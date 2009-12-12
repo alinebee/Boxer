@@ -1,0 +1,12 @@
+[Output Levels]
+MIDI_Left=90
+MIDI_Right=90
+MIDI=90
+Wave_Left=100
+Wave_Right=100
+Master=100
+
+[Program State]
+Always_On_Top=NO
+Lock_LR=YES
+

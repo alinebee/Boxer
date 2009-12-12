@@ -1,0 +1,144 @@
+/* 
+ Boxer is copyright 2009 Alun Bestor and contributors.
+ Boxer is released under the GNU General Public License 2.0. A full copy of this license can be
+ found in this XCode project at Resources/English.lproj/GNU General Public License.txt, or read
+ online at [http://www.gnu.org/licenses/gpl-2.0.txt].
+ */
+
+
+//BXSession is an NSDocument subclass which encapsulates a single DOS emulation session.
+//It manages an underlying BXEmulator (configuring, starting and stopping it), reads and writes
+//the gamebox for the session (if any), and creates the various window controllers for the session.
+
+//BXSession is extended by separate categories that encapsulate different aspects of functionality
+//(mostly for controlling the emulator.)
+
+#import <Cocoa/Cocoa.h>
+
+@class BXEmulator;
+@class BXSessionWindowController;
+@class BXInspectorController;
+@class BXPackage;
+
+@interface BXSession : NSDocument
+{
+	BXSessionWindowController *mainWindowController;
+	
+	BXPackage *gamePackage;
+	BXEmulator *emulator;
+	NSString *targetPath;
+	NSString *activeProgramPath;
+	BOOL isConfigured;
+}
+
+//Properties
+//----------
+
+//The main window controller, responsible for the BXSessionWindow that displays this session.
+@property (assign)		BXSessionWindowController *mainWindowController;
+
+//The underlying emulator process for this session. This is created during [BXSession start].
+@property (retain)		BXEmulator *emulator;
+
+//The gamebox for this session. BXSession retrieves bundled drives, configuration files and
+//target program from this during emulator configuration.
+//Will be nil if an executable file or folder was opened outside of a gamebox.
+@property (retain)		BXPackage *gamePackage;
+
+//The OS X path of the executable to launch (or folder to switch to) when the emulator starts.
+@property (copy)		NSString *targetPath;
+
+//The OS X path of the currently executing DOS program or batch file. Will be nil if the
+//emulator is at the DOS prompt, or when Boxer has no idea what program is running.
+//Currently this is only set when BXSession launches a program itself, not when a program is
+//launched manually from the DOS prompt.
+@property (copy)		NSString *activeProgramPath;
+
+
+//Class methods
+//-------------
+
+
+//Returns the currently active session, which is the session whose window is topmost.
+//Currently, only one session can be active at a time and Boxer will quit after that session
+//is shut down.
++ (id) mainSession;
+
+//Toggle the inspector panel for this session.
+//TODO: move this back to BXAppController, since inspector panels are shared between sessions.
+- (IBAction) toggleInspectorPanel:	(id)sender;
+
+
+//Starting/stopping emulation
+//---------------------------
+
+//Start up the DOS emulator.
+//This is currently called automatically by showWindow, meaning that emulation starts
+//as soon as the session window appears.
+- (void) start;
+
+//Shut down the DOS emulator.
+- (void) cancel;
+
+//Returns whether the emulator has been started. This does not necessarily indicate
+//that the emulator is ready to respond to user input, merely that start has been called.
+- (BOOL) hasStarted;
+
+
+//Session descriptions
+//--------------------
+
+//Returns a title for the current DOS session, suitable for display.
+- (NSString *) sessionDisplayName;
+
+//Returns a title for the currently-executing DOS process, suitable for display.
+- (NSString *) processDisplayName;
+
+
+//Properties of the current gamebox
+//---------------------------------
+
+//Returns whether this session has a gamebox or not.
+//TODO: replace this with just a check against [BXSession gamePackage].
+- (BOOL) isGamePackage;
+
+//A 'unique' identifier for the current session, currently equivalent to the gamebox filename.
+//This is used to persist gamebox-specific data such as window size.
+//TODO: this belongs as a property of the underlying gamebox instead.
+- (NSString *) uniqueIdentifier;
+
+//The icon for this DOS session. Currently this corresponds exactly to the gamebox's cover art image.
+- (NSImage *)representedIcon;
+- (void) setRepresentedIcon: (NSImage *)icon;
+
+//Returns an array of dictionaries describing the available executables in the current gamebox (if any).
+//TODO: these are used solely by UI code, and could be replaced instead with value transformers referring
+//to properties on the current gamebox
+- (NSArray *) executables;
+
+//Returns an array of dictionaries describing the available documentation in the current gamebox (if any).
+- (NSArray *) documentation;
+
+@end
+
+
+//Methods in this category are not intended to be called outside of BXSession.
+@interface BXSession (BXSessionInternals)
+
+//Initialising the DOS session
+//----------------------------
+
+- (void) _configureSession;
+- (void) _launchSession;
+
+
+//Monitoring process changes in the emulator
+//------------------------------------------
+
+- (void) _registerForProcessNotifications;
+- (void) _deregisterForProcessNotifications;
+
+- (void) processDidStart: (NSNotification *)notification;
+- (void) processDidReturnToShell: (NSNotification *)notification;
+
+@end

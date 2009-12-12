@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>savedRecordingsPath</key>
+	<string>~/Desktop</string>
+	<key>statusBarShown</key>
+	<true/>
+	<key>windowSnapDistance</key>
+	<integer>24</integer>
+	<key>scalerType</key>
+	<integer>0</integer>
+	<key>aspectCorrected</key>
+	<true/>
+	<key>initialInspectorPanelIndex</key>
+	<integer>1</integer>
+	<key>toolkitDriveLetter</key>
+	<string>Y</string>
+</dict>
+</plist>

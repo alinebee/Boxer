@@ -1,0 +1,1 @@
+This NSBezierPath category was written by Sean Patrick O'Brien, and snipped from complete example sourceode provided as part of his resolution independence tutorial at: http://www.seanpatrickobrien.com/journal/posts/3.

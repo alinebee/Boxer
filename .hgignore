@@ -1,0 +1,18 @@
+syntax: glob
+
+#Ignore Finder metadata files
+.DS_Store
+._*
+
+#No build directories thanks
+build
+Frameworks/Framework Source/BGHUDAppKit/build
+Frameworks/Framework Source/libpng/build
+Frameworks/Framework Source/SDLForBoxer/build
+
+#Ignore user-specific stuff in .xcodeproj bundles
+*.pbxuser
+*.perspective
+*.perspectivev3
+*.mode1v3
+*.mode2v3

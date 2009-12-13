@@ -303,9 +303,15 @@ void DOS_Shell::Run(void) {
 	WriteOut(MSG_Get("SHELL_STARTUP_END"));
 
 	if (cmd->FindString("/INIT",line,true)) {
+		//--Added 2009-12-13 by Alun Bestor to let Boxer monitor the autoexec process
+		boxer_handleAutoexecStart();
+		
 		strcpy(input_line,line.c_str());
 		line.erase();
 		ParseLine(input_line);
+		
+		boxer_handleAutoexecEnd();
+		//--End of modifications
 	}
 	do {
 		if (bf){

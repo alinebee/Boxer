@@ -52,34 +52,12 @@
 - (void) showWindows
 {
 	[super showWindows];
+	//Start the emulator as soon as our windows appear
 	if (![self hasStarted]) [self start];
 }
 
-
-//Close down the active DOSBox emulator and free the document
-- (void) close
-{
-	//This closes down the whole application as soon as the current session closes.
-	//Historically we did this because DOSBox stores state in global variables it
-	//doesn't bother resetting, which means a second DOSBox session could not be
-	//started after the first as it would inherit an invalid state.
-	
-	//However, quitting-on-close now also covers a clutch of really bad amateur bugs
-	//in Boxer itself whereby various components will fail to cope when other bits
-	//are suddenly not there. Leaving this quit-on-close in place is now only a
-	//bandaid workaround to prevent crashes until I've fix these bugs properly.
-	
-	[NSApp terminate: self];
-	
-	//These lines are currently never reached.
-	[self cancel];
-	[super close];
-}
-
-
 - (void) dealloc
 {
-	[[self emulator] setDelegate: nil];
 	[self setEmulator: nil],			[emulator release];
 	[self setGamePackage: nil],			[gamePackage release];
 	[self setTargetPath: nil],			[targetPath release];
@@ -112,9 +90,9 @@
 	
 	if (theEmulator != emulator)
 	{
-		[self _deregisterForProcessNotifications];
 		[self _deregisterForFilesystemNotifications];
 		//[emulator removeObserver: self forKeyPath: @"finished"];
+		[emulator setDelegate: nil];
 		[emulator autorelease];
 	
 		emulator = [theEmulator retain];
@@ -123,7 +101,6 @@
 		{
 			[theEmulator setDelegate: self];
 			[self _registerForFilesystemNotifications];
-			[self _registerForProcessNotifications];
 		}
 	}
 	
@@ -138,36 +115,37 @@
 //Create our DOSBox emulator and add it to the operations queue
 - (void) start
 {
-	[self setEmulator: [[BXEmulator new] autorelease]];
-		
-	//Avoid using the operation queue for now and just start the operation manually;
-	//OS X 10.6 operation queues will run all NSOperations concurrently, so ours will
-	//break until the multithreading code is working properly.
+	//We schedule our internal _startEmulator method to be called separately on the main thread,
+	//so that it doesn't block completion of whatever UI event led to this being called.
+	//In practice, this prevents menu highlights from getting 'stuck' because of DOSBox's
+	//main loop blocking the thread.
 	
-	//NSOperationQueue *queue = [[NSApp delegate] emulationQueue];
-	//[queue addOperation: [self emulator]];
-	
-
-	NSString *preflightConfig	= [[NSBundle mainBundle] pathForResource: @"Preflight" ofType: @"conf"];
-	[[self emulator] addConfigFile: preflightConfig];
-	
-	if ([self gamePackage])
-	{
-		NSString *packageConfig = [[self gamePackage] configurationPath];
-		if (packageConfig) [[self emulator] addConfigFile: packageConfig];
-	}
-	
-	NSString *launchConfig		= [[NSBundle mainBundle] pathForResource: @"Launch" ofType: @"conf"];
-    [[self emulator] addConfigFile: launchConfig];
-	
-	[[self emulator] start];
-	[self close];
+	[self performSelector: @selector(_startEmulator) withObject: nil afterDelay: 0];  
 }
-
-
 
 //Cancel the DOSBox emulator thread
 - (void)cancel	{ [[self emulator] cancel]; }
+
+
+//Close down the emulator and free the document
+- (void) close
+{
+	//This closes down the whole application as soon as the current session closes.
+	//Historically we did this because DOSBox stores state in global variables which 
+	//don't get reset when it 'quits', which means a second DOSBox session cannot be
+	//successfully started after the first since it inherits an invalid state.
+	
+	//However, quitting-on-close now also conceals a clutch of really bad amateur bugs
+	//in Boxer itself whereby various components will fail to cope when other bits
+	//are suddenly not there. Leaving this quit-on-close in place is now only a
+	//bandaid workaround to prevent crashes until I've fixed these bugs properly.
+	
+	[NSApp terminate: self];
+	
+	//These lines are currently never reached.
+	[self cancel];
+	[super close];
+}
 
 /*
 //Close ourselves when we detect the emulator thread has terminated
@@ -183,6 +161,7 @@
 }
 */
 
+
 //Describing the active DOS process
 //---------------------------------
 - (NSString *) sessionDisplayName
@@ -197,7 +176,8 @@
 	if ([emulator isRunningProcess] && ![emulator processIsInternal])
 		displayName = [[emulator processName] capitalizedString];
 	else
-		displayName = NSLocalizedString(@"MS-DOS Prompt", @"The standard process name when the session is at the DOS prompt.");
+		displayName = NSLocalizedString(@"MS-DOS Prompt",
+										@"The standard process name when the session is at the DOS prompt.");
 	return displayName;
 }
 + (NSSet *) keyPathsForValuesAffectingProcessDisplayName	{ return [NSSet setWithObject: @"emulator.processName"]; }
@@ -216,9 +196,10 @@
 	
 	[self setTargetPath: filePath];
 	
-	//If the fileURL is (or was located inside) a gamebox, we use the gamebox as the fileURL instead, and track the original
-	//fileURL as our targetPath (which then gets called later in launchSession.) This way, the DOS window will show the
-	//gamebox as the represented file and our Recent Documents list will likewise list the gamebox instead.
+	//If the fileURL is located inside a gamebox, we use the gamebox itself as the fileURL
+	//and track the original fileURL as our targetPath (which gets used later in _launchTarget.)
+	//This way, the DOS window will show the gamebox as the represented file and our Recent Documents
+	//list will likewise show the gamebox instead.
 	if (packagePath)
 	{
 		BXPackage *package = (BXPackage *)[BXPackage bundleWithPath: packagePath];
@@ -342,11 +323,36 @@
 //Emulator initialisation
 //-----------------------
 
-- (void) _configureSession
+
+- (void) _startEmulator
 {
-	BXEmulator *theEmulator = [self emulator];
+	[self setEmulator: [[BXEmulator new] autorelease]];
 	
-	BXPackage *package = [self gamePackage];
+	
+	NSString *preflightConfig	= [[NSBundle mainBundle] pathForResource: @"Preflight" ofType: @"conf"];
+	[[self emulator] addConfigFile: preflightConfig];
+	
+	if ([self gamePackage])
+	{
+		NSString *packageConfig = [[self gamePackage] configurationPath];
+		if (packageConfig) [[self emulator] addConfigFile: packageConfig];
+	}
+	
+	NSString *launchConfig		= [[NSBundle mainBundle] pathForResource: @"Launch" ofType: @"conf"];
+    [[self emulator] addConfigFile: launchConfig];
+	
+	
+	[[self emulator] start];
+	//If the emulator ever quits of its own accord, close the document also.
+	//This will happen if the user types "exit" at the command prompt.
+	[self close];
+}
+
+- (void) _configureEmulator
+{
+	BXEmulator *theEmulator	= [self emulator];
+	BXPackage *package		= [self gamePackage];
+	
 	if (package)
 	{
 		//Mount the game package as a new hard drive, at drive C
@@ -371,7 +377,7 @@
 	//Mount our internal DOS toolkit at the appropriate drive
 	NSString *toolkitDriveLetter	= [[NSUserDefaults standardUserDefaults] stringForKey: @"toolkitDriveLetter"];
 	NSString *toolkitFiles			= [[NSBundle mainBundle] pathForResource: @"DOS Toolkit" ofType: nil];
-	BXDrive *toolkitDrive		= [BXDrive hardDriveFromPath: toolkitFiles atLetter: toolkitDriveLetter];
+	BXDrive *toolkitDrive			= [BXDrive hardDriveFromPath: toolkitFiles atLetter: toolkitDriveLetter];
 	
 	[toolkitDrive setReadOnly: YES];
 	[toolkitDrive setHidden: YES];
@@ -382,93 +388,83 @@
 	if (toolkitDrive)
 	{
 		NSString *dosPath	= [NSString stringWithFormat: @"%1$@:\\;%1$@:\\UTILS;Z:\\", [toolkitDrive letter], nil];
-		NSString *ultraDir	= [NSString stringWithFormat: @"%@\\ULTRASND", [toolkitDrive letter], nil];
+		NSString *ultraDir	= [NSString stringWithFormat: @"%@:\\ULTRASND", [toolkitDrive letter], nil];
 		
 		[theEmulator setVariable: @"path"		to: dosPath		encoding: BXDirectStringEncoding];
 		[theEmulator setVariable: @"ultradir"	to: ultraDir	encoding: BXDirectStringEncoding];
 	}
 	
-	//Finally, make a mount for our represented file URL, if it's not already accessible
+	//Finally, make a mount for our represented file URL, if it's not already accessible in DOS.
 	if ([self fileURL])
 	{
 		NSString *filePath = [[self fileURL] path];
 		if ([self shouldMountDriveForPath: filePath]) [self mountDriveForPath: filePath];
 	}
 	
-	//Flag that we have completed our initial game configuration
-	isConfigured = YES;
+	//Flag that we have completed our initial game configuration.
+	hasConfigured = YES;
 }
 
 //After all preflight configuration has finished, go ahead and open whatever file we're pointing at
-- (void) _launchSession
+- (void) _launchTarget
 {
 	NSString *target = [self targetPath];
 	if (target)
 	{
 		//If the Option key was held down, don't launch the gamebox's target;
-		//Instead, switch to its parent folder and show the program picker
-		if ([[self class] isExecutable: target] && [[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask)
+		//Instead, just switch to its parent folder
+		NSUInteger optionKeyDown = [[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask;
+		if (optionKeyDown != 0 && [[self class] isExecutable: target])
 		{
-			[self openFileAtPath: [target stringByDeletingLastPathComponent]];
+			target = [target stringByDeletingLastPathComponent];
 		}
-		else
-		{
-			[self openFileAtPath: target];
-		}
+		[self openFileAtPath: target];
 	}
+	
+	//Flag that we have started up properly
+	hasLaunched = YES;
 }
 
 
 //Monitoring process changes in the emulator
 //------------------------------------------
 
-- (void) _registerForProcessNotifications
+
+//If we have not already performed our own configuration, do so now
+- (void) runPreflightCommands
 {
-	BXEmulator *theEmulator			= [self emulator];
-	NSNotificationCenter *center	= [NSNotificationCenter defaultCenter];
-	
-	[center addObserver:	self
-			   selector:	@selector(processDidStart:)
-				   name:	@"BXProcessDidStartNotification"
-				 object:	theEmulator];
-	
-	[center addObserver:	self
-			   selector:	@selector(processDidReturnToShell:)
-				   name:	@"BXProcessDidReturnToShellNotification"
-				 object:	theEmulator];
+	if (!hasConfigured) [self _configureEmulator];
 }
 
-- (void) _deregisterForProcessNotifications
-{
-	BXEmulator *theEmulator	= [self emulator];
-	NSNotificationCenter *center	= [NSNotificationCenter defaultCenter];
-	
-	[center removeObserver: self name: @"BXProcessDidStartNotification"			object: theEmulator];
-	[center removeObserver: self name: @"BXProcessDidReturnToShellNotification"	object: theEmulator];
-}
-
-- (void) processDidStart: (NSNotification *)notification
+//If we have not already launched our default target, do so now (and then display the program picker)
+- (void) runLaunchCommands
 {	
-	//If we don't know the active program ahead of time, try to figure it out
-	if (![self activeProgramPath] && ![emulator processIsInternal])
+	if (!hasLaunched)
 	{
-		//DO SOMETHING CLEVER HERE TO DETECT THE PATH OF THE CURRENTLY EXECUTING PROGRAM
+		[self _launchTarget]; 
+		
+		if ([self isGamePackage] && [[self executables] count])
+			[(BXSessionWindow *)[[self mainWindowController] window] setProgramPanelShown: YES];
 	}
 }
 
-- (void) processDidReturnToShell: (NSNotification *)notification
+- (void) didReturnToShell: (NSNotification *)notification
 {
 	BXEmulator *theEmulator = [self emulator];
 	
 	//Clear the active program
 	[self setActiveProgramPath: nil];
-	
-	//Now that control has reverted to the shell, display the program chooser if appropriate
-	//Note: only do this the first time we quit, not every time
-	if ([self isGamePackage] && [[self executables] count])
+}
+
+- (void) processDidStart: (NSNotification *)notification
+{	
+	if (![self activeProgramPath] && ![emulator processIsInternal])
 	{
-		[(BXSessionWindow *)[[self mainWindowController] window] setProgramPanelShown: YES];
+		//TODO: detect the path of the currently executing program, so that we can populate activeProgramPath
+		//if it is empty (so that we can keep track of what programs a user has launched on their own.
 	}
 }
+
+- (void) processDidEnd: (NSNotification *)notification {}
 
 @end

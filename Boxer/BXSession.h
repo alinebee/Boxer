@@ -28,7 +28,8 @@
 	BXEmulator *emulator;
 	NSString *targetPath;
 	NSString *activeProgramPath;
-	BOOL isConfigured;
+	BOOL hasConfigured;
+	BOOL hasLaunched;
 }
 
 //Properties
@@ -128,17 +129,33 @@
 //Initialising the DOS session
 //----------------------------
 
-- (void) _configureSession;
-- (void) _launchSession;
+//Create our BXEmulator instance and starts its main loop.
+//Called internally by [BXSession start], deferred to the end of the main thread's event loop to prevent
+//DOSBox blocking cleanup code.
+- (void) _startEmulator;
+
+//Set up the emulator context with drive mounts and other configuration settings specific to this session.
+//Called in response to the BXEmulatorWillLoadConfiguration event, once the emulator is initialised enough
+//for us to configure it.
+- (void) _configureEmulator;
+
+//Start up the target program for this session (if any) and displays the program panel selector after this
+//finishes. Called in response to the BXEmulatorDidLoadConfiguration event, once the emulator has finished
+//processing configuration files.
+- (void) _launchTarget;
 
 
 //Monitoring process changes in the emulator
 //------------------------------------------
 
-- (void) _registerForProcessNotifications;
-- (void) _deregisterForProcessNotifications;
+//These are called directly by BXShell in response to DOS shell commands that we ourselves have injected
+//into AUTOEXEC.BAT, so that Boxer performs its startup routine at the right moments.
+- (void) runPreflightCommands;
+- (void) runLaunchCommands;
 
-- (void) processDidStart: (NSNotification *)notification;
-- (void) processDidReturnToShell: (NSNotification *)notification;
+//These are delegate methods called by BXEmulator at various points during the emulator's lifecycle.
+- (void) didReturnToShell:		(NSNotification *)notification;
+- (void) processDidStart:		(NSNotification *)notification;
+- (void) processDidEnd:			(NSNotification *)notification;
 
 @end

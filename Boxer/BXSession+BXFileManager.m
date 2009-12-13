@@ -7,6 +7,7 @@
 
 #import "BXSession+BXFileManager.h"
 #import "BXEmulator+BXDOSFileSystem.h"
+#import "BXEmulator+BXShell.h"
 #import "UKFNSubscribeFileWatcher.h"
 #import "BXMountPanelController.h"
 #import "BXGrowlController.h"
@@ -333,7 +334,7 @@
 	
 	//only show notifications once the session has started up fully,
 	//so we don't spray out notifications for our initial drive mounts
-	if (isConfigured) [[BXGrowlController controller] notifyDriveMounted: drive];
+	if (hasConfigured) [[BXGrowlController controller] notifyDriveMounted: drive];
 }
 
 - (void) DOSDriveDidUnmount: (NSNotification *)theNotification
@@ -345,7 +346,7 @@
 	
 	//only show notifications once the session has started up fully,
 	//just in case we have to unmount something during launch
-	if (isConfigured) [[BXGrowlController controller] notifyDriveUnmounted: drive];
+	if (hasConfigured) [[BXGrowlController controller] notifyDriveUnmounted: drive];
 }
 
 - (void) _startTrackingChangesAtPath: (NSString *)path

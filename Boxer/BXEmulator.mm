@@ -152,7 +152,6 @@ BXEmulator *currentEmulator = nil;
 	[self setCurrentRecordingPath: nil], [currentRecordingPath release];
 	[self setConfigFiles: nil], [configFiles release];
 	[super dealloc];
-	NSLog(@"End of BXEmulator dealloc");
 }
 
 
@@ -175,12 +174,6 @@ BXEmulator *currentEmulator = nil;
 	[self _shutdownRecording];
 	[self _shutdownRenderer];
 	[self _shutdownShell];
-	
-	//Reset all the DOSBox globals we can find, so that they don't interfere with the next session
-	sdl = SDL_Block();
-	RunningProgram = [shellProcessName cStringUsingEncoding: BXDirectStringEncoding];
-	first_shell = 0;
-	control = 0;
 	
 	if (currentEmulator == self) currentEmulator = nil;
 	[self release];
@@ -458,6 +451,39 @@ BXEmulator *currentEmulator = nil;
 
 @implementation BXEmulator (BXEmulatorInternals)
 
+- (void) _postNotificationName: (NSString *)name
+			  delegateSelector: (SEL)selector
+					  userInfo: (id)userInfo
+{
+	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+	NSNotification *notification = [NSNotification notificationWithName: name
+																 object: self
+															   userInfo: userInfo];
+	
+	BXSession *theSession = [self delegate];
+	if (theSession && [theSession respondsToSelector: selector]) [theSession performSelector: selector withObject: notification];
+	
+	[center postNotification: notification];
+}
+
+- (void) _applyConfiguration
+{
+	[self _postNotificationName: @"BXEmulatorWillLoadConfigurationNotification"
+			   delegateSelector: @selector(willLoadConfiguration:)
+					   userInfo: nil];
+	
+	for (NSString *configFile in [self configFiles])
+	{
+		const char * const encodedConfigPath = (const char * const)[configFile cStringUsingEncoding: BXDirectStringEncoding];
+		control->ParseConfigFile(encodedConfigPath);
+	}
+
+	[self _postNotificationName: @"BXEmulatorDidLoadConfigurationNotification"
+			   delegateSelector: @selector(didLoadConfiguration:)
+					   userInfo: nil];
+}
+
+
 //Synchronising emulation state
 //-----------------------------
 
@@ -493,22 +519,24 @@ BXEmulator *currentEmulator = nil;
 		if ([newProcessName isEqualToString: shellProcessName]) newProcessName = nil;
 		[self setProcessName: newProcessName];
 		
-		NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+
 		NSDictionary *userInfo;
 		
 		if (!oldProcessName && newProcessName)
 		{
 			userInfo = [NSDictionary dictionaryWithObject: newProcessName forKey: @"process"];
-			[center	postNotificationName: @"BXEmulatorProcessDidStartNotification"
-								  object: self
-								userInfo: userInfo];
+			
+			[self _postNotificationName: @"BXEmulatorProcessDidStartNotification"
+					   delegateSelector: @selector(processDidStart:)
+							   userInfo: userInfo];
 		}
 		else if (oldProcessName && !newProcessName)
 		{
 			userInfo = [NSDictionary dictionaryWithObject: oldProcessName forKey: @"process"];
-			[center	postNotificationName: @"BXEmulatorProcessDidEndNotification"
-								  object: self
-								userInfo: userInfo];
+			
+			[self _postNotificationName: @"BXEmulatorProcessDidEndNotification"
+					   delegateSelector: @selector(processDidEnd:)
+							   userInfo: userInfo];
 		}
 		
 		//Update our max fixed speed if the real speed has gone higher
@@ -520,13 +548,28 @@ BXEmulator *currentEmulator = nil;
 	}
 }
 
+- (void) _willRunStartupCommands
+{
+	[self _postNotificationName: @"BXEmulatorWillRunStartupCommandsNotification"
+			   delegateSelector: @selector(willRunStartupCommands:)
+					   userInfo: nil];
+}
+
+- (void) _didRunStartupCommands
+{
+	[self _postNotificationName: @"BXEmulatorDidRunStartupCommandsNotification"
+			   delegateSelector: @selector(didRunStartupCommands:)
+					   userInfo: nil];
+}
+
 - (void) _didReturnToShell
 {
-	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-	[center	postNotificationName: @"BXProcessDidReturnToShellNotification"
-						  object: self
-						userInfo: nil];
+	[self _postNotificationName: @"BXEmulatorProcessDidReturnToShellNotification"
+			   delegateSelector: @selector(didReturnToShell:)
+					   userInfo: nil];
 }
+
+
 
 //Threading
 //---------
@@ -606,12 +649,21 @@ bool boxer_handleDOSBoxTitleChange(int newCycles, int newFrameskip, bool newPaus
 void boxer_applyConfigFiles()
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	for (NSString *configFile in [emulator configFiles])
-	{
-		const char * const encodedConfigPath = (const char * const)[configFile cStringUsingEncoding: BXDirectStringEncoding];
-		control->ParseConfigFile(encodedConfigPath);
-	}
+	[emulator _applyConfiguration];
 }
+
+void boxer_handleAutoexecStart()
+{
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+	[emulator _willRunStartupCommands];
+}
+
+void boxer_handleAutoexecEnd()
+{
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+	[emulator _didRunStartupCommands];
+}
+
 
 void boxer_handleReturnToShell()
 {

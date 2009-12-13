@@ -46,7 +46,11 @@ BOXER_EXPORT bool boxer_willMountPath(const char *pathStr);
 //Called from hardware.cpp: overrides DOSBox's image capture paths.
 BOXER_EXPORT const char * boxer_pathForNewRecording(const char * extension);
 
-//Called from shell.cpp: notifies Boxer when control returns to the DOS prompt
+//Called from shell.cpp: notifies Boxer when autoexec.bat is run.
+BOXER_EXPORT void boxer_handleAutoexecStart();
+BOXER_EXPORT void boxer_handleAutoexecEnd();
+
+//Called from shell.cpp: notifies Boxer when control returns to the DOS prompt.
 BOXER_EXPORT void boxer_handleReturnToShell();
 
 //Called from shell_cmds.cpp: hooks into shell command processing.

@@ -27,12 +27,18 @@
 		  withArguments: (NSArray *)arguments
 			   encoding: (NSStringEncoding)encoding;
 
+//Launch the program at the specified DOS path.
+//If changingDirectory is true, first switches the working directory to the program's containing directory;
+//Otherwise the command will be executed as an absolute path, using the current directory as the working directory.
+- (void) executeProgramAtPath: (NSString *)dosPath changingDirectory: (BOOL)changeDir;
+
 
 //Prints the specified string to the DOS stdout, using DOS Latin-1 encoding.
 - (void) displayString: (NSString *)theString;
 
 //Returns a quoted escaped string, safe for use in DOS command arguments.
 - (NSString *) quotedString: (NSString *)theString;
+
 
 
 //DOS environment and configuration variables
@@ -84,9 +90,10 @@
 //If argument is omitted, simply toggles fullscreen.
 - (id) toggleFullScreen: (NSString *)argumentString;
 
-//Shuts down the DOS session. Overrides Boxer's own exit command to ensure that we perform our own shutdown activities.
-//Call with "exit" or "quit".
-- (id) quitSession: (NSString *)argumentString;
+//These commands hook into the AUTOEXEC process to execute Boxer's session commands at suitable points.
+//These call corresponding methods on our session delegate.
+- (id) runPreflightCommands: (NSString *)argumentString;
+- (id) runLaunchCommands: (NSString *)argumentString;
 
 //Lists all available drives, using Boxer's output syntax instead of DOSBox's.
 //Call with "boxer_listMounts"
@@ -111,10 +118,4 @@
 //Reprint the command prompt. Has no effect if called while a process is executing.
 - (void) _redrawPrompt;
 
-
-//Perform configuration steps when starting up the DOS session.
-//TODO: refactor these hateful methods out of existence. This should be done in BXEmulator
-//with delegate messages instead.
-- (id) _preflight: (NSString *)argument;
-- (id) _launch: (NSString *)argument;
 @end

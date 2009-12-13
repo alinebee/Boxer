@@ -206,13 +206,29 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 //The methods in this category should not be executed outside of BXEmulator.
 @interface BXEmulator (BXEmulatorInternals)
 
+//Shortcut method for sending a notification both to the default notification center
+//and to a selector on our delegate. The object of the notification will be self.
+- (void) _postNotificationName: (NSString *)name
+			  delegateSelector: (SEL)selector
+					  userInfo: (id)userInfo;
+
+
+//Called by DOSBox when it's time to load configuration files for the emulator context.
+//Signals that configuration is starting and feeds our own configuration files to DOSBox.
+- (void) _applyConfiguration;
+
 //Called by DOSBox whenever it changes states we care about. This resyncs BXEmulator's
 //cached notions of the DOSBox state, and posts notifications for relevant properties.
 - (void) _syncWithEmulationState;
 
-//Called by DOSBox whenever control returns to the DOS prompt.
-//This informs the rest of Boxer via a notification.
+//Called by DOSBox whenever control returns to the DOS prompt. Sends a delegate notification.
 - (void) _didReturnToShell;
+
+//Called by DOSBox just before AUTOEXEC.BAT is started. Sends a delegate notification.
+- (void) _willRunStartupCommands;
+
+//Called by DOSBox after AUTOEXEC.BAT has completed. Sends a delegate notification.
+- (void) _didRunStartupCommands;
 
 
 //Threading

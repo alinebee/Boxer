@@ -19,14 +19,13 @@
 //Lookup table of BXEmulator+BXShell selectors and the shell commands that call them
 NSDictionary *commandList = [[NSDictionary alloc] initWithObjectsAndKeys:
 	//Commands prefixed by boxer_ are intended for Boxer's own use in batchfiles and our own personal command chains
-	@"_preflight:",				@"boxer_preflight",
-	@"_launch:",				@"boxer_launch",
+	@"runPreflightCommands:",	@"boxer_preflight",
+	@"runLaunchCommands:",		@"boxer_launch",
 	@"showPackageExitPrompt:",	@"boxer_quitaftercompletion",
 	@"displayStringFromKey:",	@"boxer_displaystring",
 	@"showShellCommandHelp:",	@"help",
 	@"toggleFullScreen:",		@"fullscreen",
 	@"listMounts:",				@"list_mounts",
-	//@"quitSession:",			@"exit",
 nil];
 
 //Lookup table of shell commands and the aliases that run them
@@ -54,7 +53,7 @@ nil];
 			   encoding: (NSStringEncoding)encoding
 {
 	if ([self isExecuting])
-	{		
+	{
 		DOS_Shell *DOSBoxShell = (DOS_Shell *)first_shell;
 		char *encodedString;
 
@@ -88,6 +87,23 @@ nil];
 	[self executeCommand: fullCommand encoding: encoding];
 }
 
+- (void) executeProgramAtPath: (NSString *)dosPath changingDirectory: (BOOL)changeDir
+{
+	if (changeDir)
+	{
+		NSString *parentFolder	= [dosPath stringByDeletingLastPathComponent];
+		NSString *programName	= [dosPath lastPathComponent];
+		
+		[self openQueue];
+		[self changeWorkingDirectoryToPath: parentFolder];
+		[self executeCommand: programName encoding: BXDirectStringEncoding];
+		[self closeQueue];
+	}
+	else
+	{
+		[self executeCommand: dosPath encoding: BXDirectStringEncoding];
+	}
+}
 
 
 - (void) displayString: (NSString *)theString
@@ -146,12 +162,18 @@ nil];
 
 - (void) setPromptNeedsDisplay: (BOOL)redraw
 {
-	if (redraw)
+	//DOSBox will redraw the command prompt after a batchfile exits anyway,
+	//so don't bother doing anything if we're in a batch script
+	if (![self isInBatchScript])
 	{
-		if ([self isInQueue]) numQueuedCommands++;
-		else [self _redrawPrompt];
+		if (redraw)
+		{
+			if ([self isInQueue]) numQueuedCommands++;
+			else [self _redrawPrompt];
+		}
+		else numQueuedCommands = 0;
+			
 	}
-	else numQueuedCommands = 0;
 }
 - (BOOL) promptNeedsDisplay	{ return numQueuedCommands > 0; }
  
@@ -201,13 +223,17 @@ nil];
 	return [NSNumber numberWithBool: YES];
 }
 
-
-- (id) quitSession: (NSString *)argumentString
+- (id) runPreflightCommands: (NSString *)argumentString
 {
-	[self cancel];
+	[[self delegate] runPreflightCommands];
 	return [NSNumber numberWithBool: YES];
 }
 
+- (id) runLaunchCommands: (NSString *)argumentString
+{
+	[[self delegate] runLaunchCommands];
+	return [NSNumber numberWithBool: YES];
+}
 
 - (id) listMounts: (NSString *)argumentString
 {
@@ -229,7 +255,7 @@ nil];
 
 - (BOOL) _handleCommand: (NSString *)originalCommand
 	 withArgumentString: (NSString *)originalArgumentString
-{
+{	
 	//Normalise the command to lowercase
 	NSString *command = [originalCommand lowercaseString];
 	
@@ -283,29 +309,6 @@ nil];
 //so far of interfering with DOS_Shell::InputCommand().
 - (void) _redrawPrompt { if (![self isRunningProcess] && ![self suppressOutput]) [self sendEnter]; }
 
-
-
-//Perform any necessary initial configuration of the DOS session. This corresponds to the shell command
-//boxer_preflight, which is called by default at the start of the autoexec process.
-- (id) _preflight: (NSString *)arguments
-{
-	//We just pass this directly up the food chain to our DOS session.
-	[self setSuppressOutput: YES];
-	[[self delegate] _configureSession];
-	[self setSuppressOutput: NO];
-	return [NSNumber numberWithBool: YES];
-}
-
-//Run any necessary post-configuration launch commands. This corresponds to the shell command boxer_launch,
-//which is called by default at the end of the autoexec process.
-- (id) _launch: (NSString *)arguments
-{
-	//We just pass this directly up the food chain to our DOS session.
-	[self setSuppressOutput: YES];
-	[[self delegate] _launchSession];
-	[self setSuppressOutput: NO];
-	return [NSNumber numberWithBool: YES];
-}
 
 @end
 

@@ -113,12 +113,6 @@
 //Change directory to the specified DOS path, which may include a drive letter.
 - (BOOL) changeWorkingDirectoryToPath: (NSString *)dosPath;
 
-//Launch the program at the specified DOS path.
-//If changingDirectory is true, first switches the working directory to the program's containing directory;
-//Otherwise the command will be executed as an absolute path, using the current directory as the working directory.
-//TODO: move this to BXShell instead as it has little to do with the filesystem itself.
-- (void) executeProgramAtPath: (NSString *)dosPath changingDirectory: (BOOL)changeDir;
-
 
 //Filesystem validation
 //---------------------

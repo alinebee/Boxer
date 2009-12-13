@@ -604,24 +604,6 @@ enum {
 	return changedPath;
 }
 
-- (void) executeProgramAtPath: (NSString *)dosPath changingDirectory: (BOOL)changeDir
-{
-	if (changeDir)
-	{
-		NSString *parentFolder	= [dosPath stringByDeletingLastPathComponent];
-		NSString *programName	= [dosPath lastPathComponent];
-		
-		[self openQueue];
-		[self changeWorkingDirectoryToPath: parentFolder];
-		[self executeCommand: programName encoding: BXDirectStringEncoding];
-		[self closeQueue];
-	}
-	else
-	{
-		[self executeCommand: dosPath encoding: BXDirectStringEncoding];
-	}
-}
-
 @end
 
 

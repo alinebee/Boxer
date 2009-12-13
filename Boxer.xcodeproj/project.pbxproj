@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 45;
+	objectVersion = 44;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -212,7 +212,6 @@
 		9FD95E9710BF33BE0044FC62 /* IconFamily+BXIconFamily.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD95E9610BF33BE0044FC62 /* IconFamily+BXIconFamily.m */; };
 		9FDAD87F10C182B3004EA7D0 /* BXCoverArtWell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FDAD87E10C182B3004EA7D0 /* BXCoverArtWell.m */; };
 		9FDB601710C0707F00C15CF4 /* BXDockTileController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FDB601610C0707F00C15CF4 /* BXDockTileController.m */; };
-		9FDB602810C0740D00C15CF4 /* DockTile.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FDB602610C0740D00C15CF4 /* DockTile.xib */; };
 		9FE201340F6D543F00B3A38C /* libpng.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FE201320F6D543F00B3A38C /* libpng.framework */; };
 		9FE201A60F6D599C00B3A38C /* libz.1.2.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FE201A50F6D599C00B3A38C /* libz.1.2.3.dylib */; };
 		9FE201BB0F6D59D500B3A38C /* libpng.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FE201320F6D543F00B3A38C /* libpng.framework */; };
@@ -623,7 +622,6 @@
 		9FDAD87E10C182B3004EA7D0 /* BXCoverArtWell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXCoverArtWell.m; sourceTree = "<group>"; };
 		9FDB601510C0707F00C15CF4 /* BXDockTileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDockTileController.h; sourceTree = "<group>"; };
 		9FDB601610C0707F00C15CF4 /* BXDockTileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDockTileController.m; sourceTree = "<group>"; };
-		9FDB602710C0740D00C15CF4 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/DockTile.xib; sourceTree = "<group>"; };
 		9FE200A10F6D2F2C00B3A38C /* BXFilterDefinitions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFilterDefinitions.h; sourceTree = "<group>"; };
 		9FE2010A0F6D4CBA00B3A38C /* zmbv.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = zmbv.cpp; sourceTree = "<group>"; };
 		9FE2010B0F6D4CBA00B3A38C /* zmbv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zmbv.h; sourceTree = "<group>"; };
@@ -738,10 +736,10 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				9FCBB5FE10A6DDBD00C28B09 /* DOS Toolkit */,
 				9FBC31E40F56C399001811F2 /* UserDefaults.plist */,
 				9FCBB2DB10A61E9300C28B09 /* Launch.conf */,
 				9FCBB2D910A61D6100C28B09 /* Preflight.conf */,
+				9FCBB5FE10A6DDBD00C28B09 /* DOS Toolkit */,
 				9FCDCCE310D2D53C0080A24F /* Original DOSBox Documentation */,
 				9F76D3F510CBC3B300C3B081 /* GNU General Public License.txt */,
 				9FCBB2CB10A61C6D00C28B09 /* Sounds */,
@@ -903,7 +901,6 @@
 		9F496E4C108EEDF700282261 /* XIBs */ = {
 			isa = PBXGroup;
 			children = (
-				9FDB602610C0740D00C15CF4 /* DockTile.xib */,
 				9F59DEDD10B01743008DBBC1 /* ProgramPanel.xib */,
 				9F45A46A109C9A0400593456 /* MountPanelOptions.xib */,
 				9F45A1CB109C3D3400593456 /* MainMenu.xib */,
@@ -1444,7 +1441,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Boxer" */;
-			compatibilityVersion = "Xcode 3.1";
+			compatibilityVersion = "Xcode 3.0";
 			hasScannedForEncodings = 1;
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Boxer */;
 			projectDirPath = "";
@@ -1486,7 +1483,6 @@
 				9F59D99810AE0956008DBBC1 /* BoxArtShine.png in Resources */,
 				9F59DD2310AF6129008DBBC1 /* Grille.png in Resources */,
 				9F59DEDF10B01743008DBBC1 /* ProgramPanel.xib in Resources */,
-				9FDB602810C0740D00C15CF4 /* DockTile.xib in Resources */,
 				9F76D3F710CBC3B300C3B081 /* GNU General Public License.txt in Resources */,
 				9FCDCCE510D2D53C0080A24F /* Original DOSBox Documentation in Resources */,
 			);
@@ -1778,15 +1774,6 @@
 			name = "Original DOSBox Documentation";
 			sourceTree = "<group>";
 		};
-		9FDB602610C0740D00C15CF4 /* DockTile.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				9FDB602710C0740D00C15CF4 /* English */,
-			);
-			name = DockTile.xib;
-			path = ..;
-			sourceTree = "<group>";
-		};
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
@@ -1871,28 +1858,29 @@
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
 				CURRENT_PROJECT_VERSION = 20091212.1;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_VERSION = 4.0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH)";
 				PREBINDING = NO;
-				SDKROOT = macosx10.5;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 			};
 			name = Debug;
 		};
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
 				CURRENT_PROJECT_VERSION = 20091212.1;
 				GCC_VERSION = 4.0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;
-				SDKROOT = macosx10.5;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 			};
 			name = Release;
 		};

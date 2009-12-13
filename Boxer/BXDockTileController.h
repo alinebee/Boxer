@@ -12,5 +12,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface BXDockTileController : NSViewController
+@interface BXDockTileController : NSObject
+- (void)syncIconWithActiveSession;
 @end

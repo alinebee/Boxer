@@ -3,12 +3,12 @@
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
 		<string key="IBDocument.SystemVersion">10C540</string>
-		<string key="IBDocument.InterfaceBuilderVersion">732</string>
+		<string key="IBDocument.InterfaceBuilderVersion">740</string>
 		<string key="IBDocument.AppKitVersion">1038.25</string>
 		<string key="IBDocument.HIToolboxVersion">458.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">732</string>
+			<string key="NS.object.0">740</string>
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -41,11 +41,11 @@
 			<object class="NSCustomObject" id="74086318">
 				<string key="NSClassName">BXAppController</string>
 			</object>
-			<object class="NSViewController" id="355654051">
-				<string key="NSNibName">DockTile</string>
-			</object>
 			<object class="NSCustomObject" id="849055722">
 				<string key="NSClassName">BXHelpMenuController</string>
+			</object>
+			<object class="NSCustomObject" id="1070867462">
+				<string key="NSClassName">BXDockTileController</string>
 			</object>
 			<object class="NSObjectController" id="132209991">
 				<object class="NSMutableArray" key="NSDeclaredKeys">
@@ -3502,10 +3502,9 @@
 						<string key="objectName">Boxer App Controller</string>
 					</object>
 					<object class="IBObjectRecord">
-						<int key="objectID">1751</int>
-						<reference key="object" ref="355654051"/>
+						<int key="objectID">1756</int>
+						<reference key="object" ref="1070867462"/>
 						<reference key="parent" ref="0"/>
-						<string key="objectName">Dock Tile Controller</string>
 					</object>
 				</object>
 			</object>
@@ -3683,8 +3682,7 @@
 					<string>1663.ImportedFromIB2</string>
 					<string>1664.IBPluginDependency</string>
 					<string>1664.ImportedFromIB2</string>
-					<string>1751.CustomClassName</string>
-					<string>1751.IBPluginDependency</string>
+					<string>1756.IBPluginDependency</string>
 					<string>196.IBPluginDependency</string>
 					<string>196.ImportedFromIB2</string>
 					<string>283.IBPluginDependency</string>
@@ -3966,7 +3964,6 @@
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
-					<string>BXDockTileController</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
@@ -4064,7 +4061,7 @@ IEtWQiBob29rIGZvciByZW5kZXJpbmcgc2V0dGluZ3MuA</bytes>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1755</int>
+			<int key="maxID">1756</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -4097,15 +4094,15 @@ IEtWQiBob29rIGZvciByZW5kZXJpbmcgc2V0dGluZ3MuA</bytes>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Boxer Source/BXAppController.h</string>
+						<string key="minorKey">Boxer/BXAppController.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">BXDockTileController</string>
-					<string key="superclassName">NSViewController</string>
+					<string key="superclassName">NSObject</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Boxer Source/BXDockTileController.h</string>
+						<string key="minorKey">Boxer/BXDockTileController.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -4141,7 +4138,7 @@ IEtWQiBob29rIGZvciByZW5kZXJpbmcgc2V0dGluZ3MuA</bytes>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Boxer Source/BXHelpMenuController.h</string>
+						<string key="minorKey">Boxer/BXHelpMenuController.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -4149,7 +4146,14 @@ IEtWQiBob29rIGZvciByZW5kZXJpbmcgc2V0dGluZ3MuA</bytes>
 					<string key="superclassName">NSView</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Boxer Source/BXRenderView.h</string>
+						<string key="minorKey">Boxer/BXRenderView.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXSession</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">Boxer/BXSession+BXDragDrop.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -4162,7 +4166,6 @@ IEtWQiBob29rIGZvciByZW5kZXJpbmcgc2V0dGluZ3MuA</bytes>
 							<string>decrementSpeed:</string>
 							<string>incrementFrameSkip:</string>
 							<string>incrementSpeed:</string>
-							<string>paste:</string>
 							<string>sendEnter:</string>
 							<string>sendF10:</string>
 							<string>sendF1:</string>
@@ -4194,12 +4197,11 @@ IEtWQiBob29rIGZvciByZW5kZXJpbmcgc2V0dGluZ3MuA</bytes>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
-							<string>id</string>
 						</object>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Boxer Source/BXSession+BXEmulatorController.h</string>
+						<string key="minorKey">Boxer/BXSession+BXEmulatorController.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -4223,7 +4225,7 @@ IEtWQiBob29rIGZvciByZW5kZXJpbmcgc2V0dGluZ3MuA</bytes>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Boxer Source/BXSession+BXFileManager.h</string>
+						<string key="minorKey">Boxer/BXSession+BXFileManager.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -4235,7 +4237,7 @@ IEtWQiBob29rIGZvciByZW5kZXJpbmcgc2V0dGluZ3MuA</bytes>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Boxer Source/BXSession.h</string>
+						<string key="minorKey">Boxer/BXSession.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -4271,7 +4273,7 @@ IEtWQiBob29rIGZvciByZW5kZXJpbmcgc2V0dGluZ3MuA</bytes>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Boxer Source/BXSessionWindow.h</string>
+						<string key="minorKey">Boxer/BXSessionWindow.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -4295,7 +4297,7 @@ IEtWQiBob29rIGZvciByZW5kZXJpbmcgc2V0dGluZ3MuA</bytes>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Boxer Source/BXSessionWindowController+BXRenderController.h</string>
+						<string key="minorKey">Boxer/BXSessionWindowController+BXRenderController.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -4303,7 +4305,7 @@ IEtWQiBob29rIGZvciByZW5kZXJpbmcgc2V0dGluZ3MuA</bytes>
 					<string key="superclassName">NSWindowController</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Boxer Source/BXSessionWindowController.h</string>
+						<string key="minorKey">Boxer/BXSessionWindowController.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -4415,7 +4417,7 @@ IEtWQiBob29rIGZvciByZW5kZXJpbmcgc2V0dGluZ3MuA</bytes>
 					<string key="className">NSWindow</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Boxer Source/NSWindow+BXWindowSizing.h</string>
+						<string key="minorKey">Boxer/NSWindow+BXWindowSizing.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -5048,18 +5050,6 @@ IEtWQiBob29rIGZvciByZW5kZXJpbmcgc2V0dGluZ3MuA</bytes>
 					<string key="className">NSView</string>
 					<string key="superclassName">NSResponder</string>
 					<reference key="sourceIdentifier" ref="107479504"/>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">NSViewController</string>
-					<string key="superclassName">NSResponder</string>
-					<object class="NSMutableDictionary" key="outlets">
-						<string key="NS.key.0">view</string>
-						<string key="NS.object.0">NSView</string>
-					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBFrameworkSource</string>
-						<string key="minorKey">AppKit.framework/Headers/NSViewController.h</string>
-					</object>
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">NSWindow</string>

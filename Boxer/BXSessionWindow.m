@@ -52,28 +52,8 @@
 	[self setStatusBarShown: [[NSUserDefaults standardUserDefaults] boolForKey: @"statusBarShown"]];
 	
 	//Hide the program panel by default - the DOS session decides when it's appropriate to display this
-	[self setProgramPanelShown: NO];
+	[self setProgramPanelShown: YES];
 }
-
-- (void) setProgramPanel: (NSView *)panel
-{
-	[self willChangeValueForKey: @"programPanel"];
-	
-	NSView *oldPanel = [self programPanel];
-	if (oldPanel)
-	{	
-		[panel setFrame:	[oldPanel frame]];
-		[panel setHidden:	[oldPanel isHidden]];
-		[panel setAutoresizingMask: [oldPanel autoresizingMask]];
-		[[oldPanel superview] replaceSubview: oldPanel with: panel];
-	
-		[oldPanel autorelease];
-	}
-	programPanel = [panel retain];
-
-	[self didChangeValueForKey: @"programPanel"];
-}
-
 
 - (BOOL) statusBarShown		{ return ![statusBar isHidden]; }
 - (BOOL) programPanelShown	{ return ![programPanel isHidden]; }
@@ -82,7 +62,6 @@
 {
 	if (show != [self statusBarShown])
 	{
-		
 		//temporarily override the other views' resizing behaviour so that they don't slide up as we do this
 		NSUInteger oldRenderMask		= [renderView autoresizingMask];
 		NSUInteger oldProgramPanelMask	= [programPanel autoresizingMask];
@@ -168,7 +147,6 @@
 - (NSSize) renderViewSize	{ return [[self renderView] frame].size; }
 
 //Resize the window frame to fit the new render size
-//Todo: this should be just setContentSize: instead
 - (void) setRenderViewSize: (NSSize)newSize animate: (BOOL)performAnimation
 {
 	NSSize currentSize = [self renderViewSize];

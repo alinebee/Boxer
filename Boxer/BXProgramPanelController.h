@@ -12,12 +12,10 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class BXSessionWindowController;
 @class BXSession;
 
 @interface BXProgramPanelController : NSViewController
 {
-	IBOutlet BXSessionWindowController *controller;
 	IBOutlet NSView *programList;
 	IBOutlet NSView *defaultTargetToggle;
 	IBOutlet NSView *noProgramsNotice;
@@ -25,21 +23,13 @@
 @property (retain) NSView *programList;				//The program picker view.
 @property (retain) NSView *defaultTargetToggle;		//The default program toggle view.
 @property (retain) NSView *noProgramsNotice;		//The no-programs-found notice view.
-@property (assign) BXSessionWindowController *controller;	//The controller we are responsible to.
-
-//Returns the session to which this program panel belongs (i.e., the BXSessionWindowController's document)
-- (BXSession *) session;
 
 //Returns the localised display string used for the "open this program every time" checkbox toggle.
 - (NSString *) labelForToggle;
 
-//Opens the path of the sender's represented object, called by our program picker buttons.
-//TODO: this duplicates the behaviour of BXFileManager's openInDOS: action. Look into
-//linking our picker buttons directly to that instead.
-- (IBAction) openFileInDOS:	(id)sender;
-
 //Set/get whether the session's currently executing program is the default program for its gamebox.
 //Used by the default program toggle view.
+
 - (BOOL) activeProgramIsDefault;
 - (void) setActiveProgramIsDefault: (BOOL) isDefault;
 

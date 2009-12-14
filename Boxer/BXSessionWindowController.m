@@ -36,11 +36,10 @@
 	BXRenderView *renderView		= [theWindow renderView];
 	
 	
-	//Create our new program panel controller and add its view to our window
+	//Create our new program panel controller and attach it to our window's program panel
 	BXProgramPanelController *panelController = [[[BXProgramPanelController alloc] initWithNibName: @"ProgramPanel" bundle: nil] autorelease];
-	[panelController setController: self];
 	[self setProgramPanelController: panelController];
-	[(BXSessionWindow *)[self window] setProgramPanel: [panelController view]];
+	[panelController setView: [theWindow programPanel]];
 	
 	
 	//These are handled by BoxerRenderController, our category for rendering-related delegate tasks
@@ -85,6 +84,9 @@
 	
 	//While we're here, also observe the process name of the session so that we can change the window title appropriately
 	[theSession addObserver:self forKeyPath:@"processDisplayName" options: 0 context: nil];
+	
+	//...and add it to our panel controller, so that it can keep up with the times too
+	[[self programPanelController] setRepresentedObject: theSession];
 }
 
 //Sync our window title when we notice that the document's name has changed

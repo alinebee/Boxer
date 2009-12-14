@@ -12,7 +12,7 @@
 - (NSComparisonResult) pathDepthCompare: (NSString *)comparison
 {
 	NSUInteger v1 = [[self pathComponents] count];
-    NSUInteger v2 = [[self pathComponents] count];
+    NSUInteger v2 = [[comparison pathComponents] count];
 	
     if (v1 < v2)		return NSOrderedAscending;
     else if (v1 > v2)	return NSOrderedDescending;

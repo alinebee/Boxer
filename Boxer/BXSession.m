@@ -17,6 +17,7 @@
 #import "BXEmulator+BXShell.h"
 #import "BXSessionWindow.h"
 #import "NSWorkspace+BXFileTypes.h"
+#import "NSString+BXPaths.h"
 
 
 @implementation BXSession
@@ -288,7 +289,7 @@
 
 - (NSArray *) documentation
 {
-	NSWorkspace *workspace		= [NSWorkspace sharedWorkspace];
+	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
 	BXPackage *thePackage	= [self gamePackage];
 	
 	NSArray *docPaths = [[thePackage documentation] sortedArrayUsingSelector: @selector(pathDepthCompare:)];

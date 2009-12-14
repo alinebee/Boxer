@@ -6,12 +6,6 @@
  */
 
 
-//TODO: this class is in desperate need of refactoring as it has a very unhealthy relationship
-//with both BXWindowController and BXWindow. We should not be replacing a 'placeholder' view
-//in BXWindow, but having our own view assigned to it and populating it with our subviews instead.
-//Nor should we be maintaining a reference to BXWindowController: we should instead derive the
-//current session from our view's parent window's document.
-
 #import "BXProgramPanelController.h"
 #import "BXValueTransformers.h"
 #import "BXSession+BXFileManager.h"
@@ -21,11 +15,19 @@
 
 @implementation BXProgramPanelController
 @synthesize programList, defaultTargetToggle, noProgramsNotice;
-@synthesize controller;
 
-+ (NSSet *)keyPathsForValuesAffectingSession				{ return [NSSet setWithObject: @"controller.document"]; }
-+ (NSSet *)keyPathsForValuesAffectingLabelForToggle			{ return [NSSet setWithObject: @"session.activeProgramPath"]; }
-+ (NSSet *)keyPathsForValuesAffectingActiveProgramIsDefault	{ return [NSSet setWithObjects: @"session.activeProgramPath", @"session.gamePackage.targetPath", nil]; }
++ (NSSet *)keyPathsForValuesAffectingLabelForToggle
+{
+	return [NSSet setWithObject: @"representedObject.activeProgramPath"];
+}
+
++ (NSSet *)keyPathsForValuesAffectingActiveProgramIsDefault
+{
+	return [NSSet setWithObjects:
+			@"representedObject.activeProgramPath",
+			@"representedObject.gamePackage.targetPath",
+			nil];
+}
 
 + (void) initialize
 {
@@ -45,12 +47,16 @@
 	[super dealloc];
 }
 
-- (void) awakeFromNib
+- (void) setView: (NSView *)view
 {
-	NSView *container = [self view];
-	if ([self programList])			[container addSubview: [self programList]];
-	if ([self defaultTargetToggle]) [container addSubview: [self defaultTargetToggle]];
-	if ([self noProgramsNotice])	[container addSubview: [self noProgramsNotice]];
+	[super setView: view];
+	
+	//Pull our subsidiary views from our NIB file
+	if (![self programList]) [self loadView];
+	
+	if ([self programList])			[view addSubview: [self programList]];
+	if ([self defaultTargetToggle]) [view addSubview: [self defaultTargetToggle]];
+	if ([self noProgramsNotice])	[view addSubview: [self noProgramsNotice]];
 }
 
 //Returns the display string used for the "open this program every time" checkbox toggle
@@ -60,18 +66,16 @@
 		@"Launch %@ every time I open this gamebox.",
 		@"Label for default program checkbox in program panel. %@ is the lowercase filename of the currently-active program."
 	);
-	NSString *programPath = [[self session] activeProgramPath];
+	NSString *programPath = [[self representedObject] activeProgramPath];
 	NSString *dosFilename = [[NSValueTransformer valueTransformerForName: @"BXDOSFilename"] transformedValue: programPath];
 	
 	return [NSString stringWithFormat: format, dosFilename, nil];
 }
 
-- (BXSession *)session { return (BXSession *)[[self controller] document]; }
-
 - (BOOL) activeProgramIsDefault
 {
-	NSString *defaultProgram	= [[[self session] gamePackage] targetPath];
-	NSString *activeProgram		= [[self session] activeProgramPath];
+	NSString *defaultProgram	= [[[self representedObject] gamePackage] targetPath];
+	NSString *activeProgram		= [[self representedObject] activeProgramPath];
 	
 	return [activeProgram isEqualToString: defaultProgram];
 }
@@ -81,32 +85,13 @@
 {
 	[self willChangeValueForKey: @"activeProgramIsDefault"];
 	
-	BXPackage *gamePackage	= [[self session] gamePackage];
-	NSString *activeProgram		= [[self session] activeProgramPath];
+	BXPackage *gamePackage	= [[self representedObject] gamePackage];
+	NSString *activeProgram	= [[self representedObject] activeProgramPath];
 	if (!gamePackage || !activeProgram) return;
 	
 	if (isDefault)							[gamePackage setTargetPath: activeProgram];
 	else if ([self activeProgramIsDefault])	[gamePackage setTargetPath: nil];
 	
 	[self didChangeValueForKey: @"activeProgramIsDefault"];	
-}
-
-//Actions
-//-------
-
-- (IBAction) openFileInDOS:	(id)sender
-{
-	NSString *filePath = [[sender representedObject] objectForKey: @"path"];
-	[[self session] openFileAtPath: filePath];
-}
-
-- (BOOL) validateUserInterfaceItem: (id)theItem
-{	
-	BXEmulator *emulator	= [[self session] emulator];
-	SEL theAction = [theItem action];
-
-	if (theAction == @selector(openFileInDOS:)) return [emulator isExecuting] && ![emulator isRunningProcess];
-	
-	return YES;
 }
 @end

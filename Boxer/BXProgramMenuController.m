@@ -57,7 +57,8 @@
 {
 	NSMenu *menu = [programSelector menu];
 	NSString *targetPath = [[[self session] gamePackage] targetPath];
-	[programSelector selectItemAtIndex: [menu indexOfItemWithRepresentedObject: targetPath]];
+	NSUInteger index = (targetPath == nil) ? 0 : [menu indexOfItemWithRepresentedObject: targetPath];
+	[programSelector selectItemAtIndex: index];
 }
 
 - (BOOL) hasItems

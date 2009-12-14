@@ -45,8 +45,8 @@
 	[self willChangeValueForKey: @"hasItems"];
 	
 	NSMenu *menu = [programSelector menu];
-	[(id)menu removeAllItems];
-	for (NSMenuItem *item in [self programMenuItems]) [menu addItem: item];
+	for (NSMenuItem *oldItem in [menu itemArray]) [menu removeItem: oldItem];
+	for (NSMenuItem *newItem in [self programMenuItems]) [menu addItem: newItem];
 		
 	[self didChangeValueForKey: @"hasItems"];
 	

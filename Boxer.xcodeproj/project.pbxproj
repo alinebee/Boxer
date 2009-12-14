@@ -722,7 +722,7 @@
 				9FBC3CB10F56E32C001811F2 /* Info.plist */,
 				080E96DDFE201D6D7F000001 /* Boxer */,
 				9FBC3A7A0F56CEA2001811F2 /* DOSBox */,
-				9F7A8F230F8E705100D1AAD5 /* Boxer */,
+				9F7A8F230F8E705100D1AAD5 /* BXToolkit */,
 				9FD95DC210BF1D730044FC62 /* IconFamily */,
 				9F59DA1410AE22B9008DBBC1 /* MCAdditions */,
 				9FAD43B610A341F6007E8C0D /* UKKQueue */,
@@ -930,7 +930,7 @@
 			path = MCAdditions;
 			sourceTree = "<group>";
 		};
-		9F7A8F230F8E705100D1AAD5 /* Boxer */ = {
+		9F7A8F230F8E705100D1AAD5 /* BXToolkit */ = {
 			isa = PBXGroup;
 			children = (
 				9FBC351B0F56C7B7001811F2 /* BXGeometry.h */,
@@ -948,7 +948,7 @@
 				9F76D1B710CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.h */,
 				9F76D1B810CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.m */,
 			);
-			path = Boxer;
+			path = BXToolkit;
 			sourceTree = "<group>";
 		};
 		9FAD43B610A341F6007E8C0D /* UKKQueue */ = {

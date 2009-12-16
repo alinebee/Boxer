@@ -10,6 +10,7 @@
 //program picker panel views.
 
 #import <Cocoa/Cocoa.h>
+#import <BGHUDAppKit/BGHUDScroller.h>
 
 //BXProgramPanel is the containing view for all other panel content. This class draws
 //itself as a shaded grey gradient background with a grille at the top.
@@ -40,4 +41,8 @@
 //Assigned to program picker buttons in the NIB file, but currently does nothing.
 //Kept around for now in case we want to customise the appearance or behaviour of them.
 @interface BXProgramButton : NSButton
+@end
+
+
+@interface BXProgramScroller : BGHUDScroller
 @end

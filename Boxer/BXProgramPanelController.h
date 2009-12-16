@@ -33,4 +33,5 @@
 - (BOOL) activeProgramIsDefault;
 - (void) setActiveProgramIsDefault: (BOOL) isDefault;
 
+- (void) syncActiveView;
 @end

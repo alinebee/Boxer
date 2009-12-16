@@ -39,6 +39,7 @@
 	[NSValueTransformer setValueTransformer: [displayPath autorelease]	forName: @"BXProgramDisplayPath"];
 	[NSValueTransformer setValueTransformer: [fileName autorelease]		forName: @"BXDOSFilename"];
 }
+
 - (void) dealloc
 {
 	[self setProgramList: nil],			[programList release];
@@ -47,16 +48,37 @@
 	[super dealloc];
 }
 
-- (void) setView: (NSView *)view
+- (void) setRepresentedObject: (id)session
 {
-	[super setView: view];
-	
-	//Pull our subsidiary views from our NIB file
+	[[self representedObject] removeObserver: self forKeyPath: @"activeProgramPath"];
+	[super setRepresentedObject: session];
+	[[self representedObject] addObserver: self forKeyPath: @"activeProgramPath" options: 0 context: nil];
+	[self syncActiveView];
+}
+
+//Whenever the active program changes, change which view is drawn
+- (void)observeValueForKeyPath: (NSString *)keyPath
+					  ofObject: (id)object
+						change: (NSDictionary *)change
+					   context: (void *)context
+{	
+	if ([keyPath isEqualToString: @"activeProgramPath"]) [self syncActiveView];
+}
+
+- (void) syncActiveView
+{
+	//Pull our subsidiary views in from our NIB file, when we first need them
 	if (![self programList]) [self loadView];
 	
-	if ([self programList])			[view addSubview: [self programList]];
-	if ([self defaultTargetToggle]) [view addSubview: [self defaultTargetToggle]];
-	if ([self noProgramsNotice])	[view addSubview: [self noProgramsNotice]];
+	BXSession *session = [self representedObject];
+	NSView *activeView	= nil;
+	
+	if		([session activeProgramPath])	activeView = [self defaultTargetToggle];
+	else if	([[session executables] count])	activeView = [self programList];
+	else									activeView = [self noProgramsNotice];
+
+	for (NSView *subview in [[self view] subviews]) [subview removeFromSuperview];
+	[[self view] addSubview: activeView];
 }
 
 //Returns the display string used for the "open this program every time" checkbox toggle

@@ -3,12 +3,12 @@
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
 		<string key="IBDocument.SystemVersion">10C540</string>
-		<string key="IBDocument.InterfaceBuilderVersion">732</string>
+		<string key="IBDocument.InterfaceBuilderVersion">740</string>
 		<string key="IBDocument.AppKitVersion">1038.25</string>
 		<string key="IBDocument.HIToolboxVersion">458.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">732</string>
+			<string key="NS.object.0">740</string>
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -62,9 +62,9 @@
 							<object class="NSTextFieldCell" key="NSCell" id="384297069">
 								<int key="NSCellFlags">67239424</int>
 								<int key="NSCellFlags2">272629760</int>
-								<string type="base64-UTF8" key="NSContents">Qm94ZXIgaXMgZGVzaWduZWQgYnkNQWx1biBCZXN0b3IgJiByZWxlYXNlZA11bmRlciBhIENDLUF0dHJp
-YnV0aW9uIDMuMCBMaWNlbnNlLg0NQm94ZXIgaXMgYmFzZWQgb24gRE9TQm94LCB3aGljaCBpcyDCqTIw
-MDLigJMyMDA5IGJ5IHRoZSBET1NCb3ggVGVhbS4</string>
+								<string type="base64-UTF8" key="NSContents">Qm94ZXIgaXMgZGVzaWduZWQgYnkNQWx1biBCZXN0b3IgJiByZWxlYXNlZCB1bmRlciB0aGUgR05VIFB1
+YmxpYyBMaWNlbnNlLg0NQm94ZXIgaXMgYmFzZWQgb24gRE9TQm94LCB3aGljaCBpcyDCqTIwMDLigJMy
+MDA5IGJ5IHRoZSBET1NCb3ggVGVhbS4</string>
 								<object class="NSFont" key="NSSupport">
 									<string key="NSName">LucidaGrande</string>
 									<double key="NSSize">12</double>

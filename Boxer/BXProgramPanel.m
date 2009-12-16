@@ -140,3 +140,26 @@ enum {
 @implementation BXProgramButton
 //- (BOOL) showsBorderOnlyWhileMouseInside { return YES; }
 @end
+
+
+
+@implementation BXProgramScroller
+
+- (void) drawIncrementArrow:(BOOL)highlighted	{}
+- (void) drawDecrementArrow:(BOOL)highlighted	{}
+- (void) drawKnobSlotInRect:(NSRect)slotRect highlight:(BOOL)flag	{}
+
+- (void) drawKnob
+{
+	NSGradient *knobGradient = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.2 alpha: 1.0]
+															 endingColor: [NSColor colorWithCalibratedWhite: 0.15 alpha: 1.0]
+								];
+
+	NSRect regionRect	= [self rectForPart: NSScrollerKnob];
+	NSRect knobRect		= NSInsetRect(regionRect, 0.0, 3.0);
+	CGFloat knobRadius	= knobRect.size.height / 2;
+	NSBezierPath *knobPath = [NSBezierPath bezierPathWithRoundedRect: knobRect xRadius: knobRadius yRadius: knobRadius];
+	
+	[knobGradient drawInBezierPath: knobPath angle: 90];
+}
+@end

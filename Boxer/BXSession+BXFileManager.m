@@ -321,7 +321,6 @@
 	BXPackage *package = [self gamePackage];
 	if (package && [path hasPrefix: [package gamePath]])
 	{
-		NSLog(@"Flushing game package caches");
 		[package setExecutables:	nil];
 		[package setDocumentation:	nil];
 	}

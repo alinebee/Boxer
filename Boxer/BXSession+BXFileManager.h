@@ -45,6 +45,7 @@
 //Unmount the represented object of the sender (assumed to be a BXDrive). 
 - (IBAction) unmountDrive:		(id)sender;
 
+
 //Returns an array of currently-mounted drives, filtered to exclude internal and hidden drives.
 //Used only by UIs, and so really belongs downstream in UI controllers instead.
 - (NSArray *) drives;

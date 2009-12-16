@@ -155,7 +155,10 @@
 
 	if (theAction == @selector(incrementFrameSkip:))	return ![self frameskipAtMaximum];
 	if (theAction == @selector(decrementFrameSkip:))	return ![self frameskipAtMinimum];
-	
+
+	//Defined in BXFileManager
+	if (theAction == @selector(openInDOS:))				return [[self emulator] isAtPrompt];
+
 	//if (theAction == @selector(paste:))	return [self canPaste];
 	
 	return [super validateUserInterfaceItem: theItem];

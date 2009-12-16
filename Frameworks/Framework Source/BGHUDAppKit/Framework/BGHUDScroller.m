@@ -134,8 +134,8 @@
 	
 	NSDisableScreenUpdates();
 	
-	[[NSColor colorWithCalibratedWhite: 0.0f alpha: 0.7f] set];
-	NSRectFill([self bounds]);
+	//[[NSColor colorWithCalibratedWhite: 0.0f alpha: 0.7f] set];
+	//NSRectFill([self bounds]);
 	
 	// Draw knob-slot.
 	[self drawKnobSlotInRect: [self bounds] highlight: YES];

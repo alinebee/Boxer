@@ -52,7 +52,7 @@
 	[self setStatusBarShown: [[NSUserDefaults standardUserDefaults] boolForKey: @"statusBarShown"]];
 	
 	//Hide the program panel by default - the DOS session decides when it's appropriate to display this
-	[self setProgramPanelShown: YES];
+	[self setProgramPanelShown: NO];
 }
 
 - (BOOL) statusBarShown		{ return ![statusBar isHidden]; }

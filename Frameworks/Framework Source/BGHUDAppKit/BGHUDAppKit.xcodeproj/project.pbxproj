@@ -11,6 +11,7 @@
 			isa = PBXAggregateTarget;
 			buildConfigurationList = C056398708A954F8003078D8 /* Build configuration list for PBXAggregateTarget "All" */;
 			buildPhases = (
+				B7E8FFCA10DA294B00FD282E /* CopyFiles */,
 			);
 			dependencies = (
 				53DF6903067E5B930090B5B0 /* PBXTargetDependency */,
@@ -39,7 +40,7 @@
 		8D1AC96C0486D14A00FE50C9 /* BGHUDAppKitInspector.m in Sources */ = {isa = PBXBuildFile; fileRef = 0259C577FE90428111CA0C5A /* BGHUDAppKitInspector.m */; settings = {ATTRIBUTES = (); }; };
 		8D1AC9700486D14A00FE50C9 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD92D38A0106425D02CA0E72 /* Cocoa.framework */; };
 		8D1AC9800486D23B00FE50C9 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8D1AC97F0486D23B00FE50C9 /* InfoPlist.strings */; };
-		9FCDCD4910D2D8690080A24F /* BGHUDAppKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 53DF68FD067E5B5A0090B5B0 /* BGHUDAppKit.framework */; };
+		B7E8FF9D10DA293900FD282E /* BGHUDAppKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 53DF68FD067E5B5A0090B5B0 /* BGHUDAppKit.framework */; };
 		C044829F0C3328F4006E818F /* BGHUDButtonCellIntegration.m in Sources */ = {isa = PBXBuildFile; fileRef = C044829E0C3328F4006E818F /* BGHUDButtonCellIntegration.m */; };
 		C08787290A49DE9A00E9B151 /* BGHUDAppKitPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 0259C576FE90428111CA0C5A /* BGHUDAppKitPlugin.m */; };
 		C0A47C500A523B730004BDC3 /* BGHUDAppKitInspector.nib in Resources */ = {isa = PBXBuildFile; fileRef = C05B20D80A48CB530099B9E5 /* BGHUDAppKitInspector.nib */; };
@@ -178,14 +179,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		9FCDCD5410D2D8870080A24F /* CopyFiles */ = {
+		B7E8FFCA10DA294B00FD282E /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			comments = "This copies the compiled framework into the Boxer XCode project's Frameworks folder, to ensure that Boxer uses the new version.";
 			dstPath = "$(PROJECT_DIR)/../../";
 			dstSubfolderSpec = 0;
 			files = (
-				9FCDCD4910D2D8690080A24F /* BGHUDAppKit.framework in CopyFiles */,
+				B7E8FF9D10DA293900FD282E /* BGHUDAppKit.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -811,7 +812,6 @@
 				53DF68FA067E5B5A0090B5B0 /* Sources */,
 				53DF68FB067E5B5A0090B5B0 /* Frameworks */,
 				E7B8A3040E171698006AC84C /* CopyFiles */,
-				9FCDCD5410D2D8870080A24F /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -1113,7 +1113,7 @@
 		C056398408A954F8003078D8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)/BGHUDAppKit.framework/Resources/";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1142,7 +1142,7 @@
 		C056398508A954F8003078D8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)/BGHUDAppKit.framework/Resources/";
 				CONFIGURATION_TEMP_DIR = "$(PROJECT_TEMP_DIR)/$(CONFIGURATION)";
 				COPY_PHASE_STRIP = NO;
@@ -1215,10 +1215,7 @@
 		C056398D08A954F8003078D8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					ppc,
-					i386,
-				);
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				GCC_ENABLE_OBJC_GC = supported;
 				GCC_MODEL_TUNING = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;

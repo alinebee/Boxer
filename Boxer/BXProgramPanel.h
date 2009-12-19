@@ -43,6 +43,7 @@
 @interface BXProgramButton : NSButton
 @end
 
-
-@interface BXProgramScroller : BGHUDScroller
+//A custom scroller used in our program panel: displays a simple grey scroll knob
+//with no scroll buttons. Basically ripped off Tweetie.
+@interface BXProgramScroller : NSScroller
 @end

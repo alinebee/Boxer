@@ -15,9 +15,9 @@
 	<key>CFBundleName</key>
 	<string>${PRODUCT_NAME}</string>
 	<key>CFBundleGetInfoString</key>
-	<string>Boxer 1.0beta</string>
+	<string>Boxer 1.0alpha</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0beta</string>
+	<string>1.0alpha</string>
 	<key>CFBundleVersion</key>
 	<string>${CURRENT_PROJECT_VERSION}</string>
 	<key>CFBundlePackageType</key>

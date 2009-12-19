@@ -283,7 +283,13 @@
 			[executables setObject: data forKey: fileName];
 		}
 	}
-	return [executables allValues];
+	NSArray *filteredExecutables = [executables allValues];
+	
+	NSSortDescriptor *sortByFilename = [[[NSSortDescriptor alloc] initWithKey: @"path.lastPathComponent"
+																	ascending: YES
+																	 selector: @selector(caseInsensitiveCompare:)] autorelease];
+	
+	return [filteredExecutables sortedArrayUsingDescriptors: [NSArray arrayWithObject: sortByFilename]];
 }
 
 
@@ -442,10 +448,8 @@
 {	
 	if (!hasLaunched)
 	{
-		[self _launchTarget]; 
-		
-		if ([self isGamePackage] && [[self executables] count])
-			[(BXSessionWindow *)[[self mainWindowController] window] setProgramPanelShown: YES];
+		showProgramPanelOnReturnToShell = YES;
+		[self _launchTarget];
 	}
 }
 
@@ -455,6 +459,14 @@
 	
 	//Clear the active program
 	[self setActiveProgramPath: nil];
+	
+	//Show the program chooser, if that was queued up
+	if (showProgramPanelOnReturnToShell)
+	{
+		if ([self isGamePackage] && [[self executables] count])
+			[(BXSessionWindow *)[[self mainWindowController] window] setProgramPanelShown: YES];
+		showProgramPanelOnReturnToShell = NO;
+	}
 }
 
 - (void) processDidStart: (NSNotification *)notification

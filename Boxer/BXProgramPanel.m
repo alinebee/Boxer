@@ -106,6 +106,7 @@ enum {
 	NSArray *siblings		= [[self superview] subviews];
 	NSUInteger numSiblings	= [siblings count];
 	NSUInteger ourIndex		= [siblings indexOfObject: self];
+	//Todo: flip the index check when using 10.5, wherein NSCollectionViews populate themselves in reverse order.
 
 	[[self contents] sizeToFit];
 	
@@ -115,7 +116,7 @@ enum {
 	
 	//but if there's 2 or 3 programs then we want to align it left or right
 	//depending on whether we're the first or last program...
-	if (numSiblings == 2 || numSiblings == 3)
+	if (NO && (numSiblings == 2 || numSiblings == 3))
 	{
 		if		(ourIndex == 0)					alignment = 0.95;	//we're first: right-align
 		else if	(ourIndex == numSiblings - 1)	alignment = 0.05;	//we're last; left-align
@@ -144,21 +145,23 @@ enum {
 
 
 @implementation BXProgramScroller
-
-- (void) drawIncrementArrow:(BOOL)highlighted	{}
-- (void) drawDecrementArrow:(BOOL)highlighted	{}
-- (void) drawKnobSlotInRect:(NSRect)slotRect highlight:(BOOL)flag	{}
+- (BOOL) isOpaque	{ return NO; }
+- (void) drawRect: (NSRect)dirtyRect { [self drawKnob]; }
 
 - (void) drawKnob
 {
+	NSRect regionRect = [self rectForPart: NSScrollerKnob];
+	if (NSEqualRects(regionRect, NSZeroRect)) return;
+	
 	NSGradient *knobGradient = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.2 alpha: 1.0]
 															 endingColor: [NSColor colorWithCalibratedWhite: 0.15 alpha: 1.0]
 								];
 
-	NSRect regionRect	= [self rectForPart: NSScrollerKnob];
 	NSRect knobRect		= NSInsetRect(regionRect, 0.0, 3.0);
 	CGFloat knobRadius	= knobRect.size.height / 2;
-	NSBezierPath *knobPath = [NSBezierPath bezierPathWithRoundedRect: knobRect xRadius: knobRadius yRadius: knobRadius];
+	NSBezierPath *knobPath = [NSBezierPath bezierPathWithRoundedRect: knobRect
+															 xRadius: knobRadius
+															 yRadius: knobRadius];
 	
 	[knobGradient drawInBezierPath: knobPath angle: 90];
 }

@@ -14,7 +14,7 @@
 
 
 @implementation BXProgramPanelController
-@synthesize programList, defaultTargetToggle, noProgramsNotice;
+@synthesize programChooserPanel, defaultProgramPanel, noProgramsPanel, programList;
 
 + (NSSet *)keyPathsForValuesAffectingLabelForToggle
 {
@@ -42,9 +42,9 @@
 
 - (void) dealloc
 {
-	[self setProgramList: nil],			[programList release];
-	[self setDefaultTargetToggle: nil],	[defaultTargetToggle release];
-	[self setNoProgramsNotice: nil],	[noProgramsNotice release];
+	[self setProgramChooserPanel: nil],	[programChooserPanel release];
+	[self setDefaultProgramPanel: nil],	[defaultProgramPanel release];
+	[self setNoProgramsPanel: nil],		[noProgramsPanel release];
 	[super dealloc];
 }
 
@@ -53,7 +53,6 @@
 	[[self representedObject] removeObserver: self forKeyPath: @"activeProgramPath"];
 	[super setRepresentedObject: session];
 	[[self representedObject] addObserver: self forKeyPath: @"activeProgramPath" options: 0 context: nil];
-	[self syncActiveView];
 }
 
 //Whenever the active program changes, change which view is drawn
@@ -62,23 +61,41 @@
 						change: (NSDictionary *)change
 					   context: (void *)context
 {	
-	if ([keyPath isEqualToString: @"activeProgramPath"]) [self syncActiveView];
+	if ([keyPath isEqualToString: @"activeProgramPath"]) [self syncActivePanel];
 }
 
-- (void) syncActiveView
+- (void) setView: (NSView *)view
 {
-	//Pull our subsidiary views in from our NIB file, when we first need them
-	if (![self programList]) [self loadView];
-	
+	[super setView: view];
+	//This will pull our subsidiary views from our own NIB file
+	[self loadView];
+}
+
+- (void) syncActivePanel
+{	
 	BXSession *session = [self representedObject];
-	NSView *activeView	= nil;
+	NSView *panel;
 	
-	if		([session activeProgramPath])	activeView = [self defaultTargetToggle];
-	else if	([[session executables] count])	activeView = [self programList];
-	else									activeView = [self noProgramsNotice];
+	if		([session activeProgramPath])	panel = [self defaultProgramPanel];
+	else if	([[session executables] count])	panel = [self programChooserPanel];
+	else									panel = [self noProgramsPanel];
+
+	[self setActivePanel: panel];
+}
+
+- (NSView *) activePanel
+{
+	return [[[self view] subviews] lastObject];
+}
+
+- (void) setActivePanel: (NSView *)panel
+{
+	[self willChangeValueForKey: @"activePanel"];
 
 	for (NSView *subview in [[self view] subviews]) [subview removeFromSuperview];
-	[[self view] addSubview: activeView];
+	[[self view] addSubview: panel];
+	
+	[self didChangeValueForKey: @"activePanel"];
 }
 
 //Returns the display string used for the "open this program every time" checkbox toggle

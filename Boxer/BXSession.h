@@ -30,6 +30,7 @@
 	NSString *activeProgramPath;
 	BOOL hasConfigured;
 	BOOL hasLaunched;
+	BOOL showProgramPanelOnReturnToShell;
 }
 
 //Properties

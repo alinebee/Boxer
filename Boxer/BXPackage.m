@@ -219,10 +219,19 @@
 //TODO: check these against file() to weed out non-DOS exes
 - (NSArray *) _foundExecutables
 {
-	NSArray *foundExecutables	= [self _foundResourcesOfTypes: [[self class] executableTypes] startingIn: [self gamePath]];
-	NSPredicate *notExcluded	= [NSPredicate predicateWithFormat: @"NOT lastPathComponent.lowercaseString IN %@", [[self class] executableExclusions]];
+	NSArray *filters = [NSArray arrayWithObjects:
+		[NSPredicate predicateWithFormat: @"NOT lastPathComponent BEGINSWITH %@", @".", nil],
+		[NSPredicate predicateWithFormat: @"NOT lastPathComponent.lowercaseString IN %@", [[self class] executableExclusions]],
+	nil];
 
-	return [foundExecutables filteredArrayUsingPredicate: notExcluded];
+	NSMutableArray *filteredExecutables = [
+		[self _foundResourcesOfTypes: [[self class] executableTypes]
+						  startingIn: [self gamePath]]
+	mutableCopy];
+	
+	for (NSPredicate *filter in filters) [filteredExecutables filterUsingPredicate: filter];
+	
+	return [filteredExecutables autorelease];
 }
 
 - (NSArray *) _foundDocumentation

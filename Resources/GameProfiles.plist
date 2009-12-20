@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>BXGenericProfiles</key>
+	<array>
+		<dict>
+			<key>BXProfileConf</key>
+			<string>Sierra AGI</string>
+			<key>BXProfileDescription</key>
+			<string>Sierra AGI games that support Tandy sound.</string>
+			<key>BXProfileMatches</key>
+			<array>
+				<string>King&apos;s Quest</string>
+				<string>King&apos;s Quest II</string>
+				<string>King&apos;s Quest III</string>
+				<string>Space Quest</string>
+				<string>Space Quest II</string>
+				<string>Police Quest</string>
+				<string>Gold Rush</string>
+				<string>Manhunter: New York</string>
+				<string>Manhunter: San Francisco</string>
+				<string>Leisure Suit Larry</string>
+				<string>The Black Cauldron</string>
+			</array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>agi</string>
+			</array>
+		</dict>
+		<dict>
+			<key>BXProfileConf</key>
+			<string>Low Memory</string>
+			<key>BXProfileDescription</key>
+			<string>Old games that need low conventional memory.</string>
+			<key>BXProfileMatches</key>
+			<array>
+				<string>California Games</string>
+				<string>Might and Magic 2</string>
+			</array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>calgames.exe</string>
+				<string>mm2.exe</string>
+			</array>
+		</dict>
+		<dict>
+			<key>BXProfileConf</key>
+			<string>More Memory</string>
+			<key>BXProfileDescription</key>
+			<string>Later games that like a lot of memory.</string>
+			<key>BXProfileMatches</key>
+			<array>
+				<string>The Elder Scrolls: Battlespire</string>
+				<string>Descent 2</string>
+				<string>Blood</string>
+			</array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>spire.bat</string>
+				<string>descent2.exe</string>
+				<string>blood.exe</string>
+			</array>
+		</dict>
+		<dict>
+			<key>BXProfileConf</key>
+			<string>No EMS</string>
+			<key>BXProfileDescription</key>
+			<string>Games that dislike expanded memory (but aren&apos;t fussy about anything else.)</string>
+			<key>BXProfileMatches</key>
+			<array>
+				<string>Wrath of Earth</string>
+			</array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>woe.exe</string>
+			</array>
+		</dict>
+		<dict>
+			<key>BXProfileConf</key>
+			<string>AT speed</string>
+			<key>BXProfileDescription</key>
+			<string>Old games that need a 286-sped CPU for correct timing.</string>
+			<key>BXProfileMatches</key>
+			<array>
+				<string>Ultima IV</string>
+				<string>Ultima V</string>
+				<string>Ultima VI</string>
+			</array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>ultima.</string>
+				<string>ultima6.exe</string>
+			</array>
+		</dict>
+		<dict>
+			<key>BXProfileConf</key>
+			<string>386 speed</string>
+			<key>BXProfileDescription</key>
+			<string>386-era games that are sensitive to high CPU speeds.</string>
+			<key>BXProfileMatches</key>
+			<array>
+				<string>One Must Fall</string>
+				<string>Theme Park</string>
+			</array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>omf.exe</string>
+				<string>park.bat</string>
+			</array>
+		</dict>
+		<dict>
+			<key>BXProfileConf</key>
+			<string>486 speed</string>
+			<key>BXProfileDescription</key>
+			<string>486 and Pentium-era games that like high-but-not-too-high CPU speeds.</string>
+			<key>BXProfileMatches</key>
+			<array>
+				<string>X-COM: UFO Defense</string>
+				<string>X-COM: Terror From the Deep</string>
+				<string>Warcraft II</string>
+			</array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>ufo2exe</string>
+				<string>war2.exe</string>
+			</array>
+		</dict>
+		<dict>
+			<key>BXProfileConf</key>
+			<string>More memory, no GUS</string>
+			<key>BXProfileDescription</key>
+			<string>Games that like a lot of memory and are incompatible with the Gravis Ultrasound.</string>
+			<key>BXProfileMatches</key>
+			<array>
+				<string>Quake</string>
+				<string>Fallout</string>
+				<string>Daggerfall</string>
+				<string>Terminator: Future Shock</string>
+				<string>Terminator: Skynet</string>
+			</array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>quake.exe</string>
+				<string>dagger.exe</string>
+				<string>fallout.</string>
+				<string>shock.exe</string>
+				<string>skynet.exe</string>
+			</array>
+		</dict>
+		<dict>
+			<key>BXProfileConf</key>
+			<string>No GUS</string>
+			<key>BXProfileDescription</key>
+			<string>Games that autodetect the Gravis Ultrasound, but are incompatible with the current emulation of it.</string>
+			<key>BXProfileMatches</key>
+			<array>
+				<string>CyberJudas</string>
+				<string>CyberLaw</string>
+				<string>Games using the HMI sound library</string>
+			</array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>cj08.fnt</string>
+				<string>t15_95.dat</string>
+				<string>hmidrv.386</string>
+			</array>
+		</dict>
+		<dict>
+			<key>BXProfileConf</key>
+			<string>No Dynamic</string>
+			<key>BXProfileDescription</key>
+			<string>Protected-mode games that have problems with the dynamic core.</string>
+			<key>BXProfileMatches</key>
+			<array>
+				<string>Alone in the Dark</string>
+				<string>Alone in the Dark 2</string>
+				<string>Alone in the Dark 3</string>
+			</array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>objets.itd</string>
+			</array>
+		</dict>
+		<dict>
+			<key>BXProfileConf</key>
+			<string>Dynamic</string>
+			<key>BXProfileDescription</key>
+			<string>Real-mode games that benefit from dynamic core and max CPU speed.</string>
+			<key>BXProfileMatches</key>
+			<array>
+				<string>Flashback</string>
+				<string>Ultima Underworld</string>
+				<string>Ultima Underworld II</string>
+				<string>Frontier</string>
+				<string>Blackthorne</string>
+				<string>Star Wars X-Wing</string>
+				<string>Star Wars Tie Fighter</string>
+				<string>The Elder Scrolls: Arena</string>
+				<string>Epic Pinball</string>
+				<string>Colonization</string>
+				<string>Blake Stone</string>
+				<string>Blake Stone 2</string>
+				<string>Falcon 3.0</string>
+				<string>Links</string>
+				<string>Warlords 2</string>
+				<string>Master of Magic</string>
+			</array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>fb.exe</string>
+				<string>uwsound.exe</string>
+				<string>uwdemo.exe</string>
+				<string>frontier.exe</string>
+				<string>black.exe</string>
+				<string>vga.pac</string>
+				<string>tamriel.mnu</string>
+				<string>ep1.dat</string>
+				<string>viceroy.exe</string>
+				<string>jm_error.h</string>
+				<string>falcon3.exe</string>
+				<string>torrey_p.crs</string>
+				<string>warlord2.exe</string>
+				<string>magic.exe</string>
+			</array>
+		</dict>
+	</array>
+	<key>BXSpecificGameProfiles</key>
+	<array>
+		<dict>
+			<key>BXProfileConf</key>
+			<string>KQ7</string>
+			<key>BXProfileName</key>
+			<string>King&apos;s Quest VII</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>kq7.bat</string>
+			</array>
+		</dict>
+		<dict>
+			<key>BXProfileConf</key>
+			<string>The 7th Guest</string>
+			<key>BXProfileName</key>
+			<string>The 7th Guest</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>t7g.bat</string>
+			</array>
+		</dict>
+		<dict>
+			<key>BXProfileConf</key>
+			<string>Ultima VII</string>
+			<key>BXProfileName</key>
+			<string>Ultima VII</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>ultima7.com</string>
+			</array>
+		</dict>
+		<dict>
+			<key>BXProfileConf</key>
+			<string>Ultima VII</string>
+			<key>BXProfileName</key>
+			<string>Ultima VII Part 2: The Serpent Isle</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>serpent.com</string>
+			</array>
+		</dict>
+		<dict>
+			<key>BXProfileConf</key>
+			<string>Wing Commander 2</string>
+			<key>BXProfileName</key>
+			<string>Wing Commander II</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>wc2.</string>
+			</array>
+		</dict>
+		<dict>
+			<key>BXProfileConf</key>
+			<string>Wings of Glory</string>
+			<key>BXProfileName</key>
+			<string>Wings of Glory</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>wogdata3.tre</string>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>

@@ -128,8 +128,7 @@
 	return volumes;
 }
 
-- (NSString *) configurationPath	{ return [self pathForResource: @"DOSBox Preferences" ofType: @"conf"]; }
-- (NSString *) gamePath				{ return [self bundlePath]; }
+- (NSString *) gamePath { return [self bundlePath]; }
 
 - (NSString *) targetPath
 {
@@ -167,6 +166,25 @@
 	[self didChangeValueForKey: @"targetPath"];
 }
 
+- (NSString *) configurationFile
+{
+	return [self pathForResource: @"DOSBox Preferences" ofType: @"conf"];
+}
+- (void) setConfigurationFile: (NSString *)filePath
+{
+	NSFileManager *manager		= [NSFileManager defaultManager];
+	NSString *configLocation	= [[self resourcePath] stringByAppendingPathComponent: @"DOSBox Preferences.conf"];
+	
+	[self willChangeValueForKey: @"configurationFile"];
+	
+	//First, attempt to delete any existing configuration file
+	[manager removeItemAtPath: configLocation error: nil];
+	//Now, copy the new file in its place (if one was provided)
+	if (filePath) [manager copyItemAtPath: filePath toPath: configLocation error: nil];
+	
+	[self didChangeValueForKey: @"configurationFile"];
+}
+
 //Set/return the cover art associated with this game package (currently, the package file's icon)
 - (NSImage *) coverArt
 {
@@ -180,17 +198,8 @@
 - (void) setCoverArt: (NSImage *)image
 {
 	[self willChangeValueForKey: @"coverArt"];
-	
-	if (image)
-	{
-		IconFamily *icon = [IconFamily iconFamilyWithRepresentationsFromImage: image];
-		[icon setAsCustomIconForDirectory: [self bundlePath]];
-	}
-	else
-	{
-		//Delete the custom icon altogether
-		[[NSWorkspace sharedWorkspace] setIcon: nil forFile: [self bundlePath] options: 0];
-	}
+
+	[[NSWorkspace sharedWorkspace] setIcon: image forFile: [self bundlePath] options: 0];
 
 	[self didChangeValueForKey: @"coverArt"];
 }

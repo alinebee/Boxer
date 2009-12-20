@@ -92,8 +92,11 @@
 {
 	[self willChangeValueForKey: @"activePanel"];
 
-	for (NSView *subview in [[self view] subviews]) [subview removeFromSuperview];
-	[[self view] addSubview: panel];
+	NSView *mainView = [self view];
+	for (NSView *subview in [mainView subviews]) [subview removeFromSuperview];
+	//Resize to panel first to fit the container
+	[panel setFrame: [mainView bounds]];
+	[mainView addSubview: panel];
 	
 	[self didChangeValueForKey: @"activePanel"];
 }
@@ -116,10 +119,10 @@
 	NSString *defaultProgram	= [[[self representedObject] gamePackage] targetPath];
 	NSString *activeProgram		= [[self representedObject] activeProgramPath];
 	
+	//NSLog(@"Default program: %@, active program: %@", defaultProgram, activeProgram);
 	return [activeProgram isEqualToString: defaultProgram];
 }
 
-//Toggle whether or not the currently-active program should be the default program for this gamebox
 - (void) setActiveProgramIsDefault: (BOOL) isDefault
 {
 	[self willChangeValueForKey: @"activeProgramIsDefault"];

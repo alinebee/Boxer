@@ -18,6 +18,7 @@
 #import "BXSessionWindow.h"
 #import "NSWorkspace+BXFileTypes.h"
 #import "NSString+BXPaths.h"
+#import "BXGameProfile.h"
 
 
 @implementation BXSession
@@ -118,8 +119,8 @@
 {
 	//We schedule our internal _startEmulator method to be called separately on the main thread,
 	//so that it doesn't block completion of whatever UI event led to this being called.
-	//In practice, this prevents menu highlights from getting 'stuck' because of DOSBox's
-	//main loop blocking the thread.
+	//This prevents menu highlights from getting 'stuck' because of DOSBox's main loop blocking
+	//the thread.
 	
 	[self performSelector: @selector(_startEmulator) withObject: nil afterDelay: 0];  
 }
@@ -140,27 +141,12 @@
 	//in Boxer itself whereby various components will fail to cope when other bits
 	//are suddenly not there. Leaving this quit-on-close in place is now only a
 	//bandaid workaround to prevent crashes until I've fixed these bugs properly.
-	
-	[NSApp terminate: self];
-	
-	//These lines are currently never reached.
+		
 	[self cancel];
 	[super close];
-}
 
-/*
-//Close ourselves when we detect the emulator thread has terminated
-- (void)observeValueForKeyPath: (NSString *)keyPath
-					  ofObject: (id)object
-						change: (NSDictionary *)change
-					   context: (void *)context
-{
-	if (object == [self emulator])
-	{
-		if ([object isFinished]) [self close];
-	}
+	[NSApp terminate: self];
 }
-*/
 
 
 //Describing the active DOS process
@@ -336,16 +322,48 @@
 	[self setEmulator: [[BXEmulator new] autorelease]];
 	
 	
-	NSString *preflightConfig	= [[NSBundle mainBundle] pathForResource: @"Preflight" ofType: @"conf"];
+	NSString *preflightConfig = [[NSBundle mainBundle] pathForResource: @"Preflight" ofType: @"conf"];
 	[[self emulator] addConfigFile: preflightConfig];
 	
-	if ([self gamePackage])
+	BXPackage *thePackage = [self gamePackage];
+	if (thePackage)
 	{
-		NSString *packageConfig = [[self gamePackage] configurationPath];
+		NSString *detectedConfig;
+		NSString *packageConfig;
+		
+		//First, autodetect and load our own configuration file for this gamebox
+		NSDictionary *gameProfile = [BXGameProfile detectedProfileForPath: [thePackage gamePath]];
+		if (gameProfile)
+		{
+			NSString *configName = [gameProfile objectForKey: @"BXProfileConf"];
+			detectedConfig = [[NSBundle mainBundle] pathForResource: configName
+															 ofType: @"conf"
+														inDirectory: @"Configurations"];
+			
+			if (detectedConfig) [[self emulator] addConfigFile: detectedConfig];
+		}
+		
+		//Then, load the gamebox's own configuration file, if any
+		packageConfig = [thePackage configurationFile];
 		if (packageConfig) [[self emulator] addConfigFile: packageConfig];
+		else
+		{
+			//If the gamebox doesn't already have its own configuration file,
+			//copy any autodetected configuration into it
+			if (detectedConfig) [thePackage setConfigurationFile: detectedConfig];
+			else
+			{
+				//If no configuration was detected, copy the empty generic configuration file instead
+				NSString *genericConfig = [[NSBundle mainBundle] pathForResource: @"Generic"
+																		  ofType: @"conf"
+																	 inDirectory: @"Configurations"];
+				[thePackage setConfigurationFile: genericConfig];
+			}
+
+		}
 	}
 	
-	NSString *launchConfig		= [[NSBundle mainBundle] pathForResource: @"Launch" ofType: @"conf"];
+	NSString *launchConfig = [[NSBundle mainBundle] pathForResource: @"Launch" ofType: @"conf"];
     [[self emulator] addConfigFile: launchConfig];
 	
 	

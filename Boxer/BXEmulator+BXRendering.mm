@@ -326,15 +326,24 @@
 		
 	BOOL useAspectCorrection	= [self _shouldUseAspectCorrectionForResolution: resolution];
 	
-	//Decide if we can use our selected scaler at this scale, and revert to the normal filter if we can't
+	//Decide if we can use our selected scaler at this scale, reverting to the normal filter if we can't
 	BXFilterType filterType		= [self _paramsForFilterType: [self filterType]].filterType;
 	if (![self _shouldApplyFilterType: filterType toScale: scale]) filterType = BXFilterNormal;
 		
 	//Now decide on what operation size this scaler should use
-	NSInteger filterSize		= [self _sizeForFilterType: filterType atScale: scale];
-	NSInteger maxFilterSize		= [self _maxFilterSizeForResolution: [self resolution]];
-	filterSize					= fmin(filterSize, maxFilterSize);
-		
+	//If we're using a flat scaling filter and bilinear filtering isn't necessary for the target size,
+	//then speed things up by using 1x scaling and letting OpenGL do the work
+	NSInteger filterSize;
+	if (filterType == BXFilterNormal && ![self _shouldUseBilinearForResolution: resolution atSurfaceSize: surfaceSize])
+	{
+		filterSize = 1;
+	}
+	else
+	{
+		filterSize				= [self _sizeForFilterType: filterType atScale: scale];
+		NSInteger maxFilterSize	= [self _maxFilterSizeForResolution: [self resolution]];
+		filterSize				= fmin(filterSize, maxFilterSize);
+	}
 	//Finally, apply the values to DOSBox
 	render.aspect		= useAspectCorrection;
 	render.scale.forced	= YES;

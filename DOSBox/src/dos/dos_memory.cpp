@@ -388,11 +388,18 @@ static Bitu DOS_default_handler(void) {
 	return CBRET_NONE;
 }
 
-static	CALLBACK_HandlerObject callbackhandler;
+//--Modified 2009-12-20 by Alun Bestor to make callbackhandler a local instead of a static global,
+//to prevent CALLBACK_HandlerObject.Allocate dying with an already-installed error after shutdown-and-restart.
+//I have no idea whether this is breaking the callback or not, nor any idea how to simply 'null' this given
+//it's not a pointer. C++ noob.
+
+//static	CALLBACK_HandlerObject callbackhandler;
 void DOS_SetupMemory(void) {
 	/* Let dos claim a few bios interrupts. Makes DOSBox more compatible with 
 	 * buggy games, which compare against the interrupt table. (probably a 
 	 * broken linked list implementation) */
+	CALLBACK_HandlerObject callbackhandler;
+//--End of modifications
 	callbackhandler.Allocate(&DOS_default_handler,"DOS default int");
 	Bitu ihseg = 0x70;
 	Bitu ihofs = 0x08;

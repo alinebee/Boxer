@@ -18,6 +18,7 @@
 #import "mixer.h"
 #import "control.h"
 #import "shell.h"
+//#import "callback.h"
 
 #import <SDL/boxer_hooks.h>	//for boxer_SDLCaptureInput et. al.
 #import <crt_externs.h>		//for _NSGetArgc() and _NSGetArgv()
@@ -47,7 +48,10 @@ void GFX_ResetScreen();
 //Defined by us in midi.cpp
 void boxer_toggleMIDIOutput(bool enabled);
 
-//defined in dos/dos_execute.cpp
+void CALLBACK_DeAllocate(Bitu in);
+
+
+//defined in dos_execute.cpp
 extern const char* RunningProgram;
 
 //defined in dosbox.h
@@ -56,10 +60,10 @@ extern Config * control;
 //the current shell instance in DOSBox, defined in shell.h
 extern Program * first_shell;
 
-
 //Defined herein
 BXCoreMode boxer_CPUMode();
 
+extern DOS_Block dos;
 
 BXEmulator *currentEmulator = nil;
 
@@ -174,6 +178,7 @@ BXEmulator *currentEmulator = nil;
 	[self _shutdownRecording];
 	[self _shutdownRenderer];
 	[self _shutdownShell];
+
 	
 	if (currentEmulator == self) currentEmulator = nil;
 	[self release];
@@ -588,7 +593,7 @@ BXEmulator *currentEmulator = nil;
 {
 	if ([self isExecuting])
 	{
-		if ([self isCancelled]) { throw(0); }
+		if ([self isCancelled]) { throw(1); }
 	}
 	return NO;
 }
@@ -627,7 +632,12 @@ BXCoreMode boxer_CPUMode()
 bool boxer_handleEventLoop()
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	return [emulator _handleEventLoop];
+	if ([emulator isExecuting])
+	{
+		if ([emulator isCancelled]) { throw(0); }
+	}
+	//return [emulator _handleEventLoop];
+	return NO;
 }
 
 //Catch SDL events and process them - return YES if we've handled the event, NO if we want to let it go through

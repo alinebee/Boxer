@@ -141,11 +141,11 @@
 	//in Boxer itself whereby various components will fail to cope when other bits
 	//are suddenly not there. Leaving this quit-on-close in place is now only a
 	//bandaid workaround to prevent crashes until I've fixed these bugs properly.
-		
+	
 	[self cancel];
 	[super close];
 
-	[NSApp terminate: self];
+	//[NSApp terminate: self];
 }
 
 
@@ -167,8 +167,8 @@
 										@"The standard process name when the session is at the DOS prompt.");
 	return displayName;
 }
-+ (NSSet *) keyPathsForValuesAffectingProcessDisplayName	{ return [NSSet setWithObject: @"emulator.processName"]; }
-+ (NSSet *) keyPathsForValuesAffectingSessionDisplayName	{ return [NSSet setWithObject: @"self.processDisplayName"]; }
+//+ (NSSet *) keyPathsForValuesAffectingProcessDisplayName	{ return [NSSet setWithObject: @"emulator.processName"]; }
++ (NSSet *) keyPathsForValuesAffectingSessionDisplayName	{ return [NSSet setWithObject: @"processDisplayName"]; }
 
 
 

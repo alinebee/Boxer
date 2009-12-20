@@ -66,27 +66,33 @@
 
 - (void) setDocument: (BXSession *)theSession
 {
+	[[self document] removeObserver: self forKeyPath: @"processDisplayName"];
+	[[self programPanelController] setRepresentedObject: nil];
+	
 	[super setDocument: theSession];
 	
-	id theWindow = [self window];
+	if (theSession)
+	{
+		id theWindow = [self window];
 
-	//Now that we can retrieve the game's identifier from the session, use the autosaved window size for that game
-	if ([theSession isGamePackage])
-	{
-		if ([theWindow setFrameAutosaveName: [theSession uniqueIdentifier]]) [theWindow center];
-		//I hate to have to force the window to be centered but it compensates for Cocoa screwing up the position when it resizes a window from its saved frame: Cocoa pegs the window to the bottom-left origin when resizing this way, rather than the top-left as it should.
-		//This comes up with non-16:10 games, since they get resized to match the 16:10 DOS ratio when they load. They would otherwise make the window travel down the screen each time they start up.
+		//Now that we can retrieve the game's identifier from the session, use the autosaved window size for that game
+		if ([theSession isGamePackage])
+		{
+			if ([theWindow setFrameAutosaveName: [theSession uniqueIdentifier]]) [theWindow center];
+			//I hate to have to force the window to be centered but it compensates for Cocoa screwing up the position when it resizes a window from its saved frame: Cocoa pegs the window to the bottom-left origin when resizing this way, rather than the top-left as it should.
+			//This comes up with non-16:10 games, since they get resized to match the 16:10 DOS ratio when they load. They would otherwise make the window travel down the screen each time they start up.
+		}
+		else
+		{
+			[theWindow setFrameAutosaveName: @"DOSWindow"];
+		}
+		
+		//While we're here, also observe the process name of the session so that we can change the window title appropriately
+		[theSession addObserver: self forKeyPath: @"processDisplayName" options: 0 context: nil];
+		
+		//...and add it to our panel controller, so that it can keep up with the times too
+		[[self programPanelController] setRepresentedObject: theSession];
 	}
-	else
-	{
-		[theWindow setFrameAutosaveName: @"DOSWindow"];
-	}
-	
-	//While we're here, also observe the process name of the session so that we can change the window title appropriately
-	[theSession addObserver:self forKeyPath:@"processDisplayName" options: 0 context: nil];
-	
-	//...and add it to our panel controller, so that it can keep up with the times too
-	[[self programPanelController] setRepresentedObject: theSession];
 }
 
 //Sync our window title when we notice that the document's name has changed
@@ -96,14 +102,6 @@
 					   context: (void *)context
 {
 	if ([keyPath isEqualToString: @"processDisplayName"]) [self synchronizeWindowTitleWithDocumentName];
-}
-
-//Tidy up the observing before it's TOO LATE to do so, which it is in dealloc
-//(why do you make me jump through these stupid hoops, this is ridiculous)
-- (void) windowWillClose: (NSNotification *)notification
-{
-	BXSession *theSession = (BXSession *)[self document];
-	if (theSession) [theSession removeObserver: self forKeyPath: @"processDisplayName"];
 }
 
 

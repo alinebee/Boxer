@@ -27,7 +27,7 @@
 		if (matchingProfile = [lookups objectForKey: fileName]) return matchingProfile;
 		
 		//Next, check if the base filename (sans extension) matches anything
-		NSString *baseName	= [fileName stringByDeletingPathExtension];
+		NSString *baseName	= [[fileName stringByDeletingPathExtension] stringByAppendingString: @"."];
 		if (matchingProfile = [lookups objectForKey: baseName]) return matchingProfile;
 	}
 	//If we got this far, we couldn't find anything

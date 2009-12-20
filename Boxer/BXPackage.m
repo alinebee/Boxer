@@ -228,26 +228,21 @@
 //TODO: check these against file() to weed out non-DOS exes
 - (NSArray *) _foundExecutables
 {
-	NSArray *filters = [NSArray arrayWithObjects:
-		[NSPredicate predicateWithFormat: @"NOT lastPathComponent BEGINSWITH %@", @".", nil],
-		[NSPredicate predicateWithFormat: @"NOT lastPathComponent.lowercaseString IN %@", [[self class] executableExclusions]],
-	nil];
-
-	NSMutableArray *filteredExecutables = [
-		[self _foundResourcesOfTypes: [[self class] executableTypes]
-						  startingIn: [self gamePath]]
-	mutableCopy];
+	NSArray *foundExecutables	= [self _foundResourcesOfTypes: [[self class] executableTypes] startingIn: [self gamePath]];
+	NSPredicate *notExcluded	= [NSPredicate predicateWithFormat: @"NOT lastPathComponent.lowercaseString IN %@", [[self class] executableExclusions]];
 	
-	for (NSPredicate *filter in filters) [filteredExecutables filterUsingPredicate: filter];
-	
-	return [filteredExecutables autorelease];
+	return [foundExecutables filteredArrayUsingPredicate: notExcluded];
 }
 
 - (NSArray *) _foundDocumentation
 {
 	//First, check if there is an explicitly-named documentation folder and use the contents of that if so
 	NSArray *docsFolderContents = [self pathsForResourcesOfType: nil inDirectory: @"Documentation"];
-	if ([docsFolderContents count]) return docsFolderContents;
+	if ([docsFolderContents count])
+	{
+		NSPredicate *notHidden	= [NSPredicate predicateWithFormat: @"NOT lastPathComponent BEGINSWITH %@", @".", nil];
+		return [docsFolderContents filteredArrayUsingPredicate: notHidden];
+	}
 
 	//Otherwise, go trawling through the entire game package looking for likely documentation
 	NSArray *foundDocumentation	= [self _foundResourcesOfTypes: [[self class] documentationTypes] startingIn: [self gamePath]];
@@ -264,6 +259,9 @@
 	
 	for (NSString *fileName in [manager enumeratorAtPath: basePath])
 	{
+		//Skip over hidden/metadata files
+		if ([[fileName lastPathComponent] hasPrefix: @"."]) continue;
+		
 		NSString *filePath = [basePath stringByAppendingPathComponent: fileName];
 		
 		//Note that we don't use our own smarter file:matchesTypes: function for this,

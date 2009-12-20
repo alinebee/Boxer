@@ -108,10 +108,10 @@
 		
 	newFrame.size.height	+= height;
 	newFrame.origin.y		-= height;
-
-	if (show)	[view setHidden: NO];	//Unhide before sliding out
+	
+	if (show) [view setHidden: NO];	//Unhide before sliding out
 	[self setFrame: newFrame display: YES animate: YES];
-	if (!show)	[view setHidden: YES];	//Hide after sliding in
+	if (!show)	[view setHidden: YES];	//Hide after sliding in 
 }
 
 

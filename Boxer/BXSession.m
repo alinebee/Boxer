@@ -145,7 +145,7 @@
 	[self cancel];
 	[super close];
 
-	//[NSApp terminate: self];
+	[NSApp terminate: self];
 }
 
 

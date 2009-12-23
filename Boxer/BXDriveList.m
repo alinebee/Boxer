@@ -17,10 +17,10 @@
 - (BOOL) acceptsFirstMouse: (NSEvent *)theEvent { return YES; }
 
 //Select ourselves and pass menu events up to our parent
-- (void) menuForEvent:(NSEvent *)event
+- (NSMenu *) menuForEvent:(NSEvent *)event
 {
 	[[self delegate] setSelected: YES];
-	[[self superview] menuForEvent: event];
+	return [[self superview] menuForEvent: event];
 }
 
 - (NSView *) hitTest: (NSPoint)thePoint

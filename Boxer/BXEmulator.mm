@@ -588,12 +588,11 @@ BXEmulator *currentEmulator = nil;
 //Event-handling
 //--------------
 
-//Kill the DOSBox main loop if the emulator has been cancelled
 - (BOOL) _handleEventLoop
 {
 	if ([self isExecuting])
 	{
-		if ([self isCancelled]) { throw(1); }
+		if ([self isCancelled]) { throw(0); }
 	}
 	return NO;
 }
@@ -632,12 +631,7 @@ BXCoreMode boxer_CPUMode()
 bool boxer_handleEventLoop()
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	if ([emulator isExecuting])
-	{
-		if ([emulator isCancelled]) { throw(0); }
-	}
-	//return [emulator _handleEventLoop];
-	return NO;
+	return [emulator _handleEventLoop];
 }
 
 //Catch SDL events and process them - return YES if we've handled the event, NO if we want to let it go through

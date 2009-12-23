@@ -186,6 +186,13 @@
 	[super draggingExited: sender];
 }
 
+//Select ourselves before displaying our superview's menu, to indicate the target of cut/copy/paste menu options
+- (NSMenu *) menuForEvent:(NSEvent *)event
+{
+	[[self window] makeFirstResponder: self];
+	return [super menuForEvent: event];
+}
+
 /*
 //Disabled for now, because setting images from files doesn't seem to get committed back to the gamebox itself.
 //Need to look further into why this isn't working.

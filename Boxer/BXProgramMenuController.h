@@ -17,9 +17,10 @@
 @interface BXProgramMenuController : NSObject
 {
 	IBOutlet NSPopUpButton *programSelector;
+	IBOutlet NSObjectController *sessionMediator;
 }
-@property (retain) NSPopUpButton *programSelector;	//The program selector button we control.
-
+@property (retain) NSPopUpButton *programSelector;		//The program selector popup button we populate.
+@property (retain) NSObjectController *sessionMediator;
 
 //Sets the default program of the gamebox to the represented path of the selected menu item.
 //Called by the program selector whenever its selected item is changed.

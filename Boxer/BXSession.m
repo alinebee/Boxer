@@ -95,6 +95,7 @@
 		[self _deregisterForFilesystemNotifications];
 		//[emulator removeObserver: self forKeyPath: @"finished"];
 		[emulator setDelegate: nil];
+		[emulator cancel];
 		[emulator autorelease];
 	
 		emulator = [theEmulator retain];
@@ -328,8 +329,8 @@
 	BXPackage *thePackage = [self gamePackage];
 	if (thePackage)
 	{
-		NSString *detectedConfig;
-		NSString *packageConfig;
+		NSString *detectedConfig = nil;
+		NSString *packageConfig = nil;
 		
 		//First, autodetect and load our own configuration file for this gamebox
 		NSDictionary *gameProfile = [BXGameProfile detectedProfileForPath: [thePackage gamePath]];
@@ -342,15 +343,18 @@
 			
 			if (detectedConfig) [[self emulator] addConfigFile: detectedConfig];
 		}
-		
-		//Then, load the gamebox's own configuration file, if any
+		//Then, load the gamebox's own configuration file, if it has one
 		packageConfig = [thePackage configurationFile];
 		if (packageConfig) [[self emulator] addConfigFile: packageConfig];
 		else
 		{
 			//If the gamebox doesn't already have its own configuration file,
-			//copy any autodetected configuration into it
-			if (detectedConfig) [thePackage setConfigurationFile: detectedConfig];
+			//copy the autodetected configuration into it
+			if (detectedConfig)
+			{
+				[thePackage setConfigurationFile: detectedConfig];
+				
+			}
 			else
 			{
 				//If no configuration was detected, copy the empty generic configuration file instead
@@ -359,7 +363,6 @@
 																	 inDirectory: @"Configurations"];
 				[thePackage setConfigurationFile: genericConfig];
 			}
-
 		}
 	}
 	

@@ -12,32 +12,53 @@
 #import "BXEmulator.h"
 
 @implementation BXProgramMenuController
-@synthesize programSelector;
+@synthesize programSelector, sessionMediator;
 
-- (BXSession *) session	{ return [BXSession mainSession]; }
-
-- (void) awakeFromNib
+- (BXSession *) session
 {
-	[self syncMenuItems];	
-	[[NSApp delegate] addObserver: self forKeyPath: @"currentSession.executables" options: 0 context: nil];
-	[[NSApp delegate] addObserver: self forKeyPath: @"currentSession.gamePackage.targetPath" options: 0 context: nil];
+	return [[self sessionMediator] content];
 }
 
 - (void) dealloc
 {
-	[[NSApp delegate] removeObserver: self forKeyPath: @"currentSession.executables"];
-	[[NSApp delegate] removeObserver: self forKeyPath: @"currentSession.gamePackage.targetPath"];
+	[self setSessionMediator: nil]; [sessionMediator release];
+	[self setProgramSelector: nil]; [programSelector release];
 	[super dealloc];
 }
 
-//Whenever the session's executables change, repopulate our selector
+- (void) setSessionMediator: (NSObjectController *)mediator
+{
+	[self willChangeValueForKey: @"sessionMediator"];
+	
+	NSObjectController *oldMediator = [self sessionMediator];
+	if (mediator != oldMediator)
+	{
+		NSArray *observePaths = [NSArray arrayWithObjects:
+			@"content.executables",
+			@"content.gamePackage.targetPath",
+		nil];
+		
+		for (NSString *path in observePaths)
+			[oldMediator removeObserver: self forKeyPath: path];
+	
+		[oldMediator autorelease];
+		sessionMediator = [mediator retain];
+	
+		for (NSString *path in observePaths)
+			[mediator addObserver: self forKeyPath: path options: NSKeyValueObservingOptionInitial context: nil];
+	}
+
+	[self didChangeValueForKey: @"sessionMediator"];	
+}
+
+//Whenever the session's executables or targets change, repopulate our selector with the new values
 - (void)observeValueForKeyPath: (NSString *)keyPath
 					  ofObject: (id)object
 						change: (NSDictionary *)change
 					   context: (void *)context
 {
-	if		([keyPath isEqualToString: @"currentSession.executables"])				[self syncMenuItems];
-	else if ([keyPath isEqualToString: @"currentSession.gamePackage.targetPath"])	[self syncSelection];
+	if		([keyPath isEqualToString: @"content.executables"])				[self syncMenuItems];
+	else if ([keyPath isEqualToString: @"content.gamePackage.targetPath"])	[self syncSelection];
 }
 
 - (void) syncMenuItems

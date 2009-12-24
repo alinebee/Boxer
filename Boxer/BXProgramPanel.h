@@ -36,14 +36,3 @@
 //0.0 is left, 1.0 is right, 0.5 is centered.
 - (void) alignContentsToPosition: (CGFloat)position;
 @end
-
-
-//Assigned to program picker buttons in the NIB file, but currently does nothing.
-//Kept around for now in case we want to customise the appearance or behaviour of them.
-@interface BXProgramButton : NSButton
-@end
-
-//A custom scroller used in our program panel: displays a simple grey scroll knob
-//with no scroll buttons. Basically ripped off Tweetie.
-@interface BXProgramScroller : NSScroller
-@end

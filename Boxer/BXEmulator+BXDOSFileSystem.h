@@ -93,9 +93,6 @@
 - (NSString *) DOSPathForPath: (NSString *)path;
 - (NSString *) DOSPathForPath: (NSString *)path onDrive: (BXDrive *)drive;
 
-//Sanitise a file path component to be DOS 8.3-safe. Unused, has been replaced with DOSBox's own path lookups.
-//- (NSString *) makeDOSFilename: (NSString *)fileName withPosition: (NSUInteger) position;
-
 
 //Methods for performing filesystem tasks
 //---------------------------------------

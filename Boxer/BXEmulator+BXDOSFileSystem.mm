@@ -224,82 +224,6 @@ enum {
 		return drive;
 	}
 	else return nil;
-	
-	
-	/*
-	//Get to work constructing the DOSBox (img)mount command
-	//------------------------------------------------------
-	
-	NSString *mountCommand;
-	NSMutableArray *mountArguments = [NSMutableArray arrayWithCapacity: 5];
-	
-	[mountArguments addObject: driveLetter];
-	
-	//Abbreviate the path if possible, so that we don't go over DOSBox's stupid character limit
-	NSString *abbreviatedPath = [[drive path] stringByAbbreviatingWithTildeInPath];
-	[mountArguments addObject: [self quotedString: abbreviatedPath]];
-	
-	//Only process disk-space, label and CD audio arguments if we're mounting a folder
-	//(imgmount doesn't need or accept these arguments)
-	if (isFolder)
-	{
-		mountCommand = @"mount";
-		
-		//If we're mounting a regular harddrive, we don't need a mount type argument
-		if		([drive isCDROM])	[mountArguments addObject: @"-t cdrom"];
-		else if	([drive isFloppy])	[mountArguments addObject: @"-t floppy"];
-	
-		if ([drive freeSpace] != BXDefaultFreeSpace)
-		{
-			NSString *spaceArg = [NSString stringWithFormat: @"-freesize %d", [drive freeSpace], nil];
-			[mountArguments addObject: spaceArg];
-		}
-
-		NSString *label = [drive label];
-		if ([label length] > 0)
-		{
-			NSString *labelArg = [NSString stringWithFormat: @"-label %@", [self quotedString: label], nil];
-			[mountArguments addObject: labelArg];
-		}
-		
-		if ([drive usesCDAudio] && [drive isCDROM] && [[workspace mountedVolumesOfType: audioCDVolumeType] count])
-		{
-			[mountArguments addObject: @"-usecd 0"];
-		}
-	}
-	else
-	{
-		mountCommand = @"imgmount";
-
-		if		([drive isCDROM])	[mountArguments addObject: @"-t iso"];
-		else if	([drive isFloppy])	[mountArguments addObject: @"-t floppy"];
-		else						[mountArguments addObject: @"-t hdd"];
-	}
-	
-	//Execute the mount command
-	NSUInteger oldCount = [self numDrives];
-	[self executeCommand: mountCommand withArguments: mountArguments encoding: BXDirectStringEncoding];
-	NSUInteger newCount = [self numDrives];
-	
-	//If there are now more mounts, it means the drive mounted successfully - pass the mounted drive back,
-	//after populating it with the details we actually used
-	if (newCount > oldCount)
-	{
-		[drive setLetter: driveLetter];
-		
-		//Post a notification to whoever's listening
-		NSDictionary *userInfo = [NSDictionary dictionaryWithObject: drive forKey: @"drive"];
-		[[[NSWorkspace sharedWorkspace] notificationCenter]
-			postNotificationName: @"BXDriveDidMountNotification"
-			object: self
-			userInfo: userInfo];
-		
-		return drive;
-	}
-	//Otherwise the mount command failed
-	//TODO: find out from DOSBox what went wrong, and populate an NSError object here
-	else return nil;
-	*/
 }
 
 - (BOOL) unmountDrive: (BXDrive *)drive
@@ -527,37 +451,6 @@ enum {
 	}
 	return [dosDrive stringByAppendingString: dosPath];
 }
-
-
-//A fakeout way of generating an appropriate 8.3 filename from a long filename.
-//This has been superseded by DOSPathForPath:onDrive: above and is now unused.
-/*
-- (NSString *) makeDOSFilename: (NSString *)fileName withPosition: (NSUInteger) position
-{
-	BOOL needsTilde = FALSE;
-	NSCharacterSet *stripChars = [NSCharacterSet whitespaceAndNewlineCharacterSet];
-	NSString *sanitizedName = [fileName stringByReplacingCharactersInSet: stripChars withString: @""];
-	
-	if (![fileName isEqualToString: sanitizedName]) needsTilde = TRUE;
-	
-	NSString *baseName	= [sanitizedName stringByDeletingPathExtension];
-	NSString *extension	= [sanitizedName pathExtension];
-	
-	if ([extension length] > 3)
-	{
-		extension = [extension substringToIndex: 3];
-		needsTilde = TRUE;
-	}
-	
-	if ([baseName length] > 8 || needsTilde)
-	{
-		if ([baseName length] > 6) baseName = [baseName substringToIndex: 6];
-		baseName = [NSString stringWithFormat: @"%@~%u", baseName, position, nil];
-	}
-	if ([extension length]) return [baseName stringByAppendingPathExtension: extension];
-	else return baseName;
-} 
-*/
 
 
 //Methods for performing filesystem tasks

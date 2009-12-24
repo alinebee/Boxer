@@ -84,7 +84,6 @@
 
 - (void) setDocument: (BXSession *)theSession
 {
-	[[self document] removeObserver: self forKeyPath: @"processDisplayName"];
 	[[self programPanelController] setRepresentedObject: nil];
 	
 	[super setDocument: theSession];
@@ -105,21 +104,9 @@
 			[theWindow setFrameAutosaveName: @"DOSWindow"];
 		}
 		
-		//While we're here, also observe the process name of the session so that we can change the window title appropriately
-		[theSession addObserver: self forKeyPath: @"processDisplayName" options: 0 context: nil];
-		
 		//...and add it to our panel controller, so that it can keep up with the times too
 		[[self programPanelController] setRepresentedObject: theSession];
 	}
-}
-
-//Sync our window title when we notice that the document's name has changed
-- (void)observeValueForKeyPath: (NSString *)keyPath
-					  ofObject: (id)object
-						change: (NSDictionary *)change
-					   context: (void *)context
-{
-	if ([keyPath isEqualToString: @"processDisplayName"]) [self synchronizeWindowTitleWithDocumentName];
 }
 
 
@@ -243,6 +230,7 @@
 		
 		[theItem setState: itemState];
 	}
+	
 	else if (theAction == @selector(toggleProgramPanelShown:))
 	{
 		if ([theItem isKindOfClass: [NSMenuItem class]])
@@ -253,6 +241,7 @@
 		}
 		return [[self document] isGamePackage];
 	}
+	
 	else if (theAction == @selector(toggleStatusBarShown:))
 	{
 		if ([theItem isKindOfClass: [NSMenuItem class]])
@@ -315,18 +304,10 @@
 //Handling window title
 //---------------------
 
-//I give up, why is this even here? Why isn't BXSession deciding which to use?
 - (void) synchronizeWindowTitleWithDocumentName
 {	
 	BXSession *theSession = [self document];
-	if (theSession)
-	{
-		//For game packages, we use the standard NSDocument window title
-		if ([theSession isGamePackage]) [super synchronizeWindowTitleWithDocumentName];
-		
-		//For regular DOS sessions, we use the current process name instead
-		else [[self window] setTitle: [theSession processDisplayName]];
-	}
+	if (theSession) [[self window] setTitle: [theSession sessionDisplayName]];
 }
 
 

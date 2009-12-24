@@ -293,7 +293,7 @@
 				<string key="NSClassName">BXProgramPanel</string>
 			</object>
 			<object class="NSCustomView" id="1029538789">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">274</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -302,7 +302,6 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{150, 24}, {341, 14}}</string>
 						<reference key="NSSuperview" ref="1029538789"/>
-						<reference key="NSWindow"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="512924413">
 							<int key="NSCellFlags">68288064</int>
@@ -320,7 +319,6 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{181, 41}, {278, 17}}</string>
 						<reference key="NSSuperview" ref="1029538789"/>
-						<reference key="NSWindow"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="59349482">
 							<int key="NSCellFlags">68288064</int>
@@ -335,8 +333,6 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{640, 78}</string>
-				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<string key="NSClassName">BXProgramPanel</string>
 			</object>
 			<object class="NSCustomView" id="80732392">
@@ -908,7 +904,7 @@
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>BXProgramScroller</string>
+					<string>BXScroller</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="118422565"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -994,9 +990,12 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
-					<string key="className">BXProgramScroller</string>
+					<string key="className">BXScroller</string>
 					<string key="superclassName">NSScroller</string>
-					<reference key="sourceIdentifier" ref="246999621"/>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">Boxer/BXScroller.h</string>
+					</object>
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">NSObject</string>

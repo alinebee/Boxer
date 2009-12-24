@@ -21,8 +21,8 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="202"/>
-			<integer value="876"/>
+			<integer value="411"/>
+			<integer value="390"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -59,7 +59,7 @@
 				<nil key="NSViewClass"/>
 				<string key="NSWindowContentMaxSize">{1.79769e+308, 1.79769e+308}</string>
 				<object class="NSView" key="NSWindowView" id="55730634">
-					<nil key="NSNextResponder"/>
+					<reference key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
 					<object class="NSMutableArray" key="NSSubviews">
 						<bool key="EncodedWithXMLCoder">YES</bool>
@@ -68,6 +68,7 @@
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{19, 17}, {227, 24}}</string>
 							<reference key="NSSuperview" ref="55730634"/>
+							<reference key="NSWindow"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="BGHUDSegmentedCell" key="NSCell" id="916510000">
 								<int key="NSCellFlags">-2080244224</int>
@@ -103,13 +104,15 @@
 						</object>
 					</object>
 					<string key="NSFrameSize">{264, 60}</string>
+					<reference key="NSSuperview"/>
+					<reference key="NSWindow"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1280, 778}}</string>
 				<string key="NSMaxSize">{1.79769e+308, 1.79769e+308}</string>
 				<string key="NSFrameAutosaveName"/>
 			</object>
 			<object class="NSCustomView" id="749303976">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">293</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -315,7 +318,6 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{264, 348}</string>
-				<reference key="NSSuperview"/>
 				<string key="NSClassName">NSView</string>
 			</object>
 			<object class="NSCustomView" id="563656760">
@@ -668,7 +670,7 @@
 				<string key="NSClassName">NSView</string>
 			</object>
 			<object class="NSCustomView" id="327384677">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">293</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -824,6 +826,7 @@
 												<int key="NSvFlags">-2147483392</int>
 												<string key="NSFrame">{{234, 1}, {15, 143}}</string>
 												<reference key="NSSuperview" ref="121654331"/>
+												<int key="NSArrowsLoc">2</int>
 												<reference key="NSTarget" ref="121654331"/>
 												<string key="NSAction">_doScroller:</string>
 												<double key="NSCurValue">1</double>
@@ -901,6 +904,7 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{264, 348}</string>
+				<reference key="NSSuperview"/>
 				<string key="NSClassName">NSView</string>
 			</object>
 			<object class="NSObjectController" id="56494336">
@@ -1009,7 +1013,7 @@
 				<bool key="NSClearsFilterPredicateOnInsertion">YES</bool>
 			</object>
 			<object class="NSCustomView" id="347655005">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">266</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1038,7 +1042,7 @@
 												<string>NeXT TIFF v4.0 pasteboard type</string>
 											</object>
 										</object>
-										<string key="NSFrame">{{27, 36}, {48, 48}}</string>
+										<string key="NSFrame">{{25, 36}, {45, 48}}</string>
 										<reference key="NSSuperview" ref="352866644"/>
 										<int key="NSTag">1</int>
 										<bool key="NSEnabled">YES</bool>
@@ -1055,7 +1059,7 @@
 									<object class="BGHUDLabel" id="944925903">
 										<reference key="NSNextResponder" ref="352866644"/>
 										<int key="NSvFlags">290</int>
-										<string key="NSFrame">{{3, 2}, {98, 28}}</string>
+										<string key="NSFrame">{{3, 2}, {93, 28}}</string>
 										<reference key="NSSuperview" ref="352866644"/>
 										<int key="NSTag">2</int>
 										<bool key="NSEnabled">YES</bool>
@@ -1076,11 +1080,12 @@
 										<string key="themeKey">BXShadowedTextTheme</string>
 									</object>
 								</object>
-								<string key="NSFrame">{{2, 2}, {103, 92}}</string>
+								<string key="NSFrame">{{3, 2}, {98, 92}}</string>
 								<reference key="NSSuperview" ref="923429844"/>
 							</object>
 						</object>
-						<string key="NSFrameSize">{107, 96}</string>
+						<string key="NSFrame">{{1, 0}, {104, 96}}</string>
+						<string key="NSBounds">{{1, 0}, {102, 96}}</string>
 						<reference key="NSSuperview" ref="347655005"/>
 						<string key="NSOffsets">{0, 0}</string>
 						<object class="NSTextFieldCell" key="NSTitleCell">
@@ -1111,7 +1116,8 @@
 						</object>
 					</object>
 				</object>
-				<string key="NSFrameSize">{107, 96}</string>
+				<string key="NSFrameSize">{104, 96}</string>
+				<reference key="NSSuperview"/>
 				<string key="NSClassName">BXDriveItemView</string>
 			</object>
 			<object class="NSMenu" id="215026082">
@@ -1745,6 +1751,26 @@
 						<reference key="destination" ref="56494336"/>
 					</object>
 					<int key="connectionID">886</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">displayPatternTitle1: selection.sessionDisplayName</string>
+						<reference key="source" ref="1042712787"/>
+						<reference key="destination" ref="56494336"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="1042712787"/>
+							<reference key="NSDestination" ref="56494336"/>
+							<string key="NSLabel">displayPatternTitle1: selection.sessionDisplayName</string>
+							<string key="NSBinding">displayPatternTitle1</string>
+							<string key="NSKeyPath">selection.sessionDisplayName</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSDisplayPattern</string>
+								<string key="NS.object.0">Inspector (%{title1}@)</string>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">893</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -2456,11 +2482,9 @@
 					<string>411.IBUserGuides</string>
 					<string>428.IBPluginDependency</string>
 					<string>429.IBPluginDependency</string>
-					<string>431.CustomClassName</string>
 					<string>431.IBPluginDependency</string>
 					<string>432.CustomClassName</string>
 					<string>432.IBPluginDependency</string>
-					<string>433.CustomClassName</string>
 					<string>433.IBPluginDependency</string>
 					<string>434.CustomClassName</string>
 					<string>434.IBCollectionViewIntegration.primaryColor</string>
@@ -2572,17 +2596,15 @@
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>{{105, 531}, {96, 88}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{204, 531}, {107, 96}}</string>
+					<string>{{204, 531}, {104, 96}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<reference ref="0"/>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
-					<string>BGHUDScrollView</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>BGHUDScroller</string>
+					<string>BXHUDScroller</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>BGHUDScroller</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>BXDriveList</string>
 					<reference ref="561555681"/>
@@ -2665,7 +2687,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">886</int>
+			<int key="maxID">893</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2694,6 +2716,14 @@
 					<string key="className">BXDriveList</string>
 					<string key="superclassName">NSCollectionView</string>
 					<reference key="sourceIdentifier" ref="510696074"/>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXHUDScroller</string>
+					<string key="superclassName">BXScroller</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier" id="672146362">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">Boxer/BXScroller.h</string>
+					</object>
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">BXInspectorController</string>
@@ -2780,6 +2810,11 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
+					<string key="className">BXScroller</string>
+					<string key="superclassName">NSScroller</string>
+					<reference key="sourceIdentifier" ref="672146362"/>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">BXSession</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
@@ -2808,9 +2843,11 @@
 							<string>sendF8:</string>
 							<string>sendF9:</string>
 							<string>takeScreenshot:</string>
+							<string>toggleRecordingVideo:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -2931,22 +2968,6 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBFrameworkSource</string>
 						<string key="minorKey">BGHUDAppKit.framework/Headers/BGHUDPopUpButtonCell.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BGHUDScrollView</string>
-					<string key="superclassName">NSScrollView</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBFrameworkSource</string>
-						<string key="minorKey">BGHUDAppKit.framework/Headers/BGHUDScrollView.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BGHUDScroller</string>
-					<string key="superclassName">NSScroller</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBFrameworkSource</string>
-						<string key="minorKey">BGHUDAppKit.framework/Headers/BGHUDScroller.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

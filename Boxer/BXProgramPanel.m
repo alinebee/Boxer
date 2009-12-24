@@ -7,7 +7,6 @@
 
 
 #import "BXProgramPanel.h"
-#import "NSBezierPath+MCAdditions.h"
 
 //Interface Builder tags
 enum {
@@ -136,58 +135,5 @@ enum {
 	NSRect frame	= [[self contents] frame];
 	frame.origin.x	= ([self bounds].size.width - frame.size.width) * position;
 	[[self contents] setFrame: NSIntegralRect(frame)];
-}
-@end
-
-
-@implementation BXProgramButton
-//- (BOOL) showsBorderOnlyWhileMouseInside { return YES; }
-@end
-
-
-
-@implementation BXProgramScroller
-- (BOOL) isOpaque	{ return NO; }
-- (void) drawRect: (NSRect)dirtyRect
-{
-	[self drawKnobSlotInRect: [self bounds] highlight: NO];
-	[self drawKnob];
-}
-- (void) drawKnobSlotInRect: (NSRect)regionRect highlight:(BOOL)flag
-{
-	if (NSEqualRects(regionRect, NSZeroRect)) return;
-	
-	NSColor *slotFill		= [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.2]; 
-	NSShadow *slotShadow	= [[NSShadow new] autorelease];
-	[slotShadow setShadowOffset: NSMakeSize(0, -1)];
-	[slotShadow setShadowBlurRadius: 3];
-	[slotShadow setShadowColor: [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.5]];
-	
-	NSRect slotRect			= NSInsetRect(regionRect, 4.0, 3.0);
-	CGFloat slotRadius		= slotRect.size.height / 2;
-	NSBezierPath *slotPath	= [NSBezierPath	bezierPathWithRoundedRect: slotRect
-															 xRadius: slotRadius
-															 yRadius: slotRadius];
-	
-	[slotFill set];
-	[slotPath fill];
-	[slotPath fillWithInnerShadow: slotShadow];
-}
-- (void) drawKnob
-{
-	NSRect regionRect = [self rectForPart: NSScrollerKnob];
-	if (NSEqualRects(regionRect, NSZeroRect)) return;
-	
-	NSGradient *knobGradient = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.2 alpha: 1.0]
-															 endingColor: [NSColor colorWithCalibratedWhite: 0.15 alpha: 1.0]
-								];
-
-	NSRect knobRect		= NSInsetRect(regionRect, 0.0, 3.0);
-	CGFloat knobRadius	= knobRect.size.height / 2;
-	NSBezierPath *knobPath = [NSBezierPath bezierPathWithRoundedRect: knobRect
-															 xRadius: knobRadius
-															 yRadius: knobRadius];
-	
-	[knobGradient drawInBezierPath: knobPath angle: 90];
 }
 @end

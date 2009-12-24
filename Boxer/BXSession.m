@@ -152,11 +152,13 @@
 
 //Describing the active DOS process
 //---------------------------------
+
 - (NSString *) sessionDisplayName
 {
 	if (![self isGamePackage]) return [self processDisplayName];
 	else return [[self displayName] stringByDeletingPathExtension];
 }
++ (NSSet *) keyPathsForValuesAffectingSessionDisplayName	{ return [NSSet setWithObject: @"processDisplayName"]; }
 
 - (NSString *) processDisplayName
 {
@@ -168,8 +170,7 @@
 										@"The standard process name when the session is at the DOS prompt.");
 	return displayName;
 }
-//+ (NSSet *) keyPathsForValuesAffectingProcessDisplayName	{ return [NSSet setWithObject: @"emulator.processName"]; }
-+ (NSSet *) keyPathsForValuesAffectingSessionDisplayName	{ return [NSSet setWithObject: @"processDisplayName"]; }
++ (NSSet *) keyPathsForValuesAffectingProcessDisplayName	{ return [NSSet setWithObject: @"emulator.processName"]; }
 
 
 
@@ -487,9 +488,11 @@
 		if ([self isGamePackage] && [[self executables] count])
 		{
 			BOOL panelShown = [[self mainWindowController] programPanelShown];
+			
+			//Show only after a delay so that the window has time to resize after quitting the game
 			if (!panelShown) [[self mainWindowController] performSelector: @selector(toggleProgramPanelShown:)
 															   withObject: self
-															   afterDelay: 1];
+															   afterDelay: 0.2];
 		}
 		showProgramPanelOnReturnToShell = NO;
 	}

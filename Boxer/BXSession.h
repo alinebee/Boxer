@@ -91,6 +91,7 @@
 //--------------------
 
 //Returns a title for the current DOS session, suitable for display.
+//This is used as the title for the session's window.
 - (NSString *) sessionDisplayName;
 
 //Returns a title for the currently-executing DOS process, suitable for display.

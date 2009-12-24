@@ -3,12 +3,12 @@
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
 		<string key="IBDocument.SystemVersion">10C540</string>
-		<string key="IBDocument.InterfaceBuilderVersion">732</string>
+		<string key="IBDocument.InterfaceBuilderVersion">740</string>
 		<string key="IBDocument.AppKitVersion">1038.25</string>
 		<string key="IBDocument.HIToolboxVersion">458.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">732</string>
+			<string key="NS.object.0">740</string>
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -264,6 +264,7 @@
 					<string>gamePackage.executables</string>
 					<string>executables</string>
 					<string>emulator.isRunningProcess</string>
+					<string>sessionDisplayName</string>
 				</object>
 				<string key="NSObjectClassName">BXSession</string>
 				<object class="_NSManagedProxy" key="_NSManagedProxy"/>
@@ -446,6 +447,22 @@
 						</object>
 					</object>
 					<int key="connectionID">900</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">title: selection.sessionDisplayName</string>
+						<reference key="source" ref="1005"/>
+						<reference key="destination" ref="968073238"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="1005"/>
+							<reference key="NSDestination" ref="968073238"/>
+							<string key="NSLabel">title: selection.sessionDisplayName</string>
+							<string key="NSBinding">title</string>
+							<string key="NSKeyPath">selection.sessionDisplayName</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">902</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -694,7 +711,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">900</int>
+			<int key="maxID">902</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -704,7 +721,14 @@
 					<string key="superclassName">NSView</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Boxer Source/BXRenderView.h</string>
+						<string key="minorKey">Boxer/BXRenderView.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXSession</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">Boxer/BXSession+BXDragDrop.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -717,7 +741,6 @@
 							<string>decrementSpeed:</string>
 							<string>incrementFrameSkip:</string>
 							<string>incrementSpeed:</string>
-							<string>paste:</string>
 							<string>sendEnter:</string>
 							<string>sendF10:</string>
 							<string>sendF1:</string>
@@ -730,6 +753,7 @@
 							<string>sendF8:</string>
 							<string>sendF9:</string>
 							<string>takeScreenshot:</string>
+							<string>toggleRecordingVideo:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -754,7 +778,7 @@
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Boxer Source/BXSession+BXEmulatorController.h</string>
+						<string key="minorKey">Boxer/BXSession+BXEmulatorController.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -778,7 +802,7 @@
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Boxer Source/BXSession+BXFileManager.h</string>
+						<string key="minorKey">Boxer/BXSession+BXFileManager.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -790,25 +814,12 @@
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Boxer Source/BXSession.h</string>
+						<string key="minorKey">Boxer/BXSession.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">BXSessionWindow</string>
 					<string key="superclassName">NSWindow</string>
-					<object class="NSMutableDictionary" key="actions">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>toggleProgramPanelShown:</string>
-							<string>toggleStatusBarShown:</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
-						</object>
-					</object>
 					<object class="NSMutableDictionary" key="outlets">
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
@@ -826,11 +837,19 @@
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Boxer Source/BXSessionWindow.h</string>
+						<string key="minorKey">Boxer/BXSessionWindow.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">BXSessionWindowController</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">Boxer/BXSessionWindowController+BXRenderController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXSessionWindowController</string>
+					<string key="superclassName">NSWindowController</string>
 					<object class="NSMutableDictionary" key="actions">
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
@@ -839,6 +858,8 @@
 							<string>toggleFilterType:</string>
 							<string>toggleFullScreen:</string>
 							<string>toggleFullScreenWithZoom:</string>
+							<string>toggleProgramPanelShown:</string>
+							<string>toggleStatusBarShown:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -846,33 +867,27 @@
 							<string>NSMenuItem</string>
 							<string>id</string>
 							<string>id</string>
+							<string>id</string>
+							<string>id</string>
 						</object>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Boxer Source/BXSessionWindowController+BXRenderController.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXSessionWindowController</string>
-					<string key="superclassName">NSWindowController</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Boxer Source/BXSessionWindowController.h</string>
+						<string key="minorKey">Boxer/BXSessionWindowController.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">BXStatusBar</string>
 					<string key="superclassName">NSView</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier" id="28466948">
+					<object class="IBClassDescriptionSource" key="sourceIdentifier" id="255237333">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Boxer Source/BXStatusBar.h</string>
+						<string key="minorKey">Boxer/BXStatusBar.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">BXToggleButtonCell</string>
 					<string key="superclassName">NSButtonCell</string>
-					<reference key="sourceIdentifier" ref="28466948"/>
+					<reference key="sourceIdentifier" ref="255237333"/>
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">FirstResponder</string>
@@ -926,7 +941,7 @@
 					<string key="className">NSWindow</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Boxer Source/NSWindow+BXWindowSizing.h</string>
+						<string key="minorKey">BXToolkit/NSWindow+BXWindowSizing.h</string>
 					</object>
 				</object>
 			</object>

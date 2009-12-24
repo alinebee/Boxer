@@ -123,7 +123,6 @@ BXEmulator *currentEmulator = nil;
 
 + (NSSet *) keyPathsForValuesAffectingIsRunningProcess	{ return [NSSet setWithObject: @"processName"]; }
 + (NSSet *) keyPathsForValuesAffectingProcessIsInternal	{ return [NSSet setWithObject: @"processName"]; }
-+ (NSSet *) keyPathsForValuesAffectingProcessPath		{ return [NSSet setWithObject: @"processName"]; }
 
 
 + (BXEmulator *) currentEmulator
@@ -515,7 +514,6 @@ BXEmulator *currentEmulator = nil;
 		
 		[self willChangeValueForKey:	@"mountedDrives"];
 		[self didChangeValueForKey:		@"mountedDrives"];
-		
 		
 		//Now perform fine-grained checking on the process name, and post appropriate notifications
 		

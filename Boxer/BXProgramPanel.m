@@ -117,6 +117,7 @@ enum {
 	
 	//but if there's 2 or 3 programs then we want to align it left or right
 	//depending on whether we're the first or last program...
+	//This is disabled for now, because NSCollectionView's ordering is reversed in 10.5 so we end up aligning them wrongly
 	if (NO && (numSiblings == 2 || numSiblings == 3))
 	{
 		if		(ourIndex == 0)					alignment = 0.95;	//we're first: right-align

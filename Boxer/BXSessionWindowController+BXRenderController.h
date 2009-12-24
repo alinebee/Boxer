@@ -21,9 +21,7 @@
 @interface BXSessionWindowController (BXRenderController)
 
 //Managing the DOSBox/SDL draw context
-//------------------------------------
-- (BXEmulator *) emulator;		//Shortcut accessor for the current session's emulator
-- (BXRenderView *) renderView;	//Shortcut accessor for the session window's render view. 
+//------------------------------------ 
 
 //Get/replace/delete the view inside renderView that SDL will use for output.
 //These methods are called directly from inside our own hacked-up version of the SDL framework,
@@ -43,25 +41,6 @@
 //whenever a new event loop gets created.
 - (void) menuDidOpen:	(NSNotification *) notification;
 - (void) menuDidClose:	(NSNotification *) notification;
-
-
-//Rendering-related interface actions
-//-----------------------------------
-
-//Toggle the emulator's active rendering filter. This will resize the window to fit, if the
-//filter demands a minimum size smaller than the current window size.
-- (IBAction) toggleFilterType: (NSMenuItem *)sender;
-
-//Toggle instantly in and out of fullscreen mode.
-- (IBAction) toggleFullScreen: (id)sender;
-
-//Zoom in and out of fullscreen mode with a smooth window sizing animation.
-//Toggles setFullScreenWithZoom:
-- (IBAction) toggleFullScreenWithZoom: (id)sender;
-
-//Exit back to a window, if in fullscreen; otherwise do nothing.
-//This is triggered by pressing ESC when at the DOS prompt.
-- (IBAction) exitFullScreen: (id)sender;
 
 
 //Window sizing methods

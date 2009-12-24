@@ -47,56 +47,8 @@
 	
 	CGFloat borderThickness = [statusBar frame].size.height;
 	[self setContentBorderThickness: borderThickness forEdge: NSMinYEdge];
-
-	//Show/hide the statusbar based on user's preference
-	[self setStatusBarShown: [[NSUserDefaults standardUserDefaults] boolForKey: @"statusBarShown"]];
-	
-	//Hide the program panel by default - the DOS session decides when it's appropriate to display this
-	[self setProgramPanelShown: NO];
 }
 
-- (BOOL) statusBarShown		{ return ![statusBar isHidden]; }
-- (BOOL) programPanelShown	{ return ![programPanel isHidden]; }
-
-- (void) setStatusBarShown: (BOOL)show
-{
-	if (show != [self statusBarShown])
-	{
-		//temporarily override the other views' resizing behaviour so that they don't slide up as we do this
-		NSUInteger oldRenderMask		= [renderView autoresizingMask];
-		NSUInteger oldProgramPanelMask	= [programPanel autoresizingMask];
-		[renderView		setAutoresizingMask: NSViewMinYMargin];
-		[programPanel	setAutoresizingMask: NSViewMinYMargin];
-
-		//toggle the resize indicator on/off also (it doesn't play nice with the program panel)
-		if (!show)	[self setShowsResizeIndicator: NO];
-		[self slideView: statusBar shown: show];
-		if (show)	[self setShowsResizeIndicator: YES];
-		
-		[renderView		setAutoresizingMask: oldRenderMask];
-		[programPanel	setAutoresizingMask: oldProgramPanelMask];
-		
-		//record the current statusbar state in the user defaults
-		[[NSUserDefaults standardUserDefaults] setBool: show forKey: @"statusBarShown"];
-	}
-}
-
-- (void) setProgramPanelShown: (BOOL)show
-{
-	if (show != [self programPanelShown])
-	{
-		//temporarily override the other views' resizing behaviour so that they don't slide up as we do this
-		NSUInteger oldRenderMask = [renderView autoresizingMask];
-		[renderView setAutoresizingMask: NSViewMinYMargin];
-		
-		[self slideView: programPanel shown: show];
-		
-		[renderView setAutoresizingMask: oldRenderMask];
-	}
-}
-
-- (IBAction) toggleStatusBarShown:		(id)sender	{ [self setStatusBarShown:		![self statusBarShown]]; }
-- (IBAction) toggleProgramPanelShown:	(id)sender	{ [self setProgramPanelShown:	![self programPanelShown]]; }
 
 //Performs the slide animation used to toggle the status bar and program panel on or off
 - (void) slideView: (NSView *)view shown: (BOOL)show

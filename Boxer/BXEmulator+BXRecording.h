@@ -11,7 +11,6 @@
 
 #import <Cocoa/Cocoa.h>
 #import "BXEmulator.h"
-#import "BXAlert.h"
 
 @interface BXEmulator (BXRecording)
 
@@ -48,11 +47,6 @@
 //Returns whether a recording is in progress.
 - (BOOL) isRecordingVideo;
 
-
-//Checks whether the movie at the specified path could be played: if not, shows a
-//BXVideoFormatAlert dialog advising the user to download the Perian codec pack.
-//TODO: this has absolutely no place here and should be moved upstream.
-- (void) confirmUserCanPlayVideoRecording: (NSString *)recordingPath;
 
 
 //Recorded file paths

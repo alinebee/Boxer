@@ -21,8 +21,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="52"/>
-			<integer value="66"/>
+			<integer value="11"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -76,6 +75,9 @@
 					<string>activeProgramPath</string>
 					<string>toggleLabel</string>
 					<string>gamePackage</string>
+					<string>emulator.isAtPrompt</string>
+					<string>emulator.isInProcess</string>
+					<string>isRunningProcess</string>
 				</object>
 				<string key="NSObjectClassName">BXSession</string>
 				<object class="_NSManagedProxy" key="_NSManagedProxy"/>
@@ -97,7 +99,7 @@
 			</object>
 			<object class="NSCollectionViewItem" id="72546225"/>
 			<object class="NSCustomView" id="156718782">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">274</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -229,10 +231,11 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{640, 78}</string>
+				<reference key="NSSuperview"/>
 				<string key="NSClassName">BXProgramPanel</string>
 			</object>
 			<object class="NSCustomView" id="515511690">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">274</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -287,7 +290,6 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{640, 78}</string>
-				<reference key="NSSuperview"/>
 				<string key="NSClassName">BXProgramPanel</string>
 			</object>
 			<object class="NSCustomView" id="1029538789">
@@ -300,6 +302,7 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{150, 24}, {341, 14}}</string>
 						<reference key="NSSuperview" ref="1029538789"/>
+						<reference key="NSWindow"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="512924413">
 							<int key="NSCellFlags">68288064</int>
@@ -317,6 +320,7 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{181, 41}, {278, 17}}</string>
 						<reference key="NSSuperview" ref="1029538789"/>
+						<reference key="NSWindow"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="59349482">
 							<int key="NSCellFlags">68288064</int>
@@ -332,6 +336,7 @@
 				</object>
 				<string key="NSFrameSize">{640, 78}</string>
 				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
 				<string key="NSClassName">BXProgramPanel</string>
 			</object>
 			<object class="NSCustomView" id="80732392">
@@ -626,6 +631,26 @@
 					</object>
 					<int key="connectionID">277</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">enabled: selection.emulator.isRunningProcess</string>
+						<reference key="source" ref="187453467"/>
+						<reference key="destination" ref="693023672"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="187453467"/>
+							<reference key="NSDestination" ref="693023672"/>
+							<string key="NSLabel">enabled: selection.emulator.isRunningProcess</string>
+							<string key="NSBinding">enabled</string>
+							<string key="NSKeyPath">selection.emulator.isRunningProcess</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSValueTransformerName</string>
+								<string key="NS.object.0">NSNegateBoolean</string>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">283</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -887,7 +912,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="118422565"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{119, 630}, {120, 30}}</string>
+					<string>{{99, 703}, {120, 30}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>{{0, 704}, {120, 30}}</string>
 					<string>{{21, 687}, {121, 24}}</string>
@@ -921,7 +946,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">277</int>
+			<int key="maxID">285</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

@@ -12,6 +12,8 @@
 #import "BXEmulator+BXShell.h"
 #import "BXEmulator+BXInput.h"
 #import "BXValueTransformers.h"
+#import "BXVideoFormatAlert.h"
+
 
 @implementation BXSession (BXEmulatorController)
 
@@ -85,6 +87,34 @@
 	[[NSApp delegate] playUISoundWithName: @"Snapshot" atVolume: 0.5f];
 }
 
+- (IBAction) toggleRecordingVideo: (id)sender
+{
+	BOOL isRecording = [[self emulator] isRecordingVideo];
+	[[self emulator] setRecordingVideo: !isRecording];
+
+	//If we stopped recording, check whether the new video file exists and can be played by the user
+	//(If not, prompt the user to download Perian)
+	if (isRecording)
+	{
+		NSFileManager *manager		= [NSFileManager defaultManager];
+		NSUserDefaults *defaults	= [NSUserDefaults standardUserDefaults];
+		NSString *recordingPath		= [[self emulator] currentRecordingPath];
+		if (![defaults boolForKey: @"suppressCodecRequiredAlert"] && [manager fileExistsAtPath: recordingPath])
+		{
+			//We check if our video format is supported only once per application session,
+			//since the check is slow and the result won't change over the lifetime of the app
+			static NSInteger formatSupported = -1;
+			
+			if (formatSupported == -1) formatSupported = (NSInteger)[[BXEmulator class] canPlayVideoRecording: recordingPath];
+			if (!formatSupported)
+			{
+				BXVideoFormatAlert *alert = [BXVideoFormatAlert alert];
+				[alert beginSheetModalForWindow: [self windowForSheet] contextInfo: nil];
+			}
+		}
+	}
+}
+
 - (IBAction) incrementFrameSkip: (id)sender
 {
 	
@@ -149,6 +179,7 @@
 	if (![[self emulator] isExecuting]) return NO;
 	
 	SEL theAction = [theItem action];
+	BOOL hideItem;
 
 	if (theAction == @selector(incrementSpeed:))		return ![self speedAtMaximum];
 	if (theAction == @selector(decrementSpeed:))		return ![self speedAtMinimum];
@@ -160,6 +191,16 @@
 	if (theAction == @selector(openInDOS:))				return [[self emulator] isAtPrompt];
 
 	//if (theAction == @selector(paste:))	return [self canPaste];
+	
+	if (theAction == @selector(toggleRecordingVideo:))
+	{
+		if ([theItem isKindOfClass: [NSMenuItem class]])
+		{
+			hideItem = [[self emulator] isRecordingVideo];
+			if ([theItem tag] == 1) hideItem = !hideItem;
+			[theItem setHidden: hideItem];
+		}
+	}
 	
 	return [super validateUserInterfaceItem: theItem];
 }

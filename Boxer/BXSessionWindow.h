@@ -34,25 +34,12 @@
 												//Used internally to change window constraining behaviour.
 												//TODO: move it the hell away from here.
 
-//Get/set whether the statusbar should be shown.
-//TODO: move to BXWindowController.
-- (BOOL) statusBarShown;
-- (void) setStatusBarShown:		(BOOL)show;
-
-//Get/set whether the program panel should be shown.
-//TODO: move to BXWindowController.
-- (BOOL) programPanelShown;
-- (void) setProgramPanelShown:	(BOOL)show;
-
-//Blindly toggle the status bar and program panel.
-- (IBAction) toggleStatusBarShown:		(id)sender;
-- (IBAction) toggleProgramPanelShown:	(id)sender;
 
 //Used internally to show/hide the specified view with a resize animation. 
 - (void) slideView: (NSView *)view shown: (BOOL)show;
 
 //Get/set the size of our render portal.
-//TODO: this has absolutely no business being here.
+//TODO: remove, this has absolutely no business being here.
 - (NSSize) renderViewSize;
 - (void) setRenderViewSize: (NSSize)newSize animate: (BOOL)performAnimation;
 

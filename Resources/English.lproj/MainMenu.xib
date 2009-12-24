@@ -12,7 +12,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="1528"/>
+			<integer value="1607"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -59,6 +59,8 @@
 					<string>programPanelShown</string>
 					<string>executables</string>
 					<string>isGamePackage</string>
+					<string>mainWindowController.statusBarShown</string>
+					<string>mainWindowController.programPanelShown</string>
 				</object>
 				<string key="NSObjectClassName">BXSessionWindow</string>
 				<object class="_NSManagedProxy" key="_NSManagedProxy"/>
@@ -98,6 +100,8 @@
 					<string>emulator.fullScreen</string>
 					<string>emulator.isRunningProcess</string>
 					<string>representedIcon</string>
+					<string>mainWindowController.statusBarShown</string>
+					<string>mainWindowController.programPanelShown</string>
 				</object>
 				<string key="NSObjectClassName">BXSession</string>
 				<bool key="NSEditable">YES</bool>
@@ -837,12 +841,14 @@
 								</object>
 								<object class="NSMenuItem" id="989137542">
 									<reference key="NSMenu" ref="548981161"/>
+									<bool key="NSIsHidden">YES</bool>
 									<string key="NSTitle">Hide Status Bar</string>
 									<string key="NSKeyEquiv">/</string>
 									<int key="NSKeyEquivModMask">1048576</int>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="569538535"/>
 									<reference key="NSMixedImage" ref="489554260"/>
+									<int key="NSTag">1</int>
 								</object>
 								<object class="NSMenuItem" id="1014189777">
 									<reference key="NSMenu" ref="548981161"/>
@@ -855,12 +861,14 @@
 								</object>
 								<object class="NSMenuItem" id="1034744520">
 									<reference key="NSMenu" ref="548981161"/>
+									<bool key="NSIsHidden">YES</bool>
 									<string key="NSTitle">Hide Programs Panel</string>
 									<string key="NSKeyEquiv">g</string>
 									<int key="NSKeyEquivModMask">1048576</int>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="569538535"/>
 									<reference key="NSMixedImage" ref="489554260"/>
+									<int key="NSTag">1</int>
 								</object>
 								<object class="NSMenuItem" id="437069684">
 									<reference key="NSMenu" ref="548981161"/>
@@ -883,6 +891,7 @@
 								</object>
 								<object class="NSMenuItem" id="1025646852">
 									<reference key="NSMenu" ref="548981161"/>
+									<bool key="NSIsAlternate">YES</bool>
 									<string key="NSTitle">Enter Full Screen Quickly</string>
 									<string key="NSKeyEquiv">F</string>
 									<int key="NSKeyEquivModMask">1048576</int>
@@ -904,6 +913,7 @@
 								</object>
 								<object class="NSMenuItem" id="390415794">
 									<reference key="NSMenu" ref="548981161"/>
+									<bool key="NSIsHidden">YES</bool>
 									<string key="NSTitle">Exit Full Screen</string>
 									<string type="base64-UTF8" key="NSKeyEquiv">Gw</string>
 									<int key="NSMnemonicLoc">2147483647</int>
@@ -1046,11 +1056,13 @@
 								</object>
 								<object class="NSMenuItem" id="246699266">
 									<reference key="NSMenu" ref="518236691"/>
+									<bool key="NSIsHidden">YES</bool>
 									<string key="NSTitle">Stop Recording Video</string>
 									<string key="NSKeyEquiv"/>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="569538535"/>
 									<reference key="NSMixedImage" ref="489554260"/>
+									<int key="NSTag">1</int>
 								</object>
 							</object>
 						</object>
@@ -1575,42 +1587,6 @@
 					<int key="connectionID">1229</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: selection.emulator.recordingVideo</string>
-						<reference key="source" ref="604917546"/>
-						<reference key="destination" ref="126527174"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="604917546"/>
-							<reference key="NSDestination" ref="126527174"/>
-							<string key="NSLabel">value: selection.emulator.recordingVideo</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">selection.emulator.recordingVideo</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1231</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: selection.emulator.recordingVideo</string>
-						<reference key="source" ref="246699266"/>
-						<reference key="destination" ref="126527174"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="246699266"/>
-							<reference key="NSDestination" ref="126527174"/>
-							<string key="NSLabel">value: selection.emulator.recordingVideo</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">selection.emulator.recordingVideo</string>
-							<object class="NSDictionary" key="NSOptions">
-								<string key="NS.key.0">NSValueTransformerName</string>
-								<string key="NS.object.0">NSNegateBoolean</string>
-							</object>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1235</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
 						<string key="label">sendF1:</string>
 						<reference key="source" ref="935372999"/>
@@ -2012,14 +1988,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
-						<string key="label">exitFullScreen:</string>
-						<reference key="source" ref="935372999"/>
-						<reference key="destination" ref="390415794"/>
-					</object>
-					<int key="connectionID">1632</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
 						<string key="label">toggleFilterType:</string>
 						<reference key="source" ref="935372999"/>
 						<reference key="destination" ref="727166358"/>
@@ -2060,63 +2028,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
-						<string key="label">enabled: selection.visible</string>
-						<reference key="source" ref="78770769"/>
-						<reference key="destination" ref="132209991"/>
-						<object class="NSNibBindingConnector" key="connector" id="1032952881">
-							<reference key="NSSource" ref="78770769"/>
-							<reference key="NSDestination" ref="132209991"/>
-							<string key="NSLabel">enabled: selection.visible</string>
-							<string key="NSBinding">enabled</string>
-							<string key="NSKeyPath">selection.visible</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1638</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">enabled: selection.emulator.isRunningProcess</string>
-						<reference key="source" ref="390415794"/>
-						<reference key="destination" ref="126527174"/>
-						<object class="NSNibBindingConnector" key="connector" id="759107701">
-							<reference key="NSSource" ref="390415794"/>
-							<reference key="NSDestination" ref="126527174"/>
-							<string key="NSLabel">enabled: selection.emulator.isRunningProcess</string>
-							<string key="NSBinding">enabled</string>
-							<string key="NSKeyPath">selection.emulator.isRunningProcess</string>
-							<object class="NSDictionary" key="NSOptions">
-								<string key="NS.key.0">NSValueTransformerName</string>
-								<string key="NS.object.0">NSNegateBoolean</string>
-							</object>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1640</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">hidden: selection.emulator.fullScreen</string>
-						<reference key="source" ref="390415794"/>
-						<reference key="destination" ref="126527174"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="390415794"/>
-							<reference key="NSDestination" ref="126527174"/>
-							<string key="NSLabel">hidden: selection.emulator.fullScreen</string>
-							<string key="NSBinding">hidden</string>
-							<string key="NSKeyPath">selection.emulator.fullScreen</string>
-							<object class="NSDictionary" key="NSOptions">
-								<string key="NS.key.0">NSValueTransformerName</string>
-								<string key="NS.object.0">NSNegateBoolean</string>
-							</object>
-							<reference key="NSPreviousConnector" ref="759107701"/>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1641</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
 						<string key="label">value: selection.mouseLocked</string>
 						<reference key="source" ref="19860634"/>
 						<reference key="destination" ref="126527174"/>
@@ -2130,22 +2041,6 @@
 						</object>
 					</object>
 					<int key="connectionID">1642</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">enabled: selection.visible</string>
-						<reference key="source" ref="989137542"/>
-						<reference key="destination" ref="132209991"/>
-						<object class="NSNibBindingConnector" key="connector" id="762912350">
-							<reference key="NSSource" ref="989137542"/>
-							<reference key="NSDestination" ref="132209991"/>
-							<string key="NSLabel">enabled: selection.visible</string>
-							<string key="NSBinding">enabled</string>
-							<string key="NSKeyPath">selection.visible</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1643</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
@@ -2196,108 +2091,6 @@
 					<int key="connectionID">1654</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">enabled: selection.emulator.isExecuting</string>
-						<reference key="source" ref="604917546"/>
-						<reference key="destination" ref="126527174"/>
-						<object class="NSNibBindingConnector" key="connector" id="373528542">
-							<reference key="NSSource" ref="604917546"/>
-							<reference key="NSDestination" ref="126527174"/>
-							<string key="NSLabel">enabled: selection.emulator.isExecuting</string>
-							<string key="NSBinding">enabled</string>
-							<string key="NSKeyPath">selection.emulator.isExecuting</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1657</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">hidden: selection.emulator.recordingVideo</string>
-						<reference key="source" ref="604917546"/>
-						<reference key="destination" ref="126527174"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="604917546"/>
-							<reference key="NSDestination" ref="126527174"/>
-							<string key="NSLabel">hidden: selection.emulator.recordingVideo</string>
-							<string key="NSBinding">hidden</string>
-							<string key="NSKeyPath">selection.emulator.recordingVideo</string>
-							<reference key="NSPreviousConnector" ref="373528542"/>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1658</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">enabled: selection.emulator.isExecuting</string>
-						<reference key="source" ref="246699266"/>
-						<reference key="destination" ref="126527174"/>
-						<object class="NSNibBindingConnector" key="connector" id="175127656">
-							<reference key="NSSource" ref="246699266"/>
-							<reference key="NSDestination" ref="126527174"/>
-							<string key="NSLabel">enabled: selection.emulator.isExecuting</string>
-							<string key="NSBinding">enabled</string>
-							<string key="NSKeyPath">selection.emulator.isExecuting</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1661</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">hidden: selection.emulator.recordingVideo</string>
-						<reference key="source" ref="246699266"/>
-						<reference key="destination" ref="126527174"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="246699266"/>
-							<reference key="NSDestination" ref="126527174"/>
-							<string key="NSLabel">hidden: selection.emulator.recordingVideo</string>
-							<string key="NSBinding">hidden</string>
-							<string key="NSKeyPath">selection.emulator.recordingVideo</string>
-							<object class="NSDictionary" key="NSOptions">
-								<string key="NS.key.0">NSValueTransformerName</string>
-								<string key="NS.object.0">NSNegateBoolean</string>
-							</object>
-							<reference key="NSPreviousConnector" ref="175127656"/>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1662</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">enabled: selection.visible</string>
-						<reference key="source" ref="1014189777"/>
-						<reference key="destination" ref="132209991"/>
-						<object class="NSNibBindingConnector" key="connector" id="545108989">
-							<reference key="NSSource" ref="1014189777"/>
-							<reference key="NSDestination" ref="132209991"/>
-							<string key="NSLabel">enabled: selection.visible</string>
-							<string key="NSBinding">enabled</string>
-							<string key="NSKeyPath">selection.visible</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1665</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">enabled: selection.visible</string>
-						<reference key="source" ref="1034744520"/>
-						<reference key="destination" ref="132209991"/>
-						<object class="NSNibBindingConnector" key="connector" id="101666237">
-							<reference key="NSSource" ref="1034744520"/>
-							<reference key="NSDestination" ref="132209991"/>
-							<string key="NSLabel">enabled: selection.visible</string>
-							<string key="NSBinding">enabled</string>
-							<string key="NSKeyPath">selection.visible</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1667</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
 						<string key="label">toggleProgramPanelShown:</string>
 						<reference key="source" ref="935372999"/>
@@ -2320,150 +2113,6 @@
 						<reference key="destination" ref="78770769"/>
 					</object>
 					<int key="connectionID">1686</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">hidden: selection.statusBarShown</string>
-						<reference key="source" ref="78770769"/>
-						<reference key="destination" ref="132209991"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="78770769"/>
-							<reference key="NSDestination" ref="132209991"/>
-							<string key="NSLabel">hidden: selection.statusBarShown</string>
-							<string key="NSBinding">hidden</string>
-							<string key="NSKeyPath">selection.statusBarShown</string>
-							<reference key="NSPreviousConnector" ref="1032952881"/>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1688</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">hidden: selection.statusBarShown</string>
-						<reference key="source" ref="989137542"/>
-						<reference key="destination" ref="132209991"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="989137542"/>
-							<reference key="NSDestination" ref="132209991"/>
-							<string key="NSLabel">hidden: selection.statusBarShown</string>
-							<string key="NSBinding">hidden</string>
-							<string key="NSKeyPath">selection.statusBarShown</string>
-							<object class="NSDictionary" key="NSOptions">
-								<string key="NS.key.0">NSValueTransformerName</string>
-								<string key="NS.object.0">NSNegateBoolean</string>
-							</object>
-							<reference key="NSPreviousConnector" ref="762912350"/>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1690</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">enabled2: selection.isGamePackage</string>
-						<reference key="source" ref="1034744520"/>
-						<reference key="destination" ref="126527174"/>
-						<object class="NSNibBindingConnector" key="connector" id="934977998">
-							<reference key="NSSource" ref="1034744520"/>
-							<reference key="NSDestination" ref="126527174"/>
-							<string key="NSLabel">enabled2: selection.isGamePackage</string>
-							<string key="NSBinding">enabled2</string>
-							<string key="NSKeyPath">selection.isGamePackage</string>
-							<object class="NSDictionary" key="NSOptions">
-								<bool key="EncodedWithXMLCoder">YES</bool>
-								<object class="NSArray" key="dict.sortedKeys">
-									<bool key="EncodedWithXMLCoder">YES</bool>
-									<string>NSMultipleValuesPlaceholder</string>
-									<string>NSNoSelectionPlaceholder</string>
-									<string>NSNotApplicablePlaceholder</string>
-									<string>NSNullPlaceholder</string>
-								</object>
-								<object class="NSMutableArray" key="dict.values">
-									<bool key="EncodedWithXMLCoder">YES</bool>
-									<integer value="-1"/>
-									<integer value="-1"/>
-									<integer value="-1"/>
-									<integer value="-1"/>
-								</object>
-							</object>
-							<reference key="NSPreviousConnector" ref="101666237"/>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1714</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">hidden: selection.programPanelShown</string>
-						<reference key="source" ref="1034744520"/>
-						<reference key="destination" ref="132209991"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="1034744520"/>
-							<reference key="NSDestination" ref="132209991"/>
-							<string key="NSLabel">hidden: selection.programPanelShown</string>
-							<string key="NSBinding">hidden</string>
-							<string key="NSKeyPath">selection.programPanelShown</string>
-							<object class="NSDictionary" key="NSOptions">
-								<string key="NS.key.0">NSValueTransformerName</string>
-								<string key="NS.object.0">NSNegateBoolean</string>
-							</object>
-							<reference key="NSPreviousConnector" ref="934977998"/>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1715</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">enabled2: selection.isGamePackage</string>
-						<reference key="source" ref="1014189777"/>
-						<reference key="destination" ref="126527174"/>
-						<object class="NSNibBindingConnector" key="connector" id="854119778">
-							<reference key="NSSource" ref="1014189777"/>
-							<reference key="NSDestination" ref="126527174"/>
-							<string key="NSLabel">enabled2: selection.isGamePackage</string>
-							<string key="NSBinding">enabled2</string>
-							<string key="NSKeyPath">selection.isGamePackage</string>
-							<object class="NSDictionary" key="NSOptions">
-								<bool key="EncodedWithXMLCoder">YES</bool>
-								<object class="NSArray" key="dict.sortedKeys">
-									<bool key="EncodedWithXMLCoder">YES</bool>
-									<string>NSMultipleValuesPlaceholder</string>
-									<string>NSNoSelectionPlaceholder</string>
-									<string>NSNotApplicablePlaceholder</string>
-									<string>NSNullPlaceholder</string>
-								</object>
-								<object class="NSMutableArray" key="dict.values">
-									<bool key="EncodedWithXMLCoder">YES</bool>
-									<integer value="-1"/>
-									<integer value="-1"/>
-									<integer value="-1"/>
-									<integer value="-1"/>
-								</object>
-							</object>
-							<reference key="NSPreviousConnector" ref="545108989"/>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1717</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">hidden: selection.programPanelShown</string>
-						<reference key="source" ref="1014189777"/>
-						<reference key="destination" ref="132209991"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="1014189777"/>
-							<reference key="NSDestination" ref="132209991"/>
-							<string key="NSLabel">hidden: selection.programPanelShown</string>
-							<string key="NSBinding">hidden</string>
-							<string key="NSKeyPath">selection.programPanelShown</string>
-							<reference key="NSPreviousConnector" ref="854119778"/>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1718</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
@@ -2504,6 +2153,30 @@
 						<reference key="destination" ref="350988856"/>
 					</object>
 					<int key="connectionID">1755</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">toggleRecordingVideo:</string>
+						<reference key="source" ref="935372999"/>
+						<reference key="destination" ref="604917546"/>
+					</object>
+					<int key="connectionID">1789</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">toggleRecordingVideo:</string>
+						<reference key="source" ref="935372999"/>
+						<reference key="destination" ref="246699266"/>
+					</object>
+					<int key="connectionID">1790</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">exitFullScreen:</string>
+						<reference key="source" ref="935372999"/>
+						<reference key="destination" ref="390415794"/>
+					</object>
+					<int key="connectionID">1792</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -3969,7 +3642,7 @@
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
-					<string>{{441, 626}, {142, 73}}</string>
+					<string>{{294, 626}, {142, 73}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
 					<string>{{0, 699}, {426, 20}}</string>
@@ -4059,7 +3732,7 @@ IEtWQiBob29rIGZvciByZW5kZXJpbmcgc2V0dGluZ3MuA</bytes>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1769</int>
+			<int key="maxID">1792</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -4140,14 +3813,6 @@ IEtWQiBob29rIGZvciByZW5kZXJpbmcgc2V0dGluZ3MuA</bytes>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
-					<string key="className">BXRenderView</string>
-					<string key="superclassName">NSView</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Boxer/BXRenderView.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
 					<string key="className">BXSession</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
@@ -4176,9 +3841,11 @@ IEtWQiBob29rIGZvciByZW5kZXJpbmcgc2V0dGluZ3MuA</bytes>
 							<string>sendF8:</string>
 							<string>sendF9:</string>
 							<string>takeScreenshot:</string>
+							<string>toggleRecordingVideo:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -4239,60 +3906,7 @@ IEtWQiBob29rIGZvciByZW5kZXJpbmcgc2V0dGluZ3MuA</bytes>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
-					<string key="className">BXSessionWindow</string>
-					<string key="superclassName">NSWindow</string>
-					<object class="NSMutableDictionary" key="actions">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>toggleProgramPanelShown:</string>
-							<string>toggleStatusBarShown:</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
-						</object>
-					</object>
-					<object class="NSMutableDictionary" key="outlets">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>programPanel</string>
-							<string>renderView</string>
-							<string>statusBar</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>NSView</string>
-							<string>BXRenderView</string>
-							<string>NSView</string>
-						</object>
-					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Boxer/BXSessionWindow.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
 					<string key="className">BXSessionWindowController</string>
-					<object class="NSMutableDictionary" key="actions">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>exitFullScreen:</string>
-							<string>toggleFilterType:</string>
-							<string>toggleFullScreen:</string>
-							<string>toggleFullScreenWithZoom:</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>NSMenuItem</string>
-							<string>id</string>
-							<string>id</string>
-						</object>
-					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">Boxer/BXSessionWindowController+BXRenderController.h</string>
@@ -4301,6 +3915,27 @@ IEtWQiBob29rIGZvciByZW5kZXJpbmcgc2V0dGluZ3MuA</bytes>
 				<object class="IBPartialClassDescription">
 					<string key="className">BXSessionWindowController</string>
 					<string key="superclassName">NSWindowController</string>
+					<object class="NSMutableDictionary" key="actions">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>exitFullScreen:</string>
+							<string>toggleFilterType:</string>
+							<string>toggleFullScreen:</string>
+							<string>toggleFullScreenWithZoom:</string>
+							<string>toggleProgramPanelShown:</string>
+							<string>toggleStatusBarShown:</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>NSMenuItem</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+						</object>
+					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">Boxer/BXSessionWindowController.h</string>

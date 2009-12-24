@@ -6,7 +6,6 @@
  */
 
 #import "BXEmulator+BXRecording.h"
-#import "BXVideoFormatAlert.h"
 #import "BXSession.h"
 #import <QTKit/QTKit.h>
 
@@ -69,12 +68,6 @@ void CAPTURE_VideoEvent(bool pressed);
 	return perianFormatsSupported;
 }
 
-- (void) showVideoFormatAlertForRecording: (NSString *)recordingPath
-{
-	BXVideoFormatAlert *alert = [BXVideoFormatAlert alert];
-	[alert beginSheetModalForWindow: [[self delegate] windowForSheet] contextInfo: nil];
-}
-
 
 - (void) recordImage
 {
@@ -85,25 +78,6 @@ void CAPTURE_VideoEvent(bool pressed);
 	}
 }
 
-//Check if the user can view the specified recording, and warn them with a prompt if they can't
-- (void) confirmUserCanPlayVideoRecording: (NSString *)recordingPath
-{
-	NSFileManager *manager		= [NSFileManager defaultManager];
-	NSUserDefaults *defaults	= [NSUserDefaults standardUserDefaults];
-	
-	if (![defaults boolForKey: @"suppressCodecRequiredAlert"] && [manager fileExistsAtPath: recordingPath])
-	{
-		//We check if our video format is supported only once per application session, since the check is slow and the result won't change over the lifetime of the app
-		static NSInteger formatSupported = -1;
-	
-		if (formatSupported == -1) formatSupported = (NSInteger)[[self class] canPlayVideoRecording: recordingPath];
-		if (!formatSupported)
-		{
-			BXVideoFormatAlert *alert = [BXVideoFormatAlert alert];
-			[alert beginSheetModalForWindow: [[self delegate] windowForSheet] contextInfo: nil];
-		}
-	}
-}
 
 - (void) setRecordingVideo: (BOOL)record
 {
@@ -111,10 +85,6 @@ void CAPTURE_VideoEvent(bool pressed);
 	if ([self isExecuting] && (record != [self isRecordingVideo]))
 	{
 		CAPTURE_VideoEvent(YES);
-		
-		//If we stopped recording, check whether the new video file exists and can be played by the user
-		//(If recording was stopped by program exit, don't bother with this step)
-		if (!record && ![self isCancelled]) [self confirmUserCanPlayVideoRecording: [self currentRecordingPath]];
 	}
 	[self didChangeValueForKey: @"recordingVideo"];
 }

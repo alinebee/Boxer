@@ -17,6 +17,11 @@
 
 #import <Cocoa/Cocoa.h>
 
+
+@class BXEmulator;
+@class BXRenderView;
+@class BXSession;
+@class BXSessionWindow;
 @class BXProgramPanelController;
 
 @interface BXSessionWindowController : NSWindowController
@@ -28,6 +33,13 @@
 @property (retain) BXProgramPanelController *programPanelController;
 
 
+- (BXSession *)document;
+- (BXSessionWindow *)window;
+
+- (BXEmulator *) emulator;		//Shortcut accessor for the current session's emulator
+- (BXRenderView *) renderView;	//Shortcut accessor for the session window's render view.
+
+
 //Handling drag-drop
 //------------------
 
@@ -35,5 +47,43 @@
 //them in DOS if appropriate. These methods call corresponding methods on BXSession+BXDragDrop.
 - (NSDragOperation)draggingEntered:	(id < NSDraggingInfo >)sender;
 - (BOOL)performDragOperation:		(id < NSDraggingInfo >)sender;
+
+
+//Rendering-related interface actions
+//-----------------------------------
+
+//Toggle the emulator's active rendering filter. This will resize the window to fit, if the
+//filter demands a minimum size smaller than the current window size.
+- (IBAction) toggleFilterType: (NSMenuItem *)sender;
+
+//Toggle instantly in and out of fullscreen mode.
+- (IBAction) toggleFullScreen: (id)sender;
+
+//Zoom in and out of fullscreen mode with a smooth window sizing animation.
+//Toggles setFullScreenWithZoom:
+- (IBAction) toggleFullScreenWithZoom: (id)sender;
+
+//Exit back to a window, if in fullscreen; otherwise do nothing.
+//This is triggered by pressing ESC when at the DOS prompt.
+- (IBAction) exitFullScreen: (id)sender;
+
+//Toggle the status bar and program panel components on and off.
+- (IBAction) toggleStatusBarShown:		(id)sender;
+- (IBAction) toggleProgramPanelShown:	(id)sender;
+
+
+//Toggling window UI components
+//-----------------------------
+
+//Get/set whether the statusbar should be shown.
+//TODO: move to BXWindowController.
+- (BOOL) statusBarShown;
+- (void) setStatusBarShown:		(BOOL)show;
+
+//Get/set whether the program panel should be shown.
+//TODO: move to BXWindowController.
+- (BOOL) programPanelShown;
+- (void) setProgramPanelShown:	(BOOL)show;
+
 
 @end

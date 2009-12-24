@@ -485,7 +485,12 @@
 	if (showProgramPanelOnReturnToShell)
 	{
 		if ([self isGamePackage] && [[self executables] count])
-			[(BXSessionWindow *)[[self mainWindowController] window] setProgramPanelShown: YES];
+		{
+			BOOL panelShown = [[self mainWindowController] programPanelShown];
+			if (!panelShown) [[self mainWindowController] performSelector: @selector(toggleProgramPanelShown:)
+															   withObject: self
+															   afterDelay: 1];
+		}
 		showProgramPanelOnReturnToShell = NO;
 	}
 }

@@ -20,7 +20,7 @@
 	IBOutlet NSObjectController *sessionMediator;
 }
 @property (retain) NSPopUpButton *programSelector;		//The program selector popup button we populate.
-@property (retain) NSObjectController *sessionMediator;
+@property (retain) NSObjectController *sessionMediator;	//The NIB's object-controller proxy for the current session.
 
 //Sets the default program of the gamebox to the represented path of the selected menu item.
 //Called by the program selector whenever its selected item is changed.

@@ -10,6 +10,7 @@
 #import "BXSessionWindow.h"
 #import "BXEmulator+BXRendering.h"
 #import "BXGeometry.h"
+#import "BXSession.h"
 
 
 @implementation BXSessionWindowController (BXRenderController)
@@ -17,13 +18,10 @@
 //Managing the DOSBox/SDL draw context
 //------------------------------------
 
-- (BXEmulator *)	emulator	{ return [(BXSession *)[self document] emulator]; }
-- (BXRenderView *)	renderView	{ return [(BXSessionWindow *)[self window] renderView]; }
-
-- (NSView *) SDLView			{ return [[[self renderView] subviews] lastObject]; }
+- (NSView *) SDLView { return [[[self renderView] subviews] lastObject]; }
 - (void) setSDLView: (NSView *)theView
 {
-	BXSessionWindow *theWindow	= (BXSessionWindow *)[self window];
+	BXSessionWindow *theWindow	= [self window];
 	
 	NSSize viewSize		= [theView frame].size;					//The size of SDL's actual render view
 	NSSize originalSize	= [[self emulator] scaledResolution];	//The size the DOS game is producing
@@ -62,7 +60,7 @@
 //Reset the DOS renderer if its draw surface no longer matches the size of the window
 - (void) windowDidResize: (NSNotification *) notification
 {
-	BXSessionWindow	*theWindow	= (BXSessionWindow *)[self window];
+	BXSessionWindow	*theWindow	= [self window];
 	BXRenderView	*renderView	= [self renderView];
 	NSView			*SDLView	= [self SDLView];
 	
@@ -186,7 +184,7 @@
 //It's also doing too much work and needs to be refactored so that BXEmulator is making decisions about minimum size and height preservation instead of us here.
 - (NSSize) viewSizeForRenderedSize: (NSSize)renderedSize minSize: (NSSize)minViewSize
 {
-	BXSessionWindow *theWindow = (BXSessionWindow *)[self window];
+	BXSessionWindow *theWindow = [self window];
 	
 	//Quick hack: if we're in the middle of a resize animation, just return the current size without constraints
 	if ([theWindow sizingToFillScreen]) return [theWindow renderViewSize];
@@ -231,7 +229,7 @@
 //If we can't manage that size, do nothing and return NO; otherwise resize and return YES
 - (BOOL) resizeToAccommodateViewSize: (NSSize) minViewSize
 {
-	BXSessionWindow *theWindow	= (BXSessionWindow *)[self window];
+	BXSessionWindow *theWindow	= [self window];
 
 	NSSize currentSize		= [theWindow renderViewSize];
 	//We're already that size or larger, go us!
@@ -258,7 +256,7 @@
 	//Don't bother if the emulator is already in the correct state
 	if ([emulator isFullScreen] == fullScreen) return NO;
 	 
-	BXSessionWindow *theWindow		= (BXSessionWindow *)[self window];
+	BXSessionWindow *theWindow	= [self window];
 	
 	NSInteger originalLevel		= [theWindow level];
 	
@@ -307,70 +305,4 @@
 	return YES;	
 }
 
-
-//Responding to interface actions
-//-------------------------------
-
-- (IBAction) exitFullScreen: (id)sender
-{
-	[self setFullScreenWithZoom: NO];
-}
-
-- (IBAction) toggleFullScreen: (id)sender
-{
-	//Make sure we're the key window first before any shenanigans
-	[[self window] makeKeyAndOrderFront: self];
-
-	BXEmulator *emulator	= [self emulator];
-	BOOL isFullScreen = [emulator isFullScreen];
-	[emulator setFullScreen: !isFullScreen];
-}
-
-- (IBAction) toggleFullScreenWithZoom: (id)sender
-{
-	BXEmulator *emulator	= [self emulator];
-	BOOL isFullScreen = [emulator isFullScreen];
-	[self setFullScreenWithZoom: !isFullScreen];
-}
-
-- (IBAction) toggleFilterType: (NSMenuItem *)sender
-{
-	BXEmulator *emulator	= [self emulator];
-	BXFilterType filterType	= [sender tag];
-	[emulator setFilterType: filterType];
-
-	//If the new filter choice isn't active, then try to resize the window to an appropriate size for it
-	//Todo: clarify these functions to indicate *why* the filter is inactive
-	if (![emulator isFullScreen] && ![emulator filterIsActive])
-	{
-		NSSize newRenderSize = [emulator _minSurfaceSizeForFilterType: filterType];
-		[self resizeToAccommodateViewSize: newRenderSize];
-	}
-}
-
-
-- (BOOL) validateUserInterfaceItem: (id)theItem
-{
-	BXEmulator *emulator	= [self emulator];
-	
-	//All our actions depend on the emulator being active
-	if (![emulator isExecuting]) return NO;
-	
-	SEL theAction = [theItem action];
-	if (theAction == @selector(toggleFilterType:))
-	{
-		NSInteger itemState;
-		BXFilterType filterType	= [theItem tag];
-		
-		//Update the option state to reflect the current filter selection
-		//If the filter is selected but not active at the current window size, we indicate this with a mixed state
-		if		(filterType != [emulator filterType])	itemState = NSOffState;
-		else if	([emulator filterIsActive])				itemState = NSOnState;
-		else											itemState = NSMixedState;
-		
-		[theItem setState: itemState];
-	}
-	
-    return YES;
-}
 @end

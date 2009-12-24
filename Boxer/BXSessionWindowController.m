@@ -7,16 +7,25 @@
 
 
 #import "BXSessionWindowController.h"
+#import "BXSessionWindowController+BXRenderController.h"
 #import "BXSessionWindow.h"
 #import "BXProgramPanelController.h"
 
-#import "BXEmulator.h"
+#import "BXEmulator+BXRendering.h"
 #import "BXCloseAlert.h"
 #import "BXSession+BXDragDrop.h"
 
 
 @implementation BXSessionWindowController
 @synthesize programPanelController;
+
+//Overridden to make the types explicit, so we don't have to keep casting the return values to avoid compilation warnings
+- (BXSession *)document			{ return (BXSession *)[super document]; }
+- (BXSessionWindow *)window		{ return (BXSessionWindow *)[super window]; }
+
+- (BXEmulator *)emulator		{ return [[self document] emulator]; }
+- (BXRenderView *)renderView	{ return [[self window] renderView]; }
+
 
 //Initialisation and cleanup functions
 //------------------------------------
@@ -32,7 +41,7 @@
 - (void) awakeFromNib
 {
 	NSNotificationCenter *center	= [NSNotificationCenter defaultCenter];
-	BXSessionWindow *theWindow		= (BXSessionWindow *)[self window];
+	BXSessionWindow *theWindow		= [self window];
 	BXRenderView *renderView		= [theWindow renderView];
 	
 	
@@ -62,6 +71,15 @@
 	
 	//While we're here, register for drag-drop file operations (used for mounting folders and such)
 	[theWindow registerForDraggedTypes: [NSArray arrayWithObjects: NSFilenamesPboardType, NSStringPboardType, nil]];
+	
+	
+	//Set up the window UI components appropriately
+	
+	//Show/hide the statusbar based on user's preference
+	[self setStatusBarShown: [[NSUserDefaults standardUserDefaults] boolForKey: @"statusBarShown"]];
+	
+	//Hide the program panel by default - our parent session decides when it's appropriate to display this
+	[self setProgramPanelShown: NO];
 }
 
 - (void) setDocument: (BXSession *)theSession
@@ -105,6 +123,159 @@
 }
 
 
+//Toggling window UI components
+//-----------------------------
+
+
+- (BOOL) statusBarShown		{ return ![[(BXSessionWindow *)[self window] statusBar] isHidden]; }
+- (BOOL) programPanelShown	{ return ![[(BXSessionWindow *)[self window] programPanel] isHidden]; }
+
+- (void) setStatusBarShown: (BOOL)show
+{
+	if (show != [self statusBarShown])
+	{
+		BXSessionWindow *theWindow	= (BXSessionWindow *)[self window];
+		BXRenderView *renderView	= [theWindow renderView];
+		NSView *programPanel		= [theWindow programPanel];
+		
+		//temporarily override the other views' resizing behaviour so that they don't slide up as we do this
+		NSUInteger oldRenderMask		= [renderView autoresizingMask];
+		NSUInteger oldProgramPanelMask	= [programPanel autoresizingMask];
+		[renderView		setAutoresizingMask: NSViewMinYMargin];
+		[programPanel	setAutoresizingMask: NSViewMinYMargin];
+		
+		//toggle the resize indicator on/off also (it doesn't play nice with the program panel)
+		if (!show)	[theWindow setShowsResizeIndicator: NO];
+		[theWindow slideView: [theWindow statusBar] shown: show];
+		if (show)	[theWindow setShowsResizeIndicator: YES];
+		
+		[renderView		setAutoresizingMask: oldRenderMask];
+		[programPanel	setAutoresizingMask: oldProgramPanelMask];
+		
+		//record the current statusbar state in the user defaults
+		[[NSUserDefaults standardUserDefaults] setBool: show forKey: @"statusBarShown"];
+	}
+}
+
+- (void) setProgramPanelShown: (BOOL)show
+{
+	if (show != [self programPanelShown])
+	{
+		BXSessionWindow *theWindow	= (BXSessionWindow *)[self window];
+		BXRenderView *renderView 	= [theWindow renderView];
+		NSView *programPanel		= [theWindow programPanel];
+		
+		//temporarily override the other views' resizing behaviour so that they don't slide up as we do this
+		NSUInteger oldRenderMask = [renderView autoresizingMask];
+		[renderView setAutoresizingMask: NSViewMinYMargin];
+		
+		[theWindow slideView: programPanel shown: show];
+		
+		[renderView setAutoresizingMask: oldRenderMask];
+	}
+}
+
+
+//Responding to interface actions
+//-------------------------------
+
+- (IBAction) toggleStatusBarShown:		(id)sender	{ [self setStatusBarShown:		![self statusBarShown]]; }
+- (IBAction) toggleProgramPanelShown:	(id)sender	{ [self setProgramPanelShown:	![self programPanelShown]]; }
+
+- (IBAction) exitFullScreen: (id)sender
+{
+	[self setFullScreenWithZoom: NO];
+}
+
+- (IBAction) toggleFullScreen: (id)sender
+{
+	//Make sure we're the key window first before any shenanigans
+	[[self window] makeKeyAndOrderFront: self];
+	
+	BXEmulator *emulator	= [self emulator];
+	BOOL isFullScreen		= [emulator isFullScreen];
+	[emulator setFullScreen: !isFullScreen];
+}
+
+- (IBAction) toggleFullScreenWithZoom: (id)sender
+{
+	BXEmulator *emulator	= [self emulator];
+	BOOL isFullScreen		= [emulator isFullScreen];
+	[self setFullScreenWithZoom: !isFullScreen];
+}
+
+- (IBAction) toggleFilterType: (NSMenuItem *)sender
+{
+	BXEmulator *emulator	= [self emulator];
+	BXFilterType filterType	= [sender tag];
+	[emulator setFilterType: filterType];
+	
+	//If the new filter choice isn't active, then try to resize the window to an appropriate size for it
+	//Todo: clarify these functions to indicate *why* the filter is inactive
+	if (![emulator isFullScreen] && ![emulator filterIsActive])
+	{
+		NSSize newRenderSize = [emulator _minSurfaceSizeForFilterType: filterType];
+		[self resizeToAccommodateViewSize: newRenderSize];
+	}
+}
+
+
+- (BOOL) validateUserInterfaceItem: (id)theItem
+{
+	BXEmulator *emulator = [self emulator];
+	
+	//All our actions depend on the emulator being active
+	if (![emulator isExecuting]) return NO;
+	
+	SEL theAction = [theItem action];
+	BOOL hideItem; 
+	
+	if (theAction == @selector(toggleFilterType:))
+	{
+		NSInteger itemState;
+		BXFilterType filterType	= [theItem tag];
+		
+		//Update the option state to reflect the current filter selection
+		//If the filter is selected but not active at the current window size, we indicate this with a mixed state
+		if		(filterType != [emulator filterType])	itemState = NSOffState;
+		else if	([emulator filterIsActive])				itemState = NSOnState;
+		else											itemState = NSMixedState;
+		
+		[theItem setState: itemState];
+	}
+	else if (theAction == @selector(toggleProgramPanelShown:))
+	{
+		if ([theItem isKindOfClass: [NSMenuItem class]])
+		{
+			hideItem = [self programPanelShown];
+			if ([theItem tag] == 1) hideItem = !hideItem;
+			[theItem setHidden: hideItem];
+		}
+		return [[self document] isGamePackage];
+	}
+	else if (theAction == @selector(toggleStatusBarShown:))
+	{
+		if ([theItem isKindOfClass: [NSMenuItem class]])
+		{
+			hideItem = [self statusBarShown];
+			if ([theItem tag] == 1) hideItem = !hideItem;
+			[theItem setHidden: hideItem];
+		}
+		return YES;
+	}	
+	
+	//Hide and disable the exit-fullscreen option when in windowed mode
+	if (theAction == @selector(exitFullScreen:))
+	{
+		BOOL isFullScreen = [[self emulator] isFullScreen];
+		[theItem setHidden: !isFullScreen];
+		return isFullScreen;
+	}
+	
+    return YES;
+}
+
+
 //Handling drag-drop
 //------------------
 
@@ -114,8 +285,7 @@
 	if ([[pboard types] containsObject: NSFilenamesPboardType])
 	{
 		NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
-		BXSession *theSession = (BXSession *)[self document];
-		return [theSession responseToDroppedFiles: filePaths];
+		return [[self document] responseToDroppedFiles: filePaths];
 	}
 	else return NSDragOperationNone;
 }
@@ -128,16 +298,14 @@
     if ([[pboard types] containsObject: NSFilenamesPboardType])
 	{
         NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
-		BXSession *theSession = (BXSession *)[self document];
 		
-		return [theSession handleDroppedFiles: filePaths withLaunching: YES];
+		return [[self document] handleDroppedFiles: filePaths withLaunching: YES];
 	}
 	/*
 	else if ([[pboard types] containsObject: NSStringPboardType])
 	{
-		BXSession *theSession = (BXSession *)[self document];
 		NSString *droppedString = [pboard stringForType: NSStringPboardType];
-		return [theSession handlePastedString: droppedString];
+		return [[self document] handlePastedString: droppedString];
     }
 	*/
     return NO;
@@ -150,7 +318,7 @@
 //I give up, why is this even here? Why isn't BXSession deciding which to use?
 - (void) synchronizeWindowTitleWithDocumentName
 {	
-	BXSession *theSession = (BXSession *)[self document];
+	BXSession *theSession = [self document];
 	if (theSession)
 	{
 		//For game packages, we use the standard NSDocument window title

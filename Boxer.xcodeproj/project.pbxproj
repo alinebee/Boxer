@@ -68,7 +68,6 @@
 		9FB554F70F6EE58000A33017 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FB554F60F6EE58000A33017 /* QTKit.framework */; };
 		9FBB86850F5DD070008418E6 /* BXRenderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBB86840F5DD070008418E6 /* BXRenderView.m */; };
 		9FBC31D70F56C370001811F2 /* AboutBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC31D10F56C370001811F2 /* AboutBackground.png */; };
-		9FBC31D80F56C370001811F2 /* Badge.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC31D20F56C370001811F2 /* Badge.png */; };
 		9FBC31DA0F56C370001811F2 /* BunnyTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC31D40F56C370001811F2 /* BunnyTemplate.png */; };
 		9FBC31DC0F56C370001811F2 /* TortoiseTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC31D60F56C370001811F2 /* TortoiseTemplate.png */; };
 		9FBC31E00F56C383001811F2 /* LockClosing.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC31DD0F56C383001811F2 /* LockClosing.aiff */; };
@@ -199,6 +198,7 @@
 		9FBC3CF90F56E6DE001811F2 /* session.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC31DF0F56C383001811F2 /* session.icns */; };
 		9FBC3D600F56EA82001811F2 /* SDL.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C140F56D6E8001811F2 /* SDL.framework */; };
 		9FBC3D610F56EA82001811F2 /* SDL_net.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C150F56D6E8001811F2 /* SDL_net.framework */; };
+		9FBD321710E5144C00031CB6 /* Brand.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBD321610E5144C00031CB6 /* Brand.png */; };
 		9FC3B2550F62D9CE006DE439 /* BXSession+BXEmulatorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC3B2540F62D9CE006DE439 /* BXSession+BXEmulatorController.m */; };
 		9FC8F50C10934F3400AD6307 /* NSString+BXPaths.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC8F50B10934F3400AD6307 /* NSString+BXPaths.m */; };
 		9FCBB2D010A61CA800C28B09 /* boxer.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CD10A61CA800C28B09 /* boxer.icns */; };
@@ -352,7 +352,6 @@
 		9FBB86830F5DD070008418E6 /* BXRenderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXRenderView.h; sourceTree = "<group>"; };
 		9FBB86840F5DD070008418E6 /* BXRenderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXRenderView.m; sourceTree = "<group>"; };
 		9FBC31D10F56C370001811F2 /* AboutBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AboutBackground.png; sourceTree = "<group>"; };
-		9FBC31D20F56C370001811F2 /* Badge.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Badge.png; sourceTree = "<group>"; };
 		9FBC31D40F56C370001811F2 /* BunnyTemplate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BunnyTemplate.png; sourceTree = "<group>"; };
 		9FBC31D60F56C370001811F2 /* TortoiseTemplate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TortoiseTemplate.png; sourceTree = "<group>"; };
 		9FBC31DD0F56C383001811F2 /* LockClosing.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = LockClosing.aiff; sourceTree = "<group>"; };
@@ -605,6 +604,7 @@
 		9FBC3C760F56E0D7001811F2 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
 		9FBC3C770F56E0D7001811F2 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = /System/Library/Frameworks/CoreMIDI.framework; sourceTree = "<absolute>"; };
 		9FBC3CB10F56E32C001811F2 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9FBD321610E5144C00031CB6 /* Brand.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Brand.png; sourceTree = "<group>"; };
 		9FC3B2530F62D9CE006DE439 /* BXSession+BXEmulatorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXSession+BXEmulatorController.h"; sourceTree = "<group>"; };
 		9FC3B2540F62D9CE006DE439 /* BXSession+BXEmulatorController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXSession+BXEmulatorController.m"; sourceTree = "<group>"; };
 		9FC8F50A10934F3400AD6307 /* NSString+BXPaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+BXPaths.h"; sourceTree = "<group>"; };
@@ -981,6 +981,7 @@
 		9FBC34390F56C5AC001811F2 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				9FBD321610E5144C00031CB6 /* Brand.png */,
 				9FCBB2CD10A61CA800C28B09 /* boxer.icns */,
 				9FCBB2CE10A61CA800C28B09 /* executable.icns */,
 				9FCBB2CF10A61CA800C28B09 /* package.icns */,
@@ -988,7 +989,6 @@
 				9F59DD2210AF6129008DBBC1 /* Grille.png */,
 				9F59D99710AE0956008DBBC1 /* BoxArtShine.png */,
 				9FBC31D10F56C370001811F2 /* AboutBackground.png */,
-				9FBC31D20F56C370001811F2 /* Badge.png */,
 				9FBC31D40F56C370001811F2 /* BunnyTemplate.png */,
 				9FBC31D60F56C370001811F2 /* TortoiseTemplate.png */,
 			);
@@ -1473,7 +1473,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				9FBC31D70F56C370001811F2 /* AboutBackground.png in Resources */,
-				9FBC31D80F56C370001811F2 /* Badge.png in Resources */,
 				9FBC31DA0F56C370001811F2 /* BunnyTemplate.png in Resources */,
 				9FBC31DC0F56C370001811F2 /* TortoiseTemplate.png in Resources */,
 				9FBC31E00F56C383001811F2 /* LockClosing.aiff in Resources */,
@@ -1502,6 +1501,7 @@
 				9FCDCCE510D2D53C0080A24F /* Original DOSBox Documentation in Resources */,
 				9FFAFE2D10DE33FB00728BAC /* GameProfiles.plist in Resources */,
 				9FFAFE4310DE343F00728BAC /* Configurations in Resources */,
+				9FBD321710E5144C00031CB6 /* Brand.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

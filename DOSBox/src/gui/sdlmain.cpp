@@ -1222,7 +1222,7 @@ static void GUI_StartUp(Section * sec) {
 	
 	//--Disabled 2009-11-12 by Alun Bestor: what's more obnoxious than a splash screen?
 	//How about a passive-aggressive admonition not to alter the splash screen?
-	//This code is incompatible with OpenGL rendering anyway and will be reimplemented differently by Boxer.
+	//This code is incompatible with OpenGL rendering, and Boxer implements its own prettier DOSBox badge.
 	//SDL_Surface* splash_surf = SDL_CreateRGBSurface(SDL_SWSURFACE, 640, 400, 32, rmask, gmask, bmask, 0);
 	SDL_Surface* splash_surf = NULL;
 	//--End of modifications

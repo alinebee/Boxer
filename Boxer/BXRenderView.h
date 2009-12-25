@@ -18,4 +18,10 @@
 	BOOL subviewsHidden;			//Used when resizing to track whether we have hidden all our subviews yet
 }
 @property (retain) NSBitmapImageRep *cachedImage;
+
+//Render the view's badged grey background; this is drawn when there is no DOSBox view. 
+- (void) drawBackgroundInRect: (NSRect) dirtyRect;
+
+//Render the view's cached image; this is drawn during window resizing events.
+- (void) drawCachedImageInRect: (NSRect) dirtyRect;
 @end

@@ -258,7 +258,7 @@
 	{
 		BOOL isFullScreen = [[self emulator] isFullScreen];
 		[theItem setHidden: !isFullScreen];
-		return isFullScreen;
+		return isFullScreen && [[self emulator] isAtPrompt];
 	}
 	
     return YES;

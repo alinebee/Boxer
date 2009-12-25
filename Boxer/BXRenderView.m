@@ -28,53 +28,71 @@
 	[super viewWillDraw];
 }
 
-- (void) drawRect: (NSRect)dirtyRect
+- (void) drawBackgroundInRect: (NSRect)dirtyRect
 {
-	//First draw a flat black background
-	[[NSColor blackColor] set];
-	[NSBezierPath fillRect:dirtyRect];
-	
-	//While resizing, draw our cached fake image at the appropriate scale
-	if ([self inLiveResize] && cachedImage)
+	//Cache the background gradient so we don't have to generate it each time
+	static NSGradient *background = nil;
+	if (background == nil)
 	{
-		NSRect bounds = [self bounds];
-		NSRect drawRect;
-		
-		//Center the cached image within the view, retaining its original aspect ratio
-		//This isn't needed for normal resizes because we keep the aspect ratio locked, but it's needed when scaling to fill the screen
-		//Could we do this by modifying the view bounds instead?
-		drawRect.size	= sizeToFitSize([cachedImage size], bounds.size);
-		drawRect.origin	= NSMakePoint(
-			(NSMaxX(bounds) - drawRect.size.width)	/ 2,
-			(NSMaxY(bounds) - drawRect.size.height)	/ 2
-		);
-		
-		//An integral rect may result in faster draws?? or may not??
-		drawRect = NSIntegralRect(drawRect);
-		[cachedImage drawInRect: drawRect];
-		
-		/*
-		//Quick and dirty fade effect if we want it, which we currently don't
-		NSColor *black = [NSColor colorWithDeviceWhite: 0.0 alpha: 0.5];
-		[black set];
-		[NSBezierPath fillRect:drawRect];
-		*/
+		background = [[NSGradient alloc] initWithColorsAndLocations:
+					  [NSColor colorWithCalibratedWhite: 0.15 alpha: 1.0],	0.0,
+					  [NSColor colorWithCalibratedWhite: 0.25 alpha: 1.0],	0.95,
+					  [NSColor colorWithCalibratedWhite: 0.15 alpha: 1.0],	0.99,
+					  [NSColor colorWithCalibratedWhite: 0.05 alpha: 1.0],	1.0,
+					  nil];	
 	}
 	
-	//Draw a focus ring if appropriate
-	//Currently unusable because it will be covered by SDL's opaque (literally and figuratively) NSOpenGLView
-	/*
-	if (YES)
+	[background drawInRect: [self bounds] angle: 90];
+	
+	NSImage *brand = [NSImage imageNamed: @"Brand.png"];
+	NSRect brandRegion;
+	brandRegion.size = [brand size];
+	brandRegion =  centerInRect(brandRegion, [self bounds]);
+	
+	if (NSIntersectsRect(dirtyRect, brandRegion))
 	{
-	    NSRect frameRect = NSInsetRect([self bounds],4,4);
-		[NSGraphicsContext saveGraphicsState];
-		[self setKeyboardFocusRingNeedsDisplayInRect: frameRect];
-		NSSetFocusRingStyle(NSFocusRingOnly);
-		[[NSBezierPath bezierPathWithRect: frameRect] fill];
-		[self setKeyboardFocusRingNeedsDisplayInRect: frameRect];
-		[NSGraphicsContext restoreGraphicsState];
-    }
-	*/
+		[brand drawInRect: brandRegion
+				 fromRect: NSZeroRect
+				operation: NSCompositeSourceOver
+				 fraction: 1.0];	
+	}		
+}
+
+- (void) drawCachedImageInRect: (NSRect)dirtyRect
+{
+	NSRect bounds = [self bounds];
+
+	//First, fill the view with black
+	//This will show at the edges of the image if the aspect ratio changes
+	[[NSColor blackColor] setFill];
+	[NSBezierPath fillRect: dirtyRect];
+	
+	//Center the cached image within the view, retaining its original aspect ratio
+	//This isn't needed for normal resizes because we keep the aspect ratio locked,
+	//but it is needed when scaling to fill the screen.
+	NSRect drawRect;
+	drawRect.size	= sizeToFitSize([cachedImage size], bounds.size);
+	drawRect		= centerInRect(drawRect, bounds);
+	
+	if (NSIntersectsRect(dirtyRect, drawRect))
+	{
+		[cachedImage drawInRect: NSIntegralRect(drawRect)];	
+	}
+}
+
+- (void) drawRect: (NSRect)dirtyRect
+{
+	[NSBezierPath clipRect: dirtyRect];
+	if ([self inLiveResize] && [self cachedImage])
+	{
+		//While resizing, draw our cached fake image at the appropriate scale
+		return [self drawCachedImageInRect: dirtyRect];
+	}
+	else
+	{
+		//The rest of the time, draw our grey background and badge underneath
+		return [self drawBackgroundInRect: dirtyRect];
+	}
 }
 
 //Cache an image of our current content to display while we resize

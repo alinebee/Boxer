@@ -279,7 +279,7 @@
 }
 
 //Returns whether to apply bilinear filtering to the specified SDL surface size.
-//We always apply filtering unless the size is an exact multiple of the base resolution.
+//We apply filtering when the size is not an exact multiple of the base resolution.
 - (BOOL) _shouldUseBilinearForResolution: (NSSize)resolution atSurfaceSize: (NSSize)surfaceSize
 {
 	return	((NSInteger)surfaceSize.width	% (NSInteger)resolution.width) || 

@@ -151,7 +151,6 @@
 
 - (void) startScalingToFrame: (NSRect)newFrame
 {
-	NSArray *animations;
 	NSViewAnimation *animation;
 	NSDictionary *resize, *fadeIn;
 

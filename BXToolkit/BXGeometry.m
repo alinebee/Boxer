@@ -55,3 +55,16 @@ NSPoint pointRelativeToRect(NSPoint thePoint, NSRect theRect)
 	anchorPoint.y = (theRect.size.height > 0)	? ((thePoint.y - theRect.origin.y) / theRect.size.height)	: 0;
 	return anchorPoint;
 }
+
+NSRect alignInRectWithAnchor(NSRect innerRect, NSRect outerRect, NSPoint anchor)
+{
+	NSRect alignedRect = innerRect;
+	alignedRect.origin.x = anchor.x * (NSMaxX(outerRect) - innerRect.size.width);
+	alignedRect.origin.y = anchor.y * (NSMaxY(outerRect) - innerRect.size.height);
+	return alignedRect;	
+}
+
+NSRect centerInRect(NSRect innerRect, NSRect outerRect)
+{
+	return alignInRectWithAnchor(innerRect, outerRect, NSMakePoint(0.5, 0.5));
+}

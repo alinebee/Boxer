@@ -23,7 +23,7 @@
 							  samplesPerPixel: 3
 							  hasAlpha: NO
 							  isPlanar: NO
-							  colorSpaceName: NSCalibratedRGBColorSpace
+							  colorSpaceName: NSDeviceRGBColorSpace
 							  bytesPerRow: bytesPerRow
 							  bitsPerPixel: 32] autorelease];
 	return rep;

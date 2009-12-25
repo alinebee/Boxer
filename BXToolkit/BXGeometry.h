@@ -35,7 +35,14 @@ NSRect resizeRectFromPoint(NSRect theRect, NSSize newSize, NSPoint anchor);
 //Get the relative position ({0,0}, {1,1} etc.) of an NSPoint origin, relative to the specified NSRect.
 NSPoint pointRelativeToRect(NSPoint thePoint, NSRect theRect);
 
+//Align innerRect within outerRect relative to the specified anchor point: 
+//{0,0} is bottom left, {1,1} is top right, {0.5,0.5} is center.
+NSRect alignInRectWithAnchor(NSRect innerRect, NSRect outerRect, NSPoint anchor);
 
+//Center innerRect within outerRect. Equivalent to alignRectInRectWithAnchor of {0.5, 0.5}.
+NSRect centerInRect(NSRect innerRect, NSRect outerRect);
+
+	
 #if __cplusplus
 } //Extern C
 #endif

@@ -42,7 +42,7 @@
 	[theWindow setRenderViewSize: viewSize animate: YES];
 	
 	//Finally add the new view into our resized window
-	[[self renderView] setSubviews: [NSArray arrayWithObject: theView]];
+	[[self renderView] addSubview: theView];
 }
 - (void) clearSDLView	{ [[self SDLView] removeFromSuperview]; }
 

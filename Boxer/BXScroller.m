@@ -10,6 +10,10 @@
 #import "NSBezierPath+MCAdditions.h"
 
 @implementation BXScroller
+
+//Appearance properties
+//---------------------
+
 //Todo: is there an easier way to determine this?
 - (BOOL) isVertical
 {
@@ -17,7 +21,8 @@
 	return size.height > size.width;
 }
 
-- (BOOL) isOpaque	{ return NO; }
+- (NSSize) knobMargin	{ return NSMakeSize(3.0, 0); }
+- (NSSize) slotMargin	{ return NSMakeSize(3.0, 4.0); }
 
 - (NSColor *)slotFill
 {
@@ -36,11 +41,17 @@
 
 - (NSGradient *)knobGradient
 {
-	NSGradient *knobGradient = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.2 alpha: 1.0]
-															 endingColor: [NSColor colorWithCalibratedWhite: 0.15 alpha: 1.0]
+	NSGradient *knobGradient = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.25 alpha: 1.0]
+															 endingColor: [NSColor colorWithCalibratedWhite: 0.20 alpha: 1.0]
 								];
 	return [knobGradient autorelease];
 }
+
+
+//Draw methods
+//------------
+
+- (BOOL) isOpaque	{ return NO; }
 
 - (void) drawRect: (NSRect)dirtyRect
 {
@@ -53,20 +64,21 @@
 	NSRect regionRect = [self rectForPart: NSScrollerKnob];
 	if (NSEqualRects(regionRect, NSZeroRect)) return;	
 	
-	NSRect knobRect;
-	CGFloat knobRadius;
-	CGFloat knobGradientAngle;
-	NSGradient *knobGradient = [self knobGradient];
+	NSRect	knobRect;
+	CGFloat	knobRadius;
+	CGFloat	knobGradientAngle;
+	NSGradient *knobGradient	= [self knobGradient];
+	NSSize	knobMargin			= [self knobMargin];
 	
 	if ([self isVertical])
 	{
-		knobRect			= NSInsetRect(regionRect, 3.0, 0.0);
+		knobRect			= NSInsetRect(regionRect, knobMargin.width, knobMargin.height);
 		knobRadius			= knobRect.size.width / 2;
 		knobGradientAngle	= 0;
 	}
 	else
 	{
-		knobRect			= NSInsetRect(regionRect, 0.0, 3.0);
+		knobRect			= NSInsetRect(regionRect, knobMargin.height, knobMargin.width);
 		knobRadius			= knobRect.size.height / 2;
 		knobGradientAngle	= 90;
 	}
@@ -85,19 +97,22 @@
 	NSColor *slotFill		= [self slotFill];
 	NSShadow *slotShadow	= [self slotShadow];
 	
+	
 	NSRect slotRect;
 	CGFloat slotRadius;
+	NSSize slotMargin = [self slotMargin];
 	
 	if ([self isVertical])
-	{
-		slotRect		= NSInsetRect(regionRect, 3.0, 4.0);
-		slotRadius		= slotRect.size.width / 2;
+	{	
+		slotRect = NSInsetRect(regionRect, slotMargin.width, slotMargin.height);
+		slotRadius = slotRect.size.width / 2;
 	}
 	else
 	{
-		slotRect		= NSInsetRect(regionRect, 4.0, 3.0);
-		slotRadius		= slotRect.size.height / 2;
+		slotRect = NSInsetRect(regionRect, slotMargin.height, slotMargin.width);
+		slotRadius = slotRect.size.height / 2;
 	}
+	
 	NSBezierPath *slotPath	= [NSBezierPath	bezierPathWithRoundedRect: slotRect
 															 xRadius: slotRadius
 															 yRadius: slotRadius];
@@ -110,10 +125,13 @@
 
 @implementation BXHUDScroller
 
+//Make the knob 1px thinner than the slot on each side
+- (NSSize) knobMargin	{ return NSMakeSize(4.0, 1.0); }
+
 - (NSGradient *)knobGradient
 {
-	NSGradient *knobGradient = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.4 alpha: 1.0]
-															 endingColor: [NSColor colorWithCalibratedWhite: 0.3 alpha: 1.0]
+	NSGradient *knobGradient = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.40 alpha: 1.0]
+															 endingColor: [NSColor colorWithCalibratedWhite: 0.30 alpha: 1.0]
 								];
 	return [knobGradient autorelease];
 }

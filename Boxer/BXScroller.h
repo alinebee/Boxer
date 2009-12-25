@@ -16,6 +16,8 @@
 @interface BXScroller : NSScroller
 - (BOOL) isVertical;	//Returns whether the scroller is horizontal or vertical.
 
+- (NSSize) knobMargin;			//How big a margin to leave between the edge of the scroller and the scroll knob
+- (NSSize) slotMargin;			//How big a margin to leave between the edge of the scroller and the visible track
 - (NSColor *)slotFill;			//The color with which to fill the scroller track
 - (NSShadow *)slotShadow;		//The inner shadow to give the scroller track
 - (NSGradient *)knobGradient;	//The gradient with which to fill the scroller knob

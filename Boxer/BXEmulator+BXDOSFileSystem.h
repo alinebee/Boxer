@@ -30,6 +30,7 @@
 + (NSArray *) floppyDriveLetters;	//letters appropriate for floppy drives
 + (NSArray *) hardDriveLetters;		//letters appropriate for hard disk/CD-ROM drives (excludes reserved letters)
 
++ (NSArray *) dosFileExclusions;	//Filenames to hide from DOS directory listings
 
 //Instance methods for mounting drives
 //------------------------------------
@@ -120,6 +121,10 @@
 //Decides whether to let the DOS session mount the specified path
 //This checks against pathIsSafeToMount, and prints an error to the console if not
 - (BOOL) shouldMountPath: (NSString *)thePath;
+
+//Returns whether to show files with the specified name in DOS directory listings
+//This hides all files starting with . or that are in dosFileExclusions
+- (BOOL) shouldShowFileWithName: (NSString *)fileName;
 
 @end
 

@@ -112,6 +112,18 @@ enum {
 	return letters;
 }
 
++ (NSArray *) dosFileExclusions
+{
+	static NSArray *exclusions = nil;
+	if (!exclusions) exclusions = [[NSArray alloc] initWithObjects:
+		@"DOSBox Preferences.conf",
+		@"DOSBox Target",
+		@"Icon\r",
+	nil];
+								   
+	return exclusions;
+}
+
 
 //Returns whether a specific folder is safe to mount from DOS
 //This is used to restrict access to the root folder and library folders
@@ -148,6 +160,21 @@ enum {
 		return NO;
 	}
 	else return YES;
+}
+
+//Todo: supplement this by getting entire OS X filepaths out of DOSBox, instead of just filenames
+- (BOOL) shouldShowFileWithName: (NSString *)fileName
+{
+	//Permit . and .. to be shown
+	if ([fileName isEqualToString: @"."] || [fileName isEqualToString: @".."]) return YES;
+	
+	//Hide all hidden UNIX files
+	//Todo: will this ever hide valid DOS files?
+	if ([fileName hasPrefix: @"."]) return NO;
+	
+	//Hide OSX and Boxer metadata files
+	if ([[[self class] dosFileExclusions] containsObject: fileName]) return NO;
+	return YES;
 }
 
 
@@ -631,8 +658,7 @@ enum {
 	}
 	
 	const char *drivePath = [path cStringUsingEncoding: BXDirectStringEncoding];
-	return new localDrive(
-						  drivePath,
+	return new localDrive(drivePath,
 						  geometry.bytesPerSector,
 						  geometry.sectorsPerCluster,
 						  geometry.numClusters,
@@ -660,4 +686,11 @@ bool boxer_willMountPath(const char *pathStr)
 	
 	BXEmulator *emulator = [BXEmulator currentEmulator];
 	return [emulator shouldMountPath: thePath];
+}
+
+bool boxer_allowFileWithName(const char *name)
+{
+	NSString *fileName = [NSString stringWithCString: name encoding: BXDirectStringEncoding];
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+	return [emulator shouldShowFileWithName: fileName];
 }

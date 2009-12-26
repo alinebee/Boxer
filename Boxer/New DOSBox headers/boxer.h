@@ -55,6 +55,9 @@ BOXER_EXPORT void boxer_handleReturnToShell();
 
 //Called from shell_cmds.cpp: hooks into shell command processing.
 BOXER_EXPORT bool boxer_handleShellCommand(char* cmd, char* args);
+	
+//Called from drive_cache.cpp: allows Boxer to hide OS X files that DOSBox shouldn't touch
+BOXER_EXPORT bool boxer_allowFileWithName(const char *name);
 
 #if __cplusplus
 } //Extern C

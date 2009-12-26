@@ -85,6 +85,7 @@
 					<string>mainWindowController.statusBarShown</string>
 					<string>mainWindowController.programPanelShown</string>
 					<string>emulator.isFullScreen</string>
+					<string>emulator.isInProcess</string>
 				</object>
 				<string key="NSObjectClassName">BXSession</string>
 				<bool key="NSEditable">YES</bool>
@@ -1920,6 +1921,65 @@
 					</object>
 					<int key="connectionID">1792</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">enabled: selection.emulator.isRunningProcess</string>
+						<reference key="source" ref="390415794"/>
+						<reference key="destination" ref="126527174"/>
+						<object class="NSNibBindingConnector" key="connector" id="446902774">
+							<reference key="NSSource" ref="390415794"/>
+							<reference key="NSDestination" ref="126527174"/>
+							<string key="NSLabel">enabled: selection.emulator.isRunningProcess</string>
+							<string key="NSBinding">enabled</string>
+							<string key="NSKeyPath">selection.emulator.isRunningProcess</string>
+							<object class="NSDictionary" key="NSOptions">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<object class="NSArray" key="dict.sortedKeys">
+									<bool key="EncodedWithXMLCoder">YES</bool>
+									<string>NSNoSelectionPlaceholder</string>
+									<string>NSValueTransformerName</string>
+								</object>
+								<object class="NSMutableArray" key="dict.values">
+									<bool key="EncodedWithXMLCoder">YES</bool>
+									<integer value="0"/>
+									<string>NSNegateBoolean</string>
+								</object>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1814</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">hidden: selection.emulator.fullScreen</string>
+						<reference key="source" ref="390415794"/>
+						<reference key="destination" ref="126527174"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="390415794"/>
+							<reference key="NSDestination" ref="126527174"/>
+							<string key="NSLabel">hidden: selection.emulator.fullScreen</string>
+							<string key="NSBinding">hidden</string>
+							<string key="NSKeyPath">selection.emulator.fullScreen</string>
+							<object class="NSDictionary" key="NSOptions">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<object class="NSArray" key="dict.sortedKeys">
+									<bool key="EncodedWithXMLCoder">YES</bool>
+									<string>NSNoSelectionPlaceholder</string>
+									<string>NSValueTransformerName</string>
+								</object>
+								<object class="NSMutableArray" key="dict.values">
+									<bool key="EncodedWithXMLCoder">YES</bool>
+									<integer value="1"/>
+									<string>NSNegateBoolean</string>
+								</object>
+							</object>
+							<reference key="NSPreviousConnector" ref="446902774"/>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1816</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -3311,7 +3371,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1801</int>
+			<int key="maxID">1816</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

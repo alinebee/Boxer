@@ -230,16 +230,6 @@
 		return ([emulator isExecuting]);
 	}
 	
-	//Hide and disable the exit-fullscreen option when in windowed mode
-	else if (theAction == @selector(exitFullScreen:))
-	{
-		BOOL isFullScreen = [emulator isFullScreen];
-		//Note: unhiding the menu item like this will leave it disabled until the next NSEvent,
-		//not the current one that triggered the revalidation. I have no idea why this is so.
-		[theItem setHidden: !isFullScreen];
-		return isFullScreen && [emulator isAtPrompt];
-	}
-	
 	else if (theAction == @selector(toggleProgramPanelShown:))
 	{
 		if (![self programPanelShown])

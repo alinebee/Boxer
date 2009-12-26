@@ -196,14 +196,19 @@
 	{
 		if ([theItem isKindOfClass: [NSMenuItem class]])
 		{
-			hideItem = [[self emulator] isRecordingVideo];
-			if ([theItem tag] == 1) hideItem = !hideItem;
-			[theItem setHidden: hideItem];
+			NSString *title;
+			if (![[self emulator] isRecordingVideo])
+				title = NSLocalizedString(@"Start Recording Video", @"Recording menu option for starting video recording.");
+			else
+				title = NSLocalizedString(@"Stop Recording Video", @"Recording menu option for stopping video recording.");
+			
+			[theItem setTitle: title];
 		}
 	}
 	
 	return [super validateUserInterfaceItem: theItem];
 }
+
 
 //Used to selectively enable/disable menu items by validateUserInterfaceItem
 - (BOOL) speedAtMinimum		{ return ![[self emulator] isAutoSpeed] && [[self emulator] fixedSpeed] <= [[self emulator] minFixedSpeed]; }

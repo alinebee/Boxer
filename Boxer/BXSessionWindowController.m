@@ -206,16 +206,13 @@
 	}
 }
 
-
-- (BOOL) validateUserInterfaceItem: (id)theItem
+- (BOOL) validateMenuItem: (NSMenuItem *)theItem
 {
 	BXEmulator *emulator = [self emulator];
 	
-	//All our actions depend on the emulator being active
-	if (![emulator isExecuting]) return NO;
-	
 	SEL theAction = [theItem action];
-	BOOL hideItem; 
+	BOOL hideItem;
+	NSString *title;
 	
 	if (theAction == @selector(toggleFilterType:))
 	{
@@ -229,36 +226,42 @@
 		else											itemState = NSMixedState;
 		
 		[theItem setState: itemState];
+		
+		return ([emulator isExecuting]);
+	}
+	
+	//Hide and disable the exit-fullscreen option when in windowed mode
+	else if (theAction == @selector(exitFullScreen:))
+	{
+		BOOL isFullScreen = [emulator isFullScreen];
+		//Note: unhiding the menu item like this will leave it disabled until the next NSEvent,
+		//not the current one that triggered the revalidation. I have no idea why this is so.
+		[theItem setHidden: !isFullScreen];
+		return isFullScreen && [emulator isAtPrompt];
 	}
 	
 	else if (theAction == @selector(toggleProgramPanelShown:))
 	{
-		if ([theItem isKindOfClass: [NSMenuItem class]])
-		{
-			hideItem = [self programPanelShown];
-			if ([theItem tag] == 1) hideItem = !hideItem;
-			[theItem setHidden: hideItem];
-		}
+		if (![self programPanelShown])
+			title = NSLocalizedString(@"Show Programs Panel", @"View menu option for showing the program panel.");
+		else
+			title = NSLocalizedString(@"Hide Programs Panel", @"View menu option for hiding the program panel.");
+		
+		[theItem setTitle: title];
+	
 		return [[self document] isGamePackage];
 	}
 	
 	else if (theAction == @selector(toggleStatusBarShown:))
 	{
-		if ([theItem isKindOfClass: [NSMenuItem class]])
-		{
-			hideItem = [self statusBarShown];
-			if ([theItem tag] == 1) hideItem = !hideItem;
-			[theItem setHidden: hideItem];
-		}
-		return YES;
-	}	
+		if (![self statusBarShown])
+			title = NSLocalizedString(@"Show Status Bar", @"View menu option for showing the status bar.");
+		else
+			title = NSLocalizedString(@"Hide Status Bar", @"View menu option for hiding the status bar.");
+		
+		[theItem setTitle: title];
 	
-	//Hide and disable the exit-fullscreen option when in windowed mode
-	if (theAction == @selector(exitFullScreen:))
-	{
-		BOOL isFullScreen = [[self emulator] isFullScreen];
-		[theItem setHidden: !isFullScreen];
-		return isFullScreen && [[self emulator] isAtPrompt];
+		return YES;
 	}
 	
     return YES;

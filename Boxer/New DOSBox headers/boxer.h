@@ -59,6 +59,10 @@ BOXER_EXPORT bool boxer_handleShellCommand(char* cmd, char* args);
 //Called from drive_cache.cpp: allows Boxer to hide OS X files that DOSBox shouldn't touch
 BOXER_EXPORT bool boxer_allowFileWithName(const char *name);
 
+//Called from dosbox.cpp to short-circuit the emulation loop
+BOXER_EXPORT bool boxer_isPaused();
+BOXER_EXPORT bool boxer_isCancelled();
+	
 #if __cplusplus
 } //Extern C
 #endif

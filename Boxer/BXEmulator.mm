@@ -74,6 +74,7 @@ BXEmulator *currentEmulator = nil;
 @synthesize minFixedSpeed, maxFixedSpeed, maxFrameskip;
 @synthesize suppressOutput;
 @synthesize configFiles;
+@synthesize paused;
 
 
 //Introspective class methods
@@ -139,12 +140,6 @@ BXEmulator *currentEmulator = nil;
 		[self setMinFixedSpeed:	BXMinSpeedThreshold];
 		[self setMaxFrameskip:	9];
 		[self setConfigFiles: [NSMutableArray arrayWithCapacity: 10]];
-		
-		queueDepth			= 0;
-		numQueuedCommands	= 0;
-		suppressOutput		= NO;
-		isInterrupted		= NO;
-		pendingRefresh		= NO;
 	}
 	return self;
 }
@@ -163,7 +158,6 @@ BXEmulator *currentEmulator = nil;
 
 - (void) main
 {
-	[self retain];
 	currentEmulator = self;
 	
 	//Record the thread we are running on for comparisons later
@@ -173,14 +167,16 @@ BXEmulator *currentEmulator = nil;
 	//Start DOSBox's main loop
 	DOSBox_main(*_NSGetArgc(), *_NSGetArgv());
 	
+	NSLog(@"Exited DOSBox.");
+	
 	//Clean up after DOSBox finishes
 	[self _shutdownRecording];
 	[self _shutdownRenderer];
 	[self _shutdownShell];
-
 	
 	if (currentEmulator == self) currentEmulator = nil;
-	[self release];
+	
+	NSLog(@"Finished shutting down.");
 }
 
 - (void) addConfigFile: (NSString *)configPath
@@ -206,7 +202,7 @@ BXEmulator *currentEmulator = nil;
 
 - (BOOL) isInBatchScript
 {
-	DOS_Shell *shell = (DOS_Shell *)first_shell;
+	DOS_Shell *shell = [self _currentShell];
 	return (shell && shell->bf);
 }
 
@@ -427,6 +423,18 @@ BXEmulator *currentEmulator = nil;
 	}
 }
 
+
+- (void) setPaused: (BOOL) pause
+{
+	[self willChangeValueForKey: @"paused"];
+	if (pause)	[self willPause];
+	else		[self didResume];
+	
+	paused = pause;
+	
+	[self didChangeValueForKey: @"paused"];
+}
+
 //These methods are only necessary if we are running in single-threaded mode,
 //which currently is indicated by the isConcurrent flag
 - (void) willPause
@@ -450,10 +458,22 @@ BXEmulator *currentEmulator = nil;
 		isInterrupted = NO;
 	}
 }
+
+- (void) cancel
+{
+	DOS_Shell *shell = [self _currentShell];
+	if (shell) shell->exit = YES;
+	[super cancel];
+}
 @end
 
 
 @implementation BXEmulator (BXEmulatorInternals)
+
+- (DOS_Shell *) _currentShell
+{
+	return (DOS_Shell *)first_shell;
+}
 
 - (void) _postNotificationName: (NSString *)name
 			  delegateSelector: (SEL)selector
@@ -588,10 +608,6 @@ BXEmulator *currentEmulator = nil;
 
 - (BOOL) _handleEventLoop
 {
-	if ([self isExecuting])
-	{
-		if ([self isCancelled]) { throw(0); }
-	}
 	return NO;
 }
 
@@ -671,4 +687,16 @@ void boxer_handleReturnToShell()
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
 	[emulator _didReturnToShell];
+}
+
+bool boxer_isPaused()
+{
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+	return [emulator isPaused];	
+}
+
+bool boxer_isCancelled()
+{
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+	return [emulator isCancelled];	
 }

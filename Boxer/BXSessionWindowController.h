@@ -32,9 +32,10 @@
 //Our view controller for the program picker panel. This is created when awaking from the NIB file.
 @property (retain) BXProgramPanelController *programPanelController;
 
-
-- (BXSession *)document;
-- (BXSessionWindow *)window;
+//Recast NSWindowController's standard accessors so that we get our own classes
+//(and don't have to keep recasting them ourselves)
+- (BXSession *) document;
+- (BXSessionWindow *) window;
 
 - (BXEmulator *) emulator;		//Shortcut accessor for the current session's emulator
 - (BXRenderView *) renderView;	//Shortcut accessor for the session window's render view.

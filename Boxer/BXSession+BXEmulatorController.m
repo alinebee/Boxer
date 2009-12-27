@@ -81,6 +81,11 @@
 //Responding to actions
 //---------------------
 
+- (IBAction) pause: (id)sender
+{
+	[[self emulator] setPaused: ![[self emulator] isPaused]];
+}
+
 - (IBAction) takeScreenshot: (id)sender
 {
 	[[self emulator] recordImage];
@@ -220,7 +225,6 @@
 
 //Keyboard events
 //---------------
-
 
 - (IBAction) sendEnter: (id)sender	{ [[self emulator] sendEnter]; }
 - (IBAction) sendF1:	(id)sender	{ [[self emulator] sendF1]; }

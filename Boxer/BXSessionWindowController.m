@@ -114,14 +114,14 @@
 //-----------------------------
 
 
-- (BOOL) statusBarShown		{ return ![[(BXSessionWindow *)[self window] statusBar] isHidden]; }
-- (BOOL) programPanelShown	{ return ![[(BXSessionWindow *)[self window] programPanel] isHidden]; }
+- (BOOL) statusBarShown		{ return ![[[self window] statusBar] isHidden]; }
+- (BOOL) programPanelShown	{ return ![[[self window] programPanel] isHidden]; }
 
 - (void) setStatusBarShown: (BOOL)show
 {
 	if (show != [self statusBarShown])
 	{
-		BXSessionWindow *theWindow	= (BXSessionWindow *)[self window];
+		BXSessionWindow *theWindow	= [self window];
 		BXRenderView *renderView	= [theWindow renderView];
 		NSView *programPanel		= [theWindow programPanel];
 		
@@ -148,7 +148,7 @@
 {
 	if (show != [self programPanelShown])
 	{
-		BXSessionWindow *theWindow	= (BXSessionWindow *)[self window];
+		BXSessionWindow *theWindow	= [self window];
 		BXRenderView *renderView 	= [theWindow renderView];
 		NSView *programPanel		= [theWindow programPanel];
 		
@@ -280,7 +280,6 @@
     if ([[pboard types] containsObject: NSFilenamesPboardType])
 	{
         NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
-		
 		return [[self document] handleDroppedFiles: filePaths withLaunching: YES];
 	}
 	/*
@@ -292,17 +291,6 @@
 	*/
     return NO;
 }
-
-
-//Handling window title
-//---------------------
-
-- (void) synchronizeWindowTitleWithDocumentName
-{	
-	BXSession *theSession = [self document];
-	if (theSession) [[self window] setTitle: [theSession sessionDisplayName]];
-}
-
 
 //Handling dialog sheets
 //----------------------

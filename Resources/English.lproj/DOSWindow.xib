@@ -741,6 +741,7 @@
 							<string>decrementSpeed:</string>
 							<string>incrementFrameSkip:</string>
 							<string>incrementSpeed:</string>
+							<string>pause:</string>
 							<string>sendEnter:</string>
 							<string>sendF10:</string>
 							<string>sendF1:</string>
@@ -757,6 +758,7 @@
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>

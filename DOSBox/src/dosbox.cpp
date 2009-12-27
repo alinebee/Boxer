@@ -43,6 +43,10 @@
 #include "ints/int10.h"
 #include "render.h"
 
+//--Added 2009-12-27 by Alun Bestor to allow Boxer to hook into DOSBox's internals
+#include "boxer.h"
+//--End of modifications
+
 Config * control;
 MachineType machine;
 SVGACards svgaCard;
@@ -128,6 +132,10 @@ bool ticksLocked;
 static Bitu Normal_Loop(void) {
 	Bits ret;
 	while (1) {
+		//--Added 2009-12-27 by Alun Bestor to short-circuit the emulation loop while we are shutting down
+		if (boxer_isCancelled()) return 1;
+		//--End of modifications
+		
 		if (PIC_RunQueue()) {
 			ret=(*cpudecoder)();
 			if (ret<0) return 1;

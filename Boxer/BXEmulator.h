@@ -60,6 +60,7 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 	NSUInteger maxFrameskip;
 	
 	BOOL isInterrupted;
+	BOOL paused;
 	BOOL pendingRefresh;
 	
 	//Used by BXShell
@@ -108,6 +109,8 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 //Whether the output of DOS programs should be discarded without printing to the DOS shell.
 //Used by BXShell at opportune moments.
 @property (assign)		BOOL suppressOutput;
+
+@property (assign, getter=isPaused) BOOL paused;
 
 
 //Class methods
@@ -203,8 +206,14 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 @end
 
 
-//The methods in this category should not be executed outside of BXEmulator.
+#if __cplusplus
+
+class DOS_Shell;
+
+//The methods in this category should not be executed outside of BXEmulator and are only visible in Objective C++.
 @interface BXEmulator (BXEmulatorInternals)
+
+- (DOS_Shell *) _currentShell;
 
 //Shortcut method for sending a notification both to the default notification center
 //and to a selector on our delegate. The object of the notification will be self.
@@ -251,3 +260,5 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 - (BOOL) _handleEventLoop;
 
 @end
+
+#endif

@@ -12,7 +12,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="1607"/>
+			<integer value="1527"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1926,7 +1926,7 @@
 						<string key="label">enabled: selection.emulator.isRunningProcess</string>
 						<reference key="source" ref="390415794"/>
 						<reference key="destination" ref="126527174"/>
-						<object class="NSNibBindingConnector" key="connector" id="446902774">
+						<object class="NSNibBindingConnector" key="connector" id="21266085">
 							<reference key="NSSource" ref="390415794"/>
 							<reference key="NSDestination" ref="126527174"/>
 							<string key="NSLabel">enabled: selection.emulator.isRunningProcess</string>
@@ -1974,7 +1974,7 @@
 									<string>NSNegateBoolean</string>
 								</object>
 							</object>
-							<reference key="NSPreviousConnector" ref="446902774"/>
+							<reference key="NSPreviousConnector" ref="21266085"/>
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
 					</object>
@@ -3284,7 +3284,7 @@
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
-					<string>{{406, 436}, {198, 123}}</string>
+					<string>{{419, 436}, {198, 123}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -3371,7 +3371,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1816</int>
+			<int key="maxID">1818</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -3468,6 +3468,7 @@
 							<string>decrementSpeed:</string>
 							<string>incrementFrameSkip:</string>
 							<string>incrementSpeed:</string>
+							<string>pause:</string>
 							<string>sendEnter:</string>
 							<string>sendF10:</string>
 							<string>sendF1:</string>
@@ -3484,6 +3485,7 @@
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>

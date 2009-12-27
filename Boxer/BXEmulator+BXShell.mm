@@ -54,7 +54,7 @@ nil];
 {
 	if ([self isExecuting])
 	{
-		DOS_Shell *DOSBoxShell = (DOS_Shell *)first_shell;
+		DOS_Shell *shell = [self _currentShell];
 		char *encodedString;
 
 		if ([self suppressOutput] || [self isRunningProcess])
@@ -62,15 +62,15 @@ nil];
 			//Only run the command itself, and eat the command's output so it doesn't print anything
 			theString = [theString stringByAppendingString: @" > NUL"];
 			encodedString = (char *)[theString cStringUsingEncoding: encoding];
-			DOSBoxShell->ParseLine(encodedString);
+			shell->ParseLine(encodedString);
 		}
 		else
 		{
 			//Otherwise, run the command and let any output flow
 			if (numQueuedCommands == 0)
-				DOSBoxShell->WriteOut_NoParsing("\n");
+				shell->WriteOut_NoParsing("\n");
 			encodedString = (char *)[theString cStringUsingEncoding: encoding];
-			DOSBoxShell->ParseLine(encodedString);
+			shell->ParseLine(encodedString);
 			
 			//Make sure to refresh the prompt, in case this command did produce any output
 			[self setPromptNeedsDisplay: YES];
@@ -112,8 +112,8 @@ nil];
 	
 	if ([self isExecuting] && ![self isRunningProcess])
 	{
-		DOS_Shell *DOSBoxShell	= (DOS_Shell *)first_shell;
-		DOSBoxShell->WriteOut(encodedString);
+		DOS_Shell *shell = [self _currentShell];
+		shell->WriteOut(encodedString);
 	}
 }
 
@@ -298,8 +298,8 @@ nil];
 	if ([self isExecuting])
 	{
 		const char *encodedString = [theString cStringUsingEncoding: encoding];
-		DOS_Shell *DOSBoxShell	= (DOS_Shell *)first_shell;
-		DOSBoxShell->DoCommand((char *)encodedString);
+		DOS_Shell *shell = [self _currentShell];
+		shell->DoCommand((char *)encodedString);
 	}
 }
 

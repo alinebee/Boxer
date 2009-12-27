@@ -20,17 +20,12 @@
 //Class methods for reporting accepted values
 //-------------------------------------------
 
-+ (NSArray *) executableTypes;		//UTIs that the file system can execute
-
-+ (NSArray *) mountableImageTypes;	//UTIs of disk image formats that the file system can mount
-+ (NSArray *) mountableFolderTypes;	//UTIs of folder formats that the file system can mount
-+ (NSArray *) mountableTypes;		//UTIs that the file system can mount (union of the above two)
-
 + (NSArray *) driveLetters;			//all drive letters, including reserved letters
 + (NSArray *) floppyDriveLetters;	//letters appropriate for floppy drives
 + (NSArray *) hardDriveLetters;		//letters appropriate for hard disk/CD-ROM drives (excludes reserved letters)
 
 + (NSArray *) dosFileExclusions;	//Filenames to hide from DOS directory listings
+
 
 //Instance methods for mounting drives
 //------------------------------------

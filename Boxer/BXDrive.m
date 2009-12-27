@@ -7,9 +7,11 @@
 
 
 #import "BXDrive.h"
+#import "BXAppController.h"
 #import "NSWorkspace+BXMountedVolumes.h"
 #import "NSWorkspace+BXFileTypes.h"
 #import "NSString+BXPaths.h"
+#import "RegexKitLite.h"
 
 @implementation BXDrive
 @synthesize path, letter, label;
@@ -23,40 +25,6 @@
 	NSSet *keyPaths = [super keyPathsForValuesAffectingValueForKey: key];
 	if (![key isEqualToString: @"path"]) keyPaths = [keyPaths setByAddingObject: @"path"];
 	return keyPaths;
-}
-
-//Supported UTIs
-//--------------
-
-+ (NSArray *) CDROMTypes
-{
-	static NSArray *types = nil;
-	if (!types) types = [[NSArray alloc] initWithObjects:
-		@"public.iso-image",					//.iso
-		@"com.apple.disk-image-cdr",			//.cdr
-		@"com.goldenhawk.cdrwin-cuesheet",		//.cue	
-		@"net.washboardabs.boxer-cdrom-folder",	//.cdrom
-	nil];
-	return types;
-}
-
-+ (NSArray *) floppyTypes
-{
-	static NSArray *types = nil;
-	if (!types) types = [[NSArray alloc] initWithObjects:
-		@"net.washboardabs.boxer-floppy-folder",	//.floppy
-	nil];
-	return types;
-}
-
-+ (NSArray *) hardDiskTypes
-{
-	static NSArray *types = nil;
-	if (!types) types = [[NSArray alloc] initWithObjects:
-		@"net.washboardabs.boxer-game-package",	//.boxer
-		@"public.directory",
-	nil];
-	return types;
 }
 
 + (NSString *) descriptionForType: (BXDriveType)driveType
@@ -77,11 +45,11 @@
 	if (filePath == nil) return BXDriveInternal;
 	
 	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
-	if ([workspace file: filePath matchesTypes: [self CDROMTypes]])		return BXDriveCDROM;
-	if ([workspace file: filePath matchesTypes: [self floppyTypes]])	return BXDriveFloppyDisk;
+	if ([workspace file: filePath matchesTypes: [BXAppController cdVolumeTypes]])		return BXDriveCDROM;
+	if ([workspace file: filePath matchesTypes: [BXAppController floppyVolumeTypes]])	return BXDriveFloppyDisk;
 
 	//Check the volume type of the underlying filesystem for that path
-	NSString *volumeType	= [workspace volumeTypeForPath: filePath];
+	NSString *volumeType = [workspace volumeTypeForPath: filePath];
 	if ([volumeType isEqualToString: dataCDVolumeType]) return BXDriveCDROM;
 	
 	//Fall back on a standard hard-disk mount
@@ -90,10 +58,36 @@
 
 + (NSString *) preferredLabelForPath: (NSString *)filePath
 {
-	NSString *baseName = [[filePath stringByDeletingPathExtension] lastPathComponent];
+	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
+	NSString *baseName		= [[filePath stringByDeletingPathExtension] lastPathComponent];
+
+	//Disk images store their own volume labels
+	if ([workspace file: filePath matchesTypes: [BXAppController mountableImageTypes]]) return nil;
+		 
+	//Mountable folders can include a drive letter prefix as well as a drive label,
+	//so have a crack at parsing it out
+	if ([workspace file: filePath matchesTypes: [BXAppController mountableFolderTypes]])
+	{
+		NSString *detectedLabel	= [baseName stringByMatching: @"^([a-xA-X] )?(.+)$" capture: 2];
+		if (detectedLabel) return detectedLabel;		
+	}
+
+	//For all other cases, use the base filename as the drive label
 	return baseName;
 }
 
++ (NSString *) preferredDriveLetterForPath: (NSString *)filePath
+{
+	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+	if ([workspace file: filePath matchesTypes: [BXAppController mountableImageTypes]] ||
+		[workspace file: filePath matchesTypes: [BXAppController mountableFolderTypes]])
+	{
+		NSString *baseName			= [[filePath stringByDeletingPathExtension] lastPathComponent];
+		NSString *detectedLetter	= [baseName stringByMatching: @"^([a-xA-X])( .*)?$" capture: 1];
+		return detectedLetter;	//will be nil if no match was found
+	}
+	return nil;
+}
 
 //Copious initialisation methods we will never use
 //------------------------------------------------
@@ -116,7 +110,7 @@
 	if ((self = [self init]))
 	{
 		[self setPath: drivePath];
-		[self setLetter: driveLetter];
+		if (driveLetter) [self setLetter: driveLetter];
 		
 		//Autodetect the appropriate mount type for the specified path
 		if (driveType == BXDriveAutodetect) driveType = [[self class] preferredTypeForPath: [self path]];
@@ -160,6 +154,10 @@
 	[path autorelease];
 	path = [filePath retain];
 	[self didChangeValueForKey: @"path"];
+	
+	//Automatically parse the drive letter and label from the name of the drive
+	if (![self letter])	[self setLetter:	[[self class] preferredDriveLetterForPath: filePath]];
+	if (![self label])	[self setLabel:		[[self class] preferredLabelForPath: filePath]];
 }
 
 - (void) setLetter: (NSString *)driveLetter
@@ -170,13 +168,6 @@
 	[letter autorelease];
 	letter = [driveLetter retain];
 	[self didChangeValueForKey: @"letter"];	
-}
-
-//Autogenerate the label based on the file path, if an explicit label has not been provided 
-- (NSString *) label
-{
-	if (!label)	return [[self class] preferredLabelForPath: [self path]];
-	else		return label;
 }
 
 //If type was set to auto, autodetect the appropriate mount type for our current path the first time we need that information
@@ -210,8 +201,12 @@
 
 - (NSString *) displayName
 {
-	NSFileManager *manager = [NSFileManager defaultManager];
-	return [manager displayNameAtPath: [self path]];
+	if ([self label]) return [self label];
+	else
+	{
+		NSFileManager *manager = [NSFileManager defaultManager];
+		return [manager displayNameAtPath: [self path]];
+	}
 }
 
 - (NSImage *) icon

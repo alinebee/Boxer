@@ -19,6 +19,79 @@
 @implementation BXAppController
 @synthesize emulationQueue, currentSession;
 
+
+//Filetypes used by Boxer
+//-----------------------
+
++ (NSArray *) hddVolumeTypes
+{
+	static NSArray *types = nil;
+	if (!types) types = [[NSArray alloc] initWithObjects:
+						 @"net.washboardabs.boxer-harddisk-folder",
+						 nil];
+	return types;
+}
+
++ (NSArray *) cdVolumeTypes
+{
+	static NSArray *types = nil;
+	if (!types) types = [[NSArray alloc] initWithObjects:
+						 @"com.goldenhawk.cdrwin-cuesheet",
+						 @"net.washboardabs.boxer-cdrom-folder",
+						 @"public.iso-image",
+						 @"com.apple.disk-image-cdr",
+						 nil];
+	return types;
+}
+
++ (NSArray *) floppyVolumeTypes
+{
+	static NSArray *types = nil;
+	if (!types) types = [[NSArray alloc] initWithObjects:
+						 @"net.washboardabs.boxer-floppy-folder",
+						 nil];
+	return types;
+}
+
++ (NSArray *) mountableFolderTypes
+{
+	static NSArray *types = nil;
+	if (!types) types = [[NSArray alloc] initWithObjects:
+						 @"net.washboardabs.boxer-mountable-folder",
+						 nil];
+	return types;
+}
+
++ (NSArray *) mountableImageTypes
+{
+	static NSArray *types = nil;
+	if (!types) types = [[NSArray alloc] initWithObjects:
+						 @"public.iso-image",					//.iso
+						 @"com.apple.disk-image-cdr",			//.cdr
+						 @"com.goldenhawk.cdrwin-cuesheet",		//.cue
+						 nil];
+	return types;
+}
+
++ (NSArray *) mountableTypes
+{
+	static NSArray *types = nil;
+	if (!types) types = [[[self mountableImageTypes] arrayByAddingObject: @"public.directory"] retain];
+	return types;
+}
+
++ (NSArray *) executableTypes
+{
+	static NSArray *types = nil;
+	if (!types) types = [[NSArray alloc] initWithObjects:
+						 @"com.microsoft.windows-executable",	//.exe
+						 @"com.microsoft.msdos-executable",		//.com
+						 @"com.microsoft.batch-file",			//.bat
+						 nil];
+	return types;
+}
+
+
 //Initialisation process
 //----------------------
 

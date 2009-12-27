@@ -9,35 +9,10 @@
 #import "NSString+BXPaths.h"
 #import "NSWorkspace+BXFileTypes.h"
 #import "IconFamily+BXIconFamily.h"
+#import "BXAppController.h"
 
 @implementation BXPackage
 @synthesize documentation, executables;
-
-+ (NSArray *) hddVolumeTypes
-{
-	return [NSArray arrayWithObjects:
-		@"net.washboardabs.boxer-harddisk-folder",
-	nil];
-}
-
-+ (NSArray *) cdVolumeTypes
-{
-	return [NSArray arrayWithObjects:
-		@"com.goldenhawk.cdrwin-cuesheet",
-		@"net.washboardabs.boxer-cdrom-folder",
-		@"public.iso-image",
-		@"com.apple.disk-image-cdr",
-		@"com.gog.gog-disk-image",
-	nil];
-}
-
-+ (NSArray *) floppyVolumeTypes
-{
-	return [NSArray arrayWithObjects:
-		@"net.washboardabs.boxer-floppy-folder",
-	nil];
-}
-
 
 + (NSArray *) documentationTypes
 {
@@ -72,17 +47,6 @@
 	return exclusions;
 }
 
-+ (NSArray *) executableTypes
-{
-	static NSArray *types = nil;
-	if (!types) types = [[NSArray alloc] initWithObjects:
-		@"com.microsoft.windows-executable",	//.exe
-		@"com.microsoft.msdos-executable",		//.com
-		@"com.microsoft.batch-file",			//.bat
-	nil];
-	return types;
-}
-
 //We ignore files with these names when considering which programs are important enough to list
 //TODO: read this data from a configuration plist instead
 + (NSArray *) executableExclusions
@@ -108,9 +72,9 @@
 }
 
 
-- (NSArray *) hddVolumes	{ return [self volumesOfTypes: [[self class] hddVolumeTypes]]; }
-- (NSArray *) cdVolumes		{ return [self volumesOfTypes: [[self class] cdVolumeTypes]]; }
-- (NSArray *) floppyVolumes	{ return [self volumesOfTypes: [[self class] floppyVolumeTypes]]; }
+- (NSArray *) hddVolumes	{ return [self volumesOfTypes: [BXAppController hddVolumeTypes]]; }
+- (NSArray *) cdVolumes		{ return [self volumesOfTypes: [BXAppController cdVolumeTypes]]; }
+- (NSArray *) floppyVolumes	{ return [self volumesOfTypes: [BXAppController floppyVolumeTypes]]; }
 
 - (NSArray *) volumesOfTypes: (NSArray *)acceptedTypes
 {

@@ -52,42 +52,6 @@ enum {
 
 @implementation BXEmulator (BXDOSFileSystem)
 
-+ (NSArray *) executableTypes
-{
-	static NSArray *types = nil;
-	if (!types) types = [[NSArray alloc] initWithObjects:
-		@"com.microsoft.windows-executable",	//.exe
-		@"com.microsoft.msdos-executable",		//.com
-		@"com.microsoft.batch-file",			//.bat
-	nil];
-	return types;
-}
-
-+ (NSArray *) mountableImageTypes
-{
-	static NSArray *types = nil;
-	if (!types) types = [[NSArray alloc] initWithObjects:
-		@"public.iso-image",					//.iso
-		@"com.apple.disk-image-cdr",			//.cdr
-		@"com.goldenhawk.cdrwin-cuesheet",		//.cue
-	nil];
-	return types;
-}
-+ (NSArray *) mountableFolderTypes
-{
-	static NSArray *types = nil;
-	if (!types) types = [[NSArray alloc] initWithObjects:
-		@"public.directory",
-	nil];
-	return types;
-}
-+ (NSArray *) mountableTypes
-{
-	static NSArray *types = nil;
-	if (!types) types = [[[self mountableImageTypes] arrayByAddingObjectsFromArray: [self mountableFolderTypes]] retain];
-	return types;
-}
-
 //Todo: this could be done much more efficiently
 + (NSArray *) driveLetters
 {

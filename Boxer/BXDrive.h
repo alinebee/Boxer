@@ -77,21 +77,24 @@ static const NSInteger BXDefaultFreeSpace = -1;
 //Class methods
 //-------------
 
-//UTIs that will be auto-detected as that specific drive type. Used by preferredDriveTypeForPath:
-+ (NSArray *) CDROMTypes;
-+ (NSArray *) floppyTypes;
-+ (NSArray *) hardDiskTypes;
-
 //Returns a localised descriptive name for the specified drive type. e.g. @"hard disk", @"CD-ROM" etc. 
 + (NSString *) descriptionForType: (BXDriveType)driveType;
-
 
 //Auto-detects the appropriate drive type for the specified path, based on the path's UTI and the
 //filesystem of the path's volume: e.g. folders located on CD-ROM volume will be detected as CD-ROMs.
 + (BXDriveType) preferredTypeForPath:	(NSString *)filePath;
 
-//Autogenerates a suitable DOS label for the specified path, based on its filename minus any extension.
+//Autogenerates a suitable DOS label for the specified path.
+//For disk images, this will be nil (their volume labels are stored internally);
+//For regular folders and CD-ROM volumes, this will be their filename;
+//For .floppy, .cdrom and .harddisk folders, this will be their filename minus extension
+//and parsed drive letter (see preferredDriveLetterForPath: below.)
 + (NSString *) preferredLabelForPath:	(NSString *)filePath;
+
+//Parses a recommended drive letter from the specified path. For disk images and Boxer mountable folders,
+//this will be the first letter of the filename if the filename starts with a single letter followed by a space.
+//For regular folders and CD-ROM volumes, this will be nil (as their names are probably coincidental.)
++ (NSString *) preferredDriveLetterForPath: (NSString *)filePath;
 
 
 //Initializers

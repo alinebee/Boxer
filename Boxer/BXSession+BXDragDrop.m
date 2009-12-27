@@ -5,6 +5,7 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
+#import "BXAppController.h"
 #import "BXSession+BXDragDrop.h"
 #import "BXSession+BXFileManager.h"
 #import "BXEmulator+BXDOSFileSystem.h"
@@ -17,7 +18,7 @@
 //Return an array of all filetypes we will accept by drag-drop
 + (NSArray *) droppableFileTypes
 {
-	return [[BXEmulator mountableTypes] arrayByAddingObjectsFromArray: [BXEmulator executableTypes]];
+	return [[BXAppController mountableTypes] arrayByAddingObjectsFromArray: [BXAppController executableTypes]];
 }
 
 

@@ -5,6 +5,7 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
+#import "BXAppController.h"
 #import "BXSession+BXFileManager.h"
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulator+BXShell.h"
@@ -37,12 +38,12 @@
 		@"net.washboardabs.boxer-mountable-folder",	//Any of .floppy, .cdrom, .harddisk
 		@"net.washboardabs.boxer-game-package",		//.boxer
 	nil];
-	return [[BXEmulator mountableImageTypes] arrayByAddingObjectsFromArray: separatelyMountedTypes];
+	return [[BXAppController mountableImageTypes] arrayByAddingObjectsFromArray: separatelyMountedTypes];
 }
 
 + (BOOL) isExecutable: (NSString *)path
 {
-	return [[NSWorkspace sharedWorkspace] file: path matchesTypes: [BXEmulator executableTypes]];
+	return [[NSWorkspace sharedWorkspace] file: path matchesTypes: [BXAppController executableTypes]];
 }
 
 
@@ -145,9 +146,9 @@
 - (NSString *) preferredMountPointForPath: (NSString *)filePath
 {	
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-
+	
 	//If the path is a disc image, use that as the mount point.
-	if ([workspace file: filePath matchesTypes: [BXEmulator mountableImageTypes]]) return filePath;
+	if ([workspace file: filePath matchesTypes: [BXAppController mountableImageTypes]]) return filePath;
 
 	
 	//If the path is (itself or inside) a gamebox or mountable folder, use that as the mount point.
@@ -189,9 +190,12 @@
 	}
 	
 	//If we get this far, then treat the path as a regular file or folder.
+	BOOL isDir;
+	NSFileManager *manager = [NSFileManager defaultManager];
+	[manager fileExistsAtPath: filePath isDirectory: &isDir];
 	
 	//If the path is a folder, use it directly as the mount point...
-	if ([workspace file: filePath matchesTypes: [BXEmulator mountableFolderTypes]]) return filePath;
+	if (isDir) return filePath;
 		
 	//...otherwise use the path's parent folder.
 	else return [filePath stringByDeletingLastPathComponent]; 

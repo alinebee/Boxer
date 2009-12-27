@@ -22,6 +22,19 @@
 @property (retain) BXSession *currentSession;			//The currently-active DOS session
 
 
+//Filetypes (UTIs) used by Boxer
+//------------------------------
+
++ (NSArray *) executableTypes;		//DOS executable UTIs
++ (NSArray *) hddVolumeTypes;		//UTIs that should be mounted as DOS hard drives
++ (NSArray *) cdVolumeTypes;		//UTIs that should be mounted as DOS CD-ROM drives
++ (NSArray *) floppyVolumeTypes;	//UTIs that should be mounted as DOS floppy drives
++ (NSArray *) mountableFolderTypes;	//All mountable folder UTIs supported by Boxer
++ (NSArray *) mountableImageTypes;	//All mountable disk-image UTIs supported by Boxer
++ (NSArray *) mountableTypes;		//All mountable UTIs supported by Boxer
+
+
+
 //Called at class initialization time to initialize Boxer's own user defaults.
 + (void) setupDefaults;
 

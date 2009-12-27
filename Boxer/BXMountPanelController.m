@@ -7,6 +7,7 @@
 
 #import "BXMountPanelController.h"
 #import "BXSession.h"
+#import "BXAppController.h"
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "NSWorkspace+BXFileTypes.h"
 #import "BXDrive.h"
@@ -41,7 +42,7 @@
 
 	[openPanel	beginSheetForDirectory: nil
 				file: nil
-				types: [BXEmulator mountableTypes]
+				types: [BXAppController mountableTypes]
 				modalForWindow: [theSession windowForSheet]
 				modalDelegate: self
 				didEndSelector: @selector(mountChosenFolder:returnCode:contextInfo:)
@@ -129,7 +130,7 @@
 		[autoLetterOption setTitle:	[NSString stringWithFormat: autoLabel, [preferredLetterOption title], nil]];
 
 		//Don't allow type to be configured for disc images
-		BOOL isImage = [[NSWorkspace sharedWorkspace] file: path matchesTypes: [BXEmulator mountableImageTypes]]; 
+		BOOL isImage = [[NSWorkspace sharedWorkspace] file: path matchesTypes: [BXAppController mountableImageTypes]]; 
 		[driveType setEnabled: !isImage];
 		[driveLetter setEnabled: YES];
 	}

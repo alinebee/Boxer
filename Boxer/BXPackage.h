@@ -26,12 +26,7 @@
 //An array of absolute file paths to DOS executables found inside the gamebox.
 @property (retain) NSArray *executables;
 
-
-+ (NSArray *) hddVolumeTypes;		//UTIs recognised as Boxer hard drive resources.
-+ (NSArray *) cdVolumeTypes;		//UTIs recognised as Boxer CD-ROM drive resources.
-+ (NSArray *) floppyVolumeTypes;	//UTIs recognised as Boxer floppy drive resources.
-+ (NSArray *) documentationTypes;	//UTIs recognised as documentation files.
-
++ (NSArray *) documentationTypes;		//UTIs recognised as documentation files.
 + (NSArray *) documentationExclusions;	//Filename patterns for documentation to exclude from searches.
 + (NSArray *) executableExclusions;		//Filename patterns for executables to exclude from searches.
 

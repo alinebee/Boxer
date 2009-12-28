@@ -192,7 +192,7 @@
 //TODO: check these against file() to weed out non-DOS exes
 - (NSArray *) _foundExecutables
 {
-	NSArray *foundExecutables	= [self _foundResourcesOfTypes: [[self class] executableTypes] startingIn: [self gamePath]];
+	NSArray *foundExecutables	= [self _foundResourcesOfTypes: [BXAppController executableTypes] startingIn: [self gamePath]];
 	NSPredicate *notExcluded	= [NSPredicate predicateWithFormat: @"NOT lastPathComponent.lowercaseString IN %@", [[self class] executableExclusions]];
 	
 	return [foundExecutables filteredArrayUsingPredicate: notExcluded];

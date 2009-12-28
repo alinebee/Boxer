@@ -31,8 +31,7 @@ enum {
 	NSGradient *background = [[NSGradient alloc] initWithColorsAndLocations:
 		[NSColor grayColor],		0.0,
 		[NSColor darkGrayColor],	0.9,
-		[NSColor colorWithCalibratedWhite: 0.25 alpha: 1.0],	0.97,
-		[NSColor blackColor],		1.0,
+		[NSColor colorWithCalibratedWhite: 0.15 alpha: 1.0],	1.0,
 	nil];
 
 	NSRect panelRegion	= [self bounds];
@@ -47,21 +46,15 @@ enum {
 	
 	
 	//Next, calculate our top and bottom grille strips
-	NSRect bottomStrip		= panelRegion;
-	bottomStrip.size.height	= patternSize.height * 0.75;	//Cut off the bottom of the grille slightly
-	NSPoint bottomPhase		= NSMakePoint(
+	NSRect grilleStrip		= panelRegion;
+	grilleStrip.size.height	= patternSize.height * 0.83;	//Cut off the top of the grille slightly
+	grilleStrip.origin.y	= panelRegion.size.height - grilleStrip.size.height;	//Align the grille along the top of the panel
+	NSPoint grillePhase		= NSMakePoint(
 		((panelRegion.size.width - patternSize.width) / 2)	+ panelOrigin.x,	//Center the pattern horizontally
-		(patternSize.height - bottomStrip.size.height)		+ panelOrigin.y		//Lock the pattern to the top of the grille strip
+		grilleStrip.origin.y		+ panelOrigin.y								//Lock the pattern to the bottom of the grille strip
 	);
-
-	NSRect topStrip			= bottomStrip;
-	NSPoint topPhase		= bottomPhase;
-	topStrip.size.height	= patternSize.height * 0.85;	//Make this strip slightly taller than the bottom one
-	topStrip.origin.y		= panelRegion.size.height - topStrip.size.height;
-	topPhase.y				= topStrip.origin.y + panelOrigin.y;
 	
-	NSBezierPath *bottomPath	= [NSBezierPath bezierPathWithRect: bottomStrip];
-	NSBezierPath *topPath		= [NSBezierPath bezierPathWithRect: topStrip];
+	NSBezierPath *grillePath	= [NSBezierPath bezierPathWithRect: grilleStrip];
 	NSView *title				= [self viewWithTag: BXProgramPanelTitle];
 
 	//If the panel has a visible title, then clip out a portion of the grille pattern to accommodate it.
@@ -74,23 +67,19 @@ enum {
 		titleMask.origin.x		= (panelRegion.size.width - titleMask.size.width) / 2;
 		
 		//Also reduce the mask's height so that it only masks areas within the strip.
-		titleMask.size.height	= NSMaxY(titleMask) - topStrip.origin.y;
-		titleMask.origin.y		= topStrip.origin.y;
+		titleMask.size.height	= NSMaxY(titleMask) - grilleStrip.origin.y;
+		titleMask.origin.y		= grilleStrip.origin.y;
 		
-		[topPath appendBezierPathWithRect: titleMask];
+		[grillePath appendBezierPathWithRect: titleMask];
 		//The winding rules are a cheap way of subtracting the rect from our path, which only works in the simplest of cases.
-		[topPath setWindingRule: NSEvenOddWindingRule]; 
+		[grillePath setWindingRule: NSEvenOddWindingRule]; 
 	}
 	
-	//Finally, draw the grille strips.
+	//Finally, draw the grille strip.
 	[NSGraphicsContext saveGraphicsState];
 		[grillePattern set];
-
-		//[[NSGraphicsContext currentContext] setPatternPhase: bottomPhase];
-		//[bottomPath fill];
-		
-		[[NSGraphicsContext currentContext] setPatternPhase: topPhase];
-		[topPath fill];
+		[[NSGraphicsContext currentContext] setPatternPhase: grillePhase];
+		[grillePath fill];
 	[NSGraphicsContext restoreGraphicsState];
 }
 @end

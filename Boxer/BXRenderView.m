@@ -36,9 +36,8 @@
 	{
 		background = [[NSGradient alloc] initWithColorsAndLocations:
 					  [NSColor colorWithCalibratedWhite: 0.15 alpha: 1.0],	0.0,
-					  [NSColor colorWithCalibratedWhite: 0.25 alpha: 1.0],	0.95,
-					  [NSColor colorWithCalibratedWhite: 0.15 alpha: 1.0],	0.99,
-					  [NSColor colorWithCalibratedWhite: 0.05 alpha: 1.0],	1.0,
+					  [NSColor colorWithCalibratedWhite: 0.25 alpha: 1.0],	0.98,
+					  [NSColor colorWithCalibratedWhite: 0.15 alpha: 1.0],	1.0,
 					  nil];	
 	}
 	

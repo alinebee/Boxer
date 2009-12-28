@@ -385,6 +385,7 @@
 	if (package)
 	{
 		//Mount the game package as a new hard drive, at drive C
+		//(This may be replaced below by a custom bundled C volume)
 		BXDrive *packageDrive = [BXDrive hardDriveFromPath: [package gamePath] atLetter: @"C"];
 		packageDrive = [theEmulator mountDrive: packageDrive];
 		
@@ -394,9 +395,18 @@
 		[packageVolumes addObjectsFromArray: [package hddVolumes]];
 		[packageVolumes addObjectsFromArray: [package cdVolumes]];
 		
+		BXDrive *bundledDrive;
 		for (NSString *volumePath in packageVolumes)
 		{
-			if ([self shouldMountDriveForPath: volumePath]) [self mountDriveForPath: volumePath];
+			bundledDrive = [BXDrive driveFromPath: volumePath atLetter: nil];
+			//The bundled drive was explicitly set to drive C, override our existing C drive with it
+			if ([[bundledDrive letter] isEqualToString: @"C"])
+			{
+				[[self emulator] unmountDriveAtLetter: @"C"];
+				//Rewrite the target to point to the new C drive, if it was pointing to the old one
+				if ([[self targetPath] isEqualToString: [package gamePath]]) [self setTargetPath: volumePath]; 
+			}
+			[[self emulator] mountDrive: bundledDrive];
 		}
 	}
 	
@@ -424,10 +434,9 @@
 	}
 	
 	//Finally, make a mount for our represented file URL, if it's not already accessible in DOS.
-	if ([self fileURL])
+	if ([self targetPath])
 	{
-		NSString *filePath = [[self fileURL] path];
-		if ([self shouldMountDriveForPath: filePath]) [self mountDriveForPath: filePath];
+		if ([self shouldMountDriveForPath: targetPath]) [self mountDriveForPath: targetPath];
 	}
 	
 	//Flag that we have completed our initial game configuration.

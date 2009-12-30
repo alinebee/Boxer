@@ -254,9 +254,9 @@
 			object:			workspace];
 	
 	[center addObserver:	self
-			selector:		@selector(volumeDidUnmount:)
-			name:			@"NSWorkspaceDidUnmountNotification"
-			object:			workspace];
+			   selector:	@selector(volumeWillUnmount:)
+				   name:	@"NSWorkspaceWillUnmountNotification"
+				 object:	workspace];
 	
 	[center addObserver:	self
 			selector:		@selector(DOSDriveDidMount:)
@@ -280,18 +280,12 @@
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	NSNotificationCenter *center = [workspace notificationCenter];
 
-	[center removeObserver: self name: @"NSWorkspaceDidMountNotification"	object: workspace];
-	[center removeObserver: self name: @"NSWorkspaceDidUnmountNotification"	object: workspace];
-	[center removeObserver: self name: @"BXDriveDidMountNotification"		object: theEmulator];
-	[center removeObserver: self name: @"BXDriveDidUnmountNotification"		object: theEmulator];
-	[center removeObserver: self name: UKFileWatcherWriteNotification		object: nil];
+	[center removeObserver: self name: @"NSWorkspaceDidMountNotification"		object: workspace];
+	[center removeObserver: self name: @"NSWorkspaceWillUnmountNotification"	object: workspace];
+	[center removeObserver: self name: @"BXDriveDidMountNotification"			object: theEmulator];
+	[center removeObserver: self name: @"BXDriveDidUnmountNotification"			object: theEmulator];
+	[center removeObserver: self name: UKFileWatcherWriteNotification			object: nil];
 
-}
-
-- (void) volumeDidUnmount: (NSNotification *)theNotification
-{
-	NSString *volumePath = [[theNotification userInfo] objectForKey: @"NSDevicePath"];
-	[[self emulator] unmountDrivesForPath: volumePath];
 }
 
 - (void) volumeDidMount: (NSNotification *)theNotification
@@ -314,6 +308,14 @@
 			[[self emulator] mountDrive: drive];
 		}
 	}
+}
+
+//Implementation note: we do this in willUnmount instead of didUnmount, so that we can
+//remove any of our own file locks that would prevent OS X from unmounting.
+- (void) volumeWillUnmount: (NSNotification *)theNotification
+{
+	NSString *volumePath = [[theNotification userInfo] objectForKey: @"NSDevicePath"];
+	[[self emulator] unmountDrivesForPath: volumePath];
 }
 
 - (void) filesystemDidChange: (NSNotification *)theNotification

@@ -94,12 +94,12 @@
 - (void) _registerForFilesystemNotifications;
 - (void) _deregisterForFilesystemNotifications;
 
-- (void) _volumeDidUnmount:		(NSNotification *)theNotification;
-- (void) _volumeDidMount:		(NSNotification *)theNotification;
-- (void) _filesystemDidChange:	(NSNotification *)theNotification;
+- (void) volumeDidMount:		(NSNotification *)theNotification;
+- (void) volumeWillUnmount:		(NSNotification *)theNotification;
+- (void) filesystemDidChange:	(NSNotification *)theNotification;
 
-- (void) _DOSDriveDidMount:		(NSNotification *)theNotification;
-- (void) _DOSDriveDidUnmount:	(NSNotification *)theNotification;
+- (void) DOSDriveDidMount:		(NSNotification *)theNotification;
+- (void) DOSDriveDidUnmount:	(NSNotification *)theNotification;
 
 - (void) _startTrackingChangesAtPath:	(NSString *)path;
 - (void) _stopTrackingChangesAtPath:	(NSString *)path;

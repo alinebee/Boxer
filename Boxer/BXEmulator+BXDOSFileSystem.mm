@@ -16,6 +16,7 @@
 #import "cdrom.h"
 
 //Defined in dos_files.cpp
+extern DOS_File * Files[DOS_FILES];
 extern DOS_Drive * Drives[DOS_DRIVES];
 
 //Defined in dos_mscdex.cpp
@@ -528,9 +529,27 @@ enum {
 	mem_writeb(Real2Phys(dos.tables.mediaid)+(index)*2, drive->GetMediaByte());
 }
 
-//Unmount a drive and clear references to it
+//Unmount a drive and clear references to it (and any files on it)
 - (BOOL) _unmountDriveAtIndex: (NSUInteger)index
 {
+	//Close any files that DOSBox had open on that drive before unmounting it
+	//TODO: port this code back to DOSBox itself, as it will not currently occur
+	//if user unmounts a drive with the MOUNT command
+	int i;
+	for (i=0; i<DOS_FILES; i++)
+	{
+		if (Files[i] && Files[i]->GetDrive() == index)
+		{
+			//Code copy-pasted from localDrive::FileUnlink in drive_local.cpp
+			//Only relevant for local files
+			while (Files[i]->IsOpen())
+			{
+				Files[i]->Close();
+				if (Files[i]->RemoveRef() <= 0) break;
+			}
+		}
+	}
+	
 	NSInteger result = DriveManager::UnmountDrive(index);
 	if (result == BXUnmountSuccess)
 	{

@@ -61,7 +61,7 @@ static int LoadTracks (SDL_CD *cdrom)
         return 0;
         
     /* Allocate memory for tracks */
-    tracks[cdrom->id] = (FSRef*) SDL_calloc (1, sizeof(**tracks) * cdrom->numtracks);
+    tracks[cdrom->id] = (FSRef*) SDL_calloc (1, sizeof(FSRef) * cdrom->numtracks);
     if (tracks[cdrom->id] == NULL) {
         SDL_OutOfMemory ();
         return -1;
@@ -70,8 +70,15 @@ static int LoadTracks (SDL_CD *cdrom)
     /* Load tracks */
     if (ListTrackFiles (volumes[cdrom->id], tracks[cdrom->id], cdrom->numtracks) < 0)
         return -1;
-
-    return 0;
+	
+	//--Comment 2009-12-30 by Alun Bestor: 
+	//DANGER WILL ROBINSON! ListTrackFiles will leave holes in the FSRef tracks array
+	//for any data tracks, which are not represented by AIFF files and so cannot be given
+	//a valid FSRef. The FSRefs for those tracks therefore point to arbitrary memory space,
+	//and trying to access them is a Bad Idea. GetFileForOffset has been patched to avoid
+	//doing this.
+	
+	return 0;
 }
 
 /* Find a file for a given start frame and length */
@@ -88,6 +95,13 @@ static FSRef* GetFileForOffset (SDL_CD *cdrom, int start, int length,  int *outS
     
     if (i == cdrom->numtracks)
         return NULL;
+	
+	//--Added 2009-12-30 by Alun Bestor to prevent SDL trying to play data tracks
+	//for which it doesn't have a valid file reference but instead a chunk of completely
+	//arbitrary memory which is, you know, a really bad idea
+	if (cdrom->track[i].type == SDL_DATA_TRACK)
+		return NULL;
+	//--End of modifications
         
     currentTrack = i;
 
@@ -362,7 +376,7 @@ static int SDL_SYS_CDPlay(SDL_CD *cdrom, int start, int length)
         SDL_SetError ("SDL_SYS_CDPlay: No file for start=%d, length=%d", start, length);
         return -5;
     }
-    
+	
     if (LoadFile (ref, startFrame, stopFrame) < 0)
         return -6;
     

@@ -93,7 +93,6 @@
 	if (theEmulator != emulator)
 	{
 		[self _deregisterForFilesystemNotifications];
-		//[emulator removeObserver: self forKeyPath: @"finished"];
 		[emulator setDelegate: nil];
 		[emulator cancel];
 		[emulator autorelease];
@@ -426,6 +425,7 @@
 	//TODO: we should treat this as an error if it didn't mount!
 	if (toolkitDrive)
 	{
+		//Todo: the DOS path should include the root folder of every drive, not just Y and Z.
 		NSString *dosPath	= [NSString stringWithFormat: @"%1$@:\\;%1$@:\\UTILS;Z:\\", [toolkitDrive letter], nil];
 		NSString *ultraDir	= [NSString stringWithFormat: @"%@:\\ULTRASND", [toolkitDrive letter], nil];
 		
@@ -433,7 +433,7 @@
 		[theEmulator setVariable: @"ultradir"	to: ultraDir	encoding: BXDirectStringEncoding];
 	}
 	
-	//Finally, make a mount for our represented file URL, if it's not already accessible in DOS.
+	//Finally, make a mount point allowing access to our target program/folder, if it's not already accessible in DOS.
 	if ([self targetPath])
 	{
 		if ([self shouldMountDriveForPath: targetPath]) [self mountDriveForPath: targetPath];
@@ -498,12 +498,20 @@
 		{
 			BOOL panelShown = [[self mainWindowController] programPanelShown];
 			
-			//Show only after a delay so that the window has time to resize after quitting the game
+			//Show only after a delay, so that the window has time to resize after quitting the game
 			if (!panelShown) [[self mainWindowController] performSelector: @selector(toggleProgramPanelShown:)
 															   withObject: self
 															   afterDelay: 0.2];
 		}
 		showProgramPanelOnReturnToShell = NO;
+	}
+	
+	
+	if ([[NSUserDefaults standardUserDefaults] boolForKey: @"startUpInFullScreen"])
+	{
+		//Dump out of fullscreen mode when we return to the prompt,
+		//if we automatically switch into fullscreen at startup
+		[[self mainWindowController] exitFullScreen: self];
 	}
 }
 
@@ -512,10 +520,29 @@
 	if (![self activeProgramPath] && ![emulator processIsInternal])
 	{
 		//TODO: detect the path of the currently executing program, so that we can populate activeProgramPath
-		//if it is empty (so that we can keep track of what programs a user has launched on their own.
+		//if it is empty (so that we can keep track of what programs a user has launched on their own.)
 	}
 }
 
 - (void) processDidEnd: (NSNotification *)notification {}
 
+
+- (void) didStartGraphicalContext: (NSNotification *)notification
+{
+	if ([[NSUserDefaults standardUserDefaults] boolForKey: @"startUpInFullScreen"])
+	{
+		//Switch to fullscreen mode automatically after a brief delay
+		//This will be cancelled if the context exits within that time, see below
+		[[self mainWindowController] performSelector: @selector(toggleFullScreenWithZoom:) 
+										  withObject: [NSNumber numberWithBool: YES] 
+										  afterDelay: 0.5];
+	}
+}
+
+- (void) didEndGraphicalContext: (NSNotification *)notification
+{
+	[NSObject cancelPreviousPerformRequestsWithTarget: [self mainWindowController]
+											 selector: @selector(toggleFullScreenWithZoom:)
+											   object: [NSNumber numberWithBool: YES]];
+}
 @end

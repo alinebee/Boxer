@@ -160,4 +160,8 @@
 - (void) processDidStart:		(NSNotification *)notification;
 - (void) processDidEnd:			(NSNotification *)notification;
 
+
+- (void) didStartGraphicalContext:	(NSNotification *)notification;
+- (void) didEndGraphicalContext:	(NSNotification *)notification;
+
 @end

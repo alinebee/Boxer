@@ -186,9 +186,13 @@
 
 - (IBAction) toggleFullScreenWithZoom: (id)sender
 {
-	BXEmulator *emulator	= [self emulator];
-	BOOL isFullScreen		= [emulator isFullScreen];
-	[self setFullScreenWithZoom: !isFullScreen];
+	BOOL enterFullScreen;
+	BXEmulator *emulator = [self emulator];
+	
+	if ([sender isKindOfClass: [NSNumber class]])	enterFullScreen = [sender boolValue];
+	else											enterFullScreen = ![emulator isFullScreen];
+
+	[self setFullScreenWithZoom: enterFullScreen];
 }
 
 - (IBAction) toggleFilterType: (NSMenuItem *)sender
@@ -201,7 +205,7 @@
 	//Todo: clarify these functions to indicate *why* the filter is inactive
 	if (![emulator isFullScreen] && ![emulator filterIsActive])
 	{
-		NSSize newRenderSize = [emulator _minSurfaceSizeForFilterType: filterType];
+		NSSize newRenderSize = [emulator minSurfaceSizeForFilterType: filterType];
 		[self resizeToAccommodateViewSize: newRenderSize];
 	}
 }

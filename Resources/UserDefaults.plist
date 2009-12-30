@@ -4,6 +4,8 @@
 <dict>
 	<key>savedRecordingsPath</key>
 	<string>~/Desktop</string>
+	<key>startUpInFullScreen</key>
+	<false/>
 	<key>statusBarShown</key>
 	<true/>
 	<key>windowSnapDistance</key>

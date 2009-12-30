@@ -57,6 +57,8 @@
 
 	[theWindow setAcceptsMouseMovedEvents: YES];
 	
+	[theWindow setFrameAutosaveName: @"InspectorPanel"];
+	
 	//Set the initial panel based on the user's last chosen panel (defaulting to the CPU panel)
 	NSView *initialView;
 	NSArray *panels = [self panels];
@@ -66,8 +68,6 @@
 	else initialView = [self cpuPanel];
 	
 	[self setCurrentPanel: initialView];
-	
-	[self setWindowFrameAutosaveName: @"InspectorPanel"];
 }
 
 - (NSArray *) panels

@@ -51,6 +51,7 @@
 		9F6BA6F910A9FB92005A3E2A /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F6BA6F810A9FB92005A3E2A /* Growl.framework */; };
 		9F6BA6FD10A9FBAB005A3E2A /* Growl.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F6BA6F810A9FB92005A3E2A /* Growl.framework */; };
 		9F6BA70510A9FC77005A3E2A /* BXGrowlController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F6BA70410A9FC77005A3E2A /* BXGrowlController.m */; };
+		9F758B0A10E904CF00531FDB /* PreferencesPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F758B0810E904CF00531FDB /* PreferencesPanel.xib */; };
 		9F76C8550F6509EF0068EA1C /* BXSessionWindowController+BXRenderController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F76C8540F6509EF0068EA1C /* BXSessionWindowController+BXRenderController.m */; };
 		9F76D1B910CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F76D1B810CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.m */; };
 		9F76D3F710CBC3B300C3B081 /* GNU General Public License.txt in Resources */ = {isa = PBXBuildFile; fileRef = 9F76D3F510CBC3B300C3B081 /* GNU General Public License.txt */; };
@@ -326,6 +327,7 @@
 		9F6BA6F810A9FB92005A3E2A /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Growl.framework; sourceTree = "<group>"; };
 		9F6BA70310A9FC77005A3E2A /* BXGrowlController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXGrowlController.h; sourceTree = "<group>"; };
 		9F6BA70410A9FC77005A3E2A /* BXGrowlController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGrowlController.m; sourceTree = "<group>"; };
+		9F758B0910E904CF00531FDB /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/PreferencesPanel.xib; sourceTree = "<group>"; };
 		9F76C8530F6509EF0068EA1C /* BXSessionWindowController+BXRenderController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXSessionWindowController+BXRenderController.h"; sourceTree = "<group>"; };
 		9F76C8540F6509EF0068EA1C /* BXSessionWindowController+BXRenderController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXSessionWindowController+BXRenderController.m"; sourceTree = "<group>"; };
 		9F76D1B710CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSWorkspace+BXFileTypes.h"; sourceTree = "<group>"; };
@@ -746,6 +748,7 @@
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
+				9F758B0810E904CF00531FDB /* PreferencesPanel.xib */,
 			);
 			name = Boxer;
 			sourceTree = "<group>";
@@ -1520,6 +1523,7 @@
 				9FFAFE2D10DE33FB00728BAC /* GameProfiles.plist in Resources */,
 				9FFAFE4310DE343F00728BAC /* Configurations in Resources */,
 				9FBD321710E5144C00031CB6 /* Brand.png in Resources */,
+				9F758B0A10E904CF00531FDB /* PreferencesPanel.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1770,6 +1774,14 @@
 			);
 			name = ProgramPanel.xib;
 			path = ..;
+			sourceTree = "<group>";
+		};
+		9F758B0810E904CF00531FDB /* PreferencesPanel.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9F758B0910E904CF00531FDB /* English */,
+			);
+			name = PreferencesPanel.xib;
 			sourceTree = "<group>";
 		};
 		9F76D3F510CBC3B300C3B081 /* GNU General Public License.txt */ = {

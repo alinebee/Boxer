@@ -1883,15 +1883,24 @@ int DOSBox_main(int argc, char* argv[]) {
 		/* Some extra SDL Functions */
 		Section_prop * sdl_sec=static_cast<Section_prop *>(control->GetSection("sdl"));
 
+		
+		//--Disabled 2009-12-28 by Alun Bestor: startup fullscreen behaviour is now controlled by Boxer
+		/*
 		if (control->cmdline->FindExist("-fullscreen") || sdl_sec->Get_bool("fullscreen")) {
 			if(!sdl.desktop.fullscreen) { //only switch if not allready in fullscreen
 				GFX_SwitchFullScreen();
 			}
 		}
+		//--End of modifications
+		 
 
 		/* Init the keyMapper */
 		MAPPER_Init();
-		if (control->cmdline->FindExist("-startmapper")) MAPPER_Run(false);
+		
+		//--Disabled 2009-12-27 by Alun Bestor: the DOSBox keyboard mapper is not compatible with OpenGL rendering and will
+		//be replaced by a native solution anyway
+		//if (control->cmdline->FindExist("-startmapper")) MAPPER_Run(false);
+		//--End of modifications
 		
 		/* Start up main machine */
 		control->StartUp();

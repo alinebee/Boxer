@@ -55,13 +55,16 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 {
 	NSThread *thread;
 	
+	NSString *processName;
+	NSMutableArray *configFiles;
+	BXSession *delegate;
+	
 	NSInteger minFixedSpeed;
 	NSInteger maxFixedSpeed;
 	NSUInteger maxFrameskip;
 	
 	BOOL isInterrupted;
 	BOOL paused;
-	BOOL pendingRefresh;
 	
 	//Used by BXShell
 	NSUInteger queueDepth;
@@ -71,11 +74,8 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 	//Used by BXRecording
 	NSString *currentRecordingPath;
 	
-	NSString *processName;
-	
-	NSMutableArray *configFiles;
-	
-	BXSession *delegate;
+	//Used by BXRendering
+	NSInteger currentVideoMode;
 }
 
 //Properties

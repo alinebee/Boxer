@@ -9,7 +9,6 @@
 #import "BXSession.h"
 #import "BXSessionWindowController+BXRenderController.h"
 #import "BXSessionWindow.h"
-#import "BXFilterDefinitions.h"
 #import "BXGeometry.h"
 
 #import "boxer.h"
@@ -17,6 +16,7 @@
 #import "video.h"
 #import "vga.h"
 #import "sdlmain.h"
+#import "BXFilterDefinitions.h"
 
 
 //Renderer functions
@@ -119,7 +119,7 @@
 	BOOL textMode = NO;
 	if ([self isExecuting])
 	{
-		switch (vga.mode)
+		switch (currentVideoMode)
 		{
 			case M_TEXT: case M_TANDY_TEXT: case M_HERC_TEXT: textMode = YES;
 		}
@@ -201,9 +201,6 @@
 }
 
 
-//Internal functions for decisions about rendering
-//------------------------------------------------
-
 //Reinitialises DOSBox's graphical subsystem and redraws the render region.
 //This is called after resizing the session window or toggling rendering options.
 - (void) resetRenderer
@@ -211,6 +208,16 @@
 	if ([self isExecuting]) GFX_ResetScreen();
 }
 
+
+- (NSSize) minSurfaceSizeForFilterType: (BXFilterType) filterType
+{
+	BXFilterDefinition params	= [self _paramsForFilterType: filterType];
+	NSSize scaledResolution		= [self scaledResolution];
+	NSSize	minSurfaceSize		= NSMakeSize(scaledResolution.width * params.minFilterSize,
+											 scaledResolution.height * params.minFilterSize
+											 );
+	return minSurfaceSize;
+}
 @end
 
 
@@ -256,6 +263,7 @@
 	
 	sdl.opengl.bilinear = [self _shouldUseBilinearForResolution: [self resolution] atSurfaceSize: surfaceSize];
 	
+	
 	if ([self isFullScreen])
 	{
 		NSSize screenSize = [self fullScreenSize];
@@ -275,6 +283,28 @@
 	{
 		flags |= SDL_HWSURFACE;
 		sdl.surface = SDL_SetVideoMode(sdl.clip.w, sdl.clip.h, bpp, flags);
+	}
+	
+	//Synchronise our record of the current video mode with the new video mode
+	if (currentVideoMode != vga.mode)
+	{
+		BOOL wasTextMode = [self isInTextMode];
+		[self willChangeValueForKey: @"isInTextMode"];
+		currentVideoMode = vga.mode;
+		[self didChangeValueForKey: @"isInTextMode"];
+		BOOL nowTextMode = [self isInTextMode];
+		
+		//Started up a graphical application
+		if (wasTextMode && !nowTextMode)
+			[self _postNotificationName: @"BXEmulatorDidStartGraphicalContext"
+					   delegateSelector: @selector(didStartGraphicalContext:)
+														   userInfo: nil];
+		
+		//Graphical application returned to text mode
+		else if (!wasTextMode && nowTextMode)
+			[self _postNotificationName: @"BXEmulatorDidEndGraphicalContext"
+					   delegateSelector: @selector(didEndGraphicalContext:)
+							   userInfo: nil];
 	}
 }
 
@@ -401,16 +431,6 @@
 {
 	return (scale.height >= [self _paramsForFilterType: filterType].minSurfaceScale);
 }
-
-- (NSSize) _minSurfaceSizeForFilterType: (BXFilterType) filterType
-{
-	BXFilterDefinition params	= [self _paramsForFilterType: filterType];
-	NSSize scaledResolution		= [self scaledResolution];
-	NSSize	minSurfaceSize		= NSMakeSize(	scaledResolution.width * params.minFilterSize,
-												scaledResolution.height * params.minFilterSize
-											);
-	return minSurfaceSize;
-}
 @end
 
 
@@ -443,7 +463,7 @@ void boxer_setupSurfaceScaled(Bit32u sdl_flags, Bit32u bpp)
 void boxer_copySurfaceSize(unsigned int * surfaceWidth, unsigned int * surfaceHeight)
 {
 	BXEmulator *emulator	= [BXEmulator currentEmulator];
-	NSSize surfaceSize			= [emulator surfaceSize];
+	NSSize surfaceSize		= [emulator surfaceSize];
 	
 	*surfaceWidth	= (unsigned int)surfaceSize.width;
 	*surfaceHeight	= (unsigned int)surfaceSize.height;

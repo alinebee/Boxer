@@ -18,6 +18,7 @@
 #import "mixer.h"
 #import "control.h"
 #import "shell.h"
+#import "vga.h"
 //#import "callback.h"
 
 #import <SDL/boxer_hooks.h>	//for boxer_SDLCaptureInput et. al.
@@ -140,6 +141,7 @@ BXEmulator *currentEmulator = nil;
 		[self setMinFixedSpeed:	BXMinSpeedThreshold];
 		[self setMaxFrameskip:	9];
 		[self setConfigFiles: [NSMutableArray arrayWithCapacity: 10]];
+		currentVideoMode = M_TEXT;
 	}
 	return self;
 }

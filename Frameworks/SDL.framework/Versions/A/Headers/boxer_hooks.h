@@ -1,6 +1,13 @@
-/*
-	This header gives Boxer access to various otherwise-private SDL internal functions by declaring them as exported symbols.
-*/
+/* 
+ Boxer is copyright 2009 Alun Bestor and contributors.
+ Boxer is released under the GNU General Public License 2.0. A full copy of this license can be
+ found in this XCode project at Resources/English.lproj/GNU General Public License.txt, or read
+ online at [http://www.gnu.org/licenses/gpl-2.0.txt].
+ */
+
+
+//This header gives Boxer access to various otherwise-private SDL internal functions by declaring
+//them as exported symbols.
 
 #ifndef _boxer_hooks_h
 #define _boxer_hooks_h

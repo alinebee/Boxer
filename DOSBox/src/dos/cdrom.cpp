@@ -118,8 +118,13 @@ bool CDROM_Interface_SDL::GetMediaTrayStatus(bool& mediaPresent, bool& mediaChan
 
 bool CDROM_Interface_SDL::PlayAudioSector(unsigned long start,unsigned long len) { 
 	// Has to be there, otherwise wrong cd status report (dunno why, sdl bug ?)
+	//--Disabled 2009-12-30 by Alun Bestor: no it doesn't, in fact disabling and reenabling the CD like this
+	//kills the track listing in OS X owing to another SDL bug.
+	/*
 	SDL_CDClose(cd);
 	cd = SDL_CDOpen(driveID);
+	*/
+	//--End of modifications
 	bool success = (SDL_CDPlay(cd,start+150,len)==0);
 	return success;
 }
@@ -133,8 +138,13 @@ bool CDROM_Interface_SDL::PauseAudio(bool resume) {
 
 bool CDROM_Interface_SDL::StopAudio(void) {
 	// Has to be there, otherwise wrong cd status report (dunno why, sdl bug ?)
+	//--Disabled 2009-12-30 by Alun Bestor: no it doesn't, in fact disabling and reenabling the CD like this
+	//kills the track listing in OS X owing to another SDL bug.
+	/*
 	SDL_CDClose(cd);
 	cd = SDL_CDOpen(driveID);
+	*/
+	//--End of modifications
 	bool success = (SDL_CDStop(cd)==0);
 	return success;
 }

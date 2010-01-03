@@ -9,6 +9,14 @@
 #import "BXGameProfile.h"
 
 
+
+//Directories larger than this size (in bytes) will be treated as CD games by isDisketteGameAtPath:
+const NSInteger BXDisketteGameSizeThreshold = 20 * 1024 * 1024;
+
+//Directories with any files older than this will be treated as diskette games by isDisketteGameAtPath:
+NSString *BXDisketteGameDateThreshold = @"1995-01-01 00:00:00 +0000";
+
+
 @implementation BXGameProfile
 
 + (NSArray *) genericProfiles		{ return [[self _gameProfileData] objectForKey: @"BXGenericProfiles"]; }
@@ -33,6 +41,31 @@
 	//If we got this far, we couldn't find anything
 	return nil;
 }
+
++ (BOOL) isDisketteGameAtPath: (NSString *)basePath
+{
+	NSFileManager *manager = [NSFileManager defaultManager];
+	NSDirectoryEnumerator *enumerator = [manager enumeratorAtPath: basePath];
+	
+	NSDate *cutoffDate = [NSDate dateWithString: BXDisketteGameDateThreshold];
+	NSInteger pathSize = 0;
+	
+	for (NSString *filePath in enumerator)
+	{
+		NSDictionary *attrs = [enumerator fileAttributes];
+		
+		//The game was released before CDs became commonplace, treat it as a diskette game
+		NSDate *creationDate = [attrs fileCreationDate];
+		if ([creationDate timeIntervalSinceDate: cutoffDate] < 0) return YES;
+		
+		//The game is too big to have been released on diskettes, treat it as a CD game
+		pathSize += [attrs fileSize];
+		if (pathSize > BXDisketteGameSizeThreshold) return NO;
+	}
+	//When all else fails, let's call it a diskette game
+	return YES;
+}
+
 
 @end
 

@@ -11,6 +11,9 @@
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		9F1D50010F5C0966009F0AB9 /* BXEmulator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */; };
 		9F2140FF0F59F28000A5A183 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F2140FE0F59F28000A5A183 /* QuartzCore.framework */; };
+		9F2AC6D710EFE14300CFFF72 /* CDCover.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F2AC6D510EFE14300CFFF72 /* CDCover.png */; };
+		9F2AC6D810EFE14300CFFF72 /* CDCase.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F2AC6D610EFE14300CFFF72 /* CDCase.png */; };
+		9F2AC6E410EFFE8600CFFF72 /* BXBootlegCoverArt.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2AC6E310EFFE8600CFFF72 /* BXBootlegCoverArt.m */; };
 		9F2B50B4108B25FB008D78C9 /* core_prefetch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F2B50B3108B25FB008D78C9 /* core_prefetch.cpp */; };
 		9F2B50B8108B261F008D78C9 /* gui_tk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F2B50B6108B261F008D78C9 /* gui_tk.cpp */; };
 		9F2B50BB108B2655008D78C9 /* sdl_gui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F2B50BA108B2655008D78C9 /* sdl_gui.cpp */; };
@@ -222,6 +225,8 @@
 		9FE201BB0F6D59D500B3A38C /* libpng.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FE201320F6D543F00B3A38C /* libpng.framework */; };
 		9FE201C80F6D5B5F00B3A38C /* BXEmulator+BXRecording.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FE201C50F6D5B5F00B3A38C /* BXEmulator+BXRecording.mm */; };
 		9FE202480F6D749500B3A38C /* Snapshot.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9FE202470F6D749500B3A38C /* Snapshot.aiff */; };
+		9FE8265C10F0EBA000F1B03E /* DisketteShine.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE8265A10F0EBA000F1B03E /* DisketteShine.png */; };
+		9FE8265D10F0EBA000F1B03E /* Diskette.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE8265B10F0EBA000F1B03E /* Diskette.png */; };
 		9FFAFE2D10DE33FB00728BAC /* GameProfiles.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */; };
 		9FFAFE4310DE343F00728BAC /* Configurations in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2E10DE343F00728BAC /* Configurations */; };
 /* End PBXBuildFile section */
@@ -254,6 +259,10 @@
 		9F1D4FFF0F5C0966009F0AB9 /* BXEmulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulator.h; sourceTree = "<group>"; };
 		9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXEmulator.mm; sourceTree = "<group>"; };
 		9F2140FE0F59F28000A5A183 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
+		9F2AC6D510EFE14300CFFF72 /* CDCover.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CDCover.png; sourceTree = "<group>"; };
+		9F2AC6D610EFE14300CFFF72 /* CDCase.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CDCase.png; sourceTree = "<group>"; };
+		9F2AC6E210EFFE8600CFFF72 /* BXBootlegCoverArt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBootlegCoverArt.h; sourceTree = "<group>"; };
+		9F2AC6E310EFFE8600CFFF72 /* BXBootlegCoverArt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBootlegCoverArt.m; sourceTree = "<group>"; };
 		9F2B50A4108B2571008D78C9 /* bios_disk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bios_disk.h; sourceTree = "<group>"; };
 		9F2B50A5108B2571008D78C9 /* control.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = control.h; sourceTree = "<group>"; };
 		9F2B50A6108B2591008D78C9 /* risc_armv4le-common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "risc_armv4le-common.h"; sourceTree = "<group>"; };
@@ -643,6 +652,8 @@
 		9FE201C40F6D5B5F00B3A38C /* BXEmulator+BXRecording.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXEmulator+BXRecording.h"; sourceTree = "<group>"; };
 		9FE201C50F6D5B5F00B3A38C /* BXEmulator+BXRecording.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "BXEmulator+BXRecording.mm"; sourceTree = "<group>"; };
 		9FE202470F6D749500B3A38C /* Snapshot.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = Snapshot.aiff; sourceTree = "<group>"; };
+		9FE8265A10F0EBA000F1B03E /* DisketteShine.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DisketteShine.png; sourceTree = "<group>"; };
+		9FE8265B10F0EBA000F1B03E /* Diskette.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Diskette.png; sourceTree = "<group>"; };
 		9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = GameProfiles.plist; sourceTree = "<group>"; };
 		9FFAFE2E10DE343F00728BAC /* Configurations */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Configurations; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -678,8 +689,6 @@
 			children = (
 				29B97316FDCFA39411CA2CEA /* main.m */,
 				9F2D775B0F6140EF00D4E563 /* New headers for DOSBox */,
-				9F59DA9D10AEF9E0008DBBC1 /* BXCoverArt.h */,
-				9F59DA9E10AEF9E0008DBBC1 /* BXCoverArt.m */,
 				9F573D370F8E69AF0089D8B7 /* BXPackage.h */,
 				9F573D380F8E69AF0089D8B7 /* BXPackage.m */,
 				9F69133110A2F62A00EA78CD /* BXDrive.h */,
@@ -691,6 +700,7 @@
 				9F496E3E108EEB9800282261 /* BXAlert */,
 				9F496E3F108EEBB200282261 /* UI helpers */,
 				9F496E3C108EEAD700282261 /* UI controllers */,
+				9F2AC6DB10EFFE2C00CFFF72 /* Artwork */,
 				9FBC35110F56C7B7001811F2 /* BXAppController.h */,
 				9FBC351E0F56C7B7001811F2 /* BXAppController.m */,
 				9F6BA70310A9FC77005A3E2A /* BXGrowlController.h */,
@@ -842,6 +852,17 @@
 				9FD011BC10C2A02F00670CE1 /* BXProgramMenuController.m */,
 			);
 			name = BXInspector;
+			sourceTree = "<group>";
+		};
+		9F2AC6DB10EFFE2C00CFFF72 /* Artwork */ = {
+			isa = PBXGroup;
+			children = (
+				9F59DA9D10AEF9E0008DBBC1 /* BXCoverArt.h */,
+				9F59DA9E10AEF9E0008DBBC1 /* BXCoverArt.m */,
+				9F2AC6E210EFFE8600CFFF72 /* BXBootlegCoverArt.h */,
+				9F2AC6E310EFFE8600CFFF72 /* BXBootlegCoverArt.m */,
+			);
+			name = Artwork;
 			sourceTree = "<group>";
 		};
 		9F2B50B5108B261F008D78C9 /* gui_tk */ = {
@@ -1002,6 +1023,10 @@
 		9FBC34390F56C5AC001811F2 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				9FE8265A10F0EBA000F1B03E /* DisketteShine.png */,
+				9FE8265B10F0EBA000F1B03E /* Diskette.png */,
+				9F2AC6D510EFE14300CFFF72 /* CDCover.png */,
+				9F2AC6D610EFE14300CFFF72 /* CDCase.png */,
 				9FBD321610E5144C00031CB6 /* Brand.png */,
 				9FCBB2CD10A61CA800C28B09 /* boxer.icns */,
 				9FCBB2CE10A61CA800C28B09 /* executable.icns */,
@@ -1524,6 +1549,10 @@
 				9FFAFE4310DE343F00728BAC /* Configurations in Resources */,
 				9FBD321710E5144C00031CB6 /* Brand.png in Resources */,
 				9F758B0A10E904CF00531FDB /* PreferencesPanel.xib in Resources */,
+				9F2AC6D710EFE14300CFFF72 /* CDCover.png in Resources */,
+				9F2AC6D810EFE14300CFFF72 /* CDCase.png in Resources */,
+				9FE8265C10F0EBA000F1B03E /* DisketteShine.png in Resources */,
+				9FE8265D10F0EBA000F1B03E /* Diskette.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1717,6 +1746,7 @@
 				9F61FC8510DE3F7F00F3896C /* BXGameProfile.m in Sources */,
 				9F438C5810E3D8C8007D30AD /* BXScroller.m in Sources */,
 				9F8A974A10E7DEF500A4B72A /* RegexKitLite.m in Sources */,
+				9F2AC6E410EFFE8600CFFF72 /* BXBootlegCoverArt.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

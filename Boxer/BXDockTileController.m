@@ -10,14 +10,18 @@
 #import "BXDockTileController.h"
 #import "BXAppController.h"
 #import "BXSession.h"
+#import "BXBootlegCoverArt.h"
+#import "BXGameProfile.h"
 
 @implementation BXDockTileController
 
 - (void) awakeFromNib
 {
 	//Listen for changes to the current session's represented icon
-	[[NSApp delegate] addObserver: self forKeyPath: @"currentSession.representedIcon" options: 0 context: nil];
-	[self syncIconWithActiveSession];
+	[[NSApp delegate] addObserver: self
+					   forKeyPath: @"currentSession.representedIcon"
+						  options: NSKeyValueObservingOptionInitial
+						  context: nil];
 }
 
 - (void) dealloc
@@ -27,17 +31,30 @@
 }
 
 //Whenever the represented icon changes, force a redraw of our icon view
-- (void)observeValueForKeyPath: (NSString *)keyPath
-					  ofObject: (id)object
-						change: (NSDictionary *)change
-					   context: (void *)context
+- (void) observeValueForKeyPath: (NSString *)keyPath
+					   ofObject: (id)object
+						 change: (NSDictionary *)change
+						context: (void *)context
 {	
 	if ([keyPath isEqualToString: @"currentSession.representedIcon"]) [self syncIconWithActiveSession];
 }
 
-- (void)syncIconWithActiveSession
+- (NSImage *) coverArtForSession: (BXSession *)session
 {
-	NSImage *icon = [[[NSApp delegate] currentSession] representedIcon];
+	NSImage *icon = [session representedIcon];
+	if (!icon && [session isGamePackage])
+	{
+		BOOL useDiskette = [BXGameProfile isDisketteGameAtPath: [[session fileURL] path]];
+		Class <BXBootlegCoverArt> coverArtClass = (useDiskette) ? [BXDiskette class] : [BXJewelCase class];
+		icon = [coverArtClass coverArtWithTitle: [session sessionDisplayName]];
+	}
+	return icon;
+}
+
+- (void) syncIconWithActiveSession
+{
+	BXSession *session = [[NSApp delegate] currentSession];
+	NSImage *icon = [self coverArtForSession: session];
 	[icon setSize: NSMakeSize(128, 128)];
 	[NSApp setApplicationIconImage: icon];
 }

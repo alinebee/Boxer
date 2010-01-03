@@ -28,6 +28,11 @@
 //specific game profile that is matched earlier by a less specific one. This could be fixed by matching
 //all profiles and then sorting them by 'relevance', at a cost of scanning the entire file heirarchy.
 + (NSDictionary *)detectedProfileForPath: (NSString *)basePath;
+
+
+//Returns whether the contents of the specified file path look like a floppy disk game, based on
+//age of files and overall size. This is used to decide which bootleg coverart style to use.
++ (BOOL) isDisketteGameAtPath: (NSString *)basePath;
 @end
 
 

@@ -51,6 +51,14 @@ bool CDROM_Interface_SDL::SetDevice(char* path, int forceCD) {
 	int num = SDL_CDNumDrives();
 	if ((forceCD>=0) && (forceCD<num)) {
 		driveID = forceCD;
+			//--Added 2009-12-31 by Alun Bestor: shut down and restart the CDROM subsystem to reset SDL's
+			//cached file information about the CD-ROM volumes
+			//This is needed otherwise SDL persists invalid file pointers to the CD-ROM and its tracks,
+			//way to go guys
+			SDL_QuitSubSystem(SDL_INIT_CDROM);
+			SDL_Init(SDL_INIT_CDROM);
+			//--End of modifications
+		
 	        cd = SDL_CDOpen(driveID);
 	        SDL_CDStatus(cd);
 	   	return true;
@@ -60,6 +68,14 @@ bool CDROM_Interface_SDL::SetDevice(char* path, int forceCD) {
 	for (int i=0; i<num; i++) {
 		cdname = SDL_CDName(i);
 		if (strcmp(buffer,cdname)==0) {
+			//--Added 2009-12-31 by Alun Bestor: shut down and restart the CDROM subsystem to reset SDL's
+			//cached file information about the CD-ROM volumes
+			//This is needed otherwise SDL persists invalid file pointers to the CD-ROM and its tracks,
+			//way to go guys
+			SDL_QuitSubSystem(SDL_INIT_CDROM);
+			SDL_Init(SDL_INIT_CDROM);
+			//--End of modifications
+			
 			cd = SDL_CDOpen(i);
 			SDL_CDStatus(cd);
 			driveID = i;

@@ -44,8 +44,13 @@
 	NSImage *icon = [session representedIcon];
 	if (!icon && [session isGamePackage])
 	{
-		BOOL useDiskette = [BXGameProfile isDisketteGameAtPath: [[session fileURL] path]];
-		Class <BXBootlegCoverArt> coverArtClass = (useDiskette) ? [BXDiskette class] : [BXJewelCase class];
+		Class <BXBootlegCoverArt> coverArtClass;
+		switch([BXGameProfile eraOfGameAtPath: [[session fileURL] path]])
+		{
+			case BXCDROMEra:		coverArtClass = [BXJewelCase class];	break;
+			case BX525DisketteEra:	coverArtClass = [BX525Diskette class];	break;
+			default:				coverArtClass = [BX35Diskette class];	break;
+		}
 		icon = [coverArtClass coverArtWithTitle: [session sessionDisplayName]];
 	}
 	return icon;

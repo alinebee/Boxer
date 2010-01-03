@@ -10,11 +10,14 @@
 
 
 
-//Directories larger than this size (in bytes) will be treated as CD games by isDisketteGameAtPath:
+//Directories larger than this size (in bytes) will be treated as CD-era games by eraOfGameAtPath:
 const NSInteger BXDisketteGameSizeThreshold = 20 * 1024 * 1024;
 
-//Directories with any files older than this will be treated as diskette games by isDisketteGameAtPath:
-NSString *BXDisketteGameDateThreshold = @"1995-01-01 00:00:00 +0000";
+//Directories with any files older than this will be treated as 5.25 diskette-era games by eraOfGameAtPath:
+NSString *BX35DisketteGameDateThreshold = @"1995-01-01 00:00:00 +0000";
+
+//Directories with any files older than this will be treated as 3.5 diskette-era games by eraOfGameAtPath:
+NSString *BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 
 
 @implementation BXGameProfile
@@ -42,12 +45,13 @@ NSString *BXDisketteGameDateThreshold = @"1995-01-01 00:00:00 +0000";
 	return nil;
 }
 
-+ (BOOL) isDisketteGameAtPath: (NSString *)basePath
++ (BXGameEra) eraOfGameAtPath: (NSString *)basePath
 {
 	NSFileManager *manager = [NSFileManager defaultManager];
 	NSDirectoryEnumerator *enumerator = [manager enumeratorAtPath: basePath];
 	
-	NSDate *cutoffDate = [NSDate dateWithString: BXDisketteGameDateThreshold];
+	NSDate *cutoffDate525	= [NSDate dateWithString: BX525DisketteGameDateThreshold];
+	NSDate *cutoffDate35	= [NSDate dateWithString: BX35DisketteGameDateThreshold];
 	NSInteger pathSize = 0;
 	
 	for (NSString *filePath in enumerator)
@@ -56,14 +60,15 @@ NSString *BXDisketteGameDateThreshold = @"1995-01-01 00:00:00 +0000";
 		
 		//The game was released before CDs became commonplace, treat it as a diskette game
 		NSDate *creationDate = [attrs fileCreationDate];
-		if ([creationDate timeIntervalSinceDate: cutoffDate] < 0) return YES;
+		if ([creationDate timeIntervalSinceDate: cutoffDate525] < 0)	return BX525DisketteEra;
+		if ([creationDate timeIntervalSinceDate: cutoffDate35] < 0)		return BX35DisketteEra;
 		
 		//The game is too big to have been released on diskettes, treat it as a CD game
 		pathSize += [attrs fileSize];
-		if (pathSize > BXDisketteGameSizeThreshold) return NO;
+		if (pathSize > BXDisketteGameSizeThreshold) return BXCDROMEra;
 	}
-	//When all else fails, let's call it a diskette game
-	return YES;
+	//When all else fails, assume it's a 3.5 diskette game
+	return BX35DisketteEra;
 }
 
 

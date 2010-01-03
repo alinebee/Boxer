@@ -225,8 +225,9 @@
 		9FE201BB0F6D59D500B3A38C /* libpng.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FE201320F6D543F00B3A38C /* libpng.framework */; };
 		9FE201C80F6D5B5F00B3A38C /* BXEmulator+BXRecording.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FE201C50F6D5B5F00B3A38C /* BXEmulator+BXRecording.mm */; };
 		9FE202480F6D749500B3A38C /* Snapshot.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9FE202470F6D749500B3A38C /* Snapshot.aiff */; };
-		9FE8265C10F0EBA000F1B03E /* DisketteShine.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE8265A10F0EBA000F1B03E /* DisketteShine.png */; };
-		9FE8265D10F0EBA000F1B03E /* Diskette.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE8265B10F0EBA000F1B03E /* Diskette.png */; };
+		9FE8265C10F0EBA000F1B03E /* 35DisketteShine.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE8265A10F0EBA000F1B03E /* 35DisketteShine.png */; };
+		9FE8265D10F0EBA000F1B03E /* 35Diskette.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE8265B10F0EBA000F1B03E /* 35Diskette.png */; };
+		9FF445E010F13A2200B74B15 /* 525Diskette.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FF445DF10F13A2200B74B15 /* 525Diskette.png */; };
 		9FFAFE2D10DE33FB00728BAC /* GameProfiles.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */; };
 		9FFAFE4310DE343F00728BAC /* Configurations in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2E10DE343F00728BAC /* Configurations */; };
 /* End PBXBuildFile section */
@@ -652,8 +653,9 @@
 		9FE201C40F6D5B5F00B3A38C /* BXEmulator+BXRecording.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXEmulator+BXRecording.h"; sourceTree = "<group>"; };
 		9FE201C50F6D5B5F00B3A38C /* BXEmulator+BXRecording.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "BXEmulator+BXRecording.mm"; sourceTree = "<group>"; };
 		9FE202470F6D749500B3A38C /* Snapshot.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = Snapshot.aiff; sourceTree = "<group>"; };
-		9FE8265A10F0EBA000F1B03E /* DisketteShine.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DisketteShine.png; sourceTree = "<group>"; };
-		9FE8265B10F0EBA000F1B03E /* Diskette.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Diskette.png; sourceTree = "<group>"; };
+		9FE8265A10F0EBA000F1B03E /* 35DisketteShine.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 35DisketteShine.png; sourceTree = "<group>"; };
+		9FE8265B10F0EBA000F1B03E /* 35Diskette.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 35Diskette.png; sourceTree = "<group>"; };
+		9FF445DF10F13A2200B74B15 /* 525Diskette.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 525Diskette.png; sourceTree = "<group>"; };
 		9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = GameProfiles.plist; sourceTree = "<group>"; };
 		9FFAFE2E10DE343F00728BAC /* Configurations */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Configurations; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -1023,8 +1025,9 @@
 		9FBC34390F56C5AC001811F2 /* Images */ = {
 			isa = PBXGroup;
 			children = (
-				9FE8265A10F0EBA000F1B03E /* DisketteShine.png */,
-				9FE8265B10F0EBA000F1B03E /* Diskette.png */,
+				9FF445DF10F13A2200B74B15 /* 525Diskette.png */,
+				9FE8265A10F0EBA000F1B03E /* 35DisketteShine.png */,
+				9FE8265B10F0EBA000F1B03E /* 35Diskette.png */,
 				9F2AC6D510EFE14300CFFF72 /* CDCover.png */,
 				9F2AC6D610EFE14300CFFF72 /* CDCase.png */,
 				9FBD321610E5144C00031CB6 /* Brand.png */,
@@ -1551,8 +1554,9 @@
 				9F758B0A10E904CF00531FDB /* PreferencesPanel.xib in Resources */,
 				9F2AC6D710EFE14300CFFF72 /* CDCover.png in Resources */,
 				9F2AC6D810EFE14300CFFF72 /* CDCase.png in Resources */,
-				9FE8265C10F0EBA000F1B03E /* DisketteShine.png in Resources */,
-				9FE8265D10F0EBA000F1B03E /* Diskette.png in Resources */,
+				9FE8265C10F0EBA000F1B03E /* 35DisketteShine.png in Resources */,
+				9FE8265D10F0EBA000F1B03E /* 35Diskette.png in Resources */,
+				9FF445E010F13A2200B74B15 /* 525Diskette.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

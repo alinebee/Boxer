@@ -33,5 +33,8 @@
 
 @end
 
-@interface BXDiskette : BXJewelCase
+@interface BX35Diskette : BXJewelCase
+@end
+
+@interface BX525Diskette : BXJewelCase
 @end

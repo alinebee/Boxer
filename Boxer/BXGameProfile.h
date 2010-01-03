@@ -12,6 +12,16 @@
 
 #import <Cocoa/Cocoa.h>
 
+
+//Constants used by eraOfGameAtPath:
+enum {
+	BX525DisketteEra,
+	BX35DisketteEra,
+	BXCDROMEra
+};
+typedef NSUInteger BXGameEra;
+
+
 @interface BXGameProfile : NSObject
 //Returns an array of generic profiles that match multiple games.
 //This corresponds the contents of the BXGenericProfiles key in GameProfiles.plist.
@@ -32,7 +42,7 @@
 
 //Returns whether the contents of the specified file path look like a floppy disk game, based on
 //age of files and overall size. This is used to decide which bootleg coverart style to use.
-+ (BOOL) isDisketteGameAtPath: (NSString *)basePath;
++ (BXGameEra) eraOfGameAtPath: (NSString *)basePath;
 @end
 
 

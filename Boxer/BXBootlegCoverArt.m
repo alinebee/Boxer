@@ -86,11 +86,21 @@
 @end
 
 
-@implementation BXDiskette
+@implementation BX35Diskette
 
-+ (NSImage *) baseLayerForSize:	(NSSize)size	{ return [NSImage imageNamed: @"Diskette.png"]; }
-+ (NSImage *) topLayerForSize:	(NSSize)size	{ return [NSImage imageNamed: @"DisketteShine.png"]; }
++ (NSImage *) baseLayerForSize:	(NSSize)size	{ return [NSImage imageNamed: @"35Diskette.png"]; }
++ (NSImage *) topLayerForSize:	(NSSize)size	{ return [NSImage imageNamed: @"35DisketteShine.png"]; }
 + (NSRect) textRegionForSize:	(NSSize)size	{ return NSMakeRect(24, 55, 80, 54); }
 + (CGFloat) lineHeightForSize:	(NSSize)size	{ return 18.0; }
+
+@end
+
+@implementation BX525Diskette
+
++ (NSImage *) baseLayerForSize:	(NSSize)size	{ return [NSImage imageNamed: @"525Diskette.png"]; }
++ (NSImage *) topLayerForSize:	(NSSize)size	{ return nil; }
++ (NSRect) textRegionForSize:	(NSSize)size	{ return NSMakeRect(16, 90, 96, 32); }
++ (CGFloat) lineHeightForSize:	(NSSize)size	{ return 16.0; }
++ (CGFloat) fontSizeForSize:	(NSSize)size	{ return 12.0; }
 
 @end

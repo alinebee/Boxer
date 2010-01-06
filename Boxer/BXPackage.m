@@ -96,12 +96,14 @@
 
 - (NSString *) targetPath
 {
-	NSString *symlinkPath	= [self pathForResource: @"DOSBox Target" ofType: nil];
-	NSString *targetPath	= [symlinkPath stringByResolvingSymlinksInPath];
+	if (!targetPath)
+	{
+		NSString *symlinkPath = [self pathForResource: @"DOSBox Target" ofType: nil];
+		targetPath = [symlinkPath stringByResolvingSymlinksInPath];
 	
-	//If the path is unchanged, this indicates a broken link
-	if ([targetPath isEqualToString: symlinkPath]) targetPath = nil;
-	
+		//If the path is unchanged, this indicates a broken link
+		if ([targetPath isEqualToString: symlinkPath]) targetPath = nil;
+	}
 	return targetPath;
 }
 
@@ -109,24 +111,32 @@
 {
 	[self willChangeValueForKey: @"targetPath"];
 	
-	NSFileManager *manager	= [NSFileManager defaultManager];
-	NSString *linkLocation	= [[self resourcePath] stringByAppendingPathComponent: @"DOSBox Target"];
-	
-	//Todo: handle errors better (at all)!
-	
-	//First, attempt to delete any existing link
-	[manager removeItemAtPath: linkLocation error: nil];
-	
-	//If a new path was specified, create a new link
-	if (path)
+	if (![targetPath isEqualToString: path])
 	{
-		//Make the link relative to the game package
-		NSString *basePath		= [self resourcePath];
-		NSString *relativePath	= [path pathRelativeToPath: basePath];
-	
-		[manager createSymbolicLinkAtPath: linkLocation withDestinationPath: relativePath error: nil];
+		
+		[targetPath autorelease];
+		targetPath = [path retain];
+		
+		//Now persist the target path as a symlink
+		//----------------------------------------
+		
+		NSFileManager *manager	= [NSFileManager defaultManager];
+		NSString *linkLocation	= [[self resourcePath] stringByAppendingPathComponent: @"DOSBox Target"];
+		
+		//Todo: handle errors better (at all)!
+		//First, attempt to delete any existing link
+		[manager removeItemAtPath: linkLocation error: nil];
+		
+		//If a new path was specified, create a new link
+		if (path)
+		{
+			//Make the link relative to the game package
+			NSString *basePath		= [self resourcePath];
+			NSString *relativePath	= [targetPath pathRelativeToPath: basePath];
+		
+			[manager createSymbolicLinkAtPath: linkLocation withDestinationPath: relativePath error: nil];
+		}
 	}
-	
 	[self didChangeValueForKey: @"targetPath"];
 }
 

@@ -9,6 +9,7 @@
 //BXPackage represents a single Boxer gamebox and offers methods for retrieving and persisting
 //bundled drives, configuration files, documentation and target programs. It is based on NSBundle
 //but does not require that Boxer gameboxes use any standard OS X bundle folder structure.
+//(and indeed, gameboxes with a standard OS X bundle structure haven't been tested.)
 
 //TODO: it is inappropriate to subclass NSBundle for representing a modifiable file package,
 //and we should instead be using an NSFileWrapper directory wrapper.
@@ -19,7 +20,9 @@
 {
 	NSArray *documentation;
 	NSArray *executables;
+	NSString *targetPath;
 }
+
 //An array of absolute file paths to documentation files found inside the gamebox.
 @property (retain) NSArray *documentation;
 
@@ -30,11 +33,12 @@
 + (NSArray *) documentationExclusions;	//Filename patterns for documentation to exclude from searches.
 + (NSArray *) executableExclusions;		//Filename patterns for executables to exclude from searches.
 
-//The path to the DOS game's base folder. Currently this is equal to [NSBundle bundlePath]. 
+//The path to the DOS game's base folder. Currently this is equal to [NSBundle bundlePath].
+//TODO: if there is a separately-bundled drive C, this should be returned instead!
 - (NSString *) gamePath;
 
 //The path to the default DOS program to launch when the gamebox is opened, or nil if one has not been chosen.
-//This is currently stored as a symlink in the base folder of the gamebox.
+//This is also persisted as a symlink in the base folder of the gamebox.
 - (NSString *) targetPath;
 - (void) setTargetPath: (NSString *)path;
 

@@ -156,10 +156,14 @@
 //Convert the dropped image into pretty cover-art
 - (void) setImage: (NSImage *)newImage
 {
-	if (newImage) newImage = [BXCoverArt coverArtFromImage: newImage];
-	[super setImage: newImage];
+	if (newImage)
+	{
+		[super setImage: [BXCoverArt coverArtWithImage: newImage]];
+	}
+	else [super setImage: nil];
 	
 	//Deselect ourselves afterwards so we don't have a glow hanging around
+	//TODO: this should be handled upstream, in the IBAction methods that call this instead
 	if ([[self window] firstResponder] == self) [[self window] makeFirstResponder: nil];
 }
 

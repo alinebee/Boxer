@@ -9,8 +9,9 @@
 #import "BXBootlegCoverArt.h"
 
 @implementation BXJewelCase
+@synthesize title;
 
-+ (NSString *)fontName	{ return @"Marker Felt Thin"; }
++ (NSString *) fontName	{ return @"Marker Felt Thin"; }
 
 + (NSColor *) textColor
 {
@@ -44,44 +45,64 @@
 			nil];
 }
 
-+ (NSImageRep *) representationWithTitle: (NSString *)title forSize: (NSSize) iconSize
++ (NSImage *) baseLayerForSize:	(NSSize)size	{ return [NSImage imageNamed: @"CDCase.png"]; }
++ (NSImage *) topLayerForSize:	(NSSize)size	{ return [NSImage imageNamed: @"CDCover.png"]; }
+
++ (NSRect) textRegionForRect:	(NSRect)frame	{ return NSMakeRect(22, 32, 92, 60); }
+
+
+
+- (id) initWithTitle: (NSString *)coverTitle
 {
-	NSRect frame		= NSMakeRect(0, 0, iconSize.width, iconSize.height);
-	NSRect textRegion	= [self textRegionForSize: iconSize];
-	NSDictionary *textAttributes = [self textAttributesForSize: iconSize];
+	if ((self = [super init]))
+	{
+		[self setTitle: coverTitle];
+	}
+	return self;
+}
+
+- (void) drawInRect: (NSRect)frame
+{
+	NSSize iconSize		= frame.size;
+	NSRect textRegion	= [[self class] textRegionForRect: frame];
+	NSDictionary *textAttributes = [[self class] textAttributesForSize: iconSize];
 	
-	NSImage *baseLayer	= [self baseLayerForSize: iconSize];
-	NSImage *topLayer	= [self topLayerForSize: iconSize];
+	NSImage *baseLayer	= [[self class] baseLayerForSize: iconSize];
+	NSImage *topLayer	= [[self class] topLayerForSize: iconSize];
+	
+	[baseLayer drawInRect: frame fromRect: NSZeroRect operation: NSCompositeSourceOver fraction: 1.0];
+	[[self title] drawInRect: textRegion withAttributes: textAttributes];
+	[topLayer drawInRect: frame fromRect: NSZeroRect operation: NSCompositeSourceOver fraction: 1.0];
+}
+
+- (NSImageRep *) representationForSize: (NSSize)iconSize
+{
+	NSRect frame = NSMakeRect(0, 0, iconSize.width, iconSize.height);
 	
 	//Create a new empty canvas to draw into
 	NSImage *canvas = [[NSImage alloc] initWithSize: iconSize];
-	NSBitmapImageRep *rep;
 	
 	[canvas lockFocus];
-		[baseLayer drawInRect: frame fromRect: NSZeroRect operation: NSCompositeSourceOver fraction: 1.0];
-	
-		[title drawInRect: textRegion withAttributes: textAttributes];
-	
-		[topLayer drawInRect: frame fromRect: NSZeroRect operation: NSCompositeSourceOver fraction: 1.0];
-	
-		//Capture the canvas as an NSBitmapImageRep
-		rep = [[NSBitmapImageRep alloc] initWithFocusedViewRect: frame];
+	[self drawInRect: frame];
+	NSBitmapImageRep *rep = [[NSBitmapImageRep alloc] initWithFocusedViewRect: frame];
 	[canvas unlockFocus];
 	[canvas release];
 	
 	return [rep autorelease];
 }
 
-+ (NSImage *) coverArtWithTitle: (NSString *)title
+- (NSImage *) coverArt
 {
 	NSImage *coverArt = [[NSImage alloc] init];
-	[coverArt addRepresentation: [self representationWithTitle: title forSize: NSMakeSize(128, 128)]];
+	[coverArt addRepresentation: [self representationForSize: NSMakeSize(128, 128)]];
 	return [coverArt autorelease];
 }
 
-+ (NSImage *) baseLayerForSize:	(NSSize)size	{ return [NSImage imageNamed: @"CDCase.png"]; }
-+ (NSImage *) topLayerForSize:	(NSSize)size	{ return [NSImage imageNamed: @"CDCover.png"]; }
-+ (NSRect) textRegionForSize:	(NSSize)size	{ return NSMakeRect(22, 32, 92, 60); }
++ (NSImage *) coverArtWithTitle: (NSString *)coverTitle
+{
+	id generator = [[[self alloc] initWithTitle: coverTitle] autorelease];
+	return [generator coverArt];
+}
 
 @end
 
@@ -90,8 +111,9 @@
 
 + (NSImage *) baseLayerForSize:	(NSSize)size	{ return [NSImage imageNamed: @"35Diskette.png"]; }
 + (NSImage *) topLayerForSize:	(NSSize)size	{ return [NSImage imageNamed: @"35DisketteShine.png"]; }
-+ (NSRect) textRegionForSize:	(NSSize)size	{ return NSMakeRect(24, 55, 80, 54); }
 + (CGFloat) lineHeightForSize:	(NSSize)size	{ return 18.0; }
+
++ (NSRect) textRegionForRect:	(NSRect)frame	{ return NSMakeRect(24, 55, 80, 54); }
 
 @end
 
@@ -99,8 +121,9 @@
 
 + (NSImage *) baseLayerForSize:	(NSSize)size	{ return [NSImage imageNamed: @"525Diskette.png"]; }
 + (NSImage *) topLayerForSize:	(NSSize)size	{ return nil; }
-+ (NSRect) textRegionForSize:	(NSSize)size	{ return NSMakeRect(16, 90, 96, 32); }
 + (CGFloat) lineHeightForSize:	(NSSize)size	{ return 16.0; }
 + (CGFloat) fontSizeForSize:	(NSSize)size	{ return 12.0; }
+
++ (NSRect) textRegionForRect:	(NSRect)frame	{ return NSMakeRect(16, 90, 96, 32); }
 
 @end

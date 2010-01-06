@@ -6,12 +6,22 @@
  */
 
 
-//BXCoverArt is a holding class for a set of class methods to convert images into game cover art.
-//This class has no instance methods and is not meant to be instantiated.
+//BXCoverArt renders a boxed cover-art appearance from an original source image. It can return
+//an NSImage resource suitable for use as a file thumbnail, or draw the art directly into the
+//current graphics context.
 
 #import <Cocoa/Cocoa.h>
 
 @interface BXCoverArt : NSObject
+{
+	NSImage *sourceImage;
+}
+//The original image we will render into cover art
+@property (retain) NSImage *sourceImage;
+
+
+//Methods governing art appearance
+//--------------------------------
 
 //Returns the drop shadow effect to be applied to icons of the specified size.
 //This shadow ensures the icon stands out on light backgrounds, such as a Finder folder window.
@@ -25,11 +35,25 @@
 //This overlay gives the image a stylized glossy appearance.
 + (NSImage *) shineForSize: (NSSize) iconSize;
 
-//Returns a cover art image representation rendered from the specified image at the specified size.
-+ (NSImageRep *) representationFromImage: (NSImage *)originalImage forSize: (NSSize) iconSize;
+
+//Rendering methods
+//-----------------
+
+//Draws the source image as cover art into the specified frame in the current graphics context.
+- (void) drawInRect: (NSRect)frame;
+
+//Returns a cover art image representation from the source image rendered at the specified size.
+- (NSImageRep *) representationForSize: (NSSize)iconSize;
+
+//Default initializer: returns a BXCoverArt object initialized with the specified original image.
+- (id) initWithSourceImage: (NSImage *)image;
+
+//Returns a cover art image rendered from the source image to 512, 256, 128 and 32x32 sizes,
+//suitable for use as an OS X icon.
+- (NSImage *) coverArt;
 
 //Returns a cover art image rendered from the specified image to 512, 256, 128 and 32x32 sizes,
-//suitable for use as an OSX icon resource.
-+ (NSImage *) coverArtFromImage: (NSImage *)image;
+//suitable for use as an OS X icon.
++ (NSImage *) coverArtWithImage: (NSImage *)image;
 
 @end

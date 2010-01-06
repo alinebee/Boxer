@@ -366,6 +366,10 @@
 	} else {
 		[image drawInRect: imageRect fromRect: NSZeroRect operation: NSCompositeSourceAtop fraction: [[[BGThemeManager keyedManager] themeForKey: self.themeKey] disabledAlphaValue]];
 	}
+	
+	//--Added 2010-01-06 by Alun Bestor: leaving the image flipped will make it draw incorrectly in the popup menu
+	[image setFlipped: NO];
+	//--End of modifications
 }
 
 - (void)drawArrowsInRect:(NSRect) frame {

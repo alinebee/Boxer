@@ -8,6 +8,7 @@
 
 #import "BXAppController.h"
 #import "BXAboutController.h"
+#import "BXPreferencesController.h"
 #import "BXSession.h"
 #import "BXValueTransformers.h"
 #import "BXGrowlController.h"
@@ -261,7 +262,8 @@
 //--------------------
 //Should probably be abstracted off to a separate class at this point, linked into the responder chain
 
-- (IBAction) orderFrontAboutPanel:	(id)sender	{ [[BXAboutController controller] showWindow: nil]; }
+- (IBAction) orderFrontAboutPanel:			(id)sender	{ [[BXAboutController controller] showWindow: nil]; }
+- (IBAction) orderFrontPreferencesPanel:	(id)sender	{ [[BXPreferencesController controller] showWindow: nil]; }
 
 - (IBAction) showWebsite:			(id)sender	{ [self openURLFromKey: @"WebsiteURL"]; }
 - (IBAction) showDonationPage:		(id)sender	{ [self openURLFromKey: @"DonationURL"]; }

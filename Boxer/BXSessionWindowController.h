@@ -55,7 +55,7 @@
 
 //Toggle the emulator's active rendering filter. This will resize the window to fit, if the
 //filter demands a minimum size smaller than the current window size.
-- (IBAction) toggleFilterType: (NSMenuItem *)sender;
+- (IBAction) toggleFilterType: (id)sender;
 
 //Toggle instantly in and out of fullscreen mode.
 - (IBAction) toggleFullScreen: (id)sender;

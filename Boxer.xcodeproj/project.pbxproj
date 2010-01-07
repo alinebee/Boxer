@@ -61,6 +61,15 @@
 		9F76D4CC10CBFFB200C3B081 /* BXVideoFormatAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F76D4CB10CBFFB200C3B081 /* BXVideoFormatAlert.m */; };
 		9F8A974A10E7DEF500A4B72A /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8A974910E7DEF500A4B72A /* RegexKitLite.m */; };
 		9F8A976010E7EDDE00A4B72A /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */; };
+		9F9A4C9610F67A1F00E61965 /* GalleryOriginal.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A4C9010F67A1F00E61965 /* GalleryOriginal.png */; };
+		9F9A4C9710F67A1F00E61965 /* GalleryHQx.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A4C9110F67A1F00E61965 /* GalleryHQx.png */; };
+		9F9A4C9810F67A1F00E61965 /* GalleryMAME.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A4C9210F67A1F00E61965 /* GalleryMAME.png */; };
+		9F9A4C9910F67A1F00E61965 /* GallerySpotlight.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A4C9310F67A1F00E61965 /* GallerySpotlight.png */; };
+		9F9A4C9A10F67A1F00E61965 /* GalleryBkg.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A4C9410F67A1F00E61965 /* GalleryBkg.jpg */; };
+		9F9A4C9B10F67A1F00E61965 /* GalleryTVScanlines.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A4C9510F67A1F00E61965 /* GalleryTVScanlines.png */; };
+		9F9A4CA110F67D2C00E61965 /* BXPreferencesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9A4CA010F67D2C00E61965 /* BXPreferencesController.m */; };
+		9F9A4CA610F67DD800E61965 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A4CA410F67DD800E61965 /* Preferences.xib */; };
+		9F9A4CA910F6824B00E61965 /* BXFilterGallery.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9A4CA810F6824B00E61965 /* BXFilterGallery.m */; };
 		9FA2E596109D251100E50623 /* BGHUDAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FA2E595109D251100E50623 /* BGHUDAppKit.framework */; };
 		9FA2E5D9109D255300E50623 /* BGHUDAppKit.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FA2E595109D251100E50623 /* BGHUDAppKit.framework */; };
 		9FA85CD510A357A600E6457F /* BXSession+BXFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA85CD410A357A600E6457F /* BXSession+BXFileManager.m */; };
@@ -348,6 +357,17 @@
 		9F8A974810E7DEF500A4B72A /* RegexKitLite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegexKitLite.h; sourceTree = "<group>"; };
 		9F8A974910E7DEF500A4B72A /* RegexKitLite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegexKitLite.m; sourceTree = "<group>"; };
 		9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
+		9F9A4C9010F67A1F00E61965 /* GalleryOriginal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GalleryOriginal.png; sourceTree = "<group>"; };
+		9F9A4C9110F67A1F00E61965 /* GalleryHQx.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GalleryHQx.png; sourceTree = "<group>"; };
+		9F9A4C9210F67A1F00E61965 /* GalleryMAME.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GalleryMAME.png; sourceTree = "<group>"; };
+		9F9A4C9310F67A1F00E61965 /* GallerySpotlight.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GallerySpotlight.png; sourceTree = "<group>"; };
+		9F9A4C9410F67A1F00E61965 /* GalleryBkg.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = GalleryBkg.jpg; sourceTree = "<group>"; };
+		9F9A4C9510F67A1F00E61965 /* GalleryTVScanlines.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GalleryTVScanlines.png; sourceTree = "<group>"; };
+		9F9A4C9F10F67D2C00E61965 /* BXPreferencesController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXPreferencesController.h; sourceTree = "<group>"; };
+		9F9A4CA010F67D2C00E61965 /* BXPreferencesController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXPreferencesController.m; sourceTree = "<group>"; };
+		9F9A4CA510F67DD800E61965 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/Preferences.xib; sourceTree = "<group>"; };
+		9F9A4CA710F6824B00E61965 /* BXFilterGallery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFilterGallery.h; sourceTree = "<group>"; };
+		9F9A4CA810F6824B00E61965 /* BXFilterGallery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFilterGallery.m; sourceTree = "<group>"; };
 		9FA2E595109D251100E50623 /* BGHUDAppKit.framework */ = {isa = PBXFileReference; comments = "http://www.binarymethod.com/bghudappkit/"; explicitFileType = wrapper.framework; path = BGHUDAppKit.framework; sourceTree = "<group>"; };
 		9FA85CD310A357A600E6457F /* BXSession+BXFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXSession+BXFileManager.h"; sourceTree = "<group>"; };
 		9FA85CD410A357A600E6457F /* BXSession+BXFileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXSession+BXFileManager.m"; sourceTree = "<group>"; };
@@ -697,6 +717,7 @@
 				9F496E3D108EEB0700282261 /* BXSession */,
 				9F27133610C1253E0003CB58 /* BXSessionWindow */,
 				9F27136610C127F90003CB58 /* BXInspector */,
+				9F9A4C9E10F67CEA00E61965 /* BXPreferences */,
 				9F496E3E108EEB9800282261 /* BXAlert */,
 				9F496E3F108EEBB200282261 /* UI helpers */,
 				9F496E3C108EEAD700282261 /* UI controllers */,
@@ -944,6 +965,7 @@
 		9F496E4C108EEDF700282261 /* XIBs */ = {
 			isa = PBXGroup;
 			children = (
+				9F9A4CA410F67DD800E61965 /* Preferences.xib */,
 				9F59DEDD10B01743008DBBC1 /* ProgramPanel.xib */,
 				9F45A46A109C9A0400593456 /* MountPanelOptions.xib */,
 				9F45A1CB109C3D3400593456 /* MainMenu.xib */,
@@ -1004,6 +1026,17 @@
 			path = RegexKitLite;
 			sourceTree = "<group>";
 		};
+		9F9A4C9E10F67CEA00E61965 /* BXPreferences */ = {
+			isa = PBXGroup;
+			children = (
+				9F9A4C9F10F67D2C00E61965 /* BXPreferencesController.h */,
+				9F9A4CA010F67D2C00E61965 /* BXPreferencesController.m */,
+				9F9A4CA710F6824B00E61965 /* BXFilterGallery.h */,
+				9F9A4CA810F6824B00E61965 /* BXFilterGallery.m */,
+			);
+			name = BXPreferences;
+			sourceTree = "<group>";
+		};
 		9FAD43B610A341F6007E8C0D /* UKKQueue */ = {
 			isa = PBXGroup;
 			children = (
@@ -1037,6 +1070,12 @@
 				9FBC31D10F56C370001811F2 /* AboutBackground.png */,
 				9FBC31D40F56C370001811F2 /* BunnyTemplate.png */,
 				9FBC31D60F56C370001811F2 /* TortoiseTemplate.png */,
+				9F9A4C9010F67A1F00E61965 /* GalleryOriginal.png */,
+				9F9A4C9110F67A1F00E61965 /* GalleryHQx.png */,
+				9F9A4C9210F67A1F00E61965 /* GalleryMAME.png */,
+				9F9A4C9310F67A1F00E61965 /* GallerySpotlight.png */,
+				9F9A4C9410F67A1F00E61965 /* GalleryBkg.jpg */,
+				9F9A4C9510F67A1F00E61965 /* GalleryTVScanlines.png */,
 			);
 			name = Images;
 			sourceTree = "<group>";
@@ -1553,6 +1592,13 @@
 				9FE8265C10F0EBA000F1B03E /* 35DisketteShine.png in Resources */,
 				9FE8265D10F0EBA000F1B03E /* 35Diskette.png in Resources */,
 				9FF445E010F13A2200B74B15 /* 525Diskette.png in Resources */,
+				9F9A4C9610F67A1F00E61965 /* GalleryOriginal.png in Resources */,
+				9F9A4C9710F67A1F00E61965 /* GalleryHQx.png in Resources */,
+				9F9A4C9810F67A1F00E61965 /* GalleryMAME.png in Resources */,
+				9F9A4C9910F67A1F00E61965 /* GallerySpotlight.png in Resources */,
+				9F9A4C9A10F67A1F00E61965 /* GalleryBkg.jpg in Resources */,
+				9F9A4C9B10F67A1F00E61965 /* GalleryTVScanlines.png in Resources */,
+				9F9A4CA610F67DD800E61965 /* Preferences.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1747,6 +1793,8 @@
 				9F438C5810E3D8C8007D30AD /* BXScroller.m in Sources */,
 				9F8A974A10E7DEF500A4B72A /* RegexKitLite.m in Sources */,
 				9F2AC6E410EFFE8600CFFF72 /* BXBootlegCoverArt.m in Sources */,
+				9F9A4CA110F67D2C00E61965 /* BXPreferencesController.m in Sources */,
+				9F9A4CA910F6824B00E61965 /* BXFilterGallery.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1812,6 +1860,15 @@
 				9F76D3F610CBC3B300C3B081 /* English */,
 			);
 			name = "GNU General Public License.txt";
+			sourceTree = "<group>";
+		};
+		9F9A4CA410F67DD800E61965 /* Preferences.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9F9A4CA510F67DD800E61965 /* English */,
+			);
+			name = Preferences.xib;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		9FBC34480F56C5D1001811F2 /* DOSBox.strings */ = {

@@ -53,8 +53,8 @@
 //UI actions
 //----------
 
-- (IBAction) orderFrontAboutPanel:	(id)sender;	//Display the Boxer About window.
-
+- (IBAction) orderFrontAboutPanel:	(id)sender;			//Display Boxer's About panel.
+- (IBAction) orderFrontPreferencesPanel: (id)sender;	//Display Boxer's preferences panel. 
 
 //The URLs and email addresses for the following actions are configured in the Info.plist file.
 

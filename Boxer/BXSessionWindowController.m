@@ -195,7 +195,7 @@
 	[self setFullScreenWithZoom: enterFullScreen];
 }
 
-- (IBAction) toggleFilterType: (NSMenuItem *)sender
+- (IBAction) toggleFilterType: (id)sender
 {
 	BXEmulator *emulator	= [self emulator];
 	BXFilterType filterType	= [sender tag];

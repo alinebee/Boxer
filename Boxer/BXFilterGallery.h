@@ -7,11 +7,22 @@
 
 
 //BXFilterGallery draws Boxer's rendering filter gallery in the preferences pane. It consists of
-//a view with a graphical background containing custom NSButtons for each option.
+//the BXFilterGallery view that renders a graphical background, containing BXFilterPortrait
+//buttons for each option.
 
 #import <Cocoa/Cocoa.h>
 
 @interface BXFilterGallery : NSView
+@end
+
+@interface BXFilterPortrait : NSButton
+{
+	CGFloat illumination;
+}
+//The current illumination, which controls the brightness of the portrait and the opacity of the
+//spotlight. This is animatable via -animator and will change automatically when the button's state
+//is toggled on or off.
+@property (assign) CGFloat illumination;
 @end
 
 @interface BXFilterPortraitCell : NSButtonCell

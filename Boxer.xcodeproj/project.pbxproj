@@ -59,6 +59,9 @@
 		9F76D3F710CBC3B300C3B081 /* GNU General Public License.txt in Resources */ = {isa = PBXBuildFile; fileRef = 9F76D3F510CBC3B300C3B081 /* GNU General Public License.txt */; };
 		9F76D45610CBE5C500C3B081 /* BXSession+BXDragDrop.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F76D45510CBE5C500C3B081 /* BXSession+BXDragDrop.m */; };
 		9F76D4CC10CBFFB200C3B081 /* BXVideoFormatAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F76D4CB10CBFFB200C3B081 /* BXVideoFormatAlert.m */; };
+		9F7936D010F8B8D300C9178C /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F7936CF10F8B8D300C9178C /* Sparkle.framework */; };
+		9F7936DB10F8B9E900C9178C /* Sparkle.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F7936CF10F8B8D300C9178C /* Sparkle.framework */; };
+		9F7936DD10F8C0CA00C9178C /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = 9F7936DC10F8C0CA00C9178C /* dsa_pub.pem */; };
 		9F8A974A10E7DEF500A4B72A /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8A974910E7DEF500A4B72A /* RegexKitLite.m */; };
 		9F8A976010E7EDDE00A4B72A /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */; };
 		9F9A4C9610F67A1F00E61965 /* GalleryOriginal.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A4C9010F67A1F00E61965 /* GalleryOriginal.png */; };
@@ -247,6 +250,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				9F7936DB10F8B9E900C9178C /* Sparkle.framework in Copy Bundled Frameworks */,
 				9F6BA6FD10A9FBAB005A3E2A /* Growl.framework in Copy Bundled Frameworks */,
 				9FA2E5D9109D255300E50623 /* BGHUDAppKit.framework in Copy Bundled Frameworks */,
 				9FE201BB0F6D59D500B3A38C /* libpng.framework in Copy Bundled Frameworks */,
@@ -354,6 +358,8 @@
 		9F76D45510CBE5C500C3B081 /* BXSession+BXDragDrop.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXSession+BXDragDrop.m"; sourceTree = "<group>"; };
 		9F76D4CA10CBFFB200C3B081 /* BXVideoFormatAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXVideoFormatAlert.h; sourceTree = "<group>"; };
 		9F76D4CB10CBFFB200C3B081 /* BXVideoFormatAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXVideoFormatAlert.m; sourceTree = "<group>"; };
+		9F7936CF10F8B8D300C9178C /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
+		9F7936DC10F8C0CA00C9178C /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub.pem; sourceTree = "<group>"; };
 		9F8A974810E7DEF500A4B72A /* RegexKitLite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegexKitLite.h; sourceTree = "<group>"; };
 		9F8A974910E7DEF500A4B72A /* RegexKitLite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegexKitLite.m; sourceTree = "<group>"; };
 		9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
@@ -698,6 +704,7 @@
 				9FA2E596109D251100E50623 /* BGHUDAppKit.framework in Frameworks */,
 				9F6BA6F910A9FB92005A3E2A /* Growl.framework in Frameworks */,
 				9F8A976010E7EDDE00A4B72A /* libicucore.dylib in Frameworks */,
+				9F7936D010F8B8D300C9178C /* Sparkle.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -786,6 +793,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				9F7936DC10F8C0CA00C9178C /* dsa_pub.pem */,
 				9FBC31E40F56C399001811F2 /* UserDefaults.plist */,
 				9FCBB2DB10A61E9300C28B09 /* Launch.conf */,
 				9FCBB2D910A61D6100C28B09 /* Preflight.conf */,
@@ -1446,6 +1454,7 @@
 		9FBC3C130F56D6E8001811F2 /* Bundled Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9F7936CF10F8B8D300C9178C /* Sparkle.framework */,
 				9F6BA6F810A9FB92005A3E2A /* Growl.framework */,
 				9FA2E595109D251100E50623 /* BGHUDAppKit.framework */,
 				9FE201320F6D543F00B3A38C /* libpng.framework */,
@@ -1599,6 +1608,7 @@
 				9F9A4C9A10F67A1F00E61965 /* GalleryBkg.jpg in Resources */,
 				9F9A4C9B10F67A1F00E61965 /* GalleryTVScanlines.png in Resources */,
 				9F9A4CA610F67DD800E61965 /* Preferences.xib in Resources */,
+				9F7936DD10F8C0CA00C9178C /* dsa_pub.pem in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2008,7 +2018,7 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
 				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
 				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 20100106.1;
+				CURRENT_PROJECT_VERSION = 20100109.1;
 				GCC_VERSION = 4.0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;

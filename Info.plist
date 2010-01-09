@@ -44,6 +44,16 @@
 	<string>http://www.mobygames.com/</string>
 	<key>MobygamesSearchURL</key>
 	<string>http://www.mobygames.com/search/quick?p=2&amp;q=%@</string>
+	<key>SUEnableAutomaticChecks</key>
+	<true/>
+	<key>SUEnableSystemProfiling</key>
+	<false/>
+	<key>SUScheduledCheckInterval</key>
+	<integer>86400</integer>
+	<key>SUFeedURL</key>
+	<string>http://boxerapp.com/sparkledev</string>
+	<key>SUPublicDSAKeyFile</key>
+	<string>dsa_pub.pem</string>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>

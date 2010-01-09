@@ -12,6 +12,7 @@
 #import "BXSessionWindowController+BXRenderController.h"
 
 #import "BXSession+BXFileManager.h"
+#import "BXSession+BXEmulatorController.h"
 #import "BXDrive.h"
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulator+BXShell.h"
@@ -37,6 +38,24 @@
 //Initialization and cleanup methods
 //----------------------------------
 
+- (id) init
+{
+	if ((self = [super init]))
+	{
+		//This space intentionally left blank, for any init-time setup we need to do later
+	}
+	return self;
+}
+
+- (void) dealloc
+{
+	[self setEmulator: nil],			[emulator release];
+	[self setGamePackage: nil],			[gamePackage release];
+	[self setTargetPath: nil],			[targetPath release];
+	[self setActiveProgramPath: nil],	[activeProgramPath release];
+	[super dealloc];
+}
+
 //We only implement this to keep drag-drop opening happy - we don't ever actually read any data off disk.
 - (BOOL)readFromFileWrapper:(NSFileWrapper *)fileWrapper ofType:(NSString *)typeName error:(NSError **)outError
 {
@@ -58,50 +77,27 @@
 	if (![self hasStarted]) [self start];
 }
 
-- (void) dealloc
-{
-	[self setEmulator: nil],			[emulator release];
-	[self setGamePackage: nil],			[gamePackage release];
-	[self setTargetPath: nil],			[targetPath release];
-	[self setActiveProgramPath: nil],	[activeProgramPath release];
-	[super dealloc];
-}
-
-
-- (IBAction) toggleInspectorPanel: (id)sender
-{
-	BXInspectorController *inspector = [BXInspectorController controller];
-	
-	//Hide the inspector if it is already visible
-	if ([inspector isWindowLoaded] && [[inspector window] isVisible])
-	{
-		[[inspector window] orderOut: sender];
-	}
-	else
-	{
-		//Escape from fullscreen when showing the inspector
-		[[self mainWindowController] exitFullScreen: sender];
-		[inspector showWindow: sender];
-	}
-}
-
-
 - (void) setEmulator: (BXEmulator *)theEmulator
 {
 	[self willChangeValueForKey: @"emulator"];
 	
 	if (theEmulator != emulator)
 	{
-		[self _deregisterForFilesystemNotifications];
-		[emulator setDelegate: nil];
-		[emulator cancel];
-		[emulator autorelease];
-	
+		if (emulator)
+		{
+			[self _deregisterForFilesystemNotifications];
+			[emulator setDelegate: nil];
+			[self _unbindEmulator];
+			[emulator cancel];
+			[emulator autorelease];
+		}
+		
 		emulator = [theEmulator retain];
 	
 		if (theEmulator)
 		{
 			[theEmulator setDelegate: self];
+			[self _bindEmulator];
 			[self _registerForFilesystemNotifications];
 		}
 	}
@@ -317,11 +313,30 @@
 //Emulator initialisation
 //-----------------------
 
+- (void) _bindEmulator
+{
+	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+	
+	[[self emulator] bind: @"filterType"
+				 toObject: defaults
+			  withKeyPath: @"filterType"
+				  options: nil];
+	
+	[[self emulator] bind: @"aspectCorrected"
+				 toObject: defaults
+			  withKeyPath: @"aspectCorrected"
+				  options: nil];
+}
+
+- (void) _unbindEmulator
+{
+	[[self emulator] unbind: @"aspectCorrected"];
+	[[self emulator] unbind: @"filterType"];
+}
 
 - (void) _startEmulator
 {
 	[self setEmulator: [[BXEmulator new] autorelease]];
-	
 	
 	NSString *preflightConfig = [[NSBundle mainBundle] pathForResource: @"Preflight" ofType: @"conf"];
 	[[self emulator] addConfigFile: preflightConfig];
@@ -353,7 +368,6 @@
 			if (detectedConfig)
 			{
 				[thePackage setConfigurationFile: detectedConfig];
-				
 			}
 			else
 			{

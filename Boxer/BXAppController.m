@@ -8,8 +8,10 @@
 
 #import "BXAppController.h"
 #import "BXAboutController.h"
+#import "BXInspectorController.h"
 #import "BXPreferencesController.h"
 #import "BXSession.h"
+#import "BXSessionWindowController.h"
 #import "BXValueTransformers.h"
 #import "BXGrowlController.h"
 #import "NSString+BXPaths.h"
@@ -262,8 +264,37 @@
 //--------------------
 //Should probably be abstracted off to a separate class at this point, linked into the responder chain
 
-- (IBAction) orderFrontAboutPanel:			(id)sender	{ [[BXAboutController controller] showWindow: nil]; }
-- (IBAction) orderFrontPreferencesPanel:	(id)sender	{ [[BXPreferencesController controller] showWindow: nil]; }
+- (IBAction) orderFrontAboutPanel:			(id)sender
+{
+	[[[self currentSession] mainWindowController] exitFullScreen: sender];
+	[[BXAboutController controller] showWindow: nil];
+}
+- (IBAction) orderFrontPreferencesPanel:	(id)sender
+{
+	[[[self currentSession] mainWindowController] exitFullScreen: sender];
+	[[BXPreferencesController controller] showWindow: nil];
+}
+
+- (IBAction) toggleInspectorPanel: (id)sender
+{
+	BXInspectorController *inspector = [BXInspectorController controller];
+	
+	//Hide the inspector if it is already visible
+	if ([inspector isWindowLoaded] && [[inspector window] isVisible])
+	{
+		[[inspector window] orderOut: sender];
+	}
+	else
+	{
+		//Only show the inspector if there is a DOS session window; otherwise, we have nothing to inspect.
+		//This limitation will be removed as we gain other inspectable window types.
+		if ([self currentSession])
+		{
+			[[[self currentSession] mainWindowController] exitFullScreen: sender];
+			[inspector showWindow: sender];
+		}
+	}
+}
 
 - (IBAction) showWebsite:			(id)sender	{ [self openURLFromKey: @"WebsiteURL"]; }
 - (IBAction) showDonationPage:		(id)sender	{ [self openURLFromKey: @"DonationURL"]; }
@@ -378,8 +409,9 @@
 	SEL theAction = [theItem action];
 
 	//Disable actions that would open new sessions once we already have one active
-	if (theAction == @selector(newDocument:))		return [self currentSession] == nil;
-	if (theAction == @selector(openDocument:))		return [self currentSession] == nil;
+	if (theAction == @selector(newDocument:))			return [self currentSession] == nil;
+	if (theAction == @selector(openDocument:))			return [self currentSession] == nil;
+	if (theAction == @selector(toggleInspectorPanel:))	return [self currentSession] != nil;
 	
 	return [super validateUserInterfaceItem: theItem];
 }

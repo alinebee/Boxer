@@ -55,6 +55,7 @@
 
 - (IBAction) orderFrontAboutPanel:	(id)sender;			//Display Boxer's About panel.
 - (IBAction) orderFrontPreferencesPanel: (id)sender;	//Display Boxer's preferences panel. 
+- (IBAction) toggleInspectorPanel: (id)sender;			//Display/hide Boxer's inspector HUD panel.
 
 //The URLs and email addresses for the following actions are configured in the Info.plist file.
 

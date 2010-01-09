@@ -140,4 +140,5 @@ enum
 
 //Returns a localised human-readable description of the frameskip setting.
 - (NSString *) frameskipDescription;
+
 @end

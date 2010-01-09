@@ -76,6 +76,8 @@ BXEmulator *currentEmulator = nil;
 @synthesize suppressOutput;
 @synthesize configFiles;
 @synthesize paused;
+@synthesize aspectCorrected;
+@synthesize filterType;
 
 
 //Introspective class methods

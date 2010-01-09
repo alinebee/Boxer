@@ -60,15 +60,10 @@
 //Class methods
 //-------------
 
-
 //Returns the currently active session, which is the session whose window is topmost.
 //Currently, only one session can be active at a time and Boxer will quit after that session
 //is shut down.
 + (id) mainSession;
-
-//Toggle the inspector panel for this session.
-//TODO: move this back to BXAppController, since inspector panels are shared between sessions.
-- (IBAction) toggleInspectorPanel:	(id)sender;
 
 
 //Starting/stopping emulation
@@ -130,6 +125,10 @@
 
 //Initialising the DOS session
 //----------------------------
+
+//Set up/tear down programmatic bindings for the emulator
+- (void) _bindEmulator;
+- (void) _unbindEmulator;
 
 //Create our BXEmulator instance and starts its main loop.
 //Called internally by [BXSession start], deferred to the end of the main thread's event loop to prevent

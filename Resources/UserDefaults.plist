@@ -10,7 +10,7 @@
 	<true/>
 	<key>windowSnapDistance</key>
 	<integer>24</integer>
-	<key>scalerType</key>
+	<key>filterType</key>
 	<integer>0</integer>
 	<key>aspectCorrected</key>
 	<true/>

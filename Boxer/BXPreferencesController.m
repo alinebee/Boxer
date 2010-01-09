@@ -39,22 +39,10 @@
 	}
 }
 
-- (IBAction) toggleFilterType: (id)sender
+- (IBAction) toggleDefaultFilterType: (id)sender
 {
-	BXSession *session = [BXSession mainSession];
-	
-	if (session && [session mainWindowController])
-	{
-		//If there's an active session, then let it handle the toggling
-		[[session mainWindowController] toggleFilterType: sender];
-	}
-	else
-	{
-		//Otherwise then do the work by hand
-		NSInteger filterType = [sender tag];
-		[[NSUserDefaults standardUserDefaults] setInteger: filterType forKey: @"filterType"];
-	}
-
+	NSInteger filterType = [sender tag];
+	[[NSUserDefaults standardUserDefaults] setInteger: filterType forKey: @"filterType"];
 }
 
 - (void) syncFilterControls

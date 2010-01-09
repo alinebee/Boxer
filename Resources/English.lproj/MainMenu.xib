@@ -12,7 +12,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="29"/>
+			<integer value="1607"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -86,6 +86,9 @@
 					<string>mainWindowController.programPanelShown</string>
 					<string>emulator.isFullScreen</string>
 					<string>emulator.isInProcess</string>
+					<object class="NSMutableString">
+						<characters key="NS.bytes">aspectCorrected</characters>
+					</object>
 				</object>
 				<string key="NSObjectClassName">BXSession</string>
 				<bool key="NSEditable">YES</bool>
@@ -1186,6 +1189,16 @@
 					<reference key="NSTextColor" ref="1000087917"/>
 				</object>
 			</object>
+			<object class="NSUserDefaultsController" id="852755903">
+				<object class="NSMutableArray" key="NSDeclaredKeys">
+					<bool key="EncodedWithXMLCoder">YES</bool>
+					<object class="NSMutableString">
+						<characters key="NS.bytes">emulator.aspectCorrected</characters>
+					</object>
+					<string>aspectCorrected</string>
+				</object>
+				<bool key="NSSharedInstance">YES</bool>
+			</object>
 		</object>
 		<object class="IBObjectContainer" key="IBDocument.Objects">
 			<object class="NSMutableArray" key="connectionRecords">
@@ -1783,38 +1796,6 @@
 					<int key="connectionID">1642</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: selection.emulator.aspectCorrected</string>
-						<reference key="source" ref="803089018"/>
-						<reference key="destination" ref="126527174"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="803089018"/>
-							<reference key="NSDestination" ref="126527174"/>
-							<string key="NSLabel">value: selection.emulator.aspectCorrected</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">selection.emulator.aspectCorrected</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1645</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">enabled: selection.emulator.isExecuting</string>
-						<reference key="source" ref="803089018"/>
-						<reference key="destination" ref="126527174"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="803089018"/>
-							<reference key="NSDestination" ref="126527174"/>
-							<string key="NSLabel">enabled: selection.emulator.isExecuting</string>
-							<string key="NSBinding">enabled</string>
-							<string key="NSKeyPath">selection.emulator.isExecuting</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1649</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
 						<string key="label">toggleFullScreenWithZoom:</string>
 						<reference key="source" ref="935372999"/>
@@ -1968,6 +1949,38 @@
 						<reference key="destination" ref="751623511"/>
 					</object>
 					<int key="connectionID">1839</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: values.aspectCorrected</string>
+						<reference key="source" ref="803089018"/>
+						<reference key="destination" ref="852755903"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="803089018"/>
+							<reference key="NSDestination" ref="852755903"/>
+							<string key="NSLabel">value: values.aspectCorrected</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">values.aspectCorrected</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1852</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">enabled: selection.emulator.isExecuting</string>
+						<reference key="source" ref="803089018"/>
+						<reference key="destination" ref="126527174"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="803089018"/>
+							<reference key="NSDestination" ref="126527174"/>
+							<string key="NSLabel">enabled: selection.emulator.isExecuting</string>
+							<string key="NSBinding">enabled</string>
+							<string key="NSKeyPath">selection.emulator.isExecuting</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1854</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -2869,6 +2882,11 @@
 						<reference key="object" ref="262374231"/>
 						<reference key="parent" ref="124940089"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1841</int>
+						<reference key="object" ref="852755903"/>
+						<reference key="parent" ref="0"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -3034,6 +3052,7 @@
 					<string>1663.ImportedFromIB2</string>
 					<string>1838.IBPluginDependency</string>
 					<string>1840.IBPluginDependency</string>
+					<string>1841.IBPluginDependency</string>
 					<string>196.IBPluginDependency</string>
 					<string>196.ImportedFromIB2</string>
 					<string>283.IBPluginDependency</string>
@@ -3281,6 +3300,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
@@ -3346,7 +3366,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1840</int>
+			<int key="maxID">1854</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -3366,9 +3386,11 @@
 							<string>showDonationPage:</string>
 							<string>showPerianDownloadPage:</string>
 							<string>showWebsite:</string>
+							<string>toggleInspectorPanel:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -3390,6 +3412,14 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">Boxer/BXDockTileController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXFilterGallery</string>
+					<string key="superclassName">NSView</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">Boxer/BXFilterGallery.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -3426,6 +3456,22 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">Boxer/BXHelpMenuController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXPreferencesController</string>
+					<string key="superclassName">NSWindowController</string>
+					<object class="NSMutableDictionary" key="actions">
+						<string key="NS.key.0">toggleFilterType:</string>
+						<string key="NS.object.0">id</string>
+					</object>
+					<object class="NSMutableDictionary" key="outlets">
+						<string key="NS.key.0">filterGallery</string>
+						<string key="NS.object.0">BXFilterGallery</string>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">Boxer/BXPreferencesController.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -3514,10 +3560,6 @@
 				<object class="IBPartialClassDescription">
 					<string key="className">BXSession</string>
 					<string key="superclassName">NSDocument</string>
-					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">toggleInspectorPanel:</string>
-						<string key="NS.object.0">id</string>
-					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">Boxer/BXSession.h</string>
@@ -3547,7 +3589,7 @@
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>id</string>
-							<string>NSMenuItem</string>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -4277,6 +4319,14 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBFrameworkSource</string>
 						<string key="minorKey">AppKit.framework/Headers/NSTextView.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">NSUserDefaultsController</string>
+					<string key="superclassName">NSController</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBFrameworkSource</string>
+						<string key="minorKey">AppKit.framework/Headers/NSUserDefaultsController.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

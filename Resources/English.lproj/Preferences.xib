@@ -21,7 +21,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="47"/>
+			<integer value="1"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -53,7 +53,7 @@
 				<int key="NSWindowBacking">2</int>
 				<string key="NSWindowRect">{{196, 114}, {532, 396}}</string>
 				<int key="NSWTFlags">1618477056</int>
-				<string key="NSWindowTitle">Boxer Preferences</string>
+				<string key="NSWindowTitle">Preferences</string>
 				<string key="NSWindowClass">NSWindow</string>
 				<nil key="NSViewClass"/>
 				<string key="NSWindowContentMaxSize">{1.79769e+308, 1.79769e+308}</string>
@@ -175,7 +175,7 @@
 								<object class="BGHUDLabel" id="854697744">
 									<reference key="NSNextResponder" ref="732888659"/>
 									<int key="NSvFlags">268</int>
-									<string key="NSFrame">{{205, 188}, {122, 17}}</string>
+									<string key="NSFrame">{{205, 182}, {122, 17}}</string>
 									<reference key="NSSuperview" ref="732888659"/>
 									<bool key="NSEnabled">YES</bool>
 									<object class="NSTextFieldCell" key="NSCell" id="437022126">
@@ -229,7 +229,7 @@
 									<int key="NSTag">3</int>
 									<bool key="NSEnabled">YES</bool>
 									<object class="NSButtonCell" key="NSCell" id="643563351">
-										<int key="NSCellFlags">67239424</int>
+										<int key="NSCellFlags">-2080244224</int>
 										<int key="NSCellFlags2">134250496</int>
 										<string type="base64-UTF8" key="NSContents">RmFuY3kgU21vb3RoaW5nCihIUXgpA</string>
 										<reference key="NSSupport" ref="467860324"/>
@@ -340,38 +340,6 @@
 					<int key="connectionID">56</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">toggleFilterType:</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="30539910"/>
-					</object>
-					<int key="connectionID">57</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">toggleFilterType:</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="919818771"/>
-					</object>
-					<int key="connectionID">58</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">toggleFilterType:</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="760385414"/>
-					</object>
-					<int key="connectionID">59</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">toggleFilterType:</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="876454175"/>
-					</object>
-					<int key="connectionID">60</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">value: values.startUpInFullScreen</string>
 						<reference key="source" ref="982755173"/>
@@ -402,6 +370,38 @@
 						</object>
 					</object>
 					<int key="connectionID">65</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">toggleDefaultFilterType:</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="30539910"/>
+					</object>
+					<int key="connectionID">66</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">toggleDefaultFilterType:</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="919818771"/>
+					</object>
+					<int key="connectionID">67</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">toggleDefaultFilterType:</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="760385414"/>
+					</object>
+					<int key="connectionID">68</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">toggleDefaultFilterType:</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="876454175"/>
+					</object>
+					<int key="connectionID">69</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -700,7 +700,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">65</int>
+			<int key="maxID">69</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -727,7 +727,7 @@
 					<string key="className">BXPreferencesController</string>
 					<string key="superclassName">NSWindowController</string>
 					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">toggleFilterType:</string>
+						<string key="NS.key.0">toggleDefaultFilterType:</string>
 						<string key="NS.object.0">id</string>
 					</object>
 					<object class="NSMutableDictionary" key="outlets">

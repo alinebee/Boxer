@@ -195,19 +195,12 @@
 	[self setFullScreenWithZoom: enterFullScreen];
 }
 
+//Toggle the emulator's active rendering filter. This will resize the window to fit, if the
+//filter demands a minimum size smaller than the current window size.
 - (IBAction) toggleFilterType: (id)sender
 {
-	BXEmulator *emulator	= [self emulator];
-	BXFilterType filterType	= [sender tag];
-	[emulator setFilterType: filterType];
-	
-	//If the new filter choice isn't active, then try to resize the window to an appropriate size for it
-	//Todo: clarify these functions to indicate *why* the filter is inactive
-	if (![emulator isFullScreen] && ![emulator filterIsActive])
-	{
-		NSSize newRenderSize = [emulator minSurfaceSizeForFilterType: filterType];
-		[self resizeToAccommodateViewSize: newRenderSize];
-	}
+	NSInteger filterType = [sender tag];
+	[[NSUserDefaults standardUserDefaults] setInteger: filterType forKey: @"filterType"];
 }
 
 - (BOOL) validateMenuItem: (NSMenuItem *)theItem

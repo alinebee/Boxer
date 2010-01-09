@@ -42,6 +42,7 @@ enum {
 
 typedef BOOL BXSpeedMode;
 typedef NSInteger BXCoreMode;
+typedef NSInteger BXFilterType;
 
 
 //C string encodings, used by BXShell executeCommand:encoding: and executeCommand:withArgumentString:encoding:
@@ -76,6 +77,8 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 	
 	//Used by BXRendering
 	NSInteger currentVideoMode;
+	BXFilterType filterType;
+	BOOL aspectCorrected;
 }
 
 //Properties
@@ -111,6 +114,12 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 @property (assign)		BOOL suppressOutput;
 
 @property (assign, getter=isPaused) BOOL paused;
+
+//Whether to apply 4:3 aspect ratio correction to the rendered output.
+@property (assign, getter=isAspectCorrected) BOOL aspectCorrected;
+//The current rendering style as a DOSBox filter type constant (q.v. BXEmulator+BXRendering.h)
+@property (assign) BXFilterType filterType;
+
 
 
 //Class methods

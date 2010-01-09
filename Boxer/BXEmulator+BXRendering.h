@@ -26,7 +26,6 @@ enum {
 	BXFilterRGB			= 8,
 	BXFilterScanlines	= 9
 };
-typedef NSInteger BXFilterType;
 
 typedef struct {
 	//The type constant from BXEmulator+BXRendering.h to which this definition corresponds. Not currently used.
@@ -53,7 +52,6 @@ typedef struct {
 //DOS renderer functions
 //----------------------
 @interface BXEmulator (BXRendering)
-
 
 //Introspecting the rendering context
 //-----------------------------------
@@ -99,20 +97,12 @@ typedef struct {
 - (BOOL) isFullScreen;
 - (void) setFullScreen: (BOOL)fullscreen;
 
-//Gets/sets the current rendering filter. See the BXFilterType constants above for available options.
-- (BXFilterType) filterType;
-- (void) setFilterType: (BXFilterType)filterType;
-
 //Returns the minimum view size needed to use the specified filter type. 
-- (NSSize)	minSurfaceSizeForFilterType: (BXFilterType) filterType;
+- (NSSize)	minSurfaceSizeForFilterType: (BXFilterType) type;
 
 //Returns whether the chosen filter is actually being rendered. This will be NO if our current render region
 //is smaller than the minimum size supported by the chosen filter.
 - (BOOL) filterIsActive;
-
-//Gets/sets whether we use aspect ratio correction to stretch non-4:3 resolutions to 4:3.
-- (BOOL) isAspectCorrected;
-- (void) setAspectCorrected: (BOOL)correct;
 
 @end
 

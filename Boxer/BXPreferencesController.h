@@ -23,8 +23,10 @@
 + (BXPreferencesController *) controller;
 
 //Change the default render filter to match the sender's tag.
-//If a session window is open, this will change the active filter also.
-- (IBAction) toggleFilterType: (id)sender;
+//Note that this uses an intentionally different name from the toggleFilterType: defined on
+//BXSessionWindowController and used by main menu items, as the two sets of controls need to be
+//validated differently.
+- (IBAction) toggleDefaultFilterType: (id)sender;
 
 //Synchonises the filter gallery controls to the current default filter.
 //This is called through Key-Value Observing whenever the filter preference changes.

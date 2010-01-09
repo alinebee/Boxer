@@ -398,5 +398,4 @@
 	
 	return [NSString stringWithFormat: format, frameskip + 1];
 }
-
 @end

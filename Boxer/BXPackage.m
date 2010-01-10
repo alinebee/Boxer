@@ -8,7 +8,7 @@
 #import "BXPackage.h"
 #import "NSString+BXPaths.h"
 #import "NSWorkspace+BXFileTypes.h"
-#import "IconFamily+BXIconFamily.h"
+#import "NSWorkspace+BXIcons.h"
 #import "BXAppController.h"
 
 @implementation BXPackage
@@ -162,9 +162,10 @@
 //Set/return the cover art associated with this game package (currently, the package file's icon)
 - (NSImage *) coverArt
 {
-	if ([IconFamily fileHasCustomIcon: [self bundlePath]])
+	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+	if ([workspace fileHasCustomIcon: [self bundlePath]])
 	{
-		return [[NSWorkspace sharedWorkspace] iconForFile: [self bundlePath]];
+		return [workspace iconForFile: [self bundlePath]];
 	}
 	else return nil;
 }

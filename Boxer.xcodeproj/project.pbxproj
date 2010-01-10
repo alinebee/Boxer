@@ -73,6 +73,7 @@
 		9F9A4CA110F67D2C00E61965 /* BXPreferencesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9A4CA010F67D2C00E61965 /* BXPreferencesController.m */; };
 		9F9A4CA610F67DD800E61965 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A4CA410F67DD800E61965 /* Preferences.xib */; };
 		9F9A4CA910F6824B00E61965 /* BXFilterGallery.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9A4CA810F6824B00E61965 /* BXFilterGallery.m */; };
+		9F9FE70410FA5F5800E3944B /* NSWorkspace+BXIcons.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9FE70310FA5F5800E3944B /* NSWorkspace+BXIcons.m */; };
 		9FA2E596109D251100E50623 /* BGHUDAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FA2E595109D251100E50623 /* BGHUDAppKit.framework */; };
 		9FA2E5D9109D255300E50623 /* BGHUDAppKit.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FA2E595109D251100E50623 /* BGHUDAppKit.framework */; };
 		9FA85CD510A357A600E6457F /* BXSession+BXFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA85CD410A357A600E6457F /* BXSession+BXFileManager.m */; };
@@ -226,9 +227,6 @@
 		9FCBB6F310A6DDBD00C28B09 /* DOS Toolkit in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB5FE10A6DDBD00C28B09 /* DOS Toolkit */; };
 		9FCDCCE510D2D53C0080A24F /* Original DOSBox Documentation in Resources */ = {isa = PBXBuildFile; fileRef = 9FCDCCE310D2D53C0080A24F /* Original DOSBox Documentation */; };
 		9FD011BD10C2A02F00670CE1 /* BXProgramMenuController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD011BC10C2A02F00670CE1 /* BXProgramMenuController.m */; };
-		9FD95DC510BF1D820044FC62 /* IconFamily.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD95DC410BF1D820044FC62 /* IconFamily.m */; };
-		9FD95DDF10BF20460044FC62 /* NSString+CarbonFSRefCreation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD95DDE10BF20460044FC62 /* NSString+CarbonFSRefCreation.m */; };
-		9FD95E9710BF33BE0044FC62 /* IconFamily+BXIconFamily.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD95E9610BF33BE0044FC62 /* IconFamily+BXIconFamily.m */; };
 		9FDAD87F10C182B3004EA7D0 /* BXCoverArtWell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FDAD87E10C182B3004EA7D0 /* BXCoverArtWell.m */; };
 		9FDB601710C0707F00C15CF4 /* BXDockTileController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FDB601610C0707F00C15CF4 /* BXDockTileController.m */; };
 		9FE201340F6D543F00B3A38C /* libpng.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FE201320F6D543F00B3A38C /* libpng.framework */; };
@@ -374,6 +372,8 @@
 		9F9A4CA510F67DD800E61965 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/Preferences.xib; sourceTree = "<group>"; };
 		9F9A4CA710F6824B00E61965 /* BXFilterGallery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFilterGallery.h; sourceTree = "<group>"; };
 		9F9A4CA810F6824B00E61965 /* BXFilterGallery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFilterGallery.m; sourceTree = "<group>"; };
+		9F9FE70210FA5F5800E3944B /* NSWorkspace+BXIcons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSWorkspace+BXIcons.h"; sourceTree = "<group>"; };
+		9F9FE70310FA5F5800E3944B /* NSWorkspace+BXIcons.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSWorkspace+BXIcons.m"; sourceTree = "<group>"; };
 		9FA2E595109D251100E50623 /* BGHUDAppKit.framework */ = {isa = PBXFileReference; comments = "http://www.binarymethod.com/bghudappkit/"; explicitFileType = wrapper.framework; path = BGHUDAppKit.framework; sourceTree = "<group>"; };
 		9FA85CD310A357A600E6457F /* BXSession+BXFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXSession+BXFileManager.h"; sourceTree = "<group>"; };
 		9FA85CD410A357A600E6457F /* BXSession+BXFileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXSession+BXFileManager.m"; sourceTree = "<group>"; };
@@ -659,12 +659,6 @@
 		9FCDCCE410D2D53C0080A24F /* English */ = {isa = PBXFileReference; lastKnownFileType = folder; name = English; path = "English.lproj/Original DOSBox Documentation"; sourceTree = "<group>"; };
 		9FD011BB10C2A02F00670CE1 /* BXProgramMenuController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXProgramMenuController.h; sourceTree = "<group>"; };
 		9FD011BC10C2A02F00670CE1 /* BXProgramMenuController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXProgramMenuController.m; sourceTree = "<group>"; };
-		9FD95DC310BF1D820044FC62 /* IconFamily.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconFamily.h; sourceTree = "<group>"; };
-		9FD95DC410BF1D820044FC62 /* IconFamily.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IconFamily.m; sourceTree = "<group>"; };
-		9FD95DDD10BF20460044FC62 /* NSString+CarbonFSRefCreation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+CarbonFSRefCreation.h"; sourceTree = "<group>"; };
-		9FD95DDE10BF20460044FC62 /* NSString+CarbonFSRefCreation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+CarbonFSRefCreation.m"; sourceTree = "<group>"; };
-		9FD95E9510BF33BE0044FC62 /* IconFamily+BXIconFamily.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "IconFamily+BXIconFamily.h"; sourceTree = "<group>"; };
-		9FD95E9610BF33BE0044FC62 /* IconFamily+BXIconFamily.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "IconFamily+BXIconFamily.m"; sourceTree = "<group>"; };
 		9FDAD87D10C182B3004EA7D0 /* BXCoverArtWell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCoverArtWell.h; sourceTree = "<group>"; };
 		9FDAD87E10C182B3004EA7D0 /* BXCoverArtWell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXCoverArtWell.m; sourceTree = "<group>"; };
 		9FDB601510C0707F00C15CF4 /* BXDockTileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDockTileController.h; sourceTree = "<group>"; };
@@ -779,7 +773,6 @@
 				080E96DDFE201D6D7F000001 /* Boxer */,
 				9FBC3A7A0F56CEA2001811F2 /* DOSBox */,
 				9F7A8F230F8E705100D1AAD5 /* BXToolkit */,
-				9FD95DC210BF1D730044FC62 /* IconFamily */,
 				9F59DA1410AE22B9008DBBC1 /* MCAdditions */,
 				9FAD43B610A341F6007E8C0D /* UKKQueue */,
 				9F8A974710E7DEF500A4B72A /* RegexKitLite */,
@@ -1016,10 +1009,10 @@
 				9FBC35260F56C7B7001811F2 /* NSWindow+BXWindowSizing.m */,
 				9FC8F50A10934F3400AD6307 /* NSString+BXPaths.h */,
 				9FC8F50B10934F3400AD6307 /* NSString+BXPaths.m */,
-				9FD95E9510BF33BE0044FC62 /* IconFamily+BXIconFamily.h */,
-				9FD95E9610BF33BE0044FC62 /* IconFamily+BXIconFamily.m */,
 				9F76D1B710CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.h */,
 				9F76D1B810CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.m */,
+				9F9FE70210FA5F5800E3944B /* NSWorkspace+BXIcons.h */,
+				9F9FE70310FA5F5800E3944B /* NSWorkspace+BXIcons.m */,
 			);
 			path = BXToolkit;
 			sourceTree = "<group>";
@@ -1488,17 +1481,6 @@
 			name = Sounds;
 			sourceTree = "<group>";
 		};
-		9FD95DC210BF1D730044FC62 /* IconFamily */ = {
-			isa = PBXGroup;
-			children = (
-				9FD95DDD10BF20460044FC62 /* NSString+CarbonFSRefCreation.h */,
-				9FD95DDE10BF20460044FC62 /* NSString+CarbonFSRefCreation.m */,
-				9FD95DC310BF1D820044FC62 /* IconFamily.h */,
-				9FD95DC410BF1D820044FC62 /* IconFamily.m */,
-			);
-			path = IconFamily;
-			sourceTree = "<group>";
-		};
 		9FE201080F6D4CBA00B3A38C /* libs */ = {
 			isa = PBXGroup;
 			children = (
@@ -1789,9 +1771,6 @@
 				9F59DA9F10AEF9E0008DBBC1 /* BXCoverArt.m in Sources */,
 				9F59DAD510AF1042008DBBC1 /* BXProgramPanel.m in Sources */,
 				9F59DEDA10B0159A008DBBC1 /* BXProgramPanelController.m in Sources */,
-				9FD95DC510BF1D820044FC62 /* IconFamily.m in Sources */,
-				9FD95DDF10BF20460044FC62 /* NSString+CarbonFSRefCreation.m in Sources */,
-				9FD95E9710BF33BE0044FC62 /* IconFamily+BXIconFamily.m in Sources */,
 				9FDB601710C0707F00C15CF4 /* BXDockTileController.m in Sources */,
 				9FDAD87F10C182B3004EA7D0 /* BXCoverArtWell.m in Sources */,
 				9FD011BD10C2A02F00670CE1 /* BXProgramMenuController.m in Sources */,
@@ -1805,6 +1784,7 @@
 				9F2AC6E410EFFE8600CFFF72 /* BXBootlegCoverArt.m in Sources */,
 				9F9A4CA110F67D2C00E61965 /* BXPreferencesController.m in Sources */,
 				9F9A4CA910F6824B00E61965 /* BXFilterGallery.m in Sources */,
+				9F9FE70410FA5F5800E3944B /* NSWorkspace+BXIcons.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

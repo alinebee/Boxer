@@ -19,20 +19,19 @@
 
 @interface BXInspectorController : NSWindowController
 {
-	NSView *currentPanel;
+	IBOutlet NSView *panelContainer;
 	IBOutlet NSView *gamePanel;
 	IBOutlet NSView *cpuPanel;
 	IBOutlet NSView *drivePanel;
 	IBOutlet NSSegmentedControl *panelSelector;
 	IBOutlet NSArrayController *driveController;
 }
-@property (retain) NSView *currentPanel;	//The currently-displayed tab panel.
+@property (retain) NSView *panelContainer;	//The view into which the current panel will be added.
 @property (retain) NSView *gamePanel;		//The gamebox properties tab panel.
 @property (retain) NSView *cpuPanel;		//The CPU emulation settings tab panel.
 @property (retain) NSView *drivePanel;		//The drive list panel.
 @property (retain) NSSegmentedControl *panelSelector;	//The segmented tab selector button at the top of the inspector.
 @property (retain) NSArrayController *driveController;	//The array controller representing the current session's drives.
-														//(This is assigned in the NIB file.)
 
 
 //A singleton instance of the inspector controller, which is shared by all session windows.
@@ -42,6 +41,9 @@
 //Returns an array of tab panels, which should match the order of panelSelector's tab segments.
 - (NSArray *) panels;
 
+//Sets/gets the currently displayed panel. This will be added to panelContainer and faded in.
+- (NSView *) currentPanel;
+- (void) setCurrentPanel: (NSView *)panel;
 
 - (IBAction) showGameInspectorPanel:	(id)sender;	//Display the gamebox panel.
 - (IBAction) showCPUInspectorPanel:		(id)sender;	//Display the CPU panel.

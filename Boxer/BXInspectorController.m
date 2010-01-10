@@ -7,7 +7,7 @@
 
 
 @implementation BXInspectorController
-@synthesize currentPanel;
+@synthesize panelContainer;
 @synthesize gamePanel, cpuPanel, drivePanel;
 @synthesize panelSelector;
 @synthesize driveController;
@@ -38,7 +38,7 @@
 
 - (void) dealloc
 {
-	[self setCurrentPanel: nil],	[currentPanel release];
+	[self setPanelContainer: nil],	[panelContainer release];
 	[self setGamePanel: nil],		[gamePanel release];
 	[self setCpuPanel: nil],		[cpuPanel release];
 	[self setDrivePanel: nil],		[drivePanel release];
@@ -56,7 +56,7 @@
 	[theWindow registerForDraggedTypes: [NSArray arrayWithObjects: NSFilenamesPboardType, NSStringPboardType, nil]];
 
 	[theWindow setAcceptsMouseMovedEvents: YES];
-	
+		
 	[theWindow setFrameAutosaveName: @"InspectorPanel"];
 	
 	//Set the initial panel based on the user's last chosen panel (defaulting to the CPU panel)
@@ -77,27 +77,18 @@
 	nil];
 }
 
+- (NSView *) currentPanel
+{
+	return [[[self panelContainer] subviews] lastObject];
+}
+
 - (void) setCurrentPanel: (NSView *)panel
 {
 	NSView *oldPanel = [self currentPanel];
 	
 	if (oldPanel != panel)
 	{
-		//First, do the grunt-work we came to do
 		[self willChangeValueForKey: @"currentPanel"];
-
-		[oldPanel autorelease];
-		currentPanel = [panel retain];
-		
-		[self didChangeValueForKey: @"currentPanel"];
-		
-		if (panel == nil)
-		{
-			//If the panel was nil, leave it at that;
-			//we're probably in dealloc 
-			return;
-		}
-		
 
 		//Synchronise the selected tab and record the panel choice in the user default
 		NSInteger panelIndex = [[self panels] indexOfObject: panel];
@@ -106,16 +97,15 @@
 		//Record the current panel in the user defaults
 		[[NSUserDefaults standardUserDefaults] setInteger: panelIndex forKey: @"initialInspectorPanelIndex"];
 		
-		
-		//Now set about resizing the window to accomodate the new panel
+		//Now add the new panel and resize the window to accomodate it
 
 		NSWindow *theWindow	= [self window];
-		NSView *container = [theWindow contentView];
+		NSView *container	= [self panelContainer];
 
 		NSRect newFrame, oldFrame = [theWindow frame];
 		
 		NSSize newSize	= [panel bounds].size;
-		NSSize oldSize	= (oldPanel) ? [oldPanel bounds].size : NSMakeSize(oldFrame.size.width, 0.0);
+		NSSize oldSize	= [container bounds].size;
 		NSSize difference = NSMakeSize(
 			newSize.width - oldSize.width,
 			newSize.height - oldSize.height
@@ -146,6 +136,8 @@
 			//Otherwise just resize the window instantly
 			[theWindow setFrame: newFrame display: YES];
 		}
+		
+		[self didChangeValueForKey: @"currentPanel"];
 	}
 }
 

@@ -175,13 +175,13 @@
 								<object class="BGHUDLabel" id="854697744">
 									<reference key="NSNextResponder" ref="732888659"/>
 									<int key="NSvFlags">268</int>
-									<string key="NSFrame">{{205, 182}, {122, 17}}</string>
+									<string key="NSFrame">{{123, 182}, {287, 17}}</string>
 									<reference key="NSSuperview" ref="732888659"/>
 									<bool key="NSEnabled">YES</bool>
 									<object class="NSTextFieldCell" key="NSCell" id="437022126">
 										<int key="NSCellFlags">68288064</int>
 										<int key="NSCellFlags2">138413056</int>
-										<string key="NSContents">Rendering Style:</string>
+										<string key="NSContents">Choose a rendering style for DOS games:</string>
 										<object class="NSFont" key="NSSupport">
 											<string key="NSName">LucidaGrande-Bold</string>
 											<double key="NSSize">13</double>
@@ -206,7 +206,7 @@
 									<object class="NSButtonCell" key="NSCell" id="906845844">
 										<int key="NSCellFlags">67239424</int>
 										<int key="NSCellFlags2">134250496</int>
-										<string key="NSContents">TV Scanlines</string>
+										<string type="base64-UTF8" key="NSContents">VFYgU2NhbmxpbmVzCg</string>
 										<reference key="NSSupport" ref="467860324"/>
 										<reference key="NSControlView" ref="876454175"/>
 										<int key="NSButtonFlags">139215103</int>
@@ -255,7 +255,7 @@
 									<object class="NSButtonCell" key="NSCell" id="732948479">
 										<int key="NSCellFlags">67239424</int>
 										<int key="NSCellFlags2">134250496</int>
-										<string key="NSContents">Original</string>
+										<string type="base64-UTF8" key="NSContents">T3JpZ2luYWwKA</string>
 										<reference key="NSSupport" ref="467860324"/>
 										<reference key="NSControlView" ref="30539910"/>
 										<int key="NSButtonFlags">139215103</int>
@@ -1204,6 +1204,20 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBFrameworkSource</string>
 						<string key="minorKey">QuartzCore.framework/Headers/CIImageProvider.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">NSObject</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBFrameworkSource</string>
+						<string key="minorKey">Sparkle.framework/Headers/SUAppcast.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">NSObject</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBFrameworkSource</string>
+						<string key="minorKey">Sparkle.framework/Headers/SUUpdater.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

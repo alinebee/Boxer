@@ -86,16 +86,10 @@
 	NSFont *font;
 	NSColor *textColor;
 	
-	if ([self state])
-	{
-		textColor = [NSColor whiteColor];
-		font = [NSFont boldSystemFontOfSize: 0];
-	}
-	else
-	{
-		textColor = [NSColor lightGrayColor];
-		font = [NSFont systemFontOfSize: 0];
-	}
+	//Render the text in white if this button is selected
+	textColor = ([self state]) ? [NSColor whiteColor] : [NSColor lightGrayColor];
+	//Render the text in bold if this button is selected or the user is pressing the button
+	font = ([self state] || [self isHighlighted]) ? [NSFont boldSystemFontOfSize: 0] : [NSFont systemFontOfSize: 0];
 	
 	NSShadow *textShadow = [[NSShadow new] autorelease];	
 	[textShadow setShadowOffset: NSMakeSize(0.0, -1.0)];

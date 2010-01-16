@@ -159,11 +159,13 @@ enum {
 
 	NSString *driveLetter = [drive letter];
 
-	//Choose an appropriate drive letter to mount it at, if one hasn't been specified
-	if (!driveLetter) driveLetter = [self preferredLetterForDrive: drive];
+	//Choose an appropriate drive letter to mount it at,
+	//if one hasn't been specified (or if it is already taken)
+	if (!driveLetter || [self driveExistsAtLetter: driveLetter])
+		driveLetter = [self preferredLetterForDrive: drive];
 	
 	//No drive letters were available - do not attempt to mount
-	//TODO: populate an NSError object also
+	//TODO: populate an NSError object also!
 	if (driveLetter == nil) return nil;
 	
 	

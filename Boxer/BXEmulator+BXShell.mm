@@ -237,8 +237,7 @@ nil];
 
 - (id) listMounts: (NSString *)argumentString
 {
-	NSArray *drives = [self mountedDrives];
-	for (BXDrive *drive in drives)
+	for (BXDrive *drive in [driveCache objectEnumerator])
 	{
 		NSLog(@"%@: %@", [drive letter], [drive path]);
 	}

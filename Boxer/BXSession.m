@@ -338,8 +338,10 @@
 {
 	[self setEmulator: [[BXEmulator new] autorelease]];
 	
+	NSMutableArray *configFiles = [[self emulator] configFiles];
+	
 	NSString *preflightConfig = [[NSBundle mainBundle] pathForResource: @"Preflight" ofType: @"conf"];
-	[[self emulator] addConfigFile: preflightConfig];
+	[configFiles addObject: preflightConfig];
 	
 	BXPackage *thePackage = [self gamePackage];
 	if (thePackage)
@@ -356,11 +358,11 @@
 															 ofType: @"conf"
 														inDirectory: @"Configurations"];
 			
-			if (detectedConfig) [[self emulator] addConfigFile: detectedConfig];
+			if (detectedConfig) [configFiles addObject: detectedConfig];
 		}
 		//Then, load the gamebox's own configuration file, if it has one
 		packageConfig = [thePackage configurationFile];
-		if (packageConfig) [[self emulator] addConfigFile: packageConfig];
+		if (packageConfig) [configFiles addObject: packageConfig];
 		else
 		{
 			//If the gamebox doesn't already have its own configuration file,
@@ -381,7 +383,7 @@
 	}
 	
 	NSString *launchConfig = [[NSBundle mainBundle] pathForResource: @"Launch" ofType: @"conf"];
-    [[self emulator] addConfigFile: launchConfig];
+	[configFiles addObject: launchConfig];
 	
 	
 	[[self emulator] start];

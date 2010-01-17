@@ -55,21 +55,11 @@
 //Methods for introspecting DOS mounts and OS X paths 
 //---------------------------------------------------
 
+//Returns an unsorted array of all mounted drives.
+- (NSArray *)mountedDrives;
+
 //Returns the drive mounted at the specified letter, or nil if no drive is mounted at that letter.
 - (BXDrive *)driveAtLetter: (NSString *)driveLetter;
-
-//Returns an array of mounted drives as BXDrive objects.
-- (NSArray *) mountedDrives;
-
-//Returns the number of drives currently mounted, including internal drives.
-- (NSUInteger) numDrives;
-
-//Returns an array of mounted drive letters as NSStrings.
-- (NSArray *) mountedDriveLetters;
-
-//Returns whether a drive exists at the specified drive letter.
-- (BOOL) driveExistsAtLetter: (NSString *)driveLetter;
-
 
 //Returns YES if the specified OS X path is explicitly mounted as its own DOS drive; NO otherwise.
 //Use pathIsDOSAccessible below if you want to know if a path is accessible on any DOS drive.
@@ -140,12 +130,29 @@ class DOS_Drive;
 //Indeed, this category will not even be seen by other classes, since it is only visible to Objective C++ files.
 @interface BXEmulator (BXDOSFileSystemInternals)
 
+//Returns the DOSBox drive index for a specified drive letter.
 - (NSUInteger)_indexOfDriveLetter: (NSString *)driveLetter;
-- (BXDrive *)_driveAtIndex: (NSUInteger)index;
 
-- (void) _addDOSBoxDrive: (DOS_Drive *)drive atIndex: (NSUInteger)index;
-- (BOOL) _unmountDriveAtIndex: (NSUInteger)index;
+//Returns the Boxer drive object for a drive at the specified drive index.
+- (BXDrive *)_driveFromDOSBoxDriveAtIndex: (NSUInteger)index;
 
+//Registers a new drive with DOSBox and adds it to the drive list. Returns YES if the drive was successfully added,
+//or NO if there was an error (e.g. there was already a drive at that index).
+//TODO: should populate an optional NSError object for cases like this.
+- (BOOL) _addDOSBoxDrive: (DOS_Drive *)drive atIndex: (NSUInteger)index;
+
+//Unmounts the DOSBox drive at the specified index and clears any references to the drive.
+//Returns YES if the drive was successfully removed, or NO if there was an error (e.g. there was no drive at that index.)
+//TODO: should populate an optional NSError object for cases like this.
+- (BOOL) _unmountDOSBoxDriveAtIndex: (NSUInteger)index;
+
+//Synchronizes Boxer's mounted drive cache with DOSBox's drive array, adding and removing drives as necessary.
+- (void) _syncDriveCache;
+- (void) _addDriveToCache: (BXDrive *)drive;
+- (void) _removeDriveFromCacheAtLetter: (NSString *)letter;
+
+
+//Create a new DOS_Drive CDROM from a path to a disc image.
 - (DOS_Drive *) _CDROMDriveFromImageAtPath:	(NSString *)path forIndex: (NSUInteger)index;
 - (DOS_Drive *) _CDROMDriveFromPath:		(NSString *)path forIndex: (NSUInteger)index withAudio: (BOOL)useCDAudio;
 - (DOS_Drive *) _hardDriveFromPath:			(NSString *)path freeSpace: (NSInteger)freeSpace;

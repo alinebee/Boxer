@@ -161,7 +161,7 @@ enum {
 
 	//Choose an appropriate drive letter to mount it at,
 	//if one hasn't been specified (or if it is already taken)
-	if (!driveLetter || [self driveExistsAtLetter: driveLetter])
+	if (!driveLetter || [self driveAtLetter: driveLetter] != nil)
 		driveLetter = [self preferredLetterForDrive: drive];
 	
 	//No drive letters were available - do not attempt to mount
@@ -173,6 +173,7 @@ enum {
 	NSUInteger index = [self _indexOfDriveLetter: driveLetter];
 	NSString *path = [drive path];
 	//The standardized path returned by BXDrive will not have a trailing slash, so add it ourselves
+	//TODO: fix this upstream?
 	if (isFolder) path = [path stringByAppendingString: @"/"];
 	
 	switch ([drive type])
@@ -192,30 +193,35 @@ enum {
 	//DOSBox successfully created the drive object
 	if (DOSBoxDrive)
 	{
-		[self willChangeValueForKey: @"mountedDrives"];
-		
-		//Now, add it to the drive list
-		[self _addDOSBoxDrive: DOSBoxDrive atIndex: index];
-		//And set its label appropriately (unless its an image, which carry their own labels)
-		if (!isImage)
+		//Now add the drive to DOSBox's drive list
+		//We do this after recording it in driveCache, so that _syncDriveCache won't bother generating
+		//a new drive object for it
+		if ([self _addDOSBoxDrive: DOSBoxDrive atIndex: index])
 		{
-			const char *cLabel = [[drive label] cStringUsingEncoding: BXDirectStringEncoding];
-			DOSBoxDrive->dirCache.SetLabel(cLabel, [drive isCDROM], false);
+			//And set its label appropriately (unless its an image, which carry their own labels)
+			if (!isImage)
+			{
+				const char *cLabel = [[drive label] cStringUsingEncoding: BXDirectStringEncoding];
+				DOSBoxDrive->dirCache.SetLabel(cLabel, [drive isCDROM], false);
+			}
+			
+			//Populate the drive with the settings we ended up using, and add the drive to our own drives cache
+			[drive setLetter: driveLetter];
+			[self _addDriveToCache: drive];
+			
+			//Post a notification to whoever's listening
+			NSDictionary *userInfo = [NSDictionary dictionaryWithObject: drive forKey: @"drive"];
+			[self _postNotificationName: @"BXDriveDidMountNotification"
+					   delegateSelector: @selector(DOSDriveDidMount:)
+							   userInfo: userInfo];
+			
+			return drive;
 		}
-		
-		//Populate the drive with the settings we ended up using
-		[drive setLetter: driveLetter];
-
-		[self didChangeValueForKey: @"mountedDrives"];
-		
-		//Post a notification to whoever's listening
-		NSDictionary *userInfo = [NSDictionary dictionaryWithObject: drive forKey: @"drive"];
-		[[[NSWorkspace sharedWorkspace] notificationCenter]
-			postNotificationName: @"BXDriveDidMountNotification"
-			object: self
-			userInfo: userInfo];
-
-		return drive;
+		else
+		{
+			delete DOSBoxDrive;
+			return nil;
+		}
 	}
 	else return nil;
 }
@@ -227,21 +233,21 @@ enum {
 	NSUInteger index	= [self _indexOfDriveLetter: [drive letter]];
 	BOOL isCurrentDrive = (index == DOS_GetDefaultDrive());
 
-	[self willChangeValueForKey: @"mountedDrives"];
-	BOOL unmounted = [self _unmountDriveAtIndex: index];
-	[self didChangeValueForKey: @"mountedDrives"];
+	BOOL unmounted = [self _unmountDOSBoxDriveAtIndex: index];
 	
 	if (unmounted)
 	{
 		//If this was the drive we were on, recover by switching to Z drive
 		if (isCurrentDrive) [self changeToDriveLetter: @"Z"];
 		
+		//Remove the drive from our drive cache
+		[self _removeDriveFromCacheAtLetter: [drive letter]];
+		
 		//Post a notification to whoever's listening
 		NSDictionary *userInfo = [NSDictionary dictionaryWithObject: drive forKey: @"drive"];
-		[[[NSWorkspace sharedWorkspace] notificationCenter]
-			postNotificationName: @"BXDriveDidUnmountNotification"
-			object: self
-			userInfo: userInfo];
+		[self _postNotificationName: @"BXDriveDidUnmountNotification"
+				   delegateSelector: @selector(DOSDriveDidUnmount:)
+						   userInfo: userInfo];
 	}
 	return unmounted;
 }
@@ -259,7 +265,7 @@ enum {
 	BOOL succeeded = NO;
 	
 	[self openQueue];
-	for (BXDrive *drive in [self mountedDrives])
+	for (BXDrive *drive in [driveCache objectEnumerator])
 	{
 		if ([[drive path] isEqualToString: standardizedPath])
 			succeeded = [self unmountDrive: drive] || succeeded;
@@ -281,7 +287,7 @@ enum {
 
 - (NSString *) preferredLetterForDrive: (BXDrive *)drive
 {
-	NSArray *usedLetters = [self mountedDriveLetters];
+	NSArray *usedLetters = [driveCache allKeys];
 	
 	//TODO: try to ensure CD-ROM mounts are contiguous
 	NSArray *letters;
@@ -299,60 +305,20 @@ enum {
 //Drive and filesystem introspection
 //----------------------------------
 
-- (BXDrive *) currentDrive			{ return [self _driveAtIndex: DOS_GetDefaultDrive()]; }
-- (NSString *) currentDriveLetter	{ return [[[self class] driveLetters] objectAtIndex: DOS_GetDefaultDrive()]; }
-- (NSString *) currentWorkingDirectory
-{
-	return [NSString stringWithCString: Drives[DOS_GetDefaultDrive()]->curdir encoding: BXDirectStringEncoding];
-}
-
 - (NSArray *) mountedDrives
 {
-	NSArray *driveLetters	= [[self class] driveLetters];
-	NSMutableArray *drives	= [NSMutableArray arrayWithCapacity: [driveLetters count]];
-	
-	for (NSString *letter in driveLetters)
-	{
-		BXDrive *drive = [self driveAtLetter: letter];
-		if (drive) [drives addObject: drive];
-	}
-	return (NSArray *)drives;
+	return [driveCache allValues];
 }
 
-- (NSArray *) mountedDriveLetters
+- (BXDrive *) driveAtLetter: (NSString *)driveLetter
 {
-	NSArray *possibleLetters	= [[self class] driveLetters]; 
-	NSMutableArray *usedLetters	= [NSMutableArray arrayWithCapacity: DOS_DRIVES];
-	for (NSUInteger i=0; i < DOS_DRIVES; i++)
-	{
-		if (Drives[i]) [usedLetters addObject: [possibleLetters objectAtIndex: i]];
-	}
-	return (NSArray *)usedLetters;
-}
-
-- (BXDrive *)driveAtLetter: (NSString *)driveLetter
-{
-	return [self _driveAtIndex: [self _indexOfDriveLetter: driveLetter]];
-}
-
-- (BOOL)driveExistsAtLetter: (NSString *)driveLetter
-{
-	NSUInteger index = [self _indexOfDriveLetter: driveLetter];
-	if (Drives[index]) return YES;
-	return NO;
-}
-
-- (NSUInteger) numDrives
-{
-	NSUInteger count;
-	for (NSUInteger i=0; i < DOS_DRIVES; i++) if (Drives[i]) count++;
-	return count;
+	return [driveCache objectForKey: driveLetter];
 }
 
 - (BOOL) pathIsMountedAsDrive: (NSString *)path
 {
 	path = [path stringByStandardizingPath];
-	for (BXDrive *drive in [self mountedDrives])
+	for (BXDrive *drive in [driveCache objectEnumerator])
 	{
 		if ([[drive path] isEqualTo: path]) return YES;
 	}
@@ -362,7 +328,10 @@ enum {
 - (BOOL) pathIsDOSAccessible: (NSString *)path
 {
 	path = [path stringByStandardizingPath];
-	for (BXDrive *drive in [self mountedDrives]) if ([drive exposesPath: path]) return YES;
+	for (BXDrive *drive in [driveCache objectEnumerator])
+	{
+		if ([drive exposesPath: path]) return YES;
+	}
 	return NO;
 }
 
@@ -373,7 +342,7 @@ enum {
 	//Sort the drives by path depth, so that deeper mounts are picked over 'shallower' ones.
 	//e.g. when MyGame.boxer and MyGame.boxer/MyCD.cdrom are both mounted, it should pick the latter.
 	//Todo: filter this down to matching drives first, then do the sort, which would be quicker.
-	NSArray *sortedDrives = [[self mountedDrives] sortedArrayUsingSelector:@selector(pathDepthCompare:)];
+	NSArray *sortedDrives = [[driveCache allValues] sortedArrayUsingSelector:@selector(pathDepthCompare:)];
 	
 	for (BXDrive *drive in [sortedDrives reverseObjectEnumerator]) 
 	{
@@ -450,6 +419,12 @@ enum {
 //Methods for performing filesystem tasks
 //---------------------------------------
 
+- (BXDrive *) currentDrive			{ return [driveCache objectForKey: [self currentDriveLetter]]; }
+- (NSString *) currentDriveLetter	{ return [[[self class] driveLetters] objectAtIndex: DOS_GetDefaultDrive()]; }
+- (NSString *) currentWorkingDirectory
+{
+	return [NSString stringWithCString: Drives[DOS_GetDefaultDrive()]->curdir encoding: BXDirectStringEncoding];
+}
 - (BOOL) changeWorkingDirectoryToPath: (NSString *)dosPath
 {
 	BOOL changedPath = NO;
@@ -507,11 +482,17 @@ enum {
 	return index;
 }
 
-//Used internally to retrieve drives from DOSBox's Drives array
-//TODO: split this into two functions, one to return the DOSBox drive object from an index and another to convert DOSBox drive objects into BXDrives.
-- (BXDrive *)_driveAtIndex: (NSUInteger)index
+- (NSString *)_driveLetterForIndex: (NSUInteger)index
 {
-	NSAssert1(index < DOS_DRIVES, @"index %u passed to _driveAtIndex was beyond the range of DOSBox's drive array.", index);
+	NSAssert1(index < [[[self class] driveLetters] count],
+			  @"index %u passed to _driveLetterForIndex: was beyond the range of available drive letters.", index);
+	return [[[self class] driveLetters] objectAtIndex: index];
+}
+
+//Generates a BXDrive object from a DOSBox drive entry.
+- (BXDrive *)_driveFromDOSBoxDriveAtIndex: (NSUInteger)index
+{
+	NSAssert1(index < DOS_DRIVES, @"index %u passed to _driveFromDOSBoxDriveAtIndex was beyond the range of DOSBox's drive array.", index);
 	if (Drives[index])
 	{
 		NSString *driveLetter	= [[[self class] driveLetters] objectAtIndex: index];
@@ -523,23 +504,36 @@ enum {
 	else return nil;
 }
 
-//Register a new drive in DOS and add it to the drive list
-//TODO: sanity-check assert that a drive at that index doesn't already exist
-- (void) _addDOSBoxDrive: (DOS_Drive *)drive atIndex: (NSUInteger)index
+//Registers a new drive with DOSBox and adds it to the drive list.
+- (BOOL) _addDOSBoxDrive: (DOS_Drive *)drive atIndex: (NSUInteger)index
 {
+	NSAssert1(index < DOS_DRIVES, @"index %u passed to _addDOSBoxDrive was beyond the range of DOSBox's drive array.", index);
+	
+	//There was already a drive at that index, bail out
+	//TODO: populate an NSError object as well.
+	if (Drives[index]) return NO;
+	
 	Drives[index] = drive;
 	mem_writeb(Real2Phys(dos.tables.mediaid)+(index)*2, drive->GetMediaByte());
+	
+	return YES;
 }
 
-//Unmount a drive and clear references to it (and any files on it)
-- (BOOL) _unmountDriveAtIndex: (NSUInteger)index
+
+//Unmounts the DOSBox drive at the specified index and clears any references to the drive.
+- (BOOL) _unmountDOSBoxDriveAtIndex: (NSUInteger)index
 {
+	//The specified drive is not mounted, bail out.
+	//TODO: populate an NSError object as well.
+	if (!Drives[index]) return NO;
+	
 	//Close any files that DOSBox had open on that drive before unmounting it
 	//TODO: port this code back to DOSBox itself, as it will not currently occur
 	//if user unmounts a drive with the MOUNT command
 	int i;
 	for (i=0; i<DOS_FILES; i++)
 	{
+		//FIXME: GetDrive() returns 0 for stdin/stdout, which also correspond to the index number for A
 		if (Files[i] && Files[i]->GetDrive() == index)
 		{
 			//Code copy-pasted from localDrive::FileUnlink in drive_local.cpp
@@ -561,7 +555,7 @@ enum {
 	else return NO;
 }
 
-//Create a new DOS_Drive CDROM from a path to a disc image
+//Create a new DOS_Drive CDROM from a path to a disc image.
 - (DOS_Drive *) _CDROMDriveFromImageAtPath: (NSString *)path forIndex: (NSUInteger)index
 {
 	MSCDEX_SetCDInterface(CDROM_USE_SDL, -1);
@@ -580,7 +574,7 @@ enum {
 	return drive;
 }
 
-//Create a new DOS_Drive CDROM from a path to a filesystem folder
+//Create a new DOS_Drive CDROM from a path to a filesystem folder.
 - (DOS_Drive *) _CDROMDriveFromPath: (NSString *)path
 						   forIndex: (NSUInteger)index
 						  withAudio: (BOOL)useCDAudio
@@ -612,7 +606,7 @@ enum {
 	return drive;
 }
 
-//Create a new DOS_Drive hard disk from a path to a filesystem folder
+//Create a new DOS_Drive hard disk from a path to a filesystem folder.
 - (DOS_Drive *) _hardDriveFromPath: (NSString *)path freeSpace: (NSInteger)freeSpace
 {
 	return [self _DOSBoxDriveFromPath: path
@@ -621,7 +615,7 @@ enum {
 							  mediaID: BXHardDiskMediaID];
 }
 
-//Create a new DOS_Drive floppy disk from a path to a filesystem folder
+//Create a new DOS_Drive floppy disk from a path to a filesystem folder.
 - (DOS_Drive *) _floppyDriveFromPath: (NSString *)path freeSpace: (NSInteger)freeSpace
 {
 	return [self _DOSBoxDriveFromPath: path
@@ -651,6 +645,45 @@ enum {
 						  mediaID);
 }
 
+
+
+//Synchronizes Boxer's mounted drive cache with DOSBox's drive array, adding new drives and removing old drives as necessary.
+- (void) _syncDriveCache
+{
+	NSArray *driveLetters = [[self class] driveLetters];
+	
+	NSUInteger i;
+	for (i=0; i < DOS_DRIVES; i++)
+	{
+		NSString *letter = [self _driveLetterForIndex: i];
+		BOOL driveExists = [driveCache objectForKey: letter] != nil;
+		//A drive exists in DOSBox that we don't have a record of yet, add it to our cache
+		if (Drives[i] && !driveExists)
+		{
+			BXDrive *drive = [self _driveFromDOSBoxDriveAtIndex: i];
+			[self _addDriveToCache: drive];
+		}
+		//A drive no longer exists in DOSBox which we have a leftover record for, remove it
+		else if (!Drives[i] && driveExists)
+		{
+			[self _removeDriveFromCacheAtLetter: letter];
+		}
+	}
+}
+
+- (void) _addDriveToCache: (BXDrive *)drive
+{
+	[self willChangeValueForKey: @"mountedDrives"];
+	[driveCache setObject: drive forKey: [drive letter]];
+	[self didChangeValueForKey: @"mountedDrives"];
+}
+
+- (void) _removeDriveFromCacheAtLetter: (NSString *)letter
+{
+	[self willChangeValueForKey: @"mountedDrives"];
+	[driveCache removeObjectForKey: letter];
+	[self didChangeValueForKey: @"mountedDrives"];
+}
 @end
 
 
@@ -673,9 +706,17 @@ bool boxer_willMountPath(const char *pathStr)
 	return [emulator shouldMountPath: thePath];
 }
 
+//Whether to include a file with the specified name in DOSBox directory listings
 bool boxer_allowFileWithName(const char *name)
 {
 	NSString *fileName = [NSString stringWithCString: name encoding: BXDirectStringEncoding];
 	BXEmulator *emulator = [BXEmulator currentEmulator];
 	return [emulator shouldShowFileWithName: fileName];
+}
+
+//Tells Boxer to resync its cached drives - called by DOSBox functions that add/remove drives
+void boxer_syncDriveCache()
+{
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+	[emulator _syncDriveCache];	
 }

@@ -22,8 +22,8 @@
 
 @implementation BXSession (BXFileManager)
 
-+ (NSSet *) keyPathsForValuesAffectingDrives			{ return [NSSet setWithObject: @"emulator.mountedDrives"]; }
-+ (NSSet *) keyPathsForValuesAffectingExecutables		{ return [NSSet setWithObject: @"gamePackage.executables"]; }
++ (NSSet *) keyPathsForValuesAffectingDrives		{ return [NSSet setWithObject: @"emulator.mountedDrives"]; }
++ (NSSet *) keyPathsForValuesAffectingExecutables	{ return [NSSet setWithObject: @"gamePackage.executables"]; }
 
 
 //Class methods concerning filetypes
@@ -71,16 +71,6 @@
 {
 	if ([sender respondsToSelector: @selector(representedObject)]) sender = [sender representedObject];
 	[[self emulator] unmountDrive: sender];
-}
-
-
-//Returns the currently mounted drives, filtered to hide internal drives
-- (NSArray *) drives
-{
-	NSArray *drives = [[self emulator] mountedDrives];
-	NSPredicate *isNotInternal = [NSPredicate predicateWithFormat:@"isInternal == NO && isHidden == NO"];
-
-	return [drives filteredArrayUsingPredicate: isNotInternal];
 }
 
 
@@ -244,7 +234,6 @@
 //Called from BXSession init
 - (void) _registerForFilesystemNotifications
 {
-	BXEmulator *theEmulator = [self emulator];
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	NSNotificationCenter *center = [workspace notificationCenter];
 	
@@ -257,16 +246,6 @@
 			   selector:	@selector(volumeWillUnmount:)
 				   name:	@"NSWorkspaceWillUnmountNotification"
 				 object:	workspace];
-	
-	[center addObserver:	self
-			selector:		@selector(DOSDriveDidMount:)
-			name:			@"BXDriveDidMountNotification"
-			object:			theEmulator];
-			
-	[center addObserver:	self
-			selector:		@selector(DOSDriveDidUnmount:)
-			name:			@"BXDriveDidUnmountNotification"
-			object:			theEmulator];
 
 	[center addObserver:	self
 			selector:		@selector(filesystemDidChange:)
@@ -282,8 +261,6 @@
 
 	[center removeObserver: self name: @"NSWorkspaceDidMountNotification"		object: workspace];
 	[center removeObserver: self name: @"NSWorkspaceWillUnmountNotification"	object: workspace];
-	[center removeObserver: self name: @"BXDriveDidMountNotification"			object: theEmulator];
-	[center removeObserver: self name: @"BXDriveDidUnmountNotification"			object: theEmulator];
 	[center removeObserver: self name: UKFileWatcherWriteNotification			object: nil];
 
 }

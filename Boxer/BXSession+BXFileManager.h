@@ -45,11 +45,6 @@
 //Unmount the represented object of the sender (assumed to be a BXDrive). 
 - (IBAction) unmountDrive:		(id)sender;
 
-
-//Returns an array of currently-mounted drives, filtered to exclude internal and hidden drives.
-//Used only by UIs, and so really belongs downstream in UI controllers instead.
-- (NSArray *) drives;
-
 //Returns whether the specified path should be mounted as a new drive.
 //Returns YES if the path isn't already DOS-accessible or deserves its own drive anyway, NO otherwise.
 - (BOOL) shouldMountDriveForPath: (NSString *)path;

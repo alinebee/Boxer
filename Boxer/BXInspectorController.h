@@ -81,4 +81,12 @@
 - (NSDragOperation)draggingEntered: (id < NSDraggingInfo >)sender;
 - (BOOL)performDragOperation: (id < NSDraggingInfo >)sender;
 
+
+//Handling the drives panel
+//-------------------------
+
+//TODO: move these off to an NSViewController dedicated to the drives panel
+- (NSArray *)driveSortDescriptors;
+- (NSPredicate *) driveFilterPredicate;
+
 @end

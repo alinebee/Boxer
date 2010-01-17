@@ -271,4 +271,18 @@
 	}		
 	return NO;
 }
+
+
+
+//Returns the NSSortDescriptors to be used for sorting drives in the drive panel
+- (NSArray *) driveSortDescriptors
+{
+	NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey: @"letter" ascending: YES];
+	return [NSArray arrayWithObject: [descriptor autorelease]];
+}
+//Returns the predicate to be used for filtering drives in the drive panel
+- (NSPredicate *) driveFilterPredicate
+{
+	return [NSPredicate predicateWithFormat: @"isInternal == NO && isHidden == NO"];
+}
 @end

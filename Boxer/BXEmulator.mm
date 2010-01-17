@@ -139,20 +139,25 @@ BXEmulator *currentEmulator = nil;
 	if ((self = [super init]))
 	{
 		//Todo: bind these to hidden preferences instead?
-		[self setMaxFixedSpeed:	BXMaxSpeedThreshold];
-		[self setMinFixedSpeed:	BXMinSpeedThreshold];
-		[self setMaxFrameskip:	9];
-		[self setConfigFiles: [NSMutableArray arrayWithCapacity: 10]];
-		currentVideoMode = M_TEXT;
+		maxFixedSpeed		= BXMaxSpeedThreshold;
+		minFixedSpeed		= BXMinSpeedThreshold;
+		maxFrameskip		= 9;
+		
+		configFiles			= [[NSMutableArray alloc] initWithCapacity: 10];
+		driveCache			= [[NSMutableDictionary alloc] initWithCapacity: DOS_DRIVES];
+		currentVideoMode	= M_TEXT;
 	}
 	return self;
 }
 
 - (void) dealloc
 {
-	[self setProcessName: nil], [processName release];
+	[self setProcessName: nil],	[processName release];
 	[self setCurrentRecordingPath: nil], [currentRecordingPath release];
-	[self setConfigFiles: nil], [configFiles release];
+	
+	[driveCache release], driveCache = nil;
+	[configFiles release], configFiles = nil;
+	
 	[super dealloc];
 }
 
@@ -171,23 +176,14 @@ BXEmulator *currentEmulator = nil;
 	//Start DOSBox's main loop
 	DOSBox_main(*_NSGetArgc(), *_NSGetArgv());
 	
-	NSLog(@"Exited DOSBox.");
-	
 	//Clean up after DOSBox finishes
 	[self _shutdownRecording];
 	[self _shutdownRenderer];
 	[self _shutdownShell];
 	
 	if (currentEmulator == self) currentEmulator = nil;
-	
-	NSLog(@"Finished shutting down.");
 }
 
-- (void) addConfigFile: (NSString *)configPath
-{
-	configPath = [configPath stringByStandardizingPath];
-	[[self configFiles] addObject: configPath];
-}
 
 
 //Introspecting emulation state
@@ -500,10 +496,11 @@ BXEmulator *currentEmulator = nil;
 			   delegateSelector: @selector(willLoadConfiguration:)
 					   userInfo: nil];
 	
-	for (NSString *configFile in [self configFiles])
+	for (NSString *configPath in [self configFiles])
 	{
-		const char * const encodedConfigPath = (const char * const)[configFile cStringUsingEncoding: BXDirectStringEncoding];
-		control->ParseConfigFile(encodedConfigPath);
+		configPath = [configPath stringByStandardizingPath];
+		const char * encodedConfigPath = [configPath cStringUsingEncoding: BXDirectStringEncoding];
+		control->ParseConfigFile((const char * const)encodedConfigPath);
 	}
 
 	[self _postNotificationName: @"BXEmulatorDidLoadConfigurationNotification"
@@ -521,6 +518,8 @@ BXEmulator *currentEmulator = nil;
 {
 	if ([self isExecuting])
 	{
+		//Post event notifications for settings we have no way of detecting changes to,
+		//so that all bound objects will update just in case
 		[self willChangeValueForKey:	@"mouseLocked"];
 		[self didChangeValueForKey:		@"mouseLocked"];
 		
@@ -536,8 +535,6 @@ BXEmulator *currentEmulator = nil;
 		[self willChangeValueForKey:	@"coreMode"];
 		[self didChangeValueForKey:		@"coreMode"];
 		
-		[self willChangeValueForKey:	@"mountedDrives"];
-		[self didChangeValueForKey:		@"mountedDrives"];
 		
 		//Now perform fine-grained checking on the process name, and post appropriate notifications
 		

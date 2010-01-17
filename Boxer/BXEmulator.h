@@ -55,10 +55,11 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 @interface BXEmulator : NSOperation
 {
 	NSThread *thread;
+	BXSession *delegate;
 	
 	NSString *processName;
 	NSMutableArray *configFiles;
-	BXSession *delegate;
+	NSMutableDictionary *driveCache;
 	
 	NSInteger minFixedSpeed;
 	NSInteger maxFixedSpeed;
@@ -98,7 +99,7 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 @property (readonly)	NSThread *thread;
 
 //An array of OS X paths to configuration files that will be processed by this session during startup.
-@property (retain)		NSMutableArray *configFiles;
+@property (retain, readonly) NSMutableArray *configFiles;
 
 //The maximum allowable value for the frameskip setting.
 //Defaults to 9.
@@ -122,6 +123,7 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 
 
 
+
 //Class methods
 //-------------
 
@@ -140,11 +142,6 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 
 //Starts up the main emulator loop. 
 - (void) main;
-
-//Adds the DOSBox configuration file at the specified OS X path to be parsed at startup.
-//Has no effect if the emulator has already started.
-- (void) addConfigFile: (NSString *)configPath;
-
 
 //Introspecting emulation state
 //-----------------------------

@@ -141,8 +141,7 @@
 - (void) _configureEmulator;
 
 //Start up the target program for this session (if any) and displays the program panel selector after this
-//finishes. Called in response to the BXEmulatorDidLoadConfiguration event, once the emulator has finished
-//processing configuration files.
+//finishes. Called by runLaunchCommands, once the emulator has finished processing configuration files.
 - (void) _launchTarget;
 
 

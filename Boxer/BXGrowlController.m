@@ -8,6 +8,7 @@
 
 #import "BXGrowlController.h"
 #import "BXDrive.h"
+#import "BXValueTransformers.h"
 #import <Growl/GrowlDefines.h>
 
 @implementation BXGrowlController
@@ -46,12 +47,24 @@
 
 	NSString *title = [NSString stringWithFormat: titleFormat, [BXDrive descriptionForType: [drive type]], [drive letter], nil];
 	
+	//This is offensive
+	NSString *capitalizedTitle = [[[title substringToIndex: 1] capitalizedString]
+									stringByAppendingString: [title substringFromIndex: 1]];
+
+	NSString *description = nil;
+	if ([drive path])
+	{
+		BXDisplayPathTransformer *transformer = [[BXDisplayPathTransformer alloc] initWithJoiner: @" ▸ " maxComponents: 0];
+		description = [transformer transformedValue: [drive path]];
+		[transformer release];
+	}
+	
 	NSImage *icon		= [drive icon];
 	NSData *iconData	= [icon TIFFRepresentation];
 	
 	[GrowlApplicationBridge
-		notifyWithTitle:	title
-		description:		nil
+		notifyWithTitle:	capitalizedTitle
+		description:		description
 		notificationName:	@"Drive mounted"
 		iconData:			iconData
 		priority:			0
@@ -66,12 +79,25 @@
 
 	NSString *title = [NSString stringWithFormat: titleFormat, [BXDrive descriptionForType: [drive type]], [drive letter], nil];
 	
+	//This is offensive
+	NSString *capitalizedTitle = [[[title substringToIndex: 1] capitalizedString]
+								  stringByAppendingString: [title substringFromIndex: 1]];
+	
+	
+	NSString *description = nil;
+	if ([drive path])
+	{
+		BXDisplayPathTransformer *transformer = [[BXDisplayPathTransformer alloc] initWithJoiner: @" ▸ " maxComponents: 0];
+		description = [transformer transformedValue: [drive path]];
+		[transformer release];
+	}
+	
 	NSImage *icon		= [drive icon];
 	NSData *iconData	= [icon TIFFRepresentation];
 	
 	[GrowlApplicationBridge
-		notifyWithTitle:	title
-		description:		nil
+		notifyWithTitle:	capitalizedTitle
+		description:		description
 		notificationName:	@"Drive unmounted"
 		iconData:			iconData
 		priority:			0

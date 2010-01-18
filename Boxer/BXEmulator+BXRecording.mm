@@ -9,6 +9,7 @@
 #import "BXSession.h"
 #import <QTKit/QTKit.h>
 
+#import "boxer.h"
 #import "hardware.h"
 
 //Defined in hardware.cpp

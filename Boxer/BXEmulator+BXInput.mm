@@ -11,6 +11,8 @@
 #import "BXEmulator.h"
 #import "BXEmulator+BXShell.h"
 
+#import "boxer.h"
+
 @implementation BXEmulator (BXInput)
 + (NSDictionary *)keyboardLayoutMappings
 {

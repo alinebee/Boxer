@@ -67,14 +67,13 @@ static const NSInteger BXDefaultFreeSpace = -1;
 @property (assign) BOOL usesCDAudio;
 
 //Whether to prevent writing to the OS X filesystem representing this drive: defaults to NO.
-//NOT YET IMPLEMENTED.
 @property (assign) BOOL readOnly;
 
-//Whether to protect this drive from being unmounted from the drive manager UI.
+//Whether to protect this drive from being unmounted from the drive manager UI: defaults to NO.
 //Ignored for DOSBox internal drives (which are always locked).
 @property (assign, getter=isLocked) BOOL locked;
 
-//Whether to hide this drive from Boxer's drive manager UI.
+//Whether to hide this drive from Boxer's drive manager UI: defaults to NO.
 //Ignored for DOSBox internal drives (which are always hidden).
 @property (assign, getter=isHidden) BOOL hidden;
 

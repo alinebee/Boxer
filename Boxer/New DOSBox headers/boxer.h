@@ -58,6 +58,10 @@ BOXER_EXPORT bool boxer_handleShellCommand(char* cmd, char* args);
 	
 //Called from drive_cache.cpp: allows Boxer to hide OS X files that DOSBox shouldn't touch.
 BOXER_EXPORT bool boxer_allowFileWithName(const char *name);
+
+//Called from drive_local.cpp: allows Boxer to restrict access to files that DOS programs shouldn't write to.
+class DOS_Drive;
+BOXER_EXPORT bool boxer_allowWriteAccessToPathOnDrive(const char *filename, DOS_Drive *drive);
 	
 //Called from dos_programs.cpp et al: informs Boxer of drive mount/unmount events
 BOXER_EXPORT void boxer_syncDriveCache();

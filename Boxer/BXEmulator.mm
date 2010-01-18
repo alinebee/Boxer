@@ -13,6 +13,7 @@
 #import "BXEmulator+BXRecording.h"
 #import "BXEmulator+BXDOSFileSystem.h"
 
+#import "boxer.h"
 #import "render.h"
 #import "cpu.h"
 #import "sdlmain.h"

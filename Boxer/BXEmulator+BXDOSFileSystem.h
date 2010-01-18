@@ -106,14 +106,6 @@
 //Returns whether the specified path is safe for DOS programs to access (i.e. not a system folder)
 + (BOOL) pathIsSafeToMount: (NSString *)thePath;
 
-//Decides whether to let the DOS session mount the specified path
-//This checks against pathIsSafeToMount, and prints an error to the console if not
-- (BOOL) shouldMountPath: (NSString *)thePath;
-
-//Returns whether to show files with the specified name in DOS directory listings
-//This hides all files starting with . or that are in dosFileExclusions
-- (BOOL) shouldShowFileWithName: (NSString *)fileName;
-
 @end
 
 
@@ -136,8 +128,12 @@ class DOS_Drive;
 //Returns the DOSBox drive index for a specified drive letter.
 - (NSUInteger)_indexOfDriveLetter: (NSString *)driveLetter;
 
-//Returns the Boxer drive object for a drive at the specified drive index.
+//Generates a Boxer drive object for a drive at the specified drive index.
 - (BXDrive *)_driveFromDOSBoxDriveAtIndex: (NSUInteger)index;
+
+//Returns the Boxer drive that matches the specified DOSBox drive, or nil if no drive was found.
+//TODO: clarify this and the above function, which are for two different purposes.
+- (BXDrive *)_driveMatchingDOSBoxDrive: (DOS_Drive *)dosDrive;
 
 //Registers a new drive with DOSBox and adds it to the drive list. Returns YES if the drive was successfully added,
 //or NO if there was an error (e.g. there was already a drive at that index).
@@ -168,5 +164,15 @@ class DOS_Drive;
 - (void) _syncDriveCache;
 - (void) _addDriveToCache: (BXDrive *)drive;
 - (void) _removeDriveFromCache: (BXDrive *)drive;
+
+
+//Decides whether to let the DOS session mount the specified path
+//This checks against pathIsSafeToMount, and prints an error to the console if not
+- (BOOL) _shouldMountPath: (NSString *)thePath;
+
+//Returns whether to show files with the specified name in DOS directory listings
+//This hides all files starting with . or that are in dosFileExclusions
+- (BOOL) _shouldShowFileWithName: (NSString *)fileName;
+
 @end
 #endif

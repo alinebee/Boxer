@@ -22,7 +22,6 @@
 
 #import <Cocoa/Cocoa.h>
 #import <Carbon/Carbon.h>
-#import "boxer.h"
 
 //Emulation-related constant definitions
 //--------------------------------------

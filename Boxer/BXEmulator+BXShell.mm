@@ -14,6 +14,7 @@
 #import "BXCloseAlert.h"
 #import "BXDrive.h"
 
+#import "boxer.h"
 #import "shell.h"
 
 //Lookup table of BXEmulator+BXShell selectors and the shell commands that call them

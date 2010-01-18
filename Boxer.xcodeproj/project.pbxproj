@@ -28,7 +28,7 @@
 		9F424207109D03F500111D28 /* BXInspectorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F424206109D03F500111D28 /* BXInspectorController.m */; };
 		9F424222109D061000111D28 /* InspectorPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F45A1C5109C3CB400593456 /* InspectorPanel.xib */; };
 		9F438C5810E3D8C8007D30AD /* BXScroller.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F438C5710E3D8C8007D30AD /* BXScroller.m */; };
-		9F44E5E410D17A4C0081B8D2 /* BXEmulator+BXInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F44E5E310D17A4C0081B8D2 /* BXEmulator+BXInput.m */; };
+		9F44E5E410D17A4C0081B8D2 /* BXEmulator+BXInput.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F44E5E310D17A4C0081B8D2 /* BXEmulator+BXInput.mm */; };
 		9F45A1BD109C3C3900593456 /* About.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F45A1BB109C3C3900593456 /* About.xib */; };
 		9F45A1C9109C3D1100593456 /* DOSWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F45A1C7109C3D1100593456 /* DOSWindow.xib */; };
 		9F45A1CD109C3D3400593456 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F45A1CB109C3D3400593456 /* MainMenu.xib */; };
@@ -306,7 +306,7 @@
 		9F438C5610E3D8C8007D30AD /* BXScroller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXScroller.h; sourceTree = "<group>"; };
 		9F438C5710E3D8C8007D30AD /* BXScroller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXScroller.m; sourceTree = "<group>"; };
 		9F44E5E210D17A4C0081B8D2 /* BXEmulator+BXInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXEmulator+BXInput.h"; sourceTree = "<group>"; };
-		9F44E5E310D17A4C0081B8D2 /* BXEmulator+BXInput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXEmulator+BXInput.m"; sourceTree = "<group>"; };
+		9F44E5E310D17A4C0081B8D2 /* BXEmulator+BXInput.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "BXEmulator+BXInput.mm"; sourceTree = "<group>"; };
 		9F45A1BC109C3C3900593456 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/About.xib; sourceTree = "<group>"; };
 		9F45A1C6109C3CB400593456 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/InspectorPanel.xib; sourceTree = "<group>"; };
 		9F45A1C8109C3D1100593456 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/DOSWindow.xib; sourceTree = "<group>"; };
@@ -833,7 +833,7 @@
 				9F675DE30F8F4D49001FCE5F /* BXEmulator+BXDOSFileSystem.h */,
 				9F675DE40F8F4D49001FCE5F /* BXEmulator+BXDOSFileSystem.mm */,
 				9F44E5E210D17A4C0081B8D2 /* BXEmulator+BXInput.h */,
-				9F44E5E310D17A4C0081B8D2 /* BXEmulator+BXInput.m */,
+				9F44E5E310D17A4C0081B8D2 /* BXEmulator+BXInput.mm */,
 			);
 			comments = "The sourcefiles in this group interface directly with DOSBox's internals. For this reason, they need to be compiled as Objective C++ rather than Objective C.";
 			name = BXEmulator;
@@ -1782,7 +1782,7 @@
 				9F76D1B910CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.m in Sources */,
 				9F76D45610CBE5C500C3B081 /* BXSession+BXDragDrop.m in Sources */,
 				9F76D4CC10CBFFB200C3B081 /* BXVideoFormatAlert.m in Sources */,
-				9F44E5E410D17A4C0081B8D2 /* BXEmulator+BXInput.m in Sources */,
+				9F44E5E410D17A4C0081B8D2 /* BXEmulator+BXInput.mm in Sources */,
 				9F61FC8510DE3F7F00F3896C /* BXGameProfile.m in Sources */,
 				9F438C5810E3D8C8007D30AD /* BXScroller.m in Sources */,
 				9F8A974A10E7DEF500A4B72A /* RegexKitLite.m in Sources */,

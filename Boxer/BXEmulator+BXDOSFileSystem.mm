@@ -9,7 +9,9 @@
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulator+BXShell.h"
 #import "BXDrive.h"
+#import "NSString+BXPaths.h"
 
+#import "boxer.h"
 #import "dos_inc.h"
 #import "dos_system.h"
 #import "drives.h"
@@ -103,42 +105,6 @@ enum {
 	NSArray *restrictedPaths	= NSSearchPathForDirectoriesInDomains(NSAllLibrariesDirectory, NSAllDomainsMask, YES);
 	for (NSString *testPath in restrictedPaths) if ([resolvedPath hasPrefix: testPath]) return NO;
 	
-	return YES;
-}
-
-//Filesystem validation
-//---------------------
-
-//If the folder was restricted, print an error to the shell and deny access
-//Todo: this assumes that the check is being called from the shell; we should instead populate an NSError with the error details and let the upstream context handle it
-- (BOOL) shouldMountPath: (NSString *)thePath
-{
-	if (![[self class] pathIsSafeToMount: thePath])
-	{
-		NSString *errorMessage = NSLocalizedStringFromTable(
-			@"Mounting system folders such as %@ is not permitted.",
-			@"Shell", 
-			@"Printed to the DOS shell when the user attempts to mount a system folder. %@ is the fully resolved folder path, which may not be the path they entered."
-		);
-
-		[self displayString: [NSString stringWithFormat: errorMessage, thePath]];
-		return NO;
-	}
-	else return YES;
-}
-
-//Todo: supplement this by getting entire OS X filepaths out of DOSBox, instead of just filenames
-- (BOOL) shouldShowFileWithName: (NSString *)fileName
-{
-	//Permit . and .. to be shown
-	if ([fileName isEqualToString: @"."] || [fileName isEqualToString: @".."]) return YES;
-	
-	//Hide all hidden UNIX files
-	//Todo: will this ever hide valid DOS files?
-	if ([fileName hasPrefix: @"."]) return NO;
-	
-	//Hide OSX and Boxer metadata files
-	if ([[[self class] dosFileExclusions] containsObject: fileName]) return NO;
 	return YES;
 }
 
@@ -508,6 +474,20 @@ enum {
 	else return nil;
 }
 
+//Returns the Boxer drive that matches the specified DOSBox drive, or nil if no drive was found
+- (BXDrive *)_driveMatchingDOSBoxDrive: (DOS_Drive *)dosDrive
+{
+	NSUInteger i;
+	for (i=0; i < DOS_DRIVES; i++)
+	{
+		if (Drives[i] == dosDrive)
+		{
+			return [driveCache objectForKey: [self _driveLetterForIndex: i]];
+		}
+	}
+	return nil;
+}
+
 //Registers a new drive with DOSBox and adds it to the drive list.
 - (BOOL) _addDOSBoxDrive: (DOS_Drive *)drive atIndex: (NSUInteger)index
 {
@@ -728,9 +708,63 @@ enum {
 	[driveCache removeObjectForKey: [drive letter]];
 	[self didChangeValueForKey: @"mountedDrives"];
 }
+
+
+//Filesystem validation
+//---------------------
+
+//If the folder was restricted, print an error to the shell and deny access
+//Todo: this assumes that the check is being called from the shell; we should instead populate an NSError with the error details and let the upstream context handle it
+- (BOOL) _shouldMountPath: (NSString *)thePath
+{
+	if (![[self class] pathIsSafeToMount: thePath])
+	{
+		NSString *errorMessage = NSLocalizedStringFromTable(
+															@"Mounting system folders such as %@ is not permitted.",
+															@"Shell", 
+															@"Printed to the DOS shell when the user attempts to mount a system folder. %@ is the fully resolved folder path, which may not be the path they entered."
+															);
+		
+		[self displayString: [NSString stringWithFormat: errorMessage, thePath]];
+		return NO;
+	}
+	else return YES;
+}
+
+//Todo: supplement this by getting entire OS X filepaths out of DOSBox, instead of just filenames
+- (BOOL) _shouldShowFileWithName: (NSString *)fileName
+{
+	//Permit . and .. to be shown
+	if ([fileName isEqualToString: @"."] || [fileName isEqualToString: @".."]) return YES;
+	
+	//Hide all hidden UNIX files
+	//CHECK: will this ever hide valid DOS files?
+	if ([fileName hasPrefix: @"."]) return NO;
+	
+	//Hide OSX and Boxer metadata files
+	if ([[[self class] dosFileExclusions] containsObject: fileName]) return NO;
+	return YES;
+}
+
+- (BOOL) _shouldAllowWriteAccessToPath: (NSString *)filePath onDOSBoxDrive: (DOS_Drive *)dosDrive
+{
+	BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosDrive];
+	
+	//Don't allow write access to files on drives marked as read-only
+	if ([drive readOnly]) return NO;
+	
+	//Don't allow write access to files inside Boxer's application bundle
+	filePath = [filePath stringByStandardizingPath];
+	NSString *boxerPath = [[NSBundle mainBundle] bundlePath];
+	if ([filePath isRootedInPath: boxerPath]) return NO;
+	
+	//TODO: don't allow write access to files in system directories
+	
+	//Let other files go through unmolested
+	return YES;
+}
+
 @end
-
-
 
 
 //Bridge functions
@@ -747,7 +781,7 @@ bool boxer_willMountPath(const char *pathStr)
 						length: strlen(pathStr)];
 	
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	return [emulator shouldMountPath: thePath];
+	return [emulator _shouldMountPath: thePath];
 }
 
 //Whether to include a file with the specified name in DOSBox directory listings
@@ -755,7 +789,15 @@ bool boxer_allowFileWithName(const char *name)
 {
 	NSString *fileName = [NSString stringWithCString: name encoding: BXDirectStringEncoding];
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	return [emulator shouldShowFileWithName: fileName];
+	return [emulator _shouldShowFileWithName: fileName];
+}
+
+//Whether to allow write access to the file at the specified path on the local filesystem
+bool boxer_allowWriteAccessToPathOnDrive(const char *filename, DOS_Drive *drive)
+{
+	NSString *filePath = [NSString stringWithCString: filename encoding: BXDirectStringEncoding];
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+	return [emulator _shouldAllowWriteAccessToPath: filePath onDOSBoxDrive: drive];
 }
 
 //Tells Boxer to resync its cached drives - called by DOSBox functions that add/remove drives

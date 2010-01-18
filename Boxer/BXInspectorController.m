@@ -1,5 +1,6 @@
 #import "BXInspectorController.h"
 #import "BXSession+BXDragDrop.h"
+#import "BXSession+BXFileManager.h"
 #import "BXEmulator.h"
 #import "BXDrive.h"
 #import "BXAppController.h"
@@ -212,7 +213,8 @@
 - (IBAction) unmountSelectedDrives: (id)sender
 {
 	NSArray *selection = [[self driveController] selectedObjects];
-	for (BXDrive *drive in selection) [NSApp sendAction: @selector(unmountDrive:) to: nil from: drive];
+	if ([[BXSession mainSession] shouldUnmountDrives: selection sender: sender])
+		[[BXSession mainSession] unmountDrives: selection];
 }
 
 - (IBAction) showMountPanel: (id) sender

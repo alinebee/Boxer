@@ -16,7 +16,7 @@
 @implementation BXDrive
 @synthesize path, letter, label;
 @synthesize type, freeSpace;
-@synthesize usesCDAudio, readOnly, hidden;
+@synthesize usesCDAudio, readOnly, locked, hidden;
 
 
 //Pretty much all our properties depend on our path, so we add it here

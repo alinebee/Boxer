@@ -86,7 +86,10 @@
 	NSString *fileName, *filePath, *fileType;
 	for (fileName in [manager contentsOfDirectoryAtPath: basePath error: nil])
 	{
-		filePath	= [basePath stringByAppendingPathComponent: fileName];
+		//Skip over hidden/metadata files
+		if ([[fileName lastPathComponent] hasPrefix: @"."]) continue;
+
+		filePath = [basePath stringByAppendingPathComponent: fileName];
 		if ([workspace file: filePath matchesTypes: acceptedTypes]) [volumes addObject: filePath];
 	}
 	return volumes;
@@ -113,7 +116,6 @@
 	
 	if (![targetPath isEqualToString: path])
 	{
-		
 		[targetPath autorelease];
 		targetPath = [path retain];
 		

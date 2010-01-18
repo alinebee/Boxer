@@ -228,7 +228,7 @@ enum {
 
 - (BOOL) unmountDrive: (BXDrive *)drive
 {
-	if ([drive isInternal]) return NO;
+	if ([drive isInternal] || [drive isLocked]) return NO;
 	
 	NSUInteger index	= [self _indexOfDriveLetter: [drive letter]];
 	BOOL isCurrentDrive = (index == DOS_GetDefaultDrive());
@@ -241,7 +241,7 @@ enum {
 		if (isCurrentDrive) [self changeToDriveLetter: @"Z"];
 		
 		//Remove the drive from our drive cache
-		[self _removeDriveFromCacheAtLetter: [drive letter]];
+		[self _removeDriveFromCache: drive];
 		
 		//Post a notification to whoever's listening
 		NSDictionary *userInfo = [NSDictionary dictionaryWithObject: drive forKey: @"drive"];
@@ -315,6 +315,11 @@ enum {
 	return [driveCache objectForKey: driveLetter];
 }
 
+- (BOOL) driveInUseAtLetter: (NSString *)driveLetter
+{
+	return [self _DOSBoxDriveInUseAtIndex: [self _indexOfDriveLetter: driveLetter]];
+}
+
 - (BOOL) pathIsMountedAsDrive: (NSString *)path
 {
 	path = [path stringByStandardizingPath];
@@ -372,7 +377,7 @@ enum {
 	if (![drive exposesPath: path]) return nil;
 
 
-	//To be extra sure we get this right, flush the drive caches before we look anything up
+	//To be sure we get this right, flush the drive caches before we look anything up
 	[self refreshMountedDrives];
 	
 	NSString *basePath			= [drive path];
@@ -405,9 +410,8 @@ enum {
 		if (hasShortName)
 			dosName = [NSString stringWithCString: (const char *)buffer encoding: BXDirectStringEncoding];
 		else
-			//If DOSBox didn't find a shorter name, it probably means the name is already short enough - just make sure it's
-			//uppercased.
-			//TODO: if DOSBox fails to find a filepath for some other reason, maybe we should still run the filename through our own makeDOSFilename: method to get a 'dos-like' filepath that might work. However, doing so would hide the failure, and make debugging it that much harder.
+			//If DOSBox didn't find a shorter name, it probably means the name is already short enough
+			//- just make sure it's uppercased.
 			dosName = [fileName uppercaseString];
 
 		[dosPath appendFormat: @"/%@", dosName, nil];
@@ -519,7 +523,6 @@ enum {
 	return YES;
 }
 
-
 //Unmounts the DOSBox drive at the specified index and clears any references to the drive.
 - (BOOL) _unmountDOSBoxDriveAtIndex: (NSUInteger)index
 {
@@ -529,15 +532,21 @@ enum {
 	
 	//Close any files that DOSBox had open on that drive before unmounting it
 	//TODO: port this code back to DOSBox itself, as it will not currently occur
-	//if user unmounts a drive with the MOUNT command
+	//if user unmounts a drive with the MOUNT command (not that this usually matters,
+	//since there should be no open files while at the commandline, but still)
+	
 	int i;
 	for (i=0; i<DOS_FILES; i++)
 	{
-		//FIXME: GetDrive() returns 0 for stdin/stdout, which also correspond to the index number for A
 		if (Files[i] && Files[i]->GetDrive() == index)
 		{
+			//DOS_File->GetDrive() returns 0 for the special CON system file,
+			//which also corresponds to the drive index for A, so make sure we don't
+			//close this by mistake.
+			if (index == 0 && !strcmp(Files[i]->GetName(), "CON")) continue;
+			
 			//Code copy-pasted from localDrive::FileUnlink in drive_local.cpp
-			//Only relevant for local files
+			//Only relevant for local drives, but harmless to perform on other types of drives.
 			while (Files[i]->IsOpen())
 			{
 				Files[i]->Close();
@@ -554,6 +563,26 @@ enum {
 	}
 	else return NO;
 }
+
+
+
+- (BOOL) _DOSBoxDriveInUseAtIndex: (NSUInteger)index
+{
+	int i;
+	for (i=0; i<DOS_FILES; i++)
+	{
+		if (Files[i] && Files[i]->GetDrive() == index)
+		{
+			//DOS_File->GetDrive() returns 0 for the special CON system file,
+			//which also corresponds to the drive index for A, so skip it
+			if (index == 0 && !strcmp(Files[i]->GetName(), "CON")) continue;
+			
+			if (Files[i]->IsOpen()) return YES;
+		}
+	}
+	return NO;
+}
+
 
 //Create a new DOS_Drive CDROM from a path to a disc image.
 - (DOS_Drive *) _CDROMDriveFromImageAtPath: (NSString *)path forIndex: (NSUInteger)index
@@ -647,26 +676,41 @@ enum {
 
 
 
-//Synchronizes Boxer's mounted drive cache with DOSBox's drive array, adding new drives and removing old drives as necessary.
+//Synchronizes Boxer's mounted drive cache with DOSBox's drive array,
+//adding new drives and removing old drives as necessary.
 - (void) _syncDriveCache
 {
 	NSArray *driveLetters = [[self class] driveLetters];
-	
+	NSDictionary *userInfo;
 	NSUInteger i;
+	
 	for (i=0; i < DOS_DRIVES; i++)
 	{
-		NSString *letter = [self _driveLetterForIndex: i];
-		BOOL driveExists = [driveCache objectForKey: letter] != nil;
+		NSString *letter	= [self _driveLetterForIndex: i];
+		BXDrive *drive		= [driveCache objectForKey: letter];
+		
 		//A drive exists in DOSBox that we don't have a record of yet, add it to our cache
-		if (Drives[i] && !driveExists)
+		if (Drives[i] && !drive)
 		{
-			BXDrive *drive = [self _driveFromDOSBoxDriveAtIndex: i];
+			drive = [self _driveFromDOSBoxDriveAtIndex: i];
 			[self _addDriveToCache: drive];
+			
+			//Post a notification to whoever's listening
+			userInfo = [NSDictionary dictionaryWithObject: drive forKey: @"drive"];
+			[self _postNotificationName: @"BXDriveDidMountNotification"
+					   delegateSelector: @selector(DOSDriveDidMount:)
+							   userInfo: userInfo];
 		}
 		//A drive no longer exists in DOSBox which we have a leftover record for, remove it
-		else if (!Drives[i] && driveExists)
+		else if (!Drives[i] && drive)
 		{
-			[self _removeDriveFromCacheAtLetter: letter];
+			[self _removeDriveFromCache: drive];
+			
+			//Post a notification to whoever's listening
+			userInfo = [NSDictionary dictionaryWithObject: drive forKey: @"drive"];
+			[self _postNotificationName: @"BXDriveDidUnmountNotification"
+					   delegateSelector: @selector(DOSDriveDidUnmount:)
+							   userInfo: userInfo];
 		}
 	}
 }
@@ -678,10 +722,10 @@ enum {
 	[self didChangeValueForKey: @"mountedDrives"];
 }
 
-- (void) _removeDriveFromCacheAtLetter: (NSString *)letter
+- (void) _removeDriveFromCache: (BXDrive *)drive
 {
 	[self willChangeValueForKey: @"mountedDrives"];
-	[driveCache removeObjectForKey: letter];
+	[driveCache removeObjectForKey: [drive letter]];
 	[self didChangeValueForKey: @"mountedDrives"];
 }
 @end

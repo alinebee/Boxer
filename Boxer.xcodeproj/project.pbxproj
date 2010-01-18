@@ -227,6 +227,7 @@
 		9FCBB6F310A6DDBD00C28B09 /* DOS Toolkit in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB5FE10A6DDBD00C28B09 /* DOS Toolkit */; };
 		9FCDCCE510D2D53C0080A24F /* Original DOSBox Documentation in Resources */ = {isa = PBXBuildFile; fileRef = 9FCDCCE310D2D53C0080A24F /* Original DOSBox Documentation */; };
 		9FD011BD10C2A02F00670CE1 /* BXProgramMenuController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD011BC10C2A02F00670CE1 /* BXProgramMenuController.m */; };
+		9FD5481411047E420041E1E7 /* BXDrivesInUseAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD5481311047E420041E1E7 /* BXDrivesInUseAlert.m */; };
 		9FDAD87F10C182B3004EA7D0 /* BXCoverArtWell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FDAD87E10C182B3004EA7D0 /* BXCoverArtWell.m */; };
 		9FDB601710C0707F00C15CF4 /* BXDockTileController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FDB601610C0707F00C15CF4 /* BXDockTileController.m */; };
 		9FE201340F6D543F00B3A38C /* libpng.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FE201320F6D543F00B3A38C /* libpng.framework */; };
@@ -659,6 +660,8 @@
 		9FCDCCE410D2D53C0080A24F /* English */ = {isa = PBXFileReference; lastKnownFileType = folder; name = English; path = "English.lproj/Original DOSBox Documentation"; sourceTree = "<group>"; };
 		9FD011BB10C2A02F00670CE1 /* BXProgramMenuController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXProgramMenuController.h; sourceTree = "<group>"; };
 		9FD011BC10C2A02F00670CE1 /* BXProgramMenuController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXProgramMenuController.m; sourceTree = "<group>"; };
+		9FD5481211047E420041E1E7 /* BXDrivesInUseAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDrivesInUseAlert.h; sourceTree = "<group>"; };
+		9FD5481311047E420041E1E7 /* BXDrivesInUseAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDrivesInUseAlert.m; sourceTree = "<group>"; };
 		9FDAD87D10C182B3004EA7D0 /* BXCoverArtWell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCoverArtWell.h; sourceTree = "<group>"; };
 		9FDAD87E10C182B3004EA7D0 /* BXCoverArtWell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXCoverArtWell.m; sourceTree = "<group>"; };
 		9FDB601510C0707F00C15CF4 /* BXDockTileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDockTileController.h; sourceTree = "<group>"; };
@@ -944,6 +947,8 @@
 				9FB553E00F6EA30900A33017 /* BXCloseAlert.m */,
 				9F76D4CA10CBFFB200C3B081 /* BXVideoFormatAlert.h */,
 				9F76D4CB10CBFFB200C3B081 /* BXVideoFormatAlert.m */,
+				9FD5481211047E420041E1E7 /* BXDrivesInUseAlert.h */,
+				9FD5481311047E420041E1E7 /* BXDrivesInUseAlert.m */,
 			);
 			name = BXAlert;
 			sourceTree = "<group>";
@@ -1785,6 +1790,7 @@
 				9F9A4CA110F67D2C00E61965 /* BXPreferencesController.m in Sources */,
 				9F9A4CA910F6824B00E61965 /* BXFilterGallery.m in Sources */,
 				9F9FE70410FA5F5800E3944B /* NSWorkspace+BXIcons.m in Sources */,
+				9FD5481411047E420041E1E7 /* BXDrivesInUseAlert.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

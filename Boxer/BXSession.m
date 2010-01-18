@@ -414,10 +414,11 @@
 		for (NSString *volumePath in packageVolumes)
 		{
 			bundledDrive = [BXDrive driveFromPath: volumePath atLetter: nil];
-			//The bundled drive was explicitly set to drive C, override our existing C drive with it
+			//The bundled drive was explicitly set to drive C, override our existing C package-drive with it
 			if ([[bundledDrive letter] isEqualToString: @"C"])
 			{
 				[[self emulator] unmountDriveAtLetter: @"C"];
+				packageDrive = bundledDrive;
 				//Rewrite the target to point to the new C drive, if it was pointing to the old one
 				if ([[self targetPath] isEqualToString: [package gamePath]]) [self setTargetPath: volumePath]; 
 			}
@@ -433,6 +434,8 @@
 	NSString *toolkitFiles			= [[NSBundle mainBundle] pathForResource: @"DOS Toolkit" ofType: nil];
 	BXDrive *toolkitDrive			= [BXDrive hardDriveFromPath: toolkitFiles atLetter: toolkitDriveLetter];
 	
+	//Hide and lock the toolkit drive so that it will not appear in the drive manager UI
+	[toolkitDrive setLocked: YES];
 	[toolkitDrive setReadOnly: YES];
 	[toolkitDrive setHidden: YES];
 	toolkitDrive = [theEmulator mountDrive: toolkitDrive];

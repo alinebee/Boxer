@@ -14,6 +14,7 @@
 #import "BXGrowlController.h"
 #import "BXPackage.h"
 #import "BXDrive.h"
+#import "BXDrivesInUseAlert.h"
 
 #import "NSWorkspace+BXMountedVolumes.h"
 #import "NSWorkspace+BXFileTypes.h"
@@ -70,7 +71,48 @@
 - (IBAction) unmountDrive: (id)sender
 {
 	if ([sender respondsToSelector: @selector(representedObject)]) sender = [sender representedObject];
-	[[self emulator] unmountDrive: sender];
+	if ([self shouldUnmountDrives: [NSArray arrayWithObject: sender] sender: sender])
+		[[self emulator] unmountDrive: sender];
+}
+
+- (BOOL) shouldUnmountDrives: (NSArray *)drives sender: (id)sender
+{
+	//If the Option key was held down, bypass this check altogether and allow any drive to be unmounted
+	NSUInteger optionKeyDown = [[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask;
+	if (optionKeyDown) return YES;
+	
+	NSMutableArray *drivesInUse = [[NSMutableArray alloc] initWithCapacity: [drives count]];
+	for (BXDrive *drive in drives)
+	{
+		if ([drive isLocked]) return NO; //Prevent locked drives from being removed altogether
+		if ([[self emulator] driveInUseAtLetter: [drive letter]]) [drivesInUse addObject: drive];
+	}
+	
+	if ([drivesInUse count] > 0)
+	{
+		//Note that alert stays retained - it is released by the didEndSelector
+		BXDrivesInUseAlert *alert = [[BXDrivesInUseAlert alloc] initWithDrives: drivesInUse forSession: self];
+		
+		NSWindow *sheetWindow;
+		if (sender && [sender respondsToSelector: @selector(window)])
+			sheetWindow = [sender window];
+		else sheetWindow = [self windowForSheet]; 
+		
+		[alert beginSheetModalForWindow: sheetWindow
+						  modalDelegate: self
+						 didEndSelector: @selector(drivesInUseAlertDidEnd:returnCode:forDrives:)
+							contextInfo: drives];
+		return NO;
+	}
+	return YES;
+}
+
+- (void) drivesInUseAlertDidEnd: (BXDrivesInUseAlert *)alert
+					 returnCode: (NSInteger)returnCode
+					  forDrives: (NSArray *)drives
+{
+	[alert release];
+	if (returnCode == NSAlertFirstButtonReturn) [self unmountDrives: drives];
 }
 
 
@@ -312,29 +354,41 @@
 - (void) DOSDriveDidMount: (NSNotification *)theNotification
 {
 	BXDrive *drive = [[theNotification userInfo] objectForKey: @"drive"];
-	[self _startTrackingChangesAtPath: [drive path]];
+	if (![drive isInternal])
+	{
+		[self _startTrackingChangesAtPath: [drive path]];
 	
-	//only show notifications once the session has started up fully,
-	//so we don't spray out notifications for our initial drive mounts
-	if (hasConfigured) [[BXGrowlController controller] notifyDriveMounted: drive];
+		//only show notifications once the session has started up fully,
+		//so we don't spray out notifications for our initial drive mounts.
+		if (hasConfigured) [[BXGrowlController controller] notifyDriveMounted: drive];
+	}
 }
 
 - (void) DOSDriveDidUnmount: (NSNotification *)theNotification
 {
 	BXDrive *drive = [[theNotification userInfo] objectForKey: @"drive"];
-	NSString *path = [drive path];
-	//Only stop tracking if there are no other drives mapping to that path either
-	if (![[self emulator] pathIsDOSAccessible: path]) [self _stopTrackingChangesAtPath: path];
+	if (![drive isInternal])
+	{
+		NSString *path = [drive path];
+		//Only stop tracking if there are no other drives mapping to that path either.
+		if (![[self emulator] pathIsDOSAccessible: path]) [self _stopTrackingChangesAtPath: path];
 	
-	//only show notifications once the session has started up fully,
-	//just in case we have to unmount something during launch
-	if (hasConfigured) [[BXGrowlController controller] notifyDriveUnmounted: drive];
+		//only show notifications once the session has started up fully,
+		//in case something gets unmounted during startup.
+		if (hasConfigured) [[BXGrowlController controller] notifyDriveUnmounted: drive];
+	}
 }
 
 - (void) _startTrackingChangesAtPath: (NSString *)path
 {
-	UKFNSubscribeFileWatcher *watcher = [UKFNSubscribeFileWatcher sharedFileWatcher];
-	[watcher addPath: path];
+	NSFileManager *manager = [NSFileManager defaultManager];
+	BOOL isDir, exists = [manager fileExistsAtPath: path isDirectory: &isDir];
+	//Note: UKFNSubscribeFileWatcher can only watch directories, not regular files 
+	if (exists && isDir)
+	{
+		UKFNSubscribeFileWatcher *watcher = [UKFNSubscribeFileWatcher sharedFileWatcher];
+		[watcher addPath: path];
+	}
 }
 
 - (void) _stopTrackingChangesAtPath: (NSString *)path

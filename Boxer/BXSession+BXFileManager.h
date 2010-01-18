@@ -45,6 +45,10 @@
 //Unmount the represented object of the sender (assumed to be a BXDrive). 
 - (IBAction) unmountDrive:		(id)sender;
 
+//Returns whether the specified drives are allowed to be unmounted.
+//This may display a confirmation sheet and return NO.
+- (BOOL) shouldUnmountDrives:	(NSArray *)drives sender: (id)sender;
+
 //Returns whether the specified path should be mounted as a new drive.
 //Returns YES if the path isn't already DOS-accessible or deserves its own drive anyway, NO otherwise.
 - (BOOL) shouldMountDriveForPath: (NSString *)path;

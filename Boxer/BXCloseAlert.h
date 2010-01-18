@@ -33,12 +33,6 @@
 + (BXCloseAlert *) closeAlertWhileSessionIsActive:	(BXSession *)theSession;
 
 
-//Accessing buttons
-//-----------------
-- (NSButton *)closeButton;		//Returns the alert's yes-close-the-window button.
-- (NSButton *)cancelButton;		//Returns the alert's cancel button.
-
-
 //Dispatch and callback methods
 //-----------------------------
 

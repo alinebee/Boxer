@@ -11,8 +11,6 @@
 
 @implementation BXCloseAlert
 
-//Autoreleased constructor for general close alerts
-//-------------------------------------------------
 - (id) init
 {
 	if ((self = [super init]))
@@ -21,15 +19,10 @@
 		NSString *cancelLabel	= NSLocalizedString(@"Cancel",	@"Cancel the current action and return to what the user was doing");		
 	
 		[self addButtonWithTitle: closeLabel];
-		[self addButtonWithTitle: cancelLabel];
-		[[self cancelButton] setKeyEquivalent: @"\e"];	//Ensure the cancel button always uses Escape
+		[[self addButtonWithTitle: cancelLabel] setKeyEquivalent: @"\e"];	//Ensure the cancel button always uses Escape
 	}
 	return self;
 }
-
-- (NSButton *)closeButton	{ return [[self buttons] objectAtIndex: 0]; }
-- (NSButton *)cancelButton	{ return [[self buttons] objectAtIndex: 1]; }
-
 
 //Boxer's predefined alerts
 //-------------------------
@@ -61,8 +54,8 @@
 	[alert setInformativeText:	NSLocalizedString(@"If the program quit unexpectedly, you can return to DOS to examine any error messages.",
 												@"Informative text of confirmation sheet after a game exits.")];
 
-	[[alert cancelButton] setTitle: NSLocalizedString(	@"Return to DOS",
-														@"Cancel button for confirmation sheet after game exits: will return user to the DOS prompt.")];
+	[[[alert buttons] lastObject] setTitle: NSLocalizedString(@"Return to DOS",
+															  @"Cancel button for confirmation sheet after game exits: will return user to the DOS prompt.")];
 	return alert;
 }
 

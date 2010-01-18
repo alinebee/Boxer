@@ -148,32 +148,37 @@
 	
 	if (operation == NSDragOperationNone && ![(BXAppController *)[NSApp delegate] windowAtPoint: mousePoint])
 	{
-		//Calculate the center-point of the image for displaying the poof icon
-		NSRect imageRect;
-		imageRect.size		= [draggedImage size];
-		imageRect.origin	= screenPoint;	
-
-		NSPoint midPoint = NSMakePoint(NSMidX(imageRect), NSMidY(imageRect));
-
-		//We make it square instead of fitting the width of the image,
-		//because the image may include a big fat horizontal margin 
-		NSSize poofSize = imageRect.size;
-		poofSize.width = poofSize.height;
-		
-		//Reset the cursor back to normal
-		[[NSCursor arrowCursor] set];
-		
-		//Play the poof animation
-		NSShowAnimationEffect(NSAnimationEffectPoof, midPoint, poofSize, nil, nil, nil);
-		
-		//And last but not least, unmount our selected drives
+		//Send the remove-these-drives action and see whether any drives were removed
+		//(IBActions do not provide a return value, so we can't find out directly if the action succeeded or failed)
+		NSUInteger oldItems = [[self content] count];
 		[NSApp sendAction: @selector(unmountSelectedDrives:) to: nil from: self];
+		NSUInteger newItems = [[self content] count];
+		
+		//If any drives were removed by the action, display the poof animation
+		if (newItems < oldItems)
+		{		
+			//Calculate the center-point of the image for displaying the poof icon
+			NSRect imageRect;
+			imageRect.size		= [draggedImage size];
+			imageRect.origin	= screenPoint;	
+
+			NSPoint midPoint = NSMakePoint(NSMidX(imageRect), NSMidY(imageRect));
+
+			//We make it square instead of fitting the width of the image,
+			//because the image may include a big fat horizontal margin 
+			NSSize poofSize = imageRect.size;
+			poofSize.width = poofSize.height;
+			
+			//Reset the cursor back to normal
+			[[NSCursor arrowCursor] set];
+			
+			//Play the poof animation
+			NSShowAnimationEffect(NSAnimationEffectPoof, midPoint, poofSize, nil, nil, nil);
+		}
 	}
-	else
-	{
-		//If the drag ended 'successfully', clean up after the drag by unhiding the items
-		for (NSView *itemView in [self selectedViews]) [itemView setHidden: NO];
-	}
+	
+	//Once the drag has finished, clean up by unhiding the dragged items
+	for (NSView *itemView in [self selectedViews]) [itemView setHidden: NO];
 }
 
 

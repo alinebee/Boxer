@@ -94,6 +94,11 @@ public:
 						if(i_drive == DOS_GetDefaultDrive()) 
 							DOS_SetDrive(toupper('Z') - 'A');
 						WriteOut(MSG_Get("PROGRAM_MOUNT_UMOUNT_SUCCES"),umount[0]);
+							
+						//--Added 2010-01-18 by Alun Bestor: let Boxer know that the drive state has changed
+						boxer_syncDriveCache();
+						//--End of modifications
+							
 						break;
 					case 1:
 						WriteOut(MSG_Get("PROGRAM_MOUNT_UMOUNT_NO_VIRTUAL"));
@@ -327,6 +332,11 @@ public:
 			label = drive; label += "_FLOPPY";
 			newdrive->dirCache.SetLabel(label.c_str(),iscdrom,true);
 		}
+		
+		//--Added 2010-01-18 by Alun Bestor: let Boxer know that the drive state has changed
+		boxer_syncDriveCache();
+		//--End of modifications
+		
 		return;
 showusage:
 		WriteOut(MSG_Get("PROGRAM_MOUNT_USAGE"));
@@ -999,6 +1009,10 @@ public:
 						if (i_drive == DOS_GetDefaultDrive()) 
 							DOS_SetDrive(toupper('Z') - 'A');
 						WriteOut(MSG_Get("PROGRAM_MOUNT_UMOUNT_SUCCES"),umount[0]);
+						//--Added 2010-01-18 by Alun Bestor: let Boxer know that the drive state has changed
+						boxer_syncDriveCache();
+						//--End of modifications
+							
 						break;
 					case 1:
 						WriteOut(MSG_Get("PROGRAM_MOUNT_UMOUNT_NO_VIRTUAL"));
@@ -1264,6 +1278,10 @@ public:
 			WriteOut(MSG_Get("PROGRAM_IMGMOUNT_MOUNT_NUMBER"),drive-'0',temp_line.c_str());
 		}
 
+		//--Added 2010-01-18 by Alun Bestor: let Boxer know that the drive state has changed
+		boxer_syncDriveCache();
+		//--End of modifications
+		
 		// check if volume label is given. becareful for cdrom
 		//if (cmd->FindString("-label",label,true)) newdrive->dirCache.SetLabel(label.c_str());
 		return;

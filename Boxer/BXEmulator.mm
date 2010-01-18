@@ -11,6 +11,7 @@
 #import "BXEmulator+BXShell.h"
 #import "BXEmulator+BXRendering.h"
 #import "BXEmulator+BXRecording.h"
+#import "BXEmulator+BXDOSFileSystem.h"
 
 #import "render.h"
 #import "cpu.h"
@@ -574,6 +575,9 @@ BXEmulator *currentEmulator = nil;
 
 - (void) _willRunStartupCommands
 {
+	//Before startup, ensure that Boxer's drive cache is up to date.
+	[self _syncDriveCache];
+	
 	[self _postNotificationName: @"BXEmulatorWillRunStartupCommandsNotification"
 			   delegateSelector: @selector(willRunStartupCommands:)
 					   userInfo: nil];

@@ -23,6 +23,11 @@
 			[self setIcon: sessionIcon];
 			return YES;
 		}
+		else
+		{
+			[self setIcon: [NSApp applicationIconImage]];
+			return YES;
+		}
 	}
 	return NO;
 }

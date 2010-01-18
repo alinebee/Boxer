@@ -61,6 +61,9 @@
 //Returns the drive mounted at the specified letter, or nil if no drive is mounted at that letter.
 - (BXDrive *)driveAtLetter: (NSString *)driveLetter;
 
+//Returns whether the drive at the specified letter is being actively used by DOS.
+- (BOOL) driveInUseAtLetter: (NSString *)driveLetter;
+
 //Returns YES if the specified OS X path is explicitly mounted as its own DOS drive; NO otherwise.
 //Use pathIsDOSAccessible below if you want to know if a path is accessible on any DOS drive.
 - (BOOL) pathIsMountedAsDrive: (NSString *)path;
@@ -146,11 +149,9 @@ class DOS_Drive;
 //TODO: should populate an optional NSError object for cases like this.
 - (BOOL) _unmountDOSBoxDriveAtIndex: (NSUInteger)index;
 
-//Synchronizes Boxer's mounted drive cache with DOSBox's drive array, adding and removing drives as necessary.
-- (void) _syncDriveCache;
-- (void) _addDriveToCache: (BXDrive *)drive;
-- (void) _removeDriveFromCacheAtLetter: (NSString *)letter;
-
+//Returns whether the specified drive is being used by DOS programs.
+//Currently, this means whether any files are open on that drive.
+- (BOOL) _DOSBoxDriveInUseAtIndex: (NSUInteger)index;
 
 //Create a new DOS_Drive CDROM from a path to a disc image.
 - (DOS_Drive *) _CDROMDriveFromImageAtPath:	(NSString *)path forIndex: (NSUInteger)index;
@@ -163,5 +164,9 @@ class DOS_Drive;
 							geometry: (BXDriveGeometry)size
 							 mediaID: (NSUInteger)mediaID;
 
+//Synchronizes Boxer's mounted drive cache with DOSBox's drive array, adding and removing drives as necessary.
+- (void) _syncDriveCache;
+- (void) _addDriveToCache: (BXDrive *)drive;
+- (void) _removeDriveFromCache: (BXDrive *)drive;
 @end
 #endif

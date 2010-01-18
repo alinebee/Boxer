@@ -213,11 +213,11 @@
 - (IBAction) unmountSelectedDrives: (id)sender
 {
 	NSArray *selection = [[self driveController] selectedObjects];
-	if ([[BXSession mainSession] shouldUnmountDrives: selection sender: sender])
+	if ([[BXSession mainSession] shouldUnmountDrives: selection sender: self])
 		[[BXSession mainSession] unmountDrives: selection];
 }
 
-- (IBAction) showMountPanel: (id) sender
+- (IBAction) showMountPanel: (id)sender
 {
 	//Pass mount panel action upstream - this works around the fiddly separation of responder chains
 	//between the inspector panel and main DOS window.

@@ -118,7 +118,7 @@
 {
 	NSString *defaultProgram	= [[[self representedObject] gamePackage] targetPath];
 	NSString *activeProgram		= [[self representedObject] activeProgramPath];
-	
+
 	//NSLog(@"Default program: %@, active program: %@", defaultProgram, activeProgram);
 	return [activeProgram isEqualToString: defaultProgram];
 }

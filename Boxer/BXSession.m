@@ -38,15 +38,6 @@
 //Initialization and cleanup methods
 //----------------------------------
 
-- (id) init
-{
-	if ((self = [super init]))
-	{
-		//This space intentionally left blank, for any init-time setup we need to do later
-	}
-	return self;
-}
-
 - (void) dealloc
 {
 	[self setEmulator: nil],			[emulator release];
@@ -148,24 +139,35 @@
 //Describing the active DOS process
 //---------------------------------
 
-- (NSString *) sessionDisplayName
+- (NSString *) bindableDisplayName
 {
-	if (![self isGamePackage]) return [self processDisplayName];
-	else return [[self displayName] stringByDeletingPathExtension];
+	return [self displayName];
 }
-+ (NSSet *) keyPathsForValuesAffectingSessionDisplayName	{ return [NSSet setWithObject: @"processDisplayName"]; }
++ (NSSet *) keyPathsForValuesAffectingBindableDisplayName { return [NSSet setWithObjects: @"processName", nil]; }
 
-- (NSString *) processDisplayName
+- (NSString *) displayName
 {
-	NSString *displayName;
-	if ([emulator isRunningProcess] && ![emulator processIsInternal])
-		displayName = [[emulator processName] capitalizedString];
-	else
-		displayName = NSLocalizedString(@"MS-DOS Prompt",
-										@"The standard process name when the session is at the DOS prompt.");
-	return displayName;
+	if (![self isGamePackage]) return [self processName];
+	else 
+	{
+		NSString *displayName = [super displayName];
+		if ([[displayName pathExtension] isEqualToString: @"boxer"])
+			displayName = [displayName stringByDeletingPathExtension];
+		return displayName;
+	}
 }
-+ (NSSet *) keyPathsForValuesAffectingProcessDisplayName	{ return [NSSet setWithObject: @"emulator.processName"]; }
+
+- (NSString *) processName
+{
+	NSString *processName;
+	if ([emulator isRunningProcess] && ![emulator processIsInternal])
+		processName = [[emulator processName] capitalizedString];
+	else
+		processName = NSLocalizedString(@"MS-DOS Prompt",
+										@"The standard process name when the session is at the DOS prompt.");
+	return processName;
+}
++ (NSSet *) keyPathsForValuesAffectingProcessName { return [NSSet setWithObject: @"emulator.processName"]; }
 
 
 
@@ -186,7 +188,7 @@
 	//list will likewise show the gamebox instead.
 	if (packagePath)
 	{
-		BXPackage *package = (BXPackage *)[BXPackage bundleWithPath: packagePath];
+		BXPackage *package = [[BXPackage alloc] initWithPath: packagePath];
 		[self setGamePackage: package];
 
 		fileURL = [NSURL fileURLWithPath: packagePath];
@@ -197,6 +199,7 @@
 			NSString *packageTarget = [package targetPath];
 			if (packageTarget) [self setTargetPath: packageTarget];
 		}
+		[package release];
 	}
 
 	[super setFileURL: fileURL];

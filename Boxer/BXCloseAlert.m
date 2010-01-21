@@ -31,11 +31,11 @@
 {
 	BXCloseAlert *alert = [self alert];
 
-	NSString *processName	= [theSession sessionDisplayName];
+	NSString *sessionName	= [theSession displayName];
 	NSString *messageFormat	= NSLocalizedString(@"Boxer supports only one DOS session at a time. Do you want to close %@ to start a new session?",
-												@"Title of confirmation sheet when starting a new DOS session while one is already active. %@ is the display-ready name of the current game package or running process (will usually be capitalized and without file extension.)");
+												@"Title of confirmation sheet when starting a new DOS session while one is already active. %@ is the display name of the current DOS session.)");
 
-	[alert setMessageText:		[NSString stringWithFormat: messageFormat, processName]];
+	[alert setMessageText:		[NSString stringWithFormat: messageFormat, sessionName]];
 	[alert setInformativeText:	NSLocalizedString(	@"Any unsaved data in this session will be lost.",
 													@"Informative text of confirmation sheet when closing an active DOS session to open another.")];
 	return alert;
@@ -46,11 +46,11 @@
 {
 	BXCloseAlert *alert = [self alert];
 
-	NSString *processName	= [theSession sessionDisplayName];
+	NSString *sessionName	= [theSession displayName];
 	NSString *messageFormat	= NSLocalizedString(@"%@ has now finished.",
-												@"Title of confirmation sheet after a game exits. %@ is the display-ready name of the current game package or running process (will usually be capitalized and without file extension.)");
+												@"Title of confirmation sheet after a game exits. %@ is the display name of the current DOS session.)");
 
-	[alert setMessageText:		[NSString stringWithFormat: messageFormat, processName]];
+	[alert setMessageText:		[NSString stringWithFormat: messageFormat, sessionName]];
 	[alert setInformativeText:	NSLocalizedString(@"If the program quit unexpectedly, you can return to DOS to examine any error messages.",
 												@"Informative text of confirmation sheet after a game exits.")];
 
@@ -63,11 +63,11 @@
 {	
 	BXCloseAlert *alert = [self alert];
 	
-	NSString *processName	= [theSession sessionDisplayName];
+	NSString *sessionName	= [theSession displayName];
 	NSString *messageFormat	= NSLocalizedString(@"Do you want to close this window while %@ is running?",
-												@"Title of confirmation sheet when closing an active DOS session. %@ is the display-ready name of the current game package or running process (will usually be capitalized and without file extension.)");
+												@"Title of confirmation sheet when closing an active DOS session. %@ is the display name of the current DOS session.");
 
-	[alert setMessageText:		[NSString stringWithFormat: messageFormat, processName]];
+	[alert setMessageText:		[NSString stringWithFormat: messageFormat, sessionName]];
 	[alert setInformativeText:	NSLocalizedString(	@"Any unsaved data will be lost.",
 													@"Informative text of confirmation sheet when closing an active DOS session.")];
 

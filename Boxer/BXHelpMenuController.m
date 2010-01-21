@@ -18,8 +18,8 @@
 	if ([session isGamePackage])
 	{
 		NSString *format = NSLocalizedString(	@"Find %@ at Mobygames",
-												@"Help menu item for searching Mobygames: %@ is the title of the game package.");
-		return [NSString stringWithFormat: format, [session sessionDisplayName], nil];
+												@"Help menu item for searching Mobygames: %@ is the display name of the current DOS session.");
+		return [NSString stringWithFormat: format, [session displayName], nil];
 	}
 	else
 	{
@@ -34,8 +34,8 @@
 	if ([session isGamePackage])
 	{
 		NSString *format = NSLocalizedString(	@"Find %@ at ReplacementDocs",
-												@"Help menu item for searching ReplacementDocs: %@ is the title of the game package.");
-		return [NSString stringWithFormat: format, [session sessionDisplayName], nil];
+												@"Help menu item for searching ReplacementDocs: %@ is the display name of the current DOS session.");
+		return [NSString stringWithFormat: format, [session displayName], nil];
 	}
 	else
 	{
@@ -54,7 +54,7 @@
 	
 	if ([session isGamePackage])
 	{
-		NSString *search = [session sessionDisplayName];
+		NSString *search = [session displayName];
 		[[NSApp delegate] searchURLFromKey: @"MobygamesSearchURL" withSearchString: search];
 	}
 	else
@@ -69,7 +69,7 @@
 
 	if ([session isGamePackage])
 	{
-		NSString *search = [session sessionDisplayName];
+		NSString *search = [session displayName];
 		[[NSApp delegate] searchURLFromKey: @"ReplacementDocsSearchURL" withSearchString: search];
 	}
 	else
@@ -95,8 +95,8 @@
 		{
 			NSString *heading = [NSString stringWithFormat:	NSLocalizedString(
 									@"%@ Documentation:",
-									@"Heading for game documentation in help menu. %@ is the name of the current game package."),
-									[docSession sessionDisplayName], nil]; 
+									@"Heading for game documentation in help menu. %@ is the display name of the current DOS session."),
+									[docSession displayName], nil]; 
 			
 			[menu addItem: [NSMenuItem separatorItem]];
 			[menu addItemWithTitle: heading action: nil keyEquivalent: @""];

@@ -63,6 +63,10 @@
 	return exclusions;
 }
 
++ (BXPackage *)bundleWithPath: (NSString *)path
+{
+	return [[[self alloc] initWithPath: path] autorelease];
+}
 
 - (void) dealloc
 {
@@ -70,7 +74,6 @@
 	[self setExecutables: nil],		[executables release];
 	[super dealloc];
 }
-
 
 - (NSArray *) hddVolumes	{ return [self volumesOfTypes: [BXAppController hddVolumeTypes]]; }
 - (NSArray *) cdVolumes		{ return [self volumesOfTypes: [BXAppController cdVolumeTypes]]; }
@@ -99,6 +102,7 @@
 
 - (NSString *) targetPath
 {
+	//Retrieve the target path from the symlink the first time it is requested, then cache it for later
 	if (!targetPath)
 	{
 		NSString *symlinkPath = [self pathForResource: @"DOSBox Target" ofType: nil];
@@ -106,6 +110,7 @@
 	
 		//If the path is unchanged, this indicates a broken link
 		if ([targetPath isEqualToString: symlinkPath]) targetPath = nil;
+		else [targetPath retain];
 	}
 	return targetPath;
 }
@@ -113,7 +118,6 @@
 - (void) setTargetPath: (NSString *)path
 {
 	[self willChangeValueForKey: @"targetPath"];
-	
 	if (![targetPath isEqualToString: path])
 	{
 		[targetPath autorelease];
@@ -134,7 +138,7 @@
 		{
 			//Make the link relative to the game package
 			NSString *basePath		= [self resourcePath];
-			NSString *relativePath	= [targetPath pathRelativeToPath: basePath];
+			NSString *relativePath	= [path pathRelativeToPath: basePath];
 		
 			[manager createSymbolicLinkAtPath: linkLocation withDestinationPath: relativePath error: nil];
 		}

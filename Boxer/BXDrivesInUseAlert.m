@@ -20,12 +20,13 @@
 		//Since this may cause dataloss, I think we're justified in using caution alerts
 		[self setAlertStyle: NSCriticalAlertStyle];
 		
-		NSString *processName = [theSession processDisplayName];
+		NSString *processName = [theSession processName];
+		
 		if ([drivesInUse count] > 1)
 		{
 			NSString *messageFormat = NSLocalizedString(
 				@"The selected drives are in use by %@. Are you sure you want to remove them?",
-				@"Title for confirmation sheet when unmounting multiple drives that are in use. %@ is the display-ready name of the current game package or running process (which will usually be capitalized and without file extension.)");
+				@"Title for confirmation sheet when unmounting multiple drives that are in use. %@ is the display-ready name of the current DOS process.");
 			
 			[self setMessageText: [NSString stringWithFormat: messageFormat, processName, nil]];
 		}
@@ -35,7 +36,7 @@
 			[self setIcon: [drive icon]];
 			NSString *messageFormat = NSLocalizedString(
 				@"Drive %1$@: is in use by %2$@. Are you sure you want to remove it?",
-				@"Title for confirmation sheet when unmounting a single drive that is in use. %1$@ is the uppercase letter of the drive, %@ is the display-ready name of the current game package or running process (which will usually be capitalized and without file extension.)");
+				@"Title for confirmation sheet when unmounting a single drive that is in use. %1$@ is the uppercase letter of the drive, %@ is the display-ready name of the current DOS process.");
 			[self setMessageText: [NSString stringWithFormat: messageFormat, [drive letter], processName, nil]];
 		}
 

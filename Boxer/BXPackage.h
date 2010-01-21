@@ -23,6 +23,9 @@
 	NSString *targetPath;
 }
 
+//Re-casts the return value as a BXPackage instead of an NSBundle
++ (BXPackage *)bundleWithPath: (NSString *)path;
+
 //An array of absolute file paths to documentation files found inside the gamebox.
 @property (retain) NSArray *documentation;
 

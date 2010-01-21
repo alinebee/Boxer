@@ -85,12 +85,13 @@
 //Session descriptions
 //--------------------
 
-//Returns a title for the current DOS session, suitable for display.
-//This is used as the title for the session's window.
-- (NSString *) sessionDisplayName;
+//A wrapper for NSDocument displayName that is suitable for key-value binding.
+//(NSDocument displayName isn't, because setDisplayName: is not void, and so raises a binding warning.)
+- (NSString *) bindableDisplayName;
 
-//Returns a title for the currently-executing DOS process, suitable for display.
-- (NSString *) processDisplayName;
+//Returns a display-ready title for the currently-executing DOS process.
+//This will be used as the window title if no session is active.
+- (NSString *) processName;
 
 
 //Properties of the current gamebox

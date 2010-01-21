@@ -51,7 +51,8 @@
 			case BX525DisketteEra:	coverArtClass = [BX525Diskette class];	break;
 			default:				coverArtClass = [BX35Diskette class];	break;
 		}
-		icon = [coverArtClass coverArtWithTitle: [session sessionDisplayName]];
+		NSString *iconTitle = [session displayName];
+		icon = [coverArtClass coverArtWithTitle: iconTitle];
 	}
 	return icon;
 }

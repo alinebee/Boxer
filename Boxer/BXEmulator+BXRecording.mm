@@ -104,7 +104,7 @@ void CAPTURE_VideoEvent(bool pressed);
 - (NSString *) pathForNewRecordingOfType: (NSString *)typeName
 {
 	NSString *basePath	= [[self class] savedRecordingsPath];
-	NSString *fileName	= [[self delegate] sessionDisplayName];
+	NSString *fileName	= [[self delegate] displayName];
 	NSString *extension	= [[NSWorkspace sharedWorkspace] preferredFilenameExtensionForType: typeName];
 	if (extension == nil) extension = typeName;
 	

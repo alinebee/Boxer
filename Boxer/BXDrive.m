@@ -115,6 +115,7 @@
 		//Autodetect the appropriate mount type for the specified path
 		if (driveType == BXDriveAutodetect) driveType = [[self class] preferredTypeForPath: [self path]];
 		[self setType: driveType];
+		
 	}
 	return self;
 }

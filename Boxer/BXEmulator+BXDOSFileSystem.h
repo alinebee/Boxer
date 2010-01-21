@@ -92,6 +92,14 @@
 //Returns the letter of the current drive.
 - (NSString *) currentDriveLetter;
 
+//Returns the DOS path to the current working directory.
+- (NSString *) currentWorkingDirectory;
+
+//Returns the local filesystem path to the current working directory on the current drive.
+//Returns the drive's base path if Boxer cannot 'see into' the drive (e.g. the drive is on a disk image.)
+//Returns nil if the drive does not exist on the local filesystem (e.g. it is a DOSBox-internal drive.)
+- (NSString *) pathOfCurrentWorkingDirectory;
+
 //Change to the specified drive letter. This will not alter the working directory on that drive.
 //Returns YES if the working drive was changed, NO if the specified drive was not mounted.
 - (BOOL) changeToDriveLetter: (NSString *)driveLetter;
@@ -125,15 +133,28 @@ class DOS_Drive;
 //Indeed, this category will not even be seen by other classes, since it is only visible to Objective C++ files.
 @interface BXEmulator (BXDOSFileSystemInternals)
 
-//Returns the DOSBox drive index for a specified drive letter.
-- (NSUInteger)_indexOfDriveLetter: (NSString *)driveLetter;
 
-//Generates a Boxer drive object for a drive at the specified drive index.
-- (BXDrive *)_driveFromDOSBoxDriveAtIndex: (NSUInteger)index;
+//Translating between Boxer and DOSBox drives
+//-------------------------------------------
+
+//Returns the DOSBox drive index for a specified drive letter and vice-versa.
+- (NSUInteger)_indexOfDriveLetter: (NSString *)driveLetter;
+- (NSString *)_driveLetterForIndex: (NSUInteger)index;
+
 
 //Returns the Boxer drive that matches the specified DOSBox drive, or nil if no drive was found.
-//TODO: clarify this and the above function, which are for two different purposes.
 - (BXDrive *)_driveMatchingDOSBoxDrive: (DOS_Drive *)dosDrive;
+
+//Does the inverse of the above - returns the DOSBox drive corresponding to the specified Boxer drive.
+- (DOS_Drive *)_DOSBoxDriveMatchingDrive: (BXDrive *)drive;
+
+//Returns the local filesystem path corresponding to the specified DOS path on the specified DOSBox drive index.
+//Returns nil if there is no corresponding local file (e.g. if the drive is a disk image or DOSBox-internal drive.)
+- (NSString *)_filesystemPathForDOSPath: (const char *)dosPath atIndex: (NSUInteger)driveIndex;
+
+
+//Adding and removing new DOSBox drives
+//-------------------------------------
 
 //Registers a new drive with DOSBox and adds it to the drive list. Returns YES if the drive was successfully added,
 //or NO if there was an error (e.g. there was already a drive at that index).
@@ -145,9 +166,8 @@ class DOS_Drive;
 //TODO: should populate an optional NSError object for cases like this.
 - (BOOL) _unmountDOSBoxDriveAtIndex: (NSUInteger)index;
 
-//Returns whether the specified drive is being used by DOS programs.
-//Currently, this means whether any files are open on that drive.
-- (BOOL) _DOSBoxDriveInUseAtIndex: (NSUInteger)index;
+//Generates a Boxer drive object for a drive at the specified drive index.
+- (BXDrive *)_driveFromDOSBoxDriveAtIndex: (NSUInteger)index;
 
 //Create a new DOS_Drive CDROM from a path to a disc image.
 - (DOS_Drive *) _CDROMDriveFromImageAtPath:	(NSString *)path forIndex: (NSUInteger)index;
@@ -166,6 +186,13 @@ class DOS_Drive;
 - (void) _removeDriveFromCache: (BXDrive *)drive;
 
 
+//Filesystem validation
+//---------------------
+
+//Returns whether the specified drive is being used by DOS programs.
+//Currently, this means whether any files are open on that drive.
+- (BOOL) _DOSBoxDriveInUseAtIndex: (NSUInteger)index;
+
 //Decides whether to let the DOS session mount the specified path
 //This checks against pathIsSafeToMount, and prints an error to the console if not
 - (BOOL) _shouldMountPath: (NSString *)thePath;
@@ -173,6 +200,9 @@ class DOS_Drive;
 //Returns whether to show files with the specified name in DOS directory listings
 //This hides all files starting with . or that are in dosFileExclusions
 - (BOOL) _shouldShowFileWithName: (NSString *)fileName;
+
+//Returns whether to allow the file at the specified path to be written to or modified by DOS, via the specified drive.
+- (BOOL) _shouldAllowWriteAccessToPath: (NSString *)filePath onDrive: (BXDrive *)drive;
 
 @end
 #endif

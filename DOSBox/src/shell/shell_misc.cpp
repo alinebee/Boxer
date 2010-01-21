@@ -27,6 +27,10 @@
 #include "callback.h"
 #include "support.h"
 
+//--Added 2010-01-21 by Alun Bestor to let Boxer hook into DOSBox internals
+#include "boxer.h"
+//--End of modifications
+
 void DOS_Shell::ShowPrompt(void) {
 	Bit8u drive=DOS_GetDefaultDrive()+'A';
 	char dir[DOS_PATHLENGTH];
@@ -426,6 +430,13 @@ bool DOS_Shell::Execute(char * name,char * args) {
 		}
 	}
 	
+	//--Added 2010-01-21 by Alun Bestor to let Boxer track the executed program
+	char dosPath[DOS_PATHLENGTH];
+	Bit8u driveIndex;
+	DOS_MakeName(fullname,dosPath,&driveIndex);
+	boxer_willExecuteFileAtDOSPath(dosPath, driveIndex);
+	//--End of modifications
+		
 	if (strcasecmp(extension, ".bat") == 0) 
 	{	/* Run the .bat file */
 		/* delete old batch file if call is not active*/
@@ -497,6 +508,11 @@ bool DOS_Shell::Execute(char * name,char * args) {
 		SegSet16(cs,oldcs);
 #endif
 	}
+	
+	//--Added 2010-01-21 by Alun Bestor to let Boxer track the executed program
+	boxer_didExecuteFileAtDOSPath(dosPath, driveIndex);
+	//--End of modifications
+	
 	return true; //Executable started
 }
 

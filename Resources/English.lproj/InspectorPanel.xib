@@ -21,7 +21,6 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="246"/>
 			<integer value="47"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
@@ -837,7 +836,7 @@
 				<string key="NSClassName">NSView</string>
 			</object>
 			<object class="NSCustomView" id="327384677">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">293</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -944,7 +943,6 @@
 												</object>
 												<string key="NSFrameSize">{262, 213}</string>
 												<reference key="NSSuperview" ref="121654331"/>
-												<reference key="NSNextKeyView" ref="501105234"/>
 												<reference key="NSDocView" ref="501105234"/>
 												<reference key="NSBGColor" ref="680331616"/>
 												<int key="NScvFlags">2</int>
@@ -974,7 +972,6 @@
 										</object>
 										<string key="NSFrame">{{0, 1}, {262, 213}}</string>
 										<reference key="NSSuperview" ref="5478778"/>
-										<reference key="NSNextKeyView" ref="531264091"/>
 										<int key="NSsFlags">528</int>
 										<reference key="NSVScroller" ref="443714734"/>
 										<reference key="NSHScroller" ref="21177029"/>
@@ -1032,7 +1029,6 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{264, 348}</string>
-				<reference key="NSSuperview"/>
 				<string key="NSClassName">NSView</string>
 			</object>
 			<object class="NSObjectController" id="56494336">
@@ -1926,37 +1922,6 @@
 						</object>
 					</object>
 					<int key="connectionID">936</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">displayPatternTitle1: selection.bindableDisplayName</string>
-						<reference key="source" ref="1042712787"/>
-						<reference key="destination" ref="56494336"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="1042712787"/>
-							<reference key="NSDestination" ref="56494336"/>
-							<string key="NSLabel">displayPatternTitle1: selection.bindableDisplayName</string>
-							<string key="NSBinding">displayPatternTitle1</string>
-							<string key="NSKeyPath">selection.bindableDisplayName</string>
-							<object class="NSDictionary" key="NSOptions">
-								<bool key="EncodedWithXMLCoder">YES</bool>
-								<object class="NSArray" key="dict.sortedKeys">
-									<bool key="EncodedWithXMLCoder">YES</bool>
-									<string>NSDisplayPattern</string>
-									<string>NSNoSelectionPlaceholder</string>
-									<string>NSNullPlaceholder</string>
-								</object>
-								<object class="NSMutableArray" key="dict.values">
-									<bool key="EncodedWithXMLCoder">YES</bool>
-									<string>Inspector (%{title1}@)</string>
-									<string>No Session</string>
-									<string>No Session</string>
-								</object>
-							</object>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">938</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">

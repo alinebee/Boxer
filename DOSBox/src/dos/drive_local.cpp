@@ -101,14 +101,28 @@ bool localDrive::FileOpen(DOS_File * * file,char * name,Bit32u flags) {
 	dirCache.ExpandName(newname);
 	
 	//--Added 2010-01-18 by Alun Bestor to allow Boxer to selectively deny write access to files
-	if (!strcmp(type, "rb+") && !boxer_allowWriteAccessToPathOnDrive((const char *)newname, this))
+	if (!strcmp(type, "rb+"))
 	{
-		//Copy-pasted from cdromDrive::FileOpen
-		if ((flags&3)==OPEN_READWRITE) {
-			flags &= ~OPEN_READWRITE;
-		} else {
-			DOS_SetError(DOSERR_ACCESS_DENIED);
-			return false;
+		//Figure out which drive letter we are for Boxer's benefit
+		Bit8u i, driveIndex;
+		for (i=0; i < DOS_DRIVES; i++)
+		{
+			if (Drives[i] == this)
+			{
+				driveIndex = i;
+				break;
+			}
+		}
+		
+		if (!boxer_shouldAllowWriteAccessToPath((const char *)newname, driveIndex))
+		{
+			//Copy-pasted from cdromDrive::FileOpen
+			if ((flags&3)==OPEN_READWRITE) {
+				flags &= ~OPEN_READWRITE;
+			} else {
+				DOS_SetError(DOSERR_ACCESS_DENIED);
+				return false;
+			}			
 		}
 	}
 	//--End of modifications

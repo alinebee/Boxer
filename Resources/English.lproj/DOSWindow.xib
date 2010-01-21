@@ -459,22 +459,6 @@
 					</object>
 					<int key="connectionID">900</int>
 				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">title: selection.bindableDisplayName</string>
-						<reference key="source" ref="1005"/>
-						<reference key="destination" ref="968073238"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="1005"/>
-							<reference key="NSDestination" ref="968073238"/>
-							<string key="NSLabel">title: selection.bindableDisplayName</string>
-							<string key="NSBinding">title</string>
-							<string key="NSKeyPath">selection.bindableDisplayName</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">904</int>
-				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">

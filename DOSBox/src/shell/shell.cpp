@@ -304,13 +304,13 @@ void DOS_Shell::Run(void) {
 
 	if (cmd->FindString("/INIT",line,true)) {
 		//--Added 2009-12-13 by Alun Bestor to let Boxer monitor the autoexec process
-		boxer_handleAutoexecStart();
+		boxer_autoexecDidStart();
 		
 		strcpy(input_line,line.c_str());
 		line.erase();
 		ParseLine(input_line);
 		
-		boxer_handleAutoexecEnd();
+		boxer_autoexecDidFinish();
 		//--End of modifications
 	}
 	do {
@@ -333,7 +333,7 @@ void DOS_Shell::Run(void) {
 			if (echo && !bf) WriteOut_NoParsing("\n");
 		}
 		//--Added 2009-11-29 by Alun Bestor as a hook for detecting when control has returned to the DOS prompt. 
-		if (!bf) boxer_handleReturnToShell();
+		if (!bf) boxer_didReturnToShell();
 		//--End of modifications
 	} while (!exit);
 }

@@ -20,7 +20,7 @@
 		//Since this may cause dataloss, I think we're justified in using caution alerts
 		[self setAlertStyle: NSCriticalAlertStyle];
 		
-		NSString *processName = [theSession processName];
+		NSString *processName = [theSession processDisplayName];
 		
 		if ([drivesInUse count] > 1)
 		{

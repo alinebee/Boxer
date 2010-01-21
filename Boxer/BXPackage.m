@@ -110,7 +110,7 @@
 	
 		//If the path is unchanged, this indicates a broken link
 		if ([targetPath isEqualToString: symlinkPath]) targetPath = nil;
-		else [targetPath retain];
+		else [targetPath copy];
 	}
 	return targetPath;
 }
@@ -121,7 +121,7 @@
 	if (![targetPath isEqualToString: path])
 	{
 		[targetPath autorelease];
-		targetPath = [path retain];
+		targetPath = [path copy];
 		
 		//Now persist the target path as a symlink
 		//----------------------------------------

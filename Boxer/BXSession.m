@@ -139,35 +139,35 @@
 //Describing the active DOS process
 //---------------------------------
 
-- (NSString *) bindableDisplayName
-{
-	return [self displayName];
-}
-+ (NSSet *) keyPathsForValuesAffectingBindableDisplayName { return [NSSet setWithObjects: @"processName", nil]; }
-
 - (NSString *) displayName
 {
-	if (![self isGamePackage]) return [self processName];
-	else 
-	{
-		NSString *displayName = [super displayName];
-		if ([[displayName pathExtension] isEqualToString: @"boxer"])
-			displayName = [displayName stringByDeletingPathExtension];
-		return displayName;
-	}
+	if ([self isGamePackage]) return [self gameDisplayName];
+	else return [self processDisplayName];
 }
 
-- (NSString *) processName
+- (NSString *) gameDisplayName
 {
-	NSString *processName;
-	if ([emulator isRunningProcess] && ![emulator processIsInternal])
-		processName = [[emulator processName] capitalizedString];
-	else
-		processName = NSLocalizedString(@"MS-DOS Prompt",
-										@"The standard process name when the session is at the DOS prompt.");
+	NSString *gameName = [super displayName];
+	if ([[[gameName pathExtension] lowercaseString] isEqualToString: @".boxer"])
+		gameName = [gameName stringByDeletingPathExtension];
+	return gameName;
+}
+
+- (NSString *) processDisplayName
+{
+	NSString *processName = nil;
+	if ([emulator isRunningProcess])
+		//Use the active program name where possible;
+		//Failing that, fall back on the original process name
+		if ([self activeProgramPath]) processName = [[self activeProgramPath] lastPathComponent];
+		else processName = [emulator processName];
+		
 	return processName;
 }
-+ (NSSet *) keyPathsForValuesAffectingProcessName { return [NSSet setWithObject: @"emulator.processName"]; }
++ (NSSet *) keyPathsForValuesAffectingProcessDisplayName
+{
+	return [NSSet setWithObjects: @"activeProgramPath", @"emulator.processName", nil];
+}
 
 
 
@@ -212,7 +212,7 @@
 {
 	if (![self isGamePackage]) return nil;
 	//The path is too brittle, so instead we use the display name. This, in turn, is probably both too lenient and still too brittle. What we really ought to do is use an alias as the unique ID, but those are complicated to make and bulky to store.
-	else return [self displayName];
+	else return [self gameDisplayName];
 }
 
 - (NSImage *)representedIcon
@@ -506,6 +506,18 @@
 	}
 }
 
+- (void) programWillStart: (NSNotification *)notification
+{	
+	//Don't set the active program if we already have one
+	//This way, we keep track of when a user launches a batch file, and don't immediately discard it
+	if (![self activeProgramPath])
+	{
+		[self setActiveProgramPath: [[notification userInfo] objectForKey: @"localPath"]];
+	}
+}
+
+- (void) programDidFinish: (NSNotification *)notification {}
+
 - (void) didReturnToShell: (NSNotification *)notification
 {
 	BXEmulator *theEmulator = [self emulator];
@@ -536,18 +548,6 @@
 		[[self mainWindowController] exitFullScreen: self];
 	}
 }
-
-- (void) processDidStart: (NSNotification *)notification
-{	
-	if (![self activeProgramPath] && ![emulator processIsInternal])
-	{
-		//TODO: detect the path of the currently executing program, so that we can populate activeProgramPath
-		//if it is empty (so that we can keep track of what programs a user has launched on their own.)
-	}
-}
-
-- (void) processDidEnd: (NSNotification *)notification {}
-
 
 - (void) didStartGraphicalContext: (NSNotification *)notification
 {

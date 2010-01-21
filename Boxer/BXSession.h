@@ -85,13 +85,13 @@
 //Session descriptions
 //--------------------
 
-//A wrapper for NSDocument displayName that is suitable for key-value binding.
-//(NSDocument displayName isn't, because setDisplayName: is not void, and so raises a binding warning.)
-- (NSString *) bindableDisplayName;
+//Returns a best-guess name for the current game.
+//Currently, this means NSDocument displayName minus any ".boxer" extension.
+- (NSString *) gameDisplayName;
 
 //Returns a display-ready title for the currently-executing DOS process.
-//This will be used as the window title if no session is active.
-- (NSString *) processName;
+//Returns nil if there is currently no process executing.
+- (NSString *) processDisplayName;
 
 
 //Properties of the current gamebox
@@ -156,8 +156,8 @@
 
 //These are delegate methods called by BXEmulator at various points during the emulator's lifecycle.
 - (void) didReturnToShell:		(NSNotification *)notification;
-- (void) processDidStart:		(NSNotification *)notification;
-- (void) processDidEnd:			(NSNotification *)notification;
+- (void) programWillStart:		(NSNotification *)notification;
+- (void) programDidFinish:		(NSNotification *)notification;
 
 
 - (void) didStartGraphicalContext:	(NSNotification *)notification;

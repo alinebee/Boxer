@@ -18,6 +18,7 @@ enum BXDriveTypes {
 	BXDriveCDROM		= 2,
 	BXDriveInternal		= 3
 };
+
 typedef NSInteger BXDriveType;
 
 static const NSInteger BXDefaultFreeSpace = -1;

@@ -162,8 +162,6 @@
 	if ([[self class] isExecutable: path])
 	{
 		//If an executable was specified, execute it!
-		//Note what file it was also, so we can track it internally
-		[self setActiveProgramPath: path];
 		[theEmulator executeProgramAtPath: dosPath changingDirectory: YES];
 	}
 	else

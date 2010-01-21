@@ -243,7 +243,7 @@ public:
 	/* Can be overridden for example in iso images */
 	virtual char const * GetLabel(){return dirCache.GetLabel();};
 	
-	//--Added 2009-10-25 by Alun Bestor to record the base system path for a drive
+	//--Added 2009-10-25 by Alun Bestor to access the base system path for a drive
 	char systempath[CROSS_LEN];
 	char * getSystemPath(void);
 	//--End of modifications

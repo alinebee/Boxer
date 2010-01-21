@@ -72,7 +72,8 @@ BXEmulator *currentEmulator = nil;
 
 
 @implementation BXEmulator
-@synthesize processName, currentRecordingPath;
+@synthesize processName, processPath, processLocalPath;
+@synthesize currentRecordingPath;
 @synthesize delegate, thread;
 @synthesize minFixedSpeed, maxFixedSpeed, maxFrameskip;
 @synthesize suppressOutput;
@@ -540,30 +541,9 @@ BXEmulator *currentEmulator = nil;
 		
 		//Now perform fine-grained checking on the process name, and post appropriate notifications
 		
-		NSString *oldProcessName = [self processName];
 		NSString *newProcessName = [NSString stringWithCString: RunningProgram encoding: BXDirectStringEncoding];
 		if ([newProcessName isEqualToString: shellProcessName]) newProcessName = nil;
 		[self setProcessName: newProcessName];
-		
-
-		NSDictionary *userInfo;
-		
-		if (!oldProcessName && newProcessName)
-		{
-			userInfo = [NSDictionary dictionaryWithObject: newProcessName forKey: @"process"];
-			
-			[self _postNotificationName: @"BXEmulatorProcessDidStartNotification"
-					   delegateSelector: @selector(processDidStart:)
-							   userInfo: userInfo];
-		}
-		else if (oldProcessName && !newProcessName)
-		{
-			userInfo = [NSDictionary dictionaryWithObject: oldProcessName forKey: @"process"];
-			
-			[self _postNotificationName: @"BXEmulatorProcessDidEndNotification"
-					   delegateSelector: @selector(processDidEnd:)
-							   userInfo: userInfo];
-		}
 		
 		//Update our max fixed speed if the real speed has gone higher
 		//this allows us to gracefully handle extra-high speeds imposed by game settings
@@ -591,6 +571,53 @@ BXEmulator *currentEmulator = nil;
 					   userInfo: nil];
 }
 
+- (void) _willExecuteFileAtDOSPath: (const char *)dosPath onDrive: (NSUInteger)driveIndex
+{
+	BXDrive *drive			= [self driveAtLetter: [self _driveLetterForIndex: driveIndex]];
+	NSString *localPath		= [self _filesystemPathForDOSPath: dosPath atIndex: driveIndex];
+	NSString *fullDOSPath	= [NSString stringWithFormat: @"%@:\%@",
+							   [self _driveLetterForIndex: driveIndex],
+							   [NSString stringWithCString: dosPath encoding: BXDirectStringEncoding],
+							   nil];
+
+	[self setProcessPath: localPath];
+	[self setProcessLocalPath: fullDOSPath];
+
+	NSDictionary *userInfo	= [NSDictionary dictionaryWithObjectsAndKeys:
+							   localPath,	@"localPath",
+							   fullDOSPath,	@"DOSPath",
+							   drive,		@"drive",
+							   nil];
+	
+	[self _postNotificationName: @"BXEmulatorProgramWillStartNotification"
+			   delegateSelector: @selector(programWillStart:)
+					   userInfo: userInfo];
+	
+}
+
+- (void) _didExecuteFileAtDOSPath: (const char *)dosPath onDrive: (NSUInteger)driveIndex
+{
+	BXDrive *drive			= [self driveAtLetter: [self _driveLetterForIndex: driveIndex]];
+	NSString *localPath		= [self _filesystemPathForDOSPath: dosPath atIndex: driveIndex];
+	NSString *fullDOSPath	= [NSString stringWithFormat: @"%@:\%@",
+							   [self _driveLetterForIndex: driveIndex],
+							   [NSString stringWithCString: dosPath encoding: BXDirectStringEncoding],
+							   nil];
+	
+	NSDictionary *userInfo	= [NSDictionary dictionaryWithObjectsAndKeys:
+							   localPath,	@"localPath",
+							   fullDOSPath,	@"DOSPath",
+							   drive,		@"drive",
+							   nil];
+	
+	[self setProcessPath: nil];
+	[self setProcessLocalPath: nil];
+	
+	[self _postNotificationName: @"BXEmulatorProgramDidFinishNotification"
+			   delegateSelector: @selector(programDidFinish:)
+					   userInfo: userInfo];
+}
+							   
 - (void) _didReturnToShell
 {
 	[self _postNotificationName: @"BXEmulatorProcessDidReturnToShellNotification"
@@ -676,20 +703,32 @@ void boxer_applyConfigFiles()
 	[emulator _applyConfiguration];
 }
 
-void boxer_handleAutoexecStart()
+void boxer_autoexecDidStart()
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
 	[emulator _willRunStartupCommands];
 }
 
-void boxer_handleAutoexecEnd()
+void boxer_autoexecDidFinish()
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
 	[emulator _didRunStartupCommands];
 }
 
+void boxer_willExecuteFileAtDOSPath(const char *dosPath, Bit8u driveIndex)
+{
+	BXEmulator *emulator	= [BXEmulator currentEmulator];
+	[emulator _willExecuteFileAtDOSPath: dosPath onDrive: driveIndex];
+}
 
-void boxer_handleReturnToShell()
+void boxer_didExecuteFileAtDOSPath(const char *dosPath, Bit8u driveIndex)
+{
+	BXEmulator *emulator	= [BXEmulator currentEmulator];
+	[emulator _didExecuteFileAtDOSPath: dosPath onDrive: driveIndex];
+}
+
+
+void boxer_didReturnToShell()
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
 	[emulator _didReturnToShell];

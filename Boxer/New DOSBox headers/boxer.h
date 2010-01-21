@@ -41,30 +41,34 @@ BOXER_EXPORT const char * boxer_localizedStringForKey(char const * key);
 BOXER_EXPORT const char * boxer_currentDOSKeyboardLayout();
 
 //Called from dos_programs.cpp: verifies that DOSBox is allowed to mount the specified folder.
-BOXER_EXPORT bool boxer_willMountPath(const char *pathStr);
+BOXER_EXPORT bool boxer_shouldMountPath(const char *filePath);
 
 //Called from hardware.cpp: overrides DOSBox's image capture paths.
 BOXER_EXPORT const char * boxer_pathForNewRecording(const char * extension);
 
 //Called from shell.cpp: notifies Boxer when autoexec.bat is run.
-BOXER_EXPORT void boxer_handleAutoexecStart();
-BOXER_EXPORT void boxer_handleAutoexecEnd();
+BOXER_EXPORT void boxer_autoexecDidStart();
+BOXER_EXPORT void boxer_autoexecDidFinish();
 
 //Called from shell.cpp: notifies Boxer when control returns to the DOS prompt.
-BOXER_EXPORT void boxer_handleReturnToShell();
+BOXER_EXPORT void boxer_didReturnToShell();
 
 //Called from shell_cmds.cpp: hooks into shell command processing.
-BOXER_EXPORT bool boxer_handleShellCommand(char* cmd, char* args);
+BOXER_EXPORT bool boxer_shouldRunShellCommand(char* cmd, char* args);
 	
 //Called from drive_cache.cpp: allows Boxer to hide OS X files that DOSBox shouldn't touch.
-BOXER_EXPORT bool boxer_allowFileWithName(const char *name);
+BOXER_EXPORT bool boxer_shouldShowFileWithName(const char *name);
 
 //Called from drive_local.cpp: allows Boxer to restrict access to files that DOS programs shouldn't write to.
-class DOS_Drive;
-BOXER_EXPORT bool boxer_allowWriteAccessToPathOnDrive(const char *filename, DOS_Drive *drive);
+BOXER_EXPORT bool boxer_shouldAllowWriteAccessToPath(const char *filePath, Bit8u driveIndex);
 	
 //Called from dos_programs.cpp et al: informs Boxer of drive mount/unmount events
-BOXER_EXPORT void boxer_syncDriveCache();
+BOXER_EXPORT void boxer_driveDidMount(Bit8u driveIndex);
+BOXER_EXPORT void boxer_driveDidUnmount(Bit8u driveIndex);
+	
+//Called from shell_misc.cpp when a program or batchfile is executed
+BOXER_EXPORT void boxer_willExecuteFileAtDOSPath(const char *dosPath, Bit8u driveIndex);
+BOXER_EXPORT void boxer_didExecuteFileAtDOSPath(const char *dosPath, Bit8u driveIndex);
 
 //Called from dosbox.cpp to short-circuit the emulation loop
 BOXER_EXPORT bool boxer_isPaused();

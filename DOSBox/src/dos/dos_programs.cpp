@@ -90,15 +90,14 @@ public:
 				if(i_drive < DOS_DRIVES && i_drive >= 0 && Drives[i_drive]) {
 					switch (DriveManager::UnmountDrive(i_drive)) {
 					case 0:
+						//--Added 2010-01-18 by Alun Bestor: let Boxer know that the drive state has changed
+						boxer_driveDidUnmount(i_drive);
+						//--End of modifications
+							
 						Drives[i_drive] = 0;
 						if(i_drive == DOS_GetDefaultDrive()) 
 							DOS_SetDrive(toupper('Z') - 'A');
-						WriteOut(MSG_Get("PROGRAM_MOUNT_UMOUNT_SUCCES"),umount[0]);
-							
-						//--Added 2010-01-18 by Alun Bestor: let Boxer know that the drive state has changed
-						boxer_syncDriveCache();
-						//--End of modifications
-							
+						WriteOut(MSG_Get("PROGRAM_MOUNT_UMOUNT_SUCCES"),umount[0]);							
 						break;
 					case 1:
 						WriteOut(MSG_Get("PROGRAM_MOUNT_UMOUNT_NO_VIRTUAL"));
@@ -300,7 +299,7 @@ public:
 				//--Modified 2009-02-20 by Alun Bestor: we now prohibit this altogether and produce our own contextual warning.
 				//if(temp_line == "/") WriteOut(MSG_Get("PROGRAM_MOUNT_WARNING_OTHER"));
 				
-				if(!boxer_willMountPath(temp_line.c_str())) return;
+				if(!boxer_shouldMountPath(temp_line.c_str())) return;
 				
 				//--End of modifications
 #endif
@@ -334,7 +333,7 @@ public:
 		}
 		
 		//--Added 2010-01-18 by Alun Bestor: let Boxer know that the drive state has changed
-		boxer_syncDriveCache();
+		boxer_driveDidMount(drive-'A');
 		//--End of modifications
 		
 		return;
@@ -1005,14 +1004,14 @@ public:
 				if (i_drive < DOS_DRIVES && i_drive >= 0 && Drives[i_drive]) {
 					switch (DriveManager::UnmountDrive(i_drive)) {
 					case 0:
+						//--Added 2010-01-18 by Alun Bestor: let Boxer know that the drive state has changed
+						boxer_driveDidUnmount(i_drive);
+						//--End of modifications
+							
 						Drives[i_drive] = 0;
 						if (i_drive == DOS_GetDefaultDrive()) 
 							DOS_SetDrive(toupper('Z') - 'A');
 						WriteOut(MSG_Get("PROGRAM_MOUNT_UMOUNT_SUCCES"),umount[0]);
-						//--Added 2010-01-18 by Alun Bestor: let Boxer know that the drive state has changed
-						boxer_syncDriveCache();
-						//--End of modifications
-							
 						break;
 					case 1:
 						WriteOut(MSG_Get("PROGRAM_MOUNT_UMOUNT_NO_VIRTUAL"));
@@ -1279,7 +1278,7 @@ public:
 		}
 
 		//--Added 2010-01-18 by Alun Bestor: let Boxer know that the drive state has changed
-		boxer_syncDriveCache();
+		boxer_driveDidMount(drive-'A');
 		//--End of modifications
 		
 		// check if volume label is given. becareful for cdrom

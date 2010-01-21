@@ -57,6 +57,9 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 	BXSession *delegate;
 	
 	NSString *processName;
+	NSString *processPath;
+	NSString *processLocalPath;
+	
 	NSMutableArray *configFiles;
 	NSMutableDictionary *driveCache;
 	
@@ -86,6 +89,14 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 
 //The name of the currently-executing DOSBox process. Will be nil if no process is running.
 @property (copy)		NSString *processName;
+
+//The DOS filesystem path of the currently-executing DOSBox process.
+//Will be nil if no process is running.
+@property (copy)		NSString *processPath;
+
+//The local filesystem path of the currently-executing DOSBox process.
+//Will be nil if no process is running or if the process is on an image or DOSBox-internal drive.
+@property (copy)		NSString *processLocalPath;
 
 //The path to the movie we are currently recording. Will be nil if no recording is in progress.
 //This is only used internally by BXRecording and should not be accessed outside of BXEmulator.

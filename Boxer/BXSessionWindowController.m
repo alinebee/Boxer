@@ -8,6 +8,7 @@
 
 #import "BXSessionWindowController.h"
 #import "BXSessionWindowController+BXRenderController.h"
+#import "BXEmulator+BXDOSFileSystem.h"
 #import "BXSessionWindow.h"
 #import "BXProgramPanelController.h"
 
@@ -86,6 +87,11 @@
 {
 	[[self programPanelController] setRepresentedObject: nil];
 	
+	if (![theSession isEqualTo: [self document]])
+	{
+		[[self document] removeObserver: self forKeyPath: @"activeProgramPath"];
+		[theSession addObserver: self forKeyPath: @"activeProgramPath" options: 0 context: nil];
+	}
 	[super setDocument: theSession];
 	
 	if (theSession)
@@ -107,6 +113,45 @@
 		//...and add it to our panel controller, so that it can keep up with the times too
 		[[self programPanelController] setRepresentedObject: theSession];
 	}
+}
+
+
+//Controlling the window title
+//----------------------------
+
+- (void) synchronizeWindowTitleWithDocumentName
+{
+	if ([[self document] isGamePackage])
+	{
+		//If the session is a gamebox, always use the gamebox for the window title (like a regular NSDocument.)
+		return [super synchronizeWindowTitleWithDocumentName];
+	}
+	else
+	{
+		//If the session isn't a gamebox, then use the currently-active program as the window title.
+		NSString *representedPath = [[self document] activeProgramPath];
+		
+		//If no program is running, then use the local filesystem equivalent of the current directory in DOS.
+		if (!representedPath) representedPath = [[[self document] emulator] pathOfCurrentWorkingDirectory];
+		
+		if (representedPath) [[self window] setTitleWithRepresentedFilename: representedPath];
+		else
+		{
+			//If that wasn't available either (e.g. we're on drive Z) then just display a generic title
+			[[self window] setRepresentedFilename: @""];
+			[[self window] setTitle: NSLocalizedString(
+				@"MS-DOS Prompt", @"The standard window title when the session is at the DOS prompt.")];
+		}
+	}
+}
+
+- (void) observeValueForKeyPath: (NSString *)keyPath
+						ofObject: (id)object
+						  change: (NSDictionary *)change
+						 context: (void *)context
+{
+	//Whenever the key path changes, synchronise our filter selection controls
+	if ([keyPath isEqualToString: @"activeProgramPath"]) [self synchronizeWindowTitleWithDocumentName];
 }
 
 

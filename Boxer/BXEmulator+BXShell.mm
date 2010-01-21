@@ -320,7 +320,7 @@ nil];
 
 //Catch shell input and send it to our own shell controller - returns YES if we've handled the command, NO if we want to let it go through
 //This is called by DOS_Shell::DoCommand in DOSBox's shell/shell_cmds.cpp, to allow us to hook into what goes on in the shell
-bool boxer_handleShellCommand(char* cmd, char* args)
+bool boxer_shouldRunShellCommand(char* cmd, char* args)
 {
 	NSString *command			= [NSString stringWithCString: cmd	encoding: BXDirectStringEncoding];
 	NSString *argumentString	= [NSString stringWithCString: args	encoding: BXDirectStringEncoding];

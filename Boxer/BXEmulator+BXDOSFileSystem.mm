@@ -395,6 +395,16 @@ enum {
 {
 	return [NSString stringWithCString: Drives[DOS_GetDefaultDrive()]->curdir encoding: BXDirectStringEncoding];
 }
+
+- (NSString *) pathOfCurrentWorkingDirectory
+{
+	NSUInteger index = DOS_GetDefaultDrive();
+	NSString *localPath	= [self _filesystemPathForDOSPath: Drives[index]->curdir atIndex: index];
+	if (localPath) return localPath;
+	//If no accurate local path could be determined, then return the source path of the current drive instead 
+	else return [[self currentDrive] path];
+}
+
 - (BOOL) changeWorkingDirectoryToPath: (NSString *)dosPath
 {
 	BOOL changedPath = NO;
@@ -443,6 +453,9 @@ enum {
 //Internal methods (no touchy!)
 @implementation BXEmulator (BXDOSFileSystemInternals)
 
+//Translating between Boxer and DOSBox drives
+//-------------------------------------------
+
 //Used internally to match DOS drive letters to the DOSBox drive array
 - (NSUInteger)_indexOfDriveLetter: (NSString *)driveLetter
 {
@@ -459,21 +472,6 @@ enum {
 	return [[[self class] driveLetters] objectAtIndex: index];
 }
 
-//Generates a BXDrive object from a DOSBox drive entry.
-- (BXDrive *)_driveFromDOSBoxDriveAtIndex: (NSUInteger)index
-{
-	NSAssert1(index < DOS_DRIVES, @"index %u passed to _driveFromDOSBoxDriveAtIndex was beyond the range of DOSBox's drive array.", index);
-	if (Drives[index])
-	{
-		NSString *driveLetter	= [[[self class] driveLetters] objectAtIndex: index];
-		NSString *path			= [NSString stringWithCString: Drives[index]->getSystemPath() encoding: BXDirectStringEncoding];
-		
-		if (![path length]) path = nil;	//Internal drives
-		return [BXDrive driveFromPath: path atLetter: driveLetter];
-	}
-	else return nil;
-}
-
 //Returns the Boxer drive that matches the specified DOSBox drive, or nil if no drive was found
 - (BXDrive *)_driveMatchingDOSBoxDrive: (DOS_Drive *)dosDrive
 {
@@ -487,6 +485,35 @@ enum {
 	}
 	return nil;
 }
+
+- (DOS_Drive *)_DOSBoxDriveMatchingDrive: (BXDrive *)drive
+{
+	NSUInteger index = [self _indexOfDriveLetter: [drive letter]];
+	if (Drives[index]) return Drives[index];
+	else return NULL;
+}
+
+- (NSString *)_filesystemPathForDOSPath: (const char *)dosPath atIndex: (NSUInteger)driveIndex
+{
+	DOS_Drive *DOSBoxDrive = Drives[driveIndex];
+	if (!DOSBoxDrive) return nil;
+	
+	localDrive *localDOSBoxDrive = dynamic_cast<localDrive *>(DOSBoxDrive);
+	if (localDOSBoxDrive)
+	{
+		char filePath[CROSS_LEN];
+		localDOSBoxDrive->GetSystemFilename(filePath, (char const * const)dosPath);
+		NSString *thePath = [[NSFileManager defaultManager]
+							 stringWithFileSystemRepresentation: filePath
+							 length: strlen(filePath)];
+		return thePath;
+	}
+	//We can't return a system file path for non-local drives
+	else return nil;
+}
+
+//Adding and removing new DOSBox drives
+//-------------------------------------
 
 //Registers a new drive with DOSBox and adds it to the drive list.
 - (BOOL) _addDOSBoxDrive: (DOS_Drive *)drive atIndex: (NSUInteger)index
@@ -545,24 +572,20 @@ enum {
 }
 
 
-
-- (BOOL) _DOSBoxDriveInUseAtIndex: (NSUInteger)index
+//Generates a BXDrive object from a DOSBox drive entry.
+- (BXDrive *)_driveFromDOSBoxDriveAtIndex: (NSUInteger)index
 {
-	int i;
-	for (i=0; i<DOS_FILES; i++)
+	NSAssert1(index < DOS_DRIVES, @"index %u passed to _driveFromDOSBoxDriveAtIndex was beyond the range of DOSBox's drive array.", index);
+	if (Drives[index])
 	{
-		if (Files[i] && Files[i]->GetDrive() == index)
-		{
-			//DOS_File->GetDrive() returns 0 for the special CON system file,
-			//which also corresponds to the drive index for A, so skip it
-			if (index == 0 && !strcmp(Files[i]->GetName(), "CON")) continue;
-			
-			if (Files[i]->IsOpen()) return YES;
-		}
+		NSString *driveLetter	= [[[self class] driveLetters] objectAtIndex: index];
+		NSString *path			= [NSString stringWithCString: Drives[index]->getSystemPath() encoding: BXDirectStringEncoding];
+		
+		if (![path length]) path = nil;	//Internal drives
+		return [BXDrive driveFromPath: path atLetter: driveLetter];
 	}
-	return NO;
+	else return nil;
 }
-
 
 //Create a new DOS_Drive CDROM from a path to a disc image.
 - (DOS_Drive *) _CDROMDriveFromImageAtPath: (NSString *)path forIndex: (NSUInteger)index
@@ -713,6 +736,24 @@ enum {
 //Filesystem validation
 //---------------------
 
+- (BOOL) _DOSBoxDriveInUseAtIndex: (NSUInteger)index
+{
+	int i;
+	for (i=0; i<DOS_FILES; i++)
+	{
+		if (Files[i] && Files[i]->GetDrive() == index)
+		{
+			//DOS_File->GetDrive() returns 0 for the special CON system file,
+			//which also corresponds to the drive index for A, so skip it
+			if (index == 0 && !strcmp(Files[i]->GetName(), "CON")) continue;
+			
+			if (Files[i]->IsOpen()) return YES;
+		}
+	}
+	return NO;
+}
+
+
 //If the folder was restricted, print an error to the shell and deny access
 //Todo: this assumes that the check is being called from the shell; we should instead populate an NSError with the error details and let the upstream context handle it
 - (BOOL) _shouldMountPath: (NSString *)thePath
@@ -746,10 +787,8 @@ enum {
 	return YES;
 }
 
-- (BOOL) _shouldAllowWriteAccessToPath: (NSString *)filePath onDOSBoxDrive: (DOS_Drive *)dosDrive
-{
-	BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosDrive];
-	
+- (BOOL) _shouldAllowWriteAccessToPath: (NSString *)filePath onDrive: (BXDrive *)drive
+{	
 	//Don't allow write access to files on drives marked as read-only
 	if ([drive readOnly]) return NO;
 	
@@ -771,21 +810,20 @@ enum {
 //----------------
 //DOSBox uses these to call relevant methods on the current Boxer emulation context
 
-
 //Whether or not to allow the specified path to be mounted.
 //Called by MOUNT::Run in DOSBox's dos/dos_programs.cpp.
-bool boxer_willMountPath(const char *pathStr)
+bool boxer_shouldMountPath(const char *filePath)
 {
 	NSString *thePath = [[NSFileManager defaultManager]
-						stringWithFileSystemRepresentation: pathStr
-						length: strlen(pathStr)];
+						stringWithFileSystemRepresentation: filePath
+						length: strlen(filePath)];
 	
 	BXEmulator *emulator = [BXEmulator currentEmulator];
 	return [emulator _shouldMountPath: thePath];
 }
 
 //Whether to include a file with the specified name in DOSBox directory listings
-bool boxer_allowFileWithName(const char *name)
+bool boxer_shouldShowFileWithName(const char *name)
 {
 	NSString *fileName = [NSString stringWithCString: name encoding: BXDirectStringEncoding];
 	BXEmulator *emulator = [BXEmulator currentEmulator];
@@ -793,16 +831,25 @@ bool boxer_allowFileWithName(const char *name)
 }
 
 //Whether to allow write access to the file at the specified path on the local filesystem
-bool boxer_allowWriteAccessToPathOnDrive(const char *filename, DOS_Drive *drive)
+bool boxer_shouldAllowWriteAccessToPath(const char *filePath, Bit8u driveIndex)
 {
-	NSString *filePath = [NSString stringWithCString: filename encoding: BXDirectStringEncoding];
+	NSString *thePath	= [[NSFileManager defaultManager]
+						   stringWithFileSystemRepresentation: filePath
+						   length: strlen(filePath)];
+	
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	return [emulator _shouldAllowWriteAccessToPath: filePath onDOSBoxDrive: drive];
+	BXDrive *drive = [emulator driveAtLetter: [emulator _driveLetterForIndex: driveIndex]];
+	return [emulator _shouldAllowWriteAccessToPath: thePath onDrive: drive];
 }
 
 //Tells Boxer to resync its cached drives - called by DOSBox functions that add/remove drives
-void boxer_syncDriveCache()
+void boxer_driveDidMount(Bit8u driveIndex)
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	[emulator _syncDriveCache];	
+	[emulator _syncDriveCache];
+}
+void boxer_driveDidUnmount(Bit8u driveIndex)
+{
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+	[emulator _syncDriveCache];
 }

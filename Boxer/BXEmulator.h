@@ -72,7 +72,6 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 	
 	//Used by BXShell
 	BOOL suppressOutput;
-	BOOL abortShellInput;
 	NSMutableArray *commandQueue;
 	
 	//Used by BXRecording

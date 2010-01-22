@@ -314,16 +314,6 @@ nil];
 	}
 }
 
-- (BOOL) _shouldAbortShellInput
-{
-	if (abortShellInput)
-	{
-		abortShellInput = NO;	//So we don't continually abort
-		return YES;
-	}
-	else return NO;
-}
-
 - (NSString *)_handleCommandInput: (NSString *)commandLine
 {
 	NSString *nextCommand = nil;
@@ -440,12 +430,6 @@ const char * boxer_localizedStringForKey(char const *keyStr)
 									table: @"DOSBox"];
 									
 	return [localizedString cStringUsingEncoding: BXDisplayStringEncoding];
-}
-
-bool boxer_shouldAbortShellInput()
-{
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	return [emulator _shouldAbortShellInput];
 }
 
 bool boxer_handleCommandInput(char *cmd)

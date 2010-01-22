@@ -270,6 +270,9 @@ class DOS_Shell;
 //for that loop or NO to continue it.
 - (BOOL) _handleEventLoop;
 
+//Called during DOSBox's run loop: returns YES to short-circuit the loop.
+- (BOOL) _handleRunLoop;
+
 @end
 
 #endif

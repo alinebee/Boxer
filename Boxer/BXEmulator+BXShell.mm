@@ -74,10 +74,8 @@ nil];
 		}
 		else
 		{
-			//Otherwise we're at the commandline: we'll need to feed our command into
-			//DOSBox's command-line input loop, and then prod it to process the command
+			//Otherwise we're at the commandline: feed our command into DOSBox's command-line input loop
 			[[self commandQueue] addObject: theString];
-			[self sendTab];
 		}
 	}
 }
@@ -188,13 +186,7 @@ nil];
 
 - (void) discardShellInput
 {
-	if ([self isAtPrompt])
-	{
-		[[self commandQueue] addObject: @""];
-		//Force the shell to register an update (by sending a key event that won't produce any output)
-		//FIXME: This is so ghetto
-		[self sendTab];
-	}
+	if ([self isAtPrompt]) [[self commandQueue] addObject: @""];
 }
 
 

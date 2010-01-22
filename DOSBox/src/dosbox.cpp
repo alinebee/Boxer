@@ -132,8 +132,8 @@ bool ticksLocked;
 static Bitu Normal_Loop(void) {
 	Bits ret;
 	while (1) {
-		//--Added 2009-12-27 by Alun Bestor to short-circuit the emulation loop while we are shutting down
-		if (boxer_isCancelled()) return 1;
+		//--Added 2009-12-27 by Alun Bestor to short-circuit the emulation loop when we need to
+		if (boxer_handleRunLoop()) return 1;
 		//--End of modifications
 		
 		if (PIC_RunQueue()) {

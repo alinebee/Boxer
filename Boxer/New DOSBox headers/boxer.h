@@ -68,17 +68,16 @@ BOXER_EXPORT bool boxer_shouldShowFileWithName(const char *name);
 //Called from drive_local.cpp: allows Boxer to restrict access to files that DOS programs shouldn't write to.
 BOXER_EXPORT bool boxer_shouldAllowWriteAccessToPath(const char *filePath, Bit8u driveIndex);
 	
-//Called from dos_programs.cpp et al: informs Boxer of drive mount/unmount events
+//Called from dos_programs.cpp et al: informs Boxer of drive mount/unmount events.
 BOXER_EXPORT void boxer_driveDidMount(Bit8u driveIndex);
 BOXER_EXPORT void boxer_driveDidUnmount(Bit8u driveIndex);
 	
-//Called from shell_misc.cpp when a program or batchfile is executed
+//Called from shell_misc.cpp to notify Boxer when a program or batchfile is executed.
 BOXER_EXPORT void boxer_willExecuteFileAtDOSPath(const char *dosPath, Bit8u driveIndex);
 BOXER_EXPORT void boxer_didExecuteFileAtDOSPath(const char *dosPath, Bit8u driveIndex);
 	
-//Called from dosbox.cpp to short-circuit the emulation loop
-BOXER_EXPORT bool boxer_isPaused();
-BOXER_EXPORT bool boxer_isCancelled();
+//Called from dosbox.cpp to short-circuit the emulation loop.
+BOXER_EXPORT bool boxer_handleRunLoop();
 	
 #if __cplusplus
 } //Extern C

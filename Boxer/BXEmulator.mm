@@ -575,6 +575,13 @@ BXEmulator *currentEmulator = nil;
 	return NO;
 }
 
+- (BOOL) _handleRunLoop
+{
+	if ([self isCancelled]) return YES;
+	if ([self isAtPrompt] && [[self commandQueue] count]) return YES;
+	return NO;
+}
+
 @end
 
 
@@ -610,6 +617,13 @@ bool boxer_handleEventLoop()
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
 	return [emulator _handleEventLoop];
+}
+
+//This is called at the start of DOSBox_NormalLoop, and allows us to short-circuit the current run loop if needed.
+bool boxer_handleRunLoop()
+{
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+	return [emulator _handleRunLoop];	
 }
 
 //Catch SDL events and process them - return YES if we've handled the event, NO if we want to let it go through

@@ -83,9 +83,6 @@
 - (NSString *) DOSPathForPath: (NSString *)path onDrive: (BXDrive *)drive;
 
 
-//Methods for performing filesystem tasks
-//---------------------------------------
-
 //Returns a BXDrive record for the current drive.
 - (BXDrive *) currentDrive;
 
@@ -99,13 +96,6 @@
 //Returns the drive's base path if Boxer cannot 'see into' the drive (e.g. the drive is on a disk image.)
 //Returns nil if the drive does not exist on the local filesystem (e.g. it is a DOSBox-internal drive.)
 - (NSString *) pathOfCurrentWorkingDirectory;
-
-//Change to the specified drive letter. This will not alter the working directory on that drive.
-//Returns YES if the working drive was changed, NO if the specified drive was not mounted.
-- (BOOL) changeToDriveLetter: (NSString *)driveLetter;
-
-//Change directory to the specified DOS path, which may include a drive letter.
-- (BOOL) changeWorkingDirectoryToPath: (NSString *)dosPath;
 
 
 //Filesystem validation

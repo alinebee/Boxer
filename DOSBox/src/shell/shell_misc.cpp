@@ -63,10 +63,24 @@ void DOS_Shell::InputCommand(char * line) {
 			DOS_OpenFile("con",2,&dummy);
 			LOG(LOG_MISC,LOG_ERROR)("Reopening the input handle.This is a bug!");
 		}
+
+		//--Added 2010-01-22 by Alun Bestor to let Boxer inject its own input
+		if (boxer_handleCommandInput(line))
+		{
+			outc('\n');
+			str_len = strlen(line);
+			break;
+		}
+		//--End of modifications
+		
+		
+		
 		if (!n) {
 			size=0;			//Kill the while loop
 			continue;
 		}
+
+	
 		switch (c) {
 		case 0x00:				/* Extended Keys */
 			{
@@ -340,10 +354,11 @@ void DOS_Shell::InputCommand(char * line) {
 				size--;
 			}
 			DOS_WriteFile(STDOUT,&c,&n);
+			
 			break;
 		}
 	}
-
+	
 	if (!str_len) return;
 	str_len++;
 
@@ -434,7 +449,6 @@ bool DOS_Shell::Execute(char * name,char * args) {
 	char dosPath[DOS_PATHLENGTH];
 	Bit8u driveIndex;
 	DOS_MakeName(fullname,dosPath,&driveIndex);
-	boxer_willExecuteFileAtDOSPath(dosPath, driveIndex);
 	//--End of modifications
 		
 	if (strcasecmp(extension, ".bat") == 0) 
@@ -442,6 +456,11 @@ bool DOS_Shell::Execute(char * name,char * args) {
 		/* delete old batch file if call is not active*/
 		bool temp_echo=echo; /*keep the current echostate (as delete bf might change it )*/
 		if(bf && !call) delete bf;
+		
+		//--Added 2010-01-21 by Alun Bestor to let Boxer track the executed program
+		boxer_willExecuteFileAtDOSPath(dosPath, driveIndex);
+		//--End of modifications
+
 		bf=new BatchFile(this,fullname,line);
 		echo=temp_echo; //restore it.
 	} 
@@ -451,6 +470,11 @@ bool DOS_Shell::Execute(char * name,char * args) {
 		{
 			if(strcasecmp(extension, ".exe") !=0) return false;
 		}
+		
+		//--Added 2010-01-21 by Alun Bestor to let Boxer track the executed program
+		boxer_willExecuteFileAtDOSPath(dosPath, driveIndex);
+		//--End of modifications
+		
 		/* Run the .exe or .com file from the shell */
 		/* Allocate some stack space for tables in physical memory */
 		reg_sp-=0x200;

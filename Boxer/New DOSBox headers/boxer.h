@@ -56,6 +56,12 @@ BOXER_EXPORT void boxer_didReturnToShell();
 //Called from shell_cmds.cpp: hooks into shell command processing.
 BOXER_EXPORT bool boxer_shouldRunShellCommand(char* cmd, char* args);
 	
+//Called from shell_misc.cpp to allow BXShell to break DOSBox's commandline input loop when it runs its own commands.
+BOXER_EXPORT bool boxer_shouldAbortShellInput();
+	
+//Called from shell_misc.cpp to allow Boxer to inject its own commands at the DOS command line.
+BOXER_EXPORT bool boxer_handleCommandInput(char *cmd);
+	
 //Called from drive_cache.cpp: allows Boxer to hide OS X files that DOSBox shouldn't touch.
 BOXER_EXPORT bool boxer_shouldShowFileWithName(const char *name);
 
@@ -69,7 +75,7 @@ BOXER_EXPORT void boxer_driveDidUnmount(Bit8u driveIndex);
 //Called from shell_misc.cpp when a program or batchfile is executed
 BOXER_EXPORT void boxer_willExecuteFileAtDOSPath(const char *dosPath, Bit8u driveIndex);
 BOXER_EXPORT void boxer_didExecuteFileAtDOSPath(const char *dosPath, Bit8u driveIndex);
-
+	
 //Called from dosbox.cpp to short-circuit the emulation loop
 BOXER_EXPORT bool boxer_isPaused();
 BOXER_EXPORT bool boxer_isCancelled();

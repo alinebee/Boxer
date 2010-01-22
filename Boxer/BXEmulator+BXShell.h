@@ -40,6 +40,13 @@
 - (NSString *) quotedString: (NSString *)theString;
 
 
+//Change to the specified drive letter. This will not alter the working directory on that drive.
+//Returns YES if the working drive was changed, NO if the specified drive was not mounted.
+- (BOOL) changeToDriveLetter: (NSString *)driveLetter;
+
+//Change directory to the specified DOS path, which may include a drive letter.
+- (BOOL) changeWorkingDirectoryToPath: (NSString *)dosPath;
+
 
 //DOS environment and configuration variables
 //-------------------------------------------
@@ -57,17 +64,9 @@
 //Buffering commands
 //------------------
 
-//Open and close nested command queues, to execute a series of commands as one batchfile-like operation.
-//In practice, this does not execute them as a batch script but merely defers reprinting the command
-//prompt until the queue(s) are closed.
-- (void) openQueue;
-- (void) closeQueue;
-- (BOOL) isInQueue;
-
-//Get/set whether the command prompt is 'dirty' and needs redrawing.
-//This is called after changing the drive or working directory internally.
-- (void) setPromptNeedsDisplay: (BOOL)redraw;
-- (BOOL) promptNeedsDisplay;
+//Discard any user input at the commandline.
+//Called automatically when executing commands or changing the current drive/directory.
+- (void) discardShellInput;
 
 
 //Actual shell commands you might want to call
@@ -115,7 +114,15 @@
 - (void) _substituteCommand: (NSString *)theString encoding: (NSStringEncoding)encoding;
 
 
-//Reprint the command prompt. Has no effect if called while a process is executing.
-- (void) _redrawPrompt;
+- (NSString *)_handleCommandInput: (NSString *)commandLine;
+
+//Called by DOSBox whenever control returns to the DOS prompt. Sends a delegate notification.
+- (void) _didReturnToShell;
+
+//Called by DOSBox just before AUTOEXEC.BAT is started. Sends a delegate notification.
+- (void) _willRunStartupCommands;
+
+//Called by DOSBox after AUTOEXEC.BAT has completed. Sends a delegate notification.
+- (void) _didRunStartupCommands;
 
 @end

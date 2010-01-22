@@ -69,6 +69,29 @@
 	else initialView = [self cpuPanel];
 	
 	[self setCurrentPanel: initialView];
+	
+	//Listen for changes to the current session
+	[[NSApp delegate] addObserver: self
+					   forKeyPath: @"currentSession"
+						  options: NSKeyValueObservingOptionInitial
+						  context: nil];	
+}
+
+//Whenever the session changes, update the availability of the gamebox panel
+- (void) observeValueForKeyPath: (NSString *)keyPath
+					   ofObject: (id)object
+						 change: (NSDictionary *)change
+						context: (void *)context
+{	
+	if ([keyPath isEqualToString: @"currentSession"])
+	{
+		BXSession *session		= [[NSApp delegate] currentSession];
+		NSInteger panelIndex	= [[self panels] indexOfObject: [self gamePanel]];
+		
+		[[self panelSelector] setEnabled: [session isGamePackage] forSegment: panelIndex];
+		if (![session isGamePackage] && [[self currentPanel] isEqualTo: [self gamePanel]])
+			[self setCurrentPanel: [self cpuPanel]];
+	}
 }
 
 - (NSArray *) panels
@@ -91,12 +114,9 @@
 	{
 		[self willChangeValueForKey: @"currentPanel"];
 
-		//Synchronise the selected tab and record the panel choice in the user default
+		//Synchronise the selected tab
 		NSInteger panelIndex = [[self panels] indexOfObject: panel];
 		[[self panelSelector] setSelectedSegment: panelIndex];
-		
-		//Record the current panel in the user defaults
-		[[NSUserDefaults standardUserDefaults] setInteger: panelIndex forKey: @"initialInspectorPanelIndex"];
 		
 		//Now add the new panel and resize the window to accomodate it
 
@@ -197,6 +217,11 @@
 {
 	NSInteger selectorIndex = [sender selectedSegment];
 	[self setCurrentPanel: [[self panels] objectAtIndex: selectorIndex]];
+	
+	//Record the user's choice in the user defaults
+	//Note: we do this here rather than in setCurrentPanel: because the latter is often called programmatically
+	//and we only want to persist actual choices, not states.
+	[[NSUserDefaults standardUserDefaults] setInteger: selectorIndex forKey: @"initialInspectorPanelIndex"];
 }
 
 - (IBAction) revealSelectedDrivesInFinder: (id)sender
@@ -213,24 +238,27 @@
 - (IBAction) unmountSelectedDrives: (id)sender
 {
 	NSArray *selection = [[self driveController] selectedObjects];
-	if ([[BXSession mainSession] shouldUnmountDrives: selection sender: self])
-		[[BXSession mainSession] unmountDrives: selection];
+	BXSession *session = [[NSApp delegate] currentSession];
+	if ([session shouldUnmountDrives: selection sender: self])
+		[session unmountDrives: selection];
 }
 
 - (IBAction) showMountPanel: (id)sender
 {
 	//Pass mount panel action upstream - this works around the fiddly separation of responder chains
 	//between the inspector panel and main DOS window.
-	[NSApp sendAction: @selector(showMountPanel:) to: [BXSession mainSession] from: self];
+	BXSession *session = [[NSApp delegate] currentSession];
+	[NSApp sendAction: @selector(showMountPanel:) to: session from: self];
 }
 
 - (BOOL) validateUserInterfaceItem: (id)theItem
 {
 	BOOL hasSelection = ([[[self driveController] selectedObjects] count] > 0);
-	BXEmulator *theEmulator = [[BXSession mainSession] emulator];
+	BXSession *session = [[NSApp delegate] currentSession];
+	BXEmulator *theEmulator = [session emulator];
 	
 	SEL action = [theItem action];
-	if (action == @selector(showMountPanel:))				return [BXSession mainSession] != nil;
+	if (action == @selector(showMountPanel:))				return session != nil;
 	if (action == @selector(revealSelectedDrivesInFinder:)) return hasSelection;
 	if (action == @selector(unmountSelectedDrives:))		return hasSelection && [theEmulator isExecuting];
 	if (action == @selector(openSelectedDrivesInDOS:))		return hasSelection && [theEmulator isExecuting] && ![theEmulator isRunningProcess];
@@ -255,26 +283,24 @@
 	if ([[pboard types] containsObject: NSFilenamesPboardType])
 	{
 		NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
-		BXSession *theSession = [BXSession mainSession];
-		return [theSession responseToDroppedFiles: filePaths];
+		BXSession *session = [[NSApp delegate] currentSession];
+		return [session responseToDroppedFiles: filePaths];
 	}
 	else return NSDragOperationNone;
 }
 
 - (BOOL)performDragOperation: (id <NSDraggingInfo>)sender
 {
-	BXSession *theSession = [BXSession mainSession];
+	BXSession *session = [[NSApp delegate] currentSession];
 
 	NSPasteboard *pboard = [sender draggingPasteboard];
 	if ([[pboard types] containsObject: NSFilenamesPboardType])
 	{
 		NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
-		return [theSession handleDroppedFiles: filePaths withLaunching: NO];
+		return [session handleDroppedFiles: filePaths withLaunching: NO];
 	}		
 	return NO;
 }
-
-
 
 //Returns the NSSortDescriptors to be used for sorting drives in the drive panel
 - (NSArray *) driveSortDescriptors

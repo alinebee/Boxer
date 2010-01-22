@@ -178,7 +178,6 @@
 	return type;
 }
 
-
 - (BOOL) exposesPath: (NSString *)subPath
 {
 	if ([self isInternal]) return NO;

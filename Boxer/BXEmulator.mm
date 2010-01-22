@@ -81,6 +81,7 @@ BXEmulator *currentEmulator = nil;
 @synthesize paused;
 @synthesize aspectCorrected;
 @synthesize filterType;
+@synthesize commandQueue;
 
 
 //Introspective class methods
@@ -147,6 +148,7 @@ BXEmulator *currentEmulator = nil;
 		maxFrameskip		= 9;
 		
 		configFiles			= [[NSMutableArray alloc] initWithCapacity: 10];
+		commandQueue		= [[NSMutableArray alloc] initWithCapacity: 4];
 		driveCache			= [[NSMutableDictionary alloc] initWithCapacity: DOS_DRIVES];
 		currentVideoMode	= M_TEXT;
 	}
@@ -160,6 +162,7 @@ BXEmulator *currentEmulator = nil;
 	
 	[driveCache release], driveCache = nil;
 	[configFiles release], configFiles = nil;
+	[commandQueue release], commandQueue = nil;
 	
 	[super dealloc];
 }
@@ -554,78 +557,6 @@ BXEmulator *currentEmulator = nil;
 	}
 }
 
-- (void) _willRunStartupCommands
-{
-	//Before startup, ensure that Boxer's drive cache is up to date.
-	[self _syncDriveCache];
-	
-	[self _postNotificationName: @"BXEmulatorWillRunStartupCommandsNotification"
-			   delegateSelector: @selector(willRunStartupCommands:)
-					   userInfo: nil];
-}
-
-- (void) _didRunStartupCommands
-{
-	[self _postNotificationName: @"BXEmulatorDidRunStartupCommandsNotification"
-			   delegateSelector: @selector(didRunStartupCommands:)
-					   userInfo: nil];
-}
-
-- (void) _willExecuteFileAtDOSPath: (const char *)dosPath onDrive: (NSUInteger)driveIndex
-{
-	BXDrive *drive			= [self driveAtLetter: [self _driveLetterForIndex: driveIndex]];
-	NSString *localPath		= [self _filesystemPathForDOSPath: dosPath atIndex: driveIndex];
-	NSString *fullDOSPath	= [NSString stringWithFormat: @"%@:\%@",
-							   [self _driveLetterForIndex: driveIndex],
-							   [NSString stringWithCString: dosPath encoding: BXDirectStringEncoding],
-							   nil];
-
-	[self setProcessPath: localPath];
-	[self setProcessLocalPath: fullDOSPath];
-
-	NSDictionary *userInfo	= [NSDictionary dictionaryWithObjectsAndKeys:
-							   localPath,	@"localPath",
-							   fullDOSPath,	@"DOSPath",
-							   drive,		@"drive",
-							   nil];
-	
-	[self _postNotificationName: @"BXEmulatorProgramWillStartNotification"
-			   delegateSelector: @selector(programWillStart:)
-					   userInfo: userInfo];
-	
-}
-
-- (void) _didExecuteFileAtDOSPath: (const char *)dosPath onDrive: (NSUInteger)driveIndex
-{
-	BXDrive *drive			= [self driveAtLetter: [self _driveLetterForIndex: driveIndex]];
-	NSString *localPath		= [self _filesystemPathForDOSPath: dosPath atIndex: driveIndex];
-	NSString *fullDOSPath	= [NSString stringWithFormat: @"%@:\%@",
-							   [self _driveLetterForIndex: driveIndex],
-							   [NSString stringWithCString: dosPath encoding: BXDirectStringEncoding],
-							   nil];
-	
-	NSDictionary *userInfo	= [NSDictionary dictionaryWithObjectsAndKeys:
-							   localPath,	@"localPath",
-							   fullDOSPath,	@"DOSPath",
-							   drive,		@"drive",
-							   nil];
-	
-	[self setProcessPath: nil];
-	[self setProcessLocalPath: nil];
-	
-	[self _postNotificationName: @"BXEmulatorProgramDidFinishNotification"
-			   delegateSelector: @selector(programDidFinish:)
-					   userInfo: userInfo];
-}
-							   
-- (void) _didReturnToShell
-{
-	[self _postNotificationName: @"BXEmulatorProcessDidReturnToShellNotification"
-			   delegateSelector: @selector(didReturnToShell:)
-					   userInfo: nil];
-}
-
-
 
 //Threading
 //---------
@@ -701,37 +632,6 @@ void boxer_applyConfigFiles()
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
 	[emulator _applyConfiguration];
-}
-
-void boxer_autoexecDidStart()
-{
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	[emulator _willRunStartupCommands];
-}
-
-void boxer_autoexecDidFinish()
-{
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	[emulator _didRunStartupCommands];
-}
-
-void boxer_willExecuteFileAtDOSPath(const char *dosPath, Bit8u driveIndex)
-{
-	BXEmulator *emulator	= [BXEmulator currentEmulator];
-	[emulator _willExecuteFileAtDOSPath: dosPath onDrive: driveIndex];
-}
-
-void boxer_didExecuteFileAtDOSPath(const char *dosPath, Bit8u driveIndex)
-{
-	BXEmulator *emulator	= [BXEmulator currentEmulator];
-	[emulator _didExecuteFileAtDOSPath: dosPath onDrive: driveIndex];
-}
-
-
-void boxer_didReturnToShell()
-{
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	[emulator _didReturnToShell];
 }
 
 bool boxer_isPaused()

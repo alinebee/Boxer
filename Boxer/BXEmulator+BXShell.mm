@@ -60,21 +60,24 @@ nil];
 
 		if ([self suppressOutput] || [self isRunningProcess])
 		{
-			//Only run the command itself, and eat the command's output so it doesn't print anything
+			//If we're running a program or we just don't want to print anything,
+			//then run the command itself and eat the command's output.
 			theString = [theString stringByAppendingString: @" > NUL"];
+			encodedString = (char *)[theString cStringUsingEncoding: encoding];
+			shell->ParseLine(encodedString);
+		}
+		else if ([self isInBatchScript])
+		{
+			//If we're inside a batchfile, we can go ahead and run the command directly.
 			encodedString = (char *)[theString cStringUsingEncoding: encoding];
 			shell->ParseLine(encodedString);
 		}
 		else
 		{
-			//Otherwise, run the command and let any output flow
-			if (numQueuedCommands == 0)
-				shell->WriteOut_NoParsing("\n");
-			encodedString = (char *)[theString cStringUsingEncoding: encoding];
-			shell->ParseLine(encodedString);
-			
-			//Make sure to refresh the prompt, in case this command did produce any output
-			[self setPromptNeedsDisplay: YES];
+			//Otherwise we're at the commandline: we'll need to feed our command into
+			//DOSBox's command-line input loop, and then prod it to process the command
+			[[self commandQueue] addObject: theString];
+			[self sendTab];
 		}
 	}
 }
@@ -95,13 +98,12 @@ nil];
 		NSString *parentFolder	= [dosPath stringByDeletingLastPathComponent];
 		NSString *programName	= [dosPath lastPathComponent];
 		
-		[self openQueue];
 		[self changeWorkingDirectoryToPath: parentFolder];
 		[self executeCommand: programName encoding: BXDirectStringEncoding];
-		[self closeQueue];
 	}
 	else
 	{
+		dosPath = [dosPath stringByReplacingOccurrencesOfString: @"/" withString: @"\\"];
 		[self executeCommand: dosPath encoding: BXDirectStringEncoding];
 	}
 }
@@ -109,7 +111,7 @@ nil];
 
 - (void) displayString: (NSString *)theString
 {
-	const char *encodedString	= [theString cStringUsingEncoding: BXDisplayStringEncoding];
+	const char *encodedString = [theString cStringUsingEncoding: BXDisplayStringEncoding];
 	
 	if ([self isExecuting] && ![self isRunningProcess])
 	{
@@ -125,6 +127,43 @@ nil];
 	return [NSString stringWithFormat:@"\"%@\"", escapedString, nil];
 }
 
+
+
+- (BOOL) changeWorkingDirectoryToPath: (NSString *)dosPath
+{
+	BOOL changedPath = NO;
+	
+	dosPath = [dosPath stringByReplacingOccurrencesOfString: @"/" withString: @"\\"];
+	
+	//If the path starts with a drive letter, switch to that first
+	if ([dosPath length] >= 2 && [dosPath characterAtIndex: 1] == (unichar)':')
+	{
+		NSString *driveLetter = [dosPath substringToIndex: 1];
+		//Snip off the drive letter from the front of the path
+		dosPath = [dosPath substringFromIndex: 2];
+		
+		changedPath = (BOOL)DOS_SetDrive([self _indexOfDriveLetter: driveLetter]);
+		//If the drive was not found, bail out early
+		if (!changedPath) return NO;
+	}
+	
+	if ([dosPath length])
+	{
+		char const * const dir = [dosPath cStringUsingEncoding: BXDirectStringEncoding];
+		changedPath = (BOOL)DOS_ChangeDir(dir) || changedPath;
+	}
+	
+	if (changedPath) [self discardShellInput];
+	
+	return changedPath;
+}
+
+- (BOOL) changeToDriveLetter: (NSString *)driveLetter 
+{
+	BOOL changedPath = (BOOL)DOS_SetDrive([self _indexOfDriveLetter: driveLetter]);
+	if (changedPath) [self discardShellInput];
+	return changedPath;
+}
 
 
 
@@ -147,37 +186,17 @@ nil];
 //Buffering commands
 //------------------
 
-- (void) openQueue	{ queueDepth++; }
-- (void) closeQueue
+- (void) discardShellInput
 {
-	if (queueDepth > 0)	queueDepth--;
-	
-	//Final queue closed: clean up after ourselves
-	if (queueDepth == 0)
+	if ([self isAtPrompt])
 	{
-		if ([self promptNeedsDisplay]) [self _redrawPrompt];
-		[self setPromptNeedsDisplay: NO];
+		[[self commandQueue] addObject: @""];
+		//Force the shell to register an update (by sending a key event that won't produce any output)
+		//FIXME: This is so ghetto
+		[self sendTab];
 	}
 }
-- (BOOL) isInQueue	{ return queueDepth > 0; }
 
-- (void) setPromptNeedsDisplay: (BOOL)redraw
-{
-	//DOSBox will redraw the command prompt after a batchfile exits anyway,
-	//so don't bother doing anything if we're in a batch script
-	if (![self isInBatchScript])
-	{
-		if (redraw)
-		{
-			if ([self isInQueue]) numQueuedCommands++;
-			else [self _redrawPrompt];
-		}
-		else numQueuedCommands = 0;
-			
-	}
-}
-- (BOOL) promptNeedsDisplay	{ return numQueuedCommands > 0; }
- 
 
 //Actual shell commands you might want to call
 //--------------------------------------------
@@ -303,12 +322,100 @@ nil];
 	}
 }
 
+- (BOOL) _shouldAbortShellInput
+{
+	if (abortShellInput)
+	{
+		abortShellInput = NO;	//So we don't continually abort
+		return YES;
+	}
+	else return NO;
+}
 
-//This redraws the shell prompt after however many lines of output we have produced.
-//This does so by faking an enter keypress, which is the only way I have discovered
-//so far of interfering with DOS_Shell::InputCommand().
-- (void) _redrawPrompt { if (![self isRunningProcess] && ![self suppressOutput]) [self sendEnter]; }
+- (NSString *)_handleCommandInput: (NSString *)commandLine
+{
+	NSString *nextCommand = nil;
+	NSMutableArray *queue = [self commandQueue];
+	
+	if ([queue count])
+	{
+		nextCommand = [[queue objectAtIndex: 0] copy];
+		[queue removeObjectAtIndex: 0];
+		[self displayString: nextCommand];
+	}
+	return [nextCommand autorelease];
+}
 
+- (void) _willRunStartupCommands
+{
+	//Before startup, ensure that Boxer's drive cache is up to date.
+	[self _syncDriveCache];
+	
+	[self _postNotificationName: @"BXEmulatorWillRunStartupCommandsNotification"
+			   delegateSelector: @selector(willRunStartupCommands:)
+					   userInfo: nil];
+}
+
+- (void) _didRunStartupCommands
+{
+	[self _postNotificationName: @"BXEmulatorDidRunStartupCommandsNotification"
+			   delegateSelector: @selector(didRunStartupCommands:)
+					   userInfo: nil];
+}
+
+- (void) _willExecuteFileAtDOSPath: (const char *)dosPath onDrive: (NSUInteger)driveIndex
+{
+	BXDrive *drive			= [self driveAtLetter: [self _driveLetterForIndex: driveIndex]];
+	NSString *localPath		= [self _filesystemPathForDOSPath: dosPath atIndex: driveIndex];
+	NSString *fullDOSPath	= [NSString stringWithFormat: @"%@:\%@",
+							   [self _driveLetterForIndex: driveIndex],
+							   [NSString stringWithCString: dosPath encoding: BXDirectStringEncoding],
+							   nil];
+	
+	[self setProcessPath: localPath];
+	[self setProcessLocalPath: fullDOSPath];
+	
+	NSDictionary *userInfo	= [NSDictionary dictionaryWithObjectsAndKeys:
+							   localPath,	@"localPath",
+							   fullDOSPath,	@"DOSPath",
+							   drive,		@"drive",
+							   nil];
+	
+	[self _postNotificationName: @"BXEmulatorProgramWillStartNotification"
+			   delegateSelector: @selector(programWillStart:)
+					   userInfo: userInfo];
+	
+}
+
+- (void) _didExecuteFileAtDOSPath: (const char *)dosPath onDrive: (NSUInteger)driveIndex
+{
+	BXDrive *drive			= [self driveAtLetter: [self _driveLetterForIndex: driveIndex]];
+	NSString *localPath		= [self _filesystemPathForDOSPath: dosPath atIndex: driveIndex];
+	NSString *fullDOSPath	= [NSString stringWithFormat: @"%@:\%@",
+							   [self _driveLetterForIndex: driveIndex],
+							   [NSString stringWithCString: dosPath encoding: BXDirectStringEncoding],
+							   nil];
+	
+	NSDictionary *userInfo	= [NSDictionary dictionaryWithObjectsAndKeys:
+							   localPath,	@"localPath",
+							   fullDOSPath,	@"DOSPath",
+							   drive,		@"drive",
+							   nil];
+	
+	[self setProcessPath: nil];
+	[self setProcessLocalPath: nil];
+	
+	[self _postNotificationName: @"BXEmulatorProgramDidFinishNotification"
+			   delegateSelector: @selector(programDidFinish:)
+					   userInfo: userInfo];
+}
+
+- (void) _didReturnToShell
+{
+	[self _postNotificationName: @"BXEmulatorProcessDidReturnToShellNotification"
+			   delegateSelector: @selector(didReturnToShell:)
+					   userInfo: nil];
+}
 
 @end
 
@@ -341,4 +448,53 @@ const char * boxer_localizedStringForKey(char const *keyStr)
 									table: @"DOSBox"];
 									
 	return [localizedString cStringUsingEncoding: BXDisplayStringEncoding];
+}
+
+bool boxer_shouldAbortShellInput()
+{
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+	return [emulator _shouldAbortShellInput];
+}
+
+bool boxer_handleCommandInput(char *cmd)
+{
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+	NSString *newCommand = [emulator _handleCommandInput: [NSString stringWithCString: cmd encoding: BXDirectStringEncoding]];
+	if (newCommand)
+	{
+		const char *newcmd = [newCommand cStringUsingEncoding: BXDirectStringEncoding];
+		strcpy(cmd, newcmd);
+		return YES;
+	}
+	return NO;
+}
+
+void boxer_didReturnToShell()
+{
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+	[emulator _didReturnToShell];
+}
+
+void boxer_autoexecDidStart()
+{
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+	[emulator _willRunStartupCommands];
+}
+
+void boxer_autoexecDidFinish()
+{
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+	[emulator _didRunStartupCommands];
+}
+
+void boxer_willExecuteFileAtDOSPath(const char *dosPath, Bit8u driveIndex)
+{
+	BXEmulator *emulator	= [BXEmulator currentEmulator];
+	[emulator _willExecuteFileAtDOSPath: dosPath onDrive: driveIndex];
+}
+
+void boxer_didExecuteFileAtDOSPath(const char *dosPath, Bit8u driveIndex)
+{
+	BXEmulator *emulator	= [BXEmulator currentEmulator];
+	[emulator _didExecuteFileAtDOSPath: dosPath onDrive: driveIndex];
 }

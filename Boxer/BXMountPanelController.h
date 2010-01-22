@@ -19,9 +19,14 @@
 {
 	IBOutlet NSPopUpButton *driveType;
 	IBOutlet NSPopUpButton *driveLetter;
+	IBOutlet NSButton *readOnlyToggle;
+	
+	NSCellStateValue previousReadOnlyState;
+	NSMenuItem *previousDriveTypeSelection;
 }
 @property (retain) NSPopUpButton *driveType;	//The drive type selector in the accessory view.
 @property (retain) NSPopUpButton *driveLetter;	//The drive letter selector in the accessory view.
+@property (retain) NSButton *readOnlyToggle;	//The read-only checkbox toggle in the accessory view.
 
 //Returns a singleton instance, which loads the view from the NIB file the first time.
 + (BXMountPanelController *) controller;
@@ -40,6 +45,6 @@
 - (void) syncMountOptionsForPanel: (NSOpenPanel *)openPanel;
 
 //Mounts the currently selected file or folder in the specified open panel.
-- (void) mountChosenFolder: (NSOpenPanel *)openPanel returnCode: (int)returnCode contextInfo: (void *)contextInfo;
+- (void) mountChosenItem: (NSOpenPanel *)openPanel returnCode: (int)returnCode contextInfo: (void *)contextInfo;
 
 @end

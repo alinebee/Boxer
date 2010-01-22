@@ -63,43 +63,44 @@
 
 - (void) syncMenuItems
 {
-	[self willChangeValueForKey: @"hasItems"];
+	NSMenu *menu = [[self programSelector] menu];
+	NSUInteger count = [menu numberOfItems];
+	NSRange programItemRange = NSMakeRange(1, count-3);
+
+	//Remove all the original program options...
+	for (NSMenuItem *oldItem in [[menu itemArray] subarrayWithRange: programItemRange])
+		[menu removeItem: oldItem];
 	
-	NSMenu *menu = [programSelector menu];
-	for (NSMenuItem *oldItem in [menu itemArray]) [menu removeItem: oldItem];
-	for (NSMenuItem *newItem in [self programMenuItems]) [menu addItem: newItem];
-		
-	[self didChangeValueForKey: @"hasItems"];
+	
+	//...and then add all the new ones in their place
+	NSUInteger insertionPoint = 1;
+	for (NSMenuItem *newItem in [self programMenuItems])
+	{
+		[menu insertItem: newItem atIndex: insertionPoint];
+		insertionPoint++;
+	}
 	
 	[self syncSelection];
 }
 
 - (void) syncSelection
 {
-	NSMenu *menu = [programSelector menu];
+	NSMenu *menu = [[self programSelector] menu];
 	NSString *targetPath = [[[self session] gamePackage] targetPath];
 	NSUInteger index = (targetPath == nil) ? 0 : [menu indexOfItemWithRepresentedObject: targetPath];
 	[programSelector selectItemAtIndex: index];
 }
 
-- (BOOL) hasItems
-{
-	return [[[self session] executables] count] > 0;
-}
-
 - (NSArray *) programMenuItems
 {
-	NSArray *executables = [[self session] executables];
+	NSArray *executables	= [[self session] executables];
 	NSMutableArray *items	= [NSMutableArray arrayWithCapacity: [executables count]];
-	
+		
 	if ([executables count])
 	{
-		NSMenuItem *noneItem	= [[NSMenuItem new] autorelease];
-		[noneItem setTitle: NSLocalizedString(@"None", @"None option for default program selector.")];
-		[items addObject: noneItem];
-		
 		BXDOSFilenameTransformer *DOSName = [[BXDOSFilenameTransformer new] autorelease];
 		
+		NSAutoreleasePool *pool = [NSAutoreleasePool new];
 		for (NSDictionary *data in executables)
 		{
 			NSMenuItem *item = [[NSMenuItem new] autorelease];
@@ -113,9 +114,10 @@
 			
 			[items addObject: item];
 		}
+		[pool drain];
 	}
 	
-	return (NSArray *)items;
+	return items;
 }
 
 - (IBAction) changeDefaultProgram: (id)sender
@@ -128,6 +130,14 @@
 {
 	NSString *filePath = [[[self programSelector] selectedItem] representedObject];
 	[[self session] openFileAtPath: filePath];
+}
+
+- (IBAction) showProgramChooserPanel: (id)sender
+{
+	NSLog(@"showProgramChooserPanel:");
+	//Resync the selected item back to what it should be, since choosing the menu item that triggered this will have changed it
+	//TODO: see about fixing that upstream, since resyncing it results in an annoying flicker
+	[self syncSelection];
 }
 
 - (BOOL) validateUserInterfaceItem: (id)theItem

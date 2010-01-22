@@ -230,13 +230,11 @@ enum {
 	NSString *standardizedPath = [path stringByStandardizingPath];
 	BOOL succeeded = NO;
 	
-	[self openQueue];
 	for (BXDrive *drive in [driveCache objectEnumerator])
 	{
 		if ([[drive path] isEqualToString: standardizedPath])
 			succeeded = [self unmountDrive: drive] || succeeded;
 	}
-	[self closeQueue];
 	return succeeded;
 }
 
@@ -403,47 +401,6 @@ enum {
 	if (localPath) return localPath;
 	//If no accurate local path could be determined, then return the source path of the current drive instead 
 	else return [[self currentDrive] path];
-}
-
-- (BOOL) changeWorkingDirectoryToPath: (NSString *)dosPath
-{
-	BOOL changedPath = NO;
-	
-	[self openQueue];
-	
-	//If the path starts with a drive letter, switch to that first
-	if ([dosPath length] >= 2 && [dosPath characterAtIndex: 1] == (unichar)':')
-	{
-		NSString *driveLetter = [dosPath substringToIndex: 1];
-		//Snip off the drive letter from the front of the path
-		dosPath = [dosPath substringFromIndex: 2];
-		
-		changedPath = [self changeToDriveLetter: driveLetter];
-		//If the drive was not found, bail out early
-		if (!changedPath)
-		{
-			[self closeQueue];
-			return NO;
-		}
-	}
-
-	if ([dosPath length])
-	{
-		char const * const dir = [dosPath cStringUsingEncoding: BXDirectStringEncoding];
-		changedPath = (BOOL)DOS_ChangeDir(dir) || changedPath;
-	}
-	
-	if (changedPath) [self setPromptNeedsDisplay: YES];
-	
-	[self closeQueue];
-	return changedPath;
-}
-
-- (BOOL) changeToDriveLetter: (NSString *)driveLetter 
-{
-	BOOL changedPath = (BOOL)DOS_SetDrive([self _indexOfDriveLetter: driveLetter]);
-	if (changedPath) [self setPromptNeedsDisplay: YES];
-	return changedPath;
 }
 
 @end

@@ -140,7 +140,9 @@
 	SDL_PushEvent((SDL_Event *)&keyUp);
 }
 
-
+- (void) sendTab	{ return [self _simulateKeypress: SDLK_TAB withKeyCode: kVK_Tab]; }
+- (void) sendDelete	{ return [self _simulateKeypress: SDLK_DELETE withKeyCode: kVK_Delete]; }
+- (void) sendSpace	{ return [self _simulateKeypress: SDLK_SPACE withKeyCode: kVK_Space]; }
 - (void) sendEnter	{ return [self _simulateKeypress: SDLK_RETURN withKeyCode: kVK_Return]; }
 - (void) sendF1		{ return [self _simulateKeypress: SDLK_F1	withKeyCode: kVK_F1]; }
 - (void) sendF2		{ return [self _simulateKeypress: SDLK_F2	withKeyCode: kVK_F2]; }

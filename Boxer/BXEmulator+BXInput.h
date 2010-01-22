@@ -30,6 +30,9 @@
 //Triggering events
 //-----------------
 
+- (void) sendTab;
+- (void) sendDelete;
+- (void) sendSpace;
 - (void) sendEnter;
 - (void) sendF1;
 - (void) sendF2;

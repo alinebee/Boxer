@@ -71,9 +71,9 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 	BOOL paused;
 	
 	//Used by BXShell
-	NSUInteger queueDepth;
-	NSUInteger numQueuedCommands;
 	BOOL suppressOutput;
+	BOOL abortShellInput;
+	NSMutableArray *commandQueue;
 	
 	//Used by BXRecording
 	NSString *currentRecordingPath;
@@ -123,6 +123,10 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 //Whether the output of DOS programs should be discarded without printing to the DOS shell.
 //Used by BXShell at opportune moments.
 @property (assign)		BOOL suppressOutput;
+
+//An array of queued command strings to execute on the DOS command line.
+@property (retain, readonly) NSMutableArray *commandQueue;
+
 
 @property (assign, getter=isPaused) BOOL paused;
 
@@ -245,15 +249,6 @@ class DOS_Shell;
 //Called by DOSBox whenever it changes states we care about. This resyncs BXEmulator's
 //cached notions of the DOSBox state, and posts notifications for relevant properties.
 - (void) _syncWithEmulationState;
-
-//Called by DOSBox whenever control returns to the DOS prompt. Sends a delegate notification.
-- (void) _didReturnToShell;
-
-//Called by DOSBox just before AUTOEXEC.BAT is started. Sends a delegate notification.
-- (void) _willRunStartupCommands;
-
-//Called by DOSBox after AUTOEXEC.BAT has completed. Sends a delegate notification.
-- (void) _didRunStartupCommands;
 
 
 //Threading

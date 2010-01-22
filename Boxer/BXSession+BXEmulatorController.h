@@ -107,13 +107,8 @@ enum
 //Handling paste
 //--------------
 
-//These functions are currently incomplete and disabled.
-/*
 - (IBAction) paste: (id)sender;
 - (BOOL) canPaste;
-- (BOOL) handlePastedString: (NSString *)pastedString;
-*/
-
 
 //Mouse-lock state wrapper
 //------------------------

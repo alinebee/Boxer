@@ -75,7 +75,7 @@ nil];
 		else
 		{
 			//Otherwise we're at the commandline: feed our command into DOSBox's command-line input loop
-			[[self commandQueue] addObject: theString];
+			[[self commandQueue] addObject: [theString stringByAppendingString:@"\n"]];
 		}
 	}
 }
@@ -186,7 +186,7 @@ nil];
 
 - (void) discardShellInput
 {
-	if ([self isAtPrompt]) [[self commandQueue] addObject: @""];
+	if ([self isAtPrompt]) [[self commandQueue] addObject: @"\n"];
 }
 
 
@@ -315,6 +315,8 @@ nil];
 }
 
 - (NSString *)_handleCommandInput: (NSString *)commandLine
+				 atCursorPosition: (NSUInteger *)cursorPosition
+			   executeImmediately: (BOOL *)execute
 {
 	NSString *nextCommand = nil;
 	NSMutableArray *queue = [self commandQueue];
@@ -323,7 +325,26 @@ nil];
 	{
 		nextCommand = [[queue objectAtIndex: 0] copy];
 		[queue removeObjectAtIndex: 0];
-		[self displayString: nextCommand];
+		
+		BOOL completeCommand = [nextCommand hasSuffix: @"\n"];
+		//If the command is terminated by a newline, treat it as an entire command and execute it immediately
+		if (completeCommand)
+		{
+			[self displayString: nextCommand];
+			nextCommand = [nextCommand substringToIndex: [nextCommand length] - 1];
+			*execute = YES;
+		}
+		else
+		{
+			//Otherwise, treat it as a command snippet and insert it into to the current commandline at the cursor position
+			NSString *prefix = [commandLine substringToIndex: *cursorPosition];
+			NSString *suffix = [commandLine substringFromIndex: *cursorPosition];
+			[self displayString: nextCommand];
+			[self displayString: suffix];
+			*cursorPosition += [nextCommand length];
+			
+			nextCommand = [[NSArray arrayWithObjects: prefix, nextCommand, suffix, nil] componentsJoinedByString: @""];
+		}
 	}
 	return [nextCommand autorelease];
 }
@@ -354,8 +375,8 @@ nil];
 							   [NSString stringWithCString: dosPath encoding: BXDirectStringEncoding],
 							   nil];
 	
-	[self setProcessPath: localPath];
-	[self setProcessLocalPath: fullDOSPath];
+	[self setProcessPath: fullDOSPath];
+	[self setProcessLocalPath: localPath];
 	
 	NSDictionary *userInfo	= [NSDictionary dictionaryWithObjectsAndKeys:
 							   localPath,	@"localPath",
@@ -432,17 +453,19 @@ const char * boxer_localizedStringForKey(char const *keyStr)
 	return [localizedString cStringUsingEncoding: BXDisplayStringEncoding];
 }
 
-bool boxer_handleCommandInput(char *cmd)
+bool boxer_handleCommandInput(char *cmd, Bitu *cursorPosition, bool *executeImmediately)
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	NSString *newCommand = [emulator _handleCommandInput: [NSString stringWithCString: cmd encoding: BXDirectStringEncoding]];
+	NSString *newCommand = [emulator _handleCommandInput: [NSString stringWithCString: cmd encoding: BXDirectStringEncoding]
+										atCursorPosition: cursorPosition
+									  executeImmediately: (BOOL *)executeImmediately];
 	if (newCommand)
 	{
 		const char *newcmd = [newCommand cStringUsingEncoding: BXDirectStringEncoding];
 		strcpy(cmd, newcmd);
 		return YES;
 	}
-	return NO;
+	else return NO;
 }
 
 void boxer_didReturnToShell()

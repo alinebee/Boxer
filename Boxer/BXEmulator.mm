@@ -129,7 +129,7 @@ BXEmulator *currentEmulator = nil;
 + (NSSet *) keyPathsForValuesAffectingMouseLocked		{ return [NSSet setWithObject: @"fullScreen"]; }
 + (NSSet *) keyPathsForValuesAffectingDynamic			{ return [NSSet setWithObject: @"coreMode"]; }
 
-+ (NSSet *) keyPathsForValuesAffectingIsRunningProcess	{ return [NSSet setWithObject: @"processName"]; }
++ (NSSet *) keyPathsForValuesAffectingIsRunningProcess	{ return [NSSet setWithObjects: @"processName", @"processPath", nil]; }
 + (NSSet *) keyPathsForValuesAffectingProcessIsInternal	{ return [NSSet setWithObject: @"processName"]; }
 
 
@@ -197,7 +197,8 @@ BXEmulator *currentEmulator = nil;
 
 - (BOOL) isRunningProcess
 {
-	return [self isExecuting] && [self processName] != nil;
+	//Extra-safe - processPath is set earlier than processName
+	return [self isExecuting] && ([self processName] || [self processPath]);
 }
 
 - (BOOL) processIsInternal

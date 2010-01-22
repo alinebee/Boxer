@@ -65,22 +65,30 @@ void DOS_Shell::InputCommand(char * line) {
 		}
 
 		//--Added 2010-01-22 by Alun Bestor to let Boxer inject its own input
-		if (boxer_handleCommandInput(line))
+		bool executeImmediately = false;
+		if (boxer_handleCommandInput(line, &str_index, &executeImmediately))
 		{
-			outc('\n');
-			str_len = strlen(line);
-			break;
+			if (executeImmediately) size = 0;
+			else
+			{
+				//Correct the visible cursor position and the cached lengths
+				str_len = strlen(line);
+				size = CMD_MAXLINE - str_len - 2;
+				int cursorOffset = str_len - str_index;
+				while (cursorOffset > 0) {
+					outc(8); cursorOffset--;
+				} 
+			}
+			continue;
 		}
 		//--End of modifications
-		
 		
 		
 		if (!n) {
 			size=0;			//Kill the while loop
 			continue;
 		}
-
-	
+		
 		switch (c) {
 		case 0x00:				/* Extended Keys */
 			{
@@ -358,7 +366,7 @@ void DOS_Shell::InputCommand(char * line) {
 			break;
 		}
 	}
-	
+
 	if (!str_len) return;
 	str_len++;
 

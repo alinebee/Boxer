@@ -155,8 +155,37 @@
 - (void) sendF9		{ return [self _simulateKeypress: SDLK_F9	withKeyCode: kVK_F9]; }
 - (void) sendF10	{ return [self _simulateKeypress: SDLK_F10	withKeyCode: kVK_F10]; }
 
-@end
 
+- (BOOL) handlePastedString: (NSString *)pastedString
+{
+	if ([self isAtPrompt])
+	{
+		//Split string into separate lines, which will be pasted one by one as commands
+		NSArray *lines = [pastedString componentsSeparatedByCharactersInSet: [NSCharacterSet newlineCharacterSet]];
+		NSUInteger i, numLines = [lines count];
+		for (i = 0; i < numLines; i++)
+		{
+			//Remove whitespace from each line
+			NSString *cleanedString = [[lines objectAtIndex: i]
+									   stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
+			
+			if ([cleanedString length])
+			{
+				//Execute each line immediately, except for the last one, which we leave in case the user wants to modify it
+				if (i < numLines - 1) cleanedString = [cleanedString stringByAppendingString: @"\n"]; 
+				[[self commandQueue] addObject: cleanedString];
+			}
+		}
+		return YES;
+	}
+	return NO;
+}
+
+- (BOOL) canAcceptPastedString: (NSString *)pastedString
+{
+	return [self isAtPrompt];
+}
+@end
 
 
 //Bridge functions

@@ -242,82 +242,42 @@
 //Handling paste
 //--------------
 
-/*
 - (IBAction) paste: (id)sender
 {
 	NSPasteboard *pboard = [NSPasteboard generalPasteboard];
 
-	if ([[pboard types] containsObject: NSStringPboardType])
+	NSArray *acceptedPasteTypes = [NSArray arrayWithObjects: NSFilenamesPboardType, NSStringPboardType, nil];
+	NSString *bestType = [pboard availableTypeFromArray: acceptedPasteTypes];
+	NSString *pastedString;
+	
+	if (!bestType) return;
+	if ([bestType isEqualToString: NSFilenamesPboardType])
 	{
-		NSString *pastedString = [pboard stringForType: NSStringPboardType];
-		[self handlePastedString: pastedString];
+		NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
+		pastedString = [filePaths lastObject];
 	}
+	else pastedString = [pboard stringForType: NSStringPboardType];
+	[[self emulator] handlePastedString: pastedString];
 }
 
 - (BOOL) canPaste
 {
-	return NO;	//Disabled for now
 	NSPasteboard *pboard = [NSPasteboard generalPasteboard];
-	return [[pboard types] containsObject: NSStringPboardType];
+
+	NSArray *acceptedPasteTypes = [NSArray arrayWithObjects: NSFilenamesPboardType, NSStringPboardType, nil];
+	NSString *bestType = [pboard availableTypeFromArray: acceptedPasteTypes];
+	NSString *pastedString;
+	
+	if (!bestType) return NO;
+	if ([bestType isEqualToString: NSFilenamesPboardType])
+	{
+		NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
+		pastedString = [filePaths lastObject];
+	}
+	else pastedString = [pboard stringForType: NSStringPboardType];
+	return [[self emulator] canAcceptPastedString: pastedString];
 }
 
-//Yes that's right, we handle pasting by generating key events for each pasted character. Wheeee!
-//TODO: we need to look up hardware goddamn keycodes
-//Fuck everything
-- (BOOL) handlePastedString: (NSString *)pastedString
-{
-	if ([[self emulator] isExecuting])
-	{
-		NSString *cleanedString = [pastedString stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
-		NSUInteger numChars = [cleanedString length];
-		
-		NSWindow *window = [[self mainWindowController] window];
-		NSUInteger windowNumber = [window windowNumber];
-		
-		NSEvent *downEvent, *upEvent;
-		NSString *subString;
-		NSRange range;
-		NSUInteger i;
-		
-		for (i = 0; i < numChars; i++)
-		{
-			range = NSMakeRange(i, 1);
-			subString = [cleanedString substringWithRange: range];
-			
-			downEvent = [NSEvent
-				keyEventWithType:	NSKeyDown
-				location:			NSZeroPoint
-				modifierFlags:		0
-				timestamp:			0
-				windowNumber:		windowNumber
-				context:			nil
-				characters:			subString
-				charactersIgnoringModifiers: subString
-				isARepeat:			NO
-				keyCode:			0
-			];
-			
-			upEvent = [NSEvent
-				keyEventWithType:	NSKeyUp
-				location:			NSZeroPoint
-				modifierFlags:		NSShiftKeyMask
-				timestamp:			0
-				windowNumber:		windowNumber
-				context:			nil
-				characters:			subString
-				charactersIgnoringModifiers: subString
-				isARepeat:			NO
-				keyCode:			0
-			];
-		
-			[NSApp postEvent: downEvent atStart: NO];
-			[NSApp postEvent: upEvent atStart: NO];
-		}
-	}
-	return YES;
-}
-*/
- 
 
 //Wrapping mouse-lock state
 //-------------------------

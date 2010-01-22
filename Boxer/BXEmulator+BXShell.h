@@ -113,8 +113,12 @@
 //Used internally for rewriting and chaining commands.
 - (void) _substituteCommand: (NSString *)theString encoding: (NSStringEncoding)encoding;
 
-
-- (NSString *)_handleCommandInput: (NSString *)commandLine;
+//Called by DOSBox when processing input at the commandline. Returns a modified command string,
+//along with a flag to execute the command or leave it on the commandline for further modification.
+//Returns nil if Boxer does not wish to meddle with the command string.
+- (NSString *)_handleCommandInput: (NSString *)commandLine
+				 atCursorPosition: (NSUInteger *)cursorPosition
+			   executeImmediately: (BOOL *)execute;
 
 //Called by DOSBox whenever control returns to the DOS prompt. Sends a delegate notification.
 - (void) _didReturnToShell;

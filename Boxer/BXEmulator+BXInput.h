@@ -45,4 +45,12 @@
 - (void) sendF9;
 - (void) sendF10;
 
+//Accepts a string of characters, and deals with how best to paste it into DOS.
+//Returns YES if the string was handled, NO otherwise.
+- (BOOL) handlePastedString: (NSString *)pastedString;
+
+//Returns YES if Boxer can paste the specified string, no otherwise.
+//In practice, this just returns whether Boxer is at the commandline or not.
+- (BOOL) canAcceptPastedString: (NSString *)pastedString;
+
 @end

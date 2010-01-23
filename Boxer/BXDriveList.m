@@ -29,6 +29,27 @@
 	if ([self mouse: thePoint inRect: [self frame]]) return self;
 	else return nil;
 }
+
+- (void) drawRect: (NSRect)dirtyRect
+{	
+	if ([[self delegate] isSelected])
+	{
+		NSColor *selection	= [NSColor alternateSelectedControlColor];
+		NSColor *shadow		= [selection shadowWithLevel: 0.4];
+		NSColor *bevel		= [selection shadowWithLevel: 0.4];
+		NSGradient *background = [[[NSGradient alloc] initWithStartingColor: selection endingColor: shadow] autorelease];
+		[background drawInRect: [self bounds] angle: 270];
+		
+		NSRect bevelRect = [self bounds];
+		bevelRect.origin.y = bevelRect.size.height - 1.0;
+		bevelRect.size.height = 1.0;
+		
+		NSRect borderPath = NSInsetRect([self bounds], 0.5, 0.5);
+		[NSBezierPath setDefaultLineWidth: 1.0];
+		[bevel set];
+		[NSBezierPath strokeRect: borderPath];
+	}
+}
 @end
 
 
@@ -60,7 +81,9 @@
 	{
 		//Clear our selection
 		[self setSelectionIndexes: [NSIndexSet indexSet]];
-	}	
+	}
+	//Redraw selection in our subviews
+	[self setNeedsDisplay: YES];
 }
 
 //This amounts to a complete reimplementation of NSCollectionView's default mouseDown implementation, just so that we can stick in our own drag functionality. Fuck. You.

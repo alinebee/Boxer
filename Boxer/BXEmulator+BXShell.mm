@@ -186,7 +186,12 @@ nil];
 
 - (void) discardShellInput
 {
-	if ([self isAtPrompt]) [[self commandQueue] addObject: @"\n"];
+	if ([self isAtPrompt])
+	{
+		NSString *emptyInput = @"\n";
+		if (![[[self commandQueue] lastObject] isEqualToString: emptyInput]) [[self commandQueue] addObject: emptyInput];
+		
+	}
 }
 
 

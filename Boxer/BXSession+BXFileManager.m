@@ -80,11 +80,13 @@
 	//If the Option key was held down, bypass this check altogether and allow any drive to be unmounted
 	NSUInteger optionKeyDown = [[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask;
 	if (optionKeyDown) return YES;
-	
+
 	NSMutableArray *drivesInUse = [[NSMutableArray alloc] initWithCapacity: [drives count]];
 	for (BXDrive *drive in drives)
 	{
 		if ([drive isLocked]) return NO; //Prevent locked drives from being removed altogether
+		
+		//If the drive is in use, then warn about it
 		if ([[self emulator] driveInUseAtLetter: [drive letter]]) [drivesInUse addObject: drive];
 	}
 	

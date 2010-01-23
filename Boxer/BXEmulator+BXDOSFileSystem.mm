@@ -282,6 +282,11 @@ enum {
 
 - (BOOL) driveInUseAtLetter: (NSString *)driveLetter
 {
+	if ([self processPath])
+	{
+		NSString *processDriveLetter = [[self processPath] substringToIndex: 1];
+		if ([driveLetter isEqualToString: processDriveLetter]) return YES;
+	}
 	return [self _DOSBoxDriveInUseAtIndex: [self _indexOfDriveLetter: driveLetter]];
 }
 

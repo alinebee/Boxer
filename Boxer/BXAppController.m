@@ -106,9 +106,11 @@
 	
 	NSValueTransformer *isEmpty		= [[BXArraySizeTransformer alloc] initWithMinSize: 0 maxSize: 0];
 	NSValueTransformer *isNotEmpty	= [[BXArraySizeTransformer alloc] initWithMinSize: 1 maxSize: NSIntegerMax];
+	NSValueTransformer *capitalizer	= [BXCapitalizer new];
 	
-	[NSValueTransformer setValueTransformer: [isEmpty autorelease]		forName:@"BXArrayIsEmpty"];
-	[NSValueTransformer setValueTransformer: [isNotEmpty autorelease]	forName:@"BXArrayIsNotEmpty"];	
+	[NSValueTransformer setValueTransformer: [isEmpty autorelease]		forName: @"BXArrayIsEmpty"];
+	[NSValueTransformer setValueTransformer: [isNotEmpty autorelease]	forName: @"BXArrayIsNotEmpty"];	
+	[NSValueTransformer setValueTransformer: [capitalizer autorelease]	forName: @"BXCapitalizedString"];	
 	
 	//Initialise our Growl notifier instance
 	[GrowlApplicationBridge setGrowlDelegate: [BXGrowlController controller]];
@@ -116,7 +118,6 @@
 	//Register our BGHUD UI themes
 	[[BGThemeManager keyedManager] setTheme: [[BXShadowedTextTheme new] autorelease]	forKey: @"BXShadowedTextTheme"];
 	[[BGThemeManager keyedManager] setTheme: [[BXHelpTextTheme new] autorelease]		forKey: @"BXHelpTextTheme"];
-	//[[BGThemeManager keyedManager] setTheme: [[BXIconButtonTheme new] autorelease]		forKey: @"BXIconButtonTheme"];
 }
 
 + (void)setupDefaults

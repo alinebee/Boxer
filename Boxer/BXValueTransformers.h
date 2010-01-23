@@ -46,6 +46,10 @@
 //String transformers
 //-------------------
 
+//Capitalises the first letter of a string
+@interface BXCapitalizer: NSValueTransformer
+@end
+
 //Converts a POSIX file path into a lowercase filename
 @interface BXDOSFilenameTransformer: NSValueTransformer
 @end

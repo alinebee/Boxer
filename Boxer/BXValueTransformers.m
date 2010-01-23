@@ -133,6 +133,16 @@
 //String transformers
 //-------------------
 
+@implementation BXCapitalizer
++ (Class) transformedValueClass			{ return [NSString class]; }
++ (BOOL) allowsReverseTransformation	{ return NO; }
+
+- (NSString *) transformedValue: (NSString *)text
+{
+	return [[[text substringToIndex: 1] capitalizedString] stringByAppendingString: [text substringFromIndex: 1]];
+}
+@end
+
 @implementation BXDOSFilenameTransformer
 + (Class) transformedValueClass			{ return [NSString class]; }
 + (BOOL) allowsReverseTransformation	{ return NO; }

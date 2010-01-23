@@ -203,6 +203,10 @@
 - (BOOL) isFloppy	{ return ([self type] == BXDriveFloppyDisk); }
 - (BOOL) isHardDisk	{ return ([self type] == BXDriveHardDisk); }
 
+- (NSString *) typeDescription
+{
+	return [[self class] descriptionForType: [self type]];
+}
 - (NSString *) description
 {
 	return [NSString stringWithFormat: @"%@: %@ (%@)", [self letter], [self path], [[self class] descriptionForType: [self type]], nil]; 

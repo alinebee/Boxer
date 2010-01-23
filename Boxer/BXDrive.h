@@ -123,6 +123,9 @@ static const NSInteger BXDefaultFreeSpace = -1;
 //Describing the drive
 //--------------------
 
+//A friendly OS X title for the drive's type.
+- (NSString *) typeDescription;
+
 //A friendly OS X name for the drive's source path. This corresponds to NSManager displayNameAtPath:.
 - (NSString *)displayName;
 

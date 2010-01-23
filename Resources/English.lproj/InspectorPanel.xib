@@ -22,6 +22,7 @@
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<integer value="411"/>
+			<integer value="979"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1199,12 +1200,11 @@
 						<int key="NSvFlags">270</int>
 						<string key="NSFrame">{{49, 9}, {196, 14}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
-						<reference key="NSWindow"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="61342089">
 							<int key="NSCellFlags">67239488</int>
 							<int key="NSCellFlags2">272762368</int>
-							<string key="NSContents">[Drive path]</string>
+							<string key="NSContents">[Drive type]</string>
 							<reference key="NSSupport" ref="26"/>
 							<reference key="NSControlView" ref="1057456829"/>
 							<reference key="NSBackgroundColor" ref="1046058740"/>
@@ -1217,7 +1217,6 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{49, 24}, {18, 17}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
-						<reference key="NSWindow"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="621126295">
 							<int key="NSCellFlags">67239488</int>
@@ -1235,12 +1234,11 @@
 						<int key="NSvFlags">270</int>
 						<string key="NSFrame">{{67, 24}, {178, 17}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
-						<reference key="NSWindow"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="720598392">
 							<int key="NSCellFlags">67239488</int>
-							<int key="NSCellFlags2">272631808</int>
-							<string key="NSContents">[Drive label]</string>
+							<int key="NSCellFlags2">272632320</int>
+							<string key="NSContents">[Drive source]</string>
 							<reference key="NSSupport" ref="190746779"/>
 							<reference key="NSControlView" ref="163857552"/>
 							<reference key="NSBackgroundColor" ref="1046058740"/>
@@ -1265,7 +1263,6 @@
 						</object>
 						<string key="NSFrame">{{12, 9}, {32, 31}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
-						<reference key="NSWindow"/>
 						<int key="NSTag">1</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="701925773">
@@ -1281,7 +1278,6 @@
 				</object>
 				<string key="NSFrameSize">{262, 48}</string>
 				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<string key="NSClassName">BXDriveItemView</string>
 			</object>
 		</object>
@@ -1830,26 +1826,6 @@
 					<int key="connectionID">1007</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">toolTip: representedObject.path</string>
-						<reference key="source" ref="1057456829"/>
-						<reference key="destination" ref="527118087"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="1057456829"/>
-							<reference key="NSDestination" ref="527118087"/>
-							<string key="NSLabel">toolTip: representedObject.path</string>
-							<string key="NSBinding">toolTip</string>
-							<string key="NSKeyPath">representedObject.path</string>
-							<object class="NSDictionary" key="NSOptions">
-								<string key="NS.key.0">NSValueTransformerName</string>
-								<string key="NS.object.0">BXDriveDisplayPath</string>
-							</object>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1008</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">view</string>
 						<reference key="source" ref="527118087"/>
@@ -1875,27 +1851,11 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: representedObject.label</string>
+						<string key="label">value: representedObject.displayName</string>
 						<reference key="source" ref="163857552"/>
 						<reference key="destination" ref="527118087"/>
 						<object class="NSNibBindingConnector" key="connector">
 							<reference key="NSSource" ref="163857552"/>
-							<reference key="NSDestination" ref="527118087"/>
-							<string key="NSLabel">value: representedObject.label</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">representedObject.label</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1014</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: representedObject.displayName</string>
-						<reference key="source" ref="1057456829"/>
-						<reference key="destination" ref="527118087"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="1057456829"/>
 							<reference key="NSDestination" ref="527118087"/>
 							<string key="NSLabel">value: representedObject.displayName</string>
 							<string key="NSBinding">value</string>
@@ -1903,7 +1863,47 @@
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
 					</object>
-					<int key="connectionID">1016</int>
+					<int key="connectionID">1017</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">toolTip: representedObject.path</string>
+						<reference key="source" ref="163857552"/>
+						<reference key="destination" ref="527118087"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="163857552"/>
+							<reference key="NSDestination" ref="527118087"/>
+							<string key="NSLabel">toolTip: representedObject.path</string>
+							<string key="NSBinding">toolTip</string>
+							<string key="NSKeyPath">representedObject.path</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSValueTransformerName</string>
+								<string key="NS.object.0">BXDriveDisplayPath</string>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1020</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: representedObject.typeDescription</string>
+						<reference key="source" ref="1057456829"/>
+						<reference key="destination" ref="527118087"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="1057456829"/>
+							<reference key="NSDestination" ref="527118087"/>
+							<string key="NSLabel">value: representedObject.typeDescription</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">representedObject.typeDescription</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSValueTransformerName</string>
+								<string key="NS.object.0">BXCapitalizedString</string>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1022</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -2859,7 +2859,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1016</int>
+			<int key="maxID">1022</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

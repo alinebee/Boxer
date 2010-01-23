@@ -59,20 +59,32 @@
 + (NSString *) preferredLabelForPath: (NSString *)filePath
 {
 	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
-	NSString *baseName		= [[filePath stringByDeletingPathExtension] lastPathComponent];
-
+						   
 	//Disk images store their own volume labels
 	if ([workspace file: filePath matchesTypes: [BXAppController mountableImageTypes]]) return nil;
-		 
+						   
+	//Extensions to strip from filenames
+	NSArray *strippedExtensions = [NSArray arrayWithObjects:
+								   @"boxer",
+								   @"cdrom",
+								   @"floppy",
+								   @"harddisk",
+								   nil];
+						   
+						   
+	NSString *baseName		= [filePath lastPathComponent];
+	NSString *extension		= [[baseName pathExtension] lowercaseString];
+	if ([strippedExtensions containsObject: extension]) baseName = [baseName stringByDeletingPathExtension];
+	
 	//Mountable folders can include a drive letter prefix as well as a drive label,
-	//so have a crack at parsing it out
+	//so have a crack at parsing that out
 	if ([workspace file: filePath matchesTypes: [BXAppController mountableFolderTypes]])
 	{
 		NSString *detectedLabel	= [baseName stringByMatching: @"^([a-xA-X] )?(.+)$" capture: 2];
 		if (detectedLabel) return detectedLabel;		
 	}
 
-	//For all other cases, use the base filename as the drive label
+	//For all other cases, just use the base filename as the drive label
 	return baseName;
 }
 

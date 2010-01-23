@@ -173,6 +173,7 @@ enum {
 			
 			//Populate the drive with the settings we ended up using, and add the drive to our own drives cache
 			[drive setLetter: driveLetter];
+			[drive setLabel: [NSString stringWithCString: DOSBoxDrive->GetLabel() encoding: BXDirectStringEncoding]];
 			[self _addDriveToCache: drive];
 			
 			//Post a notification to whoever's listening
@@ -537,9 +538,12 @@ enum {
 	{
 		NSString *driveLetter	= [[[self class] driveLetters] objectAtIndex: index];
 		NSString *path			= [NSString stringWithCString: Drives[index]->getSystemPath() encoding: BXDirectStringEncoding];
+		NSString *label			= [NSString stringWithCString: Drives[index]->GetLabel() encoding: BXDirectStringEncoding];
 		
 		if (![path length]) path = nil;	//Internal drives
-		return [BXDrive driveFromPath: path atLetter: driveLetter];
+		BXDrive *drive = [BXDrive driveFromPath: path atLetter: driveLetter];
+		[drive setLabel: label];
+		return drive;
 	}
 	else return nil;
 }

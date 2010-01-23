@@ -21,7 +21,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="1"/>
+			<integer value="47"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -177,6 +177,8 @@
 									<int key="NSvFlags">268</int>
 									<string key="NSFrame">{{123, 182}, {287, 17}}</string>
 									<reference key="NSSuperview" ref="732888659"/>
+									<bool key="NSViewIsLayerTreeHost">YES</bool>
+									<int key="NSViewLayerContentsRedrawPolicy">2</int>
 									<bool key="NSEnabled">YES</bool>
 									<object class="NSTextFieldCell" key="NSCell" id="437022126">
 										<int key="NSCellFlags">68288064</int>
@@ -579,6 +581,11 @@
 						<reference key="parent" ref="876454175"/>
 					</object>
 					<object class="IBObjectRecord">
+						<int key="objectID">62</int>
+						<reference key="object" ref="783521929"/>
+						<reference key="parent" ref="0"/>
+					</object>
+					<object class="IBObjectRecord">
 						<int key="objectID">54</int>
 						<reference key="object" ref="854697744"/>
 						<object class="NSMutableArray" key="children">
@@ -591,11 +598,6 @@
 						<int key="objectID">55</int>
 						<reference key="object" ref="437022126"/>
 						<reference key="parent" ref="854697744"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">62</int>
-						<reference key="object" ref="783521929"/>
-						<reference key="parent" ref="0"/>
 					</object>
 				</object>
 			</object>

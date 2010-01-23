@@ -213,12 +213,8 @@
 
 - (NSString *) displayName
 {
-	if ([self label]) return [self label];
-	else
-	{
-		NSFileManager *manager = [NSFileManager defaultManager];
-		return [manager displayNameAtPath: [self path]];
-	}
+	NSFileManager *manager = [NSFileManager defaultManager];
+	return [manager displayNameAtPath: [self path]];
 }
 
 - (NSImage *) icon

@@ -148,7 +148,7 @@
 - (NSString *) gameDisplayName
 {
 	NSString *gameName = [super displayName];
-	if ([[[gameName pathExtension] lowercaseString] isEqualToString: @".boxer"])
+	if ([[[gameName pathExtension] lowercaseString] isEqualToString: @"boxer"])
 		gameName = [gameName stringByDeletingPathExtension];
 	return gameName;
 }

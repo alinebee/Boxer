@@ -113,10 +113,10 @@
 				 slideBack: NO];
 }
 
-//Reveal our selected drive(s) in Finder on double-click
 - (void) mouseUp: (NSEvent *)theEvent
 {
-	if ([theEvent clickCount] > 1) [NSApp sendAction: @selector(revealSelectedDrivesInFinder:) to: nil from: self];
+	//This behaviour is disabled for now - it was unintuitive and click counting is unreliable, resulting in frequent accidental openings.
+	//if ([theEvent clickCount] > 1) [NSApp sendAction: @selector(revealSelectedDrivesInFinder:) to: nil from: self];
 }
 
 //Select/deselect item at click point before showing our menu

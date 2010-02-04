@@ -78,7 +78,7 @@
 		else
 		{
 			BXSessionWindowController *controller = [[self delegate] mainWindowController];
-			size = [(BXSessionWindow *)[controller window] renderViewSize];
+			size = [controller renderViewSize];
 		}
 	}
 	return size;
@@ -235,7 +235,7 @@
 {
 	//By the time we get here, there's no SDL context left and we should already have left fullscreen
 	//[self setFullScreen: NO];
-	[[[self delegate] mainWindowController] clearSDLView];
+	//[[[self delegate] mainWindowController] clearSDLView];
 }
 
 //Returns the maximum supported render size, decided by OpenGL's max surface size.

@@ -18,14 +18,13 @@
 
 
 @implementation BXSessionWindowController
-@synthesize programPanelController;
+@synthesize renderView, statusBar, programPanel, programPanelController;
+@synthesize resizingProgrammatically;
 
 //Overridden to make the types explicit, so we don't have to keep casting the return values to avoid compilation warnings
-- (BXSession *)document			{ return (BXSession *)[super document]; }
-- (BXSessionWindow *)window		{ return (BXSessionWindow *)[super window]; }
-
-- (BXEmulator *)emulator		{ return [[self document] emulator]; }
-- (BXRenderView *)renderView	{ return [[self window] renderView]; }
+- (BXSession *) document		{ return (BXSession *)[super document]; }
+- (BXSessionWindow *) window	{ return (BXSessionWindow *)[super window]; }
+- (BXEmulator *) emulator		{ return [[self document] emulator]; }
 
 
 //Initialisation and cleanup functions
@@ -34,7 +33,10 @@
 - (void) dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
-	[self setProgramPanelController: nil], [programPanelController release];
+	[self setRenderView: nil],				[renderView release];
+	[self setStatusBar: nil],				[statusBar release];
+	[self setProgramPanel: nil],			[programPanel release];
+	[self setProgramPanelController: nil],	[programPanelController release];
 	
 	[super dealloc];
 }
@@ -43,14 +45,15 @@
 {
 	NSNotificationCenter *center	= [NSNotificationCenter defaultCenter];
 	BXSessionWindow *theWindow		= [self window];
-	BXRenderView *renderView		= [theWindow renderView];
-	
 	
 	//Create our new program panel controller and attach it to our window's program panel
-	BXProgramPanelController *panelController = [[[BXProgramPanelController alloc] initWithNibName: @"ProgramPanel" bundle: nil] autorelease];
-	[self setProgramPanelController: panelController];
-	[panelController setView: [theWindow programPanel]];
+	BXProgramPanelController *panelController = [[BXProgramPanelController alloc] initWithNibName: @"ProgramPanel" bundle: nil];
+	[self setProgramPanelController: [panelController autorelease]];
+	[panelController setView: programPanel];
 	
+	
+	//Set up observing for UI events
+	//------------------------------
 	
 	//These are handled by BoxerRenderController, our category for rendering-related delegate tasks
 	[center addObserver:	self
@@ -75,12 +78,36 @@
 	
 	
 	//Set up the window UI components appropriately
+	//---------------------------------------------
 	
 	//Show/hide the statusbar based on user's preference
 	[self setStatusBarShown: [[NSUserDefaults standardUserDefaults] boolForKey: @"statusBarShown"]];
 	
 	//Hide the program panel by default - our parent session decides when it's appropriate to display this
 	[self setProgramPanelShown: NO];
+	
+	//Apply a border to the window matching the size of the statusbar
+	CGFloat borderThickness = [statusBar frame].size.height;
+	[theWindow setContentBorderThickness: borderThickness forEdge: NSMinYEdge];	
+	
+	//Give statusbar text an indented appearance
+	for (id statusBarItem in [statusBar subviews])
+	{
+		if ([statusBarItem isKindOfClass: [NSTextField class]] && ![statusBarItem isBezeled])
+			[[statusBarItem cell] setBackgroundStyle: NSBackgroundStyleRaised];
+	}
+	
+	//Set window rendering behaviour
+	//------------------------------
+	
+	//Fix the window in the aspect ratio it will start up in
+	[theWindow setContentAspectRatio: [self renderViewSize]];
+	
+	//Needed so that the window catches mouse movement over it
+	[theWindow setAcceptsMouseMovedEvents: YES];
+	
+	//We don't support content-preservation yet, so disable the check to be slightly more efficient
+	[theWindow setPreservesContentDuringLiveResize: NO];
 }
 
 - (void) setDocument: (BXSession *)theSession
@@ -92,6 +119,7 @@
 		[[self document] removeObserver: self forKeyPath: @"activeProgramPath"];
 		[theSession addObserver: self forKeyPath: @"activeProgramPath" options: 0 context: nil];
 	}
+	
 	[super setDocument: theSession];
 	
 	if (theSession)
@@ -150,7 +178,7 @@
 						  change: (NSDictionary *)change
 						 context: (void *)context
 {
-	//Whenever the key path changes, synchronise our filter selection controls
+	//Whenever the active program path changes, synchronise the window title
 	if ([keyPath isEqualToString: @"activeProgramPath"]) [self synchronizeWindowTitleWithDocumentName];
 }
 
@@ -158,17 +186,14 @@
 //Toggling window UI components
 //-----------------------------
 
-
-- (BOOL) statusBarShown		{ return ![[[self window] statusBar] isHidden]; }
-- (BOOL) programPanelShown	{ return ![[[self window] programPanel] isHidden]; }
+- (BOOL) statusBarShown		{ return ![statusBar isHidden]; }
+- (BOOL) programPanelShown	{ return ![programPanel isHidden]; }
 
 - (void) setStatusBarShown: (BOOL)show
 {
 	if (show != [self statusBarShown])
 	{
 		BXSessionWindow *theWindow	= [self window];
-		BXRenderView *renderView	= [theWindow renderView];
-		NSView *programPanel		= [theWindow programPanel];
 		
 		//temporarily override the other views' resizing behaviour so that they don't slide up as we do this
 		NSUInteger oldRenderMask		= [renderView autoresizingMask];
@@ -178,7 +203,7 @@
 		
 		//toggle the resize indicator on/off also (it doesn't play nice with the program panel)
 		if (!show)	[theWindow setShowsResizeIndicator: NO];
-		[theWindow slideView: [theWindow statusBar] shown: show];
+		[self _slideView: statusBar shown: show];
 		if (show)	[theWindow setShowsResizeIndicator: YES];
 		
 		[renderView		setAutoresizingMask: oldRenderMask];
@@ -193,15 +218,11 @@
 {
 	if (show != [self programPanelShown])
 	{
-		BXSessionWindow *theWindow	= [self window];
-		BXRenderView *renderView 	= [theWindow renderView];
-		NSView *programPanel		= [theWindow programPanel];
-		
 		//temporarily override the other views' resizing behaviour so that they don't slide up as we do this
 		NSUInteger oldRenderMask = [renderView autoresizingMask];
 		[renderView setAutoresizingMask: NSViewMinYMargin];
 		
-		[theWindow slideView: programPanel shown: show];
+		[self _slideView: programPanel shown: show];
 		
 		[renderView setAutoresizingMask: oldRenderMask];
 	}
@@ -340,7 +361,7 @@
 - (BOOL) windowShouldClose: (id)theWindow
 {
 	if (![[NSUserDefaults standardUserDefaults] boolForKey: @"suppressCloseAlert"]
-		&& [[[self document] emulator] isRunningProcess])
+		&& [[self emulator] isRunningProcess])
 	{
 		BXCloseAlert *closeAlert = [BXCloseAlert closeAlertWhileSessionIsActive: [self document]];
 		[closeAlert beginSheetModalForWindow: [self window]];

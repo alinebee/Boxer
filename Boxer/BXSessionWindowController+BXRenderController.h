@@ -20,17 +20,6 @@
 
 @interface BXSessionWindowController (BXRenderController)
 
-//Managing the DOSBox/SDL draw context
-//------------------------------------ 
-
-//Get/replace/delete the view inside renderView that SDL will use for output.
-//These methods are called directly from inside our own hacked-up version of the SDL framework,
-//which is so dirty I need to have a shower whenever I think about it.
-- (NSView *) SDLView;
-- (void) setSDLView: (NSView *)theView;
-- (void) clearSDLView;
-
-
 //Notification observers
 //----------------------
 
@@ -46,6 +35,8 @@
 //Window sizing methods
 //---------------------
 
+- (NSSize) renderViewSize;
+
 //Returns the view size that should be used for rendering the specified DOSBox output size.
 //This information is used by BXEmulator for telling SDL how big a surface to create.
 - (NSSize) viewSizeForRenderedSize: (NSSize)renderedSize minSize: (NSSize)minViewSize;
@@ -57,6 +48,31 @@
 - (BOOL) resizeToAccommodateViewSize: (NSSize) minViewSize;
 
 //Zoom in and out of fullscreen mode with a smooth window sizing animation.
-- (BOOL) setFullScreenWithZoom: (BOOL) fullScreen;
+- (void) setFullScreenWithZoom: (BOOL) fullScreen;
+
+@end
+
+
+//Methods in this category are not intended to be called outside of BXSessionWindowController.
+@interface BXSessionWindowController (BXSessionWindowControllerInternals)
+
+//Performs the slide animation used to toggle the status bar and program panel on or off
+- (void) _slideView: (NSView *)view shown: (BOOL)show;
+
+//Resize the window frame to fit the new render size.
+- (void) _resizeWindowForRenderViewSize: (NSSize)newSize animate: (BOOL)performAnimation;
+
+
+//Responding to SDL's entreaties
+//------------------------------
+- (NSOpenGLView *) SDLView;
+- (NSWindow *) SDLWindow;
+- (NSOpenGLContext *) SDLOpenGLContext;
+
+- (void) prepareSDLViewForFullscreen;
+- (void) prepareSDLOpenGLContextForTeardown;
+- (void) prepareSDLViewForFrame: (NSRect)frame;
+- (void) prepareSDLOpenGLContextWithFormat: (NSOpenGLPixelFormat *)format;
+- (BOOL) handleSDLKeyboardEvent: (NSEvent *)event;
 
 @end

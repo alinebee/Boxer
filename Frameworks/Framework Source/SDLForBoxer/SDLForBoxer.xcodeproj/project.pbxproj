@@ -415,6 +415,8 @@
 		9F54FD970F5D4CD20068D831 /* boxer_hooks.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F54FC1E0F5D46530068D831 /* boxer_hooks.m */; };
 		9F54FD9B0F5D4DD50068D831 /* boxer_hooks.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F54FC1D0F5D46530068D831 /* boxer_hooks.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9F54FD9E0F5D4DF90068D831 /* SDL.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BECDF66C0761BA81005FE872 /* SDL.framework */; };
+		9FBB62F3111A12FF00FF220A /* BXBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FBB62F1111A12FF00FF220A /* BXBridge.h */; };
+		9FBB62F4111A12FF00FF220A /* BXBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBB62F2111A12FF00FF220A /* BXBridge.m */; };
 		BECDF62D0761BA81005FE872 /* SDL_romaudio.c in Sources */ = {isa = PBXBuildFile; fileRef = 0153832E006D78D67F000001 /* SDL_romaudio.c */; };
 		BECDF62E0761BA81005FE872 /* SDL_audio.c in Sources */ = {isa = PBXBuildFile; fileRef = 01538330006D78D67F000001 /* SDL_audio.c */; };
 		BECDF62F0761BA81005FE872 /* SDL_audiocvt.c in Sources */ = {isa = PBXBuildFile; fileRef = 01538331006D78D67F000001 /* SDL_audiocvt.c */; };
@@ -706,6 +708,8 @@
 		2EECDF2F0086C3A07F000001 /* SDLMain.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = SDLMain.nib; path = SDL/src/main/macosx/SDLMain.nib; sourceTree = "<group>"; };
 		9F54FC1D0F5D46530068D831 /* boxer_hooks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = boxer_hooks.h; sourceTree = "<group>"; };
 		9F54FC1E0F5D46530068D831 /* boxer_hooks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = boxer_hooks.m; sourceTree = "<group>"; };
+		9FBB62F1111A12FF00FF220A /* BXBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBridge.h; sourceTree = "<group>"; };
+		9FBB62F2111A12FF00FF220A /* BXBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBridge.m; sourceTree = "<group>"; };
 		9FBC31200F5693BD001811F2 /* Untitled-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Untitled-Info.plist"; sourceTree = "<group>"; };
 		9FC3B1D50F62C369006DE439 /* SDL.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SDL.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B24DA4D605A88AD0006B9F1C /* CGS.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CGS.h; sourceTree = "<group>"; };
@@ -1296,6 +1300,8 @@
 			children = (
 				9F54FC1D0F5D46530068D831 /* boxer_hooks.h */,
 				9F54FC1E0F5D46530068D831 /* boxer_hooks.m */,
+				9FBB62F1111A12FF00FF220A /* BXBridge.h */,
+				9FBB62F2111A12FF00FF220A /* BXBridge.m */,
 			);
 			path = "Boxer additions";
 			sourceTree = "<group>";
@@ -1521,6 +1527,7 @@
 				9F1D17110F57E36C001C6C48 /* SDL_config_os2.h in Headers */,
 				9F1D17120F57E36C001C6C48 /* SDL_config_win32.h in Headers */,
 				9F54FD9B0F5D4DD50068D831 /* boxer_hooks.h in Headers */,
+				9FBB62F3111A12FF00FF220A /* BXBridge.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2130,6 +2137,7 @@
 				9F1D17300F57E5DF001C6C48 /* SDL_quit.c in Sources */,
 				9F1D17380F57E60A001C6C48 /* SDL_resize.c in Sources */,
 				9F54FD0A0F5D4AC20068D831 /* boxer_hooks.m in Sources */,
+				9FBB62F4111A12FF00FF220A /* BXBridge.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

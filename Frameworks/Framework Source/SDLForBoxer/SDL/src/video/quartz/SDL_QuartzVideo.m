@@ -24,6 +24,11 @@
 #include "SDL_QuartzVideo.h"
 #include "SDL_QuartzWindow.h"
 
+//--Added 2010-02-03 by Alun Bestor to let Boxer override SDL's window and view handling
+#include "BXBridge.h"
+//--End of modifications
+
+
 /* 
     Add methods to get at private members of NSScreen. 
     Since there is a bug in Apple's screen switching code
@@ -379,7 +384,8 @@ static void QZ_UnsetVideoMode (_THIS, BOOL to_desktop) {
         
         /* If we still have a valid window, close it. */
 		
-		/* Disabled 2009-02-15 by Alun Bestor so as not to break my own window-hijacking code
+		//--Disabled 2009-02-15 by Alun Bestor so as not to break my own window-hijacking code
+		/*
         if ( qz_window ) {
             NSCAssert([ qz_window delegate ] == nil, @"full screen window shouldn't have a delegate"); //if that should ever change, we'd have to release it here
             [ qz_window close ]; //includes release because [qz_window isReleasedWhenClosed]
@@ -387,6 +393,7 @@ static void QZ_UnsetVideoMode (_THIS, BOOL to_desktop) {
             window_view = nil;
         }
 		*/
+		//--End of modifications
 		
         /* 
             Release the OpenGL context
@@ -415,13 +422,15 @@ static void QZ_UnsetVideoMode (_THIS, BOOL to_desktop) {
     /* Release window mode resources */
     else {
 		
-		/* Disabled 2009-02-15 by Alun Bestor so as not to break my own window-hijacking code
+		//--Disabled 2009-02-15 by Alun Bestor so as not to break my own window-hijacking code
+		/*
         id delegate = [ qz_window delegate ];
         [ qz_window close ]; //includes release because [qz_window isReleasedWhenClosed]
         if (delegate != nil) [ delegate release ];
         qz_window = nil;
         window_view = nil;
 		*/
+		//--End of modifications
 
         /* Release the OpenGL context */
         if ( mode_flags & SDL_OPENGL )
@@ -443,10 +452,15 @@ static SDL_Surface* QZ_SetVideoFullScreen (_THIS, SDL_Surface *current, int widt
     
     /* Fade to black to hide resolution-switching flicker (and garbage
        that is displayed by a destroyed OpenGL context, if applicable) */
-    if ( CGAcquireDisplayFadeReservation (5, &fade_token) == kCGErrorSuccess ) {
+   
+	//--Disabled 2010-02-04 by Alun Bestor: we don't need no steenking fades
+	/*
+	if ( CGAcquireDisplayFadeReservation (5, &fade_token) == kCGErrorSuccess ) {
         CGDisplayFade (fade_token, 0.3, kCGDisplayBlendNormal, kCGDisplayBlendSolidColor, 0.0, 0.0, 0.0, TRUE);
     }
-    
+    */
+	//--End of modifications
+	
     /* Destroy any previous mode */
     if (video_set == SDL_TRUE)
         QZ_UnsetVideoMode (this, FALSE);
@@ -534,14 +548,9 @@ static SDL_Surface* QZ_SetVideoFullScreen (_THIS, SDL_Surface *current, int widt
 	
     /* Check if we should recreate the window */
 
-	//Added 2009-02-15 by Alun Bestor to implement my own window-hijacking code
-	id session			= [[NSApp delegate] currentSession];
-	id renderController	= [session mainWindowController];
-	qz_window			= [renderController window];
 	
     /* Setup OpenGL for a fullscreen context */
     if (flags & SDL_OPENGL) {
-
         CGLError err;
         CGLContextObj ctx;
 
@@ -549,10 +558,14 @@ static SDL_Surface* QZ_SetVideoFullScreen (_THIS, SDL_Surface *current, int widt
             goto ERR_NO_GL;
         }
 		
-		//Todo 2009-02-16 by Alun Bestor: can we do this better with [NSOpenGLContext setFullscreen] or [NSView enableFullscreen] instead? The former is probably doing the same thing as this anyway...
-		[gl_context makeCurrentContext];
+		//--Added 2010-02-03 by Alun Bestor to give Boxer control over the OpenGL context
+		NSOpenGLContext *theContext = [[BXBridge bridge] openGLContext];
+		//--End of modifications
 		
-        ctx = [gl_context cglContext];
+		//Todo 2009-02-16 by Alun Bestor: can we do this better with [NSOpenGLContext setFullscreen] or [NSView enableFullscreen] instead? The former is probably doing the same thing as this anyway...
+		[theContext makeCurrentContext];
+		
+        ctx = [theContext cglContext];
         err = CGLSetFullScreen (ctx);
 
         if (err) {
@@ -561,18 +574,21 @@ static SDL_Surface* QZ_SetVideoFullScreen (_THIS, SDL_Surface *current, int widt
         }
 
 		//Remove any existing SDL view (otherwise it interferes with fullscreen operations)
-		[renderController clearSDLView];
+		//--Modified 2010-02-03 by Alun Bestor to give Boxer control over views
+		[[BXBridge bridge] prepareViewForFullscreen];
+		//--End of modifications
 		
 		glClear (GL_COLOR_BUFFER_BIT);
 
-        [gl_context flushBuffer];
+        [theContext flushBuffer];
 
         current->flags |= SDL_OPENGL;
     }
 
     //If we don't hide menu bar, it will get events and interrupt the program
-	//Todo 2009-02-18 by Alun Bestor: make it possible to display the menu in fullscreen mode
-	HideMenuBar ();
+	//--Disabled 2010-02-04 by Alun Bestor: don't disable the menus thanks!
+	//HideMenuBar ();
+	//--End of modifications
 
     /* Fade in again (asynchronously) */
     if ( fade_token != kCGDisplayFadeReservationInvalidToken ) {
@@ -636,9 +652,15 @@ static SDL_Surface* QZ_SetVideoWindowed (_THIS, SDL_Surface *current, int width,
         if (mode_flags & SDL_FULLSCREEN) {
             /* Fade to black to hide resolution-switching flicker (and garbage
                that is displayed by a destroyed OpenGL context, if applicable) */
+			
+			
+			//--Disabled 2010-02-04 by Alun Bestor: we don't want no steeenking fades
+			/*
             if (CGAcquireDisplayFadeReservation (5, &fade_token) == kCGErrorSuccess) {
                 CGDisplayFade (fade_token, 0.3, kCGDisplayBlendNormal, kCGDisplayBlendSolidColor, 0.0, 0.0, 0.0, TRUE);
             }
+			 */
+			//--End of modifications
             QZ_UnsetVideoMode (this, TRUE);
         }
         else if ( ((mode_flags ^ flags) & (SDL_NOFRAME|SDL_RESIZABLE)) ||
@@ -649,11 +671,6 @@ static SDL_Surface* QZ_SetVideoWindowed (_THIS, SDL_Surface *current, int width,
     }
     
     /* Check if we should recreate the window */
-
-	//Added 2009-02-15 by Alun Bestor to implement my own window-hijacking code
-	id session			= [[NSApp delegate] currentSession];
-	id renderController	= [session mainWindowController];
-	qz_window			= [renderController window];
 	
     /* For OpenGL, we bind the context to a subview */
     if ( flags & SDL_OPENGL ) {
@@ -665,26 +682,20 @@ static SDL_Surface* QZ_SetVideoWindowed (_THIS, SDL_Surface *current, int width,
             return NULL;
         }
 		
-		//Modified 2009-02-18 by Alun Bestor to use an NSOpenGLView instead of a standard view
-		window_view = [[NSOpenGLView alloc] initWithFrame:contentRect];
-		[renderController setSDLView: window_view];
-		
-		[window_view setOpenGLContext: gl_context];
-		[gl_context setView: window_view];
-		
-        [gl_context makeCurrentContext];
-        current->flags |= SDL_OPENGL;
-		
-		[window_view release];
+		//--Modified 2010-02-03 by Alun Bestor to give Boxer control over OpenGL view creation
+		[[BXBridge bridge] prepareViewForFrame: contentRect];
+		//--End of modifications
+        
+		current->flags |= SDL_OPENGL;
     }
 
     //For 2D, we set the subview to an NSQuickDrawView
     else {
+		//Disabled 2010-02-03 by Alun Bestor - this is no longer used or supported by Boxer.
+		
+		/*
 		short qdbpp = 0;
 
-		//Only recreate the view if it doesn't already exist
-		//I've no idea why DOSBox wants to create a software surface before switching to OpenGL but there we go
-		//Modified 2009-02-19 to always create this view - still not sure why this is needed or why we're even in this branch!
 		window_view = [[NSQuickDrawView alloc] initWithFrame:contentRect];
 		[renderController setSDLView: window_view];
 		[ window_view release ];
@@ -715,12 +726,14 @@ static SDL_Surface* QZ_SetVideoWindowed (_THIS, SDL_Surface *current, int width,
 		this->UpdateRects     = QZ_UpdateRects;
 		this->LockHWSurface   = QZ_LockWindow;
 		this->UnlockHWSurface = QZ_UnlockWindow;
+		 */
     }
 
     /* Save flags to ensure correct teardown */
     mode_flags = current->flags;
 
     /* Fade in again (asynchronously) if we came from a fullscreen mode and faded to black */
+	
     if (fade_token != kCGDisplayFadeReservationInvalidToken) {
         CGDisplayFade (fade_token, 0.5, kCGDisplayBlendSolidColor, kCGDisplayBlendNormal, 0.0, 0.0, 0.0, FALSE);
         CGReleaseDisplayFadeReservation (fade_token);
@@ -1302,12 +1315,12 @@ static void QZ_UpdateRects (_THIS, int numRects, SDL_Rect *rects) {
     if (SDL_VideoSurface->flags & SDL_OPENGLBLIT) {
         QZ_GL_SwapBuffers (this);
     }
-    else if ( [ qz_window isMiniaturized ] ) {
+    else if ( [ [[BXBridge bridge] window] isMiniaturized ] ) {
     
         /* Do nothing if miniaturized */
     }
     
-    else if ( ! QZ_IsWindowObscured (qz_window) ) {
+    else if ( ! QZ_IsWindowObscured ([[BXBridge bridge] window]) ) {
 
         /* Use direct copy to flush contents to the display */
         CGrafPtr savePort;

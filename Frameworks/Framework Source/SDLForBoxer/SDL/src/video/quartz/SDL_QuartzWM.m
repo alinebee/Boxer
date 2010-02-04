@@ -24,6 +24,11 @@
 #include "SDL_QuartzVideo.h"
 #include "SDL_QuartzWM.h"
 
+//--Added 2010-02-03 by Alun Bestor to let Boxer override SDL's window and view handling
+#include "BXBridge.h"
+//--End of modifications
+
+
 
 void QZ_FreeWMCursor     (_THIS, WMcursor *cursor) { 
 
@@ -112,14 +117,15 @@ void QZ_UpdateCursor (_THIS) {
 }
 
 BOOL QZ_IsMouseInWindow (_THIS) {
-    if (qz_window == nil || (mode_flags & SDL_FULLSCREEN)) return YES; /*fullscreen*/
+	NSWindow *theWindow = [[BXBridge bridge] window];
+    if (theWindow == nil || (mode_flags & SDL_FULLSCREEN)) return YES; /*fullscreen*/
     else {
-        NSPoint p = [ qz_window mouseLocationOutsideOfEventStream ];
+        NSPoint p = [ theWindow mouseLocationOutsideOfEventStream ];
         p.y -= 1.0f; /* Apparently y goes from 1 to h, not from 0 to h-1 (i.e. the "location of the mouse" seems to be defined as "the location of the top left corner of the mouse pointer's hot pixel" */
 		
 		//Modified 2009-02-16 by Alun Bestor to correct the cursor hide region in our custom window
         //return NSPointInRect(p, [ window_view frame ]);
-		return NSPointInRect(p, [[qz_window renderView] frame ]);
+		return NSPointInRect(p, [[[BXBridge bridge] view] frame ]);
     }
 }
 
@@ -133,14 +139,17 @@ int QZ_ShowWMCursor (_THIS, WMcursor *cursor) {
         QZ_UpdateCursor(this);
     }
     else {
-        if (qz_window ==nil || (mode_flags & SDL_FULLSCREEN)) {
+		NSWindow *theWindow = [[BXBridge bridge] window];
+		
+        if (theWindow ==nil || (mode_flags & SDL_FULLSCREEN)) {
             [ cursor->nscursor set ];
         }
         else {
-			//Modified 2009-02-16 by Alun Bestor to ensure the mouse behaves nicely in our custom window
+			//--Modified 2010-02-03 by Alun Bestor to ensure the mouse behaves nicely in our custom window
             //[ qz_window invalidateCursorRectsForView: [ qz_window contentView ] ];
-			[qz_window invalidateCursorRectsForView: [qz_window renderView]];
-        }
+			[theWindow invalidateCursorRectsForView: [[BXBridge bridge] view]];
+			//--End of modifications
+		}
         if ( ! cursor_should_be_visible ) {
             cursor_should_be_visible = YES;
             QZ_ChangeGrabState (this, QZ_SHOWCURSOR);
@@ -162,14 +171,14 @@ int QZ_ShowWMCursor (_THIS, WMcursor *cursor) {
 /* Convert Cocoa screen coordinate to Cocoa window coordinate */
 void QZ_PrivateGlobalToLocal (_THIS, NSPoint *p) {
 
-    *p = [ qz_window convertScreenToBase:*p ];
+    *p = [ [[BXBridge bridge] window] convertScreenToBase:*p ];
 }
 
 
 /* Convert Cocoa window coordinate to Cocoa screen coordinate */
 void QZ_PrivateLocalToGlobal (_THIS, NSPoint *p) {
 
-    *p = [ qz_window convertBaseToScreen:*p ];
+    *p = [ [[BXBridge bridge] window] convertBaseToScreen:*p ];
 }
 
 /* Convert SDL coordinate to Cocoa coordinate */
@@ -180,12 +189,13 @@ void QZ_PrivateSDLToCocoa (_THIS, NSPoint *p) {
         p->y = CGDisplayPixelsHigh (display_id) - p->y;
     }
     else {
-       
-        *p = [ window_view convertPoint:*p toView: nil ];
+		NSView *theView = [[BXBridge bridge] view];
+		
+        *p = [ theView convertPoint:*p toView: nil ];
         
         /* We need a workaround in OpenGL mode */
         if ( SDL_VideoSurface->flags & SDL_OPENGL ) {
-            p->y = [window_view frame].size.height - p->y;
+            p->y = [theView frame].size.height - p->y;
         }
     }
 }
@@ -198,12 +208,13 @@ void QZ_PrivateCocoaToSDL (_THIS, NSPoint *p) {
         p->y = CGDisplayPixelsHigh (display_id) - p->y;
     }
     else {
-
-        *p = [ window_view convertPoint:*p fromView: nil ];
+		NSView *theView = [[BXBridge bridge] view];
+		
+        *p = [ theView convertPoint:*p fromView: nil ];
         
         /* We need a workaround in OpenGL mode */
         if ( SDL_VideoSurface != NULL && (SDL_VideoSurface->flags & SDL_OPENGL) ) {
-            p->y = [window_view frame].size.height - p->y;
+            p->y = [theView frame].size.height - p->y;
         }
     }
 }
@@ -278,7 +289,10 @@ void QZ_MoveWMCursor     (_THIS, int x, int y) { }
 void QZ_CheckMouseMode   (_THIS) { }
 
 void QZ_SetCaption    (_THIS, const char *title, const char *icon) {
-
+	//--Disabled 2010-02-03 by Alun Bestor to prevent SDL ever messing with our window
+	return;
+	//--End of modifications
+	
     if ( qz_window != nil ) {
         NSString *string;
         if ( title != NULL ) {
@@ -296,6 +310,10 @@ void QZ_SetCaption    (_THIS, const char *title, const char *icon) {
 
 void QZ_SetIcon       (_THIS, SDL_Surface *icon, Uint8 *mask)
 {
+	//--Disabled 2010-02-03 by Alun Bestor to prevent SDL ever messing with our icons
+	return;
+	//--End of modifications
+	
     NSBitmapImageRep *imgrep;
     NSImage *img;
     SDL_Surface *mergedSurface;
@@ -363,10 +381,10 @@ freePool:
 }
 
 int  QZ_IconifyWindow (_THIS) { 
-
-    if ( ! [ qz_window isMiniaturized ] ) {
-        [ qz_window miniaturize:nil ];
-        if ( ! [ qz_window isMiniaturized ] ) {
+	NSWindow *theWindow = [[BXBridge bridge] window];
+    if ( ! [ theWindow isMiniaturized ] ) {
+        [ theWindow miniaturize:nil ];
+        if ( ! [ theWindow isMiniaturized ] ) {
             SDL_SetError ("window iconification failed");
             return 0;
         }

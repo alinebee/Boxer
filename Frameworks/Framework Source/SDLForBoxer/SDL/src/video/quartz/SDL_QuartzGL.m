@@ -23,6 +23,12 @@
 
 #include "SDL_QuartzVideo.h"
 
+
+//--Added 2010-02-03 by Alun Bestor to let Boxer override SDL's openGL handling
+#include "BXBridge.h"
+//--End of modifications
+
+
 /*
  * GL_ARB_Multisample is supposed to be available in 10.1, according to Apple:
  *
@@ -126,12 +132,13 @@ int QZ_SetupOpenGL (_THIS, int bpp, Uint32 flags) {
         return 0;
     }
 
-    gl_context = [ [ NSOpenGLContext alloc ] initWithFormat:fmt
-                                               shareContext:nil];
-
+	//--Added 2010-02-03 by Alun Bestor to give Boxer control over the OpenGL context
+	[[BXBridge bridge] prepareOpenGLContextWithFormat: fmt];
+	//--End of modifications
+	
     [ fmt release ];
 
-    if (gl_context == nil) {
+    if ([[BXBridge bridge] openGLContext] == nil) {
         SDL_SetError ("Failed creating OpenGL context");
         return 0;
     }
@@ -144,7 +151,7 @@ int QZ_SetupOpenGL (_THIS, int bpp, Uint32 flags) {
     if ( this->gl_config.swap_control >= 0 ) {
         long value;
         value = this->gl_config.swap_control;
-        [ gl_context setValues: &value forParameter: NSOpenGLCPSwapInterval ];
+        [ [[BXBridge bridge] openGLContext] setValues: &value forParameter: NSOpenGLCPSwapInterval ];
     }
 
     /*
@@ -165,7 +172,7 @@ int QZ_SetupOpenGL (_THIS, int bpp, Uint32 flags) {
 
     {
         long cache_max = 64;
-        CGLContextObj ctx = [ gl_context cglContext ];
+        CGLContextObj ctx = [ [[BXBridge bridge] openGLContext] cglContext ];
         CGLSetParameter (ctx, GLI_SUBMIT_FUNC_CACHE_MAX, &cache_max);
         CGLSetParameter (ctx, GLI_ARRAY_FUNC_CACHE_MAX, &cache_max);
     }
@@ -176,10 +183,9 @@ int QZ_SetupOpenGL (_THIS, int bpp, Uint32 flags) {
 }
 
 void QZ_TearDownOpenGL (_THIS) {
-
-    [ NSOpenGLContext clearCurrentContext ];
-    [ gl_context clearDrawable ];
-    [ gl_context release ];
+	//--Modified 2010-02-03 by Alun Bestor to allow Boxer control over OpenGL context destruction
+	[[BXBridge bridge] prepareOpenGLContextForTeardown];
+	//--End of modifications
 }
 
 
@@ -188,10 +194,14 @@ static const char *DEFAULT_OPENGL_LIB_NAME =
     "/System/Library/Frameworks/OpenGL.framework/Libraries/libGL.dylib";
 
 int    QZ_GL_LoadLibrary    (_THIS, const char *location) {
-    if ( gl_context != NULL ) {
+	//--Disabled 2010-02-04 by Alun Bestor to prevent SDL ruining our carefully-laid plans
+	/*
+    if ( [[BXBridge bridge] openGLContext] != NULL ) {
         SDL_SetError("OpenGL context already created");
         return -1;
     }
+	 */
+	//--End of modifications
 
     if (opengl_library != NULL)
         SDL_UnloadObject(opengl_library);
@@ -261,7 +271,7 @@ int    QZ_GL_GetAttribute   (_THIS, SDL_GLattr attrib, int* value) {
         case SDL_GL_SWAP_CONTROL:
         {
             long val;
-            [ gl_context getValues: &val forParameter: NSOpenGLCPSwapInterval ];
+            [ [[BXBridge bridge] openGLContext] getValues: &val forParameter: NSOpenGLCPSwapInterval ];
             *value = val;
             return 0;
         }
@@ -272,10 +282,10 @@ int    QZ_GL_GetAttribute   (_THIS, SDL_GLattr attrib, int* value) {
 }
 
 int    QZ_GL_MakeCurrent    (_THIS) {
-    [ gl_context makeCurrentContext ];
+    [ [[BXBridge bridge] openGLContext] makeCurrentContext ];
     return 0;
 }
 
 void   QZ_GL_SwapBuffers    (_THIS) {
-    [ gl_context flushBuffer ];
+    [ [[BXBridge bridge] openGLContext] flushBuffer ];
 }

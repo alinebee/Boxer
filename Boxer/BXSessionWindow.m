@@ -6,131 +6,47 @@
  */
 
 #import "BXSessionWindow.h"
+#import "BXSessionWindowController.h"
 #import "BXRenderView.h"
-#import "BXStatusBar.h"
-#import "BXProgramPanel.h"
-
-#import "NSWindow+BXWindowSizing.h"
-#import "BXGeometry.h"
 
 @implementation BXSessionWindow
-@synthesize statusBar, renderView, programPanel;
-@synthesize sizingToFillScreen;
 
-//Give our controller a shot at key events, if none of our views can deal with it
-//I have no idea why this isn't already happening, given that windows automatically insert
-//their window controller into the responder chain.
-- (BOOL)performKeyEquivalent:(NSEvent *)theEvent
+//Overridden to make our required controller type explicit
+- (BXSessionWindowController *) windowController
 {
-	return [super performKeyEquivalent: theEvent] || [[self windowController] performKeyEquivalent: theEvent];
+	return (BXSessionWindowController *)[super windowController];
 }
-
-
-//set up the initial interface appearance settings that we couldn't handle in interface builder
-- (void)awakeFromNib
-{
-	//Set window rendering behaviour
-	//------------------------------
-	
-	//Fix ourselves to the aspect ratio we start up in (this is the aspect ratio of the DOS text mode)
-	[self setContentAspectRatio: [self renderViewSize]];
-
-	//Needed so that the window catches mouse movement over it
-	[self setAcceptsMouseMovedEvents: YES];
-	
-	//We can use optimized drawing because we don't overlap any subviews
-	[self useOptimizedDrawing: YES];
-	
-	//We don't support content-preservation, so disable the check to be slightly more efficient
-	[self setPreservesContentDuringLiveResize: NO];
-
-	
-	CGFloat borderThickness = [statusBar frame].size.height;
-	[self setContentBorderThickness: borderThickness forEdge: NSMinYEdge];
-}
-
-
-//Performs the slide animation used to toggle the status bar and program panel on or off
-- (void) slideView: (NSView *)view shown: (BOOL)show
-{
-	NSRect newFrame	= [self frame];
-	
-	CGFloat height	= [view frame].size.height;
-	if (!show) height = -height;
-		
-	newFrame.size.height	+= height;
-	newFrame.origin.y		-= height;
-	
-	if (show) [view setHidden: NO];	//Unhide before sliding out
-	[self setFrame: newFrame display: YES animate: YES];
-	if (!show)	[view setHidden: YES];	//Hide after sliding in 
-}
-
 
 //Adjust reported content/frame sizes to account for statusbar and program panel
-//(This is used to keep content resizing proportional to the shape of the render view, not the shape of the window)
+//This is used to keep content resizing proportional to the shape of the render view, not the shape of the window
 - (NSRect) contentRectForFrameRect:(NSRect)windowFrame
 {
-	NSRect rect = [super contentRectForFrameRect:windowFrame];
-	NSArray *subviews = [[self contentView] subviews];
-	
-	for (NSView *view in subviews) if (!(view == [self renderView] || [view isHidden]))
-	{
-		CGFloat sizeAdjustment	= [view frame].size.height;		
-		rect.size.height		-= sizeAdjustment;
-		rect.origin.y			+= sizeAdjustment;
-	}
-	return rect;
-}
-- (NSRect) frameRectForContentRect:(NSRect)windowContent
-{
-	NSRect rect = [super frameRectForContentRect:windowContent];
-	NSArray *subviews = [[self contentView] subviews];
-	
-	for (NSView *view in subviews) if (!(view == [self renderView] || [view isHidden]))
-	{
-		CGFloat sizeAdjustment	= [view frame].size.height;		
-		rect.size.height		+= sizeAdjustment;
-		rect.origin.y			-= sizeAdjustment;
-	}
+	NSRect rect = [super contentRectForFrameRect: windowFrame];
+	NSView *renderView	= [[self windowController] renderView];
+
+	CGFloat sizeAdjustment	= [renderView frame].origin.y;
+	rect.size.height		-= sizeAdjustment;
+	rect.origin.y			+= sizeAdjustment;
+
 	return rect;
 }
 
-- (NSSize) renderViewSize	{ return [[self renderView] frame].size; }
-
-//Resize the window frame to fit the new render size
-- (void) setRenderViewSize: (NSSize)newSize animate: (BOOL)performAnimation
+- (NSRect) frameRectForContentRect: (NSRect)windowContent
 {
-	NSSize currentSize = [self renderViewSize];
-	
-	if (!NSEqualSizes(currentSize, newSize))
-	{
-		NSSize windowSize	= [self frame].size;
-		windowSize.width	+= newSize.width	- currentSize.width;
-		windowSize.height	+= newSize.height	- currentSize.height;
+	NSRect rect = [super frameRectForContentRect: windowContent];
+	NSView *renderView	= [[self windowController] renderView];
 
-		//Resize relative to center of titlebar
-		NSRect newFrame			= resizeRectFromPoint([self frame], windowSize, NSMakePoint(0.5, 1));
-		//Constrain the result to fit tidily on screen
-		newFrame				= [self fullyConstrainFrameRect: newFrame toScreen: [self screen]];
-		
-		[self setFrame: NSIntegralRect(newFrame) display: YES animate: performAnimation];
-	}
+	CGFloat sizeAdjustment	= [renderView frame].origin.y;
+	rect.size.height		+= sizeAdjustment;
+	rect.origin.y			-= sizeAdjustment;
+	
+	return rect;
 }
 
-//Disable constraining if we are performing the zoom-to-fullscreen animation
+//Disable constraining if our window controller is taking matters into its own hands 
 - (NSRect)constrainFrameRect:(NSRect)frameRect toScreen:(NSScreen *)screen
 {
-	if ([self sizingToFillScreen]) return frameRect;
+	if ([[self windowController] resizingProgrammatically]) return frameRect;
 	else return [super constrainFrameRect: frameRect toScreen: screen];
-}
-
-- (void) dealloc
-{
-	[self setRenderView: nil],		[renderView release];
-	[self setStatusBar: nil],		[statusBar release];
-	[self setProgramPanel: nil],	[programPanel release];
-	
-	[super dealloc];
 }
 @end

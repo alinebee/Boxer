@@ -138,8 +138,8 @@
 
 - (void) mouseUp: (NSEvent *)theEvent
 {
-	//This behaviour is disabled for now - it was unintuitive and click counting is unreliable, resulting in frequent accidental openings.
-	//if ([theEvent clickCount] > 1) [NSApp sendAction: @selector(revealSelectedDrivesInFinder:) to: nil from: self];
+	if ([theEvent clickCount] > 1 && ([theEvent modifierFlags] & NSCommandKeyMask))
+		[NSApp sendAction: @selector(revealSelectedDrivesInFinder:) to: nil from: self];
 }
 
 //Select/deselect item at click point before showing our menu

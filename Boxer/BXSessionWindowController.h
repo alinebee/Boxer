@@ -26,19 +26,30 @@
 
 @interface BXSessionWindowController : NSWindowController
 {
-	NSSize currentRenderedSize;	//Used internally by the BXRenderController category for resizing decisions.	
+	IBOutlet BXRenderView *renderView;
+	IBOutlet NSView *statusBar;
+	IBOutlet NSView *programPanel;
+
 	BXProgramPanelController *programPanelController;
+	NSSize currentRenderedSize;	//Used internally by the BXRenderController category for resizing decisions.
+	BOOL resizingProgrammatically;
+	NSOpenGLContext *SDLOpenGLContext;
 }
 //Our view controller for the program picker panel. This is created when awaking from the NIB file.
 @property (retain) BXProgramPanelController *programPanelController;
+
+@property (retain) BXRenderView *renderView;	//A wrapper for the OpenGL view that displays DOSBox's graphical output.
+@property (retain) NSView *statusBar;			//The status bar at the bottom of the window.
+@property (retain) NSView *programPanel;		//The slide-out program picker panel.
+@property (assign) BOOL resizingProgrammatically;		//Indicates that the current resize event is internal and not triggered by user interaction.
+														//Used to change our window constraining behaviour and response to resize events.
 
 //Recast NSWindowController's standard accessors so that we get our own classes
 //(and don't have to keep recasting them ourselves)
 - (BXSession *) document;
 - (BXSessionWindow *) window;
 
-- (BXEmulator *) emulator;		//Shortcut accessor for the current session's emulator
-- (BXRenderView *) renderView;	//Shortcut accessor for the session window's render view.
+- (BXEmulator *) emulator;		//Shortcut accessor for the current session's emulator.
 
 
 //Handling drag-drop
@@ -71,18 +82,16 @@
 //Toggle the emulator's active rendering filter.
 - (IBAction) toggleFilterType: (id)sender;
 
+
 //Toggling window UI components
 //-----------------------------
 
 //Get/set whether the statusbar should be shown.
-//TODO: move to BXWindowController.
 - (BOOL) statusBarShown;
 - (void) setStatusBarShown:		(BOOL)show;
 
 //Get/set whether the program panel should be shown.
-//TODO: move to BXWindowController.
 - (BOOL) programPanelShown;
 - (void) setProgramPanelShown:	(BOOL)show;
-
 
 @end

@@ -28,6 +28,11 @@
 #include <IOKit/pwr_mgt/IOPMLib.h> /* For wake from sleep detection */
 #include "SDL_QuartzKeys.h"
 
+//--Added 2010-02-03 by Alun Bestor to let Boxer override SDL's window and view handling
+#include "BXBridge.h"
+//--End of modifications
+
+
 /* 
  * In Panther, this header defines device dependent masks for 
  * right side keys. These definitions only exist in Panther, but
@@ -253,18 +258,9 @@ void     QZ_InitOSKeymap (_THIS) {
 }
 
 static void QZ_DoKey (_THIS, int state, NSEvent *event) {
-	//Added 2009-02-20 by Alun Bestor: if we're not the key window, pass the key event along
-	//This can come up with dialog sheets, where SDL doesn't realise it doesn't have the keyboard focus anymore 
-	if (![qz_window isKeyWindow]) 
-	{
-		[NSApp sendEvent:event];
-		return;
-	}
-	//Added 2009-01-23 by Alun Bestor to fix SDL breaking OSX menu shortcuts
-	//Feed the key event to the window and menubar to see if anything wants to claim it;
-	// if something does, cancel further SDL processing
-	if (([ [NSApp mainMenu] performKeyEquivalent:event ] ||
-		 [ [NSApp keyWindow] performKeyEquivalent:event ] ))  return;
+	//--Added 2010-02-03 by Alun Bestor to let Boxer have first crack at keyboard events
+	if ([[BXBridge bridge] handleKeyboardEvent: event]) return;
+	//--End of modifications
 
     NSString *chars = NULL;
     unsigned int i, numChars;
@@ -631,7 +627,7 @@ static void QZ_DoModifiers (_THIS, unsigned int newMods) {
 
 static void QZ_GetMouseLocation (_THIS, NSPoint *p) {
     *p = [ NSEvent mouseLocation ]; /* global coordinates */
-    if (qz_window)
+    if ([[BXBridge bridge] window])
         QZ_PrivateGlobalToLocal (this, p);
     QZ_PrivateCocoaToSDL (this, p);
 }

@@ -674,6 +674,7 @@
 		9FE201C40F6D5B5F00B3A38C /* BXEmulator+BXRecording.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXEmulator+BXRecording.h"; sourceTree = "<group>"; };
 		9FE201C50F6D5B5F00B3A38C /* BXEmulator+BXRecording.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "BXEmulator+BXRecording.mm"; sourceTree = "<group>"; };
 		9FE202470F6D749500B3A38C /* Snapshot.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = Snapshot.aiff; sourceTree = "<group>"; };
+		9FE587E2110CBAA400875E90 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/GameInstaller.xib; sourceTree = "<group>"; };
 		9FE8265A10F0EBA000F1B03E /* 35DisketteShine.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 35DisketteShine.png; sourceTree = "<group>"; };
 		9FE8265B10F0EBA000F1B03E /* 35Diskette.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 35Diskette.png; sourceTree = "<group>"; };
 		9FF445DF10F13A2200B74B15 /* 525Diskette.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 525Diskette.png; sourceTree = "<group>"; };
@@ -971,6 +972,7 @@
 		9F496E4C108EEDF700282261 /* XIBs */ = {
 			isa = PBXGroup;
 			children = (
+				9FE587E1110CBAA400875E90 /* GameInstaller.xib */,
 				9F9A4CA410F67DD800E61965 /* Preferences.xib */,
 				9F59DEDD10B01743008DBBC1 /* ProgramPanel.xib */,
 				9F45A46A109C9A0400593456 /* MountPanelOptions.xib */,
@@ -1897,6 +1899,15 @@
 				9FCDCCE410D2D53C0080A24F /* English */,
 			);
 			name = "Original DOSBox Documentation";
+			sourceTree = "<group>";
+		};
+		9FE587E1110CBAA400875E90 /* GameInstaller.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9FE587E2110CBAA400875E90 /* English */,
+			);
+			name = GameInstaller.xib;
+			path = ..;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

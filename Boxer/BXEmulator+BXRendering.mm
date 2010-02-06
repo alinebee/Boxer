@@ -315,8 +315,8 @@
 	}
 }
 
-//Returns whether to apply bilinear filtering to the specified SDL surface size.
-//We apply filtering when the size is not an exact multiple of the base resolution.
+//Returns whether to apply bilinear filtering to the specified rendering size.
+//We apply filtering only when the size is not an exact multiple of the base resolution.
 - (BOOL) _shouldUseBilinearForResolution: (NSSize)resolution atSurfaceSize: (NSSize)surfaceSize
 {
 	return	((NSInteger)surfaceSize.width	% (NSInteger)resolution.width) || 
@@ -368,10 +368,12 @@
 	if (![self _shouldApplyFilterType: activeType toScale: scale]) activeType = BXFilterNormal;
 		
 	//Now decide on what operation size this scaler should use
-	//If we're using a flat scaling filter and bilinear filtering isn't necessary for the target size,
-	//then speed things up by using 1x scaling and letting OpenGL do the work
+	//If we're using a flat scaling filter and bilinear filtering isn't necessary for the target size (or the base resolution is large enough for scaling to be too slow), then speed things up by using 1x scaling and letting OpenGL do the work.
 	NSInteger filterSize;
-	if (activeType == BXFilterNormal && ![self _shouldUseBilinearForResolution: resolution atSurfaceSize: surfaceSize])
+	if (activeType == BXFilterNormal && (
+		resolution.width >= 640 || resolution.height >= 400 ||
+		![self _shouldUseBilinearForResolution: resolution atSurfaceSize: surfaceSize]
+	))
 	{
 		filterSize = 1;
 	}

@@ -195,7 +195,7 @@
 	{
 		//First quietly resize the window to fill the screen, while we're still hidden by the fullscreen context...
 		[self setResizingProgrammatically: YES];
-		[theWindow setFrame: zoomedWindowFrame display: NO];
+		[theWindow setFrame: zoomedWindowFrame display: YES];
 		[[self SDLView] setHidden: NO];
 		
 		//...then flip us out of fullscreen, which will render to the zoomed window...
@@ -351,8 +351,6 @@
 
 - (void) prepareSDLOpenGLContextWithFormat: (NSOpenGLPixelFormat *)format
 {
-	[[self SDLView] clearGLContext];
-	[[self SDLView] setPixelFormat: format];
 }
 
 - (void) prepareSDLViewForFullscreen
@@ -364,6 +362,7 @@
 - (void) prepareSDLOpenGLContextForTeardown
 {
 	[NSOpenGLContext clearCurrentContext];
+	[[self SDLView] clearGLContext];
 }
 
 - (BOOL) handleSDLKeyboardEvent: (NSEvent *)event

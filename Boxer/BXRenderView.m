@@ -10,23 +10,9 @@
 #import "BXGeometry.h"
 
 @implementation BXRenderView
-@synthesize cachedImage;
 
 //This helps optimize OS X's rendering decisions, hopefully
 - (BOOL) isOpaque	{ return YES; }
-
-//When doing a live resize, make sure our subviews are hidden so that our cached image shows through
-//We do this here at the last minute rather than in viewWillStartLiveResize, to avoid a momentary flicker
-//before the drawing begins
-- (void) viewWillDraw
-{
-	if (!subviewsHidden && [self inLiveResize] && [self cachedImage])
-	{
-		for (NSView *subview in [self subviews]) [subview setHidden: YES];
-		subviewsHidden = YES;
-	}
-	[super viewWillDraw];
-}
 
 - (void) drawBackgroundInRect: (NSRect)dirtyRect
 {
@@ -61,31 +47,21 @@
 {
 	NSRect bounds = [self bounds];
 
-	//First, fill the view with black
+	//Fill the view with black
 	//This will show at the edges of the image if the aspect ratio changes
+	//TODO: let the SDLView handle this
 	[[NSColor blackColor] setFill];
 	[NSBezierPath fillRect: dirtyRect];
-	
-	//Center the cached image within the view, retaining its original aspect ratio
-	//This isn't needed for normal resizes because we keep the aspect ratio locked,
-	//but it is needed when scaling to fill the screen.
-	NSRect drawRect;
-	drawRect.size	= sizeToFitSize([cachedImage size], bounds.size);
-	drawRect		= centerInRect(drawRect, bounds);
-	
-	if (NSIntersectsRect(dirtyRect, drawRect))
-	{
-		[cachedImage drawInRect: NSIntegralRect(drawRect)];	
-	}
 }
 
 - (void) drawRect: (NSRect)dirtyRect
 {
 	[NSBezierPath clipRect: dirtyRect];
-	if ([self inLiveResize] && [self cachedImage])
+	if ([self inLiveResize])
 	{
-		//While resizing, draw our cached fake image at the appropriate scale
-		return [self drawCachedImageInRect: dirtyRect];
+		//While resizing, just fill the view with black
+		[[NSColor blackColor] setFill];
+		[NSBezierPath fillRect: dirtyRect];
 	}
 	else
 	{
@@ -94,35 +70,15 @@
 	}
 }
 
-//Cache an image of our current content to display while we resize
+//Silly notifications to let the window controller know when a live resize operation is starting/stopping,
+//so that it can clean up afterwards. These should go on BXSessionWindow now instead.
 - (void)viewWillStartLiveResize
-{
-	NSView *SDLView = [[self subviews] lastObject];
-	if (SDLView)
-	{
-		NSRect captureRegion = [SDLView visibleRect];
-		NSBitmapImageRep *capturedImage = [SDLView bitmapImageRepForCachingDisplayInRect:captureRegion];
-		[SDLView cacheDisplayInRect: captureRegion toBitmapImageRep: capturedImage];
-
-		[self setCachedImage: capturedImage];
-	}
-	
+{	
 	[[NSNotificationCenter defaultCenter] postNotificationName: @"BXRenderViewWillLiveResizeNotification" object: self];
 }
 
 - (void)viewDidEndLiveResize
 {
-	//Clear the image cache and unhide our views
-	for (NSView *subview in [self subviews]) [subview setHidden: NO];
-	subviewsHidden = NO;
-	[self setCachedImage: nil];
-	
 	[[NSNotificationCenter defaultCenter] postNotificationName: @"BXRenderViewDidLiveResizeNotification" object: self];
-}
-
-- (void) dealloc
-{
-	[self setCachedImage: nil], [cachedImage release];
-	[super dealloc];
 }
 @end

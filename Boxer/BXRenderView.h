@@ -13,15 +13,7 @@
 #import <Cocoa/Cocoa.h>
 
 @interface BXRenderView : NSView
-{
-	NSBitmapImageRep *cachedImage;	//Used when resizing to provide cheap-and-nasty live scaling
-	BOOL subviewsHidden;			//Used when resizing to track whether we have hidden all our subviews yet
-}
-@property (retain) NSBitmapImageRep *cachedImage;
 
-//Render the view's badged grey background; this is drawn when there is no DOSBox view. 
+//Render the view's badged grey background; this shows through when there is no SDL view visible. 
 - (void) drawBackgroundInRect: (NSRect) dirtyRect;
-
-//Render the view's cached image; this is drawn during window resizing events.
-- (void) drawCachedImageInRect: (NSRect) dirtyRect;
 @end

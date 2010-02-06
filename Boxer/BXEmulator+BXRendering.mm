@@ -215,6 +215,28 @@
 	if ([self isExecuting]) GFX_ResetScreen();
 }
 
+//Redraws the render region, without reinitialising.
+//This is called while resizing the session window to provide live updates.
+- (void) redraw
+{
+	if (!sdl.surface) return;
+	
+	//Center the viewport in our current surface size
+	NSRect canvas, viewport;
+	canvas.size = [self surfaceSize];
+	viewport.size = sizeToFitSize([self renderedSize], [self surfaceSize]);
+	viewport = centerInRect(viewport, canvas);
+	
+	glViewport(viewport.origin.x, viewport.origin.y, viewport.size.width, viewport.size.height);
+
+	//Fill the framebuffer with black
+    glClearColor(0.0, 0.0, 0.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	glCallList(sdl.opengl.displaylist);
+	SDL_GL_SwapBuffers();
+}
+
 
 - (NSSize) minSurfaceSizeForFilterType: (BXFilterType) type
 {

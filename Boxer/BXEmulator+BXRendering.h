@@ -92,6 +92,10 @@ typedef struct {
 //This is called after resizing the session window or toggling rendering options.
 - (void) resetRenderer;
 
+//Redraws the render region, without reinitialising. Does not mark the render region
+//as needing display - this must be done manually.
+//This is called while resizing the session window to provide live updates.
+- (void) redraw;
 
 //Gets/sets whether we are rendering to fullscreen.
 - (BOOL) isFullScreen;

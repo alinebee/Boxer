@@ -26,14 +26,18 @@
 }
 
 
-//Reset the DOS renderer if its draw surface no longer matches the size of the window
+//Update the DOS view as the window resizes
 - (void) windowDidResize: (NSNotification *) notification
 {
-	BXSessionWindow	*theWindow	= [self window];
-	NSView			*SDLView	= [self SDLView];
-
-	if (![self resizingProgrammatically] && ![renderView inLiveResize])
+	if ([self resizingProgrammatically] || [renderView inLiveResize])
 	{
+		//While a resize is in progress, content ourselves with just rescaling the view
+		[[self emulator] redraw];
+	}
+	else
+	{
+		//Once the resize has finished, reinitialise the renderer to make it use settings
+		//appropriate to the new size
 		[[self emulator] resetRenderer];
 	}
 }
@@ -196,7 +200,6 @@
 		//First quietly resize the window to fill the screen, while we're still hidden by the fullscreen context...
 		[self setResizingProgrammatically: YES];
 		[theWindow setFrame: zoomedWindowFrame display: YES];
-		[[self SDLView] setHidden: NO];
 		
 		//...then flip us out of fullscreen, which will render to the zoomed window...
 		[emulator setFullScreen: NO];
@@ -312,7 +315,6 @@
 		[self setResizingProgrammatically: NO];
 	}
 }
-
 
 //Responding to SDL's entreaties
 //------------------------------

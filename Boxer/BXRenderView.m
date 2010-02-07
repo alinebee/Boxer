@@ -32,7 +32,7 @@
 	NSImage *brand = [NSImage imageNamed: @"Brand.png"];
 	NSRect brandRegion;
 	brandRegion.size = [brand size];
-	brandRegion =  centerInRect(brandRegion, [self bounds]);
+	brandRegion = centerInRect(brandRegion, [self bounds]);
 	
 	if (NSIntersectsRect(dirtyRect, brandRegion))
 	{
@@ -41,17 +41,6 @@
 				operation: NSCompositeSourceOver
 				 fraction: 1.0];	
 	}		
-}
-
-- (void) drawCachedImageInRect: (NSRect)dirtyRect
-{
-	NSRect bounds = [self bounds];
-
-	//Fill the view with black
-	//This will show at the edges of the image if the aspect ratio changes
-	//TODO: let the SDLView handle this
-	[[NSColor blackColor] setFill];
-	[NSBezierPath fillRect: dirtyRect];
 }
 
 - (void) drawRect: (NSRect)dirtyRect

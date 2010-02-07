@@ -12,8 +12,8 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface BXRenderView : NSView
+@interface BXRenderView : NSOpenGLView
 
-//Render the view's badged grey background; this shows through when there is no SDL view visible. 
+//Render the view's badged grey background; this shows through when there is no OpenGL view. 
 - (void) drawBackgroundInRect: (NSRect) dirtyRect;
 @end

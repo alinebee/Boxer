@@ -84,6 +84,7 @@
 		9FB553E10F6EA30900A33017 /* BXCloseAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB553E00F6EA30900A33017 /* BXCloseAlert.m */; };
 		9FB554220F6EAC5F00A33017 /* BXAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB554210F6EAC5F00A33017 /* BXAlert.m */; };
 		9FB554F70F6EE58000A33017 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FB554F60F6EE58000A33017 /* QTKit.framework */; };
+		9FB635DD111EC63F00EDC2DA /* BXRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB635DC111EC63F00EDC2DA /* BXRenderer.m */; };
 		9FBB86850F5DD070008418E6 /* BXRenderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBB86840F5DD070008418E6 /* BXRenderView.m */; };
 		9FBC31D70F56C370001811F2 /* AboutBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC31D10F56C370001811F2 /* AboutBackground.png */; };
 		9FBC31DA0F56C370001811F2 /* BunnyTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC31D40F56C370001811F2 /* BunnyTemplate.png */; };
@@ -391,6 +392,8 @@
 		9FB554200F6EAC5F00A33017 /* BXAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXAlert.h; sourceTree = "<group>"; };
 		9FB554210F6EAC5F00A33017 /* BXAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXAlert.m; sourceTree = "<group>"; };
 		9FB554F60F6EE58000A33017 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
+		9FB635DB111EC63F00EDC2DA /* BXRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXRenderer.h; sourceTree = "<group>"; };
+		9FB635DC111EC63F00EDC2DA /* BXRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXRenderer.m; sourceTree = "<group>"; };
 		9FBB86830F5DD070008418E6 /* BXRenderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXRenderView.h; sourceTree = "<group>"; };
 		9FBB86840F5DD070008418E6 /* BXRenderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXRenderView.m; sourceTree = "<group>"; };
 		9FBC31D10F56C370001811F2 /* AboutBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AboutBackground.png; sourceTree = "<group>"; };
@@ -835,6 +838,8 @@
 				9F675DE40F8F4D49001FCE5F /* BXEmulator+BXDOSFileSystem.mm */,
 				9F44E5E210D17A4C0081B8D2 /* BXEmulator+BXInput.h */,
 				9F44E5E310D17A4C0081B8D2 /* BXEmulator+BXInput.mm */,
+				9FB635DB111EC63F00EDC2DA /* BXRenderer.h */,
+				9FB635DC111EC63F00EDC2DA /* BXRenderer.m */,
 			);
 			comments = "The sourcefiles in this group interface directly with DOSBox's internals. For this reason, they need to be compiled as Objective C++ rather than Objective C.";
 			name = BXEmulator;
@@ -1793,6 +1798,7 @@
 				9F9A4CA910F6824B00E61965 /* BXFilterGallery.m in Sources */,
 				9F9FE70410FA5F5800E3944B /* NSWorkspace+BXIcons.m in Sources */,
 				9FD5481411047E420041E1E7 /* BXDrivesInUseAlert.m in Sources */,
+				9FB635DD111EC63F00EDC2DA /* BXRenderer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

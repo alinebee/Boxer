@@ -320,12 +320,15 @@
 //------------------------------
 
 - (NSWindow *) SDLWindow	{ return [self window]; }
-- (NSOpenGLView *) SDLView	{ return [[[self renderView] subviews] lastObject]; }
-- (NSOpenGLContext *) SDLOpenGLContext { return [[self SDLView] openGLContext]; }
+- (NSOpenGLView *) SDLView	{ return (NSOpenGLView *)[self renderView]; }
+- (NSOpenGLContext *) SDLOpenGLContext { return [renderView openGLContext]; }
 
 - (void) prepareSDLViewForFrame: (NSRect)frame
-{
-	NSOpenGLView *view = [self SDLView];
+{	
+	[renderView setHidden: NO];
+	[renderView setNeedsDisplay: YES];	
+	[[renderView openGLContext] makeCurrentContext];
+	
 	BXSessionWindow *theWindow = [self window];
 	
 	NSSize viewSize		= frame.size;
@@ -344,11 +347,6 @@
 	
 	//Now resize the window to fit the new size
 	[self _resizeWindowForRenderViewSize: viewSize animate: YES];
-	
-	[view setHidden: NO];
-	[view setNeedsDisplay: YES];
-	
-	[[view openGLContext] makeCurrentContext];
 }
 
 - (void) prepareSDLOpenGLContextWithFormat: (NSOpenGLPixelFormat *)format
@@ -358,13 +356,13 @@
 - (void) prepareSDLViewForFullscreen
 {
 	//Prevents contention for draw context, for some reason.
-	[[self SDLView] setHidden: YES];
+	[renderView setHidden: YES];
 }
 
 - (void) prepareSDLOpenGLContextForTeardown
 {
 	[NSOpenGLContext clearCurrentContext];
-	[[self SDLView] clearGLContext];
+	[renderView clearGLContext];
 }
 
 - (BOOL) handleSDLKeyboardEvent: (NSEvent *)event

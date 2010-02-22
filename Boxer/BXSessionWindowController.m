@@ -117,7 +117,7 @@
 	if (![theSession isEqualTo: [self document]])
 	{
 		[[self document] removeObserver: self forKeyPath: @"activeProgramPath"];
-		[theSession addObserver: self forKeyPath: @"activeProgramPath" options: 0 context: nil];
+		[[self renderView] unbind: @"renderer"];
 	}
 	
 	[super setDocument: theSession];
@@ -140,6 +140,15 @@
 		
 		//...and add it to our panel controller, so that it can keep up with the times too
 		[[self programPanelController] setRepresentedObject: theSession];
+		
+		[theSession addObserver: self forKeyPath: @"activeProgramPath" options: 0 context: nil];
+
+		//..and finally bind our render view to it
+		
+		[[self renderView] bind: @"renderer"
+					   toObject: theSession
+					withKeyPath: @"emulator.renderer"
+						options: nil];
 	}
 }
 

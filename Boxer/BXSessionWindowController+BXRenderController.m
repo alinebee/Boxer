@@ -12,6 +12,8 @@
 #import "BXGeometry.h"
 #import "BXSession.h"
 #import "NSWindow+BXWindowSizing.h"
+#import "BXRenderView.h"
+#import "BXRenderer.h"
 
 
 @implementation BXSessionWindowController (BXRenderController)
@@ -32,13 +34,13 @@
 	if ([self resizingProgrammatically] || [renderView inLiveResize])
 	{
 		//While a resize is in progress, content ourselves with just rescaling the view
-		[[self emulator] redraw];
+		//[[self emulator] redraw];
 	}
 	else
 	{
 		//Once the resize has finished, reinitialise the renderer to make it use settings
 		//appropriate to the new size
-		[[self emulator] resetRenderer];
+		//[[self emulator] resetRenderer];
 	}
 }
 
@@ -90,36 +92,28 @@
 //Return the current size of the render portal.
 - (NSSize) renderViewSize	{ return [[self renderView] frame].size; }
 
-//Returns the most appropriate view size for the intended DOSBox render size, given the size of the current window.
-//This is calculated as the current view size with the aspect ratio compensated for that of the new render size: favouring the width or the height as appropriate.
-//This method is called by BXEmulator+BXRendering's surfaceSizeForRenderedSize function, which in turn is called by DOSBox's internals to advise it what surface size to request from SDL.
-//It's also doing too much work and needs to be refactored so that BXEmulator is making decisions about minimum size and height preservation instead of us here.
-- (NSSize) viewSizeForRenderedSize: (NSSize)renderedSize minSize: (NSSize)minViewSize
-{
-	BXSessionWindow *theWindow = [self window];
-	
-	//Quick hack: if we're in the middle of a resize animation, just return the current size without constraints
-	if ([self resizingProgrammatically]) return [self renderViewSize];
-
-	
-	//Work out the aspect ratio of the target render size, and how we should apply that ratio
-	CGFloat aspectRatio = aspectRatioOfSize(renderedSize);
-	
-	//We preserve height during the aspect ratio adjustment if the new render height is equivalent to the old AND the width is not equivalent to the old; otherwise, we preserve width. (Height-locking fixes crazy-ass resolution transitions in Pinball Fantasies and The Humans, while width-locking fixes occasional rounding errors during live resizes.)
-	BOOL preserveHeight = !((NSInteger)currentRenderedSize.height % (NSInteger)renderedSize.height)
-						&& ((NSInteger)currentRenderedSize.width % (NSInteger)renderedSize.width);
-
-	//We set the minimum size to be the base resolution of the DOS output,
-	//and the maximum size as that which will fit on the current screen
-	NSRect screenFrame	= [[theWindow screen] visibleFrame];
-	NSSize maxViewSize	= [theWindow contentRectForFrameRect: screenFrame].size;
-
-
+//Returns the most appropriate view size for the intended output size, given the size of the current window.
+//This is calculated as the current view size with the aspect ratio compensated for that of the new output size:
+//favouring the width or the height as appropriate.
+- (NSSize) viewSizeForScaledOutputSize: (NSSize)scaledSize minSize: (NSSize)minViewSize
+{	
 	//We start off with our current view size: we want to deviate from this as little as possible.
 	NSSize viewSize = [self renderViewSize];
+	
+	//Work out the aspect ratio of the scaled size, and how we should apply that ratio
+	CGFloat aspectRatio = aspectRatioOfSize(scaledSize);
+	
+	//We preserve height during the aspect ratio adjustment if:
+	// 1. the new height is equivalent to the old, and
+	// 2. the width is not equivalent to the old.
+	//Otherwise, we preserve width.
+	//Height-locking fixes crazy-ass resolution transitions in Pinball Fantasies and The Humans,
+	//while width-locking allows for rounding errors from live resizes.
+	BOOL preserveHeight = !((NSInteger)currentScaledSize.height	% (NSInteger)scaledSize.height)
+						&& ((NSInteger)currentScaledSize.width	% (NSInteger)scaledSize.width);
 
 	//Now, adjust the view size to fit the aspect ratio of our new rendered size.
-	//At the same time we clamp it to the minimum size, preserving the same dimension.
+	//At the same time we clamp it to the minimum size, preserving the preferred dimension.
 	if (preserveHeight)
 	{
 		if (minViewSize.height > viewSize.height) viewSize = minViewSize;
@@ -131,23 +125,63 @@
 		viewSize.height = round(viewSize.width / aspectRatio);
 	}
 
+	//TODO: this screen constraint should not exist here!
+	//We set the maximum size as that which will fit on the current screen
+	BXSessionWindow *theWindow = [self window];
+	NSRect screenFrame	= [[theWindow screen] visibleFrame];
+	NSSize maxViewSize	= [theWindow contentRectForFrameRect: screenFrame].size;
+	
 	//Now clamp the size to the maximum size that will fit on screen, just in case we still overflow
 	viewSize = constrainToFitSize(viewSize, maxViewSize);
 	
 	return viewSize;
 }
 
+- (void) resizeToAccommodateOutputSize: (NSSize)outputSize atScale: (NSSize)scale
+{
+	NSSize scaledSize	= NSMakeSize(outputSize.width	* scale.width,
+									 outputSize.height	* scale.height);
+	NSSize originalSize	= [[self emulator] scaledResolution];	//The size the DOS game is producing
+	NSSize viewSize		= [self viewSizeForScaledOutputSize: scaledSize minSize: originalSize];
+	
+	//Use the base resolution as our minimum content size, to prevent higher resolutions being rendered
+	//smaller than their effective size
+	//Tweak: ...unless the base resolution is actually larger than our view size, which can happen 
+	//if the base resolution is too large to fit on screen and hence the view is shrunk.
+	//In that case we use the target view size as the minimum instead.
+	NSSize minSize;
+	if (viewSize.width < originalSize.width || viewSize.height < originalSize.height)
+		minSize = viewSize;
+	else
+		minSize = originalSize;
+		
+	//Fix the window's aspect ratio to the new size - this will affect our live resizing behaviour
+	[[self window] setContentMinSize: minSize];
+	[[self window] setContentAspectRatio: viewSize];
+	
+	//Now resize the window to fit the new size
+	//Tell the renderer not to maintain aspect ratio when doing so,
+	//since this change in size is driven by the DOS context
+	[[[self renderView] renderer] setMaintainAspectRatio: NO];
+	[self _resizeWindowForRenderViewSize: viewSize animate: YES];
+	[[[self renderView] renderer] setMaintainAspectRatio: YES];
+	
+	//Finally, record our current scaled size for future resizing calculations
+	currentScaledSize = scaledSize;
+}
+
+
 //Try to resize the window to accomodate the specified minimum size
 //If we can't manage that size, do nothing and return NO; otherwise resize and return YES
 - (BOOL) resizeToAccommodateViewSize: (NSSize) minViewSize
 {
-	BXSessionWindow *theWindow	= [self window];
+	BXSessionWindow *theWindow = [self window];
 
 	NSSize currentSize		= [self renderViewSize];
-	//We're already that size or larger, go us!
+	//We're already that size or larger, don't resize further
 	if (sizeFitsWithinSize(minViewSize, currentSize)) return YES;
 	
-	//Otherwise check if the specified size will still fit on screen
+	//Otherwise check if the desired size will still fit on screen
 	NSRect screenFrame		= [[theWindow screen] visibleFrame];
 	NSSize maxViewSize		= [theWindow contentRectForFrameRect: screenFrame].size;
 	
@@ -163,7 +197,7 @@
 //Returns YES if the window is zooming, NO if no zoom occurs (i.e. the window is already in the correct state)
 - (void) setFullScreenWithZoom: (BOOL) fullScreen
 {
-	BXEmulator *emulator	= [self emulator];
+	BXEmulator *emulator = [self emulator];
 
 	//Don't bother if the emulator is already in the correct state
 	if ([emulator isFullScreen] == fullScreen) return;
@@ -231,7 +265,7 @@
 	if (widthDiff > 0 && widthDiff <= snapThreshold)
 	{
 		renderFrame.size.width = snappedWidth;
-		if (aspectRatio > 0)	renderFrame.size.height = round(snappedWidth / aspectRatio);
+		if (aspectRatio > 0) renderFrame.size.height = round(snappedWidth / aspectRatio);
 	}
 	
 	NSSize newProposedSize = [theWindow frameRectForContentRect:renderFrame].size;
@@ -241,7 +275,10 @@
 
 
 //Return an appropriate "standard" (zoomed) frame for the window given the currently available screen space.
-//We define the standard frame to be the largest even multiple of the game resolution. Note that in some cases this will be equal to the standard window size, so that nothing happens when zoomed - unfortunately the cures for this are worse than the disease, so we leave it be for now.
+//We define the standard frame to be the largest even multiple of the game resolution.
+//Note that in some cases this will be equal to the standard window size, so that nothing happens when zoomed
+//(unfortunately the cures for this are worse than the disease, so we leave it be for now.)
+
 - (NSRect) windowWillUseStandardFrame: (BXSessionWindow *)theWindow defaultFrame: (NSRect)defaultFrame
 {
 	if (![[self emulator] isExecuting]) return defaultFrame;
@@ -333,7 +370,7 @@
 	
 	NSSize viewSize		= frame.size;
 	NSSize originalSize	= [[self emulator] scaledResolution];	//The size the DOS game is producing
-	currentRenderedSize	= [[self emulator] renderedSize];		//Record DOSBox's new rendering size, for later use in viewSizeForRenderedSize
+																//currentRenderedSize	= [[self emulator] renderedSize];		//Record DOSBox's new rendering size, for later use in viewSizeForRenderedSize
 	
 	//Use the base resolution as our minimum content size, to prevent higher resolutions being rendered smaller than their effective size
 	//Tweak: ...unless the base resolution is actually larger than our view size, which can happen if the base resolution is too large to fit on screen and hence the view is shrunk. In that case we use the view size as a minimum instead.

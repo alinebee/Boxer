@@ -28,9 +28,12 @@ extern "C" {
 	BOXER_EXPORT bool boxer_handleDOSBoxTitleChange(int cycles, int frameskip, bool paused);
 	BOXER_EXPORT void boxer_applyConfigFiles();
 	BOXER_EXPORT void boxer_setupSurfaceScaled(Bit32u sdl_flags, Bit32u bpp);
-	BOXER_EXPORT void boxer_copySurfaceSize(unsigned int * surfaceWidth, unsigned int * surfaceHeight);
 	BOXER_EXPORT Bit8u boxer_screenColorDepth();
-
+	
+	BOXER_EXPORT Bitu boxer_prepareRenderContext();
+	BOXER_EXPORT void boxer_updateRenderContext();
+	
+	
 	//Called from render.cpp: configures the DOSBox render state.
 	BOXER_EXPORT void boxer_applyRenderingStrategy();
 

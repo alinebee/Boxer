@@ -8,6 +8,13 @@
 
 #import "BXGeometry.h"
 
+NSInteger fitToPowerOfTwo(NSInteger value)
+{
+    int log = 0;
+    while ((value >>= 1) != 0) log++;
+    return 2 << log;
+}
+
 CGFloat aspectRatioOfSize(NSSize size)
 {
 	return (size.height) ? (size.width / size.height) : 0;
@@ -67,4 +74,19 @@ NSRect alignInRectWithAnchor(NSRect innerRect, NSRect outerRect, NSPoint anchor)
 NSRect centerInRect(NSRect innerRect, NSRect outerRect)
 {
 	return alignInRectWithAnchor(innerRect, outerRect, NSMakePoint(0.5, 0.5));
+}
+
+NSRect fitInRect(NSRect innerRect, NSRect outerRect, NSPoint anchor)
+{
+	NSRect fittedRect;
+	fittedRect.size = sizeToFitSize(innerRect.size, outerRect.size);
+	return alignInRectWithAnchor(fittedRect, outerRect, anchor);
+}
+
+NSRect constrainToRect(NSRect innerRect, NSRect outerRect, NSPoint anchor)
+{
+	NSRect fittedRect;
+	if (NSContainsRect(outerRect, innerRect))
+		return alignInRectWithAnchor(fittedRect, outerRect, anchor);
+	else return fitInRect(innerRect, outerRect, anchor);
 }

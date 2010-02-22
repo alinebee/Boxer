@@ -50,11 +50,13 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 
 
 @class BXSession;
+@class BXRenderer;
 
 @interface BXEmulator : NSOperation
 {
 	NSThread *thread;
 	BXSession *delegate;
+	BXRenderer *renderer;
 	
 	NSString *processName;
 	NSString *processPath;
@@ -107,6 +109,10 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 //The current thread under which the emulator is running. This is not retained.
 @property (readonly)	NSThread *thread;
 
+//The OpenGL renderer we use for displaying DOSBox output.
+@property (retain)		BXRenderer *renderer;
+
+
 //An array of OS X paths to configuration files that will be processed by this session during startup.
 @property (retain, readonly) NSMutableArray *configFiles;
 
@@ -133,7 +139,6 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 @property (assign, getter=isAspectCorrected) BOOL aspectCorrected;
 //The current rendering style as a DOSBox filter type constant (q.v. BXEmulator+BXRendering.h)
 @property (assign) BXFilterType filterType;
-
 
 
 

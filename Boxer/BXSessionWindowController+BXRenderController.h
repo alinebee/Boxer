@@ -39,13 +39,16 @@
 
 //Returns the view size that should be used for rendering the specified DOSBox output size.
 //This information is used by BXEmulator for telling SDL how big a surface to create.
-- (NSSize) viewSizeForRenderedSize: (NSSize)renderedSize minSize: (NSSize)minViewSize;
+- (NSSize) viewSizeForScaledOutputSize: (NSSize)scaledSize minSize: (NSSize)minViewSize;
 
 //Resize the window to accomodate the specified view size. Returns YES if a resize was possible,
 //or NO if there is not enough room onscreen to do so.
 //Currently this is called when choosing a new filter to resize the window if it is smaller than
 //the filter's minimum size.
 - (BOOL) resizeToAccommodateViewSize: (NSSize) minViewSize;
+
+//Resize the window to accomodate the specified DOS output size at the specified scale factor.
+- (void) resizeToAccommodateOutputSize: (NSSize)outputSize atScale: (NSSize)scale;
 
 //Zoom in and out of fullscreen mode with a smooth window sizing animation.
 - (void) setFullScreenWithZoom: (BOOL) fullScreen;

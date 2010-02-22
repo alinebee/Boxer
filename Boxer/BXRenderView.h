@@ -12,7 +12,12 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class BXRenderer;
 @interface BXRenderView : NSOpenGLView
+{
+	BXRenderer *renderer;
+}
+@property (retain) BXRenderer *renderer;
 
 //Render the view's badged grey background; this shows through when there is no OpenGL view. 
 - (void) drawBackgroundInRect: (NSRect) dirtyRect;

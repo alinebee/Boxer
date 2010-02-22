@@ -27,11 +27,11 @@ enum {
 	NSImage *grille			= [NSImage imageNamed: @"Grille.png"];
 	NSSize patternSize		= [grille size];
 	NSColor *grillePattern	= [NSColor colorWithPatternImage: grille];
-	
+	NSColor *backgroundColor = [NSColor grayColor]; 
 	NSGradient *background = [[NSGradient alloc] initWithColorsAndLocations:
-		[NSColor grayColor],		0.0,
-		[NSColor darkGrayColor],	0.9,
-		[NSColor colorWithCalibratedWhite: 0.15 alpha: 1.0],	1.0,
+		backgroundColor,							0.0,
+		[backgroundColor shadowWithLevel: 0.25],	0.9,
+		[backgroundColor shadowWithLevel: 0.5],		1.0,
 	nil];
 
 	NSRect panelRegion	= [self bounds];

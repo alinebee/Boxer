@@ -8,8 +8,10 @@
 
 #import "BXRenderView.h"
 #import "BXGeometry.h"
+#import "BXRenderer.h"
 
 @implementation BXRenderView
+@synthesize renderer;
 
 //This helps optimize OS X's rendering decisions, hopefully
 - (BOOL) isOpaque	{ return YES; }
@@ -20,10 +22,11 @@
 	static NSGradient *background = nil;
 	if (background == nil)
 	{
+		NSColor *backgroundColor = [NSColor darkGrayColor];
 		background = [[NSGradient alloc] initWithColorsAndLocations:
-					  [NSColor colorWithCalibratedWhite: 0.15 alpha: 1.0],	0.0,
-					  [NSColor colorWithCalibratedWhite: 0.25 alpha: 1.0],	0.98,
-					  [NSColor colorWithCalibratedWhite: 0.15 alpha: 1.0],	1.0,
+					  [backgroundColor shadowWithLevel: 0.5],	0.00,
+					  backgroundColor,							0.98,
+					  [backgroundColor shadowWithLevel: 0.4],	1.00,
 					  nil];	
 	}
 	
@@ -46,27 +49,30 @@
 - (void) drawRect: (NSRect)dirtyRect
 {
 	[NSBezierPath clipRect: dirtyRect];
-	if ([self inLiveResize])
+	if ([self renderer])
 	{
-		//While resizing, just fill the view with black
-		[[NSColor blackColor] setFill];
-		[NSBezierPath fillRect: dirtyRect];
+		[[self renderer] render];
+		[[self openGLContext] flushBuffer];
 	}
 	else
 	{
-		//The rest of the time, draw our grey background and badge underneath
 		return [self drawBackgroundInRect: dirtyRect];
 	}
 }
 
+- (void) reshape
+{
+	[[self renderer] setViewportRect: [self bounds]];
+}
+
 //Silly notifications to let the window controller know when a live resize operation is starting/stopping,
 //so that it can clean up afterwards. These should go on BXSessionWindow now instead.
-- (void)viewWillStartLiveResize
+- (void) viewWillStartLiveResize
 {	
 	[[NSNotificationCenter defaultCenter] postNotificationName: @"BXRenderViewWillLiveResizeNotification" object: self];
 }
 
-- (void)viewDidEndLiveResize
+- (void) viewDidEndLiveResize
 {
 	[[NSNotificationCenter defaultCenter] postNotificationName: @"BXRenderViewDidLiveResizeNotification" object: self];
 }

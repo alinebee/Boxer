@@ -31,9 +31,9 @@
 	IBOutlet NSView *programPanel;
 
 	BXProgramPanelController *programPanelController;
-	NSSize currentRenderedSize;	//Used internally by the BXRenderController category for resizing decisions.
+	
+	NSSize currentScaledSize;	//Used internally by the BXRenderController category for resizing decisions.
 	BOOL resizingProgrammatically;
-	NSOpenGLContext *SDLOpenGLContext;
 }
 //Our view controller for the program picker panel. This is created when awaking from the NIB file.
 @property (retain) BXProgramPanelController *programPanelController;

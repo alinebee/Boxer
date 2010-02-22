@@ -429,6 +429,9 @@ Bitu GFX_SetSize(Bitu width,Bitu height,Bitu flags,double scalex,double scaley,G
 	sdl.draw.scalex=scalex;
 	sdl.draw.scaley=scaley;
 
+	return boxer_prepareRenderContext();
+	//Everything after this point never happens
+	
 	Bitu bpp=0;
 	Bitu retFlags = 0;
 
@@ -778,6 +781,10 @@ void GFX_EndUpdate( const Bit16u *changedLines ) {
 	if (!sdl.updating)
 		return;
 	sdl.updating=false;
+	
+	if (changedLines) boxer_updateRenderContext();
+	return;
+	
 	switch (sdl.desktop.type) {
 	case SCREEN_SURFACE:
 		if (SDL_MUSTLOCK(sdl.surface)) {
@@ -1152,14 +1159,16 @@ static void GUI_StartUp(Section * sec) {
 	//--Modified 2009-02-18 by Alun Bestor: initialise OpenGL to our standard window size to ensure that we don't inadvertently resize the window to play catchup
 	//sdl.surface=SDL_SetVideoMode(640,400,0,SDL_OPENGL);
 	unsigned int surfaceWidth, surfaceHeight;
-	boxer_copySurfaceSize(&surfaceWidth, &surfaceHeight);
-	sdl.surface=SDL_SetVideoMode((int)surfaceWidth,(int)surfaceHeight,0,SDL_OPENGL);
+	   //boxer_copySurfaceSize(&surfaceWidth, &surfaceHeight);
+	   //sdl.surface=SDL_SetVideoMode((int)surfaceWidth,(int)surfaceHeight,0,SDL_OPENGL);
 	//--End of modifications
 	
+	   /*
 	if (sdl.surface == NULL) {
 		LOG_MSG("Could not initialize OpenGL, switching back to surface");
 		sdl.desktop.want_type=SCREEN_SURFACE;
-	} else {
+	} else */{
+		
 	sdl.opengl.framebuf=0;
 	sdl.opengl.texture=0;
 	sdl.opengl.displaylist=0;

@@ -17,6 +17,7 @@
 #import "vga.h"
 #import "sdlmain.h"
 #import "BXFilterDefinitions.h"
+#import "BXRenderer.h"
 
 
 //Renderer functions
@@ -58,8 +59,8 @@
 	NSSize size = NSZeroSize;
 	if ([self isExecuting])
 	{
-		size.width	= (CGFloat)sdl.draw.width * (CGFloat)sdl.draw.scalex;
-		size.height	= (CGFloat)sdl.draw.height * (CGFloat)sdl.draw.scaley;
+		size.width	= (CGFloat)sdl.draw.width	* (CGFloat)sdl.draw.scalex;
+		size.height	= (CGFloat)sdl.draw.height	* (CGFloat)sdl.draw.scaley;
 	}
 	return size;
 }
@@ -219,6 +220,7 @@
 //This is called while resizing the session window to provide live updates.
 - (void) redraw
 {
+	/*
 	if (!sdl.surface) return;
 	
 	//Center the viewport in our current surface size
@@ -239,6 +241,7 @@
 		glCallList(sdl.opengl.displaylist);
 		SDL_GL_SwapBuffers();
 	}
+	 */
 }
 
 
@@ -279,6 +282,59 @@
 //SDL surface strategy
 //--------------------
 
+- (NSUInteger) _prepareRenderContext
+{
+	NSSize outputSize	= NSMakeSize((CGFloat)sdl.draw.width, (CGFloat)sdl.draw.height);
+	NSSize scale		= NSMakeSize((CGFloat)sdl.draw.scalex, (CGFloat)sdl.draw.scaley);
+	
+	[[[self delegate] mainWindowController] resizeToAccommodateOutputSize: outputSize atScale: scale];
+	[[self renderer] prepareForOutputSize: outputSize atScale: scale];
+	
+	sdl.opengl.framebuf = malloc(sdl.draw.width * sdl.draw.height * 4);
+	sdl.opengl.pitch = sdl.draw.width * 4;
+	sdl.desktop.type = SCREEN_OPENGL;
+	sdl.active = YES;
+	
+	if (!sdl.mouse.autoenable) SDL_ShowCursor(sdl.mouse.autolock ? SDL_DISABLE: SDL_ENABLE);
+
+	//Synchronise our record of the current video mode with the new video mode
+	if (currentVideoMode != vga.mode)
+	{
+		BOOL wasTextMode = [self isInTextMode];
+		[self willChangeValueForKey: @"isInTextMode"];
+		currentVideoMode = vga.mode;
+		[self didChangeValueForKey: @"isInTextMode"];
+		BOOL nowTextMode = [self isInTextMode];
+		
+		//Started up a graphical application
+		if (wasTextMode && !nowTextMode)
+			[self _postNotificationName: @"BXEmulatorDidStartGraphicalContext"
+					   delegateSelector: @selector(didStartGraphicalContext:)
+							   userInfo: nil];
+		
+		//Graphical application returned to text mode
+		else if (!wasTextMode && nowTextMode)
+			[self _postNotificationName: @"BXEmulatorDidEndGraphicalContext"
+					   delegateSelector: @selector(didEndGraphicalContext:)
+							   userInfo: nil];
+	}	
+	
+	return GFX_CAN_32 | GFX_SCALING;
+}
+
+- (void) _updateRenderContext
+{
+	if (sdl.opengl.framebuf && Scaler_ChangedLines)
+	{
+		[[self renderer] _drawPixelData: (void *)sdl.opengl.framebuf dirtyLines: Scaler_ChangedLines];
+		
+		//TODO: this does not belong here
+		BXSessionWindowController *controller = [[self delegate] mainWindowController];
+		[[controller renderView] setNeedsDisplay: YES];
+	}
+}
+
+
 //Initialises the SDL surface to which we shall render.
 //Called by boxer_SetupSurfaceScaled which is in turn called from DOSBox gui/sdlmain.cpp. This entirely replaces the old GFX_SetupSurfaceScaled DOSBox function.
 - (void) _initSDLSurfaceWithFlags: (NSInteger)flags
@@ -317,28 +373,6 @@
 		flags |= SDL_HWSURFACE;
 		sdl.surface = SDL_SetVideoMode(sdl.clip.w, sdl.clip.h, bpp, flags);
 	}
-	
-	//Synchronise our record of the current video mode with the new video mode
-	if (currentVideoMode != vga.mode)
-	{
-		BOOL wasTextMode = [self isInTextMode];
-		[self willChangeValueForKey: @"isInTextMode"];
-		currentVideoMode = vga.mode;
-		[self didChangeValueForKey: @"isInTextMode"];
-		BOOL nowTextMode = [self isInTextMode];
-		
-		//Started up a graphical application
-		if (wasTextMode && !nowTextMode)
-			[self _postNotificationName: @"BXEmulatorDidStartGraphicalContext"
-					   delegateSelector: @selector(didStartGraphicalContext:)
-														   userInfo: nil];
-		
-		//Graphical application returned to text mode
-		else if (!wasTextMode && nowTextMode)
-			[self _postNotificationName: @"BXEmulatorDidEndGraphicalContext"
-					   delegateSelector: @selector(didEndGraphicalContext:)
-							   userInfo: nil];
-	}
 }
 
 //Returns whether to apply bilinear filtering to the specified rendering size.
@@ -360,7 +394,7 @@
 	else
 	{
 		BXSessionWindowController *controller = [[self delegate] mainWindowController];
-		surfaceSize = [controller viewSizeForRenderedSize: renderedSize minSize: resolution];
+		surfaceSize = [controller viewSizeForScaledOutputSize: renderedSize minSize: resolution];
 	}
 	
 	return surfaceSize;
@@ -383,36 +417,42 @@
 	
 	//Work out how much we will need to scale the resolution to fit our likely surface
 	NSSize resolution			= [self resolution];
-	NSSize maxRenderedSize		= [self _maxRenderedSize];
-	NSSize surfaceSize			= [self _probableSurfaceSizeForResolution: resolution];
-	NSSize scale				= NSMakeSize(surfaceSize.width / resolution.width, surfaceSize.height / resolution.height);
+	NSSize expectedRenderSize	= [self _probableSurfaceSizeForResolution: resolution];
+	NSSize scale				= NSMakeSize(expectedRenderSize.width	/ resolution.width,
+											 expectedRenderSize.height	/ resolution.height);
 		
 	BOOL useAspectCorrection	= [self _shouldUseAspectCorrectionForResolution: resolution];
 	
-	//Decide if we can use our selected scaler at this scale, reverting to the normal filter if we can't
-	BXFilterType activeType		= [self filterType];
+	//Decide if we can use our selected scaler at this scale,
+	//reverting to the normal filter if we can't
+	BXFilterType activeType = [self filterType];
 	if (![self _shouldApplyFilterType: activeType toScale: scale]) activeType = BXFilterNormal;
 		
 	//Now decide on what operation size this scaler should use
-	//If we're using a flat scaling filter and bilinear filtering isn't necessary for the target size (or the base resolution is large enough for scaling to be too slow), then speed things up by using 1x scaling and letting OpenGL do the work.
-	NSInteger filterSize;
+	//If we're using a flat scaling filter and bilinear filtering isn't necessary for the target size
+	//(or the base resolution is large enough for scaling to be too slow), then speed things up
+	//by using 1x scaling and letting OpenGL do the work.
+	NSInteger filterScale;
 	if (activeType == BXFilterNormal && (
 		resolution.width >= 640 || resolution.height >= 400 ||
-		![self _shouldUseBilinearForResolution: resolution atSurfaceSize: surfaceSize]
+		![self _shouldUseBilinearForResolution: resolution atSurfaceSize: expectedRenderSize]
 	))
 	{
-		filterSize = 1;
+		filterScale = 1;
 	}
 	else
 	{
-		filterSize				= [self _sizeForFilterType: activeType atScale: scale];
-		NSInteger maxFilterSize	= [self _maxFilterSizeForResolution: [self resolution]];
-		filterSize				= fmin(filterSize, maxFilterSize);
+		filterScale					= [self _sizeForFilterType: activeType atScale: scale];
+		NSInteger maxFilterScale	= [self _maxFilterSizeForResolution: resolution];
+		filterScale					= fmin(filterScale, maxFilterScale);
 	}
+	
+	filterScale = 1;
+	
 	//Finally, apply the values to DOSBox
 	render.aspect		= useAspectCorrection;
 	render.scale.forced	= YES;
-	render.scale.size	= (Bitu)filterSize;
+	render.scale.size	= (Bitu)filterScale;
 	render.scale.op		= (scalerOperation_t)activeType;
 }
 
@@ -502,4 +542,16 @@ void boxer_copySurfaceSize(unsigned int * surfaceWidth, unsigned int * surfaceHe
 	
 	*surfaceWidth	= (unsigned int)surfaceSize.width;
 	*surfaceHeight	= (unsigned int)surfaceSize.height;
+}
+
+Bitu boxer_prepareRenderContext()
+{
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+	return [emulator _prepareRenderContext];
+}
+
+void boxer_updateRenderContext()
+{
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+	[emulator _updateRenderContext];
 }

@@ -12,6 +12,7 @@
 #import "BXEmulator+BXRendering.h"
 #import "BXEmulator+BXRecording.h"
 #import "BXEmulator+BXDOSFileSystem.h"
+#import "BXRenderer.h"
 
 #import "boxer.h"
 #import "render.h"
@@ -75,6 +76,7 @@ BXEmulator *currentEmulator = nil;
 @synthesize processName, processPath, processLocalPath;
 @synthesize currentRecordingPath;
 @synthesize delegate, thread;
+@synthesize renderer;
 @synthesize minFixedSpeed, maxFixedSpeed, maxFrameskip;
 @synthesize suppressOutput;
 @synthesize configFiles;
@@ -151,6 +153,8 @@ BXEmulator *currentEmulator = nil;
 		commandQueue		= [[NSMutableArray alloc] initWithCapacity: 4];
 		driveCache			= [[NSMutableDictionary alloc] initWithCapacity: DOS_DRIVES];
 		currentVideoMode	= M_TEXT;
+		
+		[self setRenderer: [[[BXRenderer alloc] init] autorelease]];
 	}
 	return self;
 }
@@ -159,6 +163,7 @@ BXEmulator *currentEmulator = nil;
 {
 	[self setProcessName: nil],	[processName release];
 	[self setCurrentRecordingPath: nil], [currentRecordingPath release];
+	[self setRenderer: nil], [renderer release];
 	
 	[driveCache release], driveCache = nil;
 	[configFiles release], configFiles = nil;

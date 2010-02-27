@@ -27,7 +27,18 @@
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_LIGHTING);
 	glDisable(GL_CULL_FACE);
-	glEnable(GL_TEXTURE_2D);
+	
+	if (gluCheckExtension((const GLubyte*)"GL_ARB_texture_rectangle", glGetString(GL_EXTENSIONS)))
+	{
+		//Enable rectangular textures for a tidier texture path
+		glEnable(GL_TEXTURE_RECTANGLE_ARB);
+		textureTarget = GL_TEXTURE_RECTANGLE_ARB;
+	}
+	else
+	{
+		glEnable(GL_TEXTURE_2D);
+		textureTarget = GL_TEXTURE_2D;
+	}
 	
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -37,8 +48,9 @@
 {
 	outputSize = size;
 	outputScale = scale;
-	textureIsInvalid = YES;
-	[self _updateViewport];
+	//Next time one of the draw functions is called, this will resync
+	//the texture and display list to match the new output size
+	rendererIsInvalid = YES;
 }
 
 - (void) setCanvas: (NSRect)canvasRect
@@ -66,17 +78,13 @@
 {
 	if (dirtyBlocks)
 	{
-		if (textureIsInvalid)
-		{
-			[self _createTexture];
-			[self _createDisplayList];
-		}
+		if (rendererIsInvalid) [self _updateRenderer];
 		
 		NSUInteger offset = 0, i = 0;
 		NSUInteger height, pitch = [self pitch];
 		void *offsetPixels;
 		
-		glBindTexture(GL_TEXTURE_2D, texture);
+		glBindTexture(textureTarget, texture);
 		
 		while (offset < outputSize.height)
 		{
@@ -96,7 +104,7 @@
 				//otherwise it would write arbitrary data to the texture.
 				offsetPixels = pixelData + (offset * pitch);
 				
-				glTexSubImage2D(GL_TEXTURE_2D,		//Texture target
+				glTexSubImage2D(textureTarget,		//Texture target
 								0,					//Mipmap level
 								0,					//X offset
 								offset,				//Y offset
@@ -106,6 +114,7 @@
 								GL_UNSIGNED_INT_8_8_8_8_REV,	//byte packing
 								offsetPixels		//pixel data
 								);
+				
 			}
 			offset += height;
 			i++;
@@ -116,14 +125,10 @@
 
 - (void) drawPixelData: (void *)pixelData
 {
-	if (textureIsInvalid)
-	{
-		[self _createTexture];
-		[self _createDisplayList];
-	}
+	if (rendererIsInvalid) [self _updateRenderer];
 	
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexSubImage2D(GL_TEXTURE_2D,		//Texture target
+	glBindTexture(textureTarget, texture);
+	glTexSubImage2D(textureTarget,		//Texture target
 					0,					//Mipmap level
 					0,					//X offset
 					0,					//Y offset
@@ -150,6 +155,17 @@
 
 @implementation BXRenderer (BXRendererInternals)
 
+- (void) _updateRenderer
+{
+	[self _createTexture];
+	[self _createDisplayList];
+	[self _updateViewport];
+	[self clear];
+	
+	rendererIsInvalid = NO;
+}
+
+
 - (BOOL) _shouldUseFiltering
 {
 	return	((NSInteger)viewport.size.width		% (NSInteger)outputSize.width) || 
@@ -166,9 +182,8 @@
 	}
 	else
 	{
-		//Otherwise, let the output fill the available canvas
-		//FIXME: this is not really what we want. This toggle is intended to allow us to correctly reshape when 4:3 aspect
-		//ratio correction is toggled, but it will screw up the viewport when we're in fullscreen mode. 
+		//Otherwise, unlock to let the output fill the available canvas
+		//FIXME: this is not really what we want. This toggle is intended to allow us to correctly reshape when 4:3 aspect ratio correction is toggled, but it will screw up the viewport if this is toggled when we're in fullscreen mode (or are otherwise letterboxed). 
 		viewport = canvas;
 	}
 	
@@ -180,9 +195,16 @@
 
 - (void) _createTexture
 {
-	//Create a texture large enough to accommodate the output size, whose dimensions are an even power of 2 
-	textureSize.width	= (CGFloat)fitToPowerOfTwo((NSInteger)outputSize.width);
-	textureSize.height	= (CGFloat)fitToPowerOfTwo((NSInteger)outputSize.height);
+	if (textureTarget == GL_TEXTURE_RECTANGLE_ARB)
+	{
+		textureSize = outputSize;
+	}
+	else
+	{
+		//Create a texture large enough to accommodate the output size, whose dimensions are an even power of 2
+		textureSize.width	= (CGFloat)fitToPowerOfTwo((NSInteger)outputSize.width);
+		textureSize.height	= (CGFloat)fitToPowerOfTwo((NSInteger)outputSize.height);
+	}
 	
 	//TODO: replace this check with a GL_PROXY_TEXTURE_2D call with graceful fallback
 	//See glTexImage2D(3) for implementation details
@@ -198,31 +220,41 @@
 	glGenTextures(1, &texture);
 	
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glBindTexture(GL_TEXTURE_2D, texture);
+	glBindTexture(textureTarget, texture);
 	
 	//Clamp the texture to avoid wrapping, and set the filtering mode
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glTexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	[self _updateFiltering];
 	
-	//Create a new empty texture of the specified size
-	//TODO: fill this with black, as to start with it's filled with leftover garbage data from arbitrary memory space
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, textureSize.width, textureSize.height, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, 0);	
 	
-	textureIsInvalid = NO;
+	//Create a new empty texture of the specified size
+	//TODO: fill this with black, as to start with it's filled with garbage data from arbitrary memory space
+	//This is noticeable as an ugly fringe in bilinear-filtered GL_TEXTURE_2D
+	glTexImage2D(textureTarget,	//Texture target
+				 0,				//Mipmap level
+				 GL_RGBA8,		//Internal texture format
+				 (GLsizei)textureSize.width,	//Width
+				 (GLsizei)textureSize.height,	//Height
+				 0,								//Border
+				 GL_BGRA,						//Byte ordering
+				 GL_UNSIGNED_INT_8_8_8_8_REV,	//Byte packing
+				 0								//Texture data
+				 );
+	
 }
 
 - (void) _updateFiltering
 {
 	if (glIsTexture(texture))
 	{
-		glBindTexture(GL_TEXTURE_2D, texture);
+		glBindTexture(textureTarget, texture);
 		
 		//Apply bilinear filtering to the texture
 		GLint filterMode = ([self _shouldUseFiltering]) ? GL_LINEAR : GL_NEAREST;
 		
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filterMode);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filterMode);	
+		glTexParameteri(textureTarget, GL_TEXTURE_MAG_FILTER, filterMode);
+		glTexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, filterMode);	
 	}
 }
 
@@ -230,15 +262,29 @@
 {
 	//Calculate what portion of the texture constitutes the output region
 	//(this is the part of the texture that will actually be filled with framebuffer data)
-	GLfloat outputX = (GLfloat)(outputSize.width	/ textureSize.width);
-	GLfloat outputY = (GLfloat)(outputSize.height	/ textureSize.height);
+	
+	GLfloat outputX, outputY;
+	if (textureTarget == GL_TEXTURE_RECTANGLE_ARB)
+	{	
+		//GL_TEXTURE_RECTANGLE_ARB textures use non-normalized texture coordinates
+		//(e.g. 0->width instead of 0->1) because they're STUPID
+		outputX = (GLfloat)textureSize.width;
+		outputY = (GLfloat)textureSize.height;
+	}
+	else
+	{
+		//Regular textures use proper 0->1 coordinates
+		outputX = (GLfloat)(outputSize.width	/ textureSize.width);
+		outputY = (GLfloat)(outputSize.height	/ textureSize.height);
+	}
+
 	
 	if (glIsList(displayList))
 		glDeleteLists(displayList, 1);
 	displayList = glGenLists(1);
 	
 	glNewList(displayList, GL_COMPILE);
-	glBindTexture(GL_TEXTURE_2D, texture);
+	glBindTexture(textureTarget, texture);
 	glBegin(GL_QUADS);
 	
 	//Now, map the output region of the texture to a surface filling the viewport

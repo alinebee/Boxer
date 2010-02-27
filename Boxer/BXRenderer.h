@@ -18,6 +18,7 @@
 	
 	NSSize outputSize;
 	NSSize textureSize;
+	GLenum textureTarget;
 	NSSize outputScale;
 	
 	NSRect viewport;
@@ -25,7 +26,7 @@
 	
 	BOOL maintainAspectRatio;
 	BOOL needsDisplay;
-	BOOL textureIsInvalid;
+	BOOL rendererIsInvalid;
 }
 
 //The OpenGL viewport into which we are rendering. When maintainAspectRatio is true,
@@ -80,6 +81,7 @@
 //The methods in this category should not be called from outside BXRenderer.
 @interface BXRenderer (BXRendererInternals)
 
+- (void) _updateRenderer;
 - (void) _createTexture;
 - (void) _createDisplayList;
 - (void) _updateViewport;

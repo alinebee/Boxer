@@ -715,13 +715,13 @@
 		080E96DDFE201D6D7F000001 /* Boxer */ = {
 			isa = PBXGroup;
 			children = (
-				9F23EB0111390A2600DC5AB6 /* BXRenderer */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
 				9F2D775B0F6140EF00D4E563 /* New headers for DOSBox */,
 				9F573D370F8E69AF0089D8B7 /* BXPackage.h */,
 				9F573D380F8E69AF0089D8B7 /* BXPackage.m */,
 				9F69133110A2F62A00EA78CD /* BXDrive.h */,
 				9F69133210A2F62A00EA78CD /* BXDrive.m */,
+				9F23EB0111390A2600DC5AB6 /* BXRenderer */,
 				9F1D50280F5C0ACD009F0AB9 /* BXEmulator */,
 				9F496E3D108EEB0700282261 /* BXSession */,
 				9F27133610C1253E0003CB58 /* BXSessionWindow */,
@@ -1927,6 +1927,63 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		9FE76B331139A11A005EF7B1 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
+				COPY_PHASE_STRIP = YES;
+				CURRENT_PROJECT_VERSION = 20100121.1;
+				GCC_VERSION = 4.0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH)";
+				PREBINDING = YES;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = Development;
+		};
+		9FE76B341139A11A005EF7B1 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+					"\"$(SRCROOT)/Frameworks\"",
+					"\"$(SRCROOT)/../../BGHUDAppKit/build/Release\"",
+				);
+				GCC_MODEL_TUNING = G4;
+				GCC_WARN_UNUSED_VARIABLE = NO;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+					"\"$(SRCROOT)/boxer\"",
+					"\"$(SRCROOT)/libs\"",
+					"\"$(SRCROOT)/src/boxer\"",
+					"\"$(SRCROOT)/src/cpu\"",
+					"\"$(SRCROOT)/src/debug\"",
+					"\"$(SRCROOT)/src/dos\"",
+					"\"$(SRCROOT)/src/fpu\"",
+					"\"$(SRCROOT)/src/gui\"",
+					"\"$(SRCROOT)/src/hardware\"",
+					"\"$(SRCROOT)/src/hardware/serialport\"",
+					"\"$(SRCROOT)/src/ints\"",
+					"\"$(SRCROOT)/src/misc\"",
+					"\"$(SRCROOT)/src/shell\"",
+				);
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "";
+				"OTHER_CFLAGS[arch=i386]" = "-mstackrealign";
+				"OTHER_CFLAGS[arch=x86_64]" = "-mstackrealign";
+				PRODUCT_NAME = Boxer;
+			};
+			name = Development;
+		};
 		C01FCF4B08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2046,6 +2103,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C01FCF4B08A954540054247B /* Debug */,
+				9FE76B341139A11A005EF7B1 /* Development */,
 				C01FCF4C08A954540054247B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2055,6 +2113,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C01FCF4F08A954540054247B /* Debug */,
+				9FE76B331139A11A005EF7B1 /* Development */,
 				C01FCF5008A954540054247B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;

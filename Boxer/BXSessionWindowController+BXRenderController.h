@@ -35,17 +35,18 @@
 //Window sizing methods
 //---------------------
 
-- (NSSize) renderViewSize;
+//Returns YES if the window is in the process of resizing itself.
+- (BOOL) isResizing;
 
-//Returns the view size that should be used for rendering the specified DOSBox output size.
-//This information is used by BXEmulator for telling SDL how big a surface to create.
-- (NSSize) viewSizeForScaledOutputSize: (NSSize)scaledSize minSize: (NSSize)minViewSize;
+//Returns the size that the render view would currently be *if it were in windowed mode.*
+//This will differ from the actual render view size if in fullscreen mode.
+- (NSSize) windowedRenderViewSize;
 
 //Resize the window to accomodate the specified view size. Returns YES if a resize was possible,
 //or NO if there is not enough room onscreen to do so.
 //Currently this is called when choosing a new filter to resize the window if it is smaller than
 //the filter's minimum size.
-- (BOOL) resizeToAccommodateViewSize: (NSSize) minViewSize;
+- (BOOL) resizeToAtLeastSize: (NSSize) minViewSize;
 
 //Resize the window to accomodate the specified DOS output size at the specified scale factor.
 - (void) resizeToAccommodateOutputSize: (NSSize)outputSize atScale: (NSSize)scale;
@@ -70,8 +71,11 @@
 //Performs the slide animation used to toggle the status bar and program panel on or off
 - (void) _slideView: (NSView *)view shown: (BOOL)show;
 
-//Resize the window frame to fit the new render size.
-- (void) _resizeWindowForRenderViewSize: (NSSize)newSize animate: (BOOL)performAnimation;
+//Resize the window frame to fit the requested render size.
+- (void) _resizeWindowToRenderViewSize: (NSSize)newSize animate: (BOOL)performAnimation;
+
+//Returns the view size that should be used for rendering the specified DOSBox output size.
+- (NSSize) _renderViewSizeForScaledOutputSize: (NSSize)scaledSize minSize: (NSSize)minViewSize;
 
 
 //Responding to SDL's entreaties

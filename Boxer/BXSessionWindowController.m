@@ -102,7 +102,7 @@
 	//------------------------------
 	
 	//Fix the window in the aspect ratio it will start up in
-	[theWindow setContentAspectRatio: [self renderViewSize]];
+	[theWindow setContentAspectRatio: [self windowedRenderViewSize]];
 	
 	//Needed so that the window catches mouse movement over it
 	[theWindow setAcceptsMouseMovedEvents: YES];

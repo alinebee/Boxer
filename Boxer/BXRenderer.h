@@ -18,20 +18,29 @@
 	
 	NSSize outputSize;
 	NSSize textureSize;
-	NSSize viewportSize;
 	NSSize outputScale;
+	
+	NSRect viewport;
+	NSRect canvas;
 	
 	BOOL maintainAspectRatio;
 	BOOL needsDisplay;
+	BOOL textureIsInvalid;
 }
-@property (readonly) NSSize viewportSize;
 
-@property (readonly) NSSize outputSize;
-//If YES, scales the viewport to match the dimensions of the output size; otherwise, fills the entire viewport with the output 
+//The OpenGL viewport into which we are rendering. When maintainAspectRatio is true,
+//this is letterboxed within the canvas to match the same ratio as outputSize.
+@property (readonly) NSRect viewport;
+
+//If YES, the viewport is letterboxed to match the aspect ratio of the output size;
+//otherwise, the viewport fills the entire entire canvas.
 @property (assign) BOOL maintainAspectRatio;
 
-//The render context is 'dirty' and needs redrawing. Analogous to needsDisplay on NSViews.
+//If YES, the render context is 'dirty' and needs redrawing.
+//This is set to YES by the drawPixelData functions, then back to NO once render has been called.
+//Analogous to needsDisplay on NSViews.
 @property (assign) BOOL needsDisplay;
+
 
 
 //The maximum size that the renderer can produce. This is equivalent to GL_MAX_TEXTURE_SIZE.
@@ -45,10 +54,10 @@
 //This creates the necessary framebuffer texture and sets up a display list to draw the buffer.
 - (void) prepareForOutputSize: (NSSize)size atScale: (NSSize)scale;
 
-//Resizes the OpenGL viewport in response to a change in the available canvas area.
-- (void) setViewportForRect: (NSRect)canvas;
+//Resizes the OpenGL viewport in response to a change in the available canvas.
+- (void) setCanvas: (NSRect)canvas;
 
-//Redraws the DOS output.
+//Draws the DOS output into the OpenGL context.
 - (void) render;
 
 //Fills the OpenGL viewport with black.
@@ -73,6 +82,7 @@
 
 - (void) _createTexture;
 - (void) _createDisplayList;
+- (void) _updateViewport;
 - (void) _updateFiltering;
 - (BOOL) _shouldUseFiltering;
 

@@ -20,9 +20,7 @@ BXFilterDefinition BXFilterNormalParams = {
 	0.0,
 	0.0,
 	1,
-	3 //This supports up to 4 now, but 4 has proven to be very sluggish so is disabled for now
-	  //Look into why this is - it shouldn't be a programming error in the filter itself, as the
-	  //algorithm is extremely simple, but possibly a max texture-size problem
+	1 //The normal filter has been entirely disabled in favour of scaling up in hardware
 };
 
 BXFilterDefinition BXFilterHQxParams = {

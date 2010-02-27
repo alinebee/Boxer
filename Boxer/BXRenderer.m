@@ -10,7 +10,7 @@
 #import "BXGeometry.h"
 
 @implementation BXRenderer
-@synthesize outputSize, viewportSize, maintainAspectRatio, needsDisplay;
+@synthesize viewport, maintainAspectRatio, needsDisplay;
 
 - (NSSize) maxOutputSize
 {
@@ -37,41 +37,21 @@
 {
 	outputSize = size;
 	outputScale = scale;
-	
-	[self _createTexture];
-	[self _createDisplayList];
+	textureIsInvalid = YES;
+	[self _updateViewport];
 }
 
-- (void) setViewportForRect: (NSRect)canvas
+- (void) setCanvas: (NSRect)canvasRect
 {
-	NSRect outputRect, viewportRect;
-	if ([self maintainAspectRatio])
-	{
-		//Keep the viewport letterboxed in proportion with our output size
-		outputRect		= NSMakeRect(0, 0, outputSize.width * outputScale.width, outputSize.height * outputScale.height);
-		viewportRect	= fitInRect(outputRect, canvas, NSMakePoint(0.5, 0.5));
-	}
-	else
-	{
-		//Otherwise, let the output fill the available canvas
-		//FIXME: this is not really what we want. This toggle is intended to allow us to correctly reshape when 4:3 aspect
-		//ratio correction is toggled, but it will screw up the viewport when we're in fullscreen mode. 
-		viewportRect = canvas;
-	}
-
-	viewportSize = viewportRect.size;
-	glViewport(viewportRect.origin.x,
-			   viewportRect.origin.y,
-			   viewportRect.size.width,
-			   viewportRect.size.height);
-
-	[self clear];
+	canvas = canvasRect;
+	[self _updateViewport];
 	[self _updateFiltering];
+	[self clear];
 }
 
 - (void) render
 {
-	glCallList(displayList);
+	if (displayList) glCallList(displayList);
 	[self setNeedsDisplay: NO];
 }
 
@@ -86,6 +66,12 @@
 {
 	if (dirtyBlocks)
 	{
+		if (textureIsInvalid)
+		{
+			[self _createTexture];
+			[self _createDisplayList];
+		}
+		
 		NSUInteger offset = 0, i = 0;
 		NSUInteger height, pitch = [self pitch];
 		void *offsetPixels;
@@ -130,6 +116,12 @@
 
 - (void) drawPixelData: (void *)pixelData
 {
+	if (textureIsInvalid)
+	{
+		[self _createTexture];
+		[self _createDisplayList];
+	}
+	
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexSubImage2D(GL_TEXTURE_2D,		//Texture target
 					0,					//Mipmap level
@@ -158,6 +150,34 @@
 
 @implementation BXRenderer (BXRendererInternals)
 
+- (BOOL) _shouldUseFiltering
+{
+	return	((NSInteger)viewport.size.width		% (NSInteger)outputSize.width) || 
+			((NSInteger)viewport.size.height	% (NSInteger)outputSize.height);
+}
+
+- (void) _updateViewport
+{
+	if ([self maintainAspectRatio])
+	{
+		//Keep the viewport letterboxed in proportion with our output size
+		NSRect outputRect = NSMakeRect(0, 0, outputSize.width * outputScale.width, outputSize.height * outputScale.height);
+		viewport = fitInRect(outputRect, canvas, NSMakePoint(0.5, 0.5));
+	}
+	else
+	{
+		//Otherwise, let the output fill the available canvas
+		//FIXME: this is not really what we want. This toggle is intended to allow us to correctly reshape when 4:3 aspect
+		//ratio correction is toggled, but it will screw up the viewport when we're in fullscreen mode. 
+		viewport = canvas;
+	}
+	
+	glViewport(viewport.origin.x,
+			   viewport.origin.y,
+			   viewport.size.width,
+			   viewport.size.height);
+}
+
 - (void) _createTexture
 {
 	//Create a texture large enough to accommodate the output size, whose dimensions are an even power of 2 
@@ -177,17 +197,19 @@
 	glDeleteTextures(1, &texture);
 	glGenTextures(1, &texture);
 	
-	glPixelStorei( GL_UNPACK_ALIGNMENT, 1);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	
-	//Clamp the texture to avoid wrapping
+	//Clamp the texture to avoid wrapping, and set the filtering mode
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-	
 	[self _updateFiltering];
+	
 	//Create a new empty texture of the specified size
 	//TODO: fill this with black, as to start with it's filled with leftover garbage data from arbitrary memory space
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, textureSize.width, textureSize.height, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, 0);	
+	
+	textureIsInvalid = NO;
 }
 
 - (void) _updateFiltering
@@ -202,12 +224,6 @@
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filterMode);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filterMode);	
 	}
-}
-
-- (BOOL) _shouldUseFiltering
-{
-	return	((NSInteger)viewportSize.width	% (NSInteger)outputSize.width) || 
-	((NSInteger)viewportSize.height	% (NSInteger)outputSize.height);
 }
 
 - (void) _createDisplayList

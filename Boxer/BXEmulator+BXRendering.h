@@ -110,7 +110,6 @@ typedef struct {
 - (BXFilterDefinition) _paramsForFilterType: (BXFilterType)filterType;
 
 - (void)		_applyRenderingStrategy;
-- (NSSize)		_probableRenderedSizeForResolution: (NSSize)resolution;
 - (BOOL)		_shouldUseAspectCorrectionForResolution: (NSSize)resolution;
 
 - (BOOL)		_shouldApplyFilterType:	(BXFilterType) filterType toScale: (NSSize)scale;

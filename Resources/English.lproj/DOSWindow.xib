@@ -12,7 +12,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="924"/>
+			<integer value="921"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -168,7 +168,7 @@
 									<int key="NSViewLayerContentsRedrawPolicy">2</int>
 									<object class="NSOpenGLPixelFormat" key="NSPixelFormat">
 										<object class="NSMutableData" key="NSPixelAttributes">
-											<bytes key="NS.bytes">AAAABQAAAEgAAABJAAAAAA</bytes>
+											<bytes key="NS.bytes">AAAABQAAAGAAAAAAA</bytes>
 										</object>
 									</object>
 								</object>

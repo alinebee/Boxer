@@ -56,7 +56,7 @@
 - (NSSize) scale
 {
 	NSSize resolution	= [self resolution];
-	NSSize renderedSize	= [[self renderer] viewportSize];
+	NSSize renderedSize	= [[self renderer] viewport].size;
 	return NSMakeSize(renderedSize.width / resolution.width, renderedSize.height / resolution.height);
 }
 
@@ -146,7 +146,7 @@
 		else
 		{
 			NSSize minSize = [self minRenderedSizeForFilterType: filterType];
-			[[[self delegate] mainWindowController] resizeToAccommodateViewSize: minSize];
+			[[[self delegate] mainWindowController] resizeToAtLeastSize: minSize];
 		}
 		
 		[self didChangeValueForKey: @"filterType"];
@@ -257,55 +257,28 @@
 {
 	if (![self isExecuting]) return;
 	
-	//Work out how much we will need to scale the resolution to fit our likely surface
+	//Work out how much we will need to scale the resolution to fit the viewport
 	NSSize resolution			= [self resolution];
-	NSSize expectedRenderSize	= [self _probableRenderedSizeForResolution: resolution];
-	NSSize scale				= NSMakeSize(expectedRenderSize.width	/ resolution.width,
-											 expectedRenderSize.height	/ resolution.height);
+	NSSize currentRenderSize	= [[self renderer] viewport].size;
+	NSSize scale				= NSMakeSize(currentRenderSize.width	/ resolution.width,
+											 currentRenderSize.height	/ resolution.height);
 		
 	BOOL useAspectCorrection	= [self _shouldUseAspectCorrectionForResolution: resolution];
 	
-	//Decide if we can use our selected scaler at this scale,
-	//reverting to the normal filter if we can't
+	//Decide if we can use our selected scaler at this scale, reverting to the normal filter if we can't
 	BXFilterType activeType = [self filterType];
 	if (![self _shouldApplyFilterType: activeType toScale: scale]) activeType = BXFilterNormal;
 		
 	//Now decide on what operation size this scaler should use
-	//If we're using a flat scaling filter and bilinear filtering isn't necessary for the target size
-	//(or the base resolution is large enough for scaling to be too slow), then speed things up
-	//by using 1x scaling and letting OpenGL do the work.
-	NSInteger filterScale;
-	if (activeType == BXFilterNormal)
-	{
-		filterScale = 1;
-	}
-	else
-	{
-		filterScale					= [self _sizeForFilterType: activeType atScale: scale];
-		NSInteger maxFilterScale	= [self _maxFilterSizeForResolution: resolution];
-		filterScale					= fmin(filterScale, maxFilterScale);
-	}
+	NSInteger filterScale		= [self _sizeForFilterType: activeType atScale: scale];
+	NSInteger maxFilterScale	= [self _maxFilterSizeForResolution: resolution];
+	filterScale					= fmin(filterScale, maxFilterScale);
 	
 	//Finally, apply the values to DOSBox
 	render.aspect		= useAspectCorrection;
 	render.scale.forced	= YES;
 	render.scale.size	= (Bitu)filterScale;
 	render.scale.op		= (scalerOperation_t)activeType;
-}
-
-//This 'predicts' the final rendered size from very early in the render process, for applyRenderingStrategy to make decisions about how and when to filter.
-//Once all that shitty render-setup code is refactored, this will hopefully be unnecessary.
-- (NSSize) _probableRenderedSizeForResolution: (NSSize)resolution
-{
-	NSSize outputSize			= resolution;
-	BOOL useAspectCorrection	= [self _shouldUseAspectCorrectionForResolution: resolution];
-	if ([self isExecuting])
-	{
-		if (useAspectCorrection) outputSize.height *= render.src.ratio;
-	}
-	
-	BXSessionWindowController *controller = [[self delegate] mainWindowController];
-	return [controller viewSizeForScaledOutputSize: outputSize minSize: resolution];
 }
 
 //Returns whether to apply 4:3 aspect ratio correction to the specified DOS resolution. Currently we ignore the resolution itself, and instead check the pixel aspect ratio from DOSBox directly, as this is based on more data than we have. If the pixel aspect ratio is not ~1 then correction is needed.

@@ -31,22 +31,17 @@
 //Update the DOS view as the window resizes
 - (void) windowDidResize: (NSNotification *) notification
 {
-	if ([self resizingProgrammatically] || [renderView inLiveResize])
+	if (![self isResizing])
 	{
-		//While a resize is in progress, content ourselves with just rescaling the view
-		//[[self emulator] redraw];
-	}
-	else
-	{
-		//Once the resize has finished, reinitialise the renderer to make it use settings
-		//appropriate to the new size
-		//[[self emulator] resetRenderer];
+		//After a resize event has finished, reinitialise the renderer
+		//to make it use settings appropriate to its new size
+		[[self emulator] resetRenderer];
 	}
 }
 
 //Warn the emulator to prepare for emulation cutout when the resize starts
 //Release input capturing also, just to be on the safe side
-- (void) windowWillLiveResize:	(NSNotification *) notification
+- (void) windowWillLiveResize: (NSNotification *) notification
 {
 	[[self emulator] releaseInput];
 	[[self emulator] willPause];
@@ -54,7 +49,7 @@
 
 //Catch the end of a live resize event and pass it to our normal resize handler
 //While we're at it, restore the input capturing (fixes duplicate cursor) and let the emulator know it can unpause now
-- (void) windowDidLiveResize:	(NSNotification *) notification
+- (void) windowDidLiveResize: (NSNotification *) notification
 {
 	[self windowDidResize: notification];
 	
@@ -89,63 +84,24 @@
 //Window size calculations
 //------------------------
 
-//Return the current size of the render portal.
-- (NSSize) renderViewSize	{ return [[self renderView] frame].size; }
-
-//Returns the most appropriate view size for the intended output size, given the size of the current window.
-//This is calculated as the current view size with the aspect ratio compensated for that of the new output size:
-//favouring the width or the height as appropriate.
-- (NSSize) viewSizeForScaledOutputSize: (NSSize)scaledSize minSize: (NSSize)minViewSize
-{	
-	//Start off with our current view size: we want to deviate from this as little as possible.
-	NSSize viewSize = [[self renderContainer] frame].size;
-	
-	//If we are in fullscreen, return the current size and leave it at that
-	if ([self isFullScreen]) return viewSize;
-	
-	//Work out the aspect ratio of the scaled size, and how we should apply that ratio
-	CGFloat aspectRatio = aspectRatioOfSize(scaledSize);
-	
-	//We preserve height during the aspect ratio adjustment if:
-	// 1. the new height is equivalent to the old, and
-	// 2. the width is not equivalent to the old.
-	//Otherwise, we preserve width.
-	//Height-locking fixes crazy-ass resolution transitions in Pinball Fantasies and The Humans,
-	//while width-locking allows for rounding errors from live resizes.
-	BOOL preserveHeight = !((NSInteger)currentScaledSize.height	% (NSInteger)scaledSize.height)
-						&& ((NSInteger)currentScaledSize.width	% (NSInteger)scaledSize.width);
-
-	//Now, adjust the view size to fit the aspect ratio of our new rendered size.
-	//At the same time we clamp it to the minimum size, preserving the preferred dimension.
-	if (preserveHeight)
-	{
-		if (minViewSize.height > viewSize.height) viewSize = minViewSize;
-		viewSize.width = round(viewSize.height * aspectRatio);
-	}
-	else
-	{
-		if (minViewSize.width > viewSize.width) viewSize = minViewSize;
-		viewSize.height = round(viewSize.width / aspectRatio);
-	}
-
-	//TODO: this screen constraint should not exist here!
-	//We set the maximum size as that which will fit on the current screen
-	BXSessionWindow *theWindow = [self window];
-	NSRect screenFrame	= [[theWindow screen] visibleFrame];
-	NSSize maxViewSize	= [theWindow contentRectForFrameRect: screenFrame].size;
-	
-	//Now clamp the size to the maximum size that will fit on screen, just in case we still overflow
-	viewSize = constrainToFitSize(viewSize, maxViewSize);
-	
-	return viewSize;
+- (BOOL) isResizing
+{
+	return [self resizingProgrammatically] || [[self renderView] inLiveResize];
 }
+
+//Returns the current size that the render view *would be if it were in windowed mode.*
+//This will differ from the actual render view size when in fullscreen mode.
+- (NSSize) windowedRenderViewSize	{ return [[self renderContainer] frame].size; }
 
 - (void) resizeToAccommodateOutputSize: (NSSize)outputSize atScale: (NSSize)scale
 {
+	//Don't resize if we're in the middle of resizing already
+	if ([self isResizing]) return;
+	
 	NSSize scaledSize	= NSMakeSize(outputSize.width	* scale.width,
 									 outputSize.height	* scale.height);
 	NSSize originalSize	= [[self emulator] scaledResolution];	//The size the DOS game is producing
-	NSSize viewSize		= [self viewSizeForScaledOutputSize: scaledSize minSize: originalSize];
+	NSSize viewSize		= [self _renderViewSizeForScaledOutputSize: scaledSize minSize: originalSize];
 	
 	//Use the base resolution as our minimum content size, to prevent higher resolutions being rendered
 	//smaller than their effective size
@@ -166,7 +122,7 @@
 	//Tell the renderer not to maintain aspect ratio when doing so,
 	//since this change in size is driven by the DOS context
 	[[[self renderView] renderer] setMaintainAspectRatio: NO];
-	[self _resizeWindowForRenderViewSize: viewSize animate: YES];
+	[self _resizeWindowToRenderViewSize: viewSize animate: YES];
 	[[[self renderView] renderer] setMaintainAspectRatio: YES];
 	
 	//Finally, record our current scaled size for future resizing calculations
@@ -176,11 +132,14 @@
 
 //Try to resize the window to accomodate the specified minimum size
 //If we can't manage that size, do nothing and return NO; otherwise resize and return YES
-- (BOOL) resizeToAccommodateViewSize: (NSSize) minViewSize
+- (BOOL) resizeToAtLeastSize: (NSSize) minViewSize
 {
+	//Don't resize if we're in the middle of resizing already
+	if ([self isResizing]) return NO;
+	
 	BXSessionWindow *theWindow = [self window];
 
-	NSSize currentSize		= [[self renderContainer] frame].size;
+	NSSize currentSize		= [self windowedRenderViewSize];
 	//We're already that size or larger, don't resize further
 	if (sizeFitsWithinSize(minViewSize, currentSize)) return YES;
 	
@@ -192,7 +151,7 @@
 	if (!sizeFitsWithinSize(minViewSize, maxViewSize)) return NO;
 	
 	//Otherwise carry on and resize
-	[self _resizeWindowForRenderViewSize: minViewSize animate: YES];
+	[self _resizeWindowToRenderViewSize: minViewSize animate: YES];
 	return YES;
 }
 
@@ -228,6 +187,7 @@
 		[theView setFrame: [theContainer bounds]];
 		[theView setNeedsDisplay: YES];
 	}
+	[[self emulator] resetRenderer];
 }
 
 - (BOOL) isFullScreen
@@ -371,15 +331,23 @@
 	newFrame.origin.y		-= height;
 	
 	if (show) [view setHidden: NO];	//Unhide before sliding out
-	[[self window] setFrame: newFrame display: YES animate: YES];
+	if (![self isFullScreen])
+	{
+		[[self window] setFrame: newFrame display: YES animate: YES];
+	}
+	else
+	{
+		[[self window] setFrame: newFrame display: NO];
+	}
+
 	if (!show)	[view setHidden: YES];	//Hide after sliding in 
 }
 
-//Resize the window frame to fit the new render size.
-- (void) _resizeWindowForRenderViewSize: (NSSize)newSize animate: (BOOL)performAnimation
+//Resize the window frame to the requested render size.
+- (void) _resizeWindowToRenderViewSize: (NSSize)newSize animate: (BOOL)performAnimation
 {
-	NSSize currentSize	= [self renderViewSize];
 	NSWindow *theWindow	= [self window];
+	NSSize currentSize	= [self windowedRenderViewSize];
 	
 	if (!NSEqualSizes(currentSize, newSize))
 	{
@@ -392,11 +360,66 @@
 		//Constrain the result to fit tidily on screen
 		newFrame			= [theWindow fullyConstrainFrameRect: newFrame toScreen: [theWindow screen]];
 		
+		newFrame = NSIntegralRect(newFrame);
+		
 		[self setResizingProgrammatically: YES];
-		[theWindow setFrame: NSIntegralRect(newFrame) display: YES animate: performAnimation];
+		if (![self isFullScreen])
+		{
+			[theWindow setFrame: newFrame display: YES animate: performAnimation];
+		}
+		else
+		{
+			[theWindow setFrame: newFrame display: NO];
+		}
 		[self setResizingProgrammatically: NO];
 	}
 }
+
+//Returns the most appropriate view size for the intended output size, given the size of the current window.
+//This is calculated as the current view size with the aspect ratio compensated for that of the new output size:
+//favouring the width or the height as appropriate.
+- (NSSize) _renderViewSizeForScaledOutputSize: (NSSize)scaledSize minSize: (NSSize)minViewSize
+{	
+	//Start off with our current view size: we want to deviate from this as little as possible.
+	NSSize viewSize = [self windowedRenderViewSize];
+	
+	//Work out the aspect ratio of the scaled size, and how we should apply that ratio
+	CGFloat aspectRatio = aspectRatioOfSize(scaledSize);
+	
+	//We preserve height during the aspect ratio adjustment if:
+	// 1. the new height is equivalent to the old, and
+	// 2. the width is not equivalent to the old.
+	//Otherwise, we preserve width.
+	//Height-locking fixes crazy-ass resolution transitions in Pinball Fantasies and The Humans,
+	//while width-locking allows for rounding errors from live resizes.
+	BOOL preserveHeight = !((NSInteger)currentScaledSize.height	% (NSInteger)scaledSize.height)
+	&& ((NSInteger)currentScaledSize.width	% (NSInteger)scaledSize.width);
+	
+	//Now, adjust the view size to fit the aspect ratio of our new rendered size.
+	//At the same time we clamp it to the minimum size, preserving the preferred dimension.
+	if (preserveHeight)
+	{
+		if (minViewSize.height > viewSize.height) viewSize = minViewSize;
+		viewSize.width = round(viewSize.height * aspectRatio);
+	}
+	else
+	{
+		if (minViewSize.width > viewSize.width) viewSize = minViewSize;
+		viewSize.height = round(viewSize.width / aspectRatio);
+	}
+	
+	//TODO: this screen constraint should not exist here!
+	//We set the maximum size as that which will fit on the current screen
+	BXSessionWindow *theWindow = [self window];
+	NSRect screenFrame	= [[theWindow screen] visibleFrame];
+	NSSize maxViewSize	= [theWindow contentRectForFrameRect: screenFrame].size;
+	
+	//Now clamp the size to the maximum size that will fit on screen, just in case we still overflow
+	viewSize = constrainToFitSize(viewSize, maxViewSize);
+	
+	return viewSize;
+}
+
 
 //Responding to SDL's entreaties
 //------------------------------

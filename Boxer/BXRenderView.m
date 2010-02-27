@@ -51,7 +51,7 @@
 	[NSBezierPath clipRect: dirtyRect];
 	if ([self renderer])
 	{
-		[[self openGLContext] makeCurrentContext];
+		//[[self openGLContext] makeCurrentContext];
 		[[self renderer] render];
 		[[self openGLContext] flushBuffer];
 	}
@@ -89,7 +89,7 @@
 
 - (void) reshape
 {
-	[[self renderer] setViewportForRect: [self bounds]];
+	[[self renderer] setCanvas: [self bounds]];
 }
 
 - (void) prepareOpenGL

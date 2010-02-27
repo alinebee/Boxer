@@ -6,9 +6,9 @@
  */
 
 
-//BXRenderView is a persistent container for the doomed temporary views that SDL creates and
-//destroys as it needs graphics contexts. Its main duties are to establish a concrete render size
-//and to draw a cached image in place of the DOS output while the window is being scaled.
+//BXRenderView is an NSOpenGLView subclass which displays DOSBox's rendered output.
+//It relies on a BXRenderer object to do the actual drawing: telling it to draw when needed,
+//and notifying it of changes to the viewport dimensions.
 
 #import <Cocoa/Cocoa.h>
 
@@ -19,6 +19,6 @@
 }
 @property (retain) BXRenderer *renderer;
 
-//Render the view's badged grey background; this shows through when there is no OpenGL view. 
+//Render the view's badged grey background; this shows through when there is no renderer yet.
 - (void) drawBackgroundInRect: (NSRect) dirtyRect;
 @end

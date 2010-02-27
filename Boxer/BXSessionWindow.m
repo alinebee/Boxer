@@ -7,7 +7,6 @@
 
 #import "BXSessionWindow.h"
 #import "BXSessionWindowController.h"
-#import "BXRenderView.h"
 
 @implementation BXSessionWindow
 
@@ -22,9 +21,9 @@
 - (NSRect) contentRectForFrameRect:(NSRect)windowFrame
 {
 	NSRect rect = [super contentRectForFrameRect: windowFrame];
-	NSView *renderView	= [[self windowController] renderView];
+	NSView *container	= [[self windowController] renderContainer];
 
-	CGFloat sizeAdjustment	= [renderView frame].origin.y;
+	CGFloat sizeAdjustment	= [container frame].origin.y;
 	rect.size.height		-= sizeAdjustment;
 	rect.origin.y			+= sizeAdjustment;
 
@@ -34,9 +33,9 @@
 - (NSRect) frameRectForContentRect: (NSRect)windowContent
 {
 	NSRect rect = [super frameRectForContentRect: windowContent];
-	NSView *renderView	= [[self windowController] renderView];
+	NSView *container	= [[self windowController] renderContainer];
 
-	CGFloat sizeAdjustment	= [renderView frame].origin.y;
+	CGFloat sizeAdjustment	= [container frame].origin.y;
 	rect.size.height		+= sizeAdjustment;
 	rect.origin.y			-= sizeAdjustment;
 	

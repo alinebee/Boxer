@@ -18,7 +18,7 @@
 
 
 @implementation BXSessionWindowController
-@synthesize renderView, statusBar, programPanel, programPanelController;
+@synthesize renderView, renderContainer, statusBar, programPanel, programPanelController;
 @synthesize resizingProgrammatically;
 
 //Overridden to make the types explicit, so we don't have to keep casting the return values to avoid compilation warnings
@@ -33,6 +33,7 @@
 - (void) dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
+	[self setRenderContainer: nil],			[renderContainer release];
 	[self setRenderView: nil],				[renderView release];
 	[self setStatusBar: nil],				[statusBar release];
 	[self setProgramPanel: nil],			[programPanel release];
@@ -205,18 +206,18 @@
 		BXSessionWindow *theWindow	= [self window];
 		
 		//temporarily override the other views' resizing behaviour so that they don't slide up as we do this
-		NSUInteger oldRenderMask		= [renderView autoresizingMask];
+		NSUInteger oldContainerMask		= [renderContainer autoresizingMask];
 		NSUInteger oldProgramPanelMask	= [programPanel autoresizingMask];
-		[renderView		setAutoresizingMask: NSViewMinYMargin];
-		[programPanel	setAutoresizingMask: NSViewMinYMargin];
+		[renderContainer	setAutoresizingMask: NSViewMinYMargin];
+		[programPanel		setAutoresizingMask: NSViewMinYMargin];
 		
 		//toggle the resize indicator on/off also (it doesn't play nice with the program panel)
 		if (!show)	[theWindow setShowsResizeIndicator: NO];
 		[self _slideView: statusBar shown: show];
 		if (show)	[theWindow setShowsResizeIndicator: YES];
 		
-		[renderView		setAutoresizingMask: oldRenderMask];
-		[programPanel	setAutoresizingMask: oldProgramPanelMask];
+		[renderContainer	setAutoresizingMask: oldContainerMask];
+		[programPanel		setAutoresizingMask: oldProgramPanelMask];
 		
 		//record the current statusbar state in the user defaults
 		[[NSUserDefaults standardUserDefaults] setBool: show forKey: @"statusBarShown"];
@@ -228,12 +229,12 @@
 	if (show != [self programPanelShown])
 	{
 		//temporarily override the other views' resizing behaviour so that they don't slide up as we do this
-		NSUInteger oldRenderMask = [renderView autoresizingMask];
-		[renderView setAutoresizingMask: NSViewMinYMargin];
+		NSUInteger oldMask = [renderContainer autoresizingMask];
+		[renderContainer setAutoresizingMask: NSViewMinYMargin];
 		
 		[self _slideView: programPanel shown: show];
 		
-		[renderView setAutoresizingMask: oldRenderMask];
+		[renderContainer setAutoresizingMask: oldMask];
 	}
 }
 
@@ -251,22 +252,21 @@
 
 - (IBAction) toggleFullScreen: (id)sender
 {
-	//Make sure we're the key window first before any shenanigans
-	[[self window] makeKeyAndOrderFront: self];
+	BOOL enterFullScreen;
 	
-	BXEmulator *emulator	= [self emulator];
-	BOOL isFullScreen		= [emulator isFullScreen];
-	[emulator setFullScreen: !isFullScreen];
+	if ([sender isKindOfClass: [NSNumber class]])	enterFullScreen = [sender boolValue];
+	else											enterFullScreen = ![self isFullScreen];
+	
+	[self setFullScreen: enterFullScreen];
 }
 
 - (IBAction) toggleFullScreenWithZoom: (id)sender
 {
 	BOOL enterFullScreen;
-	BXEmulator *emulator = [self emulator];
 	
 	if ([sender isKindOfClass: [NSNumber class]])	enterFullScreen = [sender boolValue];
-	else											enterFullScreen = ![emulator isFullScreen];
-
+	else											enterFullScreen = ![self isFullScreen];
+																		
 	[self setFullScreenWithZoom: enterFullScreen];
 }
 

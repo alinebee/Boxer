@@ -12,7 +12,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="2"/>
+			<integer value="924"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -62,6 +62,7 @@
 									<int key="NSvFlags">269</int>
 									<string key="NSFrame">{{201, 6}, {237, 14}}</string>
 									<reference key="NSSuperview" ref="773857734"/>
+									<int key="NSViewLayerContentsRedrawPolicy">2</int>
 									<bool key="NSEnabled">YES</bool>
 									<object class="NSTextFieldCell" key="NSCell" id="386940528">
 										<int key="NSCellFlags">68288064</int>
@@ -98,6 +99,7 @@
 									<int key="NSvFlags">268</int>
 									<string key="NSFrame">{{8, 3}, {100, 19}}</string>
 									<reference key="NSSuperview" ref="773857734"/>
+									<int key="NSViewLayerContentsRedrawPolicy">2</int>
 									<bool key="NSEnabled">YES</bool>
 									<object class="NSSegmentedCell" key="NSCell" id="838192882">
 										<int key="NSCellFlags">-2080244224</int>
@@ -141,6 +143,7 @@
 							</object>
 							<string key="NSFrameSize">{640, 26}</string>
 							<reference key="NSSuperview" ref="1006"/>
+							<int key="NSViewLayerContentsRedrawPolicy">2</int>
 							<string key="NSClassName">NSView</string>
 						</object>
 						<object class="NSCustomView" id="910670518">
@@ -148,23 +151,36 @@
 							<int key="NSvFlags">290</int>
 							<string key="NSFrame">{{0, 26}, {640, 78}}</string>
 							<reference key="NSSuperview" ref="1006"/>
+							<int key="NSViewLayerContentsRedrawPolicy">2</int>
 							<string key="NSClassName">NSView</string>
 						</object>
-						<object class="NSOpenGLView" id="58925681">
+						<object class="NSCustomView" id="89453087">
 							<reference key="NSNextResponder" ref="1006"/>
-							<int key="NSvFlags">1298</int>
-							<object class="NSPSMatrix" key="NSDrawMatrix"/>
-							<string key="NSFrame">{{0, 104}, {640, 400}}</string>
-							<reference key="NSSuperview" ref="1006"/>
-							<object class="NSOpenGLPixelFormat" key="NSPixelFormat">
-								<object class="NSMutableData" key="NSPixelAttributes">
-									<bytes key="NS.bytes">AAAABQAAAEgAAABJAAAAYAAAAAA</bytes>
+							<int key="NSvFlags">274</int>
+							<object class="NSMutableArray" key="NSSubviews">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<object class="NSOpenGLView" id="58925681">
+									<reference key="NSNextResponder" ref="89453087"/>
+									<int key="NSvFlags">1298</int>
+									<object class="NSPSMatrix" key="NSDrawMatrix"/>
+									<string key="NSFrameSize">{640, 400}</string>
+									<reference key="NSSuperview" ref="89453087"/>
+									<int key="NSViewLayerContentsRedrawPolicy">2</int>
+									<object class="NSOpenGLPixelFormat" key="NSPixelFormat">
+										<object class="NSMutableData" key="NSPixelAttributes">
+											<bytes key="NS.bytes">AAAABQAAAEgAAABJAAAAAA</bytes>
+										</object>
+									</object>
 								</object>
 							</object>
+							<string key="NSFrame">{{0, 104}, {640, 400}}</string>
+							<reference key="NSSuperview" ref="1006"/>
+							<string key="NSClassName">NSView</string>
 						</object>
 					</object>
 					<string key="NSFrameSize">{640, 504}</string>
 					<reference key="NSSuperview"/>
+					<int key="NSViewLayerContentsRedrawPolicy">2</int>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1280, 778}}</string>
 				<string key="NSMaxSize">{1.79769e+308, 1.79769e+308}</string>
@@ -286,6 +302,14 @@
 					</object>
 					<int key="connectionID">923</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">renderContainer</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="89453087"/>
+					</object>
+					<int key="connectionID">925</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -330,7 +354,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="773857734"/>
 							<reference ref="910670518"/>
-							<reference ref="58925681"/>
+							<reference ref="89453087"/>
 						</object>
 						<reference key="parent" ref="1005"/>
 					</object>
@@ -386,9 +410,19 @@
 						<reference key="parent" ref="912332772"/>
 					</object>
 					<object class="IBObjectRecord">
+						<int key="objectID">924</int>
+						<reference key="object" ref="89453087"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="58925681"/>
+						</object>
+						<reference key="parent" ref="1006"/>
+						<string key="objectName">Render View Wrapper</string>
+					</object>
+					<object class="IBObjectRecord">
 						<int key="objectID">921</int>
 						<reference key="object" ref="58925681"/>
-						<reference key="parent" ref="1006"/>
+						<reference key="parent" ref="89453087"/>
 					</object>
 				</object>
 			</object>
@@ -427,9 +461,9 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{185, 128}, {640, 504}}</string>
+					<string>{{38, 141}, {640, 504}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{185, 128}, {640, 504}}</string>
+					<string>{{38, 141}, {640, 504}}</string>
 					<integer value="0"/>
 					<string>{196, 240}</string>
 					<string>{{357, 418}, {480, 270}}</string>
@@ -467,7 +501,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">923</int>
+			<int key="maxID">925</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -524,11 +558,13 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>programPanel</string>
+							<string>renderContainer</string>
 							<string>renderView</string>
 							<string>statusBar</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSView</string>
 							<string>NSView</string>
 							<string>BXRenderView</string>
 							<string>NSView</string>

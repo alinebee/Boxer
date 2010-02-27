@@ -24,7 +24,7 @@
 //Drop out of fullscreen mode before showing any sheets
 - (void) windowWillBeginSheet: (NSNotification *) notification
 {
-	[[self emulator] setFullScreen: NO];
+	[self setFullScreen: NO];
 }
 
 
@@ -74,7 +74,7 @@
 //Drop out of fullscreen and warn the emulator to prepare for emulation cutout when a menu opens
 - (void) menuDidOpen:	(NSNotification *) notification
 {
-	[[self emulator] setFullScreen: NO];
+	[self setFullScreen: NO];
 	[[self emulator] willPause];
 }
 
@@ -193,21 +193,64 @@
 	return YES;
 }
 
+//Switch the DOS window in or out of fullscreen instantly
+- (void) setFullScreen: (BOOL)fullScreen
+{
+	//Don't bother if we're already in the correct fullscreen state
+	if ([self isFullScreen] == fullScreen) return;
+	
+	NSView *theView			= [self renderView];
+	NSView *theContainer	= [self renderContainer]; 
+	NSWindow *theWindow		= [self window];
+	
+	if (fullScreen)
+	{
+		NSScreen *targetScreen	= [NSScreen mainScreen];
+		//TODO: check that any of these options are actually necessary, as these could be the defaults
+		NSDictionary *options	= [NSDictionary dictionaryWithObjectsAndKeys:
+								   [NSNumber numberWithBool: YES], NSFullScreenModeAllScreens,
+								   [NSNumber numberWithInteger: NSScreenSaverWindowLevel], NSFullScreenModeWindowLevel,
+								   nil];
+
+		//Flip the view into fullscreen mode
+		[theView enterFullScreenMode: targetScreen withOptions: nil];
+		
+		//Set the window as key, which is disabled by the switch to fullscreen mode (for some reason)
+		[theWindow makeKeyWindow];
+	}
+	else
+	{
+		[theView exitFullScreenModeWithOptions: nil];
+		//Reset the view's frame to match its loyal container, as otherwise it retains its fullscreen frame size
+		[theView setFrame: [theContainer bounds]];
+		[theView setNeedsDisplay: YES];
+	}
+}
+
+- (BOOL) isFullScreen
+{
+	return [[self renderView] isInFullScreenMode];
+}
+
+- (NSScreen *) fullScreenTarget
+{
+	return [NSScreen mainScreen];
+}
+
 //Zoom the DOS window in or out of fullscreen with a smooth animation
 //Returns YES if the window is zooming, NO if no zoom occurs (i.e. the window is already in the correct state)
 - (void) setFullScreenWithZoom: (BOOL) fullScreen
-{
-	BXEmulator *emulator = [self emulator];
-
-	//Don't bother if the emulator is already in the correct state
-	if ([emulator isFullScreen] == fullScreen) return;
+{	
+	//Don't bother if we're already in the correct fullscreen state
+	if ([self isFullScreen] == fullScreen) return;
 	 
-	BXSessionWindow *theWindow	= [self window];
+	BXEmulator *emulator	= [self emulator];
+	NSWindow *theWindow		= [self window];
 	
 	NSInteger originalLevel		= [theWindow level];
-	
 	NSRect originalFrame		= [theWindow frame];
-	NSRect fullscreenFrame		= [[emulator targetForFullScreen] frame];
+	NSScreen *targetScreen		= [self fullScreenTarget];
+	NSRect fullscreenFrame		= [targetScreen frame];
 	NSRect zoomedWindowFrame	= [theWindow frameRectForContentRect: fullscreenFrame];
 	
 	[emulator willPause];
@@ -216,33 +259,32 @@
 	//Make sure we're the key window first before any shenanigans
 	[theWindow makeKeyAndOrderFront: self];
 	
+	[self setResizingProgrammatically: YES];
 	if (fullScreen)
 	{
 		//First zoom smoothly in to fill the screen...
-		[self setResizingProgrammatically: YES];
 		[theWindow setFrame: zoomedWindowFrame display: YES animate: YES];
+				
+		//Then flip the view into fullscreen mode...
+		[self setFullScreen: YES];
 		
-		//...then flip SDL into the real fullscreen mode...
-		[emulator setFullScreen: YES];
-		
-		//...then revert our changes to the window frame, while we're hidden by the fullscreen context
+		//...then revert the window back to its original size, while it's hidden by the fullscreen view
+		//We do this so that the window's autosaved frame doesn't get messed up, and so that we don't have
+		//to track the window's former size indepedently while we're in fullscreen mode.
 		[theWindow setFrame: originalFrame display: NO];
-		[self setResizingProgrammatically: NO];
 	}
 	else
 	{
-		//First quietly resize the window to fill the screen, while we're still hidden by the fullscreen context...
-		[self setResizingProgrammatically: YES];
+		//First quietly resize the window to fill the screen, while we're still hidden by the fullscreen view...
 		[theWindow setFrame: zoomedWindowFrame display: YES];
 		
-		//...then flip us out of fullscreen, which will render to the zoomed window...
-		[emulator setFullScreen: NO];
+		//...then flip the view out of fullscreen, which will return it to the zoomed window...
+		[self setFullScreen: NO];
 		
-		//...then resize the window back to the original size, after permitting redraw
-		[self setResizingProgrammatically: NO];
+		//...then resize the window back to its original size
 		[theWindow setFrame: originalFrame display: YES animate: YES];
 	}
-	
+	[self setResizingProgrammatically: NO];
 	[theWindow setLevel: originalLevel];
 	[emulator didResume];
 }
@@ -359,48 +401,6 @@
 - (NSWindow *) SDLWindow	{ return [self window]; }
 - (NSOpenGLView *) SDLView	{ return (NSOpenGLView *)[self renderView]; }
 - (NSOpenGLContext *) SDLOpenGLContext { return [renderView openGLContext]; }
-
-- (void) prepareSDLViewForFrame: (NSRect)frame
-{	
-	[renderView setHidden: NO];
-	[renderView setNeedsDisplay: YES];	
-	[[renderView openGLContext] makeCurrentContext];
-	
-	BXSessionWindow *theWindow = [self window];
-	
-	NSSize viewSize		= frame.size;
-	NSSize originalSize	= [[self emulator] scaledResolution];	//The size the DOS game is producing
-																//currentRenderedSize	= [[self emulator] renderedSize];		//Record DOSBox's new rendering size, for later use in viewSizeForRenderedSize
-	
-	//Use the base resolution as our minimum content size, to prevent higher resolutions being rendered smaller than their effective size
-	//Tweak: ...unless the base resolution is actually larger than our view size, which can happen if the base resolution is too large to fit on screen and hence the view is shrunk. In that case we use the view size as a minimum instead.
-	if (viewSize.width < originalSize.width || viewSize.height < originalSize.height)
-		[theWindow setContentMinSize: viewSize];
-	else
-		[theWindow setContentMinSize: originalSize];
-	
-	//Fix the window's aspect ratio to the new size - this will affect our live resizing behaviour
-	[theWindow setContentAspectRatio: viewSize];
-	
-	//Now resize the window to fit the new size
-	[self _resizeWindowForRenderViewSize: viewSize animate: YES];
-}
-
-- (void) prepareSDLOpenGLContextWithFormat: (NSOpenGLPixelFormat *)format
-{
-}
-
-- (void) prepareSDLViewForFullscreen
-{
-	//Prevents contention for draw context, for some reason.
-	[renderView setHidden: YES];
-}
-
-- (void) prepareSDLOpenGLContextForTeardown
-{
-	[NSOpenGLContext clearCurrentContext];
-	[renderView clearGLContext];
-}
 
 - (BOOL) handleSDLKeyboardEvent: (NSEvent *)event
 {

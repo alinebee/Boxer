@@ -22,26 +22,52 @@
 	NSSize outputScale;
 	
 	BOOL maintainAspectRatio;
+	BOOL needsDisplay;
 }
 @property (readonly) NSSize outputSize;
-
+//If YES, scales the viewport to match the dimensions of the output size; otherwise, fills the entire viewport with the output 
 @property (assign) BOOL maintainAspectRatio;
 
-- (NSOpenGLContext *) context;
+//The render context is 'dirty' and needs redrawing. Analogous to needsDisplay on NSViews.
+@property (assign) BOOL needsDisplay;
 
+//Sets the initial OpenGL render parameters, turning off unnecessary OpenGL features.
+//Analogous to NSOpenGLView prepareOpenGL.
+- (void) prepareOpenGL;
+
+//Prepares the renderer to draw an output region of the specified pixel dimensions at the specified scale.
+//This creates the necessary framebuffer texture and sets up a display list to draw the buffer.
 - (void) prepareForOutputSize: (NSSize)size atScale: (NSSize)scale;
-- (void) setViewportRect: (NSRect)viewport;
+
+//Resizes the OpenGL viewport in response to a change in the available canvas area.
+- (void) setViewportForRect: (NSRect)canvas;
+
+//Redraws the DOS output.
 - (void) render;
+
+//Fills the OpenGL viewport with black.
 - (void) clear;
 
-- (void) _prepareOpenGL;
+//Returns the number of bytes per line of output: this is equal to output width * colourdepth.
+- (NSUInteger) pitch;
+
+//Copy the specified buffer of pixel data into our texture.
+- (void) drawPixelData: (void *)pixelData;
+
+//Copy the specified buffer of pixel data into our texture, copying only those blocks that are listed in dirtyBlocks.
+//dirtyBlocks should bean array describing the heights of alternating blocks of dirty/clean lines in the buffer:
+//e.g. (1, 5, 2, 4) means one clean line, then 5 dirty lines, then 2 clean lines, then 4 dirty lines.
+- (void) drawPixelData: (void *)pixelData dirtyBlocks: (const uint16_t *)dirtyBlocks;
+
+@end
+
+
+//The methods in this category should not be called from outside BXRenderer.
+@interface BXRenderer (BXRendererInternals)
+
 - (void) _createTexture;
 - (void) _createDisplayList;
 - (void) _updateFiltering;
 - (BOOL) _shouldUseFiltering;
-
-- (NSUInteger) _pitch;
-- (void) _drawPixelData: (void *)pixelData;
-- (void) _drawPixelData: (void *)pixelData dirtyLines: (const uint16_t *)dirtyLines;
 
 @end

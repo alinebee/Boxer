@@ -10,70 +10,12 @@
 #import "BXGeometry.h"
 
 @implementation BXRenderer
-@synthesize outputSize, maintainAspectRatio;
+@synthesize outputSize, maintainAspectRatio, needsDisplay;
 
-- (void) dealloc
-{
-	if (glIsTexture(texture))	glDeleteTextures(1, &texture);
-	if (glIsList(displayList))	glDeleteLists(displayList, 1);
-	
-	[super dealloc];
-}
-
-- (NSOpenGLContext *) context
-{
-	return [NSOpenGLContext currentContext];
-}
-
-- (void) prepareForOutputSize: (NSSize)size atScale: (NSSize)scale
-{
-	outputSize = size;
-	outputScale = scale;
-	
-	[self _prepareOpenGL];
-	[self _createTexture];
-	[self _createDisplayList];
-}
-
-- (void) setViewportRect: (NSRect)viewportRect
-{
-	NSRect outputRect, renderRect;
-	if ([self maintainAspectRatio])
-	{
-		//Keep the rendering area letterboxed in proportion with our output size
-		outputRect = NSMakeRect(0, 0, outputSize.width * outputScale.width, outputSize.height * outputScale.height);
-		renderRect = fitInRect(outputRect, viewportRect, NSMakePoint(0.5, 0.5));
-	}
-	else
-	{
-		renderRect = viewportRect;
-	}
-
-	viewportSize = renderRect.size;
-	glViewport(renderRect.origin.x,
-			   renderRect.origin.y,
-			   renderRect.size.width,
-			   renderRect.size.height);
-
-	[self clear];
-	[self _updateFiltering];
-}
-
-- (void) render
-{
-	glCallList(displayList);
-}
-
-- (void) clear
-{
-	glClearColor(0.0, 0.0, 0.0, 1.0);
-	glClear(GL_COLOR_BUFFER_BIT);
-}
-
-- (void) _prepareOpenGL
+- (void) prepareOpenGL
 {
 	glMatrixMode(GL_PROJECTION);
-	
+	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glShadeModel(GL_FLAT);
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_LIGHTING);
@@ -83,6 +25,131 @@
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }
+
+- (void) prepareForOutputSize: (NSSize)size atScale: (NSSize)scale
+{
+	outputSize = size;
+	outputScale = scale;
+	
+	[self _createTexture];
+	[self _createDisplayList];
+}
+
+- (void) setViewportForRect: (NSRect)canvas
+{
+	NSRect outputRect, viewportRect;
+	if ([self maintainAspectRatio])
+	{
+		//Keep the viewport letterboxed in proportion with our output size
+		outputRect		= NSMakeRect(0, 0, outputSize.width * outputScale.width, outputSize.height * outputScale.height);
+		viewportRect	= fitInRect(outputRect, canvas, NSMakePoint(0.5, 0.5));
+	}
+	else
+	{
+		//Otherwise, let the output fill the available canvas
+		//FIXME: this is not really what we want. This toggle is intended to allow us to correctly reshape when 4:3 aspect
+		//ratio correction is toggled, but it will screw up the viewport when we're in fullscreen mode. 
+		viewportRect = canvas;
+	}
+
+	viewportSize = viewportRect.size;
+	glViewport(viewportRect.origin.x,
+			   viewportRect.origin.y,
+			   viewportRect.size.width,
+			   viewportRect.size.height);
+
+	[self clear];
+	[self _updateFiltering];
+}
+
+- (void) render
+{
+	glCallList(displayList);
+	[self setNeedsDisplay: NO];
+}
+
+- (void) clear
+{
+	glClear(GL_COLOR_BUFFER_BIT);
+}
+
+- (NSUInteger) pitch { return (NSUInteger)(outputSize.width * 4); }
+
+- (void) drawPixelData: (void *)pixelData dirtyBlocks: (const uint16_t *)dirtyBlocks
+{
+	if (dirtyBlocks)
+	{
+		NSUInteger offset = 0, i = 0;
+		NSUInteger height, pitch = [self pitch];
+		void *offsetPixels;
+		
+		glBindTexture(GL_TEXTURE_2D, texture);
+		
+		while (offset < outputSize.height)
+		{
+			//Explanation: dirtyBlocks is an array describing the heights of alternating blocks of dirty/clean lines.
+			//e.g. (1, 5, 2, 4) means one clean line, then 5 dirty lines, then 2 clean lines, then 4 dirty lines.
+			
+			//On clean blocks, we just increment the line offset by the number of clean lines in the block and move on.
+			//On dirty blocks, we draw the dirty lines from the pixel data into the texture.
+			
+			height = dirtyBlocks[i];
+			
+			//This is an odd row, hence a dirty line block, so write the dirty lines from it into our texture
+			if (i & 1)
+			{
+				//Ahhh, pointer arithmetic. Determine the starting offset of the dirty line block in our pixel data.
+				//TODO: this needs sanity-checking to make sure the offset is within expected bounds,
+				//otherwise it would write arbitrary data to the texture.
+				offsetPixels = pixelData + (offset * pitch);
+				
+				glTexSubImage2D(GL_TEXTURE_2D,		//Texture target
+								0,					//Mipmap level
+								0,					//X offset
+								offset,				//Y offset
+								outputSize.width,	//width
+								height,				//height
+								GL_BGRA,						//byte ordering
+								GL_UNSIGNED_INT_8_8_8_8_REV,	//byte packing
+								offsetPixels		//pixel data
+								);
+			}
+			offset += height;
+			i++;
+		}
+		[self setNeedsDisplay: YES];
+	}
+}
+
+- (void) drawPixelData: (void *)pixelData
+{
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glTexSubImage2D(GL_TEXTURE_2D,		//Texture target
+					0,					//Mipmap level
+					0,					//X offset
+					0,					//Y offset
+					outputSize.width,	//width
+					outputSize.height,	//height
+					GL_BGRA,						//byte ordering
+					GL_UNSIGNED_INT_8_8_8_8_REV,	//byte packing
+					pixelData			//pixel data
+					);
+	[self setNeedsDisplay: YES];
+}
+
+- (void) dealloc
+{
+	if (glIsTexture(texture))	glDeleteTextures(1, &texture);
+	if (glIsList(displayList))	glDeleteLists(displayList, 1);
+	
+	[super dealloc];
+}
+
+@end
+
+
+
+@implementation BXRenderer (BXRendererInternals)
 
 - (void) _createTexture
 {
@@ -100,6 +167,8 @@
 	//Wipe out any existing texture we have
 	glDeleteTextures(1, &texture);
 	glGenTextures(1, &texture);
+	
+	glPixelStorei( GL_UNPACK_ALIGNMENT, 1);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	
 	//Clamp the texture to avoid wrapping
@@ -117,7 +186,7 @@
 	if (glIsTexture(texture))
 	{
 		glBindTexture(GL_TEXTURE_2D, texture);
-
+		
 		//Apply bilinear filtering to the texture
 		GLint filterMode = ([self _shouldUseFiltering]) ? GL_LINEAR : GL_NEAREST;
 		
@@ -129,7 +198,7 @@
 - (BOOL) _shouldUseFiltering
 {
 	return	((NSInteger)viewportSize.width	% (NSInteger)outputSize.width) || 
-			((NSInteger)viewportSize.height	% (NSInteger)outputSize.height);
+	((NSInteger)viewportSize.height	% (NSInteger)outputSize.height);
 }
 
 - (void) _createDisplayList
@@ -161,65 +230,4 @@
 	glEndList();	
 }
 
-- (NSUInteger) _pitch { return (NSUInteger)(outputSize.width * 4); }
-
-- (void) _drawPixelData: (void *)pixelData dirtyLines: (const uint16_t *)dirtyLines
-{
-	if (dirtyLines)
-	{
-		NSUInteger offset = 0, i = 0;
-		NSUInteger height, pitch = [self _pitch];
-		void *offsetPixels;
-		
-		glBindTexture(GL_TEXTURE_2D, texture);
-		
-		while (offset < outputSize.height)
-		{
-			//Explanation: dirtyLines is an array describing the heights of alternating blocks of dirty/clean lines.
-			//e.g. (1, 5, 2, 4) means one clean line, then 5 dirty lines, then 2 clean lines, then 4 dirty lines.
-			
-			//On clean blocks, we just increment the line offset by the number of clean lines in the block and move on.
-			//On dirty blocks, we draw the dirty lines from the pixel data into the texture.
-			
-			height = dirtyLines[i];
-			
-			//This is an odd row, hence a dirty line block, so write the dirty lines from it into our texture
-			if (i & 1)
-			{
-				//Ahhh, pointer arithmetic. Determine the starting offset of the dirty line block in our pixel data.
-				//TODO: this needs sanity-checking to make sure the offset is within expected bounds,
-				//otherwise it would write arbitrary data to the texture.
-				offsetPixels = pixelData + (offset * pitch);
-				
-				glTexSubImage2D(GL_TEXTURE_2D,		//Texture target
-								0,					//Mipmap level
-								0,					//X offset
-								offset,				//Y offset
-								outputSize.width,	//width
-								height,				//height
-								GL_BGRA,						//byte ordering
-								GL_UNSIGNED_INT_8_8_8_8_REV,	//byte packing
-								offsetPixels		//pixel data
-								);
-			}
-			offset += height;
-			i++;
-		}
-	}
-}
-
-- (void) _drawPixelData: (void *)pixelData
-{
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexSubImage2D(GL_TEXTURE_2D,		//Texture target
-					0,					//Mipmap level
-					0,					//X offset
-					0,					//Y offset
-					outputSize.width,	//width
-					outputSize.height,	//height
-					GL_BGRA,						//byte ordering
-					GL_UNSIGNED_INT_8_8_8_8_REV,	//byte packing
-					pixelData			//pixel data
-					);
-}
 @end

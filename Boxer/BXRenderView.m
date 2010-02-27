@@ -51,6 +51,7 @@
 	[NSBezierPath clipRect: dirtyRect];
 	if ([self renderer])
 	{
+		[[self openGLContext] makeCurrentContext];
 		[[self renderer] render];
 		[[self openGLContext] flushBuffer];
 	}
@@ -60,13 +61,44 @@
 	}
 }
 
+//OpenGL methods
+//--------------
+
+//Whenever we get assigned a new renderer, reinitialise the OpenGL context
+- (void) setRenderer: (BXRenderer *)newRenderer
+{
+	[self willChangeValueForKey: @"renderer"];
+	if (![[self renderer] isEqualTo: newRenderer])
+	{
+		[self unbind: @"needsDisplay"];
+		[[self renderer] autorelease];
+		renderer = [newRenderer retain];
+		
+		if ([self renderer])
+		{
+			//Tell the new renderer to get the OpenGL context ready
+			[self prepareOpenGL];
+			[self reshape];
+			
+			//Bind ourselves to the renderer so that we redraw when the renderer marks itself as dirty
+			[self bind: @"needsDisplay" toObject: renderer withKeyPath: @"needsDisplay" options: nil];
+		}
+	}
+	[self didChangeValueForKey: @"renderer"];
+}
+
 - (void) reshape
 {
-	[[self renderer] setViewportRect: [self bounds]];
+	[[self renderer] setViewportForRect: [self bounds]];
+}
+
+- (void) prepareOpenGL
+{
+	[[self renderer] prepareOpenGL];
 }
 
 //Silly notifications to let the window controller know when a live resize operation is starting/stopping,
-//so that it can clean up afterwards. These should go on BXSessionWindow now instead.
+//so that it can clean up afterwards.
 - (void) viewWillStartLiveResize
 {	
 	[[NSNotificationCenter defaultCenter] postNotificationName: @"BXRenderViewWillLiveResizeNotification" object: self];

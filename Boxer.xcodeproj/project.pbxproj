@@ -715,6 +715,7 @@
 		080E96DDFE201D6D7F000001 /* Boxer */ = {
 			isa = PBXGroup;
 			children = (
+				9F23EB0111390A2600DC5AB6 /* BXRenderer */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
 				9F2D775B0F6140EF00D4E563 /* New headers for DOSBox */,
 				9F573D370F8E69AF0089D8B7 /* BXPackage.h */,
@@ -838,11 +839,20 @@
 				9F675DE40F8F4D49001FCE5F /* BXEmulator+BXDOSFileSystem.mm */,
 				9F44E5E210D17A4C0081B8D2 /* BXEmulator+BXInput.h */,
 				9F44E5E310D17A4C0081B8D2 /* BXEmulator+BXInput.mm */,
-				9FB635DB111EC63F00EDC2DA /* BXRenderer.h */,
-				9FB635DC111EC63F00EDC2DA /* BXRenderer.m */,
 			);
 			comments = "The sourcefiles in this group interface directly with DOSBox's internals. For this reason, they need to be compiled as Objective C++ rather than Objective C.";
 			name = BXEmulator;
+			sourceTree = "<group>";
+		};
+		9F23EB0111390A2600DC5AB6 /* BXRenderer */ = {
+			isa = PBXGroup;
+			children = (
+				9FB635DB111EC63F00EDC2DA /* BXRenderer.h */,
+				9FB635DC111EC63F00EDC2DA /* BXRenderer.m */,
+				9FBB86830F5DD070008418E6 /* BXRenderView.h */,
+				9FBB86840F5DD070008418E6 /* BXRenderView.m */,
+			);
+			name = BXRenderer;
 			sourceTree = "<group>";
 		};
 		9F27133610C1253E0003CB58 /* BXSessionWindow */ = {
@@ -851,8 +861,6 @@
 				9FC7FADC10C08CBA00B5AF42 /* Controllers */,
 				9FBC35170F56C7B7001811F2 /* BXSessionWindow.h */,
 				9FBC35240F56C7B7001811F2 /* BXSessionWindow.m */,
-				9FBB86830F5DD070008418E6 /* BXRenderView.h */,
-				9FBB86840F5DD070008418E6 /* BXRenderView.m */,
 				9FBC35120F56C7B7001811F2 /* BXStatusBar.h */,
 				9FBC351F0F56C7B7001811F2 /* BXStatusBar.m */,
 				9F59DAD310AF1042008DBBC1 /* BXProgramPanel.h */,

@@ -50,9 +50,17 @@
 //Resize the window to accomodate the specified DOS output size at the specified scale factor.
 - (void) resizeToAccommodateOutputSize: (NSSize)outputSize atScale: (NSSize)scale;
 
+//Switch to and from fullscreen mode instantly with no animation.
+- (void) setFullScreen: (BOOL)fullScreen;
+
 //Zoom in and out of fullscreen mode with a smooth window sizing animation.
 - (void) setFullScreenWithZoom: (BOOL) fullScreen;
 
+//Whether the rendering view is currently fullscreen.
+- (BOOL) isFullScreen;
+
+//The screen which we will render to in fullscreen mode.
+- (NSScreen *) fullScreenTarget;
 @end
 
 
@@ -72,10 +80,6 @@
 - (NSWindow *) SDLWindow;
 - (NSOpenGLContext *) SDLOpenGLContext;
 
-- (void) prepareSDLViewForFullscreen;
-- (void) prepareSDLOpenGLContextForTeardown;
-- (void) prepareSDLViewForFrame: (NSRect)frame;
-- (void) prepareSDLOpenGLContextWithFormat: (NSOpenGLPixelFormat *)format;
 - (BOOL) handleSDLKeyboardEvent: (NSEvent *)event;
 
 @end

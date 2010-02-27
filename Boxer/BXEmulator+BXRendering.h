@@ -129,8 +129,6 @@ typedef struct {
 
 - (BXFilterDefinition) _paramsForFilterType: (BXFilterType)filterType;
 
-- (void) _initSDLSurfaceWithFlags: (NSInteger)flags;
-
 - (NSSize)	_surfaceSizeForRenderedSize:		(NSSize)renderedSize fromResolution: (NSSize)resolution;
 - (BOOL)	_shouldUseBilinearForResolution:	(NSSize)resolution atSurfaceSize: (NSSize)surfaceSize;
 

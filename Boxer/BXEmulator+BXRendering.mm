@@ -279,8 +279,8 @@
 	return size;
 }
 
-//SDL surface strategy
-//--------------------
+//Rendering output
+//----------------
 
 - (NSUInteger) _prepareRenderContext
 {
@@ -326,54 +326,10 @@
 {
 	if (sdl.opengl.framebuf && Scaler_ChangedLines)
 	{
-		[[self renderer] _drawPixelData: (void *)sdl.opengl.framebuf dirtyLines: Scaler_ChangedLines];
-		
-		//TODO: this does not belong here
-		BXSessionWindowController *controller = [[self delegate] mainWindowController];
-		[[controller renderView] setNeedsDisplay: YES];
+		[[self renderer] drawPixelData: (void *)sdl.opengl.framebuf dirtyBlocks: Scaler_ChangedLines];
 	}
 }
 
-
-//Initialises the SDL surface to which we shall render.
-//Called by boxer_SetupSurfaceScaled which is in turn called from DOSBox gui/sdlmain.cpp. This entirely replaces the old GFX_SetupSurfaceScaled DOSBox function.
-- (void) _initSDLSurfaceWithFlags: (NSInteger)flags
-{
-	if (![self isExecuting]) return;
-	
-	NSSize renderedSize	= [self renderedSize];
-	NSSize surfaceSize	= [self _surfaceSizeForRenderedSize: renderedSize fromResolution: [self scaledResolution]];
-	NSInteger bpp		= [self screenDepth];
-
-	sdl.clip.x = 0;
-	sdl.clip.y = 0;
-	sdl.clip.w = (Uint16)surfaceSize.width;
-	sdl.clip.h = (Uint16)surfaceSize.height;
-	
-	sdl.opengl.bilinear = [self _shouldUseBilinearForResolution: [self resolution] atSurfaceSize: surfaceSize];
-	
-	
-	if ([self isFullScreen])
-	{
-		NSSize screenSize = [self fullScreenSize];
-		
-		flags |= SDL_FULLSCREEN|SDL_HWSURFACE;
-
-		sdl.surface = SDL_SetVideoMode((int)screenSize.width, (int)screenSize.height, bpp, flags);
-		
-		//Center the actual draw surface on the screen
-		if (sdl.surface && sdl.surface->flags & SDL_FULLSCREEN)
-		{
-			sdl.clip.x = (Sint16)((sdl.surface->w - sdl.clip.w) * 0.5);
-			sdl.clip.y = (Sint16)((sdl.surface->h - sdl.clip.h) * 0.5);
-		}
-	}
-	else
-	{
-		flags |= SDL_HWSURFACE;
-		sdl.surface = SDL_SetVideoMode(sdl.clip.w, sdl.clip.h, bpp, flags);
-	}
-}
 
 //Returns whether to apply bilinear filtering to the specified rendering size.
 //We apply filtering only when the size is not an exact multiple of the base resolution.
@@ -433,10 +389,7 @@
 	//(or the base resolution is large enough for scaling to be too slow), then speed things up
 	//by using 1x scaling and letting OpenGL do the work.
 	NSInteger filterScale;
-	if (activeType == BXFilterNormal && (
-		resolution.width >= 640 || resolution.height >= 400 ||
-		![self _shouldUseBilinearForResolution: resolution atSurfaceSize: expectedRenderSize]
-	))
+	if (activeType == BXFilterNormal)
 	{
 		filterScale = 1;
 	}
@@ -446,8 +399,6 @@
 		NSInteger maxFilterScale	= [self _maxFilterSizeForResolution: resolution];
 		filterScale					= fmin(filterScale, maxFilterScale);
 	}
-	
-	filterScale = 1;
 	
 	//Finally, apply the values to DOSBox
 	render.aspect		= useAspectCorrection;
@@ -529,19 +480,14 @@ Bit8u boxer_screenColorDepth()
 //This is called by GFX_SetupSurfaceScaled in DOSBox's gui/sdlmain.cpp
 void boxer_setupSurfaceScaled(Bit32u sdl_flags, Bit32u bpp)
 {
-	BXEmulator *emulator	= [BXEmulator currentEmulator];
-	[emulator _initSDLSurfaceWithFlags: (NSInteger)sdl_flags];
+	//This should never ever be used any longer
 }
 
 //Populates a pair of integers with the dimensions of the current render-surface
 //This is called by GUI_StartUp in DOSBox's gui/sdlmain.cpp, when initialising OpenGL with a 'pioneer' surface to obtain OpenGL parameters
 void boxer_copySurfaceSize(unsigned int * surfaceWidth, unsigned int * surfaceHeight)
 {
-	BXEmulator *emulator	= [BXEmulator currentEmulator];
-	NSSize surfaceSize		= [emulator surfaceSize];
-	
-	*surfaceWidth	= (unsigned int)surfaceSize.width;
-	*surfaceHeight	= (unsigned int)surfaceSize.height;
+	//This should never ever be used any longer
 }
 
 Bitu boxer_prepareRenderContext()

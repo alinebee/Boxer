@@ -10,7 +10,14 @@
 #import "BXGeometry.h"
 
 @implementation BXRenderer
-@synthesize outputSize, maintainAspectRatio, needsDisplay;
+@synthesize outputSize, viewportSize, maintainAspectRatio, needsDisplay;
+
+- (NSSize) maxOutputSize
+{
+	GLint maxSize;
+	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
+	return NSMakeSize((CGFloat)maxSize, (CGFloat)maxSize);
+}
 
 - (void) prepareOpenGL
 {
@@ -159,10 +166,12 @@
 	
 	//TODO: replace this check with a GL_PROXY_TEXTURE_2D call with graceful fallback
 	//See glTexImage2D(3) for implementation details
-	GLint maxSize;
-	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
-	NSAssert1(textureSize.width <= maxSize && textureSize.height <= maxSize,
-			  @"Output size %@ is too large to create as a texture.", NSStringFromSize(outputSize));
+	NSSize maxSize = [self maxOutputSize];
+	NSAssert2(textureSize.width <= maxSize.width && textureSize.height <= maxSize.height,
+			  @"Output size %@ is too large to create as a texture (maximum dimensions are %@).",
+			  NSStringFromSize(outputSize),
+			  NSStringFromSize(maxSize)
+			  );
 	
 	//Wipe out any existing texture we have
 	glDeleteTextures(1, &texture);

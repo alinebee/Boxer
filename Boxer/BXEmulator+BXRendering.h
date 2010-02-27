@@ -62,24 +62,11 @@ typedef struct {
 //Returns the DOS resolution after aspect-correction scaling has been applied, but before filters are applied.
 - (NSSize) scaledResolution;
 
-//Returns the size of the output DOSBox is rendering to an OpenGL texture: after scalers and aspect correction
-//are applied but before we have scaled it to the final draw surface/fullscreen context.
-- (NSSize) renderedSize;
-
-//Returns the size in pixels of our final render region.
-- (NSSize) surfaceSize;
-
-//Returns the x and y scaling factor being applied to the final surface, compared to the original resolution.
+//Returns the x and y scaling factor being applied to the final rendered size, compared to the original resolution.
 - (NSSize) scale;
 
-//Returns the size in pixels of the current screen, used when rendering to a fullscreen context. 
-- (NSSize) fullScreenSize;
 //Returns the bit depth of the current screen. As of OS X 10.5.4, this is always 32.
 - (NSInteger) screenDepth;
-
-//Returns the screen we will use for rendering to a fullscreen context. Because of crappy nearsighted SDL code,
-//this is locked to the screen on which the session window first opened, not the screen on which it is currently displayed.
-- (NSScreen *) targetForFullScreen;
 
 //Returns whether the emulator is currently rendering in a text-only graphics mode.
 - (BOOL) isInTextMode;
@@ -92,20 +79,17 @@ typedef struct {
 //This is called after resizing the session window or toggling rendering options.
 - (void) resetRenderer;
 
-//Redraws the render region, without reinitialising. Does not mark the render region
-//as needing display - this must be done manually.
-//This is called while resizing the session window to provide live updates.
-- (void) redraw;
-
 //Gets/sets whether we are rendering to fullscreen.
+//Note that setFullScreen does *not* switch the rendering mode to fullscreen: it merely informs DOSBox
+//that Boxer has switched the mode.
 - (BOOL) isFullScreen;
 - (void) setFullScreen: (BOOL)fullscreen;
 
-//Returns the minimum view size needed to use the specified filter type. 
-- (NSSize)	minSurfaceSizeForFilterType: (BXFilterType) type;
+//Returns the minimum view size needed to display the specified filter type. 
+- (NSSize) minRenderedSizeForFilterType: (BXFilterType) type;
 
-//Returns whether the chosen filter is actually being rendered. This will be NO if our current render region
-//is smaller than the minimum size supported by the chosen filter.
+//Returns whether the chosen filter is actually being rendered. This will be NO if the current rendered
+//size is smaller than the minimum size supported by the chosen filter.
 - (BOOL) filterIsActive;
 
 @end
@@ -123,18 +107,11 @@ typedef struct {
 //Internal functions for decisions about rendering
 //------------------------------------------------
 
-//Returns the maximum supported render size, decided by OpenGL's max surface size.
-//This is applied internally as a hard limit to DOSBox's render size.
-- (NSSize) _maxRenderedSize;
-
 - (BXFilterDefinition) _paramsForFilterType: (BXFilterType)filterType;
 
-- (NSSize)	_surfaceSizeForRenderedSize:		(NSSize)renderedSize fromResolution: (NSSize)resolution;
-- (BOOL)	_shouldUseBilinearForResolution:	(NSSize)resolution atSurfaceSize: (NSSize)surfaceSize;
-
-- (void)	_applyRenderingStrategy;
-- (NSSize)	_probableSurfaceSizeForResolution: (NSSize)resolution;
-- (BOOL)	_shouldUseAspectCorrectionForResolution: (NSSize)resolution;
+- (void)		_applyRenderingStrategy;
+- (NSSize)		_probableRenderedSizeForResolution: (NSSize)resolution;
+- (BOOL)		_shouldUseAspectCorrectionForResolution: (NSSize)resolution;
 
 - (BOOL)		_shouldApplyFilterType:	(BXFilterType) filterType toScale: (NSSize)scale;
 - (NSInteger)	_sizeForFilterType:	(BXFilterType) filterType atScale: (NSSize)scale;

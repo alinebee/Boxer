@@ -24,12 +24,18 @@
 	BOOL maintainAspectRatio;
 	BOOL needsDisplay;
 }
+@property (readonly) NSSize viewportSize;
+
 @property (readonly) NSSize outputSize;
 //If YES, scales the viewport to match the dimensions of the output size; otherwise, fills the entire viewport with the output 
 @property (assign) BOOL maintainAspectRatio;
 
 //The render context is 'dirty' and needs redrawing. Analogous to needsDisplay on NSViews.
 @property (assign) BOOL needsDisplay;
+
+
+//The maximum size that the renderer can produce. This is equivalent to GL_MAX_TEXTURE_SIZE.
+- (NSSize) maxOutputSize;
 
 //Sets the initial OpenGL render parameters, turning off unnecessary OpenGL features.
 //Analogous to NSOpenGLView prepareOpenGL.

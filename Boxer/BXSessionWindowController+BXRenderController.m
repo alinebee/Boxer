@@ -97,8 +97,11 @@
 //favouring the width or the height as appropriate.
 - (NSSize) viewSizeForScaledOutputSize: (NSSize)scaledSize minSize: (NSSize)minViewSize
 {	
-	//We start off with our current view size: we want to deviate from this as little as possible.
-	NSSize viewSize = [self renderViewSize];
+	//Start off with our current view size: we want to deviate from this as little as possible.
+	NSSize viewSize = [[self renderContainer] frame].size;
+	
+	//If we are in fullscreen, return the current size and leave it at that
+	if ([self isFullScreen]) return viewSize;
 	
 	//Work out the aspect ratio of the scaled size, and how we should apply that ratio
 	CGFloat aspectRatio = aspectRatioOfSize(scaledSize);
@@ -177,7 +180,7 @@
 {
 	BXSessionWindow *theWindow = [self window];
 
-	NSSize currentSize		= [self renderViewSize];
+	NSSize currentSize		= [[self renderContainer] frame].size;
 	//We're already that size or larger, don't resize further
 	if (sizeFitsWithinSize(minViewSize, currentSize)) return YES;
 	

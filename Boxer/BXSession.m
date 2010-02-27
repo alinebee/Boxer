@@ -329,12 +329,20 @@
 				 toObject: defaults
 			  withKeyPath: @"aspectCorrected"
 				  options: nil];
+
+	/*
+	[[self emulator] bind: @"fullScreen"
+				 toObject: [self mainWindowController]
+			  withKeyPath: @"fullScreen"
+				  options: nil];
+	 */
 }
 
 - (void) _unbindEmulator
 {
 	[[self emulator] unbind: @"aspectCorrected"];
 	[[self emulator] unbind: @"filterType"];
+	//[[self emulator] unbind: @"fullScreen"];
 }
 
 - (void) _startEmulator

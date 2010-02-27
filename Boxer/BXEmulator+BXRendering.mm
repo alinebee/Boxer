@@ -52,50 +52,13 @@
 	return size;
 }
 
-//Returns the size of the output DOSBox is rendering after scalers and aspect correction are applied,
-//but before SDL has scaled it to the final draw surface.
-- (NSSize) renderedSize
-{
-	NSSize size = NSZeroSize;
-	if ([self isExecuting])
-	{
-		size.width	= (CGFloat)sdl.draw.width	* (CGFloat)sdl.draw.scalex;
-		size.height	= (CGFloat)sdl.draw.height	* (CGFloat)sdl.draw.scaley;
-	}
-	return size;
-}
-
-//Returns the final size of SDL's render region.
-- (NSSize) surfaceSize
-{
-	NSSize size = NSZeroSize;
-	if ([self isExecuting])
-	{
-		if ([self isFullScreen] && sdl.clip.w && sdl.clip.h)
-		{
-			size.width	= (CGFloat)sdl.clip.w;
-			size.height	= (CGFloat)sdl.clip.h;
-		}
-		else
-		{
-			BXSessionWindowController *controller = [[self delegate] mainWindowController];
-			size = [controller renderViewSize];
-		}
-	}
-	return size;
-}
-
 //Returns the x and y scaling factor being applied to the final surface, compared to the original resolution.
 - (NSSize) scale
 {
 	NSSize resolution	= [self resolution];
-	NSSize surfaceSize	= [self surfaceSize];
-	return NSMakeSize(surfaceSize.width / resolution.width, surfaceSize.height / resolution.height);
+	NSSize renderedSize	= [[self renderer] viewportSize];
+	return NSMakeSize(renderedSize.width / resolution.width, renderedSize.height / resolution.height);
 }
-
-
-//Returns the size in pixels of the current screen, used when rendering to a fullscreen context. 
-- (NSSize) fullScreenSize	{ return [[self targetForFullScreen] frame].size; }
 
 
 //Returns the bit depth of the current screen. As of OS X 10.5.4, this is always 32.
@@ -105,13 +68,6 @@
 	return NSBitsPerPixelFromDepth([screen depth]);
 }
 
-//The screen upon which we will put the fullscreen display context.
-//To match SDL, this is defined as the screen with the menubar on it, which should match up to kCGDirectMainDisplay,
-//which is what SDL in its infinite wisdom is hardcoded to do
-- (NSScreen *)targetForFullScreen
-{
-	return ([[NSScreen screens] count] > 0) ? [[NSScreen screens] objectAtIndex: 0] : nil;
-}
 
 //Returns whether the emulator is currently rendering in a text-only graphics mode.
 - (BOOL) isInTextMode
@@ -189,7 +145,7 @@
 		}
 		else
 		{
-			NSSize minSize = [self minSurfaceSizeForFilterType: filterType];
+			NSSize minSize = [self minRenderedSizeForFilterType: filterType];
 			[[[self delegate] mainWindowController] resizeToAccommodateViewSize: minSize];
 		}
 		
@@ -216,43 +172,14 @@
 	if ([self isExecuting]) GFX_ResetScreen();
 }
 
-//Redraws the render region, without reinitialising.
-//This is called while resizing the session window to provide live updates.
-- (void) redraw
-{
-	/*
-	if (!sdl.surface) return;
-	
-	//Center the viewport in our current surface size
-	NSRect canvas, viewport;
-	canvas.size = ([self isFullScreen]) ? [self fullScreenSize] : [self surfaceSize];
-	
-	viewport.size = sizeToFitSize([self renderedSize], [self surfaceSize]);
-	viewport = centerInRect(viewport, canvas);
-	
-	glViewport(viewport.origin.x, viewport.origin.y, viewport.size.width, viewport.size.height);
-
-	if (sdl.opengl.framebuf)
-	{
-		//Fill the framebuffer with black
-		glClearColor(0.0, 0.0, 0.0, 1.0);
-		glClear(GL_COLOR_BUFFER_BIT);
-		
-		glCallList(sdl.opengl.displaylist);
-		SDL_GL_SwapBuffers();
-	}
-	 */
-}
-
-
-- (NSSize) minSurfaceSizeForFilterType: (BXFilterType) type
+- (NSSize) minRenderedSizeForFilterType: (BXFilterType) type
 {
 	BXFilterDefinition params	= [self _paramsForFilterType: type];
 	NSSize scaledResolution		= [self scaledResolution];
-	NSSize	minSurfaceSize		= NSMakeSize(scaledResolution.width * params.minFilterSize,
+	NSSize	minRenderedSize		= NSMakeSize(scaledResolution.width * params.minFilterSize,
 											 scaledResolution.height * params.minFilterSize
 											 );
-	return minSurfaceSize;
+	return minRenderedSize;
 }
 @end
 
@@ -262,21 +189,6 @@
 //Called by BXEmulator to prepare the renderer for shutdown.
 - (void) _shutdownRenderer
 {
-	//By the time we get here, there's no SDL context left and we should already have left fullscreen
-	//[self setFullScreen: NO];
-	//[[[self delegate] mainWindowController] clearSDLView];
-}
-
-//Returns the maximum supported render size, decided by OpenGL's max surface size.
-//This is applied internally as a hard limit to DOSBox's render size.
-- (NSSize) _maxRenderedSize
-{
-	NSSize size = NSZeroSize;
-	if ([self isExecuting])
-	{
-		size.width = size.height = (CGFloat)sdl.opengl.max_texsize;
-	}
-	return size;
 }
 
 //Rendering output
@@ -331,32 +243,6 @@
 }
 
 
-//Returns whether to apply bilinear filtering to the specified rendering size.
-//We apply filtering only when the size is not an exact multiple of the base resolution.
-- (BOOL) _shouldUseBilinearForResolution: (NSSize)resolution atSurfaceSize: (NSSize)surfaceSize
-{
-	return	((NSInteger)surfaceSize.width	% (NSInteger)resolution.width) || 
-			((NSInteger)surfaceSize.height	% (NSInteger)resolution.height);
-}
-
-//Returns the size of surface that SDL should use for rendering DOSBox's output. In fullscreen mode, this is just the render size fitted to the screen resolution; in windowed mode we pass the calculation up to BXSessionWindowController, as it knows more about the desktop context than we do.
-- (NSSize) _surfaceSizeForRenderedSize: (NSSize)renderedSize fromResolution: (NSSize)resolution
-{
-	NSSize surfaceSize;
-	if ([self isFullScreen]) 
-	{
-		surfaceSize = sizeToFitSize(renderedSize, [self fullScreenSize]);
-	}
-	else
-	{
-		BXSessionWindowController *controller = [[self delegate] mainWindowController];
-		surfaceSize = [controller viewSizeForScaledOutputSize: renderedSize minSize: resolution];
-	}
-	
-	return surfaceSize;
-}
-
-
 //Rendering strategy
 //------------------
 
@@ -373,7 +259,7 @@
 	
 	//Work out how much we will need to scale the resolution to fit our likely surface
 	NSSize resolution			= [self resolution];
-	NSSize expectedRenderSize	= [self _probableSurfaceSizeForResolution: resolution];
+	NSSize expectedRenderSize	= [self _probableRenderedSizeForResolution: resolution];
 	NSSize scale				= NSMakeSize(expectedRenderSize.width	/ resolution.width,
 											 expectedRenderSize.height	/ resolution.height);
 		
@@ -407,17 +293,19 @@
 	render.scale.op		= (scalerOperation_t)activeType;
 }
 
-//This 'predicts' the final surface size from very early in the render process, for applyRenderingStrategy to make decisions about filtering.
+//This 'predicts' the final rendered size from very early in the render process, for applyRenderingStrategy to make decisions about how and when to filter.
 //Once all that shitty render-setup code is refactored, this will hopefully be unnecessary.
-- (NSSize) _probableSurfaceSizeForResolution: (NSSize)resolution
+- (NSSize) _probableRenderedSizeForResolution: (NSSize)resolution
 {
-	NSSize renderedSize			= resolution;
+	NSSize outputSize			= resolution;
 	BOOL useAspectCorrection	= [self _shouldUseAspectCorrectionForResolution: resolution];
 	if ([self isExecuting])
 	{
-		if (useAspectCorrection) renderedSize.height *= render.src.ratio;
+		if (useAspectCorrection) outputSize.height *= render.src.ratio;
 	}
-	return [self _surfaceSizeForRenderedSize: renderedSize fromResolution: resolution];
+	
+	BXSessionWindowController *controller = [[self delegate] mainWindowController];
+	return [controller viewSizeForScaledOutputSize: outputSize minSize: resolution];
 }
 
 //Returns whether to apply 4:3 aspect ratio correction to the specified DOS resolution. Currently we ignore the resolution itself, and instead check the pixel aspect ratio from DOSBox directly, as this is based on more data than we have. If the pixel aspect ratio is not ~1 then correction is needed.
@@ -445,9 +333,9 @@
 
 - (NSInteger) _maxFilterSizeForResolution: (NSSize)resolution
 {
-	NSSize maxRenderedSize	= [self _maxRenderedSize];
+	NSSize maxOutputSize	= [[self renderer] maxOutputSize];
 	//Work out how big a filter operation size we can use given the maximum render size
-	NSInteger maxFilterSize	= floor(fmin(maxRenderedSize.width / resolution.width, maxRenderedSize.height / resolution.height));
+	NSInteger maxFilterSize	= floor(fmin(maxOutputSize.width / resolution.width, maxOutputSize.height / resolution.height));
 	return maxFilterSize;
 }
 

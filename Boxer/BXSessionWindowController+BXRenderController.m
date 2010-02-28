@@ -28,10 +28,10 @@
 }
 
 
-//Update the DOS view as the window resizes
+//Refresh the DOS renderer after the window resizes, to take the new size into account
 - (void) windowDidResize: (NSNotification *) notification
 {
-	if (![self isResizing])
+	if (![self isFullScreen] && ![self isResizing])
 	{
 		//After a resize event has finished, reinitialise the renderer
 		//to make it use settings appropriate to its new size
@@ -161,6 +161,8 @@
 	//Don't bother if we're already in the correct fullscreen state
 	if ([self isFullScreen] == fullScreen) return;
 	
+	[self willChangeValueForKey: @"fullScreen"];
+	
 	NSView *theView			= [self renderView];
 	NSView *theContainer	= [self renderContainer]; 
 	NSWindow *theWindow		= [self window];
@@ -188,6 +190,8 @@
 		[theView setNeedsDisplay: YES];
 	}
 	[[self emulator] resetRenderer];
+	
+	[self didChangeValueForKey: @"fullScreen"];
 }
 
 - (BOOL) isFullScreen

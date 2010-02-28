@@ -144,8 +144,7 @@
 		
 		[theSession addObserver: self forKeyPath: @"activeProgramPath" options: 0 context: nil];
 
-		//..and finally bind our render view to it
-		
+		//..and finally bind our render view to the session's BXRenderer instance
 		[[self renderView] bind: @"renderer"
 					   toObject: theSession
 					withKeyPath: @"emulator.renderer"

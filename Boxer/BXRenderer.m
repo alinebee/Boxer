@@ -46,11 +46,15 @@
 
 - (void) prepareForOutputSize: (NSSize)size atScale: (NSSize)scale
 {
-	outputSize = size;
-	outputScale = scale;
-	//Next time one of the draw functions is called, this will resync
-	//the texture and display list to match the new output size
-	rendererIsInvalid = YES;
+	if (!NSEqualSizes(size, outputSize) || !NSEqualSizes(scale, outputScale))
+	{
+		outputSize = size;
+		outputScale = scale;
+
+		//Next time one of our draw functions is called, this will resync
+		//the texture, display list and viewport to fit the new output size
+		rendererIsInvalid = YES;
+	}
 }
 
 - (void) setCanvas: (NSRect)canvasRect

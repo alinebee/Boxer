@@ -50,7 +50,7 @@
 
 	//Check the volume type of the underlying filesystem for that path
 	NSString *volumeType = [workspace volumeTypeForPath: filePath];
-	if ([volumeType isEqualToString: dataCDVolumeType]) return BXDriveCDROM;
+	if ([volumeType isEqualToString: dataCDVolumeType] || [volumeType isEqualToString: audioCDVolumeType]) return BXDriveCDROM;
 	
 	//Fall back on a standard hard-disk mount
 	return BXDriveHardDisk;

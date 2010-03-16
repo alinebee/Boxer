@@ -37,6 +37,10 @@ static const NSInteger BXDefaultFreeSpace = -1;
 	BOOL hidden;
 }
 
+//FAT volumes smaller than 2MB will be treated as floppy drives.
+static const NSInteger BXFloppySizeCutoff = 2 * 1024 * 1024;
+
+
 //Properties
 //----------
 
@@ -118,6 +122,7 @@ static const NSInteger BXDefaultFreeSpace = -1;
 + (id) CDROMFromPath:		(NSString *)drivePath atLetter: (NSString *)driveLetter;
 + (id) floppyDriveFromPath: (NSString *)drivePath atLetter: (NSString *)driveLetter;
 + (id) hardDriveFromPath:	(NSString *)drivePath atLetter: (NSString *)driveLetter;
++ (id) internalDriveAtLetter: (NSString *)driveLetter;
 
 
 //Describing the drive

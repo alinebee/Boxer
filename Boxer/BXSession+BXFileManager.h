@@ -76,6 +76,11 @@
 //Returns YES if any new volumes were created, NO otherwise.
 - (BOOL) mountCDVolumes;
 
+//Mount all floppy-sized FAT volumes that are currently mounted in OS X.
+//Will not create new mounts for ones that are already mounted.
+//Returns YES if any drives were mounted, NO otherwise.
+- (BOOL) mountFloppyVolumes;
+
 //Unmount the BXDrives in the specified array.
 - (BOOL) unmountDrives: (NSArray *)drives;
 
@@ -102,5 +107,7 @@
 
 - (void) _startTrackingChangesAtPath:	(NSString *)path;
 - (void) _stopTrackingChangesAtPath:	(NSString *)path;
+
+- (BOOL) _isFloppySizedVolume: (NSString *)path;
 
 @end

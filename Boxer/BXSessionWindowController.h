@@ -96,4 +96,15 @@
 - (BOOL) programPanelShown;
 - (void) setProgramPanelShown:	(BOOL)show;
 
+
+//Handling dialog sheets
+//----------------------
+
+//Called when the user tries to close a window.
+//If a program is running, this shows a confirmation sheet; otherwise, it allows the window to close.
+- (BOOL) windowShouldClose: (id)theWindow;
+
+//Shows a confirmation sheet asking to close the window, after exiting a game or program.
+//Currently unused.
+- (IBAction) windowShouldCloseAfterProgramCompletion: (id)sender;
 @end

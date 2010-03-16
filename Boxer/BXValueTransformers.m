@@ -164,18 +164,28 @@
 
 
 @implementation BXDisplayPathTransformer
-@synthesize joiner, maxComponents;
+@synthesize joiner, ellipsis, maxComponents;
 + (Class) transformedValueClass			{ return [NSString class]; }
 + (BOOL) allowsReverseTransformation	{ return NO; }
 
-- (id) initWithJoiner: (NSString *)joinString maxComponents: (NSUInteger)components
+- (id) initWithJoiner: (NSString *)joinString
+			 ellipsis: (NSString *)ellipsisString
+		maxComponents: (NSUInteger)components
 {
 	if ((self = [super init]))
 	{
 		[self setJoiner: joinString];
+		[self setEllipsis: ellipsisString];
 		[self setMaxComponents: components];
 	}
-	return self;
+	return self;	
+}
+
+- (id) initWithJoiner: (NSString *)joinString maxComponents: (NSUInteger)components
+{
+	return [self initWithJoiner: joinString
+					   ellipsis: nil
+				  maxComponents: components];
 }
 
 - (NSString *) transformedValue: (NSString *)path
@@ -183,15 +193,23 @@
 	NSFileManager *manager	= [NSFileManager defaultManager];
 	NSArray *components		= [manager componentsToDisplayForPath: path];
 	NSUInteger count		= [components count];
-	if (maxComponents > 0 && count > maxComponents)
-		components			= [components subarrayWithRange: NSMakeRange(count - maxComponents, maxComponents)];
+	BOOL shortened = NO;
 	
-	return [components componentsJoinedByString: [self joiner]];
+	if (maxComponents > 0 && count > maxComponents)
+	{
+		components = [components subarrayWithRange: NSMakeRange(count - maxComponents, maxComponents)];
+		shortened = YES;
+	}
+	
+	NSString *displayPath = [components componentsJoinedByString: [self joiner]];
+	if (shortened && [self ellipsis]) displayPath = [[self ellipsis] stringByAppendingString: displayPath];
+	return displayPath;
 }
 
 - (void) dealloc
 {
-	[self setJoiner: nil], [joiner release];
+	[self setJoiner: nil],		[joiner release];
+	[self setEllipsis: nil],	[ellipsis release];
 	[super dealloc];
 }
 @end

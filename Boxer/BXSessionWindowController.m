@@ -253,8 +253,8 @@
 {
 	BOOL enterFullScreen;
 	
-	if ([sender isKindOfClass: [NSNumber class]])	enterFullScreen = [sender boolValue];
-	else											enterFullScreen = ![self isFullScreen];
+	if ([sender respondsToSelector: @selector(boolValue)])	enterFullScreen = [sender boolValue];
+	else													enterFullScreen = ![self isFullScreen];
 	
 	[self setFullScreen: enterFullScreen];
 }
@@ -263,8 +263,8 @@
 {
 	BOOL enterFullScreen;
 	
-	if ([sender isKindOfClass: [NSNumber class]])	enterFullScreen = [sender boolValue];
-	else											enterFullScreen = ![self isFullScreen];
+	if ([sender respondsToSelector: @selector(boolValue)])	enterFullScreen = [sender boolValue];
+	else													enterFullScreen = ![self isFullScreen];
 																		
 	[self setFullScreenWithZoom: enterFullScreen];
 }
@@ -376,5 +376,13 @@
 		return NO;
 	}
 	else return YES;
+}
+
+
+//Prompt to close the window, after exiting a game or program.
+- (IBAction) windowShouldCloseAfterProgramCompletion: (id)sender
+{
+	BXCloseAlert *closeAlert = [BXCloseAlert closeAlertAfterSessionExited: [self document]];
+	[closeAlert beginSheetModalForWindow: [self window]];
 }
 @end

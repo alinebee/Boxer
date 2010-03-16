@@ -545,8 +545,17 @@ enum {
 		NSString *path			= [NSString stringWithCString: Drives[index]->getSystemPath() encoding: BXDirectStringEncoding];
 		NSString *label			= [NSString stringWithCString: Drives[index]->GetLabel() encoding: BXDirectStringEncoding];
 		
-		if (![path length]) path = nil;	//Internal drives
-		BXDrive *drive = [BXDrive driveFromPath: path atLetter: driveLetter];
+		BXDrive *drive;
+		//TODO: detect the specific type of drive here!
+		//Requires drive-size heuristics, or keeping track of drive type in MOUNT/IMGMOUNT
+		if (![path length])
+		{
+			drive = [BXDrive internalDriveAtLetter: driveLetter];
+		}
+		else
+		{
+			drive = [BXDrive driveFromPath: path atLetter: driveLetter];
+		}
 		[drive setLabel: label];
 		return drive;
 	}

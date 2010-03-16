@@ -36,12 +36,12 @@ NSString *HFSVolumeType		= @"hfs";
 - (NSString *) volumeTypeForPath: (NSString *)path
 {
 	NSString *volumeType = nil;
-	[self	getFileSystemInfoForPath:path
-			isRemovable:nil
-			isWritable:nil
-			isUnmountable:nil
-			description:nil
-			type: &volumeType];
+	[self getFileSystemInfoForPath: path
+					   isRemovable: nil
+						isWritable: nil
+					 isUnmountable: nil
+					   description: nil
+							  type: &volumeType];
 	return volumeType;
 }
 
@@ -67,7 +67,7 @@ NSString *HFSVolumeType		= @"hfs";
 	//Optimisation: if the path is not in mountedRemovableMedia,
 	//assume it doesn't have a source image and don't check further
 	NSArray *removableMedia = [self mountedRemovableMedia];
-	if ([removableMedia containsObject: volumePath])
+	if ([removableMedia containsObject: resolvedPath])
 	{
 		NSArray *mountedImages = [self mountedImages];	
 		

@@ -42,15 +42,26 @@
 
 + (BXDriveType) preferredTypeForPath: (NSString *)filePath
 {	
-	if (filePath == nil) return BXDriveInternal;
-	
-	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
+	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	if ([workspace file: filePath matchesTypes: [BXAppController cdVolumeTypes]])		return BXDriveCDROM;
 	if ([workspace file: filePath matchesTypes: [BXAppController floppyVolumeTypes]])	return BXDriveFloppyDisk;
 
 	//Check the volume type of the underlying filesystem for that path
 	NSString *volumeType = [workspace volumeTypeForPath: filePath];
-	if ([volumeType isEqualToString: dataCDVolumeType] || [volumeType isEqualToString: audioCDVolumeType]) return BXDriveCDROM;
+	
+	//Mount data or audio CD volumes as CD-ROM drives 
+	if ([volumeType isEqualToString: dataCDVolumeType] || [volumeType isEqualToString: audioCDVolumeType])
+		return BXDriveCDROM;
+
+	//If the path is a FAT/FAT32 volume, check its volume size: volumes smaller than BXFloppySizeCutoff will be treated as floppy disks.
+	//TODO: is it really relevant whether it's FAT? Should we do this for all very small volumes?
+	if ([volumeType isEqualToString: FATVolumeType])
+	{
+		NSFileManager *manager = [NSFileManager defaultManager];
+		NSDictionary *fsAttrs = [manager attributesOfFileSystemForPath: filePath error: nil];
+		NSUInteger volumeSize = [[fsAttrs valueForKey: NSFileSystemSize] integerValue];
+		if (volumeSize <= BXFloppySizeCutoff) return BXDriveFloppyDisk;
+	}
 	
 	//Fall back on a standard hard-disk mount
 	return BXDriveHardDisk;
@@ -124,8 +135,9 @@
 		[self setPath: drivePath];
 		if (driveLetter) [self setLetter: driveLetter];
 		
-		//Autodetect the appropriate mount type for the specified path
+		//Detect the appropriate mount type for the specified path
 		if (driveType == BXDriveAutodetect) driveType = [[self class] preferredTypeForPath: [self path]];
+		
 		[self setType: driveType];
 		
 	}
@@ -148,6 +160,8 @@
 	{ return [self driveFromPath: drivePath atLetter: driveLetter withType: BXDriveFloppyDisk]; }
 + (id) hardDriveFromPath:	(NSString *)drivePath atLetter: (NSString *)driveLetter
 	{ return [self driveFromPath: drivePath atLetter: driveLetter withType: BXDriveHardDisk]; }
++ (id) internalDriveAtLetter: (NSString *)driveLetter
+{ return [self driveFromPath: nil atLetter: driveLetter withType: BXDriveInternal]; }
 
 
 - (void) dealloc
@@ -183,13 +197,6 @@
 	[self didChangeValueForKey: @"letter"];	
 }
 
-//If type was set to auto, autodetect the appropriate mount type for our current path the first time we need that information
-- (BXDriveType) type
-{
-	if (type == BXDriveAutodetect) [self setType: [[self class] preferredTypeForPath: [self path]]];
-	return type;
-}
-
 - (BOOL) exposesPath: (NSString *)subPath
 {
 	if ([self isInternal]) return NO;
@@ -209,7 +216,11 @@
 }
 - (NSString *) description
 {
-	return [NSString stringWithFormat: @"%@: %@ (%@)", [self letter], [self path], [[self class] descriptionForType: [self type]], nil]; 
+	return [NSString stringWithFormat: @"%@: %@ (%@)",
+			[self letter],
+			[self path],
+			[[self class] descriptionForType: [self type]],
+			nil]; 
 }
 
 //Generated display properties

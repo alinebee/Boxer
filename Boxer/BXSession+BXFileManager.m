@@ -195,14 +195,14 @@
 	//Check what kind of volume the file is on
 	NSString *volumeType = [workspace volumeTypeForPath: filePath];
 
-	//If it's on an audio CD, hunt around for the corresponding data CD volume and use that as the mount point (if found.)
+	//If it's on an audio CD, hunt around for the corresponding data CD volume and use that as the mount point (if found)
 	if ([volumeType isEqualToString: audioCDVolumeType])
 	{
 		NSString *dataVolumePath = [workspace findDataVolumeForAudioCD: [workspace volumeForPath: filePath]];
 		if (dataVolumePath) return dataVolumePath;
 	}
 	
-	//Otherwise if it's on a CD volume, use that as the mount point.
+	//If it's on a data CD volume, use the base folder of the volume as the mount point
 	else if ([volumeType isEqualToString: dataCDVolumeType])
 	{
 		NSString *cdVolume = [workspace volumeForPath: filePath];
@@ -219,6 +219,13 @@
 		}
 		*/
 		return cdVolume;
+	}
+	
+	//If it's a floppy-sized FAT volume, also use the base folder as the mount point 
+	else if ([volumeType isEqualToString: FATVolumeType])
+	{
+		NSString *floppyVolume = [workspace volumeForPath: filePath];
+		return floppyVolume;
 	}
 	
 	//If we get this far, then treat the path as a regular file or folder.
@@ -239,15 +246,36 @@
 - (BOOL) mountCDVolumes
 {
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	NSArray *mountedCDs = [workspace mountedVolumesOfType: dataCDVolumeType];
+	NSArray *volumes = [workspace mountedVolumesOfType: dataCDVolumeType];
 	BXEmulator *theEmulator = [self emulator];
 	
 	BOOL returnValue = NO;
-	for (NSString *mountedCD in mountedCDs)
+	for (NSString *volume in volumes)
 	{
-		if (![theEmulator pathIsMountedAsDrive: mountedCD])
+		if (![theEmulator pathIsMountedAsDrive: volume])
 		{
-			BXDrive *drive = [BXDrive CDROMFromPath: mountedCD atLetter: nil];
+			BXDrive *drive = [BXDrive CDROMFromPath: volume atLetter: nil];
+			drive = [theEmulator mountDrive: drive];
+			if (drive != nil) returnValue = YES;
+		}
+	}
+	return returnValue;
+}
+
+//Mount drives for all floppy-sized FAT volumes that are currently mounted in OS X.
+//Returns YES if any drives were mounted, NO otherwise.
+- (BOOL) mountFloppyVolumes
+{
+	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+	NSArray *volumes = [workspace mountedVolumesOfType: FATVolumeType];
+	BXEmulator *theEmulator = [self emulator];
+	
+	BOOL returnValue = NO;
+	for (NSString *volume in volumes)
+	{
+		if (![theEmulator pathIsMountedAsDrive: volume] && [self _isFloppySizedVolume: volume])
+		{
+			BXDrive *drive = [BXDrive floppyDriveFromPath: volume atLetter: nil];
 			drive = [theEmulator mountDrive: drive];
 			if (drive != nil) returnValue = YES;
 		}
@@ -256,7 +284,7 @@
 }
 
 //Simple helper function to unmount a set of drives. Returns YES if any drives were unmounted, NO otherwise.
-//Implemented just so that BXInspectorController doesn't have to know about BXEmulator+BXDOSFileSystem or BXEmulator+BXShell.
+//Implemented just so that BXInspectorController doesn't have to know about BXEmulator+BXDOSFileSystem.
 - (BOOL) unmountDrives: (NSArray *)drives
 {
 	BOOL succeeded = NO;
@@ -312,21 +340,31 @@
 	//Ignore mounts if we currently have the mount panel open;
 	//we assume that the user will want to handle the new volume manually.
 	NSWindow *attachedSheet = [[self windowForSheet] attachedSheet];
-	if (![attachedSheet isMemberOfClass: [NSOpenPanel class]])
-	{
-		NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
-		NSString *volumePath	= [[theNotification userInfo] objectForKey: @"NSDevicePath"];
+	if ([attachedSheet isMemberOfClass: [NSOpenPanel class]]) return;
+	
+	NSArray *automountedTypes = [NSArray arrayWithObjects:
+								 dataCDVolumeType,
+								 FATVolumeType,
+								 nil];
+	
+	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
+	NSString *volume		= [[theNotification userInfo] objectForKey: @"NSDevicePath"];
+	NSString *volumeType	= [workspace volumeTypeForPath: volume];
+	
+	//Only mount volumes that are of an appropriate type
+	if (![automountedTypes containsObject: volumeType]) return;
+	
+	//Only mount FAT volumes that are floppydisk-sized
+	if ([volumeType isEqualToString: FATVolumeType] && ![self _isFloppySizedVolume: volume]) return;
+	
+	//Only mount volumes that aren't already mounted as drives
+	NSString *mountPoint = [self preferredMountPointForPath: volume];
+	if ([[self emulator] pathIsMountedAsDrive: mountPoint]) return;
+	
+	//Alright, if we got this far then it's ok to mount a new drive for it
+	BXDrive *drive = [BXDrive driveFromPath: mountPoint atLetter: nil];
 		
-		//Only auto-mount CD-ROM volumes, and only if they're not already mounted
-		if ([[workspace volumeTypeForPath: volumePath] isEqualToString: dataCDVolumeType]
-			&& ![[self emulator] pathIsDOSAccessible: volumePath])
-		{
-			NSString *mountPoint = [self preferredMountPointForPath: volumePath];
-			BXDrive *drive = [BXDrive CDROMFromPath: mountPoint atLetter: nil];
-			
-			[[self emulator] mountDrive: drive];
-		}
-	}
+	[[self emulator] mountDrive: drive];
 }
 
 //Implementation note: we do this in willUnmount instead of didUnmount, so that we can
@@ -395,6 +433,14 @@
 {
 	UKFNSubscribeFileWatcher *watcher = [UKFNSubscribeFileWatcher sharedFileWatcher];
 	[watcher removePath: path];
+}
+
+- (BOOL) _isFloppySizedVolume: (NSString *)path
+{
+	NSFileManager *manager = [NSFileManager defaultManager];
+	NSDictionary *fsAttrs = [manager attributesOfFileSystemForPath: path error: nil];
+	NSUInteger volumeSize = [[fsAttrs valueForKey: NSFileSystemSize] integerValue];
+	return volumeSize <= BXFloppySizeCutoff;
 }
 
 @end

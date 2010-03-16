@@ -75,19 +75,9 @@
 //Retrieves the localized string for the specified key from Shell.strings and prints it to DOS using displayString:
 - (id) displayStringFromKey: (NSString *)theKey;
 
-//Displays the quit confirmation sheet after a game package has exited.
-//TODO: move this to BXSession.
-- (id) showPackageExitPrompt: (NSString *)argumentString;
-
 //Displays a page of DOS shell commands.
 //Call with "commands".
 - (id) showShellCommandHelp: (NSString *)argumentString;
-
-//Toggle between fullscreen and windowed mode.
-//Call with "fullscreen".
-//Accepts an optional argument: 1/0 or "true"/"false", to set fullscreen to a particular value.
-//If argument is omitted, simply toggles fullscreen.
-- (id) toggleFullScreen: (NSString *)argumentString;
 
 //These commands hook into the AUTOEXEC process to execute Boxer's session commands at suitable points.
 //These call corresponding methods on our session delegate.
@@ -95,8 +85,8 @@
 - (id) runLaunchCommands: (NSString *)argumentString;
 
 //Lists all available drives, using Boxer's output syntax instead of DOSBox's.
-//Call with "boxer_listMounts"
-- (id) listMounts: (NSString *)argumentString;
+//Call with "drives"
+- (id) listDrives: (NSString *)argumentString;
 @end
 
 

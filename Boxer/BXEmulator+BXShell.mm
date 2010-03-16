@@ -11,8 +11,8 @@
 #import "BXEmulator+BXInput.h"
 #import "BXSessionWindowController+BXRenderController.h"
 #import "BXSession.h"
-#import "BXCloseAlert.h"
 #import "BXDrive.h"
+#import "BXValueTransformers.h"
 
 #import "boxer.h"
 #import "shell.h"
@@ -22,11 +22,13 @@ NSDictionary *commandList = [[NSDictionary alloc] initWithObjectsAndKeys:
 	//Commands prefixed by boxer_ are intended for Boxer's own use in batchfiles and our own personal command chains
 	@"runPreflightCommands:",	@"boxer_preflight",
 	@"runLaunchCommands:",		@"boxer_launch",
-	@"showPackageExitPrompt:",	@"boxer_quitaftercompletion",
 	@"displayStringFromKey:",	@"boxer_displaystring",
 	@"showShellCommandHelp:",	@"help",
-	@"toggleFullScreen:",		@"fullscreen",
-	@"listMounts:",				@"list_mounts",
+	@"listDrives:",				@"drives",
+	
+	//Handled by BXSessionWindowController
+	@"toggleFullScreenWithZoom:",					@"fullscreen",
+	@"windowShouldCloseAfterProgramCompletion:",	@"boxer_closeaftercompletion",
 nil];
 
 //Lookup table of shell commands and the aliases that run them
@@ -39,7 +41,6 @@ NSDictionary *commandAliases = [[NSDictionary alloc] initWithObjectsAndKeys:
 	@"del",			@"rm",
 	@"dir",			@"ls",
 	@"type",		@"cat",
-	@"mount",		@"drives",
 	@"mount -u",	@"unmount",
 nil];
 
@@ -212,31 +213,11 @@ nil];
 	return [NSNumber numberWithBool: YES];
 }
 
-- (id) showPackageExitPrompt: (NSString *)argumentString
-{
-	BXCloseAlert *closeAlert = [BXCloseAlert closeAlertAfterSessionExited: [self delegate]];
-	[closeAlert beginSheetModalForWindow: [[self delegate] windowForSheet]];
-	
-	return [NSNumber numberWithBool: YES];
-}
-
 - (id) showShellCommandHelp: (NSString *)argumentString
 {
 	[self _substituteCommand: @"cls" encoding: BXDirectStringEncoding];
 	[self displayStringFromKey: @"Shell Command Help"];
 
-	return [NSNumber numberWithBool: YES];
-}
-
-
-- (id) toggleFullScreen: (NSString *)argumentString
-{
-	//Only toggle if no argument was provided, or argument did not match the current fullscreen state
-	if ([argumentString isEqualToString: @""] || [argumentString boolValue] != [self isFullScreen])
-	{
-		BXSessionWindowController *controller = [[self delegate] mainWindowController];
-		[controller toggleFullScreenWithZoom: self];
-	}
 	return [NSNumber numberWithBool: YES];
 }
 
@@ -252,12 +233,39 @@ nil];
 	return [NSNumber numberWithBool: YES];
 }
 
-- (id) listMounts: (NSString *)argumentString
+- (id) listDrives: (NSString *)argumentString
 {
-	for (BXDrive *drive in [driveCache objectEnumerator])
+	NSString *description;
+	BXDisplayPathTransformer *pathTransformer = [[BXDisplayPathTransformer alloc] initWithJoiner: @"/"
+																						ellipsis: @"..."
+																				   maxComponents: 4];
+	
+	[self displayStringFromKey: @"Currently mounted drives:"];
+	NSArray *sortedDrives = [[self mountedDrives] sortedArrayUsingSelector: @selector(letterCompare:)];
+	for (BXDrive *drive in sortedDrives)
 	{
-		NSLog(@"%@: %@", [drive letter], [drive path]);
+		//if ([drive isHidden]) continue;
+		
+		if ([drive isInternal])
+		{
+			description = [NSString stringWithFormat: @"%@: %@\n",
+						   [drive letter],
+						   [drive typeDescription],
+						   nil];
+		}
+		else
+		{
+			description = [NSString stringWithFormat: @"%@: %@ (%@)\n",
+						   [drive letter],
+						   [pathTransformer transformedValue: [drive path]],
+						   [drive typeDescription],
+						   nil];
+		}
+
+		[self displayString: description];
 	}
+	[pathTransformer release];
+	
 	return [NSNumber numberWithBool: YES];
 }
 
@@ -298,11 +306,23 @@ nil];
 		if (selector)
 		{
 			//Eat the first character of the arguments, which is just the separator between command and arguments
-			//Should this be the responsibility of each handler?
 			NSString *argumentString = ([originalArgumentString length]) ? [originalArgumentString substringFromIndex: 1] : @"";
 			
-			NSNumber *returnValue = [self performSelector: selector withObject: argumentString];
-			return [returnValue boolValue];
+			BOOL returnValue;
+			
+			//If we respond to that selector, then handle it ourselves
+			if ([self respondsToSelector: selector])
+			{
+				returnValue = [[self performSelector: selector withObject: argumentString] boolValue];
+			}
+			//Otherwise, pass the selector up to the application as an action call, using the argument string as the action parameter
+			//This allows other parts of Boxer to hook into the shell, without BXShell explicitly handling the method responsible
+			else
+			{
+				NSString *sender = [argumentString length] ? argumentString : nil;
+				returnValue = [NSApp sendAction: selector to: nil from: sender];
+			}
+			return returnValue;
 		}
 	}
 	return NO;

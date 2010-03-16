@@ -63,12 +63,19 @@
 @interface BXDisplayPathTransformer: NSValueTransformer
 {
 	NSString *joiner;
+	NSString *ellipsis;
 	NSUInteger maxComponents;
 }
 @property (copy) NSString *joiner;
+@property (copy) NSString *ellipsis;
 @property (assign) NSUInteger maxComponents;
 
-- (id) initWithJoiner: (NSString *)joinString maxComponents: (NSUInteger)components;
+- (id) initWithJoiner: (NSString *)joinString
+			 ellipsis: (NSString *)ellipsisString
+		maxComponents: (NSUInteger)components;
+
+- (id) initWithJoiner: (NSString *)joinString
+		maxComponents: (NSUInteger)components;
 @end
 
 

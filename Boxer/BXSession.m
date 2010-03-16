@@ -435,7 +435,8 @@
 		}
 	}
 	
-	//Automount all currently mounted CD-ROM volumes
+	//Automount all currently mounted floppy and CD-ROM volumes
+	[self mountFloppyVolumes];
 	[self mountCDVolumes];
 	
 	//Mount our internal DOS toolkit at the appropriate drive

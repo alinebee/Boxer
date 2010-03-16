@@ -202,7 +202,9 @@
 	[[[self delegate] mainWindowController] resizeToAccommodateOutputSize: outputSize atScale: scale];
 	[[self renderer] prepareForOutputSize: outputSize atScale: scale];
 	
+	if (sdl.opengl.framebuf) free(sdl.opengl.framebuf);
 	sdl.opengl.framebuf = malloc(sdl.draw.width * sdl.draw.height * 4);
+	
 	sdl.opengl.pitch = sdl.draw.width * 4;
 	sdl.desktop.type = SCREEN_OPENGL;
 	sdl.active = YES;

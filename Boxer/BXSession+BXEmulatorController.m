@@ -36,8 +36,8 @@
 	
 	[speedBanding setBandThresholds: bands];
 	
-	[NSValueTransformer setValueTransformer: speedBanding forName:@"BXSpeedSliderTransformer"];
-	[NSValueTransformer setValueTransformer: invertFramerate forName:@"BXFrameRateSliderTransformer"];
+	[NSValueTransformer setValueTransformer: speedBanding forName: @"BXSpeedSliderTransformer"];
+	[NSValueTransformer setValueTransformer: invertFramerate forName: @"BXFrameRateSliderTransformer"];
 }
 
 //We use different increment scales depending on the speed, to give more accuracy to low-speed adjustments

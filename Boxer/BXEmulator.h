@@ -114,7 +114,7 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 
 
 //An array of OS X paths to configuration files that will be processed by this session during startup.
-@property (retain, readonly) NSMutableArray *configFiles;
+@property (readonly)	NSMutableArray *configFiles;
 
 //The maximum allowable value for the frameskip setting.
 //Defaults to 9.
@@ -130,7 +130,7 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 @property (assign)		BOOL suppressOutput;
 
 //An array of queued command strings to execute on the DOS command line.
-@property (retain, readonly) NSMutableArray *commandQueue;
+@property (readonly)	NSMutableArray *commandQueue;
 
 
 @property (assign, getter=isPaused) BOOL paused;

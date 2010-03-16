@@ -584,7 +584,7 @@ BXEmulator *currentEmulator = nil;
 - (BOOL) _handleRunLoop
 {
 	if ([self isCancelled]) return YES;
-	if ([self isAtPrompt] && [[self commandQueue] count]) return YES;
+	if ([[self commandQueue] count] && [self isAtPrompt]) return YES;
 	return NO;
 }
 

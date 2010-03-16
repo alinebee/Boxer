@@ -22,6 +22,7 @@
 
 - (BOOL) handleKeyboardEvent: (NSEvent *)event;
 
+- (BOOL) isFullScreen;
 - (void) prepareViewForFullscreen;
 - (void) prepareViewForFrame: (NSRect)frame;
 - (void) prepareOpenGLContextWithFormat: (NSOpenGLPixelFormat *)format;

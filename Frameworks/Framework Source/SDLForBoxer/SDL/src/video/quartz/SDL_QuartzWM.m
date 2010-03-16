@@ -118,14 +118,16 @@ void QZ_UpdateCursor (_THIS) {
 
 BOOL QZ_IsMouseInWindow (_THIS) {
 	NSWindow *theWindow = [[BXBridge bridge] window];
-    if (theWindow == nil || (mode_flags & SDL_FULLSCREEN)) return YES; /*fullscreen*/
+	//--Replaced 2010-03-16 by Alun Bestor: Boxer now handles fullscreen mode, thanks
+	// if (theWindow == nil || (mode_flags & SDL_FULLSCREEN)) return YES; /*fullscreen*/
+	if ([[BXBridge bridge] isFullScreen]) return YES;
     else {
         NSPoint p = [ theWindow mouseLocationOutsideOfEventStream ];
         p.y -= 1.0f; /* Apparently y goes from 1 to h, not from 0 to h-1 (i.e. the "location of the mouse" seems to be defined as "the location of the top left corner of the mouse pointer's hot pixel" */
 		
 		//Modified 2009-02-16 by Alun Bestor to correct the cursor hide region in our custom window
         //return NSPointInRect(p, [ window_view frame ]);
-		return NSPointInRect(p, [[[BXBridge bridge] view] frame ]);
+		return NSPointInRect(p, [[[BXBridge bridge] view] frame]);
     }
 }
 
@@ -141,10 +143,13 @@ int QZ_ShowWMCursor (_THIS, WMcursor *cursor) {
     else {
 		NSWindow *theWindow = [[BXBridge bridge] window];
 		
-        if (theWindow ==nil || (mode_flags & SDL_FULLSCREEN)) {
-            [ cursor->nscursor set ];
+		//--Replaced 2010-03-16 by Alun Bestor: Boxer now handles fullscreen
+		//if (theWindow ==nil || (mode_flags & SDL_FULLSCREEN)) {
+        if ([[BXBridge bridge] isFullScreen]) {
+			[ cursor->nscursor set ];
         }
-        else {
+		//--End of modifications
+		else {
 			//--Modified 2010-02-03 by Alun Bestor to ensure the mouse behaves nicely in our custom window
             //[ qz_window invalidateCursorRectsForView: [ qz_window contentView ] ];
 			[theWindow invalidateCursorRectsForView: [[BXBridge bridge] view]];
@@ -184,8 +189,9 @@ void QZ_PrivateLocalToGlobal (_THIS, NSPoint *p) {
 /* Convert SDL coordinate to Cocoa coordinate */
 void QZ_PrivateSDLToCocoa (_THIS, NSPoint *p) {
 
-    if ( CGDisplayIsCaptured (display_id) ) { /* capture signals fullscreen */
-    
+	//--Bypassed 2010-03-16 by Alun Bestor: our view should always handle the coordinate translation
+    if (NO && CGDisplayIsCaptured (display_id) ) { /* capture signals fullscreen */
+	//--End of modifications
         p->y = CGDisplayPixelsHigh (display_id) - p->y;
     }
     else {
@@ -194,16 +200,20 @@ void QZ_PrivateSDLToCocoa (_THIS, NSPoint *p) {
         *p = [ theView convertPoint:*p toView: nil ];
         
         /* We need a workaround in OpenGL mode */
-        if ( SDL_VideoSurface->flags & SDL_OPENGL ) {
+		//Bypassed 2010-03-16 by Alun Bestor: we always use OpenGL mode
+        if (YES || SDL_VideoSurface->flags & SDL_OPENGL ) {
             p->y = [theView frame].size.height - p->y;
         }
+		//--End of modifications
     }
 }
 
 /* Convert Cocoa coordinate to SDL coordinate */
 void QZ_PrivateCocoaToSDL (_THIS, NSPoint *p) {
 
-    if ( CGDisplayIsCaptured (display_id) ) { /* capture signals fullscreen */
+	//--Bypassed 2010-03-16 by Alun Bestor: we always want our view to handle coordinate conversion
+    if (NO && CGDisplayIsCaptured (display_id) ) { /* capture signals fullscreen */
+	//--End of modifications
     
         p->y = CGDisplayPixelsHigh (display_id) - p->y;
     }
@@ -213,9 +223,11 @@ void QZ_PrivateCocoaToSDL (_THIS, NSPoint *p) {
         *p = [ theView convertPoint:*p fromView: nil ];
         
         /* We need a workaround in OpenGL mode */
-        if ( SDL_VideoSurface != NULL && (SDL_VideoSurface->flags & SDL_OPENGL) ) {
+		//--Bypassed 2010-03-16 by Alun Bestor: we always use OpenGL mode
+        if (YES && SDL_VideoSurface != NULL && (SDL_VideoSurface->flags & SDL_OPENGL) ) {
             p->y = [theView frame].size.height - p->y;
         }
+		//--End of modifications
     }
 }
 
@@ -443,7 +455,9 @@ void QZ_ChangeGrabState (_THIS, int action) {
     else {
         assert( grab_state == QZ_INVISIBLE_GRAB );
 
-        QZ_PrivateWarpCursor (this, SDL_VideoSurface->w / 2, SDL_VideoSurface->h / 2);
+		//--Disabled 2010-03-16 by Alun Bestor: we no longer populate SDL_VideoSurface
+        //QZ_PrivateWarpCursor (this, SDL_VideoSurface->w / 2, SDL_VideoSurface->h / 2);
+		//--End of modifications
         CGAssociateMouseAndMouseCursorPosition (0);
     }
 }

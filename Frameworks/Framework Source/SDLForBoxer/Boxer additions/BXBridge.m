@@ -17,6 +17,11 @@
 	return bridge;
 }
 
+- (BOOL) isFullScreen
+{
+	return [[self windowController] isFullScreen];
+}
+
 - (id) windowController
 {
 	return [[[NSApp delegate] currentSession] mainWindowController];

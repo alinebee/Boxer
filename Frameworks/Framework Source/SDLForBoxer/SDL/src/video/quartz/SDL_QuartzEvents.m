@@ -750,14 +750,16 @@ void QZ_PumpEvents (_THIS)
     pool = [ [ NSAutoreleasePool alloc ] init ];
     distantPast = [ NSDate distantPast ];
 
-    winRect = NSMakeRect (0, 0, SDL_VideoSurface->w, SDL_VideoSurface->h);
-    
+	//--Replaced 2010-03-16 by Alun Bestor
+    //winRect = NSMakeRect (0, 0, SDL_VideoSurface->w, SDL_VideoSurface->h);
+    winRect = [[[BXBridge bridge] view] bounds];
+	//--End of modifications
+	
     /* while grabbed, accumulate all mouse moved events into one SDL mouse event */
     dx = 0;
     dy = 0;
     
     do {
-    
         /* Poll for an event. This will not block */
         event = [ NSApp nextEventMatchingMask:NSAnyEventMask
                                     untilDate:distantPast
@@ -926,7 +928,9 @@ void QZ_PumpEvents (_THIS)
                         QZ_UpdateCursor(this);
 
                         if (grab_state == QZ_INVISIBLE_GRAB) { /*see comment above*/
-                            QZ_PrivateWarpCursor (this, SDL_VideoSurface->w / 2, SDL_VideoSurface->h / 2);
+							//--Disabled 2010-03-16 by Alun Bestor: we no longer populate SDL_VideoSurface
+							// QZ_PrivateWarpCursor (this, SDL_VideoSurface->w / 2, SDL_VideoSurface->h / 2);
+							//--End of modifications
                             CGAssociateMouseAndMouseCursorPosition (0);
                         }
                     }

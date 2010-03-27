@@ -139,12 +139,13 @@
 			[theWindow setFrameAutosaveName: @"DOSWindow"];
 		}
 		
-		//...and add it to our panel controller, so that it can keep up with the times too
+		//Add the session to our panel controller, so that it can keep up with the times too
 		[[self programPanelController] setRepresentedObject: theSession];
 		
+		//Track changes to the active DOS program, to update the represented file accordingly
 		[theSession addObserver: self forKeyPath: @"activeProgramPath" options: 0 context: nil];
 
-		//..and finally bind our render view to the session's BXRenderer instance
+		//Bind our render view to the session's BXRenderer instance
 		[[self renderView] bind: @"renderer"
 					   toObject: theSession
 					withKeyPath: @"emulator.renderer"
@@ -187,8 +188,20 @@
 						  change: (NSDictionary *)change
 						 context: (void *)context
 {
-	//Whenever the active program path changes, synchronise the window title
-	if ([keyPath isEqualToString: @"activeProgramPath"]) [self synchronizeWindowTitleWithDocumentName];
+	//Whenever the active program path changes, synchronise the window title and the unsaved changes indicator
+	if ([keyPath isEqualToString: @"activeProgramPath"])
+	{
+		[self synchronizeWindowTitleWithDocumentName];
+		
+		//If the user has suppressed the close-while-a-program-is-running alert, don't flag the window as unsaved.
+		//This matches the behaviour of the OS X Terminal, which shows the unsaved changes indicator only when
+		//pressing the close button would trigger a confirmation panel.
+		if (![[NSUserDefaults standardUserDefaults] boolForKey: @"suppressCloseAlert"])
+		{
+			BOOL hasUnsavedChanges = ([object valueForKey: keyPath] != nil);
+			[[self window] setDocumentEdited: hasUnsavedChanges];
+		}
+	}
 }
 
 

@@ -193,14 +193,10 @@
 	{
 		[self synchronizeWindowTitleWithDocumentName];
 		
-		//If the user has suppressed the close-while-a-program-is-running alert, don't flag the window as unsaved.
-		//This matches the behaviour of the OS X Terminal, which shows the unsaved changes indicator only when
-		//pressing the close button would trigger a confirmation panel.
-		if (![[NSUserDefaults standardUserDefaults] boolForKey: @"suppressCloseAlert"])
-		{
-			BOOL hasUnsavedChanges = ([object valueForKey: keyPath] != nil);
-			[[self window] setDocumentEdited: hasUnsavedChanges];
-		}
+		//Flag the window as unsaved if pressing the close button would trigger a confirmation panel.
+		//This matches the behaviour of the OS X Terminal.
+		
+		[[self window] setDocumentEdited: [self shouldConfirmClose]];
 	}
 }
 
@@ -353,6 +349,11 @@
 		NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
 		return [[self document] responseToDroppedFiles: filePaths];
 	}
+	else if ([[pboard types] containsObject: NSStringPboardType])
+	{
+		NSString *droppedString = [pboard stringForType: NSStringPboardType];
+		return [[self document] responseToDroppedString: droppedString];
+    }
 	else return NSDragOperationNone;
 }
 
@@ -366,23 +367,26 @@
         NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
 		return [[self document] handleDroppedFiles: filePaths withLaunching: YES];
 	}
-	/*
+	
 	else if ([[pboard types] containsObject: NSStringPboardType])
 	{
 		NSString *droppedString = [pboard stringForType: NSStringPboardType];
-		return [[self document] handlePastedString: droppedString];
+		return [[self document] handleDroppedString: droppedString];
     }
-	*/
-    return NO;
+	return NO;
 }
 
 //Handling dialog sheets
 //----------------------
 
+- (BOOL) shouldConfirmClose
+{
+	return (![[NSUserDefaults standardUserDefaults] boolForKey: @"suppressCloseAlert"] && [[self emulator] isRunningProcess]);
+}
+
 - (BOOL) windowShouldClose: (id)theWindow
 {
-	if (![[NSUserDefaults standardUserDefaults] boolForKey: @"suppressCloseAlert"]
-		&& [[self emulator] isRunningProcess])
+	if ([self shouldConfirmClose])
 	{
 		BXCloseAlert *closeAlert = [BXCloseAlert closeAlertWhileSessionIsActive: [self document]];
 		[closeAlert beginSheetModalForWindow: [self window]];

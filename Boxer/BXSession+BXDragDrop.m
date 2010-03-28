@@ -9,6 +9,7 @@
 #import "BXSession+BXDragDrop.h"
 #import "BXSession+BXFileManager.h"
 #import "BXEmulator+BXDOSFileSystem.h"
+#import "BXEmulator+BXInput.h"
 #import "NSWorkspace+BXFileTypes.h"
 #import "NSWorkspace+BXMountedVolumes.h"
 
@@ -37,6 +38,14 @@
 	return response;
 }
 
+//Called by BXSessionWindowController draggingEntered: to figure out what we'd do with a dropped string.
+- (NSDragOperation) responseToDroppedString: (NSString *)droppedString
+{
+	if ([[self emulator] canAcceptPastedString: droppedString]) return NSDragOperationCopy;
+	else return NSDragOperationNone;
+}
+
+
 //Called by BXSessionWindowController performDragOperation: when files have been drag-dropped onto Boxer.
 - (BOOL) handleDroppedFiles: (NSArray *)filePaths withLaunching: (BOOL)launch
 {
@@ -52,7 +61,14 @@
 	return returnValue;
 }
 
+//Called by BXSessionWindowController performDragOperation: when a string has been drag-dropped onto Boxer.
+- (BOOL) handleDroppedString: (NSString *)droppedString
+{
+	return [[self emulator] handlePastedString: droppedString];
+}
+
 @end
+
 
 @implementation BXSession (BXDragDropInternals)
 

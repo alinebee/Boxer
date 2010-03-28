@@ -100,6 +100,9 @@
 //Handling dialog sheets
 //----------------------
 
+//Returns whether a confirmation sheet should be shown when windowShouldClose is called.
+- (BOOL) shouldConfirmClose;
+
 //Called when the user tries to close a window.
 //If a program is running, this shows a confirmation sheet; otherwise, it allows the window to close.
 - (BOOL) windowShouldClose: (id)theWindow;

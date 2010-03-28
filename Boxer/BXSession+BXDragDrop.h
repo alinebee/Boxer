@@ -20,8 +20,12 @@
 //Returns an NSDragOperation indicating what the session would do with the files were they dropped.
 - (NSDragOperation) responseToDroppedFiles: (NSArray *)filePaths;
 
+- (NSDragOperation) responseToDroppedString: (NSString *)droppedString;
+
 //Handles an array of dropped files.
 - (BOOL) handleDroppedFiles: (NSArray *)filePaths withLaunching: (BOOL)launch;
+
+- (BOOL) handleDroppedString: (NSString *)droppedString;
 
 @end
 

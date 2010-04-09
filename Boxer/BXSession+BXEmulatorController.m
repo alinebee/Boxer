@@ -14,6 +14,8 @@
 #import "BXValueTransformers.h"
 #import "BXVideoFormatAlert.h"
 
+#import "BXSessionWindowController.h"
+#import "BXRenderView.h"
 
 @implementation BXSession (BXEmulatorController)
 
@@ -279,13 +281,14 @@
 }
 
 
-//Wrapping mouse-lock state
-//-------------------------
-//We pass along the mouselock state unhindered, but just play a cheery sound to accompany it
 
 - (void) setMouseLocked: (BOOL) lock
 {
 	[[self emulator] setMouseLocked: lock];	
+
+	BXRenderView *renderView = [[self mainWindowController] renderView]; 
+	[renderView setCursorHidden: lock];
+	
 	if ([self mouseLocked] == lock)
 	{
 		NSString *lockSoundName	= (lock) ? @"LockClosing" : @"LockOpening";

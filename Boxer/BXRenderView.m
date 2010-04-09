@@ -11,10 +11,65 @@
 #import "BXRenderer.h"
 
 @implementation BXRenderView
-@synthesize renderer;
+@synthesize renderer, cursorHidden;
 
 //This helps optimize OS X's rendering decisions, hopefully
 - (BOOL) isOpaque	{ return YES; }
+
+- (void) setCursorHidden: (BOOL)hide
+{
+	cursorHidden = hide;
+	if (hide && [self containsMouse]) [self cursorUpdate: nil];
+}
+
+- (BOOL) containsMouse
+{
+	NSPoint mouseLocation = [[self window] mouseLocationOutsideOfEventStream];
+	NSPoint relativePoint = [self convertPoint: mouseLocation fromView: nil];
+	return [self mouse: relativePoint inRect: [self bounds]];
+}
+
+
+- (void) updateTrackingAreas
+{
+	/*
+	for (NSTrackingArea *area in [self trackingAreas]) [self removeTrackingArea: area];
+	
+	NSTrackingAreaOptions options = NSTrackingMouseEnteredAndExited | NSTrackingMouseMoved | NSTrackingCursorUpdate | 
+NSTrackingActiveInKeyWindow | NSTrackingInVisibleRect;
+		
+	NSTrackingArea *trackingArea = [[NSTrackingArea alloc] initWithRect: NSZeroRect
+																options: options
+																  owner: self
+															   userInfo: nil];
+	[self addTrackingArea: trackingArea];
+	[trackingArea release];
+	
+	if ([self containsMouse]) [self cursorUpdate: nil];
+	*/
+	[super updateTrackingAreas];
+}
+
+- (void) cursorUpdate: (NSEvent *)event
+{
+	//Implementation note: rather than use [NSCursor show/hide] to toggle the cursor, it's more robust to specify
+	//that the view use a completely blank cursor (with the same dimensions as the regular arrow cursor),
+	//then let Cocoa's cursorUpdate: behaviour do the work for us.
+	static NSCursor *blankCursor = nil;
+	if ([self isCursorHidden] && !blankCursor)
+	{
+		NSCursor *arrowCursor = [NSCursor arrowCursor];
+		NSImage *blankImage = [[NSImage alloc] initWithSize: [[arrowCursor image] size]];
+		blankCursor = [[NSCursor alloc] initWithImage: blankImage hotSpot: [arrowCursor hotSpot]];
+		[blankImage release];
+	}
+	if ([self isCursorHidden]) [blankCursor set];
+}
+
+- (void) mouseExited: (NSEvent *)theEvent
+{
+	[super mouseExited: theEvent];
+}
 
 - (void) drawBackgroundInRect: (NSRect)dirtyRect
 {

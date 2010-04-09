@@ -35,6 +35,7 @@ static const NSInteger BXDefaultFreeSpace = -1;
 	BOOL readOnly;
 	BOOL locked;
 	BOOL hidden;
+	NSImage *icon;
 }
 
 //FAT volumes smaller than 2MB will be treated as floppy drives.
@@ -81,6 +82,9 @@ static const NSInteger BXFloppySizeCutoff = 2 * 1024 * 1024;
 //Whether to hide this drive from Boxer's drive manager UI: defaults to NO.
 //Ignored for DOSBox internal drives (which are always hidden).
 @property (assign, getter=isHidden) BOOL hidden;
+
+//The icon representing this drive. This will be taken from the drive path's filesystem icon.
+@property (retain) NSImage *icon;
 
 
 //Class methods
@@ -133,9 +137,6 @@ static const NSInteger BXFloppySizeCutoff = 2 * 1024 * 1024;
 
 //A friendly OS X name for the drive's source path. This corresponds to NSManager displayNameAtPath:.
 - (NSString *)displayName;
-
-//The OS X icon for the drive's source path. This corresponds to NSWorkspace iconForFile:.
-- (NSImage *)icon;
 
 
 //Introspecting the drive

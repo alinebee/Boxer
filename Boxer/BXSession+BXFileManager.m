@@ -318,6 +318,11 @@
 				 object:	workspace];
 
 	[center addObserver:	self
+			   selector:	@selector(volumeWillUnmount:)
+				   name:	@"NSWorkspaceDidUnmountNotification"
+				 object:	workspace];
+	
+	[center addObserver:	self
 			selector:		@selector(filesystemDidChange:)
 			name:			UKFileWatcherWriteNotification
 			object:			nil];
@@ -367,8 +372,11 @@
 	[[self emulator] mountDrive: drive];
 }
 
-//Implementation note: we do this in willUnmount instead of didUnmount, so that we can
-//remove any of our own file locks that would prevent OS X from unmounting.
+//Implementation note: this handler is called in response to NSVolumeWillUnmountNotifications,
+//so that we can remove any of our own file locks that would prevent OS X from continuing to unmount.
+//However, it's also called again in response to NSVolumeDidUnmountNotifications, so that we can catch
+//unmounts that happened too suddenly to send a WillUnmount notification (which can happen when
+//pulling out a USB drive or mechanically ejecting a disk)
 - (void) volumeWillUnmount: (NSNotification *)theNotification
 {
 	NSString *volumePath = [[theNotification userInfo] objectForKey: @"NSDevicePath"];

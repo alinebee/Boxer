@@ -14,7 +14,7 @@
 #import "RegexKitLite.h"
 
 @implementation BXDrive
-@synthesize path, letter, label;
+@synthesize path, letter, label, icon;
 @synthesize type, freeSpace;
 @synthesize usesCDAudio, readOnly, locked, hidden;
 
@@ -132,14 +132,20 @@
 {
 	if ((self = [self init]))
 	{
-		[self setPath: drivePath];
 		if (driveLetter) [self setLetter: driveLetter];
+		
+		if (drivePath)
+		{
+			[self setPath: drivePath];
+			//Fetch the filesystem icon for the drive
+			NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+			[self setIcon: [workspace iconForFile: drivePath]];
+		}
 		
 		//Detect the appropriate mount type for the specified path
 		if (driveType == BXDriveAutodetect) driveType = [[self class] preferredTypeForPath: [self path]];
 		
 		[self setType: driveType];
-		
 	}
 	return self;
 }
@@ -169,6 +175,7 @@
 	[self setLetter: nil],	[letter release];
 	[self setPath: nil],	[path release];
 	[self setLabel: nil],	[label release];
+	[self setIcon: nil],	[icon release];
 	[super dealloc];
 }
 
@@ -230,12 +237,6 @@
 {
 	NSFileManager *manager = [NSFileManager defaultManager];
 	return [manager displayNameAtPath: [self path]];
-}
-
-- (NSImage *) icon
-{
-	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	return [workspace iconForFile: [self path]];
 }
 
 

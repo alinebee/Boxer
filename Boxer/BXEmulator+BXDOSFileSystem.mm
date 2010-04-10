@@ -205,7 +205,7 @@ enum {
 	if (unmounted)
 	{
 		//If this was the drive we were on, recover by switching to Z drive
-		if (isCurrentDrive) [self changeToDriveLetter: @"Z"];
+		if (isCurrentDrive && [self isAtPrompt]) [self changeToDriveLetter: @"Z"];
 		
 		//Post a notification to whoever's listening
 		NSDictionary *userInfo = [NSDictionary dictionaryWithObject: drive forKey: @"drive"];
@@ -231,7 +231,10 @@ enum {
 	NSString *standardizedPath = [path stringByStandardizingPath];
 	BOOL succeeded = NO;
 	
-	for (BXDrive *drive in [driveCache objectEnumerator])
+	//Implementation note: normally we'd use [driveCache objectEnumerator] for speed,
+	//but unmountDrive: may modify driveCache behind its back which is a Bad Thing.
+	//This way, we get a safer copy of the drive array to work with instead.
+	for (BXDrive *drive in [self mountedDrives])
 	{
 		if ([[drive path] isEqualToString: standardizedPath])
 			succeeded = [self unmountDrive: drive] || succeeded;

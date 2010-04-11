@@ -471,7 +471,7 @@ SDL_GrabMode QZ_GrabInput (_THIS, SDL_GrabMode grab_mode) {
         return SDL_GRAB_OFF;
     }
         
-    if ( ! video_set ) {
+    if (NO && ! video_set ) {
         /*SDL_SetError ("QZ_GrabInput: video is not set, grab will take effect on mode switch"); */
         current_grab_mode = grab_mode;
         return grab_mode;       /* Will be set later on mode switch */

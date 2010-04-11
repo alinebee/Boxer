@@ -117,18 +117,19 @@ void QZ_UpdateCursor (_THIS) {
 }
 
 BOOL QZ_IsMouseInWindow (_THIS) {
-	NSWindow *theWindow = [[BXBridge bridge] window];
-	//--Replaced 2010-03-16 by Alun Bestor: Boxer now handles fullscreen mode, thanks
-	// if (theWindow == nil || (mode_flags & SDL_FULLSCREEN)) return YES; /*fullscreen*/
-	if ([[BXBridge bridge] isFullScreen]) return YES;
-    else {
-        NSPoint p = [ theWindow mouseLocationOutsideOfEventStream ];
-        p.y -= 1.0f; /* Apparently y goes from 1 to h, not from 0 to h-1 (i.e. the "location of the mouse" seems to be defined as "the location of the top left corner of the mouse pointer's hot pixel" */
+	//--Replaced 2010-04-11 by Alun Bestor: Boxer manages this calculation entirely now
+	return (BOOL)[[[BXBridge bridge] view] containsMouse];
+	
+	/*
+	if (qz_window == nil || (mode_flags & SDL_FULLSCREEN)) return YES;
+	else {
+        NSPoint p = [ qz_window mouseLocationOutsideOfEventStream ];
+        p.y -= 1.0f; //Apparently y goes from 1 to h, not from 0 to h-1 (i.e. the "location of the mouse" seems to be defined as "the location of the top left corner of the mouse pointer's hot pixel"
 		
-		//Modified 2009-02-16 by Alun Bestor to correct the cursor hide region in our custom window
-        //return NSPointInRect(p, [ window_view frame ]);
-		return NSPointInRect(p, [[[BXBridge bridge] view] frame]);
+        return NSPointInRect(p, [ window_view frame ]);
     }
+	*/
+	//--End of modification
 }
 
 int QZ_ShowWMCursor (_THIS, WMcursor *cursor) { 
@@ -224,7 +225,7 @@ void QZ_PrivateCocoaToSDL (_THIS, NSPoint *p) {
         
         /* We need a workaround in OpenGL mode */
 		//--Bypassed 2010-03-16 by Alun Bestor: we always use OpenGL mode
-        if (YES && SDL_VideoSurface != NULL && (SDL_VideoSurface->flags & SDL_OPENGL) ) {
+        if (YES || (SDL_VideoSurface != NULL && (SDL_VideoSurface->flags & SDL_OPENGL)) ) {
             p->y = [theView frame].size.height - p->y;
         }
 		//--End of modifications
@@ -236,7 +237,7 @@ CGPoint QZ_PrivateSDLToCG (_THIS, NSPoint *p) {
     
     CGPoint cgp;
     
-    if ( ! CGDisplayIsCaptured (display_id) ) { /* not captured => not fullscreen => local coord */
+    if (YES || ! CGDisplayIsCaptured (display_id) ) { /* not captured => not fullscreen => local coord */
     
         int height;
         
@@ -257,7 +258,7 @@ CGPoint QZ_PrivateSDLToCG (_THIS, NSPoint *p) {
 /* Convert window server (CoreGraphics) coordinate to SDL coordinate */
 void QZ_PrivateCGToSDL (_THIS, NSPoint *p) {
             
-    if ( ! CGDisplayIsCaptured (display_id) ) { /* not captured => not fullscreen => local coord */
+    if (YES || ! CGDisplayIsCaptured (display_id) ) { /* not captured => not fullscreen => local coord */
     
         int height;
 
@@ -455,10 +456,8 @@ void QZ_ChangeGrabState (_THIS, int action) {
     else {
         assert( grab_state == QZ_INVISIBLE_GRAB );
 
-		//--Disabled 2010-03-16 by Alun Bestor: we no longer populate SDL_VideoSurface
-        //QZ_PrivateWarpCursor (this, SDL_VideoSurface->w / 2, SDL_VideoSurface->h / 2);
-		//--End of modifications
-        CGAssociateMouseAndMouseCursorPosition (0);
+		QZ_PrivateWarpCursor (this, SDL_VideoSurface->w / 2, SDL_VideoSurface->h / 2);
+		CGAssociateMouseAndMouseCursorPosition (0);
     }
 }
 

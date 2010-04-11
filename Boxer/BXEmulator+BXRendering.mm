@@ -208,6 +208,8 @@
 	sdl.desktop.type = SCREEN_OPENGL;
 	sdl.active = YES;
 	
+	NSRect viewport = [[self renderer] viewport];
+	
 	if (!sdl.mouse.autoenable) SDL_ShowCursor(sdl.mouse.autolock ? SDL_DISABLE: SDL_ENABLE);
 
 	//Synchronise our record of the current video mode with the new video mode

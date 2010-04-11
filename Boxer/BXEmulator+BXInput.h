@@ -8,8 +8,8 @@
 //The BXInput category extends BXEmulator to add methods for getting keyboard, mouse and joystick
 //input into a form that DOSBox can cope with.
 
-#import <Cocoa/Cocoa.h>
 #import "BXEmulator.h"
+#import <SDL/SDL.h>
 
 @interface BXEmulator (BXInput)
 
@@ -52,5 +52,7 @@
 //Returns YES if Boxer can paste the specified string, no otherwise.
 //In practice, this just returns whether Boxer is at the commandline or not.
 - (BOOL) canAcceptPastedString: (NSString *)pastedString;
+
+- (void) handleSDLMouseMovement: (SDL_MouseMotionEvent *)motion;
 
 @end

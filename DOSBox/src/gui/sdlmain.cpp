@@ -1319,12 +1319,18 @@ void Mouse_AutoLock(bool enable) {
 }
 
 static void HandleMouseMotion(SDL_MouseMotionEvent * motion) {
+	return boxer_handleMouseMotion(motion);
+	
+	//--Disabled 2010-04-11 by Alun Bestor: this is now handled by BXInput
+	/*
 	if (sdl.mouse.locked || !sdl.mouse.autoenable)
 		Mouse_CursorMoved((float)motion->xrel*sdl.mouse.sensitivity/100.0f,
 						  (float)motion->yrel*sdl.mouse.sensitivity/100.0f,
 						  (float)(motion->x-sdl.clip.x)/(sdl.clip.w-1)*sdl.mouse.sensitivity/100.0f,
 						  (float)(motion->y-sdl.clip.y)/(sdl.clip.h-1)*sdl.mouse.sensitivity/100.0f,
 						  sdl.mouse.locked);
+	 */
+	//--End of modifications
 }
 
 static void HandleMouseButton(SDL_MouseButtonEvent * button) {

@@ -734,9 +734,9 @@ void QZ_PumpEvents (_THIS)
     NSRect winRect;
     NSAutoreleasePool *pool;
 
-    if (!SDL_VideoSurface)
+	if (!SDL_VideoSurface)
         return;  /* don't do anything if there's no screen surface. */
-
+	
     /* Update activity every five seconds to prevent screensaver. --ryan. */
     if (!allow_screensaver) {
         nowTicks = SDL_GetTicks();
@@ -750,9 +750,12 @@ void QZ_PumpEvents (_THIS)
     pool = [ [ NSAutoreleasePool alloc ] init ];
     distantPast = [ NSDate distantPast ];
 
-	//--Replaced 2010-03-16 by Alun Bestor
+	//--Replaced 2010-03-16 by Alun Bestor: use our view as the canvas size, and populate SDL_VideoSurface 
+	//so the rest of SDL knows about it
     //winRect = NSMakeRect (0, 0, SDL_VideoSurface->w, SDL_VideoSurface->h);
     winRect = [[[BXBridge bridge] view] bounds];
+	SDL_VideoSurface->w = winRect.size.width;
+	SDL_VideoSurface->h = winRect.size.height;
 	//--End of modifications
 	
     /* while grabbed, accumulate all mouse moved events into one SDL mouse event */
@@ -844,8 +847,10 @@ void QZ_PumpEvents (_THIS)
                 case NSRightMouseDragged:
                 case NSOtherMouseDragged: /* usually middle mouse dragged */
                 case NSMouseMoved:
-                    if ( grab_state == QZ_INVISIBLE_GRAB ) {
-                
+					//[[[BXBridge bridge] windowController] mouseMoved: event];
+					//break;
+                    if (grab_state == QZ_INVISIBLE_GRAB ) {
+						
                         /*
                             If input is grabbed+hidden, the cursor doesn't move,
                             so we have to call the lowlevel window server
@@ -855,7 +860,7 @@ void QZ_PumpEvents (_THIS)
                         CGGetLastMouseDelta (&dx1, &dy1);
                         dx += dx1;
                         dy += dy1;
-                    }
+					}
                     else {
                         
                         /*
@@ -880,7 +885,6 @@ void QZ_PumpEvents (_THIS)
                         but not as a result of the warp (so it's in the right direction).
                     */
                     if ( grab_state == QZ_VISIBLE_GRAB && !isInGameWin ) {
-                       
                         NSPoint p;
                         QZ_GetMouseLocation (this, &p);
 
@@ -900,7 +904,7 @@ void QZ_PumpEvents (_THIS)
                     }
                     else
                     if ( !isInGameWin && (SDL_GetAppState() & SDL_APPMOUSEFOCUS) ) {
-                    
+                        
                         SDL_PrivateAppActive (0, SDL_APPMOUSEFOCUS);
 
                         if (grab_state == QZ_INVISIBLE_GRAB)
@@ -924,13 +928,11 @@ void QZ_PumpEvents (_THIS)
                     else
                     if ( isInGameWin && (SDL_GetAppState() & (SDL_APPMOUSEFOCUS | SDL_APPINPUTFOCUS)) == SDL_APPINPUTFOCUS ) {
                         SDL_PrivateAppActive (1, SDL_APPMOUSEFOCUS);
-
+						
                         QZ_UpdateCursor(this);
 
                         if (grab_state == QZ_INVISIBLE_GRAB) { /*see comment above*/
-							//--Disabled 2010-03-16 by Alun Bestor: we no longer populate SDL_VideoSurface
-							// QZ_PrivateWarpCursor (this, SDL_VideoSurface->w / 2, SDL_VideoSurface->h / 2);
-							//--End of modifications
+							QZ_PrivateWarpCursor (this, SDL_VideoSurface->w / 2, SDL_VideoSurface->h / 2);
                             CGAssociateMouseAndMouseCursorPosition (0);
                         }
                     }

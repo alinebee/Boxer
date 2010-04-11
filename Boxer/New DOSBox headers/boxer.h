@@ -79,6 +79,8 @@ extern "C" {
 	//Called from dosbox.cpp to short-circuit the emulation loop.
 	BOXER_EXPORT bool boxer_handleRunLoop();
 	
+	BOXER_EXPORT void boxer_handleMouseMotion(SDL_MouseMotionEvent * motion);
+	
 #if __cplusplus
 } //Extern C
 #endif

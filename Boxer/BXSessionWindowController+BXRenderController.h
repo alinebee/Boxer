@@ -85,5 +85,6 @@
 - (NSOpenGLContext *) SDLOpenGLContext;
 
 - (BOOL) handleSDLKeyboardEvent: (NSEvent *)event;
+- (BOOL) handleSDLMouseMovement: (NSEvent *)event;
 
 @end

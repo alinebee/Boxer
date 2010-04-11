@@ -7,11 +7,16 @@
 
 
 #import <Carbon/Carbon.h>
-#import <Cocoa/Cocoa.h>
-#import "BXEmulator.h"
+#import "BXEmulator+BXInput.h"
 #import "BXEmulator+BXShell.h"
+#import "BXEmulator+BXRendering.h"
+#import "BXRenderer.h"
 
+#include "dosbox.h"
+#include "video.h"
+#import "mouse.h"
 #import "boxer.h"
+#import "sdlmain.h"
 
 @implementation BXEmulator (BXInput)
 + (NSDictionary *)keyboardLayoutMappings
@@ -185,6 +190,25 @@
 {
 	return [self isAtPrompt];
 }
+
+//Handling events internally
+- (void) handleSDLMouseMovement: (SDL_MouseMotionEvent *)motion
+{
+	NSRect viewport = [[self renderer] viewport];
+	CGFloat sensitivity = sdl.mouse.sensitivity / 100.0f;
+	
+	NSPoint relativeMotion		= NSMakePoint(motion->xrel, motion->yrel);
+	NSPoint absolutePosition	= NSMakePoint((motion->x - viewport.origin.x) / (viewport.size.width - 1),
+											  (motion->y - viewport.origin.y) / (viewport.size.height - 1)); 
+										
+	
+	Mouse_CursorMoved(relativeMotion.x * sensitivity,
+					  relativeMotion.y * sensitivity,
+					  absolutePosition.x * sensitivity,
+					  absolutePosition.y * sensitivity,
+					  [self mouseLocked]);
+}
+
 @end
 
 
@@ -197,4 +221,10 @@ const char * boxer_currentDOSKeyboardLayout()
 	NSString *layoutCode = [[BXEmulator class] keyboardLayoutForCurrentInputMethod];
 	if (!layoutCode) layoutCode = [[BXEmulator class] defaultKeyboardLayout];
 	return [layoutCode cStringUsingEncoding: BXDirectStringEncoding];
+}
+
+void boxer_handleMouseMotion(SDL_MouseMotionEvent * motion)
+{
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+	[emulator handleSDLMouseMovement: motion];
 }

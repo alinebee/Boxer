@@ -26,4 +26,7 @@
 
 //Returns whether the mouse currently lies inside the view. 
 - (BOOL) containsMouse;
+
+//Returns the current location of the mouse relative to this view.
+- (NSPoint) relativeMouseLocation;
 @end

@@ -453,4 +453,54 @@
 	else return NO;
 }
 
+- (BOOL) handleSDLMouseMovement: (NSEvent *)event
+{
+	/*
+	BOOL mouseLocked = [[self emulator] mouseLocked];
+	BOOL mouseInView = [renderView containsMouse];
+	NSRect viewRect = [renderView bounds];
+	
+	if (grab_state == QZ_INVISIBLE_GRAB )
+	{
+		CGMouseDelta dx, dy;
+		CGGetLastMouseDelta (&dx, &dy);
+		if (dx != 0 || dy != 0) SDL_PrivateMouseMotion(0, 1, dx, dy);
+	}
+	else
+	{
+		NSPoint p;
+		QZ_GetMouseLocation (this, &p);
+		SDL_PrivateMouseMotion (0, 0, p.x, p.y);
+	}
+	
+	if (!mouseInView)
+	{
+		if (SDL_GetAppState() & SDL_APPMOUSEFOCUS)
+		{
+			SDL_PrivateAppActive (0, SDL_APPMOUSEFOCUS);
+			
+			if (grab_state == QZ_INVISIBLE_GRAB) CGAssociateMouseAndMouseCursorPosition (1);
+			
+			QZ_UpdateCursor(this);
+		}
+	}
+	else
+	{
+		if ((SDL_GetAppState() & (SDL_APPMOUSEFOCUS | SDL_APPINPUTFOCUS)) == SDL_APPINPUTFOCUS)
+		{
+			SDL_PrivateAppActive (1, SDL_APPMOUSEFOCUS);
+			
+			QZ_UpdateCursor(this);
+			
+			if (grab_state == QZ_INVISIBLE_GRAB) {
+				//--Disabled 2010-03-16 by Alun Bestor: we no longer populate SDL_VideoSurface
+				//QZ_PrivateWarpCursor (this, SDL_VideoSurface->w / 2, SDL_VideoSurface->h / 2);
+				//--End of modifications
+				CGAssociateMouseAndMouseCursorPosition (0);
+			}
+		}
+	}
+	*/
+}
+
 @end

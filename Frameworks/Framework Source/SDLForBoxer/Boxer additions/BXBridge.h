@@ -21,6 +21,7 @@
 - (NSOpenGLContext *) openGLContext;
 
 - (BOOL) handleKeyboardEvent: (NSEvent *)event;
+- (BOOL) handleMouseMovement: (NSEvent *)event;
 
 - (BOOL) isFullScreen;
 - (void) prepareViewForFullscreen;

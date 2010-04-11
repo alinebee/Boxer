@@ -32,11 +32,17 @@
 
 - (BOOL) containsMouse
 {
-	NSPoint mouseLocation = [[self window] mouseLocationOutsideOfEventStream];
-	NSPoint relativePoint = [self convertPoint: mouseLocation fromView: nil];
+	if ([self isInFullScreenMode]) return YES;
+	
+	NSPoint relativePoint = [self relativeMouseLocation];
 	return [self mouse: relativePoint inRect: [self bounds]];
 }
 
+- (NSPoint) relativeMouseLocation
+{
+	NSPoint mouseLocation = [[self window] mouseLocationOutsideOfEventStream];
+	return [self convertPoint: mouseLocation fromView: nil];
+}
 
 - (void) updateTrackingAreas
 {

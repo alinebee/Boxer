@@ -47,6 +47,12 @@
 	return [[self windowController] handleSDLKeyboardEvent: event];
 }
 
+- (BOOL) handleMouseMovement: (NSEvent *)event
+{
+	return [[self windowController] handleSDLMouseMovement: event];
+}
+
+
 - (void) prepareViewForFullscreen
 {
 	[[self windowController] prepareSDLViewForFullscreen];

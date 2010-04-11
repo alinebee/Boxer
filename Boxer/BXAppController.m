@@ -278,23 +278,34 @@
 
 - (IBAction) toggleInspectorPanel: (id)sender
 {
-	BXInspectorController *inspector = [BXInspectorController controller];
+	[self setInspectorPanelShown: ![self inspectorPanelShown]];
+}
+
+- (void) setInspectorPanelShown: (BOOL)show
+{
+	[self willChangeValueForKey: @"inspectorPanelShown"];
 	
-	//Hide the inspector if it is already visible
-	if ([inspector isWindowLoaded] && [[inspector window] isVisible])
+	BXInspectorController *inspector = [BXInspectorController controller];
+
+	//Only show the inspector if there is a DOS session window; otherwise, we have nothing to inspect.
+	//This limitation will be removed as we gain other inspectable window types.
+	if (show && [self currentSession])
 	{
-		[[inspector window] orderOut: sender];
+		[[[self currentSession] mainWindowController] exitFullScreen: nil];
+		[inspector showWindow: nil];
 	}
-	else
+	else if ([inspector isWindowLoaded])
 	{
-		//Only show the inspector if there is a DOS session window; otherwise, we have nothing to inspect.
-		//This limitation will be removed as we gain other inspectable window types.
-		if ([self currentSession])
-		{
-			[[[self currentSession] mainWindowController] exitFullScreen: sender];
-			[inspector showWindow: sender];
-		}
+		[[inspector window] orderOut: nil];
 	}
+	
+	[self didChangeValueForKey: @"inspectorPanelShown"];	
+}
+
+- (BOOL) inspectorPanelShown
+{
+	BXInspectorController *inspector = [BXInspectorController controller];
+	return [inspector isWindowLoaded] && [[inspector window] isVisible];
 }
 
 - (IBAction) showWebsite:			(id)sender	{ [self openURLFromKey: @"WebsiteURL"]; }

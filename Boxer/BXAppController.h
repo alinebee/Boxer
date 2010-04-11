@@ -57,6 +57,10 @@
 - (IBAction) orderFrontPreferencesPanel: (id)sender;	//Display Boxer's preferences panel. 
 - (IBAction) toggleInspectorPanel: (id)sender;			//Display/hide Boxer's inspector HUD panel.
 
+//Set/get whether the inspector panel is currently open
+- (void) setInspectorPanelShown: (BOOL)show;
+- (BOOL) inspectorPanelShown;
+
 //The URLs and email addresses for the following actions are configured in the Info.plist file.
 
 - (IBAction) showWebsite:			(id)sender;	//Open the Boxer website in the default browser. 

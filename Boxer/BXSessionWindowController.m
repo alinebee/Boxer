@@ -89,14 +89,8 @@
 	
 	//Apply a border to the window matching the size of the statusbar
 	CGFloat borderThickness = [statusBar frame].size.height;
-	[theWindow setContentBorderThickness: borderThickness forEdge: NSMinYEdge];	
+	[theWindow setContentBorderThickness: borderThickness forEdge: NSMinYEdge];
 	
-	//Give statusbar text an indented appearance
-	for (id statusBarItem in [statusBar subviews])
-	{
-		if ([statusBarItem isKindOfClass: [NSTextField class]] && ![statusBarItem isBezeled])
-			[[statusBarItem cell] setBackgroundStyle: NSBackgroundStyleRaised];
-	}
 	
 	//Set window rendering behaviour
 	//------------------------------

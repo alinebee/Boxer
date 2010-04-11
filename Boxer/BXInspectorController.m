@@ -320,4 +320,14 @@
 {
 	return [NSPredicate predicateWithFormat: @"isInternal == NO && isHidden == NO"];
 }
+
+//A miserable hack to notify BXAppController that the inspector panel has been closed,
+//so that we can update button states immediately. It has so far proven impossible to manage
+//this some other, more preferable way (such as bindings).
+- (BOOL) windowShouldClose: (id)sender
+{
+	[[NSApp delegate] setInspectorPanelShown: NO];
+	return YES;
+}
+
 @end

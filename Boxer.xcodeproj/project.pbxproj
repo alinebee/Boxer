@@ -27,6 +27,9 @@
 		9F2D76C30F61327D00D4E563 /* BXEmulator+BXRendering.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F2D76C20F61327D00D4E563 /* BXEmulator+BXRendering.mm */; };
 		9F424207109D03F500111D28 /* BXInspectorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F424206109D03F500111D28 /* BXInspectorController.m */; };
 		9F424222109D061000111D28 /* InspectorPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F45A1C5109C3CB400593456 /* InspectorPanel.xib */; };
+		9F42D9D9117233C200AC6F1F /* PanelCollapseTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F42D9D7117233C200AC6F1F /* PanelCollapseTemplate.png */; };
+		9F42D9DA117233C200AC6F1F /* PanelExpandTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F42D9D8117233C200AC6F1F /* PanelExpandTemplate.png */; };
+		9F42D9DF1172481800AC6F1F /* BXStatusBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F42D9DE1172481800AC6F1F /* BXStatusBarController.m */; };
 		9F438C5810E3D8C8007D30AD /* BXScroller.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F438C5710E3D8C8007D30AD /* BXScroller.m */; };
 		9F44E5E410D17A4C0081B8D2 /* BXEmulator+BXInput.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F44E5E310D17A4C0081B8D2 /* BXEmulator+BXInput.mm */; };
 		9F45A1BD109C3C3900593456 /* About.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F45A1BB109C3C3900593456 /* About.xib */; };
@@ -98,7 +101,6 @@
 		9FBC345D0F56C64D001811F2 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC345B0F56C64D001811F2 /* InfoPlist.strings */; };
 		9FBC352B0F56C7B7001811F2 /* BXAboutController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC351D0F56C7B7001811F2 /* BXAboutController.m */; };
 		9FBC352C0F56C7B7001811F2 /* BXAppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC351E0F56C7B7001811F2 /* BXAppController.m */; };
-		9FBC352D0F56C7B7001811F2 /* BXStatusBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC351F0F56C7B7001811F2 /* BXStatusBar.m */; };
 		9FBC352F0F56C7B7001811F2 /* BXSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35210F56C7B7001811F2 /* BXSession.m */; };
 		9FBC35300F56C7B7001811F2 /* NSOpenGLView+BXImageCapture.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35220F56C7B7001811F2 /* NSOpenGLView+BXImageCapture.m */; };
 		9FBC35310F56C7B7001811F2 /* BXEmulator+BXShell.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35230F56C7B7001811F2 /* BXEmulator+BXShell.mm */; };
@@ -304,6 +306,10 @@
 		9F2D76C20F61327D00D4E563 /* BXEmulator+BXRendering.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "BXEmulator+BXRendering.mm"; sourceTree = "<group>"; };
 		9F424205109D03F500111D28 /* BXInspectorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXInspectorController.h; sourceTree = "<group>"; };
 		9F424206109D03F500111D28 /* BXInspectorController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXInspectorController.m; sourceTree = "<group>"; };
+		9F42D9D7117233C200AC6F1F /* PanelCollapseTemplate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PanelCollapseTemplate.png; sourceTree = "<group>"; };
+		9F42D9D8117233C200AC6F1F /* PanelExpandTemplate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PanelExpandTemplate.png; sourceTree = "<group>"; };
+		9F42D9DD1172481800AC6F1F /* BXStatusBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXStatusBarController.h; sourceTree = "<group>"; };
+		9F42D9DE1172481800AC6F1F /* BXStatusBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXStatusBarController.m; sourceTree = "<group>"; };
 		9F438C5610E3D8C8007D30AD /* BXScroller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXScroller.h; sourceTree = "<group>"; };
 		9F438C5710E3D8C8007D30AD /* BXScroller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXScroller.m; sourceTree = "<group>"; };
 		9F44E5E210D17A4C0081B8D2 /* BXEmulator+BXInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXEmulator+BXInput.h"; sourceTree = "<group>"; };
@@ -410,7 +416,6 @@
 		9FBC350F0F56C7B7001811F2 /* BXBezel.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = BXBezel.h; sourceTree = "<group>"; };
 		9FBC35100F56C7B7001811F2 /* BXAboutController.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = BXAboutController.h; sourceTree = "<group>"; };
 		9FBC35110F56C7B7001811F2 /* BXAppController.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = BXAppController.h; sourceTree = "<group>"; };
-		9FBC35120F56C7B7001811F2 /* BXStatusBar.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = BXStatusBar.h; sourceTree = "<group>"; };
 		9FBC35140F56C7B7001811F2 /* BXSession.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = BXSession.h; sourceTree = "<group>"; };
 		9FBC35150F56C7B7001811F2 /* NSOpenGLView+BXImageCapture.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = "NSOpenGLView+BXImageCapture.h"; sourceTree = "<group>"; };
 		9FBC35160F56C7B7001811F2 /* BXEmulator+BXShell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXEmulator+BXShell.h"; sourceTree = "<group>"; };
@@ -421,7 +426,6 @@
 		9FBC351C0F56C7B7001811F2 /* BXBezel.m */ = {isa = PBXFileReference; comments = "Disabled for now because it doesn't play nice with SDL's OpenGL output. Once it is added, we will need to link in the QuartzCore framework."; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = BXBezel.m; sourceTree = "<group>"; };
 		9FBC351D0F56C7B7001811F2 /* BXAboutController.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = BXAboutController.m; sourceTree = "<group>"; };
 		9FBC351E0F56C7B7001811F2 /* BXAppController.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = BXAppController.m; sourceTree = "<group>"; };
-		9FBC351F0F56C7B7001811F2 /* BXStatusBar.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = BXStatusBar.m; sourceTree = "<group>"; };
 		9FBC35210F56C7B7001811F2 /* BXSession.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = BXSession.m; sourceTree = "<group>"; };
 		9FBC35220F56C7B7001811F2 /* NSOpenGLView+BXImageCapture.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = "NSOpenGLView+BXImageCapture.m"; sourceTree = "<group>"; };
 		9FBC35230F56C7B7001811F2 /* BXEmulator+BXShell.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "BXEmulator+BXShell.mm"; sourceTree = "<group>"; };
@@ -861,8 +865,6 @@
 				9FC7FADC10C08CBA00B5AF42 /* Controllers */,
 				9FBC35170F56C7B7001811F2 /* BXSessionWindow.h */,
 				9FBC35240F56C7B7001811F2 /* BXSessionWindow.m */,
-				9FBC35120F56C7B7001811F2 /* BXStatusBar.h */,
-				9FBC351F0F56C7B7001811F2 /* BXStatusBar.m */,
 				9F59DAD310AF1042008DBBC1 /* BXProgramPanel.h */,
 				9F59DAD410AF1042008DBBC1 /* BXProgramPanel.m */,
 			);
@@ -1091,6 +1093,8 @@
 				9FBC31D10F56C370001811F2 /* AboutBackground.png */,
 				9FBC31D40F56C370001811F2 /* BunnyTemplate.png */,
 				9FBC31D60F56C370001811F2 /* TortoiseTemplate.png */,
+				9F42D9D7117233C200AC6F1F /* PanelCollapseTemplate.png */,
+				9F42D9D8117233C200AC6F1F /* PanelExpandTemplate.png */,
 				9F9A4C9010F67A1F00E61965 /* GalleryOriginal.png */,
 				9F9A4C9110F67A1F00E61965 /* GalleryHQx.png */,
 				9F9A4C9210F67A1F00E61965 /* GalleryMAME.png */,
@@ -1487,6 +1491,8 @@
 				9F76C8540F6509EF0068EA1C /* BXSessionWindowController+BXRenderController.m */,
 				9F59DED810B0159A008DBBC1 /* BXProgramPanelController.h */,
 				9F59DED910B0159A008DBBC1 /* BXProgramPanelController.m */,
+				9F42D9DD1172481800AC6F1F /* BXStatusBarController.h */,
+				9F42D9DE1172481800AC6F1F /* BXStatusBarController.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -1611,6 +1617,8 @@
 				9F9A4C9B10F67A1F00E61965 /* GalleryTVScanlines.png in Resources */,
 				9F9A4CA610F67DD800E61965 /* Preferences.xib in Resources */,
 				9F7936DD10F8C0CA00C9178C /* dsa_pub.pem in Resources */,
+				9F42D9D9117233C200AC6F1F /* PanelCollapseTemplate.png in Resources */,
+				9F42D9DA117233C200AC6F1F /* PanelExpandTemplate.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1641,7 +1649,6 @@
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
 				9FBC352B0F56C7B7001811F2 /* BXAboutController.m in Sources */,
 				9FBC352C0F56C7B7001811F2 /* BXAppController.m in Sources */,
-				9FBC352D0F56C7B7001811F2 /* BXStatusBar.m in Sources */,
 				9FBC352F0F56C7B7001811F2 /* BXSession.m in Sources */,
 				9FBC35300F56C7B7001811F2 /* NSOpenGLView+BXImageCapture.m in Sources */,
 				9FBC35310F56C7B7001811F2 /* BXEmulator+BXShell.mm in Sources */,
@@ -1807,6 +1814,7 @@
 				9F9FE70410FA5F5800E3944B /* NSWorkspace+BXIcons.m in Sources */,
 				9FD5481411047E420041E1E7 /* BXDrivesInUseAlert.m in Sources */,
 				9FB635DD111EC63F00EDC2DA /* BXRenderer.m in Sources */,
+				9F42D9DF1172481800AC6F1F /* BXStatusBarController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

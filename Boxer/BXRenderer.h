@@ -11,6 +11,16 @@
 
 #import <Cocoa/Cocoa.h>
 
+
+//Don't bilinear-filter when scaling up beyond 1.75x
+//Used by _shouldUseFiltering
+static const CGFloat BXBilinearFilteringScaleCutoff = 1.75;
+
+//Don't apply scaler effects for resolutions 400 pixels high or larger
+//Used by BXRendering _maxFilterSizeForResolution
+static const CGFloat BXScalingResolutionCutoff = 400;
+
+
 @interface BXRenderer : NSObject
 {
 	GLuint texture;
@@ -60,9 +70,6 @@
 
 //Draws the DOS output into the OpenGL context.
 - (void) render;
-
-//Fills the OpenGL viewport with black.
-- (void) clear;
 
 //Returns the number of bytes per line of output: this is equal to output width * colourdepth.
 - (NSUInteger) pitch;

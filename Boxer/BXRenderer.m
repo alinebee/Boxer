@@ -62,18 +62,15 @@
 	canvas = canvasRect;
 	[self _updateViewport];
 	[self _updateFiltering];
-	[self clear];
 }
 
 - (void) render
 {
+	//Avoid garbage in letterbox region by clearing every frame
+	//Man, is there a tidier way of doing this?
+	glClear(GL_COLOR_BUFFER_BIT);
 	if (displayList) glCallList(displayList);
 	[self setNeedsDisplay: NO];
-}
-
-- (void) clear
-{
-	glClear(GL_COLOR_BUFFER_BIT);
 }
 
 - (NSUInteger) pitch { return (NSUInteger)(outputSize.width * 4); }
@@ -161,24 +158,30 @@
 
 - (void) _updateRenderer
 {
+	[self _updateViewport];
 	[self _createTexture];
 	[self _createDisplayList];
-	[self _updateViewport];
-	[self clear];
 	
 	rendererIsInvalid = NO;
 }
 
 
 - (BOOL) _shouldUseFiltering
-{
+{	
+	if (viewport.size.width / outputSize.width > BXBilinearFilteringScaleCutoff) return NO;
+	
 	return	((NSInteger)viewport.size.width		% (NSInteger)outputSize.width) || 
 			((NSInteger)viewport.size.height	% (NSInteger)outputSize.height);
 }
 
 - (void) _updateViewport
 {
-	if ([self maintainAspectRatio])
+	if (NSEqualSizes(outputSize, NSZeroSize) || NSEqualSizes(outputScale, NSZeroSize))
+	{
+		//If no frame has been rendered yet, fill the whole canvas
+		viewport = canvas;													 
+	}
+	else if ([self maintainAspectRatio])
 	{
 		//Keep the viewport letterboxed in proportion with our output size
 		NSRect outputRect = NSMakeRect(0, 0, outputSize.width * outputScale.width, outputSize.height * outputScale.height);
@@ -186,15 +189,18 @@
 	}
 	else
 	{
-		//Otherwise, unlock to let the output fill the available canvas
-		//FIXME: this is not really what we want. This toggle is intended to allow us to correctly reshape when 4:3 aspect ratio correction is toggled, but it will screw up the viewport if this is toggled when we're in fullscreen mode (or are otherwise letterboxed). 
-		viewport = canvas;
+		//Otherwise, unlock the height to let the output stretch to its new aspect ratio
+		NSRect outputRect = NSMakeRect(0, 0, viewport.size.width, canvas.size.height);
+		viewport = fitInRect(outputRect, canvas, NSMakePoint(0.5, 0.5));
 	}
+	viewport = NSIntegralRect(viewport);
 	
 	glViewport(viewport.origin.x,
 			   viewport.origin.y,
 			   viewport.size.width,
 			   viewport.size.height);
+	
+	glClear(GL_COLOR_BUFFER_BIT);
 }
 
 - (void) _createTexture

@@ -20,7 +20,7 @@ BXFilterDefinition BXFilterNormalParams = {
 	0.0,
 	0.0,
 	1,
-	1 //The normal filter has been entirely disabled in favour of scaling up in hardware
+	2
 };
 
 BXFilterDefinition BXFilterHQxParams = {

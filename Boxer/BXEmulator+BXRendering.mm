@@ -19,7 +19,6 @@
 #import "BXFilterDefinitions.h"
 #import "BXRenderer.h"
 
-
 //Renderer functions
 //------------------
 
@@ -260,21 +259,30 @@
 	if (![self isExecuting]) return;
 	
 	//Work out how much we will need to scale the resolution to fit the viewport
-	NSSize resolution			= [self resolution];
-	NSSize currentRenderSize	= [[self renderer] viewport].size;
-	NSSize scale				= NSMakeSize(currentRenderSize.width	/ resolution.width,
-											 currentRenderSize.height	/ resolution.height);
+	NSSize resolution	= [self resolution];
+	NSSize viewportSize	= [[self renderer] viewport].size;
+	NSSize scale		= NSMakeSize(viewportSize.width		/ resolution.width,
+									 viewportSize.height	/ resolution.height);
 		
-	BOOL useAspectCorrection	= [self _shouldUseAspectCorrectionForResolution: resolution];
-	
-	//Decide if we can use our selected scaler at this scale, reverting to the normal filter if we can't
-	BXFilterType activeType = [self filterType];
-	if (![self _shouldApplyFilterType: activeType toScale: scale]) activeType = BXFilterNormal;
-		
-	//Now decide on what operation size this scaler should use
-	NSInteger filterScale		= [self _sizeForFilterType: activeType atScale: scale];
+	BOOL useAspectCorrection	= [self _shouldUseAspectCorrectionForResolution: resolution];	
 	NSInteger maxFilterScale	= [self _maxFilterSizeForResolution: resolution];
-	filterScale					= fmin(filterScale, maxFilterScale);
+	BXFilterType activeType		= [self filterType];
+	NSInteger filterScale;
+	
+	if (maxFilterScale <= 1)
+	{
+		filterScale = 1;
+		activeType = BXFilterNormal;
+	}
+	else
+	{
+		//Decide if we can use our selected scaler at this scale, reverting to the normal filter if we can't
+		if (![self _shouldApplyFilterType: activeType toScale: scale]) activeType = BXFilterNormal;
+		
+		//Now decide on what operation size this scaler should use
+		NSInteger filterScale = [self _sizeForFilterType: activeType atScale: scale];
+		filterScale = fmin(filterScale, maxFilterScale);
+	}
 	
 	//Finally, apply the values to DOSBox
 	render.aspect		= useAspectCorrection;
@@ -308,6 +316,9 @@
 
 - (NSInteger) _maxFilterSizeForResolution: (NSSize)resolution
 {
+	//For performance reasons, disable filters entirely for higher resolutions
+	if (resolution.height >= BXScalingResolutionCutoff) return 1;
+	
 	NSSize maxOutputSize	= [[self renderer] maxOutputSize];
 	//Work out how big a filter operation size we can use given the maximum render size
 	NSInteger maxFilterSize	= floor(fmin(maxOutputSize.width / resolution.width, maxOutputSize.height / resolution.height));

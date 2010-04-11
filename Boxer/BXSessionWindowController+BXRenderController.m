@@ -173,11 +173,12 @@
 		//TODO: check that any of these options are actually necessary, as these could be the defaults
 		NSDictionary *options	= [NSDictionary dictionaryWithObjectsAndKeys:
 								   [NSNumber numberWithBool: YES], NSFullScreenModeAllScreens,
-								   [NSNumber numberWithInteger: NSScreenSaverWindowLevel], NSFullScreenModeWindowLevel,
+								   //This causes a blank screen For Some Reason
+								   //[NSNumber numberWithInteger: NSScreenSaverWindowLevel], NSFullScreenModeWindowLevel,
 								   nil];
 
 		//Flip the view into fullscreen mode
-		[theView enterFullScreenMode: targetScreen withOptions: nil];
+		[theView enterFullScreenMode: targetScreen withOptions: options];
 		
 		//Set the window as key, which is disabled by the switch to fullscreen mode (for some reason)
 		[theWindow makeKeyWindow];

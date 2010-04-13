@@ -75,11 +75,17 @@
 	[statusBarControls setSelected: [controller programPanelShown]			forSegment: BXStatusBarProgramPanelSegment];
 	[statusBarControls setSelected: [[controller document] mouseLocked]		forSegment: BXStatusBarMouseLockSegment];
 
-	NSString *imageName;
+	NSString *panelButtonImage;
 	if ([statusBarControls isSelectedForSegment: BXStatusBarProgramPanelSegment])
-		imageName = @"PanelCollapseTemplate.png";
-	else	imageName = @"PanelExpandTemplate.png";
-	[statusBarControls setImage: [NSImage imageNamed: imageName] forSegment: BXStatusBarProgramPanelSegment];
+			panelButtonImage = @"PanelCollapseTemplate.png";
+	else	panelButtonImage = @"PanelExpandTemplate.png";
+	[statusBarControls setImage: [NSImage imageNamed: panelButtonImage] forSegment: BXStatusBarProgramPanelSegment];
+	
+	NSString *lockButtonImage;
+	if ([statusBarControls isSelectedForSegment: BXStatusBarMouseLockSegment])
+			lockButtonImage = @"NSLockLockedTemplate";
+	else	lockButtonImage = @"NSLockUnlockedTemplate";
+	[statusBarControls setImage: [NSImage imageNamed: lockButtonImage] forSegment: BXStatusBarMouseLockSegment];
 }
 
 

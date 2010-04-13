@@ -63,8 +63,20 @@
 
 - (void) windowDidBecomeKey:	(NSNotification *) notification	{ [[self emulator] captureInput]; }
 - (void) windowDidBecomeMain:	(NSNotification *) notification	{ [[self emulator] activate]; }
-- (void) windowDidResignKey:	(NSNotification *) notification	{ [[self emulator] releaseInput]; }
-- (void) windowDidResignMain:	(NSNotification *) notification	{ [[self emulator] deactivate]; }
+- (void) windowDidResignKey:	(NSNotification *) notification
+{
+	//Don't resign key when we're in fullscreen mode
+	//FIXME: work out why this is happening in the first place!
+	if ([self isFullScreen]) [[self window] makeKeyWindow];
+	else [[self emulator] releaseInput];
+}
+- (void) windowDidResignMain:	(NSNotification *) notification
+{	
+	//Don't resign key when we're in fullscreen mode
+	//FIXME: work out why this is happening in the first place!
+	if ([self isFullScreen]) [[self window] makeMainWindow];
+	else [[self emulator] deactivate];
+}
 
 //Drop out of fullscreen and warn the emulator to prepare for emulation cutout when a menu opens
 - (void) menuDidOpen:	(NSNotification *) notification
@@ -176,11 +188,11 @@
 								   //This causes a blank screen For Some Reason
 								   //[NSNumber numberWithInteger: NSScreenSaverWindowLevel], NSFullScreenModeWindowLevel,
 								   nil];
-
-		//Flip the view into fullscreen mode
-		[theView enterFullScreenMode: targetScreen withOptions: options];
 		
-		//Set the window as key, which is disabled by the switch to fullscreen mode (for some reason)
+		//Flip the view into fullscreen mode
+		[theView enterFullScreenMode: targetScreen withOptions: nil];
+		
+		//Set the window as key, which is disabled by the switch to fullscreen mode (For Some Reason)
 		[theWindow makeKeyWindow];
 	}
 	else
@@ -251,6 +263,9 @@
 		
 		//...then resize the window back to its original size
 		[theWindow setFrame: originalFrame display: YES animate: YES];
+		
+		//Finally, reset the renderer again to fit the new size
+		[[self emulator] resetRenderer];
 	}
 	[self setResizingProgrammatically: NO];
 	[theWindow setLevel: originalLevel];
@@ -455,6 +470,7 @@
 
 - (BOOL) handleSDLMouseMovement: (NSEvent *)event
 {
+	return NO;
 	/*
 	BOOL mouseLocked = [[self emulator] mouseLocked];
 	BOOL mouseInView = [renderView containsMouse];

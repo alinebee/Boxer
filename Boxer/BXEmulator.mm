@@ -45,14 +45,9 @@ NSStringEncoding BXDirectStringEncoding		= NSUTF8StringEncoding;
 
 //defined in gui/sdlmain.cpp
 int DOSBox_main(int argc, char* argv[]);
-void GFX_SwitchFullScreen();
-void GFX_CaptureMouse();
-void GFX_ResetScreen();
 
 //Defined by us in midi.cpp
 void boxer_toggleMIDIOutput(bool enabled);
-
-void CALLBACK_DeAllocate(Bitu in);
 
 
 //defined in dos_execute.cpp
@@ -404,13 +399,10 @@ BXEmulator *currentEmulator = nil;
 	}
 }
 
-//If we lose the input focus while in fullscreen be sure to jump back out
-//Not sure that OS X can actually let this happen but better safe than sorry
 - (void) releaseInput
 {
 	if ([self isExecuting])
 	{
-		[self setFullScreen: NO];
 		boxer_SDLReleaseInput();
 		[self setMouseLocked: NO];
 	}
@@ -425,12 +417,10 @@ BXEmulator *currentEmulator = nil;
 	}
 }
 
-//If we lose the application focus while in fullscreen be sure to jump back out
 - (void) deactivate
 {
 	if ([self isExecuting])
 	{
-		[self setFullScreen: NO];
 		boxer_SDLDeactivateApp();
 	}
 }

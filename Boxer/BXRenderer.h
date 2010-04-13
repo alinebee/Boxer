@@ -12,13 +12,13 @@
 #import <Cocoa/Cocoa.h>
 
 
-//Don't bilinear-filter when scaling up beyond 1.75x
+//Don't bilinear-filter when scaling up beyond 2x
 //Used by _shouldUseFiltering
-static const CGFloat BXBilinearFilteringScaleCutoff = 1.75;
+static const CGFloat BXBilinearFilteringScaleCutoff = 2;
 
 //Don't apply scaler effects for resolutions 400 pixels high or larger
 //Used by BXRendering _maxFilterSizeForResolution
-static const CGFloat BXScalingResolutionCutoff = 400;
+static const CGFloat BXScalingResolutionCutoff = 400.0;
 
 
 @interface BXRenderer : NSObject

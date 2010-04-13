@@ -134,7 +134,6 @@
 
 - (IBAction) showProgramChooserPanel: (id)sender
 {
-	NSLog(@"showProgramChooserPanel:");
 	//Resync the selected item back to what it should be, since choosing the menu item that triggered this will have changed it
 	//TODO: see about fixing that upstream, since resyncing it results in an annoying flicker
 	[self syncSelection];

@@ -14,8 +14,7 @@
 #import "BXValueTransformers.h"
 #import "BXVideoFormatAlert.h"
 
-#import "BXSessionWindowController.h"
-#import "BXRenderView.h"
+#import "BXSessionWindowController+BXRenderController.h"
 
 @implementation BXSession (BXEmulatorController)
 
@@ -284,10 +283,13 @@
 
 - (void) setMouseLocked: (BOOL) lock
 {
-	[[self emulator] setMouseLocked: lock];	
+	//Don't alter the mouselock state while the window is in fullscreen mode
+	if ([[self mainWindowController] isFullScreen]) return;
+	
+	[[self emulator] setMouseLocked: lock];
 
-	BXRenderView *renderView = [[self mainWindowController] renderView]; 
-	[renderView setCursorHidden: lock];
+	//BXRenderView *renderView = [[self mainWindowController] renderView]; 
+	//[renderView setCursorHidden: lock];
 	
 	if ([self mouseLocked] == lock)
 	{

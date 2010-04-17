@@ -201,6 +201,10 @@
 		//Reset the view's frame to match its loyal container, as otherwise it retains its fullscreen frame size
 		[theView setFrame: [theContainer bounds]];
 		[theView setNeedsDisplay: YES];
+		
+		//Cocoa 10.6 bugfix: for some reason this gets forgotten upon the return to windowed mode,
+		//until the window loses and regains focus. Setting it manually fixes it.
+		[theWindow setAcceptsMouseMovedEvents: YES];
 	}
 	[[self emulator] resetRenderer];
 	

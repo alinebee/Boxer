@@ -12,7 +12,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="3"/>
+			<integer value="924"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -175,7 +175,7 @@
 									<int key="NSViewLayerContentsRedrawPolicy">2</int>
 									<object class="NSOpenGLPixelFormat" key="NSPixelFormat">
 										<object class="NSMutableData" key="NSPixelAttributes">
-											<bytes key="NS.bytes">AAAABQAAADMAAABIAAAACAAAABgAAAALAAAACAAAAAA</bytes>
+											<bytes key="NS.bytes">AAAABQAAAEgAAABJAAAACAAAABgAAAALAAAACAAAAAA</bytes>
 										</object>
 									</object>
 								</object>
@@ -500,9 +500,9 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{38, 82}, {640, 504}}</string>
+					<string>{{38, 112}, {640, 504}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{38, 82}, {640, 504}}</string>
+					<string>{{38, 112}, {640, 504}}</string>
 					<integer value="0"/>
 					<string>{196, 240}</string>
 					<string>{{357, 418}, {480, 270}}</string>

@@ -22,7 +22,6 @@
 #import "control.h"
 #import "shell.h"
 #import "vga.h"
-//#import "callback.h"
 
 #import <SDL/boxer_hooks.h>	//for boxer_SDLCaptureInput et. al.
 #import <crt_externs.h>		//for _NSGetArgc() and _NSGetArgv()
@@ -75,7 +74,6 @@ BXEmulator *currentEmulator = nil;
 @synthesize minFixedSpeed, maxFixedSpeed, maxFrameskip;
 @synthesize suppressOutput;
 @synthesize configFiles;
-@synthesize paused;
 @synthesize aspectCorrected;
 @synthesize filterType;
 @synthesize commandQueue;
@@ -426,17 +424,6 @@ BXEmulator *currentEmulator = nil;
 }
 
 
-- (void) setPaused: (BOOL) pause
-{
-	[self willChangeValueForKey: @"paused"];
-	if (pause)	[self willPause];
-	else		[self didResume];
-	
-	paused = pause;
-	
-	[self didChangeValueForKey: @"paused"];
-}
-
 //These methods are only necessary if we are running in single-threaded mode,
 //which currently is indicated by the isConcurrent flag
 - (void) willPause
@@ -642,12 +629,6 @@ void boxer_applyConfigFiles()
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
 	[emulator _applyConfiguration];
-}
-
-bool boxer_isPaused()
-{
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	return [emulator isPaused];	
 }
 
 bool boxer_isCancelled()

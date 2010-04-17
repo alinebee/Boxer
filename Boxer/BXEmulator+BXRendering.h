@@ -120,6 +120,10 @@ typedef struct {
 - (NSInteger)	_sizeForFilterType:	(BXFilterType) filterType atScale: (NSSize)scale;
 - (NSInteger)	_maxFilterSizeForResolution: (NSSize)resolution;
 
+- (void) _prepareForOutputSize: (NSSize)outputSize atScale: (NSSize)scale;
+- (BOOL) _startFrameWithBuffer: (void **)frameBuffer pitch: (NSUInteger *)pitch;
+- (void) _finishFrameWithChanges: (const uint16_t *)dirtyBlocks;
+
 @end
 
 #endif

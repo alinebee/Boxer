@@ -37,6 +37,8 @@ static const CGFloat BXScalingResolutionCutoff = 400.0;
 	BOOL maintainAspectRatio;
 	BOOL needsDisplay;
 	BOOL rendererIsInvalid;
+	
+	void *frameBuffer;
 }
 
 //The OpenGL viewport into which we are rendering. When maintainAspectRatio is true,
@@ -52,6 +54,12 @@ static const CGFloat BXScalingResolutionCutoff = 400.0;
 //Analogous to needsDisplay on NSViews.
 @property (assign) BOOL needsDisplay;
 
+//Returns the current output scaling. This will normally be 1.0, 1.0 unless aspect ratio correction is being applied.
+@property (readonly) NSSize outputScale;
+
+//Returns the number of bytes per line of output: this is equal to output width * colourdepth.
+- (NSUInteger) pitch;
+
 
 
 //The maximum size that the renderer can produce. This is equivalent to GL_MAX_TEXTURE_SIZE.
@@ -62,17 +70,18 @@ static const CGFloat BXScalingResolutionCutoff = 400.0;
 - (void) prepareOpenGL;
 
 //Prepares the renderer to draw an output region of the specified pixel dimensions at the specified scale.
-//This creates the necessary framebuffer texture and sets up a display list to draw the buffer.
-- (void) prepareForOutputSize: (NSSize)size atScale: (NSSize)scale;
+//This allocates a framebuffer, creates the texture to display it and sets up a display list to draw the texture.
+//Returns the new framebuffer.
+- (void *) setFrameBufferSize: (NSSize)size atScale: (NSSize)scale;
+
+//Returns the current framebuffer.
+- (void *) frameBuffer;
 
 //Resizes the OpenGL viewport in response to a change in the available canvas.
 - (void) setCanvas: (NSRect)canvas;
 
 //Draws the DOS output into the OpenGL context.
 - (void) render;
-
-//Returns the number of bytes per line of output: this is equal to output width * colourdepth.
-- (NSUInteger) pitch;
 
 //Copy the specified buffer of pixel data into our texture.
 - (void) drawPixelData: (void *)pixelData;

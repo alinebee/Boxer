@@ -10,7 +10,29 @@
 #import "BXGeometry.h"
 
 @implementation BXRenderer
-@synthesize viewport, maintainAspectRatio, needsDisplay;
+@synthesize viewport, outputScale, maintainAspectRatio, needsDisplay;
+
+- (id) init
+{
+	if ((self = [super init]))
+	{
+		frameBuffer = NULL;
+	}
+	return self;
+}
+- (void) dealloc
+{
+	if (glIsTexture(texture))	glDeleteTextures(1, &texture);
+	if (glIsList(displayList))	glDeleteLists(displayList, 1);
+	if (frameBuffer)
+	{
+		free(frameBuffer);
+		frameBuffer = NULL;
+	}
+	
+	[super dealloc];
+}
+
 
 - (NSSize) maxOutputSize
 {
@@ -44,17 +66,27 @@
 	glLoadIdentity();
 }
 
-- (void) prepareForOutputSize: (NSSize)size atScale: (NSSize)scale
+- (void *) frameBuffer
+{
+	return frameBuffer;
+}
+
+- (void *) setFrameBufferSize: (NSSize)size atScale: (NSSize)scale
 {
 	if (!NSEqualSizes(size, outputSize) || !NSEqualSizes(scale, outputScale))
 	{
 		outputSize = size;
 		outputScale = scale;
+		
+		if (frameBuffer) free(frameBuffer);
+		frameBuffer = malloc(outputSize.width * outputSize.height * 4);
+		//TODO: fill the framebuffer with black
 
 		//Next time one of our draw functions is called, this will resync
 		//the texture, display list and viewport to fit the new output size
 		rendererIsInvalid = YES;
 	}
+	return frameBuffer;
 }
 
 - (void) setCanvas: (NSRect)canvasRect
@@ -103,7 +135,7 @@
 				//Ahhh, pointer arithmetic. Determine the starting offset of the dirty line block in our pixel data.
 				//TODO: this needs sanity-checking to make sure the offset is within expected bounds,
 				//otherwise it would write arbitrary data to the texture.
-				offsetPixels = pixelData + (offset * pitch);
+				offsetPixels = frameBuffer + (offset * pitch);
 				
 				glTexSubImage2D(textureTarget,		//Texture target
 								0,					//Mipmap level
@@ -137,17 +169,9 @@
 					outputSize.height,	//height
 					GL_BGRA,						//byte ordering
 					GL_UNSIGNED_INT_8_8_8_8_REV,	//byte packing
-					pixelData			//pixel data
+					frameBuffer			//pixel data
 					);
 	[self setNeedsDisplay: YES];
-}
-
-- (void) dealloc
-{
-	if (glIsTexture(texture))	glDeleteTextures(1, &texture);
-	if (glIsList(displayList))	glDeleteLists(displayList, 1);
-	
-	[super dealloc];
 }
 
 @end
@@ -239,17 +263,15 @@
 	
 	
 	//Create a new empty texture of the specified size
-	//TODO: fill this with black, as to start with it's filled with garbage data from arbitrary memory space
-	//This is noticeable as an ugly fringe in bilinear-filtered GL_TEXTURE_2D
 	glTexImage2D(textureTarget,	//Texture target
 				 0,				//Mipmap level
 				 GL_RGBA8,		//Internal texture format
 				 (GLsizei)textureSize.width,	//Width
 				 (GLsizei)textureSize.height,	//Height
-				 0,								//Border
+				 0,								//Border (unused)
 				 GL_BGRA,						//Byte ordering
 				 GL_UNSIGNED_INT_8_8_8_8_REV,	//Byte packing
-				 0								//Texture data
+				 frameBuffer					//Texture data
 				 );
 	
 }

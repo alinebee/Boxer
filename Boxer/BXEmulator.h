@@ -70,7 +70,6 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 	NSUInteger maxFrameskip;
 	
 	BOOL isInterrupted;
-	BOOL paused;
 	
 	//Used by BXShell
 	BOOL suppressOutput;
@@ -83,6 +82,7 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 	NSInteger currentVideoMode;
 	BXFilterType filterType;
 	BOOL aspectCorrected;
+	BOOL frameInProgress;
 }
 
 //Properties
@@ -132,8 +132,6 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 //An array of queued command strings to execute on the DOS command line.
 @property (readonly)	NSMutableArray *commandQueue;
 
-
-@property (assign, getter=isPaused) BOOL paused;
 
 //Whether to apply 4:3 aspect ratio correction to the rendered output.
 @property (assign, getter=isAspectCorrected) BOOL aspectCorrected;

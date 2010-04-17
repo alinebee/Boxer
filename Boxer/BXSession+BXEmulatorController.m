@@ -82,11 +82,6 @@
 //Responding to actions
 //---------------------
 
-- (IBAction) pause: (id)sender
-{
-	[[self emulator] setPaused: ![[self emulator] isPaused]];
-}
-
 - (IBAction) takeScreenshot: (id)sender
 {
 	[[self emulator] recordImage];

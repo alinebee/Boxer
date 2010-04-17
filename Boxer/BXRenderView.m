@@ -13,16 +13,14 @@
 @implementation BXRenderView
 @synthesize renderer, cursorHidden;
 
+- (void) dealloc
+{
+	[self setRenderer: nil], [renderer release];
+	[super dealloc];
+}
+
 //This helps optimize OS X's rendering decisions, hopefully
 - (BOOL) isOpaque	{ return YES; }
-
-- (BOOL) enterFullScreenMode:(NSScreen *)screen withOptions:(NSDictionary *)options
-{
-	NSOpenGLContext *oldContext = [self openGLContext];
-	BOOL returnValue = [super enterFullScreenMode: screen withOptions: options];
-	NSOpenGLContext *newContext = [self openGLContext];
-	return returnValue;
-}
 
 - (void) setCursorHidden: (BOOL)hide
 {

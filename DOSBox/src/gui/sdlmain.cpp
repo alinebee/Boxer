@@ -364,15 +364,6 @@ static int int_log2 (int val) {
 }
 
 
-
-//--Added 2009-03-10 by Alun Bestor: we pass off this function entirely to our own Boxer functionality now
-static SDL_Surface * GFX_SetupSurfaceScaled(Bit32u sdl_flags, Bit32u bpp)
-{
-	boxer_setupSurfaceScaled(sdl_flags, bpp);
-	return sdl.surface;
-}
-
-/*
 static SDL_Surface * GFX_SetupSurfaceScaled(Bit32u sdl_flags, Bit32u bpp) {
 	Bit16u fixedWidth;
 	Bit16u fixedHeight;
@@ -416,21 +407,19 @@ static SDL_Surface * GFX_SetupSurfaceScaled(Bit32u sdl_flags, Bit32u bpp) {
 		return sdl.surface;
 	}
 }
-*/
-//--End of modifications
 
 Bitu GFX_SetSize(Bitu width,Bitu height,Bitu flags,double scalex,double scaley,GFX_CallBack_t callback) {
 	if (sdl.updating)
-		GFX_EndUpdate( 0 );
+		//--Modified 2010-04-17 by Alun Bestor to use Boxer's frame functions
+		boxer_finishFrame(NULL);
+		//GFX_EndUpdate( 0 );
+		//--End of modifications
 
 	sdl.draw.width=width;
 	sdl.draw.height=height;
 	sdl.draw.callback=callback;
 	sdl.draw.scalex=scalex;
 	sdl.draw.scaley=scaley;
-
-	return boxer_prepareRenderContext();
-	//Everything after this point never happens
 	
 	Bitu bpp=0;
 	Bitu retFlags = 0;
@@ -782,9 +771,6 @@ void GFX_EndUpdate( const Bit16u *changedLines ) {
 		return;
 	sdl.updating=false;
 	
-	if (changedLines) boxer_updateRenderContext();
-	return;
-	
 	switch (sdl.desktop.type) {
 	case SCREEN_SURFACE:
 		if (SDL_MUSTLOCK(sdl.surface)) {
@@ -922,7 +908,10 @@ Bitu GFX_GetRGB(Bit8u red,Bit8u green,Bit8u blue) {
 
 void GFX_Stop() {
 	if (sdl.updating)
-		GFX_EndUpdate( 0 );
+		//--Modified 2010-04-17 by Alun Bestor to use Boxer's frame functions
+		boxer_finishFrame(NULL);
+		//GFX_EndUpdate( 0 );
+		//--End of modifications
 	sdl.active=false;
 }
 
@@ -1206,7 +1195,7 @@ static void GUI_StartUp(Section * sec) {
 	}
 	*/
 	sdl.surface=NULL;
-	sdl.desktop.bpp=boxer_screenColorDepth();
+	//sdl.desktop.bpp=boxer_screenColorDepth();
 	//--End of modifications
 	
 	GFX_Stop();

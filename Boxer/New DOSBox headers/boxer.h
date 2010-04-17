@@ -21,18 +21,15 @@ extern "C" {
 	#import "config.h"
 
 	#define BOXER_EXPORT __attribute__((visibility("default")))
-
+	
 	//Called from sdlmain.cpp: perform various notifications and overrides.
 	BOXER_EXPORT bool boxer_handleEventLoop();
 	BOXER_EXPORT bool boxer_handleSDLEvent(SDL_Event *event);
 	BOXER_EXPORT bool boxer_handleDOSBoxTitleChange(int cycles, int frameskip, bool paused);
 	BOXER_EXPORT void boxer_applyConfigFiles();
-	BOXER_EXPORT void boxer_setupSurfaceScaled(Bit32u sdl_flags, Bit32u bpp);
-	BOXER_EXPORT Bit8u boxer_screenColorDepth();
-	
-	BOXER_EXPORT Bitu boxer_prepareRenderContext();
-	BOXER_EXPORT void boxer_updateRenderContext();
-	
+
+	BOXER_EXPORT bool boxer_startFrame(Bit8u **frameBuffer, Bitu *pitch);
+	BOXER_EXPORT void boxer_finishFrame(const uint16_t *dirtyBlocks);
 	
 	//Called from render.cpp: configures the DOSBox render state.
 	BOXER_EXPORT void boxer_applyRenderingStrategy();

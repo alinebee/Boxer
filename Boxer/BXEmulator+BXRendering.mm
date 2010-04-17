@@ -12,8 +12,8 @@
 #import "BXGeometry.h"
 
 #import "boxer.h"
-#import "render.h"
 #import "video.h"
+#import "render.h"
 #import "vga.h"
 #import "sdlmain.h"
 #import "BXFilterDefinitions.h"
@@ -43,11 +43,10 @@
 - (NSSize) scaledResolution
 {
 	NSSize size = [self resolution];
-	if ([self isExecuting])
-	{
-		if (sdl.draw.scalex > 0) size.width *= sdl.draw.scalex;
-		if (sdl.draw.scaley > 0) size.height *= sdl.draw.scaley;
-	}
+	NSSize scale = [[self renderer] outputScale];
+	size.width *= scale.width;
+	size.height *= scale.height;
+	
 	return size;
 }
 
@@ -193,22 +192,13 @@
 //Rendering output
 //----------------
 
-- (NSUInteger) _prepareRenderContext
+- (void) _prepareForOutputSize: (NSSize)outputSize atScale: (NSSize)scale
 {
-	NSSize outputSize	= NSMakeSize((CGFloat)sdl.draw.width, (CGFloat)sdl.draw.height);
-	NSSize scale		= NSMakeSize((CGFloat)sdl.draw.scalex, (CGFloat)sdl.draw.scaley);
+	//If we were in the middle of a frame then cancel it
+	frameInProgress = NO;
 	
 	[[[self delegate] mainWindowController] resizeToAccommodateOutputSize: outputSize atScale: scale];
-	[[self renderer] prepareForOutputSize: outputSize atScale: scale];
-	
-	if (sdl.opengl.framebuf) free(sdl.opengl.framebuf);
-	sdl.opengl.framebuf = malloc(sdl.draw.width * sdl.draw.height * 4);
-	
-	sdl.opengl.pitch = sdl.draw.width * 4;
-	sdl.desktop.type = SCREEN_OPENGL;
-	sdl.active = YES;
-	
-	NSRect viewport = [[self renderer] viewport];
+	[[self renderer] setFrameBufferSize: outputSize atScale: scale];
 	
 	if (!sdl.mouse.autoenable) SDL_ShowCursor(sdl.mouse.autolock ? SDL_DISABLE: SDL_ENABLE);
 
@@ -232,17 +222,40 @@
 			[self _postNotificationName: @"BXEmulatorDidEndGraphicalContext"
 					   delegateSelector: @selector(didEndGraphicalContext:)
 							   userInfo: nil];
-	}	
-	
-	return GFX_CAN_32 | GFX_SCALING;
+	}
 }
 
-- (void) _updateRenderContext
+- (BOOL) _startFrameWithBuffer: (void **)frameBuffer pitch: (NSUInteger *)pitch
 {
-	if (sdl.opengl.framebuf && Scaler_ChangedLines)
+	//Don't let a new frame start if one is already going.
+	//This is merely mirroring a sanity flag in DOSBox and I'm not sure that the code
+	//ever actually does this. 
+	if (frameInProgress) 
 	{
-		[[self renderer] drawPixelData: (void *)sdl.opengl.framebuf dirtyBlocks: Scaler_ChangedLines];
+		NSLog(@"Tried to start a new frame while one was still in progress!");
+		return NO;
 	}
+	
+	*frameBuffer	= [[self renderer] frameBuffer];
+	*pitch			= [[self renderer] pitch];
+	
+	if (!frameBuffer)
+	{
+		NSLog(@"Tried to start a frame before any framebuffer was created!");
+		return NO;
+	}
+	
+	frameInProgress = YES;
+	return YES;
+}
+
+- (void) _finishFrameWithChanges: (const uint16_t *)dirtyBlocks
+{
+	if ([[self renderer] frameBuffer] && dirtyBlocks)
+	{
+		[[self renderer] drawPixelData: (void *)sdl.opengl.framebuf dirtyBlocks: dirtyBlocks];
+	}
+	frameInProgress = NO;
 }
 
 
@@ -359,36 +372,32 @@
 //This is called by RENDER_Reset in DOSBox's gui/render.cpp
 void boxer_applyRenderingStrategy()	{ [[BXEmulator currentEmulator] _applyRenderingStrategy]; }
 
-//Returns the colourdepth of the most colourful screen
-//This is called by GUI_StartUp in DOSBox's gui/sdlmain.cpp
-Bit8u boxer_screenColorDepth()
+void boxer_prepareForSize(Bitu width, Bitu height, double scalex, double scaley, GFX_CallBack_t callback)
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	return (Bit8u)[emulator screenDepth];
+	
+	NSSize outputSize	= NSMakeSize((CGFloat)width, (CGFloat)height);
+	NSSize scale		= NSMakeSize((CGFloat)scalex, (CGFloat)scaley);
+	[emulator _prepareForOutputSize: outputSize atScale: scale];
+
+	sdl.draw.callback=callback;
+	sdl.desktop.type=SCREEN_OPENGL;
+	//TODO: none of these should actually be used by live code anymore.
+	//If anywhere is using them, it needs to be excised forthwith.
+	sdl.draw.width=width;
+	sdl.draw.height=height;
+	sdl.draw.scalex=scalex;
+	sdl.draw.scaley=scaley;
 }
 
-//Initialises a new SDL surface to Boxer's specifications
-//This is called by GFX_SetupSurfaceScaled in DOSBox's gui/sdlmain.cpp
-void boxer_setupSurfaceScaled(Bit32u sdl_flags, Bit32u bpp)
-{
-	//This should never ever be used any longer
-}
-
-//Populates a pair of integers with the dimensions of the current render-surface
-//This is called by GUI_StartUp in DOSBox's gui/sdlmain.cpp, when initialising OpenGL with a 'pioneer' surface to obtain OpenGL parameters
-void boxer_copySurfaceSize(unsigned int * surfaceWidth, unsigned int * surfaceHeight)
-{
-	//This should never ever be used any longer
-}
-
-Bitu boxer_prepareRenderContext()
+bool boxer_startFrame(Bit8u **frameBuffer, Bitu *pitch)
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	return [emulator _prepareRenderContext];
+	return [emulator _startFrameWithBuffer: (void **)frameBuffer pitch: (NSUInteger *)pitch];
 }
 
-void boxer_updateRenderContext()
+void boxer_finishFrame(const uint16_t *dirtyBlocks)
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	[emulator _updateRenderContext];
+	[emulator _finishFrameWithChanges: dirtyBlocks];	
 }

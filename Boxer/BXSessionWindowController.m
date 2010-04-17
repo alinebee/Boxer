@@ -370,8 +370,8 @@
 	return NO;
 }
 
-//Handling dialog sheets
-//----------------------
+//Handling window close
+//---------------------
 
 - (BOOL) shouldConfirmClose
 {
@@ -389,11 +389,16 @@
 	else return YES;
 }
 
-
 //Prompt to close the window, after exiting a game or program.
 - (IBAction) windowShouldCloseAfterProgramCompletion: (id)sender
 {
 	BXCloseAlert *closeAlert = [BXCloseAlert closeAlertAfterSessionExited: [self document]];
 	[closeAlert beginSheetModalForWindow: [self window]];
+}
+
+- (void) windowWillClose:(NSNotification *)notification
+{
+	//Make sure to tear down the fullscreen context before quitting
+	[self exitFullScreen: self];
 }
 @end

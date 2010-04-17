@@ -87,8 +87,6 @@ enum
 //Keyboard events
 //---------------
 
-- (IBAction) pause: (id)sender;
-
 //Sends the appropriate keystroke to the emulator.
 //These will be replaced in future with a single method that uses the represented object or IB tag of the sender. 
 - (IBAction) sendEnter: (id)sender;

@@ -79,6 +79,7 @@
 		9F9FE70410FA5F5800E3944B /* NSWorkspace+BXIcons.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9FE70310FA5F5800E3944B /* NSWorkspace+BXIcons.m */; };
 		9FA2E596109D251100E50623 /* BGHUDAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FA2E595109D251100E50623 /* BGHUDAppKit.framework */; };
 		9FA2E5D9109D255300E50623 /* BGHUDAppKit.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FA2E595109D251100E50623 /* BGHUDAppKit.framework */; };
+		9FA7CB691179B351005D8670 /* BXContextSwitchingRenderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA7CB681179B351005D8670 /* BXContextSwitchingRenderView.m */; };
 		9FA85CD510A357A600E6457F /* BXSession+BXFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA85CD410A357A600E6457F /* BXSession+BXFileManager.m */; };
 		9FAD43C010A341F6007E8C0D /* UKFileWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD43B810A341F6007E8C0D /* UKFileWatcher.m */; };
 		9FAD43C110A341F6007E8C0D /* UKFNSubscribeFileWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD43BA10A341F6007E8C0D /* UKFNSubscribeFileWatcher.m */; };
@@ -383,6 +384,8 @@
 		9F9FE70210FA5F5800E3944B /* NSWorkspace+BXIcons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSWorkspace+BXIcons.h"; sourceTree = "<group>"; };
 		9F9FE70310FA5F5800E3944B /* NSWorkspace+BXIcons.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSWorkspace+BXIcons.m"; sourceTree = "<group>"; };
 		9FA2E595109D251100E50623 /* BGHUDAppKit.framework */ = {isa = PBXFileReference; comments = "http://www.binarymethod.com/bghudappkit/"; explicitFileType = wrapper.framework; path = BGHUDAppKit.framework; sourceTree = "<group>"; };
+		9FA7CB671179B351005D8670 /* BXContextSwitchingRenderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXContextSwitchingRenderView.h; sourceTree = "<group>"; };
+		9FA7CB681179B351005D8670 /* BXContextSwitchingRenderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXContextSwitchingRenderView.m; sourceTree = "<group>"; };
 		9FA85CD310A357A600E6457F /* BXSession+BXFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXSession+BXFileManager.h"; sourceTree = "<group>"; };
 		9FA85CD410A357A600E6457F /* BXSession+BXFileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXSession+BXFileManager.m"; sourceTree = "<group>"; };
 		9FAD43B710A341F6007E8C0D /* UKFileWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UKFileWatcher.h; sourceTree = "<group>"; };
@@ -851,6 +854,8 @@
 		9F23EB0111390A2600DC5AB6 /* BXRenderer */ = {
 			isa = PBXGroup;
 			children = (
+				9FA7CB671179B351005D8670 /* BXContextSwitchingRenderView.h */,
+				9FA7CB681179B351005D8670 /* BXContextSwitchingRenderView.m */,
 				9FB635DB111EC63F00EDC2DA /* BXRenderer.h */,
 				9FB635DC111EC63F00EDC2DA /* BXRenderer.m */,
 				9FBB86830F5DD070008418E6 /* BXRenderView.h */,
@@ -1815,6 +1820,7 @@
 				9FD5481411047E420041E1E7 /* BXDrivesInUseAlert.m in Sources */,
 				9FB635DD111EC63F00EDC2DA /* BXRenderer.m in Sources */,
 				9F42D9DF1172481800AC6F1F /* BXStatusBarController.m in Sources */,
+				9FA7CB691179B351005D8670 /* BXContextSwitchingRenderView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1940,7 +1946,7 @@
 			buildSettings = {
 				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
 				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 20100121.1;
+				CURRENT_PROJECT_VERSION = 20100416.1;
 				GCC_VERSION = 4.0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
@@ -2076,7 +2082,7 @@
 			buildSettings = {
 				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
 				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 20091219.1;
+				CURRENT_PROJECT_VERSION = 20100416.1;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_VERSION = 4.0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -2094,7 +2100,7 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
 				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
 				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 20100121.1;
+				CURRENT_PROJECT_VERSION = 20100416.1;
 				GCC_VERSION = 4.0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;

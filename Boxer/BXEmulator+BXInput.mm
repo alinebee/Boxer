@@ -11,6 +11,8 @@
 #import "BXEmulator+BXShell.h"
 #import "BXEmulator+BXRendering.h"
 #import "BXRenderer.h"
+#import "BXSession.h"
+#import "BXSessionWindowController.h"
 
 #include "dosbox.h"
 #include "video.h"
@@ -188,7 +190,9 @@
 
 - (BOOL) canAcceptPastedString: (NSString *)pastedString
 {
-	return [self isAtPrompt];
+	//Disabled-for-1.0: Disable paste and drag-drop of text for now, as there are too many bugs for it to be a releasable feature.
+	return NO;
+	//return [self isAtPrompt];
 }
 
 //Handling events internally
@@ -209,6 +213,37 @@
 					  [self mouseLocked]);
 }
 
+- (void) handleSDLMouseButton: (SDL_MouseButtonEvent *)event
+{
+	NSInteger button;
+	
+	//Convert SDL button constants to DOSBox button constants
+	switch (event->button)
+	{
+		case SDL_BUTTON_LEFT:	button = DOSBoxMouseButtonLeft; break;
+		case SDL_BUTTON_RIGHT:	button = DOSBoxMouseButtonRight; break;
+		case SDL_BUTTON_MIDDLE:	button = DOSBoxMouseButtonMiddle; break;
+		default:
+			//Ignore buttons we don't recognise
+			return;
+	}
+	
+	if (event->state == SDL_PRESSED)
+	{
+		//If the mouse was clicked while Cmd was held down, lock/unlock the mouse and discard the event
+		if ([[NSApp currentEvent] modifierFlags] & NSCommandKeyMask)
+		{
+			BXSession *session = [self delegate];
+			[[session mainWindowController] toggleMouseLocked: nil];
+			return;
+		}
+		else Mouse_ButtonPressed(button);
+	}
+	else if (event->state == SDL_RELEASED)
+	{
+		Mouse_ButtonReleased(button);	
+	}
+}
 @end
 
 
@@ -223,8 +258,14 @@ const char * boxer_currentDOSKeyboardLayout()
 	return [layoutCode cStringUsingEncoding: BXDirectStringEncoding];
 }
 
-void boxer_handleMouseMotion(SDL_MouseMotionEvent * motion)
+void boxer_handleMouseMotion(SDL_MouseMotionEvent * event)
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	[emulator handleSDLMouseMovement: motion];
+	[emulator handleSDLMouseMovement: event];
+}
+
+void boxer_handleMouseButton(SDL_MouseButtonEvent * event)
+{
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+	[emulator handleSDLMouseButton: event];
 }

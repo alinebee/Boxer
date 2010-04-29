@@ -45,8 +45,8 @@ BXFilterDefinition BXFilterMAMEParams = {
 BXFilterDefinition BXFilterTVScanlinesParams = {
 	BXFilterTVScanlines,
 	2,
-	0.75,
 	0.0,
+	0.75,
 	2,
 	3
 };
@@ -54,8 +54,8 @@ BXFilterDefinition BXFilterTVScanlinesParams = {
 BXFilterDefinition BXFilterRGBParams = {
 	BXFilterRGB,
 	2,
-	0.25,
 	0.0,
+	0.25,
 	2,
 	3
 };

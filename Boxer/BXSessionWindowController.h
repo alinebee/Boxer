@@ -54,13 +54,17 @@
 - (BXEmulator *) emulator;		//Shortcut accessor for the current session's emulator.
 
 
-//Handling drag-drop
-//------------------
+//Input-related interface actions
+//-------------------------------
 
 //The session window responds to dropped files and folders, mounting them as new DOS drives and/or opening
 //them in DOS if appropriate. These methods call corresponding methods on BXSession+BXDragDrop.
 - (NSDragOperation)draggingEntered:	(id < NSDraggingInfo >)sender;
 - (BOOL)performDragOperation:		(id < NSDraggingInfo >)sender;
+
+- (IBAction) toggleMouseLocked: (id)sender;
+- (void) setMouseLocked: (BOOL) lock;
+- (BOOL) mouseLocked;
 
 
 //Rendering-related interface actions

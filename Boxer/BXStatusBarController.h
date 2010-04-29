@@ -10,10 +10,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-enum {
-	BXStatusBarSegmentedButton	= 1,
-	BXStatusBarNotificationText	= 2
-};
+@class BXSessionWindowController;
 
 enum {
 	BXStatusBarInspectorSegment,
@@ -24,11 +21,18 @@ enum {
 @interface BXStatusBarController : NSViewController
 {
 	IBOutlet NSSegmentedControl *statusBarControls;
+	IBOutlet NSTextField *notificationMessage;
 }
+
+//Returns the window controller associated with this statusbar
+- (BXSessionWindowController *)windowController;
 
 //Processes the selection/deselection of segments in the segmented button
 - (IBAction) performSegmentedButtonAction: (id) sender;
 
 //Synchronises the selection state of segments in the segmented button
 - (void) syncSegmentedButtonStates;
+
+//The text that will appear as the statusbar notification message
+- (NSString *) notificationText;
 @end

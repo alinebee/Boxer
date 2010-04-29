@@ -11,6 +11,13 @@
 #import "BXEmulator.h"
 #import <SDL/SDL.h>
 
+enum {
+	DOSBoxMouseButtonLeft	= 0,
+	DOSBoxMouseButtonMiddle	= 1,
+	DOSBoxMouseButtonRight	= 2
+};
+
+
 @interface BXEmulator (BXInput)
 
 //Handling keyboard layout
@@ -53,6 +60,7 @@
 //In practice, this just returns whether Boxer is at the commandline or not.
 - (BOOL) canAcceptPastedString: (NSString *)pastedString;
 
-- (void) handleSDLMouseMovement: (SDL_MouseMotionEvent *)motion;
+- (void) handleSDLMouseMovement: (SDL_MouseMotionEvent *)event;
+- (void) handleSDLMouseButton: (SDL_MouseButtonEvent *)event;
 
 @end

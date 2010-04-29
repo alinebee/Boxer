@@ -8,19 +8,23 @@
 
 #import "BXStatusBarController.h"
 #import "BXAppController.h"
-#import "BXSessionWindowController.h"
-#import "BXSession+BXEmulatorController.h"
+#import "BXSessionWindowController+BXRenderController.h"
 #import "BXInspectorController.h"
+#import "BXSession.h"
+#import "BXRenderView.h"
 
 @implementation BXStatusBarController
 
+- (BXSessionWindowController *)windowController
+{
+	return (BXSessionWindowController *)[[[self view] window] windowController];
+}
 - (void) awakeFromNib
 {
 	//Give statusbar text an indented appearance
-	NSTextField *notificationText = [[self view] viewWithTag: BXStatusBarNotificationText];
-	[[notificationText cell] setBackgroundStyle: NSBackgroundStyleRaised];
+	[[notificationMessage cell] setBackgroundStyle: NSBackgroundStyleRaised];
 	
-	BXSessionWindowController *windowController = (BXSessionWindowController *)[[[self view] window] windowController];
+	BXSessionWindowController *windowController = [self windowController];
 	BXAppController *appController = (BXAppController *)[NSApp delegate];
 	
 	//Observe changes that will affect our segmented button states
@@ -35,17 +39,20 @@
 						  context: nil];
 
 	[windowController addObserver: self
-					   forKeyPath: @"document.mouseLocked"
+					   forKeyPath: @"document.isGamePackage"
 						  options: NSKeyValueObservingOptionInitial
 						  context: nil];
 	
+	[windowController addObserver: self
+					   forKeyPath: @"mouseLocked"
+						  options: NSKeyValueObservingOptionInitial
+						  context: nil];
 }
 
 - (IBAction) performSegmentedButtonAction: (id)sender
 {
-	BXSessionWindowController *controller = (BXSessionWindowController *)[[[self view] window] windowController];
-	BXSession *session = [controller document];
-	BOOL mouseLocked = [session mouseLocked];
+	BXSessionWindowController *controller = [self windowController];
+	BOOL mouseLocked = [controller mouseLocked];
 	
 	//Because we have no easy way of telling which segment was just toggled, just synchronise them all
 	
@@ -61,7 +68,7 @@
 	
 	if ([sender isSelectedForSegment: BXStatusBarMouseLockSegment] != mouseLocked)
 	{
-		[session setMouseLocked: !mouseLocked];		
+		[controller setMouseLocked: !mouseLocked];		
 	}
 	
 	[self syncSegmentedButtonStates];
@@ -69,11 +76,13 @@
 
 - (void) syncSegmentedButtonStates
 {
-	BXSessionWindowController *controller = (BXSessionWindowController *)[[statusBarControls window] windowController];
+	BXSessionWindowController *controller = [self windowController];
 
 	[statusBarControls setSelected: [[NSApp delegate] inspectorPanelShown]	forSegment: BXStatusBarInspectorSegment];
 	[statusBarControls setSelected: [controller programPanelShown]			forSegment: BXStatusBarProgramPanelSegment];
-	[statusBarControls setSelected: [[controller document] mouseLocked]		forSegment: BXStatusBarMouseLockSegment];
+	[statusBarControls setSelected: [controller mouseLocked]				forSegment: BXStatusBarMouseLockSegment];
+	
+	[statusBarControls setEnabled:	[[controller document] isGamePackage]	forSegment: BXStatusBarProgramPanelSegment];
 
 	NSString *panelButtonImage;
 	if ([statusBarControls isSelectedForSegment: BXStatusBarProgramPanelSegment])
@@ -94,8 +103,22 @@
 					   ofObject: (id)object
 						 change: (NSDictionary *)change
 						context: (void *)context
-{	
+{
 	[self syncSegmentedButtonStates];
 }
 
++ (NSSet *) keyPathsForValuesAffectingNotificationText
+{
+	return [NSSet setWithObjects: @"windowController.mouseLocked", @"windowController.renderView.containsMouse"];
+}
+
+- (NSString *) notificationText
+{
+	BXSessionWindowController *controller = [self windowController];
+	if ([controller mouseLocked])					return NSLocalizedString(@"Cmd-click to release the mouse.",
+																			 @"Statusbar message when mouse is locked");
+	if ([[controller renderView] containsMouse])	return NSLocalizedString(@"Cmd-click to lock the mouse to the window.",
+																			 @"Statusbar message when mouse is unlocked and over DOS viewport");
+	return @"";
+}
 @end

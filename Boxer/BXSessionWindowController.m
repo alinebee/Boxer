@@ -11,6 +11,7 @@
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXSessionWindow.h"
 #import "BXProgramPanelController.h"
+#import "BXAppController.h"
 
 #import "BXEmulator+BXRendering.h"
 #import "BXCloseAlert.h"
@@ -189,8 +190,10 @@
 		
 		//Flag the window as unsaved if pressing the close button would trigger a confirmation panel.
 		//This matches the behaviour of the OS X Terminal.
+		//Disabled as it also fades out the document icon, which is stretching the dubious
+		//justification for using this feature to breaking point.
 		
-		[[self window] setDocumentEdited: [self shouldConfirmClose]];
+		//[self setDocumentEdited: [self shouldConfirmClose]];
 	}
 }
 
@@ -228,6 +231,9 @@
 
 - (void) setProgramPanelShown: (BOOL)show
 {
+	//Don't open the program panel if we're not running a gamebox
+	if (show && ![[self document] isGamePackage]) return;
+	
 	if (show != [self programPanelShown])
 	{
 		//temporarily override the other views' resizing behaviour so that they don't slide up as we do this
@@ -280,15 +286,48 @@
 	[[NSUserDefaults standardUserDefaults] setInteger: filterType forKey: @"filterType"];
 }
 
+
++ (NSSet *) keyPathsForValuesAffectingMouseLocked
+{
+	return [NSSet setWithObjects: @"fullScreen", @"document.emulator.mouseLocked", nil];
+}
+
+- (IBAction) toggleMouseLocked: (id)sender
+{
+	[self setMouseLocked: ![self mouseLocked]];
+}
+
+- (void) setMouseLocked: (BOOL) lock
+{
+	//Don't alter the mouselock state while the window is in fullscreen mode
+	if ([self isFullScreen]) return;
+	
+	[[self emulator] setMouseLocked: lock];
+	 
+	//[[self renderView] setCursorHidden: lock];
+	
+	if ([self mouseLocked] == lock)
+	{
+		NSString *lockSoundName	= (lock) ? @"LockClosing" : @"LockOpening";
+		[[NSApp delegate] playUISoundWithName: lockSoundName atVolume: 0.5f];
+	}
+}
+- (BOOL) mouseLocked { return [[self emulator] mouseLocked]; }
+
 - (BOOL) validateMenuItem: (NSMenuItem *)theItem
 {
 	BXEmulator *emulator = [self emulator];
 	
 	SEL theAction = [theItem action];
-	BOOL hideItem;
 	NSString *title;
 	
-	if (theAction == @selector(toggleFilterType:))
+	if (theAction == @selector(toggleMouseLocked:))
+	{
+		[theItem setState: [self mouseLocked]];
+		return ([emulator isExecuting]);
+	}
+	
+	else if (theAction == @selector(toggleFilterType:))
 	{
 		NSInteger itemState;
 		BXFilterType filterType	= [theItem tag];

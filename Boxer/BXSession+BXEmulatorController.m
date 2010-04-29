@@ -6,13 +6,13 @@
  */
 
 #import "BXSession+BXEmulatorController.h"
-#import "BXAppController.h"
 #import "BXEmulator+BXRendering.h"
 #import "BXEmulator+BXRecording.h"
 #import "BXEmulator+BXShell.h"
 #import "BXEmulator+BXInput.h"
 #import "BXValueTransformers.h"
 #import "BXVideoFormatAlert.h"
+#import "BXAppController.h"
 
 #import "BXSessionWindowController+BXRenderController.h"
 
@@ -72,7 +72,6 @@
 //Class methods affecting binding
 //-------------------------------
 
-+ (NSSet *) keyPathsForValuesAffectingMouseLocked			{ return [NSSet setWithObject: @"emulator.mouseLocked"]; }
 + (NSSet *) keyPathsForValuesAffectingSliderSpeed			{ return [NSSet setWithObjects: @"emulator.fixedSpeed", @"emulator.autoSpeed", nil]; }
 
 + (NSSet *) keyPathsForValuesAffectingSpeedDescription		{ return [NSSet setWithObject: @"sliderSpeed"]; }
@@ -191,7 +190,7 @@
 	//Defined in BXFileManager
 	if (theAction == @selector(openInDOS:))				return [[self emulator] isAtPrompt];
 
-	//if (theAction == @selector(paste:))	return [self canPaste];
+	if (theAction == @selector(paste:))	return [self canPaste];
 	
 	if (theAction == @selector(toggleRecordingVideo:))
 	{
@@ -273,27 +272,6 @@
 	else pastedString = [pboard stringForType: NSStringPboardType];
 	return [[self emulator] canAcceptPastedString: pastedString];
 }
-
-
-
-- (void) setMouseLocked: (BOOL) lock
-{
-	//Don't alter the mouselock state while the window is in fullscreen mode
-	if ([[self mainWindowController] isFullScreen]) return;
-	
-	[[self emulator] setMouseLocked: lock];
-
-	//BXRenderView *renderView = [[self mainWindowController] renderView]; 
-	//[renderView setCursorHidden: lock];
-	
-	if ([self mouseLocked] == lock)
-	{
-		NSString *lockSoundName	= (lock) ? @"LockClosing" : @"LockOpening";
-		[[NSApp delegate] playUISoundWithName: lockSoundName atVolume: 0.5f];
-	}
-}
-- (BOOL) mouseLocked { return [[self emulator] mouseLocked]; }
-
 
 
 //Wrapping CPU speed state

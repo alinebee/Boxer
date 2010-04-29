@@ -108,14 +108,6 @@ enum
 - (IBAction) paste: (id)sender;
 - (BOOL) canPaste;
 
-//Mouse-lock state wrapper
-//------------------------
-
-//Toggle whether the mouse is locked to the DOS window.
-//Locking and unlocking the mouse will be accompanied by a UI sound effect.
-- (void) setMouseLocked: (BOOL)lock;
-- (BOOL) mouseLocked;
-
 
 //Speed state wrapper
 //-------------------

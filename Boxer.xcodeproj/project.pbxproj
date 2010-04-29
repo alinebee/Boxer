@@ -221,6 +221,7 @@
 		9FBC3D600F56EA82001811F2 /* SDL.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C140F56D6E8001811F2 /* SDL.framework */; };
 		9FBC3D610F56EA82001811F2 /* SDL_net.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C150F56D6E8001811F2 /* SDL_net.framework */; };
 		9FBD321710E5144C00031CB6 /* Brand.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBD321610E5144C00031CB6 /* Brand.png */; };
+		9FBD5EDA1182F6C400F9E7FB /* Shaders in Resources */ = {isa = PBXBuildFile; fileRef = 9FBD5ED61182F6C400F9E7FB /* Shaders */; };
 		9FC3B2550F62D9CE006DE439 /* BXSession+BXEmulatorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC3B2540F62D9CE006DE439 /* BXSession+BXEmulatorController.m */; };
 		9FC8F50C10934F3400AD6307 /* NSString+BXPaths.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC8F50B10934F3400AD6307 /* NSString+BXPaths.m */; };
 		9FCBB2D010A61CA800C28B09 /* boxer.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CD10A61CA800C28B09 /* boxer.icns */; };
@@ -657,6 +658,7 @@
 		9FBC3C770F56E0D7001811F2 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = /System/Library/Frameworks/CoreMIDI.framework; sourceTree = "<absolute>"; };
 		9FBC3CB10F56E32C001811F2 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9FBD321610E5144C00031CB6 /* Brand.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Brand.png; sourceTree = "<group>"; };
+		9FBD5ED61182F6C400F9E7FB /* Shaders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Shaders; sourceTree = "<group>"; };
 		9FC3B2530F62D9CE006DE439 /* BXSession+BXEmulatorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXSession+BXEmulatorController.h"; sourceTree = "<group>"; };
 		9FC3B2540F62D9CE006DE439 /* BXSession+BXEmulatorController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXSession+BXEmulatorController.m"; sourceTree = "<group>"; };
 		9FC8F50A10934F3400AD6307 /* NSString+BXPaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+BXPaths.h"; sourceTree = "<group>"; };
@@ -684,7 +686,6 @@
 		9FE201C40F6D5B5F00B3A38C /* BXEmulator+BXRecording.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXEmulator+BXRecording.h"; sourceTree = "<group>"; };
 		9FE201C50F6D5B5F00B3A38C /* BXEmulator+BXRecording.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "BXEmulator+BXRecording.mm"; sourceTree = "<group>"; };
 		9FE202470F6D749500B3A38C /* Snapshot.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = Snapshot.aiff; sourceTree = "<group>"; };
-		9FE587E2110CBAA400875E90 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/GameInstaller.xib; sourceTree = "<group>"; };
 		9FE8265A10F0EBA000F1B03E /* 35DisketteShine.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 35DisketteShine.png; sourceTree = "<group>"; };
 		9FE8265B10F0EBA000F1B03E /* 35Diskette.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 35Diskette.png; sourceTree = "<group>"; };
 		9FF445DF10F13A2200B74B15 /* 525Diskette.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 525Diskette.png; sourceTree = "<group>"; };
@@ -801,6 +802,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				9FBD5ED61182F6C400F9E7FB /* Shaders */,
 				9F7936DC10F8C0CA00C9178C /* dsa_pub.pem */,
 				9FBC31E40F56C399001811F2 /* UserDefaults.plist */,
 				9FCBB2DB10A61E9300C28B09 /* Launch.conf */,
@@ -992,7 +994,6 @@
 		9F496E4C108EEDF700282261 /* XIBs */ = {
 			isa = PBXGroup;
 			children = (
-				9FE587E1110CBAA400875E90 /* GameInstaller.xib */,
 				9F9A4CA410F67DD800E61965 /* Preferences.xib */,
 				9F59DEDD10B01743008DBBC1 /* ProgramPanel.xib */,
 				9F45A46A109C9A0400593456 /* MountPanelOptions.xib */,
@@ -1624,6 +1625,7 @@
 				9F7936DD10F8C0CA00C9178C /* dsa_pub.pem in Resources */,
 				9F42D9D9117233C200AC6F1F /* PanelCollapseTemplate.png in Resources */,
 				9F42D9DA117233C200AC6F1F /* PanelExpandTemplate.png in Resources */,
+				9FBD5EDA1182F6C400F9E7FB /* Shaders in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1929,15 +1931,6 @@
 			name = "Original DOSBox Documentation";
 			sourceTree = "<group>";
 		};
-		9FE587E1110CBAA400875E90 /* GameInstaller.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				9FE587E2110CBAA400875E90 /* English */,
-			);
-			name = GameInstaller.xib;
-			path = ..;
-			sourceTree = "<group>";
-		};
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
@@ -1946,7 +1939,7 @@
 			buildSettings = {
 				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
 				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 20100416.1;
+				CURRENT_PROJECT_VERSION = 20100417.1;
 				GCC_VERSION = 4.0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
@@ -1967,28 +1960,14 @@
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/Frameworks\"",
-					"\"$(SRCROOT)/../../BGHUDAppKit/build/Release\"",
 				);
-				GCC_MODEL_TUNING = G4;
+				GCC_MODEL_TUNING = G5;
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
-					"\"$(SRCROOT)/boxer\"",
-					"\"$(SRCROOT)/libs\"",
-					"\"$(SRCROOT)/src/boxer\"",
-					"\"$(SRCROOT)/src/cpu\"",
-					"\"$(SRCROOT)/src/debug\"",
-					"\"$(SRCROOT)/src/dos\"",
-					"\"$(SRCROOT)/src/fpu\"",
-					"\"$(SRCROOT)/src/gui\"",
-					"\"$(SRCROOT)/src/hardware\"",
-					"\"$(SRCROOT)/src/hardware/serialport\"",
-					"\"$(SRCROOT)/src/ints\"",
-					"\"$(SRCROOT)/src/misc\"",
-					"\"$(SRCROOT)/src/shell\"",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
@@ -2007,7 +1986,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/Frameworks\"",
-					"\"$(SRCROOT)/../../BGHUDAppKit/build/Release\"",
 				);
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -2017,19 +1995,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
-					"\"$(SRCROOT)/boxer\"",
-					"\"$(SRCROOT)/libs\"",
-					"\"$(SRCROOT)/src/boxer\"",
-					"\"$(SRCROOT)/src/cpu\"",
-					"\"$(SRCROOT)/src/debug\"",
-					"\"$(SRCROOT)/src/dos\"",
-					"\"$(SRCROOT)/src/fpu\"",
-					"\"$(SRCROOT)/src/gui\"",
-					"\"$(SRCROOT)/src/hardware\"",
-					"\"$(SRCROOT)/src/hardware/serialport\"",
-					"\"$(SRCROOT)/src/ints\"",
-					"\"$(SRCROOT)/src/misc\"",
-					"\"$(SRCROOT)/src/shell\"",
 				);
 				OTHER_CFLAGS = "-mstackrealign";
 				PRODUCT_NAME = Boxer;
@@ -2046,28 +2011,14 @@
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/Frameworks\"",
-					"\"$(SRCROOT)/../../BGHUDAppKit/build/Release\"",
 				);
-				GCC_MODEL_TUNING = G4;
+				GCC_MODEL_TUNING = G5;
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
-					"\"$(SRCROOT)/boxer\"",
-					"\"$(SRCROOT)/libs\"",
-					"\"$(SRCROOT)/src/boxer\"",
-					"\"$(SRCROOT)/src/cpu\"",
-					"\"$(SRCROOT)/src/debug\"",
-					"\"$(SRCROOT)/src/dos\"",
-					"\"$(SRCROOT)/src/fpu\"",
-					"\"$(SRCROOT)/src/gui\"",
-					"\"$(SRCROOT)/src/hardware\"",
-					"\"$(SRCROOT)/src/hardware/serialport\"",
-					"\"$(SRCROOT)/src/ints\"",
-					"\"$(SRCROOT)/src/misc\"",
-					"\"$(SRCROOT)/src/shell\"",
 				);
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "";
@@ -2082,7 +2033,7 @@
 			buildSettings = {
 				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
 				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 20100416.1;
+				CURRENT_PROJECT_VERSION = 20100417.1;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_VERSION = 4.0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -2100,7 +2051,7 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
 				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
 				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 20100416.1;
+				CURRENT_PROJECT_VERSION = 20100417.1;
 				GCC_VERSION = 4.0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;

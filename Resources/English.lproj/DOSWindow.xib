@@ -3,16 +3,16 @@
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
 		<string key="IBDocument.SystemVersion">10D573</string>
-		<string key="IBDocument.InterfaceBuilderVersion">740</string>
+		<string key="IBDocument.InterfaceBuilderVersion">762</string>
 		<string key="IBDocument.AppKitVersion">1038.29</string>
 		<string key="IBDocument.HIToolboxVersion">460.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">740</string>
+			<string key="NS.object.0">762</string>
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="924"/>
+			<integer value="3"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -60,7 +60,7 @@
 								<object class="NSTextField" id="912332772">
 									<reference key="NSNextResponder" ref="773857734"/>
 									<int key="NSvFlags">269</int>
-									<string key="NSFrame">{{201, 6}, {237, 14}}</string>
+									<string key="NSFrame">{{120, 6}, {400, 14}}</string>
 									<reference key="NSSuperview" ref="773857734"/>
 									<int key="NSViewLayerContentsRedrawPolicy">2</int>
 									<int key="NSTag">2</int>
@@ -68,7 +68,7 @@
 									<object class="NSTextFieldCell" key="NSCell" id="386940528">
 										<int key="NSCellFlags">68288064</int>
 										<int key="NSCellFlags2">138544128</int>
-										<string key="NSContents">Press Cmd-L to release the mouse.</string>
+										<string key="NSContents">Cmd-click to release the mouse.</string>
 										<object class="NSFont" key="NSSupport" id="26">
 											<string key="NSName">LucidaGrande</string>
 											<double key="NSSize">11</double>
@@ -217,6 +217,7 @@
 					<string>bindableDisplayName</string>
 					<string>emulator.mouseLocked</string>
 					<string>isMouseLocked</string>
+					<string>mainWindowController.mouseLocked</string>
 				</object>
 				<string key="NSObjectClassName">BXSession</string>
 				<object class="_NSManagedProxy" key="_NSManagedProxy"/>
@@ -257,26 +258,6 @@
 						</object>
 					</object>
 					<int key="connectionID">743</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">hidden: selection.emulator.mouseLocked</string>
-						<reference key="source" ref="912332772"/>
-						<reference key="destination" ref="968073238"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="912332772"/>
-							<reference key="NSDestination" ref="968073238"/>
-							<string key="NSLabel">hidden: selection.emulator.mouseLocked</string>
-							<string key="NSBinding">hidden</string>
-							<string key="NSKeyPath">selection.emulator.mouseLocked</string>
-							<object class="NSDictionary" key="NSOptions">
-								<string key="NS.key.0">NSValueTransformerName</string>
-								<string key="NS.object.0">NSNegateBoolean</string>
-							</object>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">916</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -341,6 +322,30 @@
 						<reference key="destination" ref="533401407"/>
 					</object>
 					<int key="connectionID">930</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">notificationMessage</string>
+						<reference key="source" ref="819309219"/>
+						<reference key="destination" ref="912332772"/>
+					</object>
+					<int key="connectionID">947</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: notificationText</string>
+						<reference key="source" ref="912332772"/>
+						<reference key="destination" ref="819309219"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="912332772"/>
+							<reference key="NSDestination" ref="819309219"/>
+							<string key="NSLabel">value: notificationText</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">notificationText</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">949</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -500,9 +505,9 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{38, 112}, {640, 504}}</string>
+					<string>{{111, 136}, {640, 504}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{38, 112}, {640, 504}}</string>
+					<string>{{111, 136}, {640, 504}}</string>
 					<integer value="0"/>
 					<string>{196, 240}</string>
 					<string>{{357, 418}, {480, 270}}</string>
@@ -542,7 +547,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">930</int>
+			<int key="maxID">949</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -581,12 +586,14 @@
 							<string>toggleFilterType:</string>
 							<string>toggleFullScreen:</string>
 							<string>toggleFullScreenWithZoom:</string>
+							<string>toggleMouseLocked:</string>
 							<string>toggleProgramPanelShown:</string>
 							<string>toggleStatusBarShown:</string>
 							<string>windowShouldCloseAfterProgramCompletion:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -626,8 +633,17 @@
 						<string key="NS.object.0">id</string>
 					</object>
 					<object class="NSMutableDictionary" key="outlets">
-						<string key="NS.key.0">statusBarControls</string>
-						<string key="NS.object.0">NSSegmentedControl</string>
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>notificationMessage</string>
+							<string>statusBarControls</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSTextField</string>
+							<string>NSSegmentedControl</string>
+						</object>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
@@ -1271,6 +1287,7 @@
 			</object>
 		</object>
 		<int key="IBDocument.localizationMode">0</int>
+		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaFramework</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDependencies">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.macosx</string>
 			<integer value="1050" key="NS.object.0"/>
@@ -1286,5 +1303,20 @@
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>
 		<string key="IBDocument.LastKnownRelativeProjectPath">../../Boxer.xcodeproj</string>
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
+		<object class="NSMutableDictionary" key="IBDocument.LastKnownImageSizes">
+			<bool key="EncodedWithXMLCoder">YES</bool>
+			<object class="NSArray" key="dict.sortedKeys">
+				<bool key="EncodedWithXMLCoder">YES</bool>
+				<string>NSLockUnlockedTemplate</string>
+				<string>NSRevealFreestandingTemplate</string>
+				<string>PanelExpandTemplate</string>
+			</object>
+			<object class="NSMutableArray" key="dict.values">
+				<bool key="EncodedWithXMLCoder">YES</bool>
+				<string>{9, 12}</string>
+				<string>{14, 14}</string>
+				<string>{13, 12}</string>
+			</object>
+		</object>
 	</data>
 </archive>

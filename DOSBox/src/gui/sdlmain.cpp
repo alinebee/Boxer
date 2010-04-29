@@ -1323,6 +1323,10 @@ static void HandleMouseMotion(SDL_MouseMotionEvent * motion) {
 }
 
 static void HandleMouseButton(SDL_MouseButtonEvent * button) {
+	return boxer_handleMouseButton(button);
+
+	//--Disabled 2010-04-29 by Alun Bestor: this is now handled by BXInput
+	/*
 	switch (button->state) {
 	case SDL_PRESSED:
 		if (sdl.mouse.requestlock && !sdl.mouse.locked) {
@@ -1360,6 +1364,8 @@ static void HandleMouseButton(SDL_MouseButtonEvent * button) {
 		}
 		break;
 	}
+	 */
+	//--End of modifications
 }
 
 void GFX_LosingFocus(void) {

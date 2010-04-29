@@ -44,7 +44,6 @@
 
 - (void) updateTrackingAreas
 {
-	/*
 	for (NSTrackingArea *area in [self trackingAreas]) [self removeTrackingArea: area];
 	
 	NSTrackingAreaOptions options = NSTrackingMouseEnteredAndExited | NSTrackingMouseMoved | NSTrackingCursorUpdate | 
@@ -58,12 +57,13 @@ NSTrackingActiveInKeyWindow | NSTrackingInVisibleRect;
 	[trackingArea release];
 	
 	if ([self containsMouse]) [self cursorUpdate: nil];
-	*/
+
 	[super updateTrackingAreas];
 }
 
 - (void) cursorUpdate: (NSEvent *)event
 {
+	/*
 	//Implementation note: rather than use [NSCursor show/hide] to toggle the cursor, it's more robust to specify
 	//that the view use a completely blank cursor (with the same dimensions as the regular arrow cursor),
 	//then let Cocoa's cursorUpdate: behaviour do the work for us.
@@ -76,11 +76,21 @@ NSTrackingActiveInKeyWindow | NSTrackingInVisibleRect;
 		[blankImage release];
 	}
 	if ([self isCursorHidden]) [blankCursor set];
+	 */
 }
 
 - (void) mouseExited: (NSEvent *)theEvent
 {
+	[self willChangeValueForKey: @"containsMouse"];
 	[super mouseExited: theEvent];
+	[self didChangeValueForKey: @"containsMouse"];
+}
+
+- (void) mouseEntered: (NSEvent *)theEvent
+{
+	[self willChangeValueForKey: @"containsMouse"];
+	[super mouseEntered: theEvent];
+	[self didChangeValueForKey: @"containsMouse"];
 }
 
 - (void) drawBackgroundInRect: (NSRect)dirtyRect

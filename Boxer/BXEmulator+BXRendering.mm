@@ -134,18 +134,7 @@
 		[self willChangeValueForKey: @"filterType"];
 		
 		filterType = type;
-		
-		//If the view is too small to apply the filter choice,
-		//then try to resize it to an appropriate size
-		if ([self _shouldApplyFilterType: type toScale: [self scale]])
-		{
-			[self resetRenderer];	
-		}
-		else
-		{
-			NSSize minSize = [self minRenderedSizeForFilterType: filterType];
-			[[[self delegate] mainWindowController] resizeToAtLeastSize: minSize];
-		}
+		[self resetRenderer];
 		
 		[self didChangeValueForKey: @"filterType"];
 	}
@@ -174,8 +163,8 @@
 {
 	BXFilterDefinition params	= [self _paramsForFilterType: type];
 	NSSize scaledResolution		= [self scaledResolution];
-	NSSize	minRenderedSize		= NSMakeSize(scaledResolution.width * params.minFilterSize,
-											 scaledResolution.height * params.minFilterSize
+	NSSize	minRenderedSize		= NSMakeSize(scaledResolution.width * params.minFilterScale,
+											 scaledResolution.height * params.minFilterScale
 											 );
 	return minRenderedSize;
 }
@@ -276,39 +265,28 @@
 	//Work out how much we will need to scale the resolution to fit the viewport
 	NSSize resolution	= [self resolution];
 	NSSize viewportSize	= [[self renderer] viewport].size;
-	NSSize scale		= NSMakeSize(viewportSize.width		/ resolution.width,
-									 viewportSize.height	/ resolution.height);
 		
 	BOOL useAspectCorrection	= [self _shouldUseAspectCorrectionForResolution: resolution];	
-	NSInteger maxFilterScale	= [self _maxFilterSizeForResolution: resolution];
+	NSInteger maxFilterScale	= [self _maxFilterScaleForResolution: resolution];
 	
-	BXFilterType activeType		= [self filterType];
+	BXFilterType activeType		= [self filterType];	
 	NSInteger filterScale;
 	
-	if (maxFilterScale <= 1)
-	{
-		filterScale = 1;
-		activeType = BXFilterNormal;
-	}
-	else
-	{
-		//Decide if we can use our selected scaler at this scale,
-		//reverting to the normal filter if we can't
-		if (![self _shouldApplyFilterType: activeType toScale: scale]) activeType = BXFilterNormal;
-		
-		//Now decide on what operation size this scaler should use
-		//Cheap hack: cut off the normal filter above a certain size
-		//to let hardware scaling do the work instead
-		if (activeType == BXFilterNormal && scale.height > 3)
-		{
-			filterScale = 1;
-		}
-		else
-		{
-			filterScale = [self _sizeForFilterType: activeType atScale: scale];
-			filterScale = fmin(filterScale, maxFilterScale);			
-		}
-	}
+	//Decide if we can use our selected scaler at this scale,
+	//reverting to the normal filter if we can't
+	if (![self _shouldApplyFilterType: activeType
+					   fromResolution: resolution
+						   toViewport: viewportSize]) activeType = BXFilterNormal;
+	
+	
+	//Now decide on what operation size the scaler should use
+	filterScale = [self _filterScaleForType: activeType
+							 fromResolution: resolution
+								 toViewport: viewportSize];
+	
+	//Make sure we don't go over the maximum size imposed by the OpenGL hardware
+	filterScale = fmin(filterScale, maxFilterScale);
+	
 	
 	//Finally, apply the values to DOSBox
 	render.aspect		= useAspectCorrection;
@@ -328,38 +306,64 @@
 	return useAspectCorrection;
 }
 
-//Return the appropriate filter size for the given scale. This is usually the scale rounded up, to ensure we're always rendering larger than we need so that the graphics are crisper when scaled down. However we finesse this for some filters that look like shit when scaled down too much.
-//We base this on height rather than width, so that we'll use the larger filter size for aspect-ratio corrected surfaces.
-- (NSInteger) _sizeForFilterType: (BXFilterType) type atScale: (NSSize)scale
+//Return the appropriate filter size we should use to scale the given resolution up to the given viewport.
+//This is usually the viewport height divided by the resolution height and rounded up, to ensure
+//we're always rendering larger than we need so that the graphics are crisper when scaled down.
+//However we finesse this for some filters that look like shit when scaled down too much.
+//(We base this on height rather than width, so that we'll use the larger filter size for aspect-ratio corrected surfaces.)
+- (NSInteger) _filterScaleForType: (BXFilterType)type
+				   fromResolution: (NSSize)resolution
+					   toViewport: (NSSize)viewportSize
 {
 	BXFilterDefinition params = [self _paramsForFilterType: type];
 	
-	NSInteger filterSize = ceil(scale.height - params.surfaceScaleBias);
-	if (filterSize < params.minFilterSize)	filterSize = params.minFilterSize;
-	if (filterSize > params.maxFilterSize)	filterSize = params.maxFilterSize;
+	NSSize scale = NSMakeSize(viewportSize.width / resolution.width,
+							  viewportSize.height / resolution.height);
 	
-	return filterSize;
+	NSInteger filterScale = ceil(scale.height - params.outputScaleBias);
+	if (filterScale < params.minFilterScale) filterScale = params.minFilterScale;
+	if (filterScale > params.maxFilterScale)
+	{
+		//Kludgy special-case for the normal filter: turn off the filter altogether
+		//if we're scaling above its maximum output scale
+		if (params.maxOutputScale and filterScale > params.maxOutputScale) filterScale = 1;
+		else filterScale = params.maxFilterScale;
+	}
+	
+	return filterScale;
 }
 
-- (NSInteger) _maxFilterSizeForResolution: (NSSize)resolution
+//Returns whether our selected filter should be applied for the specified transformation.
+- (BOOL) _shouldApplyFilterType: (BXFilterType)type
+				 fromResolution: (NSSize)resolution
+					 toViewport: (NSSize)viewportSize
 {
+	//Disable all scalers for high-resolution games
+	if (resolution.height > BXScalingResolutionCutoff) return NO;
 	
-	//For performance reasons, disable filters entirely for higher resolutions
-	if (resolution.height >= BXScalingResolutionCutoff) return 1;
+	NSSize scale = NSMakeSize(viewportSize.width / resolution.width,
+							  viewportSize.height / resolution.height);
+
+	BXFilterDefinition params = [self _paramsForFilterType: type];
 	
+	//Scale is too small for filter to be applied
+	if (scale.height < params.minOutputScale) return NO;
+	
+	//Scale is too large for filter to be worth applying
+	if (params.maxOutputScale && scale.height > params.maxOutputScale) return NO;
+
+	//If we got this far, go for it!
+	return YES;
+}
+
+
+- (NSInteger) _maxFilterScaleForResolution: (NSSize)resolution
+{
 	NSSize maxOutputSize	= [[self renderer] maxOutputSize];
-	//Work out how big a filter operation size we can use given the maximum render size
-	NSInteger maxFilterSize	= floor(fmin(maxOutputSize.width / resolution.width, maxOutputSize.height / resolution.height));
+	//Work out how big a filter operation size we can use, given the maximum output size
+	NSInteger maxScale		= floor(fmin(maxOutputSize.width / resolution.width, maxOutputSize.height / resolution.height));
 
-	return maxFilterSize;
-}
-
-
-//Returns whether our selected filter should be applied to the specified scale.
-- (BOOL) _shouldApplyFilterType: (BXFilterType) type toScale: (NSSize)scale
-{
-	BXFilterDefinition params = [self _paramsForFilterType: type];
-	return (scale.height >= params.minSurfaceScale);
+	return maxScale;
 }
 @end
 

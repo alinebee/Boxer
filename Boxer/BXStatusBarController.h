@@ -30,9 +30,13 @@ enum {
 //Processes the selection/deselection of segments in the segmented button
 - (IBAction) performSegmentedButtonAction: (id) sender;
 
-//Synchronises the selection state of segments in the segmented button
-- (void) syncSegmentedButtonStates;
-
 //The text that will appear as the statusbar notification message
 - (NSString *) notificationText;
+
+//Selectively hides statusbar items when the window is too small to display them without overlaps 
+- (void) _preventOverlappingStatusItems;
+
+//Synchronises the selection state of segments in the segmented button
+- (void) _syncSegmentedButtonStates;
+
 @end

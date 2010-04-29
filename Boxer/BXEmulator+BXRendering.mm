@@ -269,20 +269,30 @@
 	BOOL useAspectCorrection	= [self _shouldUseAspectCorrectionForResolution: resolution];	
 	NSInteger maxFilterScale	= [self _maxFilterScaleForResolution: resolution];
 	
-	BXFilterType activeType		= [self filterType];	
-	NSInteger filterScale;
+	//Start off with a passthrough filter as the default
+	BXFilterType activeType		= BXFilterNormal;
+	NSInteger filterScale		= 1;
 	
-	//Decide if we can use our selected scaler at this scale,
-	//reverting to the normal filter if we can't
-	if (![self _shouldApplyFilterType: activeType
-					   fromResolution: resolution
-						   toViewport: viewportSize]) activeType = BXFilterNormal;
+	BXFilterType desiredType	= [self filterType];
 	
-	
-	//Now decide on what operation size the scaler should use
-	filterScale = [self _filterScaleForType: activeType
-							 fromResolution: resolution
-								 toViewport: viewportSize];
+	//Decide if we can use our selected filter at this scale, and if so at what scale
+	if (desiredType != BXFilterNormal && [self _shouldApplyFilterType: desiredType fromResolution: resolution toViewport: viewportSize])
+	{
+		activeType = desiredType;
+		//Now decide on what operation size the scaler should use
+		filterScale = [self _filterScaleForType: activeType
+								 fromResolution: resolution
+									 toViewport: viewportSize];
+	}
+	else if ([self _shouldApplyFilterType: BXFilterNormal fromResolution: resolution toViewport: viewportSize])
+	{
+		//If a more advanced filter is inappropriate, we fall back to the normal filter at an appropriate scale.
+		//(However, if the normal filter shouldn't be used either, then we apply 1x scaling - i.e. no filtering at all.)
+		filterScale = [self _filterScaleForType: BXFilterNormal
+								 fromResolution: resolution
+									 toViewport: viewportSize];
+	}
+
 	
 	//Make sure we don't go over the maximum size imposed by the OpenGL hardware
 	filterScale = fmin(filterScale, maxFilterScale);
@@ -322,13 +332,7 @@
 	
 	NSInteger filterScale = ceil(scale.height - params.outputScaleBias);
 	if (filterScale < params.minFilterScale) filterScale = params.minFilterScale;
-	if (filterScale > params.maxFilterScale)
-	{
-		//Kludgy special-case for the normal filter: turn off the filter altogether
-		//if we're scaling above its maximum output scale
-		if (params.maxOutputScale and filterScale > params.maxOutputScale) filterScale = 1;
-		else filterScale = params.maxFilterScale;
-	}
+	if (filterScale > params.maxFilterScale) filterScale = params.maxFilterScale;
 	
 	return filterScale;
 }
@@ -338,13 +342,13 @@
 				 fromResolution: (NSSize)resolution
 					 toViewport: (NSSize)viewportSize
 {
-	//Disable all scalers for high-resolution games
-	if (resolution.height > BXScalingResolutionCutoff) return NO;
+	BXFilterDefinition params = [self _paramsForFilterType: type];
+
+	//Disable scalers for high-resolution games
+	if (!sizeFitsWithinSize(resolution, params.maxResolution)) return NO;
 	
 	NSSize scale = NSMakeSize(viewportSize.width / resolution.width,
 							  viewportSize.height / resolution.height);
-
-	BXFilterDefinition params = [self _paramsForFilterType: type];
 	
 	//Scale is too small for filter to be applied
 	if (scale.height < params.minOutputScale) return NO;

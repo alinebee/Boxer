@@ -16,10 +16,6 @@
 //Used by _shouldUseFiltering
 static const CGFloat BXBilinearFilteringScaleCutoff = 2;
 
-//Don't apply scaler effects for resolutions 400 pixels high or larger
-//Used by BXRendering _maxFilterSizeForResolution
-static const CGFloat BXScalingResolutionCutoff = 400.0;
-
 
 @interface BXRenderer : NSObject
 {

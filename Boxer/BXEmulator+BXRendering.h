@@ -39,6 +39,10 @@ typedef struct {
 	//or 0 to apply to all scales above minSurfaceScale.
 	CGFloat			maxOutputScale;
 	
+	//The maximum game resolution at which this filter should be applied,
+	//or NSZeroSize to apply to all resolutions.
+	NSSize			maxResolution;
+	
 	//Normally, the filter size is always equal to the surface scale rounded up: so e.g. a surface that's 2.1 scale will get a 3x scaler.
 	//surfaceScaleBias tweaks the point at which rounding up occurs: a bias of 0.5 will mean that 2.1-2.4 get rounded down to 2x while 2.5-2.9 get rounded up to 3x, whereas a bias of 1.0 means that the scale will always get rounded down. 0.0 gives the normal result.
 	//Tweaking this is needed for filters that get really muddy if they're scaled down a lot, like the TV scanlines.

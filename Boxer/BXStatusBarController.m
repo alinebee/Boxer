@@ -47,6 +47,11 @@
 					   forKeyPath: @"mouseLocked"
 						  options: NSKeyValueObservingOptionInitial
 						  context: nil];
+	
+	[[NSNotificationCenter defaultCenter] addObserver: self
+											 selector: @selector(_preventOverlappingStatusItems)
+												 name: @"NSViewFrameDidChangeNotification"
+											   object: [self view]];
 }
 
 - (IBAction) performSegmentedButtonAction: (id)sender
@@ -71,19 +76,50 @@
 		[controller setMouseLocked: !mouseLocked];		
 	}
 	
-	[self syncSegmentedButtonStates];
+	[self _syncSegmentedButtonStates];
 }
 
-- (void) syncSegmentedButtonStates
+
+//Whenever the represented icon changes, force a redraw of our icon view
+- (void) observeValueForKeyPath: (NSString *)keyPath
+					   ofObject: (id)object
+						 change: (NSDictionary *)change
+						context: (void *)context
+{
+	[self _syncSegmentedButtonStates];
+}
+
++ (NSSet *) keyPathsForValuesAffectingNotificationText
+{
+	return [NSSet setWithObjects: @"windowController.mouseLocked", @"windowController.renderView.containsMouse", nil];
+}
+
+- (NSString *) notificationText
 {
 	BXSessionWindowController *controller = [self windowController];
+	if ([controller mouseLocked])					return NSLocalizedString(@"Cmd-click to release the mouse.",
+																			 @"Statusbar message when mouse is locked");
+	if ([[controller renderView] containsMouse])	return NSLocalizedString(@"Cmd-click to lock the mouse to the window.",
+																			 @"Statusbar message when mouse is unlocked and over DOS viewport");
+	return @"";
+}
 
+- (void) _preventOverlappingStatusItems
+{
+	//Hide the notification text if it overlaps the button
+	[notificationMessage setHidden: NSIntersectsRect([notificationMessage frame], [statusBarControls frame])];
+}
+
+- (void) _syncSegmentedButtonStates
+{
+	BXSessionWindowController *controller = [self windowController];
+	
 	[statusBarControls setSelected: [[NSApp delegate] inspectorPanelShown]	forSegment: BXStatusBarInspectorSegment];
 	[statusBarControls setSelected: [controller programPanelShown]			forSegment: BXStatusBarProgramPanelSegment];
 	[statusBarControls setSelected: [controller mouseLocked]				forSegment: BXStatusBarMouseLockSegment];
 	
 	[statusBarControls setEnabled:	[[controller document] isGamePackage]	forSegment: BXStatusBarProgramPanelSegment];
-
+	
 	NSString *panelButtonImage;
 	if ([statusBarControls isSelectedForSegment: BXStatusBarProgramPanelSegment])
 			panelButtonImage = @"PanelCollapseTemplate.png";
@@ -95,30 +131,5 @@
 			lockButtonImage = @"NSLockLockedTemplate";
 	else	lockButtonImage = @"NSLockUnlockedTemplate";
 	[statusBarControls setImage: [NSImage imageNamed: lockButtonImage] forSegment: BXStatusBarMouseLockSegment];
-}
-
-
-//Whenever the represented icon changes, force a redraw of our icon view
-- (void) observeValueForKeyPath: (NSString *)keyPath
-					   ofObject: (id)object
-						 change: (NSDictionary *)change
-						context: (void *)context
-{
-	[self syncSegmentedButtonStates];
-}
-
-+ (NSSet *) keyPathsForValuesAffectingNotificationText
-{
-	return [NSSet setWithObjects: @"windowController.mouseLocked", @"windowController.renderView.containsMouse"];
-}
-
-- (NSString *) notificationText
-{
-	BXSessionWindowController *controller = [self windowController];
-	if ([controller mouseLocked])					return NSLocalizedString(@"Cmd-click to release the mouse.",
-																			 @"Statusbar message when mouse is locked");
-	if ([[controller renderView] containsMouse])	return NSLocalizedString(@"Cmd-click to lock the mouse to the window.",
-																			 @"Statusbar message when mouse is unlocked and over DOS viewport");
-	return @"";
 }
 @end

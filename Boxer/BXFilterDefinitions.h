@@ -19,6 +19,7 @@ BXFilterDefinition BXFilterNormalParams = {
 	BXFilterNormal,
 	0.0,
 	3.0,
+	NSMakeSize(400, 300),
 	0.0,
 	1,
 	2
@@ -28,6 +29,7 @@ BXFilterDefinition BXFilterHQxParams = {
 	BXFilterHQx,
 	1.1,
 	0.0,
+	NSMakeSize(320, 240),
 	0.0,
 	2,
 	3
@@ -37,6 +39,7 @@ BXFilterDefinition BXFilterMAMEParams = {
 	BXFilterMAME,
 	2,
 	0.0,
+	NSMakeSize(320, 240),
 	0.0,
 	2,
 	3
@@ -46,6 +49,7 @@ BXFilterDefinition BXFilterTVScanlinesParams = {
 	BXFilterTVScanlines,
 	2,
 	0.0,
+	NSMakeSize(400, 300),
 	0.75,
 	2,
 	3
@@ -55,6 +59,7 @@ BXFilterDefinition BXFilterRGBParams = {
 	BXFilterRGB,
 	2,
 	0.0,
+	NSMakeSize(400, 300),
 	0.25,
 	2,
 	3
@@ -68,6 +73,7 @@ BXFilterDefinition BXFilterSaIParams = {
 	BXFilterSaI,
 	2,
 	0.0,
+	NSMakeSize(320, 240),
 	0.0,
 	2,
 	2

@@ -12,7 +12,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="3"/>
+			<integer value="924"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -60,7 +60,7 @@
 								<object class="NSTextField" id="912332772">
 									<reference key="NSNextResponder" ref="773857734"/>
 									<int key="NSvFlags">269</int>
-									<string key="NSFrame">{{120, 6}, {400, 14}}</string>
+									<string key="NSFrame">{{185, 6}, {270, 14}}</string>
 									<reference key="NSSuperview" ref="773857734"/>
 									<int key="NSViewLayerContentsRedrawPolicy">2</int>
 									<int key="NSTag">2</int>
@@ -68,7 +68,7 @@
 									<object class="NSTextFieldCell" key="NSCell" id="386940528">
 										<int key="NSCellFlags">68288064</int>
 										<int key="NSCellFlags2">138544128</int>
-										<string key="NSContents">Cmd-click to release the mouse.</string>
+										<string key="NSContents">Cmd-click to lock the mouse to the window.</string>
 										<object class="NSFont" key="NSSupport" id="26">
 											<string key="NSName">LucidaGrande</string>
 											<double key="NSSize">11</double>
@@ -505,9 +505,9 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{111, 136}, {640, 504}}</string>
+					<string>{{38, 136}, {640, 504}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{111, 136}, {640, 504}}</string>
+					<string>{{38, 136}, {640, 504}}</string>
 					<integer value="0"/>
 					<string>{196, 240}</string>
 					<string>{{357, 418}, {480, 270}}</string>

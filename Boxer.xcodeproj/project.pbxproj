@@ -1940,7 +1940,7 @@
 			buildSettings = {
 				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
 				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 20100121.1;
+				CURRENT_PROJECT_VERSION = 20100430.1;
 				GCC_VERSION = 4.0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
@@ -1961,7 +1961,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/Frameworks\"",
-					"\"$(SRCROOT)/../../BGHUDAppKit/build/Release\"",
 				);
 				GCC_MODEL_TUNING = G4;
 				GCC_WARN_UNUSED_VARIABLE = NO;
@@ -1970,19 +1969,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
-					"\"$(SRCROOT)/boxer\"",
-					"\"$(SRCROOT)/libs\"",
-					"\"$(SRCROOT)/src/boxer\"",
-					"\"$(SRCROOT)/src/cpu\"",
-					"\"$(SRCROOT)/src/debug\"",
-					"\"$(SRCROOT)/src/dos\"",
-					"\"$(SRCROOT)/src/fpu\"",
-					"\"$(SRCROOT)/src/gui\"",
-					"\"$(SRCROOT)/src/hardware\"",
-					"\"$(SRCROOT)/src/hardware/serialport\"",
-					"\"$(SRCROOT)/src/ints\"",
-					"\"$(SRCROOT)/src/misc\"",
-					"\"$(SRCROOT)/src/shell\"",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
@@ -2001,7 +1987,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/Frameworks\"",
-					"\"$(SRCROOT)/../../BGHUDAppKit/build/Release\"",
 				);
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -2011,19 +1996,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
-					"\"$(SRCROOT)/boxer\"",
-					"\"$(SRCROOT)/libs\"",
-					"\"$(SRCROOT)/src/boxer\"",
-					"\"$(SRCROOT)/src/cpu\"",
-					"\"$(SRCROOT)/src/debug\"",
-					"\"$(SRCROOT)/src/dos\"",
-					"\"$(SRCROOT)/src/fpu\"",
-					"\"$(SRCROOT)/src/gui\"",
-					"\"$(SRCROOT)/src/hardware\"",
-					"\"$(SRCROOT)/src/hardware/serialport\"",
-					"\"$(SRCROOT)/src/ints\"",
-					"\"$(SRCROOT)/src/misc\"",
-					"\"$(SRCROOT)/src/shell\"",
 				);
 				OTHER_CFLAGS = "-mstackrealign";
 				PRODUCT_NAME = Boxer;
@@ -2040,7 +2012,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/Frameworks\"",
-					"\"$(SRCROOT)/../../BGHUDAppKit/build/Release\"",
 				);
 				GCC_MODEL_TUNING = G4;
 				GCC_WARN_UNUSED_VARIABLE = NO;
@@ -2049,19 +2020,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
-					"\"$(SRCROOT)/boxer\"",
-					"\"$(SRCROOT)/libs\"",
-					"\"$(SRCROOT)/src/boxer\"",
-					"\"$(SRCROOT)/src/cpu\"",
-					"\"$(SRCROOT)/src/debug\"",
-					"\"$(SRCROOT)/src/dos\"",
-					"\"$(SRCROOT)/src/fpu\"",
-					"\"$(SRCROOT)/src/gui\"",
-					"\"$(SRCROOT)/src/hardware\"",
-					"\"$(SRCROOT)/src/hardware/serialport\"",
-					"\"$(SRCROOT)/src/ints\"",
-					"\"$(SRCROOT)/src/misc\"",
-					"\"$(SRCROOT)/src/shell\"",
 				);
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "";
@@ -2076,7 +2034,7 @@
 			buildSettings = {
 				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
 				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 20091219.1;
+				CURRENT_PROJECT_VERSION = 20100430.1;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_VERSION = 4.0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -2094,7 +2052,7 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
 				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
 				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 20100121.1;
+				CURRENT_PROJECT_VERSION = 20100430.1;
 				GCC_VERSION = 4.0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;

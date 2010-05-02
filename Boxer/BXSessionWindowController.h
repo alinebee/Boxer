@@ -10,9 +10,9 @@
 //It is responsible for handling drag-drop and window close events, synchronising the window title
 //with the document, and initialising the window to a suitable state for the current session.
 
-//The base controller class currently has no overt custom functionality itself, instead overriding
-//the standard behaviour of NSWindowController in various ways. Custom methods and actions
-//are provided by the more exciting BXRenderController category instead.
+//BXSessionWindowController has the following categories:
+//BXRenderController manages rendering-specific tasks such as window resizing and fullscreening;
+//BXInputController manages event handling, window activation and other input-specific tasks.
 
 
 #import <Cocoa/Cocoa.h>
@@ -54,21 +54,17 @@
 - (BXEmulator *) emulator;		//Shortcut accessor for the current session's emulator.
 
 
-//Input-related interface actions
-//-------------------------------
+//Drag-and-drop
+//-------------
 
 //The session window responds to dropped files and folders, mounting them as new DOS drives and/or opening
 //them in DOS if appropriate. These methods call corresponding methods on BXSession+BXDragDrop.
 - (NSDragOperation)draggingEntered:	(id < NSDraggingInfo >)sender;
 - (BOOL)performDragOperation:		(id < NSDraggingInfo >)sender;
 
-- (IBAction) toggleMouseLocked: (id)sender;
-- (void) setMouseLocked: (BOOL) lock;
-- (BOOL) mouseLocked;
 
-
-//Rendering-related interface actions
-//-----------------------------------
+//Interface actions
+//-----------------
 
 //Toggle instantly in and out of fullscreen mode.
 - (IBAction) toggleFullScreen: (id)sender;
@@ -87,6 +83,9 @@
 
 //Toggle the emulator's active rendering filter.
 - (IBAction) toggleFilterType: (id)sender;
+
+//Lock/unlock the mouse.
+- (IBAction) toggleMouseLocked: (id)sender;
 
 
 //Toggling window UI components

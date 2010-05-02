@@ -8,6 +8,7 @@
 
 #import "BXSessionWindowController.h"
 #import "BXSessionWindowController+BXRenderController.h"
+#import "BXSessionWindowController+BXInputController.h"
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXSessionWindow.h"
 #import "BXProgramPanelController.h"
@@ -294,25 +295,16 @@
 
 - (IBAction) toggleMouseLocked: (id)sender
 {
-	[self setMouseLocked: ![self mouseLocked]];
-}
-
-- (void) setMouseLocked: (BOOL) lock
-{
-	//Don't alter the mouselock state while the window is in fullscreen mode
-	if ([self isFullScreen]) return;
+	BOOL wasLocked = [self mouseLocked];
+	[self setMouseLocked: !wasLocked];
 	
-	[[self emulator] setMouseLocked: lock];
-	 
-	//[[self renderView] setCursorHidden: lock];
-	
-	if ([self mouseLocked] == lock)
+	//If the mouse state was actually toggled, play a sound to commemorate the occasion
+	if ([self mouseLocked] != wasLocked)
 	{
-		NSString *lockSoundName	= (lock) ? @"LockClosing" : @"LockOpening";
+		NSString *lockSoundName	= (wasLocked) ? @"LockOpening" : @"LockClosing";
 		[[NSApp delegate] playUISoundWithName: lockSoundName atVolume: 0.5f];
 	}
 }
-- (BOOL) mouseLocked { return [[self emulator] mouseLocked]; }
 
 - (BOOL) validateMenuItem: (NSMenuItem *)theItem
 {
@@ -374,7 +366,7 @@
 //Handling drag-drop
 //------------------
 
-- (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
+- (NSDragOperation)draggingEntered: (id <NSDraggingInfo>)sender
 {
 	NSPasteboard *pboard = [sender draggingPasteboard];	
 	if ([[pboard types] containsObject: NSFilenamesPboardType])
@@ -390,7 +382,7 @@
 	else return NSDragOperationNone;
 }
 
-- (BOOL)performDragOperation:(id <NSDraggingInfo>)sender
+- (BOOL)performDragOperation: (id <NSDraggingInfo>)sender
 {
 	NSPasteboard *pboard = [sender draggingPasteboard];
     NSDragOperation sourceDragMask = [sender draggingSourceOperationMask];

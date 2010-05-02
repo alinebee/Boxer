@@ -1412,7 +1412,7 @@ void GFX_Events() {
 							GFX_ResetScreen();
 						}
 #endif
-						GFX_CaptureMouse();
+						//GFX_CaptureMouse();
 					}
 					SetPriority(sdl.priority.nofocus);
 					GFX_LosingFocus();

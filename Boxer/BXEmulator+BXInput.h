@@ -13,8 +13,8 @@
 
 enum {
 	DOSBoxMouseButtonLeft	= 0,
-	DOSBoxMouseButtonMiddle	= 1,
-	DOSBoxMouseButtonRight	= 2
+	DOSBoxMouseButtonRight	= 1,
+	DOSBoxMouseButtonMiddle	= 2
 };
 
 

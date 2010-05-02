@@ -241,6 +241,7 @@
 		9FE202480F6D749500B3A38C /* Snapshot.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9FE202470F6D749500B3A38C /* Snapshot.aiff */; };
 		9FE8265C10F0EBA000F1B03E /* 35DisketteShine.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE8265A10F0EBA000F1B03E /* 35DisketteShine.png */; };
 		9FE8265D10F0EBA000F1B03E /* 35Diskette.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE8265B10F0EBA000F1B03E /* 35Diskette.png */; };
+		9FF17BC8118CA9790013661A /* BXSessionWindowController+BXInputController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF17BC7118CA9790013661A /* BXSessionWindowController+BXInputController.m */; };
 		9FF445E010F13A2200B74B15 /* 525Diskette.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FF445DF10F13A2200B74B15 /* 525Diskette.png */; };
 		9FFAFE2D10DE33FB00728BAC /* GameProfiles.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */; };
 		9FFAFE4310DE343F00728BAC /* Configurations in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2E10DE343F00728BAC /* Configurations */; };
@@ -686,6 +687,8 @@
 		9FE202470F6D749500B3A38C /* Snapshot.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = Snapshot.aiff; sourceTree = "<group>"; };
 		9FE8265A10F0EBA000F1B03E /* 35DisketteShine.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 35DisketteShine.png; sourceTree = "<group>"; };
 		9FE8265B10F0EBA000F1B03E /* 35Diskette.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 35Diskette.png; sourceTree = "<group>"; };
+		9FF17BC6118CA9790013661A /* BXSessionWindowController+BXInputController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXSessionWindowController+BXInputController.h"; sourceTree = "<group>"; };
+		9FF17BC7118CA9790013661A /* BXSessionWindowController+BXInputController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXSessionWindowController+BXInputController.m"; sourceTree = "<group>"; };
 		9FF445DF10F13A2200B74B15 /* 525Diskette.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 525Diskette.png; sourceTree = "<group>"; };
 		9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = GameProfiles.plist; sourceTree = "<group>"; };
 		9FFAFE2E10DE343F00728BAC /* Configurations */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Configurations; sourceTree = "<group>"; };
@@ -1492,6 +1495,8 @@
 				9FBC35250F56C7B7001811F2 /* BXSessionWindowController.m */,
 				9F76C8530F6509EF0068EA1C /* BXSessionWindowController+BXRenderController.h */,
 				9F76C8540F6509EF0068EA1C /* BXSessionWindowController+BXRenderController.m */,
+				9FF17BC6118CA9790013661A /* BXSessionWindowController+BXInputController.h */,
+				9FF17BC7118CA9790013661A /* BXSessionWindowController+BXInputController.m */,
 				9F59DED810B0159A008DBBC1 /* BXProgramPanelController.h */,
 				9F59DED910B0159A008DBBC1 /* BXProgramPanelController.m */,
 				9F42D9DD1172481800AC6F1F /* BXStatusBarController.h */,
@@ -1819,6 +1824,7 @@
 				9FB635DD111EC63F00EDC2DA /* BXRenderer.m in Sources */,
 				9F42D9DF1172481800AC6F1F /* BXStatusBarController.m in Sources */,
 				9FA7CB691179B351005D8670 /* BXContextSwitchingRenderView.m in Sources */,
+				9FF17BC8118CA9790013661A /* BXSessionWindowController+BXInputController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1935,7 +1941,7 @@
 			buildSettings = {
 				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
 				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 20100429.1;
+				CURRENT_PROJECT_VERSION = 20100430.2;
 				GCC_VERSION = 4.0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
@@ -2029,7 +2035,7 @@
 			buildSettings = {
 				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
 				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 20100429.1;
+				CURRENT_PROJECT_VERSION = 20100430.2;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_VERSION = 4.0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -2047,7 +2053,7 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
 				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
 				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 20100429.1;
+				CURRENT_PROJECT_VERSION = 20100430.2;
 				GCC_VERSION = 4.0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;

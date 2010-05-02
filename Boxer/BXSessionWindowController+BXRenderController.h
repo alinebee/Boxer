@@ -20,18 +20,6 @@
 
 @interface BXSessionWindowController (BXRenderController)
 
-//Notification observers
-//----------------------
-
-//These listen for any time an NSMenu opens or closes, and warn the active emulator
-//to pause or resume emulation. In practice this means muting it to avoid hanging
-//music and sound effects while the menu is blocking the thread.
-//TODO: BXEmulator itself should handle this at a lower level by watching out for
-//whenever a new event loop gets created.
-- (void) menuDidOpen:	(NSNotification *) notification;
-- (void) menuDidClose:	(NSNotification *) notification;
-
-
 //Window sizing methods
 //---------------------
 
@@ -76,15 +64,5 @@
 
 //Returns the view size that should be used for rendering the specified DOSBox output size.
 - (NSSize) _renderViewSizeForScaledOutputSize: (NSSize)scaledSize minSize: (NSSize)minViewSize;
-
-
-//Responding to SDL's entreaties
-//------------------------------
-- (NSOpenGLView *) SDLView;
-- (NSWindow *) SDLWindow;
-- (NSOpenGLContext *) SDLOpenGLContext;
-
-- (BOOL) handleSDLKeyboardEvent: (NSEvent *)event;
-- (BOOL) handleSDLMouseMovement: (NSEvent *)event;
 
 @end

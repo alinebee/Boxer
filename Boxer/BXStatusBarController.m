@@ -9,6 +9,7 @@
 #import "BXStatusBarController.h"
 #import "BXAppController.h"
 #import "BXSessionWindowController+BXRenderController.h"
+#import "BXSessionWindowController+BXInputController.h"
 #import "BXInspectorController.h"
 #import "BXSession.h"
 #import "BXRenderView.h"
@@ -73,7 +74,7 @@
 	
 	if ([sender isSelectedForSegment: BXStatusBarMouseLockSegment] != mouseLocked)
 	{
-		[controller setMouseLocked: !mouseLocked];		
+		[controller toggleMouseLocked: sender];		
 	}
 	
 	[self _syncSegmentedButtonStates];

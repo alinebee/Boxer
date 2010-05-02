@@ -402,7 +402,6 @@ BXEmulator *currentEmulator = nil;
 	if ([self isExecuting])
 	{
 		boxer_SDLReleaseInput();
-		[self setMouseLocked: NO];
 	}
 }
 

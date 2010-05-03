@@ -7,19 +7,16 @@
 
 #import "BXSession.h"
 #import "BXPackage.h"
+#import "BXGameProfile.h"
+#import "BXDrive.h"
 #import "BXAppController.h"
-#import "BXInspectorController.h"
 #import "BXSessionWindowController+BXRenderController.h"
 
 #import "BXSession+BXFileManager.h"
-#import "BXSession+BXEmulatorController.h"
-#import "BXDrive.h"
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulator+BXShell.h"
-#import "BXSessionWindow.h"
 #import "NSWorkspace+BXFileTypes.h"
 #import "NSString+BXPaths.h"
-#import "BXGameProfile.h"
 
 
 @implementation BXSession
@@ -78,7 +75,6 @@
 		{
 			[self _deregisterForFilesystemNotifications];
 			[emulator setDelegate: nil];
-			[self _unbindEmulator];
 			[emulator cancel];
 			[emulator autorelease];
 		}
@@ -88,7 +84,6 @@
 		if (theEmulator)
 		{
 			[theEmulator setDelegate: self];
-			[self _bindEmulator];
 			[self _registerForFilesystemNotifications];
 		}
 	}
@@ -316,33 +311,6 @@
 //Emulator initialisation
 //-----------------------
 
-- (void) _bindEmulator
-{
-	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-	
-	[[self emulator] bind: @"filterType"
-				 toObject: defaults
-			  withKeyPath: @"filterType"
-				  options: nil];
-	
-	[[self emulator] bind: @"aspectCorrected"
-				 toObject: defaults
-			  withKeyPath: @"aspectCorrected"
-				  options: nil];
-
-	[[self emulator] bind: @"fullScreen"
-				 toObject: [self mainWindowController]
-			  withKeyPath: @"fullScreen"
-				  options: nil];
-}
-
-- (void) _unbindEmulator
-{
-	[[self emulator] unbind: @"aspectCorrected"];
-	[[self emulator] unbind: @"filterType"];
-	[[self emulator] unbind: @"fullScreen"];
-}
-
 - (void) _startEmulator
 {
 	[self setEmulator: [[BXEmulator new] autorelease]];
@@ -542,7 +510,7 @@
 			//Show only after a delay, so that the window has time to resize after quitting the game
 			if (!panelShown) [[self mainWindowController] performSelector: @selector(toggleProgramPanelShown:)
 															   withObject: self
-															   afterDelay: 0.2];
+															   afterDelay: 0.5];
 		}
 		showProgramPanelOnReturnToShell = NO;
 	}

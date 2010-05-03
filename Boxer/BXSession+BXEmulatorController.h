@@ -62,13 +62,6 @@ enum
 //Responding to interface actions and validation 
 //----------------------------------------------
 
-- (IBAction) takeScreenshot:		(id)sender;	//Saves a PNG snapshot of the emulator output to the desktop.
-- (IBAction) toggleRecordingVideo:	(id)sender;	//Starts/stops recording the emulator output to AVI.
-//(This also checks whether the movie at the specified path could be played: if not,
-//shows a BXVideoFormatAlert dialog advising the user to download the Perian codec pack.
-//TODO: this has absolutely no place here and should be moved upstream.)
-
-
 - (IBAction) incrementFrameSkip:	(id)sender;	//Increases the current frameskip by 1.
 - (IBAction) decrementFrameSkip:	(id)sender;	//Decreases the current frameskip by 1.
 

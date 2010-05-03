@@ -10,15 +10,12 @@
 
 #import "BXEmulator+BXShell.h"
 #import "BXEmulator+BXRendering.h"
-#import "BXEmulator+BXRecording.h"
-#import "BXEmulator+BXDOSFileSystem.h"
 #import "BXRenderer.h"
 
-#import "boxer.h"
-#import "render.h"
-#import "cpu.h"
+#import <SDL/SDL.h>
+#import "config.h"
 #import "sdlmain.h"
-#import "mixer.h"
+#import "cpu.h"
 #import "control.h"
 #import "shell.h"
 #import "vga.h"
@@ -52,16 +49,9 @@ void boxer_toggleMIDIOutput(bool enabled);
 //defined in dos_execute.cpp
 extern const char* RunningProgram;
 
-//defined in dosbox.h
-extern Config * control;
-
-//the current shell instance in DOSBox, defined in shell.h
-extern Program * first_shell;
-
 //Defined herein
 BXCoreMode boxer_CPUMode();
 
-extern DOS_Block dos;
 
 BXEmulator *currentEmulator = nil;
 
@@ -77,6 +67,7 @@ BXEmulator *currentEmulator = nil;
 @synthesize aspectCorrected;
 @synthesize filterType;
 @synthesize commandQueue;
+@synthesize mouseActive;
 
 
 //Introspective class methods
@@ -181,7 +172,6 @@ BXEmulator *currentEmulator = nil;
 	DOSBox_main(*_NSGetArgc(), *_NSGetArgv());
 	
 	//Clean up after DOSBox finishes
-	[self _shutdownRecording];
 	[self _shutdownRenderer];
 	[self _shutdownShell];
 	
@@ -226,10 +216,9 @@ BXEmulator *currentEmulator = nil;
 	BOOL wasLocked = [self mouseLocked];
 	if ([self isExecuting] && wasLocked != lock)
 	{
+		//SDL_WM_GrabInput(lock ? SDL_GRAB_ON : SDL_GRAB_OFF);
+		//sdl.mouse.locked=lock;
 		GFX_CaptureMouse();
-		//Force additional activation messages to SDL
-		//this resyncs the mouse position immediately, and fixes the OS X cursor remaining visible until moved
-		boxer_SDLGrabInput();
 	}
 }
 
@@ -587,51 +576,4 @@ BXCoreMode boxer_CPUMode()
 	if (cpudecoder == &CPU_Core_Full_Run)			return BXCoreFull;
 	
 	return BXCoreUnknown;
-}
-
-
-//Bridge functions
-//----------------
-//DOSBox uses these to call relevant methods on the current Boxer emulation context
-
-//This is called at the start of GFX_Events in DOSBox's sdlmain.cpp, to allow us to perform initial actions every time the event loop runs. Return YES to skip the event loop.
-bool boxer_handleEventLoop()
-{
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	return [emulator _handleEventLoop];
-}
-
-//This is called at the start of DOSBox_NormalLoop, and allows us to short-circuit the current run loop if needed.
-bool boxer_handleRunLoop()
-{
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	return [emulator _handleRunLoop];	
-}
-
-//Catch SDL events and process them - return YES if we've handled the event, NO if we want to let it go through
-//This is called by GFX_Events in DOSBox's sdlmain.cpp, to allow us to hook into the main event loop
-bool boxer_handleSDLEvent(SDL_Event *event)
-{
-	return NO;
-}
-
-//Notifies Boxer of changes to title and speed settings
-//This is called by GFX_SetTitle in DOSBox's sdlmain.cpp, instead of trying to set the window title through SDL
-bool boxer_handleDOSBoxTitleChange(int newCycles, int newFrameskip, bool newPaused)
-{
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	[emulator _syncWithEmulationState];
-	return YES;
-}
-
-void boxer_applyConfigFiles()
-{
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	[emulator _applyConfiguration];
-}
-
-bool boxer_isCancelled()
-{
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	return [emulator isCancelled];	
 }

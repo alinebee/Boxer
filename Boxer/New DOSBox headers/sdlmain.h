@@ -24,6 +24,8 @@
 #ifndef DOSBox_SDLMAIN
 #define DOSBox_SDLMAIN
 
+#import "render.h"
+
 enum SCREEN_TYPES	{
 	SCREEN_SURFACE,
 	SCREEN_SURFACE_DDRAW,

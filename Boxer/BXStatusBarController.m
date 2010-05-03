@@ -10,8 +10,10 @@
 #import "BXAppController.h"
 #import "BXSessionWindowController+BXRenderController.h"
 #import "BXSessionWindowController+BXInputController.h"
+#import "BXRenderViewController.h"
 #import "BXInspectorController.h"
 #import "BXSession.h"
+#import "BXEmulator.h"
 #import "BXRenderView.h"
 
 @implementation BXStatusBarController
@@ -45,7 +47,12 @@
 						  context: nil];
 	
 	[windowController addObserver: self
-					   forKeyPath: @"mouseLocked"
+					   forKeyPath: @"renderViewController.mouseLocked"
+						  options: NSKeyValueObservingOptionInitial
+						  context: nil];
+	
+	[windowController addObserver: self
+					   forKeyPath: @"renderViewController.mouseActive"
 						  options: NSKeyValueObservingOptionInitial
 						  context: nil];
 	
@@ -58,7 +65,7 @@
 - (IBAction) performSegmentedButtonAction: (id)sender
 {
 	BXSessionWindowController *controller = [self windowController];
-	BOOL mouseLocked = [controller mouseLocked];
+	BOOL mouseLocked = [[controller renderViewController] mouseLocked];
 	
 	//Because we have no easy way of telling which segment was just toggled, just synchronise them all
 	
@@ -74,7 +81,7 @@
 	
 	if ([sender isSelectedForSegment: BXStatusBarMouseLockSegment] != mouseLocked)
 	{
-		[controller toggleMouseLocked: sender];		
+		[[controller renderViewController] toggleMouseLocked: sender];		
 	}
 	
 	[self _syncSegmentedButtonStates];
@@ -92,16 +99,23 @@
 
 + (NSSet *) keyPathsForValuesAffectingNotificationText
 {
-	return [NSSet setWithObjects: @"windowController.mouseLocked", @"windowController.renderView.containsMouse", nil];
+	return [NSSet setWithObjects:
+			@"windowController.renderViewController.mouseActive",
+			@"windowController.renderViewController.mouseLocked",
+			@"windowController.renderViewController.mouseInView",
+			nil];
 }
 
 - (NSString *) notificationText
 {
-	BXSessionWindowController *controller = [self windowController];
-	if ([controller mouseLocked])					return NSLocalizedString(@"Cmd-click to release the mouse.",
-																			 @"Statusbar message when mouse is locked");
-	if ([[controller renderView] containsMouse])	return NSLocalizedString(@"Cmd-click to lock the mouse to the window.",
-																			 @"Statusbar message when mouse is unlocked and over DOS viewport");
+	BXRenderViewController *viewController = [[self windowController] renderViewController];
+	if ([viewController mouseActive])
+	{
+		if ([viewController mouseLocked])	return NSLocalizedString(@"Cmd-click to release the mouse.",
+																	 @"Statusbar message when mouse is locked");
+		if ([viewController mouseInView])	return NSLocalizedString(@"Cmd-click to lock the mouse to the window.",
+																	 @"Statusbar message when mouse is unlocked and over DOS viewport");
+	}
 	return @"";
 }
 
@@ -113,13 +127,15 @@
 
 - (void) _syncSegmentedButtonStates
 {
-	BXSessionWindowController *controller = [self windowController];
+	BXSessionWindowController *windowController	= [self windowController];
+	BXRenderViewController *viewController		= [windowController renderViewController];
 	
 	[statusBarControls setSelected: [[NSApp delegate] inspectorPanelShown]	forSegment: BXStatusBarInspectorSegment];
-	[statusBarControls setSelected: [controller programPanelShown]			forSegment: BXStatusBarProgramPanelSegment];
-	[statusBarControls setSelected: [controller mouseLocked]				forSegment: BXStatusBarMouseLockSegment];
+	[statusBarControls setSelected: [windowController programPanelShown]	forSegment: BXStatusBarProgramPanelSegment];
+	[statusBarControls setSelected: [viewController mouseLocked]			forSegment: BXStatusBarMouseLockSegment];
 	
-	[statusBarControls setEnabled:	[[controller document] isGamePackage]	forSegment: BXStatusBarProgramPanelSegment];
+	[statusBarControls setEnabled:	[[windowController document] isGamePackage]	forSegment: BXStatusBarProgramPanelSegment];
+	[statusBarControls setEnabled:	[viewController mouseActive]				forSegment: BXStatusBarMouseLockSegment];
 	
 	NSString *panelButtonImage;
 	if ([statusBarControls isSelectedForSegment: BXStatusBarProgramPanelSegment])

@@ -32,7 +32,7 @@ using namespace std;
 
 
 //--Added 2009-02-23 by Alun Bestor to let Boxer hook into localization system
-#include "boxer.h"
+#include "BXCoalface.h"
 //--End of modifications
 
 

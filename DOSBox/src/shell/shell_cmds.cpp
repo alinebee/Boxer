@@ -33,7 +33,7 @@
 
 //--Added 2009-02-20 by Alun Bestor to support Boxer's shell hooks
 //Note that unlike my other odious meddlings, standalone improvements have been made to these functions which could be submitted back to DOSBox for inclusion
-#include "boxer.h"
+#include "BXCoalface.h"
 //--End of modifications
 
 

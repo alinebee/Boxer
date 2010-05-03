@@ -24,7 +24,7 @@
 #include "cross.h"
 
 //--Added 2009-12-26 by Alun Bestor to allow Boxer to hook into DOSBox internals
-#include "boxer.h"
+#include "BXCoalface.h"
 //--End of modifications
 
 // STL stuff

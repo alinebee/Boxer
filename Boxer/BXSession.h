@@ -127,10 +127,6 @@
 //Initialising the DOS session
 //----------------------------
 
-//Set up/tear down programmatic bindings for the emulator
-- (void) _bindEmulator;
-- (void) _unbindEmulator;
-
 //Create our BXEmulator instance and starts its main loop.
 //Called internally by [BXSession start], deferred to the end of the main thread's event loop to prevent
 //DOSBox blocking cleanup code.

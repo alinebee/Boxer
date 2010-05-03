@@ -119,4 +119,10 @@
 //Called by DOSBox after AUTOEXEC.BAT has completed. Sends a delegate notification.
 - (void) _didRunStartupCommands;
 
+//Called by DOSBox just before a program will start. Sends a delegate notification.
+- (void) _willExecuteFileAtDOSPath: (const char *)dosPath onDrive: (NSUInteger)driveIndex;
+
+//Called by DOSBox just after a program finishes executing and exits. Sends a delegate notification.
+- (void) _didExecuteFileAtDOSPath: (const char *)dosPath onDrive: (NSUInteger)driveIndex;
+
 @end

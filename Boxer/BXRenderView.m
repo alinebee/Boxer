@@ -11,7 +11,13 @@
 #import "BXRenderer.h"
 
 @implementation BXRenderView
-@synthesize renderer, cursorHidden;
+@synthesize renderer;
+
+
+- (void) cursorUpdate: (NSEvent *)event
+{
+	[delegate cursorUpdate: event];
+}
 
 - (void) dealloc
 {
@@ -21,77 +27,6 @@
 
 //This helps optimize OS X's rendering decisions, hopefully
 - (BOOL) isOpaque	{ return YES; }
-
-- (void) setCursorHidden: (BOOL)hide
-{
-	cursorHidden = hide;
-	//if (hide && [self containsMouse]) [self cursorUpdate: nil];
-}
-
-- (BOOL) containsMouse
-{
-	if ([self isInFullScreenMode]) return YES;
-	
-	NSPoint relativePoint = [self relativeMouseLocation];
-	return [self mouse: relativePoint inRect: [self bounds]];
-}
-
-- (NSPoint) relativeMouseLocation
-{
-	NSPoint mouseLocation = [[self window] mouseLocationOutsideOfEventStream];
-	return [self convertPoint: mouseLocation fromView: nil];
-}
-
-- (void) updateTrackingAreas
-{
-	for (NSTrackingArea *area in [self trackingAreas]) [self removeTrackingArea: area];
-	
-	NSTrackingAreaOptions options = NSTrackingMouseEnteredAndExited | NSTrackingMouseMoved | NSTrackingCursorUpdate | 
-NSTrackingActiveInKeyWindow | NSTrackingInVisibleRect;
-		
-	NSTrackingArea *trackingArea = [[NSTrackingArea alloc] initWithRect: NSZeroRect
-																options: options
-																  owner: self
-															   userInfo: nil];
-	[self addTrackingArea: trackingArea];
-	[trackingArea release];
-	
-	if ([self containsMouse]) [self cursorUpdate: nil];
-
-	[super updateTrackingAreas];
-}
-
-- (void) cursorUpdate: (NSEvent *)event
-{
-	/*
-	//Implementation note: rather than use [NSCursor show/hide] to toggle the cursor, it's more robust to specify
-	//that the view use a completely blank cursor (with the same dimensions as the regular arrow cursor),
-	//then let Cocoa's cursorUpdate: behaviour do the work for us.
-	static NSCursor *blankCursor = nil;
-	if ([self isCursorHidden] && !blankCursor)
-	{
-		NSCursor *arrowCursor = [NSCursor arrowCursor];
-		NSImage *blankImage = [[NSImage alloc] initWithSize: [[arrowCursor image] size]];
-		blankCursor = [[NSCursor alloc] initWithImage: blankImage hotSpot: [arrowCursor hotSpot]];
-		[blankImage release];
-	}
-	if ([self isCursorHidden]) [blankCursor set];
-	 */
-}
-
-- (void) mouseExited: (NSEvent *)theEvent
-{
-	[self willChangeValueForKey: @"containsMouse"];
-	[super mouseExited: theEvent];
-	[self didChangeValueForKey: @"containsMouse"];
-}
-
-- (void) mouseEntered: (NSEvent *)theEvent
-{
-	[self willChangeValueForKey: @"containsMouse"];
-	[super mouseEntered: theEvent];
-	[self didChangeValueForKey: @"containsMouse"];
-}
 
 - (void) drawBackgroundInRect: (NSRect)dirtyRect
 {

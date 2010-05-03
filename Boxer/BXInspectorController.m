@@ -81,7 +81,7 @@
 	[[NSApp delegate] addObserver: self
 					   forKeyPath: @"currentSession"
 						  options: NSKeyValueObservingOptionInitial
-						  context: nil];	
+						  context: nil];
 }
 
 //Whenever the session changes, update the availability of the gamebox panel

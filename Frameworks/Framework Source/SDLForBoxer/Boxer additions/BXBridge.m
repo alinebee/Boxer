@@ -21,6 +21,10 @@
 {
 	return [[self windowController] isFullScreen];
 }
+- (BOOL) mouseInView
+{
+	return [[[self windowController] renderViewController] mouseInView];
+}
 
 - (id) windowController
 {

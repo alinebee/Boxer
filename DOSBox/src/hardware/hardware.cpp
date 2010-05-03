@@ -32,7 +32,7 @@
 #include "cross.h"
 
 //--Added 2009-03-15 by Alun Bestor to let us override recording behaviour
-#import "boxer.h"
+#include "BXCoalface.h"
 //--End of modifications
 
 #if (C_SSHOT)
@@ -90,9 +90,7 @@ static struct {
 } capture;
 
 FILE * OpenCaptureFile(const char * type,const char * ext) {
-	
-	//--Modified 2009-03-15 by Alun Bestor to allow Boxer to fully control the location of saved recordings
-	/*
+
 	if(capturedir.empty()) {
 		LOG_MSG("Please specify a capture directory");
 		return 0;
@@ -131,10 +129,6 @@ FILE * OpenCaptureFile(const char * type,const char * ext) {
 	close_directory( dir );
 	char file_name[CROSS_LEN];
 	sprintf(file_name,"%s%c%s%03d%s",capturedir.c_str(),CROSS_FILESPLIT,file_start,last,ext);
-	*/
-	
-	const char * file_name = boxer_pathForNewRecording(ext);
-	//--End of modifications
 	
 	
 	/* Open the actual file */

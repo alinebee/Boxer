@@ -44,7 +44,7 @@
 #include "render.h"
 
 //--Added 2009-12-27 by Alun Bestor to allow Boxer to hook into DOSBox's internals
-#include "boxer.h"
+#include "BXCoalface.h"
 //--End of modifications
 
 Config * control;

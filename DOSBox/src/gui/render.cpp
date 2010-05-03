@@ -35,7 +35,7 @@
 #include "render_scalers.h"
 
 //--Added 2009-03-06 by Alun Bestor to allow Boxer to hook into render methods
-#import "boxer.h"
+#include "BXCoalface.h"
 
 //Has to be declared here instead of boxer.h because of callback type
 BOXER_EXPORT void boxer_prepareForSize(Bitu width, Bitu height, double scalex, double scaley, GFX_CallBack_t callback);

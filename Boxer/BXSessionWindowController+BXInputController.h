@@ -16,13 +16,6 @@
 
 @interface BXSessionWindowController (BXInputController)
 
-//Mouse locking
-//-------------
-
-//Set/retrieve whether the mouse is locked to the DOS viewport.
-- (void) setMouseLocked: (BOOL) lock;
-- (BOOL) mouseLocked;
-
 //Notification observers
 //----------------------
 

@@ -11,7 +11,6 @@
 #import "BXDrive.h"
 #import "NSString+BXPaths.h"
 
-#import "boxer.h"
 #import "dos_inc.h"
 #import "dos_system.h"
 #import "drives.h"
@@ -782,52 +781,3 @@ enum {
 }
 
 @end
-
-
-//Bridge functions
-//----------------
-//DOSBox uses these to call relevant methods on the current Boxer emulation context
-
-//Whether or not to allow the specified path to be mounted.
-//Called by MOUNT::Run in DOSBox's dos/dos_programs.cpp.
-bool boxer_shouldMountPath(const char *filePath)
-{
-	NSString *thePath = [[NSFileManager defaultManager]
-						stringWithFileSystemRepresentation: filePath
-						length: strlen(filePath)];
-	
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	return [emulator _shouldMountPath: thePath];
-}
-
-//Whether to include a file with the specified name in DOSBox directory listings
-bool boxer_shouldShowFileWithName(const char *name)
-{
-	NSString *fileName = [NSString stringWithCString: name encoding: BXDirectStringEncoding];
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	return [emulator _shouldShowFileWithName: fileName];
-}
-
-//Whether to allow write access to the file at the specified path on the local filesystem
-bool boxer_shouldAllowWriteAccessToPath(const char *filePath, Bit8u driveIndex)
-{
-	NSString *thePath	= [[NSFileManager defaultManager]
-						   stringWithFileSystemRepresentation: filePath
-						   length: strlen(filePath)];
-	
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	BXDrive *drive = [emulator driveAtLetter: [emulator _driveLetterForIndex: driveIndex]];
-	return [emulator _shouldAllowWriteAccessToPath: thePath onDrive: drive];
-}
-
-//Tells Boxer to resync its cached drives - called by DOSBox functions that add/remove drives
-void boxer_driveDidMount(Bit8u driveIndex)
-{
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	[emulator _syncDriveCache];
-}
-void boxer_driveDidUnmount(Bit8u driveIndex)
-{
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	[emulator _syncDriveCache];
-}

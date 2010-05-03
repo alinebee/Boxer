@@ -16,17 +16,10 @@
 @interface BXRenderView : NSOpenGLView
 {
 	BXRenderer *renderer;
-	BOOL cursorHidden;
+	IBOutlet NSViewController *delegate;
 }
 @property (retain) BXRenderer *renderer;
-@property (assign, getter=isCursorHidden) BOOL cursorHidden;
 
 //Render the view's badged grey background; this shows through when there is no renderer yet.
 - (void) drawBackgroundInRect: (NSRect) dirtyRect;
-
-//Returns whether the mouse currently lies inside the view. 
-- (BOOL) containsMouse;
-
-//Returns the current location of the mouse relative to this view.
-- (NSPoint) relativeMouseLocation;
 @end

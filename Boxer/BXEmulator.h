@@ -83,6 +83,9 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 	BXFilterType filterType;
 	BOOL aspectCorrected;
 	BOOL frameInProgress;
+	
+	//Used by BXInput
+	BOOL mouseActive;
 }
 
 //Properties
@@ -137,6 +140,9 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 @property (assign, getter=isAspectCorrected) BOOL aspectCorrected;
 //The current rendering style as a DOSBox filter type constant (q.v. BXEmulator+BXRendering.h)
 @property (assign) BXFilterType filterType;
+
+//Whether the active DOS game has requested mouse support.
+@property (assign) BOOL mouseActive;
 
 
 

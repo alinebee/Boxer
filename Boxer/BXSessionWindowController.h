@@ -23,6 +23,8 @@
 @class BXSession;
 @class BXSessionWindow;
 @class BXProgramPanelController;
+@class BXRenderViewController;
+@class BXEmulator;
 
 @interface BXSessionWindowController : NSWindowController
 {
@@ -31,27 +33,34 @@
 	IBOutlet NSView *statusBar;
 	IBOutlet NSView *programPanel;
 
-	BXProgramPanelController *programPanelController;
+	IBOutlet BXProgramPanelController *programPanelController;
+	IBOutlet BXRenderViewController *renderViewController;
+	
+	BXEmulator *emulator;
 	
 	NSSize currentScaledSize;	//Used internally by the BXRenderController category for resizing decisions.
 	BOOL resizingProgrammatically;
 }
-//Our view controller for the program picker panel. This is created when awaking from the NIB file.
+//Our view controller for the program picker panel.
 @property (retain) BXProgramPanelController *programPanelController;
+//Our view controller for the DOS view.
+@property (retain) BXRenderViewController *renderViewController;
 
-@property (retain) NSView *renderContainer;		//A wrapper for the renderView to help window-sizing behaviour.
 @property (retain) BXRenderView *renderView;	//The OpenGL view that displays DOSBox's graphical output.
-@property (retain) NSView *statusBar;			//The status bar at the bottom of the window.
+@property (retain) NSView *renderContainer;		//A wrapper for the renderView to help window-sizing behaviour.
 @property (retain) NSView *programPanel;		//The slide-out program picker panel.
-@property (assign) BOOL resizingProgrammatically;	//Indicates that the current resize event is internal and not triggered by user interaction.
-													//Used to change our window constraining behaviour and response to resize events.
+@property (retain) NSView *statusBar;			//The status bar at the bottom of the window.
+
+//Indicates that the current resize event is internal and not triggered by user interaction.
+//Used to change our window constraining behaviour and response to resize events.
+@property (assign) BOOL resizingProgrammatically;
+
+@property (retain) BXEmulator *emulator;
 
 //Recast NSWindowController's standard accessors so that we get our own classes
 //(and don't have to keep recasting them ourselves)
 - (BXSession *) document;
 - (BXSessionWindow *) window;
-
-- (BXEmulator *) emulator;		//Shortcut accessor for the current session's emulator.
 
 
 //Drag-and-drop
@@ -83,9 +92,6 @@
 
 //Toggle the emulator's active rendering filter.
 - (IBAction) toggleFilterType: (id)sender;
-
-//Lock/unlock the mouse.
-- (IBAction) toggleMouseLocked: (id)sender;
 
 
 //Toggling window UI components

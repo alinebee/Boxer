@@ -28,7 +28,7 @@
 #include "support.h"
 
 //--Added 2010-01-21 by Alun Bestor to let Boxer hook into DOSBox internals
-#include "boxer.h"
+#include "BXCoalface.h"
 //--End of modifications
 
 void DOS_Shell::ShowPrompt(void) {

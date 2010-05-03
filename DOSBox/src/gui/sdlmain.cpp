@@ -134,8 +134,8 @@ struct private_hwdata {
 
 
 //--Added 2009-02-01 by Alun Bestor to provide access to Boxer extensions and video settings
-#import "boxer.h"
-#import "sdlmain.h"
+#include "BXCoalface.h"
+#include "sdlmain.h"
 //--End of modifications
 
 //--Modified 2009-03-01 by Alun Bestor: these are all now defined in sdlmain.h instead, so that Boxer's lascivious fingers can grope the SDL struct
@@ -697,12 +697,14 @@ static void CaptureMouse(bool pressed) {
 
 void GFX_SwitchFullScreen(void) {
 	sdl.desktop.fullscreen=!sdl.desktop.fullscreen;
+	/*
 	if (sdl.desktop.fullscreen) {
 		if (!sdl.mouse.locked) GFX_CaptureMouse();
 	} else {
 		if (sdl.mouse.locked) GFX_CaptureMouse();
 	}
 	GFX_ResetScreen();
+	 */
 }
 
 static void SwitchFullScreen(bool pressed) {
@@ -1299,12 +1301,18 @@ static void GUI_StartUp(Section * sec) {
 }
 
 void Mouse_AutoLock(bool enable) {
+	boxer_setMouseActive(enable);
+	return;
+	
+	//--Disabled 2010-04-11 by Alun Bestor: this is now handled by BXInput
+	/*
 	sdl.mouse.autolock=enable;
 	if (sdl.mouse.autoenable) sdl.mouse.requestlock=enable;
 	else {
 		SDL_ShowCursor(enable?SDL_DISABLE:SDL_ENABLE);
 		sdl.mouse.requestlock=false;
 	}
+	 */
 }
 
 static void HandleMouseMotion(SDL_MouseMotionEvent * motion) {

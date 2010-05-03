@@ -30,7 +30,7 @@
 
 
 //--Added 2009-11-29 by Alun Bestor to let Boxer hook into various shell functions
-#include "boxer.h"
+#include "BXCoalface.h"
 //--End of modifications
 
 

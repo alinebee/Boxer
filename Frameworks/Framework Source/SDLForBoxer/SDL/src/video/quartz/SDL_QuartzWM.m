@@ -108,9 +108,9 @@ void QZ_UpdateCursor (_THIS) {
 	
     if (state != cursor_visible) {
         if (state) {
-            [ NSCursor unhide ];
+            //[ NSCursor unhide ];
         } else {
-            [ NSCursor hide ];
+            //[ NSCursor hide ];
         }
         cursor_visible = state;
    }
@@ -118,7 +118,7 @@ void QZ_UpdateCursor (_THIS) {
 
 BOOL QZ_IsMouseInWindow (_THIS) {
 	//--Replaced 2010-04-11 by Alun Bestor: Boxer manages this calculation entirely now
-	return (BOOL)[[[BXBridge bridge] view] containsMouse];
+	return (BOOL)[[BXBridge bridge] mouseInView];
 	
 	/*
 	if (qz_window == nil || (mode_flags & SDL_FULLSCREEN)) return YES;

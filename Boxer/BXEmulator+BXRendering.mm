@@ -8,16 +8,16 @@
 #import "BXEmulator+BXRendering.h"
 #import "BXSession.h"
 #import "BXSessionWindowController+BXRenderController.h"
-#import "BXSessionWindow.h"
 #import "BXGeometry.h"
+#import "BXFilterDefinitions.h"
+#import "BXRenderer.h"
 
-#import "boxer.h"
+#import <SDL/SDL.h>
+#import "config.h"
 #import "video.h"
 #import "render.h"
 #import "vga.h"
 #import "sdlmain.h"
-#import "BXFilterDefinitions.h"
-#import "BXRenderer.h"
 
 //Renderer functions
 //------------------
@@ -90,10 +90,8 @@
 	if ([self isExecuting] && [self isFullScreen] != fullscreen)
 	{
 		[self willChangeValueForKey: @"fullScreen"];
-		//Fix the hanging cursor in fullscreen mode
-		if (fullscreen && CGCursorIsVisible())		[NSCursor hide];
-		GFX_SwitchFullScreen();
-		if (!fullscreen && !CGCursorIsVisible())	[NSCursor unhide];
+		
+		sdl.desktop.fullscreen=fullscreen;
 		
 		[self didChangeValueForKey: @"fullScreen"];
 	}
@@ -188,8 +186,6 @@
 	
 	[[[self delegate] mainWindowController] resizeToAccommodateOutputSize: outputSize atScale: scale];
 	[[self renderer] setFrameBufferSize: outputSize atScale: scale];
-	
-	if (!sdl.mouse.autoenable) SDL_ShowCursor(sdl.mouse.autolock ? SDL_DISABLE: SDL_ENABLE);
 
 	//Synchronise our record of the current video mode with the new video mode
 	if (currentVideoMode != vga.mode)
@@ -370,42 +366,3 @@
 	return maxScale;
 }
 @end
-
-
-//Bridge functions
-//----------------
-//DOSBox uses these to call relevant methods on the current Boxer emulation context
-
-//Applies Boxer's rendering settings when reinitializing the DOSBox renderer
-//This is called by RENDER_Reset in DOSBox's gui/render.cpp
-void boxer_applyRenderingStrategy()	{ [[BXEmulator currentEmulator] _applyRenderingStrategy]; }
-
-void boxer_prepareForSize(Bitu width, Bitu height, double scalex, double scaley, GFX_CallBack_t callback)
-{
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	
-	NSSize outputSize	= NSMakeSize((CGFloat)width, (CGFloat)height);
-	NSSize scale		= NSMakeSize((CGFloat)scalex, (CGFloat)scaley);
-	[emulator _prepareForOutputSize: outputSize atScale: scale];
-
-	sdl.draw.callback=callback;
-	sdl.desktop.type=SCREEN_OPENGL;
-	//TODO: none of these should actually be used by live code anymore.
-	//If anywhere is using them, it needs to be excised forthwith.
-	sdl.draw.width=width;
-	sdl.draw.height=height;
-	sdl.draw.scalex=scalex;
-	sdl.draw.scaley=scaley;
-}
-
-bool boxer_startFrame(Bit8u **frameBuffer, Bitu *pitch)
-{
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	return [emulator _startFrameWithBuffer: (void **)frameBuffer pitch: (NSUInteger *)pitch];
-}
-
-void boxer_finishFrame(const uint16_t *dirtyBlocks)
-{
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	[emulator _finishFrameWithChanges: dirtyBlocks];	
-}

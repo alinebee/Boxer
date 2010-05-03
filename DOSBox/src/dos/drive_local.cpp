@@ -32,7 +32,7 @@
 #include "inout.h"
 
 //--Added 2010-01-18 by Alun Bestor to allow Boxer to hook into DOSBox internals
-#include "boxer.h"
+#include "BXCoalface.h"
 //--End of modifications
 
 class localFile : public DOS_File {

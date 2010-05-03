@@ -8,25 +8,27 @@
 
 #import "BXSessionWindowController.h"
 #import "BXSessionWindowController+BXRenderController.h"
-#import "BXSessionWindowController+BXInputController.h"
-#import "BXEmulator+BXDOSFileSystem.h"
 #import "BXSessionWindow.h"
-#import "BXProgramPanelController.h"
 #import "BXAppController.h"
+#import "BXProgramPanelController.h"
+#import "BXRenderViewController.h"
 
+#import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulator+BXRendering.h"
+
 #import "BXCloseAlert.h"
 #import "BXSession+BXDragDrop.h"
 
 
 @implementation BXSessionWindowController
-@synthesize renderView, renderContainer, statusBar, programPanel, programPanelController;
+@synthesize renderView, renderContainer, statusBar, programPanel;
+@synthesize renderViewController, programPanelController;
 @synthesize resizingProgrammatically;
+@synthesize emulator;
 
 //Overridden to make the types explicit, so we don't have to keep casting the return values to avoid compilation warnings
 - (BXSession *) document		{ return (BXSession *)[super document]; }
 - (BXSessionWindow *) window	{ return (BXSessionWindow *)[super window]; }
-- (BXEmulator *) emulator		{ return [[self document] emulator]; }
 
 
 //Initialisation and cleanup functions
@@ -34,7 +36,9 @@
 
 - (void) dealloc
 {
+	[self removeObserver: self forKeyPath: @"document.activeProgramPath"];
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
+	
 	[self setRenderContainer: nil],			[renderContainer release];
 	[self setRenderView: nil],				[renderView release];
 	[self setStatusBar: nil],				[statusBar release];
@@ -49,11 +53,9 @@
 	NSNotificationCenter *center	= [NSNotificationCenter defaultCenter];
 	BXSessionWindow *theWindow		= [self window];
 	
-	//Create our new program panel controller and attach it to our window's program panel
-	BXProgramPanelController *panelController = [[BXProgramPanelController alloc] initWithNibName: @"ProgramPanel" bundle: nil];
-	[self setProgramPanelController: [panelController autorelease]];
-	[panelController setView: programPanel];
-	
+	//Add our view controllers into the responder chain
+	[self setNextResponder: renderViewController];
+	[renderViewController setNextResponder: programPanelController];
 	
 	//Set up observing for UI events
 	//------------------------------
@@ -105,18 +107,20 @@
 	
 	//We don't support content-preservation yet, so disable the check to be slightly more efficient
 	[theWindow setPreservesContentDuringLiveResize: NO];
+	
+	
+	//Bindings galore
+	//---------------
+	 
+	[self addObserver: self forKeyPath: @"document.activeProgramPath" options: 0 context: nil];
+	
+	[self bind: @"emulator" toObject: self withKeyPath: @"document.emulator" options: nil];
+	
+	[programPanelController bind: @"representedObject" toObject: self withKeyPath: @"document" options: nil];
 }
 
 - (void) setDocument: (BXSession *)theSession
-{
-	[[self programPanelController] setRepresentedObject: nil];
-	
-	if (![theSession isEqualTo: [self document]])
-	{
-		[[self document] removeObserver: self forKeyPath: @"activeProgramPath"];
-		[[self renderView] unbind: @"renderer"];
-	}
-	
+{	
 	[super setDocument: theSession];
 	
 	if (theSession)
@@ -134,19 +138,65 @@
 		{
 			[theWindow setFrameAutosaveName: @"DOSWindow"];
 		}
-		
-		//Add the session to our panel controller, so that it can keep up with the times too
-		[[self programPanelController] setRepresentedObject: theSession];
-		
-		//Track changes to the active DOS program, to update the represented file accordingly
-		[theSession addObserver: self forKeyPath: @"activeProgramPath" options: 0 context: nil];
-
-		//Bind our render view to the session's BXRenderer instance
-		[[self renderView] bind: @"renderer"
-					   toObject: theSession
-					withKeyPath: @"emulator.renderer"
-						options: nil];
 	}
+}
+
+
+- (void) setEmulator: (BXEmulator *)newEmulator 
+{
+	
+	[self willChangeValueForKey: @"emulator"];
+	
+	if (![[self emulator] isEqualTo: newEmulator])
+	{
+		[[self emulator] unbind: @"mouseLocked"];
+		[[self emulator] unbind: @"fullScreen"];
+		[[self emulator] unbind: @"aspectCorrected"];
+		[[self emulator] unbind: @"filterType"];
+		[renderView unbind: @"renderer"];
+		[renderViewController unbind: @"mouseActive"];
+		
+		[[self emulator] autorelease];
+		emulator = [newEmulator retain];
+		
+		if (emulator)
+		{
+			NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+			
+			[emulator bind: @"filterType"
+				  toObject: defaults
+			   withKeyPath: @"filterType"
+				   options: nil];
+			
+			[emulator bind: @"aspectCorrected"
+				  toObject: defaults
+			   withKeyPath: @"aspectCorrected"
+				   options: nil];
+			
+			[emulator bind: @"fullScreen"
+				  toObject: self
+			   withKeyPath: @"fullScreen"
+				   options: nil];
+			
+			[emulator bind: @"mouseLocked"
+				  toObject: renderViewController
+			   withKeyPath: @"mouseLocked"
+				   options: nil];
+			
+			//Bind our render view to the emulator's BXRenderer instance
+			[renderView bind: @"renderer"
+					toObject: emulator
+				 withKeyPath: @"renderer"
+					 options: nil];
+			
+			[renderViewController bind: @"mouseActive"
+							  toObject: emulator
+						   withKeyPath: @"mouseActive"
+							   options: nil];
+		}
+	}
+	
+	[self didChangeValueForKey: @"emulator"];
 }
 
 
@@ -185,7 +235,7 @@
 						 context: (void *)context
 {
 	//Whenever the active program path changes, synchronise the window title and the unsaved changes indicator
-	if ([keyPath isEqualToString: @"activeProgramPath"])
+	if ([keyPath isEqualToString: @"document.activeProgramPath"])
 	{
 		[self synchronizeWindowTitleWithDocumentName];
 		
@@ -287,52 +337,25 @@
 	[[NSUserDefaults standardUserDefaults] setInteger: filterType forKey: @"filterType"];
 }
 
-
-+ (NSSet *) keyPathsForValuesAffectingMouseLocked
-{
-	return [NSSet setWithObjects: @"fullScreen", @"document.emulator.mouseLocked", nil];
-}
-
-- (IBAction) toggleMouseLocked: (id)sender
-{
-	BOOL wasLocked = [self mouseLocked];
-	[self setMouseLocked: !wasLocked];
-	
-	//If the mouse state was actually toggled, play a sound to commemorate the occasion
-	if ([self mouseLocked] != wasLocked)
-	{
-		NSString *lockSoundName	= (wasLocked) ? @"LockOpening" : @"LockClosing";
-		[[NSApp delegate] playUISoundWithName: lockSoundName atVolume: 0.5f];
-	}
-}
-
 - (BOOL) validateMenuItem: (NSMenuItem *)theItem
-{
-	BXEmulator *emulator = [self emulator];
-	
+{	
 	SEL theAction = [theItem action];
 	NSString *title;
 	
-	if (theAction == @selector(toggleMouseLocked:))
-	{
-		[theItem setState: [self mouseLocked]];
-		return ([emulator isExecuting]);
-	}
-	
-	else if (theAction == @selector(toggleFilterType:))
+	if (theAction == @selector(toggleFilterType:))
 	{
 		NSInteger itemState;
 		BXFilterType filterType	= [theItem tag];
 		
 		//Update the option state to reflect the current filter selection
 		//If the filter is selected but not active at the current window size, we indicate this with a mixed state
-		if		(filterType != [emulator filterType])	itemState = NSOffState;
-		else if	([emulator filterIsActive])				itemState = NSOnState;
-		else											itemState = NSMixedState;
+		if		(filterType != [[self emulator] filterType])	itemState = NSOffState;
+		else if	([[self emulator] filterIsActive])				itemState = NSOnState;
+		else													itemState = NSMixedState;
 		
 		[theItem setState: itemState];
 		
-		return ([emulator isExecuting]);
+		return ([[self emulator] isExecuting]);
 	}
 	
 	else if (theAction == @selector(toggleProgramPanelShown:))

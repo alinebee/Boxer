@@ -8,16 +8,11 @@
 
 #import <Carbon/Carbon.h>
 #import "BXEmulator+BXInput.h"
-#import "BXEmulator+BXShell.h"
-#import "BXEmulator+BXRendering.h"
 #import "BXRenderer.h"
-#import "BXSession.h"
-#import "BXSessionWindowController.h"
 
-#include "dosbox.h"
+#include "config.h"
 #include "video.h"
 #import "mouse.h"
-#import "boxer.h"
 #import "sdlmain.h"
 
 @implementation BXEmulator (BXInput)
@@ -234,7 +229,7 @@
 		if ([[NSApp currentEvent] modifierFlags] & NSCommandKeyMask)
 		{
 			BXSession *session = [self delegate];
-			[[session mainWindowController] toggleMouseLocked: nil];
+			[NSApp sendAction: @selector(toggleMouseLocked:) to: nil from: self];
 			return;
 		}
 		else Mouse_ButtonPressed(button);
@@ -244,28 +239,14 @@
 		Mouse_ButtonReleased(button);	
 	}
 }
+
+
++ (NSSet *) keyPathsForValuesAffectingMouseActive	{ return [NSSet setWithObject: @"isRunningProcess"]; }
+
+- (BOOL) mouseActive
+{
+	//The mouse active state is not reset by DOSBox when a game exits.
+	return mouseActive && [self isRunningProcess];
+}
+
 @end
-
-
-//Bridge functions
-//----------------
-//DOSBox uses these to call relevant methods on the current Boxer emulation context
-
-const char * boxer_currentDOSKeyboardLayout()
-{
-	NSString *layoutCode = [[BXEmulator class] keyboardLayoutForCurrentInputMethod];
-	if (!layoutCode) layoutCode = [[BXEmulator class] defaultKeyboardLayout];
-	return [layoutCode cStringUsingEncoding: BXDirectStringEncoding];
-}
-
-void boxer_handleMouseMotion(SDL_MouseMotionEvent * event)
-{
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	[emulator handleSDLMouseMovement: event];
-}
-
-void boxer_handleMouseButton(SDL_MouseButtonEvent * event)
-{
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	[emulator handleSDLMouseButton: event];
-}

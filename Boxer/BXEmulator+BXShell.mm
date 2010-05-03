@@ -6,15 +6,11 @@
  */
 
 #import "BXEmulator+BXShell.h"
-#import "BXEmulator+BXRendering.h"
 #import "BXEmulator+BXDOSFileSystem.h"
-#import "BXEmulator+BXInput.h"
-#import "BXSessionWindowController+BXRenderController.h"
 #import "BXSession.h"
 #import "BXDrive.h"
 #import "BXValueTransformers.h"
 
-#import "boxer.h"
 #import "shell.h"
 
 //Lookup table of BXEmulator+BXShell selectors and the shell commands that call them
@@ -446,79 +442,3 @@ nil];
 }
 
 @end
-
-
-//Bridge functions
-//----------------
-//DOSBox uses these to call relevant methods on the current Boxer emulation context
-
-
-//Catch shell input and send it to our own shell controller - returns YES if we've handled the command, NO if we want to let it go through
-//This is called by DOS_Shell::DoCommand in DOSBox's shell/shell_cmds.cpp, to allow us to hook into what goes on in the shell
-bool boxer_shouldRunShellCommand(char* cmd, char* args)
-{
-	NSString *command			= [NSString stringWithCString: cmd	encoding: BXDirectStringEncoding];
-	NSString *argumentString	= [NSString stringWithCString: args	encoding: BXDirectStringEncoding];
-	
-	BXEmulator *emulator	= [BXEmulator currentEmulator];
-	return [emulator _handleCommand: command withArgumentString: argumentString];
-}
-
-
-//Return a localized string for the given DOSBox translation key
-//This is called by MSG_Get in DOSBox's misc/messages.cpp, instead of retrieving strings from its own localisation system
-const char * boxer_localizedStringForKey(char const *keyStr)
-{
-	NSString *theKey			= [NSString stringWithCString: keyStr encoding: BXDirectStringEncoding];
-	NSString *localizedString	= [[NSBundle mainBundle]
-									localizedStringForKey: theKey
-									value: nil
-									table: @"DOSBox"];
-									
-	return [localizedString cStringUsingEncoding: BXDisplayStringEncoding];
-}
-
-bool boxer_handleCommandInput(char *cmd, Bitu *cursorPosition, bool *executeImmediately)
-{
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	NSString *newCommand = [emulator _handleCommandInput: [NSString stringWithCString: cmd encoding: BXDirectStringEncoding]
-										atCursorPosition: cursorPosition
-									  executeImmediately: (BOOL *)executeImmediately];
-	if (newCommand)
-	{
-		const char *newcmd = [newCommand cStringUsingEncoding: BXDirectStringEncoding];
-		strcpy(cmd, newcmd);
-		return YES;
-	}
-	else return NO;
-}
-
-void boxer_didReturnToShell()
-{
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	[emulator _didReturnToShell];
-}
-
-void boxer_autoexecDidStart()
-{
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	[emulator _willRunStartupCommands];
-}
-
-void boxer_autoexecDidFinish()
-{
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	[emulator _didRunStartupCommands];
-}
-
-void boxer_willExecuteFileAtDOSPath(const char *dosPath, Bit8u driveIndex)
-{
-	BXEmulator *emulator	= [BXEmulator currentEmulator];
-	[emulator _willExecuteFileAtDOSPath: dosPath onDrive: driveIndex];
-}
-
-void boxer_didExecuteFileAtDOSPath(const char *dosPath, Bit8u driveIndex)
-{
-	BXEmulator *emulator	= [BXEmulator currentEmulator];
-	[emulator _didExecuteFileAtDOSPath: dosPath onDrive: driveIndex];
-}

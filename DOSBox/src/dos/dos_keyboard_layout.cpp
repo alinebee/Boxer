@@ -34,7 +34,7 @@
 #include "dos_keyboard_layout_data.h"
 
 //--Added 2009-02-23 by Alun Bestor to let us hook into keyboard layout selection
-#include "boxer.h"
+#include "BXCoalface.h"
 //--End of modifications
 
 #if defined (WIN32)

@@ -8,23 +8,10 @@
 
 #import "BXSessionWindowController+BXInputController.h"
 #import "BXSessionWindowController+BXRenderController.h"
+#import "BXRenderView.h"
 #import "BXEmulator.h"
 
 @implementation BXSessionWindowController (BXInputController)
-
-//Mouse locking
-//-------------
-
-- (void) setMouseLocked: (BOOL) lock
-{
-	//Don't alter the mouselock state while the window is in fullscreen mode
-	if ([self isFullScreen]) return;
-	
-	[[self emulator] setMouseLocked: lock];
-}
-
-- (BOOL) mouseLocked { return [[self emulator] mouseLocked]; }
-
 
 //Delegate methods
 //----------------
@@ -53,18 +40,18 @@
 	else
 	{
 		[[self emulator] releaseInput];
-		[self setMouseLocked: NO];
+		[renderViewController setMouseLocked: NO];
 	}
 }
 - (void) windowDidResignMain:	(NSNotification *) notification
-{	
+{
 	//Don't resign main when we're in fullscreen mode
 	//FIXME: work out why this is happening in the first place!
 	if ([self isFullScreen]) [[self window] makeMainWindow];
 	else
 	{
 		[[self emulator] deactivate];
-		[self setMouseLocked: NO];
+		[renderViewController setMouseLocked: NO];
 	}
 }
 
@@ -114,7 +101,7 @@
 	return NO;
 	/*
 	 BOOL mouseLocked = [[self emulator] mouseLocked];
-	 BOOL mouseInView = [renderView containsMouse];
+	 BOOL mouseInView = [[self renderViewController] mouseInView];
 	 NSRect viewRect = [renderView bounds];
 	 
 	 if (grab_state == QZ_INVISIBLE_GRAB )

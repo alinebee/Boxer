@@ -9,11 +9,10 @@
 #import "BXSessionWindowController+BXRenderController.h"
 #import "BXSessionWindow.h"
 #import "BXEmulator+BXRendering.h"
-#import "BXGeometry.h"
-#import "BXSession.h"
 #import "NSWindow+BXWindowSizing.h"
 #import "BXRenderView.h"
 #import "BXRenderer.h"
+#import "BXGeometry.h"
 
 
 @implementation BXSessionWindowController (BXRenderController)
@@ -48,7 +47,7 @@
 	return [self resizingProgrammatically] || [[self renderView] inLiveResize];
 }
 
-//Returns the current size that the render view *would be if it were in windowed mode.*
+//Returns the current size that the render view *would be if it were in windowed mode.
 //This will differ from the actual render view size when in fullscreen mode.
 - (NSSize) windowedRenderViewSize	{ return [[self renderContainer] frame].size; }
 
@@ -68,14 +67,18 @@
 	//if the base resolution is too large to fit on screen and hence the view is shrunk.
 	//In that case we use the target view size as the minimum instead.
 	NSSize minSize;
-	if (viewSize.width < originalSize.width || viewSize.height < originalSize.height)
+	if (NSEqualSizes(originalSize, NSZeroSize) ||
+		viewSize.width < originalSize.width ||
+		viewSize.height < originalSize.height)
 		minSize = viewSize;
 	else
 		minSize = originalSize;
-		
+
 	//Fix the window's aspect ratio to the new size - this will affect our live resizing behaviour
 	[[self window] setContentMinSize: minSize];
 	[[self window] setContentAspectRatio: viewSize];
+	
+	
 	
 	//Now resize the window to fit the new size
 	//Tell the renderer not to maintain aspect ratio when doing so,
@@ -129,22 +132,17 @@
 	if (fullScreen)
 	{
 		NSScreen *targetScreen	= [NSScreen mainScreen];
-		//TODO: check that any of these options are actually necessary, as these could be the defaults
-		NSDictionary *options	= [NSDictionary dictionaryWithObjectsAndKeys:
-								   [NSNumber numberWithBool: YES], NSFullScreenModeAllScreens,
-								   //This causes a blank screen For Some Reason
-								   //[NSNumber numberWithInteger: NSScreenSaverWindowLevel], NSFullScreenModeWindowLevel,
-								   nil];
+		
+		//Ensure that the mouse is locked for fullscreen mode
+		[renderViewController setMouseLocked: YES];
 		
 		//Flip the view into fullscreen mode
 		[theView enterFullScreenMode: targetScreen withOptions: nil];
-		
-		//Set the window as key, which is disabled by the switch to fullscreen mode (For Some Reason)
-		[theWindow makeKeyWindow];
 	}
 	else
 	{
 		[theView exitFullScreenModeWithOptions: nil];
+		
 		//Reset the view's frame to match its loyal container, as otherwise it retains its fullscreen frame size
 		[theView setFrame: [theContainer bounds]];
 		[theView setNeedsDisplay: YES];
@@ -152,6 +150,9 @@
 		//Cocoa 10.6 bugfix: for some reason this gets forgotten upon the return to windowed mode,
 		//until the window loses and regains focus. Setting it manually fixes it.
 		[theWindow setAcceptsMouseMovedEvents: YES];
+		
+		//Unlock the mouse after leaving fullscreen
+		[renderViewController setMouseLocked: NO];
 	}
 	[[self emulator] resetRenderer];
 	
@@ -175,7 +176,6 @@
 	//Don't bother if we're already in the correct fullscreen state
 	if ([self isFullScreen] == fullScreen) return;
 	 
-	BXEmulator *emulator	= [self emulator];
 	NSWindow *theWindow		= [self window];
 	
 	NSInteger originalLevel		= [theWindow level];
@@ -184,7 +184,7 @@
 	NSRect fullscreenFrame		= [targetScreen frame];
 	NSRect zoomedWindowFrame	= [theWindow frameRectForContentRect: fullscreenFrame];
 	
-	[emulator willPause];
+	[[self emulator] willPause];
 	[theWindow setLevel: NSScreenSaverWindowLevel];
 
 	//Make sure we're the key window first before any shenanigans
@@ -220,7 +220,7 @@
 	}
 	[self setResizingProgrammatically: NO];
 	[theWindow setLevel: originalLevel];
-	[emulator didResume];
+	[[self emulator] didResume];
 }
 
 //Snap to multiples of the base render size as we scale

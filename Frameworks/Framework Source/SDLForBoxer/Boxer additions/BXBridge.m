@@ -23,7 +23,7 @@
 }
 - (BOOL) mouseInView
 {
-	return [[[self windowController] renderViewController] mouseInView];
+	return [[self windowController] mouseInView];
 }
 
 - (id) windowController

@@ -134,7 +134,7 @@
 		NSScreen *targetScreen	= [NSScreen mainScreen];
 		
 		//Ensure that the mouse is locked for fullscreen mode
-		[renderViewController setMouseLocked: YES];
+		[self setMouseLocked: YES];
 		
 		//Flip the view into fullscreen mode
 		[theView enterFullScreenMode: targetScreen withOptions: nil];
@@ -152,7 +152,7 @@
 		[theWindow setAcceptsMouseMovedEvents: YES];
 		
 		//Unlock the mouse after leaving fullscreen
-		[renderViewController setMouseLocked: NO];
+		[self setMouseLocked: NO];
 	}
 	[[self emulator] resetRenderer];
 	

@@ -16,7 +16,6 @@
 @interface BXRenderView : NSOpenGLView
 {
 	BXRenderer *renderer;
-	IBOutlet NSViewController *delegate;
 }
 @property (retain) BXRenderer *renderer;
 

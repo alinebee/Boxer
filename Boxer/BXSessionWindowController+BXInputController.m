@@ -40,7 +40,7 @@
 	else
 	{
 		[[self emulator] releaseInput];
-		[renderViewController setMouseLocked: NO];
+		[self setMouseLocked: NO];
 	}
 }
 - (void) windowDidResignMain:	(NSNotification *) notification
@@ -51,7 +51,7 @@
 	else
 	{
 		[[self emulator] deactivate];
-		[renderViewController setMouseLocked: NO];
+		[self setMouseLocked: NO];
 	}
 }
 
@@ -67,6 +67,101 @@
 {
 	if ([[self window] isKeyWindow]) [[self emulator] captureInput];
 	[[self emulator] didResume];
+}
+
+
+/* Mouse cursor handling */
+/* --------------------- */
+
+- (BOOL) mouseInView
+{
+	if ([renderView isInFullScreenMode]) return YES;
+	
+	NSPoint mouseLocation = [[self window] mouseLocationOutsideOfEventStream];
+	NSPoint relativePoint = [renderView convertPoint: mouseLocation fromView: nil];
+	return [renderView mouse: relativePoint inRect: [renderView bounds]];
+}
+
+- (void) setMouseActive: (BOOL)active
+{
+	[self willChangeValueForKey: @"mouseActive"];
+	mouseActive = active;
+	[self cursorUpdate: nil];
+	[self didChangeValueForKey: @"mouseActive"];
+}
+
+- (NSCursor *)hiddenCursor
+{
+	//If we don't have a hidden cursor yet, generate it now
+	if (!hiddenCursor)
+	{
+		NSCursor *arrowCursor	= [NSCursor arrowCursor];
+		NSImage *arrowImage		= [arrowCursor image];
+		NSImage *blankImage		= [[NSImage alloc] initWithSize: [arrowImage size]];
+		
+		//Use a faded cursor instead of an entirely blank one.
+		//This is disabled for now because it looks quite distracting.
+		/*
+		 [blankImage lockFocus];
+		 [arrowImage drawAtPoint: NSZeroPoint fromRect: NSZeroRect operation: NSCompositeSourceOver fraction: 0.25];
+		 [blankImage unlockFocus];
+		 */
+		
+		NSCursor *blankCursor = [[NSCursor alloc] initWithImage: blankImage hotSpot: [arrowCursor hotSpot]];
+		[self setHiddenCursor: blankCursor];
+		[blankImage release];
+		[blankCursor release];
+	}
+	return hiddenCursor;
+}
+
+- (void) cursorUpdate: (NSEvent *)theEvent
+{
+	if ([self mouseActive] && [self mouseInView])
+	{
+		[[self hiddenCursor] set];
+	}
+}
+
+- (void) mouseExited: (NSEvent *)theEvent
+{
+	[self willChangeValueForKey: @"mouseInView"];
+	[super mouseExited: theEvent];
+	[self didChangeValueForKey: @"mouseInView"];
+}
+
+- (void) mouseEntered: (NSEvent *)theEvent
+{
+	[self willChangeValueForKey: @"mouseInView"];
+	[super mouseEntered: theEvent];
+	[self didChangeValueForKey: @"mouseInView"];
+}
+
+- (void) setMouseLocked: (BOOL)lock
+{
+	//Don't continue if we're already in the right lock state
+	if (lock == [self mouseLocked]) return;
+	
+	//Don't allow the mouse to be unlocked while in fullscreen mode
+	if ([self isFullScreen] && !lock) return;
+	
+	//Don't allow the mouse to be locked if the game hasn't requested mouse locking
+	if (![self mouseActive] && lock) return;
+	
+	
+	//If we got this far, go ahead!
+	[self willChangeValueForKey: @"mouseLocked"];
+	
+	mouseLocked = lock;
+	
+	//Ensure we don't "over-hide" the cursor if it's already hidden
+	//(since [NSCursor hide] stacks)
+	BOOL cursorVisible = CGCursorIsVisible();
+	
+	if		(cursorVisible && lock)		[NSCursor hide];
+	else if (!cursorVisible && !lock)	[NSCursor unhide];
+	
+	[self didChangeValueForKey: @"mouseLocked"];
 }
 
 

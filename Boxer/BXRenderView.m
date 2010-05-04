@@ -16,7 +16,7 @@
 
 - (void) cursorUpdate: (NSEvent *)event
 {
-	[delegate cursorUpdate: event];
+	[[[self window] delegate] cursorUpdate: event];
 }
 
 - (void) dealloc

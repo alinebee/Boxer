@@ -11,7 +11,6 @@
 #import "BXSessionWindow.h"
 #import "BXAppController.h"
 #import "BXProgramPanelController.h"
-#import "BXRenderViewController.h"
 
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulator+BXRendering.h"
@@ -22,9 +21,11 @@
 
 @implementation BXSessionWindowController
 @synthesize renderView, renderContainer, statusBar, programPanel;
-@synthesize renderViewController, programPanelController;
+@synthesize programPanelController;
 @synthesize resizingProgrammatically;
 @synthesize emulator;
+@synthesize hiddenCursor, mouseActive, mouseLocked;
+
 
 //Overridden to make the types explicit, so we don't have to keep casting the return values to avoid compilation warnings
 - (BXSession *) document		{ return (BXSession *)[super document]; }
@@ -44,7 +45,8 @@
 	[self setStatusBar: nil],				[statusBar release];
 	[self setProgramPanel: nil],			[programPanel release];
 	[self setProgramPanelController: nil],	[programPanelController release];
-	
+	[self setHiddenCursor: nil],			[hiddenCursor release];
+
 	[super dealloc];
 }
 
@@ -54,8 +56,7 @@
 	BXSessionWindow *theWindow		= [self window];
 	
 	//Add our view controllers into the responder chain
-	[self setNextResponder: renderViewController];
-	[renderViewController setNextResponder: programPanelController];
+	[self setNextResponder: programPanelController];
 	
 	//Set up observing for UI events
 	//------------------------------
@@ -117,6 +118,19 @@
 	[self bind: @"emulator" toObject: self withKeyPath: @"document.emulator" options: nil];
 	
 	[programPanelController bind: @"representedObject" toObject: self withKeyPath: @"document" options: nil];
+
+	
+	//Set up cursor region for mouse handling
+	//---------------------------------------
+	
+	NSTrackingAreaOptions options = NSTrackingMouseEnteredAndExited | NSTrackingCursorUpdate | NSTrackingActiveInKeyWindow | NSTrackingInVisibleRect | NSTrackingAssumeInside;
+	
+	NSTrackingArea *trackingArea = [[NSTrackingArea alloc] initWithRect: NSZeroRect
+																options: options
+																  owner: self
+															   userInfo: nil];
+	[renderView addTrackingArea: trackingArea];
+	[trackingArea release];
 }
 
 - (void) setDocument: (BXSession *)theSession
@@ -144,55 +158,55 @@
 
 - (void) setEmulator: (BXEmulator *)newEmulator 
 {
-	
 	[self willChangeValueForKey: @"emulator"];
 	
-	if (![[self emulator] isEqualTo: newEmulator])
+	BXEmulator *oldEmulator = [self emulator];
+	if (![oldEmulator isEqualTo: newEmulator])
 	{
-		[[self emulator] unbind: @"mouseLocked"];
-		[[self emulator] unbind: @"fullScreen"];
-		[[self emulator] unbind: @"aspectCorrected"];
-		[[self emulator] unbind: @"filterType"];
+		[oldEmulator unbind: @"mouseLocked"];
+		[oldEmulator unbind: @"fullScreen"];
+		[oldEmulator unbind: @"aspectCorrected"];
+		[oldEmulator unbind: @"filterType"];
 		[renderView unbind: @"renderer"];
-		[renderViewController unbind: @"mouseActive"];
+		[self unbind: @"mouseActive"];
 		
-		[[self emulator] autorelease];
+		[oldEmulator autorelease];
 		emulator = [newEmulator retain];
 		
-		if (emulator)
+		if (newEmulator)
 		{
 			NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 			
-			[emulator bind: @"filterType"
+			[newEmulator bind: @"filterType"
 				  toObject: defaults
 			   withKeyPath: @"filterType"
 				   options: nil];
 			
-			[emulator bind: @"aspectCorrected"
+			[newEmulator bind: @"aspectCorrected"
 				  toObject: defaults
 			   withKeyPath: @"aspectCorrected"
 				   options: nil];
 			
-			[emulator bind: @"fullScreen"
+			[newEmulator bind: @"fullScreen"
 				  toObject: self
 			   withKeyPath: @"fullScreen"
 				   options: nil];
 			
-			[emulator bind: @"mouseLocked"
-				  toObject: renderViewController
+			[newEmulator bind: @"mouseLocked"
+				  toObject: self
 			   withKeyPath: @"mouseLocked"
 				   options: nil];
 			
 			//Bind our render view to the emulator's BXRenderer instance
 			[renderView bind: @"renderer"
-					toObject: emulator
+					toObject: newEmulator
 				 withKeyPath: @"renderer"
 					 options: nil];
 			
-			[renderViewController bind: @"mouseActive"
-							  toObject: emulator
-						   withKeyPath: @"mouseActive"
-							   options: nil];
+			[self bind: @"mouseActive"
+			  toObject: newEmulator
+		   withKeyPath: @"mouseActive"
+			   options: nil];
 		}
 	}
 	
@@ -337,12 +351,31 @@
 	[[NSUserDefaults standardUserDefaults] setInteger: filterType forKey: @"filterType"];
 }
 
+- (IBAction) toggleMouseLocked: (id)sender
+{
+	BOOL wasLocked = [self mouseLocked];
+	[self setMouseLocked: !wasLocked];
+	
+	//If the mouse state was actually toggled, play a sound to commemorate the occasion
+	if ([self mouseLocked] != wasLocked)
+	{
+		NSString *lockSoundName	= (wasLocked) ? @"LockOpening" : @"LockClosing";
+		[[NSApp delegate] playUISoundWithName: lockSoundName atVolume: 0.5f];
+	}
+}
+
+
 - (BOOL) validateMenuItem: (NSMenuItem *)theItem
 {	
 	SEL theAction = [theItem action];
 	NSString *title;
-	
-	if (theAction == @selector(toggleFilterType:))
+
+	if (theAction == @selector(toggleMouseLocked:))
+	{
+		[theItem setState: [self mouseLocked]];
+		return [self mouseActive];
+	}
+	else if (theAction == @selector(toggleFilterType:))
 	{
 		NSInteger itemState;
 		BXFilterType filterType	= [theItem tag];

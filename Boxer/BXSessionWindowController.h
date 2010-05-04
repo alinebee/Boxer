@@ -23,7 +23,6 @@
 @class BXSession;
 @class BXSessionWindow;
 @class BXProgramPanelController;
-@class BXRenderViewController;
 @class BXEmulator;
 
 @interface BXSessionWindowController : NSWindowController
@@ -34,17 +33,18 @@
 	IBOutlet NSView *programPanel;
 
 	IBOutlet BXProgramPanelController *programPanelController;
-	IBOutlet BXRenderViewController *renderViewController;
 	
 	BXEmulator *emulator;
 	
 	NSSize currentScaledSize;	//Used internally by the BXRenderController category for resizing decisions.
 	BOOL resizingProgrammatically;
+	
+	NSCursor *hiddenCursor;
+	BOOL mouseActive;
+	BOOL mouseLocked;
 }
 //Our view controller for the program picker panel.
 @property (retain) BXProgramPanelController *programPanelController;
-//Our view controller for the DOS view.
-@property (retain) BXRenderViewController *renderViewController;
 
 @property (retain) BXRenderView *renderView;	//The OpenGL view that displays DOSBox's graphical output.
 @property (retain) NSView *renderContainer;		//A wrapper for the renderView to help window-sizing behaviour.
@@ -56,6 +56,14 @@
 @property (assign) BOOL resizingProgrammatically;
 
 @property (retain) BXEmulator *emulator;
+
+//Whether the mouse is in use by the DOS program. Set programmatically to match the emulator.
+@property (assign) BOOL mouseActive;
+//Whether the mouse is locked to the DOS viewport.
+@property (assign) BOOL mouseLocked;
+//The blank cursor we use when the mouse should be hidden when over the DOS viewport.
+@property (retain) NSCursor *hiddenCursor;
+
 
 //Recast NSWindowController's standard accessors so that we get our own classes
 //(and don't have to keep recasting them ourselves)
@@ -92,6 +100,9 @@
 
 //Toggle the emulator's active rendering filter.
 - (IBAction) toggleFilterType: (id)sender;
+
+//Lock/unlock the mouse from the DOS viewport, and play a jaunty click sound at the same time.
+- (IBAction) toggleMouseLocked: (id)sender;
 
 
 //Toggling window UI components

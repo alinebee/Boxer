@@ -16,6 +16,10 @@
 
 @interface BXSessionWindowController (BXInputController)
 
+//Whether the mouse is currently within the DOS viewport.
+//This should probably be moved back to BXRenderView.
+- (BOOL) mouseInView;
+
 //Notification observers
 //----------------------
 
@@ -26,6 +30,7 @@
 //whenever a new event loop gets created.
 - (void) menuDidOpen:	(NSNotification *) notification;
 - (void) menuDidClose:	(NSNotification *) notification;
+
 
 //Responding to SDL's entreaties
 //------------------------------

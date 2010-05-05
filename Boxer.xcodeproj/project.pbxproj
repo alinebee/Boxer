@@ -234,9 +234,7 @@
 		9FDAD87F10C182B3004EA7D0 /* BXCoverArtWell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FDAD87E10C182B3004EA7D0 /* BXCoverArtWell.m */; };
 		9FDB601710C0707F00C15CF4 /* BXDockTileController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FDB601610C0707F00C15CF4 /* BXDockTileController.m */; };
 		9FDCA790118F2B7900E2FD74 /* BXCoalface.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCA78F118F2B7900E2FD74 /* BXCoalface.mm */; };
-		9FE201340F6D543F00B3A38C /* libpng.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FE201320F6D543F00B3A38C /* libpng.framework */; };
 		9FE201A60F6D599C00B3A38C /* libz.1.2.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FE201A50F6D599C00B3A38C /* libz.1.2.3.dylib */; };
-		9FE201BB0F6D59D500B3A38C /* libpng.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FE201320F6D543F00B3A38C /* libpng.framework */; };
 		9FE202480F6D749500B3A38C /* Snapshot.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9FE202470F6D749500B3A38C /* Snapshot.aiff */; };
 		9FE8265C10F0EBA000F1B03E /* 35DisketteShine.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE8265A10F0EBA000F1B03E /* 35DisketteShine.png */; };
 		9FE8265D10F0EBA000F1B03E /* 35Diskette.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE8265B10F0EBA000F1B03E /* 35Diskette.png */; };
@@ -256,7 +254,6 @@
 				9F7936DB10F8B9E900C9178C /* Sparkle.framework in Copy Bundled Frameworks */,
 				9F6BA6FD10A9FBAB005A3E2A /* Growl.framework in Copy Bundled Frameworks */,
 				9FA2E5D9109D255300E50623 /* BGHUDAppKit.framework in Copy Bundled Frameworks */,
-				9FE201BB0F6D59D500B3A38C /* libpng.framework in Copy Bundled Frameworks */,
 				9FBC3D600F56EA82001811F2 /* SDL.framework in Copy Bundled Frameworks */,
 				9FBC3D610F56EA82001811F2 /* SDL_net.framework in Copy Bundled Frameworks */,
 			);
@@ -678,7 +675,6 @@
 		9FE200A10F6D2F2C00B3A38C /* BXFilterDefinitions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFilterDefinitions.h; sourceTree = "<group>"; };
 		9FE2010A0F6D4CBA00B3A38C /* zmbv.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = zmbv.cpp; sourceTree = "<group>"; };
 		9FE2010B0F6D4CBA00B3A38C /* zmbv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zmbv.h; sourceTree = "<group>"; };
-		9FE201320F6D543F00B3A38C /* libpng.framework */ = {isa = PBXFileReference; comments = "I have no idea where this came from originally, but it's a framework that builds libpng as a universal binary. Sourcecode for the framework (including an XCode project for it) is included in the Boxer distribution.\n\nNote that this is version 1.2.35, whereas the latest ('final') version of libpng as of 2009-11-08 is 1.2.40 - this should be updated!"; lastKnownFileType = wrapper.framework; path = libpng.framework; sourceTree = "<group>"; };
 		9FE201A50F6D599C00B3A38C /* libz.1.2.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.3.dylib; path = usr/lib/libz.1.2.3.dylib; sourceTree = SDKROOT; };
 		9FE202470F6D749500B3A38C /* Snapshot.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = Snapshot.aiff; sourceTree = "<group>"; };
 		9FE8265A10F0EBA000F1B03E /* 35DisketteShine.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 35DisketteShine.png; sourceTree = "<group>"; };
@@ -704,7 +700,6 @@
 				9FBC3C790F56E0D7001811F2 /* CoreMIDI.framework in Frameworks */,
 				9F2140FF0F59F28000A5A183 /* QuartzCore.framework in Frameworks */,
 				9F4E042C0F67E72300427D50 /* AudioToolbox.framework in Frameworks */,
-				9FE201340F6D543F00B3A38C /* libpng.framework in Frameworks */,
 				9FE201A60F6D599C00B3A38C /* libz.1.2.3.dylib in Frameworks */,
 				9FB554F70F6EE58000A33017 /* QTKit.framework in Frameworks */,
 				9FA2E596109D251100E50623 /* BGHUDAppKit.framework in Frameworks */,
@@ -1464,7 +1459,6 @@
 				9F7936CF10F8B8D300C9178C /* Sparkle.framework */,
 				9F6BA6F810A9FB92005A3E2A /* Growl.framework */,
 				9FA2E595109D251100E50623 /* BGHUDAppKit.framework */,
-				9FE201320F6D543F00B3A38C /* libpng.framework */,
 				9FBC3C140F56D6E8001811F2 /* SDL.framework */,
 				9FBC3C150F56D6E8001811F2 /* SDL_net.framework */,
 			);

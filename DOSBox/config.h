@@ -115,7 +115,7 @@ This means that this file has had too many modifications to be safely replaceabl
 
 /* Define to 1 to enable screenshots, requires libpng */
 /* #undef C_SSHOT */
-#define C_SSHOT 1
+//#define C_SSHOT 1
 
 
 /* The type of cpu this target has */

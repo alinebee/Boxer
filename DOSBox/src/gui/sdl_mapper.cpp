@@ -38,6 +38,10 @@
 #include "mapper.h"
 #include "setup.h"
 
+//--Added 2010-05-06 by Alun Bestor to replace SDL calls with Boxer calls
+#include "BXCoalface.h"
+//--End of modifications
+
 enum {
 	CLR_BLACK=0,
 	CLR_WHITE=1,
@@ -2325,12 +2329,12 @@ void MAPPER_Init(void) {
 	CreateLayout();
 	CreateBindGroups();
 	if (!MAPPER_LoadBinds()) CreateDefaultBinds();
-	if (SDL_GetModState()&KMOD_CAPS) {
+	if (boxer_currentSDLModifiers()&KMOD_CAPS) {
 		for (CBindList_it bit=caps_lock_event->bindlist.begin();bit!=caps_lock_event->bindlist.end();bit++) {
 			(*bit)->ActivateBind(32767,true,true);
 		}
 	}
-	if (SDL_GetModState()&KMOD_NUM) {
+	if (boxer_currentSDLModifiers()&KMOD_NUM) {
 		for (CBindList_it bit=num_lock_event->bindlist.begin();bit!=num_lock_event->bindlist.end();bit++) {
 			(*bit)->ActivateBind(32767,true,true);
 		}

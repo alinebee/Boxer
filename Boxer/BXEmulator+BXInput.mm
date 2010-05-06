@@ -9,6 +9,7 @@
 #import <Carbon/Carbon.h>
 #import "BXEmulator+BXInput.h"
 #import "BXRenderer.h"
+#import "BXEmulatorEventResponder.h"
 
 #import "config.h"
 #import "video.h"
@@ -251,4 +252,8 @@
 	 */
 }
 
+- (SDLMod) currentSDLModifiers
+{
+	return [[[self eventHandler] class] _convertToSDLModifiers: [[NSApp currentEvent] modifierFlags]];
+}
 @end

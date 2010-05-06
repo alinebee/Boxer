@@ -17,10 +17,32 @@ enum {
 };
 
 @interface BXEmulatorEventResponder : NSResponder
-{
-	NSPoint lastMousePosition;
-}
 
-- (void) mouseMovedToPoint: (NSPoint)point byAmount: (NSPoint)delta whileLocked: (BOOL)locked;
+- (void) mouseMovedToPoint: (NSPoint)point
+				  byAmount: (NSPoint)delta
+				  onCanvas:	(NSRect)canvas
+			   whileLocked: (BOOL)locked;
 
 @end
+
+
+#if __cplusplus
+//Hide SDL nastiness from Objective C classes
+
+#import <SDL/SDL.h>
+
+@interface BXEmulatorEventResponder (BXEmulatorEventResponderInternals)
+
+//Generates and returns an SDL key event with the specified parameters.
++ (SDL_Event) _SDLKeyEventForKeyCode: (CGKeyCode)keyCode
+							 pressed: (BOOL)pressed
+					   withModifiers: (NSUInteger)modifierFlags;
+
+//Returns the SDL key constant corresponding to the specified OS X virtual keycode.
++ (SDLKey) _convertToSDLKeyCode: (CGKeyCode)keyCode;	
+	
+//Returns the appropriate SDL modifier bitmask for the specified NSEvent modifier flags.
++ (SDLMod) _convertToSDLModifiers: (NSUInteger)modifierFlags;
+
+@end
+#endif

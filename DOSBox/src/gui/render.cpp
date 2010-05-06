@@ -38,7 +38,7 @@
 #include "BXCoalface.h"
 
 //Has to be declared here instead of boxer.h because of callback type
-BOXER_EXPORT void boxer_prepareForSize(Bitu width, Bitu height, double scalex, double scaley, GFX_CallBack_t callback);
+void boxer_prepareForSize(Bitu width, Bitu height, double scalex, double scaley, GFX_CallBack_t callback);
 //--End of modifications
 
 Render_t render;

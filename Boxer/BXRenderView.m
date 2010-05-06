@@ -18,6 +18,7 @@
 	return YES;
 }
 
+//Pass on various events that would otherwise be eaten by the view
 - (void) rightMouseDown: (NSEvent *)event
 {
 	[[[self window] windowController] rightMouseDown: event];
@@ -27,6 +28,12 @@
 {
 	[[[self window] windowController] cursorUpdate: event];
 }
+
+- (void) cancelOperation: (id)sender
+{
+	[[[self window] windowController] cancelOperation: sender];
+}
+
 
 - (void) dealloc
 {

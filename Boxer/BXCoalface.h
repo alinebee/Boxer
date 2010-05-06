@@ -20,63 +20,62 @@ extern "C" {
 #import <SDL/SDL.h>
 #import "config.h"
 	
-#define BOXER_EXPORT __attribute__((visibility("default")))
-	
 	//Called from sdlmain.cpp: perform various notifications and overrides.
-	BOXER_EXPORT bool boxer_handleEventLoop();
-	BOXER_EXPORT bool boxer_handleSDLEvent(SDL_Event *event);
-	BOXER_EXPORT bool boxer_handleDOSBoxTitleChange(int cycles, int frameskip, bool paused);
-	BOXER_EXPORT void boxer_applyConfigFiles();
+	bool boxer_handleEventLoop();
+	bool boxer_handleSDLEvent(SDL_Event *event);
+	bool boxer_handleDOSBoxTitleChange(int cycles, int frameskip, bool paused);
+	void boxer_applyConfigFiles();
 	
-	BOXER_EXPORT bool boxer_startFrame(Bit8u **frameBuffer, Bitu *pitch);
-	BOXER_EXPORT void boxer_finishFrame(const uint16_t *dirtyBlocks);
+	bool boxer_startFrame(Bit8u **frameBuffer, Bitu *pitch);
+	void boxer_finishFrame(const uint16_t *dirtyBlocks);
 	
 	//Called from render.cpp: configures the DOSBox render state.
-	BOXER_EXPORT void boxer_applyRenderingStrategy();
+	void boxer_applyRenderingStrategy();
 	
 	//Called from messages.cpp: overrides DOSBox's translation system.
-	BOXER_EXPORT const char * boxer_localizedStringForKey(char const * key);
+	const char * boxer_localizedStringForKey(char const * key);
 	
 	//Called from dos_keyboard_layout.cpp: provides the current OS X keyboard layout as a DOSBox layout code.
-	BOXER_EXPORT const char * boxer_currentDOSKeyboardLayout();
+	const char * boxer_currentDOSKeyboardLayout();
 	
 	//Called from dos_programs.cpp: verifies that DOSBox is allowed to mount the specified folder.
-	BOXER_EXPORT bool boxer_shouldMountPath(const char *filePath);
+	bool boxer_shouldMountPath(const char *filePath);
 	
 	//Called from shell.cpp: notifies Boxer when autoexec.bat is run.
-	BOXER_EXPORT void boxer_autoexecDidStart();
-	BOXER_EXPORT void boxer_autoexecDidFinish();
+	void boxer_autoexecDidStart();
+	void boxer_autoexecDidFinish();
 	
 	//Called from shell.cpp: notifies Boxer when control returns to the DOS prompt.
-	BOXER_EXPORT void boxer_didReturnToShell();
+	void boxer_didReturnToShell();
 	
 	//Called from shell_cmds.cpp: hooks into shell command processing.
-	BOXER_EXPORT bool boxer_shouldRunShellCommand(char* cmd, char* args);
+	bool boxer_shouldRunShellCommand(char* cmd, char* args);
 	
 	//Called from shell_misc.cpp to allow Boxer to inject its own commands at the DOS command line.
-	BOXER_EXPORT bool boxer_handleCommandInput(char *cmd, Bitu *cursorPosition, bool *executeImmediately);
+	bool boxer_handleCommandInput(char *cmd, Bitu *cursorPosition, bool *executeImmediately);
 	
 	//Called from drive_cache.cpp: allows Boxer to hide OS X files that DOSBox shouldn't touch.
-	BOXER_EXPORT bool boxer_shouldShowFileWithName(const char *name);
+	bool boxer_shouldShowFileWithName(const char *name);
 	
 	//Called from drive_local.cpp: allows Boxer to restrict access to files that DOS programs shouldn't write to.
-	BOXER_EXPORT bool boxer_shouldAllowWriteAccessToPath(const char *filePath, Bit8u driveIndex);
+	bool boxer_shouldAllowWriteAccessToPath(const char *filePath, Bit8u driveIndex);
 	
 	//Called from dos_programs.cpp et al: informs Boxer of drive mount/unmount events.
-	BOXER_EXPORT void boxer_driveDidMount(Bit8u driveIndex);
-	BOXER_EXPORT void boxer_driveDidUnmount(Bit8u driveIndex);
+	void boxer_driveDidMount(Bit8u driveIndex);
+	void boxer_driveDidUnmount(Bit8u driveIndex);
 	
 	//Called from shell_misc.cpp to notify Boxer when a program or batchfile is executed.
-	BOXER_EXPORT void boxer_willExecuteFileAtDOSPath(const char *dosPath, Bit8u driveIndex);
-	BOXER_EXPORT void boxer_didExecuteFileAtDOSPath(const char *dosPath, Bit8u driveIndex);
+	void boxer_willExecuteFileAtDOSPath(const char *dosPath, Bit8u driveIndex);
+	void boxer_didExecuteFileAtDOSPath(const char *dosPath, Bit8u driveIndex);
 	
 	//Called from dosbox.cpp to short-circuit the emulation loop.
-	BOXER_EXPORT bool boxer_handleRunLoop();
+	bool boxer_handleRunLoop();
 	
-	BOXER_EXPORT void boxer_handleMouseMotion(SDL_MouseMotionEvent * event);
-	BOXER_EXPORT void boxer_handleMouseButton(SDL_MouseButtonEvent * event);
-	BOXER_EXPORT void boxer_setMouseActive(bool mouseActive);
+	void boxer_handleMouseMotion(SDL_MouseMotionEvent * event);
+	void boxer_handleMouseButton(SDL_MouseButtonEvent * event);
+	void boxer_setMouseActive(bool mouseActive);
 	
+	SDLMod boxer_currentSDLModifiers();
 #if __cplusplus
 } //Extern C
 #endif

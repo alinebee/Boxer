@@ -14,6 +14,10 @@
 #import "video.h"
 #import "sdlmain.h"
 
+
+#pragma mark -
+#pragma mark Application state functions
+
 //This is called at the start of GFX_Events in DOSBox's sdlmain.cpp, to allow us to perform initial actions every time the event loop runs. Return YES to skip the event loop.
 bool boxer_handleEventLoop()
 {
@@ -57,6 +61,9 @@ bool boxer_isCancelled()
 }
 
 
+#pragma mark -
+#pragma mark Rendering functions
+
 //Applies Boxer's rendering settings when reinitializing the DOSBox renderer
 //This is called by RENDER_Reset in DOSBox's gui/render.cpp
 void boxer_applyRenderingStrategy()	{ [[BXEmulator currentEmulator] _applyRenderingStrategy]; }
@@ -91,6 +98,9 @@ void boxer_finishFrame(const uint16_t *dirtyBlocks)
 	[emulator _finishFrameWithChanges: dirtyBlocks];	
 }
 
+
+#pragma mark -
+#pragma mark Shell-related functions
 
 //Catch shell input and send it to our own shell controller - returns YES if we've handled the command,
 //NO if we want to let it go through
@@ -154,16 +164,19 @@ void boxer_autoexecDidFinish()
 
 void boxer_willExecuteFileAtDOSPath(const char *dosPath, Bit8u driveIndex)
 {
-	BXEmulator *emulator	= [BXEmulator currentEmulator];
+	BXEmulator *emulator = [BXEmulator currentEmulator];
 	[emulator _willExecuteFileAtDOSPath: dosPath onDrive: driveIndex];
 }
 
 void boxer_didExecuteFileAtDOSPath(const char *dosPath, Bit8u driveIndex)
 {
-	BXEmulator *emulator	= [BXEmulator currentEmulator];
+	BXEmulator *emulator = [BXEmulator currentEmulator];
 	[emulator _didExecuteFileAtDOSPath: dosPath onDrive: driveIndex];
 }
 
+
+#pragma mark -
+#pragma mark Filesystem functions
 
 //Whether or not to allow the specified path to be mounted.
 //Called by MOUNT::Run in DOSBox's dos/dos_programs.cpp.
@@ -210,6 +223,9 @@ void boxer_driveDidUnmount(Bit8u driveIndex)
 }
 
 
+#pragma mark -
+#pragma mark Event-related functions
+
 //Returns the DOSBox keyboard code that most closely corresponds to the current OS X keyboard layout
 const char * boxer_currentDOSKeyboardLayout()
 {
@@ -234,5 +250,10 @@ void boxer_setMouseActive(bool mouseActive)
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
 	return [emulator setMouseActive: mouseActive];
-	
+}
+
+SDLMod boxer_currentSDLModifiers()
+{
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+	return [emulator currentSDLModifiers];
 }

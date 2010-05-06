@@ -35,7 +35,9 @@
 {
 	//Don't resign key when we're in fullscreen mode
 	//FIXME: work out why this is happening in the first place!
-	if ([self isFullScreen]) [[self window] makeKeyWindow];
+	if ([self isFullScreen]) {
+		[[self window] makeKeyWindow];
+	}
 	else
 	{
 		[self setMouseLocked: NO];
@@ -45,7 +47,9 @@
 {
 	//Don't resign main when we're in fullscreen mode
 	//FIXME: work out why this is happening in the first place!
-	if ([self isFullScreen]) [[self window] makeMainWindow];
+	if ([self isFullScreen]) {
+		[[self window] makeMainWindow];	
+	}
 	else
 	{
 		[self setMouseLocked: NO];
@@ -128,7 +132,7 @@
 - (void) mouseDown: (NSEvent *)theEvent
 {
 	//Cmd-left-click toggles mouse-locking
-	if ([self mouseActive] && [self mouseInView] && [[NSApp currentEvent] modifierFlags] & NSCommandKeyMask)
+	if ([self mouseActive] && [self mouseInView] && [theEvent modifierFlags] & NSCommandKeyMask)
 		[self toggleMouseLocked: self];
 	//Otherwise, pass the click on
 	else [super mouseDown: theEvent];
@@ -136,19 +140,24 @@
 
 - (void) mouseMoved: (NSEvent *)theEvent
 {
-	//Work out mouse motion relative to the DOS viewport,
+	//Work out mouse motion relative to the DOS viewport canvas,
 	//and pass that on as a relative point to the emulator's event handler
-	
-	//While we're mouselocked and the cursor is disassociated, we can't get an absolute mouse position - so we have
-	//to calculate it from the last known position
 	
 	NSPoint relativePosition;
 	NSPoint relativeDelta;
+	NSRect canvas;
 
 	if ([self mouseLocked])
 	{
-		NSRect viewPort	= [[[self window] screen] frame];
-		relativeDelta = NSMakePoint([theEvent deltaX] / viewPort.size.width, [theEvent deltaY] / viewPort.size.width);
+		//While we're mouselocked and the cursor is disassociated,
+		//we can't get an absolute mouse position - so we have
+		//to calculate it from the last known position. We store this
+		//as a 0-1 ratio of the canvas rather than as a fixed unit position,
+		//so that it doesn't get muddled up by changes to the view size.
+		
+		canvas = [[[self window] screen] frame];
+		relativeDelta = NSMakePoint([theEvent deltaX] / canvas.size.width,
+									-[theEvent deltaY] / canvas.size.height);
 		//Update the last known position with the new mouse delta
 		lastMousePosition.x += relativeDelta.x;
 		lastMousePosition.y += relativeDelta.y;
@@ -160,20 +169,22 @@
 	}
 	else
 	{
-		NSRect viewPort	= [renderView bounds];
+		canvas = [renderView bounds];
 		NSPoint pointInView	= [renderView convertPoint: [theEvent locationInWindow] fromView: nil];
 		
-		relativeDelta = NSMakePoint([theEvent deltaX] / viewPort.size.width, [theEvent deltaY] / viewPort.size.width);
-		relativePosition = NSMakePoint(pointInView.x / viewPort.size.width, 1.0 - (pointInView.y / viewPort.size.height));
+		relativeDelta		= NSMakePoint([theEvent deltaX] / canvas.size.width,
+										  -[theEvent deltaY] / canvas.size.height);
+		relativePosition	= NSMakePoint(pointInView.x / canvas.size.width,
+										  pointInView.y / canvas.size.height);
+		
 		//Record the location so that we can use it next time
 		lastMousePosition = relativePosition;
 	}
 	
 	[[[self emulator] eventHandler] mouseMovedToPoint: relativePosition
 											 byAmount: relativeDelta
-										  whileLocked: NO];
-	
-	NSLog(@"%@, %@", NSStringFromPoint(relativePosition), NSStringFromPoint(relativeDelta));
+											 onCanvas: canvas
+										  whileLocked: [self mouseLocked]];
 }
 
 - (void) mouseDragged: (NSEvent *)theEvent
@@ -200,6 +211,16 @@
 	[self didChangeValueForKey: @"mouseInView"];
 }
 
+- (void) cancelOperation: (id)sender
+{
+	//Exit fullscreen when ESC is pressed and we are at the DOS prompt.
+	if ([self isFullScreen] && ![[self emulator] isRunningProcess])
+	{
+		[self exitFullScreen: self];
+	}
+	//Otherwise, send the event that triggered this cancellation over to the emulator.
+	else [[[self emulator] eventHandler] keyDown: [NSApp currentEvent]];
+}
 
 #pragma mark -
 #pragma mark Mouse focus and locking 
@@ -227,8 +248,24 @@
 	if		(cursorVisible && lock)		[NSCursor hide];
 	else if (!cursorVisible && !lock)	[NSCursor unhide];
 	
-	//Unlock the mouse from the cursor
+	//Lock/unlock the mouse and the OS X cursor
 	CGAssociateMouseAndMouseCursorPosition(!lock);
+	
+	//When unlocking, warp the cursor to the equivalent screen position it would have moved to while locked.
+	if (!lock)
+	{
+		NSRect canvas = [renderView bounds];
+		NSPoint pointInView = NSMakePoint(lastMousePosition.x * canvas.size.width,
+										  lastMousePosition.y * canvas.size.height);
+		
+		NSPoint pointOnScreen	= [[self window] convertBaseToScreen: [renderView convertPointToBase: pointInView]];
+		CGPoint cgPointOnScreen	= NSPointToCGPoint(pointOnScreen);
+		
+		//Correct for CG's top-left origin
+		NSRect screenFrame = [[[self window] screen] frame];
+		cgPointOnScreen.y = screenFrame.size.height - screenFrame.origin.y - cgPointOnScreen.y;
+		CGWarpMouseCursorPosition(cgPointOnScreen);
+	}
 	
 	[self didChangeValueForKey: @"mouseLocked"];
 }

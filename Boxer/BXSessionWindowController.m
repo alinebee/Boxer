@@ -94,6 +94,8 @@
 	CGFloat borderThickness = [statusBar frame].size.height;
 	[theWindow setContentBorderThickness: borderThickness forEdge: NSMinYEdge];
 	
+	//Track mouse movement when this is the main window
+	[theWindow setAcceptsMouseMovedEvents: YES];
 	
 	//Set window rendering behaviour
 	//------------------------------

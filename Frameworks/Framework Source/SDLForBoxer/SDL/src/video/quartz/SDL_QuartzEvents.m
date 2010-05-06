@@ -960,8 +960,13 @@ void QZ_PumpEvents (_THIS)
                 case NSKeyDown:
                     QZ_DoKey (this, SDL_PRESSED, event);
                     break;
-                case NSFlagsChanged:
+                
+					//--Disabled 2010-05-05 by Alun Bestor: pass flag changes on through to Boxer you bastards
+					/*
+				case NSFlagsChanged:
                     break;
+					 */
+					//--End of modifications
                 case NSAppKitDefined:
                     [ NSApp sendEvent:event ];
                     if ([ event subtype ] == NSApplicationActivatedEventType && (mode_flags & SDL_FULLSCREEN)) {

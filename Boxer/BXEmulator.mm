@@ -11,6 +11,7 @@
 #import "BXEmulator+BXShell.h"
 #import "BXEmulator+BXRendering.h"
 #import "BXRenderer.h"
+#import "BXEmulatorEventResponder.h"
 
 #import <SDL/SDL.h>
 #import "config.h"
@@ -68,6 +69,7 @@ BXEmulator *currentEmulator = nil;
 @synthesize filterType;
 @synthesize commandQueue;
 @synthesize mouseActive;
+@synthesize eventHandler;
 
 
 //Introspective class methods
@@ -139,6 +141,7 @@ BXEmulator *currentEmulator = nil;
 		currentVideoMode	= M_TEXT;
 		
 		[self setRenderer: [[[BXRenderer alloc] init] autorelease]];
+		[self setEventHandler: [[[BXEmulatorEventResponder alloc] init] autorelease]];
 	}
 	return self;
 }
@@ -543,7 +546,11 @@ BXEmulator *currentEmulator = nil;
 
 - (BOOL) _handleEventLoop
 {
-	return NO;
+	NSEvent *event;
+	while (event = [NSApp nextEventMatchingMask: NSAnyEventMask untilDate: [NSDate distantPast] inMode: NSDefaultRunLoopMode dequeue: YES])
+		[NSApp sendEvent: event];
+	
+	return YES;
 }
 
 - (BOOL) _handleRunLoop

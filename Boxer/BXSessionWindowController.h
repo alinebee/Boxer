@@ -42,6 +42,7 @@
 	NSCursor *hiddenCursor;
 	BOOL mouseActive;
 	BOOL mouseLocked;
+	NSPoint lastMousePosition; //Used internally by BXInputController category for tracking the mouse location while locked. 
 }
 //Our view controller for the program picker panel.
 @property (retain) BXProgramPanelController *programPanelController;

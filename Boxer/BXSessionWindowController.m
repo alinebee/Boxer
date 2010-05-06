@@ -14,6 +14,7 @@
 
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulator+BXRendering.h"
+#import "BXEmulatorEventResponder.h"
 
 #import "BXCloseAlert.h"
 #import "BXSession+BXDragDrop.h"
@@ -54,9 +55,6 @@
 {
 	NSNotificationCenter *center	= [NSNotificationCenter defaultCenter];
 	BXSessionWindow *theWindow		= [self window];
-	
-	//Add our view controllers into the responder chain
-	[self setNextResponder: programPanelController];
 	
 	//Set up observing for UI events
 	//------------------------------
@@ -103,9 +101,6 @@
 	//Fix the window in the aspect ratio it will start up in
 	[theWindow setContentAspectRatio: [self windowedRenderViewSize]];
 	
-	//Needed so that the window catches mouse movement over it
-	[theWindow setAcceptsMouseMovedEvents: YES];
-	
 	//We don't support content-preservation yet, so disable the check to be slightly more efficient
 	[theWindow setPreservesContentDuringLiveResize: NO];
 	
@@ -123,7 +118,7 @@
 	//Set up cursor region for mouse handling
 	//---------------------------------------
 	
-	NSTrackingAreaOptions options = NSTrackingMouseEnteredAndExited | NSTrackingCursorUpdate | NSTrackingActiveInKeyWindow | NSTrackingInVisibleRect | NSTrackingAssumeInside;
+	NSTrackingAreaOptions options = NSTrackingMouseEnteredAndExited | NSTrackingMouseMoved | NSTrackingCursorUpdate | NSTrackingActiveInKeyWindow | NSTrackingInVisibleRect | NSTrackingAssumeInside;
 	
 	NSTrackingArea *trackingArea = [[NSTrackingArea alloc] initWithRect: NSZeroRect
 																options: options
@@ -163,12 +158,13 @@
 	BXEmulator *oldEmulator = [self emulator];
 	if (![oldEmulator isEqualTo: newEmulator])
 	{
-		[oldEmulator unbind: @"mouseLocked"];
+		//[oldEmulator unbind: @"mouseLocked"];
 		[oldEmulator unbind: @"fullScreen"];
 		[oldEmulator unbind: @"aspectCorrected"];
 		[oldEmulator unbind: @"filterType"];
 		[renderView unbind: @"renderer"];
 		[self unbind: @"mouseActive"];
+		[self setNextResponder: nil];
 		
 		[oldEmulator autorelease];
 		emulator = [newEmulator retain];
@@ -192,11 +188,12 @@
 			   withKeyPath: @"fullScreen"
 				   options: nil];
 			
+			/*
 			[newEmulator bind: @"mouseLocked"
 				  toObject: self
 			   withKeyPath: @"mouseLocked"
 				   options: nil];
-			
+			*/
 			//Bind our render view to the emulator's BXRenderer instance
 			[renderView bind: @"renderer"
 					toObject: newEmulator
@@ -207,6 +204,8 @@
 			  toObject: newEmulator
 		   withKeyPath: @"mouseActive"
 			   options: nil];
+			
+			[self setNextResponder: [emulator eventHandler]];
 		}
 	}
 	

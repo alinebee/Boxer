@@ -10,11 +10,12 @@
 #import "BXSessionWindowController+BXRenderController.h"
 #import "BXRenderView.h"
 #import "BXEmulator.h"
+#import "BXEmulatorEventResponder.h"
 
 @implementation BXSessionWindowController (BXInputController)
 
-//Delegate methods
-//----------------
+#pragma mark -
+#pragma mark Monitoring application state
 
 //Warn the emulator to prepare for emulation cutout when the resize starts
 - (void) windowWillLiveResize: (NSNotification *) notification
@@ -30,8 +31,6 @@
 	[[self emulator] didResume];
 }
 
-- (void) windowDidBecomeKey:	(NSNotification *) notification	{ [[self emulator] captureInput]; }
-- (void) windowDidBecomeMain:	(NSNotification *) notification	{ [[self emulator] activate]; }
 - (void) windowDidResignKey:	(NSNotification *) notification
 {
 	//Don't resign key when we're in fullscreen mode
@@ -39,7 +38,6 @@
 	if ([self isFullScreen]) [[self window] makeKeyWindow];
 	else
 	{
-		[[self emulator] releaseInput];
 		[self setMouseLocked: NO];
 	}
 }
@@ -50,7 +48,6 @@
 	if ([self isFullScreen]) [[self window] makeMainWindow];
 	else
 	{
-		[[self emulator] deactivate];
 		[self setMouseLocked: NO];
 	}
 }
@@ -70,16 +67,16 @@
 }
 
 
-/* Mouse cursor handling */
-/* --------------------- */
+#pragma mark -
+#pragma mark Cursor handling
 
 - (BOOL) mouseInView
 {
-	if ([renderView isInFullScreenMode]) return YES;
+	if ([renderView isInFullScreenMode] || [self mouseLocked]) return YES;
 	
 	NSPoint mouseLocation = [[self window] mouseLocationOutsideOfEventStream];
-	NSPoint relativePoint = [renderView convertPoint: mouseLocation fromView: nil];
-	return [renderView mouse: relativePoint inRect: [renderView bounds]];
+	NSPoint pointInView = [renderView convertPoint: mouseLocation fromView: nil];
+	return [renderView mouse: pointInView inRect: [renderView bounds]];
 }
 
 - (void) setMouseActive: (BOOL)active
@@ -115,13 +112,79 @@
 	return hiddenCursor;
 }
 
+
+#pragma mark -
+#pragma mark Event responding
+
 - (void) cursorUpdate: (NSEvent *)theEvent
 {
+	//TODO: figure out why cursor is getting reset when view changes dimensions
 	if ([self mouseActive] && [self mouseInView])
 	{
 		[[self hiddenCursor] set];
 	}
 }
+
+- (void) mouseDown: (NSEvent *)theEvent
+{
+	//Cmd-left-click toggles mouse-locking
+	if ([self mouseActive] && [self mouseInView] && [[NSApp currentEvent] modifierFlags] & NSCommandKeyMask)
+		[self toggleMouseLocked: self];
+	//Otherwise, pass the click on
+	else [super mouseDown: theEvent];
+}
+
+- (void) mouseMoved: (NSEvent *)theEvent
+{
+	//Work out mouse motion relative to the DOS viewport,
+	//and pass that on as a relative point to the emulator's event handler
+	
+	//While we're mouselocked and the cursor is disassociated, we can't get an absolute mouse position - so we have
+	//to calculate it from the last known position
+	
+	NSPoint relativePosition;
+	NSPoint relativeDelta;
+
+	if ([self mouseLocked])
+	{
+		NSRect viewPort	= [[[self window] screen] frame];
+		relativeDelta = NSMakePoint([theEvent deltaX] / viewPort.size.width, [theEvent deltaY] / viewPort.size.width);
+		//Update the last known position with the new mouse delta
+		lastMousePosition.x += relativeDelta.x;
+		lastMousePosition.y += relativeDelta.y;
+		//Clamp the axes to 0.0 and 1.0
+		lastMousePosition.x = fmaxf(fminf(lastMousePosition.x, 1.0), 0.0);
+		lastMousePosition.y = fmaxf(fminf(lastMousePosition.y, 1.0), 0.0);
+		
+		relativePosition = lastMousePosition;
+	}
+	else
+	{
+		NSRect viewPort	= [renderView bounds];
+		NSPoint pointInView	= [renderView convertPoint: [theEvent locationInWindow] fromView: nil];
+		
+		relativeDelta = NSMakePoint([theEvent deltaX] / viewPort.size.width, [theEvent deltaY] / viewPort.size.width);
+		relativePosition = NSMakePoint(pointInView.x / viewPort.size.width, 1.0 - (pointInView.y / viewPort.size.height));
+		//Record the location so that we can use it next time
+		lastMousePosition = relativePosition;
+	}
+	
+	[[[self emulator] eventHandler] mouseMovedToPoint: relativePosition
+											 byAmount: relativeDelta
+										  whileLocked: NO];
+	
+	NSLog(@"%@, %@", NSStringFromPoint(relativePosition), NSStringFromPoint(relativeDelta));
+}
+
+- (void) mouseDragged: (NSEvent *)theEvent
+{
+	//Only pass on mouse drag events when they're inside the window
+	//This way, we don't catch dragging the window itself around
+	if ([self mouseInView]) [self mouseMoved: theEvent];
+}
+- (void) rightMouseDragged: (NSEvent *)theEvent	{ return [self mouseDragged: theEvent]; }
+- (void) otherMouseDragged: (NSEvent *)theEvent	{ return [self mouseDragged: theEvent]; }
+
 
 - (void) mouseExited: (NSEvent *)theEvent
 {
@@ -137,6 +200,9 @@
 	[self didChangeValueForKey: @"mouseInView"];
 }
 
+
+#pragma mark -
+#pragma mark Mouse focus and locking 
 - (void) setMouseLocked: (BOOL)lock
 {
 	//Don't continue if we're already in the right lock state
@@ -161,7 +227,15 @@
 	if		(cursorVisible && lock)		[NSCursor hide];
 	else if (!cursorVisible && !lock)	[NSCursor unhide];
 	
+	//Unlock the mouse from the cursor
+	CGAssociateMouseAndMouseCursorPosition(!lock);
+	
 	[self didChangeValueForKey: @"mouseLocked"];
+}
+
+- (BOOL) mouseActive
+{
+	return YES;
 }
 
 

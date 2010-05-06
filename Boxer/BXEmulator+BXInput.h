@@ -11,13 +11,6 @@
 #import "BXEmulator.h"
 #import <SDL/SDL.h>
 
-enum {
-	DOSBoxMouseButtonLeft	= 0,
-	DOSBoxMouseButtonRight	= 1,
-	DOSBoxMouseButtonMiddle	= 2
-};
-
-
 @interface BXEmulator (BXInput)
 
 //Handling keyboard layout

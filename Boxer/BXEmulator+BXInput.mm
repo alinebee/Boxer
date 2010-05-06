@@ -10,8 +10,8 @@
 #import "BXEmulator+BXInput.h"
 #import "BXRenderer.h"
 
-#include "config.h"
-#include "video.h"
+#import "config.h"
+#import "video.h"
 #import "mouse.h"
 #import "sdlmain.h"
 
@@ -190,7 +190,16 @@
 	//return [self isAtPrompt];
 }
 
-//Handling events internally
++ (NSSet *) keyPathsForValuesAffectingMouseActive	{ return [NSSet setWithObject: @"isRunningProcess"]; }
+
+- (BOOL) mouseActive
+{
+	//The mouse active state is not reset by DOSBox when a game exits.
+	return mouseActive && [self isRunningProcess];
+}
+
+
+
 - (void) handleSDLMouseMovement: (SDL_MouseMotionEvent *)motion
 {
 	NSRect viewport = [[self renderer] viewport];
@@ -199,7 +208,7 @@
 	NSPoint relativeMotion		= NSMakePoint(motion->xrel, motion->yrel);
 	NSPoint absolutePosition	= NSMakePoint((motion->x - viewport.origin.x) / (viewport.size.width - 1),
 											  (motion->y - viewport.origin.y) / (viewport.size.height - 1)); 
-										
+	
 	
 	Mouse_CursorMoved(relativeMotion.x * sensitivity,
 					  relativeMotion.y * sensitivity,
@@ -210,6 +219,7 @@
 
 - (void) handleSDLMouseButton: (SDL_MouseButtonEvent *)event
 {
+	/*
 	NSInteger button;
 	
 	//Convert SDL button constants to DOSBox button constants
@@ -238,15 +248,7 @@
 	{
 		Mouse_ButtonReleased(button);	
 	}
-}
-
-
-+ (NSSet *) keyPathsForValuesAffectingMouseActive	{ return [NSSet setWithObject: @"isRunningProcess"]; }
-
-- (BOOL) mouseActive
-{
-	//The mouse active state is not reset by DOSBox when a game exits.
-	return mouseActive && [self isRunningProcess];
+	 */
 }
 
 @end

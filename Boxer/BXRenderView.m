@@ -13,10 +13,19 @@
 @implementation BXRenderView
 @synthesize renderer;
 
+- (BOOL)acceptsFirstResponder
+{
+	return YES;
+}
+
+- (void) rightMouseDown: (NSEvent *)event
+{
+	[[[self window] windowController] rightMouseDown: event];
+}
 
 - (void) cursorUpdate: (NSEvent *)event
 {
-	[[[self window] delegate] cursorUpdate: event];
+	[[[self window] windowController] cursorUpdate: event];
 }
 
 - (void) dealloc

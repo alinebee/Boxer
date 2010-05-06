@@ -51,6 +51,7 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 
 @class BXSession;
 @class BXRenderer;
+@class BXEmulatorEventResponder;
 
 @interface BXEmulator : NSOperation
 {
@@ -86,6 +87,8 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 	
 	//Used by BXInput
 	BOOL mouseActive;
+	
+	BXEmulatorEventResponder *eventHandler;
 }
 
 //Properties
@@ -136,6 +139,7 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 @property (readonly)	NSMutableArray *commandQueue;
 
 
+
 //Whether to apply 4:3 aspect ratio correction to the rendered output.
 @property (assign, getter=isAspectCorrected) BOOL aspectCorrected;
 //The current rendering style as a DOSBox filter type constant (q.v. BXEmulator+BXRendering.h)
@@ -144,7 +148,7 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 //Whether the active DOS game has requested mouse support.
 @property (assign) BOOL mouseActive;
 
-
+@property (retain) BXEmulatorEventResponder *eventHandler;
 
 //Class methods
 //-------------

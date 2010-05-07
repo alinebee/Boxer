@@ -99,6 +99,16 @@
 #pragma mark -
 #pragma mark Event responding
 
+
+- (void) didResignKey
+{
+	if (![[self view] isInFullScreenMode])
+	{
+		[self setMouseLocked: NO];
+		[[[self emulator] eventHandler] lostFocus];
+	}
+}
+
 - (void) cursorUpdate: (NSEvent *)theEvent
 {
 	//TODO: figure out why cursor is getting reset when view changes dimensions
@@ -137,9 +147,11 @@
 		canvas = [[[[self view] window] screen] frame];
 		relativeDelta = NSMakePoint([theEvent deltaX] / canvas.size.width,
 									-[theEvent deltaY] / canvas.size.height);
+		
 		//Update the last known position with the new mouse delta
 		lastMousePosition.x += relativeDelta.x;
 		lastMousePosition.y += relativeDelta.y;
+		
 		//Clamp the axes to 0.0 and 1.0
 		lastMousePosition.x = fmaxf(fminf(lastMousePosition.x, 1.0), 0.0);
 		lastMousePosition.y = fmaxf(fminf(lastMousePosition.y, 1.0), 0.0);

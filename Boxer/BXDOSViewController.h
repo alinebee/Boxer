@@ -39,6 +39,8 @@
 //Returns the emulator for the session we belong to.
 - (BXEmulator *) emulator;
 
+//Called by BXSessionWindowController whenever the keyboard focus leaves the window.
+- (void) didResignKey;
 
 //Lock/unlock the mouse.
 - (IBAction) toggleMouseLocked: (id)sender;

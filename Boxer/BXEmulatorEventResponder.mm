@@ -132,26 +132,22 @@ void MAPPER_CheckEvent(SDL_Event *event);
 			return;
 	}
 	
+	BOOL pressed = ([theEvent modifierFlags] & flag) > 0;
 	SDL_Event keyEvent = [[self class] _SDLKeyEventForKeyCode: [theEvent keyCode]
-													  pressed: ([theEvent modifierFlags] & flag)
+													  pressed: pressed
 												withModifiers: [theEvent modifierFlags]];
 
-	//Special-case for CapsLock, which is a toggle: we get here only when the button is pressed,
-	//not when it is released. Thus, we pretend it has been pressed and then released immediately.
-	//FIXME: this isn't responding in DOSBox. Why?
-	if (flag == NSAlphaShiftKeyMask)
-	{
-		keyEvent.type = SDL_KEYDOWN;
-		keyEvent.key.state = SDL_PRESSED;
-		
-		MAPPER_CheckEvent(&keyEvent);
-		
-		keyEvent.type = SDL_KEYUP;
-		keyEvent.key.state = SDL_RELEASED;
-		
-		MAPPER_CheckEvent(&keyEvent);
-	}
-	else MAPPER_CheckEvent(&keyEvent);
+	//Implementation note: you might think that CapsLock has to be handled differently since
+	//it's a toggle. However, SDL sends an SDL_KEYDOWN event when CapsLock is toggled on,
+	//and an SDL_KEYUP event when CapsLock is toggled off.
+	
+	MAPPER_CheckEvent(&keyEvent);
+}
+
+- (void) lostFocus
+{
+	//Release all DOSBox events when we lose responder status.
+	GFX_LosingFocus();
 }
 
 @end

@@ -34,27 +34,11 @@
 
 - (void) windowDidResignKey:	(NSNotification *) notification
 {
-	//Don't resign key when we're in fullscreen mode
-	//FIXME: work out why this is happening in the first place!
-	if ([self isFullScreen]) {
-		[[self window] makeKeyWindow];
-	}
-	else
-	{
-		[DOSViewController setMouseLocked: NO];
-	}
+	[DOSViewController didResignKey];
 }
 - (void) windowDidResignMain:	(NSNotification *) notification
 {
-	//Don't resign main when we're in fullscreen mode
-	//FIXME: work out why this is happening in the first place!
-	if ([self isFullScreen]) {
-		[[self window] makeMainWindow];	
-	}
-	else
-	{
-		[DOSViewController setMouseLocked: NO];
-	}
+	[DOSViewController didResignKey];
 }
 
 //Drop out of fullscreen and warn the emulator to prepare for emulation cutout when a menu opens

@@ -18,10 +18,14 @@ enum {
 
 @interface BXEmulatorEventResponder : NSResponder
 
+//Move the mouse to a relative point on the specified canvas, by the relative delta.
 - (void) mouseMovedToPoint: (NSPoint)point
 				  byAmount: (NSPoint)delta
 				  onCanvas:	(NSRect)canvas
 			   whileLocked: (BOOL)locked;
+
+//Called whenever we lose keyboard input focus. Clears all DOSBox events.
+- (void) lostFocus;
 
 @end
 

@@ -43,9 +43,6 @@
 #pragma -
 #pragma mark Rendering methods
 
-//This helps optimize OS X's rendering decisions, hopefully
-- (BOOL) isOpaque	{ return YES; }
-
 - (void) drawBackgroundInRect: (NSRect)dirtyRect
 {
 	//Cache the background gradient so we don't have to generate it each time

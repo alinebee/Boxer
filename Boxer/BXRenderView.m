@@ -34,11 +34,6 @@
 	[[self nextResponder] rightMouseDown: theEvent];
 }
 
-- (void) cursorUpdate: (NSEvent *)theEvent
-{
-	[[self nextResponder] cursorUpdate: theEvent];
-}
-
 
 #pragma -
 #pragma mark Rendering methods

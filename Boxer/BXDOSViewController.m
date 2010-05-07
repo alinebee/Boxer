@@ -66,6 +66,12 @@
 	[self setHiddenCursor: blankCursor];
 	[blankImage release];
 	[blankCursor release];
+	
+	
+	[[NSNotificationCenter defaultCenter] addObserver: self
+											 selector: @selector(_viewDidResize)
+												 name: @"BXRenderViewDidLiveResizeNotification"
+											   object: [self view]];
 }
 
 - (void) dealloc
@@ -107,11 +113,12 @@
 
 - (void) cursorUpdate: (NSEvent *)theEvent
 {
-	//TODO: figure out why cursor is getting reset when view changes dimensions
+	//TODO: figure out why cursor is getting reset when the view changes dimensions
 	if ([self mouseActive] && [self mouseInView])
 	{
 		[[self hiddenCursor] set];
 	}
+
 }
 
 - (void) mouseDown: (NSEvent *)theEvent
@@ -288,6 +295,16 @@
 	NSRect screenFrame = [[[[self view] window] screen] frame];
 	cgPointOnScreen.y = screenFrame.size.height - screenFrame.origin.y - cgPointOnScreen.y;
 	CGWarpMouseCursorPosition(cgPointOnScreen);	
+}
+
+- (void) _viewDidResize
+{
+	//So it has come to this: shortly after the view has resized, the cursor gets reset
+	//and cursorUpdate isn't called. Calling cursorUpdate immediately just means it gets
+	//reset afterwards, so we defer the call so that it gets processed later.
+	//FIXME: try to find some other way, any other way, to do this.
+	[self performSelector: @selector(cursorUpdate:) withObject: nil afterDelay: 0.0];
+	//[self cursorUpdate: nil];
 }
 
 @end

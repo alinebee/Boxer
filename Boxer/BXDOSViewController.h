@@ -48,4 +48,6 @@
 //Warp the OS X cursor to the point on screen corresponding to (where we think) the DOS cursor is.
 - (void) _syncOSXCursorAndDOSCursor;
 
+//Resync the 'hidden' cursor whenever the view resizes
+- (void) _viewDidResize;
 @end

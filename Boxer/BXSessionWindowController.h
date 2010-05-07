@@ -107,8 +107,8 @@
 - (void) setProgramPanelShown:	(BOOL)show;
 
 
-//Handling dialog sheets
-//----------------------
+//Handling window state changes
+//-----------------------------
 
 //Returns whether a confirmation sheet should be shown when windowShouldClose is called.
 - (BOOL) shouldConfirmClose;
@@ -120,4 +120,31 @@
 //Shows a confirmation sheet asking to close the window, after exiting a game or program.
 //Currently unused.
 - (IBAction) windowShouldCloseAfterProgramCompletion: (id)sender;
+
+
+//These listen for any time an NSMenu opens or closes, and warn the active emulator
+//to pause or resume emulation. In practice this means muting it to avoid hanging
+//music and sound effects while the menu is blocking the thread.
+//TODO: BXEmulator itself should handle this at a lower level by watching out for
+//whenever a new event loop gets created.
+- (void) menuDidOpen:	(NSNotification *) notification;
+- (void) menuDidClose:	(NSNotification *) notification;
+
+- (void) applicationWillHide: (NSNotification *) notification;
+- (void) applicationWillResignActive: (NSNotification *) notification;
+@end
+
+
+//Methods in this category are not intended to be called outside of BXSessionWindowController.
+@interface BXSessionWindowController (BXSessionWindowControllerInternals)
+
+//Performs the slide animation used to toggle the status bar and program panel on or off
+- (void) _slideView: (NSView *)view shown: (BOOL)show;
+
+//Resize the window frame to fit the requested render size.
+- (void) _resizeWindowToRenderViewSize: (NSSize)newSize animate: (BOOL)performAnimation;
+
+//Returns the view size that should be used for rendering the specified DOSBox output size.
+- (NSSize) _renderViewSizeForScaledOutputSize: (NSSize)scaledSize minSize: (NSSize)minViewSize;
+
 @end

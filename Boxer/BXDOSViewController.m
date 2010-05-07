@@ -99,14 +99,10 @@
 #pragma mark -
 #pragma mark Event responding
 
-
 - (void) didResignKey
 {
-	if (![[self view] isInFullScreenMode])
-	{
-		[self setMouseLocked: NO];
-		[[[self emulator] eventHandler] lostFocus];
-	}
+	[self setMouseLocked: NO];
+	[[[self emulator] eventHandler] lostFocus];
 }
 
 - (void) cursorUpdate: (NSEvent *)theEvent
@@ -270,7 +266,7 @@
 	if		(cursorVisible && lock)		[NSCursor hide];
 	else if (!cursorVisible && !lock)	[NSCursor unhide];
 	
-	//Lock/unlock the mouse and the OS X cursor
+	//Associate/disassociate the mouse and the OS X cursor
 	CGAssociateMouseAndMouseCursorPosition(!lock);
 	
 	//When unlocking, warp the cursor to the equivalent screen position it would have moved to while locked.

@@ -11,6 +11,7 @@
 #import "BXSessionWindow.h"
 #import "BXAppController.h"
 #import "BXProgramPanelController.h"
+#import "BXDOSViewController.h"
 
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulator+BXRendering.h"
@@ -21,6 +22,10 @@
 
 
 @implementation BXSessionWindowController
+
+#pragma mark -
+#pragma mark Accessors
+
 @synthesize renderView, renderContainer, statusBar, programPanel;
 @synthesize programPanelController, DOSViewController;
 @synthesize resizingProgrammatically;
@@ -32,8 +37,8 @@
 - (BXSessionWindow *) window	{ return (BXSessionWindow *)[super window]; }
 
 
-//Initialisation and cleanup functions
-//------------------------------------
+#pragma mark -
+#pragma mark Initialisation and cleanup
 
 - (void) dealloc
 {
@@ -75,6 +80,16 @@
 			selector:		@selector(menuDidClose:)
 			name:			NSMenuDidEndTrackingNotification
 			object:			nil];
+	
+	[center addObserver:	self
+			   selector:	@selector(applicationWillHide:)
+				   name:	NSApplicationWillHideNotification
+				 object:	NSApp];
+	
+	[center addObserver:	self
+			   selector:	@selector(applicationWillHide:)
+				   name:	NSApplicationWillResignActiveNotification
+				 object:	NSApp];
 	
 	//While we're here, register for drag-drop file operations (used for mounting folders and such)
 	[theWindow registerForDraggedTypes: [NSArray arrayWithObjects: NSFilenamesPboardType, NSStringPboardType, nil]];
@@ -196,8 +211,8 @@
 }
 
 
-//Controlling the window title
-//----------------------------
+#pragma mark -
+#pragma mark Syncing window title
 
 - (void) synchronizeWindowTitleWithDocumentName
 {
@@ -245,8 +260,8 @@
 }
 
 
-//Toggling window UI components
-//-----------------------------
+#pragma mark -
+#pragma mark Toggling UI components
 
 - (BOOL) statusBarShown		{ return ![statusBar isHidden]; }
 - (BOOL) programPanelShown	{ return ![programPanel isHidden]; }
@@ -294,8 +309,8 @@
 }
 
 
-//Responding to interface actions
-//-------------------------------
+#pragma mark -
+#pragma mark UI actions
 
 - (IBAction) toggleStatusBarShown:		(id)sender	{ [self setStatusBarShown:		![self statusBarShown]]; }
 - (IBAction) toggleProgramPanelShown:	(id)sender	{ [self setProgramPanelShown:	![self programPanelShown]]; }
@@ -325,8 +340,6 @@
 	[self setFullScreenWithZoom: enterFullScreen];
 }
 
-//Toggle the emulator's active rendering filter. This will resize the window to fit, if the
-//filter demands a minimum size smaller than the current window size.
 - (IBAction) toggleFilterType: (id)sender
 {
 	NSInteger filterType = [sender tag];
@@ -382,8 +395,8 @@
 }
 
 
-//Handling drag-drop
-//------------------
+#pragma mark -
+#pragma mark Drag-drop handlers
 
 - (NSDragOperation)draggingEntered: (id <NSDraggingInfo>)sender
 {
@@ -420,8 +433,8 @@
 	return NO;
 }
 
-//Handling window close
-//---------------------
+#pragma mark -
+#pragma mark Handlers for window and application state changes
 
 - (BOOL) shouldConfirmClose
 {
@@ -446,9 +459,61 @@
 	[closeAlert beginSheetModalForWindow: [self window]];
 }
 
-- (void) windowWillClose:(NSNotification *)notification
+- (void) windowWillClose: (NSNotification *)notification
 {
-	//Make sure to tear down the fullscreen context before quitting
 	[self exitFullScreen: self];
+}
+
+- (void) windowWillMiniaturize: (NSNotification *)notification
+{
+	[self exitFullScreen: self];
+}
+
+//Warn the emulator to prepare for emulation cutout when the resize starts
+- (void) windowWillLiveResize: (NSNotification *) notification
+{
+	[[self emulator] willPause];
+}
+
+//Catch the end of a live resize event and pass it to our normal resize handler
+//While we're at it, let the emulator know it can unpause now
+- (void) windowDidLiveResize: (NSNotification *) notification
+{
+	[self windowDidResize: notification];
+	[[self emulator] didResume];
+}
+
+//Tell the view controller to cancel key events and unlock the mouse
+//We ignore this notification in fullscreen, because we receive it when
+//the view is swapped to AppKit's private fullscreen window
+- (void) windowDidResignKey:	(NSNotification *) notification
+{
+	if (![self isFullScreen]) [DOSViewController didResignKey];
+}
+- (void) windowDidResignMain:	(NSNotification *) notification
+{
+	if (![self isFullScreen]) [DOSViewController didResignKey];
+}
+
+//Drop out of fullscreen and warn the emulator to prepare for emulation cutout when a menu opens
+- (void) menuDidOpen:	(NSNotification *) notification
+{
+	[self setFullScreen: NO];
+	[[self emulator] willPause];
+}
+
+//Let the emulator know the coast is clear
+- (void) menuDidClose:	(NSNotification *) notification
+{
+	[[self emulator] didResume];
+}
+
+- (void) applicationWillHide: (NSNotification *) notification
+{
+	[self setFullScreen: NO];
+}
+- (void) applicationWillResignActive: (NSNotification *) notification
+{
+	[self setFullScreen: NO];
 }
 @end

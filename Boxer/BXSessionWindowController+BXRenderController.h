@@ -51,18 +51,3 @@
 //The screen which we will render to in fullscreen mode.
 - (NSScreen *) fullScreenTarget;
 @end
-
-
-//Methods in this category are not intended to be called outside of BXSessionWindowController.
-@interface BXSessionWindowController (BXSessionWindowControllerInternals)
-
-//Performs the slide animation used to toggle the status bar and program panel on or off
-- (void) _slideView: (NSView *)view shown: (BOOL)show;
-
-//Resize the window frame to fit the requested render size.
-- (void) _resizeWindowToRenderViewSize: (NSSize)newSize animate: (BOOL)performAnimation;
-
-//Returns the view size that should be used for rendering the specified DOSBox output size.
-- (NSSize) _renderViewSizeForScaledOutputSize: (NSSize)scaledSize minSize: (NSSize)minViewSize;
-
-@end

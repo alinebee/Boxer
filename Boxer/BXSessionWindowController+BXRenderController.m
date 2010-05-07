@@ -133,7 +133,7 @@
 	
 	if (fullScreen)
 	{
-		NSScreen *targetScreen	= [NSScreen mainScreen];
+		NSScreen *targetScreen	= [self fullScreenTarget];
 		
 		//Ensure that the mouse is locked for fullscreen mode
 		[DOSViewController setMouseLocked: YES];

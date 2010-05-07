@@ -73,11 +73,8 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 	BOOL isInterrupted;
 	
 	//Used by BXShell
-	BOOL suppressOutput;
 	NSMutableArray *commandQueue;
-	
-	//Used by BXRecording
-	NSString *currentRecordingPath;
+
 	
 	//Used by BXRendering
 	NSInteger currentVideoMode;
@@ -105,10 +102,6 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 //Will be nil if no process is running or if the process is on an image or DOSBox-internal drive.
 @property (copy)		NSString *processLocalPath;
 
-//The path to the movie we are currently recording. Will be nil if no recording is in progress.
-//This is only used internally by BXRecording and should not be accessed outside of BXEmulator.
-@property (copy)		NSString *currentRecordingPath;
-
 //The BXSession delegate responsible for this emulator.
 @property (assign)		BXSession *delegate;
 
@@ -117,6 +110,9 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 
 //The OpenGL renderer we use for displaying DOSBox output.
 @property (retain)		BXRenderer *renderer;
+
+//The NSResponder we use for processing input events for the emulation.
+@property (retain) BXEmulatorEventResponder *eventHandler;
 
 
 //An array of OS X paths to configuration files that will be processed by this session during startup.
@@ -131,13 +127,8 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 @property (assign)		NSInteger minFixedSpeed;
 @property (assign)		NSInteger maxFixedSpeed;
 
-//Whether the output of DOS programs should be discarded without printing to the DOS shell.
-//Used by BXShell at opportune moments.
-@property (assign)		BOOL suppressOutput;
-
 //An array of queued command strings to execute on the DOS command line.
 @property (readonly)	NSMutableArray *commandQueue;
-
 
 
 //Whether to apply 4:3 aspect ratio correction to the rendered output.
@@ -148,7 +139,6 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 //Whether the active DOS game has requested mouse support.
 @property (assign) BOOL mouseActive;
 
-@property (retain) BXEmulatorEventResponder *eventHandler;
 
 //Class methods
 //-------------
@@ -208,10 +198,6 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 - (void) setFrameskip: (NSUInteger)frameskip;
 - (BOOL) validateFrameskip: (id *)ioValue error: (NSError **)outError;
 
-//Get/set for the current mouselock state.
-- (BOOL) mouseLocked;
-- (void) setMouseLocked: (BOOL)lock;
-
 //Get/set the current DOSBox core emulation mode.
 //NOTE: this is not currently safe to change during program execution.
 - (BOOL) isDynamic;
@@ -229,12 +215,6 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 - (void) willPause;
 - (void) didResume;
 
-//Used to notify the emulator that the DOS session window has gained or
-//lost input focus. Updates SDL's internal state accordingly.
-- (void) captureInput;
-- (void) releaseInput;
-- (void) activate;
-- (void) deactivate;
 @end
 
 

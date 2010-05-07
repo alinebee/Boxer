@@ -59,11 +59,9 @@ BXEmulator *currentEmulator = nil;
 
 @implementation BXEmulator
 @synthesize processName, processPath, processLocalPath;
-@synthesize currentRecordingPath;
 @synthesize delegate, thread;
 @synthesize renderer;
 @synthesize minFixedSpeed, maxFixedSpeed, maxFrameskip;
-@synthesize suppressOutput;
 @synthesize configFiles;
 @synthesize aspectCorrected;
 @synthesize filterType;
@@ -149,8 +147,8 @@ BXEmulator *currentEmulator = nil;
 - (void) dealloc
 {
 	[self setProcessName: nil],	[processName release];
-	[self setCurrentRecordingPath: nil], [currentRecordingPath release];
 	[self setRenderer: nil], [renderer release];
+	[self setEventHandler: nil], [eventHandler release];
 	
 	[driveCache release], driveCache = nil;
 	[configFiles release], configFiles = nil;
@@ -208,33 +206,6 @@ BXEmulator *currentEmulator = nil;
 {
 	return ![self isRunningProcess] && ![self isInBatchScript];
 }
-
-
-
-//Managing user input
-//-------------------
-
-- (void) setMouseLocked: (BOOL)lock
-{
-	BOOL wasLocked = [self mouseLocked];
-	if ([self isExecuting] && wasLocked != lock)
-	{
-		//SDL_WM_GrabInput(lock ? SDL_GRAB_ON : SDL_GRAB_OFF);
-		//sdl.mouse.locked=lock;
-		GFX_CaptureMouse();
-	}
-}
-
-- (BOOL) mouseLocked
-{
-	BOOL isLocked = NO;
-	if ([self isExecuting])
-	{
-		isLocked = (SDL_WM_GrabInput(SDL_GRAB_QUERY) == SDL_GRAB_ON);
-	}
-	return isLocked;
-}
-
 
 
 //Controlling emulation state
@@ -380,40 +351,6 @@ BXEmulator *currentEmulator = nil;
 
 //Handling changes to application focus
 //-------------------------------------
-
-- (void) captureInput
-{
-	if ([self isExecuting])
-	{ 
-		boxer_SDLGrabInput();
-	}
-}
-
-- (void) releaseInput
-{
-	if ([self isExecuting])
-	{
-		boxer_SDLReleaseInput();
-	}
-}
-
-- (void) activate
-{
-	if ([self isExecuting])
-	{
-		currentEmulator = self;
-		boxer_SDLActivateApp();
-	}
-}
-
-- (void) deactivate
-{
-	if ([self isExecuting])
-	{
-		boxer_SDLDeactivateApp();
-	}
-}
-
 
 //These methods are only necessary if we are running in single-threaded mode,
 //which currently is indicated by the isConcurrent flag

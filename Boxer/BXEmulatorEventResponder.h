@@ -33,6 +33,9 @@ enum {
 
 @interface BXEmulatorEventResponder (BXEmulatorEventResponderInternals)
 
+//Analoguous to [[NSApp currentEvent] modifierFlags], only for SDL-style modifiers.
+- (SDLMod) currentSDLModifiers;
+
 //Generates and returns an SDL key event with the specified parameters.
 + (SDL_Event) _SDLKeyEventForKeyCode: (CGKeyCode)keyCode
 							 pressed: (BOOL)pressed

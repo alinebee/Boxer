@@ -11,6 +11,8 @@
 #import "BXEmulator+BXShell.h"
 #import "BXEmulator+BXInput.h"
 #import "BXEmulator+BXDOSFileSystem.h"
+#import "BXEmulatorEventResponder.h"
+
 #import "video.h"
 #import "sdlmain.h"
 
@@ -30,13 +32,6 @@ bool boxer_handleRunLoop()
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
 	return [emulator _handleRunLoop];	
-}
-
-//Catch SDL events and process them - return YES if we've handled the event, NO if we want to let it go through
-//This is called by GFX_Events in DOSBox's sdlmain.cpp, to allow us to hook into the main event loop
-bool boxer_handleSDLEvent(SDL_Event *event)
-{
-	return NO;
 }
 
 //Notifies Boxer of changes to title and speed settings
@@ -234,18 +229,6 @@ const char * boxer_currentDOSKeyboardLayout()
 	return [layoutCode cStringUsingEncoding: BXDirectStringEncoding];
 }
 
-void boxer_handleMouseMotion(SDL_MouseMotionEvent * event)
-{
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	[emulator handleSDLMouseMovement: event];
-}
-
-void boxer_handleMouseButton(SDL_MouseButtonEvent * event)
-{
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	[emulator handleSDLMouseButton: event];
-}
-
 void boxer_setMouseActive(bool mouseActive)
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
@@ -255,5 +238,5 @@ void boxer_setMouseActive(bool mouseActive)
 SDLMod boxer_currentSDLModifiers()
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	return [emulator currentSDLModifiers];
+	return [[emulator eventHandler] currentSDLModifiers];
 }

@@ -22,7 +22,6 @@ extern "C" {
 	
 	//Called from sdlmain.cpp: perform various notifications and overrides.
 	bool boxer_handleEventLoop();
-	bool boxer_handleSDLEvent(SDL_Event *event);
 	bool boxer_handleDOSBoxTitleChange(int cycles, int frameskip, bool paused);
 	void boxer_applyConfigFiles();
 	
@@ -71,8 +70,6 @@ extern "C" {
 	//Called from dosbox.cpp to short-circuit the emulation loop.
 	bool boxer_handleRunLoop();
 	
-	void boxer_handleMouseMotion(SDL_MouseMotionEvent * event);
-	void boxer_handleMouseButton(SDL_MouseButtonEvent * event);
 	void boxer_setMouseActive(bool mouseActive);
 	
 	SDLMod boxer_currentSDLModifiers();

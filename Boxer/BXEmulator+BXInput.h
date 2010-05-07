@@ -53,9 +53,4 @@
 //In practice, this just returns whether Boxer is at the commandline or not.
 - (BOOL) canAcceptPastedString: (NSString *)pastedString;
 
-- (void) handleSDLMouseMovement: (SDL_MouseMotionEvent *)event;
-- (void) handleSDLMouseButton: (SDL_MouseButtonEvent *)event;
-
-//Analoguous to [[NSApp currentEvent] modifierFlags], only for SDL-style modifiers.
-- (SDLMod) currentSDLModifiers;
 @end

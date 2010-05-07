@@ -31,13 +31,4 @@
 - (void) menuDidOpen:	(NSNotification *) notification;
 - (void) menuDidClose:	(NSNotification *) notification;
 
-
-//Responding to SDL's entreaties
-//------------------------------
-- (NSOpenGLView *) SDLView;
-- (NSWindow *) SDLWindow;
-
-- (BOOL) handleSDLKeyboardEvent: (NSEvent *)event;
-- (BOOL) handleSDLMouseMovement: (NSEvent *)event;
-
 @end

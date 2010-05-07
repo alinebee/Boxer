@@ -55,7 +55,7 @@ nil];
 		DOS_Shell *shell = [self _currentShell];
 		char *encodedString;
 
-		if ([self suppressOutput] || [self isRunningProcess])
+		if ([self isRunningProcess])
 		{
 			//If we're running a program or we just don't want to print anything,
 			//then run the command itself and eat the command's output.

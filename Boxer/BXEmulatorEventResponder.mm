@@ -147,6 +147,12 @@ void MAPPER_CheckEvent(SDL_Event *event);
 
 @implementation BXEmulatorEventResponder (BXEmulatorEventResponderInternals)
 
+//"Private-but-not-quite" - exposed here for coalface functions
+- (SDLMod) currentSDLModifiers
+{
+	return [[self class] _convertToSDLModifiers: [[NSApp currentEvent] modifierFlags]];
+}
+
 + (SDL_Event) _SDLKeyEventForKeyCode: (CGKeyCode)keyCode
 							 pressed: (BOOL)pressed
 					   withModifiers: (NSUInteger)modifierFlags

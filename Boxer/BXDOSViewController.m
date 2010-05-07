@@ -190,9 +190,9 @@
 	[self didChangeValueForKey: @"mouseInView"];
 }
 
-//Intercept ESC keypresses and use them to bail out of fullscreen mode
 - (void) keyDown: (NSEvent *)theEvent
-{	
+{
+	//Pressing ESC while in fullscreen mode and not running a program will exit fullscreen mode. 	
 	if ([[theEvent charactersIgnoringModifiers] isEqualToString: @"\e"] &&
 		[[self view] isInFullScreenMode] &&
 		![[self emulator] isRunningProcess])
@@ -200,9 +200,10 @@
 		[[self windowController] exitFullScreen: self];
 	}
 	
-	//Otherwise, send the event that triggered this cancellation over to the emulator.
+	//Otherwise, send the event onwards
 	else [[self nextResponder] keyDown: theEvent];
 }
+
 
 #pragma mark -
 #pragma mark Mouse focus and locking 

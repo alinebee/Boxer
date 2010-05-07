@@ -79,6 +79,12 @@ void MAPPER_CheckEvent(SDL_Event *event);
 
 - (void) keyUp: (NSEvent *)theEvent
 {
+	//Ignore keypresses where the Cmd key is held down, to be consistent with how other OS X
+	//applications behave.
+	//(If it was a proper key equivalent, it would have been handled before now.)
+	if ([theEvent modifierFlags] & NSCommandKeyMask) return [super keyDown: theEvent];
+	
+		
 	SDL_Event keyEvent = [[self class] _SDLKeyEventForKeyCode: [theEvent keyCode]
 													  pressed: NO
 												withModifiers: [theEvent modifierFlags]];
@@ -88,6 +94,12 @@ void MAPPER_CheckEvent(SDL_Event *event);
 
 - (void) keyDown: (NSEvent *)theEvent
 {
+	//Ignore keypresses where the Cmd key is held down, to be consistent with how other OS X
+	//applications behave.
+	//(If it was a proper key equivalent, it would have been handled before now.)
+	if ([theEvent modifierFlags] & NSCommandKeyMask) return [super keyDown: theEvent];
+	
+	
 	SDL_Event keyEvent = [[self class] _SDLKeyEventForKeyCode: [theEvent keyCode]
 													  pressed: YES
 												withModifiers: [theEvent modifierFlags]];
@@ -125,7 +137,7 @@ void MAPPER_CheckEvent(SDL_Event *event);
 												withModifiers: [theEvent modifierFlags]];
 
 	//Special-case for CapsLock, which is a toggle: we get here only when the button is pressed,
-	//not when it is released. Thus, we have to assume it is always pressed and then released immediately.
+	//not when it is released. Thus, we pretend it has been pressed and then released immediately.
 	//FIXME: this isn't responding in DOSBox. Why?
 	if (flag == NSAlphaShiftKeyMask)
 	{

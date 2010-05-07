@@ -13,6 +13,13 @@
 @implementation BXRenderView
 @synthesize renderer;
 
+- (void) dealloc
+{
+	[self setRenderer: nil], [renderer release];
+	[super dealloc];
+}
+
+
 #pragma -
 #pragma mark Responder-related methods
 
@@ -30,12 +37,6 @@
 - (void) cursorUpdate: (NSEvent *)theEvent
 {
 	[[self nextResponder] cursorUpdate: theEvent];
-}
-
-- (void) dealloc
-{
-	[self setRenderer: nil], [renderer release];
-	[super dealloc];
 }
 
 

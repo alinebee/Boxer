@@ -16,10 +16,6 @@
 
 @interface BXSessionWindowController (BXInputController)
 
-//Whether the mouse is currently within the DOS viewport.
-//This should probably be moved back to BXRenderView.
-- (BOOL) mouseInView;
-
 //Notification observers
 //----------------------
 

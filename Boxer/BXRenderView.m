@@ -13,33 +13,34 @@
 @implementation BXRenderView
 @synthesize renderer;
 
-- (BOOL)acceptsFirstResponder
+#pragma -
+#pragma mark Responder-related methods
+
+- (BOOL) acceptsFirstResponder
 {
 	return YES;
 }
 
 //Pass on various events that would otherwise be eaten by the view
-- (void) rightMouseDown: (NSEvent *)event
+- (void) rightMouseDown: (NSEvent *)theEvent
 {
-	[[[self window] windowController] rightMouseDown: event];
+	[[self nextResponder] rightMouseDown: theEvent];
 }
 
-- (void) cursorUpdate: (NSEvent *)event
+- (void) cursorUpdate: (NSEvent *)theEvent
 {
-	[[[self window] windowController] cursorUpdate: event];
+	[[self nextResponder] cursorUpdate: theEvent];
 }
-
-- (void) cancelOperation: (id)sender
-{
-	[[[self window] windowController] cancelOperation: sender];
-}
-
 
 - (void) dealloc
 {
 	[self setRenderer: nil], [renderer release];
 	[super dealloc];
 }
+
+
+#pragma -
+#pragma mark Rendering methods
 
 //This helps optimize OS X's rendering decisions, hopefully
 - (BOOL) isOpaque	{ return YES; }

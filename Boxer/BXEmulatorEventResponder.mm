@@ -82,7 +82,7 @@ void MAPPER_CheckEvent(SDL_Event *event);
 	SDL_Event keyEvent = [[self class] _SDLKeyEventForKeyCode: [theEvent keyCode]
 													  pressed: NO
 												withModifiers: [theEvent modifierFlags]];
-	
+
 	MAPPER_CheckEvent(&keyEvent);
 }
 
@@ -91,7 +91,7 @@ void MAPPER_CheckEvent(SDL_Event *event);
 	SDL_Event keyEvent = [[self class] _SDLKeyEventForKeyCode: [theEvent keyCode]
 													  pressed: YES
 												withModifiers: [theEvent modifierFlags]];
-	
+
 	MAPPER_CheckEvent(&keyEvent);
 }
 
@@ -112,9 +112,9 @@ void MAPPER_CheckEvent(SDL_Event *event);
 		case kVK_RightControl:	flag = BXRightControlKeyMask;	break;
 		case kVK_RightOption:	flag = BXRightAlternateKeyMask;	break;
 		case kVK_RightShift:	flag = BXRightShiftKeyMask;		break;
-			
+		
 		case kVK_CapsLock:		flag = NSAlphaShiftKeyMask;		break;
-			
+		
 		default:
 			//Ignore all other modifier types
 			return;

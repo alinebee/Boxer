@@ -22,10 +22,9 @@
 
 @implementation BXSessionWindowController
 @synthesize renderView, renderContainer, statusBar, programPanel;
-@synthesize programPanelController;
+@synthesize programPanelController, DOSViewController;
 @synthesize resizingProgrammatically;
 @synthesize emulator;
-@synthesize hiddenCursor, mouseActive, mouseLocked;
 
 
 //Overridden to make the types explicit, so we don't have to keep casting the return values to avoid compilation warnings
@@ -46,7 +45,7 @@
 	[self setStatusBar: nil],				[statusBar release];
 	[self setProgramPanel: nil],			[programPanel release];
 	[self setProgramPanelController: nil],	[programPanelController release];
-	[self setHiddenCursor: nil],			[hiddenCursor release];
+	[self setDOSViewController: nil],		[DOSViewController release];
 
 	[super dealloc];
 }
@@ -115,19 +114,6 @@
 	[self bind: @"emulator" toObject: self withKeyPath: @"document.emulator" options: nil];
 	
 	[programPanelController bind: @"representedObject" toObject: self withKeyPath: @"document" options: nil];
-
-	
-	//Set up cursor region for mouse handling
-	//---------------------------------------
-	
-	NSTrackingAreaOptions options = NSTrackingMouseEnteredAndExited | NSTrackingMouseMoved | NSTrackingCursorUpdate | NSTrackingActiveInKeyWindow | NSTrackingInVisibleRect | NSTrackingAssumeInside;
-	
-	NSTrackingArea *trackingArea = [[NSTrackingArea alloc] initWithRect: NSZeroRect
-																options: options
-																  owner: self
-															   userInfo: nil];
-	[renderView addTrackingArea: trackingArea];
-	[trackingArea release];
 }
 
 - (void) setDocument: (BXSession *)theSession
@@ -160,13 +146,16 @@
 	BXEmulator *oldEmulator = [self emulator];
 	if (![oldEmulator isEqualTo: newEmulator])
 	{
-		//[oldEmulator unbind: @"mouseLocked"];
-		[oldEmulator unbind: @"fullScreen"];
-		[oldEmulator unbind: @"aspectCorrected"];
-		[oldEmulator unbind: @"filterType"];
-		[renderView unbind: @"renderer"];
-		[self unbind: @"mouseActive"];
-		[self setNextResponder: nil];
+		if (oldEmulator)
+		{
+			[oldEmulator unbind: @"aspectCorrected"];
+			[oldEmulator unbind: @"filterType"];
+			[renderView unbind: @"renderer"];
+			[DOSViewController unbind: @"mouseActive"];
+			
+			//Remove the emulator's responder from the responder chain
+			[DOSViewController setNextResponder: [[oldEmulator eventHandler] nextResponder]];			
+		}
 		
 		[oldEmulator autorelease];
 		emulator = [newEmulator retain];
@@ -185,29 +174,21 @@
 			   withKeyPath: @"aspectCorrected"
 				   options: nil];
 			
-			[newEmulator bind: @"fullScreen"
-				  toObject: self
-			   withKeyPath: @"fullScreen"
-				   options: nil];
-			
-			/*
-			[newEmulator bind: @"mouseLocked"
-				  toObject: self
-			   withKeyPath: @"mouseLocked"
-				   options: nil];
-			*/
 			//Bind our render view to the emulator's BXRenderer instance
 			[renderView bind: @"renderer"
 					toObject: newEmulator
 				 withKeyPath: @"renderer"
 					 options: nil];
 			
-			[self bind: @"mouseActive"
-			  toObject: newEmulator
-		   withKeyPath: @"mouseActive"
-			   options: nil];
+			[DOSViewController bind: @"mouseActive"
+						   toObject: newEmulator
+						withKeyPath: @"mouseActive"
+							options: nil];
 			
-			[self setNextResponder: [emulator eventHandler]];
+			//Put the new responder into the responder chain
+			[[newEmulator eventHandler] setNextResponder: [DOSViewController nextResponder]];
+			
+			[DOSViewController setNextResponder: [newEmulator eventHandler]];
 		}
 	}
 	
@@ -352,31 +333,12 @@
 	[[NSUserDefaults standardUserDefaults] setInteger: filterType forKey: @"filterType"];
 }
 
-- (IBAction) toggleMouseLocked: (id)sender
-{
-	BOOL wasLocked = [self mouseLocked];
-	[self setMouseLocked: !wasLocked];
-	
-	//If the mouse state was actually toggled, play a sound to commemorate the occasion
-	if ([self mouseLocked] != wasLocked)
-	{
-		NSString *lockSoundName	= (wasLocked) ? @"LockOpening" : @"LockClosing";
-		[[NSApp delegate] playUISoundWithName: lockSoundName atVolume: 0.5f];
-	}
-}
-
-
 - (BOOL) validateMenuItem: (NSMenuItem *)theItem
 {	
 	SEL theAction = [theItem action];
 	NSString *title;
 
-	if (theAction == @selector(toggleMouseLocked:))
-	{
-		[theItem setState: [self mouseLocked]];
-		return [self mouseActive];
-	}
-	else if (theAction == @selector(toggleFilterType:))
+	if (theAction == @selector(toggleFilterType:))
 	{
 		NSInteger itemState;
 		BXFilterType filterType	= [theItem tag];

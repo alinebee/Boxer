@@ -10,6 +10,7 @@
 #import "BXSessionWindow.h"
 #import "BXEmulator+BXRendering.h"
 #import "NSWindow+BXWindowSizing.h"
+#import "BXDOSViewController.h"
 #import "BXRenderView.h"
 #import "BXRenderer.h"
 #import "BXGeometry.h"
@@ -128,20 +129,29 @@
 	NSView *theView			= [self renderView];
 	NSView *theContainer	= [self renderContainer]; 
 	NSWindow *theWindow		= [self window];
+	NSResponder *currentResponder = [theView nextResponder];
 	
 	if (fullScreen)
 	{
 		NSScreen *targetScreen	= [NSScreen mainScreen];
 		
 		//Ensure that the mouse is locked for fullscreen mode
-		[self setMouseLocked: YES];
+		[DOSViewController setMouseLocked: YES];
 		
 		//Flip the view into fullscreen mode
 		[theView enterFullScreenMode: targetScreen withOptions: nil];
+		
+		//Reset the responders to what they should be, since enterFullScreenMode: screws with them
+		[theWindow makeFirstResponder: theView];
+		[theView setNextResponder: currentResponder];
 	}
 	else
 	{
 		[theView exitFullScreenModeWithOptions: nil];
+		
+		//Reset the responders to what they should be, since exitFullScreenModeWithOptions: screws with them
+		[theWindow makeFirstResponder: theView];
+		[theView setNextResponder: currentResponder];
 		
 		//Reset the view's frame to match its loyal container, as otherwise it retains its fullscreen frame size
 		[theView setFrame: [theContainer bounds]];
@@ -152,7 +162,7 @@
 		[theWindow setAcceptsMouseMovedEvents: YES];
 		
 		//Unlock the mouse after leaving fullscreen
-		[self setMouseLocked: NO];
+		[DOSViewController setMouseLocked: NO];
 	}
 	[[self emulator] resetRenderer];
 	

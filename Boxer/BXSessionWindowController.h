@@ -23,6 +23,7 @@
 @class BXSession;
 @class BXSessionWindow;
 @class BXProgramPanelController;
+@class BXDOSViewController;
 @class BXEmulator;
 
 @interface BXSessionWindowController : NSWindowController
@@ -33,22 +34,19 @@
 	IBOutlet NSView *programPanel;
 
 	IBOutlet BXProgramPanelController *programPanelController;
+	IBOutlet BXDOSViewController *DOSViewController;
 	
 	BXEmulator *emulator;
 	
 	NSSize currentScaledSize;	//Used internally by the BXRenderController category for resizing decisions.
 	BOOL resizingProgrammatically;
-	
-	NSCursor *hiddenCursor;
-	BOOL mouseActive;
-	BOOL mouseLocked;
-	NSPoint lastMousePosition; //Used internally by BXInputController category for tracking the mouse location while locked. 
 }
 //Our view controller for the program picker panel.
 @property (retain) BXProgramPanelController *programPanelController;
+@property (retain) BXDOSViewController *DOSViewController;
 
 @property (retain) BXRenderView *renderView;	//The OpenGL view that displays DOSBox's graphical output.
-@property (retain) NSView *renderContainer;		//A wrapper for the renderView to help window-sizing behaviour.
+@property (retain) NSView *renderContainer;		//A wrapper for the renderView to aid window-sizing behaviour.
 @property (retain) NSView *programPanel;		//The slide-out program picker panel.
 @property (retain) NSView *statusBar;			//The status bar at the bottom of the window.
 
@@ -56,14 +54,8 @@
 //Used to change our window constraining behaviour and response to resize events.
 @property (assign) BOOL resizingProgrammatically;
 
+//A reference to the emulator instance for this window.
 @property (retain) BXEmulator *emulator;
-
-//Whether the mouse is in use by the DOS program. Set programmatically to match the emulator.
-@property (assign) BOOL mouseActive;
-//Whether the mouse is locked to the DOS viewport.
-@property (assign) BOOL mouseLocked;
-//The blank cursor we use when the mouse should be hidden when over the DOS viewport.
-@property (retain) NSCursor *hiddenCursor;
 
 
 //Recast NSWindowController's standard accessors so that we get our own classes
@@ -101,9 +93,6 @@
 
 //Toggle the emulator's active rendering filter.
 - (IBAction) toggleFilterType: (id)sender;
-
-//Lock/unlock the mouse from the DOS viewport, and play a jaunty click sound at the same time.
-- (IBAction) toggleMouseLocked: (id)sender;
 
 
 //Toggling window UI components

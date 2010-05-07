@@ -15,17 +15,13 @@
 #import "mouse.h"
 #import "sdlmain.h"
 
-//Modifier flag constants for left- and right-side modifier keys, copied from IOKit/IOLLEvent.h.
-//Allows us to distinguish these for DOSBox.
+//Flags for which mouse buttons we are currently faking (for Ctrl- and Opt-clicking.)
+//Note that while these are ORed together, there will currently only ever be one of them active at a time.
 enum {
-	BXLeftControlKeyMask	= 0x00000001,
-	BXLeftShiftKeyMask		= 0x00000002,
-	BXRightShiftKeyMask		= 0x00000004,
-	BXLeftCommandKeyMask	= 0x00000008,
-	BXRightCommandKeyMask	= 0x00000010,
-	BXLeftAlternateKeyMask	= 0x00000020,
-	BXRightAlternateKeyMask	= 0x00000040,
-	BXRightControlKeyMask	= 0x00002000
+	BXNoSimulatedButtons			= 0,
+	BXSimulatedButtonRight			= 1,
+	BXSimulatedButtonMiddle			= 2,
+	BXSimulatedButtonLeftAndRight	= 4,
 };
 
 //Declared in mapper.cpp
@@ -36,8 +32,64 @@ void MAPPER_CheckEvent(SDL_Event *event);
 #pragma mark -
 #pragma mark Mouse handling
 
-- (void) mouseDown: (NSEvent *)theEvent			{ Mouse_ButtonPressed(DOSBoxMouseButtonLeft); }
-- (void) mouseUp: (NSEvent *)theEvent			{ Mouse_ButtonReleased(DOSBoxMouseButtonLeft); }
+- (void) mouseDown: (NSEvent *)theEvent
+{
+	NSUInteger modifiers = [theEvent modifierFlags];
+	
+	BOOL optModified	= (modifiers & NSAlternateKeyMask) > 0;
+	BOOL ctrlModified	= (modifiers & NSControlKeyMask) > 0;
+	
+	//Ctrl-Opt-clicking simulates a simultaneous left- and right-click
+	//(for those rare games that use it, like Syndicate)
+	if (optModified && ctrlModified)
+	{
+		simulatedMouseButtons |= BXSimulatedButtonLeftAndRight;
+		Mouse_ButtonPressed(DOSBoxMouseButtonLeft);
+		Mouse_ButtonPressed(DOSBoxMouseButtonRight);
+	}
+	
+	//Ctrl-clicking simulates a right mouse-click
+	else if (ctrlModified)
+	{
+		simulatedMouseButtons |= BXSimulatedButtonRight;
+		Mouse_ButtonPressed(DOSBoxMouseButtonRight);
+	}
+	
+	//Opt-clicking simulates a middle mouse-click
+	else if (optModified)
+	{
+		simulatedMouseButtons |= BXSimulatedButtonMiddle;
+		Mouse_ButtonPressed(DOSBoxMouseButtonMiddle);
+	}
+	
+	//Just a plain old regular left-click
+	else
+	{
+		Mouse_ButtonPressed(DOSBoxMouseButtonLeft);
+	}
+}
+
+- (void) mouseUp: (NSEvent *)theEvent
+{
+	//If we were faking any mouse buttons, release them now
+	if (simulatedMouseButtons)
+	{
+		if (simulatedMouseButtons & BXSimulatedButtonLeftAndRight)
+		{
+			Mouse_ButtonReleased(DOSBoxMouseButtonLeft);
+			Mouse_ButtonReleased(DOSBoxMouseButtonRight);
+		}
+		if (simulatedMouseButtons & BXSimulatedButtonRight) Mouse_ButtonReleased(DOSBoxMouseButtonRight);
+		if (simulatedMouseButtons & BXSimulatedButtonMiddle) Mouse_ButtonReleased(DOSBoxMouseButtonMiddle);
+		
+		simulatedMouseButtons = BXNoSimulatedButtons;
+	}
+	else
+	{
+		Mouse_ButtonReleased(DOSBoxMouseButtonLeft);
+	}
+
+}
 
 - (void) rightMouseDown: (NSEvent *)theEvent	{ Mouse_ButtonPressed(DOSBoxMouseButtonRight); }
 - (void) rightMouseUp: (NSEvent *)theEvent		{ Mouse_ButtonReleased(DOSBoxMouseButtonRight); }

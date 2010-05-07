@@ -16,7 +16,24 @@ enum {
 	DOSBoxMouseButtonMiddle	= 2
 };
 
+//Modifier flag constants for left- and right-side modifier keys, copied from IOKit/IOLLEvent.h.
+//Allows us to distinguish these for DOSBox.
+enum {
+	BXLeftControlKeyMask	= 0x00000001,
+	BXLeftShiftKeyMask		= 0x00000002,
+	BXRightShiftKeyMask		= 0x00000004,
+	BXLeftCommandKeyMask	= 0x00000008,
+	BXRightCommandKeyMask	= 0x00000010,
+	BXLeftAlternateKeyMask	= 0x00000020,
+	BXRightAlternateKeyMask	= 0x00000040,
+	BXRightControlKeyMask	= 0x00002000
+};
+
+
 @interface BXEmulatorEventResponder : NSResponder
+{
+	NSUInteger simulatedMouseButtons;
+}
 
 //Move the mouse to a relative point on the specified canvas, by the relative delta.
 - (void) mouseMovedToPoint: (NSPoint)point

@@ -124,9 +124,9 @@
 - (void) mouseDown: (NSEvent *)theEvent
 {
 	//Cmd-left-click toggles mouse-locking
-	if ([self mouseActive] && [self mouseInView] && [theEvent modifierFlags] & NSCommandKeyMask)
-		[self toggleMouseLocked: self];
-	//Otherwise, pass the click on
+	if ([theEvent modifierFlags] & NSCommandKeyMask) [self toggleMouseLocked: self];
+	
+	//Otherwise, pass the click on as-is
 	else [super mouseDown: theEvent];
 }
 
@@ -181,12 +181,8 @@
 										  whileLocked: [self mouseLocked]];
 }
 
-- (void) mouseDragged: (NSEvent *)theEvent
-{
-	//Only pass on mouse drag events when they're inside the window
-	//This way, we don't catch dragging the window itself around
-	if ([self mouseInView]) [self mouseMoved: theEvent];
-}
+//Treat drag events as simple mouse movement
+- (void) mouseDragged: (NSEvent *)theEvent		{ [self mouseMoved: theEvent]; }
 - (void) rightMouseDragged: (NSEvent *)theEvent	{ return [self mouseDragged: theEvent]; }
 - (void) otherMouseDragged: (NSEvent *)theEvent	{ return [self mouseDragged: theEvent]; }
 

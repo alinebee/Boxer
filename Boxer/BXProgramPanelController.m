@@ -14,7 +14,8 @@
 
 
 @implementation BXProgramPanelController
-@synthesize programChooserPanel, defaultProgramPanel, noProgramsPanel, programList;
+
+- (NSString *) nibName	{ return @"ProgramPanel"; }
 
 + (NSSet *)keyPathsForValuesAffectingLabelForToggle
 {
@@ -38,14 +39,6 @@
 	[NSValueTransformer setValueTransformer: [iconSize autorelease]		forName: @"BXProgramIconSize"];
 	[NSValueTransformer setValueTransformer: [displayPath autorelease]	forName: @"BXProgramDisplayPath"];
 	[NSValueTransformer setValueTransformer: [fileName autorelease]		forName: @"BXDOSFilename"];
-}
-
-- (void) dealloc
-{
-	[self setProgramChooserPanel: nil],	[programChooserPanel release];
-	[self setDefaultProgramPanel: nil],	[defaultProgramPanel release];
-	[self setNoProgramsPanel: nil],		[noProgramsPanel release];
-	[super dealloc];
 }
 
 - (void) setRepresentedObject: (id)session
@@ -76,9 +69,9 @@
 	BXSession *session = [self representedObject];
 	NSView *panel;
 	
-	if		([session activeProgramPath])	panel = [self defaultProgramPanel];
-	else if	([[session executables] count])	panel = [self programChooserPanel];
-	else									panel = [self noProgramsPanel];
+	if		([session activeProgramPath])	panel = defaultProgramPanel;
+	else if	([[session executables] count])	panel = programChooserPanel;
+	else									panel = noProgramsPanel;
 
 	[self setActivePanel: panel];
 }

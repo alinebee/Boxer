@@ -21,10 +21,6 @@
 	IBOutlet NSView *noProgramsPanel;
 	IBOutlet NSCollectionView *programList;
 }
-@property (retain) NSView *programChooserPanel;	//The program picker view.
-@property (retain) NSView *defaultProgramPanel;	//The default program toggle view.
-@property (retain) NSView *noProgramsPanel;		//The no-programs-found notice view.
-@property (retain) NSCollectionView *programList;	//The program list inside the picker view.
 
 //Returns the localised display string used for the "open this program every time" checkbox toggle.
 - (NSString *) labelForToggle;

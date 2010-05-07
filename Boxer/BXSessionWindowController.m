@@ -469,6 +469,28 @@
 	[self exitFullScreen: self];
 }
 
+//Drop out of fullscreen mode before showing any sheets
+- (void) windowWillBeginSheet: (NSNotification *) notification
+{
+	[self setFullScreen: NO];
+}
+
+
+//Refresh the DOS renderer after the window resizes, to take the new size into account
+- (void) windowDidResize: (NSNotification *) notification
+{
+	if (![self isFullScreen] && ![self isResizing])
+	{
+		//After a resize event has finished, reinitialise the renderer
+		//to make it use settings appropriate to its new size
+		[[self emulator] resetRenderer];
+		
+		//Also, update the damn cursors which will have been reset by the window's resizing
+		[DOSViewController cursorUpdate: nil];
+	}
+}
+
+
 //Warn the emulator to prepare for emulation cutout when the resize starts
 - (void) windowWillLiveResize: (NSNotification *) notification
 {
@@ -479,7 +501,8 @@
 //While we're at it, let the emulator know it can unpause now
 - (void) windowDidLiveResize: (NSNotification *) notification
 {
-	[self windowDidResize: notification];
+	//We do this with a delay to give the resize operation time to 'stop being live'.
+	[self performSelector: @selector(windowDidResize:) withObject: notification afterDelay: 0.0];
 	[[self emulator] didResume];
 }
 

@@ -32,6 +32,10 @@
 
 - (void) awakeFromNib
 {
+	//Initialize the mouse position to the centre of the DOS view,
+	//in case we lock the mouse before receiving a mouseMoved event.
+	lastMousePosition = NSMakePoint(0.5, 0.5);
+	
 	//Insert ourselves into the responder chain as the view's next responder
 	[self setNextResponder: [[self view] nextResponder]];
 	[[self view] setNextResponder: self];
@@ -66,12 +70,6 @@
 	[self setHiddenCursor: blankCursor];
 	[blankImage release];
 	[blankCursor release];
-	
-	
-	[[NSNotificationCenter defaultCenter] addObserver: self
-											 selector: @selector(_viewDidResize)
-												 name: @"BXRenderViewDidLiveResizeNotification"
-											   object: [self view]];
 }
 
 - (void) dealloc
@@ -132,12 +130,12 @@
 
 - (void) mouseMoved: (NSEvent *)theEvent
 {
-	//Work out mouse motion relative to the DOS viewport canvas,
-	//and pass that on as a relative point to the emulator's event handler
+	//Work out mouse motion relative to the DOS viewport canvas, and pass on the current position
+	//and last movement delta to the emulator's event handler.
 	
 	NSPoint relativePosition;
 	NSPoint relativeDelta;
-	NSRect canvas;
+	NSRect canvas = [[self view] bounds];
 	
 	if ([self mouseLocked])
 	{
@@ -147,33 +145,31 @@
 		//as a 0-1 ratio of the canvas rather than as a fixed unit position,
 		//so that it doesn't get muddled up by changes to the view size.
 		
-		canvas = [[[[self view] window] screen] frame];
 		relativeDelta = NSMakePoint([theEvent deltaX] / canvas.size.width,
 									-[theEvent deltaY] / canvas.size.height);
 		
-		//Update the last known position with the new mouse delta
-		lastMousePosition.x += relativeDelta.x;
-		lastMousePosition.y += relativeDelta.y;
-		
-		//Clamp the axes to 0.0 and 1.0
-		lastMousePosition.x = fmaxf(fminf(lastMousePosition.x, 1.0), 0.0);
-		lastMousePosition.y = fmaxf(fminf(lastMousePosition.y, 1.0), 0.0);
-		
 		relativePosition = lastMousePosition;
+		
+		//Update the last known position with the new mouse delta
+		relativePosition.x += relativeDelta.x;
+		relativePosition.y += relativeDelta.y;
 	}
 	else
 	{
-		canvas = [[self view] bounds];
 		NSPoint pointInView	= [[self view] convertPoint: [theEvent locationInWindow] fromView: nil];
 		
 		relativeDelta		= NSMakePoint([theEvent deltaX] / canvas.size.width,
 										  -[theEvent deltaY] / canvas.size.height);
 		relativePosition	= NSMakePoint(pointInView.x / canvas.size.width,
 										  pointInView.y / canvas.size.height);
-		
-		//Record the location so that we can use it next time
-		lastMousePosition = relativePosition;
 	}
+	
+	//Clamp the position's axes to within 0.0 and 1.0
+	relativePosition.x = fmaxf(fminf(relativePosition.x, 1.0f), 0.0f);
+	relativePosition.y = fmaxf(fminf(relativePosition.y, 1.0f), 0.0f);
+	
+	//Record the location so that we can use it next time
+	lastMousePosition = relativePosition;
 	
 	[[[self emulator] eventHandler] mouseMovedToPoint: relativePosition
 											 byAmount: relativeDelta
@@ -272,17 +268,23 @@
 	//Associate/disassociate the mouse and the OS X cursor
 	CGAssociateMouseAndMouseCursorPosition(!lock);
 	
-	//When unlocking, warp the cursor to the equivalent screen position it would have moved to while locked.
-	if (!lock) [self _syncOSXCursorAndDOSCursor];
+	//When locking, always ensure the DOS window is key and frontmost.
+	if (lock) [[[self view] window] makeKeyAndOrderFront: self];
+	
+	//Warp the cursor to the equivalent position of the DOS cursor within the view.
+	//This gives a smooth user transition from locked to unlocked mode, and ensures
+	//that when we lock the mouse it will always be over the window (so that clicks
+	//don't go astray).
+	[self _syncOSXCursorToPointInCanvas: lastMousePosition];
 	
 	[self didChangeValueForKey: @"mouseLocked"];
 }
 
-- (void) _syncOSXCursorAndDOSCursor
+- (void) _syncOSXCursorToPointInCanvas: (NSPoint)point
 {
 	NSRect canvas = [[self view] bounds];
-	NSPoint pointInView = NSMakePoint(lastMousePosition.x * canvas.size.width,
-									  lastMousePosition.y * canvas.size.height);
+	NSPoint pointInView = NSMakePoint(point.x * canvas.size.width,
+									  point.y * canvas.size.height);
 	
 	NSPoint pointOnScreen = [[[self view] window] convertBaseToScreen: [[self view] convertPointToBase: pointInView]];
 	CGPoint cgPointOnScreen	= NSPointToCGPoint(pointOnScreen);
@@ -290,17 +292,8 @@
 	//Correct for CG's top-left origin
 	NSRect screenFrame = [[[[self view] window] screen] frame];
 	cgPointOnScreen.y = screenFrame.size.height - screenFrame.origin.y - cgPointOnScreen.y;
-	CGWarpMouseCursorPosition(cgPointOnScreen);	
+	CGWarpMouseCursorPosition(cgPointOnScreen);
 }
 
-- (void) _viewDidResize
-{
-	//So it has come to this: shortly after the view has resized, the cursor gets reset
-	//and cursorUpdate isn't called. Calling cursorUpdate immediately just means it gets
-	//reset afterwards, so we defer the call so that it gets processed later.
-	//FIXME: try to find some other way, any other way, to do this.
-	[self performSelector: @selector(cursorUpdate:) withObject: nil afterDelay: 0.0];
-	//[self cursorUpdate: nil];
-}
-
+- (BOOL) mouseActive	{ return YES; }
 @end

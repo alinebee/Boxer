@@ -124,13 +124,13 @@
 //so that it can clean up afterwards.
 - (void) viewWillStartLiveResize
 {	
-	[[NSNotificationCenter defaultCenter] postNotificationName: @"BXRenderViewWillLiveResizeNotification" object: self];
 	[super viewWillStartLiveResize];
+	[[NSNotificationCenter defaultCenter] postNotificationName: @"BXRenderViewWillLiveResizeNotification" object: self];
 }
 
 - (void) viewDidEndLiveResize
 {
-	[[NSNotificationCenter defaultCenter] postNotificationName: @"BXRenderViewDidLiveResizeNotification" object: self];
 	[super viewDidEndLiveResize];
+	[[NSNotificationCenter defaultCenter] postNotificationName: @"BXRenderViewDidLiveResizeNotification" object: self];
 }
 @end

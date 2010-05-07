@@ -18,28 +18,6 @@
 
 @implementation BXSessionWindowController (BXRenderController)
 
-//Delegate methods
-//----------------
-
-//Drop out of fullscreen mode before showing any sheets
-- (void) windowWillBeginSheet: (NSNotification *) notification
-{
-	[self setFullScreen: NO];
-}
-
-
-//Refresh the DOS renderer after the window resizes, to take the new size into account
-- (void) windowDidResize: (NSNotification *) notification
-{
-	if (![self isFullScreen] && ![self isResizing])
-	{
-		//After a resize event has finished, reinitialise the renderer
-		//to make it use settings appropriate to its new size
-		[[self emulator] resetRenderer];
-	}
-}
-
-
 //Window size calculations
 //------------------------
 

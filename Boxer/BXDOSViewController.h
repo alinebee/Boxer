@@ -45,9 +45,8 @@
 //Lock/unlock the mouse.
 - (IBAction) toggleMouseLocked: (id)sender;
 
-//Warp the OS X cursor to the point on screen corresponding to (where we think) the DOS cursor is.
-- (void) _syncOSXCursorAndDOSCursor;
+//Warp the OS X cursor to the specified point on our virtual mouse canvas.
+//Used when locking and unlocking the mouse.
+- (void) _syncOSXCursorToPointInCanvas: (NSPoint)point;
 
-//Resync the 'hidden' cursor whenever the view resizes
-- (void) _viewDidResize;
 @end

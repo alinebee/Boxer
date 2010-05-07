@@ -37,7 +37,7 @@
 	[[self view] setNextResponder: self];
 	 
 	//Set up cursor region for mouse handling
-	NSTrackingAreaOptions options = NSTrackingMouseEnteredAndExited | NSTrackingCursorUpdate | NSTrackingActiveInKeyWindow | NSTrackingInVisibleRect | NSTrackingAssumeInside;
+	NSTrackingAreaOptions options = NSTrackingMouseEnteredAndExited | NSTrackingEnabledDuringMouseDrag | NSTrackingCursorUpdate | NSTrackingActiveInKeyWindow | NSTrackingInVisibleRect | NSTrackingAssumeInside;
 	
 	NSTrackingArea *trackingArea = [[NSTrackingArea alloc] initWithRect: NSZeroRect
 																options: options

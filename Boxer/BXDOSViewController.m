@@ -128,11 +128,10 @@
 	else [super mouseDown: theEvent];
 }
 
+//Work out mouse motion relative to the DOS viewport canvas, passing on the current position
+//and last movement delta to the emulator's event handler.
 - (void) mouseMoved: (NSEvent *)theEvent
 {
-	//Work out mouse motion relative to the DOS viewport canvas, and pass on the current position
-	//and last movement delta to the emulator's event handler.
-	
 	NSPoint relativePosition;
 	NSPoint relativeDelta;
 	NSRect canvas = [[self view] bounds];
@@ -140,8 +139,8 @@
 	if ([self mouseLocked])
 	{
 		//While we're mouselocked and the cursor is disassociated,
-		//we can't get an absolute mouse position, so we have to calculate it
-		//using the delta from the last known position. We store this
+		//we can't get an absolute mouse position, so we have to calculate
+		//it using the delta from the last known position. We store this
 		//as a 0-1 ratio of the canvas rather than as a fixed unit position,
 		//so that it doesn't get muddled up by changes to the view size.
 		
@@ -168,7 +167,7 @@
 	relativePosition.x = fmaxf(fminf(relativePosition.x, 1.0f), 0.0f);
 	relativePosition.y = fmaxf(fminf(relativePosition.y, 1.0f), 0.0f);
 	
-	//Record the location so that we can use it next time
+	//Record the position so that we can use it next time
 	lastMousePosition = relativePosition;
 	
 	[[[self emulator] eventHandler] mouseMovedToPoint: relativePosition
@@ -295,5 +294,4 @@
 	CGWarpMouseCursorPosition(cgPointOnScreen);
 }
 
-- (BOOL) mouseActive	{ return YES; }
 @end

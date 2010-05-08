@@ -52,6 +52,7 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 @class BXSession;
 @class BXRenderer;
 @class BXInputHandler;
+@class BXFrameBuffer;
 
 @interface BXEmulator : NSOperation
 {
@@ -59,6 +60,7 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 	BXSession *delegate;
 	BXRenderer *renderer;
 	BXInputHandler *inputHandler;
+	BXFrameBuffer *frameBuffer;
 	
 	NSString *processName;
 	NSString *processPath;
@@ -107,8 +109,11 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 //The OpenGL renderer we use for displaying DOSBox output.
 @property (retain)		BXRenderer *renderer;
 
+//The framebuffer we render our frames into.
+@property (retain)		BXFrameBuffer *frameBuffer;
+
 //The NSResponder we use for processing input events for the emulation.
-@property (retain) BXInputHandler *inputHandler;
+@property (retain)		BXInputHandler *inputHandler;
 
 
 //An array of OS X paths to configuration files that will be processed by this session during startup.

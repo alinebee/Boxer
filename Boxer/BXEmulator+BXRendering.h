@@ -87,12 +87,6 @@ typedef struct {
 //This is called after resizing the session window or toggling rendering options.
 - (void) resetRenderer;
 
-//Gets/sets whether we are rendering to fullscreen.
-//Note that setFullScreen does *not* switch the rendering mode to fullscreen: it merely informs DOSBox
-//that Boxer has switched the mode.
-- (BOOL) isFullScreen;
-- (void) setFullScreen: (BOOL)fullscreen;
-
 //Returns the minimum view size needed to display the specified filter type. 
 - (NSSize) minRenderedSizeForFilterType: (BXFilterType) type;
 

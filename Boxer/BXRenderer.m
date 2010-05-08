@@ -8,42 +8,124 @@
 
 #import "BXRenderer.h"
 #import "BXGeometry.h"
+#import "BXFrameBuffer.h"
 
 @implementation BXRenderer
-@synthesize viewport, outputScale, maintainAspectRatio, needsDisplay;
+@synthesize viewport, maintainAspectRatio, needsDisplay;
+@synthesize lastFrame;
 
-- (id) init
-{
-	if ((self = [super init]))
-	{
-		frameBuffer = NULL;
-	}
-	return self;
-}
+#pragma mark -
+#pragma mark Initialization and cleanup
+
 - (void) dealloc
 {
 	if (glIsTexture(texture))	glDeleteTextures(1, &texture);
 	if (glIsList(displayList))	glDeleteLists(displayList, 1);
-	if (frameBuffer)
-	{
-		free(frameBuffer);
-		frameBuffer = NULL;
-	}
+	
+	[self setLastFrame: nil], [lastFrame release];
 	
 	[super dealloc];
 }
 
 
-- (NSSize) maxOutputSize
+#pragma mark -
+#pragma mark Framebuffer rendering
+
+- (NSSize) maxFrameSize
 {
 	GLint maxSize;
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
 	return NSMakeSize((CGFloat)maxSize, (CGFloat)maxSize);
 }
 
+- (BXFrameBuffer *) bufferForOutputSize: (NSSize)resolution atScale: (NSSize)scale
+{
+	return [BXFrameBuffer bufferWithResolution: resolution depth: 4 scale: scale];
+}
+
+- (void) drawFrame: (BXFrameBuffer *)frame
+{
+	//A new buffer is being rendered, prepare the renderer to cope with it
+	if (frame != lastFrame) 
+	{
+		[self _prepareForFrame: frame];
+		[self setLastFrame: frame];
+	}
+	
+	glBindTexture(textureTarget, texture);
+	glTexSubImage2D(textureTarget,					//Texture target
+					0,								//Mipmap level
+					0,								//X offset
+					0,								//Y offset
+					[frame resolution].width,		//width
+					[frame resolution].height,		//height
+					GL_BGRA,						//byte ordering
+					GL_UNSIGNED_INT_8_8_8_8_REV,	//byte packing
+					[frame bytes]					//pixel data
+					);
+	
+	[self setNeedsDisplay: YES];
+}
+
+- (void) drawFrame: (BXFrameBuffer *)frame dirtyRegions: (const uint16_t *)dirtyRegions
+{
+	//A new buffer is being rendered, reset the renderer and then render the whole buffer anew
+	if (frame != lastFrame) return [self drawFrame: frame];
+	
+	//Otherwise, render only the parts of the buffer that are flagged as being dirty
+	if (dirtyRegions)
+	{
+		NSUInteger offset = 0;
+		NSUInteger currentRegion = 0;
+		NSUInteger height;
+		void *offsetPixels;
+		
+		glBindTexture(textureTarget, texture);
+		
+		while (offset < [frame resolution].height)
+		{
+			//Explanation: dirtyRegions is an array describing the pixel heights of alternating dirty/clean
+			//regions in the buffer.
+			//e.g. (1, 5, 2, 4) means one clean line, then 5 dirty lines, then 2 clean lines, then 4 dirty lines.
+			
+			//On clean regions, we just increment the line offset by the number of clean lines in the region
+			//and move on. On dirty regions, we draw the dirty lines from the buffer into the texture.
+			
+			height = dirtyRegions[currentRegion];
+			
+			//This is an odd row, hence a dirty line block, so write the dirty lines from it into our texture
+			if (currentRegion & 1)
+			{
+				//Ahhh, pointer arithmetic. Determine the starting offset of the dirty region in our buffer.
+				//TODO: this needs sanity-checking to make sure the offset is within expected bounds,
+				//otherwise it would write arbitrary data to the texture.
+				offsetPixels = [frame mutableBytes] + (offset * [frame pitch]);
+				
+				glTexSubImage2D(textureTarget,					//Texture target
+								0,								//Mipmap level
+								0,								//X offset
+								offset,							//Y offset
+								[frame resolution].width,		//width
+								height,							//height
+								GL_BGRA,						//byte ordering
+								GL_UNSIGNED_INT_8_8_8_8_REV,	//byte packing
+								offsetPixels					//pixel data
+								);
+			}
+			offset += height;
+			currentRegion++;
+		}
+		[self setNeedsDisplay: YES];
+	}
+}
+
+#pragma mark -
+#pragma mark OpenGL setup and output
+
 - (void) prepareOpenGL
 {
 	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glShadeModel(GL_FLAT);
 	glDisable(GL_DEPTH_TEST);
@@ -66,113 +148,21 @@
 	glLoadIdentity();
 }
 
-- (void *) frameBuffer
-{
-	return frameBuffer;
-}
-
-- (void *) setFrameBufferSize: (NSSize)size atScale: (NSSize)scale
-{
-	if (!NSEqualSizes(size, outputSize) || !NSEqualSizes(scale, outputScale))
-	{
-		outputSize = size;
-		outputScale = scale;
-		
-		if (frameBuffer) free(frameBuffer);
-		frameBuffer = malloc(outputSize.width * outputSize.height * 4);
-		//TODO: fill the framebuffer with black
-
-		//Next time one of our draw functions is called, this will resync
-		//the texture, display list and viewport to fit the new output size
-		rendererIsInvalid = YES;
-	}
-	return frameBuffer;
-}
-
 - (void) setCanvas: (NSRect)canvasRect
 {
 	canvas = canvasRect;
-	[self _updateViewport];
-	[self _updateFiltering];
+	[self _setupViewportForFrame: [self lastFrame]];
+	[self _setupFilteringForFrame: [self lastFrame]];
 }
 
 - (void) render
 {
 	//Avoid garbage in letterbox region by clearing every frame
-	//Man, is there a tidier way of doing this?
 	glClear(GL_COLOR_BUFFER_BIT);
 	if (displayList) glCallList(displayList);
 	[self setNeedsDisplay: NO];
 }
 
-- (NSUInteger) pitch { return (NSUInteger)(outputSize.width * 4); }
-
-- (void) drawPixelData: (void *)pixelData dirtyBlocks: (const uint16_t *)dirtyBlocks
-{
-	if (dirtyBlocks)
-	{
-		if (rendererIsInvalid) [self _updateRenderer];
-		
-		NSUInteger offset = 0, i = 0;
-		NSUInteger height, pitch = [self pitch];
-		void *offsetPixels;
-		
-		glBindTexture(textureTarget, texture);
-		
-		while (offset < outputSize.height)
-		{
-			//Explanation: dirtyBlocks is an array describing the heights of alternating blocks of dirty/clean lines.
-			//e.g. (1, 5, 2, 4) means one clean line, then 5 dirty lines, then 2 clean lines, then 4 dirty lines.
-			
-			//On clean blocks, we just increment the line offset by the number of clean lines in the block and move on.
-			//On dirty blocks, we draw the dirty lines from the pixel data into the texture.
-			
-			height = dirtyBlocks[i];
-			
-			//This is an odd row, hence a dirty line block, so write the dirty lines from it into our texture
-			if (i & 1)
-			{
-				//Ahhh, pointer arithmetic. Determine the starting offset of the dirty line block in our pixel data.
-				//TODO: this needs sanity-checking to make sure the offset is within expected bounds,
-				//otherwise it would write arbitrary data to the texture.
-				offsetPixels = frameBuffer + (offset * pitch);
-				
-				glTexSubImage2D(textureTarget,		//Texture target
-								0,					//Mipmap level
-								0,					//X offset
-								offset,				//Y offset
-								outputSize.width,	//width
-								height,				//height
-								GL_BGRA,						//byte ordering
-								GL_UNSIGNED_INT_8_8_8_8_REV,	//byte packing
-								offsetPixels		//pixel data
-								);
-				
-			}
-			offset += height;
-			i++;
-		}
-		[self setNeedsDisplay: YES];
-	}
-}
-
-- (void) drawPixelData: (void *)pixelData
-{
-	if (rendererIsInvalid) [self _updateRenderer];
-	
-	glBindTexture(textureTarget, texture);
-	glTexSubImage2D(textureTarget,		//Texture target
-					0,					//Mipmap level
-					0,					//X offset
-					0,					//Y offset
-					outputSize.width,	//width
-					outputSize.height,	//height
-					GL_BGRA,						//byte ordering
-					GL_UNSIGNED_INT_8_8_8_8_REV,	//byte packing
-					frameBuffer			//pixel data
-					);
-	[self setNeedsDisplay: YES];
-}
 
 @end
 
@@ -180,35 +170,36 @@
 
 @implementation BXRenderer (BXRendererInternals)
 
-- (void) _updateRenderer
+- (void) _prepareForFrame: (BXFrameBuffer *)frame
 {
-	[self _updateViewport];
-	[self _createTexture];
-	[self _createDisplayList];
-	
-	rendererIsInvalid = NO;
+	[self _setupViewportForFrame: frame];
+	[self _setupTextureForFrame: frame];
+	[self _setupDisplayListForFrame: frame];
 }
 
 
-- (BOOL) _shouldUseFiltering
-{	
-	if (viewport.size.width / outputSize.width > BXBilinearFilteringScaleCutoff) return NO;
+- (BOOL) _shouldUseFilteringForFrame: (BXFrameBuffer *)frame
+{
+	if (viewport.size.width / [frame resolution].width > BXBilinearFilteringScaleCutoff) return NO;
 	
-	return	((NSInteger)viewport.size.width		% (NSInteger)outputSize.width) || 
-			((NSInteger)viewport.size.height	% (NSInteger)outputSize.height);
+	return	((NSInteger)viewport.size.width		% (NSInteger)[frame resolution].width) || 
+			((NSInteger)viewport.size.height	% (NSInteger)[frame resolution].height);
 }
 
-- (void) _updateViewport
+- (void) _setupViewportForFrame: (BXFrameBuffer *)frame
 {
-	if (NSEqualSizes(outputSize, NSZeroSize) || NSEqualSizes(outputScale, NSZeroSize))
+	if (!frame)
 	{
-		//If no frame has been rendered yet, fill the whole canvas
+		//If there is no frame to render, fill our whole canvas
 		viewport = canvas;													 
 	}
 	else if ([self maintainAspectRatio])
 	{
 		//Keep the viewport letterboxed in proportion with our output size
-		NSRect outputRect = NSMakeRect(0, 0, outputSize.width * outputScale.width, outputSize.height * outputScale.height);
+		NSRect outputRect = NSMakeRect(0,
+									   0,
+									   [frame resolution].width * [frame intendedScale].width,
+									   [frame resolution].height * [frame intendedScale].height);
 		viewport = fitInRect(outputRect, canvas, NSMakePoint(0.5, 0.5));
 	}
 	else
@@ -223,29 +214,27 @@
 			   viewport.origin.y,
 			   viewport.size.width,
 			   viewport.size.height);
-	
-	glClear(GL_COLOR_BUFFER_BIT);
 }
 
-- (void) _createTexture
+- (void) _setupTextureForFrame: (BXFrameBuffer *)frame
 {
 	if (textureTarget == GL_TEXTURE_RECTANGLE_ARB)
 	{
-		textureSize = outputSize;
+		textureSize = [frame resolution];
 	}
 	else
 	{
-		//Create a texture large enough to accommodate the output size, whose dimensions are an even power of 2
-		textureSize.width	= (CGFloat)fitToPowerOfTwo((NSInteger)outputSize.width);
-		textureSize.height	= (CGFloat)fitToPowerOfTwo((NSInteger)outputSize.height);
+		//Create a texture large enough to accommodate the buffer, whose dimensions are an even power of 2
+		textureSize.width	= (CGFloat)fitToPowerOfTwo((NSInteger)[frame resolution].width);
+		textureSize.height	= (CGFloat)fitToPowerOfTwo((NSInteger)[frame resolution].height);
 	}
 	
 	//TODO: replace this check with a GL_PROXY_TEXTURE_2D call with graceful fallback
 	//See glTexImage2D(3) for implementation details
-	NSSize maxSize = [self maxOutputSize];
+	NSSize maxSize = [self maxFrameSize];
 	NSAssert2(textureSize.width <= maxSize.width && textureSize.height <= maxSize.height,
 			  @"Output size %@ is too large to create as a texture (maximum dimensions are %@).",
-			  NSStringFromSize(outputSize),
+			  NSStringFromSize([frame resolution]),
 			  NSStringFromSize(maxSize)
 			  );
 	
@@ -259,8 +248,7 @@
 	//Clamp the texture to avoid wrapping, and set the filtering mode
 	glTexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP);
-	[self _updateFiltering];
-	
+	[self _setupFilteringForFrame: frame];
 	
 	//Create a new empty texture of the specified size
 	glTexImage2D(textureTarget,	//Texture target
@@ -271,29 +259,29 @@
 				 0,								//Border (unused)
 				 GL_BGRA,						//Byte ordering
 				 GL_UNSIGNED_INT_8_8_8_8_REV,	//Byte packing
-				 frameBuffer					//Texture data
+				 [frame bytes]					//Texture data
 				 );
 	
 }
 
-- (void) _updateFiltering
+- (void) _setupFilteringForFrame: (BXFrameBuffer *)frame
 {
 	if (glIsTexture(texture))
 	{
 		glBindTexture(textureTarget, texture);
 		
 		//Apply bilinear filtering to the texture
-		GLint filterMode = ([self _shouldUseFiltering]) ? GL_LINEAR : GL_NEAREST;
+		GLint filterMode = ([self _shouldUseFilteringForFrame: frame]) ? GL_LINEAR : GL_NEAREST;
 		
 		glTexParameteri(textureTarget, GL_TEXTURE_MAG_FILTER, filterMode);
 		glTexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, filterMode);	
 	}
 }
 
-- (void) _createDisplayList
+- (void) _setupDisplayListForFrame: (BXFrameBuffer *)frame
 {
 	//Calculate what portion of the texture constitutes the output region
-	//(this is the part of the texture that will actually be filled with framebuffer data)
+	//(this is the part of the texture that will actually be filled with the framebuffer's data)
 	
 	GLfloat outputX, outputY;
 	if (textureTarget == GL_TEXTURE_RECTANGLE_ARB)
@@ -306,8 +294,8 @@
 	else
 	{
 		//Regular textures use proper 0->1 coordinates
-		outputX = (GLfloat)(outputSize.width	/ textureSize.width);
-		outputY = (GLfloat)(outputSize.height	/ textureSize.height);
+		outputX = (GLfloat)([frame resolution].width	/ textureSize.width);
+		outputY = (GLfloat)([frame resolution].height	/ textureSize.height);
 	}
 
 	

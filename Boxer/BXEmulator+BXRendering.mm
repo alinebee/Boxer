@@ -11,6 +11,7 @@
 #import "BXGeometry.h"
 #import "BXFilterDefinitions.h"
 #import "BXRenderer.h"
+#import "BXFrameBuffer.h"
 
 #import <SDL/SDL.h>
 #import "config.h"
@@ -43,7 +44,7 @@
 - (NSSize) scaledResolution
 {
 	NSSize size = [self resolution];
-	NSSize scale = [[self renderer] outputScale];
+	NSSize scale = [[self frameBuffer] intendedScale];
 	size.width *= scale.width;
 	size.height *= scale.height;
 	
@@ -79,32 +80,6 @@
 		}
 	}
 	return textMode;
-}
-
-
-//Controlling the rendering context
-//---------------------------------
-
-- (void) setFullScreen: (BOOL)fullscreen
-{
-	if ([self isExecuting] && [self isFullScreen] != fullscreen)
-	{
-		[self willChangeValueForKey: @"fullScreen"];
-		
-		sdl.desktop.fullscreen=fullscreen;
-		
-		[self didChangeValueForKey: @"fullScreen"];
-	}
-}
-
-- (BOOL) isFullScreen
-{
-	BOOL fullscreen = NO;
-	if ([self isExecuting])
-	{
-		fullscreen = (BOOL)sdl.desktop.fullscreen;
-	}
-	return fullscreen;
 }
 
 
@@ -185,7 +160,8 @@
 	frameInProgress = NO;
 	
 	[[[self delegate] mainWindowController] resizeToAccommodateOutputSize: outputSize atScale: scale];
-	[[self renderer] setFrameBufferSize: outputSize atScale: scale];
+	
+	[self setFrameBuffer: [[self renderer] bufferForOutputSize: outputSize atScale: scale]]; 
 
 	//Synchronise our record of the current video mode with the new video mode
 	if (currentVideoMode != vga.mode)
@@ -210,7 +186,7 @@
 	}
 }
 
-- (BOOL) _startFrameWithBuffer: (void **)frameBuffer pitch: (NSUInteger *)pitch
+- (BOOL) _startFrameWithBuffer: (void **)buffer pitch: (NSUInteger *)pitch
 {
 	//Don't let a new frame start if one is already going.
 	//This is merely mirroring a sanity flag in DOSBox and I'm not sure that the code
@@ -221,14 +197,14 @@
 		return NO;
 	}
 	
-	*frameBuffer	= [[self renderer] frameBuffer];
-	*pitch			= [[self renderer] pitch];
-	
-	if (!frameBuffer)
+	if (![self frameBuffer])
 	{
 		NSLog(@"Tried to start a frame before any framebuffer was created!");
 		return NO;
 	}
+	
+	*buffer	= [[self frameBuffer] mutableBytes];
+	*pitch	= [[self frameBuffer] pitch];
 	
 	frameInProgress = YES;
 	return YES;
@@ -236,9 +212,9 @@
 
 - (void) _finishFrameWithChanges: (const uint16_t *)dirtyBlocks
 {
-	if ([[self renderer] frameBuffer] && dirtyBlocks)
+	if ([self frameBuffer] && dirtyBlocks)
 	{
-		[[self renderer] drawPixelData: (void *)sdl.opengl.framebuf dirtyBlocks: dirtyBlocks];
+		[[self renderer] drawFrame: [self frameBuffer] dirtyRegions: dirtyBlocks];
 	}
 	frameInProgress = NO;
 }
@@ -359,9 +335,9 @@
 
 - (NSInteger) _maxFilterScaleForResolution: (NSSize)resolution
 {
-	NSSize maxOutputSize	= [[self renderer] maxOutputSize];
+	NSSize maxFrameSize	= [[self renderer] maxFrameSize];
 	//Work out how big a filter operation size we can use, given the maximum output size
-	NSInteger maxScale		= floor(fmin(maxOutputSize.width / resolution.width, maxOutputSize.height / resolution.height));
+	NSInteger maxScale		= floor(fmin(maxFrameSize.width / resolution.width, maxFrameSize.height / resolution.height));
 
 	return maxScale;
 }

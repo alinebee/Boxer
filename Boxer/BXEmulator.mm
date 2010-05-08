@@ -61,6 +61,7 @@ BXEmulator *currentEmulator = nil;
 @synthesize processName, processPath, processLocalPath;
 @synthesize delegate, thread;
 @synthesize renderer;
+@synthesize frameBuffer;
 @synthesize minFixedSpeed, maxFixedSpeed, maxFrameskip;
 @synthesize configFiles;
 @synthesize aspectCorrected;
@@ -149,6 +150,7 @@ BXEmulator *currentEmulator = nil;
 	[self setProcessName: nil],	[processName release];
 	[self setRenderer: nil], [renderer release];
 	[self setInputHandler: nil], [inputHandler release];
+	[self setFrameBuffer: nil], [frameBuffer release];
 	
 	[driveCache release], driveCache = nil;
 	[configFiles release], configFiles = nil;

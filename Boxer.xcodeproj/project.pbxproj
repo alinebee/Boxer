@@ -80,13 +80,13 @@
 		9F9FE70410FA5F5800E3944B /* NSWorkspace+BXIcons.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9FE70310FA5F5800E3944B /* NSWorkspace+BXIcons.m */; };
 		9FA2E596109D251100E50623 /* BGHUDAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FA2E595109D251100E50623 /* BGHUDAppKit.framework */; };
 		9FA2E5D9109D255300E50623 /* BGHUDAppKit.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FA2E595109D251100E50623 /* BGHUDAppKit.framework */; };
-		9FA7CB691179B351005D8670 /* BXContextSwitchingRenderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA7CB681179B351005D8670 /* BXContextSwitchingRenderView.m */; };
 		9FA85CD510A357A600E6457F /* BXSession+BXFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA85CD410A357A600E6457F /* BXSession+BXFileManager.m */; };
 		9FAD43C010A341F6007E8C0D /* UKFileWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD43B810A341F6007E8C0D /* UKFileWatcher.m */; };
 		9FAD43C110A341F6007E8C0D /* UKFNSubscribeFileWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD43BA10A341F6007E8C0D /* UKFNSubscribeFileWatcher.m */; };
 		9FAD43C310A341F6007E8C0D /* UKKQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD43BD10A341F6007E8C0D /* UKKQueue.m */; };
 		9FAD43C410A341F6007E8C0D /* UKMainThreadProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD43BF10A341F6007E8C0D /* UKMainThreadProxy.m */; };
 		9FB4F9E411957B55006C8AC9 /* BXFrameBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB4F9E311957B55006C8AC9 /* BXFrameBuffer.m */; };
+		9FB4FAD1119597FA006C8AC9 /* BXContextSwitchingRenderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA7CB681179B351005D8670 /* BXContextSwitchingRenderView.m */; };
 		9FB553E10F6EA30900A33017 /* BXCloseAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB553E00F6EA30900A33017 /* BXCloseAlert.m */; };
 		9FB554220F6EAC5F00A33017 /* BXAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB554210F6EAC5F00A33017 /* BXAlert.m */; };
 		9FB554F70F6EE58000A33017 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FB554F60F6EE58000A33017 /* QTKit.framework */; };
@@ -1809,11 +1809,11 @@
 				9FD5481411047E420041E1E7 /* BXDrivesInUseAlert.m in Sources */,
 				9FB635DD111EC63F00EDC2DA /* BXRenderer.m in Sources */,
 				9F42D9DF1172481800AC6F1F /* BXStatusBarController.m in Sources */,
-				9FA7CB691179B351005D8670 /* BXContextSwitchingRenderView.m in Sources */,
 				9FDCA790118F2B7900E2FD74 /* BXCoalface.mm in Sources */,
 				9FEF98011191E1EF002024DF /* BXInputHandler.mm in Sources */,
 				9F765649119403520082A06A /* BXDOSViewController.m in Sources */,
 				9FB4F9E411957B55006C8AC9 /* BXFrameBuffer.m in Sources */,
+				9FB4FAD1119597FA006C8AC9 /* BXContextSwitchingRenderView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

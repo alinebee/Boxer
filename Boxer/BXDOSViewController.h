@@ -18,7 +18,9 @@
 	NSCursor *hiddenCursor;
 	BOOL mouseActive;
 	BOOL mouseLocked;
+	
 	NSPoint lastMousePosition;
+	BOOL discardNextMouseDelta;
 	
 	IBOutlet BXSessionWindowController *windowController;
 }
@@ -39,7 +41,7 @@
 //Returns the emulator for the session we belong to.
 - (BXEmulator *) emulator;
 
-//Called by BXSessionWindowController whenever the keyboard focus leaves the window.
+//Called by BXSessionWindowController whenever the view loses keyboard focus.
 - (void) didResignKey;
 
 //Lock/unlock the mouse.
@@ -49,4 +51,6 @@
 //Used when locking and unlocking the mouse.
 - (void) _syncOSXCursorToPointInCanvas: (NSPoint)point;
 
+//Does the fiddly internal work of locking/unlocking the mouse.
+- (void) _applyMouseLockState;
 @end

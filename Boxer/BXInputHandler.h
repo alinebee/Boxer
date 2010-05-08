@@ -6,7 +6,7 @@
  */
 
 
-//BXEmulatorEventResponder class description goes here.
+//BXInputHandler class description goes here.
 
 #import <Cocoa/Cocoa.h>
 
@@ -29,11 +29,20 @@ enum {
 	BXRightControlKeyMask	= 0x00002000
 };
 
+@class BXEmulator;
 
-@interface BXEmulatorEventResponder : NSResponder
+@interface BXInputHandler : NSResponder
 {
 	NSUInteger simulatedMouseButtons;
+	BXEmulator *emulator;
+	BOOL mouseActive;
 }
+@property (assign) BXEmulator *emulator;
+//Whether we are responding to mouse input.
+@property (assign) BOOL mouseActive;
+
+//Called whenever we lose keyboard input focus. Clears all DOSBox events.
+- (void) lostFocus;
 
 //Move the mouse to a relative point on the specified canvas, by the relative delta.
 - (void) mouseMovedToPoint: (NSPoint)point
@@ -41,8 +50,43 @@ enum {
 				  onCanvas:	(NSRect)canvas
 			   whileLocked: (BOOL)locked;
 
-//Called whenever we lose keyboard input focus. Clears all DOSBox events.
-- (void) lostFocus;
+//Sends a key up/down event with the specified parameters to DOSBox.
+- (void) sendKeyEventWithCode: (unsigned short)keyCode
+					  pressed: (BOOL)pressed
+				withModifiers: (NSUInteger)modifierFlags;
+
+//Sends a key up/down event with the specified code, using the current modifier flags.
+- (void) sendKeyEventWithCode: (unsigned short)keyCode pressed: (BOOL)pressed;
+
+//Sends a keyup and a keydown event for the specified code, using the current modifier flags.
+- (void) sendKeypressWithCode: (unsigned short)keyCode;
+
+//Sends various fake events to DOS.
+- (void) sendTab;
+- (void) sendDelete;
+- (void) sendSpace;
+- (void) sendEnter;
+- (void) sendF1;
+- (void) sendF2;
+- (void) sendF3;
+- (void) sendF4;
+- (void) sendF5;
+- (void) sendF6;
+- (void) sendF7;
+- (void) sendF8;
+- (void) sendF9;
+- (void) sendF10;
+
+
+//Returns the DOS keyboard layout code for the currently-active input method in OS X.
+//Returns [BXInputHandler defaultKeyboardLayout] if no appropriate layout could be found.
+- (NSString *)keyboardLayoutForCurrentInputMethod;
+
+//Returns a dictionary mapping OSX InputServices input method names to DOS keyboard layout codes. 
++ (NSDictionary *)keyboardLayoutMappings;
+
+//The default DOS keyboard layout that should be used if no more specific one can be found.
++ (NSString *)defaultKeyboardLayout;
 
 @end
 
@@ -52,7 +96,7 @@ enum {
 
 #import <SDL/SDL.h>
 
-@interface BXEmulatorEventResponder (BXEmulatorEventResponderInternals)
+@interface BXInputHandler (BXInputHandlerInternals)
 
 //Analoguous to [[NSApp currentEvent] modifierFlags], only for SDL-style modifiers.
 - (SDLMod) currentSDLModifiers;

@@ -9,9 +9,8 @@
 #import "BXCoalface.h"
 #import "BXEmulator+BXRendering.h"
 #import "BXEmulator+BXShell.h"
-#import "BXEmulator+BXInput.h"
 #import "BXEmulator+BXDOSFileSystem.h"
-#import "BXEmulatorEventResponder.h"
+#import "BXInputHandler.h"
 
 #import "video.h"
 #import "sdlmain.h"
@@ -219,24 +218,24 @@ void boxer_driveDidUnmount(Bit8u driveIndex)
 
 
 #pragma mark -
-#pragma mark Event-related functions
+#pragma mark Input-related functions
 
 //Returns the DOSBox keyboard code that most closely corresponds to the current OS X keyboard layout
 const char * boxer_currentDOSKeyboardLayout()
 {
-	NSString *layoutCode = [[BXEmulator class] keyboardLayoutForCurrentInputMethod];
-	if (!layoutCode) layoutCode = [[BXEmulator class] defaultKeyboardLayout];
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+	NSString *layoutCode = [[emulator inputHandler] keyboardLayoutForCurrentInputMethod];
 	return [layoutCode cStringUsingEncoding: BXDirectStringEncoding];
 }
 
 void boxer_setMouseActive(bool mouseActive)
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	return [emulator setMouseActive: mouseActive];
+	return [[emulator inputHandler] setMouseActive: mouseActive];
 }
 
 SDLMod boxer_currentSDLModifiers()
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	return [[emulator eventHandler] currentSDLModifiers];
+	return [[emulator inputHandler] currentSDLModifiers];
 }

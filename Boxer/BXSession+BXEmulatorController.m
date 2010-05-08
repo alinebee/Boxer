@@ -8,7 +8,8 @@
 #import "BXSession+BXEmulatorController.h"
 #import "BXEmulator+BXRendering.h"
 #import "BXEmulator+BXShell.h"
-#import "BXEmulator+BXInput.h"
+#import "BXEmulator+BXPaste.h"
+#import "BXInputHandler.h"
 #import "BXValueTransformers.h"
 #import "BXVideoFormatAlert.h"
 #import "BXAppController.h"
@@ -168,17 +169,17 @@
 //Keyboard events
 //---------------
 
-- (IBAction) sendEnter: (id)sender	{ [[self emulator] sendEnter]; }
-- (IBAction) sendF1:	(id)sender	{ [[self emulator] sendF1]; }
-- (IBAction) sendF2:	(id)sender	{ [[self emulator] sendF2]; }
-- (IBAction) sendF3:	(id)sender	{ [[self emulator] sendF3]; }
-- (IBAction) sendF4:	(id)sender	{ [[self emulator] sendF4]; }
-- (IBAction) sendF5:	(id)sender	{ [[self emulator] sendF5]; }
-- (IBAction) sendF6:	(id)sender	{ [[self emulator] sendF6]; }
-- (IBAction) sendF7:	(id)sender	{ [[self emulator] sendF7]; }
-- (IBAction) sendF8:	(id)sender	{ [[self emulator] sendF8]; }
-- (IBAction) sendF9:	(id)sender	{ [[self emulator] sendF9]; }
-- (IBAction) sendF10:	(id)sender	{ [[self emulator] sendF10]; }
+- (IBAction) sendEnter: (id)sender	{ [[[self emulator] inputHandler] sendEnter]; }
+- (IBAction) sendF1:	(id)sender	{ [[[self emulator] inputHandler] sendF1]; }
+- (IBAction) sendF2:	(id)sender	{ [[[self emulator] inputHandler] sendF2]; }
+- (IBAction) sendF3:	(id)sender	{ [[[self emulator] inputHandler] sendF3]; }
+- (IBAction) sendF4:	(id)sender	{ [[[self emulator] inputHandler] sendF4]; }
+- (IBAction) sendF5:	(id)sender	{ [[[self emulator] inputHandler] sendF5]; }
+- (IBAction) sendF6:	(id)sender	{ [[[self emulator] inputHandler] sendF6]; }
+- (IBAction) sendF7:	(id)sender	{ [[[self emulator] inputHandler] sendF7]; }
+- (IBAction) sendF8:	(id)sender	{ [[[self emulator] inputHandler] sendF8]; }
+- (IBAction) sendF9:	(id)sender	{ [[[self emulator] inputHandler] sendF9]; }
+- (IBAction) sendF10:	(id)sender	{ [[[self emulator] inputHandler] sendF10]; }
 
 
 //Handling paste

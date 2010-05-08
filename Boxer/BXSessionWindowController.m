@@ -15,7 +15,7 @@
 
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulator+BXRendering.h"
-#import "BXEmulatorEventResponder.h"
+#import "BXInputHandler.h"
 
 #import "BXCloseAlert.h"
 #import "BXSession+BXDragDrop.h"
@@ -169,7 +169,7 @@
 			[DOSViewController unbind: @"mouseActive"];
 			
 			//Remove the emulator's responder from the responder chain
-			[DOSViewController setNextResponder: [[oldEmulator eventHandler] nextResponder]];			
+			[DOSViewController setNextResponder: [[oldEmulator inputHandler] nextResponder]];			
 		}
 		
 		[oldEmulator autorelease];
@@ -197,13 +197,13 @@
 			
 			[DOSViewController bind: @"mouseActive"
 						   toObject: newEmulator
-						withKeyPath: @"mouseActive"
+						withKeyPath: @"inputHandler.mouseActive"
 							options: nil];
 			
 			//Put the new responder into the responder chain
-			[[newEmulator eventHandler] setNextResponder: [DOSViewController nextResponder]];
+			[[newEmulator inputHandler] setNextResponder: [DOSViewController nextResponder]];
 			
-			[DOSViewController setNextResponder: [newEmulator eventHandler]];
+			[DOSViewController setNextResponder: [newEmulator inputHandler]];
 		}
 	}
 	

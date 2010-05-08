@@ -1304,7 +1304,7 @@ void Mouse_AutoLock(bool enable) {
 	boxer_setMouseActive(enable);
 	return;
 	
-	//--Disabled 2010-04-11 by Alun Bestor: this is now handled by BXInput
+	//--Disabled 2010-04-11 by Alun Bestor: this is now handled by Boxer
 	/*
 	sdl.mouse.autolock=enable;
 	if (sdl.mouse.autoenable) sdl.mouse.requestlock=enable;

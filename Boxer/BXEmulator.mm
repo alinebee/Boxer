@@ -11,7 +11,7 @@
 #import "BXEmulator+BXShell.h"
 #import "BXEmulator+BXRendering.h"
 #import "BXRenderer.h"
-#import "BXEmulatorEventResponder.h"
+#import "BXInputHandler.h"
 
 #import <SDL/SDL.h>
 #import "config.h"
@@ -66,8 +66,7 @@ BXEmulator *currentEmulator = nil;
 @synthesize aspectCorrected;
 @synthesize filterType;
 @synthesize commandQueue;
-@synthesize mouseActive;
-@synthesize eventHandler;
+@synthesize inputHandler;
 
 
 //Introspective class methods
@@ -139,7 +138,8 @@ BXEmulator *currentEmulator = nil;
 		currentVideoMode	= M_TEXT;
 		
 		[self setRenderer: [[[BXRenderer alloc] init] autorelease]];
-		[self setEventHandler: [[[BXEmulatorEventResponder alloc] init] autorelease]];
+		[self setInputHandler: [[[BXInputHandler alloc] init] autorelease]];
+		[[self inputHandler] setEmulator: self];
 	}
 	return self;
 }
@@ -148,7 +148,7 @@ BXEmulator *currentEmulator = nil;
 {
 	[self setProcessName: nil],	[processName release];
 	[self setRenderer: nil], [renderer release];
-	[self setEventHandler: nil], [eventHandler release];
+	[self setInputHandler: nil], [inputHandler release];
 	
 	[driveCache release], driveCache = nil;
 	[configFiles release], configFiles = nil;

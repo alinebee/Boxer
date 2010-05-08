@@ -8,9 +8,10 @@
 
 #import "BXDOSViewController.h"
 #import "BXSessionWindowController.h"
-#import "BXEmulatorEventResponder.h"
+#import "BXInputHandler.h"
 #import "BXEmulator.h"
 #import "BXAppController.h"
+#import "BXGeometry.h"
 
 
 @implementation BXDOSViewController
@@ -106,7 +107,7 @@
 - (void) didResignKey
 {
 	[self setMouseLocked: NO];
-	[[[self emulator] eventHandler] lostFocus];
+	[[[self emulator] inputHandler] lostFocus];
 }
 
 - (void) cursorUpdate: (NSEvent *)theEvent
@@ -129,48 +130,53 @@
 }
 
 //Work out mouse motion relative to the DOS viewport canvas, passing on the current position
-//and last movement delta to the emulator's event handler.
+//and last movement delta to the emulator's input handler.
+//We represent position and delta as as a fraction of the canvas rather than as a fixed unit
+//position, so that they stay consistent when the view size changes.
 - (void) mouseMoved: (NSEvent *)theEvent
 {
-	NSPoint relativePosition;
-	NSPoint relativeDelta;
 	NSRect canvas = [[self view] bounds];
+	CGFloat width = canvas.size.width;
+	CGFloat height = canvas.size.height;
+	
+	NSPoint relativePosition, relativeDelta;
+	
+	if (discardNextMouseDelta)
+	{
+		//If we have just warped the mouse, the delta will be the difference between the
+		//original and warped mouse positions. We want to discard this initial delta.
+		relativeDelta = NSZeroPoint;
+		discardNextMouseDelta = NO;
+	}
+	else
+	{
+		//We invert the delta to be consistent with AppKit's bottom-left screen origin.
+		relativeDelta = NSMakePoint([theEvent deltaX] / width,
+									-[theEvent deltaY] / height);		
+	}
 	
 	if ([self mouseLocked])
 	{
 		//While we're mouselocked and the cursor is disassociated,
 		//we can't get an absolute mouse position, so we have to calculate
-		//it using the delta from the last known position. We store this
-		//as a 0-1 ratio of the canvas rather than as a fixed unit position,
-		//so that it doesn't get muddled up by changes to the view size.
-		
-		relativeDelta = NSMakePoint([theEvent deltaX] / canvas.size.width,
-									-[theEvent deltaY] / canvas.size.height);
-		
-		relativePosition = lastMousePosition;
-		
-		//Update the last known position with the new mouse delta
-		relativePosition.x += relativeDelta.x;
-		relativePosition.y += relativeDelta.y;
+		//it using the delta from the last known position.
+		relativePosition.x = lastMousePosition.x + relativeDelta.x;
+		relativePosition.y = lastMousePosition.y + relativeDelta.y;
 	}
 	else
 	{
 		NSPoint pointInView	= [[self view] convertPoint: [theEvent locationInWindow] fromView: nil];
-		
-		relativeDelta		= NSMakePoint([theEvent deltaX] / canvas.size.width,
-										  -[theEvent deltaY] / canvas.size.height);
-		relativePosition	= NSMakePoint(pointInView.x / canvas.size.width,
-										  pointInView.y / canvas.size.height);
+		relativePosition	= NSMakePoint(pointInView.x / width,
+										  pointInView.y / height);
 	}
 	
-	//Clamp the position's axes to within 0.0 and 1.0
-	relativePosition.x = fmaxf(fminf(relativePosition.x, 1.0f), 0.0f);
-	relativePosition.y = fmaxf(fminf(relativePosition.y, 1.0f), 0.0f);
+	//Clamp the position to within the canvas.
+	relativePosition = clampPointToRect(relativePosition, NSMakeRect(0.0, 0.0, 1.0, 1.0));
 	
-	//Record the position so that we can use it next time
+	//Record the position for next time.
 	lastMousePosition = relativePosition;
 	
-	[[[self emulator] eventHandler] mouseMovedToPoint: relativePosition
+	[[[self emulator] inputHandler] mouseMovedToPoint: relativePosition
 											 byAmount: relativeDelta
 											 onCanvas: canvas
 										  whileLocked: [self mouseLocked]];
@@ -255,26 +261,16 @@
 	//If we got this far, go ahead!
 	[self willChangeValueForKey: @"mouseLocked"];
 	
+	//When locking, always ensure the application and DOS window are active.
+	if (lock)
+	{
+		[NSApp activateIgnoringOtherApps: YES];
+		[[[self view] window] makeKeyAndOrderFront: self];
+	}
+	
 	mouseLocked = lock;
 	
-	//Ensure we don't "over-hide" the cursor if it's already hidden
-	//(since [NSCursor hide] stacks)
-	BOOL cursorVisible = CGCursorIsVisible();
-	
-	if		(cursorVisible && lock)		[NSCursor hide];
-	else if (!cursorVisible && !lock)	[NSCursor unhide];
-	
-	//Associate/disassociate the mouse and the OS X cursor
-	CGAssociateMouseAndMouseCursorPosition(!lock);
-	
-	//When locking, always ensure the DOS window is key and frontmost.
-	if (lock) [[[self view] window] makeKeyAndOrderFront: self];
-	
-	//Warp the cursor to the equivalent position of the DOS cursor within the view.
-	//This gives a smooth user transition from locked to unlocked mode, and ensures
-	//that when we lock the mouse it will always be over the window (so that clicks
-	//don't go astray).
-	[self _syncOSXCursorToPointInCanvas: lastMousePosition];
+	[self _applyMouseLockState];
 	
 	[self didChangeValueForKey: @"mouseLocked"];
 }
@@ -288,10 +284,44 @@
 	NSPoint pointOnScreen = [[[self view] window] convertBaseToScreen: [[self view] convertPointToBase: pointInView]];
 	CGPoint cgPointOnScreen	= NSPointToCGPoint(pointOnScreen);
 	
-	//Correct for CG's top-left origin
+	//Correct for CG's top-left origin, since the result of convertBaseToScreen: will use 
 	NSRect screenFrame = [[[[self view] window] screen] frame];
 	cgPointOnScreen.y = screenFrame.size.height - screenFrame.origin.y - cgPointOnScreen.y;
+	
 	CGWarpMouseCursorPosition(cgPointOnScreen);
+	
+	//Warping the mouse won't generate a mouseMoved event, but it will mess up the delta on the 
+	//next mouseMoved event to reflect the distance the mouse was warped. This flag instructs our
+	//mouseMoved: handler to ignore the delta from the warp.
+	discardNextMouseDelta = YES;
+}
+
+- (void) _applyMouseLockState
+{
+	BOOL lock = [self mouseLocked];
+	
+	//Ensure we don't "over-hide" the cursor if it's already hidden
+	//(since [NSCursor hide] stacks)
+	BOOL cursorVisible = CGCursorIsVisible();
+	
+	if		(cursorVisible && lock)		[NSCursor hide];
+	else if (!cursorVisible && !lock)	[NSCursor unhide];
+	
+	//Associate/disassociate the mouse and the OS X cursor
+	CGAssociateMouseAndMouseCursorPosition(!lock);
+	
+	//Warp the cursor to the equivalent position of the DOS cursor within the view.
+	//This gives a smooth user transition from locked to unlocked mode, and ensures
+	//that when we lock the mouse it will always be over the window (so that clicks
+	//don't go astray).
+	
+	NSPoint newMousePosition = lastMousePosition;
+	
+	//Tweak: when unlocking the mouse, inset it slightly from the edges of the canvas,
+	//as having the mouse exactly flush with the window edge looks ugly.
+	if (!lock) newMousePosition = clampPointToRect(newMousePosition, NSMakeRect(0.01, 0.01, 0.98, 0.98));
+	
+	[self _syncOSXCursorToPointInCanvas: newMousePosition];
 }
 
 @end

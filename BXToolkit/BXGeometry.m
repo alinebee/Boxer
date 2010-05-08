@@ -90,3 +90,11 @@ NSRect constrainToRect(NSRect innerRect, NSRect outerRect, NSPoint anchor)
 		return alignInRectWithAnchor(fittedRect, outerRect, anchor);
 	else return fitInRect(innerRect, outerRect, anchor);
 }
+
+NSPoint clampPointToRect(NSPoint point, NSRect rect)
+{
+	NSPoint clampedPoint;
+	clampedPoint.x = fmaxf(fminf(point.x, NSMaxX(rect)), NSMinX(rect));
+	clampedPoint.y = fmaxf(fminf(point.y, NSMaxY(rect)), NSMinY(rect));
+	return clampedPoint;
+}

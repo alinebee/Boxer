@@ -9,7 +9,7 @@
 #import "BXSession+BXDragDrop.h"
 #import "BXSession+BXFileManager.h"
 #import "BXEmulator+BXDOSFileSystem.h"
-#import "BXEmulator+BXInput.h"
+#import "BXEmulator+BXPaste.h"
 #import "NSWorkspace+BXFileTypes.h"
 #import "NSWorkspace+BXMountedVolumes.h"
 

@@ -51,13 +51,14 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 
 @class BXSession;
 @class BXRenderer;
-@class BXEmulatorEventResponder;
+@class BXInputHandler;
 
 @interface BXEmulator : NSOperation
 {
 	NSThread *thread;
 	BXSession *delegate;
 	BXRenderer *renderer;
+	BXInputHandler *inputHandler;
 	
 	NSString *processName;
 	NSString *processPath;
@@ -81,11 +82,6 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 	BXFilterType filterType;
 	BOOL aspectCorrected;
 	BOOL frameInProgress;
-	
-	//Used by BXInput
-	BOOL mouseActive;
-	
-	BXEmulatorEventResponder *eventHandler;
 }
 
 //Properties
@@ -112,7 +108,7 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 @property (retain)		BXRenderer *renderer;
 
 //The NSResponder we use for processing input events for the emulation.
-@property (retain) BXEmulatorEventResponder *eventHandler;
+@property (retain) BXInputHandler *inputHandler;
 
 
 //An array of OS X paths to configuration files that will be processed by this session during startup.
@@ -135,9 +131,6 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 @property (assign, getter=isAspectCorrected) BOOL aspectCorrected;
 //The current rendering style as a DOSBox filter type constant (q.v. BXEmulator+BXRendering.h)
 @property (assign) BXFilterType filterType;
-
-//Whether the active DOS game has requested mouse support.
-@property (assign) BOOL mouseActive;
 
 
 //Class methods

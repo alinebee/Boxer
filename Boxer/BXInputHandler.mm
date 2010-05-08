@@ -6,7 +6,8 @@
  */
 
 
-#import "BXEmulatorEventResponder.h"
+#import "BXInputHandler.h"
+#import "BXEmulator.h"
 
 #import <Carbon/Carbon.h> //For keycode constants
 #import <SDL/SDL.h>
@@ -27,7 +28,29 @@ enum {
 //Declared in mapper.cpp
 void MAPPER_CheckEvent(SDL_Event *event);
 
-@implementation BXEmulatorEventResponder
+@implementation BXInputHandler
+@synthesize emulator;
+@synthesize mouseActive;
+
+#pragma mark -
+#pragma mark Controlling response state
+
++ (NSSet *) keyPathsForValuesAffectingMouseActive
+{
+	return [NSSet setWithObject: @"emulator.isRunningProcess"];
+}
+
+- (BOOL) mouseActive
+{
+	//The mouse active state is not reset by DOSBox when a game exits.
+	return mouseActive && [[self emulator] isRunningProcess];
+}
+
+- (void) lostFocus
+{
+	//Release all DOSBox events when we lose responder status.
+	GFX_LosingFocus();
+}
 
 #pragma mark -
 #pragma mark Mouse handling
@@ -96,12 +119,16 @@ void MAPPER_CheckEvent(SDL_Event *event);
 
 - (void) otherMouseDown: (NSEvent *)theEvent
 {
-	if ([theEvent buttonNumber] == 2) Mouse_ButtonPressed(DOSBoxMouseButtonMiddle);
+	//Ignore all buttons other than the 'real' middle button
+	if ([theEvent buttonNumber] == 2)
+		Mouse_ButtonPressed(DOSBoxMouseButtonMiddle);
 }
 
 - (void) otherMouseUp: (NSEvent *)theEvent
 {
-	if ([theEvent buttonNumber] == 2) Mouse_ButtonReleased(DOSBoxMouseButtonMiddle);	
+	//Ignore all buttons other than the 'real' middle button
+	if ([theEvent buttonNumber] == 2)
+		Mouse_ButtonReleased(DOSBoxMouseButtonMiddle);	
 }
 
 - (void) mouseMovedToPoint: (NSPoint)point
@@ -134,14 +161,10 @@ void MAPPER_CheckEvent(SDL_Event *event);
 	//Ignore keypresses where the Cmd key is held down, to be consistent with how other OS X
 	//applications behave.
 	//(If it was a proper key equivalent, it would have been handled before now.)
-	if ([theEvent modifierFlags] & NSCommandKeyMask) return [super keyDown: theEvent];
+	if ([theEvent modifierFlags] & NSCommandKeyMask)
+		return [super keyUp: theEvent];
 	
-		
-	SDL_Event keyEvent = [[self class] _SDLKeyEventForKeyCode: [theEvent keyCode]
-													  pressed: NO
-												withModifiers: [theEvent modifierFlags]];
-
-	MAPPER_CheckEvent(&keyEvent);
+	[self sendKeyEventWithCode: [theEvent keyCode] pressed: NO withModifiers: [theEvent modifierFlags]];
 }
 
 - (void) keyDown: (NSEvent *)theEvent
@@ -149,25 +172,23 @@ void MAPPER_CheckEvent(SDL_Event *event);
 	//Ignore keypresses where the Cmd key is held down, to be consistent with how other OS X
 	//applications behave.
 	//(If it was a proper key equivalent, it would have been handled before now.)
-	if ([theEvent modifierFlags] & NSCommandKeyMask) return [super keyDown: theEvent];
+	if ([theEvent modifierFlags] & NSCommandKeyMask)
+		return [super keyDown: theEvent];
 	
-	
-	SDL_Event keyEvent = [[self class] _SDLKeyEventForKeyCode: [theEvent keyCode]
-													  pressed: YES
-												withModifiers: [theEvent modifierFlags]];
-
-	MAPPER_CheckEvent(&keyEvent);
+	[self sendKeyEventWithCode: [theEvent keyCode] pressed: YES withModifiers: [theEvent modifierFlags]];
 }
 
 //Convert flag changes into proper key events
 - (void) flagsChanged: (NSEvent *)theEvent
 {
-	//We can determine which modifier key was involved by its key code,
-	//but we can't determine from the event whether it was pressed or released.
-	//So, we check whether the corresponding modifier flag is active or not.
+	unsigned short keyCode	= [theEvent keyCode];
+	NSUInteger modifiers	= [theEvent modifierFlags];
 	NSUInteger flag;
 	
-	switch([theEvent keyCode])
+	//We can determine which modifier key was involved by its key code,
+	//but we can't determine from the event whether it was pressed or released.
+	//So, we check whether the corresponding modifier flag is active or not.	
+	switch(keyCode)
 	{
 		case kVK_Control:		flag = BXLeftControlKeyMask;	break;
 		case kVK_Option:		flag = BXLeftAlternateKeyMask;	break;
@@ -184,34 +205,178 @@ void MAPPER_CheckEvent(SDL_Event *event);
 			return;
 	}
 	
-	BOOL pressed = ([theEvent modifierFlags] & flag) > 0;
-	SDL_Event keyEvent = [[self class] _SDLKeyEventForKeyCode: [theEvent keyCode]
-													  pressed: pressed
-												withModifiers: [theEvent modifierFlags]];
+	BOOL pressed = (modifiers & flag) == flag;
 
 	//Implementation note: you might think that CapsLock has to be handled differently since
-	//it's a toggle. However, SDL sends an SDL_KEYDOWN event when CapsLock is toggled on,
-	//and an SDL_KEYUP event when CapsLock is toggled off.
+	//it's a toggle. However, DOSBox expects an SDL_KEYDOWN event when CapsLock is toggled on,
+	//and an SDL_KEYUP event when CapsLock is toggled off, so our normal behaviour is fine.
+		
+	[self sendKeyEventWithCode: keyCode pressed: pressed withModifiers: modifiers];
+}
+
+//Shortcut functions for sending keypresses to DOSBox
+- (void) sendKeyEventWithCode: (unsigned short)keyCode
+					  pressed: (BOOL)pressed
+				withModifiers: (NSUInteger)modifierFlags
+{
+	SDL_Event keyEvent = [[self class] _SDLKeyEventForKeyCode: keyCode
+													  pressed: pressed
+												withModifiers: modifierFlags];
 	
 	MAPPER_CheckEvent(&keyEvent);
 }
 
-- (void) lostFocus
+- (void) sendKeyEventWithCode: (unsigned short)keyCode
+					  pressed: (BOOL)pressed
 {
-	//Release all DOSBox events when we lose responder status.
-	GFX_LosingFocus();
+	[self sendKeyEventWithCode: keyCode pressed: pressed withModifiers: [[NSApp currentEvent] modifierFlags]];
 }
+
+- (void) sendKeypressWithCode: (unsigned short)keyCode
+{
+	[self sendKeyEventWithCode: keyCode pressed: YES];
+	[self sendKeyEventWithCode: keyCode pressed: NO];
+}
+
+
+#pragma mark -
+#pragma mark Faking events
+
+- (void) sendTab	{ return [self sendKeypressWithCode: kVK_Tab]; }
+- (void) sendDelete	{ return [self sendKeypressWithCode: kVK_Delete]; }
+- (void) sendSpace	{ return [self sendKeypressWithCode: kVK_Space]; }
+- (void) sendEnter	{ return [self sendKeypressWithCode: kVK_Return]; }
+
+- (void) sendF1		{ return [self sendKeypressWithCode: kVK_F1]; }
+- (void) sendF2		{ return [self sendKeypressWithCode: kVK_F2]; }
+- (void) sendF3		{ return [self sendKeypressWithCode: kVK_F3]; }
+- (void) sendF4		{ return [self sendKeypressWithCode: kVK_F4]; }
+- (void) sendF5		{ return [self sendKeypressWithCode: kVK_F5]; }
+- (void) sendF6		{ return [self sendKeypressWithCode: kVK_F6]; }
+- (void) sendF7		{ return [self sendKeypressWithCode: kVK_F7]; }
+- (void) sendF8		{ return [self sendKeypressWithCode: kVK_F8]; }
+- (void) sendF9		{ return [self sendKeypressWithCode: kVK_F9]; }
+- (void) sendF10	{ return [self sendKeypressWithCode: kVK_F10]; }
+
+
+#pragma mark -
+#pragma mark Keyboard layout methods
+
+- (NSString *)keyboardLayoutForCurrentInputMethod
+{
+	TISInputSourceRef keyboardRef	= TISCopyCurrentKeyboardLayoutInputSource();
+	NSString *inputSourceID			= (NSString *)TISGetInputSourceProperty(keyboardRef, kTISPropertyInputSourceID);
+	CFRelease(keyboardRef);
+	
+	NSString *layout	= [[[self class] keyboardLayoutMappings] objectForKey: inputSourceID];
+	if (!layout) layout	= [[self class] defaultKeyboardLayout];
+	return layout;
+}
+
++ (NSDictionary *)keyboardLayoutMappings
+{
+	//Note: these are not exact matches, and the ones marked with ?? are purely speculative.
+	//DOSBox doesn't even natively support all of them.
+	//This is a disgusting solution, and will be the first against the wall when the Unicode
+	//revolution comes. 
+	
+	static NSDictionary *mappings = nil;
+	if (!mappings) mappings = [[NSDictionary alloc] initWithObjectsAndKeys:
+							   @"be",	@"com.apple.keylayout.Belgian",
+							   
+							   @"bg",	@"com.apple.keylayout.Bulgarian",				
+							   @"bg",	@"com.apple.keylayout.Bulgarian-Phonetic",	//??
+							   
+							   @"br",	@"com.apple.keylayout.Brazilian",
+							   
+							   //There should be different mappings for Canadian vs French-Canadian
+							   @"ca",	@"com.apple.keylayout.Canadian",
+							   @"ca",	@"com.apple.keylayout.Canadian-CSA",
+							   
+							   //Note: DOS cz layout is QWERTY, not QWERTZ like the standard Mac Czech layout
+							   @"cz",	@"com.apple.keylayout.Czech",
+							   @"cz",	@"com.apple.keylayout.Czech-QWERTY",
+							   
+							   @"de",	@"com.apple.keylayout.Austrian",
+							   @"de",	@"com.apple.keylayout.German",
+							   
+							   @"dk",	@"com.apple.keylayout.Danish",
+							   
+							   @"dv",	@"com.apple.keylayout.DVORAK-QWERTYCMD",
+							   @"dv",	@"com.apple.keylayout.Dvorak",
+							   
+							   @"es",	@"com.apple.keylayout.Spanish",
+							   @"es",	@"com.apple.keylayout.Spanish-ISO",
+							   
+							   @"fi",	@"com.apple.keylayout.Finnish",
+							   @"fi",	@"com.apple.keylayout.FinnishExtended",
+							   @"fi",	@"com.apple.keylayout.FinnishSami-PC",		//??
+							   
+							   //There should be different DOS mappings for French and French Numerical
+							   @"fr",	@"com.apple.keylayout.French",
+							   @"fr",	@"com.apple.keylayout.French-numerical",
+							   
+							   @"gk",	@"com.apple.keylayout.Greek",
+							   @"gk",	@"com.apple.keylayout.GreekPolytonic",		//??
+							   
+							   @"hu",	@"com.apple.keylayout.Hungarian",
+							   
+							   @"is",	@"com.apple.keylayout.Icelandic",
+							   
+							   @"it",	@"com.apple.keylayout.Italian",
+							   @"it",	@"com.apple.keylayout.Italian-Pro",			//??
+							   
+							   @"nl",	@"com.apple.keylayout.Dutch",
+							   
+							   @"no",	@"com.apple.keylayout.Norwegian",
+							   @"no",	@"com.apple.keylayout.NorwegianExtended",
+							   @"no",	@"com.apple.keylayout.NorwegianSami-PC",	//??
+							   
+							   @"pl",	@"com.apple.keylayout.Polish",
+							   @"pl",	@"com.apple.keylayout.PolishPro",			//??
+							   
+							   @"po",	@"com.apple.keylayout.Portuguese",
+							   
+							   @"ru",	@"com.apple.keylayout.Russian",				//??
+							   @"ru",	@"com.apple.keylayout.Russian-Phonetic",	//??
+							   @"ru",	@"com.apple.keylayout.RussianWin",			//??
+							   
+							   @"sf",	@"com.apple.keylayout.SwissFrench",
+							   @"sg",	@"com.apple.keylayout.SwissGerman",
+							   
+							   @"sv",	@"com.apple.keylayout.Swedish",
+							   @"sv",	@"com.apple.keylayout.Swedish-Pro",
+							   @"sv",	@"com.apple.keylayout.SwedishSami-PC",		//??
+							   
+							   @"uk",	@"com.apple.keylayout.British",
+							   @"uk",	@"com.apple.keylayout.Irish",				//??
+							   @"uk",	@"com.apple.keylayout.IrishExtended",		//??
+							   @"uk",	@"com.apple.keylayout.Welsh",				//??
+							   
+							   @"us",	@"com.apple.keylayout.Australian",
+							   @"us",	@"com.apple.keylayout.Hawaiian",			//??
+							   @"us",	@"com.apple.keylayout.US",
+							   @"us",	@"com.apple.keylayout.USExtended",
+							   nil];
+	return mappings;
+}
+
++ (NSString *)defaultKeyboardLayout	{ return @"us"; }
 
 @end
 
 
-@implementation BXEmulatorEventResponder (BXEmulatorEventResponderInternals)
+#pragma mark -
+#pragma mark Internal methods
+
+@implementation BXInputHandler (BXInputHandlerInternals)
 
 //"Private-but-not-quite" - exposed here for coalface functions
 - (SDLMod) currentSDLModifiers
 {
 	return [[self class] _convertToSDLModifiers: [[NSApp currentEvent] modifierFlags]];
 }
+
 
 + (SDL_Event) _SDLKeyEventForKeyCode: (CGKeyCode)keyCode
 							 pressed: (BOOL)pressed

@@ -14,11 +14,16 @@
 #import "BXValueTransformers.h"
 
 
+const CGFloat BXInspectorPanelBlurRadius = 2.0f;
+
 @implementation BXInspectorController
 @synthesize panelContainer;
 @synthesize gamePanel, cpuPanel, drivePanel;
 @synthesize panelSelector;
 @synthesize driveController;
+
+typedef void * CGSConnection;
+extern OSStatus CGSNewConnection(const void **attributes, CGSConnection * id);
 
 + (void) initialize
 {
@@ -99,6 +104,33 @@
 		if (![session isGamePackage] && [[self currentPanel] isEqualTo: [self gamePanel]])
 			[self setCurrentPanel: [self cpuPanel]];
 	}
+}
+
+- (void) showWindow: (id)sender
+{
+	[super showWindow: sender];
+	
+	//The code below applies a soft gaussian blur underneath the window, and was lifted directly from:
+	//http://blog.steventroughtonsmith.com/2008/03/using-core-image-filters-onunder.html
+	//This is all private-framework stuff and so may stop working (or compiling) in a future version of OS X.
+	
+	CGSConnection thisConnection;
+	uint32_t compositingFilter;
+	NSInteger compositingType = 1; //Applies the effect only underneath the window
+	NSInteger windowNumber = [[self window] windowNumber];
+	
+	//Make a new connection to CoreGraphics
+	CGSNewConnection(NULL, &thisConnection);
+	
+	//Create a CoreImage gaussian blur filter
+	CGSNewCIFilterByName(thisConnection, (CFStringRef)@"CIGaussianBlur", &compositingFilter);
+	
+	NSDictionary *options = [NSDictionary dictionaryWithObject: [NSNumber numberWithFloat: BXInspectorPanelBlurRadius] forKey: @"inputRadius"];
+	
+	CGSSetCIFilterValuesFromDictionary(thisConnection, compositingFilter, (CFDictionaryRef)options);
+	
+	//Now apply the filter to the window
+	CGSAddWindowFilter(thisConnection, windowNumber, compositingFilter, compositingType);
 }
 
 - (NSArray *) panels

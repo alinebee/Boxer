@@ -112,8 +112,7 @@
 
 - (void) cursorUpdate: (NSEvent *)theEvent
 {
-	//TODO: figure out why cursor is getting reset when the view changes dimensions
-	if ([self mouseActive] && [self mouseInView])
+	if ([self mouseActive] && [self mouseInView] && [[[self view] window] isKeyWindow])
 	{
 		[[self hiddenCursor] set];
 	}

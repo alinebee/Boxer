@@ -113,15 +113,15 @@
 	{
 		NSScreen *targetScreen	= [self fullScreenTarget];
 		
-		//Ensure that the mouse is locked for fullscreen mode
-		[DOSViewController setMouseLocked: YES];
-		
 		//Flip the view into fullscreen mode
 		[theView enterFullScreenMode: targetScreen withOptions: nil];
 		
 		//Reset the responders to what they should be, since enterFullScreenMode: screws with them
 		[theWindow makeFirstResponder: theView];
 		[theView setNextResponder: currentResponder];
+		
+		//Ensure that the mouse is locked for fullscreen mode
+		[DOSViewController setMouseLocked: YES];
 	}
 	else
 	{

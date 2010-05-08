@@ -252,10 +252,12 @@
 	if (lock == [self mouseLocked]) return;
 	
 	//Don't allow the mouse to be unlocked while in fullscreen mode
-	if ([[self view] isInFullScreenMode] && !lock) return;
+	if (!lock && [[self view] isInFullScreenMode]) return;
 	
-	//Don't allow the mouse to be locked if the game hasn't requested mouse locking
-	if (![self mouseActive] && lock) return;
+	//Don't allow the mouse to be locked if the game hasn't indicated mouse support
+	//Tweak: unless we're in fullscreen mode, in which case we only really do it
+	//to hide the mouse cursor.
+	if (lock && ![self mouseActive] && ![[self view] isInFullScreenMode]) return;
 	
 	
 	//If we got this far, go ahead!

@@ -24,6 +24,6 @@
 - (NSImage *) coverArtForSession: (BXSession *)session;
 
 //Called whenever the current session or its icon changes.
-//This calls iconForSession: with the current session and sets NSApplication's icon to the result.
+//This calls coverArtForSession: with the current session and sets NSApplication's icon to the result.
 - (void) syncIconWithActiveSession;
 @end

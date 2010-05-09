@@ -94,7 +94,7 @@ NSRect constrainToRect(NSRect innerRect, NSRect outerRect, NSPoint anchor)
 NSPoint clampPointToRect(NSPoint point, NSRect rect)
 {
 	NSPoint clampedPoint;
-	clampedPoint.x = fmaxf(fminf(point.x, NSMaxX(rect)), NSMinX(rect));
-	clampedPoint.y = fmaxf(fminf(point.y, NSMaxY(rect)), NSMinY(rect));
+	clampedPoint.x = MAX(MIN(point.x, NSMaxX(rect)), NSMinX(rect));
+	clampedPoint.y = MAX(MIN(point.y, NSMaxY(rect)), NSMinY(rect));
 	return clampedPoint;
 }

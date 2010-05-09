@@ -485,10 +485,18 @@ BXEmulator *currentEmulator = nil;
 
 - (BOOL) _handleEventLoop
 {
-	NSEvent *event;
-	while (event = [NSApp nextEventMatchingMask: NSAnyEventMask untilDate: [NSDate distantPast] inMode: NSDefaultRunLoopMode dequeue: YES])
-		[NSApp sendEvent: event];
+	//Implementation note: in a better world, this code wouldn't be here as event dispatch is normally done
+	//automatically by NSApplication at opportune moments. However, DOSBox's emulation loop completely takes
+	//over the application's main thread, leaving no time for events to get processed and dispatched.
+	//This explicitly pumps NSApplication's event queue for all pending events and sends them on their way.
 	
+	if ([NSThread currentThread] == [NSThread mainThread])
+	{
+		NSEvent *event;
+		while (event = [NSApp nextEventMatchingMask: NSAnyEventMask untilDate: nil inMode: NSDefaultRunLoopMode dequeue: YES])
+			[NSApp sendEvent: event];
+				
+	}
 	return YES;
 }
 

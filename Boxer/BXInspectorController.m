@@ -63,12 +63,13 @@ extern OSStatus CGSNewConnection(const void **attributes, CGSConnection * id);
 
 - (void) awakeFromNib
 {	
-	NSWindow *theWindow = [self window];
+	NSPanel *theWindow = (NSPanel *)[self window];
 
 	//Note that we actually only accept drag-drop on the drive panel: see draggingEntered et. al. below.
 	[theWindow registerForDraggedTypes: [NSArray arrayWithObjects: NSFilenamesPboardType, NSStringPboardType, nil]];
 
-	[theWindow setAcceptsMouseMovedEvents: YES];
+	//[theWindow setAcceptsMouseMovedEvents: YES];
+	[theWindow setBecomesKeyOnlyIfNeeded: YES];
 		
 	[theWindow setFrameAutosaveName: @"InspectorPanel"];
 	

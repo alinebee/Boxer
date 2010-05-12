@@ -42,6 +42,12 @@
 	return resolution.width * bitDepth;
 }
 
+- (NSSize) scaledResolution
+{
+	return NSMakeSize(resolution.width	* intendedScale.width,
+					  resolution.height	* intendedScale.height);
+}
+
 - (const void *) bytes
 {
 	return [frameData bytes];

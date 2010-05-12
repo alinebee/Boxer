@@ -29,6 +29,9 @@
 //Return the width in bytes of one scanline in the buffer.
 - (NSInteger) pitch;
 
+//Returns the resolution of the frame scaled to the intended scale.
+- (NSSize) scaledResolution;
+
 //Return a read-only/mutable pointer to the frame's data.
 - (const void *) bytes;
 - (void *) mutableBytes;

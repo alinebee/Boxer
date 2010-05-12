@@ -19,6 +19,7 @@
 @class BXSessionWindowController;
 @class BXInspectorController;
 @class BXPackage;
+@class BXFrameBuffer;
 
 @interface BXSession : NSDocument
 {
@@ -158,5 +159,5 @@
 
 - (void) didStartGraphicalContext:	(NSNotification *)notification;
 - (void) didEndGraphicalContext:	(NSNotification *)notification;
-
+- (void) frameComplete:				(BXFrameBuffer *)frame;
 @end

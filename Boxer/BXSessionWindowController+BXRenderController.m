@@ -8,15 +8,30 @@
 
 #import "BXSessionWindowController+BXRenderController.h"
 #import "BXSessionWindow.h"
-#import "BXEmulator+BXRendering.h"
+#import "BXEmulator.h"
 #import "NSWindow+BXWindowSizing.h"
 #import "BXDOSViewController.h"
 #import "BXRenderView.h"
-#import "BXRenderer.h"
+#import "BXRenderingLayer.h"
+#import "BXFrameBuffer.h"
+
 #import "BXGeometry.h"
 
 
 @implementation BXSessionWindowController (BXRenderController)
+
+//DOSBox frame rendering
+//----------------------
+
+- (void) drawFrame: (BXFrameBuffer *)frame
+{
+	//Resize the window if we need to to accomodate the frame
+	[self resizeToAccommodateFrameSize: [frame scaledResolution]];
+	
+	//Update the rendering layer with the frame
+	[[renderView renderingLayer] drawFrame: frame];
+}
+
 
 //Window size calculations
 //------------------------
@@ -30,15 +45,12 @@
 //This will differ from the actual render view size when in fullscreen mode.
 - (NSSize) windowedRenderViewSize	{ return [[self renderContainer] frame].size; }
 
-- (void) resizeToAccommodateOutputSize: (NSSize)outputSize atScale: (NSSize)scale
+- (void) resizeToAccommodateFrameSize: (NSSize)scaledSize
 {
-	//Don't resize if we're in the middle of resizing already
-	if ([self isResizing]) return;
-	
-	NSSize scaledSize	= NSMakeSize(outputSize.width	* scale.width,
-									 outputSize.height	* scale.height);
-	NSSize originalSize	= [[self emulator] scaledResolution];	//The size the DOS game is producing
-	NSSize viewSize		= [self _renderViewSizeForScaledOutputSize: scaledSize minSize: originalSize];
+	//Don't resize if we're in the middle of resizing already, or are matched to this size
+	if ([self isResizing] || NSEqualSizes(currentScaledSize, scaledSize)) return;
+
+	NSSize viewSize	= [self _renderViewSizeForScaledOutputSize: scaledSize minSize: scaledSize];
 	
 	//Use the base resolution as our minimum content size, to prevent higher resolutions being rendered
 	//smaller than their effective size
@@ -46,25 +58,19 @@
 	//if the base resolution is too large to fit on screen and hence the view is shrunk.
 	//In that case we use the target view size as the minimum instead.
 	NSSize minSize;
-	if (NSEqualSizes(originalSize, NSZeroSize) ||
-		viewSize.width < originalSize.width ||
-		viewSize.height < originalSize.height)
+	if (viewSize.width < scaledSize.width || viewSize.height < scaledSize.height)
 		minSize = viewSize;
 	else
-		minSize = originalSize;
+		minSize = scaledSize;
 
 	//Fix the window's aspect ratio to the new size - this will affect our live resizing behaviour
 	[[self window] setContentMinSize: minSize];
 	[[self window] setContentAspectRatio: viewSize];
 	
-	
-	
 	//Now resize the window to fit the new size
 	//Tell the renderer not to maintain aspect ratio when doing so,
 	//since this change in size is driven by the DOS context
-	[[[self renderView] renderer] setMaintainAspectRatio: NO];
 	[self _resizeWindowToRenderViewSize: viewSize animate: YES];
-	[[[self renderView] renderer] setMaintainAspectRatio: YES];
 	
 	//Finally, record our current scaled size for future resizing calculations
 	currentScaledSize = scaledSize;
@@ -142,7 +148,6 @@
 		//Unlock the mouse after leaving fullscreen
 		[DOSViewController setMouseLocked: NO];
 	}
-	[[self emulator] resetRenderer];
 	
 	[self didChangeValueForKey: @"fullScreen"];
 }
@@ -202,9 +207,6 @@
 		
 		//...then resize the window back to its original size
 		[theWindow setFrame: originalFrame display: YES animate: YES];
-		
-		//Finally, reset the renderer again to fit the new size
-		[[self emulator] resetRenderer];
 	}
 	[self setResizingProgrammatically: NO];
 	[theWindow setLevel: originalLevel];
@@ -218,7 +220,7 @@
 	if (![[self emulator] isExecuting]) return proposedFrameSize;
 	
 	NSInteger snapThreshold	= [[NSUserDefaults standardUserDefaults] integerForKey: @"windowSnapDistance"];
-	NSSize snapIncrement	= [[self emulator] scaledResolution];
+	NSSize snapIncrement	= currentScaledSize;
 	CGFloat aspectRatio		= aspectRatioOfSize([theWindow contentAspectRatio]);
 	
 	NSRect proposedFrame	= NSMakeRect(0, 0, proposedFrameSize.width, proposedFrameSize.height);
@@ -247,7 +249,7 @@
 {
 	if (![[self emulator] isExecuting]) return defaultFrame;
 	
-	NSSize scaledResolution			= [[self emulator] scaledResolution];
+	NSSize scaledResolution			= currentScaledSize;
 	CGFloat aspectRatio				= aspectRatioOfSize([theWindow contentAspectRatio]);
 	
 	NSRect standardFrame;

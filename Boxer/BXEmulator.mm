@@ -10,7 +10,6 @@
 
 #import "BXEmulator+BXShell.h"
 #import "BXEmulator+BXRendering.h"
-#import "BXRenderer.h"
 #import "BXInputHandler.h"
 
 #import <SDL/SDL.h>
@@ -60,7 +59,6 @@ BXEmulator *currentEmulator = nil;
 @implementation BXEmulator
 @synthesize processName, processPath, processLocalPath;
 @synthesize delegate, thread;
-@synthesize renderer;
 @synthesize frameBuffer;
 @synthesize minFixedSpeed, maxFixedSpeed, maxFrameskip;
 @synthesize configFiles;
@@ -138,7 +136,6 @@ BXEmulator *currentEmulator = nil;
 		driveCache			= [[NSMutableDictionary alloc] initWithCapacity: DOS_DRIVES];
 		currentVideoMode	= M_TEXT;
 		
-		[self setRenderer: [[[BXRenderer alloc] init] autorelease]];
 		[self setInputHandler: [[[BXInputHandler alloc] init] autorelease]];
 		[[self inputHandler] setEmulator: self];
 	}
@@ -148,7 +145,6 @@ BXEmulator *currentEmulator = nil;
 - (void) dealloc
 {
 	[self setProcessName: nil],	[processName release];
-	[self setRenderer: nil], [renderer release];
 	[self setInputHandler: nil], [inputHandler release];
 	[self setFrameBuffer: nil], [frameBuffer release];
 	

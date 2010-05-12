@@ -12,7 +12,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="921"/>
+			<integer value="924"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -166,18 +166,12 @@
 							<int key="NSvFlags">274</int>
 							<object class="NSMutableArray" key="NSSubviews">
 								<bool key="EncodedWithXMLCoder">YES</bool>
-								<object class="NSOpenGLView" id="58925681">
+								<object class="NSCustomView" id="691696096">
 									<reference key="NSNextResponder" ref="89453087"/>
-									<int key="NSvFlags">5394</int>
-									<object class="NSPSMatrix" key="NSDrawMatrix"/>
+									<int key="NSvFlags">4370</int>
 									<string key="NSFrameSize">{640, 400}</string>
 									<reference key="NSSuperview" ref="89453087"/>
-									<int key="NSViewLayerContentsRedrawPolicy">2</int>
-									<object class="NSOpenGLPixelFormat" key="NSPixelFormat">
-										<object class="NSMutableData" key="NSPixelAttributes">
-											<bytes key="NS.bytes">AAAABQAAAEgAAABJAAAACAAAABgAAAALAAAACAAAAAA</bytes>
-										</object>
-									</object>
+									<string key="NSClassName">BXRenderView</string>
 								</object>
 							</object>
 							<string key="NSFrame">{{0, 104}, {640, 400}}</string>
@@ -223,10 +217,10 @@
 				<object class="_NSManagedProxy" key="_NSManagedProxy"/>
 			</object>
 			<object class="NSViewController" id="819309219"/>
+			<object class="NSViewController" id="949716796"/>
 			<object class="NSViewController" id="744398180">
 				<string key="NSNibName">ProgramPanel</string>
 			</object>
-			<object class="NSViewController" id="949716796"/>
 		</object>
 		<object class="IBObjectContainer" key="IBDocument.Objects">
 			<object class="NSMutableArray" key="connectionRecords">
@@ -278,22 +272,6 @@
 						<reference key="destination" ref="773857734"/>
 					</object>
 					<int key="connectionID">918</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">renderView</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="58925681"/>
-					</object>
-					<int key="connectionID">922</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">initialFirstResponder</string>
-						<reference key="source" ref="1005"/>
-						<reference key="destination" ref="58925681"/>
-					</object>
-					<int key="connectionID">923</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -369,14 +347,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">view</string>
-						<reference key="source" ref="949716796"/>
-						<reference key="destination" ref="58925681"/>
-					</object>
-					<int key="connectionID">958</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">DOSViewController</string>
 						<reference key="source" ref="1001"/>
 						<reference key="destination" ref="949716796"/>
@@ -390,6 +360,22 @@
 						<reference key="destination" ref="1001"/>
 					</object>
 					<int key="connectionID">960</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">renderView</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="691696096"/>
+					</object>
+					<int key="connectionID">964</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">view</string>
+						<reference key="source" ref="949716796"/>
+						<reference key="destination" ref="691696096"/>
+					</object>
+					<int key="connectionID">965</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -495,15 +481,10 @@
 						<reference key="object" ref="89453087"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="58925681"/>
+							<reference ref="691696096"/>
 						</object>
 						<reference key="parent" ref="1006"/>
 						<string key="objectName">Render View Wrapper</string>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">921</int>
-						<reference key="object" ref="58925681"/>
-						<reference key="parent" ref="89453087"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">926</int>
@@ -511,15 +492,21 @@
 						<reference key="parent" ref="0"/>
 					</object>
 					<object class="IBObjectRecord">
+						<int key="objectID">957</int>
+						<reference key="object" ref="949716796"/>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">DOS View Controller</string>
+					</object>
+					<object class="IBObjectRecord">
 						<int key="objectID">950</int>
 						<reference key="object" ref="744398180"/>
 						<reference key="parent" ref="0"/>
 					</object>
 					<object class="IBObjectRecord">
-						<int key="objectID">957</int>
-						<reference key="object" ref="949716796"/>
-						<reference key="parent" ref="0"/>
-						<string key="objectName">DOS View Controller</string>
+						<int key="objectID">962</int>
+						<reference key="object" ref="691696096"/>
+						<reference key="parent" ref="89453087"/>
+						<string key="objectName">Render View</string>
 					</object>
 				</object>
 			</object>
@@ -550,8 +537,6 @@
 					<string>908.IBSegmentedControlInspectorSelectedSegmentMetadataKey</string>
 					<string>909.IBPluginDependency</string>
 					<string>910.IBPluginDependency</string>
-					<string>921.CustomClassName</string>
-					<string>921.IBPluginDependency</string>
 					<string>926.CustomClassName</string>
 					<string>926.IBPluginDependency</string>
 					<string>950.CustomClassName</string>
@@ -584,8 +569,6 @@
 					<integer value="2"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>BXRenderView</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>BXStatusBarController</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>BXProgramPanelController</string>
@@ -610,7 +593,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">960</int>
+			<int key="maxID">965</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -658,7 +641,7 @@
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">BXRenderView</string>
-					<string key="superclassName">NSOpenGLView</string>
+					<string key="superclassName">NSView</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">Boxer/BXRenderView.h</string>
@@ -670,13 +653,6 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">Boxer/BXSessionWindow.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXSessionWindowController</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Boxer/BXSessionWindowController+BXInputController.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -1274,14 +1250,6 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBFrameworkSource</string>
 						<string key="minorKey">AppKit.framework/Headers/NSObjectController.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">NSOpenGLView</string>
-					<string key="superclassName">NSView</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBFrameworkSource</string>
-						<string key="minorKey">AppKit.framework/Headers/NSOpenGLView.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

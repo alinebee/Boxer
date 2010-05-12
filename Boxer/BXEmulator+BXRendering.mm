@@ -10,7 +10,6 @@
 #import "BXSessionWindowController+BXRenderController.h"
 #import "BXGeometry.h"
 #import "BXFilterDefinitions.h"
-#import "BXRenderer.h"
 #import "BXFrameBuffer.h"
 
 #import <SDL/SDL.h>
@@ -50,15 +49,6 @@
 	
 	return size;
 }
-
-//Returns the x and y scaling factor being applied to the final surface, compared to the original resolution.
-- (NSSize) scale
-{
-	NSSize resolution	= [self resolution];
-	NSSize renderedSize	= [[self renderer] viewport].size;
-	return NSMakeSize(renderedSize.width / resolution.width, renderedSize.height / resolution.height);
-}
-
 
 //Returns the bit depth of the current screen. As of OS X 10.5.4, this is always 32.
 - (NSInteger) screenDepth
@@ -159,9 +149,7 @@
 	//If we were in the middle of a frame then cancel it
 	frameInProgress = NO;
 	
-	[[[self delegate] mainWindowController] resizeToAccommodateOutputSize: outputSize atScale: scale];
-	
-	[self setFrameBuffer: [[self renderer] bufferForOutputSize: outputSize atScale: scale]]; 
+	[self setFrameBuffer: [BXFrameBuffer bufferWithResolution: outputSize depth: 4 scale: scale]];
 
 	//Synchronise our record of the current video mode with the new video mode
 	if (currentVideoMode != vga.mode)
@@ -214,7 +202,7 @@
 {
 	if ([self frameBuffer] && dirtyBlocks)
 	{
-		[[self renderer] drawFrame: [self frameBuffer] dirtyRegions: dirtyBlocks];
+		[[self delegate] frameComplete: [self frameBuffer]];
 	}
 	frameInProgress = NO;
 }
@@ -235,40 +223,12 @@
 	if (![self isExecuting]) return;
 	
 	//Work out how much we will need to scale the resolution to fit the viewport
-	NSSize resolution	= [self resolution];
-	NSSize viewportSize	= [[self renderer] viewport].size;
-		
+	NSSize resolution			= [self resolution];		
 	BOOL useAspectCorrection	= [self _shouldUseAspectCorrectionForResolution: resolution];	
-	NSInteger maxFilterScale	= [self _maxFilterScaleForResolution: resolution];
 	
 	//Start off with a passthrough filter as the default
 	BXFilterType activeType		= BXFilterNormal;
 	NSInteger filterScale		= 1;
-	
-	BXFilterType desiredType	= [self filterType];
-	
-	//Decide if we can use our selected filter at this scale, and if so at what scale
-	if (desiredType != BXFilterNormal && [self _shouldApplyFilterType: desiredType fromResolution: resolution toViewport: viewportSize])
-	{
-		activeType = desiredType;
-		//Now decide on what operation size the scaler should use
-		filterScale = [self _filterScaleForType: activeType
-								 fromResolution: resolution
-									 toViewport: viewportSize];
-	}
-	else if ([self _shouldApplyFilterType: BXFilterNormal fromResolution: resolution toViewport: viewportSize])
-	{
-		//If a more advanced filter is inappropriate, we fall back to the normal filter at an appropriate scale.
-		//(However, if the normal filter shouldn't be used either, then we apply 1x scaling - i.e. no filtering at all.)
-		filterScale = [self _filterScaleForType: BXFilterNormal
-								 fromResolution: resolution
-									 toViewport: viewportSize];
-	}
-
-	
-	//Make sure we don't go over the maximum size imposed by the OpenGL hardware
-	filterScale = fmin(filterScale, maxFilterScale);
-	
 	
 	//Finally, apply the values to DOSBox
 	render.aspect		= useAspectCorrection;
@@ -332,13 +292,4 @@
 	return YES;
 }
 
-
-- (NSInteger) _maxFilterScaleForResolution: (NSSize)resolution
-{
-	NSSize maxFrameSize	= [[self renderer] maxFrameSize];
-	//Work out how big a filter operation size we can use, given the maximum output size
-	NSInteger maxScale		= floor(fmin(maxFrameSize.width / resolution.width, maxFrameSize.height / resolution.height));
-
-	return maxScale;
-}
 @end

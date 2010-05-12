@@ -50,7 +50,6 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 
 
 @class BXSession;
-@class BXRenderer;
 @class BXInputHandler;
 @class BXFrameBuffer;
 
@@ -58,7 +57,6 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 {
 	NSThread *thread;
 	BXSession *delegate;
-	BXRenderer *renderer;
 	BXInputHandler *inputHandler;
 	BXFrameBuffer *frameBuffer;
 	
@@ -105,9 +103,6 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 
 //The current thread under which the emulator is running. This is not retained.
 @property (readonly)	NSThread *thread;
-
-//The OpenGL renderer we use for displaying DOSBox output.
-@property (retain)		BXRenderer *renderer;
 
 //The framebuffer we render our frames into.
 @property (retain)		BXFrameBuffer *frameBuffer;

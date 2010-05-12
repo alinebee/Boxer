@@ -1163,6 +1163,7 @@ static void GUI_StartUp(Section * sec) {
 	sdl.opengl.framebuf=0;
 	sdl.opengl.texture=0;
 	sdl.opengl.displaylist=0;
+		/*
 	glGetIntegerv (GL_MAX_TEXTURE_SIZE, &sdl.opengl.max_texsize);
 #if defined(__WIN32__) && defined(NVIDIA_PixelDataRange)
 	glPixelDataRangeNV = (PFNGLPIXELDATARANGENVPROC) wglGetProcAddress("glPixelDataRangeNV");
@@ -1181,6 +1182,7 @@ static void GUI_StartUp(Section * sec) {
     	} else {
 		sdl.opengl.packed_pixel=sdl.opengl.paletted_texture=false;
 	}
+		 */
 	}
 	} /* OPENGL is requested end */
 

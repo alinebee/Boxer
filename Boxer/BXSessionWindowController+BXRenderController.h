@@ -17,8 +17,11 @@
 @class BXSessionWindow;
 @class BXEmulator;
 @class BXRenderView;
+@class BXFrameBuffer;
 
 @interface BXSessionWindowController (BXRenderController)
+
+- (void) drawFrame: (BXFrameBuffer *)frame;
 
 //Window sizing methods
 //---------------------
@@ -36,8 +39,8 @@
 //the filter's minimum size.
 - (BOOL) resizeToAtLeastSize: (NSSize) minViewSize;
 
-//Resize the window to accomodate the specified DOS output size at the specified scale factor.
-- (void) resizeToAccommodateOutputSize: (NSSize)outputSize atScale: (NSSize)scale;
+//Resize the window to accomodate the specified DOS output size.
+- (void) resizeToAccommodateFrameSize: (NSSize)scaledSize;
 
 //Switch to and from fullscreen mode instantly with no animation.
 - (void) setFullScreen: (BOOL)fullScreen;

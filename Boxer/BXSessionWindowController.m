@@ -16,6 +16,7 @@
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulator+BXRendering.h"
 #import "BXInputHandler.h"
+#import "BXRenderView.h"
 
 #import "BXCloseAlert.h"
 #import "BXSession+BXDragDrop.h"
@@ -165,7 +166,6 @@
 		{
 			[oldEmulator unbind: @"aspectCorrected"];
 			[oldEmulator unbind: @"filterType"];
-			[renderView unbind: @"renderer"];
 			[DOSViewController unbind: @"mouseActive"];
 			
 			//Remove the emulator's responder from the responder chain
@@ -188,12 +188,6 @@
 				  toObject: defaults
 			   withKeyPath: @"aspectCorrected"
 				   options: nil];
-			
-			//Bind our render view to the emulator's BXRenderer instance
-			[renderView bind: @"renderer"
-					toObject: newEmulator
-				 withKeyPath: @"renderer"
-					 options: nil];
 			
 			[DOSViewController bind: @"mouseActive"
 						   toObject: newEmulator

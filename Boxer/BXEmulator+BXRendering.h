@@ -70,9 +70,6 @@ typedef struct {
 //Returns the DOS resolution after aspect-correction scaling has been applied, but before filters are applied.
 - (NSSize) scaledResolution;
 
-//Returns the x and y scaling factor being applied to the final rendered size, compared to the original resolution.
-- (NSSize) scale;
-
 //Returns the bit depth of the current screen. As of OS X 10.5.4, this is always 32.
 - (NSInteger) screenDepth;
 
@@ -120,8 +117,6 @@ typedef struct {
 - (NSInteger) _filterScaleForType: (BXFilterType)type
 				   fromResolution: (NSSize)resolution
 					   toViewport: (NSSize)viewportSize;
-
-- (NSInteger) _maxFilterScaleForResolution: (NSSize)resolution;
 
 - (void) _prepareForOutputSize: (NSSize)outputSize atScale: (NSSize)scale;
 - (BOOL) _startFrameWithBuffer: (void **)frameBuffer pitch: (NSUInteger *)pitch;

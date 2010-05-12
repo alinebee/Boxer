@@ -542,4 +542,9 @@
 											 selector: @selector(toggleFullScreenWithZoom:)
 											   object: [NSNumber numberWithBool: YES]];
 }
+
+- (void) frameComplete: (BXFrameBuffer *)frame
+{
+	[[self mainWindowController] drawFrame: frame];
+}
 @end

@@ -8,17 +8,33 @@
 
 #import "BXRenderView.h"
 #import "BXGeometry.h"
-#import "BXRenderer.h"
+#import "BXRenderingLayer.h"
 
 @implementation BXRenderView
-@synthesize renderer;
+@synthesize renderingLayer;
 
-- (void) dealloc
+
+- (void) awakeFromNib
 {
-	[self setRenderer: nil], [renderer release];
-	[super dealloc];
-}
+	[self setWantsLayer: YES];
+	
+	CALayer *parentLayer	= [self layer];
+	BXRenderingLayer *layer	= [BXRenderingLayer layer];
+	
+	[self setRenderingLayer: layer];
+	[layer setDelegate: self];
+	
+	[layer setNeedsDisplayOnBoundsChange: YES];
+	[layer setOpaque: YES];
+	[layer setAsynchronous: NO];
+	
+	[layer setFrame: [parentLayer bounds]];
+	[layer setAutoresizingMask: kCALayerWidthSizable | kCALayerHeightSizable];
 
+	//Hide the layer until it has a frame to draw (it will unhide itself after that.)
+	[layer setHidden: YES];
+	[parentLayer addSublayer: layer];
+}
 
 #pragma -
 #pragma mark Responder-related methods
@@ -70,54 +86,11 @@
 
 - (void) drawRect: (NSRect)dirtyRect
 {
-	if ([self renderer])
-	{
-		[[self renderer] render];
-		[[self openGLContext] flushBuffer];
-	}
-	else
+	if ([[self renderingLayer] isHidden])
 	{
 		[NSBezierPath clipRect: dirtyRect];
 		[self drawBackgroundInRect: dirtyRect];
 	}
-}
-
-//OpenGL methods
-//--------------
-
-//Whenever we get assigned a new renderer, reinitialise the OpenGL context
-- (void) setRenderer: (BXRenderer *)newRenderer
-{
-	[self willChangeValueForKey: @"renderer"];
-	if (![[self renderer] isEqualTo: newRenderer])
-	{
-		[self unbind: @"needsDisplay"];
-		[[self renderer] autorelease];
-		renderer = [newRenderer retain];
-		
-		if ([self renderer])
-		{
-			//Tell the new renderer to get the OpenGL context ready
-			[self prepareOpenGL];
-			[self reshape];
-			
-			//Bind ourselves to the renderer so that we redraw when the renderer marks itself as dirty
-			[self bind: @"needsDisplay" toObject: renderer withKeyPath: @"needsDisplay" options: nil];
-		}
-	}
-	[self didChangeValueForKey: @"renderer"];
-}
-
-- (void) reshape
-{
-	[super reshape];
-	[[self renderer] setCanvas: [self bounds]];
-}
-
-- (void) prepareOpenGL
-{
-	[super prepareOpenGL];
-	[[self renderer] prepareOpenGL];
 }
 
 //Silly notifications to let the window controller know when a live resize operation is starting/stopping,

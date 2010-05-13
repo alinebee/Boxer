@@ -12,20 +12,42 @@
 
 @interface BXRenderingLayer : CAOpenGLLayer
 {
-	GLuint frameTexture;
-	GLuint frameDisplayList;
-	GLenum frameTextureTarget;
-	
 	BXFrameBuffer *currentFrame;
+	
+	BOOL useScalingBuffer;
+	
+	GLuint frameTexture;
+	GLuint scalingBufferTexture;
+	GLuint scalingBuffer;
+	CGSize scalingBufferSize;
 	
 	BOOL needsNewFrameTexture;
 	BOOL needsFrameTextureUpdate;
+	BOOL recalculateScalingBuffer;
 }
 @property (retain) BXFrameBuffer *currentFrame;
 
 - (void) drawFrame: (BXFrameBuffer *)frame;
 
-- (void) _prepareTextureForFrameBuffer: (BXFrameBuffer *)frame inCGLContext: (CGLContextObj)glContext;
-- (void) _renderFrameInCGLContext: (CGLContextObj)glContext;
+//Ensure our framebuffer and scaling buffers are prepared for rendering the current frame. Called when the layer is about to be drawn.
+- (void) _prepareScalingBufferForCurrentFrameInCGLContext: (CGLContextObj)glContext;
+- (void) _prepareFrameTextureForCurrentFrameInCGLContext: (CGLContextObj)glContext;
 
+//Render the current frame. Called when the layer is drawn.
+- (void) _renderCurrentFrameInCGLContext: (CGLContextObj)glContext;
+
+//Draw a region of the currently active GL texture to a quad filling the viewport.
+- (void) _renderTextureFromRegion: (CGRect)textureRegion inCGLContext: (CGLContextObj)glContext;
+
+//Create/update an OpenGL texture with the contents of the specified framebuffer in the specified context.
+- (GLuint) _createTextureForFrameBuffer: (BXFrameBuffer *)frame inCGLContext: (CGLContextObj)glContext;
+- (void) _fillTexture: (GLuint)texture withFrameBuffer: (BXFrameBuffer *)frame inCGLContext: (CGLContextObj)glContext;
+
+//Create a new empty scaling buffer texture of the specified size in the specified context.
+- (GLuint) _createTextureForScalingBufferOfSize: (CGSize)size inCGLContext: (CGLContextObj)glContext;
+- (GLuint) _createScalingBufferWithTexture: (GLuint)texture inCGLContext: (CGLContextObj)glContext;
+
+//Calculate the appropriate scaling buffer size for the specified frame to the specified viewport dimensions.
+//This will be the nearest even multiple of the frame's resolution which covers the entire viewport size.
+- (CGSize) _idealScalingBufferSizeForFrame: (BXFrameBuffer *)frame toViewportSize: (CGSize)viewportSize;
 @end

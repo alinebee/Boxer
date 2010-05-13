@@ -84,7 +84,9 @@
 - (void) _renderFrameInCGLContext: (CGLContextObj)glContext
 {
 	CGLContextObj cgl_ctx = glContext;
-
+	
+    CGLLockContext(cgl_ctx);
+	
 	if (!frameTexture || needsNewFrameTexture)
 	{
 		[self _prepareTextureForFrameBuffer: [self currentFrame] inCGLContext: glContext];
@@ -151,8 +153,12 @@
     glDisableClientState(GL_VERTEX_ARRAY);
 	
 	//Clean up the things we enabled
+	
+	glDisable(frameTextureTarget);
     glPopAttrib();
     glPopClientAttrib();
+	
+    CGLUnlockContext(cgl_ctx);
 }
 
 - (void) _prepareTextureForFrameBuffer: (BXFrameBuffer *)frame inCGLContext: (CGLContextObj)glContext
@@ -171,12 +177,17 @@
 	glGenTextures(1, &frameTexture);
 	glBindTexture(frameTextureTarget, frameTexture);
 	
+	
 	//OS X-specific voodoo for mapping the framebuffer's byte array 
 	//to video memory for fast texture transfers.
-	glTextureRangeAPPLE(frameTextureTarget,  frameWidth * frameHeight * (32 >> 3), [frame bytes]); 
-	glTexParameteri(frameTextureTarget, GL_TEXTURE_STORAGE_HINT_APPLE, GL_STORAGE_CACHED_APPLE);
+	
+	//These are disabled for now as they produce very apparent frame tearing and shimmering
+	//glTextureRangeAPPLE(frameTextureTarget,  frameWidth * frameHeight * (32 >> 3), [frame bytes]);
+	//glTexParameteri(frameTextureTarget, GL_TEXTURE_STORAGE_HINT_APPLE, GL_STORAGE_CACHED_APPLE);
+	
 	glPixelStorei(GL_UNPACK_CLIENT_STORAGE_APPLE, GL_TRUE);
     glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+	
 	
 	//Clamp the texture to avoid wrapping, and set the filtering mode to nearest-neighbour
 	glTexParameteri(frameTextureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -195,6 +206,8 @@
 				 GL_UNSIGNED_INT_8_8_8_8_REV,	//Byte packing
 				 [frame bytes]					//Texture data
 				 );
+	
+    glPixelStorei(GL_UNPACK_CLIENT_STORAGE_APPLE, GL_FALSE);
 	
 	glPopAttrib();
 }

@@ -149,8 +149,19 @@
 	//If we were in the middle of a frame then cancel it
 	frameInProgress = NO;
 	
-	[self setFrameBuffer: [BXFrameBuffer bufferWithResolution: outputSize depth: 4 scale: scale]];
-
+	//Check if we can reuse our existing framebuffer:
+	if ([self frameBuffer] && NSEqualSizes(outputSize, [[self frameBuffer] resolution]))
+	{
+		//If we're staying at the same resolution, just update the scale of our existing framebuffer
+		[[self frameBuffer] setIntendedScale: scale];
+	}
+	else
+	{
+		//Otherwise, create a new framebuffer
+		BXFrameBuffer *newBuffer = [BXFrameBuffer bufferWithResolution: outputSize depth: 4 scale: scale];
+		[self setFrameBuffer: newBuffer];
+	}
+	
 	//Synchronise our record of the current video mode with the new video mode
 	if (currentVideoMode != vga.mode)
 	{

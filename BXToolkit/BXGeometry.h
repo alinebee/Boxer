@@ -53,7 +53,14 @@ extern "C" {
 	
 	//Clamp the specified point so that it fits within the specified rect.
 	NSPoint clampPointToRect(NSPoint point, NSRect rect);
+
 	
+	BOOL BXCGSizeFitsWithinSize(CGSize innerSize, CGSize outerSize);
+
+	CGSize BXCGSmallerSize(CGSize size1, CGSize size2);
+
+	CGSize BXCGLargerSize(CGSize size1, CGSize size2);
+
 #if __cplusplus
 } //Extern C
 #endif

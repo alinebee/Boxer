@@ -9,7 +9,15 @@
 #import "BXRenderingLayer.h"
 #import "BXFrameBuffer.h"
 #import <OpenGL/CGLMacro.h>
+#import "BXGeometry.h"
 
+//When scaling up beyond this we won't bother with the scaling buffer
+const CGFloat BXScalingBufferScaleCutoff = 2.5;
+
+//The maximum feasible width and height to use for a scaling buffer based on a modest GPU (i.e. my white Macbook).
+//In future, this should be determined from the characteristics of the actual GPU
+const CGFloat BXMaxFeasibleScalingBufferWidth = 1280;
+const CGFloat BXMaxFeasibleScalingBufferHeight = 960;
 
 @implementation BXRenderingLayer
 @synthesize currentFrame;
@@ -67,9 +75,18 @@
 	
 	//TODO: we'll load and compile our shaders here
 	
-	//Check for FBO support and enable/disable the scaling buffer accordingly
-	useScalingBuffer = (BOOL)gluCheckExtension((const GLubyte *)"GL_EXT_framebuffer_object", glGetString(GL_EXTENSIONS));
-	//useScalingBuffer = NO;
+	//Check for FBO support to see if we can use a scaling buffer
+	FBOAvailable = (BOOL)gluCheckExtension((const GLubyte *)"GL_EXT_framebuffer_object", glGetString(GL_EXTENSIONS));
+	useScalingBuffer = FBOAvailable;
+	
+	//Check what the largest texture size we can support is
+	GLint maxTextureDims;
+	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureDims);
+	
+	maxTextureSize = CGSizeMake((CGFloat)maxTextureDims, (CGFloat)maxTextureDims);
+	
+	CGSize maxFeasibleScalingBufferSize = CGSizeMake(BXMaxFeasibleScalingBufferWidth, BXMaxFeasibleScalingBufferHeight);
+	maxScalingBufferSize = BXCGSmallerSize(maxTextureSize, maxFeasibleScalingBufferSize);
 	
 	return cgl_ctx;
 }
@@ -245,23 +262,32 @@
 
 - (void) _prepareScalingBufferForCurrentFrameInCGLContext: (CGLContextObj)glContext
 {
-	if (useScalingBuffer && (!scalingBuffer || recalculateScalingBuffer))
+	if (FBOAvailable && (!scalingBuffer || recalculateScalingBuffer))
 	{
 		CGLContextObj cgl_ctx = glContext;
 		
 		CGSize newBufferSize = [self _idealScalingBufferSizeForFrame: [self currentFrame] toViewportSize: [self bounds].size];
-
+		
 		//If the old scaling buffer doesn't fit the new ideal size, recreate it
 		if (!scalingBuffer || !CGSizeEqualToSize(scalingBufferSize, newBufferSize))
 		{
 			//Create the scaling buffer if it is missing
 			if (!scalingBuffer) glGenFramebuffersEXT(1, &scalingBuffer);
 			
-			//(Re)create the scaling buffer texture
-			if (scalingBufferTexture) glDeleteTextures(1, &scalingBufferTexture);
-			scalingBufferTexture = [self _createTextureForScalingBuffer: scalingBuffer withSize: newBufferSize inCGLContext: glContext];
-			
-			scalingBufferSize = newBufferSize;			
+			//A zero suggested size means the scaling buffer is not necessary, so disable it
+			if (CGSizeEqualToSize(newBufferSize, CGSizeZero))
+			{
+				useScalingBuffer = NO;
+			}
+			else
+			{
+				//(Re)create the scaling buffer texture
+				if (scalingBufferTexture) glDeleteTextures(1, &scalingBufferTexture);
+				scalingBufferTexture = [self _createTextureForScalingBuffer: scalingBuffer withSize: newBufferSize inCGLContext: glContext];
+							
+				useScalingBuffer = YES;
+			}
+			scalingBufferSize = newBufferSize;
 		}
 		recalculateScalingBuffer = NO;
 	}
@@ -318,10 +344,10 @@
     glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 	
 	
-	//Clamp the texture to avoid wrapping, and set the filtering mode to nearest-neighbour
+	//Clamp the texture to avoid wrapping, and set the filtering mode to use nearest-neighbour when scaling up
 	glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_T, GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	
 	//Create a new texture for the framebuffer's resolution using the framebuffer's data
@@ -447,16 +473,36 @@
 	CGSize frameSize		= NSSizeToCGSize([frame resolution]);
 	CGSize scalingFactor	= CGSizeMake(viewportSize.width / frameSize.width,
 										 viewportSize.height / frameSize.height);
+	
+	//TODO: once we get the additional rendering styles reimplemented, the optimisations below
+	//should be specific to the Original style.
 
+	//We disable the scaling buffer for scales over a certain limit, where (we assume) stretching
+	//artifacts won't be visible.
+	if (scalingFactor.height > BXScalingBufferScaleCutoff) return CGSizeZero;
+	
+	//If the viewport is an even multiple of the initial resolution then we don't need to scale either.
+	if (!((NSInteger)viewportSize.width % (NSInteger)frameSize.width) && 
+		!((NSInteger)viewportSize.height % (NSInteger)frameSize.height)) return CGSizeZero;
+	
 	//Our ideal scaling buffer size is the closest integer multiple of the
 	//base resolution to the viewport size: rounding up, so that we're always
 	//scaling down to maintain sharpness.
-	NSInteger nearestScale = ceil(scalingFactor.height);
+	NSInteger nearestScale = ceilf(scalingFactor.height);
 	
-	CGSize idealBufferSize = CGSizeMake(frameSize.width * nearestScale,
-										frameSize.height * nearestScale);
+	//Work our way down from that to the largest scale that will still fit into our maximum allowable size.
+	CGSize idealBufferSize;
+	do
+	{		
+		//If we're not scaling up at all in the end, then disable the scaling buffer altogether.
+		if (nearestScale <= 1) return CGSizeZero;
+		
+		idealBufferSize = CGSizeMake(frameSize.width * nearestScale,
+									 frameSize.height * nearestScale);
+		nearestScale--;
+	}
+	while (!BXCGSizeFitsWithinSize(idealBufferSize, maxScalingBufferSize));
 	
-	NSLog(@"%@", NSStringFromSize(NSSizeFromCGSize(idealBufferSize)));
 	return idealBufferSize;
 }
 @end

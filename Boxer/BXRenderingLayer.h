@@ -14,12 +14,16 @@
 {
 	BXFrameBuffer *currentFrame;
 	
+	BOOL FBOAvailable;
 	BOOL useScalingBuffer;
 	
 	GLuint frameTexture;
 	GLuint scalingBufferTexture;
 	GLuint scalingBuffer;
 	CGSize scalingBufferSize;
+	
+	CGSize maxTextureSize;
+	CGSize maxScalingBufferSize;
 	
 	BOOL needsNewFrameTexture;
 	BOOL needsFrameTextureUpdate;

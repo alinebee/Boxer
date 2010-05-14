@@ -98,3 +98,22 @@ NSPoint clampPointToRect(NSPoint point, NSRect rect)
 	clampedPoint.y = MAX(MIN(point.y, NSMaxY(rect)), NSMinY(rect));
 	return clampedPoint;
 }
+
+#pragma mark -
+#pragma mark CG functions
+
+BOOL BXCGSizeFitsWithinSize(CGSize innerSize, CGSize outerSize)
+{
+	return (innerSize.width <= outerSize.width) && (innerSize.height <= outerSize.height);	
+}
+
+CGSize BXCGSmallerSize(CGSize size1, CGSize size2)
+{
+	return BXCGSizeFitsWithinSize(size1, size2) ? size1 : size2;
+}
+
+CGSize BXCGLargerSize(CGSize size1, CGSize size2)
+{
+	return BXCGSizeFitsWithinSize(size1, size2) ? size2 : size1;
+}
+

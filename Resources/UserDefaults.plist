@@ -9,7 +9,7 @@
 	<key>statusBarShown</key>
 	<true/>
 	<key>windowSnapDistance</key>
-	<integer>24</integer>
+	<integer>40</integer>
 	<key>filterType</key>
 	<integer>0</integer>
 	<key>aspectCorrected</key>

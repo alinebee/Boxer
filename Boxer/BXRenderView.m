@@ -11,7 +11,7 @@
 #import "BXRenderingLayer.h"
 
 @implementation BXRenderView
-@synthesize renderingLayer;
+@synthesize renderingLayer, frameRateLayer;
 
 
 - (void) awakeFromNib
@@ -19,22 +19,49 @@
 	[self setWantsLayer: YES];
 	
 	CALayer *parentLayer	= [self layer];
-	BXRenderingLayer *layer	= [BXRenderingLayer layer];
+	CGRect canvas = [parentLayer bounds];
 	
-	[self setRenderingLayer: layer];
-	[layer setDelegate: self];
+	[self setRenderingLayer: [BXRenderingLayer layer]];
+	[renderingLayer setDelegate: self];
 	
-	[layer setNeedsDisplayOnBoundsChange: YES];
-	[layer setOpaque: YES];
-	[layer setAsynchronous: NO];
+	[renderingLayer setNeedsDisplayOnBoundsChange: YES];
+	[renderingLayer setOpaque: YES];
+	[renderingLayer setAsynchronous: NO];
 	
-	[layer setFrame: [parentLayer bounds]];
-	[layer setAutoresizingMask: kCALayerWidthSizable | kCALayerHeightSizable];
+	[renderingLayer setFrame: canvas];
+	[renderingLayer setAutoresizingMask: kCALayerWidthSizable | kCALayerHeightSizable];
 
 	//Hide the layer until it has a frame to draw (it will unhide itself after that.)
-	[layer setHidden: YES];
-	[parentLayer addSublayer: layer];
+	[renderingLayer setHidden: YES];
+	[parentLayer addSublayer: renderingLayer];
+	
+	
+	//Now add a layer for displaying the current framerate
+	[self setFrameRateLayer: [CATextLayer layer]];
+	
+	[frameRateLayer setOpacity: 0.75];
+	[frameRateLayer setForegroundColor: CGColorGetConstantColor(kCGColorWhite)];
+	[frameRateLayer setFontSize: 20.0];
+	[frameRateLayer setAlignmentMode: kCAAlignmentRight];
+	
+	[frameRateLayer bind: @"string" toObject: renderingLayer withKeyPath: @"frameRateInfo" options: nil];
+	
+	[frameRateLayer setBounds: CGRectMake(0, 0, 400, 20)];
+	[frameRateLayer setAnchorPoint: CGPointMake(1, 0)];
+	[frameRateLayer setPosition: CGPointMake(CGRectGetMaxX(canvas) - 10, CGRectGetMinY(canvas) + 10)];
+	[frameRateLayer setAutoresizingMask: kCALayerMinXMargin | kCALayerMaxYMargin];
+	
+	//This can be toggled by a menu item
+	[frameRateLayer setHidden: YES];
+	
+	[renderingLayer addSublayer: frameRateLayer];
 }
+
+- (IBAction) toggleFrameRate: (id) sender
+{
+	[[self frameRateLayer] setHidden: ![[self frameRateLayer] isHidden]];
+}
+
 
 #pragma -
 #pragma mark Responder-related methods

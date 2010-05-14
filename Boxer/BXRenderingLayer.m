@@ -15,12 +15,40 @@
 const CGFloat BXScalingBufferScaleCutoff = 2.5;
 
 //The maximum feasible width and height to use for a scaling buffer based on a modest GPU (i.e. my white Macbook).
-//In future, this should be determined from the characteristics of the actual GPU
+//In future, this should be determined from the characteristics of the actual GPU.
 const CGFloat BXMaxFeasibleScalingBufferWidth = 1280;
 const CGFloat BXMaxFeasibleScalingBufferHeight = 960;
 
+
+
+@interface BXRenderingLayer (BXRenderingLayerInternals)
+
+//Ensure our framebuffer and scaling buffers are prepared for rendering the current frame. Called when the layer is about to be drawn.
+- (void) _prepareScalingBufferForCurrentFrameInCGLContext: (CGLContextObj)glContext;
+- (void) _prepareFrameTextureForCurrentFrameInCGLContext: (CGLContextObj)glContext;
+
+//Render the current frame. Called when the layer is drawn.
+- (void) _renderCurrentFrameInCGLContext: (CGLContextObj)glContext;
+
+//Draw a region of the currently active GL texture to a quad made from the specified points.
+- (void) _renderTexture: (GLuint)texture fromRegion: (CGRect)textureRegion toPoints: (GLfloat *)vertices inCGLContext: (CGLContextObj)glContext;
+
+//Create/update an OpenGL texture with the contents of the specified framebuffer in the specified context.
+- (GLuint) _createTextureForFrameBuffer: (BXFrameBuffer *)frame inCGLContext: (CGLContextObj)glContext;
+- (void) _fillTexture: (GLuint)texture withFrameBuffer: (BXFrameBuffer *)frame inCGLContext: (CGLContextObj)glContext;
+
+//Create a new empty scaling buffer texture of the specified size in the specified context.
+- (GLuint) _createTextureForScalingBuffer: (GLuint)buffer withSize: (CGSize)size inCGLContext: (CGLContextObj)glContext;
+
+//Calculate the appropriate scaling buffer size for the specified frame to the specified viewport dimensions.
+//This will be the nearest even multiple of the frame's resolution which covers the entire viewport size.
+- (CGSize) _idealScalingBufferSizeForFrame: (BXFrameBuffer *)frame toViewportSize: (CGSize)viewportSize;
+
+@end
+
+
 @implementation BXRenderingLayer
-@synthesize currentFrame;
+@synthesize currentFrame, frameRate, lastFrameRenderTime;
 
 - (void) dealloc
 {
@@ -34,6 +62,17 @@ const CGFloat BXMaxFeasibleScalingBufferHeight = 960;
 	[self setNeedsDisplay];
 	[self setHidden: NO];
 	needsFrameTextureUpdate = YES;
+}
+
++ (NSSet *) keyPathsForValuesAffectingFrameRateInfo	{ return [NSSet setWithObject: @"frameRate"]; }
+
+- (NSString *)frameRateInfo
+{
+	if ([self lastFrameRenderTime])
+	{
+		return [NSString stringWithFormat: @"%.01f fps (%.02f ms)", [self frameRate], [self lastFrameRenderTime] * 1000, nil];
+	}
+	else return @"";
 }
 
 - (void) setBounds: (CGRect)newBounds
@@ -123,6 +162,8 @@ const CGFloat BXMaxFeasibleScalingBufferHeight = 960;
 			 forLayerTime: (CFTimeInterval)timeInterval
 			  displayTime: (const CVTimeStamp *)timeStamp
 {
+	NSTimeInterval startTime = [NSDate timeIntervalSinceReferenceDate];
+	
 	CGLContextObj cgl_ctx = glContext;
 	
     CGLLockContext(cgl_ctx);
@@ -138,6 +179,13 @@ const CGFloat BXMaxFeasibleScalingBufferHeight = 960;
 				pixelFormat: pixelFormat
 			   forLayerTime: timeInterval
 				displayTime: timeStamp];
+	
+	NSTimeInterval endTime = [NSDate timeIntervalSinceReferenceDate];
+	
+	[self setLastFrameRenderTime: endTime - startTime];
+	
+	if (lastFrameEndTime) [self setFrameRate: 1 / (endTime - lastFrameEndTime)];
+	lastFrameEndTime = endTime;
 }
 
 - (void) _renderCurrentFrameInCGLContext: (CGLContextObj)glContext

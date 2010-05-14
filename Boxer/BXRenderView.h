@@ -11,15 +11,21 @@
 //and notifying it of changes to the viewport dimensions.
 
 #import <Cocoa/Cocoa.h>
+#import <QuartzCore/QuartzCore.h>
 
 @class BXRenderingLayer;
 
 @interface BXRenderView : NSView
 {
 	BXRenderingLayer *renderingLayer;
+	CATextLayer *frameRateLayer;
 }
 @property (retain) BXRenderingLayer *renderingLayer;
+@property (retain) CATextLayer *frameRateLayer;
 
 //Render the view's badged grey background; this shows through when there is no renderer yet.
 - (void) drawBackgroundInRect: (NSRect) dirtyRect;
+
+//Toggle the frame rate display on/off
+- (IBAction) toggleFrameRate: (id) sender;
 @end

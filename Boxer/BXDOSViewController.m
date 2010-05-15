@@ -127,7 +127,7 @@
 
 - (BOOL) _controlsCursor
 {
-	return /*[self mouseActive] && */[self mouseInView] && [[[self view] window] isKeyWindow];
+	return [self mouseActive] && [[[self view] window] isKeyWindow] && [self mouseInView];
 }
 
 

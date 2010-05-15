@@ -14,7 +14,7 @@
 {
 	BXFrameBuffer *currentFrame;
 	
-	BOOL FBOAvailable;
+	BOOL supportsFBO;
 	BOOL useScalingBuffer;
 	
 	GLuint frameTexture;

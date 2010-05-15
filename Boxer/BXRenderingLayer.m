@@ -101,21 +101,30 @@ const CGFloat BXMaxFeasibleScalingBufferHeight = 960;
 {
 	CGLContextObj cgl_ctx = [super copyCGLContextForPixelFormat: pixelFormat];
 	
-	//TODO: we'll load and compile our shaders here
-	
-	//Check for FBO support to see if we can use a scaling buffer
-	FBOAvailable = (BOOL)gluCheckExtension((const GLubyte *)"GL_EXT_framebuffer_object", glGetString(GL_EXTENSIONS));
-	useScalingBuffer = FBOAvailable;
-	
 	//Check what the largest texture size we can support is
 	GLint maxTextureDims;
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureDims);
+	maxTextureSize = CGSizeMake((CGFloat)maxTextureDims, (CGFloat)maxTextureDims);	//TODO: we'll load and compile our shaders here
 	
-	maxTextureSize = CGSizeMake((CGFloat)maxTextureDims, (CGFloat)maxTextureDims);
 	
-	CGSize maxFeasibleScalingBufferSize = CGSizeMake(BXMaxFeasibleScalingBufferWidth, BXMaxFeasibleScalingBufferHeight);
-	maxScalingBufferSize = BXCGSmallerSize(maxTextureSize, maxFeasibleScalingBufferSize);
+	//Check for FBO support to see if we can use a scaling buffer
+	supportsFBO = (BOOL)gluCheckExtension((const GLubyte *)"GL_EXT_framebuffer_object",
+										  glGetString(GL_EXTENSIONS));
 	
+	if (supportsFBO)
+	{
+		glGenFramebuffersEXT(1, &scalingBuffer);
+
+		//Calculate our feasible maximum scaling buffer size and cap it to the max texture size
+		CGSize maxFeasibleScalingBufferSize = CGSizeMake(BXMaxFeasibleScalingBufferWidth,
+														 BXMaxFeasibleScalingBufferHeight);
+		maxScalingBufferSize = BXCGSmallerSize(maxTextureSize, maxFeasibleScalingBufferSize);
+	}
+	
+	
+	//TODO: we'll load and compile our shaders here
+	
+
 	return cgl_ctx;
 }
 
@@ -181,8 +190,6 @@ const CGFloat BXMaxFeasibleScalingBufferHeight = 960;
 - (void) _renderCurrentFrameInCGLContext: (CGLContextObj)glContext
 {
 	CGLContextObj cgl_ctx = glContext;
-	
-	CGRect frameRegion, scalingRegion;
 
 	GLint contextFramebuffer;
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &contextFramebuffer);
@@ -211,7 +218,8 @@ const CGFloat BXMaxFeasibleScalingBufferHeight = 960;
 	
 	//Draw the frame texture as a quad filling the viewport/framebuffer
 	//-----------
-	frameRegion.size = NSSizeToCGSize([[self currentFrame] resolution]);
+	NSSize frameSize = [[self currentFrame] resolution];
+	CGRect frameRegion = CGRectMake(0, 0, frameSize.width, frameSize.height);
 	GLfloat frameVerts[] = {
 		-1,	1,
 		1,	1,
@@ -244,8 +252,7 @@ const CGFloat BXMaxFeasibleScalingBufferHeight = 960;
 		
 		//Finally, take the scaling buffer texture and draw that into the original viewport
 		//--------
-		scalingRegion = CGRectMake(0, 0, scalingBufferSize.width, scalingBufferSize.height);
-		
+		CGRect scalingRegion = CGRectMake(0, 0, scalingBufferSize.width, scalingBufferSize.height);
 		//Note that this is flipped vertically from the coordinates we use for rendering the frame texture
 		GLfloat scalingVerts[] = {
 			-1,	-1,
@@ -300,30 +307,26 @@ const CGFloat BXMaxFeasibleScalingBufferHeight = 960;
 
 - (void) _prepareScalingBufferForCurrentFrameInCGLContext: (CGLContextObj)glContext
 {
-	if (FBOAvailable && (!scalingBuffer || recalculateScalingBuffer))
+	if (scalingBuffer && recalculateScalingBuffer)
 	{
 		CGLContextObj cgl_ctx = glContext;
 		
-		CGSize newBufferSize = [self _idealScalingBufferSizeForFrame: [self currentFrame] toViewportSize: [self bounds].size];
+		CGSize newBufferSize = [self _idealScalingBufferSizeForFrame: [self currentFrame]
+													  toViewportSize: [self bounds].size];
 		
 		//If the old scaling buffer doesn't fit the new ideal size, recreate it
-		if (!scalingBuffer || !CGSizeEqualToSize(scalingBufferSize, newBufferSize))
+		if (!CGSizeEqualToSize(scalingBufferSize, newBufferSize))
 		{
-			//Create the scaling buffer if it is missing
-			if (!scalingBuffer) glGenFramebuffersEXT(1, &scalingBuffer);
+			//A zero suggested size means the scaling buffer is not necessary
+			useScalingBuffer = !CGSizeEqualToSize(newBufferSize, CGSizeZero);
 			
-			//A zero suggested size means the scaling buffer is not necessary, so disable it
-			if (CGSizeEqualToSize(newBufferSize, CGSizeZero))
+			if (useScalingBuffer)
 			{
-				useScalingBuffer = NO;
-			}
-			else
-			{
-				//(Re)create the scaling buffer texture
+				//(Re)create the scaling buffer texture in the new dimensions
 				if (scalingBufferTexture) glDeleteTextures(1, &scalingBufferTexture);
-				scalingBufferTexture = [self _createTextureForScalingBuffer: scalingBuffer withSize: newBufferSize inCGLContext: glContext];
-							
-				useScalingBuffer = YES;
+				scalingBufferTexture = [self _createTextureForScalingBuffer: scalingBuffer
+																   withSize: newBufferSize
+															   inCGLContext: glContext];
 			}
 			scalingBufferSize = newBufferSize;
 		}

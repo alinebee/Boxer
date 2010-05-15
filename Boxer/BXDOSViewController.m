@@ -303,7 +303,7 @@
 	NSPoint pointInView = NSMakePoint(point.x * canvas.size.width,
 									  point.y * canvas.size.height);
 	
-	NSPoint pointOnScreen = [[[self view] window] convertBaseToScreen: [[self view] convertPointToBase: pointInView]];
+	NSPoint pointOnScreen = [[[self view] window] convertBaseToScreen: [[self view] convertPoint: pointInView toView: nil]];
 	CGPoint cgPointOnScreen	= NSPointToCGPoint(pointOnScreen);
 	
 	//Correct for CG's top-left origin, since the result of convertBaseToScreen: will use 

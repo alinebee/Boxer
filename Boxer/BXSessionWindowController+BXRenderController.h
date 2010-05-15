@@ -21,7 +21,7 @@
 
 @interface BXSessionWindowController (BXRenderController)
 
-- (void) drawFrame: (BXFrameBuffer *)frame;
+- (void) updateWithFrame: (BXFrameBuffer *)frame;
 
 //Window sizing methods
 //---------------------

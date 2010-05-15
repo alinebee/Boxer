@@ -55,8 +55,11 @@ extern "C" {
 	NSPoint clampPointToRect(NSPoint point, NSRect rect);
 
 	
+	//CG implementations of the above functions.
 	BOOL BXCGSizeFitsWithinSize(CGSize innerSize, CGSize outerSize);
-
+	
+	CGSize BXCGSizeToFitSize(CGSize innerSize, CGSize outerSize);
+	
 	CGSize BXCGSmallerSize(CGSize size1, CGSize size2);
 
 	CGSize BXCGLargerSize(CGSize size1, CGSize size2);

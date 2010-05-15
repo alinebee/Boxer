@@ -50,17 +50,28 @@ const CGFloat BXMaxFeasibleScalingBufferHeight = 960;
 @implementation BXRenderingLayer
 @synthesize currentFrame, frameRate, renderingTime;
 
+- (id) init
+{
+	if ((self = [super init]))
+	{
+		//Set up our initial properties as we know them to be
+		[self setNeedsDisplayOnBoundsChange: YES];
+		[self setOpaque: YES];
+		[self setAsynchronous: NO];		
+	}
+	return self;
+}
+
 - (void) dealloc
 {
 	[self setCurrentFrame: nil], [currentFrame release];
 	[super dealloc];
 }
 
-- (void) drawFrame: (BXFrameBuffer *)frame
+- (void) updateWithFrame: (BXFrameBuffer *)frame
 {
 	[self setCurrentFrame: frame];
 	[self setNeedsDisplay];
-	[self setHidden: NO];
 	needsFrameTextureUpdate = YES;
 }
 
@@ -82,15 +93,24 @@ const CGFloat BXMaxFeasibleScalingBufferHeight = 960;
 		if ([frame bytes] != [currentFrame bytes])
 			 needsNewFrameTexture = YES;
 		
-		//If the buffers for the two frames are a different size, we'll need to recreate the scaling buffer too
+		//If the buffers for the two frames are a different size, we'll need to recreate the scaling
+		//buffer when we draw too and possibly adjust the layout of the layer
 		if (!NSEqualSizes([frame resolution], [currentFrame resolution]))
 			recalculateScalingBuffer = YES;
-			
-		
+				 
 		[currentFrame autorelease];
 		currentFrame = [frame retain];
 	}
 	[self didChangeValueForKey: @"currentFrame"];
+}
+
+- (CGRect) viewportForFrame: (BXFrameBuffer *)frame
+{
+	NSSize frameSize = [frame scaledResolution];
+	NSRect frameRect = NSMakeRect(0, 0, frameSize.width, frameSize.height);
+	NSRect bounds = NSRectFromCGRect([self bounds]);
+	
+	return NSRectToCGRect(fitInRect(frameRect, bounds, NSMakePoint(0.5, 0.5)));
 }
 
 
@@ -204,6 +224,17 @@ const CGFloat BXMaxFeasibleScalingBufferHeight = 960;
 	glDisable(GL_CULL_FACE);
     glDisable(GL_BLEND);
     glEnable(GL_TEXTURE_RECTANGLE_ARB);
+
+	//Set the viewport to match the aspect ratio of our frame
+	CGRect viewportRect = [self viewportForFrame: [self currentFrame]];
+	
+	glViewport((GLint)viewportRect.origin.x,
+			   (GLint)viewportRect.origin.y,
+			   (GLsizei)viewportRect.size.width,
+			   (GLsizei)viewportRect.size.height);
+	
+	glClearColor(0, 0, 0, 1);
+	glClear(GL_COLOR_BUFFER_BIT);
 	
 	
 	//Activate our scaling buffer, which we'll draw the frame into first
@@ -237,14 +268,7 @@ const CGFloat BXMaxFeasibleScalingBufferHeight = 960;
 	{
 		//Revert the GL viewport to match the layer size (as set by our calling context)
 		glPopAttrib();
-		
-		//...and now for some reason we need to set it explicitly again here
-		//FIXME: work out why this is getting screwed up.
-		glViewport((GLint)[self bounds].origin.x,
-				   (GLint)[self bounds].origin.y,
-				   (GLsizei)[self bounds].size.width,
-				   (GLsizei)[self bounds].size.height);
-		
+				
 		//Revert the framebuffer to what it was in the context, so that drawing goes to
 		//the proper place from now on
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, contextFramebuffer);

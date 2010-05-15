@@ -545,6 +545,6 @@
 
 - (void) frameComplete: (BXFrameBuffer *)frame
 {
-	[[self mainWindowController] drawFrame: frame];
+	[[self mainWindowController] updateWithFrame: frame];
 }
 @end

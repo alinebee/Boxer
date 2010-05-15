@@ -107,6 +107,17 @@ BOOL BXCGSizeFitsWithinSize(CGSize innerSize, CGSize outerSize)
 	return (innerSize.width <= outerSize.width) && (innerSize.height <= outerSize.height);	
 }
 
+CGSize BXCGSizeToFitSize(CGSize innerSize, CGSize outerSize)
+{
+	CGSize finalSize = outerSize;
+	CGFloat ratioW = outerSize.width / innerSize.width;
+	CGFloat ratioH = outerSize.height / innerSize.height;
+	
+	if (ratioW < ratioH)	finalSize.height	= (innerSize.height * ratioW);
+	else					finalSize.width		= (innerSize.width * ratioH);
+	return finalSize;
+}
+
 CGSize BXCGSmallerSize(CGSize size1, CGSize size2)
 {
 	return BXCGSizeFitsWithinSize(size1, size2) ? size1 : size2;

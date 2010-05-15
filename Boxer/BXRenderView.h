@@ -14,6 +14,7 @@
 
 @class BXRenderingLayer;
 @class BXFrameRateCounterLayer;
+@class BXFrameBuffer;
 
 @interface BXRenderView : NSView
 {
@@ -22,6 +23,9 @@
 }
 @property (retain) BXRenderingLayer *renderingLayer;
 @property (retain) BXFrameRateCounterLayer *frameRateLayer;
+
+//Tell the rendering layer to draw the specified frame
+- (void) updateWithFrame: (BXFrameBuffer *)frame;
 
 //Render the view's badged grey background; this shows through when there is no renderer yet.
 - (void) drawBackgroundInRect: (NSRect) dirtyRect;

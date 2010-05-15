@@ -12,7 +12,6 @@
 #import "NSWindow+BXWindowSizing.h"
 #import "BXDOSViewController.h"
 #import "BXRenderView.h"
-#import "BXRenderingLayer.h"
 #import "BXFrameBuffer.h"
 
 #import "BXGeometry.h"
@@ -23,13 +22,13 @@
 //DOSBox frame rendering
 //----------------------
 
-- (void) drawFrame: (BXFrameBuffer *)frame
+- (void) updateWithFrame: (BXFrameBuffer *)frame
 {
-	//Resize the window if we need to to accomodate the frame
+	//Resize the window to accomodate the frame
 	[self resizeToAccommodateFrameSize: [frame scaledResolution]];
 	
-	//Update the rendering layer with the frame
-	[[renderView renderingLayer] drawFrame: frame];
+	//Tell the render view to draw the frame
+	[renderView updateWithFrame: frame];
 }
 
 
@@ -47,8 +46,8 @@
 
 - (void) resizeToAccommodateFrameSize: (NSSize)scaledSize
 {
-	//Don't resize if we're in the middle of resizing already, or are matched to this size
-	if ([self isResizing] || NSEqualSizes(currentScaledSize, scaledSize)) return;
+	//Don't resize if we're already matched to this size
+	if (NSEqualSizes(currentScaledSize, scaledSize)) return;
 
 	NSSize viewSize	= [self _renderViewSizeForScaledOutputSize: scaledSize minSize: scaledSize];
 	

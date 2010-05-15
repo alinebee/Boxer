@@ -11,6 +11,7 @@
 #import "BXRenderingLayer.h"
 #import "BXFrameRateCounterLayer.h"
 #import "BXValueTransformers.h"
+#import "BXFrameBuffer.h"
 
 @implementation BXRenderView
 @synthesize renderingLayer, frameRateLayer;
@@ -18,26 +19,16 @@
 
 - (void) awakeFromNib
 {
-	[self setWantsLayer: YES];
+	CGRect canvas = NSRectToCGRect([self bounds]);
 	
-	CALayer *parentLayer	= [self layer];
-	CGRect canvas = [parentLayer bounds];
+	[self setWantsLayer: YES];
 	
 	[self setRenderingLayer: [BXRenderingLayer layer]];
 	[renderingLayer setDelegate: self];
-	
-	[renderingLayer setNeedsDisplayOnBoundsChange: YES];
-	[renderingLayer setOpaque: YES];
-	[renderingLayer setAsynchronous: NO];
-	
 	[renderingLayer setFrame: canvas];
 	[renderingLayer setAutoresizingMask: kCALayerWidthSizable | kCALayerHeightSizable];
+	
 
-	//Hide the layer until it has a frame to draw (it will unhide itself after that.)
-	[renderingLayer setHidden: YES];
-	[parentLayer addSublayer: renderingLayer];
-	
-	
 	//Now add a layer for displaying the current framerate
 	[self setFrameRateLayer: [BXFrameRateCounterLayer layer]];
 	
@@ -58,10 +49,28 @@
 	[frameRateLayer setPosition: CGPointMake(CGRectGetMaxX(canvas) - 10, CGRectGetMinY(canvas) + 10)];
 	[frameRateLayer setAutoresizingMask: kCALayerMinXMargin | kCALayerMaxYMargin];
 	
-	//This can be toggled by a menu item
+	//Hide the frame-rate display until it is toggled on by a menu action
 	[frameRateLayer setHidden: YES];
 	
+	//Hide the rendering layer until we receive our first frame to draw
+	[renderingLayer setHidden: YES];
+	
+	[[self layer] addSublayer: renderingLayer];
 	[renderingLayer addSublayer: frameRateLayer];
+}
+
+- (void) dealloc
+{
+	[self setRenderingLayer: nil],	[renderingLayer release];
+	[self setFrameRateLayer: nil],	[frameRateLayer release];
+	[super dealloc];
+}
+
+
+- (void) updateWithFrame: (BXFrameBuffer *)frame
+{
+	[renderingLayer updateWithFrame: frame];
+	[renderingLayer setHidden: NO];
 }
 
 - (IBAction) toggleFrameRate: (id) sender

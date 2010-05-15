@@ -37,6 +37,7 @@
 @property (assign) CGFloat frameRate;
 @property (assign) NSTimeInterval renderingTime;
 
-- (void) drawFrame: (BXFrameBuffer *)frame;
+- (void) updateWithFrame: (BXFrameBuffer *)frame;
 
+- (CGRect) viewportForFrame: (BXFrameBuffer *)frame;
 @end

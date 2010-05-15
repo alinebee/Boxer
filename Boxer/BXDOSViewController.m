@@ -108,21 +108,16 @@
 	}
 }
 
-- (BOOL) animationShouldChangeCursor: (BXCursorFadeAnimation *)cursorAnimation
+- (BOOL) animationShouldChangeCursor: (BXCursorFadeAnimation *)animation
 {
 	//If the mouse is still inside the view, let the cursor change proceed
 	if ([self _controlsCursor]) return YES;
 	//If the mouse has left the view, cancel the animation and don't change the cursor
 	else
 	{
-		if ([cursorAnimation isAnimating]) [cursorAnimation stopAnimation];
+		if ([animation isAnimating]) [animation stopAnimation];
 		return NO;
 	}
-}
-
-- (void) animationDidStop: (NSAnimation *)animation
-{
-	[animation setCurrentProgress: 0.0];
 }
 
 - (BOOL) _controlsCursor

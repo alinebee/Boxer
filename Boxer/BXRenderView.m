@@ -47,7 +47,6 @@
 	[frameRateLayer setAlignmentMode: kCAAlignmentRight];
 	
 	BXRollingAverageTransformer *frameRateSmoother = [[[BXRollingAverageTransformer alloc] initWithWindowSize: 10] autorelease];
-	
 	NSDictionary *bindingOptions = [NSDictionary dictionaryWithObjectsAndKeys:
 									frameRateSmoother,	NSValueTransformerBindingOption,
 									nil];

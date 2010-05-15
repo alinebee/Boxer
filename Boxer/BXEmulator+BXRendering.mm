@@ -7,9 +7,7 @@
 
 #import "BXEmulator+BXRendering.h"
 #import "BXSession.h"
-#import "BXSessionWindowController+BXRenderController.h"
 #import "BXGeometry.h"
-#import "BXFilterDefinitions.h"
 #import "BXFrameBuffer.h"
 
 #import <SDL/SDL.h>
@@ -38,25 +36,6 @@
 	}
 	return size;
 }
-
-//Returns the DOS resolution after aspect-correction scaling has been applied, but before filters are applied.
-- (NSSize) scaledResolution
-{
-	NSSize size = [self resolution];
-	NSSize scale = [[self frameBuffer] intendedScale];
-	size.width *= scale.width;
-	size.height *= scale.height;
-	
-	return size;
-}
-
-//Returns the bit depth of the current screen. As of OS X 10.5.4, this is always 32.
-- (NSInteger) screenDepth
-{
-	NSScreen *screen = [NSScreen deepestScreen];
-	return NSBitsPerPixelFromDepth([screen depth]);
-}
-
 
 //Returns whether the emulator is currently rendering in a text-only graphics mode.
 - (BOOL) isInTextMode
@@ -87,49 +66,10 @@
 	}
 }
 
-//Chooses the specified filter, and resets the renderer to apply the change immediately.
-- (void) setFilterType: (BXFilterType)type
-{	
-	if (type != filterType)
-	{
-		NSAssert1(type >= 0 && type <= sizeof(BXFilters), @"Invalid filter type provided to setFilterType: %i", type);
-		
-		[self willChangeValueForKey: @"filterType"];
-		
-		filterType = type;
-		[self resetRenderer];
-		
-		[self didChangeValueForKey: @"filterType"];
-	}
-}
-
-//Returns whether the chosen filter is actually being rendered.
-- (BOOL) filterIsActive
-{
-	BOOL isActive = NO;
-	if ([self isExecuting])
-	{
-		isActive = ([self filterType] == render.scale.op);
-	}
-	return isActive;
-}
-
-
 //Reinitialises DOSBox's graphical subsystem and redraws the render region.
-//This is called after resizing the session window or toggling rendering options.
 - (void) resetRenderer
 {
 	if ([self isExecuting]) GFX_ResetScreen();
-}
-
-- (NSSize) minRenderedSizeForFilterType: (BXFilterType) type
-{
-	BXFilterDefinition params	= [self _paramsForFilterType: type];
-	NSSize scaledResolution		= [self scaledResolution];
-	NSSize	minRenderedSize		= NSMakeSize(scaledResolution.width * params.minFilterScale,
-											 scaledResolution.height * params.minFilterScale
-											 );
-	return minRenderedSize;
 }
 @end
 
@@ -222,22 +162,14 @@
 //Rendering strategy
 //------------------
 
-- (BXFilterDefinition) _paramsForFilterType: (BXFilterType)type
-{
-	NSAssert1(type >= 0 && type <= sizeof(BXFilters), @"Invalid filter type provided to paramsForFilterType: %i", type);
-	
-	return BXFilters[type];
-}
-
 - (void) _applyRenderingStrategy
 {
 	if (![self isExecuting]) return;
 	
-	//Work out how much we will need to scale the resolution to fit the viewport
 	NSSize resolution			= [self resolution];		
 	BOOL useAspectCorrection	= [self _shouldUseAspectCorrectionForResolution: resolution];	
 	
-	//Start off with a passthrough filter as the default
+	//We do all our filtering in OpenGL now, so tell DOSBox to use the simplest rendering path
 	BXFilterType activeType		= BXFilterNormal;
 	NSInteger filterScale		= 1;
 	
@@ -257,50 +189,6 @@
 		useAspectCorrection = [self isAspectCorrected] && (fabs(render.src.ratio - 1) > 0.01);
 	}
 	return useAspectCorrection;
-}
-
-//Return the appropriate filter size we should use to scale the given resolution up to the given viewport.
-//This is usually the viewport height divided by the resolution height and rounded up, to ensure
-//we're always rendering larger than we need so that the graphics are crisper when scaled down.
-//However we finesse this for some filters that look like shit when scaled down too much.
-//(We base this on height rather than width, so that we'll use the larger filter size for aspect-ratio corrected surfaces.)
-- (NSInteger) _filterScaleForType: (BXFilterType)type
-				   fromResolution: (NSSize)resolution
-					   toViewport: (NSSize)viewportSize
-{
-	BXFilterDefinition params = [self _paramsForFilterType: type];
-	
-	NSSize scale = NSMakeSize(viewportSize.width / resolution.width,
-							  viewportSize.height / resolution.height);
-	
-	NSInteger filterScale = ceil(scale.height - params.outputScaleBias);
-	if (filterScale < params.minFilterScale) filterScale = params.minFilterScale;
-	if (filterScale > params.maxFilterScale) filterScale = params.maxFilterScale;
-	
-	return filterScale;
-}
-
-//Returns whether our selected filter should be applied for the specified transformation.
-- (BOOL) _shouldApplyFilterType: (BXFilterType)type
-				 fromResolution: (NSSize)resolution
-					 toViewport: (NSSize)viewportSize
-{
-	BXFilterDefinition params = [self _paramsForFilterType: type];
-
-	//Disable scalers for high-resolution games
-	if (!sizeFitsWithinSize(resolution, params.maxResolution)) return NO;
-	
-	NSSize scale = NSMakeSize(viewportSize.width / resolution.width,
-							  viewportSize.height / resolution.height);
-	
-	//Scale is too small for filter to be applied
-	if (scale.height < params.minOutputScale) return NO;
-	
-	//Scale is too large for filter to be worth applying
-	if (params.maxOutputScale && scale.height > params.maxOutputScale) return NO;
-
-	//If we got this far, go for it!
-	return YES;
 }
 
 @end

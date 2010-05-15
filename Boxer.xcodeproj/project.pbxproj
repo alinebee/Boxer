@@ -677,7 +677,6 @@
 		9FDB601610C0707F00C15CF4 /* BXDockTileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDockTileController.m; sourceTree = "<group>"; };
 		9FDCA78E118F2B7900E2FD74 /* BXCoalface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCoalface.h; sourceTree = "<group>"; };
 		9FDCA78F118F2B7900E2FD74 /* BXCoalface.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXCoalface.mm; sourceTree = "<group>"; };
-		9FE200A10F6D2F2C00B3A38C /* BXFilterDefinitions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFilterDefinitions.h; sourceTree = "<group>"; };
 		9FE2010A0F6D4CBA00B3A38C /* zmbv.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = zmbv.cpp; sourceTree = "<group>"; };
 		9FE2010B0F6D4CBA00B3A38C /* zmbv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zmbv.h; sourceTree = "<group>"; };
 		9FE201A50F6D599C00B3A38C /* libz.1.2.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.3.dylib; path = usr/lib/libz.1.2.3.dylib; sourceTree = SDKROOT; };
@@ -834,7 +833,6 @@
 				9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */,
 				9F2D76C10F61327D00D4E563 /* BXEmulator+BXRendering.h */,
 				9F2D76C20F61327D00D4E563 /* BXEmulator+BXRendering.mm */,
-				9FE200A10F6D2F2C00B3A38C /* BXFilterDefinitions.h */,
 				9FBC35160F56C7B7001811F2 /* BXEmulator+BXShell.h */,
 				9FBC35230F56C7B7001811F2 /* BXEmulator+BXShell.mm */,
 				9F675DE30F8F4D49001FCE5F /* BXEmulator+BXDOSFileSystem.h */,

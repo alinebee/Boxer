@@ -27,35 +27,6 @@ enum {
 	BXFilterScanlines	= 9
 };
 
-typedef struct {
-	//The type constant from BXEmulator+BXRendering.h to which this definition corresponds. Not currently used.
-	BXFilterType	filterType;
-	
-	//The minimum surface scale at which this filter should be applied.
-	//Normally this is 2.0, so the filter only starts applying once the surface is two or more times the original resolution. If the filter scales down well (like HQx), this can afford to be lower than 2.
-	CGFloat			minOutputScale;
-	
-	//The maximum surface scale at which this filter should be applied,
-	//or 0 to apply to all scales above minSurfaceScale.
-	CGFloat			maxOutputScale;
-	
-	//The maximum game resolution at which this filter should be applied,
-	//or NSZeroSize to apply to all resolutions.
-	NSSize			maxResolution;
-	
-	//Normally, the filter size is always equal to the surface scale rounded up: so e.g. a surface that's 2.1 scale will get a 3x scaler.
-	//surfaceScaleBias tweaks the point at which rounding up occurs: a bias of 0.5 will mean that 2.1-2.4 get rounded down to 2x while 2.5-2.9 get rounded up to 3x, whereas a bias of 1.0 means that the scale will always get rounded down. 0.0 gives the normal result.
-	//Tweaking this is needed for filters that get really muddy if they're scaled down a lot, like the TV scanlines.
-	CGFloat			outputScaleBias;
-	
-	//The minimum supported scaler transformation. Normally 2.
-	NSInteger		minFilterScale;
-	
-	//The maximum supported scaler transformation. Normally 3.
-	NSInteger		maxFilterScale;
-} BXFilterDefinition;
-
-
 
 //DOS renderer functions
 //----------------------
@@ -67,12 +38,6 @@ typedef struct {
 //Returns the base resolution the DOS game is producing, before any scaling or filters are applied.
 - (NSSize) resolution;
 
-//Returns the DOS resolution after aspect-correction scaling has been applied, but before filters are applied.
-- (NSSize) scaledResolution;
-
-//Returns the bit depth of the current screen. As of OS X 10.5.4, this is always 32.
-- (NSInteger) screenDepth;
-
 //Returns whether the emulator is currently rendering in a text-only graphics mode.
 - (BOOL) isInTextMode;
 
@@ -83,13 +48,6 @@ typedef struct {
 //Reinitialises DOSBox's graphical subsystem and redraws the render region.
 //This is called after resizing the session window or toggling rendering options.
 - (void) resetRenderer;
-
-//Returns the minimum view size needed to display the specified filter type. 
-- (NSSize) minRenderedSizeForFilterType: (BXFilterType) type;
-
-//Returns whether the chosen filter is actually being rendered. This will be NO if the current rendered
-//size is smaller than the minimum size supported by the chosen filter.
-- (BOOL) filterIsActive;
 
 @end
 
@@ -106,17 +64,8 @@ typedef struct {
 //Internal functions for decisions about rendering
 //------------------------------------------------
 
-- (BXFilterDefinition) _paramsForFilterType: (BXFilterType)filterType;
-
 - (void) _applyRenderingStrategy;
 - (BOOL) _shouldUseAspectCorrectionForResolution: (NSSize)resolution;
-
-- (BOOL) _shouldApplyFilterType: (BXFilterType)type
-				 fromResolution: (NSSize)resolution
-					 toViewport: (NSSize)viewportSize;
-- (NSInteger) _filterScaleForType: (BXFilterType)type
-				   fromResolution: (NSSize)resolution
-					   toViewport: (NSSize)viewportSize;
 
 - (void) _prepareForOutputSize: (NSSize)outputSize atScale: (NSSize)scale;
 - (BOOL) _startFrameWithBuffer: (void **)frameBuffer pitch: (NSUInteger *)pitch;

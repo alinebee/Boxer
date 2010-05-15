@@ -14,7 +14,6 @@
 #import "BXDOSViewController.h"
 
 #import "BXEmulator+BXDOSFileSystem.h"
-#import "BXEmulator+BXRendering.h"
 #import "BXInputHandler.h"
 #import "BXRenderView.h"
 
@@ -352,10 +351,12 @@
 		
 		//Update the option state to reflect the current filter selection
 		//If the filter is selected but not active at the current window size, we indicate this with a mixed state
+		/*
 		if		(filterType != [[self emulator] filterType])	itemState = NSOffState;
 		else if	([[self emulator] filterIsActive])				itemState = NSOnState;
 		else													itemState = NSMixedState;
-		
+		*/
+		itemState = NSOffState;
 		[theItem setState: itemState];
 		
 		return ([[self emulator] isExecuting]);
@@ -475,10 +476,6 @@
 {
 	if (![self isFullScreen] && ![self isResizing])
 	{
-		//After a resize event has finished, reinitialise the renderer
-		//to make it use settings appropriate to its new size
-		[[self emulator] resetRenderer];
-		
 		//Also, update the damn cursors which will have been reset by the window's resizing
 		[DOSViewController cursorUpdate: nil];
 	}

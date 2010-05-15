@@ -12,10 +12,12 @@
 
 @class BXSessionWindowController;
 @class BXEmulator;
+@class BXCursorFadeAnimation;
 
 @interface BXDOSViewController : NSViewController
 {	
-	NSCursor *hiddenCursor;
+	BXCursorFadeAnimation *cursorFade;
+	
 	BOOL mouseActive;
 	BOOL mouseLocked;
 	
@@ -29,13 +31,13 @@
 @property (assign) BOOL mouseActive;
 //Set/get whether the mouse is locked to the DOS view.
 @property (assign) BOOL mouseLocked;
-//The blank cursor we use when the mouse should be hidden when over the DOS view.
-@property (retain) NSCursor *hiddenCursor;
 
 @property (assign) BXSessionWindowController *windowController;
 
+//Returns whether the specified cursor animation should continue.
+- (BOOL) animationShouldChangeCursor: (BXCursorFadeAnimation *)cursorAnimation;
 
-//Whether the mouse is currently within our view.
+//Returns whether the mouse is currently within our view.
 - (BOOL) mouseInView;
 
 //Returns the emulator for the session we belong to.
@@ -53,4 +55,7 @@
 
 //Does the fiddly internal work of locking/unlocking the mouse.
 - (void) _applyMouseLockState;
+
+//Returns whether we should have control of the mouse cursor state.
+- (BOOL) _controlsCursor;
 @end

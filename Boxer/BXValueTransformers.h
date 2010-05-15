@@ -12,6 +12,18 @@
 #import <Cocoa/Cocoa.h>
 
 
+#pragma mark -
+#pragma mark Numeric transformers
+
+
+@interface BXRollingAverageTransformer : NSValueTransformer
+{
+	NSNumber *previousAverage;
+	NSUInteger windowSize;
+}
+- (id) initWithWindowSize: (NSUInteger)size;
+@end
+
 //Returns the NSNumber equivalents of YES or NO based on whether an array's size is within the min and max range of the transformer.
 //Registered as BXIsEmpty and BXIsNotEmpty by BXAppController, which are used for detecting whether an array is empty or not.
 @interface BXArraySizeTransformer : NSValueTransformer
@@ -43,8 +55,8 @@
 @end
 
 
-//String transformers
-//-------------------
+#pragma mark -
+#pragma mark String transformers
 
 //Capitalises the first letter of a string
 @interface BXCapitalizer: NSValueTransformer
@@ -79,8 +91,8 @@
 @end
 
 
-//Image transformers
-//------------------
+#pragma mark -
+#pragma mark Image transformers
 
 //Resizes an NSImage to the target size.
 @interface BXImageSizeTransformer: NSValueTransformer

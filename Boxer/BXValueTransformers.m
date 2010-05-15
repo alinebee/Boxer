@@ -8,6 +8,56 @@
 
 #import "BXValueTransformers.h"
 
+#pragma mark -
+#pragma mark Numeric transformers
+
+
+@implementation BXRollingAverageTransformer
+
++ (Class) transformedValueClass			{ return [NSNumber class]; }
++ (BOOL) allowsReverseTransformation	{ return NO; }
+
+- (id) initWithWindowSize: (NSUInteger)size
+{
+	if ((self = [super init]))
+	{
+		windowSize = size;
+	}
+	return self;
+}
+				  
+- (void) dealloc
+{
+	[previousAverage release]; previousAverage = nil;
+	[super dealloc];
+}
+
+- (NSNumber *) transformedValue: (NSNumber *)value
+{
+	NSNumber *newAverage;
+	if (previousAverage)
+	{
+		CGFloat oldAvg	= [previousAverage floatValue],
+				val		= [value floatValue],
+				newAvg;
+		
+		newAvg = (val + (oldAvg * (windowSize - 1))) / windowSize;
+		
+		newAverage = [NSNumber numberWithFloat: newAvg];
+	}
+	else
+	{
+		newAverage = value;
+	}
+	
+	[previousAverage release];
+	previousAverage = [newAverage retain];
+	return newAverage;
+}
+
+@end
+
+
 @implementation BXArraySizeTransformer
 
 + (Class) transformedValueClass			{ return [NSNumber class]; }
@@ -130,8 +180,11 @@
 @end
 
 
-//String transformers
-//-------------------
+
+
+
+#pragma mark -
+#pragma mark String transformers
 
 @implementation BXCapitalizer
 + (Class) transformedValueClass			{ return [NSString class]; }
@@ -214,9 +267,8 @@
 }
 @end
 
-
-//Image transformers
-//------------------
+#pragma mark -
+#pragma mark Image transformers
 
 @implementation BXImageSizeTransformer
 @synthesize size;

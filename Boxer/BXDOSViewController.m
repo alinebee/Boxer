@@ -12,11 +12,12 @@
 #import "BXEmulator.h"
 #import "BXAppController.h"
 #import "BXGeometry.h"
+#import "BXCursorFadeAnimation.h"
 
 
 @implementation BXDOSViewController
 @synthesize windowController;
-@synthesize mouseLocked, mouseActive, hiddenCursor;
+@synthesize mouseLocked, mouseActive;
 
 
 #pragma mark -
@@ -52,30 +53,20 @@
 	[[self view] addTrackingArea: trackingArea];
 	[trackingArea release];	
 	 
-	//Create our hidden cursor
-	 
-	NSCursor *arrowCursor	= [NSCursor arrowCursor];
-	NSImage *arrowImage		= [arrowCursor image];
-	NSImage *blankImage		= [[NSImage alloc] initWithSize: [arrowImage size]];
-	 
-	//Use a faded cursor instead of an entirely blank one.
-	//This is disabled for now because it looks quite distracting.
-	 
-	/*
-	[blankImage lockFocus];
-	[arrowImage drawAtPoint: NSZeroPoint fromRect: NSZeroRect operation: NSCompositeSourceOver fraction: 0.25];
-	[blankImage unlockFocus];
-	*/
-	 
-	NSCursor *blankCursor = [[NSCursor alloc] initWithImage: blankImage hotSpot: [arrowCursor hotSpot]];
-	[self setHiddenCursor: blankCursor];
-	[blankImage release];
-	[blankCursor release];
+	//Set up our cursor fade animation
+	cursorFade = [[BXCursorFadeAnimation alloc] initWithDuration: 0.5
+												  animationCurve: NSAnimationEaseIn];
+	[cursorFade setDelegate: self];
+	[cursorFade setOriginalCursor: [NSCursor arrowCursor]];
+	[cursorFade setAnimationBlockingMode: NSAnimationNonblocking];
+	[cursorFade setFrameRate: 15.0];
 }
 
 - (void) dealloc
 {
-	[self setHiddenCursor: nil], [hiddenCursor release];
+	[cursorFade stopAnimation];
+	[cursorFade release], cursorFade = nil;
+	
 	[super dealloc];
 }
 
@@ -100,6 +91,45 @@
 	[self didChangeValueForKey: @"mouseActive"];
 }
 
+- (void) cursorUpdate: (NSEvent *)theEvent
+{
+	if ([self _controlsCursor])
+	{
+		if (![cursorFade isAnimating])
+		{
+			//Make the cursor fade from the beginning rather than where it left off
+			[cursorFade setCurrentProgress: 0.0];
+			[cursorFade startAnimation];
+		}
+	}
+	else
+	{
+		[cursorFade stopAnimation];
+	}
+}
+
+- (BOOL) animationShouldChangeCursor: (BXCursorFadeAnimation *)cursorAnimation
+{
+	//If the mouse is still inside the view, let the cursor change proceed
+	if ([self _controlsCursor]) return YES;
+	//If the mouse has left the view, cancel the animation and don't change the cursor
+	else
+	{
+		if ([cursorAnimation isAnimating]) [cursorAnimation stopAnimation];
+		return NO;
+	}
+}
+
+- (void) animationDidStop: (NSAnimation *)animation
+{
+	[animation setCurrentProgress: 0.0];
+}
+
+- (BOOL) _controlsCursor
+{
+	return /*[self mouseActive] && */[self mouseInView] && [[[self view] window] isKeyWindow];
+}
+
 
 #pragma mark -
 #pragma mark Event responding
@@ -108,15 +138,6 @@
 {
 	[self setMouseLocked: NO];
 	[[[self emulator] inputHandler] lostFocus];
-}
-
-- (void) cursorUpdate: (NSEvent *)theEvent
-{
-	if ([self mouseActive] && [self mouseInView] && [[[self view] window] isKeyWindow])
-	{
-		[[self hiddenCursor] set];
-	}
-
 }
 
 - (void) mouseDown: (NSEvent *)theEvent

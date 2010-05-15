@@ -9,6 +9,8 @@
 #import "BXRenderView.h"
 #import "BXGeometry.h"
 #import "BXRenderingLayer.h"
+#import "BXFrameRateCounterLayer.h"
+#import "BXValueTransformers.h"
 
 @implementation BXRenderView
 @synthesize renderingLayer, frameRateLayer;
@@ -37,14 +39,20 @@
 	
 	
 	//Now add a layer for displaying the current framerate
-	[self setFrameRateLayer: [CATextLayer layer]];
+	[self setFrameRateLayer: [BXFrameRateCounterLayer layer]];
 	
 	[frameRateLayer setOpacity: 0.75];
 	[frameRateLayer setForegroundColor: CGColorGetConstantColor(kCGColorWhite)];
 	[frameRateLayer setFontSize: 20.0];
 	[frameRateLayer setAlignmentMode: kCAAlignmentRight];
 	
-	[frameRateLayer bind: @"string" toObject: renderingLayer withKeyPath: @"frameRateInfo" options: nil];
+	BXRollingAverageTransformer *frameRateSmoother = [[[BXRollingAverageTransformer alloc] initWithWindowSize: 10] autorelease];
+	
+	NSDictionary *bindingOptions = [NSDictionary dictionaryWithObjectsAndKeys:
+									frameRateSmoother,	NSValueTransformerBindingOption,
+									nil];
+	
+	[frameRateLayer bind: @"frameRate" toObject: renderingLayer withKeyPath: @"frameRate" options: bindingOptions];
 	
 	[frameRateLayer setBounds: CGRectMake(0, 0, 400, 20)];
 	[frameRateLayer setAnchorPoint: CGPointMake(1, 0)];

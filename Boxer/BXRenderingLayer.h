@@ -29,18 +29,13 @@
 	BOOL needsFrameTextureUpdate;
 	BOOL recalculateScalingBuffer;
 	
-	//The absolute time of the previous frame - stored internally for calculating framerate
-	NSTimeInterval lastFrameEndTime;
-	
-	//The time it took to render the last frame - exposed as property
-	NSTimeInterval lastFrameRenderTime;
-	//The current framerate we are producing - exposed as property
-	NSTimeInterval frameRate;
+	NSTimeInterval lastFrameTime;
+	NSTimeInterval renderingTime;
+	CGFloat frameRate;
 }
 @property (retain) BXFrameBuffer *currentFrame;
-
-@property (assign) NSTimeInterval lastFrameRenderTime;
-@property (assign) NSTimeInterval frameRate;
+@property (assign) CGFloat frameRate;
+@property (assign) NSTimeInterval renderingTime;
 
 - (void) drawFrame: (BXFrameBuffer *)frame;
 

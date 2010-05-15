@@ -48,7 +48,7 @@ const CGFloat BXMaxFeasibleScalingBufferHeight = 960;
 
 
 @implementation BXRenderingLayer
-@synthesize currentFrame, frameRate, lastFrameRenderTime;
+@synthesize currentFrame, frameRate, renderingTime;
 
 - (void) dealloc
 {
@@ -64,21 +64,10 @@ const CGFloat BXMaxFeasibleScalingBufferHeight = 960;
 	needsFrameTextureUpdate = YES;
 }
 
-+ (NSSet *) keyPathsForValuesAffectingFrameRateInfo	{ return [NSSet setWithObject: @"frameRate"]; }
-
-- (NSString *)frameRateInfo
-{
-	if ([self lastFrameRenderTime])
-	{
-		return [NSString stringWithFormat: @"%.01f fps (%.02f ms)", [self frameRate], [self lastFrameRenderTime] * 1000, nil];
-	}
-	else return @"";
-}
-
 - (void) setBounds: (CGRect)newBounds
 {
 	[super setBounds: newBounds];
-	//We need to recalculate our scaling buffer size 
+	//We need to recalculate our scaling buffer size if the bounds change
 	recalculateScalingBuffer = YES;
 }
 
@@ -182,10 +171,11 @@ const CGFloat BXMaxFeasibleScalingBufferHeight = 960;
 	
 	NSTimeInterval endTime = [NSDate timeIntervalSinceReferenceDate];
 	
-	[self setLastFrameRenderTime: endTime - startTime];
+	[self setRenderingTime: endTime - startTime];
+	if (lastFrameTime)
+		[self setFrameRate: 1 / (endTime - lastFrameTime)];
 	
-	if (lastFrameEndTime) [self setFrameRate: 1 / (endTime - lastFrameEndTime)];
-	lastFrameEndTime = endTime;
+	lastFrameTime = endTime;
 }
 
 - (void) _renderCurrentFrameInCGLContext: (CGLContextObj)glContext

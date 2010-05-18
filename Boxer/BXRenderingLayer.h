@@ -8,36 +8,12 @@
 
 #import <QuartzCore/QuartzCore.h>
 
-@class BXFrameBuffer;
+@class BXRenderer;
 
 @interface BXRenderingLayer : CAOpenGLLayer
 {
-	BXFrameBuffer *currentFrame;
-	
-	BOOL supportsFBO;
-	BOOL useScalingBuffer;
-	
-	GLuint frameTexture;
-	GLuint scalingBufferTexture;
-	GLuint scalingBuffer;
-	CGSize scalingBufferSize;
-	
-	CGSize maxTextureSize;
-	CGSize maxScalingBufferSize;
-	
-	BOOL needsNewFrameTexture;
-	BOOL needsFrameTextureUpdate;
-	BOOL recalculateScalingBuffer;
-	
-	NSTimeInterval lastFrameTime;
-	NSTimeInterval renderingTime;
-	CGFloat frameRate;
+	BXRenderer *renderer;
 }
-@property (retain) BXFrameBuffer *currentFrame;
-@property (assign) CGFloat frameRate;
-@property (assign) NSTimeInterval renderingTime;
+@property (retain) BXRenderer *renderer;
 
-- (void) updateWithFrame: (BXFrameBuffer *)frame;
-
-- (CGRect) viewportForFrame: (BXFrameBuffer *)frame;
 @end

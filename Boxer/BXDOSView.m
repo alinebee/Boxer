@@ -13,7 +13,7 @@
 #import "BXValueTransformers.h"
 #import "BXFrameBuffer.h"
 
-@implementation BXDOSView
+@implementation BXDOSLayerView
 @synthesize renderingLayer, frameRateLayer;
 
 
@@ -42,7 +42,7 @@
 									frameRateSmoother,	NSValueTransformerBindingOption,
 									nil];
 	
-	[frameRateLayer bind: @"frameRate" toObject: renderingLayer withKeyPath: @"frameRate" options: bindingOptions];
+	[frameRateLayer bind: @"frameRate" toObject: renderingLayer withKeyPath: @"renderer.frameRate" options: bindingOptions];
 	
 	[frameRateLayer setBounds: CGRectMake(0, 0, 400, 20)];
 	[frameRateLayer setAnchorPoint: CGPointMake(1, 0)];
@@ -69,8 +69,9 @@
 
 - (void) updateWithFrame: (BXFrameBuffer *)frame
 {
-	[renderingLayer updateWithFrame: frame];
+	[[renderingLayer renderer] updateWithFrame: frame];
 	[renderingLayer setHidden: NO];
+	[renderingLayer setNeedsDisplay];
 }
 
 - (IBAction) toggleFrameRate: (id) sender

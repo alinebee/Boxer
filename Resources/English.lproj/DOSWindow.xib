@@ -166,12 +166,17 @@
 							<int key="NSvFlags">274</int>
 							<object class="NSMutableArray" key="NSSubviews">
 								<bool key="EncodedWithXMLCoder">YES</bool>
-								<object class="NSCustomView" id="691696096">
+								<object class="NSOpenGLView" id="511833091">
 									<reference key="NSNextResponder" ref="89453087"/>
-									<int key="NSvFlags">4370</int>
+									<int key="NSvFlags">5394</int>
+									<object class="NSPSMatrix" key="NSDrawMatrix"/>
 									<string key="NSFrameSize">{640, 400}</string>
 									<reference key="NSSuperview" ref="89453087"/>
-									<string key="NSClassName">BXDOSView</string>
+									<object class="NSOpenGLPixelFormat" key="NSPixelFormat">
+										<object class="NSMutableData" key="NSPixelAttributes">
+											<bytes key="NS.bytes">AAAABQAAAEgAAABJAAAACAAAABgAAAALAAAACAAAAAA</bytes>
+										</object>
+									</object>
 								</object>
 							</object>
 							<string key="NSFrame">{{0, 104}, {640, 400}}</string>
@@ -355,14 +360,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">view</string>
-						<reference key="source" ref="949716796"/>
-						<reference key="destination" ref="691696096"/>
-					</object>
-					<int key="connectionID">965</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">DOSViewContainer</string>
 						<reference key="source" ref="1001"/>
 						<reference key="destination" ref="89453087"/>
@@ -373,9 +370,17 @@
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">DOSView</string>
 						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="691696096"/>
+						<reference key="destination" ref="511833091"/>
 					</object>
-					<int key="connectionID">967</int>
+					<int key="connectionID">971</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">view</string>
+						<reference key="source" ref="949716796"/>
+						<reference key="destination" ref="511833091"/>
+					</object>
+					<int key="connectionID">972</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -481,7 +486,7 @@
 						<reference key="object" ref="89453087"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="691696096"/>
+							<reference ref="511833091"/>
 						</object>
 						<reference key="parent" ref="1006"/>
 						<string key="objectName">DOS View Wrapper</string>
@@ -503,10 +508,9 @@
 						<reference key="parent" ref="0"/>
 					</object>
 					<object class="IBObjectRecord">
-						<int key="objectID">962</int>
-						<reference key="object" ref="691696096"/>
+						<int key="objectID">970</int>
+						<reference key="object" ref="511833091"/>
 						<reference key="parent" ref="89453087"/>
-						<string key="objectName">DOS View</string>
 					</object>
 				</object>
 			</object>
@@ -543,15 +547,17 @@
 					<string>950.IBPluginDependency</string>
 					<string>957.CustomClassName</string>
 					<string>957.IBPluginDependency</string>
+					<string>970.CustomClassName</string>
+					<string>970.IBPluginDependency</string>
 				</object>
 				<object class="NSMutableArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{38, 105}, {640, 504}}</string>
+					<string>{{46, 208}, {640, 504}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{38, 105}, {640, 504}}</string>
+					<string>{{46, 208}, {640, 504}}</string>
 					<integer value="0"/>
 					<string>{196, 240}</string>
 					<string>{{357, 418}, {480, 270}}</string>
@@ -575,6 +581,8 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>BXDOSViewController</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>BXDOSGLView</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
@@ -593,21 +601,17 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">967</int>
+			<int key="maxID">972</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<object class="IBPartialClassDescription">
-					<string key="className">BXDOSView</string>
-					<string key="superclassName">NSView</string>
-					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">toggleFrameRate:</string>
-						<string key="NS.object.0">id</string>
-					</object>
+					<string key="className">BXDOSGLView</string>
+					<string key="superclassName">NSOpenGLView</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Boxer/BXDOSView.h</string>
+						<string key="minorKey">Boxer/BXDOSGLView.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -705,7 +709,7 @@
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>BXDOSView</string>
+							<string>NSView</string>
 							<string>NSView</string>
 							<string>BXDOSViewController</string>
 							<string>NSView</string>
@@ -1254,6 +1258,14 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBFrameworkSource</string>
 						<string key="minorKey">AppKit.framework/Headers/NSObjectController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">NSOpenGLView</string>
+					<string key="superclassName">NSView</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBFrameworkSource</string>
+						<string key="minorKey">AppKit.framework/Headers/NSOpenGLView.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

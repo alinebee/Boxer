@@ -19,7 +19,7 @@
 
 
 @class BXEmulator;
-@class BXDOSView;
+@protocol BXDOSView;
 @class BXSession;
 @class BXSessionWindow;
 @class BXProgramPanelController;
@@ -28,7 +28,7 @@
 
 @interface BXSessionWindowController : NSWindowController
 {
-	IBOutlet BXDOSView *DOSView;
+	IBOutlet NSView <BXDOSView>*DOSView;
 	IBOutlet NSView *DOSViewContainer;
 	IBOutlet NSView *statusBar;
 	IBOutlet NSView *programPanel;
@@ -45,7 +45,7 @@
 @property (retain) BXProgramPanelController *programPanelController;
 @property (retain) BXDOSViewController *DOSViewController;
 
-@property (retain) BXDOSView *DOSView;			//The view that displays DOSBox's graphical output.
+@property (retain) NSView <BXDOSView> *DOSView;	//The view that displays DOSBox's graphical output.
 @property (retain) NSView *DOSViewContainer;	//A wrapper for the DOSView to aid window-sizing behaviour.
 @property (retain) NSView *programPanel;		//The slide-out program picker panel.
 @property (retain) NSView *statusBar;			//The status bar at the bottom of the window.

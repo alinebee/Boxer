@@ -239,6 +239,8 @@
 		9FE202480F6D749500B3A38C /* Snapshot.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9FE202470F6D749500B3A38C /* Snapshot.aiff */; };
 		9FE8265C10F0EBA000F1B03E /* 35DisketteShine.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE8265A10F0EBA000F1B03E /* 35DisketteShine.png */; };
 		9FE8265D10F0EBA000F1B03E /* 35Diskette.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE8265B10F0EBA000F1B03E /* 35Diskette.png */; };
+		9FECE19011A31B8B00E0EBB6 /* BXRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FECE18F11A31B8B00E0EBB6 /* BXRenderer.m */; };
+		9FECE1C211A3244500E0EBB6 /* BXDOSGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FECE1C111A3244500E0EBB6 /* BXDOSGLView.m */; };
 		9FEF98011191E1EF002024DF /* BXInputHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FEF98001191E1EF002024DF /* BXInputHandler.mm */; };
 		9FF445E010F13A2200B74B15 /* 525Diskette.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FF445DF10F13A2200B74B15 /* 525Diskette.png */; };
 		9FFAFE2D10DE33FB00728BAC /* GameProfiles.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */; };
@@ -683,6 +685,10 @@
 		9FE202470F6D749500B3A38C /* Snapshot.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = Snapshot.aiff; sourceTree = "<group>"; };
 		9FE8265A10F0EBA000F1B03E /* 35DisketteShine.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 35DisketteShine.png; sourceTree = "<group>"; };
 		9FE8265B10F0EBA000F1B03E /* 35Diskette.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 35Diskette.png; sourceTree = "<group>"; };
+		9FECE18E11A31B8B00E0EBB6 /* BXRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXRenderer.h; sourceTree = "<group>"; };
+		9FECE18F11A31B8B00E0EBB6 /* BXRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXRenderer.m; sourceTree = "<group>"; };
+		9FECE1C011A3244500E0EBB6 /* BXDOSGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDOSGLView.h; sourceTree = "<group>"; };
+		9FECE1C111A3244500E0EBB6 /* BXDOSGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDOSGLView.m; sourceTree = "<group>"; };
 		9FEF97FF1191E1EF002024DF /* BXInputHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXInputHandler.h; sourceTree = "<group>"; };
 		9FEF98001191E1EF002024DF /* BXInputHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXInputHandler.mm; sourceTree = "<group>"; };
 		9FF445DF10F13A2200B74B15 /* 525Diskette.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 525Diskette.png; sourceTree = "<group>"; };
@@ -855,6 +861,8 @@
 				9F4175AA119DBFDD00646B15 /* BXRenderingLayer.m */,
 				9FB4F9E211957B55006C8AC9 /* BXFrameBuffer.h */,
 				9FB4F9E311957B55006C8AC9 /* BXFrameBuffer.m */,
+				9FECE18E11A31B8B00E0EBB6 /* BXRenderer.h */,
+				9FECE18F11A31B8B00E0EBB6 /* BXRenderer.m */,
 			);
 			name = BXRenderer;
 			sourceTree = "<group>";
@@ -867,6 +875,8 @@
 				9FBC35240F56C7B7001811F2 /* BXSessionWindow.m */,
 				9FBB86830F5DD070008418E6 /* BXDOSView.h */,
 				9FBB86840F5DD070008418E6 /* BXDOSView.m */,
+				9FECE1C011A3244500E0EBB6 /* BXDOSGLView.h */,
+				9FECE1C111A3244500E0EBB6 /* BXDOSGLView.m */,
 				9F59DAD310AF1042008DBBC1 /* BXProgramPanel.h */,
 				9F59DAD410AF1042008DBBC1 /* BXProgramPanel.m */,
 			);
@@ -1810,6 +1820,8 @@
 				9F4175AB119DBFDD00646B15 /* BXRenderingLayer.m in Sources */,
 				9F4175F1119DCF7E00646B15 /* BXFrameRateCounterLayer.m in Sources */,
 				9FC1620E119E9AD700705EA5 /* BXCursorFadeAnimation.m in Sources */,
+				9FECE19011A31B8B00E0EBB6 /* BXRenderer.m in Sources */,
+				9FECE1C211A3244500E0EBB6 /* BXDOSGLView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

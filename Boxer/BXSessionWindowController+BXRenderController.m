@@ -109,7 +109,7 @@
 	
 	[self willChangeValueForKey: @"fullScreen"];
 	
-	NSView *theView			= [self DOSView];
+	NSView *theView			= (NSView *)[self DOSView];
 	NSView *theContainer	= [self DOSViewContainer]; 
 	NSWindow *theWindow		= [self window];
 	NSResponder *currentResponder = [theView nextResponder];

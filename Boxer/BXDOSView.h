@@ -16,7 +16,14 @@
 @class BXFrameRateCounterLayer;
 @class BXFrameBuffer;
 
-@interface BXDOSView : NSView
+
+@protocol BXDOSView
+
+- (void) updateWithFrame: (BXFrameBuffer *)frame;
+
+@end
+
+@interface BXDOSLayerView : NSView <BXDOSView>
 {
 	BXRenderingLayer *renderingLayer;
 	BXFrameRateCounterLayer *frameRateLayer;

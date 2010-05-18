@@ -45,8 +45,8 @@
 	[self removeObserver: self forKeyPath: @"document.activeProgramPath"];
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
 	
-	[self setDOSViewContainer: nil],			[DOSViewContainer release];
-	[self setDOSView: nil],				[DOSView release];
+	[self setDOSViewContainer: nil],		[DOSViewContainer release];
+	[self setDOSView: nil],					[DOSView release];
 	[self setStatusBar: nil],				[statusBar release];
 	[self setProgramPanel: nil],			[programPanel release];
 	[self setProgramPanelController: nil],	[programPanelController release];

@@ -6,7 +6,7 @@
  */
 
 
-//BXRenderView is an NSOpenGLView subclass which displays DOSBox's rendered output.
+//BXDOSView is an NSOpenGLView subclass which displays DOSBox's rendered output.
 //It relies on a BXRenderer object to do the actual drawing: telling it to draw when needed,
 //and notifying it of changes to the viewport dimensions.
 
@@ -16,7 +16,7 @@
 @class BXFrameRateCounterLayer;
 @class BXFrameBuffer;
 
-@interface BXRenderView : NSView
+@interface BXDOSView : NSView
 {
 	BXRenderingLayer *renderingLayer;
 	BXFrameRateCounterLayer *frameRateLayer;

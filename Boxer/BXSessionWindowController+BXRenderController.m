@@ -11,7 +11,7 @@
 #import "BXEmulator.h"
 #import "NSWindow+BXWindowSizing.h"
 #import "BXDOSViewController.h"
-#import "BXRenderView.h"
+#import "BXDOSView.h"
 #import "BXFrameBuffer.h"
 
 #import "BXGeometry.h"
@@ -28,7 +28,7 @@
 	[self resizeToAccommodateFrameSize: [frame scaledResolution]];
 	
 	//Tell the render view to draw the frame
-	[renderView updateWithFrame: frame];
+	[DOSView updateWithFrame: frame];
 }
 
 
@@ -37,19 +37,19 @@
 
 - (BOOL) isResizing
 {
-	return [self resizingProgrammatically] || [[self renderView] inLiveResize];
+	return [self resizingProgrammatically] || [[self DOSView] inLiveResize];
 }
 
 //Returns the current size that the render view *would be if it were in windowed mode.
 //This will differ from the actual render view size when in fullscreen mode.
-- (NSSize) windowedRenderViewSize	{ return [[self renderContainer] frame].size; }
+- (NSSize) windowedDOSViewSize	{ return [[self DOSViewContainer] frame].size; }
 
 - (void) resizeToAccommodateFrameSize: (NSSize)scaledSize
 {
 	//Don't resize if we're already matched to this size
 	if (NSEqualSizes(currentScaledSize, scaledSize)) return;
 
-	NSSize viewSize	= [self _renderViewSizeForScaledOutputSize: scaledSize minSize: scaledSize];
+	NSSize viewSize	= [self _DOSViewSizeForScaledOutputSize: scaledSize minSize: scaledSize];
 	
 	//Use the base resolution as our minimum content size, to prevent higher resolutions being rendered
 	//smaller than their effective size
@@ -69,7 +69,7 @@
 	//Now resize the window to fit the new size
 	//Tell the renderer not to maintain aspect ratio when doing so,
 	//since this change in size is driven by the DOS context
-	[self _resizeWindowToRenderViewSize: viewSize animate: YES];
+	[self _resizeWindowToDOSViewSize: viewSize animate: YES];
 	
 	//Finally, record our current scaled size for future resizing calculations
 	currentScaledSize = scaledSize;
@@ -85,7 +85,7 @@
 	
 	BXSessionWindow *theWindow = [self window];
 
-	NSSize currentSize		= [self windowedRenderViewSize];
+	NSSize currentSize		= [self windowedDOSViewSize];
 	//We're already that size or larger, don't resize further
 	if (sizeFitsWithinSize(minViewSize, currentSize)) return YES;
 	
@@ -97,7 +97,7 @@
 	if (!sizeFitsWithinSize(minViewSize, maxViewSize)) return NO;
 	
 	//Otherwise carry on and resize
-	[self _resizeWindowToRenderViewSize: minViewSize animate: YES];
+	[self _resizeWindowToDOSViewSize: minViewSize animate: YES];
 	return YES;
 }
 
@@ -109,8 +109,8 @@
 	
 	[self willChangeValueForKey: @"fullScreen"];
 	
-	NSView *theView			= [self renderView];
-	NSView *theContainer	= [self renderContainer]; 
+	NSView *theView			= [self DOSView];
+	NSView *theContainer	= [self DOSViewContainer]; 
 	NSWindow *theWindow		= [self window];
 	NSResponder *currentResponder = [theView nextResponder];
 	
@@ -153,7 +153,7 @@
 
 - (BOOL) isFullScreen
 {
-	return [[self renderView] isInFullScreenMode];
+	return [[self DOSView] isInFullScreenMode];
 }
 
 - (NSScreen *) fullScreenTarget
@@ -304,10 +304,10 @@
 }
 
 //Resize the window frame to the requested render size.
-- (void) _resizeWindowToRenderViewSize: (NSSize)newSize animate: (BOOL)performAnimation
+- (void) _resizeWindowToDOSViewSize: (NSSize)newSize animate: (BOOL)performAnimation
 {
 	NSWindow *theWindow	= [self window];
-	NSSize currentSize	= [self windowedRenderViewSize];
+	NSSize currentSize	= [self windowedDOSViewSize];
 	
 	if (!NSEqualSizes(currentSize, newSize))
 	{
@@ -338,10 +338,10 @@
 //Returns the most appropriate view size for the intended output size, given the size of the current window.
 //This is calculated as the current view size with the aspect ratio compensated for that of the new output size:
 //favouring the width or the height as appropriate.
-- (NSSize) _renderViewSizeForScaledOutputSize: (NSSize)scaledSize minSize: (NSSize)minViewSize
+- (NSSize) _DOSViewSizeForScaledOutputSize: (NSSize)scaledSize minSize: (NSSize)minViewSize
 {	
 	//Start off with our current view size: we want to deviate from this as little as possible.
-	NSSize viewSize = [self windowedRenderViewSize];
+	NSSize viewSize = [self windowedDOSViewSize];
 	
 	//Work out the aspect ratio of the scaled size, and how we should apply that ratio
 	CGFloat aspectRatio = aspectRatioOfSize(scaledSize);

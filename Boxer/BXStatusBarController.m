@@ -13,7 +13,7 @@
 #import "BXDOSViewController.h"
 #import "BXSession.h"
 #import "BXEmulator.h"
-#import "BXRenderView.h"
+#import "BXDOSView.h"
 
 @implementation BXStatusBarController
 

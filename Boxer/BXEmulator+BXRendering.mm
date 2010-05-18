@@ -186,7 +186,7 @@
 	BOOL useAspectCorrection = NO;
 	if ([self isExecuting])
 	{
-		useAspectCorrection = [self isAspectCorrected] && (fabs(render.src.ratio - 1) > 0.01);
+		useAspectCorrection = [self isAspectCorrected] && (ABS(render.src.ratio - 1) > 0.01);
 	}
 	return useAspectCorrection;
 }

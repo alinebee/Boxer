@@ -7,7 +7,7 @@
 
 
 //The BXRenderController category separates off rendering-specific functionality from general
-//window controller housework. The methods herein liaise between BXRenderView and BXEmulator, pass UI
+//window controller housework. The methods herein liaise between BXDOSView and BXEmulator, pass UI
 //signals back to BXEmulator, and manage resizing to ensure that the view size and rendering size
 //are consistent.
 
@@ -16,7 +16,7 @@
 
 @class BXSessionWindow;
 @class BXEmulator;
-@class BXRenderView;
+@class BXDOSView;
 @class BXFrameBuffer;
 
 @interface BXSessionWindowController (BXRenderController)
@@ -31,7 +31,7 @@
 
 //Returns the size that the render view would currently be *if it were in windowed mode.*
 //This will differ from the actual render view size if in fullscreen mode.
-- (NSSize) windowedRenderViewSize;
+- (NSSize) windowedDOSViewSize;
 
 //Resize the window to accomodate the specified view size. Returns YES if a resize was possible,
 //or NO if there is not enough room onscreen to do so.

@@ -131,6 +131,7 @@ const CGFloat BXMaxFeasibleScalingBufferHeight = 960;
 	supportsFBO = (BOOL)gluCheckExtension((const GLubyte *)"GL_EXT_framebuffer_object",
 										  glGetString(GL_EXTENSIONS));
 	
+	//supportsFBO = NO;
 	if (supportsFBO)
 	{
 		glGenFramebuffersEXT(1, &scalingBuffer);
@@ -179,7 +180,7 @@ const CGFloat BXMaxFeasibleScalingBufferHeight = 960;
 			  pixelFormat: (CGLPixelFormatObj)pixelFormat
 			 forLayerTime: (CFTimeInterval)timeInterval
 			  displayTime: (const CVTimeStamp *)timeStamp
-{
+{	
 	NSTimeInterval startTime = [NSDate timeIntervalSinceReferenceDate];
 	
 	CGLContextObj cgl_ctx = glContext;
@@ -224,19 +225,17 @@ const CGFloat BXMaxFeasibleScalingBufferHeight = 960;
 	glDisable(GL_CULL_FACE);
     glDisable(GL_BLEND);
     glEnable(GL_TEXTURE_RECTANGLE_ARB);
-
+	
 	//Set the viewport to match the aspect ratio of our frame
-	CGRect viewportRect = [self viewportForFrame: [self currentFrame]];
+	CGRect viewportRect = CGRectIntegral([self viewportForFrame: [self currentFrame]]);
 	
 	glViewport((GLint)viewportRect.origin.x,
 			   (GLint)viewportRect.origin.y,
 			   (GLsizei)viewportRect.size.width,
 			   (GLsizei)viewportRect.size.height);
-	
 	glClearColor(0, 0, 0, 1);
 	glClear(GL_COLOR_BUFFER_BIT);
-	
-	
+	 
 	//Activate our scaling buffer, which we'll draw the frame into first
 	if (useScalingBuffer)
 	{
@@ -266,11 +265,11 @@ const CGFloat BXMaxFeasibleScalingBufferHeight = 960;
 	
 	if (useScalingBuffer)
 	{
-		//Revert the GL viewport to match the layer size (as set by our calling context)
+		//Revert the GL viewport to match the layer size (as set previously)
 		glPopAttrib();
 				
-		//Revert the framebuffer to what it was in the context, so that drawing goes to
-		//the proper place from now on
+		//Revert the framebuffer to the context's original target,
+		//so that drawing goes to the proper place from now on
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, contextFramebuffer);
 
 		

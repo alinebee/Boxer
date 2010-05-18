@@ -6,14 +6,14 @@
  */
 
 
-#import "BXRenderView.h"
+#import "BXDOSView.h"
 #import "BXGeometry.h"
 #import "BXRenderingLayer.h"
 #import "BXFrameRateCounterLayer.h"
 #import "BXValueTransformers.h"
 #import "BXFrameBuffer.h"
 
-@implementation BXRenderView
+@implementation BXDOSView
 @synthesize renderingLayer, frameRateLayer;
 
 
@@ -129,7 +129,8 @@
 
 - (void) drawRect: (NSRect)dirtyRect
 {
-	if ([[self renderingLayer] isHidden])
+	
+	if (![self renderingLayer] || [[self renderingLayer] isHidden])
 	{
 		[NSBezierPath clipRect: dirtyRect];
 		[self drawBackgroundInRect: dirtyRect];
@@ -141,12 +142,12 @@
 - (void) viewWillStartLiveResize
 {	
 	[super viewWillStartLiveResize];
-	[[NSNotificationCenter defaultCenter] postNotificationName: @"BXRenderViewWillLiveResizeNotification" object: self];
+	[[NSNotificationCenter defaultCenter] postNotificationName: @"BXDOSViewWillLiveResizeNotification" object: self];
 }
 
 - (void) viewDidEndLiveResize
 {
 	[super viewDidEndLiveResize];
-	[[NSNotificationCenter defaultCenter] postNotificationName: @"BXRenderViewDidLiveResizeNotification" object: self];
+	[[NSNotificationCenter defaultCenter] postNotificationName: @"BXDOSViewDidLiveResizeNotification" object: self];
 }
 @end

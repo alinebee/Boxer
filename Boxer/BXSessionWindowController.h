@@ -19,7 +19,7 @@
 
 
 @class BXEmulator;
-@class BXRenderView;
+@class BXDOSView;
 @class BXSession;
 @class BXSessionWindow;
 @class BXProgramPanelController;
@@ -28,8 +28,8 @@
 
 @interface BXSessionWindowController : NSWindowController
 {
-	IBOutlet BXRenderView *renderView;
-	IBOutlet NSView *renderContainer;
+	IBOutlet BXDOSView *DOSView;
+	IBOutlet NSView *DOSViewContainer;
 	IBOutlet NSView *statusBar;
 	IBOutlet NSView *programPanel;
 
@@ -45,8 +45,8 @@
 @property (retain) BXProgramPanelController *programPanelController;
 @property (retain) BXDOSViewController *DOSViewController;
 
-@property (retain) BXRenderView *renderView;	//The OpenGL view that displays DOSBox's graphical output.
-@property (retain) NSView *renderContainer;		//A wrapper for the renderView to aid window-sizing behaviour.
+@property (retain) BXDOSView *DOSView;			//The view that displays DOSBox's graphical output.
+@property (retain) NSView *DOSViewContainer;	//A wrapper for the DOSView to aid window-sizing behaviour.
 @property (retain) NSView *programPanel;		//The slide-out program picker panel.
 @property (retain) NSView *statusBar;			//The status bar at the bottom of the window.
 
@@ -142,9 +142,9 @@
 - (void) _slideView: (NSView *)view shown: (BOOL)show;
 
 //Resize the window frame to fit the requested render size.
-- (void) _resizeWindowToRenderViewSize: (NSSize)newSize animate: (BOOL)performAnimation;
+- (void) _resizeWindowToDOSViewSize: (NSSize)newSize animate: (BOOL)performAnimation;
 
 //Returns the view size that should be used for rendering the specified DOSBox output size.
-- (NSSize) _renderViewSizeForScaledOutputSize: (NSSize)scaledSize minSize: (NSSize)minViewSize;
+- (NSSize) _DOSViewSizeForScaledOutputSize: (NSSize)scaledSize minSize: (NSSize)minViewSize;
 
 @end

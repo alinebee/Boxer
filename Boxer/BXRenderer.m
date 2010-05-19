@@ -13,14 +13,7 @@
 
 
 //When scaling up beyond this we won't bother with the scaling buffer
-const CGFloat BXScalingBufferScaleCutoff = 2.5;
-
-//The maximum feasible width and height to use for a scaling buffer based on a modest GPU (i.e. my white Macbook).
-//In future, this should be determined from the characteristics of the actual GPU.
-const CGFloat BXMaxFeasibleScalingBufferWidth = 1280;
-const CGFloat BXMaxFeasibleScalingBufferHeight = 960;
-
-
+const CGFloat BXScalingBufferScaleCutoff = 3;
 
 @interface BXRenderer (BXRendererInternals)
 
@@ -121,11 +114,7 @@ const CGFloat BXMaxFeasibleScalingBufferHeight = 960;
 	if (supportsFBO)
 	{
 		glGenFramebuffersEXT(1, &scalingBuffer);
-		
-		//Calculate our feasible maximum scaling buffer size and cap it to the max texture size
-		CGSize maxFeasibleScalingBufferSize = CGSizeMake(BXMaxFeasibleScalingBufferWidth,
-														 BXMaxFeasibleScalingBufferHeight);
-		maxScalingBufferSize = BXCGSmallerSize(maxTextureSize, maxFeasibleScalingBufferSize);
+		maxScalingBufferSize = maxTextureSize;
 	}
 	
 	//TODO: we'll load and compile our shaders here
@@ -183,7 +172,7 @@ const CGFloat BXMaxFeasibleScalingBufferHeight = 960;
 }
 
 - (void) _renderCurrentFrameInCGLContext: (CGLContextObj)glContext
-{
+{	
 	CGLContextObj cgl_ctx = glContext;
 	
 	GLint contextFramebuffer;
@@ -207,6 +196,7 @@ const CGFloat BXMaxFeasibleScalingBufferHeight = 960;
 			   (GLint)viewportRect.origin.y,
 			   (GLsizei)viewportRect.size.width,
 			   (GLsizei)viewportRect.size.height);
+	
 	glClearColor(0, 0, 0, 1);
 	glClear(GL_COLOR_BUFFER_BIT);
 	
@@ -515,12 +505,15 @@ const CGFloat BXMaxFeasibleScalingBufferHeight = 960;
 	//TODO: once we get the additional rendering styles reimplemented, the optimisations below
 	//should be specific to the Original style.
 	
-	//We disable the scaling buffer for scales over a certain limit, where (we assume) stretching
-	//artifacts won't be visible.
+	//We disable the scaling buffer for scales over a certain limit,
+	//where (we assume) stretching artifacts won't be visible.
+	
 	if (scalingFactor.height > BXScalingBufferScaleCutoff) return CGSizeZero;
 	
-	//If the viewport is an even multiple of the initial resolution then we don't need to scale either.
-	if (!((NSInteger)viewportSize.width % (NSInteger)frameSize.width) && 
+	//If there's no aspect ratio correction needed, and the viewport is an even multiple
+	//of the initial resolution, then we don't need to scale either.
+	if (NSEqualSizes([frame intendedScale], NSMakeSize(1, 1)) &&
+		!((NSInteger)viewportSize.width % (NSInteger)frameSize.width) && 
 		!((NSInteger)viewportSize.height % (NSInteger)frameSize.height)) return CGSizeZero;
 	
 	//Our ideal scaling buffer size is the closest integer multiple of the

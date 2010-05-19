@@ -44,8 +44,8 @@
 
 - (NSSize) scaledResolution
 {
-	return NSMakeSize(resolution.width	* intendedScale.width,
-					  resolution.height	* intendedScale.height);
+	return NSMakeSize(ceilf(resolution.width	* intendedScale.width),
+					  ceilf(resolution.height	* intendedScale.height));
 }
 
 - (const void *) bytes

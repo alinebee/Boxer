@@ -78,7 +78,13 @@
 
 - (void) prepareOpenGL
 {
-	[[self renderer] prepareForGLContext: [[self openGLContext] CGLContextObj]];	
+	[[self renderer] prepareForGLContext: [[self openGLContext] CGLContextObj]];
+}
+
+- (void) clearGLContext
+{
+	[[self renderer] tearDownGLContext: [[self openGLContext] CGLContextObj]];	
+	[super clearGLContext];
 }
 
 - (void) reshape

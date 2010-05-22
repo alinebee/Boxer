@@ -21,6 +21,7 @@
 	BOOL useScalingBuffer;
 	
 	CGRect canvas;
+	BOOL maintainsAspectRatio;
 	
 	GLuint frameTexture;
 	GLuint scalingBufferTexture;
@@ -41,6 +42,7 @@
 @property (retain) BXFrameBuffer *currentFrame;
 @property (assign) CGFloat frameRate;
 @property (assign) CGRect canvas;
+@property (assign) BOOL maintainsAspectRatio;
 @property (assign) NSTimeInterval renderingTime;
 
 - (void) updateWithFrame: (BXFrameBuffer *)frame;

@@ -17,6 +17,4 @@
 }
 @property (retain) BXRenderer *renderer;
 
-- (void) updateWithFrame: (BXFrameBuffer *)frame;
-
 @end

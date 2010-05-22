@@ -12,6 +12,7 @@
 #import "BXFrameRateCounterLayer.h"
 #import "BXValueTransformers.h"
 #import "BXFrameBuffer.h"
+#import "BXRenderer.h"
 
 @implementation BXDOSLayerView
 @synthesize renderingLayer, frameRateLayer;
@@ -97,6 +98,18 @@
 
 #pragma -
 #pragma mark Rendering methods
+
+- (void) setManagesAspectRatio: (BOOL)manage
+{
+	[self willChangeValueForKey: @"managesAspectRatio"];
+	[[renderingLayer renderer] setMaintainsAspectRatio: manage];
+	[self didChangeValueForKey: @"managesAspectRatio"];
+}
+
+- (BOOL) managesAspectRatio
+{
+	return [[renderingLayer renderer] maintainsAspectRatio];	
+}
 
 - (void) drawBackgroundInRect: (NSRect)dirtyRect
 {

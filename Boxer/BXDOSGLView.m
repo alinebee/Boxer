@@ -70,6 +70,18 @@
 #pragma -
 #pragma mark Rendering methods
 
+- (void) setManagesAspectRatio: (BOOL)manage
+{
+	[self willChangeValueForKey: @"managesAspectRatio"];
+	[[self renderer] setMaintainsAspectRatio: manage];
+	[self didChangeValueForKey: @"managesAspectRatio"];
+}
+
+- (BOOL) managesAspectRatio
+{
+	return [[self renderer] maintainsAspectRatio];	
+}
+
 - (void) updateWithFrame: (BXFrameBuffer *)frame
 {
 	[[self renderer] updateWithFrame: frame];

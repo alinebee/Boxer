@@ -13,6 +13,7 @@
 #import "BXDOSViewController.h"
 #import "BXDOSView.h"
 #import "BXFrameBuffer.h"
+#import "BXDOSView.h"
 
 #import "BXGeometry.h"
 
@@ -109,10 +110,10 @@
 	
 	[self willChangeValueForKey: @"fullScreen"];
 	
-	NSView *theView			= (NSView *)[self DOSView];
-	NSView *theContainer	= [self DOSViewContainer]; 
-	NSWindow *theWindow		= [self window];
-	NSResponder *currentResponder = [theView nextResponder];
+	NSView <BXDOSView> *theView		= [self DOSView];
+	NSView *theContainer			= [self DOSViewContainer]; 
+	NSWindow *theWindow				= [self window];
+	NSResponder *currentResponder	= [theView nextResponder];
 	
 	if (fullScreen)
 	{
@@ -127,10 +128,16 @@
 		
 		//Ensure that the mouse is locked for fullscreen mode
 		[DOSViewController setMouseLocked: YES];
+		
+		//Tell the view to manage aspect ratio correction in fullscreen mode
+		[theView setManagesAspectRatio: YES];
 	}
 	else
 	{
 		[theView exitFullScreenModeWithOptions: nil];
+		
+		//Tell the view to stop managing aspect ratio correction
+		[theView setManagesAspectRatio: NO];
 		
 		//Reset the responders to what they should be, since exitFullScreenModeWithOptions: screws with them
 		[theWindow makeFirstResponder: theView];
@@ -167,8 +174,9 @@
 {	
 	//Don't bother if we're already in the correct fullscreen state
 	if ([self isFullScreen] == fullScreen) return;
-	 
-	NSWindow *theWindow		= [self window];
+	
+	NSView <BXDOSView> *theView	= [self DOSView];
+	NSWindow *theWindow			= [self window];
 	
 	NSInteger originalLevel		= [theWindow level];
 	NSRect originalFrame		= [theWindow frame];
@@ -185,6 +193,10 @@
 	[self setResizingProgrammatically: YES];
 	if (fullScreen)
 	{
+		//Tell the view to start managing aspect ratio correction early,
+		//so that the aspect ratio appears correct while resizing to fill the window
+		[theView setManagesAspectRatio: YES];
+		
 		//First zoom smoothly in to fill the screen...
 		[theWindow setFrame: zoomedWindowFrame display: YES animate: YES];
 				
@@ -204,8 +216,15 @@
 		//...then flip the view out of fullscreen, which will return it to the zoomed window...
 		[self setFullScreen: NO];
 		
+		//Tell the view to continue managing aspect ratio while we resize,
+		//overriding setFullScreen's original behaviour
+		[theView setManagesAspectRatio: YES];
+		
 		//...then resize the window back to its original size
 		[theWindow setFrame: originalFrame display: YES animate: YES];
+		
+		//Finally tell the view to stop managing aspect ratio again
+		[theView setManagesAspectRatio: NO];
 	}
 	[self setResizingProgrammatically: NO];
 	[theWindow setLevel: originalLevel];

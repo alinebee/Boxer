@@ -42,7 +42,7 @@ const CGFloat BXScalingBufferScaleCutoff = 3;
 
 
 @implementation BXRenderer
-@synthesize currentFrame, frameRate, renderingTime, canvas;
+@synthesize currentFrame, frameRate, renderingTime, canvas, maintainsAspectRatio;
 
 - (void) dealloc
 {
@@ -164,11 +164,15 @@ const CGFloat BXScalingBufferScaleCutoff = 3;
 
 - (CGRect) _viewportForFrame: (BXFrameBuffer *)frame
 {
-	NSSize frameSize = [frame scaledResolution];
-	NSRect frameRect = NSMakeRect(0, 0, frameSize.width, frameSize.height);
-	NSRect bounds = NSRectFromCGRect([self canvas]);
-	
-	return NSRectToCGRect(fitInRect(frameRect, bounds, NSMakePoint(0.5, 0.5)));
+	if ([self maintainsAspectRatio])
+	{
+		NSSize frameSize = [frame scaledResolution];
+		NSRect frameRect = NSMakeRect(0, 0, frameSize.width, frameSize.height);
+		NSRect bounds = NSRectFromCGRect([self canvas]);
+		
+		return NSRectToCGRect(fitInRect(frameRect, bounds, NSMakePoint(0.5, 0.5)));
+	}
+	else return [self canvas];
 }
 
 - (void) _renderCurrentFrameInCGLContext: (CGLContextObj)glContext
@@ -373,8 +377,8 @@ const CGFloat BXScalingBufferScaleCutoff = 3;
 	
 	
 	//Clamp the texture to avoid wrapping, and set the filtering mode to use nearest-neighbour when scaling up
-	glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	

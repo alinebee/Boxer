@@ -245,9 +245,15 @@
 //Returns YES if any drives were mounted, NO otherwise
 - (BOOL) mountCDVolumes
 {
+	BXEmulator *theEmulator = [self emulator];
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	NSArray *volumes = [workspace mountedVolumesOfType: dataCDVolumeType];
-	BXEmulator *theEmulator = [self emulator];
+	
+	//If there were no data CD volumes, then check for audio CD volumes and mount them instead
+	//(We avoid doing this if there were data CD volumes, since the audio CDs will then be used
+	//as 'shadow' audio volumes for those data CDs.)
+	if (![volumes count])
+		volumes = [workspace mountedVolumesOfType: audioCDVolumeType];
 	
 	BOOL returnValue = NO;
 	for (NSString *volume in volumes)

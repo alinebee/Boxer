@@ -11,9 +11,8 @@
 #import "BXEmulator.h"
 #import "NSWindow+BXWindowSizing.h"
 #import "BXDOSViewController.h"
-#import "BXDOSView.h"
+#import "BXFrameRenderingView.h"
 #import "BXFrameBuffer.h"
-#import "BXDOSView.h"
 
 #import "BXGeometry.h"
 
@@ -38,7 +37,7 @@
 
 - (BOOL) isResizing
 {
-	return [self resizingProgrammatically] || [[self DOSView] inLiveResize];
+	return [self resizingProgrammatically] || [DOSView inLiveResize];
 }
 
 //Returns the current size that the render view *would be if it were in windowed mode.
@@ -110,10 +109,10 @@
 	
 	[self willChangeValueForKey: @"fullScreen"];
 	
-	NSView <BXDOSView> *theView		= [self DOSView];
-	NSView *theContainer			= [self DOSViewContainer]; 
-	NSWindow *theWindow				= [self window];
-	NSResponder *currentResponder	= [theView nextResponder];
+	NSView <BXFrameRenderingView> *theView	= [self DOSView];
+	NSView *theContainer					= [self DOSViewContainer]; 
+	NSWindow *theWindow						= [self window];
+	NSResponder *currentResponder			= [theView nextResponder];
 	
 	if (fullScreen)
 	{
@@ -175,8 +174,8 @@
 	//Don't bother if we're already in the correct fullscreen state
 	if ([self isFullScreen] == fullScreen) return;
 	
-	NSView <BXDOSView> *theView	= [self DOSView];
-	NSWindow *theWindow			= [self window];
+	NSView <BXFrameRenderingView> *theView	= [self DOSView];
+	NSWindow *theWindow						= [self window];
 	
 	NSInteger originalLevel		= [theWindow level];
 	NSRect originalFrame		= [theWindow frame];

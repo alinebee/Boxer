@@ -90,7 +90,7 @@
 		9FB553E10F6EA30900A33017 /* BXCloseAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB553E00F6EA30900A33017 /* BXCloseAlert.m */; };
 		9FB554220F6EAC5F00A33017 /* BXAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB554210F6EAC5F00A33017 /* BXAlert.m */; };
 		9FB554F70F6EE58000A33017 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FB554F60F6EE58000A33017 /* QTKit.framework */; };
-		9FBB86850F5DD070008418E6 /* BXDOSView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBB86840F5DD070008418E6 /* BXDOSView.m */; };
+		9FBB86850F5DD070008418E6 /* BXDOSLayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBB86840F5DD070008418E6 /* BXDOSLayerView.m */; };
 		9FBC31D70F56C370001811F2 /* AboutBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC31D10F56C370001811F2 /* AboutBackground.png */; };
 		9FBC31DA0F56C370001811F2 /* BunnyTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC31D40F56C370001811F2 /* BunnyTemplate.png */; };
 		9FBC31DC0F56C370001811F2 /* TortoiseTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC31D60F56C370001811F2 /* TortoiseTemplate.png */; };
@@ -406,8 +406,8 @@
 		9FB554200F6EAC5F00A33017 /* BXAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXAlert.h; sourceTree = "<group>"; };
 		9FB554210F6EAC5F00A33017 /* BXAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXAlert.m; sourceTree = "<group>"; };
 		9FB554F60F6EE58000A33017 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
-		9FBB86830F5DD070008418E6 /* BXDOSView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDOSView.h; sourceTree = "<group>"; };
-		9FBB86840F5DD070008418E6 /* BXDOSView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDOSView.m; sourceTree = "<group>"; };
+		9FBB86830F5DD070008418E6 /* BXDOSLayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDOSLayerView.h; sourceTree = "<group>"; };
+		9FBB86840F5DD070008418E6 /* BXDOSLayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDOSLayerView.m; sourceTree = "<group>"; };
 		9FBC31D10F56C370001811F2 /* AboutBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AboutBackground.png; sourceTree = "<group>"; };
 		9FBC31D40F56C370001811F2 /* BunnyTemplate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BunnyTemplate.png; sourceTree = "<group>"; };
 		9FBC31D60F56C370001811F2 /* TortoiseTemplate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TortoiseTemplate.png; sourceTree = "<group>"; };
@@ -694,6 +694,7 @@
 		9FF445DF10F13A2200B74B15 /* 525Diskette.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 525Diskette.png; sourceTree = "<group>"; };
 		9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = GameProfiles.plist; sourceTree = "<group>"; };
 		9FFAFE2E10DE343F00728BAC /* Configurations */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Configurations; sourceTree = "<group>"; };
+		9FFBF67011A7F8F4000A1863 /* BXFrameRenderingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFrameRenderingView.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -730,7 +731,7 @@
 				9F573D380F8E69AF0089D8B7 /* BXPackage.m */,
 				9F69133110A2F62A00EA78CD /* BXDrive.h */,
 				9F69133210A2F62A00EA78CD /* BXDrive.m */,
-				9F23EB0111390A2600DC5AB6 /* BXRenderer */,
+				9F23EB0111390A2600DC5AB6 /* Rendering */,
 				9F1D50280F5C0ACD009F0AB9 /* BXEmulator */,
 				9F496E3D108EEB0700282261 /* BXSession */,
 				9F27133610C1253E0003CB58 /* BXSessionWindow */,
@@ -852,9 +853,10 @@
 			name = BXEmulator;
 			sourceTree = "<group>";
 		};
-		9F23EB0111390A2600DC5AB6 /* BXRenderer */ = {
+		9F23EB0111390A2600DC5AB6 /* Rendering */ = {
 			isa = PBXGroup;
 			children = (
+				9FFBF67011A7F8F4000A1863 /* BXFrameRenderingView.h */,
 				9F4175EF119DCF7E00646B15 /* BXFrameRateCounterLayer.h */,
 				9F4175F0119DCF7E00646B15 /* BXFrameRateCounterLayer.m */,
 				9F4175A9119DBFDD00646B15 /* BXRenderingLayer.h */,
@@ -864,7 +866,7 @@
 				9FECE18E11A31B8B00E0EBB6 /* BXRenderer.h */,
 				9FECE18F11A31B8B00E0EBB6 /* BXRenderer.m */,
 			);
-			name = BXRenderer;
+			name = Rendering;
 			sourceTree = "<group>";
 		};
 		9F27133610C1253E0003CB58 /* BXSessionWindow */ = {
@@ -873,12 +875,12 @@
 				9FC7FADC10C08CBA00B5AF42 /* Controllers */,
 				9FBC35170F56C7B7001811F2 /* BXSessionWindow.h */,
 				9FBC35240F56C7B7001811F2 /* BXSessionWindow.m */,
-				9FBB86830F5DD070008418E6 /* BXDOSView.h */,
-				9FBB86840F5DD070008418E6 /* BXDOSView.m */,
-				9FECE1C011A3244500E0EBB6 /* BXDOSGLView.h */,
-				9FECE1C111A3244500E0EBB6 /* BXDOSGLView.m */,
 				9F59DAD310AF1042008DBBC1 /* BXProgramPanel.h */,
 				9F59DAD410AF1042008DBBC1 /* BXProgramPanel.m */,
+				9FBB86830F5DD070008418E6 /* BXDOSLayerView.h */,
+				9FBB86840F5DD070008418E6 /* BXDOSLayerView.m */,
+				9FECE1C011A3244500E0EBB6 /* BXDOSGLView.h */,
+				9FECE1C111A3244500E0EBB6 /* BXDOSGLView.m */,
 			);
 			name = BXSessionWindow;
 			sourceTree = "<group>";
@@ -974,6 +976,8 @@
 		9F496E3F108EEBB200282261 /* UI helpers */ = {
 			isa = PBXGroup;
 			children = (
+				9FC1620C119E9AD700705EA5 /* BXCursorFadeAnimation.h */,
+				9FC1620D119E9AD700705EA5 /* BXCursorFadeAnimation.m */,
 				9F544A7E10AB44C40030FED5 /* BXThemes.h */,
 				9F544A7F10AB44C40030FED5 /* BXThemes.m */,
 				9F69128A10A2DF8D00EA78CD /* BXValueTransformers.h */,
@@ -1484,8 +1488,6 @@
 		9FC7FADC10C08CBA00B5AF42 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				9FC1620C119E9AD700705EA5 /* BXCursorFadeAnimation.h */,
-				9FC1620D119E9AD700705EA5 /* BXCursorFadeAnimation.m */,
 				9FBC35180F56C7B7001811F2 /* BXSessionWindowController.h */,
 				9FBC35250F56C7B7001811F2 /* BXSessionWindowController.m */,
 				9F76C8530F6509EF0068EA1C /* BXSessionWindowController+BXRenderController.h */,
@@ -1760,7 +1762,7 @@
 				9FBC3BC80F56CEA2001811F2 /* shell_cmds.cpp in Sources */,
 				9FBC3BC90F56CEA2001811F2 /* shell_misc.cpp in Sources */,
 				9F1D50010F5C0966009F0AB9 /* BXEmulator.mm in Sources */,
-				9FBB86850F5DD070008418E6 /* BXDOSView.m in Sources */,
+				9FBB86850F5DD070008418E6 /* BXDOSLayerView.m in Sources */,
 				9F2D76C30F61327D00D4E563 /* BXEmulator+BXRendering.mm in Sources */,
 				9FC3B2550F62D9CE006DE439 /* BXSession+BXEmulatorController.m in Sources */,
 				9F76C8550F6509EF0068EA1C /* BXSessionWindowController+BXRenderController.m in Sources */,

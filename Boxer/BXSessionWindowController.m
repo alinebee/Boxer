@@ -15,7 +15,6 @@
 
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXInputHandler.h"
-#import "BXDOSView.h"
 
 #import "BXCloseAlert.h"
 #import "BXSession+BXDragDrop.h"

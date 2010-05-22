@@ -6,12 +6,14 @@
  */
 
 
-//BXDOSGLView class description goes here.
+//BXDOSGLView is an NSOpenGLView subclass which displays DOSBox's rendered output.
+//It manages a BXRenderer object to do the actual drawing, passing it new frames to draw
+//and notifying it of changes to the view dimensions.
 
-#import "BXDOSView.h"
+#import "BXFrameRenderingView.h"
 
 @class BXRenderer;
-@interface BXDOSGLView : NSOpenGLView <BXDOSView>
+@interface BXDOSGLView : NSOpenGLView <BXFrameRenderingView>
 {
 	BXRenderer *renderer;
 }

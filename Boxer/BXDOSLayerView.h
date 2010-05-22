@@ -6,25 +6,19 @@
  */
 
 
-//BXDOSView is an NSOpenGLView subclass which displays DOSBox's rendered output.
-//It relies on a BXRenderer object to do the actual drawing: telling it to draw when needed,
-//and notifying it of changes to the viewport dimensions.
+//BXDOSLayerView is a layer-backed implementation of the BXFrameRenderingView protocol.
+//It uses a CAOpenGLLayer subclass for displaying frame content, and unlike BXDOSGLView
+//it can display other views or layers over the top of this content.
 
-#import <Cocoa/Cocoa.h>
+//This layer-based drawing approach is not currently used as it has significant unresolved
+//performance problems compared to BXDOSGLView.
+
+#import "BXFrameRenderingView.h"
 
 @class BXRenderingLayer;
 @class BXFrameRateCounterLayer;
-@class BXFrameBuffer;
 
-
-@protocol BXDOSView
-@property (assign) BOOL managesAspectRatio;
-
-- (void) updateWithFrame: (BXFrameBuffer *)frame;
-
-@end
-
-@interface BXDOSLayerView : NSView <BXDOSView>
+@interface BXDOSLayerView : NSView <BXFrameRenderingView>
 {
 	BXRenderingLayer *renderingLayer;
 	BXFrameRateCounterLayer *frameRateLayer;

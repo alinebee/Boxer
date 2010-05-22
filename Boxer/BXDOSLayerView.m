@@ -6,7 +6,7 @@
  */
 
 
-#import "BXDOSView.h"
+#import "BXDOSLayerView.h"
 #import "BXGeometry.h"
 #import "BXRenderingLayer.h"
 #import "BXFrameRateCounterLayer.h"
@@ -16,7 +16,6 @@
 
 @implementation BXDOSLayerView
 @synthesize renderingLayer, frameRateLayer;
-
 
 - (void) awakeFromNib
 {

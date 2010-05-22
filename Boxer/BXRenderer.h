@@ -6,7 +6,16 @@
  */
 
 
-//BXRenderer class description goes here.
+//BXRenderer is a view- and context-agnostic class for rendering frame content using OpenGL.
+//It is responsible for preparing a specified CGL context, creating textures and framebuffers,
+//managing the viewport, reading frame data, and actually rendering the frames.
+
+//BXRenderer does not own or retain the OpenGL context, and tries to leave the context in the
+//state in which it found it after every frame (as is required for CAOpenGLLayer-based drawing.)
+
+//In future, some of BXRenderer's rendering functionality will be moved off into rendering-style
+//child objects. These will request textures and framebuffers from BXRenderer, and render into
+//them using their own specific shaders and rendering approach.
 
 #import <Foundation/Foundation.h>
 #import <OpenGL/OpenGL.h>
@@ -39,16 +48,53 @@
 	NSTimeInterval renderingTime;
 	CGFloat frameRate;	
 }
+
+#pragma mark -
+#pragma mark Properties
+
+//The current frame that will be rendered when renderToGLContext: is called.
 @property (retain) BXFrameBuffer *currentFrame;
+
+//The frames-per-second we are producing, measured as the time between the last two rendered frames.
+//Note that BXRenderer is only rendered when the frame or viewport changes, so this rate will only
+//ever be as fast as the DOS program is changing the screen.
 @property (assign) CGFloat frameRate;
-@property (assign) CGRect canvas;
-@property (assign) BOOL maintainsAspectRatio;
+
+//The time it took to render the last frame, measured as the time renderToGLContext: was called to
+//the time when renderToGLContext: finished. This measures the efficiency of the rendering pipeline.
 @property (assign) NSTimeInterval renderingTime;
 
+//The bounds of the view/layer in which we are rendering.
+//Set by the view, and used for viewport and scaling calculations.
+@property (assign) CGRect canvas;
+
+//Whether to set the GL viewport to match the aspect ratio of the current frame. Set by the view.
+//This is only enabled for fullscreen mode; in windowed mode, the window manages the aspect ratio itself.
+@property (assign) BOOL maintainsAspectRatio;
+
+
+#pragma mark -
+#pragma mark Methods
+
+//Replaces the current frame with a new/updated one for rendering.
+//Next time renderToGLContext is called, the rendering state will be updated
+//to match the new frame and the new frame will be rendered. 
 - (void) updateWithFrame: (BXFrameBuffer *)frame;
 
+//Prepare the renderer state for rendering into the specified OpenGL context.
 - (void) prepareForGLContext:	(CGLContextObj)glContext;
+
+//Release resources (textures, framebuffers etc.) that were created for the specified
+//OpenGL context.
 - (void) tearDownGLContext:		(CGLContextObj)glContext;
+
+//Returns whether the renderer is ready to render the current frame.
+//Currently this ignores the context and always returns YES as long as there is a frame to render.
 - (BOOL) canRenderToGLContext:	(CGLContextObj)glContext;
+
+//Renders the current frame into the specified context.
+//This also adjusts the GL viewport, enables and disables OpenGL features, generates/updates the
+//frame texture and resizes the framebuffer if necessary. All changes to OpenGL state are then 
+//undone at the end of the frame, as expected by CAOpenGLLayer.
 - (void) renderToGLContext:		(CGLContextObj)glContext;
 @end

@@ -7,7 +7,7 @@
 
 
 #import "BXCursorFadeAnimation.h"
-#import "BXDOSViewController.h"
+#import "BXInputController.h"
 
 
 @implementation BXCursorFadeAnimation

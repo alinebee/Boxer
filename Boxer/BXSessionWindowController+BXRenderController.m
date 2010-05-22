@@ -10,7 +10,7 @@
 #import "BXSessionWindow.h"
 #import "BXEmulator.h"
 #import "NSWindow+BXWindowSizing.h"
-#import "BXDOSViewController.h"
+#import "BXInputController.h"
 #import "BXFrameRenderingView.h"
 #import "BXFrameBuffer.h"
 
@@ -126,7 +126,7 @@
 		[theView setNextResponder: currentResponder];
 		
 		//Ensure that the mouse is locked for fullscreen mode
-		[DOSViewController setMouseLocked: YES];
+		[inputController setMouseLocked: YES];
 		
 		//Tell the view to manage aspect ratio correction in fullscreen mode
 		[theView setManagesAspectRatio: YES];
@@ -151,7 +151,7 @@
 		[theWindow setAcceptsMouseMovedEvents: YES];
 		
 		//Unlock the mouse after leaving fullscreen
-		[DOSViewController setMouseLocked: NO];
+		[inputController setMouseLocked: NO];
 	}
 	
 	[self didChangeValueForKey: @"fullScreen"];

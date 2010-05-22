@@ -6,7 +6,10 @@
  */
 
 
-//BXDOSViewController class description goes here.
+//BXInputController processes keyboard and mouse events received by its view and turns them
+//into input commands to the emulator's own input handler (which for convenience is set as the
+//controller's representedObject).
+//It also manages mouse locking and the appearance and behaviour of the OS X mouse cursor.
 
 #import <Cocoa/Cocoa.h>
 
@@ -14,7 +17,7 @@
 @class BXEmulator;
 @class BXCursorFadeAnimation;
 
-@interface BXDOSViewController : NSViewController
+@interface BXInputController : NSViewController
 {	
 	BXCursorFadeAnimation *cursorFade;
 	
@@ -23,18 +26,29 @@
 	
 	NSPoint lastMousePosition;
 	BOOL discardNextMouseDelta;
+	NSUInteger simulatedMouseButtons;
 	
 	IBOutlet BXSessionWindowController *windowController;
 }
 
+#pragma mark -
+#pragma mark Properties
+
 //Whether the mouse is in use by the DOS program. Set programmatically to match the emulator.
 @property (assign) BOOL mouseActive;
+
 //Set/get whether the mouse is locked to the DOS view.
 @property (assign) BOOL mouseLocked;
 
+//The parent window controller that controls us.
 @property (assign) BXSessionWindowController *windowController;
 
+
+#pragma mark -
+#pragma mark Methods
+
 //Returns whether the specified cursor animation should continue.
+//Called by our cursor animation as a delegate method.
 - (BOOL) animationShouldChangeCursor: (BXCursorFadeAnimation *)cursorAnimation;
 
 //Returns whether the mouse is currently within our view.
@@ -49,13 +63,4 @@
 //Lock/unlock the mouse.
 - (IBAction) toggleMouseLocked: (id)sender;
 
-//Warp the OS X cursor to the specified point on our virtual mouse canvas.
-//Used when locking and unlocking the mouse.
-- (void) _syncOSXCursorToPointInCanvas: (NSPoint)point;
-
-//Does the fiddly internal work of locking/unlocking the mouse.
-- (void) _applyMouseLockState;
-
-//Returns whether we should have control of the mouse cursor state.
-- (BOOL) _controlsCursor;
 @end

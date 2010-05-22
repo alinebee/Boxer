@@ -10,7 +10,7 @@
 #import "BXAppController.h"
 #import "BXSessionWindowController+BXRenderController.h"
 #import "BXInspectorController.h"
-#import "BXDOSViewController.h"
+#import "BXInputController.h"
 #import "BXSession.h"
 #import "BXEmulator.h"
 
@@ -45,12 +45,12 @@
 						  context: nil];
 	
 	[windowController addObserver: self
-					   forKeyPath: @"DOSViewController.mouseLocked"
+					   forKeyPath: @"inputController.mouseLocked"
 						  options: NSKeyValueObservingOptionInitial
 						  context: nil];
 	
 	[windowController addObserver: self
-					   forKeyPath: @"DOSViewController.mouseActive"
+					   forKeyPath: @"inputController.mouseActive"
 						  options: NSKeyValueObservingOptionInitial
 						  context: nil];
 	
@@ -63,7 +63,7 @@
 - (IBAction) performSegmentedButtonAction: (id)sender
 {
 	BXSessionWindowController *controller = [self windowController];
-	BOOL mouseLocked = [[controller DOSViewController] mouseLocked];
+	BOOL mouseLocked = [[controller inputController] mouseLocked];
 	
 	//Because we have no easy way of telling which segment was just toggled, just synchronise them all
 	
@@ -79,7 +79,7 @@
 	
 	if ([sender isSelectedForSegment: BXStatusBarMouseLockSegment] != mouseLocked)
 	{
-		[[controller DOSViewController] toggleMouseLocked: sender];		
+		[[controller inputController] toggleMouseLocked: sender];		
 	}
 	
 	[self _syncSegmentedButtonStates];
@@ -98,15 +98,15 @@
 + (NSSet *) keyPathsForValuesAffectingNotificationText
 {
 	return [NSSet setWithObjects:
-			@"windowController.DOSViewController.mouseActive",
-			@"windowController.DOSViewController.mouseLocked",
-			@"windowController.DOSViewController.mouseInView",
+			@"windowController.inputController.mouseActive",
+			@"windowController.inputController.mouseLocked",
+			@"windowController.inputController.mouseInView",
 			nil];
 }
 
 - (NSString *) notificationText
 {
-	BXDOSViewController *viewController = [[self windowController] DOSViewController];
+	BXInputController *viewController = [[self windowController] inputController];
 	if ([viewController mouseActive])
 	{
 		if ([viewController mouseLocked])	return NSLocalizedString(@"Cmd-click to release the mouse.",
@@ -129,10 +129,10 @@
 	
 	[statusBarControls setSelected: [[NSApp delegate] inspectorPanelShown]	forSegment: BXStatusBarInspectorSegment];
 	[statusBarControls setSelected: [windowController programPanelShown]	forSegment: BXStatusBarProgramPanelSegment];
-	[statusBarControls setSelected: [[windowController DOSViewController] mouseLocked]	forSegment: BXStatusBarMouseLockSegment];
+	[statusBarControls setSelected: [[windowController inputController] mouseLocked]	forSegment: BXStatusBarMouseLockSegment];
 	
 	[statusBarControls setEnabled:	[[windowController document] isGamePackage]	forSegment: BXStatusBarProgramPanelSegment];
-	[statusBarControls setEnabled:	[[windowController DOSViewController] mouseActive]	forSegment: BXStatusBarMouseLockSegment];
+	[statusBarControls setEnabled:	[[windowController inputController] mouseActive]	forSegment: BXStatusBarMouseLockSegment];
 	
 	NSString *panelButtonImage;
 	if ([statusBarControls isSelectedForSegment: BXStatusBarProgramPanelSegment])

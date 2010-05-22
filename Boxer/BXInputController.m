@@ -6,7 +6,8 @@
  */
 
 
-#import "BXDOSViewController.h"
+#import "BXInputController.h"
+#import "BXEventConstants.h"
 #import "BXSessionWindowController.h"
 #import "BXInputHandler.h"
 #import "BXEmulator.h"
@@ -15,7 +16,32 @@
 #import "BXCursorFadeAnimation.h"
 
 
-@implementation BXDOSViewController
+//Flags for which mouse buttons we are currently faking (for Ctrl- and Opt-clicking.)
+//Note that while these are ORed together, there will currently only ever be one of them active at a time.
+enum {
+	BXNoSimulatedButtons			= 0,
+	BXSimulatedButtonRight			= 1,
+	BXSimulatedButtonMiddle			= 2,
+	BXSimulatedButtonLeftAndRight	= 4,
+};
+
+
+@interface BXInputController (BXInputControllerInternals)
+
+//Warp the OS X cursor to the specified point on our virtual mouse canvas.
+//Used when locking and unlocking the mouse.
+- (void) _syncOSXCursorToPointInCanvas: (NSPoint)point;
+
+//Does the fiddly internal work of locking/unlocking the mouse.
+- (void) _applyMouseLockState;
+
+//Returns whether we should have control of the mouse cursor state.
+- (BOOL) _controlsCursor;
+
+@end
+
+
+@implementation BXInputController
 @synthesize windowController;
 @synthesize mouseLocked, mouseActive;
 
@@ -38,11 +64,11 @@
 	//in case we lock the mouse before receiving a mouseMoved event.
 	lastMousePosition = NSMakePoint(0.5, 0.5);
 	
-	//Insert ourselves into the responder chain as the view's next responder
+	//Insert ourselves into the responder chain as our view's next responder
 	[self setNextResponder: [[self view] nextResponder]];
 	[[self view] setNextResponder: self];
 	 
-	//Set up cursor region for mouse handling
+	//Set up a cursor region in the view for mouse handling
 	NSTrackingAreaOptions options = NSTrackingMouseEnteredAndExited | NSTrackingEnabledDuringMouseDrag | NSTrackingCursorUpdate | NSTrackingActiveInKeyWindow | NSTrackingInVisibleRect | NSTrackingAssumeInside;
 	
 	NSTrackingArea *trackingArea = [[NSTrackingArea alloc] initWithRect: NSZeroRect
@@ -53,6 +79,7 @@
 	[[self view] addTrackingArea: trackingArea];
 	[trackingArea release];	
 	 
+	
 	//Set up our cursor fade animation
 	cursorFade = [[BXCursorFadeAnimation alloc] initWithDuration: 0.5
 												  animationCurve: NSAnimationEaseIn];
@@ -72,7 +99,7 @@
 
 	
 #pragma mark -
-#pragma mark Cursor handling
+#pragma mark Cursor and event state handling
 
 - (BOOL) mouseInView
 {
@@ -126,23 +153,89 @@
 }
 
 
-#pragma mark -
-#pragma mark Event responding
-
 - (void) didResignKey
 {
 	[self setMouseLocked: NO];
 	[[[self emulator] inputHandler] lostFocus];
 }
 
+#pragma mark -
+#pragma mark Mouse events
+
 - (void) mouseDown: (NSEvent *)theEvent
 {
-	//Cmd-left-click toggles mouse-locking
-	if ([theEvent modifierFlags] & NSCommandKeyMask) [self toggleMouseLocked: self];
+	id inputHandler = [self representedObject];
 	
-	//Otherwise, pass the click on as-is
-	else [super mouseDown: theEvent];
+	NSUInteger modifiers = [theEvent modifierFlags];
+	BOOL optModified	= (modifiers & NSAlternateKeyMask) > 0;
+	BOOL ctrlModified	= (modifiers & NSControlKeyMask) > 0;
+	BOOL cmdModified	= (modifiers & NSCommandKeyMask) > 0;
+
+	//Cmd-clicking toggles mouse-locking
+	if (cmdModified) [self toggleMouseLocked: self];
+	
+	//Ctrl-Opt-clicking simulates a simultaneous left- and right-click
+	//(for those rare games that need it, like Syndicate)
+	else if (optModified && ctrlModified)
+	{
+		simulatedMouseButtons |= BXSimulatedButtonLeftAndRight;
+		[inputHandler mouseButtonPressed: OSXMouseButtonLeft withModifiers: modifiers];
+		[inputHandler mouseButtonPressed: OSXMouseButtonRight withModifiers: modifiers];
+	}
+	
+	//Ctrl-clicking simulates a right mouse-click
+	else if (ctrlModified)
+	{
+		simulatedMouseButtons |= BXSimulatedButtonRight;
+		[inputHandler mouseButtonPressed: OSXMouseButtonRight withModifiers: modifiers];
+	}
+	
+	//Opt-clicking simulates a middle mouse-click
+	else if (optModified)
+	{
+		simulatedMouseButtons |= BXSimulatedButtonMiddle;
+		[inputHandler mouseButtonPressed: OSXMouseButtonMiddle withModifiers: modifiers];
+	}
+	
+	//Otherwise, pass the left click on as-is
+	else [inputHandler mouseButtonPressed: OSXMouseButtonLeft withModifiers: modifiers];
 }
+
+- (void) rightMouseDown: (NSEvent *)theEvent
+{
+	[[self representedObject] mouseButtonPressed: OSXMouseButtonRight withModifiers: [theEvent modifierFlags]];
+}
+
+- (void) otherMouseDown: (NSEvent *)theEvent
+{
+	if ([theEvent buttonNumber] == OSXMouseButtonMiddle)
+		[[self representedObject] mouseButtonPressed: OSXMouseButtonMiddle withModifiers: [theEvent modifierFlags]];
+	else [super otherMouseDown: theEvent];
+}
+
+- (void) mouseUp: (NSEvent *)theEvent
+{
+	id inputHandler = [self representedObject];
+	NSUInteger modifiers = [theEvent modifierFlags];
+
+	if (simulatedMouseButtons)
+	{
+		if (simulatedMouseButtons & BXSimulatedButtonLeftAndRight)
+		{
+			[inputHandler mouseButtonReleased: OSXMouseButtonLeft withModifiers: modifiers];
+			[inputHandler mouseButtonReleased: OSXMouseButtonRight withModifiers: modifiers];
+		}
+		if (simulatedMouseButtons & BXSimulatedButtonRight)
+			[inputHandler mouseButtonReleased: OSXMouseButtonRight withModifiers: modifiers];
+		if (simulatedMouseButtons & BXSimulatedButtonMiddle)
+			[inputHandler mouseButtonReleased: OSXMouseButtonMiddle withModifiers: modifiers];
+		
+		simulatedMouseButtons = BXNoSimulatedButtons;
+	}
+	//Pass the mouse release as-is to our input handler
+	else [inputHandler mouseButtonReleased: OSXMouseButtonLeft withModifiers: modifiers];
+}
+
 
 //Work out mouse motion relative to the DOS viewport canvas, passing on the current position
 //and last movement delta to the emulator's input handler.
@@ -217,6 +310,9 @@
 	[self didChangeValueForKey: @"mouseInView"];
 }
 
+#pragma mark -
+#pragma mark Key events
+
 - (void) keyDown: (NSEvent *)theEvent
 {
 	//Pressing ESC while in fullscreen mode and not running a program will exit fullscreen mode. 	
@@ -227,9 +323,70 @@
 		[[self windowController] exitFullScreen: self];
 	}
 	
-	//Otherwise, send the event onwards
-	else [[self nextResponder] keyDown: theEvent];
+	//If the keypress was command-modified, don't pass it on to the emulator as it indicates
+	//a failed key equivalent.
+	//(This is consistent with how other OS X apps with textinput handle Cmd-keypresses.)
+	else if ([theEvent modifierFlags] & NSCommandKeyMask)
+		[super keyDown: theEvent];
+	
+	//Otherwise, pass the keypress on to our input handler.
+	else [[self representedObject] sendKeyEventWithCode: [theEvent keyCode]
+												pressed: YES
+										  withModifiers: [theEvent modifierFlags]];
 }
+
+- (void) keyUp: (NSEvent *)theEvent
+{
+	//If the keypress was command-modified, don't pass it on to the emulator as it indicates
+	//a failed key equivalent.
+	//(This is consistent with how other OS X apps with textinput handle Cmd-keypresses.)
+	if ([theEvent modifierFlags] & NSCommandKeyMask)
+		[super keyUp: theEvent];
+	
+	[[self representedObject] sendKeyEventWithCode: [theEvent keyCode]
+										   pressed: NO withModifiers:
+	 [theEvent modifierFlags]];
+}
+
+//Convert flag changes into proper key events
+- (void) flagsChanged: (NSEvent *)theEvent
+{
+	unsigned short keyCode	= [theEvent keyCode];
+	NSUInteger modifiers	= [theEvent modifierFlags];
+	NSUInteger flag;
+	
+	//We can determine which modifier key was involved by its key code,
+	//but we can't determine from the event whether it was pressed or released.
+	//So, we check whether the corresponding modifier flag is active or not.	
+	switch (keyCode)
+	{
+		case kVK_Control:		flag = BXLeftControlKeyMask;	break;
+		case kVK_Option:		flag = BXLeftAlternateKeyMask;	break;
+		case kVK_Shift:			flag = BXLeftShiftKeyMask;		break;
+			
+		case kVK_RightControl:	flag = BXRightControlKeyMask;	break;
+		case kVK_RightOption:	flag = BXRightAlternateKeyMask;	break;
+		case kVK_RightShift:	flag = BXRightShiftKeyMask;		break;
+			
+		case kVK_CapsLock:		flag = NSAlphaShiftKeyMask;		break;
+			
+		default:
+			//Ignore all other modifier types
+			return;
+	}
+	
+	BOOL pressed = (modifiers & flag) == flag;
+	
+	//Implementation note: you might think that CapsLock has to be handled differently since
+	//it's a toggle. However, DOSBox expects a keydown event when CapsLock is toggled on,
+	//and a keyup event when CapsLock is toggled off, so this default behaviour is fine.
+	
+	[[self representedObject] sendKeyEventWithCode: keyCode
+										   pressed: pressed
+									 withModifiers: modifiers];
+}
+
+
 
 
 #pragma mark -

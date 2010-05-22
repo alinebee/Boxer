@@ -59,7 +59,7 @@
 		9F6BA6F910A9FB92005A3E2A /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F6BA6F810A9FB92005A3E2A /* Growl.framework */; };
 		9F6BA6FD10A9FBAB005A3E2A /* Growl.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F6BA6F810A9FB92005A3E2A /* Growl.framework */; };
 		9F6BA70510A9FC77005A3E2A /* BXGrowlController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F6BA70410A9FC77005A3E2A /* BXGrowlController.m */; };
-		9F765649119403520082A06A /* BXDOSViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F765648119403520082A06A /* BXDOSViewController.m */; };
+		9F765649119403520082A06A /* BXInputController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F765648119403520082A06A /* BXInputController.m */; };
 		9F76C8550F6509EF0068EA1C /* BXSessionWindowController+BXRenderController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F76C8540F6509EF0068EA1C /* BXSessionWindowController+BXRenderController.m */; };
 		9F76D1B910CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F76D1B810CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.m */; };
 		9F76D3F710CBC3B300C3B081 /* GNU General Public License.txt in Resources */ = {isa = PBXBuildFile; fileRef = 9F76D3F510CBC3B300C3B081 /* GNU General Public License.txt */; };
@@ -360,8 +360,8 @@
 		9F6BA6F810A9FB92005A3E2A /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Growl.framework; sourceTree = "<group>"; };
 		9F6BA70310A9FC77005A3E2A /* BXGrowlController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXGrowlController.h; sourceTree = "<group>"; };
 		9F6BA70410A9FC77005A3E2A /* BXGrowlController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGrowlController.m; sourceTree = "<group>"; };
-		9F765647119403520082A06A /* BXDOSViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDOSViewController.h; sourceTree = "<group>"; };
-		9F765648119403520082A06A /* BXDOSViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDOSViewController.m; sourceTree = "<group>"; };
+		9F765647119403520082A06A /* BXInputController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXInputController.h; sourceTree = "<group>"; };
+		9F765648119403520082A06A /* BXInputController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXInputController.m; sourceTree = "<group>"; };
 		9F76C8530F6509EF0068EA1C /* BXSessionWindowController+BXRenderController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXSessionWindowController+BXRenderController.h"; sourceTree = "<group>"; };
 		9F76C8540F6509EF0068EA1C /* BXSessionWindowController+BXRenderController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXSessionWindowController+BXRenderController.m"; sourceTree = "<group>"; };
 		9F76D1B710CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSWorkspace+BXFileTypes.h"; sourceTree = "<group>"; };
@@ -695,6 +695,7 @@
 		9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = GameProfiles.plist; sourceTree = "<group>"; };
 		9FFAFE2E10DE343F00728BAC /* Configurations */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Configurations; sourceTree = "<group>"; };
 		9FFBF67011A7F8F4000A1863 /* BXFrameRenderingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFrameRenderingView.h; sourceTree = "<group>"; };
+		9FFBF6AA11A811F7000A1863 /* BXEventConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEventConstants.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1038,6 +1039,7 @@
 				9F76D1B810CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.m */,
 				9F9FE70210FA5F5800E3944B /* NSWorkspace+BXIcons.h */,
 				9F9FE70310FA5F5800E3944B /* NSWorkspace+BXIcons.m */,
+				9FFBF6AA11A811F7000A1863 /* BXEventConstants.h */,
 			);
 			path = BXToolkit;
 			sourceTree = "<group>";
@@ -1496,8 +1498,8 @@
 				9F59DED910B0159A008DBBC1 /* BXProgramPanelController.m */,
 				9F42D9DD1172481800AC6F1F /* BXStatusBarController.h */,
 				9F42D9DE1172481800AC6F1F /* BXStatusBarController.m */,
-				9F765647119403520082A06A /* BXDOSViewController.h */,
-				9F765648119403520082A06A /* BXDOSViewController.m */,
+				9F765647119403520082A06A /* BXInputController.h */,
+				9F765648119403520082A06A /* BXInputController.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -1817,7 +1819,7 @@
 				9F42D9DF1172481800AC6F1F /* BXStatusBarController.m in Sources */,
 				9FDCA790118F2B7900E2FD74 /* BXCoalface.mm in Sources */,
 				9FEF98011191E1EF002024DF /* BXInputHandler.mm in Sources */,
-				9F765649119403520082A06A /* BXDOSViewController.m in Sources */,
+				9F765649119403520082A06A /* BXInputController.m in Sources */,
 				9FB4F9E411957B55006C8AC9 /* BXFrameBuffer.m in Sources */,
 				9F4175AB119DBFDD00646B15 /* BXRenderingLayer.m in Sources */,
 				9F4175F1119DCF7E00646B15 /* BXFrameRateCounterLayer.m in Sources */,

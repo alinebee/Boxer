@@ -6,34 +6,16 @@
  */
 
 
-//BXInputHandler class description goes here.
+//BXInputHandler is a generic class for responding to input. It expects OS X key and modifier
+//constants, but does not directly accept NSEvents or interact with the OS X event framework:
+//instead, it receives specific signals from Boxer's controller classes.
 
 #import <Cocoa/Cocoa.h>
 
-enum {
-	DOSBoxMouseButtonLeft	= 0,
-	DOSBoxMouseButtonRight	= 1,
-	DOSBoxMouseButtonMiddle	= 2
-};
-
-//Modifier flag constants for left- and right-side modifier keys, copied from IOKit/IOLLEvent.h.
-//Allows us to distinguish these for DOSBox.
-enum {
-	BXLeftControlKeyMask	= 0x00000001,
-	BXLeftShiftKeyMask		= 0x00000002,
-	BXRightShiftKeyMask		= 0x00000004,
-	BXLeftCommandKeyMask	= 0x00000008,
-	BXRightCommandKeyMask	= 0x00000010,
-	BXLeftAlternateKeyMask	= 0x00000020,
-	BXRightAlternateKeyMask	= 0x00000040,
-	BXRightControlKeyMask	= 0x00002000
-};
-
 @class BXEmulator;
 
-@interface BXInputHandler : NSResponder
+@interface BXInputHandler : NSObject
 {
-	NSUInteger simulatedMouseButtons;
 	BXEmulator *emulator;
 	BOOL mouseActive;
 }
@@ -43,6 +25,10 @@ enum {
 
 //Called whenever we lose keyboard input focus. Clears all DOSBox events.
 - (void) lostFocus;
+
+//Press/release the specified mouse button, with the specified modifiers.
+- (void) mouseButtonPressed: (NSInteger)button withModifiers: (NSUInteger)modifierFlags;
+- (void) mouseButtonReleased: (NSInteger)button withModifiers: (NSUInteger) modifierFlags;
 
 //Move the mouse to a relative point on the specified canvas, by the relative delta.
 - (void) mouseMovedToPoint: (NSPoint)point

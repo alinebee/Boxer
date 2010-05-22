@@ -11,7 +11,7 @@
 #import "BXSessionWindow.h"
 #import "BXAppController.h"
 #import "BXProgramPanelController.h"
-#import "BXDOSViewController.h"
+#import "BXInputController.h"
 
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXInputHandler.h"
@@ -26,7 +26,7 @@
 #pragma mark Accessors
 
 @synthesize DOSView, DOSViewContainer, statusBar, programPanel;
-@synthesize programPanelController, DOSViewController;
+@synthesize programPanelController, inputController;
 @synthesize resizingProgrammatically;
 @synthesize emulator;
 
@@ -49,7 +49,7 @@
 	[self setStatusBar: nil],				[statusBar release];
 	[self setProgramPanel: nil],			[programPanel release];
 	[self setProgramPanelController: nil],	[programPanelController release];
-	[self setDOSViewController: nil],		[DOSViewController release];
+	[self setInputController: nil],		[inputController release];
 
 	[super dealloc];
 }
@@ -163,11 +163,8 @@
 		if (oldEmulator)
 		{
 			[oldEmulator unbind: @"aspectCorrected"];
-			[oldEmulator unbind: @"filterType"];
-			[DOSViewController unbind: @"mouseActive"];
-			
-			//Remove the emulator's responder from the responder chain
-			[DOSViewController setNextResponder: [[oldEmulator inputHandler] nextResponder]];			
+			[inputController unbind: @"mouseActive"];
+			[inputController setRepresentedObject: nil];		
 		}
 		
 		[oldEmulator autorelease];
@@ -177,25 +174,17 @@
 		{
 			NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 			
-			[newEmulator bind: @"filterType"
-				  toObject: defaults
-			   withKeyPath: @"filterType"
-				   options: nil];
-			
 			[newEmulator bind: @"aspectCorrected"
 				  toObject: defaults
 			   withKeyPath: @"aspectCorrected"
 				   options: nil];
 			
-			[DOSViewController bind: @"mouseActive"
+			[inputController bind: @"mouseActive"
 						   toObject: newEmulator
 						withKeyPath: @"inputHandler.mouseActive"
 							options: nil];
 			
-			//Put the new responder into the responder chain
-			[[newEmulator inputHandler] setNextResponder: [DOSViewController nextResponder]];
-			
-			[DOSViewController setNextResponder: [newEmulator inputHandler]];
+			[inputController setRepresentedObject: [newEmulator inputHandler]];
 		}
 	}
 	
@@ -476,7 +465,7 @@
 	if (![self isFullScreen] && ![self isResizing])
 	{
 		//Also, update the damn cursors which will have been reset by the window's resizing
-		[DOSViewController cursorUpdate: nil];
+		[inputController cursorUpdate: nil];
 	}
 }
 
@@ -501,11 +490,11 @@
 //the view is swapped to AppKit's private fullscreen window
 - (void) windowDidResignKey:	(NSNotification *) notification
 {
-	if (![self isFullScreen]) [DOSViewController didResignKey];
+	if (![self isFullScreen]) [inputController didResignKey];
 }
 - (void) windowDidResignMain:	(NSNotification *) notification
 {
-	if (![self isFullScreen]) [DOSViewController didResignKey];
+	if (![self isFullScreen]) [inputController didResignKey];
 }
 
 //Drop out of fullscreen and warn the emulator to prepare for emulation cutout when a menu opens

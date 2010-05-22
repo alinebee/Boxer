@@ -9,21 +9,14 @@
 #import "BXInputHandler.h"
 #import "BXEmulator.h"
 
-#import <Carbon/Carbon.h> //For keycode constants
-#import <SDL/SDL.h>
+#import "BXEventConstants.h"
+#import <Carbon/Carbon.h>	//For OSX keycode constants
+#import <SDL/SDL.h>			//For SDL keycode constants
 #import "config.h"
 #import "video.h"
 #import "mouse.h"
 #import "sdlmain.h"
 
-//Flags for which mouse buttons we are currently faking (for Ctrl- and Opt-clicking.)
-//Note that while these are ORed together, there will currently only ever be one of them active at a time.
-enum {
-	BXNoSimulatedButtons			= 0,
-	BXSimulatedButtonRight			= 1,
-	BXSimulatedButtonMiddle			= 2,
-	BXSimulatedButtonLeftAndRight	= 4,
-};
 
 //Declared in mapper.cpp
 void MAPPER_CheckEvent(SDL_Event *event);
@@ -48,87 +41,25 @@ void MAPPER_CheckEvent(SDL_Event *event);
 
 - (void) lostFocus
 {
-	//Release all DOSBox events when we lose responder status.
+	//Release all DOSBox events when we lose focus
 	GFX_LosingFocus();
 }
+
 
 #pragma mark -
 #pragma mark Mouse handling
 
-- (void) mouseDown: (NSEvent *)theEvent
+- (void) mouseButtonPressed: (NSInteger)button withModifiers: (NSUInteger) modifierFlags
 {
-	NSUInteger modifiers = [theEvent modifierFlags];
-	
-	BOOL optModified	= (modifiers & NSAlternateKeyMask) > 0;
-	BOOL ctrlModified	= (modifiers & NSControlKeyMask) > 0;
-	
-	//Ctrl-Opt-clicking simulates a simultaneous left- and right-click
-	//(for those rare games that use it, like Syndicate)
-	if (optModified && ctrlModified)
-	{
-		simulatedMouseButtons |= BXSimulatedButtonLeftAndRight;
-		Mouse_ButtonPressed(DOSBoxMouseButtonLeft);
-		Mouse_ButtonPressed(DOSBoxMouseButtonRight);
-	}
-	
-	//Ctrl-clicking simulates a right mouse-click
-	else if (ctrlModified)
-	{
-		simulatedMouseButtons |= BXSimulatedButtonRight;
-		Mouse_ButtonPressed(DOSBoxMouseButtonRight);
-	}
-	
-	//Opt-clicking simulates a middle mouse-click
-	else if (optModified)
-	{
-		simulatedMouseButtons |= BXSimulatedButtonMiddle;
-		Mouse_ButtonPressed(DOSBoxMouseButtonMiddle);
-	}
-	
-	//Just a plain old regular left-click
-	else
-	{
-		Mouse_ButtonPressed(DOSBoxMouseButtonLeft);
-	}
+	//Happily, DOSBox's mouse button numbering corresponds exactly to OSX's
+	Mouse_ButtonPressed(button);
 }
 
-- (void) mouseUp: (NSEvent *)theEvent
+
+- (void) mouseButtonReleased: (NSInteger)button withModifiers: (NSUInteger) modifierFlags
 {
-	//If we were faking any mouse buttons, release them now
-	if (simulatedMouseButtons)
-	{
-		if (simulatedMouseButtons & BXSimulatedButtonLeftAndRight)
-		{
-			Mouse_ButtonReleased(DOSBoxMouseButtonLeft);
-			Mouse_ButtonReleased(DOSBoxMouseButtonRight);
-		}
-		if (simulatedMouseButtons & BXSimulatedButtonRight) Mouse_ButtonReleased(DOSBoxMouseButtonRight);
-		if (simulatedMouseButtons & BXSimulatedButtonMiddle) Mouse_ButtonReleased(DOSBoxMouseButtonMiddle);
-		
-		simulatedMouseButtons = BXNoSimulatedButtons;
-	}
-	else
-	{
-		Mouse_ButtonReleased(DOSBoxMouseButtonLeft);
-	}
-
-}
-
-- (void) rightMouseDown: (NSEvent *)theEvent	{ Mouse_ButtonPressed(DOSBoxMouseButtonRight); }
-- (void) rightMouseUp: (NSEvent *)theEvent		{ Mouse_ButtonReleased(DOSBoxMouseButtonRight); }
-
-- (void) otherMouseDown: (NSEvent *)theEvent
-{
-	//Ignore all buttons other than the 'real' middle button
-	if ([theEvent buttonNumber] == 2)
-		Mouse_ButtonPressed(DOSBoxMouseButtonMiddle);
-}
-
-- (void) otherMouseUp: (NSEvent *)theEvent
-{
-	//Ignore all buttons other than the 'real' middle button
-	if ([theEvent buttonNumber] == 2)
-		Mouse_ButtonReleased(DOSBoxMouseButtonMiddle);	
+	//Happily, DOSBox's mouse button numbering corresponds exactly to OSX's
+	Mouse_ButtonReleased(button);
 }
 
 - (void) mouseMovedToPoint: (NSPoint)point
@@ -136,6 +67,7 @@ void MAPPER_CheckEvent(SDL_Event *event);
 				  onCanvas: (NSRect)canvas
 			   whileLocked: (BOOL)locked
 {
+	//TODO: control this sensitivity further up the food chain 
 	CGFloat sensitivity = sdl.mouse.sensitivity / 100.0f;
 	
 	//In DOSBox land, absolute position is from 0-1 but delta is in raw pixels,
@@ -156,65 +88,6 @@ void MAPPER_CheckEvent(SDL_Event *event);
 #pragma mark -
 #pragma mark Key handling
 
-- (void) keyUp: (NSEvent *)theEvent
-{
-	//Ignore keypresses where the Cmd key is held down, to be consistent with how other OS X
-	//applications behave.
-	//(If it was a proper key equivalent, it would have been handled before now.)
-	if ([theEvent modifierFlags] & NSCommandKeyMask)
-		return [super keyUp: theEvent];
-	
-	[self sendKeyEventWithCode: [theEvent keyCode] pressed: NO withModifiers: [theEvent modifierFlags]];
-}
-
-- (void) keyDown: (NSEvent *)theEvent
-{
-	//Ignore keypresses where the Cmd key is held down, to be consistent with how other OS X
-	//applications behave.
-	//(If it was a proper key equivalent, it would have been handled before now.)
-	if ([theEvent modifierFlags] & NSCommandKeyMask)
-		return [super keyDown: theEvent];
-	
-	[self sendKeyEventWithCode: [theEvent keyCode] pressed: YES withModifiers: [theEvent modifierFlags]];
-}
-
-//Convert flag changes into proper key events
-- (void) flagsChanged: (NSEvent *)theEvent
-{
-	unsigned short keyCode	= [theEvent keyCode];
-	NSUInteger modifiers	= [theEvent modifierFlags];
-	NSUInteger flag;
-	
-	//We can determine which modifier key was involved by its key code,
-	//but we can't determine from the event whether it was pressed or released.
-	//So, we check whether the corresponding modifier flag is active or not.	
-	switch(keyCode)
-	{
-		case kVK_Control:		flag = BXLeftControlKeyMask;	break;
-		case kVK_Option:		flag = BXLeftAlternateKeyMask;	break;
-		case kVK_Shift:			flag = BXLeftShiftKeyMask;		break;
-			
-		case kVK_RightControl:	flag = BXRightControlKeyMask;	break;
-		case kVK_RightOption:	flag = BXRightAlternateKeyMask;	break;
-		case kVK_RightShift:	flag = BXRightShiftKeyMask;		break;
-		
-		case kVK_CapsLock:		flag = NSAlphaShiftKeyMask;		break;
-		
-		default:
-			//Ignore all other modifier types
-			return;
-	}
-	
-	BOOL pressed = (modifiers & flag) == flag;
-
-	//Implementation note: you might think that CapsLock has to be handled differently since
-	//it's a toggle. However, DOSBox expects an SDL_KEYDOWN event when CapsLock is toggled on,
-	//and an SDL_KEYUP event when CapsLock is toggled off, so our normal behaviour is fine.
-		
-	[self sendKeyEventWithCode: keyCode pressed: pressed withModifiers: modifiers];
-}
-
-//Shortcut functions for sending keypresses to DOSBox
 - (void) sendKeyEventWithCode: (unsigned short)keyCode
 					  pressed: (BOOL)pressed
 				withModifiers: (NSUInteger)modifierFlags

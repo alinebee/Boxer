@@ -20,7 +20,7 @@
 @class BXSession;
 @class BXSessionWindow;
 @class BXProgramPanelController;
-@class BXDOSViewController;
+@class BXInputController;
 @class BXEmulator;
 @protocol BXFrameRenderingView;
 
@@ -32,7 +32,7 @@
 	IBOutlet NSView *programPanel;
 
 	IBOutlet BXProgramPanelController *programPanelController;
-	IBOutlet BXDOSViewController *DOSViewController;
+	IBOutlet BXInputController *inputController;
 	
 	BXEmulator *emulator;
 	
@@ -41,7 +41,7 @@
 }
 //Our view controller for the program picker panel.
 @property (retain) BXProgramPanelController *programPanelController;
-@property (retain) BXDOSViewController *DOSViewController;
+@property (retain) BXInputController *inputController;
 
 @property (retain) NSView <BXFrameRenderingView> *DOSView;	//The view that displays DOSBox's graphical output.
 @property (retain) NSView *DOSViewContainer;	//A wrapper for the DOSView to aid window-sizing behaviour.

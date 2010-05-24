@@ -8,6 +8,7 @@
 
 #import "BXRenderer.h"
 #import <OpenGL/CGLMacro.h>
+#import "Shader.h"
 #import "BXFrameBuffer.h"
 #import "BXGeometry.h"
 
@@ -42,7 +43,7 @@ const CGFloat BXScalingBufferScaleCutoff = 3;
 
 
 @implementation BXRenderer
-@synthesize currentFrame, frameRate, renderingTime, canvas, maintainsAspectRatio;
+@synthesize currentFrame, currentShader, frameRate, renderingTime, canvas, maintainsAspectRatio;
 
 - (void) dealloc
 {
@@ -104,7 +105,7 @@ const CGFloat BXScalingBufferScaleCutoff = 3;
 	//Check what the largest texture size we can support is
 	GLint maxTextureDims;
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureDims);
-	maxTextureSize = CGSizeMake((CGFloat)maxTextureDims, (CGFloat)maxTextureDims);	//TODO: we'll load and compile our shaders here
+	maxTextureSize = CGSizeMake((CGFloat)maxTextureDims, (CGFloat)maxTextureDims);
 	
 	//Check for FBO support to see if we can use a scaling buffer
 	supportsFBO = (BOOL)gluCheckExtension((const GLubyte *)"GL_EXT_framebuffer_object",
@@ -117,7 +118,9 @@ const CGFloat BXScalingBufferScaleCutoff = 3;
 		maxScalingBufferSize = maxTextureSize;
 	}
 	
-	//TODO: we'll load and compile our shaders here
+	Shader *shader = [[Shader alloc] initWithShadersInAppBundle: @"Scale2xHQ"];
+	if (NO && [shader programObject]) [self setCurrentShader: shader];
+	[shader release];
 }
 
 - (void) tearDownGLContext: (CGLContextObj)glContext
@@ -201,8 +204,11 @@ const CGFloat BXScalingBufferScaleCutoff = 3;
 			   (GLsizei)viewportRect.size.width,
 			   (GLsizei)viewportRect.size.height);
 	
-	glClearColor(0, 0, 0, 1);
-	glClear(GL_COLOR_BUFFER_BIT);
+	if (!CGRectEqualToRect(viewportRect, canvas))
+	{
+		glClearColor(0, 0, 0, 1);
+		glClear(GL_COLOR_BUFFER_BIT);
+	}
 	
 	//Activate our scaling buffer, which we'll draw the frame into first
 	if (useScalingBuffer)
@@ -216,6 +222,7 @@ const CGFloat BXScalingBufferScaleCutoff = 3;
 	
 	//Draw the frame texture as a quad filling the viewport/framebuffer
 	//-----------
+
 	NSSize frameSize = [[self currentFrame] resolution];
 	CGRect frameRegion = CGRectMake(0, 0, frameSize.width, frameSize.height);
 	GLfloat frameVerts[] = {
@@ -225,11 +232,18 @@ const CGFloat BXScalingBufferScaleCutoff = 3;
 		-1,	-1
 	};
 	
+	if ([self currentShader])
+	{
+		glUseProgramObjectARB([[self currentShader] programObject]);
+		glUniform1iARB([[self currentShader] getUniformLocation: "OGL2Texture"], 0);
+	}
+	
 	[self _renderTexture: frameTexture
 			  fromRegion: frameRegion
 				toPoints: frameVerts
 			inCGLContext: glContext];
 	
+	if ([self currentShader]) glUseProgramObjectARB(NULL);
 	
 	if (useScalingBuffer)
 	{

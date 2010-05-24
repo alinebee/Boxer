@@ -13,8 +13,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class BXSessionWindowController;
-@class BXEmulator;
 @class BXCursorFadeAnimation;
 
 @interface BXInputController : NSViewController
@@ -27,8 +25,6 @@
 	NSPoint lastMousePosition;
 	BOOL discardNextMouseDelta;
 	NSUInteger simulatedMouseButtons;
-	
-	IBOutlet BXSessionWindowController *windowController;
 }
 
 #pragma mark -
@@ -40,9 +36,6 @@
 //Set/get whether the mouse is locked to the DOS view.
 @property (assign) BOOL mouseLocked;
 
-//The parent window controller that controls us.
-@property (assign) BXSessionWindowController *windowController;
-
 
 #pragma mark -
 #pragma mark Methods
@@ -53,9 +46,6 @@
 
 //Returns whether the mouse is currently within our view.
 - (BOOL) mouseInView;
-
-//Returns the emulator for the session we belong to.
-- (BXEmulator *) emulator;
 
 //Called by BXSessionWindowController whenever the view loses keyboard focus.
 - (void) didResignKey;

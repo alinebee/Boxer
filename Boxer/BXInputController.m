@@ -8,7 +8,6 @@
 
 #import "BXInputController.h"
 #import "BXEventConstants.h"
-#import "BXSessionWindowController.h"
 #import "BXInputHandler.h"
 #import "BXEmulator.h"
 #import "BXAppController.h"
@@ -42,18 +41,7 @@ enum {
 
 
 @implementation BXInputController
-@synthesize windowController;
 @synthesize mouseLocked, mouseActive;
-
-
-#pragma mark -
-#pragma mark Helper accessors
-
-- (BXEmulator *) emulator
-{
-	return [[self windowController] emulator];
-}
-
 
 #pragma mark -
 #pragma mark Initialization and cleanup
@@ -156,7 +144,7 @@ enum {
 - (void) didResignKey
 {
 	[self setMouseLocked: NO];
-	[[[self emulator] inputHandler] lostFocus];
+	[[self representedObject] lostFocus];
 }
 
 #pragma mark -
@@ -284,10 +272,10 @@ enum {
 	//Record the position for next time.
 	lastMousePosition = relativePosition;
 	
-	[[[self emulator] inputHandler] mouseMovedToPoint: relativePosition
-											 byAmount: relativeDelta
-											 onCanvas: canvas
-										  whileLocked: [self mouseLocked]];
+	[[self representedObject] mouseMovedToPoint: relativePosition
+									   byAmount: relativeDelta
+									   onCanvas: canvas
+									whileLocked: [self mouseLocked]];
 }
 
 //Treat drag events as simple mouse movement
@@ -318,9 +306,9 @@ enum {
 	//Pressing ESC while in fullscreen mode and not running a program will exit fullscreen mode. 	
 	if ([[theEvent charactersIgnoringModifiers] isEqualToString: @"\e"] &&
 		[[self view] isInFullScreenMode] &&
-		![[self emulator] isRunningProcess])
+		![[[self representedObject] emulator] isRunningProcess])
 	{
-		[[self windowController] exitFullScreen: self];
+		[NSApp sendAction: @selector(exitFullScreen:) to: nil from: self];
 	}
 	
 	//If the keypress was command-modified, don't pass it on to the emulator as it indicates

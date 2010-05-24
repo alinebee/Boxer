@@ -10,7 +10,7 @@
 //to draw as an OpenGL texture. It keeps track of the frame's resolution, bit depth and intended
 //display scale.
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
 @interface BXFrameBuffer : NSObject
 {

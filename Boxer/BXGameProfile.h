@@ -10,8 +10,7 @@
 //At the moment, game profiles are represented as NSDictionaries and this class only has static
 //methods; in future, they may be replaced with a custom class.
 
-#import <Cocoa/Cocoa.h>
-
+#import <Foundation/Foundation.h>
 
 //Constants used by eraOfGameAtPath:
 enum {

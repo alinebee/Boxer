@@ -235,7 +235,7 @@
 {
 	//If emulation is not active, don't bother calculating constraints
 	if (![[self emulator] isExecuting]) return proposedFrameSize;
-	
+
 	NSInteger snapThreshold	= [[NSUserDefaults standardUserDefaults] integerForKey: @"windowSnapDistance"];
 	NSSize snapIncrement	= currentScaledSize;
 	CGFloat aspectRatio		= aspectRatioOfSize([theWindow contentAspectRatio]);

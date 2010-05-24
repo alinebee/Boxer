@@ -10,7 +10,7 @@
 //constants, but does not directly accept NSEvents or interact with the OS X event framework:
 //instead, it receives specific signals from Boxer's controller classes.
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
 @class BXEmulator;
 

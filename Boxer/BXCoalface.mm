@@ -231,7 +231,17 @@ const char * boxer_currentDOSKeyboardLayout()
 void boxer_setMouseActive(bool mouseActive)
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	return [[emulator inputHandler] setMouseActive: mouseActive];
+	[[emulator inputHandler] setMouseActive: mouseActive];
+}
+
+void boxer_mouseMovedToPoint(float x, float y)
+{
+	//Point is inverted to reflect AppKit-based mouse positioning
+	//That I am doing this here of all places indicates that I really
+	//need to clean up how coordinate orientation is handled
+	NSPoint point = NSMakePoint((CGFloat)x, 1 - (CGFloat)y);
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+	[[emulator inputHandler] setMousePosition: point];
 }
 
 SDLMod boxer_currentSDLModifiers()

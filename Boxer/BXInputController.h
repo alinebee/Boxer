@@ -14,6 +14,7 @@
 #import <Cocoa/Cocoa.h>
 
 @class BXCursorFadeAnimation;
+@class BXInputHandler;
 
 @interface BXInputController : NSViewController
 {	
@@ -22,8 +23,10 @@
 	BOOL mouseActive;
 	BOOL mouseLocked;
 	
+	
 	NSPoint lastMousePosition;
-	BOOL discardNextMouseDelta;
+	NSPoint distanceWarped;
+	BOOL updatingMousePosition;
 	NSUInteger simulatedMouseButtons;
 }
 
@@ -39,6 +42,9 @@
 
 #pragma mark -
 #pragma mark Methods
+
+//Overridden to specify the class expected for our represented object
+- (void) setRepresentedObject: (BXInputHandler *)representedObject;
 
 //Returns whether the specified cursor animation should continue.
 //Called by our cursor animation as a delegate method.

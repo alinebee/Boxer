@@ -71,6 +71,7 @@ extern "C" {
 	bool boxer_handleRunLoop();
 	
 	void boxer_setMouseActive(bool mouseActive);
+	void boxer_mouseMovedToPoint(float x, float y);
 	
 	SDLMod boxer_currentSDLModifiers();
 #if __cplusplus

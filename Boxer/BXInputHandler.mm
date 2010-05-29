@@ -24,6 +24,7 @@ void MAPPER_CheckEvent(SDL_Event *event);
 @implementation BXInputHandler
 @synthesize emulator;
 @synthesize mouseActive;
+@synthesize mousePosition;
 
 #pragma mark -
 #pragma mark Controlling response state
@@ -83,7 +84,6 @@ void MAPPER_CheckEvent(SDL_Event *event);
 					  (1 - point.y) * sensitivity,
 					  NO);
 }
-		 
 		 
 #pragma mark -
 #pragma mark Key handling

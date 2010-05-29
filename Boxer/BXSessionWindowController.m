@@ -163,7 +163,6 @@
 		if (oldEmulator)
 		{
 			[oldEmulator unbind: @"aspectCorrected"];
-			[inputController unbind: @"mouseActive"];
 			[inputController setRepresentedObject: nil];		
 		}
 		
@@ -178,11 +177,6 @@
 				  toObject: defaults
 			   withKeyPath: @"aspectCorrected"
 				   options: nil];
-			
-			[inputController bind: @"mouseActive"
-						   toObject: newEmulator
-						withKeyPath: @"inputHandler.mouseActive"
-							options: nil];
 			
 			[inputController setRepresentedObject: [newEmulator inputHandler]];
 		}

@@ -18,10 +18,16 @@
 {
 	BXEmulator *emulator;
 	BOOL mouseActive;
+	NSPoint mousePosition;
 }
 @property (assign) BXEmulator *emulator;
+
 //Whether we are responding to mouse input.
 @property (assign) BOOL mouseActive;
+
+//Where DOSBox thinks the mouse is.
+@property (assign) NSPoint mousePosition;
+
 
 //Called whenever we lose keyboard input focus. Clears all DOSBox events.
 - (void) lostFocus;

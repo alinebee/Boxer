@@ -35,7 +35,7 @@ enum {
 - (NSPoint) _pointOnScreen: (NSPoint)canvasPoint;
 
 //Does the fiddly internal work of locking/unlocking the mouse.
-- (void) _applyMouseLockState;
+- (void) _applyMouseLockState: (BOOL)lock;
 
 //Returns whether we should have control of the mouse cursor state.
 - (BOOL) _controlsCursor;
@@ -118,11 +118,13 @@ enum {
 	if (!updatingMousePosition && [keyPath isEqualToString: @"mousePosition"])
 	{
 		NSPoint position = [object mousePosition];
-		//If the mouse is locked, just update the last known position to match
+		
+		//If the mouse is locked, update the last known position to match DOSBox's and leave it at that.
 		if ([self mouseLocked]) lastMousePosition = position;
 		
-		//Otherwise if the mouse is over the DOS viewport, warp the OS X mouse cursor
-		else if ([self mouseInView]) [self _syncOSXCursorToPointInCanvas: position];
+		//Otherwise if we have control of the mouse, warp the OS X mouse cursor to match DOSBox's.
+		//NOTE: the warping will result in a slight but noticeable input delay.
+		else if ([self _controlsCursor]) [self _syncOSXCursorToPointInCanvas: position];
 	}
 }
 
@@ -472,9 +474,9 @@ enum {
 		[[[self view] window] makeKeyAndOrderFront: self];
 	}
 	
-	mouseLocked = lock;
+	[self _applyMouseLockState: lock];
 	
-	[self _applyMouseLockState];
+	mouseLocked = lock;
 	
 	[self didChangeValueForKey: @"mouseLocked"];
 }
@@ -505,14 +507,14 @@ enum {
 	NSPoint pointInView = NSMakePoint(canvasPoint.x * canvas.size.width,
 									  canvasPoint.y * canvas.size.height);
 	
-	NSPoint pointOnScreen = [[[self view] window] convertBaseToScreen: [[self view] convertPoint: pointInView toView: nil]];
+	NSPoint pointInWindow = [[self view] convertPoint: pointInView toView: nil];
+	NSPoint pointOnScreen = [[[self view] window] convertBaseToScreen: pointInWindow];
+	
 	return pointOnScreen;
 }
 
-- (void) _applyMouseLockState
-{
-	BOOL lock = [self mouseLocked];
-	
+- (void) _applyMouseLockState: (BOOL)lock
+{	
 	//Ensure we don't "over-hide" the cursor if it's already hidden
 	//(since [NSCursor hide] stacks)
 	BOOL cursorVisible = CGCursorIsVisible();
@@ -523,18 +525,21 @@ enum {
 	//Associate/disassociate the mouse and the OS X cursor
 	CGAssociateMouseAndMouseCursorPosition(!lock);
 	
-	//Warp the cursor to the equivalent position of the DOS cursor within the view.
-	//This gives a smooth user transition from locked to unlocked mode, and ensures
-	//that when we lock the mouse it will always be over the window (so that clicks
-	//don't go astray).
-	
-	NSPoint newMousePosition = lastMousePosition;
-	
-	//Tweak: when unlocking the mouse, inset it slightly from the edges of the canvas,
-	//as having the mouse exactly flush with the window edge looks ugly.
-	if (!lock) newMousePosition = clampPointToRect(newMousePosition, NSMakeRect(0.01, 0.01, 0.98, 0.98));
-	
-	[self _syncOSXCursorToPointInCanvas: newMousePosition];
+	//If we're unlocking, or the mouse isn't over the window when we lock, then
+	//warp the cursor to the equivalent position of the DOS cursor within the view.
+	//This gives a smooth transition from locked to unlocked mode, and ensures that
+	//when we lock the mouse it will always be over the window so that clicks don't
+	//go astray.
+	if (!lock || ![self mouseInView])
+	{
+		NSPoint newMousePosition = lastMousePosition;
+		
+		//Tweak: when unlocking the mouse, inset it slightly from the edges of the canvas,
+		//as having the mouse exactly flush with the window edge looks ugly.
+		if (!lock) newMousePosition = clampPointToRect(newMousePosition, NSMakeRect(0.01, 0.01, 0.98, 0.98));
+		
+		[self _syncOSXCursorToPointInCanvas: newMousePosition];
+	}
 }
 
 @end

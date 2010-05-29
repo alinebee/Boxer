@@ -355,9 +355,9 @@
 	
 	CGFloat currentAspectRatio = aspectRatioOfSize(viewSize);
 	
-	//If there's only a negligible difference in aspect ratio,
-	//then just use the current or minimum view size. This eliminates rounding errors.
-	if (ABS(aspectRatio - currentAspectRatio) < 0.01)
+	//If there's only a negligible difference in aspect ratio, then just use the current
+	//or minimum view size (whichever is larger). This eliminates rounding errors.
+	if (ABS(aspectRatio - currentAspectRatio) < 0.05)
 	{
 		return sizeFitsWithinSize(minViewSize, viewSize) ? viewSize : minViewSize;
 	}

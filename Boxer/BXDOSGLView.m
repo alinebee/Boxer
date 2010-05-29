@@ -88,6 +88,22 @@
 	[self setNeedsDisplay: YES];
 }
 
+- (BXFrameBuffer *)currentFrame
+{
+	return [[self renderer] currentFrame];
+}
+
+- (NSSize) viewportSize
+{
+	return NSSizeFromCGSize([renderer viewportForFrame: [renderer currentFrame]].size);
+}
+
+- (NSSize) maxFrameSize
+{
+	return NSSizeFromCGSize([renderer maxFrameSize]);
+}
+
+
 - (void) prepareOpenGL
 {
 	[[self renderer] prepareForGLContext: [[self openGLContext] CGLContextObj]];

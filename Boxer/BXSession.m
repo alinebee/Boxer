@@ -543,8 +543,22 @@
 											   object: [NSNumber numberWithBool: YES]];
 }
 
+
+#pragma mark -
+#pragma mark Rendering delegate methods
+
 - (void) frameComplete: (BXFrameBuffer *)frame
 {
 	[[self mainWindowController] updateWithFrame: frame];
+}
+
+- (NSSize) maxFrameSize
+{
+	return [[self mainWindowController] maxFrameSize];
+}
+
+- (NSSize) viewportSize
+{
+	return [[self mainWindowController] viewportSize];
 }
 @end

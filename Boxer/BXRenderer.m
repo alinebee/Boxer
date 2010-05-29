@@ -61,6 +61,11 @@ const CGFloat BXScalingBufferScaleCutoff = 3;
 	needsFrameTextureUpdate = YES;
 }
 
+- (CGSize) maxFrameSize
+{
+	return maxTextureSize;
+}
+
 - (void) setCanvas: (CGRect)newCanvas
 {
 	[self willChangeValueForKey: @"canvas"];
@@ -85,7 +90,7 @@ const CGFloat BXScalingBufferScaleCutoff = 3;
 		
 		//If the buffers for the two frames are a different size, we'll need to recreate the scaling
 		//buffer when we draw too and possibly adjust the layout of the layer
-		if (!NSEqualSizes([frame resolution], [currentFrame resolution]))
+		if (!NSEqualSizes([frame size], [currentFrame size]))
 			recalculateScalingBuffer = YES;
 		
 		[currentFrame autorelease];
@@ -165,7 +170,7 @@ const CGFloat BXScalingBufferScaleCutoff = 3;
 }
 
 
-- (CGRect) _viewportForFrame: (BXFrameBuffer *)frame
+- (CGRect) viewportForFrame: (BXFrameBuffer *)frame
 {
 	if ([self maintainsAspectRatio])
 	{
@@ -197,7 +202,7 @@ const CGFloat BXScalingBufferScaleCutoff = 3;
     glEnable(GL_TEXTURE_RECTANGLE_ARB);
 	
 	//Set the viewport to match the aspect ratio of our frame
-	CGRect viewportRect = CGRectIntegral([self _viewportForFrame: [self currentFrame]]);
+	CGRect viewportRect = CGRectIntegral([self viewportForFrame: [self currentFrame]]);
 	
 	glViewport((GLint)viewportRect.origin.x,
 			   (GLint)viewportRect.origin.y,
@@ -223,7 +228,7 @@ const CGFloat BXScalingBufferScaleCutoff = 3;
 	//Draw the frame texture as a quad filling the viewport/framebuffer
 	//-----------
 
-	NSSize frameSize = [[self currentFrame] resolution];
+	NSSize frameSize = [[self currentFrame] size];
 	CGRect frameRegion = CGRectMake(0, 0, frameSize.width, frameSize.height);
 	GLfloat frameVerts[] = {
 		-1,	1,
@@ -316,8 +321,8 @@ const CGFloat BXScalingBufferScaleCutoff = 3;
 	{
 		CGLContextObj cgl_ctx = glContext;
 		
-		CGSize newBufferSize = [self _idealScalingBufferSizeForFrame: [self currentFrame]
-													  toViewportSize: [self canvas].size];
+		CGSize newBufferSize = [self _idealScalingBufferSizeForFrame: currentFrame
+													  toViewportSize: [self viewportForFrame: currentFrame].size];
 		
 		//If the old scaling buffer doesn't fit the new ideal size, recreate it
 		if (!CGSizeEqualToSize(scalingBufferSize, newBufferSize))
@@ -369,8 +374,8 @@ const CGFloat BXScalingBufferScaleCutoff = 3;
 	
 	GLuint texture;
 	
-	GLsizei texWidth	= (GLsizei)[frame resolution].width;
-	GLsizei texHeight	= (GLsizei)[frame resolution].height;
+	GLsizei texWidth	= (GLsizei)[frame size].width;
+	GLsizei texHeight	= (GLsizei)[frame size].height;
 	
 	glEnable(GL_TEXTURE_RECTANGLE_ARB);
 	
@@ -410,7 +415,7 @@ const CGFloat BXScalingBufferScaleCutoff = 3;
 	GLenum status = glGetError();
     if (status)
     {
-        NSLog(@"[BXRenderingLayer _createTextureForFrameBuffer:inCGLContext:] Could not create texture for frame buffer of size: %@ (OpenGL error %04X)", NSStringFromSize([frame resolution]), status);
+        NSLog(@"[BXRenderingLayer _createTextureForFrameBuffer:inCGLContext:] Could not create texture for frame buffer of size: %@ (OpenGL error %04X)", NSStringFromSize([frame size]), status);
 		glDeleteTextures(1, &texture);
 		texture = 0;
 	}
@@ -425,8 +430,8 @@ const CGFloat BXScalingBufferScaleCutoff = 3;
 {
 	CGLContextObj cgl_ctx = glContext;
 	
-	GLsizei frameWidth	= (GLsizei)[frame resolution].width;
-	GLsizei frameHeight	= (GLsizei)[frame resolution].height;
+	GLsizei frameWidth	= (GLsizei)[frame size].width;
+	GLsizei frameHeight	= (GLsizei)[frame size].height;
 	
 	glEnable(GL_TEXTURE_RECTANGLE_ARB);
 	glBindTexture(GL_TEXTURE_RECTANGLE_ARB, texture);
@@ -443,7 +448,7 @@ const CGFloat BXScalingBufferScaleCutoff = 3;
 	GLenum status = glGetError();
     if (status)
     {
-        NSLog(@"[BXRenderingLayer _fillTexture:withFrameBuffer:inCGLContext:] Could not update texture for frame buffer of size: %@ (OpenGL error %04X)", NSStringFromSize([frame resolution]), status);
+        NSLog(@"[BXRenderingLayer _fillTexture:withFrameBuffer:inCGLContext:] Could not update texture for frame buffer of size: %@ (OpenGL error %04X)", NSStringFromSize([frame size]), status);
 	}
 	
 	glDisable(GL_TEXTURE_RECTANGLE_ARB);
@@ -516,7 +521,7 @@ const CGFloat BXScalingBufferScaleCutoff = 3;
 
 - (CGSize) _idealScalingBufferSizeForFrame: (BXFrameBuffer *)frame toViewportSize: (CGSize)viewportSize
 {
-	CGSize frameSize		= NSSizeToCGSize([frame resolution]);
+	CGSize frameSize		= NSSizeToCGSize([frame size]);
 	CGSize scalingFactor	= CGSizeMake(viewportSize.width / frameSize.width,
 										 viewportSize.height / frameSize.height);
 	

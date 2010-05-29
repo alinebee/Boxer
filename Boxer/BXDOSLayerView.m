@@ -74,6 +74,23 @@
 	[renderingLayer setNeedsDisplay];
 }
 
+- (BXFrameBuffer *)currentFrame
+{
+	return [[renderingLayer renderer] currentFrame];
+}
+
+- (NSSize) viewportSize
+{
+	BXRenderer *renderer = [renderingLayer renderer];
+	return NSSizeFromCGSize([renderer viewportForFrame: [renderer currentFrame]].size);
+}
+
+- (NSSize) maxFrameSize
+{
+	BXRenderer *renderer = [renderingLayer renderer];
+	return NSSizeFromCGSize([renderer maxFrameSize]);
+}
+
 - (IBAction) toggleFrameRate: (id) sender
 {
 	[[self frameRateLayer] setHidden: ![[self frameRateLayer] isHidden]];

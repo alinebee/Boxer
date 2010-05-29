@@ -19,21 +19,30 @@
 
 @implementation BXSessionWindowController (BXRenderController)
 
-//DOSBox frame rendering
-//----------------------
+#pragma mark -
+#pragma mark DOSBox frame rendering
 
 - (void) updateWithFrame: (BXFrameBuffer *)frame
 {
 	//Resize the window to accomodate the frame
-	[self resizeToAccommodateFrameSize: [frame scaledResolution]];
+	[self _resizeToAccommodateFrame: frame];
 	
 	//Tell the render view to draw the frame
 	[DOSView updateWithFrame: frame];
 }
 
+- (NSSize) viewportSize
+{
+	return [DOSView viewportSize];
+}
 
-//Window size calculations
-//------------------------
+- (NSSize) maxFrameSize
+{
+	return [DOSView maxFrameSize];
+}
+
+#pragma mark -
+#pragma mark Window resizing and fullscreen
 
 - (BOOL) isResizing
 {
@@ -43,63 +52,6 @@
 //Returns the current size that the render view *would be if it were in windowed mode.
 //This will differ from the actual render view size when in fullscreen mode.
 - (NSSize) windowedDOSViewSize	{ return [[self DOSViewContainer] frame].size; }
-
-- (void) resizeToAccommodateFrameSize: (NSSize)scaledSize
-{
-	//Don't resize if we're already matched to this size
-	if (NSEqualSizes(currentScaledSize, scaledSize)) return;
-
-	NSSize viewSize	= [self _DOSViewSizeForScaledOutputSize: scaledSize minSize: scaledSize];
-	
-	//Use the base resolution as our minimum content size, to prevent higher resolutions being rendered
-	//smaller than their effective size
-	//Tweak: ...unless the base resolution is actually larger than our view size, which can happen 
-	//if the base resolution is too large to fit on screen and hence the view is shrunk.
-	//In that case we use the target view size as the minimum instead.
-	NSSize minSize;
-	if (viewSize.width < scaledSize.width || viewSize.height < scaledSize.height)
-		minSize = viewSize;
-	else
-		minSize = scaledSize;
-
-	//Fix the window's aspect ratio to the new size - this will affect our live resizing behaviour
-	[[self window] setContentMinSize: minSize];
-	[[self window] setContentAspectRatio: viewSize];
-	
-	//Now resize the window to fit the new size
-	//Tell the renderer not to maintain aspect ratio when doing so,
-	//since this change in size is driven by the DOS context
-	[self _resizeWindowToDOSViewSize: viewSize animate: YES];
-	
-	//Finally, record our current scaled size for future resizing calculations
-	currentScaledSize = scaledSize;
-}
-
-
-//Try to resize the window to accomodate the specified minimum size
-//If we can't manage that size, do nothing and return NO; otherwise resize and return YES
-- (BOOL) resizeToAtLeastSize: (NSSize) minViewSize
-{
-	//Don't resize if we're in the middle of resizing already
-	if ([self isResizing]) return NO;
-	
-	BXSessionWindow *theWindow = [self window];
-
-	NSSize currentSize		= [self windowedDOSViewSize];
-	//We're already that size or larger, don't resize further
-	if (sizeFitsWithinSize(minViewSize, currentSize)) return YES;
-	
-	//Otherwise check if the desired size will still fit on screen
-	NSRect screenFrame		= [[theWindow screen] visibleFrame];
-	NSSize maxViewSize		= [theWindow contentRectForFrameRect: screenFrame].size;
-	
-	//If the minimum requested size won't fit on screen, bail out
-	if (!sizeFitsWithinSize(minViewSize, maxViewSize)) return NO;
-	
-	//Otherwise carry on and resize
-	[self _resizeWindowToDOSViewSize: minViewSize animate: YES];
-	return YES;
-}
 
 //Switch the DOS window in or out of fullscreen instantly
 - (void) setFullScreen: (BOOL)fullScreen
@@ -237,7 +189,7 @@
 	if (![[self emulator] isExecuting]) return proposedFrameSize;
 
 	NSInteger snapThreshold	= [[NSUserDefaults standardUserDefaults] integerForKey: @"windowSnapDistance"];
-	NSSize snapIncrement	= currentScaledSize;
+	NSSize snapIncrement	= [[DOSView currentFrame] scaledResolution];
 	CGFloat aspectRatio		= aspectRatioOfSize([theWindow contentAspectRatio]);
 	
 	NSRect proposedFrame	= NSMakeRect(0, 0, proposedFrameSize.width, proposedFrameSize.height);
@@ -266,11 +218,11 @@
 {
 	if (![[self emulator] isExecuting]) return defaultFrame;
 	
-	NSSize scaledResolution			= currentScaledSize;
+	NSSize scaledResolution			= [[DOSView currentFrame] scaledResolution];
 	CGFloat aspectRatio				= aspectRatioOfSize([theWindow contentAspectRatio]);
 	
 	NSRect standardFrame;
-	NSRect currentFrame				= [theWindow frame];
+	NSRect currentWindowFrame		= [theWindow frame];
 	NSRect defaultViewFrame			= [theWindow contentRectForFrameRect: defaultFrame];
 	NSRect largestCleanViewFrame	= defaultViewFrame;
 	
@@ -283,19 +235,53 @@
 	standardFrame = [theWindow frameRectForContentRect: largestCleanViewFrame];
 	
 	//Carry over the top-left corner position from the original window
-	standardFrame.origin	= currentFrame.origin;
-	standardFrame.origin.y += (currentFrame.size.height - standardFrame.size.height);
+	standardFrame.origin	= currentWindowFrame.origin;
+	standardFrame.origin.y += (currentWindowFrame.size.height - standardFrame.size.height);
 	
 	//Constrain our newly frame to fit the screen real-estate (which it should already do, but just in case)
 	standardFrame.size		= constrainToFitSize(standardFrame.size, defaultFrame.size);
 	
 	return standardFrame;
 }
-
 @end
 
 
 @implementation BXSessionWindowController (BXRenderControllerInternals)
+
+- (void) _resizeToAccommodateFrame: (BXFrameBuffer *)frame
+{
+	NSSize scaledSize		= [frame scaledSize];
+	NSSize scaledResolution	= [frame scaledResolution];
+	
+	NSSize viewSize			= [self windowedDOSViewSize];
+	BOOL needsResize		= NO;
+	
+	//Only resize the window if the frame size is different from its previous size
+	if (!NSEqualSizes(currentScaledSize, scaledSize))
+	{
+		viewSize = [self _DOSViewSizeForFrame: frame minSize: scaledResolution];
+		needsResize = YES;
+	}
+		
+	//Use the base resolution as our minimum content size, to prevent higher resolutions
+	//being rendered smaller than their effective size
+	NSSize minSize = scaledResolution;
+	
+	//Tweak: ...unless the base resolution is actually larger than our view size, which can happen 
+	//if the base resolution is too large to fit on screen and hence the view is shrunk.
+	//In that case we use the target view size as the minimum instead.
+	if (!sizeFitsWithinSize(scaledResolution, viewSize)) minSize = viewSize;
+	
+	//Lock the window's aspect ratio to the new size
+	[[self window] setContentMinSize: minSize];
+	[[self window] setContentAspectRatio: viewSize];
+	
+	//Now resize the window to fit the new size
+	if (needsResize) [self _resizeWindowToDOSViewSize: viewSize animate: YES];
+	
+	currentScaledSize = scaledSize;
+}
+
 
 //Performs the slide animation used to toggle the status bar and program panel on or off
 - (void) _slideView: (NSView *)view shown: (BOOL)show
@@ -309,16 +295,16 @@
 	newFrame.origin.y		-= height;
 	
 	if (show) [view setHidden: NO];	//Unhide before sliding out
-	if (![self isFullScreen])
-	{
-		[[self window] setFrame: newFrame display: YES animate: YES];
-	}
-	else
+	if ([self isFullScreen])
 	{
 		[[self window] setFrame: newFrame display: NO];
 	}
+	else
+	{
+		[[self window] setFrame: newFrame display: YES animate: YES];
+	}
 
-	if (!show)	[view setHidden: YES];	//Hide after sliding in 
+	if (!show) [view setHidden: YES]; //Hide after sliding in 
 }
 
 //Resize the window frame to the requested render size.
@@ -356,13 +342,25 @@
 //Returns the most appropriate view size for the intended output size, given the size of the current window.
 //This is calculated as the current view size with the aspect ratio compensated for that of the new output size:
 //favouring the width or the height as appropriate.
-- (NSSize) _DOSViewSizeForScaledOutputSize: (NSSize)scaledSize minSize: (NSSize)minViewSize
+- (NSSize) _DOSViewSizeForFrame: (BXFrameBuffer *)frame minSize: (NSSize)minViewSize
 {	
 	//Start off with our current view size: we want to deviate from this as little as possible.
 	NSSize viewSize = [self windowedDOSViewSize];
 	
+	NSSize frameSize = [frame scaledSize];
+	NSSize currentFrameSize = [[DOSView currentFrame] scaledSize];
+	
 	//Work out the aspect ratio of the scaled size, and how we should apply that ratio
-	CGFloat aspectRatio = aspectRatioOfSize(scaledSize);
+	CGFloat aspectRatio = aspectRatioOfSize(frameSize);
+	
+	CGFloat currentAspectRatio = aspectRatioOfSize(viewSize);
+	
+	//If there's only a negligible difference in aspect ratio,
+	//then just use the current or minimum view size. This eliminates rounding errors.
+	if (ABS(aspectRatio - currentAspectRatio) < 0.01)
+	{
+		return sizeFitsWithinSize(minViewSize, viewSize) ? viewSize : minViewSize;
+	}
 	
 	//We preserve height during the aspect ratio adjustment if:
 	// 1. the new height is equivalent to the old, and
@@ -370,8 +368,8 @@
 	//Otherwise, we preserve width.
 	//Height-locking fixes crazy-ass resolution transitions in Pinball Fantasies and The Humans,
 	//while width-locking allows for rounding errors from live resizes.
-	BOOL preserveHeight = !((NSInteger)currentScaledSize.height	% (NSInteger)scaledSize.height)
-	&& ((NSInteger)currentScaledSize.width	% (NSInteger)scaledSize.width);
+	BOOL preserveHeight = !((NSInteger)currentFrameSize.height	% (NSInteger)frameSize.height)
+						&& ((NSInteger)currentFrameSize.width	% (NSInteger)frameSize.width);
 	
 	//Now, adjust the view size to fit the aspect ratio of our new rendered size.
 	//At the same time we clamp it to the minimum size, preserving the preferred dimension.
@@ -386,11 +384,9 @@
 		viewSize.height = round(viewSize.width / aspectRatio);
 	}
 	
-	//TODO: this screen constraint should not exist here!
 	//We set the maximum size as that which will fit on the current screen
-	BXSessionWindow *theWindow = [self window];
-	NSRect screenFrame	= [[theWindow screen] visibleFrame];
-	NSSize maxViewSize	= [theWindow contentRectForFrameRect: screenFrame].size;
+	NSRect screenFrame	= [[[self window] screen] visibleFrame];
+	NSSize maxViewSize	= [[self window] contentRectForFrameRect: screenFrame].size;
 	
 	//Now clamp the size to the maximum size that will fit on screen, just in case we still overflow
 	viewSize = constrainToFitSize(viewSize, maxViewSize);

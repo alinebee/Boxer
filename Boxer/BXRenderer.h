@@ -86,6 +86,12 @@
 //to match the new frame and the new frame will be rendered. 
 - (void) updateWithFrame: (BXFrameBuffer *)frame;
 
+//Returns the maximum drawable frame size.
+- (CGSize) maxFrameSize;
+
+//Returns the rectangular region of the current canvas that the specified frame would be drawn into.
+- (CGRect) viewportForFrame: (BXFrameBuffer *)frame;
+
 //Prepare the renderer state for rendering into the specified OpenGL context.
 - (void) prepareForGLContext:	(CGLContextObj)glContext;
 

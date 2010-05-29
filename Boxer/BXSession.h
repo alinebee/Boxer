@@ -159,5 +159,8 @@
 
 - (void) didStartGraphicalContext:	(NSNotification *)notification;
 - (void) didEndGraphicalContext:	(NSNotification *)notification;
-- (void) frameComplete:				(BXFrameBuffer *)frame;
+
+- (void) frameComplete: (BXFrameBuffer *)frame;
+- (NSSize) viewportSize;
+- (NSSize) maxFrameSize;
 @end

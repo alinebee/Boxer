@@ -22,6 +22,7 @@
 @class BXProgramPanelController;
 @class BXInputController;
 @class BXEmulator;
+@class BXFrameBuffer;
 @protocol BXFrameRenderingView;
 
 @interface BXSessionWindowController : NSWindowController
@@ -36,7 +37,7 @@
 	
 	BXEmulator *emulator;
 	
-	NSSize currentScaledSize;	//Used internally by the BXRenderController category for resizing decisions.
+	NSSize currentScaledSize;
 	BOOL resizingProgrammatically;
 }
 //Our view controller for the program picker panel.
@@ -139,10 +140,13 @@
 //Performs the slide animation used to toggle the status bar and program panel on or off
 - (void) _slideView: (NSView *)view shown: (BOOL)show;
 
+//Resize the window to accomodate the specified frame.
+- (void) _resizeToAccommodateFrame: (BXFrameBuffer *)frame;
+
+//Returns the view size that should be used for rendering the specified frame.
+- (NSSize) _DOSViewSizeForFrame: (BXFrameBuffer *)frame minSize: (NSSize)minViewSize;
+
 //Resize the window frame to fit the requested render size.
 - (void) _resizeWindowToDOSViewSize: (NSSize)newSize animate: (BOOL)performAnimation;
-
-//Returns the view size that should be used for rendering the specified DOSBox output size.
-- (NSSize) _DOSViewSizeForScaledOutputSize: (NSSize)scaledSize minSize: (NSSize)minViewSize;
 
 @end

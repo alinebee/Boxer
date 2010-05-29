@@ -7,7 +7,9 @@
 
 #import "BXEmulator+BXRendering.h"
 #import "BXSession.h"
+#import "BXSessionWindowController+BXRenderController.h"
 #import "BXGeometry.h"
+#import "BXFilterDefinitions.h"
 #import "BXFrameBuffer.h"
 
 #import <SDL/SDL.h>
@@ -36,6 +38,7 @@
 	}
 	return size;
 }
+
 
 //Returns whether the emulator is currently rendering in a text-only graphics mode.
 - (BOOL) isInTextMode
@@ -66,13 +69,41 @@
 	}
 }
 
+//Chooses the specified filter, and resets the renderer to apply the change immediately.
+- (void) setFilterType: (BXFilterType)type
+{	
+	if (type != filterType)
+	{
+		NSAssert1(type >= 0 && type <= sizeof(BXFilters), @"Invalid filter type provided to setFilterType: %i", type);
+		
+		[self willChangeValueForKey: @"filterType"];
+		
+		filterType = type;
+		[self resetRenderer];
+		
+		[self didChangeValueForKey: @"filterType"];
+	}
+}
+
+//Returns whether the chosen filter is actually being rendered.
+- (BOOL) filterIsActive
+{
+	BOOL isActive = NO;
+	if ([self isExecuting])
+	{
+		isActive = ([self filterType] == render.scale.op);
+	}
+	return isActive;
+}
+
+
 //Reinitialises DOSBox's graphical subsystem and redraws the render region.
+//This is called after resizing the session window or toggling rendering options.
 - (void) resetRenderer
 {
 	if ([self isExecuting]) GFX_ResetScreen();
 }
 @end
-
 
 @implementation BXEmulator (BXRenderingInternals)
 
@@ -89,18 +120,15 @@
 	//If we were in the middle of a frame then cancel it
 	frameInProgress = NO;
 	
-	//Check if we can reuse our existing framebuffer:
-	if ([self frameBuffer] && NSEqualSizes(outputSize, [[self frameBuffer] resolution]))
+	//Check if we can reuse our existing framebuffer: if not, create a new one
+	if (!NSEqualSizes(outputSize, [[self frameBuffer] size]))
 	{
-		//If we're staying at the same resolution, just update the scale of our existing framebuffer
-		[[self frameBuffer] setIntendedScale: scale];
-	}
-	else
-	{
-		//Otherwise, create a new framebuffer
-		BXFrameBuffer *newBuffer = [BXFrameBuffer bufferWithResolution: outputSize depth: 4 scale: scale];
+		BXFrameBuffer *newBuffer = [BXFrameBuffer bufferWithSize: outputSize depth: 4];
 		[self setFrameBuffer: newBuffer];
 	}
+	[[self frameBuffer] setIntendedScale: scale];
+	[[self frameBuffer] setBaseResolution: [self resolution]];
+
 	
 	//Synchronise our record of the current video mode with the new video mode
 	if (currentVideoMode != vga.mode)
@@ -162,16 +190,44 @@
 //Rendering strategy
 //------------------
 
+- (BXFilterDefinition) _paramsForFilterType: (BXFilterType)type
+{
+	NSAssert1(type >= 0 && type <= sizeof(BXFilters), @"Invalid filter type provided to paramsForFilterType: %i", type);
+	
+	return BXFilters[type];
+}
+
 - (void) _applyRenderingStrategy
 {
 	if (![self isExecuting]) return;
 	
-	NSSize resolution			= [self resolution];		
-	BOOL useAspectCorrection	= [self _shouldUseAspectCorrectionForResolution: resolution];	
+	//Work out how much we will need to scale the resolution to fit the viewport
+	NSSize resolution			= [self resolution];	
+	NSSize viewportSize			= [[self delegate] viewportSize];
 	
-	//We do all our filtering in OpenGL now, so tell DOSBox to use the simplest rendering path
+	BOOL useAspectCorrection	= [self _shouldUseAspectCorrectionForResolution: resolution];	
+	NSInteger maxFilterScale	= [self _maxFilterScaleForResolution: resolution];	
+	
+	
+	//Start off with a passthrough filter as the default
 	BXFilterType activeType		= BXFilterNormal;
 	NSInteger filterScale		= 1;
+	BXFilterType desiredType	= [self filterType];
+	
+	//Decide if we can use our selected filter at this scale, and if so at what scale
+	if (desiredType != BXFilterNormal &&
+		[self _shouldApplyFilterType: desiredType fromResolution: resolution toViewport: viewportSize])
+	{
+		activeType = desiredType;
+		//Now decide on what operation size the scaler should use
+		filterScale = [self _filterScaleForType: activeType
+								 fromResolution: resolution
+									 toViewport: viewportSize];
+	}
+	
+	//Make sure we don't go over the maximum size imposed by the OpenGL hardware
+	filterScale = MIN(filterScale, maxFilterScale);
+	
 	
 	//Finally, apply the values to DOSBox
 	render.aspect		= useAspectCorrection;
@@ -191,4 +247,56 @@
 	return useAspectCorrection;
 }
 
+//Return the appropriate filter size we should use to scale the given resolution up to the given viewport.
+//This is usually the viewport height divided by the resolution height and rounded up, to ensure
+//we're always rendering larger than we need so that the graphics are crisper when scaled down.
+//However we finesse this for some filters that look like shit when scaled down too much.
+//(We base this on height rather than width, so that we'll use the larger filter size for aspect-ratio corrected surfaces.)
+- (NSInteger) _filterScaleForType: (BXFilterType)type
+				   fromResolution: (NSSize)resolution
+					   toViewport: (NSSize)viewportSize
+{
+	BXFilterDefinition params = [self _paramsForFilterType: type];
+	
+	NSSize scale = NSMakeSize(viewportSize.width / resolution.width,
+							  viewportSize.height / resolution.height);
+	
+	NSInteger filterScale = ceil(scale.height - params.outputScaleBias);
+	if (filterScale < params.minFilterScale) filterScale = params.minFilterScale;
+	if (filterScale > params.maxFilterScale) filterScale = params.maxFilterScale;
+	
+	return filterScale;
+}
+
+//Returns whether our selected filter should be applied for the specified transformation.
+- (BOOL) _shouldApplyFilterType: (BXFilterType)type
+				 fromResolution: (NSSize)resolution
+					 toViewport: (NSSize)viewportSize
+{
+	BXFilterDefinition params = [self _paramsForFilterType: type];
+
+	//Disable scalers for high-resolution games
+	if (!sizeFitsWithinSize(resolution, params.maxResolution)) return NO;
+	
+	NSSize scale = NSMakeSize(viewportSize.width / resolution.width,
+							  viewportSize.height / resolution.height);
+	
+	//Scale is too small for filter to be applied
+	if (scale.height < params.minOutputScale) return NO;
+	
+	//Scale is too large for filter to be worth applying
+	if (params.maxOutputScale && scale.height > params.maxOutputScale) return NO;
+
+	//If we got this far, go for it!
+	return YES;
+}
+
+- (NSInteger) _maxFilterScaleForResolution: (NSSize)resolution
+{
+	NSSize maxFrameSize	= [[self delegate] maxFrameSize];
+	//Work out how big a filter operation size we can use, given the maximum output size
+	NSInteger maxScale	= floor(fmin(maxFrameSize.width / resolution.width, maxFrameSize.height / resolution.height));
+	
+	return maxScale;
+}
 @end

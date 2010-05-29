@@ -14,6 +14,7 @@
 #import "BXInputController.h"
 
 #import "BXEmulator+BXDOSFileSystem.h"
+#import "BXEmulator+BXRendering.h"
 #import "BXInputHandler.h"
 
 #import "BXCloseAlert.h"
@@ -163,6 +164,7 @@
 		if (oldEmulator)
 		{
 			[oldEmulator unbind: @"aspectCorrected"];
+			[oldEmulator unbind: @"filterType"];
 			[inputController setRepresentedObject: nil];		
 		}
 		
@@ -173,10 +175,8 @@
 		{
 			NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 			
-			[newEmulator bind: @"aspectCorrected"
-				  toObject: defaults
-			   withKeyPath: @"aspectCorrected"
-				   options: nil];
+			[newEmulator bind: @"aspectCorrected" toObject: defaults withKeyPath: @"aspectCorrected" options: nil];
+			[newEmulator bind: @"filterType" toObject: defaults withKeyPath: @"filterType" options: nil];
 			
 			[inputController setRepresentedObject: [newEmulator inputHandler]];
 		}
@@ -458,6 +458,9 @@
 {
 	if (![self isFullScreen] && ![self isResizing])
 	{
+		//Tell the renderer to refresh its filters 
+		[[self emulator] resetRenderer];
+		
 		//Also, update the damn cursors which will have been reset by the window's resizing
 		[inputController cursorUpdate: nil];
 	}

@@ -10,23 +10,24 @@
 
 
 @implementation BXFrameBuffer
-@synthesize resolution, bitDepth, intendedScale;
+@synthesize size, baseResolution, bitDepth, intendedScale;
 
-+ (id) bufferWithResolution: (NSSize)targetResolution depth: (NSUInteger)depth scale: (NSSize)scale
++ (id) bufferWithSize: (NSSize)targetSize depth: (NSUInteger)depth
 {
-	return [[[self alloc] initWithResolution: targetResolution depth: depth scale: scale] autorelease];
+	return [[[self alloc] initWithSize: targetSize depth: depth] autorelease];
 }
 
-- (id) initWithResolution: (NSSize)targetResolution depth: (NSUInteger)depth scale: (NSSize)scale
+- (id) initWithSize: (NSSize)targetSize depth: (NSUInteger)depth
 {
 	if ((self = [super init]))
 	{
-		resolution		= targetResolution;
-		intendedScale	= scale;
+		size			= targetSize;
+		baseResolution	= targetSize;
 		bitDepth		= depth;
+		intendedScale	= NSMakeSize(1.0, 1.0);
 
-		NSUInteger requiredLength = resolution.width * resolution.height * bitDepth;
-		frameData		= [[NSMutableData alloc] initWithCapacity: requiredLength];
+		NSUInteger requiredLength = size.width * size.height * bitDepth;
+		frameData	= [[NSMutableData alloc] initWithCapacity: requiredLength];
 	}
 	return self;
 }
@@ -39,13 +40,19 @@
 
 - (NSInteger) pitch
 {
-	return resolution.width * bitDepth;
+	return size.width * bitDepth;
+}
+
+- (NSSize) scaledSize
+{
+	return NSMakeSize(ceilf(size.width	* intendedScale.width),
+					  ceilf(size.height	* intendedScale.height));
 }
 
 - (NSSize) scaledResolution
 {
-	return NSMakeSize(ceilf(resolution.width	* intendedScale.width),
-					  ceilf(resolution.height	* intendedScale.height));
+	return NSMakeSize(ceilf(baseResolution.width	* intendedScale.width),
+					  ceilf(baseResolution.height	* intendedScale.height));
 }
 
 - (const void *) bytes

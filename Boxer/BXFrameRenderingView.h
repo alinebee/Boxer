@@ -15,8 +15,17 @@
 @class BXFrameBuffer;
 
 @protocol BXFrameRenderingView
+@property (readonly) BXFrameBuffer *currentFrame;
 @property (assign) BOOL managesAspectRatio;
 
+//Tells the view to render the specified frame next time it is redrawn.
+//Will usually mark the view as needing display.
 - (void) updateWithFrame: (BXFrameBuffer *)frame;
+
+//Reports the maximum displayable frame size.
+- (NSSize) maxFrameSize;
+
+//Reports the current viewport size to which frames will be rendered.
+- (NSSize) viewportSize;
 
 @end

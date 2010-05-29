@@ -15,21 +15,26 @@
 @interface BXFrameBuffer : NSObject
 {
 	NSMutableData *frameData;
-	NSSize resolution;
+	NSSize size;
+	NSSize baseResolution;
 	NSUInteger bitDepth;
 	NSSize intendedScale;
 }
-@property (readonly) NSSize resolution;
+@property (readonly) NSSize size;
 @property (readonly) NSUInteger bitDepth;
 @property (assign) NSSize intendedScale;
+@property (assign) NSSize baseResolution;
 
-+ (id) bufferWithResolution: (NSSize)targetResolution depth: (NSUInteger)depth scale: (NSSize)scale;
-- (id) initWithResolution: (NSSize)targetResolution depth: (NSUInteger)depth scale: (NSSize)scale;
++ (id) bufferWithSize: (NSSize)targetSize depth: (NSUInteger)depth;
+- (id) initWithSize: (NSSize)targetSize depth: (NSUInteger)depth;
 
 //Return the width in bytes of one scanline in the buffer.
 - (NSInteger) pitch;
 
-//Returns the resolution of the frame scaled to the intended scale.
+//Returns the size of the frame scaled to the intended scale.
+- (NSSize) scaledSize;
+
+//Returns the base resolution of the frame scaled to the intended scale.
 - (NSSize) scaledResolution;
 
 //Return a read-only/mutable pointer to the frame's data.

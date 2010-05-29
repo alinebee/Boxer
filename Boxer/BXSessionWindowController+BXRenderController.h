@@ -22,6 +22,8 @@
 @interface BXSessionWindowController (BXRenderController)
 
 - (void) updateWithFrame: (BXFrameBuffer *)frame;
+- (NSSize) maxFrameSize;
+- (NSSize) viewportSize;
 
 //Window sizing methods
 //---------------------
@@ -32,15 +34,6 @@
 //Returns the size that the render view would currently be *if it were in windowed mode.*
 //This will differ from the actual render view size if in fullscreen mode.
 - (NSSize) windowedDOSViewSize;
-
-//Resize the window to accomodate the specified view size. Returns YES if a resize was possible,
-//or NO if there is not enough room onscreen to do so.
-//Currently this is called when choosing a new filter to resize the window if it is smaller than
-//the filter's minimum size.
-- (BOOL) resizeToAtLeastSize: (NSSize) minViewSize;
-
-//Resize the window to accomodate the specified DOS output size.
-- (void) resizeToAccommodateFrameSize: (NSSize)scaledSize;
 
 //Switch to and from fullscreen mode instantly with no animation.
 - (void) setFullScreen: (BOOL)fullScreen;

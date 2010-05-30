@@ -35,10 +35,6 @@
 #include "dos_inc.h"
 
 
-//--Added 2010-05-29 to let Boxer hook into DOSBox mouse handling
-#include "BXCoalface.h"
-//--End of modifications
-
 
 static Bitu call_int33,call_int74,int74_ret_callback,call_mouse_bd;
 static Bit16u ps2cbseg,ps2cbofs;

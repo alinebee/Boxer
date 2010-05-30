@@ -586,8 +586,14 @@ static void InitBiosSegment(void) {
 	mem_writew(BIOS_KEYBOARD_BUFFER_TAIL,0x1e);
 	Bit8u flag1 = 0;
 	Bit8u leds = 16; /* Ack recieved */
+	
+	//--Modified 2010-05-30 by Alun Bestor to let Boxer control capslock and numlock state.
+	bool startup_state_capslock = boxer_capsLockEnabled();
+	bool startup_state_numlock = boxer_numLockEnabled();
+	//--End of modifications
 	if(startup_state_capslock) { flag1|=0x40; leds|=0x04;}
 	if(startup_state_numlock){ flag1|=0x20; leds|=0x02;}
+	
 	mem_writeb(BIOS_KEYBOARD_FLAGS1,flag1);
 	mem_writeb(BIOS_KEYBOARD_FLAGS2,0);
 	mem_writeb(BIOS_KEYBOARD_FLAGS3,16); /* Enhanced keyboard installed */	

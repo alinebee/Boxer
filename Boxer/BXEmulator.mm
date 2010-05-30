@@ -9,18 +9,16 @@
 #import "BXSession+BXEmulatorController.h"
 
 #import "BXEmulator+BXShell.h"
-#import "BXEmulator+BXRendering.h"
 #import "BXInputHandler.h"
+#import "BXVideoHandler.h"
 
 #import <SDL/SDL.h>
 #import "config.h"
-#import "sdlmain.h"
 #import "cpu.h"
 #import "control.h"
 #import "shell.h"
-#import "vga.h"
+#import "mapper.h"
 
-#import <SDL/boxer_hooks.h>	//for boxer_SDLCaptureInput et. al.
 #import <crt_externs.h>		//for _NSGetArgc() and _NSGetArgv()
 
 //Default name that DOSBox uses when there's no process running. Used by processName for string comparisons.
@@ -39,18 +37,12 @@ NSStringEncoding BXDirectStringEncoding		= NSUTF8StringEncoding;
 //DOSBox functions and vars we hook into
 //--------------------------------------
 
-//defined in gui/sdlmain.cpp
-int DOSBox_main(int argc, char* argv[]);
-
 //Defined by us in midi.cpp
 void boxer_toggleMIDIOutput(bool enabled);
 
 
 //defined in dos_execute.cpp
 extern const char* RunningProgram;
-
-//Defined herein
-BXCoreMode boxer_CPUMode();
 
 
 BXEmulator *currentEmulator = nil;
@@ -59,13 +51,11 @@ BXEmulator *currentEmulator = nil;
 @implementation BXEmulator
 @synthesize processName, processPath, processLocalPath;
 @synthesize delegate, thread;
-@synthesize frameBuffer;
 @synthesize minFixedSpeed, maxFixedSpeed, maxFrameskip;
 @synthesize configFiles;
-@synthesize aspectCorrected;
-@synthesize filterType;
 @synthesize commandQueue;
 @synthesize inputHandler;
+@synthesize videoHandler;
 
 
 //Introspective class methods
@@ -134,10 +124,11 @@ BXEmulator *currentEmulator = nil;
 		configFiles			= [[NSMutableArray alloc] initWithCapacity: 10];
 		commandQueue		= [[NSMutableArray alloc] initWithCapacity: 4];
 		driveCache			= [[NSMutableDictionary alloc] initWithCapacity: DOS_DRIVES];
-		currentVideoMode	= M_TEXT;
 		
 		[self setInputHandler: [[[BXInputHandler alloc] init] autorelease]];
+		[self setVideoHandler: [[[BXVideoHandler alloc] init] autorelease]];
 		[[self inputHandler] setEmulator: self];
+		[[self videoHandler] setEmulator: self];
 	}
 	return self;
 }
@@ -146,7 +137,7 @@ BXEmulator *currentEmulator = nil;
 {
 	[self setProcessName: nil],	[processName release];
 	[self setInputHandler: nil], [inputHandler release];
-	[self setFrameBuffer: nil], [frameBuffer release];
+	[self setVideoHandler: nil], [videoHandler release];
 	
 	[driveCache release], driveCache = nil;
 	[configFiles release], configFiles = nil;
@@ -168,10 +159,10 @@ BXEmulator *currentEmulator = nil;
 	thread = [NSThread currentThread];
 	
 	//Start DOSBox's main loop
-	DOSBox_main(*_NSGetArgc(), *_NSGetArgv());
+	[self _startDOSBox];
 	
 	//Clean up after DOSBox finishes
-	[self _shutdownRenderer];
+	[[self videoHandler] shutdown];
 	[self _shutdownShell];
 	
 	if (currentEmulator == self) currentEmulator = nil;
@@ -211,20 +202,14 @@ BXEmulator *currentEmulator = nil;
 
 - (NSUInteger) frameskip
 {
-	NSUInteger frameskip = 0;
-	if ([self isExecuting])
-	{
-		frameskip = (NSUInteger)render.frameskip.max;
-	}
-	return frameskip; 
+	return [[self videoHandler] frameskip];
 }
 
 - (void) setFrameskip: (NSUInteger)frameskip
 {
-	if ([self isExecuting])
-	{
-		render.frameskip.max = (Bitu)frameskip;
-	}
+	[self willChangeValueForKey: @"frameskip"];
+	[[self videoHandler] setFrameskip: frameskip];
+	[self didChangeValueForKey: @"frameskip"];
 }
 
 - (BOOL) validateFrameskip: (id *)ioValue error: (NSError **)outError
@@ -251,6 +236,8 @@ BXEmulator *currentEmulator = nil;
 {
 	if ([self isExecuting])
 	{
+		[self willChangeValueForKey: @"fixedSpeed"];
+		
 		//Turn off automatic speed scaling
 		[self setAutoSpeed: NO];
 	
@@ -259,6 +246,8 @@ BXEmulator *currentEmulator = nil;
 		//Wipe out the cycles queue - we do this because DOSBox's CPU functions do whenever they modify the cycles
 		CPU_CycleLeft	= 0;
 		CPU_Cycles		= 0;
+		
+		[self didChangeValueForKey: @"fixedSpeed"];
 	}
 }
 
@@ -286,6 +275,8 @@ BXEmulator *currentEmulator = nil;
 {
 	if ([self isExecuting] && [self isAutoSpeed] != autoSpeed)
 	{
+		[self willChangeValueForKey: @"autoSpeed"];
+		
 		//Be a good boy and record/restore the old cycles setting
 		if (autoSpeed)	CPU_OldCycleMax = CPU_CycleMax;
 		else			CPU_CycleMax = CPU_OldCycleMax;
@@ -294,6 +285,8 @@ BXEmulator *currentEmulator = nil;
 		CPU_CyclePercUsed = 100;
 		
 		CPU_CycleAutoAdjust = (autoSpeed) ? BXSpeedAuto : BXSpeedFixed;
+		
+		[self didChangeValueForKey: @"autoSpeed"];
 	}
 }
 
@@ -304,12 +297,27 @@ BXEmulator *currentEmulator = nil;
 //Note: these work but are currently unused. This is because this implementation is just too simple; games may crash when the emulation mode is arbitrarily changed in the middle of program execution, so instead we should queue this up and require an emulation restart for it to take effect.
 - (BXCoreMode) coreMode
 {
-	BXCoreMode coreMode = BXCoreUnknown;
 	if ([self isExecuting])
 	{
-		coreMode = boxer_CPUMode();
+		if (cpudecoder == &CPU_Core_Normal_Run ||
+			cpudecoder == &CPU_Core_Normal_Trap_Run)	return BXCoreNormal;
+		
+#if (C_DYNAMIC_X86)
+		if (cpudecoder == &CPU_Core_Dyn_X86_Run ||
+			cpudecoder == &CPU_Core_Dyn_X86_Trap_Run)	return BXCoreDynamic;
+#endif
+		
+#if (C_DYNREC)
+		if (cpudecoder == &CPU_Core_Dynrec_Run ||
+			cpudecoder == &CPU_Core_Dynrec_Trap_Run)	return BXCoreDynamic;
+#endif
+		
+		if (cpudecoder == &CPU_Core_Simple_Run)			return BXCoreSimple;
+		if (cpudecoder == &CPU_Core_Full_Run)			return BXCoreFull;
+		
+		return BXCoreUnknown;
 	}
-	return coreMode;
+	else return BXCoreUnknown;
 }
 - (void) setCoreMode: (BXCoreMode)coreMode
 {
@@ -405,24 +413,6 @@ BXEmulator *currentEmulator = nil;
 	[center postNotification: notification];
 }
 
-- (void) _applyConfiguration
-{
-	[self _postNotificationName: @"BXEmulatorWillLoadConfigurationNotification"
-			   delegateSelector: @selector(willLoadConfiguration:)
-					   userInfo: nil];
-	
-	for (NSString *configPath in [self configFiles])
-	{
-		configPath = [configPath stringByStandardizingPath];
-		const char * encodedConfigPath = [configPath cStringUsingEncoding: BXDirectStringEncoding];
-		control->ParseConfigFile((const char * const)encodedConfigPath);
-	}
-
-	[self _postNotificationName: @"BXEmulatorDidLoadConfigurationNotification"
-			   delegateSelector: @selector(didLoadConfiguration:)
-					   userInfo: nil];
-}
-
 
 //Synchronising emulation state
 //-----------------------------
@@ -467,15 +457,6 @@ BXEmulator *currentEmulator = nil;
 }
 
 
-//Threading
-//---------
-
-- (BOOL) _executingOnDOSBoxThread	{ return ([NSThread currentThread] == thread); }
-- (void) _performSelectorOnDOSBoxThread:(SEL)selector withObject:(id)arg waitUntilDone:(BOOL)wait
-{
-	[self performSelector: selector onThread: thread withObject: arg waitUntilDone: wait];
-}
-
 //Event-handling
 //--------------
 
@@ -503,27 +484,61 @@ BXEmulator *currentEmulator = nil;
 	return NO;
 }
 
-@end
 
-
-//Return the current DOSBox core mode
-BXCoreMode boxer_CPUMode()
+//This is a cut-down and mashed-up version of DOSBox's old main and GUI_StartUp functions,
+//chopping out all the stuff that Boxer doesn't need or want.
+- (void) _startDOSBox
 {
-	if (cpudecoder == &CPU_Core_Normal_Run ||
-		cpudecoder == &CPU_Core_Normal_Trap_Run)	return BXCoreNormal;
+	//Initialize the SDL modules that DOSBox will need.
+	NSAssert1(!SDL_Init(SDL_INIT_AUDIO|SDL_INIT_TIMER|SDL_INIT_CDROM|SDL_INIT_NOPARACHUTE),
+			  @"SDL failed to initialize with the following error: %s", SDL_GetError());
 	
-#if (C_DYNAMIC_X86)
-	if (cpudecoder == &CPU_Core_Dyn_X86_Run ||
-		cpudecoder == &CPU_Core_Dyn_X86_Trap_Run)	return BXCoreDynamic;
-#endif
+	try
+	{
+		//Create a new configuration instance and feed it our commandline parameters (ugh)
+		//TODO: use our own (empty) argc and argv instead of these.
+		
+		CommandLine commandLine(*_NSGetArgc(), *_NSGetArgv());
+		Config configuration(&commandLine);
+		control=&configuration;
+		
+		//Sets up the vast swathes of DOSBox configuration file parameters,
+		//and registers the shell to start up when we finish initializing.
+		DOSBOX_Init();
+		
+		//Registers the mapper's initialiser and configuration file parser.
+		control->AddSection_prop("sdl", &MAPPER_StartUp);
+
+		//Load up Boxer's own configuration files
+		for (NSString *configPath in [self configFiles])
+		{
+			configPath = [configPath stringByStandardizingPath];
+			const char * encodedConfigPath = [configPath cStringUsingEncoding: BXDirectStringEncoding];
+			control->ParseConfigFile((const char * const)encodedConfigPath);
+		}
+
+		//Initialise the configuration.
+		control->Init();
+		 
+		//Initialise the key mapper.
+		MAPPER_Init();
+		
+		//Start up the main machine.
+		control->StartUp();
+	}
+	catch (char * error)
+	{
+		NSLog(@"DOSBox died with the following error: %@",
+			  [NSString stringWithCString: error encoding: BXDirectStringEncoding]);
+	}
+	catch (int)
+	{
+		//This means that something pressed the killswitch in DOSBox and we should shut down normally.
+	}
+	//Any other exception is a genuine fuckup and needs to be thrown all the way up.
 	
-#if (C_DYNREC)
-	if (cpudecoder == &CPU_Core_Dynrec_Run ||
-		cpudecoder == &CPU_Core_Dynrec_Trap_Run)	return BXCoreDynamic;
-#endif
-	
-	if (cpudecoder == &CPU_Core_Simple_Run)			return BXCoreSimple;
-	if (cpudecoder == &CPU_Core_Full_Run)			return BXCoreFull;
-	
-	return BXCoreUnknown;
+	//Shut down SDL after DOSBox exits.
+	SDL_Quit();
 }
+
+@end

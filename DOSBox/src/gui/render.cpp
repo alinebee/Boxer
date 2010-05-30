@@ -34,13 +34,6 @@
 
 #include "render_scalers.h"
 
-//--Added 2009-03-06 by Alun Bestor to allow Boxer to hook into render methods
-#include "BXCoalface.h"
-
-//Has to be declared here instead of boxer.h because of callback type
-void boxer_prepareForSize(Bitu width, Bitu height, double scalex, double scaley, GFX_CallBack_t callback);
-//--End of modifications
-
 Render_t render;
 ScalerLineHandler_t RENDER_DrawLine;
 
@@ -110,9 +103,7 @@ static void RENDER_StartLineHandler(const void * s) {
 		Bitu *cache = (Bitu*)(render.scale.cacheRead);
 		for (Bits x=render.src.start;x>0;) {
 			if (GCC_UNLIKELY(src[0] != cache[0])) {
-				//--Modified 2010-04-17 by Alun Bestor to use Boxer's frame functions
-				if (!boxer_startFrame(&render.scale.outWrite, &render.scale.outPitch )) {
-				//--End of modifications
+				if (!GFX_StartUpdate(&render.scale.outWrite, &render.scale.outPitch )) {
 					RENDER_DrawLine = RENDER_EmptyLineHandler;
 					return;
 				}
@@ -179,9 +170,7 @@ bool RENDER_StartUpdate(void) {
 //		LOG_MSG("Clearing cache");
 		//Will always have to update the screen with this one anyway, so let's update already
 		
-		//--Modified 2010-04-17 by Alun Bestor to use Boxer's frame functions
-		if (GCC_UNLIKELY(!boxer_startFrame(&render.scale.outWrite, &render.scale.outPitch )))
-		//--End of modifications
+		if (GCC_UNLIKELY(!GFX_StartUpdate(&render.scale.outWrite, &render.scale.outPitch )))
 			return false;
 		render.fullFrame = true;
 		render.scale.clearCache = false;
@@ -189,9 +178,7 @@ bool RENDER_StartUpdate(void) {
 	} else {
 		if (render.pal.changed) {
 			/* Assume pal changes always do a full screen update anyway */
-			//--Modified 2010-04-17 by Alun Bestor to use Boxer's frame functions
-			if (GCC_UNLIKELY(!boxer_startFrame(&render.scale.outWrite, &render.scale.outPitch )))
-			//--End of modifications
+			if (GCC_UNLIKELY(!GFX_StartUpdate(&render.scale.outWrite, &render.scale.outPitch )))
 				return false;
 			RENDER_DrawLine = render.scale.linePalHandler;
 			render.fullFrame = true;
@@ -209,10 +196,7 @@ bool RENDER_StartUpdate(void) {
 
 static void RENDER_Halt( void ) {
 	RENDER_DrawLine = RENDER_EmptyLineHandler;
-	//--Modified 2010-04-17 by Alun Bestor to use Boxer's frame functions
-	boxer_finishFrame(NULL);
-	//GFX_EndUpdate( 0 );
-	//--End of modifications
+	GFX_EndUpdate( 0 );
 	render.updating=false;
 	render.active=false;
 }
@@ -237,10 +221,7 @@ void RENDER_EndUpdate( void ) {
 			flags, fps, (Bit8u *)&scalerSourceCache, (Bit8u*)&render.pal.rgb );
 	}
 	if ( render.scale.outWrite ) {
-		//--Modified 2010-04-17 by Alun Bestor to use Boxer's frame functions
-		boxer_finishFrame(Scaler_ChangedLines);
-		//GFX_EndUpdate( Scaler_ChangedLines );
-		//--End of modifications
+		GFX_EndUpdate( Scaler_ChangedLines );
 		render.frameskip.hadSkip[render.frameskip.index] = 0;
 	} else {
 #if 0
@@ -281,7 +262,7 @@ static Bitu MakeAspectTable(Bitu skip,Bitu height,double scaley,Bitu miny) {
 /* static */ void RENDER_Reset( void ) {
 //--End of modifications
 
-	//--Added 2009-03-06 by Alun Bestor to allow Boxer to control DOSBox's scaler settings
+	//--Added 2009-03-06 by Alun Bestor to allow Boxer to override DOSBox's scaler settings
 	boxer_applyRenderingStrategy();
 	//--End of modifications
 	
@@ -452,11 +433,7 @@ forcenormal:
 		}
 	}
 /* Setup the scaler variables */
-	//--Modified 2010-04-17 by Alun Bestor to use Boxer's frame functions and hardcode the GFX flags
-	boxer_prepareForSize(width, height, gfx_scalew, gfx_scaleh, &RENDER_CallBack);
-	gfx_flags = GFX_CAN_32 | GFX_SCALING;
-	//gfx_flags=GFX_SetSize(width,height,gfx_flags,gfx_scalew,gfx_scaleh,&RENDER_CallBack);
-	//--End of modifications
+	gfx_flags=GFX_SetSize(width,height,gfx_flags,gfx_scalew,gfx_scaleh,&RENDER_CallBack);
 	
 	if (gfx_flags & GFX_CAN_8)
 		render.scale.outMode = scalerMode8;
@@ -544,10 +521,7 @@ static void RENDER_CallBack( GFX_CallBackFunctions_t function ) {
 		render.scale.clearCache = true;
 		return;
 	} else if ( function == GFX_CallBackReset) {
-		//--Modified 2010-04-17 by Alun Bestor to use Boxer's frame functions
-		boxer_finishFrame(NULL);
-		//GFX_EndUpdate( 0 );
-		//--End of modifications
+		GFX_EndUpdate( 0 );
 		RENDER_Reset();
 	} else {
 		E_Exit("Unhandled GFX_CallBackReset %d", function );

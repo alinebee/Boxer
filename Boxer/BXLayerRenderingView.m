@@ -7,7 +7,6 @@
 
 
 #import "BXLayerRenderingView.h"
-#import "BXGeometry.h"
 #import "BXRenderingLayer.h"
 #import "BXFrameRateCounterLayer.h"
 #import "BXValueTransformers.h"

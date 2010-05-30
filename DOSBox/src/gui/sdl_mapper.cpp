@@ -38,10 +38,6 @@
 #include "mapper.h"
 #include "setup.h"
 
-//--Added 2010-05-06 by Alun Bestor to replace SDL calls with Boxer calls
-#include "BXCoalface.h"
-//--End of modifications
-
 enum {
 	CLR_BLACK=0,
 	CLR_WHITE=1,
@@ -2276,6 +2272,8 @@ void MAPPER_LosingFocus(void) {
 	}
 }
 
+//--Disabled 2010-05-31 by Alun Bestor. Boxer does not support the DOSBox mapper.
+#if 0
 void MAPPER_Run(bool pressed) {
 	if (pressed)
 		return;
@@ -2323,22 +2321,27 @@ void MAPPER_Run(bool pressed) {
 	SDL_ShowCursor(cursor);
 	GFX_ResetScreen();
 }
+#endif
+//--End of modifications
 
 void MAPPER_Init(void) {
 	InitializeJoysticks();
 	CreateLayout();
 	CreateBindGroups();
 	if (!MAPPER_LoadBinds()) CreateDefaultBinds();
-	if (boxer_currentSDLModifiers()&KMOD_CAPS) {
+	
+	//--Modified 2010-05-30 by Alun Bestor to let Boxer control numlock and capslock state
+	if (boxer_capsLockEnabled()) {
 		for (CBindList_it bit=caps_lock_event->bindlist.begin();bit!=caps_lock_event->bindlist.end();bit++) {
 			(*bit)->ActivateBind(32767,true,true);
 		}
 	}
-	if (boxer_currentSDLModifiers()&KMOD_NUM) {
+	if (boxer_numLockEnabled()) {
 		for (CBindList_it bit=num_lock_event->bindlist.begin();bit!=num_lock_event->bindlist.end();bit++) {
 			(*bit)->ActivateBind(32767,true,true);
 		}
 	}
+	//--End of modifications
 }
 //Somehow including them at the top conflicts with something in setup.h
 #ifdef C_X11_XKB
@@ -2471,8 +2474,12 @@ void MAPPER_StartUp(Section * sec) {
 		}
 	}
 
+	//--Disabled 2010-05-30 by Alun Bestor: Boxer no longer uses mapper files.
+	/*
 	Prop_path* pp = section->Get_path("mapperfile");
 	mapper.filename = pp->realpath;
 	MAPPER_AddHandler(&MAPPER_Run,MK_f1,MMOD1,"mapper","Mapper");
+	 */
+	//--End of modifications
 }
 

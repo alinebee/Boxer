@@ -7,10 +7,23 @@
 
 
 //BXFilterDefinitions defines strategies for the various filters, which determine when and how Boxer should
-//apply them. These are mapped to BXFilterType constants by BXRenderer's _paramsForFilterType: method.
+//apply them. These are mapped to BXFilterType constants by BXVideoHandler's _paramsForFilterType: method.
+//Ugghhhhhhh.
 
-#import "BXEmulator+BXRendering.h"
 
+//These constants are for reference and correspond directly to constants defined in DOSBox's render_scalers.h
+enum {
+	BXFilterNormal		= 0,
+	BXFilterMAME		= 1,
+	BXFilterInterpolated= 2,
+	BXFilterHQx			= 3,
+	BXFilterSaI			= 4,
+	BXFilterSuperSaI	= 5,
+	BXFilterSuperEagle	= 6,
+	BXFilterTVScanlines	= 7,
+	BXFilterRGB			= 8,
+	BXFilterScanlines	= 9
+};
 
 //Filters officially supported by Boxer
 //-------------------------------------

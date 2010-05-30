@@ -37,10 +37,6 @@
 #include "setup.h"
 #include "control.h"
 
-//--Added 2009-02-25 by Alun Bestor to allow Boxer to hook into the folder mounting process
-#include "BXCoalface.h"
-//--End of modifications
-
 #if defined(OS2)
 #define INCL DOSFILEMGR
 #define INCL_DOSERRORS

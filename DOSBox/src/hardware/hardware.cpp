@@ -31,15 +31,8 @@
 #include "render.h"
 #include "cross.h"
 
-//--Added 2009-03-15 by Alun Bestor to let us override recording behaviour
-#include "BXCoalface.h"
-//--End of modifications
-
 #if (C_SSHOT)
-//--Modified 2009-03-15 by Alun Bestor to link against our libpng framework instead
-//#include <png.h>
 #import <libpng/png.h>
-//--End of modifications
 
 #include "../libs/zmbv/zmbv.cpp"
 #endif

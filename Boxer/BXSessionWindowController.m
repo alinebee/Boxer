@@ -14,8 +14,9 @@
 #import "BXInputController.h"
 
 #import "BXEmulator+BXDOSFileSystem.h"
-#import "BXEmulator+BXRendering.h"
+#import "BXEmulator.h"
 #import "BXInputHandler.h"
+#import "BXVideoHandler.h"
 
 #import "BXCloseAlert.h"
 #import "BXSession+BXDragDrop.h"
@@ -164,8 +165,8 @@
 	{
 		if (oldEmulator)
 		{
-			[oldEmulator unbind: @"aspectCorrected"];
-			[oldEmulator unbind: @"filterType"];
+			[[oldEmulator videoHandler] unbind: @"aspectCorrected"];
+			[[oldEmulator videoHandler] unbind: @"filterType"];
 			[inputController setRepresentedObject: nil];		
 		}
 		
@@ -176,8 +177,8 @@
 		{
 			NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 			
-			[newEmulator bind: @"aspectCorrected" toObject: defaults withKeyPath: @"aspectCorrected" options: nil];
-			[newEmulator bind: @"filterType" toObject: defaults withKeyPath: @"filterType" options: nil];
+			[[newEmulator videoHandler] bind: @"aspectCorrected" toObject: defaults withKeyPath: @"aspectCorrected" options: nil];
+			[[newEmulator videoHandler] bind: @"filterType" toObject: defaults withKeyPath: @"filterType" options: nil];
 			
 			[inputController setRepresentedObject: [newEmulator inputHandler]];
 		}
@@ -331,15 +332,15 @@
 	{
 		NSInteger itemState;
 		BXFilterType filterType	= [theItem tag];
+		BXVideoHandler *videoHandler = [[self emulator] videoHandler];
 		
 		//Update the option state to reflect the current filter selection
 		//If the filter is selected but not active at the current window size, we indicate this with a mixed state
-		/*
-		if		(filterType != [[self emulator] filterType])	itemState = NSOffState;
-		else if	([[self emulator] filterIsActive])				itemState = NSOnState;
-		else													itemState = NSMixedState;
-		*/
-		itemState = NSOffState;
+		
+		if		(filterType != [videoHandler filterType])	itemState = NSOffState;
+		else if	([videoHandler filterIsActive])				itemState = NSOnState;
+		else 												itemState = NSMixedState;
+		
 		[theItem setState: itemState];
 		
 		return ([[self emulator] isExecuting]);
@@ -460,7 +461,7 @@
 	if (![self isFullScreen] && ![self isResizing])
 	{
 		//Tell the renderer to refresh its filters 
-		[[self emulator] resetRenderer];
+		[[[self emulator] videoHandler] reset];
 		
 		//Also, update the damn cursors which will have been reset by the window's resizing
 		[inputController cursorUpdate: nil];

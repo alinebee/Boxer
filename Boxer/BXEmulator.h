@@ -41,7 +41,6 @@ enum {
 
 typedef BOOL BXSpeedMode;
 typedef NSInteger BXCoreMode;
-typedef NSInteger BXFilterType;
 
 
 //C string encodings, used by BXShell executeCommand:encoding: and executeCommand:withArgumentString:encoding:
@@ -51,14 +50,14 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 
 @class BXSession;
 @class BXInputHandler;
-@class BXFrameBuffer;
+@class BXVideoHandler;
 
 @interface BXEmulator : NSOperation
 {
 	NSThread *thread;
 	BXSession *delegate;
 	BXInputHandler *inputHandler;
-	BXFrameBuffer *frameBuffer;
+	BXVideoHandler *videoHandler;
 	
 	NSString *processName;
 	NSString *processPath;
@@ -75,13 +74,6 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 	
 	//Used by BXShell
 	NSMutableArray *commandQueue;
-
-	
-	//Used by BXRendering
-	NSInteger currentVideoMode;
-	BXFilterType filterType;
-	BOOL aspectCorrected;
-	BOOL frameInProgress;
 }
 
 //Properties
@@ -104,33 +96,30 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 //The current thread under which the emulator is running. This is not retained.
 @property (readonly)	NSThread *thread;
 
-//The framebuffer we render our frames into.
-@property (retain)		BXFrameBuffer *frameBuffer;
-
-//The NSResponder we use for processing input events for the emulation.
+//Our DOSBox input handler.
 @property (retain)		BXInputHandler *inputHandler;
+
+//Our DOSBox video and rendering handler.
+@property (retain)		BXVideoHandler *videoHandler;
 
 
 //An array of OS X paths to configuration files that will be processed by this session during startup.
 @property (readonly)	NSMutableArray *configFiles;
 
-//The maximum allowable value for the frameskip setting.
+//The current and maximum allowable value for the frameskip setting.
 //Defaults to 9.
+@property (assign)		NSUInteger frameskip;
 @property (assign)		NSUInteger maxFrameskip;
 
-//The minimum and maximum allowable CPU speeds.
+
+//The current, minimum and maximum allowable CPU speeds.
 //These default to BXMinSpeedThreshold and BXMaxSpeedThreshold.
+@property (assign)		NSInteger fixedSpeed;
 @property (assign)		NSInteger minFixedSpeed;
 @property (assign)		NSInteger maxFixedSpeed;
 
 //An array of queued command strings to execute on the DOS command line.
 @property (readonly)	NSMutableArray *commandQueue;
-
-
-//Whether to apply 4:3 aspect ratio correction to the rendered output.
-@property (assign, getter=isAspectCorrected) BOOL aspectCorrected;
-//The current rendering style as a DOSBox filter type constant (q.v. BXEmulator+BXRendering.h)
-@property (assign) BXFilterType filterType;
 
 
 //Class methods
@@ -173,10 +162,8 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 //While it is safe to call these directly, in most cases these should be modified through
 //BXEmulatorController's wrapper functions instead, as those use Boxer-specific logic.
 
-//Get/set the current DOSBox CPU speed setting.
-//Values will be clamped to minFixedSpeed and maxFixedSpeed.
-- (NSInteger) fixedSpeed;
-- (void) setFixedSpeed: (NSInteger)newSpeed;
+
+- (BOOL) validateFrameskip: (id *)ioValue error: (NSError **)outError;
 - (BOOL) validateFixedSpeed: (id *)ioValue error: (NSError **)outError;
 
 //Get/set whether CPU speed is fixed or automatically maxed.
@@ -185,11 +172,6 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 - (BOOL) isAutoSpeed;
 - (void) setAutoSpeed: (BOOL)autoSpeed;
 
-//Get/set the current DOSBox frameskip settings.
-//Values will be clamped to minFrameskip and maxFrameskip.
-- (NSUInteger) frameskip;
-- (void) setFrameskip: (NSUInteger)frameskip;
-- (BOOL) validateFrameskip: (id *)ioValue error: (NSError **)outError;
 
 //Get/set the current DOSBox core emulation mode.
 //NOTE: this is not currently safe to change during program execution.
@@ -226,26 +208,9 @@ class DOS_Shell;
 			  delegateSelector: (SEL)selector
 					  userInfo: (id)userInfo;
 
-
-//Called by DOSBox when it's time to load configuration files for the emulator context.
-//Signals that configuration is starting and feeds our own configuration files to DOSBox.
-- (void) _applyConfiguration;
-
 //Called by DOSBox whenever it changes states we care about. This resyncs BXEmulator's
 //cached notions of the DOSBox state, and posts notifications for relevant properties.
 - (void) _syncWithEmulationState;
-
-
-//Threading
-//---------
-
-//Returns YES if called on the thread on which the emulator was started, NO otherwise.
-//Irrelevant in our current single-threaded environment.
-- (BOOL) _executingOnDOSBoxThread;
-
-//Perform the specified message on the thread upon which the emulator was started.
-//Used internally in a vain, failed attempt to ensure that methods are thread-safe.
-- (void) _performSelectorOnDOSBoxThread:(SEL)selector withObject:(id)arg waitUntilDone:(BOOL)wait;
 
 
 //Event-handling
@@ -258,6 +223,8 @@ class DOS_Shell;
 //Called during DOSBox's run loop: returns YES to short-circuit the loop.
 - (BOOL) _handleRunLoop;
 
+//Called at emulator startup.
+- (void) _startDOSBox;
 @end
 
 #endif

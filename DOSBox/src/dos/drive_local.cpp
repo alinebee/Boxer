@@ -31,10 +31,6 @@
 #include "cross.h"
 #include "inout.h"
 
-//--Added 2010-01-18 by Alun Bestor to allow Boxer to hook into DOSBox internals
-#include "BXCoalface.h"
-//--End of modifications
-
 class localFile : public DOS_File {
 public:
 	localFile(const char* name, FILE * handle);

@@ -31,11 +31,6 @@
 #include <vector>
 #include <string>
 
-//--Added 2009-02-20 by Alun Bestor to support Boxer's shell hooks
-//Note that unlike my other odious meddlings, standalone improvements have been made to these functions which could be submitted back to DOSBox for inclusion
-#include "BXCoalface.h"
-//--End of modifications
-
 
 static SHELL_Cmd cmd_list[]={
 {	"CHDIR",	1,			&DOS_Shell::CMD_CHDIR,		"SHELL_CMD_CHDIR_HELP"},

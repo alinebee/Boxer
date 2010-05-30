@@ -123,9 +123,9 @@ const CGFloat BXScalingBufferScaleCutoff = 3;
 		maxScalingBufferSize = maxTextureSize;
 	}
 	
-	Shader *shader = [[Shader alloc] initWithShadersInAppBundle: @"Scale2xHQ"];
-	if (NO && [shader programObject]) [self setCurrentShader: shader];
-	[shader release];
+	//Shader *shader = [[Shader alloc] initWithShadersInAppBundle: @"Scale2xHQ"];
+	//if ([shader programObject]) [self setCurrentShader: shader];
+	//[shader release];
 }
 
 - (void) tearDownGLContext: (CGLContextObj)glContext

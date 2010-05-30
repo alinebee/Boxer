@@ -8,7 +8,6 @@
 
 #import "BXGLRenderingView.h"
 #import "BXRenderer.h"
-#import "BXGeometry.h"
 
 @implementation BXGLRenderingView
 @synthesize renderer;
@@ -16,6 +15,7 @@
 - (void) awakeFromNib
 {
 	[self setRenderer: [[BXRenderer new] autorelease]];
+	//Hide the view until we receive our first frame
 	[self setHidden: YES];
 }
 

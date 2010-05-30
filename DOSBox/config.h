@@ -151,7 +151,8 @@ This means that this file has had too many modifications to be safely replaceabl
 /* #undef ENVIRON_INCLUDED */
 
 /* environ can be linked */
-#define ENVIRON_LINKED 1
+/* #define ENVIRON_LINKED 1 */
+#undef ENVIRON_LINKED
 
 /* Define to 1 to use ALSA for MIDI */
 /* #undef HAVE_ALSA */

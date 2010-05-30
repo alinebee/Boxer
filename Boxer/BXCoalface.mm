@@ -7,23 +7,20 @@
 
 
 #import "BXCoalface.h"
-#import "BXEmulator+BXRendering.h"
 #import "BXEmulator+BXShell.h"
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXInputHandler.h"
-
-#import "video.h"
-#import "sdlmain.h"
+#import "BXVideoHandler.h"
 
 
 #pragma mark -
 #pragma mark Application state functions
 
-//This is called at the start of GFX_Events in DOSBox's sdlmain.cpp, to allow us to perform initial actions every time the event loop runs. Return YES to skip the event loop.
-bool boxer_handleEventLoop()
+//This is called at the start of GFX_Events in DOSBox's sdlmain.cpp, to allow us to perform initial actions every time the event loop runs.
+void boxer_handleEventLoop()
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	return [emulator _handleEventLoop];
+	[emulator _handleEventLoop];
 }
 
 //This is called at the start of DOSBox_NormalLoop, and allows us to short-circuit the current run loop if needed.
@@ -35,61 +32,66 @@ bool boxer_handleRunLoop()
 
 //Notifies Boxer of changes to title and speed settings
 //This is called by GFX_SetTitle in DOSBox's sdlmain.cpp, instead of trying to set the window title through SDL
-bool boxer_handleDOSBoxTitleChange(int newCycles, int newFrameskip, bool newPaused)
+void boxer_handleDOSBoxTitleChange(int newCycles, int newFrameskip, bool newPaused)
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
 	[emulator _syncWithEmulationState];
-	return YES;
-}
-
-void boxer_applyConfigFiles()
-{
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	[emulator _applyConfiguration];
-}
-
-bool boxer_isCancelled()
-{
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	return [emulator isCancelled];	
 }
 
 
 #pragma mark -
 #pragma mark Rendering functions
 
-//Applies Boxer's rendering settings when reinitializing the DOSBox renderer
-//This is called by RENDER_Reset in DOSBox's gui/render.cpp
-void boxer_applyRenderingStrategy()	{ [[BXEmulator currentEmulator] _applyRenderingStrategy]; }
+void boxer_applyRenderingStrategy()
+{
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+	[[emulator videoHandler] applyRenderingStrategy];
+}
 
-void boxer_prepareForSize(Bitu width, Bitu height, double scalex, double scaley, GFX_CallBack_t callback)
+Bitu boxer_prepareForFrameSize(Bitu width, Bitu height, Bitu gfx_flags, double scalex, double scaley, GFX_CallBack_t callback)
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
 	
 	NSSize outputSize	= NSMakeSize((CGFloat)width, (CGFloat)height);
 	NSSize scale		= NSMakeSize((CGFloat)scalex, (CGFloat)scaley);
-	[emulator _prepareForOutputSize: outputSize atScale: scale];
+	[[emulator videoHandler] prepareForOutputSize: outputSize atScale: scale withCallback: callback];
 	
-	sdl.draw.callback=callback;
-	sdl.desktop.type=SCREEN_OPENGL;
-	//TODO: none of these should actually be used by live code anymore.
-	//If anywhere is using them, it needs to be excised forthwith.
-	sdl.draw.width=width;
-	sdl.draw.height=height;
-	sdl.draw.scalex=scalex;
-	sdl.draw.scaley=scaley;
+	return GFX_CAN_32 | GFX_SCALING;
+}
+
+Bitu boxer_idealOutputMode(Bitu flags)
+{
+	//Originally this tested various bit depths to find the most appropriate mode for the chosen scaler.
+	//Because OS X always uses a 32bpp context and Boxer always uses RGBA-capable scalers, we ignore the
+	//original function's behaviour altogether and just return something that will keep DOSBox happy.
+	return GFX_CAN_32 | GFX_SCALING;
 }
 
 bool boxer_startFrame(Bit8u **frameBuffer, Bitu *pitch)
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	return [emulator _startFrameWithBuffer: (void **)frameBuffer pitch: (NSUInteger *)pitch];
+	return [[emulator videoHandler] startFrameWithBuffer: (void **)frameBuffer pitch: (NSUInteger *)pitch];
 }
 
 void boxer_finishFrame(const uint16_t *dirtyBlocks)
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	[emulator _finishFrameWithChanges: dirtyBlocks];	
+	[[emulator videoHandler] finishFrameWithChanges: dirtyBlocks];	
+}
+
+Bitu boxer_getRGBPaletteEntry(Bit8u red, Bit8u green, Bit8u blue)
+{
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+	return [[emulator videoHandler] paletteEntryWithRed: red green: green blue: blue];
+}
+
+void boxer_setPalette(Bitu start,Bitu count,GFX_PalEntry * entries)
+{
+	//This replacement DOSBox function does nothing, as the original was intended only for SDL
+	//surface palettes which are irrelevant to OpenGL.
+	//Furthermore it should never be called: if it does, that means DOSBox thinks it's using
+	//surface output and this is a bug.
+	NSLog(@"boxer_setPalette called. This is a bug and should never happen.");
 }
 
 
@@ -241,8 +243,30 @@ void boxer_mouseMovedToPoint(float x, float y)
 	[[emulator inputHandler] setMousePosition: point];
 }
 
-SDLMod boxer_currentSDLModifiers()
+bool boxer_capsLockEnabled()
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	return [[emulator inputHandler] currentSDLModifiers];
+	return [[emulator inputHandler] capsLockEnabled];
+}
+
+bool boxer_numLockEnabled()
+{
+	//NumLock doesn't exist in Macland. We may one day add a menu toggle for this.
+	return NO;
+}
+
+
+#pragma mark -
+#pragma mark Helper functions
+
+void boxer_log(char const* format,...)
+{
+	//Copypasta from sdlmain.cpp
+	char buf[512];
+	va_list msg;
+	va_start(msg,format);
+	vsprintf(buf,format,msg);
+	strcat(buf,"\n");
+	va_end(msg);
+	printf("%s",buf);
 }

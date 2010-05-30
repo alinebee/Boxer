@@ -6,7 +6,6 @@
  */
 
 #import "BXSession+BXEmulatorController.h"
-#import "BXEmulator+BXRendering.h"
 #import "BXEmulator+BXShell.h"
 #import "BXEmulator+BXPaste.h"
 #import "BXInputHandler.h"

@@ -6,9 +6,9 @@
  */
 
 
-//BXInputHandler is a generic class for responding to input. It expects OS X key and modifier
-//constants, but does not directly accept NSEvents or interact with the OS X event framework:
-//instead, it receives specific signals from Boxer's controller classes.
+//BXInputHandler converts input from OS X into DOSBox input commands. It expects OS X key and
+//modifier constants, but does not accept NSEvents or interact with the OS X event framework:
+//instead, it uses abstract methods to receive 'predigested' input data from BXInputController.
 
 #import <Foundation/Foundation.h>
 
@@ -19,7 +19,9 @@
 	BXEmulator *emulator;
 	BOOL mouseActive;
 	NSPoint mousePosition;
+	CGFloat mouseSensitivity;
 }
+//Our parent emulator.
 @property (assign) BXEmulator *emulator;
 
 //Whether we are responding to mouse input.
@@ -27,6 +29,9 @@
 
 //Where DOSBox thinks the mouse is.
 @property (assign) NSPoint mousePosition;
+
+//How much to scale mouse motion by.
+@property (assign) CGFloat mouseSensitivity;
 
 
 //Called whenever we lose keyboard input focus. Clears all DOSBox events.
@@ -80,6 +85,9 @@
 //The default DOS keyboard layout that should be used if no more specific one can be found.
 + (NSString *)defaultKeyboardLayout;
 
+//Returns the current state of capslock for DOSBox.
+- (BOOL) capsLockEnabled;
+
 @end
 
 
@@ -89,9 +97,6 @@
 #import <SDL/SDL.h>
 
 @interface BXInputHandler (BXInputHandlerInternals)
-
-//Analoguous to [[NSApp currentEvent] modifierFlags], only for SDL-style modifiers.
-- (SDLMod) currentSDLModifiers;
 
 //Generates and returns an SDL key event with the specified parameters.
 + (SDL_Event) _SDLKeyEventForKeyCode: (CGKeyCode)keyCode

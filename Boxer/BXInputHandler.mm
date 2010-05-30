@@ -15,16 +15,28 @@
 #import "config.h"
 #import "video.h"
 #import "mouse.h"
-#import "sdlmain.h"
 
 
 //Declared in mapper.cpp
 void MAPPER_CheckEvent(SDL_Event *event);
+void MAPPER_LosingFocus();
 
 @implementation BXInputHandler
 @synthesize emulator;
 @synthesize mouseActive;
 @synthesize mousePosition;
+@synthesize mouseSensitivity;
+
+- (id) init
+{
+	if ((self = [super init]))
+	{
+		mouseSensitivity	= 1.0;
+		mousePosition		= NSMakePoint(0.5, 0.5);
+		mouseActive			= NO;
+	}
+	return self;
+}
 
 #pragma mark -
 #pragma mark Controlling response state
@@ -43,7 +55,12 @@ void MAPPER_CheckEvent(SDL_Event *event);
 - (void) lostFocus
 {
 	//Release all DOSBox events when we lose focus
-	GFX_LosingFocus();
+	MAPPER_LosingFocus();
+}
+
+- (BOOL) capsLockEnabled
+{
+	return ([[NSApp currentEvent] modifierFlags] & NSAlphaShiftKeyMask);
 }
 
 
@@ -67,19 +84,18 @@ void MAPPER_CheckEvent(SDL_Event *event);
 				  byAmount: (NSPoint)delta
 				  onCanvas: (NSRect)canvas
 			   whileLocked: (BOOL)locked
-{
-	//TODO: control this sensitivity further up the food chain or leave it out altogether.
-	CGFloat sensitivity = sdl.mouse.sensitivity / 100.0f;
-	
+{	
 	//In DOSBox land, absolute position is from 0-1 but delta is in raw pixels, for some silly reason.
 	//TODO: try making this relative to the DOS driver's max mouse position instead.
 	NSPoint canvasDelta = NSMakePoint(delta.x * canvas.size.width,
 									  delta.y * canvas.size.height);
 	
-	Mouse_CursorMoved(canvasDelta.x * sensitivity,
-					  canvasDelta.y * sensitivity,
-					  point.x * sensitivity,
-					  point.y * sensitivity,
+	//FIXME: it seems really wrong to scale absolute mouse positions by mouse sensitivity,
+	//and not just delta; but this is what DOSBox used to do.
+	Mouse_CursorMoved(canvasDelta.x * mouseSensitivity,
+					  canvasDelta.y * mouseSensitivity,
+					  point.x * mouseSensitivity,
+					  point.y * mouseSensitivity,
 					  NO);
 }
 		 
@@ -241,12 +257,6 @@ void MAPPER_CheckEvent(SDL_Event *event);
 #pragma mark Internal methods
 
 @implementation BXInputHandler (BXInputHandlerInternals)
-
-//"Private-but-not-quite" - exposed here for coalface functions
-- (SDLMod) currentSDLModifiers
-{
-	return [[self class] _convertToSDLModifiers: [[NSApp currentEvent] modifierFlags]];
-}
 
 
 + (SDL_Event) _SDLKeyEventForKeyCode: (CGKeyCode)keyCode

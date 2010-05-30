@@ -131,15 +131,6 @@ struct private_hwdata {
 #include <os2.h>
 #endif
 
-
-
-//--Added 2009-02-01 by Alun Bestor to provide access to Boxer extensions and video settings
-#include "BXCoalface.h"
-#include "sdlmain.h"
-//--End of modifications
-
-//--Modified 2009-03-01 by Alun Bestor: these are all now defined in sdlmain.h instead, so that Boxer's lascivious fingers can grope the SDL struct
-/*
 enum SCREEN_TYPES	{
 	SCREEN_SURFACE,
 	SCREEN_SURFACE_DDRAW,
@@ -229,12 +220,8 @@ struct SDL_Block {
 	Bit8u laltstate;
 	Bit8u raltstate;
 };
-*/
 
-//--Modified 2009-03-01 by Alun Bestor to allow Boxer to hook into the sdl struct
-/* static */ SDL_Block sdl;
-//--End of modifications
-
+static SDL_Block sdl;
 
 extern const char* RunningProgram;
 extern bool CPU_CycleAutoAdjust;
@@ -242,10 +229,22 @@ extern bool CPU_CycleAutoAdjust;
 bool startup_state_numlock=false;
 bool startup_state_capslock=false;
 void GFX_SetTitle(Bit32s cycles,Bits frameskip,bool paused){
-	//--Modified 2009-02-01 by Alun Bestor to pass title handling off to our own custom Boxer code
-	//Actually this now does nothing except notify Boxer of internal changes to these variables
-	boxer_handleDOSBoxTitleChange((int)cycles, (int)frameskip, (bool)paused);
-	//--End of modifications
+	char title[200]={0};
+	static Bit32s internal_cycles=0;
+	static Bits internal_frameskip=0;
+	if(cycles != -1) internal_cycles = cycles;
+	if(frameskip != -1) internal_frameskip = frameskip;
+	if(CPU_CycleAutoAdjust) {
+		if (internal_cycles>=100)
+			sprintf(title,"DOSBox %s, Cpu Cycles:      max, Frameskip %2d, Program: %8s",VERSION,internal_frameskip,RunningProgram);
+		else
+			sprintf(title,"DOSBox %s, Cpu Cycles:   [%3d%%], Frameskip %2d, Program: %8s",VERSION,internal_cycles,internal_frameskip,RunningProgram);
+	} else {
+		sprintf(title,"DOSBox %s, Cpu Cycles: %8d, Frameskip %2d, Program: %8s",VERSION,internal_cycles,internal_frameskip,RunningProgram);
+	}
+
+	if(paused) strcat(title," PAUSED");
+	SDL_WM_SetCaption(title,VERSION);
 }
 
 static void PauseDOSBox(bool pressed) {
@@ -410,17 +409,14 @@ static SDL_Surface * GFX_SetupSurfaceScaled(Bit32u sdl_flags, Bit32u bpp) {
 
 Bitu GFX_SetSize(Bitu width,Bitu height,Bitu flags,double scalex,double scaley,GFX_CallBack_t callback) {
 	if (sdl.updating)
-		//--Modified 2010-04-17 by Alun Bestor to use Boxer's frame functions
-		boxer_finishFrame(NULL);
-		//GFX_EndUpdate( 0 );
-		//--End of modifications
+		GFX_EndUpdate( 0 );
 
 	sdl.draw.width=width;
 	sdl.draw.height=height;
 	sdl.draw.callback=callback;
 	sdl.draw.scalex=scalex;
 	sdl.draw.scaley=scaley;
-	
+
 	Bitu bpp=0;
 	Bitu retFlags = 0;
 
@@ -569,14 +565,7 @@ dosurface:
 			free(sdl.opengl.framebuf);
 		}
 		sdl.opengl.framebuf=0;
-		
-		//--Modified 2009-02-19 by Alun Bestor to allow RGBonly scalers to render to an OpenGL context
-		//Is there any situation where this could cause problems? I haven't found one.
-
-		//if (!(flags&GFX_CAN_32) || (flags & GFX_RGBONLY)) goto dosurface;
-
-		//--End of modifications
-		
+		if (!(flags&GFX_CAN_32) || (flags & GFX_RGBONLY)) goto dosurface;
 		int texsize=2 << int_log2(width > height ? width : height);
 		if (texsize>sdl.opengl.max_texsize) {
 			LOG_MSG("SDL:OPENGL:No support for texturesize of %d, falling back to surface",texsize);
@@ -615,11 +604,6 @@ dosurface:
 		if (sdl.opengl.bilinear) {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			//--Added 2009-02-28 by Alun Bestor: a dirty trick to hide the bilinear filtering smudging the bottom and right edges with garbage from the region outside the texture that DOSBox is rendering
-			//Really we should be addressing the issue of why the region contains garbage in the first place, instead of just pure black
-			width -= 1;
-			height -= 1;
-			//--End of modifications
 		} else {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -697,14 +681,12 @@ static void CaptureMouse(bool pressed) {
 
 void GFX_SwitchFullScreen(void) {
 	sdl.desktop.fullscreen=!sdl.desktop.fullscreen;
-	/*
 	if (sdl.desktop.fullscreen) {
 		if (!sdl.mouse.locked) GFX_CaptureMouse();
 	} else {
 		if (sdl.mouse.locked) GFX_CaptureMouse();
 	}
 	GFX_ResetScreen();
-	 */
 }
 
 static void SwitchFullScreen(bool pressed) {
@@ -772,7 +754,6 @@ void GFX_EndUpdate( const Bit16u *changedLines ) {
 	if (!sdl.updating)
 		return;
 	sdl.updating=false;
-	
 	switch (sdl.desktop.type) {
 	case SCREEN_SURFACE:
 		if (SDL_MUSTLOCK(sdl.surface)) {
@@ -910,10 +891,7 @@ Bitu GFX_GetRGB(Bit8u red,Bit8u green,Bit8u blue) {
 
 void GFX_Stop() {
 	if (sdl.updating)
-		//--Modified 2010-04-17 by Alun Bestor to use Boxer's frame functions
-		boxer_finishFrame(NULL);
-		//GFX_EndUpdate( 0 );
-		//--End of modifications
+		GFX_EndUpdate( 0 );
 	sdl.active=false;
 }
 
@@ -1117,9 +1095,6 @@ static void GUI_StartUp(Section * sec) {
 	/* Setup Mouse correctly if fullscreen */
 	if(sdl.desktop.fullscreen) GFX_CaptureMouse();
 
-	//--Modified 2009-02-23 by Alun Bestor: Boxer now tries to use OpenGL exclusively
-	sdl.desktop.want_type=SCREEN_OPENGL;
-	/*
 	if (output == "surface") {
 		sdl.desktop.want_type=SCREEN_SURFACE;
 #if (HAVE_DDRAW_H) && defined(WIN32)
@@ -1140,30 +1115,18 @@ static void GUI_StartUp(Section * sec) {
 		LOG_MSG("SDL:Unsupported output device %s, switching back to surface",output.c_str());
 		sdl.desktop.want_type=SCREEN_SURFACE;//SHOULDN'T BE POSSIBLE anymore
 	}
-	*/
-	//--End of modifications
 
 	sdl.overlay=0;
 #if C_OPENGL
    if(sdl.desktop.want_type==SCREEN_OPENGL){ /* OPENGL is requested */
-   
-	//--Modified 2009-02-18 by Alun Bestor: initialise OpenGL to our standard window size to ensure that we don't inadvertently resize the window to play catchup
-	//sdl.surface=SDL_SetVideoMode(640,400,0,SDL_OPENGL);
-	unsigned int surfaceWidth, surfaceHeight;
-	   //boxer_copySurfaceSize(&surfaceWidth, &surfaceHeight);
-	   //sdl.surface=SDL_SetVideoMode((int)surfaceWidth,(int)surfaceHeight,0,SDL_OPENGL);
-	//--End of modifications
-	
-	   /*
+	sdl.surface=SDL_SetVideoMode(640,400,0,SDL_OPENGL);
 	if (sdl.surface == NULL) {
 		LOG_MSG("Could not initialize OpenGL, switching back to surface");
 		sdl.desktop.want_type=SCREEN_SURFACE;
-	} else */{
-		
+	} else {
 	sdl.opengl.framebuf=0;
 	sdl.opengl.texture=0;
 	sdl.opengl.displaylist=0;
-		/*
 	glGetIntegerv (GL_MAX_TEXTURE_SIZE, &sdl.opengl.max_texsize);
 #if defined(__WIN32__) && defined(NVIDIA_PixelDataRange)
 	glPixelDataRangeNV = (PFNGLPIXELDATARANGENVPROC) wglGetProcAddress("glPixelDataRangeNV");
@@ -1182,32 +1145,19 @@ static void GUI_StartUp(Section * sec) {
     	} else {
 		sdl.opengl.packed_pixel=sdl.opengl.paletted_texture=false;
 	}
-		 */
 	}
 	} /* OPENGL is requested end */
 
 #endif	//OPENGL
 	/* Initialize screen for first time */
-	
-	//--Disabled 2009-02-19 by Alun Bestor: Stop needlessly initialising the video surface, I can tell you what the damn colour depth is
-	/*
 	sdl.surface=SDL_SetVideoMode(640,400,0,0);
 	if (sdl.surface == NULL) E_Exit("Could not initialize video: %s",SDL_GetError());
 	sdl.desktop.bpp=sdl.surface->format->BitsPerPixel;
 	if (sdl.desktop.bpp==24) {
 		LOG_MSG("SDL:You are running in 24 bpp mode, this will slow down things!");
 	}
-	*/
-	sdl.surface=NULL;
-	//sdl.desktop.bpp=boxer_screenColorDepth();
-	//--End of modifications
-	
 	GFX_Stop();
-	
-	//--Disabled 2009-10-18 by Alun Bestor: leave my windows alone
-	//SDL_WM_SetCaption("DOSBox",VERSION);
-	//--End of modifications
-
+	SDL_WM_SetCaption("DOSBox",VERSION);
 
 /* The endian part is intentionally disabled as somehow it produces correct results without according to rhoenie*/
 //#if SDL_BYTEORDER == SDL_BIG_ENDIAN
@@ -1221,13 +1171,7 @@ static void GUI_StartUp(Section * sec) {
 //#endif
 
 /* Please leave the Splash screen stuff in working order in DOSBox. We spend a lot of time making DOSBox. */
-	
-	//--Disabled 2009-11-12 by Alun Bestor: what's more obnoxious than a splash screen?
-	//How about a passive-aggressive admonition not to alter the splash screen?
-	//This code is incompatible with OpenGL rendering, and Boxer implements its own prettier DOSBox badge.
-	//SDL_Surface* splash_surf = SDL_CreateRGBSurface(SDL_SWSURFACE, 640, 400, 32, rmask, gmask, bmask, 0);
-	SDL_Surface* splash_surf = NULL;
-	//--End of modifications
+	SDL_Surface* splash_surf = SDL_CreateRGBSurface(SDL_SWSURFACE, 640, 400, 32, rmask, gmask, bmask, 0);
 	if (splash_surf) {
 		SDL_FillRect(splash_surf, NULL, SDL_MapRGB(splash_surf->format, 0, 0, 0));
 
@@ -1297,24 +1241,18 @@ static void GUI_StartUp(Section * sec) {
 	MAPPER_AddHandler(&PauseDOSBox, MK_pause, MMOD2, "pause", "Pause");
 #endif
 	/* Get Keyboard state of numlock and capslock */
-	SDLMod keystate = boxer_currentSDLModifiers();
+	SDLMod keystate = SDL_GetModState();
 	if(keystate&KMOD_NUM) startup_state_numlock = true;
 	if(keystate&KMOD_CAPS) startup_state_capslock = true;
 }
 
 void Mouse_AutoLock(bool enable) {
-	boxer_setMouseActive(enable);
-	return;
-	
-	//--Disabled 2010-04-11 by Alun Bestor: this is now handled by Boxer
-	/*
 	sdl.mouse.autolock=enable;
 	if (sdl.mouse.autoenable) sdl.mouse.requestlock=enable;
 	else {
 		SDL_ShowCursor(enable?SDL_DISABLE:SDL_ENABLE);
 		sdl.mouse.requestlock=false;
 	}
-	 */
 }
 
 static void HandleMouseMotion(SDL_MouseMotionEvent * motion) {
@@ -1373,11 +1311,6 @@ void GFX_LosingFocus(void) {
 }
 
 void GFX_Events() {
-	//--Added 2009-10-18 by Alun Bestor to let Boxer take over the DOSBox event loop
-	boxer_handleEventLoop();
-	return;	
-	//--End of modifications
-
 	SDL_Event event;
 #if defined (REDUCE_JOYSTICK_POLLING)
 	static int poll_delay=0;
@@ -1389,7 +1322,6 @@ void GFX_Events() {
 	}
 #endif
 	while (SDL_PollEvent(&event)) {
-		
 		switch (event.type) {
 		case SDL_ACTIVEEVENT:
 			if (event.active.state & SDL_APPINPUTFOCUS) {
@@ -1407,7 +1339,7 @@ void GFX_Events() {
 							GFX_ResetScreen();
 						}
 #endif
-						//GFX_CaptureMouse();
+						GFX_CaptureMouse();
 					}
 					SetPriority(sdl.priority.nofocus);
 					GFX_LosingFocus();
@@ -1714,11 +1646,7 @@ static void eraseconfigfile() {
 
 
 //extern void UI_Init(void);
-
-//--Renamed 2009-02-22 by Alun Bestor: used to be main(). SDL silently renamed this function to SDL_main() anyway, but now that we no longer use sdlmain.a and have our own Boxer main() function instead, we need to rename it to avoid a symbol clash.
-//We now call this entry point from [BXSession start].
-int DOSBox_main(int argc, char* argv[]) {
-//--End of modifications
+int main(int argc, char* argv[]) {
 	try {
 		CommandLine com_line(argc,argv);
 		Config myconf(&com_line);
@@ -1789,7 +1717,7 @@ int DOSBox_main(int argc, char* argv[]) {
 
 	/* Init SDL */
 	putenv(const_cast<char*>("SDL_DISABLE_LOCK_KEYS=1")); //Workaround debian/ubuntu fixes for SDL.
-	if ( SDL_Init( SDL_INIT_AUDIO|SDL_INIT_TIMER|SDL_INIT_CDROM
+	if ( SDL_Init( SDL_INIT_AUDIO|SDL_INIT_VIDEO|SDL_INIT_TIMER|SDL_INIT_CDROM
 		|SDL_INIT_NOPARACHUTE
 		) < 0 ) E_Exit("Can't init SDL %s",SDL_GetError());
 	sdl.inited = true;
@@ -1835,16 +1763,11 @@ int DOSBox_main(int argc, char* argv[]) {
 	sdl.num_joysticks=SDL_NumJoysticks();
 
 	/* Parse configuration files */
-	
-	//--Disabled 2009-11-07 by Alun Bestor: No thanks, Boxer will take care of the config files itself.
-	boxer_applyConfigFiles();
-	/*
 	std::string config_file,config_path;
 	bool parsed_anyconfigfile = false;
 	//First Parse -conf switches
 	while(control->cmdline->FindString("-conf",config_file,true))
 		if (control->ParseConfigFile(config_file.c_str())) parsed_anyconfigfile = true;
-
 
 	//if none found => parse localdir conf
 	config_file = "dosbox.conf";
@@ -1873,9 +1796,6 @@ int DOSBox_main(int argc, char* argv[]) {
 			LOG_MSG("CONFIG: Using default settings. Create a configfile to change them");
 		}
 	}
-	*/
-	//--End of modifications
-	
 
 
 #if (ENVIRON_LINKED)
@@ -1888,29 +1808,18 @@ int DOSBox_main(int argc, char* argv[]) {
 		/* Some extra SDL Functions */
 		Section_prop * sdl_sec=static_cast<Section_prop *>(control->GetSection("sdl"));
 
-		
-		//--Disabled 2009-12-28 by Alun Bestor: startup fullscreen behaviour is now controlled by Boxer
-		/*
 		if (control->cmdline->FindExist("-fullscreen") || sdl_sec->Get_bool("fullscreen")) {
 			if(!sdl.desktop.fullscreen) { //only switch if not allready in fullscreen
 				GFX_SwitchFullScreen();
 			}
 		}
-		//--End of modifications
-		 
 
 		/* Init the keyMapper */
 		MAPPER_Init();
-		
-		//--Disabled 2009-12-27 by Alun Bestor: the DOSBox keyboard mapper is not compatible with OpenGL rendering and will
-		//be replaced by a native solution anyway
-		//if (control->cmdline->FindExist("-startmapper")) MAPPER_Run(false);
-		//--End of modifications
-		
+		if (control->cmdline->FindExist("-startmapper")) MAPPER_Run(false);
 		/* Start up main machine */
 		control->StartUp();
 		/* Shutdown everything */
-		
 	} catch (char * error) {
 		GFX_ShowMsg("Exit to error: %s",error);
 		fflush(NULL);

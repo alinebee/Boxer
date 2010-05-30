@@ -165,9 +165,7 @@ static void CAPTURE_AddAviChunk(const char * tag, Bit32u size, void * data, Bit3
 #endif
 
 #if (C_SSHOT)
-//--Modified 2009-03-15 by Alun Bestor to allow video captures to be controlled from Boxer
-/* static */void CAPTURE_VideoEvent(bool pressed) {
-//--End of modifications
+static void CAPTURE_VideoEvent(bool pressed) {
 	if (!pressed)
 		return;
 	if (CaptureState & CAPTURE_VIDEO) {

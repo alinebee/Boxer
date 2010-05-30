@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: risc_mipsel32.h,v 1.5 2009/05/27 09:15:41 qbix79 Exp $ */
+/* $Id: risc_mipsel32.h,v 1.6 2009-06-25 19:31:43 c2woody Exp $ */
 
 
 /* MIPS32 (little endian) backend by crazyc */
@@ -73,6 +73,9 @@ typedef Bit8u HostReg;
 
 // register that holds the second parameter
 #define FC_OP2 HOST_a1
+
+// special register that holds the third parameter for _R3 calls (byte accessible)
+#define FC_OP3 HOST_???
 
 // register that holds byte-accessible temporary values
 #define FC_TMP_BA1 HOST_t5

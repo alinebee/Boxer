@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: dos.cpp,v 1.117 2009/04/16 12:16:52 qbix79 Exp $ */
+/* $Id: dos.cpp,v 1.121 2009-10-28 21:45:12 qbix79 Exp $ */
 
 #include <stdlib.h>
 #include <string.h>
@@ -44,7 +44,10 @@ void DOS_SetError(Bit16u code) {
 
 #define DATA_TRANSFERS_TAKE_CYCLES 1
 #ifdef DATA_TRANSFERS_TAKE_CYCLES
+
+#ifndef DOSBOX_CPU_H
 #include "cpu.h"
+#endif
 static inline void modify_cycles(Bits value) {
 	if((4*value+5) < CPU_Cycles) {
 		CPU_Cycles -= 4*value;
@@ -59,6 +62,20 @@ static inline void modify_cycles(Bits /* value */) {
 	return;
 }
 #endif
+#define DOS_OVERHEAD 1
+#ifdef DOS_OVERHEAD
+#ifndef DOSBOX_CPU_H
+#include "cpu.h"
+#endif
+
+static inline void overhead() {
+	reg_ip += 2;
+}
+#else
+static inline void overhead() {
+	return;
+}
+#endif
 
 #define DOSNAMEBUF 256
 static Bitu DOS_21Handler(void) {
@@ -69,7 +86,11 @@ static Bitu DOS_21Handler(void) {
 
 	char name1[DOSNAMEBUF+2+DOS_NAMELENGTH_ASCII];
 	char name2[DOSNAMEBUF+2+DOS_NAMELENGTH_ASCII];
+
 	switch (reg_ah) {
+	case 0x00:		/* Terminate Program */
+		DOS_Terminate(mem_readw(SegPhys(ss)+reg_sp+2),false,0);
+		break;
 	case 0x01:		/* Read character from STDIN, with echo */
 		{	
 			Bit8u c;Bit16u n=1;
@@ -83,6 +104,8 @@ static Bitu DOS_21Handler(void) {
 		{
 			Bit8u c=reg_dl;Bit16u n=1;
 			DOS_WriteFile(STDOUT,&c,&n);
+			//Not in the official specs, but happens nonetheless. (last written character)
+			reg_al = c;// reg_al=(c==9)?0x20:c; //Officially: tab to spaces
 		}
 		break;
 	case 0x03:		/* Read character from STDAUX */
@@ -115,7 +138,10 @@ static Bitu DOS_21Handler(void) {
 		switch (reg_dl) {
 		case 0xFF:	/* Input */
 			{	
-//TODO Make this better according to standards
+				//Simulate DOS overhead for timing sensitive games
+				//MM1
+				overhead();
+				//TODO Make this better according to standards
 				if (!DOS_GetSTDINStatus()) {
 					reg_al=0;
 					CALLBACK_SZF(true);
@@ -195,6 +221,9 @@ static Bitu DOS_21Handler(void) {
 	case 0x0b:		/* Get STDIN Status */
 		if (!DOS_GetSTDINStatus()) {reg_al=0x00;}
 		else {reg_al=0xFF;}
+		//Simulate some overhead for timing issues
+		//Tankwar menu (needs maybe even more)
+		overhead();
 		break;
 	case 0x0c:		/* Flush Buffer and read STDIN call */
 		{
@@ -363,6 +392,9 @@ static Bitu DOS_21Handler(void) {
 			reg_dh=(Bit8u)(seconds % 60);
 			reg_dl=(Bit8u)(ticks % 100);
 		}
+		//Simulate DOS overhead for timing-sensitive games
+        	//Robomaze 2
+		overhead();
 		break;
 	case 0x2d:		/* Set System Time */
 		LOG(LOG_DOSMISC,LOG_ERROR)("DOS:Set System Time not supported");
@@ -388,17 +420,17 @@ static Bitu DOS_21Handler(void) {
 		reg_cx=0x0000;
 		break;
 	case 0x31:		/* Terminate and stay resident */
-		//TODO First get normal files executing
 		// Important: This service does not set the carry flag!
 		DOS_ResizeMemory(dos.psp(),&reg_dx);
-		DOS_Terminate(true,reg_al);
-		dos.return_mode=RETURN_TSR;
+		DOS_Terminate(dos.psp(),true,reg_al);
 		break;
 	case 0x1f: /* Get drive parameter block for default drive */
 	case 0x32: /* Get drive parameter block for specific drive */
 		{	/* Officially a dpb should be returned as well. The disk detection part is implemented */
-			Bitu drive=reg_dl;if(!drive || reg_ah==0x1f) drive = DOS_GetDefaultDrive();else drive--;
-			if(Drives[drive]) {
+			Bit8u drive=reg_dl;
+			if (!drive || reg_ah==0x1f) drive = DOS_GetDefaultDrive();
+			else drive--;
+			if (Drives[drive]) {
 				reg_al = 0x00;
 				SegSet16(ds,dos.tables.dpb);
 				reg_bx = drive;//Faking only the first entry (that is the driveletter)
@@ -704,18 +736,9 @@ static Bitu DOS_21Handler(void) {
 		}
 		break;
 //TODO Check for use of execution state AL=5
-	case 0x00:
-		reg_ax=0x4c00;				/* Terminate Program */
 	case 0x4c:					/* EXIT Terminate with return code */
-	        {
-			if (DOS_Terminate(false,reg_al)) {
-				/* This can't ever return false normally */
-			} else {            
-				reg_ax=dos.errorcode;
-				CALLBACK_SCF(true);
-			}
-			break;
-		}
+		DOS_Terminate(dos.psp(),false,reg_al);
+		break;
 	case 0x4d:					/* Get Return code */
 		reg_al=dos.return_code;/* Officially read from SDA and clear when read */
 		reg_ah=dos.return_mode;
@@ -813,11 +836,17 @@ static Bitu DOS_21Handler(void) {
 			break;
 		default:
 			LOG(LOG_DOSMISC,LOG_ERROR)("DOS:58:Not Supported Set//Get memory allocation call %X",reg_al);
+			reg_ax=1;
+			CALLBACK_SCF(true);
 		}
 		break;
 	case 0x59:					/* Get Extended error information */
 		reg_ax=dos.errorcode;
-		reg_bh=0;	//Unkown error class
+		if (dos.errorcode==DOSERR_FILE_NOT_FOUND || dos.errorcode==DOSERR_PATH_NOT_FOUND) {
+			reg_bh=8;	//Not Found error class (Road Hog)
+		} else {
+			reg_bh=0;	//Unspecified error class
+		}
 		reg_bl=1;	//Retry retry retry
 		reg_ch=0;	//Unkown error locus
 		break;
@@ -926,13 +955,18 @@ static Bitu DOS_21Handler(void) {
 				reg_cx = 5;
 				CALLBACK_SCF(false);
 				break;
+			case 0x02: // Get pointer to uppercase table
+				mem_writeb(data + 0x00, reg_al);
+				mem_writed(data + 0x01, dos.tables.upcase);
+				reg_cx = 5;
+				CALLBACK_SCF(false);
+				break;
 			case 0x06: // Get pointer to collating sequence table
 				mem_writeb(data + 0x00, reg_al);
 				mem_writed(data + 0x01, dos.tables.collatingseq);
 				reg_cx = 5;
 				CALLBACK_SCF(false);
 				break;
-			case 0x02: // Get pointer to uppercase table
 			case 0x03: // Get pointer to lowercase table
 			case 0x04: // Get pointer to filename uppercase table
 			case 0x07: // Get pointer to double byte char set table
@@ -945,7 +979,7 @@ static Bitu DOS_21Handler(void) {
 				{
 					int in  = reg_dl;
 					int out = toupper(in);
-					reg_dl  = out;
+					reg_dl  = (Bit8u)out;
 				}
 				CALLBACK_SCF(false);
 				break;
@@ -960,8 +994,8 @@ static Bitu DOS_21Handler(void) {
 					MEM_BlockRead(data,dos_copybuf,len);
 					dos_copybuf[len] = 0;
 					//No upcase as String(0x21) might be multiple asciz strings
-					for(Bitu count = 0; count < len;count++)
-						dos_copybuf[count] = toupper(*reinterpret_cast<unsigned char*>(dos_copybuf+count));
+					for (Bitu count = 0; count < len;count++)
+						dos_copybuf[count] = (Bit8u)toupper(*reinterpret_cast<unsigned char*>(dos_copybuf+count));
 					MEM_BlockWrite(data,dos_copybuf,len);
 				}
 				CALLBACK_SCF(false);
@@ -1045,7 +1079,7 @@ static Bitu DOS_21Handler(void) {
 
 
 static Bitu DOS_20Handler(void) {
-	reg_ax=0x4c00;
+	reg_ah=0x00;
 	DOS_21Handler();
 	return CBRET_NONE;
 }
@@ -1053,7 +1087,8 @@ static Bitu DOS_20Handler(void) {
 static Bitu DOS_27Handler(void) {
 	// Terminate & stay resident
 	Bit16u para = (reg_dx/16)+((reg_dx % 16)>0);
-	if (DOS_ResizeMemory(dos.psp(),&para)) DOS_Terminate(true,0);
+	Bit16u psp = dos.psp(); //mem_readw(SegPhys(ss)+reg_sp+2);
+	if (DOS_ResizeMemory(psp,&para)) DOS_Terminate(psp,true,0);
 	return CBRET_NONE;
 }
 
@@ -1128,7 +1163,7 @@ public:
 		DOS_SetupMisc();							/* Some additional dos interrupts */
 		DOS_SDA(DOS_SDA_SEG,DOS_SDA_OFS).SetDrive(25); /* Else the next call gives a warning. */
 		DOS_SetDefaultDrive(25);
-		
+	
 		
 		dos.version.major=5;
 		dos.version.minor=0;
@@ -1157,12 +1192,13 @@ public:
 			delete Drives[i];
 			Drives[i] = 0;
 		}
+		//--End of modifications
 	}
 };
 
 static DOS* test;
 
-void DOS_ShutDown(Section* sec) {
+void DOS_ShutDown(Section* /*sec*/) {
 	delete test;
 }
 

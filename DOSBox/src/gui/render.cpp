@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: render.cpp,v 1.60 2009/04/26 19:14:50 harekiet Exp $ */
+/* $Id: render.cpp,v 1.60 2009-04-26 19:14:50 harekiet Exp $ */
 
 #include <sys/types.h>
 #include <assert.h>
@@ -202,7 +202,7 @@ static void RENDER_Halt( void ) {
 }
 
 extern Bitu PIC_Ticks;
-void RENDER_EndUpdate( void ) {
+void RENDER_EndUpdate( bool abort ) {
 	if (GCC_UNLIKELY(!render.updating))
 		return;
 	RENDER_DrawLine = RENDER_EmptyLineHandler;
@@ -221,7 +221,7 @@ void RENDER_EndUpdate( void ) {
 			flags, fps, (Bit8u *)&scalerSourceCache, (Bit8u*)&render.pal.rgb );
 	}
 	if ( render.scale.outWrite ) {
-		GFX_EndUpdate( Scaler_ChangedLines );
+		GFX_EndUpdate( abort? NULL : Scaler_ChangedLines );
 		render.frameskip.hadSkip[render.frameskip.index] = 0;
 	} else {
 #if 0
@@ -265,7 +265,7 @@ static Bitu MakeAspectTable(Bitu skip,Bitu height,double scaley,Bitu miny) {
 	//--Added 2009-03-06 by Alun Bestor to allow Boxer to override DOSBox's scaler settings
 	boxer_applyRenderingStrategy();
 	//--End of modifications
-	
+
 	Bitu width=render.src.width;
 	Bitu height=render.src.height;
 	bool dblw=render.src.dblw;
@@ -295,10 +295,6 @@ static Bitu MakeAspectTable(Bitu skip,Bitu height,double scaley,Bitu miny) {
 			simpleBlock = &ScaleNormal2x;
 		else if (render.scale.size == 3)
 			simpleBlock = &ScaleNormal3x;
-		//--Added 2009-03-15 by Alun Bestor to support 4x scaling
-		else if (render.scale.size == 4)
-			simpleBlock = &ScaleNormal4x;
-		//--End of modifications
 		else
 			simpleBlock = &ScaleNormal1x;
 		/* Maybe override them */
@@ -521,7 +517,7 @@ static void RENDER_CallBack( GFX_CallBackFunctions_t function ) {
 		render.scale.clearCache = true;
 		return;
 	} else if ( function == GFX_CallBackReset) {
-		GFX_EndUpdate( 0 );
+		GFX_EndUpdate( 0 );	
 		RENDER_Reset();
 	} else {
 		E_Exit("Unhandled GFX_CallBackReset %d", function );

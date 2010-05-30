@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,6 +16,8 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+/* $Id: bios_keyboard.cpp,v 1.36 2009-06-11 16:05:17 c2woody Exp $ */
+
 #include "dosbox.h"
 #include "callback.h"
 #include "mem.h"
@@ -24,11 +26,16 @@
 #include "regs.h"
 #include "inout.h"
 #include "dos_inc.h"
+#include "SDL.h"
 
 /* SDL by default treats numlock and scrolllock different from all other keys.
- * Some linux distros disable this bad behaviour. (for example debian) 
+ * In recent versions this can disabled by a environment variable which we set in sdlmain.cpp
  * Define the following if this is the case */
+#if SDL_VERSION_ATLEAST(1, 2, 14)
+//--Modified 2010-05-30 by Alun Bestor - this fix still needs to be reimplemented in Boxer.
 //#define CAN_USE_LOCK 1
+//--End of modifications
+#endif
 
 static Bitu call_int16,call_irq1,call_irq6;
 
@@ -241,6 +248,7 @@ static Bitu IRQ1_Handler(void) {
 	flags2&=~(0x40+0x20);//remove numlock/capslock pressed (hack for sdl only reporting states)
 #endif
 	if (DOS_LayoutKey(scancode,flags1,flags2,flags3)) return CBRET_NONE;
+//LOG_MSG("key input %d %d %d %d",scancode,flags1,flags2,flags3);
 	switch (scancode) {
 	/* First the hard ones  */
 	case 0xfa:	/* ack. Do nothing for now */
@@ -382,7 +390,7 @@ static Bitu IRQ1_Handler(void) {
 		}
 		if(flags1 &0x08) {
 			Bit8u token = mem_readb(BIOS_KEYBOARD_TOKEN);
-			token= token*10 + scan_to_scanascii[scancode].alt;
+			token = token*10 + (Bit8u)(scan_to_scanascii[scancode].alt&0xff);
 			mem_writeb(BIOS_KEYBOARD_TOKEN,token);
 		} else if (flags1 &0x04) {
 			add_key(scan_to_scanascii[scancode].control);
@@ -586,14 +594,9 @@ static void InitBiosSegment(void) {
 	mem_writew(BIOS_KEYBOARD_BUFFER_TAIL,0x1e);
 	Bit8u flag1 = 0;
 	Bit8u leds = 16; /* Ack recieved */
-	
-	//--Modified 2010-05-30 by Alun Bestor to let Boxer control capslock and numlock state.
-	bool startup_state_capslock = boxer_capsLockEnabled();
-	bool startup_state_numlock = boxer_numLockEnabled();
-	//--End of modifications
-	if(startup_state_capslock) { flag1|=0x40; leds|=0x04;}
-	if(startup_state_numlock){ flag1|=0x20; leds|=0x02;}
-	
+//MAPPER_Init takes care of this now ?
+//	if(startup_state_capslock) { flag1|=0x40; leds|=0x04;}
+//	if(startup_state_numlock){ flag1|=0x20; leds|=0x02;}
 	mem_writeb(BIOS_KEYBOARD_FLAGS1,flag1);
 	mem_writeb(BIOS_KEYBOARD_FLAGS2,0);
 	mem_writeb(BIOS_KEYBOARD_FLAGS3,16); /* Enhanced keyboard installed */	
@@ -607,12 +610,12 @@ void BIOS_SetupKeyboard(void) {
 
 	/* Allocate/setup a callback for int 0x16 and for standard IRQ 1 handler */
 	call_int16=CALLBACK_Allocate();	
-	CALLBACK_Setup(call_int16,&INT16_Handler,CB_INT16,"keyboard");
+	CALLBACK_Setup(call_int16,&INT16_Handler,CB_INT16,"Keyboard");
 	RealSetVec(0x16,CALLBACK_RealPointer(call_int16));
 
 	call_irq1=CALLBACK_Allocate();	
-	CALLBACK_Setup(call_irq1,&IRQ1_Handler,CB_IRQ1,"keyboard irq");
-	RealSetVec(0x9,CALLBACK_RealPointer(call_irq1));
+	CALLBACK_Setup(call_irq1,&IRQ1_Handler,CB_IRQ1,Real2Phys(BIOS_DEFAULT_IRQ1_LOCATION),"IRQ 1 Keyboard");
+	RealSetVec(0x09,BIOS_DEFAULT_IRQ1_LOCATION);
 	// pseudocode for CB_IRQ1:
 	//	push ax
 	//	in al, 0x60

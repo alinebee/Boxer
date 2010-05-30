@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -15,6 +15,8 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
+
+/* $Id: decoder_opcodes.h,v 1.10 2009-10-18 17:52:10 c2woody Exp $ */
 
 
 /*
@@ -544,8 +546,8 @@ static void dyn_dshift_ev_gv(bool left,bool immediate) {
 		MOV_REG_WORD_TO_HOST_REG(FC_OP1,decode.modrm.rm,decode.big_op);
 	}
 	MOV_REG_WORD_TO_HOST_REG(FC_OP2,decode.modrm.reg,decode.big_op);
-	if (immediate) gen_mov_byte_to_reg_low_imm(FC_RETOP,decode_fetchb());
-	else MOV_REG_BYTE_TO_HOST_REG_LOW(FC_RETOP,DRC_REG_ECX,0);
+	if (immediate) gen_mov_byte_to_reg_low_imm(FC_OP3,decode_fetchb());
+	else MOV_REG_BYTE_TO_HOST_REG_LOW(FC_OP3,DRC_REG_ECX,0);
 	if (decode.big_op) dyn_dpshift_dword_gencall(left);
 	else dyn_dpshift_word_gencall(left);
 
@@ -816,7 +818,7 @@ static bool dyn_grp4_eb(void) {
 	return false;
 }
 
-static bool dyn_grp4_ev(void) {
+static Bitu dyn_grp4_ev(void) {
 	dyn_get_modrm();
 	if (decode.modrm.mod<3) {
 		dyn_fill_ea(FC_ADDR);
@@ -846,10 +848,10 @@ static bool dyn_grp4_ev(void) {
 
 		gen_restore_addr_reg();
 		gen_mov_word_from_reg(FC_ADDR,decode.big_op?(void*)(&reg_eip):(void*)(&reg_ip),decode.big_op);
-		return true;
+		return 1;
 	case 0x4:	// JMP Ev
 		gen_mov_word_from_reg(FC_OP1,decode.big_op?(void*)(&reg_eip):(void*)(&reg_ip),decode.big_op);
-		return true;
+		return 1;
 	case 0x3:	// CALL Ep
 	case 0x5:	// JMP Ep
 		if (!decode.big_op) gen_extend_word(false,FC_OP1);
@@ -863,15 +865,16 @@ static bool dyn_grp4_ev(void) {
 		gen_restore_reg(FC_OP1,FC_ADDR);
 		gen_call_function_IRRR(decode.modrm.reg == 3 ? (void*)(&CPU_CALL) : (void*)(&CPU_JMP),
 			decode.big_op,FC_OP2,FC_ADDR,FC_RETOP);
-		return true;
+		return 1;
 	case 0x6:		// PUSH Ev
 		if (decode.big_op) gen_call_function_raw((void*)&dynrec_push_dword);
 		else gen_call_function_raw((void*)&dynrec_push_word);
 		break;
 	default:
-		IllegalOptionDynrec("dyn_grp4_ev");
+//		IllegalOptionDynrec("dyn_grp4_ev");
+		return 2;
 	}
-	return false;
+	return 0;
 }
 
 

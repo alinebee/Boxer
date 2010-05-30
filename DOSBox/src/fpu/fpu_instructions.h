@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: fpu_instructions.h,v 1.33 2009/05/27 09:15:41 qbix79 Exp $ */
+/* $Id: fpu_instructions.h,v 1.33 2009-05-27 09:15:41 qbix79 Exp $ */
 
 
 static void FPU_FINIT(void) {
@@ -106,7 +106,7 @@ static Real64 FPU_FLD80(PhysPt addr) {
 	Bit64s sign = (test.begin&0x8000)?1:0;
 	FPU_Reg result;
 	result.ll = (sign <<63)|(exp64final << 52)| mant64;
-	return result.d;   
+	return result.d;
 
 	//mant64= test.mant80/2***64    * 2 **53 
 }
@@ -118,12 +118,16 @@ static void FPU_ST80(PhysPt addr,Bitu reg) {
 	} test;
 	Bit64s sign80 = (fpu.regs[reg].ll&LONGTYPE(0x8000000000000000))?1:0;
 	Bit64s exp80 =  fpu.regs[reg].ll&LONGTYPE(0x7ff0000000000000);
-	Bit64s exp80final = (exp80>>52) - BIAS64 + BIAS80;
+	Bit64s exp80final = (exp80>>52);
 	Bit64s mant80 = fpu.regs[reg].ll&LONGTYPE(0x000fffffffffffff);
 	Bit64s mant80final = (mant80 << 11);
-	// Elvira wants the 8 and tcalc doesn't 
-	if(fpu.regs[reg].d != 0) mant80final |= LONGTYPE(0x8000000000000000);
-	test.begin= (static_cast<Bit16s>(sign80)<<15)| static_cast<Bit16s>(exp80final);
+	if(fpu.regs[reg].d != 0){ //Zero is a special case
+		// Elvira wants the 8 and tcalc doesn't
+		mant80final |= LONGTYPE(0x8000000000000000);
+		//Ca-cyber doesn't like this when result is zero.
+		exp80final += (BIAS80 - BIAS64);
+	}
+	test.begin = (static_cast<Bit16s>(sign80)<<15)| static_cast<Bit16s>(exp80final);
 	test.eind.ll = mant80final;
 	mem_writed(addr,test.eind.l.lower);
 	mem_writed(addr+4,test.eind.l.upper);
@@ -239,7 +243,7 @@ static void FPU_FST_I64(PhysPt addr) {
 static void FPU_FBST(PhysPt addr) {
 	FPU_Reg val = fpu.regs[TOP];
 	bool sign = false;
-	if(val.d<0.0){ //sign
+	if(fpu.regs[TOP].ll & LONGTYPE(0x8000000000000000)) { //sign
 		sign=true;
 		val.d=-val.d;
 	}
@@ -519,7 +523,7 @@ static void FPU_FXTRACT(void) {
 	Bit64s exp80final = (exp80>>52) - BIAS64;
 	Real64 mant = test.d / (pow(2.0,static_cast<Real64>(exp80final)));
 	fpu.regs[TOP].d = static_cast<Real64>(exp80final);
-	FPU_PUSH(mant); 
+	FPU_PUSH(mant);
 }
 
 static void FPU_FCHS(void){

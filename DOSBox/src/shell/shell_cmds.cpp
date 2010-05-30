@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: shell_cmds.cpp,v 1.90 2009/04/02 19:08:26 qbix79 Exp $ */
+/* $Id: shell_cmds.cpp,v 1.93 2009-09-21 21:04:25 h-a-l-9000 Exp $ */
 
 #include "dosbox.h"
 #include "shell.h"
@@ -33,37 +33,37 @@
 
 
 static SHELL_Cmd cmd_list[]={
+{	"DIR",		0,			&DOS_Shell::CMD_DIR,		"SHELL_CMD_DIR_HELP"},
 {	"CHDIR",	1,			&DOS_Shell::CMD_CHDIR,		"SHELL_CMD_CHDIR_HELP"},
+{	"ATTRIB",	1,			&DOS_Shell::CMD_ATTRIB,		"SHELL_CMD_ATTRIB_HELP"},
+{	"CALL",		1,			&DOS_Shell::CMD_CALL,		"SHELL_CMD_CALL_HELP"},
 {	"CD",		0,			&DOS_Shell::CMD_CHDIR,		"SHELL_CMD_CHDIR_HELP"},
+{	"CHOICE",	1,			&DOS_Shell::CMD_CHOICE,		"SHELL_CMD_CHOICE_HELP"},
 {	"CLS",		0,			&DOS_Shell::CMD_CLS,		"SHELL_CMD_CLS_HELP"},
 {	"COPY",		0,			&DOS_Shell::CMD_COPY,		"SHELL_CMD_COPY_HELP"},
-{	"DIR",		0,			&DOS_Shell::CMD_DIR,		"SHELL_CMD_DIR_HELP"},
 {	"DEL",		0,			&DOS_Shell::CMD_DELETE,		"SHELL_CMD_DELETE_HELP"},
 {	"DELETE",	1,			&DOS_Shell::CMD_DELETE,		"SHELL_CMD_DELETE_HELP"},
 {	"ERASE",	1,			&DOS_Shell::CMD_DELETE,		"SHELL_CMD_DELETE_HELP"},
 {	"ECHO",		1,			&DOS_Shell::CMD_ECHO,		"SHELL_CMD_ECHO_HELP"},
 {	"EXIT",		0,			&DOS_Shell::CMD_EXIT,		"SHELL_CMD_EXIT_HELP"},	
+{	"GOTO",		1,			&DOS_Shell::CMD_GOTO,		"SHELL_CMD_GOTO_HELP"},
 {	"HELP",		1,			&DOS_Shell::CMD_HELP,		"SHELL_CMD_HELP_HELP"},
+{	"IF",		1,			&DOS_Shell::CMD_IF,			"SHELL_CMD_IF_HELP"},
+{	"LOADHIGH",	1,			&DOS_Shell::CMD_LOADHIGH, 	"SHELL_CMD_LOADHIGH_HELP"},
+{	"LH",		1,			&DOS_Shell::CMD_LOADHIGH,	"SHELL_CMD_LOADHIGH_HELP"},
 {	"MKDIR",	1,			&DOS_Shell::CMD_MKDIR,		"SHELL_CMD_MKDIR_HELP"},
 {	"MD",		0,			&DOS_Shell::CMD_MKDIR,		"SHELL_CMD_MKDIR_HELP"},
+{	"PATH",		1,			&DOS_Shell::CMD_PATH,		"SHELL_CMD_PATH_HELP"},
+{	"PAUSE",	1,			&DOS_Shell::CMD_PAUSE,		"SHELL_CMD_PAUSE_HELP"},
 {	"RMDIR",	1,			&DOS_Shell::CMD_RMDIR,		"SHELL_CMD_RMDIR_HELP"},
 {	"RD",		0,			&DOS_Shell::CMD_RMDIR,		"SHELL_CMD_RMDIR_HELP"},
-{	"SET",		1,			&DOS_Shell::CMD_SET,		"SHELL_CMD_SET_HELP"},
-{	"IF",		1,			&DOS_Shell::CMD_IF,			"SHELL_CMD_IF_HELP"},
-{	"GOTO",		1,			&DOS_Shell::CMD_GOTO,		"SHELL_CMD_GOTO_HELP"},
-{	"SHIFT",	1,			&DOS_Shell::CMD_SHIFT,		"SHELL_CMD_SHIFT_HELP"},
-{	"TYPE",		0,			&DOS_Shell::CMD_TYPE,		"SHELL_CMD_TYPE_HELP"},
 {	"REM",		1,			&DOS_Shell::CMD_REM,		"SHELL_CMD_REM_HELP"},
 {	"RENAME",	1,			&DOS_Shell::CMD_RENAME,		"SHELL_CMD_RENAME_HELP"},
 {	"REN",		0,			&DOS_Shell::CMD_RENAME,		"SHELL_CMD_RENAME_HELP"},
-{	"PAUSE",	1,			&DOS_Shell::CMD_PAUSE,		"SHELL_CMD_PAUSE_HELP"},
-{	"CALL",		1,			&DOS_Shell::CMD_CALL,		"SHELL_CMD_CALL_HELP"},
+{	"SET",		1,			&DOS_Shell::CMD_SET,		"SHELL_CMD_SET_HELP"},
+{	"SHIFT",	1,			&DOS_Shell::CMD_SHIFT,		"SHELL_CMD_SHIFT_HELP"},
 {	"SUBST",	1,			&DOS_Shell::CMD_SUBST,		"SHELL_CMD_SUBST_HELP"},
-{	"LOADHIGH",	0,			&DOS_Shell::CMD_LOADHIGH, 	"SHELL_CMD_LOADHIGH_HELP"},
-{	"LH",		1,			&DOS_Shell::CMD_LOADHIGH,	"SHELL_CMD_LOADHIGH_HELP"},
-{	"CHOICE",	0,			&DOS_Shell::CMD_CHOICE,		"SHELL_CMD_CHOICE_HELP"},
-{	"ATTRIB",	1,			&DOS_Shell::CMD_ATTRIB,		"SHELL_CMD_ATTRIB_HELP"},
-{	"PATH",		1,			&DOS_Shell::CMD_PATH,		"SHELL_CMD_PATH_HELP"},
+{	"TYPE",		0,			&DOS_Shell::CMD_TYPE,		"SHELL_CMD_TYPE_HELP"},
 {	"VER",		0,			&DOS_Shell::CMD_VER,		"SHELL_CMD_VER_HELP"},
 {0,0,0,0}
 }; 
@@ -276,8 +276,9 @@ void DOS_Shell::CMD_RENAME(char * args){
 		if((strlen(dir_source) == 2) && (dir_source[1] == ':')) 
 			strcat(dir_source,"\\"); //X: add slash
 
-		char dir_current[DOS_PATHLENGTH];
-		DOS_GetCurrentDir(0,dir_current);
+		char dir_current[DOS_PATHLENGTH + 1];
+		dir_current[0] = '\\'; //Absolute addressing so we can return properly
+		DOS_GetCurrentDir(0,dir_current + 1);
 		if(!DOS_ChangeDir(dir_source)) {
 			WriteOut(MSG_Get("SHELL_ILLEGAL_PATH"));
 			return;
@@ -290,7 +291,6 @@ void DOS_Shell::CMD_RENAME(char * args){
 }
 
 void DOS_Shell::CMD_ECHO(char * args){
-	HELP("ECHO");
 	if (!*args) {
 		if (echo) { WriteOut(MSG_Get("SHELL_CMD_ECHO_ON"));}
 		else { WriteOut(MSG_Get("SHELL_CMD_ECHO_OFF"));}
@@ -308,6 +308,8 @@ void DOS_Shell::CMD_ECHO(char * args){
 		echo=true;		
 		return;
 	}
+	if(strcasecmp(pbuffer,"/?")==0) { HELP("ECHO"); }
+
 	args++;//skip first character. either a slash or dot or space
 	size_t len = strlen(args); //TODO check input of else ook nodig is.
 	if(len && args[len - 1] == '\r') {
@@ -475,6 +477,10 @@ void DOS_Shell::CMD_DIR(char * args) {
 	bool optW=ScanCMDBool(args,"W");
 	ScanCMDBool(args,"S");
 	bool optP=ScanCMDBool(args,"P");
+	if (ScanCMDBool(args,"WP") || ScanCMDBool(args,"PW")) {
+		optW=optP=true;
+	}
+	bool optB=ScanCMDBool(args,"B");
 	bool optAD=ScanCMDBool(args,"AD");
 	char * rem=ScanCMDRemain(args);
 	
@@ -531,7 +537,7 @@ void DOS_Shell::CMD_DIR(char * args) {
 		return;
 	}
 	*(strrchr(path,'\\')+1)=0;
-	WriteOut(MSG_Get("SHELL_CMD_DIR_INTRO"),path);
+	if (!optB) WriteOut(MSG_Get("SHELL_CMD_DIR_INTRO"),path);
 
 	/* Command uses dta so set it to our internal dta */
 	RealPt save_dta=dos.dta();
@@ -539,7 +545,7 @@ void DOS_Shell::CMD_DIR(char * args) {
 	DOS_DTA dta(dos.dta());
 	bool ret=DOS_FindFirst(args,0xffff & ~DOS_ATTR_VOLUME);
 	if (!ret) {
-		WriteOut(MSG_Get("SHELL_CMD_FILE_NOT_FOUND"),args);
+		if (!optB) WriteOut(MSG_Get("SHELL_CMD_FILE_NOT_FOUND"),args);
 		dos.dta(save_dta);
 		return;
 	}
@@ -550,67 +556,73 @@ void DOS_Shell::CMD_DIR(char * args) {
 
 		/* Skip non-directories if option AD is present */
 		if(optAD && !(attr&DOS_ATTR_DIRECTORY) ) continue;
-
-		char * ext = empty_string;
-		if (!optW && (name[0] != '.')) {
-			ext = strrchr(name, '.');
-			if (!ext) ext = empty_string;
-			else *ext++ = 0;
-		}
-		Bit8u day	= (Bit8u)(date & 0x001f);
-		Bit8u month	= (Bit8u)((date >> 5) & 0x000f);
-		Bit16u year = (Bit16u)((date >> 9) + 1980);
-		Bit8u hour	= (Bit8u)((time >> 5 ) >> 6);
-		Bit8u minute = (Bit8u)((time >> 5) & 0x003f);
-
+		
 		/* output the file */
-		if (attr & DOS_ATTR_DIRECTORY) {
-			if (optW) {
-				WriteOut("[%s]",name);
-				size_t namelen = strlen(name);
-				if (namelen <= 14) {
-					for (size_t i=14-namelen;i>0;i--) WriteOut(" ");
-				}
-			} else {
-				WriteOut("%-8s %-3s   %-16s %02d-%02d-%04d %2d:%02d\n",name,ext,"<DIR>",day,month,year,hour,minute);
+		if (optB) {
+			// this overrides pretty much everything
+			if (strcmp(".",name) && strcmp("..",name)) {
+				WriteOut("%s\n",name);
 			}
-			dir_count++;
 		} else {
-			if (optW) {
-				WriteOut("%-16s",name);
+			char * ext = empty_string;
+			if (!optW && (name[0] != '.')) {
+				ext = strrchr(name, '.');
+				if (!ext) ext = empty_string;
+				else *ext++ = 0;
+			}
+			Bit8u day	= (Bit8u)(date & 0x001f);
+			Bit8u month	= (Bit8u)((date >> 5) & 0x000f);
+			Bit16u year = (Bit16u)((date >> 9) + 1980);
+			Bit8u hour	= (Bit8u)((time >> 5 ) >> 6);
+			Bit8u minute = (Bit8u)((time >> 5) & 0x003f);
+
+			if (attr & DOS_ATTR_DIRECTORY) {
+				if (optW) {
+					WriteOut("[%s]",name);
+					size_t namelen = strlen(name);
+					if (namelen <= 14) {
+						for (size_t i=14-namelen;i>0;i--) WriteOut(" ");
+					}
+				} else {
+					WriteOut("%-8s %-3s   %-16s %02d-%02d-%04d %2d:%02d\n",name,ext,"<DIR>",day,month,year,hour,minute);
+				}
+				dir_count++;
 			} else {
-				FormatNumber(size,numformat);
-				WriteOut("%-8s %-3s   %16s %02d-%02d-%04d %2d:%02d\n",name,ext,numformat,day,month,year,hour,minute);
+				if (optW) {
+					WriteOut("%-16s",name);
+				} else {
+					FormatNumber(size,numformat);
+					WriteOut("%-8s %-3s   %16s %02d-%02d-%04d %2d:%02d\n",name,ext,numformat,day,month,year,hour,minute);
+				}
+				file_count++;
+				byte_count+=size;
 			}
-			file_count++;
-			byte_count+=size;
-		}
-		if (optW) {
-			w_count++;
-		}
-		if(optP) {
-			if(!(++p_count%(22*w_size))) {
-				CMD_PAUSE(empty_string);
+			if (optW) {
+				w_count++;
 			}
+		}
+		if (optP && !(++p_count%(22*w_size))) {
+			CMD_PAUSE(empty_string);
 		}
 	} while ( (ret=DOS_FindNext()) );
 	if (optW) {
 		if (w_count%5)	WriteOut("\n");
 	}
-
-	/* Show the summary of results */
-	FormatNumber(byte_count,numformat);
-	WriteOut(MSG_Get("SHELL_CMD_DIR_BYTES_USED"),file_count,numformat);
-	Bit8u drive=dta.GetSearchDrive();
-	//TODO Free Space
-	Bitu free_space=1024*1024*100;
-	if (Drives[drive]) {
-		Bit16u bytes_sector;Bit8u sectors_cluster;Bit16u total_clusters;Bit16u free_clusters;
-		Drives[drive]->AllocationInfo(&bytes_sector,&sectors_cluster,&total_clusters,&free_clusters);
-		free_space=bytes_sector*sectors_cluster*free_clusters;
+	if (!optB) {
+		/* Show the summary of results */
+		FormatNumber(byte_count,numformat);
+		WriteOut(MSG_Get("SHELL_CMD_DIR_BYTES_USED"),file_count,numformat);
+		Bit8u drive=dta.GetSearchDrive();
+		//TODO Free Space
+		Bitu free_space=1024*1024*100;
+		if (Drives[drive]) {
+			Bit16u bytes_sector;Bit8u sectors_cluster;Bit16u total_clusters;Bit16u free_clusters;
+			Drives[drive]->AllocationInfo(&bytes_sector,&sectors_cluster,&total_clusters,&free_clusters);
+			free_space=bytes_sector*sectors_cluster*free_clusters;
+		}
+		FormatNumber(free_space,numformat);
+		WriteOut(MSG_Get("SHELL_CMD_DIR_BYTES_FREE"),dir_count,numformat);
 	}
-	FormatNumber(free_space,numformat);
-	WriteOut(MSG_Get("SHELL_CMD_DIR_BYTES_FREE"),dir_count,numformat);
 	dos.dta(save_dta);
 }
 
@@ -660,11 +672,25 @@ void DOS_Shell::CMD_COPY(char * args) {
 	// Concatating files go as follows: All parts except for the last bear the concat flag.
 	// This construction allows them to be counted (only the non concat set)
 	char* source_p = NULL;
+	char source_x[DOS_PATHLENGTH+CROSS_LEN];
 	while ( (source_p = StripWord(args)) && *source_p ) {
 		do {
 			char* plus = strchr(source_p,'+');
-			if(plus) *plus++ = 0;
-			sources.push_back(copysource(source_p,(plus)?true:false));
+			if (plus) *plus++ = 0;
+			safe_strncpy(source_x,source_p,CROSS_LEN);
+			bool has_drive_spec = false;
+			size_t source_x_len = strlen(source_x);
+			if (source_x_len>0) {
+				if (source_x[source_x_len-1]==':') has_drive_spec = true;
+			}
+			if (!has_drive_spec) {
+				if (DOS_FindFirst(source_p,0xffff & ~DOS_ATTR_VOLUME)) {
+					dta.GetResult(name,size,date,time,attr);
+					if (attr & DOS_ATTR_DIRECTORY && !strstr(source_p,"*.*"))
+						strcat(source_x,"\\*.*");
+				}
+			}
+			sources.push_back(copysource(source_x,(plus)?true:false));
 			source_p = plus;
 		} while(source_p && *source_p);
 	}

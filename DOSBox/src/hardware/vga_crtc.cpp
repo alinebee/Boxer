@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: vga_crtc.cpp,v 1.34 2009/03/18 18:08:16 c2woody Exp $ */
+/* $Id: vga_crtc.cpp,v 1.34 2009-03-18 18:08:16 c2woody Exp $ */
 
 #include <stdlib.h>
 #include "dosbox.h"

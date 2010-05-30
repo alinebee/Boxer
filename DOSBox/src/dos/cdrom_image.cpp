@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: cdrom_image.cpp,v 1.24 2009/03/19 20:45:42 c2woody Exp $ */
+/* $Id: cdrom_image.cpp,v 1.24 2009-03-19 20:45:42 c2woody Exp $ */
 
 #include <cctype>
 #include <cmath>
@@ -227,11 +227,19 @@ bool CDROM_Interface_Image::GetMediaTrayStatus(bool& mediaPresent, bool& mediaCh
 
 bool CDROM_Interface_Image::PlayAudioSector(unsigned long start,unsigned long len)
 {
+	// We might want to do some more checks. E.g valid start and length
 	SDL_mutexP(player.mutex);
 	player.cd = this;
 	player.currFrame = start;
 	player.targetFrame = start + len;
-	player.isPlaying = true;
+	int track = GetTrack(start) - 1;
+	if(track >= 0 && tracks[track].attr == 0x40) {
+		LOG(LOG_MISC,LOG_WARN)("Game tries to play the data track. Not doing this");
+		player.isPlaying = false;
+		//Unclear wether return false should be here. 
+		//specs say that this function returns at once and games should check the status wether the audio is actually playing
+		//Real drives either fail or succeed as well
+	} else player.isPlaying = true;
 	player.isPaused = false;
 	SDL_mutexV(player.mutex);
 	return true;
@@ -239,6 +247,7 @@ bool CDROM_Interface_Image::PlayAudioSector(unsigned long start,unsigned long le
 
 bool CDROM_Interface_Image::PauseAudio(bool resume)
 {
+	if (!player.isPlaying) return false;
 	player.isPaused = !resume;
 	return true;
 }
@@ -498,8 +507,18 @@ bool CDROM_Interface_Image::LoadCueSheet(char *cuefile)
 				track.file = new BinaryFile(filename.c_str(), error);
 			}
 #if defined(C_SDL_SOUND)
+			//The next if has been surpassed by the else, but leaving it in as not 
+			//to break existing cue sheets that depend on this.(mine with OGG tracks specifying MP3 as type)
 			else if (type == "WAVE" || type == "AIFF" || type == "MP3") {
 				track.file = new AudioFile(filename.c_str(), error);
+			} else { 
+				const Sound_DecoderInfo **i;
+				for (i = Sound_AvailableDecoders(); *i != NULL; i++) {
+					if (*(*i)->extensions == type) {
+						track.file = new AudioFile(filename.c_str(), error);
+						break;
+					}
+				}
 			}
 #endif
 			if (error) {

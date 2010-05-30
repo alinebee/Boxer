@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -15,6 +15,8 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
+
+/* $Id: operators.h,v 1.8 2009-06-25 19:31:43 c2woody Exp $ */
 
 
 static Bit8u DRC_CALL_CONV dynrec_add_byte(Bit8u op1,Bit8u op2) DRC_FC;
@@ -1297,20 +1299,20 @@ static Bit32u DRC_CALL_CONV dynrec_dshr_dword_simple(Bit32u op1,Bit32u op2,Bit8u
 
 static void dyn_dpshift_word_gencall(bool left) {
 	if (left) {
-		DRC_PTR_SIZE_IM proc_addr=gen_call_function_R3((void*)&dynrec_dshl_word,FC_RETOP);
+		DRC_PTR_SIZE_IM proc_addr=gen_call_function_R3((void*)&dynrec_dshl_word,FC_OP3);
 		InvalidateFlagsPartially((void*)&dynrec_dshl_word_simple,proc_addr,t_DSHLw);
 	} else {
-		DRC_PTR_SIZE_IM proc_addr=gen_call_function_R3((void*)&dynrec_dshr_word,FC_RETOP);
+		DRC_PTR_SIZE_IM proc_addr=gen_call_function_R3((void*)&dynrec_dshr_word,FC_OP3);
 		InvalidateFlagsPartially((void*)&dynrec_dshr_word_simple,proc_addr,t_DSHRw);
 	}
 }
 
 static void dyn_dpshift_dword_gencall(bool left) {
 	if (left) {
-		DRC_PTR_SIZE_IM proc_addr=gen_call_function_R3((void*)&dynrec_dshl_dword,FC_RETOP);
+		DRC_PTR_SIZE_IM proc_addr=gen_call_function_R3((void*)&dynrec_dshl_dword,FC_OP3);
 		InvalidateFlagsPartially((void*)&dynrec_dshl_dword_simple,proc_addr,t_DSHLd);
 	} else {
-		DRC_PTR_SIZE_IM proc_addr=gen_call_function_R3((void*)&dynrec_dshr_dword,FC_RETOP);
+		DRC_PTR_SIZE_IM proc_addr=gen_call_function_R3((void*)&dynrec_dshr_dword,FC_OP3);
 		InvalidateFlagsPartially((void*)&dynrec_dshr_dword_simple,proc_addr,t_DSHRd);
 	}
 }

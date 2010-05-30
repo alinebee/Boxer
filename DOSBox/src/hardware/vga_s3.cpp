@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: vga_s3.cpp,v 1.18 2009/03/15 11:28:35 c2woody Exp $ */
+/* $Id: vga_s3.cpp,v 1.18 2009-03-15 11:28:35 c2woody Exp $ */
 
 #include "dosbox.h"
 #include "inout.h"
@@ -355,7 +355,7 @@ Bitu SVGA_S3_ReadCRTC( Bitu reg, Bitu iolen) {
 	switch (reg) {
 	case 0x24:	/* attribute controller index (read only) */
 	case 0x26:
-		return (vga.attr.enabled?0x20:0x00) | (vga.attr.index&0x1f);
+		return ((vga.attr.disabled & 1)?0x00:0x20) | (vga.attr.index & 0x1f);
 	case 0x2d:	/* Extended Chip ID (high byte of PCI device ID) */
 		return 0x88;
 	case 0x2e:	/* New Chip ID  (low byte of PCI device ID) */

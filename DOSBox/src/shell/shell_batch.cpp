@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: shell_batch.cpp,v 1.35 2009/05/27 09:15:42 qbix79 Exp $ */
+/* $Id: shell_batch.cpp,v 1.36 2009-07-03 19:36:56 qbix79 Exp $ */
 
 #include <stdlib.h>
 #include <string.h>
@@ -24,14 +24,15 @@
 #include "shell.h"
 #include "support.h"
 
-BatchFile::BatchFile(DOS_Shell * host,char const * const name, char const * const cmd_line) {
+BatchFile::BatchFile(DOS_Shell * host,char const * const resolved_name,char const * const entered_name, char const * const cmd_line) {
 	location = 0;
 	prev=host->bf;
 	echo=host->echo;
 	shell=host;
 	char totalname[DOS_PATHLENGTH+4];
-	DOS_Canonicalize(name,totalname); // Get fullname including drive specificiation
-	cmd = new CommandLine(totalname,cmd_line);
+	DOS_Canonicalize(resolved_name,totalname); // Get fullname including drive specificiation
+	cmd = new CommandLine(entered_name,cmd_line);
+	filename = totalname;
 
 	//Test if file is openable
 	if (!DOS_OpenFile(totalname,128,&file_handle)) {
@@ -49,8 +50,8 @@ BatchFile::~BatchFile() {
 
 bool BatchFile::ReadLine(char * line) {
 	//Open the batchfile and seek to stored postion
-	if (!DOS_OpenFile(cmd->GetFileName(),128,&file_handle)) {
-		LOG(LOG_MISC,LOG_ERROR)("ReadLine Can't open BatchFile %s",cmd->GetFileName());
+	if (!DOS_OpenFile(filename.c_str(),128,&file_handle)) {
+		LOG(LOG_MISC,LOG_ERROR)("ReadLine Can't open BatchFile %s",filename.c_str());
 		delete this;
 		return false;
 	}
@@ -143,8 +144,8 @@ emptyline:
 
 bool BatchFile::Goto(char * where) {
 	//Open bat file and search for the where string
-	if (!DOS_OpenFile(cmd->GetFileName(),128,&file_handle)) {
-		LOG(LOG_MISC,LOG_ERROR)("SHELL:Goto Can't open BatchFile %s",cmd->GetFileName());
+	if (!DOS_OpenFile(filename.c_str(),128,&file_handle)) {
+		LOG(LOG_MISC,LOG_ERROR)("SHELL:Goto Can't open BatchFile %s",filename.c_str());
 		delete this;
 		return false;
 	}

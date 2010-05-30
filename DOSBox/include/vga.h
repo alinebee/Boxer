@@ -1,5 +1,5 @@
  /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: vga.h,v 1.46 2009/03/15 11:28:34 c2woody Exp $ */
+/* $Id: vga.h,v 1.48 2009-11-03 21:06:59 h-a-l-9000 Exp $ */
 
 #ifndef DOSBOX_VGA_H
 #define DOSBOX_VGA_H
@@ -111,6 +111,12 @@ typedef struct {
 	Bit32u full_enable_and_set_reset;
 } VGA_Config;
 
+typedef enum {
+	PART,
+	LINE,
+	//EGALINE
+} Drawmode;
+
 typedef struct {
 	bool resizing;
 	Bitu width;
@@ -126,6 +132,7 @@ typedef struct {
 	Bitu address_line_total;
 	Bitu address_line;
 	Bitu lines_total;
+	Bitu vblank_skip;
 	Bitu lines_done;
 	Bitu lines_scaled;
 	Bitu split_line;
@@ -143,6 +150,7 @@ typedef struct {
 		double hdend, htotal;
 		double parts;
 	} delay;
+	Bitu bpp;
 	double aspect_ratio;
 	bool double_scan;
 	bool doublewidth,doubleheight;
@@ -155,6 +163,7 @@ typedef struct {
 		Bit8u count,delay;
 		Bit8u enabled;
 	} cursor;
+	Drawmode mode;
 	bool vret_triggered;
 } VGA_Draw;
 
@@ -215,14 +224,15 @@ typedef struct {
 	Bit8u htotal;
 	Bit8u hdend;
 	Bit8u hsyncp;
-	Bit8u syncw;
+	Bit8u hsyncw;
 	Bit8u vtotal;
 	Bit8u vdend;
 	Bit8u vadjust;
 	Bit8u vsyncp;
 	Bit8u vsyncw;
 	Bit8u max_scanline;
-	Bit8u lpen_low, lpen_high;
+	Bit16u lightpen;
+	bool lightpen_triggered;
 	Bit8u cursor_start;
 	Bit8u cursor_end;
 } VGA_OTHER;
@@ -260,7 +270,12 @@ typedef struct {
 	Bit8u color_plane_enable;
 	Bit8u color_select;
 	Bit8u index;
-	Bit8u enabled;
+	Bit8u disabled; // Used for disabling the screen.
+					// Bit0: screen disabled by attribute controller index
+					// Bit1: screen disabled by sequencer index 1 bit 5
+					// These are put together in one variable for performance reasons:
+					// the line drawing function is called maybe 60*480=28800 times/s,
+					// and we only need to check one variable for zero this way.
 } VGA_Attr;
 
 typedef struct {
@@ -365,8 +380,6 @@ typedef struct {
 
 typedef struct {
 	VGAModes mode;								/* The mode the vga system is in */
-	VGAModes lastmode;
-	Bits screenflip;
 	Bit8u misc_output;
 	VGA_Draw draw;
 	VGA_Config config;
@@ -395,6 +408,8 @@ typedef struct {
 } VGA_Type;
 
 
+/* Hercules Palette function */
+void Herc_Palette(void);
 
 /* Functions for different resolutions */
 void VGA_SetMode(VGAModes mode);

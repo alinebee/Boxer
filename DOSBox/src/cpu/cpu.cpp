@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: cpu.cpp,v 1.116 2009/03/16 18:10:08 c2woody Exp $ */
+/* $Id: cpu.cpp,v 1.116 2009-03-16 18:10:08 c2woody Exp $ */
 
 #include <assert.h>
 #include <sstream>
@@ -49,7 +49,7 @@ CPUBlock cpu;
 Segments Segs;
 
 Bit32s CPU_Cycles = 0;
-Bit32s CPU_CycleLeft = 0;
+Bit32s CPU_CycleLeft = 3000;
 Bit32s CPU_CycleMax = 3000;
 Bit32s CPU_OldCycleMax = 3000;
 Bit32s CPU_CyclePercUsed = 100;
@@ -1542,7 +1542,7 @@ Bitu CPU_SIDT_limit(void) {
 	return cpu.idt.GetLimit();
 }
 
-
+static bool printed_cycles_auto_info = false;
 void CPU_SET_CRX(Bitu cr,Bitu value) {
 	switch (cr) {
 	case 0:
@@ -1563,6 +1563,10 @@ void CPU_SET_CRX(Bitu cr,Bitu value) {
 					CPU_Cycles=0;
 					CPU_OldCycleMax=CPU_CycleMax;
 					GFX_SetTitle(CPU_CyclePercUsed,-1,false);
+					if(!printed_cycles_auto_info) {
+						printed_cycles_auto_info = true;
+						LOG_MSG("DOSBox switched to max cycles, because of the setting: cycles=auto. If the game runs too fast try a fixed cycles amount in DOSBox's options.");
+					}
 				} else {
 					GFX_SetTitle(-1,-1,false);
 				}
@@ -2095,8 +2099,8 @@ static void CPU_CycleIncrease(bool pressed) {
 	if (!pressed) return;
 	if (CPU_CycleAutoAdjust) {
 		CPU_CyclePercUsed+=5;
-		if (CPU_CyclePercUsed>100) CPU_CyclePercUsed=100;
-		LOG_MSG("CPU:%d percent",CPU_CyclePercUsed);
+		if (CPU_CyclePercUsed>105) CPU_CyclePercUsed=105;
+		LOG_MSG("CPU speed: max %d percent.",CPU_CyclePercUsed);
 		GFX_SetTitle(CPU_CyclePercUsed,-1,false);
 	} else {
 		Bit32s old_cycles=CPU_CycleMax;
@@ -2108,7 +2112,10 @@ static void CPU_CycleIncrease(bool pressed) {
 	    
 		CPU_CycleLeft=0;CPU_Cycles=0;
 		if (CPU_CycleMax==old_cycles) CPU_CycleMax++;
-		LOG_MSG("CPU:%d cycles",CPU_CycleMax);
+		if(CPU_CycleMax > 15000 ) 
+			LOG_MSG("CPU speed: fixed %d cycles. If you need more than 20000, try core=dynamic in DOSBox's options.",CPU_CycleMax);
+		else
+			LOG_MSG("CPU speed: fixed %d cycles.",CPU_CycleMax);
 		GFX_SetTitle(CPU_CycleMax,-1,false);
 	}
 }
@@ -2118,7 +2125,10 @@ static void CPU_CycleDecrease(bool pressed) {
 	if (CPU_CycleAutoAdjust) {
 		CPU_CyclePercUsed-=5;
 		if (CPU_CyclePercUsed<=0) CPU_CyclePercUsed=1;
-		LOG_MSG("CPU:%d percent",CPU_CyclePercUsed);
+		if(CPU_CyclePercUsed <=70)
+			LOG_MSG("CPU speed: max %d percent. If the game runs too fast, try a fixed cycles amount in DOSBox's options.",CPU_CyclePercUsed);
+		else
+			LOG_MSG("CPU speed: max %d percent.",CPU_CyclePercUsed);
 		GFX_SetTitle(CPU_CyclePercUsed,-1,false);
 	} else {
 		if (CPU_CycleDown < 100) {
@@ -2128,7 +2138,7 @@ static void CPU_CycleDecrease(bool pressed) {
 		}
 		CPU_CycleLeft=0;CPU_Cycles=0;
 		if (CPU_CycleMax <= 0) CPU_CycleMax=1;
-		LOG_MSG("CPU:%d cycles",CPU_CycleMax);
+		LOG_MSG("CPU speed: fixed %d cycles.",CPU_CycleMax);
 		GFX_SetTitle(CPU_CycleMax,-1,false);
 	}
 }
@@ -2222,7 +2232,7 @@ public:
 	bool Change_Config(Section* newconfig){
 		Section_prop * section=static_cast<Section_prop *>(newconfig);
 		CPU_AutoDetermineMode=CPU_AUTODETERMINE_NONE;
-		CPU_CycleLeft=0;//needed ?
+		//CPU_CycleLeft=0;//needed ?
 		CPU_Cycles=0;
 		CPU_SkipCycleAutoAdjust=false;
 
@@ -2242,7 +2252,7 @@ public:
 						int percval=0;
 						std::istringstream stream(str);
 						stream >> percval;
-						if ((percval>0) && (percval<=100)) CPU_CyclePercUsed=(Bit32s)percval;
+						if ((percval>0) && (percval<=105)) CPU_CyclePercUsed=(Bit32s)percval;
 					} else if (str=="limit") {
 						cmdnum++;
 						if (cmd.FindCommand(cmdnum,str)) {
@@ -2267,7 +2277,7 @@ public:
 							int percval=0;
 							std::istringstream stream(str);
 							stream >> percval;
-							if ((percval>0) && (percval<=100)) CPU_CyclePercUsed=(Bit32s)percval;
+							if ((percval>0) && (percval<=105)) CPU_CyclePercUsed=(Bit32s)percval;
 						} else if (str=="limit") {
 							cmdnum++;
 							if (cmd.FindCommand(cmdnum,str)) {

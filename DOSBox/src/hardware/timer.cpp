@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: timer.cpp,v 1.49 2009/04/10 09:53:04 c2woody Exp $ */
+/* $Id: timer.cpp,v 1.49 2009-04-10 09:53:04 c2woody Exp $ */
 
 #include <math.h>
 #include "dosbox.h"
@@ -75,9 +75,7 @@ static void PIT0_Event(Bitu /*val*/) {
 			pit[0].delay=(1000.0f/((float)PIT_TICK_RATE/(float)pit[0].cntr));
 			pit[0].update_count=false;
 		}
-
-		double error = 	pit[0].start - PIC_FullIndex();
-		PIC_AddEvent(PIT0_Event,(float)(pit[0].delay + error));
+		PIC_AddEvent(PIT0_Event,pit[0].delay);
 	}
 }
 
@@ -271,9 +269,7 @@ static Bitu read_latch(Bitu port,Bitu /*iolen*/) {
 			break;
 		case 3: /* read LSB followed by MSB */
 			ret = pit[counter].read_latch & 0xff;
-
-			if (pit[counter].mode & 0x80) pit[counter].mode &= 7;
-			else pit[counter].read_state = 0;
+			pit[counter].read_state = 0;
 			break;
 		case 1: /* read LSB */
 			ret = pit[counter].read_latch & 0xff;

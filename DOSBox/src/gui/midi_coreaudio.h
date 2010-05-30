@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,13 +16,10 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+/* $Id: midi_coreaudio.h,v 1.12 2009-10-18 18:06:28 qbix79 Exp $ */
+
 #include <AudioToolbox/AUGraph.h>
-#include <AvailabilityMacros.h>
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1050
-#define OS_X_10_5
-#endif
-
+#include <CoreServices/CoreServices.h>
 
 // A macro to simplify error handling a bit.
 #define RequireNoErr(error)                                         \
@@ -58,24 +55,14 @@ public:
 		desc.componentFlags = 0;
 		desc.componentFlagsMask = 0;
 
-#ifdef OS_X_10_5
 		RequireNoErr(AUGraphAddNode(m_auGraph, &desc, &outputNode));
-#else
-		RequireNoErr(AUGraphNewNode(m_auGraph, &desc, 0, NULL, &outputNode));
-#endif
-		
+
 		// The built-in default (softsynth) music device
 		desc.componentType = kAudioUnitType_MusicDevice;
 		desc.componentSubType = kAudioUnitSubType_DLSSynth;
 		desc.componentManufacturer = kAudioUnitManufacturer_Apple;
 		RequireNoErr(AUGraphAddNode(m_auGraph, &desc, &synthNode));
 
-#ifdef OS_X_10_5
-		RequireNoErr(AUGraphAddNode(m_auGraph, &desc, &synthNode));
-#else
-		RequireNoErr(AUGraphNewNode(m_auGraph, &desc, 0, NULL, &synthNode));
-#endif
-		
 		// Connect the softsynth to the default output
 		RequireNoErr(AUGraphConnectNodeInput(m_auGraph, synthNode, 0, outputNode, 0));
 
@@ -84,12 +71,8 @@ public:
 		RequireNoErr(AUGraphInitialize(m_auGraph));
 
 		// Get the music device from the graph.
-#ifdef OS_X_10_5
 		RequireNoErr(AUGraphNodeInfo(m_auGraph, synthNode, NULL, &m_synth));
-#else
-		RequireNoErr(AUGraphGetNodeInfo(m_auGraph, synthNode, NULL, NULL, NULL, &m_synth));
-#endif
-		
+
 		// Finally: Start the graph!
 		RequireNoErr(AUGraphStart(m_auGraph));
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: dos_inc.h,v 1.78 2009/05/27 09:15:41 qbix79 Exp $ */
+/* $Id: dos_inc.h,v 1.83 2009-10-28 21:45:12 qbix79 Exp $ */
 
 #ifndef DOSBOX_DOS_INC_H
 #define DOSBOX_DOS_INC_H
@@ -86,7 +86,7 @@ enum { RETURN_EXIT=0,RETURN_CTRLC=1,RETURN_ABORT=2,RETURN_TSR=3};
 #define DOS_SDA_OFS 0
 #define DOS_CDS_SEG 0x108
 #define DOS_FIRST_SHELL 0x118
-#define DOS_MEM_START 0x158		//First Segment that DOS can use
+#define DOS_MEM_START 0x16f		//First Segment that DOS can use
 
 #define DOS_PRIVATE_SEGMENT 0xc800
 #define DOS_PRIVATE_SEGMENT_END 0xd000
@@ -154,7 +154,7 @@ void DOS_SetupDevices(void);
 bool DOS_NewPSP(Bit16u pspseg,Bit16u size);
 bool DOS_ChildPSP(Bit16u pspseg,Bit16u size);
 bool DOS_Execute(char * name,PhysPt block,Bit8u flags);
-bool DOS_Terminate(bool tsr,Bit8u exitcode);
+void DOS_Terminate(Bit16u pspseg,bool tsr,Bit8u exitcode);
 
 /* Memory Handling Routines */
 void DOS_SetupMemory(void);
@@ -489,7 +489,7 @@ private:
 
 class DOS_FCB: public MemStruct {
 public:
-	DOS_FCB(Bit16u seg,Bit16u off);
+	DOS_FCB(Bit16u seg,Bit16u off,bool allow_extended=true);
 	void Create(bool _extended);
 	void SetName(Bit8u _drive,char * _fname,char * _ext);
 	void SetSizeDateTime(Bit32u _size,Bit16u _date,Bit16u _time);
@@ -627,6 +627,7 @@ struct DOS_Block {
 		RealPt dbcs;
 		RealPt filenamechar;
 		RealPt collatingseq;
+		RealPt upcase;
 		Bit8u* country;//Will be copied to dos memory. resides in real mem
 		Bit16u dpb; //Fake Disk parameter system using only the first entry so the drive letter matches
 	} tables;

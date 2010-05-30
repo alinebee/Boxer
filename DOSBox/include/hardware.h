@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -15,6 +15,8 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
+
+/* $Id: hardware.h,v 1.17 2009-06-23 17:46:05 c2woody Exp $ */
 
 #ifndef DOSBOX_HARDWARE_H
 #define DOSBOX_HARDWARE_H
@@ -37,6 +39,9 @@ void OPL_Init(Section* sec,OPL_Mode mode);
 void CMS_Init(Section* sec);
 void OPL_ShutDown(Section* sec);
 void CMS_ShutDown(Section* sec);
+
+bool SB_Get_Address(Bitu& sbaddr, Bitu& sbirq, Bitu& sbdma);
+bool TS_Get_Address(Bitu& tsaddr, Bitu& tsirq, Bitu& tsdma);
 
 extern Bit8u adlib_commandreg;
 FILE * OpenCaptureFile(const char * type,const char * ext);

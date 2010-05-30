@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: dos_system.h,v 1.47 2009/03/04 21:08:22 c2woody Exp $ */
+/* $Id: dos_system.h,v 1.47 2009-03-04 21:08:22 c2woody Exp $ */
 
 #ifndef DOSBOX_DOS_SYSTEM_H
 #define DOSBOX_DOS_SYSTEM_H
@@ -139,11 +139,14 @@ public:
 
 	void		ExpandName			(char* path);
 	char*		GetExpandName		(const char* path);
-//--Modified 2009-10-06 by Alun Bestor: changed function signature to correspond to new implementation in drive_cache.cpp.
+
+	//--Modified 2009-10-06 by Alun Bestor: changed function signature to correspond to new implementation in drive_cache.cpp.
 	bool		GetShortName		(const char* dirpath, const char* filename, char* shortname);
-//--End of modifications
-	bool		FindFirst			(char* path, Bitu& id);
-	bool		FindNext			(Bitu id, char* &result);
+	//bool		GetShortName		(const char* fullname, char* shortname);
+	//--End of modifications
+
+	bool		FindFirst			(char* path, Bit16u& id);
+	bool		FindNext			(Bit16u id, char* &result);
 
 	void		CacheOut			(const char* path, bool ignoreLastDir = false);
 	void		AddEntry			(const char* path, bool checkExist = false);
@@ -206,7 +209,7 @@ private:
 	char		dirSearchName		[MAX_OPENDIRS];
 	bool		free				[MAX_OPENDIRS];
 	CFileInfo*	dirFindFirst		[MAX_OPENDIRS];
-	Bitu		nextFreeFindFirst;
+	Bit16u		nextFreeFindFirst;
 
 	char		label				[CROSS_LEN];
 	bool		updatelabel;
@@ -242,7 +245,7 @@ public:
 	
 	/* Can be overridden for example in iso images */
 	virtual char const * GetLabel(){return dirCache.GetLabel();};
-	
+
 	//--Added 2009-10-25 by Alun Bestor to access the base system path for a drive
 	char systempath[CROSS_LEN];
 	char * getSystemPath(void);

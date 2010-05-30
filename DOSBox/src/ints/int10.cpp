@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: int10.cpp,v 1.55 2009/04/11 07:58:39 qbix79 Exp $ */
+/* $Id: int10.cpp,v 1.56 2009-09-06 19:25:34 c2woody Exp $ */
 
 #include "dosbox.h"
 #include "mem.h"
@@ -329,11 +329,42 @@ graphics_chars:
 		case 0x20:							/* Set alternate printscreen */
 			break;
 		case 0x30:							/* Select vertical resolution */
-			if (!IS_VGA_ARCH) break;
-			LOG(LOG_INT10,LOG_ERROR)("Function 12:Call %2X not handled",reg_bl);
-			if (reg_al>2) reg_al=0;		//invalid subfunction
-			else reg_al=0x12;			//fake a success call
-			break;
+			{   
+				if (!IS_VGA_ARCH) break;
+				LOG(LOG_INT10,LOG_WARN)("Function 12:Call %2X (select vertical resolution)",reg_bl);
+				if (svgaCard != SVGA_None) {
+					if (reg_al > 2) {
+						reg_al=0;		// invalid subfunction
+						break;
+					}
+				}
+				Bit8u modeset_ctl = real_readb(BIOSMEM_SEG,BIOSMEM_MODESET_CTL);
+				Bit8u video_switches = real_readb(BIOSMEM_SEG,BIOSMEM_SWITCHES)&0xf0;
+				switch(reg_al) {
+				case 0: // 200
+					modeset_ctl &= 0xef;
+					modeset_ctl |= 0x80;
+					video_switches |= 8;	// ega normal/cga emulation
+					break;
+				case 1: // 350
+					modeset_ctl &= 0x6f;
+					video_switches |= 9;	// ega enhanced
+					break;
+				case 2: // 400
+					modeset_ctl &= 0x6f;
+					modeset_ctl |= 0x10;	// use 400-line mode at next mode set
+					video_switches |= 9;	// ega enhanced
+					break;
+				default:
+					modeset_ctl &= 0xef;
+					video_switches |= 8;	// ega normal/cga emulation
+					break;
+				}
+				real_writeb(BIOSMEM_SEG,BIOSMEM_MODESET_CTL,modeset_ctl);
+				real_writeb(BIOSMEM_SEG,BIOSMEM_SWITCHES,video_switches);
+				reg_al=0x12;	// success
+				break;
+			}
 		case 0x31:							/* Palette loading on modeset */
 			{   
 				if (!IS_VGA_ARCH) break;
@@ -388,18 +419,24 @@ graphics_chars:
 			LOG(LOG_INT10,LOG_ERROR)("Function 12:Call %2X not handled",reg_bl);
 			reg_al=0x12;
 			break;
-		case 0x36:							/* VGA Refresh control */
+		case 0x36: {						/* VGA Refresh control */
 			if (!IS_VGA_ARCH) break;
 			if ((svgaCard==SVGA_S3Trio) && (reg_al>1)) {
 				reg_al=0;
 				break;
 			}
-			/* 
-				Call disables/enables the vga from outputting video,
-				don't support it, but fake a success return 
-			*/
-			reg_al=0x12;
+			IO_Write(0x3c4,0x1);
+			Bit8u clocking = IO_Read(0x3c5);
+			
+			if (reg_al==0) clocking &= ~0x20;
+			else clocking |= 0x20;
+			
+			IO_Write(0x3c4,0x1);
+			IO_Write(0x3c5,clocking);
+
+			reg_al=0x12; // success
 			break;
+		}
 		default:
 			LOG(LOG_INT10,LOG_ERROR)("Function 12:Call %2X not handled",reg_bl);
 			if (machine!=MCH_EGA) reg_al=0;

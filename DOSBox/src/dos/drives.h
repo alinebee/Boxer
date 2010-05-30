@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: drives.h,v 1.41 2009/05/27 09:15:41 qbix79 Exp $ */
+/* $Id: drives.h,v 1.41 2009-05-27 09:15:41 qbix79 Exp $ */
 
 #ifndef _DRIVES_H__
 #define _DRIVES_H__
@@ -175,7 +175,7 @@ public:
 	bool directoryBrowse(Bit32u dirClustNumber, direntry *useEntry, Bit32s entNum);
 	bool directoryChange(Bit32u dirClustNumber, direntry *useEntry, Bit32s entNum);
 	imageDisk *loadedDisk;
-	bool created_succesfully;
+	bool created_successfully;
 private:
 	Bit32u getClusterValue(Bit32u clustNum);
 	void setClusterValue(Bit32u clustNum, Bit32u clustValue);
@@ -345,6 +345,7 @@ private:
 	
 	struct DirIterator {
 		bool valid;
+		bool root;
 		Bit32u currentSector;
 		Bit32u endSector;
 		Bit32u pos;

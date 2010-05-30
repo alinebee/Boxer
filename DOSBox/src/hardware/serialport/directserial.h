@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,42 +16,26 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: directserial_posix.h,v 1.4 2009/05/27 09:15:41 qbix79 Exp $ */
+/* $Id: directserial.h,v 1.2 2009-09-26 09:15:19 h-a-l-9000 Exp $ */
 
 // include guard
-#ifndef DOSBOX_DIRECTSERIAL_POSIX_H
-#define DOSBOX_DIRECTSERIAL_POSIX_H
+#ifndef DOSBOX_DIRECTSERIAL_WIN32_H
+#define DOSBOX_DIRECTSERIAL_WIN32_H
 
 #include "dosbox.h"
 
 #if C_DIRECTSERIAL
-#if defined (LINUX) || defined (MACOSX) || defined (BSD)
-
-
 
 #define DIRECTSERIAL_AVAILIBLE
 #include "serialport.h"
-#include <termios.h>
-#include <unistd.h>
+
+#include "libserial.h"
 
 class CDirectSerial : public CSerial {
 public:
-	termios termInfo;
-	termios backup;
-	int fileHandle;
-
 	CDirectSerial(Bitu id, CommandLine* cmd);
 	~CDirectSerial();
-	bool receiveblock;		// It's not a block of data it rather blocks
 
-	Bitu rx_retry;		// counter of retries
-
-	Bitu rx_retry_max;	// how many POLL_EVENTS to wait before causing
-						// a overrun error.
-
-	void ReadCharacter();
-	void CheckErrors();
-	
 	void updatePortConfig(Bit16u divider, Bit8u lcr);
 	void updateMSR();
 	void transmitByte(Bit8u val, bool first);
@@ -61,9 +45,27 @@ public:
 	void setRTS(bool val);
 	void setDTR(bool val);
 	void handleUpperEvent(Bit16u type);
-		
+
+private:
+	COMPORT comport;
+
+	Bitu rx_state;
+#define D_RX_IDLE		0
+#define D_RX_WAIT		1
+#define D_RX_BLOCKED	2
+#define D_RX_FASTWAIT	3
+
+	Bitu rx_retry;		// counter of retries (every millisecond)
+	Bitu rx_retry_max;	// how many POLL_EVENTS to wait before causing
+						// an overrun error.
+	bool doReceive();
+
+#if SERIAL_DEBUG
+	bool dbgmsg_poll_block;
+	bool dbgmsg_rx_block;
+#endif
+
 };
 
-#endif	// WIN32
 #endif	// C_DIRECTSERIAL
 #endif	// include guard

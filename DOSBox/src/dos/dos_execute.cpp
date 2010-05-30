@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: dos_execute.cpp,v 1.67 2009/05/27 09:15:41 qbix79 Exp $ */
+/* $Id: dos_execute.cpp,v 1.68 2009-10-04 14:28:07 c2woody Exp $ */
 
 #include <string.h>
 #include <ctype.h>
@@ -57,11 +57,6 @@ struct EXE_Header {
 #define MAGIC2 0x4d5a
 #define MAXENV 32768u
 #define ENV_KEEPFREE 83				 /* keep unallocated by environment variables */
-	/* The '65' added to nEnvSize does not cover the additional stuff:
-	   + 2 bytes: number of strings
-	   + 80 bytes: maximum absolute filename
-	   + 1 byte: '\0'
-	   -- 1999/04/21 ska */
 #define LOADNGO 0
 #define LOAD    1
 #define OVERLAY 3
@@ -104,15 +99,13 @@ void DOS_UpdatePSPName(void) {
 	GFX_SetTitle(-1,-1,false);
 }
 
-bool DOS_Terminate(bool tsr,Bit8u exitcode) {
+void DOS_Terminate(Bit16u pspseg,bool tsr,Bit8u exitcode) {
 
 	dos.return_code=exitcode;
-	dos.return_mode=RETURN_EXIT;
+	dos.return_mode=(tsr)?(Bit8u)RETURN_TSR:(Bit8u)RETURN_EXIT;
 	
-	Bit16u mempsp = dos.psp();
-
-	DOS_PSP curpsp(mempsp);
-	if (mempsp==curpsp.GetParent()) return true;
+	DOS_PSP curpsp(pspseg);
+	if (pspseg==curpsp.GetParent()) return;
 	/* Free Files owned by process */
 	if (!tsr) curpsp.CloseFiles();
 	
@@ -136,10 +129,10 @@ bool DOS_Terminate(bool tsr,Bit8u exitcode) {
 	   interrupts enabled, test flags cleared */
 	mem_writew(SegPhys(ss)+reg_sp+4,0x7202);
 	// Free memory owned by process
-	if (!tsr) DOS_FreeProcessMemory(mempsp);
+	if (!tsr) DOS_FreeProcessMemory(pspseg);
 	DOS_UpdatePSPName();
 
-	if ((!(CPU_AutoDetermineMode>>CPU_AUTODETERMINE_SHIFT)) || (cpu.pmode)) return true;
+	if ((!(CPU_AutoDetermineMode>>CPU_AUTODETERMINE_SHIFT)) || (cpu.pmode)) return;
 
 	CPU_AutoDetermineMode>>=CPU_AUTODETERMINE_SHIFT;
 	if (CPU_AutoDetermineMode&CPU_AUTODETERMINE_CYCLES) {
@@ -159,7 +152,7 @@ bool DOS_Terminate(bool tsr,Bit8u exitcode) {
 	}
 #endif
 
-	return true;
+	return;
 }
 
 static bool MakeEnv(char * name,Bit16u * segment) {
@@ -220,8 +213,12 @@ bool DOS_NewPSP(Bit16u segment, Bit16u size) {
 bool DOS_ChildPSP(Bit16u segment, Bit16u size) {
 	DOS_PSP psp(segment);
 	psp.MakeNew(size);
-	DOS_PSP psp_parent(psp.GetParent());
+	Bit16u parent_psp_seg = psp.GetParent();
+	DOS_PSP psp_parent(parent_psp_seg);
 	psp.CopyFileTable(&psp_parent,true);
+	psp.SetCommandTail(RealMake(parent_psp_seg,0x80));
+	psp.SetFCB1(RealMake(parent_psp_seg,0x5c));
+	psp.SetFCB2(RealMake(parent_psp_seg,0x6c));
 	psp.SetEnvironment(psp_parent.GetEnvironment());
 	psp.SetSize(size);
 	return true;
@@ -338,6 +335,7 @@ bool DOS_Execute(char * name,PhysPt block_pt,Bit8u flags) {
 				if (dataread<0xf800) minsize=((dataread+0x10)>>4)+0x20;
 			}
 			if (maxfree<minsize) {
+				DOS_CloseFile(fhandle);
 				DOS_SetError(DOSERR_INSUFFICIENT_MEMORY);
 				DOS_FreeMemory(envseg);
 				return false;
@@ -363,7 +361,7 @@ bool DOS_Execute(char * name,PhysPt block_pt,Bit8u flags) {
 		if (!iscom) {
 			/* Check if requested to load program into upper part of allocated memory */
 			if ((head.minmemory == 0) && (head.maxmemory == 0))
-				loadseg = ((pspseg+memsize)*0x10-imagesize)/0x10;
+				loadseg = (Bit16u)(((pspseg+memsize)*0x10-imagesize)/0x10);
 		}
 	} else loadseg=block.overlay.loadseg;
 	/* Load the executable */
@@ -418,6 +416,7 @@ bool DOS_Execute(char * name,PhysPt block_pt,Bit8u flags) {
 	} else {
 		csip=RealMake(loadseg+head.initCS,head.initIP);
 		sssp=RealMake(loadseg+head.initSS,head.initSP);
+		if (head.initSP<4) LOG(LOG_EXEC,LOG_ERROR)("stack underflow/wrap at EXEC");
 	}
 
 	if (flags==LOAD) {
@@ -439,6 +438,7 @@ bool DOS_Execute(char * name,PhysPt block_pt,Bit8u flags) {
 	}
 
 	if (flags==LOADNGO) {
+		if ((reg_sp>0xfffe) || (reg_sp<18)) LOG(LOG_EXEC,LOG_ERROR)("stack underflow/wrap at EXEC");
 		/* Get Caller's program CS:IP of the stack and set termination address to that */
 		RealSetVec(0x22,RealMake(mem_readw(SegPhys(ss)+reg_sp+2),mem_readw(SegPhys(ss)+reg_sp)));
 		SaveRegisters();
@@ -457,12 +457,10 @@ bool DOS_Execute(char * name,PhysPt block_pt,Bit8u flags) {
 		/* Set the stack for new program */
 		SegSet16(ss,RealSeg(sssp));reg_sp=RealOff(sssp);
 		/* Add some flags and CS:IP on the stack for the IRET */
-		reg_sp-=4;
-		mem_writew(SegPhys(ss)+reg_sp+0,RealOff(csip));
-		mem_writew(SegPhys(ss)+reg_sp+2,RealSeg(csip));
-		/* Old info, we now jump to a RETF:
-		 * DOS starts programs with a RETF, so our IRET
-		 * should not modify critical flags (IOPL in v86 mode);
+		CPU_Push16(RealSeg(csip));
+		CPU_Push16(RealOff(csip));
+		/* DOS starts programs with a RETF, so critical flags
+		 * should not be modified (IOPL in v86 mode);
 		 * interrupt flag is set explicitly, test flags cleared */
 		reg_flags=(reg_flags&(~FMASK_TEST))|FLAG_IF;
 		//Jump to retf so that we only need to store cs:ip on the stack
@@ -483,7 +481,7 @@ bool DOS_Execute(char * name,PhysPt block_pt,Bit8u flags) {
 		while (char chr=*name++) {
 			switch (chr) {
 			case ':':case '\\':case '/':index=0;break;
-			default:if (index<8) stripname[index++]=toupper(chr);
+			default:if (index<8) stripname[index++]=(char)toupper(chr);
 			}
 		}
 		index=0;

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: dos_misc.cpp,v 1.23 2009/05/27 09:15:41 qbix79 Exp $ */
+/* $Id: dos_misc.cpp,v 1.24 2009-09-25 20:51:21 qbix79 Exp $ */
 
 #include "dosbox.h"
 #include "callback.h"
@@ -184,8 +184,7 @@ static bool DOS_MultiplexFunctions(void) {
 		else return false;
 	case 0x1680:	/*  RELEASE CURRENT VIRTUAL MACHINE TIME-SLICE */
 		//TODO Maybe do some idling but could screw up other systems :)
-		reg_al=0;	
-		return true;
+		return true; //So no warning in the debugger anymore
 	case 0x1689:	/*  Kernel IDLE CALL */
 	case 0x168f:	/*  Close awareness crap */
 	   /* Removing warning */
@@ -193,7 +192,7 @@ static bool DOS_MultiplexFunctions(void) {
 	case 0x4a01:	/* Query free hma space */
 	case 0x4a02:	/* ALLOCATE HMA SPACE */
 		LOG(LOG_DOSMISC,LOG_WARN)("INT 2f:4a HMA. DOSBox reports none available.");
-		reg_bx=0;	//number of bytes available in HMA or amount succesfully allocated
+		reg_bx=0;	//number of bytes available in HMA or amount successfully allocated
 		//ESDI=ffff:ffff Location of HMA/Allocated memory
 		SegSet16(es,0xffff);
 		reg_di=0xffff;

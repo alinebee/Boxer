@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -356,6 +356,63 @@
 	CASE_0F_W(0xaf)												/* IMUL Gw,Ew */
 		RMGwEwOp3(DIMULW,*rmrw);
 		break;
+	CASE_0F_B(0xb0) 										/* cmpxchg Eb,Gb */
+		{
+			if (CPU_ArchitectureType<CPU_ARCHTYPE_486OLDSLOW) goto illegal_opcode;
+			FillFlags();
+			GetRMrb;
+			if (rm >= 0xc0 ) {
+				GetEArb;
+				if (reg_al == *earb) {
+					*earb=*rmrb;
+					SETFLAGBIT(ZF,1);
+				} else {
+					reg_al = *earb;
+					SETFLAGBIT(ZF,0);
+				}
+			} else {
+   				GetEAa;
+				Bit8u val = LoadMb(eaa);
+				if (reg_al == val) { 
+					SaveMb(eaa,*rmrb);
+					SETFLAGBIT(ZF,1);
+				} else {
+					SaveMb(eaa,val);	// cmpxchg always issues a write
+					reg_al = val;
+					SETFLAGBIT(ZF,0);
+				}
+			}
+			break;
+		}
+	CASE_0F_W(0xb1) 									/* cmpxchg Ew,Gw */
+		{
+			if (CPU_ArchitectureType<CPU_ARCHTYPE_486OLDSLOW) goto illegal_opcode;
+			FillFlags();
+			GetRMrw;
+			if (rm >= 0xc0 ) {
+				GetEArw;
+				if(reg_ax == *earw) { 
+					*earw = *rmrw;
+					SETFLAGBIT(ZF,1);
+				} else {
+					reg_ax = *earw;
+					SETFLAGBIT(ZF,0);
+				}
+			} else {
+   				GetEAa;
+				Bit16u val = LoadMw(eaa);
+				if(reg_ax == val) { 
+					SaveMw(eaa,*rmrw);
+					SETFLAGBIT(ZF,1);
+				} else {
+					SaveMw(eaa,val);	// cmpxchg always issues a write
+					reg_ax = val;
+					SETFLAGBIT(ZF,0);
+				}
+			}
+			break;
+		}
+
 	CASE_0F_W(0xb2)												/* LSS Ew */
 		{	
 			GetRMrw;
@@ -531,28 +588,28 @@
 			else {GetEAa;*rmrw=LoadMw(eaa);SaveMw(eaa,LoadMw(eaa)+oldrmrw);}
 			break;
 		}
-	CASE_0F_B(0xc8)												/* BSWAP EAX */
+	CASE_0F_W(0xc8)												/* BSWAP AX */
 		if (CPU_ArchitectureType<CPU_ARCHTYPE_486OLDSLOW) goto illegal_opcode;
-		BSWAP(reg_eax);break;
-	CASE_0F_B(0xc9)												/* BSWAP ECX */
+		BSWAPW(reg_ax);break;
+	CASE_0F_W(0xc9)												/* BSWAP CX */
 		if (CPU_ArchitectureType<CPU_ARCHTYPE_486OLDSLOW) goto illegal_opcode;
-		BSWAP(reg_ecx);break;
-	CASE_0F_B(0xca)												/* BSWAP EDX */
+		BSWAPW(reg_cx);break;
+	CASE_0F_W(0xca)												/* BSWAP DX */
 		if (CPU_ArchitectureType<CPU_ARCHTYPE_486OLDSLOW) goto illegal_opcode;
-		BSWAP(reg_edx);break;
-	CASE_0F_B(0xcb)												/* BSWAP EBX */
+		BSWAPW(reg_dx);break;
+	CASE_0F_W(0xcb)												/* BSWAP BX */
 		if (CPU_ArchitectureType<CPU_ARCHTYPE_486OLDSLOW) goto illegal_opcode;
-		BSWAP(reg_ebx);break;
-	CASE_0F_B(0xcc)												/* BSWAP ESP */
+		BSWAPW(reg_bx);break;
+	CASE_0F_W(0xcc)												/* BSWAP SP */
 		if (CPU_ArchitectureType<CPU_ARCHTYPE_486OLDSLOW) goto illegal_opcode;
-		BSWAP(reg_esp);break;
-	CASE_0F_B(0xcd)												/* BSWAP EBP */
+		BSWAPW(reg_sp);break;
+	CASE_0F_W(0xcd)												/* BSWAP BP */
 		if (CPU_ArchitectureType<CPU_ARCHTYPE_486OLDSLOW) goto illegal_opcode;
-		BSWAP(reg_ebp);break;
-	CASE_0F_B(0xce)												/* BSWAP ESI */
+		BSWAPW(reg_bp);break;
+	CASE_0F_W(0xce)												/* BSWAP SI */
 		if (CPU_ArchitectureType<CPU_ARCHTYPE_486OLDSLOW) goto illegal_opcode;
-		BSWAP(reg_esi);break;
-	CASE_0F_B(0xcf)												/* BSWAP EDI */
+		BSWAPW(reg_si);break;
+	CASE_0F_W(0xcf)												/* BSWAP DI */
 		if (CPU_ArchitectureType<CPU_ARCHTYPE_486OLDSLOW) goto illegal_opcode;
-		BSWAP(reg_edi);break;
+		BSWAPW(reg_di);break;
 		

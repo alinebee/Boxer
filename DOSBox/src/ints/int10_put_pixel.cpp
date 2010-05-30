@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: int10_put_pixel.cpp,v 1.23 2009/05/27 09:15:42 qbix79 Exp $ */
+/* $Id: int10_put_pixel.cpp,v 1.23 2009-05-27 09:15:42 qbix79 Exp $ */
 
 #include "dosbox.h"
 #include "mem.h"
@@ -94,6 +94,13 @@ void INT10_PutPixel(Bit16u x,Bit16u y,Bit8u page,Bit8u color) {
 			real_writeb(0xb800,off,old);
 		}
 		break;
+	case M_LIN4:
+		if ((machine!=MCH_VGA) || (svgaCard!=SVGA_TsengET4K) ||
+				(CurMode->swidth>800)) {
+			// the ET4000 BIOS supports text output in 800x600 SVGA (Gateway 2)
+			// putpixel warining?
+			break;
+		}
 	case M_EGA:
 		{
 			/* Set the correct bitmask for the pixel position */

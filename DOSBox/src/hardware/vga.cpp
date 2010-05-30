@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: vga.cpp,v 1.36 2009/05/27 09:15:41 qbix79 Exp $ */
+/* $Id: vga.cpp,v 1.36 2009-05-27 09:15:41 qbix79 Exp $ */
 
 #include "dosbox.h"
 //#include "setup.h"
@@ -41,6 +41,12 @@ Bit32u Expand16Table[4][16];
 Bit32u FillTable[16];
 Bit32u ColorTable[16];
 
+void VGA_SetModeNow(VGAModes mode) {
+	if (vga.mode == mode) return;
+	vga.mode=mode;
+	VGA_SetupHandlers();
+	VGA_StartResize(0);
+}
 
 
 void VGA_SetMode(VGAModes mode) {
@@ -85,8 +91,10 @@ void VGA_DetermineMode(void) {
 void VGA_StartResize(Bitu delay /*=50*/) {
 	if (!vga.draw.resizing) {
 		vga.draw.resizing=true;
+		if (vga.mode==M_ERROR) delay = 5;
 		/* Start a resize after delay (default 50 ms) */
-		PIC_AddEvent(VGA_SetupDrawing,(float)delay);
+		if (delay==0) VGA_SetupDrawing(0);
+		else PIC_AddEvent(VGA_SetupDrawing,(float)delay);
 	}
 }
 
@@ -167,8 +175,6 @@ void VGA_SetCGA4Table(Bit8u val0,Bit8u val1,Bit8u val2,Bit8u val3) {
 
 void VGA_Init(Section* sec) {
 //	Section_prop * section=static_cast<Section_prop *>(sec);
-//	vga.screenflip = section->Get_int("screenflip");
-	vga.screenflip = 0;
 	vga.draw.resizing=false;
 	vga.mode=M_ERROR;			//For first init
 	SVGA_Setup_Driver();

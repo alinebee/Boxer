@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: programs.cpp,v 1.37 2009/05/27 09:15:42 qbix79 Exp $ */
+/* $Id: programs.cpp,v 1.37 2009-05-27 09:15:42 qbix79 Exp $ */
 
 #include <vector>
 #include <ctype.h>
@@ -137,18 +137,38 @@ void Program::WriteOut(const char * format,...) {
 	va_end(msg);
 
 	Bit16u size = (Bit16u)strlen(buf);
-	DOS_WriteFile(STDOUT,(Bit8u *)buf,&size);
+	for(Bit16u i = 0; i < size;i++) {
+		Bit8u out;Bit16u s=1;
+		if(buf[i] == 0xA && i > 0 && buf[i-1] !=0xD) {
+			out = 0xD;DOS_WriteFile(STDOUT,&out,&s);
+		}
+		out = buf[i];
+		DOS_WriteFile(STDOUT,&out,&s);
+	}
+	
+//	DOS_WriteFile(STDOUT,(Bit8u *)buf,&size);
 }
 
 void Program::WriteOut_NoParsing(const char * format) {
 	Bit16u size = (Bit16u)strlen(format);
-	DOS_WriteFile(STDOUT,(Bit8u *)format,&size);
+	char const* buf = format;
+	for(Bit16u i = 0; i < size;i++) {
+		Bit8u out;Bit16u s=1;
+		if(buf[i] == 0xA && i > 0 && buf[i-1] !=0xD) {
+			out = 0xD;DOS_WriteFile(STDOUT,&out,&s);
+		}
+		out = buf[i];
+		DOS_WriteFile(STDOUT,&out,&s);
+	}
+
+//	DOS_WriteFile(STDOUT,(Bit8u *)format,&size);
 }
 
 
 bool Program::GetEnvStr(const char * entry,std::string & result) {
 	/* Walk through the internal environment and see for a match */
 	PhysPt env_read=PhysMake(psp->GetEnvironment(),0);
+
 	char env_string[1024+1];
 	result.erase();
 	if (!entry[0]) return false;

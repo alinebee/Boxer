@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -15,6 +15,8 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
+
+/* $Id: dos_memory.cpp,v 1.45 2009-07-15 17:05:07 c2woody Exp $ */
 
 #include "dosbox.h"
 #include "mem.h"
@@ -45,7 +47,7 @@ static void DOS_CompressMemory(void) {
 void DOS_FreeProcessMemory(Bit16u pspseg) {
 	Bit16u mcb_segment=dos.firstMCB;
 	DOS_MCB mcb(mcb_segment);
-	while (true) {
+	for (;;) {
 		if (mcb.GetPSPSeg()==pspseg) {
 			mcb.SetPSPSeg(MCB_FREE);
 		}
@@ -64,7 +66,7 @@ void DOS_FreeProcessMemory(Bit16u pspseg) {
 	Bit16u umb_start=dos_infoblock.GetStartOfUMBChain();
 	if (umb_start==UMB_START_SEG) {
 		DOS_MCB umb_mcb(umb_start);
-		while (true) {
+		for (;;) {
 			if (umb_mcb.GetPSPSeg()==pspseg) {
 				umb_mcb.SetPSPSeg(MCB_FREE);
 			}
@@ -345,7 +347,7 @@ bool DOS_LinkUMBsToMemChain(Bit16u linkstate) {
 	Bit16u umb_start=dos_infoblock.GetStartOfUMBChain();
 	if (umb_start!=UMB_START_SEG) {
 		if (umb_start!=0xffff) LOG(LOG_DOSMISC,LOG_ERROR)("Corrupt UMB chain: %x",umb_start);
-		return true;
+		return false;
 	}
 
 	if ((linkstate&1)==(dos_infoblock.GetUMBChainState()&1)) return true;
@@ -401,8 +403,8 @@ void DOS_SetupMemory(void) {
 	CALLBACK_HandlerObject callbackhandler;
 //--End of modifications
 	callbackhandler.Allocate(&DOS_default_handler,"DOS default int");
-	Bitu ihseg = 0x70;
-	Bitu ihofs = 0x08;
+	Bit16u ihseg = 0x70;
+	Bit16u ihofs = 0x08;
 	real_writeb(ihseg,ihofs+0x00,(Bit8u)0xFE);	//GRP 4
 	real_writeb(ihseg,ihofs+0x01,(Bit8u)0x38);	//Extra Callback instruction
 	real_writew(ihseg,ihofs+0x02,callbackhandler.Get_callback());  //The immediate word
@@ -441,12 +443,12 @@ void DOS_SetupMemory(void) {
 	if (machine==MCH_TANDY) {
 		/* memory up to 608k available, the rest (to 640k) is used by
 			the tandy graphics system's variable mapping of 0xb800 */
-		mcb.SetSize(0x97FE - DOS_MEM_START - mcb_sizes);
+		mcb.SetSize(0x97FF - DOS_MEM_START - mcb_sizes);
 	} else if (machine==MCH_PCJR) {
 		/* memory from 128k to 640k is available */
 		mcb_devicedummy.SetPt((Bit16u)0x2000);
 		mcb_devicedummy.SetPSPSeg(MCB_FREE);
-		mcb_devicedummy.SetSize(0x9FFE - 0x2000);
+		mcb_devicedummy.SetSize(0x9FFF - 0x2000);
 		mcb_devicedummy.SetType(0x5a);
 
 		/* exclude PCJr graphics region */
@@ -460,6 +462,7 @@ void DOS_SetupMemory(void) {
 		mcb.SetType(0x4d);
 	} else {
 		/* complete memory up to 640k available */
+		/* last paragraph used to add UMB chain to low-memory MCB chain */
 		mcb.SetSize(0x9FFE - DOS_MEM_START - mcb_sizes);
 	}
 

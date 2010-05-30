@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: dos_keyboard_layout.cpp,v 1.21 2009/04/01 18:30:41 c2woody Exp $ */
+/* $Id: dos_keyboard_layout.cpp,v 1.22 2009-09-06 19:25:33 c2woody Exp $ */
 
 #include "dosbox.h"
 #include "bios.h"
@@ -80,7 +80,7 @@ public:
 	// call layout_key to apply the current language layout
 	bool layout_key(Bitu key, Bit8u flags1, Bit8u flags2, Bit8u flags3);
 
-	Bitu switch_keyboard_layout(const char* new_layout, keyboard_layout* &created_layout);
+	Bitu switch_keyboard_layout(const char* new_layout, keyboard_layout* &created_layout, Bit32s& tried_cp);
 	void switch_foreign_layout();
 	const char* get_layout_name();
 	const char* main_language_code();
@@ -935,8 +935,7 @@ Bitu keyboard_layout::read_codepage_file(const char* codepage_file_name, Bit32s 
 
 			// update font if necessary
 			if (font_changed && (CurMode->type==M_TEXT) && (IS_EGAVGA_ARCH)) {
-				if (IS_VGA_ARCH) INT10_LoadFont(Real2Phys(int10.rom.font_16),true,256,0,0,16);
-				else INT10_LoadFont(Real2Phys(int10.rom.font_14),true,256,0,0,14);
+				INT10_ReloadFont();
 			}
 			INT10_SetupRomMemoryChecksum();
 
@@ -952,7 +951,7 @@ Bitu keyboard_layout::read_codepage_file(const char* codepage_file_name, Bit32s 
 	return KEYB_INVALIDCPFILE;
 }
 
-Bitu keyboard_layout::switch_keyboard_layout(const char* new_layout, keyboard_layout*& created_layout) {
+Bitu keyboard_layout::switch_keyboard_layout(const char* new_layout, keyboard_layout*& created_layout, Bit32s& tried_cp) {
 	if (strncasecmp(new_layout,"US",2)) {
 		// switch to a foreign layout
 		char tbuf[256];
@@ -978,6 +977,7 @@ Bitu keyboard_layout::switch_keyboard_layout(const char* new_layout, keyboard_la
 		} else {
 			keyboard_layout * temp_layout=new keyboard_layout();
 			Bitu req_codepage=temp_layout->extract_codepage(new_layout);
+			tried_cp = req_codepage;
 			Bitu kerrcode=temp_layout->read_keyboard_file(new_layout, req_codepage);
 			if (kerrcode) {
 				delete temp_layout;
@@ -1060,10 +1060,10 @@ Bitu DOS_LoadKeyboardLayout(const char * layoutname, Bit32s codepage, const char
 	return KEYB_NOERROR;
 }
 
-Bitu DOS_SwitchKeyboardLayout(const char* new_layout) {
+Bitu DOS_SwitchKeyboardLayout(const char* new_layout, Bit32s& tried_cp) {
 	if (loaded_layout) {
 		keyboard_layout* changed_layout=NULL;
-		Bitu ret_code=loaded_layout->switch_keyboard_layout(new_layout, changed_layout);
+		Bitu ret_code=loaded_layout->switch_keyboard_layout(new_layout, changed_layout, tried_cp);
 		if (changed_layout) {
 			// Remove old layout, activate new layout
 			delete loaded_layout;
@@ -1238,7 +1238,7 @@ public:
 			}
 #endif
 		}
-		
+
 		//--Added 2009-02-23 by Alun Bestor: if no layout was specified, ask Boxer to provide the current OSX layout
 		if (!strlen(layoutname) || !strncasecmp(layoutname, "none", 4) || !strncasecmp(layoutname, "auto", 4))
 		{

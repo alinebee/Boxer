@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: int10.h,v 1.39 2009/05/27 09:15:42 qbix79 Exp $ */
+/* $Id: int10.h,v 1.42 2009-09-06 19:25:34 c2woody Exp $ */
 
 #include "vga.h"
 
@@ -95,14 +95,14 @@
 #define VGAMEM_MTEXT 0xB000
 
 #define BIOS_NCOLS Bit16u ncols=real_readw(BIOSMEM_SEG,BIOSMEM_NB_COLS);
-#define BIOS_NROWS Bit16u nrows=real_readb(BIOSMEM_SEG,BIOSMEM_NB_ROWS)+1;
+#define BIOS_NROWS Bit16u nrows=(Bit16u)real_readb(BIOSMEM_SEG,BIOSMEM_NB_ROWS)+1;
 
 extern Bit8u int10_font_08[256 * 8];
 extern Bit8u int10_font_14[256 * 14];
 extern Bit8u int10_font_16[256 * 16];
 
 struct VideoModeBlock {
-	Bitu	mode;
+	Bit16u	mode;
 	VGAModes	type;
 	Bitu	swidth, sheight;
 	Bitu	twidth, theight;
@@ -137,9 +137,9 @@ typedef struct {
 		Bit16u pmode_interface_start;
 		Bit16u pmode_interface_window;
 		Bit16u pmode_interface_palette;
-		Bitu used;
+		Bit16u used;
 	} rom;
-	Bitu vesa_setmode;
+	Bit16u vesa_setmode;
 	bool vesa_nolfb;
 	bool vesa_oldvbe;
 } Int10Data;
@@ -154,7 +154,7 @@ static Bit8u CURSOR_POS_ROW(Bit8u page) {
 	return real_readb(BIOSMEM_SEG,BIOSMEM_CURSOR_POS+page*2+1);
 }
 
-bool INT10_SetVideoMode(Bitu mode);
+bool INT10_SetVideoMode(Bit16u mode);
 
 void INT10_ScrollWindow(Bit8u rul,Bit8u cul,Bit8u rlr,Bit8u clr,Bit8s nlines,Bit8u attr,Bit8u page);
 
@@ -175,6 +175,7 @@ void INT10_GetPixel(Bit16u x,Bit16u y,Bit8u page,Bit8u * color);
 
 /* Font Stuff */
 void INT10_LoadFont(PhysPt font,bool reload,Bitu count,Bitu offset,Bitu map,Bitu height);
+void INT10_ReloadFont(void);
 
 /* Palette Group */
 void INT10_SetBackgroundBorder(Bit8u val);
@@ -230,4 +231,5 @@ bool INT10_VideoState_Save(Bitu state,RealPt buffer);
 bool INT10_VideoState_Restore(Bitu state,RealPt buffer);
 
 /* Video Parameter Tables */
-Bitu INT10_SetupVideoParameterTable(PhysPt basepos);
+Bit16u INT10_SetupVideoParameterTable(PhysPt basepos);
+void INT10_SetupBasicVideoParameterTable(void);

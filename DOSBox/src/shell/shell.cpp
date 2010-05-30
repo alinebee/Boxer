@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: shell.cpp,v 1.99 2009/05/14 18:44:54 qbix79 Exp $ */
+/* $Id: shell.cpp,v 1.100 2009-07-08 20:05:41 c2woody Exp $ */
 
 #include <stdlib.h>
 #include <stdarg.h>
@@ -144,6 +144,7 @@ Bitu DOS_Shell::GetRedirection(char *s, char **ifn, char **ofn,bool * append) {
 	char ch;
 	Bitu num=0;
 	bool quote = false;
+	char* t;
 
 	while ( (ch=*lr++) ) {
 		if(quote && ch != '"') { /* don't parse redirection within quotes. Not perfect yet. Escaped quotes will mess the count up */
@@ -161,26 +162,30 @@ Bitu DOS_Shell::GetRedirection(char *s, char **ifn, char **ofn,bool * append) {
 			lr=ltrim(lr);
 			if (*ofn) free(*ofn);
 			*ofn=lr;
-			while (*lr && *lr!=' ') lr++;
+			while (*lr && *lr!=' ' && *lr!='<' && *lr!='|') lr++;
 			//if it ends on a : => remove it.
 			if((*ofn != lr) && (lr[-1] == ':')) lr[-1] = 0;
-			if(*lr && *(lr+1)) 
-				*lr++=0; 
-			else 
-				*lr=0;
-			*ofn=strdup(*ofn);
+//			if(*lr && *(lr+1)) 
+//				*lr++=0; 
+//			else 
+//				*lr=0;
+			t = (char*)malloc(lr-*ofn+1);
+			safe_strncpy(t,*ofn,lr-*ofn+1);
+			*ofn=t;
 			continue;
 		case '<':
 			if (*ifn) free(*ifn);
 			lr=ltrim(lr);
 			*ifn=lr;
-			while (*lr && *lr!=' ') lr++;
+			while (*lr && *lr!=' ' && *lr!='>' && *lr != '|') lr++;
 			if((*ifn != lr) && (lr[-1] == ':')) lr[-1] = 0;
-			if(*lr && *(lr+1)) 
-				*lr++=0; 
-			else 
-				*lr=0;
-			*ifn=strdup(*ifn);
+//			if(*lr && *(lr+1)) 
+//				*lr++=0; 
+//			else 
+//				*lr=0;
+			t = (char*)malloc(lr-*ifn+1);
+			safe_strncpy(t,*ifn,lr-*ifn+1);
+			*ifn=t;
 			continue;
 		case '|':
 			ch=0;
@@ -284,6 +289,8 @@ void DOS_Shell::Run(void) {
 	std::string line;
 	if (cmd->FindStringRemain("/C",line)) {
 		strcpy(input_line,line.c_str());
+		char* sep = strpbrk(input_line,"\r\n"); //GTA installer
+		if (sep) *sep = 0;
 		DOS_Shell temp;
 		temp.echo = echo;
 		temp.ParseLine(input_line);		//for *.exe *.com  |*.bat creates the bf needed by runinternal;
@@ -296,6 +303,7 @@ void DOS_Shell::Run(void) {
 	WriteOut(MSG_Get("SHELL_STARTUP_DEBUG"));
 #endif
 	if (machine == MCH_CGA) WriteOut(MSG_Get("SHELL_STARTUP_CGA"));
+	if (machine == MCH_HERC) WriteOut(MSG_Get("SHELL_STARTUP_HERC"));
 	WriteOut(MSG_Get("SHELL_STARTUP_END"));
 
 	if (cmd->FindString("/INIT",line,true)) {
@@ -381,6 +389,7 @@ public:
 
 		/* Check for first command being a directory or file */
 		char buffer[CROSS_LEN];
+		char orig[CROSS_LEN];
 		char cross_filesplit[2] = {CROSS_FILESPLIT , 0};
 		/* Combining -securemode and no parameter leaves you with a lovely Z:\. */ 
 		if ( !control->cmdline->FindCommand(1,line) ) { 
@@ -413,21 +422,29 @@ public:
 				if (access(buffer,F_OK)) goto nomount;
 				autoexec[12].Install(std::string("MOUNT C \"") + buffer + "\"");
 				autoexec[13].Install("C:");
+				/* Save the non modified filename (so boot and imgmount can use it (long filenames, case sensivitive)*/
+				strcpy(orig,name);
 				upcase(name);
 				if(strstr(name,".BAT") != 0) {
 					if(secure) autoexec[14].Install("z:\\config.com -securemode");
 					/* BATch files are called else exit will not work */
 					autoexec[15].Install(std::string("CALL ") + name);
-				} else if((strstr(name,".IMG") != 0) || (strstr(name,".IMA") !=0)) {
+					if(addexit) autoexec[16].Install("exit");
+				} else if((strstr(name,".IMG") != 0) || (strstr(name,".IMA") !=0 )) {
 					//No secure mode here as boot is destructive and enabling securemode disables boot
 					/* Boot image files */
-					autoexec[15].Install(std::string("BOOT ") + name);
+					autoexec[15].Install(std::string("BOOT ") + orig);
+				} else if((strstr(name,".ISO") != 0) || (strstr(name,".CUE") !=0 )) {
+					if(secure) autoexec[14].Install("z:\\config.com -securemode");
+					/* imgmount CD image files */
+					autoexec[15].Install(std::string("IMGMOUNT D \"") + orig + std::string("\" -t iso"));
+					//autoexec[16].Install("D:");
+					/* Makes no sense to exit here */
 				} else {
 					if(secure) autoexec[14].Install("z:\\config.com -securemode");
 					autoexec[15].Install(name);
+					if(addexit) autoexec[16].Install("exit");
 				}
-
-				if(addexit) autoexec[16].Install("exit");
 			}
 		}
 nomount:
@@ -456,7 +473,7 @@ void SHELL_Init() {
 	MSG_Add("SHELL_MISSING_PARAMETER","Required parameter missing.\n");
 	MSG_Add("SHELL_CMD_CHDIR_ERROR","Unable to change to: %s.\n");
 	MSG_Add("SHELL_CMD_CHDIR_HINT","To change to different drive type \033[31m%c:\033[0m\n");
-	MSG_Add("SHELL_CMD_CHDIR_HINT_2","directoryname is longer than 8 charachters and/or contains spaces.\nTry \033[31mcd %s\033[0m\n");
+	MSG_Add("SHELL_CMD_CHDIR_HINT_2","directoryname is longer than 8 characters and/or contains spaces.\nTry \033[31mcd %s\033[0m\n");
 	MSG_Add("SHELL_CMD_CHDIR_HINT_3","You are still on drive Z:, change to a mounted drive with \033[31mC:\033[0m.\n");
 	MSG_Add("SHELL_CMD_MKDIR_ERROR","Unable to make: %s.\n");
 	MSG_Add("SHELL_CMD_RMDIR_ERROR","Unable to remove: %s.\n");
@@ -493,13 +510,16 @@ void SHELL_Init() {
 		"\xBA For a short introduction for new users type: \033[33mINTRO\033[37m                 \xBA\n"
 		"\xBA For supported shell commands type: \033[33mHELP\033[37m                            \xBA\n"
 		"\xBA                                                                    \xBA\n"
-		"\xBA If you want more speed, try \033[31mctrl-F8\033[37m and \033[31mctrl-F12\033[37m.                  \xBA\n"
+		"\xBA To adjust the emulated CPU speed, use \033[31mctrl-F11\033[37m and \033[31mctrl-F12\033[37m.       \xBA\n"
 		"\xBA To activate the keymapper \033[31mctrl-F1\033[37m.                                 \xBA\n"
 		"\xBA For more information read the \033[36mREADME\033[37m file in the DOSBox directory. \xBA\n"
 		"\xBA                                                                    \xBA\n"
 	);
 	MSG_Add("SHELL_STARTUP_CGA","\xBA DOSBox supports Composite CGA mode.                                \xBA\n"
 	        "\xBA Use \033[31m(alt-)F11\033[37m to change the colours when in this mode.             \xBA\n"
+	        "\xBA                                                                    \xBA\n"
+	);
+	MSG_Add("SHELL_STARTUP_HERC","\xBA Use \033[31mF11\033[37m to cycle through white, amber, and green monochrome color. \xBA\n"
 	        "\xBA                                                                    \xBA\n"
 	);
 	MSG_Add("SHELL_STARTUP_DEBUG",
@@ -594,7 +614,7 @@ void SHELL_Init() {
 	pspmcb.SetType(0x4d);
 	DOS_MCB envmcb((Bit16u)(env_seg-1));
 	envmcb.SetPSPSeg(psp_seg);	// MCB of the command shell environment
-	envmcb.SetSize(0x28);
+	envmcb.SetSize(DOS_MEM_START-env_seg);
 	envmcb.SetType(0x4d);
 	
 	/* Setup environment */

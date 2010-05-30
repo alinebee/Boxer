@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: shell_misc.cpp,v 1.54 2009/05/27 09:15:42 qbix79 Exp $ */
+/* $Id: shell_misc.cpp,v 1.54 2009-05-27 09:15:42 qbix79 Exp $ */
 
 #include <stdlib.h>
 #include <string.h>
@@ -458,7 +458,7 @@ bool DOS_Shell::Execute(char * name,char * args) {
 	Bit8u driveIndex;
 	DOS_MakeName(fullname,dosPath,&driveIndex);
 	//--End of modifications
-		
+	
 	if (strcasecmp(extension, ".bat") == 0) 
 	{	/* Run the .bat file */
 		/* delete old batch file if call is not active*/
@@ -468,8 +468,8 @@ bool DOS_Shell::Execute(char * name,char * args) {
 		//--Added 2010-01-21 by Alun Bestor to let Boxer track the executed program
 		boxer_willExecuteFileAtDOSPath(dosPath, driveIndex);
 		//--End of modifications
-
-		bf=new BatchFile(this,fullname,line);
+		
+		bf=new BatchFile(this,fullname,name,line);
 		echo=temp_echo; //restore it.
 	} 
 	else 

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: mouse.cpp,v 1.79 2009/04/16 12:11:45 qbix79 Exp $ */
+/* $Id: mouse.cpp,v 1.80 2009-06-16 19:00:26 qbix79 Exp $ */
 
 #include <string.h>
 #include <math.h>
@@ -53,7 +53,7 @@ struct button_event {
 #define QUEUE_SIZE 32
 #define MOUSE_BUTTONS 3
 #define MOUSE_IRQ 12
-#define POS_X (Bit16s)(mouse.x)
+#define POS_X ((Bit16s)(mouse.x) & mouse.granMask)
 #define POS_Y (Bit16s)(mouse.y)
 
 #define CURSORX 16
@@ -128,6 +128,7 @@ static struct {
 	bool timer_in_progress;
 	bool in_UIR;
 	Bit8u mode;
+	Bit16s granMask;
 } mouse;
 
 bool Mouse_SetPS2State(bool use) {
@@ -508,18 +509,26 @@ void Mouse_CursorSet(float x,float y) {
 
 void Mouse_ButtonPressed(Bit8u button) {
 	switch (button) {
+#if (MOUSE_BUTTONS >= 1)
 	case 0:
 		mouse.buttons|=1;
 		Mouse_AddEvent(MOUSE_LEFT_PRESSED);
 		break;
+#endif
+#if (MOUSE_BUTTONS >= 2)
 	case 1:
 		mouse.buttons|=2;
 		Mouse_AddEvent(MOUSE_RIGHT_PRESSED);
 		break;
+#endif
+#if (MOUSE_BUTTONS >= 3)
 	case 2:
 		mouse.buttons|=4;
 		Mouse_AddEvent(MOUSE_MIDDLE_PRESSED);
 		break;
+#endif
+	default:
+		return;
 	}
 	mouse.times_pressed[button]++;
 	mouse.last_pressed_x[button]=POS_X;
@@ -528,18 +537,26 @@ void Mouse_ButtonPressed(Bit8u button) {
 
 void Mouse_ButtonReleased(Bit8u button) {
 	switch (button) {
+#if (MOUSE_BUTTONS >= 1)
 	case 0:
 		mouse.buttons&=~1;
 		Mouse_AddEvent(MOUSE_LEFT_RELEASED);
 		break;
+#endif
+#if (MOUSE_BUTTONS >= 2)
 	case 1:
 		mouse.buttons&=~2;
 		Mouse_AddEvent(MOUSE_RIGHT_RELEASED);
 		break;
+#endif
+#if (MOUSE_BUTTONS >= 3)
 	case 2:
 		mouse.buttons&=~4;
 		Mouse_AddEvent(MOUSE_MIDDLE_RELEASED);
 		break;
+#endif
+	default:
+		return;
 	}
 	mouse.times_released[button]++;	
 	mouse.last_released_x[button]=POS_X;
@@ -622,6 +639,7 @@ void Mouse_NewVideoMode(void) {
 	mouse.max_x = 639;
 	mouse.min_x = 0;
 	mouse.min_y = 0;
+	mouse.granMask = (mode == 0x0d || mode == 0x13) ? 0xfffe : 0xffff;
 
 	mouse.events = 0;
 	mouse.timer_in_progress = false;
@@ -914,6 +932,12 @@ static Bitu INT33_Handler(void) {
 		break;
 	case 0x26: /* Get Maximum virtual coordinates */
 		reg_bx=(mouse.enabled ? 0x0000 : 0xffff);
+		reg_cx=(Bit16u)mouse.max_x;
+		reg_dx=(Bit16u)mouse.max_y;
+		break;
+	case 0x31: /* Get Current Minimum/Maximum virtual coordinates */
+		reg_ax=(Bit16u)mouse.min_x;
+		reg_bx=(Bit16u)mouse.min_y;
 		reg_cx=(Bit16u)mouse.max_x;
 		reg_dx=(Bit16u)mouse.max_y;
 		break;

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2009  The DOSBox Team
+ *  Copyright (C) 2002-2010  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/* $Id: vga_draw.cpp,v 1.107 2009/04/11 08:02:23 qbix79 Exp $ */
+/* $Id: vga_draw.cpp,v 1.112 2009-11-03 21:06:59 h-a-l-9000 Exp $ */
 
 #include <string.h>
 #include <math.h>
@@ -26,6 +26,10 @@
 #include "../gui/render_scalers.h"
 #include "vga.h"
 #include "pic.h"
+
+//#undef C_DEBUG
+//#define C_DEBUG 1
+//#define LOG(X,Y) LOG_MSG
 
 #define VGA_PARTS 4
 
@@ -344,11 +348,24 @@ static Bit8u * VGA_Draw_LIN32_Line_HWMouse(Bitu vidstart, Bitu /*line*/) {
 	}
 }
 
+static const Bit8u* VGA_Text_Memwrap(Bitu vidstart) {
+	vidstart &= vga.draw.linear_mask;
+	Bitu line_end = 2 * vga.draw.blocks;
+	if (GCC_UNLIKELY((vidstart + line_end) > vga.draw.linear_mask)) {
+		// wrapping in this line
+		Bitu break_pos = (vga.draw.linear_mask - vidstart) + 1;
+		// need a temporary storage - TempLine/2 is ok for a bit more than 132 columns
+		memcpy(&TempLine[sizeof(TempLine)/2], &vga.tandy.draw_base[vidstart], break_pos);
+		memcpy(&TempLine[sizeof(TempLine)/2 + break_pos],&vga.tandy.draw_base[0], line_end - break_pos);
+		return &TempLine[sizeof(TempLine)/2];
+	} else return &vga.tandy.draw_base[vidstart];
+}
+
 static Bit32u FontMask[2]={0xffffffff,0x0};
 static Bit8u * VGA_TEXT_Draw_Line(Bitu vidstart, Bitu line) {
 	Bits font_addr;
 	Bit32u * draw=(Bit32u *)TempLine;
-	const Bit8u *vidmem = &vga.tandy.draw_base[vidstart];
+	const Bit8u* vidmem = VGA_Text_Memwrap(vidstart);
 	for (Bitu cx=0;cx<vga.draw.blocks;cx++) {
 		Bitu chr=vidmem[cx*2];
 		Bitu col=vidmem[cx*2+1];
@@ -376,7 +393,7 @@ skip_cursor:
 static Bit8u * VGA_TEXT_Herc_Draw_Line(Bitu vidstart, Bitu line) {
 	Bits font_addr;
 	Bit32u * draw=(Bit32u *)TempLine;
-	const Bit8u *vidmem = &vga.tandy.draw_base[vidstart];
+	const Bit8u* vidmem = VGA_Text_Memwrap(vidstart);
 
 	for (Bitu cx=0;cx<vga.draw.blocks;cx++) {
 		Bitu chr=vidmem[cx*2];
@@ -415,8 +432,16 @@ static Bit8u * VGA_TEXT_Herc_Draw_Line(Bitu vidstart, Bitu line) {
 		if (line<vga.draw.cursor.sline) goto skip_cursor;
 		if (line>vga.draw.cursor.eline) goto skip_cursor;
 		draw=(Bit32u *)&TempLine[font_addr*8];
-		Bit32u att=TXT_FG_Table[vga.tandy.draw_base[vga.draw.cursor.address+1]&0xf];
-		*draw++=att;*draw++=att;
+		Bit8u attr = vga.tandy.draw_base[vga.draw.cursor.address+1];
+		Bit32u cg;
+		if (attr&0x8) {
+			cg = TXT_FG_Table[0xf];
+		} else if ((attr&0x77)==0x70) {
+			cg = TXT_FG_Table[0x0];
+		} else {
+			cg = TXT_FG_Table[0x7];
+		}
+		*draw++=cg;*draw++=cg;
 	}
 skip_cursor:
 	return TempLine;
@@ -425,7 +450,7 @@ skip_cursor:
 static Bit8u * VGA_TEXT_Xlat16_Draw_Line(Bitu vidstart, Bitu line) {
 	Bits font_addr;
 	Bit16u * draw=(Bit16u *)TempLine;
-	const Bit8u *vidmem = &vga.tandy.draw_base[vidstart];
+	const Bit8u* vidmem = VGA_Text_Memwrap(vidstart);
 	for (Bitu cx=0;cx<vga.draw.blocks;cx++) {
 		Bitu chr=vidmem[cx*2];
 		Bitu col=vidmem[cx*2+1];
@@ -467,7 +492,7 @@ static Bit8u * VGA_TEXT_Draw_Line_9(Bitu vidstart, Bitu line) {
 	bool underline=(Bitu)(vga.crtc.underline_location&0x1f)==line;
 	Bit8u pel_pan=(Bit8u)vga.draw.panning;
 	if ((vga.attr.mode_control&0x20) && (vga.draw.lines_done>=vga.draw.split_line)) pel_pan=0;
-	const Bit8u *vidmem = &vga.tandy.draw_base[vidstart];
+	const Bit8u* vidmem = VGA_Text_Memwrap(vidstart);
 	Bit8u chr=vidmem[0];
 	Bit8u col=vidmem[1];
 	Bit8u font=(vga.draw.font_tables[(col >> 3)&1][chr*32+line])<<pel_pan;
@@ -526,7 +551,7 @@ static Bit8u * VGA_TEXT_Xlat16_Draw_Line_9(Bitu vidstart, Bitu line) {
 	bool underline=(Bitu)(vga.crtc.underline_location&0x1f)==line;
 	Bit8u pel_pan=(Bit8u)vga.draw.panning;
 	if ((vga.attr.mode_control&0x20) && (vga.draw.lines_done>=vga.draw.split_line)) pel_pan=0;
-	const Bit8u *vidmem = &vga.tandy.draw_base[vidstart];
+	const Bit8u* vidmem = VGA_Text_Memwrap(vidstart);
 	Bit8u chr=vidmem[0];
 	Bit8u col=vidmem[1];
 	Bit8u font=(vga.draw.font_tables[(col >> 3)&1][chr*32+line])<<pel_pan;
@@ -616,15 +641,13 @@ static void VGA_ProcessSplit() {
 }
 
 static void VGA_DrawSingleLine(Bitu /*blah*/) {
-	if(vga.attr.enabled || (!(vga.mode==M_VGA || vga.mode==M_EGA))) {
-        Bit8u * data=VGA_DrawLine( vga.draw.address, vga.draw.address_line );	
-		RENDER_DrawLine(data);
-	} else {
-		// else draw overscan color line
-		// TODO: black line should be good enough for now
-		// (DoWhackaDo)
+	if (GCC_UNLIKELY(vga.attr.disabled)) {
+		// draw blanked line (DoWhackaDo, Alien Carnage, TV sports Football)
 		memset(TempLine, 0, sizeof(TempLine));
 		RENDER_DrawLine(TempLine);
+	} else {
+		Bit8u * data=VGA_DrawLine( vga.draw.address, vga.draw.address_line );	
+		RENDER_DrawLine(data);
 	}
 
 	vga.draw.address_line++;
@@ -636,7 +659,7 @@ static void VGA_DrawSingleLine(Bitu /*blah*/) {
 	if (vga.draw.split_line==vga.draw.lines_done) VGA_ProcessSplit();
 	if (vga.draw.lines_done < vga.draw.lines_total) {
 		PIC_AddEvent(VGA_DrawSingleLine,(float)vga.draw.delay.htotal);
-	} else RENDER_EndUpdate();
+	} else RENDER_EndUpdate(false);
 }
 
 static void VGA_DrawPart(Bitu lines) {
@@ -666,7 +689,7 @@ static void VGA_DrawPart(Bitu lines) {
 #ifdef VGA_KEEP_CHANGES
 		VGA_ChangesEnd();
 #endif
-		RENDER_EndUpdate();
+		RENDER_EndUpdate(false);
 	}
 }
 
@@ -715,6 +738,11 @@ static void VGA_VertInterrupt(Bitu /*val*/) {
 	}
 }
 
+static void VGA_Other_VertInterrupt(Bitu val) {
+	if (val) PIC_ActivateIRQ(5);
+	else PIC_DeActivateIRQ(5);
+}
+
 static void VGA_DisplayStartLatch(Bitu /*val*/) {
 	vga.config.real_start=vga.config.display_start & (vga.vmemwrap-1);
 	vga.draw.bytes_skip = vga.config.bytes_skip;
@@ -725,47 +753,45 @@ static void VGA_PanningLatch(Bitu /*val*/) {
 }
 
 static void VGA_VerticalTimer(Bitu /*val*/) {
-	double error = vga.draw.delay.framestart;
 	vga.draw.delay.framestart = PIC_FullIndex();
-	error = vga.draw.delay.framestart - error - vga.draw.delay.vtotal;
 	PIC_AddEvent( VGA_VerticalTimer, (float)vga.draw.delay.vtotal );
-	//PIC_AddEvent( VGA_VerticalDisplayEnd, (float)vga.draw.delay.vrstart );
-	double flip_offset = vga.screenflip/1000.0 + vga.draw.delay.vrstart;
-	if(flip_offset > vga.draw.delay.vtotal) {
+	
+	switch(machine) {
+	case MCH_PCJR:
+	case MCH_TANDY:
+		// PCJr: Vsync is directly connected to the IRQ controller
+		// Some earlier Tandy models are said to have a vsync interrupt too
+		PIC_AddEvent(VGA_Other_VertInterrupt, (float)vga.draw.delay.vrstart, 1);
+		PIC_AddEvent(VGA_Other_VertInterrupt, (float)vga.draw.delay.vrend, 0);
+		// fall-through
+	case MCH_CGA:
+	case MCH_HERC:
+		// MC6845-powered graphics: Loading the display start latch happens somewhere
+		// after vsync off and before first visible scanline, so probably here
 		VGA_DisplayStartLatch(0);
-	} else PIC_AddEvent( VGA_DisplayStartLatch,(float)flip_offset);
-	PIC_AddEvent(VGA_PanningLatch,(float)vga.draw.delay.vrend);
-
-	// EGA: 82c435 datasheet: interrupt happens at display end
-	// VGA: checked with scope
-	// add a little amount of time to make sure the last drawpart has already fired
-	if (IS_EGAVGA_ARCH) PIC_AddEvent(VGA_VertInterrupt,(float)(vga.draw.delay.vdend + 0.005));
-
-	if ( GCC_UNLIKELY( vga.draw.parts_left)) {
-		if (!IS_VGA_ARCH || (svgaCard!=SVGA_None)) {
-			LOG(LOG_VGAMISC,LOG_NORMAL)( "Parts left: %d", vga.draw.parts_left );
-			PIC_RemoveEvents( &VGA_DrawPart );
-			RENDER_EndUpdate();
-			vga.draw.parts_left = 0;
-		}
+		break;
+	case MCH_VGA:
+	case MCH_EGA:
+		PIC_AddEvent(VGA_DisplayStartLatch, (float)vga.draw.delay.vrstart);
+		PIC_AddEvent(VGA_PanningLatch, (float)vga.draw.delay.vrend);
+		// EGA: 82c435 datasheet: interrupt happens at display end
+		// VGA: checked with scope; however disabled by default by jumper on VGA boards
+		// add a little amount of time to make sure the last drawpart has already fired
+		PIC_AddEvent(VGA_VertInterrupt,(float)(vga.draw.delay.vdend + 0.005));
+		break;
+	default:
+		E_Exit("This new machine needs implementation in VGA_VerticalTimer too.");
+		break;
 	}
-	//Check if we can actually render, else skip the rest
+	//Check if we can actually render, else skip the rest (frameskip)
 	if (!RENDER_StartUpdate())
 		return;
-	if ( GCC_UNLIKELY( vga.draw.lines_done < vga.draw.lines_total)) {
-		if (IS_VGA_ARCH && (svgaCard==SVGA_None)) {
-			while(vga.draw.lines_done < vga.draw.lines_total)
-				VGA_DrawSingleLine(0);
-			PIC_RemoveEvents(VGA_DrawSingleLine);
-		}
-	}
-	//TODO Maybe check for an active frame on parts_left and clear that first?
-	vga.draw.parts_left = vga.draw.parts_total;
-	vga.draw.lines_done = 0;
+
 	vga.draw.address_line = vga.config.hlines_skip;
 	if (IS_EGAVGA_ARCH) {
 		vga.draw.split_line = (Bitu)((vga.config.line_compare+1)/vga.draw.lines_scaled);
 		if ((svgaCard==SVGA_S3Trio) && (vga.config.line_compare==0)) vga.draw.split_line=0;
+		vga.draw.split_line -= vga.draw.vblank_skip;
 	} else {
 		vga.draw.split_line = 0x10000;	// don't care
 	}
@@ -779,6 +805,8 @@ static void VGA_VerticalTimer(Bitu /*val*/) {
 #endif
 	switch (vga.mode) {
 	case M_EGA:
+		if (!(vga.crtc.mode_control&0x1)) vga.draw.linear_mask &= ~0x10000;
+		else vga.draw.linear_mask |= 0x10000;
 	case M_LIN4:
 		vga.draw.byte_panning_shift = 8;
 		vga.draw.address += vga.draw.bytes_skip;
@@ -809,14 +837,16 @@ static void VGA_VerticalTimer(Bitu /*val*/) {
 #endif
 		break;
 	case M_TEXT:
-		if ((IS_VGA_ARCH) && (svgaCard==SVGA_None)) vga.draw.byte_panning_shift = 2;
-		else vga.draw.byte_panning_shift = 0;
-		if ((IS_VGA_ARCH) && (svgaCard==SVGA_None)) vga.draw.address = vga.config.real_start * 2;
-		else vga.draw.address = vga.config.display_start * 2;
-		vga.draw.address += vga.draw.bytes_skip*vga.draw.byte_panning_shift;
+		vga.draw.byte_panning_shift = 2;
+		vga.draw.address += vga.draw.bytes_skip;
+		// fall-through
 	case M_TANDY_TEXT:
 	case M_HERC_TEXT:
+		if (machine==MCH_HERC) vga.draw.linear_mask = 0xfff; // 1 page
+		else if (IS_EGAVGA_ARCH) vga.draw.linear_mask = 0x7fff; // 8 pages
+		else vga.draw.linear_mask = 0x3fff; // CGA, Tandy 4 pages
 		vga.draw.cursor.address=vga.config.cursor_start*2;
+		vga.draw.address *= 2;
 		vga.draw.cursor.count++;
 		/* check for blinking and blinking change delay */
 		FontMask[1]=(vga.draw.blinking & (vga.draw.cursor.count >> 4)) ?
@@ -839,11 +869,37 @@ static void VGA_VerticalTimer(Bitu /*val*/) {
 	if (startaddr_changed) VGA_ChangesStart();
 #endif
 
-	if ((IS_VGA_ARCH) && (svgaCard==SVGA_None)) PIC_AddEvent(VGA_DrawSingleLine,(float)(vga.draw.delay.htotal/4.0));
-	else PIC_AddEvent(VGA_DrawPart,(float)vga.draw.delay.parts,vga.draw.parts_lines);
-	//VGA_DrawPart( vga.draw.parts_lines );
-	//PIC_AddEvent(VGA_DrawPart,(float)vga.draw.delay.parts,vga.draw.parts_lines);
-	//PIC_AddEvent(VGA_DrawPart,(float)(vga.draw.delay.parts/2),vga.draw.parts_lines); //Else tearline in Tyrian and second reality
+	// check if some lines at the top off the screen are blanked
+	float draw_skip = 0.0;
+	if (GCC_UNLIKELY(vga.draw.vblank_skip)) {
+		draw_skip = (float)(vga.draw.delay.htotal * vga.draw.vblank_skip);
+		vga.draw.address += vga.draw.address_add * (vga.draw.vblank_skip/(vga.draw.address_line_total));
+	}
+
+	// add the draw event
+	switch (vga.draw.mode) {
+	case PART:
+		if (GCC_UNLIKELY(vga.draw.parts_left)) {
+			LOG(LOG_VGAMISC,LOG_NORMAL)( "Parts left: %d", vga.draw.parts_left );
+			PIC_RemoveEvents(VGA_DrawPart);
+			RENDER_EndUpdate(true);
+		}
+		vga.draw.lines_done = 0;
+		vga.draw.parts_left = vga.draw.parts_total;
+		PIC_AddEvent(VGA_DrawPart,(float)vga.draw.delay.parts + draw_skip,vga.draw.parts_lines);
+		break;
+	case LINE:
+		if (GCC_UNLIKELY(vga.draw.lines_done < vga.draw.lines_total)) {
+			LOG(LOG_VGAMISC,LOG_NORMAL)( "Lines left: %d", 
+				vga.draw.lines_total-vga.draw.lines_done);
+			PIC_RemoveEvents(VGA_DrawSingleLine);
+			RENDER_EndUpdate(true);
+		}
+		vga.draw.lines_done = 0;
+		PIC_AddEvent(VGA_DrawSingleLine,(float)(vga.draw.delay.htotal/4.0 + draw_skip));
+		break;
+	//case EGALINE:
+	}
 }
 
 void VGA_CheckScanLength(void) {
@@ -920,10 +976,28 @@ void VGA_SetupDrawing(Bitu /*val*/) {
 		PIC_RemoveEvents(VGA_DisplayStartLatch);
 		return;
 	}
+	// set the drawing mode
+	switch (machine) {
+	case MCH_CGA:
+	case MCH_PCJR:
+		vga.draw.mode = LINE;
+		break;
+	case MCH_VGA:
+		if (svgaCard==SVGA_None) {
+			vga.draw.mode = LINE;
+			break;
+		}
+		// fall-through
+	default:
+		vga.draw.mode = PART;
+		break;
+	}
+	
 	/* Calculate the FPS for this screen */
-	float fps; Bitu clock;
+	double fps; Bitu clock;
 	Bitu htotal, hdend, hbstart, hbend, hrstart, hrend;
 	Bitu vtotal, vdend, vbstart, vbend, vrstart, vrend;
+	Bitu vblank_skip;
 	if (IS_EGAVGA_ARCH) {
 		htotal = vga.crtc.horizontal_total;
 		hdend = vga.crtc.horizontal_display_end;
@@ -953,14 +1027,15 @@ void VGA_SetupDrawing(Bitu /*val*/) {
 			vbstart |= (vga.s3.ex_ver_overflow & 0x4) << 8;
 			vrstart |= ((vga.crtc.overflow & 0x80) << 2);
 			vrstart |= (vga.s3.ex_ver_overflow & 0x10) << 6;
-			vbend = vga.crtc.end_vertical_blanking & 0x3f;
-		} else {
-			vbend = vga.crtc.end_vertical_blanking & 0xf;
+			vbend = vga.crtc.end_vertical_blanking & 0x7f;
+		} else { // EGA
+			vbend = vga.crtc.end_vertical_blanking & 0x1f;
 		}
 		htotal += 2;
 		vtotal += 2;
 		hdend += 1;
 		vdend += 1;
+		vbstart += 1;
 
 		hbend = hbstart + ((hbend - hbstart) & 0x3F);
 		hrend = vga.crtc.end_horizontal_retrace & 0x1f;
@@ -975,9 +1050,11 @@ void VGA_SetupDrawing(Bitu /*val*/) {
 		if ( !vrend) vrend = vrstart + 0xf + 1;
 		else vrend = vrstart + vrend;
 
-		vbend = (vbend - vbstart) & 0x3f;
-		if ( !vbend) vbend = vbstart + 0x3f + 1;
+		vbend = (vbend - vbstart) & 0x7f;
+		if ( !vbend) vbend = vbstart + 0x7f + 1;
 		else vbend = vbstart + vbend;
+
+		vbend++;
 			
 		if (svga.get_clock) {
 			clock = svga.get_clock();
@@ -1017,17 +1094,13 @@ void VGA_SetupDrawing(Bitu /*val*/) {
 		hbstart = hdend;
 		hbend = htotal;
 		hrstart = vga.other.hsyncp;
-		hrend = hrstart + (vga.other.syncw & 0xf) ;
+		hrend = hrstart + vga.other.hsyncw;
 
 		vga.draw.address_line_total = vga.other.max_scanline + 1;
 		vtotal = vga.draw.address_line_total * (vga.other.vtotal+1)+vga.other.vadjust;
 		vdend = vga.draw.address_line_total * vga.other.vdend;
 		vrstart = vga.draw.address_line_total * vga.other.vsyncp;
-		vrend = (vga.other.syncw >> 4);
-		if (!vrend)
-			vrend = vrstart + 0xf + 1;
-		else 
-			vrend = vrstart + vrend;
+		vrend = vrstart + 16; // vsync width is fixed to 16 lines on the MC6845 TODO Tandy
 		vbstart = vdend;
 		vbend = vtotal;
 		vga.draw.double_scan=false;
@@ -1044,6 +1117,7 @@ void VGA_SetupDrawing(Bitu /*val*/) {
 			clock = 14318180;
 			break;
 		}
+		vga.draw.delay.hdend = hdend*1000.0/clock; //in milliseconds
 	}
 #if C_DEBUG
 	LOG(LOG_VGA,LOG_NORMAL)("h total %d end %d blank (%d/%d) retrace (%d/%d)",
@@ -1054,35 +1128,56 @@ void VGA_SetupDrawing(Bitu /*val*/) {
 	if (!htotal) return;
 	if (!vtotal) return;
 	
-	fps=(float)clock/(vtotal*htotal);
-	// The time a complete video frame takes
-	vga.draw.delay.vtotal = (1000.0 * (double)(vtotal*htotal)) / (double)clock; 
+	// The screen refresh frequency
+	fps=(double)clock/(vtotal*htotal);
 	// Horizontal total (that's how long a line takes with whistles and bells)
 	vga.draw.delay.htotal = htotal*1000.0/clock; //in milliseconds
 	// Start and End of horizontal blanking
 	vga.draw.delay.hblkstart = hbstart*1000.0/clock; //in milliseconds
 	vga.draw.delay.hblkend = hbend*1000.0/clock; 
-	vga.draw.delay.hrstart = 0;
-	
+	// Start and End of horizontal retrace
+	vga.draw.delay.hrstart = hrstart*1000.0/clock;
+	vga.draw.delay.hrend = hrend*1000.0/clock;
 	// Start and End of vertical blanking
 	vga.draw.delay.vblkstart = vbstart * vga.draw.delay.htotal;
 	vga.draw.delay.vblkend = vbend * vga.draw.delay.htotal;
 	// Start and End of vertical retrace pulse
 	vga.draw.delay.vrstart = vrstart * vga.draw.delay.htotal;
 	vga.draw.delay.vrend = vrend * vga.draw.delay.htotal;
+
+	// Vertical blanking tricks
+	vblank_skip = 0;
+	if (IS_VGA_ARCH) { // others need more investigation
+		if (vbend > vtotal) {
+			// blanking wraps to the start of the screen
+			vblank_skip = vbend&0x7f;
+			
+			// on blanking wrap to 0, the first line is not blanked
+			// this is used by the S3 BIOS and other S3 drivers in some SVGA modes
+			if((vbend&0x7f)==1) vblank_skip = 0;
+			
+			// it might also cut some lines off the bottom
+			if(vbstart < vdend) {
+				vdend = vbstart;
+			}
+			LOG(LOG_VGA,LOG_WARN)("Blanking wrap to line %d", vblank_skip);
+		} else if (vbstart==1) {
+			// blanking is used to cut lines at the start of the screen
+			vblank_skip = vbend;
+			LOG(LOG_VGA,LOG_WARN)("Upper %d lines of the screen blanked", vblank_skip);
+		} else if (vbstart < vdend) {
+			if(vbend < vdend) {
+				// the game wants a black bar somewhere on the screen
+				LOG(LOG_VGA,LOG_WARN)("Unsupported blanking: line %d-%d",vbstart,vbend);
+			} else {
+				// blanking is used to cut off some lines from the bottom
+				vdend = vbstart;
+			}
+		}
+		vdend -= vblank_skip;
+	}
 	// Display end
 	vga.draw.delay.vdend = vdend * vga.draw.delay.htotal;
-
-#if C_DEBUG
-	LOG(LOG_VGA,LOG_NORMAL)("h total %2.5f (%3.2fkHz) blank(%02.5f/%02.5f) retrace(%02.5f/%02.5f)",
-		vga.draw.delay.htotal,(1.0/vga.draw.delay.htotal),
-		vga.draw.delay.hblkstart,vga.draw.delay.hblkend,
-		vga.draw.delay.hrstart,vga.draw.delay.hrend);
-	LOG(LOG_VGA,LOG_NORMAL)("v total %2.5f (%3.2fHz) blank(%02.5f/%02.5f) retrace(%02.5f/%02.5f)",
-		vga.draw.delay.vtotal,(1000.0/vga.draw.delay.vtotal),
-		vga.draw.delay.vblkstart,vga.draw.delay.vblkend,
-		vga.draw.delay.vrstart,vga.draw.delay.vrend);
-#endif
 
 	vga.draw.parts_total=VGA_PARTS;
 	/*
@@ -1131,9 +1226,8 @@ void VGA_SetupDrawing(Bitu /*val*/) {
 
 	//Check to prevent useless black areas
 	if (hbstart<hdend) hdend=hbstart;
-	//if (vbstart<vdend) vdend=vbstart;
-	// magic.exe demo by European Technology uses blanking from line 0 - 63
-	if (vbstart!=0 && vbstart<vdend) vdend=vbstart;
+	if ((!IS_VGA_ARCH) && (vbstart<vdend)) vdend=vbstart;
+
 
 	Bitu width=hdend;
 	Bitu height=vdend;
@@ -1313,9 +1407,13 @@ void VGA_SetupDrawing(Bitu /*val*/) {
 	}
 	VGA_CheckScanLength();
 	if (vga.draw.double_scan) {
-		if (IS_VGA_ARCH) height/=2;
+		if (IS_VGA_ARCH) { 
+			vga.draw.vblank_skip /= 2;
+			height/=2;
+		}
 		doubleheight=true;
 	}
+	vga.draw.vblank_skip = vblank_skip;
 		
 	if(!(IS_VGA_ARCH && (svgaCard==SVGA_None) && (vga.mode==M_EGA || vga.mode==M_VGA))) {
 		//Only check for extra double height in vga modes
@@ -1342,20 +1440,44 @@ void VGA_SetupDrawing(Bitu /*val*/) {
 	}
 //	LOG_MSG("ht %d vt %d ratio %f", htotal, vtotal, aspect_ratio );
 
-	if (( width != vga.draw.width) || (height != vga.draw.height) ||
-		(aspect_ratio != vga.draw.aspect_ratio) || 
-		(vga.mode != vga.lastmode)) {
-		vga.lastmode = vga.mode;
+	// need to change the vertical timing?
+	if (fabs(vga.draw.delay.vtotal - 1000.0 / fps) > 0.0001) {
+		vga.draw.delay.vtotal = 1000.0 / fps;
+		VGA_KillDrawing();
+		PIC_RemoveEvents(VGA_Other_VertInterrupt);
 		PIC_RemoveEvents(VGA_VerticalTimer);
 		PIC_RemoveEvents(VGA_PanningLatch);
 		PIC_RemoveEvents(VGA_DisplayStartLatch);
-		PIC_RemoveEvents(VGA_DrawPart);
-		PIC_RemoveEvents(VGA_DrawSingleLine);
+		VGA_VerticalTimer(0);
+	}
+
+#if C_DEBUG
+	LOG(LOG_VGA,LOG_NORMAL)("h total %2.5f (%3.2fkHz) blank(%02.5f/%02.5f) retrace(%02.5f/%02.5f)",
+		vga.draw.delay.htotal,(1.0/vga.draw.delay.htotal),
+		vga.draw.delay.hblkstart,vga.draw.delay.hblkend,
+		vga.draw.delay.hrstart,vga.draw.delay.hrend);
+	LOG(LOG_VGA,LOG_NORMAL)("v total %2.5f (%3.2fHz) blank(%02.5f/%02.5f) retrace(%02.5f/%02.5f)",
+		vga.draw.delay.vtotal,(1000.0/vga.draw.delay.vtotal),
+		vga.draw.delay.vblkstart,vga.draw.delay.vblkend,
+		vga.draw.delay.vrstart,vga.draw.delay.vrend);
+#endif
+
+	// need to resize the output window?
+	if ((width != vga.draw.width) ||
+		(height != vga.draw.height) ||
+		(vga.draw.doublewidth != doublewidth) ||
+		(vga.draw.doubleheight != doubleheight) ||
+		(fabs(aspect_ratio - vga.draw.aspect_ratio) > 0.0001) ||
+		(vga.draw.bpp != bpp)) {
+
+		VGA_KillDrawing();
+
 		vga.draw.width = width;
 		vga.draw.height = height;
 		vga.draw.doublewidth = doublewidth;
 		vga.draw.doubleheight = doubleheight;
 		vga.draw.aspect_ratio = aspect_ratio;
+		vga.draw.bpp = bpp;
 		if (doubleheight) vga.draw.lines_scaled=2;
 		else vga.draw.lines_scaled=1;
 #if C_DEBUG
@@ -1363,14 +1485,14 @@ void VGA_SetupDrawing(Bitu /*val*/) {
 		LOG(LOG_VGA,LOG_NORMAL)("%s width, %s height aspect %f",
 			doublewidth ? "double":"normal",doubleheight ? "double":"normal",aspect_ratio);
 #endif
-		RENDER_SetSize(width,height,bpp,fps,aspect_ratio,doublewidth,doubleheight);
-		vga.draw.delay.framestart = PIC_FullIndex();
-		PIC_AddEvent( VGA_VerticalTimer , (float)vga.draw.delay.vtotal );
-		vga.draw.lines_done = 0;
+		RENDER_SetSize(width,height,bpp,(float)fps,aspect_ratio,doublewidth,doubleheight);
 	}
 }
 
 void VGA_KillDrawing(void) {
 	PIC_RemoveEvents(VGA_DrawPart);
 	PIC_RemoveEvents(VGA_DrawSingleLine);
+	vga.draw.parts_left = 0;
+	vga.draw.lines_done = ~0;
+	RENDER_EndUpdate(true);
 }

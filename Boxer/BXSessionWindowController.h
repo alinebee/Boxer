@@ -27,8 +27,9 @@
 
 @interface BXSessionWindowController : NSWindowController
 {
-	IBOutlet NSView <BXFrameRenderingView> *DOSView;
-	IBOutlet NSView *DOSViewContainer;
+	IBOutlet NSView <BXFrameRenderingView> *renderingView;
+	IBOutlet NSView *inputView;
+	IBOutlet NSView *viewContainer;
 	IBOutlet NSView *statusBar;
 	IBOutlet NSView *programPanel;
 
@@ -44,10 +45,11 @@
 @property (retain) BXProgramPanelController *programPanelController;
 @property (retain) BXInputController *inputController;
 
-@property (retain) NSView <BXFrameRenderingView> *DOSView;	//The view that displays DOSBox's graphical output.
-@property (retain) NSView *DOSViewContainer;	//A wrapper for the DOSView to aid window-sizing behaviour.
-@property (retain) NSView *programPanel;		//The slide-out program picker panel.
-@property (retain) NSView *statusBar;			//The status bar at the bottom of the window.
+@property (retain) NSView <BXFrameRenderingView> *renderingView;	//The view that displays DOSBox's graphical output.
+@property (retain) NSView *inputView;		//The view that tracks user input. This is also be the view we use for fullscreen.
+@property (retain) NSView *viewContainer;	//A wrapper for the input view to aid window-sizing behaviour.
+@property (retain) NSView *programPanel;	//The slide-out program picker panel.
+@property (retain) NSView *statusBar;		//The status bar at the bottom of the window.
 
 //Indicates that the current resize event is internal and not triggered by user interaction.
 //Used to change our window constraining behaviour and response to resize events.
@@ -144,9 +146,9 @@
 - (void) _resizeToAccommodateFrame: (BXFrameBuffer *)frame;
 
 //Returns the view size that should be used for rendering the specified frame.
-- (NSSize) _DOSViewSizeForFrame: (BXFrameBuffer *)frame minSize: (NSSize)minViewSize;
+- (NSSize) _renderingViewSizeForFrame: (BXFrameBuffer *)frame minSize: (NSSize)minViewSize;
 
 //Resize the window frame to fit the requested render size.
-- (void) _resizeWindowToDOSViewSize: (NSSize)newSize animate: (BOOL)performAnimation;
+- (void) _resizeWindowToRenderingViewSize: (NSSize)newSize animate: (BOOL)performAnimation;
 
 @end

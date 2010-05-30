@@ -58,7 +58,7 @@ enum {
 	//Insert ourselves into the responder chain as our view's next responder
 	[self setNextResponder: [[self view] nextResponder]];
 	[[self view] setNextResponder: self];
-	 
+	
 	//Set up a cursor region in the view for mouse handling
 	NSTrackingAreaOptions options = NSTrackingMouseEnteredAndExited | NSTrackingEnabledDuringMouseDrag | NSTrackingCursorUpdate | NSTrackingActiveInKeyWindow | NSTrackingInVisibleRect | NSTrackingAssumeInside;
 	
@@ -280,13 +280,12 @@ enum {
 	
 	NSPoint relativePosition, relativeDelta;
 
-	//We invert the delta to be consistent with AppKit's bottom-left screen origin.
 	relativeDelta = NSMakePoint([theEvent deltaX] / width,
-								-[theEvent deltaY] / height);		
+								[theEvent deltaY] / height);		
 	
 	
 	//If we have just warped the mouse, the delta above will include the distance warped
-	//as well as the actual distance moved in this mouse event: so, we subtract the warp.
+	//as well as the actual distance moved in this mouse event: so, we have to subtract the warp.
 	relativeDelta.x -= distanceWarped.x;
 	relativeDelta.y -= distanceWarped.y;
 	distanceWarped = NSZeroPoint;

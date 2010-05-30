@@ -21,7 +21,7 @@
 - (NSRect) contentRectForFrameRect:(NSRect)windowFrame
 {
 	NSRect rect = [super contentRectForFrameRect: windowFrame];
-	NSView *container	= [[self windowController] DOSViewContainer];
+	NSView *container	= [[self windowController] viewContainer];
 
 	CGFloat sizeAdjustment	= [container frame].origin.y;
 	rect.size.height		-= sizeAdjustment;
@@ -33,7 +33,7 @@
 - (NSRect) frameRectForContentRect: (NSRect)windowContent
 {
 	NSRect rect = [super frameRectForContentRect: windowContent];
-	NSView *container	= [[self windowController] DOSViewContainer];
+	NSView *container	= [[self windowController] viewContainer];
 
 	CGFloat sizeAdjustment	= [container frame].origin.y;
 	rect.size.height		+= sizeAdjustment;

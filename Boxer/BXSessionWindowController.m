@@ -26,7 +26,7 @@
 #pragma mark -
 #pragma mark Accessors
 
-@synthesize DOSView, DOSViewContainer, statusBar, programPanel;
+@synthesize renderingView, inputView, viewContainer, statusBar, programPanel;
 @synthesize programPanelController, inputController;
 @synthesize resizingProgrammatically;
 @synthesize emulator;
@@ -45,12 +45,13 @@
 	[self removeObserver: self forKeyPath: @"document.activeProgramPath"];
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
 	
-	[self setDOSViewContainer: nil],		[DOSViewContainer release];
-	[self setDOSView: nil],					[DOSView release];
+	[self setViewContainer: nil],			[viewContainer release];
+	[self setInputView: nil],				[inputView release];
+	[self setRenderingView: nil],			[renderingView release];
 	[self setStatusBar: nil],				[statusBar release];
 	[self setProgramPanel: nil],			[programPanel release];
 	[self setProgramPanelController: nil],	[programPanelController release];
-	[self setInputController: nil],		[inputController release];
+	[self setInputController: nil],			[inputController release];
 
 	[super dealloc];
 }
@@ -66,12 +67,12 @@
 	//These are handled by BoxerRenderController, our category for rendering-related delegate tasks
 	[center addObserver:	self
 			selector:		@selector(windowWillLiveResize:)
-			name:			@"BXDOSViewWillLiveResizeNotification"
-			object:			DOSView];
+			name:			@"BXViewWillLiveResizeNotification"
+			object:			inputView];
 	[center addObserver:	self
 			selector:		@selector(windowDidLiveResize:)
-			name:			@"BXDOSViewDidLiveResizeNotification"
-			object:			DOSView];
+			name:			@"BXViewDidLiveResizeNotification"
+			object:			inputView];
 	[center addObserver:	self
 			selector:		@selector(menuDidOpen:)
 			name:			NSMenuDidBeginTrackingNotification
@@ -115,7 +116,7 @@
 	//------------------------------
 	
 	//Fix the window in the aspect ratio it will start up in
-	[theWindow setContentAspectRatio: [self windowedDOSViewSize]];
+	[theWindow setContentAspectRatio: [self windowedRenderingViewSize]];
 	
 	//We don't support content-preservation yet, so disable the check to be slightly more efficient
 	[theWindow setPreservesContentDuringLiveResize: NO];
@@ -248,18 +249,18 @@
 		BXSessionWindow *theWindow	= [self window];
 		
 		//temporarily override the other views' resizing behaviour so that they don't slide up as we do this
-		NSUInteger oldContainerMask		= [DOSViewContainer autoresizingMask];
+		NSUInteger oldContainerMask		= [viewContainer autoresizingMask];
 		NSUInteger oldProgramPanelMask	= [programPanel autoresizingMask];
-		[DOSViewContainer	setAutoresizingMask: NSViewMinYMargin];
-		[programPanel		setAutoresizingMask: NSViewMinYMargin];
+		[viewContainer	setAutoresizingMask: NSViewMinYMargin];
+		[programPanel	setAutoresizingMask: NSViewMinYMargin];
 		
 		//toggle the resize indicator on/off also (it doesn't play nice with the program panel)
 		if (!show)	[theWindow setShowsResizeIndicator: NO];
 		[self _slideView: statusBar shown: show];
 		if (show)	[theWindow setShowsResizeIndicator: YES];
 		
-		[DOSViewContainer	setAutoresizingMask: oldContainerMask];
-		[programPanel		setAutoresizingMask: oldProgramPanelMask];
+		[viewContainer	setAutoresizingMask: oldContainerMask];
+		[programPanel	setAutoresizingMask: oldProgramPanelMask];
 		
 		//record the current statusbar state in the user defaults
 		[[NSUserDefaults standardUserDefaults] setBool: show forKey: @"statusBarShown"];
@@ -274,12 +275,12 @@
 	if (show != [self programPanelShown])
 	{
 		//temporarily override the other views' resizing behaviour so that they don't slide up as we do this
-		NSUInteger oldMask = [DOSViewContainer autoresizingMask];
-		[DOSViewContainer setAutoresizingMask: NSViewMinYMargin];
+		NSUInteger oldMask = [viewContainer autoresizingMask];
+		[viewContainer setAutoresizingMask: NSViewMinYMargin];
 		
 		[self _slideView: programPanel shown: show];
 		
-		[DOSViewContainer setAutoresizingMask: oldMask];
+		[viewContainer setAutoresizingMask: oldMask];
 	}
 }
 

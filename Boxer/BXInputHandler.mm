@@ -68,20 +68,18 @@ void MAPPER_CheckEvent(SDL_Event *event);
 				  onCanvas: (NSRect)canvas
 			   whileLocked: (BOOL)locked
 {
-	//TODO: control this sensitivity further up the food chain 
+	//TODO: control this sensitivity further up the food chain or leave it out altogether.
 	CGFloat sensitivity = sdl.mouse.sensitivity / 100.0f;
 	
-	//In DOSBox land, absolute position is from 0-1 but delta is in raw pixels,
-	//for some silly reason.
+	//In DOSBox land, absolute position is from 0-1 but delta is in raw pixels, for some silly reason.
+	//TODO: try making this relative to the DOS driver's max mouse position instead.
 	NSPoint canvasDelta = NSMakePoint(delta.x * canvas.size.width,
 									  delta.y * canvas.size.height);
 	
-	//point and delta use bottom-left origins to be consistent with AppKit's coordinate system.
-	//We need to flip them to match DOSBox's top-left origin coordinate system.
 	Mouse_CursorMoved(canvasDelta.x * sensitivity,
-					  -canvasDelta.y * sensitivity,
+					  canvasDelta.y * sensitivity,
 					  point.x * sensitivity,
-					  (1 - point.y) * sensitivity,
+					  point.y * sensitivity,
 					  NO);
 }
 		 

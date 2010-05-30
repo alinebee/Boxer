@@ -6,28 +6,25 @@
  */
 
 
-//BXDOSLayerView is a layer-backed implementation of the BXFrameRenderingView protocol.
-//It uses a CAOpenGLLayer subclass for displaying frame content, and unlike BXDOSGLView
+//BXLayerRenderingView is a layer-backed implementation of the BXFrameRenderingView protocol.
+//It uses a CAOpenGLLayer subclass for displaying frame content, and unlike BXGLRenderingView
 //it can display other views or layers over the top of this content.
 
 //This layer-based drawing approach is not currently used as it has significant unresolved
-//performance problems compared to BXDOSGLView.
+//performance problems compared to BXGLRenderingView.
 
 #import "BXFrameRenderingView.h"
 
 @class BXRenderingLayer;
 @class BXFrameRateCounterLayer;
 
-@interface BXDOSLayerView : NSView <BXFrameRenderingView>
+@interface BXLayerRenderingView : NSView <BXFrameRenderingView>
 {
 	BXRenderingLayer *renderingLayer;
 	BXFrameRateCounterLayer *frameRateLayer;
 }
 @property (retain) BXRenderingLayer *renderingLayer;
 @property (retain) BXFrameRateCounterLayer *frameRateLayer;
-
-//Render the view's badged grey background; this shows through when there is no renderer yet.
-- (void) drawBackgroundInRect: (NSRect) dirtyRect;
 
 //Toggle the frame rate display on/off
 - (IBAction) toggleFrameRate: (id) sender;

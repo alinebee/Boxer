@@ -93,7 +93,7 @@
 		9FB553E10F6EA30900A33017 /* BXCloseAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB553E00F6EA30900A33017 /* BXCloseAlert.m */; };
 		9FB554220F6EAC5F00A33017 /* BXAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB554210F6EAC5F00A33017 /* BXAlert.m */; };
 		9FB554F70F6EE58000A33017 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FB554F60F6EE58000A33017 /* QTKit.framework */; };
-		9FBB86850F5DD070008418E6 /* BXDOSLayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBB86840F5DD070008418E6 /* BXDOSLayerView.m */; };
+		9FBB86850F5DD070008418E6 /* BXLayerRenderingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBB86840F5DD070008418E6 /* BXLayerRenderingView.m */; };
 		9FBC31D70F56C370001811F2 /* AboutBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC31D10F56C370001811F2 /* AboutBackground.png */; };
 		9FBC31DA0F56C370001811F2 /* BunnyTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC31D40F56C370001811F2 /* BunnyTemplate.png */; };
 		9FBC31DC0F56C370001811F2 /* TortoiseTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC31D60F56C370001811F2 /* TortoiseTemplate.png */; };
@@ -243,8 +243,9 @@
 		9FE8265C10F0EBA000F1B03E /* 35DisketteShine.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE8265A10F0EBA000F1B03E /* 35DisketteShine.png */; };
 		9FE8265D10F0EBA000F1B03E /* 35Diskette.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE8265B10F0EBA000F1B03E /* 35Diskette.png */; };
 		9FECE19011A31B8B00E0EBB6 /* BXRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FECE18F11A31B8B00E0EBB6 /* BXRenderer.m */; };
-		9FECE1C211A3244500E0EBB6 /* BXDOSGLView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FECE1C111A3244500E0EBB6 /* BXDOSGLView.m */; };
+		9FECE1C211A3244500E0EBB6 /* BXGLRenderingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FECE1C111A3244500E0EBB6 /* BXGLRenderingView.m */; };
 		9FEF98011191E1EF002024DF /* BXInputHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FEF98001191E1EF002024DF /* BXInputHandler.mm */; };
+		9FF1756D11B25F4E00D0FCDC /* BXInputView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF1756C11B25F4E00D0FCDC /* BXInputView.m */; };
 		9FF445E010F13A2200B74B15 /* 525Diskette.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FF445DF10F13A2200B74B15 /* 525Diskette.png */; };
 		9FFAFE2D10DE33FB00728BAC /* GameProfiles.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */; };
 		9FFAFE4310DE343F00728BAC /* Configurations in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2E10DE343F00728BAC /* Configurations */; };
@@ -413,8 +414,8 @@
 		9FB554200F6EAC5F00A33017 /* BXAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXAlert.h; sourceTree = "<group>"; };
 		9FB554210F6EAC5F00A33017 /* BXAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXAlert.m; sourceTree = "<group>"; };
 		9FB554F60F6EE58000A33017 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
-		9FBB86830F5DD070008418E6 /* BXDOSLayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDOSLayerView.h; sourceTree = "<group>"; };
-		9FBB86840F5DD070008418E6 /* BXDOSLayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDOSLayerView.m; sourceTree = "<group>"; };
+		9FBB86830F5DD070008418E6 /* BXLayerRenderingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXLayerRenderingView.h; sourceTree = "<group>"; };
+		9FBB86840F5DD070008418E6 /* BXLayerRenderingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXLayerRenderingView.m; sourceTree = "<group>"; };
 		9FBC31D10F56C370001811F2 /* AboutBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AboutBackground.png; sourceTree = "<group>"; };
 		9FBC31D40F56C370001811F2 /* BunnyTemplate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BunnyTemplate.png; sourceTree = "<group>"; };
 		9FBC31D60F56C370001811F2 /* TortoiseTemplate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TortoiseTemplate.png; sourceTree = "<group>"; };
@@ -694,10 +695,12 @@
 		9FE8265B10F0EBA000F1B03E /* 35Diskette.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 35Diskette.png; sourceTree = "<group>"; };
 		9FECE18E11A31B8B00E0EBB6 /* BXRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXRenderer.h; sourceTree = "<group>"; };
 		9FECE18F11A31B8B00E0EBB6 /* BXRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXRenderer.m; sourceTree = "<group>"; };
-		9FECE1C011A3244500E0EBB6 /* BXDOSGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDOSGLView.h; sourceTree = "<group>"; };
-		9FECE1C111A3244500E0EBB6 /* BXDOSGLView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDOSGLView.m; sourceTree = "<group>"; };
+		9FECE1C011A3244500E0EBB6 /* BXGLRenderingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXGLRenderingView.h; sourceTree = "<group>"; };
+		9FECE1C111A3244500E0EBB6 /* BXGLRenderingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGLRenderingView.m; sourceTree = "<group>"; };
 		9FEF97FF1191E1EF002024DF /* BXInputHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXInputHandler.h; sourceTree = "<group>"; };
 		9FEF98001191E1EF002024DF /* BXInputHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXInputHandler.mm; sourceTree = "<group>"; };
+		9FF1756B11B25F4E00D0FCDC /* BXInputView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXInputView.h; sourceTree = "<group>"; };
+		9FF1756C11B25F4E00D0FCDC /* BXInputView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXInputView.m; sourceTree = "<group>"; };
 		9FF445DF10F13A2200B74B15 /* 525Diskette.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 525Diskette.png; sourceTree = "<group>"; };
 		9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = GameProfiles.plist; sourceTree = "<group>"; };
 		9FFAFE2E10DE343F00728BAC /* Configurations */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Configurations; sourceTree = "<group>"; };
@@ -887,10 +890,12 @@
 				9FBC35240F56C7B7001811F2 /* BXSessionWindow.m */,
 				9F59DAD310AF1042008DBBC1 /* BXProgramPanel.h */,
 				9F59DAD410AF1042008DBBC1 /* BXProgramPanel.m */,
-				9FBB86830F5DD070008418E6 /* BXDOSLayerView.h */,
-				9FBB86840F5DD070008418E6 /* BXDOSLayerView.m */,
-				9FECE1C011A3244500E0EBB6 /* BXDOSGLView.h */,
-				9FECE1C111A3244500E0EBB6 /* BXDOSGLView.m */,
+				9FBB86830F5DD070008418E6 /* BXLayerRenderingView.h */,
+				9FBB86840F5DD070008418E6 /* BXLayerRenderingView.m */,
+				9FECE1C011A3244500E0EBB6 /* BXGLRenderingView.h */,
+				9FECE1C111A3244500E0EBB6 /* BXGLRenderingView.m */,
+				9FF1756B11B25F4E00D0FCDC /* BXInputView.h */,
+				9FF1756C11B25F4E00D0FCDC /* BXInputView.m */,
 			);
 			name = "DOS window";
 			sourceTree = "<group>";
@@ -1777,7 +1782,7 @@
 				9FBC3BC80F56CEA2001811F2 /* shell_cmds.cpp in Sources */,
 				9FBC3BC90F56CEA2001811F2 /* shell_misc.cpp in Sources */,
 				9F1D50010F5C0966009F0AB9 /* BXEmulator.mm in Sources */,
-				9FBB86850F5DD070008418E6 /* BXDOSLayerView.m in Sources */,
+				9FBB86850F5DD070008418E6 /* BXLayerRenderingView.m in Sources */,
 				9F2D76C30F61327D00D4E563 /* BXEmulator+BXRendering.mm in Sources */,
 				9FC3B2550F62D9CE006DE439 /* BXSession+BXEmulatorController.m in Sources */,
 				9F76C8550F6509EF0068EA1C /* BXSessionWindowController+BXRenderController.m in Sources */,
@@ -1838,8 +1843,9 @@
 				9F4175F1119DCF7E00646B15 /* BXFrameRateCounterLayer.m in Sources */,
 				9FC1620E119E9AD700705EA5 /* BXCursorFadeAnimation.m in Sources */,
 				9FECE19011A31B8B00E0EBB6 /* BXRenderer.m in Sources */,
-				9FECE1C211A3244500E0EBB6 /* BXDOSGLView.m in Sources */,
+				9FECE1C211A3244500E0EBB6 /* BXGLRenderingView.m in Sources */,
 				9F466A4911A924EC00C50965 /* Shader.m in Sources */,
+				9FF1756D11B25F4E00D0FCDC /* BXInputView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

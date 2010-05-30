@@ -7,33 +7,35 @@
 
 
 //The BXRenderController category separates off rendering-specific functionality from general
-//window controller housework. The methods herein liaise between BXDOSView and BXEmulator, pass UI
-//signals back to BXEmulator, and manage resizing to ensure that the view size and rendering size
-//are consistent.
+//window controller housework. The methods herein pass frame rendering on to the rendering view,
+//and manage window size and fullscreen mode.
 
 #import <Cocoa/Cocoa.h>
 #import "BXSessionWindowController.h"
 
 @class BXSessionWindow;
 @class BXEmulator;
-@class BXDOSView;
 @class BXFrameBuffer;
 
 @interface BXSessionWindowController (BXRenderController)
+
+#pragma mark -
+#pragma mark Renderer-related methods
 
 - (void) updateWithFrame: (BXFrameBuffer *)frame;
 - (NSSize) maxFrameSize;
 - (NSSize) viewportSize;
 
-//Window sizing methods
-//---------------------
+
+#pragma mark -
+#pragma mark Window-sizing and fullscreen methods
 
 //Returns YES if the window is in the process of resizing itself.
 - (BOOL) isResizing;
 
-//Returns the size that the render view would currently be *if it were in windowed mode.*
+//Returns the size that the rendering view would currently be *if it were in windowed mode.*
 //This will differ from the actual render view size if in fullscreen mode.
-- (NSSize) windowedDOSViewSize;
+- (NSSize) windowedRenderingViewSize;
 
 //Switch to and from fullscreen mode instantly with no animation.
 - (void) setFullScreen: (BOOL)fullScreen;

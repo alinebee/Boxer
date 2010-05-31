@@ -2,10 +2,10 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
-		<string key="IBDocument.SystemVersion">10C540</string>
-		<string key="IBDocument.InterfaceBuilderVersion">740</string>
-		<string key="IBDocument.AppKitVersion">1038.25</string>
-		<string key="IBDocument.HIToolboxVersion">458.00</string>
+		<string key="IBDocument.SystemVersion">10D573</string>
+		<string key="IBDocument.InterfaceBuilderVersion">762</string>
+		<string key="IBDocument.AppKitVersion">1038.29</string>
+		<string key="IBDocument.HIToolboxVersion">460.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<object class="NSArray" key="dict.sortedKeys">
@@ -15,13 +15,15 @@
 			</object>
 			<object class="NSMutableArray" key="dict.values">
 				<bool key="EncodedWithXMLCoder">YES</bool>
-				<string>740</string>
+				<string>762</string>
 				<string>1</string>
 			</object>
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
+			<integer value="52"/>
 			<integer value="11"/>
+			<integer value="66"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -106,7 +108,7 @@
 					<object class="BGHUDLabel" id="438849360">
 						<reference key="NSNextResponder" ref="156718782"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{221, 56}, {197, 17}}</string>
+						<string key="NSFrame">{{221, 42}, {197, 17}}</string>
 						<reference key="NSSuperview" ref="156718782"/>
 						<int key="NSTag">1</int>
 						<bool key="NSEnabled">YES</bool>
@@ -172,7 +174,7 @@
 									<object class="NSCollectionView" id="987636477">
 										<reference key="NSNextResponder" ref="470278647"/>
 										<int key="NSvFlags">274</int>
-										<string key="NSFrameSize">{640, 52}</string>
+										<string key="NSFrameSize">{640, 44}</string>
 										<reference key="NSSuperview" ref="470278647"/>
 										<string key="NSMinGridSize">{0, 0}</string>
 										<string key="NSMaxGridSize">{0, 0}</string>
@@ -189,7 +191,7 @@
 										<int key="NSDraggingSourceMaskForNonLocal">0</int>
 									</object>
 								</object>
-								<string key="NSFrameSize">{640, 52}</string>
+								<string key="NSFrameSize">{640, 44}</string>
 								<reference key="NSSuperview" ref="427757765"/>
 								<reference key="NSNextKeyView" ref="987636477"/>
 								<reference key="NSDocView" ref="987636477"/>
@@ -221,7 +223,7 @@
 								<double key="NSPercent">0.63157890000000005</double>
 							</object>
 						</object>
-						<string key="NSFrameSize">{640, 52}</string>
+						<string key="NSFrameSize">{640, 44}</string>
 						<reference key="NSSuperview" ref="156718782"/>
 						<reference key="NSNextKeyView" ref="470278647"/>
 						<int key="NSsFlags">544</int>
@@ -230,19 +232,19 @@
 						<reference key="NSContentView" ref="470278647"/>
 					</object>
 				</object>
-				<string key="NSFrameSize">{640, 78}</string>
+				<string key="NSFrameSize">{640, 64}</string>
 				<reference key="NSSuperview"/>
 				<string key="NSClassName">BXProgramPanel</string>
 			</object>
 			<object class="NSCustomView" id="515511690">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">274</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<object class="BGHUDLabel" id="957861673">
 						<reference key="NSNextResponder" ref="515511690"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{99, 14}, {443, 14}}</string>
+						<string key="NSFrame">{{99, 10}, {443, 14}}</string>
 						<reference key="NSSuperview" ref="515511690"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="118197522">
@@ -263,7 +265,7 @@
 					<object class="NSButton" id="924340279">
 						<reference key="NSNextResponder" ref="515511690"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{129, 29}, {381, 18}}</string>
+						<string key="NSFrame">{{129, 25}, {381, 18}}</string>
 						<reference key="NSSuperview" ref="515511690"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="BGHUDButtonCell" key="NSCell" id="14580453">
@@ -289,18 +291,19 @@
 						</object>
 					</object>
 				</object>
-				<string key="NSFrameSize">{640, 78}</string>
+				<string key="NSFrameSize">{640, 64}</string>
+				<reference key="NSSuperview"/>
 				<string key="NSClassName">BXProgramPanel</string>
 			</object>
 			<object class="NSCustomView" id="1029538789">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">274</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<object class="BGHUDLabel" id="257783006">
 						<reference key="NSNextResponder" ref="1029538789"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{150, 24}, {341, 14}}</string>
+						<string key="NSFrame">{{150, 10}, {341, 14}}</string>
 						<reference key="NSSuperview" ref="1029538789"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="512924413">
@@ -317,7 +320,7 @@
 					<object class="BGHUDLabel" id="10611085">
 						<reference key="NSNextResponder" ref="1029538789"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{181, 41}, {278, 17}}</string>
+						<string key="NSFrame">{{181, 27}, {278, 17}}</string>
 						<reference key="NSSuperview" ref="1029538789"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="59349482">
@@ -332,7 +335,8 @@
 						<string key="themeKey">BXShadowedTextTheme</string>
 					</object>
 				</object>
-				<string key="NSFrameSize">{640, 78}</string>
+				<string key="NSFrameSize">{640, 64}</string>
+				<reference key="NSSuperview"/>
 				<string key="NSClassName">BXProgramPanel</string>
 			</object>
 			<object class="NSCustomView" id="80732392">
@@ -893,7 +897,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{2, 536}, {640, 78}}</string>
+					<string>{{2, 550}, {640, 64}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>{{21, 633}, {640, 78}}</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
@@ -918,9 +922,9 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
-					<string>{{9, 640}, {640, 78}}</string>
+					<string>{{9, 654}, {640, 64}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{40, 505}, {640, 78}}</string>
+					<string>{{40, 519}, {640, 64}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
@@ -1495,6 +1499,20 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
+					<string key="className">NSObject</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBFrameworkSource</string>
+						<string key="minorKey">Sparkle.framework/Headers/SUAppcast.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">NSObject</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBFrameworkSource</string>
+						<string key="minorKey">Sparkle.framework/Headers/SUUpdater.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">NSObjectController</string>
 					<string key="superclassName">NSController</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
@@ -1590,6 +1608,7 @@
 			</object>
 		</object>
 		<int key="IBDocument.localizationMode">0</int>
+		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaFramework</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDependencies">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.macosx</string>
 			<integer value="1050" key="NS.object.0"/>
@@ -1605,5 +1624,9 @@
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>
 		<string key="IBDocument.LastKnownRelativeProjectPath">../../Boxer.xcodeproj</string>
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
+		<object class="NSMutableDictionary" key="IBDocument.LastKnownImageSizes">
+			<string key="NS.key.0">NSSwitch</string>
+			<string key="NS.object.0">{15, 15}</string>
+		</object>
 	</data>
 </archive>

@@ -12,7 +12,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="924"/>
+			<integer value="1"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -41,7 +41,7 @@
 			<object class="NSWindowTemplate" id="1005">
 				<int key="NSWindowStyleMask">15</int>
 				<int key="NSWindowBacking">2</int>
-				<string key="NSWindowRect">{{326, 204}, {640, 504}}</string>
+				<string key="NSWindowRect">{{326, 218}, {640, 490}}</string>
 				<int key="NSWTFlags">536870912</int>
 				<string key="NSWindowTitle"/>
 				<string key="NSWindowClass">BXSessionWindow</string>
@@ -156,7 +156,7 @@
 						<object class="NSCustomView" id="910670518">
 							<reference key="NSNextResponder" ref="1006"/>
 							<int key="NSvFlags">290</int>
-							<string key="NSFrame">{{0, 26}, {640, 78}}</string>
+							<string key="NSFrame">{{0, 26}, {640, 64}}</string>
 							<reference key="NSSuperview" ref="1006"/>
 							<int key="NSViewLayerContentsRedrawPolicy">2</int>
 							<string key="NSClassName">NSView</string>
@@ -189,12 +189,12 @@
 									<string key="NSClassName">BXInputView</string>
 								</object>
 							</object>
-							<string key="NSFrame">{{0, 104}, {640, 400}}</string>
+							<string key="NSFrame">{{0, 90}, {640, 400}}</string>
 							<reference key="NSSuperview" ref="1006"/>
 							<string key="NSClassName">NSView</string>
 						</object>
 					</object>
-					<string key="NSFrameSize">{640, 504}</string>
+					<string key="NSFrameSize">{640, 490}</string>
 					<reference key="NSSuperview"/>
 					<int key="NSViewLayerContentsRedrawPolicy">2</int>
 				</object>
@@ -574,9 +574,9 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{56, 92}, {640, 504}}</string>
+					<string>{{56, 114}, {640, 490}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{56, 92}, {640, 504}}</string>
+					<string>{{56, 114}, {640, 490}}</string>
 					<integer value="0"/>
 					<string>{196, 240}</string>
 					<string>{{357, 418}, {480, 270}}</string>

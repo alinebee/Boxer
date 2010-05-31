@@ -17,6 +17,11 @@
 #import "BXGeometry.h"
 
 
+const CGFloat BXFullscreenFadeOutDuration	= 0.2;
+const CGFloat BXFullscreenFadeInDuration	= 0.4;
+const NSInteger BXWindowSnapThreshold		= 64;
+const CGFloat BXIdenticalAspectRatioDelta	= 0.025;
+
 @implementation BXSessionWindowController (BXRenderController)
 
 #pragma mark -
@@ -81,11 +86,11 @@
 	if (acquiredToken == kCGErrorSuccess)
 	{
 		CGError fadedOut = CGDisplayFade(fadeToken,
-										 0.25,						//Fade duration
-										 kCGDisplayBlendNormal,		//Start transparent
-										 kCGDisplayBlendSolidColor,	//Fade to opaque
-										 0.0, 0.0, 0.0,				//Pure black (R, G, B)
-										 true						//Synchronous
+										 BXFullscreenFadeOutDuration,	//Fade duration
+										 kCGDisplayBlendNormal,			//Start transparent
+										 kCGDisplayBlendSolidColor,		//Fade to opaque
+										 0.0, 0.0, 0.0,					//Pure black (R, G, B)
+										 true							//Synchronous
 										 );
 	}
 	
@@ -96,7 +101,7 @@
 	if (acquiredToken == kCGErrorSuccess)
 	{
 		CGError fadedIn = CGDisplayFade(fadeToken,
-										0.5,						//Fade duration
+										BXFullscreenFadeInDuration,	//Fade duration
 										kCGDisplayBlendSolidColor,	//Start opaque
 										kCGDisplayBlendNormal,		//Fade to transparent
 										0.0, 0.0, 0.0,				//Pure black (R, G, B)
@@ -172,7 +177,10 @@
 	//If emulation is not active, don't bother calculating constraints
 	if (![[self emulator] isExecuting]) return proposedFrameSize;
 
-	NSInteger snapThreshold	= [[NSUserDefaults standardUserDefaults] integerForKey: @"windowSnapDistance"];
+	//Used to be: [[NSUserDefaults standardUserDefaults] integerForKey: @"windowSnapDistance"];
+	//But is now constant while developing to find the ideal default value
+	NSInteger snapThreshold	= BXWindowSnapThreshold;
+	
 	NSSize snapIncrement	= [[renderingView currentFrame] scaledResolution];
 	CGFloat aspectRatio		= aspectRatioOfSize([theWindow contentAspectRatio]);
 	
@@ -291,31 +299,43 @@
 	
 	NSSize viewSize			= [self windowedRenderingViewSize];
 	BOOL needsResize		= NO;
+	BOOL needsNewMinSize	= NO;
 	
 	//Only resize the window if the frame size is different from its previous size
 	if (!NSEqualSizes(currentScaledSize, scaledSize))
 	{
 		viewSize = [self _renderingViewSizeForFrame: frame minSize: scaledResolution];
 		needsResize = YES;
+		needsNewMinSize = YES;
+	}
+	else if (!NSEqualSizes(currentScaledResolution, scaledResolution))
+	{
+		needsNewMinSize = YES;
 	}
 		
-	//Use the base resolution as our minimum content size, to prevent higher resolutions
-	//being rendered smaller than their effective size
-	NSSize minSize = scaledResolution;
+	if (needsNewMinSize)
+	{
+		//Use the base resolution as our minimum content size, to prevent higher resolutions
+		//being rendered smaller than their effective size
+		NSSize minSize = scaledResolution;
 	
-	//Tweak: ...unless the base resolution is actually larger than our view size, which can happen 
-	//if the base resolution is too large to fit on screen and hence the view is shrunk.
-	//In that case we use the target view size as the minimum instead.
-	if (!sizeFitsWithinSize(scaledResolution, viewSize)) minSize = viewSize;
+		//Tweak: ...unless the base resolution is actually larger than our view size, which can happen 
+		//if the base resolution is too large to fit on screen and hence the view is shrunk.
+		//In that case we use the target view size as the minimum instead.
+		if (!sizeFitsWithinSize(scaledResolution, viewSize)) minSize = viewSize;
+
+		[[self window] setContentMinSize: minSize];
+	}
 	
-	//Lock the window's aspect ratio to the new size
-	[[self window] setContentMinSize: minSize];
-	[[self window] setContentAspectRatio: viewSize];
-	
-	//Now resize the window to fit the new size
-	if (needsResize) [self _resizeWindowToRenderingViewSize: viewSize animate: YES];
+	//Now resize the window to fit the new size and lock its aspect ratio
+	if (needsResize)
+	{
+		[self _resizeWindowToRenderingViewSize: viewSize animate: YES];
+		[[self window] setContentAspectRatio: viewSize];
+	}
 	
 	currentScaledSize = scaledSize;
+	currentScaledResolution = scaledResolution;
 }
 
 
@@ -383,47 +403,42 @@
 	//Start off with our current view size: we want to deviate from this as little as possible.
 	NSSize viewSize = [self windowedRenderingViewSize];
 	
-	NSSize frameSize = [frame scaledSize];
-	NSSize currentFrameSize = [[renderingView currentFrame] scaledSize];
+	NSSize scaledSize = [frame scaledSize];
 	
 	//Work out the aspect ratio of the scaled size, and how we should apply that ratio
-	CGFloat aspectRatio = aspectRatioOfSize(frameSize);
-	
+	CGFloat aspectRatio = aspectRatioOfSize(scaledSize);
 	CGFloat currentAspectRatio = aspectRatioOfSize(viewSize);
 	
 	//If there's only a negligible difference in aspect ratio, then just use the current
-	//or minimum view size (whichever is larger). This eliminates rounding errors.
-	if (ABS(aspectRatio - currentAspectRatio) < 0.05)
+	//or minimum view size (whichever is larger) to eliminate rounding errors.
+	if (ABS(aspectRatio - currentAspectRatio) < BXIdenticalAspectRatioDelta)
 	{
-		return sizeFitsWithinSize(minViewSize, viewSize) ? viewSize : minViewSize;
+		viewSize = sizeFitsWithinSize(minViewSize, viewSize) ? viewSize : minViewSize;
 	}
-	
-	//We preserve height during the aspect ratio adjustment if:
-	// 1. the new height is equivalent to the old, and
-	// 2. the width is not equivalent to the old.
-	//Otherwise, we preserve width.
-	//Height-locking fixes crazy-ass resolution transitions in Pinball Fantasies and The Humans,
-	//while width-locking allows for rounding errors from live resizes.
-	BOOL preserveHeight = !((NSInteger)currentFrameSize.height	% (NSInteger)frameSize.height)
-						&& ((NSInteger)currentFrameSize.width	% (NSInteger)frameSize.width);
-	
-	//Now, adjust the view size to fit the aspect ratio of our new rendered size.
-	//At the same time we clamp it to the minimum size, preserving the preferred dimension.
-	if (preserveHeight)
-	{
-		if (minViewSize.height > viewSize.height) viewSize = minViewSize;
-		viewSize.width = round(viewSize.height * aspectRatio);
-	}
+	//Otherwise, try to work out the most appropriate window shape to resize to
 	else
 	{
-		if (minViewSize.width > viewSize.width) viewSize = minViewSize;
-		viewSize.height = round(viewSize.width / aspectRatio);
+		//We preserve height during the aspect ratio adjustment if the new height is equivalent to the old.
+		//Height-locking fixes crazy-ass resolution transitions in Pinball Fantasies and The Humans.
+		BOOL preserveHeight = !((NSInteger)currentScaledSize.height	% (NSInteger)scaledSize.height);
+		
+		//Now, adjust the view size to fit the aspect ratio of our new rendered size.
+		//At the same time we clamp it to the minimum size, preserving the preferred dimension.
+		if (preserveHeight)
+		{
+			if (minViewSize.height > viewSize.height) viewSize = minViewSize;
+			viewSize.width = round(viewSize.height * aspectRatio);
+		}
+		else
+		{
+			if (minViewSize.width > viewSize.width) viewSize = minViewSize;
+			viewSize.height = round(viewSize.width / aspectRatio);
+		}
 	}
 	
 	//We set the maximum size as that which will fit on the current screen
 	NSRect screenFrame	= [[[self window] screen] visibleFrame];
 	NSSize maxViewSize	= [[self window] contentRectForFrameRect: screenFrame].size;
-	
 	//Now clamp the size to the maximum size that will fit on screen, just in case we still overflow
 	viewSize = constrainToFitSize(viewSize, maxViewSize);
 	

@@ -117,7 +117,8 @@
 	//------------------------------
 	
 	//Fix the window in the aspect ratio it will start up in
-	[theWindow setContentAspectRatio: [self windowedRenderingViewSize]];
+	initialContentSize = [self windowedRenderingViewSize];
+	[theWindow setContentAspectRatio: initialContentSize];
 	
 	//We don't support content-preservation yet, so disable the check to be slightly more efficient
 	[theWindow setPreservesContentDuringLiveResize: NO];

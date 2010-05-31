@@ -38,7 +38,10 @@
 	
 	BXEmulator *emulator;
 	
+	//Used internally by BXRenderController for resizing calculations
 	NSSize currentScaledSize;
+	NSSize currentScaledResolution;
+	NSSize initialContentSize;
 	BOOL resizingProgrammatically;
 }
 //Our view controller for the program picker panel.

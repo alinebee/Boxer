@@ -28,6 +28,7 @@
 	NSPoint distanceWarped;
 	BOOL updatingMousePosition;
 	NSUInteger simulatedMouseButtons;
+	NSRect cursorWarpDeadzone;
 }
 
 #pragma mark -

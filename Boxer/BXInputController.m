@@ -14,6 +14,10 @@
 #import "BXGeometry.h"
 #import "BXCursorFadeAnimation.h"
 
+//If the cursor is warped less than this distance (relative to a 0.0->1.0 square canvas) then
+//the warp will be ignored. Because cursor warping introduces a slight input delay, we use this
+//tolerance to ignore small warps.
+const CGFloat BXCursorWarpTolerance = 0.1;
 
 //Flags for which mouse buttons we are currently faking (for Ctrl- and Opt-clicking.)
 //Note that while these are ORed together, there will currently only ever be one of them active at a time.
@@ -54,6 +58,10 @@ enum {
 	//Initialize the mouse position to the centre of the DOS view,
 	//in case we lock the mouse before receiving a mouseMoved event.
 	lastMousePosition = NSMakePoint(0.5, 0.5);
+	
+	//DOSBox-triggered cursor warp distances which fit within this deadzone will be ignored
+	//to prevent needless input delays.
+	cursorWarpDeadzone = NSInsetRect(NSZeroRect, -BXCursorWarpTolerance, -BXCursorWarpTolerance);
 	
 	//Insert ourselves into the responder chain as our view's next responder
 	[self setNextResponder: [[self view] nextResponder]];
@@ -123,8 +131,15 @@ enum {
 		if ([self mouseLocked]) lastMousePosition = position;
 		
 		//Otherwise if we have control of the mouse, warp the OS X mouse cursor to match DOSBox's.
-		//NOTE: the warping will result in a slight but noticeable input delay.
-		else if ([self _controlsCursor]) [self _syncOSXCursorToPointInCanvas: position];
+		else if ([self _controlsCursor])
+		{
+			//Because the warp would result in a slight but noticeable input delay,
+			//we ignore it if the difference between the two points is negligible.
+			NSPoint distance = NSMakePoint(lastMousePosition.x - position.x,
+										   lastMousePosition.y - position.y);
+			
+			if (!NSPointInRect(distance, cursorWarpDeadzone)) [self _syncOSXCursorToPointInCanvas: position];
+		}
 	}
 }
 

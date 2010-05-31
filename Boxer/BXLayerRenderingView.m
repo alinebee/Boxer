@@ -102,6 +102,7 @@
 {
 	[self willChangeValueForKey: @"managesAspectRatio"];
 	[[renderingLayer renderer] setMaintainsAspectRatio: manage];
+	[renderingLayer setNeedsDisplay];
 	[self didChangeValueForKey: @"managesAspectRatio"];
 }
 

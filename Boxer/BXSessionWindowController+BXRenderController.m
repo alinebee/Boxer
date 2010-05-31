@@ -53,60 +53,11 @@
 //This will differ from the actual render view size when in fullscreen mode.
 - (NSSize) windowedRenderingViewSize	{ return [[self viewContainer] bounds].size; }
 
-//Switch the DOS window in or out of fullscreen instantly
-- (void) setFullScreen: (BOOL)fullScreen
+
+- (NSScreen *) fullScreenTarget
 {
-	//Don't bother if we're already in the correct fullscreen state
-	if ([self isFullScreen] == fullScreen) return;
-	
-	[self willChangeValueForKey: @"fullScreen"];
-	
-	NSView *theView					= [self inputView];
-	NSView *theContainer			= [self viewContainer]; 
-	NSWindow *theWindow				= [self window];
-	NSResponder *currentResponder	= [theView nextResponder];
-	
-	if (fullScreen)
-	{
-		NSScreen *targetScreen	= [self fullScreenTarget];
-		
-		//Flip the view into fullscreen mode
-		[theView enterFullScreenMode: targetScreen withOptions: nil];
-		
-		//Reset the responders to what they should be, since enterFullScreenMode: screws with them
-		[theWindow makeFirstResponder: theView];
-		[theView setNextResponder: currentResponder];
-		
-		//Ensure that the mouse is locked for fullscreen mode
-		[inputController setMouseLocked: YES];
-		
-		//Tell the rendering view to manage aspect ratio correction in fullscreen mode
-		[[self renderingView] setManagesAspectRatio: YES];
-	}
-	else
-	{
-		[theView exitFullScreenModeWithOptions: nil];
-		
-		//Tell the rendering view to stop managing aspect ratio correction
-		[[self renderingView] setManagesAspectRatio: NO];
-		
-		//Reset the responders to what they should be, since exitFullScreenModeWithOptions: screws with them
-		[theWindow makeFirstResponder: theView];
-		[theView setNextResponder: currentResponder];
-		
-		//Reset the view's frame to match its loyal container, as otherwise it retains its fullscreen frame size
-		[theView setFrame: [theContainer bounds]];
-		[theView setNeedsDisplay: YES];
-		
-		//Cocoa 10.6 bugfix: for some reason this gets forgotten upon the return to windowed mode,
-		//until the window loses and regains focus. Setting it manually fixes it.
-		[theWindow setAcceptsMouseMovedEvents: YES];
-		
-		//Unlock the mouse after leaving fullscreen
-		[inputController setMouseLocked: NO];
-	}
-	
-	[self didChangeValueForKey: @"fullScreen"];
+	//TODO: should we switch this to the screen that the our window is on?
+	return [NSScreen mainScreen];
 }
 
 - (BOOL) isFullScreen
@@ -114,13 +65,48 @@
 	return [inputView isInFullScreenMode];
 }
 
-- (NSScreen *) fullScreenTarget
+//Switch the DOS window in or out of fullscreen with a brief fade
+- (void) setFullScreen: (BOOL)fullScreen
 {
-	return [NSScreen mainScreen];
+	//Don't bother if we're already in the desired fullscreen state
+	if ([self isFullScreen] == fullScreen) return;
+	
+	//Set up a screen fade in and out of the fullscreen mode
+	CGError acquiredToken, fadedOut, fadedIn;
+	CGDisplayFadeReservationToken fadeToken;
+	
+	acquiredToken = CGAcquireDisplayFadeReservation(kCGMaxDisplayReservationInterval, &fadeToken);
+	
+	//First fade out to black synchronously
+	if (acquiredToken == kCGErrorSuccess)
+	{
+		CGError fadedOut = CGDisplayFade(fadeToken,
+										 0.25,						//Fade duration
+										 kCGDisplayBlendNormal,		//Start transparent
+										 kCGDisplayBlendSolidColor,	//Fade to opaque
+										 0.0, 0.0, 0.0,				//Pure black (R, G, B)
+										 true						//Synchronous
+										 );
+	}
+	
+	//Now actually switch to fullscreen mode
+	[self _applyFullScreenState: fullScreen];
+	
+	//And now fade back in from black asynchronously
+	if (acquiredToken == kCGErrorSuccess)
+	{
+		CGError fadedIn = CGDisplayFade(fadeToken,
+										0.5,						//Fade duration
+										kCGDisplayBlendSolidColor,	//Start opaque
+										kCGDisplayBlendNormal,		//Fade to transparent
+										0.0, 0.0, 0.0,				//Pure black (R, G, B)
+										false						//Asynchronous
+										);
+	}
+	CGReleaseDisplayFadeReservation(fadeToken);
 }
 
 //Zoom the DOS window in or out of fullscreen with a smooth animation
-//Returns YES if the window is zooming, NO if no zoom occurs (i.e. the window is already in the correct state)
 - (void) setFullScreenWithZoom: (BOOL) fullScreen
 {	
 	//Don't bother if we're already in the correct fullscreen state
@@ -150,7 +136,7 @@
 		[theWindow setFrame: zoomedWindowFrame display: YES animate: YES];
 				
 		//Then flip the view into fullscreen mode...
-		[self setFullScreen: YES];
+		[self _applyFullScreenState: fullScreen];
 		
 		//...then revert the window back to its original size, while it's hidden by the fullscreen view
 		//We do this so that the window's autosaved frame doesn't get messed up, and so that we don't have
@@ -163,7 +149,7 @@
 		[theWindow setFrame: zoomedWindowFrame display: YES];
 		
 		//...then flip the view out of fullscreen, which will return it to the zoomed window...
-		[self setFullScreen: NO];
+		[self _applyFullScreenState: fullScreen];
 		
 		//Tell the view to continue managing aspect ratio while we resize,
 		//overriding setFullScreen's original behaviour
@@ -245,6 +231,58 @@
 
 
 @implementation BXSessionWindowController (BXRenderControllerInternals)
+
+- (void) _applyFullScreenState: (BOOL)fullScreen
+{
+	[self willChangeValueForKey: @"fullScreen"];
+	
+	NSView *theView					= [self inputView];
+	NSView *theContainer			= [self viewContainer]; 
+	NSWindow *theWindow				= [self window];
+	NSResponder *currentResponder	= [theView nextResponder];
+	
+	if (fullScreen)
+	{
+		NSScreen *targetScreen	= [self fullScreenTarget];
+		
+		//Flip the view into fullscreen mode
+		[theView enterFullScreenMode: targetScreen withOptions: nil];
+		
+		//Reset the responders to what they should be, since enterFullScreenMode: screws with them
+		[theWindow makeFirstResponder: theView];
+		[theView setNextResponder: currentResponder];
+		
+		//Ensure that the mouse is locked for fullscreen mode
+		[inputController setMouseLocked: YES];
+		
+		//Tell the rendering view to manage aspect ratio correction in fullscreen mode
+		[[self renderingView] setManagesAspectRatio: YES];
+	}
+	else
+	{
+		[theView exitFullScreenModeWithOptions: nil];
+		
+		//Tell the rendering view to stop managing aspect ratio correction
+		[[self renderingView] setManagesAspectRatio: NO];
+		
+		//Reset the responders to what they should be, since exitFullScreenModeWithOptions: screws with them
+		[theWindow makeFirstResponder: theView];
+		[theView setNextResponder: currentResponder];
+		
+		//Reset the view's frame to match its loyal container, as otherwise it retains its fullscreen frame size
+		[theView setFrame: [theContainer bounds]];
+		[theView setNeedsDisplay: YES];
+		
+		//Cocoa 10.6 bugfix: for some reason this gets forgotten upon the return to windowed mode,
+		//until the window loses and regains focus. Setting it manually fixes it.
+		[theWindow setAcceptsMouseMovedEvents: YES];
+		
+		//Unlock the mouse after leaving fullscreen
+		[inputController setMouseLocked: NO];
+	}
+	
+	[self didChangeValueForKey: @"fullScreen"];
+}
 
 - (void) _resizeToAccommodateFrame: (BXFrameBuffer *)frame
 {

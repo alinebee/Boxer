@@ -139,6 +139,9 @@
 //Methods in this category are not intended to be called outside of BXSessionWindowController.
 @interface BXSessionWindowController (BXSessionWindowControllerInternals)
 
+//Apply the switch to fullscreen mode. Used internally by setFullScreen: and setFullScreenWithZoom:
+- (void) _applyFullScreenState: (BOOL)fullScreen;
+
 //Performs the slide animation used to toggle the status bar and program panel on or off
 - (void) _slideView: (NSView *)view shown: (BOOL)show;
 

@@ -105,6 +105,8 @@
 - (void) DOSDriveDidMount:		(NSNotification *)theNotification;
 - (void) DOSDriveDidUnmount:	(NSNotification *)theNotification;
 
+- (void) _handleVolumeDidMount: (NSNotification *)theNotification;
+
 - (void) _startTrackingChangesAtPath:	(NSString *)path;
 - (void) _stopTrackingChangesAtPath:	(NSString *)path;
 

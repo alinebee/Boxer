@@ -348,6 +348,17 @@
 
 - (void) volumeDidMount: (NSNotification *)theNotification
 {
+	//We decide what to do with audio CD volumes based on whether they have a corresponding
+	//data volume. Unfortunately, the volumes are reported as soon as they are mounted, so
+	//often the audio volume will send a mount notification before its data volume exists.
+	
+	//To work around this, we add a slight delay before we process the volume mount notification,
+	//to allow other volumes to finish mounting.
+	[self performSelector:@selector(_handleVolumeDidMount:) withObject: theNotification afterDelay: 0.1];
+}
+
+- (void) _handleVolumeDidMount: (NSNotification *)theNotification
+{
 	//Ignore mounts if we currently have the mount panel open;
 	//we assume that the user will want to handle the new volume manually.
 	NSWindow *attachedSheet = [[self windowForSheet] attachedSheet];
@@ -355,6 +366,7 @@
 	
 	NSArray *automountedTypes = [NSArray arrayWithObjects:
 								 dataCDVolumeType,
+								 audioCDVolumeType,
 								 FATVolumeType,
 								 nil];
 	
@@ -365,6 +377,10 @@
 	//Only mount volumes that are of an appropriate type
 	if (![automountedTypes containsObject: volumeType]) return;
 	
+	//Only mount CD audio volumes if they have no corresponding data volume
+	//(Otherwise, we mount the data volume instead and shadow it with the audio CD's tracks)
+	if ([volumeType isEqualToString: audioCDVolumeType] && [workspace findDataVolumeForAudioCD: volume]) return;
+	
 	//Only mount FAT volumes that are floppydisk-sized
 	if ([volumeType isEqualToString: FATVolumeType] && ![self _isFloppySizedVolume: volume]) return;
 	
@@ -374,7 +390,7 @@
 	
 	//Alright, if we got this far then it's ok to mount a new drive for it
 	BXDrive *drive = [BXDrive driveFromPath: mountPoint atLetter: nil];
-		
+	
 	[[self emulator] mountDrive: drive];
 }
 

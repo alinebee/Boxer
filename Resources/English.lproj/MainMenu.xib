@@ -12,7 +12,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="1865"/>
+			<integer value="29"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -974,29 +974,6 @@
 							</object>
 						</object>
 					</object>
-					<object class="NSMenuItem" id="431101327">
-						<reference key="NSMenu" ref="605083824"/>
-						<string key="NSTitle">Debug</string>
-						<string key="NSKeyEquiv"/>
-						<int key="NSMnemonicLoc">2147483647</int>
-						<reference key="NSOnImage" ref="569538535"/>
-						<reference key="NSMixedImage" ref="489554260"/>
-						<string key="NSAction">submenuAction:</string>
-						<object class="NSMenu" key="NSSubmenu" id="724519996">
-							<string key="NSTitle">Debug</string>
-							<object class="NSMutableArray" key="NSMenuItems">
-								<bool key="EncodedWithXMLCoder">YES</bool>
-								<object class="NSMenuItem" id="978676364">
-									<reference key="NSMenu" ref="724519996"/>
-									<string key="NSTitle">Toggle frame rate</string>
-									<string key="NSKeyEquiv"/>
-									<int key="NSMnemonicLoc">2147483647</int>
-									<reference key="NSOnImage" ref="569538535"/>
-									<reference key="NSMixedImage" ref="489554260"/>
-								</object>
-							</object>
-						</object>
-					</object>
 					<object class="NSMenuItem" id="293253799">
 						<reference key="NSMenu" ref="605083824"/>
 						<string key="NSTitle">Window</string>
@@ -1147,7 +1124,7 @@
 						<string key="NSColorName">controlColor</string>
 						<object class="NSColor" key="NSColor">
 							<int key="NSColorSpace">3</int>
-							<bytes key="NSWhite">MC42NjY2NjY2ODY1AA</bytes>
+							<bytes key="NSWhite">MC42NjY2NjY2NjY3AA</bytes>
 						</object>
 					</object>
 					<object class="NSColor" key="NSTextColor" id="1000087917">
@@ -1858,14 +1835,6 @@
 					</object>
 					<int key="connectionID">1857</int>
 				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">toggleFrameRate:</string>
-						<reference key="source" ref="935372999"/>
-						<reference key="destination" ref="978676364"/>
-					</object>
-					<int key="connectionID">1868</int>
-				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -1905,7 +1874,6 @@
 							<reference ref="848222553"/>
 							<reference ref="33134111"/>
 							<reference ref="605111885"/>
-							<reference ref="431101327"/>
 						</object>
 						<reference key="parent" ref="0"/>
 						<string key="objectName">MainMenu</string>
@@ -2742,29 +2710,6 @@
 						<reference key="object" ref="581728426"/>
 						<reference key="parent" ref="135265988"/>
 					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">1864</int>
-						<reference key="object" ref="431101327"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="724519996"/>
-						</object>
-						<reference key="parent" ref="605083824"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">1865</int>
-						<reference key="object" ref="724519996"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="978676364"/>
-						</object>
-						<reference key="parent" ref="431101327"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">1867</int>
-						<reference key="object" ref="978676364"/>
-						<reference key="parent" ref="724519996"/>
-					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -2919,10 +2864,6 @@
 					<string>1840.IBPluginDependency</string>
 					<string>1841.IBPluginDependency</string>
 					<string>1856.IBPluginDependency</string>
-					<string>1864.IBPluginDependency</string>
-					<string>1865.IBEditorWindowLastContentRect</string>
-					<string>1865.IBPluginDependency</string>
-					<string>1867.IBPluginDependency</string>
 					<string>196.IBPluginDependency</string>
 					<string>196.ImportedFromIB2</string>
 					<string>283.IBPluginDependency</string>
@@ -3154,10 +3095,6 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{207, 676}, {174, 23}}</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
@@ -3166,7 +3103,7 @@
 					<string>{{207, 626}, {142, 73}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
-					<string>{{0, 699}, {402, 20}}</string>
+					<string>{{0, 699}, {339, 20}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -3264,22 +3201,6 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
-					<string key="className">BXDOSViewController</string>
-					<string key="superclassName">NSViewController</string>
-					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">toggleMouseLocked:</string>
-						<string key="NS.object.0">id</string>
-					</object>
-					<object class="NSMutableDictionary" key="outlets">
-						<string key="NS.key.0">windowController</string>
-						<string key="NS.object.0">BXSessionWindowController</string>
-					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Boxer/BXDOSViewController.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
 					<string key="className">BXDockTileController</string>
 					<string key="superclassName">NSObject</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
@@ -3324,6 +3245,18 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
+					<string key="className">BXInputController</string>
+					<string key="superclassName">NSViewController</string>
+					<object class="NSMutableDictionary" key="actions">
+						<string key="NS.key.0">toggleMouseLocked:</string>
+						<string key="NS.object.0">id</string>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">Boxer/BXInputController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">BXProgramPanelController</string>
 					<string key="superclassName">NSViewController</string>
 					<object class="NSMutableDictionary" key="outlets">
@@ -3346,18 +3279,6 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">Boxer/BXProgramPanelController.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXRenderView</string>
-					<string key="superclassName">NSView</string>
-					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">toggleFrameRate:</string>
-						<string key="NS.object.0">id</string>
-					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Boxer/BXRenderView.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -3484,20 +3405,22 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>DOSViewController</string>
+							<string>inputController</string>
+							<string>inputView</string>
 							<string>programPanel</string>
 							<string>programPanelController</string>
-							<string>renderContainer</string>
-							<string>renderView</string>
+							<string>renderingView</string>
 							<string>statusBar</string>
+							<string>viewContainer</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>BXDOSViewController</string>
+							<string>BXInputController</string>
+							<string>NSView</string>
 							<string>NSView</string>
 							<string>BXProgramPanelController</string>
 							<string>NSView</string>
-							<string>BXRenderView</string>
+							<string>NSView</string>
 							<string>NSView</string>
 						</object>
 					</object>

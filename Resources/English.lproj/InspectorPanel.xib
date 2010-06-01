@@ -22,6 +22,7 @@
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<integer value="47"/>
+			<integer value="864"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -116,7 +117,7 @@
 				<string key="NSFrameAutosaveName"/>
 			</object>
 			<object class="NSCustomView" id="749303976">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">293</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -239,6 +240,7 @@
 													</object>
 													<object class="NSMenuItem" id="748606543">
 														<reference key="NSMenu" ref="457796887"/>
+														<bool key="NSIsDisabled">YES</bool>
 														<string key="NSTitle">Other…</string>
 														<string key="NSKeyEquiv"/>
 														<int key="NSMnemonicLoc">2147483647</int>
@@ -248,6 +250,7 @@
 														<reference key="NSTarget" ref="573646503"/>
 													</object>
 												</object>
+												<bool key="NSNoAutoenable">YES</bool>
 											</object>
 											<int key="NSPreferredEdge">1</int>
 											<bool key="NSUsesItemFromMenu">YES</bool>
@@ -408,6 +411,7 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{264, 348}</string>
+				<reference key="NSSuperview"/>
 				<string key="NSClassName">NSView</string>
 			</object>
 			<object class="NSCustomView" id="563656760">
@@ -3053,13 +3057,9 @@
 							<string>sendF7:</string>
 							<string>sendF8:</string>
 							<string>sendF9:</string>
-							<string>takeScreenshot:</string>
-							<string>toggleRecordingVideo:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>

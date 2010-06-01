@@ -2,16 +2,17 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
-		<string key="IBDocument.SystemVersion">10C540</string>
-		<string key="IBDocument.InterfaceBuilderVersion">740</string>
-		<string key="IBDocument.AppKitVersion">1038.25</string>
-		<string key="IBDocument.HIToolboxVersion">458.00</string>
+		<string key="IBDocument.SystemVersion">10D573</string>
+		<string key="IBDocument.InterfaceBuilderVersion">762</string>
+		<string key="IBDocument.AppKitVersion">1038.29</string>
+		<string key="IBDocument.HIToolboxVersion">460.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">740</string>
+			<string key="NS.object.0">762</string>
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
+			<integer value="2"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -56,15 +57,24 @@
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{20, 99}, {155, 153}}</string>
 							<reference key="NSSuperview" ref="1006"/>
-							<reference key="NSWindow"/>
+							<bool key="NSViewIsLayerTreeHost">YES</bool>
+							<object class="NSShadow" key="NSViewShadow">
+								<double key="NSShadowVert">-1</double>
+								<double key="NSShadowBlurRadius">2</double>
+								<object class="NSColor" key="NSShadowColor" id="920072122">
+									<int key="NSColorSpace">3</int>
+									<bytes key="NSWhite">MAA</bytes>
+								</object>
+							</object>
+							<int key="NSViewLayerContentsRedrawPolicy">2</int>
 							<int key="NSTag">2</int>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="384297069">
 								<int key="NSCellFlags">67239424</int>
 								<int key="NSCellFlags2">272629760</int>
 								<string type="base64-UTF8" key="NSContents">Qm94ZXIgaXMgZGVzaWduZWQgYnkNQWx1biBCZXN0b3IgJiByZWxlYXNlZCB1bmRlciB0aGUgR05VIFB1
-YmxpYyBMaWNlbnNlLg0NQm94ZXIgaXMgYmFzZWQgb24gRE9TQm94LCB3aGljaCBpcyDCqTIwMDLigJMy
-MDA5IGJ5IHRoZSBET1NCb3ggVGVhbS4</string>
+YmxpYyBMaWNlbnNlLg0NQm94ZXIgaXMgYmFzZWQgb24gRE9TQm94IDAuNzQsIHdoaWNoIGlzIArCqSAy
+MDAy4oCTMjAxMCBieSB0aGUgRE9TQm94IFRlYW0uA</string>
 								<object class="NSFont" key="NSSupport">
 									<string key="NSName">LucidaGrande</string>
 									<double key="NSSize">12</double>
@@ -91,7 +101,18 @@ MDA5IGJ5IHRoZSBET1NCb3ggVGVhbS4</string>
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{20, 266}, {172, 38}}</string>
 							<reference key="NSSuperview" ref="1006"/>
-							<reference key="NSWindow"/>
+							<bool key="NSViewIsLayerTreeHost">YES</bool>
+							<object class="NSShadow" key="NSViewShadow">
+								<double key="NSShadowVert">-1</double>
+								<object class="NSColor" key="NSShadowColor" id="67037365">
+									<int key="NSColorSpace">3</int>
+									<bytes key="NSWhite">MSAwLjUAA</bytes>
+									<object class="NSColorSpace" key="NSCustomColorSpace">
+										<int key="NSID">2</int>
+									</object>
+								</object>
+							</object>
+							<int key="NSViewLayerContentsRedrawPolicy">2</int>
 							<int key="NSTag">1</int>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="379322218">
@@ -105,10 +126,7 @@ MDA5IGJ5IHRoZSBET1NCb3ggVGVhbS4</string>
 								</object>
 								<reference key="NSControlView" ref="403378641"/>
 								<reference key="NSBackgroundColor" ref="1068513734"/>
-								<object class="NSColor" key="NSTextColor">
-									<int key="NSColorSpace">3</int>
-									<bytes key="NSWhite">MAA</bytes>
-								</object>
+								<reference key="NSTextColor" ref="920072122"/>
 							</object>
 						</object>
 						<object class="NSButton" id="472785503">
@@ -116,7 +134,6 @@ MDA5IGJ5IHRoZSBET1NCb3ggVGVhbS4</string>
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{25, 18}, {295, 19}}</string>
 							<reference key="NSSuperview" ref="1006"/>
-							<reference key="NSWindow"/>
 							<int key="NSTag">3</int>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="400326945">
@@ -144,14 +161,20 @@ MDA5IGJ5IHRoZSBET1NCb3ggVGVhbS4</string>
 						<object class="NSTextField" id="865736149">
 							<reference key="NSNextResponder" ref="1006"/>
 							<int key="NSvFlags">268</int>
-							<string key="NSFrame">{{20, 77}, {132, 14}}</string>
+							<string key="NSFrame">{{20, 71}, {155, 20}}</string>
 							<reference key="NSSuperview" ref="1006"/>
-							<reference key="NSWindow"/>
+							<bool key="NSViewIsLayerTreeHost">YES</bool>
+							<object class="NSShadow" key="NSViewShadow">
+								<double key="NSShadowVert">-1</double>
+								<double key="NSShadowBlurRadius">2</double>
+								<reference key="NSShadowColor" ref="920072122"/>
+							</object>
+							<int key="NSViewLayerContentsRedrawPolicy">2</int>
 							<int key="NSTag">4</int>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="237945532">
-								<int key="NSCellFlags">68288064</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags">67239424</int>
+								<int key="NSCellFlags2">4194304</int>
 								<string key="NSContents">[Boxer version number]</string>
 								<object class="NSFont" key="NSSupport">
 									<string key="NSName">LucidaGrande</string>
@@ -169,7 +192,6 @@ MDA5IGJ5IHRoZSBET1NCb3ggVGVhbS4</string>
 					</object>
 					<string key="NSFrameSize">{340, 384}</string>
 					<reference key="NSSuperview"/>
-					<reference key="NSWindow"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1280, 778}}</string>
 				<string key="NSMaxSize">{1.79769e+308, 1.79769e+308}</string>
@@ -324,14 +346,21 @@ MDA5IGJ5IHRoZSBET1NCb3ggVGVhbS4</string>
 					<string>1.WindowOrigin</string>
 					<string>1.editorWindowContentRectSynchronizationRect</string>
 					<string>11.IBPluginDependency</string>
+					<string>11.IBViewIntegration.shadowBlurRadius</string>
+					<string>11.IBViewIntegration.shadowColor</string>
+					<string>11.IBViewIntegration.shadowOffsetHeight</string>
 					<string>12.IBPluginDependency</string>
 					<string>13.IBPluginDependency</string>
 					<string>14.IBPluginDependency</string>
 					<string>2.IBPluginDependency</string>
 					<string>2.notes</string>
 					<string>22.IBPluginDependency</string>
+					<string>22.IBViewIntegration.shadowBlurRadius</string>
+					<string>22.IBViewIntegration.shadowOffsetHeight</string>
 					<string>23.IBPluginDependency</string>
 					<string>7.IBPluginDependency</string>
+					<string>7.IBViewIntegration.shadowBlurRadius</string>
+					<string>7.IBViewIntegration.shadowOffsetHeight</string>
 					<string>8.IBPluginDependency</string>
 				</object>
 				<object class="NSMutableArray" key="dict.values">
@@ -339,13 +368,16 @@ MDA5IGJ5IHRoZSBET1NCb3ggVGVhbS4</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{251, 312}, {340, 384}}</string>
+					<string>{{150, 312}, {340, 384}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{251, 312}, {340, 384}}</string>
+					<string>{{150, 312}, {340, 384}}</string>
 					<boolean value="NO"/>
 					<string>{196, 240}</string>
 					<string>{{357, 418}, {480, 270}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<real value="0.0"/>
+					<reference ref="67037365"/>
+					<real value="-1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -356,8 +388,12 @@ MDA5IGJ5IHRoZSBET1NCb3ggVGVhbS4</string>
 						</object>
 					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<real value="2"/>
+					<real value="-1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<real value="2"/>
+					<real value="-1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
@@ -405,9 +441,11 @@ MDA5IGJ5IHRoZSBET1NCb3ggVGVhbS4</string>
 							<string>showDonationPage:</string>
 							<string>showPerianDownloadPage:</string>
 							<string>showWebsite:</string>
+							<string>toggleInspectorPanel:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -912,6 +950,20 @@ MDA5IGJ5IHRoZSBET1NCb3ggVGVhbS4</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
+					<string key="className">NSObject</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBFrameworkSource</string>
+						<string key="minorKey">Sparkle.framework/Headers/SUAppcast.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">NSObject</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBFrameworkSource</string>
+						<string key="minorKey">Sparkle.framework/Headers/SUUpdater.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">NSPanel</string>
 					<string key="superclassName">NSWindow</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
@@ -1013,6 +1065,7 @@ MDA5IGJ5IHRoZSBET1NCb3ggVGVhbS4</string>
 			</object>
 		</object>
 		<int key="IBDocument.localizationMode">0</int>
+		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaFramework</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDependencies">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.macosx</string>
 			<integer value="1050" key="NS.object.0"/>
@@ -1028,5 +1081,9 @@ MDA5IGJ5IHRoZSBET1NCb3ggVGVhbS4</string>
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>
 		<string key="IBDocument.LastKnownRelativeProjectPath">../../Boxer.xcodeproj</string>
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
+		<object class="NSMutableDictionary" key="IBDocument.LastKnownImageSizes">
+			<string key="NS.key.0">NSFollowLinkFreestandingTemplate</string>
+			<string key="NS.object.0">{10, 10}</string>
+		</object>
 	</data>
 </archive>

@@ -45,14 +45,7 @@ enum {
 	NSTextField *version	= [contentView viewWithTag: BXAboutVersion];
 	NSButton *websiteLink	= [contentView viewWithTag: BXAboutWebsiteLink];
 	
-	//Indent the subtitle text
-	[[subtitle cell]	setBackgroundStyle: NSBackgroundStyleRaised];
-	
-	//Outdent the copyright text
-	[[copyright cell]	setBackgroundStyle: NSBackgroundStyleLowered];
-	
 	//Set the version's number and appearance
-	[[version cell]		setBackgroundStyle: NSBackgroundStyleLowered];
 	NSString *versionFormat	= NSLocalizedString(@"v%@ %@", @"Version string for display in About panel. First @ is human-readable version (e.g. 0.9 beta), second @ is build number (e.g. 20090323-1.)");
 	NSString *versionName	= [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleShortVersionString"];
 	NSString *buildNumber	= [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleVersion"];

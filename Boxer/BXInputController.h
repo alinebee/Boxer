@@ -29,6 +29,7 @@
 	BOOL updatingMousePosition;
 	NSUInteger simulatedMouseButtons;
 	NSRect cursorWarpDeadzone;
+	NSRect canvasBounds;
 }
 
 #pragma mark -

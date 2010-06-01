@@ -41,17 +41,6 @@ void MAPPER_LosingFocus();
 #pragma mark -
 #pragma mark Controlling response state
 
-+ (NSSet *) keyPathsForValuesAffectingMouseActive
-{
-	return [NSSet setWithObject: @"emulator.isRunningProcess"];
-}
-
-- (BOOL) mouseActive
-{
-	//The mouse active state is not reset by DOSBox when a game exits.
-	return mouseActive && [[self emulator] isRunningProcess];
-}
-
 - (void) lostFocus
 {
 	//Release all DOSBox events when we lose focus

@@ -10,6 +10,7 @@
 #import "BXSession.h"
 #import "BXDrive.h"
 #import "BXValueTransformers.h"
+#import "BXInputHandler.h"
 
 #import "shell.h"
 
@@ -436,6 +437,7 @@ nil];
 
 - (void) _didReturnToShell
 {
+	[[self inputHandler] setMouseActive: NO];
 	[self _postNotificationName: @"BXEmulatorProcessDidReturnToShellNotification"
 			   delegateSelector: @selector(didReturnToShell:)
 					   userInfo: nil];

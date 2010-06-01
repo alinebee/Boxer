@@ -63,6 +63,12 @@ enum {
 	//to prevent needless input delays.
 	cursorWarpDeadzone = NSInsetRect(NSZeroRect, -BXCursorWarpTolerance, -BXCursorWarpTolerance);
 	
+	//The extent of our relative canvas. Mouse coordinates passed to DOSBox will be clamped to fit within these bounds.
+	canvasBounds = NSMakeRect(0.0, 0.0, 1.0, 1.0);
+	
+	
+	
+	
 	//Insert ourselves into the responder chain as our view's next responder
 	[self setNextResponder: [[self view] nextResponder]];
 	[[self view] setNextResponder: self];
@@ -133,12 +139,17 @@ enum {
 		//Otherwise if we have control of the mouse, warp the OS X mouse cursor to match DOSBox's.
 		else if ([self _controlsCursor])
 		{
+			
 			//Because the warp would result in a slight but noticeable input delay,
 			//we ignore it if the difference between the two points is negligible.
 			NSPoint distance = NSMakePoint(lastMousePosition.x - position.x,
 										   lastMousePosition.y - position.y);
 			
-			if (!NSPointInRect(distance, cursorWarpDeadzone)) [self _syncOSXCursorToPointInCanvas: position];
+			//We also won't warp the mouse if it would put us outside the canvas or at the 0,0 point;
+			//that's just games playing silly buggers.
+			if (!NSEqualPoints(position, NSZeroPoint) &&
+				NSPointInRect(position, canvasBounds) &&
+				!NSPointInRect(distance, cursorWarpDeadzone)) [self _syncOSXCursorToPointInCanvas: position];
 		}
 	}
 }
@@ -159,8 +170,12 @@ enum {
 - (void) setMouseActive: (BOOL)active
 {
 	[self willChangeValueForKey: @"mouseActive"];
+	
 	mouseActive = active;
 	[self cursorUpdate: nil];
+	//Release the mouse lock when the game stops using the mouse
+	if (!active) [self setMouseLocked: NO];
+	
 	[self didChangeValueForKey: @"mouseActive"];
 }
 
@@ -324,7 +339,7 @@ enum {
 	}
 	
 	//Clamp the position to within the canvas.
-	relativePosition = clampPointToRect(relativePosition, NSMakeRect(0.0, 0.0, 1.0, 1.0));
+	relativePosition = clampPointToRect(relativePosition, canvasBounds);
 	
 	//Record the position for next time.
 	lastMousePosition = relativePosition;

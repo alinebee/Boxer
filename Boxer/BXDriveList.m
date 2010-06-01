@@ -174,7 +174,7 @@
 		//Send the remove-these-drives action and see whether any drives were removed
 		//(IBActions do not provide a return value, so we can't find out directly if the action succeeded or failed)
 		NSUInteger oldItems = [[self content] count];
-		[NSApp sendAction: @selector(unmountSelectedDrives:) to: nil from: self];
+		[NSApp sendAction: @selector(unmountSelectedDrives:) to: [[self window] windowController] from: self];
 		NSUInteger newItems = [[self content] count];
 		
 		//If any drives were removed by the action, display the poof animation
@@ -192,12 +192,12 @@
 			NSSize poofSize = imageRect.size;
 			poofSize.width = poofSize.height;
 			
-			//Reset the cursor back to normal
-			[[NSCursor arrowCursor] set];
-			
 			//Play the poof animation
 			NSShowAnimationEffect(NSAnimationEffectPoof, midPoint, poofSize, nil, nil, nil);
 		}
+		
+		//Reset the cursor back to normal in any case
+		[[NSCursor arrowCursor] set];
 	}
 	
 	//Once the drag has finished, clean up by unhiding the dragged items

@@ -75,7 +75,7 @@
 
 - (void) notifyDriveUnmounted: (BXDrive *)drive
 {
-	NSString *titleFormat = NSLocalizedString(@"%1$@ %2$@ removed from DOS.", @"Growl notification title when drive has just been unmounted from DOS. %1$@ is the localized drive type (hard drive, CD-ROM etc.); %2$@ is the uppercase letter of the drive.");
+	NSString *titleFormat = NSLocalizedString(@"%1$@ %2$@ ejected.", @"Growl notification title when drive has just been unmounted from DOS. %1$@ is the localized drive type (hard drive, CD-ROM etc.); %2$@ is the uppercase letter of the drive.");
 
 	NSString *title = [NSString stringWithFormat: titleFormat, [BXDrive descriptionForType: [drive type]], [drive letter], nil];
 	

@@ -312,6 +312,17 @@ enum {
 	else [inputHandler mouseButtonReleased: OSXMouseButtonLeft withModifiers: modifiers];
 }
 
+- (void) rightMouseUp:(NSEvent *)theEvent
+{
+	[[self representedObject] mouseButtonReleased: OSXMouseButtonRight withModifiers: [theEvent modifierFlags]];
+}
+
+- (void) otherMouseUp:(NSEvent *)theEvent
+{
+	if ([theEvent buttonNumber] == OSXMouseButtonMiddle)
+		[[self representedObject] mouseButtonReleased: OSXMouseButtonMiddle withModifiers: [theEvent modifierFlags]];
+	else [super otherMouseDown: theEvent];
+}
 
 //Work out mouse motion relative to the DOS viewport canvas, passing on the current position
 //and last movement delta to the emulator's input handler.

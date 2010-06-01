@@ -66,6 +66,13 @@
 }
 
 
+
+//Pass on various events that would otherwise be eaten by the default NSView implementation
+- (void) rightMouseDown: (NSEvent *)theEvent
+{
+	[[self nextResponder] rightMouseDown: theEvent];
+}
+
 #pragma -
 #pragma mark Rendering methods
 

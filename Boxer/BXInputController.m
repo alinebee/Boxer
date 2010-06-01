@@ -14,10 +14,25 @@
 #import "BXGeometry.h"
 #import "BXCursorFadeAnimation.h"
 
+
+#pragma mark -
+#pragma mark Constants for configuring behaviour
+
+//The number of seconds it takes for the cursor to fade out after entering the window.
+//Cursor animation is flickery so a small duration helps mask this.
+const NSTimeInterval BXCursorFadeDuration = 0.4;
+
+//The framerate at which to animate the cursor fade.
+//15fps is as fast as is really noticeable.
+const float BXCursorFadeFrameRate = 15.0;
+
 //If the cursor is warped less than this distance (relative to a 0.0->1.0 square canvas) then
 //the warp will be ignored. Because cursor warping introduces a slight input delay, we use this
 //tolerance to ignore small warps.
 const CGFloat BXCursorWarpTolerance = 0.1;
+
+const float BXMouseLockSoundVolume = 0.5;
+
 
 //Flags for which mouse buttons we are currently faking (for Ctrl- and Opt-clicking.)
 //Note that while these are ORed together, there will currently only ever be one of them active at a time.
@@ -86,12 +101,12 @@ enum {
 	 
 	
 	//Set up our cursor fade animation
-	cursorFade = [[BXCursorFadeAnimation alloc] initWithDuration: 0.5
+	cursorFade = [[BXCursorFadeAnimation alloc] initWithDuration: BXCursorFadeDuration
 												  animationCurve: NSAnimationEaseIn];
 	[cursorFade setDelegate: self];
 	[cursorFade setOriginalCursor: [NSCursor arrowCursor]];
 	[cursorFade setAnimationBlockingMode: NSAnimationNonblocking];
-	[cursorFade setFrameRate: 15.0];
+	[cursorFade setFrameRate: BXCursorFadeFrameRate];
 }
 
 - (void) dealloc
@@ -467,7 +482,7 @@ enum {
 	if ([self mouseLocked] != wasLocked)
 	{
 		NSString *lockSoundName	= (wasLocked) ? @"LockOpening" : @"LockClosing";
-		[[NSApp delegate] playUISoundWithName: lockSoundName atVolume: 0.5f];
+		[[NSApp delegate] playUISoundWithName: lockSoundName atVolume: BXMouseLockSoundVolume];
 	}
 }
 
@@ -570,7 +585,8 @@ enum {
 		
 		//Tweak: when unlocking the mouse, inset it slightly from the edges of the canvas,
 		//as having the mouse exactly flush with the window edge looks ugly.
-		if (!lock) newMousePosition = clampPointToRect(newMousePosition, NSMakeRect(0.01, 0.01, 0.98, 0.98));
+		if (!lock) newMousePosition = clampPointToRect(newMousePosition,
+													   NSMakeRect(0.01, 0.01, 0.98, 0.98));
 		
 		[self _syncOSXCursorToPointInCanvas: newMousePosition];
 		

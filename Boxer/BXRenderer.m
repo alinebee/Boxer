@@ -174,7 +174,7 @@ const CGFloat BXScalingBufferScaleCutoff = 3;
 {
 	if ([self maintainsAspectRatio])
 	{
-		NSSize frameSize = [frame scaledResolution];
+		NSSize frameSize = [frame scaledSize];
 		NSRect frameRect = NSMakeRect(0, 0, frameSize.width, frameSize.height);
 		NSRect bounds = NSRectFromCGRect([self canvas]);
 		

@@ -85,7 +85,7 @@ void MAPPER_LosingFocus();
 					  canvasDelta.y * mouseSensitivity,
 					  point.x * mouseSensitivity,
 					  point.y * mouseSensitivity,
-					  NO);
+					  locked);
 }
 		 
 #pragma mark -
@@ -165,8 +165,7 @@ void MAPPER_LosingFocus();
 							   
 							   @"br",	@"com.apple.keylayout.Brazilian",
 							   
-							   //There should be different mappings for Canadian vs French-Canadian
-							   @"ca",	@"com.apple.keylayout.Canadian",
+							   @"us",	@"com.apple.keylayout.Canadian",
 							   @"ca",	@"com.apple.keylayout.Canadian-CSA",
 							   
 							   //Note: DOS cz layout is QWERTY, not QWERTZ like the standard Mac Czech layout

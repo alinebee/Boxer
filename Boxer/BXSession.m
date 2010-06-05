@@ -35,13 +35,25 @@
 //Initialization and cleanup methods
 //----------------------------------
 
+- (id) init
+{
+	if ((self = [super init]))
+	{
+		//[self setEmulator: [[[BXEmulator alloc] init] autorelease]];
+	}
+	return self;
+}
+
 - (void) dealloc
 {
 	[self setEmulator: nil],			[emulator release];
 	[self setGamePackage: nil],			[gamePackage release];
 	[self setTargetPath: nil],			[targetPath release];
 	[self setActiveProgramPath: nil],	[activeProgramPath release];
+	
 	[super dealloc];
+	
+	NSLog(@"BXSession dealloc");
 }
 
 //We only implement this to keep drag-drop opening happy - we don't ever actually read any data off disk.
@@ -52,10 +64,12 @@
 
 - (void) makeWindowControllers
 {
-	id mainWindow = [[[BXSessionWindowController alloc] initWithWindowNibName: @"DOSWindow"] autorelease];
-	[self addWindowController:		mainWindow];
-	[self setMainWindowController:	mainWindow];	
-	[mainWindow setShouldCloseDocument: YES];
+	id controller = [[BXSessionWindowController alloc] initWithWindowNibName: @"DOSWindow"];
+	[self addWindowController:		controller];
+	[self setMainWindowController:	controller];	
+	[controller setShouldCloseDocument: YES];
+	
+	[controller release];
 }
 
 - (void) showWindows
@@ -65,25 +79,23 @@
 	if (![self hasStarted]) [self start];
 }
 
-- (void) setEmulator: (BXEmulator *)theEmulator
+- (void) setEmulator: (BXEmulator *)newEmulator
 {
 	[self willChangeValueForKey: @"emulator"];
 	
-	if (theEmulator != emulator)
+	if (newEmulator != emulator)
 	{
 		if (emulator)
 		{
 			[self _deregisterForFilesystemNotifications];
-			[emulator setDelegate: nil];
-			[emulator cancel];
-			[emulator autorelease];
 		}
 		
-		emulator = [theEmulator retain];
+		[emulator autorelease];
+		emulator = [newEmulator retain];
 	
-		if (theEmulator)
+		if (newEmulator)
 		{
-			[theEmulator setDelegate: self];
+			[newEmulator setDelegate: self];
 			[self _registerForFilesystemNotifications];
 		}
 	}
@@ -93,7 +105,7 @@
 
 - (BOOL) hasStarted
 {
-	return [self emulator] != nil; 
+	return [[self emulator] isExecuting];
 }
 
 //Create our DOSBox emulator and add it to the operations queue
@@ -104,7 +116,7 @@
 	//This prevents menu highlights from getting 'stuck' because of DOSBox's main loop blocking
 	//the thread.
 	
-	[self performSelector: @selector(_startEmulator) withObject: nil afterDelay: 0];  
+	[self performSelector: @selector(_startEmulator) withObject: nil afterDelay: 0.1];
 }
 
 //Cancel the DOSBox emulator thread
@@ -127,7 +139,7 @@
 	[self cancel];
 	[super close];
 
-	[NSApp terminate: self];
+	//[NSApp terminate: self];
 }
 
 
@@ -173,7 +185,8 @@
 {	
 	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
 	NSString *filePath		= [[fileURL path] stringByStandardizingPath];
-	NSString *packagePath	= [workspace parentOfFile: filePath matchingTypes: [NSArray arrayWithObject: @"net.washboardabs.boxer-game-package"]];
+	NSString *packagePath	= [workspace parentOfFile: filePath
+										matchingTypes: [NSArray arrayWithObject: @"net.washboardabs.boxer-game-package"]];
 	
 	[self setTargetPath: filePath];
 	
@@ -312,9 +325,9 @@
 //-----------------------
 
 - (void) _startEmulator
-{
-	[self setEmulator: [[BXEmulator new] autorelease]];
-	
+{	
+	[self setEmulator: [[[BXEmulator alloc] init] autorelease]];
+
 	NSMutableArray *configFiles = [[self emulator] configFiles];
 	
 	NSString *preflightConfig = [[NSBundle mainBundle] pathForResource: @"Preflight" ofType: @"conf"];
@@ -363,10 +376,14 @@
 	[configFiles addObject: launchConfig];
 	
 	
+	//[self setEmulator: nil];
 	[[self emulator] start];
+	
 	//If the emulator ever quits of its own accord, close the document also.
 	//This will happen if the user types "exit" at the command prompt.
 	[self close];
+	
+	NSLog(@"BXSession end of _startEmulator");
 }
 
 - (void) _configureEmulator

@@ -18,6 +18,7 @@
 
 /* $Id: vga_draw.cpp,v 1.112 2009-11-03 21:06:59 h-a-l-9000 Exp $ */
 
+#include <stdio.h>
 #include <string.h>
 #include <math.h>
 #include "dosbox.h"

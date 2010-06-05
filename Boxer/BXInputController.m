@@ -124,17 +124,19 @@ enum {
 	[cursorFade release], cursorFade = nil;
 	
 	[super dealloc];
+	
+	NSLog(@"BXInputController dealloc");
 }
 
 
 - (void) setRepresentedObject: (BXInputHandler *)representedObject
 {
-	if (![representedObject isEqualTo: [self representedObject]])
+	if (representedObject != [self representedObject])
 	{
 		if ([self representedObject])
 		{
 			[self unbind: @"mouseActive"];
-			[representedObject removeObserver: self forKeyPath: @"mousePosition"];
+			[[self representedObject] removeObserver: self forKeyPath: @"mousePosition"];
 		}
 		
 		[super setRepresentedObject: representedObject];

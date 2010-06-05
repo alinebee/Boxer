@@ -113,6 +113,8 @@ enum {
 
 - (BXDrive *) mountDrive: (BXDrive *)drive
 {
+	if (![self isExecuting]) return nil;
+	
 	NSFileManager *manager	= [NSFileManager defaultManager];
 	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
 	BOOL isFolder;
@@ -194,7 +196,7 @@ enum {
 
 - (BOOL) unmountDrive: (BXDrive *)drive
 {
-	if ([drive isInternal] || [drive isLocked]) return NO;
+	if (![self isExecuting] || [drive isInternal] || [drive isLocked]) return NO;
 	
 	NSUInteger index	= [self _indexOfDriveLetter: [drive letter]];
 	BOOL isCurrentDrive = (index == DOS_GetDefaultDrive());
@@ -337,6 +339,8 @@ enum {
 
 - (NSString *) DOSPathForPath: (NSString *)path onDrive: (BXDrive *)drive
 {
+	if (![self isExecuting]) return nil;
+	
 	path = [path stringByStandardizingPath];
 
 	//Start with the drive
@@ -366,7 +370,7 @@ enum {
 	{
 		fileName = [components objectAtIndex: i];
 		
-		//TODO Optimisation: check if the filename is already DOS-safe (within 8.3 and only ASCII characters),
+		//TODO: Optimisation: check if the filename is already DOS-safe (within 8.3 and only ASCII characters),
 		//and if so then pass it on directly without doing a DOSBox long-filename lookup. 
 
 		
@@ -396,19 +400,34 @@ enum {
 //---------------------------------------
 
 - (BXDrive *) currentDrive			{ return [driveCache objectForKey: [self currentDriveLetter]]; }
-- (NSString *) currentDriveLetter	{ return [[[self class] driveLetters] objectAtIndex: DOS_GetDefaultDrive()]; }
+- (NSString *) currentDriveLetter
+{
+	if ([self isExecuting])
+	{
+		return [[[self class] driveLetters] objectAtIndex: DOS_GetDefaultDrive()];
+	}
+	else return nil;
+}
 - (NSString *) currentWorkingDirectory
 {
-	return [NSString stringWithCString: Drives[DOS_GetDefaultDrive()]->curdir encoding: BXDirectStringEncoding];
+	if ([self isExecuting])
+	{
+		return [NSString stringWithCString: Drives[DOS_GetDefaultDrive()]->curdir encoding: BXDirectStringEncoding];
+	}
+	else return nil;
 }
 
 - (NSString *) pathOfCurrentWorkingDirectory
 {
-	NSUInteger index = DOS_GetDefaultDrive();
-	NSString *localPath	= [self _filesystemPathForDOSPath: Drives[index]->curdir atIndex: index];
-	if (localPath) return localPath;
-	//If no accurate local path could be determined, then return the source path of the current drive instead 
-	else return [[self currentDrive] path];
+	if ([self isExecuting])
+	{
+		NSUInteger index = DOS_GetDefaultDrive();
+		NSString *localPath	= [self _filesystemPathForDOSPath: Drives[index]->curdir atIndex: index];
+		if (localPath) return localPath;
+		//If no accurate local path could be determined, then return the source path of the current drive instead 
+		else return [[self currentDrive] path];		
+	}
+	else return nil;
 }
 
 @end

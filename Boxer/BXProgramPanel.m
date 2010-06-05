@@ -8,14 +8,6 @@
 
 #import "BXProgramPanel.h"
 
-//Interface Builder tags
-enum {
-	BXProgramPanelTitle			= 1,
-	BXProgramPanelDefaultToggle	= 2,
-	BXProgramPanelHide			= 3,
-};
-
-
 @implementation BXProgramPanel
 
 - (BOOL) isOpaque { return YES; }

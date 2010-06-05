@@ -12,6 +12,14 @@
 #import <Cocoa/Cocoa.h>
 #import <BGHUDAppKit/BGHUDScroller.h>
 
+//Interface Builder tags
+enum {
+	BXProgramPanelTitle			= 1,
+	BXProgramPanelDefaultToggle	= 2,
+	BXProgramPanelHide			= 3,
+	BXProgramPanelButtons		= 4
+};
+
 //BXProgramPanel is the containing view for all other panel content. This class draws
 //itself as a shaded grey gradient background with a grille at the top.
 @interface BXProgramPanel : NSView

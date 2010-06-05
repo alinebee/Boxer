@@ -43,9 +43,13 @@
 
 - (void) setRepresentedObject: (id)session
 {
-	[[self representedObject] removeObserver: self forKeyPath: @"activeProgramPath"];
+	if ([self representedObject])
+		[[self representedObject] removeObserver: self forKeyPath: @"emulator.isAtPrompt"];
+	
 	[super setRepresentedObject: session];
-	[[self representedObject] addObserver: self forKeyPath: @"activeProgramPath" options: 0 context: nil];
+	
+	if (session)
+		[session addObserver: self forKeyPath: @"emulator.isAtPrompt" options: 0 context: nil];
 }
 
 //Whenever the active program changes, change which view is drawn
@@ -54,7 +58,7 @@
 						change: (NSDictionary *)change
 					   context: (void *)context
 {	
-	if ([keyPath isEqualToString: @"activeProgramPath"]) [self syncActivePanel];
+	if ([keyPath isEqualToString: @"emulator.isAtPrompt"]) [self syncActivePanel];
 }
 
 - (void) setView: (NSView *)view
@@ -89,6 +93,22 @@
 	for (NSView *subview in [mainView subviews]) [subview removeFromSuperview];
 	//Resize to panel first to fit the container
 	[panel setFrame: [mainView bounds]];
+	
+	if (panel == programChooserPanel)
+	{
+		//Validate the program chooser buttons before displaying it, which will
+		//enable/disable them based on whether we're at the DOS prompt or not
+		//This would be much simpler with a binding but HA HA HA HA we can't because
+		//Cocoa doesn't clean up bindings on NSCollectionView subviews properly,
+		//causing spurious exceptions once the thing we're observing has been dealloced.
+
+		//Dig our way down the heirarchy until we find a program button
+		NSView *sampleButton = [panel viewWithTag: BXProgramPanelButtons];
+		//Then, find its siblings and validate them all
+		for (id button in [[sampleButton superview] subviews])
+			[[self representedObject] validateUserInterfaceItem: button];
+	}
+	
 	[mainView addSubview: panel];
 	
 	[self didChangeValueForKey: @"activePanel"];

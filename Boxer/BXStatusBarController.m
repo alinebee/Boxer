@@ -16,54 +16,30 @@
 
 @implementation BXStatusBarController
 
-- (BXSessionWindowController *)windowController
+- (BXSessionWindowController *)controller
 {
 	return (BXSessionWindowController *)[[[self view] window] windowController];
 }
+
 - (void) awakeFromNib
 {
 	//Give statusbar text an indented appearance
 	[[notificationMessage cell] setBackgroundStyle: NSBackgroundStyleRaised];
-	
-	BXSessionWindowController *windowController = [self windowController];
-	BXAppController *appController = (BXAppController *)[NSApp delegate];
-	
-	//Observe changes that will affect our segmented button states
-	[appController addObserver: self
-					forKeyPath: @"inspectorPanelShown"
-					   options: NSKeyValueObservingOptionInitial
-					   context: nil];
-	
-	[windowController addObserver: self
-					   forKeyPath: @"programPanelShown"
-						  options: NSKeyValueObservingOptionInitial
-						  context: nil];
 
-	[windowController addObserver: self
-					   forKeyPath: @"document.isGamePackage"
-						  options: NSKeyValueObservingOptionInitial
-						  context: nil];
+	[self _prepareBindings];
+	[self _syncSegmentedButtonStates];
+}
+
+- (void) dealloc
+{
+	[super dealloc];
 	
-	[windowController addObserver: self
-					   forKeyPath: @"inputController.mouseLocked"
-						  options: NSKeyValueObservingOptionInitial
-						  context: nil];
-	
-	[windowController addObserver: self
-					   forKeyPath: @"inputController.mouseActive"
-						  options: NSKeyValueObservingOptionInitial
-						  context: nil];
-	
-	[[NSNotificationCenter defaultCenter] addObserver: self
-											 selector: @selector(_preventOverlappingStatusItems)
-												 name: @"NSViewFrameDidChangeNotification"
-											   object: [self view]];
+	NSLog(@"BXStatusBarController dealloc");
 }
 
 - (IBAction) performSegmentedButtonAction: (id)sender
 {
-	BXSessionWindowController *controller = [self windowController];
-	BOOL mouseLocked = [[controller inputController] mouseLocked];
+	BOOL mouseLocked = [[[self controller] inputController] mouseLocked];
 	
 	//Because we have no easy way of telling which segment was just toggled, just synchronise them all
 	
@@ -72,41 +48,43 @@
 		[[NSApp delegate] toggleInspectorPanel: sender];
 	}
 	
-	if ([sender isSelectedForSegment: BXStatusBarProgramPanelSegment] != [controller programPanelShown])
+	if ([sender isSelectedForSegment: BXStatusBarProgramPanelSegment] != [[self controller] programPanelShown])
 	{
-		[controller toggleProgramPanelShown: sender];
+		[[self controller] toggleProgramPanelShown: sender];
 	}
 	
 	if ([sender isSelectedForSegment: BXStatusBarMouseLockSegment] != mouseLocked)
 	{
-		[[controller inputController] toggleMouseLocked: sender];		
+		[[[self controller] inputController] toggleMouseLocked: sender];		
 	}
 	
 	[self _syncSegmentedButtonStates];
 }
 
 
-//Whenever the represented icon changes, force a redraw of our icon view
+//Resync the segmented button state whenever any of the keys we're observing change
 - (void) observeValueForKeyPath: (NSString *)keyPath
 					   ofObject: (id)object
 						 change: (NSDictionary *)change
 						context: (void *)context
 {
 	[self _syncSegmentedButtonStates];
-}
-
-+ (NSSet *) keyPathsForValuesAffectingNotificationText
-{
-	return [NSSet setWithObjects:
-			@"windowController.inputController.mouseActive",
-			@"windowController.inputController.mouseLocked",
-			@"windowController.inputController.mouseInView",
-			nil];
+	
+	NSArray *notificationTextModifiers = [NSArray arrayWithObjects:
+										  @"inputController.mouseActive",
+										  @"inputController.mouseLocked",
+										  @"inputController.mouseInView",
+										  nil];
+	
+	if ([notificationTextModifiers containsObject: keyPath])
+	{
+		[self didChangeValueForKey: @"notificationText"];
+	}
 }
 
 - (NSString *) notificationText
 {
-	BXInputController *viewController = [[self windowController] inputController];
+	BXInputController *viewController = [[self controller] inputController];
 	if ([viewController mouseActive])
 	{
 		if ([viewController mouseLocked])	return NSLocalizedString(@"Cmd-click to release the mouse.",
@@ -117,22 +95,25 @@
 	return @"";
 }
 
-- (void) _preventOverlappingStatusItems
+- (void) _statusBarDidResize
 {
 	//Hide the notification text if it overlaps the button
 	[notificationMessage setHidden: NSIntersectsRect([notificationMessage frame], [statusBarControls frame])];
 }
 
-- (void) _syncSegmentedButtonStates
+- (void) _windowWillClose
 {
-	BXSessionWindowController *windowController	= [self windowController];
+	[self _removeBindings];
+}
+
+- (void) _syncSegmentedButtonStates
+{	
+	[statusBarControls setSelected: [[NSApp delegate] inspectorPanelShown]		forSegment: BXStatusBarInspectorSegment];
+	[statusBarControls setSelected: [[self controller] programPanelShown]				forSegment: BXStatusBarProgramPanelSegment];
+	[statusBarControls setSelected: [[[self controller] inputController] mouseLocked]	forSegment: BXStatusBarMouseLockSegment];
 	
-	[statusBarControls setSelected: [[NSApp delegate] inspectorPanelShown]	forSegment: BXStatusBarInspectorSegment];
-	[statusBarControls setSelected: [windowController programPanelShown]	forSegment: BXStatusBarProgramPanelSegment];
-	[statusBarControls setSelected: [[windowController inputController] mouseLocked]	forSegment: BXStatusBarMouseLockSegment];
-	
-	[statusBarControls setEnabled:	[[windowController document] isGamePackage]	forSegment: BXStatusBarProgramPanelSegment];
-	[statusBarControls setEnabled:	[[windowController inputController] mouseActive]	forSegment: BXStatusBarMouseLockSegment];
+	[statusBarControls setEnabled:	[[[self controller] document] isGamePackage]		forSegment: BXStatusBarProgramPanelSegment];
+	[statusBarControls setEnabled:	[[[self controller] inputController] mouseActive]	forSegment: BXStatusBarMouseLockSegment];
 	
 	NSString *panelButtonImage;
 	if ([statusBarControls isSelectedForSegment: BXStatusBarProgramPanelSegment])
@@ -145,5 +126,68 @@
 			lockButtonImage = @"NSLockLockedTemplate";
 	else	lockButtonImage = @"NSLockUnlockedTemplate";
 	[statusBarControls setImage: [NSImage imageNamed: lockButtonImage] forSegment: BXStatusBarMouseLockSegment];
+}
+
+- (void) _prepareBindings
+{
+	//Observe changes that will affect our segmented button states
+	[[self controller] addObserver: self
+				 forKeyPath: @"programPanelShown"
+					options: 0
+					context: nil];
+	
+	[[self controller] addObserver: self
+				 forKeyPath: @"document.isGamePackage"
+					options: 0
+					context: nil];
+	
+	[[self controller] addObserver: self
+				 forKeyPath: @"inputController.mouseLocked"
+					options: 0
+					context: nil];
+	
+	[[self controller] addObserver: self
+				 forKeyPath: @"inputController.mouseActive"
+					options: 0
+					context: nil];
+	
+	[[self controller] addObserver: self
+				 forKeyPath: @"inputController.mouseInView"
+					options: 0
+					context: nil];
+	
+	[[NSApp delegate] addObserver: self
+					   forKeyPath: @"inspectorPanelShown"
+						  options: 0
+						  context: nil];
+	
+	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+	
+	//Listen for changes in the status bar's size, so that we can selectively hide elements to avoid overlaps.
+	[center addObserver: self
+			   selector: @selector(_statusBarDidResize)
+				   name: @"NSViewFrameDidChangeNotification"
+				 object: [self view]];
+	
+	//Listen for the parent window closing, so that we can tear down our bindings before our window controller
+	//ceases to exist. This avoids spurious console errors.
+	[center addObserver: self
+			   selector: @selector(_windowWillClose)
+				   name: @"NSWindowWillCloseNotification"
+				 object: [[self view] window]];
+	
+}
+
+- (void) _removeBindings
+{
+	[[self controller] removeObserver: self forKeyPath: @"inputController.mouseActive"];
+	[[self controller] removeObserver: self forKeyPath: @"inputController.mouseLocked"];
+	[[self controller] removeObserver: self forKeyPath: @"inputController.mouseInView"];
+	[[self controller] removeObserver: self forKeyPath: @"document.isGamePackage"];
+	[[self controller] removeObserver: self forKeyPath: @"programPanelShown"];
+	
+	[[NSApp delegate] removeObserver: self forKeyPath: @"inspectorPanelShown"];
+	
+	[[NSNotificationCenter defaultCenter] removeObserver: self];
 }
 @end

@@ -38,6 +38,12 @@ void MAPPER_LosingFocus();
 	return self;
 }
 
+- (void) dealloc
+{
+	[super dealloc];
+	NSLog(@"BXInputHandler dealloc");
+}
+
 #pragma mark -
 #pragma mark Controlling response state
 
@@ -59,33 +65,36 @@ void MAPPER_LosingFocus();
 - (void) mouseButtonPressed: (NSInteger)button withModifiers: (NSUInteger) modifierFlags
 {
 	//Happily, DOSBox's mouse button numbering corresponds exactly to OSX's
-	Mouse_ButtonPressed(button);
+	if ([[self emulator] isExecuting]) Mouse_ButtonPressed(button);
 }
 
 
 - (void) mouseButtonReleased: (NSInteger)button withModifiers: (NSUInteger) modifierFlags
 {
 	//Happily, DOSBox's mouse button numbering corresponds exactly to OSX's
-	Mouse_ButtonReleased(button);
+	if ([[self emulator] isExecuting]) Mouse_ButtonReleased(button);
 }
 
 - (void) mouseMovedToPoint: (NSPoint)point
 				  byAmount: (NSPoint)delta
 				  onCanvas: (NSRect)canvas
 			   whileLocked: (BOOL)locked
-{	
-	//In DOSBox land, absolute position is from 0-1 but delta is in raw pixels, for some silly reason.
-	//TODO: try making this relative to the DOS driver's max mouse position instead.
-	NSPoint canvasDelta = NSMakePoint(delta.x * canvas.size.width,
-									  delta.y * canvas.size.height);
-	
-	//FIXME: it seems really wrong to scale absolute mouse positions by mouse sensitivity,
-	//and not just delta; but this is what DOSBox used to do.
-	Mouse_CursorMoved(canvasDelta.x * mouseSensitivity,
-					  canvasDelta.y * mouseSensitivity,
-					  point.x * mouseSensitivity,
-					  point.y * mouseSensitivity,
-					  locked);
+{
+	if ([[self emulator] isExecuting])
+	{
+		//In DOSBox land, absolute position is from 0-1 but delta is in raw pixels, for some silly reason.
+		//TODO: try making this relative to the DOS driver's max mouse position instead.
+		NSPoint canvasDelta = NSMakePoint(delta.x * canvas.size.width,
+										  delta.y * canvas.size.height);
+		
+		//FIXME: it seems really wrong to scale absolute mouse positions by mouse sensitivity,
+		//and not just delta; but this is what DOSBox used to do.
+		Mouse_CursorMoved(canvasDelta.x * mouseSensitivity,
+						  canvasDelta.y * mouseSensitivity,
+						  point.x * mouseSensitivity,
+						  point.y * mouseSensitivity,
+						  locked);		
+	}
 }
 		 
 #pragma mark -
@@ -99,7 +108,7 @@ void MAPPER_LosingFocus();
 													  pressed: pressed
 												withModifiers: modifierFlags];
 	
-	MAPPER_CheckEvent(&keyEvent);
+	if ([[self emulator] isExecuting]) MAPPER_CheckEvent(&keyEvent);
 }
 
 - (void) sendKeyEventWithCode: (unsigned short)keyCode

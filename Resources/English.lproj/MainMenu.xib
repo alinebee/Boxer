@@ -12,7 +12,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="29"/>
+			<integer value="1607"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -46,56 +46,6 @@
 			</object>
 			<object class="NSCustomObject" id="1070867462">
 				<string key="NSClassName">BXDockTileController</string>
-			</object>
-			<object class="NSObjectController" id="126527174">
-				<object class="NSMutableArray" key="NSDeclaredKeys">
-					<bool key="EncodedWithXMLCoder">YES</bool>
-					<object class="NSMutableString">
-						<characters key="NS.bytes">mainWindowController.window</characters>
-					</object>
-					<object class="NSMutableString">
-						<characters key="NS.bytes">window</characters>
-					</object>
-					<object class="NSMutableString">
-						<characters key="NS.bytes">speedDescription</characters>
-					</object>
-					<object class="NSMutableString">
-						<characters key="NS.bytes">frameskipDescription</characters>
-					</object>
-					<object class="NSMutableString">
-						<characters key="NS.bytes">mouseLocked</characters>
-					</object>
-					<object class="NSMutableString">
-						<characters key="NS.bytes">emulator.isExecuting</characters>
-					</object>
-					<object class="NSMutableString">
-						<characters key="NS.bytes">emulator.aspectCorrected</characters>
-					</object>
-					<object class="NSMutableString">
-						<characters key="NS.bytes">emulator.autoSpeed</characters>
-					</object>
-					<object class="NSMutableString">
-						<characters key="NS.bytes">emulator.recordingVideo</characters>
-					</object>
-					<string>isFullScreen</string>
-					<string>fullScreen</string>
-					<string>emulator.fullScreen</string>
-					<string>emulator.isRunningProcess</string>
-					<string>representedIcon</string>
-					<string>mainWindowController.statusBarShown</string>
-					<string>mainWindowController.programPanelShown</string>
-					<string>emulator.isFullScreen</string>
-					<string>emulator.isInProcess</string>
-					<object class="NSMutableString">
-						<characters key="NS.bytes">aspectCorrected</characters>
-					</object>
-					<string>mainWindowController.fullScreen</string>
-					<string>mainWindowController.mouseLocked</string>
-					<string>mainWindowController.isFullScreen</string>
-				</object>
-				<string key="NSObjectClassName">BXSession</string>
-				<bool key="NSEditable">YES</bool>
-				<object class="_NSManagedProxy" key="_NSManagedProxy"/>
 			</object>
 			<object class="NSMenu" id="605083824">
 				<string key="NSTitle">SDLMain</string>
@@ -1103,56 +1053,6 @@
 				</object>
 				<string key="NSName">_NSMainMenu</string>
 			</object>
-			<object class="NSTextField" id="884601539">
-				<nil key="NSNextResponder"/>
-				<int key="NSvFlags">295</int>
-				<string key="NSFrameSize">{97, 16}</string>
-				<bool key="NSEnabled">YES</bool>
-				<object class="NSTextFieldCell" key="NSCell" id="245914408">
-					<int key="NSCellFlags">605158976</int>
-					<int key="NSCellFlags2">138544128</int>
-					<string key="NSContents">Label</string>
-					<object class="NSFont" key="NSSupport" id="26">
-						<string key="NSName">LucidaGrande</string>
-						<double key="NSSize">11</double>
-						<int key="NSfFlags">3100</int>
-					</object>
-					<reference key="NSControlView" ref="884601539"/>
-					<object class="NSColor" key="NSBackgroundColor" id="215657214">
-						<int key="NSColorSpace">6</int>
-						<string key="NSCatalogName">System</string>
-						<string key="NSColorName">controlColor</string>
-						<object class="NSColor" key="NSColor">
-							<int key="NSColorSpace">3</int>
-							<bytes key="NSWhite">MC42NjY2NjY2NjY3AA</bytes>
-						</object>
-					</object>
-					<object class="NSColor" key="NSTextColor" id="1000087917">
-						<int key="NSColorSpace">6</int>
-						<string key="NSCatalogName">System</string>
-						<string key="NSColorName">headerColor</string>
-						<object class="NSColor" key="NSColor">
-							<int key="NSColorSpace">3</int>
-							<bytes key="NSWhite">MQA</bytes>
-						</object>
-					</object>
-				</object>
-			</object>
-			<object class="NSTextField" id="180380845">
-				<nil key="NSNextResponder"/>
-				<int key="NSvFlags">295</int>
-				<string key="NSFrameSize">{98, 16}</string>
-				<bool key="NSEnabled">YES</bool>
-				<object class="NSTextFieldCell" key="NSCell" id="946049730">
-					<int key="NSCellFlags">605158976</int>
-					<int key="NSCellFlags2">138544128</int>
-					<string key="NSContents">Label</string>
-					<reference key="NSSupport" ref="26"/>
-					<reference key="NSControlView" ref="180380845"/>
-					<reference key="NSBackgroundColor" ref="215657214"/>
-					<reference key="NSTextColor" ref="1000087917"/>
-				</object>
-			</object>
 			<object class="NSUserDefaultsController" id="852755903">
 				<bool key="NSSharedInstance">YES</bool>
 			</object>
@@ -1258,54 +1158,6 @@
 						<reference key="destination" ref="849055722"/>
 					</object>
 					<int key="connectionID">1142</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">contentObject: currentSession</string>
-						<reference key="source" ref="126527174"/>
-						<reference key="destination" ref="74086318"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="126527174"/>
-							<reference key="NSDestination" ref="74086318"/>
-							<string key="NSLabel">contentObject: currentSession</string>
-							<string key="NSBinding">contentObject</string>
-							<string key="NSKeyPath">currentSession</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1209</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: selection.speedDescription</string>
-						<reference key="source" ref="884601539"/>
-						<reference key="destination" ref="126527174"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="884601539"/>
-							<reference key="NSDestination" ref="126527174"/>
-							<string key="NSLabel">value: selection.speedDescription</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">selection.speedDescription</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1219</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: selection.frameskipDescription</string>
-						<reference key="source" ref="180380845"/>
-						<reference key="destination" ref="126527174"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="180380845"/>
-							<reference key="NSDestination" ref="126527174"/>
-							<string key="NSLabel">value: selection.frameskipDescription</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">selection.frameskipDescription</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1221</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
@@ -1812,22 +1664,6 @@
 					<int key="connectionID">1852</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">enabled: selection.emulator.isExecuting</string>
-						<reference key="source" ref="803089018"/>
-						<reference key="destination" ref="126527174"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="803089018"/>
-							<reference key="NSDestination" ref="126527174"/>
-							<string key="NSLabel">enabled: selection.emulator.isExecuting</string>
-							<string key="NSBinding">enabled</string>
-							<string key="NSKeyPath">selection.emulator.isExecuting</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1854</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
 						<string key="label">checkForUpdates:</string>
 						<reference key="source" ref="154218853"/>
@@ -2036,36 +1872,6 @@
 						<reference key="parent" ref="605083824"/>
 					</object>
 					<object class="IBObjectRecord">
-						<int key="objectID">450</int>
-						<reference key="object" ref="884601539"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="245914408"/>
-						</object>
-						<reference key="parent" ref="0"/>
-						<string key="objectName">Speed Indicator</string>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">455</int>
-						<reference key="object" ref="180380845"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="946049730"/>
-						</object>
-						<reference key="parent" ref="0"/>
-						<string key="objectName">Frameskip Indicator</string>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">1138</int>
-						<reference key="object" ref="245914408"/>
-						<reference key="parent" ref="884601539"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">1139</int>
-						<reference key="object" ref="946049730"/>
-						<reference key="parent" ref="180380845"/>
-					</object>
-					<object class="IBObjectRecord">
 						<int key="objectID">1141</int>
 						<reference key="object" ref="849055722"/>
 						<reference key="parent" ref="0"/>
@@ -2085,12 +1891,6 @@
 						<int key="objectID">1157</int>
 						<reference key="object" ref="1035603794"/>
 						<reference key="parent" ref="632409172"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">1208</int>
-						<reference key="object" ref="126527174"/>
-						<reference key="parent" ref="0"/>
-						<string key="objectName">Session Mediator</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">1414</int>
@@ -2729,15 +2529,11 @@
 					<string>1124.ImportedFromIB2</string>
 					<string>1125.IBPluginDependency</string>
 					<string>1125.ImportedFromIB2</string>
-					<string>1138.IBPluginDependency</string>
-					<string>1139.IBPluginDependency</string>
 					<string>1141.notes</string>
 					<string>1141.showNotes</string>
 					<string>1155.IBPluginDependency</string>
 					<string>1156.IBPluginDependency</string>
 					<string>1157.IBPluginDependency</string>
-					<string>1208.IBPluginDependency</string>
-					<string>1208.notes</string>
 					<string>134.IBPluginDependency</string>
 					<string>134.ImportedFromIB2</string>
 					<string>136.IBPluginDependency</string>
@@ -2885,14 +2681,6 @@
 					<string>375.IBPluginDependency</string>
 					<string>375.ImportedFromIB2</string>
 					<string>401.ImportedFromIB2</string>
-					<string>450.IBEditorWindowLastContentRect</string>
-					<string>450.IBPluginDependency</string>
-					<string>450.ImportedFromIB2</string>
-					<string>450.notes</string>
-					<string>455.IBEditorWindowLastContentRect</string>
-					<string>455.IBPluginDependency</string>
-					<string>455.ImportedFromIB2</string>
-					<string>455.notes</string>
 					<string>56.IBPluginDependency</string>
 					<string>56.ImportedFromIB2</string>
 					<string>57.IBEditorWindowLastContentRect</string>
@@ -2918,13 +2706,11 @@
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<object class="NSMutableAttributedString">
 						<object class="NSMutableString" key="NSString">
 							<characters key="NS.bytes">Automatically populates the Help menu with a list of documentation resources available in the current gamebox.</characters>
 						</object>
-						<object class="NSDictionary" key="NSAttributes" id="554471435">
+						<object class="NSDictionary" key="NSAttributes">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<object class="NSArray" key="dict.sortedKeys">
 								<bool key="EncodedWithXMLCoder">YES</bool>
@@ -2944,7 +2730,11 @@
 										<bytes key="NSWhite">MAA</bytes>
 									</object>
 								</object>
-								<reference ref="26"/>
+								<object class="NSFont" id="26">
+									<string key="NSName">LucidaGrande</string>
+									<double key="NSSize">11</double>
+									<int key="NSfFlags">3100</int>
+								</object>
 								<reference ref="26"/>
 								<object class="NSParagraphStyle">
 									<int key="NSAlignment">4</int>
@@ -2957,13 +2747,6 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<object class="NSMutableAttributedString">
-						<object class="NSMutableString" key="NSString">
-							<characters key="NS.bytes">Wraps the current BoxerDOSSession to offer a convenient KVB hook for emulator settings.</characters>
-						</object>
-						<reference key="NSAttributes" ref="554471435"/>
-					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -3115,24 +2898,6 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
 					<integer value="1"/>
-					<string>{{21, 684}, {97, 16}}</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
-					<object class="NSMutableAttributedString">
-						<object class="NSMutableString" key="NSString">
-							<characters key="NS.bytes">Renders the CPU speed menu item</characters>
-						</object>
-						<reference key="NSAttributes" ref="554471435"/>
-					</object>
-					<string>{{0, 707}, {98, 16}}</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
-					<object class="NSMutableAttributedString">
-						<object class="NSMutableString" key="NSString">
-							<characters key="NS.bytes">Renders the framerate menu item</characters>
-						</object>
-						<reference key="NSAttributes" ref="554471435"/>
-					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
 					<string>{{12, 486}, {252, 213}}</string>
@@ -3577,14 +3342,6 @@
 			<object class="NSMutableArray" key="referencedPartialClassDescriptionsV3.2+">
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<object class="IBPartialClassDescription">
-					<string key="className">NSActionCell</string>
-					<string key="superclassName">NSCell</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBFrameworkSource</string>
-						<string key="minorKey">AppKit.framework/Headers/NSActionCell.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
 					<string key="className">NSApplication</string>
 					<string key="superclassName">NSResponder</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier" id="812318725">
@@ -3633,14 +3390,6 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBFrameworkSource</string>
 						<string key="minorKey">AppKit.framework/Headers/NSBrowser.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">NSCell</string>
-					<string key="superclassName">NSObject</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBFrameworkSource</string>
-						<string key="minorKey">AppKit.framework/Headers/NSCell.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -3739,14 +3488,6 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBFrameworkSource</string>
 						<string key="minorKey">Foundation.framework/Headers/NSFormatter.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">NSManagedObjectContext</string>
-					<string key="superclassName">NSObject</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBFrameworkSource</string>
-						<string key="minorKey">CoreData.framework/Headers/NSManagedObjectContext.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -4117,14 +3858,6 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
-					<string key="className">NSObjectController</string>
-					<string key="superclassName">NSController</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBFrameworkSource</string>
-						<string key="minorKey">AppKit.framework/Headers/NSObjectController.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
 					<string key="className">NSResponder</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBFrameworkSource</string>
@@ -4150,22 +3883,6 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBFrameworkSource</string>
 						<string key="minorKey">AppKit.framework/Headers/NSText.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">NSTextField</string>
-					<string key="superclassName">NSControl</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBFrameworkSource</string>
-						<string key="minorKey">AppKit.framework/Headers/NSTextField.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">NSTextFieldCell</string>
-					<string key="superclassName">NSActionCell</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBFrameworkSource</string>
-						<string key="minorKey">AppKit.framework/Headers/NSTextFieldCell.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

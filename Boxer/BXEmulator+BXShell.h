@@ -93,9 +93,6 @@
 //The methods in this category should not be executed outside BXEmulator.
 @interface BXEmulator (BXShellInternals)
 
-//Called by BXEmulator to prepare the shell for shutdown.
-- (void) _shutdownShell;
-
 //Routes DOS commands to the appropriate selector according to commandList.
 - (BOOL) _handleCommand: (NSString *)command withArgumentString: (NSString *)arguments;
 

@@ -35,6 +35,7 @@
 {	
 	[self setFrameBuffer: nil], [frameBuffer release];
 	[super dealloc];
+	NSLog(@"BXVideoHandler dealloc");
 }
 
 - (NSSize) resolution
@@ -140,6 +141,11 @@
 {
 	[self finishFrameWithChanges: 0];
 	if (callback) callback(GFX_CallBackStop);
+	
+	//Fuck with DOSBox's global state just enough to get it to reinitialize the video subsystem properly.
+	//Jesus christ.
+	vga.draw.width = vga.draw.height = 0;
+	vga.draw.delay.vtotal = 1234;
 }
 
 #pragma mark -

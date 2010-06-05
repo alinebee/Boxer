@@ -21,8 +21,10 @@
 @class BXSessionWindow;
 @class BXProgramPanelController;
 @class BXInputController;
+@class BXStatusBarController;
 @class BXEmulator;
 @class BXFrameBuffer;
+
 @protocol BXFrameRenderingView;
 
 @interface BXSessionWindowController : NSWindowController
@@ -35,6 +37,7 @@
 
 	IBOutlet BXProgramPanelController *programPanelController;
 	IBOutlet BXInputController *inputController;
+	IBOutlet BXStatusBarController *statusBarController;
 	
 	BXEmulator *emulator;
 	
@@ -44,9 +47,10 @@
 	NSSize initialContentSize;
 	BOOL resizingProgrammatically;
 }
-//Our view controller for the program picker panel.
+//Our subsidiary view controllers.
 @property (retain) BXProgramPanelController *programPanelController;
 @property (retain) BXInputController *inputController;
+@property (retain) BXStatusBarController *statusBarController;
 
 @property (retain) NSView <BXFrameRenderingView> *renderingView;	//The view that displays DOSBox's graphical output.
 @property (retain) NSView *inputView;		//The view that tracks user input. This is also be the view we use for fullscreen.

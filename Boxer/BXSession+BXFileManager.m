@@ -336,7 +336,6 @@
 
 - (void) _deregisterForFilesystemNotifications
 {
-	BXEmulator *theEmulator = [self emulator];
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	NSNotificationCenter *center = [workspace notificationCenter];
 

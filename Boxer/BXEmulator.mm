@@ -103,7 +103,6 @@ BXEmulator *currentEmulator = nil;
 + (NSSet *) keyPathsForValuesAffectingMouseLocked		{ return [NSSet setWithObject: @"fullScreen"]; }
 + (NSSet *) keyPathsForValuesAffectingDynamic			{ return [NSSet setWithObject: @"coreMode"]; }
 
-+ (NSSet *) keyPathsForValuesAffectingIsInBatchScript	{ return [NSSet setWithObject: @"isRunningProcess"]; }
 + (NSSet *) keyPathsForValuesAffectingIsAtPrompt		{ return [NSSet setWithObjects: @"isRunningProcess", @"isInBatchScript", nil]; }
 + (NSSet *) keyPathsForValuesAffectingIsRunningProcess	{ return [NSSet setWithObjects: @"processName", @"processPath", nil]; }
 + (NSSet *) keyPathsForValuesAffectingProcessIsInternal	{ return [NSSet setWithObject: @"processName"]; }
@@ -146,6 +145,8 @@ BXEmulator *currentEmulator = nil;
 	[commandQueue release], commandQueue = nil;
 	
 	[super dealloc];
+	
+	NSLog(@"BXEmulator dealloc");
 }
 
 
@@ -165,9 +166,10 @@ BXEmulator *currentEmulator = nil;
 	
 	//Clean up after DOSBox finishes
 	[[self videoHandler] shutdown];
-	[self _shutdownShell];
 	
 	if (currentEmulator == self) currentEmulator = nil;
+	
+	NSLog(@"BXEmulator end of main");
 }
 
 

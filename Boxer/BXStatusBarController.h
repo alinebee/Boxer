@@ -24,8 +24,8 @@ enum {
 	IBOutlet NSTextField *notificationMessage;
 }
 
-//Returns the window controller associated with this statusbar
-- (BXSessionWindowController *)windowController;
+//The window controller for the window containing this statusbar
+- (BXSessionWindowController *)controller;
 
 //Processes the selection/deselection of segments in the segmented button
 - (IBAction) performSegmentedButtonAction: (id) sender;
@@ -34,9 +34,15 @@ enum {
 - (NSString *) notificationText;
 
 //Selectively hides statusbar items when the window is too small to display them without overlaps 
-- (void) _preventOverlappingStatusItems;
+- (void) _statusBarDidResize;
+
+//Tears down our bindings when the window is about to close
+- (void) _windowWillClose;
 
 //Synchronises the selection state of segments in the segmented button
 - (void) _syncSegmentedButtonStates;
 
+//Set up/tear down the notification and KVC bindings we use to control the segmented button state
+- (void) _prepareBindings;
+- (void) _removeBindings;
 @end

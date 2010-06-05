@@ -217,20 +217,8 @@
 //Tidy up when the current session closes
 - (void) removeDocument: (NSDocument *)theDocument
 {
-	[super removeDocument: theDocument];
 	if ([self currentSession] == theDocument) [self setCurrentSession: nil];
-}
-
-
-//For some reason the default setter isn't firing key-change notifications correctly???
-- (void) setCurrentSession: (BXSession *)session
-{
-	[self willChangeValueForKey: @"currentSession"];
-		
-	[currentSession autorelease];
-	currentSession = [session retain];
-	
-	[self didChangeValueForKey: @"currentSession"];
+	[super removeDocument: theDocument];
 }
 
 

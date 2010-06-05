@@ -272,8 +272,6 @@ nil];
 //The methods in this category should not be called outside BXEmulator.
 @implementation BXEmulator (BXShellInternals)
 
-- (void) _shutdownShell	{}
-
 - (BOOL) _handleCommand: (NSString *)originalCommand
 	 withArgumentString: (NSString *)originalArgumentString
 {	

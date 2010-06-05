@@ -38,24 +38,22 @@
 //----------
 
 //The main window controller, responsible for the BXSessionWindow that displays this session.
-@property (assign)		BXSessionWindowController *mainWindowController;
+@property (assign) BXSessionWindowController *mainWindowController;
 
 //The underlying emulator process for this session. This is created during [BXSession start].
-@property (retain)		BXEmulator *emulator;
+@property (retain) BXEmulator *emulator;
 
 //The gamebox for this session. BXSession retrieves bundled drives, configuration files and
 //target program from this during emulator configuration.
 //Will be nil if an executable file or folder was opened outside of a gamebox.
-@property (retain)		BXPackage *gamePackage;
+@property (retain) BXPackage *gamePackage;
 
 //The OS X path of the executable to launch (or folder to switch to) when the emulator starts.
-@property (copy)		NSString *targetPath;
+@property (copy) NSString *targetPath;
 
 //The OS X path of the currently executing DOS program or batch file. Will be nil if the
 //emulator is at the DOS prompt, or when Boxer has no idea what program is running.
-//Currently this is only set when BXSession launches a program itself, not when a program is
-//launched manually from the DOS prompt.
-@property (copy)		NSString *activeProgramPath;
+@property (copy) NSString *activeProgramPath;
 
 
 //Class methods

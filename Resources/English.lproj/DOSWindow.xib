@@ -12,7 +12,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="1"/>
+			<integer value="3"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -202,35 +202,6 @@
 				<string key="NSMaxSize">{1.79769e+308, 1.79769e+308}</string>
 				<string key="NSFrameAutosaveName"/>
 			</object>
-			<object class="NSObjectController" id="968073238">
-				<object class="NSMutableArray" key="NSDeclaredKeys">
-					<bool key="EncodedWithXMLCoder">YES</bool>
-					<object class="NSMutableString">
-						<characters key="NS.bytes">speedDescription</characters>
-					</object>
-					<object class="NSMutableString">
-						<characters key="NS.bytes">sliderSpeed</characters>
-					</object>
-					<object class="NSMutableString">
-						<characters key="NS.bytes">emulator.isExecuting</characters>
-					</object>
-					<object class="NSMutableString">
-						<characters key="NS.bytes">mouseLocked</characters>
-					</object>
-					<string>package.executables</string>
-					<string>gamePackage.executables</string>
-					<string>executables</string>
-					<string>emulator.isRunningProcess</string>
-					<string>sessionDisplayName</string>
-					<string>displayName</string>
-					<string>bindableDisplayName</string>
-					<string>emulator.mouseLocked</string>
-					<string>isMouseLocked</string>
-					<string>mainWindowController.mouseLocked</string>
-				</object>
-				<string key="NSObjectClassName">BXSession</string>
-				<object class="_NSManagedProxy" key="_NSManagedProxy"/>
-			</object>
 			<object class="NSViewController" id="819309219"/>
 			<object class="NSViewController" id="949716796"/>
 			<object class="NSViewController" id="744398180">
@@ -255,22 +226,6 @@
 						<reference key="destination" ref="1001"/>
 					</object>
 					<int key="connectionID">529</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">contentObject: document</string>
-						<reference key="source" ref="968073238"/>
-						<reference key="destination" ref="1001"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="968073238"/>
-							<reference key="NSDestination" ref="1001"/>
-							<string key="NSLabel">contentObject: document</string>
-							<string key="NSBinding">contentObject</string>
-							<string key="NSKeyPath">document</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">743</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -452,12 +407,6 @@
 						<string key="objectName">Status bar</string>
 					</object>
 					<object class="IBObjectRecord">
-						<int key="objectID">739</int>
-						<reference key="object" ref="968073238"/>
-						<reference key="parent" ref="0"/>
-						<string key="objectName">Session Mediator</string>
-					</object>
-					<object class="IBObjectRecord">
 						<int key="objectID">893</int>
 						<reference key="object" ref="910670518"/>
 						<reference key="parent" ref="1006"/>
@@ -551,7 +500,6 @@
 					<string>1.windowTemplate.minSize</string>
 					<string>2.IBPluginDependency</string>
 					<string>3.IBPluginDependency</string>
-					<string>739.IBPluginDependency</string>
 					<string>893.IBPluginDependency</string>
 					<string>907.IBPluginDependency</string>
 					<string>907.IBSegmentedControlTracker.RoundRobinState</string>
@@ -583,7 +531,6 @@
 					<integer value="0"/>
 					<integer value="0"/>
 					<string>{640, 422}</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -620,7 +567,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">980</int>
+			<int key="maxID">982</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -729,6 +676,7 @@
 							<string>programPanelController</string>
 							<string>renderingView</string>
 							<string>statusBar</string>
+							<string>statusBarController</string>
 							<string>viewContainer</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
@@ -739,6 +687,7 @@
 							<string>BXProgramPanelController</string>
 							<string>NSView</string>
 							<string>NSView</string>
+							<string>BXStatusBarController</string>
 							<string>NSView</string>
 						</object>
 					</object>
@@ -911,27 +860,11 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
-					<string key="className">NSController</string>
-					<string key="superclassName">NSObject</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBFrameworkSource</string>
-						<string key="minorKey">AppKit.framework/Headers/NSController.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
 					<string key="className">NSFormatter</string>
 					<string key="superclassName">NSObject</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBFrameworkSource</string>
 						<string key="minorKey">Foundation.framework/Headers/NSFormatter.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">NSManagedObjectContext</string>
-					<string key="superclassName">NSObject</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBFrameworkSource</string>
-						<string key="minorKey">CoreData.framework/Headers/NSManagedObjectContext.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -1275,14 +1208,6 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBFrameworkSource</string>
 						<string key="minorKey">Sparkle.framework/Headers/SUUpdater.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">NSObjectController</string>
-					<string key="superclassName">NSController</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBFrameworkSource</string>
-						<string key="minorKey">AppKit.framework/Headers/NSObjectController.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

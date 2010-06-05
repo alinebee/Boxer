@@ -28,7 +28,7 @@
 #pragma mark Accessors
 
 @synthesize renderingView, inputView, viewContainer, statusBar, programPanel;
-@synthesize programPanelController, inputController;
+@synthesize programPanelController, inputController, statusBarController;
 @synthesize resizingProgrammatically;
 @synthesize emulator;
 
@@ -43,18 +43,24 @@
 
 - (void) dealloc
 {
-	[self removeObserver: self forKeyPath: @"document.activeProgramPath"];
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
 	
+	[self setEmulator: nil],				[emulator release];
+	
+	[self setProgramPanelController: nil],	[programPanelController release];
+	[self setInputController: nil],			[inputController release];
+	[self setStatusBarController: nil],		[statusBarController release];
+
 	[self setViewContainer: nil],			[viewContainer release];
 	[self setInputView: nil],				[inputView release];
 	[self setRenderingView: nil],			[renderingView release];
-	[self setStatusBar: nil],				[statusBar release];
+	
 	[self setProgramPanel: nil],			[programPanel release];
-	[self setProgramPanelController: nil],	[programPanelController release];
-	[self setInputController: nil],			[inputController release];
-
+	[self setStatusBar: nil],				[statusBar release];
+	
 	[super dealloc];
+	
+	NSLog(@"BXSessionWindowController dealloc");
 }
 
 - (void) awakeFromNib
@@ -122,20 +128,17 @@
 	
 	//We don't support content-preservation yet, so disable the check to be slightly more efficient
 	[theWindow setPreservesContentDuringLiveResize: NO];
-	
-	
-	//Bindings galore
-	//---------------
-	 
-	[self addObserver: self forKeyPath: @"document.activeProgramPath" options: 0 context: nil];
-	
-	[self bind: @"emulator" toObject: self withKeyPath: @"document.emulator" options: nil];
-	
-	[programPanelController bind: @"representedObject" toObject: self withKeyPath: @"document" options: nil];
 }
 
 - (void) setDocument: (BXSession *)theSession
 {	
+	if ([self document])
+	{
+		[[self document] removeObserver: self forKeyPath: @"activeProgramPath"];
+		[self unbind: @"emulator"];
+		[programPanelController setRepresentedObject: nil];		
+	}
+	
 	[super setDocument: theSession];
 	
 	if (theSession)
@@ -153,6 +156,10 @@
 		{
 			[theWindow setFrameAutosaveName: @"DOSWindow"];
 		}
+		
+		[theSession addObserver: self forKeyPath: @"activeProgramPath" options: 0 context: nil];
+		[self bind: @"emulator" toObject: theSession withKeyPath: @"emulator" options: nil];
+		[programPanelController setRepresentedObject: theSession];
 	}
 }
 
@@ -161,17 +168,16 @@
 {
 	[self willChangeValueForKey: @"emulator"];
 	
-	BXEmulator *oldEmulator = [self emulator];
-	if (![oldEmulator isEqualTo: newEmulator])
+	if (newEmulator != emulator)
 	{
-		if (oldEmulator)
+		if (emulator)
 		{
-			[[oldEmulator videoHandler] unbind: @"aspectCorrected"];
-			[[oldEmulator videoHandler] unbind: @"filterType"];
-			[inputController setRepresentedObject: nil];		
+			[[emulator videoHandler] unbind: @"aspectCorrected"];
+			[[emulator videoHandler] unbind: @"filterType"];
+			[inputController setRepresentedObject: nil];	
 		}
 		
-		[oldEmulator autorelease];
+		[emulator autorelease];
 		emulator = [newEmulator retain];
 		
 		if (newEmulator)

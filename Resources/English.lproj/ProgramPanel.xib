@@ -21,9 +21,9 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="52"/>
-			<integer value="11"/>
+			<integer value="246"/>
 			<integer value="66"/>
+			<integer value="11"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -193,7 +193,6 @@
 								</object>
 								<string key="NSFrameSize">{640, 44}</string>
 								<reference key="NSSuperview" ref="427757765"/>
-								<reference key="NSNextKeyView" ref="987636477"/>
 								<reference key="NSDocView" ref="987636477"/>
 								<object class="NSColor" key="NSBGColor">
 									<int key="NSColorSpace">1</int>
@@ -225,7 +224,6 @@
 						</object>
 						<string key="NSFrameSize">{640, 44}</string>
 						<reference key="NSSuperview" ref="156718782"/>
-						<reference key="NSNextKeyView" ref="470278647"/>
 						<int key="NSsFlags">544</int>
 						<reference key="NSVScroller" ref="740269719"/>
 						<reference key="NSHScroller" ref="20793709"/>
@@ -246,6 +244,7 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{99, 10}, {443, 14}}</string>
 						<reference key="NSSuperview" ref="515511690"/>
+						<reference key="NSWindow"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="118197522">
 							<int key="NSCellFlags">68288064</int>
@@ -267,6 +266,7 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{129, 25}, {381, 18}}</string>
 						<reference key="NSSuperview" ref="515511690"/>
+						<reference key="NSWindow"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="BGHUDButtonCell" key="NSCell" id="14580453">
 							<int key="NSCellFlags">-2080244224</int>
@@ -293,6 +293,7 @@
 				</object>
 				<string key="NSFrameSize">{640, 64}</string>
 				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
 				<string key="NSClassName">BXProgramPanel</string>
 			</object>
 			<object class="NSCustomView" id="1029538789">
@@ -340,7 +341,7 @@
 				<string key="NSClassName">BXProgramPanel</string>
 			</object>
 			<object class="NSCustomView" id="80732392">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">266</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -349,6 +350,7 @@
 						<int key="NSvFlags">301</int>
 						<string key="NSFrame">{{10, 3}, {100, 24}}</string>
 						<reference key="NSSuperview" ref="80732392"/>
+						<int key="NSTag">4</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="943765406">
 							<int key="NSCellFlags">67239488</int>
@@ -370,6 +372,7 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{120, 30}</string>
+				<reference key="NSSuperview"/>
 				<string key="NSClassName">BXProgramItemView</string>
 			</object>
 		</object>
@@ -630,26 +633,6 @@
 						</object>
 					</object>
 					<int key="connectionID">277</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">enabled: selection.emulator.isRunningProcess</string>
-						<reference key="source" ref="187453467"/>
-						<reference key="destination" ref="693023672"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="187453467"/>
-							<reference key="NSDestination" ref="693023672"/>
-							<string key="NSLabel">enabled: selection.emulator.isRunningProcess</string>
-							<string key="NSBinding">enabled</string>
-							<string key="NSKeyPath">selection.emulator.isRunningProcess</string>
-							<object class="NSDictionary" key="NSOptions">
-								<string key="NS.key.0">NSValueTransformerName</string>
-								<string key="NS.object.0">NSNegateBoolean</string>
-							</object>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">283</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -946,7 +929,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">285</int>
+			<int key="maxID">286</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

@@ -99,6 +99,24 @@ NSPoint clampPointToRect(NSPoint point, NSRect rect)
 	return clampedPoint;
 }
 
+NSPoint deltaFromPointToPoint(NSPoint pointA, NSPoint pointB)
+{
+	return NSMakePoint(pointB.x - pointA.x,
+					   pointB.y - pointA.y);
+}
+
+NSPoint pointWithDelta(NSPoint point, NSPoint delta)
+{
+	return NSMakePoint(point.x + delta.x,
+					   point.y + delta.y);
+}
+NSPoint pointWithoutDelta(NSPoint point, NSPoint delta)
+{
+	return NSMakePoint(point.x - delta.x,
+					   point.y - delta.y);
+}
+
+
 #pragma mark -
 #pragma mark CG functions
 

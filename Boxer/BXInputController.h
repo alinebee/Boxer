@@ -23,13 +23,15 @@
 	BOOL mouseActive;
 	BOOL mouseLocked;
 	
+	//Used internally for constraining mouse location and movement
+	NSRect cursorWarpDeadzone;
+	NSRect canvasBounds;
+	NSRect visibleCanvasBounds;
 	
-	NSPoint lastMousePosition;
+	//Used internally for tracking mouse state between events
 	NSPoint distanceWarped;
 	BOOL updatingMousePosition;
 	NSUInteger simulatedMouseButtons;
-	NSRect cursorWarpDeadzone;
-	NSRect canvasBounds;
 }
 
 #pragma mark -

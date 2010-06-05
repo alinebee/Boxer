@@ -51,9 +51,17 @@ extern "C" {
 	//Same as fitInRect, but will return alignInRectWithAnchor instead if innerRect already fits within outerRect.
 	NSRect constrainToRect(NSRect innerRect, NSRect outerRect, NSPoint anchor);
 	
+	
 	//Clamp the specified point so that it fits within the specified rect.
 	NSPoint clampPointToRect(NSPoint point, NSRect rect);
-
+	
+	//Calculate the delta between two points.
+	NSPoint deltaFromPointToPoint(NSPoint pointA, NSPoint pointB);
+	
+	//Add/remove the specified delta from the specified starting point.
+	NSPoint pointWithDelta(NSPoint point, NSPoint delta);
+	NSPoint pointWithoutDelta(NSPoint point, NSPoint delta);
+	
 	
 	//CG implementations of the above functions.
 	BOOL BXCGSizeFitsWithinSize(CGSize innerSize, CGSize outerSize);

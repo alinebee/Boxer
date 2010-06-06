@@ -18,6 +18,7 @@
 #import "control.h"
 #import "shell.h"
 #import "mapper.h"
+#import "callback.h"
 
 #import <crt_externs.h>		//for _NSGetArgc() and _NSGetArgv()
 
@@ -543,6 +544,30 @@ BXEmulator *currentEmulator = nil;
 	
 	//Shut down SDL after DOSBox exits.
 	SDL_Quit();
+	
+	
+	//Cleanup leftover globals
+	cpu = CPUBlock();
+	dos = DOS_Block();
+	control = NULL;
+	cpudecoder = &CPU_Core_Normal_Run;
+	
+	SDLNetInited = NO;
+	machine = MCH_HERC;
+	svgaCard = SVGA_None;
+	
+	CPU_Cycles = 3000;
+	CPU_CycleLeft = 3000;
+	CPU_CycleMax = 3000;
+	CPU_OldCycleMax = 3000;
+	CPU_CyclePercUsed = 100;
+	CPU_CycleLimit = -1;
+	CPU_IODelayRemoved = 0;
+	CPU_CycleAutoAdjust = false;
+	CPU_SkipCycleAutoAdjust = false;
+	CPU_AutoDetermineMode = 0;
+	CPU_ArchitectureType = CPU_ARCHTYPE_MIXED;
+	CPU_PrefetchQueueSize = 0;
 }
 
 @end

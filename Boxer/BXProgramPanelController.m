@@ -43,13 +43,11 @@
 
 - (void) setRepresentedObject: (id)session
 {
-	if ([self representedObject])
-		[[self representedObject] removeObserver: self forKeyPath: @"emulator.isAtPrompt"];
+	//if ([self representedObject]) [[self representedObject] removeObserver: self forKeyPath: @"emulator.isAtPrompt"];
 	
 	[super setRepresentedObject: session];
 	
-	if (session)
-		[session addObserver: self forKeyPath: @"emulator.isAtPrompt" options: 0 context: nil];
+	//if (session) [session addObserver: self forKeyPath: @"emulator.isAtPrompt" options: 0 context: nil];
 }
 
 //Whenever the active program changes, change which view is drawn

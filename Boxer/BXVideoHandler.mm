@@ -142,10 +142,11 @@
 	[self finishFrameWithChanges: 0];
 	if (callback) callback(GFX_CallBackStop);
 	
-	//Fuck with DOSBox's global state just enough to get it to reinitialize the video subsystem properly.
-	//Jesus christ.
-	vga.draw.width = vga.draw.height = 0;
-	vga.draw.delay.vtotal = 1234;
+	//Wipe out DOSBox's global data structures to reset the renderer state for the next time.
+	//TODO: check that this doesn't leak memory.
+	vga = VGA_Type();
+	svga = SVGA_Driver();
+	render = Render_t();
 }
 
 #pragma mark -

@@ -633,7 +633,7 @@ bool Config::PrintConfig(char const * const configfilename) const {
 			}
 			i=0;
 			char prefix[80];
-			snprintf(prefix,80, "\n# %*s  ", maxwidth, "");
+			snprintf(prefix,80, "\n# %*s  ", (int)maxwidth, "");
 			while ((p = sec->Get_prop(i++))) {		
 				std::string help = p->Get_help();
 				std::string::size_type pos = std::string::npos;
@@ -641,7 +641,7 @@ bool Config::PrintConfig(char const * const configfilename) const {
 					help.replace(pos, 1, prefix);
 				}
 		     
-				fprintf(outfile, "# %*s: %s", maxwidth, p->propname.c_str(), help.c_str());
+				fprintf(outfile, "# %*s: %s", (int)maxwidth, p->propname.c_str(), help.c_str());
 
 				std::vector<Value> values = p->GetValues();
 				if (!values.empty()) {

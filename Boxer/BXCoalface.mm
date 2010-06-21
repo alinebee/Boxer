@@ -32,7 +32,7 @@ bool boxer_handleRunLoop()
 
 //Notifies Boxer of changes to title and speed settings
 //This is called by GFX_SetTitle in DOSBox's sdlmain.cpp, instead of trying to set the window title through SDL
-void boxer_handleDOSBoxTitleChange(int newCycles, int newFrameskip, bool newPaused)
+void boxer_handleDOSBoxTitleChange(Bit32s newCycles, Bits newFrameskip, bool newPaused)
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
 	[emulator _syncWithEmulationState];
@@ -129,7 +129,7 @@ bool boxer_handleCommandInput(char *cmd, Bitu *cursorPosition, bool *executeImme
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
 	NSString *newCommand = [emulator _handleCommandInput: [NSString stringWithCString: cmd encoding: BXDirectStringEncoding]
-										atCursorPosition: cursorPosition
+										atCursorPosition: (NSUInteger *)cursorPosition
 									  executeImmediately: (BOOL *)executeImmediately];
 	if (newCommand)
 	{

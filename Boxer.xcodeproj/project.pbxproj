@@ -1975,7 +1975,7 @@
 				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
 				COPY_PHASE_STRIP = YES;
 				CURRENT_PROJECT_VERSION = 20100605.1;
-				GCC_VERSION = 4.0;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH)";
@@ -2007,7 +2007,6 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
 				"OTHER_CFLAGS[arch=i386]" = "-mstackrealign";
-				"OTHER_CFLAGS[arch=x86_64]" = "-mstackrealign";
 				PRODUCT_NAME = Boxer;
 			};
 			name = Development;
@@ -2058,7 +2057,6 @@
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "";
 				"OTHER_CFLAGS[arch=i386]" = "-mstackrealign";
-				"OTHER_CFLAGS[arch=x86_64]" = "-mstackrealign";
 				PRODUCT_NAME = Boxer;
 			};
 			name = Release;
@@ -2070,7 +2068,7 @@
 				COPY_PHASE_STRIP = YES;
 				CURRENT_PROJECT_VERSION = 20100605.1;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = 4.0;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH)";
@@ -2087,7 +2085,7 @@
 				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
 				COPY_PHASE_STRIP = YES;
 				CURRENT_PROJECT_VERSION = 20100605.1;
-				GCC_VERSION = 4.0;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = YES;

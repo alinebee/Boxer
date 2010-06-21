@@ -79,7 +79,7 @@ extern "C" {
 	void boxer_didExecuteFileAtDOSPath(const char *dosPath, Bit8u driveIndex);
 	
 	void boxer_handleEventLoop();
-	void boxer_handleDOSBoxTitleChange(int cycles, int frameskip, bool paused);
+	void boxer_handleDOSBoxTitleChange(Bit32s cycles, Bits frameskip, bool paused);
 	
 	//Called from dosbox.cpp to short-circuit the emulation loop.	
 	bool boxer_handleRunLoop();

@@ -174,7 +174,7 @@ static void LinkProgram(GLhandleARB programObject,
 												 inDirectory:@"Shaders"];
 	GLcharARB *shaderSource = NULL;
 	
-	shaderTempSource = [NSString stringWithContentsOfFile:shaderTempSource];
+	shaderTempSource = [NSString stringWithContentsOfFile:shaderTempSource encoding: NSASCIIStringEncoding error: nil];
 	shaderSource     = (GLcharARB *)[shaderTempSource cStringUsingEncoding:NSASCIIStringEncoding];
 	
 	return  shaderSource;

@@ -143,11 +143,11 @@
 }
 
 //Select/deselect item at click point before showing our menu
-- (void) menuForEvent: (NSEvent *)theEvent
+- (NSMenu *) menuForEvent: (NSEvent *)theEvent
 {
 	NSPoint clickPoint = [self convertPoint: [theEvent locationInWindow] fromView: nil];
 	[self selectItemAtPoint: clickPoint];
-	[super menuForEvent: theEvent];
+	return [super menuForEvent: theEvent];
 }
 
 //While dragging, this checks for valid Boxer windows under the cursor; if there aren't any, it displays

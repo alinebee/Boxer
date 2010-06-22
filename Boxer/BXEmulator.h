@@ -20,7 +20,7 @@
 //via the NSOperation API.
 
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
 //Emulation-related constant definitions
 //--------------------------------------
@@ -98,7 +98,9 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 @property (readonly)	NSMutableArray *commandQueue;
 
 @property (assign)		NSUInteger frameskip;	//The current value for the frameskip setting.
-@property (assign)		NSInteger fixedSpeed;	//The current CPU speed.
+@property (assign)		NSInteger fixedSpeed;	//The current fixed CPU speed.
+@property (assign)		BXCoreMode coreMode;	//The current CPU core mode.
+@property (assign, getter=isAutoSpeed)	BOOL autoSpeed;	//Whether we are running at automatic maximum speed.
 
 
 #pragma mark -
@@ -131,25 +133,6 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 
 
 #pragma mark -
-#pragma mark Controlling DOSBox emulation settings
-
-//Get/set whether CPU speed is fixed or automatically maxed.
-//NOTE: this does not correspond to the DOSBox "auto" setting but to the DOSBox "max" setting.
-//The naming of this accessor should be changed to clarify this.
-- (BOOL) isAutoSpeed;
-- (void) setAutoSpeed: (BOOL)autoSpeed;
-
-
-//Get/set the current DOSBox core emulation mode.
-//NOTE: this is not currently safe to change during program execution.
-- (BOOL) isDynamic;
-- (void) setDynamic: (BOOL)dynamic;
-
-- (BXCoreMode) coreMode;
-- (void) setCoreMode: (BXCoreMode)coreMode;
-
-
-#pragma mark -
 #pragma mark Responding to application state
 
 //Used to notify the emulator that it will be interrupted by UI events.
@@ -177,7 +160,7 @@ class DOS_Shell;
 
 //Called by DOSBox whenever it changes states we care about. This resyncs BXEmulator's
 //cached notions of the DOSBox state, and posts notifications for relevant properties.
-- (void) _syncWithEmulationState;
+- (void) _didChangeEmulationState;
 
 
 //Event-handling

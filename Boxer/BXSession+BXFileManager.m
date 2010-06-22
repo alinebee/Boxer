@@ -24,8 +24,8 @@
 
 @implementation BXSession (BXFileManager)
 
-//Class methods concerning filetypes
-//----------------------------------
+#pragma mark -
+#pragma mark Filetype helper methods
 
 
 //Return an array of all filetypes that should be mounted as a separate drive even if they're already accessible
@@ -45,8 +45,13 @@
 }
 
 
-//File and folder mounting
-//------------------------
+#pragma mark -
+#pragma mark File and folder mounting
+
+- (NSArray *)drives
+{
+	return [[self emulator] mountedDrives];
+}
 
 - (IBAction) refreshFolders:	(id)sender	{ [[self emulator] refreshMountedDrives]; }
 - (IBAction) showMountPanel:	(id)sender	{ [[BXMountPanelController controller] showMountPanelForSession: self]; }
@@ -300,8 +305,8 @@
 }
 
 
-//Handling filesystem notifications
-//---------------------------------
+#pragma mark -
+#pragma mark OS X filesystem notifications
 
 //Register ourselves as an observer for filesystem notifications
 //Called from BXSession init
@@ -417,19 +422,25 @@
 
 - (void) DOSDriveDidMount: (NSNotification *)theNotification
 {
+	[self willChangeValueForKey: @"drives"];
+	
 	BXDrive *drive = [[theNotification userInfo] objectForKey: @"drive"];
 	if (![drive isInternal])
 	{
 		[self _startTrackingChangesAtPath: [drive path]];
 	
-		//only show notifications once the session has started up fully,
+		//Only show notifications once the session has started up fully,
 		//so we don't spray out notifications for our initial drive mounts.
 		if (hasConfigured) [[BXGrowlController controller] notifyDriveMounted: drive];
 	}
+	
+	[self didChangeValueForKey: @"drives"];
 }
 
 - (void) DOSDriveDidUnmount: (NSNotification *)theNotification
 {
+	[self willChangeValueForKey: @"drives"];
+
 	BXDrive *drive = [[theNotification userInfo] objectForKey: @"drive"];
 	if (![drive isInternal])
 	{
@@ -437,10 +448,12 @@
 		//Only stop tracking if there are no other drives mapping to that path either.
 		if (![[self emulator] pathIsDOSAccessible: path]) [self _stopTrackingChangesAtPath: path];
 	
-		//only show notifications once the session has started up fully,
+		//Only show notifications once the session has started up fully,
 		//in case something gets unmounted during startup.
 		if (hasConfigured) [[BXGrowlController controller] notifyDriveUnmounted: drive];
 	}
+
+	[self didChangeValueForKey: @"drives"];
 }
 
 - (void) _startTrackingChangesAtPath: (NSString *)path

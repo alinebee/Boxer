@@ -15,6 +15,10 @@
 
 @interface BXSession (BXFileManager)
 
+//A bindable wrapper property for BXEmulator's mountedDrives array.
+@property (readonly) NSArray *drives;
+
+
 //Class methods concerning files
 //------------------------------
 

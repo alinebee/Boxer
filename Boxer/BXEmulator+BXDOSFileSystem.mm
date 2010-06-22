@@ -208,14 +208,15 @@ enum {
 		//If this was the drive we were on, recover by switching to Z drive
 		if (isCurrentDrive && [self isAtPrompt]) [self changeToDriveLetter: @"Z"];
 		
+		//Remove the drive from our drive cache
+		[self _removeDriveFromCache: drive];
+		
 		//Post a notification to whoever's listening
 		NSDictionary *userInfo = [NSDictionary dictionaryWithObject: drive forKey: @"drive"];
 		[self _postNotificationName: @"BXDriveDidUnmountNotification"
 				   delegateSelector: @selector(DOSDriveDidUnmount:)
 						   userInfo: userInfo];
 		
-		//Remove the drive from our drive cache
-		[self _removeDriveFromCache: drive];
 	}
 	return unmounted;
 }

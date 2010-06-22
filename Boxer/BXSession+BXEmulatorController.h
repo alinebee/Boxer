@@ -44,11 +44,16 @@ const NSUInteger BXMaxFrameskip = 9;
 
 @interface BXSession (BXEmulatorController)
 
-//Class methods
-//-------------
+#pragma mark -
+#pragma mark Properties
 
-//Sets up the emulator's value transformers.
-+ (void) initialize;
+@property (assign) NSInteger fixedSpeed; 
+@property (assign) NSUInteger frameskip;
+@property (assign, getter=isDynamic) BOOL dynamic;
+
+
+#pragma mark -
+#pragma mark Class methods
 
 //Returns the appropriate increment amount for the specified speed (see the speed increment constants above.)
 //increasing specifies whether the speed will be increased or decreased, and affects which increment will be
@@ -62,8 +67,8 @@ const NSUInteger BXMaxFrameskip = 9;
 + (NSString *) cpuClassFormatForSpeed: (NSInteger)speed;
 
 
-//Responding to interface actions and validation 
-//----------------------------------------------
+#pragma mark -
+#pragma mark Interface actions and bindings
 
 - (IBAction) incrementFrameSkip: (id)sender;	//Increases the current frameskip by 1.
 - (IBAction) decrementFrameSkip: (id)sender;	//Decreases the current frameskip by 1.
@@ -75,7 +80,7 @@ const NSUInteger BXMaxFrameskip = 9;
 - (IBAction) decrementSpeed: (id)sender;	//Decreases the CPU speed by an appropriate decrement.
 												
 //Caps the speed within minimum and maximum limits
-- (BOOL) validateSpeed: (id *)ioValue error: (NSError **)outError;
+- (BOOL) validateFixedSpeed: (id *)ioValue error: (NSError **)outError;
 
 //Returns whether the current frameskip level is at the minimum or maximum bounds.
 - (BOOL) frameskipAtMinimum; 
@@ -86,28 +91,25 @@ const NSUInteger BXMaxFrameskip = 9;
 - (BOOL) speedAtMaximum;
 
 
-//Handling paste
-//--------------
-
-- (IBAction) paste: (id)sender;
-- (BOOL) canPaste;
-
-
-//Speed state wrapper
-//-------------------
-
 //Used by UI speed sliders to set the CPU speed. These snap the speed to appropriate increments.
 - (void) setSliderSpeed: (NSInteger)speed;
 - (NSInteger) sliderSpeed;
 
 
-//Descriptions of emulation settings
-//----------------------------------
+#pragma mark -
+#pragma mark Describing emulation state
 
 //Returns a localised human-readable description of the current CPU speed setting.
 - (NSString *) speedDescription;
 
 //Returns a localised human-readable description of the frameskip setting.
 - (NSString *) frameskipDescription;
+
+
+#pragma mark -
+#pragma mark Copy-paste handling
+
+- (IBAction) paste: (id)sender;
+- (BOOL) canPaste;
 
 @end

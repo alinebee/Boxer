@@ -16,8 +16,9 @@
 
 @implementation BXSession (BXEmulatorController)
 
-//Speed-related class methods
-//---------------------------
+
+#pragma mark -
+#pragma mark Speed-related helper methods
 
 + (void) initialize
 {
@@ -38,6 +39,7 @@
 	[NSValueTransformer setValueTransformer: speedBanding forName: @"BXSpeedSliderTransformer"];
 	[NSValueTransformer setValueTransformer: invertFramerate forName: @"BXFrameRateSliderTransformer"];
 }
+
 
 //We use different increment scales depending on the speed, to give more accuracy to low-speed adjustments
 + (NSInteger) incrementAmountForSpeed: (NSInteger)speed goingUp: (BOOL) increasing
@@ -67,28 +69,19 @@
 }
 
 
-//Class methods affecting binding
-//-------------------------------
+#pragma mark -
+#pragma mark Controlling CPU emulation
 
-+ (NSSet *) keyPathsForValuesAffectingSliderSpeed			{ return [NSSet setWithObjects: @"emulator.fixedSpeed", @"emulator.autoSpeed", nil]; }
-
-+ (NSSet *) keyPathsForValuesAffectingSpeedDescription		{ return [NSSet setWithObject: @"sliderSpeed"]; }
-+ (NSSet *) keyPathsForValuesAffectingFrameskipDescription	{ return [NSSet setWithObject: @"emulator.frameskip"]; }
-
-
-- (IBAction) incrementFrameSkip: (id)sender
+- (NSUInteger) frameskip
 {
-	
-	NSNumber *newFrameskip = [NSNumber numberWithInteger: [[self emulator] frameskip] + 1];
-	if ([self validateFrameskip: &newFrameskip error: nil])
-		[[self emulator] setFrameskip: [newFrameskip integerValue]];
+	return [[self emulator] frameskip];
 }
 
-- (IBAction) decrementFrameSkip: (id)sender
+- (void) setFrameskip: (NSUInteger)frameskip
 {
-	NSNumber *newFrameskip = [NSNumber numberWithInteger: [[self emulator] frameskip] - 1];
-	if ([self validateFrameskip: &newFrameskip error: nil])
-		[[self emulator] setFrameskip: [newFrameskip integerValue]];
+	[self willChangeValueForKey: @"frameskip"];
+	[[self emulator] setFrameskip: frameskip];
+	[self didChangeValueForKey: @"frameskip"];
 }
 
 - (BOOL) validateFrameskip: (id *)ioValue error: (NSError **)outError
@@ -99,6 +92,41 @@
 	return YES;
 }
 
+- (IBAction) incrementFrameSkip: (id)sender
+{
+	
+	NSNumber *newFrameskip = [NSNumber numberWithInteger: [[self emulator] frameskip] + 1];
+	if ([self validateFrameskip: &newFrameskip error: nil])
+		[self setFrameskip: [newFrameskip integerValue]];
+}
+
+- (IBAction) decrementFrameSkip: (id)sender
+{
+	NSNumber *newFrameskip = [NSNumber numberWithInteger: [[self emulator] frameskip] - 1];
+	if ([self validateFrameskip: &newFrameskip error: nil])
+		[self setFrameskip: [newFrameskip integerValue]];
+}
+
+
+- (NSInteger) fixedSpeed
+{
+	return [[self emulator] fixedSpeed];
+}
+
+- (void) setFixedSpeed: (NSInteger)fixedSpeed
+{
+	[self willChangeValueForKey: @"fixedSpeed"];
+	[[self emulator] setFixedSpeed: fixedSpeed];
+	[self didChangeValueForKey: @"fixedSpeed"];
+}
+
+- (BOOL) validateFixedSpeed: (id *)ioValue error: (NSError **)outError
+{
+	NSInteger theValue = [*ioValue integerValue];
+	if		(theValue < BXMinSpeedThreshold) *ioValue = [NSNumber numberWithInteger: BXMinSpeedThreshold];
+	else if	(theValue > BXMaxSpeedThreshold) *ioValue = [NSNumber numberWithInteger: BXMaxSpeedThreshold];
+	return YES;
+}
 
 - (IBAction) incrementSpeed: (id)sender
 {
@@ -115,8 +143,8 @@
 		
 		//Validate our final value before assigning it
 		NSNumber *newSpeed = [NSNumber numberWithInteger: currentSpeed + increment];
-		if ([self validateSpeed: &newSpeed error: nil])
-			[[self emulator] setFixedSpeed: [newSpeed integerValue]];
+		if ([self validateFixedSpeed: &newSpeed error: nil])
+			[self setFixedSpeed: [newSpeed integerValue]];
 	}
 }
 
@@ -138,17 +166,19 @@
 		
 		//Validate our final value before assigning it
 		NSNumber *newSpeed = [NSNumber numberWithInteger: currentSpeed - increment];
-		if ([self validateSpeed: &newSpeed error: nil])
-			[[self emulator] setFixedSpeed: [newSpeed integerValue]];
+		if ([self validateFixedSpeed: &newSpeed error: nil])
+			[self setFixedSpeed: [newSpeed integerValue]];
 	}
 }
 
-- (BOOL) validateSpeed: (id *)ioValue error: (NSError **)outError
+
+- (BOOL) isDynamic	{ return [[self emulator] coreMode] == BXCoreDynamic; }
+
+- (void) setDynamic: (BOOL)dynamic
 {
-	NSInteger theValue = [*ioValue integerValue];
-	if		(theValue < BXMinSpeedThreshold) *ioValue = [NSNumber numberWithInteger: BXMinSpeedThreshold];
-	else if	(theValue > BXMaxSpeedThreshold) *ioValue = [NSNumber numberWithInteger: BXMaxSpeedThreshold];
-	return YES;
+	[self willChangeValueForKey: @"dynamic"];
+	[[self emulator] setCoreMode: dynamic ? BXCoreDynamic : BXCoreNormal];
+	[self didChangeValueForKey: @"dynamic"];
 }
 
 
@@ -256,8 +286,8 @@
 }
 
 
-//Descriptions for emulation settings
-//-----------------------------------
+#pragma mark -
+#pragma mark Describing emulation state
 
 - (NSString *) speedDescription
 {	
@@ -285,4 +315,8 @@
 	
 	return [NSString stringWithFormat: format, frameskip + 1];
 }
+
++ (NSSet *) keyPathsForValuesAffectingSpeedDescription		{ return [NSSet setWithObject: @"sliderSpeed"]; }
++ (NSSet *) keyPathsForValuesAffectingFrameskipDescription	{ return [NSSet setWithObject: @"frameskip"]; }
+
 @end

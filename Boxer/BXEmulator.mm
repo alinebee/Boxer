@@ -112,7 +112,6 @@ BXEmulator *currentEmulator = nil;
 	return keyPaths;
 }
 
-+ (NSSet *) keyPathsForValuesAffectingDynamic			{ return [NSSet setWithObject: @"coreMode"]; }
 + (NSSet *) keyPathsForValuesAffectingIsAtPrompt		{ return [NSSet setWithObjects: @"isRunningProcess", @"isInBatchScript", nil]; }
 + (NSSet *) keyPathsForValuesAffectingIsRunningProcess	{ return [NSSet setWithObjects: @"processName", @"processPath", nil]; }
 + (NSSet *) keyPathsForValuesAffectingProcessIsInternal	{ return [NSSet setWithObject: @"processName"]; }
@@ -327,13 +326,6 @@ BXEmulator *currentEmulator = nil;
 		CPU_Cycles=0;
 	}
 }
-- (BOOL) isDynamic	{ return [self coreMode] == BXCoreDynamic; }
-
-//Todo: make this use the previous core mode, instead of just assuming normal
-- (void) setDynamic: (BOOL)dynamic
-{
-	[self setCoreMode: ([self coreMode] == BXCoreDynamic) ? BXCoreNormal : BXCoreDynamic];
-}
 
 
 //Handling changes to application focus
@@ -403,31 +395,21 @@ BXEmulator *currentEmulator = nil;
 //Synchronising emulation state
 //-----------------------------
 
-//Post change notifications on all likely properties to resync KVC bindings
-//This is called by coalface functions to notify Boxer that the emulation state may have changed behind its back
-- (void) _syncWithEmulationState
+//Called by coalface functions to notify Boxer that the emulation state may have changed behind its back
+- (void) _didChangeEmulationState
 {
 	if ([self isExecuting])
 	{
-		//Post event notifications for settings we have no way of detecting changes to,
-		//so that all bound objects will update just in case
-		[self willChangeValueForKey:	@"mouseLocked"];
-		[self didChangeValueForKey:		@"mouseLocked"];
+		//Let the delegate know that the emulation state has changed behind its back, so it can re-check CPU settings
+		[self _postNotificationName: @"BXEmulationStateDidChange"
+				   delegateSelector: @selector(didChangeEmulationState:)
+						   userInfo: nil];
 		
-		[self willChangeValueForKey:	@"fixedSpeed"];
-		[self didChangeValueForKey:		@"fixedSpeed"];
+		[self didChangeValueForKey: @"fixedSpeed"];
+		[self didChangeValueForKey: @"autoSpeed"];
+		[self didChangeValueForKey: @"frameskip"];
+		[self didChangeValueForKey: @"coreMode"];
 		
-		[self willChangeValueForKey:	@"autoSpeed"];
-		[self didChangeValueForKey:		@"autoSpeed"];
-		
-		[self willChangeValueForKey:	@"frameskip"];
-		[self didChangeValueForKey:		@"frameskip"];
-		
-		[self willChangeValueForKey:	@"coreMode"];
-		[self didChangeValueForKey:		@"coreMode"];
-		
-		
-		//Now perform fine-grained checking on the process name, and post appropriate notifications
 		
 		NSString *newProcessName = [NSString stringWithCString: RunningProgram encoding: BXDirectStringEncoding];
 		if ([newProcessName isEqualToString: shellProcessName]) newProcessName = nil;

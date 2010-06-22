@@ -21,7 +21,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="257"/>
+			<integer value="186"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1051,6 +1051,13 @@
 				<string key="NSClassName">NSView</string>
 			</object>
 			<object class="NSObjectController" id="56494336">
+				<object class="NSMutableArray" key="NSDeclaredKeys">
+					<bool key="EncodedWithXMLCoder">YES</bool>
+					<string>isEmulating</string>
+					<string>frameskip</string>
+					<string>dynamic</string>
+					<string>drives</string>
+				</object>
 				<string key="NSObjectClassName">BXSession</string>
 				<object class="_NSManagedProxy" key="_NSManagedProxy"/>
 			</object>
@@ -1264,70 +1271,6 @@
 					<int key="connectionID">68</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">enabled: selection.emulator.isExecuting</string>
-						<reference key="source" ref="351783392"/>
-						<reference key="destination" ref="56494336"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="351783392"/>
-							<reference key="NSDestination" ref="56494336"/>
-							<string key="NSLabel">enabled: selection.emulator.isExecuting</string>
-							<string key="NSBinding">enabled</string>
-							<string key="NSKeyPath">selection.emulator.isExecuting</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">137</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">enabled: selection.emulator.isExecuting</string>
-						<reference key="source" ref="544869008"/>
-						<reference key="destination" ref="56494336"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="544869008"/>
-							<reference key="NSDestination" ref="56494336"/>
-							<string key="NSLabel">enabled: selection.emulator.isExecuting</string>
-							<string key="NSBinding">enabled</string>
-							<string key="NSKeyPath">selection.emulator.isExecuting</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">152</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: selection.speedDescription</string>
-						<reference key="source" ref="655936007"/>
-						<reference key="destination" ref="56494336"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="655936007"/>
-							<reference key="NSDestination" ref="56494336"/>
-							<string key="NSLabel">value: selection.speedDescription</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">selection.speedDescription</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">167</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: selection.frameskipDescription</string>
-						<reference key="source" ref="70665251"/>
-						<reference key="destination" ref="56494336"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="70665251"/>
-							<reference key="NSDestination" ref="56494336"/>
-							<string key="NSLabel">value: selection.frameskipDescription</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">selection.frameskipDescription</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">171</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">panelSelector</string>
 						<reference key="source" ref="1001"/>
@@ -1358,38 +1301,6 @@
 						<reference key="destination" ref="327384677"/>
 					</object>
 					<int key="connectionID">249</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: selection.emulator.dynamic</string>
-						<reference key="source" ref="245135163"/>
-						<reference key="destination" ref="56494336"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="245135163"/>
-							<reference key="NSDestination" ref="56494336"/>
-							<string key="NSLabel">value: selection.emulator.dynamic</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">selection.emulator.dynamic</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">274</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">enabled: selection.emulator.isExecuting</string>
-						<reference key="source" ref="245135163"/>
-						<reference key="destination" ref="56494336"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="245135163"/>
-							<reference key="NSDestination" ref="56494336"/>
-							<string key="NSLabel">enabled: selection.emulator.isExecuting</string>
-							<string key="NSBinding">enabled</string>
-							<string key="NSKeyPath">selection.emulator.isExecuting</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">275</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -1503,26 +1414,6 @@
 						<reference key="destination" ref="407442324"/>
 					</object>
 					<int key="connectionID">774</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: selection.emulator.frameskip</string>
-						<reference key="source" ref="544869008"/>
-						<reference key="destination" ref="56494336"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="544869008"/>
-							<reference key="NSDestination" ref="56494336"/>
-							<string key="NSLabel">value: selection.emulator.frameskip</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">selection.emulator.frameskip</string>
-							<object class="NSDictionary" key="NSOptions">
-								<string key="NS.key.0">NSValueTransformerName</string>
-								<string key="NS.object.0">BXFrameRateSliderTransformer</string>
-							</object>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">783</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
@@ -1721,22 +1612,6 @@
 					<int key="connectionID">934</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">contentArray: selection.emulator.mountedDrives</string>
-						<reference key="source" ref="19644052"/>
-						<reference key="destination" ref="56494336"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="19644052"/>
-							<reference key="NSDestination" ref="56494336"/>
-							<string key="NSLabel">contentArray: selection.emulator.mountedDrives</string>
-							<string key="NSBinding">contentArray</string>
-							<string key="NSKeyPath">selection.emulator.mountedDrives</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">936</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
 						<string key="label">showProgramChooserPanel:</string>
 						<reference key="source" ref="59669627"/>
@@ -1875,6 +1750,146 @@
 						</object>
 					</object>
 					<int key="connectionID">1022</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">enabled: selection.isEmulating</string>
+						<reference key="source" ref="544869008"/>
+						<reference key="destination" ref="56494336"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="544869008"/>
+							<reference key="NSDestination" ref="56494336"/>
+							<string key="NSLabel">enabled: selection.isEmulating</string>
+							<string key="NSBinding">enabled</string>
+							<string key="NSKeyPath">selection.isEmulating</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1061</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">enabled: selection.isEmulating</string>
+						<reference key="source" ref="245135163"/>
+						<reference key="destination" ref="56494336"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="245135163"/>
+							<reference key="NSDestination" ref="56494336"/>
+							<string key="NSLabel">enabled: selection.isEmulating</string>
+							<string key="NSBinding">enabled</string>
+							<string key="NSKeyPath">selection.isEmulating</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1062</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: selection.frameskip</string>
+						<reference key="source" ref="544869008"/>
+						<reference key="destination" ref="56494336"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="544869008"/>
+							<reference key="NSDestination" ref="56494336"/>
+							<string key="NSLabel">value: selection.frameskip</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">selection.frameskip</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSValueTransformerName</string>
+								<string key="NS.object.0">BXFrameRateSliderTransformer</string>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1063</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: selection.dynamic</string>
+						<reference key="source" ref="245135163"/>
+						<reference key="destination" ref="56494336"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="245135163"/>
+							<reference key="NSDestination" ref="56494336"/>
+							<string key="NSLabel">value: selection.dynamic</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">selection.dynamic</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1064</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">enabled: selection.isEmulating</string>
+						<reference key="source" ref="351783392"/>
+						<reference key="destination" ref="56494336"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="351783392"/>
+							<reference key="NSDestination" ref="56494336"/>
+							<string key="NSLabel">enabled: selection.isEmulating</string>
+							<string key="NSBinding">enabled</string>
+							<string key="NSKeyPath">selection.isEmulating</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1065</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">contentArray: selection.drives</string>
+						<reference key="source" ref="19644052"/>
+						<reference key="destination" ref="56494336"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="19644052"/>
+							<reference key="NSDestination" ref="56494336"/>
+							<string key="NSLabel">contentArray: selection.drives</string>
+							<string key="NSBinding">contentArray</string>
+							<string key="NSKeyPath">selection.drives</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1068</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: selection.speedDescription</string>
+						<reference key="source" ref="655936007"/>
+						<reference key="destination" ref="56494336"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="655936007"/>
+							<reference key="NSDestination" ref="56494336"/>
+							<string key="NSLabel">value: selection.speedDescription</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">selection.speedDescription</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSNoSelectionPlaceholder</string>
+								<string type="base64-UTF8" key="NS.object.0">IA</string>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1069</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: selection.frameskipDescription</string>
+						<reference key="source" ref="70665251"/>
+						<reference key="destination" ref="56494336"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="70665251"/>
+							<reference key="NSDestination" ref="56494336"/>
+							<string key="NSLabel">value: selection.frameskipDescription</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">selection.frameskipDescription</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSNoSelectionPlaceholder</string>
+								<string type="base64-UTF8" key="NS.object.0">IA</string>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1070</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -2830,7 +2845,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1060</int>
+			<int key="maxID">1070</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

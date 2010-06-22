@@ -10,6 +10,7 @@
 #import "BXEmulator.h"
 
 #import "BXEventConstants.h"
+#import <AppKit/AppKit.h>	//For NSApp
 #import <Carbon/Carbon.h>	//For OSX keycode constants
 #import <SDL/SDL.h>			//For SDL keycode constants
 #import "config.h"

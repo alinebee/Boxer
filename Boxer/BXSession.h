@@ -14,6 +14,7 @@
 //(mostly for controlling the emulator.)
 
 #import <Cocoa/Cocoa.h>
+#import "BXEmulator.h"
 
 @class BXEmulator;
 @class BXSessionWindowController;
@@ -34,8 +35,9 @@
 	BOOL showProgramPanelOnReturnToShell;
 }
 
-//Properties
-//----------
+
+#pragma mark -
+#pragma mark Properties
 
 //The main window controller, responsible for the BXSessionWindow that displays this session.
 @property (assign) BXSessionWindowController *mainWindowController;
@@ -55,9 +57,12 @@
 //emulator is at the DOS prompt, or when Boxer has no idea what program is running.
 @property (copy) NSString *activeProgramPath;
 
+@property (readonly) BOOL hasStarted;	//Whether the emulator session has been started.
+@property (readonly) BOOL isEmulating;	//Whether the emulator session is initialized and ready to receive modifications.
 
-//Class methods
-//-------------
+
+#pragma mark -
+#pragma mark Class methods
 
 //Returns the currently active session, which is the session whose window is topmost.
 //Currently, only one session can be active at a time and Boxer will quit after that session
@@ -65,8 +70,8 @@
 + (id) mainSession;
 
 
-//Starting/stopping emulation
-//---------------------------
+#pragma mark -
+#pragma mark Methods
 
 //Start up the DOS emulator.
 //This is currently called automatically by showWindow, meaning that emulation starts
@@ -76,13 +81,7 @@
 //Shut down the DOS emulator.
 - (void) cancel;
 
-//Returns whether the emulator has been started. This does not necessarily indicate
-//that the emulator is ready to respond to user input, merely that start has been called.
-- (BOOL) hasStarted;
 
-
-//Session descriptions
-//--------------------
 
 //Returns a best-guess name for the current game.
 //Currently, this means NSDocument displayName minus any ".boxer" extension.
@@ -93,8 +92,6 @@
 - (NSString *) processDisplayName;
 
 
-//Properties of the current gamebox
-//---------------------------------
 
 //Returns whether this session has a gamebox or not.
 //TODO: replace this with just a check against [BXSession gamePackage].
@@ -123,8 +120,8 @@
 //Methods in this category are not intended to be called outside of BXSession.
 @interface BXSession (BXSessionInternals)
 
-//Initialising the DOS session
-//----------------------------
+#pragma mark -
+#pragma mark Initializing the DOS session
 
 //Create our BXEmulator instance and starts its main loop.
 //Called internally by [BXSession start], deferred to the end of the main thread's event loop to prevent
@@ -140,23 +137,25 @@
 //finishes. Called by runLaunchCommands, once the emulator has finished processing configuration files.
 - (void) _launchTarget;
 
-
-//Monitoring process changes in the emulator
-//------------------------------------------
-
 //These are called directly by BXShell in response to DOS shell commands that we ourselves have injected
 //into AUTOEXEC.BAT, so that Boxer performs its startup routine at the right moments.
 - (void) runPreflightCommands;
 - (void) runLaunchCommands;
+
+
+#pragma mark -
+#pragma mark Responding to changes in emulation state
 
 //These are delegate methods called by BXEmulator at various points during the emulator's lifecycle.
 - (void) didReturnToShell:		(NSNotification *)notification;
 - (void) programWillStart:		(NSNotification *)notification;
 - (void) programDidFinish:		(NSNotification *)notification;
 
-
 - (void) didStartGraphicalContext:	(NSNotification *)notification;
 - (void) didEndGraphicalContext:	(NSNotification *)notification;
+
+- (void) didChangeEmulationState:	(NSNotification *)notification;
+
 
 - (void) frameComplete: (BXFrameBuffer *)frame;
 - (NSSize) viewportSize;

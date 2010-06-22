@@ -63,7 +63,7 @@
 @property (assign) BOOL resizingProgrammatically;
 
 //A reference to the emulator instance for this window.
-@property (retain) BXEmulator *emulator;
+@property (assign) BXEmulator *emulator;
 
 
 //Recast NSWindowController's standard accessors so that we get our own classes

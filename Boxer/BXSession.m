@@ -11,8 +11,8 @@
 #import "BXDrive.h"
 #import "BXAppController.h"
 #import "BXSessionWindowController+BXRenderController.h"
-
 #import "BXSession+BXFileManager.h"
+
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulator+BXShell.h"
 #import "NSWorkspace+BXFileTypes.h"
@@ -75,6 +75,7 @@
 - (void) showWindows
 {
 	[super showWindows];
+	
 	//Start the emulator as soon as our windows appear
 	if (![self hasStarted]) [self start];
 }
@@ -106,6 +107,11 @@
 - (BOOL) hasStarted
 {
 	return [[self emulator] isExecuting];
+}
+
+- (BOOL) isEmulating
+{
+	return hasConfigured;
 }
 
 //Create our DOSBox emulator and add it to the operations queue
@@ -143,8 +149,8 @@
 }
 
 
-//Describing the active DOS process
-//---------------------------------
+#pragma mark -
+#pragma mark Describing the document/process
 
 - (NSString *) displayName
 {
@@ -453,7 +459,9 @@
 	}
 	
 	//Flag that we have completed our initial game configuration.
+	[self willChangeValueForKey: @"isEmulating"];
 	hasConfigured = YES;
+	[self didChangeValueForKey: @"isEmulating"];
 }
 
 //After all preflight configuration has finished, go ahead and open whatever file we're pointing at
@@ -557,6 +565,19 @@
 	[NSObject cancelPreviousPerformRequestsWithTarget: [self mainWindowController]
 											 selector: @selector(toggleFullScreenWithZoom:)
 											   object: [NSNumber numberWithBool: YES]];
+}
+
+- (void) didChangeEmulationState: (NSNotification *)notification
+{
+	//These reside in BXEmulatorController, as should this function, but so be it
+	[self willChangeValueForKey: @"sliderSpeed"];
+	[self didChangeValueForKey: @"sliderSpeed"];
+	
+	[self willChangeValueForKey: @"frameskip"];
+	[self didChangeValueForKey: @"frameskip"];
+	
+	[self willChangeValueForKey: @"dynamic"];
+	[self didChangeValueForKey: @"dynamic"];	
 }
 
 

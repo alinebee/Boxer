@@ -86,14 +86,14 @@ public:
 				if(i_drive < DOS_DRIVES && i_drive >= 0 && Drives[i_drive]) {
 					switch (DriveManager::UnmountDrive(i_drive)) {
 					case 0:
-						//--Added 2010-01-18 by Alun Bestor: let Boxer know that the drive state has changed
-						boxer_driveDidUnmount(i_drive);
-						//--End of modifications
-							
 						Drives[i_drive] = 0;
 						if(i_drive == DOS_GetDefaultDrive()) 
 							DOS_SetDrive(toupper('Z') - 'A');
 						WriteOut(MSG_Get("PROGRAM_MOUNT_UMOUNT_SUCCESS"),umount[0]);
+							
+						//--Added 2010-01-18 by Alun Bestor: let Boxer know that the drive state has changed
+						boxer_driveDidUnmount(i_drive);
+						//--End of modifications
 						break;
 					case 1:
 						WriteOut(MSG_Get("PROGRAM_MOUNT_UMOUNT_NO_VIRTUAL"));
@@ -1004,14 +1004,15 @@ public:
 				if (i_drive < DOS_DRIVES && i_drive >= 0 && Drives[i_drive]) {
 					switch (DriveManager::UnmountDrive(i_drive)) {
 					case 0:
-						//--Added 2010-01-18 by Alun Bestor: let Boxer know that the drive state has changed
-						boxer_driveDidUnmount(i_drive);
-						//--End of modifications
-							
 						Drives[i_drive] = 0;
 						if (i_drive == DOS_GetDefaultDrive()) 
 							DOS_SetDrive(toupper('Z') - 'A');
 						WriteOut(MSG_Get("PROGRAM_MOUNT_UMOUNT_SUCCESS"),umount[0]);
+						
+						//--Added 2010-01-18 by Alun Bestor: let Boxer know that the drive state has changed
+						boxer_driveDidUnmount(i_drive);
+						//--End of modifications
+							
 						break;
 					case 1:
 						WriteOut(MSG_Get("PROGRAM_MOUNT_UMOUNT_NO_VIRTUAL"));

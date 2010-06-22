@@ -16,10 +16,34 @@
 #import "video.h"
 #import "mouse.h"
 
+//How long in seconds to 'hold down' a fake keypress before releasing it.
+//This gives games enough time to register that the key has been pressed.
+const NSTimeInterval BXFakeKeypressReleaseDelay = 0.25; 
 
 //Declared in mapper.cpp
 void MAPPER_CheckEvent(SDL_Event *event);
 void MAPPER_LosingFocus();
+
+
+@interface BXInputHandler (BXInputHandlerInternals)
+
+//A simple performSelector:withObject:afterDelay: wrapper, used by
+//sendKeypressWithCode: for releasing its fake key events after a brief delay.
+- (void) _releaseKeyWithValue: (NSNumber *)value;
+
+//Generates and returns an SDL key event with the specified parameters.
++ (SDL_Event) _SDLKeyEventForKeyCode: (CGKeyCode)keyCode
+							 pressed: (BOOL)pressed
+					   withModifiers: (NSUInteger)modifierFlags;
+
+//Returns the SDL key constant corresponding to the specified OS X virtual keycode.
++ (SDLKey) _convertToSDLKeyCode: (CGKeyCode)keyCode;	
+
+//Returns the appropriate SDL modifier bitmask for the specified NSEvent modifier flags.
++ (SDLMod) _convertToSDLModifiers: (NSUInteger)modifierFlags;
+
+@end
+
 
 @implementation BXInputHandler
 @synthesize emulator;
@@ -104,11 +128,14 @@ void MAPPER_LosingFocus();
 					  pressed: (BOOL)pressed
 				withModifiers: (NSUInteger)modifierFlags
 {
-	SDL_Event keyEvent = [[self class] _SDLKeyEventForKeyCode: keyCode
-													  pressed: pressed
-												withModifiers: modifierFlags];
-	
-	if ([[self emulator] isExecuting]) MAPPER_CheckEvent(&keyEvent);
+	if ([[self emulator] isExecuting])
+	{		
+		SDL_Event keyEvent = [[self class] _SDLKeyEventForKeyCode: keyCode
+														  pressed: pressed
+													withModifiers: modifierFlags];
+		
+		MAPPER_CheckEvent(&keyEvent);
+	}
 }
 
 - (void) sendKeyEventWithCode: (unsigned short)keyCode
@@ -120,9 +147,11 @@ void MAPPER_LosingFocus();
 - (void) sendKeypressWithCode: (unsigned short)keyCode
 {
 	[self sendKeyEventWithCode: keyCode pressed: YES];
-	[self sendKeyEventWithCode: keyCode pressed: NO];
+	//Release the key after a brief delay
+	[self performSelector: @selector(_releaseKeyWithValue:)
+			   withObject: [NSNumber numberWithInt: (int)keyCode]
+			   afterDelay: BXFakeKeypressReleaseDelay];
 }
-
 
 #pragma mark -
 #pragma mark Faking events
@@ -254,6 +283,12 @@ void MAPPER_LosingFocus();
 #pragma mark Internal methods
 
 @implementation BXInputHandler (BXInputHandlerInternals)
+
+- (void) _releaseKeyWithValue: (NSNumber *)value
+{
+	unsigned short keyCode = (unsigned short)[value intValue];
+	[self sendKeyEventWithCode: keyCode pressed: NO];
+}
 
 
 + (SDL_Event) _SDLKeyEventForKeyCode: (CGKeyCode)keyCode

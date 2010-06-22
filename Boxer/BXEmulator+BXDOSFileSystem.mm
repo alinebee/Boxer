@@ -591,7 +591,7 @@ enum {
 	char driveLetter		= index + 'A';
 	const char *drivePath	= [path cStringUsingEncoding: BXDirectStringEncoding];
 	
-	int error;
+	int error = -1;
 	DOS_Drive *drive = new isoDrive(driveLetter, drivePath, BXCDROMMediaID, error);
 	
 	if (!(error == BXMakeCDROMSuccess || error == BXMakeCDROMSuccessLimited))
@@ -615,7 +615,7 @@ enum {
 	char driveLetter		= index + 'A'; //Oh to hell with it, I give up on petty lookups
 	const char *drivePath	= [path cStringUsingEncoding: BXDirectStringEncoding];
 	
-	int error;
+	int error = -1;
 	DOS_Drive *drive = new cdromDrive(driveLetter,
 									  drivePath,
 									  geometry.bytesPerSector,

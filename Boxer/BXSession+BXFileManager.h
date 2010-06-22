@@ -9,7 +9,6 @@
 //The BXFileManager category extends BXSession with methods specifically for controlling the
 //DOS filesystem and for responding to relevant changes in the OS X filesystem.
 
-#import <Cocoa/Cocoa.h>
 #import "BXSession.h"
 
 @class BXDrive;

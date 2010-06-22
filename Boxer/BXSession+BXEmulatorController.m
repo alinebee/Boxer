@@ -8,7 +8,6 @@
 #import "BXSession+BXEmulatorController.h"
 #import "BXEmulator+BXShell.h"
 #import "BXEmulator+BXPaste.h"
-#import "BXInputHandler.h"
 #import "BXValueTransformers.h"
 #import "BXVideoFormatAlert.h"
 #import "BXAppController.h"
@@ -76,20 +75,30 @@
 + (NSSet *) keyPathsForValuesAffectingSpeedDescription		{ return [NSSet setWithObject: @"sliderSpeed"]; }
 + (NSSet *) keyPathsForValuesAffectingFrameskipDescription	{ return [NSSet setWithObject: @"emulator.frameskip"]; }
 
+
 - (IBAction) incrementFrameSkip: (id)sender
 {
 	
 	NSNumber *newFrameskip = [NSNumber numberWithInteger: [[self emulator] frameskip] + 1];
-	if ([[self emulator] validateFrameskip: &newFrameskip error: nil])
+	if ([self validateFrameskip: &newFrameskip error: nil])
 		[[self emulator] setFrameskip: [newFrameskip integerValue]];
 }
 
 - (IBAction) decrementFrameSkip: (id)sender
 {
 	NSNumber *newFrameskip = [NSNumber numberWithInteger: [[self emulator] frameskip] - 1];
-	if ([[self emulator] validateFrameskip: &newFrameskip error: nil])
+	if ([self validateFrameskip: &newFrameskip error: nil])
 		[[self emulator] setFrameskip: [newFrameskip integerValue]];
 }
+
+- (BOOL) validateFrameskip: (id *)ioValue error: (NSError **)outError
+{
+	NSInteger theValue = [*ioValue integerValue];
+	if		(theValue < 0)				*ioValue = [NSNumber numberWithInteger: 0];
+	else if	(theValue > BXMaxFrameskip)	*ioValue = [NSNumber numberWithInteger: BXMaxFrameskip];
+	return YES;
+}
+
 
 - (IBAction) incrementSpeed: (id)sender
 {
@@ -97,7 +106,7 @@
 	
 	NSInteger currentSpeed = [[self emulator] fixedSpeed];
 	
-	if (currentSpeed >= [[self emulator] maxFixedSpeed]) [[self emulator] setAutoSpeed: YES];
+	if (currentSpeed >= BXMaxSpeedThreshold) [[self emulator] setAutoSpeed: YES];
 	else
 	{
 		NSInteger increment	= [[self class] incrementAmountForSpeed: currentSpeed goingUp: YES];
@@ -106,7 +115,7 @@
 		
 		//Validate our final value before assigning it
 		NSNumber *newSpeed = [NSNumber numberWithInteger: currentSpeed + increment];
-		if ([[self emulator] validateFixedSpeed: &newSpeed error: nil])
+		if ([self validateSpeed: &newSpeed error: nil])
 			[[self emulator] setFixedSpeed: [newSpeed integerValue]];
 	}
 }
@@ -117,7 +126,7 @@
 	
 	if ([[self emulator] isAutoSpeed])
 	{
-		[[self emulator] setFixedSpeed: [[self emulator] maxFixedSpeed]];
+		[[self emulator] setFixedSpeed: BXMaxSpeedThreshold];
 	}
 	else
 	{
@@ -129,10 +138,19 @@
 		
 		//Validate our final value before assigning it
 		NSNumber *newSpeed = [NSNumber numberWithInteger: currentSpeed - increment];
-		if ([[self emulator] validateFixedSpeed: &newSpeed error: nil])
+		if ([self validateSpeed: &newSpeed error: nil])
 			[[self emulator] setFixedSpeed: [newSpeed integerValue]];
 	}
 }
+
+- (BOOL) validateSpeed: (id *)ioValue error: (NSError **)outError
+{
+	NSInteger theValue = [*ioValue integerValue];
+	if		(theValue < BXMinSpeedThreshold) *ioValue = [NSNumber numberWithInteger: BXMinSpeedThreshold];
+	else if	(theValue > BXMaxSpeedThreshold) *ioValue = [NSNumber numberWithInteger: BXMaxSpeedThreshold];
+	return YES;
+}
+
 
 - (BOOL) validateUserInterfaceItem: (id)theItem
 {
@@ -158,27 +176,11 @@
 
 
 //Used to selectively enable/disable menu items by validateUserInterfaceItem
-- (BOOL) speedAtMinimum		{ return ![[self emulator] isAutoSpeed] && [[self emulator] fixedSpeed] <= [[self emulator] minFixedSpeed]; }
+- (BOOL) speedAtMinimum		{ return ![[self emulator] isAutoSpeed] && [[self emulator] fixedSpeed] <= BXMinSpeedThreshold; }
 - (BOOL) speedAtMaximum		{ return [[self emulator] isAutoSpeed]; }
 
 - (BOOL) frameskipAtMinimum	{ return [[self emulator] frameskip] <= 0; }
-- (BOOL) frameskipAtMaximum	{ return [[self emulator] frameskip] >= [[self emulator] maxFrameskip]; }
-
-
-//Keyboard events
-//---------------
-
-- (IBAction) sendEnter: (id)sender	{ [[[self emulator] inputHandler] sendEnter]; }
-- (IBAction) sendF1:	(id)sender	{ [[[self emulator] inputHandler] sendF1]; }
-- (IBAction) sendF2:	(id)sender	{ [[[self emulator] inputHandler] sendF2]; }
-- (IBAction) sendF3:	(id)sender	{ [[[self emulator] inputHandler] sendF3]; }
-- (IBAction) sendF4:	(id)sender	{ [[[self emulator] inputHandler] sendF4]; }
-- (IBAction) sendF5:	(id)sender	{ [[[self emulator] inputHandler] sendF5]; }
-- (IBAction) sendF6:	(id)sender	{ [[[self emulator] inputHandler] sendF6]; }
-- (IBAction) sendF7:	(id)sender	{ [[[self emulator] inputHandler] sendF7]; }
-- (IBAction) sendF8:	(id)sender	{ [[[self emulator] inputHandler] sendF8]; }
-- (IBAction) sendF9:	(id)sender	{ [[[self emulator] inputHandler] sendF9]; }
-- (IBAction) sendF10:	(id)sender	{ [[[self emulator] inputHandler] sendF10]; }
+- (BOOL) frameskipAtMaximum	{ return [[self emulator] frameskip] >= BXMaxFrameskip; }
 
 
 //Handling paste
@@ -228,7 +230,7 @@
 - (void) setSliderSpeed: (NSInteger)speed
 {	
 	//If we're at the maximum speed, bump it into auto-throttling mode
-	if (speed >= [[self emulator] maxFixedSpeed]) [[self emulator] setAutoSpeed: YES];
+	if (speed >= BXMaxSpeedThreshold) [[self emulator] setAutoSpeed: YES];
 	
 	//Otherwise, set the fixed speed
 	else [[self emulator] setFixedSpeed: speed];
@@ -238,7 +240,7 @@
 {
 	//Report the max fixed speed if we're in auto-throttling mode
 	
-	return ([[self emulator] isAutoSpeed]) ? [[self emulator] maxFixedSpeed] : [[self emulator] fixedSpeed];
+	return ([[self emulator] isAutoSpeed]) ? BXMaxSpeedThreshold : [[self emulator] fixedSpeed];
 }
 
 //Snap fixed speed to even increments, unless the Option key is held down

@@ -14,6 +14,9 @@
 #import "BXGeometry.h"
 #import "BXCursorFadeAnimation.h"
 
+//For keycodes
+#import <Carbon/Carbon.h>
+
 
 #pragma mark -
 #pragma mark Constants for configuring behaviour
@@ -460,6 +463,20 @@ enum {
 }
 
 
+#pragma mark -
+#pragma mark Simulating keyboard events
+
+- (IBAction) sendEnter: (id)sender	{ [[self representedObject] sendKeypressWithCode: kVK_Return]; }
+- (IBAction) sendF1:	(id)sender	{ [[self representedObject] sendKeypressWithCode: kVK_F1]; }
+- (IBAction) sendF2:	(id)sender	{ [[self representedObject] sendKeypressWithCode: kVK_F2]; }
+- (IBAction) sendF3:	(id)sender	{ [[self representedObject] sendKeypressWithCode: kVK_F3]; }
+- (IBAction) sendF4:	(id)sender	{ [[self representedObject] sendKeypressWithCode: kVK_F4]; }
+- (IBAction) sendF5:	(id)sender	{ [[self representedObject] sendKeypressWithCode: kVK_F5]; }
+- (IBAction) sendF6:	(id)sender	{ [[self representedObject] sendKeypressWithCode: kVK_F6]; }
+- (IBAction) sendF7:	(id)sender	{ [[self representedObject] sendKeypressWithCode: kVK_F7]; }
+- (IBAction) sendF8:	(id)sender	{ [[self representedObject] sendKeypressWithCode: kVK_F8]; }
+- (IBAction) sendF9:	(id)sender	{ [[self representedObject] sendKeypressWithCode: kVK_F9]; }
+- (IBAction) sendF10:	(id)sender	{ [[self representedObject] sendKeypressWithCode: kVK_F10]; }
 
 
 #pragma mark -

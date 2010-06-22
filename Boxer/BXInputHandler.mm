@@ -153,25 +153,6 @@ void MAPPER_LosingFocus();
 			   afterDelay: BXFakeKeypressReleaseDelay];
 }
 
-#pragma mark -
-#pragma mark Faking events
-
-- (void) sendTab	{ return [self sendKeypressWithCode: kVK_Tab]; }
-- (void) sendDelete	{ return [self sendKeypressWithCode: kVK_Delete]; }
-- (void) sendSpace	{ return [self sendKeypressWithCode: kVK_Space]; }
-- (void) sendEnter	{ return [self sendKeypressWithCode: kVK_Return]; }
-
-- (void) sendF1		{ return [self sendKeypressWithCode: kVK_F1]; }
-- (void) sendF2		{ return [self sendKeypressWithCode: kVK_F2]; }
-- (void) sendF3		{ return [self sendKeypressWithCode: kVK_F3]; }
-- (void) sendF4		{ return [self sendKeypressWithCode: kVK_F4]; }
-- (void) sendF5		{ return [self sendKeypressWithCode: kVK_F5]; }
-- (void) sendF6		{ return [self sendKeypressWithCode: kVK_F6]; }
-- (void) sendF7		{ return [self sendKeypressWithCode: kVK_F7]; }
-- (void) sendF8		{ return [self sendKeypressWithCode: kVK_F8]; }
-- (void) sendF9		{ return [self sendKeypressWithCode: kVK_F9]; }
-- (void) sendF10	{ return [self sendKeypressWithCode: kVK_F10]; }
-
 
 #pragma mark -
 #pragma mark Keyboard layout methods

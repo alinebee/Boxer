@@ -10,7 +10,6 @@
 #import "BXValueTransformers.h"
 #import "BXSession+BXFileManager.h"
 #import "BXProgramPanel.h"
-#import "BXEmulator.h"
 
 
 @implementation BXProgramPanelController
@@ -43,11 +42,11 @@
 
 - (void) setRepresentedObject: (id)session
 {
-	//if ([self representedObject]) [[self representedObject] removeObserver: self forKeyPath: @"emulator.isAtPrompt"];
+	if ([self representedObject]) [[self representedObject] removeObserver: self forKeyPath: @"activeProgramPath"];
 	
 	[super setRepresentedObject: session];
 	
-	//if (session) [session addObserver: self forKeyPath: @"emulator.isAtPrompt" options: 0 context: nil];
+	if (session) [session addObserver: self forKeyPath: @"activeProgramPath" options: 0 context: nil];
 }
 
 //Whenever the active program changes, change which view is drawn
@@ -56,7 +55,7 @@
 						change: (NSDictionary *)change
 					   context: (void *)context
 {	
-	if ([keyPath isEqualToString: @"emulator.isAtPrompt"]) [self syncActivePanel];
+	[self syncActivePanel];
 }
 
 - (void) setView: (NSView *)view

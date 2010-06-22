@@ -21,9 +21,8 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="246"/>
 			<integer value="66"/>
-			<integer value="11"/>
+			<integer value="246"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -51,36 +50,6 @@
 				<string key="NSClassName">NSApplication</string>
 			</object>
 			<object class="NSObjectController" id="693023672">
-				<object class="NSMutableArray" key="NSDeclaredKeys">
-					<bool key="EncodedWithXMLCoder">YES</bool>
-					<object class="NSMutableString">
-						<characters key="NS.bytes">speedDescription</characters>
-					</object>
-					<object class="NSMutableString">
-						<characters key="NS.bytes">sliderSpeed</characters>
-					</object>
-					<object class="NSMutableString">
-						<characters key="NS.bytes">emulator.isExecuting</characters>
-					</object>
-					<object class="NSMutableString">
-						<characters key="NS.bytes">mouseLocked</characters>
-					</object>
-					<string>package.executables</string>
-					<string>gamePackage.executables</string>
-					<string>executables</string>
-					<string>emulator.isRunningProcess</string>
-					<string>emulator.isGamePackage</string>
-					<string>isGamePackage</string>
-					<string>processDisplayName</string>
-					<string>displayName</string>
-					<string>emulator.activeProgramPath</string>
-					<string>activeProgramPath</string>
-					<string>toggleLabel</string>
-					<string>gamePackage</string>
-					<string>emulator.isAtPrompt</string>
-					<string>emulator.isInProcess</string>
-					<string>isRunningProcess</string>
-				</object>
 				<string key="NSObjectClassName">BXSession</string>
 				<object class="_NSManagedProxy" key="_NSManagedProxy"/>
 			</object>
@@ -101,7 +70,7 @@
 			</object>
 			<object class="NSCollectionViewItem" id="72546225"/>
 			<object class="NSCustomView" id="156718782">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">274</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -231,11 +200,10 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{640, 64}</string>
-				<reference key="NSSuperview"/>
 				<string key="NSClassName">BXProgramPanel</string>
 			</object>
 			<object class="NSCustomView" id="515511690">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">274</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -244,7 +212,6 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{99, 10}, {443, 14}}</string>
 						<reference key="NSSuperview" ref="515511690"/>
-						<reference key="NSWindow"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="118197522">
 							<int key="NSCellFlags">68288064</int>
@@ -266,7 +233,6 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{129, 25}, {381, 18}}</string>
 						<reference key="NSSuperview" ref="515511690"/>
-						<reference key="NSWindow"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="BGHUDButtonCell" key="NSCell" id="14580453">
 							<int key="NSCellFlags">-2080244224</int>
@@ -292,8 +258,6 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{640, 64}</string>
-				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<string key="NSClassName">BXProgramPanel</string>
 			</object>
 			<object class="NSCustomView" id="1029538789">

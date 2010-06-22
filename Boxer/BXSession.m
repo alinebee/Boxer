@@ -171,10 +171,6 @@
 		
 	return processName;
 }
-+ (NSSet *) keyPathsForValuesAffectingProcessDisplayName
-{
-	return [NSSet setWithObjects: @"activeProgramPath", @"emulator.processName", nil];
-}
 
 
 
@@ -244,8 +240,6 @@
 		[self didChangeValueForKey: @"representedIcon"];
 	}
 }
-+ (NSSet *) keyPathsForValuesAffectingRepresentedIcon	{ return [NSSet setWithObject: @"gamePackage.coverArt"]; }
-
 
 - (NSArray *) executables
 {
@@ -315,6 +309,11 @@
 	}
 	return [documentation allValues];
 }
+
++ (NSSet *) keyPathsForValuesAffectingRepresentedIcon	{ return [NSSet setWithObject: @"gamePackage.coverArt"]; }
++ (NSSet *) keyPathsForValuesAffectingDocumentation		{ return [NSSet setWithObject: @"gamePackage.documentation"]; }
++ (NSSet *) keyPathsForValuesAffectingExecutables		{ return [NSSet setWithObject: @"gamePackage.executables"]; }
+
 @end
 
 

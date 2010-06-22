@@ -58,22 +58,6 @@
 //Sends a keyup and a keydown event for the specified code, using the current modifier flags.
 - (void) sendKeypressWithCode: (unsigned short)keyCode;
 
-//Sends various fake events to DOS.
-- (void) sendTab;
-- (void) sendDelete;
-- (void) sendSpace;
-- (void) sendEnter;
-- (void) sendF1;
-- (void) sendF2;
-- (void) sendF3;
-- (void) sendF4;
-- (void) sendF5;
-- (void) sendF6;
-- (void) sendF7;
-- (void) sendF8;
-- (void) sendF9;
-- (void) sendF10;
-
 
 //Returns the DOS keyboard layout code for the currently-active input method in OS X.
 //Returns [BXInputHandler defaultKeyboardLayout] if no appropriate layout could be found.

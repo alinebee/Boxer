@@ -63,4 +63,20 @@
 //Lock/unlock the mouse.
 - (IBAction) toggleMouseLocked: (id)sender;
 
+
+#pragma mark -
+#pragma mark Simulating keypresses
+
+- (IBAction) sendEnter: (id)sender;
+- (IBAction) sendF1:	(id)sender;
+- (IBAction) sendF2:	(id)sender;
+- (IBAction) sendF3:	(id)sender;
+- (IBAction) sendF4:	(id)sender;
+- (IBAction) sendF5:	(id)sender;
+- (IBAction) sendF6:	(id)sender;
+- (IBAction) sendF7:	(id)sender;
+- (IBAction) sendF8:	(id)sender;
+- (IBAction) sendF9:	(id)sender;
+- (IBAction) sendF10:	(id)sender;
+
 @end

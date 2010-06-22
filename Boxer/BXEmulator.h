@@ -21,7 +21,6 @@
 
 
 #import <Cocoa/Cocoa.h>
-#import <Carbon/Carbon.h>
 
 //Emulation-related constant definitions
 //--------------------------------------
@@ -54,7 +53,6 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 
 @interface BXEmulator : NSOperation
 {
-	NSThread *thread;
 	BXSession *delegate;
 	BXInputHandler *inputHandler;
 	BXVideoHandler *videoHandler;
@@ -66,18 +64,18 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 	NSMutableArray *configFiles;
 	NSMutableDictionary *driveCache;
 	
-	NSInteger minFixedSpeed;
-	NSInteger maxFixedSpeed;
-	NSUInteger maxFrameskip;
-	
 	BOOL isInterrupted;
 	
 	//Used by BXShell
 	NSMutableArray *commandQueue;
 }
 
-//Properties
-//----------
+
+#pragma mark -
+#pragma mark Properties
+
+//The BXSession delegate responsible for this emulator.
+@property (assign)		BXSession *delegate;
 
 //The name of the currently-executing DOSBox process. Will be nil if no process is running.
 @property (copy)		NSString *processName;
@@ -90,40 +88,24 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 //Will be nil if no process is running or if the process is on an image or DOSBox-internal drive.
 @property (copy)		NSString *processLocalPath;
 
-//The BXSession delegate responsible for this emulator.
-@property (assign)		BXSession *delegate;
-
-//The current thread under which the emulator is running. This is not retained.
-@property (readonly)	NSThread *thread;
-
-//Our DOSBox input handler.
-@property (retain)		BXInputHandler *inputHandler;
-
-//Our DOSBox video and rendering handler.
-@property (retain)		BXVideoHandler *videoHandler;
-
+@property (retain)		BXInputHandler *inputHandler;	//Our DOSBox input handler.
+@property (retain)		BXVideoHandler *videoHandler;	//Our DOSBox video and rendering handler.
 
 //An array of OS X paths to configuration files that will be processed by this session during startup.
 @property (readonly)	NSMutableArray *configFiles;
 
-//The current and maximum allowable value for the frameskip setting.
-//Defaults to 9.
-@property (assign)		NSUInteger frameskip;
-@property (assign)		NSUInteger maxFrameskip;
-
-
-//The current, minimum and maximum allowable CPU speeds.
-//These default to BXMinSpeedThreshold and BXMaxSpeedThreshold.
-@property (assign)		NSInteger fixedSpeed;
-@property (assign)		NSInteger minFixedSpeed;
-@property (assign)		NSInteger maxFixedSpeed;
-
 //An array of queued command strings to execute on the DOS command line.
 @property (readonly)	NSMutableArray *commandQueue;
 
+@property (assign)		NSUInteger frameskip;	//The current value for the frameskip setting.
+@property (assign)		NSInteger fixedSpeed;	//The current CPU speed.
 
-//Class methods
-//-------------
+
+#pragma mark -
+#pragma mark Class methods
+
+//Returns the currently active DOS session.
++ (BXEmulator *) currentEmulator;
 
 //An array of names of internal DOSBox processes.
 + (NSArray *) internalProcessNames;
@@ -131,18 +113,9 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 //Returns whether the specified process name is a DOSBox internal process (according to internalProcessNames).
 + (BOOL) isInternal: (NSString *)processName;
 
-//Returns the currently active DOS session.
-+ (BXEmulator *) currentEmulator;
 
-
-//Initializating the DOS emulator
-//-------------------------------
-
-//Starts up the main emulator loop. 
-- (void) main;
-
-//Introspecting emulation state
-//-----------------------------
+#pragma mark -
+#pragma mark Introspecting emulation state
 
 //Returns whether DOSBox is currently running a process.
 - (BOOL) isRunningProcess;
@@ -157,14 +130,8 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 - (BOOL) isAtPrompt;
 
 
-//Controlling emulation settings
-//------------------------------
-//While it is safe to call these directly, in most cases these should be modified through
-//BXEmulatorController's wrapper functions instead, as those use Boxer-specific logic.
-
-
-- (BOOL) validateFrameskip: (id *)ioValue error: (NSError **)outError;
-- (BOOL) validateFixedSpeed: (id *)ioValue error: (NSError **)outError;
+#pragma mark -
+#pragma mark Controlling DOSBox emulation settings
 
 //Get/set whether CPU speed is fixed or automatically maxed.
 //NOTE: this does not correspond to the DOSBox "auto" setting but to the DOSBox "max" setting.
@@ -182,8 +149,8 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 - (void) setCoreMode: (BXCoreMode)coreMode;
 
 
-//Input-handling
-//--------------
+#pragma mark -
+#pragma mark Responding to application state
 
 //Used to notify the emulator that it will be interrupted by UI events.
 //This will mute sound and otherwise prepare DOSBox for pausing.

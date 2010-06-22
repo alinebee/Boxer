@@ -6,21 +6,18 @@
  */
 
 #import "BXEmulator.h"
-#import "BXSession+BXEmulatorController.h"
 
 #import "BXEmulator+BXShell.h"
 #import "BXInputHandler.h"
 #import "BXVideoHandler.h"
 
 #import <SDL/SDL.h>
-#import "config.h"
 #import "cpu.h"
 #import "control.h"
 #import "shell.h"
 #import "mapper.h"
-#import "callback.h"
 
-#import <crt_externs.h>		//for _NSGetArgc() and _NSGetArgv()
+#import <crt_externs.h> //for _NSGetArgc() and _NSGetArgv()
 
 //Default name that DOSBox uses when there's no process running. Used by processName for string comparisons.
 NSString * const shellProcessName = @"DOSBOX";
@@ -41,26 +38,40 @@ NSStringEncoding BXDirectStringEncoding		= NSUTF8StringEncoding;
 //Defined by us in midi.cpp
 void boxer_toggleMIDIOutput(bool enabled);
 
-
 //defined in dos_execute.cpp
 extern const char* RunningProgram;
 
+#if (C_DYNAMIC_X86)
+//defined in core_dyn_x86.cpp
+void CPU_Core_Dyn_X86_Cache_Init(bool enable_cache);
+void CPU_Core_Dyn_X86_SetFPUMode(bool dh_fpu);
+
+#elif (C_DYNREC)
+//defined in core_dynrec.cpp
+void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
+#endif
 
 BXEmulator *currentEmulator = nil;
 
 
 @implementation BXEmulator
 @synthesize processName, processPath, processLocalPath;
-@synthesize delegate, thread;
-@synthesize minFixedSpeed, maxFixedSpeed, maxFrameskip;
+@synthesize delegate;
 @synthesize configFiles;
 @synthesize commandQueue;
 @synthesize inputHandler;
 @synthesize videoHandler;
 
 
-//Introspective class methods
-//---------------------------
+#pragma mark -
+#pragma mark Class methods
+
+
+//Returns the currently executing emulator instance, for DOSBox coalface functions to talk to.
++ (BXEmulator *) currentEmulator
+{
+	return currentEmulator;
+}
 
 //Used by processIsInternal, to determine when we're running one of DOSBox's own builtin programs
 //TODO: generate this from DOSBox's builtin program manifest instead
@@ -90,10 +101,10 @@ BXEmulator *currentEmulator = nil;
 }
 
 
-//Key-value binding-related class methods
-//---------------------------------------
+#pragma mark -
+#pragma mark Key-value binding helper methods
 
-//Every property also depends on whether we're executing or not
+//Every property depends on whether we're executing or not
 + (NSSet *) keyPathsForValuesAffectingValueForKey: (NSString *)key
 {
 	NSSet *keyPaths = [super keyPathsForValuesAffectingValueForKey: key];
@@ -101,28 +112,19 @@ BXEmulator *currentEmulator = nil;
 	return keyPaths;
 }
 
-+ (NSSet *) keyPathsForValuesAffectingMouseLocked		{ return [NSSet setWithObject: @"fullScreen"]; }
 + (NSSet *) keyPathsForValuesAffectingDynamic			{ return [NSSet setWithObject: @"coreMode"]; }
-
 + (NSSet *) keyPathsForValuesAffectingIsAtPrompt		{ return [NSSet setWithObjects: @"isRunningProcess", @"isInBatchScript", nil]; }
 + (NSSet *) keyPathsForValuesAffectingIsRunningProcess	{ return [NSSet setWithObjects: @"processName", @"processPath", nil]; }
 + (NSSet *) keyPathsForValuesAffectingProcessIsInternal	{ return [NSSet setWithObject: @"processName"]; }
 
 
-+ (BXEmulator *) currentEmulator
-{
-	return currentEmulator;
-}
+#pragma mark -
+#pragma mark Initialization and teardown
 
 - (id) init
 {
 	if ((self = [super init]))
 	{
-		//Todo: bind these to hidden preferences instead?
-		maxFixedSpeed		= BXMaxSpeedThreshold;
-		minFixedSpeed		= BXMinSpeedThreshold;
-		maxFrameskip		= 9;
-		
 		configFiles			= [[NSMutableArray alloc] initWithCapacity: 10];
 		commandQueue		= [[NSMutableArray alloc] initWithCapacity: 4];
 		driveCache			= [[NSMutableDictionary alloc] initWithCapacity: DOS_DRIVES];
@@ -150,23 +152,13 @@ BXEmulator *currentEmulator = nil;
 	NSLog(@"BXEmulator dealloc");
 }
 
-
-//Threading and operation control
-//-------------------------------
-
 - (void) main
 {
+	//Record ourselves as the current emulator instance for DOSBox to talk to
 	currentEmulator = self;
-	
-	//Record the thread we are running on for comparisons later
-	//We don't retain it since presumably it will always outlive us
-	thread = [NSThread currentThread];
 	
 	//Start DOSBox's main loop
 	[self _startDOSBox];
-	
-	//Clean up after DOSBox finishes
-	[[self videoHandler] shutdown];
 	
 	if (currentEmulator == self) currentEmulator = nil;
 	
@@ -174,9 +166,8 @@ BXEmulator *currentEmulator = nil;
 }
 
 
-
-//Introspecting emulation state
-//-----------------------------
+#pragma mark -
+#pragma mark Introspecting emulation state
 
 - (BOOL) isRunningProcess
 {
@@ -202,8 +193,8 @@ BXEmulator *currentEmulator = nil;
 }
 
 
-//Controlling emulation state
-//---------------------------
+#pragma mark -
+#pragma mark Controlling DOSBox emulation settings
 
 - (NSUInteger) frameskip
 {
@@ -216,16 +207,6 @@ BXEmulator *currentEmulator = nil;
 	[[self videoHandler] setFrameskip: frameskip];
 	[self didChangeValueForKey: @"frameskip"];
 }
-
-- (BOOL) validateFrameskip: (id *)ioValue error: (NSError **)outError
-{
-	NSInteger theValue = [*ioValue integerValue];
-	if		(theValue < 0)						*ioValue = [NSNumber numberWithInteger: 0];
-	else if	(theValue > [self maxFrameskip])	*ioValue = [NSNumber numberWithInteger: [self maxFrameskip]];
-	return YES;
-}
-
-
 
 - (NSInteger) fixedSpeed
 {
@@ -248,22 +229,12 @@ BXEmulator *currentEmulator = nil;
 	
 		CPU_OldCycleMax = CPU_CycleMax = (Bit32s)newSpeed;
 		
-		//Wipe out the cycles queue - we do this because DOSBox's CPU functions do whenever they modify the cycles
+		//Wipe out the cycles queue: we do this because DOSBox's CPU functions do whenever they modify the cycles
 		CPU_CycleLeft	= 0;
 		CPU_Cycles		= 0;
 		
 		[self didChangeValueForKey: @"fixedSpeed"];
 	}
-}
-
-- (BOOL) validateFixedSpeed: (id *)ioValue error: (NSError **)outError
-{
-	NSInteger	min = [self minFixedSpeed],
-				max	= [self maxFixedSpeed],
-				theValue = [*ioValue integerValue];
-	if		(theValue < min) *ioValue = [NSNumber numberWithInteger: min];
-	else if	(theValue > max) *ioValue = [NSNumber numberWithInteger: max];
-	return YES;
 }
 
 - (BOOL) isAutoSpeed
@@ -299,7 +270,6 @@ BXEmulator *currentEmulator = nil;
 //CPU emulation
 //-------------
 
-//Note: these work but are currently unused. This is because this implementation is just too simple; games may crash when the emulation mode is arbitrarily changed in the middle of program execution, so instead we should queue this up and require an emulation restart for it to take effect.
 - (BXCoreMode) coreMode
 {
 	if ([self isExecuting])
@@ -328,27 +298,33 @@ BXEmulator *currentEmulator = nil;
 {
 	if ([self isExecuting] && [self coreMode] != coreMode)
 	{
-		//We change the core by feeding command settings to Config
-		NSString *modeName;
 		switch(coreMode)
 		{
-			case BXCoreNormal:	modeName = @"normal";	break;
-			case BXCoreDynamic:	modeName = @"dynamic";	break;
-			case BXCoreSimple:	modeName = @"simple";	break;
-			case BXCoreFull:	modeName = @"full";		break;
+			case BXCoreNormal:
+				cpudecoder = &CPU_Core_Normal_Run;
+				break;
+				
+			case BXCoreDynamic:
+#if (C_DYNAMIC_X86)
+				CPU_Core_Dyn_X86_Cache_Init(true);
+				CPU_Core_Dyn_X86_SetFPUMode(true);
+				cpudecoder = &CPU_Core_Dyn_X86_Run;
+#endif
+				
+#if (C_DYNREC)
+				CPU_Core_Dynrec_Cache_Init(true);
+				cpudecoder = &CPU_Core_Dynrec_Run;
+#endif
+				break;
+			case BXCoreSimple:	
+				cpudecoder = &CPU_Core_Simple_Run;
+				break;
+			case BXCoreFull:
+				cpudecoder = &CPU_Core_Full_Run;
+				break;
 		}
-		if (modeName)
-		{
-			NSInteger currentSpeed		= [self fixedSpeed];
-			BOOL currentSpeedIsAuto		= [self isAutoSpeed];
-			
-			[self setConfig: @"core" to: modeName];
-			
-			//Changing the core mode will revert the speed settings, so we need to reset them manually afterwards
-			//Todo: try to avoid the momentary flash of old values this causes
-			[self setFixedSpeed: currentSpeed];
-			[self setAutoSpeed: currentSpeedIsAuto];
-		}
+		CPU_CycleLeft=0;
+		CPU_Cycles=0;
 	}
 }
 - (BOOL) isDynamic	{ return [self coreMode] == BXCoreDynamic; }
@@ -389,8 +365,13 @@ BXEmulator *currentEmulator = nil;
 
 - (void) cancel
 {
+	//Breaks out of DOSBox's commandline input loop
+	[self discardShellInput];
+	
+	//Tells DOSBox to close the current shell at the end of the commandline input loop
 	DOS_Shell *shell = [self _currentShell];
 	if (shell) shell->exit = YES;
+	
 	[super cancel];
 }
 @end
@@ -451,13 +432,6 @@ BXEmulator *currentEmulator = nil;
 		NSString *newProcessName = [NSString stringWithCString: RunningProgram encoding: BXDirectStringEncoding];
 		if ([newProcessName isEqualToString: shellProcessName]) newProcessName = nil;
 		[self setProcessName: newProcessName];
-		
-		//Update our max fixed speed if the real speed has gone higher
-		//this allows us to gracefully handle extra-high speeds imposed by game settings
-		//Disabled for now, since we have implemented the banded CPU slider any adjustments to the max speed will fuck with its shit - will reenable this when I write code to sync changes to this with the highest slider band
-		
-		//NSInteger newFixedSpeed = [self fixedSpeed];
-		//if (newFixedSpeed > [self maxFixedSpeed]) [self setMaxFixedSpeed: newFixedSpeed];
 	}
 }
 
@@ -477,7 +451,7 @@ BXEmulator *currentEmulator = nil;
 		NSEvent *event;
 		while (event = [NSApp nextEventMatchingMask: NSAnyEventMask untilDate: nil inMode: NSDefaultRunLoopMode dequeue: YES])
 			[NSApp sendEvent: event];
-				
+
 	}
 	return YES;
 }
@@ -545,6 +519,9 @@ BXEmulator *currentEmulator = nil;
 	//Shut down SDL after DOSBox exits.
 	SDL_Quit();
 	
+	
+	//Clean up after DOSBox finishes
+	[[self videoHandler] shutdown];
 	
 	//Cleanup leftover globals
 	cpu = CPUBlock();

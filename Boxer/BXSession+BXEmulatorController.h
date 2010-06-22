@@ -36,6 +36,9 @@ enum
 	BXMinSpeedIncrement		= 50	//50->1000,		19 increments in band
 };
 
+//The maximum frameskip level we can set
+const NSUInteger BXMaxFrameskip = 9;
+
 
 @class BXEmulator;
 
@@ -62,12 +65,18 @@ enum
 //Responding to interface actions and validation 
 //----------------------------------------------
 
-- (IBAction) incrementFrameSkip:	(id)sender;	//Increases the current frameskip by 1.
-- (IBAction) decrementFrameSkip:	(id)sender;	//Decreases the current frameskip by 1.
+- (IBAction) incrementFrameSkip: (id)sender;	//Increases the current frameskip by 1.
+- (IBAction) decrementFrameSkip: (id)sender;	//Decreases the current frameskip by 1.
 
-- (IBAction) incrementSpeed:		(id)sender;	//Increases the CPU speed by an appropriate increment, according to incrementAmountForSpeed:.
-- (IBAction) decrementSpeed:		(id)sender;	//Decreases the CPU speed by an appropriate decrement.
+//Caps the frameskip amount within minimum and maximum limits
+- (BOOL) validateFrameskip: (id *)ioValue error: (NSError **)outError;
+
+- (IBAction) incrementSpeed: (id)sender;	//Increases the CPU speed by an appropriate increment, according to incrementAmountForSpeed:.
+- (IBAction) decrementSpeed: (id)sender;	//Decreases the CPU speed by an appropriate decrement.
 												
+//Caps the speed within minimum and maximum limits
+- (BOOL) validateSpeed: (id *)ioValue error: (NSError **)outError;
+
 //Returns whether the current frameskip level is at the minimum or maximum bounds.
 - (BOOL) frameskipAtMinimum; 
 - (BOOL) frameskipAtMaximum;
@@ -75,24 +84,6 @@ enum
 //Returns whether the current CPU speed is at the minimum or maximum bounds.
 - (BOOL) speedAtMinimum;
 - (BOOL) speedAtMaximum;
-
-
-//Keyboard events
-//---------------
-
-//Sends the appropriate keystroke to the emulator.
-//These will be replaced in future with a single method that uses the represented object or IB tag of the sender. 
-- (IBAction) sendEnter: (id)sender;
-- (IBAction) sendF1:	(id)sender;
-- (IBAction) sendF2:	(id)sender;
-- (IBAction) sendF3:	(id)sender;
-- (IBAction) sendF4:	(id)sender;
-- (IBAction) sendF5:	(id)sender;
-- (IBAction) sendF6:	(id)sender;
-- (IBAction) sendF7:	(id)sender;
-- (IBAction) sendF8:	(id)sender;
-- (IBAction) sendF9:	(id)sender;
-- (IBAction) sendF10:	(id)sender;
 
 
 //Handling paste

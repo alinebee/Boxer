@@ -5,8 +5,9 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-#import "BXAppController.h"
 #import "BXSession+BXFileManager.h"
+#import "BXAppController.h"
+
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulator+BXShell.h"
 #import "UKFNSubscribeFileWatcher.h"
@@ -22,10 +23,6 @@
 
 
 @implementation BXSession (BXFileManager)
-
-+ (NSSet *) keyPathsForValuesAffectingDrives		{ return [NSSet setWithObject: @"emulator.mountedDrives"]; }
-+ (NSSet *) keyPathsForValuesAffectingExecutables	{ return [NSSet setWithObject: @"gamePackage.executables"]; }
-
 
 //Class methods concerning filetypes
 //----------------------------------

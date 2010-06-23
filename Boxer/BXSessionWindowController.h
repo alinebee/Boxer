@@ -63,7 +63,7 @@
 @property (assign) BOOL resizingProgrammatically;
 
 //A reference to the emulator instance for this window.
-@property (assign) BXEmulator *emulator;
+@property (retain) BXEmulator *emulator;
 
 
 //Recast NSWindowController's standard accessors so that we get our own classes
@@ -152,8 +152,9 @@
 //Performs the slide animation used to toggle the status bar and program panel on or off
 - (void) _slideView: (NSView *)view shown: (BOOL)show;
 
-//Resize the window to accomodate the specified frame.
-- (void) _resizeToAccommodateFrame: (BXFrameBuffer *)frame;
+//Resize the window if needed to accomodate the specified frame.
+//Returns YES if the window was actually resized, NO otherwise.
+- (BOOL) _resizeToAccommodateFrame: (BXFrameBuffer *)frame;
 
 //Returns the view size that should be used for rendering the specified frame.
 - (NSSize) _renderingViewSizeForFrame: (BXFrameBuffer *)frame minSize: (NSSize)minViewSize;

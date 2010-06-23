@@ -29,11 +29,15 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025;
 
 - (void) updateWithFrame: (BXFrameBuffer *)frame
 {
-	//Resize the window to accomodate the frame
-	[self _resizeToAccommodateFrame: frame];
-	
-	//Tell the render view to draw the frame
+	//Update the renderer with the new frame.
 	[renderingView updateWithFrame: frame];
+
+	//Resize the window to accomodate the frame.
+	//IMPLEMENTATION NOTE: We do this after only updating the view, because the frame
+	//immediately *before* a resize is usually (always?) video-buffer garbage.
+	//This way, we have the brand-new frame visible in the view while we stretch
+	//it to the intended size, instead of leaving the garbage frame in the view.
+	BOOL didResize = [self _resizeToAccommodateFrame: frame];
 }
 
 - (NSSize) viewportSize
@@ -292,7 +296,7 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025;
 	[self didChangeValueForKey: @"fullScreen"];
 }
 
-- (void) _resizeToAccommodateFrame: (BXFrameBuffer *)frame
+- (BOOL) _resizeToAccommodateFrame: (BXFrameBuffer *)frame
 {
 	NSSize scaledSize		= [frame scaledSize];
 	NSSize scaledResolution	= [frame scaledResolution];
@@ -336,6 +340,8 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025;
 	
 	currentScaledSize = scaledSize;
 	currentScaledResolution = scaledResolution;
+	
+	return needsResize;
 }
 
 

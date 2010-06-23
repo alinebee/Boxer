@@ -14,7 +14,7 @@
 
 
 //When scaling up beyond this we won't bother with the scaling buffer
-const CGFloat BXScalingBufferScaleCutoff = 3;
+const CGFloat BXScalingBufferScaleCutoff = 3.0;
 
 @interface BXRenderer (BXRendererInternals)
 
@@ -530,8 +530,8 @@ const CGFloat BXScalingBufferScaleCutoff = 3;
 	
 	//We disable the scaling buffer for scales over a certain limit,
 	//where (we assume) stretching artifacts won't be visible.
-	
-	if (scalingFactor.height > BXScalingBufferScaleCutoff) return CGSizeZero;
+	if (scalingFactor.height >= BXScalingBufferScaleCutoff &&
+		scalingFactor.width >= BXScalingBufferScaleCutoff) return CGSizeZero;
 	
 	//If there's no aspect ratio correction needed, and the viewport is an even multiple
 	//of the initial resolution, then we don't need to scale either.

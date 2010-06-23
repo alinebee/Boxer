@@ -97,7 +97,6 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 //An array of queued command strings to execute on the DOS command line.
 @property (readonly)	NSMutableArray *commandQueue;
 
-@property (assign)		NSUInteger frameskip;	//The current value for the frameskip setting.
 @property (assign)		NSInteger fixedSpeed;	//The current fixed CPU speed.
 @property (assign)		BXCoreMode coreMode;	//The current CPU core mode.
 @property (assign, getter=isAutoSpeed)	BOOL autoSpeed;	//Whether we are running at automatic maximum speed.

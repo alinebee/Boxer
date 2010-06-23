@@ -185,13 +185,16 @@
 	filePath = [filePath stringByStandardizingPath];
 	
 	[self willChangeValueForKey: @"path"];
-	[path autorelease];
-	path = [filePath retain];
+	if (![path isEqualToString: filePath])
+	{
+		[path release];
+		path = [filePath copy];
+		
+		//Automatically parse the drive letter and label from the name of the drive
+		if (![self letter])	[self setLetter:	[[self class] preferredDriveLetterForPath: filePath]];
+		if (![self label])	[self setLabel:		[[self class] preferredLabelForPath: filePath]];
+	}
 	[self didChangeValueForKey: @"path"];
-	
-	//Automatically parse the drive letter and label from the name of the drive
-	if (![self letter])	[self setLetter:	[[self class] preferredDriveLetterForPath: filePath]];
-	if (![self label])	[self setLabel:		[[self class] preferredLabelForPath: filePath]];
 }
 
 - (void) setLetter: (NSString *)driveLetter
@@ -199,9 +202,13 @@
 	driveLetter = [driveLetter uppercaseString];
 	
 	[self willChangeValueForKey: @"letter"];
-	[letter autorelease];
-	letter = [driveLetter retain];
-	[self didChangeValueForKey: @"letter"];	
+	if (![letter isEqualToString: driveLetter])
+	{
+		
+		[letter release];
+		letter = [driveLetter copy];
+	}
+	[self didChangeValueForKey: @"letter"];
 }
 
 - (BOOL) exposesPath: (NSString *)subPath

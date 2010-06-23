@@ -177,7 +177,7 @@
 			[inputController setRepresentedObject: nil];	
 		}
 		
-		[emulator autorelease];
+		[emulator release];
 		emulator = [newEmulator retain];
 		
 		if (newEmulator)

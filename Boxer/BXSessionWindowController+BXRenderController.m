@@ -13,6 +13,7 @@
 #import "BXInputController.h"
 #import "BXFrameRenderingView.h"
 #import "BXFrameBuffer.h"
+#import "BXVideoHandler.h"
 
 #import "BXGeometry.h"
 
@@ -292,6 +293,8 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025;
 		//Unlock the mouse after leaving fullscreen
 		[inputController setMouseLocked: NO];
 	}
+	//Kick the emulator's renderer to adjust to the new viewport size
+	[[[self emulator] videoHandler] reset];
 	
 	[self didChangeValueForKey: @"fullScreen"];
 }

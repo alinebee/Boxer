@@ -138,6 +138,8 @@ BXEmulator *currentEmulator = nil;
 
 - (void) dealloc
 {
+	NSLog(@"BXEmulator dealloc");
+	
 	[self setProcessName: nil],	[processName release];
 	[self setInputHandler: nil], [inputHandler release];
 	[self setVideoHandler: nil], [videoHandler release];
@@ -148,7 +150,6 @@ BXEmulator *currentEmulator = nil;
 	
 	[super dealloc];
 	
-	NSLog(@"BXEmulator dealloc");
 }
 
 - (void) main
@@ -193,19 +194,7 @@ BXEmulator *currentEmulator = nil;
 
 
 #pragma mark -
-#pragma mark Controlling DOSBox emulation settings
-
-- (NSUInteger) frameskip
-{
-	return [[self videoHandler] frameskip];
-}
-
-- (void) setFrameskip: (NSUInteger)frameskip
-{
-	[self willChangeValueForKey: @"frameskip"];
-	[[self videoHandler] setFrameskip: frameskip];
-	[self didChangeValueForKey: @"frameskip"];
-}
+#pragma mark Controlling DOSBox CPU settings
 
 - (NSInteger) fixedSpeed
 {
@@ -264,10 +253,6 @@ BXEmulator *currentEmulator = nil;
 		[self didChangeValueForKey: @"autoSpeed"];
 	}
 }
-
-
-//CPU emulation
-//-------------
 
 - (BXCoreMode) coreMode
 {

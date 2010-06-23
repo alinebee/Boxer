@@ -11,6 +11,7 @@
 #import "BXValueTransformers.h"
 #import "BXVideoFormatAlert.h"
 #import "BXAppController.h"
+#import "BXVideoHandler.h"
 
 #import "BXSessionWindowController+BXRenderController.h"
 
@@ -74,13 +75,13 @@
 
 - (NSUInteger) frameskip
 {
-	return [[self emulator] frameskip];
+	return [[[self emulator] videoHandler] frameskip];
 }
 
 - (void) setFrameskip: (NSUInteger)frameskip
 {
 	[self willChangeValueForKey: @"frameskip"];
-	[[self emulator] setFrameskip: frameskip];
+	[[[self emulator] videoHandler] setFrameskip: frameskip];
 	[self didChangeValueForKey: @"frameskip"];
 }
 
@@ -95,14 +96,14 @@
 - (IBAction) incrementFrameSkip: (id)sender
 {
 	
-	NSNumber *newFrameskip = [NSNumber numberWithInteger: [[self emulator] frameskip] + 1];
+	NSNumber *newFrameskip = [NSNumber numberWithInteger: [self frameskip] + 1];
 	if ([self validateFrameskip: &newFrameskip error: nil])
 		[self setFrameskip: [newFrameskip integerValue]];
 }
 
 - (IBAction) decrementFrameSkip: (id)sender
 {
-	NSNumber *newFrameskip = [NSNumber numberWithInteger: [[self emulator] frameskip] - 1];
+	NSNumber *newFrameskip = [NSNumber numberWithInteger: [self frameskip] - 1];
 	if ([self validateFrameskip: &newFrameskip error: nil])
 		[self setFrameskip: [newFrameskip integerValue]];
 }
@@ -209,8 +210,8 @@
 - (BOOL) speedAtMinimum		{ return ![[self emulator] isAutoSpeed] && [[self emulator] fixedSpeed] <= BXMinSpeedThreshold; }
 - (BOOL) speedAtMaximum		{ return [[self emulator] isAutoSpeed]; }
 
-- (BOOL) frameskipAtMinimum	{ return [[self emulator] frameskip] <= 0; }
-- (BOOL) frameskipAtMaximum	{ return [[self emulator] frameskip] >= BXMaxFrameskip; }
+- (BOOL) frameskipAtMinimum	{ return [self frameskip] <= 0; }
+- (BOOL) frameskipAtMaximum	{ return [self frameskip] >= BXMaxFrameskip; }
 
 
 //Handling paste
@@ -308,7 +309,7 @@
 	if (![[self emulator] isExecuting]) return @"";
 	
 	NSString *format;
-	NSUInteger frameskip = [[self emulator] frameskip]; 
+	NSUInteger frameskip = [self frameskip]; 
 	if (frameskip == 0)
 			format = NSLocalizedString(@"Playing every frame",		@"Descriptive text for 0 frameskipping");
 	else	format = NSLocalizedString(@"Playing 1 in %u frames",	@"Descriptive text for >0 frameskipping");

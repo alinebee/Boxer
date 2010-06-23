@@ -93,7 +93,7 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0;
 		if (!NSEqualSizes([frame size], [currentFrame size]))
 			recalculateScalingBuffer = YES;
 		
-		[currentFrame autorelease];
+		[currentFrame release];
 		currentFrame = [frame retain];
 	}
 	[self didChangeValueForKey: @"currentFrame"];

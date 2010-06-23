@@ -91,7 +91,7 @@
 			[self _deregisterForFilesystemNotifications];
 		}
 		
-		[emulator autorelease];
+		[emulator release];
 		emulator = [newEmulator retain];
 	
 		if (newEmulator)
@@ -279,11 +279,11 @@
 	}
 	NSArray *filteredExecutables = [executables allValues];
 	
-	NSSortDescriptor *sortByFilename = [[[NSSortDescriptor alloc] initWithKey: @"path.lastPathComponent"
-																	ascending: YES
-																	 selector: @selector(caseInsensitiveCompare:)] autorelease];
+	NSSortDescriptor *sortByFilename = [[NSSortDescriptor alloc] initWithKey: @"path.lastPathComponent"
+																   ascending: YES
+																	selector: @selector(caseInsensitiveCompare:)];
 	
-	return [filteredExecutables sortedArrayUsingDescriptors: [NSArray arrayWithObject: sortByFilename]];
+	return [filteredExecutables sortedArrayUsingDescriptors: [NSArray arrayWithObject: [sortByFilename autorelease]]];
 }
 
 

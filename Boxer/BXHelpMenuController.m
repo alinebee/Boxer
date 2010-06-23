@@ -151,9 +151,9 @@
 {
 	if (documentation != newDocumentation)
 	{
-		[documentation autorelease];
-		documentation	= [newDocumentation retain];
-		docSession		= [BXSession mainSession];
+		[documentation release];
+		documentation = [newDocumentation retain];
+		docSession = [BXSession mainSession];
 	}
 }
 

@@ -80,31 +80,28 @@
 //Toggles aspect ratio correction and resets the renderer to apply the change immediately.
 - (void) setAspectCorrected: (BOOL)correct
 {
+	[self willChangeValueForKey: @"aspectCorrected"];
 	if (correct != [self isAspectCorrected])
 	{
-		[self willChangeValueForKey: @"aspectCorrected"];
-		
 		aspectCorrected = correct;
-		[self reset];
-		
-		[self didChangeValueForKey: @"aspectCorrected"];
+		[self reset];		
 	}
+	[self didChangeValueForKey: @"aspectCorrected"];
 }
 
 //Chooses the specified filter, and resets the renderer to apply the change immediately.
 - (void) setFilterType: (BXFilterType)type
 {	
+	[self willChangeValueForKey: @"filterType"];
 	if (type != filterType)
 	{
 		NSAssert1(type >= 0 && type <= sizeof(BXFilters), @"Invalid filter type provided to setFilterType: %i", type);
-		
-		[self willChangeValueForKey: @"filterType"];
-		
+				
 		filterType = type;
 		[self reset];
 		
-		[self didChangeValueForKey: @"filterType"];
 	}
+	[self didChangeValueForKey: @"filterType"];
 }
 
 //Returns whether the chosen filter is actually being rendered.

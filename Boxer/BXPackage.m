@@ -120,7 +120,7 @@
 	[self willChangeValueForKey: @"targetPath"];
 	if (![targetPath isEqualToString: path])
 	{
-		[targetPath autorelease];
+		[targetPath release];
 		targetPath = [path copy];
 		
 		//Now persist the target path as a symlink

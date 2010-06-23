@@ -23,6 +23,9 @@
 	NSString *targetPath;
 }
 
+#pragma mark -
+#pragma mark Properties
+
 //Re-casts the return value as a BXPackage instead of an NSBundle
 + (BXPackage *)bundleWithPath: (NSString *)path;
 
@@ -32,6 +35,14 @@
 //An array of absolute file paths to DOS executables found inside the gamebox.
 @property (retain) NSArray *executables;
 
+//The path to the default executable for this gamebox.
+@property (copy) NSString *targetPath;
+
+//The cover art image for this gamebox. Will be nil if the gamebox has no custom cover art.
+//This is currently stored as the gamebox's OS X icon resource.
+@property (copy) NSImage *coverArt;
+
+
 + (NSArray *) documentationTypes;		//UTIs recognised as documentation files.
 + (NSArray *) documentationExclusions;	//Filename patterns for documentation to exclude from searches.
 + (NSArray *) executableExclusions;		//Filename patterns for executables to exclude from searches.
@@ -40,21 +51,12 @@
 //TODO: if there is a separately-bundled drive C, this should be returned instead!
 - (NSString *) gamePath;
 
-//The path to the default DOS program to launch when the gamebox is opened, or nil if one has not been chosen.
-//This is also persisted as a symlink in the base folder of the gamebox.
-- (NSString *) targetPath;
-- (void) setTargetPath: (NSString *)path;
 
 //Set/get the custom DOSBox configuration file for this package. configurationFile will be nil if one does not
 //exist yet, and any existing configuration file can be deleted by passing nil to setConfigurationFile:.
 - (NSString *) configurationFile;
 - (void) setConfigurationFile: (NSString *)filePath;
 
-//Set/get the cover art image for this gamebox. coverArt will be nil if the gamebox has no custom cover art,
-//and existing cover art can be deleted by passing nil to setCoverArt:.
-//This is currently stored as the gamebox's OS X icon resource.
-- (NSImage *) coverArt;
-- (void) setCoverArt: (NSImage *)image;
 
 //Arrays of paths to additional DOS drives discovered within the package.
 - (NSArray *) hddVolumes;

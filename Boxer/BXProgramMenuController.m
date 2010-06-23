@@ -30,8 +30,7 @@
 {
 	[self willChangeValueForKey: @"sessionMediator"];
 	
-	NSObjectController *oldMediator = [self sessionMediator];
-	if (mediator != oldMediator)
+	if (mediator != sessionMediator)
 	{
 		NSArray *observePaths = [NSArray arrayWithObjects:
 			@"content.executables",
@@ -39,9 +38,9 @@
 		nil];
 		
 		for (NSString *path in observePaths)
-			[oldMediator removeObserver: self forKeyPath: path];
+			[sessionMediator removeObserver: self forKeyPath: path];
 	
-		[oldMediator autorelease];
+		[sessionMediator release];
 		sessionMediator = [mediator retain];
 	
 		for (NSString *path in observePaths)

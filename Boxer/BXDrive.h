@@ -47,19 +47,22 @@ static const NSInteger BXFloppySizeCutoff = 2 * 1024 * 1024;
 //----------
 
 //The absolute path to the source folder (or image) of the drive on the OS X filesystem.
-@property (retain) NSString *path;
+@property (copy) NSString *path;
 
 //The DOS drive letter under which this drive will be mounted.
 //If nil, BXEmulator mountDrive: will choose an appropriate drive letter at mount time.
 //This property is not prescriptive: if a drive is already mounted at the specified letter,
 //BXEmulator mountDrive: may mount the drive as a different letter and modify the letter
 //property of the returned drive to match.
-@property (retain) NSString *letter;
+@property (copy) NSString *letter;
 
 //The DOS disk label to use for this drive. For folder-based drives this will be
 //auto-generated from the folder's OS X filename, if not explicitly provided.
 //The label does not apply to disk images, which encapsulate their own drive label.
-@property (retain) NSString *label;
+@property (copy) NSString *label;
+
+//The icon representing this drive. This will be taken from the drive path's filesystem icon.
+@property (copy) NSImage *icon;
 
 //The type of DOS drive to mount, as a BXDriveType constant (see above.) This will
 //be auto-detected based on the source folder or image, if not explicitly provided.
@@ -83,9 +86,6 @@ static const NSInteger BXFloppySizeCutoff = 2 * 1024 * 1024;
 //Whether to hide this drive from Boxer's drive manager UI: defaults to NO.
 //Ignored for DOSBox internal drives (which are always hidden).
 @property (assign, getter=isHidden) BOOL hidden;
-
-//The icon representing this drive. This will be taken from the drive path's filesystem icon.
-@property (retain) NSImage *icon;
 
 
 //Class methods

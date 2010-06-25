@@ -207,10 +207,7 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025;
 
 
 //Return an appropriate "standard" (zoomed) frame for the window given the currently available screen space.
-//We define the standard frame to be the largest even multiple of the game resolution.
-//Note that in some cases this will be equal to the standard window size, so that nothing happens when zoomed
-//(unfortunately the cures for this are worse than the disease, so we leave it be for now.)
-
+//We define the standard frame to be the largest multiple of the game resolution, maintaining aspect ratio.
 - (NSRect) windowWillUseStandardFrame: (BXSessionWindow *)theWindow defaultFrame: (NSRect)defaultFrame
 {
 	if (![[self emulator] isExecuting]) return defaultFrame;
@@ -224,19 +221,23 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025;
 	NSRect largestCleanViewFrame	= defaultViewFrame;
 	
 	//Constrain the proposed view frame to the largest even multiple of the base resolution
+	
+	//Disabled for now: our scaling is good enough now that we can afford to scale to uneven
+	//multiples, and this way we avoid returning a size that's the same as the current size
+	//(which makes the zoom button to appear to do nothing.)
+	
+	/*
 	largestCleanViewFrame.size.width -= ((NSInteger)defaultViewFrame.size.width % (NSInteger)scaledResolution.width);
 	if (aspectRatio > 0)
 		largestCleanViewFrame.size.height = round(largestCleanViewFrame.size.width / aspectRatio);
+	*/
 	
 	//Turn our new constrained view frame back into a suitably positioned window frame
-	standardFrame = [theWindow frameRectForContentRect: largestCleanViewFrame];
+	standardFrame = [theWindow frameRectForContentRect: largestCleanViewFrame];	
 	
 	//Carry over the top-left corner position from the original window
 	standardFrame.origin	= currentWindowFrame.origin;
 	standardFrame.origin.y += (currentWindowFrame.size.height - standardFrame.size.height);
-	
-	//Constrain our newly frame to fit the screen real-estate (which it should already do, but just in case)
-	standardFrame.size		= constrainToFitSize(standardFrame.size, defaultFrame.size);
 	
 	return standardFrame;
 }

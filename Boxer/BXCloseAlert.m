@@ -98,7 +98,12 @@
 		[[NSUserDefaults standardUserDefaults] setBool: YES forKey: @"suppressCloseAlert"];
 
 	//First button is close, second button is cancel
-	if (returnCode == NSAlertFirstButtonReturn) [window close];
+	if (returnCode == NSAlertFirstButtonReturn)
+	{
+		[window close];
+		[NSApp replyToApplicationShouldTerminate: YES];
+	}
+	else [NSApp replyToApplicationShouldTerminate: NO];
 	
 	[alert release];
 }

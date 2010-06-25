@@ -56,8 +56,10 @@
 	NSLog(@"BXSession dealloc");
 }
 
-//We only implement this to keep drag-drop opening happy - we don't ever actually read any data off disk.
-- (BOOL)readFromFileWrapper:(NSFileWrapper *)fileWrapper ofType:(NSString *)typeName error:(NSError **)outError
+//We make this a no-op to avoid creating an NSFileWrapper - we don't ever actually read any data off disk,
+//so we don't need to construct a representation of the filesystem, and trying to do so for large documents
+//(e.g. root folders) can cause memory allocation crashes.
+- (BOOL)readFromURL:(NSURL *)absoluteURL ofType:(NSString *)typeName error:(NSError **)outError
 {
 	return YES;
 }

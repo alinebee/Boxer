@@ -10,7 +10,7 @@
 #import "BXAboutController.h"
 #import "BXInspectorController.h"
 #import "BXPreferencesController.h"
-#import "BXSession.h"
+#import "BXSession+BXFileManager.h"
 #import "BXSessionWindowController.h"
 #import "BXValueTransformers.h"
 #import "BXGrowlController.h"
@@ -169,6 +169,34 @@
 }
 
 
+- (id)openDocumentWithContentsOfURL: (NSURL *)absoluteURL
+							display: (BOOL)displayDocument
+							  error: (NSError **)outError
+{
+	NSString *path = [absoluteURL path];
+	
+	//First go through our existing sessions, checking if any can open the specified URL.
+	//(This will be possible if the URL is accessible to a session's emulated filesystem,
+	//and the session is not already running a program.)
+	
+	//TWEAK: don't do this if the URL is a gamebox: always treat gameboxes as separate documents.
+	NSString *type = [self typeForContentsOfURL: absoluteURL error: nil];
+	if (![type isEqualToString: @"net.washboardabs.boxer-game-package"])
+	{
+		for (id document in [self documents])
+		{
+			if ([document respondsToSelector:@selector(openFileAtPath:)] && [document openFileAtPath: path])
+			{
+				if (displayDocument) [document showWindows];
+				return document;
+			}
+		}		
+	}
+	
+	//If no existing session can open the URL, continue with the default document opening behaviour.
+	return [super openDocumentWithContentsOfURL: absoluteURL display: displayDocument error: outError];
+}
+
 //Prevent the opening of new documents if we have a session already active
 - (id) makeUntitledDocumentOfType:(NSString *)typeName error:(NSError **)outError
 {
@@ -232,7 +260,7 @@
 	{
 		id delegate = [theWindow delegate];
 		if ([delegate respondsToSelector: @selector(windowShouldClose:)] &&
-			![delegate windowShouldClose: theWindow]) return NSTerminateCancel;
+			![delegate windowShouldClose: theWindow]) return NSTerminateLater;
 	}
 	return NSTerminateNow;
 }

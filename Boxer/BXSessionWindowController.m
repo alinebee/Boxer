@@ -17,6 +17,7 @@
 #import "BXEmulator.h"
 #import "BXInputHandler.h"
 #import "BXVideoHandler.h"
+#import "BXInputView.h"
 
 #import "BXCloseAlert.h"
 #import "BXSession+BXDragDrop.h"
@@ -74,11 +75,11 @@
 	//These are handled by BoxerRenderController, our category for rendering-related delegate tasks
 	[center addObserver:	self
 			selector:		@selector(windowWillLiveResize:)
-			name:			@"BXViewWillLiveResizeNotification"
+			name:			BXViewWillLiveResizeNotification
 			object:			inputView];
 	[center addObserver:	self
 			selector:		@selector(windowDidLiveResize:)
-			name:			@"BXViewDidLiveResizeNotification"
+			name:			BXViewDidLiveResizeNotification
 			object:			inputView];
 	[center addObserver:	self
 			selector:		@selector(menuDidOpen:)

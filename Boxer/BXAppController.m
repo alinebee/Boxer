@@ -19,12 +19,14 @@
 #import <BGHUDAppKit/BGThemeManager.h>
 
 
+NSString * const BXNewSessionParam = @"--openNewSession";
+
 @implementation BXAppController
 @synthesize emulationQueue, currentSession;
 
 
-//Filetypes used by Boxer
-//-----------------------
+#pragma mark -
+#pragma mark Filetype helper methods
 
 + (NSArray *) hddVolumeTypes
 {
@@ -95,8 +97,8 @@
 }
 
 
-//Initialisation process
-//----------------------
+#pragma mark -
+#pragma mark Initialization and teardown
 
 + (void)initialize
 {
@@ -123,8 +125,8 @@
 + (void)setupDefaults
 {
 	//We carry a plist of initial values for application preferences
-    NSString *defaultsPath	= [[NSBundle mainBundle] pathForResource: @"UserDefaults" ofType:@"plist"];
-    NSDictionary *defaults	= [NSDictionary dictionaryWithContentsOfFile:defaultsPath];
+    NSString *defaultsPath	= [[NSBundle mainBundle] pathForResource: @"UserDefaults" ofType: @"plist"];
+    NSDictionary *defaults	= [NSDictionary dictionaryWithContentsOfFile: defaultsPath];
 	
     [[NSUserDefaults standardUserDefaults] registerDefaults: defaults];
 }
@@ -148,14 +150,53 @@
 }
 
 
-//Opening (and closing) files
-//---------------------------
+#pragma mark -
+#pragma mark Document management
+
+
+- (BOOL) _launchProcessWithDocumentAtURL: (NSURL *)URL
+{
+	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+	NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
+	NSURL *bundleURL = [NSURL fileURLWithPath: [[NSBundle mainBundle] bundlePath]]; 
+	
+	NSArray *URLs = [NSArray arrayWithObject: URL];
+	
+	return [workspace openURLs: URLs
+	   withAppBundleIdentifier: bundleIdentifier
+					   options: NSWorkspaceLaunchDefault | NSWorkspaceLaunchNewInstance
+additionalEventParamDescriptor: nil
+			 launchIdentifiers: NULL];
+}
+
+- (void) _launchProcessWithUntitledDocument
+{
+	//NSWorkspace doesn't give us any means (that I can find) to open a new untitled document.
+	//So, we use NSTask and pass ourselves a parameter telling ourselves to do so.
+	NSString *executablePath	= [[NSBundle mainBundle] executablePath];
+	NSArray *params				= [NSArray arrayWithObject: BXNewSessionParam]; 
+	NSTask *boxerProcess		= [NSTask launchedTaskWithLaunchPath: executablePath arguments: params];	
+}
+
+
 
 //Don't open a new empty document when switching back to the application
 - (BOOL) applicationShouldOpenUntitledFile: (NSApplication *)theApplication { return NO; }
 
+//...However, when we've been told to open a new empty session at startup, do so
+- (void) applicationDidFinishLaunching:(NSNotification *)notification
+{
+	NSArray *arguments = [[NSProcessInfo processInfo] arguments];
+	
+	if ([arguments containsObject: BXNewSessionParam])
+	{
+		[self openUntitledDocumentAndDisplay: YES error: nil];
+		[NSApp activateIgnoringOtherApps: YES];
+	}
+}
+
 //Customise the open panel
-- (NSInteger)runModalOpenPanel:(NSOpenPanel *)openPanel forTypes:(NSArray *)extensions
+- (NSInteger) runModalOpenPanel:(NSOpenPanel *)openPanel forTypes:(NSArray *)extensions
 {
 	[openPanel setAllowsMultipleSelection: NO];
 	[openPanel setCanChooseFiles: YES];
@@ -169,9 +210,9 @@
 }
 
 
-- (id)openDocumentWithContentsOfURL: (NSURL *)absoluteURL
-							display: (BOOL)displayDocument
-							  error: (NSError **)outError
+- (id) openDocumentWithContentsOfURL: (NSURL *)absoluteURL
+							 display: (BOOL)displayDocument
+							   error: (NSError **)outError
 {
 	NSString *path = [absoluteURL path];
 	
@@ -185,7 +226,7 @@
 	{
 		for (id document in [self documents])
 		{
-			if ([document respondsToSelector:@selector(openFileAtPath:)] && [document openFileAtPath: path])
+			if ([document respondsToSelector: @selector(openFileAtPath:)] && [document openFileAtPath: path])
 			{
 				if (displayDocument) [document showWindows];
 				return document;
@@ -198,37 +239,55 @@
 }
 
 //Prevent the opening of new documents if we have a session already active
-- (id) makeUntitledDocumentOfType:(NSString *)typeName error:(NSError **)outError
+- (id) makeUntitledDocumentOfType: (NSString *)typeName error: (NSError **)outError
 {
 	if ([self currentSession] && [self documentClassForType: typeName] == [BXSession class])
 	{
-		//Todo: build an NSError to go here
+		//Launch another instance of Boxer to open the new session
+		[self _launchProcessWithUntitledDocument];
+		
+		*outError = [NSError errorWithDomain: NSCocoaErrorDomain code: NSUserCancelledError userInfo: nil];
 		return nil;
 	}
 	else return [super makeUntitledDocumentOfType: typeName error: outError];
 }
 
-- (id) makeDocumentWithContentsOfURL:(NSURL *)absoluteURL ofType:(NSString *)typeName error:(NSError **)outError
+- (id) makeDocumentWithContentsOfURL: (NSURL *)absoluteURL
+							  ofType: (NSString *)typeName
+							   error: (NSError **)outError
 {
 	if ([self currentSession] && [self documentClassForType: typeName] == [BXSession class])
 	{
-		//Todo: build an NSError to go here
+		//Launch another instance of Boxer to open the specified document
+		[self _launchProcessWithDocumentAtURL: absoluteURL];
+		
+		//Cancel the existing open request without generating an error message
+		*outError = [NSError errorWithDomain: NSCocoaErrorDomain code: NSUserCancelledError userInfo: nil];
 		return nil;
 	}
-	else return [super makeDocumentWithContentsOfURL: absoluteURL ofType: typeName error: outError];
+	else return [super makeDocumentWithContentsOfURL: absoluteURL
+											  ofType: typeName
+											   error: outError];
 }
 
-- (id) makeDocumentForURL:	(NSURL *)absoluteDocumentURL
-	withContentsOfURL:		(NSURL *)absoluteDocumentContentsURL
-	ofType:					(NSString *)typeName
-	error:					(NSError **)outError
+- (id) makeDocumentForURL: (NSURL *)absoluteDocumentURL
+		withContentsOfURL: (NSURL *)absoluteDocumentContentsURL
+				   ofType: (NSString *)typeName
+					error: (NSError **)outError
 {
 	if ([self currentSession] && [self documentClassForType: typeName] == [BXSession class])
 	{
-		//Todo: build an NSError to go here
+		//Launch another instance of Boxer to open the specified document
+		[self _launchProcessWithDocumentAtURL: absoluteDocumentContentsURL];
+		
+		//Cancel the existing open request without generating an error message
+		*outError = [NSError errorWithDomain: NSCocoaErrorDomain code: NSUserCancelledError userInfo: nil];
 		return nil;
 	}
-	else return [super makeDocumentForURL: absoluteDocumentURL withContentsOfURL: absoluteDocumentContentsURL ofType: typeName error: outError];
+	else return [super makeDocumentForURL: absoluteDocumentURL
+						withContentsOfURL: absoluteDocumentContentsURL
+								   ofType: typeName
+									error: outError];
 }
 
 //Store the specified document as the current session
@@ -250,8 +309,8 @@
 }
 
 
-//Handling application termination
-//--------------------------------
+#pragma mark -
+#pragma mark Handling application termination
 
 - (NSApplicationTerminateReply) applicationShouldTerminate: (NSApplication *)theApplication
 {
@@ -277,16 +336,15 @@
 }
 
 
-//UI support functions
-//--------------------
-//Should probably be abstracted off to a separate class at this point, linked into the responder chain
+#pragma mark -
+#pragma mark Actions and action helper methods
 
-- (IBAction) orderFrontAboutPanel:			(id)sender
+- (IBAction) orderFrontAboutPanel: (id)sender
 {
 	[[[self currentSession] mainWindowController] exitFullScreen: sender];
 	[[BXAboutController controller] showWindow: nil];
 }
-- (IBAction) orderFrontPreferencesPanel:	(id)sender
+- (IBAction) orderFrontPreferencesPanel: (id)sender
 {
 	[[[self currentSession] mainWindowController] exitFullScreen: sender];
 	[[BXPreferencesController controller] showWindow: nil];
@@ -335,6 +393,19 @@
 	NSString *fullSubject	= [NSString stringWithFormat: @"%@ (v%@ %@)", subject, versionName, buildNumber, nil];
 	[self sendEmailFromKey: @"ContactEmail" withSubject: fullSubject];
 }
+
+- (BOOL) validateUserInterfaceItem: (id)theItem
+{	
+	SEL theAction = [theItem action];
+	
+	//Disable actions that would open new sessions once we already have one active
+	//if (theAction == @selector(newDocument:))			return [self currentSession] == nil;
+	//if (theAction == @selector(openDocument:))			return [self currentSession] == nil;
+	if (theAction == @selector(toggleInspectorPanel:))	return [self currentSession] != nil;
+	
+	return [super validateUserInterfaceItem: theItem];
+}
+
 
 - (void) openURLFromKey: (NSString *)infoKey
 {
@@ -406,8 +477,8 @@
 }
 
 
-//Sound-related functions
-//-----------------------
+#pragma mark -
+#pragma mark Sound-related methods
 
 //We retrieve OS X's own UI sound setting from their domain
 //(hoping this is future-proof - if we can't find it though, we assume it's yes)
@@ -432,21 +503,9 @@
 	}
 }
 
-- (BOOL) validateUserInterfaceItem: (id)theItem
-{	
-	SEL theAction = [theItem action];
 
-	//Disable actions that would open new sessions once we already have one active
-	if (theAction == @selector(newDocument:))			return [self currentSession] == nil;
-	if (theAction == @selector(openDocument:))			return [self currentSession] == nil;
-	if (theAction == @selector(toggleInspectorPanel:))	return [self currentSession] != nil;
-	
-	return [super validateUserInterfaceItem: theItem];
-}
-
-
-//Event-related functions
-//-----------------------
+#pragma mark -
+#pragma mark Event-related methods
 
 - (NSWindow *) windowAtPoint: (NSPoint)screenPoint
 {

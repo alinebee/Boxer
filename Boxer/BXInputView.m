@@ -9,6 +9,10 @@
 #import "BXInputView.h"
 #import "BXGeometry.h"
 
+
+NSString * const BXViewWillLiveResizeNotification	= @"BXViewWillLiveResizeNotification";
+NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotification";
+
 @implementation BXInputView
 
 - (BOOL) acceptsFirstResponder
@@ -71,13 +75,13 @@
 - (void) viewWillStartLiveResize
 {	
 	[super viewWillStartLiveResize];
-	[[NSNotificationCenter defaultCenter] postNotificationName: @"BXViewWillLiveResizeNotification" object: self];
+	[[NSNotificationCenter defaultCenter] postNotificationName: BXViewWillLiveResizeNotification object: self];
 }
 
 - (void) viewDidEndLiveResize
 {
 	[super viewDidEndLiveResize];
-	[[NSNotificationCenter defaultCenter] postNotificationName: @"BXViewDidLiveResizeNotification" object: self];
+	[[NSNotificationCenter defaultCenter] postNotificationName: BXViewDidLiveResizeNotification object: self];
 }
 
 @end

@@ -317,17 +317,17 @@
 	
 	[center addObserver:	self
 			selector:		@selector(volumeDidMount:)
-			name:			@"NSWorkspaceDidMountNotification"
+			name:			NSWorkspaceDidMountNotification
 			object:			workspace];
 	
 	[center addObserver:	self
 			   selector:	@selector(volumeWillUnmount:)
-				   name:	@"NSWorkspaceWillUnmountNotification"
+				   name:	NSWorkspaceWillUnmountNotification
 				 object:	workspace];
 
 	[center addObserver:	self
 			   selector:	@selector(volumeWillUnmount:)
-				   name:	@"NSWorkspaceDidUnmountNotification"
+				   name:	NSWorkspaceDidUnmountNotification
 				 object:	workspace];
 	
 	[center addObserver:	self
@@ -341,9 +341,9 @@
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	NSNotificationCenter *center = [workspace notificationCenter];
 
-	[center removeObserver: self name: @"NSWorkspaceDidMountNotification"		object: workspace];
-	[center removeObserver: self name: @"NSWorkspaceWillUnmountNotification"	object: workspace];
-	[center removeObserver: self name: UKFileWatcherWriteNotification			object: nil];
+	[center removeObserver: self name: NSWorkspaceDidMountNotification		object: workspace];
+	[center removeObserver: self name: NSWorkspaceWillUnmountNotification	object: workspace];
+	[center removeObserver: self name: UKFileWatcherWriteNotification		object: nil];
 
 }
 

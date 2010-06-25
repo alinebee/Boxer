@@ -12,6 +12,10 @@
 
 #import <Cocoa/Cocoa.h>
 
+//BXInputView posts these notifications when it begins/ends a live resize operation.
+extern NSString * const BXViewWillLiveResizeNotification;
+extern NSString * const BXViewDidLiveResizeNotification;
+
 @interface BXInputView : NSView
 
 //Render the view's badged grey background.

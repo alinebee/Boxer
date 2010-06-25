@@ -131,22 +131,17 @@
 - (void)cancel	{ [[self emulator] cancel]; }
 
 
-//Close down the emulator and free the document
+//Close down the emulator when the document closes
 - (void) close
 {
-	//This closes down the whole application as soon as the current session closes.
-	//Historically we did this because DOSBox stores state in global variables which 
-	//don't get reset when it 'quits', which means a second DOSBox session cannot be
-	//successfully started after the first since it inherits an invalid state.
-	
-	//However, quitting-on-close now also conceals a clutch of really bad amateur bugs
-	//in Boxer itself whereby various components will fail to cope when other bits
-	//are suddenly not there. Leaving this quit-on-close in place is now only a
-	//bandaid workaround to prevent crashes until I've fixed these bugs properly.
-	
 	[self cancel];
 	[super close];
 
+	//This closes down the whole application as soon as the current session closes.
+	//We do this because DOSBox stores state in global variables which don't get reset
+	//when it 'quits', which means a second DOSBox session cannot be successfully started
+	//after the first since it inherits an invalid state.
+	
 	//[NSApp terminate: self];
 }
 

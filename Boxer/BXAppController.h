@@ -17,6 +17,7 @@
 {
 	NSOperationQueue *emulationQueue;
 	BXSession *currentSession;
+	BOOL hasLaunchedSession;
 }
 @property (readonly) NSOperationQueue *emulationQueue;	//Currently unused
 @property (retain) BXSession *currentSession;			//The currently-active DOS session

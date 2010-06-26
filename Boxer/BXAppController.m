@@ -153,7 +153,6 @@ NSString * const BXNewSessionParam = @"--openNewSession";
 #pragma mark -
 #pragma mark Document management
 
-
 - (BOOL) _launchProcessWithDocumentAtURL: (NSURL *)URL
 {
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
@@ -178,7 +177,18 @@ additionalEventParamDescriptor: nil
 	NSTask *boxerProcess		= [NSTask launchedTaskWithLaunchPath: executablePath arguments: params];	
 }
 
-
+//Quit after the last window was closed if we are a 'subsidiary' process, to avoid leaving extra Boxers littering the Dock
+- (BOOL) applicationShouldTerminateAfterLastWindowClosed: (NSApplication *)sender
+{
+	NSUInteger numBoxers = 0;
+	NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
+	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+	for (NSDictionary *appDetails in [workspace launchedApplications])
+	{
+		if ([[appDetails objectForKey: @"NSApplicationBundleIdentifier"] isEqualToString: bundleIdentifier]) numBoxers++;
+	}
+	return numBoxers > 1;
+}
 
 //Don't open a new empty document when switching back to the application
 - (BOOL) applicationShouldOpenUntitledFile: (NSApplication *)theApplication { return NO; }
@@ -241,11 +251,15 @@ additionalEventParamDescriptor: nil
 //Prevent the opening of new documents if we have a session already active
 - (id) makeUntitledDocumentOfType: (NSString *)typeName error: (NSError **)outError
 {
-	if ([self currentSession] && [self documentClassForType: typeName] == [BXSession class])
+	if (hasLaunchedSession && [self documentClassForType: typeName] == [BXSession class])
 	{
 		//Launch another instance of Boxer to open the new session
 		[self _launchProcessWithUntitledDocument];
 		
+		//If we don't have a current session going, exit
+		if (![self currentSession]) [NSApp terminate: self];
+		
+		//Otherwise, cancel the existing open request without generating an error message
 		*outError = [NSError errorWithDomain: NSCocoaErrorDomain code: NSUserCancelledError userInfo: nil];
 		return nil;
 	}
@@ -256,12 +270,15 @@ additionalEventParamDescriptor: nil
 							  ofType: (NSString *)typeName
 							   error: (NSError **)outError
 {
-	if ([self currentSession] && [self documentClassForType: typeName] == [BXSession class])
+	if (hasLaunchedSession && [self documentClassForType: typeName] == [BXSession class])
 	{
 		//Launch another instance of Boxer to open the specified document
 		[self _launchProcessWithDocumentAtURL: absoluteURL];
 		
-		//Cancel the existing open request without generating an error message
+		//If we don't have a current session going, exit
+		if (![self currentSession]) [NSApp terminate: self];
+		
+		//Otherwise, cancel the existing open request without generating an error message
 		*outError = [NSError errorWithDomain: NSCocoaErrorDomain code: NSUserCancelledError userInfo: nil];
 		return nil;
 	}
@@ -275,12 +292,15 @@ additionalEventParamDescriptor: nil
 				   ofType: (NSString *)typeName
 					error: (NSError **)outError
 {
-	if ([self currentSession] && [self documentClassForType: typeName] == [BXSession class])
+	if (hasLaunchedSession && [self documentClassForType: typeName] == [BXSession class])
 	{
 		//Launch another instance of Boxer to open the specified document
 		[self _launchProcessWithDocumentAtURL: absoluteDocumentContentsURL];
-		
-		//Cancel the existing open request without generating an error message
+
+		//If we don't have a current session going, exit
+		if (![self currentSession]) [NSApp terminate: self];
+
+		//Otherwise, cancel the existing open request without generating an error message
 		*outError = [NSError errorWithDomain: NSCocoaErrorDomain code: NSUserCancelledError userInfo: nil];
 		return nil;
 	}
@@ -298,6 +318,7 @@ additionalEventParamDescriptor: nil
 	{
 		BXSession *theSession = (BXSession *)theDocument;
 		[self setCurrentSession: theSession];
+		hasLaunchedSession = YES;
 	}
 }
 

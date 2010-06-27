@@ -39,6 +39,7 @@
 
 	NSString *themeKey;
 	BOOL useTransparentWell;
+	BOOL isBeingDecoded;
 }
 
 @property (retain) NSString *themeKey;

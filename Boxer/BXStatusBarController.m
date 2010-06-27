@@ -30,13 +30,6 @@
 	[self _syncSegmentedButtonStates];
 }
 
-- (void) dealloc
-{
-	[super dealloc];
-	
-	NSLog(@"BXStatusBarController dealloc");
-}
-
 - (IBAction) performSegmentedButtonAction: (id)sender
 {
 	BOOL mouseLocked = [[[self controller] inputController] mouseLocked];

@@ -16,9 +16,6 @@
 //Instances of this class are created by BXSession, and like BXSession the active emulator can be accessed
 //as a singleton: via [[[NSApp delegate] currentSession] emulator] or just [BXEmulator currentEmulator].
 
-//While BXEmulator is an NSOperation subclass, multithreading is not yet supported and may never be
-//via the NSOperation API.
-
 
 #import <Foundation/Foundation.h>
 
@@ -51,7 +48,7 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 @class BXInputHandler;
 @class BXVideoHandler;
 
-@interface BXEmulator : NSOperation
+@interface BXEmulator : NSObject
 {
 	BXSession *delegate;
 	BXInputHandler *inputHandler;
@@ -64,6 +61,8 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 	NSMutableArray *configFiles;
 	NSMutableDictionary *driveCache;
 	
+	BOOL cancelled;
+	BOOL executing;
 	BOOL isInterrupted;
 	
 	//Used by BXShell
@@ -73,6 +72,11 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 
 #pragma mark -
 #pragma mark Properties
+
+//Whether the emulator is currently running/cancelled respectively. Mirrors interface of NSOperation.
+//The setters are for internal use only and should not be called outside of BXEmulator.
+@property (assign, getter=isExecuting) BOOL executing;
+@property (assign, getter=isCancelled) BOOL cancelled;
 
 //The BXSession delegate responsible for this emulator.
 @property (assign)		BXSession *delegate;
@@ -116,6 +120,16 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 
 
 #pragma mark -
+#pragma mark Controlling emulation state
+
+//Begin emulation.
+- (void) start;
+
+//Stop emulation.
+- (void) cancel;
+
+
+#pragma mark -
 #pragma mark Introspecting emulation state
 
 //Returns whether DOSBox is currently running a process.
@@ -148,6 +162,8 @@ class DOS_Shell;
 
 //The methods in this category should not be executed outside of BXEmulator and are only visible in Objective C++.
 @interface BXEmulator (BXEmulatorInternals)
+@property (assign, getter=isExecuting) BOOL executing;
+@property (assign, getter=isCancelled) BOOL cancelled;
 
 - (DOS_Shell *) _currentShell;
 

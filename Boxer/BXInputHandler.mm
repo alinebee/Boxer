@@ -63,12 +63,6 @@ void MAPPER_LosingFocus();
 	return self;
 }
 
-- (void) dealloc
-{
-	[super dealloc];
-	NSLog(@"BXInputHandler dealloc");
-}
-
 #pragma mark -
 #pragma mark Controlling response state
 

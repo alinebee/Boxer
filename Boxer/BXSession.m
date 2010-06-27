@@ -49,8 +49,6 @@
 	[self setActiveProgramPath: nil],	[activeProgramPath release];
 	
 	[super dealloc];
-	
-	NSLog(@"BXSession dealloc");
 }
 
 //We make this a no-op to avoid creating an NSFileWrapper - we don't ever actually read any data off disk,
@@ -392,8 +390,6 @@
 	//If the emulator ever quits of its own accord, close the document also.
 	//This will happen if the user types "exit" at the command prompt.
 	[self close];
-	
-	NSLog(@"BXSession end of _startEmulator");
 }
 
 - (void) _configureEmulator

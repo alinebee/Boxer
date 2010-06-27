@@ -60,8 +60,6 @@
 	[self setStatusBar: nil],				[statusBar release];
 	
 	[super dealloc];
-	
-	NSLog(@"BXSessionWindowController dealloc");
 }
 
 - (void) awakeFromNib

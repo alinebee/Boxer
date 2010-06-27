@@ -127,8 +127,6 @@ enum {
 	[cursorFade release], cursorFade = nil;
 	
 	[super dealloc];
-	
-	NSLog(@"BXInputController dealloc");
 }
 
 

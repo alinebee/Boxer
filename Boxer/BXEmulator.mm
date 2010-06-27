@@ -19,6 +19,11 @@
 
 #import <crt_externs.h> //for _NSGetArgc() and _NSGetArgv()
 
+
+//The singleton emulator instance. Returned by [BXEmulator currentEmulator].
+BXEmulator *currentEmulator = nil;
+
+
 //Default name that DOSBox uses when there's no process running. Used by processName for string comparisons.
 NSString * const shellProcessName = @"DOSBOX";
 
@@ -51,8 +56,6 @@ void CPU_Core_Dyn_X86_SetFPUMode(bool dh_fpu);
 void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 #endif
 
-BXEmulator *currentEmulator = nil;
-
 
 @implementation BXEmulator
 @synthesize processName, processPath, processLocalPath;
@@ -61,6 +64,7 @@ BXEmulator *currentEmulator = nil;
 @synthesize commandQueue;
 @synthesize inputHandler;
 @synthesize videoHandler;
+@synthesize cancelled, executing;
 
 
 #pragma mark -
@@ -137,9 +141,7 @@ BXEmulator *currentEmulator = nil;
 }
 
 - (void) dealloc
-{
-	NSLog(@"BXEmulator dealloc");
-	
+{	
 	[self setProcessName: nil],	[processName release];
 	[self setInputHandler: nil], [inputHandler release];
 	[self setVideoHandler: nil], [videoHandler release];
@@ -152,8 +154,14 @@ BXEmulator *currentEmulator = nil;
 	
 }
 
-- (void) main
+
+#pragma mark -
+#pragma mark Controlling emulation state
+
+- (void) start
 {
+	[self setExecuting: YES];
+	
 	//Record ourselves as the current emulator instance for DOSBox to talk to
 	currentEmulator = self;
 	
@@ -162,9 +170,23 @@ BXEmulator *currentEmulator = nil;
 	
 	if (currentEmulator == self) currentEmulator = nil;
 	
-	NSLog(@"BXEmulator end of main");
+	[self setExecuting: NO];
 }
 
+- (void) cancel
+{
+	if ([self isExecuting] && ![self isCancelled])
+	{
+		//Breaks out of DOSBox's commandline input loop
+		[self discardShellInput];
+		
+		//Tells DOSBox to close the current shell at the end of the commandline input loop
+		DOS_Shell *shell = [self _currentShell];
+		if (shell) shell->exit = YES;
+	}
+
+	[self setCancelled: YES];
+}
 
 #pragma mark -
 #pragma mark Introspecting emulation state
@@ -321,7 +343,7 @@ BXEmulator *currentEmulator = nil;
 - (void) willPause
 {
 	
-	if ([self isConcurrent] && [self isExecuting] && !isInterrupted)
+	if ([self isExecuting] && !isInterrupted)
 	{
 		SDL_PauseAudio(YES);
 		boxer_toggleMIDIOutput(NO);
@@ -332,7 +354,7 @@ BXEmulator *currentEmulator = nil;
 - (void) didResume
 {
 	
-	if ([self isConcurrent] && [self isExecuting] && isInterrupted)
+	if ([self isExecuting] && isInterrupted)
 	{
 		SDL_PauseAudio(NO);
 		boxer_toggleMIDIOutput(YES);
@@ -340,17 +362,6 @@ BXEmulator *currentEmulator = nil;
 	}
 }
 
-- (void) cancel
-{
-	//Breaks out of DOSBox's commandline input loop
-	[self discardShellInput];
-	
-	//Tells DOSBox to close the current shell at the end of the commandline input loop
-	DOS_Shell *shell = [self _currentShell];
-	if (shell) shell->exit = YES;
-	
-	[super cancel];
-}
 @end
 
 

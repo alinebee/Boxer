@@ -35,7 +35,6 @@
 {	
 	[self setFrameBuffer: nil], [frameBuffer release];
 	[super dealloc];
-	NSLog(@"BXVideoHandler dealloc");
 }
 
 - (NSSize) resolution

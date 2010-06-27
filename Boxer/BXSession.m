@@ -501,7 +501,6 @@
 {	
 	if (!hasLaunched)
 	{
-		showProgramPanelOnReturnToShell = YES;
 		[self _launchTarget];
 	}
 }
@@ -513,6 +512,12 @@
 	if (![self activeProgramPath])
 	{
 		[self setActiveProgramPath: [[notification userInfo] objectForKey: @"localPath"]];
+		
+		//Hide the program picker after launching the default program 
+		if ([[self activeProgramPath] isEqualToString: [gamePackage targetPath]])
+		{
+			[[self mainWindowController] setProgramPanelShown: NO];
+		}
 	}
 }
 
@@ -525,19 +530,15 @@
 	//Clear the active program
 	[self setActiveProgramPath: nil];
 	
-	//Show the program chooser, if that was queued up
-	if (showProgramPanelOnReturnToShell)
+	//Show the program chooser after returning to the DOS prompt
+	if ([self isGamePackage] && [[self executables] count])
 	{
-		if ([self isGamePackage] && [[self executables] count])
-		{
-			BOOL panelShown = [[self mainWindowController] programPanelShown];
-			
-			//Show only after a delay, so that the window has time to resize after quitting the game
-			if (!panelShown) [[self mainWindowController] performSelector: @selector(toggleProgramPanelShown:)
-															   withObject: self
-															   afterDelay: 0.5];
-		}
-		showProgramPanelOnReturnToShell = NO;
+		BOOL panelShown = [[self mainWindowController] programPanelShown];
+		
+		//Show only after a delay, so that the window has time to resize after quitting the game
+		if (!panelShown) [[self mainWindowController] performSelector: @selector(toggleProgramPanelShown:)
+														   withObject: self
+														   afterDelay: 0.5];
 	}
 	
 	

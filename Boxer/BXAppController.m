@@ -22,7 +22,7 @@
 NSString * const BXNewSessionParam = @"--openNewSession";
 
 @implementation BXAppController
-@synthesize emulationQueue, currentSession;
+@synthesize currentSession;
 
 
 #pragma mark -
@@ -131,20 +131,9 @@ NSString * const BXNewSessionParam = @"--openNewSession";
     [[NSUserDefaults standardUserDefaults] registerDefaults: defaults];
 }
 
-- (id) init
-{
-	if ((self = [super init]))
-	{
-		//Create our emulator operation queue
-		emulationQueue = [[NSOperationQueue alloc] init];
-	}
-	return self;
-}
-
 - (void) dealloc
 {
 	[self setCurrentSession: nil], [currentSession release];
-	[emulationQueue release], emulationQueue = nil;
 	
 	[super dealloc];
 }
@@ -347,11 +336,6 @@ additionalEventParamDescriptor: nil
 
 - (void) applicationWillTerminate: (NSNotification *)notification
 {
-	//Force all emulation threads to finish up, then wait until they do before we shut down the application
-	//Note: this is currently disabled as it seems to hang forever
-	[emulationQueue cancelAllOperations];
-	//[emulationQueue waitUntilAllOperationsAreFinished];
-
 	//Save our preferences to disk before exiting
 	[[NSUserDefaults standardUserDefaults] synchronize];
 }

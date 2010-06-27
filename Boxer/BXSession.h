@@ -62,15 +62,6 @@
 
 
 #pragma mark -
-#pragma mark Class methods
-
-//Returns the currently active session, which is the session whose window is topmost.
-//Currently, only one session can be active at a time and Boxer will quit after that session
-//is shut down.
-+ (id) mainSession;
-
-
-#pragma mark -
 #pragma mark Methods
 
 //Start up the DOS emulator.

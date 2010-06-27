@@ -14,7 +14,7 @@
 //to DOSBox emulation functionality pass through here or one of its categories.
 
 //Instances of this class are created by BXSession, and like BXSession the active emulator can be accessed
-//as a singleton: via [[BXSession mainSession] emulator] or just [BXEmulator currentEmulator].
+//as a singleton: via [[[NSApp delegate] currentSession] emulator] or just [BXEmulator currentEmulator].
 
 //While BXEmulator is an NSOperation subclass, multithreading is not yet supported and may never be
 //via the NSOperation API.

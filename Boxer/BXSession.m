@@ -28,9 +28,6 @@
 @synthesize activeProgramPath;
 
 
-//Get the current (and only) DOS session, presented as a singleton
-+ (id) mainSession	{ return [[NSApp delegate] currentSession]; }
-
 
 //Initialization and cleanup methods
 //----------------------------------

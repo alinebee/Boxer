@@ -13,7 +13,7 @@
 
 - (NSString *)mobygamesMenuTitle
 {
-	BXSession *session = [BXSession mainSession];
+	BXSession *session = [[NSApp delegate] currentSession];
 	
 	if ([session isGamePackage])
 	{
@@ -29,7 +29,7 @@
 
 - (NSString *)replacementDocsMenuTitle
 {
-	BXSession *session = [BXSession mainSession];
+	BXSession *session = [[NSApp delegate] currentSession];
 	
 	if ([session isGamePackage])
 	{
@@ -50,7 +50,7 @@
 
 - (IBAction) showGameAtMobygames: (id)sender
 {
-	BXSession *session = [BXSession mainSession];
+	BXSession *session = [[NSApp delegate] currentSession];
 	
 	if ([session isGamePackage])
 	{
@@ -65,7 +65,7 @@
 
 - (IBAction) showGameAtReplacementDocs:	(id)sender
 {
-	BXSession *session = [BXSession mainSession];
+	BXSession *session = [[NSApp delegate] currentSession];
 
 	if ([session isGamePackage])
 	{
@@ -153,13 +153,13 @@
 	{
 		[documentation release];
 		documentation = [newDocumentation retain];
-		docSession = [BXSession mainSession];
+		docSession = [[NSApp delegate] currentSession];
 	}
 }
 
 - (NSArray *) documentation
 {
-	BXSession *session = [BXSession mainSession];
+	BXSession *session = [[NSApp delegate] currentSession];
 	
 	//invalidate the documentation if the session has changed
 	if (documentation && docSession != session) [self setDocumentation: nil];

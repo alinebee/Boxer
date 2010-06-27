@@ -71,7 +71,8 @@
 	[alert setInformativeText:	NSLocalizedString(	@"Any unsaved data will be lost.",
 													@"Informative text of confirmation sheet when closing an active DOS session.")];
 
-	[alert setShowsSuppressionButton: YES];
+	//Disable the suppression button for now.
+	//[alert setShowsSuppressionButton: YES];
 	return alert;
 }
 

@@ -26,21 +26,16 @@ enum {
 @end
 
 
-//BXProgramItemView wraps each program button in the picker. This class aligns itself
-//inside its parent NSCollectionView according to how many other siblings it has.
-//It also exposes its collection view item as a delegate, so that its descendant views
-//can bind to the item and respond to its state appropriately.
-@interface BXProgramItemView : NSView
+//BXProgramItemButton is used for the buttons in the program chooser panel. Each
+//button tracks its relevant collection item as a delegate, to make it possible to
+//customise the button's appearance based on the program it represents.
+@interface BXProgramItemButton : NSButton
 {
 	IBOutlet NSCollectionViewItem *delegate;
 }
-//A nonretained reference to the item defining which program we are representing.
+//A reference to the collection item defining which program we are representing.
 @property (assign) NSCollectionViewItem *delegate;
 
-//A shortcut accessor for our first (and only) child view.
-- (id) contents;
-
-//Relatively align our fixed-width child view within our flexible-width bounds.
-//0.0 is left, 1.0 is right, 0.5 is centered.
-- (void) alignContentsToPosition: (CGFloat)position;
+//A reference to the dictionary represented by our collection item delegate.
+- (id) representedObject;
 @end

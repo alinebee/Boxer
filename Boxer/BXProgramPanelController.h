@@ -33,6 +33,9 @@
 //response to changes in state, but can be called manually if needed.
 - (void) syncActivePanel;
 
+//Synchronises the state and appearance of program filename buttons.
+- (void) syncProgramButtonStates;
+
 //Gets/sets whether the session's currently executing program is the default program for its gamebox.
 //Used by the default program toggle view.
 - (BOOL) activeProgramIsDefault;

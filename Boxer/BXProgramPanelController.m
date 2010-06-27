@@ -42,11 +42,17 @@
 
 - (void) setRepresentedObject: (id)session
 {
-	if ([self representedObject]) [[self representedObject] removeObserver: self forKeyPath: @"activeProgramPath"];
+	if ([self representedObject])
+	{
+		[[self representedObject] removeObserver: self forKeyPath: @"activeProgramPath"];
+	}
 	
 	[super setRepresentedObject: session];
 	
-	if (session) [session addObserver: self forKeyPath: @"activeProgramPath" options: 0 context: nil];
+	if (session)
+	{
+		[session addObserver: self forKeyPath: @"activeProgramPath" options: 0 context: nil];
+	}
 }
 
 //Whenever the active program changes, change which view is drawn
@@ -55,7 +61,7 @@
 						change: (NSDictionary *)change
 					   context: (void *)context
 {	
-	[self syncActivePanel];
+	if ([keyPath isEqualToString: @"activeProgramPath"]) [self syncActivePanel];
 }
 
 - (void) setView: (NSView *)view
@@ -77,6 +83,21 @@
 	[self setActivePanel: panel];
 }
 
+- (void) syncProgramButtonStates
+{
+	for (NSView *itemView in [programList subviews])
+	{
+		NSButton *button = [itemView viewWithTag: BXProgramPanelButtons];
+		
+		//Validate the program chooser buttons, which will enable/disable them based on
+		//whether we're at the DOS prompt or not.
+		//This would be much simpler with a binding but HA HA HA HA we can't because
+		//Cocoa doesn't clean up bindings on NSCollectionView subviews properly,
+		//causing spurious exceptions once the thing we're observing has been dealloced.
+		[button setEnabled: [[self representedObject] validateUserInterfaceItem: (id)button]];
+	}
+}
+
 - (NSView *) activePanel
 {
 	return [[[self view] subviews] lastObject];
@@ -91,20 +112,7 @@
 	//Resize to panel first to fit the container
 	[panel setFrame: [mainView bounds]];
 	
-	if (panel == programChooserPanel)
-	{
-		//Validate the program chooser buttons before displaying it, which will
-		//enable/disable them based on whether we're at the DOS prompt or not
-		//This would be much simpler with a binding but HA HA HA HA we can't because
-		//Cocoa doesn't clean up bindings on NSCollectionView subviews properly,
-		//causing spurious exceptions once the thing we're observing has been dealloced.
-
-		//Dig our way down the heirarchy until we find a program button
-		NSView *sampleButton = [panel viewWithTag: BXProgramPanelButtons];
-		//Then, find its siblings and validate them all
-		for (id button in [[sampleButton superview] subviews])
-			[[self representedObject] validateUserInterfaceItem: button];
-	}
+	if (panel == programChooserPanel) [self syncProgramButtonStates];
 	
 	[mainView addSubview: panel];
 	

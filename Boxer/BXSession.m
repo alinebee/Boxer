@@ -263,7 +263,7 @@
 		if (![executables objectForKey: fileName])
 		{
 			NSImage *icon		= [workspace iconForFile: path];
-			BOOL isDefault		= [path isEqualToString: targetPath];
+			BOOL isDefault		= [path isEqualToString: defaultTarget];
 			
 			NSDictionary *data	= [NSDictionary dictionaryWithObjectsAndKeys:
 				path,	@"path",
@@ -276,11 +276,19 @@
 	}
 	NSArray *filteredExecutables = [executables allValues];
 	
+	
+	NSSortDescriptor *sortDefaultFirst = [[NSSortDescriptor alloc] initWithKey: @"isDefault" ascending: NO];
+	
 	NSSortDescriptor *sortByFilename = [[NSSortDescriptor alloc] initWithKey: @"path.lastPathComponent"
 																   ascending: YES
 																	selector: @selector(caseInsensitiveCompare:)];
 	
-	return [filteredExecutables sortedArrayUsingDescriptors: [NSArray arrayWithObject: [sortByFilename autorelease]]];
+	NSArray *sortDescriptors = [NSArray arrayWithObjects:
+								[sortDefaultFirst autorelease],
+								[sortByFilename autorelease],
+								nil];
+	
+	return [filteredExecutables sortedArrayUsingDescriptors: sortDescriptors];
 }
 
 
@@ -315,7 +323,10 @@
 
 + (NSSet *) keyPathsForValuesAffectingRepresentedIcon	{ return [NSSet setWithObject: @"gamePackage.coverArt"]; }
 + (NSSet *) keyPathsForValuesAffectingDocumentation		{ return [NSSet setWithObject: @"gamePackage.documentation"]; }
-+ (NSSet *) keyPathsForValuesAffectingExecutables		{ return [NSSet setWithObject: @"gamePackage.executables"]; }
++ (NSSet *) keyPathsForValuesAffectingExecutables
+{
+	return [NSSet setWithObjects: @"gamePackage.executables", @"gamePackage.targetPath", nil];
+}
 
 @end
 

@@ -78,6 +78,7 @@
 	
 	if ([notificationTextModifiers containsObject: keyPath])
 	{
+		[self willChangeValueForKey: @"notificationText"];
 		[self didChangeValueForKey: @"notificationText"];
 	}
 }
@@ -108,7 +109,7 @@
 
 - (void) _syncSegmentedButtonStates
 {	
-	[statusBarControls setSelected: [[NSApp delegate] inspectorPanelShown]		forSegment: BXStatusBarInspectorSegment];
+	[statusBarControls setSelected: [[NSApp delegate] inspectorPanelShown]				forSegment: BXStatusBarInspectorSegment];
 	[statusBarControls setSelected: [[self controller] programPanelShown]				forSegment: BXStatusBarProgramPanelSegment];
 	[statusBarControls setSelected: [[[self controller] inputController] mouseLocked]	forSegment: BXStatusBarMouseLockSegment];
 	

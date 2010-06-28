@@ -39,7 +39,7 @@
 #pragma mark Properties
 
 //The main window controller, responsible for the BXSessionWindow that displays this session.
-@property (assign) BXSessionWindowController *mainWindowController;
+@property (retain) BXSessionWindowController *mainWindowController;
 
 //The underlying emulator process for this session. This is created during [BXSession start].
 @property (retain) BXEmulator *emulator;

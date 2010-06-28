@@ -43,6 +43,7 @@
 
 - (void) dealloc
 {
+	[self setMainWindowController: nil],[mainWindowController release];
 	[self setEmulator: nil],			[emulator release];
 	[self setGamePackage: nil],			[gamePackage release];
 	[self setTargetPath: nil],			[targetPath release];
@@ -85,6 +86,7 @@
 	{
 		if (emulator)
 		{
+			[emulator setDelegate: nil];
 			[self _deregisterForFilesystemNotifications];
 		}
 		
@@ -544,8 +546,8 @@
 	
 	if ([[NSUserDefaults standardUserDefaults] boolForKey: @"startUpInFullScreen"])
 	{
-		//Dump out of fullscreen mode when we return to the prompt,
-		//if we automatically switch into fullscreen at startup
+		//Drop out of fullscreen mode when we return to the prompt,
+		//if we automatically switched into fullscreen at startup
 		[[self mainWindowController] exitFullScreen: self];
 	}
 }
@@ -555,7 +557,7 @@
 	if ([[NSUserDefaults standardUserDefaults] boolForKey: @"startUpInFullScreen"])
 	{
 		//Switch to fullscreen mode automatically after a brief delay
-		//This will be cancelled if the context exits within that time, see below
+		//This will be cancelled if the context exits within that time - see below
 		[[self mainWindowController] performSelector: @selector(toggleFullScreenWithZoom:) 
 										  withObject: [NSNumber numberWithBool: YES] 
 										  afterDelay: 0.5];

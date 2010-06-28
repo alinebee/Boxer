@@ -8,7 +8,7 @@
 
 //BXProgramPanelController manages the program picker panel inside the session window. It is
 //responsible for populating the program selection and toggling which picker interface is shown
-//(picker, default program toggle, no programs notice) based on the state of the emulator session.
+//(picker, default program toggle, no programs notice) based on the state of the session.
 
 #import <Cocoa/Cocoa.h>
 
@@ -22,23 +22,26 @@
 	IBOutlet NSCollectionView *programList;
 }
 
-//Returns the localised display string used for the "open this program every time" checkbox toggle.
-- (NSString *) labelForToggle;
 
-//Gets/sets the currently displayed view in the program panel.
-- (NSView *) activePanel;
-- (void) setActivePanel: (NSView *)panel;
+#pragma mark -
+#pragma mark Properties
 
-//Synchronises the displayed view to the current state of the session. Called automatically in
-//response to changes in state, but can be called manually if needed.
+//The currently displayed view in the program panel.
+@property (assign) NSView *activePanel;
+
+//Whether the currently executing program is the default program for its gamebox.
+@property (assign) BOOL activeProgramIsDefault;
+
+//The localised display string used for the "Open this program every time" checkbox toggle.
+@property (readonly) NSString *labelForToggle;
+
+
+#pragma mark -
+#pragma mark Synchronising subview state
+
+//Synchronises the displayed view to the current state of the session.
 - (void) syncActivePanel;
 
-//Synchronises the state and appearance of program filename buttons.
+//Synchronises the enabled state of the program chooser buttons.
 - (void) syncProgramButtonStates;
-
-//Gets/sets whether the session's currently executing program is the default program for its gamebox.
-//Used by the default program toggle view.
-- (BOOL) activeProgramIsDefault;
-- (void) setActiveProgramIsDefault: (BOOL) isDefault;
-
 @end

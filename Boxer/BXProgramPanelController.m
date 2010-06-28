@@ -107,17 +107,25 @@
 {
 	[self willChangeValueForKey: @"activePanel"];
 
-	NSView *mainView = [self view];
-	for (NSView *subview in [mainView subviews]) [subview removeFromSuperview];
-	//Resize to panel first to fit the container
-	[panel setFrame: [mainView bounds]];
+	NSView *previousPanel = [self activePanel];
 	
-	if (panel == programChooserPanel) [self syncProgramButtonStates];
-	
-	[mainView addSubview: panel];
+	if (previousPanel != panel)
+	{
+		NSView *mainView = [self view];
+		
+		//Resize the panel first to fit the container
+		[panel setFrame: [mainView bounds]];
+		
+		if (panel == programChooserPanel) [self syncProgramButtonStates];
+		
+		//Add the new panel into the view
+		[previousPanel removeFromSuperview];
+		[mainView addSubview: panel];
+	}
 	
 	[self didChangeValueForKey: @"activePanel"];
 }
+
 
 //Returns the display string used for the "open this program every time" checkbox toggle
 - (NSString *) labelForToggle
@@ -137,7 +145,6 @@
 	NSString *defaultProgram	= [[[self representedObject] gamePackage] targetPath];
 	NSString *activeProgram		= [[self representedObject] activeProgramPath];
 
-	//NSLog(@"Default program: %@, active program: %@", defaultProgram, activeProgram);
 	return [activeProgram isEqualToString: defaultProgram];
 }
 

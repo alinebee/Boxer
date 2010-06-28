@@ -10,7 +10,6 @@
 //program picker panel views.
 
 #import <Cocoa/Cocoa.h>
-#import <BGHUDAppKit/BGHUDScroller.h>
 
 //Interface Builder tags
 enum {

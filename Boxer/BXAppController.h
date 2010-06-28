@@ -40,7 +40,7 @@
 
 //Because we can only run one emulation session at a time, we need to launch a second
 //Boxer process for opening additional/subsequent documents
-- (BOOL) _launchProcessWithDocumentAtURL: (NSURL *)URL;
+- (void) _launchProcessWithDocumentAtURL: (NSURL *)URL;
 - (void) _launchProcessWithUntitledDocument;
 
 

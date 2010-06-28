@@ -423,7 +423,7 @@
 
 - (BOOL) shouldConfirmClose
 {
-	return (![[NSUserDefaults standardUserDefaults] boolForKey: @"suppressCloseAlert"] && [[self emulator] isRunningProcess]);
+	return (![[NSUserDefaults standardUserDefaults] boolForKey: @"suppressCloseAlert"] && [[self emulator] isRunningProcess] && ![[self emulator] isCancelled]);
 }
 
 - (BOOL) windowShouldClose: (id)theWindow

@@ -20,6 +20,7 @@
 
 
 NSString * const BXNewSessionParam = @"--openNewSession";
+NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 @implementation BXAppController
 @synthesize currentSession;
@@ -142,27 +143,17 @@ NSString * const BXNewSessionParam = @"--openNewSession";
 #pragma mark -
 #pragma mark Document management
 
-- (BOOL) _launchProcessWithDocumentAtURL: (NSURL *)URL
-{
-	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
-	NSURL *bundleURL = [NSURL fileURLWithPath: [[NSBundle mainBundle] bundlePath]]; 
-	
-	NSArray *URLs = [NSArray arrayWithObject: URL];
-	
-	return [workspace openURLs: URLs
-	   withAppBundleIdentifier: bundleIdentifier
-					   options: NSWorkspaceLaunchDefault | NSWorkspaceLaunchNewInstance
-additionalEventParamDescriptor: nil
-			 launchIdentifiers: NULL];
+- (void) _launchProcessWithDocumentAtURL: (NSURL *)URL
+{	
+	NSString *executablePath	= [[NSBundle mainBundle] executablePath];
+	NSArray *params				= [NSArray arrayWithObjects: [URL path], BXActivateOnLaunchParam, nil]; 
+	NSTask *boxerProcess		= [NSTask launchedTaskWithLaunchPath: executablePath arguments: params];
 }
 
 - (void) _launchProcessWithUntitledDocument
 {
-	//NSWorkspace doesn't give us any means (that I can find) to open a new untitled document.
-	//So, we use NSTask and pass ourselves a parameter telling ourselves to do so.
 	NSString *executablePath	= [[NSBundle mainBundle] executablePath];
-	NSArray *params				= [NSArray arrayWithObject: BXNewSessionParam]; 
+	NSArray *params				= [NSArray arrayWithObjects: BXNewSessionParam, BXActivateOnLaunchParam, nil]; 
 	NSTask *boxerProcess		= [NSTask launchedTaskWithLaunchPath: executablePath arguments: params];	
 }
 
@@ -188,10 +179,10 @@ additionalEventParamDescriptor: nil
 	NSArray *arguments = [[NSProcessInfo processInfo] arguments];
 	
 	if ([arguments containsObject: BXNewSessionParam])
-	{
 		[self openUntitledDocumentAndDisplay: YES error: nil];
+	
+	if ([arguments containsObject: BXActivateOnLaunchParam]) 
 		[NSApp activateIgnoringOtherApps: YES];
-	}
 }
 
 //Customise the open panel

@@ -1,6 +1,6 @@
-diff -r eb9bf73f8f7d -r 334bb6bfcdf7 Framework/BGHUDButtonCell.m
+diff -r eb9bf73f8f7d Framework/BGHUDButtonCell.m
 --- a/Framework/BGHUDButtonCell.m	Sun Jun 27 22:08:11 2010 +0300
-+++ b/Framework/BGHUDButtonCell.m	Sun Jun 27 22:09:04 2010 +0300
++++ b/Framework/BGHUDButtonCell.m	Mon Jun 28 18:58:41 2010 +0300
 @@ -185,6 +185,16 @@
  							 range: NSMakeRange(0, [newTitle length])];
  		}
@@ -18,9 +18,9 @@ diff -r eb9bf73f8f7d -r 334bb6bfcdf7 Framework/BGHUDButtonCell.m
  		[newTitle endEditing];
  		
  		//Make the super class do the drawing
-diff -r eb9bf73f8f7d -r 334bb6bfcdf7 Framework/BGHUDLabel.m
+diff -r eb9bf73f8f7d Framework/BGHUDLabel.m
 --- a/Framework/BGHUDLabel.m	Sun Jun 27 22:08:11 2010 +0300
-+++ b/Framework/BGHUDLabel.m	Sun Jun 27 22:09:04 2010 +0300
++++ b/Framework/BGHUDLabel.m	Mon Jun 28 18:58:41 2010 +0300
 @@ -93,6 +93,23 @@
  		[self setTextColor: [[[BGThemeManager keyedManager] themeForKey: self.themeKey] disabledTextColor]];
  	}
@@ -45,9 +45,33 @@ diff -r eb9bf73f8f7d -r 334bb6bfcdf7 Framework/BGHUDLabel.m
  	[super drawRect: rect];
  }
  
-diff -r eb9bf73f8f7d -r 334bb6bfcdf7 Framework/BGTheme.h
+diff -r eb9bf73f8f7d Framework/BGHUDSegmentedCell.m
+--- a/Framework/BGHUDSegmentedCell.m	Sun Jun 27 22:08:11 2010 +0300
++++ b/Framework/BGHUDSegmentedCell.m	Mon Jun 28 18:58:41 2010 +0300
+@@ -241,7 +241,19 @@
+ 	NSMutableDictionary *textAttributes = [[NSMutableDictionary alloc] initWithCapacity: 0];
+ 	
+ 	[textAttributes setValue: [NSFont controlContentFontOfSize: [NSFont systemFontSizeForControlSize: [self controlSize]]] forKey: NSFontAttributeName];
+-	[textAttributes setValue: [[[BGThemeManager keyedManager] themeForKey: self.themeKey] textColor] forKey: NSForegroundColorAttributeName];
++	
++	//--Added 2010-06-28 by Alun Bestor to show disabled segments as properly disabled
++	NSColor *textColor;
++	if ([self isEnabledForSegment: segment])
++	{
++		textColor = [[[BGThemeManager keyedManager] themeForKey: self.themeKey] textColor];
++	}
++	else
++	{
++		textColor = [[[BGThemeManager keyedManager] themeForKey: self.themeKey] disabledTextColor];
++	}
++	[textAttributes setValue: textColor forKey: NSForegroundColorAttributeName];
++	//--End of modifications
+ 	
+ 	if([self labelForSegment: segment]) {
+ 		
+diff -r eb9bf73f8f7d Framework/BGTheme.h
 --- a/Framework/BGTheme.h	Sun Jun 27 22:08:11 2010 +0300
-+++ b/Framework/BGTheme.h	Sun Jun 27 22:09:04 2010 +0300
++++ b/Framework/BGTheme.h	Mon Jun 28 18:58:41 2010 +0300
 @@ -102,6 +102,11 @@
  -(NSColor *)textColor;							//Color used to draw text
  -(NSColor *)disabledTextColor;					//Color used to draw disabled text
@@ -60,9 +84,9 @@ diff -r eb9bf73f8f7d -r 334bb6bfcdf7 Framework/BGTheme.h
  -(CGFloat)alphaValue;								//Alpha value that is an optional paremeter, used only
  												//if you want certain colors to be draw with the same
  												//alpha value.
-diff -r eb9bf73f8f7d -r 334bb6bfcdf7 Framework/BGTheme.m
+diff -r eb9bf73f8f7d Framework/BGTheme.m
 --- a/Framework/BGTheme.m	Sun Jun 27 22:08:11 2010 +0300
-+++ b/Framework/BGTheme.m	Sun Jun 27 22:09:04 2010 +0300
++++ b/Framework/BGTheme.m	Mon Jun 28 18:58:41 2010 +0300
 @@ -344,6 +344,10 @@
  	return [shadow autorelease];
  }

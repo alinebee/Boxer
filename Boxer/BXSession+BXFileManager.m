@@ -342,6 +342,7 @@
 	NSNotificationCenter *center = [workspace notificationCenter];
 
 	[center removeObserver: self name: NSWorkspaceDidMountNotification		object: workspace];
+	[center removeObserver: self name: NSWorkspaceDidUnmountNotification	object: workspace];
 	[center removeObserver: self name: NSWorkspaceWillUnmountNotification	object: workspace];
 	[center removeObserver: self name: UKFileWatcherWriteNotification		object: nil];
 

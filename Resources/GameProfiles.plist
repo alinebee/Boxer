@@ -119,11 +119,13 @@
 				<string>X-COM: UFO Defense</string>
 				<string>X-COM: Terror From the Deep</string>
 				<string>Warcraft II</string>
+				<string>Space Quest VI</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>ufo2exe</string>
 				<string>war2.exe</string>
+				<string>vesa.drv</string>
 			</array>
 		</dict>
 		<dict>
@@ -205,6 +207,7 @@
 				<string>Links</string>
 				<string>Warlords 2</string>
 				<string>Master of Magic</string>
+				<string>Simcity 2000</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
@@ -222,6 +225,7 @@
 				<string>torrey_p.crs</string>
 				<string>warlord2.exe</string>
 				<string>magic.exe</string>
+				<string>sc2000.dat</string>
 			</array>
 		</dict>
 	</array>

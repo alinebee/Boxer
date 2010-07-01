@@ -17,8 +17,6 @@
 #import "shell.h"
 #import "mapper.h"
 
-#import <crt_externs.h> //for _NSGetArgc() and _NSGetArgv()
-
 
 //The singleton emulator instance. Returned by [BXEmulator currentEmulator].
 BXEmulator *currentEmulator = nil;
@@ -452,10 +450,9 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	
 	try
 	{
-		//Create a new configuration instance and feed it our commandline parameters (ugh)
-		//TODO: use our own (empty) argc and argv instead of these.
-		
-		CommandLine commandLine(*_NSGetArgc(), *_NSGetArgv());
+		//Create a new configuration instance and feed it an empty set of parameters.
+		char const *argv[0];
+		CommandLine commandLine(0, argv);
 		Config configuration(&commandLine);
 		control=&configuration;
 		

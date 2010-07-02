@@ -27,10 +27,6 @@ typedef struct {
 	//Normally this is 2.0, so the filter only starts applying once the surface is two or more times the original resolution. If the filter scales down well (like HQx), this can afford to be lower than 2.
 	CGFloat			minOutputScale;
 	
-	//The maximum surface scale at which this filter should be applied,
-	//or 0 to apply to all scales above minSurfaceScale.
-	CGFloat			maxOutputScale;
-	
 	//The maximum game resolution at which this filter should be applied,
 	//or NSZeroSize to apply to all resolutions.
 	NSSize			maxResolution;
@@ -146,11 +142,13 @@ typedef struct {
 
 - (BOOL) _shouldApplyFilterType: (BXFilterType)type
 				 fromResolution: (NSSize)resolution
-					 toViewport: (NSSize)viewportSize;
+					 toViewport: (NSSize)viewportSize 
+					 isTextMode: (BOOL)isTextMode;
 
 - (NSInteger) _filterScaleForType: (BXFilterType)type
 				   fromResolution: (NSSize)resolution
-					   toViewport: (NSSize)viewportSize;
+					   toViewport: (NSSize)viewportSize
+					   isTextMode: (BOOL)isTextMode;
 
 - (NSInteger) _maxFilterScaleForResolution: (NSSize)resolution;
 

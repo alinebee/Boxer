@@ -237,6 +237,7 @@
 	NSSize resolution			= [self resolution];	
 	NSSize viewportSize			= [[[self emulator] delegate] viewportSize];
 	
+	BOOL isTextMode				= [self isInTextMode];
 	BOOL useAspectCorrection	= [self _shouldUseAspectCorrectionForResolution: resolution];	
 	NSInteger maxFilterScale	= [self _maxFilterScaleForResolution: resolution];	
 	
@@ -248,13 +249,17 @@
 	
 	//Decide if we can use our selected filter at this scale, and if so at what scale
 	if (desiredType != BXFilterNormal &&
-		[self _shouldApplyFilterType: desiredType fromResolution: resolution toViewport: viewportSize])
+		[self _shouldApplyFilterType: desiredType
+					  fromResolution: resolution
+						  toViewport: viewportSize
+						  isTextMode: isTextMode])
 	{
 		activeType = desiredType;
 		//Now decide on what operation size the scaler should use
 		filterScale = [self _filterScaleForType: activeType
 								 fromResolution: resolution
-									 toViewport: viewportSize];
+									 toViewport: viewportSize
+									 isTextMode: isTextMode];
 	}
 	
 	//Make sure we don't go over the maximum size imposed by the OpenGL hardware
@@ -294,6 +299,7 @@
 - (NSInteger) _filterScaleForType: (BXFilterType)type
 				   fromResolution: (NSSize)resolution
 					   toViewport: (NSSize)viewportSize
+					   isTextMode: (BOOL) isTextMode
 {
 	BXFilterDefinition params = [self _paramsForFilterType: type];
 	
@@ -311,20 +317,19 @@
 - (BOOL) _shouldApplyFilterType: (BXFilterType)type
 				 fromResolution: (NSSize)resolution
 					 toViewport: (NSSize)viewportSize
+					 isTextMode: (BOOL)isTextMode
 {
 	BXFilterDefinition params = [self _paramsForFilterType: type];
 	
-	//Disable scalers for high-resolution games
-	if (!sizeFitsWithinSize(resolution, params.maxResolution)) return NO;
+	//Disable scalers for high-resolution graphics modes
+	//(We leave them available for text modes)
+	if (!isTextMode && !sizeFitsWithinSize(resolution, params.maxResolution)) return NO;
 	
 	NSSize scale = NSMakeSize(viewportSize.width / resolution.width,
 							  viewportSize.height / resolution.height);
 	
 	//Scale is too small for filter to be applied
 	if (scale.height < params.minOutputScale) return NO;
-	
-	//Scale is too large for filter to be worth applying
-	if (params.maxOutputScale && scale.height > params.maxOutputScale) return NO;
 	
 	//If we got this far, go for it!
 	return YES;

@@ -225,16 +225,16 @@ This means that this file has had too many modifications to be safely replaceabl
 #define PACKAGE_NAME "dosbox"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "dosbox 0.73"
+#define PACKAGE_STRING "dosbox 0.74"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "dosbox"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.73"
+#define PACKAGE_VERSION "0.74"
 
 /* Version number of package */
-#define VERSION "0.73"
+#define VERSION "0.74"
 
 
 /* Define to 1 if you have the ANSI C header files. */

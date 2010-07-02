@@ -237,6 +237,9 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	
 		CPU_OldCycleMax = CPU_CycleMax = (Bit32s)newSpeed;
 		
+		//Stop DOSBox from resetting the cycles after a program exits
+		CPU_AutoDetermineMode &= ~CPU_AUTODETERMINE_CYCLES;
+		
 		//Wipe out the cycles queue: we do this because DOSBox's CPU functions do whenever they modify the cycles
 		CPU_CycleLeft	= 0;
 		CPU_Cycles		= 0;
@@ -327,6 +330,11 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 				cpudecoder = &CPU_Core_Full_Run;
 				break;
 		}
+		
+		//Prevent DOSBox from resetting the core mode after a program exits
+		CPU_AutoDetermineMode &= ~CPU_AUTODETERMINE_CORE;
+		
+		//Reset DOSBox's emulated cycles counters
 		CPU_CycleLeft=0;
 		CPU_Cycles=0;
 	}
@@ -443,7 +451,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 //This is a cut-down and mashed-up version of DOSBox's old main and GUI_StartUp functions,
 //chopping out all the stuff that Boxer doesn't need or want.
 - (void) _startDOSBox
-{
+{	
 	//Initialize the SDL modules that DOSBox will need.
 	NSAssert1(!SDL_Init(SDL_INIT_AUDIO|SDL_INIT_TIMER|SDL_INIT_CDROM|SDL_INIT_NOPARACHUTE),
 			  @"SDL failed to initialize with the following error: %s", SDL_GetError());

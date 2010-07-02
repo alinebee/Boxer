@@ -149,6 +149,9 @@ void DOS_Terminate(Bit16u pspseg,bool tsr,Bit8u exitcode) {
 		cpudecoder=&CPU_Core_Normal_Run;
 		CPU_CycleLeft=0;
 		CPU_Cycles=0;
+		//--Added 2010-07-02 by Alun Bestor to notify Boxer when the core mode changes
+		GFX_SetTitle(-1,-1,false);
+		//--End of modifications
 	}
 #endif
 

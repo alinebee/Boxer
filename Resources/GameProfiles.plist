@@ -26,6 +26,16 @@
 		</dict>
 		<dict>
 			<key>BXProfileConf</key>
+			<string>Need for Speed</string>
+			<key>BXProfileName</key>
+			<string>Need for Speed</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>nfs.exe</string>
+			</array>
+		</dict>
+		<dict>
+			<key>BXProfileConf</key>
 			<string>The 7th Guest</string>
 			<key>BXProfileName</key>
 			<string>The 7th Guest</string>

@@ -28,18 +28,24 @@ NSString *BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 + (NSDictionary *)detectedProfileForPath: (NSString *)basePath
 {
 	NSFileManager *manager	= [NSFileManager defaultManager];
-	NSDictionary *lookups	= [self _detectionLookups];
 	NSDictionary *matchingProfile;
 	
-	for (NSString *path in [manager enumeratorAtPath: basePath])
+	//_lookupTables is divided into separate sets of profiles in order of priority: game-specific
+	//profiles followed by generic profiles.
+	//We check the entire filesystem for one set of profiles first, before starting on the next:
+	//This allows game-specific profiles to override generic ones that would otherwise match sooner.
+	for (NSDictionary *lookups in [self _lookupTables])
 	{
-		//First check for an exact filename match
-		NSString *fileName	= [[path lastPathComponent] lowercaseString];
-		if (matchingProfile = [lookups objectForKey: fileName]) return matchingProfile;
-		
-		//Next, check if the base filename (sans extension) matches anything
-		NSString *baseName	= [[fileName stringByDeletingPathExtension] stringByAppendingString: @"."];
-		if (matchingProfile = [lookups objectForKey: baseName]) return matchingProfile;
+		for (NSString *path in [manager enumeratorAtPath: basePath])
+		{
+			//First check for an exact filename match
+			NSString *fileName	= [[path lastPathComponent] lowercaseString];
+			if (matchingProfile = [lookups objectForKey: fileName]) return matchingProfile;
+			
+			//Next, check if the base filename (sans extension) matches anything
+			NSString *baseName	= [[fileName stringByDeletingPathExtension] stringByAppendingString: @"."];
+			if (matchingProfile = [lookups objectForKey: baseName]) return matchingProfile;
+		}		
 	}
 	//If we got this far, we couldn't find anything
 	return nil;
@@ -75,31 +81,42 @@ NSString *BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 @end
 
 @implementation BXGameProfile (BXGameProfileInternals)
-//Cache the data in a static variable, since it will not change over the lifetime of the application
-//Todo: check if this caching is necessary, or if there's behind-the-scenes caching.
+							   
 + (NSDictionary *) _gameProfileData
 {
+	//Cache the data in a static variable, since it will not change over the lifetime of the application
+	//Todo: check if this caching is necessary, or if there's behind-the-scenes caching.
 	static NSDictionary *dict = nil;
 	if (!dict)
 	{
-		NSString *profilePath = [[NSBundle mainBundle] pathForResource: @"GameProfiles" ofType:@"plist"];
+		NSString *profilePath = [[NSBundle mainBundle] pathForResource: @"GameProfiles" ofType: @"plist"];
 		dict = [[NSDictionary alloc] initWithContentsOfFile: profilePath]; 
 	}
 	return dict;
 }
 
-+ (NSDictionary *) _detectionLookups
++ (NSArray *) _lookupTables
 {
-	static NSMutableDictionary *lookups = nil;
-	if (!lookups)
+	static NSArray *lookupTables = nil;
+	if (!lookupTables)
 	{
-		lookups = [[NSMutableDictionary alloc] initWithCapacity: 200];
-		NSArray *profiles = [[self specificGameProfiles] arrayByAddingObjectsFromArray: [self genericProfiles]];
-		for (NSDictionary *profile in profiles)
-		{
-			for (NSString *telltale in [profile objectForKey: @"BXProfileTelltales"]) [lookups setObject: profile forKey: telltale]; 
-		}
+		lookupTables = [[NSArray alloc] initWithObjects:
+						[self _lookupTableForProfiles: [self specificGameProfiles]],
+						[self _lookupTableForProfiles: [self genericProfiles]],
+						nil];
 	}
-	return lookups;
+	return lookupTables;
+}
+
+							   
+							   
++ (NSDictionary *) _lookupTableForProfiles: (NSArray *)profiles
+{
+	NSMutableDictionary *lookups = [[NSMutableDictionary alloc] initWithCapacity: 200];
+	for (NSDictionary *profile in profiles)
+	{
+		for (NSString *telltale in [profile objectForKey: @"BXProfileTelltales"]) [lookups setObject: profile forKey: telltale]; 
+	}
+	return [lookups autorelease];
 }
 @end

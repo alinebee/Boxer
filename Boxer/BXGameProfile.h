@@ -48,10 +48,14 @@ typedef NSUInteger BXGameEra;
 //Internal methods which should not be called outside BXGameProfile.
 @interface BXGameProfile (BXGameProfileInternals)
 
-//Caches and returns the contents of GameProfiles.plist to avoid multiple hits to the filesystem.
+//Loads, caches and returns the contents of GameProfiles.plist to avoid multiple hits to the filesystem.
 + (NSDictionary *) _gameProfileData;
 
-//Generates, caches and returns a lookup table of filename->profile mappings.
-//Used by detectedProfileForPath: to perform detection in a single pass of the file heirarchy.
-+ (NSDictionary *) _detectionLookups;
+//Generates, caches and returns an array of lookup tables in order of priority.
+//Used by detectedProfileForPath: to perform detection in multiple passes of the file heirarchy.
++ (NSArray *) _lookupTables;
+
+//Generates and returns a lookup table of filename->profile mappings for the specified set of profiles.
+//Used by _lookupTables.
++ (NSDictionary *) _lookupTableForProfiles: (NSArray *)profiles;
 @end

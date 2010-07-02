@@ -2,6 +2,80 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>BXSpecificGameProfiles</key>
+	<array>
+		<dict>
+			<key>BXProfileConf</key>
+			<string>KQ7</string>
+			<key>BXProfileName</key>
+			<string>King&apos;s Quest VII</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>kq7.bat</string>
+			</array>
+		</dict>
+		<dict>
+			<key>BXProfileConf</key>
+			<string>Screamer 2</string>
+			<key>BXProfileName</key>
+			<string>Screamer 2</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>cars101.dat</string>
+			</array>
+		</dict>
+		<dict>
+			<key>BXProfileConf</key>
+			<string>The 7th Guest</string>
+			<key>BXProfileName</key>
+			<string>The 7th Guest</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>t7g.bat</string>
+			</array>
+		</dict>
+		<dict>
+			<key>BXProfileConf</key>
+			<string>Ultima VII</string>
+			<key>BXProfileName</key>
+			<string>Ultima VII</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>ultima7.com</string>
+			</array>
+		</dict>
+		<dict>
+			<key>BXProfileConf</key>
+			<string>Ultima VII</string>
+			<key>BXProfileName</key>
+			<string>Ultima VII Part 2: The Serpent Isle</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>serpent.com</string>
+			</array>
+		</dict>
+		<dict>
+			<key>BXProfileConf</key>
+			<string>Wing Commander 2</string>
+			<key>BXProfileName</key>
+			<string>Wing Commander II</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>wc2.</string>
+			</array>
+		</dict>
+		<dict>
+			<key>BXProfileConf</key>
+			<string>Wings of Glory</string>
+			<key>BXProfileName</key>
+			<string>Wings of Glory</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>wogdata3.tre</string>
+			</array>
+		</dict>
+	</array>
+
 	<key>BXGenericProfiles</key>
 	<array>
 		<dict>
@@ -226,69 +300,6 @@
 				<string>warlord2.exe</string>
 				<string>magic.exe</string>
 				<string>sc2000.dat</string>
-			</array>
-		</dict>
-	</array>
-	<key>BXSpecificGameProfiles</key>
-	<array>
-		<dict>
-			<key>BXProfileConf</key>
-			<string>KQ7</string>
-			<key>BXProfileName</key>
-			<string>King&apos;s Quest VII</string>
-			<key>BXProfileTelltales</key>
-			<array>
-				<string>kq7.bat</string>
-			</array>
-		</dict>
-		<dict>
-			<key>BXProfileConf</key>
-			<string>The 7th Guest</string>
-			<key>BXProfileName</key>
-			<string>The 7th Guest</string>
-			<key>BXProfileTelltales</key>
-			<array>
-				<string>t7g.bat</string>
-			</array>
-		</dict>
-		<dict>
-			<key>BXProfileConf</key>
-			<string>Ultima VII</string>
-			<key>BXProfileName</key>
-			<string>Ultima VII</string>
-			<key>BXProfileTelltales</key>
-			<array>
-				<string>ultima7.com</string>
-			</array>
-		</dict>
-		<dict>
-			<key>BXProfileConf</key>
-			<string>Ultima VII</string>
-			<key>BXProfileName</key>
-			<string>Ultima VII Part 2: The Serpent Isle</string>
-			<key>BXProfileTelltales</key>
-			<array>
-				<string>serpent.com</string>
-			</array>
-		</dict>
-		<dict>
-			<key>BXProfileConf</key>
-			<string>Wing Commander 2</string>
-			<key>BXProfileName</key>
-			<string>Wing Commander II</string>
-			<key>BXProfileTelltales</key>
-			<array>
-				<string>wc2.</string>
-			</array>
-		</dict>
-		<dict>
-			<key>BXProfileConf</key>
-			<string>Wings of Glory</string>
-			<key>BXProfileName</key>
-			<string>Wings of Glory</string>
-			<key>BXProfileTelltales</key>
-			<array>
-				<string>wogdata3.tre</string>
 			</array>
 		</dict>
 	</array>

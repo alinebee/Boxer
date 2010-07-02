@@ -13,11 +13,11 @@
 //Directories larger than this size (in bytes) will be treated as CD-era games by eraOfGameAtPath:
 const NSInteger BXDisketteGameSizeThreshold = 20 * 1024 * 1024;
 
-//Directories with any files older than this will be treated as 5.25 diskette-era games by eraOfGameAtPath:
-NSString *BX35DisketteGameDateThreshold = @"1995-01-01 00:00:00 +0000";
-
 //Directories with any files older than this will be treated as 3.5 diskette-era games by eraOfGameAtPath:
-NSString *BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
+NSString * const BX35DisketteGameDateThreshold = @"1995-01-01 00:00:00 +0000";
+
+//Directories with any files older than this will be treated as 5.25 diskette-era games by eraOfGameAtPath:
+NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 
 
 @implementation BXGameProfile

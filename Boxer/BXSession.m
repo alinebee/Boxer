@@ -363,22 +363,14 @@
 		//Then, load the gamebox's own configuration file, if it has one
 		packageConfig = [thePackage configurationFile];
 		if (packageConfig) [configFiles addObject: packageConfig];
+		
 		else
 		{
-			//If the gamebox doesn't already have its own configuration file,
-			//copy the autodetected configuration into it
-			if (detectedConfig)
-			{
-				[thePackage setConfigurationFile: detectedConfig];
-			}
-			else
-			{
-				//If no configuration was detected, copy the empty generic configuration file instead
-				NSString *genericConfig = [[NSBundle mainBundle] pathForResource: @"Generic"
-																		  ofType: @"conf"
-																	 inDirectory: @"Configurations"];
-				[thePackage setConfigurationFile: genericConfig];
-			}
+			//If the gamebox had no configuration file, copy in an empty generic configuration file.
+			NSString *genericConfig = [[NSBundle mainBundle] pathForResource: @"Generic"
+																	  ofType: @"conf"
+																 inDirectory: @"Configurations"];
+			[thePackage setConfigurationFile: genericConfig];
 		}
 	}
 	

@@ -6,6 +6,28 @@
 	<array>
 		<dict>
 			<key>BXProfileName</key>
+			<string>Destruction Derby 2</string>
+			<key>BXProfileConf</key>
+			<string>Destruction Derby 2</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>dd2.fil</string>
+			</array>
+		</dict>
+
+		<dict>
+			<key>BXProfileName</key>
+			<string>I Have No Mouth and I Must Scream</string>
+			<key>BXProfileConf</key>
+			<string>I Have No Mouth</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>scream.prf</string>
+			</array>
+		</dict>
+
+		<dict>
+			<key>BXProfileName</key>
 			<string>Daggerfall</string>
 			<key>BXProfileConf</key>
 			<string>More memory, no GUS</string>

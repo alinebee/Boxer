@@ -108,11 +108,11 @@ typedef struct {
 
 #if __cplusplus
 
-//Functions in this interface should not be called outside of BXEmulator and BXCoalface.
-@interface BXVideoHandler (BXVideoHandlerInternals)
-
 #pragma mark -
 #pragma mark Almost-private functions
+
+//Functions in this interface should not be called outside of BXEmulator and BXCoalface.
+@interface BXVideoHandler (BXVideoHandlerInternals)
 
 //Called by BXEmulator to prepare the renderer for shutdown.
 - (void) shutdown;
@@ -131,26 +131,6 @@ typedef struct {
 
 - (BOOL) startFrameWithBuffer: (void **)frameBuffer pitch: (NSUInteger *)pitch;
 - (void) finishFrameWithChanges: (const uint16_t *)dirtyBlocks;
-
-
-#pragma mark -
-#pragma mark Really genuinely private functions
-
-- (BXFilterDefinition) _paramsForFilterType: (BXFilterType)filterType;
-
-- (BOOL) _shouldUseAspectCorrectionForResolution: (NSSize)resolution;
-
-- (BOOL) _shouldApplyFilterType: (BXFilterType)type
-				 fromResolution: (NSSize)resolution
-					 toViewport: (NSSize)viewportSize 
-					 isTextMode: (BOOL)isTextMode;
-
-- (NSInteger) _filterScaleForType: (BXFilterType)type
-				   fromResolution: (NSSize)resolution
-					   toViewport: (NSSize)viewportSize
-					   isTextMode: (BOOL)isTextMode;
-
-- (NSInteger) _maxFilterScaleForResolution: (NSSize)resolution;
 
 @end
 

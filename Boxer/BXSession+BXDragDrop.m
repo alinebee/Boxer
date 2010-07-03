@@ -14,6 +14,15 @@
 #import "NSWorkspace+BXMountedVolumes.h"
 
 
+//Private methods
+@interface BXSession ()
+
+- (NSDragOperation) _responseToDroppedFile: (NSString *)filePath;
+- (BOOL) _handleDroppedFile: (NSString *)filePath withLaunching: (BOOL)launch;
+
+@end
+
+
 @implementation BXSession (BXDragDrop)
 
 //Return an array of all filetypes we will accept by drag-drop
@@ -67,11 +76,9 @@
 	return [[self emulator] handlePastedString: droppedString];
 }
 
-@end
 
-
-@implementation BXSession (BXDragDropInternals)
-
+#pragma mark -
+#pragma mark Private methods
 
 //This method indicates what we'll do with the dropped file, before we handle any actual drop.
 - (NSDragOperation) _responseToDroppedFile: (NSString *)filePath

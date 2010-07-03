@@ -22,6 +22,27 @@
 #import "NSString+BXPaths.h"
 
 
+
+//The methods in this category are not intended to be called outside BXSession.
+@interface BXSession ()
+
+- (void) volumeDidMount:		(NSNotification *)theNotification;
+- (void) volumeWillUnmount:		(NSNotification *)theNotification;
+- (void) filesystemDidChange:	(NSNotification *)theNotification;
+
+- (void) DOSDriveDidMount:		(NSNotification *)theNotification;
+- (void) DOSDriveDidUnmount:	(NSNotification *)theNotification;
+
+- (void) _handleVolumeDidMount: (NSNotification *)theNotification;
+
+- (void) _startTrackingChangesAtPath:	(NSString *)path;
+- (void) _stopTrackingChangesAtPath:	(NSString *)path;
+
+- (BOOL) _isFloppySizedVolume: (NSString *)path;
+
+@end
+
+
 @implementation BXSession (BXFileManager)
 
 #pragma mark -
@@ -127,7 +148,8 @@
 	if (![theEmulator pathIsDOSAccessible: path]) return YES;
 	
 	
-	//If it is accessible, but is of a type that should get its own drive, mount it separately
+	//If it is accessible within another drive, but the path is of a type that
+	//should get its own drive, then mount it as a new drive of its own.
 	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
 	if ([workspace file: path matchesTypes: [[self class] separatelyMountedTypes]]
 	&& ![theEmulator pathIsMountedAsDrive: path])
@@ -309,7 +331,6 @@
 #pragma mark OS X filesystem notifications
 
 //Register ourselves as an observer for filesystem notifications
-//Called from BXSession init
 - (void) _registerForFilesystemNotifications
 {
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
@@ -345,7 +366,6 @@
 	[center removeObserver: self name: NSWorkspaceDidUnmountNotification	object: workspace];
 	[center removeObserver: self name: NSWorkspaceWillUnmountNotification	object: workspace];
 	[center removeObserver: self name: UKFileWatcherWriteNotification		object: nil];
-
 }
 
 - (void) volumeDidMount: (NSNotification *)theNotification

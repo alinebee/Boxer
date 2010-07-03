@@ -6,11 +6,18 @@
  */
 
 
-//BXGameProfile detects and retrieves specific game configuration profiles.
-//At the moment, game profiles are represented as NSDictionaries and this class only has static
-//methods; in future, they may be replaced with a custom class.
+//BXGameProfile represents a detected game profile, which describes the game for gamebox creation
+//and specifies custom DOSBox configuration and emulation behaviour.
+//It has helper class methods for detecting a game profile from a filesystem path, and for
+//determining the 'era' of a particular game at a filesystem path.
+
 
 #import <Foundation/Foundation.h>
+
+@class BXDrive;
+
+#pragma mark -
+#pragma mark Constants
 
 //Constants used by eraOfGameAtPath:
 enum {
@@ -22,6 +29,24 @@ typedef NSUInteger BXGameEra;
 
 
 @interface BXGameProfile : NSObject
+{
+	NSString *gameName;
+	NSString *confName;
+	NSString *description;
+	NSDictionary *driveLabelMappings;
+}
+
+#pragma mark -
+#pragma mark Properties
+
+@property (copy) NSString *gameName;
+@property (copy) NSString *confName;
+@property (copy) NSString *description;
+
+
+#pragma mark -
+#pragma mark Helper class methods
+
 //Returns an array of generic profiles that match multiple games.
 //This corresponds the contents of the BXGenericProfiles key in GameProfiles.plist.
 + (NSArray *) genericProfiles;
@@ -30,32 +55,24 @@ typedef NSUInteger BXGameEra;
 //This corresponds the contents of the BXSpecificGameProfiles key in GameProfiles.plist.
 + (NSArray *) specificGameProfiles;
 
+//Returns the game era that the contents of the specified file path look like, based on filesize
+//and age of files. This is used by BXDockTileController to decide which bootleg coverart style to use.
++ (BXGameEra) eraOfGameAtPath: (NSString *)basePath;
+
+
+#pragma mark -
+#pragma mark Initializers
+
 //Detects and returns an appropriate game profile for the specified path, by scanning for telltale
 //files in the file heirarchy starting at basePath.
++ (BXGameProfile *) detectedProfileForPath: (NSString *)basePath;
 
-//FIXME: this approach may be too näive and could return false positives in cases where we have a more
-//specific game profile that is matched earlier by a less specific one. This could be fixed by matching
-//all profiles and then sorting them by 'relevance', at a cost of scanning the entire file heirarchy.
-+ (NSDictionary *)detectedProfileForPath: (NSString *)basePath;
+//Creates a new profile from the specified GameProfiles.plist-format dictionary.
+- (id) initWithDictionary: (NSDictionary *)profileDictionary;
 
+#pragma mark -
+#pragma mark Methods affecting emulation behaviour
 
-//Returns whether the contents of the specified file path look like a floppy disk game, based on
-//age of files and overall size. This is used to decide which bootleg coverart style to use.
-+ (BXGameEra) eraOfGameAtPath: (NSString *)basePath;
-@end
-
-
-//Internal methods which should not be called outside BXGameProfile.
-@interface BXGameProfile (BXGameProfileInternals)
-
-//Loads, caches and returns the contents of GameProfiles.plist to avoid multiple hits to the filesystem.
-+ (NSDictionary *) _gameProfileData;
-
-//Generates, caches and returns an array of lookup tables in order of priority.
-//Used by detectedProfileForPath: to perform detection in multiple passes of the file heirarchy.
-+ (NSArray *) _lookupTables;
-
-//Generates and returns a lookup table of filename->profile mappings for the specified set of profiles.
-//Used by _lookupTables.
-+ (NSDictionary *) _lookupTableForProfiles: (NSArray *)profiles;
+//Returns an customised drive label for the specified drive
+- (NSString *) labelForDrive: (BXDrive *)drive;
 @end

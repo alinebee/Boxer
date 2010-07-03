@@ -16,6 +16,31 @@
 #import "render.h"
 #import "vga.h"
 
+
+#pragma mark -
+#pragma mark Really genuinely private functions
+
+@interface BXVideoHandler ()
+
+- (BXFilterDefinition) _paramsForFilterType: (BXFilterType)filterType;
+
+- (BOOL) _shouldUseAspectCorrectionForResolution: (NSSize)resolution;
+
+- (BOOL) _shouldApplyFilterType: (BXFilterType)type
+				 fromResolution: (NSSize)resolution
+					 toViewport: (NSSize)viewportSize 
+					 isTextMode: (BOOL)isTextMode;
+
+- (NSInteger) _filterScaleForType: (BXFilterType)type
+				   fromResolution: (NSSize)resolution
+					   toViewport: (NSSize)viewportSize
+					   isTextMode: (BOOL)isTextMode;
+
+- (NSInteger) _maxFilterScaleForResolution: (NSSize)resolution;
+
+@end
+
+
 @implementation BXVideoHandler
 @synthesize frameBuffer;
 @synthesize emulator;
@@ -127,23 +152,12 @@
 	}
 }
 
-@end
-
-
-
-@implementation BXVideoHandler (BXVideoHandlerInternals)
-
 - (void) shutdown
 {
 	[self finishFrameWithChanges: 0];
 	if (callback) callback(GFX_CallBackStop);
-	
-	//Wipe out DOSBox's global data structures to reset the renderer state for the next time.
-	//TODO: check that this doesn't leak memory.
-	vga = VGA_Type();
-	svga = SVGA_Driver();
-	render = Render_t();
 }
+
 
 #pragma mark -
 #pragma mark DOSBox callbacks

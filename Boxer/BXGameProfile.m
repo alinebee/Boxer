@@ -7,7 +7,7 @@
 
 
 #import "BXGameProfile.h"
-
+#import "BXDrive.h"
 
 
 //Directories larger than this size (in bytes) will be treated as CD-era games by eraOfGameAtPath:
@@ -20,36 +20,26 @@ NSString * const BX35DisketteGameDateThreshold = @"1995-01-01 00:00:00 +0000";
 NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 
 
+
+//Internal methods which should not be called outside BXGameProfile.
+@interface BXGameProfile ()
+
+//Loads, caches and returns the contents of GameProfiles.plist to avoid multiple hits to the filesystem.
++ (NSDictionary *) _gameProfileData;
+
+//Generates, caches and returns an array of lookup tables in order of priority.
+//Used by detectedProfileForPath: to perform detection in multiple passes of the file heirarchy.
++ (NSArray *) _lookupTables;
+
+//Generates and returns a lookup table of filename->profile mappings for the specified set of profiles.
+//Used by _lookupTables.
++ (NSDictionary *) _lookupTableForProfiles: (NSArray *)profiles;
+@end
+
+
+
 @implementation BXGameProfile
-
-+ (NSArray *) genericProfiles		{ return [[self _gameProfileData] objectForKey: @"BXGenericProfiles"]; }
-+ (NSArray *) specificGameProfiles	{ return [[self _gameProfileData] objectForKey: @"BXSpecificGameProfiles"]; }
-
-+ (NSDictionary *)detectedProfileForPath: (NSString *)basePath
-{
-	NSFileManager *manager	= [NSFileManager defaultManager];
-	NSDictionary *matchingProfile;
-	
-	//_lookupTables is divided into separate sets of profiles in order of priority: game-specific
-	//profiles followed by generic profiles.
-	//We check the entire filesystem for one set of profiles first, before starting on the next:
-	//This allows game-specific profiles to override generic ones that would otherwise match sooner.
-	for (NSDictionary *lookups in [self _lookupTables])
-	{
-		for (NSString *path in [manager enumeratorAtPath: basePath])
-		{
-			//First check for an exact filename match
-			NSString *fileName	= [[path lastPathComponent] lowercaseString];
-			if (matchingProfile = [lookups objectForKey: fileName]) return matchingProfile;
-			
-			//Next, check if the base filename (sans extension) matches anything
-			NSString *baseName	= [[fileName stringByDeletingPathExtension] stringByAppendingString: @"."];
-			if (matchingProfile = [lookups objectForKey: baseName]) return matchingProfile;
-		}		
-	}
-	//If we got this far, we couldn't find anything
-	return nil;
-}
+@synthesize gameName, confName, description;
 
 + (BXGameEra) eraOfGameAtPath: (NSString *)basePath
 {
@@ -78,9 +68,91 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 }
 
 
-@end
++ (NSArray *) genericProfiles		{ return [[self _gameProfileData] objectForKey: @"BXGenericProfiles"]; }
++ (NSArray *) specificGameProfiles	{ return [[self _gameProfileData] objectForKey: @"BXSpecificGameProfiles"]; }
 
-@implementation BXGameProfile (BXGameProfileInternals)
+
+#pragma mark -
+#pragma mark Initializers
+
++ (BXGameProfile *)detectedProfileForPath: (NSString *)basePath
+{
+	NSFileManager *manager	= [NSFileManager defaultManager];
+	NSDictionary *matchingProfile;
+	
+	//_lookupTables is divided into separate sets of profiles in order of priority: game-specific
+	//profiles followed by generic profiles.
+	
+	//We check the entire filesystem for one set of profiles first, before starting on the next:
+	//This allows game-specific profiles to override generic ones that would otherwise match sooner.
+	
+	//FIXME: this approach may still be too näive and could return false positives when we have a
+	//more specific game profile that is matched earlier by a less specific one. This could be fixed
+	//by matching all profiles and then sorting them by 'relevance', at a cost of scanning the entire
+	//file heirarchy for each profile (which is a big cost).
+	for (NSDictionary *lookups in [self _lookupTables])
+	{
+		for (NSString *path in [manager enumeratorAtPath: basePath])
+		{
+			//First check for an exact filename match
+			NSString *fileName	= [[path lastPathComponent] lowercaseString];
+			if (matchingProfile = [lookups objectForKey: fileName])
+				return [[self alloc] initWithDictionary: matchingProfile];
+			
+			//Next, check if the base filename (sans extension) matches anything
+			NSString *baseName	= [[fileName stringByDeletingPathExtension] stringByAppendingString: @".*"];
+			if (matchingProfile = [lookups objectForKey: baseName])
+				return [[self alloc] initWithDictionary: matchingProfile];
+		}		
+	}
+	
+	return nil;
+}
+
+- (id) initWithDictionary: (NSDictionary *)profileDict
+{
+	if ((self = [super init]))
+	{
+		self.gameName = [profileDict objectForKey: @"BXProfileName"];
+		self.confName = [profileDict objectForKey: @"BXProfileConf"];
+		self.description = [profileDict objectForKey: @"BXProfileDescription"];
+		
+		//Used by customDriveLabelForPath
+		driveLabelMappings = [[profileDict objectForKey: @"BXProfileDriveLabels"] retain];
+	}
+	return self;
+}
+
+- (void) dealloc
+{
+	[self setGameName: nil], [gameName release];
+	[self setConfName: nil], [confName release];
+	[self setDescription: nil], [description release];
+	[driveLabelMappings release], driveLabelMappings = nil;
+	
+	[super dealloc];
+}
+
+
+#pragma mark -
+#pragma mark Methods affecting emulation behaviour
+
+- (NSString *) labelForDrive: (BXDrive *)drive
+{
+	NSString *defaultLabel = [drive label];
+	//If we don't have any label overrides, or the drive isn't a floppy or CD, just use its original label
+	if (!(driveLabelMappings && ([drive isCDROM] || [drive isFloppy]))) return defaultLabel;
+	
+	NSString *customLabel			= [driveLabelMappings objectForKey: defaultLabel];
+	if (!customLabel) customLabel	= [driveLabelMappings objectForKey: @"BXProfileDriveLabelAny"];
+	
+	if (customLabel) return customLabel;
+	return defaultLabel;
+}
+
+
+#pragma mark -
+#pragma mark Private methods
 							   
 + (NSDictionary *) _gameProfileData
 {
@@ -107,8 +179,6 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 	}
 	return lookupTables;
 }
-
-							   
 							   
 + (NSDictionary *) _lookupTableForProfiles: (NSArray *)profiles
 {

@@ -10,6 +10,7 @@
 #import "BXEmulator+BXShell.h"
 #import "BXDrive.h"
 #import "NSString+BXPaths.h"
+#import "BXGameProfile.h"
 
 #import "dos_inc.h"
 #import "dos_system.h"
@@ -108,8 +109,8 @@ enum {
 }
 
 
-//Drive mounting and unmounting
-//-----------------------------
+#pragma mark -
+#pragma mark Drive mounting and unmounting
 
 - (BXDrive *) mountDrive: (BXDrive *)drive
 {
@@ -125,7 +126,13 @@ enum {
 	BOOL isImage = !isFolder;
 
 	NSString *driveLetter = [drive letter];
-
+	NSString *driveLabel = [drive label];
+	
+	//Allow the game profile to override the drive label if needed
+	//TODO: should we do this upstream? Put a wrapper method for mountDrive in BXSession?
+	if ([self gameProfile]) driveLabel = [[self gameProfile] labelForDrive: drive];
+	
+	
 	//Choose an appropriate drive letter to mount it at,
 	//if one hasn't been specified (or if it is already taken)
 	if (!driveLetter || [self driveAtLetter: driveLetter] != nil)
@@ -168,7 +175,7 @@ enum {
 			//And set its label appropriately (unless its an image, which carry their own labels)
 			if (!isImage)
 			{
-				const char *cLabel = [[drive label] cStringUsingEncoding: BXDirectStringEncoding];
+				const char *cLabel = [driveLabel cStringUsingEncoding: BXDirectStringEncoding];
 				DOSBoxDrive->dirCache.SetLabel(cLabel, [drive isCDROM], false);
 			}
 			
@@ -431,12 +438,9 @@ enum {
 	else return nil;
 }
 
-@end
 
-
-
-//Internal methods (no touchy!)
-@implementation BXEmulator (BXDOSFileSystemInternals)
+#pragma mark -
+#pragma mark Private methods
 
 //Translating between Boxer and DOSBox drives
 //-------------------------------------------

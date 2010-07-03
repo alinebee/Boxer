@@ -26,7 +26,7 @@ void MAPPER_CheckEvent(SDL_Event *event);
 void MAPPER_LosingFocus();
 
 
-@interface BXInputHandler (BXInputHandlerInternals)
+@interface BXInputHandler ()
 
 //A simple performSelector:withObject:afterDelay: wrapper, used by
 //sendKeypressWithCode: for releasing its fake key events after a brief delay.
@@ -252,13 +252,9 @@ void MAPPER_LosingFocus();
 
 + (NSString *)defaultKeyboardLayout	{ return @"us"; }
 
-@end
-
 
 #pragma mark -
 #pragma mark Internal methods
-
-@implementation BXInputHandler (BXInputHandlerInternals)
 
 - (void) _releaseKeyWithValue: (NSNumber *)value
 {

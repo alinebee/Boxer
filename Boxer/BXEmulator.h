@@ -19,8 +19,8 @@
 
 #import <Foundation/Foundation.h>
 
-//Emulation-related constant definitions
-//--------------------------------------
+#pragma mark -
+#pragma mark Emulator constants
 
 enum {
 	BXSpeedFixed	= NO,
@@ -44,15 +44,18 @@ extern NSStringEncoding BXDisplayStringEncoding;	//Used for strings that will be
 extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings that must be preserved raw
 
 
-@class BXSession;
 @class BXInputHandler;
 @class BXVideoHandler;
+@class BXGameProfile;
+
+@protocol BXEmulatorDelegate;
 
 @interface BXEmulator : NSObject
 {
-	BXSession *delegate;
+	id <BXEmulatorDelegate> delegate;
 	BXInputHandler *inputHandler;
 	BXVideoHandler *videoHandler;
+	BXGameProfile *gameProfile;
 	
 	NSString *processName;
 	NSString *processPath;
@@ -78,32 +81,36 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 @property (assign, getter=isExecuting) BOOL executing;
 @property (assign, getter=isCancelled) BOOL cancelled;
 
-//The BXSession delegate responsible for this emulator.
-@property (assign)		BXSession *delegate;
+//The delegate responsible for this emulator.
+@property (assign) id <BXEmulatorDelegate> delegate;
+
+//The game profile we should refer to for tweaking emulation rules.
+@property (retain) BXGameProfile *gameProfile;
 
 //The name of the currently-executing DOSBox process. Will be nil if no process is running.
-@property (copy)		NSString *processName;
+@property (copy) NSString *processName;
 
 //The DOS filesystem path of the currently-executing DOSBox process.
 //Will be nil if no process is running.
-@property (copy)		NSString *processPath;
+@property (copy) NSString *processPath;
 
 //The local filesystem path of the currently-executing DOSBox process.
 //Will be nil if no process is running or if the process is on an image or DOSBox-internal drive.
-@property (copy)		NSString *processLocalPath;
+@property (copy) NSString *processLocalPath;
 
-@property (retain)		BXInputHandler *inputHandler;	//Our DOSBox input handler.
-@property (retain)		BXVideoHandler *videoHandler;	//Our DOSBox video and rendering handler.
+@property (readonly) BXInputHandler *inputHandler;	//Our DOSBox input handler.
+@property (readonly) BXVideoHandler *videoHandler;	//Our DOSBox video and rendering handler.
 
-//An array of OS X paths to configuration files that will be processed by this session during startup.
-@property (readonly)	NSMutableArray *configFiles;
+//An array of OS X paths to configuration files that will be/have been loaded by this session during startup.
+//This is read-only: configuration files can be loaded via applyConfigurationAtPath: 
+@property (readonly) NSArray *configFiles;
 
 //An array of queued command strings to execute on the DOS command line.
-@property (readonly)	NSMutableArray *commandQueue;
+@property (readonly) NSMutableArray *commandQueue;
 
-@property (assign)		NSInteger fixedSpeed;	//The current fixed CPU speed.
-@property (assign)		BXCoreMode coreMode;	//The current CPU core mode.
-@property (assign, getter=isAutoSpeed)	BOOL autoSpeed;	//Whether we are running at automatic maximum speed.
+@property (assign) NSInteger fixedSpeed;	//The current fixed CPU speed.
+@property (assign, getter=isAutoSpeed) BOOL autoSpeed;	//Whether we are running at automatic maximum speed.
+@property (assign) BXCoreMode coreMode;		//The current CPU core mode.
 
 
 #pragma mark -
@@ -127,6 +134,10 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 
 //Stop emulation.
 - (void) cancel;
+
+//Load the DOSBox configuration file at the specified path.
+//Currently, this only takes effect if done before [BXEmulator start] is called.
+- (void) applyConfigurationAtPath: (NSString *)configPath;
 
 
 #pragma mark -
@@ -160,12 +171,22 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 
 class DOS_Shell;
 
-//The methods in this category should not be executed outside of BXEmulator and are only visible in Objective C++.
+//The methods in this category should not be executed outside of BXEmulator categories
+//or BXCoalface functions, and are only visible in Objective C++.
 @interface BXEmulator (BXEmulatorInternals)
-@property (assign, getter=isExecuting) BOOL executing;
-@property (assign, getter=isCancelled) BOOL cancelled;
 
 - (DOS_Shell *) _currentShell;
+
+
+//Called during DOSBox's event handling function: returns YES to abort event handling
+//for that loop or NO to continue it.
+- (BOOL) _handleEventLoop;
+
+//Called during DOSBox's run loop: returns YES to short-circuit the loop.
+- (BOOL) _handleRunLoop;
+
+//Called at emulator startup.
+- (void) _startDOSBox;
 
 //Shortcut method for sending a notification both to the default notification center
 //and to a selector on our delegate. The object of the notification will be self.
@@ -177,19 +198,6 @@ class DOS_Shell;
 //cached notions of the DOSBox state, and posts notifications for relevant properties.
 - (void) _didChangeEmulationState;
 
-
-//Event-handling
-//--------------
-
-//Called during DOSBox's event handling function: returns YES to abort event handling
-//for that loop or NO to continue it.
-- (BOOL) _handleEventLoop;
-
-//Called during DOSBox's run loop: returns YES to short-circuit the loop.
-- (BOOL) _handleRunLoop;
-
-//Called at emulator startup.
-- (void) _startDOSBox;
 @end
 
 #endif

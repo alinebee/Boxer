@@ -6,8 +6,9 @@
  */
 
 
-//The BXFileManager category extends BXSession with methods specifically for controlling the
-//DOS filesystem and for responding to relevant changes in the OS X filesystem.
+//The BXFileManager category extends BXSession with methods for controlling the DOS filesystem
+//and for responding to relevant changes in the OS X filesystem. It implements Boxer's policies
+//for opening files and folders from the OS X filesystem and creating new drives for them.
 
 #import "BXSession.h"
 
@@ -90,29 +91,10 @@
 @end
 
 
-
-//The methods in this category are not intended to be called outside BXSession.
+//These methods should not be called outside BXSession
 @interface BXSession (BXFileManagerInternals)
-
-
-//Handling filesystem notifications
-//---------------------------------
 
 - (void) _registerForFilesystemNotifications;
 - (void) _deregisterForFilesystemNotifications;
-
-- (void) volumeDidMount:		(NSNotification *)theNotification;
-- (void) volumeWillUnmount:		(NSNotification *)theNotification;
-- (void) filesystemDidChange:	(NSNotification *)theNotification;
-
-- (void) DOSDriveDidMount:		(NSNotification *)theNotification;
-- (void) DOSDriveDidUnmount:	(NSNotification *)theNotification;
-
-- (void) _handleVolumeDidMount: (NSNotification *)theNotification;
-
-- (void) _startTrackingChangesAtPath:	(NSString *)path;
-- (void) _stopTrackingChangesAtPath:	(NSString *)path;
-
-- (BOOL) _isFloppySizedVolume: (NSString *)path;
 
 @end

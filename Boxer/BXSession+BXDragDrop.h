@@ -28,12 +28,3 @@
 - (BOOL) handleDroppedString: (NSString *)droppedString;
 
 @end
-
-
-//The methods in this category are not intended to be called outside of BXSession
-@interface BXSession (BXDragDropInternals)
-
-- (NSDragOperation) _responseToDroppedFile: (NSString *)filePath;
-- (BOOL) _handleDroppedFile: (NSString *)filePath withLaunching: (BOOL)launch;
-
-@end

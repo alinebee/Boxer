@@ -14,9 +14,9 @@
 
 
 //When scaling up beyond this we won't bother with the scaling buffer
-const CGFloat BXScalingBufferScaleCutoff = 3.0;
+const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 
-@interface BXRenderer (BXRendererInternals)
+@interface BXRenderer ()
 
 //Ensure our framebuffer and scaling buffers are prepared for rendering the current frame. Called when the layer is about to be drawn.
 - (void) _prepareScalingBufferForCurrentFrameInCGLContext: (CGLContextObj)glContext;
@@ -182,6 +182,10 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0;
 	}
 	else return [self canvas];
 }
+
+
+#pragma mark -
+#pragma mark Private methods
 
 - (void) _renderCurrentFrameInCGLContext: (CGLContextObj)glContext
 {	

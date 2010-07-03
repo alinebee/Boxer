@@ -27,14 +27,14 @@ const NSTimeInterval BXCursorFadeDuration = 0.4;
 
 //The framerate at which to animate the cursor fade.
 //15fps is as fast as is really noticeable.
-const float BXCursorFadeFrameRate = 15.0;
+const float BXCursorFadeFrameRate = 15.0f;
 
 //If the cursor is warped less than this distance (relative to a 0.0->1.0 square canvas) then
 //the warp will be ignored. Because cursor warping introduces a slight input delay, we use this
 //tolerance to ignore small warps.
-const CGFloat BXCursorWarpTolerance = 0.1;
+const CGFloat BXCursorWarpTolerance = 0.1f;
 
-const float BXMouseLockSoundVolume = 0.5;
+const float BXMouseLockSoundVolume = 0.5f;
 
 
 //Flags for which mouse buttons we are currently faking (for Ctrl- and Opt-clicking.)
@@ -47,7 +47,10 @@ enum {
 };
 
 
-@interface BXInputController (BXInputControllerInternals)
+#pragma mark -
+#pragma mark Private methods
+
+@interface BXInputController ()
 
 //Returns whether we should have control of the mouse cursor state.
 //This is true if the mouse is within the view, the window is key,
@@ -536,13 +539,10 @@ enum {
 	
 	[self didChangeValueForKey: @"mouseLocked"];
 }
-@end
 
 
 #pragma mark -
-#pragma mark Internal methods
-
-@implementation BXInputController (BXInputControllerInternals)
+#pragma mark Private methods
 
 - (BOOL) _controlsCursor
 {

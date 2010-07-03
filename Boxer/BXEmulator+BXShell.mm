@@ -266,11 +266,9 @@ nil];
 	return [NSNumber numberWithBool: YES];
 }
 
-@end
 
-
-//The methods in this category should not be called outside BXEmulator.
-@implementation BXEmulator (BXShellInternals)
+#pragma mark -
+#pragma mark Private methods
 
 - (BOOL) _handleCommand: (NSString *)originalCommand
 	 withArgumentString: (NSString *)originalArgumentString

@@ -19,6 +19,31 @@
 #import "NSString+BXPaths.h"
 
 
+#pragma mark -
+#pragma mark Private method declarations
+
+@interface BXSession ()
+
+//Create our BXEmulator instance and starts its main loop.
+//Called internally by [BXSession start], deferred to the end of the main thread's event loop to prevent
+//DOSBox blocking cleanup code.
+- (void) _startEmulator;
+
+//Set up the emulator context with drive mounts and other configuration settings specific to this session.
+//Called in response to the BXEmulatorWillLoadConfiguration event, once the emulator is initialised enough
+//for us to configure it.
+- (void) _configureEmulator;
+
+//Start up the target program for this session (if any) and displays the program panel selector after this
+//finishes. Called by runLaunchCommands, once the emulator has finished processing configuration files.
+- (void) _launchTarget;
+
+@end
+
+
+#pragma mark -
+#pragma mark Implementation
+
 @implementation BXSession
 
 @synthesize mainWindowController;
@@ -26,11 +51,11 @@
 @synthesize emulator;
 @synthesize targetPath;
 @synthesize activeProgramPath;
+@synthesize gameProfile;
 
 
-
-//Initialization and cleanup methods
-//----------------------------------
+#pragma mark -
+#pragma mark Initialization and cleanup
 
 - (id) init
 {
@@ -46,6 +71,7 @@
 	[self setMainWindowController: nil],[mainWindowController release];
 	[self setEmulator: nil],			[emulator release];
 	[self setGamePackage: nil],			[gamePackage release];
+	[self setGameProfile: nil],			[gameProfile release];
 	[self setTargetPath: nil],			[targetPath release];
 	[self setActiveProgramPath: nil],	[activeProgramPath release];
 	
@@ -75,7 +101,7 @@
 	[super showWindows];
 	
 	//Start the emulator as soon as our windows appear
-	if (![self hasStarted]) [self start];
+	[self start];
 }
 
 - (void) setEmulator: (BXEmulator *)newEmulator
@@ -87,6 +113,7 @@
 		if (emulator)
 		{
 			[emulator setDelegate: nil];
+			[emulator unbind: @"gameProfile"];
 			[self _deregisterForFilesystemNotifications];
 		}
 		
@@ -96,16 +123,12 @@
 		if (newEmulator)
 		{
 			[newEmulator setDelegate: self];
+			[emulator bind: @"gameProfile" toObject: self withKeyPath: @"gameProfile" options: nil];
 			[self _registerForFilesystemNotifications];
 		}
 	}
 	
 	[self didChangeValueForKey: @"emulator"];
-}
-
-- (BOOL) hasStarted
-{
-	return [[self emulator] isExecuting];
 }
 
 - (BOOL) isEmulating
@@ -121,25 +144,22 @@
 	//This prevents menu highlights from getting 'stuck' because of DOSBox's main loop blocking
 	//the thread.
 	
-	[self performSelector: @selector(_startEmulator) withObject: nil afterDelay: 0.1];
+	if (!hasStarted) [self performSelector: @selector(_startEmulator)
+								withObject: nil
+								afterDelay: 0.1];
+	
+	//So we don't try to restart the emulator
+	hasStarted = YES;
 }
 
 //Cancel the DOSBox emulator thread
 - (void)cancel	{ [[self emulator] cancel]; }
 
-
-//Close down the emulator when the document closes
+//Tell the emulator to close itself down when the document closes
 - (void) close
 {
 	[self cancel];
 	[super close];
-
-	//This closes down the whole application as soon as the current session closes.
-	//We do this because DOSBox stores state in global variables which don't get reset
-	//when it 'quits', which means a second DOSBox session cannot be successfully started
-	//after the first since it inherits an invalid state.
-	
-	//[NSApp terminate: self];
 }
 
 
@@ -173,14 +193,15 @@
 }
 
 
-
-//Introspecting the game package itself
-//-------------------------------------
+#pragma mark -
+#pragma mark Introspecting the gamebox
 
 - (void) setFileURL: (NSURL *)fileURL
 {	
 	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
 	NSString *filePath		= [[fileURL path] stringByStandardizingPath];
+	
+	//Check if this file path is located inside a gamebox
 	NSString *packagePath	= [workspace parentOfFile: filePath
 										matchingTypes: [NSArray arrayWithObject: @"net.washboardabs.boxer-game-package"]];
 	
@@ -325,164 +346,9 @@
 	return [NSSet setWithObjects: @"gamePackage.executables", @"gamePackage.targetPath", nil];
 }
 
-@end
 
-
-@implementation BXSession (BXSessionInternals)
-
-
-//Emulator initialisation
-//-----------------------
-
-- (void) _startEmulator
-{	
-	[self setEmulator: [[[BXEmulator alloc] init] autorelease]];
-
-	NSMutableArray *configFiles = [[self emulator] configFiles];
-	
-	NSString *preflightConfig = [[NSBundle mainBundle] pathForResource: @"Preflight" ofType: @"conf"];
-	[configFiles addObject: preflightConfig];
-	
-	BXPackage *thePackage = [self gamePackage];
-	if (thePackage)
-	{
-		NSString *detectedConfig = nil;
-		NSString *packageConfig = nil;
-		
-		//First, autodetect and load our own configuration file for this gamebox
-		NSDictionary *gameProfile = [BXGameProfile detectedProfileForPath: [thePackage gamePath]];
-		if (gameProfile)
-		{
-			NSString *configName = [gameProfile objectForKey: @"BXProfileConf"];
-			detectedConfig = [[NSBundle mainBundle] pathForResource: configName
-															 ofType: @"conf"
-														inDirectory: @"Configurations"];
-			
-			if (detectedConfig) [configFiles addObject: detectedConfig];
-		}
-		//Then, load the gamebox's own configuration file, if it has one
-		packageConfig = [thePackage configurationFile];
-		if (packageConfig) [configFiles addObject: packageConfig];
-		
-		else
-		{
-			//If the gamebox had no configuration file, copy in an empty generic configuration file.
-			NSString *genericConfig = [[NSBundle mainBundle] pathForResource: @"Generic"
-																	  ofType: @"conf"
-																 inDirectory: @"Configurations"];
-			[thePackage setConfigurationFile: genericConfig];
-		}
-	}
-	
-	NSString *launchConfig = [[NSBundle mainBundle] pathForResource: @"Launch" ofType: @"conf"];
-	[configFiles addObject: launchConfig];
-	
-	
-	//[self setEmulator: nil];
-	[[self emulator] start];
-	
-	//If the emulator ever quits of its own accord, close the document also.
-	//This will happen if the user types "exit" at the command prompt.
-	[self close];
-}
-
-- (void) _configureEmulator
-{
-	BXEmulator *theEmulator	= [self emulator];
-	BXPackage *package		= [self gamePackage];
-	
-	if (package)
-	{
-		//Mount the game package as a new hard drive, at drive C
-		//(This may be replaced below by a custom bundled C volume)
-		BXDrive *packageDrive = [BXDrive hardDriveFromPath: [package gamePath] atLetter: @"C"];
-		packageDrive = [theEmulator mountDrive: packageDrive];
-		
-		//Then, mount any extra volumes included in the game package
-		NSMutableArray *packageVolumes = [NSMutableArray arrayWithCapacity: 10];
-		[packageVolumes addObjectsFromArray: [package floppyVolumes]];
-		[packageVolumes addObjectsFromArray: [package hddVolumes]];
-		[packageVolumes addObjectsFromArray: [package cdVolumes]];
-		
-		BXDrive *bundledDrive;
-		for (NSString *volumePath in packageVolumes)
-		{
-			bundledDrive = [BXDrive driveFromPath: volumePath atLetter: nil];
-			//The bundled drive was explicitly set to drive C, override our existing C package-drive with it
-			if ([[bundledDrive letter] isEqualToString: @"C"])
-			{
-				[[self emulator] unmountDriveAtLetter: @"C"];
-				packageDrive = bundledDrive;
-				//Rewrite the target to point to the new C drive, if it was pointing to the old one
-				if ([[self targetPath] isEqualToString: [package gamePath]]) [self setTargetPath: volumePath]; 
-			}
-			[[self emulator] mountDrive: bundledDrive];
-		}
-	}
-	
-	//Automount all currently mounted floppy and CD-ROM volumes
-	[self mountFloppyVolumes];
-	[self mountCDVolumes];
-	
-	//Mount our internal DOS toolkit at the appropriate drive
-	NSString *toolkitDriveLetter	= [[NSUserDefaults standardUserDefaults] stringForKey: @"toolkitDriveLetter"];
-	NSString *toolkitFiles			= [[NSBundle mainBundle] pathForResource: @"DOS Toolkit" ofType: nil];
-	BXDrive *toolkitDrive			= [BXDrive hardDriveFromPath: toolkitFiles atLetter: toolkitDriveLetter];
-	
-	//Hide and lock the toolkit drive so that it will not appear in the drive manager UI
-	[toolkitDrive setLocked: YES];
-	[toolkitDrive setReadOnly: YES];
-	[toolkitDrive setHidden: YES];
-	toolkitDrive = [theEmulator mountDrive: toolkitDrive];
-	
-	//Point DOS to the correct paths if we've mounted the toolkit drive successfully
-	//TODO: we should treat this as an error if it didn't mount!
-	if (toolkitDrive)
-	{
-		//Todo: the DOS path should include the root folder of every drive, not just Y and Z.
-		NSString *dosPath	= [NSString stringWithFormat: @"%1$@:\\;%1$@:\\UTILS;Z:\\", [toolkitDrive letter], nil];
-		NSString *ultraDir	= [NSString stringWithFormat: @"%@:\\ULTRASND", [toolkitDrive letter], nil];
-		
-		[theEmulator setVariable: @"path"		to: dosPath		encoding: BXDirectStringEncoding];
-		[theEmulator setVariable: @"ultradir"	to: ultraDir	encoding: BXDirectStringEncoding];
-	}
-	
-	//Finally, make a mount point allowing access to our target program/folder, if it's not already accessible in DOS.
-	if ([self targetPath])
-	{
-		if ([self shouldMountDriveForPath: targetPath]) [self mountDriveForPath: targetPath];
-	}
-	
-	//Flag that we have completed our initial game configuration.
-	[self willChangeValueForKey: @"isEmulating"];
-	hasConfigured = YES;
-	[self didChangeValueForKey: @"isEmulating"];
-}
-
-//After all preflight configuration has finished, go ahead and open whatever file we're pointing at
-- (void) _launchTarget
-{
-	NSString *target = [self targetPath];
-	if (target)
-	{
-		//If the Option key was held down, don't launch the gamebox's target;
-		//Instead, just switch to its parent folder
-		NSUInteger optionKeyDown = [[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask;
-		if (optionKeyDown != 0 && [[self class] isExecutable: target])
-		{
-			target = [target stringByDeletingLastPathComponent];
-		}
-		[self openFileAtPath: target];
-	}
-	
-	//Flag that we have started up properly
-	hasLaunched = YES;
-}
-
-
-//Monitoring process changes in the emulator
-//------------------------------------------
-
+#pragma mark -
+#pragma mark Delegate methods
 
 //If we have not already performed our own configuration, do so now
 - (void) runPreflightCommands
@@ -498,6 +364,25 @@
 		[self _launchTarget];
 	}
 }
+
+- (void) frameComplete: (BXFrameBuffer *)frame
+{
+	[[self mainWindowController] updateWithFrame: frame];
+}
+
+- (NSSize) maxFrameSize
+{
+	return [[self mainWindowController] maxFrameSize];
+}
+
+- (NSSize) viewportSize
+{
+	return [[self mainWindowController] viewportSize];
+}
+
+
+#pragma mark -
+#pragma mark Notifications
 
 - (void) programWillStart: (NSNotification *)notification
 {	
@@ -578,20 +463,159 @@
 
 
 #pragma mark -
-#pragma mark Rendering delegate methods
+#pragma mark Private methods
 
-- (void) frameComplete: (BXFrameBuffer *)frame
-{
-	[[self mainWindowController] updateWithFrame: frame];
+
+- (void) _startEmulator
+{	
+	//Which folder to look in to detect the game we’re running.
+	//In future, this will be the installation source folder when installing a game.
+	NSString *profileDetectionPath = [[self gamePackage] gamePath];	
+	
+	NSString *preflightConf	= [[NSBundle mainBundle] pathForResource: @"Preflight" ofType: @"conf"];
+	NSString *launchConf	= [[NSBundle mainBundle] pathForResource: @"Launch" ofType: @"conf"];
+	NSString *profileConf	= nil;
+	NSString *packageConf	= nil;
+	
+	
+	//Create a new emulator instance for ourselves
+	[self setEmulator: [[[BXEmulator alloc] init] autorelease]];
+	
+	//Autodetect the appropriate game profile for this session
+	if (profileDetectionPath)
+		[self setGameProfile: [BXGameProfile detectedProfileForPath: profileDetectionPath]];
+	
+	//Get the appropriate configuration file for this game profile
+	if ([self gameProfile])
+	{
+		NSString *configName = [[self gameProfile] confName];
+		if (configName)
+		{
+			profileConf = [[NSBundle mainBundle] pathForResource: configName
+														  ofType: @"conf"
+													 inDirectory: @"Configurations"];
+		}
+	}
+	
+	//Get the gamebox's own configuration file, if it has one
+	if ([self gamePackage])
+	{
+		packageConf = [[self gamePackage] configurationFile];
+		
+		//If the gamebox had no configuration file, give it an empty generic configuration file.
+		//(We don't bother loading it, since it's empty anyway)
+		if (!packageConf)
+		{
+			NSString *genericConf = [[NSBundle mainBundle] pathForResource: @"Generic"
+																	ofType: @"conf"
+															   inDirectory: @"Configurations"];
+			[[self gamePackage] setConfigurationFile: genericConf];
+		}
+	}
+	
+	//Load all our configuration files in order.
+	[emulator applyConfigurationAtPath: preflightConf];
+	if (profileConf) [emulator applyConfigurationAtPath: profileConf];
+	if (packageConf) [emulator applyConfigurationAtPath: packageConf];
+	[emulator applyConfigurationAtPath: launchConf];
+	
+	//Start up the emulator itself.
+	[[self emulator] start];
+	
+	//Once the emulator exits, close the document also.
+	[self close];
 }
 
-- (NSSize) maxFrameSize
+- (void) _configureEmulator
 {
-	return [[self mainWindowController] maxFrameSize];
+	BXEmulator *theEmulator	= [self emulator];
+	BXPackage *package		= [self gamePackage];
+	
+	if (package)
+	{
+		//Mount the game package as a new hard drive, at drive C
+		//(This may get replaced below by a custom bundled C volume)
+		BXDrive *packageDrive = [BXDrive hardDriveFromPath: [package gamePath] atLetter: @"C"];
+		packageDrive = [theEmulator mountDrive: packageDrive];
+		
+		//Then, mount any extra volumes included in the game package
+		NSMutableArray *packageVolumes = [NSMutableArray arrayWithCapacity: 10];
+		[packageVolumes addObjectsFromArray: [package floppyVolumes]];
+		[packageVolumes addObjectsFromArray: [package hddVolumes]];
+		[packageVolumes addObjectsFromArray: [package cdVolumes]];
+		
+		BXDrive *bundledDrive;
+		for (NSString *volumePath in packageVolumes)
+		{
+			bundledDrive = [BXDrive driveFromPath: volumePath atLetter: nil];
+			//The bundled drive was explicitly set to drive C, override our existing C package-drive with it
+			if ([[bundledDrive letter] isEqualToString: @"C"])
+			{
+				[[self emulator] unmountDriveAtLetter: @"C"];
+				packageDrive = bundledDrive;
+				//Rewrite the target to point to the new C drive, if it was pointing to the old one
+				if ([[self targetPath] isEqualToString: [packageDrive path]]) [self setTargetPath: volumePath]; 
+			}
+			[[self emulator] mountDrive: bundledDrive];
+		}
+	}
+	
+	//Automount all currently mounted floppy and CD-ROM volumes
+	[self mountFloppyVolumes];
+	[self mountCDVolumes];
+	
+	//Mount our internal DOS toolkit at the appropriate drive
+	NSString *toolkitDriveLetter	= [[NSUserDefaults standardUserDefaults] stringForKey: @"toolkitDriveLetter"];
+	NSString *toolkitFiles			= [[NSBundle mainBundle] pathForResource: @"DOS Toolkit" ofType: nil];
+	BXDrive *toolkitDrive			= [BXDrive hardDriveFromPath: toolkitFiles atLetter: toolkitDriveLetter];
+	
+	//Hide and lock the toolkit drive so that it will not appear in the drive manager UI
+	[toolkitDrive setLocked: YES];
+	[toolkitDrive setReadOnly: YES];
+	[toolkitDrive setHidden: YES];
+	toolkitDrive = [theEmulator mountDrive: toolkitDrive];
+	
+	//Point DOS to the correct paths if we've mounted the toolkit drive successfully
+	//TODO: we should treat this as an error if it didn't mount!
+	if (toolkitDrive)
+	{
+		//Todo: the DOS path should include the root folder of every drive, not just Y and Z.
+		NSString *dosPath	= [NSString stringWithFormat: @"%1$@:\\;%1$@:\\UTILS;Z:\\", [toolkitDrive letter], nil];
+		NSString *ultraDir	= [NSString stringWithFormat: @"%@:\\ULTRASND", [toolkitDrive letter], nil];
+		
+		[theEmulator setVariable: @"path"		to: dosPath		encoding: BXDirectStringEncoding];
+		[theEmulator setVariable: @"ultradir"	to: ultraDir	encoding: BXDirectStringEncoding];
+	}
+	
+	//Finally, make a mount point allowing access to our target program/folder, if it's not already accessible in DOS.
+	if ([self targetPath])
+	{
+		if ([self shouldMountDriveForPath: targetPath]) [self mountDriveForPath: targetPath];
+	}
+	
+	//Flag that we have completed our initial game configuration.
+	[self willChangeValueForKey: @"isEmulating"];
+	hasConfigured = YES;
+	[self didChangeValueForKey: @"isEmulating"];
 }
 
-- (NSSize) viewportSize
+//After all preflight configuration has finished, go ahead and open whatever file we're pointing at
+- (void) _launchTarget
 {
-	return [[self mainWindowController] viewportSize];
+	NSString *target = [self targetPath];
+	if (target)
+	{
+		//If the Option key was held down, don't launch the gamebox's target;
+		//Instead, just switch to its parent folder
+		NSUInteger optionKeyDown = [[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask;
+		if (optionKeyDown != 0 && [[self class] isExecutable: target])
+		{
+			target = [target stringByDeletingLastPathComponent];
+		}
+		[self openFileAtPath: target];
+	}
+	
+	//Flag that we have started up properly
+	hasLaunched = YES;
 }
 @end

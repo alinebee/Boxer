@@ -18,10 +18,28 @@
 #import "BXGeometry.h"
 
 
-const CGFloat BXFullscreenFadeOutDuration	= 0.2;
-const CGFloat BXFullscreenFadeInDuration	= 0.4;
+const CGFloat BXFullscreenFadeOutDuration	= 0.2f;
+const CGFloat BXFullscreenFadeInDuration	= 0.4f;
 const NSInteger BXWindowSnapThreshold		= 64;
-const CGFloat BXIdenticalAspectRatioDelta	= 0.025;
+const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
+
+
+@interface BXSessionWindowController ()
+
+//Apply the switch to fullscreen mode. Used internally by setFullScreen: and setFullScreenWithZoom:
+- (void) _applyFullScreenState: (BOOL)fullScreen;
+
+//Resize the window if needed to accomodate the specified frame.
+//Returns YES if the window was actually resized, NO otherwise.
+- (BOOL) _resizeToAccommodateFrame: (BXFrameBuffer *)frame;
+
+//Returns the view size that should be used for rendering the specified frame.
+- (NSSize) _renderingViewSizeForFrame: (BXFrameBuffer *)frame minSize: (NSSize)minViewSize;
+
+//Resize the window frame to fit the requested render size.
+- (void) _resizeWindowToRenderingViewSize: (NSSize)newSize animate: (BOOL)performAnimation;
+
+@end
 
 @implementation BXSessionWindowController (BXRenderController)
 
@@ -241,10 +259,10 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025;
 	
 	return standardFrame;
 }
-@end
 
 
-@implementation BXSessionWindowController (BXRenderControllerInternals)
+#pragma mark -
+#pragma mark Private methods
 
 - (void) _applyFullScreenState: (BOOL)fullScreen
 {
@@ -346,31 +364,6 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025;
 	currentScaledResolution = scaledResolution;
 	
 	return needsResize;
-}
-
-
-//Performs the slide animation used to toggle the status bar and program panel on or off
-- (void) _slideView: (NSView *)view shown: (BOOL)show
-{
-	NSRect newFrame	= [[self window] frame];
-	
-	CGFloat height	= [view frame].size.height;
-	if (!show) height = -height;
-	
-	newFrame.size.height	+= height;
-	newFrame.origin.y		-= height;
-	
-	if (show) [view setHidden: NO];	//Unhide before sliding out
-	if ([self isFullScreen])
-	{
-		[[self window] setFrame: newFrame display: NO];
-	}
-	else
-	{
-		[[self window] setFrame: newFrame display: YES animate: YES];
-	}
-
-	if (!show) [view setHidden: YES]; //Hide after sliding in 
 }
 
 //Resize the window frame to the requested render size.

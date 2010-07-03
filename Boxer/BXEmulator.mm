@@ -6,6 +6,7 @@
  */
 
 #import "BXEmulator.h"
+#import "BXEmulatorDelegate.h"
 
 #import "BXEmulator+BXShell.h"
 #import "BXInputHandler.h"
@@ -63,6 +64,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 @synthesize inputHandler;
 @synthesize videoHandler;
 @synthesize cancelled, executing;
+@synthesize gameProfile;
 
 
 #pragma mark -
@@ -130,10 +132,10 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 		commandQueue		= [[NSMutableArray alloc] initWithCapacity: 4];
 		driveCache			= [[NSMutableDictionary alloc] initWithCapacity: DOS_DRIVES];
 		
-		[self setInputHandler: [[[BXInputHandler alloc] init] autorelease]];
-		[self setVideoHandler: [[[BXVideoHandler alloc] init] autorelease]];
-		[[self inputHandler] setEmulator: self];
-		[[self videoHandler] setEmulator: self];
+		inputHandler		= [[BXInputHandler alloc] init];
+		videoHandler		= [[BXVideoHandler alloc] init];
+		[inputHandler setEmulator: self];
+		[videoHandler setEmulator: self];
 	}
 	return self;
 }
@@ -141,9 +143,10 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 - (void) dealloc
 {	
 	[self setProcessName: nil],	[processName release];
-	[self setInputHandler: nil], [inputHandler release];
-	[self setVideoHandler: nil], [videoHandler release];
+	[self setGameProfile: nil], [gameProfile release];
 	
+	[inputHandler release], inputHandler = nil;
+	[videoHandler release], videoHandler = nil;
 	[driveCache release], driveCache = nil;
 	[configFiles release], configFiles = nil;
 	[commandQueue release], commandQueue = nil;
@@ -185,6 +188,12 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 
 	[self setCancelled: YES];
 }
+
+- (void) applyConfigurationAtPath: (NSString *)configPath;
+{
+	[configFiles addObject: configPath];
+}
+
 
 #pragma mark -
 #pragma mark Introspecting emulation state
@@ -341,8 +350,8 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 }
 
 
-//Handling changes to application focus
-//-------------------------------------
+#pragma mark -
+#pragma mark Handling changes to application focus
 
 //These methods are only necessary if we are running in single-threaded mode,
 //which currently is indicated by the isConcurrent flag
@@ -368,10 +377,9 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	}
 }
 
-@end
 
-
-@implementation BXEmulator (BXEmulatorInternals)
+#pragma mark -
+#pragma mark Private methods
 
 - (DOS_Shell *) _currentShell
 {
@@ -387,8 +395,8 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 																 object: self
 															   userInfo: userInfo];
 	
-	BXSession *theSession = [self delegate];
-	if (theSession && [theSession respondsToSelector: selector]) [theSession performSelector: selector withObject: notification];
+	if ([[self delegate] respondsToSelector: selector])
+		[[self delegate] performSelector: selector withObject: notification];
 	
 	[center postNotification: notification];
 }
@@ -406,6 +414,11 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 		[self _postNotificationName: @"BXEmulationStateDidChange"
 				   delegateSelector: @selector(didChangeEmulationState:)
 						   userInfo: nil];
+		
+		[self willChangeValueForKey: @"fixedSpeed"];
+		[self willChangeValueForKey: @"autoSpeed"];
+		[self willChangeValueForKey: @"frameskip"];
+		[self willChangeValueForKey: @"coreMode"];
 		
 		[self didChangeValueForKey: @"fixedSpeed"];
 		[self didChangeValueForKey: @"autoSpeed"];
@@ -505,29 +518,6 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	
 	//Clean up after DOSBox finishes
 	[[self videoHandler] shutdown];
-	
-	//Cleanup leftover globals
-	cpu = CPUBlock();
-	dos = DOS_Block();
-	control = NULL;
-	cpudecoder = &CPU_Core_Normal_Run;
-	
-	SDLNetInited = NO;
-	machine = MCH_HERC;
-	svgaCard = SVGA_None;
-	
-	CPU_Cycles = 3000;
-	CPU_CycleLeft = 3000;
-	CPU_CycleMax = 3000;
-	CPU_OldCycleMax = 3000;
-	CPU_CyclePercUsed = 100;
-	CPU_CycleLimit = -1;
-	CPU_IODelayRemoved = 0;
-	CPU_CycleAutoAdjust = false;
-	CPU_SkipCycleAutoAdjust = false;
-	CPU_AutoDetermineMode = 0;
-	CPU_ArchitectureType = CPU_ARCHTYPE_MIXED;
-	CPU_PrefetchQueueSize = 0;
 }
 
 @end

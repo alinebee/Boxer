@@ -190,9 +190,12 @@
 		[path release];
 		path = [filePath copy];
 		
-		//Automatically parse the drive letter and label from the name of the drive
-		if (![self letter])	[self setLetter:	[[self class] preferredDriveLetterForPath: filePath]];
-		if (![self label])	[self setLabel:		[[self class] preferredLabelForPath: filePath]];
+		if (path)
+		{
+			//Automatically parse the drive letter and label from the name of the drive
+			if (![self letter])	[self setLetter:	[[self class] preferredDriveLetterForPath: filePath]];
+			if (![self label])	[self setLabel:		[[self class] preferredLabelForPath: filePath]];
+		}
 	}
 	[self didChangeValueForKey: @"path"];
 }
@@ -204,7 +207,6 @@
 	[self willChangeValueForKey: @"letter"];
 	if (![letter isEqualToString: driveLetter])
 	{
-		
 		[letter release];
 		letter = [driveLetter copy];
 	}

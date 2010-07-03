@@ -23,6 +23,16 @@
 #import "BXSession+BXDragDrop.h"
 
 
+
+//Private methods
+@interface BXSessionWindowController ()
+
+//Performs the slide animation used to toggle the status bar and program panel on or off
+- (void) _slideView: (NSView *)view shown: (BOOL)show;
+
+@end
+
+
 @implementation BXSessionWindowController
 
 #pragma mark -
@@ -523,4 +533,33 @@
 {
 	[self setFullScreen: NO];
 }
+
+
+#pragma mark -
+#pragma mark Private methods
+
+//Performs the slide animation used to toggle the status bar and program panel on or off
+- (void) _slideView: (NSView *)view shown: (BOOL)show
+{
+	NSRect newFrame	= [[self window] frame];
+	
+	CGFloat height	= [view frame].size.height;
+	if (!show) height = -height;
+	
+	newFrame.size.height	+= height;
+	newFrame.origin.y		-= height;
+	
+	if (show) [view setHidden: NO];	//Unhide before sliding out
+	if ([self isFullScreen])
+	{
+		[[self window] setFrame: newFrame display: NO];
+	}
+	else
+	{
+		[[self window] setFrame: newFrame display: YES animate: YES];
+	}
+	
+	if (!show) [view setHidden: YES]; //Hide after sliding in 
+}
+
 @end

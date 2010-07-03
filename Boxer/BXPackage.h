@@ -65,11 +65,3 @@
 - (NSArray *) volumesOfTypes: (NSArray *)fileTypes;
 
 @end
-
-@interface BXPackage (BXPackageInternals)
-//Arrays of paths to discovered files of particular types within the gamebox.
-//BXPackage's documentation and executables accessors call these internal methods and cache the results.
-- (NSArray *) _foundDocumentation;
-- (NSArray *) _foundExecutables;
-- (NSArray *) _foundResourcesOfTypes: (NSArray *)fileTypes startingIn: (NSString *)basePath;
-@end

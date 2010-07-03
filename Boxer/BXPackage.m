@@ -11,6 +11,16 @@
 #import "NSWorkspace+BXIcons.h"
 #import "BXAppController.h"
 
+
+@interface BXPackage ()
+//Arrays of paths to discovered files of particular types within the gamebox.
+//BXPackage's documentation and executables accessors call these internal methods and cache the results.
+- (NSArray *) _foundDocumentation;
+- (NSArray *) _foundExecutables;
+- (NSArray *) _foundResourcesOfTypes: (NSArray *)fileTypes startingIn: (NSString *)basePath;
+@end
+
+
 @implementation BXPackage
 @synthesize documentation, executables;
 
@@ -199,11 +209,9 @@
 	return documentation;
 }
 
-@end
 
-
-//Methods in this category are not intended to be called outside of BXPackage.
-@implementation BXPackage (BXPackageInternals)
+#pragma mark -
+#pragma mark Private methods
 
 //Trawl the package looking for DOS executables
 //TODO: check these against file() to weed out non-DOS exes

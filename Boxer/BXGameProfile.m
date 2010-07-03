@@ -75,7 +75,7 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 #pragma mark -
 #pragma mark Initializers
 
-+ (BXGameProfile *)detectedProfileForPath: (NSString *)basePath
++ (BXGameProfile *)detectedProfileForPath: (NSString *)basePath searchSubfolders: (BOOL)searchSubfolders
 {
 	NSFileManager *manager	= [NSFileManager defaultManager];
 	NSDictionary *matchingProfile;
@@ -92,8 +92,14 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 	//file heirarchy for each profile (which is a big cost).
 	for (NSDictionary *lookups in [self _lookupTables])
 	{
-		for (NSString *path in [manager enumeratorAtPath: basePath])
+		NSDirectoryEnumerator *enumerator = [manager enumeratorAtPath: basePath];
+		for (NSString *path in enumerator)
 		{
+			//Don't descend into any subfolders if not asked to
+			if (!searchSubfolders) [enumerator skipDescendents];
+			
+			NSLog(@"%@", path);
+			
 			//First check for an exact filename match
 			NSString *fileName	= [[path lastPathComponent] lowercaseString];
 			if (matchingProfile = [lookups objectForKey: fileName])

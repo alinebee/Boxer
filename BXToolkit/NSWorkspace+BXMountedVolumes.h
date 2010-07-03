@@ -12,10 +12,10 @@
 
 
 //Filesystem types, for use with mountedVolumesOfType:
-extern NSString *dataCDVolumeType;
-extern NSString *audioCDVolumeType;
-extern NSString *FATVolumeType;
-extern NSString *HFSVolumeType;
+extern NSString * const dataCDVolumeType;
+extern NSString * const audioCDVolumeType;
+extern NSString * const FATVolumeType;
+extern NSString * const HFSVolumeType;
 
 
 @interface NSWorkspace (BXMountedVolumes)
@@ -38,7 +38,7 @@ extern NSString *HFSVolumeType;
 
 //Returns the path of the data volume associated with the specified CD volume path.
 //Returns nil if the CD volume has no corresponding data volume.
-- (NSString *) findDataVolumeForAudioCD: (NSString *)volumePath;
+- (NSString *) dataVolumeOfAudioCD: (NSString *)volumePath;
 
 //Returns the BSD device name (dev/diskXsY) for the specified volume.
 //Returns nil if no matching device name could be determined.

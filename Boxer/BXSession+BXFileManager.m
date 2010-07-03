@@ -48,16 +48,19 @@
 #pragma mark -
 #pragma mark Filetype helper methods
 
++ (NSArray *) preferredMountPointTypes
+{
+	static NSArray *containerTypes = nil;
+	if (!containerTypes) containerTypes = [NSArray arrayWithObjects:
+										   @"net.washboardabs.boxer-game-package",		//.boxer
+										   @"net.washboardabs.boxer-mountable-folder",	//Any of .floppy, .cdrom, .harddisk
+										   nil];
+	return containerTypes;
+}
 
-//Return an array of all filetypes that should be mounted as a separate drive even if they're already accessible
-//from another drive
 + (NSArray *) separatelyMountedTypes
 {
-	NSArray *separatelyMountedTypes = [NSArray arrayWithObjects:
-		@"net.washboardabs.boxer-mountable-folder",	//Any of .floppy, .cdrom, .harddisk
-		@"net.washboardabs.boxer-game-package",		//.boxer
-	nil];
-	return [[BXAppController mountableImageTypes] arrayByAddingObjectsFromArray: separatelyMountedTypes];
+	return [[BXAppController mountableImageTypes] arrayByAddingObjectsFromArray: [self preferredMountPointTypes]];
 }
 
 + (BOOL) isExecutable: (NSString *)path
@@ -167,7 +170,7 @@
 	if (![theEmulator isExecuting]) return nil;
 
 	//File doesn't exist, bail out
-	if (![manager fileExistsAtPath: path isDirectory: nil]) return nil;
+	if (![manager fileExistsAtPath: path isDirectory: NULL]) return nil;
 	
 	//Choose an appropriate mount point and create the new drive for it
 	NSString *mountPoint	= [self preferredMountPointForPath: path];
@@ -206,62 +209,82 @@
 	//If the path is a disc image, use that as the mount point.
 	if ([workspace file: filePath matchesTypes: [BXAppController mountableImageTypes]]) return filePath;
 
-	
 	//If the path is (itself or inside) a gamebox or mountable folder, use that as the mount point.
-	NSArray *containerTypes = [NSArray arrayWithObjects:
-		@"net.washboardabs.boxer-game-package",
-		@"net.washboardabs.boxer-mountable-folder",
-	nil];
-	NSString *container = [workspace parentOfFile: filePath matchingTypes: containerTypes];
+	NSString *container = [workspace parentOfFile: filePath matchingTypes: [[self class] preferredMountPointTypes]];
 	if (container) return container;
-	
 
 	//Check what kind of volume the file is on
+	NSString *volumePath = [workspace volumeForPath: filePath];
 	NSString *volumeType = [workspace volumeTypeForPath: filePath];
-
-	//If it's on an audio CD, hunt around for the corresponding data CD volume and use that as the mount point (if found)
-	if ([volumeType isEqualToString: audioCDVolumeType])
+	
+	//If it's on a data CD volume or floppy volume, use the base folder of the volume as the mount point
+	if ([volumeType isEqualToString: dataCDVolumeType] ||
+		([volumeType isEqualToString: FATVolumeType] && [self _isFloppySizedVolume: volumePath]))
 	{
-		NSString *dataVolumePath = [workspace findDataVolumeForAudioCD: [workspace volumeForPath: filePath]];
+		return volumePath;
+	}
+	//If it's on an audio CD, hunt around for a corresponding data CD volume and use that as the mount point if found
+	else if ([volumeType isEqualToString: audioCDVolumeType])
+	{
+		NSString *dataVolumePath = [workspace dataVolumeOfAudioCD: volumePath];
 		if (dataVolumePath) return dataVolumePath;
 	}
 	
-	//If it's on a data CD volume, use the base folder of the volume as the mount point
-	else if ([volumeType isEqualToString: dataCDVolumeType])
-	{
-		NSString *cdVolume = [workspace volumeForPath: filePath];
-	
-		//Check to see if the volume is actually mounted from a supported disc image;
-		//If so, use the source image instead.
-		//This option is not fully implemented downstream and is disabled for now.
-		/*
-		if (useSourceImage)
-		{
-			NSString *imagePath = [workspace sourceImageForVolume: cdVolume];
-			if (imagePath && [workspace file: imagePath matchesTypes: [BXEmulator mountableImageTypes]])
-				cdVolume = imagePath;
-		}
-		*/
-		return cdVolume;
-	}
-	
-	//If it's a floppy-sized FAT volume, also use the base folder as the mount point 
-	else if ([volumeType isEqualToString: FATVolumeType])
-	{
-		NSString *floppyVolume = [workspace volumeForPath: filePath];
-		return floppyVolume;
-	}
-	
 	//If we get this far, then treat the path as a regular file or folder.
-	BOOL isDir;
+	BOOL isFolder;
 	NSFileManager *manager = [NSFileManager defaultManager];
-	[manager fileExistsAtPath: filePath isDirectory: &isDir];
+	[manager fileExistsAtPath: filePath isDirectory: &isFolder];
 	
 	//If the path is a folder, use it directly as the mount point...
-	if (isDir) return filePath;
+	if (isFolder) return filePath;
 		
 	//...otherwise use the path's parent folder.
 	else return [filePath stringByDeletingLastPathComponent]; 
+}
+
+- (NSString *) gameDetectionPointForPath: (NSString *)path shouldSearchSubfolders: (BOOL *)shouldRecurse
+{
+	if (shouldRecurse) *shouldRecurse = YES;
+	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+	
+	//If the file is inside a gamebox (first in preferredMountPointTypes) then search from that;
+	//If the file is inside a mountable folder (second) then search from that.
+	for (NSString *type in [[self class] preferredMountPointTypes])
+	{
+		NSString *parent = [workspace parentOfFile: path matchingTypes: [NSArray arrayWithObject: type]];
+		if (parent) return parent;
+	}
+	
+	//Failing that, check what kind of volume the file is on
+	NSString *volumePath = [workspace volumeForPath: path];
+	NSString *volumeType = [workspace volumeTypeForPath: path];
+	
+	//If it's on a data CD volume or floppy volume, scan from the base folder of the volume
+	if ([volumeType isEqualToString: dataCDVolumeType] ||
+		([volumeType isEqualToString: FATVolumeType] && [self _isFloppySizedVolume: volumePath]))
+	{
+		return volumePath;
+	}
+	//If it's on an audio CD, hunt around for a corresponding data CD volume and use that if found
+	else if ([volumeType isEqualToString: audioCDVolumeType])
+	{
+		NSString *dataVolumePath = [workspace dataVolumeOfAudioCD: volumePath];
+		if (dataVolumePath) return dataVolumePath;
+	}
+	
+	//If we get this far, then treat the path as a regular file or folder and recommend against
+	//searching subfolders (since the file heirarchy could be potentially huge.)
+	if (shouldRecurse) *shouldRecurse = NO;
+	BOOL isFolder;
+	NSFileManager *manager = [NSFileManager defaultManager];
+	[manager fileExistsAtPath: path isDirectory: &isFolder];
+	
+	//If the path is a folder, search it directly...
+	if (isFolder) return path;
+	
+	//...otherwise search the path's parent folder.
+	else return [path stringByDeletingLastPathComponent]; 
+	
 }
 
 
@@ -401,9 +424,9 @@
 	
 	//Only mount CD audio volumes if they have no corresponding data volume
 	//(Otherwise, we mount the data volume instead and shadow it with the audio CD's tracks)
-	if ([volumeType isEqualToString: audioCDVolumeType] && [workspace findDataVolumeForAudioCD: volume]) return;
+	if ([volumeType isEqualToString: audioCDVolumeType] && [workspace dataVolumeOfAudioCD: volume]) return;
 	
-	//Only mount FAT volumes that are floppydisk-sized
+	//Only mount FAT volumes that are floppy-sized
 	if ([volumeType isEqualToString: FATVolumeType] && ![self _isFloppySizedVolume: volume]) return;
 	
 	//Only mount volumes that aren't already mounted as drives
@@ -480,9 +503,9 @@
 - (void) _startTrackingChangesAtPath: (NSString *)path
 {
 	NSFileManager *manager = [NSFileManager defaultManager];
-	BOOL isDir, exists = [manager fileExistsAtPath: path isDirectory: &isDir];
+	BOOL isFolder, exists = [manager fileExistsAtPath: path isDirectory: &isFolder];
 	//Note: UKFNSubscribeFileWatcher can only watch directories, not regular files 
-	if (exists && isDir)
+	if (exists && isFolder)
 	{
 		UKFNSubscribeFileWatcher *watcher = [UKFNSubscribeFileWatcher sharedFileWatcher];
 		[watcher addPath: path];

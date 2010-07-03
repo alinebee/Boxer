@@ -243,19 +243,25 @@ nil];
 	{
 		//if ([drive isHidden]) continue;
 		
+		NSString *localizedFormat;
+		
 		if ([drive isInternal])
 		{
-			description = [NSString stringWithFormat: @"%@: %@\n",
+			localizedFormat = NSLocalizedString(@"%1$@: %2$@\n",
+												"Format for listing internal DOSBox drives via the DRIVES command: %1$@ is the drive letter, %2$@ is the localized drive type.");
+			description = [NSString stringWithFormat: localizedFormat,
 						   [drive letter],
 						   [drive typeDescription],
 						   nil];
 		}
 		else
 		{
-			description = [NSString stringWithFormat: @"%@: %@ (%@)\n",
+			localizedFormat = NSLocalizedString(@"%1$@: %2$@ from %3$@\n",
+												"Format for listing regular drives via the DRIVES command: %1$@ is the drive letter, %2$@ is the localized drive type, %3$@ is the drive's OS X filesystem path");
+			description = [NSString stringWithFormat: localizedFormat,
 						   [drive letter],
-						   [pathTransformer transformedValue: [drive path]],
 						   [drive typeDescription],
+						   [pathTransformer transformedValue: [drive path]],
 						   nil];
 		}
 

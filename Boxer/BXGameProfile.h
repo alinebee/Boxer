@@ -63,9 +63,11 @@ typedef NSUInteger BXGameEra;
 #pragma mark -
 #pragma mark Initializers
 
-//Detects and returns an appropriate game profile for the specified path, by scanning for telltale
-//files in the file heirarchy starting at basePath.
-+ (BXGameProfile *) detectedProfileForPath: (NSString *)basePath;
+//Detects and returns an appropriate game profile for the specified path,
+//by scanning for telltale files in the file heirarchy starting at basePath.
+//If searchSubfolders is false, only the base path will be scanned without
+//recursing into subfolders.
++ (BXGameProfile *) detectedProfileForPath: (NSString *)basePath searchSubfolders: (BOOL) searchSubfolders;
 
 //Creates a new profile from the specified GameProfiles.plist-format dictionary.
 - (id) initWithDictionary: (NSDictionary *)profileDictionary;

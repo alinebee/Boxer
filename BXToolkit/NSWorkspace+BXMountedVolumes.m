@@ -10,10 +10,10 @@
 #include <sys/param.h>
 #include <sys/mount.h>
 
-NSString *dataCDVolumeType	= @"cd9660";
-NSString *audioCDVolumeType	= @"cddafs";
-NSString *FATVolumeType		= @"msdos";
-NSString *HFSVolumeType		= @"hfs";
+NSString * const dataCDVolumeType	= @"cd9660";
+NSString * const audioCDVolumeType	= @"cddafs";
+NSString * const FATVolumeType		= @"msdos";
+NSString * const HFSVolumeType		= @"hfs";
 
 
 @implementation NSWorkspace (BXMountedVolumes)
@@ -118,7 +118,7 @@ NSString *HFSVolumeType		= @"hfs";
 
 //Returns the path of the data volume associated with the specified CD volume path.
 //Returns nil if the CD volume has no corresponding data volume.
-- (NSString *) findDataVolumeForAudioCD: (NSString *)audioVolumePath
+- (NSString *) dataVolumeOfAudioCD: (NSString *)audioVolumePath
 {
 	audioVolumePath				= [audioVolumePath stringByStandardizingPath];
 	NSString *audioDeviceName	= [self BSDNameForVolumePath: audioVolumePath];

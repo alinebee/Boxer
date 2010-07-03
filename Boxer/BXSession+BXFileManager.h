@@ -23,6 +23,11 @@
 //Class methods concerning files
 //------------------------------
 
+//UTI filetypes of folders that should be used as mount-points for files inside them:
+//If we open a file inside a folder matching one of these types, it will mount that folder as its drive.
+//Used by preferredMountPointForPath: which will also prefer the root folders of floppy and CD-ROM volumes.
++ (NSArray *) preferredMountPointTypes;
+
 
 //UTI filetypes that should be given their own drives, even if they are already accessible within an existing DOS drive.
 //This is used by shouldMountDriveForPath: to allow disc images or drive folders inside a gamebox to be mounted as
@@ -57,7 +62,7 @@
 //Returns YES if the path isn't already DOS-accessible or deserves its own drive anyway, NO otherwise.
 - (BOOL) shouldMountDriveForPath: (NSString *)path;
 
-//Adds a new drive to expose the specified path, using preferredMountPointForPath:preferringImages:
+//Adds a new drive to expose the specified path, using preferredMountPointForPath:
 //to choose an appropriate base location for the drive.
 - (BXDrive *) mountDriveForPath: (NSString *)path;
 
@@ -66,14 +71,17 @@
 - (BOOL) openFileAtPath: (NSString *)path;
 
 //Returns the most appropriate base location for a drive to expose the specified path:
-//If path points to a disc image, that will be the mount point.
-//If path is on a CD, then the CD's root folder will be the mount point.
-//Otherwise, the parent folder of the item (or the item itself, if it is a folder) will be the mount point.
-
-//If useSourceImage is YES, then this will return any backing disc image for the specified path. 
-//NOTE: This option should not yet be used, as the drive management does not track both 
+//If path points to a disc image, that will be returned
+//If path is inside a gamebox or Boxer mountable folder type, that container will be returned.
+//If path is on a CD or floppy volume, then the volume will be returned.
+//Otherwise, the parent folder of the item, or the item itself if it is a folder, will be returned. 
 - (NSString *) preferredMountPointForPath: (NSString *)path;
 
+//Given an arbitrary target path, returns the most appropriate base location from which to start searching for games:
+//If path is inside a gamebox or Boxer mountable folder type, that container will be returned (and shouldRecurse will be YES).
+//If path is on a CD or floppy volume, then the volume will be returned (and shouldRecurse will be YES).
+//Otherwise, the parent folder of the item, or the item itself if it is a folder, will be returned (and shouldRecurse will be NO). 
+- (NSString *) gameDetectionPointForPath: (NSString *)path shouldSearchSubfolders: (BOOL *)shouldRecurse;
 
 //Automount all ISO9660 CD-ROM volumes that are currently mounted in OS X.
 //Will not create new mounts for ones that are already mounted.

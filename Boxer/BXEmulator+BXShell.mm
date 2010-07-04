@@ -345,7 +345,7 @@ nil];
 	NSMutableArray *queue = [self commandQueue];
 	if ([queue count])
 	{
-		NSString *nextCommand = [[queue objectAtIndex: 0] copy];
+		NSString *nextCommand = [queue objectAtIndex: 0];
 		[queue removeObjectAtIndex: 0];
 		
 		BOOL completeCommand = [nextCommand hasSuffix: @"\n"];
@@ -368,7 +368,7 @@ nil];
 			nextCommand = [[NSArray arrayWithObjects: prefix, nextCommand, suffix, nil] componentsJoinedByString: @""];
 		}
 		
-		return [nextCommand autorelease];
+		return nextCommand;
 	}
 	else return nil;
 }

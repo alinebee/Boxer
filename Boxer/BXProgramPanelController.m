@@ -31,11 +31,9 @@
 
 + (void) initialize
 {
-	id displayPath	= [[BXDisplayPathTransformer alloc]	initWithJoiner: @" ▸ " maxComponents: 3]; 
-	id iconSize		= [[BXImageSizeTransformer alloc]	initWithSize: NSMakeSize(16, 16)];
+	id displayPath	= [[BXDisplayPathTransformer alloc]	initWithJoiner: @" ▸ " maxComponents: 3];
 	id fileName		= [[BXDOSFilenameTransformer alloc] init];
 
-	[NSValueTransformer setValueTransformer: [iconSize autorelease]		forName: @"BXProgramIconSize"];
 	[NSValueTransformer setValueTransformer: [displayPath autorelease]	forName: @"BXProgramDisplayPath"];
 	[NSValueTransformer setValueTransformer: [fileName autorelease]		forName: @"BXDOSFilename"];
 }
@@ -161,4 +159,5 @@
 	
 	[self didChangeValueForKey: @"activeProgramIsDefault"];	
 }
+
 @end

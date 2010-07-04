@@ -44,4 +44,5 @@
 
 //Synchronises the enabled state of the program chooser buttons.
 - (void) syncProgramButtonStates;
+
 @end

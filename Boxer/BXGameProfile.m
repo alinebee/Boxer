@@ -75,7 +75,8 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 #pragma mark -
 #pragma mark Initializers
 
-+ (BXGameProfile *)detectedProfileForPath: (NSString *)basePath searchSubfolders: (BOOL)searchSubfolders
++ (BXGameProfile *)detectedProfileForPath: (NSString *)basePath
+						 searchSubfolders: (BOOL)searchSubfolders
 {
 	NSFileManager *manager	= [NSFileManager defaultManager];
 	NSDictionary *matchingProfile;
@@ -97,8 +98,6 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 		{
 			//Don't descend into any subfolders if not asked to
 			if (!searchSubfolders) [enumerator skipDescendents];
-			
-			NSLog(@"%@", path);
 			
 			//First check for an exact filename match
 			NSString *fileName	= [[path lastPathComponent] lowercaseString];

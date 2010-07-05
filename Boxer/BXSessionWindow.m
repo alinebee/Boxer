@@ -8,6 +8,9 @@
 #import "BXSessionWindow.h"
 #import "BXSessionWindowController.h"
 
+#define BXFrameResizeDelay 0.2
+#define BXFrameResizeDelayFalloff 7.5
+
 @implementation BXSessionWindow
 
 //Overridden to make our required controller type explicit
@@ -15,6 +18,20 @@
 {
 	return (BXSessionWindowController *)[super windowController];
 }
+
+//Overridden to smooth out the speed of shorter resize animations,
+//while leaving larger resize animations largely as they were.
+- (NSTimeInterval) animationResizeTime: (NSRect)newFrame
+{
+	NSTimeInterval baseTime = [super animationResizeTime: newFrame];
+	NSTimeInterval scaledTime = 0.0;
+
+	if (baseTime > 0.0)
+		scaledTime = baseTime + (BXFrameResizeDelay * MIN(1.0, (1.0 / (baseTime * BXFrameResizeDelayFalloff))));
+	
+	return scaledTime;
+}
+
 
 //Adjust reported content/frame sizes to account for statusbar and program panel
 //This is used to keep content resizing proportional to the shape of the render view, not the shape of the window

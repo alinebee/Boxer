@@ -81,6 +81,27 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 //This will differ from the actual render view size when in fullscreen mode.
 - (NSSize) windowedRenderingViewSize	{ return [[self viewContainer] bounds].size; }
 
+- (void) setFrameAutosaveName: (NSString *)savedName
+{
+	NSSize initialSize = [self windowedRenderingViewSize];
+	CGFloat initialAspectRatio = aspectRatioOfSize(initialSize);
+
+	//This will resize the window to the frame size saved with the specified name
+	if ([[self window] setFrameAutosaveName: savedName])
+	{
+		NSSize loadedSize = [self windowedRenderingViewSize];
+		CGFloat loadedAspectRatio = aspectRatioOfSize(loadedSize);
+		
+		//If the loaded size had a different aspect ratio to the size we had before,
+		//adjust the loaded size accordingly
+		if (ABS(loadedAspectRatio - initialAspectRatio) > BXIdenticalAspectRatioDelta)
+		{
+			NSSize adjustedSize = loadedSize;
+			adjustedSize.height = adjustedSize.width / initialAspectRatio;
+			[self _resizeWindowToRenderingViewSize: adjustedSize animate: NO];
+		}		
+	}
+}
 
 - (NSScreen *) fullScreenTarget
 {
@@ -197,9 +218,6 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 //Snap to multiples of the base render size as we scale
 - (NSSize) windowWillResize: (BXSessionWindow *)theWindow toSize: (NSSize) proposedFrameSize
 {
-	//If emulation is not active, don't bother calculating constraints
-	if (![[self emulator] isExecuting]) return proposedFrameSize;
-
 	//Used to be: [[NSUserDefaults standardUserDefaults] integerForKey: @"windowSnapDistance"];
 	//But is now constant while developing to find the ideal default value
 	NSInteger snapThreshold	= BXWindowSnapThreshold;
@@ -421,9 +439,10 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 	//Otherwise, try to work out the most appropriate window shape to resize to
 	else
 	{
-		//We preserve height during the aspect ratio adjustment if the new height is equivalent to the old.
-		//Height-locking fixes crazy-ass resolution transitions in Pinball Fantasies and The Humans.
-		BOOL preserveHeight = !((NSInteger)currentScaledSize.height	% (NSInteger)scaledSize.height);
+		//We preserve height during the aspect ratio adjustment if the new height is equal to the old,
+		//and if we're not setting the size for the first time.
+		BOOL preserveHeight =	!NSEqualSizes(currentScaledSize, NSZeroSize) &&
+								!((NSInteger)currentScaledSize.height % (NSInteger)scaledSize.height);
 		
 		//Now, adjust the view size to fit the aspect ratio of our new rendered size.
 		//At the same time we clamp it to the minimum size, preserving the preferred dimension.

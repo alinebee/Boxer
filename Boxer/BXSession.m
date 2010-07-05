@@ -391,6 +391,7 @@
 	if (![self activeProgramPath])
 	{
 		[self setActiveProgramPath: [[notification userInfo] objectForKey: @"localPath"]];
+		[mainWindowController synchronizeWindowTitleWithDocumentName];
 		
 		//Hide the program picker after launching the default program 
 		if ([[self activeProgramPath] isEqualToString: [gamePackage targetPath]])
@@ -408,6 +409,7 @@
 	
 	//Clear the active program
 	[self setActiveProgramPath: nil];
+	[mainWindowController synchronizeWindowTitleWithDocumentName];
 	
 	//Show the program chooser after returning to the DOS prompt
 	if ([self isGamePackage] && [[self executables] count])

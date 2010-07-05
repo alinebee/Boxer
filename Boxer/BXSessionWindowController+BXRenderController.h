@@ -33,6 +33,10 @@
 //Returns YES if the window is in the process of resizing itself.
 - (BOOL) isResizing;
 
+//Sets the window to use the specified frame-autosave name, and adjusts the resulting
+//frame to ensure the aspect ratio is consistent with what it was before.
+- (void) setFrameAutosaveName: (NSString *)savedName;
+
 //Returns the size that the rendering view would currently be *if it were in windowed mode.*
 //This will differ from the actual render view size if in fullscreen mode.
 - (NSSize) windowedRenderingViewSize;

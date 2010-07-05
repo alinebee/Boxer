@@ -128,13 +128,6 @@
 	//Track mouse movement when this is the main window
 	[theWindow setAcceptsMouseMovedEvents: YES];
 	
-	//Set window rendering behaviour
-	//------------------------------
-	
-	//Fix the window in the aspect ratio it will start up in
-	initialContentSize = [self windowedRenderingViewSize];
-	[theWindow setContentAspectRatio: initialContentSize];
-	
 	//We don't support content-preservation yet, so disable the check to be slightly more efficient
 	[theWindow setPreservesContentDuringLiveResize: NO];
 }
@@ -143,7 +136,6 @@
 {	
 	if ([self document])
 	{
-		[[self document] removeObserver: self forKeyPath: @"activeProgramPath"];
 		[self unbind: @"emulator"];
 		[programPanelController setRepresentedObject: nil];		
 	}
@@ -153,20 +145,18 @@
 	if (theSession)
 	{
 		id theWindow = [self window];
-
-		//Now that we can retrieve the game's identifier from the session, use the autosaved window size for that game
+		
+		//Now that we can retrieve the game's identifier from the session,
+		//use the autosaved window size for that game
 		if ([theSession isGamePackage])
 		{
-			if ([theWindow setFrameAutosaveName: [theSession uniqueIdentifier]]) [theWindow center];
-			//I hate to have to force the window to be centered but it compensates for Cocoa screwing up the position when it resizes a window from its saved frame: Cocoa pegs the window to the bottom-left origin when resizing this way, rather than the top-left as it should.
-			//This comes up with non-16:10 games, since they get resized to match the 16:10 DOS ratio when they load. They would otherwise make the window travel down the screen each time they start up.
+			[self setFrameAutosaveName: [theSession uniqueIdentifier]];
 		}
 		else
 		{
-			[theWindow setFrameAutosaveName: @"DOSWindow"];
+			[self setFrameAutosaveName: @"DOSWindow"];
 		}
 		
-		[theSession addObserver: self forKeyPath: @"activeProgramPath" options: 0 context: nil];
 		[self bind: @"emulator" toObject: theSession withKeyPath: @"emulator" options: nil];
 		[programPanelController setRepresentedObject: theSession];
 	}
@@ -230,25 +220,6 @@
 			[[self window] setTitle: NSLocalizedString(
 				@"MS-DOS Prompt", @"The standard window title when the session is at the DOS prompt.")];
 		}
-	}
-}
-
-- (void) observeValueForKeyPath: (NSString *)keyPath
-						ofObject: (id)object
-						  change: (NSDictionary *)change
-						 context: (void *)context
-{
-	//Whenever the active program path changes, synchronise the window title and the unsaved changes indicator
-	if ([keyPath isEqualToString: @"document.activeProgramPath"])
-	{
-		[self synchronizeWindowTitleWithDocumentName];
-		
-		//Flag the window as unsaved if pressing the close button would trigger a confirmation panel.
-		//This matches the behaviour of the OS X Terminal.
-		//Disabled as it also fades out the document icon, which is stretching the dubious
-		//justification for using this feature to breaking point.
-		
-		//[self setDocumentEdited: [self shouldConfirmClose]];
 	}
 }
 

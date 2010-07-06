@@ -387,7 +387,8 @@
 - (void) programWillStart: (NSNotification *)notification
 {	
 	//Don't set the active program if we already have one
-	//This way, we keep track of when a user launches a batch file, and don't immediately discard it
+	//This way, we keep track of when a user launches a batch file and don't immediately discard
+	//it in favour of the next program the batch-file runs
 	if (![self activeProgramPath])
 	{
 		[self setActiveProgramPath: [[notification userInfo] objectForKey: @"localPath"]];
@@ -401,7 +402,17 @@
 	}
 }
 
-- (void) programDidFinish: (NSNotification *)notification {}
+- (void) programDidFinish: (NSNotification *)notification
+{
+	//Clear the active program after every program has run during initial startup
+	//This way, we don't 'hang onto' startup commands in programWillStart:
+	//Once the default target has launched, we only reset the active program when
+	//we return to the DOS prompt.
+	if (!hasLaunched)
+	{
+		[self setActiveProgramPath: nil];		
+	}
+}
 
 - (void) didReturnToShell: (NSNotification *)notification
 {
@@ -624,6 +635,8 @@
 //After all preflight configuration has finished, go ahead and open whatever file we're pointing at
 - (void) _launchTarget
 {
+	hasLaunched = YES;
+	
 	NSString *target = [self targetPath];
 	if (target)
 	{
@@ -636,8 +649,5 @@
 		}
 		[self openFileAtPath: target];
 	}
-	
-	//Flag that we have started up properly
-	hasLaunched = YES;
 }
 @end

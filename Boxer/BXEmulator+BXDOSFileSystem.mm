@@ -117,7 +117,6 @@ enum {
 	if (![self isExecuting]) return nil;
 	
 	NSFileManager *manager	= [NSFileManager defaultManager];
-	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
 	BOOL isFolder;
 	
 	//File did not exist, don't continue mounting
@@ -684,7 +683,6 @@ enum {
 //adding new drives and removing old drives as necessary.
 - (void) _syncDriveCache
 {
-	NSArray *driveLetters = [[self class] driveLetters];
 	NSDictionary *userInfo;
 	NSUInteger i;
 	

@@ -40,8 +40,6 @@ enum {
 	
 	//Grab references to all our little subfields
 	NSView *contentView		= [theWindow contentView];
-	NSTextField *subtitle	= [contentView viewWithTag: BXAboutSubtitle];
-	NSTextField *copyright	= [contentView viewWithTag: BXAboutCopyright];
 	NSTextField *version	= [contentView viewWithTag: BXAboutVersion];
 	NSButton *websiteLink	= [contentView viewWithTag: BXAboutWebsiteLink];
 	

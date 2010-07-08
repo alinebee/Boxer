@@ -53,7 +53,7 @@ NSString * const HFSVolumeType		= @"hfs";
 	//Sort the volumes by length from longest to shortest, to make sure we get the right volume (and not a parent volume)
 	NSArray *sortedVolumes	= [volumes sortedArrayUsingSelector: @selector(pathDepthCompare:)];
 	
-	for (NSString *volumePath in [volumes reverseObjectEnumerator])
+	for (NSString *volumePath in [sortedVolumes reverseObjectEnumerator])
 	{
 		if ([resolvedPath hasPrefix: volumePath]) return volumePath;
 	}

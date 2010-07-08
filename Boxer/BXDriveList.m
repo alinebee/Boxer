@@ -26,7 +26,7 @@
 - (NSView *) hitTest: (NSPoint)thePoint
 {
 	NSPoint clickPoint = [self convertPoint: thePoint fromView: nil];
-	if ([self mouse: thePoint inRect: [self frame]]) return self;
+	if ([self mouse: clickPoint inRect: [self bounds]]) return self;
 	else return nil;
 }
 

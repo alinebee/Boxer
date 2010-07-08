@@ -144,8 +144,6 @@
 	
 	if (theSession)
 	{
-		id theWindow = [self window];
-		
 		//Now that we can retrieve the game's identifier from the session,
 		//use the autosaved window size for that game
 		if ([theSession isGamePackage])
@@ -383,7 +381,6 @@
 - (BOOL)performDragOperation: (id <NSDraggingInfo>)sender
 {
 	NSPasteboard *pboard = [sender draggingPasteboard];
-    NSDragOperation sourceDragMask = [sender draggingSourceOperationMask];
  
     if ([[pboard types] containsObject: NSFilenamesPboardType])
 	{

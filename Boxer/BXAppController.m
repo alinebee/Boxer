@@ -147,14 +147,14 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 {	
 	NSString *executablePath	= [[NSBundle mainBundle] executablePath];
 	NSArray *params				= [NSArray arrayWithObjects: [URL path], BXActivateOnLaunchParam, nil]; 
-	NSTask *boxerProcess		= [NSTask launchedTaskWithLaunchPath: executablePath arguments: params];
+	[NSTask launchedTaskWithLaunchPath: executablePath arguments: params];
 }
 
 - (void) _launchProcessWithUntitledDocument
 {
 	NSString *executablePath	= [[NSBundle mainBundle] executablePath];
 	NSArray *params				= [NSArray arrayWithObjects: BXNewSessionParam, BXActivateOnLaunchParam, nil]; 
-	NSTask *boxerProcess		= [NSTask launchedTaskWithLaunchPath: executablePath arguments: params];	
+	[NSTask launchedTaskWithLaunchPath: executablePath arguments: params];	
 }
 
 //Quit after the last window was closed if we are a 'subsidiary' process, to avoid leaving extra Boxers littering the Dock

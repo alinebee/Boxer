@@ -189,8 +189,7 @@
 	if (![[self emulator] isExecuting]) return NO;
 	
 	SEL theAction = [theItem action];
-	BOOL hideItem;
-
+	
 	if (theAction == @selector(incrementSpeed:))		return ![self speedAtMaximum];
 	if (theAction == @selector(decrementSpeed:))		return ![self speedAtMinimum];
 

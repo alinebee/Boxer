@@ -56,7 +56,7 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 	//immediately *before* a resize is usually (always?) video-buffer garbage.
 	//This way, we have the brand-new frame visible in the view while we stretch
 	//it to the intended size, instead of leaving the garbage frame in the view.
-	BOOL didResize = [self _resizeToAccommodateFrame: frame];
+	[self _resizeToAccommodateFrame: frame];
 }
 
 - (NSSize) viewportSize
@@ -121,7 +121,7 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 	if ([self isFullScreen] == fullScreen) return;
 	
 	//Set up a screen fade in and out of the fullscreen mode
-	CGError acquiredToken, fadedOut, fadedIn;
+	CGError acquiredToken;
 	CGDisplayFadeReservationToken fadeToken;
 	
 	acquiredToken = CGAcquireDisplayFadeReservation(kCGMaxDisplayReservationInterval, &fadeToken);
@@ -129,13 +129,13 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 	//First fade out to black synchronously
 	if (acquiredToken == kCGErrorSuccess)
 	{
-		CGError fadedOut = CGDisplayFade(fadeToken,
-										 BXFullscreenFadeOutDuration,	//Fade duration
-										 kCGDisplayBlendNormal,			//Start transparent
-										 kCGDisplayBlendSolidColor,		//Fade to opaque
-										 0.0, 0.0, 0.0,					//Pure black (R, G, B)
-										 true							//Synchronous
-										 );
+		CGDisplayFade(fadeToken,
+					  BXFullscreenFadeOutDuration,	//Fade duration
+					  kCGDisplayBlendNormal,			//Start transparent
+					  kCGDisplayBlendSolidColor,		//Fade to opaque
+					  0.0, 0.0, 0.0,					//Pure black (R, G, B)
+					  true							//Synchronous
+					  );
 	}
 	
 	//Now actually switch to fullscreen mode
@@ -144,13 +144,13 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 	//And now fade back in from black asynchronously
 	if (acquiredToken == kCGErrorSuccess)
 	{
-		CGError fadedIn = CGDisplayFade(fadeToken,
-										BXFullscreenFadeInDuration,	//Fade duration
-										kCGDisplayBlendSolidColor,	//Start opaque
-										kCGDisplayBlendNormal,		//Fade to transparent
-										0.0, 0.0, 0.0,				//Pure black (R, G, B)
-										false						//Asynchronous
-										);
+		CGDisplayFade(fadeToken,
+					  BXFullscreenFadeInDuration,	//Fade duration
+					  kCGDisplayBlendSolidColor,	//Start opaque
+					  kCGDisplayBlendNormal,		//Fade to transparent
+					  0.0, 0.0, 0.0,				//Pure black (R, G, B)
+					  false						//Asynchronous
+					  );
 	}
 	CGReleaseDisplayFadeReservation(fadeToken);
 }
@@ -248,9 +248,6 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 {
 	if (![[self emulator] isExecuting]) return defaultFrame;
 	
-	NSSize scaledResolution			= [[renderingView currentFrame] scaledResolution];
-	CGFloat aspectRatio				= aspectRatioOfSize([theWindow contentAspectRatio]);
-	
 	NSRect standardFrame;
 	NSRect currentWindowFrame		= [theWindow frame];
 	NSRect defaultViewFrame			= [theWindow contentRectForFrameRect: defaultFrame];
@@ -263,6 +260,9 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 	//(which makes the zoom button to appear to do nothing.)
 	
 	/*
+	CGFloat aspectRatio				= aspectRatioOfSize([theWindow contentAspectRatio]);
+	NSSize scaledResolution			= [[renderingView currentFrame] scaledResolution];
+	 
 	largestCleanViewFrame.size.width -= ((NSInteger)defaultViewFrame.size.width % (NSInteger)scaledResolution.width);
 	if (aspectRatio > 0)
 		largestCleanViewFrame.size.height = round(largestCleanViewFrame.size.width / aspectRatio);

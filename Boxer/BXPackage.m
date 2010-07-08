@@ -96,7 +96,7 @@
 	NSFileManager *manager	= [NSFileManager defaultManager];
 	NSString *basePath		= [self resourcePath];
 	
-	NSString *fileName, *filePath, *fileType;
+	NSString *fileName, *filePath;
 	for (fileName in [manager contentsOfDirectoryAtPath: basePath error: nil])
 	{
 		//Skip over hidden/metadata files

@@ -10,6 +10,9 @@
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		9F1D50010F5C0966009F0AB9 /* BXEmulator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */; };
+		9F20C28B11E5D848005AF541 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28A11E5D848005AF541 /* Sparkle.framework */; };
+		9F20C28E11E5D8B4005AF541 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28D11E5D8B4005AF541 /* QTKit.framework */; };
+		9F20C29711E5DA68005AF541 /* Sparkle.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28A11E5D848005AF541 /* Sparkle.framework */; };
 		9F2140FF0F59F28000A5A183 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F2140FE0F59F28000A5A183 /* QuartzCore.framework */; };
 		9F2AC6D710EFE14300CFFF72 /* CDCover.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F2AC6D510EFE14300CFFF72 /* CDCover.png */; };
 		9F2AC6D810EFE14300CFFF72 /* CDCase.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F2AC6D610EFE14300CFFF72 /* CDCase.png */; };
@@ -172,8 +175,6 @@
 		9F76D3F710CBC3B300C3B081 /* GNU General Public License.txt in Resources */ = {isa = PBXBuildFile; fileRef = 9F76D3F510CBC3B300C3B081 /* GNU General Public License.txt */; };
 		9F76D45610CBE5C500C3B081 /* BXSession+BXDragDrop.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F76D45510CBE5C500C3B081 /* BXSession+BXDragDrop.m */; };
 		9F76D4CC10CBFFB200C3B081 /* BXVideoFormatAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F76D4CB10CBFFB200C3B081 /* BXVideoFormatAlert.m */; };
-		9F7936D010F8B8D300C9178C /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F7936CF10F8B8D300C9178C /* Sparkle.framework */; };
-		9F7936DB10F8B9E900C9178C /* Sparkle.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F7936CF10F8B8D300C9178C /* Sparkle.framework */; };
 		9F8A974A10E7DEF500A4B72A /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8A974910E7DEF500A4B72A /* RegexKitLite.m */; };
 		9F8A976010E7EDDE00A4B72A /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */; };
 		9F9A4C9610F67A1F00E61965 /* GalleryOriginal.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A4C9010F67A1F00E61965 /* GalleryOriginal.png */; };
@@ -196,7 +197,6 @@
 		9FB4F9E411957B55006C8AC9 /* BXFrameBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB4F9E311957B55006C8AC9 /* BXFrameBuffer.m */; };
 		9FB553E10F6EA30900A33017 /* BXCloseAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB553E00F6EA30900A33017 /* BXCloseAlert.m */; };
 		9FB554220F6EAC5F00A33017 /* BXAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB554210F6EAC5F00A33017 /* BXAlert.m */; };
-		9FB554F70F6EE58000A33017 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FB554F60F6EE58000A33017 /* QTKit.framework */; };
 		9FBB86850F5DD070008418E6 /* BXLayerRenderingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBB86840F5DD070008418E6 /* BXLayerRenderingView.m */; };
 		9FBC31D70F56C370001811F2 /* AboutBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC31D10F56C370001811F2 /* AboutBackground.png */; };
 		9FBC31DA0F56C370001811F2 /* BunnyTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC31D40F56C370001811F2 /* BunnyTemplate.png */; };
@@ -261,7 +261,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				9F7936DB10F8B9E900C9178C /* Sparkle.framework in Copy Bundled Frameworks */,
+				9F20C29711E5DA68005AF541 /* Sparkle.framework in Copy Bundled Frameworks */,
 				9F6BA6FD10A9FBAB005A3E2A /* Growl.framework in Copy Bundled Frameworks */,
 				9FA2E5D9109D255300E50623 /* BGHUDAppKit.framework in Copy Bundled Frameworks */,
 				9FBC3D600F56EA82001811F2 /* SDL.framework in Copy Bundled Frameworks */,
@@ -281,6 +281,8 @@
 		8D1107320486CEB800E47090 /* Boxer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Boxer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F1D4FFF0F5C0966009F0AB9 /* BXEmulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulator.h; sourceTree = "<group>"; };
 		9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXEmulator.mm; sourceTree = "<group>"; };
+		9F20C28A11E5D848005AF541 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
+		9F20C28D11E5D8B4005AF541 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = "/Volumes/Macintosh HD/System/Library/Frameworks/QTKit.framework"; sourceTree = "<absolute>"; };
 		9F2140FE0F59F28000A5A183 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
 		9F2AC6D510EFE14300CFFF72 /* CDCover.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CDCover.png; sourceTree = "<group>"; };
 		9F2AC6D610EFE14300CFFF72 /* CDCase.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CDCase.png; sourceTree = "<group>"; };
@@ -592,7 +594,6 @@
 		9F76D45510CBE5C500C3B081 /* BXSession+BXDragDrop.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXSession+BXDragDrop.m"; sourceTree = "<group>"; };
 		9F76D4CA10CBFFB200C3B081 /* BXVideoFormatAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXVideoFormatAlert.h; sourceTree = "<group>"; };
 		9F76D4CB10CBFFB200C3B081 /* BXVideoFormatAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXVideoFormatAlert.m; sourceTree = "<group>"; };
-		9F7936CF10F8B8D300C9178C /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
 		9F8A974810E7DEF500A4B72A /* RegexKitLite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegexKitLite.h; sourceTree = "<group>"; };
 		9F8A974910E7DEF500A4B72A /* RegexKitLite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegexKitLite.m; sourceTree = "<group>"; };
 		9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
@@ -609,7 +610,7 @@
 		9F9A4CA810F6824B00E61965 /* BXFilterGallery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFilterGallery.m; sourceTree = "<group>"; };
 		9F9FE70210FA5F5800E3944B /* NSWorkspace+BXIcons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSWorkspace+BXIcons.h"; sourceTree = "<group>"; };
 		9F9FE70310FA5F5800E3944B /* NSWorkspace+BXIcons.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSWorkspace+BXIcons.m"; sourceTree = "<group>"; };
-		9FA2E595109D251100E50623 /* BGHUDAppKit.framework */ = {isa = PBXFileReference; comments = "http://www.binarymethod.com/bghudappkit/"; explicitFileType = wrapper.framework; path = BGHUDAppKit.framework; sourceTree = "<group>"; };
+		9FA2E595109D251100E50623 /* BGHUDAppKit.framework */ = {isa = PBXFileReference; comments = "This is the BGHUDAppkit framework 0.9 from http://www.binarymethod.com/bghudappkit/ compiled from source with our own modifications, which are provided as a diff in the BGHUDAppKit source folder."; explicitFileType = wrapper.framework; path = BGHUDAppKit.framework; sourceTree = "<group>"; };
 		9FA85CD310A357A600E6457F /* BXSession+BXFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXSession+BXFileManager.h"; sourceTree = "<group>"; };
 		9FA85CD410A357A600E6457F /* BXSession+BXFileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXSession+BXFileManager.m"; sourceTree = "<group>"; };
 		9FAD43B710A341F6007E8C0D /* UKFileWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UKFileWatcher.h; sourceTree = "<group>"; };
@@ -626,7 +627,6 @@
 		9FB553E00F6EA30900A33017 /* BXCloseAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXCloseAlert.m; sourceTree = "<group>"; };
 		9FB554200F6EAC5F00A33017 /* BXAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXAlert.h; sourceTree = "<group>"; };
 		9FB554210F6EAC5F00A33017 /* BXAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXAlert.m; sourceTree = "<group>"; };
-		9FB554F60F6EE58000A33017 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = /System/Library/Frameworks/QTKit.framework; sourceTree = "<absolute>"; };
 		9FBB86830F5DD070008418E6 /* BXLayerRenderingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXLayerRenderingView.h; sourceTree = "<group>"; };
 		9FBB86840F5DD070008418E6 /* BXLayerRenderingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXLayerRenderingView.m; sourceTree = "<group>"; };
 		9FBC31D10F56C370001811F2 /* AboutBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AboutBackground.png; sourceTree = "<group>"; };
@@ -658,8 +658,8 @@
 		9FBC35260F56C7B7001811F2 /* NSWindow+BXWindowSizing.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = "NSWindow+BXWindowSizing.m"; sourceTree = "<group>"; };
 		9FBC35280F56C7B7001811F2 /* BXGeometry.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = BXGeometry.m; sourceTree = "<group>"; };
 		9FBC3A7F0F56CEA2001811F2 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
-		9FBC3C140F56D6E8001811F2 /* SDL.framework */ = {isa = PBXFileReference; comments = "This is not the standard SDL 1.2.13 ( http://www.libsdl.org/ ), but our own hacked-to-pieces version that has a lot of Boxer-specific customisations. The sourcecode for this version can be found in the Source For Frameworks folder."; lastKnownFileType = wrapper.framework; path = SDL.framework; sourceTree = "<group>"; };
-		9FBC3C150F56D6E8001811F2 /* SDL_net.framework */ = {isa = PBXFileReference; comments = "This is the stock SDL_Net 1.2.7 framework, downloaded from http://www.libsdl.org/projects/SDL_net/ ."; lastKnownFileType = wrapper.framework; path = SDL_net.framework; sourceTree = "<group>"; };
+		9FBC3C140F56D6E8001811F2 /* SDL.framework */ = {isa = PBXFileReference; comments = "This is the stock SDL 1.2.14 framework, downloaded from http://www.libsdl.org/"; lastKnownFileType = wrapper.framework; path = SDL.framework; sourceTree = "<group>"; };
+		9FBC3C150F56D6E8001811F2 /* SDL_net.framework */ = {isa = PBXFileReference; comments = "This is the stock SDL_Net 1.2.7 framework, downloaded from http://www.libsdl.org/projects/SDL_net/"; lastKnownFileType = wrapper.framework; path = SDL_net.framework; sourceTree = "<group>"; };
 		9FBC3C710F56E0AE001811F2 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		9FBC3C760F56E0D7001811F2 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
 		9FBC3C770F56E0D7001811F2 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = /System/Library/Frameworks/CoreMIDI.framework; sourceTree = "<absolute>"; };
@@ -726,11 +726,11 @@
 				9F2140FF0F59F28000A5A183 /* QuartzCore.framework in Frameworks */,
 				9F4E042C0F67E72300427D50 /* AudioToolbox.framework in Frameworks */,
 				9FE201A60F6D599C00B3A38C /* libz.1.2.3.dylib in Frameworks */,
-				9FB554F70F6EE58000A33017 /* QTKit.framework in Frameworks */,
 				9FA2E596109D251100E50623 /* BGHUDAppKit.framework in Frameworks */,
 				9F6BA6F910A9FB92005A3E2A /* Growl.framework in Frameworks */,
 				9F8A976010E7EDDE00A4B72A /* libicucore.dylib in Frameworks */,
-				9F7936D010F8B8D300C9178C /* Sparkle.framework in Frameworks */,
+				9F20C28B11E5D848005AF541 /* Sparkle.framework in Frameworks */,
+				9F20C28E11E5D8B4005AF541 /* QTKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -768,7 +768,7 @@
 		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				9FB554F60F6EE58000A33017 /* QTKit.framework */,
+				9F20C28D11E5D8B4005AF541 /* QTKit.framework */,
 				9F4E042B0F67E72300427D50 /* AudioToolbox.framework */,
 				9F2140FE0F59F28000A5A183 /* QuartzCore.framework */,
 				9FBC3C760F56E0D7001811F2 /* AudioUnit.framework */,
@@ -1522,7 +1522,7 @@
 		9FBC3C130F56D6E8001811F2 /* Bundled Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				9F7936CF10F8B8D300C9178C /* Sparkle.framework */,
+				9F20C28A11E5D848005AF541 /* Sparkle.framework */,
 				9F6BA6F810A9FB92005A3E2A /* Growl.framework */,
 				9FA2E595109D251100E50623 /* BGHUDAppKit.framework */,
 				9FBC3C140F56D6E8001811F2 /* SDL.framework */,
@@ -1975,15 +1975,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
-				COPY_PHASE_STRIP = YES;
 				CURRENT_PROJECT_VERSION = 20100706.1;
 				GCC_VERSION = 4.0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH)";
-				PREBINDING = YES;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
-				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Development;
 		};
@@ -1991,21 +1988,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
+				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/Frameworks\"",
 				);
 				GCC_MODEL_TUNING = G5;
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)\"",
-				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
 				"OTHER_CFLAGS[arch=i386]" = "-mstackrealign";
@@ -2017,21 +2008,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
+				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/Frameworks\"",
 				);
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)\"",
-				);
 				OTHER_CFLAGS = "-mstackrealign";
 				PRODUCT_NAME = Boxer;
 			};
@@ -2041,21 +2026,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/Frameworks\"",
 				);
 				GCC_MODEL_TUNING = G5;
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)\"",
-				);
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "";
 				"OTHER_CFLAGS[arch=i386]" = "-mstackrealign";
@@ -2074,9 +2052,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH)";
-				PREBINDING = YES;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
-				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Debug;
 		};
@@ -2090,9 +2066,7 @@
 				GCC_VERSION = 4.0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				PREBINDING = YES;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
-				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Release;
 		};

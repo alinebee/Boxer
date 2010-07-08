@@ -415,9 +415,7 @@
 }
 
 - (void) didReturnToShell: (NSNotification *)notification
-{
-	BXEmulator *theEmulator = [self emulator];
-	
+{	
 	//Clear the active program
 	[self setActiveProgramPath: nil];
 	[mainWindowController synchronizeWindowTitleWithDocumentName];

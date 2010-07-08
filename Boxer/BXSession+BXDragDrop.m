@@ -58,7 +58,6 @@
 //Called by BXSessionWindowController performDragOperation: when files have been drag-dropped onto Boxer.
 - (BOOL) handleDroppedFiles: (NSArray *)filePaths withLaunching: (BOOL)launch
 {
-	BXEmulator *theEmulator = [self emulator];
 	BOOL returnValue = NO;
 	
 	for (NSString *filePath in filePaths)
@@ -107,9 +106,7 @@
 
 
 - (BOOL) _handleDroppedFile: (NSString *)filePath withLaunching: (BOOL)launch
-{
-	BXEmulator *theEmulator = [self emulator];
-	
+{	
 	//First check if we ought to do anything with this file, to be safe
 	if ([self _responseToDroppedFile: filePath] == NSDragOperationNone) return NO;
 	

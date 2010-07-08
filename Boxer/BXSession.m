@@ -76,6 +76,7 @@
 	[self setActiveProgramPath: nil],	[activeProgramPath release];
 	
 	[super dealloc];
+	NSLog(@"BXSession dealloc");
 }
 
 //We make this a no-op to avoid creating an NSFileWrapper - we don't ever actually read any data off disk,
@@ -168,6 +169,7 @@
 {
 	[self cancel];
 	[super close];
+	[self setMainWindowController: nil];
 }
 
 

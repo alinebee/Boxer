@@ -47,6 +47,13 @@
 - (BXSession *) document		{ return (BXSession *)[super document]; }
 - (BXSessionWindow *) window	{ return (BXSessionWindow *)[super window]; }
 
+- (void) setDocument: (BXSession *)document
+{
+	[super setDocument: document];
+	//Assign references to our document for our view controllers, or clear those references when the document is cleared.
+	[programPanelController setRepresentedObject: document];
+	[inputController setRepresentedObject: [[document emulator] inputHandler]];
+}
 
 #pragma mark -
 #pragma mark Initialisation and cleanup
@@ -67,6 +74,8 @@
 	[self setStatusBar: nil],				[statusBar release];
 	
 	[super dealloc];
+	
+	NSLog(@"BXSessionWindowController dealloc");
 }
 
 - (void) windowDidLoad
@@ -78,32 +87,32 @@
 	//------------------------------
 	
 	//These are handled by BoxerRenderController, our category for rendering-related delegate tasks
-	[center addObserver:	self
-			   selector:		@selector(windowWillLiveResize:)
-				   name:			BXViewWillLiveResizeNotification
-				 object:			inputView];
-	[center addObserver:	self
-			   selector:		@selector(windowDidLiveResize:)
-				   name:			BXViewDidLiveResizeNotification
-				 object:			inputView];
-	[center addObserver:	self
-			   selector:		@selector(menuDidOpen:)
-				   name:			NSMenuDidBeginTrackingNotification
-				 object:			nil];
-	[center addObserver:	self
-			   selector:		@selector(menuDidClose:)
-				   name:			NSMenuDidEndTrackingNotification
-				 object:			nil];
+	[center addObserver: self
+			   selector: @selector(windowWillLiveResize:)
+				   name: BXViewWillLiveResizeNotification
+				 object: inputView];
+	[center addObserver: self
+			   selector: @selector(windowDidLiveResize:)
+				   name: BXViewDidLiveResizeNotification
+				 object: inputView];
+	[center addObserver: self
+			   selector: @selector(menuDidOpen:)
+				   name: NSMenuDidBeginTrackingNotification
+				 object: nil];
+	[center addObserver: self
+			   selector: @selector(menuDidClose:)
+				   name: NSMenuDidEndTrackingNotification
+				 object: nil];
 	
-	[center addObserver:	self
-			   selector:	@selector(applicationWillHide:)
-				   name:	NSApplicationWillHideNotification
-				 object:	NSApp];
+	[center addObserver: self
+			   selector: @selector(applicationWillHide:)
+				   name: NSApplicationWillHideNotification
+				 object: NSApp];
 	
-	[center addObserver:	self
-			   selector:	@selector(applicationWillHide:)
-				   name:	NSApplicationWillResignActiveNotification
-				 object:	NSApp];
+	[center addObserver: self
+			   selector: @selector(applicationWillHide:)
+				   name: NSApplicationWillResignActiveNotification
+				 object: NSApp];
 	
 	//While we're here, register for drag-drop file operations (used for mounting folders and such)
 	[theWindow registerForDraggedTypes: [NSArray arrayWithObjects: NSFilenamesPboardType, NSStringPboardType, nil]];
@@ -140,8 +149,8 @@
 		[self setFrameAutosaveName: @"DOSWindow"];
 	}
 	
-	[programPanelController setRepresentedObject: [self document]];
-	[inputController setRepresentedObject: [[[self document] emulator] inputHandler]];
+	//Reassign the document to ensure we've set up our view controllers with references the document/emulator
+	[self setDocument: [self document]];
 }
 
 

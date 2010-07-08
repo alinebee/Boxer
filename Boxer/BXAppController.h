@@ -94,4 +94,5 @@
 //Return the NSWindow located at the specified point.
 //TODO: this should probably be an NSApplication category instead.
 - (NSWindow *) windowAtPoint: (NSPoint)screenPoint;
+
 @end

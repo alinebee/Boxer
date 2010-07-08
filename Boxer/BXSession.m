@@ -194,11 +194,12 @@
 {
 	NSString *processName = nil;
 	if ([emulator isRunningProcess])
+	{
 		//Use the active program name where possible;
 		//Failing that, fall back on the original process name
 		if ([self activeProgramPath]) processName = [[self activeProgramPath] lastPathComponent];
 		else processName = [emulator processName];
-		
+	}
 	return processName;
 }
 
@@ -423,6 +424,9 @@
 		[self setActiveProgramPath: nil];		
 	}
 }
+
+- (void) willRunStartupCommands: (NSNotification *)notification {}
+- (void) didRunStartupCommands: (NSNotification *)notification {}
 
 - (void) didReturnToShell: (NSNotification *)notification
 {	
@@ -653,4 +657,5 @@
 		[self openFileAtPath: target];
 	}
 }
+
 @end

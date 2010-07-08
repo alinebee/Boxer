@@ -19,4 +19,5 @@
 - (NSCursor *) cursorWithOpacity: (CGFloat)opacity;
 
 + (NSCursor *) _generateCursor: (NSCursor *)cursor withOpacity: (CGFloat)opacity;
+
 @end

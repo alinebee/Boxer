@@ -18,13 +18,13 @@
 {
 	if (iconSize.height < 32) return nil;
 	
-	CGFloat blurRadius	= MAX(1.0, iconSize.height / 32);
-	CGFloat offset		= MAX(1.0, iconSize.height / 128);
+	CGFloat blurRadius	= MAX(1.0f, iconSize.height / 32);
+	CGFloat offset		= MAX(1.0f, iconSize.height / 128);
 	
 	NSShadow *boxShadow = [[NSShadow new] autorelease];
 	[boxShadow setShadowOffset: NSMakeSize(0, -offset)];
 	[boxShadow setShadowBlurRadius: blurRadius];
-	[boxShadow setShadowColor: [[NSColor blackColor] colorWithAlphaComponent: 0.85]];
+	[boxShadow setShadowColor: [[NSColor blackColor] colorWithAlphaComponent: 0.85f]];
 	
 	return boxShadow;
 }
@@ -33,12 +33,12 @@
 + (NSShadow *) innerGlowForSize: (NSSize) iconSize
 {
 	if (iconSize.height < 64) return nil;
-	CGFloat blurRadius = MAX(1.0, iconSize.height / 64);
+	CGFloat blurRadius = MAX(1.0f, iconSize.height / 64);
 	
 	NSShadow *boxGlow = [[NSShadow new] autorelease];
 	[boxGlow setShadowOffset: NSZeroSize];
 	[boxGlow setShadowBlurRadius: blurRadius];
-	[boxGlow setShadowColor: [[NSColor whiteColor] colorWithAlphaComponent: 0.33]];
+	[boxGlow setShadowColor: [[NSColor whiteColor] colorWithAlphaComponent: 0.33f]];
 	
 	return boxGlow;
 }
@@ -91,19 +91,19 @@
 	//Draw the original image into the appropriate space in the canvas, with our drop shadow
 	[NSGraphicsContext saveGraphicsState];
 	[dropShadow set];
-	[image drawInRect: artFrame fromRect: NSZeroRect operation: NSCompositeSourceOver fraction: 1.0];
+	[image drawInRect: artFrame fromRect: NSZeroRect operation: NSCompositeSourceOver fraction: 1.0f];
 	[NSGraphicsContext restoreGraphicsState];
 	
 	//Draw the inner glow inside the box region
 	[[NSBezierPath bezierPathWithRect: artFrame] fillWithInnerShadow: innerGlow];
 	
 	//Draw our pretty box shine into the box's region
-	[shine drawInRect: artFrame fromRect: artFrame operation: NSCompositeSourceOver fraction: 0.25];
+	[shine drawInRect: artFrame fromRect: artFrame operation: NSCompositeSourceOver fraction: 0.25f];
 	
 	//Finally, outline the box
-	[[NSColor colorWithCalibratedWhite: 0 alpha: 0.33] set];
-	[NSBezierPath setDefaultLineWidth: 1.0];
-	[NSBezierPath strokeRect: NSInsetRect(artFrame, -0.5, -0.5)];	
+	[[NSColor colorWithCalibratedWhite: 0.0f alpha: 0.33f] set];
+	[NSBezierPath setDefaultLineWidth: 1.0f];
+	[NSBezierPath strokeRect: NSInsetRect(artFrame, -0.5f, -0.5f)];	
 }
 
 - (NSImageRep *) representationForSize: (NSSize)iconSize

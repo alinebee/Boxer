@@ -174,7 +174,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (BOOL) applicationShouldOpenUntitledFile: (NSApplication *)theApplication { return NO; }
 
 //...However, when we've been told to open a new empty session at startup, do so
-- (void) applicationDidFinishLaunching:(NSNotification *)notification
+- (void) applicationDidFinishLaunching: (NSNotification *)notification
 {
 	NSArray *arguments = [[NSProcessInfo processInfo] arguments];
 	
@@ -186,7 +186,8 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 }
 
 //Customise the open panel
-- (NSInteger) runModalOpenPanel:(NSOpenPanel *)openPanel forTypes:(NSArray *)extensions
+- (NSInteger) runModalOpenPanel: (NSOpenPanel *)openPanel
+					   forTypes: (NSArray *)extensions
 {
 	[openPanel setAllowsMultipleSelection: NO];
 	[openPanel setCanChooseFiles: YES];
@@ -431,7 +432,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (IBAction) revealInFinder: (id)sender
 {
 	if ([sender respondsToSelector: @selector(representedObject)]) sender = [sender representedObject];
-	NSString *path;
+	NSString *path = nil;
 	
 	//NSString paths
 	if ([sender isKindOfClass: [NSString class]])			path = sender;
@@ -446,7 +447,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (IBAction) openInDefaultApplication: (id)sender
 {
 	if ([sender respondsToSelector: @selector(representedObject)]) sender = [sender representedObject];
-	NSString *path;
+	NSString *path = nil;
 	
 	//NSString paths
 	if ([sender isKindOfClass: [NSString class]])			path = sender;

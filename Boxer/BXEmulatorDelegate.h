@@ -37,6 +37,12 @@
 #pragma mark -
 #pragma mark Notifications
 
+//Notifies the delegate that the emulator is about to start processing AUTOEXEC.BAT.
+- (void) willRunStartupCommands: (NSNotification *)notification;
+
+//Notifies the delegate that the emulator has just finished AUTOEXEC.BAT.
+- (void) didRunStartupCommands: (NSNotification *)notification;
+
 //Notifies the delegate that the emulator is about to start a program.
 - (void) programWillStart: (NSNotification *)notification;
 
@@ -50,7 +56,23 @@
 - (void) didStartGraphicalContext:	(NSNotification *)notification;
 - (void) didEndGraphicalContext:	(NSNotification *)notification;
 
-//Called whenever the CPU emulation settings have been changed by DOSBox.
+//Notifies the delegate that CPU emulation settings may have been changed by DOSBox.
+//(Currently no information is provided about what, if anything, has changed.)
 - (void) didChangeEmulationState:	(NSNotification *)notification;
+
+@end
+
+
+#pragma mark -
+#pragma mark Additional filesystem-related delegate methods
+
+//FIXME: this additional protocol is only necessary because of our maddening habit
+//of separating large classes into categories. If/when BXFileManager stops being
+//a category of BXSession, this protocol can be refined out of existence.
+@protocol BXEmulatorFileSystemDelegate <NSObject>
+
+//Notifies the delegate that a DOS drive has been added/removed.
+- (void) DOSDriveDidMount:		(NSNotification *)notification;
+- (void) DOSDriveDidUnmount:	(NSNotification *)notification;
 
 @end

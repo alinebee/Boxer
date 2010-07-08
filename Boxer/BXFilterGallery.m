@@ -22,13 +22,13 @@
 		//Center the pattern horizontally
 		((frame.size.width - patternSize.width) / 2) + frame.origin.x,
 		//Lock the pattern to the bottom of the view
-		frame.origin.y + 1.0
+		frame.origin.y + 1.0f
 	);
 
 	//Also add a bevel line at the bottom of the view
 	NSColor *bevelColor = [NSColor whiteColor];
 	NSRect bevelRect = [self bounds];
-	bevelRect.size.height = 1.0;
+	bevelRect.size.height = 1.0f;
 	
 	//Fill the view with the background pattern and draw the bevel
 	[NSGraphicsContext saveGraphicsState];
@@ -60,8 +60,8 @@
 - (void) setState: (NSInteger)value
 {
 	[super setState: value];
-	if (value)	[[self animator] setIllumination: 1.0];
-	else		[[self animator] setIllumination: 0.0];
+	if (value)	[[self animator] setIllumination: 1.0f];
+	else		[[self animator] setIllumination: 0.0f];
 }
 
 - (void) setIllumination: (CGFloat)newValue
@@ -92,8 +92,8 @@
 	font = ([self state] || [self isHighlighted]) ? [NSFont boldSystemFontOfSize: 0] : [NSFont systemFontOfSize: 0];
 	
 	NSShadow *textShadow = [[NSShadow new] autorelease];	
-	[textShadow setShadowOffset: NSMakeSize(0.0, -1.0)];
-	[textShadow setShadowBlurRadius: 2.0];
+	[textShadow setShadowOffset: NSMakeSize(0.0f, -1.0f)];
+	[textShadow setShadowBlurRadius: 2.0f];
 	[textShadow setShadowColor: [NSColor blackColor]];
 	
 	NSMutableAttributedString *title = [[super attributedTitle] mutableCopy];
@@ -109,13 +109,13 @@
 - (NSRect) titleRectForBounds: (NSRect)theRect
 {
 	//Position the title to occupy the bottom quarter of the button.
-	theRect.origin.y = 72.0;
+	theRect.origin.y = 72.0f;
 	return theRect;
 }
 
 - (void) drawWithFrame: (NSRect)frame inView: (BXFilterPortrait *)controlView
 {
-	if ([controlView illumination] > 0.0)
+	if ([controlView illumination] > 0.0f)
 	{
 		NSImage *spotlight = [NSImage imageNamed: @"GallerySpotlight.png"];
 		[spotlight setFlipped: [controlView isFlipped]];
@@ -133,8 +133,8 @@
 {
 	if ([controlView illumination] < 0.9)
 	{
-		CGFloat shadeLevel = (1.0 - [controlView illumination]) * 0.25;
-		NSColor *shade = [NSColor colorWithCalibratedWhite: 0.0 alpha: shadeLevel];
+		CGFloat shadeLevel = (1.0f - [controlView illumination]) * 0.25f;
+		NSColor *shade = [NSColor colorWithCalibratedWhite: 0.0f alpha: shadeLevel];
 		
 		image = [[image copy] autorelease];
 		[image lockFocus];

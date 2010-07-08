@@ -30,45 +30,45 @@ enum {
 
 BXFilterDefinition BXFilterNormalParams = {
 	BXFilterNormal,
-	0.0,
+	0.0f,
 	NSZeroSize,
-	0.0,
+	0.0f,
 	1,
 	1
 };
 
 BXFilterDefinition BXFilterHQxParams = {
 	BXFilterHQx,
-	1.1,
+	1.1f,
 	NSMakeSize(320, 240),
-	0.0,
+	0.0f,
 	2,
 	3
 };
 
 BXFilterDefinition BXFilterMAMEParams = {
 	BXFilterMAME,
-	2.0,
+	2.0f,
 	NSMakeSize(320, 240),
-	0.0,
+	0.0f,
 	2,
 	3
 };
 
 BXFilterDefinition BXFilterTVScanlinesParams = {
 	BXFilterTVScanlines,
-	2.0,
+	2.0f,
 	NSMakeSize(400, 300),
-	0.75,
+	0.75f,
 	2,
 	3
 };
 
 BXFilterDefinition BXFilterRGBParams = {
 	BXFilterRGB,
-	2.0,
+	2.0f,
 	NSMakeSize(400, 300),
-	0.25,
+	0.25f,
 	2,
 	3
 };
@@ -79,9 +79,9 @@ BXFilterDefinition BXFilterRGBParams = {
 
 BXFilterDefinition BXFilterSaIParams = {
 	BXFilterSaI,
-	2.0,
+	2.0f,
 	NSMakeSize(320, 240),
-	0.0,
+	0.0f,
 	2,
 	2
 };

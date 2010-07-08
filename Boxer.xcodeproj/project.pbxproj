@@ -689,6 +689,7 @@
 		9FDCA78E118F2B7900E2FD74 /* BXCoalface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCoalface.h; sourceTree = "<group>"; };
 		9FDCA78F118F2B7900E2FD74 /* BXCoalface.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXCoalface.mm; sourceTree = "<group>"; };
 		9FDCDEFC11B5B83B0032DA4E /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub.pem; sourceTree = "<group>"; };
+		9FDD4CB411E619D50035BA9E /* CGSPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGSPrivate.h; sourceTree = "<group>"; };
 		9FE201A50F6D599C00B3A38C /* libz.1.2.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.3.dylib; path = usr/lib/libz.1.2.3.dylib; sourceTree = SDKROOT; };
 		9FE202470F6D749500B3A38C /* Snapshot.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = Snapshot.aiff; sourceTree = "<group>"; };
 		9FE8265A10F0EBA000F1B03E /* 35DisketteShine.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 35DisketteShine.png; sourceTree = "<group>"; };
@@ -1439,6 +1440,7 @@
 				9F9FE70210FA5F5800E3944B /* NSWorkspace+BXIcons.h */,
 				9F9FE70310FA5F5800E3944B /* NSWorkspace+BXIcons.m */,
 				9FFBF6AA11A811F7000A1863 /* BXEventConstants.h */,
+				9FDD4CB411E619D50035BA9E /* CGSPrivate.h */,
 			);
 			path = BXToolkit;
 			sourceTree = "<group>";
@@ -1574,7 +1576,7 @@
 			);
 			buildRules = (
 			);
-			comments = "Boxer will crash with a dyld_misaligned_stack_error if dynamic core mode is on when the session starts.\n\ndyld is the dynamic linker, so this may be some peculiar interaction of threading and dynamically-loaded frameworks: the crash also happens in our non-XCode, SDL-framework-using build, and it *doesn't* happen if a sleep() delay is introduced before DOSBox_main is called, which implies a race condition.\n\nAdding -mstackrealign to the C flags for Intel seems to have made the problem go away. Which doesn't explain why it's happening in the first place.";
+			comments = "REGARDING --mstackrealign\nBoxer will crash with a dyld_misaligned_stack_error if dynamic core mode is on when the session starts.\n\ndyld is the dynamic linker, so this may be some peculiar interaction of threading and dynamically-loaded frameworks: the crash also happens in our non-XCode, SDL-framework-using build, and it *doesn't* happen if a sleep() delay is introduced before DOSBox_main is called, which implies a race condition.\n\nAdding -mstackrealign to the C flags for Intel seems to have made the problem go away. Which doesn't explain why it's happening in the first place.";
 			dependencies = (
 			);
 			name = Boxer;
@@ -1995,7 +1997,22 @@
 					"\"$(SRCROOT)/Frameworks\"",
 				);
 				GCC_MODEL_TUNING = G5;
-				GCC_WARN_UNUSED_VARIABLE = NO;
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = YES;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_MISSING_PARENTHESES = YES;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = Info.plist;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
@@ -2015,7 +2032,22 @@
 				);
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_WARN_UNUSED_VARIABLE = NO;
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = YES;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_MISSING_PARENTHESES = YES;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = Info.plist;
 				OTHER_CFLAGS = "-mstackrealign";
 				PRODUCT_NAME = Boxer;
@@ -2032,7 +2064,22 @@
 					"\"$(SRCROOT)/Frameworks\"",
 				);
 				GCC_MODEL_TUNING = G5;
-				GCC_WARN_UNUSED_VARIABLE = NO;
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = YES;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_MISSING_PARENTHESES = YES;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = Info.plist;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "";

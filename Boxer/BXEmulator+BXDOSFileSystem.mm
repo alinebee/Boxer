@@ -8,6 +8,7 @@
 
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulator+BXShell.h"
+#import "BXEmulatorDelegate.h"
 #import "BXDrive.h"
 #import "NSString+BXPaths.h"
 #import "BXGameProfile.h"
@@ -142,7 +143,7 @@ enum {
 	if (driveLetter == nil) return nil;
 	
 	
-	DOS_Drive *DOSBoxDrive;
+	DOS_Drive *DOSBoxDrive = NULL;
 	NSUInteger index = [self _indexOfDriveLetter: driveLetter];
 	NSString *path = [drive path];
 	//The standardized path returned by BXDrive will not have a trailing slash, so add it ourselves

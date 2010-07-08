@@ -52,4 +52,5 @@
 
 //The screen which we will render to in fullscreen mode.
 - (NSScreen *) fullScreenTarget;
+
 @end

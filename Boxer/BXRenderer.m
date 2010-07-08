@@ -8,6 +8,7 @@
 
 #import "BXRenderer.h"
 #import <OpenGL/CGLMacro.h>
+#import <OpenGL/glu.h>
 #import "Shader.h"
 #import "BXFrameBuffer.h"
 #import "BXGeometry.h"
@@ -164,7 +165,7 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 	
 	[self setRenderingTime: endTime - startTime];
 	if (lastFrameTime)
-		[self setFrameRate: 1 / (endTime - lastFrameTime)];
+		[self setFrameRate: (CGFloat)(1.0 / (endTime - lastFrameTime))];
 	
 	lastFrameTime = endTime;	
 }
@@ -175,10 +176,10 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 	if ([self maintainsAspectRatio])
 	{
 		NSSize frameSize = [frame scaledSize];
-		NSRect frameRect = NSMakeRect(0, 0, frameSize.width, frameSize.height);
+		NSRect frameRect = NSMakeRect(0.0f, 0.0f, frameSize.width, frameSize.height);
 		NSRect bounds = NSRectFromCGRect([self canvas]);
 		
-		return NSRectToCGRect(fitInRect(frameRect, bounds, NSMakePoint(0.5, 0.5)));
+		return NSRectToCGRect(fitInRect(frameRect, bounds, NSMakePoint(0.5f, 0.5f)));
 	}
 	else return [self canvas];
 }

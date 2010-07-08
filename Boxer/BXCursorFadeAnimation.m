@@ -25,7 +25,7 @@
 	
 	if ([[self delegate] animationShouldChangeCursor: self])
 	{
-		NSCursor *fadedCursor = [self cursorWithOpacity: 1.0 - [self currentValue]];
+		NSCursor *fadedCursor = [self cursorWithOpacity: 1.0f - [self currentValue]];
 		[fadedCursor set];
 	}
 }
@@ -37,10 +37,10 @@
 
 + (NSCursor *) _generateCursor: (NSCursor *)cursor withOpacity: (CGFloat)opacity
 {
-	if (opacity >= 1) return cursor;
+	if (opacity >= 1.0f) return cursor;
 	
 	NSImage *fadedImage = [[NSImage alloc] initWithSize: [[cursor image] size]];
-	if (opacity > 0)
+	if (opacity > 0.0f)
 	{
 		[fadedImage lockFocus];
 		[[cursor image] drawAtPoint: NSZeroPoint fromRect: NSZeroRect operation: NSCompositeSourceOver fraction: opacity];

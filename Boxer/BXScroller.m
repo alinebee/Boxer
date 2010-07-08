@@ -21,28 +21,28 @@
 	return size.height > size.width;
 }
 
-- (NSSize) knobMargin	{ return NSMakeSize(3.0, 0); }
-- (NSSize) slotMargin	{ return NSMakeSize(3.0, 4.0); }
+- (NSSize) knobMargin	{ return NSMakeSize(3.0f, 0.0f); }
+- (NSSize) slotMargin	{ return NSMakeSize(3.0f, 4.0f); }
 
 - (NSColor *)slotFill
 {
-	return [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.2];
+	return [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.2f];
 }
 
 - (NSShadow *)slotShadow
 {
 	NSShadow *slotShadow	= [[NSShadow new] autorelease];
-	[slotShadow setShadowOffset: NSMakeSize(0, -1)];
+	[slotShadow setShadowOffset: NSMakeSize(0.0f, -1.0f)];
 	[slotShadow setShadowBlurRadius: 3];
-	[slotShadow setShadowColor: [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.5]];
+	[slotShadow setShadowColor: [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.5f]];
 
 	return slotShadow; 
 }
 
 - (NSGradient *)knobGradient
 {
-	NSGradient *knobGradient = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.25 alpha: 1.0]
-															 endingColor: [NSColor colorWithCalibratedWhite: 0.20 alpha: 1.0]
+	NSGradient *knobGradient = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.25f alpha: 1.0f]
+															 endingColor: [NSColor colorWithCalibratedWhite: 0.20f alpha: 1.0f]
 								];
 	return [knobGradient autorelease];
 }
@@ -74,13 +74,13 @@
 	{
 		knobRect			= NSInsetRect(regionRect, knobMargin.width, knobMargin.height);
 		knobRadius			= knobRect.size.width / 2;
-		knobGradientAngle	= 0;
+		knobGradientAngle	= 0.0f;
 	}
 	else
 	{
 		knobRect			= NSInsetRect(regionRect, knobMargin.height, knobMargin.width);
 		knobRadius			= knobRect.size.height / 2;
-		knobGradientAngle	= 90;
+		knobGradientAngle	= 90.0f;
 	}
 
 	NSBezierPath *knobPath = [NSBezierPath bezierPathWithRoundedRect: knobRect
@@ -126,13 +126,14 @@
 @implementation BXHUDScroller
 
 //Make the knob 1px thinner than the slot on each side
-- (NSSize) knobMargin	{ return NSMakeSize(4.0, 1.0); }
+- (NSSize) knobMargin	{ return NSMakeSize(4.0f, 1.0f); }
 
 - (NSGradient *)knobGradient
 {
-	NSGradient *knobGradient = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.40 alpha: 1.0]
-															 endingColor: [NSColor colorWithCalibratedWhite: 0.30 alpha: 1.0]
+	NSGradient *knobGradient = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.4f alpha: 1.0f]
+															 endingColor: [NSColor colorWithCalibratedWhite: 0.3f alpha: 1.0f]
 								];
 	return [knobGradient autorelease];
 }
+
 @end

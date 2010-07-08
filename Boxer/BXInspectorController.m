@@ -12,6 +12,7 @@
 #import "BXDrive.h"
 #import "BXAppController.h"
 #import "BXValueTransformers.h"
+#import "CGSPrivate.h" //For undocumented blur effect functions
 
 
 const CGFloat BXInspectorPanelBlurRadius = 2.0f;
@@ -21,9 +22,6 @@ const CGFloat BXInspectorPanelBlurRadius = 2.0f;
 @synthesize gamePanel, cpuPanel, drivePanel;
 @synthesize panelSelector;
 @synthesize driveController;
-
-typedef void * CGSConnection;
-extern OSStatus CGSNewConnection(const void **attributes, CGSConnection * id);
 
 + (void) initialize
 {
@@ -114,24 +112,33 @@ extern OSStatus CGSNewConnection(const void **attributes, CGSConnection * id);
 	//The code below applies a soft gaussian blur underneath the window, and was lifted directly from:
 	//http://blog.steventroughtonsmith.com/2008/03/using-core-image-filters-onunder.html
 	//This is all private-framework stuff and so may stop working (or compiling) in a future version of OS X.
-	
-	CGSConnection thisConnection;
-	uint32_t compositingFilter;
+		
+	//Get the current connection to CoreGraphics
+	CGSConnection thisConnection = _CGSDefaultConnection();
+	CGSWindowFilterRef compositingFilter = NULL;
 	NSInteger compositingType = 1; //Applies the effect only underneath the window
-	NSInteger windowNumber = [[self window] windowNumber];
 	
-	//Make a new connection to CoreGraphics
-	CGSNewConnection(NULL, &thisConnection);
-	
-	//Create a CoreImage gaussian blur filter
-	CGSNewCIFilterByName(thisConnection, (CFStringRef)@"CIGaussianBlur", &compositingFilter);
-	
-	NSDictionary *options = [NSDictionary dictionaryWithObject: [NSNumber numberWithFloat: BXInspectorPanelBlurRadius] forKey: @"inputRadius"];
-	
-	CGSSetCIFilterValuesFromDictionary(thisConnection, compositingFilter, (CFDictionaryRef)options);
-	
-	//Now apply the filter to the window
-	CGSAddWindowFilter(thisConnection, windowNumber, compositingFilter, compositingType);
+	if (thisConnection)
+	{
+		//Create a CoreImage gaussian blur filter.
+		CGSNewCIFilterByName(thisConnection, (CFStringRef)@"CIGaussianBlur", &compositingFilter);
+		
+		if (compositingFilter)
+		{
+			//Set the parameters of the filter we'll be adding.
+			NSDictionary *options = [NSDictionary dictionaryWithObject: [NSNumber numberWithFloat: BXInspectorPanelBlurRadius]
+																forKey: @"inputRadius"];
+			
+			CGSSetCIFilterValuesFromDictionary(thisConnection, compositingFilter, (CFDictionaryRef)options);
+			
+			//Now apply the filter to our inspector window.
+			CGSWindowID windowNumber = [[self window] windowNumber];
+			CGSAddWindowFilter(thisConnection, windowNumber, compositingFilter, compositingType);
+			
+			//Clean up after ourselves.
+			CGSReleaseCIFilter(thisConnection, compositingFilter);			
+		}
+	}
 }
 
 - (NSArray *) panels

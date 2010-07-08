@@ -104,4 +104,5 @@
 - (id) initWithSize: (NSSize)targetSize;
 
 - (NSImage *) transformedValue: (NSImage *)image;
+
 @end

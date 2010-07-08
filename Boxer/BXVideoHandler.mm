@@ -119,7 +119,7 @@
 	[self willChangeValueForKey: @"filterType"];
 	if (type != filterType)
 	{
-		NSAssert1(type >= 0 && type <= sizeof(BXFilters), @"Invalid filter type provided to setFilterType: %i", type);
+		NSAssert1(type <= sizeof(BXFilters), @"Invalid filter type provided to setFilterType: %i", type);
 				
 		filterType = type;
 		[self reset];
@@ -134,7 +134,7 @@
 	BOOL isActive = NO;
 	if ([[self emulator] isExecuting])
 	{
-		isActive = ([self filterType] == render.scale.op);
+		isActive = ([self filterType] == (NSUInteger)render.scale.op);
 	}
 	return isActive;
 }
@@ -289,7 +289,7 @@
 
 - (BXFilterDefinition) _paramsForFilterType: (BXFilterType)type
 {
-	NSAssert1(type >= 0 && type <= sizeof(BXFilters), @"Invalid filter type provided to paramsForFilterType: %i", type);
+	NSAssert1(type <= sizeof(BXFilters), @"Invalid filter type provided to paramsForFilterType: %i", type);
 	
 	return BXFilters[type];
 }
@@ -320,7 +320,7 @@
 	NSSize scale = NSMakeSize(viewportSize.width / resolution.width,
 							  viewportSize.height / resolution.height);
 	
-	NSInteger filterScale = ceil(scale.height - params.outputScaleBias);
+	NSUInteger filterScale = (NSUInteger)ceilf(scale.height - params.outputScaleBias);
 	if (filterScale < params.minFilterScale) filterScale = params.minFilterScale;
 	if (filterScale > params.maxFilterScale) filterScale = params.maxFilterScale;
 	
@@ -353,7 +353,7 @@
 {
 	NSSize maxFrameSize	= [[[self emulator] delegate] maxFrameSize];
 	//Work out how big a filter operation size we can use, given the maximum output size
-	NSInteger maxScale	= floor(fmin(maxFrameSize.width / resolution.width, maxFrameSize.height / resolution.height));
+	NSInteger maxScale	= floorf(MIN(maxFrameSize.width / resolution.width, maxFrameSize.height / resolution.height));
 	
 	return maxScale;
 }

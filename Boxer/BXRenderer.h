@@ -108,4 +108,5 @@
 //frame texture and resizes the framebuffer if necessary. All changes to OpenGL state are then 
 //undone at the end of the frame, as expected by CAOpenGLLayer.
 - (void) renderToGLContext:		(CGLContextObj)glContext;
+
 @end

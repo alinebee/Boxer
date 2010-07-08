@@ -106,8 +106,8 @@
 	CGFloat bandedValue = [value floatValue];
 
 	//Save us some odious calculations by doing bounds checking up front
-	if (bandedValue <= [[self minValue] floatValue]) return [NSNumber numberWithFloat: 0.0];
-	if (bandedValue >= [[self maxValue] floatValue]) return [NSNumber numberWithFloat: 1.0];
+	if (bandedValue <= [[self minValue] floatValue]) return [NSNumber numberWithFloat: 0.0f];
+	if (bandedValue >= [[self maxValue] floatValue]) return [NSNumber numberWithFloat: 1.0f];
 	
 	//Now get to work!
 	NSArray *thresholds = [self bandThresholds];
@@ -115,9 +115,11 @@
 	NSInteger bandNum;
 	
 	//How much of the overall range each band occupies
-	CGFloat bandSpread	= 1.0 / (numBands - 1);
+	CGFloat bandSpread		= 1.0f / (numBands - 1);
 	
-	CGFloat upperThreshold, lowerThreshold, bandRange;
+	CGFloat upperThreshold	= 0.0f;
+	CGFloat lowerThreshold	= 0.0f;
+	CGFloat bandRange		= 0.0f;
 
 	//Now figure out which band this value falls into
 	for (bandNum = 1; bandNum < numBands; bandNum++)
@@ -133,7 +135,7 @@
 	
 	//Now work out where in the band we fall
 	CGFloat offsetWithinBand	= bandedValue - lowerThreshold;
-	CGFloat ratioWithinBand		= (bandRange != 0.0) ? offsetWithinBand / bandRange : 0.0;
+	CGFloat ratioWithinBand		= (bandRange != 0.0f) ? offsetWithinBand / bandRange : 0.0f;
 	
 	//Once we know the ratio within this band, we apply it to the band's own ratio to derive the full field ratio
 	CGFloat fieldRatio = (bandNum - 1 + ratioWithinBand) * bandSpread;
@@ -147,8 +149,8 @@
 	CGFloat fieldRatio = [value floatValue];
 	
 	//Save us some odious calculations by doing bounds checking up front
-	if		(fieldRatio >= 1.0)	return [self maxValue];
-	else if	(fieldRatio <= 0.0)	return [self minValue];
+	if		(fieldRatio >= 1.0f) return [self maxValue];
+	else if	(fieldRatio <= 0.0f) return [self minValue];
 	
 	//Now get to work!
 	NSArray *thresholds = [self bandThresholds];
@@ -156,7 +158,7 @@
 	NSInteger bandNum;
 	
 	//How much of the overall range each band occupies
-	CGFloat bandSpread	= 1.0 / (numBands - 1);
+	CGFloat bandSpread	= 1.0f / (numBands - 1);
 	
 	CGFloat upperThreshold, lowerThreshold, bandRange;
 	
@@ -285,4 +287,5 @@
 	return self;
 }
 - (NSImage *) transformedValue: (NSImage *)image	{ [image setSize: [self size]]; return image; }
+
 @end

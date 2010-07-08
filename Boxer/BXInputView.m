@@ -40,9 +40,9 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	{
 		NSColor *backgroundColor = [NSColor darkGrayColor];
 		background = [[NSGradient alloc] initWithColorsAndLocations:
-					  [backgroundColor shadowWithLevel: 0.5],	0.00,
-					  backgroundColor,							0.98,
-					  [backgroundColor shadowWithLevel: 0.4],	1.00,
+					  [backgroundColor shadowWithLevel: 0.5f],	0.00f,
+					  backgroundColor,							0.98f,
+					  [backgroundColor shadowWithLevel: 0.4f],	1.00f,
 					  nil];	
 	}
 	
@@ -59,7 +59,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 		[brand drawInRect: brandRegion
 				 fromRect: NSZeroRect
 				operation: NSCompositeSourceOver
-				 fraction: 1.0];	
+				 fraction: 1.0f];	
 	}		
 }
 

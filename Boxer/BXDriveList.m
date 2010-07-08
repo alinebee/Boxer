@@ -9,6 +9,7 @@
 #import "BXDriveList.h"
 #import "BXAppController.h"
 #import "BXDrive.h"
+#import "BXInspectorController.h"
 
 @implementation BXDriveItemView
 @synthesize delegate;
@@ -23,30 +24,31 @@
 	return [[self superview] menuForEvent: event];
 }
 
+//Overridden so that we indicate that every click has hit us instead of our descendants.
 - (NSView *) hitTest: (NSPoint)thePoint
 {
-	NSPoint clickPoint = [self convertPoint: thePoint fromView: nil];
-	if ([self mouse: clickPoint inRect: [self bounds]]) return self;
-	else return nil;
+	NSView *hitView = [super hitTest: thePoint];
+	if (hitView != nil) hitView = self;
+	return hitView;
 }
 
 - (void) drawRect: (NSRect)dirtyRect
 {	
 	if ([[self delegate] isSelected])
 	{
-		NSColor *selection	= [NSColor alternateSelectedControlColor];
-		NSColor *shadow		= [selection shadowWithLevel: 0.4];
-		NSColor *bevel		= [selection shadowWithLevel: 0.4];
-		NSGradient *background = [[[NSGradient alloc] initWithStartingColor: selection endingColor: shadow] autorelease];
-		[background drawInRect: [self bounds] angle: 270];
+		NSColor *selectionColor	= [NSColor alternateSelectedControlColor];
+		NSColor *shadowColor	= [selectionColor shadowWithLevel: 0.4f];
+		NSColor *bevelColor		= [selectionColor shadowWithLevel: 0.4f];
+		NSGradient *background = [[[NSGradient alloc] initWithStartingColor: selectionColor endingColor: shadowColor] autorelease];
+		[background drawInRect: [self bounds] angle: 270.0f];
 		
 		NSRect bevelRect = [self bounds];
-		bevelRect.origin.y = bevelRect.size.height - 1.0;
-		bevelRect.size.height = 1.0;
+		bevelRect.origin.y = bevelRect.size.height - 1.0f;
+		bevelRect.size.height = 1.0f;
 		
-		NSRect borderPath = NSInsetRect([self bounds], 0.5, 0.5);
-		[NSBezierPath setDefaultLineWidth: 1.0];
-		[bevel set];
+		NSRect borderPath = NSInsetRect([self bounds], 0.5f, 0.5f);
+		[NSBezierPath setDefaultLineWidth: 1.0f];
+		[bevelColor set];
 		[NSBezierPath strokeRect: borderPath];
 	}
 }
@@ -95,13 +97,13 @@
 	//If we have a selection, open a mouse tracking loop of our own here in mouseDown and break out of it for mouseUp and mouseDragged.
     while ([[self selectionIndexes] count])
 	{
-        NSEvent *theEvent = [[self window] nextEventMatchingMask: NSLeftMouseUpMask | NSLeftMouseDraggedMask];
-        switch ([theEvent type])
+        NSEvent *eventInDrag = [[self window] nextEventMatchingMask: NSLeftMouseUpMask | NSLeftMouseDraggedMask];
+        switch ([eventInDrag type])
 		{
             case NSLeftMouseDragged: 
-				return [self mouseDragged: theEvent];
+				return [self mouseDragged: eventInDrag];
 			case NSLeftMouseUp:
-				return [self mouseUp: theEvent];
+				return [self mouseUp: eventInDrag];
         }
     };
 }
@@ -232,4 +234,5 @@
 	}
 	return (NSArray *)selectedItems;
 }
+
 @end

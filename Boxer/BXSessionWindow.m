@@ -65,4 +65,5 @@
 	if ([[self windowController] resizingProgrammatically]) return frameRect;
 	else return [super constrainFrameRect: frameRect toScreen: screen];
 }
+
 @end

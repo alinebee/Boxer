@@ -26,7 +26,7 @@ typedef NSInteger BXDriveType;
 static const NSInteger BXDefaultFreeSpace = -1;
 
 //FAT volumes smaller than 2MB will be treated as floppy drives.
-static const NSInteger BXFloppySizeCutoff = 2 * 1024 * 1024;
+static const NSUInteger BXFloppySizeCutoff = 2 * 1024 * 1024;
 
 
 @interface BXDrive : NSObject
@@ -162,4 +162,5 @@ static const NSInteger BXFloppySizeCutoff = 2 * 1024 * 1024;
 
 //Sorts drives by drive letter.
 - (NSComparisonResult) letterCompare: (BXDrive *)comparison;
+
 @end

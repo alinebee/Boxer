@@ -15,14 +15,14 @@
 
 + (NSColor *) textColor
 {
-	return [NSColor colorWithCalibratedRed: 0.0
-									 green: 0.1
-									  blue: 0.2
-									 alpha: 0.9];
+	return [NSColor colorWithCalibratedRed: 0.0f
+									 green: 0.1f
+									  blue: 0.2f
+									 alpha: 0.9f];
 }
 
-+ (CGFloat) lineHeightForSize:	(NSSize)size	{ return 20.0; }
-+ (CGFloat) fontSizeForSize:	(NSSize)size	{ return 14.0; }
++ (CGFloat) lineHeightForSize:	(NSSize)size	{ return 20.0f; }
++ (CGFloat) fontSizeForSize:	(NSSize)size	{ return 14.0f; }
 
 + (NSDictionary *) textAttributesForSize: (NSSize)size
 {
@@ -48,7 +48,7 @@
 + (NSImage *) baseLayerForSize:	(NSSize)size	{ return [NSImage imageNamed: @"CDCase.png"]; }
 + (NSImage *) topLayerForSize:	(NSSize)size	{ return [NSImage imageNamed: @"CDCover.png"]; }
 
-+ (NSRect) textRegionForRect:	(NSRect)frame	{ return NSMakeRect(22, 32, 92, 60); }
++ (NSRect) textRegionForRect:	(NSRect)frame	{ return NSMakeRect(22.0f, 32.0f, 92.0f, 60.0f); }
 
 
 
@@ -70,14 +70,14 @@
 	NSImage *baseLayer	= [[self class] baseLayerForSize: iconSize];
 	NSImage *topLayer	= [[self class] topLayerForSize: iconSize];
 	
-	[baseLayer drawInRect: frame fromRect: NSZeroRect operation: NSCompositeSourceOver fraction: 1.0];
+	[baseLayer drawInRect: frame fromRect: NSZeroRect operation: NSCompositeSourceOver fraction: 1.0f];
 	[[self title] drawInRect: textRegion withAttributes: textAttributes];
-	[topLayer drawInRect: frame fromRect: NSZeroRect operation: NSCompositeSourceOver fraction: 1.0];
+	[topLayer drawInRect: frame fromRect: NSZeroRect operation: NSCompositeSourceOver fraction: 1.0f];
 }
 
 - (NSImageRep *) representationForSize: (NSSize)iconSize
 {
-	NSRect frame = NSMakeRect(0, 0, iconSize.width, iconSize.height);
+	NSRect frame = NSMakeRect(0.0f, 0.0f, iconSize.width, iconSize.height);
 	
 	//Create a new empty canvas to draw into
 	NSImage *canvas = [[NSImage alloc] initWithSize: iconSize];
@@ -111,9 +111,9 @@
 
 + (NSImage *) baseLayerForSize:	(NSSize)size	{ return [NSImage imageNamed: @"35Diskette.png"]; }
 + (NSImage *) topLayerForSize:	(NSSize)size	{ return [NSImage imageNamed: @"35DisketteShine.png"]; }
-+ (CGFloat) lineHeightForSize:	(NSSize)size	{ return 18.0; }
++ (CGFloat) lineHeightForSize:	(NSSize)size	{ return 18.0f; }
 
-+ (NSRect) textRegionForRect:	(NSRect)frame	{ return NSMakeRect(24, 55, 80, 54); }
++ (NSRect) textRegionForRect:	(NSRect)frame	{ return NSMakeRect(24.0f, 55.0f, 80.0f, 54.0f); }
 
 @end
 
@@ -121,9 +121,9 @@
 
 + (NSImage *) baseLayerForSize:	(NSSize)size	{ return [NSImage imageNamed: @"525Diskette.png"]; }
 + (NSImage *) topLayerForSize:	(NSSize)size	{ return nil; }
-+ (CGFloat) lineHeightForSize:	(NSSize)size	{ return 16.0; }
-+ (CGFloat) fontSizeForSize:	(NSSize)size	{ return 12.0; }
++ (CGFloat) lineHeightForSize:	(NSSize)size	{ return 16.0f; }
++ (CGFloat) fontSizeForSize:	(NSSize)size	{ return 12.0f; }
 
-+ (NSRect) textRegionForRect:	(NSRect)frame	{ return NSMakeRect(16, 90, 96, 32); }
++ (NSRect) textRegionForRect:	(NSRect)frame	{ return NSMakeRect(16.0f, 90.0f, 96.0f, 32.0f); }
 
 @end

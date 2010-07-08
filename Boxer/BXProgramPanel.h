@@ -37,4 +37,5 @@ enum {
 
 //A reference to the dictionary represented by our collection item delegate.
 - (id) representedObject;
+
 @end

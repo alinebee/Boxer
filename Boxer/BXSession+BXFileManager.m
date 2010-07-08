@@ -82,7 +82,7 @@
 - (IBAction) openInDOS:			(id)sender
 {
 	if ([sender respondsToSelector: @selector(representedObject)]) sender = [sender representedObject];
-	NSString *path;
+	NSString *path = nil;
 	
 	//NSString paths
 	if ([sender isKindOfClass: [NSString class]])			path = sender;

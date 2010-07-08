@@ -26,4 +26,5 @@
 //Called whenever the current session or its icon changes.
 //This calls coverArtForSession: with the current session and sets NSApplication's icon to the result.
 - (void) syncIconWithActiveSession;
+
 @end

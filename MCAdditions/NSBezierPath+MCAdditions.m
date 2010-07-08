@@ -129,16 +129,16 @@ static void CGPathCallback(void *info, const CGPathElement *element)
 #endif//MCBEZIER_USE_PRIVATE_FUNCTION
 }
 
-- (void)fillWithInnerShadow:(NSShadow *)shadow
+- (void)fillWithInnerShadow:(NSShadow *)innerShadow
 {
 	[NSGraphicsContext saveGraphicsState];
 	
-	NSSize offset = shadow.shadowOffset;
+	NSSize offset = innerShadow.shadowOffset;
 	NSSize originalOffset = offset;
-	CGFloat radius = shadow.shadowBlurRadius;
+	CGFloat radius = innerShadow.shadowBlurRadius;
 	NSRect bounds = NSInsetRect(self.bounds, -(ABS(offset.width) + radius), -(ABS(offset.height) + radius));
 	offset.height += bounds.size.height;
-	shadow.shadowOffset = offset;
+	innerShadow.shadowOffset = offset;
 	NSAffineTransform *transform = [NSAffineTransform transform];
 	if ([[NSGraphicsContext currentContext] isFlipped])
 		[transform translateXBy:0 yBy:bounds.size.height];
@@ -151,11 +151,11 @@ static void CGPathCallback(void *info, const CGPathElement *element)
 	[drawingPath transformUsingAffineTransform:transform];
 	
 	[self addClip];
-	[shadow set];
+	[innerShadow set];
 	[[NSColor blackColor] set];
 	[drawingPath fill];
 	
-	shadow.shadowOffset = originalOffset;
+	innerShadow.shadowOffset = originalOffset;
 	
 	[NSGraphicsContext restoreGraphicsState];
 }
@@ -163,10 +163,10 @@ static void CGPathCallback(void *info, const CGPathElement *element)
 - (void)drawBlurWithColor:(NSColor *)color radius:(CGFloat)radius
 {
 	NSRect bounds = NSInsetRect(self.bounds, -radius, -radius);
-	NSShadow *shadow = [[NSShadow alloc] init];
-	shadow.shadowOffset = NSMakeSize(0, bounds.size.height);
-	shadow.shadowBlurRadius = radius;
-	shadow.shadowColor = color;
+	NSShadow *blurShadow = [[NSShadow alloc] init];
+	blurShadow.shadowOffset = NSMakeSize(0, bounds.size.height);
+	blurShadow.shadowBlurRadius = radius;
+	blurShadow.shadowColor = color;
 	NSBezierPath *path = [self copy];
 	NSAffineTransform *transform = [NSAffineTransform transform];
 	if ([[NSGraphicsContext currentContext] isFlipped])
@@ -177,7 +177,7 @@ static void CGPathCallback(void *info, const CGPathElement *element)
 	
 	[NSGraphicsContext saveGraphicsState];
 	
-	[shadow set];
+	[blurShadow set];
 	[[NSColor blackColor] set];
 	NSRectClip(bounds);
 	[path fill];
@@ -185,7 +185,7 @@ static void CGPathCallback(void *info, const CGPathElement *element)
 	[NSGraphicsContext restoreGraphicsState];
 	
 	[path release];
-	[shadow release];
+	[blurShadow release];
 }
 
 // Credit for the next two methods goes to Matt Gemmell
@@ -204,7 +204,7 @@ static void CGPathCallback(void *info, const CGPathElement *element)
     [thisContext saveGraphicsState];
     
     /* Double the stroke width, since -stroke centers strokes on paths. */
-    [self setLineWidth:(lineWidth * 2.0)];
+    [self setLineWidth:(lineWidth * 2.0f)];
     
     /* Clip drawing to this path; draw nothing outwith the path. */
     [self setClip];

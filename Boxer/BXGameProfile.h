@@ -77,4 +77,5 @@ typedef NSUInteger BXGameEra;
 
 //Returns an customised drive label for the specified drive
 - (NSString *) labelForDrive: (BXDrive *)drive;
+
 @end

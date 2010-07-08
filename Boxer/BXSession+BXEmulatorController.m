@@ -6,6 +6,7 @@
  */
 
 #import "BXSession+BXEmulatorController.h"
+#import "BXSession+BXFileManager.h"
 #import "BXEmulator+BXShell.h"
 #import "BXEmulator+BXPaste.h"
 #import "BXValueTransformers.h"
@@ -87,9 +88,9 @@
 
 - (BOOL) validateFrameskip: (id *)ioValue error: (NSError **)outError
 {
-	NSInteger theValue = [*ioValue integerValue];
-	if		(theValue < 0)				*ioValue = [NSNumber numberWithInteger: 0];
-	else if	(theValue > BXMaxFrameskip)	*ioValue = [NSNumber numberWithInteger: BXMaxFrameskip];
+	NSUInteger theValue = [*ioValue unsignedIntegerValue];
+	if		(theValue < 0)				*ioValue = [NSNumber numberWithUnsignedInteger: 0];
+	else if	(theValue > BXMaxFrameskip)	*ioValue = [NSNumber numberWithUnsignedInteger: BXMaxFrameskip];
 	return YES;
 }
 

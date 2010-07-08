@@ -28,4 +28,5 @@
 
 //Toggle the frame rate display on/off
 - (IBAction) toggleFrameRate: (id) sender;
+
 @end

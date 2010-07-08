@@ -10,14 +10,14 @@
 
 NSInteger fitToPowerOfTwo(NSInteger value)
 {
-    int log = 0;
-    while ((value >>= 1) != 0) log++;
-    return 2 << log;
+    int shift = 0;
+    while ((value >>= 1) != 0) shift++;
+    return 2 << shift;
 }
 
 CGFloat aspectRatioOfSize(NSSize size)
 {
-	return (size.height) ? (size.width / size.height) : 0;
+	return (size.height) ? (size.width / size.height) : 0.0f;
 }
 
 BOOL sizeFitsWithinSize(NSSize innerSize, NSSize outerSize)
@@ -49,17 +49,17 @@ NSRect resizeRectFromPoint(NSRect theRect, NSSize newSize, NSPoint anchor)
 	
 	NSRect newRect		= theRect;
 	newRect.size		= newSize;
-	newRect.origin.x	-= ceil(widthDiff	* anchor.x);
-	newRect.origin.y	-= ceil(heightDiff	* anchor.y);
+	newRect.origin.x	-= widthDiff	* anchor.x;
+	newRect.origin.y	-= heightDiff	* anchor.y;
 	
 	return newRect;
 }
 
 NSPoint pointRelativeToRect(NSPoint thePoint, NSRect theRect)
 {
-	NSPoint anchorPoint;
-	anchorPoint.x = (theRect.size.width > 0)	? ((thePoint.x - theRect.origin.x) / theRect.size.width)	: 0;
-	anchorPoint.y = (theRect.size.height > 0)	? ((thePoint.y - theRect.origin.y) / theRect.size.height)	: 0;
+	NSPoint anchorPoint = NSZeroPoint;
+	anchorPoint.x = (theRect.size.width > 0.0f)		? ((thePoint.x - theRect.origin.x) / theRect.size.width)	: 0.0f;
+	anchorPoint.y = (theRect.size.height > 0.0f)	? ((thePoint.y - theRect.origin.y) / theRect.size.height)	: 0.0f;
 	return anchorPoint;
 }
 
@@ -73,29 +73,28 @@ NSRect alignInRectWithAnchor(NSRect innerRect, NSRect outerRect, NSPoint anchor)
 
 NSRect centerInRect(NSRect innerRect, NSRect outerRect)
 {
-	return alignInRectWithAnchor(innerRect, outerRect, NSMakePoint(0.5, 0.5));
+	return alignInRectWithAnchor(innerRect, outerRect, NSMakePoint(0.5f, 0.5f));
 }
 
 NSRect fitInRect(NSRect innerRect, NSRect outerRect, NSPoint anchor)
 {
-	NSRect fittedRect;
+	NSRect fittedRect = NSZeroRect;
 	fittedRect.size = sizeToFitSize(innerRect.size, outerRect.size);
 	return alignInRectWithAnchor(fittedRect, outerRect, anchor);
 }
 
 NSRect constrainToRect(NSRect innerRect, NSRect outerRect, NSPoint anchor)
 {
-	NSRect fittedRect;
 	if (NSContainsRect(outerRect, innerRect))
-		return alignInRectWithAnchor(fittedRect, outerRect, anchor);
+		return alignInRectWithAnchor(innerRect, outerRect, anchor);
 	else return fitInRect(innerRect, outerRect, anchor);
 }
 
 NSPoint clampPointToRect(NSPoint point, NSRect rect)
 {
-	NSPoint clampedPoint;
-	clampedPoint.x = MAX(MIN(point.x, NSMaxX(rect)), NSMinX(rect));
-	clampedPoint.y = MAX(MIN(point.y, NSMaxY(rect)), NSMinY(rect));
+	NSPoint clampedPoint = NSZeroPoint;
+	clampedPoint.x = fmaxf(fminf(point.x, NSMaxX(rect)), NSMinX(rect));
+	clampedPoint.y = fmaxf(fminf(point.y, NSMaxY(rect)), NSMinY(rect));
 	return clampedPoint;
 }
 

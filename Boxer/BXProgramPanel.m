@@ -21,9 +21,9 @@
 	NSColor *grillePattern	= [NSColor colorWithPatternImage: grille];
 	NSColor *backgroundColor = [NSColor grayColor]; 
 	NSGradient *background = [[NSGradient alloc] initWithColorsAndLocations:
-		backgroundColor,							0.0,
-		[backgroundColor shadowWithLevel: 0.25],	0.9,
-		[backgroundColor shadowWithLevel: 0.5],		1.0,
+		backgroundColor,							0.0f,
+		[backgroundColor shadowWithLevel: 0.25f],	0.9f,
+		[backgroundColor shadowWithLevel: 0.5f],	1.0f,
 	nil];
 
 	NSRect panelRegion	= [self bounds];
@@ -33,13 +33,13 @@
 	NSPoint panelOrigin	= [[self superview] frame].origin;
 	
 	//First, draw the background gradient
-	[background drawInRect: panelRegion angle: 90];
+	[background drawInRect: panelRegion angle: 90.0f];
 	[background release];
 	
 	
 	//Next, calculate our top and bottom grille strips
 	NSRect grilleStrip		= panelRegion;
-	grilleStrip.size.height	= patternSize.height * 0.83;	//Cut off the top of the grille slightly
+	grilleStrip.size.height	= patternSize.height * 0.83f;	//Cut off the top of the grille slightly
 	grilleStrip.origin.y	= panelRegion.size.height - grilleStrip.size.height;	//Align the grille along the top of the panel
 	NSPoint grillePhase		= NSMakePoint(
 		((panelRegion.size.width - patternSize.width) / 2)	+ panelOrigin.x,	//Center the pattern horizontally
@@ -55,7 +55,7 @@
 		NSRect titleMask		= [title frame];
 		
 		//Round the mask's width to increments of the pattern, so that we don't cut off half a hole in the grille.
-		titleMask.size.width	= ceil(titleMask.size.width / patternSize.width) * patternSize.width;
+		titleMask.size.width	= ceilf(titleMask.size.width / patternSize.width) * patternSize.width;
 		titleMask.origin.x		= (panelRegion.size.width - titleMask.size.width) / 2;
 		
 		//Also reduce the mask's height so that it only masks areas within the strip.
@@ -94,4 +94,5 @@
 	
 	[super viewWillDraw];
 }
+
 @end

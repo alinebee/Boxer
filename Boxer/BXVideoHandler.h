@@ -17,7 +17,7 @@
 #endif
 
 
-typedef NSInteger BXFilterType;
+typedef NSUInteger BXFilterType;
 
 typedef struct {
 	//The type constant from BXEmulator+BXRendering.h to which this definition corresponds. Not currently used.
@@ -37,10 +37,10 @@ typedef struct {
 	CGFloat			outputScaleBias;
 	
 	//The minimum supported scaler transformation. Normally 2.
-	NSInteger		minFilterScale;
+	NSUInteger		minFilterScale;
 	
 	//The maximum supported scaler transformation. Normally 3.
-	NSInteger		maxFilterScale;
+	NSUInteger		maxFilterScale;
 } BXFilterDefinition;
 
 

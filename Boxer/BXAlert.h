@@ -30,4 +30,5 @@
 //TODO: this may be refactored as an instance method, as there's no real need for it to be a class method
 //(save for my squeamishness about a class instance releasing itself.)
 + (void) alertDidEnd: (BXAlert *)alert returnCode: (int)returnCode contextInfo: (void *)contextInfo;
+
 @end

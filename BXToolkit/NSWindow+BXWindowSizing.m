@@ -54,4 +54,5 @@
 	//...but let NSWindow constrainRect make sure the titlebar is always visible for us
 	return [self constrainFrameRect: theRect toScreen: theScreen];
 }
+
 @end

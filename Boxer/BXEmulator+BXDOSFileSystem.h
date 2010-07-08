@@ -195,4 +195,5 @@ class DOS_Drive;
 - (BOOL) _shouldAllowWriteAccessToPath: (NSString *)filePath onDrive: (BXDrive *)drive;
 
 @end
+
 #endif

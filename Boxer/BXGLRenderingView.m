@@ -32,7 +32,7 @@
 	[[self nextResponder] rightMouseDown: theEvent];
 }
 
-#pragma -
+#pragma mark -
 #pragma mark Rendering methods
 
 - (void) setManagesAspectRatio: (BOOL)manage

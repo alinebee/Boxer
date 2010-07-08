@@ -18,8 +18,8 @@
 #import "BXGeometry.h"
 
 
-const CGFloat BXFullscreenFadeOutDuration	= 0.2f;
-const CGFloat BXFullscreenFadeInDuration	= 0.4f;
+const CGDisplayFadeInterval BXFullscreenFadeOutDuration	= 0.2f;
+const CGDisplayFadeInterval BXFullscreenFadeInDuration	= 0.4f;
 const NSInteger BXWindowSnapThreshold		= 64;
 const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 
@@ -124,16 +124,16 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 	CGError acquiredToken;
 	CGDisplayFadeReservationToken fadeToken;
 	
-	acquiredToken = CGAcquireDisplayFadeReservation(kCGMaxDisplayReservationInterval, &fadeToken);
+	acquiredToken = CGAcquireDisplayFadeReservation(BXFullscreenFadeOutDuration + BXFullscreenFadeInDuration, &fadeToken);
 	
 	//First fade out to black synchronously
 	if (acquiredToken == kCGErrorSuccess)
 	{
 		CGDisplayFade(fadeToken,
 					  BXFullscreenFadeOutDuration,	//Fade duration
-					  kCGDisplayBlendNormal,			//Start transparent
-					  kCGDisplayBlendSolidColor,		//Fade to opaque
-					  0.0, 0.0, 0.0,					//Pure black (R, G, B)
+					  (CGDisplayBlendFraction)kCGDisplayBlendNormal,		//Start transparent
+					  (CGDisplayBlendFraction)kCGDisplayBlendSolidColor,	//Fade to opaque
+					  0.0f, 0.0f, 0.0f,				//Pure black (R, G, B)
 					  true							//Synchronous
 					  );
 	}
@@ -146,10 +146,10 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 	{
 		CGDisplayFade(fadeToken,
 					  BXFullscreenFadeInDuration,	//Fade duration
-					  kCGDisplayBlendSolidColor,	//Start opaque
-					  kCGDisplayBlendNormal,		//Fade to transparent
-					  0.0, 0.0, 0.0,				//Pure black (R, G, B)
-					  false						//Asynchronous
+					  (CGDisplayBlendFraction)kCGDisplayBlendSolidColor,	//Start opaque
+					  (CGDisplayBlendFraction)kCGDisplayBlendNormal,		//Fade to transparent
+					  0.0f, 0.0f, 0.0f,				//Pure black (R, G, B)
+					  false							//Asynchronous
 					  );
 	}
 	CGReleaseDisplayFadeReservation(fadeToken);
@@ -228,12 +228,12 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 	NSRect proposedFrame	= NSMakeRect(0, 0, proposedFrameSize.width, proposedFrameSize.height);
 	NSRect renderFrame		= [theWindow contentRectForFrameRect:proposedFrame];
 	
-	CGFloat snappedWidth	= round(renderFrame.size.width / snapIncrement.width) * snapIncrement.width;
+	CGFloat snappedWidth	= roundf(renderFrame.size.width / snapIncrement.width) * snapIncrement.width;
 	CGFloat widthDiff		= abs(snappedWidth - renderFrame.size.width);
 	if (widthDiff > 0 && widthDiff <= snapThreshold)
 	{
 		renderFrame.size.width = snappedWidth;
-		if (aspectRatio > 0) renderFrame.size.height = round(snappedWidth / aspectRatio);
+		if (aspectRatio > 0) renderFrame.size.height = roundf(snappedWidth / aspectRatio);
 	}
 	
 	NSSize newProposedSize = [theWindow frameRectForContentRect:renderFrame].size;
@@ -397,7 +397,7 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 		windowSize.height	+= newSize.height	- currentSize.height;
 		
 		//Resize relative to center of titlebar
-		NSRect newFrame		= resizeRectFromPoint([theWindow frame], windowSize, NSMakePoint(0.5, 1));
+		NSRect newFrame		= resizeRectFromPoint([theWindow frame], windowSize, NSMakePoint(0.5f, 1.0f));
 		//Constrain the result to fit tidily on screen
 		newFrame			= [theWindow fullyConstrainFrameRect: newFrame toScreen: [theWindow screen]];
 		
@@ -449,12 +449,12 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 		if (preserveHeight)
 		{
 			if (minViewSize.height > viewSize.height) viewSize = minViewSize;
-			viewSize.width = round(viewSize.height * aspectRatio);
+			viewSize.width = roundf(viewSize.height * aspectRatio);
 		}
 		else
 		{
 			if (minViewSize.width > viewSize.width) viewSize = minViewSize;
-			viewSize.height = round(viewSize.width / aspectRatio);
+			viewSize.height = roundf(viewSize.width / aspectRatio);
 		}
 	}
 	
@@ -466,4 +466,5 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 	
 	return viewSize;
 }
+
 @end

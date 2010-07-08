@@ -19,4 +19,5 @@
 	
 	[self setString: [NSString stringWithFormat: @"%0.02f fps", newRate, nil]];
 }
+
 @end

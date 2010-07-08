@@ -31,9 +31,9 @@
 	//Now add a layer for displaying the current framerate
 	[self setFrameRateLayer: [BXFrameRateCounterLayer layer]];
 	
-	[frameRateLayer setOpacity: 0.75];
+	[frameRateLayer setOpacity: 0.75f];
 	[frameRateLayer setForegroundColor: CGColorGetConstantColor(kCGColorWhite)];
-	[frameRateLayer setFontSize: 20.0];
+	[frameRateLayer setFontSize: 20.0f];
 	[frameRateLayer setAlignmentMode: kCAAlignmentRight];
 	
 	BXRollingAverageTransformer *frameRateSmoother = [[[BXRollingAverageTransformer alloc] initWithWindowSize: 10] autorelease];
@@ -73,7 +73,7 @@
 	[[self nextResponder] rightMouseDown: theEvent];
 }
 
-#pragma -
+#pragma mark -
 #pragma mark Rendering methods
 
 - (void) updateWithFrame: (BXFrameBuffer *)frame
@@ -117,4 +117,5 @@
 {
 	return [[renderingLayer renderer] maintainsAspectRatio];	
 }
+
 @end

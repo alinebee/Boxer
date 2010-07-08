@@ -123,6 +123,10 @@
 //Currently unused.
 - (IBAction) windowShouldCloseAfterProgramCompletion: (id)sender;
 
+//These tell the emulator to pause itself while a resize is in progress, and clean up when it finishes.
+- (void) windowWillLiveResize: (NSNotification *) notification;
+- (void) windowDidLiveResize: (NSNotification *) notification;
+
 
 //These listen for any time an NSMenu opens or closes, and warn the active emulator
 //to pause or resume emulation. In practice this means muting it to avoid hanging
@@ -134,4 +138,5 @@
 
 - (void) applicationWillHide: (NSNotification *) notification;
 - (void) applicationWillResignActive: (NSNotification *) notification;
+
 @end

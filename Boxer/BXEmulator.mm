@@ -447,7 +447,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	if ([NSThread currentThread] == [NSThread mainThread])
 	{
 		NSEvent *event;
-		while (event = [NSApp nextEventMatchingMask: NSAnyEventMask untilDate: nil inMode: NSDefaultRunLoopMode dequeue: YES])
+		while ((event = [NSApp nextEventMatchingMask: NSAnyEventMask untilDate: nil inMode: NSDefaultRunLoopMode dequeue: YES]))
 			[NSApp sendEvent: event];
 
 	}

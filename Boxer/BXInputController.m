@@ -13,6 +13,7 @@
 #import "BXAppController.h"
 #import "BXGeometry.h"
 #import "BXCursorFadeAnimation.h"
+#import "BXSessionWindowController.h"
 
 //For keycodes
 #import <Carbon/Carbon.h>
@@ -91,12 +92,12 @@ enum {
 	
 	//The extent of our relative mouse canvas. Mouse coordinates passed to DOSBox will be
 	//relative to this canvas and clamped to fit within it. q.v. mouseMoved:
-	canvasBounds = NSMakeRect(0.0, 0.0, 1.0, 1.0);
+	canvasBounds = NSMakeRect(0.0f, 0.0f, 1.0f, 1.0f);
 	
 	//Used for constraining where the mouse cursor will appear when we unlock the mouse.
 	//This is inset slightly from canvasBounds, because a cursor that appears right at the
 	//very edge of the window looks dumb. q.v. _applyMouseLockState:
-	visibleCanvasBounds = NSMakeRect(0.01, 0.01, 0.98, 0.98);
+	visibleCanvasBounds = NSMakeRect(0.01f, 0.01f, 0.98f, 0.98f);
 	
 	
 	//Insert ourselves into the responder chain as our view's next responder
@@ -194,7 +195,7 @@ enum {
 		if (![cursorFade isAnimating])
 		{
 			//Make the cursor fade from the beginning rather than where it left off
-			[cursorFade setCurrentProgress: 0.0];
+			[cursorFade setCurrentProgress: 0.0f];
 			[cursorFade startAnimation];
 		}
 	}
@@ -595,7 +596,7 @@ enum {
 		//This prevents mouse clicks from going to other windows.
 		//(We avoid warping if the mouse is already over the view,
 		//as this would cause an input delay.)
-		if (![self mouseInView]) [self _syncOSXCursorToPointInCanvas: NSMakePoint(0.5, 0.5)];
+		if (![self mouseInView]) [self _syncOSXCursorToPointInCanvas: NSMakePoint(0.5f, 0.5f)];
 	}
 	else
 	{

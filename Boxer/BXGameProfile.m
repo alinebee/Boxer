@@ -11,7 +11,7 @@
 
 
 //Directories larger than this size (in bytes) will be treated as CD-era games by eraOfGameAtPath:
-const NSInteger BXDisketteGameSizeThreshold = 20 * 1024 * 1024;
+const NSUInteger BXDisketteGameSizeThreshold = 20 * 1024 * 1024;
 
 //Directories with any files older than this will be treated as 3.5 diskette-era games by eraOfGameAtPath:
 NSString * const BX35DisketteGameDateThreshold = @"1995-01-01 00:00:00 +0000";
@@ -48,7 +48,7 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 	
 	NSDate *cutoffDate525	= [NSDate dateWithString: BX525DisketteGameDateThreshold];
 	NSDate *cutoffDate35	= [NSDate dateWithString: BX35DisketteGameDateThreshold];
-	NSInteger pathSize = 0;
+	unsigned long long pathSize = 0;
 	
 	for (NSString *filePath in enumerator)
 	{
@@ -101,12 +101,12 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 			
 			//First check for an exact filename match
 			NSString *fileName	= [[path lastPathComponent] lowercaseString];
-			if (matchingProfile = [lookups objectForKey: fileName])
+			if ((matchingProfile = [lookups objectForKey: fileName]))
 				return [[self alloc] initWithDictionary: matchingProfile];
 			
 			//Next, check if the base filename (sans extension) matches anything
 			NSString *baseName	= [[fileName stringByDeletingPathExtension] stringByAppendingString: @".*"];
-			if (matchingProfile = [lookups objectForKey: baseName])
+			if ((matchingProfile = [lookups objectForKey: baseName]))
 				return [[self alloc] initWithDictionary: matchingProfile];
 		}		
 	}
@@ -194,4 +194,5 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 	}
 	return [lookups autorelease];
 }
+
 @end

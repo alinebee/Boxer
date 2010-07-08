@@ -91,10 +91,12 @@
 			   selector: @selector(windowWillLiveResize:)
 				   name: BXViewWillLiveResizeNotification
 				 object: inputView];
+	
 	[center addObserver: self
 			   selector: @selector(windowDidLiveResize:)
 				   name: BXViewDidLiveResizeNotification
 				 object: inputView];
+	
 	[center addObserver: self
 			   selector: @selector(menuDidOpen:)
 				   name: NSMenuDidBeginTrackingNotification

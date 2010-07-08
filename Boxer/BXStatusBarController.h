@@ -45,4 +45,5 @@ enum {
 //Set up/tear down the notification and KVC bindings we use to control the segmented button state
 - (void) _prepareBindings;
 - (void) _removeBindings;
+
 @end

@@ -31,13 +31,13 @@
 {
 	static NSArray *descriptions = nil;
 	if (!descriptions) descriptions = [[NSArray alloc] initWithObjects:
-		@"hard drive",				//BXDriveTypeHardDisk
-		@"floppy drive",			//BXDriveTypeFloppyDisk
-		@"CD-ROM drive",			//BXDriveTypeCDROM
-		@"internal system disk",	//BXDriveTypeInternal
+		NSLocalizedString(@"hard drive",			@"Label for hard disk mounts."),				//BXDriveTypeHardDisk
+		NSLocalizedString(@"floppy drive",			@"Label for floppy-disk mounts."),				//BXDriveTypeFloppyDisk
+		NSLocalizedString(@"CD-ROM drive",			@"Label for CD-ROM drive mounts."),				//BXDriveTypeCDROM
+		NSLocalizedString(@"internal system disk",	@"Label for DOSBox virtual drives (i.e. Z)."),	//BXDriveTypeInternal
 	nil];
-	if (driveType >= 0 && driveType < [descriptions count]) return [descriptions objectAtIndex: driveType];
-	else return @"unknown drive type";
+	if (driveType >= 0 && driveType < (NSInteger)[descriptions count]) return [descriptions objectAtIndex: driveType];
+	else return NSLocalizedString(@"unknown drive type", @"Label for drive mounts of an unknown type (should never happen).");
 }
 
 + (BXDriveType) preferredTypeForPath: (NSString *)filePath

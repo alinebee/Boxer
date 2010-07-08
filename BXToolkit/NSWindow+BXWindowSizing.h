@@ -29,4 +29,5 @@
 //this is a more rigorous version of NSWindow contrainFrameRect:toScreen:
 //Prioritises left screen edge over right and top edge over bottom, to ensure that the titlebar and window controls are visible.
 - (NSRect) fullyConstrainFrameRect: (NSRect)theRect toScreen: (NSScreen *)theScreen;
+
 @end

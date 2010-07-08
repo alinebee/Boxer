@@ -56,8 +56,8 @@ void MAPPER_LosingFocus();
 {
 	if ((self = [super init]))
 	{
-		mouseSensitivity	= 1.0;
-		mousePosition		= NSMakePoint(0.5, 0.5);
+		mouseSensitivity	= 1.0f;
+		mousePosition		= NSMakePoint(0.5f, 0.5f);
 		mouseActive			= NO;
 	}
 	return self;
@@ -434,4 +434,5 @@ void MAPPER_LosingFocus();
 	
 	return (SDLMod)SDLModifiers;
 }
+
 @end

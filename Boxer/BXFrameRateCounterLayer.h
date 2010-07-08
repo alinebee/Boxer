@@ -16,4 +16,5 @@
 	CGFloat frameRate;
 }
 @property (assign) CGFloat frameRate;
+
 @end

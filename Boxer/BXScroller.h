@@ -25,4 +25,5 @@
 
 //A recoloured variant for use in HUD-style panels.
 @interface BXHUDScroller : BXScroller
+
 @end

@@ -39,8 +39,6 @@
 	IBOutlet BXInputController *inputController;
 	IBOutlet BXStatusBarController *statusBarController;
 	
-	BXEmulator *emulator;
-	
 	//Used internally by BXRenderController for resizing calculations
 	NSSize currentScaledSize;
 	NSSize currentScaledResolution;
@@ -60,9 +58,6 @@
 //Indicates that the current resize event is internal and not triggered by user interaction.
 //Used to change our window constraining behaviour and response to resize events.
 @property (assign) BOOL resizingProgrammatically;
-
-//A reference to the emulator instance for this window.
-@property (retain) BXEmulator *emulator;
 
 
 //Recast NSWindowController's standard accessors so that we get our own classes

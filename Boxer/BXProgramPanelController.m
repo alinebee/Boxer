@@ -114,12 +114,11 @@
 		//Resize the panel first to fit the container
 		[panel setFrame: [mainView bounds]];
 		
-		if (panel == programChooserPanel) [self syncProgramButtonStates];
-		
 		//Add the new panel into the view
 		[previousPanel removeFromSuperview];
 		[mainView addSubview: panel];
 	}
+	if (panel == programChooserPanel) [self syncProgramButtonStates];
 	
 	[self didChangeValueForKey: @"activePanel"];
 }

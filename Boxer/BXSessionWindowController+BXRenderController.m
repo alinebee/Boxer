@@ -85,7 +85,7 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 {
 	NSSize initialSize = [self windowedRenderingViewSize];
 	CGFloat initialAspectRatio = aspectRatioOfSize(initialSize);
-
+	
 	//This will resize the window to the frame size saved with the specified name
 	if ([[self window] setFrameAutosaveName: savedName])
 	{
@@ -168,7 +168,7 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 	NSRect fullscreenFrame		= [targetScreen frame];
 	NSRect zoomedWindowFrame	= [theWindow frameRectForContentRect: fullscreenFrame];
 	
-	[[self emulator] willPause];
+	[[[self document] emulator] willPause];
 	[theWindow setLevel: NSScreenSaverWindowLevel];
 
 	//Make sure we're the key window first before any shenanigans
@@ -212,7 +212,7 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 	}
 	[self setResizingProgrammatically: NO];
 	[theWindow setLevel: originalLevel];
-	[[self emulator] didResume];
+	[[[self document] emulator] didResume];
 }
 
 //Snap to multiples of the base render size as we scale
@@ -246,7 +246,7 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 //We define the standard frame to be the largest multiple of the game resolution, maintaining aspect ratio.
 - (NSRect) windowWillUseStandardFrame: (BXSessionWindow *)theWindow defaultFrame: (NSRect)defaultFrame
 {
-	if (![[self emulator] isExecuting]) return defaultFrame;
+	if (![[[self document] emulator] isExecuting]) return defaultFrame;
 	
 	NSRect standardFrame;
 	NSRect currentWindowFrame		= [theWindow frame];
@@ -331,7 +331,7 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 		[inputController setMouseLocked: NO];
 	}
 	//Kick the emulator's renderer to adjust to the new viewport size
-	[[[self emulator] videoHandler] reset];
+	[[[[self document] emulator] videoHandler] reset];
 	
 	[self didChangeValueForKey: @"fullScreen"];
 }

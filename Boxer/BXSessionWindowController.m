@@ -41,7 +41,6 @@
 @synthesize renderingView, inputView, viewContainer, statusBar, programPanel;
 @synthesize programPanelController, inputController, statusBarController;
 @synthesize resizingProgrammatically;
-@synthesize emulator;
 
 
 //Overridden to make the types explicit, so we don't have to keep casting the return values to avoid compilation warnings
@@ -55,8 +54,6 @@
 - (void) dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
-	
-	[self setEmulator: nil],				[emulator release];
 	
 	[self setProgramPanelController: nil],	[programPanelController release];
 	[self setInputController: nil],			[inputController release];
@@ -72,7 +69,7 @@
 	[super dealloc];
 }
 
-- (void) awakeFromNib
+- (void) windowDidLoad
 {
 	NSNotificationCenter *center	= [NSNotificationCenter defaultCenter];
 	BXSessionWindow *theWindow		= [self window];
@@ -82,21 +79,21 @@
 	
 	//These are handled by BoxerRenderController, our category for rendering-related delegate tasks
 	[center addObserver:	self
-			selector:		@selector(windowWillLiveResize:)
-			name:			BXViewWillLiveResizeNotification
-			object:			inputView];
+			   selector:		@selector(windowWillLiveResize:)
+				   name:			BXViewWillLiveResizeNotification
+				 object:			inputView];
 	[center addObserver:	self
-			selector:		@selector(windowDidLiveResize:)
-			name:			BXViewDidLiveResizeNotification
-			object:			inputView];
+			   selector:		@selector(windowDidLiveResize:)
+				   name:			BXViewDidLiveResizeNotification
+				 object:			inputView];
 	[center addObserver:	self
-			selector:		@selector(menuDidOpen:)
-			name:			NSMenuDidBeginTrackingNotification
-			object:			nil];
+			   selector:		@selector(menuDidOpen:)
+				   name:			NSMenuDidBeginTrackingNotification
+				 object:			nil];
 	[center addObserver:	self
-			selector:		@selector(menuDidClose:)
-			name:			NSMenuDidEndTrackingNotification
-			object:			nil];
+			   selector:		@selector(menuDidClose:)
+				   name:			NSMenuDidEndTrackingNotification
+				 object:			nil];
 	
 	[center addObserver:	self
 			   selector:	@selector(applicationWillHide:)
@@ -129,66 +126,22 @@
 	[theWindow setAcceptsMouseMovedEvents: YES];
 	
 	//We don't support content-preservation yet, so disable the check to be slightly more efficient
-	[theWindow setPreservesContentDuringLiveResize: NO];
-}
-
-- (void) setDocument: (BXSession *)theSession
-{	
-	if ([self document])
+	[theWindow setPreservesContentDuringLiveResize: NO];	
+	
+	
+	//Now that we can retrieve the game's identifier from the session,
+	//use the autosaved window size for that game
+	if ([[self document] isGamePackage])
 	{
-		[self unbind: @"emulator"];
-		[programPanelController setRepresentedObject: nil];		
+		[self setFrameAutosaveName: [[self document] uniqueIdentifier]];
+	}
+	else
+	{
+		[self setFrameAutosaveName: @"DOSWindow"];
 	}
 	
-	[super setDocument: theSession];
-	
-	if (theSession)
-	{
-		//Now that we can retrieve the game's identifier from the session,
-		//use the autosaved window size for that game
-		if ([theSession isGamePackage])
-		{
-			[self setFrameAutosaveName: [theSession uniqueIdentifier]];
-		}
-		else
-		{
-			[self setFrameAutosaveName: @"DOSWindow"];
-		}
-		
-		[self bind: @"emulator" toObject: theSession withKeyPath: @"emulator" options: nil];
-		[programPanelController setRepresentedObject: theSession];
-	}
-}
-
-
-- (void) setEmulator: (BXEmulator *)newEmulator 
-{
-	[self willChangeValueForKey: @"emulator"];
-	
-	if (newEmulator != emulator)
-	{
-		if (emulator)
-		{
-			[[emulator videoHandler] unbind: @"aspectCorrected"];
-			[[emulator videoHandler] unbind: @"filterType"];
-			[inputController setRepresentedObject: nil];	
-		}
-		
-		[emulator release];
-		emulator = [newEmulator retain];
-		
-		if (newEmulator)
-		{
-			NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-			
-			[[newEmulator videoHandler] bind: @"aspectCorrected" toObject: defaults withKeyPath: @"aspectCorrected" options: nil];
-			[[newEmulator videoHandler] bind: @"filterType" toObject: defaults withKeyPath: @"filterType" options: nil];
-			
-			[inputController setRepresentedObject: [newEmulator inputHandler]];
-		}
-	}
-	
-	[self didChangeValueForKey: @"emulator"];
+	[programPanelController setRepresentedObject: [self document]];
+	[inputController setRepresentedObject: [[[self document] emulator] inputHandler]];
 }
 
 
@@ -317,7 +270,7 @@
 	{
 		NSInteger itemState;
 		BXFilterType filterType	= [theItem tag];
-		BXVideoHandler *videoHandler = [[self emulator] videoHandler];
+		BXVideoHandler *videoHandler = [[[self document] emulator] videoHandler];
 		
 		//Update the option state to reflect the current filter selection
 		//If the filter is selected but not active at the current window size, we indicate this with a mixed state
@@ -328,7 +281,7 @@
 		
 		[theItem setState: itemState];
 		
-		return ([[self emulator] isExecuting]);
+		return ([[self document] isEmulating]);
 	}
 	
 	else if (theAction == @selector(toggleProgramPanelShown:))
@@ -401,7 +354,8 @@
 
 - (BOOL) shouldConfirmClose
 {
-	return (![[NSUserDefaults standardUserDefaults] boolForKey: @"suppressCloseAlert"] && [[self emulator] isRunningProcess] && ![[self emulator] isCancelled]);
+	BXEmulator *theEmulator = [[self document] emulator];
+	return (![[NSUserDefaults standardUserDefaults] boolForKey: @"suppressCloseAlert"] && [theEmulator isRunningProcess] && ![theEmulator isCancelled]);
 }
 
 - (BOOL) windowShouldClose: (id)theWindow
@@ -445,7 +399,7 @@
 	if (![self isFullScreen] && ![self isResizing])
 	{
 		//Tell the renderer to refresh its filters 
-		[[[self emulator] videoHandler] reset];
+		[[[[self document] emulator] videoHandler] reset];
 		
 		//Also, update the damn cursors which will have been reset by the window's resizing
 		[inputController cursorUpdate: nil];
@@ -456,7 +410,7 @@
 //Warn the emulator to prepare for emulation cutout when the resize starts
 - (void) windowWillLiveResize: (NSNotification *) notification
 {
-	[[self emulator] willPause];
+	[[[self document] emulator] willPause];
 }
 
 //Catch the end of a live resize event and pass it to our normal resize handler
@@ -465,7 +419,7 @@
 {
 	//We do this with a delay to give the resize operation time to 'stop being live'.
 	[self performSelector: @selector(windowDidResize:) withObject: notification afterDelay: 0.0];
-	[[self emulator] didResume];
+	[[[self document] emulator] didResume];
 }
 
 //Tell the view controller to cancel key events and unlock the mouse
@@ -484,13 +438,13 @@
 - (void) menuDidOpen:	(NSNotification *) notification
 {
 	[self setFullScreen: NO];
-	[[self emulator] willPause];
+	[[[self document] emulator] willPause];
 }
 
 //Let the emulator know the coast is clear
 - (void) menuDidClose:	(NSNotification *) notification
 {
-	[[self emulator] didResume];
+	[[[self document] emulator] didResume];
 }
 
 - (void) applicationWillHide: (NSNotification *) notification

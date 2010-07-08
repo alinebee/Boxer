@@ -61,7 +61,7 @@
 {
 	if ((self = [super init]))
 	{
-		//[self setEmulator: [[[BXEmulator alloc] init] autorelease]];
+		[self setEmulator: [[[BXEmulator alloc] init] autorelease]];
 	}
 	return self;
 }
@@ -114,6 +114,9 @@
 		{
 			[emulator setDelegate: nil];
 			[emulator unbind: @"gameProfile"];
+			[[emulator videoHandler] unbind: @"aspectCorrected"];
+			[[emulator videoHandler] unbind: @"filterType"];
+			
 			[self _deregisterForFilesystemNotifications];
 		}
 		
@@ -122,8 +125,13 @@
 	
 		if (newEmulator)
 		{
+			NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+			
 			[newEmulator setDelegate: self];
-			[emulator bind: @"gameProfile" toObject: self withKeyPath: @"gameProfile" options: nil];
+			[newEmulator bind: @"gameProfile" toObject: self withKeyPath: @"gameProfile" options: nil];
+			[[newEmulator videoHandler] bind: @"aspectCorrected" toObject: defaults withKeyPath: @"aspectCorrected" options: nil];
+			[[newEmulator videoHandler] bind: @"filterType" toObject: defaults withKeyPath: @"filterType" options: nil];
+			
 			[self _registerForFilesystemNotifications];
 		}
 	}
@@ -479,16 +487,11 @@
 
 - (void) _startEmulator
 {
-	//Create a new emulator instance for ourselves
-	[self setEmulator: [[[BXEmulator alloc] init] autorelease]];
-	
-	
 	//The configuration files we may be loading today
 	NSString *preflightConf	= [[NSBundle mainBundle] pathForResource: @"Preflight" ofType: @"conf"];
 	NSString *profileConf	= nil;
 	NSString *packageConf	= nil;
 	NSString *launchConf	= [[NSBundle mainBundle] pathForResource: @"Launch" ofType: @"conf"];
-	
 	
 	//Which folder to look in to detect the game we’re running.
 	//The preferred mount point is a convenient choice for this: it will choose any

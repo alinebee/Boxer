@@ -76,7 +76,6 @@
 	[self setActiveProgramPath: nil],	[activeProgramPath release];
 	
 	[super dealloc];
-	NSLog(@"BXSession dealloc");
 }
 
 //We make this a no-op to avoid creating an NSFileWrapper - we don't ever actually read any data off disk,
@@ -114,7 +113,6 @@
 		if (emulator)
 		{
 			[emulator setDelegate: nil];
-			[emulator unbind: @"gameProfile"];
 			[[emulator videoHandler] unbind: @"aspectCorrected"];
 			[[emulator videoHandler] unbind: @"filterType"];
 			
@@ -129,7 +127,8 @@
 			NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 			
 			[newEmulator setDelegate: self];
-			[newEmulator bind: @"gameProfile" toObject: self withKeyPath: @"gameProfile" options: nil];
+			
+			//FIXME: we shouldn't be using bindings for these
 			[[newEmulator videoHandler] bind: @"aspectCorrected" toObject: defaults withKeyPath: @"aspectCorrected" options: nil];
 			[[newEmulator videoHandler] bind: @"filterType" toObject: defaults withKeyPath: @"filterType" options: nil];
 			
@@ -138,6 +137,21 @@
 	}
 	
 	[self didChangeValueForKey: @"emulator"];
+}
+
+//Keep our emulator's profile and our own profile in sync
+//IMPLEMENTATION NOTE: we could do this with bindings,
+//but I want to avoid circular-retains and bindings hell
+- (void) setGameProfile: (BXGameProfile *)profile
+{
+	[self willChangeValueForKey: @"gameProfile"];
+	if (profile != gameProfile)
+	{
+		[gameProfile release];
+		gameProfile = [profile retain];
+		[[self emulator] setGameProfile: gameProfile];
+	}
+	[self didChangeValueForKey: @"gameProfile"];
 }
 
 - (BOOL) isEmulating
@@ -169,7 +183,6 @@
 {
 	[self cancel];
 	[super close];
-	[self setMainWindowController: nil];
 }
 
 

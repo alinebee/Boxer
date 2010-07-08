@@ -152,8 +152,6 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	[commandQueue release], commandQueue = nil;
 	
 	[super dealloc];
-	
-	NSLog(@"BXEmulator dealloc");
 }
 
 

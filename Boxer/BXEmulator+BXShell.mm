@@ -30,15 +30,16 @@ nil];
 
 //Lookup table of shell commands and the aliases that run them
 NSDictionary *commandAliases = [[NSDictionary alloc] initWithObjectsAndKeys:
-	@"help",		@"commands",
-	@"exit",		@"quit",
-	@"copy",		@"cp",
-	@"rename",		@"move",
-	@"rename",		@"mv",
-	@"del",			@"rm",
-	@"dir",			@"ls",
-	@"type",		@"cat",
-	@"mount -u",	@"unmount",
+								@"help",		@"commands",
+								@"help",		@"intro",
+								@"exit",		@"quit",
+								@"copy",		@"cp",
+								@"rename",		@"move",
+								@"rename",		@"mv",
+								@"del",			@"rm",
+								@"dir",			@"ls",
+								@"type",		@"cat",
+								@"mount -u",	@"unmount",
 nil];
 
 

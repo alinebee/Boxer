@@ -249,6 +249,7 @@
 		9FEF98011191E1EF002024DF /* BXInputHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FEF98001191E1EF002024DF /* BXInputHandler.mm */; };
 		9FF1756D11B25F4E00D0FCDC /* BXInputView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF1756C11B25F4E00D0FCDC /* BXInputView.m */; };
 		9FF175E711B279F500D0FCDC /* BXVideoHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FF175E611B279F500D0FCDC /* BXVideoHandler.mm */; };
+		9FF2E9BD11E6F4950051E485 /* BXEmulatorConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF2E9BC11E6F4950051E485 /* BXEmulatorConfiguration.m */; };
 		9FF445E010F13A2200B74B15 /* 525Diskette.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FF445DF10F13A2200B74B15 /* 525Diskette.png */; };
 		9FFAFE2D10DE33FB00728BAC /* GameProfiles.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */; };
 		9FFAFE4310DE343F00728BAC /* Configurations in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2E10DE343F00728BAC /* Configurations */; };
@@ -705,6 +706,8 @@
 		9FF1756C11B25F4E00D0FCDC /* BXInputView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXInputView.m; sourceTree = "<group>"; };
 		9FF175E511B279F500D0FCDC /* BXVideoHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXVideoHandler.h; sourceTree = "<group>"; };
 		9FF175E611B279F500D0FCDC /* BXVideoHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXVideoHandler.mm; sourceTree = "<group>"; };
+		9FF2E9BB11E6F4950051E485 /* BXEmulatorConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatorConfiguration.h; sourceTree = "<group>"; };
+		9FF2E9BC11E6F4950051E485 /* BXEmulatorConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXEmulatorConfiguration.m; sourceTree = "<group>"; };
 		9FF445DF10F13A2200B74B15 /* 525Diskette.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 525Diskette.png; sourceTree = "<group>"; };
 		9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = GameProfiles.plist; sourceTree = "<group>"; };
 		9FFAFE2E10DE343F00728BAC /* Configurations */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Configurations; sourceTree = "<group>"; };
@@ -762,6 +765,8 @@
 				9FBC351E0F56C7B7001811F2 /* BXAppController.m */,
 				9F6BA70310A9FC77005A3E2A /* BXGrowlController.h */,
 				9F6BA70410A9FC77005A3E2A /* BXGrowlController.m */,
+				9FF2E9BB11E6F4950051E485 /* BXEmulatorConfiguration.h */,
+				9FF2E9BC11E6F4950051E485 /* BXEmulatorConfiguration.m */,
 			);
 			path = Boxer;
 			sourceTree = "<group>";
@@ -1862,6 +1867,7 @@
 				9F5DCB5211B2C0E700552966 /* shell_batch.cpp in Sources */,
 				9F5DCB5311B2C0E700552966 /* shell_cmds.cpp in Sources */,
 				9F5DCB5411B2C0E700552966 /* shell_misc.cpp in Sources */,
+				9FF2E9BD11E6F4950051E485 /* BXEmulatorConfiguration.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

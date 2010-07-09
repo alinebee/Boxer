@@ -13,6 +13,7 @@
 #import "BXVideoFormatAlert.h"
 #import "BXAppController.h"
 #import "BXVideoHandler.h"
+#import "BXEmulatorConfiguration.h"
 
 #import "BXSessionWindowController+BXRenderController.h"
 
@@ -76,14 +77,16 @@
 
 - (NSUInteger) frameskip
 {
-	return [[[self emulator] videoHandler] frameskip];
+	return [[emulator videoHandler] frameskip];
 }
 
 - (void) setFrameskip: (NSUInteger)frameskip
 {
 	[self willChangeValueForKey: @"frameskip"];
-	[[[self emulator] videoHandler] setFrameskip: frameskip];
+	[[emulator videoHandler] setFrameskip: frameskip];
 	[self didChangeValueForKey: @"frameskip"];
+	
+	//TODO: preserve the frameskip setting in per-document user defaults 
 }
 
 - (BOOL) validateFrameskip: (id *)ioValue error: (NSError **)outError
@@ -96,7 +99,6 @@
 
 - (IBAction) incrementFrameSkip: (id)sender
 {
-	
 	NSNumber *newFrameskip = [NSNumber numberWithInteger: [self frameskip] + 1];
 	if ([self validateFrameskip: &newFrameskip error: nil])
 		[self setFrameskip: [newFrameskip integerValue]];
@@ -110,16 +112,38 @@
 }
 
 
+- (BOOL) isAutoSpeed
+{
+	return [emulator isAutoSpeed];
+}
+
+- (void) setAutoSpeed: (BOOL)isAuto
+{
+	[self willChangeValueForKey: @"autoSpeed"];
+	[emulator setAutoSpeed: isAuto];
+	[self didChangeValueForKey: @"autoSpeed"];
+	
+	//Preserve changes to the speed settings
+	NSString *speedDescription = [BXEmulator configStringForFixedSpeed: [self fixedSpeed]
+															   isAuto: [self isAutoSpeed]];
+	[runtimeConfiguration setValue: speedDescription forKey: @"cycles" inSection: @"cpu"];
+}
+
 - (NSInteger) fixedSpeed
 {
-	return [[self emulator] fixedSpeed];
+	return [emulator fixedSpeed];
 }
 
 - (void) setFixedSpeed: (NSInteger)fixedSpeed
 {
 	[self willChangeValueForKey: @"fixedSpeed"];
-	[[self emulator] setFixedSpeed: fixedSpeed];
+	[emulator setFixedSpeed: fixedSpeed];
 	[self didChangeValueForKey: @"fixedSpeed"];
+	
+	//Preserve changes to the speed settings
+	NSString *speedDescription = [BXEmulator configStringForFixedSpeed: [self fixedSpeed]
+															   isAuto: [self isAutoSpeed]];
+	[runtimeConfiguration setValue: speedDescription forKey: @"cycles" inSection: @"cpu"];
 }
 
 - (BOOL) validateFixedSpeed: (id *)ioValue error: (NSError **)outError
@@ -134,9 +158,9 @@
 {
 	if ([self speedAtMaximum]) return;
 	
-	NSInteger currentSpeed = [[self emulator] fixedSpeed];
+	NSInteger currentSpeed = [self fixedSpeed];
 	
-	if (currentSpeed >= BXMaxSpeedThreshold) [[self emulator] setAutoSpeed: YES];
+	if (currentSpeed >= BXMaxSpeedThreshold) [self setAutoSpeed: YES];
 	else
 	{
 		NSInteger increment	= [[self class] incrementAmountForSpeed: currentSpeed goingUp: YES];
@@ -154,13 +178,13 @@
 {
 	if ([self speedAtMinimum]) return;
 	
-	if ([[self emulator] isAutoSpeed])
+	if ([self isAutoSpeed])
 	{
-		[[self emulator] setFixedSpeed: BXMaxSpeedThreshold];
+		[self setFixedSpeed: BXMaxSpeedThreshold];
 	}
 	else
 	{
-		NSInteger currentSpeed	= [[self emulator] fixedSpeed];
+		NSInteger currentSpeed	= [self fixedSpeed];
 		NSInteger increment		= [[self class] incrementAmountForSpeed: currentSpeed goingUp: NO];
 		//This snaps the speed to the nearest increment rather than doing straight subtraction
 		NSInteger diff			= (currentSpeed % increment);
@@ -174,20 +198,24 @@
 }
 
 
-- (BOOL) isDynamic	{ return [[self emulator] coreMode] == BXCoreDynamic; }
+- (BOOL) isDynamic	{ return [emulator coreMode] == BXCoreDynamic; }
 
 - (void) setDynamic: (BOOL)dynamic
 {
 	[self willChangeValueForKey: @"dynamic"];
-	[[self emulator] setCoreMode: dynamic ? BXCoreDynamic : BXCoreNormal];
+	[emulator setCoreMode: dynamic ? BXCoreDynamic : BXCoreNormal];
 	[self didChangeValueForKey: @"dynamic"];
+	
+	//Preserve changes to the core mode
+	NSString *coreDescription = [BXEmulator configStringForCoreMode: [emulator coreMode]];
+	[runtimeConfiguration setValue: coreDescription forKey: @"core" inSection: @"cpu"];
 }
 
 
 - (BOOL) validateUserInterfaceItem: (id)theItem
 {
 	//All our actions depend on the emulator being active
-	if (![[self emulator] isExecuting]) return NO;
+	if (![self isEmulating]) return NO;
 	
 	SEL theAction = [theItem action];
 	
@@ -198,7 +226,7 @@
 	if (theAction == @selector(decrementFrameSkip:))	return ![self frameskipAtMinimum];
 
 	//Defined in BXFileManager
-	if (theAction == @selector(openInDOS:))				return [[self emulator] isAtPrompt];
+	if (theAction == @selector(openInDOS:))				return [emulator isAtPrompt];
 
 	if (theAction == @selector(paste:))	return [self canPaste];
 	
@@ -207,8 +235,8 @@
 
 
 //Used to selectively enable/disable menu items by validateUserInterfaceItem
-- (BOOL) speedAtMinimum		{ return ![[self emulator] isAutoSpeed] && [[self emulator] fixedSpeed] <= BXMinSpeedThreshold; }
-- (BOOL) speedAtMaximum		{ return [[self emulator] isAutoSpeed]; }
+- (BOOL) speedAtMinimum		{ return ![self isAutoSpeed] && [self fixedSpeed] <= BXMinSpeedThreshold; }
+- (BOOL) speedAtMaximum		{ return [self isAutoSpeed]; }
 
 - (BOOL) frameskipAtMinimum	{ return [self frameskip] <= 0; }
 - (BOOL) frameskipAtMaximum	{ return [self frameskip] >= BXMaxFrameskip; }
@@ -232,7 +260,7 @@
 		pastedString = [filePaths lastObject];
 	}
 	else pastedString = [pboard stringForType: NSStringPboardType];
-	[[self emulator] handlePastedString: pastedString];
+	[emulator handlePastedString: pastedString];
 }
 
 - (BOOL) canPaste
@@ -250,7 +278,7 @@
 		pastedString = [filePaths lastObject];
 	}
 	else pastedString = [pboard stringForType: NSStringPboardType];
-	return [[self emulator] canAcceptPastedString: pastedString];
+	return [emulator canAcceptPastedString: pastedString];
 }
 
 
@@ -260,18 +288,21 @@
 
 - (void) setSliderSpeed: (NSInteger)speed
 {	
+	[self willChangeValueForKey: @"sliderSpeed"];
+	
 	//If we're at the maximum speed, bump it into auto-throttling mode
-	if (speed >= BXMaxSpeedThreshold) [[self emulator] setAutoSpeed: YES];
+	if (speed >= BXMaxSpeedThreshold) [self setAutoSpeed: YES];
 	
 	//Otherwise, set the fixed speed
-	else [[self emulator] setFixedSpeed: speed];
+	else [self setFixedSpeed: speed];
+	
+	[self didChangeValueForKey: @"sliderSpeed"];
 }
 
 - (NSInteger) sliderSpeed
 {
 	//Report the max fixed speed if we're in auto-throttling mode
-	
-	return ([[self emulator] isAutoSpeed]) ? BXMaxSpeedThreshold : [[self emulator] fixedSpeed];
+	return ([self isAutoSpeed]) ? BXMaxSpeedThreshold : [self fixedSpeed];
 }
 
 //Snap fixed speed to even increments, unless the Option key is held down
@@ -292,13 +323,13 @@
 
 - (NSString *) speedDescription
 {	
-	if (![[self emulator] isExecuting]) return @"";
+	if (![self isEmulating]) return @"";
 
-	if ([[self emulator] isAutoSpeed])
+	if ([self isAutoSpeed])
 		return NSLocalizedString(@"Maximized speed", @"Description for current CPU speed when in automatic CPU throttling mode.");
 	else
 	{
-		NSInteger speed		= [[self emulator] fixedSpeed];
+		NSInteger speed		= [self fixedSpeed];
 		NSString *format	= [[self class] cpuClassFormatForSpeed: speed];
 		return [NSString stringWithFormat: format, speed];
 	}
@@ -306,7 +337,7 @@
 
 - (NSString *) frameskipDescription
 {
-	if (![[self emulator] isExecuting]) return @"";
+	if (![self isEmulating]) return @"";
 	
 	NSString *format;
 	NSUInteger frameskip = [self frameskip]; 
@@ -317,7 +348,8 @@
 	return [NSString stringWithFormat: format, frameskip + 1];
 }
 
++ (NSSet *) keyPathsForValuesAffectingSliderSpeed			{ return [NSSet setWithObjects: @"isEmulating", @"fixedSpeed", @"autoSpeed", nil]; }
 + (NSSet *) keyPathsForValuesAffectingSpeedDescription		{ return [NSSet setWithObject: @"sliderSpeed"]; }
-+ (NSSet *) keyPathsForValuesAffectingFrameskipDescription	{ return [NSSet setWithObject: @"frameskip"]; }
++ (NSSet *) keyPathsForValuesAffectingFrameskipDescription	{ return [NSSet setWithObjects: @"isEmulating", @"frameskip", nil]; }
 
 @end

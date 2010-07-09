@@ -56,6 +56,9 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 #endif
 
 
+#pragma mark -
+#pragma mark Implementation
+
 @implementation BXEmulator
 @synthesize processName, processPath, processLocalPath;
 @synthesize delegate;
@@ -102,6 +105,29 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 + (BOOL) isInternal: (NSString *)process
 {
 	return [[self internalProcessNames] containsObject: process];
+}
+
++ (NSString *) configStringForFixedSpeed: (NSInteger)speed isAuto: (BOOL)isAutoSpeed
+{
+	if (isAutoSpeed) return @"max";
+	else return [[NSNumber numberWithInteger: speed] stringValue]; 
+}
+
++ (NSString *) configStringForCoreMode: (BXCoreMode)mode
+{
+	switch (mode)
+	{
+		case BXCoreNormal:
+			return @"normal";
+		case BXCoreFull:
+			return @"full";
+		case BXCoreDynamic:
+			return @"dynamic";
+		case BXCoreSimple:
+			return @"simple";
+		default:
+			return @"auto";
+	}
 }
 
 

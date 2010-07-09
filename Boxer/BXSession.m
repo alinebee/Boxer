@@ -12,6 +12,7 @@
 #import "BXAppController.h"
 #import "BXSessionWindowController+BXRenderController.h"
 #import "BXSession+BXFileManager.h"
+#import "BXEmulatorConfiguration.h"
 
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulator+BXShell.h"
@@ -38,6 +39,8 @@
 //finishes. Called by runLaunchCommands, once the emulator has finished processing configuration files.
 - (void) _launchTarget;
 
+//Called once the session has exited to save any DOSBox settings we have changed to the gamebox conf.
+- (void) _saveRuntimeConfigurationChangesToFile: (NSString *)filePath;
 @end
 
 
@@ -62,19 +65,23 @@
 	if ((self = [super init]))
 	{
 		[self setEmulator: [[[BXEmulator alloc] init] autorelease]];
+		runtimeConfiguration = [[BXEmulatorConfiguration alloc] init];
+		
 	}
 	return self;
 }
 
 - (void) dealloc
 {
+	[runtimeConfiguration release], runtimeConfiguration = nil;
+
 	[self setMainWindowController: nil],[mainWindowController release];
 	[self setEmulator: nil],			[emulator release];
 	[self setGamePackage: nil],			[gamePackage release];
 	[self setGameProfile: nil],			[gameProfile release];
 	[self setTargetPath: nil],			[targetPath release];
 	[self setActiveProgramPath: nil],	[activeProgramPath release];
-	
+		
 	[super dealloc];
 }
 
@@ -181,8 +188,22 @@
 //Tell the emulator to close itself down when the document closes
 - (void) close
 {
-	[self cancel];
-	[super close];
+	if (!isClosing)
+	{
+		isClosing = YES;
+		[self cancel];
+		[super close];
+	}
+}
+
+//Save our configuration changes to disk before exiting
+- (void) synchronizeSettings
+{
+	if ([self isGamePackage])
+	{
+		NSString *configPath = [[self gamePackage] configurationFile];
+		if (configPath) [self _saveRuntimeConfigurationChangesToFile: configPath]; 
+	}
 }
 
 
@@ -511,11 +532,12 @@
 	NSString *profileConf	= nil;
 	NSString *packageConf	= nil;
 	NSString *launchConf	= [[NSBundle mainBundle] pathForResource: @"Launch" ofType: @"conf"];
+ 	
 	
 	//Which folder to look in to detect the game we’re running.
-	//The preferred mount point is a convenient choice for this: it will choose any
-	//gamebox, Boxer drive folder or floppy/CD volume in the file's path, falling
-	//back on its containing folder otherwise.
+	//This will choose any gamebox, Boxer drive folder or floppy/CD volume in the
+	//file's path (setting shouldRecurse to YES) if found, falling back on the file's
+	//containing folder otherwise (setting shouldRecurse to NO).
 	NSString *profileDetectionPath = nil;
 	BOOL shouldRecurse = NO;
 	if ([self targetPath])
@@ -575,7 +597,7 @@
 	//Start up the emulator itself.
 	[[self emulator] start];
 	
-	//Once the emulator exits, close the document also.
+	//Close the document once we're done.
 	[self close];
 }
 
@@ -612,6 +634,7 @@
 			[[self emulator] mountDrive: bundledDrive];
 		}
 	}
+	//TODO: if we're not loading a package, then C should be the DOS Games folder instead
 	
 	//Automount all currently mounted floppy and CD-ROM volumes
 	[self mountFloppyVolumes];
@@ -640,7 +663,8 @@
 		[theEmulator setVariable: @"ultradir"	to: ultraDir	encoding: BXDirectStringEncoding];
 	}
 	
-	//Finally, make a mount point allowing access to our target program/folder, if it's not already accessible in DOS.
+	//Once all regular drives are in place, make a mount point allowing access to our target program/folder,
+	//if it's not already accessible in DOS.
 	if ([self targetPath])
 	{
 		if ([self shouldMountDriveForPath: targetPath]) [self mountDriveForPath: targetPath];
@@ -668,6 +692,19 @@
 			target = [target stringByDeletingLastPathComponent];
 		}
 		[self openFileAtPath: target];
+	}
+}
+
+- (void) _saveRuntimeConfigurationChangesToFile: (NSString *)filePath
+{
+	if (![runtimeConfiguration isEmpty])
+	{
+		BXEmulatorConfiguration *config = [BXEmulatorConfiguration configurationWithContentsOfFile: filePath];
+		if (config)
+		{
+			[config addSettingsFromConfiguration: runtimeConfiguration];
+			[config writeToFile: filePath error: NULL];
+		}
 	}
 }
 

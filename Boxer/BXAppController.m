@@ -303,10 +303,13 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	}
 }
 
-//Tidy up when the current session closes
+//Tidy up when the current session closes, and ensure documents save their own configurations
 - (void) removeDocument: (NSDocument *)theDocument
 {
 	if ([self currentSession] == theDocument) [self setCurrentSession: nil];
+
+	if ([theDocument respondsToSelector: @selector(synchronizeSettings)]) [(id)theDocument synchronizeSettings];
+
 	[super removeDocument: theDocument];
 }
 

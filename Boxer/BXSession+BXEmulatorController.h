@@ -47,7 +47,8 @@ const NSUInteger BXMaxFrameskip = 9;
 #pragma mark -
 #pragma mark Properties
 
-@property (assign) NSInteger fixedSpeed; 
+@property (assign, getter=isAutoSpeed) BOOL autoSpeed;
+@property (assign) NSInteger fixedSpeed;
 @property (assign) NSUInteger frameskip;
 @property (assign, getter=isDynamic) BOOL dynamic;
 

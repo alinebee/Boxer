@@ -74,18 +74,48 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 
 
 #pragma mark -
-#pragma mark Properties
-
-//Whether the emulator is currently running/cancelled respectively. Mirrors interface of NSOperation.
-//The setters are for internal use only and should not be called outside of BXEmulator.
-@property (assign, getter=isExecuting) BOOL executing;
-@property (assign, getter=isCancelled) BOOL cancelled;
+#pragma mark Members
 
 //The delegate responsible for this emulator.
 @property (assign) id <BXEmulatorDelegate> delegate;
 
 //The game profile we should refer to for tweaking emulation rules.
 @property (retain) BXGameProfile *gameProfile;
+
+@property (readonly) BXInputHandler *inputHandler;	//Our DOSBox input handler.
+@property (readonly) BXVideoHandler *videoHandler;	//Our DOSBox video and rendering handler.
+
+//An array of OS X paths to configuration files that will be/have been loaded by this session during startup.
+//This is read-only: configuration files can be loaded via applyConfigurationAtPath: 
+@property (readonly) NSArray *configFiles;
+
+//An array of queued command strings to execute on the DOS command line.
+@property (readonly) NSMutableArray *commandQueue;
+
+
+#pragma mark -
+#pragma mark Introspecting emulation state
+
+//Whether the emulator is currently running/cancelled respectively. Mirrors interface of NSOperation.
+//The setters are for internal use only and should not be called outside of BXEmulator.
+@property (assign, getter=isExecuting) BOOL executing;
+@property (assign, getter=isCancelled) BOOL cancelled;
+
+//Whether DOSBox is currently running a process.
+@property (readonly) BOOL isRunningProcess;
+
+//Returns whether the current process (if any) is an internal process.
+@property (readonly) BOOL processIsInternal;
+
+//Returns whether DOSBox is currently inside a batch script.
+@property (readonly) BOOL isInBatchScript;
+
+//Returns whether DOSBox is waiting patiently at the DOS prompt doing nothing.
+@property (readonly) BOOL isAtPrompt;
+
+
+//The following three accessors are intended to be readonly;
+//they are only left as read-write for BXEmulator categories.
 
 //The name of the currently-executing DOSBox process. Will be nil if no process is running.
 @property (copy) NSString *processName;
@@ -98,19 +128,18 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 //Will be nil if no process is running or if the process is on an image or DOSBox-internal drive.
 @property (copy) NSString *processLocalPath;
 
-@property (readonly) BXInputHandler *inputHandler;	//Our DOSBox input handler.
-@property (readonly) BXVideoHandler *videoHandler;	//Our DOSBox video and rendering handler.
 
-//An array of OS X paths to configuration files that will be/have been loaded by this session during startup.
-//This is read-only: configuration files can be loaded via applyConfigurationAtPath: 
-@property (readonly) NSArray *configFiles;
+#pragma mark -
+#pragma mark Controlling emulation state
 
-//An array of queued command strings to execute on the DOS command line.
-@property (readonly) NSMutableArray *commandQueue;
+//The current fixed CPU speed.
+@property (assign) NSInteger fixedSpeed;
 
-@property (assign) NSInteger fixedSpeed;	//The current fixed CPU speed.
-@property (assign, getter=isAutoSpeed) BOOL autoSpeed;	//Whether we are running at automatic maximum speed.
-@property (assign) BXCoreMode coreMode;		//The current CPU core mode.
+//Whether we are running at automatic maximum speed.
+@property (assign, getter=isAutoSpeed) BOOL autoSpeed;
+
+//The current CPU core mode.
+@property (assign) BXCoreMode coreMode;
 
 
 #pragma mark -
@@ -125,6 +154,10 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 //Returns whether the specified process name is a DOSBox internal process (according to internalProcessNames).
 + (BOOL) isInternal: (NSString *)processName;
 
+//Returns the configuration values that reflect the specified settings.
++ (NSString *) configStringForFixedSpeed: (NSInteger)speed isAuto: (BOOL)isAutoSpeed;
++ (NSString *) configStringForCoreMode: (BXCoreMode)mode;
+
 
 #pragma mark -
 #pragma mark Controlling emulation state
@@ -138,22 +171,6 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 //Load the DOSBox configuration file at the specified path.
 //Currently, this only takes effect if done before [BXEmulator start] is called.
 - (void) applyConfigurationAtPath: (NSString *)configPath;
-
-
-#pragma mark -
-#pragma mark Introspecting emulation state
-
-//Returns whether DOSBox is currently running a process.
-- (BOOL) isRunningProcess;
-
-//Returns whether the current process (if any) is an internal process.
-- (BOOL) processIsInternal;
-
-//Returns whether DOSBox is currently inside a batch script.
-- (BOOL) isInBatchScript;
-
-//Returns whether DOSBox is waiting patiently at the DOS prompt doing nothing.
-- (BOOL) isAtPrompt;
 
 
 #pragma mark -

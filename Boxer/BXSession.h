@@ -20,6 +20,7 @@
 @class BXPackage;
 @class BXGameProfile;
 @class BXSessionWindowController;
+@class BXEmulatorConfiguration;
 
 @interface BXSession : NSDocument <BXEmulatorDelegate>
 {	
@@ -27,12 +28,15 @@
 	BXPackage *gamePackage;
 	BXGameProfile *gameProfile;
 	BXSessionWindowController *mainWindowController;
+	BXEmulatorConfiguration *runtimeConfiguration;
 	
 	NSString *targetPath;
 	NSString *activeProgramPath;
+	
 	BOOL hasStarted;
 	BOOL hasConfigured;
 	BOOL hasLaunched;
+	BOOL isClosing;
 }
 
 
@@ -65,7 +69,7 @@
 
 
 #pragma mark -
-#pragma mark Methods
+#pragma mark Lifecycle control methods
 
 //Start up the DOS emulator.
 //This is currently called automatically by showWindow, meaning that emulation starts
@@ -75,6 +79,9 @@
 //Shut down the DOS emulator.
 - (void) cancel;
 
+//Save our document-specific settings to disk. Called when the document is closed and when
+//the application is quit.
+- (void) synchronizeSettings;
 
 
 //Returns a best-guess name for the current game.

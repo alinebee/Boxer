@@ -697,14 +697,65 @@
 
 - (void) _saveRuntimeConfigurationChangesToFile: (NSString *)filePath
 {
+	//Only bother saving the configuration if any changes have been made.
 	if (![runtimeConfiguration isEmpty])
 	{
-		BXEmulatorConfiguration *config = [BXEmulatorConfiguration configurationWithContentsOfFile: filePath];
-		if (config)
+		BXEmulatorConfiguration *gameboxConf = [BXEmulatorConfiguration configurationWithContentsOfFile: filePath];
+		
+		//If a configuration file exists at that path already, then merge
+		//the changes with its existing settings.
+		if (gameboxConf)
 		{
-			[config addSettingsFromConfiguration: runtimeConfiguration];
-			[config writeToFile: filePath error: NULL];
+			[gameboxConf addSettingsFromConfiguration: runtimeConfiguration];
 		}
+		//Otherwise, use the runtime configuration as our basis
+		else gameboxConf = runtimeConfiguration;
+		
+		
+		//If we have an auto-detected game profile, check against its configuration file
+		//and eliminate any duplicate configuration parameters. This way, we don't persist
+		//settings we don't need to.
+		NSString *profileConfName = [gameProfile confName];
+		if (profileConfName)
+		{
+			NSString *profileConfPath = [[NSBundle mainBundle] pathForResource: profileConfName
+																		ofType: @"conf"
+																   inDirectory: @"Configurations"];
+			
+			BXEmulatorConfiguration *profileConf = [BXEmulatorConfiguration configurationWithContentsOfFile: profileConfPath];
+			if (profileConf)
+			{
+				//First go through the settings, checking if any are the same as the profile config's.
+				for (NSString *sectionName in [gameboxConf settings])
+				{
+					NSDictionary *section = [gameboxConf settingsForSection: sectionName];
+					for (NSString *settingName in [section allKeys])
+					{
+						NSString *gameboxValue = [gameboxConf valueForKey: settingName inSection: sectionName];
+						NSString *profileValue = [profileConf valueForKey: settingName inSection: sectionName];
+						
+						//If the value we'd be persisting is the same as the profile's value,
+						//remove it from the persisted configuration file.
+						if ([gameboxValue isEqualToString: profileValue])
+							[gameboxConf removeValueForKey: settingName inSection: sectionName];
+					}
+				}
+				
+				//Now, eliminate duplicate startup commands too.
+				//IMPLEMENTATION NOTE: for now we leave the startup commands alone unless the two sets
+				//have exactly the same commands in the same order. There's too many risks involved 
+				//for us to remove partial sets of duplicate startup commands.
+				NSArray *profileCommands = [profileConf startupCommands];
+				NSArray *gameboxCommands = [gameboxConf startupCommands];
+				
+				if ([gameboxCommands isEqualToArray: profileCommands])
+					[gameboxConf removeStartupCommands];
+			}
+		}
+		
+		//The previous filtering may have left the configuration file empty but that's ok;
+		//this way we replace outdated duplicate configurations with empty ones.
+		[gameboxConf writeToFile: filePath error: NULL];
 	}
 }
 

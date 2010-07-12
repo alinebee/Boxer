@@ -7,7 +7,7 @@
 
 
 #import "NSString+BXWordWrap.h"
-
+#import "BXLineEnumerator.h"
 
 #pragma mark -
 #pragma mark Private method declarations
@@ -15,10 +15,10 @@
 @interface NSString ()
 
 //Returns an array of word-wrapped lines. This doesn't handle hard linebreaks at all.
-- (NSArray *) _linesWrappedByWordAtLength: (NSUInteger)lineLength;
+- (NSArray *) _linesWrappedByWordAtLength: (NSUInteger)maxLength;
 
 //Returns an array of character-wrapped lines. This doesn't handle hard linebreaks at all.
-- (NSArray *) _linesWrappedByCharacterAtLength: (NSUInteger)lineLength;
+- (NSArray *) _linesWrappedByCharacterAtLength: (NSUInteger)maxLength;
 
 @end
 
@@ -28,63 +28,66 @@
 
 @implementation NSString (BXWordWrap)
 
-- (NSArray *) componentsSplitAtLineLength: (NSUInteger)lineLength atWordBoundaries: (BOOL)wordWrap
+- (NSEnumerator *)lineEnumerator
 {
-	//First, get an array of all the lines we have owing to hard linebreaks.
-	//We will then go through these lines breaking them up by line length.
-	NSArray *existingLines = [self componentsSeparatedByCharactersInSet: [NSCharacterSet newlineCharacterSet]];
+	return [[[BXLineEnumerator alloc] initWithString: self] autorelease];
+}
+
+- (NSArray *) componentsSplitAtLineLength: (NSUInteger)maxLength atWordBoundaries: (BOOL)wordWrap
+{
+	NSUInteger length = [self length];
 	
 	//We will stuff all our actual lines into this
-	NSMutableArray *wrappedLines = [NSMutableArray arrayWithCapacity: (NSUInteger)ceilf([self length] / (float)lineLength)];
+	NSMutableArray *wrappedLines = [NSMutableArray arrayWithCapacity: (NSUInteger)ceilf(length / (float)maxLength)];
 	
-	if (wordWrap)
-	{		
-		for (NSString *originalLine in existingLines)
-		{
-			[wrappedLines addObjectsFromArray: [originalLine _linesWrappedByWordAtLength: lineLength]];
-		}
-	}
-	else
+	//Walk over every line of the string
+	for (NSString *line in [self lineEnumerator])
 	{
-		for (NSString *originalLine in existingLines)
+		//If the line is already shorter than our max line length, add it directly
+		if ([line length] <= maxLength)
 		{
-			
-			[wrappedLines addObjectsFromArray: [originalLine _linesWrappedByCharacterAtLength: lineLength]];
+			[wrappedLines addObject: line];
 		}
+		//Otherwise, split the line into smaller lines to fit into the max line length
+		else
+		{
+			NSArray *subLines;
+			if (wordWrap)	subLines = [line _linesWrappedByWordAtLength: maxLength];
+			else			subLines = [line _linesWrappedByCharacterAtLength: maxLength];
+			[wrappedLines addObjectsFromArray: subLines];
+		}
+
 	}
 	return wrappedLines;
 }
 
-- (NSString *) stringWordWrappedAtLineLength: (NSUInteger)lineLength withJoiner: (NSString *)joiner
+- (NSString *) stringWordWrappedAtLineLength: (NSUInteger)maxLength withJoiner: (NSString *)joiner
 {
-	return [[self componentsSplitAtLineLength: lineLength atWordBoundaries: YES] componentsJoinedByString: joiner];
+	return [[self componentsSplitAtLineLength: maxLength atWordBoundaries: YES] componentsJoinedByString: joiner];
 }
-- (NSString *) stringCharacterWrappedAtLineLength: (NSUInteger)lineLength withJoiner: (NSString *)joiner
+- (NSString *) stringCharacterWrappedAtLineLength: (NSUInteger)maxLength withJoiner: (NSString *)joiner
 {
-	return [[self componentsSplitAtLineLength: lineLength atWordBoundaries: NO] componentsJoinedByString: joiner];
+	return [[self componentsSplitAtLineLength: maxLength atWordBoundaries: NO] componentsJoinedByString: joiner];
 }
 
 
 #pragma mark -
 #pragma mark Private methods
 
-- (NSArray *) _linesWrappedByWordAtLength: (NSUInteger)lineLength
+- (NSArray *) _linesWrappedByWordAtLength: (NSUInteger)maxLength
 {
 	NSUInteger length = [self length];
-
-	//If the string is already short enough, return it directly
-	if (length <= lineLength)
-		return [NSArray arrayWithObject: [NSString stringWithString: self]];
+	NSMutableArray *lines = [NSMutableArray arrayWithCapacity: (NSUInteger)ceilf(length / (float)maxLength)];
 	
-	NSMutableArray *lines = [NSMutableArray arrayWithCapacity: (NSUInteger)ceilf(length / (float)lineLength)];
-	
-	NSCharacterSet *whitespaceChars	= [NSCharacterSet whitespaceAndNewlineCharacterSet];
+	//IMPLEMENTATION NOTE: we've already split on linebreaks upstream in componentsSplitAtLineLength:atWordBoundaries,
+	//so we don't check for them again here. It would probably be quicker to do it all in one go here though.
+	NSCharacterSet *whitespaceChars	= [NSCharacterSet whitespaceCharacterSet];
 	NSCharacterSet *wordChars		= [whitespaceChars invertedSet];
 	
 	NSScanner *scanner = [NSScanner scannerWithString: self];
 	[scanner setCharactersToBeSkipped: nil];
 	
-	NSMutableString *currentLine = [[NSMutableString alloc] initWithCapacity: lineLength];
+	NSMutableString *currentLine = [[NSMutableString alloc] initWithCapacity: maxLength];
 	NSString *currentChunk = nil;
 	
 	BOOL grabWhitespace = NO;
@@ -95,7 +98,7 @@
 		if ([scanner scanCharactersFromSet: charSet intoString: &currentChunk])
 		{
 			//If this chunk won't fit on the end of the line, push the current line and start a new one
-			if (([currentLine length] + [currentChunk length]) > lineLength)
+			if (([currentLine length] + [currentChunk length]) > maxLength)
 			{
 				[lines addObject: [NSString stringWithString: currentLine]];
 				
@@ -115,21 +118,16 @@
 	return lines;
 }
 
-- (NSArray *) _linesWrappedByCharacterAtLength: (NSUInteger)lineLength
+- (NSArray *) _linesWrappedByCharacterAtLength: (NSUInteger)maxLength
 {
 	NSUInteger length = [self length];
-	
-	//If the string is already short enough, return it directly
-	if (length <= lineLength)
-		return [NSArray arrayWithObject: [NSString stringWithString: self]];
-
 	NSUInteger offset = 0;
 	
-	NSMutableArray *lines = [NSMutableArray arrayWithCapacity: (NSUInteger)ceilf(length / (float)lineLength)];
+	NSMutableArray *lines = [NSMutableArray arrayWithCapacity: (NSUInteger)ceilf(length / (float)maxLength)];
 	
 	while (offset < length)
 	{
-		NSUInteger range = MIN(lineLength, length - offset);
+		NSUInteger range = MIN(maxLength, length - offset);
 		[lines addObject: [self substringWithRange: NSMakeRange(offset, range)]];
 		offset += range;
 	}

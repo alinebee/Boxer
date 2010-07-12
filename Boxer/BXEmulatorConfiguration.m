@@ -334,27 +334,12 @@ NSString * const emptyFormat = @"^\\s*$";
 
 - (void) _parseSettingsFromString: (NSString *)configuration
 {
-	NSUInteger length = [configuration length];
-	NSUInteger lineStart = 0, lineEnd = 0, contentsEnd = 0;
-	
 	NSString *sectionName = nil;
 	BOOL isInAutoexec = NO;
 		
 	//Walk over every line of the configuration string
-	while (lineEnd < length)
+	for (NSString *line in [configuration lineEnumerator])
 	{
-		
-		//This bit was copy-pasted from string programming guide basically
-		[configuration getLineStart: &lineStart
-								end: &lineEnd
-						contentsEnd: &contentsEnd
-						   forRange: NSMakeRange(lineEnd, 0)];
-		
-		NSRange currentRange = NSMakeRange(lineStart, contentsEnd - lineStart);
-		
-		NSString *line = [configuration substringWithRange: currentRange];
-		
-		
 		//Ignore empty and comment lines
 		if (!([line isEqualToString: @""] || [line isMatchedByRegex: emptyFormat] || [line isMatchedByRegex: commentFormat]))
 		{

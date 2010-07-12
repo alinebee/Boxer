@@ -189,6 +189,7 @@
 		9F9FE70410FA5F5800E3944B /* NSWorkspace+BXIcons.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9FE70310FA5F5800E3944B /* NSWorkspace+BXIcons.m */; };
 		9FA2E596109D251100E50623 /* BGHUDAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FA2E595109D251100E50623 /* BGHUDAppKit.framework */; };
 		9FA2E5D9109D255300E50623 /* BGHUDAppKit.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FA2E595109D251100E50623 /* BGHUDAppKit.framework */; };
+		9FA5D68311EB6CCC0012DFA5 /* BXLineEnumerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA5D68211EB6CCC0012DFA5 /* BXLineEnumerator.m */; };
 		9FA85CD510A357A600E6457F /* BXSession+BXFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA85CD410A357A600E6457F /* BXSession+BXFileManager.m */; };
 		9FAA44A711EB24A90042B986 /* NSString+BXWordWrap.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAA44A611EB24A90042B986 /* NSString+BXWordWrap.m */; };
 		9FAA451511EB40180042B986 /* Configuration.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9FAA451411EB40180042B986 /* Configuration.strings */; };
@@ -614,6 +615,8 @@
 		9F9FE70210FA5F5800E3944B /* NSWorkspace+BXIcons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSWorkspace+BXIcons.h"; sourceTree = "<group>"; };
 		9F9FE70310FA5F5800E3944B /* NSWorkspace+BXIcons.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSWorkspace+BXIcons.m"; sourceTree = "<group>"; };
 		9FA2E595109D251100E50623 /* BGHUDAppKit.framework */ = {isa = PBXFileReference; comments = "This is the BGHUDAppkit framework 0.9 from http://www.binarymethod.com/bghudappkit/ compiled from source with our own modifications, which are provided as a diff in the BGHUDAppKit source folder."; explicitFileType = wrapper.framework; path = BGHUDAppKit.framework; sourceTree = "<group>"; };
+		9FA5D68111EB6CCC0012DFA5 /* BXLineEnumerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXLineEnumerator.h; sourceTree = "<group>"; };
+		9FA5D68211EB6CCC0012DFA5 /* BXLineEnumerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXLineEnumerator.m; sourceTree = "<group>"; };
 		9FA85CD310A357A600E6457F /* BXSession+BXFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXSession+BXFileManager.h"; sourceTree = "<group>"; };
 		9FA85CD410A357A600E6457F /* BXSession+BXFileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXSession+BXFileManager.m"; sourceTree = "<group>"; };
 		9FAA445511EB1CC40042B986 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Configuration.strings; sourceTree = "<group>"; };
@@ -1454,6 +1457,8 @@
 				9FDD4CB411E619D50035BA9E /* CGSPrivate.h */,
 				9FAA44A511EB24A90042B986 /* NSString+BXWordWrap.h */,
 				9FAA44A611EB24A90042B986 /* NSString+BXWordWrap.m */,
+				9FA5D68111EB6CCC0012DFA5 /* BXLineEnumerator.h */,
+				9FA5D68211EB6CCC0012DFA5 /* BXLineEnumerator.m */,
 			);
 			path = BXToolkit;
 			sourceTree = "<group>";
@@ -1878,6 +1883,7 @@
 				9F5DCB5411B2C0E700552966 /* shell_misc.cpp in Sources */,
 				9FF2E9BD11E6F4950051E485 /* BXEmulatorConfiguration.m in Sources */,
 				9FAA44A711EB24A90042B986 /* NSString+BXWordWrap.m in Sources */,
+				9FA5D68311EB6CCC0012DFA5 /* BXLineEnumerator.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

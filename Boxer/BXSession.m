@@ -166,7 +166,6 @@
 	return hasConfigured;
 }
 
-//Create our DOSBox emulator and add it to the operations queue
 - (void) start
 {
 	//We schedule our internal _startEmulator method to be called separately on the main thread,

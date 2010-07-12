@@ -311,6 +311,9 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	if ([theDocument respondsToSelector: @selector(synchronizeSettings)]) [(id)theDocument synchronizeSettings];
 
 	[super removeDocument: theDocument];
+	
+	//Also hide the Inspector panel if there's no longer any sessions open
+	if (![self currentSession]) [self setInspectorPanelShown: NO];
 }
 
 
@@ -398,9 +401,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 {	
 	SEL theAction = [theItem action];
 	
-	//Disable actions that would open new sessions once we already have one active
-	//if (theAction == @selector(newDocument:))			return [self currentSession] == nil;
-	//if (theAction == @selector(openDocument:))			return [self currentSession] == nil;
+	//Don't allow the Inspector panel to be shown if there's no active session.
 	if (theAction == @selector(toggleInspectorPanel:))	return [self currentSession] != nil;
 	
 	return [super validateUserInterfaceItem: theItem];

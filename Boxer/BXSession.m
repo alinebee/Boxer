@@ -20,10 +20,17 @@
 #import "NSString+BXPaths.h"
 
 
+//How we will store our gamebox-specific settings in user defaults.
+//%@ is the unique identifier for the gamebox.
+NSString * const BXGameboxSettingsKeyFormat = @"Gamebox Settings %@";
+
+
 #pragma mark -
 #pragma mark Private method declarations
 
 @interface BXSession ()
+@property (readwrite, retain, nonatomic) NSMutableDictionary *gameSettings;
+@property (readwrite, copy, nonatomic) NSString *activeProgramPath;
 
 //Create our BXEmulator instance and starts its main loop.
 //Called internally by [BXSession start], deferred to the end of the main thread's event loop to prevent
@@ -40,7 +47,7 @@
 - (void) _launchTarget;
 
 //Called once the session has exited to save any DOSBox settings we have changed to the gamebox conf.
-- (void) _saveRuntimeConfigurationChangesToFile: (NSString *)filePath;
+- (void) _saveConfiguration: (BXEmulatorConfiguration *)configuration toFile: (NSString *)filePath;
 @end
 
 
@@ -55,6 +62,7 @@
 @synthesize targetPath;
 @synthesize activeProgramPath;
 @synthesize gameProfile;
+@synthesize gameSettings;
 
 
 #pragma mark -
@@ -65,7 +73,7 @@
 	if ((self = [super init]))
 	{
 		[self setEmulator: [[[BXEmulator alloc] init] autorelease]];
-		runtimeConfiguration = [[BXEmulatorConfiguration alloc] init];
+		[self setGameSettings: [NSMutableDictionary dictionaryWithCapacity: 10]];
 		
 	}
 	return self;
@@ -73,12 +81,11 @@
 
 - (void) dealloc
 {
-	[runtimeConfiguration release], runtimeConfiguration = nil;
-
 	[self setMainWindowController: nil],[mainWindowController release];
 	[self setEmulator: nil],			[emulator release];
 	[self setGamePackage: nil],			[gamePackage release];
 	[self setGameProfile: nil],			[gameProfile release];
+	[self setGameSettings: nil],		[gameSettings release];
 	[self setTargetPath: nil],			[targetPath release];
 	[self setActiveProgramPath: nil],	[activeProgramPath release];
 		
@@ -109,6 +116,31 @@
 	
 	//Start the emulator as soon as our windows appear
 	[self start];
+}
+
+- (void) setGamePackage: (BXPackage *)package
+{
+	[self willChangeValueForKey: @"gamePackage"];
+	
+	if (package != gamePackage)
+	{
+		[gamePackage release];
+		gamePackage = [package retain];
+		
+		//Also load up the settings for this gamebox
+		if (gamePackage)
+		{
+			NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+			NSString *defaultsKey = [NSString stringWithFormat: BXGameboxSettingsKeyFormat, [gamePackage bundleIdentifier], nil];
+			
+			NSDictionary *gameboxSettings = [defaults objectForKey: defaultsKey];
+			
+			//Merge the loaded values in rather than replacing the settings altogether.
+			[gameSettings addEntriesFromDictionary: gameboxSettings]; 
+		}
+	}
+	
+	[self didChangeValueForKey: @"gamePackage"];
 }
 
 - (void) setEmulator: (BXEmulator *)newEmulator
@@ -200,8 +232,42 @@
 {
 	if ([self isGamePackage])
 	{
+		//Go through the settings working out which ones we should store in user defaults,
+		//and which ones in the gamebox's configuration file.
+		BXEmulatorConfiguration *gameboxConf = [BXEmulatorConfiguration configuration];
+		
+		//These are the settings we want to keep in the configuration file
+		NSNumber *fixedSpeed	= [gameSettings objectForKey: @"fixedSpeed"];
+		NSNumber *isAutoSpeed	= [gameSettings objectForKey: @"autoSpeed"];
+		NSNumber *coreMode		= [gameSettings objectForKey: @"coreMode"];
+		
+		//Strip out these settings so we won't preserve them in user defaults
+		[gameSettings removeObjectsForKeys: [NSArray arrayWithObjects: @"fixedSpeed", @"autoSpeed", @"coreMode", nil]];
+		
+		if (coreMode)
+		{
+			NSString *coreString = [BXEmulator configStringForCoreMode: [coreMode integerValue]];
+			[gameboxConf setValue: coreString forKey: @"core" inSection: @"cpu"];
+		}
+		
+		if (fixedSpeed || isAutoSpeed)
+		{
+			NSString *cyclesString = [BXEmulator configStringForFixedSpeed: [fixedSpeed integerValue]
+																	isAuto: [isAutoSpeed boolValue]];
+			[gameboxConf setValue: cyclesString forKey: @"cycles" inSection: @"cpu"];
+		}
+		
+		//Persist the gamebox-specific configuration into the gamebox's configuration file.
 		NSString *configPath = [[self gamePackage] configurationFilePath];
-		if (configPath) [self _saveRuntimeConfigurationChangesToFile: configPath]; 
+		[self _saveConfiguration: gameboxConf toFile: configPath]; 
+		
+		//Save whatever's left into user defaults.
+		if ([gameSettings count])
+		{
+			NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+			NSString *defaultsKey = [NSString stringWithFormat: BXGameboxSettingsKeyFormat, [[self gamePackage] bundleIdentifier], nil];
+			[defaults setObject: gameSettings forKey: defaultsKey];			
+		}
 	}
 }
 
@@ -275,14 +341,6 @@
 }
 
 - (BOOL) isGamePackage	{ return ([self gamePackage] != nil); }
-
-//Returns a unique identifier for the package 
-- (NSString *) uniqueIdentifier
-{
-	if (![self isGamePackage]) return nil;
-	//The path is too brittle, so instead we use the display name. This, in turn, is probably both too lenient and still too brittle. What we really ought to do is use an alias as the unique ID, but those are complicated to make and bulky to store.
-	else return [self gameDisplayName];
-}
 
 - (NSImage *)representedIcon
 {
@@ -383,6 +441,7 @@
 	return [documentation allValues];
 }
 
++ (NSSet *) keyPathsForValuesAffectingIsGamePackage		{ return [NSSet setWithObject: @"gamePackage"]; }
 + (NSSet *) keyPathsForValuesAffectingRepresentedIcon	{ return [NSSet setWithObject: @"gamePackage.coverArt"]; }
 + (NSSet *) keyPathsForValuesAffectingDocumentation		{ return [NSSet setWithObject: @"gamePackage.documentation"]; }
 + (NSSet *) keyPathsForValuesAffectingExecutables
@@ -663,11 +722,19 @@
 	[self didChangeValueForKey: @"isEmulating"];
 }
 
-//After all preflight configuration has finished, go ahead and open whatever file we're pointing at
 - (void) _launchTarget
 {
 	hasLaunched = YES;
 	
+	//Do any just-in-time configuration, which should override all previous startup stuff
+	NSNumber *frameskip = [gameSettings objectForKey: @"frameskip"];
+	
+	//Set the frameskip setting if it's valid
+	if (frameskip && [self validateValue: &frameskip forKey: @"frameskip" error: nil])
+		[self setValue: frameskip forKey: @"frameskip"];
+	
+	
+	//After all preflight configuration has finished, go ahead and open whatever file we're pointing at
 	NSString *target = [self targetPath];
 	if (target)
 	{
@@ -682,13 +749,13 @@
 	}
 }
 
-- (void) _saveRuntimeConfigurationChangesToFile: (NSString *)filePath
+- (void) _saveConfiguration: (BXEmulatorConfiguration *)configuration toFile: (NSString *)filePath
 {
 	NSFileManager *manager = [NSFileManager defaultManager];
 	BOOL fileExists = [manager fileExistsAtPath: filePath];
 	
 	//Save the configuration if any changes have been made, or if the file at that path does not exist.
-	if (!fileExists || ![runtimeConfiguration isEmpty])
+	if (!fileExists || ![configuration isEmpty])
 	{
 		BXEmulatorConfiguration *gameboxConf = [BXEmulatorConfiguration configurationWithContentsOfFile: filePath];
 		
@@ -696,10 +763,10 @@
 		//the changes with its existing settings.
 		if (gameboxConf)
 		{
-			[gameboxConf addSettingsFromConfiguration: runtimeConfiguration];
+			[gameboxConf addSettingsFromConfiguration: configuration];
 		}
 		//Otherwise, use the runtime configuration as our basis
-		else gameboxConf = runtimeConfiguration;
+		else gameboxConf = configuration;
 		
 		
 		//Add comment preambles to saved configuration

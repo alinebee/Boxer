@@ -142,7 +142,8 @@
 	//use the autosaved window size for that game
 	if ([[self document] isGamePackage])
 	{
-		[self setFrameAutosaveName: [[self document] uniqueIdentifier]];
+		NSString *gameboxIdentifier = [[[self document] gamePackage] bundleIdentifier];
+		if (gameboxIdentifier) [self setFrameAutosaveName: gameboxIdentifier];
 	}
 	else
 	{

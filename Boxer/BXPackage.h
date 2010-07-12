@@ -21,6 +21,8 @@
 	NSArray *documentation;
 	NSArray *executables;
 	NSString *targetPath;
+	NSMutableDictionary *generatedDict;
+	BOOL checkedForPlist;
 }
 
 #pragma mark -

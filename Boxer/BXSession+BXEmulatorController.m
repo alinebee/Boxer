@@ -86,7 +86,7 @@
 	[[emulator videoHandler] setFrameskip: frameskip];
 	[self didChangeValueForKey: @"frameskip"];
 	
-	//TODO: preserve the frameskip setting in per-document user defaults 
+	[gameSettings setObject: [NSNumber numberWithUnsignedInteger: frameskip] forKey: @"frameskip"];
 }
 
 - (BOOL) validateFrameskip: (id *)ioValue error: (NSError **)outError
@@ -124,9 +124,7 @@
 	[self didChangeValueForKey: @"autoSpeed"];
 	
 	//Preserve changes to the speed settings
-	NSString *speedDescription = [BXEmulator configStringForFixedSpeed: [self fixedSpeed]
-															   isAuto: [self isAutoSpeed]];
-	[runtimeConfiguration setValue: speedDescription forKey: @"cycles" inSection: @"cpu"];
+	[gameSettings setObject: [NSNumber numberWithBool: isAuto] forKey: @"autoSpeed"];
 }
 
 - (NSInteger) fixedSpeed
@@ -140,10 +138,7 @@
 	[emulator setFixedSpeed: fixedSpeed];
 	[self didChangeValueForKey: @"fixedSpeed"];
 	
-	//Preserve changes to the speed settings
-	NSString *speedDescription = [BXEmulator configStringForFixedSpeed: [self fixedSpeed]
-															   isAuto: [self isAutoSpeed]];
-	[runtimeConfiguration setValue: speedDescription forKey: @"cycles" inSection: @"cpu"];
+	[gameSettings setObject: [NSNumber numberWithInteger: fixedSpeed] forKey: @"fixedSpeed"];
 }
 
 - (BOOL) validateFixedSpeed: (id *)ioValue error: (NSError **)outError
@@ -206,9 +201,7 @@
 	[emulator setCoreMode: dynamic ? BXCoreDynamic : BXCoreNormal];
 	[self didChangeValueForKey: @"dynamic"];
 	
-	//Preserve changes to the core mode
-	NSString *coreDescription = [BXEmulator configStringForCoreMode: [emulator coreMode]];
-	[runtimeConfiguration setValue: coreDescription forKey: @"core" inSection: @"cpu"];
+	[gameSettings setObject: [NSNumber numberWithInteger: [emulator coreMode]] forKey: @"coreMode"];
 }
 
 

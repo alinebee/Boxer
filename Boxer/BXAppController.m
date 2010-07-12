@@ -297,8 +297,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	[super addDocument: theDocument];
 	if ([theDocument isMemberOfClass: [BXSession class]])
 	{
-		BXSession *theSession = (BXSession *)theDocument;
-		[self setCurrentSession: theSession];
+		[self setCurrentSession: (BXSession *)theDocument];
 		hasLaunchedSession = YES;
 	}
 }

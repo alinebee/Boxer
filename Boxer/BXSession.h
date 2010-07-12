@@ -20,15 +20,15 @@
 @class BXPackage;
 @class BXGameProfile;
 @class BXSessionWindowController;
-@class BXEmulatorConfiguration;
 
 @interface BXSession : NSDocument <BXEmulatorDelegate>
 {	
 	BXEmulator *emulator;
 	BXPackage *gamePackage;
 	BXGameProfile *gameProfile;
+	NSMutableDictionary *gameSettings;
+	
 	BXSessionWindowController *mainWindowController;
-	BXEmulatorConfiguration *runtimeConfiguration;
 	
 	NSString *targetPath;
 	NSString *activeProgramPath;
@@ -44,28 +44,36 @@
 #pragma mark Properties
 
 //The main window controller, responsible for the BXSessionWindow that displays this session.
-@property (retain) BXSessionWindowController *mainWindowController;
+@property (retain, nonatomic) BXSessionWindowController *mainWindowController;
 
 //The underlying emulator process for this session. This is created during [BXSession start].
-@property (retain) BXEmulator *emulator;
+@property (retain, nonatomic) BXEmulator *emulator;
 
 //The gamebox for this session. BXSession retrieves bundled drives, configuration files and
 //target program from this during emulator configuration.
 //Will be nil if an executable file or folder was opened outside of a gamebox.
-@property (retain) BXPackage *gamePackage;
+@property (retain, nonatomic) BXPackage *gamePackage;
 
 //The autodetected game profile for this session. Used for various emulator configuration tasks.
-@property (retain) BXGameProfile *gameProfile;
+@property (retain, nonatomic) BXGameProfile *gameProfile;
+
+//A general store of configuration settings for this session.
+//These are retrieved and stored in the user defaults system, keyed to each gamebox
+//(the settings for 'regular' sessions are not stored).
+@property (readonly, retain, nonatomic) NSMutableDictionary *gameSettings;
 
 //The OS X path of the executable to launch (or folder to switch to) when the emulator starts.
-@property (copy) NSString *targetPath;
+@property (copy, nonatomic) NSString *targetPath;
 
 //The OS X path of the currently executing DOS program or batch file. Will be nil if the
 //emulator is at the DOS prompt, or when Boxer has no idea what program is running.
-@property (copy) NSString *activeProgramPath;
+@property (readonly, copy, nonatomic) NSString *activeProgramPath;
 
 //Whether the emulator session is initialized and ready to receive instructions.
 @property (readonly) BOOL isEmulating;
+
+//Whether this session represents a gamebox.
+@property (readonly) BOOL isGamePackage;
 
 
 #pragma mark -
@@ -92,16 +100,6 @@
 //Returns nil if there is currently no process executing.
 - (NSString *) processDisplayName;
 
-
-
-//Returns whether this session has a gamebox or not.
-//TODO: replace this with just a check against [BXSession gamePackage].
-- (BOOL) isGamePackage;
-
-//A 'unique' identifier for the current session, currently equivalent to the gamebox filename.
-//This is used to persist gamebox-specific data such as window size.
-//TODO: this belongs as a property of the underlying gamebox instead.
-- (NSString *) uniqueIdentifier;
 
 //The icon for this DOS session. Currently this corresponds exactly to the gamebox's cover art image.
 - (NSImage *)representedIcon;

@@ -10,6 +10,7 @@
 #import "NSWorkspace+BXFileTypes.h"
 #import "NSWorkspace+BXIcons.h"
 #import "BXAppController.h"
+#import "RegexKitLite.h"
 
 
 @interface BXPackage ()
@@ -18,6 +19,9 @@
 - (NSArray *) _foundDocumentation;
 - (NSArray *) _foundExecutables;
 - (NSArray *) _foundResourcesOfTypes: (NSArray *)fileTypes startingIn: (NSString *)basePath;
+
+//Returns a new auto-generated bundle identifier based on this gamebox's name.
+- (NSString *) _generatedBundleIdentifier;
 @end
 
 
@@ -80,6 +84,7 @@
 
 - (void) dealloc
 {
+	[generatedDict release], generatedDict = nil;
 	[self setDocumentation: nil],	[documentation release];
 	[self setExecutables: nil],		[executables release];
 	[super dealloc];
@@ -215,6 +220,35 @@
 	return documentation;
 }
 
+//If a dictionary doesn't already exist, then generate one with prepopulated values
+- (NSDictionary *) infoDictionary
+{
+	if (!checkedForPlist)
+	{
+		checkedForPlist = YES;
+		NSString *plistPath = [[self bundlePath] stringByAppendingPathComponent: @"Info.plist"];
+		NSFileManager *manager = [NSFileManager defaultManager];
+		
+		if (![manager fileExistsAtPath: plistPath])
+		{
+			//Generate a new bundle identifier for this gamebox
+			NSString *bundleIdentifier = [self _generatedBundleIdentifier];
+			generatedDict = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
+							 bundleIdentifier, @"CFBundleIdentifier",
+							 nil];
+			[generatedDict writeToFile: plistPath atomically: YES];
+			
+			[generatedDict addEntriesFromDictionary: [super infoDictionary]];
+		}		
+	}
+	
+	//NSBundle won't pick up that the info dictionary has changed,
+	//so we have to return our one for now
+	//(next time the document is loaded, the new dictionary will be in place.)
+	if (generatedDict) return generatedDict;
+	else return [super infoDictionary];
+}
+
 
 #pragma mark -
 #pragma mark Private methods
@@ -264,6 +298,32 @@
 		if ([fileTypes containsObject: [workspace typeOfFile: filePath error: nil]]) [matches addObject: filePath];
 	}
 	return matches;	
+}
+
+- (NSString *) _generatedBundleIdentifier
+{
+	NSFileManager *manager = [NSFileManager defaultManager];
+	NSString *bundlePath = [self bundlePath];
+	NSString *displayName = [manager displayNameAtPath: bundlePath];
+	
+	//Strip the extension if it's .boxer, but don't strip any other extension as it could be a version number component.
+	if ([[[displayName pathExtension] lowercaseString] isEqualToString: @"boxer"])
+		displayName = [displayName stringByDeletingPathExtension];
+	
+	
+	//Generate a UUID for the bundle identifier
+	CFUUIDRef     UUID;
+	CFStringRef   UUIDString;
+	
+	UUID = CFUUIDCreate(kCFAllocatorDefault);
+	UUIDString = CFUUIDCreateString(kCFAllocatorDefault, UUID);
+	
+	NSString *nameWithUUID = [NSString stringWithFormat: @"%1$@ %2$@", displayName, (NSString *)UUIDString, nil];
+	
+	CFRelease(UUID);
+	CFRelease(UUIDString);
+	
+	return nameWithUUID;
 }
 
 @end

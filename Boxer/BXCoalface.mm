@@ -119,7 +119,7 @@ const char * boxer_localizedStringForKey(char const *keyStr)
 	NSString *theKey			= [NSString stringWithCString: keyStr encoding: BXDirectStringEncoding];
 	NSString *localizedString	= [[NSBundle mainBundle]
 								   localizedStringForKey: theKey
-								   value: nil
+								   value: @"" //If the key isn't found, display nothing
 								   table: @"DOSBox"];
 	
 	return [localizedString cStringUsingEncoding: BXDisplayStringEncoding];

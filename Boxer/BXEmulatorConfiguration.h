@@ -9,21 +9,36 @@
 //BXEmulatorConfiguration is a Property List-style parser for configuration files in DOSBox format.
 //It can read and write conf files, though it is not currently able to preserve layout and comments.
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
 @interface BXEmulatorConfiguration : NSObject
 {
 	//Our private storage of configuration sections
 	NSMutableDictionary *sections;
+	
+	NSString *preamble;
+	NSString *startupCommandsPreamble;
 }
-//Returns a dictionary of all settings organised by section (not including startup commands)
-@property (readonly) NSDictionary *settings;
 
-//Returns an array of all startup commands
-@property (readonly) NSArray *startupCommands;
+#pragma mark -
+#pragma mark Properties
 
-//Whether the configuration has any settings or startup commands in it
-@property (readonly) BOOL isEmpty;
+//Whether the configuration has any settings or startup commands in it.
+@property (readonly, nonatomic) BOOL isEmpty;
+
+//Returns a dictionary of all settings organised by section (not including startup commands.)
+@property (readonly, nonatomic) NSDictionary *settings;
+
+//Returns an array of all startup commands.
+@property (readonly, nonatomic) NSArray *startupCommands;
+
+//A string to prepend as a header comment at the start of the configuration file.
+//Used by description and writeToFile:error:
+@property (copy, nonatomic) NSString *preamble;
+
+//A string to prepend as a section comment to the start of the autoexec block.
+//Used by description and writeToFile:error:
+@property (copy, nonatomic) NSString *startupCommandsPreamble;
 
 
 #pragma mark -

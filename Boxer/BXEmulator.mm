@@ -5,6 +5,9 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
+//For NSEvent and NSApp
+#import <Cocoa/Cocoa.h>
+
 #import "BXEmulator.h"
 #import "BXEmulatorDelegate.h"
 

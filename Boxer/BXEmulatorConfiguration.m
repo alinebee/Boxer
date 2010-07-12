@@ -8,15 +8,20 @@
 
 #import "BXEmulatorConfiguration.h"
 #import "BXEmulator.h" //For encodings
+#import "NSString+BXWordWrap.h"
 #import "RegexKitLite.h"
 
 
 //The number of DOSBox configuration sections we know exist.
-//Used only for determining initial dictionary size.
+//Used only for determining initial dictionary size and has no effect on behaviour.
 #define BXNumKnownSections 13
 
 //The initial size to use when constructing DOSBox-format string representations of a configuration.
+//Used only for determining initial string size and has no effect on behaviour.
 #define BXInitialFormattedStringSize 200
+
+//The line length to which to wrap configuration files.
+#define BXConfigurationWordWrap 76
 
 
 #pragma mark -
@@ -50,11 +55,14 @@ NSString * const emptyFormat = @"^\\s*$";
 //as a DOSBox-format configuration string.
 - (NSString *) _formattedStringFromSettings;
 
+//Returns an NSString-formatted comment
++ (NSString *) _formatAsComment: (NSString *)comment wrappedAtLineLength: (NSUInteger)wordWrap;
+
 @end
 
 
 @implementation BXEmulatorConfiguration
-
+@synthesize preamble, startupCommandsPreamble;
 
 #pragma mark -
 #pragma mark Initialization and teardown
@@ -391,6 +399,14 @@ NSString * const emptyFormat = @"^\\s*$";
 {
 	NSMutableString *formattedString = [NSMutableString stringWithCapacity: BXInitialFormattedStringSize];
 	
+	//Add the initial header comment, if we have one
+	if ([[self preamble] length])
+	{
+		NSString *preambleComment = [[self class] _formatAsComment: [self preamble]
+											   wrappedAtLineLength: BXConfigurationWordWrap];
+		[formattedString appendString: preambleComment];
+	}
+	
 	for (NSString *sectionName in [sections keyEnumerator])
 	{
 		//Skip autoexec commands for now: we process them separately at the end
@@ -414,10 +430,18 @@ NSString * const emptyFormat = @"^\\s*$";
 
 	//Now add the startup commands to the end
 	NSArray *commands = [self startupCommands];
-	if ([commands count])
+	if ([self startupCommandsPreamble] || [commands count])
 	{
 		//Add a header for the section
 		[formattedString appendString: @"\n[autoexec]\n"];
+		
+		//Add the header comment if one was provided
+		if ([[self startupCommandsPreamble] length])
+		{
+			NSString *startupPreambleComment = [[self class] _formatAsComment: [self startupCommandsPreamble]
+														  wrappedAtLineLength: BXConfigurationWordWrap];
+			[formattedString appendString: startupPreambleComment];
+		}
 		
 		for (NSString *command in commands)
 		{
@@ -427,6 +451,17 @@ NSString * const emptyFormat = @"^\\s*$";
 	
 	//Aaaand we're done!
 	return formattedString;
+}
+
++ (NSString *) _formatAsComment: (NSString *)comment wrappedAtLineLength: (NSUInteger)lineLength
+{
+	NSString *joiner = @"\n# ";
+	lineLength -= [joiner length] + 1; //Compensate for the extra joining characters
+	NSArray *commentLines = [comment componentsSplitAtLineLength: lineLength atWordBoundaries: YES];
+	
+	
+	NSString *commentedString = [NSString stringWithFormat: @"# %@\n", [commentLines componentsJoinedByString: joiner], nil];
+	return commentedString;
 }
 
 @end

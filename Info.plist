@@ -34,6 +34,8 @@
 	<string>http://boxerapp.com/donate</string>
 	<key>HelpURL</key>
 	<string>http://boxerapp.com/guide</string>
+	<key>ConfigurationFileHelpURL</key>
+	<string>http://boxerapp.com/guide/dosbox_configuration</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>10.5.4</string>
 	<key>PerianURL</key>

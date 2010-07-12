@@ -9,9 +9,8 @@
 //the DOSBox filesystem: mounting and unmounting drives, and changing the active drive and working
 //directory.
 
-#import <Cocoa/Cocoa.h>
-#import "BXEmulator.h"
 
+#import "BXEmulator.h"
 
 @class BXDrive;
 

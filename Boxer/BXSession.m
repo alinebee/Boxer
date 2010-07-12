@@ -697,8 +697,11 @@
 
 - (void) _saveRuntimeConfigurationChangesToFile: (NSString *)filePath
 {
-	//Only bother saving the configuration if any changes have been made.
-	if (![runtimeConfiguration isEmpty])
+	NSFileManager *manager = [NSFileManager defaultManager];
+	BOOL fileExists = [manager fileExistsAtPath: filePath];
+	
+	//Save the configuration if any changes have been made, or if the file at that path does not exist.
+	if (!fileExists || ![runtimeConfiguration isEmpty])
 	{
 		BXEmulatorConfiguration *gameboxConf = [BXEmulatorConfiguration configurationWithContentsOfFile: filePath];
 		
@@ -710,6 +713,17 @@
 		}
 		//Otherwise, use the runtime configuration as our basis
 		else gameboxConf = runtimeConfiguration;
+		
+		
+		//Add comment preambles to saved configuration
+		NSString *configurationHelpURL = [[NSBundle mainBundle] objectForInfoDictionaryKey: @"ConfigurationFileHelpURL"];
+		if (!configurationHelpURL) configurationHelpURL = @"";
+		NSString *preambleFormat = NSLocalizedStringFromTable(@"Configuration preamble", @"Configuration",
+															  @"Used generated configuration files as a commented header at the top of the file. %1$@ is an absolute URL to Boxer’s configuration setting documentation.");
+		[gameboxConf setPreamble: [NSString stringWithFormat: preambleFormat, configurationHelpURL, nil]];
+		 
+		[gameboxConf setStartupCommandsPreamble: NSLocalizedStringFromTable(@"Preamble for startup commands", @"Configuration",
+																			@"Used in generated configuration files as a commented header underneath the [autoexec] section.")];
 		
 		
 		//If we have an auto-detected game profile, check against its configuration file
@@ -753,8 +767,6 @@
 			}
 		}
 		
-		//The previous filtering may have left the configuration file empty but that's ok;
-		//this way we replace outdated duplicate configurations with empty ones.
 		[gameboxConf writeToFile: filePath error: NULL];
 	}
 }

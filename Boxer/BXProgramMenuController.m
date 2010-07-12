@@ -99,9 +99,10 @@
 	{
 		BXDOSFilenameTransformer *DOSName = [[BXDOSFilenameTransformer new] autorelease];
 		
-		NSAutoreleasePool *pool = [NSAutoreleasePool new];
 		for (NSDictionary *data in executables)
 		{
+			NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+			
 			NSMenuItem *item = [[NSMenuItem new] autorelease];
 			NSString *path	= [data objectForKey: @"path"];
 			NSImage *icon	= [data objectForKey: @"icon"];
@@ -112,8 +113,9 @@
 			[item setTitle: [DOSName transformedValue: [item representedObject]]];
 			
 			[items addObject: item];
+			
+			[pool drain];
 		}
-		[pool drain];
 	}
 	
 	return items;

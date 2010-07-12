@@ -7,7 +7,7 @@
 
 #import "BXEmulator+BXShell.h"
 #import "BXEmulator+BXDOSFileSystem.h"
-#import "BXSession.h"
+#import "BXEmulatorDelegate.h"
 #import "BXDrive.h"
 #import "BXValueTransformers.h"
 #import "BXInputHandler.h"

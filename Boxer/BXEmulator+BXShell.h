@@ -10,9 +10,8 @@
 //commands from DOS for processing by Boxer, and can feed new commands directly to the shell.
 //It also implements several new DOS commands.
 
-#import <Cocoa/Cocoa.h>
-#import "BXEmulator.h"
 
+#import "BXEmulator.h"
 
 @interface BXEmulator (BXShell)
 

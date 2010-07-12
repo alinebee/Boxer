@@ -190,6 +190,8 @@
 		9FA2E596109D251100E50623 /* BGHUDAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FA2E595109D251100E50623 /* BGHUDAppKit.framework */; };
 		9FA2E5D9109D255300E50623 /* BGHUDAppKit.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FA2E595109D251100E50623 /* BGHUDAppKit.framework */; };
 		9FA85CD510A357A600E6457F /* BXSession+BXFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA85CD410A357A600E6457F /* BXSession+BXFileManager.m */; };
+		9FAA44A711EB24A90042B986 /* NSString+BXWordWrap.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAA44A611EB24A90042B986 /* NSString+BXWordWrap.m */; };
+		9FAA451511EB40180042B986 /* Configuration.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9FAA451411EB40180042B986 /* Configuration.strings */; };
 		9FAD43C010A341F6007E8C0D /* UKFileWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD43B810A341F6007E8C0D /* UKFileWatcher.m */; };
 		9FAD43C110A341F6007E8C0D /* UKFNSubscribeFileWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD43BA10A341F6007E8C0D /* UKFNSubscribeFileWatcher.m */; };
 		9FAD43C310A341F6007E8C0D /* UKKQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD43BD10A341F6007E8C0D /* UKKQueue.m */; };
@@ -614,6 +616,9 @@
 		9FA2E595109D251100E50623 /* BGHUDAppKit.framework */ = {isa = PBXFileReference; comments = "This is the BGHUDAppkit framework 0.9 from http://www.binarymethod.com/bghudappkit/ compiled from source with our own modifications, which are provided as a diff in the BGHUDAppKit source folder."; explicitFileType = wrapper.framework; path = BGHUDAppKit.framework; sourceTree = "<group>"; };
 		9FA85CD310A357A600E6457F /* BXSession+BXFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXSession+BXFileManager.h"; sourceTree = "<group>"; };
 		9FA85CD410A357A600E6457F /* BXSession+BXFileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXSession+BXFileManager.m"; sourceTree = "<group>"; };
+		9FAA445511EB1CC40042B986 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Configuration.strings; sourceTree = "<group>"; };
+		9FAA44A511EB24A90042B986 /* NSString+BXWordWrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+BXWordWrap.h"; sourceTree = "<group>"; };
+		9FAA44A611EB24A90042B986 /* NSString+BXWordWrap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+BXWordWrap.m"; sourceTree = "<group>"; };
 		9FAD43B710A341F6007E8C0D /* UKFileWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UKFileWatcher.h; sourceTree = "<group>"; };
 		9FAD43B810A341F6007E8C0D /* UKFileWatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UKFileWatcher.m; sourceTree = "<group>"; };
 		9FAD43B910A341F6007E8C0D /* UKFNSubscribeFileWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UKFNSubscribeFileWatcher.h; sourceTree = "<group>"; };
@@ -1027,6 +1032,7 @@
 				9FBC345B0F56C64D001811F2 /* InfoPlist.strings */,
 				9FBC34480F56C5D1001811F2 /* DOSBox.strings */,
 				9FBC344A0F56C5D1001811F2 /* Shell.strings */,
+				9FAA451411EB40180042B986 /* Configuration.strings */,
 			);
 			name = Strings;
 			sourceTree = "<group>";
@@ -1446,6 +1452,8 @@
 				9F9FE70310FA5F5800E3944B /* NSWorkspace+BXIcons.m */,
 				9FFBF6AA11A811F7000A1863 /* BXEventConstants.h */,
 				9FDD4CB411E619D50035BA9E /* CGSPrivate.h */,
+				9FAA44A511EB24A90042B986 /* NSString+BXWordWrap.h */,
+				9FAA44A611EB24A90042B986 /* NSString+BXWordWrap.m */,
 			);
 			path = BXToolkit;
 			sourceTree = "<group>";
@@ -1661,6 +1669,7 @@
 				9F466A3211A9222B00C50965 /* Shaders in Resources */,
 				9F466AFC11A92C4B00C50965 /* UserDefaults.plist in Resources */,
 				9FDCDEFD11B5B83B0032DA4E /* dsa_pub.pem in Resources */,
+				9FAA451511EB40180042B986 /* Configuration.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1868,6 +1877,7 @@
 				9F5DCB5311B2C0E700552966 /* shell_cmds.cpp in Sources */,
 				9F5DCB5411B2C0E700552966 /* shell_misc.cpp in Sources */,
 				9FF2E9BD11E6F4950051E485 /* BXEmulatorConfiguration.m in Sources */,
+				9FAA44A711EB24A90042B986 /* NSString+BXWordWrap.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1942,6 +1952,14 @@
 			);
 			name = Preferences.xib;
 			path = ..;
+			sourceTree = "<group>";
+		};
+		9FAA451411EB40180042B986 /* Configuration.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9FAA445511EB1CC40042B986 /* English */,
+			);
+			name = Configuration.strings;
 			sourceTree = "<group>";
 		};
 		9FBC34480F56C5D1001811F2 /* DOSBox.strings */ = {

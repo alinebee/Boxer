@@ -57,6 +57,9 @@
 - (NSString *) configurationFile;
 - (void) setConfigurationFile: (NSString *)filePath;
 
+//Returns the path at which the configuration file is located - or would be, if it doesn’t exist.
+- (NSString *) configurationFilePath;
+
 
 //Arrays of paths to additional DOS drives discovered within the package.
 - (NSArray *) hddVolumes;

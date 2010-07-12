@@ -404,7 +404,7 @@ NSString * const emptyFormat = @"^\\s*$";
 	{
 		NSString *preambleComment = [[self class] _formatAsComment: [self preamble]
 											   wrappedAtLineLength: BXConfigurationWordWrap];
-		[formattedString appendString: preambleComment];
+		[formattedString appendFormat: @"%@\n", preambleComment, nil];
 	}
 	
 	for (NSString *sectionName in [sections keyEnumerator])
@@ -440,7 +440,7 @@ NSString * const emptyFormat = @"^\\s*$";
 		{
 			NSString *startupPreambleComment = [[self class] _formatAsComment: [self startupCommandsPreamble]
 														  wrappedAtLineLength: BXConfigurationWordWrap];
-			[formattedString appendString: startupPreambleComment];
+			[formattedString appendFormat: @"%@\n", startupPreambleComment, nil];
 		}
 		
 		for (NSString *command in commands)

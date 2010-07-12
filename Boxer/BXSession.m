@@ -201,7 +201,7 @@
 {
 	if ([self isGamePackage])
 	{
-		NSString *configPath = [[self gamePackage] configurationFile];
+		NSString *configPath = [[self gamePackage] configurationFilePath];
 		if (configPath) [self _saveRuntimeConfigurationChangesToFile: configPath]; 
 	}
 }
@@ -527,7 +527,7 @@
 
 - (void) _startEmulator
 {
-	//The configuration files we may be loading today
+	//The configuration files we will be using today, loaded in this order.
 	NSString *preflightConf	= [[NSBundle mainBundle] pathForResource: @"Preflight" ofType: @"conf"];
 	NSString *profileConf	= nil;
 	NSString *packageConf	= nil;
@@ -573,20 +573,8 @@
 	}
 	
 	//Get the gamebox's own configuration file, if it has one
-	if ([self gamePackage])
-	{
-		packageConf = [[self gamePackage] configurationFile];
-		
-		//If the gamebox had no configuration file, give it an empty generic configuration file.
-		//(We don't bother loading it, since it's empty anyway)
-		if (!packageConf)
-		{
-			NSString *genericConf = [[NSBundle mainBundle] pathForResource: @"Generic"
-																	ofType: @"conf"
-															   inDirectory: @"Configurations"];
-			[[self gamePackage] setConfigurationFile: genericConf];
-		}
-	}
+	if ([self gamePackage]) packageConf = [[self gamePackage] configurationFile];
+	
 	
 	//Load all our configuration files in order.
 	[emulator applyConfigurationAtPath: preflightConf];

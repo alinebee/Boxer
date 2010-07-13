@@ -92,10 +92,6 @@
 - (void) synchronizeSettings;
 
 
-//Returns a best-guess name for the current game.
-//Currently, this means NSDocument displayName minus any ".boxer" extension.
-- (NSString *) gameDisplayName;
-
 //Returns a display-ready title for the currently-executing DOS process.
 //Returns nil if there is currently no process executing.
 - (NSString *) processDisplayName;

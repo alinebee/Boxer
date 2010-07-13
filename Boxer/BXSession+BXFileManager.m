@@ -457,11 +457,7 @@
 	
 	//Also check if the file was inside our gamebox - if so, flush the gamebox's caches
 	BXPackage *package = [self gamePackage];
-	if (package && [path hasPrefix: [package gamePath]])
-	{
-		[package setExecutables:	nil];
-		[package setDocumentation:	nil];
-	}
+	if (package && [path hasPrefix: [package gamePath]]) [package refresh];
 }
 
 - (void) DOSDriveDidMount: (NSNotification *)theNotification

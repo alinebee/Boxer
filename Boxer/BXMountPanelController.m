@@ -13,6 +13,7 @@
 #import "NSWorkspace+BXFileTypes.h"
 #import "BXDrive.h"
 
+
 @implementation BXMountPanelController
 @synthesize driveType, driveLetter, readOnlyToggle;
 
@@ -68,24 +69,21 @@
 	NSArray *driveLetters	= [BXEmulator driveLetters];
 	
 	//The maximum number of components to show in file paths
-	NSUInteger numComponents, maxComponents=2;
+	NSUInteger maxComponents=2;
 	
 	//First, strip any existing options after the first two (which are Auto and a divider)
 	while ([driveLetter numberOfItems] > 2) [driveLetter removeItemAtIndex: 2];
 	
 	
 	//Now, repopulate the menu again
-	NSMenuItem *option;
-	NSString *title, *displayPath;
-	BXDrive *drive;
-	NSArray *displayComponents;
 	
-	NSAutoreleasePool *pool = [NSAutoreleasePool new];
 	for (NSString *letter in driveLetters)
 	{
-		option	= [[NSMenuItem new] autorelease];
-		title	= [NSString stringWithFormat: @"%@:", letter];
-		drive	= [theEmulator driveAtLetter: letter];
+		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+		
+		NSMenuItem *option	= [[NSMenuItem new] autorelease];
+		NSString *title		= [NSString stringWithFormat: @"%@:", letter];
+		BXDrive *drive		= [theEmulator driveAtLetter: letter];
 		
 		//The drive letter is already taken - mark it as unselectable and list a human-readable path
 		if (drive)
@@ -93,14 +91,15 @@
 			[option setEnabled: NO];
 			if (![drive isInternal])
 			{
-				displayComponents	= [manager componentsToDisplayForPath: [drive path]];
-				numComponents		= [displayComponents count];
+				NSArray *displayComponents	= [manager componentsToDisplayForPath: [drive path]];
+				NSUInteger numComponents	= [displayComponents count];
 				
 				if (numComponents > maxComponents)
 					displayComponents = [displayComponents subarrayWithRange: NSMakeRange(numComponents - maxComponents, maxComponents)];
 
-				displayPath	= [displayComponents componentsJoinedByString: @" ▸ "];
-				title		= [title stringByAppendingFormat: @"  %@", displayPath, nil];
+				NSString *displayPath = [displayComponents componentsJoinedByString: @" ▸ "];
+				
+				title = [title stringByAppendingFormat: @"  %@", displayPath, nil];
 			}
 		}
 		
@@ -108,8 +107,9 @@
 		[option setRepresentedObject: letter];
 		
 		[[driveLetter menu] addItem: option];
+		
+		[pool release];
 	}
-	[pool drain];
 	
 	[driveLetter selectItemAtIndex: 0];
 }

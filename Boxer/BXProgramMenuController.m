@@ -114,7 +114,7 @@
 			
 			[items addObject: item];
 			
-			[pool drain];
+			[pool release];
 		}
 	}
 	

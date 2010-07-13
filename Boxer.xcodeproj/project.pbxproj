@@ -197,6 +197,8 @@
 		9FAD43C110A341F6007E8C0D /* UKFNSubscribeFileWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD43BA10A341F6007E8C0D /* UKFNSubscribeFileWatcher.m */; };
 		9FAD43C310A341F6007E8C0D /* UKKQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD43BD10A341F6007E8C0D /* UKKQueue.m */; };
 		9FAD43C410A341F6007E8C0D /* UKMainThreadProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD43BF10A341F6007E8C0D /* UKMainThreadProxy.m */; };
+		9FADFE5511EC7E1700990E91 /* BXDigest.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FADFE5411EC7E1700990E91 /* BXDigest.m */; };
+		9FADFE9711EC932800990E91 /* NSData+HexStrings.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FADFE9611EC932800990E91 /* NSData+HexStrings.m */; };
 		9FB4F9E411957B55006C8AC9 /* BXFrameBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB4F9E311957B55006C8AC9 /* BXFrameBuffer.m */; };
 		9FB553E10F6EA30900A33017 /* BXCloseAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB553E00F6EA30900A33017 /* BXCloseAlert.m */; };
 		9FB554220F6EAC5F00A33017 /* BXAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB554210F6EAC5F00A33017 /* BXAlert.m */; };
@@ -630,6 +632,10 @@
 		9FAD43BD10A341F6007E8C0D /* UKKQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UKKQueue.m; sourceTree = "<group>"; };
 		9FAD43BE10A341F6007E8C0D /* UKMainThreadProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UKMainThreadProxy.h; sourceTree = "<group>"; };
 		9FAD43BF10A341F6007E8C0D /* UKMainThreadProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UKMainThreadProxy.m; sourceTree = "<group>"; };
+		9FADFE5311EC7E1700990E91 /* BXDigest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDigest.h; sourceTree = "<group>"; };
+		9FADFE5411EC7E1700990E91 /* BXDigest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDigest.m; sourceTree = "<group>"; };
+		9FADFE9511EC932800990E91 /* NSData+HexStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+HexStrings.h"; sourceTree = "<group>"; };
+		9FADFE9611EC932800990E91 /* NSData+HexStrings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+HexStrings.m"; sourceTree = "<group>"; };
 		9FB4F9E211957B55006C8AC9 /* BXFrameBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFrameBuffer.h; sourceTree = "<group>"; };
 		9FB4F9E311957B55006C8AC9 /* BXFrameBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFrameBuffer.m; sourceTree = "<group>"; };
 		9FB553DF0F6EA30900A33017 /* BXCloseAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCloseAlert.h; sourceTree = "<group>"; };
@@ -1459,6 +1465,10 @@
 				9FAA44A611EB24A90042B986 /* NSString+BXWordWrap.m */,
 				9FA5D68111EB6CCC0012DFA5 /* BXLineEnumerator.h */,
 				9FA5D68211EB6CCC0012DFA5 /* BXLineEnumerator.m */,
+				9FADFE5311EC7E1700990E91 /* BXDigest.h */,
+				9FADFE5411EC7E1700990E91 /* BXDigest.m */,
+				9FADFE9511EC932800990E91 /* NSData+HexStrings.h */,
+				9FADFE9611EC932800990E91 /* NSData+HexStrings.m */,
 			);
 			path = BXToolkit;
 			sourceTree = "<group>";
@@ -1884,6 +1894,8 @@
 				9FF2E9BD11E6F4950051E485 /* BXEmulatorConfiguration.m in Sources */,
 				9FAA44A711EB24A90042B986 /* NSString+BXWordWrap.m in Sources */,
 				9FA5D68311EB6CCC0012DFA5 /* BXLineEnumerator.m in Sources */,
+				9FADFE5511EC7E1700990E91 /* BXDigest.m in Sources */,
+				9FADFE9711EC932800990E91 /* NSData+HexStrings.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

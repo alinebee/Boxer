@@ -12,6 +12,7 @@
 #import "BXAppController.h"
 #import "BXProgramPanelController.h"
 #import "BXInputController.h"
+#import "BXPackage.h"
 
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulator.h"
@@ -142,8 +143,8 @@
 	//use the autosaved window size for that game
 	if ([[self document] isGamePackage])
 	{
-		NSString *gameboxIdentifier = [[[self document] gamePackage] bundleIdentifier];
-		if (gameboxIdentifier) [self setFrameAutosaveName: gameboxIdentifier];
+		NSString *gameIdentifier = [[[self document] gamePackage] gameIdentifier];
+		if (gameIdentifier) [self setFrameAutosaveName: gameIdentifier];
 	}
 	else
 	{

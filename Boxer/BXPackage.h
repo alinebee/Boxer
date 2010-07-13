@@ -16,57 +16,101 @@
 
 #import <Cocoa/Cocoa.h>
 
+
+//The gameInfo key under which we store the game's identifier.
+//Will be an NSString.
+extern NSString * const BXGameIdentifierKey;
+
+//The gameInfo key under which we store the type of the game's identifier.
+//Will be an NSNumber of BXGameIdentifierTypes.
+extern NSString * const BXGameIdentifierTypeKey;
+
+
+//The different kinds of game identifiers we can have.
+enum {
+	BXGameIdentifierUUID		= 0,	//Standard UUID. Used for empty gameboxes.
+	BXGameIdentifierEXEDigest	= 1		//SHA1 digest of each EXE file in the gamebox.
+};
+typedef NSUInteger BXGameIdentifierType;
+
+
 @interface BXPackage : NSBundle
 {
 	NSArray *documentation;
 	NSArray *executables;
 	NSString *targetPath;
-	NSMutableDictionary *generatedDict;
-	BOOL checkedForPlist;
+	NSMutableDictionary *gameInfo;
 }
 
 #pragma mark -
 #pragma mark Properties
 
-//Re-casts the return value as a BXPackage instead of an NSBundle
-+ (BXPackage *)bundleWithPath: (NSString *)path;
+//Returns a dictionary of gamebox metadata loaded from Boxer.plist.
+//Keys in this can also be retrieved with objectForInfoDictionaryKey: and set with setObjectForInfoDictionaryKey:
+//(They cannot be set directly on gameInfo.)
+@property (readonly, retain, nonatomic) NSDictionary *gameInfo;
+
+//The path to the DOS game's base folder. Currently this is equal to [NSBundle bundlePath].
+@property (readonly, nonatomic) NSString *gamePath;
+
+//The name of the game, suitable for display. This is the gamebox's filename minus any ".boxer" extension.
+@property (readonly, nonatomic) NSString *gameName;
+
+//The unique identifier of this game.
+@property (readonly, nonatomic) NSString *gameIdentifier;
+
 
 //An array of absolute file paths to documentation files found inside the gamebox.
-@property (retain) NSArray *documentation;
+@property (readonly, retain, nonatomic) NSArray *documentation;
 
 //An array of absolute file paths to DOS executables found inside the gamebox.
-@property (retain) NSArray *executables;
+@property (readonly, retain, nonatomic) NSArray *executables;
 
-//The path to the default executable for this gamebox.
+//Arrays of paths to additional DOS drives discovered within the package.
+@property (readonly) NSArray *hddVolumes;
+@property (readonly) NSArray *cdVolumes;
+@property (readonly) NSArray *floppyVolumes;
+
+//Returns the path at which the configuration file is located (or would be, if it doesn’t exist.)
+@property (readonly) NSString *configurationFilePath;
+
+
+//The path to the DOSBox configuration file for this package. Will be nil if one does not exist.
+//Note that setting this will actually *copy* the file; setting it to nil will delete the stored file.
+@property (copy, nonatomic) NSString *configurationFile;
+
+//The path to the default executable for this gamebox. Will be nil if the gamebox has no target executable.
+//This is stored internally as a symlink; setting this to nil will remove the symlink.
 @property (copy) NSString *targetPath;
 
 //The cover art image for this gamebox. Will be nil if the gamebox has no custom cover art.
-//This is currently stored as the gamebox's OS X icon resource.
+//This is stored internally as the gamebox's OS X icon resource.
 @property (copy) NSImage *coverArt;
+
+
+#pragma mark -
+#pragma mark Class methods
+
+//Re-casts the return value as a BXPackage instead of an NSBundle
++ (BXPackage *)bundleWithPath: (NSString *)path;
 
 
 + (NSArray *) documentationTypes;		//UTIs recognised as documentation files.
 + (NSArray *) documentationExclusions;	//Filename patterns for documentation to exclude from searches.
 + (NSArray *) executableExclusions;		//Filename patterns for executables to exclude from searches.
 
-//The path to the DOS game's base folder. Currently this is equal to [NSBundle bundlePath].
-//TODO: if there is a separately-bundled drive C, this should be returned instead!
-- (NSString *) gamePath;
 
+#pragma mark -
+#pragma mark Instance methods
 
-//Set/get the custom DOSBox configuration file for this package. configurationFile will be nil if one does not
-//exist yet, and any existing configuration file can be deleted by passing nil to setConfigurationFile:.
-- (NSString *) configurationFile;
-- (void) setConfigurationFile: (NSString *)filePath;
-
-//Returns the path at which the configuration file is located - or would be, if it doesn’t exist.
-- (NSString *) configurationFilePath;
-
-
-//Arrays of paths to additional DOS drives discovered within the package.
-- (NSArray *) hddVolumes;
-- (NSArray *) cdVolumes;
-- (NSArray *) floppyVolumes;
+//Retrieve all volumes matching the specified filetypes.
 - (NSArray *) volumesOfTypes: (NSArray *)fileTypes;
+
+//Get/set metadata in the gameInfo dictionary.
+- (id) gameInfoForKey: (NSString *)key;
+- (void) setGameInfo: (id)info forKey: (NSString *)key;
+
+//Clear resource caches for documentation, gameInfo and executables.
+- (void) refresh;
 
 @end

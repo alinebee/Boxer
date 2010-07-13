@@ -302,16 +302,15 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	}
 }
 
-//Tidy up when the current session closes, and ensure documents save their own configurations
 - (void) removeDocument: (NSDocument *)theDocument
-{
-	if ([self currentSession] == theDocument) [self setCurrentSession: nil];
-
-	if ([theDocument respondsToSelector: @selector(synchronizeSettings)]) [(id)theDocument synchronizeSettings];
-
+{	
+	//Do whatever we were going to do originally
 	[super removeDocument: theDocument];
 	
-	//Also hide the Inspector panel if there's no longer any sessions open
+	//Clear the current session
+	if ([self currentSession] == theDocument) [self setCurrentSession: nil];
+	
+	//Hide the Inspector panel if there's no longer any sessions open
 	if (![self currentSession]) [self setInspectorPanelShown: NO];
 }
 

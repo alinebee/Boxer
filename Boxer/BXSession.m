@@ -22,8 +22,8 @@
 
 //How we will store our gamebox-specific settings in user defaults.
 //%@ is the unique identifier for the gamebox.
-NSString * const BXGameboxSettingsKeyFormat = @"Gamebox Settings %@";
-
+NSString * const BXGameboxSettingsKeyFormat	= @"Game Settings %@";
+NSString * const BXGameboxSettingsNameKey	= @"Game Name";
 
 #pragma mark -
 #pragma mark Private method declarations
@@ -131,7 +131,7 @@ NSString * const BXGameboxSettingsKeyFormat = @"Gamebox Settings %@";
 		if (gamePackage)
 		{
 			NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-			NSString *defaultsKey = [NSString stringWithFormat: BXGameboxSettingsKeyFormat, [gamePackage bundleIdentifier], nil];
+			NSString *defaultsKey = [NSString stringWithFormat: BXGameboxSettingsKeyFormat, [gamePackage gameIdentifier], nil];
 			
 			NSDictionary *gameboxSettings = [defaults objectForKey: defaultsKey];
 			
@@ -222,6 +222,7 @@ NSString * const BXGameboxSettingsKeyFormat = @"Gamebox Settings %@";
 	if (!isClosing)
 	{
 		isClosing = YES;
+		[self synchronizeSettings];
 		[self cancel];
 		[super close];
 	}
@@ -241,9 +242,6 @@ NSString * const BXGameboxSettingsKeyFormat = @"Gamebox Settings %@";
 		NSNumber *isAutoSpeed	= [gameSettings objectForKey: @"autoSpeed"];
 		NSNumber *coreMode		= [gameSettings objectForKey: @"coreMode"];
 		
-		//Strip out these settings so we won't preserve them in user defaults
-		[gameSettings removeObjectsForKeys: [NSArray arrayWithObjects: @"fixedSpeed", @"autoSpeed", @"coreMode", nil]];
-		
 		if (coreMode)
 		{
 			NSString *coreString = [BXEmulator configStringForCoreMode: [coreMode integerValue]];
@@ -254,18 +252,26 @@ NSString * const BXGameboxSettingsKeyFormat = @"Gamebox Settings %@";
 		{
 			NSString *cyclesString = [BXEmulator configStringForFixedSpeed: [fixedSpeed integerValue]
 																	isAuto: [isAutoSpeed boolValue]];
+			
 			[gameboxConf setValue: cyclesString forKey: @"cycles" inSection: @"cpu"];
 		}
 		
+		//Strip out these settings once we're done, so we won't preserve them in user defaults
+		[gameSettings removeObjectsForKeys: [NSArray arrayWithObjects: @"fixedSpeed", @"autoSpeed", @"coreMode", nil]];
+
+		
 		//Persist the gamebox-specific configuration into the gamebox's configuration file.
 		NSString *configPath = [[self gamePackage] configurationFilePath];
-		[self _saveConfiguration: gameboxConf toFile: configPath]; 
+		[self _saveConfiguration: gameboxConf toFile: configPath];
 		
 		//Save whatever's left into user defaults.
 		if ([gameSettings count])
 		{
+			//Add the gamebox name into the settings, to make it easier to identify to which gamebox the record belongs
+			[gameSettings setObject: [gamePackage gameName] forKey: BXGameboxSettingsNameKey];
+			
 			NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-			NSString *defaultsKey = [NSString stringWithFormat: BXGameboxSettingsKeyFormat, [[self gamePackage] bundleIdentifier], nil];
+			NSString *defaultsKey = [NSString stringWithFormat: BXGameboxSettingsKeyFormat, [[self gamePackage] gameIdentifier], nil];
 			[defaults setObject: gameSettings forKey: defaultsKey];			
 		}
 	}
@@ -277,16 +283,8 @@ NSString * const BXGameboxSettingsKeyFormat = @"Gamebox Settings %@";
 
 - (NSString *) displayName
 {
-	if ([self isGamePackage]) return [self gameDisplayName];
+	if ([self isGamePackage]) return [[self gamePackage] gameName];
 	else return [self processDisplayName];
-}
-
-- (NSString *) gameDisplayName
-{
-	NSString *gameName = [super displayName];
-	if ([[[gameName pathExtension] lowercaseString] isEqualToString: @"boxer"])
-		gameName = [gameName stringByDeletingPathExtension];
-	return gameName;
 }
 
 - (NSString *) processDisplayName

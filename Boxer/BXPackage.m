@@ -11,22 +11,54 @@
 #import "NSWorkspace+BXIcons.h"
 #import "BXAppController.h"
 #import "RegexKitLite.h"
+#import "BXDigest.h"
+#import "NSData+HexStrings.h"
 
+#pragma mark -
+#pragma mark Constants
+
+//Application-wide constants.
+NSString * const BXGameIdentifierKey = @"Game Identifier";
+NSString * const BXGameIdentifierTypeKey = @"Game Identifier Type";
+
+
+//The following are only used internally by BXPackage.
+NSString * const BXTargetSymlinkName			= @"DOSBox Target";
+NSString * const BXConfigurationFileName		= @"DOSBox Preferences";
+NSString * const BXConfigurationFileExtension	= @"conf";
+NSString * const BXGameInfoPlistName			= @"Boxer";
+NSString * const BXDocumentationFolderName		= @"Documentation";
+
+//When calculating a digest from the gamebox's EXEs, read only the first 64kb of each EXE.
+#define BXEXEDigestStubLength 65536
+
+
+#pragma mark -
+#pragma mark Private method declarations
 
 @interface BXPackage ()
+@property (readwrite, retain, nonatomic) NSDictionary *gameInfo;
+@property (readwrite, retain, nonatomic) NSArray *executables;
+@property (readwrite, retain, nonatomic) NSArray *documentation;
+
 //Arrays of paths to discovered files of particular types within the gamebox.
 //BXPackage's documentation and executables accessors call these internal methods and cache the results.
 - (NSArray *) _foundDocumentation;
 - (NSArray *) _foundExecutables;
 - (NSArray *) _foundResourcesOfTypes: (NSArray *)fileTypes startingIn: (NSString *)basePath;
 
-//Returns a new auto-generated bundle identifier based on this gamebox's name.
-- (NSString *) _generatedBundleIdentifier;
+//Returns a new auto-generated identifier based on this gamebox's name.
+//On return, type will be the type of identifier generated.
+- (NSString *) _generatedIdentifierOfType: (BXGameIdentifierType *)type;
+
+//Save the game info back to the gamebox.
+- (void) _persistGameInfo;
 @end
 
 
 @implementation BXPackage
 @synthesize documentation, executables;
+@synthesize gameInfo;
 
 + (NSArray *) documentationTypes
 {
@@ -84,7 +116,7 @@
 
 - (void) dealloc
 {
-	[generatedDict release], generatedDict = nil;
+	[self setGameInfo: nil],		[gameInfo release];
 	[self setDocumentation: nil],	[documentation release];
 	[self setExecutables: nil],		[executables release];
 	[super dealloc];
@@ -120,7 +152,7 @@
 	//Retrieve the target path from the symlink the first time it is requested, then cache it for later
 	if (!targetPath)
 	{
-		NSString *symlinkPath = [self pathForResource: @"DOSBox Target" ofType: nil];
+		NSString *symlinkPath = [self pathForResource: BXTargetSymlinkName ofType: nil];
 		targetPath = [symlinkPath stringByResolvingSymlinksInPath];
 	
 		//If the path is unchanged, this indicates a broken link
@@ -142,7 +174,7 @@
 		//----------------------------------------
 		
 		NSFileManager *manager	= [NSFileManager defaultManager];
-		NSString *linkLocation	= [[self resourcePath] stringByAppendingPathComponent: @"DOSBox Target"];
+		NSString *linkLocation	= [[self resourcePath] stringByAppendingPathComponent: BXTargetSymlinkName];
 		
 		//Todo: handle errors better (at all)!
 		//First, attempt to delete any existing link
@@ -163,27 +195,32 @@
 
 - (NSString *) configurationFile
 {
-	return [self pathForResource: @"DOSBox Preferences" ofType: @"conf"];
+	return [self pathForResource: BXConfigurationFileName ofType: BXConfigurationFileExtension];
 }
 
 - (void) setConfigurationFile: (NSString *)filePath
 {
-	NSFileManager *manager = [NSFileManager defaultManager];
 	NSString *configLocation = [self configurationFilePath];
 	
 	[self willChangeValueForKey: @"configurationFile"];
 	
-	//First, attempt to delete any existing configuration file
-	[manager removeItemAtPath: configLocation error: nil];
-	//Now, copy the new file in its place (if one was provided)
-	if (filePath) [manager copyItemAtPath: filePath toPath: configLocation error: nil];
+	if (![filePath isEqualToString: configLocation])
+	{
+		NSFileManager *manager = [NSFileManager defaultManager];
+	
+		//First, attempt to delete any existing configuration file
+		[manager removeItemAtPath: configLocation error: nil];
+		//Now, copy the new file in its place (if one was provided)
+		if (filePath) [manager copyItemAtPath: filePath toPath: configLocation error: nil];		
+	}
 	
 	[self didChangeValueForKey: @"configurationFile"];
 }
 
 - (NSString *) configurationFilePath
 {
-	return [[self resourcePath] stringByAppendingPathComponent: @"DOSBox Preferences.conf"];
+	NSString *fileName = [BXConfigurationFileName stringByAppendingPathExtension: BXConfigurationFileExtension];
+	return [[self resourcePath] stringByAppendingPathComponent: fileName];
 }
 
 //Set/return the cover art associated with this game package (currently, the package file's icon)
@@ -220,41 +257,99 @@
 	return documentation;
 }
 
-//If a dictionary doesn't already exist, then generate one with prepopulated values
-- (NSDictionary *) infoDictionary
+- (NSDictionary *) gameInfo
 {
-	if (!checkedForPlist)
+	//Load the game info from the gamebox's plist file the first time we need it.
+	if (gameInfo == nil)
 	{
-		checkedForPlist = YES;
-		NSString *plistPath = [[self bundlePath] stringByAppendingPathComponent: @"Info.plist"];
-		NSFileManager *manager = [NSFileManager defaultManager];
+		NSMutableDictionary *info = nil;
 		
-		if (![manager fileExistsAtPath: plistPath])
-		{
-			//Generate a new bundle identifier for this gamebox
-			NSString *bundleIdentifier = [self _generatedBundleIdentifier];
-			generatedDict = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
-							 bundleIdentifier, @"CFBundleIdentifier",
-							 nil];
-			[generatedDict writeToFile: plistPath atomically: YES];
-			
-			[generatedDict addEntriesFromDictionary: [super infoDictionary]];
-		}		
+		NSString *infoPath = [self pathForResource: BXGameInfoPlistName ofType: @"plist"];
+		if (infoPath) info = [NSMutableDictionary dictionaryWithContentsOfFile: infoPath];
+		
+		//If there was no plist file in the gamebox, create an empty dictionary instead.
+		if (!info) info = [NSMutableDictionary dictionaryWithCapacity: 10];
+		
+		[self setGameInfo: info];
 	}
 	
-	//NSBundle won't pick up that the info dictionary has changed,
-	//so we have to return our one for now
-	//(next time the document is loaded, the new dictionary will be in place.)
-	if (generatedDict) return generatedDict;
-	else return [super infoDictionary];
+	return gameInfo;
 }
+
+- (id) gameInfoForKey: (NSString *)key
+{
+	return [[self gameInfo] objectForKey: key];
+}
+
+- (void) setGameInfo: (id)info forKey: (NSString *)key
+{
+	[self willChangeValueForKey: @"gameInfo"];
+	
+	BOOL changed = !([[self gameInfoForKey: key] isEqualTo: info]);
+	if (changed)
+	{
+		[(NSMutableDictionary *)[self gameInfo] setObject: info forKey: key];
+		[self _persistGameInfo];		
+	}
+	[self didChangeValueForKey: @"gameInfo"];
+}
+
+- (NSString *) gameIdentifier
+{
+	NSString *identifier = [self gameInfoForKey: BXGameIdentifierKey];
+	
+	//If we don't have an identifier yet, generate a new one and add it to the game's metadata.
+	if (!identifier)
+	{
+		NSUInteger generatedType;
+		identifier = [self _generatedIdentifierOfType: &generatedType];
+		[gameInfo setObject: identifier forKey: BXGameIdentifierKey];
+		[gameInfo setObject: [NSNumber numberWithUnsignedInteger: generatedType] forKey: BXGameIdentifierTypeKey];
+		[self _persistGameInfo];
+	}
+	
+	return identifier;
+}
+
+- (NSString *) gameName
+{
+	NSFileManager *manager = [NSFileManager defaultManager];
+	NSString *displayName = [manager displayNameAtPath: [self bundlePath]];
+
+	//Strip the extension if it's .boxer, otherwise leave path extension intact
+	//(as it could be a version number component, e.g. the ".1" in "Windows 3.1")
+	if ([[[displayName pathExtension] lowercaseString] isEqualToString: @"boxer"])
+		displayName = [displayName stringByDeletingPathExtension];
+	
+	return displayName;
+}
+
+- (void) refresh
+{
+	[self setDocumentation: nil];
+	[self setExecutables: nil];
+	[self setGameInfo: nil];
+}
+
 
 
 #pragma mark -
 #pragma mark Private methods
 
+//Write the game info back to the plist file
+- (void) _persistGameInfo
+{
+	if (gameInfo)
+	{
+		NSString *infoName = [BXGameInfoPlistName stringByAppendingPathExtension: @"plist"];
+		NSString *infoPath = [[self resourcePath] stringByAppendingPathComponent: infoName];
+		[gameInfo writeToFile: infoPath atomically: YES];
+	}
+}
+
+
 //Trawl the package looking for DOS executables
-//TODO: check these against file() to weed out non-DOS exes
+//TODO: move filtering upstairs to BXSession, as we should not be determining application behaviour here.
 - (NSArray *) _foundExecutables
 {
 	NSArray *foundExecutables	= [self _foundResourcesOfTypes: [BXAppController executableTypes] startingIn: [self gamePath]];
@@ -266,7 +361,7 @@
 - (NSArray *) _foundDocumentation
 {
 	//First, check if there is an explicitly-named documentation folder and use the contents of that if so
-	NSArray *docsFolderContents = [self pathsForResourcesOfType: nil inDirectory: @"Documentation"];
+	NSArray *docsFolderContents = [self pathsForResourcesOfType: nil inDirectory: BXDocumentationFolderName];
 	if ([docsFolderContents count])
 	{
 		NSPredicate *notHidden	= [NSPredicate predicateWithFormat: @"NOT lastPathComponent BEGINSWITH %@", @".", nil];
@@ -300,30 +395,36 @@
 	return matches;	
 }
 
-- (NSString *) _generatedBundleIdentifier
+- (NSString *) _generatedIdentifierOfType: (BXGameIdentifierType *)type
 {
-	NSFileManager *manager = [NSFileManager defaultManager];
-	NSString *bundlePath = [self bundlePath];
-	NSString *displayName = [manager displayNameAtPath: bundlePath];
+	//If the gamebox contains executables, generate an identifier based on their hash.
+	NSArray *foundExecutables = [self executables];
+	if ([foundExecutables count])
+	{
+		NSData *digest = [BXDigest SHA1DigestForFiles: [NSSet setWithArray: foundExecutables] upToLength: BXEXEDigestStubLength];
+		*type = BXGameIdentifierEXEDigest;
+		
+		return [digest stringWithHexBytes];
+	}
 	
-	//Strip the extension if it's .boxer, but don't strip any other extension as it could be a version number component.
-	if ([[[displayName pathExtension] lowercaseString] isEqualToString: @"boxer"])
-		displayName = [displayName stringByDeletingPathExtension];
-	
-	
-	//Generate a UUID for the bundle identifier
-	CFUUIDRef     UUID;
-	CFStringRef   UUIDString;
-	
-	UUID = CFUUIDCreate(kCFAllocatorDefault);
-	UUIDString = CFUUIDCreateString(kCFAllocatorDefault, UUID);
-	
-	NSString *nameWithUUID = [NSString stringWithFormat: @"%1$@ %2$@", displayName, (NSString *)UUIDString, nil];
-	
-	CFRelease(UUID);
-	CFRelease(UUIDString);
-	
-	return nameWithUUID;
+	//Otherwise, generate a UUID.
+	else
+	{	
+		CFUUIDRef     UUID;
+		CFStringRef   UUIDString;
+		
+		UUID = CFUUIDCreate(kCFAllocatorDefault);
+		UUIDString = CFUUIDCreateString(kCFAllocatorDefault, UUID);
+		
+		NSString *identifierWithUUID = [NSString stringWithString: (NSString *)UUIDString];
+		
+		CFRelease(UUID);
+		CFRelease(UUIDString);
+		
+		*type = BXGameIdentifierUUID;
+
+		return identifierWithUUID;
+	}
 }
 
 @end

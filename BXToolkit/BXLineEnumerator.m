@@ -53,7 +53,7 @@
 	NSString *line;
 	while ((line = [self nextObject])) [remainingEntries addObject: line];
 	
-	[pool drain];
+	[pool release];
 	
 	return remainingEntries;
 }

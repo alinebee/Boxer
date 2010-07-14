@@ -19,11 +19,11 @@
 //Class methods for reporting accepted values
 //-------------------------------------------
 
-+ (NSArray *) driveLetters;			//all drive letters, including reserved letters
++ (NSArray *) driveLetters;			//all drive letters in order, including reserved letters
 + (NSArray *) floppyDriveLetters;	//letters appropriate for floppy drives
 + (NSArray *) hardDriveLetters;		//letters appropriate for hard disk/CD-ROM drives (excludes reserved letters)
 
-+ (NSArray *) dosFileExclusions;	//Filenames to hide from DOS directory listings
++ (NSSet *) dosFileExclusions;		//Filenames to hide from DOS directory listings
 
 
 //Instance methods for mounting drives

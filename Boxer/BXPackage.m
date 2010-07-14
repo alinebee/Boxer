@@ -21,13 +21,13 @@
 NSString * const BXGameIdentifierKey = @"Game Identifier";
 NSString * const BXGameIdentifierTypeKey = @"Game Identifier Type";
 
-
-//The following are only used internally by BXPackage.
 NSString * const BXTargetSymlinkName			= @"DOSBox Target";
 NSString * const BXConfigurationFileName		= @"DOSBox Preferences";
 NSString * const BXConfigurationFileExtension	= @"conf";
-NSString * const BXGameInfoPlistName			= @"Boxer";
+NSString * const BXGameInfoFileName				= @"Boxer";
+NSString * const BXGameInfoFileExtension		= @"plist";
 NSString * const BXDocumentationFolderName		= @"Documentation";
+
 
 //When calculating a digest from the gamebox's EXEs, read only the first 64kb of each EXE.
 #define BXEXEDigestStubLength 65536
@@ -45,7 +45,7 @@ NSString * const BXDocumentationFolderName		= @"Documentation";
 //BXPackage's documentation and executables accessors call these internal methods and cache the results.
 - (NSArray *) _foundDocumentation;
 - (NSArray *) _foundExecutables;
-- (NSArray *) _foundResourcesOfTypes: (NSArray *)fileTypes startingIn: (NSString *)basePath;
+- (NSArray *) _foundResourcesOfTypes: (NSSet *)fileTypes startingIn: (NSString *)basePath;
 
 //Returns a new auto-generated identifier based on this gamebox's name.
 //On return, type will be the type of identifier generated.
@@ -60,10 +60,10 @@ NSString * const BXDocumentationFolderName		= @"Documentation";
 @synthesize documentation, executables;
 @synthesize gameInfo;
 
-+ (NSArray *) documentationTypes
++ (NSSet *) documentationTypes
 {
-	static NSArray *types = nil;
-	if (!types) types = [[NSArray alloc] initWithObjects:
+	static NSSet *types = nil;
+	if (!types) types = [[NSSet alloc] initWithObjects:
 		@"public.jpeg",
 		@"public.plain-text",
 		@"public.png",
@@ -79,10 +79,10 @@ NSString * const BXDocumentationFolderName		= @"Documentation";
 
 //We ignore files with these names when considering which documentation files are likely to be worth showing
 //TODO: read this data from a configuration plist instead
-+ (NSArray *) documentationExclusions
++ (NSSet *) documentationExclusions
 {
-	static NSArray *exclusions = nil;
-	if (!exclusions) exclusions = [[NSArray alloc] initWithObjects:
+	static NSSet *exclusions = nil;
+	if (!exclusions) exclusions = [[NSSet alloc] initWithObjects:
 		@"install.gif",
 		@"install.txt",
 		@"interp.txt",
@@ -95,10 +95,10 @@ NSString * const BXDocumentationFolderName		= @"Documentation";
 
 //We ignore files with these names when considering which programs are important enough to list
 //TODO: read this data from a configuration plist instead
-+ (NSArray *) executableExclusions
++ (NSSet *) executableExclusions
 {
-	static NSArray *exclusions = nil;
-	if (!exclusions) exclusions = [[NSArray alloc] initWithObjects:
+	static NSSet *exclusions = nil;
+	if (!exclusions) exclusions = [[NSSet alloc] initWithObjects:
 		@"dos4gw.exe",
 		@"pkunzip.exe",
 		@"lha.com",
@@ -126,7 +126,7 @@ NSString * const BXDocumentationFolderName		= @"Documentation";
 - (NSArray *) cdVolumes		{ return [self volumesOfTypes: [BXAppController cdVolumeTypes]]; }
 - (NSArray *) floppyVolumes	{ return [self volumesOfTypes: [BXAppController floppyVolumeTypes]]; }
 
-- (NSArray *) volumesOfTypes: (NSArray *)acceptedTypes
+- (NSArray *) volumesOfTypes: (NSSet *)acceptedTypes
 {
 	NSMutableArray *volumes	= [NSMutableArray arrayWithCapacity: 10];
 	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
@@ -264,7 +264,7 @@ NSString * const BXDocumentationFolderName		= @"Documentation";
 	{
 		NSMutableDictionary *info = nil;
 		
-		NSString *infoPath = [self pathForResource: BXGameInfoPlistName ofType: @"plist"];
+		NSString *infoPath = [self pathForResource: BXGameInfoFileName ofType: BXGameInfoFileExtension];
 		if (infoPath) info = [NSMutableDictionary dictionaryWithContentsOfFile: infoPath];
 		
 		//If there was no plist file in the gamebox, create an empty dictionary instead.
@@ -341,7 +341,7 @@ NSString * const BXDocumentationFolderName		= @"Documentation";
 {
 	if (gameInfo)
 	{
-		NSString *infoName = [BXGameInfoPlistName stringByAppendingPathExtension: @"plist"];
+		NSString *infoName = [BXGameInfoFileName stringByAppendingPathExtension: BXGameInfoFileExtension];
 		NSString *infoPath = [[self resourcePath] stringByAppendingPathComponent: infoName];
 		[gameInfo writeToFile: infoPath atomically: YES];
 	}
@@ -375,7 +375,7 @@ NSString * const BXDocumentationFolderName		= @"Documentation";
 	return [foundDocumentation filteredArrayUsingPredicate: notExcluded];
 }
 
-- (NSArray *) _foundResourcesOfTypes: (NSArray *)fileTypes startingIn: (NSString *)basePath
+- (NSArray *) _foundResourcesOfTypes: (NSSet *)fileTypes startingIn: (NSString *)basePath
 {
 	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
 	NSFileManager *manager	= [NSFileManager defaultManager];

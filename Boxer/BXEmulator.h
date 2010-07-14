@@ -149,7 +149,7 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 + (BXEmulator *) currentEmulator;
 
 //An array of names of internal DOSBox processes.
-+ (NSArray *) internalProcessNames;
++ (NSSet *) internalProcessNames;
 
 //Returns whether the specified process name is a DOSBox internal process (according to internalProcessNames).
 + (BOOL) isInternal: (NSString *)processName;

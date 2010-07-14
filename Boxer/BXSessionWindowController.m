@@ -369,6 +369,7 @@
 	return (![[NSUserDefaults standardUserDefaults] boolForKey: @"suppressCloseAlert"] && [theEmulator isRunningProcess] && ![theEmulator isCancelled]);
 }
 
+//TODO: move this into BXSession's 
 - (BOOL) windowShouldClose: (id)theWindow
 {
 	if ([self shouldConfirmClose])

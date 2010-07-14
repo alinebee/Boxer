@@ -15,7 +15,7 @@
 @interface BXSession (BXDragDrop)
 
 //UTI filetypes that may be dropped onto a session to mount or launch them.
-+ (NSArray *) droppableFileTypes;
++ (NSSet *) droppableFileTypes;
 
 //Returns an NSDragOperation indicating what the session would do with the files were they dropped.
 - (NSDragOperation) responseToDroppedFiles: (NSArray *)filePaths;

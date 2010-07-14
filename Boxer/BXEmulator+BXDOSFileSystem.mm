@@ -12,6 +12,7 @@
 #import "BXDrive.h"
 #import "NSString+BXPaths.h"
 #import "BXGameProfile.h"
+#import "BXPackage.h"
 
 #import "dos_inc.h"
 #import "dos_system.h"
@@ -80,14 +81,15 @@ enum {
 	return letters;
 }
 
-+ (NSArray *) dosFileExclusions
++ (NSSet *) dosFileExclusions
 {
-	static NSArray *exclusions = nil;
-	if (!exclusions) exclusions = [[NSArray alloc] initWithObjects:
-		@"DOSBox Preferences.conf",
-		@"DOSBox Target",
-		@"Icon\r",
-	nil];
+	static NSSet *exclusions = nil;
+	if (!exclusions) exclusions = [[NSSet alloc] initWithObjects:
+								   [BXConfigurationFileName stringByAppendingPathExtension: BXConfigurationFileExtension],
+								   [BXGameInfoFileName stringByAppendingPathExtension: BXGameInfoFileExtension],
+								   BXTargetSymlinkName,
+								   @"Icon\r",
+								   nil];
 								   
 	return exclusions;
 }

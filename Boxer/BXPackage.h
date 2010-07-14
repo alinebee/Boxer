@@ -17,6 +17,9 @@
 #import <Cocoa/Cocoa.h>
 
 
+#pragma mark -
+#pragma mark Constants
+
 //The gameInfo key under which we store the game's identifier.
 //Will be an NSString.
 extern NSString * const BXGameIdentifierKey;
@@ -24,6 +27,20 @@ extern NSString * const BXGameIdentifierKey;
 //The gameInfo key under which we store the type of the game's identifier.
 //Will be an NSNumber of BXGameIdentifierTypes.
 extern NSString * const BXGameIdentifierTypeKey;
+
+//The filename of the symlink pointing to the gamebox's target executable.
+extern NSString * const BXTargetSymlinkName;
+
+//The filename and extension of the gamebox configuration file.
+extern NSString * const BXConfigurationFileName;
+extern NSString * const BXConfigurationFileExtension;
+
+//The filename and extension of the game info manifest inside the gamebox.
+extern NSString * const BXGameInfoFileName;
+extern NSString * const BXGameInfoFileExtension;
+
+//The filename of the documentation folder inside the gamebox.
+extern NSString * const BXDocumentationFolderName;
 
 
 //The different kinds of game identifiers we can have.
@@ -33,6 +50,9 @@ enum {
 };
 typedef NSUInteger BXGameIdentifierType;
 
+
+#pragma mark -
+#pragma mark Interface
 
 @interface BXPackage : NSBundle
 {
@@ -95,16 +115,16 @@ typedef NSUInteger BXGameIdentifierType;
 + (BXPackage *)bundleWithPath: (NSString *)path;
 
 
-+ (NSArray *) documentationTypes;		//UTIs recognised as documentation files.
-+ (NSArray *) documentationExclusions;	//Filename patterns for documentation to exclude from searches.
-+ (NSArray *) executableExclusions;		//Filename patterns for executables to exclude from searches.
++ (NSSet *) documentationTypes;			//UTIs recognised as documentation files.
++ (NSSet *) documentationExclusions;	//Filename patterns for documentation to exclude from searches.
++ (NSSet *) executableExclusions;		//Filename patterns for executables to exclude from searches.
 
 
 #pragma mark -
 #pragma mark Instance methods
 
 //Retrieve all volumes matching the specified filetypes.
-- (NSArray *) volumesOfTypes: (NSArray *)fileTypes;
+- (NSArray *) volumesOfTypes: (NSSet *)fileTypes;
 
 //Get/set metadata in the gameInfo dictionary.
 - (id) gameInfoForKey: (NSString *)key;

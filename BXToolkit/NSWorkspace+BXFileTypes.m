@@ -9,7 +9,7 @@
 #import "NSWorkspace+BXFileTypes.h"
 
 @implementation NSWorkspace (BXFileTypes)
-- (BOOL) file: (NSString *)filePath matchesTypes: (NSArray *)acceptedTypes
+- (BOOL) file: (NSString *)filePath matchesTypes: (NSSet *)acceptedTypes
 {
 	NSString *fileType = [self typeOfFile: filePath error: nil];
 	if (fileType)
@@ -28,7 +28,7 @@
 	return NO;
 }
 
-- (NSString *)parentOfFile: (NSString *)filePath matchingTypes: (NSArray *)acceptedTypes
+- (NSString *)parentOfFile: (NSString *)filePath matchingTypes: (NSSet *)acceptedTypes
 {
 	do
 	{

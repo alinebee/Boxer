@@ -24,16 +24,16 @@
 //Class methods concerning files
 //------------------------------
 
-//UTI filetypes of folders that should be used as mount-points for files inside them:
-//If we open a file inside a folder matching one of these types, it will mount that folder as its drive.
+//UTI filetypes of folders that should be used as mount-points for files inside them: if we open a file
+//inside a folder matching one of these types, it will mount that folder as its drive.
 //Used by preferredMountPointForPath: which will also prefer the root folders of floppy and CD-ROM volumes.
-+ (NSArray *) preferredMountPointTypes;
++ (NSSet *) preferredMountPointTypes;
 
 
 //UTI filetypes that should be given their own drives, even if they are already accessible within an existing DOS drive.
 //This is used by shouldMountDriveForPath: to allow disc images or drive folders inside a gamebox to be mounted as
 //separate drives even when their containing gamebox is already mounted.
-+ (NSArray *) separatelyMountedTypes;
++ (NSSet *) separatelyMountedTypes;
 
 //Returns whether the specified OS X path represents a DOS/Windows executable.
 + (BOOL) isExecutable: (NSString *)path;

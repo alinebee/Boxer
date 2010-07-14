@@ -1,36 +1,33 @@
 Some notes on building Boxer
 ============================
 
-Thanks for downloading the Boxer XCode project! This project is designed to be a quick and painless one-click build, but there are a few caveats explained below, so please read this before you get to work.
+Thanks for downloading the Boxer XCode project! This project is designed to be a painless one-click build, but there are a few caveats explained below, so please read this before you get to work.
 
 
 Requirements
 ------------
 
-To build the Boxer project you will need XCode 3.2 or later. (XCode 3.1 compatibility is currently broken but will be returning soon.) All required frameworks are included in the Boxer project itself, so the project is all you need.
-
-
-Building for the first time (or: Help! Interface Builder errors when compiling!)
----------------------------
-
-Boxer uses a third-party Interface Builder plugin included with the project; you will need to tell Interface Builder where to find this plugin before you can build Boxer, otherwise you will get errors when opening or compiling Boxer's XIB files. To do so:
-1. Start up Interface Builder;
-2. Go to the Preferences->Plug-ins pane and click the + button;
-3. Add [Boxer project folder]/Frameworks/BGHUDAppKit.framework.
-
-After this, Boxer's XIB files should compile without errors, and building Boxer will be a one-click process from now on.
-(Note that if you ever move the Boxer project, you will probably need to re-add the BGHUDAppKit framework to Interface Builder so it knows where to find it.)
+To build the Boxer project you will need XCode 3.1 or later. All required frameworks are included in the Boxer project itself, so the project is all you need.
 
 
 Build Configurations
 --------------------
 
 The Boxer project has 3 build configurations: Debug, Development and Release. 
-- Debug is the standard XCode debug configuration and will provide very slow emulation.
+- Debug is the standard XCode debug configuration and will give very slow emulation.
 - Release compiles an optimised 32-bit universal binary for PPC and Intel.
 - Development compiles an optimised binary for the current system architecture only.
 
 Until you want to distribute your build to others, you'll want to stick with Development for faster build times.
+
+
+Building Boxer
+--------------
+
+NOTE FOR XCODE 3.1 USERS: you must compile Boxer using the Development build configuration, otherwise you will get spurious errors during the copy phase of compilation. The Development build configuration has the "Strip debug symbols during copy" option turned off, which prevents these errors, but the option is left on for Release builds.
+
+
+You will notice a large number of warnings when compilation gets to DOSBox's source files. The Boxer project has all feasible GCC warning options turned on to highlight potential bugs in Boxer's code; unfortunately, these options also highlight hundreds of potential bugs in DOSBox's code, none of which are likely to be fixed any time soon.
 
 
 Having trouble?

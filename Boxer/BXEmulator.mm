@@ -85,10 +85,10 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 
 //Used by processIsInternal, to determine when we're running one of DOSBox's own builtin programs
 //TODO: generate this from DOSBox's builtin program manifest instead
-+ (NSArray *) internalProcessNames
++ (NSSet *) internalProcessNames
 {
-	static NSArray *names = nil;
-	if (!names) names = [[NSArray alloc] initWithObjects:
+	static NSSet *names = nil;
+	if (!names) names = [[NSSet alloc] initWithObjects:
 		@"IPXNET",
 		@"COMMAND",
 		@"KEYB",

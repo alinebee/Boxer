@@ -100,14 +100,26 @@ NSString * const BXGameboxSettingsNameKey	= @"Game Name";
 	return YES;
 }
 
+#pragma mark -
+#pragma mark Window controller management
+
 - (void) makeWindowControllers
 {
 	id controller = [[BXSessionWindowController alloc] initWithWindowNibName: @"DOSWindow"];
 	[self addWindowController:		controller];
-	[self setMainWindowController:	controller];	
+	[self setMainWindowController:	controller];
 	[controller setShouldCloseDocument: YES];
 	
 	[controller release];
+}
+
+- (void) removeWindowController:(NSWindowController *)windowController
+{
+	if (windowController == [self mainWindowController])
+	{
+		[self setMainWindowController: nil];
+	}
+	[super removeWindowController: windowController];
 }
 
 - (void) showWindows
@@ -222,7 +234,6 @@ NSString * const BXGameboxSettingsNameKey	= @"Game Name";
 	if (!isClosing)
 	{
 		isClosing = YES;
-		[self synchronizeSettings];
 		[self cancel];
 		[super close];
 	}
@@ -311,7 +322,7 @@ NSString * const BXGameboxSettingsNameKey	= @"Game Name";
 	
 	//Check if this file path is located inside a gamebox
 	NSString *packagePath	= [workspace parentOfFile: filePath
-										matchingTypes: [NSArray arrayWithObject: @"net.washboardabs.boxer-game-package"]];
+										matchingTypes: [NSSet setWithObject: @"net.washboardabs.boxer-game-package"]];
 	
 	[self setTargetPath: filePath];
 	
@@ -336,6 +347,34 @@ NSString * const BXGameboxSettingsNameKey	= @"Game Name";
 	}
 
 	[super setFileURL: fileURL];
+	
+	
+	//While we're here, also detect the game profile.
+	
+	//Which folder to look in to detect the game we’re running.
+	//This will choose any gamebox, Boxer drive folder or floppy/CD volume in the
+	//file's path (setting shouldRecurse to YES) if found, falling back on the file's
+	//containing folder otherwise (setting shouldRecurse to NO).
+	if ([self targetPath])
+	{
+		NSString *profileDetectionPath = nil;
+		BOOL shouldRecurse = NO;
+		profileDetectionPath = [self gameDetectionPointForPath: [self targetPath] 
+										shouldSearchSubfolders: &shouldRecurse];
+	
+		//Detect any appropriate game profile for this session
+		if (profileDetectionPath)
+		{
+			//IMPLEMENTATION NOTE: we only scan subfolders of the detection path if it's a gamebox,
+			//mountable folder or CD/floppy disk, since these will have a finite and manageable file
+			//heirarchy to scan.
+			//Otherwise, we restrict our search to just the base folder to avoids massive blowouts
+			//if the user opens something big like their home folder or startup disk, and to avoid
+			//false positives when opening the DOS Games folder.
+			[self setGameProfile: [BXGameProfile detectedProfileForPath: profileDetectionPath
+													   searchSubfolders: shouldRecurse]];
+		}
+	}
 }
 
 - (BOOL) isGamePackage	{ return ([self gamePackage] != nil); }
@@ -589,33 +628,6 @@ NSString * const BXGameboxSettingsNameKey	= @"Game Name";
 	NSString *packageConf	= nil;
 	NSString *launchConf	= [[NSBundle mainBundle] pathForResource: @"Launch" ofType: @"conf"];
  	
-	
-	//Which folder to look in to detect the game we’re running.
-	//This will choose any gamebox, Boxer drive folder or floppy/CD volume in the
-	//file's path (setting shouldRecurse to YES) if found, falling back on the file's
-	//containing folder otherwise (setting shouldRecurse to NO).
-	NSString *profileDetectionPath = nil;
-	BOOL shouldRecurse = NO;
-	if ([self targetPath])
-	{
-		profileDetectionPath = [self gameDetectionPointForPath: [self targetPath] 
-										shouldSearchSubfolders: &shouldRecurse];
-	}
-	
-	//Detect any appropriate game profile for this session
-	if (profileDetectionPath)
-	{
-		//IMPLEMENTATION NOTE: we only scan subfolders of the detection path if it's a gamebox,
-		//mountable folder or CD/floppy disk, since these will have a finite and manageable file
-		//heirarchy to scan.
-		//Otherwise, we restrict our search to just the base folder to avoids massive blowouts
-		//if the user opens something big like their home folder or startup disk, and to avoid
-		//false positives when opening the DOS Games folder.
-		[self setGameProfile: [BXGameProfile detectedProfileForPath: profileDetectionPath
-												   searchSubfolders: shouldRecurse]];
-	}
-	
-	
 	//Get the appropriate configuration file for this game profile
 	if ([self gameProfile])
 	{

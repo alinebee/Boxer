@@ -29,19 +29,19 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 #pragma mark -
 #pragma mark Filetype helper methods
 
-+ (NSArray *) hddVolumeTypes
++ (NSSet *) hddVolumeTypes
 {
-	static NSArray *types = nil;
-	if (!types) types = [[NSArray alloc] initWithObjects:
+	static NSSet *types = nil;
+	if (!types) types = [[NSSet alloc] initWithObjects:
 						 @"net.washboardabs.boxer-harddisk-folder",
 						 nil];
 	return types;
 }
 
-+ (NSArray *) cdVolumeTypes
++ (NSSet *) cdVolumeTypes
 {
-	static NSArray *types = nil;
-	if (!types) types = [[NSArray alloc] initWithObjects:
+	static NSSet *types = nil;
+	if (!types) types = [[NSSet alloc] initWithObjects:
 						 @"com.goldenhawk.cdrwin-cuesheet",
 						 @"net.washboardabs.boxer-cdrom-folder",
 						 @"public.iso-image",
@@ -50,28 +50,28 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	return types;
 }
 
-+ (NSArray *) floppyVolumeTypes
++ (NSSet *) floppyVolumeTypes
 {
-	static NSArray *types = nil;
-	if (!types) types = [[NSArray alloc] initWithObjects:
+	static NSSet *types = nil;
+	if (!types) types = [[NSSet alloc] initWithObjects:
 						 @"net.washboardabs.boxer-floppy-folder",
 						 nil];
 	return types;
 }
 
-+ (NSArray *) mountableFolderTypes
++ (NSSet *) mountableFolderTypes
 {
-	static NSArray *types = nil;
-	if (!types) types = [[NSArray alloc] initWithObjects:
+	static NSSet *types = nil;
+	if (!types) types = [[NSSet alloc] initWithObjects:
 						 @"net.washboardabs.boxer-mountable-folder",
 						 nil];
 	return types;
 }
 
-+ (NSArray *) mountableImageTypes
++ (NSSet *) mountableImageTypes
 {
-	static NSArray *types = nil;
-	if (!types) types = [[NSArray alloc] initWithObjects:
+	static NSSet *types = nil;
+	if (!types) types = [[NSSet alloc] initWithObjects:
 						 @"public.iso-image",					//.iso
 						 @"com.apple.disk-image-cdr",			//.cdr
 						 @"com.goldenhawk.cdrwin-cuesheet",		//.cue
@@ -79,17 +79,17 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	return types;
 }
 
-+ (NSArray *) mountableTypes
++ (NSSet *) mountableTypes
 {
-	static NSArray *types = nil;
-	if (!types) types = [[[self mountableImageTypes] arrayByAddingObject: @"public.directory"] retain];
+	static NSSet *types = nil;
+	if (!types) types = [[[self mountableImageTypes] setByAddingObject: @"public.directory"] retain];
 	return types;
 }
 
-+ (NSArray *) executableTypes
++ (NSSet *) executableTypes
 {
-	static NSArray *types = nil;
-	if (!types) types = [[NSArray alloc] initWithObjects:
+	static NSSet *types = nil;
+	if (!types) types = [[NSSet alloc] initWithObjects:
 						 @"com.microsoft.windows-executable",	//.exe
 						 @"com.microsoft.msdos-executable",		//.com
 						 @"com.microsoft.batch-file",			//.bat
@@ -303,7 +303,11 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 }
 
 - (void) removeDocument: (NSDocument *)theDocument
-{	
+{
+	//Make sure documents synchronize themselves before closing
+	//(Normally we'd call this in [document close], but when the application is quitting that may never be called)
+	if ([theDocument respondsToSelector: @selector(synchronizeSettings)]) [(id)theDocument synchronizeSettings];
+	
 	//Do whatever we were going to do originally
 	[super removeDocument: theDocument];
 	

@@ -48,19 +48,26 @@
 #pragma mark -
 #pragma mark Filetype helper methods
 
-+ (NSArray *) preferredMountPointTypes
++ (NSSet *) preferredMountPointTypes
 {
-	static NSArray *containerTypes = nil;
-	if (!containerTypes) containerTypes = [NSArray arrayWithObjects:
-										   @"net.washboardabs.boxer-game-package",		//.boxer
-										   @"net.washboardabs.boxer-mountable-folder",	//Any of .floppy, .cdrom, .harddisk
-										   nil];
-	return containerTypes;
+	static NSSet *types = nil;
+	if (!types) types = [[NSSet alloc] initWithObjects:
+						 @"net.washboardabs.boxer-game-package",		//.boxer
+						 @"net.washboardabs.boxer-mountable-folder",	//Any of .floppy, .cdrom, .harddisk
+						 nil];
+	return types;
 }
 
-+ (NSArray *) separatelyMountedTypes
++ (NSSet *) separatelyMountedTypes
 {
-	return [[BXAppController mountableImageTypes] arrayByAddingObjectsFromArray: [self preferredMountPointTypes]];
+	static NSSet *types = nil;
+	if (!types)
+	{
+		NSSet *imageTypes	= [BXAppController mountableImageTypes];
+		NSSet *folderTypes	= [self preferredMountPointTypes];
+		types = [[imageTypes setByAddingObjectsFromSet: folderTypes] retain];
+	}
+	return types;
 }
 
 + (BOOL) isExecutable: (NSString *)path
@@ -247,11 +254,16 @@
 	if (shouldRecurse) *shouldRecurse = YES;
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	
+	NSArray *typeOrder = [NSArray arrayWithObjects:
+						  @"net.washboardabs.boxer-game-package",
+						  @"net.washboardabs.boxer-mountable-folder",
+						  nil];
+	
 	//If the file is inside a gamebox (first in preferredMountPointTypes) then search from that;
 	//If the file is inside a mountable folder (second) then search from that.
-	for (NSString *type in [[self class] preferredMountPointTypes])
+	for (NSString *type in typeOrder)
 	{
-		NSString *parent = [workspace parentOfFile: path matchingTypes: [NSArray arrayWithObject: type]];
+		NSString *parent = [workspace parentOfFile: path matchingTypes: [NSSet setWithObject: type]];
 		if (parent) return parent;
 	}
 	

@@ -13,9 +13,9 @@
 @interface NSWorkspace (BXFileTypes)
 //Returns whether the file at the specified path matches any of the specified UTI filetypes:
 //i.e. whether the file's UTI is equal to *or inherits from* any of those types.
-- (BOOL) file: (NSString *)filePath matchesTypes: (NSArray *)acceptedTypes;
+- (BOOL) file: (NSString *)filePath matchesTypes: (NSSet *)acceptedTypes;
 
 //Returns the nearest parent folder of the specified path which matches any of the specified UTIs,
 //or nil if no folder matched. This may return filePath, if the file itself matches the specified types.
-- (NSString *)parentOfFile: (NSString *)filePath matchingTypes: (NSArray *)acceptedTypes;
+- (NSString *)parentOfFile: (NSString *)filePath matchingTypes: (NSSet *)acceptedTypes;
 @end

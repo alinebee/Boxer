@@ -26,9 +26,9 @@
 @implementation BXSession (BXDragDrop)
 
 //Return an array of all filetypes we will accept by drag-drop
-+ (NSArray *) droppableFileTypes
++ (NSSet *) droppableFileTypes
 {
-	return [[BXAppController mountableTypes] arrayByAddingObjectsFromArray: [BXAppController executableTypes]];
+	return [[BXAppController mountableTypes] setByAddingObjectsFromSet: [BXAppController executableTypes]];
 }
 
 

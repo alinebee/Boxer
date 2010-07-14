@@ -53,7 +53,7 @@
 
 	[openPanel	beginSheetForDirectory: nil
 				file: nil
-				types: [BXAppController mountableTypes]
+				types: [[BXAppController mountableTypes] allObjects]
 				modalForWindow: [theSession windowForSheet]
 				modalDelegate: self
 				didEndSelector: @selector(mountChosenItem:returnCode:contextInfo:)

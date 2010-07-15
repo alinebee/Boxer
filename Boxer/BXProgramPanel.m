@@ -13,66 +13,80 @@
 - (BOOL) isOpaque { return YES; }
 - (BOOL) mouseDownCanMoveWindow { return YES; }
 
-
-- (void) drawRect: (NSRect)dirtyRect
+- (void) _drawGradientInRect: (NSRect)dirtyRect
 {
-	NSImage *grille			= [NSImage imageNamed: @"Grille.png"];
-	NSSize patternSize		= [grille size];
-	NSColor *grillePattern	= [NSColor colorWithPatternImage: grille];
 	NSColor *backgroundColor = [NSColor grayColor]; 
 	NSGradient *background = [[NSGradient alloc] initWithColorsAndLocations:
-		backgroundColor,							0.0f,
-		[backgroundColor shadowWithLevel: 0.25f],	0.9f,
-		[backgroundColor shadowWithLevel: 0.5f],	1.0f,
-	nil];
-
-	NSRect panelRegion	= [self bounds];
-
-	//NSColor pattern phase is relative to the bottom left corner of the *window*, not the bottom left corner
-	//of the view's bounds, so we need to track our window-relative origin and add it to the pattern phase
-	NSPoint panelOrigin	= [[self superview] frame].origin;
+							  backgroundColor,							0.0f,
+							  [backgroundColor shadowWithLevel: 0.25f],	0.9f,
+							  [backgroundColor shadowWithLevel: 0.5f],	1.0f,
+							  nil];
 	
-	//First, draw the background gradient
-	[background drawInRect: panelRegion angle: 90.0f];
+	[background drawInRect: [self bounds] angle: 90.0f];
 	[background release];
-	
+}
+
+- (void) _drawGrilleInRect: (NSRect)dirtyRect
+{
+	NSImage *grille		= [NSImage imageNamed: @"Grille.png"];
+	NSSize patternSize	= [grille size];
+	NSRect panelRegion	= [self bounds];
 	
 	//Next, calculate our top and bottom grille strips
 	NSRect grilleStrip		= panelRegion;
 	grilleStrip.size.height	= patternSize.height * 0.83f;	//Cut off the top of the grille slightly
 	grilleStrip.origin.y	= panelRegion.size.height - grilleStrip.size.height;	//Align the grille along the top of the panel
-	NSPoint grillePhase		= NSMakePoint(
-		((panelRegion.size.width - patternSize.width) / 2)	+ panelOrigin.x,	//Center the pattern horizontally
-		grilleStrip.origin.y		+ panelOrigin.y								//Lock the pattern to the bottom of the grille strip
-	);
 	
-	NSBezierPath *grillePath	= [NSBezierPath bezierPathWithRect: grilleStrip];
-	NSView *title				= [self viewWithTag: BXProgramPanelTitle];
-
-	//If the panel has a visible title, then clip out a portion of the grille pattern to accommodate it.
-	if (title && ![title isHidden])
+	//Only bother drawing the grille if it intersects with the region being drawn
+	if (NSIntersectsRect(grilleStrip, dirtyRect))
 	{
-		NSRect titleMask		= [title frame];
+		//NSColor pattern phase is relative to the bottom left corner of the *window*, not the bottom left corner
+		//of the view's bounds, so we need to track our window-relative origin and add it to the pattern phase
+		NSPoint panelOrigin	= [[self superview] frame].origin;
 		
-		//Round the mask's width to increments of the pattern, so that we don't cut off half a hole in the grille.
-		titleMask.size.width	= ceilf(titleMask.size.width / patternSize.width) * patternSize.width;
-		titleMask.origin.x		= (panelRegion.size.width - titleMask.size.width) / 2;
+		NSPoint grillePhase		= NSMakePoint(
+											  ((panelRegion.size.width - patternSize.width) / 2) + panelOrigin.x,	//Center the pattern horizontally
+											  grilleStrip.origin.y + panelOrigin.y									//Lock the pattern to the bottom of the grille strip
+											  );
 		
-		//Also reduce the mask's height so that it only masks areas within the strip.
-		titleMask.size.height	= NSMaxY(titleMask) - grilleStrip.origin.y;
-		titleMask.origin.y		= grilleStrip.origin.y;
+		NSBezierPath *grillePath	= [NSBezierPath bezierPathWithRect: grilleStrip];
+		NSView *title				= [self viewWithTag: BXProgramPanelTitle];
 		
-		[grillePath appendBezierPathWithRect: titleMask];
-		//The winding rules are a cheap way of subtracting the rect from our path, which only works in the simplest of cases.
-		[grillePath setWindingRule: NSEvenOddWindingRule]; 
-	}
-	
-	//Finally, draw the grille strip.
-	[NSGraphicsContext saveGraphicsState];
+		//If the panel has a visible title, then clip out a portion of the grille pattern to accommodate it.
+		if (title && ![title isHidden])
+		{
+			NSRect titleMask		= [title frame];
+			
+			//Round the mask's width to increments of the pattern, so that we don't cut off half a hole in the grille.
+			titleMask.size.width	= ceilf(titleMask.size.width / patternSize.width) * patternSize.width;
+			titleMask.origin.x		= (panelRegion.size.width - titleMask.size.width) / 2;
+			
+			//Also reduce the mask's height so that it only masks areas within the strip.
+			titleMask.size.height	= NSMaxY(titleMask) - grilleStrip.origin.y;
+			titleMask.origin.y		= grilleStrip.origin.y;
+			
+			[grillePath appendBezierPathWithRect: titleMask];
+			//The winding rules are a cheap way of subtracting the rect from our path, which only works in the simplest of cases.
+			[grillePath setWindingRule: NSEvenOddWindingRule]; 
+		}
+		
+		NSColor *grillePattern	= [NSColor colorWithPatternImage: grille];
+		
+		//Finally, draw the grille strip.
+		[NSGraphicsContext saveGraphicsState];
 		[grillePattern set];
 		[[NSGraphicsContext currentContext] setPatternPhase: grillePhase];
 		[grillePath fill];
-	[NSGraphicsContext restoreGraphicsState];
+		[NSGraphicsContext restoreGraphicsState];
+	}	
+}
+
+- (void) drawRect: (NSRect)dirtyRect
+{
+	[NSBezierPath clipRect: dirtyRect];
+	
+	[self _drawGradientInRect: dirtyRect];
+	[self _drawGrilleInRect: dirtyRect];
 }
 @end
 
@@ -84,6 +98,7 @@
 {
 	return [[self delegate] representedObject];
 }
+
 - (void) viewWillDraw
 {
 	//If this item is enabled and the default, style the button differently.
@@ -94,5 +109,4 @@
 	
 	[super viewWillDraw];
 }
-
 @end

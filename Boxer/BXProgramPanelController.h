@@ -20,20 +20,27 @@
 	IBOutlet NSView *defaultProgramPanel;
 	IBOutlet NSView *noProgramsPanel;
 	IBOutlet NSCollectionView *programList;
+	IBOutlet NSScrollView *programScroller;
 }
 
 
 #pragma mark -
 #pragma mark Properties
 
+@property (retain, nonatomic) NSView *programChooserPanel;
+@property (retain, nonatomic) NSView *defaultProgramPanel;
+@property (retain, nonatomic) NSView *noProgramsPanel;
+@property (retain, nonatomic) NSCollectionView *programList;
+@property (retain, nonatomic) NSScrollView *programScroller;
+
 //The currently displayed view in the program panel.
-@property (assign) NSView *activePanel;
+@property (assign, nonatomic) NSView *activePanel;
 
 //Whether the currently executing program is the default program for its gamebox.
-@property (assign) BOOL activeProgramIsDefault;
+@property (assign, nonatomic) BOOL activeProgramIsDefault;
 
 //The localised display string used for the "Open this program every time" checkbox toggle.
-@property (readonly) NSString *labelForToggle;
+@property (readonly, nonatomic) NSString *labelForToggle;
 
 
 #pragma mark -

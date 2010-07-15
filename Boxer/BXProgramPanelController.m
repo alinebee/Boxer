@@ -13,6 +13,18 @@
 
 
 @implementation BXProgramPanelController
+@synthesize programList, programScroller;
+@synthesize defaultProgramPanel, programChooserPanel, noProgramsPanel;
+
+- (void) dealloc
+{
+	[self setProgramList: nil],			[programList release];
+	[self setProgramScroller: nil],		[programScroller release];
+	[self setDefaultProgramPanel: nil], [defaultProgramPanel release];
+	[self setProgramChooserPanel: nil], [programChooserPanel release];
+	[self setNoProgramsPanel: nil],		[noProgramsPanel release];
+	[super dealloc];
+}
 
 - (NSString *) nibName	{ return @"ProgramPanel"; }
 
@@ -117,9 +129,16 @@
 		//Add the new panel into the view
 		[previousPanel removeFromSuperview];
 		[mainView addSubview: panel];
+		
+		//Force the program list scroller to recalculate its scroll dimensions. This is necessary in OS X 10.5,
+		//which calculates the initial dimensions incorrectly while the NSCollectionView is being populated.
+		if (panel == programChooserPanel)
+			[[self programScroller] reflectScrolledClipView: [[self programScroller] contentView]];
 	}
-	if (panel == programChooserPanel) [self syncProgramButtonStates];
-	
+	if (panel == programChooserPanel)
+	{
+		[self syncProgramButtonStates];
+	}
 	[self didChangeValueForKey: @"activePanel"];
 }
 

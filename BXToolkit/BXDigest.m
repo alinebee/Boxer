@@ -14,12 +14,12 @@
 
 @implementation BXDigest
 
-+ (NSData *) SHA1DigestForFiles: (NSSet *)filePaths
++ (NSData *) SHA1DigestForFiles: (NSArray *)filePaths
 {
 	return [self SHA1DigestForFiles: filePaths upToLength: 0];
 }
 
-+ (NSData *) SHA1DigestForFiles: (NSSet *)filePaths upToLength: (NSUInteger)readLength
++ (NSData *) SHA1DigestForFiles: (NSArray *)filePaths upToLength: (NSUInteger)readLength
 {
 	CC_SHA1_CTX	context;
 	

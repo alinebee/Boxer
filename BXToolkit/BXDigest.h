@@ -13,10 +13,10 @@
 @interface BXDigest : NSObject
 
 //Returns an SHA1 digest built from every file in the specified file list.
-+ (NSData *)SHA1DigestForFiles: (NSSet *)filePaths;
++ (NSData *)SHA1DigestForFiles: (NSArray *)filePaths;
 
 //Returns an SHA1 digest built from the first readLength bytes of every file in the specified file list.
 //If readLength is 0, this behaves the same as SHA1DigestForFiles:
-+ (NSData *)SHA1DigestForFiles: (NSSet *)filePaths upToLength: (NSUInteger)readLength;
++ (NSData *)SHA1DigestForFiles: (NSArray *)filePaths upToLength: (NSUInteger)readLength;
 
 @end

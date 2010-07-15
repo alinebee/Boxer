@@ -22,8 +22,8 @@
 
 //How we will store our gamebox-specific settings in user defaults.
 //%@ is the unique identifier for the gamebox.
-NSString * const BXGameboxSettingsKeyFormat	= @"Game Settings %@";
-NSString * const BXGameboxSettingsNameKey	= @"Game Name";
+NSString * const BXGameboxSettingsKeyFormat	= @"BXGameSettings: %@";
+NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 
 #pragma mark -
 #pragma mark Private method declarations

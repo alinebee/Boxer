@@ -18,19 +18,19 @@
 #pragma mark Constants
 
 //Application-wide constants.
-NSString * const BXGameIdentifierKey = @"Game Identifier";
-NSString * const BXGameIdentifierTypeKey = @"Game Identifier Type";
+NSString * const BXGameIdentifierKey = @"BXGameIdentifier";
+NSString * const BXGameIdentifierTypeKey = @"BXGameIdentifierType";
 
 NSString * const BXTargetSymlinkName			= @"DOSBox Target";
 NSString * const BXConfigurationFileName		= @"DOSBox Preferences";
 NSString * const BXConfigurationFileExtension	= @"conf";
-NSString * const BXGameInfoFileName				= @"Boxer";
+NSString * const BXGameInfoFileName				= @"Game Info";
 NSString * const BXGameInfoFileExtension		= @"plist";
 NSString * const BXDocumentationFolderName		= @"Documentation";
 
 
 //When calculating a digest from the gamebox's EXEs, read only the first 64kb of each EXE.
-#define BXEXEDigestStubLength 65536
+#define BXGameIdentifierEXEDigestStubLength 65536
 
 
 #pragma mark -
@@ -301,8 +301,9 @@ NSString * const BXDocumentationFolderName		= @"Documentation";
 	//If we don't have an identifier yet, generate a new one and add it to the game's metadata.
 	if (!identifier)
 	{
-		NSUInteger generatedType;
+		BXGameIdentifierType generatedType = BXGameIdentifierNone;
 		identifier = [self _generatedIdentifierOfType: &generatedType];
+		
 		[gameInfo setObject: identifier forKey: BXGameIdentifierKey];
 		[gameInfo setObject: [NSNumber numberWithUnsignedInteger: generatedType] forKey: BXGameIdentifierTypeKey];
 		[self _persistGameInfo];
@@ -401,7 +402,8 @@ NSString * const BXDocumentationFolderName		= @"Documentation";
 	NSArray *foundExecutables = [self executables];
 	if ([foundExecutables count])
 	{
-		NSData *digest = [BXDigest SHA1DigestForFiles: [NSSet setWithArray: foundExecutables] upToLength: BXEXEDigestStubLength];
+		NSData *digest = [BXDigest SHA1DigestForFiles: foundExecutables
+										   upToLength: BXGameIdentifierEXEDigestStubLength];
 		*type = BXGameIdentifierEXEDigest;
 		
 		return [digest stringWithHexBytes];

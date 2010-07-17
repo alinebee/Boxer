@@ -18,6 +18,7 @@
 
 - (NSColor *) textColor
 {
+	return [NSColor whiteColor];
 	return [NSColor lightGrayColor];
 }
 @end

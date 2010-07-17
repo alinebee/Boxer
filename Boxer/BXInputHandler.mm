@@ -50,13 +50,11 @@ void MAPPER_LosingFocus();
 @synthesize emulator;
 @synthesize mouseActive;
 @synthesize mousePosition;
-@synthesize mouseSensitivity;
 
 - (id) init
 {
 	if ((self = [super init]))
 	{
-		mouseSensitivity	= 1.0f;
 		mousePosition		= NSMakePoint(0.5f, 0.5f);
 		mouseActive			= NO;
 	}
@@ -106,12 +104,10 @@ void MAPPER_LosingFocus();
 		NSPoint canvasDelta = NSMakePoint(delta.x * canvas.size.width,
 										  delta.y * canvas.size.height);
 		
-		//FIXME: it seems really wrong to scale absolute mouse positions by mouse sensitivity,
-		//and not just delta; but this is what DOSBox used to do.
-		Mouse_CursorMoved(canvasDelta.x * mouseSensitivity,
-						  canvasDelta.y * mouseSensitivity,
-						  point.x * mouseSensitivity,
-						  point.y * mouseSensitivity,
+		Mouse_CursorMoved(canvasDelta.x,
+						  canvasDelta.y,
+						  point.x,
+						  point.y,
 						  locked);		
 	}
 }

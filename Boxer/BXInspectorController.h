@@ -22,6 +22,7 @@
 	IBOutlet NSView *panelContainer;
 	IBOutlet NSView *gamePanel;
 	IBOutlet NSView *cpuPanel;
+	IBOutlet NSView *mousePanel;
 	IBOutlet NSView *drivePanel;
 	IBOutlet NSSegmentedControl *panelSelector;
 	IBOutlet NSArrayController *driveController;
@@ -29,6 +30,7 @@
 @property (retain) NSView *panelContainer;	//The view into which the current panel will be added.
 @property (retain) NSView *gamePanel;		//The gamebox properties tab panel.
 @property (retain) NSView *cpuPanel;		//The CPU emulation settings tab panel.
+@property (retain) NSView *mousePanel;		//The mouse settings tab panel.
 @property (retain) NSView *drivePanel;		//The drive list panel.
 @property (retain) NSSegmentedControl *panelSelector;	//The segmented tab selector button at the top of the inspector.
 @property (retain) NSArrayController *driveController;	//The array controller representing the current session's drives.
@@ -48,6 +50,7 @@
 - (IBAction) showGameInspectorPanel:	(id)sender;	//Display the gamebox panel.
 - (IBAction) showCPUInspectorPanel:		(id)sender;	//Display the CPU panel.
 - (IBAction) showDriveInspectorPanel:	(id)sender;	//Display the drive list panel.
+- (IBAction) showMouseInspectorPanel:	(id)sender;	//Display the mouse panel.
 
 //Display the tab panel corresponding to the selected tab segment in the sender.
 - (IBAction) selectInspectorPanel:		(NSSegmentedControl *)sender;

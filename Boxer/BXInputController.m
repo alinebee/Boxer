@@ -14,6 +14,7 @@
 #import "BXGeometry.h"
 #import "BXCursorFadeAnimation.h"
 #import "BXSessionWindowController.h"
+#import "BXSession.h"
 
 //For keycodes
 #import <Carbon/Carbon.h>
@@ -55,8 +56,13 @@ enum {
 
 //Returns whether we should have control of the mouse cursor state.
 //This is true if the mouse is within the view, the window is key,
-//and mouse input is in use by the DOS program.
+//mouse input is in use by the DOS program, and the mouse is either
+//locked or we track the mouse while it's unlocked.
 - (BOOL) _controlsCursor;
+
+//A quicker version of the above for when we already know/don't care
+//if the mouse is inside the view.
+- (BOOL) _controlsCursorWhileMouseInside;
 
 //Converts a 0.0-1.0 relative canvas offset to a point on screen.
 - (NSPoint) _pointOnScreen: (NSPoint)canvasPoint;
@@ -75,17 +81,26 @@ enum {
 //Used when locking and unlocking the mouse and when DOS warps the mouse.
 - (void) _syncOSXCursorToPointInCanvas: (NSPoint)point;
 
+//Warps the DOS cursor to the specified point on our virtual mouse canvas.
+//Used when unlocking the mouse while unlocked mouse tracking is disabled,
+//to remove any latent mouse input from a leftover mouse position.
+- (void) _syncDOSCursorToPointInCanvas: (NSPoint)pointInCanvas;
+
 @end
 
 
 @implementation BXInputController
-@synthesize mouseLocked, mouseActive;
+@synthesize mouseLocked, mouseActive, trackMouseWhileUnlocked, mouseSensitivity;
 
 #pragma mark -
 #pragma mark Initialization and cleanup
 
 - (void) awakeFromNib
 {	
+	//Initialize mouse sensitivity and tracking options to a suitable default
+	mouseSensitivity = 1.0f;
+	trackMouseWhileUnlocked = YES;
+	
 	//DOSBox-triggered cursor warp distances which fit within this deadzone will be ignored
 	//to prevent needless input delays. q.v. _emulatorCursorMovedToPointInCanvas:
 	cursorWarpDeadzone = NSInsetRect(NSZeroRect, -BXCursorWarpTolerance, -BXCursorWarpTolerance);
@@ -140,6 +155,8 @@ enum {
 	{
 		if ([self representedObject])
 		{
+			[self unbind: @"mouseSensitivity"];
+			[self unbind: @"trackMouseWhileUnlocked"];
 			[self unbind: @"mouseActive"];
 			[[self representedObject] removeObserver: self forKeyPath: @"mousePosition"];
 		}
@@ -148,6 +165,23 @@ enum {
 		
 		if (representedObject)
 		{
+			//Bind our sensitivity and tracking options to the session settings
+			BXSession *session = (BXSession *)[[[[self view] window] windowController] document];
+			
+			NSDictionary *trackingOptions = [NSDictionary dictionaryWithObject: [NSNumber numberWithBool: YES]
+																		forKey: NSNullPlaceholderBindingOption];
+			[self bind: @"trackMouseWhileUnlocked" toObject: session
+		   withKeyPath: @"gameSettings.trackMouseWhileUnlocked"
+			   options: trackingOptions];
+			
+			NSDictionary *sensitivityOptions = [NSDictionary dictionaryWithObject: [NSNumber numberWithFloat: 1.0f]
+																		   forKey: NSNullPlaceholderBindingOption];
+			[self bind: @"mouseSensitivity" toObject: session
+		   withKeyPath: @"gameSettings.mouseSensitivity"
+			   options: sensitivityOptions];
+			
+			//Sync our mouse state to the emulator’s own mouse state
+			//TODO: eliminate these bindings as they won’t function across process boundaries
 			[self bind: @"mouseActive" toObject: representedObject withKeyPath: @"mouseActive" options: nil];
 			[representedObject addObserver: self forKeyPath: @"mousePosition" options: 0 context: nil];
 		}
@@ -174,18 +208,6 @@ enum {
 	NSPoint mouseLocation = [[[self view] window] mouseLocationOutsideOfEventStream];
 	NSPoint pointInView = [[self view] convertPoint: mouseLocation fromView: nil];
 	return [[self view] mouse: pointInView inRect: [[self view] bounds]];
-}
-
-- (void) setMouseActive: (BOOL)active
-{
-	[self willChangeValueForKey: @"mouseActive"];
-	
-	mouseActive = active;
-	[self cursorUpdate: nil];
-	//Release the mouse lock when the game stops using the mouse
-	if (!active) [self setMouseLocked: NO];
-	
-	[self didChangeValueForKey: @"mouseActive"];
 }
 
 - (void) cursorUpdate: (NSEvent *)theEvent
@@ -227,89 +249,143 @@ enum {
 #pragma mark Mouse events
 
 - (void) mouseDown: (NSEvent *)theEvent
-{
-	id inputHandler = [self representedObject];
-	
-	NSUInteger modifiers = [theEvent modifierFlags];
-	BOOL optModified	= (modifiers & NSAlternateKeyMask) > 0;
-	BOOL ctrlModified	= (modifiers & NSControlKeyMask) > 0;
-	BOOL cmdModified	= (modifiers & NSCommandKeyMask) > 0;
+{		
+	//Only respond to clicks otherwise if we're locked or tracking mouse input while unlocked
+	if ([self _controlsCursorWhileMouseInside])
+	{
+		BXInputHandler *inputHandler = (BXInputHandler *)[self representedObject];
 
-	//Cmd-clicking toggles mouse-locking
-	if (cmdModified) [self toggleMouseLocked: self];
-	
-	//Ctrl-Opt-clicking simulates a simultaneous left- and right-click
-	//(for those rare games that need it, like Syndicate)
-	else if (optModified && ctrlModified)
-	{
-		simulatedMouseButtons |= BXSimulatedButtonLeftAndRight;
-		[inputHandler mouseButtonPressed: OSXMouseButtonLeft withModifiers: modifiers];
-		[inputHandler mouseButtonPressed: OSXMouseButtonRight withModifiers: modifiers];
+		NSUInteger modifiers = [theEvent modifierFlags];
+		BOOL optModified	= (modifiers & NSAlternateKeyMask) > 0;
+		BOOL ctrlModified	= (modifiers & NSControlKeyMask) > 0;
+		BOOL cmdModified	= (modifiers & NSCommandKeyMask) > 0;
+			
+		//Cmd-clicking toggles mouse-locking
+		if (cmdModified)
+		{
+			[self toggleMouseLocked: self];
+		}		
+		//Ctrl-Opt-clicking simulates a simultaneous left- and right-click
+		//(for those rare games that need it, like Syndicate)
+		else if (optModified && ctrlModified)
+		{
+			simulatedMouseButtons |= BXSimulatedButtonLeftAndRight;
+			[inputHandler mouseButtonPressed: OSXMouseButtonLeft withModifiers: modifiers];
+			[inputHandler mouseButtonPressed: OSXMouseButtonRight withModifiers: modifiers];
+		}
+		
+		//Ctrl-clicking simulates a right mouse-click
+		else if (ctrlModified)
+		{
+			simulatedMouseButtons |= BXSimulatedButtonRight;
+			[inputHandler mouseButtonPressed: OSXMouseButtonRight withModifiers: modifiers];
+		}
+		
+		//Opt-clicking simulates a middle mouse-click
+		else if (optModified)
+		{
+			simulatedMouseButtons |= BXSimulatedButtonMiddle;
+			[inputHandler mouseButtonPressed: OSXMouseButtonMiddle withModifiers: modifiers];
+		}
+		
+		//Otherwise, pass the left click on as-is
+		else [inputHandler mouseButtonPressed: OSXMouseButtonLeft withModifiers: modifiers];
 	}
-	
-	//Ctrl-clicking simulates a right mouse-click
-	else if (ctrlModified)
+	//If we're clicking on the window while unlocked tracking is disabled,
+	//then lock the mouse immediately
+	else if (![self mouseLocked] && ![self trackMouseWhileUnlocked])
 	{
-		simulatedMouseButtons |= BXSimulatedButtonRight;
-		[inputHandler mouseButtonPressed: OSXMouseButtonRight withModifiers: modifiers];
+		[self toggleMouseLocked: self];
 	}
-	
-	//Opt-clicking simulates a middle mouse-click
-	else if (optModified)
+	//Otherwise, let the mouse event pass on unmolested
+	else
 	{
-		simulatedMouseButtons |= BXSimulatedButtonMiddle;
-		[inputHandler mouseButtonPressed: OSXMouseButtonMiddle withModifiers: modifiers];
+		[super mouseDown: theEvent];
 	}
-	
-	//Otherwise, pass the left click on as-is
-	else [inputHandler mouseButtonPressed: OSXMouseButtonLeft withModifiers: modifiers];
 }
 
 - (void) rightMouseDown: (NSEvent *)theEvent
 {
-	[[self representedObject] mouseButtonPressed: OSXMouseButtonRight withModifiers: [theEvent modifierFlags]];
+	if ([self _controlsCursorWhileMouseInside])
+	{
+		[[self representedObject] mouseButtonPressed: OSXMouseButtonRight
+									   withModifiers: [theEvent modifierFlags]];
+	}
+	else
+	{
+		[super rightMouseDown: theEvent];
+	}
 }
 
 - (void) otherMouseDown: (NSEvent *)theEvent
 {
-	if ([theEvent buttonNumber] == OSXMouseButtonMiddle)
-		[[self representedObject] mouseButtonPressed: OSXMouseButtonMiddle withModifiers: [theEvent modifierFlags]];
-	else [super otherMouseDown: theEvent];
+	if ([self _controlsCursorWhileMouseInside] && [theEvent buttonNumber] == OSXMouseButtonMiddle)
+	{
+		[[self representedObject] mouseButtonPressed: OSXMouseButtonMiddle
+									   withModifiers: [theEvent modifierFlags]];
+	}
+	else
+	{
+		[super otherMouseDown: theEvent];
+	}
 }
 
 - (void) mouseUp: (NSEvent *)theEvent
 {
-	id inputHandler = [self representedObject];
-	NSUInteger modifiers = [theEvent modifierFlags];
-
-	if (simulatedMouseButtons)
+	if ([self _controlsCursorWhileMouseInside])
 	{
-		if (simulatedMouseButtons & BXSimulatedButtonLeftAndRight)
+		id inputHandler = [self representedObject];
+		NSUInteger modifiers = [theEvent modifierFlags];
+
+		if (simulatedMouseButtons)
 		{
-			[inputHandler mouseButtonReleased: OSXMouseButtonLeft withModifiers: modifiers];
-			[inputHandler mouseButtonReleased: OSXMouseButtonRight withModifiers: modifiers];
+			if (simulatedMouseButtons & BXSimulatedButtonLeftAndRight)
+			{
+				[inputHandler mouseButtonReleased: OSXMouseButtonLeft withModifiers: modifiers];
+				[inputHandler mouseButtonReleased: OSXMouseButtonRight withModifiers: modifiers];
+			}
+			if (simulatedMouseButtons & BXSimulatedButtonRight)
+				[inputHandler mouseButtonReleased: OSXMouseButtonRight withModifiers: modifiers];
+			if (simulatedMouseButtons & BXSimulatedButtonMiddle)
+				[inputHandler mouseButtonReleased: OSXMouseButtonMiddle withModifiers: modifiers];
+			
+			simulatedMouseButtons = BXNoSimulatedButtons;
 		}
-		if (simulatedMouseButtons & BXSimulatedButtonRight)
-			[inputHandler mouseButtonReleased: OSXMouseButtonRight withModifiers: modifiers];
-		if (simulatedMouseButtons & BXSimulatedButtonMiddle)
-			[inputHandler mouseButtonReleased: OSXMouseButtonMiddle withModifiers: modifiers];
-		
-		simulatedMouseButtons = BXNoSimulatedButtons;
+		//Pass the mouse release as-is to our input handler
+		else [inputHandler mouseButtonReleased: OSXMouseButtonLeft withModifiers: modifiers];
 	}
-	//Pass the mouse release as-is to our input handler
-	else [inputHandler mouseButtonReleased: OSXMouseButtonLeft withModifiers: modifiers];
+	else
+	{
+		[super mouseUp: theEvent];
+	}
 }
 
 - (void) rightMouseUp:(NSEvent *)theEvent
 {
-	[[self representedObject] mouseButtonReleased: OSXMouseButtonRight withModifiers: [theEvent modifierFlags]];
+	if ([self _controlsCursorWhileMouseInside])
+	{
+		[[self representedObject] mouseButtonReleased: OSXMouseButtonRight
+										withModifiers: [theEvent modifierFlags]];
+	}
+	else
+	{
+		[super rightMouseUp: theEvent];
+	}
+
 }
 
 - (void) otherMouseUp:(NSEvent *)theEvent
 {
-	if ([theEvent buttonNumber] == OSXMouseButtonMiddle)
-		[[self representedObject] mouseButtonReleased: OSXMouseButtonMiddle withModifiers: [theEvent modifierFlags]];
-	else [super otherMouseDown: theEvent];
+	//Only pay attention to the middle mouse button; all others can do as they will
+	if ([theEvent buttonNumber] == OSXMouseButtonMiddle && [self _controlsCursorWhileMouseInside])
+	{
+		[[self representedObject] mouseButtonReleased: OSXMouseButtonMiddle
+										withModifiers: [theEvent modifierFlags]];
+	}		
+	else
+	{
+		[super otherMouseUp: theEvent];
+	}
 }
 
 //Work out mouse motion relative to the view's canvas, passing on the current position
@@ -318,54 +394,68 @@ enum {
 //position, so that they stay consistent when the view size changes.
 - (void) mouseMoved: (NSEvent *)theEvent
 {	
-	NSRect canvas = [[self view] bounds];
-	CGFloat width = canvas.size.width;
-	CGFloat height = canvas.size.height;
-	
-	NSPoint pointOnCanvas, delta;
-
-	//Make the delta relative to the canvas
-	delta = NSMakePoint([theEvent deltaX] / width,
-						[theEvent deltaY] / height);		
-	
-	//If we have just warped the mouse, the delta above will include the distance warped
-	//as well as the actual distance moved in this mouse event: so, we subtract the warp.
-	if (!NSEqualPoints(distanceWarped, NSZeroPoint))
+	//Only apply mouse movement if we're locked or we're accepting unlocked mouse input
+	if ([self _controlsCursorWhileMouseInside])
 	{
-		delta.x -= distanceWarped.x;
-		delta.y -= distanceWarped.y;
-		distanceWarped = NSZeroPoint;
-	}
-	
-	if (![self mouseLocked])
-	{
-		NSPoint pointInView	= [[self view] convertPoint: [theEvent locationInWindow]
-											   fromView: nil];
-		pointOnCanvas = NSMakePoint(pointInView.x / width,
-									pointInView.y / height);
+		NSRect canvas = [[self view] bounds];
+		CGFloat width = canvas.size.width;
+		CGFloat height = canvas.size.height;
+		
+		NSPoint pointOnCanvas, delta;
 
-		//Clamp the position to within the canvas.
-		pointOnCanvas = clampPointToRect(pointOnCanvas, canvasBounds);
+		//Make the delta relative to the canvas
+		delta = NSMakePoint([theEvent deltaX] / width,
+							[theEvent deltaY] / height);		
+		
+		//If we have just warped the mouse, the delta above will include the distance warped
+		//as well as the actual distance moved in this mouse event: so, we subtract the warp.
+		if (!NSEqualPoints(distanceWarped, NSZeroPoint))
+		{
+			delta.x -= distanceWarped.x;
+			delta.y -= distanceWarped.y;
+		}
+		
+		if (![self mouseLocked])
+		{
+			NSPoint pointInView	= [[self view] convertPoint: [theEvent locationInWindow]
+												   fromView: nil];
+			pointOnCanvas = NSMakePoint(pointInView.x / width,
+										pointInView.y / height);
+
+			//Clamp the position to within the canvas.
+			pointOnCanvas = clampPointToRect(pointOnCanvas, canvasBounds);
+		}
+		else
+		{
+			//While the mouse is locked, OS X won't update the absolute cursor position and
+			//DOSBox won't pay attention to the absolute cursor position either, so we don't
+			//bother calculating it.
+			pointOnCanvas = NSZeroPoint;
+			
+			//While the mouse is locked, we apply our mouse sensitivity to the delta.
+			delta.x *= mouseSensitivity;
+			delta.y *= mouseSensitivity;
+		}
+		
+		//Tells _emulatorCursorMovedToPointInCanvas: not to warp the mouse cursor based on
+		//DOSBox mouse position updates from this call.
+		updatingMousePosition = YES;
+		
+		[[self representedObject] mouseMovedToPoint: pointOnCanvas
+										   byAmount: delta
+										   onCanvas: canvas
+										whileLocked: [self mouseLocked]];
+		
+		//Resume paying attention to mouse position updates
+		updatingMousePosition = NO;
 	}
 	else
 	{
-		//While the mouse is locked, OS X won't update the absolute cursor position and
-		//DOSBox won't pay attention to the absolute cursor position either, so we don't
-		//bother calculating it.
-		pointOnCanvas = NSZeroPoint;
+		[super mouseMoved: theEvent];
 	}
-	
-	//Tells _emulatorCursorMovedToPointInCanvas: not to warp the mouse cursor based on
-	//DOSBox mouse position updates from this call.
-	updatingMousePosition = YES;
-	
-	[[self representedObject] mouseMovedToPoint: pointOnCanvas
-									   byAmount: delta
-									   onCanvas: canvas
-									whileLocked: [self mouseLocked]];
-	
-	//Resume paying attention to mouse position updates
-	updatingMousePosition = NO;
+	//Always reset our internal warp tracking after every mouse movement event,
+	//even if the event is not handled.
+	distanceWarped = NSZeroPoint;
 }
 
 //Treat drag events as simple mouse movement
@@ -484,7 +574,6 @@ enum {
 #pragma mark -
 #pragma mark Mouse focus and locking 
 	 
-	 
 - (IBAction) toggleMouseLocked: (id)sender
 {
 	BOOL wasLocked = [self mouseLocked];
@@ -498,6 +587,12 @@ enum {
 	}
 }
 
+- (IBAction) toggleTrackMouseWhileUnlocked: (id)sender
+{
+	BOOL track = [self trackMouseWhileUnlocked];
+	[self setTrackMouseWhileUnlocked: !track];
+}
+
 - (BOOL) validateMenuItem: (NSMenuItem *)menuItem
 {
 	SEL theAction = [menuItem action];
@@ -507,11 +602,18 @@ enum {
 		[menuItem setState: [self mouseLocked]];
 		return [self mouseActive];
 	}
+	else if (theAction == @selector(toggleTrackMouseWhileUnlocked:))
+	{
+		[menuItem setState: [self trackMouseWhileUnlocked]];
+		return YES;
+	}
 	return YES;
 }
-	 
+
 - (void) setMouseLocked: (BOOL)lock
 {
+	[self willChangeValueForKey: @"mouseLocked"];
+	
 	//Don't continue if we're already in the right lock state
 	if (lock == [self mouseLocked]) return;
 	
@@ -525,7 +627,6 @@ enum {
 	
 	
 	//If we got this far, go ahead!
-	[self willChangeValueForKey: @"mouseLocked"];
 	
 	//When locking, always ensure the application and DOS window are active.
 	if (lock)
@@ -535,11 +636,38 @@ enum {
 	}
 	
 	[self _applyMouseLockState: lock];
-	
 	mouseLocked = lock;
 	
 	[self didChangeValueForKey: @"mouseLocked"];
 }
+
+- (void) setMouseActive: (BOOL)active
+{
+	[self willChangeValueForKey: @"mouseActive"];
+	
+	mouseActive = active;
+	[self cursorUpdate: nil];
+	//Release the mouse lock when the game stops using the mouse
+	if (!active) [self setMouseLocked: NO];
+	
+	[self didChangeValueForKey: @"mouseActive"];
+}
+
+- (void) setTrackMouseWhileUnlocked: (BOOL)track
+{
+	[self willChangeValueForKey: @"trackMouseWhileUnlocked"];
+	
+	trackMouseWhileUnlocked = track;
+	
+	//If we're disabling tracking, and the mouse is currently unlocked,
+	//then warp the mouse to the center of the window as if we had just unlocked it.
+	
+	//Disabled for now because this makes the mouse jumpy and unpredictable.
+	if (NO && !track && ![self mouseLocked])
+		[self _syncDOSCursorToPointInCanvas: NSMakePoint(0.5f, 0.5f)];
+	 
+	[self didChangeValueForKey: @"trackMouseWhileUnlocked"];
+}	 
 
 
 #pragma mark -
@@ -547,7 +675,12 @@ enum {
 
 - (BOOL) _controlsCursor
 {
-	return [self mouseActive] && [[[self view] window] isKeyWindow] && [self mouseInView];
+	return [self _controlsCursorWhileMouseInside] && [[[self view] window] isKeyWindow] && [self mouseInView];
+}
+
+- (BOOL) _controlsCursorWhileMouseInside
+{
+	return [self mouseActive] && ([self mouseLocked] || [self trackMouseWhileUnlocked]);
 }
 
 - (NSPoint) _pointOnScreen: (NSPoint)canvasPoint
@@ -597,6 +730,17 @@ enum {
 		//(We avoid warping if the mouse is already over the view,
 		//as this would cause an input delay.)
 		if (![self mouseInView]) [self _syncOSXCursorToPointInCanvas: NSMakePoint(0.5f, 0.5f)];
+		
+		//If we weren't tracking the mouse while it was unlocked, then warp the DOS mouse cursor
+		//Disabled for now, because this makes the mouse behaviour jumpy and unpredictable.
+		
+		if (NO && ![self trackMouseWhileUnlocked])
+		{
+			NSPoint mouseLocation = [NSEvent mouseLocation];
+			NSPoint canvasLocation = [self _pointInCanvas: mouseLocation];
+			
+			[self _syncDOSCursorToPointInCanvas: canvasLocation];
+		}
 	}
 	else
 	{
@@ -610,6 +754,17 @@ enum {
 		mousePosition = clampPointToRect(mousePosition, visibleCanvasBounds);
 		
 		[self _syncOSXCursorToPointInCanvas: mousePosition];
+		
+		//If we don't track the mouse while unlocked, then also tell DOSBox
+		//to warp the mouse to the center of the canvas; this will prevent
+		//the leftover position from latently causing unintended input
+		//(such as scrolling or turning).
+		
+		//Disabled for now because this makes the mouse jumpy and unpredictable.
+		if (NO && ![self trackMouseWhileUnlocked])
+		{
+			[self _syncDOSCursorToPointInCanvas: NSMakePoint(0.5f, 0.5f)];
+		}
 	}
 }
 
@@ -660,4 +815,12 @@ enum {
 	CGWarpMouseCursorPosition(cgPointOnScreen);
 }
 
+- (void) _syncDOSCursorToPointInCanvas: (NSPoint)pointInCanvas
+{
+	NSPoint delta = deltaFromPointToPoint([[self representedObject] mousePosition], pointInCanvas);
+	[[self representedObject] mouseMovedToPoint: pointInCanvas
+									   byAmount: delta
+									   onCanvas: [[self view] bounds]
+									whileLocked: NO];
+}
 @end

@@ -81,12 +81,29 @@
 	BXInputController *viewController = [[self controller] inputController];
 	if ([viewController mouseActive])
 	{
-		if ([viewController mouseLocked])	return NSLocalizedString(@"Cmd-click to release the mouse.",
-																	 @"Statusbar message when mouse is locked");
-		if ([viewController mouseInView])	return NSLocalizedString(@"Cmd-click to lock the mouse to the window.",
-																	 @"Statusbar message when mouse is unlocked and over DOS viewport");
+		if ([viewController mouseLocked])
+		{
+			return NSLocalizedString(@"Cmd-click to release the mouse.",
+									 @"Statusbar message when mouse is locked.");
+		}
+		else if ([viewController mouseInView])
+		{	
+			if ([viewController trackMouseWhileUnlocked])
+			{
+				return NSLocalizedString(@"Cmd-click inside the window to lock the mouse.",
+										 @"Statusbar message when mouse is unlocked and over DOS viewport.");
+			}
+			else
+			{
+				return NSLocalizedString(@"Click inside the window to lock the mouse.",
+										 @"Statusbar message when mouse is unlocked and over DOS viewport and unlocked mouse-tracking is disabled.");
+			}
+		}
 	}
-	return @"";
+	else
+	{
+		return @"";
+	}
 }
 
 - (void) _statusBarDidResize
@@ -150,6 +167,11 @@
 					options: 0
 					context: nil];
 	
+	[[self controller] addObserver: self
+						forKeyPath: @"inputController.trackMouseWhileUnlocked"
+						   options: 0
+						   context: nil];
+	
 	[[NSApp delegate] addObserver: self
 					   forKeyPath: @"inspectorPanelShown"
 						  options: 0
@@ -177,6 +199,7 @@
 	[[self controller] removeObserver: self forKeyPath: @"inputController.mouseActive"];
 	[[self controller] removeObserver: self forKeyPath: @"inputController.mouseLocked"];
 	[[self controller] removeObserver: self forKeyPath: @"inputController.mouseInView"];
+	[[self controller] removeObserver: self forKeyPath: @"inputController.trackMouseWhileUnlocked"];
 	[[self controller] removeObserver: self forKeyPath: @"document.isGamePackage"];
 	[[self controller] removeObserver: self forKeyPath: @"programPanelShown"];
 	

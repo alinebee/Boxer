@@ -72,9 +72,11 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 {
 	if ((self = [super init]))
 	{
-		[self setEmulator: [[[BXEmulator alloc] init] autorelease]];
-		[self setGameSettings: [NSMutableDictionary dictionaryWithCapacity: 10]];
+		NSString *defaultsPath			= [[NSBundle mainBundle] pathForResource: @"GameDefaults" ofType: @"plist"];
+		NSMutableDictionary *defaults	= [NSMutableDictionary dictionaryWithContentsOfFile: defaultsPath];
 		
+		[self setEmulator: [[[BXEmulator alloc] init] autorelease]];
+		[self setGameSettings: defaults];
 	}
 	return self;
 }
@@ -147,7 +149,7 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 			
 			NSDictionary *gameboxSettings = [defaults objectForKey: defaultsKey];
 			
-			//Merge the loaded values in rather than replacing the settings altogether.
+			//Merge the loaded values in, rather than replacing the settings altogether.
 			[gameSettings addEntriesFromDictionary: gameboxSettings]; 
 		}
 	}

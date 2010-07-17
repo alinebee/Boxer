@@ -19,7 +19,7 @@ const CGFloat BXInspectorPanelBlurRadius = 2.0f;
 
 @implementation BXInspectorController
 @synthesize panelContainer;
-@synthesize gamePanel, cpuPanel, drivePanel;
+@synthesize gamePanel, cpuPanel, mousePanel, drivePanel;
 @synthesize panelSelector;
 @synthesize driveController;
 
@@ -96,10 +96,17 @@ const CGFloat BXInspectorPanelBlurRadius = 2.0f;
 {	
 	if ([keyPath isEqualToString: @"currentSession"])
 	{
-		BXSession *session		= [[NSApp delegate] currentSession];
-		NSInteger panelIndex	= [[self panels] indexOfObject: [self gamePanel]];
+		BXSession *session			= [[NSApp delegate] currentSession];
+		NSInteger gamePanelIndex	= [[self panels] indexOfObject: [self gamePanel]];
 		
-		[[self panelSelector] setEnabled: [session isGamePackage] forSegment: panelIndex];
+		//This charade is necessary because NSSegmentedControl has an awful interface
+		NSInteger i = 0;
+		for (i = 0; i < [[self panelSelector] segmentCount]; i++)
+		{
+			if ([[[self panelSelector] cell] tagForSegment: i] == gamePanelIndex)
+				[[self panelSelector] setEnabled: [session isGamePackage] forSegment: i];
+		}
+		
 		if (![session isGamePackage] && [[self currentPanel] isEqualTo: [self gamePanel]])
 			[self setCurrentPanel: [self cpuPanel]];
 	}
@@ -141,10 +148,20 @@ const CGFloat BXInspectorPanelBlurRadius = 2.0f;
 	}
 }
 
+//A miserable hack to notify BXAppController that the inspector panel has been closed,
+//so that we can update button states immediately. It has so far proven impossible to manage
+//this some other, more preferable way (such as bindings).
+- (BOOL) windowShouldClose: (id)sender
+{
+	[[NSApp delegate] setInspectorPanelShown: NO];
+	return YES;
+}
+
+
 - (NSArray *) panels
 {
 	return [NSArray arrayWithObjects:
-		[self gamePanel], [self cpuPanel], [self drivePanel],
+		[self gamePanel], [self cpuPanel], [self mousePanel], [self drivePanel],
 	nil];
 }
 
@@ -163,7 +180,7 @@ const CGFloat BXInspectorPanelBlurRadius = 2.0f;
 
 		//Synchronise the selected tab
 		NSInteger panelIndex = [[self panels] indexOfObject: panel];
-		[[self panelSelector] setSelectedSegment: panelIndex];
+		[[self panelSelector] selectSegmentWithTag: panelIndex];
 		
 		//Now add the new panel and resize the window to accomodate it
 
@@ -254,15 +271,17 @@ const CGFloat BXInspectorPanelBlurRadius = 2.0f;
 	return [self animationDidEnd: animation];
 }
 
-//UI Actions
-//----------
+
+#pragma mark -
+#pragma mark UI actions
 
 - (IBAction) showGameInspectorPanel:	(id)sender	{ [self setCurrentPanel: [self gamePanel]]; }
 - (IBAction) showCPUInspectorPanel:		(id)sender	{ [self setCurrentPanel: [self cpuPanel]]; }
+- (IBAction) showMouseInspectorPanel:	(id)sender	{ [self setCurrentPanel: [self mousePanel]]; }
 - (IBAction) showDriveInspectorPanel:	(id)sender	{ [self setCurrentPanel: [self drivePanel]]; }
 - (IBAction) selectInspectorPanel:		(NSSegmentedControl *)sender
 {
-	NSInteger selectorIndex = [sender selectedSegment];
+	NSInteger selectorIndex = [[sender cell] tagForSegment: [sender selectedSegment]];
 	[self setCurrentPanel: [[self panels] objectAtIndex: selectorIndex]];
 	
 	//Record the user's choice in the user defaults
@@ -313,8 +332,8 @@ const CGFloat BXInspectorPanelBlurRadius = 2.0f;
 }
 
 
-//Handling drag-drop
-//------------------
+#pragma mark -
+#pragma mark Drag-drop
 
 - (NSDragOperation)draggingEntered: (id <NSDraggingInfo>)sender
 {
@@ -349,6 +368,10 @@ const CGFloat BXInspectorPanelBlurRadius = 2.0f;
 	return NO;
 }
 
+
+#pragma mark -
+#pragma mark Drive list sorting
+
 //Returns the NSSortDescriptors to be used for sorting drives in the drive panel
 - (NSArray *) driveSortDescriptors
 {
@@ -359,15 +382,6 @@ const CGFloat BXInspectorPanelBlurRadius = 2.0f;
 - (NSPredicate *) driveFilterPredicate
 {
 	return [NSPredicate predicateWithFormat: @"isInternal == NO && isHidden == NO"];
-}
-
-//A miserable hack to notify BXAppController that the inspector panel has been closed,
-//so that we can update button states immediately. It has so far proven impossible to manage
-//this some other, more preferable way (such as bindings).
-- (BOOL) windowShouldClose: (id)sender
-{
-	[[NSApp delegate] setInspectorPanelShown: NO];
-	return YES;
 }
 
 @end

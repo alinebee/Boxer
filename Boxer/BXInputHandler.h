@@ -19,7 +19,6 @@
 	BXEmulator *emulator;
 	BOOL mouseActive;
 	NSPoint mousePosition;
-	CGFloat mouseSensitivity;
 }
 //Our parent emulator.
 @property (assign) BXEmulator *emulator;
@@ -29,9 +28,6 @@
 
 //Where DOSBox thinks the mouse is.
 @property (assign) NSPoint mousePosition;
-
-//How much to scale mouse motion by.
-@property (assign) CGFloat mouseSensitivity;
 
 
 //Called whenever we lose keyboard input focus. Clears all DOSBox events.

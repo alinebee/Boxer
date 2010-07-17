@@ -22,6 +22,8 @@
 	
 	BOOL mouseActive;
 	BOOL mouseLocked;
+	BOOL trackMouseWhileUnlocked;
+	CGFloat mouseSensitivity;
 	
 	//Used internally for constraining mouse location and movement
 	NSRect cursorWarpDeadzone;
@@ -40,9 +42,14 @@
 //Whether the mouse is in use by the DOS program. Set programmatically to match the emulator.
 @property (assign) BOOL mouseActive;
 
-//Set/get whether the mouse is locked to the DOS view.
+//Whether the mouse is locked to the DOS view.
 @property (assign) BOOL mouseLocked;
 
+//Whether we should handle mouse movement while the mouse is unlocked from the DOS view.
+@property (assign) BOOL trackMouseWhileUnlocked;
+
+//How much to scale mouse motion by.
+@property (assign) CGFloat mouseSensitivity;
 
 #pragma mark -
 #pragma mark Methods
@@ -62,6 +69,9 @@
 
 //Lock/unlock the mouse.
 - (IBAction) toggleMouseLocked: (id)sender;
+
+//Enable/disable unlocked mouse tracking.
+- (IBAction) toggleTrackMouseWhileUnlocked: (id)sender;
 
 
 #pragma mark -

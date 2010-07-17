@@ -97,6 +97,16 @@
 + (Class) transformedValueClass			{ return [NSNumber class]; }
 + (BOOL) allowsReverseTransformation	{ return YES; }
 
+- (id) initWithThresholds: (NSArray *)thresholds
+{
+	if ((self = [super init]))
+	{
+		[self setBandThresholds: thresholds];
+	}
+	return self;
+}
+
+
 - (NSNumber *) minValue	{ return [[self bandThresholds] objectAtIndex: 0]; }
 - (NSNumber *) maxValue	{ return [[self bandThresholds] lastObject]; }
 

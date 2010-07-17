@@ -845,6 +845,7 @@
 				9FCBB2D910A61D6100C28B09 /* Preflight.conf */,
 				9F466AFB11A92C4B00C50965 /* UserDefaults.plist */,
 				9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */,
+				9FAE9B8A11F1D7CF000363F7 /* GameDefaults.plist */,
 				9F466A1A11A9222B00C50965 /* Shaders */,
 				9FFAFE2E10DE343F00728BAC /* Configurations */,
 				9FCBB5FE10A6DDBD00C28B09 /* DOS Toolkit */,
@@ -854,7 +855,6 @@
 				9F496E4C108EEDF700282261 /* XIBs */,
 				9FBC34390F56C5AC001811F2 /* Images */,
 				9F496E4D108EEE0700282261 /* Strings */,
-				9FAE9B8A11F1D7CF000363F7 /* GameDefaults.plist */,
 			);
 			path = Resources;
 			sourceTree = "<group>";

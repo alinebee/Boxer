@@ -21,7 +21,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="1113"/>
+			<integer value="1071"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -868,35 +868,35 @@
 				<int key="NSvFlags">293</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
-					<object class="BGHUDLabel" id="515038512">
+					<object class="BGHUDLabel" id="674851383">
 						<reference key="NSNextResponder" ref="722134251"/>
 						<int key="NSvFlags">266</int>
 						<string key="NSFrame">{{20, 70}, {224, 28}}</string>
 						<reference key="NSSuperview" ref="722134251"/>
 						<bool key="NSEnabled">YES</bool>
-						<object class="NSTextFieldCell" key="NSCell" id="1032932035">
+						<object class="NSTextFieldCell" key="NSCell" id="75681258">
 							<int key="NSCellFlags">67239424</int>
 							<int key="NSCellFlags2">4325376</int>
 							<string key="NSContents">To lock the mouse, Cmd+click on the game window or press the lock button.</string>
 							<reference key="NSSupport" ref="26"/>
-							<reference key="NSControlView" ref="515038512"/>
+							<reference key="NSControlView" ref="674851383"/>
 							<reference key="NSBackgroundColor" ref="1046058740"/>
 							<reference key="NSTextColor" ref="680331616"/>
 						</object>
 						<string key="themeKey">BXHelpTextTheme</string>
 					</object>
-					<object class="BGHUDLabel" id="686148055">
+					<object class="BGHUDLabel" id="205794439">
 						<reference key="NSNextResponder" ref="722134251"/>
 						<int key="NSvFlags">266</int>
 						<string key="NSFrame">{{20, 70}, {224, 28}}</string>
 						<reference key="NSSuperview" ref="722134251"/>
 						<bool key="NSEnabled">YES</bool>
-						<object class="NSTextFieldCell" key="NSCell" id="503590962">
+						<object class="NSTextFieldCell" key="NSCell" id="158341696">
 							<int key="NSCellFlags">67239424</int>
 							<int key="NSCellFlags2">4325376</int>
 							<string key="NSContents">To lock the mouse, click on the game window or press the lock button.</string>
 							<reference key="NSSupport" ref="26"/>
-							<reference key="NSControlView" ref="686148055"/>
+							<reference key="NSControlView" ref="205794439"/>
 							<reference key="NSBackgroundColor" ref="1046058740"/>
 							<reference key="NSTextColor" ref="680331616"/>
 						</object>
@@ -936,7 +936,7 @@
 										<reference key="NSSuperview" ref="921991131"/>
 										<bool key="NSEnabled">YES</bool>
 										<object class="BGHUDButtonCell" key="NSCell" id="99016064">
-											<int key="NSCellFlags">-2080244224</int>
+											<int key="NSCellFlags">67239424</int>
 											<int key="NSCellFlags2">0</int>
 											<string key="NSContents">Ignore mouse unless locked</string>
 											<reference key="NSSupport" ref="235291261"/>
@@ -952,18 +952,18 @@
 											<string key="themeKey">BXShadowedTextTheme</string>
 										</object>
 									</object>
-									<object class="BGHUDLabel" id="3297162">
+									<object class="BGHUDLabel" id="23721504">
 										<reference key="NSNextResponder" ref="921991131"/>
 										<int key="NSvFlags">1292</int>
 										<string key="NSFrame">{{19, 25}, {224, 28}}</string>
 										<reference key="NSSuperview" ref="921991131"/>
 										<bool key="NSEnabled">YES</bool>
-										<object class="NSTextFieldCell" key="NSCell" id="432966514">
+										<object class="NSTextFieldCell" key="NSCell" id="582773349">
 											<int key="NSCellFlags">67239424</int>
 											<int key="NSCellFlags2">4325376</int>
 											<string key="NSContents">Turn on if the mouse causes unwanted movement when leaving the window.</string>
 											<reference key="NSSupport" ref="26"/>
-											<reference key="NSControlView" ref="3297162"/>
+											<reference key="NSControlView" ref="23721504"/>
 											<reference key="NSBackgroundColor" ref="1046058740"/>
 											<reference key="NSTextColor" ref="680331616"/>
 										</object>
@@ -994,7 +994,7 @@
 						<int key="NSBoxType">4</int>
 						<int key="NSTitlePosition">0</int>
 						<bool key="NSTransparent">NO</bool>
-						<object class="NSColor" key="NSFillColor2" id="424892565">
+						<object class="NSColor" key="NSFillColor2" id="741462176">
 							<int key="NSColorSpace">1</int>
 							<bytes key="NSRGB">MCAwIDAgMC4yAA</bytes>
 						</object>
@@ -1018,7 +1018,7 @@
 							<int key="NSColorSpace">3</int>
 							<bytes key="NSWhite">MCAwLjI1AA</bytes>
 						</object>
-						<reference key="color2" ref="424892565"/>
+						<reference key="color2" ref="741462176"/>
 					</object>
 					<object class="NSSlider" id="402535062">
 						<reference key="NSNextResponder" ref="722134251"/>
@@ -1031,9 +1031,9 @@
 							<int key="NSCellFlags2">131072</int>
 							<string key="NSContents"/>
 							<reference key="NSControlView" ref="402535062"/>
-							<double key="NSMaxValue">1.75</double>
-							<double key="NSMinValue">0.25</double>
-							<double key="NSValue">1</double>
+							<double key="NSMaxValue">1</double>
+							<double key="NSMinValue">0.0</double>
+							<double key="NSValue">0.5</double>
 							<double key="NSAltIncValue">0.0</double>
 							<int key="NSNumberOfTickMarks">9</int>
 							<int key="NSTickMarkPosition">0</int>
@@ -2147,27 +2147,11 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: selection.gameSettings.mouseSensitivity</string>
-						<reference key="source" ref="402535062"/>
-						<reference key="destination" ref="56494336"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="402535062"/>
-							<reference key="NSDestination" ref="56494336"/>
-							<string key="NSLabel">value: selection.gameSettings.mouseSensitivity</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">selection.gameSettings.mouseSensitivity</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1266</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
 						<string key="label">hidden: selection.gameSettings.trackMouseWhileUnlocked</string>
-						<reference key="source" ref="515038512"/>
+						<reference key="source" ref="674851383"/>
 						<reference key="destination" ref="56494336"/>
 						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="515038512"/>
+							<reference key="NSSource" ref="674851383"/>
 							<reference key="NSDestination" ref="56494336"/>
 							<string key="NSLabel">hidden: selection.gameSettings.trackMouseWhileUnlocked</string>
 							<string key="NSBinding">hidden</string>
@@ -2184,10 +2168,10 @@
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">hidden: selection.gameSettings.trackMouseWhileUnlocked</string>
-						<reference key="source" ref="686148055"/>
+						<reference key="source" ref="205794439"/>
 						<reference key="destination" ref="56494336"/>
 						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="686148055"/>
+							<reference key="NSSource" ref="205794439"/>
 							<reference key="NSDestination" ref="56494336"/>
 							<string key="NSLabel">hidden: selection.gameSettings.trackMouseWhileUnlocked</string>
 							<string key="NSBinding">hidden</string>
@@ -2216,6 +2200,26 @@
 						</object>
 					</object>
 					<int key="connectionID">1276</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: selection.gameSettings.mouseSensitivity</string>
+						<reference key="source" ref="402535062"/>
+						<reference key="destination" ref="56494336"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="402535062"/>
+							<reference key="NSDestination" ref="56494336"/>
+							<string key="NSLabel">value: selection.gameSettings.mouseSensitivity</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">selection.gameSettings.mouseSensitivity</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSValueTransformerName</string>
+								<string key="NS.object.0">BXMouseSensitivitySlider</string>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1278</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -2908,8 +2912,8 @@
 							<reference ref="291868707"/>
 							<reference ref="623665801"/>
 							<reference ref="192302374"/>
-							<reference ref="515038512"/>
-							<reference ref="686148055"/>
+							<reference ref="674851383"/>
+							<reference ref="205794439"/>
 							<reference ref="1004081434"/>
 						</object>
 						<reference key="parent" ref="0"/>
@@ -2991,7 +2995,7 @@
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="3244954"/>
-							<reference ref="3297162"/>
+							<reference ref="23721504"/>
 						</object>
 						<reference key="parent" ref="722134251"/>
 					</object>
@@ -3025,45 +3029,45 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">1206</int>
-						<reference key="object" ref="3297162"/>
+						<reference key="object" ref="23721504"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="432966514"/>
+							<reference ref="582773349"/>
 						</object>
 						<reference key="parent" ref="192302374"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">1207</int>
-						<reference key="object" ref="432966514"/>
-						<reference key="parent" ref="3297162"/>
+						<reference key="object" ref="582773349"/>
+						<reference key="parent" ref="23721504"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">1208</int>
-						<reference key="object" ref="515038512"/>
+						<reference key="object" ref="674851383"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="1032932035"/>
+							<reference ref="75681258"/>
 						</object>
 						<reference key="parent" ref="722134251"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">1209</int>
-						<reference key="object" ref="1032932035"/>
-						<reference key="parent" ref="515038512"/>
+						<reference key="object" ref="75681258"/>
+						<reference key="parent" ref="674851383"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">1272</int>
-						<reference key="object" ref="686148055"/>
+						<reference key="object" ref="205794439"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="503590962"/>
+							<reference ref="158341696"/>
 						</object>
 						<reference key="parent" ref="722134251"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">1273</int>
-						<reference key="object" ref="503590962"/>
-						<reference key="parent" ref="686148055"/>
+						<reference key="object" ref="158341696"/>
+						<reference key="parent" ref="205794439"/>
 					</object>
 				</object>
 			</object>
@@ -3395,7 +3399,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1276</int>
+			<int key="maxID">1278</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

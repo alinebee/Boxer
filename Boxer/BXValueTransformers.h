@@ -41,7 +41,6 @@
 @end
 
 
-
 //Maps sets of numeric ranges (0-1000, 1001-2000 etc.) onto a 0.0->1.0 scale, with equal weight for each range.
 //Registered as BXSpeedSliderTransformer by BXSession+BXEmulatorController, to maps our different CPU speed bands onto a single speed slider.
 //NOTE: sliders using this transformer must have a range from 0.0 to 1.0.
@@ -50,8 +49,10 @@
 	NSArray *bandThresholds;
 }
 @property (retain) NSArray *bandThresholds;
-- (NSNumber *) minValue;
-- (NSNumber *) maxValue;
+@property (readonly) NSNumber *minValue;
+@property (readonly) NSNumber *maxValue;
+
+- (id) initWithThresholds: (NSArray *)thresholds;
 @end
 
 

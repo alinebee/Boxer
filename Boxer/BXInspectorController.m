@@ -16,6 +16,7 @@
 
 
 const CGFloat BXInspectorPanelBlurRadius = 2.0f;
+const CGFloat BXMouseSensitivityRange = 2.0f;
 
 @implementation BXInspectorController
 @synthesize panelContainer;
@@ -25,10 +26,20 @@ const CGFloat BXInspectorPanelBlurRadius = 2.0f;
 
 + (void) initialize
 {
+	NSArray *sensitivityThresholds = [NSArray arrayWithObjects:
+									  [NSNumber numberWithFloat: 1.0f / BXMouseSensitivityRange],
+									  [NSNumber numberWithFloat: 1.0f],
+									  [NSNumber numberWithFloat: 1.0f * BXMouseSensitivityRange],
+									  nil];
+	
+	BXBandedValueTransformer *mouseSensitivity = [[BXBandedValueTransformer alloc] initWithThresholds: sensitivityThresholds];
 	BXDisplayPathTransformer *displayPath	= [[BXDisplayPathTransformer alloc] initWithJoiner: @" ▸ " maxComponents: 0];
 	BXDisplayNameTransformer *displayName	= [BXDisplayNameTransformer new];
 	BXImageSizeTransformer *imageSize = [[BXImageSizeTransformer alloc] initWithSize: NSMakeSize(16, 16)];
 	
+	
+	
+	[NSValueTransformer setValueTransformer: mouseSensitivity forName: @"BXMouseSensitivitySlider"];
 	[NSValueTransformer setValueTransformer: displayPath forName: @"BXDriveDisplayPath"];
 	[NSValueTransformer setValueTransformer: displayPath forName: @"BXDocumentationDisplayPath"];
 	[NSValueTransformer setValueTransformer: displayName forName: @"BXDocumentationDisplayName"];

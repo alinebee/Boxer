@@ -6,15 +6,55 @@
  */
 
 
-//BXFileTransfer is a class for performing asynchronous file copy/move operations,
-//with loose progress tracking based on the number of files in the copy.
+//BXFileTransfer is a class for performing asynchronous file copy/move operations using
+//NSOperationQueue. It provides vague progress indication based on the number of files being
+//transferred, and it sends notifications and delegate messages on the main thread when it
+//starts transferring a new file and when it finishes the transfer operation.
 
 #import <Cocoa/Cocoa.h>
 
 typedef float BXFileTransferProgress;
 
+
+#pragma mark -
+#pragma mark Notification constants
+
+//BXFileTransfer will post these notifications on the main thread,
+//and to its delegate on the main thread.
+
+//Sent when a file transfer operation ends.
+extern NSString * const BXFileTransferDidFinish;
+
+//Sent periodically while a file transfer operation is in progress.
+extern NSString * const BXFileTransferInProgress;
+
+
+#pragma mark -
+#pragma mark Notification user info dictionary keys
+
+//An NSNumber boolean indicating whether the transfer succeeded or failed.
+//Included with BXFileTransferFinished.
+extern NSString * const BXFileTransferSuccessKey;
+
+//An NSError containing the details of a failed transfer.
+//Included with BXFileTransferFinished if the transfer failed.
+extern NSString * const BXFileTransferErrorKey;
+
+//An NSNumber float from 0.0 to 1.0 indicating the progress of the transfer.
+//Included with BXFileTransferInProgress.
+extern NSString * const BXFileTransferProgressKey;
+
+//An NSString path indicating the current file being transferred.
+//Included with BXFileTransferInProgress.
+extern NSString * const BXFileTransferCurrentPathKey;
+
+
+@protocol BXFileTransferDelegate;
+
 @interface BXFileTransfer : NSOperation
 {
+	id <BXFileTransferDelegate> delegate;
+	
 	NSString *sourcePath;
 	NSString *destinationPath;
 	BOOL copyFiles;
@@ -30,6 +70,9 @@ typedef float BXFileTransferProgress;
 
 #pragma mark -
 #pragma mark Configuration properties
+
+//The delegate that will receive notification messages about this file operation.
+@property (assign) id <BXFileTransferDelegate> delegate;
 
 //Whether this is a copy or move operation.
 @property (assign) BOOL copyFiles;
@@ -63,7 +106,7 @@ typedef float BXFileTransferProgress;
 
 
 #pragma mark -
-#pragma mark Initialzation
+#pragma mark Initialization
 
 + (id) transferFromPath: (NSString *)source
 				 toPath: (NSString *)destination

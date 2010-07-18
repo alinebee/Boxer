@@ -416,7 +416,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 
 - (void) _postNotificationName: (NSString *)name
 			  delegateSelector: (SEL)selector
-					  userInfo: (id)userInfo
+					  userInfo: (NSDictionary *)userInfo
 {
 	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 	NSNotification *notification = [NSNotification notificationWithName: name

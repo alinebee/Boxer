@@ -209,7 +209,7 @@ class DOS_Shell;
 //and to a selector on our delegate. The object of the notification will be self.
 - (void) _postNotificationName: (NSString *)name
 			  delegateSelector: (SEL)selector
-					  userInfo: (id)userInfo;
+					  userInfo: (NSDictionary *)userInfo;
 
 //Called by DOSBox whenever it changes states we care about. This resyncs BXEmulator's
 //cached notions of the DOSBox state, and posts notifications for relevant properties.

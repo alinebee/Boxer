@@ -7,10 +7,24 @@
 
 
 #import "BXFileTransfer.h"
+#import "BXFileTransferDelegate.h"
+
+#pragma mark -
+#pragma mark Notification constants and keys
+
+NSString * const BXFileTransferDidFinish	= @"BXFileTransferDidFinish";
+NSString * const BXFileTransferInProgress	= @"BXFileTransferInProgress";
+
+NSString * const BXFileTransferSuccessKey	= @"BXFileTransferSuccessKey";
+NSString * const BXFileTransferErrorKey		= @"BXFileTransferErrorKey";
+NSString * const BXFileTransferProgressKey	= @"BXFileTransferProgressKey";
+NSString * const BXFileTransferCurrentPathKey	= @"BXFileTransferCurrentPathKey";
+
 
 
 #pragma mark -
 #pragma mark Private method declarations
+
 @interface BXFileTransfer ()
 
 @property (readwrite) NSUInteger numFiles;
@@ -23,10 +37,18 @@
 //Returns NO if the operation is cancelled.
 - (BOOL) _shouldTransferItemAtPath: (NSString *)srcPath toPath:(NSString *)dstPath;
 
+//Shortcut method for sending a notification both to the default notification center
+//and to a selector on our delegate. The object of the notification will be self.
+- (void) _postNotificationName: (NSString *)name
+			  delegateSelector: (SEL)selector
+					  userInfo: (NSDictionary *)userInfo;
 @end
 
+#pragma mark -
+#pragma mark Implementation
 
 @implementation BXFileTransfer
+@synthesize delegate;
 @synthesize copyFiles, sourcePath, destinationPath;
 @synthesize numFiles, numFilesTransferred, currentPath;
 @synthesize succeeded, error;
@@ -34,7 +56,7 @@
 #pragma mark -
 #pragma mark Initialization and deallocation
 
-- (id)initFromPath:(NSString *)source toPath:(NSString *)destination copyFiles:(BOOL)copy
+- (id)initFromPath: (NSString *)source toPath: (NSString *)destination copyFiles: (BOOL)copy
 {
 	if ((self = [super init]))
 	{
@@ -71,7 +93,7 @@
 #pragma mark -
 #pragma mark Inspecting the transfer
 
-+ (NSSet *) pathsAffectingValueForCurrentProgress
++ (NSSet *) keyPathsForValuesAffectingCurrentProgress
 {
 	return [NSSet setWithObjects: @"numFilesTransferred", @"numFiles", nil];
 }
@@ -100,6 +122,7 @@
 	[self setNumFiles: fileCount];
 	[self setNumFilesTransferred: 0];
 	
+	//TODO: check if we need to enumerate the directory in order to get "should I copy this file" checks
 	if (copyFiles)
 	{
 		transferSucceeded = [manager copyItemAtPath: [self sourcePath] toPath: [self destinationPath] error: &transferError];
@@ -118,6 +141,25 @@
 	{
 		[manager removeItemAtPath: [self destinationPath] error: nil];
 	}
+	
+	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+							  [NSNumber numberWithBool: [self succeeded]], BXFileTransferSuccessKey,
+							  [self error], BXFileTransferErrorKey,
+							  nil];
+	
+	[self _postNotificationName: BXFileTransferDidFinish
+			   delegateSelector: @selector(fileTransferDidFinish:)
+					   userInfo: userInfo];
+}
+
+- (BOOL) fileManager: (NSFileManager *)fileManager shouldCopyItemAtPath: (NSString *)srcPath toPath: (NSString *)dstPath
+{
+	return [self _shouldTransferItemAtPath: srcPath toPath: dstPath];
+}
+
+- (BOOL) fileManager: (NSFileManager *)fileManager shouldMoveItemAtPath: (NSString *)srcPath toPath: (NSString *)dstPath
+{
+	return [self _shouldTransferItemAtPath: srcPath toPath: dstPath];
 }
 
 - (BOOL) _shouldTransferItemAtPath: (NSString *)srcPath toPath: (NSString *)dstPath
@@ -126,17 +168,30 @@
 	
 	[self setCurrentPath: srcPath];
 	[self setNumFilesTransferred: [self numFilesTransferred] + 1];
+	
+	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+							  [NSNumber numberWithFloat: [self currentProgress]], BXFileTransferProgressKey,
+							  [self currentPath], BXFileTransferCurrentPathKey,
+							  nil];
+	
+	[self _postNotificationName: BXFileTransferInProgress
+			   delegateSelector: @selector(fileTransferInProgress:)
+					   userInfo: userInfo];
 	return YES;
 }
 
-- (BOOL) fileManager: (NSFileManager *)fileManager shouldCopyItemAtPath: (NSString *)srcPath toPath:(NSString *)dstPath
+- (void) _postNotificationName: (NSString *)name
+			  delegateSelector: (SEL)selector
+					  userInfo: (NSDictionary *)userInfo
 {
-	return [self _shouldTransferItemAtPath: srcPath toPath: dstPath];
+	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+	NSNotification *notification = [NSNotification notificationWithName: name
+																 object: self
+															   userInfo: userInfo];
+	
+	if ([[self delegate] respondsToSelector: selector])
+		[[self delegate] performSelectorOnMainThread: selector withObject: notification waitUntilDone: NO];
+	
+	[center performSelectorOnMainThread: @selector(postNotification:) withObject: notification waitUntilDone: NO];
 }
-
-- (BOOL) fileManager: (NSFileManager *)fileManager shouldMoveItemAtPath: (NSString *)srcPath toPath:(NSString *)dstPath
-{
-	return [self _shouldTransferItemAtPath: srcPath toPath: dstPath];
-}
-
 @end

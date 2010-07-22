@@ -12,12 +12,13 @@
 #pragma mark -
 #pragma mark Notification constants and keys
 
-NSString * const BXFileTransferDidFinish	= @"BXFileTransferDidFinish";
-NSString * const BXFileTransferInProgress	= @"BXFileTransferInProgress";
+NSString * const BXFileTransferDidFinish		= @"BXFileTransferDidFinish";
+NSString * const BXFileTransferInProgress		= @"BXFileTransferInProgress";
 
-NSString * const BXFileTransferSuccessKey	= @"BXFileTransferSuccessKey";
-NSString * const BXFileTransferErrorKey		= @"BXFileTransferErrorKey";
-NSString * const BXFileTransferProgressKey	= @"BXFileTransferProgressKey";
+NSString * const BXFileTransferContextInfoKey	= @"BXFileTransferContextInfoKey";
+NSString * const BXFileTransferSuccessKey		= @"BXFileTransferSuccessKey";
+NSString * const BXFileTransferErrorKey			= @"BXFileTransferErrorKey";
+NSString * const BXFileTransferProgressKey		= @"BXFileTransferProgressKey";
 NSString * const BXFileTransferCurrentPathKey	= @"BXFileTransferCurrentPathKey";
 
 
@@ -48,7 +49,7 @@ NSString * const BXFileTransferCurrentPathKey	= @"BXFileTransferCurrentPathKey";
 #pragma mark Implementation
 
 @implementation BXFileTransfer
-@synthesize delegate;
+@synthesize delegate, contextInfo;
 @synthesize copyFiles, sourcePath, destinationPath;
 @synthesize numFiles, numFilesTransferred, currentPath;
 @synthesize succeeded, error;
@@ -81,6 +82,7 @@ NSString * const BXFileTransferCurrentPathKey	= @"BXFileTransferCurrentPathKey";
 	[manager setDelegate: nil];
 	[manager release], manager = nil;
 	
+	[self setContextInfo: nil],		[contextInfo release];
 	[self setError: nil],			[error release];
 	[self setCurrentPath: nil],		[currentPath release];
 	[self setSourcePath: nil],		[sourcePath release];
@@ -122,7 +124,8 @@ NSString * const BXFileTransferCurrentPathKey	= @"BXFileTransferCurrentPathKey";
 	[self setNumFiles: fileCount];
 	[self setNumFilesTransferred: 0];
 	
-	//TODO: check if we need to enumerate the directory in order to get "should I copy this file" checks
+	//TODO: check if we need to enumerate the directory copying each individual file
+	//in order to get "should I copy this file" checks
 	if (copyFiles)
 	{
 		transferSucceeded = [manager copyItemAtPath: [self sourcePath] toPath: [self destinationPath] error: &transferError];
@@ -184,6 +187,14 @@ NSString * const BXFileTransferCurrentPathKey	= @"BXFileTransferCurrentPathKey";
 			  delegateSelector: (SEL)selector
 					  userInfo: (NSDictionary *)userInfo
 {
+	//Extend the notification dictionary with context info if it was provided
+	if (userInfo && [self contextInfo])
+	{
+		NSMutableDictionary *extendedInfo = [userInfo mutableCopy];
+		[extendedInfo setObject: [self contextInfo] forKey: BXFileTransferContextInfoKey];
+		userInfo = [extendedInfo autorelease];
+	}
+	
 	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 	NSNotification *notification = [NSNotification notificationWithName: name
 																 object: self

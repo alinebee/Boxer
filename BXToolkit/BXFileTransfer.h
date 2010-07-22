@@ -32,6 +32,10 @@ extern NSString * const BXFileTransferInProgress;
 #pragma mark -
 #pragma mark Notification user info dictionary keys
 
+//An arbitrary object representing the context for the file transfer operation.
+//Included in all notifications, if contextInfo was set.
+extern NSString * const BXFileTransferContextInfoKey;
+
 //An NSNumber boolean indicating whether the transfer succeeded or failed.
 //Included with BXFileTransferFinished.
 extern NSString * const BXFileTransferSuccessKey;
@@ -54,6 +58,7 @@ extern NSString * const BXFileTransferCurrentPathKey;
 @interface BXFileTransfer : NSOperation
 {
 	id <BXFileTransferDelegate> delegate;
+	id contextInfo;
 	
 	NSString *sourcePath;
 	NSString *destinationPath;
@@ -73,6 +78,10 @@ extern NSString * const BXFileTransferCurrentPathKey;
 
 //The delegate that will receive notification messages about this file operation.
 @property (assign) id <BXFileTransferDelegate> delegate;
+
+//Arbitrary context info for this operation. Included in notification dictionaries
+//for controlling contexts to use.
+@property (retain) id contextInfo;
 
 //Whether this is a copy or move operation.
 @property (assign) BOOL copyFiles;

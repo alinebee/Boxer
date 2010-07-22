@@ -21,8 +21,8 @@
 @property (readonly) NSArray *drives;
 
 
-//Class methods concerning files
-//------------------------------
+#pragma mark -
+#pragma mark Filetype-related class methods
 
 //UTI filetypes of folders that should be used as mount-points for files inside them: if we open a file
 //inside a folder matching one of these types, it will mount that folder as its drive.
@@ -39,8 +39,8 @@
 + (BOOL) isExecutable: (NSString *)path;
 
 
-//File and folder mounting
-//------------------------
+#pragma mark -
+#pragma mark File and folder mounting
 
 //Tells the emulator to flush its DOS drive caches to reflect changes in the OS X filesystem.
 //No longer used, since we explicitly listen for changes to the underlying filesystem and do this automatically.
@@ -101,6 +101,11 @@
 
 //Unmount the BXDrives in the specified array.
 - (BOOL) unmountDrives: (NSArray *)drives;
+
+
+//Imports the specified drive into the session's gamebox, as a bundled mountable folder or disc image.
+//TODO: does this belong on BXPackage instead?
+- (void) importDrive: (BXDrive *)drive;
 
 @end
 

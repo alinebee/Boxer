@@ -11,6 +11,8 @@
 #import "BXDrive.h"
 #import "BXInspectorController.h"
 
+#import "NSBezierPath+MCAdditions.h"
+
 @implementation BXDriveItemView
 @synthesize delegate;
 
@@ -38,18 +40,39 @@
 	{
 		NSColor *selectionColor	= [NSColor alternateSelectedControlColor];
 		NSColor *shadowColor	= [selectionColor shadowWithLevel: 0.4f];
-		NSColor *bevelColor		= [selectionColor shadowWithLevel: 0.4f];
-		NSGradient *background = [[[NSGradient alloc] initWithStartingColor: selectionColor endingColor: shadowColor] autorelease];
-		[background drawInRect: [self bounds] angle: 270.0f];
+		NSGradient *background	= [[NSGradient alloc] initWithStartingColor: selectionColor
+																endingColor: shadowColor];
 		
-		NSRect bevelRect = [self bounds];
-		bevelRect.origin.y = bevelRect.size.height - 1.0f;
-		bevelRect.size.height = 1.0f;
+		NSShadow *dropShadow = [[NSShadow alloc] init];
+		[dropShadow setShadowOffset: NSMakeSize(0.0f, -0.5f)];
+		[dropShadow setShadowBlurRadius: 2.0f];
+		[dropShadow setShadowColor: [[NSColor blackColor] colorWithAlphaComponent: 0.85f]];
 		
-		NSRect borderPath = NSInsetRect([self bounds], 0.5f, 0.5f);
-		[NSBezierPath setDefaultLineWidth: 1.0f];
-		[bevelColor set];
-		[NSBezierPath strokeRect: borderPath];
+		NSShadow *innerGlow = [[NSShadow alloc] init];
+		[innerGlow setShadowOffset: NSZeroSize];
+		[innerGlow setShadowBlurRadius: 2.0f];
+		[innerGlow setShadowColor: [[NSColor whiteColor] colorWithAlphaComponent: 0.5f]];
+		
+		NSRect backgroundRect = NSInsetRect([self bounds], 3.0f, 2.0f);
+		NSBezierPath *backgroundPath = [NSBezierPath bezierPathWithRoundedRect:backgroundRect xRadius: 3.0f yRadius: 3.0f];
+		
+		[NSGraphicsContext saveGraphicsState];
+			[dropShadow set];
+		
+			//Necessary only so that drop shadow gets drawn: it won't be by NSGradient drawInBezierPath:angle:
+			[selectionColor set];
+			[backgroundPath fill];
+		
+			//Now draw the gradient on top
+			[background drawInBezierPath: backgroundPath angle: 270.0f];
+		[NSGraphicsContext restoreGraphicsState];
+		
+		//Draw the glow last on top of everything else
+		[backgroundPath fillWithInnerShadow: innerGlow];
+		
+		[background release];
+		[dropShadow release];
+		[innerGlow release];
 	}
 }
 @end

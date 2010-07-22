@@ -31,7 +31,7 @@
 
 - (NSShadow *)slotShadow
 {
-	NSShadow *slotShadow	= [[NSShadow new] autorelease];
+	NSShadow *slotShadow = [[NSShadow new] autorelease];
 	[slotShadow setShadowOffset: NSMakeSize(0.0f, -1.0f)];
 	[slotShadow setShadowBlurRadius: 3];
 	[slotShadow setShadowColor: [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.5f]];

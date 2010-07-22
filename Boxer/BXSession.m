@@ -796,7 +796,6 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	NSFileManager *manager		= [NSFileManager defaultManager];
 	NSString *tempDriveLetter	= [[NSUserDefaults standardUserDefaults] stringForKey: @"temporaryDriveLetter"];
 	NSString *tempDrivePath		= [manager createTemporaryDirectoryWithPrefix: @"Boxer" error: NULL];
-	NSLog(@"Temporary folder: %@", tempDrivePath);
 	
 	if (tempDrivePath)
 	{
@@ -939,7 +938,7 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	if (temporaryFolderPath)
 	{
 		NSFileManager *manager = [NSFileManager defaultManager];
-		BOOL deleted = [manager removeItemAtPath: temporaryFolderPath error: NULL];
+		[manager removeItemAtPath: temporaryFolderPath error: NULL];
 	}
 }
 

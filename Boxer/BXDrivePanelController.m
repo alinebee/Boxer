@@ -111,6 +111,10 @@ enum {
 
 - (IBAction) showMountPanel: (id)sender
 {
+	//Make sure the application is active, as we support clickthrough
+	//so we may be in the background when this happens.
+	[NSApp activateIgnoringOtherApps: YES];
+	
 	//Pass mount panel action upstream - this works around the fiddly separation of responder chains
 	//between the inspector panel and main DOS window.
 	BXSession *session = [[NSApp delegate] currentSession];
@@ -176,7 +180,24 @@ enum {
 	{
 		BXSession *session = [[NSApp delegate] currentSession];
 		NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
-		return [session handleDroppedFiles: filePaths withLaunching: NO];
+		
+		NSArray *oldDrives = [[self drives] content];
+		BOOL addedDrives = [session handleDroppedFiles: filePaths withLaunching: NO];
+		
+		if (addedDrives)
+		{
+			//Compare the drive list before and after, and select the first new drive
+			NSArray *newDrives = [[self drives] content];
+			for (id drive in newDrives)
+			{
+				if (![oldDrives containsObject: drive])
+				{
+					[[self drives] setSelectedObjects: [NSArray arrayWithObject: drive]];
+					break;
+				}
+			}
+		}
+		return addedDrives;
 	}		
 	return NO;
 }

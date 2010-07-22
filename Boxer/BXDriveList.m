@@ -9,9 +9,10 @@
 #import "BXDriveList.h"
 #import "BXAppController.h"
 #import "BXDrive.h"
-#import "BXInspectorController.h"
+#import "BXDrivePanelController.h"
 
 #import "NSBezierPath+MCAdditions.h"
+
 
 @implementation BXDriveItemView
 @synthesize delegate;
@@ -20,10 +21,11 @@
 - (BOOL) acceptsFirstMouse: (NSEvent *)theEvent { return YES; }
 
 //Select ourselves and pass menu events up to our parent
-- (NSMenu *) menuForEvent:(NSEvent *)event
+- (NSMenu *) menuForEvent: (NSEvent *)event
 {
 	[[self delegate] setSelected: YES];
-	return [[self superview] menuForEvent: event];
+	[[self superview] setNeedsDisplay: YES];
+	return [[(BXDriveList *)[self superview] delegate] driveOptionsMenu];
 }
 
 //Overridden so that we indicate that every click has hit us instead of our descendants.
@@ -79,6 +81,7 @@
 
 
 @implementation BXDriveList
+@synthesize delegate;
 
 - (BOOL) acceptsFirstMouse: (NSEvent *)theEvent { return YES; }
 
@@ -88,7 +91,7 @@
 }
 
 
-- (NSImage *)draggableImageFromView:(NSView *)itemView
+- (NSImage *) draggableImageFromView: (NSView *)itemView
 {
 	NSData *imageData = [itemView dataWithPDFInsideRect: [itemView bounds]];
 	return [[[NSImage alloc] initWithData: imageData] autorelease];
@@ -164,42 +167,41 @@
 - (void) mouseUp: (NSEvent *)theEvent
 {
 	if ([theEvent clickCount] > 1 && ([theEvent modifierFlags] & NSCommandKeyMask))
-		[NSApp sendAction: @selector(revealSelectedDrivesInFinder:) to: nil from: self];
-}
-
-//Select/deselect item at click point before showing our menu
-- (NSMenu *) menuForEvent: (NSEvent *)theEvent
-{
-	NSPoint clickPoint = [self convertPoint: [theEvent locationInWindow] fromView: nil];
-	[self selectItemAtPoint: clickPoint];
-	return [super menuForEvent: theEvent];
+	{
+		[NSApp sendAction: @selector(revealSelectedDrivesInFinder:) to: [self delegate] from: self];
+	}
 }
 
 //While dragging, this checks for valid Boxer windows under the cursor; if there aren't any, it displays
 //a disappearing item cursor (poof) to indicate the action will discard the dragged drive(s).
-- (void)draggedImage:(NSImage *)draggedImage movedTo:(NSPoint)screenPoint
+- (void) draggedImage: (NSImage *)draggedImage movedTo: (NSPoint)screenPoint
 {	
 	NSPoint mousePoint = [NSEvent mouseLocation];
 	NSCursor *poof = [NSCursor disappearingItemCursor];
 	
-	//If there's no Boxer window under the mouse cursor, change the cursor to a poof to indicate we will discard the drive
+	//If there's no Boxer window under the mouse cursor,
+	//change the cursor to a poof to indicate we will discard the drive
 	if (![(BXAppController *)[NSApp delegate] windowAtPoint: mousePoint]) [poof set];
+	
 	//otherwise, revert any poof cursor (which may already have been changed by valid drag destinations anyway) 
 	else if ([[NSCursor currentCursor] isEqualTo: poof]) [[NSCursor arrowCursor] set];
 }
 
 //This is called when dragging completes, and discards the drive if it was not dropped onto a valid destination
 //(or back onto the drive list).
-- (void)draggedImage:(NSImage *)draggedImage endedAt:(NSPoint)screenPoint operation:(NSDragOperation)operation
+- (void)draggedImage: (NSImage *)draggedImage
+			 endedAt: (NSPoint)screenPoint
+		   operation: (NSDragOperation)operation
 {
 	NSPoint mousePoint = [NSEvent mouseLocation];
 	
 	if (operation == NSDragOperationNone && ![(BXAppController *)[NSApp delegate] windowAtPoint: mousePoint])
 	{
 		//Send the remove-these-drives action and see whether any drives were removed
-		//(IBActions do not provide a return value, so we can't find out directly if the action succeeded or failed)
+		//(IBActions do not provide a return value, so we can't find out directly
+		//if the action succeeded or failed)
 		NSUInteger oldItems = [[self content] count];
-		[NSApp sendAction: @selector(unmountSelectedDrives:) to: [[self window] windowController] from: self];
+		[NSApp sendAction: @selector(unmountSelectedDrives:) to: [self delegate] from: self];
 		NSUInteger newItems = [[self content] count];
 		
 		//If any drives were removed by the action, display the poof animation

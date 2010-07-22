@@ -11,7 +11,13 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class BXDrivePanelController;
+
 @interface BXDriveList : NSCollectionView
+{
+	IBOutlet BXDrivePanelController *delegate;
+}
+@property (assign) BXDrivePanelController *delegate;
 
 - (NSArray *) selectedObjects;	//An array of the currently selected NSCollectionViewItems.
 - (NSArray *) selectedViews;	//An array of BXDriveItemViews corresponding to the currently selected drives.

@@ -6,8 +6,7 @@
  */
 
 #import "BXInspectorController.h"
-#import "BXSession+BXDragDrop.h"
-#import "BXSession+BXFileManager.h"
+#import "BXSession.h"
 #import "BXEmulator.h"
 #import "BXDrive.h"
 #import "BXAppController.h"
@@ -20,9 +19,8 @@ const CGFloat BXMouseSensitivityRange = 2.0f;
 
 @implementation BXInspectorController
 @synthesize panelContainer;
-@synthesize gamePanel, cpuPanel, mousePanel, drivePanel;
 @synthesize panelSelector;
-@synthesize driveController;
+@synthesize gamePanel, cpuPanel, mousePanel, drivePanel;
 
 + (void) initialize
 {
@@ -65,7 +63,6 @@ const CGFloat BXMouseSensitivityRange = 2.0f;
 	[self setCpuPanel: nil],		[cpuPanel release];
 	[self setDrivePanel: nil],		[drivePanel release];
 	[self setPanelSelector: nil],	[panelSelector release];
-	[self setDriveController: nil], [driveController release];
 	
 	[super dealloc];
 }
@@ -74,10 +71,6 @@ const CGFloat BXMouseSensitivityRange = 2.0f;
 {	
 	NSPanel *theWindow = (NSPanel *)[self window];
 
-	//Note that we actually only accept drag-drop on the drive panel: see draggingEntered et. al. below.
-	[theWindow registerForDraggedTypes: [NSArray arrayWithObjects: NSFilenamesPboardType, NSStringPboardType, nil]];
-
-	//[theWindow setAcceptsMouseMovedEvents: YES];
 	[theWindow setBecomesKeyOnlyIfNeeded: YES];
 		
 	[theWindow setFrameAutosaveName: @"InspectorPanel"];
@@ -299,100 +292,6 @@ const CGFloat BXMouseSensitivityRange = 2.0f;
 	//Note: we do this here rather than in setCurrentPanel: because the latter is often called programmatically
 	//and we only want to persist actual choices, not states.
 	[[NSUserDefaults standardUserDefaults] setInteger: selectorIndex forKey: @"initialInspectorPanelIndex"];
-}
-
-- (IBAction) revealSelectedDrivesInFinder: (id)sender
-{
-	NSArray *selection = [[self driveController] selectedObjects];
-	for (BXDrive *drive in selection) [NSApp sendAction: @selector(revealInFinder:) to: nil from: drive];
-}
-- (IBAction) openSelectedDrivesInDOS: (id)sender
-{
-	//Only bother grabbing the last drive selected
-	BXDrive *drive = [[[self driveController] selectedObjects] lastObject];
-	if (drive) [NSApp sendAction: @selector(openInDOS:) to: nil from: drive];
-}
-- (IBAction) unmountSelectedDrives: (id)sender
-{
-	NSArray *selection = [[self driveController] selectedObjects];
-	BXSession *session = [[NSApp delegate] currentSession];
-	if ([session shouldUnmountDrives: selection sender: self])
-		[session unmountDrives: selection];
-}
-
-- (IBAction) showMountPanel: (id)sender
-{
-	//Pass mount panel action upstream - this works around the fiddly separation of responder chains
-	//between the inspector panel and main DOS window.
-	BXSession *session = [[NSApp delegate] currentSession];
-	[NSApp sendAction: @selector(showMountPanel:) to: session from: self];
-}
-
-- (BOOL) validateUserInterfaceItem: (id)theItem
-{
-	BOOL hasSelection = ([[[self driveController] selectedObjects] count] > 0);
-	BXSession *session = [[NSApp delegate] currentSession];
-	BXEmulator *theEmulator = [session emulator];
-	
-	SEL action = [theItem action];
-	if (action == @selector(showMountPanel:))				return session != nil;
-	if (action == @selector(revealSelectedDrivesInFinder:)) return hasSelection;
-	if (action == @selector(unmountSelectedDrives:))		return hasSelection && [theEmulator isExecuting];
-	if (action == @selector(openSelectedDrivesInDOS:))		return hasSelection && [theEmulator isExecuting] && ![theEmulator isRunningProcess];
-	return YES;
-}
-
-
-#pragma mark -
-#pragma mark Drag-drop
-
-- (NSDragOperation)draggingEntered: (id <NSDraggingInfo>)sender
-{
-	//Only allow drag-drop to the drive panel
-	if ([[self currentPanel] isNotEqualTo: [self drivePanel]]) return NSDragOperationNone;
-	
-	//Ignore drags that originated from the inspector's drive list
-	id source = [sender draggingSource];
-	if ([[source window] isEqualTo: [self window]]) return NSDragOperationNone;
-	
-	//Otherwise, ask the current session what it would like to do with the files
-	NSPasteboard *pboard = [sender draggingPasteboard];
-	if ([[pboard types] containsObject: NSFilenamesPboardType])
-	{
-		NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
-		BXSession *session = [[NSApp delegate] currentSession];
-		return [session responseToDroppedFiles: filePaths];
-	}
-	else return NSDragOperationNone;
-}
-
-- (BOOL)performDragOperation: (id <NSDraggingInfo>)sender
-{
-	BXSession *session = [[NSApp delegate] currentSession];
-
-	NSPasteboard *pboard = [sender draggingPasteboard];
-	if ([[pboard types] containsObject: NSFilenamesPboardType])
-	{
-		NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
-		return [session handleDroppedFiles: filePaths withLaunching: NO];
-	}		
-	return NO;
-}
-
-
-#pragma mark -
-#pragma mark Drive list sorting
-
-//Returns the NSSortDescriptors to be used for sorting drives in the drive panel
-- (NSArray *) driveSortDescriptors
-{
-	NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey: @"letter" ascending: YES];
-	return [NSArray arrayWithObject: [descriptor autorelease]];
-}
-//Returns the predicate to be used for filtering drives in the drive panel
-- (NSPredicate *) driveFilterPredicate
-{
-	return [NSPredicate predicateWithFormat: @"isInternal == NO && isHidden == NO"];
 }
 
 @end

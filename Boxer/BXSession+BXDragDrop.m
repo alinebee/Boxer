@@ -99,7 +99,6 @@
 		//...then we'd change the working directory to it, if we're not already busy; otherwise we'd reject it.
 		return (isInProcess) ? NSDragOperationNone : NSDragOperationLink;
 	}
-	
 	//If we get this far, it means we'd mount the dropped file as a new drive.
 	return NSDragOperationCopy;
 }

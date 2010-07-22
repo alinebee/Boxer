@@ -187,6 +187,8 @@
 		9F9A4CA110F67D2C00E61965 /* BXPreferencesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9A4CA010F67D2C00E61965 /* BXPreferencesController.m */; };
 		9F9A4CA610F67DD800E61965 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A4CA410F67DD800E61965 /* Preferences.xib */; };
 		9F9A4CA910F6824B00E61965 /* BXFilterGallery.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9A4CA810F6824B00E61965 /* BXFilterGallery.m */; };
+		9F9E27C511F8C003003EE8F3 /* BXSegmentedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9E27C411F8C003003EE8F3 /* BXSegmentedCell.m */; };
+		9F9E27D611F8C173003EE8F3 /* BXDrivePanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9E27D511F8C173003EE8F3 /* BXDrivePanelController.m */; };
 		9F9FE70410FA5F5800E3944B /* NSWorkspace+BXIcons.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9FE70310FA5F5800E3944B /* NSWorkspace+BXIcons.m */; };
 		9FA2E596109D251100E50623 /* BGHUDAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FA2E595109D251100E50623 /* BGHUDAppKit.framework */; };
 		9FA2E5D9109D255300E50623 /* BGHUDAppKit.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FA2E595109D251100E50623 /* BGHUDAppKit.framework */; };
@@ -252,6 +254,7 @@
 		9FE202480F6D749500B3A38C /* Snapshot.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9FE202470F6D749500B3A38C /* Snapshot.aiff */; };
 		9FE8265C10F0EBA000F1B03E /* 35DisketteShine.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE8265A10F0EBA000F1B03E /* 35DisketteShine.png */; };
 		9FE8265D10F0EBA000F1B03E /* 35Diskette.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE8265B10F0EBA000F1B03E /* 35Diskette.png */; };
+		9FE90BF711F8D1DC003CFFFF /* BXDelegatedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE90BF611F8D1DC003CFFFF /* BXDelegatedView.m */; };
 		9FECE19011A31B8B00E0EBB6 /* BXRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FECE18F11A31B8B00E0EBB6 /* BXRenderer.m */; };
 		9FECE1C211A3244500E0EBB6 /* BXGLRenderingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FECE1C111A3244500E0EBB6 /* BXGLRenderingView.m */; };
 		9FEF98011191E1EF002024DF /* BXInputHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FEF98001191E1EF002024DF /* BXInputHandler.mm */; };
@@ -619,6 +622,10 @@
 		9F9A4CA510F67DD800E61965 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/Preferences.xib; sourceTree = "<group>"; };
 		9F9A4CA710F6824B00E61965 /* BXFilterGallery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFilterGallery.h; sourceTree = "<group>"; };
 		9F9A4CA810F6824B00E61965 /* BXFilterGallery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFilterGallery.m; sourceTree = "<group>"; };
+		9F9E27C311F8C003003EE8F3 /* BXSegmentedCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXSegmentedCell.h; sourceTree = "<group>"; };
+		9F9E27C411F8C003003EE8F3 /* BXSegmentedCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXSegmentedCell.m; sourceTree = "<group>"; };
+		9F9E27D411F8C173003EE8F3 /* BXDrivePanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDrivePanelController.h; sourceTree = "<group>"; };
+		9F9E27D511F8C173003EE8F3 /* BXDrivePanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDrivePanelController.m; sourceTree = "<group>"; };
 		9F9FE70210FA5F5800E3944B /* NSWorkspace+BXIcons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSWorkspace+BXIcons.h"; sourceTree = "<group>"; };
 		9F9FE70310FA5F5800E3944B /* NSWorkspace+BXIcons.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSWorkspace+BXIcons.m"; sourceTree = "<group>"; };
 		9FA2E595109D251100E50623 /* BGHUDAppKit.framework */ = {isa = PBXFileReference; comments = "This is the BGHUDAppkit framework 0.9 from http://www.binarymethod.com/bghudappkit/ compiled from source with our own modifications, which are provided as a diff in the BGHUDAppKit source folder."; explicitFileType = wrapper.framework; path = BGHUDAppKit.framework; sourceTree = "<group>"; };
@@ -718,6 +725,8 @@
 		9FE202470F6D749500B3A38C /* Snapshot.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = Snapshot.aiff; sourceTree = "<group>"; };
 		9FE8265A10F0EBA000F1B03E /* 35DisketteShine.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 35DisketteShine.png; sourceTree = "<group>"; };
 		9FE8265B10F0EBA000F1B03E /* 35Diskette.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 35Diskette.png; sourceTree = "<group>"; };
+		9FE90BF511F8D1DC003CFFFF /* BXDelegatedView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDelegatedView.h; sourceTree = "<group>"; };
+		9FE90BF611F8D1DC003CFFFF /* BXDelegatedView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDelegatedView.m; sourceTree = "<group>"; };
 		9FEBB70E11DF9BB50055933F /* BXEmulatorDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatorDelegate.h; sourceTree = "<group>"; };
 		9FECE18E11A31B8B00E0EBB6 /* BXRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXRenderer.h; sourceTree = "<group>"; };
 		9FECE18F11A31B8B00E0EBB6 /* BXRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXRenderer.m; sourceTree = "<group>"; };
@@ -954,6 +963,8 @@
 				9FDAD87E10C182B3004EA7D0 /* BXCoverArtWell.m */,
 				9FD011BB10C2A02F00670CE1 /* BXProgramMenuController.h */,
 				9FD011BC10C2A02F00670CE1 /* BXProgramMenuController.m */,
+				9F9E27D411F8C173003EE8F3 /* BXDrivePanelController.h */,
+				9F9E27D511F8C173003EE8F3 /* BXDrivePanelController.m */,
 			);
 			name = "Inspector panel";
 			sourceTree = "<group>";
@@ -1027,6 +1038,8 @@
 				9FBC351C0F56C7B7001811F2 /* BXBezel.m */,
 				9F438C5610E3D8C8007D30AD /* BXScroller.h */,
 				9F438C5710E3D8C8007D30AD /* BXScroller.m */,
+				9F9E27C311F8C003003EE8F3 /* BXSegmentedCell.h */,
+				9F9E27C411F8C003003EE8F3 /* BXSegmentedCell.m */,
 			);
 			name = "UI helpers";
 			sourceTree = "<group>";
@@ -1484,6 +1497,8 @@
 				9FBF66FC11F376B900DAAB9A /* BXFileTransferDelegate.h */,
 				9F13F9CE11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.h */,
 				9F13F9CF11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m */,
+				9FE90BF511F8D1DC003CFFFF /* BXDelegatedView.h */,
+				9FE90BF611F8D1DC003CFFFF /* BXDelegatedView.m */,
 			);
 			path = BXToolkit;
 			sourceTree = "<group>";
@@ -1914,6 +1929,9 @@
 				9FADFE9711EC932800990E91 /* NSData+HexStrings.m in Sources */,
 				9FBF66AF11F35ADD00DAAB9A /* BXFileTransfer.m in Sources */,
 				9F13F9D011F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m in Sources */,
+				9F9E27C511F8C003003EE8F3 /* BXSegmentedCell.m in Sources */,
+				9F9E27D611F8C173003EE8F3 /* BXDrivePanelController.m in Sources */,
+				9FE90BF711F8D1DC003CFFFF /* BXDelegatedView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

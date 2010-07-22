@@ -44,6 +44,10 @@
 	NSSize currentScaledResolution;
 	BOOL resizingProgrammatically;
 }
+
+#pragma mark -
+#pragma mark Properties
+
 //Our subsidiary view controllers.
 @property (retain) BXProgramPanelController *programPanelController;
 @property (retain) BXInputController *inputController;
@@ -60,14 +64,17 @@
 @property (assign) BOOL resizingProgrammatically;
 
 
+#pragma mark -
+#pragma mark Inherited accessor overrides
+
 //Recast NSWindowController's standard accessors so that we get our own classes
 //(and don't have to keep recasting them ourselves)
 - (BXSession *) document;
 - (BXSessionWindow *) window;
 
 
-//Drag-and-drop
-//-------------
+#pragma mark -
+#pragma mark Drag and drop
 
 //The session window responds to dropped files and folders, mounting them as new DOS drives and/or opening
 //them in DOS if appropriate. These methods call corresponding methods on BXSession+BXDragDrop.
@@ -75,8 +82,8 @@
 - (BOOL)performDragOperation:		(id < NSDraggingInfo >)sender;
 
 
-//Interface actions
-//-----------------
+#pragma mark -
+#pragma mark Interface actions
 
 //Toggle instantly in and out of fullscreen mode.
 - (IBAction) toggleFullScreen: (id)sender;
@@ -97,8 +104,8 @@
 - (IBAction) toggleFilterType: (id)sender;
 
 
-//Toggling window UI components
-//-----------------------------
+#pragma mark -
+#pragma mark Toggling UI components
 
 //Get/set whether the statusbar should be shown.
 - (BOOL) statusBarShown;
@@ -109,19 +116,8 @@
 - (void) setProgramPanelShown:	(BOOL)show;
 
 
-//Handling window state changes
-//-----------------------------
-
-//Returns whether a confirmation sheet should be shown when windowShouldClose is called.
-- (BOOL) shouldConfirmClose;
-
-//Called when the user tries to close a window.
-//If a program is running, this shows a confirmation sheet; otherwise, it allows the window to close.
-- (BOOL) windowShouldClose: (id)theWindow;
-
-//Shows a confirmation sheet asking to close the window, after exiting a game or program.
-//Currently unused.
-- (IBAction) windowShouldCloseAfterProgramCompletion: (id)sender;
+#pragma mark -
+#pragma mark Handling window and UI events
 
 //These tell the emulator to pause itself while a resize is in progress, and clean up when it finishes.
 - (void) windowWillLiveResize: (NSNotification *) notification;

@@ -303,11 +303,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 }
 
 - (void) removeDocument: (NSDocument *)theDocument
-{
-	//Make sure documents synchronize themselves before closing
-	//(Normally we'd call this in [document close], but when the application is quitting that may never be called)
-	if ([theDocument respondsToSelector: @selector(synchronizeSettings)]) [(id)theDocument synchronizeSettings];
-	
+{	
 	//Do whatever we were going to do originally
 	[super removeDocument: theDocument];
 	
@@ -321,18 +317,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 #pragma mark -
 #pragma mark Handling application termination
-
-- (NSApplicationTerminateReply) applicationShouldTerminate: (NSApplication *)theApplication
-{
-	//Go through our windows asking each one to close
-	for (id theWindow in [theApplication windows])
-	{
-		id delegate = [theWindow delegate];
-		if ([delegate respondsToSelector: @selector(windowShouldClose:)] &&
-			![delegate windowShouldClose: theWindow]) return NSTerminateLater;
-	}
-	return NSTerminateNow;
-}
 
 - (void) applicationWillTerminate: (NSNotification *)notification
 {

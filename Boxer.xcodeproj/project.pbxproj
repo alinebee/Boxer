@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		9F13F9D011F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F13F9CF11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m */; };
 		9F1D50010F5C0966009F0AB9 /* BXEmulator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */; };
 		9F20C28B11E5D848005AF541 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28A11E5D848005AF541 /* Sparkle.framework */; };
 		9F20C28E11E5D8B4005AF541 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28D11E5D8B4005AF541 /* QTKit.framework */; };
@@ -287,6 +288,8 @@
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		8D1107320486CEB800E47090 /* Boxer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Boxer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9F13F9CE11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+BXTemporaryFiles.h"; sourceTree = "<group>"; };
+		9F13F9CF11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+BXTemporaryFiles.m"; sourceTree = "<group>"; };
 		9F1D4FFF0F5C0966009F0AB9 /* BXEmulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulator.h; sourceTree = "<group>"; };
 		9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXEmulator.mm; sourceTree = "<group>"; };
 		9F20C28A11E5D848005AF541 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
@@ -1479,6 +1482,8 @@
 				9FBF66AD11F35ADD00DAAB9A /* BXFileTransfer.h */,
 				9FBF66AE11F35ADD00DAAB9A /* BXFileTransfer.m */,
 				9FBF66FC11F376B900DAAB9A /* BXFileTransferDelegate.h */,
+				9F13F9CE11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.h */,
+				9F13F9CF11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m */,
 			);
 			path = BXToolkit;
 			sourceTree = "<group>";
@@ -1908,6 +1913,7 @@
 				9FADFE5511EC7E1700990E91 /* BXDigest.m in Sources */,
 				9FADFE9711EC932800990E91 /* NSData+HexStrings.m in Sources */,
 				9FBF66AF11F35ADD00DAAB9A /* BXFileTransfer.m in Sources */,
+				9F13F9D011F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

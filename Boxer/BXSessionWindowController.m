@@ -20,9 +20,7 @@
 #import "BXVideoHandler.h"
 #import "BXInputView.h"
 
-#import "BXCloseAlert.h"
 #import "BXSession+BXDragDrop.h"
-
 
 
 //Private methods
@@ -362,30 +360,6 @@
 
 #pragma mark -
 #pragma mark Handlers for window and application state changes
-
-- (BOOL) shouldConfirmClose
-{
-	BXEmulator *theEmulator = [[self document] emulator];
-	return (![[NSUserDefaults standardUserDefaults] boolForKey: @"suppressCloseAlert"] && [theEmulator isRunningProcess] && ![theEmulator isCancelled]);
-}
-
-- (BOOL) windowShouldClose: (id)theWindow
-{
-	if ([self shouldConfirmClose])
-	{
-		BXCloseAlert *closeAlert = [BXCloseAlert closeAlertWhileSessionIsActive: [self document]];
-		[closeAlert beginSheetModalForWindow: [self window]];
-		return NO;
-	}
-	else return YES;
-}
-
-//Prompt to close the window, after exiting a game or program.
-- (IBAction) windowShouldCloseAfterProgramCompletion: (id)sender
-{
-	BXCloseAlert *closeAlert = [BXCloseAlert closeAlertAfterSessionExited: [self document]];
-	[closeAlert beginSheetModalForWindow: [self window]];
-}
 
 - (void) windowWillClose: (NSNotification *)notification
 {

@@ -18,5 +18,7 @@
 	<integer>1</integer>
 	<key>toolkitDriveLetter</key>
 	<string>Y</string>
+	<key>temporaryDriveLetter</key>
+	<string>X</string>
 </dict>
 </plist>

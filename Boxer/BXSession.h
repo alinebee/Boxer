@@ -32,6 +32,7 @@
 	
 	NSString *targetPath;
 	NSString *activeProgramPath;
+	NSString *temporaryFolderPath;
 	
 	BOOL hasStarted;
 	BOOL hasConfigured;
@@ -69,7 +70,7 @@
 //emulator is at the DOS prompt, or when Boxer has no idea what program is running.
 @property (readonly, copy, nonatomic) NSString *activeProgramPath;
 
-//Whether the emulator session is initialized and ready to receive instructions.
+//Whether the emulator is initialized and ready to receive instructions.
 @property (readonly) BOOL isEmulating;
 
 //Whether this session represents a gamebox.

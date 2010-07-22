@@ -13,11 +13,13 @@
 #import "BXSessionWindowController+BXRenderController.h"
 #import "BXSession+BXFileManager.h"
 #import "BXEmulatorConfiguration.h"
+#import "BXCloseAlert.h"
 
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulator+BXShell.h"
 #import "NSWorkspace+BXFileTypes.h"
 #import "NSString+BXPaths.h"
+#import "NSFileManager+BXTemporaryFiles.h"
 
 
 //How we will store our gamebox-specific settings in user defaults.
@@ -48,6 +50,12 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 
 //Called once the session has exited to save any DOSBox settings we have changed to the gamebox conf.
 - (void) _saveConfiguration: (BXEmulatorConfiguration *)configuration toFile: (NSString *)filePath;
+
+//Cleans up temporary files after the session is closed.
+- (void) _cleanup;
+
+//Callback for close alert. Confirms document close when window is closed or application is shut down. 
+- (void) _closeAlertDidEnd: (BXCloseAlert *)alert returnCode: (int)returnCode contextInfo: (NSInvocation *)callback;
 @end
 
 
@@ -91,6 +99,8 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	[self setTargetPath: nil],			[targetPath release];
 	[self setActiveProgramPath: nil],	[activeProgramPath release];
 		
+	[temporaryFolderPath release], temporaryFolderPath = nil;
+	
 	[super dealloc];
 }
 
@@ -212,6 +222,23 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	return hasConfigured;
 }
 
+//Overridden solely so that NSDocumentController will call canCloseDocumentWithDelegate:
+//in the first place. This otherwise should have no effect and should not show up in the UI.
+- (BOOL) isDocumentEdited	{ return [[self emulator] isRunningProcess]; }
+
+- (void) _closeAlertDidEnd: (BXCloseAlert *)alert returnCode: (int)returnCode contextInfo: (NSInvocation *)callback
+{
+	if ([alert showsSuppressionButton] && [[alert suppressionButton] state] == NSOnState)
+		[[NSUserDefaults standardUserDefaults] setBool: YES forKey: @"suppressCloseAlert"];
+	
+	BOOL shouldSave = (returnCode == NSAlertFirstButtonReturn);
+	[callback setArgument: &shouldSave atIndex: 3];
+	[callback invoke];
+	
+	//Release the previously-retained callback
+	[callback release];
+}
+
 - (void) start
 {
 	//We schedule our internal _startEmulator method to be called separately on the main thread,
@@ -227,19 +254,63 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	hasStarted = YES;
 }
 
-//Cancel the DOSBox emulator thread
-- (void)cancel	{ [[self emulator] cancel]; }
+//Cancel the DOSBox emulator
+- (void) cancel { [[self emulator] cancel]; }
 
 //Tell the emulator to close itself down when the document closes
 - (void) close
 {
+	//Ensure that the document close procedure only happens once, no matter how many times we g
 	if (!isClosing)
 	{
 		isClosing = YES;
 		[self cancel];
+		[self synchronizeSettings];
+		[self _cleanup];
 		[super close];
 	}
 }
+
+//Overridden to display our own custom confirmation alert instead of the standard NSDocument one.
+- (void) canCloseDocumentWithDelegate: (id)delegate
+				  shouldCloseSelector: (SEL)shouldCloseSelector
+						  contextInfo: (void *)contextInfo
+{
+	//Define an invocation for the callback, which has the signature:
+	//- (void)document:(NSDocument *)document shouldClose:(BOOL)shouldClose contextInfo:(void *)contextInfo;
+	NSInvocation *callback = [NSInvocation invocationWithMethodSignature: [delegate methodSignatureForSelector:shouldCloseSelector]];
+	[callback setSelector: shouldCloseSelector];
+	[callback setTarget: delegate];
+	[callback setSelector: shouldCloseSelector];
+	[callback setArgument: &self atIndex: 2];
+	[callback setArgument: &contextInfo atIndex: 4]; // contextInfo:	
+	
+	//We confirm the close if a process is running and if we're not already shutting down
+	BOOL shouldConfirm = (![[NSUserDefaults standardUserDefaults] boolForKey: @"suppressCloseAlert"]
+						  && [emulator isRunningProcess]
+						  && ![emulator isCancelled]);
+	
+	if (shouldConfirm)
+	{
+		//Show our custom close alert, passing it the callback so we can complete
+		//our response down in _closeAlertDidEnd:returnCode:contextInfo:
+		
+		BXCloseAlert *alert = [BXCloseAlert closeAlertWhileSessionIsActive: self];
+		[alert beginSheetModalForWindow: [self windowForSheet]
+						  modalDelegate: self
+						 didEndSelector: @selector(_closeAlertDidEnd:returnCode:contextInfo:)
+							contextInfo: [callback retain]];		 
+	}
+	else
+	{
+		BOOL shouldSave = YES;
+		//Otherwise we can respond directly: call the callback straight away with YES for shouldClose:
+		[callback setArgument: &shouldSave atIndex: 3];
+		[callback invoke];
+	}
+}
+
+
 
 //Save our configuration changes to disk before exiting
 - (void) synchronizeSettings
@@ -621,7 +692,6 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 #pragma mark -
 #pragma mark Private methods
 
-
 - (void) _startEmulator
 {
 	//The configuration files we will be using today, loaded in this order.
@@ -720,6 +790,32 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 		[theEmulator setVariable: @"path"		to: dosPath		encoding: BXDirectStringEncoding];
 		[theEmulator setVariable: @"ultradir"	to: ultraDir	encoding: BXDirectStringEncoding];
 	}
+	
+	
+	//Mount a temporary folder at the appropriate drive
+	NSFileManager *manager		= [NSFileManager defaultManager];
+	NSString *tempDriveLetter	= [[NSUserDefaults standardUserDefaults] stringForKey: @"temporaryDriveLetter"];
+	NSString *tempDrivePath		= [manager createTemporaryDirectoryWithPrefix: @"Boxer" error: NULL];
+	NSLog(@"Temporary folder: %@", tempDrivePath);
+	
+	if (tempDrivePath)
+	{
+		temporaryFolderPath = [tempDrivePath retain];
+		
+		BXDrive *tempDrive = [BXDrive hardDriveFromPath: tempDrivePath atLetter: tempDriveLetter];
+		[tempDrive setLocked: YES];
+		[tempDrive setHidden: YES];
+		
+		tempDrive = [theEmulator mountDrive: tempDrive];
+		
+		if (tempDrive)
+		{
+			NSString *tempPath = [NSString stringWithFormat: @"%@:\\", [tempDrive letter], nil];
+			[theEmulator setVariable: @"temp"	to: tempPath		encoding: BXDirectStringEncoding];
+			[theEmulator setVariable: @"tmp"	to: tempPath		encoding: BXDirectStringEncoding];
+		}		
+	}
+	
 	
 	//Once all regular drives are in place, make a mount point allowing access to our target program/folder,
 	//if it's not already accessible in DOS.
@@ -834,6 +930,16 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 		}
 		
 		[gameboxConf writeToFile: filePath error: NULL];
+	}
+}
+
+- (void) _cleanup
+{
+	//Delete the temporary folder, if one was created
+	if (temporaryFolderPath)
+	{
+		NSFileManager *manager = [NSFileManager defaultManager];
+		BOOL deleted = [manager removeItemAtPath: temporaryFolderPath error: NULL];
 	}
 }
 

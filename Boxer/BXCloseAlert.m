@@ -80,9 +80,9 @@
 //Dispatch and callback methods
 //-----------------------------
 
+//Shortcut method using our own generalised callback
 - (void) beginSheetModalForWindow: (NSWindow *)window
 {
-	[self adoptIconFromWindow: window];
 	[self retain];	//The alert will be released in the callback function below
 	
 	//Note: we pass window as the context info so that the alertDidEnd:returnCode:contextInfo: method
@@ -91,6 +91,18 @@
 					modalDelegate:	[self class]
 					didEndSelector:	@selector(alertDidEnd:returnCode:contextInfo:)
 					contextInfo:	window];
+}
+
+- (void) beginSheetModalForWindow: (NSWindow *)window
+					modalDelegate: (id)delegate
+				   didEndSelector: (SEL)didEndSelector
+					  contextInfo: (void *)contextInfo
+{
+	[self adoptIconFromWindow: window];
+	return [super beginSheetModalForWindow: window
+							 modalDelegate: delegate
+							didEndSelector: didEndSelector
+							   contextInfo: contextInfo];
 }
 
 + (void) alertDidEnd: (BXCloseAlert *)alert returnCode: (int)returnCode contextInfo: (NSWindow *)window

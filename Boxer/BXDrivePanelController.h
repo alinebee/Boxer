@@ -15,13 +15,13 @@
 @interface BXDrivePanelController : NSViewController
 {
 	IBOutlet NSArrayController *drives;
-	IBOutlet NSSegmentedControl *driveOptionsControl;
-	IBOutlet NSMenu *driveOptionsMenu;
+	IBOutlet NSSegmentedControl *driveControls;
+	IBOutlet NSMenu *driveActionsMenu;
 	IBOutlet BXDriveList *driveList;
 }
 @property (retain) BXDriveList *driveList;
-@property (retain) NSSegmentedControl *driveOptionsControl;
-@property (retain) NSMenu *driveOptionsMenu;
+@property (retain) NSSegmentedControl *driveControls;
+@property (retain) NSMenu *driveActionsMenu;
 //The array controller representing the current session's drives.
 @property (retain) NSArrayController *drives;
 

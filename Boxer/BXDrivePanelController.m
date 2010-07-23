@@ -11,15 +11,20 @@
 #import "BXSession+BXFileManager.h"
 #import "BXSession+BXDragDrop.h"
 #import "BXEmulator.h"
+#import "BXDrive.h"
 
 //The segments of the drive options control
 enum {
-	BXAddDriveSegment = 0,
-	BXDriveMenuSegment = 1
+	BXAddDriveSegment			= 0,
+	BXRemoveDrivesSegment		= 1,
+	BXDriveActionsMenuSegment	= 2
 };
 
 @implementation BXDrivePanelController
-@synthesize driveOptionsControl, driveOptionsMenu, drives, driveList;
+@synthesize driveControls, driveActionsMenu, drives, driveList;
+
+#pragma mark -
+#pragma mark Initialization and teardown
 
 - (void) awakeFromNib
 {
@@ -27,7 +32,7 @@ enum {
 	[[self view] registerForDraggedTypes: [NSArray arrayWithObjects: NSFilenamesPboardType, NSStringPboardType, nil]];	
 	
 	//Assign the appropriate menu to the drive menu segment.
-	[[self driveOptionsControl] setMenu: [self driveOptionsMenu] forSegment: BXDriveMenuSegment];
+	[[self driveControls] setMenu: [self driveActionsMenu] forSegment: BXDriveActionsMenuSegment];
 }
 
 - (void) setDrives: (NSArrayController *)theDrives
@@ -52,8 +57,8 @@ enum {
 {	 
 	[self setDriveList: nil],			[driveList release];
 	[self setDrives: nil],				[drives release];
-	[self setDriveOptionsControl: nil], [driveOptionsControl release];
-	[self setDriveOptionsMenu: nil],	[driveOptionsMenu release];
+	[self setDriveControls: nil],		[driveControls release];
+	[self setDriveActionsMenu: nil],	[driveActionsMenu release];
 	[super dealloc];
 }
 
@@ -66,11 +71,14 @@ enum {
 	if ([keyPath isEqualToString: @"selectionIndexes"])
 	{
 		BOOL hasSelection = ([[object selectionIndexes] count] > 0);
-		[[self driveOptionsControl] setEnabled: hasSelection forSegment: BXDriveMenuSegment];
+		[[self driveControls] setEnabled: hasSelection forSegment: BXRemoveDrivesSegment];
+		[[self driveControls] setEnabled: hasSelection forSegment: BXDriveActionsMenuSegment];
 	}
 }
 
 
+#pragma mark -
+#pragma mark Interface actions
 
 - (IBAction) interactWithDriveOptions: (NSSegmentedControl *)sender
 {
@@ -80,7 +88,12 @@ enum {
 		case BXAddDriveSegment:
 			[self showMountPanel: sender];
 			break;
-		case BXDriveMenuSegment:
+			
+		case BXRemoveDrivesSegment:
+			[self unmountSelectedDrives: sender];
+			break;
+			
+		case BXDriveActionsMenuSegment:
 			//An infuriating workaround for an NSSegmentedControl bug,
 			//whereby menus won't be shown if the control has an action set.
 			[sender setAction: NULL];
@@ -95,12 +108,14 @@ enum {
 	NSArray *selection = [[self drives] selectedObjects];
 	for (BXDrive *drive in selection) [NSApp sendAction: @selector(revealInFinder:) to: nil from: drive];
 }
+
 - (IBAction) openSelectedDrivesInDOS: (id)sender
 {
 	//Only bother grabbing the last drive selected
 	BXDrive *drive = [[[self drives] selectedObjects] lastObject];
 	if (drive) [NSApp sendAction: @selector(openInDOS:) to: nil from: drive];
 }
+
 - (IBAction) unmountSelectedDrives: (id)sender
 {
 	NSArray *selection = [[self drives] selectedObjects];
@@ -128,10 +143,23 @@ enum {
 	BXEmulator *theEmulator = [session emulator];
 	
 	SEL action = [theItem action];
-	if (action == @selector(showMountPanel:))				return session != nil;
+	if (action == @selector(showMountPanel:))				return (session != nil);
 	if (action == @selector(revealSelectedDrivesInFinder:)) return hasSelection;
-	if (action == @selector(unmountSelectedDrives:))		return hasSelection && [theEmulator isExecuting];
-	if (action == @selector(openSelectedDrivesInDOS:))		return hasSelection && [theEmulator isExecuting] && ![theEmulator isRunningProcess];
+	if (action == @selector(unmountSelectedDrives:))
+	{
+		if (!hasSelection || ![session isEmulating]) return NO;
+		
+		//Check if any of the selected drives are locked
+		for (BXDrive *drive in [[self drives] selectedObjects])
+		{
+			if ([drive isLocked] || [drive isInternal]) return NO;
+		}
+		return YES;
+	}
+	if (action == @selector(openSelectedDrivesInDOS:))
+	{
+		return hasSelection && [session isEmulating] && ![theEmulator isRunningProcess];
+	}
 	return YES;
 }
 
@@ -139,13 +167,11 @@ enum {
 #pragma mark -
 #pragma mark Drive list sorting
 
-//Returns the NSSortDescriptors to be used for sorting drives in the drive panel
 - (NSArray *) driveSortDescriptors
 {
 	NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey: @"letter" ascending: YES];
 	return [NSArray arrayWithObject: [descriptor autorelease]];
 }
-//Returns the predicate to be used for filtering drives in the drive panel
 - (NSPredicate *) driveFilterPredicate
 {
 	return [NSPredicate predicateWithFormat: @"isInternal == NO && isHidden == NO"];
@@ -188,7 +214,7 @@ enum {
 		{
 			//Compare the drive list before and after, and select the first new drive
 			NSArray *newDrives = [[self drives] content];
-			for (id drive in newDrives)
+			for (BXDrive *drive in newDrives)
 			{
 				if (![oldDrives containsObject: drive])
 				{

@@ -25,7 +25,7 @@
 {
 	[[self delegate] setSelected: YES];
 	[[self superview] setNeedsDisplay: YES];
-	return [[(BXDriveList *)[self superview] delegate] driveOptionsMenu];
+	return [[(BXDriveList *)[self superview] delegate] driveActionsMenu];
 }
 
 //Overridden so that we indicate that every click has hit us instead of our descendants.
@@ -55,7 +55,7 @@
 		[innerGlow setShadowBlurRadius: 2.0f];
 		[innerGlow setShadowColor: [[NSColor whiteColor] colorWithAlphaComponent: 0.5f]];
 		
-		NSRect backgroundRect = NSInsetRect([self bounds], 3.0f, 2.0f);
+		NSRect backgroundRect = NSInsetRect([self bounds], 5.0f, 3.0f);
 		NSBezierPath *backgroundPath = [NSBezierPath bezierPathWithRoundedRect:backgroundRect xRadius: 3.0f yRadius: 3.0f];
 		
 		[NSGraphicsContext saveGraphicsState];

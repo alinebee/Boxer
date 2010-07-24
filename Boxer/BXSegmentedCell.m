@@ -124,8 +124,15 @@
 			break;
 	}
 	
+	BOOL isSelected;
+	
+	//In momentary tracking, we should only look at the currently-reported selected segment...
+	if ([self trackingMode] == NSSegmentSwitchTrackingMomentary) isSelected = ([self selectedSegment] == segment);
+	//...for other tracking modes, check if the segment is reported as selected.
+	else isSelected = [self isSelectedForSegment: segment];
+	
 	//Fill our paths
-	if([self selectedSegment] == segment) {
+	if (isSelected) {
 		
 		[[[[BGThemeManager keyedManager] themeForKey: self.themeKey] highlightGradient] drawInBezierPath: fillPath angle: 90];
 	} else {
@@ -148,6 +155,13 @@
 }
 
 -(void)drawInteriorForSegment:(NSInteger)segment withFrame:(NSRect)rect {
+	
+	BOOL isSelected;
+	
+	//In momentary tracking, we should only look at the currently-reported selected segment...
+	if ([self trackingMode] == NSSegmentSwitchTrackingMomentary) isSelected = ([self selectedSegment] == segment);
+	//...for other tracking modes, check if the segment is reported as selected.
+	else isSelected = [self isSelectedForSegment: segment];
 	
 	NSAttributedString *newTitle;
 	
@@ -240,10 +254,10 @@
 		NSShadow *imageShadow = [[[BGThemeManager keyedManager] themeForKey: self.themeKey] dropShadow];
 		
 		CGFloat imageAlpha = 0.8f;
-		if ([self isSelectedForSegment: segment]) imageAlpha = 1.0f;
+		if (isSelected) imageAlpha = 1.0f;
 		if (![self isEnabledForSegment: segment]) imageAlpha = 0.33f;
 		
-		BOOL useShadow = ([image isTemplate] && [self isEnabledForSegment: segment] && ![self isSelectedForSegment: segment]);
+		BOOL useShadow = ([image isTemplate] && [self isEnabledForSegment: segment] && !isSelected);
 		
 		[NSGraphicsContext saveGraphicsState];
 		if (useShadow) [imageShadow set];

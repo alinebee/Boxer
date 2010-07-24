@@ -23,6 +23,72 @@
 }
 @end
 
+@implementation BXBlueTheme
+
+- (NSGradient *) highlightGradient
+{
+	NSColor *selectionColor	= [[NSColor alternateSelectedControlColor] colorWithAlphaComponent: [self alphaValue]];
+	
+	NSColor *topColor		= [selectionColor highlightWithLevel: 0.3f];
+	NSColor *midColor1		= [selectionColor highlightWithLevel: 0.2f];
+	NSColor *midColor2		= selectionColor;
+	NSColor *bottomColor	= [selectionColor shadowWithLevel: 0.4f];
+	
+	NSGradient *gradient = [[NSGradient alloc] initWithColorsAndLocations:
+							topColor,		0.0f,
+							midColor1,		0.5f,
+							midColor2,		0.5f,
+							bottomColor,	1.0f,
+							nil];
+	
+	return [gradient autorelease];
+}
+
+- (NSGradient *) pushedGradient
+{
+	return [self highlightGradient];
+}
+
+- (NSGradient *) highlightComplexGradient
+{
+	return [self highlightGradient];
+}
+
+- (NSGradient *) pushedComplexGradient
+{
+	return [self pushedGradient];
+}
+
+- (NSGradient *) highlightKnobColor
+{
+	//Use solid colours to avoid the track showing through
+	NSColor *selectionColor	= [NSColor alternateSelectedControlColor];
+	
+	NSColor *topColor		= [selectionColor highlightWithLevel: 0.2f];
+	NSColor *midColor1		= [selectionColor highlightWithLevel: 0.1f];
+	NSColor *midColor2		= [selectionColor shadowWithLevel: 0.2f];
+	NSColor *bottomColor	= [selectionColor shadowWithLevel: 0.4f];
+	
+	NSGradient *gradient = [[NSGradient alloc] initWithColorsAndLocations:
+							topColor,		0.0f,
+							midColor1,		0.5f,
+							midColor2,		0.5f,
+							bottomColor,	1.0f,
+							nil];
+	
+	return [gradient autorelease];
+}
+
+- (NSShadow *) focusRing
+{
+	NSShadow *glow = [[NSShadow new] autorelease];
+	[glow setShadowColor: [NSColor keyboardFocusIndicatorColor]];
+	[glow setShadowBlurRadius: 2.0f];
+	return glow;
+}
+
+@end
+
 /*
 @implementation BXIconButtonTheme
 - (CGFloat) alphaValue			{ return 1.0; }

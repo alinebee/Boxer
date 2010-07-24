@@ -121,6 +121,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	//Register our BGHUD UI themes
 	[[BGThemeManager keyedManager] setTheme: [[BXShadowedTextTheme new] autorelease]	forKey: @"BXShadowedTextTheme"];
 	[[BGThemeManager keyedManager] setTheme: [[BXHelpTextTheme new] autorelease]		forKey: @"BXHelpTextTheme"];
+	[[BGThemeManager keyedManager] setTheme: [[BXBlueTheme new] autorelease]			forKey: @"BXBlueTheme"];
 }
 
 + (void)setupDefaults
@@ -346,8 +347,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 - (void) setInspectorPanelShown: (BOOL)show
 {
-	[self willChangeValueForKey: @"inspectorPanelShown"];
-	
 	BXInspectorController *inspector = [BXInspectorController controller];
 
 	//Only show the inspector if there is a DOS session window; otherwise, we have nothing to inspect.
@@ -361,8 +360,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	{
 		[[inspector window] orderOut: nil];
 	}
-	
-	[self didChangeValueForKey: @"inspectorPanelShown"];	
 }
 
 - (BOOL) inspectorPanelShown

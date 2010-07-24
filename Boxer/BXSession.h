@@ -28,6 +28,8 @@
 	BXGameProfile *gameProfile;
 	NSMutableDictionary *gameSettings;
 	
+	NSMutableArray *drives;
+	
 	BXSessionWindowController *mainWindowController;
 	
 	NSString *targetPath;
@@ -69,6 +71,9 @@
 //The OS X path of the currently executing DOS program or batch file. Will be nil if the
 //emulator is at the DOS prompt, or when Boxer has no idea what program is running.
 @property (readonly, copy, nonatomic) NSString *activeProgramPath;
+
+//A cache of the emulator's drives.
+@property (readonly, retain, nonatomic) NSArray *drives;
 
 //Whether the emulator is initialized and ready to receive instructions.
 @property (readonly) BOOL isEmulating;

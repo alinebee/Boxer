@@ -37,10 +37,8 @@
 
 - (void) setManagesAspectRatio: (BOOL)manage
 {
-	[self willChangeValueForKey: @"managesAspectRatio"];
 	[[self renderer] setMaintainsAspectRatio: manage];
 	[self setNeedsDisplay: YES];
-	[self didChangeValueForKey: @"managesAspectRatio"];
 }
 
 - (BOOL) managesAspectRatio

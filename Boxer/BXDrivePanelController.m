@@ -35,26 +35,39 @@ enum {
 	[[self driveControls] setMenu: [self driveActionsMenu] forSegment: BXDriveActionsMenuSegment];
 }
 
-- (void) setDrives: (NSArrayController *)theDrives
+- (void) setDriveList: (BXDriveList *)theList
 {
-	[self willChangeValueForKey: @"drives"];
-	if (theDrives != drives)
+	if (theList != driveList)
 	{
-		if (drives) [drives removeObserver: self forKeyPath: @"selectionIndexes"];
+		if (driveList)
+		{
+			[driveList removeObserver: self forKeyPath: @"selectionIndexes"];
+			[driveList removeObserver: self forKeyPath: @"content"];
+		}
 
-		[drives release];
-		drives = [theDrives retain];
+		[driveList release];
+		driveList = [theList retain];
 
-		if (drives) [drives addObserver: self
-							 forKeyPath: @"selectionIndexes"
-								options: NSKeyValueObservingOptionInitial
-								context: nil];
+		if (driveList)
+		{
+			[driveList addObserver: self
+						forKeyPath: @"selectionIndexes"
+						   options: NSKeyValueObservingOptionInitial
+						   context: nil];
+			
+			[driveList addObserver: self
+						forKeyPath: @"content"
+						   options: NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld
+						   context: nil];
+		}
 	}
-	[self didChangeValueForKey: @"drives"];
 }
 
 - (void) dealloc
-{	 
+{
+	//Remove the observer we added upstairs in awakeFromNib
+	[[NSApp delegate] removeObserver: self forKeyPath: @"currentSession.drives"];
+	
 	[self setDriveList: nil],			[driveList release];
 	[self setDrives: nil],				[drives release];
 	[self setDriveControls: nil],		[driveControls release];
@@ -62,17 +75,42 @@ enum {
 	[super dealloc];
 }
 
-//Disable the drive menu button when there are no selected items
 - (void) observeValueForKeyPath: (NSString *)keyPath
 					   ofObject: (id)object
 						 change: (NSDictionary *)change
 						context: (void *)context
-{	
+{
+	//Disable the appropriate drive controls when there are no selected items.
 	if ([keyPath isEqualToString: @"selectionIndexes"])
 	{
 		BOOL hasSelection = ([[object selectionIndexes] count] > 0);
 		[[self driveControls] setEnabled: hasSelection forSegment: BXRemoveDrivesSegment];
 		[[self driveControls] setEnabled: hasSelection forSegment: BXDriveActionsMenuSegment];
+	}
+	
+	//Select newly-added drives.
+	//IMPLEMENTATION NOTE: in an ideal world we'd be able to handle this by listening for
+	//NSKeyValueChangeInsertion notifications.
+	//However, those are not sent correctly by NSArrayController nor by NSCollectionView,
+	//so we have to do the work by hand: comparing old and new arrays to find out what was added.
+	else if ([keyPath isEqualToString: @"content"])
+	{
+		NSArray *oldDrives = [change valueForKey: NSKeyValueChangeOldKey];
+		NSArray *newDrives = [change valueForKey: NSKeyValueChangeNewKey];
+		
+		NSUInteger i, numDrives = [newDrives count];
+		NSMutableIndexSet *selectedIndexes = [[NSMutableIndexSet alloc] init];
+		
+		for (i = 0; i < numDrives; i++)
+		{
+			if (![oldDrives containsObject: [newDrives objectAtIndex: i]])
+			{
+				[selectedIndexes addIndex: i];
+			}
+		}
+		
+		[[self drives] addSelectionIndexes: selectedIndexes];
+		[selectedIndexes release];
 	}
 }
 
@@ -126,8 +164,8 @@ enum {
 
 - (IBAction) showMountPanel: (id)sender
 {
-	//Make sure the application is active, as we support clickthrough
-	//so we may be in the background when this happens.
+	//Make sure the application is active; since we support clickthrough,
+	//Boxer may be in the background when this action is sent.
 	[NSApp activateIgnoringOtherApps: YES];
 	
 	//Pass mount panel action upstream - this works around the fiddly separation of responder chains
@@ -172,11 +210,11 @@ enum {
 	NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey: @"letter" ascending: YES];
 	return [NSArray arrayWithObject: [descriptor autorelease]];
 }
+
 - (NSPredicate *) driveFilterPredicate
 {
 	return [NSPredicate predicateWithFormat: @"isInternal == NO && isHidden == NO"];
 }
-
 
 
 #pragma mark -
@@ -207,23 +245,7 @@ enum {
 		BXSession *session = [[NSApp delegate] currentSession];
 		NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
 		
-		NSArray *oldDrives = [[self drives] content];
-		BOOL addedDrives = [session handleDroppedFiles: filePaths withLaunching: NO];
-		
-		if (addedDrives)
-		{
-			//Compare the drive list before and after, and select the first new drive
-			NSArray *newDrives = [[self drives] content];
-			for (BXDrive *drive in newDrives)
-			{
-				if (![oldDrives containsObject: drive])
-				{
-					[[self drives] setSelectedObjects: [NSArray arrayWithObject: drive]];
-					break;
-				}
-			}
-		}
-		return addedDrives;
+		return [session handleDroppedFiles: filePaths withLaunching: NO];
 	}		
 	return NO;
 }

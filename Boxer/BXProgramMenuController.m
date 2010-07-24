@@ -28,8 +28,6 @@
 
 - (void) setSessionMediator: (NSObjectController *)mediator
 {
-	[self willChangeValueForKey: @"sessionMediator"];
-	
 	if (mediator != sessionMediator)
 	{
 		NSArray *observePaths = [NSArray arrayWithObjects:
@@ -45,9 +43,7 @@
 	
 		for (NSString *path in observePaths)
 			[mediator addObserver: self forKeyPath: path options: NSKeyValueObservingOptionInitial context: nil];
-	}
-
-	[self didChangeValueForKey: @"sessionMediator"];	
+	}	
 }
 
 //Whenever the session's executables or targets change, repopulate our selector with the new values
@@ -105,11 +101,11 @@
 			
 			NSMenuItem *item = [[NSMenuItem new] autorelease];
 			NSString *path	= [data objectForKey: @"path"];
-			NSImage *icon	= [data objectForKey: @"icon"];
-			[icon setSize: NSMakeSize(16, 16)];
+			//NSImage *icon	= [data objectForKey: @"icon"];
+			//[icon setSize: NSMakeSize(16, 16)];
 			
 			[item setRepresentedObject: path];
-			[item setImage: icon];
+			//[item setImage: icon];
 			[item setTitle: [DOSName transformedValue: [item representedObject]]];
 			
 			[items addObject: item];

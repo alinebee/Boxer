@@ -17,10 +17,6 @@
 
 @interface BXSession (BXFileManager) <BXEmulatorFileSystemDelegate>
 
-//A bindable wrapper property for BXEmulator's mountedDrives array.
-@property (readonly) NSArray *drives;
-
-
 #pragma mark -
 #pragma mark Filetype-related class methods
 
@@ -57,12 +53,12 @@
 
 //Returns whether the specified drives are allowed to be unmounted.
 //This may display a confirmation sheet and return NO.
-- (BOOL) shouldUnmountDrives:	(NSArray *)drives sender: (id)sender;
+- (BOOL) shouldUnmountDrives:	(NSArray *)selectedDrives sender: (id)sender;
 
 //Called when the "are you sure you want to unmount this drive?" alert is closed.
 - (void) drivesInUseAlertDidEnd: (BXDrivesInUseAlert *)alert
 					 returnCode: (NSInteger)returnCode
-					  forDrives: (NSArray *)drives;
+					  forDrives: (NSArray *)selectedDrives;
 
 //Returns whether the specified path should be mounted as a new drive.
 //Returns YES if the path isn't already DOS-accessible or deserves its own drive anyway, NO otherwise.
@@ -100,12 +96,12 @@
 - (BOOL) mountFloppyVolumes;
 
 //Unmount the BXDrives in the specified array.
-- (BOOL) unmountDrives: (NSArray *)drives;
+- (BOOL) unmountDrives: (NSArray *)selectedDrives;
 
 
 //Imports the specified drive into the session's gamebox, as a bundled mountable folder or disc image.
 //TODO: does this belong on BXPackage instead?
-- (void) importDrive: (BXDrive *)drive;
+//- (void) importDrive: (BXDrive *)drive;
 
 @end
 

@@ -184,7 +184,6 @@
 {
 	filePath = [filePath stringByStandardizingPath];
 	
-	[self willChangeValueForKey: @"path"];
 	if (![path isEqualToString: filePath])
 	{
 		[path release];
@@ -197,20 +196,17 @@
 			if (![self label])	[self setLabel:		[[self class] preferredLabelForPath: filePath]];
 		}
 	}
-	[self didChangeValueForKey: @"path"];
 }
 
 - (void) setLetter: (NSString *)driveLetter
 {
 	driveLetter = [driveLetter uppercaseString];
 	
-	[self willChangeValueForKey: @"letter"];
 	if (![letter isEqualToString: driveLetter])
 	{
 		[letter release];
 		letter = [driveLetter copy];
 	}
-	[self didChangeValueForKey: @"letter"];
 }
 
 - (BOOL) exposesPath: (NSString *)subPath

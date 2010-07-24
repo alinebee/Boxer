@@ -82,9 +82,7 @@
 
 - (void) setFrameskip: (NSUInteger)frameskip
 {
-	[self willChangeValueForKey: @"frameskip"];
 	[[emulator videoHandler] setFrameskip: frameskip];
-	[self didChangeValueForKey: @"frameskip"];
 	
 	[gameSettings setObject: [NSNumber numberWithUnsignedInteger: frameskip] forKey: @"frameskip"];
 }
@@ -119,9 +117,7 @@
 
 - (void) setAutoSpeed: (BOOL)isAuto
 {
-	[self willChangeValueForKey: @"autoSpeed"];
 	[emulator setAutoSpeed: isAuto];
-	[self didChangeValueForKey: @"autoSpeed"];
 	
 	//Preserve changes to the speed settings
 	[gameSettings setObject: [NSNumber numberWithBool: isAuto] forKey: @"autoSpeed"];
@@ -134,9 +130,7 @@
 
 - (void) setFixedSpeed: (NSInteger)fixedSpeed
 {
-	[self willChangeValueForKey: @"fixedSpeed"];
 	[emulator setFixedSpeed: fixedSpeed];
-	[self didChangeValueForKey: @"fixedSpeed"];
 	
 	[gameSettings setObject: [NSNumber numberWithInteger: fixedSpeed] forKey: @"fixedSpeed"];
 }
@@ -197,9 +191,7 @@
 
 - (void) setDynamic: (BOOL)dynamic
 {
-	[self willChangeValueForKey: @"dynamic"];
 	[emulator setCoreMode: dynamic ? BXCoreDynamic : BXCoreNormal];
-	[self didChangeValueForKey: @"dynamic"];
 	
 	[gameSettings setObject: [NSNumber numberWithInteger: [emulator coreMode]] forKey: @"coreMode"];
 }
@@ -280,16 +272,12 @@
 //We wrap the slider's speed value so that we can snap it to the nearest increment, and also switch to auto-throttled speed when it hits the highest speed setting
 
 - (void) setSliderSpeed: (NSInteger)speed
-{	
-	[self willChangeValueForKey: @"sliderSpeed"];
-	
+{
 	//If we're at the maximum speed, bump it into auto-throttling mode
 	if (speed >= BXMaxSpeedThreshold) [self setAutoSpeed: YES];
 	
 	//Otherwise, set the fixed speed
 	else [self setFixedSpeed: speed];
-	
-	[self didChangeValueForKey: @"sliderSpeed"];
 }
 
 - (NSInteger) sliderSpeed

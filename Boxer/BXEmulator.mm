@@ -267,8 +267,6 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 {
 	if ([self isExecuting])
 	{
-		[self willChangeValueForKey: @"fixedSpeed"];
-		
 		//Turn off automatic speed scaling
 		[self setAutoSpeed: NO];
 	
@@ -280,8 +278,6 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 		//Wipe out the cycles queue: we do this because DOSBox's CPU functions do whenever they modify the cycles
 		CPU_CycleLeft	= 0;
 		CPU_Cycles		= 0;
-		
-		[self didChangeValueForKey: @"fixedSpeed"];
 	}
 }
 
@@ -299,8 +295,6 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 {
 	if ([self isExecuting] && [self isAutoSpeed] != autoSpeed)
 	{
-		[self willChangeValueForKey: @"autoSpeed"];
-		
 		//Be a good boy and record/restore the old cycles setting
 		if (autoSpeed)	CPU_OldCycleMax = CPU_CycleMax;
 		else			CPU_CycleMax = CPU_OldCycleMax;
@@ -309,8 +303,6 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 		CPU_CyclePercUsed = 100;
 		
 		CPU_CycleAutoAdjust = (autoSpeed) ? BXSpeedAuto : BXSpeedFixed;
-		
-		[self didChangeValueForKey: @"autoSpeed"];
 	}
 }
 

@@ -66,10 +66,8 @@
 
 - (void) setIllumination: (CGFloat)newValue
 {
-	[super willChangeValueForKey: @"illumination"];
 	illumination = newValue;
 	[self setNeedsDisplay: YES];
-	[super didChangeValueForKey: @"illumination"];
 }
 @end
 

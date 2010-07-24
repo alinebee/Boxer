@@ -83,6 +83,8 @@
 @implementation BXDriveList
 @synthesize delegate;
 
+- (BOOL) mouseDownCanMoveWindow	{ return NO; }
+
 - (BOOL) acceptsFirstMouse: (NSEvent *)theEvent { return YES; }
 
 - (NSDragOperation)draggingSourceOperationMaskForLocal:(BOOL)isLocal

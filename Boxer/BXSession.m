@@ -33,6 +33,7 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 @interface BXSession ()
 @property (readwrite, retain, nonatomic) NSMutableDictionary *gameSettings;
 @property (readwrite, copy, nonatomic) NSString *activeProgramPath;
+@property (readwrite, retain, nonatomic) NSArray *drives;
 
 //Create our BXEmulator instance and starts its main loop.
 //Called internally by [BXSession start], deferred to the end of the main thread's event loop to prevent
@@ -71,6 +72,7 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 @synthesize activeProgramPath;
 @synthesize gameProfile;
 @synthesize gameSettings;
+@synthesize drives;
 
 
 #pragma mark -
@@ -83,6 +85,7 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 		NSString *defaultsPath			= [[NSBundle mainBundle] pathForResource: @"GameDefaults" ofType: @"plist"];
 		NSMutableDictionary *defaults	= [NSMutableDictionary dictionaryWithContentsOfFile: defaultsPath];
 		
+		[self setDrives: [NSMutableArray arrayWithCapacity: 10]];
 		[self setEmulator: [[[BXEmulator alloc] init] autorelease]];
 		[self setGameSettings: defaults];
 	}
@@ -98,6 +101,7 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	[self setGameSettings: nil],		[gameSettings release];
 	[self setTargetPath: nil],			[targetPath release];
 	[self setActiveProgramPath: nil],	[activeProgramPath release];
+	[self setDrives: nil],				[drives release];
 		
 	[temporaryFolderPath release], temporaryFolderPath = nil;
 	
@@ -143,9 +147,7 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 }
 
 - (void) setGamePackage: (BXPackage *)package
-{
-	[self willChangeValueForKey: @"gamePackage"];
-	
+{	
 	if (package != gamePackage)
 	{
 		[gamePackage release];
@@ -163,14 +165,10 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 			[gameSettings addEntriesFromDictionary: gameboxSettings]; 
 		}
 	}
-	
-	[self didChangeValueForKey: @"gamePackage"];
 }
 
 - (void) setEmulator: (BXEmulator *)newEmulator
-{
-	[self willChangeValueForKey: @"emulator"];
-	
+{	
 	if (newEmulator != emulator)
 	{
 		if (emulator)
@@ -198,8 +196,6 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 			[self _registerForFilesystemNotifications];
 		}
 	}
-	
-	[self didChangeValueForKey: @"emulator"];
 }
 
 //Keep our emulator's profile and our own profile in sync
@@ -207,14 +203,12 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 //but I want to avoid circular-retains and bindings hell
 - (void) setGameProfile: (BXGameProfile *)profile
 {
-	[self willChangeValueForKey: @"gameProfile"];
 	if (profile != gameProfile)
 	{
 		[gameProfile release];
 		gameProfile = [profile retain];
 		[[self emulator] setGameProfile: gameProfile];
 	}
-	[self didChangeValueForKey: @"gameProfile"];
 }
 
 - (BOOL) isEmulating
@@ -463,14 +457,10 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	BXPackage *thePackage = [self gamePackage];
 	if (thePackage)
 	{
-		[self willChangeValueForKey: @"representedIcon"];
-		
 		[thePackage setCoverArt: icon];
 				
 		//Force our file URL to appear to change, which will update icons elsewhere in the app 
 		[self setFileURL: [self fileURL]];
-		
-		[self didChangeValueForKey: @"representedIcon"];
 	}
 }
 

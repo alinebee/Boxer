@@ -115,8 +115,6 @@
 
 - (void) setActivePanel: (NSView *)panel
 {
-	[self willChangeValueForKey: @"activePanel"];
-
 	NSView *previousPanel = [self activePanel];
 	
 	if (previousPanel != panel)
@@ -139,7 +137,6 @@
 	{
 		[self syncProgramButtonStates];
 	}
-	[self didChangeValueForKey: @"activePanel"];
 }
 
 
@@ -165,17 +162,13 @@
 }
 
 - (void) setActiveProgramIsDefault: (BOOL) isDefault
-{
-	[self willChangeValueForKey: @"activeProgramIsDefault"];
-	
+{	
 	BXPackage *gamePackage	= [[self representedObject] gamePackage];
 	NSString *activeProgram	= [[self representedObject] activeProgramPath];
 	if (!gamePackage || !activeProgram) return;
 	
 	if (isDefault)							[gamePackage setTargetPath: activeProgram];
 	else if ([self activeProgramIsDefault])	[gamePackage setTargetPath: nil];
-	
-	[self didChangeValueForKey: @"activeProgramIsDefault"];	
 }
 
 @end

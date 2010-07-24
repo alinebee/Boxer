@@ -69,19 +69,14 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 
 - (void) setCanvas: (CGRect)newCanvas
 {
-	[self willChangeValueForKey: @"canvas"];
 	canvas = newCanvas;
 	
 	//We need to recalculate our scaling buffer size if our canvas changes
 	recalculateScalingBuffer = YES;
-
-	[self didChangeValueForKey: @"canvas"];
 }
 
 - (void) setCurrentFrame: (BXFrameBuffer *)frame
-{
-	[self willChangeValueForKey: @"currentFrame"];
-	
+{	
 	if (frame != currentFrame)
 	{
 		//If the buffer memory locations for the two frames are different, we'll need to reinitialize
@@ -97,7 +92,6 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 		[currentFrame release];
 		currentFrame = [frame retain];
 	}
-	[self didChangeValueForKey: @"currentFrame"];
 }
 
 

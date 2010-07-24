@@ -180,8 +180,6 @@ const CGFloat BXMouseSensitivityRange = 2.0f;
 	
 	if (oldPanel != panel)
 	{
-		[self willChangeValueForKey: @"currentPanel"];
-
 		//Synchronise the selected tab
 		NSInteger panelIndex = [[self panels] indexOfObject: panel];
 		[[self panelSelector] selectSegmentWithTag: panelIndex];
@@ -225,8 +223,6 @@ const CGFloat BXMouseSensitivityRange = 2.0f;
 			//Otherwise just resize the window instantly
 			[theWindow setFrame: newFrame display: YES];
 		}
-		
-		[self didChangeValueForKey: @"currentPanel"];
 	}
 }
 

@@ -82,19 +82,15 @@ typedef struct {
 //The current DOSBox frameskip setting.
 @property (assign) NSUInteger frameskip;
 
-
-#pragma mark -
-#pragma mark Introspection methods
-
-//Returns the base resolution the DOS game is producing.
-- (NSSize) resolution;
-
-//Returns whether the emulator is currently rendering in a text-only graphics mode.
-- (BOOL) isInTextMode;
-
 //Returns whether the chosen filter is actually being rendered. This will be NO if the current rendered
 //size is smaller than the minimum size supported by the chosen filter.
-- (BOOL) filterIsActive;
+@property (readonly) BOOL filterIsActive;
+
+//Returns whether the emulator is currently rendering in a text-only graphics mode.
+@property (readonly) BOOL isInTextMode;
+
+//Returns the base resolution the DOS game is producing.
+@property (readonly) NSSize resolution;
 
 
 #pragma mark -

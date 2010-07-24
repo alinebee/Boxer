@@ -94,9 +94,7 @@
 
 - (void) setFrameskip: (NSUInteger)frameskip
 {
-	[self willChangeValueForKey: @"frameskip"];
 	render.frameskip.max = (Bitu)frameskip;
-	[self didChangeValueForKey: @"frameskip"];
 }
 
 
@@ -104,19 +102,16 @@
 //Toggles aspect ratio correction and resets the renderer to apply the change immediately.
 - (void) setAspectCorrected: (BOOL)correct
 {
-	[self willChangeValueForKey: @"aspectCorrected"];
 	if (correct != [self isAspectCorrected])
 	{
 		aspectCorrected = correct;
 		[self reset];		
 	}
-	[self didChangeValueForKey: @"aspectCorrected"];
 }
 
 //Chooses the specified filter, and resets the renderer to apply the change immediately.
 - (void) setFilterType: (BXFilterType)type
-{	
-	[self willChangeValueForKey: @"filterType"];
+{
 	if (type != filterType)
 	{
 		NSAssert1(type <= sizeof(BXFilters), @"Invalid filter type provided to setFilterType: %i", type);
@@ -125,7 +120,6 @@
 		[self reset];
 		
 	}
-	[self didChangeValueForKey: @"filterType"];
 }
 
 //Returns whether the chosen filter is actually being rendered.

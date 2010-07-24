@@ -107,10 +107,8 @@
 
 - (void) setManagesAspectRatio: (BOOL)manage
 {
-	[self willChangeValueForKey: @"managesAspectRatio"];
 	[[renderingLayer renderer] setMaintainsAspectRatio: manage];
 	[renderingLayer setNeedsDisplay];
-	[self didChangeValueForKey: @"managesAspectRatio"];
 }
 
 - (BOOL) managesAspectRatio

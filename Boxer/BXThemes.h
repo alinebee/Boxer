@@ -10,10 +10,10 @@
 //These are used in Boxer's inspector panel and elsewhere.
 
 #import <Cocoa/Cocoa.h>
-#import <BGHUDAppKit/BGTheme.h>
+#import <BGHUDAppKit/BGHUDAppKit.h>
 
 //Adds a soft text shadow behind labels and button text.
-@interface BXShadowedTextTheme : BGTheme
+@interface BXShadowedTextTheme : BGGradientTheme
 - (NSShadow *) textShadow;
 @end
 
@@ -21,6 +21,18 @@
 @interface BXHelpTextTheme : BXShadowedTextTheme
 - (NSColor *) textColor;
 @end
+
+//Makes selection highlights blue-tinted instead of grey.
+@interface BXBlueTheme : BXShadowedTextTheme
+- (NSGradient *) highlightGradient;
+- (NSGradient *) pushedGradient;
+- (NSGradient *) highlightComplexGradient;
+- (NSGradient *) pushedComplexGradient;
+- (NSGradient *) highlightKnobColor;
+- (NSShadow *) focusRing;
+@end
+
+
 
 //Currently unused.
 /*

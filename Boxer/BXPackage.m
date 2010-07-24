@@ -164,7 +164,6 @@ NSString * const BXDocumentationFolderName		= @"Documentation";
 
 - (void) setTargetPath: (NSString *)path
 {
-	[self willChangeValueForKey: @"targetPath"];
 	if (![targetPath isEqualToString: path])
 	{
 		[targetPath release];
@@ -190,7 +189,6 @@ NSString * const BXDocumentationFolderName		= @"Documentation";
 			[manager createSymbolicLinkAtPath: linkLocation withDestinationPath: relativePath error: nil];
 		}
 	}
-	[self didChangeValueForKey: @"targetPath"];
 }
 
 - (NSString *) configurationFile
@@ -202,8 +200,6 @@ NSString * const BXDocumentationFolderName		= @"Documentation";
 {
 	NSString *configLocation = [self configurationFilePath];
 	
-	[self willChangeValueForKey: @"configurationFile"];
-	
 	if (![filePath isEqualToString: configLocation])
 	{
 		NSFileManager *manager = [NSFileManager defaultManager];
@@ -213,8 +209,6 @@ NSString * const BXDocumentationFolderName		= @"Documentation";
 		//Now, copy the new file in its place (if one was provided)
 		if (filePath) [manager copyItemAtPath: filePath toPath: configLocation error: nil];		
 	}
-	
-	[self didChangeValueForKey: @"configurationFile"];
 }
 
 - (NSString *) configurationFilePath
@@ -236,11 +230,7 @@ NSString * const BXDocumentationFolderName		= @"Documentation";
 
 - (void) setCoverArt: (NSImage *)image
 {
-	[self willChangeValueForKey: @"coverArt"];
-
 	[[NSWorkspace sharedWorkspace] setIcon: image forFile: [self bundlePath] options: 0];
-
-	[self didChangeValueForKey: @"coverArt"];
 }
 
 //Lazily discover and cache executables the first time we need them

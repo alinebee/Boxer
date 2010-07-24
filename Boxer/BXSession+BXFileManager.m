@@ -79,11 +79,6 @@
 #pragma mark -
 #pragma mark File and folder mounting
 
-- (NSArray *)drives
-{
-	return [[self emulator] mountedDrives];
-}
-
 - (IBAction) refreshFolders:	(id)sender	{ [[self emulator] refreshMountedDrives]; }
 - (IBAction) showMountPanel:	(id)sender	{ [[BXMountPanelController controller] showMountPanelForSession: self]; }
 - (IBAction) openInDOS:			(id)sender
@@ -108,14 +103,14 @@
 		[[self emulator] unmountDrive: sender];
 }
 
-- (BOOL) shouldUnmountDrives: (NSArray *)drives sender: (id)sender
+- (BOOL) shouldUnmountDrives: (NSArray *)selectedDrives sender: (id)sender
 {
 	//If the Option key was held down, bypass this check altogether and allow any drive to be unmounted
 	NSUInteger optionKeyDown = [[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask;
 	if (optionKeyDown) return YES;
 
-	NSMutableArray *drivesInUse = [[NSMutableArray alloc] initWithCapacity: [drives count]];
-	for (BXDrive *drive in drives)
+	NSMutableArray *drivesInUse = [[NSMutableArray alloc] initWithCapacity: [selectedDrives count]];
+	for (BXDrive *drive in selectedDrives)
 	{
 		if ([drive isLocked]) return NO; //Prevent locked drives from being removed altogether
 		
@@ -136,7 +131,7 @@
 		[alert beginSheetModalForWindow: sheetWindow
 						  modalDelegate: self
 						 didEndSelector: @selector(drivesInUseAlertDidEnd:returnCode:forDrives:)
-							contextInfo: drives];
+							contextInfo: selectedDrives];
 		return NO;
 	}
 	return YES;
@@ -144,10 +139,10 @@
 
 - (void) drivesInUseAlertDidEnd: (BXDrivesInUseAlert *)alert
 					 returnCode: (NSInteger)returnCode
-					  forDrives: (NSArray *)drives
+					  forDrives: (NSArray *)selectedDrives
 {
 	[alert release];
-	if (returnCode == NSAlertFirstButtonReturn) [self unmountDrives: drives];
+	if (returnCode == NSAlertFirstButtonReturn) [self unmountDrives: selectedDrives];
 }
 
 
@@ -350,11 +345,11 @@
 
 //Simple helper function to unmount a set of drives. Returns YES if any drives were unmounted, NO otherwise.
 //Implemented just so that BXInspectorController doesn't have to know about BXEmulator+BXDOSFileSystem.
-- (BOOL) unmountDrives: (NSArray *)drives
+- (BOOL) unmountDrives: (NSArray *)selectedDrives
 {
 	BOOL succeeded = NO;
 	BXEmulator *theEmulator = [self emulator];
-	for (BXDrive *drive in drives)
+	for (BXDrive *drive in selectedDrives)
 	{
 		succeeded = [theEmulator unmountDrive: drive] || succeeded;
 	}
@@ -473,10 +468,12 @@
 }
 
 - (void) DOSDriveDidMount: (NSNotification *)theNotification
-{
-	[self willChangeValueForKey: @"drives"];
-	
+{	
 	BXDrive *drive = [[theNotification userInfo] objectForKey: @"drive"];
+	
+	//We access it this way so that KVO notifications get posted properly
+	[[self mutableArrayValueForKey: @"drives"] addObject: drive];
+	
 	if (![drive isInternal])
 	{
 		[self _startTrackingChangesAtPath: [drive path]];
@@ -485,15 +482,15 @@
 		//so we don't spray out notifications for our initial drive mounts.
 		if (hasConfigured) [[BXGrowlController controller] notifyDriveMounted: drive];
 	}
-	
-	[self didChangeValueForKey: @"drives"];
 }
 
 - (void) DOSDriveDidUnmount: (NSNotification *)theNotification
 {
-	[self willChangeValueForKey: @"drives"];
-
 	BXDrive *drive = [[theNotification userInfo] objectForKey: @"drive"];
+	
+	//We access it this way so that KVO notifications get posted properly
+	[[self mutableArrayValueForKey: @"drives"] removeObject: drive];
+	
 	if (![drive isInternal])
 	{
 		NSString *path = [drive path];
@@ -504,8 +501,6 @@
 		//in case something gets unmounted during startup.
 		if (hasConfigured) [[BXGrowlController controller] notifyDriveUnmounted: drive];
 	}
-
-	[self didChangeValueForKey: @"drives"];
 }
 
 - (void) _startTrackingChangesAtPath: (NSString *)path

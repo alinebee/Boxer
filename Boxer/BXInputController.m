@@ -611,9 +611,7 @@ enum {
 }
 
 - (void) setMouseLocked: (BOOL)lock
-{
-	[self willChangeValueForKey: @"mouseLocked"];
-	
+{	
 	//Don't continue if we're already in the right lock state
 	if (lock == [self mouseLocked]) return;
 	
@@ -637,26 +635,18 @@ enum {
 	
 	[self _applyMouseLockState: lock];
 	mouseLocked = lock;
-	
-	[self didChangeValueForKey: @"mouseLocked"];
 }
 
 - (void) setMouseActive: (BOOL)active
 {
-	[self willChangeValueForKey: @"mouseActive"];
-	
 	mouseActive = active;
 	[self cursorUpdate: nil];
 	//Release the mouse lock when the game stops using the mouse
 	if (!active) [self setMouseLocked: NO];
-	
-	[self didChangeValueForKey: @"mouseActive"];
 }
 
 - (void) setTrackMouseWhileUnlocked: (BOOL)track
-{
-	[self willChangeValueForKey: @"trackMouseWhileUnlocked"];
-	
+{	
 	trackMouseWhileUnlocked = track;
 	
 	//If we're disabling tracking, and the mouse is currently unlocked,
@@ -665,8 +655,6 @@ enum {
 	//Disabled for now because this makes the mouse jumpy and unpredictable.
 	if (NO && !track && ![self mouseLocked])
 		[self _syncDOSCursorToPointInCanvas: NSMakePoint(0.5f, 0.5f)];
-	 
-	[self didChangeValueForKey: @"trackMouseWhileUnlocked"];
 }	 
 
 

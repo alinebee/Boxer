@@ -107,11 +107,7 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 		
 	[temporaryFolderPath release], temporaryFolderPath = nil;
 	
-	//Cancel everything we were importing and finish up before exiting
-	[importQueue cancelAllOperations];
-	[importQueue waitUntilAllOperationsAreFinished];
-	[importQueue release];
-	importQueue = nil;
+	[importQueue release], importQueue = nil;
 	
 	[super dealloc];
 }
@@ -267,8 +263,10 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	{
 		isClosing = YES;
 		[self cancel];
+		
 		[self synchronizeSettings];
 		[self _cleanup];
+		
 		[super close];
 	}
 }
@@ -941,6 +939,10 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 		NSFileManager *manager = [NSFileManager defaultManager];
 		[manager removeItemAtPath: temporaryFolderPath error: NULL];
 	}
+	
+	//Cancel any in-progress drive imports
+	for (BXFileTransfer *transfer in [importQueue operations]) [transfer setDelegate: nil];
+	[importQueue cancelAllOperations];
 }
 
 @end

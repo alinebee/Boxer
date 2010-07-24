@@ -1426,7 +1426,7 @@
 						<reference key="NSOnImage" ref="877608972"/>
 						<reference key="NSMixedImage" ref="352430217"/>
 					</object>
-					<object class="NSMenuItem" id="1005587224">
+					<object class="NSMenuItem" id="281998602">
 						<reference key="NSMenu" ref="29208252"/>
 						<string key="NSTitle">Import into gamebox</string>
 						<string key="NSKeyEquiv"/>
@@ -1434,7 +1434,7 @@
 						<reference key="NSOnImage" ref="877608972"/>
 						<reference key="NSMixedImage" ref="352430217"/>
 					</object>
-					<object class="NSMenuItem" id="236233905">
+					<object class="NSMenuItem" id="226163202">
 						<reference key="NSMenu" ref="29208252"/>
 						<bool key="NSIsDisabled">YES</bool>
 						<bool key="NSIsSeparator">YES</bool>
@@ -1500,14 +1500,14 @@
 					<object class="BGHUDLabel" id="682806378">
 						<reference key="NSNextResponder" ref="101756917"/>
 						<int key="NSvFlags">-2147483380</int>
-						<string key="NSFrame">{{185, 9}, {62, 14}}</string>
+						<string key="NSFrame">{{179, 9}, {68, 14}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
 						<int key="NSTag">5</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="251256203">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">272761856</int>
-							<string key="NSContents">Bundling…</string>
+							<string key="NSContents">Importing…</string>
 							<reference key="NSSupport" ref="26"/>
 							<reference key="NSControlView" ref="682806378"/>
 							<reference key="NSBackgroundColor" ref="1046058740"/>
@@ -1519,7 +1519,7 @@
 						<reference key="NSNextResponder" ref="101756917"/>
 						<int key="NSvFlags">-2147482356</int>
 						<object class="NSPSMatrix" key="NSDrawMatrix"/>
-						<string key="NSFrame">{{60, 9}, {121, 12}}</string>
+						<string key="NSFrame">{{60, 9}, {115, 12}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
 						<int key="NSpiFlags">16650</int>
 						<double key="NSMaxValue">1</double>
@@ -2435,7 +2435,7 @@
 					<object class="IBActionConnection" key="connection">
 						<string key="label">importSelectedDrives:</string>
 						<reference key="source" ref="589277066"/>
-						<reference key="destination" ref="1005587224"/>
+						<reference key="destination" ref="281998602"/>
 					</object>
 					<int key="connectionID">1353</int>
 				</object>
@@ -3315,8 +3315,8 @@
 							<reference ref="541101386"/>
 							<reference ref="75347620"/>
 							<reference ref="7699548"/>
-							<reference ref="1005587224"/>
-							<reference ref="236233905"/>
+							<reference ref="281998602"/>
+							<reference ref="226163202"/>
 						</object>
 						<reference key="parent" ref="0"/>
 						<string key="objectName">Drive Panel Context Menu</string>
@@ -3382,12 +3382,12 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">1352</int>
-						<reference key="object" ref="1005587224"/>
+						<reference key="object" ref="281998602"/>
 						<reference key="parent" ref="29208252"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">1356</int>
-						<reference key="object" ref="236233905"/>
+						<reference key="object" ref="226163202"/>
 						<reference key="parent" ref="29208252"/>
 					</object>
 				</object>

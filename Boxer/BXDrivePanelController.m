@@ -52,13 +52,8 @@ enum {
 	
 	//Assign the appropriate menu to the drive menu segment.
 	[[self driveControls] setMenu: [self driveActionsMenu] forSegment: BXDriveActionsMenuSegment];
-
-	//Monitor the session to see when drives are imported.
-	[[NSApp delegate] addObserver: self
-					   forKeyPath: @"currentSession.driveImportOperations"
-						  options: 0
-						  context: nil];
 	
+	//Listen for drive import notifications.
 	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 	[center addObserver: self selector: @selector(fileTransferDidFinish:) name: BXFileTransferDidFinish object: nil];
 	[center addObserver: self selector: @selector(fileTransferInProgress:) name: BXFileTransferInProgress object: nil];
@@ -66,8 +61,9 @@ enum {
 
 - (void) dealloc
 {
-	//Remove the observer we added upstairs in awakeFromNib
-	[[NSApp delegate] removeObserver: self forKeyPath: @"currentSession.driveImportOperations"];
+	//Clean up notifications
+	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+	[center removeObserver: self];
 	
 	[self setDriveList: nil],			[driveList release];
 	[self setDrives: nil],				[drives release];
@@ -246,7 +242,7 @@ enum {
 	if (action == @selector(importSelectedDrives:))
 	{
 		//Initial label for drive import items (may be modified below)
-		[theItem setTitle: NSLocalizedString(@"Bundle into Gamebox", @"Drive import menu item title.")];
+		[theItem setTitle: NSLocalizedString(@"Import into gamebox", @"Drive import menu item title.")];
 		
 		BOOL isGamebox = [session isGamePackage];
 		//Hide these menu items if we're not running a session
@@ -261,7 +257,7 @@ enum {
 			//is already in the gamebox
 			if ([session driveIsBundled: drive])
 			{
-				[theItem setTitle: NSLocalizedString(@"Bundled in Gamebox", @"Drive import menu item title, when selected drive(s) are already in the gamebox.")];
+				[theItem setTitle: NSLocalizedString(@"Part of gamebox", @"Drive import menu item title, when selected drive(s) are already in the gamebox.")];
 				return NO;
 			}
 			if ([drive isInternal] || [drive isHidden]) return NO;
@@ -273,7 +269,7 @@ enum {
 
 
 #pragma mark -
-#pragma mark Drive import progress reporting
+#pragma mark Drive import progressbar handling
 
 - (void) fileTransferInProgress: (NSNotification *)notification
 {
@@ -302,7 +298,7 @@ enum {
 		[progressMeter setHidden: NO];
 		[progressMeterLabel setHidden: NO];
 		
-		[driveView setNeedsDisplay: YES];
+		//[driveView setNeedsDisplay: YES];
 	}
 }
 
@@ -327,7 +323,7 @@ enum {
 		[progressMeterLabel setHidden: YES];
 		[typeLabel setHidden: NO];
 		
-		[driveView setNeedsDisplay: YES];
+		//[driveView setNeedsDisplay: YES];
 	}
 }
 				 

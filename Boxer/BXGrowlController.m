@@ -117,7 +117,7 @@
 
 - (void) notifyDriveImported: (BXDrive *)drive toPackage: (BXPackage *)package
 {
-	NSString *titleFormat = NSLocalizedString(@"%1$@ %2$@ was imported.", @"Growl notification title when drive has been imported. %1$@ is the localized drive type (Hard drive, CD-ROM etc.); %2$@ is the uppercase letter of the drive, and %3$@ is the name of the gamebox.");
+	NSString *titleFormat = NSLocalizedString(@"%1$@ %2$@ has been imported.", @"Growl notification title when drive has been imported. %1$@ is the localized drive type (Hard drive, CD-ROM etc.); %2$@ is the uppercase letter of the drive, and %3$@ is the name of the gamebox.");
 	
 	NSString *title = [NSString stringWithFormat: titleFormat, [drive typeDescription], [drive letter], [package gameName], nil];
 	

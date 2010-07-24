@@ -605,7 +605,6 @@
 
 - (void) fileTransferInProgress: (NSNotification *)theNotification
 {
-	NSLog(@"%f", [[theNotification object] currentProgress]);
 }
 
 - (void) fileTransferDidFinish: (NSNotification *)theNotification

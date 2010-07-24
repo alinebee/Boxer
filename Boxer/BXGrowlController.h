@@ -12,6 +12,7 @@
 #import <Growl/GrowlApplicationBridge.h>
 
 @class BXDrive;
+@class BXPackage;
 
 @interface BXGrowlController : NSObject <GrowlApplicationBridgeDelegate>
 
@@ -25,8 +26,8 @@
 //Called by Growl: Registers each of Boxer's notifications.
 - (NSDictionary *) registrationDictionaryForGrowl;
 
-//Currently unused.
-//- (void) growlNotificationWasClicked: (id)clickContext;
+//Display the inspector panel when drive-related notifications are clicked.
+- (void) growlNotificationWasClicked: (id)clickContext;
 
 //Notify that a new Boxer drive has been added to DOS.
 - (void) notifyDriveMounted: (BXDrive *)drive;
@@ -34,4 +35,6 @@
 //Notify that a DOS drive was removed.
 - (void) notifyDriveUnmounted: (BXDrive *)drive;
 
+//Notify that a DOS drive was imported into the specified gamebox.
+- (void) notifyDriveImported: (BXDrive *)drive toPackage: (BXPackage *)package;
 @end

@@ -18,12 +18,29 @@
 	IBOutlet NSSegmentedControl *driveControls;
 	IBOutlet NSMenu *driveActionsMenu;
 	IBOutlet BXDriveList *driveList;
+	
+	NSMutableArray *driveDetails;
 }
-@property (retain) BXDriveList *driveList;
-@property (retain) NSSegmentedControl *driveControls;
-@property (retain) NSMenu *driveActionsMenu;
+
+#pragma mark -
+#pragma mark Properties
+
+@property (retain, nonatomic) BXDriveList *driveList;
+@property (retain, nonatomic) NSSegmentedControl *driveControls;
+@property (retain, nonatomic) NSMenu *driveActionsMenu;
 //The array controller representing the current session's drives.
-@property (retain) NSArrayController *drives;
+@property (retain, nonatomic) NSArrayController *drives;
+
+//The current session's drives and drive import progress, grouped as an NSDictionary.
+@property (readonly, nonatomic) NSArray *driveDetails;
+
+//Sort descriptors and filters for our drive list.
+@property (readonly, nonatomic) NSArray *driveSortDescriptors;
+@property (readonly, nonatomic) NSPredicate *driveFilterPredicate;
+
+
+#pragma mark -
+#pragma mark Interface Actions
 
 - (IBAction) interactWithDriveOptions: (NSSegmentedControl *)sender;
 
@@ -36,12 +53,15 @@
 //Unmount the selected drives from DOS.
 - (IBAction) unmountSelectedDrives: (id)sender;
 
+//Import the selected drives into the gamebox.
+- (IBAction) importSelectedDrives: (id)sender;
+
 //Display the mount panel.
 - (IBAction) showMountPanel: (id)sender;
 
-//Sort descriptors for the drive list.
-- (NSArray *) driveSortDescriptors;
-- (NSPredicate *) driveFilterPredicate;
+
+#pragma mark -
+#pragma mark Drag-dropping
 
 //Handle drag-dropping of files and folders to mount as drives.
 - (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)sender;

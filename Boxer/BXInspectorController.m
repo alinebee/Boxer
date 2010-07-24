@@ -31,22 +31,10 @@ const CGFloat BXMouseSensitivityRange = 2.0f;
 									  nil];
 	
 	BXBandedValueTransformer *mouseSensitivity = [[BXBandedValueTransformer alloc] initWithThresholds: sensitivityThresholds];
-	BXDisplayPathTransformer *displayPath	= [[BXDisplayPathTransformer alloc] initWithJoiner: @" ▸ " maxComponents: 0];
-	BXDisplayNameTransformer *displayName	= [BXDisplayNameTransformer new];
-	BXImageSizeTransformer *imageSize = [[BXImageSizeTransformer alloc] initWithSize: NSMakeSize(16, 16)];
-	
-	
 	
 	[NSValueTransformer setValueTransformer: mouseSensitivity forName: @"BXMouseSensitivitySlider"];
-	[NSValueTransformer setValueTransformer: displayPath forName: @"BXDriveDisplayPath"];
-	[NSValueTransformer setValueTransformer: displayPath forName: @"BXDocumentationDisplayPath"];
-	[NSValueTransformer setValueTransformer: displayName forName: @"BXDocumentationDisplayName"];
-	[NSValueTransformer setValueTransformer: imageSize forName: @"BXDocumentationIconSize"];
 	
-	[displayPath release];
-	[displayName release];
-	[imageSize release];
-
+	[mouseSensitivity release];
 }
 
 + (BXInspectorController *)controller

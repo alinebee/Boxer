@@ -17,6 +17,8 @@
 #import "BXDrive.h"
 #import "BXDrivesInUseAlert.h"
 
+#import "BXFileTransfer.h"
+
 #import "NSWorkspace+BXMountedVolumes.h"
 #import "NSWorkspace+BXFileTypes.h"
 #import "NSString+BXPaths.h"
@@ -38,8 +40,11 @@
 - (void) _startTrackingChangesAtPath:	(NSString *)path;
 - (void) _stopTrackingChangesAtPath:	(NSString *)path;
 
+//Whether the specified path represents a 1.44MB volume
 - (BOOL) _isFloppySizedVolume: (NSString *)path;
 
+//The name to give the specified drive when importing
+- (NSString *) _importedNameForDrive: (BXDrive *)drive;
 @end
 
 
@@ -344,7 +349,7 @@
 }
 
 //Simple helper function to unmount a set of drives. Returns YES if any drives were unmounted, NO otherwise.
-//Implemented just so that BXInspectorController doesn't have to know about BXEmulator+BXDOSFileSystem.
+//Implemented just so that BXDrivePanelController doesn't have to know about BXEmulator+BXDOSFileSystem.
 - (BOOL) unmountDrives: (NSArray *)selectedDrives
 {
 	BOOL succeeded = NO;
@@ -356,6 +361,105 @@
 	return succeeded;
 }
 
+- (BOOL) driveIsBundled: (BXDrive *)drive
+{
+	if ([self isGamePackage])
+	{
+		NSString *gameboxPath = [[self gamePackage] bundlePath];
+		NSString *drivePath = [drive path];
+		
+		//The drive already exists within the gamebox, so of course it's bundled
+		if ([drivePath isRootedInPath: gameboxPath]) return YES;
+		
+		NSString *importedName = [self _importedNameForDrive: drive];
+		NSString *importedPath = [[[self gamePackage] resourcePath] stringByAppendingPathComponent: importedName];
+		
+		//A file already exists with the same name as we would import it with,
+		//which almost certainly means the drive was bundled earlier
+		NSFileManager *manager = [NSFileManager defaultManager];
+		if ([manager fileExistsAtPath: importedPath]) return YES;
+	}
+	return NO;
+}
+
+- (NSString *) _importedNameForDrive: (BXDrive *)drive
+{
+	NSString *importedName = nil;
+	NSString *drivePath = [drive path];
+	
+	NSFileManager *manager = [NSFileManager defaultManager];
+	BOOL isDir, exists = [manager fileExistsAtPath: drivePath isDirectory: &isDir];
+	
+	if (exists)
+	{
+		NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+		
+		NSSet *readyTypes = [[BXAppController mountableFolderTypes] setByAddingObjectsFromSet: [BXAppController mountableImageTypes]];
+		
+		//Folders of the above types don't need additional work to import: we can just use their filename directly
+		if ([workspace file: drivePath matchesTypes: readyTypes])
+		{
+			return [drivePath lastPathComponent];
+		}
+		//Otherwise, it will need to be made into a mountable folder
+		else if (isDir)
+		{
+			importedName = [drive label];
+			//If the drive has a letter, then prepend it in our standard format
+			if ([drive letter]) importedName = [NSString stringWithFormat: @"%@ %@", [drive letter], importedName];
+			
+			NSString *extension	= nil;
+			
+			//Give the mountable folder the proper file extension for its drive type
+			switch ([drive type])
+			{
+				case BXDriveCDROM:
+					extension = @"cdrom";
+					break;
+				case BXDriveFloppyDisk:
+					extension = @"floppy";
+					break;
+				case BXDriveHardDisk:
+				default:
+					extension = @"harddisk";
+					break;
+			}
+			importedName = [importedName stringByAppendingPathExtension: extension];
+		}
+	}
+	return importedName;
+}
+
+- (BXFileTransfer *) beginImportForDrive: (BXDrive *)drive
+{
+	//Don't import drives if:
+	//- we're not running a gamebox
+	//- the drive is DOSBox-internal or hidden (which means it's a Boxer-internal drive)
+	//- the drive is already bundled in the current gamebox
+	
+	if ([self isGamePackage] && ![drive isInternal] && ![drive isHidden] && ![self driveIsBundled: drive])
+	{
+		NSString *destinationBase	= [[self gamePackage] resourcePath];
+		NSString *sourcePath		= [drive path];
+		
+		//Determine the appropriate name under which to bundle this drive
+		NSString *destinationName	= [self _importedNameForDrive: drive];
+		
+		//This means the source didn't exist or wasn't an importable file
+		if (!destinationName) return nil;
+		
+		NSString *destinationPath   = [destinationBase stringByAppendingPathComponent: destinationName];
+
+		BXFileTransfer *driveImport = [BXFileTransfer transferFromPath: sourcePath toPath: destinationPath copyFiles: YES];
+		[driveImport setDelegate: self];
+		[driveImport setContextInfo: drive];
+		
+		[importQueue addOperation: driveImport];
+		return driveImport;
+	}
+	return nil;
+}
+ 
 
 #pragma mark -
 #pragma mark OS X filesystem notifications
@@ -477,10 +581,8 @@
 	if (![drive isInternal])
 	{
 		[self _startTrackingChangesAtPath: [drive path]];
-	
-		//Only show notifications once the session has started up fully,
-		//so we don't spray out notifications for our initial drive mounts.
-		if (hasConfigured) [[BXGrowlController controller] notifyDriveMounted: drive];
+
+		if (showDriveNotifications) [[BXGrowlController controller] notifyDriveMounted: drive];
 	}
 }
 
@@ -497,11 +599,58 @@
 		//Only stop tracking if there are no other drives mapping to that path either.
 		if (![[self emulator] pathIsDOSAccessible: path]) [self _stopTrackingChangesAtPath: path];
 	
-		//Only show notifications once the session has started up fully,
-		//in case something gets unmounted during startup.
-		if (hasConfigured) [[BXGrowlController controller] notifyDriveUnmounted: drive];
+		if (showDriveNotifications) [[BXGrowlController controller] notifyDriveUnmounted: drive];
 	}
 }
+
+- (void) fileTransferInProgress: (NSNotification *)theNotification
+{
+	NSLog(@"%f", [[theNotification object] currentProgress]);
+}
+
+- (void) fileTransferDidFinish: (NSNotification *)theNotification
+{
+	BXFileTransfer *transfer = [theNotification object];
+	BXDrive *drive = [transfer contextInfo];
+
+	if ([transfer succeeded])
+	{
+		//Once the drive has successfully imported, replace the old drive
+		//with the newly-imported version (if the old one is not in use by DOS)
+		if (![[self emulator] driveInUseAtLetter: [drive letter]])
+		{
+			NSString *destinationPath = [transfer destinationPath];
+			BXDrive *importedDrive = [BXDrive driveFromPath: destinationPath atLetter: [drive letter]];
+			
+			//Temporarily suppress drive mount/unmount notifications
+			BOOL oldShowDriveNotifications = showDriveNotifications;
+			showDriveNotifications = NO;
+			
+			//Unmount the old drive first...
+			if ([[self emulator] unmountDrive: drive])
+			{
+				//...then mount the new one in its place
+				BXDrive *mountedDrive = [[self emulator] mountDrive: importedDrive];
+				//If it worked, use the newly-mounted drive in the import notification
+				if (mountedDrive)
+				{
+					drive = mountedDrive;
+				}
+				//If the mount failed for some reason, then put the old drive back
+				else [[self emulator] mountDrive: drive];
+			}
+			showDriveNotifications = oldShowDriveNotifications;
+		} 
+		
+		//Post a Growl notification that this drive was successfully imported.
+		[[BXGrowlController controller] notifyDriveImported: drive toPackage: [self gamePackage]];
+	}
+	else
+	{
+		//TODO: handle the transfer error gracefully, ideally giving the user the option to try again
+	}
+}
+
 
 - (void) _startTrackingChangesAtPath: (NSString *)path
 {

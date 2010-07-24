@@ -19,8 +19,11 @@
 }
 @property (assign) BXDrivePanelController *delegate;
 
-- (NSArray *) selectedObjects;	//An array of the currently selected NSCollectionViewItems.
-- (NSArray *) selectedViews;	//An array of BXDriveItemViews corresponding to the currently selected drives.
+//An array of the currently selected content objects.
+@property (readonly) NSArray *selectedObjects;
+
+//An array of BXDriveItemViews corresponding to the current selection.
+@property (readonly) NSArray *selectedViews;
 
 @end
 

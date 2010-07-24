@@ -20,12 +20,10 @@
 - (BOOL) mouseDownCanMoveWindow	{ return NO; }
 - (BOOL) acceptsFirstMouse: (NSEvent *)theEvent { return YES; }
 
-//Select ourselves and pass menu events up to our parent
-- (NSMenu *) menuForEvent: (NSEvent *)event
+//Returns the original prototype we were copied from, to access properties that weren't copied.
+- (id) _prototype
 {
-	[[self delegate] setSelected: YES];
-	[[self superview] setNeedsDisplay: YES];
-	return [[(BXDriveList *)[self superview] delegate] driveActionsMenu];
+	return [[[[self delegate] collectionView] itemPrototype] view]; 
 }
 
 //Overridden so that we indicate that every click has hit us instead of our descendants.
@@ -34,6 +32,17 @@
 	NSView *hitView = [super hitTest: thePoint];
 	if (hitView != nil) hitView = self;
 	return hitView;
+}
+
+- (NSMenu *) menuForEvent: (NSEvent *)theEvent
+{
+	//Select the item before displaying the menu
+	[[self delegate] setSelected: YES];
+	[[self superview] setNeedsDisplay: YES];
+	
+	//Because NSCollectionView doesn't copy the menu when duplicating views,
+	//we have to return the original prototype's menu.
+	return [[self _prototype] menu];
 }
 
 - (void) drawRect: (NSRect)dirtyRect
@@ -87,19 +96,11 @@
 
 - (BOOL) acceptsFirstMouse: (NSEvent *)theEvent { return YES; }
 
-- (NSDragOperation)draggingSourceOperationMaskForLocal:(BOOL)isLocal
-{
-	return (isLocal) ? NSDragOperationPrivate : NSDragOperationNone;
-}
 
+#pragma mark -
+#pragma mark Selection behaviour
 
-- (NSImage *) draggableImageFromView: (NSView *)itemView
-{
-	NSData *imageData = [itemView dataWithPDFInsideRect: [itemView bounds]];
-	return [[[NSImage alloc] initWithData: imageData] autorelease];
-}
-
-- (void) selectItemAtPoint: (NSPoint)point
+- (void) _selectItemAtPoint: (NSPoint)point
 {
 	id clickedView = [self hitTest: point];
 	
@@ -116,13 +117,15 @@
 	[self setNeedsDisplay: YES];
 }
 
-//This amounts to a complete reimplementation of NSCollectionView's default mouseDown implementation, just so that we can stick in our own drag functionality. Fuck. You.
+//This amounts to a complete reimplementation of NSCollectionView's default mouseDown implementation,
+//just so that we can stick in our own drag functionality. Fuck. You.
 - (void) mouseDown: (NSEvent *)theEvent
 {	
 	NSPoint clickPoint = [self convertPoint: [theEvent locationInWindow] fromView: nil];
-	[self selectItemAtPoint: clickPoint];
+	[self _selectItemAtPoint: clickPoint];
 	
-	//If we have a selection, open a mouse tracking loop of our own here in mouseDown and break out of it for mouseUp and mouseDragged.
+	//If we have a selection, open a mouse tracking loop of our own here in mouseDown
+	//and break out of it for mouseUp and mouseDragged.
     while ([[self selectionIndexes] count])
 	{
         NSEvent *eventInDrag = [[self window] nextEventMatchingMask: NSLeftMouseUpMask | NSLeftMouseDraggedMask];
@@ -134,6 +137,57 @@
 				return [self mouseUp: eventInDrag];
         }
     };
+}
+
+//If the user Cmd-clicked, reveal the drive in Finder
+- (void) mouseUp: (NSEvent *)theEvent
+{
+	if ([theEvent clickCount] > 1 && ([theEvent modifierFlags] & NSCommandKeyMask))
+	{
+		[NSApp sendAction: @selector(revealSelectedDrivesInFinder:) to: [self delegate] from: self];
+	}
+}
+
+//My god what a pain in the ass
+//We can't just grab array controller's selected objects because we don't know about the array controller;
+//we're only bound to its contents and its selectionIndexes, not its selectedObjects :(
+- (NSArray *) selectedObjects
+{
+	NSIndexSet *selection	= [self selectionIndexes];
+	NSArray *values			= [self content];
+	NSUInteger i, numValues	= [values count];
+	NSMutableArray *selectedObjects = [NSMutableArray arrayWithCapacity: [selection count]];
+	
+	for (i=0; i<numValues; i++)
+	{
+		if ([selection containsIndex: i]) [selectedObjects addObject: [values objectAtIndex: i]];
+	}
+	return (NSArray *)selectedObjects;
+}
+
+- (NSArray *) selectedViews
+{	
+	NSMutableArray *selectedViews = [NSMutableArray arrayWithCapacity: [[self selectionIndexes] count]];
+	
+	for (BXDriveItemView *item in [self subviews])
+	{
+		if ([[item delegate] isSelected]) [selectedViews addObject: item];
+	}
+	return (NSArray *)selectedViews;
+}
+
+#pragma mark -
+#pragma mark Drag-dropping
+
+- (NSDragOperation) draggingSourceOperationMaskForLocal: (BOOL)isLocal
+{
+	return (isLocal) ? NSDragOperationPrivate : NSDragOperationNone;
+}
+
+- (NSImage *) draggableImageFromView: (NSView *)itemView
+{
+	NSData *imageData = [itemView dataWithPDFInsideRect: [itemView bounds]];
+	return [[[NSImage alloc] initWithData: imageData] autorelease];
 }
 
 - (void) mouseDragged: (NSEvent *)theEvent
@@ -164,14 +218,6 @@
 				pasteboard: pboard
 					source: self
 				 slideBack: NO];
-}
-
-- (void) mouseUp: (NSEvent *)theEvent
-{
-	if ([theEvent clickCount] > 1 && ([theEvent modifierFlags] & NSCommandKeyMask))
-	{
-		[NSApp sendAction: @selector(revealSelectedDrivesInFinder:) to: [self delegate] from: self];
-	}
 }
 
 //While dragging, this checks for valid Boxer windows under the cursor; if there aren't any, it displays
@@ -231,35 +277,6 @@
 	
 	//Once the drag has finished, clean up by unhiding the dragged items
 	for (NSView *itemView in [self selectedViews]) [itemView setHidden: NO];
-}
-
-
-//My god what a pain in the ass
-//We can't just grab array controller's selected objects because we don't know about the array controller;
-//we're only bound to its contents and its selectionIndexes, not its selectedObjects :(
-- (NSArray *) selectedObjects
-{
-	NSIndexSet *selection	= [self selectionIndexes];
-	NSArray *values			= [self content];
-	NSUInteger i, numValues	= [values count];
-	NSMutableArray *selectedObjects = [NSMutableArray arrayWithCapacity: [selection count]];
-	
-	for (i=0; i<numValues; i++)
-	{
-		if ([selection containsIndex: i]) [selectedObjects addObject: [values objectAtIndex: i]];
-	}
-	return (NSArray *)selectedObjects;
-}
-
-- (NSArray *) selectedViews
-{	
-	NSMutableArray *selectedItems = [NSMutableArray arrayWithCapacity: [[self selectionIndexes] count]];
-
-	for (BXDriveItemView *item in [self subviews])
-	{
-		if ([[item delegate] isSelected]) [selectedItems addObject: item];
-	}
-	return (NSArray *)selectedItems;
 }
 
 @end

@@ -15,8 +15,5 @@
 
 - (void) fileTransferInProgress: (NSNotification *)notification;
 - (void) fileTransferDidFinish: (NSNotification *)notification;
-//Included herein because it is not defined in the NSObject protocol
-- (void) performSelectorOnMainThread: (SEL)aSelector withObject: (id)arg waitUntilDone: (BOOL)wait;
-
 
 @end

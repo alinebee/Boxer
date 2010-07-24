@@ -111,21 +111,32 @@ NSString * const BXFileTransferCurrentPathKey	= @"BXFileTransferCurrentPathKey";
 
 - (void) main
 {
-	//Sanity check: if we have no source or destination path, bail out now
+	//Sanity checks: if we have no source or destination path, bail out now
 	if (![self sourcePath] || ![self destinationPath]) return;
 	
-	NSUInteger fileCount = 0;
+	BOOL sourceIsDir, sourceExists = [manager fileExistsAtPath: [self sourcePath] isDirectory: &sourceIsDir];
+	BOOL destinationExists = [manager fileExistsAtPath: [self destinationPath]];
+	
+	//Bail out if the source path does not exist or if the destination path does exist
+	//TODO: populate the error also.
+	if (!sourceExists || destinationExists) return;
+	
 	BOOL transferSucceeded = NO;
 	NSError *transferError = nil;
 	
-	//Calculate how many files are involved in our copy operation
-	for (NSString *path in [manager enumeratorAtPath: [self sourcePath]]) fileCount++;
+	//There will always be at least one file to be transferred: the source path (be it a file or folder)
+	NSUInteger fileCount = 1;
+		
+	//When source is a directory, calculate how many additional files will be transferred from within it
+	if (sourceIsDir)
+	{
+		for (NSString *path in [manager enumeratorAtPath: [self sourcePath]]) fileCount++;	
+	}
 	
 	[self setNumFiles: fileCount];
 	[self setNumFilesTransferred: 0];
 	
-	//TODO: check if we need to enumerate the directory copying each individual file
-	//in order to get "should I copy this file" checks
+	
 	if (copyFiles)
 	{
 		transferSucceeded = [manager copyItemAtPath: [self sourcePath] toPath: [self destinationPath] error: &transferError];
@@ -134,6 +145,7 @@ NSString * const BXFileTransferCurrentPathKey	= @"BXFileTransferCurrentPathKey";
 	{
 		transferSucceeded = [manager moveItemAtPath: [self sourcePath] toPath: [self destinationPath] error: &transferError];
 	}
+	
 	[self setSucceeded: transferSucceeded];
 	[self setError: transferError];
 	
@@ -201,7 +213,7 @@ NSString * const BXFileTransferCurrentPathKey	= @"BXFileTransferCurrentPathKey";
 															   userInfo: userInfo];
 	
 	if ([[self delegate] respondsToSelector: selector])
-		[[self delegate] performSelectorOnMainThread: selector withObject: notification waitUntilDone: NO];
+		[(id)[self delegate] performSelectorOnMainThread: selector withObject: notification waitUntilDone: NO];
 	
 	[center performSelectorOnMainThread: @selector(postNotification:) withObject: notification waitUntilDone: NO];
 }

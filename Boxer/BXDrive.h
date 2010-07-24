@@ -12,6 +12,10 @@
 //Could be Foundation, except we use NSImage
 #import <Cocoa/Cocoa.h>
 
+
+#pragma mark -
+#pragma mark Constants
+
 enum BXDriveTypes {
 	BXDriveAutodetect	= -1,
 	BXDriveHardDisk		= 0,
@@ -29,11 +33,15 @@ static const NSInteger BXDefaultFreeSpace = -1;
 static const NSUInteger BXFloppySizeCutoff = 2 * 1024 * 1024;
 
 
+#pragma mark -
+#pragma mark Interface
+
 @interface BXDrive : NSObject
 {
 	NSString *path;
 	NSString *letter;
 	NSString *label;
+	NSString *DOSBoxLabel;
 	BXDriveType type;
 	NSUInteger freeSpace;
 	BOOL usesCDAudio;
@@ -43,53 +51,75 @@ static const NSUInteger BXFloppySizeCutoff = 2 * 1024 * 1024;
 	NSImage *icon;
 }
 
-//Properties
-//----------
+
+#pragma mark -
+#pragma mark Properties
 
 //The absolute path to the source folder (or image) of the drive on the OS X filesystem.
-@property (copy) NSString *path;
+@property (copy, nonatomic) NSString *path;
 
 //The DOS drive letter under which this drive will be mounted.
 //If nil, BXEmulator mountDrive: will choose an appropriate drive letter at mount time.
 //This property is not prescriptive: if a drive is already mounted at the specified letter,
 //BXEmulator mountDrive: may mount the drive as a different letter and modify the letter
 //property of the returned drive to match.
-@property (copy) NSString *letter;
+@property (copy, nonatomic) NSString *letter;
 
 //The DOS disk label to use for this drive. For folder-based drives this will be
 //auto-generated from the folder's OS X filename, if not explicitly provided.
 //The label does not apply to disk images, which encapsulate their own drive label.
-@property (copy) NSString *label;
+@property (copy, nonatomic) NSString *label;
+
+//The label given to this drive by DOSBox, based on @label but munged to conform
+//to DOS volume label requirements. Will be nil until a volume has been mounted.
+@property (copy, nonatomic) NSString *DOSBoxLabel;
 
 //The icon representing this drive. This will be taken from the drive path's filesystem icon.
-@property (copy) NSImage *icon;
+@property (copy, nonatomic) NSImage *icon;
 
 //The type of DOS drive to mount, as a BXDriveType constant (see above.) This will
 //be auto-detected based on the source folder or image, if not explicitly provided.
-@property (assign) BXDriveType type;
+@property (assign, nonatomic) BXDriveType type;
 
 //The amount of free disk space to represent on the drive, in bytes. Defaults to
 //BXDefaultFreeSpace: which is ~250MB for hard disks, 1.44MB for floppies and 0B for CDROMs.
-@property (assign) NSUInteger freeSpace;
+@property (assign, nonatomic) NSUInteger freeSpace;
 
 //Whether to use SDL CD-ROM audio: only relevant for CD-ROM drives. If YES, DOS emulation
 //will read CD audio for this drive from the first audio CD volume mounted in OS X.
-@property (assign) BOOL usesCDAudio;
+@property (assign, nonatomic) BOOL usesCDAudio;
 
 //Whether to prevent writing to the OS X filesystem representing this drive: defaults to NO.
-@property (assign) BOOL readOnly;
+@property (assign, nonatomic) BOOL readOnly;
 
 //Whether to protect this drive from being unmounted from the drive manager UI: defaults to NO.
 //Ignored for DOSBox internal drives (which are always locked).
-@property (assign, getter=isLocked) BOOL locked;
+@property (assign, nonatomic, getter=isLocked) BOOL locked;
 
 //Whether to hide this drive from Boxer's drive manager UI: defaults to NO.
 //Ignored for DOSBox internal drives (which are always hidden).
-@property (assign, getter=isHidden) BOOL hidden;
+@property (assign, nonatomic, getter=isHidden) BOOL hidden;
 
 
-//Class methods
-//-------------
+#pragma mark -
+#pragma mark Immutable properties
+
+//A friendly OS X title for the drive's type.
+@property (readonly, nonatomic) NSString *typeDescription;
+
+//A friendly OS X name for the drive's source path. This corresponds to NSManager displayNameAtPath:.
+@property (readonly, nonatomic) NSString *displayName;
+
+//Returns whether this drive is the specified drive type.
+@property (readonly, nonatomic) BOOL isInternal;
+@property (readonly, nonatomic) BOOL isCDROM;
+@property (readonly, nonatomic) BOOL isFloppy;
+@property (readonly, nonatomic) BOOL isHardDisk;
+
+
+
+#pragma mark -
+#pragma mark Class methods
 
 //Returns a localised descriptive name for the specified drive type. e.g. @"hard disk", @"CD-ROM" etc. 
 + (NSString *) descriptionForType: (BXDriveType)driveType;
@@ -111,8 +141,8 @@ static const NSUInteger BXFloppySizeCutoff = 2 * 1024 * 1024;
 + (NSString *) preferredDriveLetterForPath: (NSString *)filePath;
 
 
-//Initializers
-//------------
+#pragma mark -
+#pragma mark Initializers
 
 //Initialise a retained drive with the specified parameters.
 - (id) initFromPath: (NSString *)drivePath atLetter: (NSString *)driveLetter withType: (BXDriveType)driveType;
@@ -130,32 +160,16 @@ static const NSUInteger BXFloppySizeCutoff = 2 * 1024 * 1024;
 + (id) internalDriveAtLetter: (NSString *)driveLetter;
 
 
-//Describing the drive
-//--------------------
-
-//A friendly OS X title for the drive's type.
-- (NSString *) typeDescription;
-
-//A friendly OS X name for the drive's source path. This corresponds to NSManager displayNameAtPath:.
-- (NSString *)displayName;
-
-
-//Introspecting the drive
-//-----------------------
+#pragma mark -
+#pragma mark Introspecting the drive
 
 //Returns whether the file at the specified path would be accessible in DOS from this drive.
 //This is determined by checking if the base folder of this drive is a parent of the specified path. 
 - (BOOL) exposesPath: (NSString *)subPath;
 
-//Returns whether this drive is the specified drive type.
-- (BOOL) isInternal;
-- (BOOL) isCDROM;
-- (BOOL) isFloppy;
-- (BOOL) isHardDisk;
 
-
-//Sort comparisons
-//----------------
+#pragma mark -
+#pragma mark Sort comparisons
 
 //Sorts drives based on how deep their source path is.
 - (NSComparisonResult) pathDepthCompare: (BXDrive *)comparison;

@@ -12,6 +12,7 @@
 #import "BXSession+BXDragDrop.h"
 #import "BXEmulator.h"
 #import "BXDrive.h"
+#import "BXValueTransformers.h"
 
 //The segments of the drive options control
 enum {
@@ -21,10 +22,18 @@ enum {
 };
 
 @implementation BXDrivePanelController
-@synthesize driveControls, driveActionsMenu, drives, driveList;
+@synthesize driveControls, driveActionsMenu, drives, driveList, driveDetails;
 
 #pragma mark -
 #pragma mark Initialization and teardown
+
++ (void) initialize
+{
+	BXDisplayPathTransformer *displayPath = [[BXDisplayPathTransformer alloc] initWithJoiner: @" ▸ "
+																			   maxComponents: 4];
+	[NSValueTransformer setValueTransformer: displayPath forName: @"BXDriveDisplayPath"];
+	[displayPath release];
+}
 
 - (void) awakeFromNib
 {
@@ -33,8 +42,27 @@ enum {
 	
 	//Assign the appropriate menu to the drive menu segment.
 	[[self driveControls] setMenu: [self driveActionsMenu] forSegment: BXDriveActionsMenuSegment];
+
+	//Monitor the session to see when drives are imported.
+	[[NSApp delegate] addObserver: self
+					   forKeyPath: @"currentSession.driveImportOperations"
+						  options: 0
+						  context: nil];
 }
 
+- (void) dealloc
+{
+	//Remove the observer we added upstairs in awakeFromNib
+	[[NSApp delegate] removeObserver: self forKeyPath: @"currentSession.driveImportOperations"];
+	
+	[self setDriveList: nil],			[driveList release];
+	[self setDrives: nil],				[drives release];
+	[self setDriveControls: nil],		[driveControls release];
+	[self setDriveActionsMenu: nil],	[driveActionsMenu release];
+	[super dealloc];
+}
+
+//Observe the drive list to respond when its content or selections change
 - (void) setDriveList: (BXDriveList *)theList
 {
 	if (theList != driveList)
@@ -44,10 +72,10 @@ enum {
 			[driveList removeObserver: self forKeyPath: @"selectionIndexes"];
 			[driveList removeObserver: self forKeyPath: @"content"];
 		}
-
+		
 		[driveList release];
 		driveList = [theList retain];
-
+		
 		if (driveList)
 		{
 			[driveList addObserver: self
@@ -61,18 +89,6 @@ enum {
 						   context: nil];
 		}
 	}
-}
-
-- (void) dealloc
-{
-	//Remove the observer we added upstairs in awakeFromNib
-	[[NSApp delegate] removeObserver: self forKeyPath: @"currentSession.drives"];
-	
-	[self setDriveList: nil],			[driveList release];
-	[self setDrives: nil],				[drives release];
-	[self setDriveControls: nil],		[driveControls release];
-	[self setDriveActionsMenu: nil],	[driveActionsMenu release];
-	[super dealloc];
 }
 
 - (void) observeValueForKeyPath: (NSString *)keyPath
@@ -111,6 +127,12 @@ enum {
 		
 		[[self drives] addSelectionIndexes: selectedIndexes];
 		[selectedIndexes release];
+	}
+	
+	//Show progress meters for drives that are being imported.
+	else if ([keyPath isEqualToString: @"currentSession.driveImportOperations"])
+	{
+		
 	}
 }
 
@@ -162,6 +184,14 @@ enum {
 		[session unmountDrives: selection];
 }
 
+- (IBAction) importSelectedDrives: (id)sender
+{
+	NSArray *selection = [[self drives] selectedObjects];
+	BXSession *session = [[NSApp delegate] currentSession];
+
+	for (BXDrive *drive in selection) [session beginImportForDrive: drive];
+}
+
 - (IBAction) showMountPanel: (id)sender
 {
 	//Make sure the application is active; since we support clickthrough,
@@ -198,10 +228,36 @@ enum {
 	{
 		return hasSelection && [session isEmulating] && ![theEmulator isRunningProcess];
 	}
+	
+	if (action == @selector(importSelectedDrives:))
+	{
+		//Initial label for drive import items (may be modified below)
+		[theItem setTitle: NSLocalizedString(@"Bundle into Gamebox", @"Drive import menu item title.")];
+		
+		BOOL isGamebox = [session isGamePackage];
+		//Hide these menu items if we're not running a session
+		[theItem setHidden: !isGamebox];
+		if (!isGamebox || !hasSelection) return NO;
+		
+		 
+		//Check if any of the selected drives are internal or already imported
+		for (BXDrive *drive in [[self drives] selectedObjects])
+		{
+			//Change the menu item title to reflect that the selected drive
+			//is already in the gamebox
+			if ([session driveIsBundled: drive])
+			{
+				[theItem setTitle: NSLocalizedString(@"Bundled in Gamebox", @"Drive import menu item title, when selected drive(s) are already in the gamebox.")];
+				return NO;
+			}
+			if ([drive isInternal] || [drive isHidden]) return NO;
+		}
+		return YES;
+	}
 	return YES;
 }
 
-
+				 
 #pragma mark -
 #pragma mark Drive list sorting
 

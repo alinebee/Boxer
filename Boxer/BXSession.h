@@ -40,6 +40,9 @@
 	BOOL hasConfigured;
 	BOOL hasLaunched;
 	BOOL isClosing;
+	BOOL showDriveNotifications;
+	
+	NSOperationQueue *importQueue;
 }
 
 

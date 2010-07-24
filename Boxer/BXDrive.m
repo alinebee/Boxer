@@ -14,10 +14,12 @@
 #import "RegexKitLite.h"
 
 @implementation BXDrive
-@synthesize path, letter, label, icon;
+@synthesize path, letter, label, DOSBoxLabel, icon;
 @synthesize type, freeSpace;
 @synthesize usesCDAudio, readOnly, locked, hidden;
 
+#pragma mark -
+#pragma mark Class methods
 
 //Pretty much all our properties depend on our path, so we add it here
 + (NSSet *)keyPathsForValuesAffectingValueForKey: (NSString *)key
@@ -112,8 +114,8 @@
 	return nil;
 }
 
-//Copious initialisation methods we will never use
-//------------------------------------------------
+#pragma mark -
+#pragma mark Initializers
 
 - (id) init
 {
@@ -172,10 +174,11 @@
 
 - (void) dealloc
 {
-	[self setLetter: nil],	[letter release];
-	[self setPath: nil],	[path release];
-	[self setLabel: nil],	[label release];
-	[self setIcon: nil],	[icon release];
+	[self setLetter: nil],		[letter release];
+	[self setPath: nil],		[path release];
+	[self setLabel: nil],		[label release];
+	[self setDOSBoxLabel: nil],	[DOSBoxLabel release];
+	[self setIcon: nil],		[icon release];
 	[super dealloc];
 }
 
@@ -235,18 +238,24 @@
 			nil]; 
 }
 
-//Generated display properties
-//----------------------------
-
 - (NSString *) displayName
 {
-	NSFileManager *manager = [NSFileManager defaultManager];
-	return [manager displayNameAtPath: [self path]];
+	if ([self label]) return [self label];
+	else if ([self DOSBoxLabel]) return [self DOSBoxLabel];
+	else if ([self path])
+	{
+		NSFileManager *manager = [NSFileManager defaultManager];
+		return [manager displayNameAtPath: [self path]];
+	}
+	else
+	{
+		return [self typeDescription];
+	}
 }
 
 
-//Comparison functions for easy drive sorting
-//-------------------------------------------
+#pragma mark -
+#pragma mark Drive sort comparisons
 
 //Sort by path depth
 - (NSComparisonResult) pathDepthCompare: (BXDrive *)comparison

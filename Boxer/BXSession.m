@@ -88,12 +88,14 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 		[self setDrives: [NSMutableArray arrayWithCapacity: 10]];
 		[self setEmulator: [[[BXEmulator alloc] init] autorelease]];
 		[self setGameSettings: defaults];
+		
+		importQueue = [[NSOperationQueue alloc] init];
 	}
 	return self;
 }
 
 - (void) dealloc
-{
+{ 	
 	[self setMainWindowController: nil],[mainWindowController release];
 	[self setEmulator: nil],			[emulator release];
 	[self setGamePackage: nil],			[gamePackage release];
@@ -104,6 +106,12 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	[self setDrives: nil],				[drives release];
 		
 	[temporaryFolderPath release], temporaryFolderPath = nil;
+	
+	//Cancel everything we were importing and finish up before exiting
+	[importQueue cancelAllOperations];
+	[importQueue waitUntilAllOperationsAreFinished];
+	[importQueue release];
+	importQueue = nil;
 	
 	[super dealloc];
 }
@@ -817,6 +825,9 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	[self willChangeValueForKey: @"isEmulating"];
 	hasConfigured = YES;
 	[self didChangeValueForKey: @"isEmulating"];
+	
+	//From here on out, it's OK to show drive notifications.
+	showDriveNotifications = YES;
 }
 
 - (void) _launchTarget

@@ -11,11 +11,14 @@
 //for opening files and folders from the OS X filesystem and creating new drives for them.
 
 #import "BXSession.h"
+#import "BXFileTransferDelegate.h"
 
 @class BXDrive;
 @class BXDrivesInUseAlert;
+@class BXFileTransfer;
+@protocol BXFileTransferDelegate;
 
-@interface BXSession (BXFileManager) <BXEmulatorFileSystemDelegate>
+@interface BXSession (BXFileManager) <BXEmulatorFileSystemDelegate, BXFileTransferDelegate>
 
 #pragma mark -
 #pragma mark Filetype-related class methods
@@ -68,6 +71,7 @@
 //to choose an appropriate base location for the drive.
 - (BXDrive *) mountDriveForPath: (NSString *)path;
 
+
 //Open the file at the specified path in DOS.
 //If path is an executable, it will be launched; otherwise, we'll just change the working directory to it.
 - (BOOL) openFileAtPath: (NSString *)path;
@@ -99,9 +103,19 @@
 - (BOOL) unmountDrives: (NSArray *)selectedDrives;
 
 
-//Imports the specified drive into the session's gamebox, as a bundled mountable folder or disc image.
-//TODO: does this belong on BXPackage instead?
-//- (void) importDrive: (BXDrive *)drive;
+#pragma mark -
+#pragma mark Drive importing
+
+//Returns whether the specified drive is located inside the session's gamebox.
+- (BOOL) driveIsBundled: (BXDrive *)drive;
+
+//Imports the specified drive to a bundled drive folder in the gamebox.
+//This will occur asynchronously using a BXFileTransfer, which is returned by this method.
+//Will return NIL instead if the drive could not be imported.
+- (BXFileTransfer *) beginImportForDrive: (BXDrive *)drive;
+
+- (void) fileTransferInProgress: (NSNotification *)theNotification;
+- (void) fileTransferDidFinish: (NSNotification *)theNotification;
 
 @end
 

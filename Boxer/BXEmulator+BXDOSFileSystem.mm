@@ -183,7 +183,7 @@ enum {
 			
 			//Populate the drive with the settings we ended up using, and add the drive to our own drives cache
 			[drive setLetter: driveLetter];
-			[drive setLabel: [NSString stringWithCString: DOSBoxDrive->GetLabel() encoding: BXDirectStringEncoding]];
+			[drive setDOSBoxLabel: [NSString stringWithCString: DOSBoxDrive->GetLabel() encoding: BXDirectStringEncoding]];
 			[self _addDriveToCache: drive];
 			
 			//Post a notification to whoever's listening

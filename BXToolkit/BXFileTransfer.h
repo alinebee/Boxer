@@ -80,7 +80,7 @@ extern NSString * const BXFileTransferCurrentPathKey;
 @property (assign) id <BXFileTransferDelegate> delegate;
 
 //Arbitrary context info for this operation. Included in notification dictionaries
-//for controlling contexts to use.
+//for controlling contexts to use. Note that this is an NSObject and will be retained.
 @property (retain) id contextInfo;
 
 //Whether this is a copy or move operation.

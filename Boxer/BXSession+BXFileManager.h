@@ -16,7 +16,6 @@
 @class BXDrive;
 @class BXDrivesInUseAlert;
 @class BXFileTransfer;
-@protocol BXFileTransferDelegate;
 
 @interface BXSession (BXFileManager) <BXEmulatorFileSystemDelegate, BXFileTransferDelegate>
 

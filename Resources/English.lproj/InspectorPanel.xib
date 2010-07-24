@@ -21,10 +21,8 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="731"/>
 			<integer value="979"/>
 			<integer value="431"/>
-			<integer value="1283"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1428,7 +1426,7 @@
 						<reference key="NSOnImage" ref="877608972"/>
 						<reference key="NSMixedImage" ref="352430217"/>
 					</object>
-					<object class="NSMenuItem" id="731356594">
+					<object class="NSMenuItem" id="1005587224">
 						<reference key="NSMenu" ref="29208252"/>
 						<string key="NSTitle">Import into gamebox</string>
 						<string key="NSKeyEquiv"/>
@@ -1436,7 +1434,7 @@
 						<reference key="NSOnImage" ref="877608972"/>
 						<reference key="NSMixedImage" ref="352430217"/>
 					</object>
-					<object class="NSMenuItem" id="501148528">
+					<object class="NSMenuItem" id="236233905">
 						<reference key="NSMenu" ref="29208252"/>
 						<bool key="NSIsDisabled">YES</bool>
 						<bool key="NSIsSeparator">YES</bool>
@@ -1499,11 +1497,40 @@
 				<int key="NSvFlags">266</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
+					<object class="BGHUDLabel" id="682806378">
+						<reference key="NSNextResponder" ref="101756917"/>
+						<int key="NSvFlags">-2147483380</int>
+						<string key="NSFrame">{{185, 9}, {62, 14}}</string>
+						<reference key="NSSuperview" ref="101756917"/>
+						<int key="NSTag">5</int>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSTextFieldCell" key="NSCell" id="251256203">
+							<int key="NSCellFlags">68288064</int>
+							<int key="NSCellFlags2">272761856</int>
+							<string key="NSContents">Bundling…</string>
+							<reference key="NSSupport" ref="26"/>
+							<reference key="NSControlView" ref="682806378"/>
+							<reference key="NSBackgroundColor" ref="1046058740"/>
+							<reference key="NSTextColor" ref="680331616"/>
+						</object>
+						<string key="themeKey">BXHelpTextTheme</string>
+					</object>
+					<object class="BGHUDProgressIndicator" id="106440638">
+						<reference key="NSNextResponder" ref="101756917"/>
+						<int key="NSvFlags">-2147482356</int>
+						<object class="NSPSMatrix" key="NSDrawMatrix"/>
+						<string key="NSFrame">{{60, 9}, {121, 12}}</string>
+						<reference key="NSSuperview" ref="101756917"/>
+						<int key="NSpiFlags">16650</int>
+						<double key="NSMaxValue">1</double>
+						<string key="themeKey">BXBlueTheme</string>
+					</object>
 					<object class="BGHUDLabel" id="1057456829">
 						<reference key="NSNextResponder" ref="101756917"/>
 						<int key="NSvFlags">270</int>
 						<string key="NSFrame">{{59, 9}, {187, 14}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
+						<int key="NSTag">3</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="61342089">
 							<int key="NSCellFlags">67239488</int>
@@ -1516,39 +1543,12 @@
 						</object>
 						<string key="themeKey">BXHelpTextTheme</string>
 					</object>
-					<object class="BGHUDLabel" id="682806378">
-						<reference key="NSNextResponder" ref="101756917"/>
-						<int key="NSvFlags">-2147483380</int>
-						<string key="NSFrame">{{156, 9}, {80, 14}}</string>
-						<reference key="NSSuperview" ref="101756917"/>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSTextFieldCell" key="NSCell" id="251256203">
-							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272761856</int>
-							<string key="NSContents">Importing…</string>
-							<reference key="NSSupport" ref="26"/>
-							<reference key="NSControlView" ref="682806378"/>
-							<reference key="NSBackgroundColor" ref="1046058740"/>
-							<reference key="NSTextColor" ref="680331616"/>
-						</object>
-						<string key="themeKey">BXHelpTextTheme</string>
-					</object>
-					<object class="BGHUDProgressIndicator" id="106440638">
-						<reference key="NSNextResponder" ref="101756917"/>
-						<int key="NSvFlags">-2147482356</int>
-						<object class="NSPSMatrix" key="NSDrawMatrix"/>
-						<string key="NSFrame">{{60, 9}, {92, 12}}</string>
-						<reference key="NSSuperview" ref="101756917"/>
-						<int key="NSpiFlags">16650</int>
-						<double key="NSMinValue">20</double>
-						<double key="NSMaxValue">100</double>
-						<string key="themeKey">gradientTheme</string>
-					</object>
 					<object class="BGHUDLabel" id="724221988">
 						<reference key="NSNextResponder" ref="101756917"/>
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{59, 24}, {18, 17}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
+						<int key="NSTag">1</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="621126295">
 							<int key="NSCellFlags">67239488</int>
@@ -1566,11 +1566,12 @@
 						<int key="NSvFlags">270</int>
 						<string key="NSFrame">{{77, 24}, {169, 17}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
+						<int key="NSTag">2</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="720598392">
 							<int key="NSCellFlags">67239488</int>
 							<int key="NSCellFlags2">272632320</int>
-							<string key="NSContents">[Drive source]</string>
+							<string key="NSContents">[Display name]</string>
 							<reference key="NSSupport" ref="190746779"/>
 							<reference key="NSControlView" ref="163857552"/>
 							<reference key="NSBackgroundColor" ref="1046058740"/>
@@ -1595,7 +1596,7 @@
 						</object>
 						<string key="NSFrame">{{20, 9}, {32, 31}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
-						<int key="NSTag">1</int>
+						<int key="NSTag">4</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="701925773">
 							<int key="NSCellFlags">537001472</int>
@@ -2434,7 +2435,7 @@
 					<object class="IBActionConnection" key="connection">
 						<string key="label">importSelectedDrives:</string>
 						<reference key="source" ref="589277066"/>
-						<reference key="destination" ref="731356594"/>
+						<reference key="destination" ref="1005587224"/>
 					</object>
 					<int key="connectionID">1353</int>
 				</object>
@@ -3055,8 +3056,8 @@
 							<reference ref="1057456829"/>
 							<reference ref="724221988"/>
 							<reference ref="163857552"/>
-							<reference ref="682806378"/>
 							<reference ref="106440638"/>
+							<reference ref="682806378"/>
 						</object>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -3314,8 +3315,8 @@
 							<reference ref="541101386"/>
 							<reference ref="75347620"/>
 							<reference ref="7699548"/>
-							<reference ref="731356594"/>
-							<reference ref="501148528"/>
+							<reference ref="1005587224"/>
+							<reference ref="236233905"/>
 						</object>
 						<reference key="parent" ref="0"/>
 						<string key="objectName">Drive Panel Context Menu</string>
@@ -3381,12 +3382,12 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">1352</int>
-						<reference key="object" ref="731356594"/>
+						<reference key="object" ref="1005587224"/>
 						<reference key="parent" ref="29208252"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">1356</int>
-						<reference key="object" ref="501148528"/>
+						<reference key="object" ref="236233905"/>
 						<reference key="parent" ref="29208252"/>
 					</object>
 				</object>
@@ -3755,7 +3756,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1356</int>
+			<int key="maxID">1360</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

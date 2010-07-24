@@ -13,13 +13,23 @@
 #import "BXEmulator.h"
 #import "BXDrive.h"
 #import "BXValueTransformers.h"
+#import "BXFileTransfer.h"
+#import "BXDriveList.h"
 
-//The segments of the drive options control
+#pragma mark -
+#pragma mark Private constants
+
+//The segment indexes of the drive options control
 enum {
 	BXAddDriveSegment			= 0,
 	BXRemoveDrivesSegment		= 1,
 	BXDriveActionsMenuSegment	= 2
 };
+
+
+#pragma mark -
+#pragma mark Implementation
+
 
 @implementation BXDrivePanelController
 @synthesize driveControls, driveActionsMenu, drives, driveList, driveDetails;
@@ -48,6 +58,10 @@ enum {
 					   forKeyPath: @"currentSession.driveImportOperations"
 						  options: 0
 						  context: nil];
+	
+	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+	[center addObserver: self selector: @selector(fileTransferDidFinish:) name: BXFileTransferDidFinish object: nil];
+	[center addObserver: self selector: @selector(fileTransferInProgress:) name: BXFileTransferInProgress object: nil];
 }
 
 - (void) dealloc
@@ -257,6 +271,65 @@ enum {
 	return YES;
 }
 
+
+#pragma mark -
+#pragma mark Drive import progress reporting
+
+- (void) fileTransferInProgress: (NSNotification *)notification
+{
+	BXFileTransfer *transfer = [notification object];
+	
+	//If the notification didn't come from the current session, ignore it
+	if ([transfer delegate] != [[NSApp delegate] currentSession]) return;
+		
+	BXDrive *drive = [transfer contextInfo];
+	BXDriveItemView *driveView = [[self driveList] viewForDrive: drive];
+	if (driveView)
+	{
+		NSProgressIndicator *progressMeter	= [driveView progressMeter];
+		NSTextField *progressMeterLabel		= [driveView progressMeterLabel];
+		NSTextField *typeLabel				= [driveView driveTypeLabel];
+		
+		BOOL indeterminate = [transfer numFiles] == 1;
+		//Use an indeterminate progress meter for single-file transfers,
+		//since we can't measure the progress properly
+		[progressMeter setIndeterminate: indeterminate];
+		[progressMeter startAnimation: self];
+		[progressMeter setDoubleValue: [transfer currentProgress]];
+		
+		//Unhide the progress indicator and hide the type label it covers
+		[typeLabel setHidden: YES];
+		[progressMeter setHidden: NO];
+		[progressMeterLabel setHidden: NO];
+		
+		[driveView setNeedsDisplay: YES];
+	}
+}
+
+- (void) fileTransferDidFinish: (NSNotification *)notification
+{
+	BXFileTransfer *transfer = [notification object];
+	
+	//If the notification didn't come from the current session, ignore it
+	if ([transfer delegate] != [[NSApp delegate] currentSession]) return;
+	
+	BXDrive *drive = [transfer contextInfo];
+	BXDriveItemView *driveView = [[self driveList] viewForDrive: drive];
+	if (driveView)
+	{
+		NSProgressIndicator *progressMeter	= [driveView progressMeter];
+		NSTextField *progressMeterLabel		= [driveView progressMeterLabel];
+		NSTextField *typeLabel				= [driveView driveTypeLabel];
+		
+		//Re-hide the various bits of the animation
+		[progressMeter stopAnimation: self];
+		[progressMeter setHidden: YES];
+		[progressMeterLabel setHidden: YES];
+		[typeLabel setHidden: NO];
+		
+		[driveView setNeedsDisplay: YES];
+	}
+}
 				 
 #pragma mark -
 #pragma mark Drive list sorting

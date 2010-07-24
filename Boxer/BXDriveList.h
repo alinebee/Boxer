@@ -11,19 +11,24 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class BXDrive;
+@class BXDriveItemView;
 @class BXDrivePanelController;
 
 @interface BXDriveList : NSCollectionView
 {
 	IBOutlet BXDrivePanelController *delegate;
 }
-@property (assign) BXDrivePanelController *delegate;
+@property (assign, nonatomic) BXDrivePanelController *delegate;
 
-//An array of the currently selected content objects.
-@property (readonly) NSArray *selectedObjects;
+//An array of the currently selected drives.
+@property (readonly, nonatomic) NSArray *selectedDrives;
 
 //An array of BXDriveItemViews corresponding to the current selection.
-@property (readonly) NSArray *selectedViews;
+@property (readonly, nonatomic) NSArray *selectedViews;
+
+//Returns the view that represents the specified drive.
+- (BXDriveItemView *) viewForDrive: (BXDrive *)drive;
 
 @end
 
@@ -35,6 +40,13 @@
 	IBOutlet NSCollectionViewItem *delegate;
 }
 //A nonretained reference to the item defining which drive we are representing.
-@property (assign) NSCollectionViewItem *delegate;
+@property (assign, nonatomic) NSCollectionViewItem *delegate;
+
+@property (readonly, nonatomic) NSTextField *driveTypeLabel;
+@property (readonly, nonatomic) NSTextField *displayNameLabel;
+@property (readonly, nonatomic) NSTextField *letterLabel;
+@property (readonly, nonatomic) NSTextField *progressMeterLabel;
+@property (readonly, nonatomic) NSImageView *icon;
+@property (readonly, nonatomic) NSProgressIndicator *progressMeter;
 
 @end

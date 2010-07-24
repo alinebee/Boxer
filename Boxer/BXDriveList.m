@@ -14,8 +14,36 @@
 #import "NSBezierPath+MCAdditions.h"
 
 
+//The tags of the component parts of drive item views
+enum {
+	BXDriveItemLetterLabel			= 1,
+	BXDriveItemNameLabel			= 2,
+	BXDriveItemTypeLabel			= 3,
+	BXDriveItemIcon					= 4,
+	BXDriveItemProgressMeterLabel	= 5
+};
+
+
 @implementation BXDriveItemView
 @synthesize delegate;
+
+//Quick accessors for our subviews
+- (NSTextField *) driveTypeLabel		{ return [self viewWithTag: BXDriveItemTypeLabel]; }
+- (NSTextField *) displayNameLabel		{ return [self viewWithTag: BXDriveItemNameLabel]; }
+- (NSTextField *) letterLabel			{ return [self viewWithTag: BXDriveItemLetterLabel]; }
+- (NSTextField *) progressMeterLabel	{ return [self viewWithTag: BXDriveItemProgressMeterLabel]; }
+- (NSImageView *) icon					{ return [self viewWithTag: BXDriveItemIcon]; }
+
+//Progress meters don't have a tag field, which means we have to track the damn thing down by hand
+//(Relying on us only having one progress meter in the entire view, of course.)
+- (NSProgressIndicator *) progressMeter
+{
+	for (id view in [self subviews])
+	{
+		if ([view isKindOfClass: [NSProgressIndicator class]]) return view;
+	}
+	return nil;
+}
 
 - (BOOL) mouseDownCanMoveWindow	{ return NO; }
 - (BOOL) acceptsFirstMouse: (NSEvent *)theEvent { return YES; }
@@ -151,7 +179,7 @@
 //My god what a pain in the ass
 //We can't just grab array controller's selected objects because we don't know about the array controller;
 //we're only bound to its contents and its selectionIndexes, not its selectedObjects :(
-- (NSArray *) selectedObjects
+- (NSArray *) selectedDrives
 {
 	NSIndexSet *selection	= [self selectionIndexes];
 	NSArray *values			= [self content];
@@ -169,11 +197,20 @@
 {	
 	NSMutableArray *selectedViews = [NSMutableArray arrayWithCapacity: [[self selectionIndexes] count]];
 	
-	for (BXDriveItemView *item in [self subviews])
+	for (BXDriveItemView *view in [self subviews])
 	{
-		if ([[item delegate] isSelected]) [selectedViews addObject: item];
+		if ([[view delegate] isSelected]) [selectedViews addObject: view];
 	}
 	return (NSArray *)selectedViews;
+}
+
+- (BXDriveItemView *) viewForDrive: (BXDrive *)drive
+{
+	for (BXDriveItemView *view in [self subviews])
+	{
+		if ([[[view delegate] representedObject] isEqualTo: drive]) return view;
+	}
+	return nil;
 }
 
 #pragma mark -
@@ -194,7 +231,7 @@
 {		
 	//Get a list of all file paths of the selected drives
 	NSMutableArray *filePaths = [NSMutableArray arrayWithCapacity: [[self selectionIndexes] count]];
-	for (BXDrive *drive in [self selectedObjects]) [filePaths addObject: [drive path]];
+	for (BXDrive *drive in [self selectedDrives]) [filePaths addObject: [drive path]];
 	
 	//Make a new pasteboard with the paths 
 	NSPasteboard *pboard = [NSPasteboard pasteboardWithName: NSDragPboard];

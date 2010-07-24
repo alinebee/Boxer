@@ -9,10 +9,11 @@
 //BXDrivePanelController manages the Drives panel of the Inspector window.
 
 #import <Cocoa/Cocoa.h>
+#import "BXFileTransferDelegate.h"
 
 @class BXDriveList;
 
-@interface BXDrivePanelController : NSViewController
+@interface BXDrivePanelController : NSViewController <BXFileTransferDelegate>
 {
 	IBOutlet NSArrayController *drives;
 	IBOutlet NSSegmentedControl *driveControls;

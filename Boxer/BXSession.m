@@ -229,8 +229,8 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	if ([alert showsSuppressionButton] && [[alert suppressionButton] state] == NSOnState)
 		[[NSUserDefaults standardUserDefaults] setBool: YES forKey: @"suppressCloseAlert"];
 	
-	BOOL shouldSave = (returnCode == NSAlertFirstButtonReturn);
-	[callback setArgument: &shouldSave atIndex: 3];
+	BOOL shouldClose = (returnCode == NSAlertFirstButtonReturn);
+	[callback setArgument: &shouldClose atIndex: 3];
 	[callback invoke];
 	
 	//Release the previously-retained callback
@@ -285,8 +285,19 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	[callback setArgument: &self atIndex: 2];
 	[callback setArgument: &contextInfo atIndex: 4]; // contextInfo:	
 	
+	BOOL hasActiveImports = NO;
+	for (BXFileTransfer *operation in [importQueue operations])
+	{
+		if (![operation isFinished] && ![operation isCancelled])
+		{
+			hasActiveImports = YES;
+			break;
+		}
+	}
+	
 	//We confirm the close if a process is running and if we're not already shutting down
-	BOOL shouldConfirm = (![[NSUserDefaults standardUserDefaults] boolForKey: @"suppressCloseAlert"]
+	BOOL shouldConfirm = hasActiveImports ||
+						(![[NSUserDefaults standardUserDefaults] boolForKey: @"suppressCloseAlert"]
 						  && [emulator isRunningProcess]
 						  && ![emulator isCancelled]);
 	
@@ -295,7 +306,12 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 		//Show our custom close alert, passing it the callback so we can complete
 		//our response down in _closeAlertDidEnd:returnCode:contextInfo:
 		
-		BXCloseAlert *alert = [BXCloseAlert closeAlertWhileSessionIsActive: self];
+		BXCloseAlert *alert;
+		if (hasActiveImports) 
+			alert = [BXCloseAlert closeAlertWhileImportIsActive: self];
+		else
+			alert = [BXCloseAlert closeAlertWhileSessionIsActive: self];
+		
 		[alert beginSheetModalForWindow: [self windowForSheet]
 						  modalDelegate: self
 						 didEndSelector: @selector(_closeAlertDidEnd:returnCode:contextInfo:)
@@ -303,9 +319,9 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	}
 	else
 	{
-		BOOL shouldSave = YES;
+		BOOL shouldClose = YES;
 		//Otherwise we can respond directly: call the callback straight away with YES for shouldClose:
-		[callback setArgument: &shouldSave atIndex: 3];
+		[callback setArgument: &shouldClose atIndex: 3];
 		[callback invoke];
 	}
 }

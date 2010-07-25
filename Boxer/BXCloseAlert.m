@@ -24,6 +24,7 @@
 	return self;
 }
 
+
 //Boxer's predefined alerts
 //-------------------------
 
@@ -64,7 +65,7 @@
 	BXCloseAlert *alert = [self alert];
 	
 	NSString *sessionName	= [theSession displayName];
-	NSString *messageFormat	= NSLocalizedString(@"Do you want to close this window while %@ is running?",
+	NSString *messageFormat	= NSLocalizedString(@"Do you want to close %@ while it is still running?",
 												@"Title of confirmation sheet when closing an active DOS session. %@ is the display name of the current DOS session.");
 
 	[alert setMessageText:		[NSString stringWithFormat: messageFormat, sessionName]];
@@ -76,6 +77,20 @@
 	return alert;
 }
 
++ (BXCloseAlert *) closeAlertWhileImportIsActive: (BXSession *)theSession
+{	
+	BXCloseAlert *alert = [self alert];
+	
+	NSString *sessionName	= [theSession displayName];
+	NSString *messageFormat	= NSLocalizedString(@"A drive is still being imported into %@.",
+												@"Title of confirmation sheet when closing a session that has active drive import operations. %@ is the display name of the current DOS session.");
+	
+	[alert setMessageText:		[NSString stringWithFormat: messageFormat, sessionName]];
+	[alert setInformativeText:	NSLocalizedString(@"If you close now, the import will be cancelled.",
+												  @"Informative text of confirmation sheet when closing a session that has active drive import operations.")];
+	
+	return alert;
+}
 
 //Dispatch and callback methods
 //-----------------------------

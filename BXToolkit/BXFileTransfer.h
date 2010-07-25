@@ -22,8 +22,19 @@ typedef float BXFileTransferProgress;
 //BXFileTransfer will post these notifications on the main thread,
 //and to its delegate on the main thread.
 
+//Sent when a file transfer operation is about to start,
+//before information is available about the size of the transfer.
+extern NSString * const BXFileTransferWillStart;
+
+//Sent when a file transfer operation has begun.
+extern NSString * const BXFileTransferDidStart;
+
 //Sent when a file transfer operation ends.
 extern NSString * const BXFileTransferDidFinish;
+
+//Sent when a file transfer operation gets cancelled.
+//The transfer will still send a BXFileTransferDidFinish after this.
+extern NSString * const BXFileTransferWasCancelled;
 
 //Sent periodically while a file transfer operation is in progress.
 extern NSString * const BXFileTransferInProgress;
@@ -43,6 +54,14 @@ extern NSString * const BXFileTransferSuccessKey;
 //An NSError containing the details of a failed transfer.
 //Included with BXFileTransferFinished if the transfer failed.
 extern NSString * const BXFileTransferErrorKey;
+
+//An NSNumber unsigned integer with the number of files that will be transferred.
+//Included with BXFileTransferDidStart.
+extern NSString * const BXFileTransferFileCountKey;
+
+//An NSNumber unsigned long long with the total size in bytes of the files to be transferred.
+//Included with BXFileTransferDidStart.
+extern NSString * const BXFileTransferTotalSizeKey;
 
 //An NSNumber float from 0.0 to 1.0 indicating the progress of the transfer.
 //Included with BXFileTransferInProgress.
@@ -67,6 +86,7 @@ extern NSString * const BXFileTransferCurrentPathKey;
 	NSFileManager *manager;
 	NSUInteger numFiles;
 	NSUInteger numFilesTransferred;
+	unsigned long long transferSize;
 	NSString *currentPath;
 	
 	BOOL succeeded;
@@ -92,6 +112,7 @@ extern NSString * const BXFileTransferCurrentPathKey;
 //The destination path to transfer to.
 @property (copy) NSString *destinationPath;
 
+
 #pragma mark -
 #pragma mark Operation status properties
 
@@ -103,6 +124,9 @@ extern NSString * const BXFileTransferCurrentPathKey;
 
 //The number of files that have been copied so far.
 @property (readonly) NSUInteger numFilesTransferred;
+
+//The number of bytes that will be copied in total.
+@property (readonly) unsigned long long transferSize;
 
 //Whether the operation succeeeded. Only relevant once isFinished is YES.
 @property (readonly) BOOL succeeded;

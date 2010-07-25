@@ -56,8 +56,12 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 		
 		//The game was released before CDs became commonplace, treat it as a diskette game
 		NSDate *creationDate = [attrs fileCreationDate];
-		if ([creationDate timeIntervalSinceDate: cutoffDate525] < 0)	return BX525DisketteEra;
-		if ([creationDate timeIntervalSinceDate: cutoffDate35] < 0)		return BX35DisketteEra;
+		//TWEAK: if the date is 1970, then ignore it - this indicates a missing creation date
+		if (creationDate && [creationDate timeIntervalSince1970] > 0)
+		{
+			if ([creationDate timeIntervalSinceDate: cutoffDate525] < 0)	return BX525DisketteEra;
+			if ([creationDate timeIntervalSinceDate: cutoffDate35] < 0)		return BX35DisketteEra;
+		}
 		
 		//The game is too big to have been released on diskettes, treat it as a CD game
 		pathSize += [attrs fileSize];

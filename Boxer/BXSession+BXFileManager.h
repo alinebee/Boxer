@@ -108,13 +108,23 @@
 //Returns whether the specified drive is located inside the session's gamebox.
 - (BOOL) driveIsBundled: (BXDrive *)drive;
 
+//Returns whether the specified drive
+
+//Returns whether the specified drive can be imported.
+//Will be NO if:
+//- there is no gamebox for this session
+//- the drive is a DOSBox/Boxer-internal drive
+//- the drive has already been or is currently being imported
+- (BOOL) canImportDrive: (BXDrive *)drive;
+
 //Imports the specified drive to a bundled drive folder in the gamebox.
 //This will occur asynchronously using a BXFileTransfer, which is returned by this method.
-//Will return NIL instead if the drive could not be imported.
+//Will return nil if the drive cannot be imported.
 - (BXFileTransfer *) beginImportForDrive: (BXDrive *)drive;
 
-- (void) fileTransferInProgress: (NSNotification *)theNotification;
-- (void) fileTransferDidFinish: (NSNotification *)theNotification;
+//Cancel the in-progress import of the specified drive. Returns YES if the import was cancelled,
+//NO if the import had already finished or the drive was not being imported.
+- (BOOL) cancelImportForDrive: (BXDrive *)drive;
 
 @end
 

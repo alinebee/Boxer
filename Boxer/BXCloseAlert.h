@@ -32,6 +32,9 @@
 //any unsaved data will be lost if they continue.
 + (BXCloseAlert *) closeAlertWhileSessionIsActive:	(BXSession *)theSession;
 
+//Shown when closing the window while one or more drive import operations are in progress.
++ (BXCloseAlert *) closeAlertWhileImportIsActive: (BXSession *)theSession;
+
 
 //Dispatch and callback methods
 //-----------------------------

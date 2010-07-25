@@ -46,7 +46,17 @@
 @property (readonly, nonatomic) NSTextField *displayNameLabel;
 @property (readonly, nonatomic) NSTextField *letterLabel;
 @property (readonly, nonatomic) NSTextField *progressMeterLabel;
-@property (readonly, nonatomic) NSImageView *icon;
+@property (readonly, nonatomic) NSImageView *driveIcon;
 @property (readonly, nonatomic) NSProgressIndicator *progressMeter;
+@property (readonly, nonatomic) NSButton *progressMeterCancel;
 
+@end
+
+
+//A custom appearance for control buttons within drive item views.
+@interface BXDriveItemButtonCell : NSButtonCell
+{
+	BOOL hovered;
+}
+@property (assign, getter=isHovered) BOOL hovered;
 @end

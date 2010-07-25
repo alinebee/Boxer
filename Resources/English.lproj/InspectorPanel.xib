@@ -1497,17 +1497,46 @@
 				<int key="NSvFlags">266</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
+					<object class="NSButton" id="718783277">
+						<reference key="NSNextResponder" ref="101756917"/>
+						<int key="NSvFlags">-2147483380</int>
+						<string key="NSFrame">{{229, 6}, {22, 19}}</string>
+						<reference key="NSSuperview" ref="101756917"/>
+						<int key="NSTag">6</int>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSButtonCell" key="NSCell" id="992396797">
+							<int key="NSCellFlags">67239424</int>
+							<int key="NSCellFlags2">0</int>
+							<string key="NSContents"/>
+							<object class="NSFont" key="NSSupport">
+								<string key="NSName">LucidaGrande-Bold</string>
+								<double key="NSSize">12</double>
+								<int key="NSfFlags">16</int>
+							</object>
+							<reference key="NSControlView" ref="718783277"/>
+							<int key="NSButtonFlags">-1228652289</int>
+							<int key="NSButtonFlags2">109</int>
+							<object class="NSCustomResource" key="NSNormalImage">
+								<string key="NSClassName">NSImage</string>
+								<string key="NSResourceName">NSStopProgressFreestandingTemplate</string>
+							</object>
+							<string key="NSAlternateContents"/>
+							<string key="NSKeyEquivalent"/>
+							<int key="NSPeriodicDelay">200</int>
+							<int key="NSPeriodicInterval">25</int>
+						</object>
+					</object>
 					<object class="BGHUDLabel" id="682806378">
 						<reference key="NSNextResponder" ref="101756917"/>
 						<int key="NSvFlags">-2147483380</int>
-						<string key="NSFrame">{{179, 9}, {68, 14}}</string>
+						<string key="NSFrame">{{59, 9}, {86, 14}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
 						<int key="NSTag">5</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="251256203">
-							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272761856</int>
-							<string key="NSContents">Importing…</string>
+							<int key="NSCellFlags">67239488</int>
+							<int key="NSCellFlags2">272762880</int>
+							<string key="NSContents">Cancelling…</string>
 							<reference key="NSSupport" ref="26"/>
 							<reference key="NSControlView" ref="682806378"/>
 							<reference key="NSBackgroundColor" ref="1046058740"/>
@@ -1519,7 +1548,7 @@
 						<reference key="NSNextResponder" ref="101756917"/>
 						<int key="NSvFlags">-2147482356</int>
 						<object class="NSPSMatrix" key="NSDrawMatrix"/>
-						<string key="NSFrame">{{60, 9}, {115, 12}}</string>
+						<string key="NSFrame">{{149, 9}, {82, 12}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
 						<int key="NSpiFlags">16650</int>
 						<double key="NSMaxValue">1</double>
@@ -2459,6 +2488,14 @@
 					</object>
 					<int key="connectionID">1354</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">cancelImportForDrive:</string>
+						<reference key="source" ref="589277066"/>
+						<reference key="destination" ref="718783277"/>
+					</object>
+					<int key="connectionID">1380</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -3056,8 +3093,9 @@
 							<reference ref="1057456829"/>
 							<reference ref="724221988"/>
 							<reference ref="163857552"/>
-							<reference ref="106440638"/>
 							<reference ref="682806378"/>
+							<reference ref="106440638"/>
+							<reference ref="718783277"/>
 						</object>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -3390,6 +3428,20 @@
 						<reference key="object" ref="226163202"/>
 						<reference key="parent" ref="29208252"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1374</int>
+						<reference key="object" ref="718783277"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="992396797"/>
+						</object>
+						<reference key="parent" ref="101756917"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1375</int>
+						<reference key="object" ref="992396797"/>
+						<reference key="parent" ref="718783277"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -3457,6 +3509,9 @@
 					<string>1351.IBPluginDependency</string>
 					<string>1352.IBPluginDependency</string>
 					<string>1356.IBPluginDependency</string>
+					<string>1374.IBPluginDependency</string>
+					<string>1375.CustomClassName</string>
+					<string>1375.IBPluginDependency</string>
 					<string>142.IBPluginDependency</string>
 					<string>143.IBPluginDependency</string>
 					<string>158.IBPluginDependency</string>
@@ -3624,6 +3679,9 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>BXDriveItemButtonCell</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
@@ -3756,7 +3814,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1360</int>
+			<int key="maxID">1380</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -3797,16 +3855,21 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
+					<string key="className">BXDriveItemButtonCell</string>
+					<string key="superclassName">NSButtonCell</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier" id="563963965">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">Boxer/BXDriveList.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">BXDriveItemView</string>
 					<string key="superclassName">NSView</string>
 					<object class="NSMutableDictionary" key="outlets">
 						<string key="NS.key.0">delegate</string>
 						<string key="NS.object.0">NSCollectionViewItem</string>
 					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier" id="563963965">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Boxer/BXDriveList.h</string>
-					</object>
+					<reference key="sourceIdentifier" ref="563963965"/>
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">BXDriveList</string>
@@ -3824,6 +3887,8 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>cancelImportForDrive:</string>
+							<string>cancelImportsForSelectedDrives:</string>
 							<string>importSelectedDrives:</string>
 							<string>interactWithDriveOptions:</string>
 							<string>openSelectedDrivesInDOS:</string>
@@ -3833,6 +3898,8 @@
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
 							<string>id</string>
 							<string>NSSegmentedControl</string>
 							<string>id</string>
@@ -4963,6 +5030,7 @@
 				<string>NSMenuCheckmark</string>
 				<string>NSMenuMixedState</string>
 				<string>NSRemoveTemplate</string>
+				<string>NSStopProgressFreestandingTemplate</string>
 				<string>NSSwitch</string>
 			</object>
 			<object class="NSMutableArray" key="dict.values">
@@ -4972,6 +5040,7 @@
 				<string>{9, 8}</string>
 				<string>{7, 2}</string>
 				<string>{17, 17}</string>
+				<string>{83, 83}</string>
 				<string>{15, 15}</string>
 			</object>
 		</object>

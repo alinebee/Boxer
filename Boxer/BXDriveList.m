@@ -10,6 +10,7 @@
 #import "BXAppController.h"
 #import "BXDrive.h"
 #import "BXDrivePanelController.h"
+#import "BXGeometry.h"
 
 #import "NSBezierPath+MCAdditions.h"
 
@@ -20,7 +21,8 @@ enum {
 	BXDriveItemNameLabel			= 2,
 	BXDriveItemTypeLabel			= 3,
 	BXDriveItemIcon					= 4,
-	BXDriveItemProgressMeterLabel	= 5
+	BXDriveItemProgressMeterLabel	= 5,
+	BXDriveItemProgressMeterCancel	= 6
 };
 
 
@@ -28,14 +30,15 @@ enum {
 @synthesize delegate;
 
 //Quick accessors for our subviews
+- (NSImageView *) driveIcon				{ return [self viewWithTag: BXDriveItemIcon]; }
 - (NSTextField *) driveTypeLabel		{ return [self viewWithTag: BXDriveItemTypeLabel]; }
 - (NSTextField *) displayNameLabel		{ return [self viewWithTag: BXDriveItemNameLabel]; }
 - (NSTextField *) letterLabel			{ return [self viewWithTag: BXDriveItemLetterLabel]; }
 - (NSTextField *) progressMeterLabel	{ return [self viewWithTag: BXDriveItemProgressMeterLabel]; }
-- (NSImageView *) icon					{ return [self viewWithTag: BXDriveItemIcon]; }
+- (NSButton *) progressMeterCancel		{ return [self viewWithTag: BXDriveItemProgressMeterCancel]; }
 
 //Progress meters don't have a tag field, which means we have to track the damn thing down by hand
-//(Relying on us only having one progress meter in the entire view, of course.)
+//(Limiting us to only having one progress meter in the entire view)
 - (NSProgressIndicator *) progressMeter
 {
 	for (id view in [self subviews])
@@ -58,7 +61,11 @@ enum {
 - (NSView *) hitTest: (NSPoint)thePoint
 {
 	NSView *hitView = [super hitTest: thePoint];
-	if (hitView != nil) hitView = self;
+	if (hitView != nil)
+	{
+		//TWEAK: if the view has an action, let the click go through unless it's disabled
+		if (![hitView respondsToSelector: @selector(action)] || ![(id)hitView action] || ![(id)hitView isEnabled]) hitView = self;
+	}
 	return hitView;
 }
 
@@ -115,6 +122,74 @@ enum {
 	}
 }
 @end
+
+
+@implementation BXDriveItemButtonCell
+@synthesize hovered;
+
+- (void) mouseEntered: (NSEvent *)event	{ [self setHovered: YES]; }
+- (void) mouseExited: (NSEvent *)event	{ [self setHovered: NO]; }
+- (void) setHovered: (BOOL) hover
+{
+	hovered = hover;
+	[[self controlView] setNeedsDisplay: YES];
+}
+
+- (BOOL) showsBorderOnlyWhileMouseInside
+{
+	return YES;
+}
+- (void) drawTitle: (NSAttributedString *)title withFrame: (NSRect)frame inView: (NSView *)controlView
+{
+	//Don't draw titles
+}
+
+- (void) drawBezelWithFrame: (NSRect)frame inView: (NSView *)controlView
+{
+	//Don't draw bezels neither
+}
+
+- (void) drawImage: (NSImage *)image withFrame: (NSRect)frame inView: (NSView *)controlView
+{
+	CGFloat opacity = 0.5f;
+	NSColor *tint = [NSColor whiteColor];
+	
+	if (![self isEnabled])
+	{
+		tint = [NSColor blackColor];
+		opacity = 0.25f;
+	}
+	else
+	{
+		if ([self isHighlighted])  opacity = 1.0f;
+		else if ([self isHovered]) opacity = 0.75f;
+	}
+
+	
+	if ([image isTemplate])
+	{
+		NSImage *tintedImage = [image copy];
+		[tintedImage setSize: frame.size];
+		
+		NSRect bounds = NSZeroRect;
+		bounds.size = [tintedImage size];
+		
+		
+		[tintedImage lockFocus];
+			[tint set];
+			NSRectFillUsingOperation(bounds, NSCompositeSourceAtop);
+		[tintedImage unlockFocus];
+		
+		image = [tintedImage autorelease];
+	}
+	
+	[image drawInRect: frame
+			 fromRect: NSZeroRect
+			operation: NSCompositeSourceOver
+			 fraction: opacity];
+}
+@end
+
 
 
 @implementation BXDriveList

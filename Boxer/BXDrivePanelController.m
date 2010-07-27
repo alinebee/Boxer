@@ -78,32 +78,43 @@ enum {
 	[super dealloc];
 }
 
-//Observe the drive list to respond when its content or selections change
+//To explain why we have the observers set up below the way we do:
+//NSArrayController has a bug in 10.5 and 10.6 whereby it won't post correctly provide the new or old values
+//in change notifications about its content. So, we have to observe the content of our NSCollectionView instead,
+//which has the same data but sends proper notifications about it.
+//Meanwhile, NSCollectionView has a bug in 10.5 whereby it won't post notifications on its selectionIndexes if
+//the selection is changed by calling setSelected: on a collectionViewItem. So, we have to observe the selection
+//indexes of our NSArrayController instead, which likewise has the same data but sends proper notifications about it.
+//What a fucking shambles.
 - (void) setDriveList: (BXDriveList *)theList
 {
 	if (theList != driveList)
 	{
-		if (driveList)
-		{
-			[driveList removeObserver: self forKeyPath: @"selectionIndexes"];
-			[driveList removeObserver: self forKeyPath: @"content"];
-		}
+		[driveList removeObserver: self forKeyPath: @"content"];
 		
 		[driveList release];
 		driveList = [theList retain];
 		
-		if (driveList)
-		{
-			[driveList addObserver: self
-						forKeyPath: @"selectionIndexes"
-						   options: NSKeyValueObservingOptionInitial
-						   context: nil];
-			
-			[driveList addObserver: self
-						forKeyPath: @"content"
-						   options: NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld
-						   context: nil];
-		}
+		[driveList addObserver: self
+					forKeyPath: @"content"
+					   options: NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld
+					   context: nil];
+	}
+}
+
+- (void) setDrives: (NSArrayController *)newDrives
+{
+	if (drives != newDrives)
+	{
+		[drives removeObserver: self forKeyPath: @"selectionIndexes"];
+		
+		[drives release];
+		drives = [newDrives retain];
+		
+		[drives addObserver: self
+				 forKeyPath: @"selectionIndexes"
+					options: NSKeyValueObservingOptionInitial
+					context: nil];
 	}
 }
 
@@ -303,6 +314,7 @@ enum {
 		
 		//Start off with an indeterminate progress meter before we know the size of the operation
 		[progressMeter setIndeterminate: YES];
+		[progressMeter setUsesThreadedAnimation: YES];
 		[progressMeter startAnimation: self];
 		
 		//Initialise the progress value to a suitable point

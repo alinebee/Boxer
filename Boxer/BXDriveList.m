@@ -81,9 +81,10 @@ enum {
 }
 
 - (void) drawRect: (NSRect)dirtyRect
-{	
+{
 	if ([[self delegate] isSelected])
 	{
+		[NSBezierPath clipRect: dirtyRect];
 		NSColor *selectionColor	= [NSColor alternateSelectedControlColor];
 		NSColor *shadowColor	= [selectionColor shadowWithLevel: 0.4f];
 		NSGradient *background	= [[NSGradient alloc] initWithStartingColor: selectionColor
@@ -127,6 +128,14 @@ enum {
 @implementation BXDriveItemButtonCell
 @synthesize hovered;
 
+- (id) initWithCoder: (NSCoder *)coder
+{
+	if ((self = [super initWithCoder: coder]))
+	{
+		[self setHighlightsBy: NSNoCellMask];
+	}
+	return self;
+}
 - (void) mouseEntered: (NSEvent *)event	{ [self setHovered: YES]; }
 - (void) mouseExited: (NSEvent *)event	{ [self setHovered: NO]; }
 - (void) setHovered: (BOOL) hover
@@ -138,15 +147,6 @@ enum {
 - (BOOL) showsBorderOnlyWhileMouseInside
 {
 	return YES;
-}
-- (void) drawTitle: (NSAttributedString *)title withFrame: (NSRect)frame inView: (NSView *)controlView
-{
-	//Don't draw titles
-}
-
-- (void) drawBezelWithFrame: (NSRect)frame inView: (NSView *)controlView
-{
-	//Don't draw bezels neither
 }
 
 - (void) drawImage: (NSImage *)image withFrame: (NSRect)frame inView: (NSView *)controlView

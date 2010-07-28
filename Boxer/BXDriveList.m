@@ -72,9 +72,11 @@ enum {
 - (NSMenu *) menuForEvent: (NSEvent *)theEvent
 {
 	//Select the item before displaying the menu
-	[[self delegate] setSelected: YES];
-	[[self superview] setNeedsDisplay: YES];
-	
+	if (![[self delegate] isSelected])
+	{
+		[[self delegate] setSelected: YES];
+		[[self superview] setNeedsDisplay: YES];
+	}
 	//Because NSCollectionView doesn't copy the menu when duplicating views,
 	//we have to return the original prototype's menu.
 	return [[self _prototype] menu];
@@ -85,26 +87,37 @@ enum {
 	if ([[self delegate] isSelected])
 	{
 		[NSBezierPath clipRect: dirtyRect];
+		
 		NSColor *selectionColor	= [NSColor alternateSelectedControlColor];
 		NSColor *shadowColor	= [selectionColor shadowWithLevel: 0.4f];
 		NSGradient *background	= [[NSGradient alloc] initWithStartingColor: selectionColor
 																endingColor: shadowColor];
 		
-		NSShadow *dropShadow = [[NSShadow alloc] init];
-		[dropShadow setShadowOffset: NSMakeSize(0.0f, -0.5f)];
-		[dropShadow setShadowBlurRadius: 2.0f];
-		[dropShadow setShadowColor: [[NSColor blackColor] colorWithAlphaComponent: 0.85f]];
-		
-		NSShadow *innerGlow = [[NSShadow alloc] init];
-		[innerGlow setShadowOffset: NSZeroSize];
-		[innerGlow setShadowBlurRadius: 2.0f];
-		[innerGlow setShadowColor: [[NSColor whiteColor] colorWithAlphaComponent: 0.5f]];
-		
 		NSRect backgroundRect = NSInsetRect([self bounds], 5.0f, 3.0f);
-		NSBezierPath *backgroundPath = [NSBezierPath bezierPathWithRoundedRect:backgroundRect xRadius: 3.0f yRadius: 3.0f];
+		NSBezierPath *backgroundPath = [NSBezierPath bezierPathWithRoundedRect: backgroundRect
+																	   xRadius: 3.0f
+																	   yRadius: 3.0f];
+		
+		NSShadow *dropShadow = nil, *innerGlow = nil;
+		
+		//Only bother with the drop shadow and border glow if the dirty region
+		//extends beyond the region inside the glow
+		NSRect innerRect = NSInsetRect(backgroundRect, 2.0f, 2.0f);
+		if (!NSContainsRect(innerRect, dirtyRect))
+		{
+			dropShadow = [[NSShadow alloc] init];
+			[dropShadow setShadowOffset: NSMakeSize(0.0f, -0.5f)];
+			[dropShadow setShadowBlurRadius: 2.0f];
+			[dropShadow setShadowColor: [[NSColor blackColor] colorWithAlphaComponent: 0.85f]];
+			
+			innerGlow = [[NSShadow alloc] init];
+			[innerGlow setShadowOffset: NSZeroSize];
+			[innerGlow setShadowBlurRadius: 2.0f];
+			[innerGlow setShadowColor: [[NSColor whiteColor] colorWithAlphaComponent: 0.5f]];
+		}
 		
 		[NSGraphicsContext saveGraphicsState];
-			[dropShadow set];
+			if (dropShadow) [dropShadow set];
 		
 			//Necessary only so that drop shadow gets drawn: it won't be by NSGradient drawInBezierPath:angle:
 			[selectionColor set];
@@ -115,11 +128,11 @@ enum {
 		[NSGraphicsContext restoreGraphicsState];
 		
 		//Draw the glow last on top of everything else
-		[backgroundPath fillWithInnerShadow: innerGlow];
+		if (innerGlow) [backgroundPath fillWithInnerShadow: innerGlow];
 		
 		[background release];
-		[dropShadow release];
-		[innerGlow release];
+		if (dropShadow)	[dropShadow release];
+		if (innerGlow)	[innerGlow release];
 	}
 }
 @end
@@ -138,7 +151,7 @@ enum {
 }
 - (void) mouseEntered: (NSEvent *)event	{ [self setHovered: YES]; }
 - (void) mouseExited: (NSEvent *)event	{ [self setHovered: NO]; }
-- (void) setHovered: (BOOL) hover
+- (void) setHovered: (BOOL)hover
 {
 	hovered = hover;
 	[[self controlView] setNeedsDisplay: YES];
@@ -164,7 +177,6 @@ enum {
 		if ([self isHighlighted])  opacity = 1.0f;
 		else if ([self isHovered]) opacity = 0.75f;
 	}
-
 	
 	if ([image isTemplate])
 	{
@@ -206,18 +218,21 @@ enum {
 - (void) _selectItemAtPoint: (NSPoint)point
 {
 	id clickedView = [self hitTest: point];
+	BOOL needsRedraw = NO;
 	
 	if ([clickedView isKindOfClass: [BXDriveItemView class]])
 	{
+		if (![[clickedView delegate] isSelected]) needsRedraw = YES;
 		[[clickedView delegate] setSelected: YES];
 	}
 	else
 	{
 		//Clear our selection
+		if ([[self selectionIndexes] count]) needsRedraw = YES;
 		[self setSelectionIndexes: [NSIndexSet indexSet]];
 	}
 	//Redraw selection in our subviews
-	[self setNeedsDisplay: YES];
+	if (needsRedraw) [self setNeedsDisplay: YES];
 }
 
 //This amounts to a complete reimplementation of NSCollectionView's default mouseDown implementation,

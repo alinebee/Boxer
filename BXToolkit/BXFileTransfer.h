@@ -78,6 +78,7 @@ extern NSString * const BXFileTransferCurrentPathKey;
 {
 	id <BXFileTransferDelegate> delegate;
 	id contextInfo;
+	BOOL notifyOnMainThread;
 	
 	NSString *sourcePath;
 	NSString *destinationPath;
@@ -102,6 +103,10 @@ extern NSString * const BXFileTransferCurrentPathKey;
 //Arbitrary context info for this operation. Included in notification dictionaries
 //for controlling contexts to use. Note that this is an NSObject and will be retained.
 @property (retain) id contextInfo;
+
+//Whether delegate and NSNotificationCenter notifications should be sent on the main
+//thread or on the operation's current thread. Defaults to YES (the main thread).
+@property (assign) BOOL notifyOnMainThread;
 
 //Whether this is a copy or move operation.
 @property (assign) BOOL copyFiles;

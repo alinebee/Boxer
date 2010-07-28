@@ -59,7 +59,6 @@ enum {
 	//Listen for drive import notifications.
 	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 	[center addObserver: self selector: @selector(fileTransferWillStart:) name: BXFileTransferWillStart object: nil];
-	[center addObserver: self selector: @selector(fileTransferDidStart:) name: BXFileTransferDidStart object: nil];
 	[center addObserver: self selector: @selector(fileTransferDidFinish:) name: BXFileTransferDidFinish object: nil];
 	[center addObserver: self selector: @selector(fileTransferInProgress:) name: BXFileTransferInProgress object: nil];
 	[center addObserver: self selector: @selector(fileTransferWasCancelled:) name: BXFileTransferWasCancelled object: nil];
@@ -364,6 +363,7 @@ enum {
 		if (!indeterminate)
 		{
 			[progressMeter setDoubleValue: progress];
+			[progressMeter setNeedsDisplay: YES];
 			NSString *progressFormat = NSLocalizedString(@"%1$i%% of %2$i MB",
 														 @"Drive import progress meter label. %1 is the current progress as an unsigned integer percentage, %2 is the total size of the transfer as an unsigned integer in megabytes");
 			

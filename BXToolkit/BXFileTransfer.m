@@ -55,7 +55,7 @@ NSString * const BXFileTransferCurrentPathKey	= @"BXFileTransferCurrentPathKey";
 #pragma mark Implementation
 
 @implementation BXFileTransfer
-@synthesize delegate, contextInfo;
+@synthesize delegate, contextInfo, notifyOnMainThread;
 @synthesize copyFiles, sourcePath, destinationPath;
 @synthesize numFiles, numFilesTransferred, transferSize, currentPath;
 @synthesize succeeded, error;
@@ -71,9 +71,10 @@ NSString * const BXFileTransferCurrentPathKey	= @"BXFileTransferCurrentPathKey";
 		[self setDestinationPath: destination];
 		[self setCopyFiles: copy];
 		
-		//Create our own personal file manager instance and set ourselves as the delegate
+		//Create our own personal file manager instance and set ourselves as its delegate
 		manager = [[NSFileManager alloc] init];
 		[manager setDelegate: self];
+		[self setNotifyOnMainThread: YES];
 	}
 	return self;
 }
@@ -278,8 +279,16 @@ NSString * const BXFileTransferCurrentPathKey	= @"BXFileTransferCurrentPathKey";
 															   userInfo: userInfo];
 	
 	if ([[self delegate] respondsToSelector: selector])
-		[(id)[self delegate] performSelectorOnMainThread: selector withObject: notification waitUntilDone: NO];
-	
-	[center performSelectorOnMainThread: @selector(postNotification:) withObject: notification waitUntilDone: NO];
+	{
+		if ([self notifyOnMainThread])
+			[(id)[self delegate] performSelectorOnMainThread: selector withObject: notification waitUntilDone: NO];
+		else
+			[[self delegate] performSelector: selector withObject: notification];
+	}
+		
+	if ([self notifyOnMainThread])
+		[center performSelectorOnMainThread: @selector(postNotification:) withObject: notification waitUntilDone: NO];		
+	else
+		[center postNotification: notification];
 }
 @end

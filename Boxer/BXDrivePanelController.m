@@ -26,9 +26,6 @@ enum {
 	BXDriveActionsMenuSegment	= 2
 };
 
-//Drive imports involving fewer files than this will show an indeterminate progress bar,
-//because their progress will be too inaccurate to represent.
-#define BXIndeterminateImportProgressCutoff 4
 
 #pragma mark -
 #pragma mark Implementation
@@ -334,10 +331,6 @@ enum {
 	}
 }
 
-- (void) fileTransferDidStart: (NSNotification *)notification
-{
-}
-
 - (void) fileTransferInProgress: (NSNotification *)notification
 {
 	BXFileTransfer *transfer = [notification object];
@@ -352,25 +345,18 @@ enum {
 		NSProgressIndicator *progressMeter	= [driveView progressMeter];
 		NSTextField *progressMeterLabel		= [driveView progressMeterLabel];
 		BXFileTransferProgress progress		= [transfer currentProgress];
-		
-		BOOL indeterminate = [transfer numFiles] < BXIndeterminateImportProgressCutoff;
-		
-		//Use an indeterminate progress meter for single-file transfers,
-		//since we can't measure the progress properly
-		[progressMeter setIndeterminate: indeterminate];
+	
+		[progressMeter setIndeterminate: NO];
 		
 		//If we know the progress, set the label text appropriately
-		if (!indeterminate)
-		{
-			[progressMeter setDoubleValue: progress];
-			[progressMeter setNeedsDisplay: YES];
-			NSString *progressFormat = NSLocalizedString(@"%1$i%% of %2$i MB",
-														 @"Drive import progress meter label. %1 is the current progress as an unsigned integer percentage, %2 is the total size of the transfer as an unsigned integer in megabytes");
+		[progressMeter setDoubleValue: progress];
+		[progressMeter setNeedsDisplay: YES];
+		NSString *progressFormat = NSLocalizedString(@"%1$i%% of %2$i MB",
+													 @"Drive import progress meter label. %1 is the current progress as an unsigned integer percentage, %2 is the total size of the transfer as an unsigned integer in megabytes");
 			
-			NSUInteger progressPercent	= (NSUInteger)round(progress * 100.0);
-			NSUInteger sizeInMB			= (NSUInteger)ceil([transfer transferSize] / 1000.0 / 1000.0);
-			[progressMeterLabel setStringValue: [NSString stringWithFormat: progressFormat, progressPercent, sizeInMB, nil]];
-		}
+		NSUInteger progressPercent	= (NSUInteger)round(progress * 100.0);
+		NSUInteger sizeInMB			= (NSUInteger)ceil([transfer numBytes] / 1000.0 / 1000.0);
+		[progressMeterLabel setStringValue: [NSString stringWithFormat: progressFormat, progressPercent, sizeInMB, nil]];
 	}
 }
 

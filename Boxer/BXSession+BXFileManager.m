@@ -651,10 +651,6 @@
 {
 }
 
-- (void) fileTransferDidStart: (NSNotification *)theNotification
-{
-}
-
 - (void) fileTransferInProgress: (NSNotification *)theNotification
 {
 }

@@ -14,7 +14,6 @@
 @protocol BXFileTransferDelegate <NSObject>
 
 - (void) fileTransferWillStart: (NSNotification *)notification;
-- (void) fileTransferDidStart: (NSNotification *)notification;
 - (void) fileTransferInProgress: (NSNotification *)notification;
 - (void) fileTransferWasCancelled: (NSNotification *)notification;
 - (void) fileTransferDidFinish: (NSNotification *)notification;

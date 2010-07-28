@@ -24,6 +24,10 @@
 #import "NSString+BXPaths.h"
 
 
+//Boxer will delay its handling of volume mount notifications by this many seconds,
+//to allow multipart volumes to finish mounting properly
+#define BXVolumeMountDelay 1.0
+
 
 //The methods in this category are not intended to be called outside BXSession.
 @interface BXSession ()
@@ -411,7 +415,7 @@
 	
 	//To work around this, we add a slight delay before we process the volume mount notification,
 	//to allow other volumes to finish mounting.
-	[self performSelector:@selector(_handleVolumeDidMount:) withObject: theNotification afterDelay: 0.1];
+	[self performSelector:@selector(_handleVolumeDidMount:) withObject: theNotification afterDelay: BXVolumeMountDelay];
 }
 
 - (void) _handleVolumeDidMount: (NSNotification *)theNotification

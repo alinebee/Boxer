@@ -15,21 +15,6 @@
 #pragma mark -
 #pragma mark Numeric transformers
 
-//Takes a ratio from 0.0 to 1.0, and returns a ratio from 0.0 to 1.0 massaged with the specified easing method.
-@interface BXEasingTransformer : NSValueTransformer
-{
-	NSAnimationCurve easingType;
-}
-@property (assign, nonatomic) NSAnimationCurve easingType;
-
-- (id) initWithEasingType: (NSAnimationCurve)easingType;
-
-- (NSNumber *)linearValue: (NSNumber *)value;
-- (NSNumber *)easedOutValue: (NSNumber *)value;
-- (NSNumber *)easedInValue: (NSNumber *)value;
-- (NSNumber *)easedInOutValue: (NSNumber *)value;
-@end
-
 @interface BXRollingAverageTransformer : NSValueTransformer
 {
 	NSNumber *previousAverage;

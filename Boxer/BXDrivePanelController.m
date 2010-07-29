@@ -346,15 +346,18 @@ enum {
 		NSTextField *progressMeterLabel		= [driveView progressMeterLabel];
 		BXFileTransferProgress progress		= [transfer currentProgress];
 	
+		//Massage the progress with an ease-out curve to make it appear quicker at the start of the transfer
+		BXFileTransferProgress easedProgress = -progress * (progress - 2);
+		
 		[progressMeter setIndeterminate: NO];
 		
 		//If we know the progress, set the label text appropriately
-		[progressMeter setDoubleValue: progress];
+		[progressMeter setDoubleValue: easedProgress];
 		[progressMeter setNeedsDisplay: YES];
 		NSString *progressFormat = NSLocalizedString(@"%1$i%% of %2$i MB",
 													 @"Drive import progress meter label. %1 is the current progress as an unsigned integer percentage, %2 is the total size of the transfer as an unsigned integer in megabytes");
 			
-		NSUInteger progressPercent	= (NSUInteger)round(progress * 100.0);
+		NSUInteger progressPercent	= (NSUInteger)round(easedProgress * 100.0);
 		NSUInteger sizeInMB			= (NSUInteger)ceil([transfer numBytes] / 1000.0 / 1000.0);
 		[progressMeterLabel setStringValue: [NSString stringWithFormat: progressFormat, progressPercent, sizeInMB, nil]];
 	}

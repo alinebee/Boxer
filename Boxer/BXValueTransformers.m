@@ -11,6 +11,52 @@
 #pragma mark -
 #pragma mark Numeric transformers
 
+@implementation BXEasingTransformer
+@synthesize easingType;
+
++ (Class) transformedValueClass			{ return [NSNumber class]; }
++ (BOOL) allowsReverseTransformation	{ return NO; }
+
+
+- (id) initWithEasingType: (NSAnimationCurve)type
+{
+	if ((self = [super init]))
+	{
+		[self setEasingType: type];
+	}
+	return self;
+}
+
+- (NSNumber *)linearValue: (NSNumber *)value
+{
+	return value;
+}
+- (NSNumber *)easedOutValue: (NSNumber *)value
+{
+	return value;
+}
+- (NSNumber *)easedInValue: (NSNumber *)value
+{
+	return value;	
+}
+- (NSNumber *)easedInOutValue: (NSNumber *)value
+{
+	return value;	
+}
+
+- (NSNumber *)transformedValue: (NSNumber *)value
+{
+	NSNumber *transformed = nil;
+	if (value) switch (easingType)
+	{
+		case NSAnimationLinear:		transformed = [self linearValue: value]; break;
+		case NSAnimationEaseIn:		transformed = [self easedInValue: value]; break;
+		case NSAnimationEaseOut:	transformed = [self easedOutValue: value]; break;
+		case NSAnimationEaseInOut:	transformed = [self easedInOutValue: value]; break;
+	}
+	return transformed;
+}
+@end
 
 @implementation BXRollingAverageTransformer
 

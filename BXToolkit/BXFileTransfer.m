@@ -148,7 +148,16 @@ NSString * const BXFileTransferCurrentPathKey	= @"BXFileTransferCurrentPathKey";
 													 repeats: YES];
 	
 	//Run the runloop until the transfer is finished
-	while (!isFinished && [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode beforeDate: [NSDate dateWithTimeIntervalSinceNow: BXFileTransferPollInterval]]);
+	while (!isFinished && [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode
+												   beforeDate: [NSDate dateWithTimeIntervalSinceNow: BXFileTransferPollInterval]])
+	{
+		//Cancel the file operation if we've been cancelled in the meantime
+		//(this will break out of the loop once the file operation finishes) 
+		if ([self isCancelled])
+		{
+			FSFileOperationCancel(fileOp);
+		}
+	}
 	[timer invalidate];
 	
 	[self setSucceeded: [self error] == nil];
@@ -169,8 +178,6 @@ NSString * const BXFileTransferCurrentPathKey	= @"BXFileTransferCurrentPathKey";
 	//and only if we're in progress when we get cancelled
 	if (![self isCancelled] && [self isExecuting])
 	{
-		//Cancel the file operation while we're at it
-		FSFileOperationCancel(fileOp);
 		[super cancel];
 		if (![self error])
 		{
@@ -285,6 +292,8 @@ NSString * const BXFileTransferCurrentPathKey	= @"BXFileTransferCurrentPathKey";
 		[self setFilesTransferred:	[(NSNumber *)cfFilesTransferred unsignedIntegerValue]];
 		
 		[self setCurrentProgress: (BXFileTransferProgress)bytesTransferred / (BXFileTransferProgress)numBytes];
+		
+		CFRelease(statusInfo);
 	}
 	
 	switch (stage)

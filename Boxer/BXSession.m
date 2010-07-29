@@ -959,6 +959,7 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	//Cancel any in-progress drive imports
 	for (BXFileTransfer *transfer in [importQueue operations]) [transfer setDelegate: nil];
 	[importQueue cancelAllOperations];
+	[importQueue waitUntilAllOperationsAreFinished];
 }
 
 @end

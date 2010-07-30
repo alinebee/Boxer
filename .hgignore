@@ -16,3 +16,5 @@ Frameworks/Framework Source/SDLForBoxer/build
 *.perspectivev3
 *.mode1v3
 *.mode2v3
+xcuserdata
+project.xcworkspace

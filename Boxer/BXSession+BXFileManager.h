@@ -108,7 +108,8 @@
 //Returns whether the specified drive is located inside the session's gamebox.
 - (BOOL) driveIsBundled: (BXDrive *)drive;
 
-//Returns whether the specified drive
+//Returns whether the specified drive is currently being imported.
+- (BOOL) driveIsImporting: (BXDrive *)drive;
 
 //Returns whether the specified drive can be imported.
 //Will be NO if:

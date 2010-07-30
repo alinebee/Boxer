@@ -122,9 +122,11 @@ enum {
 	//Disable the appropriate drive controls when there are no selected items.
 	if ([keyPath isEqualToString: @"selectionIndexes"])
 	{
-		BOOL hasSelection = ([[object selectionIndexes] count] > 0);
-		[[self driveControls] setEnabled: hasSelection forSegment: BXRemoveDrivesSegment];
-		[[self driveControls] setEnabled: hasSelection forSegment: BXDriveActionsMenuSegment];
+		BOOL hasSession		= ([[NSApp delegate] currentSession] != nil);
+		BOOL hasSelection	= ([[object selectionIndexes] count] > 0);
+		[[self driveControls] setEnabled: hasSession	forSegment: BXAddDriveSegment];
+		[[self driveControls] setEnabled: hasSelection	forSegment: BXRemoveDrivesSegment];
+		[[self driveControls] setEnabled: hasSelection	forSegment: BXDriveActionsMenuSegment];
 	}
 	
 	//Select newly-added drives.
@@ -235,20 +237,25 @@ enum {
 	[NSApp sendAction: @selector(showMountPanel:) to: session from: self];
 }
 
-- (BOOL) validateUserInterfaceItem: (id)theItem
+- (BOOL) validateMenuItem: (NSMenuItem *)theItem
 {
-	BOOL hasSelection = ([[[self drives] selectedObjects] count] > 0);
 	BXSession *session = [[NSApp delegate] currentSession];
+	//If there's currently no active session, we can't do anything
+	if (!session) return NO;
+	
+	NSArray *driveSelection = [[self drives] selectedObjects];
+	BOOL hasSelection = ([driveSelection count] > 0);
+	BOOL isGamebox = [session isGamePackage];
 	BXEmulator *theEmulator = [session emulator];
 	
 	SEL action = [theItem action];
-	if (action == @selector(showMountPanel:))				return (session != nil);
+	
 	if (action == @selector(revealSelectedDrivesInFinder:)) return hasSelection;
 	if (action == @selector(unmountSelectedDrives:))
 	{
-		if (!hasSelection || ![session isEmulating]) return NO;
+		if (!hasSelection) return NO;
 		
-		//Check if any of the selected drives are locked
+		//Check if any of the selected drives are locked or internal
 		for (BXDrive *drive in [[self drives] selectedObjects])
 		{
 			if ([drive isLocked] || [drive isInternal]) return NO;
@@ -265,26 +272,45 @@ enum {
 		//Initial label for drive import items (may be modified below)
 		[theItem setTitle: NSLocalizedString(@"Import into gamebox", @"Drive import menu item title.")];
 		
-		BOOL isGamebox = [session isGamePackage];
-		//Hide these menu items if we're not running a session
+		//Hide this item altogether if we're not running a session
 		[theItem setHidden: !isGamebox];
 		if (!isGamebox || !hasSelection) return NO;
-		
 		 
-		//Check if any of the selected drives are internal or already imported
-		for (BXDrive *drive in [[self drives] selectedObjects])
+		//Check if any of the selected drives are being imported, already imported, or otherwise cannot be imported
+		for (BXDrive *drive in driveSelection)
 		{
-			//Change the menu item title to reflect that the selected drive
-			//is already in the gamebox
-			if ([session driveIsBundled: drive])
+			if ([session driveIsImporting: drive])
 			{
-				[theItem setTitle: NSLocalizedString(@"Part of gamebox", @"Drive import menu item title, when selected drive(s) are already in the gamebox.")];
+				[theItem setTitle: NSLocalizedString(@"Importing into gamebox…", @"Drive import menu item title, when selected drive(s) are already in the gamebox.")];
 				return NO;
 			}
-			if ([drive isInternal] || [drive isHidden]) return NO;
+			else if ([session driveIsBundled: drive])
+			{
+				[theItem setTitle: NSLocalizedString(@"Included in gamebox", @"Drive import menu item title, when selected drive(s) are already in the gamebox.")];
+				return NO;
+			}
+			else if (![session canImportDrive: drive]) return NO;
 		}
+		//If we get this far then yes, it's ok
 		return YES;
 	}
+	
+	if (action == @selector(cancelImportsForSelectedDrives:))
+	{
+		if (isGamebox) for (BXDrive *drive in driveSelection)
+		{	
+			//If any of the selected drives are being imported, then enable and unhide the item
+			if ([session driveIsImporting: drive])
+			{
+				[theItem setHidden: NO];
+				return YES;
+			}
+		}
+		//Otherwise, hide the item
+		[theItem setHidden: YES];
+		return NO;
+	}
+	
 	return YES;
 }
 

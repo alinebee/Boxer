@@ -56,14 +56,7 @@
 		return BXDriveCDROM;
 
 	//If the path is a FAT/FAT32 volume, check its volume size: volumes smaller than BXFloppySizeCutoff will be treated as floppy disks.
-	//TODO: is it really relevant whether it's FAT? Should we do this for all very small volumes?
-	if ([volumeType isEqualToString: FATVolumeType])
-	{
-		NSFileManager *manager = [NSFileManager defaultManager];
-		NSDictionary *fsAttrs = [manager attributesOfFileSystemForPath: filePath error: nil];
-		NSUInteger volumeSize = [[fsAttrs valueForKey: NSFileSystemSize] integerValue];
-		if (volumeSize <= BXFloppySizeCutoff) return BXDriveFloppyDisk;
-	}
+	if ([workspace isFloppyVolumeAtPath: filePath]) return BXDriveFloppyDisk;
 	
 	//Fall back on a standard hard-disk mount
 	return BXDriveHardDisk;

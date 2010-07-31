@@ -27,6 +27,7 @@
 NSString * const BXGameboxSettingsKeyFormat	= @"BXGameSettings: %@";
 NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 
+
 #pragma mark -
 #pragma mark Private method declarations
 
@@ -286,9 +287,9 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	[callback setArgument: &contextInfo atIndex: 4]; // contextInfo:	
 	
 	BOOL hasActiveImports = NO;
-	for (BXFileTransfer *operation in [importQueue operations])
+	for (BXDriveImport *import in [importQueue operations])
 	{
-		if (![operation isFinished] && ![operation isCancelled])
+		if (![import isFinished] && ![import isCancelled])
 		{
 			hasActiveImports = YES;
 			break;
@@ -957,7 +958,7 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	}
 	
 	//Cancel any in-progress drive imports
-	for (BXFileTransfer *transfer in [importQueue operations]) [transfer setDelegate: nil];
+	for (BXDriveImport *import in [importQueue operations]) [import setDelegate: nil];
 	[importQueue cancelAllOperations];
 	[importQueue waitUntilAllOperationsAreFinished];
 }

@@ -18,4 +18,8 @@
 //Returns the nearest parent folder of the specified path which matches any of the specified UTIs,
 //or nil if no folder matched. This may return filePath, if the file itself matches the specified types.
 - (NSString *)parentOfFile: (NSString *)filePath matchingTypes: (NSSet *)acceptedTypes;
+
+//Returns whether the file at the specified path is a windows-only executable.
+//(This is determined using the UNIX file command, and occasionally results in false positives.)
+- (BOOL) isWindowsExecutableAtPath: (NSString *)filePath;
 @end

@@ -23,7 +23,7 @@
 
 
 //The singleton emulator instance. Returned by [BXEmulator currentEmulator].
-BXEmulator *currentEmulator = nil;
+static BXEmulator *currentEmulator = nil;
 
 
 //Default name that DOSBox uses when there's no process running. Used by processName for string comparisons.

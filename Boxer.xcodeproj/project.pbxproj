@@ -167,6 +167,9 @@
 		9F687004109F83ED003C26E4 /* BXDriveList.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F687003109F83ED003C26E4 /* BXDriveList.m */; };
 		9F69128C10A2DF8D00EA78CD /* BXValueTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F69128B10A2DF8D00EA78CD /* BXValueTransformers.m */; };
 		9F69133310A2F62A00EA78CD /* BXDrive.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F69133210A2F62A00EA78CD /* BXDrive.m */; };
+		9F6A79041203547800D2097D /* gamefolder.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F6A79031203547800D2097D /* gamefolder.icns */; };
+		9F6A79071203564E00D2097D /* GameImporter.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F6A79061203564E00D2097D /* GameImporter.xib */; };
+		9F6A790A120357DF00D2097D /* install.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F6A7909120357DF00D2097D /* install.icns */; };
 		9F6BA6F910A9FB92005A3E2A /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F6BA6F810A9FB92005A3E2A /* Growl.framework */; };
 		9F6BA6FD10A9FBAB005A3E2A /* Growl.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F6BA6F810A9FB92005A3E2A /* Growl.framework */; };
 		9F6BA70510A9FC77005A3E2A /* BXGrowlController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F6BA70410A9FC77005A3E2A /* BXGrowlController.m */; };
@@ -229,7 +232,7 @@
 		9FBC3C720F56E0AE001811F2 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C710F56E0AE001811F2 /* OpenGL.framework */; };
 		9FBC3C780F56E0D7001811F2 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C760F56E0D7001811F2 /* AudioUnit.framework */; };
 		9FBC3C790F56E0D7001811F2 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C770F56E0D7001811F2 /* CoreMIDI.framework */; };
-		9FBC3CF90F56E6DE001811F2 /* session.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC31DF0F56C383001811F2 /* session.icns */; };
+		9FBC3CF90F56E6DE001811F2 /* prompt.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC31DF0F56C383001811F2 /* prompt.icns */; };
 		9FBC3D600F56EA82001811F2 /* SDL.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C140F56D6E8001811F2 /* SDL.framework */; };
 		9FBC3D610F56EA82001811F2 /* SDL_net.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C150F56D6E8001811F2 /* SDL_net.framework */; };
 		9FBD321710E5144C00031CB6 /* Brand.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBD321610E5144C00031CB6 /* Brand.png */; };
@@ -255,6 +258,11 @@
 		9FE8265C10F0EBA000F1B03E /* 35DisketteShine.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE8265A10F0EBA000F1B03E /* 35DisketteShine.png */; };
 		9FE8265D10F0EBA000F1B03E /* 35Diskette.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE8265B10F0EBA000F1B03E /* 35Diskette.png */; };
 		9FE90BF711F8D1DC003CFFFF /* BXDelegatedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE90BF611F8D1DC003CFFFF /* BXDelegatedView.m */; };
+		9FEAA3DA120424E50085F008 /* BXGameImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEAA3D9120424E50085F008 /* BXGameImport.m */; };
+		9FEAA3DF1204422F0085F008 /* BXUninstalledGameImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEAA3DE1204422F0085F008 /* BXUninstalledGameImport.m */; };
+		9FEAA3E2120443C20085F008 /* BXPlayableGameImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEAA3E1120443C20085F008 /* BXPlayableGameImport.m */; };
+		9FEAA3EC1204595B0085F008 /* BXOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEAA3EB1204595B0085F008 /* BXOperation.m */; };
+		9FEAA451120478000085F008 /* BXDriveImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEAA450120478000085F008 /* BXDriveImport.m */; };
 		9FECE19011A31B8B00E0EBB6 /* BXRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FECE18F11A31B8B00E0EBB6 /* BXRenderer.m */; };
 		9FECE1C211A3244500E0EBB6 /* BXGLRenderingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FECE1C111A3244500E0EBB6 /* BXGLRenderingView.m */; };
 		9FEF98011191E1EF002024DF /* BXInputHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FEF98001191E1EF002024DF /* BXInputHandler.mm */; };
@@ -594,6 +602,9 @@
 		9F69128B10A2DF8D00EA78CD /* BXValueTransformers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXValueTransformers.m; sourceTree = "<group>"; };
 		9F69133110A2F62A00EA78CD /* BXDrive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDrive.h; sourceTree = "<group>"; };
 		9F69133210A2F62A00EA78CD /* BXDrive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDrive.m; sourceTree = "<group>"; };
+		9F6A79031203547800D2097D /* gamefolder.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = gamefolder.icns; sourceTree = "<group>"; };
+		9F6A79061203564E00D2097D /* GameImporter.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GameImporter.xib; sourceTree = "<group>"; };
+		9F6A7909120357DF00D2097D /* install.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = install.icns; sourceTree = "<group>"; };
 		9F6BA6F810A9FB92005A3E2A /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Growl.framework; sourceTree = "<group>"; };
 		9F6BA70310A9FC77005A3E2A /* BXGrowlController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXGrowlController.h; sourceTree = "<group>"; };
 		9F6BA70410A9FC77005A3E2A /* BXGrowlController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGrowlController.m; sourceTree = "<group>"; };
@@ -662,7 +673,7 @@
 		9FBC31D60F56C370001811F2 /* TortoiseTemplate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TortoiseTemplate.png; sourceTree = "<group>"; };
 		9FBC31DD0F56C383001811F2 /* LockClosing.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = LockClosing.aiff; sourceTree = "<group>"; };
 		9FBC31DE0F56C383001811F2 /* LockOpening.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = LockOpening.aiff; sourceTree = "<group>"; };
-		9FBC31DF0F56C383001811F2 /* session.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = session.icns; sourceTree = "<group>"; };
+		9FBC31DF0F56C383001811F2 /* prompt.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = prompt.icns; sourceTree = "<group>"; };
 		9FBC32110F56C3E9001811F2 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		9FBC34490F56C5D1001811F2 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/DOSBox.strings; sourceTree = "<group>"; };
 		9FBC344B0F56C5D1001811F2 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Shell.strings; sourceTree = "<group>"; };
@@ -695,7 +706,7 @@
 		9FBD321610E5144C00031CB6 /* Brand.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Brand.png; sourceTree = "<group>"; };
 		9FBF66AD11F35ADD00DAAB9A /* BXFileTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFileTransfer.h; sourceTree = "<group>"; };
 		9FBF66AE11F35ADD00DAAB9A /* BXFileTransfer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFileTransfer.m; sourceTree = "<group>"; };
-		9FBF66FC11F376B900DAAB9A /* BXFileTransferDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFileTransferDelegate.h; sourceTree = "<group>"; };
+		9FBF66FC11F376B900DAAB9A /* BXOperationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXOperationDelegate.h; sourceTree = "<group>"; };
 		9FC1620C119E9AD700705EA5 /* BXCursorFadeAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCursorFadeAnimation.h; sourceTree = "<group>"; };
 		9FC1620D119E9AD700705EA5 /* BXCursorFadeAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXCursorFadeAnimation.m; sourceTree = "<group>"; };
 		9FC3B2530F62D9CE006DE439 /* BXSession+BXEmulatorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXSession+BXEmulatorController.h"; sourceTree = "<group>"; };
@@ -727,6 +738,16 @@
 		9FE8265B10F0EBA000F1B03E /* 35Diskette.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 35Diskette.png; sourceTree = "<group>"; };
 		9FE90BF511F8D1DC003CFFFF /* BXDelegatedView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDelegatedView.h; sourceTree = "<group>"; };
 		9FE90BF611F8D1DC003CFFFF /* BXDelegatedView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDelegatedView.m; sourceTree = "<group>"; };
+		9FEAA3D8120424E50085F008 /* BXGameImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXGameImport.h; sourceTree = "<group>"; };
+		9FEAA3D9120424E50085F008 /* BXGameImport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGameImport.m; sourceTree = "<group>"; };
+		9FEAA3DD1204422F0085F008 /* BXUninstalledGameImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXUninstalledGameImport.h; sourceTree = "<group>"; };
+		9FEAA3DE1204422F0085F008 /* BXUninstalledGameImport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXUninstalledGameImport.m; sourceTree = "<group>"; };
+		9FEAA3E0120443C20085F008 /* BXPlayableGameImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXPlayableGameImport.h; sourceTree = "<group>"; };
+		9FEAA3E1120443C20085F008 /* BXPlayableGameImport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXPlayableGameImport.m; sourceTree = "<group>"; };
+		9FEAA3EA1204595B0085F008 /* BXOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXOperation.h; sourceTree = "<group>"; };
+		9FEAA3EB1204595B0085F008 /* BXOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXOperation.m; sourceTree = "<group>"; };
+		9FEAA44F120478000085F008 /* BXDriveImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDriveImport.h; sourceTree = "<group>"; };
+		9FEAA450120478000085F008 /* BXDriveImport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDriveImport.m; sourceTree = "<group>"; };
 		9FEBB70E11DF9BB50055933F /* BXEmulatorDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatorDelegate.h; sourceTree = "<group>"; };
 		9FECE18E11A31B8B00E0EBB6 /* BXRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXRenderer.h; sourceTree = "<group>"; };
 		9FECE18F11A31B8B00E0EBB6 /* BXRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXRenderer.m; sourceTree = "<group>"; };
@@ -776,6 +797,7 @@
 		080E96DDFE201D6D7F000001 /* Boxer */ = {
 			isa = PBXGroup;
 			children = (
+				9FEAA3D7120424D60085F008 /* Installation */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
 				9F573D370F8E69AF0089D8B7 /* BXPackage.h */,
 				9F573D380F8E69AF0089D8B7 /* BXPackage.m */,
@@ -1047,6 +1069,7 @@
 		9F496E4C108EEDF700282261 /* XIBs */ = {
 			isa = PBXGroup;
 			children = (
+				9F6A79061203564E00D2097D /* GameImporter.xib */,
 				9F9A4CA410F67DD800E61965 /* Preferences.xib */,
 				9F59DEDD10B01743008DBBC1 /* ProgramPanel.xib */,
 				9F45A46A109C9A0400593456 /* MountPanelOptions.xib */,
@@ -1494,11 +1517,13 @@
 				9FADFE9611EC932800990E91 /* NSData+HexStrings.m */,
 				9FBF66AD11F35ADD00DAAB9A /* BXFileTransfer.h */,
 				9FBF66AE11F35ADD00DAAB9A /* BXFileTransfer.m */,
-				9FBF66FC11F376B900DAAB9A /* BXFileTransferDelegate.h */,
+				9FBF66FC11F376B900DAAB9A /* BXOperationDelegate.h */,
 				9F13F9CE11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.h */,
 				9F13F9CF11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m */,
 				9FE90BF511F8D1DC003CFFFF /* BXDelegatedView.h */,
 				9FE90BF611F8D1DC003CFFFF /* BXDelegatedView.m */,
+				9FEAA3EA1204595B0085F008 /* BXOperation.h */,
+				9FEAA3EB1204595B0085F008 /* BXOperation.m */,
 			);
 			path = BXToolkit;
 			sourceTree = "<group>";
@@ -1548,10 +1573,12 @@
 				9F2AC6D510EFE14300CFFF72 /* CDCover.png */,
 				9F2AC6D610EFE14300CFFF72 /* CDCase.png */,
 				9FBD321610E5144C00031CB6 /* Brand.png */,
+				9F6A7909120357DF00D2097D /* install.icns */,
 				9FCBB2CD10A61CA800C28B09 /* boxer.icns */,
+				9F6A79031203547800D2097D /* gamefolder.icns */,
 				9FCBB2CE10A61CA800C28B09 /* executable.icns */,
 				9FCBB2CF10A61CA800C28B09 /* package.icns */,
-				9FBC31DF0F56C383001811F2 /* session.icns */,
+				9FBC31DF0F56C383001811F2 /* prompt.icns */,
 				9F59DD2210AF6129008DBBC1 /* Grille.png */,
 				9F59D99710AE0956008DBBC1 /* BoxArtShine.png */,
 				9FBC31D10F56C370001811F2 /* AboutBackground.png */,
@@ -1619,6 +1646,21 @@
 			name = Sounds;
 			sourceTree = "<group>";
 		};
+		9FEAA3D7120424D60085F008 /* Installation */ = {
+			isa = PBXGroup;
+			children = (
+				9FEAA3D8120424E50085F008 /* BXGameImport.h */,
+				9FEAA3D9120424E50085F008 /* BXGameImport.m */,
+				9FEAA3DD1204422F0085F008 /* BXUninstalledGameImport.h */,
+				9FEAA3DE1204422F0085F008 /* BXUninstalledGameImport.m */,
+				9FEAA3E0120443C20085F008 /* BXPlayableGameImport.h */,
+				9FEAA3E1120443C20085F008 /* BXPlayableGameImport.m */,
+				9FEAA44F120478000085F008 /* BXDriveImport.h */,
+				9FEAA450120478000085F008 /* BXDriveImport.m */,
+			);
+			name = Installation;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1676,7 +1718,7 @@
 				9FBC344D0F56C5D1001811F2 /* DOSBox.strings in Resources */,
 				9FBC344E0F56C5D1001811F2 /* Shell.strings in Resources */,
 				9FBC345D0F56C64D001811F2 /* InfoPlist.strings in Resources */,
-				9FBC3CF90F56E6DE001811F2 /* session.icns in Resources */,
+				9FBC3CF90F56E6DE001811F2 /* prompt.icns in Resources */,
 				9FE202480F6D749500B3A38C /* Snapshot.aiff in Resources */,
 				9F45A1BD109C3C3900593456 /* About.xib in Resources */,
 				9F45A1C9109C3D1100593456 /* DOSWindow.xib in Resources */,
@@ -1716,6 +1758,9 @@
 				9FDCDEFD11B5B83B0032DA4E /* dsa_pub.pem in Resources */,
 				9FAA451511EB40180042B986 /* Configuration.strings in Resources */,
 				9FAE9B8B11F1D7CF000363F7 /* GameDefaults.plist in Resources */,
+				9F6A79041203547800D2097D /* gamefolder.icns in Resources */,
+				9F6A79071203564E00D2097D /* GameImporter.xib in Resources */,
+				9F6A790A120357DF00D2097D /* install.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1932,6 +1977,11 @@
 				9F9E27C511F8C003003EE8F3 /* BXSegmentedCell.m in Sources */,
 				9F9E27D611F8C173003EE8F3 /* BXDrivePanelController.m in Sources */,
 				9FE90BF711F8D1DC003CFFFF /* BXDelegatedView.m in Sources */,
+				9FEAA3DA120424E50085F008 /* BXGameImport.m in Sources */,
+				9FEAA3DF1204422F0085F008 /* BXUninstalledGameImport.m in Sources */,
+				9FEAA3E2120443C20085F008 /* BXPlayableGameImport.m in Sources */,
+				9FEAA3EC1204595B0085F008 /* BXOperation.m in Sources */,
+				9FEAA451120478000085F008 /* BXDriveImport.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

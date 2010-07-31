@@ -55,10 +55,10 @@ enum {
 	
 	//Listen for drive import notifications.
 	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-	[center addObserver: self selector: @selector(fileTransferWillStart:) name: BXFileTransferWillStart object: nil];
-	[center addObserver: self selector: @selector(fileTransferDidFinish:) name: BXFileTransferDidFinish object: nil];
-	[center addObserver: self selector: @selector(fileTransferInProgress:) name: BXFileTransferInProgress object: nil];
-	[center addObserver: self selector: @selector(fileTransferWasCancelled:) name: BXFileTransferWasCancelled object: nil];
+	[center addObserver: self selector: @selector(operationWillStart:) name: BXOperationWillStart object: nil];
+	[center addObserver: self selector: @selector(operationDidFinish:) name: BXOperationDidFinish object: nil];
+	[center addObserver: self selector: @selector(operationInProgress:) name: BXOperationInProgress object: nil];
+	[center addObserver: self selector: @selector(operationWasCancelled:) name: BXOperationWasCancelled object: nil];
 }
 
 - (void) dealloc
@@ -318,7 +318,7 @@ enum {
 #pragma mark -
 #pragma mark Drive import progress handling
 
-- (void) fileTransferWillStart: (NSNotification *)notification
+- (void) operationWillStart: (NSNotification *)notification
 {
 	BXFileTransfer *transfer = [notification object];
 	
@@ -357,7 +357,7 @@ enum {
 	}
 }
 
-- (void) fileTransferInProgress: (NSNotification *)notification
+- (void) operationInProgress: (NSNotification *)notification
 {
 	BXFileTransfer *transfer = [notification object];
 	
@@ -370,10 +370,10 @@ enum {
 	{
 		NSProgressIndicator *progressMeter	= [driveView progressMeter];
 		NSTextField *progressMeterLabel		= [driveView progressMeterLabel];
-		BXFileTransferProgress progress		= [transfer currentProgress];
+		BXOperationProgress progress		= [transfer currentProgress];
 	
 		//Massage the progress with an ease-out curve to make it appear quicker at the start of the transfer
-		BXFileTransferProgress easedProgress = -progress * (progress - 2);
+		BXOperationProgress easedProgress = -progress * (progress - 2);
 		
 		[progressMeter setIndeterminate: NO];
 		
@@ -389,7 +389,7 @@ enum {
 	}
 }
 
-- (void) fileTransferWasCancelled: (NSNotification *)notification
+- (void) operationWasCancelled: (NSNotification *)notification
 {
 	BXFileTransfer *transfer = [notification object];
 	
@@ -416,7 +416,7 @@ enum {
 	}
 }
 
-- (void) fileTransferDidFinish: (NSNotification *)notification
+- (void) operationDidFinish: (NSNotification *)notification
 {
 	BXFileTransfer *transfer = [notification object];
 	

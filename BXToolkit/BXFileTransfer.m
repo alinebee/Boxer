@@ -7,41 +7,31 @@
 
 
 #import "BXFileTransfer.h"
-#import "BXFileTransferDelegate.h"
 
 #pragma mark -
 #pragma mark Notification constants and keys
 
-NSString * const BXFileTransferWillStart		= @"BXFileTransferWillStart";
-NSString * const BXFileTransferDidFinish		= @"BXFileTransferDidFinish";
-NSString * const BXFileTransferInProgress		= @"BXFileTransferInProgress";
-NSString * const BXFileTransferWasCancelled		= @"BXFileTransferWasCancelled";
-
-NSString * const BXFileTransferContextInfoKey	= @"BXFileTransferContextInfoKey";
-NSString * const BXFileTransferSuccessKey		= @"BXFileTransferSuccessKey";
-NSString * const BXFileTransferErrorKey			= @"BXFileTransferErrorKey";
-NSString * const BXFileTransferFileCountKey		= @"BXFileTransferFileCountKey";
-NSString * const BXFileTransferTotalSizeKey		= @"BXFileTransferTotalSizeKey";
-NSString * const BXFileTransferProgressKey		= @"BXFileTransferProgressKey";
-NSString * const BXFileTransferCurrentPathKey	= @"BXFileTransferCurrentPathKey";
+NSString * const BXFileTransferFilesTotalKey		= @"BXFileTransferFilesTotalKey";
+NSString * const BXFileTransferFilesTransferredKey	= @"BXFileTransferFilesTransferredKey";
+NSString * const BXFileTransferBytesTotalKey		= @"BXFileTransferBytesTotalKey";
+NSString * const BXFileTransferBytesTransferredKey	= @"BXFileTransferBytesTransferredKey";
+NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey";
 
 
 //The interval in seconds at which to poll the progress of the file transfer
 #define BXFileTransferPollInterval 0.5
+
 
 #pragma mark -
 #pragma mark Private method declarations
 
 @interface BXFileTransfer ()
 
-@property (readwrite) BXFileTransferProgress currentProgress;
 @property (readwrite) unsigned long long numBytes;
 @property (readwrite) unsigned long long bytesTransferred;
 @property (readwrite) NSUInteger numFiles;
 @property (readwrite) NSUInteger filesTransferred;
 @property (readwrite, copy) NSString *currentPath;
-@property (readwrite) BOOL succeeded;
-@property (readwrite, retain) NSError *error;
 
 //Returns whether we can start the transfer. Should also populate @error (but currently doesn't).
 - (BOOL) _canBeginTransfer;
@@ -55,17 +45,6 @@ NSString * const BXFileTransferCurrentPathKey	= @"BXFileTransferCurrentPathKey";
 //Clean up after a partial transfer.
 - (void) _undoTransfer;
 
-//Post one of the corresponding notifications.
-- (void) _sendWillStartNotification;
-- (void) _sendInProgressNotification;
-- (void) _sendWasCancelledNotification;
-- (void) _sendDidFinishNotification;
-
-//Shortcut method for sending a notification both to the default notification center
-//and to a selector on our delegate. The object of the notification will be self.
-- (void) _postNotificationName: (NSString *)name
-			  delegateSelector: (SEL)selector
-					  userInfo: (NSDictionary *)userInfo;
 @end
 
 
@@ -73,10 +52,8 @@ NSString * const BXFileTransferCurrentPathKey	= @"BXFileTransferCurrentPathKey";
 #pragma mark Implementation
 
 @implementation BXFileTransfer
-@synthesize delegate, contextInfo, notifyOnMainThread;
 @synthesize copyFiles, sourcePath, destinationPath;
-@synthesize currentProgress, numFiles, filesTransferred, numBytes, bytesTransferred, currentPath;
-@synthesize succeeded, error;
+@synthesize numFiles, filesTransferred, numBytes, bytesTransferred, currentPath;
 
 #pragma mark -
 #pragma mark Initialization and deallocation
@@ -85,7 +62,6 @@ NSString * const BXFileTransferCurrentPathKey	= @"BXFileTransferCurrentPathKey";
 {
 	if ((self = [super init]))
 	{
-		[self setNotifyOnMainThread: YES];
 		fileOp = FSFileOperationCreate(kCFAllocatorDefault);
 		
 		//Maintain our own NSFileManager instance to ensure thread safety
@@ -115,8 +91,6 @@ NSString * const BXFileTransferCurrentPathKey	= @"BXFileTransferCurrentPathKey";
 	CFRelease(fileOp);
 	[manager release], manager = nil;
 	
-	[self setContextInfo: nil],		[contextInfo release];
-	[self setError: nil],			[error release];
 	[self setCurrentPath: nil],		[currentPath release];
 	[self setSourcePath: nil],		[sourcePath release];
 	[self setDestinationPath: nil],	[destinationPath release];
@@ -128,13 +102,18 @@ NSString * const BXFileTransferCurrentPathKey	= @"BXFileTransferCurrentPathKey";
 #pragma mark -
 #pragma mark Performing the transfer
 
+- (BXOperationProgress) currentProgress
+{
+	return (BXOperationProgress)bytesTransferred / (BXOperationProgress)numBytes;
+}
+
+
 - (void) main
 {
 	if (![self _canBeginTransfer]) return;
 	
-	[self _sendWillStartNotification];
+	[self _sendWillStartNotificationWithInfo: nil];
 	
-	isFinished = NO;
 	[self setError: nil];
 	
 	//Start up the file transfer
@@ -148,15 +127,12 @@ NSString * const BXFileTransferCurrentPathKey	= @"BXFileTransferCurrentPathKey";
 													 repeats: YES];
 	
 	//Run the runloop until the transfer is finished
-	while (!isFinished && [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode
+	while (stage != kFSOperationStageComplete && [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode
 												   beforeDate: [NSDate dateWithTimeIntervalSinceNow: BXFileTransferPollInterval]])
 	{
 		//Cancel the file operation if we've been cancelled in the meantime
 		//(this will break out of the loop once the file operation finishes) 
-		if ([self isCancelled])
-		{
-			FSFileOperationCancel(fileOp);
-		}
+		if ([self isCancelled]) FSFileOperationCancel(fileOp);
 	}
 	[timer invalidate];
 	
@@ -168,27 +144,7 @@ NSString * const BXFileTransferCurrentPathKey	= @"BXFileTransferCurrentPathKey";
 		[self _undoTransfer];
 	}
 	
-	[self _sendDidFinishNotification];
-}
-
-
-- (void) cancel
-{	
-	//Only send a notification the first time we're cancelled,
-	//and only if we're in progress when we get cancelled
-	if (![self isCancelled] && [self isExecuting])
-	{
-		[super cancel];
-		if (![self error])
-		{
-			//If we haven't encountered a more serious error, set the error to indicate that this operation was cancelled.
-			[self setError: [NSError errorWithDomain: NSCocoaErrorDomain
-												code: NSUserCancelledError
-											userInfo: nil]];
-		}
-		[self _sendWasCancelledNotification];
-	}
-	else [super cancel];
+	[self _sendDidFinishNotificationWithInfo: nil];
 }
 
 - (BOOL) _canBeginTransfer
@@ -207,7 +163,7 @@ NSString * const BXFileTransferCurrentPathKey	= @"BXFileTransferCurrentPathKey";
 }
 
 - (void) _beginTransfer
-{	
+{
 	OSStatus status;
 	status = FSFileOperationScheduleWithRunLoop(fileOp, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
 	NSAssert1(!status, @"Could not schedule file operation in current run loop, FSFileOperationScheduleWithRunLoop returned error code: %i", status);
@@ -217,6 +173,7 @@ NSString * const BXFileTransferCurrentPathKey	= @"BXFileTransferCurrentPathKey";
 	const char *destPath = [[[self destinationPath] stringByDeletingLastPathComponent] fileSystemRepresentation];
 	CFStringRef destName = (CFStringRef)[[self destinationPath] lastPathComponent];
 	
+	stage = kFSOperationStageUndefined;
 	
 	if (copyFiles)
 	{
@@ -257,7 +214,6 @@ NSString * const BXFileTransferCurrentPathKey	= @"BXFileTransferCurrentPathKey";
 {	
 	char *currentItem = NULL;
 	CFDictionaryRef statusInfo = NULL;
-	FSFileOperationStage stage = 0;
 	OSStatus errorCode = noErr;
 	
 	OSStatus status = FSPathFileOperationCopyStatus(fileOp,
@@ -291,101 +247,20 @@ NSString * const BXFileTransferCurrentPathKey	= @"BXFileTransferCurrentPathKey";
 		[self setNumFiles:			[(NSNumber *)cfFiles unsignedIntegerValue]];
 		[self setFilesTransferred:	[(NSNumber *)cfFilesTransferred unsignedIntegerValue]];
 		
-		[self setCurrentProgress: (BXFileTransferProgress)bytesTransferred / (BXFileTransferProgress)numBytes];
-		
 		CFRelease(statusInfo);
 	}
 	
-	switch (stage)
+	if (stage == kFSOperationStageRunning)
 	{
-		case kFSOperationStageRunning:
-			[self _sendInProgressNotification];
-			break;
-		case kFSOperationStageComplete:
-			isFinished = YES; //This will break out of the timer loop back in -main
-			break;
-		default:
-			break;
-	}
-}
-
-
-#pragma mark -
-#pragma mark Notifications
-
-- (void) _sendWillStartNotification
-{
-	if ([self isCancelled]) return;
-
-	[self _postNotificationName: BXFileTransferWillStart
-			   delegateSelector: @selector(fileTransferWillStart:)
-					   userInfo: nil];
-}
-
-- (void) _sendWasCancelledNotification
-{
-	[self _postNotificationName: BXFileTransferWasCancelled
-			   delegateSelector: @selector(fileTransferWasCancelled:)
-					   userInfo: nil];
-}
-
-- (void) _sendDidFinishNotification
-{
-	NSDictionary *finishInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-								[NSNumber numberWithBool: [self succeeded]], BXFileTransferSuccessKey,
-								[self error], BXFileTransferErrorKey,
-								nil];
-	
-	[self _postNotificationName: BXFileTransferDidFinish
-			   delegateSelector: @selector(fileTransferDidFinish:)
-					   userInfo: finishInfo];
-}
-
-- (void) _sendInProgressNotification
-{
-	if ([self isCancelled]) return;
-	
-	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-							  [NSNumber numberWithUnsignedInteger: [self numFiles]], BXFileTransferFileCountKey,
-							  [NSNumber numberWithUnsignedLongLong: [self numBytes]], BXFileTransferTotalSizeKey,
-							  [NSNumber numberWithFloat: [self currentProgress]], BXFileTransferProgressKey,
+		NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
+							  [NSNumber numberWithUnsignedInteger: [self filesTransferred]],	BXFileTransferFilesTransferredKey,
+							  [NSNumber numberWithUnsignedLongLong: [self bytesTransferred]],	BXFileTransferBytesTransferredKey,
+							  [NSNumber numberWithUnsignedInteger: [self numFiles]],			BXFileTransferFilesTotalKey,
+							  [NSNumber numberWithUnsignedLongLong: [self numBytes]],			BXFileTransferBytesTotalKey,
 							  [self currentPath], BXFileTransferCurrentPathKey,
 							  nil];
-	
-	[self _postNotificationName: BXFileTransferInProgress
-			   delegateSelector: @selector(fileTransferInProgress:)
-					   userInfo: userInfo];
+		[self _sendInProgressNotificationWithInfo: info];
+	}
 }
 
-
-- (void) _postNotificationName: (NSString *)name
-			  delegateSelector: (SEL)selector
-					  userInfo: (NSDictionary *)userInfo
-{
-	//Extend the notification dictionary with context info, if context was provided
-	if ([self contextInfo])
-	{
-		NSMutableDictionary *extendedInfo = [NSMutableDictionary dictionaryWithObject: [self contextInfo] forKey: BXFileTransferContextInfoKey];
-		if (userInfo) [extendedInfo addEntriesFromDictionary: userInfo];
-		userInfo = extendedInfo;
-	}
-	
-	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-	NSNotification *notification = [NSNotification notificationWithName: name
-																 object: self
-															   userInfo: userInfo];
-	
-	if ([[self delegate] respondsToSelector: selector])
-	{
-		if ([self notifyOnMainThread])
-			[(id)[self delegate] performSelectorOnMainThread: selector withObject: notification waitUntilDone: NO];
-		else
-			[[self delegate] performSelector: selector withObject: notification];
-	}
-		
-	if ([self notifyOnMainThread])
-		[center performSelectorOnMainThread: @selector(postNotification:) withObject: notification waitUntilDone: NO];		
-	else
-		[center postNotification: notification];
-}
 @end

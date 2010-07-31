@@ -16,6 +16,10 @@ NSString * const FATVolumeType		= @"msdos";
 NSString * const HFSVolumeType		= @"hfs";
 
 
+//FAT volumes smaller than 2MB will be treated as floppy drives by isFloppyDriveAtPath.
+#define BXFloppySizeCutoff 2 * 1024 * 1024;
+
+
 @implementation NSWorkspace (BXMountedVolumes)
 
 - (NSArray *) mountedVolumesOfType: (NSString *)requiredType
@@ -144,6 +148,21 @@ NSString * const HFSVolumeType		= @"hfs";
 		deviceName = [manager stringWithFileSystemRepresentation: fs.f_mntfromname length: strlen(fs.f_mntfromname)];
 	}
 	return deviceName;
+}
+
+- (BOOL) isFloppyVolumeAtPath: (NSString *)path
+{
+	if ([self volumeTypeForPath: path] != FATVolumeType) return NO;
+
+	return [self isFloppySizedVolumeAtPath: path];
+}
+
+- (BOOL) isFloppySizedVolumeAtPath: (NSString *)path
+{
+	NSFileManager *manager = [NSFileManager defaultManager];
+	NSDictionary *fsAttrs = [manager attributesOfFileSystemForPath: path error: nil];
+	NSUInteger volumeSize = [[fsAttrs valueForKey: NSFileSystemSize] integerValue];
+	return volumeSize <= BXFloppySizeCutoff;	
 }
 
 @end

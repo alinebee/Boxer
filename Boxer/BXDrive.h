@@ -29,9 +29,6 @@ typedef NSInteger BXDriveType;
 //Setting freeSpace to BXDefaultFreeSpace indicates that the drive should use whatever free space DOSBox thinks is best.
 static const NSInteger BXDefaultFreeSpace = -1;
 
-//FAT volumes smaller than 2MB will be treated as floppy drives.
-static const NSUInteger BXFloppySizeCutoff = 2 * 1024 * 1024;
-
 
 #pragma mark -
 #pragma mark Interface

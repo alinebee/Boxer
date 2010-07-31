@@ -44,4 +44,10 @@ extern NSString * const HFSVolumeType;
 //Returns nil if no matching device name could be determined.
 - (NSString *) BSDNameForVolumePath: (NSString *)volumePath;
 
+//Returns whether the specified volume is actually a DOS floppy disk.
+- (BOOL) isFloppyVolumeAtPath: (NSString *)volumePath;
+
+//Returns whether the specified volume is the size of a DOS floppy disk.
+- (BOOL) isFloppySizedVolumeAtPath: (NSString *)path;
+
 @end

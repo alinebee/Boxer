@@ -17,7 +17,7 @@
 #import "BXDrive.h"
 #import "BXDrivesInUseAlert.h"
 
-#import "BXFileTransfer.h"
+#import "BXDriveImport.h"
 
 #import "NSWorkspace+BXMountedVolumes.h"
 #import "NSWorkspace+BXFileTypes.h"
@@ -44,11 +44,7 @@
 - (void) _startTrackingChangesAtPath:	(NSString *)path;
 - (void) _stopTrackingChangesAtPath:	(NSString *)path;
 
-//Whether the specified path represents a 1.44MB volume
-- (BOOL) _isFloppySizedVolume: (NSString *)path;
 
-//The name to give the specified drive when importing
-- (NSString *) _importedNameForDrive: (BXDrive *)drive;
 @end
 
 
@@ -229,8 +225,7 @@
 	NSString *volumeType = [workspace volumeTypeForPath: filePath];
 	
 	//If it's on a data CD volume or floppy volume, use the base folder of the volume as the mount point
-	if ([volumeType isEqualToString: dataCDVolumeType] ||
-		([volumeType isEqualToString: FATVolumeType] && [self _isFloppySizedVolume: volumePath]))
+	if ([volumeType isEqualToString: dataCDVolumeType] || [workspace isFloppyVolumeAtPath: volumePath])
 	{
 		return volumePath;
 	}
@@ -276,8 +271,7 @@
 	NSString *volumeType = [workspace volumeTypeForPath: path];
 	
 	//If it's on a data CD volume or floppy volume, scan from the base folder of the volume
-	if ([volumeType isEqualToString: dataCDVolumeType] ||
-		([volumeType isEqualToString: FATVolumeType] && [self _isFloppySizedVolume: volumePath]))
+	if ([volumeType isEqualToString: dataCDVolumeType] || [workspace isFloppyVolumeAtPath: volumePath])
 	{
 		return volumePath;
 	}
@@ -336,15 +330,15 @@
 - (BOOL) mountFloppyVolumes
 {
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	NSArray *volumes = [workspace mountedVolumesOfType: FATVolumeType];
+	NSArray *volumePaths = [workspace mountedVolumesOfType: FATVolumeType];
 	BXEmulator *theEmulator = [self emulator];
 	
 	BOOL returnValue = NO;
-	for (NSString *volume in volumes)
+	for (NSString *volumePath in volumePaths)
 	{
-		if (![theEmulator pathIsMountedAsDrive: volume] && [self _isFloppySizedVolume: volume])
+		if (![theEmulator pathIsMountedAsDrive: volumePath] && [workspace isFloppySizedVolumeAtPath: volumePath])
 		{
-			BXDrive *drive = [BXDrive floppyDriveFromPath: volume atLetter: nil];
+			BXDrive *drive = [BXDrive floppyDriveFromPath: volumePath atLetter: nil];
 			drive = [theEmulator mountDrive: drive];
 			if (drive != nil) returnValue = YES;
 		}
@@ -432,21 +426,21 @@
 								 nil];
 	
 	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
-	NSString *volume		= [[theNotification userInfo] objectForKey: @"NSDevicePath"];
-	NSString *volumeType	= [workspace volumeTypeForPath: volume];
+	NSString *volumePath	= [[theNotification userInfo] objectForKey: @"NSDevicePath"];
+	NSString *volumeType	= [workspace volumeTypeForPath: volumePath];
 	
 	//Only mount volumes that are of an appropriate type
 	if (![automountedTypes containsObject: volumeType]) return;
 	
 	//Only mount CD audio volumes if they have no corresponding data volume
 	//(Otherwise, we mount the data volume instead and shadow it with the audio CD's tracks)
-	if ([volumeType isEqualToString: audioCDVolumeType] && [workspace dataVolumeOfAudioCD: volume]) return;
+	if ([volumeType isEqualToString: audioCDVolumeType] && [workspace dataVolumeOfAudioCD: volumePath]) return;
 	
 	//Only mount FAT volumes that are floppy-sized
-	if ([volumeType isEqualToString: FATVolumeType] && ![self _isFloppySizedVolume: volume]) return;
+	if ([volumeType isEqualToString: FATVolumeType] && ![workspace isFloppySizedVolumeAtPath: volumePath]) return;
 	
 	//Only mount volumes that aren't already mounted as drives
-	NSString *mountPoint = [self preferredMountPointForPath: volume];
+	NSString *mountPoint = [self preferredMountPointForPath: volumePath];
 	if ([[self emulator] pathIsMountedAsDrive: mountPoint]) return;
 	
 	//Alright, if we got this far then it's ok to mount a new drive for it
@@ -523,7 +517,7 @@
 		//The drive already exists within the gamebox, so of course it's bundled
 		if ([drivePath isRootedInPath: gameboxPath]) return YES;
 		
-		NSString *importedName = [self _importedNameForDrive: drive];
+		NSString *importedName = [BXDriveImport nameForDrive: drive];
 		NSString *importedPath = [[[self gamePackage] resourcePath] stringByAppendingPathComponent: importedName];
 		
 		//A file already exists with the same name as we would import it with,
@@ -536,59 +530,11 @@
 
 - (BOOL) driveIsImporting: (BXDrive *)drive
 {
-	for (BXFileTransfer *operation in [importQueue operations])
+	for (BXDriveImport *operation in [importQueue operations])
 	{
 		if ([operation isExecuting] && [[operation contextInfo] isEqualTo: drive]) return YES; 
 	}
 	return NO;
-}
-
-- (NSString *) _importedNameForDrive: (BXDrive *)drive
-{
-	NSString *importedName = nil;
-	NSString *drivePath = [drive path];
-	
-	NSFileManager *manager = [NSFileManager defaultManager];
-	BOOL isDir, exists = [manager fileExistsAtPath: drivePath isDirectory: &isDir];
-	
-	if (exists)
-	{
-		NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-		
-		NSSet *readyTypes = [[BXAppController mountableFolderTypes] setByAddingObjectsFromSet: [BXAppController mountableImageTypes]];
-		
-		//Folders of the above types don't need additional work to import: we can just use their filename directly
-		if ([workspace file: drivePath matchesTypes: readyTypes])
-		{
-			return [drivePath lastPathComponent];
-		}
-		//Otherwise, it will need to be made into a mountable folder
-		else if (isDir)
-		{
-			importedName = [drive label];
-			//If the drive has a letter, then prepend it in our standard format
-			if ([drive letter]) importedName = [NSString stringWithFormat: @"%@ %@", [drive letter], importedName];
-			
-			NSString *extension	= nil;
-			
-			//Give the mountable folder the proper file extension for its drive type
-			switch ([drive type])
-			{
-				case BXDriveCDROM:
-					extension = @"cdrom";
-					break;
-				case BXDriveFloppyDisk:
-					extension = @"floppy";
-					break;
-				case BXDriveHardDisk:
-				default:
-					extension = @"harddisk";
-					break;
-			}
-			importedName = [importedName stringByAppendingPathExtension: extension];
-		}
-	}
-	return importedName;
 }
 
 - (BOOL) canImportDrive: (BXDrive *)drive
@@ -607,25 +553,14 @@
 	return YES;
 }
 
-- (BXFileTransfer *) beginImportForDrive: (BXDrive *)drive
+- (BXDriveImport *) beginImportForDrive: (BXDrive *)drive
 {
-	
 	if ([self canImportDrive: drive])
 	{
-		NSString *destinationBase	= [[self gamePackage] resourcePath];
-		NSString *sourcePath		= [drive path];
+		NSString *destinationBase = [[self gamePackage] resourcePath];
 		
-		//Determine the appropriate name under which to bundle this drive
-		NSString *destinationName	= [self _importedNameForDrive: drive];
-		
-		//This means the source didn't exist or wasn't an importable filetype
-		if (!destinationName) return nil;
-		
-		NSString *destinationPath   = [destinationBase stringByAppendingPathComponent: destinationName];
-		
-		BXFileTransfer *driveImport = [BXFileTransfer transferFromPath: sourcePath toPath: destinationPath copyFiles: YES];
+		BXDriveImport *driveImport = [BXDriveImport importForDrive: drive toFolder: destinationBase copyFiles: YES];
 		[driveImport setDelegate: self];
-		[driveImport setContextInfo: drive];
 		
 		[importQueue addOperation: driveImport];
 		return driveImport;
@@ -635,7 +570,7 @@
 
 - (BOOL) cancelImportForDrive: (BXDrive *)drive
 {
-	for (BXFileTransfer *operation in [importQueue operations])
+	for (BXDriveImport *operation in [importQueue operations])
 	{
 		if (![operation isFinished] && [[operation contextInfo] isEqualTo: drive])
 		{
@@ -647,30 +582,30 @@
 }
 
 
-- (void) fileTransferWillStart: (NSNotification *)theNotification
+- (void) operationWillStart: (NSNotification *)theNotification
 {
 }
 
-- (void) fileTransferInProgress: (NSNotification *)theNotification
+- (void) operationInProgress: (NSNotification *)theNotification
 {
 }
 
-- (void) fileTransferWasCancelled: (NSNotification *)theNotification
+- (void) operationWasCancelled: (NSNotification *)theNotification
 {
 }
 
-- (void) fileTransferDidFinish: (NSNotification *)theNotification
+- (void) operationDidFinish: (NSNotification *)theNotification
 {
-	BXFileTransfer *transfer = [theNotification object];
-	BXDrive *drive = [transfer contextInfo];
+	BXDriveImport *import = [theNotification object];
+	BXDrive *drive = [import contextInfo];
 
-	if ([transfer succeeded])
+	if ([import succeeded])
 	{
 		//Once the drive has successfully imported, replace the old drive
 		//with the newly-imported version (if the old one is not in use by DOS)
 		if (![[self emulator] driveInUseAtLetter: [drive letter]])
 		{
-			NSString *destinationPath = [transfer destinationPath];
+			NSString *destinationPath = [import destinationPath];
 			BXDrive *importedDrive = [BXDrive driveFromPath: destinationPath atLetter: [drive letter]];
 			
 			//Temporarily suppress drive mount/unmount notifications
@@ -726,14 +661,6 @@
 {
 	UKFNSubscribeFileWatcher *watcher = [UKFNSubscribeFileWatcher sharedFileWatcher];
 	[watcher removePath: path];
-}
-
-- (BOOL) _isFloppySizedVolume: (NSString *)path
-{
-	NSFileManager *manager = [NSFileManager defaultManager];
-	NSDictionary *fsAttrs = [manager attributesOfFileSystemForPath: path error: nil];
-	NSUInteger volumeSize = [[fsAttrs valueForKey: NSFileSystemSize] integerValue];
-	return volumeSize <= BXFloppySizeCutoff;
 }
 
 @end

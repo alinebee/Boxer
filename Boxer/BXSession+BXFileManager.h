@@ -11,13 +11,13 @@
 //for opening files and folders from the OS X filesystem and creating new drives for them.
 
 #import "BXSession.h"
-#import "BXFileTransferDelegate.h"
+#import "BXOperationDelegate.h"
 
 @class BXDrive;
 @class BXDrivesInUseAlert;
-@class BXFileTransfer;
+@class BXDriveImport;
 
-@interface BXSession (BXFileManager) <BXEmulatorFileSystemDelegate, BXFileTransferDelegate>
+@interface BXSession (BXFileManager) <BXEmulatorFileSystemDelegate, BXOperationDelegate>
 
 #pragma mark -
 #pragma mark Filetype-related class methods
@@ -121,7 +121,7 @@
 //Imports the specified drive to a bundled drive folder in the gamebox.
 //This will occur asynchronously using a BXFileTransfer, which is returned by this method.
 //Will return nil if the drive cannot be imported.
-- (BXFileTransfer *) beginImportForDrive: (BXDrive *)drive;
+- (BXDriveImport *) beginImportForDrive: (BXDrive *)drive;
 
 //Cancel the in-progress import of the specified drive. Returns YES if the import was cancelled,
 //NO if the import had already finished or the drive was not being imported.

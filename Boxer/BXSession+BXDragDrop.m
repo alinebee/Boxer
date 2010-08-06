@@ -32,7 +32,7 @@
 }
 
 
-//Called by BXSessionWindowController draggingEntered: to figure out what we'd do with dropped files.
+//Called by BXDOSWindowController draggingEntered: to figure out what we'd do with dropped files.
 - (NSDragOperation) responseToDroppedFiles: (NSArray *)filePaths
 {
 	NSDragOperation response = NSDragOperationNone;
@@ -47,7 +47,7 @@
 	return response;
 }
 
-//Called by BXSessionWindowController draggingEntered: to figure out what we'd do with a dropped string.
+//Called by BXDOSWindowController draggingEntered: to figure out what we'd do with a dropped string.
 - (NSDragOperation) responseToDroppedString: (NSString *)droppedString
 {
 	if ([[self emulator] canAcceptPastedString: droppedString]) return NSDragOperationCopy;
@@ -55,7 +55,7 @@
 }
 
 
-//Called by BXSessionWindowController performDragOperation: when files have been drag-dropped onto Boxer.
+//Called by BXDOSWindowController performDragOperation: when files have been drag-dropped onto Boxer.
 - (BOOL) handleDroppedFiles: (NSArray *)filePaths withLaunching: (BOOL)launch
 {
 	BOOL returnValue = NO;
@@ -65,11 +65,11 @@
 	
 	//If any dropped files were successfully handled, return focus to the window so that the user can get on with using them.
 	
-	if (returnValue) [[[self mainWindowController] window] makeKeyAndOrderFront: self];
+	if (returnValue) [[[self DOSWindowController] window] makeKeyAndOrderFront: self];
 	return returnValue;
 }
 
-//Called by BXSessionWindowController performDragOperation: when a string has been drag-dropped onto Boxer.
+//Called by BXDOSWindowController performDragOperation: when a string has been drag-dropped onto Boxer.
 - (BOOL) handleDroppedString: (NSString *)droppedString
 {
 	return [[self emulator] handlePastedString: droppedString];

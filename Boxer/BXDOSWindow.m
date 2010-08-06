@@ -5,18 +5,18 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-#import "BXSessionWindow.h"
-#import "BXSessionWindowController.h"
+#import "BXDOSWindow.h"
+#import "BXDOSWindowController.h"
 
 #define BXFrameResizeDelay 0.2
 #define BXFrameResizeDelayFalloff 7.5
 
-@implementation BXSessionWindow
+@implementation BXDOSWindow
 
 //Overridden to make our required controller type explicit
-- (BXSessionWindowController *) windowController
+- (BXDOSWindowController *) windowController
 {
-	return (BXSessionWindowController *)[super windowController];
+	return (BXDOSWindowController *)[super windowController];
 }
 
 //Overridden to smooth out the speed of shorter resize animations,

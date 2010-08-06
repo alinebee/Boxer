@@ -11,6 +11,7 @@
 #import <Cocoa/Cocoa.h>
 
 @interface NSWorkspace (BXFileTypes)
+
 //Returns whether the file at the specified path matches any of the specified UTI filetypes:
 //i.e. whether the file's UTI is equal to *or inherits from* any of those types.
 - (BOOL) file: (NSString *)filePath matchesTypes: (NSSet *)acceptedTypes;
@@ -19,7 +20,4 @@
 //or nil if no folder matched. This may return filePath, if the file itself matches the specified types.
 - (NSString *)parentOfFile: (NSString *)filePath matchingTypes: (NSSet *)acceptedTypes;
 
-//Returns whether the file at the specified path is a windows-only executable.
-//(This is determined using the UNIX file command, and occasionally results in false positives.)
-- (BOOL) isWindowsExecutableAtPath: (NSString *)filePath;
 @end

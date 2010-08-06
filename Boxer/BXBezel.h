@@ -10,7 +10,7 @@
 //Unfortunately it cannot be used at present, because CALayers don't play nice with NSOpenGLViews.
 
 #import <QuartzCore/QuartzCore.h>
-#import "BXSessionWindowController.h"
+#import "BXDOSWindowController.h"
 
 @interface BXBezel : CATextLayer
 {
@@ -26,7 +26,7 @@
 @end
 
 
-@interface BXNotifiableWindowController : BXSessionWindowController
+@interface BXNotifiableWindowController : BXDOSWindowController
 {
 	BXBezel	*notificationBezel;
 }

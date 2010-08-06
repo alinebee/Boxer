@@ -10,7 +10,7 @@
 #import "BXGameProfile.h"
 #import "BXDrive.h"
 #import "BXAppController.h"
-#import "BXSessionWindowController+BXRenderController.h"
+#import "BXDOSWindowController+BXRenderController.h"
 #import "BXSession+BXFileManager.h"
 #import "BXEmulatorConfiguration.h"
 #import "BXCloseAlert.h"
@@ -35,6 +35,8 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 @property (readwrite, retain, nonatomic) NSMutableDictionary *gameSettings;
 @property (readwrite, copy, nonatomic) NSString *activeProgramPath;
 @property (readwrite, retain, nonatomic) NSArray *drives;
+
+@property (readwrite, assign, nonatomic, getter=isEmulating) BOOL emulating;
 
 //Create our BXEmulator instance and starts its main loop.
 //Called internally by [BXSession start], deferred to the end of the main thread's event loop to prevent
@@ -66,7 +68,7 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 
 @implementation BXSession
 
-@synthesize mainWindowController;
+@synthesize DOSWindowController;
 @synthesize gamePackage;
 @synthesize emulator;
 @synthesize targetPath;
@@ -74,6 +76,7 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 @synthesize gameProfile;
 @synthesize gameSettings;
 @synthesize drives;
+@synthesize emulating;
 
 
 #pragma mark -
@@ -97,7 +100,7 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 
 - (void) dealloc
 { 	
-	[self setMainWindowController: nil],[mainWindowController release];
+	[self setDOSWindowController: nil],	[DOSWindowController release];
 	[self setEmulator: nil],			[emulator release];
 	[self setGamePackage: nil],			[gamePackage release];
 	[self setGameProfile: nil],			[gameProfile release];
@@ -126,19 +129,19 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 
 - (void) makeWindowControllers
 {
-	id controller = [[BXSessionWindowController alloc] initWithWindowNibName: @"DOSWindow"];
+	id controller = [[BXDOSWindowController alloc] initWithWindowNibName: @"DOSWindow"];
 	[self addWindowController:		controller];
-	[self setMainWindowController:	controller];
+	[self setDOSWindowController:	controller];
 	[controller setShouldCloseDocument: YES];
 	
 	[controller release];
 }
 
-- (void) removeWindowController:(NSWindowController *)windowController
+- (void) removeWindowController: (NSWindowController *)windowController
 {
-	if (windowController == [self mainWindowController])
+	if (windowController == [self DOSWindowController])
 	{
-		[self setMainWindowController: nil];
+		[self setDOSWindowController: nil];
 	}
 	[super removeWindowController: windowController];
 }
@@ -214,11 +217,6 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 		gameProfile = [profile retain];
 		[[self emulator] setGameProfile: gameProfile];
 	}
-}
-
-- (BOOL) isEmulating
-{
-	return hasConfigured;
 }
 
 //Overridden solely so that NSDocumentController will call canCloseDocumentWithDelegate:
@@ -593,17 +591,17 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 
 - (void) frameComplete: (BXFrameBuffer *)frame
 {
-	[[self mainWindowController] updateWithFrame: frame];
+	[[self DOSWindowController] updateWithFrame: frame];
 }
 
 - (NSSize) maxFrameSize
 {
-	return [[self mainWindowController] maxFrameSize];
+	return [[self DOSWindowController] maxFrameSize];
 }
 
 - (NSSize) viewportSize
 {
-	return [[self mainWindowController] viewportSize];
+	return [[self DOSWindowController] viewportSize];
 }
 
 
@@ -618,12 +616,12 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	if (![self activeProgramPath])
 	{
 		[self setActiveProgramPath: [[notification userInfo] objectForKey: @"localPath"]];
-		[mainWindowController synchronizeWindowTitleWithDocumentName];
+		[DOSWindowController synchronizeWindowTitleWithDocumentName];
 		
 		//Hide the program picker after launching the default program 
 		if ([[self activeProgramPath] isEqualToString: [gamePackage targetPath]])
 		{
-			[[self mainWindowController] setProgramPanelShown: NO];
+			[[self DOSWindowController] setProgramPanelShown: NO];
 		}
 	}
 }
@@ -647,15 +645,15 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 {	
 	//Clear the active program
 	[self setActiveProgramPath: nil];
-	[mainWindowController synchronizeWindowTitleWithDocumentName];
+	[DOSWindowController synchronizeWindowTitleWithDocumentName];
 	
 	//Show the program chooser after returning to the DOS prompt
 	if ([self isGamePackage] && [[self executables] count])
 	{
-		BOOL panelShown = [[self mainWindowController] programPanelShown];
+		BOOL panelShown = [[self DOSWindowController] programPanelShown];
 		
 		//Show only after a delay, so that the window has time to resize after quitting the game
-		if (!panelShown) [[self mainWindowController] performSelector: @selector(toggleProgramPanelShown:)
+		if (!panelShown) [[self DOSWindowController] performSelector: @selector(toggleProgramPanelShown:)
 														   withObject: self
 														   afterDelay: 0.5];
 	}
@@ -665,7 +663,7 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	{
 		//Drop out of fullscreen mode when we return to the prompt,
 		//if we automatically switched into fullscreen at startup
-		[[self mainWindowController] exitFullScreen: self];
+		[[self DOSWindowController] exitFullScreen: self];
 	}
 }
 
@@ -675,7 +673,7 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	{
 		//Switch to fullscreen mode automatically after a brief delay
 		//This will be cancelled if the context exits within that time - see below
-		[[self mainWindowController] performSelector: @selector(toggleFullScreenWithZoom:) 
+		[[self DOSWindowController] performSelector: @selector(toggleFullScreenWithZoom:) 
 										  withObject: [NSNumber numberWithBool: YES] 
 										  afterDelay: 0.5];
 	}
@@ -683,7 +681,7 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 
 - (void) didEndGraphicalContext: (NSNotification *)notification
 {
-	[NSObject cancelPreviousPerformRequestsWithTarget: [self mainWindowController]
+	[NSObject cancelPreviousPerformRequestsWithTarget: [self DOSWindowController]
 											 selector: @selector(toggleFullScreenWithZoom:)
 											   object: [NSNumber numberWithBool: YES]];
 }
@@ -737,6 +735,9 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	
 	//Start up the emulator itself.
 	[[self emulator] start];
+	
+	//Flag that we're no longer emulating.
+	[self setEmulating: NO];
 	
 	//Close the document once we're done.
 	[self close];
@@ -837,9 +838,8 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	}
 	
 	//Flag that we have completed our initial game configuration.
-	[self willChangeValueForKey: @"isEmulating"];
 	hasConfigured = YES;
-	[self didChangeValueForKey: @"isEmulating"];
+	[self setEmulating: YES];
 	
 	//From here on out, it's OK to show drive notifications.
 	showDriveNotifications = YES;

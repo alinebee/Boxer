@@ -8,7 +8,7 @@
 
 #import "BXStatusBarController.h"
 #import "BXAppController.h"
-#import "BXSessionWindowController+BXRenderController.h"
+#import "BXDOSWindowController+BXRenderController.h"
 #import "BXInspectorController.h"
 #import "BXInputController.h"
 #import "BXSession.h"
@@ -16,9 +16,9 @@
 
 @implementation BXStatusBarController
 
-- (BXSessionWindowController *)controller
+- (BXDOSWindowController *)controller
 {
-	return (BXSessionWindowController *)[[[self view] window] windowController];
+	return (BXDOSWindowController *)[[[self view] window] windowController];
 }
 
 - (void) awakeFromNib

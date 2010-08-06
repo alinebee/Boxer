@@ -7,7 +7,6 @@
 
 
 #import "NSWorkspace+BXFileTypes.h"
-#import "RegexKitLite.h"
 
 @implementation NSWorkspace (BXFileTypes)
 
@@ -41,35 +40,4 @@
 	return nil;
 }
 
-- (BOOL) isWindowsExecutableAtPath: (NSString *)filePath
-{
-	//Short-circuit: only bother checking EXE files.
-	if (![self file: filePath matchesTypes: [NSSet setWithObject: @"com.microsoft.windows-executable"]]) return NO;
-	
-	NSPipe *outputPipe = [NSPipe pipe];
-	NSTask *fileMagic = [[NSTask alloc] init];
-	
-	[fileMagic setLaunchPath: @"/usr/bin/file"];
-	[fileMagic setArguments: [NSArray arrayWithObjects: @"-b", filePath, nil]];
-	[fileMagic setStandardOutput: outputPipe];
-	
-	[fileMagic launch];
-	[fileMagic waitUntilExit];
-	
-	int status = [fileMagic terminationStatus];
-	[fileMagic release];
-	
-	if (status == 0)
-	{
-		NSData *output = [[outputPipe fileHandleForReading] readDataToEndOfFile];
-		NSString *outputString = [[NSString alloc] initWithData: output encoding: NSUTF8StringEncoding];
-		
-		BOOL isWindowsOnly = [outputString isMatchedByRegex: @"[^(OS/2 or )]Windows"];
-		[outputString release];
-		return isWindowsOnly;
-	}
-	//If there was a problem, assume the file wasn't a windows executable
-	//TODO: we should populate an error message
-	else return NO;
-}
 @end

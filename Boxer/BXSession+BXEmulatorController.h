@@ -47,10 +47,34 @@ const NSUInteger BXMaxFrameskip = 9;
 #pragma mark -
 #pragma mark Properties
 
-@property (assign, getter=isAutoSpeed) BOOL autoSpeed;
-@property (assign) NSInteger fixedSpeed;
-@property (assign) NSUInteger frameskip;
-@property (assign, getter=isDynamic) BOOL dynamic;
+//The number of frames to be skipped for each frame that is played
+@property (assign, nonatomic) NSUInteger frameskip;
+
+//The fixed (non-maximised) CPU speed
+@property (assign, nonatomic) NSInteger fixedSpeed;
+
+//Whether the CPU speed is scaled to the maximum possible ("auto" is a misnomer)
+@property (assign, nonatomic, getter=isAutoSpeed) BOOL autoSpeed;
+
+//The slider speed snaps the CPU speed to fixed increments and automatically bumps
+//it to maximum speed if set to the highest limit. Used by speed slider in CPU panel.
+@property (assign, nonatomic) NSInteger sliderSpeed;
+
+//Whether the CPU is in dynamic core mode
+@property (assign, nonatomic, getter=isDynamic) BOOL dynamic;
+
+
+//Whether the current frameskip level is at the minimum or maximum bounds.
+@property (readonly, nonatomic) BOOL frameskipAtMinimum; 
+@property (readonly, nonatomic) BOOL frameskipAtMaximum;
+
+//Whether the current CPU speed is at the minimum or maximum bounds.
+@property (readonly, nonatomic) BOOL speedAtMinimum;
+@property (readonly, nonatomic) BOOL speedAtMaximum;
+
+//Localised human-readable descriptions of the current CPU speed/frameskip setting.
+@property (readonly, nonatomic) NSString *speedDescription;
+@property (readonly, nonatomic) NSString *frameskipDescription;
 
 
 #pragma mark -
@@ -64,53 +88,38 @@ const NSUInteger BXMaxFrameskip = 9;
 //Returns a speed snapped to the appropriate increment for whichever CPU range that speed falls into.
 + (NSInteger) snappedSpeed: (NSInteger) rawSpeed;
 
-//Returns a localised human-readable string describing the CPU class corresponding to the specified speed.
+//Returns a localised human-readable string describing the CPU class (AT, 386, Pentium etc.)
+//corresponding to the specified speed.
 + (NSString *) cpuClassFormatForSpeed: (NSInteger)speed;
 
 
 #pragma mark -
-#pragma mark Interface actions and bindings
+#pragma mark Interface actions and validation
 
-- (IBAction) incrementFrameSkip: (id)sender;	//Increases the current frameskip by 1.
-- (IBAction) decrementFrameSkip: (id)sender;	//Decreases the current frameskip by 1.
+//Increase/decrease the current frameskip by 1.
+- (IBAction) incrementFrameSkip: (id)sender;	
+- (IBAction) decrementFrameSkip: (id)sender;
+
+//Increase/decrease the CPU speed by an appropriate increment,
+//according to incrementAmountForSpeed:goingUp:
+- (IBAction) incrementSpeed: (id)sender;	
+- (IBAction) decrementSpeed: (id)sender;
+
+//Caps the speed within minimum and maximum limits
+- (BOOL) validateFixedSpeed: (id *)ioValue error: (NSError **)outError;
 
 //Caps the frameskip amount within minimum and maximum limits
 - (BOOL) validateFrameskip: (id *)ioValue error: (NSError **)outError;
 
-- (IBAction) incrementSpeed: (id)sender;	//Increases the CPU speed by an appropriate increment, according to incrementAmountForSpeed:.
-- (IBAction) decrementSpeed: (id)sender;	//Decreases the CPU speed by an appropriate decrement.
-												
-//Caps the speed within minimum and maximum limits
-- (BOOL) validateFixedSpeed: (id *)ioValue error: (NSError **)outError;
+//Snaps the speed to set increments, and switches to auto speed above the maximum speed.
+- (BOOL) validateSliderSpeed: (id *)ioValue error: (NSError **)outError;
 
-//Returns whether the current frameskip level is at the minimum or maximum bounds.
-- (BOOL) frameskipAtMinimum; 
-- (BOOL) frameskipAtMaximum;
-
-//Returns whether the current CPU speed is at the minimum or maximum bounds.
-- (BOOL) speedAtMinimum;
-- (BOOL) speedAtMaximum;
-
-
-//Used by UI speed sliders to set the CPU speed. These snap the speed to appropriate increments.
-- (void) setSliderSpeed: (NSInteger)speed;
-- (NSInteger) sliderSpeed;
-
-
-#pragma mark -
-#pragma mark Describing emulation state
-
-//Returns a localised human-readable description of the current CPU speed setting.
-- (NSString *) speedDescription;
-
-//Returns a localised human-readable description of the frameskip setting.
-- (NSString *) frameskipDescription;
-
+//Paste data from the clipboard into the DOS session. Currently disabled.
+- (IBAction) paste: (id)sender;
 
 #pragma mark -
 #pragma mark Copy-paste handling
 
-- (IBAction) paste: (id)sender;
-- (BOOL) canPaste;
+- (BOOL) _canPasteFromPasteboard: (NSPasteboard *)pboard;
 
 @end

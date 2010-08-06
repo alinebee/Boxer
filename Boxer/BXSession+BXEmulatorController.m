@@ -15,10 +15,21 @@
 #import "BXVideoHandler.h"
 #import "BXEmulatorConfiguration.h"
 
-#import "BXSessionWindowController+BXRenderController.h"
+#import "BXDOSWindowController+BXRenderController.h"
+
+
+#pragma mark Private method declarations
+
+@interface BXSession ()
+
+//Whether we can accept pasted data from the specified pasteboard.
+//Copy-paste is disabled, so this currently always returns NO.
+- (BOOL) _canPasteFromPasteboard: (NSPasteboard *)pboard;
+
+@end
+
 
 @implementation BXSession (BXEmulatorController)
-
 
 #pragma mark -
 #pragma mark Speed-related helper methods
@@ -187,6 +198,34 @@
 }
 
 
+- (void) setSliderSpeed: (NSInteger)speed
+{
+	//If we're at the maximum speed, bump it into auto-throttling mode
+	if (speed >= BXMaxSpeedThreshold) [self setAutoSpeed: YES];
+	
+	//Otherwise, set the fixed speed
+	else [self setFixedSpeed: speed];
+}
+
+- (NSInteger) sliderSpeed
+{
+	//Report the max fixed speed if we're in auto-throttling mode
+	return ([self isAutoSpeed]) ? BXMaxSpeedThreshold : [self fixedSpeed];
+}
+
+//Snap fixed speed to even increments, unless the Option key is held down
+- (BOOL) validateSliderSpeed: (id *)ioValue error: (NSError **)outError
+{
+	if (!([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask))
+	{
+		NSInteger speed			= [*ioValue integerValue]; 
+		NSInteger snappedSpeed	= [[self class] snappedSpeed: speed];
+		*ioValue = [NSNumber numberWithInteger: snappedSpeed];
+	}
+	return YES;
+}
+
+
 - (BOOL) isDynamic	{ return [emulator coreMode] == BXCoreDynamic; }
 
 - (void) setDynamic: (BOOL)dynamic
@@ -213,7 +252,8 @@
 	//Defined in BXFileManager
 	if (theAction == @selector(openInDOS:))				return [emulator isAtPrompt];
 
-	if (theAction == @selector(paste:))	return [self canPaste];
+	if (theAction == @selector(paste:))
+		return [self _canPasteFromPasteboard: [NSPasteboard generalPasteboard]];
 	
 	return [super validateUserInterfaceItem: theItem];
 }
@@ -227,8 +267,8 @@
 - (BOOL) frameskipAtMaximum	{ return [self frameskip] >= BXMaxFrameskip; }
 
 
-//Handling paste
-//--------------
+#pragma mark -
+#pragma mark Copy-paste
 
 - (IBAction) paste: (id)sender
 {
@@ -248,10 +288,8 @@
 	[emulator handlePastedString: pastedString];
 }
 
-- (BOOL) canPaste
+- (BOOL) _canPasteFromPasteboard: (NSPasteboard *)pboard 
 {
-	NSPasteboard *pboard = [NSPasteboard generalPasteboard];
-
 	NSArray *acceptedPasteTypes = [NSArray arrayWithObjects: NSFilenamesPboardType, NSStringPboardType, nil];
 	NSString *bestType = [pboard availableTypeFromArray: acceptedPasteTypes];
 	NSString *pastedString;
@@ -264,38 +302,6 @@
 	}
 	else pastedString = [pboard stringForType: NSStringPboardType];
 	return [emulator canAcceptPastedString: pastedString];
-}
-
-
-//Wrapping CPU speed state
-//------------------------
-//We wrap the slider's speed value so that we can snap it to the nearest increment, and also switch to auto-throttled speed when it hits the highest speed setting
-
-- (void) setSliderSpeed: (NSInteger)speed
-{
-	//If we're at the maximum speed, bump it into auto-throttling mode
-	if (speed >= BXMaxSpeedThreshold) [self setAutoSpeed: YES];
-	
-	//Otherwise, set the fixed speed
-	else [self setFixedSpeed: speed];
-}
-
-- (NSInteger) sliderSpeed
-{
-	//Report the max fixed speed if we're in auto-throttling mode
-	return ([self isAutoSpeed]) ? BXMaxSpeedThreshold : [self fixedSpeed];
-}
-
-//Snap fixed speed to even increments, unless the Option key is held down
-- (BOOL)validateSliderSpeed: (id *)ioValue error: (NSError **)outError
-{
-	if (!([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask))
-	{
-		NSInteger speed			= [*ioValue integerValue]; 
-		NSInteger snappedSpeed	= [[self class] snappedSpeed: speed];
-		*ioValue = [NSNumber numberWithInteger: snappedSpeed];
-	}
-	return YES;
 }
 
 
@@ -329,8 +335,8 @@
 	return [NSString stringWithFormat: format, frameskip + 1];
 }
 
-+ (NSSet *) keyPathsForValuesAffectingSliderSpeed			{ return [NSSet setWithObjects: @"isEmulating", @"fixedSpeed", @"autoSpeed", nil]; }
-+ (NSSet *) keyPathsForValuesAffectingSpeedDescription		{ return [NSSet setWithObject: @"sliderSpeed"]; }
-+ (NSSet *) keyPathsForValuesAffectingFrameskipDescription	{ return [NSSet setWithObjects: @"isEmulating", @"frameskip", nil]; }
++ (NSSet *) keyPathsForValuesAffectingSliderSpeed			{ return [NSSet setWithObjects: @"emulating", @"fixedSpeed", @"autoSpeed", nil]; }
++ (NSSet *) keyPathsForValuesAffectingSpeedDescription		{ return [NSSet setWithObjects: @"emulating", @"fixedSpeed", @"autoSpeed", nil]; }
++ (NSSet *) keyPathsForValuesAffectingFrameskipDescription	{ return [NSSet setWithObjects: @"emulating", @"frameskip", nil]; }
 
 @end

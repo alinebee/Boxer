@@ -10,6 +10,9 @@
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		9F13F9D011F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F13F9CF11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m */; };
+		9F1CBA58120C796C00C5E926 /* BXImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBA57120C796C00C5E926 /* BXImport.m */; };
+		9F1CBA97120C7D9000C5E926 /* BXImportWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBA96120C7D9000C5E926 /* BXImportWindowController.m */; };
+		9F1CBAAB120C830600C5E926 /* BXImport+BXImportPolicies.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBAAA120C830600C5E926 /* BXImport+BXImportPolicies.m */; };
 		9F1D50010F5C0966009F0AB9 /* BXEmulator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */; };
 		9F20C28B11E5D848005AF541 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28A11E5D848005AF541 /* Sparkle.framework */; };
 		9F20C28E11E5D8B4005AF541 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28D11E5D8B4005AF541 /* QTKit.framework */; };
@@ -37,6 +40,7 @@
 		9F466AFC11A92C4B00C50965 /* UserDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9F466AFB11A92C4B00C50965 /* UserDefaults.plist */; };
 		9F4971BB108EF02F00282261 /* BXEmulator+BXDOSFileSystem.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F675DE40F8F4D49001FCE5F /* BXEmulator+BXDOSFileSystem.mm */; };
 		9F4E042C0F67E72300427D50 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F4E042B0F67E72300427D50 /* AudioToolbox.framework */; };
+		9F53411812059E7900BCBF24 /* NSWorkspace+BXExecutableTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F53411712059E7900BCBF24 /* NSWorkspace+BXExecutableTypes.m */; };
 		9F544A8010AB44C40030FED5 /* BXThemes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F544A7F10AB44C40030FED5 /* BXThemes.m */; };
 		9F573C5A0F8E18B10089D8B7 /* NSWorkspace+BXMountedVolumes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F573C590F8E18B10089D8B7 /* NSWorkspace+BXMountedVolumes.m */; };
 		9F573D390F8E69AF0089D8B7 /* BXPackage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F573D380F8E69AF0089D8B7 /* BXPackage.m */; };
@@ -174,7 +178,7 @@
 		9F6BA6FD10A9FBAB005A3E2A /* Growl.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F6BA6F810A9FB92005A3E2A /* Growl.framework */; };
 		9F6BA70510A9FC77005A3E2A /* BXGrowlController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F6BA70410A9FC77005A3E2A /* BXGrowlController.m */; };
 		9F765649119403520082A06A /* BXInputController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F765648119403520082A06A /* BXInputController.m */; };
-		9F76C8550F6509EF0068EA1C /* BXSessionWindowController+BXRenderController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F76C8540F6509EF0068EA1C /* BXSessionWindowController+BXRenderController.m */; };
+		9F76C8550F6509EF0068EA1C /* BXDOSWindowController+BXRenderController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F76C8540F6509EF0068EA1C /* BXDOSWindowController+BXRenderController.m */; };
 		9F76D1B910CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F76D1B810CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.m */; };
 		9F76D3F710CBC3B300C3B081 /* GNU General Public License.txt in Resources */ = {isa = PBXBuildFile; fileRef = 9F76D3F510CBC3B300C3B081 /* GNU General Public License.txt */; };
 		9F76D45610CBE5C500C3B081 /* BXSession+BXDragDrop.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F76D45510CBE5C500C3B081 /* BXSession+BXDragDrop.m */; };
@@ -223,8 +227,8 @@
 		9FBC352C0F56C7B7001811F2 /* BXAppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC351E0F56C7B7001811F2 /* BXAppController.m */; };
 		9FBC352F0F56C7B7001811F2 /* BXSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35210F56C7B7001811F2 /* BXSession.m */; };
 		9FBC35310F56C7B7001811F2 /* BXEmulator+BXShell.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35230F56C7B7001811F2 /* BXEmulator+BXShell.mm */; };
-		9FBC35320F56C7B7001811F2 /* BXSessionWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35240F56C7B7001811F2 /* BXSessionWindow.m */; };
-		9FBC35330F56C7B7001811F2 /* BXSessionWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35250F56C7B7001811F2 /* BXSessionWindowController.m */; };
+		9FBC35320F56C7B7001811F2 /* BXDOSWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35240F56C7B7001811F2 /* BXDOSWindow.m */; };
+		9FBC35330F56C7B7001811F2 /* BXDOSWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35250F56C7B7001811F2 /* BXDOSWindowController.m */; };
 		9FBC35340F56C7B7001811F2 /* NSWindow+BXWindowSizing.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35260F56C7B7001811F2 /* NSWindow+BXWindowSizing.m */; };
 		9FBC35360F56C7B7001811F2 /* BXGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35280F56C7B7001811F2 /* BXGeometry.m */; };
 		9FBC3C160F56D6E8001811F2 /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C140F56D6E8001811F2 /* SDL.framework */; };
@@ -258,9 +262,6 @@
 		9FE8265C10F0EBA000F1B03E /* 35DisketteShine.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE8265A10F0EBA000F1B03E /* 35DisketteShine.png */; };
 		9FE8265D10F0EBA000F1B03E /* 35Diskette.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE8265B10F0EBA000F1B03E /* 35Diskette.png */; };
 		9FE90BF711F8D1DC003CFFFF /* BXDelegatedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE90BF611F8D1DC003CFFFF /* BXDelegatedView.m */; };
-		9FEAA3DA120424E50085F008 /* BXGameImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEAA3D9120424E50085F008 /* BXGameImport.m */; };
-		9FEAA3DF1204422F0085F008 /* BXUninstalledGameImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEAA3DE1204422F0085F008 /* BXUninstalledGameImport.m */; };
-		9FEAA3E2120443C20085F008 /* BXPlayableGameImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEAA3E1120443C20085F008 /* BXPlayableGameImport.m */; };
 		9FEAA3EC1204595B0085F008 /* BXOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEAA3EB1204595B0085F008 /* BXOperation.m */; };
 		9FEAA451120478000085F008 /* BXDriveImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEAA450120478000085F008 /* BXDriveImport.m */; };
 		9FECE19011A31B8B00E0EBB6 /* BXRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FECE18F11A31B8B00E0EBB6 /* BXRenderer.m */; };
@@ -301,6 +302,12 @@
 		8D1107320486CEB800E47090 /* Boxer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Boxer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F13F9CE11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+BXTemporaryFiles.h"; sourceTree = "<group>"; };
 		9F13F9CF11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+BXTemporaryFiles.m"; sourceTree = "<group>"; };
+		9F1CBA56120C796C00C5E926 /* BXImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImport.h; sourceTree = "<group>"; };
+		9F1CBA57120C796C00C5E926 /* BXImport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXImport.m; sourceTree = "<group>"; };
+		9F1CBA95120C7D9000C5E926 /* BXImportWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImportWindowController.h; sourceTree = "<group>"; };
+		9F1CBA96120C7D9000C5E926 /* BXImportWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXImportWindowController.m; sourceTree = "<group>"; };
+		9F1CBAA9120C830600C5E926 /* BXImport+BXImportPolicies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXImport+BXImportPolicies.h"; sourceTree = "<group>"; };
+		9F1CBAAA120C830600C5E926 /* BXImport+BXImportPolicies.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXImport+BXImportPolicies.m"; sourceTree = "<group>"; };
 		9F1D4FFF0F5C0966009F0AB9 /* BXEmulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulator.h; sourceTree = "<group>"; };
 		9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXEmulator.mm; sourceTree = "<group>"; };
 		9F20C28A11E5D848005AF541 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
@@ -336,6 +343,8 @@
 		9F466A4811A924EC00C50965 /* Shader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Shader.m; path = Boxer/Shader.m; sourceTree = SOURCE_ROOT; };
 		9F466AFB11A92C4B00C50965 /* UserDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UserDefaults.plist; sourceTree = "<group>"; };
 		9F4E042B0F67E72300427D50 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
+		9F53411612059E7900BCBF24 /* NSWorkspace+BXExecutableTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSWorkspace+BXExecutableTypes.h"; sourceTree = "<group>"; };
+		9F53411712059E7900BCBF24 /* NSWorkspace+BXExecutableTypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSWorkspace+BXExecutableTypes.m"; sourceTree = "<group>"; };
 		9F544A7E10AB44C40030FED5 /* BXThemes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXThemes.h; sourceTree = "<group>"; };
 		9F544A7F10AB44C40030FED5 /* BXThemes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXThemes.m; sourceTree = "<group>"; };
 		9F573C580F8E18B10089D8B7 /* NSWorkspace+BXMountedVolumes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSWorkspace+BXMountedVolumes.h"; sourceTree = "<group>"; };
@@ -610,8 +619,8 @@
 		9F6BA70410A9FC77005A3E2A /* BXGrowlController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGrowlController.m; sourceTree = "<group>"; };
 		9F765647119403520082A06A /* BXInputController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXInputController.h; sourceTree = "<group>"; };
 		9F765648119403520082A06A /* BXInputController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXInputController.m; sourceTree = "<group>"; };
-		9F76C8530F6509EF0068EA1C /* BXSessionWindowController+BXRenderController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXSessionWindowController+BXRenderController.h"; sourceTree = "<group>"; };
-		9F76C8540F6509EF0068EA1C /* BXSessionWindowController+BXRenderController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXSessionWindowController+BXRenderController.m"; sourceTree = "<group>"; };
+		9F76C8530F6509EF0068EA1C /* BXDOSWindowController+BXRenderController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXDOSWindowController+BXRenderController.h"; sourceTree = "<group>"; };
+		9F76C8540F6509EF0068EA1C /* BXDOSWindowController+BXRenderController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXDOSWindowController+BXRenderController.m"; sourceTree = "<group>"; };
 		9F76D1B710CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSWorkspace+BXFileTypes.h"; sourceTree = "<group>"; };
 		9F76D1B810CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSWorkspace+BXFileTypes.m"; sourceTree = "<group>"; };
 		9F76D3F610CBC3B300C3B081 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = English; path = "English.lproj/GNU General Public License.txt"; sourceTree = "<group>"; };
@@ -683,8 +692,8 @@
 		9FBC35110F56C7B7001811F2 /* BXAppController.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = BXAppController.h; sourceTree = "<group>"; };
 		9FBC35140F56C7B7001811F2 /* BXSession.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = BXSession.h; sourceTree = "<group>"; };
 		9FBC35160F56C7B7001811F2 /* BXEmulator+BXShell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXEmulator+BXShell.h"; sourceTree = "<group>"; };
-		9FBC35170F56C7B7001811F2 /* BXSessionWindow.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = BXSessionWindow.h; sourceTree = "<group>"; };
-		9FBC35180F56C7B7001811F2 /* BXSessionWindowController.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = BXSessionWindowController.h; sourceTree = "<group>"; };
+		9FBC35170F56C7B7001811F2 /* BXDOSWindow.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = BXDOSWindow.h; sourceTree = "<group>"; };
+		9FBC35180F56C7B7001811F2 /* BXDOSWindowController.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = BXDOSWindowController.h; sourceTree = "<group>"; };
 		9FBC35190F56C7B7001811F2 /* NSWindow+BXWindowSizing.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = "NSWindow+BXWindowSizing.h"; sourceTree = "<group>"; };
 		9FBC351B0F56C7B7001811F2 /* BXGeometry.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = BXGeometry.h; sourceTree = "<group>"; };
 		9FBC351C0F56C7B7001811F2 /* BXBezel.m */ = {isa = PBXFileReference; comments = "Disabled for now because it doesn't play nice with SDL's OpenGL output. Once it is added, we will need to link in the QuartzCore framework."; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = BXBezel.m; sourceTree = "<group>"; };
@@ -692,8 +701,8 @@
 		9FBC351E0F56C7B7001811F2 /* BXAppController.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = BXAppController.m; sourceTree = "<group>"; };
 		9FBC35210F56C7B7001811F2 /* BXSession.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = BXSession.m; sourceTree = "<group>"; };
 		9FBC35230F56C7B7001811F2 /* BXEmulator+BXShell.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "BXEmulator+BXShell.mm"; sourceTree = "<group>"; };
-		9FBC35240F56C7B7001811F2 /* BXSessionWindow.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = BXSessionWindow.m; sourceTree = "<group>"; };
-		9FBC35250F56C7B7001811F2 /* BXSessionWindowController.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = BXSessionWindowController.m; sourceTree = "<group>"; };
+		9FBC35240F56C7B7001811F2 /* BXDOSWindow.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = BXDOSWindow.m; sourceTree = "<group>"; };
+		9FBC35250F56C7B7001811F2 /* BXDOSWindowController.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = BXDOSWindowController.m; sourceTree = "<group>"; };
 		9FBC35260F56C7B7001811F2 /* NSWindow+BXWindowSizing.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = "NSWindow+BXWindowSizing.m"; sourceTree = "<group>"; };
 		9FBC35280F56C7B7001811F2 /* BXGeometry.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = BXGeometry.m; sourceTree = "<group>"; };
 		9FBC3A7F0F56CEA2001811F2 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
@@ -738,12 +747,6 @@
 		9FE8265B10F0EBA000F1B03E /* 35Diskette.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 35Diskette.png; sourceTree = "<group>"; };
 		9FE90BF511F8D1DC003CFFFF /* BXDelegatedView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDelegatedView.h; sourceTree = "<group>"; };
 		9FE90BF611F8D1DC003CFFFF /* BXDelegatedView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDelegatedView.m; sourceTree = "<group>"; };
-		9FEAA3D8120424E50085F008 /* BXGameImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXGameImport.h; sourceTree = "<group>"; };
-		9FEAA3D9120424E50085F008 /* BXGameImport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGameImport.m; sourceTree = "<group>"; };
-		9FEAA3DD1204422F0085F008 /* BXUninstalledGameImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXUninstalledGameImport.h; sourceTree = "<group>"; };
-		9FEAA3DE1204422F0085F008 /* BXUninstalledGameImport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXUninstalledGameImport.m; sourceTree = "<group>"; };
-		9FEAA3E0120443C20085F008 /* BXPlayableGameImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXPlayableGameImport.h; sourceTree = "<group>"; };
-		9FEAA3E1120443C20085F008 /* BXPlayableGameImport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXPlayableGameImport.m; sourceTree = "<group>"; };
 		9FEAA3EA1204595B0085F008 /* BXOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXOperation.h; sourceTree = "<group>"; };
 		9FEAA3EB1204595B0085F008 /* BXOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXOperation.m; sourceTree = "<group>"; };
 		9FEAA44F120478000085F008 /* BXDriveImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDriveImport.h; sourceTree = "<group>"; };
@@ -797,7 +800,6 @@
 		080E96DDFE201D6D7F000001 /* Boxer */ = {
 			isa = PBXGroup;
 			children = (
-				9FEAA3D7120424D60085F008 /* Installation */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
 				9F573D370F8E69AF0089D8B7 /* BXPackage.h */,
 				9F573D380F8E69AF0089D8B7 /* BXPackage.m */,
@@ -805,8 +807,14 @@
 				9F69133210A2F62A00EA78CD /* BXDrive.m */,
 				9F61FC8310DE3F7F00F3896C /* BXGameProfile.h */,
 				9F61FC8410DE3F7F00F3896C /* BXGameProfile.m */,
+				9F53411612059E7900BCBF24 /* NSWorkspace+BXExecutableTypes.h */,
+				9F53411712059E7900BCBF24 /* NSWorkspace+BXExecutableTypes.m */,
+				9FEAA44F120478000085F008 /* BXDriveImport.h */,
+				9FEAA450120478000085F008 /* BXDriveImport.m */,
 				9F23EB0111390A2600DC5AB6 /* Rendering */,
 				9F1D50280F5C0ACD009F0AB9 /* Emulator */,
+				9F1CBA55120C783800C5E926 /* Game import */,
+				9F1CBA94120C7D4300C5E926 /* Game import window */,
 				9F496E3D108EEB0700282261 /* DOS session */,
 				9F27133610C1253E0003CB58 /* DOS window */,
 				9F27136610C127F90003CB58 /* Inspector panel */,
@@ -909,6 +917,26 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		9F1CBA55120C783800C5E926 /* Game import */ = {
+			isa = PBXGroup;
+			children = (
+				9F1CBA56120C796C00C5E926 /* BXImport.h */,
+				9F1CBA57120C796C00C5E926 /* BXImport.m */,
+				9F1CBAA9120C830600C5E926 /* BXImport+BXImportPolicies.h */,
+				9F1CBAAA120C830600C5E926 /* BXImport+BXImportPolicies.m */,
+			);
+			name = "Game import";
+			sourceTree = "<group>";
+		};
+		9F1CBA94120C7D4300C5E926 /* Game import window */ = {
+			isa = PBXGroup;
+			children = (
+				9F1CBA95120C7D9000C5E926 /* BXImportWindowController.h */,
+				9F1CBA96120C7D9000C5E926 /* BXImportWindowController.m */,
+			);
+			name = "Game import window";
+			sourceTree = "<group>";
+		};
 		9F1D50280F5C0ACD009F0AB9 /* Emulator */ = {
 			isa = PBXGroup;
 			children = (
@@ -952,8 +980,8 @@
 			isa = PBXGroup;
 			children = (
 				9FC7FADC10C08CBA00B5AF42 /* Controllers */,
-				9FBC35170F56C7B7001811F2 /* BXSessionWindow.h */,
-				9FBC35240F56C7B7001811F2 /* BXSessionWindow.m */,
+				9FBC35170F56C7B7001811F2 /* BXDOSWindow.h */,
+				9FBC35240F56C7B7001811F2 /* BXDOSWindow.m */,
 				9F59DAD310AF1042008DBBC1 /* BXProgramPanel.h */,
 				9F59DAD410AF1042008DBBC1 /* BXProgramPanel.m */,
 				9FBB86830F5DD070008418E6 /* BXLayerRenderingView.h */,
@@ -966,19 +994,11 @@
 			name = "DOS window";
 			sourceTree = "<group>";
 		};
-		9F27136510C127CC0003CB58 /* BXInspectorController */ = {
+		9F27136610C127F90003CB58 /* Inspector panel */ = {
 			isa = PBXGroup;
 			children = (
 				9F424205109D03F500111D28 /* BXInspectorController.h */,
 				9F424206109D03F500111D28 /* BXInspectorController.m */,
-			);
-			name = BXInspectorController;
-			sourceTree = "<group>";
-		};
-		9F27136610C127F90003CB58 /* Inspector panel */ = {
-			isa = PBXGroup;
-			children = (
-				9F27136510C127CC0003CB58 /* BXInspectorController */,
 				9F687002109F83ED003C26E4 /* BXDriveList.h */,
 				9F687003109F83ED003C26E4 /* BXDriveList.m */,
 				9FDAD87D10C182B3004EA7D0 /* BXCoverArtWell.h */,
@@ -1622,10 +1642,10 @@
 		9FC7FADC10C08CBA00B5AF42 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				9FBC35180F56C7B7001811F2 /* BXSessionWindowController.h */,
-				9FBC35250F56C7B7001811F2 /* BXSessionWindowController.m */,
-				9F76C8530F6509EF0068EA1C /* BXSessionWindowController+BXRenderController.h */,
-				9F76C8540F6509EF0068EA1C /* BXSessionWindowController+BXRenderController.m */,
+				9FBC35180F56C7B7001811F2 /* BXDOSWindowController.h */,
+				9FBC35250F56C7B7001811F2 /* BXDOSWindowController.m */,
+				9F76C8530F6509EF0068EA1C /* BXDOSWindowController+BXRenderController.h */,
+				9F76C8540F6509EF0068EA1C /* BXDOSWindowController+BXRenderController.m */,
 				9F59DED810B0159A008DBBC1 /* BXProgramPanelController.h */,
 				9F59DED910B0159A008DBBC1 /* BXProgramPanelController.m */,
 				9F42D9DD1172481800AC6F1F /* BXStatusBarController.h */,
@@ -1644,21 +1664,6 @@
 				9FBC31DE0F56C383001811F2 /* LockOpening.aiff */,
 			);
 			name = Sounds;
-			sourceTree = "<group>";
-		};
-		9FEAA3D7120424D60085F008 /* Installation */ = {
-			isa = PBXGroup;
-			children = (
-				9FEAA3D8120424E50085F008 /* BXGameImport.h */,
-				9FEAA3D9120424E50085F008 /* BXGameImport.m */,
-				9FEAA3DD1204422F0085F008 /* BXUninstalledGameImport.h */,
-				9FEAA3DE1204422F0085F008 /* BXUninstalledGameImport.m */,
-				9FEAA3E0120443C20085F008 /* BXPlayableGameImport.h */,
-				9FEAA3E1120443C20085F008 /* BXPlayableGameImport.m */,
-				9FEAA44F120478000085F008 /* BXDriveImport.h */,
-				9FEAA450120478000085F008 /* BXDriveImport.m */,
-			);
-			name = Installation;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1793,14 +1798,14 @@
 				9FBC352C0F56C7B7001811F2 /* BXAppController.m in Sources */,
 				9FBC352F0F56C7B7001811F2 /* BXSession.m in Sources */,
 				9FBC35310F56C7B7001811F2 /* BXEmulator+BXShell.mm in Sources */,
-				9FBC35320F56C7B7001811F2 /* BXSessionWindow.m in Sources */,
-				9FBC35330F56C7B7001811F2 /* BXSessionWindowController.m in Sources */,
+				9FBC35320F56C7B7001811F2 /* BXDOSWindow.m in Sources */,
+				9FBC35330F56C7B7001811F2 /* BXDOSWindowController.m in Sources */,
 				9FBC35340F56C7B7001811F2 /* NSWindow+BXWindowSizing.m in Sources */,
 				9FBC35360F56C7B7001811F2 /* BXGeometry.m in Sources */,
 				9F1D50010F5C0966009F0AB9 /* BXEmulator.mm in Sources */,
 				9FBB86850F5DD070008418E6 /* BXLayerRenderingView.m in Sources */,
 				9FC3B2550F62D9CE006DE439 /* BXSession+BXEmulatorController.m in Sources */,
-				9F76C8550F6509EF0068EA1C /* BXSessionWindowController+BXRenderController.m in Sources */,
+				9F76C8550F6509EF0068EA1C /* BXDOSWindowController+BXRenderController.m in Sources */,
 				9FB553E10F6EA30900A33017 /* BXCloseAlert.m in Sources */,
 				9FB554220F6EAC5F00A33017 /* BXAlert.m in Sources */,
 				9F6311090F70F54300AB1155 /* BXHelpMenuController.m in Sources */,
@@ -1977,11 +1982,12 @@
 				9F9E27C511F8C003003EE8F3 /* BXSegmentedCell.m in Sources */,
 				9F9E27D611F8C173003EE8F3 /* BXDrivePanelController.m in Sources */,
 				9FE90BF711F8D1DC003CFFFF /* BXDelegatedView.m in Sources */,
-				9FEAA3DA120424E50085F008 /* BXGameImport.m in Sources */,
-				9FEAA3DF1204422F0085F008 /* BXUninstalledGameImport.m in Sources */,
-				9FEAA3E2120443C20085F008 /* BXPlayableGameImport.m in Sources */,
 				9FEAA3EC1204595B0085F008 /* BXOperation.m in Sources */,
 				9FEAA451120478000085F008 /* BXDriveImport.m in Sources */,
+				9F53411812059E7900BCBF24 /* NSWorkspace+BXExecutableTypes.m in Sources */,
+				9F1CBA58120C796C00C5E926 /* BXImport.m in Sources */,
+				9F1CBA97120C7D9000C5E926 /* BXImportWindowController.m in Sources */,
+				9F1CBAAB120C830600C5E926 /* BXImport+BXImportPolicies.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

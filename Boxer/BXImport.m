@@ -6,16 +6,20 @@
  */
 
 
-#import "BXPlayableGameImport.h"
+#import "BXImport.h"
+#import "BXImport+BXImportPolicies.h"
 
+@implementation BXImport
+@synthesize importWindowController;
+@synthesize sourcePath;
 
-@implementation BXPlayableGameImport
-@synthesize containingFolderPath;
+#pragma mark -
+#pragma mark Initialization and deallocation
 
 - (void) dealloc
 {
-	[self setContainingFolderPath: nil], [containingFolderPath release];
-	
+	[self setSourcePath: nil],		[sourcePath release];
+	[self setImportWindowController: nil],	[importWindowController release];
 	[super dealloc];
 }
 

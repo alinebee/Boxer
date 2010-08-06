@@ -6,9 +6,9 @@
  */
 
 
-#import "BXSessionWindowController.h"
-#import "BXSessionWindowController+BXRenderController.h"
-#import "BXSessionWindow.h"
+#import "BXDOSWindowController.h"
+#import "BXDOSWindowController+BXRenderController.h"
+#import "BXDOSWindow.h"
 #import "BXAppController.h"
 #import "BXProgramPanelController.h"
 #import "BXInputController.h"
@@ -24,7 +24,7 @@
 
 
 //Private methods
-@interface BXSessionWindowController ()
+@interface BXDOSWindowController ()
 
 //Performs the slide animation used to toggle the status bar and program panel on or off
 - (void) _slideView: (NSView *)view shown: (BOOL)show;
@@ -32,7 +32,7 @@
 @end
 
 
-@implementation BXSessionWindowController
+@implementation BXDOSWindowController
 
 #pragma mark -
 #pragma mark Accessors
@@ -43,8 +43,8 @@
 
 
 //Overridden to make the types explicit, so we don't have to keep casting the return values to avoid compilation warnings
-- (BXSession *) document		{ return (BXSession *)[super document]; }
-- (BXSessionWindow *) window	{ return (BXSessionWindow *)[super window]; }
+- (BXSession *) document	{ return (BXSession *)[super document]; }
+- (BXDOSWindow *) window	{ return (BXDOSWindow *)[super window]; }
 
 - (void) setDocument: (BXSession *)document
 {
@@ -78,7 +78,7 @@
 - (void) windowDidLoad
 {
 	NSNotificationCenter *center	= [NSNotificationCenter defaultCenter];
-	BXSessionWindow *theWindow		= [self window];
+	BXDOSWindow *theWindow		= [self window];
 	
 	//Set up observing for UI events
 	//------------------------------
@@ -194,7 +194,7 @@
 {
 	if (show != [self statusBarShown])
 	{
-		BXSessionWindow *theWindow	= [self window];
+		BXDOSWindow *theWindow	= [self window];
 		
 		//temporarily override the other views' resizing behaviour so that they don't slide up as we do this
 		NSUInteger oldContainerMask		= [viewContainer autoresizingMask];

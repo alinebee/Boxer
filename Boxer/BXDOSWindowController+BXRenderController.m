@@ -6,8 +6,8 @@
  */
 
 
-#import "BXSessionWindowController+BXRenderController.h"
-#import "BXSessionWindow.h"
+#import "BXDOSWindowController+BXRenderController.h"
+#import "BXDOSWindow.h"
 #import "BXEmulator.h"
 #import "NSWindow+BXWindowSizing.h"
 #import "BXInputController.h"
@@ -24,7 +24,7 @@ const NSInteger BXWindowSnapThreshold		= 64;
 const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 
 
-@interface BXSessionWindowController ()
+@interface BXDOSWindowController ()
 
 //Apply the switch to fullscreen mode. Used internally by setFullScreen: and setFullScreenWithZoom:
 - (void) _applyFullScreenState: (BOOL)fullScreen;
@@ -41,7 +41,7 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 
 @end
 
-@implementation BXSessionWindowController (BXRenderController)
+@implementation BXDOSWindowController (BXRenderController)
 
 #pragma mark -
 #pragma mark DOSBox frame rendering
@@ -216,7 +216,7 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 }
 
 //Snap to multiples of the base render size as we scale
-- (NSSize) windowWillResize: (BXSessionWindow *)theWindow toSize: (NSSize) proposedFrameSize
+- (NSSize) windowWillResize: (BXDOSWindow *)theWindow toSize: (NSSize) proposedFrameSize
 {
 	//Used to be: [[NSUserDefaults standardUserDefaults] integerForKey: @"windowSnapDistance"];
 	//But is now constant while developing to find the ideal default value
@@ -244,7 +244,7 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 
 //Return an appropriate "standard" (zoomed) frame for the window given the currently available screen space.
 //We define the standard frame to be the largest multiple of the game resolution, maintaining aspect ratio.
-- (NSRect) windowWillUseStandardFrame: (BXSessionWindow *)theWindow defaultFrame: (NSRect)defaultFrame
+- (NSRect) windowWillUseStandardFrame: (BXDOSWindow *)theWindow defaultFrame: (NSRect)defaultFrame
 {
 	if (![[[self document] emulator] isExecuting]) return defaultFrame;
 	

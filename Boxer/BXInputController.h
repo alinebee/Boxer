@@ -64,7 +64,7 @@
 //Returns whether the mouse is currently within our view.
 - (BOOL) mouseInView;
 
-//Called by BXSessionWindowController whenever the view loses keyboard focus.
+//Called by BXDOSWindowController whenever the view loses keyboard focus.
 - (void) didResignKey;
 
 //Lock/unlock the mouse.

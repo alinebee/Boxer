@@ -11,7 +11,7 @@
 #import "BXInspectorController.h"
 #import "BXPreferencesController.h"
 #import "BXSession+BXFileManager.h"
-#import "BXSessionWindowController.h"
+#import "BXDOSWindowController.h"
 #import "BXValueTransformers.h"
 #import "BXGrowlController.h"
 #import "NSString+BXPaths.h"
@@ -331,12 +331,12 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 - (IBAction) orderFrontAboutPanel: (id)sender
 {
-	[[[self currentSession] mainWindowController] exitFullScreen: sender];
+	[[[self currentSession] DOSWindowController] exitFullScreen: sender];
 	[[BXAboutController controller] showWindow: nil];
 }
 - (IBAction) orderFrontPreferencesPanel: (id)sender
 {
-	[[[self currentSession] mainWindowController] exitFullScreen: sender];
+	[[[self currentSession] DOSWindowController] exitFullScreen: sender];
 	[[BXPreferencesController controller] showWindow: nil];
 }
 
@@ -353,7 +353,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	//This limitation will be removed as we gain other inspectable window types.
 	if (show && [self currentSession])
 	{
-		[[[self currentSession] mainWindowController] exitFullScreen: nil];
+		[[[self currentSession] DOSWindowController] exitFullScreen: nil];
 		[inspector showWindow: nil];
 	}
 	else if ([inspector isWindowLoaded])

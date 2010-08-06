@@ -6,16 +6,16 @@
  */
 
 
-//BXSessionWindow is the main window for a DOS session. This class is heavily reliant on
-//BXSessionWindowController and exists mainly just to override NSWindow's default window sizing
+//BXDOSWindow is the main window for a DOS session. This class is heavily reliant on
+//BXDOSWindowController and exists mainly just to override NSWindow's default window sizing
 //and constraining methods.
 
 #import <Cocoa/Cocoa.h>
 
-@class BXSessionWindowController;
+@class BXDOSWindowController;
 
-@interface BXSessionWindow : NSWindow
+@interface BXDOSWindow : NSWindow
 
-- (BXSessionWindowController *) windowController;
+- (BXDOSWindowController *) windowController;
 
 @end

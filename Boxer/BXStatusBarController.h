@@ -10,7 +10,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class BXSessionWindowController;
+@class BXDOSWindowController;
 
 enum {
 	BXStatusBarInspectorSegment,
@@ -25,7 +25,7 @@ enum {
 }
 
 //The window controller for the window containing this statusbar
-- (BXSessionWindowController *)controller;
+- (BXDOSWindowController *)controller;
 
 //Processes the selection/deselection of segments in the segmented button
 - (IBAction) performSegmentedButtonAction: (id) sender;

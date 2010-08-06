@@ -24,7 +24,7 @@
 
 //Change the default render filter to match the sender's tag.
 //Note that this uses an intentionally different name from the toggleFilterType: defined on
-//BXSessionWindowController and used by main menu items, as the two sets of controls need to be
+//BXDOSWindowController and used by main menu items, as the two sets of controls need to be
 //validated differently.
 - (IBAction) toggleDefaultFilterType: (id)sender;
 

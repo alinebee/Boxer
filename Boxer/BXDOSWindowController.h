@@ -6,11 +6,11 @@
  */
 
 
-//BXSessionWindowController manages a session window and its dependent views and view controllers.
+//BXDOSWindowController manages a session window and its dependent views and view controllers.
 //It is responsible for handling drag-drop and window close events, synchronising the window title
 //with the document, and initialising the window to a suitable state for the current session.
 
-//BXSessionWindowController also has a BXRenderController category (q.v.) to manage rendering-specific
+//BXDOSWindowController also has a BXRenderController category (q.v.) to manage rendering-specific
 //tasks such as window resizing and fullscreen mode switching.
 
 
@@ -18,7 +18,7 @@
 
 @class BXEmulator;
 @class BXSession;
-@class BXSessionWindow;
+@class BXDOSWindow;
 @class BXProgramPanelController;
 @class BXInputController;
 @class BXStatusBarController;
@@ -27,7 +27,7 @@
 
 @protocol BXFrameRenderingView;
 
-@interface BXSessionWindowController : NSWindowController
+@interface BXDOSWindowController : NSWindowController
 {
 	IBOutlet NSView <BXFrameRenderingView> *renderingView;
 	IBOutlet NSView *inputView;
@@ -70,7 +70,7 @@
 //Recast NSWindowController's standard accessors so that we get our own classes
 //(and don't have to keep recasting them ourselves)
 - (BXSession *) document;
-- (BXSessionWindow *) window;
+- (BXDOSWindow *) window;
 
 
 #pragma mark -

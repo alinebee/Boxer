@@ -23,7 +23,7 @@ NSDictionary *commandList = [[NSDictionary alloc] initWithObjectsAndKeys:
 	@"showShellCommandHelp:",	@"help",
 	@"listDrives:",				@"drives",
 	
-	//Handled by BXSessionWindowController
+	//Handled by BXDOSWindowController
 	@"toggleFullScreenWithZoom:",					@"fullscreen",
 	@"windowShouldCloseAfterProgramCompletion:",	@"boxer_closeaftercompletion",
 nil];

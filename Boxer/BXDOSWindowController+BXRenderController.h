@@ -11,13 +11,13 @@
 //and manage window size and fullscreen mode.
 
 #import <Cocoa/Cocoa.h>
-#import "BXSessionWindowController.h"
+#import "BXDOSWindowController.h"
 
-@class BXSessionWindow;
+@class BXDOSWindow;
 @class BXEmulator;
 @class BXFrameBuffer;
 
-@interface BXSessionWindowController (BXRenderController)
+@interface BXDOSWindowController (BXRenderController)
 
 #pragma mark -
 #pragma mark Renderer-related methods

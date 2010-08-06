@@ -7,7 +7,7 @@
 
 
 //BXFrameRenderingView is a protocol for views that perform drawing of BXEmulator frames.
-//It provides a consistent interface for BXSessionWindowController to communicate with
+//It provides a consistent interface for BXDOSWindowController to communicate with
 //different alternative view implementations.
 
 #import <Cocoa/Cocoa.h>

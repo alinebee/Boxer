@@ -19,7 +19,7 @@
 @class BXEmulator;
 @class BXPackage;
 @class BXGameProfile;
-@class BXSessionWindowController;
+@class BXDOSWindowController;
 
 @interface BXSession : NSDocument <BXEmulatorDelegate>
 {	
@@ -30,7 +30,7 @@
 	
 	NSMutableArray *drives;
 	
-	BXSessionWindowController *mainWindowController;
+	BXDOSWindowController *DOSWindowController;
 	
 	NSString *targetPath;
 	NSString *activeProgramPath;
@@ -40,6 +40,7 @@
 	BOOL hasConfigured;
 	BOOL hasLaunched;
 	BOOL isClosing;
+	BOOL emulating;
 	BOOL showDriveNotifications;
 	
 	NSOperationQueue *importQueue;
@@ -49,8 +50,8 @@
 #pragma mark -
 #pragma mark Properties
 
-//The main window controller, responsible for the BXSessionWindow that displays this session.
-@property (retain, nonatomic) BXSessionWindowController *mainWindowController;
+//The main window controller, responsible for the BXDOSWindow that displays this session.
+@property (retain, nonatomic) BXDOSWindowController *DOSWindowController;
 
 //The underlying emulator process for this session. This is created during [BXSession start].
 @property (retain, nonatomic) BXEmulator *emulator;
@@ -79,10 +80,10 @@
 @property (readonly, retain, nonatomic) NSArray *drives;
 
 //Whether the emulator is initialized and ready to receive instructions.
-@property (readonly) BOOL isEmulating;
+@property (readonly, assign, nonatomic, getter=isEmulating) BOOL emulating;
 
 //Whether this session represents a gamebox.
-@property (readonly) BOOL isGamePackage;
+@property (readonly, nonatomic) BOOL isGamePackage;
 
 
 #pragma mark -

@@ -13,7 +13,7 @@
 #import "BXAppController.h"
 #import "BXGeometry.h"
 #import "BXCursorFadeAnimation.h"
-#import "BXSessionWindowController.h"
+#import "BXDOSWindowController.h"
 #import "BXSession.h"
 
 //For keycodes

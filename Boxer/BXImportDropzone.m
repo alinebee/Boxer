@@ -11,14 +11,13 @@
 #import <QuartzCore/QuartzCore.h>
 
 
+//The number of times the dropzone border animation will loop before stopping.
+#define BXImportDropzoneBorderAnimationLoops 1000
+
 #pragma mark -
 #pragma mark Private method declarations
 
 @interface BXImportDropzone ()
-
-//Set the border phase to the appropriate point for the given animation progress.
-//Called from our BXImportDropzoneAnimation.
-- (void) _animateBorder: (NSAnimationProgress)currentProgress;
 
 //(Re)draw our border and icon into the specified dirty region.
 //Called from drawRect: when we don't have an image to display.
@@ -35,7 +34,8 @@
 
 + (id) defaultAnimationForKey: (NSString *)key
 {
-	if ([key isEqualToString: @"borderOutset"]) return [CABasicAnimation animation];
+	if ([key isEqualToString: @"borderOutset"])	return [CABasicAnimation animation];
+	if ([key isEqualToString: @"borderPhase"])	return [CABasicAnimation animation];
 	return [super defaultAnimationForKey: key];
 }
 
@@ -115,14 +115,6 @@
 #pragma mark -
 #pragma mark Initialization and deallocation
 
-- (void) awakeFromNib
-{
-	borderAnimation = [[BXImportDropzoneAnimation alloc] initWithDuration: 1.0
-														   animationCurve: NSAnimationLinear];
-	[borderAnimation setDelegate: self];
-	[borderAnimation setAnimationBlockingMode: NSAnimationNonblocking];
-}
-
 - (void) viewDidMoveToSuperview
 {
 	//Shut down the animation when this view gets cleaned up
@@ -131,22 +123,7 @@
 
 - (void) dealloc
 {
-	[borderAnimation release], borderAnimation = nil;
 	[super dealloc];
-}
-
-#pragma mark -
-#pragma mark Border animation methods
-
-- (void) animationDidEnd: (NSAnimation *)animation
-{
-	//Loop the animation continuously
-	[animation startAnimation];
-}
-
-- (void) _animateBorder: (NSAnimationProgress)currentProgress
-{
-	[self setBorderPhase: currentProgress * 18.0f];
 }
 
 - (void) setImage: (NSImage *)newImage
@@ -160,23 +137,38 @@
 //Start up the border animation when we get highlighted, and stop it when we stop being highlighted
 - (void) setHighlighted: (BOOL)highlight
 {
-	highlighted = highlight;
-	if (highlighted)
+	if (highlighted != highlight)
 	{
-		[borderAnimation startAnimation];
-		[[self animator] setBorderOutset: 8.0f]; 
-	}
-	else 
-	{
-		[borderAnimation stopAnimation];
-		[self setBorderPhase: 0.0f];
-		[[self animator] setBorderOutset: 0.0f];
+		highlighted = highlight;
+		
+		if (highlighted)
+		{
+			//Animate the phase to a sufficiently high number that will take forever for us to reach
+			//We have to loop the animation this way instead of with CAMediaTiming repeat options,
+			//because the NSAnimatablePropertyContainer proxy doesn't take repeating animations
+			//into account and will stack them.
+			CGFloat maxPhase		= 18.0f	* BXImportDropzoneBorderAnimationLoops;
+			CFTimeInterval duration	= 1.0	* BXImportDropzoneBorderAnimationLoops;
+			
+			[NSAnimationContext beginGrouping];
+				[[NSAnimationContext currentContext] setDuration: duration];
+				[[self animator] setBorderPhase: maxPhase]; 
+			[NSAnimationContext endGrouping];
+			
+			[[self animator] setBorderOutset: 8.0f]; 
+		}
+		else 
+		{
+			[[self animator] setBorderPhase: 0.0f];
+			[[self animator] setBorderOutset: 0.0f];
+		}
 	}
 }
 
 - (void) setBorderPhase: (CGFloat)phase
 {
-	borderPhase = phase;
+	//Wrap the phase to the length of our dash pattern
+	borderPhase = (CGFloat)((NSUInteger)phase % 18);
 	[self setNeedsDisplay: YES];
 }
 
@@ -240,14 +232,4 @@
 	[NSGraphicsContext restoreGraphicsState];
 }
 
-@end
-
-
-@implementation BXImportDropzoneAnimation
-
-- (void) setCurrentProgress: (NSAnimationProgress)progress
-{
-	[super setCurrentProgress: progress];
-	[[self delegate] _animateBorder: progress];
-}
 @end

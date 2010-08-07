@@ -14,14 +14,9 @@
 #import <Cocoa/Cocoa.h>
 
 
-//Used by BXImportDropzone for animating its border.
-@interface BXImportDropzoneAnimation : NSAnimation
-@end
-
 @interface BXImportDropzone : NSButton
 {
 	BOOL highlighted;
-	BXImportDropzoneAnimation *borderAnimation;
 	CGFloat borderPhase;
 	CGFloat borderOutset;
 }
@@ -46,4 +41,3 @@
 + (NSBezierPath *) borderForFrame: (NSRect)frame withPhase: (CGFloat)phase;
 
 @end
-

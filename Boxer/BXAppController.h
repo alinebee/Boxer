@@ -58,6 +58,8 @@
 //UI actions
 //----------
 
+- (IBAction) orderFrontImportGamePanel: (id)sender;		//Display the game import panel.
+
 - (IBAction) orderFrontAboutPanel:	(id)sender;			//Display Boxer's About panel.
 - (IBAction) orderFrontPreferencesPanel: (id)sender;	//Display Boxer's preferences panel. 
 - (IBAction) toggleInspectorPanel: (id)sender;			//Display/hide Boxer's inspector HUD panel.

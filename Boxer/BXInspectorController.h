@@ -22,24 +22,21 @@
 	IBOutlet NSView *drivePanel;
 	IBOutlet NSSegmentedControl *panelSelector;
 }
-@property (retain) NSView *panelContainer;	//The view into which the current panel will be added.
-@property (retain) NSView *gamePanel;		//The gamebox properties tab panel.
-@property (retain) NSView *cpuPanel;		//The CPU emulation settings tab panel.
-@property (retain) NSView *mousePanel;		//The mouse settings tab panel.
-@property (retain) NSView *drivePanel;		//The drive list panel.
-@property (retain) NSSegmentedControl *panelSelector;	//The segmented tab selector button at the top of the inspector.
+@property (retain, nonatomic) NSView *panelContainer;	//The view into which the current panel will be added.
+@property (retain, nonatomic) NSView *gamePanel;		//The gamebox properties tab panel.
+@property (retain, nonatomic) NSView *cpuPanel;			//The CPU emulation settings tab panel.
+@property (retain, nonatomic) NSView *mousePanel;		//The mouse settings tab panel.
+@property (retain, nonatomic) NSView *drivePanel;		//The drive list panel.
+@property (retain, nonatomic) NSSegmentedControl *panelSelector;	//The segmented tab selector button at the top of the inspector.
+
+@property (assign, nonatomic) NSView *currentPanel;	//The currently-displayed panel.
+@property (readonly, nonatomic) NSArray *panels;	//The array of tab panels, in the same order as panelSelector's tabs
 
 
 //A singleton instance of the inspector controller, which is shared by all session windows.
 //The controller should always be accessed through this method.
 + (BXInspectorController *) controller;
 
-//Returns an array of tab panels, which should match the order of panelSelector's tab segments.
-- (NSArray *) panels;
-
-//Sets/gets the currently displayed panel. This will be added to panelContainer and faded in.
-- (NSView *) currentPanel;
-- (void) setCurrentPanel: (NSView *)panel;
 
 - (IBAction) showGameInspectorPanel:	(id)sender;	//Display the gamebox panel.
 - (IBAction) showCPUInspectorPanel:		(id)sender;	//Display the CPU panel.

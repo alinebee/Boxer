@@ -33,7 +33,7 @@ typedef NSUInteger BXInstallStatus;
 @interface BXImport (BXImportPolicies)
 
 #pragma mark -
-#pragma mark Helper class methods
+#pragma mark Detecting installers
 
 //Returns a list of known installer name patterns.
 + (NSSet *) installerPatterns;
@@ -46,27 +46,46 @@ typedef NSUInteger BXInstallStatus;
 + (BOOL) isInstallerAtPath: (NSString *)path;
 
 
-//A set of regex patterns matching files that indicate the game is installed and playable.
-+ (NSSet *) playableGameTelltalePatterns;
-
-//A set of filename extensions whose presence indicates the game is installed and playable.
-+ (NSSet *) playableGameTelltaleExtensions;
+#pragma mark -
+#pragma mark Detecting files not to import
 
 //A set of regex patterns matching files that should be cleaned out of an imported game.
 + (NSSet *) junkFilePatterns;
-
-//Returns whether the file at the specified path is a telltale for an installed and playable game.
-//Uses playableGameTelltaleExtensions and playableGameTelltalePatterns, in that order.
-+ (BOOL) isPlayableGameTelltaleAtPath: (NSString *)path;
 
 //Returns whether the file at the specified path should be discarded when importing.
 //Uses +junkFilePatterns.
 + (BOOL) isJunkFileAtPath: (NSString *)path;
 
 
+#pragma mark -
+#pragma mark Detecting whether a game is already installed
+
+//A set of regex patterns matching files that indicate the game is installed and playable.
++ (NSSet *) playableGameTelltalePatterns;
+
+//A set of filename extensions whose presence indicates the game is installed and playable.
++ (NSSet *) playableGameTelltaleExtensions;
+
+//Returns whether the file at the specified path is a telltale for an installed and playable game.
+//Uses playableGameTelltaleExtensions and playableGameTelltalePatterns, in that order.
++ (BOOL) isPlayableGameTelltaleAtPath: (NSString *)path;
+
 //Returns a BXInstallStatus value, indicating how sure we are about the
 //installation status of the game at the specified path.
 + (BXInstallStatus) installStatusOfGameAtPath: (NSString *)path;
+
+
+#pragma mark -
+#pragma mark Deciding how best to import a game
+
+//Returns a list of all valid DOS installers found within the specified path, sorted depth-first.
+//If scanSubdirs is NO, the search will be restricted to the base path.
++ (NSArray *) installersAtPath: (NSString *)path recurse: (BOOL)scanSubdirs;
+
+//Returns a recommended installer from the list of possible installers,
+//using preferredInstallerPatterns.
++ (NSString *) preferredInstallerFromPaths: (NSArray *)paths;
+
 
 //Whether the source files at the specified path should be made into a fake CD-ROM for the game.
 //This decision is based on the size of the files and the volume type of the path.
@@ -74,11 +93,12 @@ typedef NSUInteger BXInstallStatus;
 
 
 //Returns a suitable name (sans .boxer extension) for the game at the specified path.
-//This is based on the last path component of the source path.
+//This is based on the last path component of the source path, cleaned up.
 + (NSString *) nameForGameAtPath: (NSString *)path;
 
-//Returns a suitable gamebox icon for the game at the specified path.
-//Will be nil if no suitable icon is found.
-+ (NSImage *) iconForGameAtPath: (NSString *)path;
+//Returns any artwork found for the game at the specified path.
+//No additional processing (box-art appearance etc.) is done on the image.
+//Will be nil if no suitable art is found.
++ (NSImage *) boxArtForGameAtPath: (NSString *)path;
 
 @end

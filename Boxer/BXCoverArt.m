@@ -62,8 +62,7 @@
 - (void) drawInRect: (NSRect)frame
 {
 	NSSize iconSize	= frame.size;
-	NSImage *image	= [self sourceImage];
-	
+	NSImage *image	= [self sourceImage];	
 	
 	//Effects we'll be applying to the cover art
 	NSImage *shine			= [[self class] shineForSize: iconSize];
@@ -107,7 +106,7 @@
 }
 
 - (NSImageRep *) representationForSize: (NSSize)iconSize
-{
+{	
 	NSRect frame = NSMakeRect(0, 0, iconSize.width, iconSize.height);
 
 	//Create a new empty canvas to draw into
@@ -125,6 +124,9 @@
 - (NSImage *) coverArt
 {
 	NSImage *image = [self sourceImage];
+	
+	//If our source image could not be read, then bail out.
+	if (![image isValid]) return nil;
 	
 	//If our source image already has an alpha channel, then assume that it already has effects of its own and don't process it.
 	if ([[image bestRepresentationForDevice: nil] hasAlpha]) return image;

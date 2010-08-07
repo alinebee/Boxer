@@ -85,6 +85,18 @@
 //Whether this session represents a gamebox.
 @property (readonly, nonatomic) BOOL isGamePackage;
 
+//Whether the document should be closed when the emulator process finishes.
+//Normally YES, may be overridden by BXSession subclasses. 
+@property (readonly, nonatomic) BOOL closeOnEmulatorExit;
+
+
+#pragma mark -
+#pragma mark Helper class methods
+
+//Autodetects and returns a profile for the specified path, using BXSession's rules
+//for autodetection (q.v. BXFileManager gameDetectionPointForPath:shouldRecurse:)
++ (BXGameProfile *) profileForPath: (NSString *)path;
+
 
 #pragma mark -
 #pragma mark Lifecycle control methods

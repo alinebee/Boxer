@@ -51,6 +51,98 @@
 @implementation BXSession (BXFileManager)
 
 #pragma mark -
+#pragma mark Helper class methods
+
++ (NSString *) preferredMountPointForPath: (NSString *)filePath
+{	
+	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+	
+	//If the path is a disc image, use that as the mount point.
+	if ([workspace file: filePath matchesTypes: [BXAppController mountableImageTypes]]) return filePath;
+	
+	//If the path is (itself or inside) a gamebox or mountable folder, use that as the mount point.
+	NSString *container = [workspace parentOfFile: filePath matchingTypes: [[self class] preferredMountPointTypes]];
+	if (container) return container;
+	
+	//Check what kind of volume the file is on
+	NSString *volumePath = [workspace volumeForPath: filePath];
+	NSString *volumeType = [workspace volumeTypeForPath: filePath];
+	
+	//If it's on a data CD volume or floppy volume, use the base folder of the volume as the mount point
+	if ([volumeType isEqualToString: dataCDVolumeType] || [workspace isFloppyVolumeAtPath: volumePath])
+	{
+		return volumePath;
+	}
+	//If it's on an audio CD, hunt around for a corresponding data CD volume and use that as the mount point if found
+	else if ([volumeType isEqualToString: audioCDVolumeType])
+	{
+		NSString *dataVolumePath = [workspace dataVolumeOfAudioCD: volumePath];
+		if (dataVolumePath) return dataVolumePath;
+	}
+	
+	//If we get this far, then treat the path as a regular file or folder.
+	BOOL isFolder;
+	NSFileManager *manager = [NSFileManager defaultManager];
+	[manager fileExistsAtPath: filePath isDirectory: &isFolder];
+	
+	//If the path is a folder, use it directly as the mount point...
+	if (isFolder) return filePath;
+	
+	//...otherwise use the path's parent folder.
+	else return [filePath stringByDeletingLastPathComponent]; 
+}
+
++ (NSString *) gameDetectionPointForPath: (NSString *)path shouldSearchSubfolders: (BOOL *)shouldRecurse
+{
+	if (shouldRecurse) *shouldRecurse = YES;
+	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+	
+	NSArray *typeOrder = [NSArray arrayWithObjects:
+						  @"net.washboardabs.boxer-game-package",
+						  @"net.washboardabs.boxer-mountable-folder",
+						  nil];
+	
+	//If the file is inside a gamebox (first in preferredMountPointTypes) then search from that;
+	//If the file is inside a mountable folder (second) then search from that.
+	for (NSString *type in typeOrder)
+	{
+		NSString *parent = [workspace parentOfFile: path matchingTypes: [NSSet setWithObject: type]];
+		if (parent) return parent;
+	}
+	
+	//Failing that, check what kind of volume the file is on
+	NSString *volumePath = [workspace volumeForPath: path];
+	NSString *volumeType = [workspace volumeTypeForPath: path];
+	
+	//If it's on a data CD volume or floppy volume, scan from the base folder of the volume
+	if ([volumeType isEqualToString: dataCDVolumeType] || [workspace isFloppyVolumeAtPath: volumePath])
+	{
+		return volumePath;
+	}
+	//If it's on an audio CD, hunt around for a corresponding data CD volume and use that if found
+	else if ([volumeType isEqualToString: audioCDVolumeType])
+	{
+		NSString *dataVolumePath = [workspace dataVolumeOfAudioCD: volumePath];
+		if (dataVolumePath) return dataVolumePath;
+	}
+	
+	//If we get this far, then treat the path as a regular file or folder and recommend against
+	//searching subfolders (since the file heirarchy could be potentially huge.)
+	if (shouldRecurse) *shouldRecurse = NO;
+	BOOL isFolder;
+	NSFileManager *manager = [NSFileManager defaultManager];
+	[manager fileExistsAtPath: path isDirectory: &isFolder];
+	
+	
+	//If the path is a folder, search it directly...
+	if (isFolder) return path;
+	
+	//...otherwise search the path's parent folder.
+	else return [path stringByDeletingLastPathComponent]; 
+}
+
+
+#pragma mark -
 #pragma mark Filetype helper methods
 
 + (NSSet *) preferredMountPointTypes
@@ -180,7 +272,7 @@
 	if (![manager fileExistsAtPath: path isDirectory: NULL]) return nil;
 	
 	//Choose an appropriate mount point and create the new drive for it
-	NSString *mountPoint	= [self preferredMountPointForPath: path];
+	NSString *mountPoint	= [[self class] preferredMountPointForPath: path];
 	BXDrive *drive			= [BXDrive driveFromPath: mountPoint atLetter: nil];
 	
 	return [theEmulator mountDrive: drive];
@@ -206,95 +298,6 @@
 		[theEmulator changeWorkingDirectoryToPath: dosPath];
 	}
 	return YES;
-}
-
-
-- (NSString *) preferredMountPointForPath: (NSString *)filePath
-{	
-	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	
-	//If the path is a disc image, use that as the mount point.
-	if ([workspace file: filePath matchesTypes: [BXAppController mountableImageTypes]]) return filePath;
-
-	//If the path is (itself or inside) a gamebox or mountable folder, use that as the mount point.
-	NSString *container = [workspace parentOfFile: filePath matchingTypes: [[self class] preferredMountPointTypes]];
-	if (container) return container;
-
-	//Check what kind of volume the file is on
-	NSString *volumePath = [workspace volumeForPath: filePath];
-	NSString *volumeType = [workspace volumeTypeForPath: filePath];
-	
-	//If it's on a data CD volume or floppy volume, use the base folder of the volume as the mount point
-	if ([volumeType isEqualToString: dataCDVolumeType] || [workspace isFloppyVolumeAtPath: volumePath])
-	{
-		return volumePath;
-	}
-	//If it's on an audio CD, hunt around for a corresponding data CD volume and use that as the mount point if found
-	else if ([volumeType isEqualToString: audioCDVolumeType])
-	{
-		NSString *dataVolumePath = [workspace dataVolumeOfAudioCD: volumePath];
-		if (dataVolumePath) return dataVolumePath;
-	}
-	
-	//If we get this far, then treat the path as a regular file or folder.
-	BOOL isFolder;
-	NSFileManager *manager = [NSFileManager defaultManager];
-	[manager fileExistsAtPath: filePath isDirectory: &isFolder];
-	
-	//If the path is a folder, use it directly as the mount point...
-	if (isFolder) return filePath;
-		
-	//...otherwise use the path's parent folder.
-	else return [filePath stringByDeletingLastPathComponent]; 
-}
-
-- (NSString *) gameDetectionPointForPath: (NSString *)path shouldSearchSubfolders: (BOOL *)shouldRecurse
-{
-	if (shouldRecurse) *shouldRecurse = YES;
-	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	
-	NSArray *typeOrder = [NSArray arrayWithObjects:
-						  @"net.washboardabs.boxer-game-package",
-						  @"net.washboardabs.boxer-mountable-folder",
-						  nil];
-	
-	//If the file is inside a gamebox (first in preferredMountPointTypes) then search from that;
-	//If the file is inside a mountable folder (second) then search from that.
-	for (NSString *type in typeOrder)
-	{
-		NSString *parent = [workspace parentOfFile: path matchingTypes: [NSSet setWithObject: type]];
-		if (parent) return parent;
-	}
-	
-	//Failing that, check what kind of volume the file is on
-	NSString *volumePath = [workspace volumeForPath: path];
-	NSString *volumeType = [workspace volumeTypeForPath: path];
-	
-	//If it's on a data CD volume or floppy volume, scan from the base folder of the volume
-	if ([volumeType isEqualToString: dataCDVolumeType] || [workspace isFloppyVolumeAtPath: volumePath])
-	{
-		return volumePath;
-	}
-	//If it's on an audio CD, hunt around for a corresponding data CD volume and use that if found
-	else if ([volumeType isEqualToString: audioCDVolumeType])
-	{
-		NSString *dataVolumePath = [workspace dataVolumeOfAudioCD: volumePath];
-		if (dataVolumePath) return dataVolumePath;
-	}
-	
-	//If we get this far, then treat the path as a regular file or folder and recommend against
-	//searching subfolders (since the file heirarchy could be potentially huge.)
-	if (shouldRecurse) *shouldRecurse = NO;
-	BOOL isFolder;
-	NSFileManager *manager = [NSFileManager defaultManager];
-	[manager fileExistsAtPath: path isDirectory: &isFolder];
-	
-	//If the path is a folder, search it directly...
-	if (isFolder) return path;
-	
-	//...otherwise search the path's parent folder.
-	else return [path stringByDeletingLastPathComponent]; 
-	
 }
 
 
@@ -440,7 +443,7 @@
 	if ([volumeType isEqualToString: FATVolumeType] && ![workspace isFloppySizedVolumeAtPath: volumePath]) return;
 	
 	//Only mount volumes that aren't already mounted as drives
-	NSString *mountPoint = [self preferredMountPointForPath: volumePath];
+	NSString *mountPoint = [[self class] preferredMountPointForPath: volumePath];
 	if ([[self emulator] pathIsMountedAsDrive: mountPoint]) return;
 	
 	//Alright, if we got this far then it's ok to mount a new drive for it

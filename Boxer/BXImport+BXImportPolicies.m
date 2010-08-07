@@ -10,6 +10,7 @@
 #import "NSWorkspace+BXMountedVolumes.h"
 #import "NSWorkspace+BXFileTypes.h"
 #import "RegexKitLite.h"
+#import "NSString+BXPaths.h"
 
 #import "BXAppController.h"
 
@@ -17,7 +18,76 @@
 @implementation BXImport (BXImportPolicies)
 
 #pragma mark -
-#pragma mark Helper class methods
+#pragma mark Detecting installers
+
++ (NSSet *) installerPatterns
+{
+	static NSSet *patterns = nil;
+	if (!patterns) patterns = [NSSet setWithObjects:
+							   @"inst",
+							   @"setup",
+							   @"config",
+							   @"^origin\\.bat$",
+							   @"^initial\\.exe$",
+							   nil];
+	return patterns;
+}
+
++ (NSArray *) preferredInstallerPatterns
+{
+	static NSArray *patterns = nil;
+	if (!patterns) patterns = [NSArray arrayWithObjects:
+							   @"^dosinst\\.",
+							   @"^install\\.",
+							   @"^hdinstal\\.",
+							   @"^setup\\.",
+							   nil];
+	return patterns;
+}
+
++ (BOOL) isInstallerAtPath: (NSString *)path
+{
+	path = [[path lastPathComponent] lowercaseString];
+	for (NSString *pattern in [self installerPatterns])
+	{
+		if ([path isMatchedByRegex: pattern]) return YES;
+	}
+	return NO;
+}
+
+
+#pragma mark -
+#pragma mark Detecting files not to import
+
++ (NSSet *) junkFilePatterns
+{
+	static NSSet *patterns = nil;
+	if (!patterns) patterns = [NSSet setWithObjects:
+							   @"\\.ico$",						//Windows icon files
+							   @"\\.pif$",						//Windows PIF files
+							   @"\\.conf$",						//DOSBox configuration files
+							   @"^dosbox$",						//Anything DOSBox-related
+							   @"^goggame.dll$",				//GOG launcher files
+							   @"^unins000\\.",					//GOG uninstaller files
+							   @"^Graphic mode setup\\.exe$",	//GOG configuration programs
+							   @"^gogwrap.exe$",				//GOG only knows what this one does
+							   nil];
+	return patterns;
+}
+
++ (BOOL) isJunkFileAtPath: (NSString *)path
+{
+	path = [[path lastPathComponent] lowercaseString];
+	for (NSString *pattern in [self junkFilePatterns])
+	{
+		if ([path isMatchedByRegex: pattern]) return YES;
+	}
+	return NO;
+}
+
+
+#pragma mark -
+#pragma mark Detecting whether a game is already installed
 
 + (NSSet *) playableGameTelltaleExtensions
 {
@@ -43,50 +113,14 @@
 	return patterns;
 }
 
-+ (NSSet *) installerPatterns
-{
-	static NSSet *patterns = nil;
-	if (!patterns) patterns = [NSSet setWithObjects:
-							   @"inst",
-							   @"setup",
-							   @"config",
-							   @"^origin.bat$",
-							   @"^initial.exe$",
-							   nil];
-	return patterns;
-}
-
-+ (NSArray *) preferredInstallerPatterns
-{
-	static NSArray *patterns = nil;
-	if (!patterns) patterns = [NSArray arrayWithObjects:
-							   @"^dosinst\\.",
-							   @"^install\\.",
-							   @"^hdinstal\\.",
-							   @"setup\\.",
-							   @"inst",
-							   nil];
-	return patterns;
-}
-
-+ (BOOL) isInstallerAtPath: (NSString *)path
-{
-	path = [path lowercaseString];
-	for (NSString *pattern in [self installerPatterns])
-	{
-		if ([path isMatchedByRegex: pattern]) return YES;
-	}
-	return NO;
-}
-
 + (BOOL) isPlayableGameTelltaleAtPath: (NSString *)path
 {
-	path = [path lowercaseString];
+	path = [[path lastPathComponent] lowercaseString];
 	
 	//Do a quick test first using just the extension
 	if ([[self playableGameTelltaleExtensions] containsObject: [path pathExtension]]) return YES;
 	
-	//Next, test for filename patterns
+	//Next, test against our filename patterns
 	for (NSString *pattern in [self playableGameTelltalePatterns])
 	{
 		if ([path isMatchedByRegex: pattern]) return YES;
@@ -95,13 +129,11 @@
 	return NO;
 }
 
-
 + (BXInstallStatus) installStatusOfGameAtPath: (NSString *)path
 {
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	NSFileManager *manager = [NSFileManager defaultManager];
 	
-	path = [path stringByStandardizingPath];
 	
 	//If the game is on CD, then it's definitely not installed
 	if ([workspace volumeTypeForPath: path] == dataCDVolumeType) return BXInstallStatusNotInstalled;
@@ -129,6 +161,43 @@
 	return BXInstallStatusProbablyNotInstalled;
 }
 
+
+#pragma mark -
+#pragma mark Deciding how best to import a game
+
++ (NSArray *) installersAtPath: (NSString *)path recurse: (BOOL)scanSubdirs
+{
+	NSMutableArray *installers = [[NSMutableArray alloc] initWithCapacity: 10];
+	
+	NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtPath: path];
+	for (NSString *subPath in enumerator)
+	{
+		if (!scanSubdirs) [enumerator skipDescendents];
+		
+		NSString *fullPath = [path stringByAppendingPathComponent: subPath];
+		if ([self isInstallerAtPath: fullPath]) [installers addObject: fullPath];
+	}
+	
+	//Sort the installers by depth
+	NSArray *sortedPaths = [installers sortedArrayUsingSelector: @selector(pathDepthCompare:)];
+	[installers release];
+	
+	return sortedPaths;
+}
+
++ (NSString *) preferredInstallerFromPaths: (NSArray *)paths
+{
+	//Run through each filename pattern in order of priority, returning the first matching path
+	for (NSString *pattern in [self preferredInstallerPatterns])
+	{
+		for (NSString *path in paths)
+		{
+			if ([[path lastPathComponent] isMatchedByRegex: pattern]) return path;
+		}
+	}
+	return nil;
+}
+
 + (BOOL) shouldImportSourceFilesFromPath: (NSString *)path
 {
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
@@ -153,4 +222,33 @@
 	return NO;
 }
 
+
++ (NSImage *) boxArtForGameAtPath: (NSString *)path
+{
+	//At the moment this is a very simple check for the existence of a Games For Windows
+	//icon, included with GOG games
+	NSString *iconPath = [path stringByAppendingPathComponent: @"gfw_high.ico"];
+	if ([[NSFileManager defaultManager] fileExistsAtPath: iconPath])
+	{
+		NSImage *icon = [[NSImage alloc] initByReferencingFile: iconPath];
+		return [icon autorelease];
+	}
+	return nil;
+}
+
++ (NSString *) nameForGameAtPath: (NSString *)path
+{
+	NSString *filename = [path lastPathComponent];
+	
+	//Put a space before a set of numbers preceded by a character:
+	//ULTIMA8 -> ULTIMA 8
+	filename = [filename stringByReplacingOccurrencesOfRegex: @"([a-zA-Z]+)(\\d+)"
+															withString: @"$1 $2"];
+	
+	//Convert the filename to Title Case
+	//ULTIMA 8 -> Ultima 8
+	filename = [filename capitalizedString];
+	
+	return filename;
+}
 @end

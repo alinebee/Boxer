@@ -19,9 +19,33 @@
 - (NSColor *) textColor
 {
 	return [NSColor whiteColor];
-	return [NSColor lightGrayColor];
 }
 @end
+
+
+@implementation BXBlueprintTheme
+
+- (NSShadow *) textShadow
+{
+	static NSShadow *textShadow;
+	if (!textShadow)
+	{
+		textShadow = [[NSShadow alloc] init];
+		[textShadow setShadowOffset: NSMakeSize(0.0f, 0.0f)];
+		[textShadow setShadowBlurRadius: 3.0f];
+		[textShadow setShadowColor: [[NSColor blackColor] colorWithAlphaComponent: 0.5f]];
+	}
+	return textShadow;
+}
+
+- (NSColor *) textColor
+{
+	return [NSColor whiteColor];
+}
+
+@end
+
+
 
 @implementation BXBlueTheme
 

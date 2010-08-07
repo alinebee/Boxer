@@ -36,4 +36,15 @@
 //(The chosen installer is represented by targetPath.)
 @property (readonly, nonatomic) NSArray *installerPaths;
 
+
+#pragma mark -
+#pragma mark Import methods
+
+//The UTIs of filetypes we can accept for import.
++ (NSSet *)acceptedSourceTypes;
+
+//Returns whether we can import from the specified path.
+- (BOOL) canImportFromSourcePath: (NSString *)sourcePath;
+
+
 @end

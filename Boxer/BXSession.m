@@ -80,6 +80,35 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 
 
 #pragma mark -
+#pragma mark Helper class methods
+
++ (BXGameProfile *) profileForPath: (NSString *)path
+{
+	//Which folder to look in to detect the game we’re running.
+	//This will choose any gamebox, Boxer drive folder or floppy/CD volume in the
+	//file's path (setting shouldRecurse to YES) if found, falling back on the file's
+	//containing folder otherwise (setting shouldRecurse to NO).
+	BOOL shouldRecurse = NO;
+	NSString *profileDetectionPath = [self gameDetectionPointForPath: path 
+											  shouldSearchSubfolders: &shouldRecurse];
+	
+	//Detect any appropriate game profile for this session
+	if (profileDetectionPath)
+	{
+		//IMPLEMENTATION NOTE: we only scan subfolders of the detection path if it's a gamebox,
+		//mountable folder or CD/floppy disk, since these will have a finite and manageable file
+		//heirarchy to scan.
+		//Otherwise, we restrict our search to just the base folder to avoids massive blowouts
+		//if the user opens something big like their home folder or startup disk, and to avoid
+		//false positives when opening the DOS Games folder.
+		return [BXGameProfile detectedProfileForPath: profileDetectionPath
+									searchSubfolders: shouldRecurse];	
+	}
+	return nil;
+}
+
+
+#pragma mark -
 #pragma mark Initialization and cleanup
 
 - (id) init
@@ -119,7 +148,9 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 //We make this a no-op to avoid creating an NSFileWrapper - we don't ever actually read any data off disk,
 //so we don't need to construct a representation of the filesystem, and trying to do so for large documents
 //(e.g. root folders) can cause memory allocation crashes.
-- (BOOL)readFromURL:(NSURL *)absoluteURL ofType:(NSString *)typeName error:(NSError **)outError
+- (BOOL) readFromURL: (NSURL *)absoluteURL
+			  ofType: (NSString *)typeName
+			   error: (NSError **)outError
 {
 	return YES;
 }
@@ -129,7 +160,7 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 
 - (void) makeWindowControllers
 {
-	id controller = [[BXDOSWindowController alloc] initWithWindowNibName: @"DOSWindow"];
+	BXDOSWindowController *controller = [[BXDOSWindowController alloc] initWithWindowNibName: @"DOSWindow"];
 	[self addWindowController:		controller];
 	[self setDOSWindowController:	controller];
 	[controller setShouldCloseDocument: YES];
@@ -152,6 +183,41 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	
 	//Start the emulator as soon as our windows appear
 	[self start];
+}
+
+
+- (void) setFileURL: (NSURL *)fileURL
+{	
+	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
+	NSString *filePath		= [[fileURL path] stringByStandardizingPath];
+	
+	//Check if this file path is located inside a gamebox
+	NSString *packagePath	= [workspace parentOfFile: filePath
+										matchingTypes: [NSSet setWithObject: @"net.washboardabs.boxer-game-package"]];
+	
+	[self setTargetPath: filePath];
+	
+	//If the fileURL is located inside a gamebox, we use the gamebox itself as the fileURL
+	//and track the original fileURL as our targetPath (which gets used later in _launchTarget.)
+	//This way, the DOS window will show the gamebox as the represented file and our Recent Documents
+	//list will likewise show the gamebox instead.
+	if (packagePath)
+	{
+		fileURL = [NSURL fileURLWithPath: packagePath];
+		
+		BXPackage *package = [[BXPackage alloc] initWithPath: packagePath];
+		[self setGamePackage: package];
+		
+		//If we opened a package directly, check if it has a target of its own; if so, use that as our target path instead.
+		if ([filePath isEqualToString: packagePath])
+		{
+			NSString *packageTarget = [package targetPath];
+			if (packageTarget) [self setTargetPath: packageTarget];
+		}
+		[package release];
+	}
+	
+	[super setFileURL: fileURL];
 }
 
 - (void) setGamePackage: (BXPackage *)package
@@ -269,6 +335,9 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 		[super close];
 	}
 }
+
+- (BOOL) closeOnEmulatorExit	{ return YES; }
+
 
 //Overridden to display our own custom confirmation alert instead of the standard NSDocument one.
 - (void) canCloseDocumentWithDelegate: (id)delegate
@@ -402,68 +471,6 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 
 #pragma mark -
 #pragma mark Introspecting the gamebox
-
-- (void) setFileURL: (NSURL *)fileURL
-{	
-	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
-	NSString *filePath		= [[fileURL path] stringByStandardizingPath];
-	
-	//Check if this file path is located inside a gamebox
-	NSString *packagePath	= [workspace parentOfFile: filePath
-										matchingTypes: [NSSet setWithObject: @"net.washboardabs.boxer-game-package"]];
-	
-	[self setTargetPath: filePath];
-	
-	//If the fileURL is located inside a gamebox, we use the gamebox itself as the fileURL
-	//and track the original fileURL as our targetPath (which gets used later in _launchTarget.)
-	//This way, the DOS window will show the gamebox as the represented file and our Recent Documents
-	//list will likewise show the gamebox instead.
-	if (packagePath)
-	{
-		BXPackage *package = [[BXPackage alloc] initWithPath: packagePath];
-		[self setGamePackage: package];
-
-		fileURL = [NSURL fileURLWithPath: packagePath];
-		
-		//If we opened a package directly, check if it has a target of its own; if so, use that as our target path.
-		if ([filePath isEqualToString: packagePath])
-		{
-			NSString *packageTarget = [package targetPath];
-			if (packageTarget) [self setTargetPath: packageTarget];
-		}
-		[package release];
-	}
-
-	[super setFileURL: fileURL];
-	
-	
-	//While we're here, also detect the game profile.
-	
-	//Which folder to look in to detect the game we’re running.
-	//This will choose any gamebox, Boxer drive folder or floppy/CD volume in the
-	//file's path (setting shouldRecurse to YES) if found, falling back on the file's
-	//containing folder otherwise (setting shouldRecurse to NO).
-	if ([self targetPath])
-	{
-		NSString *profileDetectionPath = nil;
-		BOOL shouldRecurse = NO;
-		profileDetectionPath = [self gameDetectionPointForPath: [self targetPath] 
-										shouldSearchSubfolders: &shouldRecurse];
-	
-		//Detect any appropriate game profile for this session
-		if (profileDetectionPath)
-		{
-			//IMPLEMENTATION NOTE: we only scan subfolders of the detection path if it's a gamebox,
-			//mountable folder or CD/floppy disk, since these will have a finite and manageable file
-			//heirarchy to scan.
-			//Otherwise, we restrict our search to just the base folder to avoids massive blowouts
-			//if the user opens something big like their home folder or startup disk, and to avoid
-			//false positives when opening the DOS Games folder.
-			[self setGameProfile: [BXGameProfile detectedProfileForPath: profileDetectionPath
-													   searchSubfolders: shouldRecurse]];
-		}
-	}
-}
 
 - (BOOL) isGamePackage	{ return ([self gamePackage] != nil); }
 
@@ -710,7 +717,14 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	NSString *profileConf	= nil;
 	NSString *packageConf	= nil;
 	NSString *launchConf	= [[NSBundle mainBundle] pathForResource: @"Launch" ofType: @"conf"];
- 	
+
+	//If we don't have a manually-defined game-profile, detect the game profile from our target path
+	if ([self targetPath] && ![self gameProfile])
+	{
+		BXGameProfile *profile = [[self class] profileForPath: [self targetPath]];
+		[self setGameProfile: profile];
+	}	
+	
 	//Get the appropriate configuration file for this game profile
 	if ([self gameProfile])
 	{
@@ -727,7 +741,7 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	if ([self gamePackage]) packageConf = [[self gamePackage] configurationFile];
 	
 	
-	//Load all our configuration files in order.
+	//Apply all our configuration files in order.
 	[emulator applyConfigurationAtPath: preflightConf];
 	if (profileConf) [emulator applyConfigurationAtPath: profileConf];
 	if (packageConf) [emulator applyConfigurationAtPath: packageConf];
@@ -737,11 +751,13 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	[[self emulator] start];
 	
 	//Flag that we're no longer emulating.
+	//(This will have been set to YES in _configureEmulator)
 	[self setEmulating: NO];
 	
 	//Close the document once we're done.
-	[self close];
+	if ([self closeOnEmulatorExit]) [self close];
 }
+
 
 - (void) _configureEmulator
 {

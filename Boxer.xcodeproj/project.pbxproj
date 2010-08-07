@@ -13,6 +13,10 @@
 		9F1CBA58120C796C00C5E926 /* BXImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBA57120C796C00C5E926 /* BXImport.m */; };
 		9F1CBA97120C7D9000C5E926 /* BXImportWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBA96120C7D9000C5E926 /* BXImportWindowController.m */; };
 		9F1CBAAB120C830600C5E926 /* BXImport+BXImportPolicies.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBAAA120C830600C5E926 /* BXImport+BXImportPolicies.m */; };
+		9F1CBB59120CAA5500C5E926 /* BXImportPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBB58120CAA5500C5E926 /* BXImportPanel.m */; };
+		9F1CBB5E120CABBB00C5E926 /* ImportWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F1CBB5C120CABBB00C5E926 /* ImportWindow.xib */; };
+		9F1CBBA8120CB99D00C5E926 /* BXImportDropzone.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBBA7120CB99D00C5E926 /* BXImportDropzone.m */; };
+		9F1CBCAD120CCF3900C5E926 /* Blueprint.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9F1CBCAC120CCF3900C5E926 /* Blueprint.jpg */; };
 		9F1D50010F5C0966009F0AB9 /* BXEmulator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */; };
 		9F20C28B11E5D848005AF541 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28A11E5D848005AF541 /* Sparkle.framework */; };
 		9F20C28E11E5D8B4005AF541 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28D11E5D8B4005AF541 /* QTKit.framework */; };
@@ -172,7 +176,6 @@
 		9F69128C10A2DF8D00EA78CD /* BXValueTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F69128B10A2DF8D00EA78CD /* BXValueTransformers.m */; };
 		9F69133310A2F62A00EA78CD /* BXDrive.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F69133210A2F62A00EA78CD /* BXDrive.m */; };
 		9F6A79041203547800D2097D /* gamefolder.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F6A79031203547800D2097D /* gamefolder.icns */; };
-		9F6A79071203564E00D2097D /* GameImporter.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F6A79061203564E00D2097D /* GameImporter.xib */; };
 		9F6A790A120357DF00D2097D /* install.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F6A7909120357DF00D2097D /* install.icns */; };
 		9F6BA6F910A9FB92005A3E2A /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F6BA6F810A9FB92005A3E2A /* Growl.framework */; };
 		9F6BA6FD10A9FBAB005A3E2A /* Growl.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F6BA6F810A9FB92005A3E2A /* Growl.framework */; };
@@ -240,6 +243,7 @@
 		9FBC3D600F56EA82001811F2 /* SDL.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C140F56D6E8001811F2 /* SDL.framework */; };
 		9FBC3D610F56EA82001811F2 /* SDL_net.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C150F56D6E8001811F2 /* SDL_net.framework */; };
 		9FBD321710E5144C00031CB6 /* Brand.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBD321610E5144C00031CB6 /* Brand.png */; };
+		9FBDA832120D6CE80012585D /* DropzoneTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBDA831120D6CE80012585D /* DropzoneTemplate.png */; };
 		9FBF66AF11F35ADD00DAAB9A /* BXFileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBF66AE11F35ADD00DAAB9A /* BXFileTransfer.m */; };
 		9FC1620E119E9AD700705EA5 /* BXCursorFadeAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC1620D119E9AD700705EA5 /* BXCursorFadeAnimation.m */; };
 		9FC3B2550F62D9CE006DE439 /* BXSession+BXEmulatorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC3B2540F62D9CE006DE439 /* BXSession+BXEmulatorController.m */; };
@@ -308,6 +312,12 @@
 		9F1CBA96120C7D9000C5E926 /* BXImportWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXImportWindowController.m; sourceTree = "<group>"; };
 		9F1CBAA9120C830600C5E926 /* BXImport+BXImportPolicies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXImport+BXImportPolicies.h"; sourceTree = "<group>"; };
 		9F1CBAAA120C830600C5E926 /* BXImport+BXImportPolicies.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXImport+BXImportPolicies.m"; sourceTree = "<group>"; };
+		9F1CBB57120CAA5500C5E926 /* BXImportPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImportPanel.h; sourceTree = "<group>"; };
+		9F1CBB58120CAA5500C5E926 /* BXImportPanel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXImportPanel.m; sourceTree = "<group>"; };
+		9F1CBB5D120CABBB00C5E926 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/ImportWindow.xib; sourceTree = "<group>"; };
+		9F1CBBA6120CB99D00C5E926 /* BXImportDropzone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImportDropzone.h; sourceTree = "<group>"; };
+		9F1CBBA7120CB99D00C5E926 /* BXImportDropzone.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXImportDropzone.m; sourceTree = "<group>"; };
+		9F1CBCAC120CCF3900C5E926 /* Blueprint.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Blueprint.jpg; sourceTree = "<group>"; };
 		9F1D4FFF0F5C0966009F0AB9 /* BXEmulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulator.h; sourceTree = "<group>"; };
 		9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXEmulator.mm; sourceTree = "<group>"; };
 		9F20C28A11E5D848005AF541 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
@@ -612,7 +622,6 @@
 		9F69133110A2F62A00EA78CD /* BXDrive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDrive.h; sourceTree = "<group>"; };
 		9F69133210A2F62A00EA78CD /* BXDrive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDrive.m; sourceTree = "<group>"; };
 		9F6A79031203547800D2097D /* gamefolder.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = gamefolder.icns; sourceTree = "<group>"; };
-		9F6A79061203564E00D2097D /* GameImporter.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = GameImporter.xib; sourceTree = "<group>"; };
 		9F6A7909120357DF00D2097D /* install.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = install.icns; sourceTree = "<group>"; };
 		9F6BA6F810A9FB92005A3E2A /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Growl.framework; sourceTree = "<group>"; };
 		9F6BA70310A9FC77005A3E2A /* BXGrowlController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXGrowlController.h; sourceTree = "<group>"; };
@@ -713,6 +722,7 @@
 		9FBC3C770F56E0D7001811F2 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = /System/Library/Frameworks/CoreMIDI.framework; sourceTree = "<absolute>"; };
 		9FBC3CB10F56E32C001811F2 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9FBD321610E5144C00031CB6 /* Brand.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Brand.png; sourceTree = "<group>"; };
+		9FBDA831120D6CE80012585D /* DropzoneTemplate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DropzoneTemplate.png; sourceTree = "<group>"; };
 		9FBF66AD11F35ADD00DAAB9A /* BXFileTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFileTransfer.h; sourceTree = "<group>"; };
 		9FBF66AE11F35ADD00DAAB9A /* BXFileTransfer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFileTransfer.m; sourceTree = "<group>"; };
 		9FBF66FC11F376B900DAAB9A /* BXOperationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXOperationDelegate.h; sourceTree = "<group>"; };
@@ -931,8 +941,12 @@
 		9F1CBA94120C7D4300C5E926 /* Game import window */ = {
 			isa = PBXGroup;
 			children = (
+				9F1CBBA6120CB99D00C5E926 /* BXImportDropzone.h */,
+				9F1CBBA7120CB99D00C5E926 /* BXImportDropzone.m */,
 				9F1CBA95120C7D9000C5E926 /* BXImportWindowController.h */,
 				9F1CBA96120C7D9000C5E926 /* BXImportWindowController.m */,
+				9F1CBB57120CAA5500C5E926 /* BXImportPanel.h */,
+				9F1CBB58120CAA5500C5E926 /* BXImportPanel.m */,
 			);
 			name = "Game import window";
 			sourceTree = "<group>";
@@ -1089,7 +1103,7 @@
 		9F496E4C108EEDF700282261 /* XIBs */ = {
 			isa = PBXGroup;
 			children = (
-				9F6A79061203564E00D2097D /* GameImporter.xib */,
+				9F1CBB5C120CABBB00C5E926 /* ImportWindow.xib */,
 				9F9A4CA410F67DD800E61965 /* Preferences.xib */,
 				9F59DEDD10B01743008DBBC1 /* ProgramPanel.xib */,
 				9F45A46A109C9A0400593456 /* MountPanelOptions.xib */,
@@ -1587,6 +1601,8 @@
 		9FBC34390F56C5AC001811F2 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				9FBDA831120D6CE80012585D /* DropzoneTemplate.png */,
+				9F1CBCAC120CCF3900C5E926 /* Blueprint.jpg */,
 				9FF445DF10F13A2200B74B15 /* 525Diskette.png */,
 				9FE8265A10F0EBA000F1B03E /* 35DisketteShine.png */,
 				9FE8265B10F0EBA000F1B03E /* 35Diskette.png */,
@@ -1764,8 +1780,10 @@
 				9FAA451511EB40180042B986 /* Configuration.strings in Resources */,
 				9FAE9B8B11F1D7CF000363F7 /* GameDefaults.plist in Resources */,
 				9F6A79041203547800D2097D /* gamefolder.icns in Resources */,
-				9F6A79071203564E00D2097D /* GameImporter.xib in Resources */,
 				9F6A790A120357DF00D2097D /* install.icns in Resources */,
+				9F1CBB5E120CABBB00C5E926 /* ImportWindow.xib in Resources */,
+				9F1CBCAD120CCF3900C5E926 /* Blueprint.jpg in Resources */,
+				9FBDA832120D6CE80012585D /* DropzoneTemplate.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1988,12 +2006,23 @@
 				9F1CBA58120C796C00C5E926 /* BXImport.m in Sources */,
 				9F1CBA97120C7D9000C5E926 /* BXImportWindowController.m in Sources */,
 				9F1CBAAB120C830600C5E926 /* BXImport+BXImportPolicies.m in Sources */,
+				9F1CBB59120CAA5500C5E926 /* BXImportPanel.m in Sources */,
+				9F1CBBA8120CB99D00C5E926 /* BXImportDropzone.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
+		9F1CBB5C120CABBB00C5E926 /* ImportWindow.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9F1CBB5D120CABBB00C5E926 /* English */,
+			);
+			name = ImportWindow.xib;
+			path = ..;
+			sourceTree = "<group>";
+		};
 		9F45A1BB109C3C3900593456 /* About.xib */ = {
 			isa = PBXVariantGroup;
 			children = (

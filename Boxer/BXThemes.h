@@ -17,6 +17,12 @@
 - (NSShadow *) textShadow;
 @end
 
+//Adds a light indent to text.
+@interface BXBlueprintTheme : BGGradientTheme
+- (NSShadow *) textShadow;
+- (NSColor *) textColor;
+@end
+
 //Applies a light gray text colour for help text in HUD-style panels, along with a text shadow.
 @interface BXHelpTextTheme : BXShadowedTextTheme
 - (NSColor *) textColor;

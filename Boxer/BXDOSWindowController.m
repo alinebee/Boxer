@@ -78,7 +78,7 @@
 - (void) windowDidLoad
 {
 	NSNotificationCenter *center	= [NSNotificationCenter defaultCenter];
-	BXDOSWindow *theWindow		= [self window];
+	BXDOSWindow *theWindow			= [self window];
 	
 	//Set up observing for UI events
 	//------------------------------

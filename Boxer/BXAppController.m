@@ -11,6 +11,7 @@
 #import "BXInspectorController.h"
 #import "BXPreferencesController.h"
 #import "BXSession+BXFileManager.h"
+#import "BXImport.h";
 #import "BXDOSWindowController.h"
 #import "BXValueTransformers.h"
 #import "BXGrowlController.h"
@@ -122,6 +123,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	[[BGThemeManager keyedManager] setTheme: [[BXShadowedTextTheme new] autorelease]	forKey: @"BXShadowedTextTheme"];
 	[[BGThemeManager keyedManager] setTheme: [[BXHelpTextTheme new] autorelease]		forKey: @"BXHelpTextTheme"];
 	[[BGThemeManager keyedManager] setTheme: [[BXBlueTheme new] autorelease]			forKey: @"BXBlueTheme"];
+	[[BGThemeManager keyedManager] setTheme: [[BXBlueprintTheme new] autorelease]		forKey: @"BXBlueprintTheme"];
 }
 
 + (void)setupDefaults
@@ -328,6 +330,13 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 #pragma mark -
 #pragma mark Actions and action helper methods
+
+- (IBAction) orderFrontImportGamePanel: (id)sender
+{
+	NSDocument *gameImport = [[BXImport alloc] initWithType: @"GameImport" error: nil];
+	[gameImport makeWindowControllers];
+	[gameImport showWindows];
+}
 
 - (IBAction) orderFrontAboutPanel: (id)sender
 {

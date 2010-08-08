@@ -23,7 +23,7 @@
 + (NSSet *) installerPatterns
 {
 	static NSSet *patterns = nil;
-	if (!patterns) patterns = [NSSet setWithObjects:
+	if (!patterns) patterns = [[NSSet alloc] initWithObjects:
 							   @"inst",
 							   @"setup",
 							   @"config",
@@ -36,8 +36,8 @@
 + (NSArray *) preferredInstallerPatterns
 {
 	static NSArray *patterns = nil;
-	if (!patterns) patterns = [NSArray arrayWithObjects:
-							   @"^dosinst\\.",
+	if (!patterns) patterns = [[NSArray alloc] initWithObjects:
+							   @"^dosinst",
 							   @"^install\\.",
 							   @"^hdinstal\\.",
 							   @"^setup\\.",
@@ -47,10 +47,15 @@
 
 + (BOOL) isInstallerAtPath: (NSString *)path
 {
-	path = [[path lastPathComponent] lowercaseString];
+	//Skip non-executables
+	if (![[NSWorkspace sharedWorkspace] file: path matchesTypes: [BXAppController executableTypes]])
+		return NO;
+	
+	NSString *fileName = [[path lastPathComponent] lowercaseString];
+	
 	for (NSString *pattern in [self installerPatterns])
 	{
-		if ([path isMatchedByRegex: pattern]) return YES;
+		if ([fileName isMatchedByRegex: pattern]) return YES;
 	}
 	return NO;
 }
@@ -62,7 +67,7 @@
 + (NSSet *) junkFilePatterns
 {
 	static NSSet *patterns = nil;
-	if (!patterns) patterns = [NSSet setWithObjects:
+	if (!patterns) patterns = [[NSSet alloc] initWithObjects:
 							   @"\\.ico$",						//Windows icon files
 							   @"\\.pif$",						//Windows PIF files
 							   @"\\.conf$",						//DOSBox configuration files
@@ -92,7 +97,7 @@
 + (NSSet *) playableGameTelltaleExtensions
 {
 	static NSSet *extensions = nil;
-	if (!extensions) extensions = [NSSet setWithObjects:
+	if (!extensions) extensions = [[NSSet alloc] initWithObjects:
 								   @"conf",		//DOSBox conf files indicate an already-installed game
 								   @"iso",		//Likewise with mountable disc images
 								   @"cue",
@@ -108,7 +113,7 @@
 + (NSSet *) playableGameTelltalePatterns
 {
 	static NSSet *patterns = nil;
-	if (!patterns) patterns = [NSSet setWithObjects:
+	if (!patterns) patterns = [[NSSet alloc] initWithObjects:
 							   nil];
 	return patterns;
 }
@@ -170,12 +175,24 @@
 	NSMutableArray *installers = [[NSMutableArray alloc] initWithCapacity: 10];
 	
 	NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtPath: path];
+	
 	for (NSString *subPath in enumerator)
 	{
 		if (!scanSubdirs) [enumerator skipDescendents];
 		
+		//Skip non-files
+		if (![[[enumerator fileAttributes] fileType] isEqualToString: NSFileTypeRegular])
+			continue;
+		
+		//Skip hidden files
+		if ([[subPath lastPathComponent] hasPrefix: @"."]) continue;
+		
 		NSString *fullPath = [path stringByAppendingPathComponent: subPath];
-		if ([self isInstallerAtPath: fullPath]) [installers addObject: fullPath];
+		
+		if ([self isInstallerAtPath: fullPath])
+		{
+			[installers addObject: fullPath];			
+		}
 	}
 	
 	//Sort the installers by depth
@@ -192,7 +209,7 @@
 	{
 		for (NSString *path in paths)
 		{
-			if ([[path lastPathComponent] isMatchedByRegex: pattern]) return path;
+			if ([[[path lastPathComponent] lowercaseString] isMatchedByRegex: pattern]) return path;
 		}
 	}
 	return nil;

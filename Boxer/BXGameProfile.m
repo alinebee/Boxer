@@ -50,7 +50,7 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 	NSDate *cutoffDate35	= [NSDate dateWithString: BX35DisketteGameDateThreshold];
 	unsigned long long pathSize = 0;
 	
-	for (NSString *filePath in enumerator)
+	while ([enumerator nextObject])
 	{
 		NSDictionary *attrs = [enumerator fileAttributes];
 		

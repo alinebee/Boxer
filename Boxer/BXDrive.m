@@ -38,8 +38,10 @@
 		NSLocalizedString(@"CD-ROM drive",			@"Label for CD-ROM drive mounts."),				//BXDriveTypeCDROM
 		NSLocalizedString(@"internal system disk",	@"Label for DOSBox virtual drives (i.e. Z)."),	//BXDriveTypeInternal
 	nil];
-	if (driveType >= 0 && driveType < (NSInteger)[descriptions count]) return [descriptions objectAtIndex: driveType];
-	else return NSLocalizedString(@"unknown drive type", @"Label for drive mounts of an unknown type (should never happen).");
+	NSAssert1(driveType >= 0 && driveType < (NSInteger)[descriptions count],
+			  @"Unknown drive type supplied to BXDrive descriptionForType: %i", driveType);
+	
+	return [descriptions objectAtIndex: driveType];
 }
 
 + (BXDriveType) preferredTypeForPath: (NSString *)filePath

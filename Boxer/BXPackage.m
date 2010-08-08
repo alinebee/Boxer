@@ -373,7 +373,7 @@ NSString * const BXDocumentationFolderName		= @"Documentation";
 	NSMutableArray *matches	= [NSMutableArray arrayWithCapacity: 10];
 	
 	for (NSString *fileName in [manager enumeratorAtPath: basePath])
-	{
+	{	
 		//Skip over hidden/metadata files
 		if ([[fileName lastPathComponent] hasPrefix: @"."]) continue;
 		

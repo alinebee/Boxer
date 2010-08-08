@@ -37,6 +37,7 @@
 #pragma mark -
 #pragma mark Notifications
 
+@optional
 //Notifies the delegate that the emulator is about to start processing AUTOEXEC.BAT.
 - (void) willRunStartupCommands: (NSNotification *)notification;
 
@@ -71,6 +72,7 @@
 //a category of BXSession, this protocol can be refined out of existence.
 @protocol BXEmulatorFileSystemDelegate <NSObject>
 
+@optional
 //Notifies the delegate that a DOS drive has been added/removed.
 - (void) DOSDriveDidMount:		(NSNotification *)notification;
 - (void) DOSDriveDidUnmount:	(NSNotification *)notification;

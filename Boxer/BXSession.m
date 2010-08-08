@@ -191,15 +191,15 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
 	NSString *filePath		= [[fileURL path] stringByStandardizingPath];
 	
-	//Check if this file path is located inside a gamebox
+	//Set our target launch path to point to this file, if we don't have a target already
+	if (![self targetPath]) [self setTargetPath: filePath];
+
+	//Check if the chosen file path is located inside a gamebox
 	NSString *packagePath	= [workspace parentOfFile: filePath
 										matchingTypes: [NSSet setWithObject: @"net.washboardabs.boxer-game-package"]];
 	
-	[self setTargetPath: filePath];
-	
-	//If the fileURL is located inside a gamebox, we use the gamebox itself as the fileURL
-	//and track the original fileURL as our targetPath (which gets used later in _launchTarget.)
-	//This way, the DOS window will show the gamebox as the represented file and our Recent Documents
+	//If the fileURL is located inside a gamebox, we use the gamebox itself as the fileURL.
+	//This way, the DOS window will show the gamebox as the represented file, and our Recent Documents
 	//list will likewise show the gamebox instead.
 	if (packagePath)
 	{
@@ -209,7 +209,7 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 		[self setGamePackage: package];
 		
 		//If we opened a package directly, check if it has a target of its own; if so, use that as our target path instead.
-		if ([filePath isEqualToString: packagePath])
+		if ([[self targetPath] isEqualToString: packagePath])
 		{
 			NSString *packageTarget = [package targetPath];
 			if (packageTarget) [self setTargetPath: packageTarget];
@@ -973,8 +973,8 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 		[manager removeItemAtPath: temporaryFolderPath error: NULL];
 	}
 	
-	//Cancel any in-progress drive imports
-	for (BXDriveImport *import in [importQueue operations]) [import setDelegate: nil];
+	//Cancel any in-progress drive imports and clear delegates
+	[[importQueue operations] makeObjectsPerformSelector: @selector(setDelegate:) withObject: nil];
 	[importQueue cancelAllOperations];
 	[importQueue waitUntilAllOperationsAreFinished];
 }

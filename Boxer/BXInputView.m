@@ -36,7 +36,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 {
 	//Cache the background gradient so we don't have to generate it each time
 	static NSGradient *background = nil;
-	if (background == nil)
+	if (!background)
 	{
 		NSColor *backgroundColor = [NSColor darkGrayColor];
 		background = [[NSGradient alloc] initWithColorsAndLocations:

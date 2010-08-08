@@ -28,7 +28,7 @@
 {
 	if ([[self delegate] respondsToSelector: @selector(wantsPeriodicDraggingUpdates)])
 		return [[self delegate] wantsPeriodicDraggingUpdates];
-	else return NO;
+	else return YES;
 }
 
 - (NSDragOperation) draggingUpdated: (id <NSDraggingInfo>)sender

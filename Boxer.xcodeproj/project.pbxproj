@@ -259,6 +259,8 @@
 		9FD5481411047E420041E1E7 /* BXDrivesInUseAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD5481311047E420041E1E7 /* BXDrivesInUseAlert.m */; };
 		9FDAD87F10C182B3004EA7D0 /* BXCoverArtWell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FDAD87E10C182B3004EA7D0 /* BXCoverArtWell.m */; };
 		9FDB601710C0707F00C15CF4 /* BXDockTileController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FDB601610C0707F00C15CF4 /* BXDockTileController.m */; };
+		9FDC544E120EBFE70063B33D /* BXImportDropzonePanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FDC544D120EBFE70063B33D /* BXImportDropzonePanelController.m */; };
+		9FDC5476120EC8B40063B33D /* BXImportInstallerPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FDC5475120EC8B40063B33D /* BXImportInstallerPanelController.m */; };
 		9FDCA790118F2B7900E2FD74 /* BXCoalface.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCA78F118F2B7900E2FD74 /* BXCoalface.mm */; };
 		9FDCDEFD11B5B83B0032DA4E /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = 9FDCDEFC11B5B83B0032DA4E /* dsa_pub.pem */; };
 		9FE201A60F6D599C00B3A38C /* libz.1.2.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FE201A50F6D599C00B3A38C /* libz.1.2.3.dylib */; };
@@ -747,6 +749,10 @@
 		9FDAD87E10C182B3004EA7D0 /* BXCoverArtWell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXCoverArtWell.m; sourceTree = "<group>"; };
 		9FDB601510C0707F00C15CF4 /* BXDockTileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDockTileController.h; sourceTree = "<group>"; };
 		9FDB601610C0707F00C15CF4 /* BXDockTileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDockTileController.m; sourceTree = "<group>"; };
+		9FDC544C120EBFE70063B33D /* BXImportDropzonePanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImportDropzonePanelController.h; sourceTree = "<group>"; };
+		9FDC544D120EBFE70063B33D /* BXImportDropzonePanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXImportDropzonePanelController.m; sourceTree = "<group>"; };
+		9FDC5474120EC8B40063B33D /* BXImportInstallerPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImportInstallerPanelController.h; sourceTree = "<group>"; };
+		9FDC5475120EC8B40063B33D /* BXImportInstallerPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXImportInstallerPanelController.m; sourceTree = "<group>"; };
 		9FDCA78E118F2B7900E2FD74 /* BXCoalface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCoalface.h; sourceTree = "<group>"; };
 		9FDCA78F118F2B7900E2FD74 /* BXCoalface.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXCoalface.mm; sourceTree = "<group>"; };
 		9FDCDEFC11B5B83B0032DA4E /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub.pem; sourceTree = "<group>"; };
@@ -947,6 +953,10 @@
 				9F1CBA96120C7D9000C5E926 /* BXImportWindowController.m */,
 				9F1CBB57120CAA5500C5E926 /* BXImportPanel.h */,
 				9F1CBB58120CAA5500C5E926 /* BXImportPanel.m */,
+				9FDC544C120EBFE70063B33D /* BXImportDropzonePanelController.h */,
+				9FDC544D120EBFE70063B33D /* BXImportDropzonePanelController.m */,
+				9FDC5474120EC8B40063B33D /* BXImportInstallerPanelController.h */,
+				9FDC5475120EC8B40063B33D /* BXImportInstallerPanelController.m */,
 			);
 			name = "Game import window";
 			sourceTree = "<group>";
@@ -1103,14 +1113,14 @@
 		9F496E4C108EEDF700282261 /* XIBs */ = {
 			isa = PBXGroup;
 			children = (
-				9F1CBB5C120CABBB00C5E926 /* ImportWindow.xib */,
-				9F9A4CA410F67DD800E61965 /* Preferences.xib */,
-				9F59DEDD10B01743008DBBC1 /* ProgramPanel.xib */,
-				9F45A46A109C9A0400593456 /* MountPanelOptions.xib */,
 				9F45A1CB109C3D3400593456 /* MainMenu.xib */,
 				9F45A1C7109C3D1100593456 /* DOSWindow.xib */,
+				9F1CBB5C120CABBB00C5E926 /* ImportWindow.xib */,
 				9F45A1C5109C3CB400593456 /* InspectorPanel.xib */,
+				9F9A4CA410F67DD800E61965 /* Preferences.xib */,
 				9F45A1BB109C3C3900593456 /* About.xib */,
+				9F59DEDD10B01743008DBBC1 /* ProgramPanel.xib */,
+				9F45A46A109C9A0400593456 /* MountPanelOptions.xib */,
 			);
 			name = XIBs;
 			sourceTree = "<group>";
@@ -2008,6 +2018,8 @@
 				9F1CBAAB120C830600C5E926 /* BXImport+BXImportPolicies.m in Sources */,
 				9F1CBB59120CAA5500C5E926 /* BXImportPanel.m in Sources */,
 				9F1CBBA8120CB99D00C5E926 /* BXImportDropzone.m in Sources */,
+				9FDC544E120EBFE70063B33D /* BXImportDropzonePanelController.m in Sources */,
+				9FDC5476120EC8B40063B33D /* BXImportInstallerPanelController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -13,12 +13,11 @@
 #import <Cocoa/Cocoa.h>
 
 @class BXImport;
-@class BXImportDropzone;
 
 @interface BXImportWindowController : NSWindowController
 {
 	IBOutlet NSView *dropzonePanel;
-	IBOutlet BXImportDropzone *dropzone;
+	IBOutlet NSView *installerPanel;
 }
 
 
@@ -28,23 +27,20 @@
 //The dropzone panel, displayed initially when no import source has been selected 
 @property (retain, nonatomic) NSView *dropzonePanel;
 
-//The dropzone within the dropzone panel
-@property (retain, nonatomic) BXImportDropzone *dropzone;
+//The choose-thine-installer panel, displayed if the chosen game source contains
+//installers to choose from.
+@property (retain, nonatomic) NSView *installerPanel;
 
-//The currently-displayed panel
+//The currently-displayed panel.
 @property (assign, nonatomic) NSView *currentPanel;
 
 
 //Recast NSWindowController's standard accessors so that we get our own classes
-//(and don't have to keep recasting them ourselves)
+//(and don't have to keep recasting them ourselves.)
 - (BXImport *) document;
 
-
-#pragma mark -
-#pragma mark UI actions
-
-//Display a file picker for choosing a folder or disc image to import
-- (IBAction) showOpenPanel: (id)sender;
-
+//Show the corresponding panel. Called from BXImport.
+- (void) showDropzonePanel;
+- (void) showInstallerPanel;
 
 @end

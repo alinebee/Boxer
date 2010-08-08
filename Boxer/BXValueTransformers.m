@@ -256,6 +256,10 @@
 {
 	NSFileManager *manager	= [NSFileManager defaultManager];
 	NSArray *components		= [manager componentsToDisplayForPath: path];
+	
+	//If NSFileManager couldn't derive display names for this path, just use ordinary path components
+	if (!components) components = [path pathComponents];
+	
 	NSUInteger count		= [components count];
 	BOOL shortened = NO;
 	

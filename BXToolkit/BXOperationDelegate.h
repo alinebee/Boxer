@@ -13,6 +13,7 @@
 
 @protocol BXOperationDelegate <NSObject>
 
+@optional
 - (void) operationWillStart: (NSNotification *)notification;
 - (void) operationInProgress: (NSNotification *)notification;
 - (void) operationWasCancelled: (NSNotification *)notification;

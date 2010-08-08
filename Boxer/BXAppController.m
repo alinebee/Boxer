@@ -102,7 +102,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 #pragma mark -
 #pragma mark Initialization and teardown
 
-+ (void)initialize
++ (void) initialize
 {
 	[self setupDefaults];
 
@@ -126,7 +126,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	[[BGThemeManager keyedManager] setTheme: [[BXBlueprintTheme new] autorelease]		forKey: @"BXBlueprintTheme"];
 }
 
-+ (void)setupDefaults
++ (void) setupDefaults
 {
 	//We carry a plist of initial values for application preferences
     NSString *defaultsPath	= [[NSBundle mainBundle] pathForResource: @"UserDefaults" ofType: @"plist"];
@@ -235,7 +235,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 //Prevent the opening of new documents if we have a session already active
 - (id) makeUntitledDocumentOfType: (NSString *)typeName error: (NSError **)outError
 {
-	if (hasLaunchedSession && [self documentClassForType: typeName] == [BXSession class])
+	if (hasLaunchedSession && [[self documentClassForType: typeName] isKindOfClass: [BXSession class]])
 	{
 		//Launch another instance of Boxer to open the new session
 		[self _launchProcessWithUntitledDocument];
@@ -254,7 +254,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 							  ofType: (NSString *)typeName
 							   error: (NSError **)outError
 {
-	if (hasLaunchedSession && [self documentClassForType: typeName] == [BXSession class])
+	if (hasLaunchedSession && [[self documentClassForType: typeName] isKindOfClass: [BXSession class]])
 	{
 		//Launch another instance of Boxer to open the specified document
 		[self _launchProcessWithDocumentAtURL: absoluteURL];

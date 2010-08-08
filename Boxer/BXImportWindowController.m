@@ -7,31 +7,15 @@
 
 
 #import "BXImportWindowController.h"
-#import "BXImportDropzone.h"
 #import "BXImport.h"
+
 
 //The height of the bottom window border.
 //TODO: determine this from NIB content.
 #define BXImportWindowBorderThickness 40
 
-
-#pragma mark -
-#pragma mark Private method declarations
-
-@interface BXImportWindowController ()
-
-//Handles the response from the choose-a-folder-to-import panel.
-//Will set our BXImport's source path to the chosen file.
-- (void) _importChosenItem: (NSOpenPanel *)openPanel
-				returnCode: (int)returnCode
-			   contextInfo: (void *)contextInfo;
-
-@end
-
-
-
 @implementation BXImportWindowController
-@synthesize dropzonePanel, dropzone;
+@synthesize dropzonePanel, installerPanel;
 
 - (BXImport *) document { return (BXImport *)[super document]; }
 
@@ -41,7 +25,7 @@
 - (void) dealloc
 {
 	[self setDropzonePanel: nil], [dropzonePanel release];
-	[self setDropzone: nil], [dropzone release];
+	[self setInstallerPanel: nil], [installerPanel release];
 	
 	[super dealloc];
 }
@@ -52,13 +36,11 @@
 	[[self window] setContentBorderThickness: BXImportWindowBorderThickness forEdge: NSMinYEdge];
 	
 	//Default to the dropzone panel when we initially load
-	[self setCurrentPanel: [self dropzonePanel]];
-	
-	//Set up the dropzone panel to support drag-drop operations
-	[[self window] registerForDraggedTypes: [NSArray arrayWithObjects: NSFilenamesPboardType, nil]];
+	//TODO: this should really be under the control of BXImport instead, it controls the workflow
+	[self showDropzonePanel];
 }
 
-- (NSString *) windowTitleForDocumentDisplayName:(NSString *)displayName
+- (NSString *) windowTitleForDocumentDisplayName: (NSString *)displayName
 {
 	return NSLocalizedString(@"Import a Game", @"Title for game import window.");
 }
@@ -99,11 +81,11 @@
 	
 	if (oldPanel != panel)
 	{
-		[panel setFrameOrigin: NSZeroPoint];
-		 
 		//Animate the transition from one panel to the next
 		if (oldPanel)
 		{
+			[panel setFrame: [oldPanel frame]];
+			
 			[[[self window] contentView] addSubview: panel
 										 positioned: NSWindowBelow
 										 relativeTo: oldPanel];
@@ -124,113 +106,27 @@
 			animation = [[NSViewAnimation alloc] initWithViewAnimations: [NSArray arrayWithObjects: resize, fadeOut, nil]];
 			
 			[animation setAnimationBlockingMode: NSAnimationBlocking];
-			[animation setDuration: 0.2];
+			[animation setDuration: 0.25];
 			[animation startAnimation];
 			[animation release];
 			
+			//Reset the properties of the original panel once the animation is complete
 			[oldPanel removeFromSuperview];
+			[oldPanel setFrameSize: oldSize];
 			[oldPanel setHidden: NO];
 		}
 		
 		//If we're setting up the panel for the first time, don't bother with this step
 		else
 		{
+			[panel setFrameOrigin: NSZeroPoint];
 			[[[self window] contentView] addSubview: panel];
 			[[self window] setFrame: newFrame display: YES];
 		}
 	}
 }
 
+- (void) showDropzonePanel	{ [self showWindow: self]; [self setCurrentPanel: [self dropzonePanel]]; }
+- (void) showInstallerPanel	{ [self showWindow: self]; [self setCurrentPanel: [self installerPanel]]; }
 
-#pragma mark -
-#pragma mark UI actions
-
-- (IBAction) showOpenPanel: (id)sender
-{
-	NSOpenPanel *openPanel	= [NSOpenPanel openPanel];
-	
-	[openPanel setCanChooseFiles: YES];
-	[openPanel setCanChooseDirectories: YES];
-	[openPanel setTreatsFilePackagesAsDirectories: NO];
-	[openPanel setMessage:	NSLocalizedString(@"Choose a DOS game folder, CD-ROM or disc image to import:", @"Help text shown at the top of choose-a-folder-to-import panel.")];
-	[openPanel setPrompt:	NSLocalizedString(@"Import", @"Label shown on accept button in choose-a-folder-to-import panel.")];
-
-	[openPanel setDelegate: self];
-	
-	[openPanel beginSheetForDirectory: nil
-								 file: nil
-								types: [[BXImport acceptedSourceTypes] allObjects]
-					   modalForWindow: [self window]
-						modalDelegate: self
-					   didEndSelector: @selector(_importChosenItem:returnCode:contextInfo:)
-						  contextInfo: nil];	
-}
-
-- (void) _importChosenItem: (NSOpenPanel *)openPanel
-				returnCode: (int)returnCode
-			   contextInfo: (void *)contextInfo
-{
-	if (returnCode == NSOKButton)
-	{
-		NSString *path = [[openPanel URL] path];
-		NSLog(@"%@", path);	
-	}
-}
-   
-
-#pragma mark -
-#pragma mark Drag-drop handlers
-
-- (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)sender
-{
-	NSPasteboard *pboard = [sender draggingPasteboard];	
-	if ([[pboard types] containsObject: NSFilenamesPboardType])
-	{
-		NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
-		for (NSString *path in filePaths)
-		{
-			if (![[self document] canImportFromSourcePath: path]) return NSDragOperationNone;
-		}
-		
-		[[self dropzone] setHighlighted: YES];
-		return NSDragOperationCopy;
-	}
-	else return NSDragOperationNone;
-}
-
-- (BOOL) performDragOperation: (id <NSDraggingInfo>)sender
-{
-	[[self dropzone] setHighlighted: NO];
-	
-	NSPasteboard *pboard = [sender draggingPasteboard];
-	
-    if ([[pboard types] containsObject: NSFilenamesPboardType])
-	{
-        NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
-		for (NSString *path in filePaths)
-		{
-			if ([[self document] canImportFromSourcePath: path])
-			{
-				//Do import here
-				return YES;
-			}
-		}
-	}
-	return NO;
-}
-
-- (void)draggingExited: (id <NSDraggingInfo>)sender
-{
-	[[self dropzone] setHighlighted: NO];
-}
-
-- (void)draggingEnded: (id <NSDraggingInfo>)sender
-{
-	[[self dropzone] setHighlighted: NO];
-}
-
-- (void) concludeDragOperation: (id <NSDraggingInfo>)sender
-{
-	[[self dropzone] setHighlighted: NO];
-}
 @end

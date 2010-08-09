@@ -42,7 +42,39 @@
 
 - (NSString *) windowTitleForDocumentDisplayName: (NSString *)displayName
 {
-	return NSLocalizedString(@"Import a Game", @"Title for game import window.");
+	NSString *format = NSLocalizedString(@"Importing %@",
+										 @"Title for game import window. %@ is the name of the gamebox/source path being imported.");
+	return [NSString stringWithFormat: format, displayName, nil];
+}
+
+- (void) synchronizeWindowTitleWithDocumentName
+{
+	if ([[self document] isGamePackage])
+	{
+		//If the import process already has a gamebox, display that
+		return [super synchronizeWindowTitleWithDocumentName];
+	}
+	else
+	{
+		//If the import process has a source path, use that for the title instead
+		NSString *representedPath = [[self document] sourcePath];
+		
+		if (representedPath)
+		{
+			NSString *documentName = [[NSFileManager defaultManager] displayNameAtPath: representedPath];
+			[[self window] setRepresentedFilename: representedPath];
+			[[self window] setTitle: [self windowTitleForDocumentDisplayName: documentName]];
+		}
+		
+		//Otherwise, display a generic title
+		else
+		{
+			
+			[[self window] setRepresentedFilename: @""];
+			[[self window] setTitle: NSLocalizedString(@"Import a Game",
+													   @"The standard import window title before an import source has been chosen.")];
+		}
+	}
 }
 
 
@@ -81,8 +113,8 @@
 	
 	if (oldPanel != panel)
 	{
-		//Animate the transition from one panel to the next
-		if (oldPanel)
+		//Animate the transition from one panel to the next, if we have a previous panel and the window is actually on screen
+		if (oldPanel && [[self window] isVisible])
 		{
 			[panel setFrame: [oldPanel frame]];
 			
@@ -119,6 +151,7 @@
 		//If we're setting up the panel for the first time, don't bother with this step
 		else
 		{
+			[oldPanel removeFromSuperview];
 			[panel setFrameOrigin: NSZeroPoint];
 			[[[self window] contentView] addSubview: panel];
 			[[self window] setFrame: newFrame display: YES];
@@ -126,7 +159,11 @@
 	}
 }
 
-- (void) showDropzonePanel	{ [self showWindow: self]; [self setCurrentPanel: [self dropzonePanel]]; }
-- (void) showInstallerPanel	{ [self showWindow: self]; [self setCurrentPanel: [self installerPanel]]; }
+//This curious process is as follows:
+//1. we invoke window to ensure that all our resources are fully loaded from the nib file
+//2. we swap the panels around.
+//3. we reveal the window after all swapping has been performed, so we don't have to redraw in front of the user.
+- (void) showDropzonePanel	{ [self window]; [self setCurrentPanel: [self dropzonePanel]]; [self showWindow: self]; }
+- (void) showInstallerPanel	{ [self window]; [self setCurrentPanel: [self installerPanel]]; [self showWindow: self]; }
 
 @end

@@ -27,8 +27,7 @@
 							   @"inst",
 							   @"setup",
 							   @"config",
-							   @"^origin\\.bat$",
-							   @"^initial\\.exe$",
+							   @"^origin\\.bat$",	//FIXME: should this be in a game profile?
 							   nil];
 	return patterns;
 }
@@ -46,11 +45,7 @@
 }
 
 + (BOOL) isInstallerAtPath: (NSString *)path
-{
-	//Skip non-executables
-	if (![[NSWorkspace sharedWorkspace] file: path matchesTypes: [BXAppController executableTypes]])
-		return NO;
-	
+{	
 	NSString *fileName = [[path lastPathComponent] lowercaseString];
 	
 	for (NSString *pattern in [self installerPatterns])
@@ -134,73 +129,38 @@
 	return NO;
 }
 
-+ (BXInstallStatus) installStatusOfGameAtPath: (NSString *)path
-{
-	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	NSFileManager *manager = [NSFileManager defaultManager];
-	
-	
-	//If the game is on CD, then it's definitely not installed
-	if ([workspace volumeTypeForPath: path] == dataCDVolumeType) return BXInstallStatusNotInstalled;
-	
-	BOOL hasInstallers = NO;
-	NSDirectoryEnumerator *enumerator = [manager enumeratorAtPath: path];
-	for (NSString *subPath in enumerator)
-	{
-		NSString *fullPath = [path stringByAppendingPathComponent: subPath];
-		
-		//If the path contains any playable-game telltale files, it's definitely installed
-		if ([self isPlayableGameTelltaleAtPath: fullPath]) return BXInstallStatusInstalled;
-		
-		//Check if the source path contains any known installers.
-		//(We stop checking after we've found the first one, but keep scanning the other files
-		//in case we get a more authoritative result from other checks)
-		if (!hasInstallers) hasInstallers = [self isInstallerAtPath: fullPath];
-	}
-	
-	//If the source path has no installers in it, then assume that it's probably already installed
-	//(it may not be - we may just not recognise the installer - so we can't be sure)
-	if (!hasInstallers) return BXInstallStatusProbablyInstalled;
-	
-	//If all else fails, assume the game is probably not installed
-	return BXInstallStatusProbablyNotInstalled;
-}
-
 
 #pragma mark -
 #pragma mark Deciding how best to import a game
 
-+ (NSArray *) installersAtPath: (NSString *)path recurse: (BOOL)scanSubdirs
++ (NSArray *) executablesAtPath: (NSString *)path recurse: (BOOL)scanSubdirs
 {
-	NSMutableArray *installers = [[NSMutableArray alloc] initWithCapacity: 10];
+	NSMutableArray *executables = [NSMutableArray arrayWithCapacity: 10];
 	
 	NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtPath: path];
+	
+	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+	NSSet *executableTypes = [BXAppController executableTypes];
 	
 	for (NSString *subPath in enumerator)
 	{
 		if (!scanSubdirs) [enumerator skipDescendents];
 		
-		//Skip non-files
-		if (![[[enumerator fileAttributes] fileType] isEqualToString: NSFileTypeRegular])
-			continue;
+		NSDictionary *attrs = [enumerator fileAttributes];
 		
-		//Skip hidden files
+		//Skip directories
+		if (![[attrs fileType] isEqualToString: NSFileTypeRegular]) continue;
+		
+		//Skip dot-hidden files (since these are probably just metadata for real files)
 		if ([[subPath lastPathComponent] hasPrefix: @"."]) continue;
 		
 		NSString *fullPath = [path stringByAppendingPathComponent: subPath];
-		
-		if ([self isInstallerAtPath: fullPath])
-		{
-			[installers addObject: fullPath];			
-		}
+		if ([workspace file: fullPath matchesTypes: executableTypes]) [executables addObject: fullPath];
 	}
 	
-	//Sort the installers by depth
-	NSArray *sortedPaths = [installers sortedArrayUsingSelector: @selector(pathDepthCompare:)];
-	[installers release];
-	
-	return sortedPaths;
+	return executables;
 }
+
 
 + (NSString *) preferredInstallerFromPaths: (NSArray *)paths
 {
@@ -214,6 +174,7 @@
 	}
 	return nil;
 }
+
 
 + (BOOL) shouldImportSourceFilesFromPath: (NSString *)path
 {

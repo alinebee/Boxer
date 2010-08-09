@@ -178,28 +178,20 @@
 	[self setNeedsDisplay: YES];
 }
 
-
 #pragma mark -
 #pragma mark Drawing methods
 
 - (void) drawRect: (NSRect)dirtyRect
 {
-	//If we have a file image, draw that normally
-	if ([self image]) [super drawRect: dirtyRect];
-	
-	//Otherwise, draw our fancy shmancy dropzone border
-	else
-	{
-		[NSBezierPath clipRect: dirtyRect];
-		[self _drawDropZoneInRect: dirtyRect];
-	}
+	[NSBezierPath clipRect: dirtyRect];
+	[self _drawDropZoneInRect: dirtyRect];
 }
 
 - (void) _drawDropZoneInRect: (NSRect)dirtyRect
 {
 	NSColor *borderColor		= [NSColor whiteColor];
 	NSImage *icon				= [[self class] dropzoneIcon];
-	NSShadow *dropzoneShadow	= [self isHighlighted] ? [[self class] dropzoneHighlight] : [[self class] dropzoneShadow];
+	NSShadow *dropzoneShadow	= ([self isHighlighted] || [[self cell] isHighlighted]) ? [[self class] dropzoneHighlight] : [[self class] dropzoneShadow];
 	
 	CGFloat borderInset = 8.0f - [self borderOutset];
 	NSRect borderFrame	= NSInsetRect([self bounds], borderInset, borderInset);

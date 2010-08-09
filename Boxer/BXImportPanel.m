@@ -19,18 +19,28 @@
 														 endingColor: [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.4f]];
 	
 	NSColor *blueprintColor = [NSColor colorWithPatternImage: [NSImage imageNamed: @"Blueprint.jpg"]];
-	[blueprintColor set];
+	
+	
+	//Ensure the pattern is always centered horizontally in the view by adjusting its phase relative to the bottom-left window origin.
+	NSSize patternSize		= [[blueprintColor patternImage] size];
+	NSRect panelFrame		= [self frame];
+	NSPoint patternPhase	= NSMakePoint(panelFrame.origin.x + ((panelFrame.size.width - patternSize.width) / 2), 0.0f);
+	
 	
 	NSRect backgroundRect = [self bounds];
-	
 	NSRect highlightRect = [self bounds];
 	highlightRect.size.height = 1.0f;
 	
 	NSRect shadowRect = highlightRect;
 	shadowRect.origin.y += 1.0f;
 	
+	
 	//First, fill the background with our pattern
-	[NSBezierPath fillRect: backgroundRect];
+	[NSGraphicsContext saveGraphicsState];
+		[blueprintColor set];
+		[[NSGraphicsContext currentContext] setPatternPhase: patternPhase];
+		[NSBezierPath fillRect: backgroundRect];
+	[NSGraphicsContext restoreGraphicsState];
 	
 	//Then, draw the lighting onto the background
 	NSPoint startPoint	= NSMakePoint(NSMidX(backgroundRect), NSMaxY(backgroundRect));
@@ -51,10 +61,12 @@
 	//Don't bother drawing the bevel if it's not dirty
 	if (NSIntersectsRect(dirtyRect, highlightRect))
 	{
-		[bevelHighlight set];
-		[NSBezierPath fillRect: highlightRect];
-		[bevelShadow set];
-		[NSBezierPath fillRect: shadowRect];
+		[NSGraphicsContext saveGraphicsState];
+			[bevelHighlight set];
+			[NSBezierPath fillRect: highlightRect];
+			[bevelShadow set];
+			[NSBezierPath fillRect: shadowRect];
+		[NSGraphicsContext restoreGraphicsState];
 	}
 }
 

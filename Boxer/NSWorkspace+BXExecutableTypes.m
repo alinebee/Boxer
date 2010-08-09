@@ -34,7 +34,7 @@
 		NSData *output = [[outputPipe fileHandleForReading] readDataToEndOfFile];
 		NSString *outputString = [[NSString alloc] initWithData: output encoding: NSUTF8StringEncoding];
 		
-		BOOL isWindowsOnly = [outputString isMatchedByRegex: @"[^(OS/2 or )]Windows"];
+		BOOL isWindowsOnly = ([outputString rangeOfString: @"Windows"].location != NSNotFound);
 		[outputString release];
 		return isWindowsOnly;
 	}

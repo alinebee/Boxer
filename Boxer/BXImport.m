@@ -10,8 +10,12 @@
 #import "BXImport+BXImportPolicies.h"
 #import "BXImportWindowController.h"
 #import "NSWorkspace+BXFileTypes.h"
+#import "NSWorkspace+BXMountedVolumes.h"
+#import "NSWorkspace+BXExecutableTypes.h"
+#import "NSString+BXPaths.h"
 #import "BXAppController.h"
 #import "BXGameProfile.h"
+#import "BXImportError.h"
 
 
 #pragma mark -
@@ -22,10 +26,6 @@
 @property (readwrite, copy, nonatomic) NSString *sourcePath;
 @property (readwrite, copy, nonatomic) NSString *preferredInstallerPath;
 @property (readwrite, assign, nonatomic) BOOL thinking;
-
-//Populates game profile, available installers and preferred installer based on game at specified path.
-//Called in setSourcePath: to autodetect game properties after choosing a new path.
-- (void) _detectGameFromPath: (NSString *)path;
 
 //Initiates whatever step of the import process we're up to: displaying an import panel, launching
 //an installer, finalising import etc.
@@ -95,7 +95,13 @@
 	static NSSet *acceptedTypes = nil;
 	if (!acceptedTypes)
 	{
-		acceptedTypes = [[BXAppController mountableTypes] retain];
+		//A subset of our mountable types: we only accept regular folders and disk image formats
+		//which can be mounted by hdiutil (so that we can inspect their filesystems)
+		acceptedTypes = [[NSSet alloc] initWithObjects:
+						 @"public.folder",
+						 @"public.iso-image",
+						 @"com-apple.disk-image-cdr",
+						 nil];
 	}
 	return acceptedTypes;
 }
@@ -110,17 +116,121 @@
 #pragma mark -
 #pragma mark Import steps
 
-- (void) confirmSourcePath: (NSString *)path
+- (void) importFromSourcePath: (NSString *)path
 {
 	if (path)
 	{
-		[self setSourcePath: path];
+		[self setThinking: YES];
 		
-		//Upon choosing a source path: detect its game profile, available installers and preferred installer
-		[self _detectGameFromPath: path];
+		NSError *error = nil;
+		NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+		BXGameProfile *detectedProfile = nil;
+		
+		NSMutableArray *detectedInstallers = nil;
+		NSArray *executables = nil;
+		NSString *preferredInstaller = nil;
+		
+		//If the chosen path was a disk image, mount it and use the mounted volume as our source
+		if ([workspace file: path matchesTypes: [NSSet setWithObject: @"public.disk-image"]])
+		{
+			NSString *mountedVolumePath = [workspace mountImageAtPath: path error: &error];
+			if (mountedVolumePath) path = mountedVolumePath;
+		}
+		//If the chosen path was an audio CD, check if it has a corresponding data path		
+		else if ([[workspace volumeTypeForPath: path] isEqualToString: audioCDVolumeType])
+		{
+			NSString *dataVolumePath = [workspace dataVolumeOfAudioCD: path];
+			if (dataVolumePath) path = dataVolumePath;
+		}
+		
+		//Now, autodetect the game and installers from the selected path
+		if (!error)
+		{
+			detectedProfile	= [BXGameProfile detectedProfileForPath: path searchSubfolders: YES];
+			executables		= [[self class] executablesAtPath: path recurse: YES];
+			
+			if ([executables count])
+			{
+				//Scan for installers
+				detectedInstallers = [NSMutableArray arrayWithCapacity: 10];
+				NSUInteger numWindowsExecutables = 0;
+				
+				for (NSString *executablePath in executables)
+				{
+					//Exclude windows-only programs, but note how many we've found
+					if ([workspace isWindowsOnlyExecutableAtPath: executablePath])
+					{
+						numWindowsExecutables++;
+						continue;
+					}
+					
+					//If this is the designated installer for this game,
+					//add it to the list and use it as the preferred default
+					if (!preferredInstaller && [detectedProfile isDesignatedInstallerAtPath: executablePath])
+					{
+						[detectedInstallers addObject: executablePath];
+						preferredInstaller = executablePath;
+					}
+					
+					//If it looks like an installer, go for it
+					else if ([[self class] isInstallerAtPath: executablePath])
+					{
+						[detectedInstallers addObject: executablePath];
+					}
+				}
+				
+				if ([detectedInstallers count])
+				{
+					//Sort the installers by depth, and determine the preferred one
+					[detectedInstallers sortUsingSelector: @selector(pathDepthCompare:)];
+					
+					//If we didn't find the game profile's own preferred installer, detect one from the list now
+					if (!preferredInstaller)
+						preferredInstaller = [[self class] preferredInstallerFromPaths: detectedInstallers];
+				}
+				
+				//If no installers were found, check if this was a windows-only game
+				else if (numWindowsExecutables == [executables count])
+				{
+					error = [BXImportWindowsOnlyError errorWithSourcePath: path userInfo: nil];
+				}
+			}
+			else
+			{
+				//No executables were found - this indicates that the folder contained something other than a DOS game
+				error = [BXImportNoExecutablesError errorWithSourcePath: path userInfo: nil];
+			}
+		}
+		
+		//If we encountered an error, bail out and display it
+		if (error)
+		{
+			[self setThinking: NO];
+			[self showWindows];
+			
+			[self presentError: error
+				modalForWindow: [[self importWindowController] window]
+					  delegate: nil
+			didPresentSelector: NULL
+				   contextInfo: NULL];
+			
+			return;
+		}
+				
+		[self setSourcePath: path];
+		[self setGameProfile: detectedProfile];
+		
+		//FIXME: we have to set the preferred installer first because BXInstallerPanelController is listening
+		//for when we set the installer paths, and relies on knowing the preferred installer in advance
+		//TODO: move the preferred installer detection off to BXInstallerPanelController instead?
+		[self setPreferredInstallerPath: preferredInstaller];
+		[self setInstallerPaths: detectedInstallers];
+		
+		[self setThinking: NO];
 		
 		//Now that we know the source path, we can continue to the next import step
 		[self _continueImport];
+		
 	}
 }
 
@@ -201,36 +311,6 @@
 	{
 		//TODO: show import complete panel here
 	}
-}
-
-- (void) _detectGameFromPath: (NSString *)path
-{
-	[self setThinking: YES];
-	
-	BXGameProfile *detectedProfile	= nil;
-	NSArray *detectedInstallers		= nil;
-	
-	if (path)
-	{
-		detectedProfile		= [BXGameProfile detectedProfileForPath: path searchSubfolders: YES];
-		detectedInstallers	= [[self class] installersAtPath: path recurse: YES];
-	}
-
-	[self setGameProfile: detectedProfile];
-	[self setInstallerPaths: detectedInstallers];
-	
-	[self setThinking: NO];
-}
-
-- (void) setInstallerPaths: (NSArray *)paths
-{
-	if (paths != installerPaths)
-	{
-		[installerPaths release];
-		installerPaths = [paths retain];
-		
-		//Detect a new preferred installer from among these paths
-		[self setPreferredInstallerPath: [[self class] preferredInstallerFromPaths: installerPaths]];
-	}
+	[[self importWindowController] synchronizeWindowTitleWithDocumentName];
 }
 @end

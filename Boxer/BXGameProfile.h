@@ -34,6 +34,7 @@ typedef NSUInteger BXGameEra;
 	NSString *confName;
 	NSString *description;
 	NSDictionary *driveLabelMappings;
+	NSArray *installerPatterns;
 }
 
 #pragma mark -
@@ -75,7 +76,10 @@ typedef NSUInteger BXGameEra;
 #pragma mark -
 #pragma mark Methods affecting emulation behaviour
 
-//Returns an customised drive label for the specified drive
+//Returns an customised drive label for the specified drive.
 - (NSString *) labelForDrive: (BXDrive *)drive;
+
+//Returns whether the file at the specified path is the designated installer for this game.
+- (BOOL) isDesignatedInstallerAtPath: (NSString *)path;
 
 @end

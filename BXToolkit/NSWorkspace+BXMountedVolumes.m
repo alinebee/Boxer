@@ -7,8 +7,13 @@
 
 #import "NSWorkspace+BXMountedVolumes.h"
 #import "NSString+BXPaths.h"
+#import "BXMountedVolumesError.h"
 #include <sys/param.h>
 #include <sys/mount.h>
+
+
+#pragma mark -
+#pragma mark Class constants
 
 NSString * const dataCDVolumeType	= @"cd9660";
 NSString * const audioCDVolumeType	= @"cddafs";
@@ -64,6 +69,59 @@ NSString * const HFSVolumeType		= @"hfs";
 	return nil;
 }
 
+- (NSString *) mountImageAtPath: (NSString *)path error: (NSError **)error
+{
+	path = [path stringByStandardizingPath];
+	
+	NSTask *hdiutil		= [[NSTask alloc] init];
+	NSPipe *outputPipe	= [NSPipe pipe];
+	NSPipe *errorPipe	= [NSPipe pipe];
+	NSData *output;
+	NSDictionary *hdiInfo;
+	
+	[hdiutil setLaunchPath:		@"/usr/bin/hdiutil"];
+	[hdiutil setArguments:		[NSArray arrayWithObjects: @"attach", path, @"-plist", nil]];
+	[hdiutil setStandardOutput: outputPipe];
+	[hdiutil setStandardError: errorPipe];
+	
+	[hdiutil launch];
+	[hdiutil waitUntilExit];
+	
+	int returnValue = [hdiutil terminationStatus];
+	
+	[hdiutil release];
+	
+	//If hdiutil couldn't mount the drive, populate an error object with the details
+	if (returnValue > 0)
+	{
+		NSData *errorData		= [[errorPipe fileHandleForReading] availableData];
+		NSString *failureReason	= [[NSString alloc] initWithData: errorData encoding: NSUTF8StringEncoding];
+		
+		NSDictionary *userInfo	= [NSDictionary dictionaryWithObject: failureReason forKey: NSLocalizedFailureReasonErrorKey];
+		[failureReason release];
+		
+		*error = [BXCouldNotMountImageError errorWithImagePath: path userInfo: userInfo];
+		
+		return nil;
+	}
+	
+	output	= [[outputPipe fileHandleForReading] availableData];
+	hdiInfo	= [NSPropertyListSerialization propertyListFromData: output
+											   mutabilityOption: NSPropertyListImmutable
+														 format: nil
+											   errorDescription: nil];
+	
+	NSArray *mountPoints = [hdiInfo objectForKey: @"system-entities"];
+	for (NSDictionary *mountPoint in mountPoints)
+	{
+		//Return the first mount point that has a valid volume path
+		NSString *destination = [[mountPoint objectForKey: @"mount-point"] stringByStandardizingPath];
+		if (destination) return destination;
+	}
+	//TODO: if no mount points were found, populate an error to that effect
+	return nil;
+}
+
 - (NSString *) sourceImageForVolume: (NSString *)volumePath
 {
 	NSString *resolvedPath	= [volumePath stringByStandardizingPath];
@@ -113,9 +171,10 @@ NSString * const HFSVolumeType		= @"hfs";
 	[hdiutil release];
 	
 	output	= [[outputPipe fileHandleForReading] availableData];
-	hdiInfo	= [NSPropertyListSerialization	propertyListFromData: output
-											mutabilityOption: NSPropertyListImmutable
-											format: nil errorDescription: nil];
+	hdiInfo	= [NSPropertyListSerialization propertyListFromData: output
+											   mutabilityOption: NSPropertyListImmutable
+														 format: nil
+											   errorDescription: nil];
 
 	return [hdiInfo objectForKey: @"images"];
 }

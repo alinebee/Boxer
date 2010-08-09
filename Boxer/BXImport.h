@@ -71,8 +71,9 @@
 #pragma mark -
 #pragma mark Import steps
 
-//Selects the specified source path and continues to the next step of importing.
-- (void) confirmSourcePath: (NSString *)path;
+//Selects the specified source path, detects the game's details based on it,
+//and continues to the next step of importing.
+- (void) importFromSourcePath: (NSString *)path;
 
 //Cancels a previously-specified source path and returns to the source path choice step.
 - (void) cancelSourcePath;

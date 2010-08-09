@@ -32,6 +32,10 @@ extern NSString * const HFSVolumeType;
 //Returns nil if the source image could not be determined (e.g. if the volume is not mounted from a disk image)
 - (NSString *) sourceImageForVolume: (NSString *)volumePath;
 
+//Mounts the disk image at the specified path, and returns the path to the newly-mounted volume if successful.
+//Returns nil and populates error if mounting failed.
+- (NSString *) mountImageAtPath: (NSString *)path error: (NSError **)error;
+
 //Returns an array of NSDictionaries containing details about each mounted image volume, as reported by hdiutil.
 //This data is used by sourceImageForPath: and is probably not much use otherwise.
 - (NSArray *) mountedImages;

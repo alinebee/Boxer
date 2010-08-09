@@ -21,7 +21,8 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="35"/>
+			<integer value="6"/>
+			<integer value="34"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -81,7 +82,6 @@
 								<int key="NSvFlags">269</int>
 								<string key="NSFrame">{{139, 109}, {160, 160}}</string>
 								<reference key="NSSuperview" ref="499271540"/>
-								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="441074250">
 									<int key="NSCellFlags">67239424</int>
@@ -106,7 +106,6 @@
 								<int key="NSvFlags">269</int>
 								<string key="NSFrame">{{67, 3}, {306, 51}}</string>
 								<reference key="NSSuperview" ref="499271540"/>
-								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="814898010">
 									<int key="NSCellFlags">67239424</int>
@@ -129,14 +128,13 @@ cnQgaXQgaW50byBhIG5ldyBnYW1lYm94LiA</string>
 										<bytes key="NSWhite">MQA</bytes>
 									</object>
 								</object>
-								<string key="themeKey">BXBlueprintTheme</string>
+								<string key="themeKey">BXBlueprintHelpText</string>
 							</object>
 							<object class="BGHUDLabel" id="394238581">
 								<reference key="NSNextResponder" ref="499271540"/>
 								<int key="NSvFlags">269</int>
 								<string key="NSFrame">{{45, 62}, {349, 39}}</string>
 								<reference key="NSSuperview" ref="499271540"/>
-								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="953642423">
 									<int key="NSCellFlags">68288064</int>
@@ -156,7 +154,6 @@ cnQgaXQgaW50byBhIG5ldyBnYW1lYm94LiA</string>
 						</object>
 						<string key="NSFrame">{{0, 39}, {440, 293}}</string>
 						<reference key="NSSuperview" ref="889166584"/>
-						<reference key="NSWindow"/>
 						<string key="NSClassName">BXImportPanel</string>
 					</object>
 					<object class="NSCustomView" id="730797341">
@@ -168,9 +165,8 @@ cnQgaXQgaW50byBhIG5ldyBnYW1lYm94LiA</string>
 								<reference key="NSNextResponder" ref="730797341"/>
 								<int key="NSvFlags">1316</int>
 								<object class="NSPSMatrix" key="NSDrawMatrix"/>
-								<string key="NSFrame">{{20, 12}, {16, 16}}</string>
+								<string key="NSFrame">{{212, 12}, {16, 16}}</string>
 								<reference key="NSSuperview" ref="730797341"/>
-								<reference key="NSWindow"/>
 								<int key="NSpiFlags">28938</int>
 								<double key="NSMaxValue">100</double>
 							</object>
@@ -179,7 +175,6 @@ cnQgaXQgaW50byBhIG5ldyBnYW1lYm94LiA</string>
 								<int key="NSvFlags">289</int>
 								<string key="NSFrame">{{350, 7}, {70, 25}}</string>
 								<reference key="NSSuperview" ref="730797341"/>
-								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="728028712">
 									<int key="NSCellFlags">-2080244224</int>
@@ -198,13 +193,11 @@ cnQgaXQgaW50byBhIG5ldyBnYW1lYm94LiA</string>
 						</object>
 						<string key="NSFrameSize">{440, 39}</string>
 						<reference key="NSSuperview" ref="889166584"/>
-						<reference key="NSWindow"/>
 						<string key="NSClassName">NSView</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{440, 332}</string>
 				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 			</object>
 			<object class="NSView" id="384524801">
 				<reference key="NSNextResponder"/>
@@ -315,7 +308,7 @@ cnQgaXQgaW50byBhIG5ldyBnYW1lYm94LiA</string>
 									<reference key="NSBackgroundColor" ref="672356819"/>
 									<reference key="NSTextColor" ref="432495097"/>
 								</object>
-								<string key="themeKey">BXBlueprintTheme</string>
+								<string key="themeKey">BXBlueprintHelpText</string>
 							</object>
 							<object class="BGHUDLabel" id="791447193">
 								<reference key="NSNextResponder" ref="867951720"/>
@@ -326,7 +319,7 @@ cnQgaXQgaW50byBhIG5ldyBnYW1lYm94LiA</string>
 								<object class="NSTextFieldCell" key="NSCell" id="700719066">
 									<int key="NSCellFlags">67239424</int>
 									<int key="NSCellFlags2">138412032</int>
-									<string key="NSContents">First we’ll launch the installer to set up the game.</string>
+									<string key="NSContents">Boxer will now launch an installer to set up the game.</string>
 									<object class="NSFont" key="NSSupport">
 										<string key="NSName">LucidaGrande</string>
 										<double key="NSSize">24</double>
@@ -1066,7 +1059,7 @@ cnQgaXQgaW50byBhIG5ldyBnYW1lYm94LiA</string>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">104</int>
+			<int key="maxID">107</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

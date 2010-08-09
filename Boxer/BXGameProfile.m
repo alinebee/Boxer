@@ -122,12 +122,15 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 {
 	if ((self = [super init]))
 	{
-		self.gameName = [profileDict objectForKey: @"BXProfileName"];
-		self.confName = [profileDict objectForKey: @"BXProfileConf"];
-		self.description = [profileDict objectForKey: @"BXProfileDescription"];
+		self.gameName			= [profileDict objectForKey: @"BXProfileName"];
+		self.confName			= [profileDict objectForKey: @"BXProfileConf"];
+		self.description		= [profileDict objectForKey: @"BXProfileDescription"];
+		
+		//Used by isDesignatedInstallerAtPath:
+		installerPatterns	= [[profileDict objectForKey: @"BXDesignatedInstallers"] retain];
 		
 		//Used by customDriveLabelForPath
-		driveLabelMappings = [[profileDict objectForKey: @"BXProfileDriveLabels"] retain];
+		driveLabelMappings	= [[profileDict objectForKey: @"BXProfileDriveLabels"] retain];
 	}
 	return self;
 }
@@ -138,6 +141,7 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 	[self setConfName: nil], [confName release];
 	[self setDescription: nil], [description release];
 	[driveLabelMappings release], driveLabelMappings = nil;
+	[installerPatterns release], installerPatterns = nil;
 	
 	[super dealloc];
 }
@@ -157,6 +161,17 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 	
 	if (customLabel) return customLabel;
 	return defaultLabel;
+}
+
+- (BOOL) isDesignatedInstallerAtPath: (NSString *)path
+{
+	if (!installerPatterns) return NO;
+	path = [path lowercaseString];
+	for (NSString *pattern in installerPatterns)
+	{
+		if ([path hasSuffix: pattern]) return YES;
+	}
+	return NO;
 }
 
 

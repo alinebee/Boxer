@@ -14,16 +14,6 @@
 #pragma mark -
 #pragma mark Class constants
 
-//BXInstallStatus constants. Returned by statusOfGameAtPath:
-enum {
-	BXGameStatusUninstallable			= -1,
-	BXInstallStatusUnknown				= 0,
-	BXInstallStatusNotInstalled			= 1,
-	BXInstallStatusProbablyNotInstalled	= 2,
-	BXInstallStatusProbablyInstalled	= 3,
-	BXInstallStatusInstalled			= 4
-};
-typedef NSUInteger BXInstallStatus;
 
 //Source paths whose filesize is larger than this in bytes will be treated
 //as CD-sized by shouldImportSourceFilesFromPath:
@@ -70,27 +60,21 @@ typedef NSUInteger BXInstallStatus;
 //Uses playableGameTelltaleExtensions and playableGameTelltalePatterns, in that order.
 + (BOOL) isPlayableGameTelltaleAtPath: (NSString *)path;
 
-//Returns a BXInstallStatus value, indicating how sure we are about the
-//installation status of the game at the specified path.
-+ (BXInstallStatus) installStatusOfGameAtPath: (NSString *)path;
-
 
 #pragma mark -
 #pragma mark Deciding how best to import a game
 
-//Returns a list of all valid DOS installers found within the specified path, sorted depth-first.
+//Returns a list of all executables found within the specified path.
 //If scanSubdirs is NO, the search will be restricted to the base path.
-+ (NSArray *) installersAtPath: (NSString *)path recurse: (BOOL)scanSubdirs;
++ (NSArray *) executablesAtPath: (NSString *)path recurse: (BOOL)scanSubdirs;
 
 //Returns a recommended installer from the list of possible installers,
 //using preferredInstallerPatterns.
 + (NSString *) preferredInstallerFromPaths: (NSArray *)paths;
 
-
 //Whether the source files at the specified path should be made into a fake CD-ROM for the game.
 //This decision is based on the size of the files and the volume type of the path.
 + (BOOL) shouldImportSourceFilesFromPath: (NSString *)path;
-
 
 //Returns a suitable name (sans .boxer extension) for the game at the specified path.
 //This is based on the last path component of the source path, cleaned up.

@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		9F0F9EDA12108A9000ED7A64 /* BXImportError.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0F9ED912108A9000ED7A64 /* BXImportError.m */; };
+		9F0F9EEF1210901800ED7A64 /* BXMountedVolumesError.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0F9EEE1210901800ED7A64 /* BXMountedVolumesError.m */; };
 		9F13F9D011F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F13F9CF11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m */; };
 		9F1CBA58120C796C00C5E926 /* BXImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBA57120C796C00C5E926 /* BXImport.m */; };
 		9F1CBA97120C7D9000C5E926 /* BXImportWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBA96120C7D9000C5E926 /* BXImportWindowController.m */; };
@@ -306,6 +308,10 @@
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		8D1107320486CEB800E47090 /* Boxer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Boxer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9F0F9ED812108A9000ED7A64 /* BXImportError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImportError.h; sourceTree = "<group>"; };
+		9F0F9ED912108A9000ED7A64 /* BXImportError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXImportError.m; sourceTree = "<group>"; };
+		9F0F9EED1210901800ED7A64 /* BXMountedVolumesError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXMountedVolumesError.h; sourceTree = "<group>"; };
+		9F0F9EEE1210901800ED7A64 /* BXMountedVolumesError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXMountedVolumesError.m; sourceTree = "<group>"; };
 		9F13F9CE11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+BXTemporaryFiles.h"; sourceTree = "<group>"; };
 		9F13F9CF11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+BXTemporaryFiles.m"; sourceTree = "<group>"; };
 		9F1CBA56120C796C00C5E926 /* BXImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImport.h; sourceTree = "<group>"; };
@@ -940,6 +946,8 @@
 				9F1CBA57120C796C00C5E926 /* BXImport.m */,
 				9F1CBAA9120C830600C5E926 /* BXImport+BXImportPolicies.h */,
 				9F1CBAAA120C830600C5E926 /* BXImport+BXImportPolicies.m */,
+				9F0F9ED812108A9000ED7A64 /* BXImportError.h */,
+				9F0F9ED912108A9000ED7A64 /* BXImportError.m */,
 			);
 			name = "Game import";
 			sourceTree = "<group>";
@@ -1568,6 +1576,8 @@
 				9FE90BF611F8D1DC003CFFFF /* BXDelegatedView.m */,
 				9FEAA3EA1204595B0085F008 /* BXOperation.h */,
 				9FEAA3EB1204595B0085F008 /* BXOperation.m */,
+				9F0F9EED1210901800ED7A64 /* BXMountedVolumesError.h */,
+				9F0F9EEE1210901800ED7A64 /* BXMountedVolumesError.m */,
 			);
 			path = BXToolkit;
 			sourceTree = "<group>";
@@ -2020,6 +2030,8 @@
 				9F1CBBA8120CB99D00C5E926 /* BXImportDropzone.m in Sources */,
 				9FDC544E120EBFE70063B33D /* BXImportDropzonePanelController.m in Sources */,
 				9FDC5476120EC8B40063B33D /* BXImportInstallerPanelController.m in Sources */,
+				9F0F9EDA12108A9000ED7A64 /* BXImportError.m in Sources */,
+				9F0F9EEF1210901800ED7A64 /* BXMountedVolumesError.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

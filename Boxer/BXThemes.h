@@ -17,9 +17,14 @@
 - (NSShadow *) textShadow;
 @end
 
-//Adds a light indent to text.
+//Adds a soft shadow around text.
 @interface BXBlueprintTheme : BGGradientTheme
 - (NSShadow *) textShadow;
+- (NSColor *) textColor;
+@end
+
+//Adds translucency to helper text
+@interface BXBlueprintHelpText : BXBlueprintTheme
 - (NSColor *) textColor;
 @end
 
@@ -37,13 +42,3 @@
 - (NSGradient *) highlightKnobColor;
 - (NSShadow *) focusRing;
 @end
-
-
-
-//Currently unused.
-/*
-@interface BXIconButtonTheme : BXShadowedTextTheme
-- (CGFloat) alphaValue;
-- (CGFloat) disabledAlphaValue;
-@end
-*/

@@ -46,7 +46,6 @@
 }
 
 
-
 #pragma mark -
 #pragma mark UI actions
 
@@ -70,7 +69,7 @@
 					   modalForWindow: [[self view] window]
 						modalDelegate: self
 					   didEndSelector: @selector(_importChosenPath:returnCode:contextInfo:)
-						  contextInfo: nil];	
+						  contextInfo: nil];
 }
 
 - (void) _importChosenPath: (NSOpenPanel *)openPanel
@@ -80,7 +79,10 @@
 	if (returnCode == NSOKButton)
 	{
 		NSString *path = [[openPanel URL] path];
-		[[[self controller] document] confirmSourcePath: path];
+		
+		//Because an error sheet may be displayed from importFromSourcePath, we close the panel first
+		[openPanel close];
+		[[[self controller] document] importFromSourcePath: path];
 	}
 }
 
@@ -119,7 +121,7 @@
 		{
 			if ([[[self controller] document] canImportFromSourcePath: path])
 			{
-				[[[self controller] document] confirmSourcePath: path];
+				[[[self controller] document] importFromSourcePath: path];
 				return YES;
 			}
 		}

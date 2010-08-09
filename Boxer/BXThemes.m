@@ -45,6 +45,14 @@
 
 @end
 
+@implementation BXBlueprintHelpText
+
+- (NSColor *) textColor
+{
+	return [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.75f];
+}
+@end
+
 
 
 @implementation BXBlueTheme
@@ -112,10 +120,3 @@
 }
 
 @end
-
-/*
-@implementation BXIconButtonTheme
-- (CGFloat) alphaValue			{ return 1.0; }
-- (CGFloat) disabledAlphaValue	{ return 0.6; }
-@end
-*/

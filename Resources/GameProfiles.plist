@@ -6,6 +6,20 @@
 	<array>
 		<dict>
 			<key>BXProfileName</key>
+			<string>System Shock</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>sshock.exe</string>
+				<string>cdshock.exe</string>
+			</array>
+			<key>BXDesignatedInstallers</key>
+			<array>
+				<string>/inst/initial.exe</string>
+			</array>
+		</dict>
+
+		<dict>
+			<key>BXProfileName</key>
 			<string>Destruction Derby 2</string>
 			<key>BXProfileConf</key>
 			<string>Destruction Derby 2</string>

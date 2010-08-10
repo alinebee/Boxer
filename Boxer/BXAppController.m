@@ -164,6 +164,21 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 
 #pragma mark -
+#pragma mark Managing the games folder
+
+- (NSString *) gamesFolderPath
+{
+	NSString *path = [[NSUserDefaults standardUserDefaults] stringForKey: @"gameFolder"];
+	if (!path) path = [NSSearchPathForDirectoriesInDomains(NSDesktopDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
+	return path;
+}
+
+- (void) setGamesFolderPath: (NSString *)newPath
+{
+    [[NSUserDefaults standardUserDefaults] setObject: newPath forKey: @"gameFolder"];
+}
+
+#pragma mark -
 #pragma mark Application open/closing behaviour
 
 //Quit after the last window was closed if we are a 'subsidiary' process, to avoid leaving extra Boxers littering the Dock

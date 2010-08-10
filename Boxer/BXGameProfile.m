@@ -39,7 +39,7 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 
 
 @implementation BXGameProfile
-@synthesize gameName, confName, description;
+@synthesize gameName, confName, gameDescription;
 
 + (BXGameEra) eraOfGameAtPath: (NSString *)basePath
 {
@@ -122,9 +122,9 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 {
 	if ((self = [super init]))
 	{
-		self.gameName			= [profileDict objectForKey: @"BXProfileName"];
-		self.confName			= [profileDict objectForKey: @"BXProfileConf"];
-		self.description		= [profileDict objectForKey: @"BXProfileDescription"];
+		[self setGameName: [profileDict objectForKey: @"BXProfileName"]];
+		[self setConfName: [profileDict objectForKey: @"BXProfileConf"]];
+		[self setGameDescription: [profileDict objectForKey: @"BXProfileDescription"]];
 		
 		//Used by isDesignatedInstallerAtPath:
 		installerPatterns	= [[profileDict objectForKey: @"BXDesignatedInstallers"] retain];
@@ -139,13 +139,19 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 {
 	[self setGameName: nil], [gameName release];
 	[self setConfName: nil], [confName release];
-	[self setDescription: nil], [description release];
+	[self setGameDescription: nil], [gameDescription release];
 	[driveLabelMappings release], driveLabelMappings = nil;
 	[installerPatterns release], installerPatterns = nil;
 	
 	[super dealloc];
 }
 
+- (NSString *) description
+{
+	if ([self gameName]) return [self gameName];
+	if ([self gameDescription]) return [self gameDescription];
+	return [super description];
+}
 
 #pragma mark -
 #pragma mark Methods affecting emulation behaviour

@@ -18,7 +18,7 @@
 	BXSession *currentSession;
 }
 @property (retain) BXSession *currentSession;	//The currently-active DOS session
-
+@property (copy) NSString *gamesFolderPath;		//The path where we store Boxer's games
 
 //Called at class initialization time to initialize Boxer's own user defaults.
 + (void) setupDefaults;

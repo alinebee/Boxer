@@ -32,7 +32,7 @@ typedef NSUInteger BXGameEra;
 {
 	NSString *gameName;
 	NSString *confName;
-	NSString *description;
+	NSString *gameDescription;
 	NSDictionary *driveLabelMappings;
 	NSArray *installerPatterns;
 }
@@ -42,7 +42,7 @@ typedef NSUInteger BXGameEra;
 
 @property (copy) NSString *gameName;
 @property (copy) NSString *confName;
-@property (copy) NSString *description;
+@property (copy) NSString *gameDescription;
 
 
 #pragma mark -

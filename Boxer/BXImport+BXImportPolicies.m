@@ -27,7 +27,6 @@
 							   @"inst",
 							   @"setup",
 							   @"config",
-							   @"^origin\\.bat$",	//FIXME: should this be in a game profile?
 							   nil];
 	return patterns;
 }

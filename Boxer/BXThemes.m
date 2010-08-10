@@ -49,7 +49,7 @@
 
 - (NSColor *) textColor
 {
-	return [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.75f];
+	return [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.85f];
 }
 @end
 

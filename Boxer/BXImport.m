@@ -12,6 +12,7 @@
 #import "BXAppController.h"
 #import "BXGameProfile.h"
 #import "BXImportError.h"
+#import "BXPackage.h"
 
 #import "BXImport+BXImportPolicies.h"
 #import "BXSession+BXFileManager.h"
@@ -36,6 +37,8 @@
 //Called when the user finishes each stage of the process and we have collected enough info to continue.
 - (void) _continueImport;
 
+//Create a new empty game package for our source path.
+- (BOOL) _generatePackageWithError: (NSError **)error;
 @end
 
 
@@ -172,13 +175,11 @@
 			}
 			
 			//If this was the designated installer for this game profile,
-			//offer it as the sole installer and stop looking for more
-			if ([detectedProfile isDesignatedInstallerAtPath: executablePath])
+			//add it to the list automatically
+			if (!preferredInstaller && [detectedProfile isDesignatedInstallerAtPath: executablePath])
 			{
-				[detectedInstallers removeAllObjects];
 				[detectedInstallers addObject: executablePath];
 				preferredInstaller = executablePath;
-				break;
 			}
 			
 			//Otherwise if it looks like an installer to us, add it to the list
@@ -329,7 +330,8 @@
 	//We haven't yet run the chosen installer after confirming it: launch it now.
 	else if ([self hasConfirmedInstaller] && ![self hasCompletedInstaller])
 	{
-		[self start];
+		[self _generatePackageWithError: NULL];
+		//[self start];
 	}
 	
 	//We haven't yet finalised the gamebox after completing/skipping installation
@@ -344,5 +346,47 @@
 		//TODO: show import complete panel here
 	}
 	[[self importWindowController] synchronizeWindowTitleWithDocumentName];
+}
+
+
+- (BOOL) _generatePackageWithError: (NSError **)outError
+{
+	NSFileManager *manager	= [NSFileManager defaultManager];
+	
+	NSString *gameName		= [[self gameProfile] gameName];
+	if (!gameName) gameName	= [[self class] nameForGameAtPath: [self sourcePath]];
+	
+	NSString *gamesFolder	= [[NSApp delegate] gamesFolderPath];
+	
+	NSString *basePath		= [gamesFolder stringByAppendingPathComponent: gameName];
+	NSString *packagePath	= [basePath stringByAppendingPathExtension: @"boxer"];
+	
+	//Check if a gamebox already exists with that name;
+	//if so, append an incremented extension until we land on a name that isn't taken
+	NSUInteger suffix = 1;
+	while ([manager fileExistsAtPath: packagePath])
+	{
+		packagePath = [[basePath stringByAppendingFormat: @" %u", suffix++, nil] stringByAppendingPathExtension: @"boxer"];
+	}
+	
+	BOOL success = [manager createDirectoryAtPath: packagePath
+						  withIntermediateDirectories: NO
+										   attributes: nil
+												error: outError];
+	
+	if (success)
+	{
+		BXPackage *package = [BXPackage bundleWithPath: packagePath];
+		
+		//Prep the package further by creating an empty C drive in it
+		NSString *cPath = [[package resourcePath] stringByAppendingPathComponent: @"C.harddisk"];
+		[manager createDirectoryAtPath: cPath
+		   withIntermediateDirectories: NO
+							attributes: nil
+								 error: NULL];
+		 
+		[self setGamePackage: package];
+	}
+	return success;
 }
 @end

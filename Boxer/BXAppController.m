@@ -436,9 +436,9 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 {
 	BXInspectorController *inspector = [BXInspectorController controller];
 
-	//Only show the inspector if there is a DOS session window; otherwise, we have nothing to inspect.
-	//This limitation will be removed as we gain other inspectable window types.
-	if (show && [self currentSession])
+	//Only show the inspector if there is a DOS session running;
+	//otherwise, we have nothing to inspect.
+	if (show && [[self currentSession] isEmulating])
 	{
 		[[[self currentSession] DOSWindowController] exitFullScreen: nil];
 		[inspector showWindow: nil];
@@ -472,7 +472,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	SEL theAction = [theItem action];
 	
 	//Don't allow the Inspector panel to be shown if there's no active session.
-	if (theAction == @selector(toggleInspectorPanel:))	return [self currentSession] != nil;
+	if (theAction == @selector(toggleInspectorPanel:))	return [[self currentSession] isEmulating];
 	
 	return [super validateUserInterfaceItem: theItem];
 }

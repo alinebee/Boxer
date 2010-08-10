@@ -747,6 +747,13 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	//(This will have been set to YES in _configureEmulator)
 	[self setEmulating: NO];
 	
+	//Suppress drive notifications
+	showDriveNotifications = NO;
+	
+	//Clean up our drive cache
+	[self setDrives: nil];
+	[self setActiveProgramPath: nil];
+	
 	//Close the document once we're done.
 	if ([self closeOnEmulatorExit]) [self close];
 }

@@ -16,13 +16,15 @@
 @interface BXAppController : NSDocumentController
 {
 	BXSession *currentSession;
-	BOOL hasLaunchedSession;
 }
 @property (retain) BXSession *currentSession;	//The currently-active DOS session
 
 
-//Filetypes (UTIs) used by Boxer
-//------------------------------
+//Called at class initialization time to initialize Boxer's own user defaults.
++ (void) setupDefaults;
+
+#pragma mark -
+#pragma mark UTIs
 
 + (NSSet *) executableTypes;		//DOS executable UTIs
 + (NSSet *) hddVolumeTypes;			//UTIs that should be mounted as DOS hard drives
@@ -33,19 +35,16 @@
 + (NSSet *) mountableTypes;			//All mountable UTIs supported by Boxer
 
 
+#pragma mark -
+#pragma mark Opening documents
 
-//Called at class initialization time to initialize Boxer's own user defaults.
-+ (void) setupDefaults;
-
-
-//Because we can only run one emulation session at a time, we need to launch a second
-//Boxer process for opening additional/subsequent documents
-- (void) _launchProcessWithDocumentAtURL: (NSURL *)URL;
-- (void) _launchProcessWithUntitledDocument;
+//A special method for creating a new untitled import session.
+//Mirrors the behaviour of openUntitledDocumentAndDisplay:error:
+- (id) openImportSessionAndDisplay: (BOOL)displayDocument error: (NSError **)outError;
 
 
-//UI-related functionality
-//------------------------
+#pragma mark -
+#pragma mark Managing application sound
 
 //Returns whether we should play sounds for UI events.
 //(Currently this is based on OS X's system settings, rather than our own preference.)

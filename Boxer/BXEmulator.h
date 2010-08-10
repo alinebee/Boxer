@@ -148,6 +148,10 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 //Returns the currently active DOS session.
 + (BXEmulator *) currentEmulator;
 
+//Whether it is safe to launch a new emulator instance. Will be NO after an emulator has been opened
+//(and the memory state is too polluted to reuse.)
++ (BOOL) canLaunchEmulator;
+
 //An array of names of internal DOSBox processes.
 + (NSSet *) internalProcessNames;
 

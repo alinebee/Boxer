@@ -167,6 +167,8 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 		BXPackage *package = [[BXPackage alloc] initWithPath: packagePath];
 		[self setGamePackage: package];
 		
+		//FIXME: move the fileURL reset out of here and into a later step - we can't rely on the order in which
+		//NSDocument's setFileURL/readFromURL methods are called.
 		[self setFileURL: [NSURL fileURLWithPath: packagePath]];
 		
 		//If we opened the package directly, check if it has a target of its own;
@@ -443,6 +445,7 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 - (NSString *) displayName
 {
 	if ([self isGamePackage]) return [[self gamePackage] gameName];
+	else if ([self fileURL]) return [super displayName];
 	else return [self processDisplayName];
 }
 

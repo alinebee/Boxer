@@ -49,31 +49,17 @@
 
 - (void) synchronizeWindowTitleWithDocumentName
 {
-	if ([[self document] isGamePackage])
+	if ([[self document] fileURL])
 	{
-		//If the import process already has a gamebox, display that
+		//If the import process has a file to represent, carry on with the default NSWindowController behaviour
 		return [super synchronizeWindowTitleWithDocumentName];
 	}
 	else
 	{
-		//If the import process has a source path, use that for the title instead
-		NSString *representedPath = [[self document] sourcePath];
-		
-		if (representedPath)
-		{
-			NSString *documentName = [[NSFileManager defaultManager] displayNameAtPath: representedPath];
-			[[self window] setRepresentedFilename: representedPath];
-			[[self window] setTitle: [self windowTitleForDocumentDisplayName: documentName]];
-		}
-		
 		//Otherwise, display a generic title
-		else
-		{
-			
-			[[self window] setRepresentedFilename: @""];
-			[[self window] setTitle: NSLocalizedString(@"Import a Game",
-													   @"The standard import window title before an import source has been chosen.")];
-		}
+		[[self window] setRepresentedFilename: @""];
+		[[self window] setTitle: NSLocalizedString(@"Import a Game",
+												   @"The standard import window title before an import source has been chosen.")];
 	}
 }
 

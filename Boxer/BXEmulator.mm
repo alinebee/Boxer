@@ -24,6 +24,7 @@
 
 //The singleton emulator instance. Returned by [BXEmulator currentEmulator].
 static BXEmulator *currentEmulator = nil;
+static BOOL hasStartedEmulator = NO;
 
 
 //Default name that DOSBox uses when there's no process running. Used by processName for string comparisons.
@@ -76,11 +77,16 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 #pragma mark -
 #pragma mark Class methods
 
-
 //Returns the currently executing emulator instance, for DOSBox coalface functions to talk to.
 + (BXEmulator *) currentEmulator
 {
 	return currentEmulator;
+}
+
+//Whether it is safe to launch a new emulator instance.
++ (BOOL) canLaunchEmulator;
+{
+	return !hasStartedEmulator;
 }
 
 //Used by processIsInternal, to determine when we're running one of DOSBox's own builtin programs
@@ -193,6 +199,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	
 	//Record ourselves as the current emulator instance for DOSBox to talk to
 	currentEmulator = self;
+	hasStartedEmulator = YES;
 	
 	//Start DOSBox's main loop
 	[self _startDOSBox];

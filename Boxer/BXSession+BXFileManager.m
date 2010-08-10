@@ -21,6 +21,7 @@
 
 #import "NSWorkspace+BXMountedVolumes.h"
 #import "NSWorkspace+BXFileTypes.h"
+#import "NSWorkspace+BXExecutableTypes.h"
 #import "NSString+BXPaths.h"
 
 
@@ -52,6 +53,33 @@
 
 #pragma mark -
 #pragma mark Helper class methods
+
++ (NSArray *) executablesAtPath: (NSString *)path recurse: (BOOL)scanSubdirs
+{
+	NSMutableArray *executables = [NSMutableArray arrayWithCapacity: 10];
+	
+	NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtPath: path];
+	
+	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+	NSSet *executableTypes = [BXAppController executableTypes];
+	
+	for (NSString *subPath in enumerator)
+	{
+		if (!scanSubdirs) [enumerator skipDescendents];
+		
+		NSDictionary *attrs = [enumerator fileAttributes];
+		
+		//Skip directories
+		if (![[attrs fileType] isEqualToString: NSFileTypeRegular]) continue;
+		
+		//Skip dot-hidden files (since these are probably just metadata for real files)
+		if ([[subPath lastPathComponent] hasPrefix: @"."]) continue;
+		
+		NSString *fullPath = [path stringByAppendingPathComponent: subPath];
+		if ([workspace file: fullPath matchesTypes: executableTypes]) [executables addObject: fullPath];
+	}
+	return executables;
+}
 
 + (NSString *) preferredMountPointForPath: (NSString *)filePath
 {	

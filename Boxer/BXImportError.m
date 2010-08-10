@@ -57,12 +57,12 @@ NSString * const BXImportErrorDomain = @"BXImportErrorDomain";
 + (id) errorWithSourcePath: (NSString *)sourcePath userInfo: (NSDictionary *)userInfo
 {
 	NSString *descriptionFormat = NSLocalizedString(
-		@"“%@” appears to be a Microsoft Windows application, which Boxer does not support.",
+		@"“%@” is a Microsoft Windows application, which Boxer does not support.",
 		@"Error message shown when importing a folder that contains a Windows-only game. %@ is the display filename of the imported path."
 	);
 	
 	NSString *suggestion = NSLocalizedString(
-		@"You may need to run this application in a Windows emulator instead, such as Crossover for Mac.",
+		@"You will need to run this application in a Windows emulator instead, such as Crossover for Mac.",
 		@"Explanation text shown when importing a folder that contains a Windows-only game. %@ is the display filename of the imported path."
 	);
 	

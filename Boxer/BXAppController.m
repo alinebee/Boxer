@@ -12,6 +12,7 @@
 #import "BXPreferencesController.h"
 #import "BXSession+BXFileManager.h"
 #import "BXImport.h";
+#import "BXEmulator.h";
 #import "BXDOSWindowController.h"
 #import "BXValueTransformers.h"
 #import "BXGrowlController.h"
@@ -21,7 +22,25 @@
 
 
 NSString * const BXNewSessionParam = @"--openNewSession";
+NSString * const BXShowImportPanelParam = @"--showImportPanel";
 NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
+
+@interface BXAppController ()
+
+//Because we can only run one emulation session at a time, we need to launch a second
+//Boxer process for opening additional/subsequent documents
+- (void) _launchProcessWithDocumentAtURL: (NSURL *)URL;
+- (void) _launchProcessWithUntitledDocument;
+- (void) _launchProcessWithImportPanel;
+
+//Whether it's safe to open a new session
+- (BOOL) _canOpenDocumentOfClass: (Class)documentClass;
+
+//Cancel a makeDocument/openDocument request after spawning a new process.
+- (void) _cancelOpeningWithError: (NSError **)outError;
+
+@end
+
 
 @implementation BXAppController
 @synthesize currentSession;
@@ -145,21 +164,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 
 #pragma mark -
-#pragma mark Document management
-
-- (void) _launchProcessWithDocumentAtURL: (NSURL *)URL
-{	
-	NSString *executablePath	= [[NSBundle mainBundle] executablePath];
-	NSArray *params				= [NSArray arrayWithObjects: [URL path], BXActivateOnLaunchParam, nil]; 
-	[NSTask launchedTaskWithLaunchPath: executablePath arguments: params];
-}
-
-- (void) _launchProcessWithUntitledDocument
-{
-	NSString *executablePath	= [[NSBundle mainBundle] executablePath];
-	NSArray *params				= [NSArray arrayWithObjects: BXNewSessionParam, BXActivateOnLaunchParam, nil]; 
-	[NSTask launchedTaskWithLaunchPath: executablePath arguments: params];	
-}
+#pragma mark Application open/closing behaviour
 
 //Quit after the last window was closed if we are a 'subsidiary' process, to avoid leaving extra Boxers littering the Dock
 - (BOOL) applicationShouldTerminateAfterLastWindowClosed: (NSApplication *)sender
@@ -174,8 +179,10 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	return numBoxers > 1;
 }
 
+
 //Don't open a new empty document when switching back to the application
 - (BOOL) applicationShouldOpenUntitledFile: (NSApplication *)theApplication { return NO; }
+
 
 //...However, when we've been told to open a new empty session at startup, do so
 - (void) applicationDidFinishLaunching: (NSNotification *)notification
@@ -185,9 +192,22 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	if ([arguments containsObject: BXNewSessionParam])
 		[self openUntitledDocumentAndDisplay: YES error: nil];
 	
+	if ([arguments containsObject: BXShowImportPanelParam])
+		[self openImportSessionAndDisplay: YES error: nil];
+	
 	if ([arguments containsObject: BXActivateOnLaunchParam]) 
 		[NSApp activateIgnoringOtherApps: YES];
 }
+
+- (void) applicationWillTerminate: (NSNotification *)notification
+{
+	//Save our preferences to disk before exiting
+	[[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+
+#pragma mark -
+#pragma mark Opening new documents
 
 //Customise the open panel
 - (NSInteger) runModalOpenPanel: (NSOpenPanel *)openPanel
@@ -236,16 +256,11 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 //Prevent the opening of new documents if we have a session already active
 - (id) makeUntitledDocumentOfType: (NSString *)typeName error: (NSError **)outError
 {
-	if (hasLaunchedSession && [[self documentClassForType: typeName] isKindOfClass: [BXSession class]])
+	if (![self _canOpenDocumentOfClass: [self documentClassForType: typeName]])
 	{
 		//Launch another instance of Boxer to open the new session
 		[self _launchProcessWithUntitledDocument];
-		
-		//If we don't have a current session going, exit
-		if (![self currentSession]) [NSApp terminate: self];
-		
-		//Otherwise, cancel the existing open request without generating an error message
-		*outError = [NSError errorWithDomain: NSCocoaErrorDomain code: NSUserCancelledError userInfo: nil];
+		[self _cancelOpeningWithError: outError];
 		return nil;
 	}
 	else return [super makeUntitledDocumentOfType: typeName error: outError];
@@ -255,16 +270,11 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 							  ofType: (NSString *)typeName
 							   error: (NSError **)outError
 {
-	if (hasLaunchedSession && [[self documentClassForType: typeName] isKindOfClass: [BXSession class]])
+	if (![self _canOpenDocumentOfClass: [self documentClassForType: typeName]])
 	{
 		//Launch another instance of Boxer to open the specified document
 		[self _launchProcessWithDocumentAtURL: absoluteURL];
-		
-		//If we don't have a current session going, exit
-		if (![self currentSession]) [NSApp terminate: self];
-		
-		//Otherwise, cancel the existing open request without generating an error message
-		*outError = [NSError errorWithDomain: NSCocoaErrorDomain code: NSUserCancelledError userInfo: nil];
+		[self _cancelOpeningWithError: outError];
 		return nil;
 	}
 	else return [super makeDocumentWithContentsOfURL: absoluteURL
@@ -277,16 +287,11 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 				   ofType: (NSString *)typeName
 					error: (NSError **)outError
 {
-	if (hasLaunchedSession && [self documentClassForType: typeName] == [BXSession class])
+	if (![self _canOpenDocumentOfClass: [self documentClassForType: typeName]])
 	{
 		//Launch another instance of Boxer to open the specified document
 		[self _launchProcessWithDocumentAtURL: absoluteDocumentContentsURL];
-
-		//If we don't have a current session going, exit
-		if (![self currentSession]) [NSApp terminate: self];
-
-		//Otherwise, cancel the existing open request without generating an error message
-		*outError = [NSError errorWithDomain: NSCocoaErrorDomain code: NSUserCancelledError userInfo: nil];
+		[self _cancelOpeningWithError: outError];
 		return nil;
 	}
 	else return [super makeDocumentForURL: absoluteDocumentURL
@@ -295,14 +300,38 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 									error: outError];
 }
 
+- (id) openImportSessionAndDisplay: (BOOL)displayDocument error: (NSError **)outError
+{
+	//If it's too late for us to open an import session, launch a new Boxer process to do it
+	if (![self _canOpenDocumentOfClass: [BXImport class]])
+	{
+		[self _launchProcessWithImportPanel];
+		[self _cancelOpeningWithError: outError];
+		return nil;
+	}
+	else
+	{
+		id session = [[[BXImport alloc] initWithType: nil error: outError] autorelease];
+		if (session)
+		{
+			[self addDocument: session];
+			if (displayDocument)
+			{
+				[session makeWindowControllers];
+				[session showWindows];
+			}
+		}
+		return session;
+	}
+}
+
 //Store the specified document as the current session
 - (void) addDocument: (NSDocument *)theDocument
 {
 	[super addDocument: theDocument];
-	if ([theDocument isMemberOfClass: [BXSession class]])
+	if ([theDocument isKindOfClass: [BXSession class]])
 	{
 		[self setCurrentSession: (BXSession *)theDocument];
-		hasLaunchedSession = YES;
 	}
 }
 
@@ -319,13 +348,53 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 }
 
 
-#pragma mark -
-#pragma mark Handling application termination
 
-- (void) applicationWillTerminate: (NSNotification *)notification
+#pragma mark -
+#pragma mark Spawning document processes
+
+- (void) _launchProcessWithDocumentAtURL: (NSURL *)URL
+{	
+	NSString *executablePath	= [[NSBundle mainBundle] executablePath];
+	NSArray *params				= [NSArray arrayWithObjects: [URL path], BXActivateOnLaunchParam, nil]; 
+	[NSTask launchedTaskWithLaunchPath: executablePath arguments: params];
+}
+
+- (void) _launchProcessWithUntitledDocument
 {
-	//Save our preferences to disk before exiting
-	[[NSUserDefaults standardUserDefaults] synchronize];
+	NSString *executablePath	= [[NSBundle mainBundle] executablePath];
+	NSArray *params				= [NSArray arrayWithObjects: BXNewSessionParam, BXActivateOnLaunchParam, nil]; 
+	[NSTask launchedTaskWithLaunchPath: executablePath arguments: params];	
+}
+
+- (void) _launchProcessWithImportPanel
+{
+	NSString *executablePath	= [[NSBundle mainBundle] executablePath];
+	NSArray *params				= [NSArray arrayWithObjects: BXShowImportPanelParam, BXActivateOnLaunchParam, nil]; 
+	[NSTask launchedTaskWithLaunchPath: executablePath arguments: params];	
+}
+
+- (void) _cancelOpeningWithError: (NSError **)outError
+{
+	//If we don't have a current session going, exit after cancelling
+	if (![self currentSession]) [NSApp terminate: self];
+	
+	//Otherwise, cancel the existing open request without generating an error message,
+	//and we'll leave the current session going
+	if (outError) *outError = [NSError errorWithDomain: NSCocoaErrorDomain
+												  code: NSUserCancelledError
+											  userInfo: nil];
+}
+
+- (BOOL) _canOpenDocumentOfClass: (Class)documentClass
+{
+	if ([documentClass isSubclassOfClass: [BXSession class]])
+	{
+		//Only allow a session to open if no emulator has started yet,
+		//and no other sessions are open (which could start their own emulators)
+		if (![BXEmulator canLaunchEmulator]) return NO;
+		for (id document in [self documents]) if ([document isKindOfClass: [BXSession class]]) return NO;
+	}
+	return YES;
 }
 
 
@@ -334,9 +403,17 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 - (IBAction) orderFrontImportGamePanel: (id)sender
 {
-	NSDocument *gameImport = [[BXImport alloc] initWithType: @"GameImport" error: nil];
-	[gameImport makeWindowControllers];
-	[gameImport showWindows];
+	//If we already have an import session active, just bring it to the front
+	for (id document in [self documents])
+	{
+		if ([document isKindOfClass: [BXImport class]])
+		{
+			[document showWindows];
+			return;
+		}
+	}
+	//Otherwise, launch a new import session
+	[self openImportSessionAndDisplay: YES error: nil];
 }
 
 - (IBAction) orderFrontAboutPanel: (id)sender

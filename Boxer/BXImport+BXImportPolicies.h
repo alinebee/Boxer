@@ -64,10 +64,6 @@
 #pragma mark -
 #pragma mark Deciding how best to import a game
 
-//Returns a list of all executables found within the specified path.
-//If scanSubdirs is NO, the search will be restricted to the base path.
-+ (NSArray *) executablesAtPath: (NSString *)path recurse: (BOOL)scanSubdirs;
-
 //Returns a recommended installer from the list of possible installers,
 //using preferredInstallerPatterns.
 + (NSString *) preferredInstallerFromPaths: (NSArray *)paths;

@@ -22,6 +22,11 @@
 #pragma mark -
 #pragma mark Helper class methods
 
+
+//Returns an array of all DOS/Windows executables found within the specified path.
+//If scanSubdirs is NO, the search will be restricted to the base path.
++ (NSArray *) executablesAtPath: (NSString *)path recurse: (BOOL)scanSubdirs;
+
 //Returns the most appropriate base location for a drive to expose the specified path:
 //If path points to a disc image, that will be returned
 //If path is inside a gamebox or Boxer mountable folder type, that container will be returned.

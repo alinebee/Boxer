@@ -133,35 +133,6 @@
 #pragma mark -
 #pragma mark Deciding how best to import a game
 
-+ (NSArray *) executablesAtPath: (NSString *)path recurse: (BOOL)scanSubdirs
-{
-	NSMutableArray *executables = [NSMutableArray arrayWithCapacity: 10];
-	
-	NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtPath: path];
-	
-	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	NSSet *executableTypes = [BXAppController executableTypes];
-	
-	for (NSString *subPath in enumerator)
-	{
-		if (!scanSubdirs) [enumerator skipDescendents];
-		
-		NSDictionary *attrs = [enumerator fileAttributes];
-		
-		//Skip directories
-		if (![[attrs fileType] isEqualToString: NSFileTypeRegular]) continue;
-		
-		//Skip dot-hidden files (since these are probably just metadata for real files)
-		if ([[subPath lastPathComponent] hasPrefix: @"."]) continue;
-		
-		NSString *fullPath = [path stringByAppendingPathComponent: subPath];
-		if ([workspace file: fullPath matchesTypes: executableTypes]) [executables addObject: fullPath];
-	}
-	
-	return executables;
-}
-
-
 + (NSString *) preferredInstallerFromPaths: (NSArray *)paths
 {
 	//Run through each filename pattern in order of priority, returning the first matching path
@@ -174,7 +145,6 @@
 	}
 	return nil;
 }
-
 
 + (BOOL) shouldImportSourceFilesFromPath: (NSString *)path
 {

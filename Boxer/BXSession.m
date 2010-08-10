@@ -145,13 +145,39 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	[super dealloc];
 }
 
-//We make this a no-op to avoid creating an NSFileWrapper - we don't ever actually read any data off disk,
-//so we don't need to construct a representation of the filesystem, and trying to do so for large documents
-//(e.g. root folders) can cause memory allocation crashes.
 - (BOOL) readFromURL: (NSURL *)absoluteURL
 			  ofType: (NSString *)typeName
 			   error: (NSError **)outError
 {
+	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
+	NSString *filePath		= [[absoluteURL path] stringByStandardizingPath];
+	
+	//Set our target launch path to point to this file, if we don't have a target already
+	if (![self targetPath]) [self setTargetPath: filePath];
+	
+	//Check if the chosen file is located inside a gamebox
+	NSString *packagePath	= [workspace parentOfFile: filePath
+										matchingTypes: [NSSet setWithObject: @"net.washboardabs.boxer-game-package"]];
+	
+	//If the fileURL is located inside a gamebox, load the gamebox and use the gamebox itself as the fileURL.
+	//This way, the DOS window will show the gamebox as the represented file, and our Recent Documents
+	//list will likewise show the gamebox instead.
+	if (packagePath)
+	{
+		BXPackage *package = [[BXPackage alloc] initWithPath: packagePath];
+		[self setGamePackage: package];
+		
+		[self setFileURL: [NSURL fileURLWithPath: packagePath]];
+		
+		//If we opened the package directly, check if it has a target of its own;
+		//if so, use that as our target path instead.
+		if ([[self targetPath] isEqualToString: packagePath])
+		{
+			NSString *packageTarget = [package targetPath];
+			if (packageTarget) [self setTargetPath: packageTarget];
+		}
+		[package release];
+	}
 	return YES;
 }
 
@@ -183,41 +209,6 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	
 	//Start the emulator as soon as our windows appear
 	[self start];
-}
-
-
-- (void) setFileURL: (NSURL *)fileURL
-{	
-	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
-	NSString *filePath		= [[fileURL path] stringByStandardizingPath];
-	
-	//Set our target launch path to point to this file, if we don't have a target already
-	if (![self targetPath]) [self setTargetPath: filePath];
-
-	//Check if the chosen file path is located inside a gamebox
-	NSString *packagePath	= [workspace parentOfFile: filePath
-										matchingTypes: [NSSet setWithObject: @"net.washboardabs.boxer-game-package"]];
-	
-	//If the fileURL is located inside a gamebox, we use the gamebox itself as the fileURL.
-	//This way, the DOS window will show the gamebox as the represented file, and our Recent Documents
-	//list will likewise show the gamebox instead.
-	if (packagePath)
-	{
-		fileURL = [NSURL fileURLWithPath: packagePath];
-		
-		BXPackage *package = [[BXPackage alloc] initWithPath: packagePath];
-		[self setGamePackage: package];
-		
-		//If we opened a package directly, check if it has a target of its own; if so, use that as our target path instead.
-		if ([[self targetPath] isEqualToString: packagePath])
-		{
-			NSString *packageTarget = [package targetPath];
-			if (packageTarget) [self setTargetPath: packageTarget];
-		}
-		[package release];
-	}
-	
-	[super setFileURL: fileURL];
 }
 
 - (void) setGamePackage: (BXPackage *)package
@@ -661,11 +652,10 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 		
 		//Show only after a delay, so that the window has time to resize after quitting the game
 		if (!panelShown) [[self DOSWindowController] performSelector: @selector(toggleProgramPanelShown:)
-														   withObject: self
-														   afterDelay: 0.5];
+														  withObject: self
+														  afterDelay: 0.5];
 	}
-	
-	
+
 	if ([[NSUserDefaults standardUserDefaults] boolForKey: @"startUpInFullScreen"])
 	{
 		//Drop out of fullscreen mode when we return to the prompt,

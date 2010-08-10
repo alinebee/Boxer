@@ -96,10 +96,11 @@
 	if ([[pboard types] containsObject: NSFilenamesPboardType])
 	{
 		NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
+		BXImport *importer = [[self controller] document];
 		for (NSString *path in filePaths)
 		{
 			//If any of the dropped files cannot be imported, reject the drop
-			if (![[[self controller] document] canImportFromSourcePath: path]) return NSDragOperationNone;
+			if (![importer canImportFromSourcePath: path]) return NSDragOperationNone;
 		}
 		
 		[[self dropzone] setHighlighted: YES];
@@ -109,19 +110,20 @@
 }
 
 - (BOOL) performDragOperation: (id <NSDraggingInfo>)sender
-{
+{	
 	[[self dropzone] setHighlighted: NO];
-	
 	NSPasteboard *pboard = [sender draggingPasteboard];
 	
     if ([[pboard types] containsObject: NSFilenamesPboardType])
 	{
         NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
+		BXImport *importer = [[self controller] document];
 		for (NSString *path in filePaths)
 		{
-			if ([[[self controller] document] canImportFromSourcePath: path])
+			if ([importer canImportFromSourcePath: path])
 			{
-				[[[self controller] document] importFromSourcePath: path];
+				//Defer import to give the drag operation and animations time to clean up
+				[importer performSelector: @selector(importFromSourcePath:) withObject: path afterDelay: 0.5];
 				return YES;
 			}
 		}

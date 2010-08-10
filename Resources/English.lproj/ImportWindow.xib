@@ -21,8 +21,8 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="6"/>
 			<integer value="34"/>
+			<integer value="96"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -163,10 +163,11 @@ cnQgaXQgaW50byBhIG5ldyBnYW1lYm94LiA</string>
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<object class="NSProgressIndicator" id="690050324">
 								<reference key="NSNextResponder" ref="730797341"/>
-								<int key="NSvFlags">1316</int>
+								<int key="NSvFlags">1317</int>
 								<object class="NSPSMatrix" key="NSDrawMatrix"/>
 								<string key="NSFrame">{{212, 12}, {16, 16}}</string>
 								<reference key="NSSuperview" ref="730797341"/>
+								<int key="NSViewLayerContentsRedrawPolicy">2</int>
 								<int key="NSpiFlags">28938</int>
 								<double key="NSMaxValue">100</double>
 							</object>
@@ -985,6 +986,10 @@ cnQgaXQgaW50byBhIG5ldyBnYW1lYm94LiA</string>
 					<string>76.CustomClassName</string>
 					<string>76.IBPluginDependency</string>
 					<string>96.IBPluginDependency</string>
+					<string>96.IBViewIntegration.shadowBlurRadius</string>
+					<string>96.IBViewIntegration.shadowColor</string>
+					<string>96.IBViewIntegration.shadowOffsetHeight</string>
+					<string>96.IBViewIntegration.shadowOffsetWidth</string>
 				</object>
 				<object class="NSMutableArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1041,6 +1046,16 @@ cnQgaXQgaW50byBhIG5ldyBnYW1lYm94LiA</string>
 					<string>BXImportInstallerPanelController</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<real value="0.0"/>
+					<object class="NSColor">
+						<int key="NSColorSpace">3</int>
+						<bytes key="NSWhite">MQA</bytes>
+						<object class="NSColorSpace" key="NSCustomColorSpace">
+							<int key="NSID">2</int>
+						</object>
+					</object>
+					<real value="-1"/>
+					<real value="0.0"/>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
@@ -1059,7 +1074,7 @@ cnQgaXQgaW50byBhIG5ldyBnYW1lYm94LiA</string>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">107</int>
+			<int key="maxID">108</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

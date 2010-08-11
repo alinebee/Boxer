@@ -51,12 +51,15 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 	//Update the renderer with the new frame.
 	[renderingView updateWithFrame: frame];
 
-	//Resize the window to accomodate the frame.
-	//IMPLEMENTATION NOTE: We do this after only updating the view, because the frame
-	//immediately *before* a resize is usually (always?) video-buffer garbage.
-	//This way, we have the brand-new frame visible in the view while we stretch
-	//it to the intended size, instead of leaving the garbage frame in the view.
-	[self _resizeToAccommodateFrame: frame];
+	if (frame != nil)
+	{		
+		//Resize the window to accomodate the frame.
+		//IMPLEMENTATION NOTE: We do this after only updating the view, because the frame
+		//immediately *before* a resize is usually (always?) video-buffer garbage.
+		//This way, we have the brand-new frame visible in the view while we stretch
+		//it to the intended size, instead of leaving the garbage frame in the view.
+		[self _resizeToAccommodateFrame: frame];
+	}
 }
 
 - (NSSize) viewportSize

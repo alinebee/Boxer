@@ -19,6 +19,8 @@
 	IBOutlet NSView *programChooserPanel;
 	IBOutlet NSView *defaultProgramPanel;
 	IBOutlet NSView *noProgramsPanel;
+	IBOutlet NSView *finishImportingPanel;
+	IBOutlet NSView *installerTipsPanel;
 	IBOutlet NSCollectionView *programList;
 	IBOutlet NSScrollView *programScroller;
 }
@@ -30,6 +32,9 @@
 @property (retain, nonatomic) NSView *programChooserPanel;
 @property (retain, nonatomic) NSView *defaultProgramPanel;
 @property (retain, nonatomic) NSView *noProgramsPanel;
+@property (retain, nonatomic) NSView *finishImportingPanel;
+@property (retain, nonatomic) NSView *installerTipsPanel;
+
 @property (retain, nonatomic) NSCollectionView *programList;
 @property (retain, nonatomic) NSScrollView *programScroller;
 

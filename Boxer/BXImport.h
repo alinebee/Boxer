@@ -108,4 +108,11 @@ typedef NSUInteger BXImportStage;
 //Finish importing the game into the gamebox.
 - (void) importSourceFiles;
 
+
+#pragma mark -
+#pragma mark UI Actions
+
+//Called from DOS session to close down the session and move on to the next step of importing.
+- (IBAction) finishImporting: (id)sender;
+
 @end

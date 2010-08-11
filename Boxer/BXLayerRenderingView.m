@@ -79,7 +79,7 @@
 - (void) updateWithFrame: (BXFrameBuffer *)frame
 {
 	[[renderingLayer renderer] updateWithFrame: frame];
-	[renderingLayer setHidden: NO];
+	[renderingLayer setHidden: frame == nil];
 	[renderingLayer setNeedsDisplay];
 }
 

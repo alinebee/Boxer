@@ -49,7 +49,7 @@
 - (void) updateWithFrame: (BXFrameBuffer *)frame
 {
 	[[self renderer] updateWithFrame: frame];
-	[self setHidden: NO];
+	[self setHidden: frame == nil];
 	[self setNeedsDisplay: YES];
 }
 

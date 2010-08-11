@@ -385,8 +385,6 @@
 	//Stop the installer process, and hand control back to the import window
 	[self cancel];
 	
-	[[self importWindowController] setShouldCloseDocument: YES];
-	[[self DOSWindowController] setShouldCloseDocument: NO];
 	[[self importWindowController] pickUpFromController: [self DOSWindowController]];
 	
 	[self setImportStage: BXImportReadyToFinalize];
@@ -413,6 +411,11 @@
 	[self setImportStage: BXImportFinished];
 }
 
+
+- (IBAction) finishImporting: (id)sender
+{
+	[self finishInstaller];
+}
 
 #pragma mark -
 #pragma mark Private internal methods
@@ -478,6 +481,45 @@
 		NSFileManager *manager = [NSFileManager defaultManager];
 		[manager removeItemAtPath: [[self gamePackage] bundlePath] error: NULL];	
 	}
+}
+
+
+#pragma mark -
+#pragma mark Responses to BXEmulator events
+
+- (void) programWillStart: (NSNotification *)notification
+{	
+	//Don't set the active program if we already have one
+	//This way, we keep track of when a user launches a batch file and don't immediately discard
+	//it in favour of the next program the batch-file runs
+	if (![self activeProgramPath])
+	{
+		[self setActiveProgramPath: [[notification userInfo] objectForKey: @"localPath"]];
+		[DOSWindowController synchronizeWindowTitleWithDocumentName];
+	
+		//Always show the program panel when installing
+		//(Show only after a delay, so that the installer time to start up)
+		[[self DOSWindowController] performSelector: @selector(showProgramPanel:)
+										 withObject: self
+										 afterDelay: 1.0];
+	}
+}
+
+- (void) didReturnToShell: (NSNotification *)notification
+{
+	//Clear the active program
+	[self setActiveProgramPath: nil];
+	[DOSWindowController synchronizeWindowTitleWithDocumentName];
+	
+	//Show the program chooser after returning to the DOS prompt
+	//(Show only after a delay, so that the window has time to resize after quitting the game)
+	[[self DOSWindowController] performSelector: @selector(showProgramPanel:)
+													  withObject: self
+													  afterDelay: 1.0];
+	
+	//Always drop out of fullscreen mode when we return to the prompt,
+	//so that users can see the "finish importing" option
+	[[self DOSWindowController] exitFullScreen: self];
 }
 
 @end

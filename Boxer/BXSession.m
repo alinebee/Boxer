@@ -627,12 +627,10 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	//Show the program chooser after returning to the DOS prompt
 	if ([self isGamePackage] && [[self executables] count])
 	{
-		BOOL panelShown = [[self DOSWindowController] programPanelShown];
-		
 		//Show only after a delay, so that the window has time to resize after quitting the game
-		if (!panelShown) [[self DOSWindowController] performSelector: @selector(toggleProgramPanelShown:)
-														  withObject: self
-														  afterDelay: 0.5];
+		[[self DOSWindowController] performSelector: @selector(showProgramPanel:)
+										 withObject: self
+										 afterDelay: 1.0];
 	}
 
 	if ([[NSUserDefaults standardUserDefaults] boolForKey: @"startUpInFullScreen"])
@@ -729,6 +727,10 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	//Clean up our drive cache
 	[self setDrives: nil];
 	[self setActiveProgramPath: nil];
+	
+	
+	//Clear the final frame
+	[[self DOSWindowController] updateWithFrame: nil];
 	
 	//Close the document once we're done.
 	if ([self closeOnEmulatorExit]) [self close];

@@ -147,7 +147,8 @@
 									 );
 		
 		
-		//Animate the transition from one panel to the next, if we have a previous panel and the window is actually on screen
+		//Animate the transition from one panel to the next,
+		//if we have a previous panel and the window is actually on screen
 		if (oldPanel && [[self window] isVisible])
 		{
 			[panel setFrame: [oldPanel frame]];
@@ -180,15 +181,17 @@
 			[oldPanel removeFromSuperview];
 			[oldPanel setFrameSize: oldSize];
 			[oldPanel setHidden: NO];
+			
+			//Cures infinite-redraw bug caused by animated fade
+			[panel display];
 		}
 		
 		//If we're setting up the panel for the first time, don't bother with this step
 		else
 		{
 			[oldPanel removeFromSuperview];
-			[panel setFrameOrigin: NSZeroPoint];
-			[[[self window] contentView] addSubview: panel];
 			[[self window] setFrame: newFrame display: YES];
+			[[[self window] contentView] addSubview: panel];
 		}
 		
 		//Select the designated first responder for this panel
@@ -215,11 +218,8 @@
 	[toWindow makeKeyAndOrderFront: self];
 	[fromWindow orderOut: self];
 	
-	//Resize the destination window to what it should be
+	//Resize the destination window back to what it should be
 	[toWindow setFrame: toFrame display: YES animate: YES];
-	
-	//Aaaand close ourselves afterwards
-	[self close];
 }
 
 //Return control to us from the specified window controller
@@ -238,13 +238,13 @@
 	
 	//Make the initial window scale to our final window location
 	[fromWindow setFrame: toFrame display: YES animate: YES];
-	
-	//Then, unhide ourselves behind that window
-	[toWindow orderBack: self];
-	 
+
 	//Finally, close the top window and make ourselves key
-	[fromWindow close];
 	[toWindow makeKeyAndOrderFront: self];
+	[fromWindow orderOut: self];
+	
+	//Reset the initial window back to what it was before we messed with it
+	[fromWindow setFrame: fromFrame display: NO];
 }
 
 @end

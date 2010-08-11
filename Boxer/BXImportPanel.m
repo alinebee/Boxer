@@ -11,38 +11,28 @@
 
 @implementation BXImportPanel
 
-- (void) drawRect: (NSRect)dirtyRect
+- (void) _drawBlueprintInRect: (NSRect)dirtyRect
 {
-	[NSBezierPath clipRect: dirtyRect];
-	
-	NSGradient *lighting = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.2f]
-														 endingColor: [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.4f]];
-	
 	NSColor *blueprintColor = [NSColor colorWithPatternImage: [NSImage imageNamed: @"Blueprint.jpg"]];
-	
-	
+
 	//Ensure the pattern is always centered horizontally in the view by adjusting its phase relative to the bottom-left window origin.
 	NSSize patternSize		= [[blueprintColor patternImage] size];
 	NSRect panelFrame		= [self frame];
 	NSPoint patternPhase	= NSMakePoint(panelFrame.origin.x + ((panelFrame.size.width - patternSize.width) / 2), 0.0f);
 	
-	
-	NSRect backgroundRect = [self bounds];
-	NSRect highlightRect = [self bounds];
-	highlightRect.size.height = 1.0f;
-	
-	NSRect shadowRect = highlightRect;
-	shadowRect.origin.y += 1.0f;
-	
-	
-	//First, fill the background with our pattern
 	[NSGraphicsContext saveGraphicsState];
-		[blueprintColor set];
 		[[NSGraphicsContext currentContext] setPatternPhase: patternPhase];
-		[NSBezierPath fillRect: backgroundRect];
+		[blueprintColor set];
+		[NSBezierPath fillRect: [self bounds]];
 	[NSGraphicsContext restoreGraphicsState];
-	
-	//Then, draw the lighting onto the background
+}
+
+- (void) _drawLightingInRect: (NSRect)dirtyRect
+{
+	NSGradient *lighting = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.2f]
+														 endingColor: [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.4f]];
+
+	NSRect backgroundRect = [self bounds];
 	NSPoint startPoint	= NSMakePoint(NSMidX(backgroundRect), NSMaxY(backgroundRect));
 	NSPoint endPoint	= NSMakePoint(NSMidX(backgroundRect), NSMidY(backgroundRect));
 	CGFloat startRadius = NSWidth(backgroundRect) * 0.1f;
@@ -53,14 +43,22 @@
 					 options: NSGradientDrawsBeforeStartingLocation | NSGradientDrawsAfterEndingLocation];
 	
 	[lighting release];
+}
+
+- (void) _drawGrooveInRect: (NSRect)dirtyRect
+{
+	NSRect highlightRect = [self bounds];
+	highlightRect.size.height = 1.0f;
 	
-	//Draw a bevel at the bottom of the view also
-	NSColor *bevelShadow	= [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.33f];
-	NSColor *bevelHighlight	= [NSColor whiteColor];
-	
+	NSRect shadowRect = highlightRect;
+	shadowRect.origin.y += 1.0f;
+		
 	//Don't bother drawing the bevel if it's not dirty
 	if (NSIntersectsRect(dirtyRect, highlightRect))
 	{
+		NSColor *bevelShadow	= [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.33f];
+		NSColor *bevelHighlight	= [NSColor whiteColor];
+	
 		[NSGraphicsContext saveGraphicsState];
 			[bevelHighlight set];
 			[NSBezierPath fillRect: highlightRect];
@@ -68,6 +66,48 @@
 			[NSBezierPath fillRect: shadowRect];
 		[NSGraphicsContext restoreGraphicsState];
 	}
+}
+
+- (void) drawRect: (NSRect)dirtyRect
+{
+	[NSBezierPath clipRect: dirtyRect];
+	
+	//First, fill the background with our pattern
+	[self _drawBlueprintInRect: dirtyRect];
+
+	//Then, draw the lighting onto the background
+	[self _drawLightingInRect: dirtyRect];
+	
+	//Draw a bevel at the bottom of the view also
+	[self _drawGrooveInRect: dirtyRect];
+}
+
+@end
+
+
+@implementation BXImportProgramPanel
+
+- (void) _drawLightingInRect: (NSRect)dirtyRect
+{
+	NSGradient *lighting = [[NSGradient alloc] initWithColorsAndLocations:
+							  [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.2f],	0.0f,
+							  [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.1f],	0.9f,
+							  [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.4f],	1.0f,
+							  nil];
+	
+	[lighting drawInRect: [self bounds] angle: 90.0f];
+	[lighting release];
+}
+
+- (void) drawRect: (NSRect)dirtyRect
+{
+	[NSBezierPath clipRect: dirtyRect];
+	
+	//First, fill the background with our pattern
+	[self _drawBlueprintInRect: dirtyRect];
+	
+	//Then, draw the lighting onto the background
+	[self _drawLightingInRect: dirtyRect];
 }
 
 @end

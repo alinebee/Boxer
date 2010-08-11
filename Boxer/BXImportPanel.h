@@ -15,3 +15,9 @@
 //The background view of a panel in the import window. Drawn with a blueprint appearance.
 @interface BXImportPanel : NSView
 @end
+
+
+//A modified version of the above for use in the program-chooser panel of DOS windows.
+//Uses a different gradient and layout.
+@interface BXImportProgramPanel : BXImportPanel
+@end

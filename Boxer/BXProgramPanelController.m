@@ -10,19 +10,24 @@
 #import "BXValueTransformers.h"
 #import "BXSession+BXFileManager.h"
 #import "BXProgramPanel.h"
-
+#import "BXimport.h"
 
 @implementation BXProgramPanelController
 @synthesize programList, programScroller;
 @synthesize defaultProgramPanel, programChooserPanel, noProgramsPanel;
+@synthesize finishImportingPanel, installerTipsPanel;
 
 - (void) dealloc
 {
 	[self setProgramList: nil],			[programList release];
 	[self setProgramScroller: nil],		[programScroller release];
+	
 	[self setDefaultProgramPanel: nil], [defaultProgramPanel release];
 	[self setProgramChooserPanel: nil], [programChooserPanel release];
 	[self setNoProgramsPanel: nil],		[noProgramsPanel release];
+	[self setFinishImportingPanel: nil],	[finishImportingPanel release];
+	[self setInstallerTipsPanel: nil],		[installerTipsPanel release];
+	
 	[super dealloc];
 }
 
@@ -86,9 +91,17 @@
 	BXSession *session = [self representedObject];
 	NSView *panel;
 	
-	if		([session activeProgramPath])	panel = defaultProgramPanel;
-	else if	([[session executables] count])	panel = programChooserPanel;
-	else									panel = noProgramsPanel;
+	if ([session isKindOfClass: [BXImport class]])
+	{
+		if ([session activeProgramPath])	panel = installerTipsPanel;
+		else								panel = finishImportingPanel;
+	}
+	else
+	{
+		if		([session activeProgramPath])	panel = defaultProgramPanel;
+		else if	([[session executables] count])	panel = programChooserPanel;
+		else									panel = noProgramsPanel;
+	}
 
 	[self setActivePanel: panel];
 }

@@ -242,6 +242,11 @@
 - (IBAction) toggleStatusBarShown:		(id)sender	{ [self setStatusBarShown:		![self statusBarShown]]; }
 - (IBAction) toggleProgramPanelShown:	(id)sender	{ [self setProgramPanelShown:	![self programPanelShown]]; }
 
+- (IBAction) showProgramPanel: (id)sender
+{
+	[self setProgramPanelShown: YES];
+}
+
 - (IBAction) exitFullScreen: (id)sender
 {
 	[self setFullScreenWithZoom: NO];

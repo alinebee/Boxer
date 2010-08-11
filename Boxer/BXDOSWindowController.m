@@ -21,7 +21,7 @@
 #import "BXInputView.h"
 
 #import "BXSession+BXDragDrop.h"
-
+#import "BXImport.h"
 
 //Private methods
 @interface BXDOSWindowController ()
@@ -30,7 +30,6 @@
 - (void) _slideView: (NSView *)view shown: (BOOL)show;
 
 @end
-
 
 @implementation BXDOSWindowController
 
@@ -46,9 +45,11 @@
 - (BXSession *) document	{ return (BXSession *)[super document]; }
 - (BXDOSWindow *) window	{ return (BXDOSWindow *)[super window]; }
 
+
 - (void) setDocument: (BXSession *)document
 {
 	[super setDocument: document];
+
 	//Assign references to our document for our view controllers, or clear those references when the document is cleared.
 	[programPanelController setRepresentedObject: document];
 	[inputController setRepresentedObject: [[document emulator] inputHandler]];
@@ -150,6 +151,8 @@
 	}
 	
 	//Reassign the document to ensure we've set up our view controllers with references the document/emulator
+	//This is necessary because the order of windowDidLoad/setDocument: differs between releases and some
+	//of our members may have been nil when setDocument: was first called
 	[self setDocument: [self document]];
 }
 

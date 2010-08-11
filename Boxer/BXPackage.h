@@ -45,9 +45,9 @@ extern NSString * const BXDocumentationFolderName;
 
 //The different kinds of game identifiers we can have.
 enum {
-	BXGameIdentifierNone		= 0,	//No identifier. Currently unused.
-	BXGameIdentifierUUID		= 1,	//Standard UUID. Used for empty gameboxes.
-	BXGameIdentifierEXEDigest	= 2		//SHA1 digest of each EXE file in the gamebox.
+	BXGameIdentifierUserSpecified	= 0,	//Manually specified type.
+	BXGameIdentifierUUID			= 1,	//Standard UUID. Generated for empty gameboxes.
+	BXGameIdentifierEXEDigest		= 2,	//SHA1 digest of each EXE file in the gamebox.
 };
 typedef NSUInteger BXGameIdentifierType;
 

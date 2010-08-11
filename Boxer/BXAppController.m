@@ -184,9 +184,9 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 //Quit after the last window was closed if we are a 'subsidiary' process, to avoid leaving extra Boxers littering the Dock
 - (BOOL) applicationShouldTerminateAfterLastWindowClosed: (NSApplication *)sender
 {
+	NSString *bundleIdentifier	= [[NSBundle mainBundle] bundleIdentifier];
+	NSWorkspace *workspace		= [NSWorkspace sharedWorkspace];
 	NSUInteger numBoxers = 0;
-	NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
-	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	for (NSDictionary *appDetails in [workspace launchedApplications])
 	{
 		if ([[appDetails objectForKey: @"NSApplicationBundleIdentifier"] isEqualToString: bundleIdentifier]) numBoxers++;
@@ -216,6 +216,10 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 - (void) applicationWillTerminate: (NSNotification *)notification
 {
+	//Tell any remaining documents to close on exit
+	//(NSDocumentController doesn't always do so by default)
+	for (id document in [NSArray arrayWithArray: [self documents]]) [document close];
+	
 	//Save our preferences to disk before exiting
 	[[NSUserDefaults standardUserDefaults] synchronize];
 }

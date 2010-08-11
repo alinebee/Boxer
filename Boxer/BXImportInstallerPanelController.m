@@ -148,7 +148,7 @@
 - (IBAction) launchSelectedInstaller: (id)sender
 {
 	NSString *installerPath = [[[self installerSelector] selectedItem] representedObject];
-	[[[self controller] document] confirmInstaller: installerPath];
+	[[[self controller] document] launchInstaller: installerPath];
 }
 
 - (IBAction) cancelInstallerChoice: (id)sender

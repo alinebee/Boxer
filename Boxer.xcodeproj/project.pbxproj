@@ -24,6 +24,8 @@
 		9F20C28E11E5D8B4005AF541 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28D11E5D8B4005AF541 /* QTKit.framework */; };
 		9F20C29711E5DA68005AF541 /* Sparkle.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28A11E5D848005AF541 /* Sparkle.framework */; };
 		9F2140FF0F59F28000A5A183 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F2140FE0F59F28000A5A183 /* QuartzCore.framework */; };
+		9F25C4E212130B5E0025CB2C /* BrandWatermark.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F25C4E112130B5E0025CB2C /* BrandWatermark.png */; };
+		9F25C52712130E030025CB2C /* BXImportDOSWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F25C52612130E030025CB2C /* BXImportDOSWindowController.m */; };
 		9F2AC6D710EFE14300CFFF72 /* CDCover.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F2AC6D510EFE14300CFFF72 /* CDCover.png */; };
 		9F2AC6D810EFE14300CFFF72 /* CDCase.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F2AC6D610EFE14300CFFF72 /* CDCase.png */; };
 		9F2AC6E410EFFE8600CFFF72 /* BXBootlegCoverArt.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2AC6E310EFFE8600CFFF72 /* BXBootlegCoverArt.m */; };
@@ -331,6 +333,10 @@
 		9F20C28A11E5D848005AF541 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
 		9F20C28D11E5D8B4005AF541 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = "/Volumes/Macintosh HD/System/Library/Frameworks/QTKit.framework"; sourceTree = "<absolute>"; };
 		9F2140FE0F59F28000A5A183 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
+		9F25C1FD1212BB450025CB2C /* BXSessionPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXSessionPrivate.h; sourceTree = "<group>"; };
+		9F25C4E112130B5E0025CB2C /* BrandWatermark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BrandWatermark.png; sourceTree = "<group>"; };
+		9F25C52512130E030025CB2C /* BXImportDOSWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImportDOSWindowController.h; sourceTree = "<group>"; };
+		9F25C52612130E030025CB2C /* BXImportDOSWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXImportDOSWindowController.m; sourceTree = "<group>"; };
 		9F2AC6D510EFE14300CFFF72 /* CDCover.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CDCover.png; sourceTree = "<group>"; };
 		9F2AC6D610EFE14300CFFF72 /* CDCase.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CDCase.png; sourceTree = "<group>"; };
 		9F2AC6E210EFFE8600CFFF72 /* BXBootlegCoverArt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBootlegCoverArt.h; sourceTree = "<group>"; };
@@ -959,6 +965,8 @@
 				9F1CBBA7120CB99D00C5E926 /* BXImportDropzone.m */,
 				9F1CBA95120C7D9000C5E926 /* BXImportWindowController.h */,
 				9F1CBA96120C7D9000C5E926 /* BXImportWindowController.m */,
+				9F25C52512130E030025CB2C /* BXImportDOSWindowController.h */,
+				9F25C52612130E030025CB2C /* BXImportDOSWindowController.m */,
 				9F1CBB57120CAA5500C5E926 /* BXImportPanel.h */,
 				9F1CBB58120CAA5500C5E926 /* BXImportPanel.m */,
 				9FDC544C120EBFE70063B33D /* BXImportDropzonePanelController.h */,
@@ -1072,6 +1080,7 @@
 		9F496E3D108EEB0700282261 /* DOS session */ = {
 			isa = PBXGroup;
 			children = (
+				9F25C1FD1212BB450025CB2C /* BXSessionPrivate.h */,
 				9FBC35140F56C7B7001811F2 /* BXSession.h */,
 				9FBC35210F56C7B7001811F2 /* BXSession.m */,
 				9FA85CD310A357A600E6457F /* BXSession+BXFileManager.h */,
@@ -1621,6 +1630,7 @@
 		9FBC34390F56C5AC001811F2 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				9F25C4E112130B5E0025CB2C /* BrandWatermark.png */,
 				9FBDA831120D6CE80012585D /* DropzoneTemplate.png */,
 				9F1CBCAC120CCF3900C5E926 /* Blueprint.jpg */,
 				9FF445DF10F13A2200B74B15 /* 525Diskette.png */,
@@ -1804,6 +1814,7 @@
 				9F1CBB5E120CABBB00C5E926 /* ImportWindow.xib in Resources */,
 				9F1CBCAD120CCF3900C5E926 /* Blueprint.jpg in Resources */,
 				9FBDA832120D6CE80012585D /* DropzoneTemplate.png in Resources */,
+				9F25C4E212130B5E0025CB2C /* BrandWatermark.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2032,6 +2043,7 @@
 				9FDC5476120EC8B40063B33D /* BXImportInstallerPanelController.m in Sources */,
 				9F0F9EDA12108A9000ED7A64 /* BXImportError.m in Sources */,
 				9F0F9EEF1210901800ED7A64 /* BXMountedVolumesError.m in Sources */,
+				9F25C52712130E030025CB2C /* BXImportDOSWindowController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

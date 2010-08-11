@@ -12,7 +12,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="3"/>
+			<integer value="1"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -41,8 +41,8 @@
 			<object class="NSWindowTemplate" id="1005">
 				<int key="NSWindowStyleMask">15</int>
 				<int key="NSWindowBacking">2</int>
-				<string key="NSWindowRect">{{326, 218}, {640, 490}}</string>
-				<int key="NSWTFlags">536870912</int>
+				<string key="NSWindowRect">{{320, 180}, {640, 490}}</string>
+				<int key="NSWTFlags">540540928</int>
 				<string key="NSWindowTitle"/>
 				<string key="NSWindowClass">BXDOSWindow</string>
 				<nil key="NSViewClass"/>
@@ -530,9 +530,9 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{56, 114}, {640, 490}}</string>
+					<string>{{320, 180}, {640, 490}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{56, 114}, {640, 490}}</string>
+					<string>{{320, 180}, {640, 490}}</string>
 					<integer value="0"/>
 					<string>{196, 240}</string>
 					<string>{{357, 418}, {480, 270}}</string>

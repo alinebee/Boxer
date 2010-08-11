@@ -92,7 +92,7 @@
 
 - (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)sender
 {
-	NSPasteboard *pboard = [sender draggingPasteboard];	
+	NSPasteboard *pboard = [sender draggingPasteboard];
 	if ([[pboard types] containsObject: NSFilenamesPboardType])
 	{
 		NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];

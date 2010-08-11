@@ -24,13 +24,14 @@
 @class BXStatusBarController;
 @class BXEmulator;
 @class BXFrameBuffer;
+@class BXInputView;
 
 @protocol BXFrameRenderingView;
 
 @interface BXDOSWindowController : NSWindowController
 {
 	IBOutlet NSView <BXFrameRenderingView> *renderingView;
-	IBOutlet NSView *inputView;
+	IBOutlet BXInputView *inputView;
 	IBOutlet NSView *viewContainer;
 	IBOutlet NSView *statusBar;
 	IBOutlet NSView *programPanel;
@@ -54,7 +55,7 @@
 @property (retain) BXStatusBarController *statusBarController;
 
 @property (retain) NSView <BXFrameRenderingView> *renderingView;	//The view that displays DOSBox's graphical output.
-@property (retain) NSView *inputView;		//The view that tracks user input. This is also be the view we use for fullscreen.
+@property (retain) BXInputView *inputView;	//The view that tracks user input. This is also be the view we use for fullscreen.
 @property (retain) NSView *viewContainer;	//A wrapper for the input view to aid window-sizing behaviour.
 @property (retain) NSView *programPanel;	//The slide-out program picker panel.
 @property (retain) NSView *statusBar;		//The status bar at the bottom of the window.

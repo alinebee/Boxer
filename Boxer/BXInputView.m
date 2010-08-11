@@ -8,18 +8,21 @@
 
 #import "BXInputView.h"
 #import "BXGeometry.h"
+#import "BXDOSWindowController.h"
 
 
 NSString * const BXViewWillLiveResizeNotification	= @"BXViewWillLiveResizeNotification";
 NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotification";
 
 @implementation BXInputView
+@synthesize appearance;
 
 - (BOOL) acceptsFirstResponder
 {
 	return YES;
 }
 
+//Use flipped coordinates to make input handling easier
 - (BOOL) isFlipped
 {
 	return YES;
@@ -46,13 +49,43 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 					  nil];	
 	}
 	
-	[background drawInRect: [self bounds] angle: 270];
+	[background drawInRect: [self bounds] angle: 270.0f];
+}
+
+- (void) drawBlueprintBackgroundInRect: (NSRect)dirtyRect
+{
+	static NSGradient *lighting = nil;
+	static NSColor *pattern = nil;
+	if (!lighting)
+	{
+		lighting = [[NSGradient alloc] initWithColorsAndLocations:
+					[NSColor colorWithCalibratedWhite: 0.0f alpha: 0.3f], 0.00f,
+					[NSColor colorWithCalibratedWhite: 1.0f alpha: 0.2f], 0.98f,
+					[NSColor colorWithCalibratedWhite: 0.0f alpha: 0.3f], 1.00f,
+					nil];	
+		pattern = [[NSColor colorWithPatternImage: [NSImage imageNamed: @"Blueprint.jpg"]] retain];
+	}
 	
+	NSSize patternSize		= [[pattern patternImage] size];
+	NSRect viewFrame		= [self frame];
+	NSPoint patternPhase	= NSMakePoint(viewFrame.origin.x + ((viewFrame.size.width - patternSize.width) / 2),
+										  viewFrame.origin.y + ((viewFrame.size.height - patternSize.height) / 2));
+	
+	[NSGraphicsContext saveGraphicsState];
+		[[NSGraphicsContext currentContext] setPatternPhase: patternPhase];
+		[pattern set];
+		[NSBezierPath fillRect: dirtyRect];
+		[lighting drawInRect: [self bounds] angle: 270.0f];	
+	[NSGraphicsContext restoreGraphicsState];
+}
+
+- (void) drawBrandInRect: (NSRect)dirtyRect
+{
 	NSImage *brand = [NSImage imageNamed: @"Brand.png"];
 	[brand setFlipped: YES];
 	NSRect brandRegion;
 	brandRegion.size = [brand size];
-	brandRegion = centerInRect(brandRegion, [self bounds]);
+	brandRegion = NSIntegralRect(centerInRect(brandRegion, [self bounds]));
 	
 	if (NSIntersectsRect(dirtyRect, brandRegion))
 	{
@@ -60,13 +93,41 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 				 fromRect: NSZeroRect
 				operation: NSCompositeSourceOver
 				 fraction: 1.0f];	
-	}		
+	}
+}
+
+
+- (void) drawBlueprintBrandInRect: (NSRect)dirtyRect
+{
+	NSImage *brand = [NSImage imageNamed: @"BrandWatermark.png"];
+	[brand setFlipped: YES];
+	NSRect brandRegion;
+	brandRegion.size = [brand size];
+	brandRegion = NSIntegralRect(centerInRect(brandRegion, [self bounds]));
+	
+	if (NSIntersectsRect(dirtyRect, brandRegion))
+	{
+		[brand drawInRect: brandRegion
+				 fromRect: NSZeroRect
+				operation: NSCompositeSourceOver
+				 fraction: 1.0f];	
+	}
 }
 
 - (void) drawRect: (NSRect)dirtyRect
 {
 	[NSBezierPath clipRect: dirtyRect];
-	[self drawBackgroundInRect: dirtyRect];
+	
+	if (appearance == BXInputViewBlueprintAppearance)
+	{
+		[self drawBlueprintBackgroundInRect: dirtyRect];
+		[self drawBlueprintBrandInRect: dirtyRect];		
+	}
+	else
+	{
+		[self drawBackgroundInRect: dirtyRect];
+		[self drawBrandInRect: dirtyRect];			
+	}
 }
 
 

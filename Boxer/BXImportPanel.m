@@ -45,7 +45,7 @@
 	//Then, draw the lighting onto the background
 	NSPoint startPoint	= NSMakePoint(NSMidX(backgroundRect), NSMaxY(backgroundRect));
 	NSPoint endPoint	= NSMakePoint(NSMidX(backgroundRect), NSMidY(backgroundRect));
-	CGFloat startRadius = 40.0f;
+	CGFloat startRadius = NSWidth(backgroundRect) * 0.1f;
 	CGFloat endRadius	= NSWidth(backgroundRect) * 0.75f;
 	
 	[lighting drawFromCenter: startPoint radius: startRadius

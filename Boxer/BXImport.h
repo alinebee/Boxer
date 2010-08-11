@@ -13,6 +13,23 @@
 //comprises) the import process.
 
 #import "BXSession.h"
+#import "BXOperation.h"
+
+#pragma mark -
+#pragma mark Class constants
+
+//Constants returned by importStage;
+enum {
+	BXImportWaitingForSourcePath = 0,
+	BXImportLoadingSourcePath,
+	BXImportWaitingForInstaller,
+	BXImportReadyToLaunchInstaller,
+	BXImportRunningInstaller,
+	BXImportReadyToFinalize,
+	BXImportFinalizing,
+	BXImportFinished
+};
+typedef NSUInteger BXImportStage;
 
 
 @class BXImportWindowController;
@@ -24,11 +41,10 @@
 	NSArray *installerPaths;
 	NSString *preferredInstallerPath;
 	
-	BOOL hasSkippedInstaller;
-	BOOL hasCompletedInstaller;
-	BOOL hasFinalisedGamebox;
+	NSString *rootDrivePath;
 	
-	BOOL thinking;
+	BXImportStage importStage;
+	BXOperationProgress stageProgress;
 }
 
 #pragma mark -
@@ -47,15 +63,13 @@
 //The path of the installer we recommend. Autodetected whenever installerPaths is set.
 @property (readonly, copy, nonatomic) NSString *preferredInstallerPath;
 
-//Flags for how far through the gamebox process we are
-@property (readonly, nonatomic) BOOL hasConfirmedSourcePath;
-@property (readonly, nonatomic) BOOL hasConfirmedInstaller;
-@property (readonly, nonatomic) BOOL hasSkippedInstaller;
-@property (readonly, nonatomic) BOOL hasCompletedInstaller;
-@property (readonly, nonatomic) BOOL hasFinalisedGamebox;
 
-//Will be YES when we are engaged in a lengthy detection process.
-@property (readonly, assign, nonatomic, getter=isThinking) BOOL thinking;
+//What stage of the import process we are up to (as a BXImportStage constant.)
+@property (readonly, assign, nonatomic) BXImportStage importStage;
+
+//How far through the current stage we have progressed.
+//Only relevant during the BXImportLoadingSourcePath and BXImportImportingSourcePath stages.
+@property (readonly, assign, nonatomic) BXOperationProgress stageProgress;
 
 
 #pragma mark -
@@ -66,6 +80,10 @@
 
 //Returns whether we can import from the specified path.
 - (BOOL) canImportFromSourcePath: (NSString *)sourcePath;
+
+//Whether we should run an installer for our current source path.
+//Will be YES if we detected any installers for the source path, NO otherwise.
+- (BOOL) gameNeedsInstalling;
 
 
 #pragma mark -
@@ -78,10 +96,16 @@
 //Cancels a previously-specified source path and returns to the source path choice step.
 - (void) cancelSourcePath;
 
-//Selects the specified installer path and launches it to continue importing.
-- (void) confirmInstaller: (NSString *)path;
+//Selects the specified installer and launches it to continue importing.
+- (void) launchInstaller: (NSString *)path;
 
 //Skips the installer selection process and continues to the next step of importing.
 - (void) skipInstaller;
+
+//Closes the DOS installer process and continues to the next step of importing.
+- (void) finishInstaller;
+
+//Finish importing the game into the gamebox.
+- (void) importSourceFiles;
 
 @end

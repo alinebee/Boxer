@@ -291,15 +291,23 @@ NSString * const BXDocumentationFolderName		= @"Documentation";
 	//If we don't have an identifier yet, generate a new one and add it to the game's metadata.
 	if (!identifier)
 	{
-		BXGameIdentifierType generatedType = BXGameIdentifierNone;
+		BXGameIdentifierType generatedType = 0;
 		identifier = [self _generatedIdentifierOfType: &generatedType];
-		
+
 		[gameInfo setObject: identifier forKey: BXGameIdentifierKey];
-		[gameInfo setObject: [NSNumber numberWithUnsignedInteger: generatedType] forKey: BXGameIdentifierTypeKey];
+		[gameInfo setObject: [NSNumber numberWithUnsignedInteger: generatedType]
+					 forKey: BXGameIdentifierTypeKey];
 		[self _persistGameInfo];
 	}
 	
 	return identifier;
+}
+
+- (NSString *) setGameIdentifier: (NSString *)identifier
+{
+	[gameInfo setObject: identifier forKey: BXGameIdentifierKey];
+	[gameInfo setObject: [NSNumber numberWithUnsignedInteger: BXGameIdentifierUserSpecified]
+				 forKey: BXGameIdentifierTypeKey];
 }
 
 - (NSString *) gameName

@@ -7,8 +7,11 @@
 
 
 #import "BXImport.h"
+#import "BXSessionPrivate.h"
 
+#import "BXImportDOSWindowController.h"
 #import "BXImportWindowController.h"
+
 #import "BXAppController.h"
 #import "BXGameProfile.h"
 #import "BXImportError.h"
@@ -30,24 +33,32 @@
 @property (readwrite, retain, nonatomic) NSArray *installerPaths;
 @property (readwrite, copy, nonatomic) NSString *sourcePath;
 @property (readwrite, copy, nonatomic) NSString *preferredInstallerPath;
-@property (readwrite, assign, nonatomic) BOOL thinking;
 
-//Initiates whatever step of the import process we're up to: displaying an import panel, launching
-//an installer, finalising import etc.
-//Called when the user finishes each stage of the process and we have collected enough info to continue.
-- (void) _continueImport;
+@property (readwrite, assign, nonatomic) BXImportStage importStage;
+@property (readwrite, assign, nonatomic) BXOperationProgress stageProgress;
+
+//Only defined for internal use
+@property (copy, nonatomic) NSString *rootDrivePath;
+
 
 //Create a new empty game package for our source path.
-- (BOOL) _generatePackageWithError: (NSError **)error;
+- (BOOL) _generateGameboxWithError: (NSError **)error;
+
+//Used after running an installer to check if the installer has installed files to the gamebox.
+//Determines how (and whether) we import the source path into the gamebox.
+- (BOOL) _gameDidInstall;
+
 @end
 
 
+#pragma mark -
+#pragma mark Actual implementation
+
 @implementation BXImport
 @synthesize importWindowController;
-@synthesize sourcePath;
+@synthesize sourcePath, rootDrivePath;
 @synthesize installerPaths, preferredInstallerPath;
-@synthesize hasCompletedInstaller, hasFinalisedGamebox;
-@synthesize thinking;
+@synthesize importStage, stageProgress;
 
 #pragma mark -
 #pragma mark Initialization and deallocation
@@ -55,74 +66,30 @@
 - (void) dealloc
 {
 	[self setSourcePath: nil],				[sourcePath release];
+	[self setRootDrivePath: nil],			[rootDrivePath release];
 	[self setImportWindowController: nil],	[importWindowController release];
 	[self setInstallerPaths: nil],			[installerPaths release];
 	[self setPreferredInstallerPath: nil],	[preferredInstallerPath release];
 	[super dealloc];
 }
 
-- (void) makeWindowControllers
+- (id)initWithContentsOfURL: (NSURL *)absoluteURL
+					 ofType: (NSString *)typeName
+					  error: (NSError **)outError
 {
-	[super makeWindowControllers];
-	BXImportWindowController *controller = [[BXImportWindowController alloc] initWithWindowNibName: @"ImportWindow"];
-	
-	[self addWindowController:			controller];
-	[self setImportWindowController:	controller];
-	[controller setShouldCloseDocument: YES];
-	
-	[controller release];
-}
-
-- (void) removeWindowController: (NSWindowController *)windowController
-{
-	if (windowController == [self importWindowController])
+	if ((self = [super initWithContentsOfURL: absoluteURL ofType: typeName error: outError]))
 	{
-		[self setImportWindowController: nil];
+		[self setFileURL: [NSURL fileURLWithPath: [self sourcePath]]];
+		
+		if ([self gameNeedsInstalling])
+			[self setImportStage: BXImportWaitingForInstaller];
+		else
+			[self setImportStage: BXImportReadyToFinalize];
 	}
-	[super removeWindowController: windowController];
+	return self;
 }
 
-- (void) showWindows
-{
-	//Unlike BXSession, we do not display the DOS window nor launch the emulator when this is called.
-	//Instead, we decide what to do based on what stage of the import process we're in.
-	[self _continueImport];
-}
-
-//We don't want to close the entire document after the emulated session is finished;
-//instead we carry on and complete the installation process
-- (BOOL) closeOnEmulatorExit { return NO; }
-
-
-#pragma mark -
-#pragma mark Import helpers
-
-+ (NSSet *)acceptedSourceTypes
-{
-	static NSSet *acceptedTypes = nil;
-	if (!acceptedTypes)
-	{
-		//A subset of our mountable types: we only accept regular folders and disk image formats
-		//which can be mounted by hdiutil (so that we can inspect their filesystems)
-		acceptedTypes = [[NSSet alloc] initWithObjects:
-						 @"public.folder",
-						 @"public.iso-image",
-						 @"com-apple.disk-image-cdr",
-						 nil];
-	}
-	return acceptedTypes;
-}
-
-- (BOOL) canImportFromSourcePath: (NSString *)path
-{
-	return [[NSWorkspace sharedWorkspace] file: path
-								  matchesTypes: [[self class] acceptedSourceTypes]];
-}
-
-
-#pragma mark -
-#pragma mark Import steps
-
+//Reads in a source path and determines how best to install it
 - (BOOL) readFromURL: (NSURL *)absoluteURL
 			  ofType: (NSString *)typeName
 			   error: (NSError **)outError
@@ -132,10 +99,10 @@
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	BXGameProfile *detectedProfile = nil;
 	
-	NSMutableArray *detectedInstallers = nil;
-	NSArray *executables = nil;
-	NSString *preferredInstaller = nil;
-	NSString *mountedVolumePath = nil;
+	NSMutableArray *detectedInstallers	= nil;
+	NSArray *executables				= nil;
+	NSString *preferredInstaller		= nil;
+	NSString *mountedVolumePath			= nil;
 	
 	//If the chosen path was a disk image, mount it and use the mounted volume as our source
 	if ([workspace file: path matchesTypes: [NSSet setWithObject: @"public.disk-image"]])
@@ -191,7 +158,7 @@
 		
 		if ([detectedInstallers count])
 		{
-			//Sort the installers by depth, and determine the preferred one
+			//Sort the installers by depth to determine the preferred one
 			[detectedInstallers sortUsingSelector: @selector(pathDepthCompare:)];
 			
 			//If we didn't already find the game profile's own preferred installer, detect one from the list now
@@ -205,14 +172,14 @@
 		else if (numWindowsExecutables == [executables count])
 		{
 			if (outError) *outError = [BXImportWindowsOnlyError errorWithSourcePath: path userInfo: nil];
-			//Eject any volume we mounted before we go
+			//Eject any volume that we mounted before we go
 			if (mountedVolumePath) [workspace unmountAndEjectDeviceAtPath: mountedVolumePath];
 			return NO;
 		}
 	}
 	else
 	{
-		//No executables were found - this indicates that the folder contained something other than a DOS game
+		//No executables were found: this indicates that the folder was empty or contains something other than a DOS game
 		if (outError) *outError = [BXImportNoExecutablesError errorWithSourcePath: path userInfo: nil];
 		//Eject any volume we mounted before we go
 		if (mountedVolumePath) [workspace unmountAndEjectDeviceAtPath: mountedVolumePath];
@@ -229,35 +196,140 @@
 	//the only place that uses it?
 	[self setPreferredInstallerPath: preferredInstaller];
 	[self setInstallerPaths: detectedInstallers];
-
+	
 	return YES;
 }
 
+
+#pragma mark -
+#pragma mark Window management
+
+- (void) makeWindowControllers
+{	
+	[self setDOSWindowController:	[[BXImportDOSWindowController alloc] initWithWindowNibName: @"DOSWindow"]];
+	[self setImportWindowController:[[BXImportWindowController alloc] initWithWindowNibName: @"ImportWindow"]];
+	
+	[self addWindowController: [self DOSWindowController]];
+	[self addWindowController: [self importWindowController]];
+	[[self DOSWindowController] setShouldCloseDocument: YES];
+	[[self importWindowController] setShouldCloseDocument: YES];
+	
+	[[self DOSWindowController] release];
+	[[self importWindowController] release];
+}
+
+- (void) removeWindowController: (NSWindowController *)windowController
+{
+	if (windowController == [self importWindowController])
+	{
+		[self setImportWindowController: nil];
+	}
+	[super removeWindowController: windowController];
+}
+
+- (void) showWindows
+{
+	if ([self importStage] == BXImportRunningInstaller)
+	{
+		[[self DOSWindowController] showWindow: self];
+	}
+	else
+	{
+		[[self importWindowController] showWindow: self];
+	}
+}
+
+- (NSWindow *) windowForSheet
+{
+	NSWindow *dosWindow = (NSWindow *)[[self DOSWindowController] window];
+	NSWindow *importWindow = [[self importWindowController] window];
+
+	if		([dosWindow isVisible]) return dosWindow;
+	else if	([importWindow isVisible]) return importWindow;
+	else return nil;
+}
+
+
+#pragma mark -
+#pragma mark Controlling shutdown
+
+//We don't want to close the entire document after the emulated session is finished;
+//instead we carry on and complete the installation process.
+- (BOOL) closeOnEmulatorExit { return NO; }
+
+
+#pragma mark -
+#pragma mark Import helpers
+
++ (NSSet *)acceptedSourceTypes
+{
+	static NSSet *acceptedTypes = nil;
+	if (!acceptedTypes)
+	{
+		//A subset of our usual mountable types: we only accept regular folders and disk image
+		//formats which can be mounted by hdiutil (so that we can inspect their filesystems)
+		acceptedTypes = [[NSSet alloc] initWithObjects:
+						 @"public.folder",
+						 @"public.iso-image",
+						 @"com-apple.disk-image-cdr",
+						 nil];
+	}
+	return acceptedTypes;
+}
+
+- (BOOL) canImportFromSourcePath: (NSString *)path
+{
+	return [[NSWorkspace sharedWorkspace] file: path
+								  matchesTypes: [[self class] acceptedSourceTypes]];
+}
+
+- (BOOL) gameNeedsInstalling
+{
+	return [[self installerPaths] count] > 0;
+}
+
+#pragma mark -
+#pragma mark Import steps
+
 - (void) importFromSourcePath: (NSString *)path
 {
+	//Sanity checks: if these fail then there is a programming error.
+	NSAssert(path != nil, @"Nil path passed to BXImport importFromSourcePath:");
+	NSAssert([self importStage] <= BXImportWaitingForInstaller, @"Cannot call importFromSourcePath after game import has already started.");
+	
 	NSURL *sourceURL = [NSURL fileURLWithPath: [path stringByStandardizingPath]];
 	
 	NSError *readError = nil;
-	
-	[self setThinking: YES];
-	BOOL readSucceeded = [self readFromURL: sourceURL ofType: nil error: &readError];	
-	[self setThinking: NO];
+
+	[self setFileURL: sourceURL];
+
+	[self setImportStage: BXImportLoadingSourcePath];
+	BOOL readSucceeded = [self readFromURL: sourceURL
+									ofType: nil
+									 error: &readError];
 
 	if (readSucceeded)
 	{
 		[self setFileURL: [NSURL fileURLWithPath: [self sourcePath]]];
 		
-		//Now that we have a valid source path, we can continue to the next import step
-		[self _continueImport];
+		if ([self gameNeedsInstalling])
+		{
+			[self setImportStage: BXImportWaitingForInstaller];
+		}
+		else
+		{
+			[self skipInstaller];
+		}
 	}
 	else if (readError)
 	{
-		//If we failed, then display the error as a sheet in the import window.
-		[self showWindows];
+		[self setFileURL: nil];
+		[self setImportStage: BXImportWaitingForSourcePath];
 		
+		//If we failed, then display the error as a sheet
 		[self presentError: readError
-			modalForWindow: [[self importWindowController] window]
-				  delegate: nil
+			modalForWindow: [self windowForSheet]
+		 		  delegate: nil
 		didPresentSelector: NULL
 			   contextInfo: NULL];
 	}
@@ -265,128 +337,147 @@
 
 - (void) cancelSourcePath
 {
+	//Sanity checks: if these fail then there is a programming error.
+	NSAssert([self importStage] <= BXImportWaitingForInstaller, @"Cannot call cancelSourcePath after game import has already started.");
+	
 	[self setSourcePath: nil];
 	[self setInstallerPaths: nil];
 	[self setPreferredInstallerPath: nil];
 	[self setFileURL: nil];
 	
-	[self _continueImport];
+	[self setImportStage: BXImportWaitingForSourcePath];
 }
 
-- (void) confirmInstaller: (NSString *)path
+- (void) launchInstaller: (NSString *)path
 {
-	if (path)
+	//Sanity checks: if these fail then there is a programming error.
+	NSAssert(path != nil, @"No targetPath specified when BXImport launchInstaller: was called.");
+	NSAssert([self sourcePath] != nil, @"No sourcePath specified when BXImport launchInstaller: was called.");
+	
+	//If we don't yet have a game package (and we shouldn't), generate one now
+	if (![self gamePackage])
 	{
-		[self setTargetPath: path];
-		hasSkippedInstaller = NO;
-		hasCompletedInstaller = NO;
-		
-		//Now that we have an installer, we can continue to launch it
-		[self _continueImport];
+		[self _generateGameboxWithError: NULL];
 	}
+	
+	[self setImportStage: BXImportRunningInstaller];
+	
+	[[self importWindowController] setShouldCloseDocument: NO];
+	[[self DOSWindowController] setShouldCloseDocument: YES];
+	[[self importWindowController] handOffToController: [self DOSWindowController]];
+	
+	//Set the installer as the target executable for this session
+	[self setTargetPath: path];
+	[self start];
 }
 
 - (void) skipInstaller
 {
 	[self setTargetPath: nil];
-	hasSkippedInstaller = YES;
-	hasCompletedInstaller = NO;
+	[self setImportStage: BXImportReadyToFinalize];
 	
-	[self _continueImport];
+	[self importSourceFiles];
 }
 
 
-- (BOOL) hasConfirmedSourcePath
+- (void) finishInstaller
 {
-	return [self sourcePath] != nil;
+	//Stop the installer process, and hand control back to the import window
+	[self cancel];
+	
+	[[self importWindowController] setShouldCloseDocument: YES];
+	[[self DOSWindowController] setShouldCloseDocument: NO];
+	[[self importWindowController] pickUpFromController: [self DOSWindowController]];
+	
+	[self setImportStage: BXImportReadyToFinalize];
+	
+	[self importSourceFiles];
 }
 
-- (BOOL) hasConfirmedInstaller
+- (void) importSourceFiles
 {
-	return [self targetPath] != nil;
-}
-
-- (BOOL) hasSkippedInstaller
-{
-	return hasSkippedInstaller || ![[self installerPaths] count];
-}
-
-
-- (void) _continueImport
-{
-	//We don't have a source path yet: display the dropzone panel for the user to provide one.
-	if (![self hasConfirmedSourcePath])
+	//Sanity checks: if these fail then there is a programming error.
+	NSAssert([self importStage] == BXImportReadyToFinalize, @"BXImport importSourceFiles: was called before we are ready to finalize.");
+	NSAssert([self sourcePath] != nil, @"No sourcePath specified when BXImport importSourceFiles: was called.");
+	
+	//If we don't have a source folder yet, generate one now before continuing
+	if (![self gamePackage])
 	{
-		[[self importWindowController] showDropzonePanel];
+		[self _generateGameboxWithError: NULL];
 	}
 	
-	//We haven't yet confirmed an installer to run: display the choose-thine-installer panel.
-	//(If there are no installers, then hasSkippedInstaller will be YES and this will be skipped.)
-	else if (![self hasConfirmedInstaller] && ![self hasSkippedInstaller])
-	{
-		[[self importWindowController] showInstallerPanel];
-	}
+	[self setImportStage: BXImportFinalizing];
 	
-	//We haven't yet run the chosen installer after confirming it: launch it now.
-	else if ([self hasConfirmedInstaller] && ![self hasCompletedInstaller])
-	{
-		[self _generatePackageWithError: NULL];
-		//[self start];
-	}
+	//TODO: import the game data here
 	
-	//We haven't yet finalised the gamebox after completing/skipping installation
-	else if (![self hasFinalisedGamebox] && ([self hasSkippedInstaller] || [self hasCompletedInstaller]))
-	{
-		//TODO: finalise the gamebox here
-	}
-	
-	//All done! Show the final import panel
-	else if ([self hasFinalisedGamebox])
-	{
-		//TODO: show import complete panel here
-	}
-	[[self importWindowController] synchronizeWindowTitleWithDocumentName];
+	[self setImportStage: BXImportFinished];
 }
 
 
-- (BOOL) _generatePackageWithError: (NSError **)outError
-{
-	NSFileManager *manager	= [NSFileManager defaultManager];
+#pragma mark -
+#pragma mark Private internal methods
+
+- (BOOL) _generateGameboxWithError: (NSError **)outError
+{	
+	NSAssert([self sourcePath] != nil, @"_generateGameboxWithError: called before source path was set.");
 	
 	NSString *gameName		= [[self gameProfile] gameName];
 	if (!gameName) gameName	= [[self class] nameForGameAtPath: [self sourcePath]];
 	
 	NSString *gamesFolder	= [[NSApp delegate] gamesFolderPath];
 	
-	NSString *basePath		= [gamesFolder stringByAppendingPathComponent: gameName];
-	NSString *packagePath	= [basePath stringByAppendingPathExtension: @"boxer"];
+	NSString *gameboxPath	= [[gamesFolder stringByAppendingPathComponent: gameName] stringByAppendingPathExtension: @"boxer"];
 	
-	//Check if a gamebox already exists with that name;
-	//if so, append an incremented extension until we land on a name that isn't taken
-	NSUInteger suffix = 1;
-	while ([manager fileExistsAtPath: packagePath])
+	BXPackage *gamebox = [[self class] createGameboxAtPath: gameboxPath error: outError];
+	if (gamebox)
 	{
-		packagePath = [[basePath stringByAppendingFormat: @" %u", suffix++, nil] stringByAppendingPathExtension: @"boxer"];
-	}
-	
-	BOOL success = [manager createDirectoryAtPath: packagePath
+		//Prep the gamebox further by creating an empty C drive in it
+		NSString *cPath = [[gamebox resourcePath] stringByAppendingPathComponent: @"C.harddisk"];
+		
+		NSFileManager *manager = [NSFileManager defaultManager];
+		BOOL success = [manager createDirectoryAtPath: cPath
 						  withIntermediateDirectories: NO
 										   attributes: nil
 												error: outError];
-	
-	if (success)
-	{
-		BXPackage *package = [BXPackage bundleWithPath: packagePath];
 		
-		//Prep the package further by creating an empty C drive in it
-		NSString *cPath = [[package resourcePath] stringByAppendingPathComponent: @"C.harddisk"];
-		[manager createDirectoryAtPath: cPath
-		   withIntermediateDirectories: NO
-							attributes: nil
-								 error: NULL];
-		 
-		[self setGamePackage: package];
+		if (success)
+		{
+			[self setGamePackage: gamebox];
+			[self setRootDrivePath: cPath];
+			return YES;
+		}
+		//If the C-drive creation failed for some reason, bail out and delete the new gamebox
+		else
+		{
+			[manager removeItemAtPath: [gamebox bundlePath] error: NULL];
+			return NO;
+		}
 	}
-	return success;
+	else return NO;
 }
+
+- (BOOL) _gameDidInstall
+{
+	if (![self rootDrivePath]) return NO;
+	
+	//Check if any files were copied to the root drive
+	NSFileManager *manager = [NSFileManager defaultManager];
+	NSDirectoryEnumerator *enumerator = [manager enumeratorAtPath: [self rootDrivePath]];
+	
+	return ([enumerator nextObject] != nil);
+}
+
+
+//Delete our newly-minted gamebox if we didn't finish importing it before we were closed.
+- (void) _cleanup
+{
+	[super _cleanup];
+	
+	if ([self importStage] != BXImportFinished)
+	{
+		NSFileManager *manager = [NSFileManager defaultManager];
+		[manager removeItemAtPath: [[self gamePackage] bundlePath] error: NULL];	
+	}
+}
+
 @end

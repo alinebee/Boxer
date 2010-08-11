@@ -19,7 +19,7 @@
 //as CD-sized by shouldImportSourceFilesFromPath:
 #define BXCDROMSizeThreshold 100 * 1024 * 1024
 
-
+@class BXPackage;
 @interface BXImport (BXImportPolicies)
 
 #pragma mark -
@@ -81,4 +81,8 @@
 //Will be nil if no suitable art is found.
 + (NSImage *) boxArtForGameAtPath: (NSString *)path;
 
+//Creates a new empty gamebox at the specified path. Returns a newly-generated gamebox if successful,
+//or returns nil and populates outError with failure reason if unsuccessful.
++ (BXPackage *) createGameboxAtPath: (NSString *)path
+							  error: (NSError **)outError;
 @end

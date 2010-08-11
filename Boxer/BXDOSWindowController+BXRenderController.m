@@ -286,7 +286,7 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 {
 	[self willChangeValueForKey: @"fullScreen"];
 	
-	NSView *theView					= [self inputView];
+	NSView *theView					= (NSView *)[self inputView];
 	NSView *theContainer			= [self viewContainer]; 
 	NSWindow *theWindow				= [self window];
 	NSResponder *currentResponder	= [theView nextResponder];

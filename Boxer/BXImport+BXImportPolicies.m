@@ -12,6 +12,7 @@
 #import "RegexKitLite.h"
 #import "NSString+BXPaths.h"
 
+#import "BXPackage.h"
 #import "BXAppController.h"
 
 
@@ -197,5 +198,36 @@
 	filename = [filename capitalizedString];
 	
 	return filename;
+}
+
++ (BXPackage *) createGameboxAtPath: (NSString *)path
+							  error: (NSError **)outError
+{
+	NSFileManager *manager = [NSFileManager defaultManager];
+	
+	NSString *extension	= [path pathExtension];
+	NSString *basePath	= [path stringByDeletingPathExtension];
+	
+	//Check if a gamebox already exists at that location;
+	//if so, append an incremented extension until we land on a name that isn't taken
+	NSUInteger suffix = 2;
+	while ([manager fileExistsAtPath: path])
+	{
+		path = [[basePath stringByAppendingFormat: @" %u", suffix++, nil] stringByAppendingPathExtension: extension];
+	}
+	
+	NSDictionary *hideFileExtension = [NSDictionary dictionaryWithObject: [NSNumber numberWithBool: YES]
+																  forKey: NSFileExtensionHidden];
+	BOOL success = [manager createDirectoryAtPath: path
+					  withIntermediateDirectories: NO
+									   attributes: hideFileExtension
+											error: outError];
+	
+	if (success)
+	{
+		BXPackage *gamebox = [BXPackage bundleWithPath: path];
+		return gamebox;
+	}
+	else return nil;	
 }
 @end

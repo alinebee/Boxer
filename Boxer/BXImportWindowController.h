@@ -18,6 +18,8 @@
 {
 	IBOutlet NSView *dropzonePanel;
 	IBOutlet NSView *installerPanel;
+	IBOutlet NSView *finalizingPanel;
+	IBOutlet NSView *finishedPanel;
 }
 
 
@@ -31,6 +33,12 @@
 //installers to choose from.
 @property (retain, nonatomic) NSView *installerPanel;
 
+//The finalizing-gamebox panel, which shows the progress of the import operation.
+@property (retain, nonatomic) NSView *finalizingPanel;
+
+//The final gamebox panel, which displays the finished gamebox for the user to launch.
+@property (retain, nonatomic) NSView *finishedPanel;
+
 //The currently-displayed panel.
 @property (assign, nonatomic) NSView *currentPanel;
 
@@ -39,8 +47,11 @@
 //(and don't have to keep recasting them ourselves.)
 - (BXImport *) document;
 
-//Show the corresponding panel. Called from BXImport.
-- (void) showDropzonePanel;
-- (void) showInstallerPanel;
+//Hand off control and appearance from one window controller to another.
+//Used to morph between windows.
+- (void) handOffToController: (NSWindowController *)controller;
+
+//Return control to us from the specified window controller. 
+- (void) pickUpFromController: (NSWindowController *)controller;
 
 @end

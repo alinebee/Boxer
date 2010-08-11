@@ -5,7 +5,8 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-#import "BXSession.h"
+#import "BXSessionPrivate.h"
+
 #import "BXPackage.h"
 #import "BXGameProfile.h"
 #import "BXDrive.h"
@@ -26,41 +27,6 @@
 //%@ is the unique identifier for the gamebox.
 NSString * const BXGameboxSettingsKeyFormat	= @"BXGameSettings: %@";
 NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
-
-
-#pragma mark -
-#pragma mark Private method declarations
-
-@interface BXSession ()
-@property (readwrite, retain, nonatomic) NSMutableDictionary *gameSettings;
-@property (readwrite, copy, nonatomic) NSString *activeProgramPath;
-@property (readwrite, retain, nonatomic) NSArray *drives;
-
-@property (readwrite, assign, nonatomic, getter=isEmulating) BOOL emulating;
-
-//Create our BXEmulator instance and starts its main loop.
-//Called internally by [BXSession start], deferred to the end of the main thread's event loop to prevent
-//DOSBox blocking cleanup code.
-- (void) _startEmulator;
-
-//Set up the emulator context with drive mounts and other configuration settings specific to this session.
-//Called in response to the BXEmulatorWillLoadConfiguration event, once the emulator is initialised enough
-//for us to configure it.
-- (void) _configureEmulator;
-
-//Start up the target program for this session (if any) and displays the program panel selector after this
-//finishes. Called by runLaunchCommands, once the emulator has finished processing configuration files.
-- (void) _launchTarget;
-
-//Called once the session has exited to save any DOSBox settings we have changed to the gamebox conf.
-- (void) _saveConfiguration: (BXEmulatorConfiguration *)configuration toFile: (NSString *)filePath;
-
-//Cleans up temporary files after the session is closed.
-- (void) _cleanup;
-
-//Callback for close alert. Confirms document close when window is closed or application is shut down. 
-- (void) _closeAlertDidEnd: (BXCloseAlert *)alert returnCode: (int)returnCode contextInfo: (NSInvocation *)callback;
-@end
 
 
 #pragma mark -
@@ -167,10 +133,6 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 		BXPackage *package = [[BXPackage alloc] initWithPath: packagePath];
 		[self setGamePackage: package];
 		
-		//FIXME: move the fileURL reset out of here and into a later step - we can't rely on the order in which
-		//NSDocument's setFileURL/readFromURL methods are called.
-		[self setFileURL: [NSURL fileURLWithPath: packagePath]];
-		
 		//If we opened the package directly, check if it has a target of its own;
 		//if so, use that as our target path instead.
 		if ([[self targetPath] isEqualToString: packagePath])
@@ -179,38 +141,12 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 			if (packageTarget) [self setTargetPath: packageTarget];
 		}
 		[package release];
+		
+		//FIXME: move the fileURL reset out of here and into a later step: we can't rely on the order
+		//in which NSDocument's setFileURL/readFromURL methods are called.
+		[self setFileURL: [NSURL fileURLWithPath: packagePath]];
 	}
 	return YES;
-}
-
-#pragma mark -
-#pragma mark Window controller management
-
-- (void) makeWindowControllers
-{
-	BXDOSWindowController *controller = [[BXDOSWindowController alloc] initWithWindowNibName: @"DOSWindow"];
-	[self addWindowController:		controller];
-	[self setDOSWindowController:	controller];
-	[controller setShouldCloseDocument: YES];
-	
-	[controller release];
-}
-
-- (void) removeWindowController: (NSWindowController *)windowController
-{
-	if (windowController == [self DOSWindowController])
-	{
-		[self setDOSWindowController: nil];
-	}
-	[super removeWindowController: windowController];
-}
-
-- (void) showWindows
-{
-	[super showWindows];
-	
-	//Start the emulator as soon as our windows appear
-	[self start];
 }
 
 - (void) setGamePackage: (BXPackage *)package
@@ -249,7 +185,7 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 		
 		[emulator release];
 		emulator = [newEmulator retain];
-	
+		
 		if (newEmulator)
 		{
 			NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -278,22 +214,42 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	}
 }
 
-//Overridden solely so that NSDocumentController will call canCloseDocumentWithDelegate:
-//in the first place. This otherwise should have no effect and should not show up in the UI.
-- (BOOL) isDocumentEdited	{ return [[self emulator] isRunningProcess]; }
 
-- (void) _closeAlertDidEnd: (BXCloseAlert *)alert returnCode: (int)returnCode contextInfo: (NSInvocation *)callback
+#pragma mark -
+#pragma mark Window management
+
+- (void) makeWindowControllers
 {
-	if ([alert showsSuppressionButton] && [[alert suppressionButton] state] == NSOnState)
-		[[NSUserDefaults standardUserDefaults] setBool: YES forKey: @"suppressCloseAlert"];
+	BXDOSWindowController *controller = [[BXDOSWindowController alloc] initWithWindowNibName: @"DOSWindow"];
+	[self addWindowController:		controller];
+	[self setDOSWindowController:	controller];
 	
-	BOOL shouldClose = (returnCode == NSAlertFirstButtonReturn);
-	[callback setArgument: &shouldClose atIndex: 3];
-	[callback invoke];
+	[controller setShouldCloseDocument: YES];
 	
-	//Release the previously-retained callback
-	[callback release];
+	[controller release];
 }
+
+- (void) removeWindowController: (NSWindowController *)windowController
+{
+	if (windowController == [self DOSWindowController])
+	{
+		[self setDOSWindowController: nil];
+	}
+	[super removeWindowController: windowController];
+}
+
+
+- (void) showWindows
+{
+	[super showWindows];
+	
+	//Start the emulator as soon as our windows appear
+	[self start];
+}
+
+
+#pragma mark -
+#pragma mark Flow control
 
 - (void) start
 {
@@ -313,10 +269,14 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 //Cancel the DOSBox emulator
 - (void) cancel { [[self emulator] cancel]; }
 
+
+#pragma mark -
+#pragma mark Handling document closing
+
 //Tell the emulator to close itself down when the document closes
 - (void) close
 {
-	//Ensure that the document close procedure only happens once, no matter how many times we g
+	//Ensure that the document close procedure only happens once, no matter how many times we close
 	if (!isClosing)
 	{
 		isClosing = YES;
@@ -329,8 +289,12 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	}
 }
 
-- (BOOL) closeOnEmulatorExit	{ return YES; }
+- (BOOL) closeOnEmulatorExit { return YES; }
 
+
+//Overridden solely so that NSDocumentController will call canCloseDocumentWithDelegate:
+//in the first place. This otherwise should have no effect and should not show up in the UI.
+- (BOOL) isDocumentEdited	{ return [[self emulator] isRunningProcess]; }
 
 //Overridden to display our own custom confirmation alert instead of the standard NSDocument one.
 - (void) canCloseDocumentWithDelegate: (id)delegate
@@ -387,6 +351,18 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	}
 }
 
+- (void) _closeAlertDidEnd: (BXCloseAlert *)alert returnCode: (int)returnCode contextInfo: (NSInvocation *)callback
+{
+	if ([alert showsSuppressionButton] && [[alert suppressionButton] state] == NSOnState)
+		[[NSUserDefaults standardUserDefaults] setBool: YES forKey: @"suppressCloseAlert"];
+	
+	BOOL shouldClose = (returnCode == NSAlertFirstButtonReturn);
+	[callback setArgument: &shouldClose atIndex: 3];
+	[callback invoke];
+	
+	//Release the previously-retained callback
+	[callback release];
+}
 
 
 //Save our configuration changes to disk before exiting
@@ -437,16 +413,16 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 		}
 	}
 }
-
+ 
 
 #pragma mark -
 #pragma mark Describing the document/process
 
 - (NSString *) displayName
 {
-	if ([self isGamePackage]) return [[self gamePackage] gameName];
-	else if ([self fileURL]) return [super displayName];
-	else return [self processDisplayName];
+	if ([self isGamePackage])	return [[self gamePackage] gameName];
+	else if ([self fileURL])	return [super displayName];
+	else						return [self processDisplayName];
 }
 
 - (NSString *) processDisplayName

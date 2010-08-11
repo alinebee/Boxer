@@ -8,6 +8,7 @@
 
 #import "BXImportWindowController.h"
 #import "BXImport.h"
+#import "BXGeometry.h"
 
 
 //The height of the bottom window border.
@@ -15,7 +16,7 @@
 #define BXImportWindowBorderThickness 40
 
 @implementation BXImportWindowController
-@synthesize dropzonePanel, installerPanel;
+@synthesize dropzonePanel, installerPanel, finalizingPanel, finishedPanel;
 
 - (BXImport *) document { return (BXImport *)[super document]; }
 
@@ -24,20 +25,66 @@
 
 - (void) dealloc
 {
-	[self setDropzonePanel: nil], [dropzonePanel release];
-	[self setInstallerPanel: nil], [installerPanel release];
+	[self setDropzonePanel: nil],	[dropzonePanel release];
+	[self setInstallerPanel: nil],	[installerPanel release];
+	[self setFinalizingPanel: nil],	[finalizingPanel release];
+	[self setFinishedPanel: nil],	[finishedPanel release];
 	
 	[super dealloc];
 }
 
+- (void) setDocument: (NSDocument *)document
+{
+	[[self document] removeObserver: self forKeyPath: @"importStage"];
+	
+	[super setDocument: document];
+	
+	[[self document] addObserver: self
+					  forKeyPath: @"importStage"
+						 options: 0
+						 context: nil];
+}
 
 - (void) windowDidLoad
 {
 	[[self window] setContentBorderThickness: BXImportWindowBorderThickness forEdge: NSMinYEdge];
 	
-	//Default to the dropzone panel when we initially load
-	//TODO: this should really be under the control of BXImport instead, it controls the workflow
-	[self showDropzonePanel];
+	//Default to the dropzone panel when we initially load (this will be overridden later anyway)
+	[self setCurrentPanel: [self dropzonePanel]];
+}
+
+- (void) observeValueForKeyPath: (NSString *)keyPath
+					   ofObject: (id)object
+						 change: (NSDictionary *)change
+						context: (void *)context
+{
+	//Show the appropriate panel based on the current stage of the import process
+	if ([self isWindowLoaded] && 
+		[object isEqualTo: [self document]] && 
+		[keyPath isEqualToString: @"importStage"])
+	{
+		switch ([[self document] importStage])
+		{
+			case BXImportWaitingForSourcePath:
+				[self setCurrentPanel: [self dropzonePanel]];
+				break;
+				
+			case BXImportWaitingForInstaller:
+			case BXImportReadyToLaunchInstaller:
+			case BXImportRunningInstaller:
+				[self setCurrentPanel: [self installerPanel]];
+				break;
+				
+			case BXImportReadyToFinalize:
+			case BXImportFinalizing:
+				[self setCurrentPanel: [self finalizingPanel]];
+				break;
+				
+			case BXImportFinished:
+				[self setCurrentPanel: [self finishedPanel]];
+				break;
+		}
+	}
 }
 
 - (NSString *) windowTitleForDocumentDisplayName: (NSString *)displayName
@@ -76,29 +123,30 @@
 {
 	NSView *oldPanel = [self currentPanel];
 	
-	NSRect newFrame, oldFrame = [[self window] frame];
-	
-	NSSize newSize	= [panel frame].size;
-	NSSize oldSize	= [[[self window] contentView] frame].size;
-	
-	NSSize difference = NSMakeSize(
-								   newSize.width - oldSize.width,
-								   newSize.height - oldSize.height
-								   );
-	
-	//Generate a new window frame that can contain the new panel,
-	//Ensuring that the top left corner stays put
-	newFrame.origin = NSMakePoint(
-								  oldFrame.origin.x,
-								  oldFrame.origin.y - difference.height
-								  );
-	newFrame.size	= NSMakeSize(
-								 oldFrame.size.width + difference.width,
-								 oldFrame.size.height + difference.height
-								 );
-	
-	if (oldPanel != panel)
+	if (panel && oldPanel != panel)
 	{
+		NSRect newFrame, oldFrame = [[self window] frame];
+		
+		NSSize newSize	= [panel frame].size;
+		NSSize oldSize	= [[[self window] contentView] frame].size;
+		
+		NSSize difference = NSMakeSize(
+									   newSize.width - oldSize.width,
+									   newSize.height - oldSize.height
+									   );
+		
+		//Generate a new window frame that can contain the new panel,
+		//Ensuring that the top left corner stays put
+		newFrame.origin = NSMakePoint(
+									  oldFrame.origin.x,
+									  oldFrame.origin.y - difference.height
+									  );
+		newFrame.size	= NSMakeSize(
+									 oldFrame.size.width + difference.width,
+									 oldFrame.size.height + difference.height
+									 );
+		
+		
 		//Animate the transition from one panel to the next, if we have a previous panel and the window is actually on screen
 		if (oldPanel && [[self window] isVisible])
 		{
@@ -142,14 +190,61 @@
 			[[[self window] contentView] addSubview: panel];
 			[[self window] setFrame: newFrame display: YES];
 		}
+		
+		//Select the designated first responder for this panel
+		//(Currently this is piggybacking off NSView's nextKeyView, which is kinda not good)
+		[[self window] makeFirstResponder: [panel nextKeyView]];
 	}
 }
 
-//This curious process is as follows:
-//1. we invoke window to ensure that all our resources are fully loaded from the nib file
-//2. we swap the panels around.
-//3. we reveal the window after all swapping has been performed, so we don't have to redraw in front of the user.
-- (void) showDropzonePanel	{ [self window]; [self setCurrentPanel: [self dropzonePanel]]; [self showWindow: self]; }
-- (void) showInstallerPanel	{ [self window]; [self setCurrentPanel: [self installerPanel]]; [self showWindow: self]; }
+
+- (void) handOffToController: (NSWindowController *)controller
+{
+	NSWindow *fromWindow	= [self window];
+	NSWindow *toWindow		= [controller window];
+	
+	NSRect fromFrame	= [fromWindow frame];
+	//Resize to the size of the final window, centered on the titlebar of the initial window
+	NSRect toFrame		= resizeRectFromPoint(fromFrame, [toWindow frame].size, NSMakePoint(0.5f, 1.0f));
+	
+	//First, hide the destination window and reposition it to exactly the same area and size as our own window
+	[toWindow orderOut: self];
+	[toWindow setFrame: fromFrame display: NO];
+	
+	//Next, swap the two windows around
+	[toWindow makeKeyAndOrderFront: self];
+	[fromWindow orderOut: self];
+	
+	//Resize the destination window to what it should be
+	[toWindow setFrame: toFrame display: YES animate: YES];
+	
+	//Aaaand close ourselves afterwards
+	[self close];
+}
+
+//Return control to us from the specified window controller
+- (void) pickUpFromController: (NSWindowController *)controller
+{
+	NSWindow *fromWindow	= [controller window];
+	NSWindow *toWindow		= [self window];
+	
+	NSRect fromFrame	= [fromWindow frame];
+	//Resize to the size of the final window, centered on the titlebar of the initial window
+	NSRect toFrame		= resizeRectFromPoint(fromFrame, [toWindow frame].size, NSMakePoint(0.5f, 1.0f));
+	
+	//Set ourselves to the final size behind the scenes
+	[toWindow orderOut: self];
+	[toWindow setFrame: toFrame display: NO];
+	
+	//Make the initial window scale to our final window location
+	[fromWindow setFrame: toFrame display: YES animate: YES];
+	
+	//Then, unhide ourselves behind that window
+	[toWindow orderBack: self];
+	 
+	//Finally, close the top window and make ourselves key
+	[fromWindow close];
+	[toWindow makeKeyAndOrderFront: self];
+}
 
 @end

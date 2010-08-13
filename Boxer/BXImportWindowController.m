@@ -13,7 +13,7 @@
 
 //The height of the bottom window border.
 //TODO: determine this from NIB content.
-#define BXImportWindowBorderThickness 40
+#define BXImportWindowBorderThickness 32.0f
 
 @implementation BXImportWindowController
 @synthesize dropzonePanel, installerPanel, finalizingPanel, finishedPanel;
@@ -47,7 +47,7 @@
 
 - (void) windowDidLoad
 {
-	[[self window] setContentBorderThickness: BXImportWindowBorderThickness forEdge: NSMinYEdge];
+	[[self window] setContentBorderThickness: BXImportWindowBorderThickness + 1 forEdge: NSMinYEdge];
 	
 	//Default to the dropzone panel when we initially load (this will be overridden later anyway)
 	[self setCurrentPanel: [self dropzonePanel]];

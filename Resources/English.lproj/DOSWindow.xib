@@ -151,7 +151,7 @@
 							<string key="NSFrameSize">{640, 26}</string>
 							<reference key="NSSuperview" ref="1006"/>
 							<int key="NSViewLayerContentsRedrawPolicy">2</int>
-							<string key="NSClassName">NSView</string>
+							<string key="NSClassName">BXBottomBar</string>
 						</object>
 						<object class="NSCustomView" id="910670518">
 							<reference key="NSNextResponder" ref="1006"/>
@@ -530,9 +530,9 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{320, 180}, {640, 490}}</string>
+					<string>{{36, 197}, {640, 490}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{320, 180}, {640, 490}}</string>
+					<string>{{36, 197}, {640, 490}}</string>
 					<integer value="0"/>
 					<string>{196, 240}</string>
 					<string>{{357, 418}, {480, 270}}</string>
@@ -581,6 +581,14 @@
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<object class="IBPartialClassDescription">
+					<string key="className">BXBottomBar</string>
+					<string key="superclassName">NSView</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">Boxer/BXBottomBar.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">BXDOSWindow</string>
 					<string key="superclassName">NSWindow</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
@@ -603,6 +611,7 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>exitFullScreen:</string>
+							<string>showProgramPanel:</string>
 							<string>toggleFilterType:</string>
 							<string>toggleFullScreen:</string>
 							<string>toggleFullScreenWithZoom:</string>
@@ -611,6 +620,7 @@
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -635,7 +645,7 @@
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>BXInputController</string>
-							<string>NSView</string>
+							<string>BXInputView</string>
 							<string>NSView</string>
 							<string>BXProgramPanelController</string>
 							<string>NSView</string>
@@ -716,6 +726,8 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>defaultProgramPanel</string>
+							<string>finishImportingPanel</string>
+							<string>installerTipsPanel</string>
 							<string>noProgramsPanel</string>
 							<string>programChooserPanel</string>
 							<string>programList</string>
@@ -723,6 +735,8 @@
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSView</string>
+							<string>NSView</string>
 							<string>NSView</string>
 							<string>NSView</string>
 							<string>NSView</string>

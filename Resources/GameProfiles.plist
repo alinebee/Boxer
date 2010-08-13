@@ -114,6 +114,7 @@
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>nfs.exe</string>
+				<string>nfs_dos.exe</string>
 			</array>
 		</dict>
 		<dict>

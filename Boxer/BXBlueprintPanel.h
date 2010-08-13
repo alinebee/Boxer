@@ -6,18 +6,18 @@
  */
 
 
-//BXImportPanel and friends are NSView subclasses to define the custom appearance and behaviour
+//BXBlueprintPanel and friends are NSView subclasses to define the custom appearance and behaviour
 //of import panel UI items.
 
 
 #import <Cocoa/Cocoa.h>
 
 //The background view of a panel in the import window. Drawn with a blueprint appearance.
-@interface BXImportPanel : NSView
+@interface BXBlueprintPanel : NSView
 @end
 
 
 //A modified version of the above for use in the program-chooser panel of DOS windows.
 //Uses a different gradient and layout.
-@interface BXImportProgramPanel : BXImportPanel
+@interface BXBlueprintProgramPanel : BXBlueprintPanel
 @end

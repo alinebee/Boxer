@@ -128,7 +128,7 @@
 	[self setProgramPanelShown: NO];
 	
 	//Apply a border to the window matching the size of the statusbar
-	CGFloat borderThickness = [statusBar frame].size.height;
+	CGFloat borderThickness = [statusBar frame].size.height + 1.0f;
 	[theWindow setContentBorderThickness: borderThickness forEdge: NSMinYEdge];
 	
 	//Track mouse movement when this is the main window

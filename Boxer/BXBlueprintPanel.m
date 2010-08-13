@@ -6,19 +6,24 @@
  */
 
 
-#import "BXImportPanel.h"
+#import "BXBlueprintPanel.h"
 
 
-@implementation BXImportPanel
+@implementation BXBlueprintPanel
+
+- (NSPoint) _phaseForPattern: (NSImage *)pattern
+{
+	//Ensure the pattern is always centered horizontally in the view,
+	//by adjusting its phase relative to the bottom-left window origin.
+	NSRect panelFrame = [self frame];
+	return NSMakePoint(panelFrame.origin.x + ((panelFrame.size.width - [pattern size].width) / 2),
+					   panelFrame.origin.y);
+}
 
 - (void) _drawBlueprintInRect: (NSRect)dirtyRect
 {
 	NSColor *blueprintColor = [NSColor colorWithPatternImage: [NSImage imageNamed: @"Blueprint.jpg"]];
-
-	//Ensure the pattern is always centered horizontally in the view by adjusting its phase relative to the bottom-left window origin.
-	NSSize patternSize		= [[blueprintColor patternImage] size];
-	NSRect panelFrame		= [self frame];
-	NSPoint patternPhase	= NSMakePoint(panelFrame.origin.x + ((panelFrame.size.width - patternSize.width) / 2), 0.0f);
+	NSPoint patternPhase	= [self _phaseForPattern: [blueprintColor patternImage]];
 	
 	[NSGraphicsContext saveGraphicsState];
 		[[NSGraphicsContext currentContext] setPatternPhase: patternPhase];
@@ -45,25 +50,32 @@
 	[lighting release];
 }
 
-- (void) _drawGrooveInRect: (NSRect)dirtyRect
+- (void) _drawShadowInRect: (NSRect)dirtyRect
 {
-	NSRect highlightRect = [self bounds];
-	highlightRect.size.height = 1.0f;
+	//Draw a soft shadow beneath the titlebar
+	NSRect shadowRect = [self bounds];
+	shadowRect.origin.y += shadowRect.size.height - 6.0f;
+	shadowRect.size.height = 6.0f;
 	
-	NSRect shadowRect = highlightRect;
-	shadowRect.origin.y += 1.0f;
-		
-	//Don't bother drawing the bevel if it's not dirty
-	if (NSIntersectsRect(dirtyRect, highlightRect))
+	//Draw a 1-pixel groove at the bottom of the view
+	NSRect grooveRect = [self bounds];
+	grooveRect.size.height = 1.0f;
+	
+	if (NSIntersectsRect(dirtyRect, shadowRect))
 	{
-		NSColor *bevelShadow	= [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.33f];
-		NSColor *bevelHighlight	= [NSColor whiteColor];
+		NSGradient *topShadow = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.2f]
+														   endingColor: [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.0f]];
+		
+		[topShadow drawInRect: shadowRect angle: 270.0f];
+		[topShadow release];
+	}
 	
+	if (NSIntersectsRect(dirtyRect, grooveRect))
+	{
+		NSColor *grooveColor = [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.33f];
 		[NSGraphicsContext saveGraphicsState];
-			[bevelHighlight set];
-			[NSBezierPath fillRect: highlightRect];
-			[bevelShadow set];
-			[NSBezierPath fillRect: shadowRect];
+			[grooveColor set];
+			[NSBezierPath fillRect: grooveRect];
 		[NSGraphicsContext restoreGraphicsState];
 	}
 }
@@ -78,14 +90,23 @@
 	//Then, draw the lighting onto the background
 	[self _drawLightingInRect: dirtyRect];
 	
-	//Draw a bevel at the bottom of the view also
-	[self _drawGrooveInRect: dirtyRect];
+	//Finally, draw the top and bottom shadows
+	[self _drawShadowInRect: dirtyRect];
 }
 
 @end
 
 
-@implementation BXImportProgramPanel
+@implementation BXBlueprintProgramPanel
+
+- (NSPoint) _phaseForPattern: (NSImage *)pattern
+{
+	//Compensate for the program panels being nested in an offset superview
+	NSRect panelFrame = [[self superview] frame];
+	return NSMakePoint(panelFrame.origin.x + ((panelFrame.size.width - [pattern size].width) / 2),
+					   panelFrame.origin.y);
+}
+
 
 - (void) _drawLightingInRect: (NSRect)dirtyRect
 {

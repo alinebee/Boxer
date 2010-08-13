@@ -7,8 +7,11 @@
 
 
 //BXInputView tracks keyboard and mouse input and passes them to its BXInputController.
-//It wraps a BXFrameRenderingView implementor and does no direct rendering itself, besides a
-//badged grey gradient background.
+//It wraps a BXFrameRenderingView implementor and does no direct rendering itself,
+//besides a badged grey gradient background.
+
+//TODO: split this class up further so that BXInputView does no drawing of its own, but instead
+//defers to a wrapper background element
 
 #import <Cocoa/Cocoa.h>
 
@@ -32,16 +35,5 @@ typedef NSUInteger BXInputViewAppearance;
 
 //Which appearance to use when drawing the background
 @property (assign, nonatomic) BXInputViewAppearance appearance;
-
-
-//Render the view's grey metal background.
-- (void) drawBackgroundInRect: (NSRect) dirtyRect;
-
-//Render the view's DOSBox brand
-- (void) drawBrandInRect: (NSRect)dirtyRect;
-
-//Render the view's background/branding as a blueprint (used for import sessions)
-- (void) drawBlueprintBackgroundInRect: (NSRect)dirtyRect;
-- (void) drawBlueprintBrandInRect: (NSRect)dirtyRect;
 
 @end

@@ -446,6 +446,7 @@
 		if (success)
 		{
 			[self setGamePackage: gamebox];
+			[self setFileURL: [NSURL fileURLWithPath: [gamebox bundlePath]]];
 			[self setRootDrivePath: cPath];
 			return YES;
 		}

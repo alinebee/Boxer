@@ -21,7 +21,6 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="299"/>
 			<integer value="304"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
@@ -315,6 +314,7 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{341, 13}, {266, 17}}</string>
 						<reference key="NSSuperview" ref="516813016"/>
+						<reference key="NSWindow"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="592273759">
 							<int key="NSCellFlags">68288064</int>
@@ -332,6 +332,7 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{341, 33}, {266, 17}}</string>
 						<reference key="NSSuperview" ref="516813016"/>
+						<reference key="NSWindow"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="920811257">
 							<int key="NSCellFlags">68288064</int>
@@ -353,6 +354,7 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{33, 13}, {266, 17}}</string>
 						<reference key="NSSuperview" ref="516813016"/>
+						<reference key="NSWindow"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="163059521">
 							<int key="NSCellFlags">68288064</int>
@@ -370,6 +372,7 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{33, 33}, {266, 17}}</string>
 						<reference key="NSSuperview" ref="516813016"/>
+						<reference key="NSWindow"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="832480204">
 							<int key="NSCellFlags">68288064</int>
@@ -385,7 +388,8 @@
 				</object>
 				<string key="NSFrameSize">{640, 64}</string>
 				<reference key="NSSuperview"/>
-				<string key="NSClassName">BXImportProgramPanel</string>
+				<reference key="NSWindow"/>
+				<string key="NSClassName">BXBlueprintProgramPanel</string>
 			</object>
 			<object class="NSCustomView" id="899602438">
 				<reference key="NSNextResponder"/>
@@ -419,13 +423,14 @@
 					<object class="BGHUDLabel" id="541275130">
 						<reference key="NSNextResponder" ref="899602438"/>
 						<int key="NSvFlags">265</int>
-						<string key="NSFrame">{{33, 17}, {403, 34}}</string>
+						<string key="NSFrame">{{179, 17}, {281, 34}}</string>
 						<reference key="NSSuperview" ref="899602438"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="785726533">
 							<int key="NSCellFlags">67239424</int>
-							<int key="NSCellFlags2">4194304</int>
-							<string key="NSContents">If you’re satisfied that the installer has set things up correctly, we can finish importing the game.</string>
+							<int key="NSCellFlags2">138412032</int>
+							<string type="base64-UTF8" key="NSContents">SWYgdGhlIGluc3RhbGxlciBoYXMgc2V0IHRoaW5ncyB1cCBjb3JyZWN0bHksCndlIGNhbiBmaW5pc2gg
+aW1wb3J0aW5nIHRoZSBnYW1lLg</string>
 							<reference key="NSSupport" ref="1049646389"/>
 							<reference key="NSControlView" ref="541275130"/>
 							<reference key="NSBackgroundColor" ref="870526867"/>
@@ -436,7 +441,7 @@
 				</object>
 				<string key="NSFrameSize">{640, 64}</string>
 				<reference key="NSSuperview"/>
-				<string key="NSClassName">BXImportProgramPanel</string>
+				<string key="NSClassName">BXBlueprintProgramPanel</string>
 			</object>
 			<object class="NSCustomView" id="80732392">
 				<nil key="NSNextResponder"/>
@@ -1157,6 +1162,19 @@
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<object class="IBPartialClassDescription">
+					<string key="className">BXBlueprintPanel</string>
+					<string key="superclassName">NSView</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier" id="840175214">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">Boxer/BXBlueprintPanel.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXBlueprintProgramPanel</string>
+					<string key="superclassName">BXBlueprintPanel</string>
+					<reference key="sourceIdentifier" ref="840175214"/>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">BXImport</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
@@ -1174,19 +1192,6 @@
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">Boxer/BXImport.h</string>
 					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXImportPanel</string>
-					<string key="superclassName">NSView</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier" id="886420514">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Boxer/BXImportPanel.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXImportProgramPanel</string>
-					<string key="superclassName">BXImportPanel</string>
-					<reference key="sourceIdentifier" ref="886420514"/>
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">BXProgramItemButton</string>

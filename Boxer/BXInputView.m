@@ -35,51 +35,69 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 }
 
 
-- (void) drawBackgroundInRect: (NSRect)dirtyRect
+- (void) _drawBackgroundInRect: (NSRect)dirtyRect
 {
-	//Cache the background gradient so we don't have to generate it each time
-	static NSGradient *background = nil;
-	if (!background)
-	{
-		NSColor *backgroundColor = [NSColor darkGrayColor];
-		background = [[NSGradient alloc] initWithColorsAndLocations:
-					  [backgroundColor shadowWithLevel: 0.5f],	0.00f,
-					  backgroundColor,							0.98f,
-					  [backgroundColor shadowWithLevel: 0.4f],	1.00f,
-					  nil];	
-	}
+	NSColor *backgroundColor = [NSColor darkGrayColor];
+	NSGradient *background = [[NSGradient alloc] initWithColorsAndLocations:
+							  [backgroundColor shadowWithLevel: 0.5f],	0.00f,
+							  backgroundColor,							0.98f,
+							  [backgroundColor shadowWithLevel: 0.4f],	1.00f,
+							  nil];
 	
 	[background drawInRect: [self bounds] angle: 270.0f];
+	[background release];
 }
 
-- (void) drawBlueprintBackgroundInRect: (NSRect)dirtyRect
-{
-	static NSGradient *lighting = nil;
-	static NSColor *pattern = nil;
-	if (!lighting)
-	{
-		lighting = [[NSGradient alloc] initWithColorsAndLocations:
-					[NSColor colorWithCalibratedWhite: 0.0f alpha: 0.3f], 0.00f,
-					[NSColor colorWithCalibratedWhite: 1.0f alpha: 0.2f], 0.98f,
-					[NSColor colorWithCalibratedWhite: 0.0f alpha: 0.3f], 1.00f,
-					nil];	
-		pattern = [[NSColor colorWithPatternImage: [NSImage imageNamed: @"Blueprint.jpg"]] retain];
-	}
-	
-	NSSize patternSize		= [[pattern patternImage] size];
+- (void) _drawBlueprintInRect: (NSRect)dirtyRect
+{	
+	NSColor *blueprintColor = [NSColor colorWithPatternImage: [NSImage imageNamed: @"Blueprint.jpg"]];
+	NSSize patternSize		= [[blueprintColor patternImage] size];
 	NSRect viewFrame		= [self frame];
 	NSPoint patternPhase	= NSMakePoint(viewFrame.origin.x + ((viewFrame.size.width - patternSize.width) / 2),
 										  viewFrame.origin.y + ((viewFrame.size.height - patternSize.height) / 2));
 	
 	[NSGraphicsContext saveGraphicsState];
 		[[NSGraphicsContext currentContext] setPatternPhase: patternPhase];
-		[pattern set];
-		[NSBezierPath fillRect: dirtyRect];
-		[lighting drawInRect: [self bounds] angle: 270.0f];	
+		[blueprintColor set];
+		[NSBezierPath fillRect: [self bounds]];
 	[NSGraphicsContext restoreGraphicsState];
 }
 
-- (void) drawBrandInRect: (NSRect)dirtyRect
+- (void) _drawLightingInRect: (NSRect)dirtyRect
+{
+	NSGradient *lighting = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.2f]
+														 endingColor: [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.4f]];
+	
+	NSRect backgroundRect = [self bounds];
+	NSPoint startPoint	= NSMakePoint(NSMidX(backgroundRect), NSMinY(backgroundRect));
+	NSPoint endPoint	= NSMakePoint(NSMidX(backgroundRect), NSMidY(backgroundRect));
+	CGFloat startRadius = NSWidth(backgroundRect) * 0.1f;
+	CGFloat endRadius	= NSWidth(backgroundRect) * 0.75f;
+	
+	[lighting drawFromCenter: startPoint radius: startRadius
+					toCenter: endPoint radius: endRadius
+					 options: NSGradientDrawsBeforeStartingLocation | NSGradientDrawsAfterEndingLocation];
+	
+	[lighting release];	
+}
+
+
+- (void) _drawShadowInRect: (NSRect)dirtyRect
+{
+	NSRect shadowRect = [self bounds];
+	shadowRect.size.height = 6.0f;
+	
+	if (NSIntersectsRect(dirtyRect, shadowRect))
+	{
+		NSGradient *topShadow = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.2f]
+															  endingColor: [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.0f]];
+		
+		[topShadow drawInRect: shadowRect angle: 90.0f];
+		[topShadow release];
+	}
+}
+
+- (void) _drawBrandInRect: (NSRect)dirtyRect
 {
 	NSImage *brand = [NSImage imageNamed: @"Brand.png"];
 	[brand setFlipped: YES];
@@ -97,7 +115,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 }
 
 
-- (void) drawBlueprintBrandInRect: (NSRect)dirtyRect
+- (void) _drawBlueprintBrandInRect: (NSRect)dirtyRect
 {
 	NSImage *brand = [NSImage imageNamed: @"BrandWatermark.png"];
 	[brand setFlipped: YES];
@@ -120,13 +138,15 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	
 	if (appearance == BXInputViewBlueprintAppearance)
 	{
-		[self drawBlueprintBackgroundInRect: dirtyRect];
-		[self drawBlueprintBrandInRect: dirtyRect];		
+		[self _drawBlueprintInRect: dirtyRect];
+		[self _drawBlueprintBrandInRect: dirtyRect];
+		[self _drawLightingInRect: dirtyRect];
+		[self _drawShadowInRect: dirtyRect];
 	}
 	else
 	{
-		[self drawBackgroundInRect: dirtyRect];
-		[self drawBrandInRect: dirtyRect];			
+		[self _drawBackgroundInRect: dirtyRect];
+		[self _drawBrandInRect: dirtyRect];
 	}
 }
 

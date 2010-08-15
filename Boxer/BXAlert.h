@@ -22,13 +22,4 @@
 //the normal application icon instead.)
 - (BOOL) adoptIconFromWindow: (NSWindow *)window;
 
-//A simplification of beginSheetModalForWindow:modalDelegate:didEndSelector:contextInfo: which
-//sets the modal delegate to the alert's class and the end selector to alertDidEnd:returnCode:contextInfo:. 
-- (void) beginSheetModalForWindow: (NSWindow *)window contextInfo: (void *)contextInfo;
-
-//The return method for alerts, which also releases the alert.
-//TODO: this may be refactored as an instance method, as there's no real need for it to be a class method
-//(save for my squeamishness about a class instance releasing itself.)
-+ (void) alertDidEnd: (BXAlert *)alert returnCode: (int)returnCode contextInfo: (void *)contextInfo;
-
 @end

@@ -31,21 +31,4 @@
 	}
 	return NO;
 }
-
-//Shortcut that automatically assigns our class's callback selector
-- (void) beginSheetModalForWindow: (NSWindow *)window contextInfo: (void *)contextInfo
-{
-	[self adoptIconFromWindow: window];
-	[self retain];	//The alert will be released in the callback function below
-	[self beginSheetModalForWindow:	window
-					modalDelegate:	[self class]
-					didEndSelector:	@selector(alertDidEnd:returnCode:contextInfo:)
-					contextInfo:	contextInfo];
-}
-
-//Basic implementation which does nothing but clean up
-+ (void) alertDidEnd: (BXAlert *)alert returnCode: (int)returnCode contextInfo: (void *)contextInfo
-{
-	[alert release];
-}
 @end

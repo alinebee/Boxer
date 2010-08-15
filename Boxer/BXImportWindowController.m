@@ -77,7 +77,8 @@
 				break;
 				
 			case BXImportReadyToFinalize:
-			case BXImportFinalizing:
+			case BXImportCopyingSourceFiles:
+			case BXImportCleaningGamebox:
 				[self setCurrentPanel: [self finalizingPanel]];
 				break;
 				
@@ -225,6 +226,11 @@
 	
 	//Resize the destination window back to what it should be
 	[toWindow setFrame: toFrame display: YES animate: YES];
+	
+	//The window controller architecture can get confused and reset the should-close-documentness
+	//of window controllers when we swap between them. So, set it explicitly here.
+	[self setShouldCloseDocument: NO];
+	[controller setShouldCloseDocument: YES];
 }
 
 //Return control to us from the specified window controller
@@ -254,6 +260,11 @@
 	
 	//Reset the initial window back to what it was before we messed with it
 	[fromWindow setFrame: fromFrame display: NO];
+	
+	//The window controller architecture can get confused and reset the should-close-documentness
+	//of window controllers when we swap between them. So, set it explicitly here.
+	[controller setShouldCloseDocument: NO];
+	[self setShouldCloseDocument: YES];
 }
 
 @end

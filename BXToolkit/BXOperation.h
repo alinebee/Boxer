@@ -13,7 +13,7 @@
 #import <Foundation/Foundation.h>
 
 typedef float BXOperationProgress;
-#define BXOperationProgressUndefined -1.0f
+#define BXOperationProgressIndeterminate -1.0f
 
 #pragma mark -
 #pragma mark Notification constants

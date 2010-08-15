@@ -12,16 +12,9 @@
 #import "BXAlert.h"
 
 @class BXSession;
+@class BXImport;
 
 @interface BXCloseAlert : BXAlert
-
-//Boxer's ready-made alerts
-//-------------------------
-
-//Shown when starting up a new session while another is already active. Advises the user
-//that the current session will be clsoed if they continue.
-//(Not currently used.)
-+ (BXCloseAlert *) closeAlertWhenReplacingSession:	(BXSession *)theSession;
 
 //Shown after exiting a DOS game and returning to the DOS prompt. Asks the user if they
 //want to close the window or return to DOS.
@@ -30,22 +23,12 @@
 
 //Shown when closing the window while a DOSBox process is running. Warns the user that
 //any unsaved data will be lost if they continue.
-+ (BXCloseAlert *) closeAlertWhileSessionIsActive:	(BXSession *)theSession;
++ (BXCloseAlert *) closeAlertWhileSessionIsEmulating:	(BXSession *)theSession;
 
 //Shown when closing the window while one or more drive import operations are in progress.
-+ (BXCloseAlert *) closeAlertWhileImportIsActive: (BXSession *)theSession;
++ (BXCloseAlert *) closeAlertWhileImportingDrives: (BXSession *)theSession;
 
-
-//Dispatch and callback methods
-//-----------------------------
-
-//A simplification of beginSheetModalForWindow:contextInfo:, which passes the parent
-//window as the context info.
-- (void) beginSheetModalForWindow: (NSWindow *)window;
-
-//A modification of the alertDidEnd:returnCode:contextInfo method signature to make
-//context info explicitly a window. This is needed to allow the close alert to close
-//its parent window.
-+ (void) alertDidEnd: (BXCloseAlert *)alert returnCode: (int)returnCode contextInfo: (NSWindow *)window;
+//Shown when closing the window while a game import is in progress
++ (BXCloseAlert *) closeAlertWhileImportingGame: (BXImport *)theSession;
 
 @end

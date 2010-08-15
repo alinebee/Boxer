@@ -26,7 +26,8 @@ enum {
 	BXImportReadyToLaunchInstaller,
 	BXImportRunningInstaller,
 	BXImportReadyToFinalize,
-	BXImportFinalizing,
+	BXImportCopyingSourceFiles,
+	BXImportCleaningGamebox,
 	BXImportFinished
 };
 typedef NSUInteger BXImportStage;

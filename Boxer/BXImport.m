@@ -16,6 +16,7 @@
 #import "BXGameProfile.h"
 #import "BXImportError.h"
 #import "BXPackage.h"
+#import "BXCloseAlert.h"
 
 #import "BXImport+BXImportPolicies.h"
 #import "BXSession+BXFileManager.h"
@@ -304,10 +305,13 @@
 	[self setFileURL: sourceURL];
 
 	[self setImportStage: BXImportLoadingSourcePath];
+	[self setStageProgress: BXOperationProgressIndeterminate];
 	BOOL readSucceeded = [self readFromURL: sourceURL
 									ofType: nil
 									 error: &readError];
-
+	
+	[self setStageProgress: 0.0f];
+	
 	if (readSucceeded)
 	{
 		[self setFileURL: [NSURL fileURLWithPath: [self sourcePath]]];
@@ -404,11 +408,11 @@
 		[self _generateGameboxWithError: NULL];
 	}
 	
-	[self setImportStage: BXImportFinalizing];
+	[self setImportStage: BXImportCopyingSourceFiles];
 	
 	//TODO: import the game data here
 	
-	[self setImportStage: BXImportFinished];
+	//[self setImportStage: BXImportFinished];
 }
 
 
@@ -522,5 +526,91 @@
 	//so that users can see the "finish importing" option
 	[[self DOSWindowController] exitFullScreen: self];
 }
+
+
+#pragma mark -
+#pragma mark Responding to shutdown
+
+//We are considered to have unsaved changes if we have a not-yet-finalized gamebox
+- (BOOL) isDocumentEdited	{ return [self gamePackage] != nil && [self importStage] < BXImportFinished; }
+
+//Overridden to display our own custom confirmation alert instead of the standard NSDocument one.
+- (void) canCloseDocumentWithDelegate: (id)delegate
+				  shouldCloseSelector: (SEL)shouldCloseSelector
+						  contextInfo: (void *)contextInfo
+{	
+	//Define an invocation for the callback, which has the signature:
+	//- (void)document:(NSDocument *)document shouldClose:(BOOL)shouldClose contextInfo:(void *)contextInfo;
+	NSMethodSignature *signature = [delegate methodSignatureForSelector: shouldCloseSelector];
+	NSInvocation *callback = [NSInvocation invocationWithMethodSignature: signature];
+	[callback setSelector: shouldCloseSelector];
+	[callback setTarget: delegate];
+	[callback setArgument: &self atIndex: 2];
+	[callback setArgument: &contextInfo atIndex: 4];
+	
+	//If we have a gamebox and haven't finished finalizing it, show a stop importing/cancel prompt
+	if ([self isDocumentEdited])
+	{
+		BXCloseAlert *alert = [BXCloseAlert closeAlertWhileImportingGame: self];
+	
+		//Show our custom close alert, passing it the callback so we can complete
+		//our response down in _closeAlertDidEnd:returnCode:contextInfo:
+		[alert beginSheetModalForWindow: [self windowForSheet]
+						  modalDelegate: self
+						 didEndSelector: @selector(_closeAlertDidEnd:returnCode:contextInfo:)
+							contextInfo: [callback retain]];		 
+	}
+	else
+	{
+		BOOL shouldClose = YES;
+		//Otherwise we can respond directly: call the callback straight away with YES for shouldClose:
+		[callback setArgument: &shouldClose atIndex: 3];
+		[callback invoke];
+	}
+}
+
+- (void) _closeAlertDidEnd: (BXCloseAlert *)alert
+				returnCode: (int)returnCode
+			   contextInfo: (NSInvocation *)callback
+{
+	if ([alert showsSuppressionButton] && [[alert suppressionButton] state] == NSOnState)
+		[[NSUserDefaults standardUserDefaults] setBool: YES forKey: @"suppressCloseAlert"];
+	
+	BOOL shouldClose = NO;
+	
+	//If the alert has three buttons it means it's a save/don't save confirmation instead of
+	//a close/cancel confirmation
+	//TODO: for god's sake this is idiotic, we should detect this with contextinfo or alert class
+	if ([[alert buttons] count] == 3)
+	{
+		//Cancel button
+		switch (returnCode) {
+			case NSAlertFirstButtonReturn:	//Finish importing
+				[self finishInstaller];
+				shouldClose = NO;
+				break;
+				
+			case NSAlertSecondButtonReturn:	//Cancel
+				shouldClose = NO;
+				break;
+				
+			case NSAlertThirdButtonReturn:	//Stop importing
+				shouldClose = YES;
+				break;
+		}
+	}
+	else
+	{
+		shouldClose = (returnCode == NSAlertFirstButtonReturn);
+	}
+	
+	[callback setArgument: &shouldClose atIndex: 3];
+	[callback invoke];
+	
+	//Release the previously-retained callback
+	[callback release];	
+}
+
+
 
 @end

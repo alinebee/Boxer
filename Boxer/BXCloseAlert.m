@@ -24,25 +24,6 @@
 	return self;
 }
 
-
-//Boxer's predefined alerts
-//-------------------------
-
-+ (BXCloseAlert *) closeAlertWhenReplacingSession: (BXSession *)theSession
-{
-	BXCloseAlert *alert = [self alert];
-
-	NSString *sessionName	= [theSession displayName];
-	NSString *messageFormat	= NSLocalizedString(@"Boxer supports only one DOS session at a time. Do you want to close %@ to start a new session?",
-												@"Title of confirmation sheet when starting a new DOS session while one is already active. %@ is the display name of the current DOS session.)");
-
-	[alert setMessageText:		[NSString stringWithFormat: messageFormat, sessionName]];
-	[alert setInformativeText:	NSLocalizedString(	@"Any unsaved data in this session will be lost.",
-													@"Informative text of confirmation sheet when closing an active DOS session to open another.")];
-	return alert;
-}
-
-
 + (BXCloseAlert *) closeAlertAfterSessionExited: (BXSession *)theSession
 {
 	BXCloseAlert *alert = [self alert];
@@ -60,7 +41,7 @@
 	return alert;
 }
 
-+ (BXCloseAlert *) closeAlertWhileSessionIsActive: (BXSession *)theSession
++ (BXCloseAlert *) closeAlertWhileSessionIsEmulating: (BXSession *)theSession
 {	
 	BXCloseAlert *alert = [self alert];
 	
@@ -77,7 +58,7 @@
 	return alert;
 }
 
-+ (BXCloseAlert *) closeAlertWhileImportIsActive: (BXSession *)theSession
++ (BXCloseAlert *) closeAlertWhileImportingDrives: (BXSession *)theSession
 {	
 	BXCloseAlert *alert = [self alert];
 	
@@ -92,22 +73,28 @@
 	return alert;
 }
 
-//Dispatch and callback methods
-//-----------------------------
 
-//Shortcut method using our own generalised callback
-- (void) beginSheetModalForWindow: (NSWindow *)window
++ (BXCloseAlert *) closeAlertWhileImportingGame: (BXImport *)theSession
 {
-	[self retain];	//The alert will be released in the callback function below
+	BXCloseAlert *alert = [self alert];
 	
-	//Note: we pass window as the context info so that the alertDidEnd:returnCode:contextInfo: method
-	//can close it; the method cannot otherwise determine to which window the alert sheet was attached.
-	[self beginSheetModalForWindow:	window
-					modalDelegate:	[self class]
-					didEndSelector:	@selector(alertDidEnd:returnCode:contextInfo:)
-					contextInfo:	window];
+	NSString *sessionName	= [theSession displayName];
+	NSString *messageFormat	= NSLocalizedString(@"%@ has not finished importing.",
+												@"Title of confirmation sheet when closing a game import session. %@ is the display name of the gamebox.");
+	
+	[alert setMessageText:		[NSString stringWithFormat: messageFormat, sessionName]];
+	[alert setInformativeText:	NSLocalizedString(@"If you stop importing, any already-imported game files will be discarded.",
+												  @"Informative text of confirmation sheet when closing a game import session.")];
+	
+	[[[alert buttons] objectAtIndex: 0] setTitle: NSLocalizedString(@"Stop Importing",
+																	@"Close button for confirmation sheet when closing a game import session.")];
+	
+	return alert;
 }
 
+
+//Overridden to adopt the icon of the window we're displaying ourselves in
+//TODO: this should really be handled in the alert creation context
 - (void) beginSheetModalForWindow: (NSWindow *)window
 					modalDelegate: (id)delegate
 				   didEndSelector: (SEL)didEndSelector
@@ -118,22 +105,6 @@
 							 modalDelegate: delegate
 							didEndSelector: didEndSelector
 							   contextInfo: contextInfo];
-}
-
-+ (void) alertDidEnd: (BXCloseAlert *)alert returnCode: (int)returnCode contextInfo: (NSWindow *)window
-{
-	if ([alert showsSuppressionButton] && [[alert suppressionButton] state] == NSOnState)
-		[[NSUserDefaults standardUserDefaults] setBool: YES forKey: @"suppressCloseAlert"];
-
-	//First button is close, second button is cancel
-	if (returnCode == NSAlertFirstButtonReturn)
-	{
-		[window close];
-		[NSApp replyToApplicationShouldTerminate: YES];
-	}
-	else [NSApp replyToApplicationShouldTerminate: NO];
-	
-	[alert release];
 }
 
 @end

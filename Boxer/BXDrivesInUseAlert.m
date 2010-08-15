@@ -60,15 +60,4 @@
 	return self;
 }
 
-- (void) beginSheetModalForWindow: (NSWindow *)window 
-					modalDelegate: (id)delegate 
-				   didEndSelector: (SEL)didEndSelector 
-					  contextInfo: (void *)contextInfo
-{
-	[super beginSheetModalForWindow: window
-					  modalDelegate: delegate
-					 didEndSelector: didEndSelector
-						contextInfo: contextInfo];
-}
-
 @end

@@ -303,12 +303,12 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 {
 	//Define an invocation for the callback, which has the signature:
 	//- (void)document:(NSDocument *)document shouldClose:(BOOL)shouldClose contextInfo:(void *)contextInfo;
-	NSInvocation *callback = [NSInvocation invocationWithMethodSignature: [delegate methodSignatureForSelector:shouldCloseSelector]];
+	NSMethodSignature *signature = [delegate methodSignatureForSelector: shouldCloseSelector];
+	NSInvocation *callback = [NSInvocation invocationWithMethodSignature: signature];
 	[callback setSelector: shouldCloseSelector];
 	[callback setTarget: delegate];
-	[callback setSelector: shouldCloseSelector];
 	[callback setArgument: &self atIndex: 2];
-	[callback setArgument: &contextInfo atIndex: 4]; // contextInfo:	
+	[callback setArgument: &contextInfo atIndex: 4];	
 	
 	BOOL hasActiveImports = NO;
 	for (BXDriveImport *import in [importQueue operations])
@@ -333,9 +333,9 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 		
 		BXCloseAlert *alert;
 		if (hasActiveImports) 
-			alert = [BXCloseAlert closeAlertWhileImportIsActive: self];
+			alert = [BXCloseAlert closeAlertWhileImportingDrives: self];
 		else
-			alert = [BXCloseAlert closeAlertWhileSessionIsActive: self];
+			alert = [BXCloseAlert closeAlertWhileSessionIsEmulating: self];
 		
 		[alert beginSheetModalForWindow: [self windowForSheet]
 						  modalDelegate: self
@@ -351,7 +351,9 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	}
 }
 
-- (void) _closeAlertDidEnd: (BXCloseAlert *)alert returnCode: (int)returnCode contextInfo: (NSInvocation *)callback
+- (void) _closeAlertDidEnd: (BXCloseAlert *)alert
+				returnCode: (int)returnCode
+			   contextInfo: (NSInvocation *)callback
 {
 	if ([alert showsSuppressionButton] && [[alert suppressionButton] state] == NSOnState)
 		[[NSUserDefaults standardUserDefaults] setBool: YES forKey: @"suppressCloseAlert"];

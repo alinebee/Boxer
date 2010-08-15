@@ -68,7 +68,7 @@ NSString * const BXOperationProgressKey		= @"BXOperationProgressKey";
 //Intended to be overridden by subclasses to provide more meaningful progress tracking.
 - (BXOperationProgress) currentProgress
 {
-	return BXOperationProgressUndefined;
+	return BXOperationProgressIndeterminate;
 }
 
 

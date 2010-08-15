@@ -206,6 +206,7 @@
 
 - (IBAction) refreshFolders:	(id)sender	{ [[self emulator] refreshMountedDrives]; }
 - (IBAction) showMountPanel:	(id)sender	{ [[BXMountPanelController controller] showMountPanelForSession: self]; }
+
 - (IBAction) openInDOS:			(id)sender
 {
 	if ([sender respondsToSelector: @selector(representedObject)]) sender = [sender representedObject];
@@ -219,6 +220,11 @@
 	else if ([sender isKindOfClass: [NSDictionary class]])	path = [sender objectForKey: @"path"];	
 	
 	if (path) [self openFileAtPath: path];	
+}
+
+- (IBAction) relaunch: (id)sender
+{
+	if ([self targetPath]) [self openFileAtPath: [self targetPath]];
 }
 
 - (IBAction) unmountDrive: (id)sender

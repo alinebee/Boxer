@@ -72,6 +72,9 @@
 //Open the represented object of the sender in DOS.
 - (IBAction) openInDOS:			(id)sender;
 
+//Relaunch the default program.
+- (IBAction) relaunch:			(id)sender;
+
 //Unmount the represented object of the sender (assumed to be a BXDrive). 
 - (IBAction) unmountDrive:		(id)sender;
 

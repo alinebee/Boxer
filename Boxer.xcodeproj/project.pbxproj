@@ -251,6 +251,7 @@
 		9FBF66AF11F35ADD00DAAB9A /* BXFileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBF66AE11F35ADD00DAAB9A /* BXFileTransfer.m */; };
 		9FC1620E119E9AD700705EA5 /* BXCursorFadeAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC1620D119E9AD700705EA5 /* BXCursorFadeAnimation.m */; };
 		9FC3B2550F62D9CE006DE439 /* BXSession+BXEmulatorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC3B2540F62D9CE006DE439 /* BXSession+BXEmulatorController.m */; };
+		9FC8B073121807AD004F6DA2 /* NSView+BXDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC8B072121807AD004F6DA2 /* NSView+BXDrawing.m */; };
 		9FC8F50C10934F3400AD6307 /* NSString+BXPaths.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC8F50B10934F3400AD6307 /* NSString+BXPaths.m */; };
 		9FCBB2D010A61CA800C28B09 /* boxer.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CD10A61CA800C28B09 /* boxer.icns */; };
 		9FCBB2D110A61CA800C28B09 /* executable.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CE10A61CA800C28B09 /* executable.icns */; };
@@ -745,6 +746,8 @@
 		9FC1620D119E9AD700705EA5 /* BXCursorFadeAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXCursorFadeAnimation.m; sourceTree = "<group>"; };
 		9FC3B2530F62D9CE006DE439 /* BXSession+BXEmulatorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXSession+BXEmulatorController.h"; sourceTree = "<group>"; };
 		9FC3B2540F62D9CE006DE439 /* BXSession+BXEmulatorController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXSession+BXEmulatorController.m"; sourceTree = "<group>"; };
+		9FC8B071121807AD004F6DA2 /* NSView+BXDrawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSView+BXDrawing.h"; sourceTree = "<group>"; };
+		9FC8B072121807AD004F6DA2 /* NSView+BXDrawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSView+BXDrawing.m"; sourceTree = "<group>"; };
 		9FC8F50A10934F3400AD6307 /* NSString+BXPaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+BXPaths.h"; sourceTree = "<group>"; };
 		9FC8F50B10934F3400AD6307 /* NSString+BXPaths.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+BXPaths.m"; sourceTree = "<group>"; };
 		9FCBB2CD10A61CA800C28B09 /* boxer.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = boxer.icns; sourceTree = "<group>"; };
@@ -1592,6 +1595,8 @@
 				9FEAA3EB1204595B0085F008 /* BXOperation.m */,
 				9F0F9EED1210901800ED7A64 /* BXMountedVolumesError.h */,
 				9F0F9EEE1210901800ED7A64 /* BXMountedVolumesError.m */,
+				9FC8B071121807AD004F6DA2 /* NSView+BXDrawing.h */,
+				9FC8B072121807AD004F6DA2 /* NSView+BXDrawing.m */,
 			);
 			path = BXToolkit;
 			sourceTree = "<group>";
@@ -2050,6 +2055,7 @@
 				9F0F9EEF1210901800ED7A64 /* BXMountedVolumesError.m in Sources */,
 				9F25C52712130E030025CB2C /* BXImportDOSWindowController.m in Sources */,
 				9FD668F11215CDD6009E0118 /* BXBottomBar.m in Sources */,
+				9FC8B073121807AD004F6DA2 /* NSView+BXDrawing.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -251,6 +251,7 @@
 
 	//Defined in BXFileManager
 	if (theAction == @selector(openInDOS:))				return [emulator isAtPrompt];
+	if (theAction == @selector(relaunch:))				return [emulator isAtPrompt];
 
 	if (theAction == @selector(paste:))
 		return [self _canPasteFromPasteboard: [NSPasteboard generalPasteboard]];

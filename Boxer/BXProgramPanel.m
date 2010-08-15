@@ -7,6 +7,7 @@
 
 
 #import "BXProgramPanel.h"
+#import "NSView+BXDrawing.h"
 
 @implementation BXProgramPanel
 
@@ -40,14 +41,8 @@
 	//Only bother drawing the grille if it intersects with the region being drawn
 	if (NSIntersectsRect(grilleStrip, dirtyRect))
 	{
-		//NSColor pattern phase is relative to the bottom left corner of the *window*, not the bottom left corner
-		//of the view's bounds, so we need to track our window-relative origin and add it to the pattern phase
-		NSPoint panelOrigin	= [[self superview] frame].origin;
-		
-		NSPoint grillePhase		= NSMakePoint(
-											  ((panelRegion.size.width - patternSize.width) / 2) + panelOrigin.x,	//Center the pattern horizontally
-											  grilleStrip.origin.y + panelOrigin.y									//Lock the pattern to the bottom of the grille strip
-											  );
+		NSPoint patternOffset	= [self offsetFromWindowOrigin];
+		NSPoint grillePhase		= NSMakePoint(patternOffset.x + ((panelRegion.size.width - patternSize.width) / 2),																patternOffset.y + grilleStrip.origin.y);
 		
 		NSBezierPath *grillePath	= [NSBezierPath bezierPathWithRect: grilleStrip];
 		NSView *title				= [self viewWithTag: BXProgramPanelTitle];

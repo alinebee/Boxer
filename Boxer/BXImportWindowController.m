@@ -9,6 +9,7 @@
 #import "BXImportWindowController.h"
 #import "BXImport.h"
 #import "BXGeometry.h"
+#import "NSWindow+BXWindowSizing.h"
 
 
 //The height of the bottom window border.
@@ -210,6 +211,10 @@
 	//Resize to the size of the final window, centered on the titlebar of the initial window
 	NSRect toFrame		= resizeRectFromPoint(fromFrame, [toWindow frame].size, NSMakePoint(0.5f, 1.0f));
 	
+	//Ensure the final frame fits within the current display
+	toFrame = [toWindow fullyConstrainFrameRect: toFrame toScreen: [fromWindow screen]];
+	
+	
 	//First, hide the destination window and reposition it to exactly the same area and size as our own window
 	[toWindow orderOut: self];
 	[toWindow setFrame: fromFrame display: NO];
@@ -231,6 +236,10 @@
 	NSRect fromFrame	= [fromWindow frame];
 	//Resize to the size of the final window, centered on the titlebar of the initial window
 	NSRect toFrame		= resizeRectFromPoint(fromFrame, [toWindow frame].size, NSMakePoint(0.5f, 1.0f));
+	
+	//Ensure the final frame fits within the current display
+	toFrame = [toWindow fullyConstrainFrameRect: toFrame toScreen: [fromWindow screen]];
+
 	
 	//Set ourselves to the final size behind the scenes
 	[toWindow orderOut: self];

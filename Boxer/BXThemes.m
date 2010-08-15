@@ -33,7 +33,7 @@
 		textShadow = [[NSShadow alloc] init];
 		[textShadow setShadowOffset: NSMakeSize(0.0f, 0.0f)];
 		[textShadow setShadowBlurRadius: 3.0f];
-		[textShadow setShadowColor: [[NSColor blackColor] colorWithAlphaComponent: 0.5f]];
+		[textShadow setShadowColor: [[NSColor blackColor] colorWithAlphaComponent: 0.75f]];
 	}
 	return textShadow;
 }
@@ -49,7 +49,7 @@
 
 - (NSColor *) textColor
 {
-	return [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.85f];
+	return [NSColor colorWithCalibratedRed: 0.67f green: 0.86f blue: 0.93f alpha: 1.0f];
 }
 @end
 

@@ -21,7 +21,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="35"/>
+			<integer value="34"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -67,7 +67,7 @@
 				<string key="NSFrameAutosaveName"/>
 			</object>
 			<object class="NSView" id="889166584">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">274</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -81,7 +81,6 @@
 								<int key="NSvFlags">269</int>
 								<string key="NSFrame">{{139, 104}, {160, 160}}</string>
 								<reference key="NSSuperview" ref="499271540"/>
-								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="441074250">
 									<int key="NSCellFlags">67239424</int>
@@ -106,7 +105,6 @@
 								<int key="NSvFlags">269</int>
 								<string key="NSFrame">{{72, 19}, {297, 34}}</string>
 								<reference key="NSSuperview" ref="499271540"/>
-								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="814898010">
 									<int key="NSCellFlags">67239424</int>
@@ -136,7 +134,6 @@ cnQgaXQgaW50byBhIG5ldyBnYW1lYm94LiA</string>
 								<int key="NSvFlags">269</int>
 								<string key="NSFrame">{{45, 61}, {349, 39}}</string>
 								<reference key="NSSuperview" ref="499271540"/>
-								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="953642423">
 									<int key="NSCellFlags">68288064</int>
@@ -156,7 +153,6 @@ cnQgaXQgaW50byBhIG5ldyBnYW1lYm94LiA</string>
 						</object>
 						<string key="NSFrame">{{0, 32}, {440, 280}}</string>
 						<reference key="NSSuperview" ref="889166584"/>
-						<reference key="NSWindow"/>
 						<string key="NSClassName">BXBlueprintPanel</string>
 					</object>
 					<object class="NSCustomView" id="730797341">
@@ -170,7 +166,6 @@ cnQgaXQgaW50byBhIG5ldyBnYW1lYm94LiA</string>
 								<object class="NSPSMatrix" key="NSDrawMatrix"/>
 								<string key="NSFrame">{{212, 8}, {16, 16}}</string>
 								<reference key="NSSuperview" ref="730797341"/>
-								<reference key="NSWindow"/>
 								<int key="NSViewLayerContentsRedrawPolicy">2</int>
 								<int key="NSpiFlags">28938</int>
 								<double key="NSMaxValue">100</double>
@@ -180,7 +175,6 @@ cnQgaXQgaW50byBhIG5ldyBnYW1lYm94LiA</string>
 								<int key="NSvFlags">289</int>
 								<string key="NSFrame">{{355, 3}, {70, 25}}</string>
 								<reference key="NSSuperview" ref="730797341"/>
-								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="728028712">
 									<int key="NSCellFlags">-2080244224</int>
@@ -199,13 +193,10 @@ cnQgaXQgaW50byBhIG5ldyBnYW1lYm94LiA</string>
 						</object>
 						<string key="NSFrameSize">{440, 32}</string>
 						<reference key="NSSuperview" ref="889166584"/>
-						<reference key="NSWindow"/>
 						<string key="NSClassName">BXBottomBar</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{440, 312}</string>
-				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 			</object>
 			<object class="NSView" id="384524801">
 				<reference key="NSNextResponder"/>
@@ -246,11 +237,12 @@ cnQgaXQgaW50byBhIG5ldyBnYW1lYm94LiA</string>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSPopUpButtonCell" key="NSCell" id="491306683">
 									<int key="NSCellFlags">-2076049856</int>
-									<int key="NSCellFlags2">1536</int>
+									<int key="NSCellFlags2">34304</int>
 									<reference key="NSSupport" ref="825762272"/>
 									<reference key="NSControlView" ref="384824680"/>
 									<int key="NSButtonFlags">109199615</int>
 									<int key="NSButtonFlags2">129</int>
+									<reference key="NSAlternateImage" ref="825762272"/>
 									<string key="NSAlternateContents"/>
 									<string key="NSKeyEquivalent"/>
 									<int key="NSPeriodicDelay">400</int>
@@ -631,6 +623,14 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 					</object>
 					<int key="connectionID">114</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="384824680"/>
+						<reference key="destination" ref="384524801"/>
+					</object>
+					<int key="connectionID">122</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -778,10 +778,10 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 						<reference key="object" ref="867951720"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="384824680"/>
 							<reference ref="43679927"/>
 							<reference ref="134595607"/>
 							<reference ref="791447193"/>
+							<reference ref="384824680"/>
 						</object>
 						<reference key="parent" ref="384524801"/>
 					</object>
@@ -1057,7 +1057,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{236, 241}, {262, 33}}</string>
+					<string>{{267, 355}, {213, 33}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -1097,7 +1097,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">115</int>
+			<int key="maxID">122</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

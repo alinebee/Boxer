@@ -8,8 +8,7 @@
 
 #import "BXInputView.h"
 #import "BXGeometry.h"
-#import "BXDOSWindowController.h"
-
+#import "NSView+BXDrawing.h"
 
 NSString * const BXViewWillLiveResizeNotification	= @"BXViewWillLiveResizeNotification";
 NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotification";
@@ -52,9 +51,10 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 {	
 	NSColor *blueprintColor = [NSColor colorWithPatternImage: [NSImage imageNamed: @"Blueprint.jpg"]];
 	NSSize patternSize		= [[blueprintColor patternImage] size];
-	NSRect viewFrame		= [self frame];
-	NSPoint patternPhase	= NSMakePoint(viewFrame.origin.x + ((viewFrame.size.width - patternSize.width) / 2),
-										  viewFrame.origin.y + ((viewFrame.size.height - patternSize.height) / 2));
+	NSSize viewSize			= [self bounds].size;
+	NSPoint patternOffset	= [self offsetFromWindowOrigin];
+	NSPoint patternPhase	= NSMakePoint(patternOffset.x + ((viewSize.width - patternSize.width) / 2),
+										  patternOffset.y + ((viewSize.height - patternSize.height) / 2));
 	
 	[NSGraphicsContext saveGraphicsState];
 		[[NSGraphicsContext currentContext] setPatternPhase: patternPhase];

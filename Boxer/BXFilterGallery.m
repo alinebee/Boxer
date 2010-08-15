@@ -7,6 +7,7 @@
 
 
 #import "BXFilterGallery.h"
+#import "NSView+BXDrawing.h"
 #import <QuartzCore/QuartzCore.h>
 
 @implementation BXFilterGallery
@@ -16,13 +17,14 @@
 	NSColor *pattern	= [NSColor colorWithPatternImage: wallpaper];
 	
 	NSSize patternSize	= [wallpaper size];
-	NSRect frame		= [self frame];
+	NSSize viewSize		= [self bounds].size;
+	NSPoint patternOffset	= [self offsetFromWindowOrigin];
 	
 	NSPoint patternPhase = NSMakePoint(
 		//Center the pattern horizontally
-		((frame.size.width - patternSize.width) / 2) + frame.origin.x,
+		patternOffset.x + ((viewSize.width - patternSize.width) / 2),
 		//Lock the pattern to the bottom of the view
-		frame.origin.y + 1.0f
+		patternOffset.y + 1.0f
 	);
 
 	//Also add a bevel line at the bottom of the view

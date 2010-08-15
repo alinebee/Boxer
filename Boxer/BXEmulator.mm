@@ -247,13 +247,17 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 
 - (BOOL) isInBatchScript
 {
-	DOS_Shell *shell = [self _currentShell];
-	return (shell && shell->bf);
+	if ([self isExecuting])
+	{
+		DOS_Shell *shell = [self _currentShell];
+		return (shell && shell->bf);		
+	}
+	return NO;
 }
 
 - (BOOL) isAtPrompt
 {
-	return ![self isRunningProcess] && ![self isInBatchScript];
+	return [self isExecuting] && ![self isRunningProcess] && ![self isInBatchScript];
 }
 
 

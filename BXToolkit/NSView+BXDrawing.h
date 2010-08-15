@@ -6,9 +6,14 @@
  */
 
 
-//BXBlueprintPanel renders a custom blueprint appearance for views in the import process.
+//The BXDrawing category defines some helper methods on NSViews to make drawing easier.
 
 #import <Cocoa/Cocoa.h>
 
-@interface BXBlueprintPanel : NSView
+@interface NSView (BXDrawing)
+
+//Returns the view's offset from the bottom left corner of the window.
+//Useful for aligning pattern phase when drawing pattern colours.
+- (NSPoint) offsetFromWindowOrigin;
+
 @end

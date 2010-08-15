@@ -7,17 +7,17 @@
 
 
 #import "BXBlueprintPanel.h"
-
+#import "NSView+BXDrawing.h"
+#import "BXGeometry.h"
 
 @implementation BXBlueprintPanel
 
 - (NSPoint) _phaseForPattern: (NSImage *)pattern
 {
-	//Ensure the pattern is always centered horizontally in the view,
-	//by adjusting its phase relative to the bottom-left window origin.
+	NSPoint offset = [self offsetFromWindowOrigin];
 	NSRect panelFrame = [self frame];
-	return NSMakePoint(panelFrame.origin.x + ((panelFrame.size.width - [pattern size].width) / 2),
-					   panelFrame.origin.y);
+	return NSMakePoint(offset.x + ((panelFrame.size.width - [pattern size].width) / 2),
+					   offset.y);
 }
 
 - (void) _drawBlueprintInRect: (NSRect)dirtyRect
@@ -92,43 +92,6 @@
 	
 	//Finally, draw the top and bottom shadows
 	[self _drawShadowInRect: dirtyRect];
-}
-
-@end
-
-
-@implementation BXBlueprintProgramPanel
-
-- (NSPoint) _phaseForPattern: (NSImage *)pattern
-{
-	//Compensate for the program panels being nested in an offset superview
-	NSRect panelFrame = [[self superview] frame];
-	return NSMakePoint(panelFrame.origin.x + ((panelFrame.size.width - [pattern size].width) / 2),
-					   panelFrame.origin.y);
-}
-
-
-- (void) _drawLightingInRect: (NSRect)dirtyRect
-{
-	NSGradient *lighting = [[NSGradient alloc] initWithColorsAndLocations:
-							  [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.2f],	0.0f,
-							  [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.1f],	0.9f,
-							  [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.4f],	1.0f,
-							  nil];
-	
-	[lighting drawInRect: [self bounds] angle: 90.0f];
-	[lighting release];
-}
-
-- (void) drawRect: (NSRect)dirtyRect
-{
-	[NSBezierPath clipRect: dirtyRect];
-	
-	//First, fill the background with our pattern
-	[self _drawBlueprintInRect: dirtyRect];
-	
-	//Then, draw the lighting onto the background
-	[self _drawLightingInRect: dirtyRect];
 }
 
 @end

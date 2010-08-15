@@ -60,7 +60,7 @@
 
 
 #pragma mark -
-#pragma mark File and folder mounting
+#pragma mark Interface actions
 
 //Tells the emulator to flush its DOS drive caches to reflect changes in the OS X filesystem.
 //No longer used, since we explicitly listen for changes to the underlying filesystem and do this automatically.
@@ -75,30 +75,13 @@
 //Relaunch the default program.
 - (IBAction) relaunch:			(id)sender;
 
-//Unmount the represented object of the sender (assumed to be a BXDrive). 
-- (IBAction) unmountDrive:		(id)sender;
-
-//Returns whether the specified drives are allowed to be unmounted.
-//This may display a confirmation sheet and return NO.
-- (BOOL) shouldUnmountDrives:	(NSArray *)selectedDrives sender: (id)sender;
-
-//Called when the "are you sure you want to unmount this drive?" alert is closed.
-- (void) drivesInUseAlertDidEnd: (BXDrivesInUseAlert *)alert
-					 returnCode: (NSInteger)returnCode
-					  forDrives: (NSArray *)selectedDrives;
-
-//Returns whether the specified path should be mounted as a new drive.
-//Returns YES if the path isn't already DOS-accessible or deserves its own drive anyway, NO otherwise.
-- (BOOL) shouldMountDriveForPath: (NSString *)path;
-
-//Adds a new drive to expose the specified path, using preferredMountPointForPath:
-//to choose an appropriate base location for the drive.
-- (BXDrive *) mountDriveForPath: (NSString *)path;
-
-
 //Open the file at the specified path in DOS.
 //If path is an executable, it will be launched; otherwise, we'll just change the working directory to it.
 - (BOOL) openFileAtPath: (NSString *)path;
+
+
+#pragma mark -
+#pragma mark Mounting drives
 
 //Automount all ISO9660 CD-ROM volumes that are currently mounted in OS X.
 //Will not create new mounts for ones that are already mounted.
@@ -110,8 +93,36 @@
 //Returns YES if any drives were mounted, NO otherwise.
 - (BOOL) mountFloppyVolumes;
 
+//Mount Boxer's internal toolkit drive at the appropriate drive letter (defined in the application preferences.)
+- (void) mountToolkitDrive;
+
+//Create a temporary folder and mount it at the appropriate drive letter (defined in the application preferences.)
+- (void) mountTempDrive;
+
+//A wrapper around BXDOSFileSystem mountDrive: and unmountDrive: to add additional Boxer-specific logic.
+- (BXDrive *) mountDrive: (BXDrive *)drive;
+- (BOOL) unmountDrive: (BXDrive *)drive;
+
 //Unmount the BXDrives in the specified array.
 - (BOOL) unmountDrives: (NSArray *)selectedDrives;
+
+//Returns whether the specified path should be mounted as a new drive.
+//Returns YES if the path isn't already DOS-accessible or deserves its own drive anyway, NO otherwise.
+- (BOOL) shouldMountDriveForPath: (NSString *)path;
+
+//Adds a new drive to expose the specified path, using preferredMountPointForPath:
+//to choose an appropriate base location for the drive.
+- (BXDrive *) mountDriveForPath: (NSString *)path;
+
+//Returns whether the specified drives are allowed to be unmounted.
+//This may display a confirmation sheet and return NO.
+- (BOOL) shouldUnmountDrives:	(NSArray *)selectedDrives sender: (id)sender;
+
+//Called when the "are you sure you want to unmount this drive?" alert is closed.
+- (void) drivesInUseAlertDidEnd: (BXDrivesInUseAlert *)alert
+					 returnCode: (NSInteger)returnCode
+					  forDrives: (NSArray *)selectedDrives;
+
 
 
 #pragma mark -

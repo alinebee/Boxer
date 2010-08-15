@@ -252,6 +252,8 @@
 		9FC1620E119E9AD700705EA5 /* BXCursorFadeAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC1620D119E9AD700705EA5 /* BXCursorFadeAnimation.m */; };
 		9FC3B2550F62D9CE006DE439 /* BXSession+BXEmulatorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC3B2540F62D9CE006DE439 /* BXSession+BXEmulatorController.m */; };
 		9FC8B073121807AD004F6DA2 /* NSView+BXDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC8B072121807AD004F6DA2 /* NSView+BXDrawing.m */; };
+		9FC8B16B12182586004F6DA2 /* BXImportFinalizingPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC8B16A12182586004F6DA2 /* BXImportFinalizingPanelController.m */; };
+		9FC8B2E812186171004F6DA2 /* BXImportFinishedPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC8B2E712186171004F6DA2 /* BXImportFinishedPanelController.m */; };
 		9FC8F50C10934F3400AD6307 /* NSString+BXPaths.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC8F50B10934F3400AD6307 /* NSString+BXPaths.m */; };
 		9FCBB2D010A61CA800C28B09 /* boxer.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CD10A61CA800C28B09 /* boxer.icns */; };
 		9FCBB2D110A61CA800C28B09 /* executable.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CE10A61CA800C28B09 /* executable.icns */; };
@@ -748,6 +750,10 @@
 		9FC3B2540F62D9CE006DE439 /* BXSession+BXEmulatorController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXSession+BXEmulatorController.m"; sourceTree = "<group>"; };
 		9FC8B071121807AD004F6DA2 /* NSView+BXDrawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSView+BXDrawing.h"; sourceTree = "<group>"; };
 		9FC8B072121807AD004F6DA2 /* NSView+BXDrawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSView+BXDrawing.m"; sourceTree = "<group>"; };
+		9FC8B16912182586004F6DA2 /* BXImportFinalizingPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImportFinalizingPanelController.h; sourceTree = "<group>"; };
+		9FC8B16A12182586004F6DA2 /* BXImportFinalizingPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXImportFinalizingPanelController.m; sourceTree = "<group>"; };
+		9FC8B2E612186171004F6DA2 /* BXImportFinishedPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImportFinishedPanelController.h; sourceTree = "<group>"; };
+		9FC8B2E712186171004F6DA2 /* BXImportFinishedPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXImportFinishedPanelController.m; sourceTree = "<group>"; };
 		9FC8F50A10934F3400AD6307 /* NSString+BXPaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+BXPaths.h"; sourceTree = "<group>"; };
 		9FC8F50B10934F3400AD6307 /* NSString+BXPaths.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+BXPaths.m"; sourceTree = "<group>"; };
 		9FCBB2CD10A61CA800C28B09 /* boxer.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = boxer.icns; sourceTree = "<group>"; };
@@ -979,6 +985,10 @@
 				9FDC544D120EBFE70063B33D /* BXImportDropzonePanelController.m */,
 				9FDC5474120EC8B40063B33D /* BXImportInstallerPanelController.h */,
 				9FDC5475120EC8B40063B33D /* BXImportInstallerPanelController.m */,
+				9FC8B16912182586004F6DA2 /* BXImportFinalizingPanelController.h */,
+				9FC8B16A12182586004F6DA2 /* BXImportFinalizingPanelController.m */,
+				9FC8B2E612186171004F6DA2 /* BXImportFinishedPanelController.h */,
+				9FC8B2E712186171004F6DA2 /* BXImportFinishedPanelController.m */,
 			);
 			name = "Game import window";
 			sourceTree = "<group>";
@@ -2056,6 +2066,8 @@
 				9F25C52712130E030025CB2C /* BXImportDOSWindowController.m in Sources */,
 				9FD668F11215CDD6009E0118 /* BXBottomBar.m in Sources */,
 				9FC8B073121807AD004F6DA2 /* NSView+BXDrawing.m in Sources */,
+				9FC8B16B12182586004F6DA2 /* BXImportFinalizingPanelController.m in Sources */,
+				9FC8B2E812186171004F6DA2 /* BXImportFinishedPanelController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

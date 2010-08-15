@@ -45,6 +45,8 @@
 - (void) syncMountOptionsForPanel: (NSOpenPanel *)openPanel;
 
 //Mounts the currently selected file or folder in the specified open panel.
-- (void) mountChosenItem: (NSOpenPanel *)openPanel returnCode: (int)returnCode contextInfo: (void *)contextInfo;
+- (void) mountChosenItem: (NSOpenPanel *)openPanel
+			  returnCode: (int)returnCode
+			 contextInfo: (void *)contextInfo;
 
 @end

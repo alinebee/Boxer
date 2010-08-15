@@ -71,7 +71,6 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 @synthesize inputHandler;
 @synthesize videoHandler;
 @synthesize cancelled, executing;
-@synthesize gameProfile;
 
 
 #pragma mark -
@@ -178,7 +177,6 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 - (void) dealloc
 {	
 	[self setProcessName: nil],	[processName release];
-	[self setGameProfile: nil], [gameProfile release];
 	
 	[inputHandler release], inputHandler = nil;
 	[videoHandler release], videoHandler = nil;

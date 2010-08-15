@@ -72,6 +72,12 @@
 //This decision is based on the size of the files and the volume type of the path.
 + (BOOL) shouldImportSourceFilesFromPath: (NSString *)path;
 
+//Whether we should import the specified source files into a subfolder of drive C,
+//or directly into the base folder of drive C.
+//This decision is based on whether the source path has any executables in the base folder,
+//and whether it appears to be configured as a playable game.
++ (BOOL) shouldUseSubfolderForSourceFilesAtPath: (NSString *)path;
+
 //Returns a suitable name (sans .boxer extension) for the game at the specified path.
 //This is based on the last path component of the source path, cleaned up.
 + (NSString *) nameForGameAtPath: (NSString *)path;

@@ -87,7 +87,7 @@
 
 //Whether the document should be closed when the emulator process finishes.
 //Normally YES, may be overridden by BXSession subclasses. 
-@property (readonly, nonatomic) BOOL closeOnEmulatorExit;
+@property (readonly, nonatomic) BOOL shouldCloseOnEmulatorExit;
 
 
 #pragma mark -

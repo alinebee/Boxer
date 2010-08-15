@@ -46,7 +46,6 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 
 @class BXInputHandler;
 @class BXVideoHandler;
-@class BXGameProfile;
 
 @protocol BXEmulatorDelegate;
 
@@ -55,7 +54,6 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 	id <BXEmulatorDelegate> delegate;
 	BXInputHandler *inputHandler;
 	BXVideoHandler *videoHandler;
-	BXGameProfile *gameProfile;
 	
 	NSString *processName;
 	NSString *processPath;
@@ -78,9 +76,6 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 
 //The delegate responsible for this emulator.
 @property (assign) id <BXEmulatorDelegate> delegate;
-
-//The game profile we should refer to for tweaking emulation rules.
-@property (retain) BXGameProfile *gameProfile;
 
 @property (readonly) BXInputHandler *inputHandler;	//Our DOSBox input handler.
 @property (readonly) BXVideoHandler *videoHandler;	//Our DOSBox video and rendering handler.

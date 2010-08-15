@@ -39,7 +39,7 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 
 
 @implementation BXGameProfile
-@synthesize gameName, confName, gameDescription;
+@synthesize gameName, confName, profileDescription, installsFromFloppyDrive;
 
 + (BXGameEra) eraOfGameAtPath: (NSString *)basePath
 {
@@ -124,7 +124,8 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 	{
 		[self setGameName: [profileDict objectForKey: @"BXProfileName"]];
 		[self setConfName: [profileDict objectForKey: @"BXProfileConf"]];
-		[self setGameDescription: [profileDict objectForKey: @"BXProfileDescription"]];
+		[self setProfileDescription: [profileDict objectForKey: @"BXProfileDescription"]];
+		[self setInstallsFromFloppyDrive: [[profileDict objectForKey: @"BXInstallsFromFloppyDrive"] boolValue]];
 		
 		//Used by isDesignatedInstallerAtPath:
 		installerPatterns	= [[profileDict objectForKey: @"BXDesignatedInstallers"] retain];
@@ -139,7 +140,8 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 {
 	[self setGameName: nil], [gameName release];
 	[self setConfName: nil], [confName release];
-	[self setGameDescription: nil], [gameDescription release];
+	[self setProfileDescription: nil], [profileDescription release];
+	
 	[driveLabelMappings release], driveLabelMappings = nil;
 	[installerPatterns release], installerPatterns = nil;
 	
@@ -149,7 +151,7 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 - (NSString *) description
 {
 	if ([self gameName]) return [self gameName];
-	if ([self gameDescription]) return [self gameDescription];
+	if ([self profileDescription]) return [self profileDescription];
 	return [super description];
 }
 

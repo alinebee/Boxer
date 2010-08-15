@@ -130,10 +130,6 @@ enum {
 	NSString *driveLetter = [drive letter];
 	NSString *driveLabel = [drive label];
 	
-	//Allow the game profile to override the drive label if needed
-	//TODO: should we do this upstream? Put a wrapper method for mountDrive in BXSession?
-	if ([self gameProfile]) driveLabel = [[self gameProfile] labelForDrive: drive];
-	
 	
 	//Choose an appropriate drive letter to mount it at,
 	//if one hasn't been specified (or if it is already taken)

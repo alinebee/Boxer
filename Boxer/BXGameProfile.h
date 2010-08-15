@@ -32,17 +32,30 @@ typedef NSUInteger BXGameEra;
 {
 	NSString *gameName;
 	NSString *confName;
-	NSString *gameDescription;
+	NSString *profileDescription;
 	NSDictionary *driveLabelMappings;
 	NSArray *installerPatterns;
+	
+	BOOL installsFromFloppyDrive;
 }
 
 #pragma mark -
 #pragma mark Properties
 
+//The human-readable name of the game this profile represents.
+//Will be nil for shared profiles (in which case profileDescription will be available.) 
 @property (copy) NSString *gameName;
+
+//The configuration file for this game (sans .conf extension), as stored in Resources/Configurations
 @property (copy) NSString *confName;
-@property (copy) NSString *gameDescription;
+
+//The description of what kind of games this game profile covers.
+//Will be nil for game-specific profiles (in which case gameName will be available.)
+@property (copy) NSString *profileDescription;
+
+//Whether this game needs to be installed from floppy disks.
+//When YES, the import process will mount the game’s source files as a floppy drive instead of a CD-ROM.
+@property (assign) BOOL installsFromFloppyDrive;
 
 
 #pragma mark -

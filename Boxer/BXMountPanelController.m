@@ -6,7 +6,7 @@
  */
 
 #import "BXMountPanelController.h"
-#import "BXSession.h"
+#import "BXSession+BXFileManager.h"
 #import "BXAppController.h"
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulator+BXShell.h"
@@ -229,11 +229,12 @@
 	return YES;
 }
 
-- (void) mountChosenItem: (NSOpenPanel *)openPanel returnCode: (int)returnCode contextInfo: (void *)contextInfo
+- (void) mountChosenItem: (NSOpenPanel *)openPanel
+			  returnCode: (int)returnCode
+			 contextInfo: (void *)contextInfo
 {
 	if (returnCode == NSOKButton)
 	{
-		BXEmulator *theEmulator = [[self representedObject] emulator];
 		NSString *path = [[openPanel URL] path];
 		
 		BXDriveType preferredType	= [[driveType selectedItem] tag];
@@ -242,10 +243,10 @@
 		
 		BXDrive *drive = [BXDrive driveFromPath: path atLetter: preferredLetter withType: preferredType];
 		[drive setReadOnly: readOnly];
-		drive = [theEmulator mountDrive: drive];
+		drive = [[self representedObject] mountDrive: drive];
 		
-		//If we're not in the middle of something, change to the new mount
-		if (drive != nil && ![theEmulator isRunningProcess]) [theEmulator changeToDriveLetter: [drive letter]];
+		//If we're not in the middle of something, switch to the new mount
+		if (drive != nil) [[self representedObject] openFileAtPath: [drive path]];
 	}
 	[self setRepresentedObject: nil];
 }

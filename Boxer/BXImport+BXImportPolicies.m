@@ -7,6 +7,7 @@
 
 
 #import "BXImport+BXImportPolicies.h"
+#import "BXSession+BXFileManager.h"
 #import "NSWorkspace+BXMountedVolumes.h"
 #import "NSWorkspace+BXFileTypes.h"
 #import "RegexKitLite.h"
@@ -168,6 +169,26 @@
 	}
 	
 	return NO;
+}
+
++ (BOOL) shouldUseSubfolderForSourceFilesAtPath: (NSString *)path
+{
+	NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtPath: path];
+	
+	BOOL hasExecutables = NO;
+	for (NSString *subPath in enumerator)
+	{
+		//Only scan the first level of the file heirarchy
+		[enumerator skipDescendents];
+		NSString *fullPath = [path stringByAppendingPathComponent: subPath];
+		
+		//This is an indication that the game is installed and playable; don’t use a subfolder 
+		if ([self isPlayableGameTelltaleAtPath: fullPath]) return NO;
+		
+		//Otherwise, if the folder contains executables, it probably does need a subfolder
+		else if ([self isExecutable: fullPath]) hasExecutables = YES;
+	}
+	return hasExecutables;
 }
 
 

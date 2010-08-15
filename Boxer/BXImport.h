@@ -14,6 +14,7 @@
 
 #import "BXSession.h"
 #import "BXOperation.h"
+#import "BXOperationDelegate.h"
 
 #pragma mark -
 #pragma mark Class constants
@@ -34,8 +35,9 @@ typedef NSUInteger BXImportStage;
 
 
 @class BXImportWindowController;
+@class BXFileTransfer;
 
-@interface BXImport : BXSession
+@interface BXImport : BXSession <BXOperationDelegate>
 {
 	NSString *sourcePath;
 	BXImportWindowController *importWindowController;
@@ -46,6 +48,7 @@ typedef NSUInteger BXImportStage;
 	
 	BXImportStage importStage;
 	BXOperationProgress stageProgress;
+	BXFileTransfer *transferOperation;
 }
 
 #pragma mark -
@@ -69,8 +72,16 @@ typedef NSUInteger BXImportStage;
 @property (readonly, assign, nonatomic) BXImportStage importStage;
 
 //How far through the current stage we have progressed.
-//Only relevant during the BXImportLoadingSourcePath and BXImportImportingSourcePath stages.
+//Only relevant during the BXImportLoadingSourcePath and BXImportCopyingSourceFiles stages.
 @property (readonly, assign, nonatomic) BXOperationProgress stageProgress;
+
+//The current file copying operation being performed.
+//Only relevant during the BXImportCopyingSourceFiles stage.
+@property (readonly, retain, nonatomic) BXFileTransfer *transferOperation;
+
+
+//The display filename of the gamebox, minus extension. Changing this will rename the gamebox file itself.
+@property (retain, nonatomic) NSString *gameboxName;
 
 
 #pragma mark -
@@ -106,8 +117,11 @@ typedef NSUInteger BXImportStage;
 //Closes the DOS installer process and continues to the next step of importing.
 - (void) finishInstaller;
 
-//Finish importing the game into the gamebox.
+//Copy the source files into the gamebox.
 - (void) importSourceFiles;
+
+//Clean up the gamebox and finish the operation.
+- (void) cleanGamebox;
 
 
 #pragma mark -

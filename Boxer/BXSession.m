@@ -201,19 +201,6 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	}
 }
 
-//Keep our emulator's profile and our own profile in sync
-//IMPLEMENTATION NOTE: we could do this with bindings,
-//but I want to avoid circular-retains and bindings hell
-- (void) setGameProfile: (BXGameProfile *)profile
-{
-	if (profile != gameProfile)
-	{
-		[gameProfile release];
-		gameProfile = [profile retain];
-		[[self emulator] setGameProfile: gameProfile];
-	}
-}
-
 
 #pragma mark -
 #pragma mark Window management
@@ -289,7 +276,7 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	}
 }
 
-- (BOOL) closeOnEmulatorExit { return YES; }
+- (BOOL) shouldCloseOnEmulatorExit { return YES; }
 
 
 //Overridden solely so that NSDocumentController will call canCloseDocumentWithDelegate:
@@ -556,7 +543,22 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 //If we have not already performed our own configuration, do so now
 - (void) runPreflightCommands
 {
-	if (!hasConfigured) [self _configureEmulator];
+	if (!hasConfigured)
+	{
+		//Conceal drive notifications during startup
+		showDriveNotifications = NO;
+		
+		[self _mountDrivesForSession];
+		
+		//Flag that we have completed our initial game configuration.
+		hasConfigured = YES;
+		
+		//From here on out, it's OK to show drive notifications.
+		showDriveNotifications = YES;
+	
+		//Flag that we are now officially emulating
+		[self setEmulating: YES];
+	}
 }
 
 //If we have not already launched our default target, do so now (and then display the program picker)
@@ -564,6 +566,7 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 {	
 	if (!hasLaunched)
 	{
+		hasLaunched = YES;
 		[self _launchTarget];
 	}
 }
@@ -681,12 +684,39 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 
 - (void) _startEmulator
 {
+	//Load up our configuration files
+	[self _loadDOSBoxConfigurations];
+	
+	//Start up the emulator itself.
+	[[self emulator] start];
+	//This method will block until completion, so everything following this occurs after the emulator has shut down.
+	
+	
+	//Flag that we're no longer emulating
+	//(This will have been set to YES in runPreflightCommands)
+	[self setEmulating: NO];
+	
+	//Clear our drive and program caches (suppressing notifications)
+	[self setActiveProgramPath: nil];
+	showDriveNotifications = NO;
+	[self setDrives: nil];
+	showDriveNotifications = YES;
+
+	//Clear the final rendered frame
+	[[self DOSWindowController] updateWithFrame: nil];
+	
+	//Close the document once we're done, if desired
+	if ([self shouldCloseOnEmulatorExit]) [self close];
+}
+
+- (void) _loadDOSBoxConfigurations
+{
 	//The configuration files we will be using today, loaded in this order.
 	NSString *preflightConf	= [[NSBundle mainBundle] pathForResource: @"Preflight" ofType: @"conf"];
 	NSString *profileConf	= nil;
 	NSString *packageConf	= nil;
 	NSString *launchConf	= [[NSBundle mainBundle] pathForResource: @"Launch" ofType: @"conf"];
-
+	
 	//If we don't have a manually-defined game-profile, detect the game profile from our target path
 	if ([self targetPath] && ![self gameProfile])
 	{
@@ -714,42 +744,18 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	[emulator applyConfigurationAtPath: preflightConf];
 	if (profileConf) [emulator applyConfigurationAtPath: profileConf];
 	if (packageConf) [emulator applyConfigurationAtPath: packageConf];
-	[emulator applyConfigurationAtPath: launchConf];
-	
-	//Start up the emulator itself.
-	[[self emulator] start];
-	
-	//Flag that we're no longer emulating.
-	//(This will have been set to YES in _configureEmulator)
-	[self setEmulating: NO];
-	
-	//Suppress drive notifications
-	showDriveNotifications = NO;
-	
-	//Clean up our drive cache
-	[self setDrives: nil];
-	[self setActiveProgramPath: nil];
-	
-	
-	//Clear the final frame
-	[[self DOSWindowController] updateWithFrame: nil];
-	
-	//Close the document once we're done.
-	if ([self closeOnEmulatorExit]) [self close];
+	[emulator applyConfigurationAtPath: launchConf];	
 }
 
-
-- (void) _configureEmulator
+- (void) _mountDrivesForSession
 {
-	BXEmulator *theEmulator	= [self emulator];
-	BXPackage *package		= [self gamePackage];
-	
+	BXPackage *package = [self gamePackage];
 	if (package)
 	{
 		//Mount the game package as a new hard drive, at drive C
 		//(This may get replaced below by a custom bundled C volume)
 		BXDrive *packageDrive = [BXDrive hardDriveFromPath: [package gamePath] atLetter: @"C"];
-		packageDrive = [theEmulator mountDrive: packageDrive];
+		packageDrive = [self mountDrive: packageDrive];
 		
 		//Then, mount any extra volumes included in the game package
 		NSMutableArray *packageVolumes = [NSMutableArray arrayWithCapacity: 10];
@@ -761,15 +767,18 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 		for (NSString *volumePath in packageVolumes)
 		{
 			bundledDrive = [BXDrive driveFromPath: volumePath atLetter: nil];
-			//The bundled drive was explicitly set to drive C, override our existing C package-drive with it
-			if ([[bundledDrive letter] isEqualToString: @"C"])
+			//The bundled drive was explicitly set to drive C, so override our existing C package-drive with it
+			if ([[bundledDrive letter] isEqualToString: [packageDrive letter]])
 			{
-				[[self emulator] unmountDriveAtLetter: @"C"];
-				packageDrive = bundledDrive;
+				[self unmountDrive: packageDrive];
+				
 				//Rewrite the target to point to the new C drive, if it was pointing to the old one
-				if ([[self targetPath] isEqualToString: [packageDrive path]]) [self setTargetPath: volumePath]; 
+				if ([[self targetPath] isEqualToString: [packageDrive path]]) [self setTargetPath: volumePath];
+				
+				//Aaand use this as our package drive from here on
+				packageDrive = bundledDrive;
 			}
-			[[self emulator] mountDrive: bundledDrive];
+			[self mountDrive: bundledDrive];
 		}
 	}
 	//TODO: if we're not loading a package, then C should be the DOS Games folder instead
@@ -778,52 +787,9 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	[self mountFloppyVolumes];
 	[self mountCDVolumes];
 	
-	//Mount our internal DOS toolkit at the appropriate drive
-	NSString *toolkitDriveLetter	= [[NSUserDefaults standardUserDefaults] stringForKey: @"toolkitDriveLetter"];
-	NSString *toolkitFiles			= [[NSBundle mainBundle] pathForResource: @"DOS Toolkit" ofType: nil];
-	BXDrive *toolkitDrive			= [BXDrive hardDriveFromPath: toolkitFiles atLetter: toolkitDriveLetter];
-	
-	//Hide and lock the toolkit drive so that it will not appear in the drive manager UI
-	[toolkitDrive setLocked: YES];
-	[toolkitDrive setReadOnly: YES];
-	[toolkitDrive setHidden: YES];
-	toolkitDrive = [theEmulator mountDrive: toolkitDrive];
-	
-	//Point DOS to the correct paths if we've mounted the toolkit drive successfully
-	//TODO: we should treat this as an error if it didn't mount!
-	if (toolkitDrive)
-	{
-		//Todo: the DOS path should include the root folder of every drive, not just Y and Z.
-		NSString *dosPath	= [NSString stringWithFormat: @"%1$@:\\;%1$@:\\UTILS;Z:\\", [toolkitDrive letter], nil];
-		NSString *ultraDir	= [NSString stringWithFormat: @"%@:\\ULTRASND", [toolkitDrive letter], nil];
-		
-		[theEmulator setVariable: @"path"		to: dosPath		encoding: BXDirectStringEncoding];
-		[theEmulator setVariable: @"ultradir"	to: ultraDir	encoding: BXDirectStringEncoding];
-	}
-	
-	
-	//Mount a temporary folder at the appropriate drive
-	NSFileManager *manager		= [NSFileManager defaultManager];
-	NSString *tempDriveLetter	= [[NSUserDefaults standardUserDefaults] stringForKey: @"temporaryDriveLetter"];
-	NSString *tempDrivePath		= [manager createTemporaryDirectoryWithPrefix: @"Boxer" error: NULL];
-	
-	if (tempDrivePath)
-	{
-		temporaryFolderPath = [tempDrivePath retain];
-		
-		BXDrive *tempDrive = [BXDrive hardDriveFromPath: tempDrivePath atLetter: tempDriveLetter];
-		[tempDrive setLocked: YES];
-		[tempDrive setHidden: YES];
-		
-		tempDrive = [theEmulator mountDrive: tempDrive];
-		
-		if (tempDrive)
-		{
-			NSString *tempPath = [NSString stringWithFormat: @"%@:\\", [tempDrive letter], nil];
-			[theEmulator setVariable: @"temp"	to: tempPath		encoding: BXDirectStringEncoding];
-			[theEmulator setVariable: @"tmp"	to: tempPath		encoding: BXDirectStringEncoding];
-		}		
-	}
+	//Mount our internal DOS toolkit and temporary drives
+	[self mountToolkitDrive];
+	[self mountTempDrive];
 	
 	
 	//Once all regular drives are in place, make a mount point allowing access to our target program/folder,
@@ -832,19 +798,10 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	{
 		if ([self shouldMountDriveForPath: targetPath]) [self mountDriveForPath: targetPath];
 	}
-	
-	//Flag that we have completed our initial game configuration.
-	hasConfigured = YES;
-	[self setEmulating: YES];
-	
-	//From here on out, it's OK to show drive notifications.
-	showDriveNotifications = YES;
 }
 
 - (void) _launchTarget
-{
-	hasLaunched = YES;
-	
+{	
 	//Do any just-in-time configuration, which should override all previous startup stuff
 	NSNumber *frameskip = [gameSettings objectForKey: @"frameskip"];
 	

@@ -16,6 +16,7 @@
 #import "BXPackage.h"
 #import "BXDrive.h"
 #import "BXDrivesInUseAlert.h"
+#import "BXGameProfile.h"
 
 #import "BXDriveImport.h"
 
@@ -23,6 +24,7 @@
 #import "NSWorkspace+BXFileTypes.h"
 #import "NSWorkspace+BXExecutableTypes.h"
 #import "NSString+BXPaths.h"
+#import "NSFileManager+BXTemporaryFiles.h"
 
 
 //Boxer will delay its handling of volume mount notifications by this many seconds,
@@ -227,13 +229,6 @@
 	if ([self targetPath]) [self openFileAtPath: [self targetPath]];
 }
 
-- (IBAction) unmountDrive: (id)sender
-{
-	if ([sender respondsToSelector: @selector(representedObject)]) sender = [sender representedObject];
-	if ([self shouldUnmountDrives: [NSArray arrayWithObject: sender] sender: sender])
-		[[self emulator] unmountDrive: sender];
-}
-
 - (BOOL) shouldUnmountDrives: (NSArray *)selectedDrives sender: (id)sender
 {
 	//If the Option key was held down, bypass this check altogether and allow any drive to be unmounted
@@ -309,7 +304,7 @@
 	NSString *mountPoint	= [[self class] preferredMountPointForPath: path];
 	BXDrive *drive			= [BXDrive driveFromPath: mountPoint atLetter: nil];
 	
-	return [theEmulator mountDrive: drive];
+	return [self mountDrive: drive];
 }
 
 - (BOOL) openFileAtPath: (NSString *)path
@@ -355,7 +350,7 @@
 		if (![theEmulator pathIsMountedAsDrive: volume])
 		{
 			BXDrive *drive = [BXDrive CDROMFromPath: volume atLetter: nil];
-			drive = [theEmulator mountDrive: drive];
+			drive = [self mountDrive: drive];
 			if (drive != nil) returnValue = YES;
 		}
 	}
@@ -376,22 +371,93 @@
 		if (![theEmulator pathIsMountedAsDrive: volumePath] && [workspace isFloppySizedVolumeAtPath: volumePath])
 		{
 			BXDrive *drive = [BXDrive floppyDriveFromPath: volumePath atLetter: nil];
-			drive = [theEmulator mountDrive: drive];
+			drive = [self mountDrive: drive];
 			if (drive != nil) returnValue = YES;
 		}
 	}
 	return returnValue;
 }
 
+
+- (void) mountToolkitDrive
+{
+	BXEmulator *theEmulator = [self emulator];
+
+	NSString *toolkitDriveLetter	= [[NSUserDefaults standardUserDefaults] stringForKey: @"toolkitDriveLetter"];
+	NSString *toolkitFiles			= [[NSBundle mainBundle] pathForResource: @"DOS Toolkit" ofType: nil];
+	BXDrive *toolkitDrive			= [BXDrive hardDriveFromPath: toolkitFiles atLetter: toolkitDriveLetter];
+	
+	//Hide and lock the toolkit drive so that it will not appear in the drive manager UI
+	[toolkitDrive setLocked: YES];
+	[toolkitDrive setReadOnly: YES];
+	[toolkitDrive setHidden: YES];
+	toolkitDrive = [self mountDrive: toolkitDrive];
+	
+	//Point DOS to the correct paths if we've mounted the toolkit drive successfully
+	//TODO: we should treat this as an error if it didn't mount!
+	if (toolkitDrive)
+	{
+		//Todo: the DOS path should include the root folder of every drive, not just Y and Z.
+		NSString *dosPath	= [NSString stringWithFormat: @"%1$@:\\;%1$@:\\UTILS;Z:\\", [toolkitDrive letter], nil];
+		NSString *ultraDir	= [NSString stringWithFormat: @"%@:\\ULTRASND", [toolkitDrive letter], nil];
+		
+		[theEmulator setVariable: @"path"		to: dosPath		encoding: BXDirectStringEncoding];
+		[theEmulator setVariable: @"ultradir"	to: ultraDir	encoding: BXDirectStringEncoding];
+	}	
+}
+
+- (void) mountTempDrive
+{
+	BXEmulator *theEmulator = [self emulator];
+
+	//Mount a temporary folder at the appropriate drive
+	NSFileManager *manager		= [NSFileManager defaultManager];
+	NSString *tempDriveLetter	= [[NSUserDefaults standardUserDefaults] stringForKey: @"temporaryDriveLetter"];
+	NSString *tempDrivePath		= [manager createTemporaryDirectoryWithPrefix: @"Boxer" error: NULL];
+	
+	if (tempDrivePath)
+	{
+		temporaryFolderPath = [tempDrivePath retain];
+		
+		BXDrive *tempDrive = [BXDrive hardDriveFromPath: tempDrivePath atLetter: tempDriveLetter];
+		[tempDrive setLocked: YES];
+		[tempDrive setHidden: YES];
+		
+		tempDrive = [self mountDrive: tempDrive];
+		
+		if (tempDrive)
+		{
+			NSString *tempPath = [NSString stringWithFormat: @"%@:\\", [tempDrive letter], nil];
+			[theEmulator setVariable: @"temp"	to: tempPath	encoding: BXDirectStringEncoding];
+			[theEmulator setVariable: @"tmp"	to: tempPath	encoding: BXDirectStringEncoding];
+		}		
+	}	
+}
+
+- (BXDrive *) mountDrive: (BXDrive *)drive
+{
+	//Allow the game profile to override the drive label if needed
+	NSString *customLabel = nil;
+	if ([self gameProfile]) customLabel = [[self gameProfile] labelForDrive: drive];
+	if (customLabel) [drive setLabel: customLabel];
+	
+	return [[self emulator] mountDrive: drive];
+}
+
+- (BOOL) unmountDrive: (BXDrive *)drive
+{
+	return [[self emulator] unmountDrive: drive];
+}
+
+
 //Simple helper function to unmount a set of drives. Returns YES if any drives were unmounted, NO otherwise.
 //Implemented just so that BXDrivePanelController doesn't have to know about BXEmulator+BXDOSFileSystem.
 - (BOOL) unmountDrives: (NSArray *)selectedDrives
 {
 	BOOL succeeded = NO;
-	BXEmulator *theEmulator = [self emulator];
 	for (BXDrive *drive in selectedDrives)
 	{
-		succeeded = [theEmulator unmountDrive: drive] || succeeded;
+		succeeded = [self unmountDrive: drive] || succeeded;
 	}
 	return succeeded;
 }
@@ -483,7 +549,7 @@
 	//Alright, if we got this far then it's ok to mount a new drive for it
 	BXDrive *drive = [BXDrive driveFromPath: mountPoint atLetter: nil];
 	
-	[[self emulator] mountDrive: drive];
+	[self mountDrive: drive];
 }
 
 //Implementation note: this handler is called in response to NSVolumeWillUnmountNotifications,
@@ -652,10 +718,10 @@
 			BOOL wasCurrentDrive = [[[self emulator] currentDrive] isEqualTo: drive];
 			
 			//Unmount the old drive first...
-			if ([[self emulator] unmountDrive: drive])
+			if ([self unmountDrive: drive])
 			{
 				//...then mount the new one in its place
-				BXDrive *mountedDrive = [[self emulator] mountDrive: importedDrive];
+				BXDrive *mountedDrive = [self mountDrive: importedDrive];
 				//If it worked, use the newly-mounted drive from now on
 				if (mountedDrive)
 				{
@@ -664,7 +730,7 @@
 				//If the mount failed for some reason, then put the old drive back
 				else
 				{
-					[[self emulator] mountDrive: drive];
+					[self mountDrive: drive];
 				}
 				//Switch to the new drive, if the replaced drive was the active drive
 				if (wasCurrentDrive) [[self emulator] changeToDriveLetter: [drive letter]];

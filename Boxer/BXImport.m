@@ -16,7 +16,11 @@
 #import "BXGameProfile.h"
 #import "BXImportError.h"
 #import "BXPackage.h"
+#import "BXDrive.h"
+#import "BXEmulator.h"
 #import "BXCloseAlert.h"
+
+#import "BXDriveImport.h"
 
 #import "BXImport+BXImportPolicies.h"
 #import "BXSession+BXFileManager.h"
@@ -37,6 +41,7 @@
 
 @property (readwrite, assign, nonatomic) BXImportStage importStage;
 @property (readwrite, assign, nonatomic) BXOperationProgress stageProgress;
+@property (readwrite, retain, nonatomic) BXFileTransfer *transferOperation;
 
 //Only defined for internal use
 @property (copy, nonatomic) NSString *rootDrivePath;
@@ -59,7 +64,8 @@
 @synthesize importWindowController;
 @synthesize sourcePath, rootDrivePath;
 @synthesize installerPaths, preferredInstallerPath;
-@synthesize importStage, stageProgress;
+@synthesize importStage, stageProgress, transferOperation;
+
 
 #pragma mark -
 #pragma mark Initialization and deallocation
@@ -71,6 +77,8 @@
 	[self setImportWindowController: nil],	[importWindowController release];
 	[self setInstallerPaths: nil],			[installerPaths release];
 	[self setPreferredInstallerPath: nil],	[preferredInstallerPath release];
+	
+	[self setTransferOperation: nil],		[transferOperation release];
 	[super dealloc];
 }
 
@@ -256,7 +264,87 @@
 
 //We don't want to close the entire document after the emulated session is finished;
 //instead we carry on and complete the installation process.
-- (BOOL) closeOnEmulatorExit { return NO; }
+- (BOOL) shouldCloseOnEmulatorExit { return NO; }
+
+//We are considered to have unsaved changes if we have a not-yet-finalized gamebox
+- (BOOL) isDocumentEdited	{ return [self gamePackage] != nil && [self importStage] < BXImportFinished; }
+
+//Overridden to display our own custom confirmation alert instead of the standard NSDocument one.
+- (void) canCloseDocumentWithDelegate: (id)delegate
+				  shouldCloseSelector: (SEL)shouldCloseSelector
+						  contextInfo: (void *)contextInfo
+{	
+	//Define an invocation for the callback, which has the signature:
+	//- (void)document:(NSDocument *)document shouldClose:(BOOL)shouldClose contextInfo:(void *)contextInfo;
+	NSMethodSignature *signature = [delegate methodSignatureForSelector: shouldCloseSelector];
+	NSInvocation *callback = [NSInvocation invocationWithMethodSignature: signature];
+	[callback setSelector: shouldCloseSelector];
+	[callback setTarget: delegate];
+	[callback setArgument: &self atIndex: 2];
+	[callback setArgument: &contextInfo atIndex: 4];
+	
+	//If we have a gamebox and haven't finished finalizing it, show a stop importing/cancel prompt
+	if ([self isDocumentEdited])
+	{
+		BXCloseAlert *alert = [BXCloseAlert closeAlertWhileImportingGame: self];
+		
+		//Show our custom close alert, passing it the callback so we can complete
+		//our response down in _closeAlertDidEnd:returnCode:contextInfo:
+		[alert beginSheetModalForWindow: [self windowForSheet]
+						  modalDelegate: self
+						 didEndSelector: @selector(_closeAlertDidEnd:returnCode:contextInfo:)
+							contextInfo: [callback retain]];		 
+	}
+	else
+	{
+		BOOL shouldClose = YES;
+		//Otherwise we can respond directly: call the callback straight away with YES for shouldClose:
+		[callback setArgument: &shouldClose atIndex: 3];
+		[callback invoke];
+	}
+}
+
+- (void) _closeAlertDidEnd: (BXCloseAlert *)alert
+				returnCode: (int)returnCode
+			   contextInfo: (NSInvocation *)callback
+{
+	if ([alert showsSuppressionButton] && [[alert suppressionButton] state] == NSOnState)
+		[[NSUserDefaults standardUserDefaults] setBool: YES forKey: @"suppressCloseAlert"];
+	
+	BOOL shouldClose = NO;
+	
+	//If the alert has three buttons it means it's a save/don't save confirmation instead of
+	//a close/cancel confirmation
+	//TODO: for god's sake this is idiotic, we should detect this with contextinfo or alert class
+	if ([[alert buttons] count] == 3)
+	{
+		//Cancel button
+		switch (returnCode) {
+			case NSAlertFirstButtonReturn:	//Finish importing
+				[self finishInstaller];
+				shouldClose = NO;
+				break;
+				
+			case NSAlertSecondButtonReturn:	//Cancel
+				shouldClose = NO;
+				break;
+				
+			case NSAlertThirdButtonReturn:	//Stop importing
+				shouldClose = YES;
+				break;
+		}
+	}
+	else
+	{
+		shouldClose = (returnCode == NSAlertFirstButtonReturn);
+	}
+	
+	[callback setArgument: &shouldClose atIndex: 3];
+	[callback invoke];
+	
+	//Release the previously-retained callback
+	[callback release];	
+}
 
 
 #pragma mark -
@@ -289,6 +377,46 @@
 	return [[self installerPaths] count] > 0;
 }
 
+//Overridden to reset the progress whenver we change the stage
+- (void) setImportStage: (BXImportStage)stage
+{
+	if (stage != importStage)
+	{
+		importStage = stage;
+		[self setStageProgress: 0.0f];		
+	}
+}
+
++ (NSSet *) keyPathsForValuesAffectingGameboxName	{ return [NSSet setWithObject: @"gamePackage"]; }
+
+- (NSString *)gameboxName
+{
+	return [[self gamePackage] gameName]; 
+}
+
+- (void) setGameboxName: (NSString *)newName
+{
+	if ([newName length] && ![newName isEqualToString: [self gameboxName]])
+	{
+		NSString *fullName = [newName lastPathComponent];
+		if (![[[newName pathExtension] lowercaseString] isEqualToString: @"boxer"])
+			fullName = [newName stringByAppendingPathExtension: @"boxer"];
+		
+		NSString *packagePath = [[self gamePackage] bundlePath];
+		NSString *basePath = [packagePath stringByDeletingLastPathComponent];
+		NSString *newPath = [basePath stringByAppendingPathComponent: fullName];
+		
+		NSFileManager *manager = [NSFileManager defaultManager];
+		BOOL moved = [manager moveItemAtPath: packagePath toPath: newPath error: nil];
+		if (moved)
+		{
+			BXPackage *movedPackage = [BXPackage bundleWithPath: newPath];
+			[self setGamePackage: movedPackage];
+			[self setFileURL: [NSURL fileURLWithPath: [movedPackage bundlePath]]];
+		}
+	}
+}
+
 #pragma mark -
 #pragma mark Import steps
 
@@ -309,8 +437,6 @@
 	BOOL readSucceeded = [self readFromURL: sourceURL
 									ofType: nil
 									 error: &readError];
-	
-	[self setStageProgress: 0.0f];
 	
 	if (readSucceeded)
 	{
@@ -383,9 +509,14 @@
 	[self importSourceFiles];
 }
 
+//FIXME: the lone IBAction called directly from the UI. Move this to BXProgramPanelController or something.
+- (IBAction) finishImporting: (id)sender
+{
+	[self finishInstaller];
+}
 
 - (void) finishInstaller
-{
+{	
 	//Stop the installer process, and hand control back to the import window
 	[self cancel];
 	
@@ -402,27 +533,205 @@
 	NSAssert([self importStage] == BXImportReadyToFinalize, @"BXImport importSourceFiles: was called before we are ready to finalize.");
 	NSAssert([self sourcePath] != nil, @"No sourcePath specified when BXImport importSourceFiles: was called.");
 	
+	
+	[self setImportStage: BXImportCopyingSourceFiles];
+	[self setStageProgress: BXOperationProgressIndeterminate];
+	
 	//If we don't have a source folder yet, generate one now before continuing
+	//(This will happen if there were no installers, or the user skipped the installer)
 	if (![self gamePackage])
 	{
 		[self _generateGameboxWithError: NULL];
 	}
 	
-	[self setImportStage: BXImportCopyingSourceFiles];
+	//At this point, wait for any already-in-progress imports to finish
+	[importQueue waitUntilAllOperationsAreFinished];
 	
-	//TODO: import the game data here
 	
-	//[self setImportStage: BXImportFinished];
+	//Determine how we should import the source files
+	//-----------------------------------------------
+
+	//If there are already drives in the gamebox other than C, it means the user has done their own importing
+	//and we shouldn't duplicate their work
+	NSSet *bundledTypes = [[BXAppController mountableFolderTypes] setByAddingObjectsFromSet: [BXAppController mountableImageTypes]];
+	
+	
+	NSArray *alreadyBundledVolumes = [[self gamePackage] volumesOfTypes: bundledTypes];
+	if ([alreadyBundledVolumes count] > 1)
+	{
+		//Skip straight to cleanup
+		[self cleanGamebox];
+		return;
+	}
+	
+	//If the installer copied files to our C drive, then import the source files as a fake CD-ROM/floppy drive
+	else if ([self _gameDidInstall])
+	{
+		BXDrive *importDrive = nil;
+		
+		//TODO: this is copypasta from _mountDrivesForSession, abstract it somewhere else
+		if ([[self gameProfile] installsFromFloppyDrive])
+		{
+			importDrive = [BXDrive floppyDriveFromPath: [self sourcePath] atLetter: @"A"];
+		}
+		else
+		{
+			importDrive = [BXDrive CDROMFromPath: [self sourcePath] atLetter: @"D"];
+		}
+		
+		[self setTransferOperation: [self beginImportForDrive: importDrive]];
+	}
+	
+	//If the C drive is empty, then import the source files into it
+	else
+	{
+		//We need to copy the source path into a subfolder of drive C: do this as a regular file copy
+		if ([[self class] shouldUseSubfolderForSourceFilesAtPath: [self sourcePath]])
+		{
+			NSString *subfolderName	= [[self sourcePath] lastPathComponent];
+			NSString *destination	= [[self rootDrivePath] stringByAppendingPathComponent: subfolderName];
+			
+			BXFileTransfer *transfer = [BXFileTransfer transferFromPath: [self sourcePath] toPath: destination copyFiles: YES];
+			[transfer setDelegate: self];
+			[self setTransferOperation: transfer];
+			[importQueue addOperation: transfer];
+		}
+		//Otherwise, replace the old drive C completely by importing the source path
+		//(This is easier than constructing a file transfer operation for every individual file)
+		else
+		{
+			NSFileManager *manager = [NSFileManager defaultManager];
+			[manager removeItemAtPath: [self rootDrivePath] error: nil];
+			BXDrive *importDrive = [BXDrive hardDriveFromPath: [self sourcePath] atLetter: @"C"];
+			[self setTransferOperation: [self beginImportForDrive: importDrive]];
+		}
+	}
 }
 
-
-- (IBAction) finishImporting: (id)sender
+- (void) cleanGamebox
 {
-	[self finishInstaller];
+	[self setImportStage: BXImportCleaningGamebox];
+	[self setStageProgress: BXOperationProgressIndeterminate];
+	
+	NSString *packagePath = [[self gamePackage] bundlePath];
+	NSFileManager *manager = [NSFileManager defaultManager];
+	NSDirectoryEnumerator *enumerator = [manager enumeratorAtPath: packagePath];
+	
+	for (NSString *subPath in enumerator)
+	{
+		NSString *fullPath = [packagePath stringByAppendingPathComponent: subPath];
+		if ([[self class] isJunkFileAtPath: fullPath]) [manager removeItemAtPath: fullPath error: nil];
+	}
+	
+	//That's all folks!
+	[self setImportStage: BXImportFinished];
 }
+
+- (void) operationInProgress: (NSNotification *)notification
+{
+	BXOperation *operation = [notification object];
+	if ([self importStage] == BXImportCopyingSourceFiles && operation == [self transferOperation])
+	{
+		//Update our progress to match the operation's progress
+		
+		[self setStageProgress: [operation currentProgress]];
+	}
+	else return [super operationInProgress: notification];
+}
+
+- (void) operationDidFinish: (NSNotification *)notification
+{
+	BXOperation *operation = [notification object];
+	if ([self importStage] == BXImportCopyingSourceFiles && operation == [self transferOperation])
+	{
+		//Yay! We finished copying files
+		[self setTransferOperation: nil];
+		[self cleanGamebox];
+	}
+	else return [super operationDidFinish: notification];
+}
+
+
+#pragma mark -
+#pragma mark Responses to BXEmulator events
+
+- (void) programWillStart: (NSNotification *)notification
+{	
+	//Don't set the active program if we already have one
+	//This way, we keep track of when a user launches a batch file and don't immediately discard
+	//it in favour of the next program the batch-file runs
+	if (![self activeProgramPath])
+	{
+		[self setActiveProgramPath: [[notification userInfo] objectForKey: @"localPath"]];
+		[DOSWindowController synchronizeWindowTitleWithDocumentName];
+	
+		//Always show the program panel when installing
+		//(Show only after a delay, so that the installer time to start up)
+		[[self DOSWindowController] performSelector: @selector(showProgramPanel:)
+										 withObject: self
+										 afterDelay: 1.0];
+	}
+}
+
+- (void) didReturnToShell: (NSNotification *)notification
+{
+	//Clear the active program
+	[self setActiveProgramPath: nil];
+	[DOSWindowController synchronizeWindowTitleWithDocumentName];
+	
+	//Show the program chooser after returning to the DOS prompt
+	//(Show only after a delay, so that the window has time to resize after quitting the game)
+	[[self DOSWindowController] performSelector: @selector(showProgramPanel:)
+													  withObject: self
+													  afterDelay: 1.0];
+	
+	//Always drop out of fullscreen mode when we return to the prompt,
+	//so that users can see the "finish importing" option
+	[[self DOSWindowController] exitFullScreen: self];
+}
+
 
 #pragma mark -
 #pragma mark Private internal methods
+
+- (void) _startEmulator
+{
+	[super _startEmulator];
+	
+	//Once the emulation session finishes, continue importing
+	if ([self stageProgress] == BXImportRunningInstaller) [self finishInstaller];
+}
+
+//This uses a different (and simpler) mount behaviour than BXSession to prioritise the
+//source path ahead of other drives.
+- (void) _mountDrivesForSession
+{
+	BXDrive *destinationDrive, *sourceDrive;
+	
+	destinationDrive = [BXDrive hardDriveFromPath: [self rootDrivePath] atLetter: @"C"];
+	[self mountDrive: destinationDrive];
+	
+	if ([[self gameProfile] installsFromFloppyDrive])
+	{
+		sourceDrive = [BXDrive floppyDriveFromPath: [self sourcePath] atLetter: @"A"];
+	}
+	else
+	{
+		//NOTE: this should be CD-ROM, however if the game is already installed then
+		//the installer would try to write files back to drive D and fail because it's read-only.
+		//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARGH.
+		sourceDrive = [BXDrive hardDriveFromPath: [self sourcePath] atLetter: @"D"];
+	}
+	[self mountDrive: sourceDrive];
+	
+	//Automount all currently mounted floppy and CD-ROM volumes
+	[self mountFloppyVolumes];
+	[self mountCDVolumes];
+	
+	//Mount our internal DOS toolkit and temporary drives
+	[self mountToolkitDrive];
+	[self mountTempDrive];
+}
 
 - (BOOL) _generateGameboxWithError: (NSError **)outError
 {	
@@ -472,6 +781,7 @@
 	NSFileManager *manager = [NSFileManager defaultManager];
 	NSDirectoryEnumerator *enumerator = [manager enumeratorAtPath: [self rootDrivePath]];
 	
+	//TODO: make this check more rigorous by testing for executables?
 	return ([enumerator nextObject] != nil);
 }
 
@@ -487,130 +797,5 @@
 		[manager removeItemAtPath: [[self gamePackage] bundlePath] error: NULL];	
 	}
 }
-
-
-#pragma mark -
-#pragma mark Responses to BXEmulator events
-
-- (void) programWillStart: (NSNotification *)notification
-{	
-	//Don't set the active program if we already have one
-	//This way, we keep track of when a user launches a batch file and don't immediately discard
-	//it in favour of the next program the batch-file runs
-	if (![self activeProgramPath])
-	{
-		[self setActiveProgramPath: [[notification userInfo] objectForKey: @"localPath"]];
-		[DOSWindowController synchronizeWindowTitleWithDocumentName];
-	
-		//Always show the program panel when installing
-		//(Show only after a delay, so that the installer time to start up)
-		[[self DOSWindowController] performSelector: @selector(showProgramPanel:)
-										 withObject: self
-										 afterDelay: 1.0];
-	}
-}
-
-- (void) didReturnToShell: (NSNotification *)notification
-{
-	//Clear the active program
-	[self setActiveProgramPath: nil];
-	[DOSWindowController synchronizeWindowTitleWithDocumentName];
-	
-	//Show the program chooser after returning to the DOS prompt
-	//(Show only after a delay, so that the window has time to resize after quitting the game)
-	[[self DOSWindowController] performSelector: @selector(showProgramPanel:)
-													  withObject: self
-													  afterDelay: 1.0];
-	
-	//Always drop out of fullscreen mode when we return to the prompt,
-	//so that users can see the "finish importing" option
-	[[self DOSWindowController] exitFullScreen: self];
-}
-
-
-#pragma mark -
-#pragma mark Responding to shutdown
-
-//We are considered to have unsaved changes if we have a not-yet-finalized gamebox
-- (BOOL) isDocumentEdited	{ return [self gamePackage] != nil && [self importStage] < BXImportFinished; }
-
-//Overridden to display our own custom confirmation alert instead of the standard NSDocument one.
-- (void) canCloseDocumentWithDelegate: (id)delegate
-				  shouldCloseSelector: (SEL)shouldCloseSelector
-						  contextInfo: (void *)contextInfo
-{	
-	//Define an invocation for the callback, which has the signature:
-	//- (void)document:(NSDocument *)document shouldClose:(BOOL)shouldClose contextInfo:(void *)contextInfo;
-	NSMethodSignature *signature = [delegate methodSignatureForSelector: shouldCloseSelector];
-	NSInvocation *callback = [NSInvocation invocationWithMethodSignature: signature];
-	[callback setSelector: shouldCloseSelector];
-	[callback setTarget: delegate];
-	[callback setArgument: &self atIndex: 2];
-	[callback setArgument: &contextInfo atIndex: 4];
-	
-	//If we have a gamebox and haven't finished finalizing it, show a stop importing/cancel prompt
-	if ([self isDocumentEdited])
-	{
-		BXCloseAlert *alert = [BXCloseAlert closeAlertWhileImportingGame: self];
-	
-		//Show our custom close alert, passing it the callback so we can complete
-		//our response down in _closeAlertDidEnd:returnCode:contextInfo:
-		[alert beginSheetModalForWindow: [self windowForSheet]
-						  modalDelegate: self
-						 didEndSelector: @selector(_closeAlertDidEnd:returnCode:contextInfo:)
-							contextInfo: [callback retain]];		 
-	}
-	else
-	{
-		BOOL shouldClose = YES;
-		//Otherwise we can respond directly: call the callback straight away with YES for shouldClose:
-		[callback setArgument: &shouldClose atIndex: 3];
-		[callback invoke];
-	}
-}
-
-- (void) _closeAlertDidEnd: (BXCloseAlert *)alert
-				returnCode: (int)returnCode
-			   contextInfo: (NSInvocation *)callback
-{
-	if ([alert showsSuppressionButton] && [[alert suppressionButton] state] == NSOnState)
-		[[NSUserDefaults standardUserDefaults] setBool: YES forKey: @"suppressCloseAlert"];
-	
-	BOOL shouldClose = NO;
-	
-	//If the alert has three buttons it means it's a save/don't save confirmation instead of
-	//a close/cancel confirmation
-	//TODO: for god's sake this is idiotic, we should detect this with contextinfo or alert class
-	if ([[alert buttons] count] == 3)
-	{
-		//Cancel button
-		switch (returnCode) {
-			case NSAlertFirstButtonReturn:	//Finish importing
-				[self finishInstaller];
-				shouldClose = NO;
-				break;
-				
-			case NSAlertSecondButtonReturn:	//Cancel
-				shouldClose = NO;
-				break;
-				
-			case NSAlertThirdButtonReturn:	//Stop importing
-				shouldClose = YES;
-				break;
-		}
-	}
-	else
-	{
-		shouldClose = (returnCode == NSAlertFirstButtonReturn);
-	}
-	
-	[callback setArgument: &shouldClose atIndex: 3];
-	[callback invoke];
-	
-	//Release the previously-retained callback
-	[callback release];	
-}
-
-
 
 @end

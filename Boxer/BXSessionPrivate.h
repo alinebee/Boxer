@@ -33,13 +33,15 @@
 //DOSBox blocking cleanup code.
 - (void) _startEmulator;
 
-//Set up the emulator context with drive mounts and other configuration settings specific to this session.
-//Called in response to the BXEmulatorWillLoadConfiguration event, once the emulator is initialised enough
-//for us to configure it.
-- (void) _configureEmulator;
+//Apply our chain of DOSBox configuration files (preflight, autodetected, gamebox, launch) to the emulator.
+- (void) _loadDOSBoxConfigurations;
+
+//Set up the emulator context with drive mounts and drive-related configuration settings. Called in
+//runPreflightCommands at the start of AUTOEXEC.BAT, before any other commands or settings are run.
+- (void) _mountDrivesForSession;
 
 //Start up the target program for this session (if any) and displays the program panel selector after this
-//finishes. Called by runLaunchCommands, once the emulator has finished processing configuration files.
+//finishes. Called by runLaunchCommands at the end of AUTOEXEC.BAT.
 - (void) _launchTarget;
 
 //Called once the session has exited to save any DOSBox settings we have changed to the gamebox conf.

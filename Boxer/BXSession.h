@@ -15,10 +15,10 @@
 
 #import <Cocoa/Cocoa.h>
 #import "BXEmulatorDelegate.h"
+#import "BXGameProfile.h"
 
 @class BXEmulator;
 @class BXPackage;
-@class BXGameProfile;
 @class BXDOSWindowController;
 
 @interface BXSession : NSDocument <BXEmulatorDelegate>
@@ -96,6 +96,12 @@
 //Autodetects and returns a profile for the specified path, using BXSession's rules
 //for autodetection (q.v. BXFileManager gameDetectionPointForPath:shouldRecurse:)
 + (BXGameProfile *) profileForPath: (NSString *)path;
+
+//Generates and returns a new bootleg cover-art image for the specified package,
+//using the specified game era. If era is BXUnknownEra, a suitable era will be
+//autodetected based on the size and age of the game's files.
++ (NSImage *) bootlegCoverArtForGamePackage: (BXPackage *)package
+									withEra: (BXGameEra)era;
 
 
 #pragma mark -

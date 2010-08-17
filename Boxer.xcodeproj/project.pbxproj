@@ -27,7 +27,6 @@
 		9F25C4E212130B5E0025CB2C /* BrandWatermark.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F25C4E112130B5E0025CB2C /* BrandWatermark.png */; };
 		9F25C52712130E030025CB2C /* BXImportDOSWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F25C52612130E030025CB2C /* BXImportDOSWindowController.m */; };
 		9F2AC6D710EFE14300CFFF72 /* CDCover.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F2AC6D510EFE14300CFFF72 /* CDCover.png */; };
-		9F2AC6D810EFE14300CFFF72 /* CDCase.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F2AC6D610EFE14300CFFF72 /* CDCase.png */; };
 		9F2AC6E410EFFE8600CFFF72 /* BXBootlegCoverArt.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2AC6E310EFFE8600CFFF72 /* BXBootlegCoverArt.m */; };
 		9F4175AB119DBFDD00646B15 /* BXRenderingLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4175AA119DBFDD00646B15 /* BXRenderingLayer.m */; };
 		9F4175F1119DCF7E00646B15 /* BXFrameRateCounterLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4175F0119DCF7E00646B15 /* BXFrameRateCounterLayer.m */; };
@@ -50,6 +49,9 @@
 		9F4E042C0F67E72300427D50 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F4E042B0F67E72300427D50 /* AudioToolbox.framework */; };
 		9F53411812059E7900BCBF24 /* NSWorkspace+BXExecutableTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F53411712059E7900BCBF24 /* NSWorkspace+BXExecutableTypes.m */; };
 		9F544A8010AB44C40030FED5 /* BXThemes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F544A7F10AB44C40030FED5 /* BXThemes.m */; };
+		9F550667121B057C0042614A /* 35Diskette.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F550664121B057C0042614A /* 35Diskette.icns */; };
+		9F550668121B057C0042614A /* CDCase.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F550665121B057C0042614A /* CDCase.icns */; };
+		9F550669121B057C0042614A /* 525Diskette.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F550666121B057C0042614A /* 525Diskette.icns */; };
 		9F573C5A0F8E18B10089D8B7 /* NSWorkspace+BXMountedVolumes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F573C590F8E18B10089D8B7 /* NSWorkspace+BXMountedVolumes.m */; };
 		9F573D390F8E69AF0089D8B7 /* BXPackage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F573D380F8E69AF0089D8B7 /* BXPackage.m */; };
 		9F59D99810AE0956008DBBC1 /* BoxArtShine.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F59D99710AE0956008DBBC1 /* BoxArtShine.png */; };
@@ -274,7 +276,6 @@
 		9FE201A60F6D599C00B3A38C /* libz.1.2.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FE201A50F6D599C00B3A38C /* libz.1.2.3.dylib */; };
 		9FE202480F6D749500B3A38C /* Snapshot.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9FE202470F6D749500B3A38C /* Snapshot.aiff */; };
 		9FE8265C10F0EBA000F1B03E /* 35DisketteShine.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE8265A10F0EBA000F1B03E /* 35DisketteShine.png */; };
-		9FE8265D10F0EBA000F1B03E /* 35Diskette.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE8265B10F0EBA000F1B03E /* 35Diskette.png */; };
 		9FE90BF711F8D1DC003CFFFF /* BXDelegatedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE90BF611F8D1DC003CFFFF /* BXDelegatedView.m */; };
 		9FEAA3EC1204595B0085F008 /* BXOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEAA3EB1204595B0085F008 /* BXOperation.m */; };
 		9FEAA451120478000085F008 /* BXDriveImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEAA450120478000085F008 /* BXDriveImport.m */; };
@@ -284,7 +285,6 @@
 		9FF1756D11B25F4E00D0FCDC /* BXInputView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF1756C11B25F4E00D0FCDC /* BXInputView.m */; };
 		9FF175E711B279F500D0FCDC /* BXVideoHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FF175E611B279F500D0FCDC /* BXVideoHandler.mm */; };
 		9FF2E9BD11E6F4950051E485 /* BXEmulatorConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF2E9BC11E6F4950051E485 /* BXEmulatorConfiguration.m */; };
-		9FF445E010F13A2200B74B15 /* 525Diskette.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FF445DF10F13A2200B74B15 /* 525Diskette.png */; };
 		9FFAFE2D10DE33FB00728BAC /* GameProfiles.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */; };
 		9FFAFE4310DE343F00728BAC /* Configurations in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2E10DE343F00728BAC /* Configurations */; };
 /* End PBXBuildFile section */
@@ -342,7 +342,6 @@
 		9F25C52512130E030025CB2C /* BXImportDOSWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImportDOSWindowController.h; sourceTree = "<group>"; };
 		9F25C52612130E030025CB2C /* BXImportDOSWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXImportDOSWindowController.m; sourceTree = "<group>"; };
 		9F2AC6D510EFE14300CFFF72 /* CDCover.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CDCover.png; sourceTree = "<group>"; };
-		9F2AC6D610EFE14300CFFF72 /* CDCase.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CDCase.png; sourceTree = "<group>"; };
 		9F2AC6E210EFFE8600CFFF72 /* BXBootlegCoverArt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBootlegCoverArt.h; sourceTree = "<group>"; };
 		9F2AC6E310EFFE8600CFFF72 /* BXBootlegCoverArt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBootlegCoverArt.m; sourceTree = "<group>"; };
 		9F4175A9119DBFDD00646B15 /* BXRenderingLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXRenderingLayer.h; sourceTree = "<group>"; };
@@ -375,6 +374,9 @@
 		9F53411712059E7900BCBF24 /* NSWorkspace+BXExecutableTypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSWorkspace+BXExecutableTypes.m"; sourceTree = "<group>"; };
 		9F544A7E10AB44C40030FED5 /* BXThemes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXThemes.h; sourceTree = "<group>"; };
 		9F544A7F10AB44C40030FED5 /* BXThemes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXThemes.m; sourceTree = "<group>"; };
+		9F550664121B057C0042614A /* 35Diskette.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = 35Diskette.icns; sourceTree = "<group>"; };
+		9F550665121B057C0042614A /* CDCase.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = CDCase.icns; sourceTree = "<group>"; };
+		9F550666121B057C0042614A /* 525Diskette.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = 525Diskette.icns; sourceTree = "<group>"; };
 		9F573C580F8E18B10089D8B7 /* NSWorkspace+BXMountedVolumes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSWorkspace+BXMountedVolumes.h"; sourceTree = "<group>"; };
 		9F573C590F8E18B10089D8B7 /* NSWorkspace+BXMountedVolumes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSWorkspace+BXMountedVolumes.m"; sourceTree = "<group>"; };
 		9F573D370F8E69AF0089D8B7 /* BXPackage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXPackage.h; sourceTree = "<group>"; };
@@ -784,7 +786,6 @@
 		9FE201A50F6D599C00B3A38C /* libz.1.2.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.3.dylib; path = usr/lib/libz.1.2.3.dylib; sourceTree = SDKROOT; };
 		9FE202470F6D749500B3A38C /* Snapshot.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = Snapshot.aiff; sourceTree = "<group>"; };
 		9FE8265A10F0EBA000F1B03E /* 35DisketteShine.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 35DisketteShine.png; sourceTree = "<group>"; };
-		9FE8265B10F0EBA000F1B03E /* 35Diskette.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 35Diskette.png; sourceTree = "<group>"; };
 		9FE90BF511F8D1DC003CFFFF /* BXDelegatedView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDelegatedView.h; sourceTree = "<group>"; };
 		9FE90BF611F8D1DC003CFFFF /* BXDelegatedView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDelegatedView.m; sourceTree = "<group>"; };
 		9FEAA3EA1204595B0085F008 /* BXOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXOperation.h; sourceTree = "<group>"; };
@@ -804,7 +805,6 @@
 		9FF175E611B279F500D0FCDC /* BXVideoHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXVideoHandler.mm; sourceTree = "<group>"; };
 		9FF2E9BB11E6F4950051E485 /* BXEmulatorConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatorConfiguration.h; sourceTree = "<group>"; };
 		9FF2E9BC11E6F4950051E485 /* BXEmulatorConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXEmulatorConfiguration.m; sourceTree = "<group>"; };
-		9FF445DF10F13A2200B74B15 /* 525Diskette.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 525Diskette.png; sourceTree = "<group>"; };
 		9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = GameProfiles.plist; sourceTree = "<group>"; };
 		9FFAFE2E10DE343F00728BAC /* Configurations */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Configurations; sourceTree = "<group>"; };
 		9FFBF67011A7F8F4000A1863 /* BXFrameRenderingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFrameRenderingView.h; sourceTree = "<group>"; };
@@ -1650,14 +1650,14 @@
 		9FBC34390F56C5AC001811F2 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				9FE8265A10F0EBA000F1B03E /* 35DisketteShine.png */,
+				9F550664121B057C0042614A /* 35Diskette.icns */,
+				9F550665121B057C0042614A /* CDCase.icns */,
+				9F2AC6D510EFE14300CFFF72 /* CDCover.png */,
+				9F550666121B057C0042614A /* 525Diskette.icns */,
 				9F25C4E112130B5E0025CB2C /* BrandWatermark.png */,
 				9FBDA831120D6CE80012585D /* DropzoneTemplate.png */,
 				9F1CBCAC120CCF3900C5E926 /* Blueprint.jpg */,
-				9FF445DF10F13A2200B74B15 /* 525Diskette.png */,
-				9FE8265A10F0EBA000F1B03E /* 35DisketteShine.png */,
-				9FE8265B10F0EBA000F1B03E /* 35Diskette.png */,
-				9F2AC6D510EFE14300CFFF72 /* CDCover.png */,
-				9F2AC6D610EFE14300CFFF72 /* CDCase.png */,
 				9FBD321610E5144C00031CB6 /* Brand.png */,
 				9F6A7909120357DF00D2097D /* install.icns */,
 				9FCBB2CD10A61CA800C28B09 /* boxer.icns */,
@@ -1811,10 +1811,7 @@
 				9FFAFE4310DE343F00728BAC /* Configurations in Resources */,
 				9FBD321710E5144C00031CB6 /* Brand.png in Resources */,
 				9F2AC6D710EFE14300CFFF72 /* CDCover.png in Resources */,
-				9F2AC6D810EFE14300CFFF72 /* CDCase.png in Resources */,
 				9FE8265C10F0EBA000F1B03E /* 35DisketteShine.png in Resources */,
-				9FE8265D10F0EBA000F1B03E /* 35Diskette.png in Resources */,
-				9FF445E010F13A2200B74B15 /* 525Diskette.png in Resources */,
 				9F9A4C9610F67A1F00E61965 /* GalleryOriginal.png in Resources */,
 				9F9A4C9710F67A1F00E61965 /* GalleryHQx.png in Resources */,
 				9F9A4C9810F67A1F00E61965 /* GalleryMAME.png in Resources */,
@@ -1835,6 +1832,9 @@
 				9F1CBCAD120CCF3900C5E926 /* Blueprint.jpg in Resources */,
 				9FBDA832120D6CE80012585D /* DropzoneTemplate.png in Resources */,
 				9F25C4E212130B5E0025CB2C /* BrandWatermark.png in Resources */,
+				9F550667121B057C0042614A /* 35Diskette.icns in Resources */,
+				9F550668121B057C0042614A /* CDCase.icns in Resources */,
+				9F550669121B057C0042614A /* 525Diskette.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -63,6 +63,7 @@
 + (NSImage *) topLayerForSize: (NSSize)size;
 
 //Returns the region of the image in which to print the text.
+//Will be NSZeroRect if text should not be printed at this size.
 + (NSRect) textRegionForRect: (NSRect)rect;
 
 @end

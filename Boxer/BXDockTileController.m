@@ -10,8 +10,6 @@
 #import "BXDockTileController.h"
 #import "BXAppController.h"
 #import "BXSession.h"
-#import "BXBootlegCoverArt.h"
-#import "BXGameProfile.h"
 
 @implementation BXDockTileController
 
@@ -39,28 +37,10 @@
 	if ([keyPath isEqualToString: @"currentSession.representedIcon"]) [self syncIconWithActiveSession];
 }
 
-- (NSImage *) coverArtForSession: (BXSession *)session
-{
-	NSImage *icon = [session representedIcon];
-	if (!icon && [session isGamePackage])
-	{
-		Class <BXBootlegCoverArt> coverArtClass;
-		switch([BXGameProfile eraOfGameAtPath: [[session fileURL] path]])
-		{
-			case BXCDROMEra:		coverArtClass = [BXJewelCase class];	break;
-			case BX525DisketteEra:	coverArtClass = [BX525Diskette class];	break;
-			default:				coverArtClass = [BX35Diskette class];	break;
-		}
-		NSString *iconTitle = [session displayName];
-		icon = [coverArtClass coverArtWithTitle: iconTitle];
-	}
-	return icon;
-}
-
 - (void) syncIconWithActiveSession
 {
 	BXSession *session = [[NSApp delegate] currentSession];
-	NSImage *icon = [self coverArtForSession: session];
+	NSImage *icon = [session representedIcon];
 	[icon setSize: NSMakeSize(128, 128)];
 	[NSApp setApplicationIconImage: icon];
 }

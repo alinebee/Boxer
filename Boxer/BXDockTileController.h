@@ -16,13 +16,6 @@
 
 @interface BXDockTileController : NSObject
 
-//Returns appropriate cover art for the specified session:
-// - If the session has a gamebox with an icon, this will return the gamebox's icon;
-// - If the session has a gamebox with no icon, this will generate and return bootleg cover art
-//   based on the gamebox's name;
-// - If the session is not gamebox-based, this will return nil.
-- (NSImage *) coverArtForSession: (BXSession *)session;
-
 //Called whenever the current session or its icon changes.
 //This calls coverArtForSession: with the current session and sets NSApplication's icon to the result.
 - (void) syncIconWithActiveSession;

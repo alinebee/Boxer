@@ -45,11 +45,22 @@
 			nil];
 }
 
-+ (NSImage *) baseLayerForSize:	(NSSize)size	{ return [NSImage imageNamed: @"CDCase.png"]; }
-+ (NSImage *) topLayerForSize:	(NSSize)size	{ return [NSImage imageNamed: @"CDCover.png"]; }
++ (NSImage *) baseLayerForSize:	(NSSize)size	{ return [NSImage imageNamed: @"CDCase.icns"]; }
++ (NSImage *) topLayerForSize:	(NSSize)size
+{
+	if (size.width >= 128)
+		return [NSImage imageNamed: @"CDCover.png"];
+	else
+		return nil;
+}
 
-+ (NSRect) textRegionForRect:	(NSRect)frame	{ return NSMakeRect(22.0f, 32.0f, 92.0f, 60.0f); }
-
++ (NSRect) textRegionForRect: (NSRect)frame
+{
+	if (frame.size.width >= 128)
+		return NSMakeRect(22.0f, 32.0f, 92.0f, 60.0f);
+	else
+		return NSZeroRect;
+}
 
 
 - (id) initWithTitle: (NSString *)coverTitle
@@ -64,15 +75,27 @@
 - (void) drawInRect: (NSRect)frame
 {
 	NSSize iconSize		= frame.size;
-	NSRect textRegion	= [[self class] textRegionForRect: frame];
-	NSDictionary *textAttributes = [[self class] textAttributesForSize: iconSize];
 	
 	NSImage *baseLayer	= [[self class] baseLayerForSize: iconSize];
 	NSImage *topLayer	= [[self class] topLayerForSize: iconSize];
-	
-	[baseLayer drawInRect: frame fromRect: NSZeroRect operation: NSCompositeSourceOver fraction: 1.0f];
-	[[self title] drawInRect: textRegion withAttributes: textAttributes];
-	[topLayer drawInRect: frame fromRect: NSZeroRect operation: NSCompositeSourceOver fraction: 1.0f];
+	NSRect textRegion = [[self class] textRegionForRect: frame];
+
+	if (baseLayer) [baseLayer drawInRect: frame
+								fromRect: NSZeroRect
+							   operation: NSCompositeSourceOver
+								fraction: 1.0f];
+
+	if (!NSEqualRects(textRegion, NSZeroRect))
+	{
+		NSDictionary *textAttributes = [[self class] textAttributesForSize: iconSize];
+		[[self title] drawInRect: textRegion withAttributes: textAttributes];
+	}
+
+	if (topLayer) [topLayer drawInRect: frame
+							  fromRect: NSZeroRect
+							 operation: NSCompositeSourceOver
+							  fraction: 1.0f];		
+
 }
 
 - (NSImageRep *) representationForSize: (NSSize)iconSize
@@ -95,6 +118,8 @@
 {
 	NSImage *coverArt = [[NSImage alloc] init];
 	[coverArt addRepresentation: [self representationForSize: NSMakeSize(128, 128)]];
+	[coverArt addRepresentation: [self representationForSize: NSMakeSize(32, 32)]];
+	[coverArt addRepresentation: [self representationForSize: NSMakeSize(16, 16)]];
 	return [coverArt autorelease];
 }
 
@@ -109,21 +134,37 @@
 
 @implementation BX35Diskette
 
-+ (NSImage *) baseLayerForSize:	(NSSize)size	{ return [NSImage imageNamed: @"35Diskette.png"]; }
-+ (NSImage *) topLayerForSize:	(NSSize)size	{ return [NSImage imageNamed: @"35DisketteShine.png"]; }
++ (NSImage *) baseLayerForSize:	(NSSize)size	{ return [NSImage imageNamed: @"35Diskette.icns"]; }
++ (NSImage *) topLayerForSize:	(NSSize)size
+{
+	if (size.width >= 128)
+		[NSImage imageNamed: @"35DisketteShine.png"];
+	else
+		return nil;
+}
 + (CGFloat) lineHeightForSize:	(NSSize)size	{ return 18.0f; }
 
-+ (NSRect) textRegionForRect:	(NSRect)frame	{ return NSMakeRect(24.0f, 55.0f, 80.0f, 54.0f); }
-
++ (NSRect) textRegionForRect: (NSRect)frame
+{
+	if (frame.size.width >= 128)
+		return NSMakeRect(24.0f, 55.0f, 80.0f, 54.0f);
+	else
+		return NSZeroRect;
+}
 @end
 
 @implementation BX525Diskette
 
-+ (NSImage *) baseLayerForSize:	(NSSize)size	{ return [NSImage imageNamed: @"525Diskette.png"]; }
++ (NSImage *) baseLayerForSize:	(NSSize)size	{ return [NSImage imageNamed: @"525Diskette.icns"]; }
 + (NSImage *) topLayerForSize:	(NSSize)size	{ return nil; }
 + (CGFloat) lineHeightForSize:	(NSSize)size	{ return 16.0f; }
 + (CGFloat) fontSizeForSize:	(NSSize)size	{ return 12.0f; }
 
-+ (NSRect) textRegionForRect:	(NSRect)frame	{ return NSMakeRect(16.0f, 90.0f, 96.0f, 32.0f); }
-
++ (NSRect) textRegionForRect: (NSRect)frame
+{
+	if (frame.size.width >= 128)
+		return NSMakeRect(16.0f, 90.0f, 96.0f, 32.0f);
+	else
+		return NSZeroRect;
+}
 @end

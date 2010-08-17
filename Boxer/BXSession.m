@@ -9,6 +9,7 @@
 
 #import "BXPackage.h"
 #import "BXGameProfile.h"
+#import "BXBootlegCoverArt.h"
 #import "BXDrive.h"
 #import "BXAppController.h"
 #import "BXDOSWindowController+BXRenderController.h"
@@ -71,6 +72,21 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 									searchSubfolders: shouldRecurse];	
 	}
 	return nil;
+}
+
++ (NSImage *) bootlegCoverArtForGamePackage: (BXPackage *)package withEra: (BXGameEra)era
+{
+	Class <BXBootlegCoverArt> coverArtClass;
+	if (era == BXUnknownEra) era = [BXGameProfile eraOfGameAtPath: [package bundlePath]];
+	switch (era)
+	{
+		case BXCDROMEra:		coverArtClass = [BXJewelCase class];	break;
+		case BX525DisketteEra:	coverArtClass = [BX525Diskette class];	break;
+		default:				coverArtClass = [BX35Diskette class];	break;
+	}
+	NSString *iconTitle = [package gameName];
+	NSImage *icon = [coverArtClass coverArtWithTitle: iconTitle];
+	return icon;
 }
 
 
@@ -435,7 +451,18 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 
 - (NSImage *)representedIcon
 {
-	if ([self isGamePackage]) return [[self gamePackage] coverArt];
+	if ([self isGamePackage])
+	{
+		NSImage *icon = [[self gamePackage] coverArt];
+		//Generate a new bootleg cover-art icon and save it to the game package
+		if (!icon)
+		{
+			icon = [[self class] bootlegCoverArtForGamePackage: [self gamePackage]
+													   withEra: BXUnknownEra];
+			[self setRepresentedIcon: icon];
+		}
+		return icon;
+	}
 	else return nil;
 }
 

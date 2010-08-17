@@ -21,6 +21,7 @@
 
 //Constants used by eraOfGameAtPath:
 enum {
+	BXUnknownEra = 0,
 	BX525DisketteEra,
 	BX35DisketteEra,
 	BXCDROMEra

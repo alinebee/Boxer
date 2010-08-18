@@ -39,7 +39,7 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 
 
 @implementation BXGameProfile
-@synthesize gameName, confName, profileDescription, installsFromFloppyDrive;
+@synthesize gameName, confName, profileDescription, installMedium;
 
 + (BXGameEra) eraOfGameAtPath: (NSString *)basePath
 {
@@ -125,7 +125,9 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 		[self setGameName: [profileDict objectForKey: @"BXProfileName"]];
 		[self setConfName: [profileDict objectForKey: @"BXProfileConf"]];
 		[self setProfileDescription: [profileDict objectForKey: @"BXProfileDescription"]];
-		[self setInstallsFromFloppyDrive: [[profileDict objectForKey: @"BXInstallsFromFloppyDrive"] boolValue]];
+		
+		NSNumber *medium = [profileDict objectForKey: @"BXInstallMedium"];
+		[self setInstallMedium: (medium) ? [medium intValue] : BXDriveAutodetect];
 		
 		//Used by isDesignatedInstallerAtPath:
 		installerPatterns	= [[profileDict objectForKey: @"BXDesignatedInstallers"] retain];
@@ -161,8 +163,8 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 - (NSString *) labelForDrive: (BXDrive *)drive
 {
 	NSString *defaultLabel = [drive label];
-	//If we don't have any label overrides, or the drive isn't a floppy or CD, just use its original label
-	if (!(driveLabelMappings && ([drive isCDROM] || [drive isFloppy]))) return defaultLabel;
+	//If we don't have any label overrides, just use its original label
+	if (![driveLabelMappings count]) return defaultLabel;
 	
 	NSString *customLabel			= [driveLabelMappings objectForKey: defaultLabel];
 	if (!customLabel) customLabel	= [driveLabelMappings objectForKey: @"BXProfileDriveLabelAny"];

@@ -13,8 +13,8 @@
 
 
 #import <Foundation/Foundation.h>
+#import "BXDrive.h"
 
-@class BXDrive;
 
 #pragma mark -
 #pragma mark Constants
@@ -37,7 +37,7 @@ typedef NSUInteger BXGameEra;
 	NSDictionary *driveLabelMappings;
 	NSArray *installerPatterns;
 	
-	BOOL installsFromFloppyDrive;
+	BXDriveType installMedium;
 }
 
 #pragma mark -
@@ -54,9 +54,9 @@ typedef NSUInteger BXGameEra;
 //Will be nil for game-specific profiles (in which case gameName will be available.)
 @property (copy) NSString *profileDescription;
 
-//Whether this game needs to be installed from floppy disks.
-//When YES, the import process will mount the game’s source files as a floppy drive instead of a CD-ROM.
-@property (assign) BOOL installsFromFloppyDrive;
+//Whether this game needs to be installed from a particular kind of drive (e.g. floppy-disk or CD-ROM).
+//If the game has no special requirements, will be BXDriveAutodetect
+@property (assign) BXDriveType installMedium;
 
 
 #pragma mark -

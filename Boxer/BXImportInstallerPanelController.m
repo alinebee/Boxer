@@ -171,6 +171,7 @@
 	[openPanel setMessage:	NSLocalizedString(@"Choose the DOS installer program for this game:",
 											  @"Help text shown at the top of choose-an-installer panel.")];
 	
+	[openPanel setDelegate: self];
 	[openPanel beginSheetForDirectory: [[[self controller] document] sourcePath]
 								 file: nil
 								types: [[BXAppController executableTypes] allObjects]
@@ -178,6 +179,12 @@
 						modalDelegate: self
 					   didEndSelector: @selector(_addChosenInstaller:returnCode:contextInfo:)
 						  contextInfo: nil];	
+}
+
+- (BOOL) panel: (id)sender shouldShowFilename: (NSString *)filename
+{
+	//Disable files outside the source path of the import process, for sanity's sake
+	return [filename isRootedInPath: [[[self controller] document] sourcePath]];
 }
 
 - (void) _addChosenInstaller: (NSOpenPanel *)openPanel

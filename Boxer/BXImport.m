@@ -444,6 +444,8 @@
 		
 		if ([self gameNeedsInstalling])
 		{
+			//Bounce to notify the user that we need their input
+			[NSApp requestUserAttention: NSInformationalRequest];
 			[self setImportStage: BXImportWaitingForInstaller];
 		}
 		else
@@ -533,6 +535,9 @@
 	NSAssert([self importStage] == BXImportReadyToFinalize, @"BXImport importSourceFiles: was called before we are ready to finalize.");
 	NSAssert([self sourcePath] != nil, @"No sourcePath specified when BXImport importSourceFiles: was called.");
 	
+	NSFileManager *manager = [NSFileManager defaultManager];
+	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+	
 	
 	[self setImportStage: BXImportCopyingSourceFiles];
 	[self setStageProgress: BXOperationProgressIndeterminate];
@@ -551,10 +556,17 @@
 	//Determine how we should import the source files
 	//-----------------------------------------------
 
-	//If there are already drives in the gamebox other than C, it means the user has done their own importing
-	//and we shouldn't duplicate their work
-	NSSet *bundledTypes = [[BXAppController mountableFolderTypes] setByAddingObjectsFromSet: [BXAppController mountableImageTypes]];
+	//If the source path no longer exists, it means the user probably ejected the disk and we can't import
+	if (![manager fileExistsAtPath: [self sourcePath]])
+	{
+		//Skip straight to cleanup
+		[self cleanGamebox];
+		return;
+	}
 	
+	//If there are already drives in the gamebox other than C, it means the user did their own importing
+	//and we shouldn't interfere with their work
+	NSSet *bundledTypes = [[BXAppController mountableFolderTypes] setByAddingObjectsFromSet: [BXAppController mountableImageTypes]];
 	
 	NSArray *alreadyBundledVolumes = [[self gamePackage] volumesOfTypes: bundledTypes];
 	if ([alreadyBundledVolumes count] > 1)
@@ -564,16 +576,26 @@
 		return;
 	}
 	
-	//If the installer copied files to our C drive, then import the source files as a fake CD-ROM/floppy drive
-	else if ([self _gameDidInstall])
+	
+	NSString *volumePath = [workspace volumeForPath: [self sourcePath]];
+	NSString *volumeType = [workspace volumeTypeForPath: volumePath];
+	
+	BOOL isRealCDROM = [volumeType isEqualToString: dataCDVolumeType];
+	BOOL isRealFloppy = !isRealCDROM && [volumeType isEqualToString: FATVolumeType] && [workspace isFloppySizedVolumeAtPath: volumePath];
+	
+	//If the installer copied files to our C drive, or the source files are on an actual CDROM/floppy,
+	//then import the source files as a fake CD-ROM/floppy drive
+	if (isRealCDROM || isRealFloppy || [self _gameDidInstall])
 	{
 		BXDrive *importDrive = nil;
 		
-		//TODO: this is copypasta from _mountDrivesForSession, abstract it somewhere else
-		if ([[self gameProfile] installsFromFloppyDrive])
+		//If the source is an actual floppy disk, or this game needs to be installed off floppies,
+		//then import the source files as a floppy disk
+		if (isRealFloppy || [[self gameProfile] installMedium] == BXDriveFloppyDisk)
 		{
 			importDrive = [BXDrive floppyDriveFromPath: [self sourcePath] atLetter: @"A"];
 		}
+		//Otherwise, import the source files as a CD-ROM drive
 		else
 		{
 			importDrive = [BXDrive CDROMFromPath: [self sourcePath] atLetter: @"D"];
@@ -582,7 +604,8 @@
 		[self setTransferOperation: [self beginImportForDrive: importDrive]];
 	}
 	
-	//If the C drive is empty, then import the source files into it
+	//Otherwise, assume that the source files were the already-installed game:
+	//copy the source files themselves to drive C
 	else
 	{
 		//We need to copy the source path into a subfolder of drive C: do this as a regular file copy
@@ -600,7 +623,6 @@
 		//(This is easier than constructing a file transfer operation for every individual file)
 		else
 		{
-			NSFileManager *manager = [NSFileManager defaultManager];
 			[manager removeItemAtPath: [self rootDrivePath] error: nil];
 			BXDrive *importDrive = [BXDrive hardDriveFromPath: [self sourcePath] atLetter: @"C"];
 			[self setTransferOperation: [self beginImportForDrive: importDrive]];
@@ -625,6 +647,8 @@
 	
 	//That's all folks!
 	[self setImportStage: BXImportFinished];
+	//Bounce to notify the user that we're done
+	[NSApp requestUserAttention: NSInformationalRequest];
 }
 
 - (void) operationInProgress: (NSNotification *)notification
@@ -706,22 +730,16 @@
 //source path ahead of other drives.
 - (void) _mountDrivesForSession
 {
-	BXDrive *destinationDrive, *sourceDrive;
-	
-	destinationDrive = [BXDrive hardDriveFromPath: [self rootDrivePath] atLetter: @"C"];
+	//Mount our new empty gamebox as drive C
+	BXDrive *destinationDrive = [BXDrive hardDriveFromPath: [self rootDrivePath] atLetter: @"C"];
 	[self mountDrive: destinationDrive];
 	
-	if ([[self gameProfile] installsFromFloppyDrive])
-	{
-		sourceDrive = [BXDrive floppyDriveFromPath: [self sourcePath] atLetter: @"A"];
-	}
-	else
-	{
-		//NOTE: this should be CD-ROM, however if the game is already installed then
-		//the installer would try to write files back to drive D and fail because it's read-only.
-		//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARGH.
-		sourceDrive = [BXDrive hardDriveFromPath: [self sourcePath] atLetter: @"D"];
-	}
+	//Determine what type of media this game expects to be installed from
+	//(This will be BXDriveAutodetect if it doesn't care)
+	BXDriveType installMedium = [[self gameProfile] installMedium];
+	
+	//Then, create a drive of the appropriate type from the source files and mount away
+	BXDrive *sourceDrive = [BXDrive driveFromPath: [self sourcePath] atLetter: nil withType: installMedium];
 	[self mountDrive: sourceDrive];
 	
 	//Automount all currently mounted floppy and CD-ROM volumes

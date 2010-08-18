@@ -454,13 +454,6 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	if ([self isGamePackage])
 	{
 		NSImage *icon = [[self gamePackage] coverArt];
-		//Generate a new bootleg cover-art icon and save it to the game package
-		if (!icon)
-		{
-			icon = [[self class] bootlegCoverArtForGamePackage: [self gamePackage]
-													   withEra: BXUnknownEra];
-			[self setRepresentedIcon: icon];
-		}
 		return icon;
 	}
 	else return nil;

@@ -317,7 +317,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<object class="NSButton" id="556091039">
 								<reference key="NSNextResponder" ref="237116129"/>
-								<int key="NSvFlags">269</int>
+								<int key="NSvFlags">-2147483379</int>
 								<string key="NSFrame">{{595, 17}, {25, 25}}</string>
 								<reference key="NSSuperview" ref="237116129"/>
 								<bool key="NSEnabled">YES</bool>
@@ -1446,11 +1446,9 @@
 							<string>refreshFolders:</string>
 							<string>relaunch:</string>
 							<string>showMountPanel:</string>
-							<string>unmountDrive:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>

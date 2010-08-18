@@ -10,7 +10,7 @@
 #import "BXValueTransformers.h"
 #import "BXSession+BXFileManager.h"
 #import "BXProgramPanel.h"
-#import "BXimport.h"
+#import "BXImport.h"
 
 @implementation BXProgramPanelController
 @synthesize programList, programScroller;

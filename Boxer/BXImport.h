@@ -99,6 +99,9 @@ typedef NSUInteger BXImportStage;
 //Will be YES if we detected any installers for the source path, NO otherwise.
 - (BOOL) gameNeedsInstalling;
 
+//Generate a new bootleg cover-art icon and add it to the gamebox.
+//This icon will be based on the gamebox's name, and the age of the files being imported.
+- (void) generateBootlegIcon;
 
 #pragma mark -
 #pragma mark Import steps

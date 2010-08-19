@@ -6,9 +6,13 @@
  */
 
 
-//BXBlueprintPanel renders a custom blueprint appearance for views in the import process.
+//BXBlueprintPanel and friends render a custom blueprint appearance for views in the import process.
 
 #import <Cocoa/Cocoa.h>
 
 @interface BXBlueprintPanel : NSView
+@end
+
+
+@interface BXBlueprintTextFieldCell : NSTextFieldCell
 @end

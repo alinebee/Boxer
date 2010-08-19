@@ -9,23 +9,47 @@
 #import "BXImportFinishedPanelController.h"
 #import "BXAppController.h"
 #import "BXImportWindowController.h"
-#import "BXSession.h"
+#import "BXImport.h"
 #import "BXCoverArt.h"
 
 @implementation BXImportFinishedPanelController
-@synthesize controller;
+@synthesize controller, iconView;
+
+- (void) dealloc
+{
+	[self setIconView: nil], [iconView release];
+	[super dealloc];
+}
 
 + (NSSet *) keyPathsForValuesAffectingGameboxIcon
 {
 	return [NSSet setWithObject: @"controller.document.representedIcon"];
 }
+
+- (IBAction) addCoverArt: (id)sender
+{
+	NSImage *icon = [sender image];
+	if (icon != [self gameboxIcon])
+	{
+		if (icon)
+		{
+			[[controller document] setRepresentedIcon: [BXCoverArt coverArtWithImage: icon]];
+		}
+		else
+		{
+			[[controller document] generateBootlegIcon];
+		}		
+	}
+}
+
+//This asinine workaround is necessary because with an ordinary binding, NSImageView
+//doesn't bother checking the new value after it has set it, meaning it doesn't see
+//our placeholder image or rendered box art.
+//By making the mutator do nothing, and moving the mutator logic to the addCoverArt
+//action, we trick NSImageView into paying proper attention to what is going on.
+//FIXME: there has to be an easier way.
 - (void) setGameboxIcon: (NSImage *)icon
 {
-	if (icon)
-	{
-		[[controller document] setRepresentedIcon: [BXCoverArt coverArtWithImage: icon]];
-	}
-	else [[controller document] setRepresentedIcon: nil];	
 }
 
 - (NSImage *) gameboxIcon
@@ -49,11 +73,46 @@
 {
 	NSURL *packageURL = [NSURL fileURLWithPath: [[[controller document] gamePackage] bundlePath]];
 	
-	//Close ourselves down so that we won't appear as already representing this game
+	//Close down the import process finally.
 	[[controller document] close];
 	
-	//Open the newly-minted gamebox in a new Boxer process.
+	//Open the newly-minted gamebox in a DOS session.
 	[[NSApp delegate] openDocumentWithContentsOfURL: packageURL display: YES error: NULL];
+}
+
+
+#pragma mark -
+#pragma mark NSTextField delegate methods
+
+- (BOOL) control: (NSControl *)control textView: (NSTextView *)textView doCommandBySelector: (SEL)command
+{
+	//Cancel editing if the user presses the ESC key
+	if (command == @selector(cancelOperation:))
+	{
+		[control abortEditing];
+		return YES;
+	}
+	
+	//Commit editing if the user presses Enter or Tab
+	else if (command == @selector(insertNewline:) || command == @selector(insertTab:))
+	{
+		if ([[textView string] length])
+		{
+			[control validateEditing];
+			
+			//If the user tabbed, move focus to the next view; otherwise, clear the focus
+			NSView *nextView = nil;
+			if (command == @selector(insertTab:)) nextView = [control nextKeyView];
+				
+			[[control window] makeFirstResponder: nextView];
+		}
+		else
+		{
+			[control abortEditing];
+		}
+		return YES;
+	}
+	return NO;
 }
 
 @end

@@ -103,6 +103,13 @@
 		//If the import process has a file to represent, carry on with the default NSWindowController behaviour
 		return [super synchronizeWindowTitleWithDocumentName];
 	}
+	else if ([[self document] importStage] == BXImportFinished)
+	{
+		[[self window] setRepresentedFilename: @""];
+		[[self window] setTitle: NSLocalizedString(@"Import complete",
+												   @"Import window title once an import has finished.")];
+												   
+	}
 	else
 	{
 		//Otherwise, display a generic title

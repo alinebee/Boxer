@@ -91,4 +91,8 @@
 //or returns nil and populates outError with failure reason if unsuccessful.
 + (BXPackage *) createGameboxAtPath: (NSString *)path
 							  error: (NSError **)outError;
+
+//Returns an (attempt at an) OSX-safe filename from the provided name.
+//This will replace /, \ and : characters with dashes, and remove leading dots. 
++ (NSString *) validGameboxNameFromName: (NSString *)name;
 @end

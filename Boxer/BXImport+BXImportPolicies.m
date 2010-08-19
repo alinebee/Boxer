@@ -251,4 +251,15 @@
 	}
 	else return nil;	
 }
+
++ (NSString *) validGameboxNameFromName: (NSString *)name
+{
+	//Remove all leading dots, to prevent gameboxes from being hidden
+	NSString *strippedLeadingDot = [name stringByReplacingOccurrencesOfRegex: @"^\\.+" withString: @""];
+	
+	//Replace /, \ and : with dashes
+	NSString *sanitisedSlashes = [strippedLeadingDot stringByReplacingOccurrencesOfRegex: @"[/\\\\:]" withString: @"-"];
+	
+	return sanitisedSlashes;
+}
 @end

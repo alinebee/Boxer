@@ -15,10 +15,16 @@
 @interface BXImportFinishedPanelController : NSViewController
 {
 	IBOutlet BXImportWindowController *controller;
+	IBOutlet NSImageView *iconView;
 }
 
 //A reference to our window controller.
 @property (assign, nonatomic) BXImportWindowController *controller;
+
+//The image well that displays the gamebox icon.
+@property (retain, nonatomic) NSImageView *iconView;
+
+//The gamebox’s icon itself.
 @property (retain, nonatomic) NSImage *gameboxIcon;
 
 //Reveal the newly-minted gamebox in Finder.
@@ -27,4 +33,6 @@
 //Launch the newly-minted gamebox in a new Boxer process.
 - (IBAction) launchGamebox: (id)sender;
 
+//Called when the user drops an image onto the icon view.
+- (IBAction) addCoverArt: (id)sender;
 @end

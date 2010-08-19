@@ -8,6 +8,7 @@
 
 #import "BXBlueprintPanel.h"
 #import "NSView+BXDrawing.h"
+#import "NSBezierPath+MCAdditions.h"
 #import "BXGeometry.h"
 
 @implementation BXBlueprintPanel
@@ -92,6 +93,60 @@
 	
 	//Finally, draw the top and bottom shadows
 	[self _drawShadowInRect: dirtyRect];
+}
+
+@end
+
+
+@implementation BXBlueprintTextFieldCell
+
+- (BOOL) isOpaque
+{
+	return NO;
+}
+
+- (BOOL) drawsBackground
+{
+	return NO;
+}
+
+- (void) drawWithFrame: (NSRect)frame inView: (NSView *)controlView
+{
+	BOOL isFocused = [self showsFirstResponder] && [[controlView window] isKeyWindow];
+	CGFloat backgroundOpacity = (isFocused) ? 0.4f : 0.2f;
+	
+	NSColor *textColor = [NSColor whiteColor];
+	NSColor *backgroundColor = [NSColor colorWithCalibratedWhite: 0.0f alpha: backgroundOpacity];
+	
+	
+	//We draw ourselves with rounded corners, and a custom background and inner shadow
+	CGFloat cornerRadius = NSHeight(frame) / 2.0f;
+	NSBezierPath *background = [NSBezierPath bezierPathWithRoundedRect: frame
+															   xRadius: cornerRadius
+															   yRadius: cornerRadius];
+	
+	
+	NSShadow *innerShadow = [[NSShadow alloc] init];
+	[innerShadow setShadowColor: [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.66f]];
+	[innerShadow setShadowBlurRadius: 2.0f];
+	[innerShadow setShadowOffset: NSMakeSize(0.0f, -1.0f)];
+	
+	[NSGraphicsContext saveGraphicsState];
+		[backgroundColor set];
+		if (isFocused) NSSetFocusRingStyle(NSFocusRingBelow);
+		[background fill];
+		[background fillWithInnerShadow: innerShadow];
+	[NSGraphicsContext restoreGraphicsState];
+	
+	
+	NSTextView* textView = (NSTextView *)[[controlView window] fieldEditor: NO forObject: controlView];
+	
+	[self setTextColor: textColor];
+	[textView setInsertionPointColor: textColor];
+	
+	[self drawInteriorWithFrame: frame inView: controlView];
+	
+	[innerShadow release];
 }
 
 @end

@@ -37,6 +37,7 @@ typedef NSUInteger BXGameEra;
 	NSDictionary *driveLabelMappings;
 	NSArray *installerPatterns;
 	
+	BXGameEra gameEra;
 	BXDriveType installMedium;
 }
 
@@ -57,6 +58,9 @@ typedef NSUInteger BXGameEra;
 //Whether this game needs to be installed from a particular kind of drive (e.g. floppy-disk or CD-ROM).
 //If the game has no special requirements, will be BXDriveAutodetect
 @property (assign) BXDriveType installMedium;
+
+//The era of this game. Defaults to BXUnknownEra.
+@property (assign) BXGameEra gameEra;
 
 
 #pragma mark -

@@ -120,57 +120,6 @@
 #pragma mark -
 #pragma mark Drag-drop handlers
 
-/*
-- (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)sender
-{
-	NSPasteboard *pboard = [sender draggingPasteboard];
-	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-
-	if ([[pboard types] containsObject: NSFilenamesPboardType])
-	{
-		NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
-		for (NSString *path in filePaths)
-		{
-			//If any of the dropped files was not an image, reject the drop
-			if (![workspace file:path matchesTypes: [NSSet setWithObject: @"public.image"]])
-				return NSDragOperationNone;
-		}
-		
-		[[self iconView] setHighlighted: YES];
-		return NSDragOperationCopy;
-	}
-	else return NSDragOperationNone;
-}
-
-- (BOOL) performDragOperation: (id <NSDraggingInfo>)sender
-{	
-	[[self iconView] setHighlighted: NO];
-	NSPasteboard *pboard = [sender draggingPasteboard];
-	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	
-	if ([[pboard types] containsObject: NSFilenamesPboardType])
-	{
-        NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
-		for (NSString *path in filePaths)
-		{
-			if ([workspace file:path matchesTypes: [NSSet setWithObject: @"public.image"]])
-			{
-				NSImage *icon = [[NSImage alloc] initWithContentsOfFile: path];
-				if (icon) [[[self controller] document] setRepresentedIcon: icon];
-				[icon release];
-				return YES;
-			}
-		}
-	}
-	return NO;
-}
-
-- (void)draggingExited: (id <NSDraggingInfo>)sender
-{
-	[[self iconView] setHighlighted: NO];
-}
-*/
-
 @end
 
 

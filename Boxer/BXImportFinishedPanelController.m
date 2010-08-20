@@ -11,6 +11,7 @@
 #import "BXImportWindowController.h"
 #import "BXImport.h"
 #import "BXCoverArt.h"
+#import "NSWorkspace+BXFileTypes.h"
 
 @implementation BXImportFinishedPanelController
 @synthesize controller, iconView;
@@ -115,4 +116,130 @@
 	return NO;
 }
 
+
+#pragma mark -
+#pragma mark Drag-drop handlers
+
+/*
+- (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)sender
+{
+	NSPasteboard *pboard = [sender draggingPasteboard];
+	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+
+	if ([[pboard types] containsObject: NSFilenamesPboardType])
+	{
+		NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
+		for (NSString *path in filePaths)
+		{
+			//If any of the dropped files was not an image, reject the drop
+			if (![workspace file:path matchesTypes: [NSSet setWithObject: @"public.image"]])
+				return NSDragOperationNone;
+		}
+		
+		[[self iconView] setHighlighted: YES];
+		return NSDragOperationCopy;
+	}
+	else return NSDragOperationNone;
+}
+
+- (BOOL) performDragOperation: (id <NSDraggingInfo>)sender
+{	
+	[[self iconView] setHighlighted: NO];
+	NSPasteboard *pboard = [sender draggingPasteboard];
+	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+	
+	if ([[pboard types] containsObject: NSFilenamesPboardType])
+	{
+        NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
+		for (NSString *path in filePaths)
+		{
+			if ([workspace file:path matchesTypes: [NSSet setWithObject: @"public.image"]])
+			{
+				NSImage *icon = [[NSImage alloc] initWithContentsOfFile: path];
+				if (icon) [[[self controller] document] setRepresentedIcon: icon];
+				[icon release];
+				return YES;
+			}
+		}
+	}
+	return NO;
+}
+
+- (void)draggingExited: (id <NSDraggingInfo>)sender
+{
+	[[self iconView] setHighlighted: NO];
+}
+*/
+
+@end
+
+
+@implementation BXImportIconDropzone
+
+- (BOOL) isHighlighted
+{
+	return isDragTarget || [[self window] firstResponder] == self;
+}
+
+- (NSDragOperation) draggingEntered: (id < NSDraggingInfo >)sender
+{
+	NSDragOperation result	= [super draggingEntered: sender];
+	if (result != NSDragOperationNone)
+	{
+		isDragTarget = YES;
+		[self setNeedsDisplay: YES];
+	}
+	return result;
+}
+
+- (void) draggingExited: (id < NSDraggingInfo >)sender
+{
+	isDragTarget = NO;
+	[self setNeedsDisplay: YES];
+	[super draggingExited: sender];
+}
+
+- (BOOL) performDragOperation: (id < NSDraggingInfo >)sender
+{
+	isDragTarget = NO;
+	[self setNeedsDisplay: YES];
+	return [super performDragOperation: sender];
+}
+
+- (BOOL) resignFirstResponder
+{
+	if ([super resignFirstResponder])
+	{
+		[self setNeedsDisplay: YES];
+		return YES;
+	}
+	return NO;
+}
+
+- (void) drawRect: (NSRect)dirtyRect
+{
+	[NSGraphicsContext saveGraphicsState];
+	if ([self isHighlighted])
+	{
+		CGFloat borderRadius = 8.0f;
+		NSBezierPath *background = [NSBezierPath bezierPathWithRoundedRect: [self bounds]
+																   xRadius: borderRadius
+																   yRadius: borderRadius];
+		
+		NSColor *fillColor = [NSColor colorWithCalibratedRed: 0.67f
+													   green: 0.86f
+														blue: 0.93f
+													   alpha: 0.33f];
+		
+		[fillColor setFill];
+		[background fill];
+	}
+
+	[[self image] drawInRect: [self bounds]
+					fromRect: NSZeroRect
+				   operation: NSCompositeSourceOver
+					fraction: 1.0f];
+	 
+	[NSGraphicsContext restoreGraphicsState];
+}
 @end

@@ -102,8 +102,8 @@
 	NSRect insetFrame = NSInsetRect(frame, borderWidth / 2, borderWidth / 2);
 	
 	NSBezierPath *border = [NSBezierPath bezierPathWithRoundedRect: insetFrame
-															 xRadius: borderWidth
-															 yRadius: borderWidth];
+														   xRadius: borderWidth
+														   yRadius: borderWidth];
 	
 	[border setLineWidth: borderWidth];
 	[border setLineDash: pattern count: 2 phase: phase];

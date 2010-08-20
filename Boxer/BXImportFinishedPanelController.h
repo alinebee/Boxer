@@ -11,18 +11,19 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class BXImportIconDropzone;
 @class BXImportWindowController;
 @interface BXImportFinishedPanelController : NSViewController
 {
 	IBOutlet BXImportWindowController *controller;
-	IBOutlet NSImageView *iconView;
+	IBOutlet BXImportIconDropzone *iconView;
 }
 
 //A reference to our window controller.
 @property (assign, nonatomic) BXImportWindowController *controller;
 
 //The image well that displays the gamebox icon.
-@property (retain, nonatomic) NSImageView *iconView;
+@property (retain, nonatomic) BXImportIconDropzone *iconView;
 
 //The gamebox’s icon itself.
 @property (retain, nonatomic) NSImage *gameboxIcon;
@@ -35,4 +36,12 @@
 
 //Called when the user drops an image onto the icon view.
 - (IBAction) addCoverArt: (id)sender;
+@end
+
+@interface BXImportIconDropzone : NSImageView
+{
+	BOOL isDragTarget;
+}
+@property (readonly, assign) BOOL isHighlighted;
+
 @end

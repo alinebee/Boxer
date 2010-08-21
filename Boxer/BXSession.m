@@ -611,7 +611,7 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 #pragma mark Notifications
 
 - (void) programWillStart: (NSNotification *)notification
-{	
+{
 	//Don't set the active program if we already have one
 	//This way, we keep track of when a user launches a batch file and don't immediately discard
 	//it in favour of the next program the batch-file runs
@@ -623,6 +623,10 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 		//Hide the program picker after launching the default program 
 		if ([[self activeProgramPath] isEqualToString: [gamePackage targetPath]])
 		{
+			[NSObject cancelPreviousPerformRequestsWithTarget: [self DOSWindowController]
+													 selector: @selector(showProgramPanel:)
+													   object: self];
+			
 			[[self DOSWindowController] setProgramPanelShown: NO];
 		}
 	}
@@ -644,7 +648,7 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 - (void) didRunStartupCommands: (NSNotification *)notification {}
 
 - (void) didReturnToShell: (NSNotification *)notification
-{	
+{
 	//Clear the active program
 	[self setActiveProgramPath: nil];
 	[DOSWindowController synchronizeWindowTitleWithDocumentName];

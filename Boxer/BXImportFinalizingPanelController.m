@@ -45,14 +45,14 @@
 				float sizeInMB		= [transfer numBytes] / 1000000.0f;
 				float transferredMB	= [transfer bytesTransferred] / 1000000.0f;
 				
-				NSString *format = NSLocalizedString(@"Copying source files… (%1$.01f MB of %2$.01f MB)",
+				NSString *format = NSLocalizedString(@"Importing game files… (%1$.01f MB of %2$.01f MB)",
 													 @"Import progress description for copying source files stage. %1 is the number of MB transferred so far as a float, %2 is the total number of MB to be transferred as a float.");
 				
 				return [NSString stringWithFormat: format, transferredMB, sizeInMB, nil];
 			}
 			else
 			{
-				return NSLocalizedString(@"Copying source files…",
+				return NSLocalizedString(@"Importing game files…",
 										 @"Import progress description for copying source files stage, before size of file transfer is known.");
 			}
 			

@@ -21,8 +21,9 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="335"/>
+			<integer value="52"/>
 			<integer value="332"/>
+			<integer value="335"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -205,7 +206,7 @@
 				<string key="NSClassName">BXProgramPanel</string>
 			</object>
 			<object class="NSCustomView" id="515511690">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">274</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -233,12 +234,12 @@
 					<object class="NSButton" id="924340279">
 						<reference key="NSNextResponder" ref="515511690"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{129, 25}, {381, 18}}</string>
+						<string key="NSFrame">{{129, 25}, {442, 18}}</string>
 						<reference key="NSSuperview" ref="515511690"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="BGHUDButtonCell" key="NSCell" id="14580453">
-							<int key="NSCellFlags">-2080244224</int>
-							<int key="NSCellFlags2">0</int>
+							<int key="NSCellFlags">-2080244160</int>
+							<int key="NSCellFlags2">2048</int>
 							<string key="NSContents">Launch this program every time I open this gamebox.</string>
 							<reference key="NSSupport" ref="867845248"/>
 							<reference key="NSControlView" ref="924340279"/>
@@ -260,6 +261,7 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{640, 64}</string>
+				<reference key="NSSuperview"/>
 				<string key="NSClassName">BXProgramPanel</string>
 			</object>
 			<object class="NSCustomView" id="1029538789">

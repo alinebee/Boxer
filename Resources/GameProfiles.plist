@@ -231,7 +231,7 @@
 		</dict>
 		<dict>
 			<key>BXProfileDescription</key>
-			<string>Games that dislike expanded memory (but aren&apos;t fussy about anything else.)</string>
+			<string>Games that dislike expanded memory (but are not fussy about anything else.)</string>
 			<key>BXProfileConf</key>
 			<string>No EMS</string>
 			<key>BXProfileMatches</key>
@@ -245,7 +245,7 @@
 		</dict>
 		<dict>
 			<key>BXProfileDescription</key>
-			<string>Old games that need a 286-sped CPU for correct timing.</string>
+			<string>Old games that need a 286-speed CPU for correct timing.</string>
 			<key>BXProfileConf</key>
 			<string>AT speed</string>
 			<key>BXProfileMatches</key>
@@ -371,6 +371,7 @@
 				<string>Warlords 2</string>
 				<string>Master of Magic</string>
 				<string>Simcity 2000</string>
+				<string>Master of Orion 1</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
@@ -387,6 +388,7 @@
 				<string>warlord2.exe</string>
 				<string>magic.exe</string>
 				<string>sc2000.dat</string>
+				<string>orion.exe</string>
 			</array>
 		</dict>
 	</array>

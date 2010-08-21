@@ -10,6 +10,7 @@
 #import "BXSessionPrivate.h"
 
 #import "BXImportDOSWindowController.h"
+#import "BXDOSWindowController+BXRenderController.h"
 #import "BXImportWindowController.h"
 
 #import "BXAppController.h"
@@ -579,8 +580,11 @@
 	//Stop the installer process, and hand control back to the import window
 	[self cancel];
 	
-	//Close the program panel before handoff otherwise it scales weirdly
+	//Close the program panel before handoff, otherwise it scales weirdly
 	[[self DOSWindowController] setProgramPanelShown: NO];
+	
+	//Clear the DOS frame
+	[[self DOSWindowController] updateWithFrame: nil];
 	
 	[[self importWindowController] pickUpFromController: [self DOSWindowController]];
 	
@@ -790,8 +794,11 @@
 {
 	[super _startEmulator];
 	
-	//Once the emulation session finishes, continue importing
-	if ([self stageProgress] == BXImportRunningInstaller) [self finishInstaller];
+	//Once the emulation session finishes, continue importing (if we're not doing so already)
+	if (![emulator isCancelled] && [self importStage] == BXImportRunningInstaller)
+	{
+		[self finishInstaller];
+	}
 }
 
 //This uses a different (and simpler) mount behaviour than BXSession to prioritise the
@@ -872,8 +879,16 @@
 	NSFileManager *manager = [NSFileManager defaultManager];
 	NSDirectoryEnumerator *enumerator = [manager enumeratorAtPath: [self rootDrivePath]];
 	
-	//TODO: make this check more rigorous by testing for executables?
-	return ([enumerator nextObject] != nil);
+	while ([enumerator nextObject])
+	{
+		NSDictionary *attrs = [enumerator fileAttributes];
+		//If any actual files were created, then assume the game installed
+		//IMPLEMENTATION NOTE: We'd like to be more rigorous and check for
+		//executables, but some CD-ROM games only store configuration files
+		//on the hard drive
+		if ([attrs fileType] == NSFileTypeRegular) return YES;
+	}
+	return NO;
 }
 
 

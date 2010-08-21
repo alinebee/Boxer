@@ -29,7 +29,7 @@
 
 - (void) _drawGrilleInRect: (NSRect)dirtyRect
 {
-	NSImage *grille		= [NSImage imageNamed: @"Grille.png"];
+	NSImage *grille		= [NSImage imageNamed: @"Grille"];
 	NSSize patternSize	= [grille size];
 	NSRect panelRegion	= [self bounds];
 	

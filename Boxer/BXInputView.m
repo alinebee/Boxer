@@ -99,7 +99,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 
 - (void) _drawBrandInRect: (NSRect)dirtyRect
 {
-	NSImage *brand = [NSImage imageNamed: @"Brand.png"];
+	NSImage *brand = [NSImage imageNamed: @"Brand"];
 	[brand setFlipped: YES];
 	NSRect brandRegion;
 	brandRegion.size = [brand size];
@@ -117,7 +117,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 
 - (void) _drawBlueprintBrandInRect: (NSRect)dirtyRect
 {
-	NSImage *brand = [NSImage imageNamed: @"BrandWatermark.png"];
+	NSImage *brand = [NSImage imageNamed: @"BrandWatermark"];
 	[brand setFlipped: YES];
 	NSRect brandRegion;
 	brandRegion.size = [brand size];

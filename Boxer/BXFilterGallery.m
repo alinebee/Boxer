@@ -117,7 +117,7 @@
 {
 	if ([controlView illumination] > 0.0f)
 	{
-		NSImage *spotlight = [NSImage imageNamed: @"GallerySpotlight.png"];
+		NSImage *spotlight = [NSImage imageNamed: @"GallerySpotlight"];
 		[spotlight setFlipped: [controlView isFlipped]];
 		[spotlight drawInRect: frame
 					 fromRect: NSZeroRect

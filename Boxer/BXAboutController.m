@@ -32,7 +32,7 @@ enum {
 	NSWindow *theWindow		= [self window];
 	
 	//Apply our custom background image to the window
-	NSImage *theBackground	= [NSImage imageNamed: @"AboutBackground.png"];
+	NSImage *theBackground	= [NSImage imageNamed: @"AboutBackground"];
 	[theWindow setBackgroundColor: [NSColor colorWithPatternImage: theBackground]];
 	
 	//Lets the window be moved by clicking anywhere inside it

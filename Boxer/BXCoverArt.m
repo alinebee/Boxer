@@ -45,7 +45,7 @@
 
 + (NSImage *) shineForSize: (NSSize) iconSize
 { 
-	NSImage *shine = [NSImage imageNamed: @"BoxArtShine.png"];
+	NSImage *shine = [NSImage imageNamed: @"BoxArtShine"];
 	[shine setSize: iconSize];
 	return shine;
 }

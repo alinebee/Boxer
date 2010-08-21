@@ -46,7 +46,7 @@
 	
 	if (!icon)
 	{
-		icon = [[NSImage imageNamed: @"DropzoneTemplate.png"] copy];
+		icon = [[NSImage imageNamed: @"DropzoneTemplate"] copy];
 		[icon setFlipped: YES];
 		
 		NSColor *tint = [NSColor whiteColor];

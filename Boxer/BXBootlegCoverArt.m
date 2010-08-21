@@ -49,7 +49,7 @@
 + (NSImage *) topLayerForSize:	(NSSize)size
 {
 	if (size.width >= 128)
-		return [NSImage imageNamed: @"CDCover.png"];
+		return [NSImage imageNamed: @"CDCover"];
 	else
 		return nil;
 }
@@ -138,7 +138,7 @@
 + (NSImage *) topLayerForSize:	(NSSize)size
 {
 	if (size.width >= 128)
-		[NSImage imageNamed: @"35DisketteShine.png"];
+		[NSImage imageNamed: @"35DisketteShine"];
 	else
 		return nil;
 }

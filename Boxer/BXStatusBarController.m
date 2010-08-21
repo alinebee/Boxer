@@ -128,8 +128,8 @@
 	
 	NSString *panelButtonImage;
 	if ([statusBarControls isSelectedForSegment: BXStatusBarProgramPanelSegment])
-			panelButtonImage = @"PanelCollapseTemplate.png";
-	else	panelButtonImage = @"PanelExpandTemplate.png";
+			panelButtonImage = @"PanelCollapseTemplate";
+	else	panelButtonImage = @"PanelExpandTemplate";
 	[statusBarControls setImage: [NSImage imageNamed: panelButtonImage] forSegment: BXStatusBarProgramPanelSegment];
 	
 	NSString *lockButtonImage;

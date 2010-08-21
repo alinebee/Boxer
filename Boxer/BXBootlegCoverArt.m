@@ -45,7 +45,7 @@
 			nil];
 }
 
-+ (NSImage *) baseLayerForSize:	(NSSize)size	{ return [NSImage imageNamed: @"CDCase.icns"]; }
++ (NSImage *) baseLayerForSize:	(NSSize)size	{ return [NSImage imageNamed: @"CDCase"]; }
 + (NSImage *) topLayerForSize:	(NSSize)size
 {
 	if (size.width >= 128)
@@ -134,7 +134,7 @@
 
 @implementation BX35Diskette
 
-+ (NSImage *) baseLayerForSize:	(NSSize)size	{ return [NSImage imageNamed: @"35Diskette.icns"]; }
++ (NSImage *) baseLayerForSize:	(NSSize)size	{ return [NSImage imageNamed: @"35Diskette"]; }
 + (NSImage *) topLayerForSize:	(NSSize)size
 {
 	if (size.width >= 128)
@@ -155,7 +155,7 @@
 
 @implementation BX525Diskette
 
-+ (NSImage *) baseLayerForSize:	(NSSize)size	{ return [NSImage imageNamed: @"525Diskette.icns"]; }
++ (NSImage *) baseLayerForSize:	(NSSize)size	{ return [NSImage imageNamed: @"525Diskette"]; }
 + (NSImage *) topLayerForSize:	(NSSize)size	{ return nil; }
 + (CGFloat) lineHeightForSize:	(NSSize)size	{ return 16.0f; }
 + (CGFloat) fontSizeForSize:	(NSSize)size	{ return 12.0f; }

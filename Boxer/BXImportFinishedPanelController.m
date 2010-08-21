@@ -56,7 +56,7 @@
 - (NSImage *) gameboxIcon
 {
 	NSImage *icon = [[controller document] representedIcon];
-	if (!icon) icon = [NSImage imageNamed: @"package.icns"];
+	if (!icon) icon = [NSImage imageNamed: @"package"];
 	return icon;
 }
 

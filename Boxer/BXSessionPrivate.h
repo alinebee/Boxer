@@ -12,6 +12,7 @@
 
 @class BXEmulatorConfiguration;
 @class BXCloseAlert;
+@class BXDrive;
 @interface BXSession ()
 
 #pragma mark -
@@ -21,6 +22,8 @@
 @property (readwrite, retain, nonatomic) NSMutableDictionary *gameSettings;
 @property (readwrite, copy, nonatomic) NSString *activeProgramPath;
 @property (readwrite, retain, nonatomic) NSArray *drives;
+@property (readwrite, retain, nonatomic) NSDictionary *executables;
+@property (readwrite, retain, nonatomic) NSArray *documentation;
 
 @property (readwrite, assign, nonatomic, getter=isEmulating) BOOL emulating;
 

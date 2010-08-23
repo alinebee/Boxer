@@ -29,6 +29,8 @@
 	NSMutableDictionary *gameSettings;
 	
 	NSMutableArray *drives;
+	NSMutableDictionary *executables;
+	NSMutableArray *documentation;
 	
 	BXDOSWindowController *DOSWindowController;
 	
@@ -79,6 +81,12 @@
 //A cache of the emulator's drives.
 @property (readonly, retain, nonatomic) NSArray *drives;
 
+//A cache of the designated executables, organised by drive.
+@property (readonly, retain, nonatomic) NSDictionary *executables;
+
+//A cache of the documentation found in this session's gamebox.
+@property (readonly, retain, nonatomic) NSArray *documentation;
+
 //Whether the emulator is initialized and ready to receive instructions.
 @property (readonly, assign, nonatomic, getter=isEmulating) BOOL emulating;
 
@@ -88,6 +96,13 @@
 //Whether the document should be closed when the emulator process finishes.
 //Normally YES, may be overridden by BXSession subclasses. 
 @property (readonly, nonatomic) BOOL shouldCloseOnEmulatorExit;
+
+//The display-ready title for the currently-executing DOS process.
+//Will be nil if there is currently no process executing.
+@property (readonly, nonatomic) NSString *processDisplayName;
+
+//The icon for this DOS session, which corresponds to the icon of the session's gamebox.
+@property (copy, nonatomic) NSImage *representedIcon;
 
 
 #pragma mark -
@@ -118,23 +133,5 @@
 //Save our document-specific settings to disk. Called when the document is closed and when
 //the application is quit.
 - (void) synchronizeSettings;
-
-
-//Returns a display-ready title for the currently-executing DOS process.
-//Returns nil if there is currently no process executing.
-- (NSString *) processDisplayName;
-
-
-//The icon for this DOS session. Currently this corresponds exactly to the gamebox's cover art image.
-- (NSImage *)representedIcon;
-- (void) setRepresentedIcon: (NSImage *)icon;
-
-//Returns an array of dictionaries describing the available executables in the current gamebox (if any).
-//TODO: these are used solely by UI code, and could be replaced instead with value transformers referring
-//to properties on the current gamebox
-- (NSArray *) executables;
-
-//Returns an array of dictionaries describing the available documentation in the current gamebox (if any).
-- (NSArray *) documentation;
 
 @end

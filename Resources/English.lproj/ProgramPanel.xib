@@ -21,7 +21,6 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="52"/>
 			<integer value="332"/>
 			<integer value="335"/>
 		</object>
@@ -49,10 +48,6 @@
 			</object>
 			<object class="NSCustomObject" id="1004">
 				<string key="NSClassName">NSApplication</string>
-			</object>
-			<object class="NSObjectController" id="693023672">
-				<string key="NSObjectClassName">BXSession</string>
-				<object class="_NSManagedProxy" key="_NSManagedProxy"/>
 			</object>
 			<object class="NSArrayController" id="987806626">
 				<object class="NSMutableArray" key="NSDeclaredKeys">
@@ -215,6 +210,7 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{99, 10}, {443, 14}}</string>
 						<reference key="NSSuperview" ref="515511690"/>
+						<reference key="NSWindow"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="118197522">
 							<int key="NSCellFlags">68288064</int>
@@ -236,6 +232,7 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{129, 25}, {442, 18}}</string>
 						<reference key="NSSuperview" ref="515511690"/>
+						<reference key="NSWindow"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="BGHUDButtonCell" key="NSCell" id="14580453">
 							<int key="NSCellFlags">-2080244160</int>
@@ -262,6 +259,7 @@
 				</object>
 				<string key="NSFrameSize">{640, 64}</string>
 				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
 				<string key="NSClassName">BXProgramPanel</string>
 			</object>
 			<object class="NSCustomView" id="1029538789">
@@ -518,7 +516,7 @@
 				<string key="NSClassName">BXBlueprintPanel</string>
 			</object>
 			<object class="NSCustomView" id="80732392">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">266</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -527,6 +525,7 @@
 						<int key="NSvFlags">301</int>
 						<string key="NSFrame">{{4, 3}, {112, 24}}</string>
 						<reference key="NSSuperview" ref="80732392"/>
+						<reference key="NSWindow"/>
 						<int key="NSTag">4</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="943765406">
@@ -554,6 +553,8 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{120, 30}</string>
+				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
 				<string key="NSClassName">NSView</string>
 			</object>
 		</object>
@@ -591,22 +592,6 @@
 						</object>
 					</object>
 					<int key="connectionID">162</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">contentObject: representedObject</string>
-						<reference key="source" ref="693023672"/>
-						<reference key="destination" ref="1001"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="693023672"/>
-							<reference key="NSDestination" ref="1001"/>
-							<string key="NSLabel">contentObject: representedObject</string>
-							<string key="NSBinding">contentObject</string>
-							<string key="NSKeyPath">representedObject</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">172</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -680,22 +665,6 @@
 						<reference key="destination" ref="80732392"/>
 					</object>
 					<int key="connectionID">257</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">contentArray: selection.executables</string>
-						<reference key="source" ref="987806626"/>
-						<reference key="destination" ref="693023672"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="987806626"/>
-							<reference key="NSDestination" ref="693023672"/>
-							<string key="NSLabel">contentArray: selection.executables</string>
-							<string key="NSBinding">contentArray</string>
-							<string key="NSKeyPath">selection.executables</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">261</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -801,6 +770,38 @@
 					</object>
 					<int key="connectionID">384</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">sortDescriptors: executableSortDescriptors</string>
+						<reference key="source" ref="987806626"/>
+						<reference key="destination" ref="1001"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="987806626"/>
+							<reference key="NSDestination" ref="1001"/>
+							<string key="NSLabel">sortDescriptors: executableSortDescriptors</string>
+							<string key="NSBinding">sortDescriptors</string>
+							<string key="NSKeyPath">executableSortDescriptors</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">390</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">contentArray: panelExecutables</string>
+						<reference key="source" ref="987806626"/>
+						<reference key="destination" ref="1001"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="987806626"/>
+							<reference key="NSDestination" ref="1001"/>
+							<string key="NSLabel">contentArray: panelExecutables</string>
+							<string key="NSBinding">contentArray</string>
+							<string key="NSKeyPath">panelExecutables</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">393</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -866,12 +867,6 @@
 						<reference key="object" ref="987806626"/>
 						<reference key="parent" ref="0"/>
 						<string key="objectName">Available Programs</string>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">26</int>
-						<reference key="object" ref="693023672"/>
-						<reference key="parent" ref="0"/>
-						<string key="objectName">Session Mediator</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">52</int>
@@ -1204,7 +1199,6 @@
 					<string>247.IBPluginDependency</string>
 					<string>248.IBPluginDependency</string>
 					<string>25.IBPluginDependency</string>
-					<string>26.IBPluginDependency</string>
 					<string>273.IBPluginDependency</string>
 					<string>274.IBPluginDependency</string>
 					<string>299.IBEditorWindowLastContentRect</string>
@@ -1266,7 +1260,6 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>{{42, 392}, {640, 64}}</string>
@@ -1317,7 +1310,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">388</int>
+			<int key="maxID">393</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

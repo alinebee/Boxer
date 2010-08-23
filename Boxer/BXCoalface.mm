@@ -218,6 +218,28 @@ void boxer_driveDidUnmount(Bit8u driveIndex)
 	[emulator _syncDriveCache];
 }
 
+void boxer_didCreateLocalFile(const char *path, Bit8u driveIndex)
+{
+	NSString *filePath = [[NSFileManager defaultManager] stringWithFileSystemRepresentation: path
+																					 length: strlen(path)];
+	
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+	
+	BXDrive *drive = [emulator driveAtLetter: [emulator _driveLetterForIndex: driveIndex]];
+	[emulator _didCreateFileAtPath: filePath onDrive: drive];
+}
+
+void boxer_didRemoveLocalFile(const char *path, Bit8u driveIndex)
+{
+	NSString *filePath = [[NSFileManager defaultManager] stringWithFileSystemRepresentation: path
+																					 length: strlen(path)];
+	
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+	
+	BXDrive *drive = [emulator driveAtLetter: [emulator _driveLetterForIndex: driveIndex]];
+	[emulator _didRemoveFileAtPath: filePath onDrive: drive];
+}
+
 
 #pragma mark -
 #pragma mark Input-related functions

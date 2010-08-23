@@ -10,12 +10,22 @@
 #import "BXValueTransformers.h"
 #import "BXSession+BXFileManager.h"
 #import "BXProgramPanel.h"
+#import "BXPackage.h"
 #import "BXImport.h"
+#import "BXEmulator+BXDOSFileSystem.h"
+#import "NSString+BXPaths.h"
+
+
+@interface BXProgramPanelController ()
+@property (readwrite, retain, nonatomic) NSArray *panelExecutables;
+
+@end
 
 @implementation BXProgramPanelController
 @synthesize programList, programScroller;
 @synthesize defaultProgramPanel, programChooserPanel, noProgramsPanel;
 @synthesize finishImportingPanel, installerTipsPanel;
+@synthesize panelExecutables;
 
 - (void) dealloc
 {
@@ -25,8 +35,9 @@
 	[self setDefaultProgramPanel: nil], [defaultProgramPanel release];
 	[self setProgramChooserPanel: nil], [programChooserPanel release];
 	[self setNoProgramsPanel: nil],		[noProgramsPanel release];
-	[self setFinishImportingPanel: nil],	[finishImportingPanel release];
-	[self setInstallerTipsPanel: nil],		[installerTipsPanel release];
+	[self setFinishImportingPanel: nil],[finishImportingPanel release];
+	[self setInstallerTipsPanel: nil],	[installerTipsPanel release];
+	[self setPanelExecutables: nil],	[panelExecutables release];
 	
 	[super dealloc];
 }
@@ -59,6 +70,8 @@
 {
 	if ([self representedObject])
 	{
+		[[self representedObject] removeObserver: self forKeyPath: @"programPathsOnPrincipalDrive"];
+		[[self representedObject] removeObserver: self forKeyPath: @"gamePackage.targetPath"];
 		[[self representedObject] removeObserver: self forKeyPath: @"activeProgramPath"];
 	}
 	
@@ -66,6 +79,8 @@
 	
 	if (session)
 	{
+		[session addObserver: self forKeyPath: @"programPathsOnPrincipalDrive" options: 0 context: nil];
+		[session addObserver: self forKeyPath: @"gamePackage.targetPath" options: 0 context: nil];
 		[session addObserver: self forKeyPath: @"activeProgramPath" options: 0 context: nil];
 	}
 }
@@ -76,7 +91,13 @@
 						change: (NSDictionary *)change
 					   context: (void *)context
 {	
-	if ([keyPath isEqualToString: @"activeProgramPath"]) [self syncActivePanel];
+	if ([keyPath isEqualToString: @"programPathsOnPrincipalDrive"] ||
+		[keyPath isEqualToString: @"gamePackage.targetPath"])
+	{
+		[self syncPanelExecutables];
+	}
+	
+	[self syncActivePanel];
 }
 
 - (void) setView: (NSView *)view
@@ -98,9 +119,16 @@
 	}
 	else
 	{
-		if		([session activeProgramPath])	panel = defaultProgramPanel;
-		else if	([[session executables] count])	panel = programChooserPanel;
-		else									panel = noProgramsPanel;
+		//Show the 'make this program the default' panel only when the session's active program
+		//can be legally set as the default target (i.e., it's located within the gamebox
+		NSString *activePath = [session activeProgramPath];
+		if (activePath && [[session gamePackage] validateTargetPath: &activePath error: NULL])
+		{
+			panel = defaultProgramPanel;
+			
+		}
+		else if	([[self panelExecutables] count])	panel = programChooserPanel;
+		else										panel = noProgramsPanel;
 	}
 
 	[self setActivePanel: panel];
@@ -182,6 +210,69 @@
 	
 	if (isDefault)							[gamePackage setTargetPath: activeProgram];
 	else if ([self activeProgramIsDefault])	[gamePackage setTargetPath: nil];
+}
+
+
+#pragma mark -
+#pragma mark Executable list
+
+- (void) syncPanelExecutables
+{
+	BXSession *session = [self representedObject];
+	
+	NSString *defaultTarget	= [[session gamePackage] targetPath];
+	NSArray *programPaths	= [session programPathsOnPrincipalDrive];
+	
+	//Filter the program list to just the topmost files
+	NSArray *filteredPaths = [programPaths pathsFilteredToDepth: 0];
+	
+	//If the target program isn't in the list, and it is actually available in DOS, add it in too
+	if (defaultTarget && ![filteredPaths containsObject: defaultTarget] &&
+		[[session emulator] pathIsDOSAccessible: defaultTarget])
+		filteredPaths = [filteredPaths arrayByAddingObject: defaultTarget];
+	
+	NSMutableSet *programNames = [[NSMutableSet alloc] initWithCapacity: [filteredPaths count]];
+	NSMutableArray *listedPrograms = [[NSMutableArray alloc] initWithCapacity: [filteredPaths count]];
+	
+	for (NSString *path in filteredPaths)
+	{
+		BOOL isDefaultTarget = [path isEqualToString: defaultTarget];
+		
+		NSString *fileName = [path lastPathComponent];
+		
+		//If we already have an executable with this name,
+		//skip it so that we don't offer ambiguous choices (unless it's the default target)
+		if (isDefaultTarget || ![programNames containsObject: fileName])
+		{
+			NSDictionary *data	= [[NSDictionary alloc] initWithObjectsAndKeys:
+								   path, @"path",
+								   [NSNumber numberWithBool: isDefaultTarget], @"isDefault",
+								   nil];
+			
+			[programNames addObject: fileName];
+			[listedPrograms addObject: data];
+			[data release];
+		}
+	}
+	
+	[self setPanelExecutables: listedPrograms];
+	
+	[programNames release];
+	[listedPrograms release];
+}
+
+- (NSArray *) executableSortDescriptors
+{
+	NSSortDescriptor *sortDefaultFirst = [[NSSortDescriptor alloc] initWithKey: @"isDefault" ascending: NO];
+	
+	NSSortDescriptor *sortByFilename = [[NSSortDescriptor alloc] initWithKey: @"path.lastPathComponent"
+																   ascending: YES
+																	selector: @selector(caseInsensitiveCompare:)];
+	
+	return  [NSArray arrayWithObjects:
+			 [sortDefaultFirst autorelease],
+			 [sortByFilename autorelease],
+			 nil];
 }
 
 @end

@@ -75,6 +75,20 @@ bool localDrive::FileCreate(DOS_File * * file,char * name,Bit16u /*attributes*/)
 	/* Make the 16 bit device information */
 	*file=new localFile(name,hand);
 	(*file)->flags=OPEN_READWRITE;
+	
+	
+	//--Added 2010-08-21 by Alun Bestor to let Boxer monitor DOSBox's file operations
+	Bit8u i, driveIndex = 0;
+	for (i=0; i < DOS_DRIVES; i++)
+	{
+		if (Drives[i] == this)
+		{
+			driveIndex = i;
+			break;
+		}
+	}
+	boxer_didCreateLocalFile(temp_name, driveIndex);
+	//--End of modifications
 
 	return true;
 }
@@ -99,7 +113,7 @@ bool localDrive::FileOpen(DOS_File * * file,char * name,Bit32u flags) {
 	if (!strcmp(type, "rb+"))
 	{
 		//Figure out which drive letter we are for Boxer's benefit
-		Bit8u i, driveIndex;
+		Bit8u i, driveIndex = 0;
 		for (i=0; i < DOS_DRIVES; i++)
 		{
 			if (Drives[i] == this)
@@ -167,6 +181,19 @@ bool localDrive::FileUnlink(char * name) {
 	strcat(newname,name);
 	CROSS_FILENAME(newname);
 	char *fullname = dirCache.GetExpandName(newname);
+	
+	//--Added 2010-08-21 by Alun Bestor to let Boxer monitor DOSBox's file operations
+	Bit8u ii, driveIndex = 0;
+	for (ii=0; ii < DOS_DRIVES; ii++)
+	{
+		if (Drives[ii] == this)
+		{
+			driveIndex = ii;
+			break;
+		}
+	}
+	//--End of modifications
+	
 	if (unlink(fullname)) {
 		//Unlink failed for some reason try finding it.
 		struct stat buffer;
@@ -191,13 +218,24 @@ bool localDrive::FileUnlink(char * name) {
 			}
 		}
 		if(!found_file) return false;
-		if (!unlink(fullname)) {
+		//--Changed 2010-08-21 by Alun Bestor: this branch should happen if the retried delete *succeeded*, not failed
+		//if (!unlink(fullname)) {
+		if (unlink(fullname)) {
+		//--End of modifications
 			dirCache.DeleteEntry(newname);
+			
+			//--Added 2010-08-21 by Alun Bestor to let Boxer monitor DOSBox's file operations
+			boxer_didRemoveLocalFile(fullname, driveIndex);
+			//--End of modifications
 			return true;
 		}
 		return false;
 	} else {
 		dirCache.DeleteEntry(newname);
+		
+		//--Added 2010-08-21 by Alun Bestor to let Boxer monitor DOSBox's file operations
+		boxer_didRemoveLocalFile(fullname, driveIndex);
+		//--End of modifications
 		return true;
 	}
 }

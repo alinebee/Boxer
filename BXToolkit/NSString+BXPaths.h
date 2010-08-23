@@ -15,9 +15,6 @@
 //Performs a sort comparison based on the number of components in the file path, from shallowest to deepest.
 - (NSComparisonResult) pathDepthCompare: (NSString *)comparison;
 
-//Not currently used and should be moved to a different category.
-//- (NSString *) stringByReplacingCharactersInSet: (NSCharacterSet *)characterSet withString: (NSString *) replacement;
-
 //Returns an NSString path relative to another path:
 //This standardizes both paths, trims any shared parent path, and then adds "../"s as necessary.
 //e.g. [@"/Library/Frameworks" pathRelativeToPath: @"/Library/Caches"] will return @"../Frameworks".
@@ -26,5 +23,15 @@
 //A stricter version of hasPrefix:, which checks whether one path is contained inside another.
 //Note that this does no path standardization - you should do this first if needed.
 - (BOOL) isRootedInPath: (NSString *)rootPath;
+
+@end
+
+@interface NSArray (BXPaths)
+
+//Filters an array of paths to return only the shallowest members.
+//maxRelativeDepth is relative to the shallowest member:
+//maxRelativeDepth = 0 returns paths at the shallowest depth,
+//maxRelativeDepth = 1 returns paths at the shallowest and next-shallowest depth etc.
+- (NSArray *) pathsFilteredToDepth: (NSUInteger)maxRelativeDepth;
 
 @end

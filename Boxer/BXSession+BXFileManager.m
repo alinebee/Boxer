@@ -56,20 +56,32 @@
 #pragma mark -
 #pragma mark Helper class methods
 
-+ (NSArray *) executablesAtPath: (NSString *)path recurse: (BOOL)scanSubdirs
++ (NSArray *) executablesAtPath: (NSString *)path
+					scanSubdirs: (BOOL)scanSubdirs
+		   scanMountableFolders: (BOOL)scanMountableFolders;
 {
-	NSMutableArray *executables = [NSMutableArray arrayWithCapacity: 10];
+	NSMutableArray *foundExecutables = [NSMutableArray arrayWithCapacity: 10];
 	
 	NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtPath: path];
 	
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	NSSet *executableTypes = [BXAppController executableTypes];
+	NSSet *mountableFolderTypes = [BXAppController mountableFolderTypes];
 	
 	for (NSString *subPath in enumerator)
 	{
 		if (!scanSubdirs) [enumerator skipDescendents];
 		
-		NSDictionary *attrs = [enumerator fileAttributes];
+		NSDictionary *attrs	= [enumerator fileAttributes];
+		NSString *fullPath	= [path stringByAppendingPathComponent: subPath];
+		
+		//If this is a mountable folder and we don't want to scan inside them, skip its descendants
+		if (scanSubdirs && !scanMountableFolders && 
+			[[attrs fileType] isEqualToString: NSFileTypeDirectory] &&
+			[workspace file: fullPath matchesTypes: mountableFolderTypes])
+		{
+			[enumerator skipDescendents];
+		}
 		
 		//Skip directories
 		if (![[attrs fileType] isEqualToString: NSFileTypeRegular]) continue;
@@ -77,10 +89,9 @@
 		//Skip dot-hidden files (since these are probably just metadata for real files)
 		if ([[subPath lastPathComponent] hasPrefix: @"."]) continue;
 		
-		NSString *fullPath = [path stringByAppendingPathComponent: subPath];
-		if ([workspace file: fullPath matchesTypes: executableTypes]) [executables addObject: fullPath];
+		if ([workspace file: fullPath matchesTypes: executableTypes]) [foundExecutables addObject: fullPath];
 	}
-	return executables;
+	return foundExecutables;
 }
 
 + (NSString *) preferredMountPointForPath: (NSString *)filePath
@@ -206,6 +217,40 @@
 #pragma mark -
 #pragma mark File and folder mounting
 
++ (NSSet *) keyPathsForValuesAffectingPrincipalDrive
+{
+	return [NSSet setWithObject: @"executables"];
+}
+
+- (BXDrive *) principalDrive
+{
+	//Prioritise drive C, if it's available and has executables on it
+	if ([[executables objectForKey: @"C"] count]) return [emulator driveAtLetter: @"C"];
+	
+	//Otherwise, go through the drives in letter order and return the first one that has programs on it
+	NSArray *sortedDrives = [[self drives] sortedArrayUsingSelector: @selector(letterCompare:)];
+	
+	for (BXDrive *drive in sortedDrives)
+	{
+		NSString *letter = [drive letter];
+		if ([[executables objectForKey: letter] count]) return drive;
+	}
+	return nil;
+}
+
++ (NSSet *) keyPathsForValuesAffectingProgramPathsOnPrincipalDrive
+{
+	return [NSSet setWithObject: @"principalDrive"];
+}
+
+- (NSArray *) programPathsOnPrincipalDrive
+{
+	NSString *driveLetter = [[self principalDrive] letter];
+	if (driveLetter) return [executables objectForKey: driveLetter];
+	else return nil;
+}
+
+
 - (IBAction) refreshFolders:	(id)sender	{ [[self emulator] refreshMountedDrives]; }
 - (IBAction) showMountPanel:	(id)sender	{ [[BXMountPanelController controller] showMountPanelForSession: self]; }
 
@@ -228,6 +273,11 @@
 {
 	if ([self targetPath]) [self openFileAtPath: [self targetPath]];
 }
+
+
+
+
+
 
 - (BOOL) shouldUnmountDrives: (NSArray *)selectedDrives sender: (id)sender
 {
@@ -585,6 +635,25 @@
 		[self _startTrackingChangesAtPath: [drive path]];
 
 		if (showDriveNotifications) [[BXGrowlController controller] notifyDriveMounted: drive];
+		
+		//Determine what executables are stored on this drive, if it is public
+		if (![drive isHidden])
+		{
+			NSString *drivePath = [drive path];
+			NSArray *foundExecutables = [[self class] executablesAtPath: drivePath
+															scanSubdirs: YES
+												   scanMountableFolders: NO];
+			//TODO: filter out windows-only executables here
+			
+			//Only send notifications if there were any executables to be found
+			BOOL notify = ([foundExecutables count] > 0);
+			
+			//TODO: is there a better notification method we could use here?
+			if (notify) [self willChangeValueForKey: @"executables"];
+			[executables setObject: [NSMutableArray arrayWithArray: foundExecutables]
+							forKey: [drive letter]];
+			if (notify) [self didChangeValueForKey: @"executables"];
+		}
 	}
 }
 
@@ -603,8 +672,51 @@
 	
 		if (showDriveNotifications) [[BXGrowlController controller] notifyDriveUnmounted: drive];
 	}
+	
+	if ([executables objectForKey: [drive letter]])
+	{
+		[self willChangeValueForKey: @"executables"];
+		[executables removeObjectForKey: [drive letter]];
+		[self didChangeValueForKey: @"executables"];
+	}
 }
 
+//Pick up on the creation of new executables
+- (void) emulatorDidCreateFile: (NSNotification *)notification
+{
+	BXDrive *drive = [[notification userInfo] objectForKey: @"drive"];
+	NSString *path = [[notification userInfo] objectForKey: @"path"];
+	
+	//The drive is in our executables cache: check if the created file path was an executable
+	//(If so, add it to the executables cache) 
+	NSMutableArray *driveExecutables = [executables objectForKey: [drive letter]];
+	if (driveExecutables)
+	{
+		NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+		if ([workspace file: path matchesTypes: [BXAppController executableTypes]])
+		{
+			[self willChangeValueForKey: @"executables"];
+			[driveExecutables addObject: path];
+			[self didChangeValueForKey: @"executables"];
+		}
+	}
+}
+
+//Pick up on the deletion of executables
+- (void) emulatorDidRemoveFile: (NSNotification *)notification
+{
+	BXDrive *drive = [[notification userInfo] objectForKey: @"drive"];
+	NSString *path = [[notification userInfo] objectForKey: @"path"];
+	
+	//The drive is in our executables cache: remove any reference to the deleted file) 
+	NSMutableArray *driveExecutables = [executables objectForKey: [drive letter]];
+	if (driveExecutables && [driveExecutables containsObject: path])
+	{
+		[self willChangeValueForKey: @"executables"];
+		[driveExecutables removeObject: path];
+		[self didChangeValueForKey: @"executables"];
+	}
+}
 
 #pragma mark -
 #pragma mark Drive importing
@@ -616,17 +728,24 @@
 	{
 		NSString *gameboxPath = [[self gamePackage] bundlePath];
 		NSString *drivePath = [drive path];
-		
-		//The drive already exists within the gamebox, so of course it's bundled
+
 		if ([drivePath isRootedInPath: gameboxPath]) return YES;
-		
+	}
+	return NO;
+}
+
+- (BOOL) equivalentDriveIsBundled: (BXDrive *)drive
+{
+	if ([self isGamePackage])
+	{
 		NSString *importedName = [BXDriveImport nameForDrive: drive];
 		NSString *importedPath = [[[self gamePackage] resourcePath] stringByAppendingPathComponent: importedName];
-		
+	
 		//A file already exists with the same name as we would import it with,
 		//which probably means the drive was bundled earlier
 		NSFileManager *manager = [NSFileManager defaultManager];
-		if ([manager fileExistsAtPath: importedPath]) return YES;
+	
+		return [manager fileExistsAtPath: importedPath];
 	}
 	return NO;
 }
@@ -650,7 +769,9 @@
 	if ([drive isInternal] || [drive isHidden]) return NO;
 	
 	//...the drive is currently being imported or is already bundled in the current gamebox
-	if ([self driveIsImporting: drive] || [self driveIsBundled: drive]) return NO;
+	if ([self driveIsImporting: drive] ||
+		[self driveIsBundled: drive] ||
+		[self equivalentDriveIsBundled: drive]) return NO;
 	
 	//Otherwise, go for it!
 	return YES;
@@ -682,19 +803,6 @@
 		}
 	}
 	return NO;
-}
-
-
-- (void) operationWillStart: (NSNotification *)theNotification
-{
-}
-
-- (void) operationInProgress: (NSNotification *)theNotification
-{
-}
-
-- (void) operationWasCancelled: (NSNotification *)theNotification
-{
 }
 
 - (void) operationDidFinish: (NSNotification *)theNotification

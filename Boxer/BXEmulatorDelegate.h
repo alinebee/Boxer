@@ -77,4 +77,8 @@
 - (void) DOSDriveDidMount:		(NSNotification *)notification;
 - (void) DOSDriveDidUnmount:	(NSNotification *)notification;
 
+//Notifies the delegate that Boxer created/deleted a file.
+- (void) emulatorDidCreateFile: (NSNotification *)notification;
+- (void) emulatorDidRemoveFile: (NSNotification *)notification;
+
 @end

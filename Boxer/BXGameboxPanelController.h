@@ -6,15 +6,16 @@
  */
 
 
-//BXProgramMenuController manages the default program popup button in the Inspector panel. It
-//is responsible for populating the popup button menu with the available programs in the current
-//gamebox (if any) and synchronising its selection with the default program of the gamebox.
+//BXGameboxPanelController manages the gamebox panel of the Inspector window. Its primary concern
+//is the choose-a-default-program popup button: it is responsible for populating the popup button
+//menu with the available programs in the current gamebox (if any), and synchronising its selection
+//with the default program of the gamebox.
 
 #import <Cocoa/Cocoa.h>
 
 @class BXSession;
 
-@interface BXProgramMenuController : NSObject
+@interface BXGameboxPanelController : NSViewController
 {
 	IBOutlet NSPopUpButton *programSelector;
 	IBOutlet NSObjectController *sessionMediator;
@@ -40,9 +41,5 @@
 //(Re)populate the menu with the contents of programMenuItems. Called automatically whenever
 //the active session changes.
 - (void) syncMenuItems;
-
-//Returns a sorted array of NSMenuItems for the available programs in the gamebox.
-//Used internally by syncMenuItems.
-- (NSArray *) programMenuItems;
 
 @end

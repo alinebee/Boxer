@@ -42,7 +42,7 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 @synthesize activeProgramPath;
 @synthesize gameProfile;
 @synthesize gameSettings;
-@synthesize drives;
+@synthesize drives, executables, documentation;
 @synthesize emulating;
 
 
@@ -101,8 +101,11 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 		NSMutableDictionary *defaults	= [NSMutableDictionary dictionaryWithContentsOfFile: defaultsPath];
 		
 		[self setDrives: [NSMutableArray arrayWithCapacity: 10]];
+		[self setExecutables: [NSMutableDictionary dictionaryWithCapacity: 10]];
+		
 		[self setEmulator: [[[BXEmulator alloc] init] autorelease]];
 		[self setGameSettings: defaults];
+		
 		
 		importQueue = [[NSOperationQueue alloc] init];
 	}
@@ -118,7 +121,10 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	[self setGameSettings: nil],		[gameSettings release];
 	[self setTargetPath: nil],			[targetPath release];
 	[self setActiveProgramPath: nil],	[activeProgramPath release];
+	
 	[self setDrives: nil],				[drives release];
+	[self setExecutables: nil],			[executables release];
+	[self setDocumentation: nil],		[documentation release];
 		
 	[temporaryFolderPath release], temporaryFolderPath = nil;
 	
@@ -471,90 +477,46 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	}
 }
 
-- (NSArray *) executables
-{
-	NSWorkspace *workspace		= [NSWorkspace sharedWorkspace];
-	BXPackage *thePackage		= [self gamePackage];
-	
-	NSString *defaultTarget		= [[thePackage targetPath] stringByStandardizingPath];
-	NSArray *executablePaths	= [[thePackage executables] sortedArrayUsingSelector: @selector(pathDepthCompare:)];
-	NSMutableDictionary *executables = [NSMutableDictionary dictionaryWithCapacity: [executablePaths count]];
-	
-	for (NSString *path in executablePaths)
-	{
-		path = [path stringByStandardizingPath];
-		NSString *fileName	= [path lastPathComponent];
-		
-		//If we already have an executable with this name, skip it so we don't offer ambiguous choices
-		//TODO: this filtering should be done downstream in the UI controller, it's not our call
-		if (![executables objectForKey: fileName])
-		{
-			NSImage *icon		= [workspace iconForFile: path];
-			BOOL isDefault		= [path isEqualToString: defaultTarget];
-			
-			NSDictionary *data	= [NSDictionary dictionaryWithObjectsAndKeys:
-				path,	@"path",
-				icon,	@"icon",
-				[NSNumber numberWithBool: isDefault], @"isDefault",
-			nil];
-			
-			[executables setObject: data forKey: fileName];
-		}
-	}
-	NSArray *filteredExecutables = [executables allValues];
-	
-	
-	NSSortDescriptor *sortDefaultFirst = [[NSSortDescriptor alloc] initWithKey: @"isDefault" ascending: NO];
-	
-	NSSortDescriptor *sortByFilename = [[NSSortDescriptor alloc] initWithKey: @"path.lastPathComponent"
-																   ascending: YES
-																	selector: @selector(caseInsensitiveCompare:)];
-	
-	NSArray *sortDescriptors = [NSArray arrayWithObjects:
-								[sortDefaultFirst autorelease],
-								[sortByFilename autorelease],
-								nil];
-	
-	return [filteredExecutables sortedArrayUsingDescriptors: sortDescriptors];
-}
-
 
 - (NSArray *) documentation
 {
-	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
-	BXPackage *thePackage	= [self gamePackage];
-	
-	NSArray *docPaths = [[thePackage documentation] sortedArrayUsingSelector: @selector(pathDepthCompare:)];
-	NSMutableDictionary *documentation = [NSMutableDictionary dictionaryWithCapacity: [docPaths count]];
-	
-	for (NSString *path in docPaths)
+	//Generate our documentation cache the first time it is needed
+	if (!documentation)
 	{
-		path = [path stringByStandardizingPath];
-		NSString *fileName	= [path lastPathComponent];
+		NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
 		
-		//If we already have a document with this name, skip it so we don't offer ambiguous choices
-		//TODO: this filtering should be done downstream in the UI controller, it's not our call
-		if (![documentation objectForKey: fileName])
+		NSArray *docPaths = [[[self gamePackage] documentation] sortedArrayUsingSelector: @selector(pathDepthCompare:)];
+		
+		NSMutableSet *docNames = [[NSMutableSet alloc] initWithCapacity: [docPaths count]];
+
+		documentation = [[NSMutableArray alloc] initWithCapacity: [docPaths count]];
+		
+		for (NSString *path in docPaths)
 		{
-			NSImage *icon		= [workspace iconForFile: path];
-			NSDictionary *data	= [NSDictionary dictionaryWithObjectsAndKeys:
-				path,	@"path",
-				icon,	@"icon",
-			nil];
+			path = [path stringByStandardizingPath];
+			NSString *fileName = [path lastPathComponent];
 			
-			[documentation setObject: data forKey: fileName];
+			//If we already have a document with this name, skip it so we don't offer ambiguous choices
+			//TODO: this filtering should be done downstream in the UI controller, it's not our call
+			if (![docNames containsObject: fileName])
+			{
+				NSImage *icon		= [workspace iconForFile: path];
+				NSDictionary *data	= [NSDictionary dictionaryWithObjectsAndKeys:
+									   path,	@"path",
+									   icon,	@"icon",
+									   nil];
+				
+				[docNames addObject: fileName];
+				[documentation addObject: data];
+			}
 		}
+		[docNames release];
 	}
-	return [documentation allValues];
+	return documentation;
 }
 
 + (NSSet *) keyPathsForValuesAffectingIsGamePackage		{ return [NSSet setWithObject: @"gamePackage"]; }
 + (NSSet *) keyPathsForValuesAffectingRepresentedIcon	{ return [NSSet setWithObject: @"gamePackage.coverArt"]; }
-+ (NSSet *) keyPathsForValuesAffectingDocumentation		{ return [NSSet setWithObject: @"gamePackage.documentation"]; }
-+ (NSSet *) keyPathsForValuesAffectingExecutables
-{
-	return [NSSet setWithObjects: @"gamePackage.executables", @"gamePackage.targetPath", nil];
-}
 
 
 #pragma mark -

@@ -7,14 +7,22 @@
 
 
 //BXPackage represents a single Boxer gamebox and offers methods for retrieving and persisting
-//bundled drives, configuration files, documentation and target programs. It is based on NSBundle
-//but does not require that Boxer gameboxes use any standard OS X bundle folder structure.
-//(and indeed, gameboxes with a standard OS X bundle structure haven't been tested.)
+//bundled drives, configuration files and documentation. It is based on NSBundle but does not
+//require that Boxer gameboxes use any standard OS X bundle folder structure.
+//(and indeed, gameboxes with an OS X bundle structure haven't been tested.)
 
 //TODO: it is inappropriate to subclass NSBundle for representing a modifiable file package,
 //and we should instead be using an NSFileWrapper directory wrapper.
 
 #import <Cocoa/Cocoa.h>
+
+
+#pragma mark Gamebox-related error constants
+
+extern NSString * const BXGameboxErrorDomain;
+enum {
+	BXTargetPathOutsideGameboxError
+};
 
 
 #pragma mark -
@@ -57,8 +65,6 @@ typedef NSUInteger BXGameIdentifierType;
 
 @interface BXPackage : NSBundle
 {
-	NSArray *documentation;
-	NSArray *executables;
 	NSString *targetPath;
 	NSMutableDictionary *gameInfo;
 }
@@ -82,18 +88,18 @@ typedef NSUInteger BXGameIdentifierType;
 
 
 //An array of absolute file paths to documentation files found inside the gamebox.
-@property (readonly, retain, nonatomic) NSArray *documentation;
+@property (readonly, nonatomic) NSArray *documentation;
 
 //An array of absolute file paths to DOS executables found inside the gamebox.
-@property (readonly, retain, nonatomic) NSArray *executables;
+@property (readonly, nonatomic) NSArray *executables;
 
 //Arrays of paths to additional DOS drives discovered within the package.
-@property (readonly) NSArray *hddVolumes;
-@property (readonly) NSArray *cdVolumes;
-@property (readonly) NSArray *floppyVolumes;
+@property (readonly, nonatomic) NSArray *hddVolumes;
+@property (readonly, nonatomic) NSArray *cdVolumes;
+@property (readonly, nonatomic) NSArray *floppyVolumes;
 
 //Returns the path at which the configuration file is located (or would be, if it doesn’t exist.)
-@property (readonly) NSString *configurationFilePath;
+@property (readonly, nonatomic) NSString *configurationFilePath;
 
 
 //The path to the DOSBox configuration file for this package. Will be nil if one does not exist.
@@ -102,11 +108,11 @@ typedef NSUInteger BXGameIdentifierType;
 
 //The path to the default executable for this gamebox. Will be nil if the gamebox has no target executable.
 //This is stored internally as a symlink; setting this to nil will remove the symlink.
-@property (copy) NSString *targetPath;
+@property (copy, nonatomic) NSString *targetPath;
 
 //The cover art image for this gamebox. Will be nil if the gamebox has no custom cover art.
 //This is stored internally as the gamebox's OS X icon resource.
-@property (copy) NSImage *coverArt;
+@property (copy, nonatomic) NSImage *coverArt;
 
 
 #pragma mark -
@@ -123,6 +129,9 @@ typedef NSUInteger BXGameIdentifierType;
 
 #pragma mark -
 #pragma mark Instance methods
+
+//Returns whether the specified path is valid to be the default target of this gamebox
+- (BOOL) validateTargetPath: (id *)ioValue error: (NSError **)outError;
 
 //Retrieve all volumes matching the specified filetypes.
 - (NSArray *) volumesOfTypes: (NSSet *)fileTypes;

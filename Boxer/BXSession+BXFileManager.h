@@ -19,13 +19,26 @@
 
 @interface BXSession (BXFileManager) <BXEmulatorFileSystemDelegate, BXOperationDelegate>
 
+//The 'principal' drive of the session, whose executables we will display in the programs panel
+//This is normally drive C, but otherwise is the first available drive letter with programs on it.
+@property (readonly, nonatomic) BXDrive *principalDrive;
+
+//Returns an array of executable paths located on the 'principal' drive of the session (normally drive C).
+@property (readonly, nonatomic) NSArray *programPathsOnPrincipalDrive;
+
+
 #pragma mark -
 #pragma mark Helper class methods
 
-
 //Returns an array of all DOS/Windows executables found within the specified path.
-//If scanSubdirs is NO, the search will be restricted to the base path.
-+ (NSArray *) executablesAtPath: (NSString *)path recurse: (BOOL)scanSubdirs;
+//scanSubdirs determines whether the search will descend into subdirectories or
+//just stick with the base path.
+//scanMountableFolders determines whether the search will descend into any Boxer
+//mountable folders (.cdrom, .harddisk etc.) contained within the path. This setting
+//has no effect if scanSubdirs is NO.
++ (NSArray *) executablesAtPath: (NSString *)path
+					scanSubdirs: (BOOL)scanSubdirs
+		   scanMountableFolders: (BOOL)scanMountableFolders;
 
 //Returns the most appropriate base location for a drive to expose the specified path:
 //If path points to a disc image, that will be returned
@@ -60,14 +73,7 @@
 
 
 #pragma mark -
-#pragma mark Interface actions
-
-//Tells the emulator to flush its DOS drive caches to reflect changes in the OS X filesystem.
-//No longer used, since we explicitly listen for changes to the underlying filesystem and do this automatically.
-- (IBAction) refreshFolders:	(id)sender;
-
-//Display the mount-a-new-drive sheet in this session's window.
-- (IBAction) showMountPanel:	(id)sender;
+#pragma mark Launching programs
 
 //Open the represented object of the sender in DOS.
 - (IBAction) openInDOS:			(id)sender;
@@ -82,6 +88,13 @@
 
 #pragma mark -
 #pragma mark Mounting drives
+
+//Tells the emulator to flush its DOS drive caches to reflect changes in the OS X filesystem.
+//No longer used, since we explicitly listen for changes to the underlying filesystem and do this automatically.
+- (IBAction) refreshFolders:	(id)sender;
+
+//Display the mount-a-new-drive sheet in this session's window.
+- (IBAction) showMountPanel:	(id)sender;
 
 //Automount all ISO9660 CD-ROM volumes that are currently mounted in OS X.
 //Will not create new mounts for ones that are already mounted.
@@ -130,6 +143,10 @@
 
 //Returns whether the specified drive is located inside the session's gamebox.
 - (BOOL) driveIsBundled: (BXDrive *)drive;
+
+//Returns whether a drive with the same name is located inside the session's gamebox.
+//(which probably means the drive has been previously imported.)
+- (BOOL) equivalentDriveIsBundled: (BXDrive *)drive;
 
 //Returns whether the specified drive is currently being imported.
 - (BOOL) driveIsImporting: (BXDrive *)drive;

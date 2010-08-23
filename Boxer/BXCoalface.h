@@ -74,6 +74,10 @@ extern "C" {
 	void boxer_driveDidMount(Bit8u driveIndex);
 	void boxer_driveDidUnmount(Bit8u driveIndex);
 	
+	//Called from drive_local.cpp to notify Boxer when DOSBox has created or deleted a local file.
+	void boxer_didCreateLocalFile(const char *path, Bit8u driveIndex);
+	void boxer_didRemoveLocalFile(const char *path, Bit8u driveIndex);
+	
 	//Called from shell_misc.cpp to notify Boxer when a program or batchfile is executed.
 	void boxer_willExecuteFileAtDOSPath(const char *dosPath, Bit8u driveIndex);
 	void boxer_didExecuteFileAtDOSPath(const char *dosPath, Bit8u driveIndex);

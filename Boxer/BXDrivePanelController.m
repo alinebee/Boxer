@@ -284,7 +284,7 @@ enum {
 				[theItem setTitle: NSLocalizedString(@"Importing into gamebox…", @"Drive import menu item title, when selected drive(s) are already in the gamebox.")];
 				return NO;
 			}
-			else if ([session driveIsBundled: drive])
+			else if ([session driveIsBundled: drive] || [session equivalentDriveIsBundled: drive])
 			{
 				[theItem setTitle: NSLocalizedString(@"Included in gamebox", @"Drive import menu item title, when selected drive(s) are already in the gamebox.")];
 				return NO;

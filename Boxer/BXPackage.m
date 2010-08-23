@@ -28,6 +28,8 @@ NSString * const BXGameInfoFileName				= @"Game Info";
 NSString * const BXGameInfoFileExtension		= @"plist";
 NSString * const BXDocumentationFolderName		= @"Documentation";
 
+NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
+
 
 //When calculating a digest from the gamebox's EXEs, read only the first 64kb of each EXE.
 #define BXGameIdentifierEXEDigestStubLength 65536
@@ -38,8 +40,6 @@ NSString * const BXDocumentationFolderName		= @"Documentation";
 
 @interface BXPackage ()
 @property (readwrite, retain, nonatomic) NSDictionary *gameInfo;
-@property (readwrite, retain, nonatomic) NSArray *executables;
-@property (readwrite, retain, nonatomic) NSArray *documentation;
 
 //Arrays of paths to discovered files of particular types within the gamebox.
 //BXPackage's documentation and executables accessors call these internal methods and cache the results.
@@ -57,7 +57,6 @@ NSString * const BXDocumentationFolderName		= @"Documentation";
 
 
 @implementation BXPackage
-@synthesize documentation, executables;
 @synthesize gameInfo;
 
 + (NSSet *) documentationTypes
@@ -116,9 +115,7 @@ NSString * const BXDocumentationFolderName		= @"Documentation";
 
 - (void) dealloc
 {
-	[self setGameInfo: nil],		[gameInfo release];
-	[self setDocumentation: nil],	[documentation release];
-	[self setExecutables: nil],		[executables release];
+	[self setGameInfo: nil], [gameInfo release];
 	[super dealloc];
 }
 
@@ -191,10 +188,57 @@ NSString * const BXDocumentationFolderName		= @"Documentation";
 	}
 }
 
+- (BOOL) validateTargetPath: (id *)ioValue error: (NSError **)outError
+{
+	NSString *filePath = *ioValue;
+	NSFileManager *manager = [NSFileManager defaultManager];
+	
+	//If the file does not exist, show an error
+	if (![manager fileExistsAtPath: filePath])
+	{
+		if (outError)
+		{
+			NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+									  filePath, NSFilePathErrorKey,
+									  nil];
+			*outError = [NSError errorWithDomain: NSCocoaErrorDomain
+											code: NSFileNoSuchFileError
+										userInfo: userInfo];
+		}
+		return NO;
+	}
+	
+	//Reject target paths that are not located inside the gamebox
+	if (![filePath isRootedInPath: [self gamePath]])
+	{
+		if (outError)
+		{
+			NSString *format = NSLocalizedString(@"The file “%@” was not located inside this gamebox.",
+												 @"Error message shown when trying to set the target path of a gamebox to a file outside the gamebox. %@ is the display filename of the file in question.");
+			
+			NSString *displayName = [manager displayNameAtPath: filePath];
+			NSString *description = [NSString stringWithFormat: format, displayName, nil];
+			
+			NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+									  filePath, NSFilePathErrorKey,
+									  description, NSLocalizedDescriptionKey,
+									  nil];
+			
+			*outError = [NSError errorWithDomain: BXGameboxErrorDomain
+											code: BXTargetPathOutsideGameboxError
+										userInfo: userInfo];
+		}
+		return NO;
+	}
+	return YES;
+}
+
+
 - (NSString *) configurationFile
 {
 	return [self pathForResource: BXConfigurationFileName ofType: BXConfigurationFileExtension];
 }
+
 
 - (void) setConfigurationFile: (NSString *)filePath
 {
@@ -233,18 +277,14 @@ NSString * const BXDocumentationFolderName		= @"Documentation";
 	[[NSWorkspace sharedWorkspace] setIcon: image forFile: [self bundlePath] options: 0];
 }
 
-//Lazily discover and cache executables the first time we need them
 - (NSArray *) executables
 {
-	if (executables == nil) [self setExecutables: [self _foundExecutables]];
-	return executables;
+	return [self _foundExecutables];
 }
 
-//Lazily discover and cache documentation the first time we need it
 - (NSArray *) documentation
 {
-	if (documentation == nil) [self setDocumentation: [self _foundDocumentation]];
-	return documentation;
+	return [self _foundDocumentation];
 }
 
 - (NSDictionary *) gameInfo
@@ -325,8 +365,6 @@ NSString * const BXDocumentationFolderName		= @"Documentation";
 
 - (void) refresh
 {
-	[self setDocumentation: nil];
-	[self setExecutables: nil];
 	[self setGameInfo: nil];
 }
 
@@ -397,6 +435,7 @@ NSString * const BXDocumentationFolderName		= @"Documentation";
 - (NSString *) _generatedIdentifierOfType: (BXGameIdentifierType *)type
 {
 	//If the gamebox contains executables, generate an identifier based on their hash.
+	//TODO: move the choice of executables off to BXSession
 	NSArray *foundExecutables = [self executables];
 	if ([foundExecutables count])
 	{

@@ -110,7 +110,7 @@
 	BXGameProfile *detectedProfile = nil;
 	
 	NSMutableArray *detectedInstallers	= nil;
-	NSArray *executables				= nil;
+	NSArray *foundExecutables			= nil;
 	NSString *preferredInstaller		= nil;
 	NSString *mountedVolumePath			= nil;
 	
@@ -133,16 +133,16 @@
 	}
 	
 	//Now, autodetect the game and installers from the selected path
-	detectedProfile	= [BXGameProfile detectedProfileForPath: path searchSubfolders: YES];
-	executables		= [[self class] executablesAtPath: path recurse: YES];
+	detectedProfile		= [BXGameProfile detectedProfileForPath: path searchSubfolders: YES];
+	foundExecutables	= [[self class] executablesAtPath: path scanSubdirs: YES scanMountableFolders: YES];
 	
-	if ([executables count])
+	if ([foundExecutables count])
 	{
 		//Scan the list of executables for installers
 		detectedInstallers = [NSMutableArray arrayWithCapacity: 10];
 		NSUInteger numWindowsExecutables = 0;
 		
-		for (NSString *executablePath in executables)
+		for (NSString *executablePath in foundExecutables)
 		{
 			//Exclude windows-only programs, but note how many we've found
 			if ([workspace isWindowsOnlyExecutableAtPath: executablePath])
@@ -179,7 +179,7 @@
 		}
 		
 		//If no installers were found, check if this was a windows-only game
-		else if (numWindowsExecutables == [executables count])
+		else if (numWindowsExecutables == [foundExecutables count])
 		{
 			if (outError) *outError = [BXImportWindowsOnlyError errorWithSourcePath: path userInfo: nil];
 			//Eject any volume that we mounted before we go
@@ -886,7 +886,7 @@
 		//IMPLEMENTATION NOTE: We'd like to be more rigorous and check for
 		//executables, but some CD-ROM games only store configuration files
 		//on the hard drive
-		if ([attrs fileType] == NSFileTypeRegular) return YES;
+		if ([[attrs fileType] isEqualToString: NSFileTypeRegular]) return YES;
 	}
 	return NO;
 }

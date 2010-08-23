@@ -77,10 +77,12 @@
 	NSString *joiner;
 	NSString *ellipsis;
 	NSUInteger maxComponents;
+	BOOL useFilesystemDisplayPath;
 }
 @property (copy) NSString *joiner;
 @property (copy) NSString *ellipsis;
 @property (assign) NSUInteger maxComponents;
+@property (assign) BOOL useFilesystemDisplayPath;
 
 - (id) initWithJoiner: (NSString *)joinString
 			 ellipsis: (NSString *)ellipsisString

@@ -19,14 +19,6 @@
     else				return NSOrderedSame;
 }
 
-/*
-- (NSString *) stringByReplacingCharactersInSet: (NSCharacterSet *)characterSet withString: (NSString *) replacement
-{
-	NSArray *parts = [self componentsSeparatedByCharactersInSet: characterSet];
-	return [parts componentsJoinedByString: replacement];
-}
-*/
-
 - (NSString *) pathRelativeToPath: (NSString *)basePath
 {
 	//First, standardize both paths
@@ -66,6 +58,33 @@
 	
 	//Now test whether the last component in the root path is equal to the equivalent in our own path
 	return [[components objectAtIndex: lastIndex] isEqualToString: [rootComponents lastObject]];
+}
+
+@end
+
+
+@implementation NSArray (BXPaths)
+
+- (NSArray *) pathsFilteredToDepth: (NSUInteger)maxRelativeDepth
+{
+	//IMPLEMENTATION NOTE: this could be optimised in several ways, e.g. by discarding as we sort,
+	//then filtering the remainder; or by sorting first, determining the max depth, then jumping
+	//to the middle of the array and working our way back/forward till we meet the cutoff point.
+	
+	NSArray *sortedPaths = [self sortedArrayUsingSelector: @selector(pathDepthCompare:)];
+	NSMutableArray *filteredPaths = [NSMutableArray arrayWithCapacity: [sortedPaths count]];
+	
+	NSInteger maxDepth = -1;
+	for (NSString *path in sortedPaths)
+	{
+		NSInteger pathDepth = [[path pathComponents] count];
+		if (maxDepth == -1) maxDepth = pathDepth + maxRelativeDepth;
+		
+		if (pathDepth <= maxDepth) [filteredPaths addObject: path];
+		//Stop looking once we get beyond the maximum depth
+		else break;
+	}
+	return filteredPaths;
 }
 
 @end

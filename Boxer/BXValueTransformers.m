@@ -228,7 +228,7 @@
 
 
 @implementation BXDisplayPathTransformer
-@synthesize joiner, ellipsis, maxComponents;
+@synthesize joiner, ellipsis, maxComponents, useFilesystemDisplayPath;
 + (Class) transformedValueClass			{ return [NSString class]; }
 + (BOOL) allowsReverseTransformation	{ return NO; }
 
@@ -241,8 +241,9 @@
 		[self setJoiner: joinString];
 		[self setEllipsis: ellipsisString];
 		[self setMaxComponents: components];
+		[self setUseFilesystemDisplayPath: YES];
 	}
-	return self;	
+	return self;
 }
 
 - (id) initWithJoiner: (NSString *)joinString maxComponents: (NSUInteger)components
@@ -252,15 +253,25 @@
 				  maxComponents: components];
 }
 
+- (NSArray *) _componentsForPath: (NSString *)path
+{
+	NSArray *components = nil;
+	if (useFilesystemDisplayPath)
+	{
+		components	= [[NSFileManager defaultManager] componentsToDisplayForPath: path];
+	}
+	
+	//If NSFileManager couldn't derive display names for this path,
+	//or we disabled filesystem display paths, just use ordinary path components
+	if (!components) components = [path pathComponents];
+
+	return components;
+}
+
 - (NSString *) transformedValue: (NSString *)path
 {
-	NSFileManager *manager	= [NSFileManager defaultManager];
-	NSArray *components		= [manager componentsToDisplayForPath: path];
-	
-	//If NSFileManager couldn't derive display names for this path, just use ordinary path components
-	if (!components) components = [path pathComponents];
-	
-	NSUInteger count		= [components count];
+	NSArray *components = [self _componentsForPath: path];
+	NSUInteger count = [components count];
 	BOOL shortened = NO;
 	
 	if (maxComponents > 0 && count > maxComponents)
@@ -281,6 +292,7 @@
 	[super dealloc];
 }
 @end
+
 
 #pragma mark -
 #pragma mark Image transformers

@@ -277,8 +277,8 @@ enum {
 }
 
 
-//Drive and filesystem introspection
-//----------------------------------
+#pragma mark -
+#pragma mark Drive and filesystem introspection
 
 - (NSArray *) mountedDrives
 {
@@ -401,11 +401,7 @@ enum {
 	return [dosDrive stringByAppendingString: dosPath];
 }
 
-
-//Methods for performing filesystem tasks
-//---------------------------------------
-
-- (BXDrive *) currentDrive			{ return [driveCache objectForKey: [self currentDriveLetter]]; }
+- (BXDrive *) currentDrive { return [driveCache objectForKey: [self currentDriveLetter]]; }
 - (NSString *) currentDriveLetter
 {
 	if ([self isExecuting])
@@ -440,8 +436,9 @@ enum {
 #pragma mark -
 #pragma mark Private methods
 
-//Translating between Boxer and DOSBox drives
-//-------------------------------------------
+
+#pragma mark -
+#pragma mark Translating between Boxer and DOSBox drives
 
 //Used internally to match DOS drive letters to the DOSBox drive array
 - (NSUInteger)_indexOfDriveLetter: (NSString *)driveLetter
@@ -499,8 +496,10 @@ enum {
 	else return nil;
 }
 
-//Adding and removing new DOSBox drives
-//-------------------------------------
+
+#pragma mark -
+#pragma mark Adding and removing new DOSBox drives
+
 
 //Registers a new drive with DOSBox and adds it to the drive list.
 - (BOOL) _addDOSBoxDrive: (DOS_Drive *)drive atIndex: (NSUInteger)index
@@ -730,9 +729,35 @@ enum {
 	[self didChangeValueForKey: @"mountedDrives"];
 }
 
+- (void) _didCreateFileAtPath: (NSString *)filePath onDrive: (BXDrive *)drive
+{
+	//Post a notification to whoever's listening
+	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+							  filePath, @"path",
+							  drive, @"drive",
+							  nil];
+	
+	[self _postNotificationName: @"BXEmulatorDidCreateFileNotification"
+			   delegateSelector: @selector(emulatorDidCreateFile:)
+					   userInfo: userInfo];	
+}
 
-//Filesystem validation
-//---------------------
+- (void) _didRemoveFileAtPath: (NSString *)filePath onDrive: (BXDrive *)drive
+{
+	//Post a notification to whoever's listening
+	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+							  filePath, @"path",
+							  drive, @"drive",
+							  nil];
+	
+	[self _postNotificationName: @"BXEmulatorDidRemoveFileNotification"
+			   delegateSelector: @selector(emulatorDidRemoveFile:)
+					   userInfo: userInfo];	
+}
+
+
+#pragma mark -
+#pragma mark Filesystem validation
 
 - (BOOL) _DOSBoxDriveInUseAtIndex: (NSUInteger)index
 {

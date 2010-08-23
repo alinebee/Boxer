@@ -16,8 +16,28 @@
 
 @interface BXEmulator (BXDOSFileSystem)
 
-//Class methods for reporting accepted values
-//-------------------------------------------
+#pragma mark -
+#pragma mark Properties
+
+@property (readonly, nonatomic) NSArray *mountedDrives;
+
+//The current DOS drive.
+@property (readonly, nonatomic) BXDrive *currentDrive;
+
+//The letter of the current drive.
+@property (readonly, nonatomic) NSString *currentDriveLetter;
+
+//The DOS path to the current working directory.
+@property (readonly, nonatomic) NSString *currentWorkingDirectory;
+
+//The local filesystem path to the current working directory on the current drive.
+//Returns the drive's base path if Boxer cannot 'see into' the drive (e.g. the drive is on a disk image.)
+//Returns nil if the drive does not exist on the local filesystem (e.g. it is a DOSBox-internal drive.)
+@property (readonly, nonatomic) NSString *pathOfCurrentWorkingDirectory;
+
+
+#pragma mark -
+#pragma mark Helper class methods
 
 + (NSArray *) driveLetters;			//all drive letters in order, including reserved letters
 + (NSArray *) floppyDriveLetters;	//letters appropriate for floppy drives
@@ -26,8 +46,8 @@
 + (NSSet *) dosFileExclusions;		//Filenames to hide from DOS directory listings
 
 
-//Instance methods for mounting drives
-//------------------------------------
+#pragma mark -
+#pragma mark Mounting and unmounting drives
 
 //Mount the specified drive as a new DOS drive, autodetecting the appropriate drive letter if needed.
 //Returns the drive, updated to match the chosen drive letter, or nil if the drive could not be mounted.
@@ -51,11 +71,8 @@
 - (NSString *) preferredLetterForDrive: (BXDrive *)drive;
 
 
-//Methods for introspecting DOS mounts and OS X paths 
-//---------------------------------------------------
-
-//Returns an unsorted array of all mounted drives.
-- (NSArray *)mountedDrives;
+#pragma mark -
+#pragma mark Converting paths to/from DOSBox
 
 //Returns the drive mounted at the specified letter, or nil if no drive is mounted at that letter.
 - (BXDrive *)driveAtLetter: (NSString *)driveLetter;
@@ -82,23 +99,8 @@
 - (NSString *) DOSPathForPath: (NSString *)path onDrive: (BXDrive *)drive;
 
 
-//Returns a BXDrive record for the current drive.
-- (BXDrive *) currentDrive;
-
-//Returns the letter of the current drive.
-- (NSString *) currentDriveLetter;
-
-//Returns the DOS path to the current working directory.
-- (NSString *) currentWorkingDirectory;
-
-//Returns the local filesystem path to the current working directory on the current drive.
-//Returns the drive's base path if Boxer cannot 'see into' the drive (e.g. the drive is on a disk image.)
-//Returns nil if the drive does not exist on the local filesystem (e.g. it is a DOSBox-internal drive.)
-- (NSString *) pathOfCurrentWorkingDirectory;
-
-
-//Filesystem validation
-//---------------------
+#pragma mark -
+#pragma mark Filesystem validation
 
 //Returns whether the specified path is safe for DOS programs to access (i.e. not a system folder)
 + (BOOL) pathIsSafeToMount: (NSString *)thePath;
@@ -123,8 +125,8 @@ class DOS_Drive;
 @interface BXEmulator (BXDOSFileSystemInternals)
 
 
-//Translating between Boxer and DOSBox drives
-//-------------------------------------------
+#pragma mark -
+#pragma mark Translating between Boxer and DOSBox drives
 
 //Returns the DOSBox drive index for a specified drive letter and vice-versa.
 - (NSUInteger)_indexOfDriveLetter: (NSString *)driveLetter;
@@ -142,8 +144,8 @@ class DOS_Drive;
 - (NSString *)_filesystemPathForDOSPath: (const char *)dosPath atIndex: (NSUInteger)driveIndex;
 
 
-//Adding and removing new DOSBox drives
-//-------------------------------------
+#pragma mark -
+#pragma mark Adding and removing DOSBox drives
 
 //Registers a new drive with DOSBox and adds it to the drive list. Returns YES if the drive was successfully added,
 //or NO if there was an error (e.g. there was already a drive at that index).
@@ -175,8 +177,8 @@ class DOS_Drive;
 - (void) _removeDriveFromCache: (BXDrive *)drive;
 
 
-//Filesystem validation
-//---------------------
+#pragma mark -
+#pragma mark Filesystem validation and notifications
 
 //Returns whether the specified drive is being used by DOS programs.
 //Currently, this means whether any files are open on that drive.
@@ -192,6 +194,9 @@ class DOS_Drive;
 
 //Returns whether to allow the file at the specified path to be written to or modified by DOS, via the specified drive.
 - (BOOL) _shouldAllowWriteAccessToPath: (NSString *)filePath onDrive: (BXDrive *)drive;
+
+- (void) _didCreateFileAtPath: (NSString *)filePath onDrive: (BXDrive *)drive;
+- (void) _didRemoveFileAtPath: (NSString *)filePath onDrive: (BXDrive *)drive;
 
 @end
 

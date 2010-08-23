@@ -17,8 +17,8 @@
 	
 	if ([session isGamePackage])
 	{
-		NSString *format = NSLocalizedString(	@"Find %@ at Mobygames",
-												@"Help menu item for searching Mobygames: %@ is the display name of the current DOS session.");
+		NSString *format = NSLocalizedString(@"Find %@ at Mobygames",
+											 @"Help menu item for searching Mobygames: %@ is the display name of the current DOS session.");
 		return [NSString stringWithFormat: format, [session displayName], nil];
 	}
 	else
@@ -33,8 +33,8 @@
 	
 	if ([session isGamePackage])
 	{
-		NSString *format = NSLocalizedString(	@"Find %@ at ReplacementDocs",
-												@"Help menu item for searching ReplacementDocs: %@ is the display name of the current DOS session.");
+		NSString *format = NSLocalizedString(@"Find %@ at ReplacementDocs",
+											 @"Help menu item for searching ReplacementDocs: %@ is the display name of the current DOS session.");
 		return [NSString stringWithFormat: format, [session displayName], nil];
 	}
 	else
@@ -93,10 +93,9 @@
 		NSArray *docs = [self documentation];
 		if ([docs count] > 0)
 		{
-			NSString *heading = [NSString stringWithFormat:	NSLocalizedString(
-									@"%@ Documentation:",
-									@"Heading for game documentation in help menu. %@ is the display name of the current DOS session."),
-									[docSession displayName], nil]; 
+			NSString *format = NSLocalizedString(@"%@ Documentation:",
+												 @"Heading for game documentation in help menu. %@ is the display name of the current DOS session.");
+			NSString *heading = [NSString stringWithFormat:	format, [docSession displayName], nil]; 
 			
 			[menu addItem: [NSMenuItem separatorItem]];
 			[menu addItemWithTitle: heading action: nil keyEquivalent: @""];

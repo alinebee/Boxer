@@ -23,6 +23,8 @@
 	IBOutlet NSView *installerTipsPanel;
 	IBOutlet NSCollectionView *programList;
 	IBOutlet NSScrollView *programScroller;
+	
+	NSArray *panelExecutables;
 }
 
 
@@ -48,6 +50,13 @@
 @property (readonly, nonatomic) NSString *labelForToggle;
 
 
+//An array of {@path, @isDefault} pairs representing executables to display in the program panel.
+@property (readonly, retain, nonatomic) NSArray *panelExecutables;
+
+//An array of descriptors for consumers to sort panelExecutables with
+@property (readonly, retain, nonatomic) NSArray *executableSortDescriptors;
+
+
 #pragma mark -
 #pragma mark Synchronising subview state
 
@@ -56,5 +65,8 @@
 
 //Synchronises the enabled state of the program chooser buttons.
 - (void) syncProgramButtonStates;
+
+//Regenerates the list of displayed executables from the session's executables.
+- (void) syncPanelExecutables;
 
 @end

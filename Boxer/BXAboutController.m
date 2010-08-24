@@ -18,9 +18,9 @@ enum {
 
 @implementation BXAboutController
 
-+ (BXAboutController *) controller
++ (id) controller
 {
-	static BXAboutController *singleton = nil;
+	static id singleton = nil;
 
 	if (!singleton) singleton = [[self alloc] initWithWindowNibName: @"About"];
 	return singleton;

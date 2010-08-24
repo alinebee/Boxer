@@ -14,6 +14,6 @@
 
 //Provides a singleton instance of the window controller which stays retained for the lifetime
 //of the application. BXAboutController should always be accessed from this singleton.
-+ (BXAboutController *) controller;
++ (id) controller;
 
 @end

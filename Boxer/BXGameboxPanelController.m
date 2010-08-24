@@ -85,6 +85,10 @@ enum {
 						change: (NSDictionary *)change
 					   context: (void *)context
 {
+	//TODO: there is no real need to synchronize the entire menu structure whenever these change;
+	//instead, we could optimize and only synchronize when the menu is displayed.
+	//This could lead the popup button title to become out of date, but in that case syncSelection
+	//could create a 'dummy' item just for the target path.
 	if		([keyPath isEqualToString: @"content.executables"])				[self syncMenuItems];
 	else if ([keyPath isEqualToString: @"content.gamePackage.targetPath"])	[self syncSelection];
 }
@@ -148,7 +152,6 @@ enum {
 
 #pragma mark -
 #pragma mark Program menu syncing
-
 
 - (void) syncMenuItems
 {

@@ -24,6 +24,9 @@
 		9F20C28E11E5D8B4005AF541 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28D11E5D8B4005AF541 /* QTKit.framework */; };
 		9F20C29711E5DA68005AF541 /* Sparkle.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28A11E5D848005AF541 /* Sparkle.framework */; };
 		9F2140FF0F59F28000A5A183 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F2140FE0F59F28000A5A183 /* QuartzCore.framework */; };
+		9F24D2361224336E009C1817 /* Welcome.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F24D2351224336E009C1817 /* Welcome.xib */; };
+		9F24D24D122439E0009C1817 /* BXWelcomeWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F24D24C122439E0009C1817 /* BXWelcomeWindowController.m */; };
+		9F24D25012243C9A009C1817 /* BXWelcomeBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F24D24F12243C9A009C1817 /* BXWelcomeBackgroundView.m */; };
 		9F25C4E212130B5E0025CB2C /* BrandWatermark.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F25C4E112130B5E0025CB2C /* BrandWatermark.png */; };
 		9F25C52712130E030025CB2C /* BXImportDOSWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F25C52612130E030025CB2C /* BXImportDOSWindowController.m */; };
 		9F2AC6D710EFE14300CFFF72 /* CDCover.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F2AC6D510EFE14300CFFF72 /* CDCover.png */; };
@@ -337,6 +340,11 @@
 		9F20C28A11E5D848005AF541 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
 		9F20C28D11E5D8B4005AF541 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = "/Volumes/Macintosh HD/System/Library/Frameworks/QTKit.framework"; sourceTree = "<absolute>"; };
 		9F2140FE0F59F28000A5A183 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
+		9F24D2351224336E009C1817 /* Welcome.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Welcome.xib; sourceTree = "<group>"; };
+		9F24D24B122439E0009C1817 /* BXWelcomeWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXWelcomeWindowController.h; sourceTree = "<group>"; };
+		9F24D24C122439E0009C1817 /* BXWelcomeWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXWelcomeWindowController.m; sourceTree = "<group>"; };
+		9F24D24E12243C9A009C1817 /* BXWelcomeBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXWelcomeBackgroundView.h; sourceTree = "<group>"; };
+		9F24D24F12243C9A009C1817 /* BXWelcomeBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXWelcomeBackgroundView.m; sourceTree = "<group>"; };
 		9F25C1FD1212BB450025CB2C /* BXSessionPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXSessionPrivate.h; sourceTree = "<group>"; };
 		9F25C4E112130B5E0025CB2C /* BrandWatermark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BrandWatermark.png; sourceTree = "<group>"; };
 		9F25C52512130E030025CB2C /* BXImportDOSWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImportDOSWindowController.h; sourceTree = "<group>"; };
@@ -859,6 +867,7 @@
 				9F27133610C1253E0003CB58 /* DOS window */,
 				9F27136610C127F90003CB58 /* Inspector panel */,
 				9F9A4C9E10F67CEA00E61965 /* Preferences panel */,
+				9F24D2491224394D009C1817 /* Welcome wagon */,
 				9F496E3E108EEB9800282261 /* Alerts */,
 				9F496E3F108EEBB200282261 /* UI helpers */,
 				9F496E3C108EEAD700282261 /* UI controllers */,
@@ -1032,6 +1041,17 @@
 			name = Rendering;
 			sourceTree = "<group>";
 		};
+		9F24D2491224394D009C1817 /* Welcome wagon */ = {
+			isa = PBXGroup;
+			children = (
+				9F24D24B122439E0009C1817 /* BXWelcomeWindowController.h */,
+				9F24D24C122439E0009C1817 /* BXWelcomeWindowController.m */,
+				9F24D24E12243C9A009C1817 /* BXWelcomeBackgroundView.h */,
+				9F24D24F12243C9A009C1817 /* BXWelcomeBackgroundView.m */,
+			);
+			name = "Welcome wagon";
+			sourceTree = "<group>";
+		};
 		9F27133610C1253E0003CB58 /* DOS window */ = {
 			isa = PBXGroup;
 			children = (
@@ -1156,6 +1176,7 @@
 				9F45A1BB109C3C3900593456 /* About.xib */,
 				9F59DEDD10B01743008DBBC1 /* ProgramPanel.xib */,
 				9F45A46A109C9A0400593456 /* MountPanelOptions.xib */,
+				9F24D2351224336E009C1817 /* Welcome.xib */,
 			);
 			name = XIBs;
 			sourceTree = "<group>";
@@ -1835,6 +1856,7 @@
 				9FA9E256121FD5BA006E20C4 /* DropzoneTemplate.pdf in Resources */,
 				9FA9E281121FD874006E20C4 /* PanelExpandTemplate.pdf in Resources */,
 				9FA9E282121FD874006E20C4 /* PanelCollapseTemplate.pdf in Resources */,
+				9F24D2361224336E009C1817 /* Welcome.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2068,6 +2090,8 @@
 				9FC8B073121807AD004F6DA2 /* NSView+BXDrawing.m in Sources */,
 				9FC8B16B12182586004F6DA2 /* BXImportFinalizingPanelController.m in Sources */,
 				9FC8B2E812186171004F6DA2 /* BXImportFinishedPanelController.m in Sources */,
+				9F24D24D122439E0009C1817 /* BXWelcomeWindowController.m in Sources */,
+				9F24D25012243C9A009C1817 /* BXWelcomeBackgroundView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

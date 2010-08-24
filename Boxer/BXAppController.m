@@ -7,16 +7,21 @@
 
 
 #import "BXAppController.h"
+
 #import "BXAboutController.h"
 #import "BXInspectorController.h"
 #import "BXPreferencesController.h"
+#import "BXWelcomeWindowController.h"
+#import "BXDOSWindowController.h"
+
 #import "BXSession+BXFileManager.h"
 #import "BXImport.h";
 #import "BXEmulator.h";
-#import "BXDOSWindowController.h"
+
 #import "BXValueTransformers.h"
 #import "BXGrowlController.h"
 #import "NSString+BXPaths.h"
+
 #import "BXThemes.h"
 #import <BGHUDAppKit/BGThemeManager.h>
 
@@ -212,6 +217,9 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	
 	if ([arguments containsObject: BXActivateOnLaunchParam]) 
 		[NSApp activateIgnoringOtherApps: YES];
+	
+	//Display the welcome window at startup, if no documents were opened
+	if (![[self documents] count]) [self orderFrontWelcomeWindow: self];
 }
 
 - (void) applicationWillTerminate: (NSNotification *)notification
@@ -419,6 +427,12 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 #pragma mark -
 #pragma mark Actions and action helper methods
+
+- (IBAction) orderFrontWelcomeWindow: (id)sender
+{
+	[[[self currentSession] DOSWindowController] exitFullScreen: sender];
+	[[BXWelcomeWindowController controller] showWindow: nil];
+}
 
 - (IBAction) orderFrontImportGamePanel: (id)sender
 {

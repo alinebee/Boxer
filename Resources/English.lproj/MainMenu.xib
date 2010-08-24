@@ -48,7 +48,7 @@
 				<string key="NSClassName">BXDockTileController</string>
 			</object>
 			<object class="NSMenu" id="605083824">
-				<string key="NSTitle">SDLMain</string>
+				<string key="NSTitle">Main Menu</string>
 				<object class="NSMutableArray" key="NSMenuItems">
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<object class="NSMenuItem" id="251795308">
@@ -230,6 +230,7 @@
 									<reference key="NSOnImage" ref="569538535"/>
 									<reference key="NSMixedImage" ref="489554260"/>
 									<string key="NSAction">submenuAction:</string>
+									<int key="NSTag">1</int>
 									<object class="NSMenu" key="NSSubmenu" id="1026570903">
 										<string key="NSTitle">Open Recent</string>
 										<object class="NSMutableArray" key="NSMenuItems">
@@ -975,6 +976,14 @@
 									<reference key="NSOnImage" ref="569538535"/>
 									<reference key="NSMixedImage" ref="489554260"/>
 								</object>
+								<object class="NSMenuItem" id="253492764">
+									<reference key="NSMenu" ref="540791426"/>
+									<string key="NSTitle">Welcome to Boxer</string>
+									<string key="NSKeyEquiv"/>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="569538535"/>
+									<reference key="NSMixedImage" ref="489554260"/>
+								</object>
 								<object class="NSMenuItem" id="538778010">
 									<reference key="NSMenu" ref="540791426"/>
 									<string key="NSTitle">Inspector</string>
@@ -1688,6 +1697,14 @@
 					</object>
 					<int key="connectionID">1870</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">orderFrontWelcomeWindow:</string>
+						<reference key="source" ref="935372999"/>
+						<reference key="destination" ref="253492764"/>
+					</object>
+					<int key="connectionID">1872</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -1729,7 +1746,7 @@
 							<reference ref="605111885"/>
 						</object>
 						<reference key="parent" ref="0"/>
-						<string key="objectName">MainMenu</string>
+						<string key="objectName">Main Menu</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">56</int>
@@ -1866,6 +1883,7 @@
 							<reference ref="476483409"/>
 							<reference ref="987765231"/>
 							<reference ref="538778010"/>
+							<reference ref="253492764"/>
 						</object>
 						<reference key="parent" ref="293253799"/>
 					</object>
@@ -2533,6 +2551,11 @@
 						<reference key="object" ref="408921711"/>
 						<reference key="parent" ref="176076355"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1871</int>
+						<reference key="object" ref="253492764"/>
+						<reference key="parent" ref="540791426"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -2684,6 +2707,7 @@
 					<string>1841.IBPluginDependency</string>
 					<string>1856.IBPluginDependency</string>
 					<string>1869.IBPluginDependency</string>
+					<string>1871.IBPluginDependency</string>
 					<string>196.IBPluginDependency</string>
 					<string>196.ImportedFromIB2</string>
 					<string>283.IBPluginDependency</string>
@@ -2795,7 +2819,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{336, 636}, {143, 23}}</string>
+					<string>{{284, 616}, {143, 23}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2903,12 +2927,13 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
-					<string>{{207, 626}, {142, 73}}</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<integer value="1"/>
+					<string>{{207, 606}, {200, 93}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
 					<string>{{0, 699}, {339, 20}}</string>
@@ -2950,7 +2975,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1870</int>
+			<int key="maxID">1872</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2966,6 +2991,7 @@
 							<string>orderFrontAboutPanel:</string>
 							<string>orderFrontImportGamePanel:</string>
 							<string>orderFrontPreferencesPanel:</string>
+							<string>orderFrontWelcomeWindow:</string>
 							<string>revealInFinder:</string>
 							<string>sendEmail:</string>
 							<string>showDonationPage:</string>
@@ -2975,6 +3001,7 @@
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -3007,6 +3034,7 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>exitFullScreen:</string>
+							<string>showProgramPanel:</string>
 							<string>toggleFilterType:</string>
 							<string>toggleFullScreen:</string>
 							<string>toggleFullScreenWithZoom:</string>
@@ -3015,6 +3043,7 @@
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -3039,7 +3068,7 @@
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>BXInputController</string>
-							<string>NSView</string>
+							<string>BXInputView</string>
 							<string>NSView</string>
 							<string>BXProgramPanelController</string>
 							<string>NSView</string>
@@ -3203,6 +3232,14 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
+					<string key="className">BXInputView</string>
+					<string key="superclassName">NSView</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">Boxer/BXInputView.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">BXProgramPanelController</string>
 					<string key="superclassName">NSViewController</string>
 					<object class="NSMutableDictionary" key="outlets">
@@ -3210,6 +3247,8 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>defaultProgramPanel</string>
+							<string>finishImportingPanel</string>
+							<string>installerTipsPanel</string>
 							<string>noProgramsPanel</string>
 							<string>programChooserPanel</string>
 							<string>programList</string>
@@ -3217,6 +3256,8 @@
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSView</string>
+							<string>NSView</string>
 							<string>NSView</string>
 							<string>NSView</string>
 							<string>NSView</string>
@@ -3270,8 +3311,8 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>openInDOS:</string>
 							<string>refreshFolders:</string>
+							<string>relaunch:</string>
 							<string>showMountPanel:</string>
-							<string>unmountDrive:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -3292,6 +3333,13 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">Boxer/BXSession.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXSession</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">Boxer/BXSessionPrivate.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -3431,6 +3479,13 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">UKKQueue/UKMainThreadProxy.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">NSView</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">BXToolkit/NSView+BXDrawing.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

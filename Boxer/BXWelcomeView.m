@@ -71,7 +71,7 @@
 - (NSRect) titleRectForBounds: (NSRect)theRect
 {
 	//Position the title to occupy the bottom quarter of the button.
-	theRect.origin.y = 72;
+	theRect.origin.y = 80;
 	return theRect;
 }
 
@@ -97,7 +97,7 @@
 	
 	NSRect spotlightFrame;
 	spotlightFrame.size = [spotlight size];
-	spotlightFrame.origin.y = 32;
+	spotlightFrame.origin.y = 36;
 	
 	[spotlight drawInRect: spotlightFrame
 				 fromRect: NSZeroRect

@@ -81,15 +81,37 @@
 	[self setHighlightsBy: NSNoCellMask];
 }
 
+- (void) _drawSpotlightWithFrame: (NSRect)frame inView: (NSView *)controlView withAlpha: (CGFloat)alpha
+{
+	NSImage *spotlight = [NSImage imageNamed: @"GallerySpotlight"];
+	
+	[spotlight setFlipped: [controlView isFlipped]];
+	
+	[spotlight drawInRect: frame
+				 fromRect: NSZeroRect
+				operation: NSCompositePlusLighter
+				 fraction: alpha];
+}
+
+- (NSFont *) _labelFont
+{
+	//Render the text in bold if this button is selected or the user is pressing the button
+	if ([self state] || [self isHighlighted])
+		return [NSFont boldSystemFontOfSize: 0];
+	else
+		return [NSFont systemFontOfSize: 0];
+}
+
+- (NSColor *) _textColor
+{
+	//Render the text in white if this button is selected
+	return ([self state]) ? [NSColor whiteColor] : [NSColor lightGrayColor];
+}
+
 - (NSAttributedString *) attributedTitle
 {
-	NSFont *font;
-	NSColor *textColor;
-	
-	//Render the text in white if this button is selected
-	textColor = ([self state]) ? [NSColor whiteColor] : [NSColor lightGrayColor];
-	//Render the text in bold if this button is selected or the user is pressing the button
-	font = ([self state] || [self isHighlighted]) ? [NSFont boldSystemFontOfSize: 0] : [NSFont systemFontOfSize: 0];
+	NSFont *font = [self _labelFont];
+	NSColor *textColor = [self _textColor];
 	
 	NSShadow *textShadow = [[NSShadow new] autorelease];	
 	[textShadow setShadowOffset: NSMakeSize(0.0f, -1.0f)];
@@ -117,12 +139,7 @@
 {
 	if ([controlView illumination] > 0.0f)
 	{
-		NSImage *spotlight = [NSImage imageNamed: @"GallerySpotlight"];
-		[spotlight setFlipped: [controlView isFlipped]];
-		[spotlight drawInRect: frame
-					 fromRect: NSZeroRect
-					operation: NSCompositePlusLighter
-					 fraction: [controlView illumination]];
+		[self _drawSpotlightWithFrame: frame inView: controlView withAlpha: [controlView illumination]];
 	}
 	[super drawWithFrame: frame inView: controlView];
 }
@@ -137,12 +154,12 @@
 		NSColor *shade = [NSColor colorWithCalibratedWhite: 0.0f alpha: shadeLevel];
 		
 		image = [[image copy] autorelease];
+		NSRect bounds;
+		bounds.origin = NSZeroPoint;
+		bounds.size = [image size];
 		[image lockFocus];
-			[NSGraphicsContext saveGraphicsState];
-				[[NSGraphicsContext currentContext] setCompositingOperation: NSCompositeSourceAtop];
-				[shade set];
-				[NSBezierPath fillRect: frame];
-			[NSGraphicsContext restoreGraphicsState];
+			[shade set];
+			NSRectFillUsingOperation(bounds, NSCompositeSourceAtop);
 		[image unlockFocus];
 	}
 	[super drawImage: image withFrame: frame inView: controlView];

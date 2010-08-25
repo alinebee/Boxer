@@ -22,4 +22,7 @@
 //of the application. The controller should always be accessed from this singleton.
 + (id) controller;
 
+//Open the URL represented by the sending menu item. Called by items in the Open Recent popup button.
+- (IBAction) openRecentDocument: (NSMenuItem *)sender;
+
 @end

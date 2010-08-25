@@ -12,10 +12,15 @@
 //TODO: determine this from NIB content.
 #define BXWelcomeWindowBorderThickness 32.0f
 
-#define BXRecentDocumentsMenuTag 1
+#define BXDocumentStartTag 1
+#define BXDocumentEndTag 2
 
 @implementation BXWelcomeWindowController
 @synthesize openRecentButton;
+
+#pragma mark -
+#pragma mark Initialization and deallocation
+
 
 + (id) controller
 {
@@ -34,44 +39,56 @@
 - (void) windowDidLoad
 {
 	[[self window] setContentBorderThickness: BXWelcomeWindowBorderThickness + 1 forEdge: NSMinYEdge];
+}
 
-	/*
-	NSMenu *fileMenu = [[[NSApp mainMenu] itemAtIndex: 1] submenu];
-	NSMenu *recentDocumentsMenu = [[fileMenu itemWithTag: BXRecentDocumentsMenuTag] submenu];
+
+#pragma mark -
+#pragma mark Open Recent menu
+
+- (IBAction) openRecentDocument: (NSMenuItem *)sender
+{
+	NSURL *url = [sender representedObject];
 	
-	NSPopUpButtonCell *recentButtonCell = [[self openRecentButton] cell];
-	
-	NSMenuItem *titleItem = [[NSMenuItem alloc] init];
-	[titleItem setTitle: [recentButtonCell itemTitleAtIndex: 0]];
-	
-	[recentButtonCell setMenu: [[recentDocumentsMenu copy] autorelease]];
-	[recentButtonCell setUsesItemFromMenu: NO];
-	[recentButtonCell setMenuItem: titleItem];
-	
-	[titleItem release];
-	 */
+	[[NSApp delegate] openDocumentWithContentsOfURL: url display: YES error: NULL];
 }
 
 - (void) menuWillOpen: (NSMenu *)menu
 {
-	//Fill the Open Recent dropdown with the contents of the corresponding Open Recent app menu
-	//FIXME: this doesn't work because the Open Recent menu is a Very Special Boy and doesn't
-	//have persistent items like a normal menu.
-	//Instead, we'll need to create items by hand from [BXAppController recentDocumentURLs],
-	//which means we lose the Open Recent menu's cool contextual path clarifications.
+	NSArray *documents = [[NSApp delegate] recentDocumentURLs];
+	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+	NSFileManager *manager = [NSFileManager defaultManager];
 	
-	NSMenu *fileMenu = [[[NSApp mainMenu] itemAtIndex: 1] submenu];
-	NSMenu *recentDocumentsMenu = [[fileMenu itemWithTag: BXRecentDocumentsMenuTag] submenu];
+	//Delete all document items
+	NSUInteger startOfDocuments	= [menu indexOfItemWithTag: BXDocumentStartTag] + 1;
+	NSUInteger endOfDocuments	= [menu indexOfItemWithTag: BXDocumentEndTag];
+	NSRange documentRange		= NSMakeRange(startOfDocuments, endOfDocuments - startOfDocuments);
+
+	for (NSMenuItem *oldItem in [[menu itemArray] subarrayWithRange: documentRange])
+		[menu removeItem: oldItem];
 	
-	
-	//Delete all items but the first one (which is the label for the button)
-	while ([menu numberOfItems] > 1) [menu removeItemAtIndex: 1];
-	
-	
-	//Then, repopulate it with copies of the Open Recent menu items
-	for (NSMenuItem *item in [recentDocumentsMenu itemArray])
+	//Then, repopulate it with the recent documents
+	NSUInteger insertionPoint = startOfDocuments;
+	for (NSURL *url in documents)
 	{
-		[menu addItem: [[item copy] autorelease]];
+		NSAutoreleasePool *pool	= [[NSAutoreleasePool alloc] init];
+		NSMenuItem *item		= [[NSMenuItem alloc] init];
+		
+		[item setRepresentedObject: url];
+		[item setTarget: self];
+		[item setAction: @selector(openRecentDocument:)];
+		
+		NSString *path	= [url path];
+		NSImage *icon	= [workspace iconForFile: path];
+		NSString *title	= [manager displayNameAtPath: path];
+		
+		[icon setSize: NSMakeSize(16, 16)];
+		[item setImage: icon];
+		[item setTitle: title];
+		
+		[menu insertItem: item atIndex: insertionPoint++];
+		
+		[item release];
+		[pool drain];
 	}
 }
 

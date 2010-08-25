@@ -169,8 +169,7 @@ enum {
 	NSUInteger insertionPoint = startOfPrograms;
 	for (NSMenuItem *newItem in [self _programMenuItems])
 	{
-		[menu insertItem: newItem atIndex: insertionPoint];
-		insertionPoint++;
+		[menu insertItem: newItem atIndex: insertionPoint++];
 	}
 	
 	[self syncSelection];

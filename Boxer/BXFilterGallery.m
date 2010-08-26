@@ -108,6 +108,11 @@
 	return ([self state]) ? [NSColor whiteColor] : [NSColor lightGrayColor];
 }
 
+- (CGFloat) _shadeLevel
+{
+	return 0.25f;
+}
+
 - (NSAttributedString *) attributedTitle
 {
 	NSFont *font = [self _labelFont];
@@ -150,7 +155,7 @@
 {
 	if ([controlView illumination] < 0.9)
 	{
-		CGFloat shadeLevel = (1.0f - [controlView illumination]) * 0.25f;
+		CGFloat shadeLevel = (1.0f - [controlView illumination]) * [self _shadeLevel];
 		NSColor *shade = [NSColor colorWithCalibratedWhite: 0.0f alpha: shadeLevel];
 		
 		image = [[image copy] autorelease];

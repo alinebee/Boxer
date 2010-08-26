@@ -91,6 +91,10 @@
 		[NSColor colorWithCalibratedWhite: 1.0f alpha: 0.75f];
 }
 
+- (CGFloat) _shadeLevel
+{
+	return 0.33f;
+}
 
 - (void) _drawSpotlightWithFrame: (NSRect)frame inView: (NSView *)controlView withAlpha: (CGFloat)alpha
 {

@@ -185,7 +185,6 @@
 		9F69128C10A2DF8D00EA78CD /* BXValueTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F69128B10A2DF8D00EA78CD /* BXValueTransformers.m */; };
 		9F69133310A2F62A00EA78CD /* BXDrive.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F69133210A2F62A00EA78CD /* BXDrive.m */; };
 		9F6A79041203547800D2097D /* gamefolder.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F6A79031203547800D2097D /* gamefolder.icns */; };
-		9F6A790A120357DF00D2097D /* install.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F6A7909120357DF00D2097D /* install.icns */; };
 		9F6BA6F910A9FB92005A3E2A /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F6BA6F810A9FB92005A3E2A /* Growl.framework */; };
 		9F6BA6FD10A9FBAB005A3E2A /* Growl.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F6BA6F810A9FB92005A3E2A /* Growl.framework */; };
 		9F6BA70510A9FC77005A3E2A /* BXGrowlController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F6BA70410A9FC77005A3E2A /* BXGrowlController.m */; };
@@ -195,6 +194,7 @@
 		9F76D3F710CBC3B300C3B081 /* GNU General Public License.txt in Resources */ = {isa = PBXBuildFile; fileRef = 9F76D3F510CBC3B300C3B081 /* GNU General Public License.txt */; };
 		9F76D45610CBE5C500C3B081 /* BXSession+BXDragDrop.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F76D45510CBE5C500C3B081 /* BXSession+BXDragDrop.m */; };
 		9F76D4CC10CBFFB200C3B081 /* BXVideoFormatAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F76D4CB10CBFFB200C3B081 /* BXVideoFormatAlert.m */; };
+		9F843FE11226EB1100FD37F1 /* import.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F843FE01226EB1100FD37F1 /* import.png */; };
 		9F8A974A10E7DEF500A4B72A /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8A974910E7DEF500A4B72A /* RegexKitLite.m */; };
 		9F8A976010E7EDDE00A4B72A /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */; };
 		9F9A4C9610F67A1F00E61965 /* GalleryOriginal.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A4C9010F67A1F00E61965 /* GalleryOriginal.png */; };
@@ -651,7 +651,6 @@
 		9F69133110A2F62A00EA78CD /* BXDrive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDrive.h; sourceTree = "<group>"; };
 		9F69133210A2F62A00EA78CD /* BXDrive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDrive.m; sourceTree = "<group>"; };
 		9F6A79031203547800D2097D /* gamefolder.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = gamefolder.icns; sourceTree = "<group>"; };
-		9F6A7909120357DF00D2097D /* install.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = install.icns; sourceTree = "<group>"; };
 		9F6BA6F810A9FB92005A3E2A /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Growl.framework; sourceTree = "<group>"; };
 		9F6BA70310A9FC77005A3E2A /* BXGrowlController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXGrowlController.h; sourceTree = "<group>"; };
 		9F6BA70410A9FC77005A3E2A /* BXGrowlController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGrowlController.m; sourceTree = "<group>"; };
@@ -666,6 +665,7 @@
 		9F76D45510CBE5C500C3B081 /* BXSession+BXDragDrop.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXSession+BXDragDrop.m"; sourceTree = "<group>"; };
 		9F76D4CA10CBFFB200C3B081 /* BXVideoFormatAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXVideoFormatAlert.h; sourceTree = "<group>"; };
 		9F76D4CB10CBFFB200C3B081 /* BXVideoFormatAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXVideoFormatAlert.m; sourceTree = "<group>"; };
+		9F843FE01226EB1100FD37F1 /* import.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = import.png; sourceTree = "<group>"; };
 		9F8A974810E7DEF500A4B72A /* RegexKitLite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegexKitLite.h; sourceTree = "<group>"; };
 		9F8A974910E7DEF500A4B72A /* RegexKitLite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegexKitLite.m; sourceTree = "<group>"; };
 		9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
@@ -1673,6 +1673,7 @@
 		9FBC34390F56C5AC001811F2 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				9F843FE01226EB1100FD37F1 /* import.png */,
 				9F4B5283122591960055022A /* prompt.icns */,
 				9F2292621225848000ABC0B3 /* WelcomeSpotlight.png */,
 				9FE2172A121EED1E001452E3 /* ImportCoverArtTip.png */,
@@ -1688,7 +1689,6 @@
 				9FA9E280121FD874006E20C4 /* PanelCollapseTemplate.pdf */,
 				9F1CBCAC120CCF3900C5E926 /* Blueprint.jpg */,
 				9FBD321610E5144C00031CB6 /* Brand.png */,
-				9F6A7909120357DF00D2097D /* install.icns */,
 				9FCBB2CD10A61CA800C28B09 /* boxer.icns */,
 				9F6A79031203547800D2097D /* gamefolder.icns */,
 				9FCBB2CE10A61CA800C28B09 /* executable.icns */,
@@ -1846,7 +1846,6 @@
 				9FAA451511EB40180042B986 /* Configuration.strings in Resources */,
 				9FAE9B8B11F1D7CF000363F7 /* GameDefaults.plist in Resources */,
 				9F6A79041203547800D2097D /* gamefolder.icns in Resources */,
-				9F6A790A120357DF00D2097D /* install.icns in Resources */,
 				9F1CBB5E120CABBB00C5E926 /* ImportWindow.xib in Resources */,
 				9F1CBCAD120CCF3900C5E926 /* Blueprint.jpg in Resources */,
 				9F25C4E212130B5E0025CB2C /* BrandWatermark.png in Resources */,
@@ -1861,6 +1860,7 @@
 				9F24D2361224336E009C1817 /* Welcome.xib in Resources */,
 				9F2292631225848000ABC0B3 /* WelcomeSpotlight.png in Resources */,
 				9F4B5284122591960055022A /* prompt.icns in Resources */,
+				9F843FE11226EB1100FD37F1 /* import.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

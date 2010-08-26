@@ -200,8 +200,12 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 }
 
 
-//Don't open a new empty document when switching back to the application
-- (BOOL) applicationShouldOpenUntitledFile: (NSApplication *)theApplication { return NO; }
+//Don't open a new empty document when switching back to the application; instead, open our welcome panel
+- (BOOL) applicationShouldOpenUntitledFile: (NSApplication *)theApplication
+{
+	[self orderFrontWelcomePanel: self];
+	return NO;
+}
 
 
 //...However, when we've been told to open a new empty session at startup, do so
@@ -217,9 +221,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	
 	if ([arguments containsObject: BXActivateOnLaunchParam]) 
 		[NSApp activateIgnoringOtherApps: YES];
-	
-	//Display the welcome window at startup, if no documents were opened
-	if (![[self documents] count]) [self orderFrontWelcomeWindow: self];
 }
 
 - (void) applicationWillTerminate: (NSNotification *)notification
@@ -243,7 +244,8 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	[openPanel setAllowsMultipleSelection: NO];
 	[openPanel setCanChooseFiles: YES];
 	[openPanel setCanChooseDirectories: YES];
-	[openPanel setMessage: NSLocalizedString(@"Choose a gamebox, folder or DOS program to open in DOS.", @"Help text shown at the top of the open panel.")];
+	[openPanel setMessage: NSLocalizedString(@"Choose a gamebox, folder or DOS program to open in DOS.",
+											 @"Help text shown at the top of the open panel.")];
 	
 	//Todo: add an accessory view and delegate to handle special-case requirements.
 	//(like installation, or choosing which drive to mount a folder as.) 
@@ -283,6 +285,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 //Prevent the opening of new documents if we have a session already active
 - (id) makeUntitledDocumentOfType: (NSString *)typeName error: (NSError **)outError
 {
+	[self hideWelcomePanel: self];
 	if (![self _canOpenDocumentOfClass: [self documentClassForType: typeName]])
 	{
 		//Launch another instance of Boxer to open the new session
@@ -297,6 +300,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 							  ofType: (NSString *)typeName
 							   error: (NSError **)outError
 {
+	[self hideWelcomePanel: self];
 	if (![self _canOpenDocumentOfClass: [self documentClassForType: typeName]])
 	{
 		//Launch another instance of Boxer to open the specified document
@@ -314,6 +318,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 				   ofType: (NSString *)typeName
 					error: (NSError **)outError
 {
+	[self hideWelcomePanel: self];
 	if (![self _canOpenDocumentOfClass: [self documentClassForType: typeName]])
 	{
 		//Launch another instance of Boxer to open the specified document
@@ -329,6 +334,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 - (id) openImportSessionAndDisplay: (BOOL)displayDocument error: (NSError **)outError
 {
+	[self hideWelcomePanel: self];
 	//If it's too late for us to open an import session, launch a new Boxer process to do it
 	if (![self _canOpenDocumentOfClass: [BXImport class]])
 	{
@@ -428,10 +434,15 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 #pragma mark -
 #pragma mark Actions and action helper methods
 
-- (IBAction) orderFrontWelcomeWindow: (id)sender
+- (IBAction) orderFrontWelcomePanel: (id)sender
 {
 	[[[self currentSession] DOSWindowController] exitFullScreen: sender];
 	[[BXWelcomeWindowController controller] showWindow: nil];
+}
+
+- (IBAction) hideWelcomePanel: (id)sender
+{
+	[[BXWelcomeWindowController controller] close];
 }
 
 - (IBAction) orderFrontImportGamePanel: (id)sender

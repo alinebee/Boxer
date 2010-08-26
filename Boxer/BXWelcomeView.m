@@ -99,7 +99,7 @@
 	
 	NSRect spotlightFrame;
 	spotlightFrame.size = [spotlight size];
-	spotlightFrame.origin.y = 36;
+	spotlightFrame.origin = NSMakePoint(0, 36);
 	
 	[spotlight drawInRect: spotlightFrame
 				 fromRect: NSZeroRect

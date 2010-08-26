@@ -12,7 +12,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="1415"/>
+			<integer value="285"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1699,11 +1699,11 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
-						<string key="label">orderFrontWelcomeWindow:</string>
+						<string key="label">orderFrontWelcomePanel:</string>
 						<reference key="source" ref="935372999"/>
 						<reference key="destination" ref="253492764"/>
 					</object>
-					<int key="connectionID">1872</int>
+					<int key="connectionID">1873</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -2975,7 +2975,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1872</int>
+			<int key="maxID">1873</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2987,11 +2987,12 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>hideWelcomePanel:</string>
 							<string>openInDefaultApplication:</string>
 							<string>orderFrontAboutPanel:</string>
 							<string>orderFrontImportGamePanel:</string>
 							<string>orderFrontPreferencesPanel:</string>
-							<string>orderFrontWelcomeWindow:</string>
+							<string>orderFrontWelcomePanel:</string>
 							<string>revealInFinder:</string>
 							<string>sendEmail:</string>
 							<string>showDonationPage:</string>
@@ -3001,6 +3002,7 @@
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>

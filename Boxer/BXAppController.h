@@ -57,7 +57,8 @@
 //UI actions
 //----------
 
-- (IBAction) orderFrontWelcomeWindow: (id)sender;		//Display the welcome window.
+- (IBAction) orderFrontWelcomePanel: (id)sender;		//Display the welcome panel.
+- (IBAction) hideWelcomePanel: (id)sender;				//Close the welcome panel.
 - (IBAction) orderFrontImportGamePanel: (id)sender;		//Display the game import panel.
 
 - (IBAction) orderFrontAboutPanel:	(id)sender;			//Display Boxer's About panel.

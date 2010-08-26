@@ -18,15 +18,17 @@
 
 - (void) drawRect: (NSRect)dirtyRect
 {
-	NSColor *blue	= [NSColor colorWithCalibratedRed: 0.22f green: 0.37f blue: 0.55f alpha: 1.0f];
+	//NSColor *blue	= [NSColor colorWithCalibratedRed: 0.22f green: 0.37f blue: 0.55f alpha: 1.0f];
+	NSColor *grey	= [NSColor colorWithCalibratedRed: 0.15f green: 0.17f blue: 0.2f alpha: 1.0f];
 	NSColor *black	= [NSColor blackColor];
 	
-	NSGradient *background = [[NSGradient alloc] initWithStartingColor: blue endingColor: black];
+	
+	NSGradient *background = [[NSGradient alloc] initWithStartingColor: grey endingColor: black];
 	
 	//We set a particularly huge radius and offset to give a subtle curvature to the gradient
 	CGFloat innerRadius = [self bounds].size.width * 1.5f;
-	CGFloat outerRadius = innerRadius + ([self bounds].size.height * 0.55f);
-	NSPoint center = NSMakePoint(NSMidX([self bounds]), ([self bounds].size.height * 0.05f) - innerRadius);
+	CGFloat outerRadius = innerRadius + ([self bounds].size.height * 0.5f);
+	NSPoint center = NSMakePoint(NSMidX([self bounds]), ([self bounds].size.height * 0.15f) - innerRadius);
 	
 	[background drawFromCenter: center radius: innerRadius
 					  toCenter: center radius: outerRadius

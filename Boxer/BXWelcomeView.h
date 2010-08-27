@@ -18,4 +18,8 @@
 @end
 
 @interface BXWelcomeButtonCell : BXFilterPortraitCell
+{
+	BOOL hovered;
+}
+@property (assign, nonatomic, getter=isHovered) BOOL hovered;
 @end

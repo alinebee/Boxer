@@ -69,4 +69,8 @@
 //Regenerates the list of displayed executables from the session's executables.
 - (void) syncPanelExecutables;
 
+//Whether we can set the currently-active program to be the default gamebox target.
+//Will be NO if there's no active program, there's no gamebox, or the active program is outside the gamebox.
+- (BOOL) canSetActiveProgramToDefault;
+
 @end

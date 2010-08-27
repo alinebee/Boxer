@@ -14,7 +14,7 @@
 
 //The height of the bottom window border.
 //TODO: determine this from NIB content.
-#define BXImportWindowBorderThickness 32.0f
+#define BXImportWindowBorderThickness 40.0f
 
 @implementation BXImportWindowController
 @synthesize dropzonePanel, installerPanel, finalizingPanel, finishedPanel;

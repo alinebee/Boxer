@@ -114,19 +114,20 @@
 	
 	if ([session isKindOfClass: [BXImport class]])
 	{
-		if ([session activeProgramPath])	panel = installerTipsPanel;
-		else								panel = finishImportingPanel;
+		if ([session activeProgramPath])
+		{
+			if (![(BXImport *)session isRunningInstaller] && [self canSetActiveProgramToDefault])
+				panel = defaultProgramPanel;
+			else
+				panel = installerTipsPanel;
+		}
+		else panel = finishImportingPanel;
 	}
 	else
 	{
 		//Show the 'make this program the default' panel only when the session's active program
-		//can be legally set as the default target (i.e., it's located within the gamebox
-		NSString *activePath = [session activeProgramPath];
-		if (activePath && [[session gamePackage] validateTargetPath: &activePath error: NULL])
-		{
-			panel = defaultProgramPanel;
-			
-		}
+		//can be legally set as the default target (i.e., it's located within the gamebox)
+		if ([self canSetActiveProgramToDefault])	panel = defaultProgramPanel;
 		else if	([[self panelExecutables] count])	panel = programChooserPanel;
 		else										panel = noProgramsPanel;
 	}
@@ -210,6 +211,14 @@
 	
 	if (isDefault)							[gamePackage setTargetPath: activeProgram];
 	else if ([self activeProgramIsDefault])	[gamePackage setTargetPath: nil];
+}
+
+- (BOOL) canSetActiveProgramToDefault
+{
+	BXSession *session = [self representedObject];
+	NSString *activePath = [session activeProgramPath];
+
+	return [session isGamePackage] && [[session gamePackage] validateTargetPath: &activePath error: NULL];
 }
 
 

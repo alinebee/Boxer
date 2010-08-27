@@ -85,6 +85,8 @@
 				<key>BXProfileDriveLabelAny</key>
 				<string>Daggerfall</string>
 			</dict>
+			<key>BXInstallMedium</key>
+			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>BXProfileName</key>

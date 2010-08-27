@@ -21,7 +21,8 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="3"/>
+			<integer value="123"/>
+			<integer value="170"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -51,17 +52,16 @@
 			<object class="NSWindowTemplate" id="816234716">
 				<int key="NSWindowStyleMask">7</int>
 				<int key="NSWindowBacking">2</int>
-				<string key="NSWindowRect">{{400, 280}, {480, 332}}</string>
+				<string key="NSWindowRect">{{400, 280}, {480, 340}}</string>
 				<int key="NSWTFlags">1614282752</int>
 				<string key="NSWindowTitle">Import a Game</string>
 				<string key="NSWindowClass">NSWindow</string>
 				<nil key="NSViewClass"/>
 				<string key="NSWindowContentMaxSize">{1.79769e+308, 1.79769e+308}</string>
 				<object class="NSView" key="NSWindowView" id="449785239">
-					<reference key="NSNextResponder"/>
+					<nil key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
-					<string key="NSFrameSize">{480, 332}</string>
-					<reference key="NSSuperview"/>
+					<string key="NSFrameSize">{480, 340}</string>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1280, 778}}</string>
 				<string key="NSMaxSize">{1.79769e+308, 1.79769e+308}</string>
@@ -155,7 +155,7 @@ cnQgaXQgaW50byBhIG5ldyBnYW1lYm94LiA</string>
 								<string key="themeKey">BXBlueprintTheme</string>
 							</object>
 						</object>
-						<string key="NSFrame">{{0, 32}, {480, 280}}</string>
+						<string key="NSFrame">{{0, 40}, {480, 280}}</string>
 						<reference key="NSSuperview" ref="889166584"/>
 						<reference key="NSWindow"/>
 						<string key="NSClassName">BXBlueprintPanel</string>
@@ -169,7 +169,7 @@ cnQgaXQgaW50byBhIG5ldyBnYW1lYm94LiA</string>
 								<reference key="NSNextResponder" ref="730797341"/>
 								<int key="NSvFlags">1317</int>
 								<object class="NSPSMatrix" key="NSDrawMatrix"/>
-								<string key="NSFrame">{{232, 8}, {16, 16}}</string>
+								<string key="NSFrame">{{232, 12}, {16, 16}}</string>
 								<reference key="NSSuperview" ref="730797341"/>
 								<reference key="NSWindow"/>
 								<int key="NSViewLayerContentsRedrawPolicy">2</int>
@@ -179,7 +179,7 @@ cnQgaXQgaW50byBhIG5ldyBnYW1lYm94LiA</string>
 							<object class="NSButton" id="924515152">
 								<reference key="NSNextResponder" ref="730797341"/>
 								<int key="NSvFlags">289</int>
-								<string key="NSFrame">{{395, 3}, {70, 25}}</string>
+								<string key="NSFrame">{{395, 7}, {70, 25}}</string>
 								<reference key="NSSuperview" ref="730797341"/>
 								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
@@ -198,13 +198,13 @@ cnQgaXQgaW50byBhIG5ldyBnYW1lYm94LiA</string>
 								</object>
 							</object>
 						</object>
-						<string key="NSFrameSize">{480, 32}</string>
+						<string key="NSFrameSize">{480, 40}</string>
 						<reference key="NSSuperview" ref="889166584"/>
 						<reference key="NSWindow"/>
 						<string key="NSClassName">BXBottomBar</string>
 					</object>
 				</object>
-				<string key="NSFrameSize">{480, 312}</string>
+				<string key="NSFrameSize">{480, 320}</string>
 				<reference key="NSSuperview"/>
 				<reference key="NSWindow"/>
 			</object>
@@ -347,7 +347,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 								<string key="themeKey">BXBlueprintTheme</string>
 							</object>
 						</object>
-						<string key="NSFrame">{{0, 32}, {480, 280}}</string>
+						<string key="NSFrame">{{0, 40}, {480, 280}}</string>
 						<reference key="NSSuperview" ref="384524801"/>
 						<reference key="NSWindow"/>
 						<string key="NSClassName">BXBlueprintPanel</string>
@@ -360,7 +360,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 							<object class="NSButton" id="208687213">
 								<reference key="NSNextResponder" ref="1065075942"/>
 								<int key="NSvFlags">289</int>
-								<string key="NSFrame">{{279, 3}, {60, 25}}</string>
+								<string key="NSFrame">{{279, 7}, {60, 25}}</string>
 								<reference key="NSSuperview" ref="1065075942"/>
 								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
@@ -381,7 +381,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 							<object class="NSButton" id="797821357">
 								<reference key="NSNextResponder" ref="1065075942"/>
 								<int key="NSvFlags">292</int>
-								<string key="NSFrame">{{15, 3}, {96, 25}}</string>
+								<string key="NSFrame">{{15, 7}, {96, 25}}</string>
 								<reference key="NSSuperview" ref="1065075942"/>
 								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
@@ -402,7 +402,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 							<object class="NSButton" id="282693136">
 								<reference key="NSNextResponder" ref="1065075942"/>
 								<int key="NSvFlags">289</int>
-								<string key="NSFrame">{{349, 3}, {116, 25}}</string>
+								<string key="NSFrame">{{349, 7}, {116, 25}}</string>
 								<reference key="NSSuperview" ref="1065075942"/>
 								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
@@ -421,13 +421,13 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 								</object>
 							</object>
 						</object>
-						<string key="NSFrameSize">{480, 32}</string>
+						<string key="NSFrameSize">{480, 40}</string>
 						<reference key="NSSuperview" ref="384524801"/>
 						<reference key="NSWindow"/>
 						<string key="NSClassName">BXBottomBar</string>
 					</object>
 				</object>
-				<string key="NSFrameSize">{480, 312}</string>
+				<string key="NSFrameSize">{480, 320}</string>
 				<reference key="NSSuperview"/>
 				<reference key="NSWindow"/>
 			</object>
@@ -447,7 +447,6 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 								<object class="NSPSMatrix" key="NSDrawMatrix"/>
 								<string key="NSFrame">{{46, 116}, {390, 20}}</string>
 								<reference key="NSSuperview" ref="375787521"/>
-								<reference key="NSWindow"/>
 								<int key="NSpiFlags">16394</int>
 								<double key="NSMaxValue">1</double>
 							</object>
@@ -456,7 +455,6 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 								<int key="NSvFlags">293</int>
 								<string key="NSFrame">{{45, 98}, {392, 14}}</string>
 								<reference key="NSSuperview" ref="375787521"/>
-								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="155351076">
 									<int key="NSCellFlags">68288064</int>
@@ -478,7 +476,6 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 								<int key="NSvFlags">293</int>
 								<string key="NSFrame">{{40, 130}, {397, 87}}</string>
 								<reference key="NSSuperview" ref="375787521"/>
-								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="919250561">
 									<int key="NSCellFlags">67239424</int>
@@ -492,9 +489,8 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 								<string key="themeKey">BXBlueprintTheme</string>
 							</object>
 						</object>
-						<string key="NSFrame">{{0, 32}, {480, 280}}</string>
+						<string key="NSFrame">{{0, 40}, {480, 280}}</string>
 						<reference key="NSSuperview" ref="762783357"/>
-						<reference key="NSWindow"/>
 						<string key="NSClassName">BXBlueprintPanel</string>
 					</object>
 					<object class="NSCustomView" id="149569143">
@@ -505,9 +501,8 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 							<object class="NSButton" id="722755444">
 								<reference key="NSNextResponder" ref="149569143"/>
 								<int key="NSvFlags">289</int>
-								<string key="NSFrame">{{342, 3}, {123, 25}}</string>
+								<string key="NSFrame">{{342, 7}, {123, 25}}</string>
 								<reference key="NSSuperview" ref="149569143"/>
-								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="876878180">
 									<int key="NSCellFlags">-2080244224</int>
@@ -524,18 +519,16 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 								</object>
 							</object>
 						</object>
-						<string key="NSFrameSize">{480, 32}</string>
+						<string key="NSFrameSize">{480, 40}</string>
 						<reference key="NSSuperview" ref="762783357"/>
-						<reference key="NSWindow"/>
 						<string key="NSClassName">BXBottomBar</string>
 					</object>
 				</object>
-				<string key="NSFrameSize">{480, 312}</string>
+				<string key="NSFrameSize">{480, 320}</string>
 				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 			</object>
 			<object class="NSView" id="832643188">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">274</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -679,7 +672,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 								<string key="themeKey">BXBlueprintTheme</string>
 							</object>
 						</object>
-						<string key="NSFrame">{{0, 32}, {480, 280}}</string>
+						<string key="NSFrame">{{0, 40}, {480, 280}}</string>
 						<reference key="NSSuperview" ref="832643188"/>
 						<string key="NSClassName">BXBlueprintPanel</string>
 					</object>
@@ -691,7 +684,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 							<object class="NSButton" id="275253887">
 								<reference key="NSNextResponder" ref="851166316"/>
 								<int key="NSvFlags">289</int>
-								<string key="NSFrame">{{281, 3}, {60, 25}}</string>
+								<string key="NSFrame">{{281, 7}, {60, 25}}</string>
 								<reference key="NSSuperview" ref="851166316"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="28466242">
@@ -711,7 +704,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 							<object class="NSButton" id="537346348">
 								<reference key="NSNextResponder" ref="851166316"/>
 								<int key="NSvFlags">292</int>
-								<string key="NSFrame">{{15, 3}, {124, 25}}</string>
+								<string key="NSFrame">{{15, 7}, {124, 25}}</string>
 								<reference key="NSSuperview" ref="851166316"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="427541624">
@@ -731,7 +724,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 							<object class="NSButton" id="813946431">
 								<reference key="NSNextResponder" ref="851166316"/>
 								<int key="NSvFlags">289</int>
-								<string key="NSFrame">{{351, 3}, {114, 25}}</string>
+								<string key="NSFrame">{{351, 7}, {114, 25}}</string>
 								<reference key="NSSuperview" ref="851166316"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="609382331">
@@ -749,12 +742,13 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 								</object>
 							</object>
 						</object>
-						<string key="NSFrameSize">{480, 32}</string>
+						<string key="NSFrameSize">{480, 40}</string>
 						<reference key="NSSuperview" ref="832643188"/>
 						<string key="NSClassName">BXBottomBar</string>
 					</object>
 				</object>
-				<string key="NSFrameSize">{480, 312}</string>
+				<string key="NSFrameSize">{480, 320}</string>
+				<reference key="NSSuperview"/>
 			</object>
 			<object class="NSMenu" id="921553869">
 				<string key="NSTitle"/>
@@ -1927,7 +1921,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>BXDelegatedView</string>
-					<string>{{157, 166}, {480, 312}}</string>
+					<string>{{157, 158}, {480, 320}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="0"/>
@@ -1939,7 +1933,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>BXImportFinalizingPanelController</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{209, 412}, {480, 312}}</string>
+					<string>{{209, 404}, {480, 320}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="0"/>
@@ -1973,13 +1967,13 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 					<string>BXImportDropzone</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{193, 231}, {480, 332}}</string>
+					<string>{{193, 223}, {480, 340}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{193, 231}, {480, 332}}</string>
+					<string>{{193, 223}, {480, 340}}</string>
 					<boolean value="NO"/>
 					<string>{196, 240}</string>
 					<string>{{357, 418}, {480, 270}}</string>
-					<string>{{82, 412}, {480, 312}}</string>
+					<string>{{82, 404}, {480, 320}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="0"/>
@@ -1994,7 +1988,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>BXDelegatedView</string>
-					<string>{{80, 244}, {480, 312}}</string>
+					<string>{{80, 236}, {480, 320}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>

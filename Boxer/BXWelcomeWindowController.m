@@ -10,7 +10,7 @@
 
 //The height of the bottom window border.
 //TODO: determine this from NIB content.
-#define BXWelcomeWindowBorderThickness 32.0f
+#define BXWelcomeWindowBorderThickness 40.0f
 
 #define BXDocumentStartTag 1
 #define BXDocumentEndTag 2
@@ -90,6 +90,9 @@
 		[item release];
 		[pool drain];
 	}
+	//Finish off the list with a separator
+	if ([documents count])
+		[menu insertItem: [NSMenuItem separatorItem] atIndex: insertionPoint];
 }
 
 @end

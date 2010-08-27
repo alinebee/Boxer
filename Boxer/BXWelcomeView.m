@@ -39,9 +39,15 @@
 
 
 @implementation BXWelcomeButton
+
+//Ignore state altogether (overrides BXFilterPortrait behaviour of highlighting when state changes)
+- (void) setState: (NSInteger)value
+{
+}
 @end
 
 @implementation BXWelcomeButtonCell
+@synthesize hovered;
 
 - (BXWelcomeButton *) controlView
 {
@@ -50,60 +56,78 @@
 
 - (void) awakeFromNib
 {
+	//So that we receive mouseEntered and mouseExited events
 	[self setShowsBorderOnlyWhileMouseInside: YES];
 	[super awakeFromNib];
 }
 
+
+#pragma mark -
+#pragma mark Hover events
+
 - (void) mouseEntered: (NSEvent *)event
 {
-	[self setHighlighted: YES];
+	[self setHovered: YES];
 }
 
 - (void) mouseExited: (NSEvent *)event
 {
-	[self setHighlighted: NO];
+	[self setHovered: NO];
 }
 
-- (void) setHighlighted: (BOOL)flag
+- (void) setHovered: (BOOL)flag
 {
+	hovered = flag;
 	[[[self controlView] animator] setIllumination: (flag ? 1.0f : 0.0f)];
-	[super setHighlighted: flag];
 }
 
-- (NSRect) titleRectForBounds: (NSRect)theRect
-{
-	//Position the title to occupy the bottom quarter of the button.
-	theRect.origin.y = 80;
-	return theRect;
-}
 
-- (NSFont *) _labelFont
+#pragma mark -
+#pragma mark Button style
+
+- (NSFont *) titleFont
 {
 	return [NSFont boldSystemFontOfSize: 0];
 }
 
-- (NSColor *) _textColor
+- (NSColor *) titleColor
 {
-	//Render the text in white if this button is highlighted; otherwise in translucent white
-	if ([self isHighlighted])
+	//Render the text in white if this button is highlighted or hovered; otherwise in translucent white
+	if ([self isHighlighted] || [self isHovered])
 		return [NSColor whiteColor];
 	else
 		[NSColor colorWithCalibratedWhite: 1.0f alpha: 0.75f];
 }
 
-- (CGFloat) _shadeLevel
+- (CGFloat) imageHighlightLevel
 {
-	return 0.33f;
+	return 0.15f;
 }
 
-- (void) _drawSpotlightWithFrame: (NSRect)frame inView: (NSView *)controlView withAlpha: (CGFloat)alpha
+- (NSRect) titleRectForBounds: (NSRect)theRect
+{
+	//Position the title to occupy the bottom quarter of the button.
+	theRect.origin.y = 68;
+	return theRect;
+}
+
+- (NSRect) imageRectForBounds: (NSRect)theRect
+{
+	return NSMakeRect(16, 20, 128, 128);
+}
+
+
+#pragma mark -
+#pragma mark Button drawing
+
+- (void) drawSpotlightWithFrame: (NSRect)frame inView: (NSView *)controlView withAlpha: (CGFloat)alpha
 {
 	NSImage *spotlight = [NSImage imageNamed: @"WelcomeSpotlight"];
 	[spotlight setFlipped: [controlView isFlipped]];
 	
 	NSRect spotlightFrame;
 	spotlightFrame.size = [spotlight size];
-	spotlightFrame.origin = NSMakePoint(0, 36);
+	spotlightFrame.origin = NSMakePoint(0, 0);
 	
 	[spotlight drawInRect: spotlightFrame
 				 fromRect: NSZeroRect

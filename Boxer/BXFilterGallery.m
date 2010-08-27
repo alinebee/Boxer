@@ -73,7 +73,11 @@
 }
 @end
 
+
 @implementation BXFilterPortraitCell
+
+#pragma mark -
+#pragma mark Initialization and deallocation
 
 - (void) awakeFromNib
 {
@@ -81,19 +85,21 @@
 	[self setHighlightsBy: NSNoCellMask];
 }
 
-- (void) _drawSpotlightWithFrame: (NSRect)frame inView: (NSView *)controlView withAlpha: (CGFloat)alpha
+
+#pragma mark -
+#pragma mark Button style
+
+- (CGFloat) imageShadeLevelForIllumination: (CGFloat)illumination
 {
-	NSImage *spotlight = [NSImage imageNamed: @"GallerySpotlight"];
-	
-	[spotlight setFlipped: [controlView isFlipped]];
-	
-	[spotlight drawInRect: frame
-				 fromRect: NSZeroRect
-				operation: NSCompositePlusLighter
-				 fraction: alpha];
+	return (1.0f - illumination) * 0.33f;
 }
 
-- (NSFont *) _labelFont
+- (CGFloat) imageHighlightLevel
+{
+	return 0.0f;
+}
+
+- (NSFont *) titleFont
 {
 	//Render the text in bold if this button is selected or the user is pressing the button
 	if ([self state] || [self isHighlighted])
@@ -102,33 +108,37 @@
 		return [NSFont systemFontOfSize: 0];
 }
 
-- (NSColor *) _textColor
+- (NSColor *) titleColor
 {
 	//Render the text in white if this button is selected
 	return ([self state]) ? [NSColor whiteColor] : [NSColor lightGrayColor];
 }
 
-- (CGFloat) _shadeLevel
+- (NSShadow *) titleShadow
 {
-	return 0.25f;
-}
-
-- (NSAttributedString *) attributedTitle
-{
-	NSFont *font = [self _labelFont];
-	NSColor *textColor = [self _textColor];
-	
-	NSShadow *textShadow = [[NSShadow new] autorelease];	
+	NSShadow *textShadow = [[NSShadow alloc] init];	
 	[textShadow setShadowOffset: NSMakeSize(0.0f, -1.0f)];
 	[textShadow setShadowBlurRadius: 2.0f];
-	[textShadow setShadowColor: [NSColor blackColor]];
-	
+	[textShadow setShadowColor: [NSColor blackColor]];	
+	return [textShadow autorelease];
+}
+
+- (NSDictionary *) titleAttributes
+{	
+	return [NSDictionary dictionaryWithObjectsAndKeys:
+			[self titleFont], NSFontAttributeName,
+			[self titleColor], NSForegroundColorAttributeName,
+			[self titleShadow], NSShadowAttributeName,
+			nil];
+}
+
+//Style the button title with our text shadow, colour and font
+- (NSAttributedString *) attributedTitle
+{
 	NSMutableAttributedString *title = [[super attributedTitle] mutableCopy];
 	NSRange textRange = NSMakeRange(0, [title length]);
 	
-	[title addAttribute: NSFontAttributeName value: font range: textRange];
-	[title addAttribute: NSForegroundColorAttributeName value: textColor range: textRange];
-	[title addAttribute: NSShadowAttributeName value: textShadow range: textRange];
+	[title addAttributes: [self titleAttributes] range: textRange];
 	
 	return [title autorelease];
 }
@@ -140,34 +150,75 @@
 	return theRect;
 }
 
+- (NSRect) imageRectForBounds: (NSRect)theRect
+{
+	//Fill the whole button with the image
+	return theRect;
+}
+
+
+#pragma mark -
+#pragma mark Button drawing
+
 - (void) drawWithFrame: (NSRect)frame inView: (BXFilterPortrait *)controlView
 {
+	//Render our spotlight behind the rest of the button content
 	if ([controlView illumination] > 0.0f)
 	{
-		[self _drawSpotlightWithFrame: frame inView: controlView withAlpha: [controlView illumination]];
+		[self drawSpotlightWithFrame: frame inView: controlView withAlpha: [controlView illumination]];
 	}
 	[super drawWithFrame: frame inView: controlView];
+}
+
+- (void) drawSpotlightWithFrame: (NSRect)frame inView: (NSView *)controlView withAlpha: (CGFloat)alpha
+{
+	NSImage *spotlight = [NSImage imageNamed: @"GallerySpotlight"];
+	
+	[spotlight setFlipped: [controlView isFlipped]];
+	
+	[spotlight drawInRect: frame
+				 fromRect: NSZeroRect
+				operation: NSCompositePlusLighter
+				 fraction: alpha];
 }
 
 - (void) drawImage: (NSImage *)image	
 		 withFrame: (NSRect)frame 
 			inView: (BXFilterPortrait *)controlView
 {
-	if ([controlView illumination] < 0.9)
+	NSColor *shade = nil;
+	
+	//If the button is being pressed, brighten the image
+	if ([self isHighlighted] && [self imageHighlightLevel])
 	{
-		CGFloat shadeLevel = (1.0f - [controlView illumination]) * [self _shadeLevel];
-		NSColor *shade = [NSColor colorWithCalibratedWhite: 0.0f alpha: shadeLevel];
-		
+		CGFloat shadeLevel = [self imageHighlightLevel];
+		shade = [NSColor colorWithCalibratedWhite: 1.0f alpha: shadeLevel];		
+	}
+	
+	//Otherwise, darken the image according to the current illumination level
+	else if ([controlView illumination] < 0.9)
+	{
+		CGFloat shadeLevel = [self imageShadeLevelForIllumination: [controlView illumination]];
+		shade = [NSColor colorWithCalibratedWhite: 0.0f alpha: shadeLevel];
+	}
+	
+	//Render the shade into a copy of the image before passing it on to NSButton's own draw methods
+	if (shade)
+	{
 		image = [[image copy] autorelease];
 		NSRect bounds;
 		bounds.origin = NSZeroPoint;
 		bounds.size = [image size];
+		
 		[image lockFocus];
 			[shade set];
 			NSRectFillUsingOperation(bounds, NSCompositeSourceAtop);
-		[image unlockFocus];
+		[image unlockFocus];		
 	}
-	[super drawImage: image withFrame: frame inView: controlView];
+	
+	//While we're here, let's override the image positioning with our own
+	NSRect imageRect = [self imageRectForBounds: [controlView bounds]];
+	[super drawImage: image withFrame: imageRect inView: controlView];
 }
 
 @end

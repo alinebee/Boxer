@@ -378,6 +378,14 @@
 	return [[self installerPaths] count] > 0;
 }
 
+
+- (BOOL) isRunningInstaller
+{
+	NSArray *installers = [[self installerPaths] arrayByAddingObject: [self targetPath]];
+	return [installers containsObject: [self activeProgramPath]];
+}
+
+
 //Overridden to reset the progress whenver we change the stage
 - (void) setImportStage: (BXImportStage)stage
 {
@@ -795,8 +803,10 @@
 	[super _startEmulator];
 	
 	//Once the emulation session finishes, continue importing (if we're not doing so already)
+	//Also hide the Inspector panel if it was open
 	if (![emulator isCancelled] && [self importStage] == BXImportRunningInstaller)
 	{
+		[[NSApp delegate] setInspectorPanelShown: NO];
 		[self finishInstaller];
 	}
 }

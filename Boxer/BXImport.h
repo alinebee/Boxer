@@ -99,6 +99,11 @@ typedef NSUInteger BXImportStage;
 //Will be YES if we detected any installers for the source path, NO otherwise.
 - (BOOL) gameNeedsInstalling;
 
+//Whether the DOS session is currently running an installer program.
+//Used for toggling the display of the installation help bar versus the this-program-is-default bar.
+- (BOOL) isRunningInstaller;
+
+
 //Generate a new bootleg cover-art icon and add it to the gamebox.
 //This icon will be based on the gamebox's name, and the age of the files being imported.
 - (void) generateBootlegIcon;

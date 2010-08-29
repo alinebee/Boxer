@@ -118,39 +118,56 @@
 	//Now, autodetect the game from the source path
 	BXGameProfile *detectedProfile = [BXGameProfile detectedProfileForPath: filePath searchSubfolders: YES];
 	
-	//Now, scan the source path for installers
+	//Now, scan the source path for installers and installed-game telltales
 	NSMutableArray *detectedInstallers = [NSMutableArray arrayWithCapacity: 10];
 	NSString *preferredInstaller = nil;
+	
 	NSUInteger numExecutables = 0;
 	NSUInteger numWindowsExecutables = 0;
-		
-	BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: filePath];
-	[enumerator setSkipPackageContents: YES];
-	[enumerator setFileTypes: [BXAppController executableTypes]];
+	BOOL isAlreadyInstalledGame = NO;
+	
+	NSSet *executableTypes = [BXAppController executableTypes];
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	for (NSString *executablePath in enumerator)
+	
+	for (NSString *path in [BXPathEnumerator enumeratorAtPath: filePath])
 	{
-		numExecutables++;
-		
-		//Exclude windows-only programs, but note how many we've found
-		if ([workspace isWindowsOnlyExecutableAtPath: executablePath])
+		//If we find an indication that this is an already-installed game, then we won't bother using any installers.
+		//However, we'll still keep looking for executables: but only so that we can make sure the user really is
+		//importing a proper DOS game (and not a Windows-only game.)
+		if ([[self class] isPlayableGameTelltaleAtPath: path])
 		{
-			numWindowsExecutables++;
-			continue;
+			[detectedInstallers removeAllObjects];
+			preferredInstaller = nil;
+			isAlreadyInstalledGame = YES;
 		}
 		
-		//If this was the designated installer for this game profile,
-		//add it to the list automatically
-		if (!preferredInstaller && [detectedProfile isDesignatedInstallerAtPath: executablePath])
+		if ([workspace file: path matchesTypes: executableTypes])
 		{
-			[detectedInstallers addObject: executablePath];
-			preferredInstaller = executablePath;
-		}
-		
-		//Otherwise if it looks like an installer to us, add it to the list
-		else if ([[self class] isInstallerAtPath: executablePath])
-		{
-			[detectedInstallers addObject: executablePath];
+			numExecutables++;
+			
+			//Exclude windows-only programs, but note how many we've found
+			if ([workspace isWindowsOnlyExecutableAtPath: path])
+			{
+				numWindowsExecutables++;
+				continue;
+			}
+			
+			//As described above, only bother recording installers if the game isn't already installed
+			if (!isAlreadyInstalledGame)
+			{
+				//If this was the designated installer for this game profile, add it to the installer list
+				if (!preferredInstaller && [detectedProfile isDesignatedInstallerAtPath: path])
+				{
+					[detectedInstallers addObject: path];
+					preferredInstaller = path;
+				}
+				
+				//Otherwise if it looks like an installer to us, add it to the installer list
+				else if ([[self class] isInstallerAtPath: path])
+				{
+					[detectedInstallers addObject: path];
+				}			
+			}
 		}
 	}
 	
@@ -179,7 +196,7 @@
 			return NO;
 		}		
 	}
-
+	
 	//If no executables at all were found, this indicates that the folder was empty or contains something other than a DOS game; bail out with a custom error message.
 	else
 	{
@@ -189,18 +206,16 @@
 		return NO;
 	}
 	
-	
 	//If we got this far, then there were no errors and we have a fair idea what to do with this game
 	[self setSourcePath: filePath];
 	[self setGameProfile: detectedProfile];
 	
 	//FIXME: we have to set the preferred installer first because BXInstallerPanelController is listening
 	//for when we set the installer paths, and relies on knowing the preferred installer in advance.
-	//Or do we have to? Are KVO notifications coalesced?
 	//TODO: move the preferred installer detection off to BXInstallerPanelController instead, since it's
 	//the only place that uses it?
 	[self setPreferredInstallerPath: preferredInstaller];
-	[self setInstallerPaths: detectedInstallers];
+	[self setInstallerPaths: detectedInstallers];		
 	
 	return YES;
 }

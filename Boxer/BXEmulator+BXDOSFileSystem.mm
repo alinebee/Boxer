@@ -327,7 +327,7 @@ enum {
 	//Sort the drives by path depth, so that deeper mounts are picked over 'shallower' ones.
 	//e.g. when MyGame.boxer and MyGame.boxer/MyCD.cdrom are both mounted, it should pick the latter.
 	//Todo: filter this down to matching drives first, then do the sort, which would be quicker.
-	NSArray *sortedDrives = [[driveCache allValues] sortedArrayUsingSelector:@selector(pathDepthCompare:)];
+	NSArray *sortedDrives = [[driveCache allValues] sortedArrayUsingSelector: @selector(pathDepthCompare:)];
 	
 	for (BXDrive *drive in [sortedDrives reverseObjectEnumerator]) 
 	{

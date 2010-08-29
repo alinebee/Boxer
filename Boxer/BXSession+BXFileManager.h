@@ -30,16 +30,6 @@
 #pragma mark -
 #pragma mark Helper class methods
 
-//Returns an array of all DOS/Windows executables found within the specified path.
-//scanSubdirs determines whether the search will descend into subdirectories or
-//just stick with the base path.
-//scanMountableFolders determines whether the search will descend into any Boxer
-//mountable folders (.cdrom, .harddisk etc.) contained within the path. This setting
-//has no effect if scanSubdirs is NO.
-+ (NSArray *) executablesAtPath: (NSString *)path
-					scanSubdirs: (BOOL)scanSubdirs
-		   scanMountableFolders: (BOOL)scanMountableFolders;
-
 //Returns the most appropriate base location for a drive to expose the specified path:
 //If path points to a disc image, that will be returned
 //If path is inside a gamebox or Boxer mountable folder type, that container will be returned.

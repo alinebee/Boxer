@@ -106,12 +106,13 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 			//First check for an exact filename match
 			NSString *fileName	= [[path lastPathComponent] lowercaseString];
 			if ((matchingProfile = [lookups objectForKey: fileName]))
-				return [[self alloc] initWithDictionary: matchingProfile];
+				return [[[self alloc] initWithDictionary: matchingProfile] autorelease];
 			
 			//Next, check if the base filename (sans extension) matches anything
+			//TODO: eliminate this branch, and just use explicit filenames in the profile telltales.
 			NSString *baseName	= [[fileName stringByDeletingPathExtension] stringByAppendingString: @".*"];
 			if ((matchingProfile = [lookups objectForKey: baseName]))
-				return [[self alloc] initWithDictionary: matchingProfile];
+				return [[[self alloc] initWithDictionary: matchingProfile] autorelease];
 		}		
 	}
 	

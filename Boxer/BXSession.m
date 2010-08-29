@@ -138,7 +138,7 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 			   error: (NSError **)outError
 {
 	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
-	NSString *filePath		= [[absoluteURL path] stringByStandardizingPath];
+	NSString *filePath		= [absoluteURL path];
 	
 	//Set our target launch path to point to this file, if we don't have a target already
 	if (![self targetPath]) [self setTargetPath: filePath];

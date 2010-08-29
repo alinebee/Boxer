@@ -255,6 +255,7 @@
 		9FBF66AF11F35ADD00DAAB9A /* BXFileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBF66AE11F35ADD00DAAB9A /* BXFileTransfer.m */; };
 		9FC1620E119E9AD700705EA5 /* BXCursorFadeAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC1620D119E9AD700705EA5 /* BXCursorFadeAnimation.m */; };
 		9FC3B2550F62D9CE006DE439 /* BXSession+BXEmulatorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC3B2540F62D9CE006DE439 /* BXSession+BXEmulatorController.m */; };
+		9FC74821122A7C8B00E86E6A /* BXPathEnumerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC74820122A7C8B00E86E6A /* BXPathEnumerator.m */; };
 		9FC8B073121807AD004F6DA2 /* NSView+BXDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC8B072121807AD004F6DA2 /* NSView+BXDrawing.m */; };
 		9FC8B16B12182586004F6DA2 /* BXImportFinalizingPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC8B16A12182586004F6DA2 /* BXImportFinalizingPanelController.m */; };
 		9FC8B2E812186171004F6DA2 /* BXImportFinishedPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC8B2E712186171004F6DA2 /* BXImportFinishedPanelController.m */; };
@@ -758,6 +759,8 @@
 		9FC1620D119E9AD700705EA5 /* BXCursorFadeAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXCursorFadeAnimation.m; sourceTree = "<group>"; };
 		9FC3B2530F62D9CE006DE439 /* BXSession+BXEmulatorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXSession+BXEmulatorController.h"; sourceTree = "<group>"; };
 		9FC3B2540F62D9CE006DE439 /* BXSession+BXEmulatorController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXSession+BXEmulatorController.m"; sourceTree = "<group>"; };
+		9FC7481F122A7C8B00E86E6A /* BXPathEnumerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXPathEnumerator.h; sourceTree = "<group>"; };
+		9FC74820122A7C8B00E86E6A /* BXPathEnumerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXPathEnumerator.m; sourceTree = "<group>"; };
 		9FC8B071121807AD004F6DA2 /* NSView+BXDrawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSView+BXDrawing.h"; sourceTree = "<group>"; };
 		9FC8B072121807AD004F6DA2 /* NSView+BXDrawing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSView+BXDrawing.m"; sourceTree = "<group>"; };
 		9FC8B16912182586004F6DA2 /* BXImportFinalizingPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImportFinalizingPanelController.h; sourceTree = "<group>"; };
@@ -1630,6 +1633,8 @@
 				9F0F9EEE1210901800ED7A64 /* BXMountedVolumesError.m */,
 				9FC8B071121807AD004F6DA2 /* NSView+BXDrawing.h */,
 				9FC8B072121807AD004F6DA2 /* NSView+BXDrawing.m */,
+				9FC7481F122A7C8B00E86E6A /* BXPathEnumerator.h */,
+				9FC74820122A7C8B00E86E6A /* BXPathEnumerator.m */,
 			);
 			path = BXToolkit;
 			sourceTree = "<group>";
@@ -2096,6 +2101,7 @@
 				9FC8B2E812186171004F6DA2 /* BXImportFinishedPanelController.m in Sources */,
 				9F24D24D122439E0009C1817 /* BXWelcomeWindowController.m in Sources */,
 				9F24D25012243C9A009C1817 /* BXWelcomeView.m in Sources */,
+				9FC74821122A7C8B00E86E6A /* BXPathEnumerator.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

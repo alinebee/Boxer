@@ -13,6 +13,7 @@
 #import "RegexKitLite.h"
 #import "BXDigest.h"
 #import "NSData+HexStrings.h"
+#import "BXPathEnumerator.h"
 
 #pragma mark -
 #pragma mark Constants
@@ -415,19 +416,13 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 - (NSArray *) _foundResourcesOfTypes: (NSSet *)fileTypes startingIn: (NSString *)basePath
 {
 	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
-	NSFileManager *manager	= [NSFileManager defaultManager];
 	NSMutableArray *matches	= [NSMutableArray arrayWithCapacity: 10];
 	
-	for (NSString *fileName in [manager enumeratorAtPath: basePath])
-	{	
-		//Skip over hidden/metadata files
-		if ([[fileName lastPathComponent] hasPrefix: @"."]) continue;
-		
-		NSString *filePath = [basePath stringByAppendingPathComponent: fileName];
-		
+	for (NSString *path in [BXPathEnumerator enumeratorAtPath: basePath])
+	{
 		//Note that we don't use our own smarter file:matchesTypes: function for this,
 		//because there are some inherited filetypes that we want to avoid matching.
-		if ([fileTypes containsObject: [workspace typeOfFile: filePath error: nil]]) [matches addObject: filePath];
+		if ([fileTypes containsObject: [workspace typeOfFile: path error: nil]]) [matches addObject: path];
 	}
 	return matches;	
 }

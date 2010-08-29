@@ -15,6 +15,7 @@
 
 #import "BXPackage.h"
 #import "BXAppController.h"
+#import "BXPathEnumerator.h"
 
 
 @implementation BXImport (BXImportPolicies)
@@ -110,6 +111,7 @@
 {
 	static NSSet *patterns = nil;
 	if (!patterns) patterns = [[NSSet alloc] initWithObjects:
+							   @"^gfw_high\\.ico$",	//Indicates a GOG game
 							   nil];
 	return patterns;
 }
@@ -133,6 +135,41 @@
 
 #pragma mark -
 #pragma mark Deciding how best to import a game
+
++ (NSString *) preferredSourcePathForPath: (NSString *)path
+						   didMountVolume: (BOOL *)didMountVolume
+									error: (NSError **)outError
+{
+	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+	if (didMountVolume) *didMountVolume = NO;
+	
+	//If the specified path was a disk image, mount it and use the mounted volume as our source
+	if ([workspace file: path matchesTypes: [NSSet setWithObject: @"public.disk-image"]])
+	{
+		NSString *mountedVolumePath = [workspace mountImageAtPath: path error: outError];
+		
+		if (mountedVolumePath)
+		{
+			if (didMountVolume) *didMountVolume = YES;
+			return mountedVolumePath;
+		}
+		//If the mount failed, bail out immediately (having passed the error to the calling context)
+		else return nil;
+	}
+	
+	//If the chosen path was an audio CD, check if it has a corresponding data path and use that instead
+	else if ([[workspace volumeTypeForPath: path] isEqualToString: audioCDVolumeType])
+	{
+		NSString *dataVolumePath = [workspace dataVolumeOfAudioCD: path];
+		if (dataVolumePath) return dataVolumePath;
+	}
+	
+	//Otherwise, for now stick with the original path as it was provided
+	//TODO: return the base volume path if the path was on a CD or floppy disk?
+	//TODO: search for a preferred import folder based on game profile?
+	return path;
+}
+
 
 + (NSString *) preferredInstallerFromPaths: (NSArray *)paths
 {
@@ -171,22 +208,21 @@
 	return NO;
 }
 
-+ (BOOL) shouldUseSubfolderForSourceFilesAtPath: (NSString *)path
++ (BOOL) shouldUseSubfolderForSourceFilesAtPath: (NSString *)basePath
 {
-	NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtPath: path];
+	BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: basePath];
+	[enumerator setSkipSubdirectories: YES];
 	
 	BOOL hasExecutables = NO;
-	for (NSString *subPath in enumerator)
+	for (NSString *path in enumerator)
 	{
-		//Only scan the first level of the file heirarchy
-		[enumerator skipDescendents];
-		NSString *fullPath = [path stringByAppendingPathComponent: subPath];
-		
-		//This is an indication that the game is installed and playable; don’t use a subfolder 
-		if ([self isPlayableGameTelltaleAtPath: fullPath]) return NO;
+		//This is an indication that the game is installed and playable;
+		//break out immediately and don’t use a subfolder 
+		if ([self isPlayableGameTelltaleAtPath: path]) return NO;
 		
 		//Otherwise, if the folder contains executables, it probably does need a subfolder
-		else if ([self isExecutable: fullPath]) hasExecutables = YES;
+		//(but keep scanning in case we find a playable telltale.)
+		else if ([self isExecutable: path]) hasExecutables = YES;
 	}
 	return hasExecutables;
 }
@@ -252,6 +288,7 @@
 	else return nil;	
 }
 
+//TODO: move this into BXPackage?
 + (NSString *) validGameboxNameFromName: (NSString *)name
 {
 	//Remove all leading dots, to prevent gameboxes from being hidden

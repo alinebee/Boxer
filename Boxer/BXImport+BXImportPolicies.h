@@ -64,6 +64,13 @@
 #pragma mark -
 #pragma mark Deciding how best to import a game
 
+//Returns the recommended import point for the specified path.
+//didMountVolume will be YES if this method mounted the volume on which the source path resides.
+//If this encountered any error when determining the source path, outError will be populated with a suitable error.
++ (NSString *) preferredSourcePathForPath: (NSString *)path
+						   didMountVolume: (BOOL *)didMountVolume
+									error: (NSError **)outError;
+
 //Returns a recommended installer from the list of possible installers,
 //using preferredInstallerPatterns.
 + (NSString *) preferredInstallerFromPaths: (NSArray *)paths;
@@ -76,7 +83,7 @@
 //or directly into the base folder of drive C.
 //This decision is based on whether the source path has any executables in the base folder,
 //and whether it appears to be configured as a playable game.
-+ (BOOL) shouldUseSubfolderForSourceFilesAtPath: (NSString *)path;
++ (BOOL) shouldUseSubfolderForSourceFilesAtPath: (NSString *)basePath;
 
 //Returns a suitable name (sans .boxer extension) for the game at the specified path.
 //This is based on the last path component of the source path, cleaned up.

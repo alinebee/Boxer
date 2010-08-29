@@ -25,6 +25,7 @@
 #import "NSWorkspace+BXExecutableTypes.h"
 #import "NSString+BXPaths.h"
 #import "NSFileManager+BXTemporaryFiles.h"
+#import "BXPathEnumerator.h"
 
 
 //Boxer will delay its handling of volume mount notifications by this many seconds,
@@ -55,44 +56,6 @@
 
 #pragma mark -
 #pragma mark Helper class methods
-
-+ (NSArray *) executablesAtPath: (NSString *)path
-					scanSubdirs: (BOOL)scanSubdirs
-		   scanMountableFolders: (BOOL)scanMountableFolders;
-{
-	NSMutableArray *foundExecutables = [NSMutableArray arrayWithCapacity: 10];
-	
-	NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtPath: path];
-	
-	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	NSSet *executableTypes = [BXAppController executableTypes];
-	NSSet *mountableFolderTypes = [BXAppController mountableFolderTypes];
-	
-	for (NSString *subPath in enumerator)
-	{
-		if (!scanSubdirs) [enumerator skipDescendents];
-		
-		NSDictionary *attrs	= [enumerator fileAttributes];
-		NSString *fullPath	= [path stringByAppendingPathComponent: subPath];
-		
-		//If this is a mountable folder and we don't want to scan inside them, skip its descendants
-		if (scanSubdirs && !scanMountableFolders && 
-			[[attrs fileType] isEqualToString: NSFileTypeDirectory] &&
-			[workspace file: fullPath matchesTypes: mountableFolderTypes])
-		{
-			[enumerator skipDescendents];
-		}
-		
-		//Skip directories
-		if (![[attrs fileType] isEqualToString: NSFileTypeRegular]) continue;
-		
-		//Skip dot-hidden files (since these are probably just metadata for real files)
-		if ([[subPath lastPathComponent] hasPrefix: @"."]) continue;
-		
-		if ([workspace file: fullPath matchesTypes: executableTypes]) [foundExecutables addObject: fullPath];
-	}
-	return foundExecutables;
-}
 
 + (NSString *) preferredMountPointForPath: (NSString *)filePath
 {	
@@ -632,20 +595,43 @@
 	
 	if (![drive isInternal])
 	{
-		[self _startTrackingChangesAtPath: [drive path]];
+		NSString *drivePath = [drive path];
+	
+		[self _startTrackingChangesAtPath: drivePath];
 
 		if (showDriveNotifications) [[BXGrowlController controller] notifyDriveMounted: drive];
 		
-		//Determine what executables are stored on this drive, if it is public
+		//Determine what executables are stored on this drive, if it's public
 		if (![drive isHidden])
 		{
-			NSString *drivePath = [drive path];
-			NSArray *foundExecutables = [[self class] executablesAtPath: drivePath
-															scanSubdirs: YES
-												   scanMountableFolders: NO];
-			//TODO: filter out windows-only executables here
+			NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+			NSMutableArray *foundExecutables = [NSMutableArray arrayWithCapacity: 10];
+			BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: drivePath];
 			
-			//Only send notifications if there were any executables to be found
+			NSSet *mountableFolderTypes	= [BXAppController mountableFolderTypes];
+			NSSet *executableTypes		= [BXAppController executableTypes];
+			for (NSString *path in enumerator)
+			{
+				NSString *fileType = [[enumerator fileAttributes] fileType];
+				
+				//Filter out the contents of any nested drive folders
+				if ([fileType isEqualToString: NSFileTypeDirectory])
+				{
+					if ([workspace file: path matchesTypes: mountableFolderTypes]) [enumerator skipDescendents];
+				}
+				else
+				{
+					//Skip non-executables
+					if (![workspace file: path matchesTypes: executableTypes]) continue;
+					//Skip windows-only executables
+					//This check is disabled for now because it's so costly
+					//if ([workspace isWindowsOnlyExecutableAtPath: path]) continue;
+					
+					[foundExecutables addObject: path];
+				}
+			}
+			
+			//Only send notifications if any executables were found
 			BOOL notify = ([foundExecutables count] > 0);
 			
 			//TODO: is there a better notification method we could use here?
@@ -689,11 +675,11 @@
 	
 	//The drive is in our executables cache: check if the created file path was an executable
 	//(If so, add it to the executables cache) 
-	NSMutableArray *driveExecutables = [executables objectForKey: [drive letter]];
+	NSMutableArray *driveExecutables = [executables mutableArrayValueForKey: [drive letter]];
 	if (driveExecutables)
 	{
 		NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-		if ([workspace file: path matchesTypes: [BXAppController executableTypes]])
+		if ([workspace file: path matchesTypes: [BXAppController executableTypes]]) // && ![workspace isWindowsOnlyExecutableAtPath: path]
 		{
 			[self willChangeValueForKey: @"executables"];
 			[driveExecutables addObject: path];

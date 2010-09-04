@@ -292,6 +292,15 @@
 		9FF2E9BD11E6F4950051E485 /* BXEmulatorConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF2E9BC11E6F4950051E485 /* BXEmulatorConfiguration.m */; };
 		9FFAFE2D10DE33FB00728BAC /* GameProfiles.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */; };
 		9FFAFE4310DE343F00728BAC /* Configurations in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2E10DE343F00728BAC /* Configurations */; };
+		9FFF9728123269D1009B5EE5 /* NDAlias+AliasFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9716123269D1009B5EE5 /* NDAlias+AliasFile.m */; };
+		9FFF9729123269D1009B5EE5 /* NDAlias.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9718123269D1009B5EE5 /* NDAlias.m */; };
+		9FFF972A123269D1009B5EE5 /* NDResourceFork+OtherSorces.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF971A123269D1009B5EE5 /* NDResourceFork+OtherSorces.m */; };
+		9FFF972B123269D1009B5EE5 /* NDResourceFork.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF971C123269D1009B5EE5 /* NDResourceFork.m */; };
+		9FFF972C123269D1009B5EE5 /* NSOpenPanel+NDAlias.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF971F123269D1009B5EE5 /* NSOpenPanel+NDAlias.m */; };
+		9FFF972D123269D1009B5EE5 /* NSPathControl+NDAlias.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9721123269D1009B5EE5 /* NSPathControl+NDAlias.m */; };
+		9FFF972E123269D1009B5EE5 /* NSSavePanel+NDAlias.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9723123269D1009B5EE5 /* NSSavePanel+NDAlias.m */; };
+		9FFF972F123269D1009B5EE5 /* NSString+NDCarbonUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9725123269D1009B5EE5 /* NSString+NDCarbonUtilities.m */; };
+		9FFF9730123269D1009B5EE5 /* NSURL+NDCarbonUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9727123269D1009B5EE5 /* NSURL+NDCarbonUtilities.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -822,6 +831,25 @@
 		9FFAFE2E10DE343F00728BAC /* Configurations */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Configurations; sourceTree = "<group>"; };
 		9FFBF67011A7F8F4000A1863 /* BXFrameRenderingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFrameRenderingView.h; sourceTree = "<group>"; };
 		9FFBF6AA11A811F7000A1863 /* BXEventConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEventConstants.h; sourceTree = "<group>"; };
+		9FFF9715123269D1009B5EE5 /* NDAlias+AliasFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NDAlias+AliasFile.h"; sourceTree = "<group>"; };
+		9FFF9716123269D1009B5EE5 /* NDAlias+AliasFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NDAlias+AliasFile.m"; sourceTree = "<group>"; };
+		9FFF9717123269D1009B5EE5 /* NDAlias.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NDAlias.h; sourceTree = "<group>"; };
+		9FFF9718123269D1009B5EE5 /* NDAlias.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NDAlias.m; sourceTree = "<group>"; };
+		9FFF9719123269D1009B5EE5 /* NDResourceFork+OtherSorces.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NDResourceFork+OtherSorces.h"; sourceTree = "<group>"; };
+		9FFF971A123269D1009B5EE5 /* NDResourceFork+OtherSorces.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NDResourceFork+OtherSorces.m"; sourceTree = "<group>"; };
+		9FFF971B123269D1009B5EE5 /* NDResourceFork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NDResourceFork.h; sourceTree = "<group>"; };
+		9FFF971C123269D1009B5EE5 /* NDResourceFork.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NDResourceFork.m; sourceTree = "<group>"; };
+		9FFF971D123269D1009B5EE5 /* NDSDKCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NDSDKCompatibility.h; sourceTree = "<group>"; };
+		9FFF971E123269D1009B5EE5 /* NSOpenPanel+NDAlias.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSOpenPanel+NDAlias.h"; sourceTree = "<group>"; };
+		9FFF971F123269D1009B5EE5 /* NSOpenPanel+NDAlias.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSOpenPanel+NDAlias.m"; sourceTree = "<group>"; };
+		9FFF9720123269D1009B5EE5 /* NSPathControl+NDAlias.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSPathControl+NDAlias.h"; sourceTree = "<group>"; };
+		9FFF9721123269D1009B5EE5 /* NSPathControl+NDAlias.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSPathControl+NDAlias.m"; sourceTree = "<group>"; };
+		9FFF9722123269D1009B5EE5 /* NSSavePanel+NDAlias.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSSavePanel+NDAlias.h"; sourceTree = "<group>"; };
+		9FFF9723123269D1009B5EE5 /* NSSavePanel+NDAlias.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSSavePanel+NDAlias.m"; sourceTree = "<group>"; };
+		9FFF9724123269D1009B5EE5 /* NSString+NDCarbonUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+NDCarbonUtilities.h"; sourceTree = "<group>"; };
+		9FFF9725123269D1009B5EE5 /* NSString+NDCarbonUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+NDCarbonUtilities.m"; sourceTree = "<group>"; };
+		9FFF9726123269D1009B5EE5 /* NSURL+NDCarbonUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+NDCarbonUtilities.h"; sourceTree = "<group>"; };
+		9FFF9727123269D1009B5EE5 /* NSURL+NDCarbonUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+NDCarbonUtilities.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -933,6 +961,7 @@
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
+				9FFF9714123269D1009B5EE5 /* NDAlias */,
 			);
 			name = Boxer;
 			sourceTree = "<group>";
@@ -1761,6 +1790,32 @@
 			name = Sounds;
 			sourceTree = "<group>";
 		};
+		9FFF9714123269D1009B5EE5 /* NDAlias */ = {
+			isa = PBXGroup;
+			children = (
+				9FFF9715123269D1009B5EE5 /* NDAlias+AliasFile.h */,
+				9FFF9716123269D1009B5EE5 /* NDAlias+AliasFile.m */,
+				9FFF9717123269D1009B5EE5 /* NDAlias.h */,
+				9FFF9718123269D1009B5EE5 /* NDAlias.m */,
+				9FFF9719123269D1009B5EE5 /* NDResourceFork+OtherSorces.h */,
+				9FFF971A123269D1009B5EE5 /* NDResourceFork+OtherSorces.m */,
+				9FFF971B123269D1009B5EE5 /* NDResourceFork.h */,
+				9FFF971C123269D1009B5EE5 /* NDResourceFork.m */,
+				9FFF971D123269D1009B5EE5 /* NDSDKCompatibility.h */,
+				9FFF971E123269D1009B5EE5 /* NSOpenPanel+NDAlias.h */,
+				9FFF971F123269D1009B5EE5 /* NSOpenPanel+NDAlias.m */,
+				9FFF9720123269D1009B5EE5 /* NSPathControl+NDAlias.h */,
+				9FFF9721123269D1009B5EE5 /* NSPathControl+NDAlias.m */,
+				9FFF9722123269D1009B5EE5 /* NSSavePanel+NDAlias.h */,
+				9FFF9723123269D1009B5EE5 /* NSSavePanel+NDAlias.m */,
+				9FFF9724123269D1009B5EE5 /* NSString+NDCarbonUtilities.h */,
+				9FFF9725123269D1009B5EE5 /* NSString+NDCarbonUtilities.m */,
+				9FFF9726123269D1009B5EE5 /* NSURL+NDCarbonUtilities.h */,
+				9FFF9727123269D1009B5EE5 /* NSURL+NDCarbonUtilities.m */,
+			);
+			path = NDAlias;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -2102,6 +2157,15 @@
 				9F24D24D122439E0009C1817 /* BXWelcomeWindowController.m in Sources */,
 				9F24D25012243C9A009C1817 /* BXWelcomeView.m in Sources */,
 				9FC74821122A7C8B00E86E6A /* BXPathEnumerator.m in Sources */,
+				9FFF9728123269D1009B5EE5 /* NDAlias+AliasFile.m in Sources */,
+				9FFF9729123269D1009B5EE5 /* NDAlias.m in Sources */,
+				9FFF972A123269D1009B5EE5 /* NDResourceFork+OtherSorces.m in Sources */,
+				9FFF972B123269D1009B5EE5 /* NDResourceFork.m in Sources */,
+				9FFF972C123269D1009B5EE5 /* NSOpenPanel+NDAlias.m in Sources */,
+				9FFF972D123269D1009B5EE5 /* NSPathControl+NDAlias.m in Sources */,
+				9FFF972E123269D1009B5EE5 /* NSSavePanel+NDAlias.m in Sources */,
+				9FFF972F123269D1009B5EE5 /* NSString+NDCarbonUtilities.m in Sources */,
+				9FFF9730123269D1009B5EE5 /* NSURL+NDCarbonUtilities.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

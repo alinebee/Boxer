@@ -21,7 +21,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="118"/>
+			<integer value="55"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -72,7 +72,6 @@
 									<int key="NSvFlags">292</int>
 									<string key="NSFrame">{{13, 7}, {104, 25}}</string>
 									<reference key="NSSuperview" ref="207441628"/>
-									<reference key="NSWindow"/>
 									<bool key="NSEnabled">YES</bool>
 									<object class="NSPopUpButtonCell" key="NSCell" id="814750735">
 										<int key="NSCellFlags">-2076049856</int>
@@ -141,7 +140,6 @@
 									<int key="NSvFlags">289</int>
 									<string key="NSFrame">{{435, 7}, {70, 25}}</string>
 									<reference key="NSSuperview" ref="207441628"/>
-									<reference key="NSWindow"/>
 									<bool key="NSEnabled">YES</bool>
 									<object class="NSButtonCell" key="NSCell" id="494725080">
 										<int key="NSCellFlags">-2080244224</int>
@@ -160,7 +158,6 @@
 							</object>
 							<string key="NSFrameSize">{520, 40}</string>
 							<reference key="NSSuperview" ref="553231048"/>
-							<reference key="NSWindow"/>
 							<string key="NSClassName">BXBottomBar</string>
 						</object>
 						<object class="NSCustomView" id="860667949">
@@ -173,7 +170,6 @@
 									<int key="NSvFlags">269</int>
 									<string key="NSFrame">{{37, 214}, {446, 39}}</string>
 									<reference key="NSSuperview" ref="860667949"/>
-									<reference key="NSWindow"/>
 									<int key="NSViewLayerContentsRedrawPolicy">2</int>
 									<bool key="NSEnabled">YES</bool>
 									<object class="NSTextFieldCell" key="NSCell" id="278454093">
@@ -207,7 +203,6 @@
 									<int key="NSvFlags">268</int>
 									<string key="NSFrame">{{20, 20}, {160, 186}}</string>
 									<reference key="NSSuperview" ref="860667949"/>
-									<reference key="NSWindow"/>
 									<bool key="NSEnabled">YES</bool>
 									<object class="NSButtonCell" key="NSCell" id="1059125847">
 										<int key="NSCellFlags">67239488</int>
@@ -232,7 +227,6 @@
 									<int key="NSvFlags">269</int>
 									<string key="NSFrame">{{180, 20}, {160, 186}}</string>
 									<reference key="NSSuperview" ref="860667949"/>
-									<reference key="NSWindow"/>
 									<bool key="NSEnabled">YES</bool>
 									<object class="NSButtonCell" key="NSCell" id="950596936">
 										<int key="NSCellFlags">67239488</int>
@@ -257,7 +251,6 @@
 									<int key="NSvFlags">265</int>
 									<string key="NSFrame">{{340, 20}, {160, 186}}</string>
 									<reference key="NSSuperview" ref="860667949"/>
-									<reference key="NSWindow"/>
 									<bool key="NSEnabled">YES</bool>
 									<object class="NSButtonCell" key="NSCell" id="919807319">
 										<int key="NSCellFlags">67239488</int>
@@ -280,13 +273,11 @@
 							</object>
 							<string key="NSFrame">{{0, 40}, {520, 268}}</string>
 							<reference key="NSSuperview" ref="553231048"/>
-							<reference key="NSWindow"/>
 							<string key="NSClassName">BXWelcomeView</string>
 						</object>
 					</object>
 					<string key="NSFrameSize">{520, 308}</string>
 					<reference key="NSSuperview"/>
-					<reference key="NSWindow"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1280, 778}}</string>
 				<string key="NSMaxSize">{1.79769e+308, 1.79769e+308}</string>
@@ -301,7 +292,7 @@
 				<nil key="NSViewClass"/>
 				<string key="NSWindowContentMaxSize">{1.79769e+308, 1.79769e+308}</string>
 				<object class="NSView" key="NSWindowView" id="261933879">
-					<reference key="NSNextResponder"/>
+					<nil key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
 					<object class="NSMutableArray" key="NSSubviews">
 						<bool key="EncodedWithXMLCoder">YES</bool>
@@ -370,19 +361,15 @@
 										<int key="NSCellFlags">67239424</int>
 										<int key="NSCellFlags2">134217728</int>
 										<string key="NSContents">Choose another location…</string>
-										<object class="NSFont" key="NSSupport">
-											<string key="NSName">LucidaGrande</string>
-											<double key="NSSize">12</double>
-											<int key="NSfFlags">4883</int>
-										</object>
-										<reference key="NSControlView" ref="151606391"/>
-										<int key="NSButtonFlags">-2038284033</int>
-										<int key="NSButtonFlags2">36</int>
-										<object class="NSFont" key="NSAlternateImage">
+										<object class="NSFont" key="NSSupport" id="872585481">
 											<string key="NSName">LucidaGrande</string>
 											<double key="NSSize">12</double>
 											<int key="NSfFlags">16</int>
 										</object>
+										<reference key="NSControlView" ref="151606391"/>
+										<int key="NSButtonFlags">-2038284033</int>
+										<int key="NSButtonFlags2">36</int>
+										<reference key="NSAlternateImage" ref="872585481"/>
 										<string key="NSAlternateContents"/>
 										<string key="NSKeyEquivalent"/>
 										<int key="NSPeriodicDelay">200</int>
@@ -409,9 +396,7 @@
 										<int key="NSCellFlags2">0</int>
 										<object class="NSURL" key="NSContents">
 											<nil key="NS.base"/>
-											<object class="NSMutableString" key="NS.relative">
-												<characters key="NS.bytes">file://localhost/Users/alunbestor/DOS%20Games.localized/</characters>
-											</object>
+											<string key="NS.relative">file://localhost/Users/alunbestor/DOS%20Games.localized/</string>
 										</object>
 										<reference key="NSSupport" ref="713831980"/>
 										<reference key="NSControlView" ref="1011172810"/>
@@ -541,7 +526,6 @@
 						</object>
 					</object>
 					<string key="NSFrameSize">{520, 308}</string>
-					<reference key="NSSuperview"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1280, 778}}</string>
 				<string key="NSMaxSize">{1.79769e+308, 1.79769e+308}</string>
@@ -629,6 +613,14 @@
 						<reference key="destination" ref="155283054"/>
 					</object>
 					<int key="connectionID">168</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">initialFirstResponder</string>
+						<reference key="source" ref="224645555"/>
+						<reference key="destination" ref="910787578"/>
+					</object>
+					<int key="connectionID">179</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1071,7 +1063,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">178</int>
+			<int key="maxID">179</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -1193,6 +1185,13 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">UKKQueue/UKMainThreadProxy.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">NSPathControl</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">NDAlias/NSPathControl+NDAlias.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

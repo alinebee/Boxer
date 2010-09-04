@@ -16,10 +16,23 @@
 @interface BXAppController : NSDocumentController
 {
 	BXSession *currentSession;
+	NSString *gamesFolderPath;
 }
-@property (retain, nonatomic) BXSession *currentSession;	//The currently-active DOS session
-@property (copy, nonatomic) NSString *gamesFolderPath;		//The path where we store Boxer's games
-@property (readonly, nonatomic) BOOL hasGamesFolder;		//Whether the games folder exists
+//The currently-active DOS session. Changes whenever a new session opens.
+@property (retain, nonatomic) BXSession *currentSession;
+
+//The path where we store Boxer's games, stored internally as an alias to allow the folder to be moved.
+//Will be nil if no path has been chosen or the alias could not be resolved.
+@property (copy, nonatomic) NSString *gamesFolderPath;
+
+//The game folder path from 0.8x versions of Boxer (stored as an alias at ~/Library/Preferences/Boxer/Default Folder).
+//Will be nil if no path was stored by an older version of Boxer, or if the alias could not be resolved.
+@property (readonly, nonatomic) NSString *oldGamesFolderPath;
+
+//The 'emergency' path at which to store new gameboxes, used when the games folder cannot be found
+//and we don't have the chance to ask the user for a new one. This is currently set to the user's Desktop.
+@property (readonly, nonatomic) NSString *fallbackGamesFolderPath;
+
 
 //Called at class initialization time to initialize Boxer's own user defaults.
 + (void) setupDefaults;

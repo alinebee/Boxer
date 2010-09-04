@@ -24,6 +24,7 @@
 
 #import "BXThemes.h"
 #import <BGHUDAppKit/BGThemeManager.h>
+#import "NDAlias+AliasFile.h"
 
 
 NSString * const BXNewSessionParam = @"--openNewSession";
@@ -48,7 +49,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 
 @implementation BXAppController
-@synthesize currentSession;
+@synthesize currentSession, gamesFolderPath;
 
 
 #pragma mark -
@@ -163,6 +164,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (void) dealloc
 {
 	[self setCurrentSession: nil], [currentSession release];
+	[self setGamesFolderPath: nil], [gamesFolderPath release];
 	
 	[super dealloc];
 }
@@ -173,24 +175,54 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 - (NSString *) gamesFolderPath
 {
-	NSString *path = [[NSUserDefaults standardUserDefaults] stringForKey: @"gameFolder"];
-	//If no games folder exists was set, fall back on the desktop
-	if (!path) path = [NSSearchPathForDirectoriesInDomains(NSDesktopDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
-	return path;
+	//Load the games folder path from our preferences alias the first time we need it
+	if (!gamesFolderPath)
+	{
+		NSData *aliasData = [[NSUserDefaults standardUserDefaults] dataForKey: @"gameFolder"];
+		
+		if (aliasData)
+		{
+			NDAlias *alias = [NDAlias aliasWithData: aliasData];
+			gamesFolderPath = [[alias path] copy];
+			
+			//If the alias was updated while resolving it because the target had moved,
+			//then re-save the new alias data
+			if ([alias changed])
+			{
+				[[NSUserDefaults standardUserDefaults] setObject: [alias data] forKey: @"gameFolder"];
+			}			
+		}
+	}
+	return gamesFolderPath;
 }
 
 - (void) setGamesFolderPath: (NSString *)newPath
 {
-    [[NSUserDefaults standardUserDefaults] setObject: newPath forKey: @"gameFolder"];
+	if (![gamesFolderPath isEqualToString: newPath])
+	{
+		[gamesFolderPath release];
+		gamesFolderPath = [newPath copy];
+		
+		//Store the new path in the preferences as an alias, so that users can move it around.
+		NDAlias *alias = [NDAlias aliasWithPath: newPath];
+		[[NSUserDefaults standardUserDefaults] setObject: [alias data] forKey: @"gameFolder"];		
+	}
 }
 
-- (BOOL) hasGamesFolder
+- (NSString *) oldGamesFolderPath
 {
-	NSString *path = [[NSUserDefaults standardUserDefaults] stringForKey: @"gameFolder"];
+	//Check for an alias reference from 0.8x versions of Boxer
+	NSString *libraryPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
+	NSString *oldAliasPath = [libraryPath stringByAppendingPathComponent: @"Preferences/Boxer/Default Folder"];
 	
-	if (!path) return NO;
-	if (![[NSFileManager defaultManager] fileExistsAtPath: path]) return NO;
-	return YES;
+	//Resolve the previous games folder location from that alias
+	NDAlias *alias = [NDAlias aliasWithContentsOfFile: oldAliasPath];
+	return [alias path];
+}
+
+- (NSString *) fallbackGamesFolderPath
+{
+	return [NSSearchPathForDirectoriesInDomains(NSDesktopDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
 }
 
 
@@ -529,7 +561,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	
 	//Don't allow game imports or the games folder to be opened if no games folder has been set yet.
 	if (theAction == @selector(revealGamesFolder:) ||
-		theAction == @selector(orderFrontImportGamePanel:)) return [self hasGamesFolder];
+		theAction == @selector(orderFrontImportGamePanel:)) return [self gamesFolderPath] != nil;
 	
 	return [super validateUserInterfaceItem: theItem];
 }
@@ -592,7 +624,8 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 - (IBAction) revealGamesFolder: (id)sender
 {
-	[self revealPath: [self gamesFolderPath]];
+	NSString *path = [self gamesFolderPath];
+	if (path) [self revealPath: path];
 }
 
 //Displays a file path in Finder. This will display the containing folder of files,

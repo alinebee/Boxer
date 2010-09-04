@@ -10,11 +10,11 @@
 //animation and transitions between the window's various views.
 //It takes its marching orders from the BXImport document class.
 
-#import <Cocoa/Cocoa.h>
+#import "BXMultiPanelWindowController.h"
 
 @class BXImport;
 
-@interface BXImportWindowController : NSWindowController
+@interface BXImportWindowController : BXMultiPanelWindowController
 {
 	IBOutlet NSView *dropzonePanel;
 	IBOutlet NSView *installerPanel;
@@ -38,9 +38,6 @@
 
 //The final gamebox panel, which displays the finished gamebox for the user to launch.
 @property (retain, nonatomic) NSView *finishedPanel;
-
-//The currently-displayed panel.
-@property (assign, nonatomic) NSView *currentPanel;
 
 
 //Recast NSWindowController's standard accessors so that we get our own classes

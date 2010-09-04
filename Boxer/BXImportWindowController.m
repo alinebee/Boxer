@@ -121,94 +121,7 @@
 
 
 #pragma mark -
-#pragma mark View management
-
-- (NSView *) currentPanel
-{
-	return [[[[self window] contentView] subviews] lastObject];
-}
-
-- (void) setCurrentPanel: (NSView *)panel
-{
-	NSView *oldPanel = [self currentPanel];
-	
-	if (panel && oldPanel != panel)
-	{
-		NSRect newFrame, oldFrame = [[self window] frame];
-		
-		NSSize newSize	= [panel frame].size;
-		NSSize oldSize	= [[[self window] contentView] frame].size;
-		
-		NSSize difference = NSMakeSize(
-									   newSize.width - oldSize.width,
-									   newSize.height - oldSize.height
-									   );
-		
-		//Generate a new window frame that can contain the new panel,
-		//Ensuring that the top left corner stays put
-		newFrame.origin = NSMakePoint(
-									  oldFrame.origin.x,
-									  oldFrame.origin.y - difference.height
-									  );
-		newFrame.size	= NSMakeSize(
-									 oldFrame.size.width + difference.width,
-									 oldFrame.size.height + difference.height
-									 );
-		
-		
-		//Animate the transition from one panel to the next,
-		//if we have a previous panel and the window is actually on screen
-		if (oldPanel && [[self window] isVisible])
-		{
-			[panel setFrame: [oldPanel frame]];
-			
-			[[[self window] contentView] addSubview: panel
-										 positioned: NSWindowBelow
-										 relativeTo: oldPanel];
-			
-			NSViewAnimation *animation;
-			NSDictionary *resize, *fadeOut;
-			
-			resize = [NSDictionary dictionaryWithObjectsAndKeys:
-					  [self window], NSViewAnimationTargetKey,
-					  [NSValue valueWithRect: newFrame], NSViewAnimationEndFrameKey,
-					  nil];
-			
-			fadeOut = [NSDictionary dictionaryWithObjectsAndKeys:
-					  oldPanel, NSViewAnimationTargetKey,
-					  NSViewAnimationFadeOutEffect, NSViewAnimationEffectKey,
-					  nil];
-			
-			animation = [[NSViewAnimation alloc] initWithViewAnimations: [NSArray arrayWithObjects: resize, fadeOut, nil]];
-			
-			[animation setAnimationBlockingMode: NSAnimationBlocking];
-			[animation setDuration: 0.25];
-			[animation startAnimation];
-			[animation release];
-			
-			//Reset the properties of the original panel once the animation is complete
-			[oldPanel removeFromSuperview];
-			[oldPanel setFrameSize: oldSize];
-			[oldPanel setHidden: NO];
-			
-			//Cures infinite-redraw bug caused by animated fade
-			[panel display];
-		}
-		
-		//If we're setting up the panel for the first time, don't bother with this step
-		else
-		{
-			[oldPanel removeFromSuperview];
-			[[self window] setFrame: newFrame display: YES];
-			[[[self window] contentView] addSubview: panel];
-		}
-		
-		//Select the designated first responder for this panel
-		//(Currently this is piggybacking off NSView's nextKeyView, which is kinda not good)
-		[[self window] makeFirstResponder: [panel nextKeyView]];
-	}
-}
-
+#pragma mark Window transitions
 
 - (void) handOffToController: (NSWindowController *)controller
 {
@@ -272,6 +185,13 @@
 	//of window controllers when we swap between them. So, set it explicitly here.
 	[controller setShouldCloseDocument: NO];
 	[self setShouldCloseDocument: YES];
+}
+
+- (NSViewAnimation *) transitionFromPanel: (NSView *)oldPanel toPanel: (NSView *)newPanel
+{
+	NSViewAnimation *animation = [self fadeOutPanel: oldPanel overPanel: newPanel];
+	[animation setDuration: 0.25];
+	return animation;
 }
 
 @end

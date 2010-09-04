@@ -301,6 +301,7 @@
 		9FFF972E123269D1009B5EE5 /* NSSavePanel+NDAlias.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9723123269D1009B5EE5 /* NSSavePanel+NDAlias.m */; };
 		9FFF972F123269D1009B5EE5 /* NSString+NDCarbonUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9725123269D1009B5EE5 /* NSString+NDCarbonUtilities.m */; };
 		9FFF9730123269D1009B5EE5 /* NSURL+NDCarbonUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9727123269D1009B5EE5 /* NSURL+NDCarbonUtilities.m */; };
+		9FFF97951232B718009B5EE5 /* BXMultiPanelWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF97941232B718009B5EE5 /* BXMultiPanelWindowController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -850,6 +851,8 @@
 		9FFF9725123269D1009B5EE5 /* NSString+NDCarbonUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+NDCarbonUtilities.m"; sourceTree = "<group>"; };
 		9FFF9726123269D1009B5EE5 /* NSURL+NDCarbonUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+NDCarbonUtilities.h"; sourceTree = "<group>"; };
 		9FFF9727123269D1009B5EE5 /* NSURL+NDCarbonUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+NDCarbonUtilities.m"; sourceTree = "<group>"; };
+		9FFF97931232B718009B5EE5 /* BXMultiPanelWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXMultiPanelWindowController.h; sourceTree = "<group>"; };
+		9FFF97941232B718009B5EE5 /* BXMultiPanelWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXMultiPanelWindowController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1621,6 +1624,8 @@
 		9F7A8F230F8E705100D1AAD5 /* BXToolkit */ = {
 			isa = PBXGroup;
 			children = (
+				9FFF97931232B718009B5EE5 /* BXMultiPanelWindowController.h */,
+				9FFF97941232B718009B5EE5 /* BXMultiPanelWindowController.m */,
 				9FFBF6AA11A811F7000A1863 /* BXEventConstants.h */,
 				9FBC351B0F56C7B7001811F2 /* BXGeometry.h */,
 				9FBC35280F56C7B7001811F2 /* BXGeometry.m */,
@@ -2174,6 +2179,7 @@
 				9FFF972E123269D1009B5EE5 /* NSSavePanel+NDAlias.m in Sources */,
 				9FFF972F123269D1009B5EE5 /* NSString+NDCarbonUtilities.m in Sources */,
 				9FFF9730123269D1009B5EE5 /* NSURL+NDCarbonUtilities.m in Sources */,
+				9FFF97951232B718009B5EE5 /* BXMultiPanelWindowController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

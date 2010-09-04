@@ -384,8 +384,8 @@
 		9F45A423109C867E00593456 /* BXMountPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXMountPanelController.m; sourceTree = "<group>"; };
 		9F45A46B109C9A0400593456 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/MountPanelOptions.xib; sourceTree = "<group>"; };
 		9F466A1A11A9222B00C50965 /* Shaders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Shaders; sourceTree = "<group>"; };
-		9F466A4711A924EC00C50965 /* Shader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Shader.h; path = Boxer/Shader.h; sourceTree = SOURCE_ROOT; };
-		9F466A4811A924EC00C50965 /* Shader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Shader.m; path = Boxer/Shader.m; sourceTree = SOURCE_ROOT; };
+		9F466A4711A924EC00C50965 /* Shader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Shader.h; path = Boxer/Shader.h; sourceTree = "<group>"; };
+		9F466A4811A924EC00C50965 /* Shader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Shader.m; path = Boxer/Shader.m; sourceTree = "<group>"; };
 		9F466AFB11A92C4B00C50965 /* UserDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UserDefaults.plist; sourceTree = "<group>"; };
 		9F4B5283122591960055022A /* prompt.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = prompt.icns; sourceTree = "<group>"; };
 		9F4E042B0F67E72300427D50 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
@@ -717,8 +717,8 @@
 		9FAD43BF10A341F6007E8C0D /* UKMainThreadProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UKMainThreadProxy.m; sourceTree = "<group>"; };
 		9FADFE5311EC7E1700990E91 /* BXDigest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDigest.h; sourceTree = "<group>"; };
 		9FADFE5411EC7E1700990E91 /* BXDigest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDigest.m; sourceTree = "<group>"; };
-		9FADFE9511EC932800990E91 /* NSData+HexStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+HexStrings.h"; sourceTree = "<group>"; };
-		9FADFE9611EC932800990E91 /* NSData+HexStrings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+HexStrings.m"; sourceTree = "<group>"; };
+		9FADFE9511EC932800990E91 /* NSData+HexStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSData+HexStrings.h"; path = "BXToolkit/NSData+HexStrings.h"; sourceTree = "<group>"; };
+		9FADFE9611EC932800990E91 /* NSData+HexStrings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSData+HexStrings.m"; path = "BXToolkit/NSData+HexStrings.m"; sourceTree = "<group>"; };
 		9FAE9B8A11F1D7CF000363F7 /* GameDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = GameDefaults.plist; sourceTree = "<group>"; };
 		9FB4F9E211957B55006C8AC9 /* BXFrameBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFrameBuffer.h; sourceTree = "<group>"; };
 		9FB4F9E311957B55006C8AC9 /* BXFrameBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFrameBuffer.m; sourceTree = "<group>"; };
@@ -802,7 +802,7 @@
 		9FDCA78E118F2B7900E2FD74 /* BXCoalface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCoalface.h; sourceTree = "<group>"; };
 		9FDCA78F118F2B7900E2FD74 /* BXCoalface.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXCoalface.mm; sourceTree = "<group>"; };
 		9FDCDEFC11B5B83B0032DA4E /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub.pem; sourceTree = "<group>"; };
-		9FDD4CB411E619D50035BA9E /* CGSPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGSPrivate.h; sourceTree = "<group>"; };
+		9FDD4CB411E619D50035BA9E /* CGSPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CGSPrivate.h; path = BXToolkit/CGSPrivate.h; sourceTree = "<group>"; };
 		9FE201A50F6D599C00B3A38C /* libz.1.2.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.3.dylib; path = usr/lib/libz.1.2.3.dylib; sourceTree = SDKROOT; };
 		9FE202470F6D749500B3A38C /* Snapshot.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = Snapshot.aiff; sourceTree = "<group>"; };
 		9FE2172B121EED1E001452E3 /* English */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = English; path = English.lproj/ImportCoverArtTip.png; sourceTree = "<group>"; };
@@ -882,22 +882,26 @@
 			isa = PBXGroup;
 			children = (
 				29B97316FDCFA39411CA2CEA /* main.m */,
+				9FBC35110F56C7B7001811F2 /* BXAppController.h */,
+				9FBC351E0F56C7B7001811F2 /* BXAppController.m */,
+				9F6BA70310A9FC77005A3E2A /* BXGrowlController.h */,
+				9F6BA70410A9FC77005A3E2A /* BXGrowlController.m */,
 				9F573D370F8E69AF0089D8B7 /* BXPackage.h */,
 				9F573D380F8E69AF0089D8B7 /* BXPackage.m */,
 				9F69133110A2F62A00EA78CD /* BXDrive.h */,
 				9F69133210A2F62A00EA78CD /* BXDrive.m */,
 				9F61FC8310DE3F7F00F3896C /* BXGameProfile.h */,
 				9F61FC8410DE3F7F00F3896C /* BXGameProfile.m */,
-				9F53411612059E7900BCBF24 /* NSWorkspace+BXExecutableTypes.h */,
-				9F53411712059E7900BCBF24 /* NSWorkspace+BXExecutableTypes.m */,
 				9FEAA44F120478000085F008 /* BXDriveImport.h */,
 				9FEAA450120478000085F008 /* BXDriveImport.m */,
-				9F23EB0111390A2600DC5AB6 /* Rendering */,
+				9F53411612059E7900BCBF24 /* NSWorkspace+BXExecutableTypes.h */,
+				9F53411712059E7900BCBF24 /* NSWorkspace+BXExecutableTypes.m */,
 				9F1D50280F5C0ACD009F0AB9 /* Emulator */,
-				9F1CBA55120C783800C5E926 /* Game import */,
-				9F1CBA94120C7D4300C5E926 /* Game import window */,
 				9F496E3D108EEB0700282261 /* DOS session */,
+				9F1CBA55120C783800C5E926 /* Game import */,
+				9F23EB0111390A2600DC5AB6 /* Rendering */,
 				9F27133610C1253E0003CB58 /* DOS window */,
+				9F1CBA94120C7D4300C5E926 /* Game import window */,
 				9F27136610C127F90003CB58 /* Inspector panel */,
 				9F9A4C9E10F67CEA00E61965 /* Preferences panel */,
 				9F24D2491224394D009C1817 /* Welcome wagon */,
@@ -905,12 +909,6 @@
 				9F496E3F108EEBB200282261 /* UI helpers */,
 				9F496E3C108EEAD700282261 /* UI controllers */,
 				9F2AC6DB10EFFE2C00CFFF72 /* Artwork */,
-				9FBC35110F56C7B7001811F2 /* BXAppController.h */,
-				9FBC351E0F56C7B7001811F2 /* BXAppController.m */,
-				9F6BA70310A9FC77005A3E2A /* BXGrowlController.h */,
-				9F6BA70410A9FC77005A3E2A /* BXGrowlController.m */,
-				9FF2E9BB11E6F4950051E485 /* BXEmulatorConfiguration.h */,
-				9FF2E9BC11E6F4950051E485 /* BXEmulatorConfiguration.m */,
 			);
 			path = Boxer;
 			sourceTree = "<group>";
@@ -954,14 +952,10 @@
 				9FBC3CB10F56E32C001811F2 /* Info.plist */,
 				080E96DDFE201D6D7F000001 /* Boxer */,
 				9FBC3A7A0F56CEA2001811F2 /* DOSBox */,
-				9F7A8F230F8E705100D1AAD5 /* BXToolkit */,
-				9F59DA1410AE22B9008DBBC1 /* MCAdditions */,
-				9FAD43B610A341F6007E8C0D /* UKKQueue */,
-				9F8A974710E7DEF500A4B72A /* RegexKitLite */,
+				9FFF978412327D58009B5EE5 /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
-				9FFF9714123269D1009B5EE5 /* NDAlias */,
 			);
 			name = Boxer;
 			sourceTree = "<group>";
@@ -1039,10 +1033,6 @@
 		9F1D50280F5C0ACD009F0AB9 /* Emulator */ = {
 			isa = PBXGroup;
 			children = (
-				9FEF97FF1191E1EF002024DF /* BXInputHandler.h */,
-				9FEF98001191E1EF002024DF /* BXInputHandler.mm */,
-				9FF175E511B279F500D0FCDC /* BXVideoHandler.h */,
-				9FF175E611B279F500D0FCDC /* BXVideoHandler.mm */,
 				9F1D4FFF0F5C0966009F0AB9 /* BXEmulator.h */,
 				9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */,
 				9FBC35160F56C7B7001811F2 /* BXEmulator+BXShell.h */,
@@ -1053,7 +1043,13 @@
 				9F44E5E310D17A4C0081B8D2 /* BXEmulator+BXPaste.mm */,
 				9FDCA78E118F2B7900E2FD74 /* BXCoalface.h */,
 				9FDCA78F118F2B7900E2FD74 /* BXCoalface.mm */,
+				9FEF97FF1191E1EF002024DF /* BXInputHandler.h */,
+				9FEF98001191E1EF002024DF /* BXInputHandler.mm */,
+				9FF175E511B279F500D0FCDC /* BXVideoHandler.h */,
+				9FF175E611B279F500D0FCDC /* BXVideoHandler.mm */,
 				9FEBB70E11DF9BB50055933F /* BXEmulatorDelegate.h */,
+				9FF2E9BB11E6F4950051E485 /* BXEmulatorConfiguration.h */,
+				9FF2E9BC11E6F4950051E485 /* BXEmulatorConfiguration.m */,
 			);
 			comments = "The sourcefiles in this group interface directly with DOSBox's internals. For this reason, they need to be compiled as Objective C++ rather than Objective C.";
 			name = Emulator;
@@ -1625,45 +1621,40 @@
 		9F7A8F230F8E705100D1AAD5 /* BXToolkit */ = {
 			isa = PBXGroup;
 			children = (
-				9F466A4711A924EC00C50965 /* Shader.h */,
-				9F466A4811A924EC00C50965 /* Shader.m */,
+				9FFBF6AA11A811F7000A1863 /* BXEventConstants.h */,
 				9FBC351B0F56C7B7001811F2 /* BXGeometry.h */,
 				9FBC35280F56C7B7001811F2 /* BXGeometry.m */,
-				9FBC35190F56C7B7001811F2 /* NSWindow+BXWindowSizing.h */,
-				9FBC35260F56C7B7001811F2 /* NSWindow+BXWindowSizing.m */,
-				9FC8F50A10934F3400AD6307 /* NSString+BXPaths.h */,
-				9FC8F50B10934F3400AD6307 /* NSString+BXPaths.m */,
-				9F573C580F8E18B10089D8B7 /* NSWorkspace+BXMountedVolumes.h */,
-				9F573C590F8E18B10089D8B7 /* NSWorkspace+BXMountedVolumes.m */,
-				9F76D1B710CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.h */,
-				9F76D1B810CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.m */,
-				9F9FE70210FA5F5800E3944B /* NSWorkspace+BXIcons.h */,
-				9F9FE70310FA5F5800E3944B /* NSWorkspace+BXIcons.m */,
-				9FFBF6AA11A811F7000A1863 /* BXEventConstants.h */,
-				9FDD4CB411E619D50035BA9E /* CGSPrivate.h */,
-				9FAA44A511EB24A90042B986 /* NSString+BXWordWrap.h */,
-				9FAA44A611EB24A90042B986 /* NSString+BXWordWrap.m */,
 				9FA5D68111EB6CCC0012DFA5 /* BXLineEnumerator.h */,
 				9FA5D68211EB6CCC0012DFA5 /* BXLineEnumerator.m */,
 				9FADFE5311EC7E1700990E91 /* BXDigest.h */,
 				9FADFE5411EC7E1700990E91 /* BXDigest.m */,
-				9FADFE9511EC932800990E91 /* NSData+HexStrings.h */,
-				9FADFE9611EC932800990E91 /* NSData+HexStrings.m */,
 				9FBF66AD11F35ADD00DAAB9A /* BXFileTransfer.h */,
 				9FBF66AE11F35ADD00DAAB9A /* BXFileTransfer.m */,
 				9FBF66FC11F376B900DAAB9A /* BXOperationDelegate.h */,
-				9F13F9CE11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.h */,
-				9F13F9CF11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m */,
 				9FE90BF511F8D1DC003CFFFF /* BXDelegatedView.h */,
 				9FE90BF611F8D1DC003CFFFF /* BXDelegatedView.m */,
 				9FEAA3EA1204595B0085F008 /* BXOperation.h */,
 				9FEAA3EB1204595B0085F008 /* BXOperation.m */,
 				9F0F9EED1210901800ED7A64 /* BXMountedVolumesError.h */,
 				9F0F9EEE1210901800ED7A64 /* BXMountedVolumesError.m */,
-				9FC8B071121807AD004F6DA2 /* NSView+BXDrawing.h */,
-				9FC8B072121807AD004F6DA2 /* NSView+BXDrawing.m */,
 				9FC7481F122A7C8B00E86E6A /* BXPathEnumerator.h */,
 				9FC74820122A7C8B00E86E6A /* BXPathEnumerator.m */,
+				9FBC35190F56C7B7001811F2 /* NSWindow+BXWindowSizing.h */,
+				9FBC35260F56C7B7001811F2 /* NSWindow+BXWindowSizing.m */,
+				9FC8B071121807AD004F6DA2 /* NSView+BXDrawing.h */,
+				9FC8B072121807AD004F6DA2 /* NSView+BXDrawing.m */,
+				9FC8F50A10934F3400AD6307 /* NSString+BXPaths.h */,
+				9FC8F50B10934F3400AD6307 /* NSString+BXPaths.m */,
+				9FAA44A511EB24A90042B986 /* NSString+BXWordWrap.h */,
+				9FAA44A611EB24A90042B986 /* NSString+BXWordWrap.m */,
+				9F13F9CE11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.h */,
+				9F13F9CF11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m */,
+				9F573C580F8E18B10089D8B7 /* NSWorkspace+BXMountedVolumes.h */,
+				9F573C590F8E18B10089D8B7 /* NSWorkspace+BXMountedVolumes.m */,
+				9F76D1B710CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.h */,
+				9F76D1B810CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.m */,
+				9F9FE70210FA5F5800E3944B /* NSWorkspace+BXIcons.h */,
+				9F9FE70310FA5F5800E3944B /* NSWorkspace+BXIcons.m */,
 			);
 			path = BXToolkit;
 			sourceTree = "<group>";
@@ -1814,6 +1805,23 @@
 				9FFF9727123269D1009B5EE5 /* NSURL+NDCarbonUtilities.m */,
 			);
 			path = NDAlias;
+			sourceTree = "<group>";
+		};
+		9FFF978412327D58009B5EE5 /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				9F466A4711A924EC00C50965 /* Shader.h */,
+				9F466A4811A924EC00C50965 /* Shader.m */,
+				9FDD4CB411E619D50035BA9E /* CGSPrivate.h */,
+				9FADFE9511EC932800990E91 /* NSData+HexStrings.h */,
+				9FADFE9611EC932800990E91 /* NSData+HexStrings.m */,
+				9F7A8F230F8E705100D1AAD5 /* BXToolkit */,
+				9F59DA1410AE22B9008DBBC1 /* MCAdditions */,
+				9FAD43B610A341F6007E8C0D /* UKKQueue */,
+				9F8A974710E7DEF500A4B72A /* RegexKitLite */,
+				9FFF9714123269D1009B5EE5 /* NDAlias */,
+			);
+			name = "Other Sources";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

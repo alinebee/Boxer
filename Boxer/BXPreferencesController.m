@@ -32,7 +32,9 @@
 											   options: NSKeyValueObservingOptionInitial
 											   context: nil];
 	
-	[self tabView: [self panelContainer] didSelectTabViewItem: [[self panelContainer] selectedTabViewItem]];
+	//Flip the tabs around to force the tab view to call our delegate methods
+	[[self panelContainer] selectLastTabViewItem: self];
+	[[self panelContainer] selectFirstTabViewItem: self];
 }
 
 - (void) dealloc
@@ -43,6 +45,7 @@
 	[super dealloc];
 }
 
+
 #pragma mark -
 #pragma mark Switching panels
 
@@ -51,11 +54,14 @@
 	[[self panelContainer] selectTabViewItemAtIndex: [sender tag]];
 }
 
-- (void) tabView: (NSTabView *)tabView didSelectTabViewItem: (NSTabViewItem *)tabViewItem
+
+//Resize the window and fade out the current tab's contents before switching tabs
+- (void) tabView: (NSTabView *)tabView willSelectTabViewItem: (NSTabViewItem *)tabViewItem
 {
-	[[self window] setTitle: [tabViewItem label]];
+	NSView *newView = [[[tabViewItem view] subviews] lastObject];
+	NSView *oldView = [[[[tabView selectedTabViewItem] view] subviews] lastObject]; 
 	
-	NSSize newSize	= [[[[tabViewItem view] subviews] lastObject] frame].size;
+	NSSize newSize	= [newView frame].size;
 	NSSize oldSize	= [tabView frame].size;
 	NSSize difference = NSMakeSize(newSize.width - oldSize.width,
 								   newSize.height - oldSize.height);
@@ -69,9 +75,44 @@
 	newFrame.size	= NSMakeSize(oldFrame.size.width + difference.width,
 								 oldFrame.size.height + difference.height);
 	
-	[[self window] setFrame: newFrame display: YES animate: YES];
 	
-	//Sync the toolbar selection also
+	if ([[self window] isVisible])
+	{
+		//The tab-view loses the first responder when we hide the original view,
+		//so we restore it once we've finished animating
+		NSResponder *firstResponder = [[self window] firstResponder];
+		
+		NSDictionary *resize	= [NSDictionary dictionaryWithObjectsAndKeys:
+								   [self window], NSViewAnimationTargetKey,
+								   [NSValue valueWithRect: newFrame], NSViewAnimationEndFrameKey,
+								   nil];
+		
+		NSDictionary *fadeOut	= [NSDictionary dictionaryWithObjectsAndKeys:
+								   oldView, NSViewAnimationTargetKey,
+								   NSViewAnimationFadeOutEffect, NSViewAnimationEffectKey,
+								   nil];
+		
+		NSViewAnimation *animation = [[NSViewAnimation alloc] initWithViewAnimations: [NSArray arrayWithObjects: fadeOut, resize, nil]];
+		[animation setDuration: 0.3];
+		[animation setAnimationBlockingMode: NSAnimationBlocking];
+		[animation startAnimation];
+		[animation release];
+		[oldView setHidden: NO];
+		
+		//Restore the first responder
+		[[self window] makeFirstResponder: firstResponder];
+	}
+	else
+	{
+		[[self window] setFrame: newFrame display: YES];
+	}
+}
+
+- (void) tabView: (NSTabView *)tabView didSelectTabViewItem: (NSTabViewItem *)tabViewItem
+{	
+	[[self window] setTitle: [tabViewItem label]];
+	
+	//Sync the toolbar selection after switching tabs
 	NSInteger tabIndex = [tabView indexOfTabViewItem: tabViewItem];
 	for (NSToolbarItem *item in [[[self window] toolbar] items])
 	{

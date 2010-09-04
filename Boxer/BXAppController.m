@@ -174,6 +174,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (NSString *) gamesFolderPath
 {
 	NSString *path = [[NSUserDefaults standardUserDefaults] stringForKey: @"gameFolder"];
+	//If no games folder exists was set, fall back on the desktop
 	if (!path) path = [NSSearchPathForDirectoriesInDomains(NSDesktopDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
 	return path;
 }
@@ -182,6 +183,16 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 {
     [[NSUserDefaults standardUserDefaults] setObject: newPath forKey: @"gameFolder"];
 }
+
+- (BOOL) hasGamesFolder
+{
+	NSString *path = [[NSUserDefaults standardUserDefaults] stringForKey: @"gameFolder"];
+	
+	if (!path) return NO;
+	if (![[NSFileManager defaultManager] fileExistsAtPath: path]) return NO;
+	return YES;
+}
+
 
 #pragma mark -
 #pragma mark Application open/closing behaviour
@@ -207,8 +218,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	return NO;
 }
 
-
-//...However, when we've been told to open a new empty session at startup, do so
 - (void) applicationDidFinishLaunching: (NSNotification *)notification
 {
 	NSArray *arguments = [[NSProcessInfo processInfo] arguments];
@@ -516,7 +525,11 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	SEL theAction = [theItem action];
 	
 	//Don't allow the Inspector panel to be shown if there's no active session.
-	if (theAction == @selector(toggleInspectorPanel:))	return [[self currentSession] isEmulating];
+	if (theAction == @selector(toggleInspectorPanel:)) return [[self currentSession] isEmulating];
+	
+	//Don't allow game imports or the games folder to be opened if no games folder has been set yet.
+	if (theAction == @selector(revealGamesFolder:) ||
+		theAction == @selector(orderFrontImportGamePanel:)) return [self hasGamesFolder];
 	
 	return [super validateUserInterfaceItem: theItem];
 }
@@ -525,7 +538,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (void) openURLFromKey: (NSString *)infoKey
 {
 	NSString *URLString = [[NSBundle mainBundle] objectForInfoDictionaryKey: infoKey];
-	if ([URLString length]) [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString: URLString]];
+	if ([URLString length]) [[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString: URLString]];
 }
 
 - (void) searchURLFromKey: (NSString *)infoKey withSearchString: (NSString *)search
@@ -533,7 +546,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	NSString *encodedSearch = [search stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
 	NSString *siteString	= [[NSBundle mainBundle] objectForInfoDictionaryKey: infoKey];
 	NSString *URLString		= [NSString stringWithFormat: siteString, encodedSearch, nil];
-	if ([URLString length]) [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString: URLString]];
+	if ([URLString length]) [[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString: URLString]];
 }
 
 - (void) sendEmailFromKey: (NSString *)infoKey withSubject:(NSString *)subject
@@ -543,7 +556,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	{
 		NSString *encodedSubject	= [subject stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
 		NSString *mailtoURLString	= [NSString stringWithFormat: @"mailto:%@?subject=%@", address, encodedSubject];
-		[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:mailtoURLString]];
+		[[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString:mailtoURLString]];
 	}
 }
 
@@ -575,6 +588,11 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	else if ([sender isKindOfClass: [NSDictionary class]])	path = [sender objectForKey: @"path"];	
 	
 	if (path) [[NSWorkspace sharedWorkspace] openFile: path withApplication: nil andDeactivate: YES];
+}
+
+- (IBAction) revealGamesFolder: (id)sender
+{
+	[self revealPath: [self gamesFolderPath]];
 }
 
 //Displays a file path in Finder. This will display the containing folder of files,

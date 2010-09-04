@@ -6,6 +6,17 @@
 	<array>
 		<dict>
 			<key>BXProfileName</key>
+			<string>Pro Pinball- The Web</string>
+			<key>BXProfileConf</key>
+			<string>Pro Pinball- The Web</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>theweb</string>
+			</array>
+		</dict>
+
+		<dict>
+			<key>BXProfileName</key>
 			<string>System Shock</string>
 			<key>BXProfileTelltales</key>
 			<array>

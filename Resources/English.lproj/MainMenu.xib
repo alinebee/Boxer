@@ -12,7 +12,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="285"/>
+			<integer value="1415"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -247,6 +247,15 @@
 										</object>
 										<string key="NSName">_NSRecentDocumentsMenu</string>
 									</object>
+								</object>
+								<object class="NSMenuItem" id="41311076">
+									<reference key="NSMenu" ref="176076355"/>
+									<string key="NSTitle">Browse Games Folder</string>
+									<string key="NSKeyEquiv">b</string>
+									<int key="NSKeyEquivModMask">1048576</int>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="569538535"/>
+									<reference key="NSMixedImage" ref="489554260"/>
 								</object>
 								<object class="NSMenuItem" id="980039867">
 									<reference key="NSMenu" ref="176076355"/>
@@ -1705,6 +1714,14 @@
 					</object>
 					<int key="connectionID">1873</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">revealGamesFolder:</string>
+						<reference key="source" ref="935372999"/>
+						<reference key="destination" ref="41311076"/>
+					</object>
+					<int key="connectionID">1875</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -1949,6 +1966,7 @@
 							<reference ref="904732069"/>
 							<reference ref="980039867"/>
 							<reference ref="408921711"/>
+							<reference ref="41311076"/>
 						</object>
 						<reference key="parent" ref="848222553"/>
 					</object>
@@ -2556,6 +2574,11 @@
 						<reference key="object" ref="253492764"/>
 						<reference key="parent" ref="540791426"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1874</int>
+						<reference key="object" ref="41311076"/>
+						<reference key="parent" ref="176076355"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -2708,6 +2731,7 @@
 					<string>1856.IBPluginDependency</string>
 					<string>1869.IBPluginDependency</string>
 					<string>1871.IBPluginDependency</string>
+					<string>1874.IBPluginDependency</string>
 					<string>196.IBPluginDependency</string>
 					<string>196.ImportedFromIB2</string>
 					<string>283.IBPluginDependency</string>
@@ -2813,7 +2837,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{71, 556}, {213, 143}}</string>
+					<string>{{71, 536}, {237, 163}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2928,6 +2952,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
@@ -2975,7 +3000,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1873</int>
+			<int key="maxID">1875</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2993,6 +3018,7 @@
 							<string>orderFrontImportGamePanel:</string>
 							<string>orderFrontPreferencesPanel:</string>
 							<string>orderFrontWelcomePanel:</string>
+							<string>revealGamesFolder:</string>
 							<string>revealInFinder:</string>
 							<string>sendEmail:</string>
 							<string>showDonationPage:</string>
@@ -3002,6 +3028,7 @@
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>

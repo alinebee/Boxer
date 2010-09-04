@@ -12,11 +12,11 @@
 
 @interface BXWelcomeWindowController : NSWindowController
 {
-	IBOutlet NSPopUpButton *openRecentButton;
+	IBOutlet NSPopUpButton *recentDocumentsButton;
 }
 
 //The Open Recent popup button. This will be reassigned to point to the actual Open Recent menu.
-@property (retain, nonatomic) NSPopUpButton *openRecentButton;
+@property (retain, nonatomic) NSPopUpButton *recentDocumentsButton;
 
 //Provides a singleton instance of the window controller which stays retained for the lifetime
 //of the application. The controller should always be accessed from this singleton.

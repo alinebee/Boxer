@@ -17,8 +17,9 @@
 {
 	BXSession *currentSession;
 }
-@property (retain) BXSession *currentSession;	//The currently-active DOS session
-@property (copy) NSString *gamesFolderPath;		//The path where we store Boxer's games
+@property (retain, nonatomic) BXSession *currentSession;	//The currently-active DOS session
+@property (copy, nonatomic) NSString *gamesFolderPath;		//The path where we store Boxer's games
+@property (readonly, nonatomic) BOOL hasGamesFolder;		//Whether the games folder exists
 
 //Called at class initialization time to initialize Boxer's own user defaults.
 + (void) setupDefaults;
@@ -78,6 +79,7 @@
 
 - (IBAction) revealInFinder: (id)sender;			//Reveal the sender's represented object in a new Finder window.
 - (IBAction) openInDefaultApplication: (id)sender;	//Open the sender's represented object with its default app.
+- (IBAction) revealGamesFolder: (id)sender;			//Reveal our games folder in Finder.
 
 
 //Reveal the specified path (or its parent folder, in the case of files) in a new Finder window.

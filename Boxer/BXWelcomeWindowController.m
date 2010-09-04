@@ -7,6 +7,8 @@
 
 
 #import "BXWelcomeWindowController.h"
+#import "BXAppController.h"
+
 
 //The height of the bottom window border.
 //TODO: determine this from NIB content.
@@ -16,7 +18,7 @@
 #define BXDocumentEndTag 2
 
 @implementation BXWelcomeWindowController
-@synthesize openRecentButton;
+@synthesize recentDocumentsButton;
 
 #pragma mark -
 #pragma mark Initialization and deallocation
@@ -32,7 +34,7 @@
 
 - (void) dealloc
 {
-	[self setOpenRecentButton: nil], [openRecentButton release];
+	[self setRecentDocumentsButton: nil], [recentDocumentsButton release];
 	[super dealloc];
 }
 
@@ -41,9 +43,8 @@
 	[[self window] setContentBorderThickness: BXWelcomeWindowBorderThickness + 1 forEdge: NSMinYEdge];
 }
 
-
 #pragma mark -
-#pragma mark Open Recent menu
+#pragma mark UI actions
 
 - (IBAction) openRecentDocument: (NSMenuItem *)sender
 {
@@ -51,6 +52,10 @@
 	
 	[[NSApp delegate] openDocumentWithContentsOfURL: url display: YES error: NULL];
 }
+
+
+#pragma mark -
+#pragma mark Open Recent menu
 
 - (void) menuWillOpen: (NSMenu *)menu
 {

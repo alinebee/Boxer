@@ -56,7 +56,8 @@
 		if (oldPanel && [[self window] isVisible])
 		{
 			//Resize the new panel to the same size as the old one, in preparation for window resizing
-			[newPanel setFrame: [oldPanel frame]];
+			//FIXME: this doesn't actually work properly
+			//[newPanel setFrame: [oldPanel frame]];
 			
 			//Add the new panel beneath the old one
 			[[self panelContainer] addSubview: newPanel positioned: NSWindowBelow relativeTo: oldPanel];

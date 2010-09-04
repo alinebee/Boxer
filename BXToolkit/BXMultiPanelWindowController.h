@@ -20,12 +20,14 @@
 
 #pragma mark -
 #pragma mark Properties
-@property (assign, nonatomic) NSView *currentPanel;	//The currently-displayed panel.
+
+//The currently-displayed panel.
+@property (assign, nonatomic) NSView *currentPanel;
 
 //The view into which the current panel will be added.
 @property (retain, nonatomic) NSView *panelContainer;	
 
-
+#pragma mark -
 #pragma mark Animation methods
 
 //Returns an animation that will fade out oldPanel to reveal newPanel. This is mainly suited for opaque panels.

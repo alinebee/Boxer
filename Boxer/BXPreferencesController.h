@@ -8,19 +8,36 @@
 
 //BXPreferencesController manages Boxer's application preferences panel.
 
-#import <Cocoa/Cocoa.h>
+#import "BXMultiPanelWindowController.h"
 
 @class BXFilterGallery;
 
+enum {
+	BXGeneralPreferencesPanelTag = 1,
+	BXDisplayPreferencesPanelTag = 2
+};
+
 @interface BXPreferencesController : NSWindowController
 {
-	//An outlet for the filter gallery we are managing
 	IBOutlet BXFilterGallery *filterGallery;
+	IBOutlet NSTabView *panelContainer;
 }
+
+@property (retain, nonatomic) BXFilterGallery *filterGallery;
+@property (retain, nonatomic) NSTabView *panelContainer;
+
 
 //Provides a singleton instance of the window controller which stays retained for the lifetime
 //of the application. BXPreferencesController should always be accessed from this singleton.
 + (BXPreferencesController *) controller;
+
+#pragma mark -
+#pragma mark Switching panels
+
+- (IBAction) showPanel: (NSToolbarItem *)sender;
+
+#pragma mark -
+#pragma mark Managing filter gallery state
 
 //Change the default render filter to match the sender's tag.
 //Note that this uses an intentionally different name from the toggleFilterType: defined on

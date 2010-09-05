@@ -21,7 +21,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="174"/>
+			<integer value="114"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -53,7 +53,7 @@
 				<int key="NSWindowBacking">2</int>
 				<string key="NSWindowRect">{{109, 270}, {532, 396}}</string>
 				<int key="NSWTFlags">1618478080</int>
-				<string key="NSWindowTitle">Preferences</string>
+				<string key="NSWindowTitle">Boxer Preferences</string>
 				<string key="NSWindowClass">NSWindow</string>
 				<object class="NSToolbar" key="NSViewClass" id="234783181">
 					<object class="NSMutableString" key="NSToolbarIdentifier">
@@ -192,8 +192,10 @@
 					</object>
 					<object class="NSMutableArray" key="NSToolbarIBDefaultItems">
 						<bool key="EncodedWithXMLCoder">YES</bool>
+						<reference ref="556039677"/>
 						<reference ref="216182816"/>
 						<reference ref="439594316"/>
+						<reference ref="556039677"/>
 					</object>
 					<object class="NSMutableArray" key="NSToolbarIBSelectableItems">
 						<bool key="EncodedWithXMLCoder">YES</bool>
@@ -225,14 +227,14 @@
 													<bool key="EncodedWithXMLCoder">YES</bool>
 													<object class="NSTextField" id="806285056">
 														<reference key="NSNextResponder" ref="743371518"/>
-														<int key="NSvFlags">268</int>
-														<string key="NSFrame">{{31, 136}, {155, 17}}</string>
+														<int key="NSvFlags">269</int>
+														<string key="NSFrame">{{88, 136}, {124, 17}}</string>
 														<reference key="NSSuperview" ref="743371518"/>
 														<bool key="NSEnabled">YES</bool>
 														<object class="NSTextFieldCell" key="NSCell" id="76196817">
 															<int key="NSCellFlags">68288064</int>
 															<int key="NSCellFlags2">71304192</int>
-															<string key="NSContents">Keep my DOS games in:</string>
+															<string key="NSContents">Keep my games in:</string>
 															<object class="NSFont" key="NSSupport" id="467860324">
 																<string key="NSName">LucidaGrande</string>
 																<double key="NSSize">13</double>
@@ -261,8 +263,8 @@
 													</object>
 													<object class="NSPopUpButton" id="846667841">
 														<reference key="NSNextResponder" ref="743371518"/>
-														<int key="NSvFlags">268</int>
-														<string key="NSFrame">{{193, 130}, {288, 26}}</string>
+														<int key="NSvFlags">269</int>
+														<string key="NSFrame">{{219, 130}, {225, 26}}</string>
 														<reference key="NSSuperview" ref="743371518"/>
 														<bool key="NSEnabled">YES</bool>
 														<object class="NSPopUpButtonCell" key="NSCell" id="334780385">
@@ -328,14 +330,14 @@
 													</object>
 													<object class="NSButton" id="378975767">
 														<reference key="NSNextResponder" ref="743371518"/>
-														<int key="NSvFlags">268</int>
-														<string key="NSFrame">{{194, 109}, {291, 18}}</string>
+														<int key="NSvFlags">269</int>
+														<string key="NSFrame">{{220, 109}, {202, 18}}</string>
 														<reference key="NSSuperview" ref="743371518"/>
 														<bool key="NSEnabled">YES</bool>
 														<object class="NSButtonCell" key="NSCell" id="815158257">
 															<int key="NSCellFlags">-2080244224</int>
 															<int key="NSCellFlags2">0</int>
-															<string key="NSContents">Make this folder look like a games shelf</string>
+															<string key="NSContents">Use games shelf appearance</string>
 															<reference key="NSSupport" ref="467860324"/>
 															<reference key="NSControlView" ref="378975767"/>
 															<int key="NSButtonFlags">1211912703</int>
@@ -355,8 +357,8 @@
 													</object>
 													<object class="NSPopUpButton" id="147530320">
 														<reference key="NSNextResponder" ref="743371518"/>
-														<int key="NSvFlags">268</int>
-														<string key="NSFrame">{{193, 56}, {288, 26}}</string>
+														<int key="NSvFlags">269</int>
+														<string key="NSFrame">{{219, 56}, {225, 26}}</string>
 														<reference key="NSSuperview" ref="743371518"/>
 														<bool key="NSEnabled">YES</bool>
 														<object class="NSPopUpButtonCell" key="NSCell" id="672850483">
@@ -421,8 +423,8 @@
 													</object>
 													<object class="NSTextField" id="629284169">
 														<reference key="NSNextResponder" ref="743371518"/>
-														<int key="NSvFlags">268</int>
-														<string key="NSFrame">{{43, 63}, {143, 17}}</string>
+														<int key="NSvFlags">269</int>
+														<string key="NSFrame">{{89, 63}, {123, 17}}</string>
 														<reference key="NSSuperview" ref="743371518"/>
 														<bool key="NSEnabled">YES</bool>
 														<object class="NSTextFieldCell" key="NSCell" id="8876199">
@@ -814,30 +816,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">panelContainer</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="764053557"/>
-					</object>
-					<int key="connectionID">180</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">showPanel:</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="216182816"/>
-					</object>
-					<int key="connectionID">181</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">showPanel:</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="439594316"/>
-					</object>
-					<int key="connectionID">182</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">initialFirstResponder</string>
 						<reference key="source" ref="739836041"/>
 						<reference key="destination" ref="846667841"/>
@@ -851,6 +829,30 @@
 						<reference key="destination" ref="347751891"/>
 					</object>
 					<int key="connectionID">186</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">takeSelectedTabViewItemFromTag:</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="216182816"/>
+					</object>
+					<int key="connectionID">191</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">takeSelectedTabViewItemFromTag:</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="439594316"/>
+					</object>
+					<int key="connectionID">192</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">mainTabView</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="764053557"/>
+					</object>
+					<int key="connectionID">193</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1369,15 +1371,15 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{78, 270}, {532, 396}}</string>
+					<string>{{80, 140}, {532, 396}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{78, 270}, {532, 396}}</string>
+					<string>{{80, 140}, {532, 396}}</string>
 					<boolean value="NO"/>
 					<string>{196, 240}</string>
 					<string>{{357, 418}, {480, 270}}</string>
 					<boolean value="NO"/>
 					<string>{532, 396}</string>
-					<string>{{36, 666}, {616, 0}}</string>
+					<string>{{38, 536}, {616, 0}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<boolean value="YES"/>
@@ -1468,7 +1470,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">190</int>
+			<int key="maxID">193</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -1493,36 +1495,34 @@
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">BXPreferencesController</string>
-					<string key="superclassName">NSWindowController</string>
+					<string key="superclassName">BXTabbedWindowController</string>
 					<object class="NSMutableDictionary" key="actions">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>showPanel:</string>
-							<string>toggleDefaultFilterType:</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>NSToolbarItem</string>
-							<string>id</string>
-						</object>
+						<string key="NS.key.0">toggleDefaultFilterType:</string>
+						<string key="NS.object.0">id</string>
 					</object>
 					<object class="NSMutableDictionary" key="outlets">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>filterGallery</string>
-							<string>panelContainer</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>BXFilterGallery</string>
-							<string>NSTabView</string>
-						</object>
+						<string key="NS.key.0">filterGallery</string>
+						<string key="NS.object.0">BXFilterGallery</string>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">Boxer/BXPreferencesController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXTabbedWindowController</string>
+					<string key="superclassName">NSWindowController</string>
+					<object class="NSMutableDictionary" key="actions">
+						<string key="NS.key.0">takeSelectedTabViewItemFromTag:</string>
+						<string key="NS.object.0">id</string>
+					</object>
+					<object class="NSMutableDictionary" key="outlets">
+						<string key="NS.key.0">mainTabView</string>
+						<string key="NS.object.0">NSTabView</string>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">BXToolkit/BXTabbedWindowController.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

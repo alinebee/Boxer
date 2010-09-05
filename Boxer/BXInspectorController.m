@@ -19,7 +19,6 @@ const CGFloat BXMouseSensitivityRange = 2.0f;
 
 @implementation BXInspectorController
 @synthesize panelSelector;
-@synthesize gamePanel, cpuPanel, mousePanel, drivePanel;
 
 + (void) initialize
 {
@@ -45,30 +44,25 @@ const CGFloat BXMouseSensitivityRange = 2.0f;
 
 - (void) dealloc
 {
-	[self setGamePanel: nil],		[gamePanel release];
-	[self setCpuPanel: nil],		[cpuPanel release];
-	[self setDrivePanel: nil],		[drivePanel release];
-	[self setPanelSelector: nil],	[panelSelector release];
+	[self setPanelSelector: nil], [panelSelector release];
 	
 	[super dealloc];
 }
 
 - (void) awakeFromNib
-{	
-	NSPanel *theWindow = (NSPanel *)[self window];
+{
+	[super awakeFromNib];
 
-	[theWindow setBecomesKeyOnlyIfNeeded: YES];
-	[theWindow setFrameAutosaveName: @"InspectorPanel"];
+	[(NSPanel *)[self window] setBecomesKeyOnlyIfNeeded: YES];
+	[[self window] setFrameAutosaveName: @"InspectorPanel"];
 	
 	//Set the initial panel based on the user's last chosen panel (defaulting to the CPU panel)
-	NSView *initialView;
-	NSArray *panels = [self panels];
-	NSUInteger selectedIndex = [[NSUserDefaults standardUserDefaults] integerForKey: @"initialInspectorPanelIndex"];
+	NSInteger selectedIndex = [[NSUserDefaults standardUserDefaults] integerForKey: @"initialInspectorPanelIndex"];
 	
-	if (selectedIndex < [panels count]) initialView = [panels objectAtIndex: selectedIndex];
-	else initialView = [self cpuPanel];
-	
-	[self setCurrentPanel: initialView];
+	if (selectedIndex < [[self tabView] numberOfTabViewItems])
+	{
+		[[self tabView] selectTabViewItemAtIndex: selectedIndex];
+	}
 	
 	//Listen for changes to the current session
 	[[NSApp delegate] addObserver: self
@@ -85,19 +79,25 @@ const CGFloat BXMouseSensitivityRange = 2.0f;
 {	
 	if ([keyPath isEqualToString: @"currentSession"])
 	{
-		BXSession *session			= [[NSApp delegate] currentSession];
-		NSInteger gamePanelIndex	= [[self panels] indexOfObject: [self gamePanel]];
+		BXSession *session = [[NSApp delegate] currentSession];
 		
-		//This charade is necessary because NSSegmentedControl has an awful interface
-		NSInteger i = 0;
+		//Disable the gamebox tab if the current session is not a gamebox
+		
+		//Find the panel selector segment whose tag corresponds to the game inspector panel
+		//(This charade is necessary because NSSegmentedControl has an awful interface)
+		NSInteger i;
 		for (i = 0; i < [[self panelSelector] segmentCount]; i++)
 		{
-			if ([[[self panelSelector] cell] tagForSegment: i] == gamePanelIndex)
+			if ([[[self panelSelector] cell] tagForSegment: i] == BXGameInspectorPanelTag)
 				[[self panelSelector] setEnabled: [session isGamePackage] forSegment: i];
 		}
 		
-		if (![session isGamePackage] && [[self currentPanel] isEqualTo: [self gamePanel]])
-			[self setCurrentPanel: [self cpuPanel]];
+		//If the gamebox tab was already selected, then switch to the next tab
+		if (![session isGamePackage] &&
+			[[self tabView] indexOfTabViewItem: [[self tabView] selectedTabViewItem]] == BXGameInspectorPanelTag)
+		{
+			[[self tabView] selectTabViewItemAtIndex: BXCPUInspectorPanelTag];
+		}
 	}
 }
 
@@ -147,39 +147,32 @@ const CGFloat BXMouseSensitivityRange = 2.0f;
 }
 
 
-- (NSArray *) panels
-{
-	return [NSArray arrayWithObjects:
-		[self gamePanel], [self cpuPanel], [self mousePanel], [self drivePanel],
-	nil];
-}
-
-- (void) setCurrentPanel: (NSView *)panel
-{
-	[super setCurrentPanel: panel];
-	
-	//Synchronise the panel selector to the current panel
-	NSInteger panelIndex = [[self panels] indexOfObject: panel];
-	if (panelIndex != NSNotFound) [[self panelSelector] selectSegmentWithTag: panelIndex];
-}
-
-
 #pragma mark -
-#pragma mark UI actions
+#pragma mark Tab selection
 
-- (IBAction) showGameInspectorPanel:	(id)sender	{ [self setCurrentPanel: [self gamePanel]]; }
-- (IBAction) showCPUInspectorPanel:		(id)sender	{ [self setCurrentPanel: [self cpuPanel]]; }
-- (IBAction) showMouseInspectorPanel:	(id)sender	{ [self setCurrentPanel: [self mousePanel]]; }
-- (IBAction) showDriveInspectorPanel:	(id)sender	{ [self setCurrentPanel: [self drivePanel]]; }
-- (IBAction) selectInspectorPanel:		(NSSegmentedControl *)sender
+- (IBAction) showGameInspectorPanel: (id)sender		{ [[self tabView] selectTabViewItemAtIndex: BXGameInspectorPanelTag]; }
+- (IBAction) showCPUInspectorPanel: (id)sender		{ [[self tabView] selectTabViewItemAtIndex: BXCPUInspectorPanelTag]; }
+- (IBAction) showMouseInspectorPanel: (id)sender	{ [[self tabView] selectTabViewItemAtIndex: BXMouseInspectorPanelTag]; }
+- (IBAction) showDriveInspectorPanel: (id)sender	{ [[self tabView] selectTabViewItemAtIndex: BXDriveInspectorPanelTag]; }
+
+- (void) tabView: (NSTabView *)tabView didSelectTabViewItem: (NSTabViewItem *)tabViewItem
 {
-	NSInteger selectorIndex = [[sender cell] tagForSegment: [sender selectedSegment]];
-	[self setCurrentPanel: [[self panels] objectAtIndex: selectorIndex]];
+	//Record the user's choice of tab, and synchronize the selected segment
+	NSInteger selectedIndex = [tabView indexOfTabViewItem: tabViewItem];
 	
-	//Record the user's choice in the user defaults
-	//Note: we do this here rather than in setCurrentPanel: because the latter is often called programmatically
-	//and we only want to persist actual choices, not states.
-	[[NSUserDefaults standardUserDefaults] setInteger: selectorIndex forKey: @"initialInspectorPanelIndex"];
+	if (selectedIndex != NSNotFound)
+	{
+		[[NSUserDefaults standardUserDefaults] setInteger: selectedIndex
+												   forKey: @"initialInspectorPanelIndex"];
+		
+		[[self panelSelector] selectSegmentWithTag: selectedIndex];
+	}
+}
+
+- (BOOL) tabView: (NSTabView *)tabView shouldSelectTabViewItem: (NSTabViewItem *)tabViewItem
+{
+	return ([tabView indexOfTabViewItem: tabViewItem] != BXGameInspectorPanelTag ||
+			[[[NSApp delegate] currentSession] isGamePackage]);
 }
 
 @end

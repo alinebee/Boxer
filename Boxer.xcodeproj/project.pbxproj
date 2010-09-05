@@ -179,6 +179,7 @@
 		9F5DCB5211B2C0E700552966 /* shell_batch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F5DCADD11B2C0E700552966 /* shell_batch.cpp */; };
 		9F5DCB5311B2C0E700552966 /* shell_cmds.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F5DCADE11B2C0E700552966 /* shell_cmds.cpp */; };
 		9F5DCB5411B2C0E700552966 /* shell_misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F5DCADF11B2C0E700552966 /* shell_misc.cpp */; };
+		9F61931B1233D8F000F35AB4 /* BXTabbedWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F61931A1233D8F000F35AB4 /* BXTabbedWindowController.m */; };
 		9F61FC8510DE3F7F00F3896C /* BXGameProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F61FC8410DE3F7F00F3896C /* BXGameProfile.m */; };
 		9F6311090F70F54300AB1155 /* BXHelpMenuController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F6311080F70F54300AB1155 /* BXHelpMenuController.m */; };
 		9F687004109F83ED003C26E4 /* BXDriveList.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F687003109F83ED003C26E4 /* BXDriveList.m */; };
@@ -649,6 +650,8 @@
 		9F5DCADD11B2C0E700552966 /* shell_batch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = shell_batch.cpp; sourceTree = "<group>"; };
 		9F5DCADE11B2C0E700552966 /* shell_cmds.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = shell_cmds.cpp; sourceTree = "<group>"; };
 		9F5DCADF11B2C0E700552966 /* shell_misc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = shell_misc.cpp; sourceTree = "<group>"; };
+		9F6193191233D8F000F35AB4 /* BXTabbedWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXTabbedWindowController.h; sourceTree = "<group>"; };
+		9F61931A1233D8F000F35AB4 /* BXTabbedWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXTabbedWindowController.m; sourceTree = "<group>"; };
 		9F61FC8310DE3F7F00F3896C /* BXGameProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXGameProfile.h; sourceTree = "<group>"; };
 		9F61FC8410DE3F7F00F3896C /* BXGameProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGameProfile.m; sourceTree = "<group>"; };
 		9F6311070F70F54300AB1155 /* BXHelpMenuController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXHelpMenuController.h; sourceTree = "<group>"; };
@@ -1660,6 +1663,8 @@
 				9F76D1B810CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.m */,
 				9F9FE70210FA5F5800E3944B /* NSWorkspace+BXIcons.h */,
 				9F9FE70310FA5F5800E3944B /* NSWorkspace+BXIcons.m */,
+				9F6193191233D8F000F35AB4 /* BXTabbedWindowController.h */,
+				9F61931A1233D8F000F35AB4 /* BXTabbedWindowController.m */,
 			);
 			path = BXToolkit;
 			sourceTree = "<group>";
@@ -2180,6 +2185,7 @@
 				9FFF972F123269D1009B5EE5 /* NSString+NDCarbonUtilities.m in Sources */,
 				9FFF9730123269D1009B5EE5 /* NSURL+NDCarbonUtilities.m in Sources */,
 				9FFF97951232B718009B5EE5 /* BXMultiPanelWindowController.m in Sources */,
+				9F61931B1233D8F000F35AB4 /* BXTabbedWindowController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

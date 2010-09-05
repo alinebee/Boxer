@@ -11,7 +11,7 @@
 
 
 @implementation BXPreferencesController
-@synthesize filterGallery, panelContainer;
+@synthesize filterGallery;
 
 #pragma mark -
 #pragma mark Initialization and deallocation
@@ -26,91 +26,28 @@
 
 - (void) awakeFromNib
 {
+	[super awakeFromNib];
 	//Bind to the filter preference so that we can synchronise our filter selection controls when it changes
 	[[NSUserDefaults standardUserDefaults] addObserver: self
 											forKeyPath: @"filterType"
 											   options: NSKeyValueObservingOptionInitial
 											   context: nil];
-	
-	//Flip the tabs around to force the tab view to call our delegate methods
-	[[self panelContainer] selectLastTabViewItem: self];
-	[[self panelContainer] selectFirstTabViewItem: self];
 }
 
 - (void) dealloc
 {
 	[self setFilterGallery: nil], [filterGallery release];
-	[self setPanelContainer: nil], [panelContainer release];
-	
 	[super dealloc];
 }
 
 
 #pragma mark -
-#pragma mark Switching panels
-
-- (IBAction) showPanel: (NSToolbarItem *)sender
-{
-	[[self panelContainer] selectTabViewItemAtIndex: [sender tag]];
-}
-
-
-//Resize the window and fade out the current tab's contents before switching tabs
-- (void) tabView: (NSTabView *)tabView willSelectTabViewItem: (NSTabViewItem *)tabViewItem
-{
-	NSView *newView = [[[tabViewItem view] subviews] lastObject];
-	NSView *oldView = [[[[tabView selectedTabViewItem] view] subviews] lastObject]; 
-	
-	NSSize newSize	= [newView frame].size;
-	NSSize oldSize	= [tabView frame].size;
-	NSSize difference = NSMakeSize(newSize.width - oldSize.width,
-								   newSize.height - oldSize.height);
-	
-	//Generate a new window frame that can contain the new panel,
-	//Ensuring that the top left corner stays put
-	NSRect newFrame, oldFrame = [[self window] frame];
-	
-	newFrame.origin = NSMakePoint(oldFrame.origin.x,
-								  oldFrame.origin.y - difference.height);
-	newFrame.size	= NSMakeSize(oldFrame.size.width + difference.width,
-								 oldFrame.size.height + difference.height);
-	
-	
-	if ([[self window] isVisible])
-	{
-		//The tab-view loses the first responder when we hide the original view,
-		//so we restore it once we've finished animating
-		NSResponder *firstResponder = [[self window] firstResponder];
-		
-		NSDictionary *resize	= [NSDictionary dictionaryWithObjectsAndKeys:
-								   [self window], NSViewAnimationTargetKey,
-								   [NSValue valueWithRect: newFrame], NSViewAnimationEndFrameKey,
-								   nil];
-		
-		NSDictionary *fadeOut	= [NSDictionary dictionaryWithObjectsAndKeys:
-								   oldView, NSViewAnimationTargetKey,
-								   NSViewAnimationFadeOutEffect, NSViewAnimationEffectKey,
-								   nil];
-		
-		NSViewAnimation *animation = [[NSViewAnimation alloc] initWithViewAnimations: [NSArray arrayWithObjects: fadeOut, resize, nil]];
-		[animation setDuration: 0.3];
-		[animation setAnimationBlockingMode: NSAnimationBlocking];
-		[animation startAnimation];
-		[animation release];
-		[oldView setHidden: NO];
-		
-		//Restore the first responder
-		[[self window] makeFirstResponder: firstResponder];
-	}
-	else
-	{
-		[[self window] setFrame: newFrame display: YES];
-	}
-}
+#pragma mark Switching tabs
 
 - (void) tabView: (NSTabView *)tabView didSelectTabViewItem: (NSTabViewItem *)tabViewItem
-{	
-	[[self window] setTitle: [tabViewItem label]];
+{
+	//Set the window title to the same as the active tab
+	//[[self window] setTitle: [tabViewItem label]];
 	
 	//Sync the toolbar selection after switching tabs
 	NSInteger tabIndex = [tabView indexOfTabViewItem: tabViewItem];

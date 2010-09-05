@@ -8,7 +8,7 @@
 
 //BXPreferencesController manages Boxer's application preferences panel.
 
-#import "BXMultiPanelWindowController.h"
+#import "BXTabbedWindowController.h"
 
 @class BXFilterGallery;
 
@@ -17,24 +17,18 @@ enum {
 	BXDisplayPreferencesPanelTag = 2
 };
 
-@interface BXPreferencesController : NSWindowController
+@interface BXPreferencesController : BXTabbedWindowController
 {
 	IBOutlet BXFilterGallery *filterGallery;
-	IBOutlet NSTabView *panelContainer;
 }
 
 @property (retain, nonatomic) BXFilterGallery *filterGallery;
-@property (retain, nonatomic) NSTabView *panelContainer;
 
 
 //Provides a singleton instance of the window controller which stays retained for the lifetime
 //of the application. BXPreferencesController should always be accessed from this singleton.
 + (BXPreferencesController *) controller;
 
-#pragma mark -
-#pragma mark Switching panels
-
-- (IBAction) showPanel: (NSToolbarItem *)sender;
 
 #pragma mark -
 #pragma mark Managing filter gallery state

@@ -20,9 +20,11 @@ enum {
 @interface BXPreferencesController : BXTabbedWindowController
 {
 	IBOutlet BXFilterGallery *filterGallery;
+	IBOutlet NSPopUpButton *gamesFolderSelector;
 }
 
 @property (retain, nonatomic) BXFilterGallery *filterGallery;
+@property (retain, nonatomic) NSPopUpButton *gamesFolderSelector;
 
 
 //Provides a singleton instance of the window controller which stays retained for the lifetime
@@ -42,5 +44,9 @@ enum {
 //Synchonises the filter gallery controls to the current default filter.
 //This is called through Key-Value Observing whenever the filter preference changes.
 - (void) syncFilterControls;
+
+
+//Display an open panel for choosing the games folder.
+- (IBAction) showGamesFolderChooserPanel: (id)sender;
 
 @end

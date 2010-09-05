@@ -20,5 +20,7 @@
 	<string>Y</string>
 	<key>temporaryDriveLetter</key>
 	<string>X</string>
+	<key>startupAction</key>
+	<integer>1</integer>
 </dict>
 </plist>

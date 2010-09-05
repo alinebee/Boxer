@@ -13,6 +13,13 @@
 
 @class BXSession;
 
+enum {
+	BXStartUpWithNothing		= 0,
+	BXStartUpWithWelcomePanel	= 1,
+	BXStartUpWithGamesFolder	= 2
+};
+
+
 @interface BXAppController : NSDocumentController
 {
 	BXSession *currentSession;
@@ -24,6 +31,9 @@
 //The path where we store Boxer's games, stored internally as an alias to allow the folder to be moved.
 //Will be nil if no path has been chosen or the alias could not be resolved.
 @property (copy, nonatomic) NSString *gamesFolderPath;
+
+//The icon of the games folder path. This is used for UIs that need to display the games folder.
+@property (readonly, nonatomic) NSImage *gamesFolderIcon;
 
 //The game folder path from 0.8x versions of Boxer (stored as an alias at ~/Library/Preferences/Boxer/Default Folder).
 //Will be nil if no path was stored by an older version of Boxer, or if the alias could not be resolved.

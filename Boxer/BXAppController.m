@@ -209,6 +209,21 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	}
 }
 
++ (NSSet *) keyPathsForValuesAffectingGamesFolderIcon
+{
+	return [NSSet setWithObject: @"gamesFolderPath"];
+}
+
+- (NSImage *) gamesFolderIcon
+{
+	NSString *path = [self gamesFolderPath];
+	if (path)
+	{
+		return [[NSWorkspace sharedWorkspace] iconForFile: path];
+	}
+	else return nil;
+}
+
 - (NSString *) oldGamesFolderPath
 {
 	//Check for an alias reference from 0.8x versions of Boxer
@@ -243,10 +258,9 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 }
 
 
-//Don't open a new empty document when switching back to the application; instead, open our welcome panel
+//Don't open a new empty document when switching back to the application
 - (BOOL) applicationShouldOpenUntitledFile: (NSApplication *)theApplication
 {
-	[self orderFrontWelcomePanel: self];
 	return NO;
 }
 
@@ -262,6 +276,23 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	
 	if ([arguments containsObject: BXActivateOnLaunchParam]) 
 		[NSApp activateIgnoringOtherApps: YES];
+	
+	//If no document was opened during startup, then do our standard startup behaviour
+	if (![[self documents] count])
+	{
+		switch ([[NSUserDefaults standardUserDefaults] integerForKey: @"startupAction"])
+		{
+			case BXStartUpWithWelcomePanel:
+				[self orderFrontWelcomePanel: self];
+				break;
+			case BXStartUpWithGamesFolder:
+				[self revealGamesFolder: self];
+				break;
+			case BXStartUpWithNothing:
+			default:
+				break;
+		}
+	}
 }
 
 - (void) applicationWillTerminate: (NSNotification *)notification

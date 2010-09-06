@@ -810,10 +810,6 @@
 				<string key="NSFrameAutosaveName"/>
 			</object>
 			<object class="NSUserDefaultsController" id="783521929">
-				<object class="NSMutableArray" key="NSDeclaredKeys">
-					<bool key="EncodedWithXMLCoder">YES</bool>
-					<string>applyShelfAppearance</string>
-				</object>
 				<bool key="NSSharedInstance">YES</bool>
 			</object>
 		</object>
@@ -1092,19 +1088,19 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: values.applyShelfAppearance</string>
+						<string key="label">value: delegate.appliesShelfAppearanceToGamesFolder</string>
 						<reference key="source" ref="378975767"/>
-						<reference key="destination" ref="783521929"/>
+						<reference key="destination" ref="1004"/>
 						<object class="NSNibBindingConnector" key="connector">
 							<reference key="NSSource" ref="378975767"/>
-							<reference key="NSDestination" ref="783521929"/>
-							<string key="NSLabel">value: values.applyShelfAppearance</string>
+							<reference key="NSDestination" ref="1004"/>
+							<string key="NSLabel">value: delegate.appliesShelfAppearanceToGamesFolder</string>
 							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">values.applyShelfAppearance</string>
+							<string key="NSKeyPath">delegate.appliesShelfAppearanceToGamesFolder</string>
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
 					</object>
-					<int key="connectionID">237</int>
+					<int key="connectionID">239</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1771,7 +1767,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">237</int>
+			<int key="maxID">239</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

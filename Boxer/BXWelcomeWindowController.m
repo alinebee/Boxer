@@ -8,6 +8,7 @@
 
 #import "BXWelcomeWindowController.h"
 #import "BXAppController.h"
+#import "BXValueTransformers.h"
 
 
 //The height of the bottom window border.
@@ -23,6 +24,12 @@
 #pragma mark -
 #pragma mark Initialization and deallocation
 
++ (void) initialize
+{
+	BXImageSizeTransformer *welcomeButtonImageSize = [[BXImageSizeTransformer alloc] initWithSize: NSMakeSize(128, 128)];
+	[NSValueTransformer setValueTransformer: welcomeButtonImageSize forName: @"BXWelcomeButtonImageSize"];
+	[welcomeButtonImageSize release];
+}
 
 + (id) controller
 {

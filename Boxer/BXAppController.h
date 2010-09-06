@@ -43,6 +43,11 @@ enum {
 //and we don't have the chance to ask the user for a new one. This is currently set to the user's Desktop.
 @property (readonly, nonatomic) NSString *fallbackGamesFolderPath;
 
+//Whether to apply our fancy games-shelf appearance to the games folder each time we open it.
+//Setting this to NO will immediately remove all effects from the games folder.
+//The value for this property is persisted in user defaults.
+@property (assign, nonatomic) BOOL appliesShelfAppearanceToGamesFolder;
+
 
 //Called at class initialization time to initialize Boxer's own user defaults.
 + (void) setupDefaults;

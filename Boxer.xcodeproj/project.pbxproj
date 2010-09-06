@@ -180,8 +180,12 @@
 		9F5DCB5311B2C0E700552966 /* shell_cmds.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F5DCADE11B2C0E700552966 /* shell_cmds.cpp */; };
 		9F5DCB5411B2C0E700552966 /* shell_misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F5DCADF11B2C0E700552966 /* shell_misc.cpp */; };
 		9F61931B1233D8F000F35AB4 /* BXTabbedWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F61931A1233D8F000F35AB4 /* BXTabbedWindowController.m */; };
+		9F61941212340CA100F35AB4 /* ShelvesForSnowLeopard.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9F61941012340CA100F35AB4 /* ShelvesForSnowLeopard.jpg */; };
+		9F61941312340CA100F35AB4 /* ShelvesForLeopard.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9F61941112340CA100F35AB4 /* ShelvesForLeopard.jpg */; };
+		9F61942412340F5400F35AB4 /* ScriptingBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F61942312340F5400F35AB4 /* ScriptingBridge.framework */; };
 		9F61FC8510DE3F7F00F3896C /* BXGameProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F61FC8410DE3F7F00F3896C /* BXGameProfile.m */; };
 		9F6311090F70F54300AB1155 /* BXHelpMenuController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F6311080F70F54300AB1155 /* BXHelpMenuController.m */; };
+		9F676BF01235451B00924B8C /* Display.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F676BEF1235451B00924B8C /* Display.png */; };
 		9F687004109F83ED003C26E4 /* BXDriveList.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F687003109F83ED003C26E4 /* BXDriveList.m */; };
 		9F69128C10A2DF8D00EA78CD /* BXValueTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F69128B10A2DF8D00EA78CD /* BXValueTransformers.m */; };
 		9F69133310A2F62A00EA78CD /* BXDrive.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F69133210A2F62A00EA78CD /* BXDrive.m */; };
@@ -652,12 +656,16 @@
 		9F5DCADF11B2C0E700552966 /* shell_misc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = shell_misc.cpp; sourceTree = "<group>"; };
 		9F6193191233D8F000F35AB4 /* BXTabbedWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXTabbedWindowController.h; sourceTree = "<group>"; };
 		9F61931A1233D8F000F35AB4 /* BXTabbedWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXTabbedWindowController.m; sourceTree = "<group>"; };
+		9F61941012340CA100F35AB4 /* ShelvesForSnowLeopard.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = ShelvesForSnowLeopard.jpg; sourceTree = "<group>"; };
+		9F61941112340CA100F35AB4 /* ShelvesForLeopard.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = ShelvesForLeopard.jpg; sourceTree = "<group>"; };
+		9F61942312340F5400F35AB4 /* ScriptingBridge.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ScriptingBridge.framework; path = System/Library/Frameworks/ScriptingBridge.framework; sourceTree = SDKROOT; };
 		9F61FC8310DE3F7F00F3896C /* BXGameProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXGameProfile.h; sourceTree = "<group>"; };
 		9F61FC8410DE3F7F00F3896C /* BXGameProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGameProfile.m; sourceTree = "<group>"; };
 		9F6311070F70F54300AB1155 /* BXHelpMenuController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXHelpMenuController.h; sourceTree = "<group>"; };
 		9F6311080F70F54300AB1155 /* BXHelpMenuController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXHelpMenuController.m; sourceTree = "<group>"; };
 		9F675DE30F8F4D49001FCE5F /* BXEmulator+BXDOSFileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXEmulator+BXDOSFileSystem.h"; sourceTree = "<group>"; };
 		9F675DE40F8F4D49001FCE5F /* BXEmulator+BXDOSFileSystem.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "BXEmulator+BXDOSFileSystem.mm"; sourceTree = "<group>"; };
+		9F676BEF1235451B00924B8C /* Display.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Display.png; sourceTree = "<group>"; };
 		9F687002109F83ED003C26E4 /* BXDriveList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDriveList.h; sourceTree = "<group>"; };
 		9F687003109F83ED003C26E4 /* BXDriveList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDriveList.m; sourceTree = "<group>"; };
 		9F69128A10A2DF8D00EA78CD /* BXValueTransformers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXValueTransformers.h; sourceTree = "<group>"; };
@@ -878,6 +886,7 @@
 				9F8A976010E7EDDE00A4B72A /* libicucore.dylib in Frameworks */,
 				9F20C28B11E5D848005AF541 /* Sparkle.framework in Frameworks */,
 				9F20C28E11E5D8B4005AF541 /* QTKit.framework in Frameworks */,
+				9F61942412340F5400F35AB4 /* ScriptingBridge.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -930,6 +939,7 @@
 				9FBC3C710F56E0AE001811F2 /* OpenGL.framework */,
 				9FBC32110F56C3E9001811F2 /* Carbon.framework */,
 				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
+				9F61942312340F5400F35AB4 /* ScriptingBridge.framework */,
 			);
 			name = "Linked Frameworks";
 			sourceTree = "<group>";
@@ -1708,6 +1718,9 @@
 		9FBC34390F56C5AC001811F2 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				9F676BEF1235451B00924B8C /* Display.png */,
+				9F61941012340CA100F35AB4 /* ShelvesForSnowLeopard.jpg */,
+				9F61941112340CA100F35AB4 /* ShelvesForLeopard.jpg */,
 				9F843FE01226EB1100FD37F1 /* import.png */,
 				9F4B5283122591960055022A /* prompt.icns */,
 				9F2292621225848000ABC0B3 /* WelcomeSpotlight.png */,
@@ -1939,6 +1952,9 @@
 				9F2292631225848000ABC0B3 /* WelcomeSpotlight.png in Resources */,
 				9F4B5284122591960055022A /* prompt.icns in Resources */,
 				9F843FE11226EB1100FD37F1 /* import.png in Resources */,
+				9F61941212340CA100F35AB4 /* ShelvesForSnowLeopard.jpg in Resources */,
+				9F61941312340CA100F35AB4 /* ShelvesForLeopard.jpg in Resources */,
+				9F676BF01235451B00924B8C /* Display.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

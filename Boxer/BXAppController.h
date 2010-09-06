@@ -68,7 +68,15 @@ enum {
 
 
 #pragma mark -
-#pragma mark Managing application sound
+#pragma mark Games folder handling
+
+//Apply our custom shelf appearance to the specified path.
+//If switchMode is YES, the folder's Finder window will be switched to icon mode.
+- (void) applyShelfAppearanceToPath: (NSString *)path switchToShelfMode: (BOOL)switchMode;
+
+
+#pragma mark -
+#pragma mark Managing application audio
 
 //Returns whether we should play sounds for UI events.
 //(Currently this is based on OS X's system settings, rather than our own preference.)
@@ -78,8 +86,8 @@ enum {
 - (void) playUISoundWithName: (NSString *)soundName atVolume: (float)volume;
 
 
-//UI actions
-//----------
+#pragma mark -
+#pragma mark UI actions
 
 - (IBAction) orderFrontWelcomePanel: (id)sender;		//Display the welcome panel.
 - (IBAction) hideWelcomePanel: (id)sender;				//Close the welcome panel.
@@ -116,8 +124,8 @@ enum {
 - (void) sendEmailFromKey:(NSString *)infoKey withSubject: (NSString *)subject;
 
 
-//Event-related functions
-//-----------------------
+#pragma mark -
+#pragma mark Event-related functions
 
 //Return the NSWindow located at the specified point.
 //TODO: this should probably be an NSApplication category instead.

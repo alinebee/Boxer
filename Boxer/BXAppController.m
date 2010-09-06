@@ -26,6 +26,8 @@
 #import <BGHUDAppKit/BGThemeManager.h>
 #import "NDAlias+AliasFile.h"
 
+#import <ScriptingBridge/ScriptingBridge.h>
+
 
 NSString * const BXNewSessionParam = @"--openNewSession";
 NSString * const BXShowImportPanelParam = @"--showImportPanel";
@@ -238,6 +240,10 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (NSString *) fallbackGamesFolderPath
 {
 	return [NSSearchPathForDirectoriesInDomains(NSDesktopDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
+}
+
+- (void) applyShelfAppearanceToPath: (NSString *)path switchToShelfMode: (BOOL)switchMode
+{
 }
 
 

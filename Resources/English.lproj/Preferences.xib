@@ -21,7 +21,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="221"/>
+			<integer value="114"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -109,7 +109,7 @@
 								<nil key="NSToolbarItemView"/>
 								<object class="NSCustomResource" key="NSToolbarItemImage">
 									<string key="NSClassName">NSImage</string>
-									<string key="NSResourceName">NSComputer</string>
+									<string key="NSResourceName">Display</string>
 								</object>
 								<nil key="NSToolbarItemTarget"/>
 								<nil key="NSToolbarItemAction"/>
@@ -250,14 +250,9 @@
 																	<bytes key="NSWhite">MC42NjY2NjY2NjY3AA</bytes>
 																</object>
 															</object>
-															<object class="NSColor" key="NSTextColor" id="374043504">
-																<int key="NSColorSpace">6</int>
-																<string key="NSCatalogName">System</string>
-																<string key="NSColorName">controlTextColor</string>
-																<object class="NSColor" key="NSColor" id="402617913">
-																	<int key="NSColorSpace">3</int>
-																	<bytes key="NSWhite">MAA</bytes>
-																</object>
+															<object class="NSColor" key="NSTextColor" id="402617913">
+																<int key="NSColorSpace">3</int>
+																<bytes key="NSWhite">MAA</bytes>
 															</object>
 														</object>
 													</object>
@@ -368,7 +363,7 @@
 																	<object class="NSPopUpButton" id="147530320">
 																		<reference key="NSNextResponder" ref="947433344"/>
 																		<int key="NSvFlags">269</int>
-																		<string key="NSFrame">{{213, 13}, {261, 26}}</string>
+																		<string key="NSFrame">{{214, 15}, {261, 26}}</string>
 																		<reference key="NSSuperview" ref="947433344"/>
 																		<bool key="NSEnabled">YES</bool>
 																		<object class="NSPopUpButtonCell" key="NSCell" id="672850483">
@@ -436,7 +431,7 @@
 																	<object class="NSTextField" id="629284169">
 																		<reference key="NSNextResponder" ref="947433344"/>
 																		<int key="NSvFlags">269</int>
-																		<string key="NSFrame">{{88, 19}, {123, 17}}</string>
+																		<string key="NSFrame">{{88, 21}, {123, 17}}</string>
 																		<reference key="NSSuperview" ref="947433344"/>
 																		<bool key="NSEnabled">YES</bool>
 																		<object class="NSTextFieldCell" key="NSCell" id="8876199">
@@ -446,11 +441,16 @@
 																			<reference key="NSSupport" ref="467860324"/>
 																			<reference key="NSControlView" ref="629284169"/>
 																			<reference key="NSBackgroundColor" ref="473233401"/>
-																			<reference key="NSTextColor" ref="374043504"/>
+																			<object class="NSColor" key="NSTextColor" id="374043504">
+																				<int key="NSColorSpace">6</int>
+																				<string key="NSCatalogName">System</string>
+																				<string key="NSColorName">controlTextColor</string>
+																				<reference key="NSColor" ref="402617913"/>
+																			</object>
 																		</object>
 																	</object>
 																</object>
-																<string key="NSFrame">{{1, 1}, {530, 52}}</string>
+																<string key="NSFrameSize">{532, 54}</string>
 																<reference key="NSSuperview" ref="547385607"/>
 															</object>
 														</object>
@@ -485,6 +485,11 @@
 														<int key="NSBoxType">4</int>
 														<int key="NSTitlePosition">0</int>
 														<bool key="NSTransparent">NO</bool>
+														<real value="0.0" key="NSBorderWidth2"/>
+														<object class="NSColor" key="NSFillColor2" id="480548086">
+															<int key="NSColorSpace">3</int>
+															<bytes key="NSWhite">MC44NQA</bytes>
+														</object>
 														<string key="themeKey">gradientTheme</string>
 														<bool key="useTheme">NO</bool>
 														<bool key="flipGradient">NO</bool>
@@ -503,12 +508,9 @@
 														<reference key="shadowColor" ref="402617913"/>
 														<object class="NSColor" key="color1">
 															<int key="NSColorSpace">3</int>
-															<bytes key="NSWhite">MCAwLjA1AA</bytes>
+															<bytes key="NSWhite">MC44AA</bytes>
 														</object>
-														<object class="NSColor" key="color2">
-															<int key="NSColorSpace">1</int>
-															<bytes key="NSRGB">MCAwIDAgMC4wMwA</bytes>
-														</object>
+														<reference key="color2" ref="480548086"/>
 													</object>
 													<object class="NSButton" id="411444243">
 														<reference key="NSNextResponder" ref="743371518"/>
@@ -808,11 +810,6 @@
 				<string key="NSFrameAutosaveName"/>
 			</object>
 			<object class="NSUserDefaultsController" id="783521929">
-				<object class="NSMutableArray" key="NSDeclaredKeys">
-					<bool key="EncodedWithXMLCoder">YES</bool>
-					<string>suppressCloseAlert</string>
-					<string>startupAction</string>
-				</object>
 				<bool key="NSSharedInstance">YES</bool>
 			</object>
 		</object>
@@ -1650,15 +1647,15 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{210, 149}, {532, 396}}</string>
+					<string>{{88, 166}, {532, 396}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{210, 149}, {532, 396}}</string>
+					<string>{{88, 166}, {532, 396}}</string>
 					<boolean value="NO"/>
 					<string>{196, 240}</string>
 					<string>{{357, 418}, {480, 270}}</string>
 					<boolean value="NO"/>
 					<string>{532, 396}</string>
-					<string>{{38, 536}, {616, 0}}</string>
+					<string>{{46, 562}, {616, 0}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<boolean value="YES"/>
@@ -2346,6 +2343,13 @@
 					<string key="className">NSObject</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBFrameworkSource</string>
+						<string key="minorKey">ScriptingBridge.framework/Headers/SBApplication.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">NSObject</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBFrameworkSource</string>
 						<string key="minorKey">Sparkle.framework/Headers/SUAppcast.h</string>
 					</object>
 				</object>
@@ -2524,11 +2528,11 @@
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<object class="NSArray" key="dict.sortedKeys">
 				<bool key="EncodedWithXMLCoder">YES</bool>
+				<string>Display</string>
 				<string>GalleryHQx</string>
 				<string>GalleryMAME</string>
 				<string>GalleryOriginal</string>
 				<string>GalleryTVScanlines</string>
-				<string>NSComputer</string>
 				<string>NSMenuCheckmark</string>
 				<string>NSMenuMixedState</string>
 				<string>NSPreferencesGeneral</string>
@@ -2536,11 +2540,11 @@
 			</object>
 			<object class="NSMutableArray" key="dict.values">
 				<bool key="EncodedWithXMLCoder">YES</bool>
-				<string>{128, 212}</string>
-				<string>{128, 212}</string>
-				<string>{128, 212}</string>
-				<string>{128, 212}</string>
 				<string>{32, 32}</string>
+				<string>{128, 212}</string>
+				<string>{128, 212}</string>
+				<string>{128, 212}</string>
+				<string>{128, 212}</string>
 				<string>{9, 8}</string>
 				<string>{7, 2}</string>
 				<string>{32, 32}</string>

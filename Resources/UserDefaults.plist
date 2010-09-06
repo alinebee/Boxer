@@ -22,5 +22,7 @@
 	<string>X</string>
 	<key>startupAction</key>
 	<integer>1</integer>
+	<key>applyShelfAppearance</key>
+	<false/>
 </dict>
 </plist>

@@ -26,7 +26,7 @@
 #import <BGHUDAppKit/BGThemeManager.h>
 #import "NDAlias+AliasFile.h"
 
-#import <ScriptingBridge/ScriptingBridge.h>
+#import "Finder.h"
 
 
 NSString * const BXNewSessionParam = @"--openNewSession";
@@ -243,7 +243,36 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 }
 
 - (void) applyShelfAppearanceToPath: (NSString *)path switchToShelfMode: (BOOL)switchMode
-{
+{	
+	NSURL *folderURL = [NSURL fileURLWithPath: path];
+	
+	NSString *backgroundImageResource = @"ShelvesForSnowLeopard";
+	
+	NSURL *backgroundImageURL = [NSURL fileURLWithPath: [[NSBundle mainBundle] pathForImageResource: backgroundImageResource]];
+	
+	//Go go Scripting Bridge
+	FinderApplication *finder		= [SBApplication applicationWithBundleIdentifier: @"com.apple.finder"];
+	FinderFolder *folder			= [[finder folders] objectAtLocation: folderURL];
+	FinderFile *backgroundPicture	= [[finder files] objectAtLocation: backgroundImageURL];
+	
+	//IMPLEMENTATION NOTE: [folder containerWindow] returns an SBObject instead of a FinderWindow.
+	//So to actually DO anything with that window, we need to retrieve the value manually instead.
+	//Furthermore, [FinderFinderWindow class] doesn't exist at compile time, so we need to retrieve
+	//THAT at runtime too.
+	//FFFFUUUUUUUUUCCCCCCCCKKKK AAAAAPPPPLLLLEEESSCCRRRIIPPPPTTTT.
+	FinderFinderWindow *window = (FinderFinderWindow *)[folder propertyWithClass: NSClassFromString(@"FinderFinderWindow") code: (AEKeyword)'cwnd'];
+	
+	FinderIconViewOptions *options = window.iconViewOptions;
+	
+	options.textSize			= 12;
+	options.iconSize			= 128;
+	options.backgroundPicture	= backgroundPicture;
+	options.labelPosition		= FinderEposBottom;
+	options.showsItemInfo		= NO;
+	if (options.arrangement == FinderEarrNotArranged)
+		options.arrangement		= FinderEarrSnapToGrid;
+	
+	if (switchMode) window.currentView = FinderEcvwIconView;
 }
 
 
@@ -662,7 +691,15 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (IBAction) revealGamesFolder: (id)sender
 {
 	NSString *path = [self gamesFolderPath];
-	if (path) [self revealPath: path];
+	if (path)
+	{
+		if ([[NSUserDefaults standardUserDefaults] boolForKey: @"applyShelfAppearance"])
+		{
+			[self applyShelfAppearanceToPath: path switchToShelfMode: YES];
+		}
+		
+		[self revealPath: path];
+	}
 }
 
 //Displays a file path in Finder. This will display the containing folder of files,

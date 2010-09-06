@@ -129,6 +129,7 @@
 {	
 	NSOpenPanel *openPanel = [NSOpenPanel openPanel];
 	
+	[openPanel setCanCreateDirectories: YES];
 	[openPanel setCanChooseFiles: NO];
 	[openPanel setCanChooseDirectories: YES];
 	[openPanel setTreatsFilePackagesAsDirectories: NO];

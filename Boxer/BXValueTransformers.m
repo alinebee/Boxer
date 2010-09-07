@@ -311,6 +311,11 @@
 	}
 	return self;
 }
-- (NSImage *) transformedValue: (NSImage *)image	{ [image setSize: [self size]]; return image; }
+- (NSImage *) transformedValue: (NSImage *)image
+{
+	NSImage *resizedImage = [image copy];
+	[resizedImage setSize: [self size]];
+	return [resizedImage autorelease];
+}
 
 @end

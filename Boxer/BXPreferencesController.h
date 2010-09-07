@@ -21,10 +21,19 @@ enum {
 {
 	IBOutlet BXFilterGallery *filterGallery;
 	IBOutlet NSPopUpButton *gamesFolderSelector;
+	IBOutlet NSView *folderSelectorAccessoryView;
+	IBOutlet NSButton *copySampleGamesToggle;
+
+	BOOL processingGamesFolder;
 }
 
 @property (retain, nonatomic) BXFilterGallery *filterGallery;
 @property (retain, nonatomic) NSPopUpButton *gamesFolderSelector;
+
+@property (retain, nonatomic) NSView *folderSelectorAccessoryView;
+@property (retain, nonatomic) NSButton *copySampleGamesToggle;
+
+@property (assign, nonatomic) BOOL processingGamesFolder;
 
 
 //Provides a singleton instance of the window controller which stays retained for the lifetime

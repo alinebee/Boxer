@@ -28,27 +28,6 @@ enum {
 //The currently-active DOS session. Changes whenever a new session opens.
 @property (retain, nonatomic) BXSession *currentSession;
 
-//The path where we store Boxer's games, stored internally as an alias to allow the folder to be moved.
-//Will be nil if no path has been chosen or the alias could not be resolved.
-@property (copy, nonatomic) NSString *gamesFolderPath;
-
-//The icon of the games folder path. This is used for UIs that need to display the games folder.
-@property (readonly, nonatomic) NSImage *gamesFolderIcon;
-
-//The game folder path from 0.8x versions of Boxer (stored as an alias at ~/Library/Preferences/Boxer/Default Folder).
-//Will be nil if no path was stored by an older version of Boxer, or if the alias could not be resolved.
-@property (readonly, nonatomic) NSString *oldGamesFolderPath;
-
-//The 'emergency' path at which to store new gameboxes, used when the games folder cannot be found
-//and we don't have the chance to ask the user for a new one. This is currently set to the user's Desktop.
-@property (readonly, nonatomic) NSString *fallbackGamesFolderPath;
-
-//Whether to apply our fancy games-shelf appearance to the games folder each time we open it.
-//Setting this to NO will immediately remove all effects from the games folder.
-//The value for this property is persisted in user defaults.
-@property (assign, nonatomic) BOOL appliesShelfAppearanceToGamesFolder;
-
-
 //Called at class initialization time to initialize Boxer's own user defaults.
 + (void) setupDefaults;
 
@@ -70,14 +49,6 @@ enum {
 //A special method for creating a new untitled import session.
 //Mirrors the behaviour of openUntitledDocumentAndDisplay:error:
 - (id) openImportSessionAndDisplay: (BOOL)displayDocument error: (NSError **)outError;
-
-
-#pragma mark -
-#pragma mark Games folder handling
-
-//Apply our custom shelf appearance to the specified path.
-//If switchMode is YES, the folder's Finder window will be switched to icon mode.
-- (void) applyShelfAppearanceToPath: (NSString *)path switchToShelfMode: (BOOL)switchMode;
 
 
 #pragma mark -
@@ -115,7 +86,6 @@ enum {
 
 - (IBAction) revealInFinder: (id)sender;			//Reveal the sender's represented object in a new Finder window.
 - (IBAction) openInDefaultApplication: (id)sender;	//Open the sender's represented object with its default app.
-- (IBAction) revealGamesFolder: (id)sender;			//Reveal our games folder in Finder.
 
 
 //Reveal the specified path (or its parent folder, in the case of files) in a new Finder window.

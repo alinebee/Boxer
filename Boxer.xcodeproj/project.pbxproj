@@ -12,6 +12,12 @@
 		9F0F9EDA12108A9000ED7A64 /* BXImportError.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0F9ED912108A9000ED7A64 /* BXImportError.m */; };
 		9F0F9EEF1210901800ED7A64 /* BXMountedVolumesError.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0F9EEE1210901800ED7A64 /* BXMountedVolumesError.m */; };
 		9F13F9D011F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F13F9CF11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m */; };
+		9F160DE21236952600F8768E /* Sample Games in Resources */ = {isa = PBXBuildFile; fileRef = 9F160BD91236952400F8768E /* Sample Games */; };
+		9F160E711236B2A600F8768E /* BXAppController+BXGamesFolder.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F160E701236B2A600F8768E /* BXAppController+BXGamesFolder.m */; };
+		9F160EB11236BAED00F8768E /* Commander Keen 4.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F160EAD1236BAED00F8768E /* Commander Keen 4.icns */; };
+		9F160EB21236BAED00F8768E /* Epic Pinball Demo.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F160EAE1236BAED00F8768E /* Epic Pinball Demo.icns */; };
+		9F160EB31236BAED00F8768E /* Underworld Demo.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F160EAF1236BAED00F8768E /* Underworld Demo.icns */; };
+		9F160EB41236BAED00F8768E /* X-COM Demo.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F160EB01236BAED00F8768E /* X-COM Demo.icns */; };
 		9F1CBA58120C796C00C5E926 /* BXImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBA57120C796C00C5E926 /* BXImport.m */; };
 		9F1CBA97120C7D9000C5E926 /* BXImportWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBA96120C7D9000C5E926 /* BXImportWindowController.m */; };
 		9F1CBAAB120C830600C5E926 /* BXImport+BXImportPolicies.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBAAA120C830600C5E926 /* BXImport+BXImportPolicies.m */; };
@@ -44,7 +50,6 @@
 		9F45A1CD109C3D3400593456 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F45A1CB109C3D3400593456 /* MainMenu.xib */; };
 		9F45A424109C867E00593456 /* BXMountPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F45A423109C867E00593456 /* BXMountPanelController.m */; };
 		9F45A46C109C9A0400593456 /* MountPanelOptions.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F45A46A109C9A0400593456 /* MountPanelOptions.xib */; };
-		9F466A3211A9222B00C50965 /* Shaders in Resources */ = {isa = PBXBuildFile; fileRef = 9F466A1A11A9222B00C50965 /* Shaders */; };
 		9F466A4911A924EC00C50965 /* Shader.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F466A4811A924EC00C50965 /* Shader.m */; };
 		9F466AFC11A92C4B00C50965 /* UserDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9F466AFB11A92C4B00C50965 /* UserDefaults.plist */; };
 		9F4971BB108EF02F00282261 /* BXEmulator+BXDOSFileSystem.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F675DE40F8F4D49001FCE5F /* BXEmulator+BXDOSFileSystem.mm */; };
@@ -340,6 +345,13 @@
 		9F0F9EEE1210901800ED7A64 /* BXMountedVolumesError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXMountedVolumesError.m; sourceTree = "<group>"; };
 		9F13F9CE11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+BXTemporaryFiles.h"; sourceTree = "<group>"; };
 		9F13F9CF11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+BXTemporaryFiles.m"; sourceTree = "<group>"; };
+		9F160BD91236952400F8768E /* Sample Games */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Sample Games"; sourceTree = "<group>"; };
+		9F160E6F1236B2A600F8768E /* BXAppController+BXGamesFolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXAppController+BXGamesFolder.h"; sourceTree = "<group>"; };
+		9F160E701236B2A600F8768E /* BXAppController+BXGamesFolder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXAppController+BXGamesFolder.m"; sourceTree = "<group>"; };
+		9F160EAD1236BAED00F8768E /* Commander Keen 4.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = "Commander Keen 4.icns"; sourceTree = "<group>"; };
+		9F160EAE1236BAED00F8768E /* Epic Pinball Demo.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = "Epic Pinball Demo.icns"; sourceTree = "<group>"; };
+		9F160EAF1236BAED00F8768E /* Underworld Demo.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = "Underworld Demo.icns"; sourceTree = "<group>"; };
+		9F160EB01236BAED00F8768E /* X-COM Demo.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = "X-COM Demo.icns"; sourceTree = "<group>"; };
 		9F1CBA56120C796C00C5E926 /* BXImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImport.h; sourceTree = "<group>"; };
 		9F1CBA57120C796C00C5E926 /* BXImport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXImport.m; sourceTree = "<group>"; };
 		9F1CBA95120C7D9000C5E926 /* BXImportWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImportWindowController.h; sourceTree = "<group>"; };
@@ -389,7 +401,6 @@
 		9F45A422109C867E00593456 /* BXMountPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXMountPanelController.h; sourceTree = "<group>"; };
 		9F45A423109C867E00593456 /* BXMountPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXMountPanelController.m; sourceTree = "<group>"; };
 		9F45A46B109C9A0400593456 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/MountPanelOptions.xib; sourceTree = "<group>"; };
-		9F466A1A11A9222B00C50965 /* Shaders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Shaders; sourceTree = "<group>"; };
 		9F466A4711A924EC00C50965 /* Shader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shader.h; sourceTree = "<group>"; };
 		9F466A4811A924EC00C50965 /* Shader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Shader.m; sourceTree = "<group>"; };
 		9F466AFB11A92C4B00C50965 /* UserDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UserDefaults.plist; sourceTree = "<group>"; };
@@ -897,9 +908,8 @@
 		080E96DDFE201D6D7F000001 /* Boxer */ = {
 			isa = PBXGroup;
 			children = (
+				9F160E6E1236B28900F8768E /* Application Delegate */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
-				9FBC35110F56C7B7001811F2 /* BXAppController.h */,
-				9FBC351E0F56C7B7001811F2 /* BXAppController.m */,
 				9F6BA70310A9FC77005A3E2A /* BXGrowlController.h */,
 				9F6BA70410A9FC77005A3E2A /* BXGrowlController.m */,
 				9F573D370F8E69AF0089D8B7 /* BXPackage.h */,
@@ -986,14 +996,14 @@
 				9F466AFB11A92C4B00C50965 /* UserDefaults.plist */,
 				9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */,
 				9FAE9B8A11F1D7CF000363F7 /* GameDefaults.plist */,
-				9F466A1A11A9222B00C50965 /* Shaders */,
+				9F160BD91236952400F8768E /* Sample Games */,
 				9FFAFE2E10DE343F00728BAC /* Configurations */,
 				9FCBB5FE10A6DDBD00C28B09 /* DOS Toolkit */,
 				9FCDCCE310D2D53C0080A24F /* Original DOSBox Documentation */,
 				9F76D3F510CBC3B300C3B081 /* GNU General Public License.txt */,
+				9FBC34390F56C5AC001811F2 /* Images */,
 				9FCBB2CB10A61C6D00C28B09 /* Sounds */,
 				9F496E4C108EEDF700282261 /* XIBs */,
-				9FBC34390F56C5AC001811F2 /* Images */,
 				9F496E4D108EEE0700282261 /* Strings */,
 			);
 			path = Resources;
@@ -1009,6 +1019,28 @@
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		9F160E6E1236B28900F8768E /* Application Delegate */ = {
+			isa = PBXGroup;
+			children = (
+				9FBC35110F56C7B7001811F2 /* BXAppController.h */,
+				9FBC351E0F56C7B7001811F2 /* BXAppController.m */,
+				9F160E6F1236B2A600F8768E /* BXAppController+BXGamesFolder.h */,
+				9F160E701236B2A600F8768E /* BXAppController+BXGamesFolder.m */,
+			);
+			name = "Application Delegate";
+			sourceTree = "<group>";
+		};
+		9F160EAC1236BAD300F8768E /* Sample Game Icons */ = {
+			isa = PBXGroup;
+			children = (
+				9F160EAD1236BAED00F8768E /* Commander Keen 4.icns */,
+				9F160EAE1236BAED00F8768E /* Epic Pinball Demo.icns */,
+				9F160EAF1236BAED00F8768E /* Underworld Demo.icns */,
+				9F160EB01236BAED00F8768E /* X-COM Demo.icns */,
+			);
+			name = "Sample Game Icons";
 			sourceTree = "<group>";
 		};
 		9F1CBA55120C783800C5E926 /* Game import */ = {
@@ -1719,6 +1751,7 @@
 		9FBC34390F56C5AC001811F2 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				9F160EAC1236BAD300F8768E /* Sample Game Icons */,
 				9F676BEF1235451B00924B8C /* Display.png */,
 				9F61941012340CA100F35AB4 /* ShelvesForSnowLeopard.jpg */,
 				9F61941112340CA100F35AB4 /* ShelvesForLeopard.jpg */,
@@ -1933,7 +1966,6 @@
 				9F9A4C9A10F67A1F00E61965 /* GalleryBkg.jpg in Resources */,
 				9F9A4C9B10F67A1F00E61965 /* GalleryTVScanlines.png in Resources */,
 				9F9A4CA610F67DD800E61965 /* Preferences.xib in Resources */,
-				9F466A3211A9222B00C50965 /* Shaders in Resources */,
 				9F466AFC11A92C4B00C50965 /* UserDefaults.plist in Resources */,
 				9FDCDEFD11B5B83B0032DA4E /* dsa_pub.pem in Resources */,
 				9FAA451511EB40180042B986 /* Configuration.strings in Resources */,
@@ -1957,6 +1989,11 @@
 				9F61941212340CA100F35AB4 /* ShelvesForSnowLeopard.jpg in Resources */,
 				9F61941312340CA100F35AB4 /* ShelvesForLeopard.jpg in Resources */,
 				9F676BF01235451B00924B8C /* Display.png in Resources */,
+				9F160DE21236952600F8768E /* Sample Games in Resources */,
+				9F160EB11236BAED00F8768E /* Commander Keen 4.icns in Resources */,
+				9F160EB21236BAED00F8768E /* Epic Pinball Demo.icns in Resources */,
+				9F160EB31236BAED00F8768E /* Underworld Demo.icns in Resources */,
+				9F160EB41236BAED00F8768E /* X-COM Demo.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2204,6 +2241,7 @@
 				9FFF9730123269D1009B5EE5 /* NSURL+NDCarbonUtilities.m in Sources */,
 				9FFF97951232B718009B5EE5 /* BXMultiPanelWindowController.m in Sources */,
 				9F61931B1233D8F000F35AB4 /* BXTabbedWindowController.m in Sources */,
+				9F160E711236B2A600F8768E /* BXAppController+BXGamesFolder.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

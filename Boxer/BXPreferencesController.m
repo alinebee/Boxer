@@ -9,7 +9,7 @@
 #import "BXPreferencesController.h"
 #import "BXSession.h"
 #import "BXValueTransformers.h"
-#import "BXAppController.h"
+#import "BXAppController+BXGamesFolder.h"
 
 
 #pragma mark -
@@ -22,6 +22,9 @@
 					returnCode: (int)returnCode
 				   contextInfo: (void *)contextInfo;
 
+//Copy sample games to the specified path with indeterminate progress indicator
+- (void) _addSampleGamesToPath: (NSString *)path;
+
 @end
 
 
@@ -30,6 +33,8 @@
 
 @implementation BXPreferencesController
 @synthesize filterGallery, gamesFolderSelector;
+@synthesize folderSelectorAccessoryView, copySampleGamesToggle;
+@synthesize processingGamesFolder;
 
 #pragma mark -
 #pragma mark Initialization and deallocation
@@ -65,8 +70,10 @@
 
 - (void) dealloc
 {
-	[self setFilterGallery: nil], [filterGallery release];
-	[self setGamesFolderSelector: nil], [gamesFolderSelector release];
+	[self setFilterGallery: nil],				[filterGallery release];
+	[self setGamesFolderSelector: nil],			[gamesFolderSelector release];
+	[self setFolderSelectorAccessoryView: nil],	[folderSelectorAccessoryView release];
+	[self setCopySampleGamesToggle: nil],		[copySampleGamesToggle release];
 	[super dealloc];
 }
 
@@ -128,21 +135,56 @@
 - (IBAction) showGamesFolderChooserPanel: (id)sender
 {	
 	NSOpenPanel *openPanel = [NSOpenPanel openPanel];
+
+	NSString *currentFolderPath = [[NSApp delegate] gamesFolderPath];
+	NSString *parentFolderPath, *currentFolderName;
+	if (currentFolderPath)
+	{
+		parentFolderPath = [currentFolderPath stringByDeletingLastPathComponent];
+		currentFolderName = [currentFolderPath lastPathComponent];
+	}
+	else
+	{
+		//If no folder yet exists, choose
+		parentFolderPath = NSHomeDirectory();
+		currentFolderName = nil;
+	}
 	
 	[openPanel setCanCreateDirectories: YES];
-	[openPanel setCanChooseFiles: NO];
 	[openPanel setCanChooseDirectories: YES];
+	[openPanel setCanChooseFiles: NO];
 	[openPanel setTreatsFilePackagesAsDirectories: NO];
-	[openPanel setMessage:	NSLocalizedString(@"Choose a folder in which to keep your DOS games:",
-											  @"Help text shown at the top of choose-a-games-folder panel.")];
+	[openPanel setAllowsMultipleSelection: NO];
 	
-	[openPanel beginSheetForDirectory: nil
-								 file: nil
+	[openPanel setAccessoryView: [self folderSelectorAccessoryView]];
+	[openPanel setDelegate: self];
+	
+	[openPanel setPrompt: NSLocalizedString(@"Select", @"Button label for Open panels when selecting a folder.")];
+	[openPanel setMessage: NSLocalizedString(@"Select a folder in which to keep your DOS games:",
+											 @"Help text shown at the top of choose-a-games-folder panel.")];
+	
+	[openPanel beginSheetForDirectory: parentFolderPath
+								 file: currentFolderName
 								types: nil
 					   modalForWindow: [self window]
 						modalDelegate: self
 					   didEndSelector: @selector(_setChosenGamesFolder:returnCode:contextInfo:)
 						  contextInfo: nil];
+}
+
+- (void) panel: (NSOpenPanel *)openPanel directoryDidChange: (NSString *)path
+{
+	[self panelSelectionDidChange: openPanel];
+}
+
+- (void) panelSelectionDidChange: (NSOpenPanel *)openPanel
+{
+	NSString *selection = [[openPanel URL] path];
+	NSFileManager *manager = [NSFileManager defaultManager];
+	BOOL hasFiles = ([[manager enumeratorAtPath: selection] nextObject] != nil);
+	
+	//If the selected folder is empty, turn on the copy-sample-games checkbox; otherwise, clear it. 
+	[[self copySampleGamesToggle] setState: !hasFiles];
 }
 
 - (void) _setChosenGamesFolder: (NSOpenPanel *)openPanel
@@ -154,10 +196,23 @@
 		NSString *path = [[openPanel URL] path];
 		
 		[[NSApp delegate] setGamesFolderPath: path];
+		
+		if ([[self copySampleGamesToggle] state])
+		{
+			//Let the sheet close before we start copying files, so that we can display the progress indicator
+			[self performSelector: @selector(_addSampleGamesToPath:) withObject: path afterDelay: 0.5];
+		}
 	}
 	
 	//Restore the game folder dropdown to the first item, which is the game folder representation
 	[[self gamesFolderSelector] selectItemAtIndex: 0];
+}
+
+- (void) _addSampleGamesToPath: (NSString *)path
+{
+	[self setProcessingGamesFolder: YES];
+	[[NSApp delegate] addSampleGamesToPath: path];
+	[self setProcessingGamesFolder: NO];
 }
 
 @end

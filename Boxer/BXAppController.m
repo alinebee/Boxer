@@ -7,6 +7,7 @@
 
 
 #import "BXAppController.h"
+#import "BXAppController+BXGamesFolder.h"
 
 #import "BXAboutController.h"
 #import "BXInspectorController.h"
@@ -24,9 +25,6 @@
 
 #import "BXThemes.h"
 #import <BGHUDAppKit/BGThemeManager.h>
-#import "NDAlias+AliasFile.h"
-
-#import "Finder.h"
 
 
 NSString * const BXNewSessionParam = @"--openNewSession";
@@ -51,7 +49,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 
 @implementation BXAppController
-@synthesize currentSession, gamesFolderPath;
+@synthesize currentSession;
 
 
 #pragma mark -
@@ -173,155 +171,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 
 #pragma mark -
-#pragma mark Managing the games folder
-
-- (NSString *) gamesFolderPath
-{
-	//Load the games folder path from our preferences alias the first time we need it
-	if (!gamesFolderPath)
-	{
-		NSData *aliasData = [[NSUserDefaults standardUserDefaults] dataForKey: @"gamesFolder"];
-		
-		if (aliasData)
-		{
-			NDAlias *alias = [NDAlias aliasWithData: aliasData];
-			gamesFolderPath = [[alias path] copy];
-			
-			//If the alias was updated while resolving it because the target had moved,
-			//then re-save the new alias data
-			if ([alias changed])
-			{
-				[[NSUserDefaults standardUserDefaults] setObject: [alias data] forKey: @"gamesFolder"];
-			}			
-		}
-	}
-	return gamesFolderPath;
-}
-
-- (void) setGamesFolderPath: (NSString *)newPath
-{
-	if (![gamesFolderPath isEqualToString: newPath])
-	{
-		[gamesFolderPath release];
-		gamesFolderPath = [newPath copy];
-		
-		//Store the new path in the preferences as an alias, so that users can move it around.
-		NDAlias *alias = [NDAlias aliasWithPath: newPath];
-		[[NSUserDefaults standardUserDefaults] setObject: [alias data] forKey: @"gamesFolder"];		
-	}
-}
-
-+ (NSSet *) keyPathsForValuesAffectingGamesFolderIcon
-{
-	return [NSSet setWithObject: @"gamesFolderPath"];
-}
-
-- (NSImage *) gamesFolderIcon
-{
-	NSImage *icon = nil;
-	NSString *path = [self gamesFolderPath];
-	if (path) icon = [[NSWorkspace sharedWorkspace] iconForFile: path];
-	//If no games folder has been set, or the path couldn't be found, then fall back on our default icon
-	if (!icon) icon = [NSImage imageNamed: @"gamefolder"];
-	
-	return icon;
-}
-
-- (NSString *) oldGamesFolderPath
-{
-	//Check for an alias reference from 0.8x versions of Boxer
-	NSString *libraryPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
-	NSString *oldAliasPath = [libraryPath stringByAppendingPathComponent: @"Preferences/Boxer/Default Folder"];
-	
-	//Resolve the previous games folder location from that alias
-	NDAlias *alias = [NDAlias aliasWithContentsOfFile: oldAliasPath];
-	return [alias path];
-}
-
-- (NSString *) fallbackGamesFolderPath
-{
-	return [NSSearchPathForDirectoriesInDomains(NSDesktopDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
-}
-
-- (void) applyShelfAppearanceToPath: (NSString *)path switchToShelfMode: (BOOL)switchMode
-{	
-	NSURL *folderURL = [NSURL fileURLWithPath: path];
-	
-	NSString *backgroundImageResource = @"ShelvesForSnowLeopard";
-	
-	NSURL *backgroundImageURL = [NSURL fileURLWithPath: [[NSBundle mainBundle] pathForImageResource: backgroundImageResource]];
-	
-	//Go go Scripting Bridge
-	FinderApplication *finder		= [SBApplication applicationWithBundleIdentifier: @"com.apple.finder"];
-	FinderFolder *folder			= [[finder folders] objectAtLocation: folderURL];
-	FinderFile *backgroundPicture	= [[finder files] objectAtLocation: backgroundImageURL];
-	
-	//IMPLEMENTATION NOTE: [folder containerWindow] returns an SBObject instead of a FinderWindow.
-	//So to actually DO anything with that window, we need to retrieve the value manually instead.
-	//Furthermore, [FinderFinderWindow class] doesn't exist at compile time, so we need to retrieve
-	//THAT at runtime too.
-	//FFFFUUUUUUUUUCCCCCCCCKKKK AAAAAPPPPLLLLEEESSCCRRRIIPPPPTTTT.
-	FinderFinderWindow *window = (FinderFinderWindow *)[folder propertyWithClass: NSClassFromString(@"FinderFinderWindow") code: (AEKeyword)'cwnd'];
-	
-	FinderIconViewOptions *options = window.iconViewOptions;
-	
-	options.textSize			= 12;
-	options.iconSize			= 128;
-	options.backgroundPicture	= backgroundPicture;
-	options.labelPosition		= FinderEposBottom;
-	options.showsItemInfo		= NO;
-	if (options.arrangement == FinderEarrNotArranged)
-		options.arrangement		= FinderEarrSnapToGrid;
-	
-	if (switchMode) window.currentView = FinderEcvwIconView;
-}
-
-- (void) removeShelfAppearanceFromPath: (NSString *)path
-{
-	NSURL *folderURL = [NSURL fileURLWithPath: path];
-
-	FinderApplication *finder	= [SBApplication applicationWithBundleIdentifier: @"com.apple.finder"];
-	FinderFolder *folder		= [[finder folders] objectAtLocation: folderURL];
-	
-	FinderFinderWindow *window = (FinderFinderWindow *)[folder propertyWithClass: NSClassFromString(@"FinderFinderWindow") code: (AEKeyword)'cwnd'];
-	FinderIconViewOptions *options = window.iconViewOptions;
-	
-	FinderIconViewOptions *defaultOptions = finder.FinderPreferences.iconViewOptions;
-	
-	//IMPLEMENTATION NOTE: would be nice to reset the values to those in FinderPreferences,
-	//but that doesn't seem to work
-	options.iconSize = 48;
-	options.backgroundPicture = nil;
-	//IMPLEMENTATION NOTE: would be [NSColor whiteColor] but the Scripting Bridge chokes on grayscale colour values
-	options.backgroundColor = [NSColor colorWithCalibratedRed: 1.0f green: 1.0f blue: 1.0f alpha: 1.0f];
-}
-
-- (BOOL) appliesShelfAppearanceToGamesFolder
-{
-	return [[NSUserDefaults standardUserDefaults] boolForKey: @"applyShelfAppearance"];
-}
-
-- (void) setAppliesShelfAppearanceToGamesFolder: (BOOL)flag
-{
-	[[NSUserDefaults standardUserDefaults] setBool: flag forKey: @"applyShelfAppearance"];
-	NSString *path = [self gamesFolderPath];
-	
-	if (path && [[NSFileManager defaultManager] fileExistsAtPath: path])
-	{
-		if (flag)
-		{
-			[self applyShelfAppearanceToPath: path switchToShelfMode: YES];
-		}
-		else
-		{
-			//Restore the folder to its unshelfed state
-			[self removeShelfAppearanceFromPath: path];
-		}		
-	}
-}
-
-
-#pragma mark -
 #pragma mark Application open/closing behaviour
 
 //Quit after the last window was closed if we are a 'subsidiary' process, to avoid leaving extra Boxers littering the Dock
@@ -346,37 +195,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 - (void) applicationWillFinishLaunching: (NSNotification *)notification
 {
-	//Check at startup whether we have a games folder set
-	if (![self gamesFolderPath])
-	{
-		//If no games folder has been set yet, try and import it from Boxer 0.8x.
-		//IMPLEMENTATION NOTE: we check for the presence of the default, because even if gamesFolderPath is nil
-		//then the games folder may have been set but is currently inaccessible: in which case we don't want
-		//to reimport it, because the user might have changed the folder since Boxer 0.8x. 
-		if ([[NSUserDefaults standardUserDefaults] objectForKey: @"gamesFolder"] == nil)
-		{
-			NSFileManager *manager = [NSFileManager defaultManager];
-			NSString *oldPath = [self oldGamesFolderPath];
-			if (oldPath && [manager fileExistsAtPath: oldPath])
-			{
-				[self setGamesFolderPath: oldPath];
-				
-				NSString *backgroundPath = [oldPath stringByAppendingPathComponent: @".background"];
-				//Check if the old path has a .background folder: if so, then automatically apply the games-folder appearance.
-				if ([manager fileExistsAtPath: backgroundPath])
-				{
-					[self setAppliesShelfAppearanceToGamesFolder: YES];
-				}
-			}
-		}
-		
-		//If we couldn't import a games folder, then prompt the user to choose one
-		if (![self gamesFolderPath])
-		{
-			//TODO: show the games folder chooser here!
-		}
-	}
-	
+	[self checkForGamesFolder];
 }
 
 - (void) applicationDidFinishLaunching: (NSNotification *)notification
@@ -766,22 +585,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	else if ([sender isKindOfClass: [NSDictionary class]])	path = [sender objectForKey: @"path"];	
 	
 	if (path) [[NSWorkspace sharedWorkspace] openFile: path withApplication: nil andDeactivate: YES];
-}
-
-- (IBAction) revealGamesFolder: (id)sender
-{
-	NSString *path = [self gamesFolderPath];
-	if (path)
-	{
-		//Each time we open the game folder, reapply the shelf appearance.
-		//We do this because Finder can sometimes 'lose' the appearance.
-		if ([self appliesShelfAppearanceToGamesFolder])
-		{
-			[self applyShelfAppearanceToPath: path switchToShelfMode: YES];
-		}
-		
-		[self revealPath: path];
-	}
 }
 
 //Displays a file path in Finder. This will display the containing folder of files,

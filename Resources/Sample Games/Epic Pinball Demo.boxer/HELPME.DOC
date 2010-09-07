@@ -1,0 +1,250 @@
+=============================================================================
+Epic Pinball    *    Instructions & Troubleshooting Info     *    Version 2.1
+=============================================================================
+
+SPECIAL EPIC PINBALL UPDATE:
+
+This is version 2.1 of Epic Pinball.  It fixes several problems with
+"almost" Sound Blaster compatible sound cards, such as the Sound Galaxy,
+Multimedia Pro 16, and Packard Bell sound card.
+
+=============================================================================
+
+Epic Pinball Requires:
+  * A 386 or faster IBM-compatible PC
+  * VGA graphics
+  * Hard disk
+
+Also supports:
+  * Sound Blaster, SB Pro, and compatible music cards
+  * Gravis Ultrasound music card
+
+To start Epic Pinball:
+
+1. Switch to the drive where the game is installed (C:)
+2. Switch to the subdirectory where the game is installed (CD \PINBALL)
+3. Type PINBALL.
+
+
+=============================================================================
+		      Common problems and solutions
+=============================================================================
+
+Running with WINDOWS
+====================
+
+To run this game under Windows,  be sure to run the file "PINBALL.PIF" (not
+the file "PINBALL.EXE").  This should would very reliably under Windows on
+nearly all computers.
+
+If you encounter any problems running through Windows, please exit and run
+Epic Pinball through plain DOS instead.  We appologize for the inconvenience.
+Making Epic games work through Windows is a top priority for us,  and we're
+working to improve our Windows compatibility.
+
+Running with OS/2
+=================
+
+Though Epic Pinball will work reliably under OS/2 on some computers, we
+don't recommend this because it might result in the game locking up.
+Please run Epic Pinball through DOS or Windows instead.  We tried to make
+this game compatible with OS/2,  but alas we were not successful.
+
+
+NOT ENOUGH FREE MEMORY
+======================
+
+Problem:  When I run Epic Pinball,  the game refuses to start and gives
+   me the message "You need (amount) of free memory to run this program".
+
+Solution:  You need to free up more main (conventional) memory before
+   starting Epic Pinball.  Here are some solution tips:
+
+1. If you are trying to run Epic Pinball from Windows, completely exit
+   Windows and try running it from DOS.
+
+2. If you are trying to run Epic Pinball from "DOSSHELL" or any other
+   menu program,  please exit from the menu program.  Then, run Epic Pinball
+   from the DOS prompt.  Menu programs often occupy enough memory that
+   there won't be enough left for Epic Pinball.
+
+If neither #1 or #2 solves the problem,  do the following:
+
+1. From the DOS prompt,  type "MEM" and press Enter.
+
+2. You'll see a lot of information about your computer's memory.  Look at
+   the number after the words "Largest Executable Program Size".  This is
+   how much memory you currently have available.
+
+Now you need to free up more main memory.  Here are some tips:
+
+1. If you're using DOS 6.0 or later,  reboot your computer by pressing
+   RESET or Ctrl-Alt-Del.  Wait for the message "Starting MS-DOS..." to come
+   up.  Now press the [F5] key.
+
+   This will cause DOS 6.0 to bypass all of your TSR's, memory managers,
+   and other programs which normally occupy main memory.
+
+   Now change into the Pinball directory and begin the game.
+
+2. If you have a version of DOS earlier than 6.0:  You need to create a
+   "boot disk" to allow you to start your computer without loading all
+   the TSR's and memory managers that take away main memory.  Here's how.
+
+   A. Put a blank disk in your A: drive and format it as a DOS disk.  (Don't
+      do this in your B: drive - it won't work!)  To do this, type the
+      following command:
+      
+      FORMAT A: /S
+
+   B.  Wait while your computer formats the disk.
+   C.  Label the disk "Boot Disk" and keep it handy.  You'll need this
+       disk whenever you want to start Epic Pinball.
+
+   Now, you can reboot your computer and play Epic Pinball:
+
+   A.  Put the boot disk in your A: drive.
+   B.  Restart your computer,  either by pressing CTRL-ALT-DELETE,  by
+       hitting your reset button,  or by turning it on.
+   C.  Wait while your computer boots from the boot disk.
+   D.  After a little while, your computer will stop and give you the A>
+       prompt.
+   E. Now change to your hard disk by typing "C:".
+   F. Go into the pinball directory by typing "CD \PINBALL".
+   G. Begin by typing "PINBALL".
+
+   Note to owners of "Stacker", "Superstor", and other hard disk compression
+   programs:  If your C: drive is compressed and you need a boot disk to
+   start Epic Pinball, you must install Pinball on a different,
+   non-compressed drive.  See your Stacker or Superstor manual for
+   instructions on doing this.  (This only applies to users of DOS
+   version 5.0 or earlier).
+
+
+GENERAL PROBLEMS
+================
+
+Problem: When I run PINBALL,  the computer locks up or reboots.
+
+Solution:  Run SETUP and verify that your settings are correct.  If you are
+   not using a sound card, make sure that SETUP is set for "No Sound Card".
+   If you are using a sound card, verify that:
+
+1. The correct options are specified in SETUP.  Check your address, IRQ,
+   and DMA settings (most sound cards operate on DMA 1).  If you don't know
+   your card's address, IRQ, and DMA settings, consult your sound card
+   manual for details on figuring them out.  If your sound quality is set
+   to "Ultra High Quality" or "Very High Quality", try setting it to
+   just "High Quality".
+
+2. Your sound card has no address, IRQ, or DMA conflicts with other cards
+   in your system!  If your sound card works properly with other games, you
+   can assume that there are no conflicts.  However, if your sound card does
+   not work with other games,  you have a conflict.  See your sound card
+   manual for details on resolving these conflicts.
+
+
+Problem: The music is too loud (or too quiet).
+
+Solution: From the main menu in Pinball, go into "Configuration".  There's
+   a volume control there!  This wasn't present in version 2.0, but we
+   added due to its high demand.
+
+
+Problem: I notice a bit of flicker in the dotmation (dot animation).
+
+Solution:  This will happen on slower computers (386, less than 33 mhz) when
+   you have the music playing through your Sound Blaster.  If you find this
+   distracting,  we recommend turning off the music.
+
+
+Problem: The music and sound effects sound OK when I start Epic Pinball, but
+   they get cut off several seconds after a song begins.
+
+Solution: This is what happens when you select the wrong IRQ for your sound
+   card!  Run SETUP again and pick the correct IRQ.
+
+
+Problem: My pinball game automatically gets put on "Pause" and does not 
+   respond or the screen just goes blank.
+
+Solution: Some powersaving utilities and screen savers conflict with Epic
+   Pinball.  Disable any of these features before starting pinball or boot
+   clean to avoid loading them into memory.
+
+
+OTHER SOUND CARD NOTES
+======================
+
+Pro Audio Spectrum:
+
+   Epic Pinball should work fine with the PAS, PAS+, and PAS-16 sound cards.
+   You need to run SETUP and tell it that you have a Sound Blaster card (not
+   a Sound Blaster Pro).
+
+   Important!  To run Epic Pinball on any Pro Audio Spectrum sound card, you
+   need to have the PAS drivers loaded properly.  Epic Pinball will only
+   recognize your PAS card if the drivers are loaded.  See your PAS manual
+   for instructions on loading the right PAS drivers in your AUTOEXEC.BAT
+   and CONFIG.SYS files.
+
+Gravis Ultrasound:
+
+   By popular request, Epic Pinball supports the GUS!  Just specify Gravis
+   Ultrasound from within SETUP.  If you have any problems, check your
+   address, IRQ, and DMA settings.  If you still have problems, boot clean
+   and try running Epic Pinball without any GUS drivers loaded - these
+   drivers (such as SBOS) might perhaps interfere with the game's direct,
+   native GUS support.
+
+Other sound cards:
+
+   Since new models of sound cards are always being manufactured and revised,
+   here's how to contact the top sound card makers for information about
+   sound card problems and obtaining the latest driver files.
+
+   Company       Sound Card         Phone        BBS           CompuServe GO
+   ------------- ------------------ ------------ ------------  -------------
+   Media Vision  Pro Audio Spectrum 800-638-2807 510-770-0527  MultiVen (12)
+   Creative Labs Sound Blaster      405-742-6622 405-742-6660  Blaster 
+   Gravis        Ultrasound         604-431-1708 604-431-5927  PcVenB (14)
+
+   Note: Epic Pinball requires either a Gravis UltraSound or a genuine Sound
+   Blaster card.  If your sound card isn't 100% compatible with the Sound
+   Blaster, unfortunately it's not going to work with Epic Pinball.
+
+
+   Here are some sound cards that usually do not work with Epic Pinball:
+	
+	- Ensoniq Soundscape
+	- Reveal Wave 32
+
+   We are currently looking into making Epic Pinball compatible with these 
+   sound cards.
+
+
+CONTACTING EPIC'S TECH SUPPORT
+==============================
+
+If you need further assistance, please call our tech support department
+at 301-983-9771 between 9AM and 5PM Eastern Standard Time,  or fax us
+at 301-299-3841.  You can also contact us online:
+
+CompuServe:     GO EPIC
+Internet Mail:  help@epicgames.com
+Internet FTP:   ftp.uml.edu
+Internet News:  We answer questions in comp.sys.ibm.pc.games.action
+WorldWide Web:  http://www.epicgames.com/
+America Online: We answer questions posted in the "Games" area
+GEnie:          We answer questions in the Games Roundtable
+
+EXEC-PC BBS
+   Contact:     Epic MegaGames
+   2400 Baud:   414-789-4210
+   14.4K Baud:  414-789-4360
+   
+Epic's Email list:
+   
+   To subscribe to Epic's email list and receive late-breaking news 
+from Epic every month or so, just send an Internet message to
+list@epicgames.com with the subject: SUBSCRIBE EPIC.

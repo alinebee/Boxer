@@ -13,7 +13,7 @@
 #import "BXDOSWindowController+BXRenderController.h"
 #import "BXImportWindowController.h"
 
-#import "BXAppController.h"
+#import "BXAppController+BXGamesFolder.h"
 #import "BXGameProfile.h"
 #import "BXImportError.h"
 #import "BXPackage.h"

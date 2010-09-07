@@ -96,12 +96,19 @@
 	
 	NSURL *folderURL = [NSURL fileURLWithPath: path];
 	
-	NSString *backgroundImageResource = @"ShelvesForSnowLeopard";
+	//Detect which version of Finder is running, and switch the background image we use accordingly
+	//(Leopard has different icon-view spacing than Snow Leopard)
+	
+	FinderApplication *finder = [SBApplication applicationWithBundleIdentifier: @"com.apple.finder"];
+	
+	//If the Finder version number is less than 10.6, treat this as the Leopard Finder.
+	BOOL isLeopardFinder = [@"10.6" compare: finder.version options: NSLiteralSearch | NSNumericSearch] == NSOrderedDescending;
+	
+	NSString *backgroundImageResource = (isLeopardFinder) ? @"ShelvesForLeopard" : @"ShelvesForSnowLeopard";
 	
 	NSURL *backgroundImageURL = [NSURL fileURLWithPath: [[NSBundle mainBundle] pathForImageResource: backgroundImageResource]];
 	
 	//Go go Scripting Bridge
-	FinderApplication *finder		= [SBApplication applicationWithBundleIdentifier: @"com.apple.finder"];
 	FinderFolder *folder			= [[finder folders] objectAtLocation: folderURL];
 	FinderFile *backgroundPicture	= [[finder files] objectAtLocation: backgroundImageURL];
 	

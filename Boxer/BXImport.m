@@ -188,6 +188,8 @@
 		
 		//If no installers were found, check if all executables were Windows-only:
 		//if they were, bail out with a custom error message.
+		//TODO: improve this heuristic by discarding ignorable executables from the list of found
+		//executables found: e.g. batch files and helper utilities like pkunzip.
 		else if (numWindowsExecutables == numExecutables)
 		{
 			if (outError) *outError = [BXImportWindowsOnlyError errorWithSourcePath: filePath userInfo: nil];
@@ -604,9 +606,9 @@
 	//Clear the DOS frame
 	[[self DOSWindowController] updateWithFrame: nil];
 	
-	[[self importWindowController] pickUpFromController: [self DOSWindowController]];
-	
 	[self setImportStage: BXImportReadyToFinalize];
+	
+	[[self importWindowController] pickUpFromController: [self DOSWindowController]];
 	
 	[self importSourceFiles];
 }
@@ -830,7 +832,8 @@
 	
 	//Determine what type of media this game expects to be installed from
 	//(This will be BXDriveAutodetect if it doesn't care)
-	BXDriveType installMedium = [[self gameProfile] installMedium];
+	BXDriveType installMedium = BXDriveAutodetect;
+	if ([self gameProfile] != nil) installMedium = [[self gameProfile] installMedium];
 	
 	//Then, create a drive of the appropriate type from the source files and mount away
 	BXDrive *sourceDrive = [BXDrive driveFromPath: [self sourcePath] atLetter: nil withType: installMedium];

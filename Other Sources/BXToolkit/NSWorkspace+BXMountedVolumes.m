@@ -51,6 +51,7 @@ NSString * const HFSVolumeType		= @"hfs";
 					 isUnmountable: nil
 					   description: nil
 							  type: &volumeType];
+	
 	return volumeType;
 }
 

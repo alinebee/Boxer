@@ -195,21 +195,27 @@
 	{
 		NSString *path = [[openPanel URL] path];
 		
-		[[NSApp delegate] setGamesFolderPath: path];
+		if ([[NSApp delegate] appliesShelfAppearanceToGamesFolder])
+		{
+			[[NSApp delegate] applyShelfAppearanceToPath: path switchToShelfMode: YES];
+		}
 		
 		if ([[self copySampleGamesToggle] state])
 		{
 			//Let the sheet close before we start copying files, so that we can display the progress indicator
 			[self performSelector: @selector(_addSampleGamesToPath:) withObject: path afterDelay: 0.5];
 		}
+		
+		[[NSApp delegate] setGamesFolderPath: path];
 	}
 	
-	//Restore the game folder dropdown to the first item, which is the game folder representation
+	//Restore the game folder dropdown to the first item, which is the games folder representation
 	[[self gamesFolderSelector] selectItemAtIndex: 0];
 }
 
 - (void) _addSampleGamesToPath: (NSString *)path
 {
+	//As this is a time-consuming operation, show our progress indicator
 	[self setProcessingGamesFolder: YES];
 	[[NSApp delegate] addSampleGamesToPath: path];
 	[self setProcessingGamesFolder: NO];

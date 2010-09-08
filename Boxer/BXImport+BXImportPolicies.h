@@ -25,10 +25,10 @@
 #pragma mark -
 #pragma mark Detecting installers
 
-//Returns a list of known installer name patterns.
+//Returns a set of known installer name patterns.
 + (NSSet *) installerPatterns;
 
-//Returns a list of likely installer name patterns in order of preference.
+//Returns a set of likely installer name patterns in order of preference.
 + (NSArray *) preferredInstallerPatterns;
 
 //Returns whether the executable at the specified path is an installer or not.

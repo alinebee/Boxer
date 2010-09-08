@@ -21,6 +21,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
+			<integer value="243"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -328,7 +329,7 @@
 													<object class="NSButton" id="378975767">
 														<reference key="NSNextResponder" ref="743371518"/>
 														<int key="NSvFlags">269</int>
-														<string key="NSFrame">{{215, 137}, {251, 18}}</string>
+														<string key="NSFrame">{{215, 137}, {259, 18}}</string>
 														<reference key="NSSuperview" ref="743371518"/>
 														<reference key="NSWindow"/>
 														<bool key="NSEnabled">YES</bool>
@@ -842,14 +843,13 @@
 					<object class="NSButton" id="141176468">
 						<reference key="NSNextResponder" ref="253570691"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{18, 18}, {232, 18}}</string>
+						<string key="NSFrame">{{18, 18}, {284, 18}}</string>
 						<reference key="NSSuperview" ref="253570691"/>
-						<reference key="NSWindow"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="645220913">
 							<int key="NSCellFlags">-2080244224</int>
 							<int key="NSCellFlags2">0</int>
-							<string key="NSContents">Add sample DOS games to folder</string>
+							<string key="NSContents">Add sample DOS games to this folder too</string>
 							<reference key="NSSupport" ref="467860324"/>
 							<reference key="NSControlView" ref="141176468"/>
 							<int key="NSButtonFlags">1211912703</int>
@@ -863,9 +863,8 @@
 						</object>
 					</object>
 				</object>
-				<string key="NSFrameSize">{268, 54}</string>
+				<string key="NSFrameSize">{320, 54}</string>
 				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<string key="NSClassName">NSView</string>
 			</object>
 		</object>
@@ -1670,6 +1669,7 @@
 							<reference ref="141176468"/>
 						</object>
 						<reference key="parent" ref="0"/>
+						<string key="objectName">Games-folder selector accessory view</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">244</int>
@@ -1841,7 +1841,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{0, 691}, {268, 54}}</string>
+					<string>{{87, 669}, {320, 54}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>

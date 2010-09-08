@@ -12,7 +12,21 @@
 #import "Finder.h"
 #import "NSWorkspace+BXIcons.h"
 
+
 @implementation BXAppController (BXGamesFolder)
+
++ (BOOL) isLeopardFinder
+{	
+	//IMPLEMENTATION NOTE: we used to do this by checking the version of Finder itself;
+	//however, this proved to be unreliable and extremely cumbersome. Now we just check the
+	//version of OS X itself.
+	SInt32 versionMajor = 10, versionMinor = 0;
+	
+	Gestalt(gestaltSystemVersionMajor, &versionMajor);
+	Gestalt(gestaltSystemVersionMinor, &versionMinor);
+	
+	return versionMajor == 10 && versionMinor < 6;
+}
 
 - (NSString *) gamesFolderPath
 {
@@ -101,10 +115,7 @@
 	
 	FinderApplication *finder = [SBApplication applicationWithBundleIdentifier: @"com.apple.finder"];
 	
-	//If the Finder version number is less than 10.6, treat this as the Leopard Finder.
-	//FIXME: this check can sometimes fail, resulting in us applying the Leopard background in Snow Leopard.
-	//Check against the current system version instead.
-	BOOL isLeopardFinder = [@"10.6" compare: finder.version options: NSLiteralSearch | NSNumericSearch] == NSOrderedDescending;
+	BOOL isLeopardFinder = [[self class] isLeopardFinder];
 	
 	NSString *backgroundImageResource = (isLeopardFinder) ? @"ShelvesForLeopard" : @"ShelvesForSnowLeopard";
 	
@@ -253,13 +264,13 @@
 	{
 		[self revealPath: path];
 		
-		//Each time we open the game folder, reapply the shelf appearance.
+		//Each time after we open the game folder, reapply the shelf appearance.
 		//We do this because Finder can sometimes 'lose' the appearance.
-		//IMPLEMENTATION NOTE: we do this after the folder has opened,
-		//to avoid a delay while applying the style
+		//IMPLEMENTATION NOTE: we now do this after the folder has opened,
+		//to avoid a delay while applying the style.
 		if ([self appliesShelfAppearanceToGamesFolder])
 		{
-			[self applyShelfAppearanceToPath: path switchToShelfMode: YES];
+			[self applyShelfAppearanceToPath: path switchToShelfMode: NO];
 		}
 		
 	}

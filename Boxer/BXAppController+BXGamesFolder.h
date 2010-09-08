@@ -36,9 +36,17 @@
 //The value for this property is persisted in user defaults.
 @property (assign, nonatomic) BOOL appliesShelfAppearanceToGamesFolder;
 
+#pragma mark -
+#pragma mark Helper class methods
+
+//Returns whether Finder is the Leopard or Snow Leopard version.
+//Used for tailoring shelf appearance.
++ (BOOL) isLeopardFinder;
+
 
 #pragma mark -
 #pragma mark Games folder handling
+
 
 //Apply our custom shelf appearance to the specified path.
 //If switchMode is YES, the folder's Finder window will be switched to icon mode.

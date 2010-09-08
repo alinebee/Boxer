@@ -102,6 +102,8 @@
 	FinderApplication *finder = [SBApplication applicationWithBundleIdentifier: @"com.apple.finder"];
 	
 	//If the Finder version number is less than 10.6, treat this as the Leopard Finder.
+	//FIXME: this check can sometimes fail, resulting in us applying the Leopard background in Snow Leopard.
+	//Check against the current system version instead.
 	BOOL isLeopardFinder = [@"10.6" compare: finder.version options: NSLiteralSearch | NSNumericSearch] == NSOrderedDescending;
 	
 	NSString *backgroundImageResource = (isLeopardFinder) ? @"ShelvesForLeopard" : @"ShelvesForSnowLeopard";
@@ -249,14 +251,17 @@
 	NSString *path = [self gamesFolderPath];
 	if (path)
 	{
+		[self revealPath: path];
+		
 		//Each time we open the game folder, reapply the shelf appearance.
 		//We do this because Finder can sometimes 'lose' the appearance.
+		//IMPLEMENTATION NOTE: we do this after the folder has opened,
+		//to avoid a delay while applying the style
 		if ([self appliesShelfAppearanceToGamesFolder])
 		{
 			[self applyShelfAppearanceToPath: path switchToShelfMode: YES];
 		}
 		
-		[self revealPath: path];
 	}
 }
 @end

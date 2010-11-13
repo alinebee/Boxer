@@ -34,6 +34,9 @@
 //Shows a standard OS X open panel for choosing an executable file from Finder.
 - (IBAction) showProgramChooserPanel: (id)sender;
 
+//Reveals the current gamebox in Finder.
+- (IBAction) revealGamebox: (id) sender;
+
 //Synchronise the program selector's currently selected item with the default program
 //of the current gamebox.
 - (void) syncSelection;

@@ -125,6 +125,23 @@
 
 @implementation BXImportIconDropzone
 
+- (void) mouseDown: (NSEvent *)theEvent
+{
+	//Double-clicking the dropzone will tell the controller to launch the game.
+	//This makes the dropzone behave like an icon in Finder.
+	//FIXME: Well, almost: icons in Finder only open on mouseUp, not mouseDown.
+	//But NSImageView's drag-drop handling prevents us from catching mouseUp events.
+	if ([[self window] firstResponder] == self && [theEvent clickCount] > 1)
+	{
+		[self sendAction: @selector(launchGamebox:) to: [self target]];
+	}
+	else
+	{
+		[super mouseUp: theEvent];
+	}
+
+}
+
 - (BOOL) isHighlighted
 {
 	return isDragTarget || [[self window] firstResponder] == self;

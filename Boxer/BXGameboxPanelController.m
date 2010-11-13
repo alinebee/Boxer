@@ -120,6 +120,11 @@ enum {
 	[[self session] openFileAtPath: filePath];
 }
 
+- (IBAction) revealGamebox: (id) sender
+{
+	[[NSApp delegate] revealPath: [[[self session] gamePackage] bundlePath]];
+}
+
 - (IBAction) showProgramChooserPanel: (id)sender
 {	
 	NSOpenPanel *openPanel = [NSOpenPanel openPanel];

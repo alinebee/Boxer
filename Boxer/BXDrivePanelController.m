@@ -48,7 +48,7 @@ enum {
 - (void) awakeFromNib
 {
 	//Register the entire drive panel as a drag-drop target.
-	[[self view] registerForDraggedTypes: [NSArray arrayWithObjects: NSFilenamesPboardType, NSStringPboardType, nil]];	
+	[[self view] registerForDraggedTypes: [NSArray arrayWithObject: NSFilenamesPboardType]];	
 	
 	//Assign the appropriate menu to the drive menu segment.
 	[[self driveControls] setMenu: [self driveActionsMenu] forSegment: BXDriveActionsMenuSegment];

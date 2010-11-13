@@ -292,7 +292,7 @@
 				<nil key="NSViewClass"/>
 				<string key="NSWindowContentMaxSize">{3.40282e+38, 3.40282e+38}</string>
 				<object class="NSView" key="NSWindowView" id="261933879">
-					<nil key="NSNextResponder"/>
+					<reference key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
 					<object class="NSMutableArray" key="NSSubviews">
 						<bool key="EncodedWithXMLCoder">YES</bool>
@@ -306,6 +306,7 @@
 									<int key="NSvFlags">289</int>
 									<string key="NSFrame">{{297, 7}, {61, 25}}</string>
 									<reference key="NSSuperview" ref="980016056"/>
+									<reference key="NSWindow"/>
 									<bool key="NSEnabled">YES</bool>
 									<object class="NSButtonCell" key="NSCell" id="213632656">
 										<int key="NSCellFlags">-2080244224</int>
@@ -326,6 +327,7 @@
 									<int key="NSvFlags">289</int>
 									<string key="NSFrame">{{368, 7}, {132, 25}}</string>
 									<reference key="NSSuperview" ref="980016056"/>
+									<reference key="NSWindow"/>
 									<bool key="NSEnabled">YES</bool>
 									<object class="NSButtonCell" key="NSCell" id="739716523">
 										<int key="NSCellFlags">-2080244224</int>
@@ -344,6 +346,7 @@
 							</object>
 							<string key="NSFrameSize">{520, 40}</string>
 							<reference key="NSSuperview" ref="261933879"/>
+							<reference key="NSWindow"/>
 							<string key="NSClassName">BXBottomBar</string>
 						</object>
 						<object class="NSCustomView" id="375546595">
@@ -356,6 +359,7 @@
 									<int key="NSvFlags">268</int>
 									<string key="NSFrame">{{191, 73}, {187, 19}}</string>
 									<reference key="NSSuperview" ref="375546595"/>
+									<reference key="NSWindow"/>
 									<bool key="NSEnabled">YES</bool>
 									<object class="BGHUDButtonCell" key="NSCell" id="795142935">
 										<int key="NSCellFlags">67239424</int>
@@ -390,6 +394,7 @@
 									</object>
 									<string key="NSFrame">{{185, 100}, {287, 22}}</string>
 									<reference key="NSSuperview" ref="375546595"/>
+									<reference key="NSWindow"/>
 									<bool key="NSEnabled">YES</bool>
 									<object class="NSPathCell" key="NSCell" id="487087891">
 										<int key="NSCellFlags">337772033</int>
@@ -456,6 +461,7 @@
 									<int key="NSvFlags">268</int>
 									<string key="NSFrame">{{188, 130}, {271, 34}}</string>
 									<reference key="NSSuperview" ref="375546595"/>
+									<reference key="NSWindow"/>
 									<bool key="NSEnabled">YES</bool>
 									<object class="NSTextFieldCell" key="NSCell" id="292828376">
 										<int key="NSCellFlags">67239424</int>
@@ -489,6 +495,7 @@
 									</object>
 									<string key="NSFrame">{{36, 59}, {128, 128}}</string>
 									<reference key="NSSuperview" ref="375546595"/>
+									<reference key="NSWindow"/>
 									<bool key="NSEnabled">YES</bool>
 									<object class="NSImageCell" key="NSCell" id="107506478">
 										<int key="NSCellFlags">130560</int>
@@ -506,6 +513,7 @@
 									<int key="NSvFlags">269</int>
 									<string key="NSFrame">{{37, 217}, {446, 39}}</string>
 									<reference key="NSSuperview" ref="375546595"/>
+									<reference key="NSWindow"/>
 									<int key="NSViewLayerContentsRedrawPolicy">2</int>
 									<bool key="NSEnabled">YES</bool>
 									<object class="NSTextFieldCell" key="NSCell" id="243265654">
@@ -522,10 +530,13 @@
 							</object>
 							<string key="NSFrame">{{0, 40}, {520, 268}}</string>
 							<reference key="NSSuperview" ref="261933879"/>
+							<reference key="NSWindow"/>
 							<string key="NSClassName">BXWelcomeView</string>
 						</object>
 					</object>
 					<string key="NSFrameSize">{520, 308}</string>
+					<reference key="NSSuperview"/>
+					<reference key="NSWindow"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1280, 778}}</string>
 				<string key="NSMaxSize">{3.40282e+38, 3.40282e+38}</string>
@@ -632,6 +643,46 @@
 						<reference key="destination" ref="197877380"/>
 					</object>
 					<int key="connectionID">180</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">draggingDelegate</string>
+						<reference key="source" ref="808147803"/>
+						<reference key="destination" ref="1001"/>
+					</object>
+					<int key="connectionID">187</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">draggingDelegate</string>
+						<reference key="source" ref="719745099"/>
+						<reference key="destination" ref="1001"/>
+					</object>
+					<int key="connectionID">188</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">delegate</string>
+						<reference key="source" ref="224645555"/>
+						<reference key="destination" ref="1001"/>
+					</object>
+					<int key="connectionID">189</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">importGameButton</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="719745099"/>
+					</object>
+					<int key="connectionID">190</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">openPromptButton</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="808147803"/>
+					</object>
+					<int key="connectionID">191</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1079,11 +1130,22 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">186</int>
+			<int key="maxID">191</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<bool key="EncodedWithXMLCoder">YES</bool>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXAppController</string>
+					<object class="NSMutableDictionary" key="actions">
+						<string key="NS.key.0">revealGamesFolder:</string>
+						<string key="NS.object.0">id</string>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">Boxer/BXAppController+BXGamesFolder.h</string>
+					</object>
+				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">BXAppController</string>
 					<string key="superclassName">NSDocumentController</string>
@@ -1097,7 +1159,6 @@
 							<string>orderFrontImportGamePanel:</string>
 							<string>orderFrontPreferencesPanel:</string>
 							<string>orderFrontWelcomePanel:</string>
-							<string>revealGamesFolder:</string>
 							<string>revealInFinder:</string>
 							<string>sendEmail:</string>
 							<string>showDonationPage:</string>
@@ -1107,7 +1168,6 @@
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -1151,6 +1211,10 @@
 				<object class="IBPartialClassDescription">
 					<string key="className">BXWelcomeButton</string>
 					<string key="superclassName">BXFilterPortrait</string>
+					<object class="NSMutableDictionary" key="outlets">
+						<string key="NS.key.0">draggingDelegate</string>
+						<string key="NS.object.0">id</string>
+					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier" id="325202939">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">Boxer/BXWelcomeView.h</string>
@@ -1174,8 +1238,19 @@
 						<string key="NS.object.0">NSMenuItem</string>
 					</object>
 					<object class="NSMutableDictionary" key="outlets">
-						<string key="NS.key.0">recentDocumentsButton</string>
-						<string key="NS.object.0">NSPopUpButton</string>
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>importGameButton</string>
+							<string>openPromptButton</string>
+							<string>recentDocumentsButton</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>BXWelcomeButton</string>
+							<string>BXWelcomeButton</string>
+							<string>NSPopUpButton</string>
+						</object>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>

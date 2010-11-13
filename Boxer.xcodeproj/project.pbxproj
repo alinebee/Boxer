@@ -382,6 +382,7 @@
 		9F2AC6D510EFE14300CFFF72 /* CDCover.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CDCover.png; sourceTree = "<group>"; };
 		9F2AC6E210EFFE8600CFFF72 /* BXBootlegCoverArt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBootlegCoverArt.h; sourceTree = "<group>"; };
 		9F2AC6E310EFFE8600CFFF72 /* BXBootlegCoverArt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBootlegCoverArt.m; sourceTree = "<group>"; };
+		9F348A9D128F004A0034E780 /* BXWelcomeButtonDraggingDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXWelcomeButtonDraggingDelegate.h; sourceTree = "<group>"; };
 		9F4175A9119DBFDD00646B15 /* BXRenderingLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXRenderingLayer.h; sourceTree = "<group>"; };
 		9F4175AA119DBFDD00646B15 /* BXRenderingLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXRenderingLayer.m; sourceTree = "<group>"; };
 		9F4175EF119DCF7E00646B15 /* BXFrameRateCounterLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFrameRateCounterLayer.h; sourceTree = "<group>"; };
@@ -1127,6 +1128,7 @@
 				9F24D24C122439E0009C1817 /* BXWelcomeWindowController.m */,
 				9F24D24E12243C9A009C1817 /* BXWelcomeView.h */,
 				9F24D24F12243C9A009C1817 /* BXWelcomeView.m */,
+				9F348A9D128F004A0034E780 /* BXWelcomeButtonDraggingDelegate.h */,
 			);
 			name = "Welcome wagon";
 			sourceTree = "<group>";

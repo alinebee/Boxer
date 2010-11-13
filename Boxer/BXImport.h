@@ -93,7 +93,7 @@ typedef NSUInteger BXImportStage;
 + (NSSet *)acceptedSourceTypes;
 
 //Returns whether we can import from the specified path.
-- (BOOL) canImportFromSourcePath: (NSString *)sourcePath;
++ (BOOL) canImportFromSourcePath: (NSString *)sourcePath;
 
 //Whether we should run an installer for our current source path.
 //Will be YES if we detected any installers for the source path, NO otherwise.

@@ -382,10 +382,10 @@
 	return acceptedTypes;
 }
 
-- (BOOL) canImportFromSourcePath: (NSString *)path
++ (BOOL) canImportFromSourcePath: (NSString *)path
 {
 	return [[NSWorkspace sharedWorkspace] file: path
-								  matchesTypes: [[self class] acceptedSourceTypes]];
+								  matchesTypes: [self acceptedSourceTypes]];
 }
 
 - (BOOL) gameNeedsInstalling
@@ -401,7 +401,7 @@
 }
 
 
-//Overridden to reset the progress whenver we change the stage
+//Overridden to reset the progress whenever we change the stage
 - (void) setImportStage: (BXImportStage)stage
 {
 	if (stage != importStage)

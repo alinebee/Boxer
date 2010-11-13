@@ -100,7 +100,7 @@
 		for (NSString *path in filePaths)
 		{
 			//If any of the dropped files cannot be imported, reject the drop
-			if (![importer canImportFromSourcePath: path]) return NSDragOperationNone;
+			if (![[importer class] canImportFromSourcePath: path]) return NSDragOperationNone;
 		}
 		
 		[[self dropzone] setHighlighted: YES];
@@ -120,7 +120,7 @@
 		BXImport *importer = [[self controller] document];
 		for (NSString *path in filePaths)
 		{
-			if ([importer canImportFromSourcePath: path])
+			if ([[importer class] canImportFromSourcePath: path])
 			{
 				//Defer import to give the drag operation and animations time to clean up
 				[importer performSelector: @selector(importFromSourcePath:) withObject: path afterDelay: 0.5];

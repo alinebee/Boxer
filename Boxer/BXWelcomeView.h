@@ -7,14 +7,24 @@
 
 
 //BXWelcomeView and friends render the custom background and button appearance for the welcome window.
-//These are based on the draw methods of the filter gallery.
+//These are based on the draw methods of the filter gallery since they share a lot of presentational
+//code.
 
 #import "BXFilterGallery.h"
+
+
+@protocol BXWelcomeButtonDraggingDelegate;
 
 @interface BXWelcomeView : NSView
 @end
 
 @interface BXWelcomeButton : BXFilterPortrait
+{
+	id <BXWelcomeButtonDraggingDelegate> draggingDelegate;
+}
+//The delegate used for drag-drop operations.
+@property (assign) id <BXWelcomeButtonDraggingDelegate> draggingDelegate;
+
 @end
 
 @interface BXWelcomeButtonCell : BXFilterPortraitCell

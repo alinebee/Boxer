@@ -8,6 +8,7 @@
 
 #import "BXWelcomeView.h"
 #import "BXGeometry.h"
+#import "BXWelcomeButtonDraggingDelegate.h"
 
 @implementation BXWelcomeView
 
@@ -39,12 +40,33 @@
 
 
 @implementation BXWelcomeButton
+@synthesize draggingDelegate;
 
 //Ignore state altogether (overrides BXFilterPortrait behaviour of highlighting when state changes)
 - (void) setState: (NSInteger)value
 {
 }
+
+#pragma mark -
+#pragma mark Supporting drag-drop
+
+- (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)sender
+{
+	return [[self draggingDelegate] button: self draggingEntered: sender];
+}
+
+- (void) draggingExited: (id <NSDraggingInfo>)sender
+{
+	return [[self draggingDelegate] button: self draggingExited: sender];
+}
+
+- (BOOL) performDragOperation: (id <NSDraggingInfo>)sender
+{
+	return [[self draggingDelegate] button: self performDragOperation: sender];
+}
+
 @end
+
 
 @implementation BXWelcomeButtonCell
 @synthesize hovered;

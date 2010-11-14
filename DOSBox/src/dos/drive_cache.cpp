@@ -610,6 +610,7 @@ bool DOS_Drive_Cache::OpenDir(const char* path, Bit16u& id) {
 }
 
 bool DOS_Drive_Cache::OpenDir(CFileInfo* dir, const char* expand, Bit16u& id) {
+	if (!drive) return false; //FIXME!! this should never happen
 	id = GetFreeID(dir);
 	dirSearch[id] = dir;
 	char expandcopy [CROSS_LEN];

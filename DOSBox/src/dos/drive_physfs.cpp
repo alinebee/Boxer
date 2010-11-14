@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <libphysfs/physfs.h>
+#include <PhysFS/physfs.h>
 #include "dos_inc.h"
 #include "drives.h"
 #include "support.h"

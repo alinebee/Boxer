@@ -55,6 +55,14 @@
 		9F4971BB108EF02F00282261 /* BXEmulator+BXDOSFileSystem.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F675DE40F8F4D49001FCE5F /* BXEmulator+BXDOSFileSystem.mm */; };
 		9F4B5284122591960055022A /* prompt.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F4B5283122591960055022A /* prompt.icns */; };
 		9F4E042C0F67E72300427D50 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F4E042B0F67E72300427D50 /* AudioToolbox.framework */; };
+		9F4EC82D12907B5600024B20 /* Game Importer Droplet.app in Resources */ = {isa = PBXBuildFile; fileRef = 9F4EC82412907B1E00024B20 /* Game Importer Droplet.app */; };
+		9F4EC84812907C6100024B20 /* GameImporter.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4EC84712907C6100024B20 /* GameImporter.m */; };
+		9F4EC84A12907C6B00024B20 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F4EC84212907C4400024B20 /* MainMenu.xib */; };
+		9F4EC84B12907C7500024B20 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9F4EC83F12907C4000024B20 /* InfoPlist.strings */; };
+		9F4EC84C12907C7C00024B20 /* Importer.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F4EC83412907C0C00024B20 /* Importer.icns */; };
+		9F4EC85012907CFB00024B20 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		9F4EC85112907D0000024B20 /* ScriptingBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F61942312340F5400F35AB4 /* ScriptingBridge.framework */; };
+		9F4EC85512907D1A00024B20 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4EC85412907D1A00024B20 /* main.m */; };
 		9F511502129055FE00BEC0B9 /* BXImportCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F511501129055FE00BEC0B9 /* BXImportCommand.m */; };
 		9F53411812059E7900BCBF24 /* NSWorkspace+BXExecutableTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F53411712059E7900BCBF24 /* NSWorkspace+BXExecutableTypes.m */; };
 		9F544A8010AB44C40030FED5 /* BXThemes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F544A7F10AB44C40030FED5 /* BXThemes.m */; };
@@ -316,6 +324,16 @@
 		9FFF97951232B718009B5EE5 /* BXMultiPanelWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF97941232B718009B5EE5 /* BXMultiPanelWindowController.m */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		9F4EC82B12907B4300024B20 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9F4EC82312907B1E00024B20 /* Game Importer */;
+			remoteInfo = "Game Importer";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		9FBC3D5E0F56EA69001811F2 /* Copy Bundled Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -409,6 +427,15 @@
 		9F466AFB11A92C4B00C50965 /* UserDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UserDefaults.plist; sourceTree = "<group>"; };
 		9F4B5283122591960055022A /* prompt.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = prompt.icns; sourceTree = "<group>"; };
 		9F4E042B0F67E72300427D50 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
+		9F4EC82412907B1E00024B20 /* Game Importer Droplet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Game Importer Droplet.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9F4EC83412907C0C00024B20 /* Importer.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Importer.icns; sourceTree = "<group>"; };
+		9F4EC83612907C1C00024B20 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9F4EC84012907C4000024B20 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		9F4EC84312907C4400024B20 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		9F4EC84512907C6100024B20 /* Boxer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Boxer.h; sourceTree = "<group>"; };
+		9F4EC84612907C6100024B20 /* GameImporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameImporter.h; sourceTree = "<group>"; };
+		9F4EC84712907C6100024B20 /* GameImporter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameImporter.m; sourceTree = "<group>"; };
+		9F4EC85412907D1A00024B20 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		9F511500129055FE00BEC0B9 /* BXImportCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImportCommand.h; sourceTree = "<group>"; };
 		9F511501129055FE00BEC0B9 /* BXImportCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXImportCommand.m; sourceTree = "<group>"; };
 		9F53411612059E7900BCBF24 /* NSWorkspace+BXExecutableTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSWorkspace+BXExecutableTypes.h"; sourceTree = "<group>"; };
@@ -789,7 +816,7 @@
 		9FBC3C710F56E0AE001811F2 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		9FBC3C760F56E0D7001811F2 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
 		9FBC3C770F56E0D7001811F2 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = /System/Library/Frameworks/CoreMIDI.framework; sourceTree = "<absolute>"; };
-		9FBC3CB10F56E32C001811F2 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9FBC3CB10F56E32C001811F2 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Info.plist; sourceTree = "<group>"; };
 		9FBD321610E5144C00031CB6 /* Brand.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Brand.png; sourceTree = "<group>"; };
 		9FBF66AD11F35ADD00DAAB9A /* BXFileTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFileTransfer.h; sourceTree = "<group>"; };
 		9FBF66AE11F35ADD00DAAB9A /* BXFileTransfer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFileTransfer.m; sourceTree = "<group>"; };
@@ -908,12 +935,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		9F4EC82212907B1E00024B20 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9F4EC85012907CFB00024B20 /* Cocoa.framework in Frameworks */,
+				9F4EC85112907D0000024B20 /* ScriptingBridge.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		080E96DDFE201D6D7F000001 /* Boxer */ = {
 			isa = PBXGroup;
 			children = (
+				9FBC3CB10F56E32C001811F2 /* Info.plist */,
+				9FFF978412327D58009B5EE5 /* Other Sources */,
+				29B97317FDCFA39411CA2CEA /* Resources */,
 				9F5114FF129055DE00BEC0B9 /* Scripting */,
 				9F160E6E1236B28900F8768E /* Application Delegate */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
@@ -976,6 +1015,7 @@
 			isa = PBXGroup;
 			children = (
 				8D1107320486CEB800E47090 /* Boxer.app */,
+				9F4EC82412907B1E00024B20 /* Game Importer Droplet.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -983,11 +1023,9 @@
 		29B97314FDCFA39411CA2CEA /* Boxer */ = {
 			isa = PBXGroup;
 			children = (
-				9FBC3CB10F56E32C001811F2 /* Info.plist */,
 				080E96DDFE201D6D7F000001 /* Boxer */,
 				9FBC3A7A0F56CEA2001811F2 /* DOSBox */,
-				9FFF978412327D58009B5EE5 /* Other Sources */,
-				29B97317FDCFA39411CA2CEA /* Resources */,
+				9F4EC82E12907B7400024B20 /* Game Importer Droplet */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 			);
@@ -1014,7 +1052,8 @@
 				9F496E4C108EEDF700282261 /* XIBs */,
 				9F496E4D108EEE0700282261 /* Strings */,
 			);
-			path = Resources;
+			name = Resources;
+			path = ../Resources;
 			sourceTree = "<group>";
 		};
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
@@ -1278,6 +1317,29 @@
 				9FAA451411EB40180042B986 /* Configuration.strings */,
 			);
 			name = Strings;
+			sourceTree = "<group>";
+		};
+		9F4EC82E12907B7400024B20 /* Game Importer Droplet */ = {
+			isa = PBXGroup;
+			children = (
+				9F4EC85412907D1A00024B20 /* main.m */,
+				9F4EC84512907C6100024B20 /* Boxer.h */,
+				9F4EC84612907C6100024B20 /* GameImporter.h */,
+				9F4EC84712907C6100024B20 /* GameImporter.m */,
+				9F4EC83612907C1C00024B20 /* Info.plist */,
+				9F4EC83312907C0C00024B20 /* Resources */,
+			);
+			path = "Game Importer Droplet";
+			sourceTree = "<group>";
+		};
+		9F4EC83312907C0C00024B20 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				9F4EC84212907C4400024B20 /* MainMenu.xib */,
+				9F4EC83F12907C4000024B20 /* InfoPlist.strings */,
+				9F4EC83412907C0C00024B20 /* Importer.icns */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		9F5114FF129055DE00BEC0B9 /* Scripting */ = {
@@ -1897,7 +1959,8 @@
 				9F8A974710E7DEF500A4B72A /* RegexKitLite */,
 				9FFF9714123269D1009B5EE5 /* NDAlias */,
 			);
-			path = "Other Sources";
+			name = "Other Sources";
+			path = "../Other Sources";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1917,11 +1980,29 @@
 			);
 			comments = "REGARDING --mstackrealign\nBoxer will crash with a dyld_misaligned_stack_error if dynamic core mode is on when the session starts.\n\ndyld is the dynamic linker, so this may be some peculiar interaction of threading and dynamically-loaded frameworks: the crash also happens in our non-XCode, SDL-framework-using build, and it *doesn't* happen if a sleep() delay is introduced before DOSBox_main is called, which implies a race condition.\n\nAdding -mstackrealign to the C flags for Intel seems to have made the problem go away. Which doesn't explain why it's happening in the first place.";
 			dependencies = (
+				9F4EC82C12907B4300024B20 /* PBXTargetDependency */,
 			);
 			name = Boxer;
 			productInstallPath = "$(HOME)/Applications";
 			productName = Boxer;
 			productReference = 8D1107320486CEB800E47090 /* Boxer.app */;
+			productType = "com.apple.product-type.application";
+		};
+		9F4EC82312907B1E00024B20 /* Game Importer Droplet */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9F4EC82A12907B1F00024B20 /* Build configuration list for PBXNativeTarget "Game Importer Droplet" */;
+			buildPhases = (
+				9F4EC82012907B1E00024B20 /* Resources */,
+				9F4EC82112907B1E00024B20 /* Sources */,
+				9F4EC82212907B1E00024B20 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Game Importer Droplet";
+			productName = "Game Importer";
+			productReference = 9F4EC82412907B1E00024B20 /* Game Importer Droplet.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -1939,6 +2020,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				9F4EC82312907B1E00024B20 /* Game Importer Droplet */,
 				8D1107260486CEB800E47090 /* Boxer */,
 			);
 		};
@@ -1949,6 +2031,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F4EC82D12907B5600024B20 /* Game Importer Droplet.app in Resources */,
 				9FBC31D70F56C370001811F2 /* AboutBackground.png in Resources */,
 				9FBC31E00F56C383001811F2 /* LockClosing.aiff in Resources */,
 				9FBC31E10F56C383001811F2 /* LockOpening.aiff in Resources */,
@@ -2013,6 +2096,16 @@
 				9F160EB31236BAED00F8768E /* Underworld Demo.icns in Resources */,
 				9F160EB41236BAED00F8768E /* X-COM Demo.icns in Resources */,
 				9F70C19C129036C900A3627F /* Boxer.sdef in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9F4EC82012907B1E00024B20 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9F4EC84A12907C6B00024B20 /* MainMenu.xib in Resources */,
+				9F4EC84B12907C7500024B20 /* InfoPlist.strings in Resources */,
+				9F4EC84C12907C7C00024B20 /* Importer.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2265,7 +2358,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		9F4EC82112907B1E00024B20 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9F4EC84812907C6100024B20 /* GameImporter.m in Sources */,
+				9F4EC85512907D1A00024B20 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		9F4EC82C12907B4300024B20 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9F4EC82312907B1E00024B20 /* Game Importer Droplet */;
+			targetProxy = 9F4EC82B12907B4300024B20 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		9F1CBB5C120CABBB00C5E926 /* ImportWindow.xib */ = {
@@ -2319,6 +2429,22 @@
 			);
 			name = MountPanelOptions.xib;
 			path = ..;
+			sourceTree = "<group>";
+		};
+		9F4EC83F12907C4000024B20 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9F4EC84012907C4000024B20 /* English */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		9F4EC84212907C4400024B20 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9F4EC84312907C4400024B20 /* English */,
+			);
+			name = MainMenu.xib;
 			sourceTree = "<group>";
 		};
 		9F59DEDD10B01743008DBBC1 /* ProgramPanel.xib */ = {
@@ -2406,6 +2532,78 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		9F4EC82712907B1F00024B20 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "Game Importer Droplet/Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = "Game Importer Droplet";
+			};
+			name = Development;
+		};
+		9F4EC82812907B1F00024B20 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "Game Importer Droplet/Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = "Game Importer Droplet";
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		9F4EC82912907B1F00024B20 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "Game Importer Droplet/Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = "Game Importer Droplet";
+			};
+			name = Debug;
+		};
 		9FE76B331139A11A005EF7B1 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2551,6 +2749,16 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		9F4EC82A12907B1F00024B20 /* Build configuration list for PBXNativeTarget "Game Importer Droplet" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9F4EC82712907B1F00024B20 /* Development */,
+				9F4EC82812907B1F00024B20 /* Release */,
+				9F4EC82912907B1F00024B20 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "Boxer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

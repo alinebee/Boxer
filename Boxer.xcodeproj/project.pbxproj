@@ -315,8 +315,8 @@
 		E519120F128F38800036EAD1 /* SDL_sound.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E519120E128F38800036EAD1 /* SDL_sound.framework */; };
 		E5191214128F388C0036EAD1 /* SDL_sound.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = E519120E128F38800036EAD1 /* SDL_sound.framework */; };
 		E51E4E2B128EFC7800120659 /* drive_physfs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E51E4E2A128EFC7800120659 /* drive_physfs.cpp */; };
-		E5D1D1BC128F0ECA0048EF44 /* libphysfs.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5D1D1BB128F0ECA0048EF44 /* libphysfs.framework */; };
-		E5D1D1EC128F0F7D0048EF44 /* libphysfs.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = E5D1D1BB128F0ECA0048EF44 /* libphysfs.framework */; };
+		E5CF1840128F81AF0065844A /* PhysFS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5CF183F128F81AF0065844A /* PhysFS.framework */; };
+		E5CF1899128F81FE0065844A /* PhysFS.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = E5CF183F128F81AF0065844A /* PhysFS.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -326,8 +326,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				E5CF1899128F81FE0065844A /* PhysFS.framework in Copy Bundled Frameworks */,
 				E5191214128F388C0036EAD1 /* SDL_sound.framework in Copy Bundled Frameworks */,
-				E5D1D1EC128F0F7D0048EF44 /* libphysfs.framework in Copy Bundled Frameworks */,
 				9F20C29711E5DA68005AF541 /* Sparkle.framework in Copy Bundled Frameworks */,
 				9F6BA6FD10A9FBAB005A3E2A /* Growl.framework in Copy Bundled Frameworks */,
 				9FA2E5D9109D255300E50623 /* BGHUDAppKit.framework in Copy Bundled Frameworks */,
@@ -888,7 +888,7 @@
 		E51915E6128F3D890036EAD1 /* SDL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL.h; sourceTree = "<group>"; };
 		E51915F8128F3E030036EAD1 /* SDL_endian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_endian.h; sourceTree = "<group>"; };
 		E51E4E2A128EFC7800120659 /* drive_physfs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = drive_physfs.cpp; sourceTree = "<group>"; };
-		E5D1D1BB128F0ECA0048EF44 /* libphysfs.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = libphysfs.framework; sourceTree = "<group>"; };
+		E5CF183F128F81AF0065844A /* PhysFS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PhysFS.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -912,8 +912,8 @@
 				9F20C28B11E5D848005AF541 /* Sparkle.framework in Frameworks */,
 				9F20C28E11E5D8B4005AF541 /* QTKit.framework in Frameworks */,
 				9F61942412340F5400F35AB4 /* ScriptingBridge.framework in Frameworks */,
-				E5D1D1BC128F0ECA0048EF44 /* libphysfs.framework in Frameworks */,
 				E519120F128F38800036EAD1 /* SDL_sound.framework in Frameworks */,
+				E5CF1840128F81AF0065844A /* PhysFS.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1820,8 +1820,8 @@
 		9FBC3C130F56D6E8001811F2 /* Bundled Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E5CF183F128F81AF0065844A /* PhysFS.framework */,
 				E519120E128F38800036EAD1 /* SDL_sound.framework */,
-				E5D1D1BB128F0ECA0048EF44 /* libphysfs.framework */,
 				9F20C28A11E5D848005AF541 /* Sparkle.framework */,
 				9F6BA6F810A9FB92005A3E2A /* Growl.framework */,
 				9FA2E595109D251100E50623 /* BGHUDAppKit.framework */,

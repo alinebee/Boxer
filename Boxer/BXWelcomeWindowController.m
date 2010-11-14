@@ -170,8 +170,10 @@
 	//Import only the first file, since we can't (and don't want to) support
 	//multiple concurrent import sessions
 	NSString *importPath = [filePaths objectAtIndex: 0];
-	BXImport *importer = [[NSApp delegate] openImportSessionAndDisplay: YES error: NULL];
-	[importer importFromSourcePath: importPath];
+	[[NSApp delegate] openImportSessionWithContentsOfURL: [NSURL fileURLWithPath: importPath]
+												 display: YES
+												   error: NULL];
+	
 }
 
 - (NSDragOperation) button: (BXWelcomeButton *)button draggingEntered: (id <NSDraggingInfo>)sender

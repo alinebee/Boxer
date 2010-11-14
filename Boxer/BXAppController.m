@@ -364,6 +364,13 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	}
 }
 
+- (id) openImportSessionWithContentsOfURL: (NSURL *)url display: (BOOL)display error: (NSError **)outError
+{
+	BXImport *importer = [self openImportSessionAndDisplay: display error: outError];
+	[importer importFromSourcePath: [url path]];
+}
+
+
 //Store the specified document as the current session
 - (void) addDocument: (NSDocument *)theDocument
 {

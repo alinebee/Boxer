@@ -50,6 +50,11 @@ enum {
 //Mirrors the behaviour of openUntitledDocumentAndDisplay:error:
 - (id) openImportSessionAndDisplay: (BOOL)displayDocument error: (NSError **)outError;
 
+//Open an import session to import the specified URL.
+- (id) openImportSessionWithContentsOfURL: (NSURL *)url
+								  display: (BOOL)display
+									error: (NSError **)outError;
+
 
 #pragma mark -
 #pragma mark Managing application audio

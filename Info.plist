@@ -58,6 +58,10 @@
 	<string>http://boxerapp.com/sparkledev</string>
 	<key>SUPublicDSAKeyFile</key>
 	<string>dsa_pub.pem</string>
+	<key>NSAppleScriptEnabled</key>
+	<true/>
+	<key>OSAScriptingDefinition</key>
+	<string>Boxer.sdef</string>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>

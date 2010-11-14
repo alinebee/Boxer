@@ -312,6 +312,11 @@
 		9FFF972F123269D1009B5EE5 /* NSString+NDCarbonUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9725123269D1009B5EE5 /* NSString+NDCarbonUtilities.m */; };
 		9FFF9730123269D1009B5EE5 /* NSURL+NDCarbonUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9727123269D1009B5EE5 /* NSURL+NDCarbonUtilities.m */; };
 		9FFF97951232B718009B5EE5 /* BXMultiPanelWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF97941232B718009B5EE5 /* BXMultiPanelWindowController.m */; };
+		E519120F128F38800036EAD1 /* SDL_sound.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E519120E128F38800036EAD1 /* SDL_sound.framework */; };
+		E5191214128F388C0036EAD1 /* SDL_sound.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = E519120E128F38800036EAD1 /* SDL_sound.framework */; };
+		E51E4E2B128EFC7800120659 /* drive_physfs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E51E4E2A128EFC7800120659 /* drive_physfs.cpp */; };
+		E5D1D1BC128F0ECA0048EF44 /* libphysfs.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5D1D1BB128F0ECA0048EF44 /* libphysfs.framework */; };
+		E5D1D1EC128F0F7D0048EF44 /* libphysfs.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = E5D1D1BB128F0ECA0048EF44 /* libphysfs.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -321,6 +326,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				E5191214128F388C0036EAD1 /* SDL_sound.framework in Copy Bundled Frameworks */,
+				E5D1D1EC128F0F7D0048EF44 /* libphysfs.framework in Copy Bundled Frameworks */,
 				9F20C29711E5DA68005AF541 /* Sparkle.framework in Copy Bundled Frameworks */,
 				9F6BA6FD10A9FBAB005A3E2A /* Growl.framework in Copy Bundled Frameworks */,
 				9FA2E5D9109D255300E50623 /* BGHUDAppKit.framework in Copy Bundled Frameworks */,
@@ -458,9 +465,6 @@
 		9F5DC9FB11B2C0E600552966 /* programs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = programs.h; sourceTree = "<group>"; };
 		9F5DC9FC11B2C0E600552966 /* regs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = regs.h; sourceTree = "<group>"; };
 		9F5DC9FD11B2C0E600552966 /* render.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = render.h; sourceTree = "<group>"; };
-		9F5DC9FE11B2C0E600552966 /* SDL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL.h; sourceTree = "<group>"; };
-		9F5DC9FF11B2C0E600552966 /* SDL_net.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_net.h; sourceTree = "<group>"; };
-		9F5DCA0011B2C0E600552966 /* SDL_thread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_thread.h; sourceTree = "<group>"; };
 		9F5DCA0111B2C0E600552966 /* serialport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = serialport.h; sourceTree = "<group>"; };
 		9F5DCA0211B2C0E600552966 /* setup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = setup.h; sourceTree = "<group>"; };
 		9F5DCA0311B2C0E600552966 /* shell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shell.h; sourceTree = "<group>"; };
@@ -877,6 +881,14 @@
 		9FFF9727123269D1009B5EE5 /* NSURL+NDCarbonUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+NDCarbonUtilities.m"; sourceTree = "<group>"; };
 		9FFF97931232B718009B5EE5 /* BXMultiPanelWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXMultiPanelWindowController.h; sourceTree = "<group>"; };
 		9FFF97941232B718009B5EE5 /* BXMultiPanelWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXMultiPanelWindowController.m; sourceTree = "<group>"; };
+		E519120E128F38800036EAD1 /* SDL_sound.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL_sound.framework; sourceTree = "<group>"; };
+		E51915E3128F3D890036EAD1 /* SDL_net.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_net.h; sourceTree = "<group>"; };
+		E51915E4128F3D890036EAD1 /* SDL_sound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_sound.h; sourceTree = "<group>"; };
+		E51915E5128F3D890036EAD1 /* SDL_thread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_thread.h; sourceTree = "<group>"; };
+		E51915E6128F3D890036EAD1 /* SDL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL.h; sourceTree = "<group>"; };
+		E51915F8128F3E030036EAD1 /* SDL_endian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_endian.h; sourceTree = "<group>"; };
+		E51E4E2A128EFC7800120659 /* drive_physfs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = drive_physfs.cpp; sourceTree = "<group>"; };
+		E5D1D1BB128F0ECA0048EF44 /* libphysfs.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = libphysfs.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -900,6 +912,8 @@
 				9F20C28B11E5D848005AF541 /* Sparkle.framework in Frameworks */,
 				9F20C28E11E5D8B4005AF541 /* QTKit.framework in Frameworks */,
 				9F61942412340F5400F35AB4 /* ScriptingBridge.framework in Frameworks */,
+				E5D1D1BC128F0ECA0048EF44 /* libphysfs.framework in Frameworks */,
+				E519120F128F38800036EAD1 /* SDL_sound.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1307,6 +1321,11 @@
 				9F5DC9F411B2C0E600552966 /* mapper.h */,
 				9F5DC9F511B2C0E600552966 /* mem.h */,
 				9F5DC9F611B2C0E600552966 /* mixer.h */,
+				E51915E3128F3D890036EAD1 /* SDL_net.h */,
+				E51915E4128F3D890036EAD1 /* SDL_sound.h */,
+				E51915E5128F3D890036EAD1 /* SDL_thread.h */,
+				E51915F8128F3E030036EAD1 /* SDL_endian.h */,
+				E51915E6128F3D890036EAD1 /* SDL.h */,
 				9F5DC9F711B2C0E600552966 /* modules.h */,
 				9F5DC9F811B2C0E600552966 /* mouse.h */,
 				9F5DC9F911B2C0E600552966 /* paging.h */,
@@ -1314,9 +1333,6 @@
 				9F5DC9FB11B2C0E600552966 /* programs.h */,
 				9F5DC9FC11B2C0E600552966 /* regs.h */,
 				9F5DC9FD11B2C0E600552966 /* render.h */,
-				9F5DC9FE11B2C0E600552966 /* SDL.h */,
-				9F5DC9FF11B2C0E600552966 /* SDL_net.h */,
-				9F5DCA0011B2C0E600552966 /* SDL_thread.h */,
 				9F5DCA0111B2C0E600552966 /* serialport.h */,
 				9F5DCA0211B2C0E600552966 /* setup.h */,
 				9F5DCA0311B2C0E600552966 /* shell.h */,
@@ -1480,6 +1496,7 @@
 				9F5DCA6211B2C0E600552966 /* drive_fat.cpp */,
 				9F5DCA6311B2C0E600552966 /* drive_iso.cpp */,
 				9F5DCA6411B2C0E600552966 /* drive_local.cpp */,
+				E51E4E2A128EFC7800120659 /* drive_physfs.cpp */,
 				9F5DCA6511B2C0E600552966 /* drive_virtual.cpp */,
 				9F5DCA6611B2C0E600552966 /* drives.cpp */,
 				9F5DCA6711B2C0E600552966 /* drives.h */,
@@ -1803,6 +1820,8 @@
 		9FBC3C130F56D6E8001811F2 /* Bundled Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E519120E128F38800036EAD1 /* SDL_sound.framework */,
+				E5D1D1BB128F0ECA0048EF44 /* libphysfs.framework */,
 				9F20C28A11E5D848005AF541 /* Sparkle.framework */,
 				9F6BA6F810A9FB92005A3E2A /* Growl.framework */,
 				9FA2E595109D251100E50623 /* BGHUDAppKit.framework */,
@@ -1918,7 +1937,14 @@
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Boxer" */;
 			compatibilityVersion = "Xcode 3.0";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Boxer */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -2124,6 +2150,7 @@
 				9F5DCB0211B2C0E700552966 /* drive_fat.cpp in Sources */,
 				9F5DCB0311B2C0E700552966 /* drive_iso.cpp in Sources */,
 				9F5DCB0411B2C0E700552966 /* drive_local.cpp in Sources */,
+				E51E4E2B128EFC7800120659 /* drive_physfs.cpp in Sources */,
 				9F5DCB0511B2C0E700552966 /* drive_virtual.cpp in Sources */,
 				9F5DCB0611B2C0E700552966 /* drives.cpp in Sources */,
 				9F5DCB0711B2C0E700552966 /* dosbox.cpp in Sources */,

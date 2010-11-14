@@ -24,7 +24,6 @@
 #include <fstream>
 #include <iostream>
 #include <limits>
-#include <limits.h> //GCC 2.95
 #include <sstream>
 #include <vector>
 #include <sys/stat.h>
@@ -109,21 +108,8 @@ bool CDROM_Interface_Image::AudioFile::read(Bit8u *buffer, int seek, int count)
 
 int CDROM_Interface_Image::AudioFile::getLength()
 {
-	int time = 1;
-	int shift = 0;
-	if (!(sample->flags & SOUND_SAMPLEFLAG_CANSEEK)) return -1;
-	
-	while (true) {
-		int success = Sound_Seek(sample, (unsigned int)(shift + time));
-		if (!success) {
-			if (time == 1) return lround((double)shift * 176.4f);
-			shift += time >> 1;
-			time = 1;
-		} else {
-			if (time > ((numeric_limits<int>::max() - shift) / 2)) return -1;
-			time = time << 1;
-		}
-	}
+	int length = Sound_GetDuration(sample);
+	return floor((double)length * 176.4f + 0.5f);
 }
 #endif
 
@@ -300,10 +286,16 @@ bool CDROM_Interface_Image::ReadSector(Bit8u *buffer, bool raw, unsigned long se
 {
 	int track = GetTrack(sector) - 1;
 	if (track < 0) return false;
-	
-	int seek = tracks[track].skip + (sector - tracks[track].start) * tracks[track].sectorSize;
-	int length = (raw ? RAW_SECTOR_SIZE : COOKED_SECTOR_SIZE);
+
 	if (tracks[track].sectorSize != RAW_SECTOR_SIZE && raw) return false;
+	int length = (raw ? RAW_SECTOR_SIZE : COOKED_SECTOR_SIZE);
+
+	if (sector >= tracks[track].start + tracks[track].length) {
+		memset(buffer, 0, length);
+		return true;
+	}
+
+	int seek = tracks[track].skip + (sector - tracks[track].start) * tracks[track].sectorSize;
 	if (tracks[track].sectorSize == RAW_SECTOR_SIZE && !tracks[track].mode2 && !raw) seek += 16;
 	if (tracks[track].mode2 && !raw) seek += 24;
 

@@ -106,7 +106,7 @@ This means that this file has had too many modifications to be safely replaceabl
 //--Modified 2009-02-26 by Alun Bestor to enable this manually
 //For now this is Intel-only until I work out how to cross-compile the SDL_Sound library
 #if defined(__i386__) || defined(__x86_64__)
-//	#define C_SDL_SOUND 1
+#define C_SDL_SOUND 1
 #endif
 //--End of modifications
 
@@ -211,7 +211,8 @@ This means that this file has had too many modifications to be safely replaceabl
 /* Compiling on OS/2 EMX */
 /* #undef OS2 */
 
-
+/* Compile with PhysicalFS support */
+#define C_HAVE_PHYSFS 1
 
 //--Note 2009-02-26 by Alun Bestor: I'm assuming (hoping) these lines are unused by everything except make install
 

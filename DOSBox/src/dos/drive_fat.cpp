@@ -70,7 +70,7 @@ private:
 
 /* IN - char * filename: Name in regular filename format, e.g. bob.txt */
 /* OUT - char * filearray: Name in DOS directory format, eleven char, e.g. bob     txt */
-static void convToDirFile(char *filename, char *filearray) {
+static void convToDirFile(const char *filename, char *filearray) {
 	Bit32u charidx = 0;
 	Bit32u flen,i;
 	flen = (Bit32u)strlen(filename);
@@ -394,7 +394,7 @@ void fatDrive::setClusterValue(Bit32u clustNum, Bit32u clustValue) {
 	}
 }
 
-bool fatDrive::getEntryName(char *fullname, char *entname) {
+bool fatDrive::getEntryName(const char *fullname, char *entname) {
 	char dirtoken[DOS_PATHLENGTH];
 
 	char * findDir;
@@ -462,7 +462,7 @@ bool fatDrive::getFileDirEntry(char const * const filename, direntry * useEntry,
 	return true;
 }
 
-bool fatDrive::getDirClustNum(char *dir, Bit32u *clustNum, bool parDir) {
+bool fatDrive::getDirClustNum(const char *dir, Bit32u *clustNum, bool parDir) {
 	Bit32u len = (Bit32u)strlen(dir);
 	char dirtoken[DOS_PATHLENGTH];
 	Bit32u currentClust = 0;
@@ -774,7 +774,7 @@ Bits fatDrive::UnMount(void) {
 
 Bit8u fatDrive::GetMediaByte(void) { return loadedDisk->GetBiosType(); }
 
-bool fatDrive::FileCreate(DOS_File **file, char *name, Bit16u attributes) {
+bool fatDrive::FileCreate(DOS_File **file, const char *name, Bit16u attributes) {
 	direntry fileEntry;
 	Bit32u dirClust, subEntry;
 	char dirName[DOS_NAMELENGTH_ASCII];
@@ -824,7 +824,7 @@ bool fatDrive::FileExists(const char *name) {
 	return true;
 }
 
-bool fatDrive::FileOpen(DOS_File **file, char *name, Bit32u flags) {
+bool fatDrive::FileOpen(DOS_File **file, const char *name, Bit32u flags) {
 	direntry fileEntry;
 	Bit32u dirClust, subEntry;
 	if(!getFileDirEntry(name, &fileEntry, &dirClust, &subEntry)) return false;
@@ -844,7 +844,7 @@ bool fatDrive::FileStat(const char * /*name*/, FileStat_Block *const /*stat_bloc
 	return false;
 }
 
-bool fatDrive::FileUnlink(char * name) {
+bool fatDrive::FileUnlink(const char * name) {
 	direntry fileEntry;
 	Bit32u dirClust, subEntry;
 
@@ -858,7 +858,7 @@ bool fatDrive::FileUnlink(char * name) {
 	return true;
 }
 
-bool fatDrive::FindFirst(char *_dir, DOS_DTA &dta,bool /*fcb_findfirst*/) {
+bool fatDrive::FindFirst(const char *_dir, DOS_DTA &dta,bool /*fcb_findfirst*/) {
 	direntry dummyClust;
 	Bit8u attr;char pattern[DOS_NAMELENGTH_ASCII];
 	dta.GetSearchParams(attr,pattern);
@@ -970,7 +970,7 @@ bool fatDrive::FindNext(DOS_DTA &dta) {
 	return FindNextInternal(dta.GetDirIDCluster(), dta, &dummyClust);
 }
 
-bool fatDrive::GetFileAttr(char *name, Bit16u *attr) {
+bool fatDrive::GetFileAttr(const char *name, Bit16u *attr) {
 	direntry fileEntry;
 	Bit32u dirClust, subEntry;
 	if(!getFileDirEntry(name, &fileEntry, &dirClust, &subEntry)) {
@@ -1124,7 +1124,7 @@ void fatDrive::zeroOutCluster(Bit32u clustNumber) {
 	}
 }
 
-bool fatDrive::MakeDir(char *dir) {
+bool fatDrive::MakeDir(const char *dir) {
 	Bit32u dummyClust, dirClust;
 	direntry tmpentry;
 	char dirName[DOS_NAMELENGTH_ASCII];
@@ -1176,7 +1176,7 @@ bool fatDrive::MakeDir(char *dir) {
 	return true;
 }
 
-bool fatDrive::RemoveDir(char *dir) {
+bool fatDrive::RemoveDir(const char *dir) {
 	Bit32u dummyClust, dirClust;
 	direntry tmpentry;
 	char dirName[DOS_NAMELENGTH_ASCII];
@@ -1229,7 +1229,7 @@ bool fatDrive::RemoveDir(char *dir) {
 	return true;
 }
 
-bool fatDrive::Rename(char * oldname, char * newname) {
+bool fatDrive::Rename(const char * oldname, const char * newname) {
 	direntry fileEntry1;
 	Bit32u dirClust1, subEntry1;
 	if(!getFileDirEntry(oldname, &fileEntry1, &dirClust1, &subEntry1)) return false;
@@ -1268,7 +1268,7 @@ bool fatDrive::Rename(char * oldname, char * newname) {
 	return false;
 }
 
-bool fatDrive::TestDir(char *dir) {
+bool fatDrive::TestDir(const char *dir) {
 	Bit32u dummyClust;
 	return getDirClustNum(dir, &dummyClust, false);
 }

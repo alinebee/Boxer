@@ -13,9 +13,18 @@
 
 - (id) performDefaultImplementation
 {
-	NSURL *fileURL = [self directParameter];
 	NSError *importError = nil;
-	[[NSApp delegate] openImportSessionWithContentsOfURL: fileURL display: YES error: &importError];
+	NSURL *fileURL = [self directParameter];
+	
+	if (fileURL)
+	{
+		[[NSApp delegate] openImportSessionWithContentsOfURL: fileURL display: YES error: &importError];
+	}
+	else
+	{
+		[[NSApp delegate] openImportSessionAndDisplay: YES error: &importError];		
+	}
+
 	
 	if (importError)
 	{

@@ -2,10 +2,11 @@
 <!DOCTYPE dictionary SYSTEM "file://localhost/System/Library/DTDs/sdef.dtd">
 <dictionary xmlns:xi="http://www.w3.org/2003/XInclude" title="Boxer Terminology">
 	<xi:include href="file:///System/Library/ScriptingDefinitions/CocoaStandard.sdef" xpointer="xpointer(/dictionary/suite)"/>
+	
 	<suite name="Boxer Suite" code="Boxr" description="Boxer-specific scripting facilities">
-        <command name="import" code="BoxrImpt" description="Import a game from the specified file path (which can be a folder, volume or disk image.)">
+        <command name="import" code="BoxrImpt" description="Import a game from the specified file (which can be a folder, volume or disk image.) If no file is specified, the Import window will be displayed.">
             <cocoa class="BXImportCommand"/>
-            <direct-parameter>
+            <direct-parameter optional="yes">
                 <type type="file"/>
             </direct-parameter>
         </command>

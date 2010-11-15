@@ -65,4 +65,8 @@
 //This will detect a games folder from a previous version of Boxer.
 - (void) checkForGamesFolder;
 
+//Check for the existence of the game importer droplet in the games folder, and add it
+//if it's missing. If it exists but is outdated, replace it with an updated version.
+- (void) checkForImporterDroplet;
+
 @end

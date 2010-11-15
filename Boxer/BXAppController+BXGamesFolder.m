@@ -11,6 +11,7 @@
 #import "NDAlias+AliasFile.h"
 #import "Finder.h"
 #import "NSWorkspace+BXIcons.h"
+#import "BXPathEnumerator.h"
 
 
 @implementation BXAppController (BXGamesFolder)
@@ -18,8 +19,8 @@
 + (BOOL) isLeopardFinder
 {	
 	//IMPLEMENTATION NOTE: we used to do this by checking the version of Finder itself;
-	//however, this proved to be unreliable and extremely cumbersome. Now we just check the
-	//version of OS X itself.
+	//however, this proved to be unreliable and extremely cumbersome. Now we just check
+	//the version of OS X itself.
 	SInt32 versionMajor = 10, versionMinor = 0;
 	
 	Gestalt(gestaltSystemVersionMajor, &versionMajor);
@@ -60,7 +61,10 @@
 		
 		//Store the new path in the preferences as an alias, so that users can move it around.
 		NDAlias *alias = [NDAlias aliasWithPath: newPath];
-		[[NSUserDefaults standardUserDefaults] setObject: [alias data] forKey: @"gamesFolder"];		
+		[[NSUserDefaults standardUserDefaults] setObject: [alias data] forKey: @"gamesFolder"];
+		
+		//Finally, check that the folder has an up-to-date importer droplet in it
+		[self checkForImporterDroplet];
 	}
 }
 
@@ -208,7 +212,7 @@
 		NSString *sourcePath		= [sampleGamesPath stringByAppendingPathComponent: gamePath];
 		NSString *destinationPath	= [path stringByAppendingPathComponent: gamePath];
 		
-		//If the folder already has a game of that name, don't copy sample games
+		//If the folder already has a game of that name, don't copy the game (we don’t want to 
 		if (![manager fileExistsAtPath: destinationPath])
 		{
 			[manager copyItemAtPath: sourcePath toPath: destinationPath error: NULL];
@@ -229,9 +233,9 @@
 	if (![self gamesFolderPath])
 	{
 		//If no games folder has been set yet, try and import it from Boxer 0.8x.
-		//IMPLEMENTATION NOTE: we check for the presence of the default, because even if gamesFolderPath is nil
-		//then the games folder may have been set but is currently inaccessible: in which case we don't want
-		//to reimport it, because the user might have changed the folder since Boxer 0.8x. 
+		//IMPLEMENTATION NOTE: we confirm the absence of the user default before importing,
+		//because gamesFolderPath could be nil if the folder was set but not currently
+		//accessible (and we don't want to overwrite the setting if so.)
 		if ([[NSUserDefaults standardUserDefaults] objectForKey: @"gamesFolder"] == nil)
 		{
 			NSFileManager *manager = [NSFileManager defaultManager];
@@ -241,7 +245,8 @@
 				[self setGamesFolderPath: oldPath];
 				
 				NSString *backgroundPath = [oldPath stringByAppendingPathComponent: @".background"];
-				//Check if the old path has a .background folder: if so, then automatically apply the games-folder appearance.
+				//Check if the old path has a .background folder: if so,
+				//then automatically apply the games-folder appearance.
 				if ([manager fileExistsAtPath: backgroundPath])
 				{
 					[self setAppliesShelfAppearanceToGamesFolder: YES];
@@ -250,11 +255,59 @@
 		}
 		
 		//If we couldn't import a games folder, then prompt the user to choose one
+		//(or to reinsert the disk on which their games folder was stored)
 		if (![self gamesFolderPath])
 		{
 			//TODO: show the games folder chooser here!
 		}
 	}
+}
+
+- (void) checkForImporterDroplet
+{
+	NSString *gamesFolder = [self gamesFolderPath];
+	
+	//Bail out early if we don't have a game folder yet
+	if (!gamesFolder) return;
+	
+	//Get the properties of our builtin droplet for comparison
+	NSString *dropletPath = [[NSBundle mainBundle] pathForResource: @"Game Importer Droplet" ofType: @"app"];
+	NSBundle *droplet			= [NSBundle bundleWithPath: dropletPath];
+	NSString *dropletName		= [[droplet objectForInfoDictionaryKey: @"CFBundleDisplayName"] stringByAppendingPathExtension: @"app"];
+	NSString *dropletVersion	= [droplet objectForInfoDictionaryKey: (NSString *)kCFBundleVersionKey];
+	NSString *dropletIdentifier = [droplet bundleIdentifier];
+	
+	NSFileManager *manager = [NSFileManager defaultManager];
+	
+	BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: gamesFolder];
+	[enumerator setSkipSubdirectories: YES];
+	[enumerator setSkipPackageContents: YES];
+	[enumerator setFileTypes: [NSSet setWithObject: @"com.apple.application"]];
+	
+	//Trawl through the games folder looking for apps with the same identifier
+	for (NSString *filePath in enumerator)
+	{
+		NSBundle *app = [NSBundle bundleWithPath: filePath];
+		if ([[app bundleIdentifier] isEqualToString: dropletIdentifier])
+		{
+			//Check if the app is up-to-date: if not, replace it with our own app
+			NSString *appVersion = [app objectForInfoDictionaryKey: (NSString *)kCFBundleVersionKey];
+			if (NSOrderedAscending == [appVersion compare: dropletVersion options: NSNumericSearch])
+			{
+				BOOL deleted = [manager removeItemAtPath: filePath error: nil];
+				if (deleted)
+				{
+					NSString *newPath = [[filePath stringByDeletingLastPathComponent] stringByAppendingPathComponent: dropletName];
+					[manager copyItemAtPath: dropletPath toPath: newPath error: nil];
+				}
+			}
+			//Bail out once we've found a matching droplet
+			return;
+		}
+	}
+	//If we got this far, then we didn't find any droplet: copy a new one into the game folder
+	NSString *newPath = [gamesFolder stringByAppendingPathComponent: dropletName];
+	[manager copyItemAtPath: dropletPath toPath: newPath error: nil];
 }
 
 - (IBAction) revealGamesFolder: (id)sender
@@ -272,7 +325,6 @@
 		{
 			[self applyShelfAppearanceToPath: path switchToShelfMode: NO];
 		}
-		
 	}
 }
 @end

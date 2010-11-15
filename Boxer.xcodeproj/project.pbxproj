@@ -329,7 +329,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 9F4EC82312907B1E00024B20 /* Game Importer */;
+			remoteGlobalIDString = 9F4EC82312907B1E00024B20;
 			remoteInfo = "Game Importer";
 		};
 /* End PBXContainerItemProxy section */
@@ -951,8 +951,6 @@
 			isa = PBXGroup;
 			children = (
 				9FBC3CB10F56E32C001811F2 /* Info.plist */,
-				9FFF978412327D58009B5EE5 /* Other Sources */,
-				29B97317FDCFA39411CA2CEA /* Resources */,
 				9F5114FF129055DE00BEC0B9 /* Scripting */,
 				9F160E6E1236B28900F8768E /* Application Delegate */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
@@ -1026,6 +1024,8 @@
 				080E96DDFE201D6D7F000001 /* Boxer */,
 				9FBC3A7A0F56CEA2001811F2 /* DOSBox */,
 				9F4EC82E12907B7400024B20 /* Game Importer Droplet */,
+				9FFF978412327D58009B5EE5 /* Other Sources */,
+				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 			);
@@ -1052,8 +1052,7 @@
 				9F496E4C108EEDF700282261 /* XIBs */,
 				9F496E4D108EEE0700282261 /* Strings */,
 			);
-			name = Resources;
-			path = ../Resources;
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
@@ -1322,11 +1321,11 @@
 		9F4EC82E12907B7400024B20 /* Game Importer Droplet */ = {
 			isa = PBXGroup;
 			children = (
+				9F4EC83612907C1C00024B20 /* Info.plist */,
 				9F4EC85412907D1A00024B20 /* main.m */,
 				9F4EC84512907C6100024B20 /* Boxer.h */,
 				9F4EC84612907C6100024B20 /* GameImporter.h */,
 				9F4EC84712907C6100024B20 /* GameImporter.m */,
-				9F4EC83612907C1C00024B20 /* Info.plist */,
 				9F4EC83312907C0C00024B20 /* Resources */,
 			);
 			path = "Game Importer Droplet";
@@ -1959,8 +1958,7 @@
 				9F8A974710E7DEF500A4B72A /* RegexKitLite */,
 				9FFF9714123269D1009B5EE5 /* NDAlias */,
 			);
-			name = "Other Sources";
-			path = "../Other Sources";
+			path = "Other Sources";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

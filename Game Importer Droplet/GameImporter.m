@@ -39,6 +39,12 @@
 	if (boxer)
 	{
 		[boxer import: fileURL];
+		
+		//IMPLEMENTATION NOTE: issuing activate immediately after import means Boxer receives the
+		//activate message too early and it gets ignored. And we can't activate *before* importing,
+		//because then the user's welcome screen will momentarily appear. So we sleep for 0.1 seconds
+		//before trying to activate Boxer. Wheeeeeeeee.
+		[NSThread sleepForTimeInterval: 0.1];
 		[boxer activate];
 	}
 	else

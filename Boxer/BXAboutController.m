@@ -46,7 +46,7 @@ enum {
 	//Set the version's number and appearance
 	NSString *versionFormat	= NSLocalizedString(@"v%@ %@", @"Version string for display in About panel. First @ is human-readable version (e.g. 0.9 beta), second @ is build number (e.g. 20090323-1.)");
 	NSString *versionName	= [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleShortVersionString"];
-	NSString *buildNumber	= [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleVersion"];
+	NSString *buildNumber	= [[NSBundle mainBundle] objectForInfoDictionaryKey: (NSString *)kCFBundleVersionKey];
 	NSString *versionString	= [NSString stringWithFormat: versionFormat, versionName, buildNumber, nil];
 	[version setStringValue: versionString];
 	

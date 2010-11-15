@@ -18,6 +18,8 @@
 	<string>Boxer 1.0alpha</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0alpha</string>
+	<key>CFBundleSignature</key>
+	<string>Boxr</string>
 	<key>CFBundleVersion</key>
 	<string>${CURRENT_PROJECT_VERSION}</string>
 	<key>CFBundlePackageType</key>
@@ -26,6 +28,8 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>${MACOSX_DEPLOYMENT_TARGET}</string>
 	<key>ContactEmail</key>
 	<string>support@boxerapp.com</string>
 	<key>WebsiteURL</key>
@@ -36,8 +40,6 @@
 	<string>http://boxerapp.com/guide</string>
 	<key>ConfigurationFileHelpURL</key>
 	<string>http://boxerapp.com/guide/dosbox_configuration</string>
-	<key>LSMinimumSystemVersion</key>
-	<string>10.5.4</string>
 	<key>PerianURL</key>
 	<string>http://perian.org/</string>
 	<key>ReplacementDocsURL</key>

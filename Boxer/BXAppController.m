@@ -196,6 +196,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (void) applicationWillFinishLaunching: (NSNotification *)notification
 {
 	[self checkForGamesFolder];
+	[self checkForImporterDroplet];
 }
 
 - (void) applicationDidFinishLaunching: (NSNotification *)notification
@@ -211,8 +212,9 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	if ([arguments containsObject: BXActivateOnLaunchParam]) 
 		[NSApp activateIgnoringOtherApps: YES];
 	
-	//If no document was opened during startup, then do our standard startup behaviour
-	if (![[self documents] count])
+	//If no document was opened during startup, and we didn't launch hidden,
+	//then display the chosen startup window
+	if (![NSApp isHidden] && ![[self documents] count])
 	{
 		switch ([[NSUserDefaults standardUserDefaults] integerForKey: @"startupAction"])
 		{

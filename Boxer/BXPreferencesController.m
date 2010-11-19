@@ -172,19 +172,19 @@
 						  contextInfo: nil];
 }
 
-- (void) panel: (NSOpenPanel *)openPanel directoryDidChange: (NSString *)path
+- (void) panelSelectionDidChange: (id)sender
 {
-	[self panelSelectionDidChange: openPanel];
-}
-
-- (void) panelSelectionDidChange: (NSOpenPanel *)openPanel
-{
-	NSString *selection = [[openPanel URL] path];
+	NSString *selection = [[sender URL] path];
 	NSFileManager *manager = [NSFileManager defaultManager];
 	BOOL hasFiles = ([[manager enumeratorAtPath: selection] nextObject] != nil);
 	
 	//If the selected folder is empty, turn on the copy-sample-games checkbox; otherwise, clear it. 
 	[[self copySampleGamesToggle] setState: !hasFiles];
+}
+
+- (void) panel: (NSOpenPanel *)openPanel directoryDidChange: (NSString *)path
+{
+	[self panelSelectionDidChange: openPanel];
 }
 
 - (void) _setChosenGamesFolder: (NSOpenPanel *)openPanel

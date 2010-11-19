@@ -214,9 +214,9 @@
 	[self syncMountOptionsForPanel: openPanel];
 }
 
-- (void) panelSelectionDidChange: (NSOpenPanel *)openPanel
+- (void) panelSelectionDidChange: (id)sender
 {
-	[self syncMountOptionsForPanel: openPanel];
+	[self syncMountOptionsForPanel: sender];
 }
 
 - (BOOL) panel: (NSOpenPanel *)openPanel shouldShowFilename: (NSString *)path

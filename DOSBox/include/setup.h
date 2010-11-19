@@ -156,7 +156,7 @@ public:
 		min = _min;
 		max = _max;
 	}
-	void SetMinMax(Value const& min,Value const& max) {this->min = min; this->max=max;}
+	void SetMinMax(Value const& minVal,Value const& maxVal) {this->min = minVal; this->max=maxVal;}
 	void SetValue(std::string const& in);
 	~Prop_int(){ }
 	virtual bool CheckValue(Value const& in, bool warn);

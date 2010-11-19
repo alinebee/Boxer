@@ -16,6 +16,9 @@
 @class BXSession;
 
 @interface BXGameboxPanelController : NSViewController
+#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_5
+< NSOpenSavePanelDelegate >
+#endif
 {
 	IBOutlet NSPopUpButton *programSelector;
 	IBOutlet NSObjectController *sessionMediator;

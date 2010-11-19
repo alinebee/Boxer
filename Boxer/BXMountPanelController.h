@@ -16,6 +16,9 @@
 @class BXSession;
 
 @interface BXMountPanelController : NSViewController
+#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_5
+< NSOpenSavePanelDelegate >
+#endif
 {
 	IBOutlet NSPopUpButton *driveType;
 	IBOutlet NSPopUpButton *driveLetter;

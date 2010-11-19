@@ -129,7 +129,7 @@
 	if (![image isValid]) return nil;
 	
 	//If our source image already has an alpha channel, then assume that it already has effects of its own and don't process it.
-	if ([[image bestRepresentationForDevice: nil] hasAlpha]) return image;
+	if ([[[image representations] lastObject] hasAlpha]) return image;
 
 	NSImage *coverArt = [[NSImage alloc] init];
 	[coverArt addRepresentation: [self representationForSize: NSMakeSize(512, 512)]];

@@ -12,6 +12,9 @@
 #import <Cocoa/Cocoa.h>
 
 @interface BXTabbedWindowController : NSWindowController
+#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_5
+< NSTabViewDelegate >
+#endif
 {
 	IBOutlet NSTabView *mainTabView;
 }

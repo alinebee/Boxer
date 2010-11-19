@@ -315,7 +315,24 @@
 	NSString *path = [self gamesFolderPath];
 	if (path)
 	{
-		[self revealPath: path];
+		//If the sender is a button with an image, animate the opening from the button
+		if ([sender respondsToSelector:@selector(cell)] && [[sender cell] image])
+		{
+			NSRect imageRect = [[sender cell] imageRectForBounds: [sender bounds]];
+			
+			NSWorkspace *ws = [NSWorkspace sharedWorkspace];
+			//NOTE: the intended animation does not play, so this currently acts as if
+			//NSWorkspace openFile: was called. It's unclear if this is being called
+			//wrongly or if the documented behaviour is simply unimplemented.
+			[ws openFile: path
+			   fromImage: [[sender cell] image]
+					  at: imageRect.origin
+				  inView: sender];
+		}
+		else
+		{
+			[self revealPath: path];
+		}
 		
 		//Each time after we open the game folder, reapply the shelf appearance.
 		//We do this because Finder can sometimes 'lose' the appearance.

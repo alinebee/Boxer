@@ -15,6 +15,9 @@
 @class BXImportWindowController;
 
 @interface BXImportDropzonePanelController : NSViewController
+#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_5
+< NSOpenSavePanelDelegate >
+#endif
 {
 	IBOutlet BXImportDropzone *dropzone;
 	IBOutlet BXImportWindowController *controller;

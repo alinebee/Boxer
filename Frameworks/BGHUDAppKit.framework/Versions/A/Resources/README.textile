@@ -1,3 +1,7 @@
+h1. Important 4/30/2010
+
+BGHUDAppKit is, as of today, going through a small optimization/rewrite/improvement phase.  I will update the entire repository when this is finished.  Please keep posting Issues as I will be tackling these at the same time.
+
 h2. About
 
 BGHUDAppKit 

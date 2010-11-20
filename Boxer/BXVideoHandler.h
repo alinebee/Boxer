@@ -20,26 +20,34 @@
 typedef NSUInteger BXFilterType;
 
 typedef struct {
-	//The type constant from BXEmulator+BXRendering.h to which this definition corresponds. Not currently used.
+	//The type constant from BXEmulator+BXRendering.h to which this definition
+	//corresponds. Not currently used.
 	BXFilterType	filterType;
 	
-	//The minimum surface scale at which this filter should be applied.
-	//Normally this is 2.0, so the filter only starts applying once the surface is two or more times the original resolution. If the filter scales down well (like HQx), this can afford to be lower than 2.
+	//The minimum output scaling factor at which this filter should be applied.
+	//Normally this is 2.0, so the filter is only applied when the output
+	//resolution is two or more times the original resolution. If the filter
+	//scales down well (like HQx), this can afford to be lower than 2.
 	CGFloat			minOutputScale;
 	
 	//The maximum game resolution at which this filter should be applied,
 	//or NSZeroSize to apply to all resolutions.
 	NSSize			maxResolution;
 	
-	//Normally, the filter size is always equal to the surface scale rounded up: so e.g. a surface that's 2.1 scale will get a 3x scaler.
-	//surfaceScaleBias tweaks the point at which rounding up occurs: a bias of 0.5 will mean that 2.1-2.4 get rounded down to 2x while 2.5-2.9 get rounded up to 3x, whereas a bias of 1.0 means that the scale will always get rounded down. 0.0 gives the normal result.
-	//Tweaking this is needed for filters that get really muddy if they're scaled down a lot, like the TV scanlines.
+	//Normally, the chosen filter size will be the output scaling factor rounded up:
+	//so e.g. an output resolution that's 2.1 scale will get a 3x filter.
+	//outputScaleBias tweaks the point at which rounding up occurs: a bias of 0.5 will
+	//mean that 2.1-2.4 get rounded down to 2x while 2.5-2.9 get rounded up to 3x,
+	//whereas a bias of 1.0 means that the scale will always get rounded down.
+	//0.0 gives the normal result.
+	//Tweaking this is needed for filters that get really muddy if they're scaled down
+	//a lot, like the TV scanlines.
 	CGFloat			outputScaleBias;
 	
-	//The minimum supported scaler transformation. Normally 2.
+	//The minimum supported filter transformation. Normally 2.
 	NSUInteger		minFilterScale;
 	
-	//The maximum supported scaler transformation. Normally 3.
+	//The maximum supported filter transformation. Normally 3.
 	NSUInteger		maxFilterScale;
 } BXFilterDefinition;
 

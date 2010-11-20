@@ -76,7 +76,7 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 }
 
 - (void) setCurrentFrame: (BXFrameBuffer *)frame
-{	
+{
 	if (frame != currentFrame)
 	{
 		//If the buffer memory locations for the two frames are different, we'll need to reinitialize

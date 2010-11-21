@@ -57,13 +57,24 @@
 	[openPanel setMessage: NSLocalizedString(@"Select a folder in which to keep your DOS games:",
 											 @"Help text shown at the top of choose-a-games-folder panel.")];
 	
-	[openPanel beginSheetForDirectory: parentFolderPath
-								 file: currentFolderName
-								types: nil
-					   modalForWindow: window
-						modalDelegate: self
-					   didEndSelector: @selector(setChosenGamesFolder:returnCode:contextInfo:)
-						  contextInfo: nil];
+	if (window)
+	{
+		[openPanel beginSheetForDirectory: parentFolderPath
+									 file: currentFolderName
+									types: nil
+						   modalForWindow: window
+							modalDelegate: self
+						   didEndSelector: @selector(setChosenGamesFolder:returnCode:contextInfo:)
+							  contextInfo: nil];
+	}
+	else
+	{
+		NSInteger returnCode = [openPanel runModalForDirectory: parentFolderPath
+														  file: currentFolderName
+														 types: nil];
+		
+		[self setChosenGamesFolder: openPanel returnCode: returnCode contextInfo: nil];
+	}
 }
 
 - (void) panelSelectionDidChange: (id)sender

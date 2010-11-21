@@ -12,6 +12,7 @@
 #import "Finder.h"
 #import "NSWorkspace+BXIcons.h"
 #import "BXPathEnumerator.h"
+#import "BXGamesFolderPanelController.h"
 
 
 @implementation BXAppController (BXGamesFolder)
@@ -48,6 +49,24 @@
 				[[NSUserDefaults standardUserDefaults] setObject: [alias data] forKey: @"gamesFolder"];
 			}			
 		}
+		else
+		{
+			//If no games folder has been set yet, try and import it from Boxer 0.8x.
+			NSFileManager *manager = [NSFileManager defaultManager];
+			NSString *oldPath = [self oldGamesFolderPath];
+			if (oldPath && [manager fileExistsAtPath: oldPath])
+			{
+				[self setGamesFolderPath: oldPath];
+					
+				NSString *backgroundPath = [oldPath stringByAppendingPathComponent: @".background"];
+				//Check if the old path has a .background folder: if so,
+				//then automatically apply the games-folder appearance.
+				if ([manager fileExistsAtPath: backgroundPath])
+				{
+					[self setAppliesShelfAppearanceToGamesFolder: YES];
+				}
+			}
+		}
 	}
 	return gamesFolderPath;
 }
@@ -63,7 +82,7 @@
 		NDAlias *alias = [NDAlias aliasWithPath: newPath];
 		[[NSUserDefaults standardUserDefaults] setObject: [alias data] forKey: @"gamesFolder"];
 		
-		//Finally, check that the folder has an up-to-date importer droplet in it.
+		//Finally, check that the new folder has an up-to-date importer droplet in it.
 		[self checkForImporterDroplet];
 	}
 }
@@ -210,39 +229,41 @@
 }
 
 
-- (void) checkForGamesFolder
+- (BOOL) promptForMissingGamesFolder
 {
-	//Check at startup whether we have a games folder set
-	if (![self gamesFolderPath])
+	NSAlert *alert = [[NSAlert alloc] init];
+	[alert setMessageText: NSLocalizedString(@"Boxer can no longer find your games folder.",
+											 @"Bold message shown in alert when Boxer cannot find the user’s games folder at startup.")];
+	
+	[alert setInformativeText: NSLocalizedString(@"Make sure the disk containing your games folder is connected.",
+												 @"Explanatory text shown in alert when Boxer cannot find the user’s games folder at startup.")];
+	
+	[alert addButtonWithTitle: NSLocalizedString(@"Choose folder…",
+												 @"Button to display a file open panel to choose a new location for the games folder.")];
+	
+	[alert addButtonWithTitle: NSLocalizedString(@"Create folder",
+												 @"Button to automatically create a new games folder in the default location.")];
+	
+	[[alert addButtonWithTitle: NSLocalizedString(@"Cancel",
+												  @"Button to cancel without making a new games folder.")] setKeyEquivalent: @"\e"];
+	
+	NSInteger returnCode = [alert runModal];
+	BXGamesFolderPanelController *chooser;
+	
+	switch(returnCode)
 	{
-		//If no games folder has been set yet, try and import it from Boxer 0.8x.
-		//IMPLEMENTATION NOTE: we confirm the absence of the user default before importing,
-		//because gamesFolderPath could be nil if the folder was set but not currently
-		//accessible (and we don't want to overwrite the setting if so.)
-		if ([[NSUserDefaults standardUserDefaults] objectForKey: @"gamesFolder"] == nil)
-		{
-			NSFileManager *manager = [NSFileManager defaultManager];
-			NSString *oldPath = [self oldGamesFolderPath];
-			if (oldPath && [manager fileExistsAtPath: oldPath])
-			{
-				[self setGamesFolderPath: oldPath];
-				
-				NSString *backgroundPath = [oldPath stringByAppendingPathComponent: @".background"];
-				//Check if the old path has a .background folder: if so,
-				//then automatically apply the games-folder appearance.
-				if ([manager fileExistsAtPath: backgroundPath])
-				{
-					[self setAppliesShelfAppearanceToGamesFolder: YES];
-				}
-			}
-		}
-		
-		//If we couldn't import a games folder, then prompt the user to choose one
-		//(or to reinsert the disk on which their games folder was stored)
-		if (![self gamesFolderPath])
-		{
-			//TODO: show the games folder chooser here!
-		}
+		case NSAlertFirstButtonReturn:
+			chooser = [BXGamesFolderPanelController controller];
+			[chooser showGamesFolderPanelForWindow: nil];
+			return [self gamesFolderPath] != nil;
+			break;
+		case NSAlertSecondButtonReturn:
+			//TODO: create 
+			return NO;
+			break;
+		case NSAlertThirdButtonReturn:
+			return NO;
+			break;
 	}
 }
 
@@ -274,7 +295,7 @@
 	if (path)
 	{
 		//If the sender is a button with an image, animate the opening from the button
-		if ([sender respondsToSelector:@selector(cell)] && [[sender cell] image])
+		if ([sender respondsToSelector: @selector(cell)] && [[sender cell] image])
 		{
 			NSRect imageRect = [[sender cell] imageRectForBounds: [sender bounds]];
 			
@@ -300,6 +321,16 @@
 		{
 			[self applyShelfAppearanceToPath: path switchToShelfMode: NO];
 		}
+		
+		//Also check that there's an up-to-date game importer droplet in the folder.
+		[self checkForImporterDroplet];
+	}
+	else
+	{
+		//If we have no games folder, prompt the user that it's missing
+		//and then retry opening, if appropriate.
+		BOOL retry = [self promptForMissingGamesFolder];
+		if (retry) [self revealGamesFolder: self];
 	}
 }
 @end

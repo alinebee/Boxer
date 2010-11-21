@@ -206,8 +206,8 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 - (void) applicationWillFinishLaunching: (NSNotification *)notification
 {
-	[self checkForGamesFolder];
-	[self checkForImporterDroplet];
+	//[self checkForGamesFolder];
+	//[self checkForImporterDroplet];
 }
 
 - (void) applicationDidFinishLaunching: (NSNotification *)notification

@@ -17,7 +17,8 @@
 #pragma mark Properties
 
 //The path where we store Boxer's games, stored internally as an alias to allow the folder to be moved.
-//Will be nil if no path has been chosen or the alias could not be resolved.
+//Will be nil if no path has been chosen, or the alias could not be resolved.
+//IMPLEMENTATION NOTE: this will detect and import an older games folder from Boxer 0.8x automatically.
 @property (copy, nonatomic) NSString *gamesFolderPath;
 
 //The icon of the games folder path. This is used for UIs that need to display the games folder.
@@ -61,14 +62,14 @@
 //Reveal our games folder in Finder.
 - (IBAction) revealGamesFolder: (id)sender;
 
-//Check for the existence of the games folder, and prompt the user if one cannot be found.
-//This will detect a games folder from a previous version of Boxer.
-- (void) checkForGamesFolder;
-
 //Check for the existence of the game importer droplet in the games folder, and add it
 //if it's missing. If it exists but is outdated, replace it with an updated version.
 - (void) checkForImporterDroplet;
 
+//Display a prompt telling the user their games folder cannot be found, and giving them
+//options to create a new one or cancel. Used by checkForGamesFolder.
+//Returns YES if a missing games folder was created, NO otherwise.
+- (BOOL) promptForMissingGamesFolder;
 @end
 
 

@@ -198,9 +198,13 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 }
 
 
-//Don't open a new empty document when switching back to the application
+//Don't open a new empty document when switching back to the application:
+//instead, show the welcome panel if that's the default startup behaviour.
 - (BOOL) applicationShouldOpenUntitledFile: (NSApplication *)theApplication
 {
+	if ([[NSUserDefaults standardUserDefaults] integerForKey: @"startupAction"] == BXStartUpWithWelcomePanel)
+		[self orderFrontWelcomePanel: self];
+	
 	return NO;
 }
 

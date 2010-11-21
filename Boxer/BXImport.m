@@ -912,7 +912,8 @@
 	
 	NSString *gamesFolder	= [[NSApp delegate] gamesFolderPath];
 	//If the games folder is missing or not set, then fall back on a path we know does exist (the Desktop)
-	if (!gamesFolder || ![manager fileExistsAtPath: gamesFolder]) gamesFolder = [[NSApp delegate] fallbackGamesFolderPath];
+	if (!gamesFolder || ![manager fileExistsAtPath: gamesFolder])
+		gamesFolder = [[NSApp delegate] fallbackGamesFolderPath];
 	
 	NSString *gameboxPath	= [[gamesFolder stringByAppendingPathComponent: gameName] stringByAppendingPathExtension: @"boxer"];
 	

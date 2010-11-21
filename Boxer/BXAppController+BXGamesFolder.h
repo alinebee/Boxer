@@ -62,12 +62,16 @@
 //Reveal our games folder in Finder.
 - (IBAction) revealGamesFolder: (id)sender;
 
+//Generate a new games folder at the default location, containing Boxer's bundled sample games.
+//Returns the path to the new folder on completion, or nil if the folder could not be created.
+- (NSString *) createDefaultGamesFolder;
+
 //Check for the existence of the game importer droplet in the games folder, and add it
 //if it's missing. If it exists but is outdated, replace it with an updated version.
 - (void) checkForImporterDroplet;
 
 //Display a prompt telling the user their games folder cannot be found, and giving them
-//options to create a new one or cancel. Used by checkForGamesFolder.
+//options to create a new one or cancel. Used by revealGamesFolder and elsewhere.
 //Returns YES if a missing games folder was created, NO otherwise.
 - (BOOL) promptForMissingGamesFolder;
 @end

@@ -229,6 +229,41 @@
 }
 
 
+- (NSString *) createDefaultGamesFolder
+{
+	NSString *defaultLocation = NSHomeDirectory();
+	
+	NSString *defaultName = NSLocalizedString(@"DOS Games", @"The default name for the games folder.");
+	NSString *folderPath = [defaultLocation stringByAppendingPathComponent: defaultName];
+	
+	NSFileManager *manager = [NSFileManager defaultManager];
+	
+	//Only create the folder if it doesn't already exist
+	if ([manager fileExistsAtPath: folderPath])
+	{
+		[self setGamesFolderPath: folderPath];
+		return folderPath;
+	}
+	else
+	{
+		BOOL created = [manager createDirectoryAtPath: folderPath
+						  withIntermediateDirectories: YES
+										   attributes: nil
+												error: NULL];
+		if (created)
+		{
+			[self applyShelfAppearanceToPath: folderPath switchToShelfMode: YES];
+			[self addSampleGamesToPath: folderPath];
+			
+			[self setGamesFolderPath: folderPath];
+			return folderPath;
+		}
+		//TODO: catch and handle error situations more gracefully
+		else return nil;
+	}
+}
+
+
 - (BOOL) promptForMissingGamesFolder
 {
 	NSAlert *alert = [[NSAlert alloc] init];
@@ -258,8 +293,7 @@
 			return [self gamesFolderPath] != nil;
 			break;
 		case NSAlertSecondButtonReturn:
-			//TODO: create 
-			return NO;
+			return [self createDefaultGamesFolder] != nil;
 			break;
 		case NSAlertThirdButtonReturn:
 			return NO;

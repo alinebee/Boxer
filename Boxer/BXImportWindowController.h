@@ -17,6 +17,7 @@
 @interface BXImportWindowController : BXMultiPanelWindowController
 {
 	IBOutlet NSView *dropzonePanel;
+	IBOutlet NSView *loadingPanel;
 	IBOutlet NSView *installerPanel;
 	IBOutlet NSView *finalizingPanel;
 	IBOutlet NSView *finishedPanel;
@@ -28,6 +29,9 @@
 
 //The dropzone panel, displayed initially when no import source has been selected 
 @property (retain, nonatomic) NSView *dropzonePanel;
+
+//The indeterminate progress panel shown while scanning a game folder for installers.
+@property (retain, nonatomic) NSView *loadingPanel;
 
 //The choose-thine-installer panel, displayed if the chosen game source contains
 //installers to choose from.

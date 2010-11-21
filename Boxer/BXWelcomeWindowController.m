@@ -173,7 +173,6 @@
 	[[NSApp delegate] openImportSessionWithContentsOfURL: [NSURL fileURLWithPath: importPath]
 												 display: YES
 												   error: NULL];
-	
 }
 
 - (NSDragOperation) button: (BXWelcomeButton *)button draggingEntered: (id <NSDraggingInfo>)sender

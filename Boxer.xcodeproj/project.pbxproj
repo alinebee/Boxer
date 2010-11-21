@@ -19,6 +19,7 @@
 		9F160EB31236BAED00F8768E /* Underworld Demo.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F160EAF1236BAED00F8768E /* Underworld Demo.icns */; };
 		9F160EB41236BAED00F8768E /* X-COM Demo.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F160EB01236BAED00F8768E /* X-COM Demo.icns */; };
 		9F18127F12994A4C009BC4B2 /* CDCover.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F18124312994474009BC4B2 /* CDCover.icns */; };
+		9F1812BF12996340009BC4B2 /* YRKSpinningProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1812BD12996337009BC4B2 /* YRKSpinningProgressIndicator.m */; };
 		9F1CBA58120C796C00C5E926 /* BXImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBA57120C796C00C5E926 /* BXImport.m */; };
 		9F1CBA97120C7D9000C5E926 /* BXImportWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBA96120C7D9000C5E926 /* BXImportWindowController.m */; };
 		9F1CBAAB120C830600C5E926 /* BXImport+BXImportPolicies.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBAAA120C830600C5E926 /* BXImport+BXImportPolicies.m */; };
@@ -373,6 +374,8 @@
 		9F160EAF1236BAED00F8768E /* Underworld Demo.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = "Underworld Demo.icns"; sourceTree = "<group>"; };
 		9F160EB01236BAED00F8768E /* X-COM Demo.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = "X-COM Demo.icns"; sourceTree = "<group>"; };
 		9F18124312994474009BC4B2 /* CDCover.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = CDCover.icns; sourceTree = "<group>"; };
+		9F1812BC12996337009BC4B2 /* YRKSpinningProgressIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YRKSpinningProgressIndicator.h; sourceTree = "<group>"; };
+		9F1812BD12996337009BC4B2 /* YRKSpinningProgressIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YRKSpinningProgressIndicator.m; sourceTree = "<group>"; };
 		9F1CBA56120C796C00C5E926 /* BXImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImport.h; sourceTree = "<group>"; };
 		9F1CBA57120C796C00C5E926 /* BXImport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXImport.m; sourceTree = "<group>"; };
 		9F1CBA95120C7D9000C5E926 /* BXImportWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImportWindowController.h; sourceTree = "<group>"; };
@@ -1087,6 +1090,15 @@
 				9F160EB01236BAED00F8768E /* X-COM Demo.icns */,
 			);
 			name = "Sample Game Icons";
+			sourceTree = "<group>";
+		};
+		9F1812B812996308009BC4B2 /* YRKSpinningProgressIndicator */ = {
+			isa = PBXGroup;
+			children = (
+				9F1812BC12996337009BC4B2 /* YRKSpinningProgressIndicator.h */,
+				9F1812BD12996337009BC4B2 /* YRKSpinningProgressIndicator.m */,
+			);
+			path = YRKSpinningProgressIndicator;
 			sourceTree = "<group>";
 		};
 		9F1CBA55120C783800C5E926 /* Game import */ = {
@@ -1954,6 +1966,7 @@
 		9FFF978412327D58009B5EE5 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				9F1812B812996308009BC4B2 /* YRKSpinningProgressIndicator */,
 				9F466A4711A924EC00C50965 /* Shader.h */,
 				9F466A4811A924EC00C50965 /* Shader.m */,
 				9FDD4CB411E619D50035BA9E /* CGSPrivate.h */,
@@ -2026,8 +2039,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				9F4EC82312907B1E00024B20 /* Game Importer Droplet */,
 				8D1107260486CEB800E47090 /* Boxer */,
+				9F4EC82312907B1E00024B20 /* Game Importer Droplet */,
 			);
 		};
 /* End PBXProject section */
@@ -2246,6 +2259,7 @@
 				9F61931B1233D8F000F35AB4 /* BXTabbedWindowController.m in Sources */,
 				9F160E711236B2A600F8768E /* BXAppController+BXGamesFolder.m in Sources */,
 				9F511502129055FE00BEC0B9 /* BXImportCommand.m in Sources */,
+				9F1812BF12996340009BC4B2 /* YRKSpinningProgressIndicator.m in Sources */,
 				9F5DCAE011B2C0E700552966 /* callback.cpp in Sources */,
 				9F5DCAE111B2C0E700552966 /* core_dyn_x86.cpp in Sources */,
 				9F5DCAE211B2C0E700552966 /* core_dynrec.cpp in Sources */,

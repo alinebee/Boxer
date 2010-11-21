@@ -17,7 +17,7 @@
 #define BXImportWindowBorderThickness 40.0f
 
 @implementation BXImportWindowController
-@synthesize dropzonePanel, installerPanel, finalizingPanel, finishedPanel;
+@synthesize dropzonePanel, loadingPanel, installerPanel, finalizingPanel, finishedPanel;
 
 - (BXImport *) document { return (BXImport *)[super document]; }
 
@@ -27,6 +27,7 @@
 - (void) dealloc
 {
 	[self setDropzonePanel: nil],	[dropzonePanel release];
+	[self setLoadingPanel: nil],	[loadingPanel release];
 	[self setInstallerPanel: nil],	[installerPanel release];
 	[self setFinalizingPanel: nil],	[finalizingPanel release];
 	[self setFinishedPanel: nil],	[finishedPanel release];
@@ -68,6 +69,10 @@
 		{
 			case BXImportWaitingForSourcePath:
 				[self setCurrentPanel: [self dropzonePanel]];
+				break;
+				
+			case BXImportLoadingSourcePath:
+				[self setCurrentPanel: [self loadingPanel]];
 				break;
 				
 			case BXImportWaitingForInstaller:

@@ -63,7 +63,7 @@
 		NDAlias *alias = [NDAlias aliasWithPath: newPath];
 		[[NSUserDefaults standardUserDefaults] setObject: [alias data] forKey: @"gamesFolder"];
 		
-		//Finally, check that the folder has an up-to-date importer droplet in it
+		//Finally, check that the folder has an up-to-date importer droplet in it.
 		[self checkForImporterDroplet];
 	}
 }
@@ -265,49 +265,23 @@
 
 - (void) checkForImporterDroplet
 {
-	NSString *gamesFolder = [self gamesFolderPath];
-	
-	//Bail out early if we don't have a game folder yet
-	if (!gamesFolder) return;
-	
-	//Get the properties of our builtin droplet for comparison
 	NSString *dropletPath = [[NSBundle mainBundle] pathForResource: @"Game Importer Droplet" ofType: @"app"];
-	NSBundle *droplet			= [NSBundle bundleWithPath: dropletPath];
-	NSString *dropletName		= [[droplet objectForInfoDictionaryKey: @"CFBundleDisplayName"] stringByAppendingPathExtension: @"app"];
-	NSString *dropletVersion	= [droplet objectForInfoDictionaryKey: (NSString *)kCFBundleVersionKey];
-	NSString *dropletIdentifier = [droplet bundleIdentifier];
+	NSString *folderPath = [self gamesFolderPath];
 	
-	NSFileManager *manager = [NSFileManager defaultManager];
-	
-	BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: gamesFolder];
-	[enumerator setSkipSubdirectories: YES];
-	[enumerator setSkipPackageContents: YES];
-	[enumerator setFileTypes: [NSSet setWithObject: @"com.apple.application"]];
-	
-	//Trawl through the games folder looking for apps with the same identifier
-	for (NSString *filePath in enumerator)
+	if (dropletPath && folderPath)
 	{
-		NSBundle *app = [NSBundle bundleWithPath: filePath];
-		if ([[app bundleIdentifier] isEqualToString: dropletIdentifier])
+		BXHelperAppCheck *checkOperation = [[BXHelperAppCheck alloc] initWithTargetPath: folderPath
+																		   forAppAtPath: dropletPath];
+		
+		//Cancel any currently-active check for the droplet
+		for (NSOperation *operation in [[self generalQueue] operations])
 		{
-			//Check if the app is up-to-date: if not, replace it with our own app
-			NSString *appVersion = [app objectForInfoDictionaryKey: (NSString *)kCFBundleVersionKey];
-			if (NSOrderedAscending == [appVersion compare: dropletVersion options: NSNumericSearch])
-			{
-				BOOL deleted = [manager removeItemAtPath: filePath error: nil];
-				if (deleted)
-				{
-					NSString *newPath = [[filePath stringByDeletingLastPathComponent] stringByAppendingPathComponent: dropletName];
-					[manager copyItemAtPath: dropletPath toPath: newPath error: nil];
-				}
-			}
-			//Bail out once we've found a matching droplet
-			return;
+			if ([operation isKindOfClass: [BXHelperAppCheck class]] &&
+				[[(BXHelperAppCheck *)operation appPath] isEqualToString: dropletPath]) [operation cancel];
 		}
+		
+		[generalQueue addOperation: checkOperation];
 	}
-	//If we got this far, then we didn't find any droplet: copy a new one into the game folder
-	NSString *newPath = [gamesFolder stringByAppendingPathComponent: dropletName];
-	[manager copyItemAtPath: dropletPath toPath: newPath error: nil];
 }
 
 - (IBAction) revealGamesFolder: (id)sender
@@ -343,5 +317,80 @@
 			[self applyShelfAppearanceToPath: path switchToShelfMode: NO];
 		}
 	}
+}
+@end
+
+
+
+@implementation BXHelperAppCheck
+@synthesize targetPath, appPath;
+
+- (id) initWithTargetPath: (NSString *)pathToCheck forAppAtPath: (NSString *)pathToApp
+{
+	if ((self = [super init]))
+	{
+		[self setTargetPath: pathToCheck];
+		[self setAppPath: pathToApp];
+	}
+	return self;
+}
+
+- (void) dealloc
+{
+	[self setTargetPath: nil], [targetPath release];
+	[self setAppPath: nil], [appPath release];
+	[super dealloc];
+}
+
+- (void) main
+{
+	//Bail out early if already cancelled
+	if ([self isCancelled]) return;
+	
+	//Bail out early if we don't have the necessary paths
+	if (!targetPath || !appPath) return;
+	
+	//Get the properties of the app for comparison
+	NSBundle *app		= [NSBundle bundleWithPath: appPath];
+	NSString *appName	= [[app objectForInfoDictionaryKey: @"CFBundleDisplayName"] stringByAppendingPathExtension: @"app"];
+	
+	NSString *appVersion	= [app objectForInfoDictionaryKey: (NSString *)kCFBundleVersionKey];
+	NSString *appIdentifier = [app bundleIdentifier];
+	
+	NSFileManager *manager = [NSFileManager defaultManager];
+	
+	BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: targetPath];
+	[enumerator setSkipSubdirectories: YES];
+	[enumerator setSkipPackageContents: YES];
+	[enumerator setFileTypes: [NSSet setWithObject: @"com.apple.application"]];
+	
+	//Trawl through the games folder looking for apps with the same identifier
+	for (NSString *filePath in enumerator)
+	{
+		//Bail out if we're cancelled
+		if ([self isCancelled]) return;
+
+		NSBundle *checkedApp = [NSBundle bundleWithPath: filePath];
+		if ([[checkedApp bundleIdentifier] isEqualToString: appIdentifier])
+		{
+			//Check if the app is up-to-date: if not, replace it with our own app
+			NSString *checkedAppVersion = [checkedApp objectForInfoDictionaryKey: (NSString *)kCFBundleVersionKey];
+			if (NSOrderedAscending == [checkedAppVersion compare: appVersion options: NSNumericSearch])
+			{
+				BOOL deleted = [manager removeItemAtPath: filePath error: nil];
+				if (deleted)
+				{
+					NSString *newPath = [[filePath stringByDeletingLastPathComponent] stringByAppendingPathComponent: appName];
+					[manager copyItemAtPath: appPath toPath: newPath error: nil];
+				}
+			}
+			//Bail out once we've found a matching app
+			return;
+		}
+	}
+	
+	//If we got this far, then we didn't find any droplet: copy a new one into the target folder
+	NSString *newPath = [targetPath stringByAppendingPathComponent: appName];
+	[manager copyItemAtPath: appPath toPath: newPath error: nil];
 }
 @end

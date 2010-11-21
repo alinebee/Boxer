@@ -49,7 +49,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 
 @implementation BXAppController
-@synthesize currentSession;
+@synthesize currentSession, generalQueue;
 
 
 #pragma mark -
@@ -161,10 +161,21 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
     [[NSUserDefaults standardUserDefaults] registerDefaults: defaults];
 }
 
+- (id) init
+{
+	if ((self = [super init]))
+	{
+		generalQueue = [[NSOperationQueue alloc] init];
+	}
+	return self;
+}
+
 - (void) dealloc
 {
 	[self setCurrentSession: nil], [currentSession release];
 	[self setGamesFolderPath: nil], [gamesFolderPath release];
+	
+	[generalQueue release], generalQueue = nil;
 	
 	[super dealloc];
 }
@@ -239,6 +250,11 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	
 	//Save our preferences to disk before exiting
 	[[NSUserDefaults standardUserDefaults] synchronize];
+	
+	//Tell any operations in our queue to cancel themselves
+	[generalQueue cancelAllOperations];
+	[generalQueue waitUntilAllOperationsAreFinished];
+	
 }
 
 

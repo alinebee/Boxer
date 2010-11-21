@@ -70,3 +70,18 @@
 - (void) checkForImporterDroplet;
 
 @end
+
+
+//Checks if one of our helper apps is present and up-to-date at the specified path.
+//Used by BXAppController+BXGamesFolder checkForImporterDroplet.
+@interface BXHelperAppCheck : NSOperation
+{
+	NSString *targetPath;
+	NSString *appPath;
+}
+@property (copy) NSString *targetPath;
+@property (copy) NSString *appPath;
+
+//Create a new importer check for the specified path using the specified droplet.
+- (id) initWithTargetPath: (NSString *)pathToCheck forAppAtPath: (NSString *)pathToApp;
+@end

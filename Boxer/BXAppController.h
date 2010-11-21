@@ -24,9 +24,15 @@ enum {
 {
 	BXSession *currentSession;
 	NSString *gamesFolderPath;
+	
+	NSOperationQueue *generalQueue;
 }
 //The currently-active DOS session. Changes whenever a new session opens.
 @property (retain, nonatomic) BXSession *currentSession;
+
+//A general operation queue for non-session-specific operations.
+@property (retain, readonly) NSOperationQueue *generalQueue;
+
 
 //Called at class initialization time to initialize Boxer's own user defaults.
 + (void) setupDefaults;

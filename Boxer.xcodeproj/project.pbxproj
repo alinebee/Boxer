@@ -18,6 +18,7 @@
 		9F160EB21236BAED00F8768E /* Epic Pinball Demo.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F160EAE1236BAED00F8768E /* Epic Pinball Demo.icns */; };
 		9F160EB31236BAED00F8768E /* Underworld Demo.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F160EAF1236BAED00F8768E /* Underworld Demo.icns */; };
 		9F160EB41236BAED00F8768E /* X-COM Demo.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F160EB01236BAED00F8768E /* X-COM Demo.icns */; };
+		9F18127F12994A4C009BC4B2 /* CDCover.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F18124312994474009BC4B2 /* CDCover.icns */; };
 		9F1CBA58120C796C00C5E926 /* BXImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBA57120C796C00C5E926 /* BXImport.m */; };
 		9F1CBA97120C7D9000C5E926 /* BXImportWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBA96120C7D9000C5E926 /* BXImportWindowController.m */; };
 		9F1CBAAB120C830600C5E926 /* BXImport+BXImportPolicies.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBAAA120C830600C5E926 /* BXImport+BXImportPolicies.m */; };
@@ -36,7 +37,6 @@
 		9F24D25012243C9A009C1817 /* BXWelcomeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F24D24F12243C9A009C1817 /* BXWelcomeView.m */; };
 		9F25C4E212130B5E0025CB2C /* BrandWatermark.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F25C4E112130B5E0025CB2C /* BrandWatermark.png */; };
 		9F25C52712130E030025CB2C /* BXImportDOSWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F25C52612130E030025CB2C /* BXImportDOSWindowController.m */; };
-		9F2AC6D710EFE14300CFFF72 /* CDCover.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F2AC6D510EFE14300CFFF72 /* CDCover.png */; };
 		9F2AC6E410EFFE8600CFFF72 /* BXBootlegCoverArt.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2AC6E310EFFE8600CFFF72 /* BXBootlegCoverArt.m */; };
 		9F4175AB119DBFDD00646B15 /* BXRenderingLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4175AA119DBFDD00646B15 /* BXRenderingLayer.m */; };
 		9F4175F1119DCF7E00646B15 /* BXFrameRateCounterLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4175F0119DCF7E00646B15 /* BXFrameRateCounterLayer.m */; };
@@ -372,6 +372,7 @@
 		9F160EAE1236BAED00F8768E /* Epic Pinball Demo.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = "Epic Pinball Demo.icns"; sourceTree = "<group>"; };
 		9F160EAF1236BAED00F8768E /* Underworld Demo.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = "Underworld Demo.icns"; sourceTree = "<group>"; };
 		9F160EB01236BAED00F8768E /* X-COM Demo.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = "X-COM Demo.icns"; sourceTree = "<group>"; };
+		9F18124312994474009BC4B2 /* CDCover.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = CDCover.icns; sourceTree = "<group>"; };
 		9F1CBA56120C796C00C5E926 /* BXImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImport.h; sourceTree = "<group>"; };
 		9F1CBA57120C796C00C5E926 /* BXImport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXImport.m; sourceTree = "<group>"; };
 		9F1CBA95120C7D9000C5E926 /* BXImportWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImportWindowController.h; sourceTree = "<group>"; };
@@ -399,7 +400,6 @@
 		9F25C4E112130B5E0025CB2C /* BrandWatermark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BrandWatermark.png; sourceTree = "<group>"; };
 		9F25C52512130E030025CB2C /* BXImportDOSWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImportDOSWindowController.h; sourceTree = "<group>"; };
 		9F25C52612130E030025CB2C /* BXImportDOSWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXImportDOSWindowController.m; sourceTree = "<group>"; };
-		9F2AC6D510EFE14300CFFF72 /* CDCover.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CDCover.png; sourceTree = "<group>"; };
 		9F2AC6E210EFFE8600CFFF72 /* BXBootlegCoverArt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBootlegCoverArt.h; sourceTree = "<group>"; };
 		9F2AC6E310EFFE8600CFFF72 /* BXBootlegCoverArt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBootlegCoverArt.m; sourceTree = "<group>"; };
 		9F348A9D128F004A0034E780 /* BXWelcomeButtonDraggingDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXWelcomeButtonDraggingDelegate.h; sourceTree = "<group>"; };
@@ -1728,7 +1728,7 @@
 				9FE8265A10F0EBA000F1B03E /* 35DisketteShine.png */,
 				9F550664121B057C0042614A /* 35Diskette.icns */,
 				9F550665121B057C0042614A /* CDCase.icns */,
-				9F2AC6D510EFE14300CFFF72 /* CDCover.png */,
+				9F18124312994474009BC4B2 /* CDCover.icns */,
 				9F550666121B057C0042614A /* 525Diskette.icns */,
 				9F25C4E112130B5E0025CB2C /* BrandWatermark.png */,
 				9FA9E255121FD5BA006E20C4 /* DropzoneTemplate.pdf */,
@@ -2064,7 +2064,6 @@
 				9FFAFE2D10DE33FB00728BAC /* GameProfiles.plist in Resources */,
 				9FFAFE4310DE343F00728BAC /* Configurations in Resources */,
 				9FBD321710E5144C00031CB6 /* Brand.png in Resources */,
-				9F2AC6D710EFE14300CFFF72 /* CDCover.png in Resources */,
 				9FE8265C10F0EBA000F1B03E /* 35DisketteShine.png in Resources */,
 				9F9A4C9610F67A1F00E61965 /* GalleryOriginal.png in Resources */,
 				9F9A4C9710F67A1F00E61965 /* GalleryHQx.png in Resources */,
@@ -2102,6 +2101,7 @@
 				9F160EB31236BAED00F8768E /* Underworld Demo.icns in Resources */,
 				9F160EB41236BAED00F8768E /* X-COM Demo.icns in Resources */,
 				9F70C19C129036C900A3627F /* Boxer.sdef in Resources */,
+				9F18127F12994A4C009BC4B2 /* CDCover.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

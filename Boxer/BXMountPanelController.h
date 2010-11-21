@@ -32,7 +32,7 @@
 @property (retain) NSButton *readOnlyToggle;	//The read-only checkbox toggle in the accessory view.
 
 //Returns a singleton instance, which loads the view from the NIB file the first time.
-+ (BXMountPanelController *) controller;
++ (id) controller;
 
 //Displays the mount panel in the main window for the specified session.
 - (void) showMountPanelForSession: (BXSession *)theSession;

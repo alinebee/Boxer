@@ -200,30 +200,13 @@
 
 - (void) addSampleGamesToPath: (NSString *)path
 {
-	NSString *sampleGamesPath = [[NSBundle mainBundle] pathForResource: @"Sample Games" ofType: nil];
+	NSString *sourcePath = [[NSBundle mainBundle] pathForResource: @"Sample Games" ofType: nil];
 	
-	NSFileManager *manager	= [NSFileManager defaultManager];
-	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
-	NSDictionary *attrs		= [NSDictionary dictionaryWithObject: [NSNumber numberWithBool: YES]
-														  forKey: NSFileExtensionHidden];
+	BXSampleGamesCopy *copyOperation = [[BXSampleGamesCopy alloc] initFromPath: sourcePath
+																		toPath: path];
 	
-	for (NSString *gamePath in [manager contentsOfDirectoryAtPath: sampleGamesPath error: NULL])
-	{
-		NSString *sourcePath		= [sampleGamesPath stringByAppendingPathComponent: gamePath];
-		NSString *destinationPath	= [path stringByAppendingPathComponent: gamePath];
-		
-		//If the folder already has a game of that name, don't copy the game (we don’t want to 
-		if (![manager fileExistsAtPath: destinationPath])
-		{
-			[manager copyItemAtPath: sourcePath toPath: destinationPath error: NULL];
-			
-			[manager setAttributes: attrs ofItemAtPath: destinationPath error: NULL];
-		
-			NSString *gameName = [[gamePath lastPathComponent] stringByDeletingPathExtension];
-			NSImage *iconForGame = [NSImage imageNamed: gameName];
-			if (iconForGame) [workspace setIcon: iconForGame forFile: destinationPath options: 0];
-		}
-	}
+	[generalQueue addOperation: copyOperation];
+	[copyOperation release];
 }
 
 
@@ -281,6 +264,7 @@
 		}
 		
 		[generalQueue addOperation: checkOperation];
+		[checkOperation release];
 	}
 }
 
@@ -321,6 +305,59 @@
 @end
 
 
+@implementation BXSampleGamesCopy
+@synthesize sourcePath, targetPath;
+
+- (id) initFromPath: (NSString *)source toPath: (NSString *)target
+{
+	if ((self = [super init]))
+	{
+		[self setSourcePath: source];
+		[self setTargetPath: target];
+		manager = [[NSFileManager alloc] init];
+	}
+	return self;
+}
+
+- (void) dealloc
+{
+	[self setSourcePath: nil], [sourcePath release];
+	[self setTargetPath: nil], [targetPath release];
+	[manager release], manager = nil;
+	[super dealloc];
+}
+
+- (void) main
+{
+	if ([self isCancelled]) return;
+	
+	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
+	NSDictionary *attrs		= [NSDictionary dictionaryWithObject: [NSNumber numberWithBool: YES]
+															forKey: NSFileExtensionHidden];
+	
+	for (NSString *gamePath in [manager contentsOfDirectoryAtPath: sourcePath error: NULL])
+	{
+		if ([self isCancelled]) return;
+		
+		NSString *gameSource		= [sourcePath stringByAppendingPathComponent: gamePath];
+		NSString *gameDestination	= [targetPath stringByAppendingPathComponent: gamePath];
+		
+		//If the folder already has a game of that name, don't copy the game
+		//(we don’t want to overwrite someone's savegames)
+		if (![manager fileExistsAtPath: gameDestination])
+		{
+			[manager copyItemAtPath: gameSource toPath: gameDestination error: NULL];
+			[manager setAttributes: attrs ofItemAtPath: gameDestination error: NULL];
+			
+			NSString *gameName = [[gamePath lastPathComponent] stringByDeletingPathExtension];
+			NSImage *iconForGame = [NSImage imageNamed: gameName];
+			if (iconForGame) [workspace setIcon: iconForGame forFile: gameDestination options: 0];
+		}
+	}	
+}
+
+@end
+
 
 @implementation BXHelperAppCheck
 @synthesize targetPath, appPath;
@@ -331,6 +368,7 @@
 	{
 		[self setTargetPath: pathToCheck];
 		[self setAppPath: pathToApp];
+		manager = [[NSFileManager alloc] init];
 	}
 	return self;
 }
@@ -339,6 +377,8 @@
 {
 	[self setTargetPath: nil], [targetPath release];
 	[self setAppPath: nil], [appPath release];
+	[manager release], manager = nil;
+	
 	[super dealloc];
 }
 
@@ -352,12 +392,11 @@
 	
 	//Get the properties of the app for comparison
 	NSBundle *app		= [NSBundle bundleWithPath: appPath];
-	NSString *appName	= [[app objectForInfoDictionaryKey: @"CFBundleDisplayName"] stringByAppendingPathExtension: @"app"];
+	NSString *appName	= [[app objectForInfoDictionaryKey: @"CFBundleDisplayName"]
+							stringByAppendingPathExtension: @"app"];
 	
 	NSString *appVersion	= [app objectForInfoDictionaryKey: (NSString *)kCFBundleVersionKey];
 	NSString *appIdentifier = [app bundleIdentifier];
-	
-	NSFileManager *manager = [NSFileManager defaultManager];
 	
 	BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: targetPath];
 	[enumerator setSkipSubdirectories: YES];

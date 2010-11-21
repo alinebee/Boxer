@@ -9,32 +9,13 @@
 #import "BXPreferencesController.h"
 #import "BXSession.h"
 #import "BXValueTransformers.h"
-#import "BXAppController+BXGamesFolder.h"
-
-
-#pragma mark -
-#pragma mark Private method declarations
-
-@interface BXPreferencesController ()
-
-//Sets the games folder location based on the chosen folder in the chooser panel.
-- (void) _setChosenGamesFolder: (NSOpenPanel *)openPanel
-					returnCode: (int)returnCode
-				   contextInfo: (void *)contextInfo;
-
-//Copy sample games to the specified path with indeterminate progress indicator
-- (void) _addSampleGamesToPath: (NSString *)path;
-
-@end
-
+#import "BXGamesFolderPanelController.h"
 
 #pragma mark -
 #pragma mark Implementation
 
 @implementation BXPreferencesController
 @synthesize filterGallery, gamesFolderSelector;
-@synthesize folderSelectorAccessoryView, copySampleGamesToggle;
-@synthesize processingGamesFolder;
 
 #pragma mark -
 #pragma mark Initialization and deallocation
@@ -72,8 +53,6 @@
 {
 	[self setFilterGallery: nil],				[filterGallery release];
 	[self setGamesFolderSelector: nil],			[gamesFolderSelector release];
-	[self setFolderSelectorAccessoryView: nil],	[folderSelectorAccessoryView release];
-	[self setCopySampleGamesToggle: nil],		[copySampleGamesToggle release];
 	[super dealloc];
 }
 
@@ -132,93 +111,12 @@
 	}
 }
 
+//Display an open panel for choosing the games folder.
 - (IBAction) showGamesFolderChooserPanel: (id)sender
-{	
-	NSOpenPanel *openPanel = [NSOpenPanel openPanel];
-
-	NSString *currentFolderPath = [[NSApp delegate] gamesFolderPath];
-	NSString *parentFolderPath, *currentFolderName;
-	if (currentFolderPath)
-	{
-		parentFolderPath = [currentFolderPath stringByDeletingLastPathComponent];
-		currentFolderName = [currentFolderPath lastPathComponent];
-	}
-	else
-	{
-		//If no folder yet exists, choose
-		parentFolderPath = NSHomeDirectory();
-		currentFolderName = nil;
-	}
-	
-	[openPanel setCanCreateDirectories: YES];
-	[openPanel setCanChooseDirectories: YES];
-	[openPanel setCanChooseFiles: NO];
-	[openPanel setTreatsFilePackagesAsDirectories: NO];
-	[openPanel setAllowsMultipleSelection: NO];
-	
-	[openPanel setAccessoryView: [self folderSelectorAccessoryView]];
-	[openPanel setDelegate: self];
-	
-	[openPanel setPrompt: NSLocalizedString(@"Select", @"Button label for Open panels when selecting a folder.")];
-	[openPanel setMessage: NSLocalizedString(@"Select a folder in which to keep your DOS games:",
-											 @"Help text shown at the top of choose-a-games-folder panel.")];
-	
-	[openPanel beginSheetForDirectory: parentFolderPath
-								 file: currentFolderName
-								types: nil
-					   modalForWindow: [self window]
-						modalDelegate: self
-					   didEndSelector: @selector(_setChosenGamesFolder:returnCode:contextInfo:)
-						  contextInfo: nil];
-}
-
-- (void) panelSelectionDidChange: (id)sender
 {
-	NSString *selection = [[sender URL] path];
-	NSFileManager *manager = [NSFileManager defaultManager];
-	BOOL hasFiles = ([[manager enumeratorAtPath: selection] nextObject] != nil);
-	
-	//If the selected folder is empty, turn on the copy-sample-games checkbox; otherwise, clear it. 
-	[[self copySampleGamesToggle] setState: !hasFiles];
-}
-
-- (void) panel: (NSOpenPanel *)openPanel directoryDidChange: (NSString *)path
-{
-	[self panelSelectionDidChange: openPanel];
-}
-
-- (void) _setChosenGamesFolder: (NSOpenPanel *)openPanel
-					returnCode: (int)returnCode
-				   contextInfo: (void *)contextInfo
-{
-	if (returnCode == NSOKButton)
-	{
-		NSString *path = [[openPanel URL] path];
-		
-		if ([[NSApp delegate] appliesShelfAppearanceToGamesFolder])
-		{
-			[[NSApp delegate] applyShelfAppearanceToPath: path switchToShelfMode: YES];
-		}
-		
-		if ([[self copySampleGamesToggle] state])
-		{
-			//Let the sheet close before we start copying files, so that we can display the progress indicator
-			[self performSelector: @selector(_addSampleGamesToPath:) withObject: path afterDelay: 0.5];
-		}
-		
-		[[NSApp delegate] setGamesFolderPath: path];
-	}
-	
-	//Restore the game folder dropdown to the first item, which is the games folder representation
+	BXGamesFolderPanelController *chooser = [BXGamesFolderPanelController controller];
+	[chooser showGamesFolderPanelForWindow: [self window]];
 	[[self gamesFolderSelector] selectItemAtIndex: 0];
-}
-
-- (void) _addSampleGamesToPath: (NSString *)path
-{
-	//As this is a time-consuming operation, show our progress indicator
-	[self setProcessingGamesFolder: YES];
-	[[NSApp delegate] addSampleGamesToPath: path];
-	[self setProcessingGamesFolder: NO];
 }
 
 @end

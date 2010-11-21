@@ -2,9 +2,9 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
-		<string key="IBDocument.SystemVersion">10F569</string>
+		<string key="IBDocument.SystemVersion">10H574</string>
 		<string key="IBDocument.InterfaceBuilderVersion">762</string>
-		<string key="IBDocument.AppKitVersion">1038.29</string>
+		<string key="IBDocument.AppKitVersion">1038.35</string>
 		<string key="IBDocument.HIToolboxVersion">461.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -21,7 +21,6 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="243"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -560,16 +559,6 @@
 															<reference key="NSTextColor" ref="374043504"/>
 														</object>
 													</object>
-													<object class="NSProgressIndicator" id="175695810">
-														<reference key="NSNextResponder" ref="743371518"/>
-														<int key="NSvFlags">1292</int>
-														<object class="NSPSMatrix" key="NSDrawMatrix"/>
-														<string key="NSFrame">{{480, 163}, {16, 16}}</string>
-														<reference key="NSSuperview" ref="743371518"/>
-														<reference key="NSWindow"/>
-														<int key="NSpiFlags">28938</int>
-														<double key="NSMaxValue">100</double>
-													</object>
 												</object>
 												<string key="NSFrameSize">{532, 202}</string>
 												<reference key="NSSuperview" ref="619850360"/>
@@ -834,38 +823,6 @@
 			</object>
 			<object class="NSUserDefaultsController" id="783521929">
 				<bool key="NSSharedInstance">YES</bool>
-			</object>
-			<object class="NSCustomView" id="253570691">
-				<reference key="NSNextResponder"/>
-				<int key="NSvFlags">268</int>
-				<object class="NSMutableArray" key="NSSubviews">
-					<bool key="EncodedWithXMLCoder">YES</bool>
-					<object class="NSButton" id="141176468">
-						<reference key="NSNextResponder" ref="253570691"/>
-						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{18, 18}, {284, 18}}</string>
-						<reference key="NSSuperview" ref="253570691"/>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSButtonCell" key="NSCell" id="645220913">
-							<int key="NSCellFlags">-2080244224</int>
-							<int key="NSCellFlags2">0</int>
-							<string key="NSContents">Add sample DOS games to this folder too</string>
-							<reference key="NSSupport" ref="467860324"/>
-							<reference key="NSControlView" ref="141176468"/>
-							<int key="NSButtonFlags">1211912703</int>
-							<int key="NSButtonFlags2">2</int>
-							<reference key="NSNormalImage" ref="85458975"/>
-							<reference key="NSAlternateImage" ref="667515066"/>
-							<string key="NSAlternateContents"/>
-							<string key="NSKeyEquivalent"/>
-							<int key="NSPeriodicDelay">200</int>
-							<int key="NSPeriodicInterval">25</int>
-						</object>
-					</object>
-				</object>
-				<string key="NSFrameSize">{320, 54}</string>
-				<reference key="NSSuperview"/>
-				<string key="NSClassName">NSView</string>
 			</object>
 		</object>
 		<object class="IBObjectContainer" key="IBDocument.Objects">
@@ -1157,38 +1114,6 @@
 					</object>
 					<int key="connectionID">239</int>
 				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">animate: processingGamesFolder</string>
-						<reference key="source" ref="175695810"/>
-						<reference key="destination" ref="1001"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="175695810"/>
-							<reference key="NSDestination" ref="1001"/>
-							<string key="NSLabel">animate: processingGamesFolder</string>
-							<string key="NSBinding">animate</string>
-							<string key="NSKeyPath">processingGamesFolder</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">242</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">folderSelectorAccessoryView</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="253570691"/>
-					</object>
-					<int key="connectionID">246</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">copySampleGamesToggle</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="141176468"/>
-					</object>
-					<int key="connectionID">247</int>
-				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -1332,7 +1257,6 @@
 							<reference ref="411444243"/>
 							<reference ref="735469156"/>
 							<reference ref="378975767"/>
-							<reference ref="175695810"/>
 						</object>
 						<reference key="parent" ref="619850360"/>
 					</object>
@@ -1656,35 +1580,6 @@
 						<reference key="object" ref="131177714"/>
 						<reference key="parent" ref="735469156"/>
 					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">240</int>
-						<reference key="object" ref="175695810"/>
-						<reference key="parent" ref="743371518"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">243</int>
-						<reference key="object" ref="253570691"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="141176468"/>
-						</object>
-						<reference key="parent" ref="0"/>
-						<string key="objectName">Games-folder selector accessory view</string>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">244</int>
-						<reference key="object" ref="141176468"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="645220913"/>
-						</object>
-						<reference key="parent" ref="253570691"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">245</int>
-						<reference key="object" ref="645220913"/>
-						<reference key="parent" ref="141176468"/>
-					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -1745,11 +1640,6 @@
 					<string>223.IBPluginDependency</string>
 					<string>224.IBPluginDependency</string>
 					<string>225.IBPluginDependency</string>
-					<string>240.IBPluginDependency</string>
-					<string>243.IBEditorWindowLastContentRect</string>
-					<string>243.IBPluginDependency</string>
-					<string>244.IBPluginDependency</string>
-					<string>245.IBPluginDependency</string>
 					<string>70.IBEditorWindowLastContentRect</string>
 					<string>70.IBPluginDependency</string>
 					<string>70.IBUserGuides</string>
@@ -1837,11 +1727,6 @@
 					</object>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{87, 669}, {320, 54}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -1937,16 +1822,12 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>copySampleGamesToggle</string>
 							<string>filterGallery</string>
-							<string>folderSelectorAccessoryView</string>
 							<string>gamesFolderSelector</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>NSButton</string>
 							<string>BXFilterGallery</string>
-							<string>NSView</string>
 							<string>NSPopUpButton</string>
 						</object>
 					</object>
@@ -2521,14 +2402,6 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBFrameworkSource</string>
 						<string key="minorKey">AppKit.framework/Headers/NSPopUpButtonCell.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">NSProgressIndicator</string>
-					<string key="superclassName">NSView</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBFrameworkSource</string>
-						<string key="minorKey">AppKit.framework/Headers/NSProgressIndicator.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

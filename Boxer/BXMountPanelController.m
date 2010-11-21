@@ -17,7 +17,7 @@
 @implementation BXMountPanelController
 @synthesize driveType, driveLetter, readOnlyToggle;
 
-+ (BXMountPanelController *) controller
++ (id) controller
 {
 	static BXMountPanelController *singleton = nil;
 	if (!singleton) singleton = [[self alloc] initWithNibName: @"MountPanelOptions" bundle: nil];

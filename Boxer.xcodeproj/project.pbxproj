@@ -20,6 +20,8 @@
 		9F160EB41236BAED00F8768E /* X-COM Demo.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F160EB01236BAED00F8768E /* X-COM Demo.icns */; };
 		9F18127F12994A4C009BC4B2 /* CDCover.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F18124312994474009BC4B2 /* CDCover.icns */; };
 		9F1812BF12996340009BC4B2 /* YRKSpinningProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1812BD12996337009BC4B2 /* YRKSpinningProgressIndicator.m */; };
+		9F18133B129990D5009BC4B2 /* BXGamesFolderPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F18133A129990D5009BC4B2 /* BXGamesFolderPanelController.m */; };
+		9F18137C12999E39009BC4B2 /* GamesFolderPanelOptions.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F18137A12999E39009BC4B2 /* GamesFolderPanelOptions.xib */; };
 		9F1CBA58120C796C00C5E926 /* BXImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBA57120C796C00C5E926 /* BXImport.m */; };
 		9F1CBA97120C7D9000C5E926 /* BXImportWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBA96120C7D9000C5E926 /* BXImportWindowController.m */; };
 		9F1CBAAB120C830600C5E926 /* BXImport+BXImportPolicies.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBAAA120C830600C5E926 /* BXImport+BXImportPolicies.m */; };
@@ -376,6 +378,9 @@
 		9F18124312994474009BC4B2 /* CDCover.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = CDCover.icns; sourceTree = "<group>"; };
 		9F1812BC12996337009BC4B2 /* YRKSpinningProgressIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YRKSpinningProgressIndicator.h; sourceTree = "<group>"; };
 		9F1812BD12996337009BC4B2 /* YRKSpinningProgressIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YRKSpinningProgressIndicator.m; sourceTree = "<group>"; };
+		9F181339129990D5009BC4B2 /* BXGamesFolderPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXGamesFolderPanelController.h; sourceTree = "<group>"; };
+		9F18133A129990D5009BC4B2 /* BXGamesFolderPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGamesFolderPanelController.m; sourceTree = "<group>"; };
+		9F18137B12999E39009BC4B2 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/GamesFolderPanelOptions.xib; sourceTree = "<group>"; };
 		9F1CBA56120C796C00C5E926 /* BXImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImport.h; sourceTree = "<group>"; };
 		9F1CBA57120C796C00C5E926 /* BXImport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXImport.m; sourceTree = "<group>"; };
 		9F1CBA95120C7D9000C5E926 /* BXImportWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImportWindowController.h; sourceTree = "<group>"; };
@@ -1031,6 +1036,7 @@
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
+				9F18137A12999E39009BC4B2 /* GamesFolderPanelOptions.xib */,
 			);
 			name = Boxer;
 			sourceTree = "<group>";
@@ -1249,6 +1255,8 @@
 				9F6311080F70F54300AB1155 /* BXHelpMenuController.m */,
 				9FBC35100F56C7B7001811F2 /* BXAboutController.h */,
 				9FBC351D0F56C7B7001811F2 /* BXAboutController.m */,
+				9F181339129990D5009BC4B2 /* BXGamesFolderPanelController.h */,
+				9F18133A129990D5009BC4B2 /* BXGamesFolderPanelController.m */,
 			);
 			name = "UI controllers";
 			sourceTree = "<group>";
@@ -2115,6 +2123,7 @@
 				9F160EB41236BAED00F8768E /* X-COM Demo.icns in Resources */,
 				9F70C19C129036C900A3627F /* Boxer.sdef in Resources */,
 				9F18127F12994A4C009BC4B2 /* CDCover.icns in Resources */,
+				9F18137C12999E39009BC4B2 /* GamesFolderPanelOptions.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2375,6 +2384,7 @@
 				9F5DCB5211B2C0E700552966 /* shell_batch.cpp in Sources */,
 				9F5DCB5311B2C0E700552966 /* shell_cmds.cpp in Sources */,
 				9F5DCB5411B2C0E700552966 /* shell_misc.cpp in Sources */,
+				9F18133B129990D5009BC4B2 /* BXGamesFolderPanelController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2398,6 +2408,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		9F18137A12999E39009BC4B2 /* GamesFolderPanelOptions.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9F18137B12999E39009BC4B2 /* English */,
+			);
+			name = GamesFolderPanelOptions.xib;
+			sourceTree = "<group>";
+		};
 		9F1CBB5C120CABBB00C5E926 /* ImportWindow.xib */ = {
 			isa = PBXVariantGroup;
 			children = (

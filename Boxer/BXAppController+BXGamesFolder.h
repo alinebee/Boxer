@@ -72,16 +72,33 @@
 @end
 
 
+//Add sample games to the specified path, as a fire-and-forget copy.
+//Used by BXAppController+BXGamesFolder addSampleGamesToPath:
+@interface BXSampleGamesCopy : NSOperation
+{
+	NSString *targetPath;
+	NSString *sourcePath;
+	NSFileManager *manager;
+}
+@property (copy) NSString *targetPath;
+@property (copy) NSString *sourcePath;
+
+//Create a new copy operation from the specified source path to the specified path.
+- (id) initFromPath: (NSString *)source toPath: (NSString *)target;
+@end
+
+
 //Checks if one of our helper apps is present and up-to-date at the specified path.
 //Used by BXAppController+BXGamesFolder checkForImporterDroplet.
 @interface BXHelperAppCheck : NSOperation
 {
 	NSString *targetPath;
 	NSString *appPath;
+	NSFileManager *manager;
 }
 @property (copy) NSString *targetPath;
 @property (copy) NSString *appPath;
 
-//Create a new importer check for the specified path using the specified droplet.
+//Create a new app check for the specified path using the specified droplet.
 - (id) initWithTargetPath: (NSString *)pathToCheck forAppAtPath: (NSString *)pathToApp;
 @end

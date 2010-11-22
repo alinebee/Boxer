@@ -11,8 +11,7 @@
 #import "BXDrive.h"
 #import "BXAppController.h"
 #import "BXValueTransformers.h"
-#import "CGSPrivate.h" //For undocumented blur effect functions
-
+#import "NSWindow+BXWindowEffects.h"
 
 const CGFloat BXInspectorPanelBlurRadius = 2.0f;
 const CGFloat BXMouseSensitivityRange = 2.0f;
@@ -104,42 +103,12 @@ const CGFloat BXMouseSensitivityRange = 2.0f;
 - (void) showWindow: (id)sender
 {
 	[super showWindow: sender];
-	
-	//The code below applies a soft gaussian blur underneath the window, and was lifted directly from:
-	//http://blog.steventroughtonsmith.com/2008/03/using-core-image-filters-onunder.html
-	//This is all private-framework stuff and so may stop working (or compiling) in a future version of OS X.
-		
-	//Get the current connection to CoreGraphics
-	CGSConnection thisConnection = _CGSDefaultConnection();
-	CGSWindowFilterRef compositingFilter = NULL;
-	NSInteger compositingType = 1; //Applies the effect only underneath the window
-	
-	if (thisConnection)
-	{
-		//Create a CoreImage gaussian blur filter.
-		CGSNewCIFilterByName(thisConnection, (CFStringRef)@"CIGaussianBlur", &compositingFilter);
-		
-		if (compositingFilter)
-		{
-			//Set the parameters of the filter we'll be adding.
-			NSDictionary *options = [NSDictionary dictionaryWithObject: [NSNumber numberWithFloat: BXInspectorPanelBlurRadius]
-																forKey: @"inputRadius"];
-			
-			CGSSetCIFilterValuesFromDictionary(thisConnection, compositingFilter, (CFDictionaryRef)options);
-			
-			//Now apply the filter to our inspector window.
-			CGSWindowID windowNumber = [[self window] windowNumber];
-			CGSAddWindowFilter(thisConnection, windowNumber, compositingFilter, compositingType);
-			
-			//Clean up after ourselves.
-			CGSReleaseCIFilter(thisConnection, compositingFilter);			
-		}
-	}
+	[[self window] applyGaussianBlurWithRadius: BXInspectorPanelBlurRadius];
 }
 
 //A miserable hack to notify BXAppController that the inspector panel has been closed,
-//so that we can update button states immediately. It has so far proven impossible to manage
-//this some other, more preferable way (such as bindings).
+//so that we can update button states immediately. It has so far proven impossible to
+//manage this some other, more preferable way (such as bindings).
 - (BOOL) windowShouldClose: (id)sender
 {
 	[[NSApp delegate] setInspectorPanelShown: NO];

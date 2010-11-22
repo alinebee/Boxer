@@ -11,6 +11,7 @@
 #import "BXValueTransformers.h"
 #import "BXWelcomeView.h"
 #import "BXImport.h"
+#import "NSWindow+BXWindowEffects.h"
 
 
 //The height of the bottom window border.

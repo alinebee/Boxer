@@ -112,7 +112,7 @@
 }
 
 //Display an open panel for choosing the games folder.
-- (IBAction) showGamesFolderChooserPanel: (id)sender
+- (IBAction) showGamesFolderChooser: (id)sender
 {
 	BXGamesFolderPanelController *chooser = [BXGamesFolderPanelController controller];
 	[chooser showGamesFolderPanelForWindow: [self window]];

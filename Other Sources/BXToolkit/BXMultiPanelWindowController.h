@@ -7,9 +7,12 @@
 
 
 //BXMultiPanelWindowController is an NSWindowController subclass for managing windows that display
-//one out of a set of panels: e.g. a tabbed preferences window or a wizard. This class provides
-//methods for changing the current panel and animating transitions from one panel to another
-//(resizing the window and crossfading views).
+//one out of a set of different panels. This class provides methods for changing the current panel
+//and animating transitions from one panel to another (resizing the window and crossfading views).
+
+//This is a more flexible and less organised alternative to BXTabbedWindowController, written back
+//when I was allergic to NSTabView. This provides better animation control (with better crossfades),
+//but for tab-based or toolbar-based windows, NSTabbedWindowController is still the better choice.
 
 #import <Cocoa/Cocoa.h>
 
@@ -25,7 +28,7 @@
 @property (assign, nonatomic) NSView *currentPanel;
 
 //The view into which the current panel will be added.
-@property (retain, nonatomic) NSView *panelContainer;	
+@property (retain, nonatomic) NSView *panelContainer;
 
 #pragma mark -
 #pragma mark Animation methods

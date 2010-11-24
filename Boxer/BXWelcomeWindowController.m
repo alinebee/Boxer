@@ -11,7 +11,6 @@
 #import "BXValueTransformers.h"
 #import "BXWelcomeView.h"
 #import "BXImport.h"
-#import "NSWindow+BXWindowEffects.h"
 
 
 //The height of the bottom window border.
@@ -59,7 +58,10 @@
 
 - (void) dealloc
 {
-	[self setRecentDocumentsButton: nil], [recentDocumentsButton release];
+	[self setRecentDocumentsButton: nil],	[recentDocumentsButton release];
+	[self setImportGameButton: nil],		[importGameButton release];
+	[self setOpenPromptButton: nil],		[openPromptButton release];
+	
 	[super dealloc];
 }
 
@@ -71,8 +73,6 @@
 	NSArray *types = [NSArray arrayWithObject: NSFilenamesPboardType];
 	[[self importGameButton] registerForDraggedTypes: types];
 	[[self openPromptButton] registerForDraggedTypes: types];
-	
-	[[self window] setAcceptsMouseMovedEvents: YES];
 }
 
 
@@ -85,7 +85,6 @@
 	
 	[[NSApp delegate] openDocumentWithContentsOfURL: url display: YES error: NULL];
 }
-
 
 #pragma mark -
 #pragma mark Open Recent menu
@@ -134,6 +133,9 @@
 }
 
 
+
+
+
 #pragma mark -
 #pragma mark Drag-drop behaviours
 
@@ -142,7 +144,9 @@
 	for (NSString *path in filePaths)
 	{
 		//If any of the files were not of a recognised type, bail out
-		if (![[NSApp delegate] typeForContentsOfURL: [NSURL fileURLWithPath: path] error: NULL]) return NO;
+		NSString *fileType = [[NSApp delegate] typeForContentsOfURL: [NSURL fileURLWithPath: path] error: NULL];
+		Class documentClass = [[NSApp delegate] documentClassForType: fileType];
+		if (!documentClass) return NO;
 	}
 	return YES;
 }

@@ -13,6 +13,7 @@
 #import "BXInspectorController.h"
 #import "BXPreferencesController.h"
 #import "BXWelcomeWindowController.h"
+#import "BXFirstRunWindowController.h"
 #import "BXDOSWindowController.h"
 
 #import "BXSession+BXFileManager.h"
@@ -23,8 +24,9 @@
 #import "BXGrowlController.h"
 #import "NSString+BXPaths.h"
 
-#import "BXThemes.h"
 #import <BGHUDAppKit/BGThemeManager.h>
+#import "BXThemes.h"
+#import "NSWindow+BXWindowEffects.h"
 
 
 NSString * const BXNewSessionParam = @"--openNewSession";
@@ -202,20 +204,21 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 //instead, show the welcome panel if that's the default startup behaviour.
 - (BOOL) applicationShouldOpenUntitledFile: (NSApplication *)theApplication
 {
-	if ([[NSUserDefaults standardUserDefaults] integerForKey: @"startupAction"] == BXStartUpWithWelcomePanel)
+	if (hasFinishedLaunching && 
+		[[NSUserDefaults standardUserDefaults] integerForKey: @"startupAction"] == BXStartUpWithWelcomePanel)
 		[self orderFrontWelcomePanel: self];
 	
 	return NO;
 }
 
-- (void) applicationWillFinishLaunching: (NSNotification *)notification
-{
-	//[self checkForGamesFolder];
-	//[self checkForImporterDroplet];
-}
-
 - (void) applicationDidFinishLaunching: (NSNotification *)notification
 {
+	//If the user has not chosen a games folder yet, then shown them the first-run panel
+	if (![self gamesFolderPath] && ![[NSUserDefaults standardUserDefaults] dataForKey: @"gamesFolder"])
+	{
+		[self orderFrontFirstRunPanel: self];
+	}
+
 	NSArray *arguments = [[NSProcessInfo processInfo] arguments];
 	
 	if ([arguments containsObject: BXNewSessionParam])
@@ -234,7 +237,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 		switch ([[NSUserDefaults standardUserDefaults] integerForKey: @"startupAction"])
 		{
 			case BXStartUpWithWelcomePanel:
-				[self orderFrontWelcomePanel: self];
+				[self orderFrontWelcomePanelWithFlip: self];
 				break;
 			case BXStartUpWithGamesFolder:
 				[self revealGamesFolder: self];
@@ -244,6 +247,8 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 				break;
 		}
 	}
+	
+	hasFinishedLaunching = YES;
 }
 
 - (void) applicationWillTerminate: (NSNotification *)notification
@@ -475,6 +480,25 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	[[BXWelcomeWindowController controller] showWindow: nil];
 }
 
+- (IBAction) orderFrontWelcomePanelWithFlip: (id)sender
+{
+	[[[self currentSession] DOSWindowController] exitFullScreen: sender];
+	
+	id controller = [BXWelcomeWindowController controller];
+	[controller showWindow: nil];
+	[[controller window] fadeInWithTransition: CGSFlip
+									direction: CGSDown
+									 duration: 0.4
+								 blockingMode: NSAnimationNonblocking];
+}
+
+
+- (IBAction) orderFrontFirstRunPanel: (id)sender
+{
+	[[[self currentSession] DOSWindowController] exitFullScreen: sender];
+	[[BXFirstRunWindowController controller] showWindow: nil];
+}
+
 - (IBAction) hideWelcomePanel: (id)sender
 {
 	[[BXWelcomeWindowController controller] close];
@@ -549,6 +573,9 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (BOOL) validateUserInterfaceItem: (id)theItem
 {	
 	SEL theAction = [theItem action];
+	
+	//Don't allow any actions while a modal window is active
+	if ([NSApp modalWindow]) return NO;
 	
 	//Don't allow the Inspector panel to be shown if there's no active session.
 	if (theAction == @selector(toggleInspectorPanel:)) return [[self currentSession] isEmulating];

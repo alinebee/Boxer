@@ -7,7 +7,7 @@
 
 
 //BXTabbedWindowController manages a window whose primary component is an NSTabView. It resizes
-//its window to accomodate the selected tab and animates transitions between tabs.
+//its window to accomodate the selected tab, and animates transitions between tabs.
 
 #import <Cocoa/Cocoa.h>
 

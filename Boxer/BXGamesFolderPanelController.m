@@ -39,7 +39,7 @@
 	}
 	else
 	{
-		//If no folder yet exists, choose
+		//If no folder yet exists, default to the home directory
 		parentFolderPath = NSHomeDirectory();
 		currentFolderName = nil;
 	}

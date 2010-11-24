@@ -24,6 +24,7 @@ enum {
 {
 	BXSession *currentSession;
 	NSString *gamesFolderPath;
+	BOOL hasFinishedLaunching;
 	
 	NSOperationQueue *generalQueue;
 }
@@ -77,6 +78,9 @@ enum {
 #pragma mark UI actions
 
 - (IBAction) orderFrontWelcomePanel: (id)sender;		//Display the welcome panel.
+//Display the welcome panel with a flip animation (used only at startup).
+- (IBAction) orderFrontWelcomePanelWithFlip: (id)sender;
+- (IBAction) orderFrontFirstRunPanel: (id)sender;		//Display the first-run panel.
 - (IBAction) hideWelcomePanel: (id)sender;				//Close the welcome panel.
 - (IBAction) orderFrontImportGamePanel: (id)sender;		//Display the game import panel.
 

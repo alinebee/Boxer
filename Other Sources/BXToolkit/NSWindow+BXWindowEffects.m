@@ -23,7 +23,13 @@
 				   direction: (CGSTransitionOption)direction
 					duration: (NSTimeInterval)duration
 				withCallback: (SEL)callback
-			  callbackObject: (id)callbackObj;
+			  callbackObject: (id)callbackObj
+				blockingMode: (NSAnimationBlockingMode)blockingMode;
+
+//Takes the float value of the specified number and sets the window's alpha to it.
+//Used for showing/hiding windows during a transition.
+- (void) _setAlphaForTransition: (NSNumber *)alphaValue;
+
 @end
 
 
@@ -45,26 +51,40 @@
 				backgroundOnly: YES];
 }
 
-- (void) orderOutWithTransition: (CGSTransitionType)type
-					  direction: (CGSTransitionOption)direction
-					   duration: (NSTimeInterval)duration
+- (void) fadeInWithTransition: (CGSTransitionType)type
+					direction: (CGSTransitionOption)direction
+					 duration: (NSTimeInterval)duration
+				 blockingMode: (NSAnimationBlockingMode)blockingMode
 {
+	CGFloat oldAlpha = [self alphaValue];
+	[self setAlphaValue: 0.0f];
 	[self _applyCGSTransition: type
 					direction: direction
 					 duration: duration
-				 withCallback: @selector(orderOut:)
-			   callbackObject: self];
+				 withCallback: @selector(_setAlphaForTransition:)
+			   callbackObject: [NSNumber numberWithFloat: oldAlpha]
+				 blockingMode: blockingMode];
 }
 
-- (void) makeKeyAndOrderFrontWithTransition: (CGSTransitionType)type
-								  direction: (CGSTransitionOption)direction
-								   duration: (NSTimeInterval)duration
+- (void) fadeOutWithTransition: (CGSTransitionType)type
+					 direction: (CGSTransitionOption)direction
+					  duration: (NSTimeInterval)duration
+				  blockingMode: (NSAnimationBlockingMode)blockingMode
 {
+	CGFloat oldAlpha = [self alphaValue];
 	[self _applyCGSTransition: type
 					direction: direction
 					 duration: duration
-				 withCallback: @selector(makeKeyAndOrderFront:)
-			   callbackObject: self];
+				 withCallback: @selector(_setAlphaForTransition:)
+			   callbackObject: [NSNumber numberWithFloat: 0.0f]
+				 blockingMode: blockingMode];
+	[self orderOut: self];
+	[self setAlphaValue: oldAlpha];
+}
+
+- (void) _setAlphaForTransition: (NSNumber *)alphaValue
+{
+	[self setAlphaValue: [alphaValue floatValue]];
 }
 
 
@@ -102,12 +122,14 @@
 - (void) applyCGSTransition: (CGSTransitionType)type
 				  direction: (CGSTransitionOption)direction
 				   duration: (NSTimeInterval)duration
+			   blockingMode: (NSAnimationBlockingMode)blockingMode
 {
 	[self _applyCGSTransition: type
 					direction: direction
 					 duration: duration
 				 withCallback: @selector(display)
-			   callbackObject: nil];
+			   callbackObject: nil
+				 blockingMode: blockingMode];
 }
 
 - (void) _applyCGSTransition: (CGSTransitionType)type
@@ -115,6 +137,7 @@
 					duration: (NSTimeInterval)duration
 				withCallback: (SEL)callback
 			  callbackObject: (id)callbackObj
+				blockingMode: (NSAnimationBlockingMode)blockingMode
 {
 	CGSConnection conn = _CGSDefaultConnection();
 	
@@ -130,18 +153,28 @@
 		int handle = 0;
 		
 		CGSNewTransition(conn, &spec, &handle);
+		
+		//Do any redrawing, now that Core Graphics has captured the previous window state.
+		//The transition will switch from the previous window state to this new one.
+		[self performSelector: callback withObject: callbackObj];
+		
 		if (handle)
-		{	
-			//Do any redrawing, now that Core Graphics has captured the previous window state.
-			//The transition will switch from the previous window state to this new one.
-			[self performSelector: callback withObject: callbackObj];
-			
+		{
 			CGSInvokeTransition(conn, handle, (float)duration);
 			
-			//To avoid blocking the thread, call the cleanup function with a delay.
-			[self performSelector: @selector(_releaseTransitionHandle:)
-					   withObject: [NSNumber numberWithInt: handle]
-					   afterDelay: duration];
+			if (blockingMode == NSAnimationBlocking)
+			{
+				[NSThread sleepForTimeInterval: duration];
+				CGSReleaseTransition(conn, handle);
+			}
+			else
+			{
+				//To avoid blocking the thread, call the cleanup function with a delay.
+				[self performSelector: @selector(_releaseTransitionHandle:)
+						   withObject: [NSNumber numberWithInt: handle]
+						   afterDelay: duration];
+			}
+
 		}
 	}
 }

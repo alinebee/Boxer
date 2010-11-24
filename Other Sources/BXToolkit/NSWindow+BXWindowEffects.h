@@ -19,14 +19,16 @@
 - (void) applyGaussianBlurWithRadius: (CGFloat)radius;
 
 //Hide the window by using the specified transition.
-- (void) orderOutWithTransition: (CGSTransitionType)type
-					  direction: (CGSTransitionOption)direction
-					   duration: (NSTimeInterval)duration;
+- (void) fadeOutWithTransition: (CGSTransitionType)type
+					 direction: (CGSTransitionOption)direction
+					  duration: (NSTimeInterval)duration
+				  blockingMode: (NSAnimationBlockingMode)blockingMode;
 
 //Reveal the window by using the specified transition.
-- (void) makeKeyAndOrderFrontWithTransition: (CGSTransitionType)type
-								  direction: (CGSTransitionOption)direction
-								   duration: (NSTimeInterval)duration;
+- (void) fadeInWithTransition: (CGSTransitionType)type
+					direction: (CGSTransitionOption)direction
+					 duration: (NSTimeInterval)duration
+				 blockingMode: (NSAnimationBlockingMode)blockingMode;
 
 
 #pragma mark -
@@ -42,6 +44,7 @@
 //Applies the specified Core Graphics transition to the window.
 - (void) applyCGSTransition: (CGSTransitionType)type
 				  direction: (CGSTransitionOption)direction
-				   duration: (NSTimeInterval)duration;
+				   duration: (NSTimeInterval)duration
+			   blockingMode: (NSAnimationBlockingMode)blockingMode;
 
 @end

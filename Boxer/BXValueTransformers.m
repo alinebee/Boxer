@@ -7,6 +7,7 @@
 
 
 #import "BXValueTransformers.h"
+#import "NSString+BXPaths.h"
 
 #pragma mark -
 #pragma mark Numeric transformers
@@ -290,6 +291,123 @@
 	[self setJoiner: nil],		[joiner release];
 	[self setEllipsis: nil],	[ellipsis release];
 	[super dealloc];
+}
+@end
+
+
+@implementation BXIconifiedDisplayPathTransformer
+@synthesize missingFileIcon, textAttributes, iconAttributes, iconSize, hideSystemRoots;
+
++ (Class) transformedValueClass { return [NSAttributedString class]; }
+
+- (id) initWithJoiner: (NSString *)joinString
+			 ellipsis: (NSString *)ellipsisString
+		maxComponents: (NSUInteger)components
+{
+	if ((self = [super initWithJoiner: joinString ellipsis: ellipsisString maxComponents: components]))
+	{
+		[self setIconSize: NSMakeSize(16.0f, 16.0f)];
+		[self setTextAttributes: [NSMutableDictionary dictionaryWithObjectsAndKeys:
+								  [NSFont systemFontOfSize: 0], NSFontAttributeName,
+								  nil]];
+		
+		[self setIconAttributes: [NSMutableDictionary dictionaryWithObjectsAndKeys:
+								  [NSNumber numberWithFloat: -3.0f], NSBaselineOffsetAttributeName,
+								  nil]];
+	}
+	return self;
+}
+
+- (void) dealloc
+{
+	[self setMissingFileIcon: nil], [missingFileIcon release];
+	[self setTextAttributes: nil], [textAttributes release];
+	[self setIconAttributes: nil], [iconAttributes release];
+	[super dealloc];
+}
+
+- (NSAttributedString *) transformedValue: (NSString *)path
+{
+	
+	NSMutableArray *components = [[path fullPathComponents] mutableCopy];
+	NSUInteger count = [components count];
+	
+	//Bail out early if the path is empty
+	if (!count)
+		return [[[NSAttributedString alloc] init] autorelease];
+	
+
+	NSMutableAttributedString *displayPath = [[NSMutableAttributedString alloc] init];
+	
+	NSAttributedString *attributedJoiner = [[NSAttributedString alloc] initWithString: [self joiner]];
+	
+	if (hideSystemRoots)
+	{
+		[components removeObject: @"/"];
+		[components removeObject: @"/Users"];
+	}
+	
+	if (maxComponents > 0 && count > maxComponents)
+	{
+		[components removeObjectsInRange: NSMakeRange(count - maxComponents, maxComponents)];
+		
+		NSAttributedString *attributedEllipsis = [[NSAttributedString alloc] initWithString: [self ellipsis]];
+		[displayPath appendAttributedString: attributedEllipsis];
+		[attributedEllipsis release];
+	}
+
+	NSFileManager *manager = [NSFileManager defaultManager];
+	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+	
+	NSUInteger componentsAdded = 0;
+	for (NSString *subPath in components)
+	{
+		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+		
+		NSString *displayName;
+		NSImage *icon;
+		
+		if ([manager fileExistsAtPath: subPath])
+		{
+			displayName = [manager displayNameAtPath: subPath];
+			icon = [workspace iconForFile: subPath];
+		}
+		else
+		{
+			displayName = [subPath lastPathComponent];
+			if ([self missingFileIcon])
+				icon = [self missingFileIcon];
+			else
+				//Stick with whatever icon NSWorkspace uses for nonexistent files
+				icon = [workspace iconForFile: subPath];
+		}
+		[icon setSize: [self iconSize]];
+		
+		NSTextAttachment *iconAttachment = [[[NSTextAttachment alloc] init] autorelease];
+		[(NSCell *)[iconAttachment attachmentCell] setImage: icon];
+		
+		NSMutableAttributedString *attributedName	= [[[NSMutableAttributedString alloc] initWithString: [@" " stringByAppendingString: displayName]] autorelease];
+		NSMutableAttributedString *attributedIcon	= [[NSAttributedString attributedStringWithAttachment: iconAttachment] mutableCopy];
+		[attributedIcon addAttributes: [self iconAttributes] range: NSMakeRange(0, [attributedIcon length])];
+		
+													   
+		if (componentsAdded)
+			[displayPath appendAttributedString: attributedJoiner];
+
+		[displayPath appendAttributedString: attributedIcon];
+		[displayPath appendAttributedString: attributedName];
+		
+		[pool release];
+		
+		componentsAdded++;
+	}
+	
+	[displayPath addAttributes: [self textAttributes] range: NSMakeRange(0, [displayPath length])];
+	
+	[attributedJoiner release];
+	[components release];
+	
+	return [displayPath autorelease];
 }
 @end
 

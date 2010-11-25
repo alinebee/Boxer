@@ -17,6 +17,27 @@
 
 @implementation BXAppController (BXGamesFolder)
 
++ (NSArray *) defaultGamesFolderPaths
+{
+	NSArray *paths = nil;
+	if (!paths)
+	{
+		NSString *defaultName = NSLocalizedString(@"DOS Games", @"The default name for the games folder.");
+	
+		NSString *homePath		= NSHomeDirectory();
+		NSString *appPath		= [NSSearchPathForDirectoriesInDomains(NSApplicationDirectory, NSLocalDomainMask, YES) objectAtIndex: 0];
+		//NSString *userAppPath	= [NSSearchPathForDirectoriesInDomains(NSApplicationDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
+		
+		paths = [[NSArray alloc] initWithObjects:
+				 [homePath stringByAppendingPathComponent: defaultName],
+				 [appPath stringByAppendingPathComponent: defaultName],
+				 //[userAppPath stringByAppendingPathComponent: defaultName],
+				 nil];
+	}
+
+	return paths;
+}
+
 + (BOOL) isLeopardFinder
 {	
 	//IMPLEMENTATION NOTE: we used to do this by checking the version of Finder itself;
@@ -231,32 +252,28 @@
 
 - (NSString *) createDefaultGamesFolder
 {
-	NSString *defaultLocation = NSHomeDirectory();
-	
-	NSString *defaultName = NSLocalizedString(@"DOS Games", @"The default name for the games folder.");
-	NSString *folderPath = [defaultLocation stringByAppendingPathComponent: defaultName];
-	
+	NSString *defaultPath = [[[self class] defaultGamesFolderPaths] objectAtIndex: 0];
 	NSFileManager *manager = [NSFileManager defaultManager];
 	
 	//Only create the folder if it doesn't already exist
-	if ([manager fileExistsAtPath: folderPath])
+	if ([manager fileExistsAtPath: defaultPath])
 	{
-		[self setGamesFolderPath: folderPath];
-		return folderPath;
+		[self setGamesFolderPath: defaultPath];
+		return defaultPath;
 	}
 	else
 	{
-		BOOL created = [manager createDirectoryAtPath: folderPath
+		BOOL created = [manager createDirectoryAtPath: defaultPath
 						  withIntermediateDirectories: YES
 										   attributes: nil
 												error: NULL];
 		if (created)
 		{
-			[self applyShelfAppearanceToPath: folderPath switchToShelfMode: YES];
-			[self addSampleGamesToPath: folderPath];
+			[self applyShelfAppearanceToPath: defaultPath switchToShelfMode: YES];
+			[self addSampleGamesToPath: defaultPath];
 			
-			[self setGamesFolderPath: folderPath];
-			return folderPath;
+			[self setGamesFolderPath: defaultPath];
+			return defaultPath;
 		}
 		//TODO: catch and handle error situations more gracefully
 		else return nil;

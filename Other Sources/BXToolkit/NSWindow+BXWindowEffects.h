@@ -19,13 +19,13 @@
 - (void) applyGaussianBlurWithRadius: (CGFloat)radius;
 
 //Hide the window by using the specified transition.
-- (void) fadeOutWithTransition: (CGSTransitionType)type
-					 direction: (CGSTransitionOption)direction
-					  duration: (NSTimeInterval)duration
-				  blockingMode: (NSAnimationBlockingMode)blockingMode;
+- (void) hideWithTransition: (CGSTransitionType)type
+				  direction: (CGSTransitionOption)direction
+				   duration: (NSTimeInterval)duration
+			   blockingMode: (NSAnimationBlockingMode)blockingMode;
 
 //Reveal the window by using the specified transition.
-- (void) fadeInWithTransition: (CGSTransitionType)type
+- (void) revealWithTransition: (CGSTransitionType)type
 					direction: (CGSTransitionOption)direction
 					 duration: (NSTimeInterval)duration
 				 blockingMode: (NSAnimationBlockingMode)blockingMode;

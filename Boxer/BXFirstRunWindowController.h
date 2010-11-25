@@ -32,4 +32,8 @@
 //Display an open panel for choosing the games folder.
 - (IBAction) showGamesFolderChooser: (id)sender;
 
+
+- (void) setChosenGamesFolder: (NSOpenPanel *)openPanel
+				   returnCode: (int)returnCode
+				  contextInfo: (void *)contextInfo;
 @end

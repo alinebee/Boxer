@@ -24,6 +24,9 @@
 //Note that this does no path standardization - you should do this first if needed.
 - (BOOL) isRootedInPath: (NSString *)rootPath;
 
+//Returns an array of full paths for every component in this path.
+- (NSArray *) fullPathComponents;
+
 @end
 
 @interface NSArray (BXPaths)

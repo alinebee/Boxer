@@ -15,21 +15,10 @@
 #pragma mark Implementation
 
 @implementation BXPreferencesController
-@synthesize filterGallery, gamesFolderSelector;
+@synthesize filterGallery, gamesFolderSelector, currentGamesFolderItem;
 
 #pragma mark -
 #pragma mark Initialization and deallocation
-
-+ (void) initialize
-{
-	BXImageSizeTransformer *gamesFolderIconSize	= [[BXImageSizeTransformer alloc] initWithSize: NSMakeSize(16, 16)];
-	BXDisplayPathTransformer *gamesFolderPath	= [[BXDisplayPathTransformer alloc] initWithJoiner: @" ▸ " maxComponents: 2];
-	
-	[NSValueTransformer setValueTransformer: gamesFolderIconSize forName: @"BXGamesFolderIconSize"];
-	[NSValueTransformer setValueTransformer: gamesFolderPath forName: @"BXGamesFolderPath"];
-	[gamesFolderIconSize release];
-	[gamesFolderPath release];
-}
 
 + (BXPreferencesController *) controller
 {
@@ -47,12 +36,22 @@
 											forKeyPath: @"filterType"
 											   options: NSKeyValueObservingOptionInitial
 											   context: nil];
+	
+	//Bind the so that it will prettify the current games folder path
+	[currentGamesFolderItem bind: @"attributedTitle"
+						toObject: [NSApp delegate]
+					 withKeyPath: @"gamesFolderPath"
+						 options: [NSDictionary dictionaryWithObject: @"BXDisplayPathWithIcons" forKey: NSValueTransformerNameBindingOption]];
+
 }
 
 - (void) dealloc
 {
+	[currentGamesFolderItem unbind: @"attributedTitle"];
+	
 	[self setFilterGallery: nil],				[filterGallery release];
 	[self setGamesFolderSelector: nil],			[gamesFolderSelector release];
+	[self setCurrentGamesFolderItem: nil],		[currentGamesFolderItem release];
 	[super dealloc];
 }
 

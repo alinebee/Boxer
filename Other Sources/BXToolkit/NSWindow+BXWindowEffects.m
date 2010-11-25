@@ -51,7 +51,7 @@
 				backgroundOnly: YES];
 }
 
-- (void) fadeInWithTransition: (CGSTransitionType)type
+- (void) revealWithTransition: (CGSTransitionType)type
 					direction: (CGSTransitionOption)direction
 					 duration: (NSTimeInterval)duration
 				 blockingMode: (NSAnimationBlockingMode)blockingMode
@@ -66,10 +66,10 @@
 				 blockingMode: blockingMode];
 }
 
-- (void) fadeOutWithTransition: (CGSTransitionType)type
-					 direction: (CGSTransitionOption)direction
-					  duration: (NSTimeInterval)duration
-				  blockingMode: (NSAnimationBlockingMode)blockingMode
+- (void) hideWithTransition: (CGSTransitionType)type
+				  direction: (CGSTransitionOption)direction
+				   duration: (NSTimeInterval)duration
+			   blockingMode: (NSAnimationBlockingMode)blockingMode
 {
 	CGFloat oldAlpha = [self alphaValue];
 	[self _applyCGSTransition: type

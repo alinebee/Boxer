@@ -139,9 +139,17 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	NSValueTransformer *isNotEmpty	= [[BXArraySizeTransformer alloc] initWithMinSize: 1 maxSize: NSIntegerMax];
 	NSValueTransformer *capitalizer	= [BXCapitalizer new];
 	
+	BXIconifiedDisplayPathTransformer *pathTransformer = [[BXIconifiedDisplayPathTransformer alloc] initWithJoiner: @" ▸ " maxComponents: 0];
+	[pathTransformer setMissingFileIcon: [NSImage imageNamed: @"gamefolder"]];
+	[pathTransformer setHideSystemRoots: YES];
+	NSMutableParagraphStyle *pathStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+	[pathStyle setLineBreakMode: NSLineBreakByClipping];
+	[[pathTransformer textAttributes] setObject: [pathStyle autorelease] forKey: NSParagraphStyleAttributeName];
+	
 	[NSValueTransformer setValueTransformer: [isEmpty autorelease]		forName: @"BXArrayIsEmpty"];
 	[NSValueTransformer setValueTransformer: [isNotEmpty autorelease]	forName: @"BXArrayIsNotEmpty"];	
 	[NSValueTransformer setValueTransformer: [capitalizer autorelease]	forName: @"BXCapitalizedString"];	
+	[NSValueTransformer setValueTransformer: [pathTransformer autorelease] forName: @"BXDisplayPathWithIcons"];
 	
 	//Initialise our Growl notifier instance
 	[GrowlApplicationBridge setGrowlDelegate: [BXGrowlController controller]];
@@ -237,7 +245,9 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 		switch ([[NSUserDefaults standardUserDefaults] integerForKey: @"startupAction"])
 		{
 			case BXStartUpWithWelcomePanel:
-				[self orderFrontWelcomePanelWithFlip: self];
+				//Perform with a delay to allow Dock icon bouncing time to finish,
+				//since Core Graphics flip animation interrupts this otherwise
+				[self performSelector: @selector(orderFrontWelcomePanelWithFlip:) withObject: self afterDelay: 0.33];
 				break;
 			case BXStartUpWithGamesFolder:
 				[self revealGamesFolder: self];
@@ -486,7 +496,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	
 	id controller = [BXWelcomeWindowController controller];
 	[controller showWindow: nil];
-	[[controller window] fadeInWithTransition: CGSFlip
+	[[controller window] revealWithTransition: CGSFlip
 									direction: CGSDown
 									 duration: 0.4
 								 blockingMode: NSAnimationNonblocking];

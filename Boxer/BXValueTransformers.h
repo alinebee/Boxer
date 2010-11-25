@@ -93,6 +93,39 @@
 @end
 
 
+//Converts a POSIX path into a breadcrumb-style representation with file icons
+//for each part of the file path. Unlike BXDisplayPathTransformer, this returns
+//an NSAttributedString rather than an NSString.
+@interface BXIconifiedDisplayPathTransformer: BXDisplayPathTransformer
+{
+	NSImage *missingFileIcon;
+	NSMutableDictionary *textAttributes;
+	NSMutableDictionary *iconAttributes;
+	NSSize iconSize;
+	BOOL hideSystemRoots;
+}
+//The file icon to use for files/folders that don't yet exist.
+//If left as nil, will use NSWorkspace's default icon for missing files.
+@property (copy) NSImage *missingFileIcon;
+
+//The NSAttributedString attributes to apply to the final text.
+//Defaults to the standard system font.
+@property (retain) NSMutableDictionary *textAttributes;
+
+//The NSAttributedString attributes to apply to the icons within the text.
+//Defaults to a baseline offset of -4.0.
+@property (retain) NSMutableDictionary *iconAttributes;
+
+//The pixel size at which to display icons. Defaults to 16x16.
+@property (assign) NSSize iconSize;
+
+//Whether to hide the / and /Users/ subpaths in displayed paths.
+//This imitates the behaviour of NSPathControl et. al.
+@property (assign) BOOL hideSystemRoots;
+
+@end
+
+
 #pragma mark -
 #pragma mark Image transformers
 

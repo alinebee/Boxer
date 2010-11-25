@@ -273,9 +273,9 @@
 															<string key="NSKeyEquivalent"/>
 															<int key="NSPeriodicDelay">400</int>
 															<int key="NSPeriodicInterval">75</int>
-															<object class="NSMenuItem" key="NSMenuItem" id="903444757">
+															<object class="NSMenuItem" key="NSMenuItem" id="811189109">
 																<reference key="NSMenu" ref="626022195"/>
-																<string key="NSTitle">Other…</string>
+																<string key="NSTitle">[Games folder location]</string>
 																<string key="NSKeyEquiv"/>
 																<int key="NSKeyEquivModMask">1048576</int>
 																<int key="NSMnemonicLoc">2147483647</int>
@@ -290,17 +290,7 @@
 																<string key="NSTitle">OtherViews</string>
 																<object class="NSMutableArray" key="NSMenuItems">
 																	<bool key="EncodedWithXMLCoder">YES</bool>
-																	<object class="NSMenuItem" id="811189109">
-																		<reference key="NSMenu" ref="626022195"/>
-																		<string key="NSTitle">[Games folder location]</string>
-																		<string key="NSKeyEquiv"/>
-																		<int key="NSKeyEquivModMask">1048576</int>
-																		<int key="NSMnemonicLoc">2147483647</int>
-																		<reference key="NSOnImage" ref="556359552"/>
-																		<reference key="NSMixedImage" ref="488517721"/>
-																		<string key="NSAction">_popUpItemAction:</string>
-																		<reference key="NSTarget" ref="334780385"/>
-																	</object>
+																	<reference ref="811189109"/>
 																	<object class="NSMenuItem" id="530432072">
 																		<reference key="NSMenu" ref="626022195"/>
 																		<bool key="NSIsDisabled">YES</bool>
@@ -313,11 +303,20 @@
 																		<string key="NSAction">_popUpItemAction:</string>
 																		<reference key="NSTarget" ref="334780385"/>
 																	</object>
-																	<reference ref="903444757"/>
+																	<object class="NSMenuItem" id="903444757">
+																		<reference key="NSMenu" ref="626022195"/>
+																		<string key="NSTitle">Other…</string>
+																		<string key="NSKeyEquiv"/>
+																		<int key="NSKeyEquivModMask">1048576</int>
+																		<int key="NSMnemonicLoc">2147483647</int>
+																		<reference key="NSOnImage" ref="556359552"/>
+																		<reference key="NSMixedImage" ref="488517721"/>
+																		<string key="NSAction">_popUpItemAction:</string>
+																		<reference key="NSTarget" ref="334780385"/>
+																	</object>
 																</object>
 																<reference key="NSMenuFont" ref="467860324"/>
 															</object>
-															<int key="NSSelectedIndex">2</int>
 															<int key="NSPreferredEdge">1</int>
 															<bool key="NSUsesItemFromMenu">YES</bool>
 															<bool key="NSAltersState">YES</bool>
@@ -954,56 +953,6 @@
 					<int key="connectionID">193</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">image: delegate.gamesFolderIcon</string>
-						<reference key="source" ref="811189109"/>
-						<reference key="destination" ref="1004"/>
-						<object class="NSNibBindingConnector" key="connector" id="367041594">
-							<reference key="NSSource" ref="811189109"/>
-							<reference key="NSDestination" ref="1004"/>
-							<string key="NSLabel">image: delegate.gamesFolderIcon</string>
-							<string key="NSBinding">image</string>
-							<string key="NSKeyPath">delegate.gamesFolderIcon</string>
-							<object class="NSDictionary" key="NSOptions">
-								<string key="NS.key.0">NSValueTransformerName</string>
-								<string key="NS.object.0">BXGamesFolderIconSize</string>
-							</object>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">214</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">title: delegate.gamesFolderPath</string>
-						<reference key="source" ref="811189109"/>
-						<reference key="destination" ref="1004"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="811189109"/>
-							<reference key="NSDestination" ref="1004"/>
-							<string key="NSLabel">title: delegate.gamesFolderPath</string>
-							<string key="NSBinding">title</string>
-							<string key="NSKeyPath">delegate.gamesFolderPath</string>
-							<object class="NSDictionary" key="NSOptions">
-								<bool key="EncodedWithXMLCoder">YES</bool>
-								<object class="NSArray" key="dict.sortedKeys">
-									<bool key="EncodedWithXMLCoder">YES</bool>
-									<string>NSNullPlaceholder</string>
-									<string>NSValueTransformerName</string>
-								</object>
-								<object class="NSMutableArray" key="dict.values">
-									<bool key="EncodedWithXMLCoder">YES</bool>
-									<string>(No location chosen)</string>
-									<string>BXGamesFolderPath</string>
-								</object>
-							</object>
-							<reference key="NSPreviousConnector" ref="367041594"/>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">216</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">nextKeyView</string>
 						<reference key="source" ref="846667841"/>
@@ -1102,6 +1051,14 @@
 						<reference key="destination" ref="903444757"/>
 					</object>
 					<int key="connectionID">248</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">currentGamesFolderItem</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="811189109"/>
+					</object>
+					<int key="connectionID">253</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1664,9 +1621,9 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{141, 165}, {532, 396}}</string>
+					<string>{{295, 92}, {532, 396}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{141, 165}, {532, 396}}</string>
+					<string>{{295, 92}, {532, 396}}</string>
 					<boolean value="NO"/>
 					<string>{196, 240}</string>
 					<string>{{357, 418}, {480, 270}}</string>
@@ -1688,7 +1645,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{344, 296}, {261, 53}}</string>
+					<string>{{498, 223}, {261, 53}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -1768,7 +1725,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">248</int>
+			<int key="maxID">253</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -1811,11 +1768,13 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>currentGamesFolderItem</string>
 							<string>filterGallery</string>
 							<string>gamesFolderSelector</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSMenuItem</string>
 							<string>BXFilterGallery</string>
 							<string>NSPopUpButton</string>
 						</object>

@@ -44,6 +44,10 @@
 //Used for tailoring shelf appearance.
 + (BOOL) isLeopardFinder;
 
+//Returns an array of suggested default paths for the games folder location
+//(which may or may not already exist) for selection when Boxer is first launched.
+//The first of these will be used by createDefaultGamesFolder.
++ (NSArray *) defaultGamesFolderPaths;
 
 #pragma mark -
 #pragma mark Games folder handling

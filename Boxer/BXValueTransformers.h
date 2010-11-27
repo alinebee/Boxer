@@ -123,6 +123,11 @@
 //This imitates the behaviour of NSPathControl et. al.
 @property (assign) BOOL hideSystemRoots;
 
+//Returns an icon-and-label attributed string for the specified path.
+//defaultIcon specifies the icon to use if the path does not exist.
+- (NSAttributedString *) componentForPath: (NSString *)path
+						  withDefaultIcon: (NSImage *)defaultIcon;
+
 @end
 
 

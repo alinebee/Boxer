@@ -326,9 +326,49 @@
 	[super dealloc];
 }
 
+- (NSAttributedString *) componentForPath: (NSString *)path
+						  withDefaultIcon: (NSImage *)defaultIcon
+{
+	NSString *displayName;
+	NSImage *icon;
+
+	NSFileManager *manager = [NSFileManager defaultManager];
+	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+		
+	//Determine the display name and file icon, falling back on sensible defaults if the path doesn't yet exist
+	if ([manager fileExistsAtPath: path])
+	{
+		displayName = [manager displayNameAtPath: path];
+		icon = [workspace iconForFile: path];
+	}
+	else
+	{
+		displayName = [path lastPathComponent];
+		//Fall back on whatever icon NSWorkspace uses for nonexistent files, if no default icon was specified
+		icon = (defaultIcon) ? defaultIcon : [workspace iconForFile: path];
+	}
+	
+	[icon setSize: [self iconSize]];
+	
+	NSTextAttachment *iconAttachment = [[NSTextAttachment alloc] init];
+	[(NSCell *)[iconAttachment attachmentCell] setImage: icon];
+	
+	NSMutableAttributedString *component = [[NSAttributedString attributedStringWithAttachment: iconAttachment] mutableCopy];
+	[component addAttributes: [self iconAttributes] range: NSMakeRange(0, [component length])];
+	
+	NSAttributedString *label = [[NSAttributedString alloc] initWithString: [@" " stringByAppendingString: displayName]
+																attributes: [self textAttributes]];
+	
+	[component appendAttributedString: label];
+	
+	[iconAttachment release];
+	[label release];
+	
+	return [component autorelease];
+}
+
 - (NSAttributedString *) transformedValue: (NSString *)path
 {
-	
 	NSMutableArray *components = [[path fullPathComponents] mutableCopy];
 	NSUInteger count = [components count];
 	
@@ -336,73 +376,41 @@
 	if (!count)
 		return [[[NSAttributedString alloc] init] autorelease];
 	
-
-	NSMutableAttributedString *displayPath = [[NSMutableAttributedString alloc] init];
-	
-	NSAttributedString *attributedJoiner = [[NSAttributedString alloc] initWithString: [self joiner]];
-	
+	//Hide common system root directories
 	if (hideSystemRoots)
 	{
 		[components removeObject: @"/"];
 		[components removeObject: @"/Users"];
 	}
 	
+	NSMutableAttributedString *displayPath = [[NSMutableAttributedString alloc] init];
+	NSAttributedString *attributedJoiner = [[NSAttributedString alloc] initWithString: [self joiner] attributes: [self textAttributes]];
+	
+	//Truncate the path with ellipses if there are too many components
 	if (maxComponents > 0 && count > maxComponents)
 	{
-		[components removeObjectsInRange: NSMakeRange(count - maxComponents, maxComponents)];
+		[components removeObjectsInRange: NSMakeRange(0, count - maxComponents)];
 		
-		NSAttributedString *attributedEllipsis = [[NSAttributedString alloc] initWithString: [self ellipsis]];
+		NSAttributedString *attributedEllipsis = [[NSAttributedString alloc] initWithString: [self ellipsis] attributes: [self textAttributes]];
 		[displayPath appendAttributedString: attributedEllipsis];
 		[attributedEllipsis release];
 	}
 
-	NSFileManager *manager = [NSFileManager defaultManager];
-	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	
 	NSUInteger componentsAdded = 0;
 	for (NSString *subPath in components)
 	{
 		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 		
-		NSString *displayName;
-		NSImage *icon;
-		
-		if ([manager fileExistsAtPath: subPath])
-		{
-			displayName = [manager displayNameAtPath: subPath];
-			icon = [workspace iconForFile: subPath];
-		}
-		else
-		{
-			displayName = [subPath lastPathComponent];
-			if ([self missingFileIcon])
-				icon = [self missingFileIcon];
-			else
-				//Stick with whatever icon NSWorkspace uses for nonexistent files
-				icon = [workspace iconForFile: subPath];
-		}
-		[icon setSize: [self iconSize]];
-		
-		NSTextAttachment *iconAttachment = [[[NSTextAttachment alloc] init] autorelease];
-		[(NSCell *)[iconAttachment attachmentCell] setImage: icon];
-		
-		NSMutableAttributedString *attributedName	= [[[NSMutableAttributedString alloc] initWithString: [@" " stringByAppendingString: displayName]] autorelease];
-		NSMutableAttributedString *attributedIcon	= [[NSAttributedString attributedStringWithAttachment: iconAttachment] mutableCopy];
-		[attributedIcon addAttributes: [self iconAttributes] range: NSMakeRange(0, [attributedIcon length])];
-		
-													   
 		if (componentsAdded)
 			[displayPath appendAttributedString: attributedJoiner];
 
-		[displayPath appendAttributedString: attributedIcon];
-		[displayPath appendAttributedString: attributedName];
-		
-		[pool release];
+		NSAttributedString *componentString = [self componentForPath: subPath withDefaultIcon: [self missingFileIcon]];
+		[displayPath appendAttributedString: componentString];
 		
 		componentsAdded++;
+		
+		[pool release];
 	}
-	
-	[displayPath addAttributes: [self textAttributes] range: NSMakeRange(0, [displayPath length])];
 	
 	[attributedJoiner release];
 	[components release];

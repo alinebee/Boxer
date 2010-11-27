@@ -214,8 +214,10 @@
 	{
 		NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
 		
-		if (button == [self importGameButton])		[self _importFilePaths: filePaths];
-		else if (button == [self openPromptButton]) [self _openFilePaths: filePaths];
+		if (button == [self importGameButton])
+			[self _importFilePaths: filePaths];
+		else if (button == [self openPromptButton])
+			[self _openFilePaths: filePaths];
 		
 		return YES;
 	}

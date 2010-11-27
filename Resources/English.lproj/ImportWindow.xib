@@ -8,6 +8,7 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
+			<integer value="125"/>
 			<integer value="3"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
@@ -555,7 +556,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 				<string key="NSFrameSize">{480, 320}</string>
 			</object>
 			<object class="NSView" id="832643188">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">274</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -663,7 +664,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 							<object class="NSTextField" id="294027108">
 								<reference key="NSNextResponder" ref="99871927"/>
 								<int key="NSvFlags">269</int>
-								<string key="NSFrame">{{139, 36}, {202, 22}}</string>
+								<string key="NSFrame">{{148, 36}, {184, 22}}</string>
 								<reference key="NSSuperview" ref="99871927"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="425752202">
@@ -775,6 +776,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{480, 320}</string>
+				<reference key="NSSuperview"/>
 			</object>
 			<object class="NSMenu" id="921553869">
 				<string key="NSTitle"/>

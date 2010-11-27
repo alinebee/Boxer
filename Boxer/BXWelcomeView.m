@@ -57,7 +57,7 @@
 
 - (void) draggingExited: (id <NSDraggingInfo>)sender
 {
-	return [[self draggingDelegate] button: self draggingExited: sender];
+	[[self draggingDelegate] button: self draggingExited: sender];
 }
 
 - (BOOL) performDragOperation: (id <NSDraggingInfo>)sender

@@ -264,25 +264,30 @@
 	
 	//If NSFileManager couldn't derive display names for this path,
 	//or we disabled filesystem display paths, just use ordinary path components
-	if (!components) components = [path pathComponents];
-
+	if (!components)
+	{
+		//Fix for 10.5 leaving in / when breaking up "C:/DOSPATH"
+		components = [[path pathComponents] filteredArrayUsingPredicate: [NSPredicate predicateWithFormat: @"SELF != '/'"]];
+	}
 	return components;
 }
 
 - (NSString *) transformedValue: (NSString *)path
 {
-	NSArray *components = [self _componentsForPath: path];
+	NSMutableArray *components = [[self _componentsForPath: path] mutableCopy];
 	NSUInteger count = [components count];
 	BOOL shortened = NO;
-	
+
 	if (maxComponents > 0 && count > maxComponents)
 	{
-		components = [components subarrayWithRange: NSMakeRange(count - maxComponents, maxComponents)];
+		[components removeObjectsInRange: NSMakeRange(0, count - maxComponents)];
 		shortened = YES;
 	}
 	
 	NSString *displayPath = [components componentsJoinedByString: [self joiner]];
 	if (shortened && [self ellipsis]) displayPath = [[self ellipsis] stringByAppendingString: displayPath];
+	
+	[components release];
 	return displayPath;
 }
 
@@ -372,10 +377,9 @@
 - (NSAttributedString *) transformedValue: (NSString *)path
 {
 	NSMutableArray *components = [[path fullPathComponents] mutableCopy];
-	NSUInteger count = [components count];
 	
 	//Bail out early if the path is empty
-	if (!count)
+	if (![components count])
 		return [[[NSAttributedString alloc] init] autorelease];
 	
 	//Hide common system root directories
@@ -389,6 +393,7 @@
 	NSAttributedString *attributedJoiner = [[NSAttributedString alloc] initWithString: [self joiner] attributes: [self textAttributes]];
 	
 	//Truncate the path with ellipses if there are too many components
+	NSUInteger count = [components count];
 	if (maxComponents > 0 && count > maxComponents)
 	{
 		[components removeObjectsInRange: NSMakeRange(0, count - maxComponents)];

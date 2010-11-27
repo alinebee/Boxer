@@ -602,7 +602,9 @@
 		if (showDriveNotifications) [[BXGrowlController controller] notifyDriveMounted: drive];
 		
 		//Determine what executables are stored on this drive, if it's public
-		if (![drive isHidden])
+		//Tweak: only do this if we're running a gamebox, since launchable executables
+		//are not displayed for non-gamebox sessions.
+		if ([self isGamePackage] && ![drive isHidden])
 		{
 			NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 			NSMutableArray *foundExecutables = [NSMutableArray arrayWithCapacity: 10];

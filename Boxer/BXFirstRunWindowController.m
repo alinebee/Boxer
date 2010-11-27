@@ -89,7 +89,6 @@ enum {
 
 - (void) showWindow: (id)sender
 {
-	[super showWindow: sender];
 	[[self window] revealWithTransition: CGSFlip
 							  direction: CGSUp
 							   duration: 0.5
@@ -97,16 +96,10 @@ enum {
 	[NSApp runModalForWindow: [self window]];
 }
 
-- (BOOL) windowShouldClose: (id)sender
+- (void) windowWillClose: (NSNotification *)notification
 {
-	//When the user clicks the close button, shut down the application instead:
-	//We don't want them to proceed without having chosen a games folder first
-	//TODO: should we leave this up to the application delegate?
-	[NSApp stopModal];
-	[NSApp terminate: self];
-	return YES;
+	if ([NSApp modalWindow] == [self window]) [NSApp stopModal];
 }
-
 
 - (IBAction) makeGamesFolder: (id)sender
 {
@@ -148,11 +141,12 @@ enum {
 	
 	[controller setGamesFolderPath: path];
 	
-	[NSApp stopModal];
 	[[self window] hideWithTransition: CGSFlip
 							direction: CGSDown
 							 duration: 0.5
 						 blockingMode: NSAnimationBlocking];
+	
+	[[self window] close];
 }
 
 - (IBAction) showGamesFolderChooser: (id)sender

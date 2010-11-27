@@ -104,7 +104,8 @@ enum {
 
 
 //Reveal the specified path (or its parent folder, in the case of files) in a new Finder window.
-- (void) revealPath: (NSString *)filePath;
+//Returns NO if the file at the path did not exist or could not be opened, YES otherwise.
+- (BOOL) revealPath: (NSString *)filePath;
 
 //Open the specified URL from the specified Info.plist key. Used internally by UI actions.
 - (void) openURLFromKey:(NSString *)infoKey;

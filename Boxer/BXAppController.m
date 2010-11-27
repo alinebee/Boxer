@@ -221,12 +221,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 - (void) applicationDidFinishLaunching: (NSNotification *)notification
 {
-	//If the user has not chosen a games folder yet, then shown them the first-run panel
-	if (![self gamesFolderPath] && ![[NSUserDefaults standardUserDefaults] dataForKey: @"gamesFolder"])
-	{
-		[self orderFrontFirstRunPanel: self];
-	}
-
 	NSArray *arguments = [[NSProcessInfo processInfo] arguments];
 	
 	if ([arguments containsObject: BXNewSessionParam])
@@ -242,12 +236,24 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	//then display the chosen startup window
 	if (![NSApp isHidden] && ![[self documents] count])
 	{
+		BOOL hasDelayed = NO;
+		
+		//If the user has not chosen a games folder yet, then show them the first-run panel
+		//(This is modal, so execution will not continue until the panel is dismissed.)
+		if (![self gamesFolderChosen])
+		{
+			//Perform with a delay to give the Dock icon bouncing time to finish,
+			//since the Core Graphics flip animation interrupts this otherwise.
+			[NSThread sleepForTimeInterval: 0.33];
+			hasDelayed = YES;
+			[self orderFrontFirstRunPanel: self];
+		}
+				
 		switch ([[NSUserDefaults standardUserDefaults] integerForKey: @"startupAction"])
 		{
 			case BXStartUpWithWelcomePanel:
-				//Perform with a delay to allow Dock icon bouncing time to finish,
-				//since Core Graphics flip animation interrupts this otherwise
-				[self performSelector: @selector(orderFrontWelcomePanelWithFlip:) withObject: self afterDelay: 0.33];
+				if (!hasDelayed) [NSThread sleepForTimeInterval: 0.33];
+				[self orderFrontWelcomePanelWithFlip: self];
 				break;
 			case BXStartUpWithGamesFolder:
 				[self revealGamesFolder: self];
@@ -273,7 +279,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	//Tell any operations in our queue to cancel themselves
 	[generalQueue cancelAllOperations];
 	[generalQueue waitUntilAllOperationsAreFinished];
-	
 }
 
 
@@ -494,24 +499,28 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 {
 	[[[self currentSession] DOSWindowController] exitFullScreen: sender];
 	
+	//This eschews controller showWindow: as this can cause a momentary flickr before the window is 're-hidden'.
 	id controller = [BXWelcomeWindowController controller];
-	[controller showWindow: nil];
 	[[controller window] revealWithTransition: CGSFlip
 									direction: CGSDown
 									 duration: 0.4
 								 blockingMode: NSAnimationNonblocking];
+	[[controller window] makeKeyWindow];
 }
 
 
 - (IBAction) orderFrontFirstRunPanel: (id)sender
 {
+	//The welcome panel and first-run panel are mutually exclusive.
+	[self hideWelcomePanel: self];
+	
 	[[[self currentSession] DOSWindowController] exitFullScreen: sender];
 	[[BXFirstRunWindowController controller] showWindow: nil];
 }
 
 - (IBAction) hideWelcomePanel: (id)sender
 {
-	[[BXWelcomeWindowController controller] close];
+	[[[BXWelcomeWindowController controller] window] orderOut: self];
 }
 
 - (IBAction) orderFrontImportGamePanel: (id)sender
@@ -584,7 +593,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 {	
 	SEL theAction = [theItem action];
 	
-	//Don't allow any actions while a modal window is active
+	//Don't allow any actions while a modal window is active.
 	if ([NSApp modalWindow]) return NO;
 	
 	//Don't allow the Inspector panel to be shown if there's no active session.
@@ -655,16 +664,22 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 //Displays a file path in Finder. This will display the containing folder of files,
 //but will display folders in their own window (so that the DOS Games folder's special appearance is retained.)
-- (void) revealPath: (NSString *)filePath
+- (BOOL) revealPath: (NSString *)filePath
 {
 	NSWorkspace *ws = [NSWorkspace sharedWorkspace];
 	NSFileManager *manager = [NSFileManager defaultManager];
 	
 	BOOL isFolder = NO;
-	if (![manager fileExistsAtPath: filePath isDirectory: &isFolder]) return;
+	if (![manager fileExistsAtPath: filePath isDirectory: &isFolder]) return NO;
 	
-	if (isFolder && ![ws isFilePackageAtPath: filePath]) [ws openFile: filePath];
-	else [ws selectFile: filePath inFileViewerRootedAtPath: [filePath stringByDeletingLastPathComponent]];
+	if (isFolder && ![ws isFilePackageAtPath: filePath])
+	{
+		return [ws openFile: filePath];
+	}
+	else
+	{
+		return [ws selectFile: filePath inFileViewerRootedAtPath: [filePath stringByDeletingLastPathComponent]];
+	}
 }
 
 

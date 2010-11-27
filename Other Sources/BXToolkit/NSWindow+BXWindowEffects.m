@@ -58,6 +58,7 @@
 {
 	CGFloat oldAlpha = [self alphaValue];
 	[self setAlphaValue: 0.0f];
+	[self orderFront: self];
 	[self _applyCGSTransition: type
 					direction: direction
 					 duration: duration

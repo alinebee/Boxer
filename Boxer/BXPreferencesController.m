@@ -37,11 +37,14 @@
 											   options: NSKeyValueObservingOptionInitial
 											   context: nil];
 	
-	//Bind the so that it will prettify the current games folder path
+	//Bind the attributed title so that it will prettify the current games folder path
+	NSDictionary *bindingOptions = [NSDictionary dictionaryWithObjectsAndKeys:
+									@"BXDisplayPathWithIcons", NSValueTransformerNameBindingOption,
+									nil];
 	[currentGamesFolderItem bind: @"attributedTitle"
 						toObject: [NSApp delegate]
 					 withKeyPath: @"gamesFolderPath"
-						 options: [NSDictionary dictionaryWithObject: @"BXDisplayPathWithIcons" forKey: NSValueTransformerNameBindingOption]];
+						 options: bindingOptions];
 
 }
 

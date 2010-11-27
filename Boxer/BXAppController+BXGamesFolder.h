@@ -37,6 +37,11 @@
 //The value for this property is persisted in user defaults.
 @property (assign, nonatomic) BOOL appliesShelfAppearanceToGamesFolder;
 
+//Returns whether we have a games folder preference.
+//This does not check if the folder actually exists.
+@property (readonly, nonatomic) BOOL gamesFolderChosen;
+
+
 #pragma mark -
 #pragma mark Helper class methods
 
@@ -76,8 +81,7 @@
 
 //Display a prompt telling the user their games folder cannot be found, and giving them
 //options to create a new one or cancel. Used by revealGamesFolder and elsewhere.
-//Returns YES if a missing games folder was created, NO otherwise.
-- (BOOL) promptForMissingGamesFolder;
+- (void) promptForMissingGamesFolderInWindow: (NSWindow *)window;
 @end
 
 

@@ -15,6 +15,21 @@
 #import "BXGamesFolderPanelController.h"
 
 
+#pragma mark -
+#pragma mark Private method declarations
+
+@interface BXAppController ()
+
+//Callback for the 'we-couldnt-find-your-games-folder sheet.
+- (void) _gamesFolderPromptDidEnd: (NSAlert *)alert
+					   returnCode: (NSInteger)returnCode
+						   window: (NSWindow *)window;
+
+@end
+
+
+
+
 @implementation BXAppController (BXGamesFolder)
 
 + (NSArray *) defaultGamesFolderPaths
@@ -50,6 +65,18 @@
 	
 	return versionMajor == 10 && versionMinor < 6;
 }
+
+
++ (NSSet *) keyPathsForValuesAffectingGamesFolderChosen
+{
+	return [NSSet setWithObject: @"gamesFolderPath"];
+}
+
+- (BOOL) gamesFolderChosen
+{
+	return [[NSUserDefaults standardUserDefaults] dataForKey: @"gamesFolder"] != nil;
+}
+
 
 - (NSString *) gamesFolderPath
 {
@@ -99,12 +126,16 @@
 		[gamesFolderPath release];
 		gamesFolderPath = [newPath copy];
 		
-		//Store the new path in the preferences as an alias, so that users can move it around.
-		NDAlias *alias = [NDAlias aliasWithPath: newPath];
-		[[NSUserDefaults standardUserDefaults] setObject: [alias data] forKey: @"gamesFolder"];
-		
-		//Finally, check that the new folder has an up-to-date importer droplet in it.
-		[self checkForImporterDroplet];
+		if (newPath)
+		{
+			//Store the new path in the preferences as an alias, so that users can move it around.
+			NDAlias *alias = [NDAlias aliasWithPath: newPath];
+			[[NSUserDefaults standardUserDefaults] setObject: [alias data] forKey: @"gamesFolder"];
+			
+			//Finally, check that the new folder has an up-to-date importer droplet in it.
+			//TODO: we should check this elsewhere higher up.
+			[self checkForImporterDroplet];
+		}
 	}
 }
 
@@ -281,7 +312,7 @@
 }
 
 
-- (BOOL) promptForMissingGamesFolder
+- (void) promptForMissingGamesFolderInWindow: (NSWindow *)window
 {
 	NSAlert *alert = [[NSAlert alloc] init];
 	[alert setMessageText: NSLocalizedString(@"Boxer can no longer find your games folder.",
@@ -290,30 +321,43 @@
 	[alert setInformativeText: NSLocalizedString(@"Make sure the disk containing your games folder is connected.",
 												 @"Explanatory text shown in alert when Boxer cannot find the user’s games folder at startup.")];
 	
-	[alert addButtonWithTitle: NSLocalizedString(@"Choose folder…",
+	[alert addButtonWithTitle: NSLocalizedString(@"Locate folder…",
 												 @"Button to display a file open panel to choose a new location for the games folder.")];
 	
-	[alert addButtonWithTitle: NSLocalizedString(@"Create folder",
+	[alert addButtonWithTitle: NSLocalizedString(@"Create folder…",
 												 @"Button to automatically create a new games folder in the default location.")];
 	
 	[[alert addButtonWithTitle: NSLocalizedString(@"Cancel",
 												  @"Button to cancel without making a new games folder.")] setKeyEquivalent: @"\e"];
 	
-	NSInteger returnCode = [alert runModal];
-	BXGamesFolderPanelController *chooser;
-	
+	if (window)
+	{
+		[alert beginSheetModalForWindow: window
+						  modalDelegate: self
+						 didEndSelector: @selector(_gamesFolderPromptDidEnd:returnCode:window:)
+							contextInfo: window];
+	}
+	else
+	{
+		NSInteger returnCode = [alert runModal];
+		[self _gamesFolderPromptDidEnd: alert returnCode: returnCode window: nil];
+	}
+}
+
+- (void) _gamesFolderPromptDidEnd: (NSAlert *)alert
+					   returnCode: (NSInteger)returnCode
+						   window: (NSWindow *)window
+{
+	[[alert window] close];
 	switch(returnCode)
 	{
 		case NSAlertFirstButtonReturn:
-			chooser = [BXGamesFolderPanelController controller];
-			[chooser showGamesFolderPanelForWindow: nil];
-			return [self gamesFolderPath] != nil;
+			[[BXGamesFolderPanelController controller] showGamesFolderPanelForWindow: window];
 			break;
 		case NSAlertSecondButtonReturn:
-			return [self createDefaultGamesFolder] != nil;
-			break;
-		case NSAlertThirdButtonReturn:
-			return NO;
+			//This will run modally, after which we can reveal the games folder it has made
+			[self orderFrontFirstRunPanel: self];
+			if ([self gamesFolderPath]) [self revealGamesFolder: self];
 			break;
 	}
 }
@@ -343,10 +387,14 @@
 - (IBAction) revealGamesFolder: (id)sender
 {
 	NSString *path = [self gamesFolderPath];
+	BOOL revealed = NO;
+	
 	if (path)
 	{
 		//If the sender is a button with an image, animate the opening from the button
-		if ([sender respondsToSelector: @selector(cell)] && [[sender cell] image])
+		//Disabled for now because this does not function in OS X 10.6 and I don't want
+		//to introduce bugs in other versions prior to proper testing.
+		if (NO && [sender respondsToSelector: @selector(cell)] && [[sender cell] image])
 		{
 			NSRect imageRect = [[sender cell] imageRectForBounds: [sender bounds]];
 			
@@ -354,16 +402,19 @@
 			//NOTE: the intended animation does not play, so this currently acts as if
 			//NSWorkspace openFile: was called. It's unclear if this is being called
 			//wrongly or if the documented behaviour is simply unimplemented.
-			[ws openFile: path
-			   fromImage: [[sender cell] image]
-					  at: imageRect.origin
-				  inView: sender];
+			revealed = [ws openFile: path
+						  fromImage: [[sender cell] image]
+								 at: imageRect.origin
+							 inView: sender];
 		}
 		else
 		{
-			[self revealPath: path];
+			revealed = [self revealPath: path];
 		}
-		
+	}
+	
+	if (revealed)
+	{
 		//Each time after we open the game folder, reapply the shelf appearance.
 		//We do this because Finder can sometimes 'lose' the appearance.
 		//IMPLEMENTATION NOTE: we now do this after the folder has opened,
@@ -374,14 +425,22 @@
 		}
 		
 		//Also check that there's an up-to-date game importer droplet in the folder.
-		[self checkForImporterDroplet];
+		[self checkForImporterDroplet];			
+	}
+
+	else if (![self gamesFolderChosen])
+	{
+		//If the user hasn't chosen a games folder location yet, then show them
+		//the first-run panel to choose one.
+		[self orderFrontFirstRunPanel: self];
+		[self revealGamesFolder: self];
 	}
 	else
 	{
-		//If we have no games folder, prompt the user that it's missing
-		//and then retry opening, if appropriate.
-		BOOL retry = [self promptForMissingGamesFolder];
-		if (retry) [self revealGamesFolder: self];
+		//If we do have a games folder path but can't open it, then it was probably
+		//deleted behind our backs, so prompt the user to relocate it.
+		NSWindow *window = [sender respondsToSelector: @selector(window)] ? [sender window] : nil;
+		[self promptForMissingGamesFolderInWindow: window];
 	}
 }
 @end

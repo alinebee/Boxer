@@ -115,7 +115,7 @@
 	
 	NSString *itemPath	= [document objectForKey: @"path"];
 	NSString *itemTitle	= [manager displayNameAtPath: itemPath];
-	NSImage *itemIcon	= [document objectForKey: @"icon"];
+	NSImage *itemIcon	= [[[document objectForKey: @"icon"] copy] autorelease];
 	
 	NSMenuItem *newItem = [menu	addItemWithTitle: itemTitle
 								action: itemAction
@@ -125,7 +125,7 @@
 
 	[itemIcon setSize: iconSize];
 	[newItem setImage: itemIcon];
-	
+
 	return newItem;
 }
 

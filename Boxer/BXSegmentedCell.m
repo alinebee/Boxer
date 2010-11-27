@@ -200,7 +200,8 @@
 	
 	if([super imageForSegment: segment] != nil) {
 		
-		NSImage *image = [self imageForSegment: segment];
+		//Copy the image since we will be modifying its size and/or tinting it
+		NSImage *image = [[[self imageForSegment: segment] copy] autorelease];
 		
 		[image setFlipped: YES];
 		
@@ -211,24 +212,20 @@
 			
 			NSSize newSize = NSMakeSize([image size].width * resizeRatio, newHeight);
 			
-			//[image setScalesWhenResized: YES];
 			[image setSize: newSize];
 		}
 		
 		if ([image isTemplate])
 		{
 			NSColor *tint = [NSColor whiteColor];
-			NSImage *tintedImage = [image copy];
 			
 			NSRect bounds = NSZeroRect;
-			bounds.size = [tintedImage size];   
+			bounds.size = [image size];   
 			
-			[tintedImage lockFocus];
+			[image lockFocus];
 			[tint set];
 			NSRectFillUsingOperation(bounds, NSCompositeSourceAtop);
-			[tintedImage unlockFocus];
-			
-			image = [tintedImage autorelease];
+			[image unlockFocus];
 		}
 		
 		if([self labelForSegment: segment] != nil && ![[self labelForSegment: segment] isEqualToString: @""]) {

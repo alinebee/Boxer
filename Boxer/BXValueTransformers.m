@@ -348,6 +348,7 @@
 		icon = (defaultIcon) ? defaultIcon : [workspace iconForFile: path];
 	}
 	
+	icon = [icon copy];
 	[icon setSize: [self iconSize]];
 	
 	NSTextAttachment *iconAttachment = [[NSTextAttachment alloc] init];
@@ -361,6 +362,7 @@
 	
 	[component appendAttributedString: label];
 	
+	[icon release];
 	[iconAttachment release];
 	[label release];
 	

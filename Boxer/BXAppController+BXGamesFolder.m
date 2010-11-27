@@ -13,6 +13,7 @@
 #import "NSWorkspace+BXIcons.h"
 #import "BXPathEnumerator.h"
 #import "BXGamesFolderPanelController.h"
+#import "BXCoverArt.h"
 
 
 #pragma mark -
@@ -491,8 +492,21 @@
 			[manager setAttributes: attrs ofItemAtPath: gameDestination error: NULL];
 			
 			NSString *gameName = [[gamePath lastPathComponent] stringByDeletingPathExtension];
-			NSImage *iconForGame = [NSImage imageNamed: gameName];
-			if (iconForGame) [workspace setIcon: iconForGame forFile: gameDestination options: 0];
+			NSString *iconPath = [[NSBundle mainBundle] pathForResource: gameName
+																 ofType: @"jpg"
+															inDirectory: @"Sample Game Icons"];
+			
+			//Generate a cover art image from this icon (cheaper than storing a full icns file)
+			if (iconPath)
+			{
+				NSImage *image = [[NSImage alloc] initWithContentsOfFile: iconPath];
+				if (image)
+				{
+					NSImage *iconForGame = [BXCoverArt coverArtWithImage: image];
+					[workspace setIcon: iconForGame forFile: gameDestination options: 0];
+				}
+				[image release];
+			}
 		}
 	}	
 }

@@ -115,7 +115,7 @@
 		[item setAction: @selector(openRecentDocument:)];
 		
 		NSString *path	= [url path];
-		NSImage *icon	= [workspace iconForFile: path];
+		NSImage *icon	= [[workspace iconForFile: path] copy];
 		NSString *title	= [manager displayNameAtPath: path];
 		
 		[icon setSize: NSMakeSize(16, 16)];
@@ -124,6 +124,7 @@
 		
 		[menu insertItem: item atIndex: insertionPoint++];
 		
+		[icon release];
 		[item release];
 		[pool drain];
 	}

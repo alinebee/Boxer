@@ -45,9 +45,9 @@
 
 + (NSImage *) shineForSize: (NSSize) iconSize
 { 
-	NSImage *shine = [NSImage imageNamed: @"BoxArtShine"];
+	NSImage *shine = [[NSImage imageNamed: @"BoxArtShine"] copy];
 	[shine setSize: iconSize];
-	return shine;
+	return [shine autorelease];
 }
 
 - (id) initWithSourceImage: (NSImage *)image
@@ -61,6 +61,11 @@
 
 - (void) drawInRect: (NSRect)frame
 {
+	//Switch to high-quality interpolation before we begin, and restore it once we're done
+	//(this is not stored by saveGraphicsState/restoreGraphicsState unfortunately)
+	NSImageInterpolation oldInterpolation = [[NSGraphicsContext currentContext] imageInterpolation];
+	[[NSGraphicsContext currentContext] setImageInterpolation: NSImageInterpolationHigh];
+	
 	NSSize iconSize	= frame.size;
 	NSImage *image	= [self sourceImage];	
 	
@@ -86,7 +91,7 @@
 	);
 	//Round the rect up to integral values, to avoid blurry subpixel lines
 	artFrame = NSIntegralRect(artFrame);
-
+	
 	//Draw the original image into the appropriate space in the canvas, with our drop shadow
 	[NSGraphicsContext saveGraphicsState];
 	[dropShadow set];
@@ -102,7 +107,9 @@
 	//Finally, outline the box
 	[[NSColor colorWithCalibratedWhite: 0.0f alpha: 0.33f] set];
 	[NSBezierPath setDefaultLineWidth: 1.0f];
-	[NSBezierPath strokeRect: NSInsetRect(artFrame, -0.5f, -0.5f)];	
+	[NSBezierPath strokeRect: NSInsetRect(artFrame, -0.5f, -0.5f)];
+	
+	[[NSGraphicsContext currentContext] setImageInterpolation: oldInterpolation];
 }
 
 - (NSImageRep *) representationForSize: (NSSize)iconSize

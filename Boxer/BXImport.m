@@ -78,9 +78,9 @@
 
 - (void) dealloc
 {
+	[self setImportWindowController: nil],	[importWindowController release];
 	[self setSourcePath: nil],				[sourcePath release];
 	[self setRootDrivePath: nil],			[rootDrivePath release];
-	[self setImportWindowController: nil],	[importWindowController release];
 	[self setInstallerPaths: nil],			[installerPaths release];
 	[self setPreferredInstallerPath: nil],	[preferredInstallerPath release];
 	
@@ -231,16 +231,20 @@
 
 - (void) makeWindowControllers
 {	
-	[self setDOSWindowController:	[[BXImportDOSWindowController alloc] initWithWindowNibName: @"DOSWindow"]];
-	[self setImportWindowController:[[BXImportWindowController alloc] initWithWindowNibName: @"ImportWindow"]];
+	BXImportDOSWindowController *DOSController	= [[BXImportDOSWindowController alloc] initWithWindowNibName: @"DOSWindow"];
+	BXImportWindowController *importController	= [[BXImportWindowController alloc] initWithWindowNibName: @"ImportWindow"];
 	
-	[self addWindowController: [self DOSWindowController]];
-	[self addWindowController: [self importWindowController]];
-	[[self DOSWindowController] setShouldCloseDocument: YES];
-	[[self importWindowController] setShouldCloseDocument: YES];
+	[self addWindowController: DOSController];
+	[self addWindowController: importController];
 	
-	[[self DOSWindowController] release];
-	[[self importWindowController] release];
+	[self setDOSWindowController: DOSController];
+	[self setImportWindowController: importController];
+	
+	[DOSController setShouldCloseDocument: YES];
+	[importController setShouldCloseDocument: YES];
+	
+	[DOSController release];
+	[importController release];
 }
 
 - (void) removeWindowController: (NSWindowController *)windowController
@@ -974,10 +978,14 @@
 {
 	[super _cleanup];
 	
-	if ([self importStage] != BXImportFinished)
+	if ([self importStage] != BXImportFinished && [self gamePackage])
 	{
-		NSFileManager *manager = [NSFileManager defaultManager];
-		[manager removeItemAtPath: [[self gamePackage] bundlePath] error: NULL];	
+		NSString *path = [[self gamePackage] bundlePath];
+		if (path)
+		{
+			NSFileManager *manager = [NSFileManager defaultManager];
+			[manager removeItemAtPath: path error: NULL];	
+		}
 	}
 }
 

@@ -14,10 +14,6 @@
 		9F13F9D011F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F13F9CF11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m */; };
 		9F160DE21236952600F8768E /* Sample Games in Resources */ = {isa = PBXBuildFile; fileRef = 9F160BD91236952400F8768E /* Sample Games */; };
 		9F160E711236B2A600F8768E /* BXAppController+BXGamesFolder.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F160E701236B2A600F8768E /* BXAppController+BXGamesFolder.m */; };
-		9F160EB11236BAED00F8768E /* Commander Keen 4.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F160EAD1236BAED00F8768E /* Commander Keen 4.icns */; };
-		9F160EB21236BAED00F8768E /* Epic Pinball Demo.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F160EAE1236BAED00F8768E /* Epic Pinball Demo.icns */; };
-		9F160EB31236BAED00F8768E /* Underworld Demo.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F160EAF1236BAED00F8768E /* Underworld Demo.icns */; };
-		9F160EB41236BAED00F8768E /* X-COM Demo.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F160EB01236BAED00F8768E /* X-COM Demo.icns */; };
 		9F18127F12994A4C009BC4B2 /* CDCover.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F18124312994474009BC4B2 /* CDCover.icns */; };
 		9F1812BF12996340009BC4B2 /* YRKSpinningProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1812BD12996337009BC4B2 /* YRKSpinningProgressIndicator.m */; };
 		9F18133B129990D5009BC4B2 /* BXGamesFolderPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F18133A129990D5009BC4B2 /* BXGamesFolderPanelController.m */; };
@@ -318,6 +314,7 @@
 		9FF2E9BD11E6F4950051E485 /* BXEmulatorConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF2E9BC11E6F4950051E485 /* BXEmulatorConfiguration.m */; };
 		9FFAFE2D10DE33FB00728BAC /* GameProfiles.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */; };
 		9FFAFE4310DE343F00728BAC /* Configurations in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2E10DE343F00728BAC /* Configurations */; };
+		9FFC2AC012A19CCC008C2B3B /* Sample Game Icons in Resources */ = {isa = PBXBuildFile; fileRef = 9FFC2ABF12A19CCC008C2B3B /* Sample Game Icons */; };
 		9FFF9728123269D1009B5EE5 /* NDAlias+AliasFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9716123269D1009B5EE5 /* NDAlias+AliasFile.m */; };
 		9FFF9729123269D1009B5EE5 /* NDAlias.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9718123269D1009B5EE5 /* NDAlias.m */; };
 		9FFF972A123269D1009B5EE5 /* NDResourceFork+OtherSorces.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF971A123269D1009B5EE5 /* NDResourceFork+OtherSorces.m */; };
@@ -374,10 +371,6 @@
 		9F160BD91236952400F8768E /* Sample Games */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Sample Games"; sourceTree = "<group>"; };
 		9F160E6F1236B2A600F8768E /* BXAppController+BXGamesFolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXAppController+BXGamesFolder.h"; sourceTree = "<group>"; };
 		9F160E701236B2A600F8768E /* BXAppController+BXGamesFolder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXAppController+BXGamesFolder.m"; sourceTree = "<group>"; };
-		9F160EAD1236BAED00F8768E /* Commander Keen 4.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = "Commander Keen 4.icns"; sourceTree = "<group>"; };
-		9F160EAE1236BAED00F8768E /* Epic Pinball Demo.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = "Epic Pinball Demo.icns"; sourceTree = "<group>"; };
-		9F160EAF1236BAED00F8768E /* Underworld Demo.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = "Underworld Demo.icns"; sourceTree = "<group>"; };
-		9F160EB01236BAED00F8768E /* X-COM Demo.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = "X-COM Demo.icns"; sourceTree = "<group>"; };
 		9F18124312994474009BC4B2 /* CDCover.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = CDCover.icns; sourceTree = "<group>"; };
 		9F1812BC12996337009BC4B2 /* YRKSpinningProgressIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YRKSpinningProgressIndicator.h; sourceTree = "<group>"; };
 		9F1812BD12996337009BC4B2 /* YRKSpinningProgressIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YRKSpinningProgressIndicator.m; sourceTree = "<group>"; };
@@ -904,6 +897,7 @@
 		9FFAFE2E10DE343F00728BAC /* Configurations */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Configurations; sourceTree = "<group>"; };
 		9FFBF67011A7F8F4000A1863 /* BXFrameRenderingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFrameRenderingView.h; sourceTree = "<group>"; };
 		9FFBF6AA11A811F7000A1863 /* BXEventConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEventConstants.h; sourceTree = "<group>"; };
+		9FFC2ABF12A19CCC008C2B3B /* Sample Game Icons */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Sample Game Icons"; sourceTree = "<group>"; };
 		9FFF9715123269D1009B5EE5 /* NDAlias+AliasFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NDAlias+AliasFile.h"; sourceTree = "<group>"; };
 		9FFF9716123269D1009B5EE5 /* NDAlias+AliasFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NDAlias+AliasFile.m"; sourceTree = "<group>"; };
 		9FFF9717123269D1009B5EE5 /* NDAlias.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NDAlias.h; sourceTree = "<group>"; };
@@ -1094,17 +1088,6 @@
 				9F160E701236B2A600F8768E /* BXAppController+BXGamesFolder.m */,
 			);
 			name = "Application Delegate";
-			sourceTree = "<group>";
-		};
-		9F160EAC1236BAD300F8768E /* Sample Game Icons */ = {
-			isa = PBXGroup;
-			children = (
-				9F160EAD1236BAED00F8768E /* Commander Keen 4.icns */,
-				9F160EAE1236BAED00F8768E /* Epic Pinball Demo.icns */,
-				9F160EAF1236BAED00F8768E /* Underworld Demo.icns */,
-				9F160EB01236BAED00F8768E /* X-COM Demo.icns */,
-			);
-			name = "Sample Game Icons";
 			sourceTree = "<group>";
 		};
 		9F1812B812996308009BC4B2 /* YRKSpinningProgressIndicator */ = {
@@ -1749,7 +1732,7 @@
 		9FBC34390F56C5AC001811F2 /* Images */ = {
 			isa = PBXGroup;
 			children = (
-				9F160EAC1236BAD300F8768E /* Sample Game Icons */,
+				9FFC2ABF12A19CCC008C2B3B /* Sample Game Icons */,
 				9F676BEF1235451B00924B8C /* Display.png */,
 				9F61941012340CA100F35AB4 /* ShelvesForSnowLeopard.jpg */,
 				9F61941112340CA100F35AB4 /* ShelvesForLeopard.jpg */,
@@ -2130,14 +2113,11 @@
 				9F61941312340CA100F35AB4 /* ShelvesForLeopard.jpg in Resources */,
 				9F676BF01235451B00924B8C /* Display.png in Resources */,
 				9F160DE21236952600F8768E /* Sample Games in Resources */,
-				9F160EB11236BAED00F8768E /* Commander Keen 4.icns in Resources */,
-				9F160EB21236BAED00F8768E /* Epic Pinball Demo.icns in Resources */,
-				9F160EB31236BAED00F8768E /* Underworld Demo.icns in Resources */,
-				9F160EB41236BAED00F8768E /* X-COM Demo.icns in Resources */,
 				9F70C19C129036C900A3627F /* Boxer.sdef in Resources */,
 				9F18127F12994A4C009BC4B2 /* CDCover.icns in Resources */,
 				9F18137C12999E39009BC4B2 /* GamesFolderPanelOptions.xib in Resources */,
 				9F2C28B8129D924E00B172C8 /* FirstRunWindow.xib in Resources */,
+				9FFC2AC012A19CCC008C2B3B /* Sample Game Icons in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

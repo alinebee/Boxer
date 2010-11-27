@@ -140,6 +140,13 @@
 			  callbackObject: (id)callbackObj
 				blockingMode: (NSAnimationBlockingMode)blockingMode
 {
+	//If the application isn't active, then avoid applying the effect: it will look distractingly wrong anyway 
+	if (![NSApp isActive] || [NSApp isHidden])
+	{
+		[self performSelector: callback withObject: callbackObj];
+		return;
+	}
+	
 	CGSConnection conn = _CGSDefaultConnection();
 	
 	if (conn)

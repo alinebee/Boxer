@@ -305,7 +305,7 @@
 	{
 		[self setPanelExecutables: executables];
 	}
-	else
+	else if ([self activePanel] == [self programChooserPanel])
 	{
 		//For speed, we assume this is the only kind of delayed perform request we'll ever have.
 		[NSThread cancelPreviousPerformRequestsWithTarget: self];

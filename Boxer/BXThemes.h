@@ -42,3 +42,9 @@
 - (NSGradient *) highlightKnobColor;
 - (NSShadow *) focusRing;
 @end
+
+//Makes borders more subtle for the darker background of the welcome panel.
+@interface BXWelcomeTheme : BXBlueTheme
+- (NSColor *) strokeColor;
+
+@end

@@ -94,7 +94,7 @@
 										<string key="NSKeyEquivalent"/>
 										<int key="NSPeriodicDelay">200</int>
 										<int key="NSPeriodicInterval">25</int>
-										<string key="themeKey">BXBlueTheme</string>
+										<string key="themeKey">BXWelcomeTheme</string>
 									</object>
 								</object>
 								<object class="NSPopUpButton" id="253701683">
@@ -106,10 +106,10 @@
 									<object class="BGHUDPopUpButtonCell" key="NSCell" id="593059829">
 										<int key="NSCellFlags">-2076049856</int>
 										<int key="NSCellFlags2">1536</int>
-										<object class="NSFont" key="NSSupport">
+										<object class="NSFont" key="NSSupport" id="970409020">
 											<string key="NSName">LucidaGrande</string>
 											<double key="NSSize">13</double>
-											<int key="NSfFlags">1044</int>
+											<int key="NSfFlags">16</int>
 										</object>
 										<reference key="NSControlView" ref="253701683"/>
 										<int key="NSButtonFlags">109199615</int>
@@ -171,7 +171,7 @@
 										<bool key="NSUsesItemFromMenu">YES</bool>
 										<bool key="NSAltersState">YES</bool>
 										<int key="NSArrowPosition">2</int>
-										<string key="themeKey">BXBlueTheme</string>
+										<string key="themeKey">BXWelcomeTheme</string>
 									</object>
 								</object>
 								<object class="NSButton" id="108580646">
@@ -184,11 +184,7 @@
 										<int key="NSCellFlags">-2080244224</int>
 										<int key="NSCellFlags2">0</int>
 										<string key="NSContents">Make my folder look like a games shelf</string>
-										<object class="NSFont" key="NSSupport" id="610307011">
-											<string key="NSName">LucidaGrande-Bold</string>
-											<double key="NSSize">13</double>
-											<int key="NSfFlags">16</int>
-										</object>
+										<reference key="NSSupport" ref="970409020"/>
 										<reference key="NSControlView" ref="108580646"/>
 										<int key="NSButtonFlags">1211912703</int>
 										<int key="NSButtonFlags2">2</int>
@@ -203,7 +199,7 @@
 										<string key="NSKeyEquivalent"/>
 										<int key="NSPeriodicDelay">200</int>
 										<int key="NSPeriodicInterval">25</int>
-										<string key="themeKey">BXBlueTheme</string>
+										<string key="themeKey">BXWelcomeTheme</string>
 									</object>
 								</object>
 								<object class="NSButton" id="175296993">
@@ -216,7 +212,7 @@
 										<int key="NSCellFlags">-2080244224</int>
 										<int key="NSCellFlags2">0</int>
 										<string key="NSContents">Include sample games to get me started</string>
-										<reference key="NSSupport" ref="610307011"/>
+										<reference key="NSSupport" ref="970409020"/>
 										<reference key="NSControlView" ref="175296993"/>
 										<int key="NSButtonFlags">1211912703</int>
 										<int key="NSButtonFlags2">2</int>
@@ -226,7 +222,7 @@
 										<string key="NSKeyEquivalent"/>
 										<int key="NSPeriodicDelay">200</int>
 										<int key="NSPeriodicInterval">25</int>
-										<string key="themeKey">BXBlueTheme</string>
+										<string key="themeKey">BXWelcomeTheme</string>
 									</object>
 								</object>
 								<object class="BGHUDLabel" id="953792696">

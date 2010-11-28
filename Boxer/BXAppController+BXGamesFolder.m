@@ -432,9 +432,9 @@
 	else if (![self gamesFolderChosen])
 	{
 		//If the user hasn't chosen a games folder location yet, then show them
-		//the first-run panel to choose one.
+		//the first-run panel to choose one, then reveal the new folder afterwards (if one was created).
 		[self orderFrontFirstRunPanel: self];
-		[self revealGamesFolder: self];
+		if ([self gamesFolderPath]) [self revealGamesFolder: self];
 	}
 	else
 	{

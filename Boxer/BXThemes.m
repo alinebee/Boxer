@@ -120,3 +120,13 @@
 }
 
 @end
+
+
+@implementation BXWelcomeTheme
+
+- (NSColor *) strokeColor
+{
+	return [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.33f];
+}
+
+@end

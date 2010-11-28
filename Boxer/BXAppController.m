@@ -499,7 +499,8 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 {
 	[[[self currentSession] DOSWindowController] exitFullScreen: sender];
 	
-	//This eschews controller showWindow: as this can cause a momentary flickr before the window is 're-hidden'.
+	//This eschews controller showWindow: as that would reveal the window momentarily,
+	//causing a flicker before the window is 're-hidden'.
 	id controller = [BXWelcomeWindowController controller];
 	[[controller window] revealWithTransition: CGSFlip
 									direction: CGSDown

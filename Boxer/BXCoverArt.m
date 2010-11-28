@@ -14,7 +14,7 @@
 
 
 //We give gameboxes a fairly strong shadow to lift them out from light backgrounds
-+ (NSShadow *) dropShadowForSize: (NSSize) iconSize
++ (NSShadow *) dropShadowForSize: (NSSize)iconSize
 {
 	if (iconSize.height < 32) return nil;
 	
@@ -30,7 +30,7 @@
 }
 
 //We give gameboxes a soft white glow around the inside edge so that they show up well against dark backgrounds
-+ (NSShadow *) innerGlowForSize: (NSSize) iconSize
++ (NSShadow *) innerGlowForSize: (NSSize)iconSize
 {
 	if (iconSize.height < 64) return nil;
 	CGFloat blurRadius = MAX(1.0f, iconSize.height / 64);
@@ -43,7 +43,7 @@
 	return boxGlow;
 }
 
-+ (NSImage *) shineForSize: (NSSize) iconSize
++ (NSImage *) shineForSize: (NSSize)iconSize
 { 
 	NSImage *shine = [[NSImage imageNamed: @"BoxArtShine"] copy];
 	[shine setSize: iconSize];

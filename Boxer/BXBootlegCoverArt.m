@@ -36,7 +36,12 @@
 }
 
 + (CGFloat) lineHeightForSize:	(NSSize)size	{ return 20.0f * (size.width / 128.0f); }
-+ (CGFloat) fontSizeForSize:	(NSSize)size	{ return 14.0f * (size.width / 128.0f); }
++ (CGFloat) fontSizeForSize:	(NSSize)size
+{
+	//Use smaller font at sizes > 128 so that we can fit more on the label
+	CGFloat baseSize = (size.width > 128.0f) ? 12.0f : 14.0f;
+	return baseSize * (size.width / 128.0f);
+}
 
 + (NSRect) textRegionForRect: (NSRect)frame
 {	

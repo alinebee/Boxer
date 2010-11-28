@@ -772,7 +772,7 @@
 }
 
 - (void) cleanGamebox
-{
+{	
 	[self setImportStage: BXImportCleaningGamebox];
 	[self setStageProgress: BXOperationProgressIndeterminate];
 	

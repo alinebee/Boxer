@@ -115,7 +115,7 @@
 		[item setAction: @selector(openRecentDocument:)];
 		
 		NSString *path	= [url path];
-		NSImage *icon	= [[workspace iconForFile: path] copy];
+		NSImage *icon	= [workspace iconForFile: path];
 		NSString *title	= [manager displayNameAtPath: path];
 		
 		[icon setSize: NSMakeSize(16, 16)];
@@ -214,10 +214,12 @@
 	{
 		NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
 		
+		//These functions will block, so we delay the actual call until after we've returned
+		//so that we don't keep OS X waiting to clean up the drag operation. 
 		if (button == [self importGameButton])
-			[self _importFilePaths: filePaths];
+			[self performSelector: @selector(_importFilePaths:) withObject: filePaths afterDelay: 0.1];
 		else if (button == [self openPromptButton])
-			[self _openFilePaths: filePaths];
+			[self performSelector: @selector(_openFilePaths:) withObject: filePaths afterDelay: 0.1];
 		
 		return YES;
 	}

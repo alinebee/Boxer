@@ -205,15 +205,17 @@
 	//Render the shade into a copy of the image before passing it on to NSButton's own draw methods
 	if (shade)
 	{
-		image = [[image copy] autorelease];
+		NSImage *shadedImage = [image copy];
 		NSRect bounds;
 		bounds.origin = NSZeroPoint;
-		bounds.size = [image size];
+		bounds.size = [shadedImage size];
 		
-		[image lockFocus];
+		[shadedImage lockFocus];
 			[shade set];
 			NSRectFillUsingOperation(bounds, NSCompositeSourceAtop);
-		[image unlockFocus];		
+		[shadedImage unlockFocus];
+		
+		image = [shadedImage autorelease];
 	}
 	
 	//While we're here, let's override the image positioning with our own

@@ -244,7 +244,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 		{
 			//Perform with a delay to give the Dock icon bouncing time to finish,
 			//since the Core Graphics flip animation interrupts this otherwise.
-			[NSThread sleepForTimeInterval: 0.33];
+			[NSThread sleepForTimeInterval: 0.4];
 			hasDelayed = YES;
 			[self orderFrontFirstRunPanel: self];
 		}
@@ -252,7 +252,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 		switch ([[NSUserDefaults standardUserDefaults] integerForKey: @"startupAction"])
 		{
 			case BXStartUpWithWelcomePanel:
-				if (!hasDelayed) [NSThread sleepForTimeInterval: 0.33];
+				if (!hasDelayed) [NSThread sleepForTimeInterval: 0.4];
 				[self orderFrontWelcomePanelWithFlip: self];
 				break;
 			case BXStartUpWithGamesFolder:

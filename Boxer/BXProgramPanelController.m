@@ -96,7 +96,6 @@
 	{
 		[self syncPanelExecutables];
 	}
-	
 	[self syncActivePanel];
 }
 

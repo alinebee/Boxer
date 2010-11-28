@@ -124,7 +124,6 @@
 		
 		[menu insertItem: item atIndex: insertionPoint++];
 		
-		[icon release];
 		[item release];
 		[pool drain];
 	}

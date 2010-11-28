@@ -1038,8 +1038,6 @@
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
-				9F18137A12999E39009BC4B2 /* GamesFolderPanelOptions.xib */,
-				9F2C28B6129D924E00B172C8 /* FirstRunWindow.xib */,
 			);
 			name = Boxer;
 			sourceTree = "<group>";
@@ -1308,6 +1306,8 @@
 		9F496E4C108EEDF700282261 /* XIBs */ = {
 			isa = PBXGroup;
 			children = (
+				9F18137A12999E39009BC4B2 /* GamesFolderPanelOptions.xib */,
+				9F2C28B6129D924E00B172C8 /* FirstRunWindow.xib */,
 				9F45A1CB109C3D3400593456 /* MainMenu.xib */,
 				9F45A1C7109C3D1100593456 /* DOSWindow.xib */,
 				9F1CBB5C120CABBB00C5E926 /* ImportWindow.xib */,
@@ -2410,6 +2410,7 @@
 				9F18137B12999E39009BC4B2 /* English */,
 			);
 			name = GamesFolderPanelOptions.xib;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		9F1CBB5C120CABBB00C5E926 /* ImportWindow.xib */ = {
@@ -2427,6 +2428,7 @@
 				9F2C28B7129D924E00B172C8 /* English */,
 			);
 			name = FirstRunWindow.xib;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		9F45A1BB109C3C3900593456 /* About.xib */ = {
@@ -2651,7 +2653,7 @@
 			buildSettings = {
 				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 20100730.1;
+				CURRENT_PROJECT_VERSION = 20101128.1;
 				GCC_VERSION = 4.0;
 				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH)";
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
@@ -2688,7 +2690,6 @@
 				IBC_PLUGINS = "\"$(SRCROOT)/Frameworks/BGHUDAppKit.framework/Resources/BGHUDAppKitPlugin.ibplugin\"";
 				INFOPLIST_FILE = Info.plist;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = "";
 				"OTHER_CFLAGS[arch=i386]" = "-mstackrealign";
 				PRODUCT_NAME = Boxer;
 			};
@@ -2723,7 +2724,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IBC_PLUGINS = "\"$(SRCROOT)/Frameworks/BGHUDAppKit.framework/Resources/BGHUDAppKitPlugin.ibplugin\"";
 				INFOPLIST_FILE = Info.plist;
-				OTHER_CFLAGS = "-mstackrealign";
+				"OTHER_CFLAGS[arch=i386]" = "-mstackrealign";
 				PRODUCT_NAME = Boxer;
 			};
 			name = Debug;
@@ -2757,7 +2758,6 @@
 				IBC_PLUGINS = "\"$(SRCROOT)/Frameworks/BGHUDAppKit.framework/Resources/BGHUDAppKitPlugin.ibplugin\"";
 				INFOPLIST_FILE = Info.plist;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = "";
 				"OTHER_CFLAGS[arch=i386]" = "-mstackrealign";
 				PRODUCT_NAME = Boxer;
 			};
@@ -2768,7 +2768,7 @@
 			buildSettings = {
 				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
 				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 20100730.1;
+				CURRENT_PROJECT_VERSION = 20101128.1;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_VERSION = 4.0;
 				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH)";
@@ -2782,7 +2782,7 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
 				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
 				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 20100730.1;
+				CURRENT_PROJECT_VERSION = 20101128.1;
 				GCC_VERSION = 4.0;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 			};

@@ -125,6 +125,10 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	return types;
 }
 
++ (BOOL)isRunningOnLeopard
+{
+	return (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_5);
+}
 
 #pragma mark -
 #pragma mark Initialization and teardown
@@ -241,7 +245,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 		
 		//If the user has not chosen a games folder yet, then show them the first-run panel
 		//(This is modal, so execution will not continue until the panel is dismissed.)
-		if (![self gamesFolderChosen])
+		if (![self gamesFolderPath] && ![self gamesFolderChosen])
 		{
 			//Perform with a delay to give the Dock icon bouncing time to finish,
 			//since the Core Graphics flip animation interrupts this otherwise.

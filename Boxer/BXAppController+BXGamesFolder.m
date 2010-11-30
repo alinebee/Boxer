@@ -54,20 +54,6 @@
 	return paths;
 }
 
-+ (BOOL) isLeopardFinder
-{	
-	//IMPLEMENTATION NOTE: we used to do this by checking the version of Finder itself;
-	//however, this proved to be unreliable and extremely cumbersome. Now we just check
-	//the version of OS X itself.
-	SInt32 versionMajor = 10, versionMinor = 0;
-	
-	Gestalt(gestaltSystemVersionMajor, &versionMajor);
-	Gestalt(gestaltSystemVersionMinor, &versionMinor);
-	
-	return versionMajor == 10 && versionMinor < 6;
-}
-
-
 + (NSSet *) keyPathsForValuesAffectingGamesFolderChosen
 {
 	return [NSSet setWithObject: @"gamesFolderPath"];
@@ -96,23 +82,30 @@
 			if ([alias changed])
 			{
 				[[NSUserDefaults standardUserDefaults] setObject: [alias data] forKey: @"gamesFolder"];
-			}			
+			}
 		}
 		else
 		{
-			//If no games folder has been set yet, try and import it from Boxer 0.8x.
+			//If no games folder has been set yet, try and import it now from Boxer 0.8x.
 			NSFileManager *manager = [NSFileManager defaultManager];
 			NSString *oldPath = [self oldGamesFolderPath];
 			if (oldPath && [manager fileExistsAtPath: oldPath])
 			{
 				[self setGamesFolderPath: oldPath];
-					
+
 				NSString *backgroundPath = [oldPath stringByAppendingPathComponent: @".background"];
 				//Check if the old path has a .background folder: if so,
 				//then automatically apply the games-folder appearance.
 				if ([manager fileExistsAtPath: backgroundPath])
 				{
-					[self setAppliesShelfAppearanceToGamesFolder: YES];
+					//IMPLEMENTATION NOTE: we set the user default manually instead of using
+					//the setter, because the setter automatically switches the folder to shelf mode.
+					//TODO: This is a surefire sign that we're doing waaaay too much at once with
+					//these functions, and I'll clean it up later.
+					
+					//[self setAppliesShelfAppearanceToGamesFolder: YES];
+					[[NSUserDefaults standardUserDefaults] setBool: YES forKey: @"applyShelfAppearance"];
+					[self applyShelfAppearanceToPath: oldPath switchToShelfMode: NO];
 				}
 			}
 		}
@@ -191,7 +184,7 @@
 	
 	FinderApplication *finder = [SBApplication applicationWithBundleIdentifier: @"com.apple.finder"];
 	
-	BOOL isLeopardFinder = [[self class] isLeopardFinder];
+	BOOL isLeopardFinder = [[self class] isRunningOnLeopard];
 	
 	NSString *backgroundImageResource = (isLeopardFinder) ? @"ShelvesForLeopard" : @"ShelvesForSnowLeopard";
 	
@@ -279,37 +272,6 @@
 	
 	[generalQueue addOperation: copyOperation];
 	[copyOperation release];
-}
-
-
-- (NSString *) createDefaultGamesFolder
-{
-	NSString *defaultPath = [[[self class] defaultGamesFolderPaths] objectAtIndex: 0];
-	NSFileManager *manager = [NSFileManager defaultManager];
-	
-	//Only create the folder if it doesn't already exist
-	if ([manager fileExistsAtPath: defaultPath])
-	{
-		[self setGamesFolderPath: defaultPath];
-		return defaultPath;
-	}
-	else
-	{
-		BOOL created = [manager createDirectoryAtPath: defaultPath
-						  withIntermediateDirectories: YES
-										   attributes: nil
-												error: NULL];
-		if (created)
-		{
-			[self applyShelfAppearanceToPath: defaultPath switchToShelfMode: YES];
-			[self addSampleGamesToPath: defaultPath];
-			
-			[self setGamesFolderPath: defaultPath];
-			return defaultPath;
-		}
-		//TODO: catch and handle error situations more gracefully
-		else return nil;
-	}
 }
 
 

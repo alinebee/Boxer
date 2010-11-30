@@ -9,6 +9,7 @@
 #import "BXProgramPanelController.h"
 #import "BXValueTransformers.h"
 #import "BXSession+BXFileManager.h"
+#import "BXAppController.h"
 #import "BXProgramPanel.h"
 #import "BXPackage.h"
 #import "BXImport.h"
@@ -270,12 +271,19 @@
 		}
 	}
 	
-	//[self setPanelExecutables: listedPrograms];
-	[self _safelySyncPanelExecutables: listedPrograms];
+	if ([BXAppController isRunningOnLeopard])
+	{
+		[self _safelySyncPanelExecutables: listedPrograms];
+	}
+	else
+	{
+		[self setPanelExecutables: listedPrograms];
+	}
 	
 	[programNames release];
 	[listedPrograms release];
 }
+
 
 - (void) _safelySyncPanelExecutables: (NSArray *)executables
 {
@@ -293,14 +301,10 @@
 	//should be doing but isn't: if the view is ready to draw, we set the executables and let it draw
 	//itself. If it's not, we wait a short time before trying again.
 	
-	//This ghastly hack is only appropriate for 10.5, so in 10.6 we remove this code path altogether.
+	//This ghastly hack is only appropriate for 10.5, so in 10.6 we don't bother with this method.
 	//This code should be removed once DOSBox lives in its own process, or when I hang myself in abject
 	//shame and horror, whichever comes first.
 	
-	
-#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_5
-	[self setPanelExecutables: executables];
-#else
 	if ([[self programList] canDraw])
 	{
 		[self setPanelExecutables: executables];
@@ -311,7 +315,6 @@
 		[NSThread cancelPreviousPerformRequestsWithTarget: self];
 		[self performSelector: @selector(_safelySyncPanelExecutables:) withObject: executables afterDelay: 0.05];
 	}
-#endif
 }
 
 - (NSArray *) executableSortDescriptors

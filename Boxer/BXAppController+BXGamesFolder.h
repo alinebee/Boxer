@@ -45,13 +45,8 @@
 #pragma mark -
 #pragma mark Helper class methods
 
-//Returns whether Finder is the Leopard or Snow Leopard version.
-//Used for tailoring shelf appearance.
-+ (BOOL) isLeopardFinder;
-
 //Returns an array of suggested default paths for the games folder location
 //(which may or may not already exist) for selection when Boxer is first launched.
-//The first of these will be used by createDefaultGamesFolder.
 + (NSArray *) defaultGamesFolderPaths;
 
 #pragma mark -
@@ -70,10 +65,6 @@
 
 //Reveal our games folder in Finder.
 - (IBAction) revealGamesFolder: (id)sender;
-
-//Generate a new games folder at the default location, containing Boxer's bundled sample games.
-//Returns the path to the new folder on completion, or nil if the folder could not be created.
-- (NSString *) createDefaultGamesFolder;
 
 //Check for the existence of the game importer droplet in the games folder, and add it
 //if it's missing. If it exists but is outdated, replace it with an updated version.

@@ -11,6 +11,13 @@
 
 #import <Cocoa/Cocoa.h>
 
+
+//Not defined in NSApplication until 10.6 (whoopeeeeeee)
+#ifndef NSAppKitVersionNumber10_5
+#define NSAppKitVersionNumber10_5 949
+#endif 
+
+
 @class BXSession;
 
 enum {
@@ -116,10 +123,14 @@ enum {
 
 
 #pragma mark -
-#pragma mark Event-related functions
+#pragma mark Miscellaneous helpers
 
 //Return the NSWindow located at the specified point.
 //TODO: this should probably be an NSApplication category instead.
 - (NSWindow *) windowAtPoint: (NSPoint)screenPoint;
+
+//Returns whether is running on 10.5 Leopard.
+//This is used to trigger certain bugfixes and adjusts the art we use.
++ (BOOL) isRunningOnLeopard;
 
 @end

@@ -11,6 +11,18 @@
 
 #import "BXAppController.h"
 
+
+//What shelf appearance to use. Currently only used by assignGamesFolderPath.
+enum BXShelfTypes {
+	BXShelfAuto		= -1,
+	BXShelfNone		= 0,
+	BXShelfDefault	= 1,
+	BXShelfWood		= 1
+};
+
+typedef NSInteger BXShelfAppearance;
+
+
 @interface BXAppController (BXGamesFolder)
 
 #pragma mark -
@@ -52,6 +64,31 @@
 #pragma mark -
 #pragma mark Games folder handling
 
+//Reveal our games folder in Finder.
+//This will prompt the user to locate the folder if it is missing,
+//or show the first-run panel if no games folder has been chosen yet.
+- (IBAction) revealGamesFolder: (id)sender;
+
+
+#pragma mark -
+#pragma mark Preparing the games folder
+
+//Imports a games folder from a previous version of Boxer.
+//This freshens the folder and autodetects the presence of old
+//background art, enabling the shelf background if it is found.
+//Returns YES if successful, NO if the folder could not be found.
+- (BOOL) importOldGamesFolderFromPath: (NSString *)path;
+
+//Set the games folder and prepare it with the selected options.
+//This is the main point from which the rest of Boxer can set the folder path.
+- (void) assignGamesFolderPath: (NSString *)newPath
+			   withSampleGames: (BOOL)addSampleGames
+			   importerDroplet: (BOOL)addImporterDroplet
+			   shelfAppearance: (BXShelfAppearance)applyShelfAppearance;
+
+
+#pragma mark -
+#pragma mark Customising the games folder
 
 //Apply our custom shelf appearance to the specified path.
 //If switchMode is YES, the folder's Finder window will be switched to icon mode.
@@ -63,12 +100,14 @@
 //Copy our sample games into the specified path.
 - (void) addSampleGamesToPath: (NSString *)path;
 
-//Reveal our games folder in Finder.
-- (IBAction) revealGamesFolder: (id)sender;
+//Adds an Drop Games to Import droplet to the specified folder, replacing any
+//older version if one is found.
+- (void) addImporterDropletToPath: (NSString *)folderPath;
 
-//Check for the existence of the game importer droplet in the games folder, and add it
-//if it's missing. If it exists but is outdated, replace it with an updated version.
-- (void) checkForImporterDroplet;
+//Check for the existence of the game importer droplet in the specified folder,
+//replacing any outdated versions. If addIfMissing is true, a new droplet will
+//be added if one is not found.
+- (void) freshenImporterDropletAtPath: (NSString *)folderPath addIfMissing: (BOOL)addIfMissing;
 
 //Display a prompt telling the user their games folder cannot be found, and giving them
 //options to create a new one or cancel. Used by revealGamesFolder and elsewhere.
@@ -93,15 +132,17 @@
 
 
 //Checks if one of our helper apps is present and up-to-date at the specified path.
-//Used by BXAppController+BXGamesFolder checkForImporterDroplet.
+//Used by BXAppController+BXGamesFolder freshenImporterDroplet:addIfMissing:.
 @interface BXHelperAppCheck : NSOperation
 {
 	NSString *targetPath;
 	NSString *appPath;
 	NSFileManager *manager;
+	BOOL addIfMissing;
 }
 @property (copy) NSString *targetPath;
 @property (copy) NSString *appPath;
+@property (assign) BOOL addIfMissing;
 
 //Create a new app check for the specified path using the specified droplet.
 - (id) initWithTargetPath: (NSString *)pathToCheck forAppAtPath: (NSString *)pathToApp;

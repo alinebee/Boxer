@@ -28,7 +28,6 @@ enum {
 @property (retain, nonatomic) NSPopUpButton *gamesFolderSelector;
 @property (retain, nonatomic) NSMenuItem *currentGamesFolderItem;
 
-
 //Provides a singleton instance of the window controller which stays retained for the lifetime
 //of the application. BXPreferencesController should always be accessed from this singleton.
 + (BXPreferencesController *) controller;
@@ -42,6 +41,10 @@ enum {
 //BXDOSWindowController and used by main menu items, as the two sets of controls need to be
 //validated differently.
 - (IBAction) toggleDefaultFilterType: (id)sender;
+
+//Toggle whether the games shelf appearance is applied to the games folder.
+//This will add/remove the appearance on-the-fly from the folder.
+- (IBAction) toggleShelfAppearance: (NSButton *)sender;
 
 //Synchonises the filter gallery controls to the current default filter.
 //This is called through Key-Value Observing whenever the filter preference changes.

@@ -10,6 +10,7 @@
 #import "BXSession.h"
 #import "BXValueTransformers.h"
 #import "BXGamesFolderPanelController.h"
+#import "BXAppController+BXGamesFolder.h"
 
 #pragma mark -
 #pragma mark Implementation
@@ -91,6 +92,29 @@
 	if ([object isEqualTo: [NSUserDefaults standardUserDefaults]] && [keyPath isEqualToString: @"filterType"])
 	{
 		[self syncFilterControls];
+	}
+}
+
+- (IBAction) toggleShelfAppearance: (NSButton *)sender
+{
+	BOOL flag = [sender state] == NSOnState;
+	
+	//This will already have been set by the button's own binding,
+	//but it doesn't hurt to do it explicitly here
+	[[NSApp delegate] setAppliesShelfAppearanceToGamesFolder: flag];
+	
+	NSString *path = [[NSApp delegate] gamesFolderPath];
+	if (path && [[NSFileManager defaultManager] fileExistsAtPath: path])
+	{
+		if (flag)
+		{
+			[[NSApp delegate] applyShelfAppearanceToPath: path switchToShelfMode: YES];
+		}
+		else
+		{
+			//Restore the folder to its unshelfed state
+			[[NSApp delegate] removeShelfAppearanceFromPath: path];
+		}		
 	}
 }
 

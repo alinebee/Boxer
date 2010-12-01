@@ -87,27 +87,8 @@
 		else
 		{
 			//If no games folder has been set yet, try and import it now from Boxer 0.8x.
-			NSFileManager *manager = [NSFileManager defaultManager];
 			NSString *oldPath = [self oldGamesFolderPath];
-			if (oldPath && [manager fileExistsAtPath: oldPath])
-			{
-				[self setGamesFolderPath: oldPath];
-
-				NSString *backgroundPath = [oldPath stringByAppendingPathComponent: @".background"];
-				//Check if the old path has a .background folder: if so,
-				//then automatically apply the games-folder appearance.
-				if ([manager fileExistsAtPath: backgroundPath])
-				{
-					//IMPLEMENTATION NOTE: we set the user default manually instead of using
-					//the setter, because the setter automatically switches the folder to shelf mode.
-					//TODO: This is a surefire sign that we're doing waaaay too much at once with
-					//these functions, and I'll clean it up later.
-					
-					//[self setAppliesShelfAppearanceToGamesFolder: YES];
-					[[NSUserDefaults standardUserDefaults] setBool: YES forKey: @"applyShelfAppearance"];
-					[self applyShelfAppearanceToPath: oldPath switchToShelfMode: NO];
-				}
-			}
+			if (oldPath) [self importOldGamesFolderFromPath: oldPath];
 		}
 	}
 	return gamesFolderPath;
@@ -125,12 +106,48 @@
 			//Store the new path in the preferences as an alias, so that users can move it around.
 			NDAlias *alias = [NDAlias aliasWithPath: newPath];
 			[[NSUserDefaults standardUserDefaults] setObject: [alias data] forKey: @"gamesFolder"];
-			
-			//Finally, check that the new folder has an up-to-date importer droplet in it.
-			//TODO: we should check this elsewhere higher up.
-			[self checkForImporterDroplet];
 		}
 	}
+}
+
+- (void) assignGamesFolderPath: (NSString *)newPath
+			   withSampleGames: (BOOL)addSampleGames
+			   importerDroplet: (BOOL)addImporterDroplet
+			   shelfAppearance: (BXShelfAppearance)applyShelfAppearance
+{
+	[self setGamesFolderPath: newPath];
+	
+	if (applyShelfAppearance != BXShelfAuto)
+	{
+		[self setAppliesShelfAppearanceToGamesFolder: applyShelfAppearance];
+	}
+	
+	if (applyShelfAppearance && applyShelfAppearance != BXShelfAuto)
+		[self applyShelfAppearanceToPath: newPath switchToShelfMode: YES];
+	
+	if (addSampleGames)			[self addSampleGamesToPath: newPath];
+	if (addImporterDroplet)		[self addImporterDropletToPath: newPath];
+}
+
+- (BOOL) importOldGamesFolderFromPath: (NSString *)path
+{
+	NSFileManager *manager = [NSFileManager defaultManager];
+	if ([manager fileExistsAtPath: path])
+	{
+		[self setGamesFolderPath: path];
+		[self freshenImporterDropletAtPath: path addIfMissing: YES];
+		
+		NSString *backgroundPath = [path stringByAppendingPathComponent: @".background"];
+		//Check if the old path has a .background folder: if so,
+		//then automatically apply the games-folder appearance.
+		if ([manager fileExistsAtPath: backgroundPath])
+		{
+			[self setAppliesShelfAppearanceToGamesFolder: YES];
+			[self applyShelfAppearanceToPath: path switchToShelfMode: NO];
+		}
+		return YES;
+	}
+	return NO;
 }
 
 + (NSSet *) keyPathsForValuesAffectingGamesFolderIcon
@@ -169,8 +186,10 @@
 {	
 	//Apply our shelf icon to the folder, if it doesn't have a custom icon of its own
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+	
 	if (![workspace fileHasCustomIcon: path])
 	{
+		NSLog(@"%@", path);
 		NSImage *image = [NSImage imageNamed: @"gamefolder"];
 		[workspace setIcon: image forFile: path options: 0];
 	}
@@ -247,20 +266,6 @@
 - (void) setAppliesShelfAppearanceToGamesFolder: (BOOL)flag
 {
 	[[NSUserDefaults standardUserDefaults] setBool: flag forKey: @"applyShelfAppearance"];
-	NSString *path = [self gamesFolderPath];
-	
-	if (path && [[NSFileManager defaultManager] fileExistsAtPath: path])
-	{
-		if (flag)
-		{
-			[self applyShelfAppearanceToPath: path switchToShelfMode: YES];
-		}
-		else
-		{
-			//Restore the folder to its unshelfed state
-			[self removeShelfAppearanceFromPath: path];
-		}		
-	}
 }
 
 - (void) addSampleGamesToPath: (NSString *)path
@@ -325,15 +330,20 @@
 	}
 }
 
-- (void) checkForImporterDroplet
+- (void) addImporterDropletToPath: (NSString *)folderPath
+{
+	return [self freshenImporterDropletAtPath: folderPath addIfMissing: YES];
+}
+
+- (void) freshenImporterDropletAtPath: (NSString *)folderPath addIfMissing: (BOOL)addIfMissing
 {
 	NSString *dropletPath = [[NSBundle mainBundle] pathForResource: @"Game Importer Droplet" ofType: @"app"];
-	NSString *folderPath = [self gamesFolderPath];
 	
 	if (dropletPath && folderPath)
 	{
 		BXHelperAppCheck *checkOperation = [[BXHelperAppCheck alloc] initWithTargetPath: folderPath
 																		   forAppAtPath: dropletPath];
+		[checkOperation setAddIfMissing: addIfMissing];
 		
 		//Cancel any currently-active check for the droplet
 		for (NSOperation *operation in [[self generalQueue] operations])
@@ -352,29 +362,7 @@
 	NSString *path = [self gamesFolderPath];
 	BOOL revealed = NO;
 	
-	if (path)
-	{
-		//If the sender is a button with an image, animate the opening from the button
-		//Disabled for now because this does not function in OS X 10.6 and I don't want
-		//to introduce bugs in other versions prior to proper testing.
-		if (NO && [sender respondsToSelector: @selector(cell)] && [[sender cell] image])
-		{
-			NSRect imageRect = [[sender cell] imageRectForBounds: [sender bounds]];
-			
-			NSWorkspace *ws = [NSWorkspace sharedWorkspace];
-			//NOTE: the intended animation does not play, so this currently acts as if
-			//NSWorkspace openFile: was called. It's unclear if this is being called
-			//wrongly or if the documented behaviour is simply unimplemented.
-			revealed = [ws openFile: path
-						  fromImage: [[sender cell] image]
-								 at: imageRect.origin
-							 inView: sender];
-		}
-		else
-		{
-			revealed = [self revealPath: path];
-		}
-	}
+	if (path) revealed = [self revealPath: path];
 	
 	if (revealed)
 	{
@@ -388,7 +376,7 @@
 		}
 		
 		//Also check that there's an up-to-date game importer droplet in the folder.
-		[self checkForImporterDroplet];			
+		[self freshenImporterDropletAtPath: path addIfMissing: NO];
 	}
 
 	else if (![self gamesFolderChosen])
@@ -477,7 +465,7 @@
 
 
 @implementation BXHelperAppCheck
-@synthesize targetPath, appPath;
+@synthesize targetPath, appPath, addIfMissing;
 
 - (id) initWithTargetPath: (NSString *)pathToCheck forAppAtPath: (NSString *)pathToApp
 {
@@ -545,8 +533,12 @@
 		}
 	}
 	
-	//If we got this far, then we didn't find any droplet: copy a new one into the target folder
-	NSString *newPath = [targetPath stringByAppendingPathComponent: appName];
-	[manager copyItemAtPath: appPath toPath: newPath error: nil];
+	//If we got this far, then we didn't find any droplet:
+	//copy a new one into the target folder if desired
+	if (addIfMissing)
+	{
+		NSString *newPath = [targetPath stringByAppendingPathComponent: appName];
+		[manager copyItemAtPath: appPath toPath: newPath error: nil];
+	}
 }
 @end

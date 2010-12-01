@@ -21,7 +21,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="5"/>
+			<integer value="3"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -51,8 +51,8 @@
 			<object class="NSWindowTemplate" id="397626594">
 				<int key="NSWindowStyleMask">3</int>
 				<int key="NSWindowBacking">2</int>
-				<string key="NSWindowRect">{{380, 332}, {520, 268}}</string>
-				<int key="NSWTFlags">1681391616</int>
+				<string key="NSWindowRect">{{380, 340}, {520, 268}}</string>
+				<int key="NSWTFlags">1685585920</int>
 				<string key="NSWindowTitle"/>
 				<string key="NSWindowClass">NSPanel</string>
 				<nil key="NSViewClass"/>
@@ -91,7 +91,7 @@
 											<int key="NSfFlags">16</int>
 										</object>
 										<string key="NSAlternateContents"/>
-										<string key="NSKeyEquivalent"/>
+										<string type="base64-UTF8" key="NSKeyEquivalent">DQ</string>
 										<int key="NSPeriodicDelay">200</int>
 										<int key="NSPeriodicInterval">25</int>
 										<string key="themeKey">BXWelcomeTheme</string>
@@ -335,9 +335,9 @@ A</string>
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">initialFirstResponder</string>
 						<reference key="source" ref="397626594"/>
-						<reference key="destination" ref="214606328"/>
+						<reference key="destination" ref="253701683"/>
 					</object>
-					<int key="connectionID">30</int>
+					<int key="connectionID">31</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -544,9 +544,9 @@ A</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{16, 167}, {520, 268}}</string>
+					<string>{{151, 340}, {520, 268}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{16, 167}, {520, 268}}</string>
+					<string>{{151, 340}, {520, 268}}</string>
 					<boolean value="NO"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
@@ -571,7 +571,7 @@ A</string>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">30</int>
+			<int key="maxID">31</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

@@ -100,18 +100,12 @@
 	{
 		NSString *path = [[openPanel URL] path];
 		BXAppController *controller = [NSApp delegate];
+		BOOL addSampleGames = [[self copySampleGamesToggle] state];
 		
-		if ([controller appliesShelfAppearanceToGamesFolder])
-		{
-			[controller applyShelfAppearanceToPath: path switchToShelfMode: YES];
-		}
-		
-		if ([[self copySampleGamesToggle] state])
-		{
-			[controller addSampleGamesToPath: path];
-		}
-		
-		[controller setGamesFolderPath: path];
+		[controller assignGamesFolderPath: path
+						  withSampleGames: addSampleGames
+						  importerDroplet: YES
+						  shelfAppearance: BXShelfAuto];
 	}
 }
 

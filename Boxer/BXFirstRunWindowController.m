@@ -102,9 +102,7 @@ enum {
 }
 
 - (IBAction) makeGamesFolder: (id)sender
-{
-	BXAppController *controller = [NSApp delegate];
-	
+{	
 	NSString *path = [[gamesFolderSelector selectedItem] representedObject];
 	
 	NSFileManager *manager = [NSFileManager defaultManager];
@@ -127,19 +125,13 @@ enum {
 		}
 	}
 	
-	BOOL useShelfAppearance = (BOOL)[useShelfAppearanceToggle state];
-	[[NSApp delegate] setAppliesShelfAppearanceToGamesFolder: useShelfAppearance];
-	if (useShelfAppearance)
-	{
-		[controller applyShelfAppearanceToPath: path switchToShelfMode: YES];
-	}
+	BOOL applyShelfAppearance = (BOOL)[useShelfAppearanceToggle state];
+	BOOL addSampleGames = [addSampleGamesToggle state];
 	
-	if ([addSampleGamesToggle state])
-	{
-		[controller addSampleGamesToPath: path];
-	}
-	
-	[controller setGamesFolderPath: path];
+	[[NSApp delegate] assignGamesFolderPath: path
+							withSampleGames: addSampleGames
+							importerDroplet: YES
+							shelfAppearance: applyShelfAppearance];
 	
 	[[self window] hideWithTransition: CGSFlip
 							direction: CGSDown

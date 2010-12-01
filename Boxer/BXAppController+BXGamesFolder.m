@@ -407,6 +407,7 @@
 		[self setSourcePath: source];
 		[self setTargetPath: target];
 		manager = [[NSFileManager alloc] init];
+		workspace = [NSWorkspace sharedWorkspace];
 	}
 	return self;
 }
@@ -416,6 +417,7 @@
 	[self setSourcePath: nil], [sourcePath release];
 	[self setTargetPath: nil], [targetPath release];
 	[manager release], manager = nil;
+	[workspace release], workspace = nil;
 	[super dealloc];
 }
 
@@ -423,9 +425,8 @@
 {
 	if ([self isCancelled]) return;
 	
-	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
-	NSDictionary *attrs		= [NSDictionary dictionaryWithObject: [NSNumber numberWithBool: YES]
-															forKey: NSFileExtensionHidden];
+	NSDictionary *attrs	= [NSDictionary dictionaryWithObject: [NSNumber numberWithBool: YES]
+													  forKey: NSFileExtensionHidden];
 	
 	for (NSString *gamePath in [manager contentsOfDirectoryAtPath: sourcePath error: NULL])
 	{

@@ -122,6 +122,7 @@ typedef NSInteger BXShelfAppearance;
 	NSString *targetPath;
 	NSString *sourcePath;
 	NSFileManager *manager;
+	NSWorkspace *workspace;
 }
 @property (copy) NSString *targetPath;
 @property (copy) NSString *sourcePath;

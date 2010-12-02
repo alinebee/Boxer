@@ -39,7 +39,7 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 
 
 @implementation BXGameProfile
-@synthesize gameName, confName, profileDescription, installMedium, gameEra;
+@synthesize gameName, confName, profileDescription, installMedium, gameEra, requiredDiskSpace;
 
 + (BXGameEra) eraOfGameAtPath: (NSString *)basePath
 {
@@ -129,6 +129,9 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 		
 		NSNumber *medium = [profileDict objectForKey: @"BXInstallMedium"];
 		[self setInstallMedium: (medium) ? [medium integerValue] : BXDriveAutodetect];
+		
+		NSNumber *requiredSpace = [profileDict objectForKey: @"BXRequiredDiskSpace"];
+		[self setRequiredDiskSpace: (requiredSpace) ? [requiredSpace integerValue] : BXDefaultFreeSpace];
 		
 		NSNumber *era = [profileDict objectForKey: @"BXProfileGameEra"];
 		[self setGameEra: (era) ? [era unsignedIntegerValue] : BXUnknownEra];

@@ -136,6 +136,18 @@
 #pragma mark -
 #pragma mark Deciding how best to import a game
 
++ (BOOL) isCDROMSizedGameAtPath: (NSString *)path
+{
+	unsigned long long pathSize = 0;
+	NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtPath: path];
+	while ([enumerator nextObject])
+	{
+		pathSize += [[enumerator fileAttributes] fileSize];
+		if (pathSize > (NSUInteger)BXCDROMSizeThreshold) return YES;
+	}
+	return NO;
+}
+
 + (NSString *) preferredSourcePathForPath: (NSString *)path
 						   didMountVolume: (BOOL *)didMountVolume
 									error: (NSError **)outError
@@ -195,15 +207,7 @@
 	if ([workspace volumeTypeForPath: path] == dataCDVolumeType) return YES;
 	
 	//If the source path looks CD-sized, it should be imported
-	unsigned long long pathSize = 0;
-	NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtPath: path];
-	while ([enumerator nextObject])
-	{
-		NSDictionary *attrs = [enumerator fileAttributes];
-		pathSize += [attrs fileSize];
-		
-		if (pathSize > BXCDROMSizeThreshold) return YES;
-	}
+	if ([self isCDROMSizedGameAtPath: path]) return YES;
 	
 	return NO;
 }

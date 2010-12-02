@@ -16,8 +16,11 @@
 
 
 //Source paths whose filesize is larger than this in bytes will be treated
-//as CD-sized by shouldImportSourceFilesFromPath:
-#define BXCDROMSizeThreshold 100 * 1024 * 1024
+//as CD-sized by isCDROMSizedGameAtPath: and shouldImportSourceFilesFromPath:
+static const NSInteger BXCDROMSizeThreshold  = 100 * 1024 * 1024;
+
+//The free disk space in MB to allow on drive C when installing games from CD-ROM.
+static const NSInteger BXFreeSpaceForCDROMInstall = 700 * 1024 * 1024;
 
 @class BXPackage;
 @interface BXImport (BXImportPolicies)
@@ -63,6 +66,10 @@
 
 #pragma mark -
 #pragma mark Deciding how best to import a game
+
+//Returns YES if the game at the specified path is large enough to be considered a CD-ROM game.
+//This currently determines the free hard disk space allocated for the game's install.
++ (BOOL) isCDROMSizedGameAtPath: (NSString *)path;
 
 //Returns the recommended import point for the specified path.
 //didMountVolume will be YES if this method mounted the volume on which the source path resides.

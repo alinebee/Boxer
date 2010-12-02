@@ -40,7 +40,7 @@ static const NSInteger BXDefaultFreeSpace = -1;
 	NSString *label;
 	NSString *DOSBoxLabel;
 	BXDriveType type;
-	NSUInteger freeSpace;
+	NSInteger freeSpace;
 	BOOL usesCDAudio;
 	BOOL readOnly;
 	BOOL locked;
@@ -80,7 +80,7 @@ static const NSInteger BXDefaultFreeSpace = -1;
 
 //The amount of free disk space to represent on the drive, in bytes. Defaults to
 //BXDefaultFreeSpace: which is ~250MB for hard disks, 1.44MB for floppies and 0B for CDROMs.
-@property (assign, nonatomic) NSUInteger freeSpace;
+@property (assign, nonatomic) NSInteger freeSpace;
 
 //Whether to use SDL CD-ROM audio: only relevant for CD-ROM drives. If YES, DOS emulation
 //will read CD audio for this drive from the first audio CD volume mounted in OS X.

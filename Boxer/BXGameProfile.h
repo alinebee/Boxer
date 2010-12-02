@@ -39,6 +39,7 @@ typedef NSUInteger BXGameEra;
 	
 	BXGameEra gameEra;
 	BXDriveType installMedium;
+	NSInteger requiredDiskSpace;
 }
 
 #pragma mark -
@@ -56,8 +57,13 @@ typedef NSUInteger BXGameEra;
 @property (copy) NSString *profileDescription;
 
 //Whether this game needs to be installed from a particular kind of drive (e.g. floppy-disk or CD-ROM).
-//If the game has no special requirements, will be BXDriveAutodetect
+//If the game has no special requirements, will be BXDriveAutodetect.
 @property (assign) BXDriveType installMedium;
+
+//The maximum amount of free disk space this game may need to install.
+//Used to assign an appropriate amount of free space on drive C.
+//If the game has no special requirements, this will be BXDefaultFreeSpace.
+@property (assign) NSInteger requiredDiskSpace;
 
 //The era of this game. Defaults to BXUnknownEra.
 @property (assign) BXGameEra gameEra;

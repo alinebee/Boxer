@@ -883,14 +883,29 @@
 //source path ahead of other drives.
 - (void) _mountDrivesForSession
 {
+	//Determine what type of media this game expects to be installed from,
+	//and how much free space to allow for it
+	BXDriveType installMedium = BXDriveAutodetect;
+	if ([self gameProfile])
+		installMedium = [[self gameProfile] installMedium];
+	
+	if (installMedium == BXDriveAutodetect)
+		installMedium = [BXDrive preferredTypeForPath: [self sourcePath]];
+
+	
+	NSInteger freeSpace = BXDefaultFreeSpace;
+	
+	if ([self gameProfile])
+		freeSpace = [[self gameProfile] requiredDiskSpace];
+	
+	if (freeSpace == BXDefaultFreeSpace && (installMedium == BXDriveCDROM || [[self class] isCDROMSizedGameAtPath: [self sourcePath]]))
+		freeSpace = BXFreeSpaceForCDROMInstall;
+	
+	
 	//Mount our new empty gamebox as drive C
 	BXDrive *destinationDrive = [BXDrive hardDriveFromPath: [self rootDrivePath] atLetter: @"C"];
+	[destinationDrive setFreeSpace: freeSpace];
 	[self mountDrive: destinationDrive];
-	
-	//Determine what type of media this game expects to be installed from
-	//(This will be BXDriveAutodetect if it doesn't care)
-	BXDriveType installMedium = BXDriveAutodetect;
-	if ([self gameProfile] != nil) installMedium = [[self gameProfile] installMedium];
 	
 	//Then, create a drive of the appropriate type from the source files and mount away
 	BXDrive *sourceDrive = [BXDrive driveFromPath: [self sourcePath] atLetter: nil withType: installMedium];

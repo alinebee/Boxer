@@ -245,10 +245,24 @@
 {
 	NSString *filename = [path lastPathComponent];
 	
+	//Strip any of our own file extensions from the path
+	NSArray *strippedExtensions = [NSArray arrayWithObjects:
+								   @"boxer",
+								   @"cdrom",
+								   @"floppy",
+								   @"harddisk",
+								   nil];
+	
+	NSString *extension	= [[filename pathExtension] lowercaseString];
+	if ([strippedExtensions containsObject: extension]) filename = [filename stringByDeletingPathExtension];
+	
 	//Put a space before a set of numbers preceded by a character:
 	//ULTIMA8 -> ULTIMA 8
 	filename = [filename stringByReplacingOccurrencesOfRegex: @"([a-zA-Z]+)(\\d+)"
 															withString: @"$1 $2"];
+	
+	//Replace underscores with spaces
+	filename = [filename stringByReplacingOccurrencesOfString: @"_" withString: @" "];
 	
 	//Convert the filename to Title Case
 	//ULTIMA 8 -> Ultima 8

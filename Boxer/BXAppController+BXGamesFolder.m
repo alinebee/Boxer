@@ -115,18 +115,25 @@
 			   importerDroplet: (BOOL)addImporterDroplet
 			   shelfAppearance: (BXShelfAppearance)applyShelfAppearance
 {
-	[self setGamesFolderPath: newPath];
-	
-	if (applyShelfAppearance != BXShelfAuto)
+	if (applyShelfAppearance == BXShelfAuto)
 	{
-		[self setAppliesShelfAppearanceToGamesFolder: applyShelfAppearance];
+		applyShelfAppearance = [self appliesShelfAppearanceToGamesFolder];
 	}
+	else
+	{
+		[self setAppliesShelfAppearanceToGamesFolder: (BOOL)applyShelfAppearance];
+	}
+
 	
-	if (applyShelfAppearance && applyShelfAppearance != BXShelfAuto)
+	if (applyShelfAppearance)
 		[self applyShelfAppearanceToPath: newPath switchToShelfMode: YES];
 	
 	if (addSampleGames)			[self addSampleGamesToPath: newPath];
 	if (addImporterDroplet)		[self addImporterDropletToPath: newPath];
+	
+	//Set the actual games folder last, so that any icon changes from
+	//applyShelfAppearanceToPath:switchToShelfMode will get picked up
+	[self setGamesFolderPath: newPath];
 }
 
 - (BOOL) importOldGamesFolderFromPath: (NSString *)path
@@ -134,7 +141,6 @@
 	NSFileManager *manager = [NSFileManager defaultManager];
 	if ([manager fileExistsAtPath: path])
 	{
-		[self setGamesFolderPath: path];
 		[self freshenImporterDropletAtPath: path addIfMissing: YES];
 		
 		NSString *backgroundPath = [path stringByAppendingPathComponent: @".background"];
@@ -145,6 +151,11 @@
 			[self setAppliesShelfAppearanceToGamesFolder: YES];
 			[self applyShelfAppearanceToPath: path switchToShelfMode: NO];
 		}
+		
+		//Set the actual games folder last, so that any icon changes from
+		//applyShelfAppearanceToPath:switchToShelfMode will get picked up
+		[self setGamesFolderPath: path];
+		
 		return YES;
 	}
 	return NO;
@@ -152,7 +163,7 @@
 
 + (NSSet *) keyPathsForValuesAffectingGamesFolderIcon
 {
-	return [NSSet setWithObject: @"gamesFolderPath"];
+	return [NSSet setWithObjects: @"gamesFolderPath", @"appliesShelfAppearanceToGamesFolder", nil];
 }
 
 - (NSImage *) gamesFolderIcon
@@ -189,7 +200,6 @@
 	
 	if (![workspace fileHasCustomIcon: path])
 	{
-		NSLog(@"%@", path);
 		NSImage *image = [NSImage imageNamed: @"gamefolder"];
 		[workspace setIcon: image forFile: path options: 0];
 	}

@@ -407,7 +407,7 @@
 		[self setSourcePath: source];
 		[self setTargetPath: target];
 		manager = [[NSFileManager alloc] init];
-		workspace = [NSWorkspace sharedWorkspace];
+		workspace = [[NSWorkspace alloc] init];
 	}
 	return self;
 }

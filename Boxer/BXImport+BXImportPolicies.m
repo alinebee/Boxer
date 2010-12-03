@@ -204,7 +204,7 @@
 	if ([workspace file: path matchesTypes: [BXAppController mountableImageTypes]]) return YES;
 	
 	//If the source path is on a CD, it should be imported
-	if ([workspace volumeTypeForPath: path] == dataCDVolumeType) return YES;
+	if ([[workspace volumeTypeForPath: path] isEqualToString: dataCDVolumeType]) return YES;
 	
 	//If the source path looks CD-sized, it should be imported
 	if ([self isCDROMSizedGameAtPath: path]) return YES;

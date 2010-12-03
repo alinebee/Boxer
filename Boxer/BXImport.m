@@ -891,7 +891,6 @@
 	
 	if (installMedium == BXDriveAutodetect)
 		installMedium = [BXDrive preferredTypeForPath: [self sourcePath]];
-
 	
 	NSInteger freeSpace = BXDefaultFreeSpace;
 	

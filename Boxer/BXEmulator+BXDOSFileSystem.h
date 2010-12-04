@@ -40,9 +40,9 @@
 #pragma mark Helper class methods
 
 + (NSArray *) driveLetters;			//all drive letters in order, including reserved letters
-+ (NSArray *) floppyDriveLetters;	//letters appropriate for floppy drives
-+ (NSArray *) hardDriveLetters;		//letters appropriate for hard disk/CD-ROM drives (excludes reserved letters)
-
++ (NSArray *) floppyDriveLetters;	//letters appropriate for floppy drives (A-W)
++ (NSArray *) hardDriveLetters;		//letters appropriate for hard disk drives (C-W)
++ (NSArray *) CDROMDriveLetters;	//letters appropriate for CD-ROM drives (D-W)
 + (NSSet *) dosFileExclusions;		//Filenames to hide from DOS directory listings
 
 

@@ -80,6 +80,13 @@ enum {
 	if (!letters) letters = [[[self driveLetters] subarrayWithRange: NSMakeRange(2, 22)] retain];
 	return letters;
 }
++ (NSArray *) CDROMDriveLetters
+{
+	static NSArray *letters = nil;
+	if (!letters) letters = [[[self driveLetters] subarrayWithRange: NSMakeRange(3, 22)] retain];
+	return letters;	
+}
+
 
 + (NSSet *) dosFileExclusions
 {
@@ -266,8 +273,9 @@ enum {
 	
 	//TODO: try to ensure CD-ROM mounts are contiguous
 	NSArray *letters;
-	if ([drive isFloppy])	letters = [[self class] floppyDriveLetters];
-	else					letters = [[self class] hardDriveLetters];
+	if ([drive isFloppy])		letters = [[self class] floppyDriveLetters];
+	else if ([drive isCDROM])	letters = [[self class] CDROMDriveLetters];
+	else						letters = [[self class] hardDriveLetters];
 
 	//Scan for the first available drive letter that isn't already mounted
 	for (NSString *letter in letters) if (![usedLetters containsObject: letter]) return letter;

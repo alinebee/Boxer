@@ -13,6 +13,7 @@
 #import "NSString+BXPaths.h"
 #import "BXGameProfile.h"
 #import "BXPackage.h"
+#import "RegexKitLite.h"
 
 #import "dos_inc.h"
 #import "dos_system.h"
@@ -418,6 +419,7 @@ enum {
 	}
 	else return nil;
 }
+
 - (NSString *) currentWorkingDirectory
 {
 	if ([self isExecuting])
@@ -440,6 +442,31 @@ enum {
 	else return nil;
 }
 
+- (NSString *) pathForDOSPath: (NSString *)path
+{
+	if ([self isExecuting])
+	{
+		const char *dosPath = [path cStringUsingEncoding: BXDirectStringEncoding];
+		char fullPath[DOS_PATHLENGTH];
+		Bit8u driveIndex;
+		BOOL resolved = DOS_MakeName(dosPath, fullPath, &driveIndex);
+
+		if (resolved)
+		{
+			NSString *localPath	= [self _filesystemPathForDOSPath: fullPath atIndex: driveIndex];
+			
+			if (localPath) return localPath;
+			else
+			{
+				BXDrive *drive = [self driveAtLetter: [self _driveLetterForIndex: driveIndex]];
+				return [drive path];
+			}			
+		}
+		else return nil;
+	}
+	else return nil;
+}
+
 
 #pragma mark -
 #pragma mark Private methods
@@ -451,7 +478,7 @@ enum {
 //Used internally to match DOS drive letters to the DOSBox drive array
 - (NSUInteger)_indexOfDriveLetter: (NSString *)driveLetter
 {
-	NSUInteger index = [[[self class] driveLetters] indexOfObject: driveLetter];
+	NSUInteger index = [[[self class] driveLetters] indexOfObject: [driveLetter uppercaseString]];
 	NSAssert1(index != NSNotFound,	@"driveLetter %@ passed to _indexOfDriveLetter: was not a valid DOS drive letter.", driveLetter);
 	NSAssert2(index < DOS_DRIVES,	@"driveIndex %u derived from %@ in _indexOfDriveLetter: was beyond the range of DOSBox's drive array.", index, driveLetter);
 	return index;
@@ -503,7 +530,6 @@ enum {
 	//We can't return a system file path for non-local drives
 	else return nil;
 }
-
 
 #pragma mark -
 #pragma mark Adding and removing new DOSBox drives

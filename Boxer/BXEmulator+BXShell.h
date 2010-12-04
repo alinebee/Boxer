@@ -86,6 +86,9 @@
 //Lists all available drives, using Boxer's output syntax instead of DOSBox's.
 //Call with "drives"
 - (id) listDrives: (NSString *)argumentString;
+
+//Reveal the specified DOS path in Finder. If no argument is provided, will reveal the current directory.
+- (id) revealPath: (NSString *)argumentString;
 @end
 
 

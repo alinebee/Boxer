@@ -22,6 +22,7 @@
 #import "NSWorkspace+BXFileTypes.h"
 #import "NSString+BXPaths.h"
 #import "NSFileManager+BXTemporaryFiles.h"
+#import "UKFNSubscribeFileWatcher.h"
 
 
 //How we will store our gamebox-specific settings in user defaults.
@@ -106,8 +107,8 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 		[self setEmulator: [[[BXEmulator alloc] init] autorelease]];
 		[self setGameSettings: defaults];
 		
-		
 		importQueue = [[NSOperationQueue alloc] init];
+		watcher = [[UKFNSubscribeFileWatcher alloc] init];
 	}
 	return self;
 }
@@ -129,6 +130,7 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	[temporaryFolderPath release], temporaryFolderPath = nil;
 	
 	[importQueue release], importQueue = nil;
+	[watcher release], watcher = nil;
 	
 	[super dealloc];
 }

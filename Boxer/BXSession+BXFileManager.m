@@ -485,25 +485,40 @@
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	NSNotificationCenter *center = [workspace notificationCenter];
 	
-	[center addObserver:	self
-			selector:		@selector(volumeDidMount:)
-			name:			NSWorkspaceDidMountNotification
-			object:			workspace];
+	[center addObserver: self
+			   selector: @selector(volumeDidMount:)
+				   name: NSWorkspaceDidMountNotification
+				 object: workspace];
 	
-	[center addObserver:	self
-			   selector:	@selector(volumeWillUnmount:)
-				   name:	NSWorkspaceWillUnmountNotification
-				 object:	workspace];
+	[center addObserver: self
+			   selector: @selector(volumeWillUnmount:)
+				   name: NSWorkspaceWillUnmountNotification
+				 object: workspace];
 
-	[center addObserver:	self
-			   selector:	@selector(volumeWillUnmount:)
-				   name:	NSWorkspaceDidUnmountNotification
-				 object:	workspace];
+	[center addObserver: self
+			   selector: @selector(volumeWillUnmount:)
+				   name: NSWorkspaceDidUnmountNotification
+				 object: workspace];
 	
-	[center addObserver:	self
-			selector:		@selector(filesystemDidChange:)
-			name:			UKFileWatcherWriteNotification
-			object:			nil];
+	[center addObserver: self
+			   selector: @selector(filesystemDidChange:)
+				   name: UKFileWatcherWriteNotification
+				 object: watcher];
+	
+	[center addObserver: self
+			   selector: @selector(filesystemDidChange:)
+				   name: UKFileWatcherDeleteNotification
+				 object: watcher];
+	
+	[center addObserver: self
+			   selector: @selector(filesystemDidChange:)
+				   name: UKFileWatcherRenameNotification
+				 object: watcher];
+	
+	[center addObserver: self
+			   selector: @selector(filesystemDidChange:)
+				   name: UKFileWatcherAccessRevocationNotification
+				 object: watcher];
 }
 
 - (void) _deregisterForFilesystemNotifications
@@ -514,7 +529,10 @@
 	[center removeObserver: self name: NSWorkspaceDidMountNotification		object: workspace];
 	[center removeObserver: self name: NSWorkspaceDidUnmountNotification	object: workspace];
 	[center removeObserver: self name: NSWorkspaceWillUnmountNotification	object: workspace];
-	[center removeObserver: self name: UKFileWatcherWriteNotification		object: nil];
+	[center removeObserver: self name: UKFileWatcherWriteNotification		object: watcher];
+	[center removeObserver: self name: UKFileWatcherDeleteNotification		object: watcher];
+	[center removeObserver: self name: UKFileWatcherRenameNotification		object: watcher];
+	[center removeObserver: self name: UKFileWatcherAccessRevocationNotification object: watcher];
 }
 
 - (void) volumeDidMount: (NSNotification *)theNotification
@@ -525,7 +543,9 @@
 	
 	//To work around this, we add a slight delay before we process the volume mount notification,
 	//to allow other volumes to finish mounting.
-	[self performSelector:@selector(_handleVolumeDidMount:) withObject: theNotification afterDelay: BXVolumeMountDelay];
+	[self performSelector: @selector(_handleVolumeDidMount:)
+			   withObject: theNotification
+			   afterDelay: BXVolumeMountDelay];
 }
 
 - (void) _handleVolumeDidMount: (NSNotification *)theNotification
@@ -580,6 +600,8 @@
 {
 	NSString *path = [[theNotification userInfo] objectForKey: @"path"];
 	if ([[self emulator] pathIsDOSAccessible: path]) [[self emulator] refreshMountedDrives];
+	
+	//NSLog(@"Path changed: %@", path);
 	
 	//Also check if the file was inside our gamebox - if so, flush the gamebox's caches
 	BXPackage *package = [self gamePackage];
@@ -851,14 +873,12 @@
 	//Note: UKFNSubscribeFileWatcher can only watch directories, not regular files 
 	if (exists && isFolder)
 	{
-		UKFNSubscribeFileWatcher *watcher = [UKFNSubscribeFileWatcher sharedFileWatcher];
 		[watcher addPath: path];
 	}
 }
 
 - (void) _stopTrackingChangesAtPath: (NSString *)path
 {
-	UKFNSubscribeFileWatcher *watcher = [UKFNSubscribeFileWatcher sharedFileWatcher];
 	[watcher removePath: path];
 }
 

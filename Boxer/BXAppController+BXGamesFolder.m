@@ -261,11 +261,11 @@
 	FinderIconViewOptions *options = window.iconViewOptions;
 	FinderIconViewOptions *parentOptions = parentWindow.iconViewOptions;
 	
-	options.iconSize		= parentOptions.iconSize;
-	options.backgroundColor	= parentOptions.backgroundColor;
-	options.textSize		= parentOptions.textSize;
-	options.labelPosition	= parentOptions.labelPosition;
-	options.showsItemInfo	= parentOptions.showsItemInfo;
+	options.iconSize			= parentOptions.iconSize;
+	options.backgroundColor		= parentOptions.backgroundColor;
+	options.textSize			= parentOptions.textSize;
+	options.labelPosition		= parentOptions.labelPosition;
+	options.showsItemInfo		= parentOptions.showsItemInfo;
 }
 
 - (BOOL) appliesShelfAppearanceToGamesFolder

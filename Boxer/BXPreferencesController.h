@@ -12,11 +12,6 @@
 
 @class BXFilterGallery;
 
-enum {
-	BXGeneralPreferencesPanelTag = 1,
-	BXDisplayPreferencesPanelTag = 2
-};
-
 @interface BXPreferencesController : BXTabbedWindowController
 {
 	IBOutlet BXFilterGallery *filterGallery;

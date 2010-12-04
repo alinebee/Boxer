@@ -31,7 +31,6 @@
 
 - (void) awakeFromNib
 {
-	[super awakeFromNib];
 	//Bind to the filter preference so that we can synchronise our filter selection controls when it changes
 	[[NSUserDefaults standardUserDefaults] addObserver: self
 											forKeyPath: @"filterType"
@@ -46,7 +45,8 @@
 						toObject: [NSApp delegate]
 					 withKeyPath: @"gamesFolderPath"
 						 options: bindingOptions];
-
+	
+	[super awakeFromNib];
 }
 
 - (void) dealloc
@@ -59,26 +59,6 @@
 	[super dealloc];
 }
 
-
-#pragma mark -
-#pragma mark Switching tabs
-
-- (void) tabView: (NSTabView *)tabView didSelectTabViewItem: (NSTabViewItem *)tabViewItem
-{
-	//Set the window title to the same as the active tab
-	//[[self window] setTitle: [tabViewItem label]];
-	
-	//Sync the toolbar selection after switching tabs
-	NSInteger tabIndex = [tabView indexOfTabViewItem: tabViewItem];
-	for (NSToolbarItem *item in [[[self window] toolbar] items])
-	{
-		if ([item tag] == tabIndex)
-		{
-			[[[self window] toolbar] setSelectedItemIdentifier: [item itemIdentifier]];
-			break;
-		}
-	}
-}
 
 #pragma mark -
 #pragma mark Managing filter gallery state

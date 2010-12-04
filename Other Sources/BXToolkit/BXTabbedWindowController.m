@@ -23,7 +23,7 @@
 #pragma mark Implementation
 
 @implementation BXTabbedWindowController
-@synthesize tabView = mainTabView;
+@synthesize tabView = mainTabView, toolbarForTabs;
 
 
 #pragma mark -
@@ -32,6 +32,7 @@
 - (void) dealloc
 {
 	[self setTabView: nil], [mainTabView release];
+	[self setToolbarForTabs: nil], [toolbarForTabs release];
 	
 	[super dealloc];
 }
@@ -118,4 +119,37 @@
 	[self tabView: mainTabView didSelectTabViewItem: [mainTabView selectedTabViewItem]];
 }
 
+
+
+#pragma mark -
+#pragma mark 
+
+- (void) toolbarWillAddItem: (NSNotification *)notification
+{
+	NSToolbarItem *item = [[notification userInfo] objectForKey: @"item"];
+	NSInteger tag = [item tag];
+	NSUInteger numTabs = [[[self tabView] tabViewItems] count];
+	if (tag > -1 && tag < (NSInteger)numTabs)
+	{
+		NSTabViewItem *matchingTab = [[self tabView] tabViewItemAtIndex: tag];
+		[matchingTab setIdentifier: [item itemIdentifier]];
+	}
+}
+
+- (NSArray *) toolbarSelectableItemIdentifiers: (NSToolbar *)toolbar
+{
+	NSArray *tabs = [[self tabView] tabViewItems];
+	NSMutableArray *identifiers = [NSMutableArray arrayWithCapacity: [tabs count]];
+	for (NSTabViewItem *tab in tabs)
+	{
+		[identifiers addObject: [tab identifier]];
+	}
+	return identifiers;
+}
+
+- (void) tabView: (NSTabView *)tabView didSelectTabViewItem: (NSTabViewItem *)tabViewItem
+{
+	//Sync the toolbar selection after switching tabs
+	[[self toolbarForTabs] setSelectedItemIdentifier: [tabViewItem identifier]];
+}
 @end

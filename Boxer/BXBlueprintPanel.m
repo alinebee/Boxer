@@ -118,10 +118,13 @@
 	NSColor *textColor = [NSColor whiteColor];
 	NSColor *backgroundColor = [NSColor colorWithCalibratedWhite: 0.0f alpha: backgroundOpacity];
 	
+	NSRect visibleFrame = frame;
+	visibleFrame.size.height -= 2.0f;
+	visibleFrame.origin.y += 2.0f;
 	
 	//We draw ourselves with rounded corners, and a custom background and inner shadow
 	CGFloat cornerRadius = 3.0f; //NSHeight(frame) / 2.0f;
-	NSBezierPath *background = [NSBezierPath bezierPathWithRoundedRect: frame
+	NSBezierPath *background = [NSBezierPath bezierPathWithRoundedRect: visibleFrame
 															   xRadius: cornerRadius
 															   yRadius: cornerRadius];
 	

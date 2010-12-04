@@ -14,7 +14,8 @@
 #import "RegexKitLite.h"
 
 @implementation BXDrive
-@synthesize path, letter, label, DOSBoxLabel, icon;
+@synthesize path, pathAliases;
+@synthesize letter, label, DOSBoxLabel, icon;
 @synthesize type, freeSpace;
 @synthesize usesCDAudio, readOnly, locked, hidden;
 
@@ -121,6 +122,7 @@
 		[self setFreeSpace:		BXDefaultFreeSpace];
 		[self setUsesCDAudio:	YES];
 		[self setReadOnly:		NO];
+		pathAliases = [[NSMutableSet alloc] initWithCapacity: 1];
 	}
 	return self;
 }
@@ -174,6 +176,8 @@
 	[self setLabel: nil],		[label release];
 	[self setDOSBoxLabel: nil],	[DOSBoxLabel release];
 	[self setIcon: nil],		[icon release];
+	
+	[pathAliases release], pathAliases = nil;
 	[super dealloc];
 }
 
@@ -212,7 +216,12 @@
 	if ([self isInternal]) return NO;
 	subPath = [subPath stringByStandardizingPath];
 	
-	return [subPath isRootedInPath: [self path]];
+	if ([subPath isRootedInPath: [self path]]) return YES;
+	for (NSString *alias in [self pathAliases])
+	{
+		if ([subPath isRootedInPath: alias]) return YES;
+	}
+	return NO;
 }
 
 - (BOOL) isInternal	{ return ([self type] == BXDriveInternal); }

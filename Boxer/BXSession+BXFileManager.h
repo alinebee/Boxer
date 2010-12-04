@@ -66,10 +66,10 @@
 #pragma mark Launching programs
 
 //Open the represented object of the sender in DOS.
-- (IBAction) openInDOS:			(id)sender;
+- (IBAction) openInDOS: (id)sender;
 
 //Relaunch the default program.
-- (IBAction) relaunch:			(id)sender;
+- (IBAction) relaunch: (id)sender;
 
 //Open the file at the specified path in DOS.
 //If path is an executable, it will be launched; otherwise, we'll just change the working directory to it.

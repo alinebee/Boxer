@@ -118,7 +118,7 @@
 	
 	if ([session isKindOfClass: [BXImport class]])
 	{
-		if ([session activeProgramPath])
+		if ([[session emulator] isRunningProcess])
 		{
 			if (![(BXImport *)session isRunningInstaller] && [self canSetActiveProgramToDefault])
 				panel = defaultProgramPanel;

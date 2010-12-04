@@ -454,7 +454,39 @@
 	if ([self gameProfile]) customLabel = [[self gameProfile] labelForDrive: drive];
 	if (customLabel) [drive setLabel: customLabel];
 	
-	return [[self emulator] mountDrive: drive];
+	//Check if the specified path has a DOSBox-compatible image backing it:
+	//if so, mount that instead, and assign the current path as an alias.
+	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+	NSString *sourceImagePath = [workspace sourceImageForVolume: [drive path]];
+	if (sourceImagePath && [workspace file: sourceImagePath matchesTypes: [BXAppController mountableImageTypes]])
+	{
+		//Check if the source image is already mounted:
+		//if so, then just add the path as an alias to that existing drive
+		BXDrive *existingDrive = [[self emulator] driveForPath: sourceImagePath];
+		if (existingDrive)
+		{
+			[[existingDrive pathAliases] addObject: [drive path]];
+			return existingDrive;
+		}
+		//Otherwise, make a new drive using the image, and mount that instead
+		else
+		{
+			BXDrive *imageDrive = [BXDrive driveFromPath: sourceImagePath atLetter: [drive letter] withType: [drive type]];
+			[imageDrive setReadOnly: [drive readOnly]];
+			[imageDrive setHidden: [drive isHidden]];
+			[imageDrive setLocked: [drive isLocked]];
+			[[imageDrive pathAliases] addObject: [drive path]];
+			
+			BXDrive *returnedDrive = [[self emulator] mountDrive: imageDrive];
+			//If mounting the image fails, then try again with the original drive
+			if (!returnedDrive) returnedDrive = [[self emulator] mountDrive: drive];
+			return returnedDrive;
+		}
+	}
+	else
+	{
+		return [[self emulator] mountDrive: drive];
+	}
 }
 
 - (BOOL) unmountDrive: (BXDrive *)drive
@@ -594,14 +626,18 @@
 {
 	NSString *volumePath = [[theNotification userInfo] objectForKey: @"NSDevicePath"];
 	[[self emulator] unmountDrivesForPath: volumePath];
+	
+	//Also remove the volume from any drive aliases
+	for (BXDrive *drive in [[self emulator] mountedDrives])
+	{
+		[[drive pathAliases] removeObject: volumePath];
+	}
 }
 
 - (void) filesystemDidChange: (NSNotification *)theNotification
 {
 	NSString *path = [[theNotification userInfo] objectForKey: @"path"];
 	if ([[self emulator] pathIsDOSAccessible: path]) [[self emulator] refreshMountedDrives];
-	
-	//NSLog(@"Path changed: %@", path);
 	
 	//Also check if the file was inside our gamebox - if so, flush the gamebox's caches
 	BXPackage *package = [self gamePackage];

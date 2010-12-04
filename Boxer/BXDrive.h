@@ -36,6 +36,7 @@ static const NSInteger BXDefaultFreeSpace = -1;
 @interface BXDrive : NSObject
 {
 	NSString *path;
+	NSMutableSet *pathAliases;
 	NSString *letter;
 	NSString *label;
 	NSString *DOSBoxLabel;
@@ -54,6 +55,12 @@ static const NSInteger BXDefaultFreeSpace = -1;
 
 //The absolute path to the source folder (or image) of the drive on the OS X filesystem.
 @property (copy, nonatomic) NSString *path;
+
+//A set of OS X filesystem paths which correspond to this drive, used
+//when resolving DOS paths or determining if a drive is already mounted.
+//This is mainly used for tracking paths on the mounted OS X volume
+//of an ISO that is mounted directly in DOS.
+@property (readonly, nonatomic) NSMutableSet *pathAliases;
 
 //The DOS drive letter under which this drive will be mounted.
 //If nil, BXEmulator mountDrive: will choose an appropriate drive letter at mount time.

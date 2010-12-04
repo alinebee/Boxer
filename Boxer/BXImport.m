@@ -730,16 +730,22 @@
 	{
 		BXDrive *importDrive = nil;
 		
+		//If the source path is on a disk image, then import the image instead
+		NSString *importPath = [self sourcePath];
+		NSString *sourceImagePath = [workspace sourceImageForVolume: [self sourcePath]];
+		if (sourceImagePath && [workspace file: sourceImagePath matchesTypes: [BXAppController mountableImageTypes]])
+			importPath = sourceImagePath;
+		
 		//If the source is an actual floppy disk, or this game needs to be installed off floppies,
 		//then import the source files as a floppy disk
 		if (isRealFloppy || [[self gameProfile] installMedium] == BXDriveFloppyDisk)
 		{
-			importDrive = [BXDrive floppyDriveFromPath: [self sourcePath] atLetter: @"A"];
+			importDrive = [BXDrive floppyDriveFromPath: importPath atLetter: @"A"];
 		}
 		//Otherwise, import the source files as a CD-ROM drive
 		else
 		{
-			importDrive = [BXDrive CDROMFromPath: [self sourcePath] atLetter: @"D"];
+			importDrive = [BXDrive CDROMFromPath: importPath atLetter: @"D"];
 		}
 		
 		[self setTransferOperation: [self beginImportForDrive: importDrive]];

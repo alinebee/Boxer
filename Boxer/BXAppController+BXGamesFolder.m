@@ -261,11 +261,23 @@
 	FinderIconViewOptions *options = window.iconViewOptions;
 	FinderIconViewOptions *parentOptions = parentWindow.iconViewOptions;
 	
+	//IMPLEMENTATION NOTE: In OS X 10.6, setting the background colour is enough to clear the background picture.
+	//In 10.5 this isn't sufficient - but we can't just set it to nil, or to a nonexistent file, or the parent 
+	//folder's background image, as none of these work.
+	//So, we set it to an empty PNG file we keep around for these occasions. Fuck the world.
+	if ([BXAppController isRunningOnLeopard])
+	{
+		NSURL *backgroundImageURL	= [NSURL fileURLWithPath: [[NSBundle mainBundle] pathForImageResource: @"BlankShelves"]];
+		FinderFile *blankPicture	= [[finder files] objectAtLocation: backgroundImageURL];
+		options.backgroundPicture	= (FinderFile *)blankPicture;
+	}
+
 	options.iconSize			= parentOptions.iconSize;
 	options.backgroundColor		= parentOptions.backgroundColor;
 	options.textSize			= parentOptions.textSize;
 	options.labelPosition		= parentOptions.labelPosition;
 	options.showsItemInfo		= parentOptions.showsItemInfo;
+		
 }
 
 - (BOOL) appliesShelfAppearanceToGamesFolder

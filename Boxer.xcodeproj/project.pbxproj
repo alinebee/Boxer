@@ -218,6 +218,7 @@
 		9F843FE11226EB1100FD37F1 /* import.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F843FE01226EB1100FD37F1 /* import.png */; };
 		9F8A974A10E7DEF500A4B72A /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8A974910E7DEF500A4B72A /* RegexKitLite.m */; };
 		9F8A976010E7EDDE00A4B72A /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */; };
+		9F960C7F12AAAB2900568AFD /* BlankShelves.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F960C7E12AAAB2900568AFD /* BlankShelves.png */; };
 		9F9A4C9610F67A1F00E61965 /* GalleryOriginal.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A4C9010F67A1F00E61965 /* GalleryOriginal.png */; };
 		9F9A4C9710F67A1F00E61965 /* GalleryHQx.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A4C9110F67A1F00E61965 /* GalleryHQx.png */; };
 		9F9A4C9810F67A1F00E61965 /* GalleryMAME.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A4C9210F67A1F00E61965 /* GalleryMAME.png */; };
@@ -743,6 +744,7 @@
 		9F8A974810E7DEF500A4B72A /* RegexKitLite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegexKitLite.h; sourceTree = "<group>"; };
 		9F8A974910E7DEF500A4B72A /* RegexKitLite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegexKitLite.m; sourceTree = "<group>"; };
 		9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
+		9F960C7E12AAAB2900568AFD /* BlankShelves.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BlankShelves.png; sourceTree = "<group>"; };
 		9F9A4C9010F67A1F00E61965 /* GalleryOriginal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GalleryOriginal.png; sourceTree = "<group>"; };
 		9F9A4C9110F67A1F00E61965 /* GalleryHQx.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GalleryHQx.png; sourceTree = "<group>"; };
 		9F9A4C9210F67A1F00E61965 /* GalleryMAME.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GalleryMAME.png; sourceTree = "<group>"; };
@@ -1734,6 +1736,7 @@
 			children = (
 				9FFC2ABF12A19CCC008C2B3B /* Sample Game Icons */,
 				9F676BEF1235451B00924B8C /* Display.png */,
+				9F960C7E12AAAB2900568AFD /* BlankShelves.png */,
 				9F61941012340CA100F35AB4 /* ShelvesForSnowLeopard.jpg */,
 				9F61941112340CA100F35AB4 /* ShelvesForLeopard.jpg */,
 				9F843FE01226EB1100FD37F1 /* import.png */,
@@ -2118,6 +2121,7 @@
 				9F18137C12999E39009BC4B2 /* GamesFolderPanelOptions.xib in Resources */,
 				9F2C28B8129D924E00B172C8 /* FirstRunWindow.xib in Resources */,
 				9FFC2AC012A19CCC008C2B3B /* Sample Game Icons in Resources */,
+				9F960C7F12AAAB2900568AFD /* BlankShelves.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

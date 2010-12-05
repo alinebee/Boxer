@@ -14,7 +14,7 @@
 #import "RegexKitLite.h"
 
 @implementation BXDrive
-@synthesize path, pathAliases;
+@synthesize path, mountPath, pathAliases;
 @synthesize letter, label, DOSBoxLabel, icon;
 @synthesize type, freeSpace;
 @synthesize usesCDAudio, readOnly, locked, hidden;
@@ -136,9 +136,9 @@
 		if (drivePath)
 		{
 			[self setPath: drivePath];
-			//Fetch the filesystem icon for the drive
+			//Fetch the filesystem icon for the drive path
 			NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-			[self setIcon: [workspace iconForFile: drivePath]];
+			[self setIcon: [workspace iconForFile: [self path]]];
 		}
 		
 		//Detect the appropriate mount type for the specified path
@@ -193,6 +193,8 @@
 		
 		if (path)
 		{
+			if (![self mountPath]) [self setMountPath: filePath];
+			
 			//Automatically parse the drive letter and label from the name of the drive
 			if (![self letter])	[self setLetter:	[[self class] preferredDriveLetterForPath: filePath]];
 			if (![self label])	[self setLabel:		[[self class] preferredLabelForPath: filePath]];
@@ -211,17 +213,55 @@
 	}
 }
 
+- (BOOL) representsPath: (NSString *)basePath
+{
+	if ([self isInternal]) return NO;
+	basePath = [basePath stringByStandardizingPath];
+	
+	if ([[self path] isEqualToString: basePath]) return YES;
+	if ([[self mountPath] isEqualToString: basePath]) return YES;
+	if ([[self pathAliases] containsObject: basePath]) return YES;
+	
+	return NO;
+}
+
 - (BOOL) exposesPath: (NSString *)subPath
 {
 	if ([self isInternal]) return NO;
 	subPath = [subPath stringByStandardizingPath];
 	
-	if ([subPath isRootedInPath: [self path]]) return YES;
+	if ([subPath isEqualToString: [self path]]) return YES;
+	if ([subPath isRootedInPath: [self mountPath]]) return YES;
+	
 	for (NSString *alias in [self pathAliases])
 	{
 		if ([subPath isRootedInPath: alias]) return YES;
 	}
+	
 	return NO;
+}
+
+- (NSString *) relativeLocationOfPath: (NSString *)realPath
+{
+	if ([self isInternal]) return nil;
+	realPath = [realPath stringByStandardizingPath];
+	
+	//Special-case: map the 'represented' path directly onto the mount path
+	if ([realPath isEqualToString: [self path]]) return [self mountPath];
+	
+	if ([realPath isRootedInPath: [self mountPath]])
+	{
+		return [realPath substringFromIndex: [[self mountPath] length]];
+	}
+	else
+	{
+		for (NSString *alias in [self pathAliases])
+		{
+			return [realPath substringFromIndex: [alias length]];
+		}
+	}
+	//If we got this far, then no direct mapping is possible
+	return nil;
 }
 
 - (BOOL) isInternal	{ return ([self type] == BXDriveInternal); }

@@ -292,8 +292,8 @@
 	if (![theEmulator pathIsDOSAccessible: path]) return YES;
 	
 	
-	//If it is accessible within another drive, but the path is of a type that
-	//should get its own drive, then mount it as a new drive of its own.
+	//If it is accessible within another drive, but the path is of a type
+	//that should get its own drive, then mount it as a new drive of its own.
 	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
 	if ([workspace file: path matchesTypes: [[self class] separatelyMountedTypes]]
 	&& ![theEmulator pathIsMountedAsDrive: path])

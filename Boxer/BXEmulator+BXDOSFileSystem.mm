@@ -316,8 +316,7 @@ enum {
 	path = [path stringByStandardizingPath];
 	for (BXDrive *drive in [driveCache objectEnumerator])
 	{
-		if ([[drive path] isEqualTo: path]) return YES;
-		if ([[drive pathAliases] containsObject: path]) return YES;
+		if ([drive representsPath: path]) return YES;
 	}
 	return NO;
 }
@@ -359,69 +358,54 @@ enum {
 {
 	if (![self isExecuting]) return nil;
 	
-	path = [path stringByStandardizingPath];
-
-	NSString *basePath = [drive path];
-	BOOL isOnDrive = [path isRootedInPath: basePath];
+	NSString *subPath = [drive relativeLocationOfPath: path];
 	
-	//If this path is found via an alias, then correct the path to account for the alias
-	if (!isOnDrive)
-	{
-		for (NSString *alias in [drive pathAliases])
-		{
-			if ([path isRootedInPath: alias])
-			{
-				NSString *remainder = [path substringFromIndex: [alias length]];
-				path = [basePath stringByAppendingString: remainder];
-				isOnDrive = YES;
-				break;
-			}
-		}
-	}
-
 	//The path is not be accessible on this drive; give up before we go any further. 
-	if (!isOnDrive) return nil;
-	
+	if (!subPath) return nil;
 	
 	NSString *dosDrive = [NSString stringWithFormat: @"%@:", [drive letter], nil];
 	
-	//If the path is at the root of the drive, bail out early.
-	if ([path isEqualToString: basePath]) return dosDrive;
+	//If the path is at the root of the drive, bail out now.
+	if (![subPath length]) return dosDrive;
 
 	//To be sure we get this right, flush the drive caches before we look anything up
 	[self refreshMountedDrives];
 	
-	NSMutableString *dosPath	= [NSMutableString stringWithCapacity: CROSS_LEN];
-	
-	NSArray *components			= [path pathComponents];
-	NSUInteger i, numComponents	= [components count], startingPoint = [[basePath pathComponents] count];
+	NSString *basePath			= [drive mountPath];
+	NSArray *components			= [subPath pathComponents];
 	NSUInteger driveIndex		= [self _indexOfDriveLetter: [drive letter]];
 	
-	NSString *frankenPath, *fileName, *dosName;
-	for (i = startingPoint; i < numComponents; i++)
+	NSMutableString *dosPath	= [NSMutableString stringWithCapacity: CROSS_LEN];
+	NSMutableData *buffer		= [NSMutableData dataWithLength: CROSS_LEN];
+	
+	for (NSString *fileName in components)
 	{
-		fileName = [components objectAtIndex: i];
+		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 		
-		//TODO: Optimisation: check if the filename is already DOS-safe (within 8.3 and only ASCII characters),
-		//and if so then pass it on directly without doing a DOSBox long-filename lookup.
+		NSString *frankenPath = [basePath stringByAppendingString: dosPath];
 		
-		//Can you fucking believe this shit? DOSBox looks up host OS file paths using the full base path of the drive (in the host OS's filesystem notation) plus the *abbreviated 8.3 DOS filepath from then on*. So we append the dos path we've generated so far onto the base drive path and pass that frankensteinian concoction as the folder path we're trying to look up.
-		frankenPath	= [basePath stringByAppendingString: dosPath];
+		NSString *dosName;
 		
-		char buffer[CROSS_LEN] = {0};
 		BOOL hasShortName = Drives[driveIndex]->dirCache.GetShortName(
 			[frankenPath cStringUsingEncoding: BXDirectStringEncoding],
 			[fileName cStringUsingEncoding: BXDirectStringEncoding],
-			buffer);
+			(char *)[buffer mutableBytes]);
 	
 		if (hasShortName)
-			dosName = [NSString stringWithCString: (const char *)buffer encoding: BXDirectStringEncoding];
+		{
+			dosName = [[[NSString alloc] initWithData: buffer
+											 encoding: BXDirectStringEncoding] autorelease];			
+		}
 		else
-			//If DOSBox didn't find a shorter name, it probably means the name is already short enough
-			//- just make sure it's uppercased.
+		{
+			//If DOSBox didn't find a shorter name, it probably means the name
+			//is already short enough: just make sure it's uppercased.
 			dosName = [fileName uppercaseString];
-
+		}
+		
 		[dosPath appendFormat: @"/%@", dosName, nil];
+		
+		[pool release];
 	}
 	return [dosDrive stringByAppendingString: dosPath];
 }

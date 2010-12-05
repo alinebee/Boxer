@@ -36,6 +36,7 @@ static const NSInteger BXDefaultFreeSpace = -1;
 @interface BXDrive : NSObject
 {
 	NSString *path;
+	NSString *mountPath;
 	NSMutableSet *pathAliases;
 	NSString *letter;
 	NSString *label;
@@ -53,13 +54,20 @@ static const NSInteger BXDefaultFreeSpace = -1;
 #pragma mark -
 #pragma mark Properties
 
-//The absolute path to the source folder (or image) of the drive on the OS X filesystem.
+//The absolute path on the OS X filesystem which represents this drive.
+//This may or may not be the same as the path that gets mounted in DOS:
+//see mountPath below.
 @property (copy, nonatomic) NSString *path;
 
-//A set of OS X filesystem paths which correspond to this drive, used
+//The absolute path to the source file or folder that will get mounted
+//in DOS for this drive. Usually this is the same as path, but may differ
+//for drive packages.
+@property (copy, nonatomic) NSString *mountPath;
+
+//A set of other OS X filesystem paths which represent this drive, used
 //when resolving DOS paths or determining if a drive is already mounted.
-//This is mainly used for tracking paths on the mounted OS X volume
-//of an ISO that is mounted directly in DOS.
+//This is mainly used for matching up paths on the OS X volume for an ISO
+//that is mounted in DOS.
 @property (readonly, nonatomic) NSMutableSet *pathAliases;
 
 //The DOS drive letter under which this drive will be mounted.
@@ -167,9 +175,19 @@ static const NSInteger BXDefaultFreeSpace = -1;
 #pragma mark -
 #pragma mark Introspecting the drive
 
+//Returns whether the file at the specified path is equivalent to this drive.
+//This is mostly used for determining whether a path is already mounted as a DOS drive.
+- (BOOL) representsPath: (NSString *)basePath;
+
 //Returns whether the file at the specified path would be accessible in DOS from this drive.
-//This is determined by checking if the base folder of this drive is a parent of the specified path. 
+//This is determined by checking if the mount path of this drive is a parent of the
+//specified path. 
 - (BOOL) exposesPath: (NSString *)subPath;
+
+//Returns the location of the specified path relative to the root of the drive,
+//or nil if the specified path was not present on this drive.
+//Used by BXDOSFileSystem for matching OS X filesystem paths with DOS filesystem paths.
+- (NSString *) relativeLocationOfPath: (NSString *)realPath;
 
 
 #pragma mark -

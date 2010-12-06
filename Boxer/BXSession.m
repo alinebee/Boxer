@@ -322,7 +322,7 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	[callback setArgument: &contextInfo atIndex: 4];	
 	
 	BOOL hasActiveImports = NO;
-	for (BXDriveImport *import in [importQueue operations])
+	for (NSOperation *import in [importQueue operations])
 	{
 		if (![import isFinished] && ![import isCancelled])
 		{

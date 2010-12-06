@@ -21,7 +21,7 @@
 #import "BXEmulator.h"
 #import "BXCloseAlert.h"
 
-#import "BXDriveImport.h"
+#import "BXFileTransfer.h"
 
 #import "BXImport+BXImportPolicies.h"
 #import "BXSession+BXFileManager.h"

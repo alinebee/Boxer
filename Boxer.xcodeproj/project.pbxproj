@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		9F0F2B9512AD3C8500CD7078 /* BXMultiFileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0F2B9412AD3C8500CD7078 /* BXMultiFileTransfer.m */; };
 		9F0F9EDA12108A9000ED7A64 /* BXImportError.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0F9ED912108A9000ED7A64 /* BXImportError.m */; };
 		9F0F9EEF1210901800ED7A64 /* BXMountedVolumesError.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0F9EEE1210901800ED7A64 /* BXMountedVolumesError.m */; };
 		9F13F9D011F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F13F9CF11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m */; };
@@ -306,7 +307,6 @@
 		9FE8265C10F0EBA000F1B03E /* 35DisketteShine.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE8265A10F0EBA000F1B03E /* 35DisketteShine.png */; };
 		9FE90BF711F8D1DC003CFFFF /* BXDelegatedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE90BF611F8D1DC003CFFFF /* BXDelegatedView.m */; };
 		9FEAA3EC1204595B0085F008 /* BXOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEAA3EB1204595B0085F008 /* BXOperation.m */; };
-		9FEAA451120478000085F008 /* BXDriveImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEAA450120478000085F008 /* BXDriveImport.m */; };
 		9FECE19011A31B8B00E0EBB6 /* BXRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FECE18F11A31B8B00E0EBB6 /* BXRenderer.m */; };
 		9FECE1C211A3244500E0EBB6 /* BXGLRenderingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FECE1C111A3244500E0EBB6 /* BXGLRenderingView.m */; };
 		9FEF98011191E1EF002024DF /* BXInputHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FEF98001191E1EF002024DF /* BXInputHandler.mm */; };
@@ -363,6 +363,8 @@
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		8D1107320486CEB800E47090 /* Boxer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Boxer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9F0F2B9312AD3C8500CD7078 /* BXMultiFileTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXMultiFileTransfer.h; sourceTree = "<group>"; };
+		9F0F2B9412AD3C8500CD7078 /* BXMultiFileTransfer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXMultiFileTransfer.m; sourceTree = "<group>"; };
 		9F0F9ED812108A9000ED7A64 /* BXImportError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImportError.h; sourceTree = "<group>"; };
 		9F0F9ED912108A9000ED7A64 /* BXImportError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXImportError.m; sourceTree = "<group>"; };
 		9F0F9EED1210901800ED7A64 /* BXMountedVolumesError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXMountedVolumesError.h; sourceTree = "<group>"; };
@@ -880,8 +882,6 @@
 		9FE90BF611F8D1DC003CFFFF /* BXDelegatedView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDelegatedView.m; sourceTree = "<group>"; };
 		9FEAA3EA1204595B0085F008 /* BXOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXOperation.h; sourceTree = "<group>"; };
 		9FEAA3EB1204595B0085F008 /* BXOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXOperation.m; sourceTree = "<group>"; };
-		9FEAA44F120478000085F008 /* BXDriveImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDriveImport.h; sourceTree = "<group>"; };
-		9FEAA450120478000085F008 /* BXDriveImport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDriveImport.m; sourceTree = "<group>"; };
 		9FEBB70E11DF9BB50055933F /* BXEmulatorDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatorDelegate.h; sourceTree = "<group>"; };
 		9FECE18E11A31B8B00E0EBB6 /* BXRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXRenderer.h; sourceTree = "<group>"; };
 		9FECE18F11A31B8B00E0EBB6 /* BXRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXRenderer.m; sourceTree = "<group>"; };
@@ -974,8 +974,6 @@
 				9F69133210A2F62A00EA78CD /* BXDrive.m */,
 				9F61FC8310DE3F7F00F3896C /* BXGameProfile.h */,
 				9F61FC8410DE3F7F00F3896C /* BXGameProfile.m */,
-				9FEAA44F120478000085F008 /* BXDriveImport.h */,
-				9FEAA450120478000085F008 /* BXDriveImport.m */,
 				9F53411612059E7900BCBF24 /* NSWorkspace+BXExecutableTypes.h */,
 				9F53411712059E7900BCBF24 /* NSWorkspace+BXExecutableTypes.m */,
 				9F1D50280F5C0ACD009F0AB9 /* Emulator */,
@@ -1077,6 +1075,20 @@
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		9F0F2B9712AD464800CD7078 /* Operations */ = {
+			isa = PBXGroup;
+			children = (
+				9FEAA3EA1204595B0085F008 /* BXOperation.h */,
+				9FEAA3EB1204595B0085F008 /* BXOperation.m */,
+				9FBF66FC11F376B900DAAB9A /* BXOperationDelegate.h */,
+				9FBF66AD11F35ADD00DAAB9A /* BXFileTransfer.h */,
+				9FBF66AE11F35ADD00DAAB9A /* BXFileTransfer.m */,
+				9F0F2B9312AD3C8500CD7078 /* BXMultiFileTransfer.h */,
+				9F0F2B9412AD3C8500CD7078 /* BXMultiFileTransfer.m */,
+			);
+			name = Operations;
 			sourceTree = "<group>";
 		};
 		9F160E6E1236B28900F8768E /* Application Delegate */ = {
@@ -1651,6 +1663,7 @@
 		9F7A8F230F8E705100D1AAD5 /* BXToolkit */ = {
 			isa = PBXGroup;
 			children = (
+				9F0F2B9712AD464800CD7078 /* Operations */,
 				9FFF97931232B718009B5EE5 /* BXMultiPanelWindowController.h */,
 				9FFF97941232B718009B5EE5 /* BXMultiPanelWindowController.m */,
 				9FFBF6AA11A811F7000A1863 /* BXEventConstants.h */,
@@ -1660,13 +1673,8 @@
 				9FA5D68211EB6CCC0012DFA5 /* BXLineEnumerator.m */,
 				9FADFE5311EC7E1700990E91 /* BXDigest.h */,
 				9FADFE5411EC7E1700990E91 /* BXDigest.m */,
-				9FBF66AD11F35ADD00DAAB9A /* BXFileTransfer.h */,
-				9FBF66AE11F35ADD00DAAB9A /* BXFileTransfer.m */,
-				9FBF66FC11F376B900DAAB9A /* BXOperationDelegate.h */,
 				9FE90BF511F8D1DC003CFFFF /* BXDelegatedView.h */,
 				9FE90BF611F8D1DC003CFFFF /* BXDelegatedView.m */,
-				9FEAA3EA1204595B0085F008 /* BXOperation.h */,
-				9FEAA3EB1204595B0085F008 /* BXOperation.m */,
 				9F0F9EED1210901800ED7A64 /* BXMountedVolumesError.h */,
 				9F0F9EEE1210901800ED7A64 /* BXMountedVolumesError.m */,
 				9FC7481F122A7C8B00E86E6A /* BXPathEnumerator.h */,
@@ -1973,7 +1981,6 @@
 		9FFF978412327D58009B5EE5 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
-				9F1812B812996308009BC4B2 /* YRKSpinningProgressIndicator */,
 				9F466A4711A924EC00C50965 /* Shader.h */,
 				9F466A4811A924EC00C50965 /* Shader.m */,
 				9FDD4CB411E619D50035BA9E /* CGSPrivate.h */,
@@ -1985,6 +1992,7 @@
 				9FAD43B610A341F6007E8C0D /* UKKQueue */,
 				9F8A974710E7DEF500A4B72A /* RegexKitLite */,
 				9FFF9714123269D1009B5EE5 /* NDAlias */,
+				9F1812B812996308009BC4B2 /* YRKSpinningProgressIndicator */,
 			);
 			path = "Other Sources";
 			sourceTree = "<group>";
@@ -2234,7 +2242,6 @@
 				9F9E27D611F8C173003EE8F3 /* BXDrivePanelController.m in Sources */,
 				9FE90BF711F8D1DC003CFFFF /* BXDelegatedView.m in Sources */,
 				9FEAA3EC1204595B0085F008 /* BXOperation.m in Sources */,
-				9FEAA451120478000085F008 /* BXDriveImport.m in Sources */,
 				9F53411812059E7900BCBF24 /* NSWorkspace+BXExecutableTypes.m in Sources */,
 				9F1CBA58120C796C00C5E926 /* BXImport.m in Sources */,
 				9F1CBA97120C7D9000C5E926 /* BXImportWindowController.m in Sources */,
@@ -2385,6 +2392,7 @@
 				9F18133B129990D5009BC4B2 /* BXGamesFolderPanelController.m in Sources */,
 				9FD23D55129AE3B600B2100B /* NSWindow+BXWindowEffects.m in Sources */,
 				9F2C28A2129D906600B172C8 /* BXFirstRunWindowController.m in Sources */,
+				9F0F2B9512AD3C8500CD7078 /* BXMultiFileTransfer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

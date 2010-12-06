@@ -38,7 +38,7 @@ extern NSString * const BXFileTransferCurrentPathKey;
 	
 	NSFileManager *manager;
 	FSFileOperationRef fileOp;
-	FSFileOperationStage stage;	
+	FSFileOperationStage stage;
 	
 	NSUInteger numFiles;
 	NSUInteger filesTransferred;
@@ -73,7 +73,8 @@ extern NSString * const BXFileTransferCurrentPathKey;
 @property (readonly) unsigned long long numBytes;
 @property (readonly) unsigned long long bytesTransferred;
 
-//The file path of the current file being transferred.
+//The file path of the current file being transferred,
+//or nil if no path is currently being transferred.
 @property (readonly, copy) NSString *currentPath;
 
 

@@ -104,7 +104,14 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 
 - (BXOperationProgress) currentProgress
 {
-	return (BXOperationProgress)bytesTransferred / (BXOperationProgress)numBytes;
+	if (numBytes > 0)
+	{
+		return (BXOperationProgress)bytesTransferred / (BXOperationProgress)numBytes;		
+	}
+	else
+	{
+		return BXOperationProgressIndeterminate;
+	}
 }
 
 
@@ -112,9 +119,10 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 {
 	if (![self _canBeginTransfer]) return;
 	
+	[self setError: nil];
+	
 	[self _sendWillStartNotificationWithInfo: nil];
 	
-	[self setError: nil];
 	
 	//Start up the file transfer
 	[self _beginTransfer];
@@ -253,10 +261,10 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 	if (stage == kFSOperationStageRunning)
 	{
 		NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
-							  [NSNumber numberWithUnsignedInteger: [self filesTransferred]],	BXFileTransferFilesTransferredKey,
-							  [NSNumber numberWithUnsignedLongLong: [self bytesTransferred]],	BXFileTransferBytesTransferredKey,
-							  [NSNumber numberWithUnsignedInteger: [self numFiles]],			BXFileTransferFilesTotalKey,
-							  [NSNumber numberWithUnsignedLongLong: [self numBytes]],			BXFileTransferBytesTotalKey,
+							  [NSNumber numberWithUnsignedInteger:	[self filesTransferred]],	BXFileTransferFilesTransferredKey,
+							  [NSNumber numberWithUnsignedLongLong:	[self bytesTransferred]],	BXFileTransferBytesTransferredKey,
+							  [NSNumber numberWithUnsignedInteger:	[self numFiles]],			BXFileTransferFilesTotalKey,
+							  [NSNumber numberWithUnsignedLongLong:	[self numBytes]],			BXFileTransferBytesTotalKey,
 							  [self currentPath], BXFileTransferCurrentPathKey,
 							  nil];
 		[self _sendInProgressNotificationWithInfo: info];

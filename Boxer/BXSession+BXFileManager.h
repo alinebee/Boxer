@@ -15,7 +15,7 @@
 
 @class BXDrive;
 @class BXDrivesInUseAlert;
-@class BXDriveImport;
+@class BXFileTransfer;
 
 @interface BXSession (BXFileManager) <BXEmulatorFileSystemDelegate, BXOperationDelegate>
 
@@ -60,6 +60,9 @@
 
 //Returns whether the specified OS X path represents a DOS/Windows executable.
 + (BOOL) isExecutable: (NSString *)path;
+
+//Returns the name to which the specified drive will be imported.
++ (NSString *) importedNameForDrive: (BXDrive *)drive;
 
 
 #pragma mark -
@@ -151,7 +154,7 @@
 //Imports the specified drive to a bundled drive folder in the gamebox.
 //This will occur asynchronously using a BXFileTransfer, which is returned by this method.
 //Will return nil if the drive cannot be imported.
-- (BXDriveImport *) beginImportForDrive: (BXDrive *)drive;
+- (BXFileTransfer *) beginImportForDrive: (BXDrive *)drive;
 
 //Cancel the in-progress import of the specified drive. Returns YES if the import was cancelled,
 //NO if the import had already finished or the drive was not being imported.

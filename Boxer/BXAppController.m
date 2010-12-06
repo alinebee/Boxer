@@ -72,6 +72,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	if (!types) types = [[NSSet alloc] initWithObjects:
 						 @"com.goldenhawk.cdrwin-cuesheet",
 						 @"net.washboardabs.boxer-cdrom-folder",
+						 @"net.washboardabs.boxer-cdrom-bundle",
 						 @"public.iso-image",
 						 @"com.apple.disk-image-cdr",
 						 nil];
@@ -103,6 +104,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 						 @"public.iso-image",					//.iso
 						 @"com.apple.disk-image-cdr",			//.cdr
 						 @"com.goldenhawk.cdrwin-cuesheet",		//.cue
+						 @"net.washboardabs.boxer-disk-bundle", //.cdmedia
 						 nil];
 	return types;
 }

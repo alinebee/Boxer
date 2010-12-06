@@ -131,7 +131,7 @@ enum {
 	BOOL isFolder;
 	
 	//File did not exist, don't continue mounting
-	if (![manager fileExistsAtPath: [drive path] isDirectory: &isFolder]) return nil;
+	if (![manager fileExistsAtPath: [drive mountPoint] isDirectory: &isFolder]) return nil;
 	
 	BOOL isImage = !isFolder;
 
@@ -151,9 +151,8 @@ enum {
 	
 	DOS_Drive *DOSBoxDrive = NULL;
 	NSUInteger index = [self _indexOfDriveLetter: driveLetter];
-	NSString *path = [drive path];
+	NSString *path = [drive mountPoint];
 	//The standardized path returned by BXDrive will not have a trailing slash, so add it ourselves
-	//TODO: fix this upstream?
 	if (isFolder) path = [path stringByAppendingString: @"/"];
 	
 	switch ([drive type])
@@ -179,7 +178,7 @@ enum {
 		if ([self _addDOSBoxDrive: DOSBoxDrive atIndex: index])
 		{
 			//And set its label appropriately (unless its an image, which carry their own labels)
-			if (!isImage)
+			if (!isImage && driveLabel)
 			{
 				const char *cLabel = [driveLabel cStringUsingEncoding: BXDirectStringEncoding];
 				DOSBoxDrive->dirCache.SetLabel(cLabel, [drive isCDROM], false);
@@ -251,6 +250,7 @@ enum {
 	//This way, we get a safer copy of the drive array to work with instead.
 	for (BXDrive *drive in [self mountedDrives])
 	{
+		//TODO: refactor this so that we can move the decision off to BXDrive itself
 		if ([[drive path] isEqualToString: standardizedPath])
 		{
 			succeeded = [self unmountDrive: drive] || succeeded;
@@ -313,7 +313,6 @@ enum {
 
 - (BOOL) pathIsMountedAsDrive: (NSString *)path
 {
-	path = [path stringByStandardizingPath];
 	for (BXDrive *drive in [driveCache objectEnumerator])
 	{
 		if ([drive representsPath: path]) return YES;
@@ -323,7 +322,6 @@ enum {
 
 - (BOOL) pathIsDOSAccessible: (NSString *)path
 {
-	path = [path stringByStandardizingPath];
 	for (BXDrive *drive in [driveCache objectEnumerator])
 	{
 		if ([drive exposesPath: path]) return YES;
@@ -332,9 +330,7 @@ enum {
 }
 
 - (BXDrive *) driveForPath: (NSString *)path
-{
-	path = [path stringByStandardizingPath];
-	
+{	
 	//Sort the drives by path depth, so that deeper mounts are picked over 'shallower' ones.
 	//e.g. when MyGame.boxer and MyGame.boxer/MyCD.cdrom are both mounted, it should pick the latter.
 	//Todo: filter this down to matching drives first, then do the sort, which would be quicker.
@@ -371,7 +367,7 @@ enum {
 	//To be sure we get this right, flush the drive caches before we look anything up
 	[self refreshMountedDrives];
 	
-	NSString *basePath			= [drive mountPath];
+	NSString *basePath			= [drive mountPoint];
 	NSArray *components			= [subPath pathComponents];
 	NSUInteger driveIndex		= [self _indexOfDriveLetter: [drive letter]];
 	

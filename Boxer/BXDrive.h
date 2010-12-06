@@ -36,7 +36,7 @@ static const NSInteger BXDefaultFreeSpace = -1;
 @interface BXDrive : NSObject
 {
 	NSString *path;
-	NSString *mountPath;
+	NSString *mountPoint;
 	NSMutableSet *pathAliases;
 	NSString *letter;
 	NSString *label;
@@ -56,13 +56,13 @@ static const NSInteger BXDefaultFreeSpace = -1;
 
 //The absolute path on the OS X filesystem which represents this drive.
 //This may or may not be the same as the path that gets mounted in DOS:
-//see mountPath below.
+//see mountPoint below.
 @property (copy, nonatomic) NSString *path;
 
 //The absolute path to the source file or folder that will get mounted
 //in DOS for this drive. Usually this is the same as path, but may differ
 //for drive packages.
-@property (copy, nonatomic) NSString *mountPath;
+@property (copy, nonatomic) NSString *mountPoint;
 
 //A set of other OS X filesystem paths which represent this drive, used
 //when resolving DOS paths or determining if a drive is already mounted.
@@ -152,6 +152,9 @@ static const NSInteger BXDefaultFreeSpace = -1;
 //For regular folders and CD-ROM volumes, this will be nil (as their names are probably coincidental.)
 + (NSString *) preferredDriveLetterForPath: (NSString *)filePath;
 
+//Returns the path that will actually be mounted when creating a drive with the specified path.
+//This is usually the same as the path itself, but may differ for disk bundles.
++ (NSString *) mountPointForPath: (NSString *)filePath;
 
 #pragma mark -
 #pragma mark Initializers

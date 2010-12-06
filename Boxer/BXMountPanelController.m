@@ -123,7 +123,8 @@
 	if (path)
 	{
 		//Don't allow drive type to be configured for disc images: instead, force it to CD-ROM while an image is selected
-		BOOL isImage = [[NSWorkspace sharedWorkspace] file: path matchesTypes: [BXAppController mountableImageTypes]]; 
+		BOOL isImage = [[NSWorkspace sharedWorkspace] file: path
+											  matchesTypes: [BXAppController mountableImageTypes]];
 		if (isImage)
 		{
 			[driveType setEnabled: NO];

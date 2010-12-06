@@ -14,7 +14,7 @@
 #import "RegexKitLite.h"
 
 @implementation BXDrive
-@synthesize path, mountPath, pathAliases;
+@synthesize path, mountPoint, pathAliases;
 @synthesize letter, label, DOSBoxLabel, icon;
 @synthesize type, freeSpace;
 @synthesize usesCDAudio, readOnly, locked, hidden;
@@ -110,6 +110,16 @@
 	return nil;
 }
 
++ (NSString *) mountPointForPath: (NSString *)filePath
+{
+	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+	if ([workspace file: filePath matchesTypes: [NSSet setWithObject: @"net.washboardabs.boxer-cdrom-bundle"]])
+	{
+		return [filePath stringByAppendingPathComponent: @"tracks.cue"];
+	}
+	else return filePath;
+}
+
 #pragma mark -
 #pragma mark Initializers
 
@@ -193,7 +203,10 @@
 		
 		if (path)
 		{
-			if (![self mountPath]) [self setMountPath: filePath];
+			if (![self mountPoint])
+			{
+				[self setMountPoint: [[self class] mountPointForPath: filePath]];
+			}
 			
 			//Automatically parse the drive letter and label from the name of the drive
 			if (![self letter])	[self setLetter:	[[self class] preferredDriveLetterForPath: filePath]];
@@ -213,13 +226,24 @@
 	}
 }
 
+- (void) setDOSBoxLabel: (NSString *)newLabel
+{
+	if (![DOSBoxLabel isEqualToString: newLabel])
+	{
+		[DOSBoxLabel release];
+		DOSBoxLabel = [newLabel copy];
+		
+		if (![[self label] length]) [self setLabel: DOSBoxLabel];
+	}
+}
+
 - (BOOL) representsPath: (NSString *)basePath
 {
 	if ([self isInternal]) return NO;
 	basePath = [basePath stringByStandardizingPath];
 	
 	if ([[self path] isEqualToString: basePath]) return YES;
-	if ([[self mountPath] isEqualToString: basePath]) return YES;
+	if ([[self mountPoint] isEqualToString: basePath]) return YES;
 	if ([[self pathAliases] containsObject: basePath]) return YES;
 	
 	return NO;
@@ -231,7 +255,7 @@
 	subPath = [subPath stringByStandardizingPath];
 	
 	if ([subPath isEqualToString: [self path]]) return YES;
-	if ([subPath isRootedInPath: [self mountPath]]) return YES;
+	if ([subPath isRootedInPath: [self mountPoint]]) return YES;
 	
 	for (NSString *alias in [self pathAliases])
 	{
@@ -247,11 +271,11 @@
 	realPath = [realPath stringByStandardizingPath];
 	
 	//Special-case: map the 'represented' path directly onto the mount path
-	if ([realPath isEqualToString: [self path]]) return [self mountPath];
+	if ([realPath isEqualToString: [self path]]) return [self mountPoint];
 	
-	if ([realPath isRootedInPath: [self mountPath]])
+	if ([realPath isRootedInPath: [self mountPoint]])
 	{
-		return [realPath substringFromIndex: [[self mountPath] length]];
+		return [realPath substringFromIndex: [[self mountPoint] length]];
 	}
 	else
 	{

@@ -7,19 +7,14 @@
 
 
 //BXMultiFileTransfer manages the transfer of a set of files to a set of destinations in a single
-//operation, reporting on the progress of the operation as a whole. It uses an internal operation
-//queue to run individual BXFileTransfer operations in parallel.
+//operation, reporting on the progress of the operation as a whole.
 
-#import "BXOperation.h"
-#import "BXOperationDelegate.h"
+#import "BXOperationSet.h"
 
-@interface BXMultiFileTransfer : BXOperation <BXOperationDelegate>
+@interface BXMultiFileTransfer : BXOperationSet
 {
 	BOOL copyFiles;
 	NSDictionary *pathsToTransfer;
-	
-	NSArray *transferOperations;
-	NSOperationQueue *transferQueue;
 }
 
 #pragma mark -
@@ -30,7 +25,8 @@
 @property (assign) BOOL copyFiles;
 
 //A map of source paths to destination paths.
-@property (copy) NSDictionary *pathsToTransfer;
+//This is not safe to modify once the operation has been started.
+@property (copy, nonatomic) NSDictionary *pathsToTransfer;
 
 
 #pragma mark -
@@ -64,6 +60,5 @@
 
 - (id) initForPaths: (NSDictionary *)paths
 		  copyFiles: (BOOL)copy;
-
 
 @end

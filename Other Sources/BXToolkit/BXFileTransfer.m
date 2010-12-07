@@ -215,7 +215,7 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 {
 	//Delete the destination path to clean up
 	//TODO: for move operations, we should put the files back.
-	if (copyFiles) [manager removeItemAtPath: [self destinationPath] error: nil];
+	if ([self copyFiles]) [manager removeItemAtPath: [self destinationPath] error: nil];
 }
 
 - (void) _checkTransferProgress

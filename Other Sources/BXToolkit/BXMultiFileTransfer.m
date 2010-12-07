@@ -7,8 +7,21 @@
 
 
 #import "BXMultiFileTransfer.h"
-#import "BXOperationDelegate.h"
 #import "BXFileTransfer.h"
+
+#pragma mark -
+#pragma mark Private method declarations
+
+@interface BXMultiFileTransfer ()
+
+//Clean up after a partial transfer.
+- (void) _undoTransfer;
+
+@end
+
+
+#pragma mark -
+#pragma mark Implementation
 
 @implementation BXMultiFileTransfer
 @synthesize pathsToTransfer, copyFiles;
@@ -20,16 +33,6 @@
 			  copyFiles: (BOOL)copy
 {
 	return [[[self alloc] initForPaths: paths copyFiles: copy] autorelease];
-}
-
-
-- (id) init
-{
-	if ((self = [super init]))
-	{
-		transferQueue = [[NSOperationQueue alloc] init];
-	}
-	return self;
 }
 
 - (id) initForPaths: (NSDictionary *)paths copyFiles: (BOOL)copy
@@ -46,21 +49,30 @@
 {
 	[self setPathsToTransfer: nil], [pathsToTransfer release];
 	
-	[transferQueue release], transferQueue = nil;
-	
 	[super dealloc];
 }
 
-#pragma mark -
-#pragma mark Performing the transfer
 
+#pragma mark -
+#pragma mark Transfer status
+
++ (NSSet *)keyPathsForValuesAffectingValueForKey: (NSString *)key
+{
+	NSSet *baseKeys = [super keyPathsForValuesAffectingValueForKey: key];
+	
+	NSSet *progressKeys = [NSSet setWithObjects: @"numBytes", @"numFiles", @"bytesTransferred", @"filesTransferred", nil]; 
+	
+	if ([progressKeys containsObject: key]) return [baseKeys setByAddingObject: @"currentProgress"];
+	else return baseKeys;
+}
+   
 - (BXOperationProgress) currentProgress
 {
 	//If we haven't begun yet, return an indeterminate result.
 	if (![self numBytes]) return BXOperationProgressIndeterminate;
 	
 	//If not all of our file operations know where they're at yet, return an indeterminate result.
-	for (BXFileTransfer *transfer in [transferQueue operations])
+	for (BXFileTransfer *transfer in [self operations])
 	{
 		if ([transfer currentProgress] == BXOperationProgressIndeterminate) return BXOperationProgressIndeterminate;
 	}
@@ -71,7 +83,7 @@
 - (unsigned long long) numBytes
 {
 	unsigned long long bytes = 0;
-	for (BXFileTransfer *operation in [transferQueue operations])
+	for (BXFileTransfer *operation in [self operations])
 	{
 		bytes += [operation numBytes];
 	}
@@ -81,7 +93,7 @@
 - (unsigned long long) bytesTransferred
 {
 	unsigned long long bytes = 0;
-	for (BXFileTransfer *operation in [transferQueue operations])
+	for (BXFileTransfer *operation in [self operations])
 	{
 		bytes += [operation bytesTransferred];
 	}
@@ -91,7 +103,7 @@
 - (NSUInteger) numFiles
 {
 	NSUInteger files = 0;
-	for (BXFileTransfer *operation in [transferQueue operations])
+	for (BXFileTransfer *operation in [self operations])
 	{
 		files += [operation numFiles];
 	}
@@ -101,7 +113,7 @@
 - (NSUInteger) filesTransferred
 {
 	NSUInteger files = 0;
-	for (BXFileTransfer *operation in [transferQueue operations])
+	for (BXFileTransfer *operation in [self operations])
 	{
 		files += [operation filesTransferred];
 	}
@@ -110,62 +122,64 @@
 
 - (NSString *) currentPath
 {
-	for (BXFileTransfer *transfer in [transferQueue operations])
+	for (BXFileTransfer *transfer in [self operations])
 	{
 		if ([transfer isExecuting]) return [transfer currentPath];
 	}
 	return nil;
 }
 
+#pragma mark -
+#pragma mark Performing the transfer
 
 - (void) main
 {
-	[self setError: nil];
-
-	[self _sendWillStartNotificationWithInfo: nil];
+	if ([self isCancelled]) return;
 	
-	//Queue up all transfer operations before letting them all start at once
-	[transferQueue setSuspended: YES];
-	
-	for (NSString *sourcePath in [[self pathsToTransfer] allKeys])
+	//Build file transfer operations for each pair of paths
+	for (NSString *sourcePath in [[self pathsToTransfer] keyEnumerator])
 	{
 		NSString *destinationPath = [[self pathsToTransfer] objectForKey: sourcePath];
 		
 		BXFileTransfer *transfer = [BXFileTransfer transferFromPath: sourcePath
 															 toPath: destinationPath
-														  copyFiles: copyFiles];
-		[transfer setDelegate: self];
-		
-		[transferQueue addOperation: transfer];
+														  copyFiles: [self copyFiles]];
+		[[self operations] addObject: transfer];
 	}
 	
-	[transferQueue setSuspended: NO];
-	[transferQueue waitUntilAllOperationsAreFinished];
+	[super main];
 	
-	for (BXFileTransfer *transfer in [transferQueue operations])
-	{
-		if ([transfer error])
-		{
-			[self setError: error];
-			break;
-		}
-	}
-	[self setSucceeded: [self error] == nil];
-	
-	[self _sendDidFinishNotificationWithInfo: nil];
+	if (![self succeeded]) [self _undoTransfer];
 }
 
-- (void) operationInProgress: (NSNotification *)notification
-{
+- (void) _sendInProgressNotificationWithInfo: (NSDictionary *)info
+{	
 	//Post a notification whenever one of our own operations issues a progress update
-	NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
-						  [NSNumber numberWithUnsignedInteger:	[self filesTransferred]],	BXFileTransferFilesTransferredKey,
-						  [NSNumber numberWithUnsignedLongLong:	[self bytesTransferred]],	BXFileTransferBytesTransferredKey,
-						  [NSNumber numberWithUnsignedInteger:	[self numFiles]],			BXFileTransferFilesTotalKey,
-						  [NSNumber numberWithUnsignedLongLong:	[self numBytes]],			BXFileTransferBytesTotalKey,
-						  [self currentPath], BXFileTransferCurrentPathKey,
-						  nil];
+	NSMutableDictionary *extendedInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+										 [NSNumber numberWithUnsignedInteger:	[self filesTransferred]],	BXFileTransferFilesTransferredKey,
+										 [NSNumber numberWithUnsignedLongLong:	[self bytesTransferred]],	BXFileTransferBytesTransferredKey,
+										 [NSNumber numberWithUnsignedInteger:	[self numFiles]],			BXFileTransferFilesTotalKey,
+										 [NSNumber numberWithUnsignedLongLong:	[self numBytes]],			BXFileTransferBytesTotalKey,
+										 [self currentPath], BXFileTransferCurrentPathKey,
+										 nil];
+	
+	if (info) [extendedInfo addEntriesFromDictionary: info];
 	
 	[self _sendInProgressNotificationWithInfo: info];
+}
+
+- (void) _undoTransfer
+{
+	if ([self copyFiles])
+	{
+		//Delete all destination paths to clean up.
+		//TODO: for move operations, we should put the files back.
+		NSFileManager *manager = [[NSFileManager alloc] init];
+		for (NSString *destinationPath in [self pathsToTransfer])
+		{
+			[manager removeItemAtPath: destinationPath error: nil];		
+		}
+		[manager release];
+	}
 }
 @end

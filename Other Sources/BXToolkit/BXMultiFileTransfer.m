@@ -154,7 +154,6 @@
 
 - (void) _sendInProgressNotificationWithInfo: (NSDictionary *)info
 {	
-	//Post a notification whenever one of our own operations issues a progress update
 	NSMutableDictionary *extendedInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
 										 [NSNumber numberWithUnsignedInteger:	[self filesTransferred]],	BXFileTransferFilesTransferredKey,
 										 [NSNumber numberWithUnsignedLongLong:	[self bytesTransferred]],	BXFileTransferBytesTransferredKey,
@@ -177,7 +176,7 @@
 		NSFileManager *manager = [[NSFileManager alloc] init];
 		for (NSString *destinationPath in [self pathsToTransfer])
 		{
-			[manager removeItemAtPath: destinationPath error: nil];		
+			[manager removeItemAtPath: destinationPath error: NULL];		
 		}
 		[manager release];
 	}

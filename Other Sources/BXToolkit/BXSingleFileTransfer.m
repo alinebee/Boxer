@@ -36,8 +36,8 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 //Returns whether we can start the transfer. Should also populate @error (but currently doesn't).
 - (BOOL) _canBeginTransfer;
 
-//Start up the FSFileOperation.
-- (void) _beginTransfer;
+//Start up the FSFileOperation. Returns NO and populates @error if the transfer could not be started.
+- (BOOL) _beginTransfer;
 
 //Called periodically by a timer, to check the progress of the FSFileOperation.
 - (void) _checkTransferProgress;
@@ -104,9 +104,9 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 
 - (BXOperationProgress) currentProgress
 {
-	if (numBytes > 0)
+	if ([self numBytes] > 0)
 	{
-		return (BXOperationProgress)bytesTransferred / (BXOperationProgress)numBytes;		
+		return (BXOperationProgress)[self bytesTransferred] / (BXOperationProgress)[self numBytes];		
 	}
 	else
 	{
@@ -119,15 +119,11 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 {
 	if (![self _canBeginTransfer]) return;
 	
-	[self setError: nil];
-	
-	[self _sendWillStartNotificationWithInfo: nil];
-	
-	
-	//Start up the file transfer
-	[self _beginTransfer];
+	//Start up the file transfer, bailing out if it could not be started
+	if (![self _beginTransfer]) return;
 	
 	//Use a timer to poll the FSFileOperation
+	//TODO: why do we need a timer?? couldn't we just call this within the while loop below?
 	NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval: BXFileTransferPollInterval
 													  target: self
 													selector: @selector(_checkTransferProgress)
@@ -151,39 +147,71 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 		//Clean up after ourselves
 		[self _undoTransfer];
 	}
-	
-	[self _sendDidFinishNotificationWithInfo: nil];
 }
 
 - (BOOL) _canBeginTransfer
-{
-	//TODO: set errors from these cases
-	
+{	
 	//Sanity checks: if we have no source or destination path or we're already cancelled, bail out now.
 	if ([self isCancelled] || ![self sourcePath] || ![self destinationPath]) return NO;
 	
-	//Don't start if the source path doesn't exist or the destination path does exist.
-	if (![manager fileExistsAtPath: [self sourcePath]]) return NO;
-	if ([manager fileExistsAtPath: [self destinationPath]]) return NO;
+	//Don't start if the source path doesn't exist.
+	if (![manager fileExistsAtPath: [self sourcePath]])
+	{
+		NSDictionary *userInfo = [NSDictionary dictionaryWithObject: sourcePath forKey: NSFilePathErrorKey];
+		NSError *noSourceError = [NSError errorWithDomain: NSCocoaErrorDomain
+													 code: NSFileNoSuchFileError
+												 userInfo: userInfo];
+		[self setError: noSourceError];
+		return NO;
+	}
+	
+	//...or if the destination path *does* exist.
+	if ([manager fileExistsAtPath: [self destinationPath]])
+	{
+		//TODO: check if there's a better error code to use here
+		NSDictionary *userInfo = [NSDictionary dictionaryWithObject: sourcePath forKey: NSFilePathErrorKey];
+		NSError *destinationExistsError = [NSError errorWithDomain: NSCocoaErrorDomain
+															  code: NSFileWriteNoPermissionError
+														  userInfo: userInfo];
+		[self setError: destinationExistsError];
+		return NO;
+	}
 	
 	//Otherwise, we're good to go
 	return YES;
 }
 
-- (void) _beginTransfer
+- (BOOL) _beginTransfer
 {
 	OSStatus status;
 	status = FSFileOperationScheduleWithRunLoop(fileOp, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
 	NSAssert1(!status, @"Could not schedule file operation in current run loop, FSFileOperationScheduleWithRunLoop returned error code: %i", status);
 	
+	NSString *destinationBase = [[self destinationPath] stringByDeletingLastPathComponent];
+	
+	//If the destination base folder does not yet exist, create it and any intermediate directories
+	if (![manager fileExistsAtPath: destinationBase])
+	{
+		NSError *dirError = nil;
+		BOOL created = [manager createDirectoryAtPath: destinationBase
+						  withIntermediateDirectories: YES
+										   attributes: nil
+												error: &dirError];
+		if (!created)
+		{
+			[self setError: dirError];
+			return NO;
+		}
+	}
+	
 	const char *srcPath = [[self sourcePath] fileSystemRepresentation];
 	//FSPathCopyObjectAsync expects the destination base path and filename to be provided separately
-	const char *destPath = [[[self destinationPath] stringByDeletingLastPathComponent] fileSystemRepresentation];
+	const char *destPath = [destinationBase fileSystemRepresentation];
 	CFStringRef destName = (CFStringRef)[[self destinationPath] lastPathComponent];
 	
 	stage = kFSOperationStageUndefined;
 	
-	if (copyFiles)
+	if ([self copyFiles])
 	{
 		status = FSPathCopyObjectAsync(fileOp,		//Our file operation object
 									   srcPath,		//The full path to the source file
@@ -194,7 +222,7 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 									   0.0,
 									   NULL);
 		
-		NSAssert1(!status, @"Could not start file operation, FSPathCopyObjectAsync returned error code: %i", status);		
+		//NSAssert1(!status, @"Could not start file operation, FSPathCopyObjectAsync returned error code: %i", status);		
 	}
 	else
 	{
@@ -207,8 +235,18 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 									   0.0,
 									   NULL);
 		
-		NSAssert1(!status, @"Could not start file operation, FSPathMoveObjectAsync returned error code: %i", status);		
+		//NSAssert1(!status, @"Could not start file operation, FSPathMoveObjectAsync returned error code: %i", status);		
 	}
+
+	if (status != noErr)
+	{
+		//TODO: use this as the underlying error, wrapped inside a more legible human-friendly error
+		NSError *FSError = [NSError errorWithDomain: NSOSStatusErrorDomain code: status userInfo: nil];
+		[self setError: FSError];
+		return NO;
+	}
+	
+	return YES;
 }
 
 - (void) _undoTransfer
@@ -231,7 +269,12 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 													&statusInfo,
 													NULL);
 	
-	NSAssert1(!status, @"Could not get file operation status, FSPathFileOperationCopyStatus returned error code: %i", status);
+	//NSAssert1(!status, @"Could not get file operation status, FSPathFileOperationCopyStatus returned error code: %i", status);
+	
+	if (status)
+	{
+		[self setError: [NSError errorWithDomain: NSOSStatusErrorDomain code: status userInfo: nil]];
+	}
 	
 	if (errorCode)
 	{

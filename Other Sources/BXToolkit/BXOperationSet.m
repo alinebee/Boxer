@@ -41,6 +41,7 @@
 	if ((self = [super init]))
 	{
 		[self setPollInterval: BXOperationSetDefaultPollInterval];
+		[self setOperations: [NSMutableArray arrayWithCapacity: 5]];
 	}
 	return self;
 }
@@ -49,7 +50,8 @@
 {
 	if ((self = [self init]))
 	{
-		[self setOperations: [[operations mutableCopy] autorelease]];
+		if (operations)
+			[self setOperations: [[operations mutableCopy] autorelease]];
 	}
 	return self;
 }
@@ -90,25 +92,21 @@
 {
 	if ([self isCancelled]) return;
 	
-	[self _sendWillStartNotificationWithInfo: nil];
-	
 	NSOperationQueue *queue = [[NSOperationQueue alloc] init];
-	
+
 	//Queue up all transfer operations before letting them all start at once
 	[queue setSuspended: YES];
 	for (NSOperation *operation in [self operations]) [queue addOperation: operation];
 	[queue setSuspended: NO];
 	
-	NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
-	
 	//Poll until all operations are finished, but cancel them all if we ourselves are cancelled.
-	while ([[queue operations] count] && [runLoop runMode: NSDefaultRunLoopMode
+	//FIXME: do we really have any reason to run the runloop? Could we just sleep?
+	while ([[queue operations] count] && [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode
 											   beforeDate: [NSDate dateWithTimeIntervalSinceNow: [self pollInterval]]])
 	{
 		if ([self isCancelled])
 		{
 			[queue cancelAllOperations];
-			break;
 		}
 		else
 		{
@@ -116,18 +114,19 @@
 		}
 	}
 	
-	for (BXOperation *operation in [self operations])
+	if (![self error])
 	{
-		if ([operation error])
+		for (BXOperation *operation in [self operations])
 		{
-			[self setError: error];
-			break;
-		}
+			if ([operation error])
+			{
+				[self setError: error];
+				break;
+			}
+		}		
 	}
 	
 	[self setSucceeded: [self error] == nil];
-	
-	[self _sendDidFinishNotificationWithInfo: nil];
 	
 	[queue release];
 }

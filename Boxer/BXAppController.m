@@ -28,7 +28,6 @@
 #import "BXThemes.h"
 #import "NSWindow+BXWindowEffects.h"
 
-
 NSString * const BXNewSessionParam = @"--openNewSession";
 NSString * const BXShowImportPanelParam = @"--showImportPanel";
 NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";

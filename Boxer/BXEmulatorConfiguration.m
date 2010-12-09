@@ -14,11 +14,11 @@
 
 //The number of DOSBox configuration sections we know exist.
 //Used only for determining initial dictionary size and has no effect on behaviour.
-#define BXNumKnownSections 13
+#define BXConfigurationNumKnownSections 13
 
 //The initial size to use when constructing DOSBox-format string representations of a configuration.
 //Used only for determining initial string size and has no effect on behaviour.
-#define BXInitialFormattedStringSize 200
+#define BXConfigurationInitialFormattedStringSize 200
 
 //The line length to which to wrap configuration files.
 #define BXConfigurationWordWrap 76
@@ -123,7 +123,7 @@ NSString * const emptyFormat = @"^\\s*$";
 {
 	if ((self = [super init]))
 	{
-		sections = [[NSMutableDictionary alloc] initWithCapacity: BXNumKnownSections];
+		sections = [[NSMutableDictionary alloc] initWithCapacity: BXConfigurationNumKnownSections];
 	}
 	return self;
 }
@@ -382,7 +382,7 @@ NSString * const emptyFormat = @"^\\s*$";
 
 - (NSString *) _formattedStringFromSettings
 {
-	NSMutableString *formattedString = [NSMutableString stringWithCapacity: BXInitialFormattedStringSize];
+	NSMutableString *formattedString = [NSMutableString stringWithCapacity: BXConfigurationInitialFormattedStringSize];
 	
 	//Add the initial header comment, if we have one
 	if ([[self preamble] length])

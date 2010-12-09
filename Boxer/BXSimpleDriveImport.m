@@ -7,17 +7,35 @@
 
 
 #import "BXSimpleDriveImport.h"
+#import "BXDriveBundleImport.h"
 #import "BXAppController.h"
 #import "NSWorkspace+BXFileTypes.h"
 #import "BXDrive.h"
 
+@interface BXSimpleDriveImport ()
+@property (copy, readwrite) NSString *importedDrivePath;
+@end
 
 @implementation BXSimpleDriveImport
 @synthesize drive = _drive;
 @synthesize destinationFolder = _destinationFolder;
-@synthesize importedDrivePath = destinationPath;
+@synthesize importedDrivePath = _importedDrivePath;
 @dynamic copyFiles, numFiles, filesTransferred, numBytes, bytesTransferred, currentPath;
 
+
+#pragma mark -
+#pragma mark Helper class methods
+
++ (Class) importClassForDrive: (BXDrive *)drive
+{
+	NSString *drivePath = [drive path];
+	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+	//Wrap CUE/BINs up into our custom bundle class
+	NSSet *typesForBundling = [NSSet setWithObject: @"com.goldenhawk.cdrwin-cuesheet"];
+	
+	if ([workspace file: drivePath matchesTypes: typesForBundling]) return [BXDriveBundleImport class];
+	else return [BXSimpleDriveImport class];
+}
 
 + (NSString *) nameForDrive: (BXDrive *)drive
 {
@@ -67,11 +85,16 @@
 	return importedName;
 }
 
+#pragma mark -
+#pragma mark Initialization and deallocation
+
 + (id <BXDriveImport>) importForDrive: (BXDrive *)drive
 						toDestination: (NSString *)destinationFolder
 							copyFiles: (BOOL)copyFiles
 {
-	return 0;
+	return [[[self alloc] initForDrive: drive
+						 toDestination: destinationFolder
+							 copyFiles: copyFiles] autorelease];
 }
 
 - (id <BXDriveImport>) initForDrive: (BXDrive *)drive
@@ -87,6 +110,17 @@
 	return self;
 }
 
+- (void) dealloc
+{
+	[self setDrive: nil], [_drive release];
+	[self setDestinationFolder: nil], [_destinationFolder release];
+	[self setImportedDrivePath: nil], [_importedDrivePath release];
+	[super dealloc];
+}
+
+
+#pragma mark -
+#pragma mark The actual operation, finally
 
 - (void) main
 {
@@ -95,8 +129,11 @@
 	
 	[self setSourcePath: [[self drive] path]];
 	[self setDestinationPath: destination];
-	
+
 	[super main];
+	
+	if ([self succeeded])
+		[self setImportedDrivePath: destination];
 }
 
 @end

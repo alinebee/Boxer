@@ -17,8 +17,10 @@
 {
 	BXDrive *_drive;
 	NSString *_destinationFolder;
+	NSString *_importedDrivePath;
 }
 
++ (Class) importClassForDrive: (BXDrive *)drive;
 + (NSString *) nameForDrive: (BXDrive *)drive;
 
 @end

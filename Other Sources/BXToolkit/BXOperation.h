@@ -24,11 +24,10 @@ extern NSString * const BXOperationWillStart;
 //Sent periodically while the operation is in progress.
 extern NSString * const BXOperationInProgress;
 
-//Sent when the operation ends (be it in success or failure.)
+//Sent when the operation ends (be it because of success, failure or cancellation.)
 extern NSString * const BXOperationDidFinish;
 
 //Sent when the operation gets cancelled.
-//The transfer will still send a BXOperationWasCancelled after this.
 extern NSString * const BXOperationWasCancelled;
 
 

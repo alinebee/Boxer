@@ -46,6 +46,13 @@ NSString * const BXOperationProgressKey		= @"BXOperationProgressKey";
 	[super dealloc];
 }
 
+- (void) start
+{
+	[self _sendWillStartNotificationWithInfo: nil];
+	[super start];
+	[self _sendDidFinishNotificationWithInfo: nil];
+}
+
 - (void) cancel
 {	
 	//Only send a notification the first time we're cancelled,

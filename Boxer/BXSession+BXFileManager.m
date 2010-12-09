@@ -784,7 +784,8 @@
 {
 	if ([self isGamePackage])
 	{
-		NSString *importedName = [BXSimpleDriveImport nameForDrive: drive];
+		Class importClass = [BXSimpleDriveImport importClassForDrive: drive];
+		NSString *importedName = [importClass nameForDrive: drive];
 		NSString *importedPath = [[[self gamePackage] resourcePath] stringByAppendingPathComponent: importedName];
 	
 		//A file already exists with the same name as we would import it with,
@@ -829,11 +830,13 @@
 	{
 		NSString *destinationFolder = [[self gamePackage] resourcePath];
 		
-		BXOperation <BXDriveImport> *driveImport = [BXSimpleDriveImport importForDrive: drive
-																	   toDestination: destinationFolder
-																		   copyFiles: YES];
+		Class importClass = [BXSimpleDriveImport importClassForDrive: drive];
+		BXOperation <BXDriveImport> *driveImport = [importClass importForDrive: drive
+																 toDestination: destinationFolder
+																	 copyFiles: YES];
 		
 		[driveImport setDelegate: self];
+		[driveImport setContextInfo: drive];
 		
 		[importQueue addOperation: driveImport];
 		return driveImport;
@@ -857,7 +860,7 @@
 - (void) operationDidFinish: (NSNotification *)theNotification
 {
 	BXOperation <BXDriveImport> *import = [theNotification object];
-	BXDrive *drive = [import drive];
+	BXDrive *drive = [import contextInfo];
 
 	if (drive && [import succeeded])
 	{
@@ -898,9 +901,18 @@
 		//Post a Growl notification that this drive was successfully imported.
 		[[BXGrowlController controller] notifyDriveImported: drive toPackage: [self gamePackage]];
 	}
-	else
+	else if ([import error])
 	{
-		//TODO: handle the transfer error gracefully, ideally giving the user the option to try again
+		NSError *importError = [import error];
+		//Ignore cancelled errors
+		if (!([[importError domain] isEqualToString: NSCocoaErrorDomain] && [importError code] == NSUserCancelledError))
+		{
+			[self presentError: importError
+				modalForWindow: [self windowForSheet]
+					  delegate: nil
+			didPresentSelector: NULL
+				   contextInfo: nil];
+		}
 	}
 }
 

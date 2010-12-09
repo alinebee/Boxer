@@ -17,9 +17,9 @@
 
 @interface BXOperationSet ()
 
-//Performs a single iteration of the inner runloop to monitor the specified queue.
-//Returns YES if the loop should continue, NO if we should stop executing.
-- (BOOL) _runLoopWithQueue: (NSOperationQueue *)queue;
+//Runs a single iteration of the internal run loop while we wait for the queue to finish.
+//This simply sends an in-progress notification signal.
+- (void) _postUpdateWithTimer: (NSTimer *)timer;
 
 @end
 
@@ -99,20 +99,21 @@
 	for (NSOperation *operation in [self operations]) [queue addOperation: operation];
 	[queue setSuspended: NO];
 	
+	//Use a timer to execute our polling method. (This also keeps the runloop below alive.)
+	NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval: [self pollInterval]
+													  target: self
+													selector: @selector(_postUpdateWithTimer:)
+													userInfo: queue
+													 repeats: YES];
+	
+	
 	//Poll until all operations are finished, but cancel them all if we ourselves are cancelled.
-	//FIXME: do we really have any reason to run the runloop? Could we just sleep?
 	while ([[queue operations] count] && [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode
-											   beforeDate: [NSDate dateWithTimeIntervalSinceNow: [self pollInterval]]])
+																  beforeDate: [NSDate dateWithTimeIntervalSinceNow: [self pollInterval]]])
 	{
-		if ([self isCancelled])
-		{
-			[queue cancelAllOperations];
-		}
-		else
-		{
-			if (![self _runLoopWithQueue: queue]) break;
-		}
+		if ([self isCancelled]) [queue cancelAllOperations];
 	}
+	[timer invalidate];
 	
 	if (![self error])
 	{
@@ -131,13 +132,12 @@
 	[queue release];
 }
 
-- (BOOL) _runLoopWithQueue: (NSOperationQueue *)queue
+- (void) _postUpdateWithTimer: (NSTimer *)timer
 {
 	[self willChangeValueForKey: @"currentProgress"];
 	[self didChangeValueForKey: @"currentProgress"];
 		
 	[self _sendInProgressNotificationWithInfo: nil];
-	return YES;
 }
 
 @end

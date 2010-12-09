@@ -51,4 +51,7 @@ extern NSString * const BXFileTransferCurrentPathKey;
 //or nil if no path is currently being transferred.
 @property (readonly, copy) NSString *currentPath;
 
+//Undo the file operation. Called automatically if the operation is cancelled
+//or encounters an unrecoverable error.
+- (void) undoTransfer;
 @end

@@ -42,9 +42,6 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 //Called periodically by a timer, to check the progress of the FSFileOperation.
 - (void) _checkTransferProgress;
 
-//Clean up after a partial transfer.
-- (void) _undoTransfer;
-
 @end
 
 
@@ -114,6 +111,12 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 	}
 }
 
+- (void) start
+{
+	[super start];
+	
+	if (![self succeeded]) [self undoTransfer];
+}
 
 - (void) main
 {
@@ -122,15 +125,16 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 	//Start up the file transfer, bailing out if it could not be started
 	if (![self _beginTransfer]) return;
 	
-	//Use a timer to poll the FSFileOperation
-	//TODO: why do we need a timer?? couldn't we just call this within the while loop below?
+	//Use a timer to poll the FSFileOperation. (This also keeps the runloop below alive.)
 	NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval: BXFileTransferPollInterval
 													  target: self
 													selector: @selector(_checkTransferProgress)
 													userInfo: NULL
 													 repeats: YES];
 	
-	//Run the runloop until the transfer is finished
+	//Run the runloop until the transfer is finished, letting the timer call our polling function.
+	//We use a runloop instead of just sleeping, because the runloop lets cancellation messages
+	//get dispatched to us correctly.)
 	while (stage != kFSOperationStageComplete && [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode
 												   beforeDate: [NSDate dateWithTimeIntervalSinceNow: BXFileTransferPollInterval]])
 	{
@@ -141,12 +145,6 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 	[timer invalidate];
 	
 	[self setSucceeded: [self error] == nil];
-	
-	if ([self error])
-	{
-		//Clean up after ourselves
-		[self _undoTransfer];
-	}
 }
 
 - (BOOL) _canBeginTransfer
@@ -249,7 +247,7 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 	return YES;
 }
 
-- (void) _undoTransfer
+- (void) undoTransfer
 {
 	//Delete the destination path to clean up
 	//TODO: for move operations, we should put the files back.
@@ -271,12 +269,12 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 	
 	//NSAssert1(!status, @"Could not get file operation status, FSPathFileOperationCopyStatus returned error code: %i", status);
 	
-	if (status)
+	if (status && status != userCanceledErr)
 	{
 		[self setError: [NSError errorWithDomain: NSOSStatusErrorDomain code: status userInfo: nil]];
 	}
 	
-	if (errorCode)
+	if (errorCode && errorCode != userCanceledErr)
 	{
 		[self setError: [NSError errorWithDomain: NSOSStatusErrorDomain code: errorCode userInfo: nil]];
 	}

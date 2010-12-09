@@ -118,6 +118,9 @@ NSString * const BXCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[A
 	NSString *sourcePath		= [[self drive] path];
 	NSString *destinationPath	= [[self destinationFolder] stringByAppendingPathComponent: driveName];
 	
+	[self setImportedDrivePath: destinationPath];
+	
+	
 	NSError *readError = nil;
 	NSString *cueContents		= [[NSString alloc] initWithContentsOfFile: sourcePath usedEncoding: NULL error: &readError];
 	if (!cueContents)
@@ -157,13 +160,9 @@ NSString * const BXCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[A
 		[self setPathsToTransfer: transferPaths];		
 		
 		[super main];
-	
-		if ([self isCancelled]) return;
 		
 		if ([self succeeded])
 		{
-			[self setImportedDrivePath: destinationPath];
-			
 			//Once the transfer's finished, generate a revised cue file and write it to the new bundle
 			NSMutableString *revisedCue = [cueContents mutableCopy];
 			for (NSString *oldPath in [revisedPaths keyEnumerator])
@@ -193,6 +192,16 @@ NSString * const BXCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[A
 				[self setSucceeded: NO];
 			}
 		}
-	}		
+	}	
+}
+
+- (void) undoTransfer
+{
+	[super undoTransfer];
+	if ([self copyFiles] && [self importedDrivePath])
+	{
+		NSFileManager *manager = [[NSFileManager alloc] init];
+		[manager removeItemAtPath: [self importedDrivePath] error: nil];
+	}
 }
 @end

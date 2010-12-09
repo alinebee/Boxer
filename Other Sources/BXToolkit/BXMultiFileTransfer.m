@@ -9,16 +9,6 @@
 #import "BXMultiFileTransfer.h"
 #import "BXSingleFileTransfer.h"
 
-#pragma mark -
-#pragma mark Private method declarations
-
-@interface BXMultiFileTransfer ()
-
-//Clean up after a partial transfer.
-- (void) _undoTransfer;
-
-@end
-
 
 #pragma mark -
 #pragma mark Implementation
@@ -132,6 +122,13 @@
 #pragma mark -
 #pragma mark Performing the transfer
 
+- (void) start
+{
+	[super start];
+	
+	if (![self succeeded]) [self undoTransfer];
+}
+
 - (void) main
 {
 	if ([self isCancelled]) return;
@@ -148,8 +145,6 @@
 	}
 	
 	[super main];
-	
-	if (![self succeeded]) [self _undoTransfer];
 }
 
 - (void) _sendInProgressNotificationWithInfo: (NSDictionary *)info
@@ -164,17 +159,17 @@
 	
 	if (info) [extendedInfo addEntriesFromDictionary: info];
 	
-	[self _sendInProgressNotificationWithInfo: info];
+	[super _sendInProgressNotificationWithInfo: info];
 }
 
-- (void) _undoTransfer
+- (void) undoTransfer
 {
 	if ([self copyFiles])
 	{
 		//Delete all destination paths to clean up.
 		//TODO: for move operations, we should put the files back.
 		NSFileManager *manager = [[NSFileManager alloc] init];
-		for (NSString *destinationPath in [self pathsToTransfer])
+		for (NSString *destinationPath in [[self pathsToTransfer] objectEnumerator])
 		{
 			[manager removeItemAtPath: destinationPath error: NULL];		
 		}

@@ -129,11 +129,15 @@
 	
 	[self setSourcePath: [[self drive] path]];
 	[self setDestinationPath: destination];
-
-	[super main];
 	
-	if ([self succeeded])
-		[self setImportedDrivePath: destination];
+	[self setImportedDrivePath: destination];
+	
+	[super main];
+}
+
+- (void) undoTransfer
+{
+	[super undoTransfer];
 }
 
 @end

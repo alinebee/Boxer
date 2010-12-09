@@ -17,8 +17,9 @@
 #import "BXDrive.h"
 #import "BXDrivesInUseAlert.h"
 #import "BXGameProfile.h"
+#import "BXSimpleDriveImport.h"
 
-#import "BXFileTransfer.h"
+#import "BXSingleFileTransfer.h"
 
 #import "NSWorkspace+BXMountedVolumes.h"
 #import "NSWorkspace+BXFileTypes.h"
@@ -767,55 +768,6 @@
 #pragma mark -
 #pragma mark Drive importing
 
-+ (NSString *) importedNameForDrive: (BXDrive *)drive
-{
-	NSString *importedName = nil;
-	NSString *drivePath = [drive path];
-	
-	NSFileManager *manager = [NSFileManager defaultManager];
-	BOOL isDir, exists = [manager fileExistsAtPath: drivePath isDirectory: &isDir];
-	
-	if (exists)
-	{
-		NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-		
-		NSSet *readyTypes = [[BXAppController mountableFolderTypes] setByAddingObjectsFromSet: [BXAppController mountableImageTypes]];
-		
-		//Folders of the above types don't need additional work to import: we can just use their filename directly
-		if ([workspace file: drivePath matchesTypes: readyTypes])
-		{
-			return [drivePath lastPathComponent];
-		}
-		//Otherwise, it will need to be made into a mountable folder
-		else if (isDir)
-		{
-			importedName = [drive label];
-			//If the drive has a letter, then prepend it in our standard format
-			if ([drive letter]) importedName = [NSString stringWithFormat: @"%@ %@", [drive letter], importedName];
-			
-			NSString *extension	= nil;
-			
-			//Give the mountable folder the proper file extension for its drive type
-			switch ([drive type])
-			{
-				case BXDriveCDROM:
-					extension = @"cdrom";
-					break;
-				case BXDriveFloppyDisk:
-					extension = @"floppy";
-					break;
-				case BXDriveHardDisk:
-				default:
-					extension = @"harddisk";
-					break;
-			}
-			importedName = [importedName stringByAppendingPathExtension: extension];
-		}
-	}
-	return importedName;
-}
-
-
 - (BOOL) driveIsBundled: (BXDrive *)drive
 {
 	if ([self isGamePackage])
@@ -832,7 +784,7 @@
 {
 	if ([self isGamePackage])
 	{
-		NSString *importedName = [[self class] importedNameForDrive: drive];
+		NSString *importedName = [BXSimpleDriveImport nameForDrive: drive];
 		NSString *importedPath = [[[self gamePackage] resourcePath] stringByAppendingPathComponent: importedName];
 	
 		//A file already exists with the same name as we would import it with,
@@ -846,7 +798,7 @@
 
 - (BOOL) driveIsImporting: (BXDrive *)drive
 {
-	for (BXFileTransfer *operation in [importQueue operations])
+	for (BXOperation *operation in [importQueue operations])
 	{
 		if ([operation isExecuting] && [[operation contextInfo] isEqualTo: drive]) return YES; 
 	}
@@ -871,18 +823,16 @@
 	return YES;
 }
 
-- (BXFileTransfer *) beginImportForDrive: (BXDrive *)drive
+- (BXOperation <BXDriveImport> *) beginImportForDrive: (BXDrive *)drive
 {
 	if ([self canImportDrive: drive])
 	{
-		NSString *destinationBase = [[self gamePackage] resourcePath];
-		NSString *driveName = [[self class] importedNameForDrive: drive];
-		NSString *destinationPath = [destinationBase stringByAppendingPathComponent: driveName];
+		NSString *destinationFolder = [[self gamePackage] resourcePath];
 		
-		BXFileTransfer *driveImport = [BXFileTransfer transferFromPath: [drive path]
-																toPath: destinationPath
-															 copyFiles: YES];
-		[driveImport setContextInfo: drive];
+		BXOperation <BXDriveImport> *driveImport = [BXSimpleDriveImport importForDrive: drive
+																	   toDestination: destinationFolder
+																		   copyFiles: YES];
+		
 		[driveImport setDelegate: self];
 		
 		[importQueue addOperation: driveImport];
@@ -893,7 +843,7 @@
 
 - (BOOL) cancelImportForDrive: (BXDrive *)drive
 {
-	for (BXFileTransfer *operation in [importQueue operations])
+	for (BXOperation *operation in [importQueue operations])
 	{
 		if (![operation isFinished] && [[operation contextInfo] isEqualTo: drive])
 		{
@@ -906,8 +856,8 @@
 
 - (void) operationDidFinish: (NSNotification *)theNotification
 {
-	BXFileTransfer *import = [theNotification object];
-	BXDrive *drive = [import contextInfo];
+	BXOperation <BXDriveImport> *import = [theNotification object];
+	BXDrive *drive = [import drive];
 
 	if (drive && [import succeeded])
 	{
@@ -915,8 +865,8 @@
 		//with the newly-imported version (if the old one is not in use by DOS)
 		if (![[self emulator] driveInUseAtLetter: [drive letter]])
 		{
-			NSString *destinationPath = [import destinationPath];
-			BXDrive *importedDrive = [BXDrive driveFromPath: destinationPath atLetter: [drive letter]];
+			NSString *destinationPath	= [import importedDrivePath];
+			BXDrive *importedDrive		= [BXDrive driveFromPath: destinationPath atLetter: [drive letter]];
 			
 			//Temporarily suppress drive mount/unmount notifications
 			BOOL oldShowDriveNotifications = showDriveNotifications;

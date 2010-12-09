@@ -10,8 +10,10 @@
 //operation, reporting on the progress of the operation as a whole.
 
 #import "BXOperationSet.h"
+#import "BXFileTransfer.h"
 
-@interface BXMultiFileTransfer : BXOperationSet
+
+@interface BXMultiFileTransfer : BXOperationSet <BXFileTransfer>
 {
 	BOOL copyFiles;
 	NSDictionary *pathsToTransfer;
@@ -20,38 +22,12 @@
 #pragma mark -
 #pragma mark Configuration properties
 
-//Whether this is a copy or move operation.
-//This applies to all paths being transferred.
-@property (assign) BOOL copyFiles;
-
 //A map of source paths to destination paths.
 //This is not safe to modify once the operation has been started.
 @property (copy, nonatomic) NSDictionary *pathsToTransfer;
 
-
-#pragma mark -
-#pragma mark Operation status properties
-
-//The number of files that will be copied in total across all operations.
-@property (readonly) NSUInteger numFiles;
-
-//The number of files that have been copied so far across all operations.
-@property (readonly) NSUInteger filesTransferred;
-
-//The number of bytes that will be copied in total across all operations,
-//and which have been copied so far.
-@property (readonly) unsigned long long numBytes;
-@property (readonly) unsigned long long bytesTransferred;
-
-//The file path of the current file being transferred,
-//or nil if no file is being transferred.
-//This currently returns the file path of the first active file transfer.
-@property (readonly) NSString *currentPath;
-
-
 #pragma mark -
 #pragma mark Initialization
-
 
 //Create/initialize a suitable file transfer operation for the specified
 //source->destination mappings.

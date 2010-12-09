@@ -21,7 +21,7 @@
 #import "BXEmulator.h"
 #import "BXCloseAlert.h"
 
-#import "BXFileTransfer.h"
+#import "BXSingleFileTransfer.h"
 
 #import "BXImport+BXImportPolicies.h"
 #import "BXSession+BXFileManager.h"
@@ -44,7 +44,7 @@
 
 @property (readwrite, assign, nonatomic) BXImportStage importStage;
 @property (readwrite, assign, nonatomic) BXOperationProgress stageProgress;
-@property (readwrite, retain, nonatomic) BXFileTransfer *transferOperation;
+@property (readwrite, retain, nonatomic) BXOperation <BXDriveImport> *transferOperation;
 
 //Only defined for internal use
 @property (copy, nonatomic) NSString *rootDrivePath;
@@ -761,7 +761,9 @@
 			NSString *subfolderName	= [[self sourcePath] lastPathComponent];
 			NSString *destination	= [[self rootDrivePath] stringByAppendingPathComponent: subfolderName];
 			
-			BXFileTransfer *transfer = [BXFileTransfer transferFromPath: [self sourcePath] toPath: destination copyFiles: YES];
+			BXOperation *transfer = [BXSingleFileTransfer transferFromPath: [self sourcePath]
+																	toPath: destination
+																 copyFiles: YES];
 			[transfer setDelegate: self];
 			[self setTransferOperation: transfer];
 			[importQueue addOperation: transfer];

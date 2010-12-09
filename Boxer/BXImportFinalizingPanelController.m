@@ -8,7 +8,7 @@
 
 #import "BXImportFinalizingPanelController.h"
 #import "BXImportWindowController.h"
-#import "BXFileTransfer.h"
+#import "BXDriveImport.h"
 #import "BXImport.h"
 
 @implementation BXImportFinalizingPanelController
@@ -40,7 +40,7 @@
 		case BXImportCopyingSourceFiles:
 			if ([[controller document] transferOperation])
 			{
-				BXFileTransfer *transfer = [[controller document] transferOperation];	
+				BXOperation <BXDriveImport> *transfer = [[controller document] transferOperation];	
 				
 				float sizeInMB		= [transfer numBytes] / 1000000.0f;
 				float transferredMB	= [transfer bytesTransferred] / 1000000.0f;

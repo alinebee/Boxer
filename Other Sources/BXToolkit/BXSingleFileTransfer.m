@@ -6,7 +6,7 @@
  */
 
 
-#import "BXFileTransfer.h"
+#import "BXSingleFileTransfer.h"
 
 #pragma mark -
 #pragma mark Notification constants and keys
@@ -25,7 +25,7 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 #pragma mark -
 #pragma mark Private method declarations
 
-@interface BXFileTransfer ()
+@interface BXSingleFileTransfer ()
 
 @property (readwrite) unsigned long long numBytes;
 @property (readwrite) unsigned long long bytesTransferred;
@@ -51,7 +51,7 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 #pragma mark -
 #pragma mark Implementation
 
-@implementation BXFileTransfer
+@implementation BXSingleFileTransfer
 @synthesize copyFiles, sourcePath, destinationPath;
 @synthesize numFiles, filesTransferred, numBytes, bytesTransferred, currentPath;
 

@@ -47,6 +47,8 @@
 		9F42D9DF1172481800AC6F1F /* BXStatusBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F42D9DE1172481800AC6F1F /* BXStatusBarController.m */; };
 		9F438C5810E3D8C8007D30AD /* BXScroller.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F438C5710E3D8C8007D30AD /* BXScroller.m */; };
 		9F444FCC12AEA28700A2D405 /* BXOperationSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F444FCB12AEA28700A2D405 /* BXOperationSet.m */; };
+		9F444FFF12AEBE5200A2D405 /* BXDriveBundleImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F444FFE12AEBE5200A2D405 /* BXDriveBundleImport.m */; };
+		9F44500212AEC0FC00A2D405 /* BXSimpleDriveImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F44500112AEC0FC00A2D405 /* BXSimpleDriveImport.m */; };
 		9F44E5E410D17A4C0081B8D2 /* BXEmulator+BXPaste.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F44E5E310D17A4C0081B8D2 /* BXEmulator+BXPaste.mm */; };
 		9F45A1BD109C3C3900593456 /* About.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F45A1BB109C3C3900593456 /* About.xib */; };
 		9F45A1C9109C3D1100593456 /* DOSWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F45A1C7109C3D1100593456 /* DOSWindow.xib */; };
@@ -276,7 +278,7 @@
 		9FBC3D600F56EA82001811F2 /* SDL.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C140F56D6E8001811F2 /* SDL.framework */; };
 		9FBC3D610F56EA82001811F2 /* SDL_net.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C150F56D6E8001811F2 /* SDL_net.framework */; };
 		9FBD321710E5144C00031CB6 /* Brand.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBD321610E5144C00031CB6 /* Brand.png */; };
-		9FBF66AF11F35ADD00DAAB9A /* BXFileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBF66AE11F35ADD00DAAB9A /* BXFileTransfer.m */; };
+		9FBF66AF11F35ADD00DAAB9A /* BXSingleFileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBF66AE11F35ADD00DAAB9A /* BXSingleFileTransfer.m */; };
 		9FC1620E119E9AD700705EA5 /* BXCursorFadeAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC1620D119E9AD700705EA5 /* BXCursorFadeAnimation.m */; };
 		9FC3B2550F62D9CE006DE439 /* BXSession+BXEmulatorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC3B2540F62D9CE006DE439 /* BXSession+BXEmulatorController.m */; };
 		9FC74821122A7C8B00E86E6A /* BXPathEnumerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC74820122A7C8B00E86E6A /* BXPathEnumerator.m */; };
@@ -426,6 +428,12 @@
 		9F438C5710E3D8C8007D30AD /* BXScroller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXScroller.m; sourceTree = "<group>"; };
 		9F444FCA12AEA28700A2D405 /* BXOperationSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXOperationSet.h; sourceTree = "<group>"; };
 		9F444FCB12AEA28700A2D405 /* BXOperationSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXOperationSet.m; sourceTree = "<group>"; };
+		9F444FFD12AEBE5200A2D405 /* BXDriveBundleImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDriveBundleImport.h; sourceTree = "<group>"; };
+		9F444FFE12AEBE5200A2D405 /* BXDriveBundleImport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDriveBundleImport.m; sourceTree = "<group>"; };
+		9F44500012AEC0FC00A2D405 /* BXSimpleDriveImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXSimpleDriveImport.h; sourceTree = "<group>"; };
+		9F44500112AEC0FC00A2D405 /* BXSimpleDriveImport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXSimpleDriveImport.m; sourceTree = "<group>"; };
+		9F44501012AEC71100A2D405 /* BXFileTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFileTransfer.h; sourceTree = "<group>"; };
+		9F44509F12AECC4700A2D405 /* BXDriveImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDriveImport.h; sourceTree = "<group>"; };
 		9F44E5E210D17A4C0081B8D2 /* BXEmulator+BXPaste.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXEmulator+BXPaste.h"; sourceTree = "<group>"; };
 		9F44E5E310D17A4C0081B8D2 /* BXEmulator+BXPaste.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "BXEmulator+BXPaste.mm"; sourceTree = "<group>"; };
 		9F45A1BC109C3C3900593456 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/About.xib; sourceTree = "<group>"; };
@@ -832,8 +840,8 @@
 		9FBC3C770F56E0D7001811F2 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = /System/Library/Frameworks/CoreMIDI.framework; sourceTree = "<absolute>"; };
 		9FBC3CB10F56E32C001811F2 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Info.plist; sourceTree = "<group>"; };
 		9FBD321610E5144C00031CB6 /* Brand.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Brand.png; sourceTree = "<group>"; };
-		9FBF66AD11F35ADD00DAAB9A /* BXFileTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFileTransfer.h; sourceTree = "<group>"; };
-		9FBF66AE11F35ADD00DAAB9A /* BXFileTransfer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFileTransfer.m; sourceTree = "<group>"; };
+		9FBF66AD11F35ADD00DAAB9A /* BXSingleFileTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXSingleFileTransfer.h; sourceTree = "<group>"; };
+		9FBF66AE11F35ADD00DAAB9A /* BXSingleFileTransfer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXSingleFileTransfer.m; sourceTree = "<group>"; };
 		9FBF66FC11F376B900DAAB9A /* BXOperationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXOperationDelegate.h; sourceTree = "<group>"; };
 		9FC1620C119E9AD700705EA5 /* BXCursorFadeAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCursorFadeAnimation.h; sourceTree = "<group>"; };
 		9FC1620D119E9AD700705EA5 /* BXCursorFadeAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXCursorFadeAnimation.m; sourceTree = "<group>"; };
@@ -1086,12 +1094,13 @@
 				9FEAA3EA1204595B0085F008 /* BXOperation.h */,
 				9FEAA3EB1204595B0085F008 /* BXOperation.m */,
 				9FBF66FC11F376B900DAAB9A /* BXOperationDelegate.h */,
-				9FBF66AD11F35ADD00DAAB9A /* BXFileTransfer.h */,
-				9FBF66AE11F35ADD00DAAB9A /* BXFileTransfer.m */,
+				9FBF66AD11F35ADD00DAAB9A /* BXSingleFileTransfer.h */,
+				9FBF66AE11F35ADD00DAAB9A /* BXSingleFileTransfer.m */,
 				9F0F2B9312AD3C8500CD7078 /* BXMultiFileTransfer.h */,
 				9F0F2B9412AD3C8500CD7078 /* BXMultiFileTransfer.m */,
 				9F444FCA12AEA28700A2D405 /* BXOperationSet.h */,
 				9F444FCB12AEA28700A2D405 /* BXOperationSet.m */,
+				9F44501012AEC71100A2D405 /* BXFileTransfer.h */,
 			);
 			name = Operations;
 			sourceTree = "<group>";
@@ -1125,6 +1134,11 @@
 				9F1CBAAA120C830600C5E926 /* BXImport+BXImportPolicies.m */,
 				9F0F9ED812108A9000ED7A64 /* BXImportError.h */,
 				9F0F9ED912108A9000ED7A64 /* BXImportError.m */,
+				9F44509F12AECC4700A2D405 /* BXDriveImport.h */,
+				9F444FFD12AEBE5200A2D405 /* BXDriveBundleImport.h */,
+				9F444FFE12AEBE5200A2D405 /* BXDriveBundleImport.m */,
+				9F44500012AEC0FC00A2D405 /* BXSimpleDriveImport.h */,
+				9F44500112AEC0FC00A2D405 /* BXSimpleDriveImport.m */,
 			);
 			name = "Game import";
 			sourceTree = "<group>";
@@ -2241,7 +2255,7 @@
 				9FA5D68311EB6CCC0012DFA5 /* BXLineEnumerator.m in Sources */,
 				9FADFE5511EC7E1700990E91 /* BXDigest.m in Sources */,
 				9FADFE9711EC932800990E91 /* NSData+HexStrings.m in Sources */,
-				9FBF66AF11F35ADD00DAAB9A /* BXFileTransfer.m in Sources */,
+				9FBF66AF11F35ADD00DAAB9A /* BXSingleFileTransfer.m in Sources */,
 				9F13F9D011F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m in Sources */,
 				9F9E27C511F8C003003EE8F3 /* BXSegmentedCell.m in Sources */,
 				9F9E27D611F8C173003EE8F3 /* BXDrivePanelController.m in Sources */,
@@ -2399,6 +2413,8 @@
 				9F2C28A2129D906600B172C8 /* BXFirstRunWindowController.m in Sources */,
 				9F0F2B9512AD3C8500CD7078 /* BXMultiFileTransfer.m in Sources */,
 				9F444FCC12AEA28700A2D405 /* BXOperationSet.m in Sources */,
+				9F444FFF12AEBE5200A2D405 /* BXDriveBundleImport.m in Sources */,
+				9F44500212AEC0FC00A2D405 /* BXSimpleDriveImport.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

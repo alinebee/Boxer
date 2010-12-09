@@ -1,0 +1,57 @@
+/* 
+ Boxer is copyright 2010 Alun Bestor and contributors.
+ Boxer is released under the GNU General Public License 2.0. A full copy of this license can be
+ found in this XCode project at Resources/English.lproj/GNU General Public License.txt, or read
+ online at [http://www.gnu.org/licenses/gpl-2.0.txt].
+ */
+
+
+//BXFileTransfer is a BXOperation subclass class for performing asynchronous file copy/move
+//operations using NSOperationQueue. BXFileTransfer transfers only a single file/directory
+//to a single destination: see also BXMultiFileTransfer for a batch transfer operation.
+
+
+#import "BXOperation.h"
+#import "BXFileTransfer.h"
+
+@interface BXSingleFileTransfer : BXOperation <BXFileTransfer>
+{
+	BOOL copyFiles;
+	NSString *sourcePath;
+	NSString *destinationPath;
+	
+	NSFileManager *manager;
+	FSFileOperationRef fileOp;
+	FSFileOperationStage stage;
+	
+	NSUInteger numFiles;
+	NSUInteger filesTransferred;
+	unsigned long long numBytes;
+	unsigned long long bytesTransferred;
+	NSString *currentPath;
+}
+
+#pragma mark -
+#pragma mark Configuration properties
+
+//The full source path to transfer from.
+@property (copy) NSString *sourcePath;
+
+//The full destination path to transfer to, including filename.
+@property (copy) NSString *destinationPath;
+
+
+#pragma mark -
+#pragma mark Initialization
+
+//Create/initialize a suitable file transfer operation from the specified source path
+//to the specified destination.
++ (id) transferFromPath: (NSString *)source
+				 toPath: (NSString *)destination
+			  copyFiles: (BOOL)copy;
+
+- (id) initFromPath: (NSString *)source
+			 toPath: (NSString *)destination
+		  copyFiles: (BOOL)copy;
+
+@end

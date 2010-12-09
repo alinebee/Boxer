@@ -13,6 +13,7 @@
 #import "BXEmulator.h"
 #import "BXDrive.h"
 #import "BXValueTransformers.h"
+#import "BXOperation.h"
 #import "BXFileTransfer.h"
 #import "BXDriveList.h"
 
@@ -320,7 +321,7 @@ enum {
 
 - (void) operationWillStart: (NSNotification *)notification
 {
-	BXFileTransfer *transfer = [notification object];
+	BXOperation <BXFileTransfer> *transfer = [notification object];
 	
 	//If the notification didn't come from the current session, ignore it
 	if ([transfer delegate] != [[NSApp delegate] currentSession]) return;
@@ -359,7 +360,7 @@ enum {
 
 - (void) operationInProgress: (NSNotification *)notification
 {
-	BXFileTransfer *transfer = [notification object];
+	BXOperation <BXFileTransfer> *transfer = [notification object];
 	
 	//If the notification didn't come from the current session, ignore it
 	if ([transfer delegate] != [[NSApp delegate] currentSession]) return;
@@ -391,7 +392,7 @@ enum {
 
 - (void) operationWasCancelled: (NSNotification *)notification
 {
-	BXFileTransfer *transfer = [notification object];
+	BXOperation <BXFileTransfer> *transfer = [notification object];
 	
 	//If the notification didn't come from the current session, ignore it
 	if ([transfer delegate] != [[NSApp delegate] currentSession]) return;
@@ -418,7 +419,7 @@ enum {
 
 - (void) operationDidFinish: (NSNotification *)notification
 {
-	BXFileTransfer *transfer = [notification object];
+	BXOperation <BXFileTransfer> *transfer = [notification object];
 	
 	//If the notification didn't come from the current session, ignore it
 	if ([transfer delegate] != [[NSApp delegate] currentSession]) return;

@@ -58,16 +58,11 @@
    
 - (BXOperationProgress) currentProgress
 {
-	//If we haven't begun yet, return an indeterminate result.
-	if (![self numBytes]) return BXOperationProgressIndeterminate;
-	
-	//If not all of our file operations know where they're at yet, return an indeterminate result.
-	for (BXOperation <BXFileTransfer> *transfer in [self operations])
+	if ([self numBytes])
 	{
-		if ([transfer currentProgress] == BXOperationProgressIndeterminate) return BXOperationProgressIndeterminate;
+		return (BXOperationProgress)[self bytesTransferred] / (BXOperationProgress)[self numBytes];
 	}
-	
-	return (BXOperationProgress)[self bytesTransferred] / (BXOperationProgress)[self numBytes];
+	else return 0.0f;
 }
 
 - (unsigned long long) numBytes
@@ -122,13 +117,6 @@
 #pragma mark -
 #pragma mark Performing the transfer
 
-- (void) start
-{
-	[super start];
-	
-	if (![self succeeded]) [self undoTransfer];
-}
-
 - (void) main
 {
 	if ([self isCancelled]) return;
@@ -162,18 +150,17 @@
 	[super _sendInProgressNotificationWithInfo: info];
 }
 
-- (void) undoTransfer
+- (BOOL) undoTransfer
 {
+	BOOL undid = NO;
 	if ([self copyFiles])
 	{
-		//Delete all destination paths to clean up.
-		//TODO: for move operations, we should put the files back.
-		NSFileManager *manager = [[NSFileManager alloc] init];
-		for (NSString *destinationPath in [[self pathsToTransfer] objectEnumerator])
+		//Tell each component file transfer to undo whatever it did
+		for (BXSingleFileTransfer *transfer in [self operations])
 		{
-			[manager removeItemAtPath: destinationPath error: NULL];		
+			if ([transfer undoTransfer]) undid = YES;
 		}
-		[manager release];
 	}
+	return undid;
 }
 @end

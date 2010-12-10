@@ -904,7 +904,11 @@
 	else if ([import error])
 	{
 		NSError *importError = [import error];
-		//Ignore cancelled errors
+		
+		//Unwind failed transfers, whatever the reason
+		[import undoTransfer];
+		
+		//Display a sheet for the error, unless it was just the user cancelling
 		if (!([[importError domain] isEqualToString: NSCocoaErrorDomain] && [importError code] == NSUserCancelledError))
 		{
 			[self presentError: importError

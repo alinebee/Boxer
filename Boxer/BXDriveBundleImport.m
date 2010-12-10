@@ -195,13 +195,14 @@ NSString * const BXCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[A
 	}	
 }
 
-- (void) undoTransfer
+- (BOOL) undoTransfer
 {
-	[super undoTransfer];
+	BOOL undid = [super undoTransfer];
 	if ([self copyFiles] && [self importedDrivePath])
 	{
 		NSFileManager *manager = [[NSFileManager alloc] init];
-		[manager removeItemAtPath: [self importedDrivePath] error: nil];
+		undid = [manager removeItemAtPath: [self importedDrivePath] error: nil];
 	}
+	return undid;
 }
 @end

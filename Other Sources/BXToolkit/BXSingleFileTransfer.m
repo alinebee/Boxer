@@ -19,7 +19,7 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 
 
 //The interval in seconds at which to poll the progress of the file transfer
-#define BXFileTransferPollInterval 0.5
+#define BXFileTransferDefaultPollInterval 0.5
 
 
 #pragma mark -
@@ -49,8 +49,11 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 #pragma mark Implementation
 
 @implementation BXSingleFileTransfer
-@synthesize copyFiles, sourcePath, destinationPath;
-@synthesize numFiles, filesTransferred, numBytes, bytesTransferred, currentPath;
+@synthesize copyFiles = _copyFiles, pollInterval = _pollInterval;
+@synthesize sourcePath = _sourcePath, destinationPath = _destinationPath, currentPath = _currentPath;
+@synthesize numFiles = _numFiles, filesTransferred = _filesTransferred;
+@synthesize numBytes = _numBytes, bytesTransferred = _bytesTransferred;
+
 
 #pragma mark -
 #pragma mark Initialization and deallocation
@@ -59,38 +62,42 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 {
 	if ((self = [super init]))
 	{
-		fileOp = FSFileOperationCreate(kCFAllocatorDefault);
+		_fileOp = FSFileOperationCreate(kCFAllocatorDefault);
+		
+		_pollInterval = BXFileTransferDefaultPollInterval;
 		
 		//Maintain our own NSFileManager instance to ensure thread safety
-		manager = [[NSFileManager alloc] init];
+		_manager = [[NSFileManager alloc] init];
 	}
 	return self;
 }
 
-- (id) initFromPath: (NSString *)source toPath: (NSString *)destination copyFiles: (BOOL)copy
+- (id) initFromPath: (NSString *)sourcePath toPath: (NSString *)destinationPath copyFiles: (BOOL)copyFiles
 {
 	if ((self = [self init]))
 	{
-		[self setSourcePath: source];
-		[self setDestinationPath: destination];
-		[self setCopyFiles: copy];
+		[self setSourcePath: sourcePath];
+		[self setDestinationPath: destinationPath];
+		[self setCopyFiles: copyFiles];
 	}
 	return self;
 }
 
-+ (id) transferFromPath: (NSString *)source toPath: (NSString *)destination copyFiles: (BOOL)copy
++ (id) transferFromPath: (NSString *)sourcePath toPath: (NSString *)destinationPath copyFiles: (BOOL)copyFiles
 {
-	return [[[self alloc] initFromPath: source toPath: destination copyFiles: copy] autorelease];
+	return [[[self alloc] initFromPath: sourcePath
+								toPath: destinationPath
+							 copyFiles: copyFiles] autorelease];
 }
 
 - (void) dealloc
 {
-	CFRelease(fileOp);
-	[manager release], manager = nil;
+	CFRelease(_fileOp);
+	[_manager release], _manager = nil;
 	
-	[self setCurrentPath: nil],		[currentPath release];
-	[self setSourcePath: nil],		[sourcePath release];
-	[self setDestinationPath: nil],	[destinationPath release];
+	[self setCurrentPath: nil],		[_currentPath release];
+	[self setSourcePath: nil],		[_sourcePath release];
+	[self setDestinationPath: nil],	[_destinationPath release];
 	
 	[super dealloc];
 }
@@ -105,17 +112,12 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 	{
 		return (BXOperationProgress)[self bytesTransferred] / (BXOperationProgress)[self numBytes];		
 	}
-	else
-	{
-		return BXOperationProgressIndeterminate;
-	}
+	else return 0;
 }
 
-- (void) start
+- (BOOL) isIndeterminate
 {
-	[super start];
-	
-	if (![self succeeded]) [self undoTransfer];
+	return [self numBytes] == 0;
 }
 
 - (void) main
@@ -126,7 +128,7 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 	if (![self _beginTransfer]) return;
 	
 	//Use a timer to poll the FSFileOperation. (This also keeps the runloop below alive.)
-	NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval: BXFileTransferPollInterval
+	NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval: [self pollInterval]
 													  target: self
 													selector: @selector(_checkTransferProgress)
 													userInfo: NULL
@@ -135,12 +137,12 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 	//Run the runloop until the transfer is finished, letting the timer call our polling function.
 	//We use a runloop instead of just sleeping, because the runloop lets cancellation messages
 	//get dispatched to us correctly.)
-	while (stage != kFSOperationStageComplete && [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode
-												   beforeDate: [NSDate dateWithTimeIntervalSinceNow: BXFileTransferPollInterval]])
+	while (_stage != kFSOperationStageComplete && [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode
+																		   beforeDate: [NSDate dateWithTimeIntervalSinceNow: [self pollInterval]]])
 	{
 		//Cancel the file operation if we've been cancelled in the meantime
-		//(this will break out of the loop once the file operation finishes) 
-		if ([self isCancelled]) FSFileOperationCancel(fileOp);
+		//(this will break out of the loop once the file operation finishes)
+		if ([self isCancelled]) FSFileOperationCancel(_fileOp);
 	}
 	[timer invalidate];
 	
@@ -153,9 +155,9 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 	if ([self isCancelled] || ![self sourcePath] || ![self destinationPath]) return NO;
 	
 	//Don't start if the source path doesn't exist.
-	if (![manager fileExistsAtPath: [self sourcePath]])
+	if (![_manager fileExistsAtPath: [self sourcePath]])
 	{
-		NSDictionary *userInfo = [NSDictionary dictionaryWithObject: sourcePath forKey: NSFilePathErrorKey];
+		NSDictionary *userInfo = [NSDictionary dictionaryWithObject: [self sourcePath] forKey: NSFilePathErrorKey];
 		NSError *noSourceError = [NSError errorWithDomain: NSCocoaErrorDomain
 													 code: NSFileNoSuchFileError
 												 userInfo: userInfo];
@@ -164,10 +166,10 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 	}
 	
 	//...or if the destination path *does* exist.
-	if ([manager fileExistsAtPath: [self destinationPath]])
+	if ([_manager fileExistsAtPath: [self destinationPath]])
 	{
 		//TODO: check if there's a better error code to use here
-		NSDictionary *userInfo = [NSDictionary dictionaryWithObject: sourcePath forKey: NSFilePathErrorKey];
+		NSDictionary *userInfo = [NSDictionary dictionaryWithObject: [self destinationPath] forKey: NSFilePathErrorKey];
 		NSError *destinationExistsError = [NSError errorWithDomain: NSCocoaErrorDomain
 															  code: NSFileWriteNoPermissionError
 														  userInfo: userInfo];
@@ -182,20 +184,24 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 - (BOOL) _beginTransfer
 {
 	OSStatus status;
-	status = FSFileOperationScheduleWithRunLoop(fileOp, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+	status = FSFileOperationScheduleWithRunLoop(_fileOp, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
 	NSAssert1(!status, @"Could not schedule file operation in current run loop, FSFileOperationScheduleWithRunLoop returned error code: %i", status);
 	
 	NSString *destinationBase = [[self destinationPath] stringByDeletingLastPathComponent];
 	
 	//If the destination base folder does not yet exist, create it and any intermediate directories
-	if (![manager fileExistsAtPath: destinationBase])
+	if (![_manager fileExistsAtPath: destinationBase])
 	{
 		NSError *dirError = nil;
-		BOOL created = [manager createDirectoryAtPath: destinationBase
-						  withIntermediateDirectories: YES
-										   attributes: nil
-												error: &dirError];
-		if (!created)
+		BOOL created = [_manager createDirectoryAtPath: destinationBase
+						   withIntermediateDirectories: YES
+											attributes: nil
+												 error: &dirError];
+		if (created)
+		{
+			_hasCreatedFiles = YES;
+		}
+		else
 		{
 			[self setError: dirError];
 			return NO;
@@ -207,11 +213,11 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 	const char *destPath = [destinationBase fileSystemRepresentation];
 	CFStringRef destName = (CFStringRef)[[self destinationPath] lastPathComponent];
 	
-	stage = kFSOperationStageUndefined;
+	_stage = kFSOperationStageUndefined;
 	
 	if ([self copyFiles])
 	{
-		status = FSPathCopyObjectAsync(fileOp,		//Our file operation object
+		status = FSPathCopyObjectAsync(_fileOp,		//Our file operation object
 									   srcPath,		//The full path to the source file
 									   destPath,	//The path to the destination folder
 									   destName,	//The destination filename
@@ -224,7 +230,7 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 	}
 	else
 	{
-		status = FSPathMoveObjectAsync(fileOp,		//Our file operation object
+		status = FSPathMoveObjectAsync(_fileOp,		//Our file operation object
 									   srcPath,		//The full path to the source file
 									   destPath,	//The path to the destination folder
 									   destName,	//The destination filename
@@ -247,11 +253,14 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 	return YES;
 }
 
-- (void) undoTransfer
+- (BOOL) undoTransfer
 {
 	//Delete the destination path to clean up
 	//TODO: for move operations, we should put the files back.
-	if ([self copyFiles]) [manager removeItemAtPath: [self destinationPath] error: nil];
+	if (_hasCreatedFiles && [self copyFiles])
+	{
+		return [_manager removeItemAtPath: [self destinationPath] error: nil];
+	}
 }
 
 - (void) _checkTransferProgress
@@ -260,9 +269,9 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 	CFDictionaryRef statusInfo = NULL;
 	OSStatus errorCode = noErr;
 	
-	OSStatus status = FSPathFileOperationCopyStatus(fileOp,
+	OSStatus status = FSPathFileOperationCopyStatus(_fileOp,
 													&currentItem,
-													&stage,
+													&_stage,
 													&errorCode,
 													&statusInfo,
 													NULL);
@@ -281,7 +290,7 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 	
 	if (currentItem)
 	{
-		[self setCurrentPath: [manager stringWithFileSystemRepresentation: currentItem length: strlen(currentItem)]];
+		[self setCurrentPath: [_manager stringWithFileSystemRepresentation: currentItem length: strlen(currentItem)]];
 	}
 	
 	if (statusInfo)
@@ -299,7 +308,7 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 		CFRelease(statusInfo);
 	}
 	
-	if (stage == kFSOperationStageRunning)
+	if (_stage == kFSOperationStageRunning)
 	{
 		NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
 							  [NSNumber numberWithUnsignedInteger:	[self filesTransferred]],	BXFileTransferFilesTransferredKey,
@@ -310,6 +319,9 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 							  nil];
 		[self _sendInProgressNotificationWithInfo: info];
 	}
+	
+	//Make a note that we have actually copied/moved any data, in case we need to clean up later
+	if ([self bytesTransferred] > 0) _hasCreatedFiles = YES;
 }
 
 @end

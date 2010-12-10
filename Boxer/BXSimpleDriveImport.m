@@ -135,9 +135,9 @@
 	[super main];
 }
 
-- (void) undoTransfer
+- (BOOL) undoTransfer
 {
-	[super undoTransfer];
+	return [super undoTransfer];
 }
 
 @end

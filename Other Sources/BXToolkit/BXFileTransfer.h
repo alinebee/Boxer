@@ -53,5 +53,7 @@ extern NSString * const BXFileTransferCurrentPathKey;
 
 //Undo the file operation. Called automatically if the operation is cancelled
 //or encounters an unrecoverable error.
-- (void) undoTransfer;
+//Returns YES if the transfer was undone, NO if there was nothing to undo
+//(e.g. the operation hadn't successfully copied anything.)
+- (BOOL) undoTransfer;
 @end

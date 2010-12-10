@@ -16,7 +16,7 @@
 
 - (BOOL) isIndeterminate
 {
-	return ([[controller document] stageProgress] == BXOperationProgressIndeterminate);
+	return ([[controller document] stageProgressIndeterminate]);
 }
 
 - (BXOperationProgress) progress
@@ -24,7 +24,8 @@
 	BXOperationProgress progress = [[controller document] stageProgress];
 
 	//Massage the progress with an ease-out curve to make it appear quicker at the start of the transfer
-	//Disabled for now because it's obvious on a large progress bar that it’s wrong
+	//Easing disabled for now because it's obvious on a large progress bar that it’s wrong - this needs
+	//tweaking to be more subtle.
 	//BXOperationProgress easedProgress = -progress * (progress - 2);
 	BXOperationProgress easedProgress = progress;
 	

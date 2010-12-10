@@ -16,19 +16,23 @@
 
 @interface BXSingleFileTransfer : BXOperation <BXFileTransfer>
 {
-	BOOL copyFiles;
-	NSString *sourcePath;
-	NSString *destinationPath;
+	BOOL _copyFiles;
+	NSString *_sourcePath;
+	NSString *_destinationPath;
 	
-	NSFileManager *manager;
-	FSFileOperationRef fileOp;
-	FSFileOperationStage stage;
+	NSFileManager *_manager;
+	FSFileOperationRef _fileOp;
+	FSFileOperationStage _stage;
 	
-	NSUInteger numFiles;
-	NSUInteger filesTransferred;
-	unsigned long long numBytes;
-	unsigned long long bytesTransferred;
-	NSString *currentPath;
+	NSUInteger _numFiles;
+	NSUInteger _filesTransferred;
+	unsigned long long _numBytes;
+	unsigned long long _bytesTransferred;
+	NSString *_currentPath;
+	
+	NSTimeInterval _pollInterval;
+	
+	BOOL _hasCreatedFiles;
 }
 
 #pragma mark -
@@ -40,6 +44,10 @@
 //The full destination path to transfer to, including filename.
 @property (copy) NSString *destinationPath;
 
+//The interval at which to check the progress of our dependent operations and
+//issue overall progress updates.
+//BXOperationSet's overall running time will be a multiple of this interval.
+@property (assign) NSTimeInterval pollInterval;
 
 #pragma mark -
 #pragma mark Initialization

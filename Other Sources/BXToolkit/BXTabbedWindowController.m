@@ -8,16 +8,6 @@
 
 #import "BXTabbedWindowController.h"
 
-#pragma mark -
-#pragma mark Private method declarations
-
-@interface BXTabbedWindowController ()
-
-//Calls willSelectTabViewItem: and didSelectTabViewItem: with the currently-selected tab view item,
-//to perform any synchronisation needed when the tab view is first assigned to us.
-- (void) _synchronizeSelectedTab;
-@end
-
 
 #pragma mark -
 #pragma mark Implementation
@@ -37,11 +27,14 @@
 	[super dealloc];
 }
 
-- (void) awakeFromNib
+- (void) windowDidLoad
 {
-	[self _synchronizeSelectedTab];
+	if ([[self tabView] selectedTabViewItem])
+	{
+		[self tabView: [self tabView] willSelectTabViewItem: [[self tabView] selectedTabViewItem]];
+		[self tabView: [self tabView] didSelectTabViewItem: [[self tabView] selectedTabViewItem]];
+	}
 }
-
 
 #pragma mark -
 #pragma mark Tab selection
@@ -112,13 +105,6 @@
 		[[self window] setFrame: newFrame display: YES];
 	}
 }
-
-- (void) _synchronizeSelectedTab
-{
-	[self tabView: mainTabView willSelectTabViewItem: [mainTabView selectedTabViewItem]];
-	[self tabView: mainTabView didSelectTabViewItem: [mainTabView selectedTabViewItem]];
-}
-
 
 
 #pragma mark -

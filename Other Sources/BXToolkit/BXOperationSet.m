@@ -75,17 +75,24 @@
 	
 	for (BXOperation *operation in [self operations])
 	{
-		BXOperationProgress progress = [operation currentProgress];
-		
-		//If any operation's progress cannot be determined, then we cannot give an overall progress either
-		if (progress == BXOperationProgressIndeterminate)
-			return BXOperationProgressIndeterminate;
-		
-		totalProgress += progress;
-		numOperations++;
+		//Only count the operation if it can report its progress
+		if (![operation isIndeterminate])
+		{
+			totalProgress += [operation currentProgress];
+			numOperations++;			
+		}
 	}
 	
 	return totalProgress / (BXOperationProgress)numOperations;
+}
+
+- (BOOL) isIndeterminate
+{
+	for (BXOperation *operation in [self operations])
+	{
+		if ([operation isIndeterminate]) return YES;
+	}
+	return NO;
 }
 
 - (void) main

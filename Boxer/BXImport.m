@@ -44,6 +44,7 @@
 
 @property (readwrite, assign, nonatomic) BXImportStage importStage;
 @property (readwrite, assign, nonatomic) BXOperationProgress stageProgress;
+@property (readwrite, assign, nonatomic) BOOL stageProgressIndeterminate;
 @property (readwrite, retain, nonatomic) BXOperation <BXDriveImport> *transferOperation;
 
 //Only defined for internal use
@@ -70,7 +71,7 @@
 @synthesize importWindowController;
 @synthesize sourcePath, rootDrivePath;
 @synthesize installerPaths, preferredInstallerPath;
-@synthesize importStage, stageProgress, transferOperation;
+@synthesize importStage, stageProgress, stageProgressIndeterminate, transferOperation;
 
 
 #pragma mark -
@@ -411,7 +412,8 @@
 	if (stage != importStage)
 	{
 		importStage = stage;
-		[self setStageProgress: 0.0f];		
+		[self setStageProgress: 0.0f];
+		[self setStageProgressIndeterminate: YES];
 	}
 }
 
@@ -568,7 +570,7 @@
 	[self setFileURL: sourceURL];
 
 	[self setImportStage: BXImportLoadingSourcePath];
-	[self setStageProgress: BXOperationProgressIndeterminate];
+	
 	BOOL readSucceeded = [self readFromURL: sourceURL
 									ofType: nil
 									 error: &readError];
@@ -681,7 +683,6 @@
 	
 	
 	[self setImportStage: BXImportCopyingSourceFiles];
-	[self setStageProgress: BXOperationProgressIndeterminate];
 	
 	//If we don't have a source folder yet, generate one now before continuing
 	//(This will happen if there were no installers, or the user skipped the installer)
@@ -782,7 +783,6 @@
 - (void) cleanGamebox
 {	
 	[self setImportStage: BXImportCleaningGamebox];
-	[self setStageProgress: BXOperationProgressIndeterminate];
 	
 	NSString *packagePath = [[self gamePackage] bundlePath];
 	NSFileManager *manager = [NSFileManager defaultManager];
@@ -815,6 +815,7 @@
 		//Update our progress to match the operation's progress
 		
 		[self setStageProgress: [operation currentProgress]];
+		[self setStageProgressIndeterminate: [operation isIndeterminate]];
 	}
 	else return [super operationInProgress: notification];
 }

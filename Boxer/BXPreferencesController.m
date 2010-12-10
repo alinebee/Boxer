@@ -41,6 +41,7 @@
 	NSDictionary *bindingOptions = [NSDictionary dictionaryWithObjectsAndKeys:
 									@"BXDisplayPathWithIcons", NSValueTransformerNameBindingOption,
 									nil];
+	
 	[currentGamesFolderItem bind: @"attributedTitle"
 						toObject: [NSApp delegate]
 					 withKeyPath: @"gamesFolderPath"

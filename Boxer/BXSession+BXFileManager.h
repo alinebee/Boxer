@@ -149,10 +149,13 @@
 //- the drive has already been or is currently being imported
 - (BOOL) canImportDrive: (BXDrive *)drive;
 
-//Imports the specified drive to a bundled drive folder in the gamebox.
-//This will occur asynchronously using a BXOperation, which is returned by this method.
-//Will return nil if the drive cannot be imported.
-- (BXOperation <BXDriveImport> *) beginImportForDrive: (BXDrive *)drive;
+//Returns an import operation that will import the specified drive to a bundled
+//drive folder in the gamebox. If start is YES, the operation will be added to
+//the queue immediately and begin importing asynchronously.
+//Will return nil if the drive cannot be imported (e.g. because a drive at
+//the destination already exists.)
+- (BXOperation <BXDriveImport> *) importForDrive: (BXDrive *)drive
+								startImmediately: (BOOL)start;
 
 //Cancel the in-progress import of the specified drive. Returns YES if the import was cancelled,
 //NO if the import had already finished or the drive was not being imported.

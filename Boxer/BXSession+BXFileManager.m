@@ -824,7 +824,8 @@
 	return YES;
 }
 
-- (BXOperation <BXDriveImport> *) beginImportForDrive: (BXDrive *)drive
+- (BXOperation <BXDriveImport> *) importForDrive: (BXDrive *)drive
+								startImmediately: (BOOL)start
 {
 	if ([self canImportDrive: drive])
 	{
@@ -838,10 +839,13 @@
 		[driveImport setDelegate: self];
 		[driveImport setContextInfo: drive];
 		
-		[importQueue addOperation: driveImport];
+		if (start) [importQueue addOperation: driveImport];
 		return driveImport;
 	}
-	return nil;
+	else
+	{
+		return nil;
+	}
 }
 
 - (BOOL) cancelImportForDrive: (BXDrive *)drive

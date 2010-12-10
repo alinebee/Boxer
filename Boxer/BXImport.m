@@ -22,6 +22,7 @@
 #import "BXCloseAlert.h"
 
 #import "BXSingleFileTransfer.h"
+#import "BXSimpleDriveImport.h"
 
 #import "BXImport+BXImportPolicies.h"
 #import "BXSession+BXFileManager.h"
@@ -699,6 +700,7 @@
 	//-----------------------------------------------
 
 	//If the source path no longer exists, it means the user probably ejected the disk and we can't import
+	//FIXME: make this properly handle the case where the sourcepath is a mounted volume for a disc image
 	if (![manager fileExistsAtPath: [self sourcePath]])
 	{
 		//Skip straight to cleanup
@@ -749,7 +751,8 @@
 			importDrive = [BXDrive CDROMFromPath: importPath atLetter: @"D"];
 		}
 		
-		[self setTransferOperation: [self beginImportForDrive: importDrive]];
+		BXOperation <BXDriveImport> *importOperation = [self importForDrive: importDrive startImmediately: YES];
+		[self setTransferOperation: importOperation];
 	}
 	
 	//Otherwise, assume that the source files were the already-installed game:
@@ -775,7 +778,8 @@
 		{
 			[manager removeItemAtPath: [self rootDrivePath] error: nil];
 			BXDrive *importDrive = [BXDrive hardDriveFromPath: [self sourcePath] atLetter: @"C"];
-			[self setTransferOperation: [self beginImportForDrive: importDrive]];
+			BXOperation <BXDriveImport> *importOperation = [self importForDrive: importDrive startImmediately: YES];
+			[self setTransferOperation: importOperation];
 		}
 	}
 }
@@ -783,16 +787,36 @@
 - (void) cleanGamebox
 {	
 	[self setImportStage: BXImportCleaningGamebox];
+
+	NSSet *bundledTypes = [[BXAppController mountableFolderTypes] setByAddingObjectsFromSet: [BXAppController mountableImageTypes]];
 	
-	NSString *packagePath = [[self gamePackage] bundlePath];
-	NSFileManager *manager = [NSFileManager defaultManager];
-	BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: packagePath];
+	NSFileManager *manager	= [NSFileManager defaultManager];
+	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
+	
+	NSString *pathToClean	= [self rootDrivePath];
+	NSString *pathForDrives	= [[self gamePackage] resourcePath];
+	
+	BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: pathToClean];
 	[enumerator setSkipHiddenFiles: NO];
 	
 	for (NSString *path in enumerator)
 	{
 		if ([[self class] isJunkFileAtPath: path]) [manager removeItemAtPath: path error: nil];
+		else if ([workspace file: path matchesTypes: bundledTypes])
+		{
+			//If this file is a mountable type, move it into the gamebox's root folder where we can find it 
+			BXDrive *drive = [BXDrive driveFromPath: path atLetter: nil];
+			Class importClass = [BXSimpleDriveImport importClassForDrive: drive];
+			BXOperation <BXDriveImport> *importOperation = [importClass importForDrive: drive
+																		 toDestination: pathForDrives
+																			 copyFiles: NO];
+			
+			[importQueue addOperation: importOperation];
+		}
 	}
+	//Any import operations in progress by this point should be moves within the same volume,
+	//so they should be done already, but let's wait anyway.
+	[importQueue waitUntilAllOperationsAreFinished];
 	
 	//Clear our file URL, so that we don't appear as representing this gamebox when the user tries to open it
 	[self setFileURL: nil];
@@ -822,14 +846,22 @@
 
 - (void) operationDidFinish: (NSNotification *)notification
 {
-	BXOperation *operation = [notification object];
-	if ([self importStage] == BXImportCopyingSourceFiles && operation == [self transferOperation])
+	BXOperation <BXDriveImport> *operation = [notification object];
+	if ([self importStage] == BXImportCopyingSourceFiles &&
+		operation == [self transferOperation] &&
+		[operation succeeded])
 	{
 		//Yay! We finished copying files
 		[self setTransferOperation: nil];
+		[self setRootDrivePath: [operation importedDrivePath]];
+		
 		[self cleanGamebox];
 	}
-	else return [super operationDidFinish: notification];
+	//Only perform the normal post-import behaviour (drive-swapping, notifications etc.) if we're actually in a DOS session
+	else if ([self importStage] == BXImportRunningInstaller)
+	{
+		return [super operationDidFinish: notification];
+	}
 }
 
 

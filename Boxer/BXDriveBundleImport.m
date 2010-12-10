@@ -38,7 +38,7 @@ NSString * const BXCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[A
 {
 	NSString *importedName = nil;
 	
-	importedName = [drive label];
+	importedName = [[[drive path] lastPathComponent] stringByDeletingPathExtension];
 	
 	//If the drive has a letter, then prepend it in our standard format
 	if ([drive letter]) importedName = [NSString stringWithFormat: @"%@ %@", [drive letter], importedName];
@@ -115,11 +115,11 @@ NSString * const BXCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[A
 	if ([self isCancelled]) return;
 	
 	NSString *driveName			= [[self class] nameForDrive: [self drive]];
+	
 	NSString *sourcePath		= [[self drive] path];
 	NSString *destinationPath	= [[self destinationFolder] stringByAppendingPathComponent: driveName];
 	
 	[self setImportedDrivePath: destinationPath];
-	
 	
 	NSError *readError = nil;
 	NSString *cueContents		= [[NSString alloc] initWithContentsOfFile: sourcePath usedEncoding: NULL error: &readError];
@@ -190,6 +190,12 @@ NSString * const BXCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[A
 			{
 				[self setError: cueError];
 				[self setSucceeded: NO];
+			}
+			else if (![self copyFiles])
+			{
+				//If we were moving rather than copying, then delete the original cue file once we've written the new one
+				NSFileManager *manager = [[NSFileManager alloc] init];
+				[manager removeItemAtPath: sourcePath error: nil];
 			}
 		}
 	}	

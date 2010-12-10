@@ -209,7 +209,7 @@ enum {
 	NSArray *selection = [[self drives] selectedObjects];
 	BXSession *session = [[NSApp delegate] currentSession];
 
-	for (BXDrive *drive in selection) [session beginImportForDrive: drive];
+	for (BXDrive *drive in selection) [session importForDrive: drive startImmediately: YES];
 }
 
 - (IBAction) cancelImportForDrive: (id)sender

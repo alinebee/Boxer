@@ -814,7 +814,7 @@
 			[importQueue addOperation: importOperation];
 		}
 	}
-	//Any import operations in progress by this point should be moves within the same volume,
+	//Any import operations we do in this stage would be moves within the same volume,
 	//so they should be done already, but let's wait anyway.
 	[importQueue waitUntilAllOperationsAreFinished];
 	
@@ -848,16 +848,18 @@
 {
 	BXOperation <BXDriveImport> *operation = [notification object];
 	if ([self importStage] == BXImportCopyingSourceFiles &&
-		operation == [self transferOperation] &&
-		[operation succeeded])
+		operation == [self transferOperation])
 	{
-		//Yay! We finished copying files
+		//Yay! We finished copying files (or failed copying files but want to get done with this anyway)
+		//TODO: add proper error checking and display, as a failure during drive import will probably
+		//means an unusable gamebox.
 		[self setTransferOperation: nil];
 		[self setRootDrivePath: [operation importedDrivePath]];
 		
 		[self cleanGamebox];
 	}
-	//Only perform the normal post-import behaviour (drive-swapping, notifications etc.) if we're actually in a DOS session
+	//Only perform the regular post-import behaviour (drive-swapping, notifications etc.)
+	//if we're actually in a DOS session
 	else if ([self importStage] == BXImportRunningInstaller)
 	{
 		return [super operationDidFinish: notification];

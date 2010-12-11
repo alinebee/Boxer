@@ -73,12 +73,10 @@ int CDROM_Interface_Image::BinaryFile::getLength()
 CDROM_Interface_Image::AudioFile::AudioFile(const char *filename, bool &error)
 {
 	Sound_AudioInfo desired = {AUDIO_S16, 2, 44100};
-	printf("%s\n", filename);
 	sample = Sound_NewSampleFromFile(filename, &desired, RAW_SECTOR_SIZE);
 	lastCount = RAW_SECTOR_SIZE;
 	lastSeek = 0;
 	error = (sample == NULL);
-	if (error) printf("%s\n", Sound_GetError());
 }
 
 CDROM_Interface_Image::AudioFile::~AudioFile()

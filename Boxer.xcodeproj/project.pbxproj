@@ -19,6 +19,7 @@
 		9F1812BF12996340009BC4B2 /* YRKSpinningProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1812BD12996337009BC4B2 /* YRKSpinningProgressIndicator.m */; };
 		9F18133B129990D5009BC4B2 /* BXGamesFolderPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F18133A129990D5009BC4B2 /* BXGamesFolderPanelController.m */; };
 		9F18137C12999E39009BC4B2 /* GamesFolderPanelOptions.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F18137A12999E39009BC4B2 /* GamesFolderPanelOptions.xib */; };
+		9F19E7E112B3F48200496BCF /* SDL_sound.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FCEDF3212B3DFFC00E856A4 /* SDL_sound.framework */; };
 		9F1CBA58120C796C00C5E926 /* BXImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBA57120C796C00C5E926 /* BXImport.m */; };
 		9F1CBA97120C7D9000C5E926 /* BXImportWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBA96120C7D9000C5E926 /* BXImportWindowController.m */; };
 		9F1CBAAB120C830600C5E926 /* BXImport+BXImportPolicies.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBAAA120C830600C5E926 /* BXImport+BXImportPolicies.m */; };
@@ -294,6 +295,7 @@
 		9FCBB2DC10A61E9300C28B09 /* Launch.conf in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2DB10A61E9300C28B09 /* Launch.conf */; };
 		9FCBB6F310A6DDBD00C28B09 /* DOS Toolkit in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB5FE10A6DDBD00C28B09 /* DOS Toolkit */; };
 		9FCDCCE510D2D53C0080A24F /* Original DOSBox Documentation in Resources */ = {isa = PBXBuildFile; fileRef = 9FCDCCE310D2D53C0080A24F /* Original DOSBox Documentation */; };
+		9FCEDF3312B3DFFC00E856A4 /* SDL_sound.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FCEDF3212B3DFFC00E856A4 /* SDL_sound.framework */; };
 		9FD011BD10C2A02F00670CE1 /* BXGameboxPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD011BC10C2A02F00670CE1 /* BXGameboxPanelController.m */; };
 		9FD23D55129AE3B600B2100B /* NSWindow+BXWindowEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD23D54129AE3B600B2100B /* NSWindow+BXWindowEffects.m */; };
 		9FD5481411047E420041E1E7 /* BXDrivesInUseAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD5481311047E420041E1E7 /* BXDrivesInUseAlert.m */; };
@@ -330,8 +332,6 @@
 		9FFF972F123269D1009B5EE5 /* NSString+NDCarbonUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9725123269D1009B5EE5 /* NSString+NDCarbonUtilities.m */; };
 		9FFF9730123269D1009B5EE5 /* NSURL+NDCarbonUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9727123269D1009B5EE5 /* NSURL+NDCarbonUtilities.m */; };
 		9FFF97951232B718009B5EE5 /* BXMultiPanelWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF97941232B718009B5EE5 /* BXMultiPanelWindowController.m */; };
-		E519120F128F38800036EAD1 /* SDL_sound.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E519120E128F38800036EAD1 /* SDL_sound.framework */; };
-		E5191214128F388C0036EAD1 /* SDL_sound.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = E519120E128F38800036EAD1 /* SDL_sound.framework */; };
 		E5CF1840128F81AF0065844A /* PhysFS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5CF183F128F81AF0065844A /* PhysFS.framework */; };
 		E5CF1899128F81FE0065844A /* PhysFS.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = E5CF183F128F81AF0065844A /* PhysFS.framework */; };
 /* End PBXBuildFile section */
@@ -353,13 +353,13 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				9F19E7E112B3F48200496BCF /* SDL_sound.framework in Copy Bundled Frameworks */,
+				9FBC3D610F56EA82001811F2 /* SDL_net.framework in Copy Bundled Frameworks */,
 				E5CF1899128F81FE0065844A /* PhysFS.framework in Copy Bundled Frameworks */,
-				E5191214128F388C0036EAD1 /* SDL_sound.framework in Copy Bundled Frameworks */,
 				9F20C29711E5DA68005AF541 /* Sparkle.framework in Copy Bundled Frameworks */,
 				9F6BA6FD10A9FBAB005A3E2A /* Growl.framework in Copy Bundled Frameworks */,
 				9FA2E5D9109D255300E50623 /* BGHUDAppKit.framework in Copy Bundled Frameworks */,
 				9FBC3D600F56EA82001811F2 /* SDL.framework in Copy Bundled Frameworks */,
-				9FBC3D610F56EA82001811F2 /* SDL_net.framework in Copy Bundled Frameworks */,
 			);
 			name = "Copy Bundled Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -874,6 +874,7 @@
 		9FCBB2DB10A61E9300C28B09 /* Launch.conf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Launch.conf; sourceTree = "<group>"; };
 		9FCBB5FE10A6DDBD00C28B09 /* DOS Toolkit */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "DOS Toolkit"; sourceTree = "<group>"; };
 		9FCDCCE410D2D53C0080A24F /* English */ = {isa = PBXFileReference; lastKnownFileType = folder; name = English; path = "English.lproj/Original DOSBox Documentation"; sourceTree = "<group>"; };
+		9FCEDF3212B3DFFC00E856A4 /* SDL_sound.framework */ = {isa = PBXFileReference; comments = "This is a CoreAudio-enabled build produced by Eric Wing and downloaded on 2010-12-11 from http://www.assembla.com/spaces/SDL_sound_CoreAudio/documents . More information is at: http://playcontrol.net/ewing/jibberjabber/new-core-audio-backend-deco.html"; lastKnownFileType = wrapper.framework; path = SDL_sound.framework; sourceTree = "<group>"; };
 		9FD011BB10C2A02F00670CE1 /* BXGameboxPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXGameboxPanelController.h; sourceTree = "<group>"; };
 		9FD011BC10C2A02F00670CE1 /* BXGameboxPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGameboxPanelController.m; sourceTree = "<group>"; };
 		9FD23D53129AE3B600B2100B /* NSWindow+BXWindowEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSWindow+BXWindowEffects.h"; sourceTree = "<group>"; };
@@ -942,7 +943,6 @@
 		9FFF9727123269D1009B5EE5 /* NSURL+NDCarbonUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+NDCarbonUtilities.m"; sourceTree = "<group>"; };
 		9FFF97931232B718009B5EE5 /* BXMultiPanelWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXMultiPanelWindowController.h; sourceTree = "<group>"; };
 		9FFF97941232B718009B5EE5 /* BXMultiPanelWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXMultiPanelWindowController.m; sourceTree = "<group>"; };
-		E519120E128F38800036EAD1 /* SDL_sound.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL_sound.framework; sourceTree = "<group>"; };
 		E5CF183F128F81AF0065844A /* PhysFS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PhysFS.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -967,8 +967,8 @@
 				9F20C28B11E5D848005AF541 /* Sparkle.framework in Frameworks */,
 				9F20C28E11E5D8B4005AF541 /* QTKit.framework in Frameworks */,
 				9F61942412340F5400F35AB4 /* ScriptingBridge.framework in Frameworks */,
-				E519120F128F38800036EAD1 /* SDL_sound.framework in Frameworks */,
 				E5CF1840128F81AF0065844A /* PhysFS.framework in Frameworks */,
+				9FCEDF3312B3DFFC00E856A4 /* SDL_sound.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1944,12 +1944,12 @@
 			isa = PBXGroup;
 			children = (
 				E5CF183F128F81AF0065844A /* PhysFS.framework */,
-				E519120E128F38800036EAD1 /* SDL_sound.framework */,
 				9F20C28A11E5D848005AF541 /* Sparkle.framework */,
 				9F6BA6F810A9FB92005A3E2A /* Growl.framework */,
 				9FA2E595109D251100E50623 /* BGHUDAppKit.framework */,
 				9FBC3C140F56D6E8001811F2 /* SDL.framework */,
 				9FBC3C150F56D6E8001811F2 /* SDL_net.framework */,
+				9FCEDF3212B3DFFC00E856A4 /* SDL_sound.framework */,
 			);
 			name = "Bundled Frameworks";
 			path = Frameworks;

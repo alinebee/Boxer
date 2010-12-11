@@ -5,11 +5,13 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>SDL_sound</string>
+	<string>SDL_Sound</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.yourcompany.SDL-sound</string>
+	<string>net.washboardabs.SDL_Sound</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>SDL_Sound</string>
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>

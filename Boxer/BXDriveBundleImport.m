@@ -143,7 +143,10 @@ NSString * const BXCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[A
 		
 		for (NSString *fromPath in relatedPaths)
 		{
-			NSString *fullFromPath	= [[sourceBasePath stringByAppendingPathComponent: fromPath] stringByStandardizingPath];
+			//Rewrite Windows-style paths
+			NSString *sanitisedFromPath = [fromPath stringByReplacingOccurrencesOfString: @"\\" withString: @"/"];
+			
+			NSString *fullFromPath	= [[sourceBasePath stringByAppendingPathComponent: sanitisedFromPath] stringByStandardizingPath];
 			NSString *fromName		= [fullFromPath lastPathComponent];
 			NSString *fullToPath	= [destinationPath stringByAppendingPathComponent: fromName];
 			

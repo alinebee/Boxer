@@ -270,22 +270,36 @@
 	if ([self isInternal]) return nil;
 	realPath = [realPath stringByStandardizingPath];
 	
-	//Special-case: map the 'represented' path directly onto the mount path
-	if ([realPath isEqualToString: [self path]]) return [self mountPoint];
+	NSString *relativePath = nil;
 	
-	if ([realPath isRootedInPath: [self mountPoint]])
+	//Special-case: map the 'represented' path directly onto the mount path
+	if ([realPath isEqualToString: [self path]])
 	{
-		return [realPath substringFromIndex: [[self mountPoint] length]];
+		relativePath = @"";
 	}
+	
+	else if ([realPath isRootedInPath: [self mountPoint]])
+	{
+		relativePath = [realPath substringFromIndex: [[self mountPoint] length]];
+	}
+	
 	else
 	{
 		for (NSString *alias in [self pathAliases])
 		{
-			return [realPath substringFromIndex: [alias length]];
+			if ([realPath isRootedInPath: alias])
+			{
+				relativePath = [realPath substringFromIndex: [alias length]];
+				break;
+			}
 		}
 	}
-	//If we got this far, then no direct mapping is possible
-	return nil;
+	
+	//Strip any leading slash from the relative path
+	if (relativePath && [relativePath hasPrefix: @"/"])
+		relativePath = [relativePath substringFromIndex: 1];
+	
+	return relativePath;
 }
 
 - (BOOL) isInternal	{ return ([self type] == BXDriveInternal); }

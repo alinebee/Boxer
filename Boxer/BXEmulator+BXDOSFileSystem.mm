@@ -364,38 +364,48 @@ enum {
 	//If the path is at the root of the drive, bail out now.
 	if (![subPath length]) return dosDrive;
 
-	//To be sure we get this right, flush the drive caches before we look anything up
-	[self refreshMountedDrives];
-	
 	NSString *basePath			= [drive mountPoint];
 	NSArray *components			= [subPath pathComponents];
-	NSUInteger driveIndex		= [self _indexOfDriveLetter: [drive letter]];
 	
-	NSMutableString *dosPath	= [NSMutableString stringWithCapacity: CROSS_LEN];
-	NSMutableData *buffer		= [NSMutableData dataWithLength: CROSS_LEN];
+	NSUInteger driveIndex	= [self _indexOfDriveLetter: [drive letter]];
+	DOS_Drive *DOSBoxDrive	= Drives[driveIndex];
+	if (!DOSBoxDrive) return nil;
+	
+	//Drive cache lookups are only available for local drives, and this
+	//obnoxious hack the only way we can test what type this drive is
+	localDrive *localDOSBoxDrive = dynamic_cast<localDrive *>(DOSBoxDrive);
+	BOOL useLookup = (localDOSBoxDrive != NULL);
+	
+	//To be sure we get this right, flush the drive cache before we look anything up
+	DOSBoxDrive->EmptyCache();
+
+	NSMutableString *dosPath = [NSMutableString stringWithCapacity: CROSS_LEN];
 	
 	for (NSString *fileName in components)
 	{
 		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 		
 		NSString *frankenPath = [basePath stringByAppendingString: dosPath];
+		NSString *dosName = nil;
 		
-		NSString *dosName;
-		
-		BOOL hasShortName = Drives[driveIndex]->dirCache.GetShortName(
-			[frankenPath cStringUsingEncoding: BXDirectStringEncoding],
-			[fileName cStringUsingEncoding: BXDirectStringEncoding],
-			(char *)[buffer mutableBytes]);
-	
-		if (hasShortName)
+		if (useLookup)
 		{
-			dosName = [[[NSString alloc] initWithData: buffer
-											 encoding: BXDirectStringEncoding] autorelease];			
+			NSMutableData *buffer = [NSMutableData dataWithLength: CROSS_LEN];
+			
+			BOOL hasShortName = DOSBoxDrive->dirCache.GetShortName([frankenPath cStringUsingEncoding: BXDirectStringEncoding],
+																   [fileName cStringUsingEncoding: BXDirectStringEncoding],
+																   (char *)[buffer mutableBytes]);
+			
+			if (hasShortName)
+			{
+				dosName = [[[NSString alloc] initWithData: buffer
+												 encoding: BXDirectStringEncoding] autorelease];			
+			}
 		}
-		else
+		
+		if (!dosName)
 		{
-			//If DOSBox didn't find a shorter name, it probably means the name
-			//is already short enough: just make sure it's uppercased.
+			//TODO: if filename is longer than 8.3, crop and append ~1 as a last-ditch guess.
 			dosName = [fileName uppercaseString];
 		}
 		

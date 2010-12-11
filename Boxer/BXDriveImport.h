@@ -6,29 +6,29 @@
  */
 
 
-//BXDriveImport is a simple extension of BXFileTransfer specifically to handle importing BXDrives.
-
 #import "BXFileTransfer.h"
 
 @class BXDrive;
 
-@interface BXDriveImport : BXFileTransfer
+@protocol BXDriveImport <BXFileTransfer>
 
-#pragma mark -
-#pragma mark Helper class methods
+//The drive to import
+@property (retain) BXDrive *drive;
 
-//Returns a suitable name under which to store the specified drive,
-//using the standard format for Boxer mountable folders.
-+ (NSString *) nameForDrive: (BXDrive *)drive;
+//The base folder into which to import the drive to.
+//This does not include the destination drive name, which will be determined automatically
+//from the drive being imported.
+@property (copy) NSString *destinationFolder;
 
-#pragma mark -
-#pragma mark Initializers
+//The path of the new drive once it is finally imported.
+@property (copy, readonly) NSString *importedDrivePath;
 
-//Create/initialize a new drive import operation for the specified drive to the specified destination
-//folder/gamebox. These will set drive to be the context info for the transfer.
-//Unlike BXFileTransfer, destination should be the base folder and not the whole path: the destination
-//filename will be determined automatically from the drive details, using +nameForDrive:.
-+ (id) importForDrive: (BXDrive *)drive toFolder: (NSString *)destination copyFiles: (BOOL)copy;
-- (id) initForDrive: (BXDrive *)drive toFolder: (NSString *)destination copyFiles: (BOOL)copy;
+//Return a suitably initialized BXOperation subclass for transferring the drive.
++ (id <BXDriveImport>) importForDrive: (BXDrive *)drive
+						toDestination: (NSString *)destinationFolder
+							copyFiles: (BOOL)copyFiles;
 
+- (id <BXDriveImport>) initForDrive: (BXDrive *)drive
+					  toDestination: (NSString *)destinationFolder
+						  copyFiles: (BOOL)copyFiles;
 @end

@@ -11,6 +11,7 @@
 #import "BXDrive.h"
 #import "BXValueTransformers.h"
 #import "BXInputHandler.h"
+#import "BXAppController.h"
 
 #import "shell.h"
 
@@ -20,6 +21,7 @@ NSDictionary *commandList = [[NSDictionary alloc] initWithObjectsAndKeys:
 	@"runPreflightCommands:",	@"boxer_preflight",
 	@"runLaunchCommands:",		@"boxer_launch",
 	@"displayStringFromKey:",	@"boxer_displaystring",
+	@"revealPath:",				@"boxer_reveal",
 	@"showShellCommandHelp:",	@"help",
 	@"listDrives:",				@"drives",
 	
@@ -273,6 +275,26 @@ nil];
 	return [NSNumber numberWithBool: YES];
 }
 
+- (id) revealPath: (NSString *)argumentString
+{
+	NSString *cleanedPath = [argumentString stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
+	if (![cleanedPath length]) cleanedPath = @".";
+	
+	NSString *filesystemPath = [self pathForDOSPath: cleanedPath];
+	
+	if (filesystemPath)
+	{
+		[NSApp sendAction: @selector(revealInFinder:) to: nil from: filesystemPath];
+	}
+	else
+	{
+		NSString *errorFormat = NSLocalizedString(@"The path \"%1$@\" could not be found, or does not exist in the OS X filesystem.", @"Error message displayed when BOXER_REVEAL cannot resolve a specified drive path.");
+		NSString *errorMessage = [NSString stringWithFormat: errorFormat, cleanedPath, nil];
+		[self displayString: errorMessage];
+	}
+	
+	return [NSNumber numberWithBool: YES];
+}
 
 #pragma mark -
 #pragma mark Private methods

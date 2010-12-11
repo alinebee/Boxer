@@ -11,6 +11,13 @@
 
 #import <Cocoa/Cocoa.h>
 
+
+//Not defined in NSApplication until 10.6 (whoopeeeeeee)
+#ifndef NSAppKitVersionNumber10_5
+#define NSAppKitVersionNumber10_5 949
+#endif 
+
+
 @class BXSession;
 
 enum {
@@ -24,9 +31,16 @@ enum {
 {
 	BXSession *currentSession;
 	NSString *gamesFolderPath;
+	BOOL hasFinishedLaunching;
+	
+	NSOperationQueue *generalQueue;
 }
 //The currently-active DOS session. Changes whenever a new session opens.
 @property (retain, nonatomic) BXSession *currentSession;
+
+//A general operation queue for non-session-specific operations.
+@property (retain, readonly) NSOperationQueue *generalQueue;
+
 
 //Called at class initialization time to initialize Boxer's own user defaults.
 + (void) setupDefaults;
@@ -50,6 +64,11 @@ enum {
 //Mirrors the behaviour of openUntitledDocumentAndDisplay:error:
 - (id) openImportSessionAndDisplay: (BOOL)displayDocument error: (NSError **)outError;
 
+//Open an import session to import the specified URL.
+- (id) openImportSessionWithContentsOfURL: (NSURL *)url
+								  display: (BOOL)display
+									error: (NSError **)outError;
+
 
 #pragma mark -
 #pragma mark Managing application audio
@@ -66,6 +85,9 @@ enum {
 #pragma mark UI actions
 
 - (IBAction) orderFrontWelcomePanel: (id)sender;		//Display the welcome panel.
+//Display the welcome panel with a flip animation (used only at startup).
+- (IBAction) orderFrontWelcomePanelWithFlip: (id)sender;
+- (IBAction) orderFrontFirstRunPanel: (id)sender;		//Display the first-run panel.
 - (IBAction) hideWelcomePanel: (id)sender;				//Close the welcome panel.
 - (IBAction) orderFrontImportGamePanel: (id)sender;		//Display the game import panel.
 
@@ -89,7 +111,8 @@ enum {
 
 
 //Reveal the specified path (or its parent folder, in the case of files) in a new Finder window.
-- (void) revealPath: (NSString *)filePath;
+//Returns NO if the file at the path did not exist or could not be opened, YES otherwise.
+- (BOOL) revealPath: (NSString *)filePath;
 
 //Open the specified URL from the specified Info.plist key. Used internally by UI actions.
 - (void) openURLFromKey:(NSString *)infoKey;
@@ -100,10 +123,14 @@ enum {
 
 
 #pragma mark -
-#pragma mark Event-related functions
+#pragma mark Miscellaneous helpers
 
 //Return the NSWindow located at the specified point.
 //TODO: this should probably be an NSApplication category instead.
 - (NSWindow *) windowAtPoint: (NSPoint)screenPoint;
+
+//Returns whether is running on 10.5 Leopard.
+//This is used to trigger certain bugfixes and adjusts the art we use.
++ (BOOL) isRunningOnLeopard;
 
 @end

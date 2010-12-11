@@ -21,6 +21,7 @@ NSString * const BXOperationContextInfoKey	= @"BXOperationContextInfoKey";
 NSString * const BXOperationSuccessKey		= @"BXOperationSuccessKey";
 NSString * const BXOperationErrorKey		= @"BXOperationErrorKey";
 NSString * const BXOperationProgressKey		= @"BXOperationProgressKey";
+NSString * const BXOperationIsIndeterminateKey	= @"BXOperationIsIndeterminateKey";
 
 
 @implementation BXOperation
@@ -46,6 +47,13 @@ NSString * const BXOperationProgressKey		= @"BXOperationProgressKey";
 	[super dealloc];
 }
 
+- (void) start
+{
+	[self _sendWillStartNotificationWithInfo: nil];
+	[super start];
+	[self _sendDidFinishNotificationWithInfo: nil];
+}
+
 - (void) cancel
 {	
 	//Only send a notification the first time we're cancelled,
@@ -68,7 +76,12 @@ NSString * const BXOperationProgressKey		= @"BXOperationProgressKey";
 //Intended to be overridden by subclasses to provide more meaningful progress tracking.
 - (BXOperationProgress) currentProgress
 {
-	return BXOperationProgressIndeterminate;
+	return 0.0f;
+}
+
+- (BOOL) isIndeterminate
+{
+	return YES;
 }
 
 
@@ -112,7 +125,8 @@ NSString * const BXOperationProgressKey		= @"BXOperationProgressKey";
 	if ([self isCancelled]) return;
 	
 	NSMutableDictionary *progressInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-										 [NSNumber numberWithFloat: [self currentProgress]], BXOperationProgressKey,
+										 [NSNumber numberWithFloat: [self currentProgress]],	BXOperationProgressKey,
+										 [NSNumber numberWithBool: [self isIndeterminate]],		BXOperationIsIndeterminateKey,
 										 nil];
 	if (info) [progressInfo addEntriesFromDictionary: info];
 	

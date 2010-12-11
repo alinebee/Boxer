@@ -15,7 +15,8 @@
 
 @class BXDrive;
 @class BXDrivesInUseAlert;
-@class BXDriveImport;
+@class BXOperation;
+@protocol BXDriveImport;
 
 @interface BXSession (BXFileManager) <BXEmulatorFileSystemDelegate, BXOperationDelegate>
 
@@ -66,10 +67,10 @@
 #pragma mark Launching programs
 
 //Open the represented object of the sender in DOS.
-- (IBAction) openInDOS:			(id)sender;
+- (IBAction) openInDOS: (id)sender;
 
 //Relaunch the default program.
-- (IBAction) relaunch:			(id)sender;
+- (IBAction) relaunch: (id)sender;
 
 //Open the file at the specified path in DOS.
 //If path is an executable, it will be launched; otherwise, we'll just change the working directory to it.
@@ -148,10 +149,13 @@
 //- the drive has already been or is currently being imported
 - (BOOL) canImportDrive: (BXDrive *)drive;
 
-//Imports the specified drive to a bundled drive folder in the gamebox.
-//This will occur asynchronously using a BXFileTransfer, which is returned by this method.
-//Will return nil if the drive cannot be imported.
-- (BXDriveImport *) beginImportForDrive: (BXDrive *)drive;
+//Returns an import operation that will import the specified drive to a bundled
+//drive folder in the gamebox. If start is YES, the operation will be added to
+//the queue immediately and begin importing asynchronously.
+//Will return nil if the drive cannot be imported (e.g. because a drive at
+//the destination already exists.)
+- (BXOperation <BXDriveImport> *) importForDrive: (BXDrive *)drive
+								startImmediately: (BOOL)start;
 
 //Cancel the in-progress import of the specified drive. Returns YES if the import was cancelled,
 //NO if the import had already finished or the drive was not being imported.

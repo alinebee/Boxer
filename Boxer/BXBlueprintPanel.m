@@ -118,10 +118,13 @@
 	NSColor *textColor = [NSColor whiteColor];
 	NSColor *backgroundColor = [NSColor colorWithCalibratedWhite: 0.0f alpha: backgroundOpacity];
 	
+	NSRect visibleFrame = frame;
+	visibleFrame.size.height -= 2.0f;
+	visibleFrame.origin.y += 2.0f;
 	
 	//We draw ourselves with rounded corners, and a custom background and inner shadow
-	CGFloat cornerRadius = NSHeight(frame) / 2.0f;
-	NSBezierPath *background = [NSBezierPath bezierPathWithRoundedRect: frame
+	CGFloat cornerRadius = 3.0f; //NSHeight(frame) / 2.0f;
+	NSBezierPath *background = [NSBezierPath bezierPathWithRoundedRect: visibleFrame
 															   xRadius: cornerRadius
 															   yRadius: cornerRadius];
 	
@@ -149,4 +152,27 @@
 	[innerShadow release];
 }
 
+@end
+
+
+@implementation BXBlueprintProgressIndicator
+
+- (void) awakeFromNib
+{
+	[self setColor: [NSColor whiteColor]];
+	[self setDrawsBackground: NO];
+}
+
+- (void) drawRect: (NSRect)dirtyRect
+{
+	NSShadow *dropShadow = [[NSShadow alloc] init];
+	[dropShadow setShadowOffset: NSMakeSize(0.0f, 0.0f)];
+	[dropShadow setShadowBlurRadius: 3.0f];
+	[dropShadow setShadowColor: [[NSColor blackColor] colorWithAlphaComponent: 0.5f]];
+	
+	[NSGraphicsContext saveGraphicsState];
+		[dropShadow set];
+		[super drawRect: dirtyRect];
+	[NSGraphicsContext restoreGraphicsState];
+}
 @end

@@ -20,6 +20,7 @@
 @class BXEmulator;
 @class BXPackage;
 @class BXDOSWindowController;
+@class UKFileWatcher;
 
 @interface BXSession : NSDocument <BXEmulatorDelegate>
 {	
@@ -46,6 +47,8 @@
 	BOOL showDriveNotifications;
 	
 	NSOperationQueue *importQueue;
+	
+	UKFileWatcher *watcher;
 }
 
 

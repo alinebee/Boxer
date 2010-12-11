@@ -7,6 +7,7 @@
 
 
 #import "BXValueTransformers.h"
+#import "NSString+BXPaths.h"
 
 #pragma mark -
 #pragma mark Numeric transformers
@@ -263,25 +264,30 @@
 	
 	//If NSFileManager couldn't derive display names for this path,
 	//or we disabled filesystem display paths, just use ordinary path components
-	if (!components) components = [path pathComponents];
-
+	if (!components)
+	{
+		//Fix for 10.5 leaving in / when breaking up "C:/DOSPATH"
+		components = [[path pathComponents] filteredArrayUsingPredicate: [NSPredicate predicateWithFormat: @"SELF != '/'"]];
+	}
 	return components;
 }
 
 - (NSString *) transformedValue: (NSString *)path
 {
-	NSArray *components = [self _componentsForPath: path];
+	NSMutableArray *components = [[self _componentsForPath: path] mutableCopy];
 	NSUInteger count = [components count];
 	BOOL shortened = NO;
-	
+
 	if (maxComponents > 0 && count > maxComponents)
 	{
-		components = [components subarrayWithRange: NSMakeRange(count - maxComponents, maxComponents)];
+		[components removeObjectsInRange: NSMakeRange(0, count - maxComponents)];
 		shortened = YES;
 	}
 	
 	NSString *displayPath = [components componentsJoinedByString: [self joiner]];
 	if (shortened && [self ellipsis]) displayPath = [[self ellipsis] stringByAppendingString: displayPath];
+	
+	[components release];
 	return displayPath;
 }
 
@@ -290,6 +296,131 @@
 	[self setJoiner: nil],		[joiner release];
 	[self setEllipsis: nil],	[ellipsis release];
 	[super dealloc];
+}
+@end
+
+
+@implementation BXIconifiedDisplayPathTransformer
+@synthesize missingFileIcon, textAttributes, iconAttributes, iconSize, hideSystemRoots;
+
++ (Class) transformedValueClass { return [NSAttributedString class]; }
+
+- (id) initWithJoiner: (NSString *)joinString
+			 ellipsis: (NSString *)ellipsisString
+		maxComponents: (NSUInteger)components
+{
+	if ((self = [super initWithJoiner: joinString ellipsis: ellipsisString maxComponents: components]))
+	{
+		[self setIconSize: NSMakeSize(16.0f, 16.0f)];
+		[self setTextAttributes: [NSMutableDictionary dictionaryWithObjectsAndKeys:
+								  [NSFont systemFontOfSize: 0], NSFontAttributeName,
+								  nil]];
+		
+		[self setIconAttributes: [NSMutableDictionary dictionaryWithObjectsAndKeys:
+								  [NSNumber numberWithFloat: -3.0f], NSBaselineOffsetAttributeName,
+								  nil]];
+	}
+	return self;
+}
+
+- (void) dealloc
+{
+	[self setMissingFileIcon: nil], [missingFileIcon release];
+	[self setTextAttributes: nil], [textAttributes release];
+	[self setIconAttributes: nil], [iconAttributes release];
+	[super dealloc];
+}
+
+- (NSAttributedString *) componentForPath: (NSString *)path
+						  withDefaultIcon: (NSImage *)defaultIcon
+{
+	NSString *displayName;
+	NSImage *icon;
+
+	NSFileManager *manager = [NSFileManager defaultManager];
+	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+		
+	//Determine the display name and file icon, falling back on sensible defaults if the path doesn't yet exist
+	if ([manager fileExistsAtPath: path])
+	{
+		displayName = [manager displayNameAtPath: path];
+		icon = [workspace iconForFile: path];
+	}
+	else
+	{
+		displayName = [path lastPathComponent];
+		//Fall back on whatever icon NSWorkspace uses for nonexistent files, if no default icon was specified
+		icon = (defaultIcon) ? defaultIcon : [workspace iconForFile: path];
+	}
+	
+	[icon setSize: [self iconSize]];
+	
+	NSTextAttachment *iconAttachment = [[NSTextAttachment alloc] init];
+	[(NSCell *)[iconAttachment attachmentCell] setImage: icon];
+	
+	NSMutableAttributedString *component = [[NSAttributedString attributedStringWithAttachment: iconAttachment] mutableCopy];
+	[component addAttributes: [self iconAttributes] range: NSMakeRange(0, [component length])];
+	
+	NSAttributedString *label = [[NSAttributedString alloc] initWithString: [@" " stringByAppendingString: displayName]
+																attributes: [self textAttributes]];
+	
+	[component appendAttributedString: label];
+	
+	[iconAttachment release];
+	[label release];
+	
+	return [component autorelease];
+}
+
+- (NSAttributedString *) transformedValue: (NSString *)path
+{
+	NSMutableArray *components = [[path fullPathComponents] mutableCopy];
+	
+	//Bail out early if the path is empty
+	if (![components count])
+		return [[[NSAttributedString alloc] init] autorelease];
+	
+	//Hide common system root directories
+	if (hideSystemRoots)
+	{
+		[components removeObject: @"/"];
+		[components removeObject: @"/Users"];
+	}
+	
+	NSMutableAttributedString *displayPath = [[NSMutableAttributedString alloc] init];
+	NSAttributedString *attributedJoiner = [[NSAttributedString alloc] initWithString: [self joiner] attributes: [self textAttributes]];
+	
+	//Truncate the path with ellipses if there are too many components
+	NSUInteger count = [components count];
+	if (maxComponents > 0 && count > maxComponents)
+	{
+		[components removeObjectsInRange: NSMakeRange(0, count - maxComponents)];
+		
+		NSAttributedString *attributedEllipsis = [[NSAttributedString alloc] initWithString: [self ellipsis] attributes: [self textAttributes]];
+		[displayPath appendAttributedString: attributedEllipsis];
+		[attributedEllipsis release];
+	}
+
+	NSUInteger componentsAdded = 0;
+	for (NSString *subPath in components)
+	{
+		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+		
+		if (componentsAdded)
+			[displayPath appendAttributedString: attributedJoiner];
+
+		NSAttributedString *componentString = [self componentForPath: subPath withDefaultIcon: [self missingFileIcon]];
+		[displayPath appendAttributedString: componentString];
+		
+		componentsAdded++;
+		
+		[pool release];
+	}
+	
+	[attributedJoiner release];
+	[components release];
+	
+	return [displayPath autorelease];
 }
 @end
 

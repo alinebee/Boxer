@@ -15,9 +15,11 @@
 	<key>CFBundleName</key>
 	<string>${PRODUCT_NAME}</string>
 	<key>CFBundleGetInfoString</key>
-	<string>Boxer 1.0alpha</string>
+	<string>Boxer 1.0beta</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0alpha</string>
+	<string>1.0beta</string>
+	<key>CFBundleSignature</key>
+	<string>Boxr</string>
 	<key>CFBundleVersion</key>
 	<string>${CURRENT_PROJECT_VERSION}</string>
 	<key>CFBundlePackageType</key>
@@ -26,6 +28,8 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>${MACOSX_DEPLOYMENT_TARGET}</string>
 	<key>ContactEmail</key>
 	<string>support@boxerapp.com</string>
 	<key>WebsiteURL</key>
@@ -36,8 +40,6 @@
 	<string>http://boxerapp.com/guide</string>
 	<key>ConfigurationFileHelpURL</key>
 	<string>http://boxerapp.com/guide/dosbox_configuration</string>
-	<key>LSMinimumSystemVersion</key>
-	<string>10.5.4</string>
 	<key>PerianURL</key>
 	<string>http://perian.org/</string>
 	<key>ReplacementDocsURL</key>
@@ -58,6 +60,10 @@
 	<string>http://boxerapp.com/sparkledev</string>
 	<key>SUPublicDSAKeyFile</key>
 	<string>dsa_pub.pem</string>
+	<key>NSAppleScriptEnabled</key>
+	<true/>
+	<key>OSAScriptingDefinition</key>
+	<string>Boxer.sdef</string>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
@@ -75,7 +81,10 @@
 			<array>
 				<string>net.washboardabs.boxer-game-package</string>
 			</array>
+			<key>LSTypeIsPackage</key>
+			<true/>
 		</dict>
+		
 		<dict>
 			<key>NSDocumentClass</key>
 			<string>BXSession</string>
@@ -91,6 +100,7 @@
 				<string>net.washboardabs.boxer-mountable-folder</string>
 			</array>
 		</dict>
+		
 		<dict>
 			<key>NSDocumentClass</key>
 			<string>BXSession</string>
@@ -107,6 +117,22 @@
 				<string>com.goldenhawk.cdrwin-cuesheet</string>
 			</array>
 		</dict>
+		
+		<dict>
+			<key>NSDocumentClass</key>
+			<string>BXSession</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>CFBundleTypeName</key>
+			<string>Disk Bundle</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>net.washboardabs.boxer-disk-bundle</string>
+			</array>
+		</dict>
+		
 		<dict>
 			<key>NSDocumentClass</key>
 			<string>BXSession</string>
@@ -130,6 +156,28 @@
 	<array>
 		<dict>
 			<key>UTTypeDescription</key>
+			<string>Boxer mountable folder</string>
+			<key>UTTypeIdentifier</key>
+			<string>net.washboardabs.boxer-mountable-folder</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>com.apple.folder</string>
+			</array>
+		</dict>
+		
+		<dict>
+			<key>UTTypeDescription</key>
+			<string>Boxer disk bundle</string>
+			<key>UTTypeIdentifier</key>
+			<string>net.washboardabs.boxer-disk-bundle</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>com.apple.folder</string>
+			</array>
+		</dict>
+
+		<dict>
+			<key>UTTypeDescription</key>
 			<string>MS-DOS gamebox</string>
 			<key>UTTypeIconFile</key>
 			<string>package.icns</string>
@@ -148,16 +196,7 @@
 				</array>
 			</dict>
 		</dict>
-		<dict>
-			<key>UTTypeDescription</key>
-			<string>MS-DOS mountable folder</string>
-			<key>UTTypeIdentifier</key>
-			<string>net.washboardabs.boxer-mountable-folder</string>
-			<key>UTTypeConformsTo</key>
-			<array>
-				<string>com.apple.folder</string>
-			</array>
-		</dict>
+		
 		<dict>
 			<key>UTTypeDescription</key>
 			<string>MS-DOS CD-ROM</string>
@@ -175,6 +214,7 @@
 				</array>
 			</dict>
 		</dict>
+		
 		<dict>
 			<key>UTTypeDescription</key>
 			<string>MS-DOS floppy disk</string>
@@ -192,6 +232,7 @@
 				</array>
 			</dict>
 		</dict>
+		
 		<dict>
 			<key>UTTypeDescription</key>
 			<string>MS-DOS hard disk</string>
@@ -207,6 +248,24 @@
 				<array>
 					<string>harddisk</string>
 					<string>harddrive</string>
+				</array>
+			</dict>
+		</dict>
+		
+		<dict>
+			<key>UTTypeDescription</key>
+			<string>CD-ROM bundle</string>
+			<key>UTTypeIdentifier</key>
+			<string>net.washboardabs.boxer-cdrom-bundle</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>net.washboardabs.boxer-disk-bundle</string>
+			</array>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>cdmedia</string>
 				</array>
 			</dict>
 		</dict>
@@ -231,6 +290,7 @@
 				<string>com</string>
 			</dict>
 		</dict>
+		
 		<dict>
 			<key>UTTypeDescription</key>
 			<string>Microsoft Windows/MS-DOS batch file</string>
@@ -251,6 +311,7 @@
 				</array>
 			</dict>
 		</dict>
+		
 		<dict>
 			<key>UTTypeDescription</key>
 			<string>Configuration file</string>
@@ -268,6 +329,7 @@
 				<string>DBGc</string>
 			</dict>
 		</dict>
+		
 		<dict>
 			<key>UTTypeDescription</key>
 			<string>DOSBox translation file</string>
@@ -288,6 +350,7 @@
 				<string>DBGa</string>
 			</dict>
 		</dict>
+		
 		<dict>
 			<key>UTTypeDescription</key>
 			<string>Disc image cue-sheet</string>
@@ -309,6 +372,7 @@
 				<string>application/x-cue</string>
 			</dict>
 		</dict>
+		
 		<dict>
 			<key>UTTypeDescription</key>
 			<string>Good Old Games disc image</string>

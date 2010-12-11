@@ -25,6 +25,10 @@ enum {
 	BXFilterScanlines	= 9
 };
 
+// Accomodates 400x300 and 320x400 resolutions, which should still be small enough for reasonable filtering.
+const NSSize BXDefaultFilterResolutionCutoff = NSMakeSize(400, 400);
+
+
 //Filters officially supported by Boxer
 //-------------------------------------
 
@@ -40,7 +44,7 @@ BXFilterDefinition BXFilterNormalParams = {
 BXFilterDefinition BXFilterHQxParams = {
 	BXFilterHQx,
 	1.1f,
-	NSMakeSize(320, 240),
+	BXDefaultFilterResolutionCutoff,
 	0.0f,
 	2,
 	3
@@ -49,7 +53,7 @@ BXFilterDefinition BXFilterHQxParams = {
 BXFilterDefinition BXFilterMAMEParams = {
 	BXFilterMAME,
 	2.0f,
-	NSMakeSize(320, 240),
+	BXDefaultFilterResolutionCutoff,
 	0.0f,
 	2,
 	3
@@ -58,7 +62,7 @@ BXFilterDefinition BXFilterMAMEParams = {
 BXFilterDefinition BXFilterTVScanlinesParams = {
 	BXFilterTVScanlines,
 	2.0f,
-	NSMakeSize(400, 300),
+	BXDefaultFilterResolutionCutoff,
 	0.75f,
 	2,
 	3
@@ -67,7 +71,7 @@ BXFilterDefinition BXFilterTVScanlinesParams = {
 BXFilterDefinition BXFilterRGBParams = {
 	BXFilterRGB,
 	2.0f,
-	NSMakeSize(400, 300),
+	BXDefaultFilterResolutionCutoff,
 	0.25f,
 	2,
 	3
@@ -80,7 +84,7 @@ BXFilterDefinition BXFilterRGBParams = {
 BXFilterDefinition BXFilterSaIParams = {
 	BXFilterSaI,
 	2.0f,
-	NSMakeSize(320, 240),
+	BXDefaultFilterResolutionCutoff,
 	0.0f,
 	2,
 	2

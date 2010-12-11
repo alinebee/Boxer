@@ -9,6 +9,7 @@
 #import "BXProgramPanelController.h"
 #import "BXValueTransformers.h"
 #import "BXSession+BXFileManager.h"
+#import "BXAppController.h"
 #import "BXProgramPanel.h"
 #import "BXPackage.h"
 #import "BXImport.h"
@@ -19,6 +20,7 @@
 @interface BXProgramPanelController ()
 @property (readwrite, retain, nonatomic) NSArray *panelExecutables;
 
+- (void) _safelySyncPanelExecutables: (NSArray *)executables;
 @end
 
 @implementation BXProgramPanelController
@@ -29,6 +31,8 @@
 
 - (void) dealloc
 {
+	[NSThread cancelPreviousPerformRequestsWithTarget: self];
+	
 	[self setProgramList: nil],			[programList release];
 	[self setProgramScroller: nil],		[programScroller release];
 	
@@ -91,12 +95,12 @@
 						change: (NSDictionary *)change
 					   context: (void *)context
 {	
-	if ([keyPath isEqualToString: @"programPathsOnPrincipalDrive"] ||
-		[keyPath isEqualToString: @"gamePackage.targetPath"])
+	//Resync the program panel if it is active and the programs on it would have changed
+	if ([self activePanel] == [self programChooserPanel] &&
+		([keyPath isEqualToString: @"programPathsOnPrincipalDrive"] || [keyPath isEqualToString: @"gamePackage.targetPath"]))
 	{
 		[self syncPanelExecutables];
 	}
-	
 	[self syncActivePanel];
 }
 
@@ -114,7 +118,7 @@
 	
 	if ([session isKindOfClass: [BXImport class]])
 	{
-		if ([session activeProgramPath])
+		if ([[session emulator] isRunningProcess])
 		{
 			if (![(BXImport *)session isRunningInstaller] && [self canSetActiveProgramToDefault])
 				panel = defaultProgramPanel;
@@ -127,9 +131,9 @@
 	{
 		//Show the 'make this program the default' panel only when the session's active program
 		//can be legally set as the default target (i.e., it's located within the gamebox)
-		if ([self canSetActiveProgramToDefault])	panel = defaultProgramPanel;
-		else if	([[self panelExecutables] count])	panel = programChooserPanel;
-		else										panel = noProgramsPanel;
+		if ([self canSetActiveProgramToDefault]) panel = defaultProgramPanel;
+		else if	([session programPathsOnPrincipalDrive]) panel = programChooserPanel;
+		else panel = noProgramsPanel;
 	}
 
 	[self setActivePanel: panel];
@@ -173,7 +177,10 @@
 		//Force the program list scroller to recalculate its scroll dimensions. This is necessary in OS X 10.5,
 		//which calculates the initial dimensions incorrectly while the NSCollectionView is being populated.
 		if (panel == programChooserPanel)
+		{
+			if (![[self panelExecutables] count]) [self syncPanelExecutables];
 			[[self programScroller] reflectScrolledClipView: [[self programScroller] contentView]];
+		}
 	}
 	if (panel == programChooserPanel)
 	{
@@ -264,10 +271,50 @@
 		}
 	}
 	
-	[self setPanelExecutables: listedPrograms];
+	if ([BXAppController isRunningOnLeopard])
+	{
+		[self _safelySyncPanelExecutables: listedPrograms];
+	}
+	else
+	{
+		[self setPanelExecutables: listedPrograms];
+	}
 	
 	[programNames release];
 	[listedPrograms release];
+}
+
+
+- (void) _safelySyncPanelExecutables: (NSArray *)executables
+{
+	//OK, you're going to love this.
+	
+	//Our NSCollectionView-powered program list will redraw itself when we set panelExecutables,
+	//since its content is bound to this array. Fine.
+	
+	//But in OS X 10.5, NSCollectionView may try to redraw itself before it's actually ready to do so,
+	//causing a lockFocus assertion error. This will occur very frequently at startup when the CPU speed
+	//is set to certain intervals - DOSBox's CPU cycle speed also determines how and when the UI gets
+	//to update itself, triggering a peculiar edge case here.
+	
+	//So, before setting the panel executables, we perform the check that NSCollectionView itself
+	//should be doing but isn't: if the view is ready to draw, we set the executables and let it draw
+	//itself. If it's not, we wait a short time before trying again.
+	
+	//This ghastly hack is only appropriate for 10.5, so in 10.6 we don't bother with this method.
+	//This code should be removed once DOSBox lives in its own process, or when I hang myself in abject
+	//shame and horror, whichever comes first.
+	
+	if ([[self programList] canDraw])
+	{
+		[self setPanelExecutables: executables];
+	}
+	else if ([self activePanel] == [self programChooserPanel])
+	{
+		//For speed, we assume this is the only kind of delayed perform request we'll ever have.
+		[NSThread cancelPreviousPerformRequestsWithTarget: self];
+		[self performSelector: @selector(_safelySyncPanelExecutables:) withObject: executables afterDelay: 0.05];
+	}
 }
 
 - (NSArray *) executableSortDescriptors

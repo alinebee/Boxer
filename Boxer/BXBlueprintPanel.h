@@ -9,10 +9,14 @@
 //BXBlueprintPanel and friends render a custom blueprint appearance for views in the import process.
 
 #import <Cocoa/Cocoa.h>
+#import "YRKSpinningProgressIndicator.h"
 
 @interface BXBlueprintPanel : NSView
 @end
 
 
 @interface BXBlueprintTextFieldCell : NSTextFieldCell
+@end
+
+@interface BXBlueprintProgressIndicator : YRKSpinningProgressIndicator
 @end

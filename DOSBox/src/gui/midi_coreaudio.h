@@ -46,8 +46,15 @@ public:
 		RequireNoErr(NewAUGraph(&m_auGraph));
 
 		AUNode outputNode, synthNode;
+		
+#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_5
+		//AUGraphAddNode function switched from old ComponentDescription
+		//to newly-minted AudioComponentDescription in 10.6 
+		AudioComponentDescription desc;
+#else
 		ComponentDescription desc;
-
+#endif
+		
 		// The default output device
 		desc.componentType = kAudioUnitType_Output;
 		desc.componentSubType = kAudioUnitSubType_DefaultOutput;

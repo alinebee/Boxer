@@ -8,7 +8,7 @@
 
 #import "BXImportFinalizingPanelController.h"
 #import "BXImportWindowController.h"
-#import "BXFileTransfer.h"
+#import "BXDriveImport.h"
 #import "BXImport.h"
 
 @implementation BXImportFinalizingPanelController
@@ -16,7 +16,7 @@
 
 - (BOOL) isIndeterminate
 {
-	return ([[controller document] stageProgress] == BXOperationProgressIndeterminate);
+	return ([[controller document] stageProgressIndeterminate]);
 }
 
 - (BXOperationProgress) progress
@@ -24,7 +24,8 @@
 	BXOperationProgress progress = [[controller document] stageProgress];
 
 	//Massage the progress with an ease-out curve to make it appear quicker at the start of the transfer
-	//Disabled for now because it's obvious on a large progress bar that it’s wrong
+	//Easing disabled for now because it's obvious on a large progress bar that it’s wrong - this needs
+	//tweaking to be more subtle.
 	//BXOperationProgress easedProgress = -progress * (progress - 2);
 	BXOperationProgress easedProgress = progress;
 	
@@ -40,7 +41,7 @@
 		case BXImportCopyingSourceFiles:
 			if ([[controller document] transferOperation])
 			{
-				BXFileTransfer *transfer = [[controller document] transferOperation];	
+				BXOperation <BXDriveImport> *transfer = [[controller document] transferOperation];	
 				
 				float sizeInMB		= [transfer numBytes] / 1000000.0f;
 				float transferredMB	= [transfer bytesTransferred] / 1000000.0f;

@@ -482,10 +482,10 @@ void DOS_Shell::CMD_DIR(char * args) {
 	}
 	bool optB=ScanCMDBool(args,"B");
 	bool optAD=ScanCMDBool(args,"AD");
-	char * rem=ScanCMDRemain(args);
-	
+
 	//--Disabled 2009-02-24 by Alun Bestor: This/is/preventing/Unix/delimited/paths/from/working/you/idiots
 	/*	
+	char * rem=ScanCMDRemain(args);
 	if (rem) {
 		WriteOut(MSG_Get("SHELL_ILLEGAL_SWITCH"),rem);
 		return;

@@ -40,9 +40,9 @@
 #pragma mark Helper class methods
 
 + (NSArray *) driveLetters;			//all drive letters in order, including reserved letters
-+ (NSArray *) floppyDriveLetters;	//letters appropriate for floppy drives
-+ (NSArray *) hardDriveLetters;		//letters appropriate for hard disk/CD-ROM drives (excludes reserved letters)
-
++ (NSArray *) floppyDriveLetters;	//letters appropriate for floppy drives (A-W)
++ (NSArray *) hardDriveLetters;		//letters appropriate for hard disk drives (C-W)
++ (NSArray *) CDROMDriveLetters;	//letters appropriate for CD-ROM drives (D-W)
 + (NSSet *) dosFileExclusions;		//Filenames to hide from DOS directory listings
 
 
@@ -85,7 +85,8 @@
 - (BOOL) pathIsMountedAsDrive: (NSString *)path;
 
 //Returns YES if the specified OS X path is accessible in DOS, NO otherwise.
-//Call DOSPathForPath: if you need the actual DOS path; this is just a quick way of determining if a volume is mounted at all.
+//Call DOSPathForPath: if you need the actual DOS path; this is just a quick
+//way of determining if a volume is mounted at all.
 - (BOOL) pathIsDOSAccessible: (NSString *)path;
 
 //Returns the 'best match' drive on which the specified path is accessible.
@@ -98,6 +99,11 @@
 - (NSString *) DOSPathForPath: (NSString *)path;
 - (NSString *) DOSPathForPath: (NSString *)path onDrive: (BXDrive *)drive;
 
+//Returns the real filesystem path corresponding to the specified DOS path.
+//This may return the base path of the drive instead, if the specified DOS path
+//resides on an image or is otherwise inaccessible to the local filesystem.
+//Will return nil if the path could not be resolved.
+- (NSString *) pathForDOSPath: (NSString *)path;
 
 #pragma mark -
 #pragma mark Filesystem validation
@@ -130,7 +136,7 @@ class DOS_Drive;
 
 //Returns the DOSBox drive index for a specified drive letter and vice-versa.
 - (NSUInteger)_indexOfDriveLetter: (NSString *)driveLetter;
-- (NSString *)_driveLetterForIndex: (NSUInteger)index;
+- (NSString *)_driveLetterForIndex: (NSUInteger)driveIndex;
 
 
 //Returns the Boxer drive that matches the specified DOSBox drive, or nil if no drive was found.
@@ -150,19 +156,19 @@ class DOS_Drive;
 //Registers a new drive with DOSBox and adds it to the drive list. Returns YES if the drive was successfully added,
 //or NO if there was an error (e.g. there was already a drive at that index).
 //TODO: should populate an optional NSError object for cases like this.
-- (BOOL) _addDOSBoxDrive: (DOS_Drive *)drive atIndex: (NSUInteger)index;
+- (BOOL) _addDOSBoxDrive: (DOS_Drive *)drive atIndex: (NSUInteger)driveIndex;
 
 //Unmounts the DOSBox drive at the specified index and clears any references to the drive.
 //Returns YES if the drive was successfully removed, or NO if there was an error (e.g. there was no drive at that index.)
 //TODO: should populate an optional NSError object for cases like this.
-- (BOOL) _unmountDOSBoxDriveAtIndex: (NSUInteger)index;
+- (BOOL) _unmountDOSBoxDriveAtIndex: (NSUInteger)driveIndex;
 
 //Generates a Boxer drive object for a drive at the specified drive index.
-- (BXDrive *)_driveFromDOSBoxDriveAtIndex: (NSUInteger)index;
+- (BXDrive *)_driveFromDOSBoxDriveAtIndex: (NSUInteger)driveIndex;
 
 //Create a new DOS_Drive CDROM from a path to a disc image.
-- (DOS_Drive *) _CDROMDriveFromImageAtPath:	(NSString *)path forIndex: (NSUInteger)index;
-- (DOS_Drive *) _CDROMDriveFromPath:		(NSString *)path forIndex: (NSUInteger)index withAudio: (BOOL)useCDAudio;
+- (DOS_Drive *) _CDROMDriveFromImageAtPath:	(NSString *)path forIndex: (NSUInteger)driveIndex;
+- (DOS_Drive *) _CDROMDriveFromPath:		(NSString *)path forIndex: (NSUInteger)driveIndex withAudio: (BOOL)useCDAudio;
 - (DOS_Drive *) _hardDriveFromPath:			(NSString *)path freeSpace: (NSInteger)freeSpace;
 - (DOS_Drive *) _floppyDriveFromPath:		(NSString *)path freeSpace: (NSInteger)freeSpace;
 
@@ -182,7 +188,7 @@ class DOS_Drive;
 
 //Returns whether the specified drive is being used by DOS programs.
 //Currently, this means whether any files are open on that drive.
-- (BOOL) _DOSBoxDriveInUseAtIndex: (NSUInteger)index;
+- (BOOL) _DOSBoxDriveInUseAtIndex: (NSUInteger)driveIndex;
 
 //Decides whether to let the DOS session mount the specified path
 //This checks against pathIsSafeToMount, and prints an error to the console if not

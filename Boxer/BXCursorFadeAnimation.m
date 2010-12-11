@@ -23,7 +23,7 @@
 {
 	[super setCurrentProgress: progress];
 	
-	if ([[self delegate] animationShouldChangeCursor: self])
+	if ([(BXInputController *)[self delegate] animationShouldChangeCursor: self])
 	{
 		NSCursor *fadedCursor = [self cursorWithOpacity: 1.0f - [self currentValue]];
 		[fadedCursor set];

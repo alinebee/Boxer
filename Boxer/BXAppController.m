@@ -13,6 +13,7 @@
 #import "BXInspectorController.h"
 #import "BXPreferencesController.h"
 #import "BXWelcomeWindowController.h"
+#import "BXFirstRunWindowController.h"
 #import "BXDOSWindowController.h"
 
 #import "BXSession+BXFileManager.h"
@@ -23,9 +24,9 @@
 #import "BXGrowlController.h"
 #import "NSString+BXPaths.h"
 
-#import "BXThemes.h"
 #import <BGHUDAppKit/BGThemeManager.h>
-
+#import "BXThemes.h"
+#import "NSWindow+BXWindowEffects.h"
 
 NSString * const BXNewSessionParam = @"--openNewSession";
 NSString * const BXShowImportPanelParam = @"--showImportPanel";
@@ -49,7 +50,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 
 @implementation BXAppController
-@synthesize currentSession;
+@synthesize currentSession, generalQueue;
 
 
 #pragma mark -
@@ -70,6 +71,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	if (!types) types = [[NSSet alloc] initWithObjects:
 						 @"com.goldenhawk.cdrwin-cuesheet",
 						 @"net.washboardabs.boxer-cdrom-folder",
+						 @"net.washboardabs.boxer-cdrom-bundle",
 						 @"public.iso-image",
 						 @"com.apple.disk-image-cdr",
 						 nil];
@@ -101,6 +103,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 						 @"public.iso-image",					//.iso
 						 @"com.apple.disk-image-cdr",			//.cdr
 						 @"com.goldenhawk.cdrwin-cuesheet",		//.cue
+						 @"net.washboardabs.boxer-disk-bundle", //.cdmedia
 						 nil];
 	return types;
 }
@@ -123,6 +126,10 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	return types;
 }
 
++ (BOOL)isRunningOnLeopard
+{
+	return (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_5);
+}
 
 #pragma mark -
 #pragma mark Initialization and teardown
@@ -137,9 +144,17 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	NSValueTransformer *isNotEmpty	= [[BXArraySizeTransformer alloc] initWithMinSize: 1 maxSize: NSIntegerMax];
 	NSValueTransformer *capitalizer	= [BXCapitalizer new];
 	
+	BXIconifiedDisplayPathTransformer *pathTransformer = [[BXIconifiedDisplayPathTransformer alloc] initWithJoiner: @" ▸ " maxComponents: 0];
+	[pathTransformer setMissingFileIcon: [NSImage imageNamed: @"gamefolder"]];
+	[pathTransformer setHideSystemRoots: YES];
+	NSMutableParagraphStyle *pathStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+	[pathStyle setLineBreakMode: NSLineBreakByClipping];
+	[[pathTransformer textAttributes] setObject: [pathStyle autorelease] forKey: NSParagraphStyleAttributeName];
+	
 	[NSValueTransformer setValueTransformer: [isEmpty autorelease]		forName: @"BXArrayIsEmpty"];
 	[NSValueTransformer setValueTransformer: [isNotEmpty autorelease]	forName: @"BXArrayIsNotEmpty"];	
 	[NSValueTransformer setValueTransformer: [capitalizer autorelease]	forName: @"BXCapitalizedString"];	
+	[NSValueTransformer setValueTransformer: [pathTransformer autorelease] forName: @"BXDisplayPathWithIcons"];
 	
 	//Initialise our Growl notifier instance
 	[GrowlApplicationBridge setGrowlDelegate: [BXGrowlController controller]];
@@ -150,6 +165,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	[[BGThemeManager keyedManager] setTheme: [[BXBlueTheme new] autorelease]			forKey: @"BXBlueTheme"];
 	[[BGThemeManager keyedManager] setTheme: [[BXBlueprintTheme new] autorelease]		forKey: @"BXBlueprintTheme"];
 	[[BGThemeManager keyedManager] setTheme: [[BXBlueprintHelpText new] autorelease]	forKey: @"BXBlueprintHelpText"];
+	[[BGThemeManager keyedManager] setTheme: [[BXWelcomeTheme new] autorelease]			forKey: @"BXWelcomeTheme"];
 }
 
 + (void) setupDefaults
@@ -161,10 +177,21 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
     [[NSUserDefaults standardUserDefaults] registerDefaults: defaults];
 }
 
+- (id) init
+{
+	if ((self = [super init]))
+	{
+		generalQueue = [[NSOperationQueue alloc] init];
+	}
+	return self;
+}
+
 - (void) dealloc
 {
 	[self setCurrentSession: nil], [currentSession release];
 	[self setGamesFolderPath: nil], [gamesFolderPath release];
+	
+	[generalQueue release], generalQueue = nil;
 	
 	[super dealloc];
 }
@@ -187,15 +214,15 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 }
 
 
-//Don't open a new empty document when switching back to the application
+//Don't open a new empty document when switching back to the application:
+//instead, show the welcome panel if that's the default startup behaviour.
 - (BOOL) applicationShouldOpenUntitledFile: (NSApplication *)theApplication
 {
+	if (hasFinishedLaunching && 
+		[[NSUserDefaults standardUserDefaults] integerForKey: @"startupAction"] == BXStartUpWithWelcomePanel)
+		[self orderFrontWelcomePanel: self];
+	
 	return NO;
-}
-
-- (void) applicationWillFinishLaunching: (NSNotification *)notification
-{
-	[self checkForGamesFolder];
 }
 
 - (void) applicationDidFinishLaunching: (NSNotification *)notification
@@ -211,13 +238,28 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	if ([arguments containsObject: BXActivateOnLaunchParam]) 
 		[NSApp activateIgnoringOtherApps: YES];
 	
-	//If no document was opened during startup, then do our standard startup behaviour
-	if (![[self documents] count])
+	//If no document was opened during startup, and we didn't launch hidden,
+	//then display the chosen startup window
+	if (![NSApp isHidden] && ![[self documents] count])
 	{
+		BOOL hasDelayed = NO;
+		
+		//If the user has not chosen a games folder yet, then show them the first-run panel
+		//(This is modal, so execution will not continue until the panel is dismissed.)
+		if (![self gamesFolderPath] && ![self gamesFolderChosen])
+		{
+			//Perform with a delay to give the Dock icon bouncing time to finish,
+			//since the Core Graphics flip animation interrupts this otherwise.
+			[NSThread sleepForTimeInterval: 0.4];
+			hasDelayed = YES;
+			[self orderFrontFirstRunPanel: self];
+		}
+				
 		switch ([[NSUserDefaults standardUserDefaults] integerForKey: @"startupAction"])
 		{
 			case BXStartUpWithWelcomePanel:
-				[self orderFrontWelcomePanel: self];
+				if (!hasDelayed) [NSThread sleepForTimeInterval: 0.4];
+				[self orderFrontWelcomePanelWithFlip: self];
 				break;
 			case BXStartUpWithGamesFolder:
 				[self revealGamesFolder: self];
@@ -227,6 +269,8 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 				break;
 		}
 	}
+	
+	hasFinishedLaunching = YES;
 }
 
 - (void) applicationWillTerminate: (NSNotification *)notification
@@ -237,6 +281,10 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	
 	//Save our preferences to disk before exiting
 	[[NSUserDefaults standardUserDefaults] synchronize];
+	
+	//Tell any operations in our queue to cancel themselves
+	[generalQueue cancelAllOperations];
+	[generalQueue waitUntilAllOperationsAreFinished];
 }
 
 
@@ -364,6 +412,13 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	}
 }
 
+- (id) openImportSessionWithContentsOfURL: (NSURL *)url display: (BOOL)display error: (NSError **)outError
+{
+	BXImport *importer = [self openImportSessionAndDisplay: display error: outError];
+	[importer importFromSourcePath: [url path]];
+}
+
+
 //Store the specified document as the current session
 - (void) addDocument: (NSDocument *)theDocument
 {
@@ -446,9 +501,33 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	[[BXWelcomeWindowController controller] showWindow: nil];
 }
 
+- (IBAction) orderFrontWelcomePanelWithFlip: (id)sender
+{
+	[[[self currentSession] DOSWindowController] exitFullScreen: sender];
+	
+	//This eschews controller showWindow: as that would reveal the window momentarily,
+	//causing a flicker before the window is 're-hidden'.
+	id controller = [BXWelcomeWindowController controller];
+	[[controller window] revealWithTransition: CGSFlip
+									direction: CGSDown
+									 duration: 0.4
+								 blockingMode: NSAnimationNonblocking];
+	[[controller window] makeKeyWindow];
+}
+
+
+- (IBAction) orderFrontFirstRunPanel: (id)sender
+{
+	//The welcome panel and first-run panel are mutually exclusive.
+	[self hideWelcomePanel: self];
+	
+	[[[self currentSession] DOSWindowController] exitFullScreen: sender];
+	[[BXFirstRunWindowController controller] showWindow: nil];
+}
+
 - (IBAction) hideWelcomePanel: (id)sender
 {
-	[[BXWelcomeWindowController controller] close];
+	[[[BXWelcomeWindowController controller] window] orderOut: self];
 }
 
 - (IBAction) orderFrontImportGamePanel: (id)sender
@@ -521,6 +600,9 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 {	
 	SEL theAction = [theItem action];
 	
+	//Don't allow any actions while a modal window is active.
+	if ([NSApp modalWindow]) return NO;
+	
 	//Don't allow the Inspector panel to be shown if there's no active session.
 	if (theAction == @selector(toggleInspectorPanel:)) return [[self currentSession] isEmulating];
 	
@@ -589,16 +671,22 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 //Displays a file path in Finder. This will display the containing folder of files,
 //but will display folders in their own window (so that the DOS Games folder's special appearance is retained.)
-- (void) revealPath: (NSString *)filePath
+- (BOOL) revealPath: (NSString *)filePath
 {
 	NSWorkspace *ws = [NSWorkspace sharedWorkspace];
 	NSFileManager *manager = [NSFileManager defaultManager];
 	
 	BOOL isFolder = NO;
-	if (![manager fileExistsAtPath: filePath isDirectory: &isFolder]) return;
+	if (![manager fileExistsAtPath: filePath isDirectory: &isFolder]) return NO;
 	
-	if (isFolder && ![ws isFilePackageAtPath: filePath]) [ws openFile: filePath];
-	else [ws selectFile: filePath inFileViewerRootedAtPath: [filePath stringByDeletingLastPathComponent]];
+	if (isFolder && ![ws isFilePackageAtPath: filePath])
+	{
+		return [ws openFile: filePath];
+	}
+	else
+	{
+		return [ws selectFile: filePath inFileViewerRootedAtPath: [filePath stringByDeletingLastPathComponent]];
+	}
 }
 
 

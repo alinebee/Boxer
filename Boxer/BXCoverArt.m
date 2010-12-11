@@ -14,7 +14,7 @@
 
 
 //We give gameboxes a fairly strong shadow to lift them out from light backgrounds
-+ (NSShadow *) dropShadowForSize: (NSSize) iconSize
++ (NSShadow *) dropShadowForSize: (NSSize)iconSize
 {
 	if (iconSize.height < 32) return nil;
 	
@@ -30,7 +30,7 @@
 }
 
 //We give gameboxes a soft white glow around the inside edge so that they show up well against dark backgrounds
-+ (NSShadow *) innerGlowForSize: (NSSize) iconSize
++ (NSShadow *) innerGlowForSize: (NSSize)iconSize
 {
 	if (iconSize.height < 64) return nil;
 	CGFloat blurRadius = MAX(1.0f, iconSize.height / 64);
@@ -43,11 +43,11 @@
 	return boxGlow;
 }
 
-+ (NSImage *) shineForSize: (NSSize) iconSize
++ (NSImage *) shineForSize: (NSSize)iconSize
 { 
-	NSImage *shine = [NSImage imageNamed: @"BoxArtShine"];
+	NSImage *shine = [[NSImage imageNamed: @"BoxArtShine"] copy];
 	[shine setSize: iconSize];
-	return shine;
+	return [shine autorelease];
 }
 
 - (id) initWithSourceImage: (NSImage *)image
@@ -61,6 +61,11 @@
 
 - (void) drawInRect: (NSRect)frame
 {
+	//Switch to high-quality interpolation before we begin, and restore it once we're done
+	//(this is not stored by saveGraphicsState/restoreGraphicsState unfortunately)
+	NSImageInterpolation oldInterpolation = [[NSGraphicsContext currentContext] imageInterpolation];
+	[[NSGraphicsContext currentContext] setImageInterpolation: NSImageInterpolationHigh];
+	
 	NSSize iconSize	= frame.size;
 	NSImage *image	= [self sourceImage];	
 	
@@ -86,7 +91,7 @@
 	);
 	//Round the rect up to integral values, to avoid blurry subpixel lines
 	artFrame = NSIntegralRect(artFrame);
-
+	
 	//Draw the original image into the appropriate space in the canvas, with our drop shadow
 	[NSGraphicsContext saveGraphicsState];
 	[dropShadow set];
@@ -102,7 +107,9 @@
 	//Finally, outline the box
 	[[NSColor colorWithCalibratedWhite: 0.0f alpha: 0.33f] set];
 	[NSBezierPath setDefaultLineWidth: 1.0f];
-	[NSBezierPath strokeRect: NSInsetRect(artFrame, -0.5f, -0.5f)];	
+	[NSBezierPath strokeRect: NSInsetRect(artFrame, -0.5f, -0.5f)];
+	
+	[[NSGraphicsContext currentContext] setImageInterpolation: oldInterpolation];
 }
 
 - (NSImageRep *) representationForSize: (NSSize)iconSize
@@ -129,7 +136,7 @@
 	if (![image isValid]) return nil;
 	
 	//If our source image already has an alpha channel, then assume that it already has effects of its own and don't process it.
-	if ([[image bestRepresentationForDevice: nil] hasAlpha]) return image;
+	if ([[[image representations] lastObject] hasAlpha]) return image;
 
 	NSImage *coverArt = [[NSImage alloc] init];
 	[coverArt addRepresentation: [self representationForSize: NSMakeSize(512, 512)]];

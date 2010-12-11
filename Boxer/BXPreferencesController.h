@@ -12,29 +12,16 @@
 
 @class BXFilterGallery;
 
-enum {
-	BXGeneralPreferencesPanelTag = 1,
-	BXDisplayPreferencesPanelTag = 2
-};
-
 @interface BXPreferencesController : BXTabbedWindowController
 {
 	IBOutlet BXFilterGallery *filterGallery;
 	IBOutlet NSPopUpButton *gamesFolderSelector;
-	IBOutlet NSView *folderSelectorAccessoryView;
-	IBOutlet NSButton *copySampleGamesToggle;
-
-	BOOL processingGamesFolder;
+	IBOutlet NSMenuItem *currentGamesFolderItem;
 }
 
 @property (retain, nonatomic) BXFilterGallery *filterGallery;
 @property (retain, nonatomic) NSPopUpButton *gamesFolderSelector;
-
-@property (retain, nonatomic) NSView *folderSelectorAccessoryView;
-@property (retain, nonatomic) NSButton *copySampleGamesToggle;
-
-@property (assign, nonatomic) BOOL processingGamesFolder;
-
+@property (retain, nonatomic) NSMenuItem *currentGamesFolderItem;
 
 //Provides a singleton instance of the window controller which stays retained for the lifetime
 //of the application. BXPreferencesController should always be accessed from this singleton.
@@ -50,12 +37,15 @@ enum {
 //validated differently.
 - (IBAction) toggleDefaultFilterType: (id)sender;
 
+//Toggle whether the games shelf appearance is applied to the games folder.
+//This will add/remove the appearance on-the-fly from the folder.
+- (IBAction) toggleShelfAppearance: (NSButton *)sender;
+
 //Synchonises the filter gallery controls to the current default filter.
 //This is called through Key-Value Observing whenever the filter preference changes.
 - (void) syncFilterControls;
 
-
 //Display an open panel for choosing the games folder.
-- (IBAction) showGamesFolderChooserPanel: (id)sender;
+- (IBAction) showGamesFolderChooser: (id)sender;
 
 @end

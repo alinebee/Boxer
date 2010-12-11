@@ -113,9 +113,9 @@
 
 	NSFileManager *manager	= [NSFileManager defaultManager];
 	
+	NSImage *itemIcon	= [document objectForKey: @"icon"];
 	NSString *itemPath	= [document objectForKey: @"path"];
 	NSString *itemTitle	= [manager displayNameAtPath: itemPath];
-	NSImage *itemIcon	= [document objectForKey: @"icon"];
 	
 	NSMenuItem *newItem = [menu	addItemWithTitle: itemTitle
 								action: itemAction
@@ -125,7 +125,7 @@
 
 	[itemIcon setSize: iconSize];
 	[newItem setImage: itemIcon];
-	
+
 	return newItem;
 }
 

@@ -7,15 +7,21 @@
 
 
 //BXTabbedWindowController manages a window whose primary component is an NSTabView. It resizes
-//its window to accomodate the selected tab and animates transitions between tabs.
+//its window to accomodate the selected tab, and animates transitions between tabs. It can also
+//use an NSToolbar in place of the NSTabView's own tab selector.
 
 #import <Cocoa/Cocoa.h>
 
 @interface BXTabbedWindowController : NSWindowController
+#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_5
+< NSTabViewDelegate, NSToolbarDelegate >
+#endif
 {
 	IBOutlet NSTabView *mainTabView;
+	IBOutlet NSToolbar *toolbarForTabs;
 }
 @property (retain, nonatomic) NSTabView *tabView;
+@property (retain, nonatomic) NSToolbar *toolbarForTabs;
 
 //Select the tab whose index corresponds to the tag of the sender.
 - (IBAction) takeSelectedTabViewItemFromTag: (id <NSValidatedUserInterfaceItem>)sender;

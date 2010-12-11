@@ -58,7 +58,10 @@
 
 - (void) dealloc
 {
-	[self setRecentDocumentsButton: nil], [recentDocumentsButton release];
+	[self setRecentDocumentsButton: nil],	[recentDocumentsButton release];
+	[self setImportGameButton: nil],		[importGameButton release];
+	[self setOpenPromptButton: nil],		[openPromptButton release];
+	
 	[super dealloc];
 }
 
@@ -70,8 +73,6 @@
 	NSArray *types = [NSArray arrayWithObject: NSFilenamesPboardType];
 	[[self importGameButton] registerForDraggedTypes: types];
 	[[self openPromptButton] registerForDraggedTypes: types];
-	
-	[[self window] setAcceptsMouseMovedEvents: YES];
 }
 
 
@@ -84,7 +85,6 @@
 	
 	[[NSApp delegate] openDocumentWithContentsOfURL: url display: YES error: NULL];
 }
-
 
 #pragma mark -
 #pragma mark Open Recent menu
@@ -133,6 +133,9 @@
 }
 
 
+
+
+
 #pragma mark -
 #pragma mark Drag-drop behaviours
 
@@ -141,7 +144,9 @@
 	for (NSString *path in filePaths)
 	{
 		//If any of the files were not of a recognised type, bail out
-		if (![[NSApp delegate] typeForContentsOfURL: [NSURL fileURLWithPath: path] error: NULL]) return NO;
+		NSString *fileType = [[NSApp delegate] typeForContentsOfURL: [NSURL fileURLWithPath: path] error: NULL];
+		Class documentClass = [[NSApp delegate] documentClassForType: fileType];
+		if (!documentClass) return NO;
 	}
 	return YES;
 }
@@ -170,8 +175,9 @@
 	//Import only the first file, since we can't (and don't want to) support
 	//multiple concurrent import sessions
 	NSString *importPath = [filePaths objectAtIndex: 0];
-	BXImport *importer = [[NSApp delegate] openImportSessionAndDisplay: YES error: NULL];
-	[importer importFromSourcePath: importPath];
+	[[NSApp delegate] openImportSessionWithContentsOfURL: [NSURL fileURLWithPath: importPath]
+												 display: YES
+												   error: NULL];
 }
 
 - (NSDragOperation) button: (BXWelcomeButton *)button draggingEntered: (id <NSDraggingInfo>)sender
@@ -207,8 +213,12 @@
 	{
 		NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
 		
-		if (button == [self importGameButton])		[self _importFilePaths: filePaths];
-		else if (button == [self openPromptButton]) [self _openFilePaths: filePaths];
+		//These functions will block, so we delay the actual call until after we've returned
+		//so that we don't keep OS X waiting to clean up the drag operation. 
+		if (button == [self importGameButton])
+			[self performSelector: @selector(_importFilePaths:) withObject: filePaths afterDelay: 0.1];
+		else if (button == [self openPromptButton])
+			[self performSelector: @selector(_openFilePaths:) withObject: filePaths afterDelay: 0.1];
 		
 		return YES;
 	}

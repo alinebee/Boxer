@@ -13,6 +13,7 @@
 #import "NSString+BXPaths.h"
 #import "BXGameProfile.h"
 #import "BXPackage.h"
+#import "RegexKitLite.h"
 
 #import "dos_inc.h"
 #import "dos_system.h"
@@ -80,6 +81,13 @@ enum {
 	if (!letters) letters = [[[self driveLetters] subarrayWithRange: NSMakeRange(2, 22)] retain];
 	return letters;
 }
++ (NSArray *) CDROMDriveLetters
+{
+	static NSArray *letters = nil;
+	if (!letters) letters = [[[self driveLetters] subarrayWithRange: NSMakeRange(3, 22)] retain];
+	return letters;	
+}
+
 
 + (NSSet *) dosFileExclusions
 {
@@ -123,7 +131,7 @@ enum {
 	BOOL isFolder;
 	
 	//File did not exist, don't continue mounting
-	if (![manager fileExistsAtPath: [drive path] isDirectory: &isFolder]) return nil;
+	if (![manager fileExistsAtPath: [drive mountPoint] isDirectory: &isFolder]) return nil;
 	
 	BOOL isImage = !isFolder;
 
@@ -143,9 +151,8 @@ enum {
 	
 	DOS_Drive *DOSBoxDrive = NULL;
 	NSUInteger index = [self _indexOfDriveLetter: driveLetter];
-	NSString *path = [drive path];
+	NSString *path = [drive mountPoint];
 	//The standardized path returned by BXDrive will not have a trailing slash, so add it ourselves
-	//TODO: fix this upstream?
 	if (isFolder) path = [path stringByAppendingString: @"/"];
 	
 	switch ([drive type])
@@ -171,7 +178,7 @@ enum {
 		if ([self _addDOSBoxDrive: DOSBoxDrive atIndex: index])
 		{
 			//And set its label appropriately (unless its an image, which carry their own labels)
-			if (!isImage)
+			if (!isImage && driveLabel)
 			{
 				const char *cLabel = [driveLabel cStringUsingEncoding: BXDirectStringEncoding];
 				DOSBoxDrive->dirCache.SetLabel(cLabel, [drive isCDROM], false);
@@ -243,8 +250,11 @@ enum {
 	//This way, we get a safer copy of the drive array to work with instead.
 	for (BXDrive *drive in [self mountedDrives])
 	{
+		//TODO: refactor this so that we can move the decision off to BXDrive itself
 		if ([[drive path] isEqualToString: standardizedPath])
+		{
 			succeeded = [self unmountDrive: drive] || succeeded;
+		}
 	}
 	return succeeded;
 }
@@ -266,8 +276,9 @@ enum {
 	
 	//TODO: try to ensure CD-ROM mounts are contiguous
 	NSArray *letters;
-	if ([drive isFloppy])	letters = [[self class] floppyDriveLetters];
-	else					letters = [[self class] hardDriveLetters];
+	if ([drive isFloppy])		letters = [[self class] floppyDriveLetters];
+	else if ([drive isCDROM])	letters = [[self class] CDROMDriveLetters];
+	else						letters = [[self class] hardDriveLetters];
 
 	//Scan for the first available drive letter that isn't already mounted
 	for (NSString *letter in letters) if (![usedLetters containsObject: letter]) return letter;
@@ -302,17 +313,15 @@ enum {
 
 - (BOOL) pathIsMountedAsDrive: (NSString *)path
 {
-	path = [path stringByStandardizingPath];
 	for (BXDrive *drive in [driveCache objectEnumerator])
 	{
-		if ([[drive path] isEqualTo: path]) return YES;
+		if ([drive representsPath: path]) return YES;
 	}
 	return NO;
 }
 
 - (BOOL) pathIsDOSAccessible: (NSString *)path
 {
-	path = [path stringByStandardizingPath];
 	for (BXDrive *drive in [driveCache objectEnumerator])
 	{
 		if ([drive exposesPath: path]) return YES;
@@ -321,9 +330,7 @@ enum {
 }
 
 - (BXDrive *) driveForPath: (NSString *)path
-{
-	path = [path stringByStandardizingPath];
-	
+{	
 	//Sort the drives by path depth, so that deeper mounts are picked over 'shallower' ones.
 	//e.g. when MyGame.boxer and MyGame.boxer/MyCD.cdrom are both mounted, it should pick the latter.
 	//Todo: filter this down to matching drives first, then do the sort, which would be quicker.
@@ -347,56 +354,54 @@ enum {
 {
 	if (![self isExecuting]) return nil;
 	
-	path = [path stringByStandardizingPath];
-
-	//Start with the drive
+	NSString *subPath = [drive relativeLocationOfPath: path];
+	
+	//The path is not be accessible on this drive; give up before we go any further. 
+	if (!subPath) return nil;
+	
 	NSString *dosDrive = [NSString stringWithFormat: @"%@:", [drive letter], nil];
 	
-	//If the path is at the root of the drive, end there too.
-	if ([path isEqualToString: [drive path]]) return dosDrive;
-	
-	//The path would not be accessible on this drive; give up before we go any further. 
-	if (![drive exposesPath: path]) return nil;
-
+	//If the path is at the root of the drive, bail out now.
+	if (![subPath length]) return dosDrive;
 
 	//To be sure we get this right, flush the drive caches before we look anything up
 	[self refreshMountedDrives];
 	
-	NSString *basePath			= [drive path];
+	NSString *basePath			= [drive mountPoint];
+	NSArray *components			= [subPath pathComponents];
+	NSUInteger driveIndex		= [self _indexOfDriveLetter: [drive letter]];
+	
 	NSMutableString *dosPath	= [NSMutableString stringWithCapacity: CROSS_LEN];
+	NSMutableData *buffer		= [NSMutableData dataWithLength: CROSS_LEN];
 	
-	NSArray *components			= [path pathComponents];
-	NSUInteger i, numComponents	= [components count], startingPoint = [[basePath pathComponents] count];
-	
-	NSString *frankenPath, *fileName, *dosName;
-	
-	NSUInteger driveIndex = [self _indexOfDriveLetter: [drive letter]];
-	
-	for (i=startingPoint; i<numComponents; i++)
+	for (NSString *fileName in components)
 	{
-		fileName = [components objectAtIndex: i];
+		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 		
-		//TODO: Optimisation: check if the filename is already DOS-safe (within 8.3 and only ASCII characters),
-		//and if so then pass it on directly without doing a DOSBox long-filename lookup. 
-
+		NSString *frankenPath = [basePath stringByAppendingString: dosPath];
 		
-		//Can you fucking believe this shit? DOSBox looks up host OS file paths using the full base path of the drive (in the host OS's filesystem notation) plus the *abbreviated 8.3 DOS filepath from then on*. So we append the dos path we've generated so far onto the base drive path and pass that frankensteinian concoction as the folder path we're trying to look up.
-		frankenPath	= [[drive path] stringByAppendingString: dosPath];
+		NSString *dosName;
 		
-		char buffer[CROSS_LEN] = {0};
 		BOOL hasShortName = Drives[driveIndex]->dirCache.GetShortName(
 			[frankenPath cStringUsingEncoding: BXDirectStringEncoding],
 			[fileName cStringUsingEncoding: BXDirectStringEncoding],
-			buffer);
+			(char *)[buffer mutableBytes]);
 	
 		if (hasShortName)
-			dosName = [NSString stringWithCString: (const char *)buffer encoding: BXDirectStringEncoding];
+		{
+			dosName = [[[NSString alloc] initWithData: buffer
+											 encoding: BXDirectStringEncoding] autorelease];			
+		}
 		else
-			//If DOSBox didn't find a shorter name, it probably means the name is already short enough
-			//- just make sure it's uppercased.
+		{
+			//If DOSBox didn't find a shorter name, it probably means the name
+			//is already short enough: just make sure it's uppercased.
 			dosName = [fileName uppercaseString];
-
+		}
+		
 		[dosPath appendFormat: @"/%@", dosName, nil];
+		
+		[pool release];
 	}
 	return [dosDrive stringByAppendingString: dosPath];
 }
@@ -410,6 +415,7 @@ enum {
 	}
 	else return nil;
 }
+
 - (NSString *) currentWorkingDirectory
 {
 	if ([self isExecuting])
@@ -432,6 +438,31 @@ enum {
 	else return nil;
 }
 
+- (NSString *) pathForDOSPath: (NSString *)path
+{
+	if ([self isExecuting])
+	{
+		const char *dosPath = [path cStringUsingEncoding: BXDirectStringEncoding];
+		char fullPath[DOS_PATHLENGTH];
+		Bit8u driveIndex;
+		BOOL resolved = DOS_MakeName(dosPath, fullPath, &driveIndex);
+
+		if (resolved)
+		{
+			NSString *localPath	= [self _filesystemPathForDOSPath: fullPath atIndex: driveIndex];
+			
+			if (localPath) return localPath;
+			else
+			{
+				BXDrive *drive = [self driveAtLetter: [self _driveLetterForIndex: driveIndex]];
+				return [drive path];
+			}			
+		}
+		else return nil;
+	}
+	else return nil;
+}
+
 
 #pragma mark -
 #pragma mark Private methods
@@ -443,7 +474,7 @@ enum {
 //Used internally to match DOS drive letters to the DOSBox drive array
 - (NSUInteger)_indexOfDriveLetter: (NSString *)driveLetter
 {
-	NSUInteger index = [[[self class] driveLetters] indexOfObject: driveLetter];
+	NSUInteger index = [[[self class] driveLetters] indexOfObject: [driveLetter uppercaseString]];
 	NSAssert1(index != NSNotFound,	@"driveLetter %@ passed to _indexOfDriveLetter: was not a valid DOS drive letter.", driveLetter);
 	NSAssert2(index < DOS_DRIVES,	@"driveIndex %u derived from %@ in _indexOfDriveLetter: was beyond the range of DOSBox's drive array.", index, driveLetter);
 	return index;
@@ -495,7 +526,6 @@ enum {
 	//We can't return a system file path for non-local drives
 	else return nil;
 }
-
 
 #pragma mark -
 #pragma mark Adding and removing new DOSBox drives

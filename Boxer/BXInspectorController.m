@@ -11,8 +11,7 @@
 #import "BXDrive.h"
 #import "BXAppController.h"
 #import "BXValueTransformers.h"
-#import "CGSPrivate.h" //For undocumented blur effect functions
-
+#import "NSWindow+BXWindowEffects.h"
 
 const CGFloat BXInspectorPanelBlurRadius = 2.0f;
 const CGFloat BXMouseSensitivityRange = 2.0f;
@@ -59,10 +58,11 @@ const CGFloat BXMouseSensitivityRange = 2.0f;
 	//Set the initial panel based on the user's last chosen panel (defaulting to the CPU panel)
 	NSInteger selectedIndex = [[NSUserDefaults standardUserDefaults] integerForKey: @"initialInspectorPanelIndex"];
 	
-	if (selectedIndex < [[self tabView] numberOfTabViewItems])
-	{
-		[[self tabView] selectTabViewItemAtIndex: selectedIndex];
-	}
+	if (selectedIndex < 0 || selectedIndex > [[self tabView] numberOfTabViewItems])
+		selectedIndex = BXCPUInspectorPanelTag;
+	
+	[[self tabView] selectTabViewItemAtIndex: selectedIndex];
+	
 	
 	//Listen for changes to the current session
 	[[NSApp delegate] addObserver: self
@@ -81,22 +81,25 @@ const CGFloat BXMouseSensitivityRange = 2.0f;
 	{
 		BXSession *session = [[NSApp delegate] currentSession];
 		
-		//Disable the gamebox tab if the current session is not a gamebox
-		
-		//Find the panel selector segment whose tag corresponds to the game inspector panel
-		//(This charade is necessary because NSSegmentedControl has an awful interface)
-		NSInteger i;
-		for (i = 0; i < [[self panelSelector] segmentCount]; i++)
+		if (session)
 		{
-			if ([[[self panelSelector] cell] tagForSegment: i] == BXGameInspectorPanelTag)
-				[[self panelSelector] setEnabled: [session isGamePackage] forSegment: i];
-		}
-		
-		//If the gamebox tab was already selected, then switch to the next tab
-		if (![session isGamePackage] &&
-			[[self tabView] indexOfTabViewItem: [[self tabView] selectedTabViewItem]] == BXGameInspectorPanelTag)
-		{
-			[[self tabView] selectTabViewItemAtIndex: BXCPUInspectorPanelTag];
+			//Disable the gamebox tab if the current session is not a gamebox
+			
+			//Find the panel selector segment whose tag corresponds to the game inspector panel
+			//(This charade is necessary because NSSegmentedControl has an awful interface)
+			NSInteger i;
+			for (i = 0; i < [[self panelSelector] segmentCount]; i++)
+			{
+				if ([[[self panelSelector] cell] tagForSegment: i] == BXGameInspectorPanelTag)
+					[[self panelSelector] setEnabled: [session isGamePackage] forSegment: i];
+			}
+			
+			//If the gamebox tab was already selected, then switch to the next tab
+			if (![session isGamePackage] &&
+				[[self tabView] indexOfTabViewItem: [[self tabView] selectedTabViewItem]] == BXGameInspectorPanelTag)
+			{
+				[[self tabView] selectTabViewItemAtIndex: BXCPUInspectorPanelTag];
+			}
 		}
 	}
 }
@@ -104,42 +107,12 @@ const CGFloat BXMouseSensitivityRange = 2.0f;
 - (void) showWindow: (id)sender
 {
 	[super showWindow: sender];
-	
-	//The code below applies a soft gaussian blur underneath the window, and was lifted directly from:
-	//http://blog.steventroughtonsmith.com/2008/03/using-core-image-filters-onunder.html
-	//This is all private-framework stuff and so may stop working (or compiling) in a future version of OS X.
-		
-	//Get the current connection to CoreGraphics
-	CGSConnection thisConnection = _CGSDefaultConnection();
-	CGSWindowFilterRef compositingFilter = NULL;
-	NSInteger compositingType = 1; //Applies the effect only underneath the window
-	
-	if (thisConnection)
-	{
-		//Create a CoreImage gaussian blur filter.
-		CGSNewCIFilterByName(thisConnection, (CFStringRef)@"CIGaussianBlur", &compositingFilter);
-		
-		if (compositingFilter)
-		{
-			//Set the parameters of the filter we'll be adding.
-			NSDictionary *options = [NSDictionary dictionaryWithObject: [NSNumber numberWithFloat: BXInspectorPanelBlurRadius]
-																forKey: @"inputRadius"];
-			
-			CGSSetCIFilterValuesFromDictionary(thisConnection, compositingFilter, (CFDictionaryRef)options);
-			
-			//Now apply the filter to our inspector window.
-			CGSWindowID windowNumber = [[self window] windowNumber];
-			CGSAddWindowFilter(thisConnection, windowNumber, compositingFilter, compositingType);
-			
-			//Clean up after ourselves.
-			CGSReleaseCIFilter(thisConnection, compositingFilter);			
-		}
-	}
+	[[self window] applyGaussianBlurWithRadius: BXInspectorPanelBlurRadius];
 }
 
 //A miserable hack to notify BXAppController that the inspector panel has been closed,
-//so that we can update button states immediately. It has so far proven impossible to manage
-//this some other, more preferable way (such as bindings).
+//so that we can update button states immediately. It has so far proven impossible to
+//manage this some other, more preferable way (such as bindings).
 - (BOOL) windowShouldClose: (id)sender
 {
 	[[NSApp delegate] setInspectorPanelShown: NO];
@@ -157,6 +130,8 @@ const CGFloat BXMouseSensitivityRange = 2.0f;
 
 - (void) tabView: (NSTabView *)tabView didSelectTabViewItem: (NSTabViewItem *)tabViewItem
 {
+	[super tabView: tabView didSelectTabViewItem: tabViewItem];
+	
 	//Record the user's choice of tab, and synchronize the selected segment
 	NSInteger selectedIndex = [tabView indexOfTabViewItem: tabViewItem];
 	
@@ -164,6 +139,7 @@ const CGFloat BXMouseSensitivityRange = 2.0f;
 	{
 		[[NSUserDefaults standardUserDefaults] setInteger: selectedIndex
 												   forKey: @"initialInspectorPanelIndex"];
+		
 		
 		[[self panelSelector] selectSegmentWithTag: selectedIndex];
 	}

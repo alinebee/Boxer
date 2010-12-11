@@ -212,7 +212,7 @@ NSString * const HFSVolumeType		= @"hfs";
 
 - (BOOL) isFloppyVolumeAtPath: (NSString *)path
 {
-	if ([self volumeTypeForPath: path] != FATVolumeType) return NO;
+	if (![[self volumeTypeForPath: path] isEqualToString: FATVolumeType]) return NO;
 
 	return [self isFloppySizedVolumeAtPath: path];
 }

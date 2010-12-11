@@ -10,6 +10,7 @@
 #import "BXImportWindowController.h"
 #import "BXImportDropzone.h"
 #import "BXImport.h"
+#import "BXBlueprintPanel.h"
 
 
 #pragma mark -
@@ -27,7 +28,7 @@
 
 
 @implementation BXImportDropzonePanelController
-@synthesize dropzone, controller;
+@synthesize dropzone, controller, spinner;
 
 #pragma mark -
 #pragma mark Initialization and deallocation
@@ -36,11 +37,17 @@
 {
 	//Set up the dropzone panel to support drag-drop operations
 	[[self view] registerForDraggedTypes: [NSArray arrayWithObjects: NSFilenamesPboardType, nil]];
+	
+	[[self spinner] setUsesThreadedAnimation: YES];
+	//Since the spinner is on a separate view that's only added to the window
+	//when it's spinnin' time, we can safely start it animating now
+	[[self spinner] startAnimation: self];
 }
 
 - (void) dealloc
 {
 	[self setDropzone: nil], [dropzone release];
+	[self setSpinner: nil], [spinner release];
 	
 	[super dealloc];
 }

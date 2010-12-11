@@ -13,6 +13,7 @@
 #import "BXEmulator.h"
 #import "BXDrive.h"
 #import "BXValueTransformers.h"
+#import "BXOperation.h"
 #import "BXFileTransfer.h"
 #import "BXDriveList.h"
 
@@ -208,7 +209,7 @@ enum {
 	NSArray *selection = [[self drives] selectedObjects];
 	BXSession *session = [[NSApp delegate] currentSession];
 
-	for (BXDrive *drive in selection) [session beginImportForDrive: drive];
+	for (BXDrive *drive in selection) [session importForDrive: drive startImmediately: YES];
 }
 
 - (IBAction) cancelImportForDrive: (id)sender
@@ -320,7 +321,7 @@ enum {
 
 - (void) operationWillStart: (NSNotification *)notification
 {
-	BXFileTransfer *transfer = [notification object];
+	BXOperation <BXFileTransfer> *transfer = [notification object];
 	
 	//If the notification didn't come from the current session, ignore it
 	if ([transfer delegate] != [[NSApp delegate] currentSession]) return;
@@ -359,7 +360,7 @@ enum {
 
 - (void) operationInProgress: (NSNotification *)notification
 {
-	BXFileTransfer *transfer = [notification object];
+	BXOperation <BXFileTransfer> *transfer = [notification object];
 	
 	//If the notification didn't come from the current session, ignore it
 	if ([transfer delegate] != [[NSApp delegate] currentSession]) return;
@@ -368,30 +369,38 @@ enum {
 	BXDriveItemView *driveView = [[self driveList] viewForDrive: drive];
 	if (driveView)
 	{
-		NSProgressIndicator *progressMeter	= [driveView progressMeter];
-		NSTextField *progressMeterLabel		= [driveView progressMeterLabel];
-		BXOperationProgress progress		= [transfer currentProgress];
-	
-		//Massage the progress with an ease-out curve to make it appear quicker at the start of the transfer
-		BXOperationProgress easedProgress = -progress * (progress - 2);
+		NSProgressIndicator *progressMeter = [driveView progressMeter];
+		NSTextField *progressMeterLabel = [driveView progressMeterLabel];
 		
-		[progressMeter setIndeterminate: NO];
-		
-		//If we know the progress, set the label text appropriately
-		[progressMeter setDoubleValue: easedProgress];
-		[progressMeter setNeedsDisplay: YES];
-		NSString *progressFormat = NSLocalizedString(@"%1$i%% of %2$i MB",
-													 @"Drive import progress meter label. %1 is the current progress as an unsigned integer percentage, %2 is the total size of the transfer as an unsigned integer in megabytes");
+		if ([transfer isIndeterminate])
+		{
+			[progressMeter setIndeterminate: YES];
+		}
+		else
+		{
+			BXOperationProgress progress = [transfer currentProgress];
 			
-		NSUInteger progressPercent	= (NSUInteger)round(easedProgress * 100.0);
-		NSUInteger sizeInMB			= (NSUInteger)ceil([transfer numBytes] / 1000.0 / 1000.0);
-		[progressMeterLabel setStringValue: [NSString stringWithFormat: progressFormat, progressPercent, sizeInMB, nil]];
+			//Massage the progress with an ease-out curve to make it appear quicker at the start of the transfer
+			BXOperationProgress easedProgress = -progress * (progress - 2);
+			
+			[progressMeter setIndeterminate: NO];
+			
+			//If we know the progress, set the label text appropriately
+			[progressMeter setDoubleValue: easedProgress];
+			[progressMeter setNeedsDisplay: YES];
+			NSString *progressFormat = NSLocalizedString(@"%1$i%% of %2$i MB",
+														 @"Drive import progress meter label. %1 is the current progress as an unsigned integer percentage, %2 is the total size of the transfer as an unsigned integer in megabytes");
+			
+			NSUInteger progressPercent	= (NSUInteger)round(easedProgress * 100.0);
+			NSUInteger sizeInMB			= (NSUInteger)ceil([transfer numBytes] / 1000.0 / 1000.0);
+			[progressMeterLabel setStringValue: [NSString stringWithFormat: progressFormat, progressPercent, sizeInMB, nil]];			
+		}
 	}
 }
 
 - (void) operationWasCancelled: (NSNotification *)notification
 {
-	BXFileTransfer *transfer = [notification object];
+	BXOperation <BXFileTransfer> *transfer = [notification object];
 	
 	//If the notification didn't come from the current session, ignore it
 	if ([transfer delegate] != [[NSApp delegate] currentSession]) return;
@@ -418,7 +427,7 @@ enum {
 
 - (void) operationDidFinish: (NSNotification *)notification
 {
-	BXFileTransfer *transfer = [notification object];
+	BXOperation <BXFileTransfer> *transfer = [notification object];
 	
 	//If the notification didn't come from the current session, ignore it
 	if ([transfer delegate] != [[NSApp delegate] currentSession]) return;

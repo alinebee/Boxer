@@ -21,7 +21,8 @@
 #import "BXEmulator.h"
 #import "BXCloseAlert.h"
 
-#import "BXDriveImport.h"
+#import "BXSingleFileTransfer.h"
+#import "BXSimpleDriveImport.h"
 
 #import "BXImport+BXImportPolicies.h"
 #import "BXSession+BXFileManager.h"
@@ -44,7 +45,8 @@
 
 @property (readwrite, assign, nonatomic) BXImportStage importStage;
 @property (readwrite, assign, nonatomic) BXOperationProgress stageProgress;
-@property (readwrite, retain, nonatomic) BXFileTransfer *transferOperation;
+@property (readwrite, assign, nonatomic) BOOL stageProgressIndeterminate;
+@property (readwrite, retain, nonatomic) BXOperation <BXDriveImport> *transferOperation;
 
 //Only defined for internal use
 @property (copy, nonatomic) NSString *rootDrivePath;
@@ -70,7 +72,7 @@
 @synthesize importWindowController;
 @synthesize sourcePath, rootDrivePath;
 @synthesize installerPaths, preferredInstallerPath;
-@synthesize importStage, stageProgress, transferOperation;
+@synthesize importStage, stageProgress, stageProgressIndeterminate, transferOperation;
 
 
 #pragma mark -
@@ -78,9 +80,9 @@
 
 - (void) dealloc
 {
+	[self setImportWindowController: nil],	[importWindowController release];
 	[self setSourcePath: nil],				[sourcePath release];
 	[self setRootDrivePath: nil],			[rootDrivePath release];
-	[self setImportWindowController: nil],	[importWindowController release];
 	[self setInstallerPaths: nil],			[installerPaths release];
 	[self setPreferredInstallerPath: nil],	[preferredInstallerPath release];
 	
@@ -231,16 +233,20 @@
 
 - (void) makeWindowControllers
 {	
-	[self setDOSWindowController:	[[BXImportDOSWindowController alloc] initWithWindowNibName: @"DOSWindow"]];
-	[self setImportWindowController:[[BXImportWindowController alloc] initWithWindowNibName: @"ImportWindow"]];
+	BXImportDOSWindowController *DOSController	= [[BXImportDOSWindowController alloc] initWithWindowNibName: @"DOSWindow"];
+	BXImportWindowController *importController	= [[BXImportWindowController alloc] initWithWindowNibName: @"ImportWindow"];
 	
-	[self addWindowController: [self DOSWindowController]];
-	[self addWindowController: [self importWindowController]];
-	[[self DOSWindowController] setShouldCloseDocument: YES];
-	[[self importWindowController] setShouldCloseDocument: YES];
+	[self addWindowController: DOSController];
+	[self addWindowController: importController];
 	
-	[[self DOSWindowController] release];
-	[[self importWindowController] release];
+	[self setDOSWindowController: DOSController];
+	[self setImportWindowController: importController];
+	
+	[DOSController setShouldCloseDocument: YES];
+	[importController setShouldCloseDocument: YES];
+	
+	[DOSController release];
+	[importController release];
 }
 
 - (void) removeWindowController: (NSWindowController *)windowController
@@ -407,7 +413,8 @@
 	if (stage != importStage)
 	{
 		importStage = stage;
-		[self setStageProgress: 0.0f];		
+		[self setStageProgress: 0.0f];
+		[self setStageProgressIndeterminate: YES];
 	}
 }
 
@@ -564,7 +571,7 @@
 	[self setFileURL: sourceURL];
 
 	[self setImportStage: BXImportLoadingSourcePath];
-	[self setStageProgress: BXOperationProgressIndeterminate];
+	
 	BOOL readSucceeded = [self readFromURL: sourceURL
 									ofType: nil
 									 error: &readError];
@@ -677,7 +684,6 @@
 	
 	
 	[self setImportStage: BXImportCopyingSourceFiles];
-	[self setStageProgress: BXOperationProgressIndeterminate];
 	
 	//If we don't have a source folder yet, generate one now before continuing
 	//(This will happen if there were no installers, or the user skipped the installer)
@@ -694,6 +700,7 @@
 	//-----------------------------------------------
 
 	//If the source path no longer exists, it means the user probably ejected the disk and we can't import
+	//FIXME: make this properly handle the case where the sourcepath is a mounted volume for a disc image
 	if (![manager fileExistsAtPath: [self sourcePath]])
 	{
 		//Skip straight to cleanup
@@ -726,19 +733,26 @@
 	{
 		BXDrive *importDrive = nil;
 		
+		//If the source path is on a disk image, then import the image instead
+		NSString *importPath = [self sourcePath];
+		NSString *sourceImagePath = [workspace sourceImageForVolume: [self sourcePath]];
+		if (sourceImagePath && [workspace file: sourceImagePath matchesTypes: [BXAppController mountableImageTypes]])
+			importPath = sourceImagePath;
+		
 		//If the source is an actual floppy disk, or this game needs to be installed off floppies,
 		//then import the source files as a floppy disk
 		if (isRealFloppy || [[self gameProfile] installMedium] == BXDriveFloppyDisk)
 		{
-			importDrive = [BXDrive floppyDriveFromPath: [self sourcePath] atLetter: @"A"];
+			importDrive = [BXDrive floppyDriveFromPath: importPath atLetter: @"A"];
 		}
 		//Otherwise, import the source files as a CD-ROM drive
 		else
 		{
-			importDrive = [BXDrive CDROMFromPath: [self sourcePath] atLetter: @"D"];
+			importDrive = [BXDrive CDROMFromPath: importPath atLetter: @"D"];
 		}
 		
-		[self setTransferOperation: [self beginImportForDrive: importDrive]];
+		BXOperation <BXDriveImport> *importOperation = [self importForDrive: importDrive startImmediately: YES];
+		[self setTransferOperation: importOperation];
 	}
 	
 	//Otherwise, assume that the source files were the already-installed game:
@@ -751,7 +765,9 @@
 			NSString *subfolderName	= [[self sourcePath] lastPathComponent];
 			NSString *destination	= [[self rootDrivePath] stringByAppendingPathComponent: subfolderName];
 			
-			BXFileTransfer *transfer = [BXFileTransfer transferFromPath: [self sourcePath] toPath: destination copyFiles: YES];
+			BXOperation *transfer = [BXSingleFileTransfer transferFromPath: [self sourcePath]
+																	toPath: destination
+																 copyFiles: YES];
 			[transfer setDelegate: self];
 			[self setTransferOperation: transfer];
 			[importQueue addOperation: transfer];
@@ -762,25 +778,45 @@
 		{
 			[manager removeItemAtPath: [self rootDrivePath] error: nil];
 			BXDrive *importDrive = [BXDrive hardDriveFromPath: [self sourcePath] atLetter: @"C"];
-			[self setTransferOperation: [self beginImportForDrive: importDrive]];
+			BXOperation <BXDriveImport> *importOperation = [self importForDrive: importDrive startImmediately: YES];
+			[self setTransferOperation: importOperation];
 		}
 	}
 }
 
 - (void) cleanGamebox
-{
+{	
 	[self setImportStage: BXImportCleaningGamebox];
-	[self setStageProgress: BXOperationProgressIndeterminate];
+
+	NSSet *bundledTypes = [[BXAppController mountableFolderTypes] setByAddingObjectsFromSet: [BXAppController mountableImageTypes]];
 	
-	NSString *packagePath = [[self gamePackage] bundlePath];
-	NSFileManager *manager = [NSFileManager defaultManager];
-	BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: packagePath];
+	NSFileManager *manager	= [NSFileManager defaultManager];
+	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
+	
+	NSString *pathToClean	= [self rootDrivePath];
+	NSString *pathForDrives	= [[self gamePackage] resourcePath];
+	
+	BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: pathToClean];
 	[enumerator setSkipHiddenFiles: NO];
 	
 	for (NSString *path in enumerator)
 	{
 		if ([[self class] isJunkFileAtPath: path]) [manager removeItemAtPath: path error: nil];
+		else if ([workspace file: path matchesTypes: bundledTypes])
+		{
+			//If this file is a mountable type, move it into the gamebox's root folder where we can find it 
+			BXDrive *drive = [BXDrive driveFromPath: path atLetter: nil];
+			Class importClass = [BXSimpleDriveImport importClassForDrive: drive];
+			BXOperation <BXDriveImport> *importOperation = [importClass importForDrive: drive
+																		 toDestination: pathForDrives
+																			 copyFiles: NO];
+			
+			[importQueue addOperation: importOperation];
+		}
 	}
+	//Any import operations we do in this stage would be moves within the same volume,
+	//so they should be done already, but let's wait anyway.
+	[importQueue waitUntilAllOperationsAreFinished];
 	
 	//Clear our file URL, so that we don't appear as representing this gamebox when the user tries to open it
 	[self setFileURL: nil];
@@ -803,20 +839,31 @@
 		//Update our progress to match the operation's progress
 		
 		[self setStageProgress: [operation currentProgress]];
+		[self setStageProgressIndeterminate: [operation isIndeterminate]];
 	}
 	else return [super operationInProgress: notification];
 }
 
 - (void) operationDidFinish: (NSNotification *)notification
 {
-	BXOperation *operation = [notification object];
-	if ([self importStage] == BXImportCopyingSourceFiles && operation == [self transferOperation])
+	BXOperation <BXDriveImport> *operation = [notification object];
+	if ([self importStage] == BXImportCopyingSourceFiles &&
+		operation == [self transferOperation])
 	{
-		//Yay! We finished copying files
+		//Yay! We finished copying files (or failed copying files but want to get done with this anyway)
+		//TODO: add proper error checking and display, as a failure during drive import will probably
+		//means an unusable gamebox.
 		[self setTransferOperation: nil];
+		[self setRootDrivePath: [operation importedDrivePath]];
+		
 		[self cleanGamebox];
 	}
-	else return [super operationDidFinish: notification];
+	//Only perform the regular post-import behaviour (drive-swapping, notifications etc.)
+	//if we're actually in a DOS session
+	else if ([self importStage] == BXImportRunningInstaller)
+	{
+		return [super operationDidFinish: notification];
+	}
 }
 
 
@@ -879,14 +926,28 @@
 //source path ahead of other drives.
 - (void) _mountDrivesForSession
 {
+	//Determine what type of media this game expects to be installed from,
+	//and how much free space to allow for it
+	BXDriveType installMedium = BXDriveAutodetect;
+	if ([self gameProfile])
+		installMedium = [[self gameProfile] installMedium];
+	
+	if (installMedium == BXDriveAutodetect)
+		installMedium = [BXDrive preferredTypeForPath: [self sourcePath]];
+	
+	NSInteger freeSpace = BXDefaultFreeSpace;
+	
+	if ([self gameProfile])
+		freeSpace = [[self gameProfile] requiredDiskSpace];
+	
+	if (freeSpace == BXDefaultFreeSpace && (installMedium == BXDriveCDROM || [[self class] isCDROMSizedGameAtPath: [self sourcePath]]))
+		freeSpace = BXFreeSpaceForCDROMInstall;
+	
+	
 	//Mount our new empty gamebox as drive C
 	BXDrive *destinationDrive = [BXDrive hardDriveFromPath: [self rootDrivePath] atLetter: @"C"];
+	[destinationDrive setFreeSpace: freeSpace];
 	[self mountDrive: destinationDrive];
-	
-	//Determine what type of media this game expects to be installed from
-	//(This will be BXDriveAutodetect if it doesn't care)
-	BXDriveType installMedium = BXDriveAutodetect;
-	if ([self gameProfile] != nil) installMedium = [[self gameProfile] installMedium];
 	
 	//Then, create a drive of the appropriate type from the source files and mount away
 	BXDrive *sourceDrive = [BXDrive driveFromPath: [self sourcePath] atLetter: nil withType: installMedium];
@@ -912,7 +973,8 @@
 	
 	NSString *gamesFolder	= [[NSApp delegate] gamesFolderPath];
 	//If the games folder is missing or not set, then fall back on a path we know does exist (the Desktop)
-	if (!gamesFolder || ![manager fileExistsAtPath: gamesFolder]) gamesFolder = [[NSApp delegate] fallbackGamesFolderPath];
+	if (!gamesFolder || ![manager fileExistsAtPath: gamesFolder])
+		gamesFolder = [[NSApp delegate] fallbackGamesFolderPath];
 	
 	NSString *gameboxPath	= [[gamesFolder stringByAppendingPathComponent: gameName] stringByAppendingPathExtension: @"boxer"];
 	
@@ -973,10 +1035,14 @@
 {
 	[super _cleanup];
 	
-	if ([self importStage] != BXImportFinished)
+	if ([self importStage] != BXImportFinished && [self gamePackage])
 	{
-		NSFileManager *manager = [NSFileManager defaultManager];
-		[manager removeItemAtPath: [[self gamePackage] bundlePath] error: NULL];	
+		NSString *path = [[self gamePackage] bundlePath];
+		if (path)
+		{
+			NSFileManager *manager = [NSFileManager defaultManager];
+			[manager removeItemAtPath: path error: NULL];	
+		}
 	}
 }
 

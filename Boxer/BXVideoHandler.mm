@@ -288,7 +288,10 @@
 	return BXFilters[type];
 }
 
-//Returns whether to apply 4:3 aspect ratio correction to the specified DOS resolution. Currently we ignore the resolution itself, and instead check the pixel aspect ratio from DOSBox directly, as this is based on more data than we have. If the pixel aspect ratio is not ~1 then correction is needed.
+//Returns whether to apply 4:3 aspect ratio correction to the specified DOS resolution.
+//Currently we ignore the resolution itself, and instead check the pixel aspect ratio
+//from DOSBox directly, as this is based on more data than we have. If the pixel aspect
+//ratio is not ~1 then correction is needed.
 - (BOOL) _shouldUseAspectCorrectionForResolution: (NSSize)resolution
 {
 	BOOL useAspectCorrection = NO;
@@ -299,11 +302,12 @@
 	return useAspectCorrection;
 }
 
-//Return the appropriate filter size we should use to scale the given resolution up to the given viewport.
+//Return the appropriate filter size to scale the given resolution up to the specified viewport.
 //This is usually the viewport height divided by the resolution height and rounded up, to ensure
 //we're always rendering larger than we need so that the graphics are crisper when scaled down.
 //However we finesse this for some filters that look like shit when scaled down too much.
-//(We base this on height rather than width, so that we'll use the larger filter size for aspect-ratio corrected surfaces.)
+//(We base this on height rather than width, so that we'll use the larger filter size for
+//aspect-ratio corrected surfaces.)
 - (NSInteger) _filterScaleForType: (BXFilterType)type
 				   fromResolution: (NSSize)resolution
 					   toViewport: (NSSize)viewportSize

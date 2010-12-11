@@ -13,7 +13,6 @@
 #import <Foundation/Foundation.h>
 
 typedef float BXOperationProgress;
-#define BXOperationProgressIndeterminate -1.0f
 
 #pragma mark -
 #pragma mark Notification constants
@@ -24,11 +23,10 @@ extern NSString * const BXOperationWillStart;
 //Sent periodically while the operation is in progress.
 extern NSString * const BXOperationInProgress;
 
-//Sent when the operation ends (be it in success or failure.)
+//Sent when the operation ends (be it because of success, failure or cancellation.)
 extern NSString * const BXOperationDidFinish;
 
 //Sent when the operation gets cancelled.
-//The transfer will still send a BXOperationWasCancelled after this.
 extern NSString * const BXOperationWasCancelled;
 
 
@@ -50,6 +48,11 @@ extern NSString * const BXOperationErrorKey;
 //An NSNumber float from 0.0 to 1.0 indicating the progress of the operation.
 //Included with BXOperationInProgress.
 extern NSString * const BXOperationProgressKey;
+
+//An NSNumber boolean indicating whether the operation cannot currently
+//measure its progress in a meaningful way.
+//Included with BXOperationInProgress.
+extern NSString * const BXOperationIsIndeterminateKey;
 
 
 @protocol BXOperationDelegate;
@@ -82,9 +85,11 @@ extern NSString * const BXOperationProgressKey;
 #pragma mark Operation status properties
 
 //A float from 0.0f to 1.0f indicating how far through its process the operation is.
-//Will be BXOperationProgressUndefined if the operation cannot provide a meaningful
-//indication of progress.
 @property (readonly) BXOperationProgress currentProgress;
+
+//Indicates whether the process cannot currently provide a meaningful indication
+//of progress (and thus whether the value of currentProgress should be ignored).
+@property (readonly) BOOL isIndeterminate;
 
 //Whether the operation succeeeded or failed. Only relevant once isFinished is YES.
 @property (assign) BOOL succeeded;

@@ -17,8 +17,9 @@
 #import "BXDrive.h"
 #import "BXDrivesInUseAlert.h"
 #import "BXGameProfile.h"
+#import "BXSimpleDriveImport.h"
 
-#import "BXDriveImport.h"
+#import "BXSingleFileTransfer.h"
 
 #import "NSWorkspace+BXMountedVolumes.h"
 #import "NSWorkspace+BXFileTypes.h"
@@ -292,8 +293,8 @@
 	if (![theEmulator pathIsDOSAccessible: path]) return YES;
 	
 	
-	//If it is accessible within another drive, but the path is of a type that
-	//should get its own drive, then mount it as a new drive of its own.
+	//If it is accessible within another drive, but the path is of a type
+	//that should get its own drive, then mount it as a new drive of its own.
 	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
 	if ([workspace file: path matchesTypes: [[self class] separatelyMountedTypes]]
 	&& ![theEmulator pathIsMountedAsDrive: path])
@@ -454,7 +455,39 @@
 	if ([self gameProfile]) customLabel = [[self gameProfile] labelForDrive: drive];
 	if (customLabel) [drive setLabel: customLabel];
 	
-	return [[self emulator] mountDrive: drive];
+	//Check if the specified path has a DOSBox-compatible image backing it:
+	//if so, mount that instead, and assign the current path as an alias.
+	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+	NSString *sourceImagePath = [workspace sourceImageForVolume: [drive path]];
+	if (sourceImagePath && [workspace file: sourceImagePath matchesTypes: [BXAppController mountableImageTypes]])
+	{
+		//Check if the source image is already mounted:
+		//if so, then just add the path as an alias to that existing drive
+		BXDrive *existingDrive = [[self emulator] driveForPath: sourceImagePath];
+		if (existingDrive)
+		{
+			[[existingDrive pathAliases] addObject: [drive path]];
+			return existingDrive;
+		}
+		//Otherwise, make a new drive using the image, and mount that instead
+		else
+		{
+			BXDrive *imageDrive = [BXDrive driveFromPath: sourceImagePath atLetter: [drive letter] withType: [drive type]];
+			[imageDrive setReadOnly: [drive readOnly]];
+			[imageDrive setHidden: [drive isHidden]];
+			[imageDrive setLocked: [drive isLocked]];
+			[[imageDrive pathAliases] addObject: [drive path]];
+			
+			BXDrive *returnedDrive = [[self emulator] mountDrive: imageDrive];
+			//If mounting the image fails, then try again with the original drive
+			if (!returnedDrive) returnedDrive = [[self emulator] mountDrive: drive];
+			return returnedDrive;
+		}
+	}
+	else
+	{
+		return [[self emulator] mountDrive: drive];
+	}
 }
 
 - (BOOL) unmountDrive: (BXDrive *)drive
@@ -485,25 +518,40 @@
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	NSNotificationCenter *center = [workspace notificationCenter];
 	
-	[center addObserver:	self
-			selector:		@selector(volumeDidMount:)
-			name:			NSWorkspaceDidMountNotification
-			object:			workspace];
+	[center addObserver: self
+			   selector: @selector(volumeDidMount:)
+				   name: NSWorkspaceDidMountNotification
+				 object: workspace];
 	
-	[center addObserver:	self
-			   selector:	@selector(volumeWillUnmount:)
-				   name:	NSWorkspaceWillUnmountNotification
-				 object:	workspace];
+	[center addObserver: self
+			   selector: @selector(volumeWillUnmount:)
+				   name: NSWorkspaceWillUnmountNotification
+				 object: workspace];
 
-	[center addObserver:	self
-			   selector:	@selector(volumeWillUnmount:)
-				   name:	NSWorkspaceDidUnmountNotification
-				 object:	workspace];
+	[center addObserver: self
+			   selector: @selector(volumeWillUnmount:)
+				   name: NSWorkspaceDidUnmountNotification
+				 object: workspace];
 	
-	[center addObserver:	self
-			selector:		@selector(filesystemDidChange:)
-			name:			UKFileWatcherWriteNotification
-			object:			nil];
+	[center addObserver: self
+			   selector: @selector(filesystemDidChange:)
+				   name: UKFileWatcherWriteNotification
+				 object: watcher];
+	
+	[center addObserver: self
+			   selector: @selector(filesystemDidChange:)
+				   name: UKFileWatcherDeleteNotification
+				 object: watcher];
+	
+	[center addObserver: self
+			   selector: @selector(filesystemDidChange:)
+				   name: UKFileWatcherRenameNotification
+				 object: watcher];
+	
+	[center addObserver: self
+			   selector: @selector(filesystemDidChange:)
+				   name: UKFileWatcherAccessRevocationNotification
+				 object: watcher];
 }
 
 - (void) _deregisterForFilesystemNotifications
@@ -514,7 +562,10 @@
 	[center removeObserver: self name: NSWorkspaceDidMountNotification		object: workspace];
 	[center removeObserver: self name: NSWorkspaceDidUnmountNotification	object: workspace];
 	[center removeObserver: self name: NSWorkspaceWillUnmountNotification	object: workspace];
-	[center removeObserver: self name: UKFileWatcherWriteNotification		object: nil];
+	[center removeObserver: self name: UKFileWatcherWriteNotification		object: watcher];
+	[center removeObserver: self name: UKFileWatcherDeleteNotification		object: watcher];
+	[center removeObserver: self name: UKFileWatcherRenameNotification		object: watcher];
+	[center removeObserver: self name: UKFileWatcherAccessRevocationNotification object: watcher];
 }
 
 - (void) volumeDidMount: (NSNotification *)theNotification
@@ -525,7 +576,9 @@
 	
 	//To work around this, we add a slight delay before we process the volume mount notification,
 	//to allow other volumes to finish mounting.
-	[self performSelector:@selector(_handleVolumeDidMount:) withObject: theNotification afterDelay: BXVolumeMountDelay];
+	[self performSelector: @selector(_handleVolumeDidMount:)
+			   withObject: theNotification
+			   afterDelay: BXVolumeMountDelay];
 }
 
 - (void) _handleVolumeDidMount: (NSNotification *)theNotification
@@ -574,6 +627,12 @@
 {
 	NSString *volumePath = [[theNotification userInfo] objectForKey: @"NSDevicePath"];
 	[[self emulator] unmountDrivesForPath: volumePath];
+	
+	//Also remove the volume from any drive aliases
+	for (BXDrive *drive in [[self emulator] mountedDrives])
+	{
+		[[drive pathAliases] removeObject: volumePath];
+	}
 }
 
 - (void) filesystemDidChange: (NSNotification *)theNotification
@@ -602,7 +661,9 @@
 		if (showDriveNotifications) [[BXGrowlController controller] notifyDriveMounted: drive];
 		
 		//Determine what executables are stored on this drive, if it's public
-		if (![drive isHidden])
+		//Tweak: only do this if we're running a gamebox, since launchable executables
+		//are not displayed for non-gamebox sessions.
+		if ([self isGamePackage] && ![drive isHidden])
 		{
 			NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 			NSMutableArray *foundExecutables = [NSMutableArray arrayWithCapacity: 10];
@@ -707,7 +768,6 @@
 #pragma mark -
 #pragma mark Drive importing
 
-
 - (BOOL) driveIsBundled: (BXDrive *)drive
 {
 	if ([self isGamePackage])
@@ -724,7 +784,8 @@
 {
 	if ([self isGamePackage])
 	{
-		NSString *importedName = [BXDriveImport nameForDrive: drive];
+		Class importClass = [BXSimpleDriveImport importClassForDrive: drive];
+		NSString *importedName = [importClass nameForDrive: drive];
 		NSString *importedPath = [[[self gamePackage] resourcePath] stringByAppendingPathComponent: importedName];
 	
 		//A file already exists with the same name as we would import it with,
@@ -738,7 +799,7 @@
 
 - (BOOL) driveIsImporting: (BXDrive *)drive
 {
-	for (BXDriveImport *operation in [importQueue operations])
+	for (BXOperation *operation in [importQueue operations])
 	{
 		if ([operation isExecuting] && [[operation contextInfo] isEqualTo: drive]) return YES; 
 	}
@@ -763,24 +824,33 @@
 	return YES;
 }
 
-- (BXDriveImport *) beginImportForDrive: (BXDrive *)drive
+- (BXOperation <BXDriveImport> *) importForDrive: (BXDrive *)drive
+								startImmediately: (BOOL)start
 {
 	if ([self canImportDrive: drive])
 	{
-		NSString *destinationBase = [[self gamePackage] resourcePath];
+		NSString *destinationFolder = [[self gamePackage] resourcePath];
 		
-		BXDriveImport *driveImport = [BXDriveImport importForDrive: drive toFolder: destinationBase copyFiles: YES];
+		Class importClass = [BXSimpleDriveImport importClassForDrive: drive];
+		BXOperation <BXDriveImport> *driveImport = [importClass importForDrive: drive
+																 toDestination: destinationFolder
+																	 copyFiles: YES];
+		
 		[driveImport setDelegate: self];
+		[driveImport setContextInfo: drive];
 		
-		[importQueue addOperation: driveImport];
+		if (start) [importQueue addOperation: driveImport];
 		return driveImport;
 	}
-	return nil;
+	else
+	{
+		return nil;
+	}
 }
 
 - (BOOL) cancelImportForDrive: (BXDrive *)drive
 {
-	for (BXDriveImport *operation in [importQueue operations])
+	for (BXOperation *operation in [importQueue operations])
 	{
 		if (![operation isFinished] && [[operation contextInfo] isEqualTo: drive])
 		{
@@ -793,17 +863,17 @@
 
 - (void) operationDidFinish: (NSNotification *)theNotification
 {
-	BXDriveImport *import = [theNotification object];
+	BXOperation <BXDriveImport> *import = [theNotification object];
 	BXDrive *drive = [import contextInfo];
 
-	if ([import succeeded])
+	if (drive && [import succeeded])
 	{
 		//Once the drive has successfully imported, replace the old drive
 		//with the newly-imported version (if the old one is not in use by DOS)
 		if (![[self emulator] driveInUseAtLetter: [drive letter]])
 		{
-			NSString *destinationPath = [import destinationPath];
-			BXDrive *importedDrive = [BXDrive driveFromPath: destinationPath atLetter: [drive letter]];
+			NSString *destinationPath	= [import importedDrivePath];
+			BXDrive *importedDrive		= [BXDrive driveFromPath: destinationPath atLetter: [drive letter]];
 			
 			//Temporarily suppress drive mount/unmount notifications
 			BOOL oldShowDriveNotifications = showDriveNotifications;
@@ -835,9 +905,22 @@
 		//Post a Growl notification that this drive was successfully imported.
 		[[BXGrowlController controller] notifyDriveImported: drive toPackage: [self gamePackage]];
 	}
-	else
+	else if ([import error])
 	{
-		//TODO: handle the transfer error gracefully, ideally giving the user the option to try again
+		NSError *importError = [import error];
+		
+		//Unwind failed transfers, whatever the reason
+		[import undoTransfer];
+		
+		//Display a sheet for the error, unless it was just the user cancelling
+		if (!([[importError domain] isEqualToString: NSCocoaErrorDomain] && [importError code] == NSUserCancelledError))
+		{
+			[self presentError: importError
+				modalForWindow: [self windowForSheet]
+					  delegate: nil
+			didPresentSelector: NULL
+				   contextInfo: nil];
+		}
 	}
 }
 
@@ -849,14 +932,12 @@
 	//Note: UKFNSubscribeFileWatcher can only watch directories, not regular files 
 	if (exists && isFolder)
 	{
-		UKFNSubscribeFileWatcher *watcher = [UKFNSubscribeFileWatcher sharedFileWatcher];
 		[watcher addPath: path];
 	}
 }
 
 - (void) _stopTrackingChangesAtPath: (NSString *)path
 {
-	UKFNSubscribeFileWatcher *watcher = [UKFNSubscribeFileWatcher sharedFileWatcher];
 	[watcher removePath: path];
 }
 

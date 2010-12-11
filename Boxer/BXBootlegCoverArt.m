@@ -21,8 +21,41 @@
 									 alpha: 0.9f];
 }
 
-+ (CGFloat) lineHeightForSize:	(NSSize)size	{ return 20.0f; }
-+ (CGFloat) fontSizeForSize:	(NSSize)size	{ return 14.0f; }
++ (NSImage *) baseLayerForSize:	(NSSize)size
+{
+	return [NSImage imageNamed: @"CDCase"];
+}
+
++ (NSImage *) topLayerForSize:	(NSSize)size
+{
+	//At sizes below 128x128 we don't use the cover-glass image
+	if (size.width >= 128)
+		return [NSImage imageNamed: @"CDCover"];
+	else
+		return nil;
+}
+
++ (CGFloat) lineHeightForSize:	(NSSize)size	{ return 20.0f * (size.width / 128.0f); }
++ (CGFloat) fontSizeForSize:	(NSSize)size
+{
+	//Use smaller font at sizes > 128 so that we can fit more on the label
+	CGFloat baseSize = (size.width > 128.0f) ? 12.0f : 14.0f;
+	return baseSize * (size.width / 128.0f);
+}
+
++ (NSRect) textRegionForRect: (NSRect)frame
+{	
+	if (frame.size.width >= 128)
+	{
+		CGFloat scale = frame.size.width / 128.0f;
+		return NSMakeRect(22.0f * scale,
+						  32.0f * scale,
+						  92.0f * scale,
+						  60.0f * scale);
+	}
+	//Do not show text on icon sizes below 128x128.
+	else return NSZeroRect;
+}
 
 + (NSDictionary *) textAttributesForSize: (NSSize)size
 {
@@ -41,25 +74,7 @@
 			font,	NSFontAttributeName,
 			color,	NSForegroundColorAttributeName,
 			[NSNumber numberWithInteger: 2],	NSLigatureAttributeName,
-			//[NSNumber numberWithFloat: 0.1],	NSObliquenessAttributeName,
 			nil];
-}
-
-+ (NSImage *) baseLayerForSize:	(NSSize)size	{ return [NSImage imageNamed: @"CDCase"]; }
-+ (NSImage *) topLayerForSize:	(NSSize)size
-{
-	if (size.width >= 128)
-		return [NSImage imageNamed: @"CDCover"];
-	else
-		return nil;
-}
-
-+ (NSRect) textRegionForRect: (NSRect)frame
-{
-	if (frame.size.width >= 128)
-		return NSMakeRect(22.0f, 32.0f, 92.0f, 60.0f);
-	else
-		return NSZeroRect;
 }
 
 
@@ -117,6 +132,7 @@
 - (NSImage *) coverArt
 {
 	NSImage *coverArt = [[NSImage alloc] init];
+	[coverArt addRepresentation: [self representationForSize: NSMakeSize(512, 512)]];
 	[coverArt addRepresentation: [self representationForSize: NSMakeSize(128, 128)]];
 	[coverArt addRepresentation: [self representationForSize: NSMakeSize(32, 32)]];
 	[coverArt addRepresentation: [self representationForSize: NSMakeSize(16, 16)]];
@@ -134,7 +150,10 @@
 
 @implementation BX35Diskette
 
-+ (NSImage *) baseLayerForSize:	(NSSize)size	{ return [NSImage imageNamed: @"35Diskette"]; }
++ (NSImage *) baseLayerForSize:	(NSSize)size
+{
+	return [NSImage imageNamed: @"35Diskette"];
+}
 + (NSImage *) topLayerForSize:	(NSSize)size
 {
 	if (size.width >= 128)
@@ -142,14 +161,19 @@
 	else
 		return nil;
 }
-+ (CGFloat) lineHeightForSize:	(NSSize)size	{ return 18.0f; }
++ (CGFloat) lineHeightForSize:	(NSSize)size	{ return 18.0f * (size.width / 128.0f); }
 
 + (NSRect) textRegionForRect: (NSRect)frame
 {
 	if (frame.size.width >= 128)
-		return NSMakeRect(24.0f, 55.0f, 80.0f, 54.0f);
-	else
-		return NSZeroRect;
+	{
+		CGFloat scale = frame.size.width / 128.0f;
+		return NSMakeRect(24.0f * scale,
+						  55.0f * scale,
+						  80.0f * scale,
+						  54.0f * scale);
+	}
+	else return NSZeroRect;
 }
 @end
 
@@ -157,14 +181,19 @@
 
 + (NSImage *) baseLayerForSize:	(NSSize)size	{ return [NSImage imageNamed: @"525Diskette"]; }
 + (NSImage *) topLayerForSize:	(NSSize)size	{ return nil; }
-+ (CGFloat) lineHeightForSize:	(NSSize)size	{ return 16.0f; }
-+ (CGFloat) fontSizeForSize:	(NSSize)size	{ return 12.0f; }
++ (CGFloat) lineHeightForSize:	(NSSize)size	{ return 16.0f * (size.width / 128.0f); }
++ (CGFloat) fontSizeForSize:	(NSSize)size	{ return 12.0f * (size.width / 128.0f); }
 
 + (NSRect) textRegionForRect: (NSRect)frame
 {
 	if (frame.size.width >= 128)
-		return NSMakeRect(16.0f, 90.0f, 96.0f, 32.0f);
-	else
-		return NSZeroRect;
+	{
+		CGFloat scale = frame.size.width / 128.0f;
+		return NSMakeRect(16.0f * scale,
+						  90.0f * scale,
+						  96.0f * scale,
+						  32.0f * scale);
+	}
+	else return NSZeroRect;
 }
 @end

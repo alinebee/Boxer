@@ -179,7 +179,7 @@
 		else
 		{
 			//If that wasn't available either (e.g. we're on drive Z) then just display a generic title
-			[[self window] setRepresentedFilename: @""];
+			[[self window] setRepresentedURL: nil];
 			[[self window] setTitle: NSLocalizedString(
 				@"MS-DOS Prompt", @"The standard window title when the session is at the DOS prompt.")];
 		}

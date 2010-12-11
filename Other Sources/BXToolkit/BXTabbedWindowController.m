@@ -8,22 +8,12 @@
 
 #import "BXTabbedWindowController.h"
 
-#pragma mark -
-#pragma mark Private method declarations
-
-@interface BXTabbedWindowController ()
-
-//Calls willSelectTabViewItem: and didSelectTabViewItem: with the currently-selected tab view item,
-//to perform any synchronisation needed when the tab view is first assigned to us.
-- (void) _synchronizeSelectedTab;
-@end
-
 
 #pragma mark -
 #pragma mark Implementation
 
 @implementation BXTabbedWindowController
-@synthesize tabView = mainTabView;
+@synthesize tabView = mainTabView, toolbarForTabs;
 
 
 #pragma mark -
@@ -32,15 +22,19 @@
 - (void) dealloc
 {
 	[self setTabView: nil], [mainTabView release];
+	[self setToolbarForTabs: nil], [toolbarForTabs release];
 	
 	[super dealloc];
 }
 
-- (void) awakeFromNib
+- (void) windowDidLoad
 {
-	[self _synchronizeSelectedTab];
+	if ([[self tabView] selectedTabViewItem])
+	{
+		[self tabView: [self tabView] willSelectTabViewItem: [[self tabView] selectedTabViewItem]];
+		[self tabView: [self tabView] didSelectTabViewItem: [[self tabView] selectedTabViewItem]];
+	}
 }
-
 
 #pragma mark -
 #pragma mark Tab selection
@@ -112,10 +106,36 @@
 	}
 }
 
-- (void) _synchronizeSelectedTab
+
+#pragma mark -
+#pragma mark 
+
+- (void) toolbarWillAddItem: (NSNotification *)notification
 {
-	[self tabView: mainTabView willSelectTabViewItem: [mainTabView selectedTabViewItem]];
-	[self tabView: mainTabView didSelectTabViewItem: [mainTabView selectedTabViewItem]];
+	NSToolbarItem *item = [[notification userInfo] objectForKey: @"item"];
+	NSInteger tag = [item tag];
+	NSUInteger numTabs = [[[self tabView] tabViewItems] count];
+	if (tag > -1 && tag < (NSInteger)numTabs)
+	{
+		NSTabViewItem *matchingTab = [[self tabView] tabViewItemAtIndex: tag];
+		[matchingTab setIdentifier: [item itemIdentifier]];
+	}
 }
 
+- (NSArray *) toolbarSelectableItemIdentifiers: (NSToolbar *)toolbar
+{
+	NSArray *tabs = [[self tabView] tabViewItems];
+	NSMutableArray *identifiers = [NSMutableArray arrayWithCapacity: [tabs count]];
+	for (NSTabViewItem *tab in tabs)
+	{
+		[identifiers addObject: [tab identifier]];
+	}
+	return identifiers;
+}
+
+- (void) tabView: (NSTabView *)tabView didSelectTabViewItem: (NSTabViewItem *)tabViewItem
+{
+	//Sync the toolbar selection after switching tabs
+	[[self toolbarForTabs] setSelectedItemIdentifier: [tabViewItem identifier]];
+}
 @end

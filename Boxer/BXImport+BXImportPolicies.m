@@ -136,6 +136,18 @@
 #pragma mark -
 #pragma mark Deciding how best to import a game
 
++ (BOOL) isCDROMSizedGameAtPath: (NSString *)path
+{
+	unsigned long long pathSize = 0;
+	NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtPath: path];
+	while ([enumerator nextObject])
+	{
+		pathSize += [[enumerator fileAttributes] fileSize];
+		if (pathSize > (NSUInteger)BXCDROMSizeThreshold) return YES;
+	}
+	return NO;
+}
+
 + (NSString *) preferredSourcePathForPath: (NSString *)path
 						   didMountVolume: (BOOL *)didMountVolume
 									error: (NSError **)outError
@@ -192,18 +204,10 @@
 	if ([workspace file: path matchesTypes: [BXAppController mountableImageTypes]]) return YES;
 	
 	//If the source path is on a CD, it should be imported
-	if ([workspace volumeTypeForPath: path] == dataCDVolumeType) return YES;
+	if ([[workspace volumeTypeForPath: path] isEqualToString: dataCDVolumeType]) return YES;
 	
 	//If the source path looks CD-sized, it should be imported
-	unsigned long long pathSize = 0;
-	NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtPath: path];
-	while ([enumerator nextObject])
-	{
-		NSDictionary *attrs = [enumerator fileAttributes];
-		pathSize += [attrs fileSize];
-		
-		if (pathSize > BXCDROMSizeThreshold) return YES;
-	}
+	if ([self isCDROMSizedGameAtPath: path]) return YES;
 	
 	return NO;
 }
@@ -245,10 +249,24 @@
 {
 	NSString *filename = [path lastPathComponent];
 	
+	//Strip any of our own file extensions from the path
+	NSArray *strippedExtensions = [NSArray arrayWithObjects:
+								   @"boxer",
+								   @"cdrom",
+								   @"floppy",
+								   @"harddisk",
+								   nil];
+	
+	NSString *extension	= [[filename pathExtension] lowercaseString];
+	if ([strippedExtensions containsObject: extension]) filename = [filename stringByDeletingPathExtension];
+	
 	//Put a space before a set of numbers preceded by a character:
 	//ULTIMA8 -> ULTIMA 8
 	filename = [filename stringByReplacingOccurrencesOfRegex: @"([a-zA-Z]+)(\\d+)"
 															withString: @"$1 $2"];
+	
+	//Replace underscores with spaces
+	filename = [filename stringByReplacingOccurrencesOfString: @"_" withString: @" "];
 	
 	//Convert the filename to Title Case
 	//ULTIMA 8 -> Ultima 8

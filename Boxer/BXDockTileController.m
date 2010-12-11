@@ -40,7 +40,7 @@
 - (void) syncIconWithActiveSession
 {
 	BXSession *session = [[NSApp delegate] currentSession];
-	NSImage *icon = [session representedIcon];
+	NSImage *icon = [[[session representedIcon] copy] autorelease];
 	if (!icon && [session gamePackage])
 	{
 		//If the session didn't have an icon of its own, generate a bootleg one based on the gamebox

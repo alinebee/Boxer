@@ -17,7 +17,7 @@
 @implementation BXMountPanelController
 @synthesize driveType, driveLetter, readOnlyToggle;
 
-+ (BXMountPanelController *) controller
++ (id) controller
 {
 	static BXMountPanelController *singleton = nil;
 	if (!singleton) singleton = [[self alloc] initWithNibName: @"MountPanelOptions" bundle: nil];
@@ -123,7 +123,8 @@
 	if (path)
 	{
 		//Don't allow drive type to be configured for disc images: instead, force it to CD-ROM while an image is selected
-		BOOL isImage = [[NSWorkspace sharedWorkspace] file: path matchesTypes: [BXAppController mountableImageTypes]]; 
+		BOOL isImage = [[NSWorkspace sharedWorkspace] file: path
+											  matchesTypes: [BXAppController mountableImageTypes]];
 		if (isImage)
 		{
 			[driveType setEnabled: NO];
@@ -214,9 +215,9 @@
 	[self syncMountOptionsForPanel: openPanel];
 }
 
-- (void) panelSelectionDidChange: (NSOpenPanel *)openPanel
+- (void) panelSelectionDidChange: (id)sender
 {
-	[self syncMountOptionsForPanel: openPanel];
+	[self syncMountOptionsForPanel: sender];
 }
 
 - (BOOL) panel: (NSOpenPanel *)openPanel shouldShowFilename: (NSString *)path

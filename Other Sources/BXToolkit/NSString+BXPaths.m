@@ -60,6 +60,29 @@
 	return [[components objectAtIndex: lastIndex] isEqualToString: [rootComponents lastObject]];
 }
 
+- (NSArray *) fullPathComponents
+{
+	//Bail out early for empty strings
+	if (![self length]) return [NSArray array];
+	
+	NSString *path = [self stringByStandardizingPath];
+	NSString *rootPath = @"/";
+	
+	//Build an array of complete paths for each component
+	NSMutableArray *paths = [[NSMutableArray alloc] initWithCapacity: 10];
+	do
+	{
+		[paths addObject: path];
+		path = [path stringByDeletingLastPathComponent];
+	}
+	while ([path length] && ![path isEqualToString: rootPath]);
+	
+	//Reverse the array to put the components back in their original order
+	NSArray *reverse = [[paths reverseObjectEnumerator] allObjects];
+	[paths release];
+	return reverse;
+}
+
 @end
 
 

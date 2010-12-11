@@ -80,6 +80,10 @@ public:
 
 	virtual void EmptyCache(void) { dirCache.EmptyCache(); };
 
+	//Added 2010-12-11 by Alun Bestor to give Boxer the ability to do directory cache lookups
+	virtual bool getShortName(const char* dirpath, const char*filename, char* shortname) { return dirCache.GetShortName(dirpath, filename, shortname); };
+	//End of modifications
+	
 protected:
 	DOS_Drive_Cache dirCache;
 	char basedir[CROSS_LEN];

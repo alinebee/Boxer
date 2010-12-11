@@ -259,6 +259,9 @@ public:
 	//--Added 2009-10-25 by Alun Bestor to access the base system path for a drive
 	char systempath[CROSS_LEN];
 	char * getSystemPath(void);
+	
+	//Added 2010-12-11 by Alun Bestor to give Boxer the ability to do directory cache lookups
+	virtual bool getShortName(const char* dirpath, const char*filename, char* shortname) { return false; };
 	//--End of modifications
 	
 	DOS_Drive_Cache dirCache;

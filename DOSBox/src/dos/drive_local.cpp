@@ -517,12 +517,12 @@ localDrive::localDrive(const char * startdir,Bit16u _bytes_sector,Bit8u _sectors
 	allocation.total_clusters=_total_clusters;
 	allocation.free_clusters=_free_clusters;
 	allocation.mediaid=_mediaid;
-
-	dirCache.SetBaseDir(basedir,this);
 	
 	//--Added 2009-10-25 by Alun Bestor to allow Boxer to track the system path for DOSBox drives
 	strcpy(systempath, startdir);
 	//--End of modifications
+	
+	dirCache.SetBaseDir(basedir,this);
 }
 
 

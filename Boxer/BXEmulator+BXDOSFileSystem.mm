@@ -371,11 +371,6 @@ enum {
 	DOS_Drive *DOSBoxDrive	= Drives[driveIndex];
 	if (!DOSBoxDrive) return nil;
 	
-	//Drive cache lookups are only available for local drives, and this
-	//obnoxious hack the only way we can test what type this drive is
-	localDrive *localDOSBoxDrive = dynamic_cast<localDrive *>(DOSBoxDrive);
-	BOOL useLookup = (localDOSBoxDrive != NULL);
-	
 	//To be sure we get this right, flush the drive cache before we look anything up
 	DOSBoxDrive->EmptyCache();
 
@@ -388,22 +383,16 @@ enum {
 		NSString *frankenPath = [basePath stringByAppendingString: dosPath];
 		NSString *dosName = nil;
 		
-		if (useLookup)
+		char buffer[CROSS_LEN] = {0};
+		BOOL hasShortName = DOSBoxDrive->getShortName([frankenPath cStringUsingEncoding: BXDirectStringEncoding],
+													  [fileName cStringUsingEncoding: BXDirectStringEncoding],
+													  buffer);
+			
+		if (hasShortName)
 		{
-			NSMutableData *buffer = [NSMutableData dataWithLength: CROSS_LEN];
-			
-			BOOL hasShortName = DOSBoxDrive->dirCache.GetShortName([frankenPath cStringUsingEncoding: BXDirectStringEncoding],
-																   [fileName cStringUsingEncoding: BXDirectStringEncoding],
-																   (char *)[buffer mutableBytes]);
-			
-			if (hasShortName)
-			{
-				dosName = [[[NSString alloc] initWithData: buffer
-												 encoding: BXDirectStringEncoding] autorelease];			
-			}
+			dosName = [NSString stringWithCString: (const char *)buffer encoding: BXDirectStringEncoding];
 		}
-		
-		if (!dosName)
+		else
 		{
 			//TODO: if filename is longer than 8.3, crop and append ~1 as a last-ditch guess.
 			dosName = [fileName uppercaseString];

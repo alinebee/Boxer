@@ -50,8 +50,6 @@ const CGFloat BXMouseSensitivityRange = 2.0f;
 
 - (void) awakeFromNib
 {
-	[super awakeFromNib];
-
 	[(NSPanel *)[self window] setBecomesKeyOnlyIfNeeded: YES];
 	[[self window] setFrameAutosaveName: @"InspectorPanel"];
 	

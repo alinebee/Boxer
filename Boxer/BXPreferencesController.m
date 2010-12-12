@@ -46,8 +46,6 @@
 						toObject: [NSApp delegate]
 					 withKeyPath: @"gamesFolderPath"
 						 options: bindingOptions];
-	
-	[super awakeFromNib];
 }
 
 - (void) dealloc

@@ -46,7 +46,7 @@
 @property (readwrite, assign, nonatomic) BXImportStage importStage;
 @property (readwrite, assign, nonatomic) BXOperationProgress stageProgress;
 @property (readwrite, assign, nonatomic) BOOL stageProgressIndeterminate;
-@property (readwrite, retain, nonatomic) BXOperation <BXDriveImport> *transferOperation;
+@property (readwrite, retain, nonatomic) BXOperation *transferOperation;
 
 //Only defined for internal use
 @property (copy, nonatomic) NSString *rootDrivePath;
@@ -846,7 +846,7 @@
 
 - (void) operationDidFinish: (NSNotification *)notification
 {
-	BXOperation <BXDriveImport> *operation = [notification object];
+	BXOperation *operation = [notification object];
 	if ([self importStage] == BXImportCopyingSourceFiles &&
 		operation == [self transferOperation])
 	{
@@ -854,7 +854,10 @@
 		//TODO: add proper error checking and display, as a failure during drive import will probably
 		//means an unusable gamebox.
 		[self setTransferOperation: nil];
-		[self setRootDrivePath: [operation importedDrivePath]];
+		if ([operation respondsToSelector: @selector(importedDrivePath)])
+		{
+			[self setRootDrivePath: [(id)operation importedDrivePath]];
+		}
 		
 		[self cleanGamebox];
 	}

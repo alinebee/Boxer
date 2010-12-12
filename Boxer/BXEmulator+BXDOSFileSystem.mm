@@ -181,7 +181,7 @@ enum {
 			if (!isImage && driveLabel)
 			{
 				const char *cLabel = [driveLabel cStringUsingEncoding: BXDirectStringEncoding];
-				DOSBoxDrive->dirCache.SetLabel(cLabel, [drive isCDROM], false);
+				DOSBoxDrive->SetLabel(cLabel, [drive isCDROM], false);
 			}
 			
 			//Populate the drive with the settings we ended up using, and add the drive to our own drives cache

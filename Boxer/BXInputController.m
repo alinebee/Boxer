@@ -250,7 +250,7 @@ enum {
 
 - (void) mouseDown: (NSEvent *)theEvent
 {		
-	//Only respond to clicks otherwise if we're locked or tracking mouse input while unlocked
+	//Only respond to clicks if we're locked or tracking mouse input while unlocked
 	if ([self _controlsCursorWhileMouseInside])
 	{
 		BXInputHandler *inputHandler = (BXInputHandler *)[self representedObject];
@@ -291,8 +291,8 @@ enum {
 		//Otherwise, pass the left click on as-is
 		else [inputHandler mouseButtonPressed: OSXMouseButtonLeft withModifiers: modifiers];
 	}
-	//If we're clicking on the window while unlocked tracking is disabled,
-	//then lock the mouse immediately
+	//If we're clicking on the window while unlocked-tracking is disabled,
+	//then lock the mouse immediately - but only if Boxer is actually the active application
 	else if (![self mouseLocked] && ![self trackMouseWhileUnlocked])
 	{
 		[self toggleMouseLocked: self];
@@ -697,12 +697,13 @@ enum {
 
 - (void) _applyMouseLockState: (BOOL)lock
 {
-	//Ensure we don't "over-hide" the cursor if it's already hidden
-	//(since [NSCursor hide] stacks)
-	BOOL cursorVisible = CGCursorIsVisible();
-	
-	if		(cursorVisible && lock)		[NSCursor hide];
-	else if (!cursorVisible && !lock)	[NSCursor unhide];
+	//Ensure we don't "over-hide" the cursor if it's already hidden,
+	//since [NSCursor hide] stacks.
+	//IMPLEMENTATION NOTE: we also used to check CGCursorIsVisible when
+	//unhiding too, but this broke with Cmd-Tabbing and there's no danger
+	//of "over-unhiding" anyway.
+	if		(CGCursorIsVisible() && lock)	[NSCursor hide];
+	else if (!lock)							[NSCursor unhide];
 	
 	//Reset any custom faded cursor to the default arrow cursor.
 	[[NSCursor arrowCursor] set];

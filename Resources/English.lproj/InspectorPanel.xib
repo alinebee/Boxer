@@ -22,7 +22,7 @@
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<integer value="876"/>
-			<integer value="1113"/>
+			<integer value="1071"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -2652,26 +2652,6 @@
 						<reference key="destination" ref="555749561"/>
 					</object>
 					<int key="connectionID">1447</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">hidden: selection.gameSettings.trackMouseWhileUnlocked</string>
-						<reference key="source" ref="1004081434"/>
-						<reference key="destination" ref="56494336"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="1004081434"/>
-							<reference key="NSDestination" ref="56494336"/>
-							<string key="NSLabel">hidden: selection.gameSettings.trackMouseWhileUnlocked</string>
-							<string key="NSBinding">hidden</string>
-							<string key="NSKeyPath">selection.gameSettings.trackMouseWhileUnlocked</string>
-							<object class="NSDictionary" key="NSOptions">
-								<string key="NS.key.0">NSValueTransformerName</string>
-								<string key="NS.object.0">NSNegateBoolean</string>
-							</object>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1450</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">

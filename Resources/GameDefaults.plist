@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>trackMouseWhileUnlocked</key>
-	<true/>
+	<false/>
 	<key>mouseSensitivity</key>
 	<real>1</real>
 	<key>frameskip</key>

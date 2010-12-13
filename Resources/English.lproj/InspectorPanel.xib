@@ -21,8 +21,8 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="876"/>
 			<integer value="1071"/>
+			<integer value="876"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1398,7 +1398,7 @@
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<object class="NSMenuItem" id="791753002">
 						<reference key="NSMenu" ref="983218472"/>
-						<string key="NSTitle">Reveal in Finder</string>
+						<string key="NSTitle">Show in Finder</string>
 						<string key="NSKeyEquiv"/>
 						<int key="NSMnemonicLoc">2147483647</int>
 						<reference key="NSOnImage" ref="877608972"/>
@@ -1485,7 +1485,7 @@
 					</object>
 					<object class="NSMenuItem" id="555822503">
 						<reference key="NSMenu" ref="29208252"/>
-						<string key="NSTitle">Reveal in Finder</string>
+						<string key="NSTitle">Show in Finder</string>
 						<string key="NSKeyEquiv"/>
 						<int key="NSMnemonicLoc">2147483647</int>
 						<reference key="NSOnImage" ref="877608972"/>
@@ -1588,7 +1588,7 @@
 					</object>
 					<object class="NSMenuItem" id="36598483">
 						<reference key="NSMenu" ref="215026082"/>
-						<string key="NSTitle">Reveal game in Finder</string>
+						<string key="NSTitle">Show gamebox in Finder</string>
 						<string key="NSKeyEquiv"/>
 						<int key="NSMnemonicLoc">2147483647</int>
 						<reference key="NSOnImage" ref="877608972"/>
@@ -4089,7 +4089,7 @@
 					<string>{{137, 164}, {228, 53}}</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
-					<string>{{329, 618}, {202, 93}}</string>
+					<string>{{329, 618}, {220, 93}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>

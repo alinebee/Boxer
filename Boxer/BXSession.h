@@ -45,6 +45,7 @@
 	BOOL isClosing;
 	BOOL emulating;
 	BOOL showDriveNotifications;
+	BOOL userToggledProgramPanel;
 	
 	NSOperationQueue *importQueue;
 	
@@ -106,6 +107,11 @@
 
 //The icon for this DOS session, which corresponds to the icon of the session's gamebox.
 @property (copy, nonatomic) NSImage *representedIcon;
+
+//Whether the user has manually toggled the program panel this session.
+//BXSession uses this to finesse when it should auto-show/auto-hide the
+//program panel in response to leaving/returning to the DOS prompt.
+@property (assign) BOOL userToggledProgramPanel;
 
 
 #pragma mark -

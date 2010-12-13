@@ -21,7 +21,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="169"/>
+			<integer value="35"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -265,7 +265,7 @@ cnQgaXQgaW50byBhIG5ldyBnYW1lYm94LiA</string>
 				<string key="NSFrameSize">{480, 320}</string>
 			</object>
 			<object class="NSView" id="384524801">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">274</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -406,7 +406,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 							<object class="NSButton" id="208687213">
 								<reference key="NSNextResponder" ref="1065075942"/>
 								<int key="NSvFlags">289</int>
-								<string key="NSFrame">{{279, 7}, {60, 25}}</string>
+								<string key="NSFrame">{{270, 7}, {60, 25}}</string>
 								<reference key="NSSuperview" ref="1065075942"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="284357024">
@@ -426,7 +426,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 							<object class="NSButton" id="797821357">
 								<reference key="NSNextResponder" ref="1065075942"/>
 								<int key="NSvFlags">292</int>
-								<string key="NSFrame">{{15, 7}, {96, 25}}</string>
+								<string key="NSFrame">{{15, 7}, {104, 25}}</string>
 								<reference key="NSSuperview" ref="1065075942"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="134499466">
@@ -446,7 +446,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 							<object class="NSButton" id="282693136">
 								<reference key="NSNextResponder" ref="1065075942"/>
 								<int key="NSvFlags">289</int>
-								<string key="NSFrame">{{349, 7}, {116, 25}}</string>
+								<string key="NSFrame">{{340, 7}, {125, 25}}</string>
 								<reference key="NSSuperview" ref="1065075942"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="1010249392">
@@ -470,9 +470,10 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{480, 320}</string>
+				<reference key="NSSuperview"/>
 			</object>
 			<object class="NSView" id="762783357">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">274</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -565,7 +566,6 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{480, 320}</string>
-				<reference key="NSSuperview"/>
 			</object>
 			<object class="NSView" id="832643188">
 				<nil key="NSNextResponder"/>

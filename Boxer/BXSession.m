@@ -45,7 +45,7 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 @synthesize gameSettings;
 @synthesize drives, executables, documentation;
 @synthesize emulating;
-
+@synthesize userToggledProgramPanel;
 
 #pragma mark -
 #pragma mark Helper class methods
@@ -258,6 +258,14 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	[self start];
 }
 
+- (void) setUserToggledProgramPanel: (BOOL)flag
+{
+	//Finesse: ignore program toggles while a program is running, only pay attention
+	//when the user hides the program panel at the DOS prompt. This makes the behaviour
+	//feel more 'natural', in that the panel will stay hidden while the user is mucking
+	//around at the prompt but will return as soon as the user exits.
+	if ([emulator isAtPrompt]) userToggledProgramPanel = flag;
+}
 
 #pragma mark -
 #pragma mark Flow control
@@ -574,18 +582,23 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 #pragma mark -
 #pragma mark Notifications
 
+- (void) willRunStartupCommands: (NSNotification *)notification {}
+- (void) didRunStartupCommands: (NSNotification *)notification {}
+
 - (void) programWillStart: (NSNotification *)notification
 {
-	//Don't set the active program if we already have one
-	//This way, we keep track of when a user launches a batch file and don't immediately discard
+	//Don't set the active program if we already have one: this way, we keep
+	//track of when a user launches a batch file and don't immediately discard
 	//it in favour of the next program the batch-file runs
 	if (![self activeProgramPath])
 	{
 		[self setActiveProgramPath: [[notification userInfo] objectForKey: @"localPath"]];
 		[DOSWindowController synchronizeWindowTitleWithDocumentName];
 		
-		//Hide the program picker after launching the default program 
-		if ([[self activeProgramPath] isEqualToString: [gamePackage targetPath]])
+		//Hide the program picker after launching the default program,
+		//only if the user hasn't manually toggled the panel themselves
+		if (![self userToggledProgramPanel] && [self gamePackage] &&
+			[[self activeProgramPath] isEqualToString: [gamePackage targetPath]])
 		{
 			[NSObject cancelPreviousPerformRequestsWithTarget: [self DOSWindowController]
 													 selector: @selector(showProgramPanel:)
@@ -608,17 +621,15 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	}
 }
 
-- (void) willRunStartupCommands: (NSNotification *)notification {}
-- (void) didRunStartupCommands: (NSNotification *)notification {}
-
 - (void) didReturnToShell: (NSNotification *)notification
 {
 	//Clear the active program
 	[self setActiveProgramPath: nil];
 	[DOSWindowController synchronizeWindowTitleWithDocumentName];
 	
-	//Show the program chooser after returning to the DOS prompt
-	if ([self isGamePackage] && [[self executables] count])
+	//Show the program chooser after returning to the DOS prompt, as long
+	//as the program chooser hasn't been manually toggled from the DOS prompt
+	if ([self isGamePackage] && ![self userToggledProgramPanel] && [[self executables] count])
 	{
 		//Show only after a delay, so that the window has time to resize after quitting the game
 		[[self DOSWindowController] performSelector: @selector(showProgramPanel:)

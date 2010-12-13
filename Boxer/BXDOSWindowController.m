@@ -239,8 +239,12 @@
 #pragma mark -
 #pragma mark UI actions
 
-- (IBAction) toggleStatusBarShown:		(id)sender	{ [self setStatusBarShown:		![self statusBarShown]]; }
-- (IBAction) toggleProgramPanelShown:	(id)sender	{ [self setProgramPanelShown:	![self programPanelShown]]; }
+- (IBAction) toggleStatusBarShown:		(id)sender	{ [self setStatusBarShown: ![self statusBarShown]]; }
+- (IBAction) toggleProgramPanelShown:	(id)sender
+{
+	[[self document] setUserToggledProgramPanel: YES];
+	[self setProgramPanelShown:	![self programPanelShown]];
+}
 
 - (IBAction) showProgramPanel: (id)sender
 {

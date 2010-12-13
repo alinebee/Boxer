@@ -884,7 +884,7 @@
 		[DOSWindowController synchronizeWindowTitleWithDocumentName];
 	
 		//Always show the program panel when installing
-		//(Show only after a delay, so that the installer time to start up)
+		//(Show only after a delay, so that the installer has time to start up)
 		[[self DOSWindowController] performSelector: @selector(showProgramPanel:)
 										 withObject: self
 										 afterDelay: 1.0];

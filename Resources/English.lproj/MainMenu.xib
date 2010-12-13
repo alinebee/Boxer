@@ -1736,6 +1736,14 @@
 					</object>
 					<int key="connectionID">1875</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">toggleInspectorPanel:</string>
+						<reference key="source" ref="935372999"/>
+						<reference key="destination" ref="512917539"/>
+					</object>
+					<int key="connectionID">1879</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -3032,7 +3040,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1878</int>
+			<int key="maxID">1879</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

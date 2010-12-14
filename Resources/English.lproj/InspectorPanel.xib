@@ -1406,7 +1406,7 @@
 					</object>
 					<object class="NSMenuItem" id="600306152">
 						<reference key="NSMenu" ref="983218472"/>
-						<string key="NSTitle">Open in DOS</string>
+						<string key="NSTitle">Make current drive</string>
 						<string key="NSKeyEquiv"/>
 						<int key="NSMnemonicLoc">2147483647</int>
 						<reference key="NSOnImage" ref="877608972"/>
@@ -1493,7 +1493,7 @@
 					</object>
 					<object class="NSMenuItem" id="1036505527">
 						<reference key="NSMenu" ref="29208252"/>
-						<string key="NSTitle">Open in DOS</string>
+						<string key="NSTitle">Make current drive</string>
 						<string key="NSKeyEquiv"/>
 						<int key="NSMnemonicLoc">2147483647</int>
 						<reference key="NSOnImage" ref="877608972"/>
@@ -3955,7 +3955,7 @@
 					<integer value="2"/>
 					<string>BXDrivePanelController</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{241, 506}, {197, 153}}</string>
+					<string>{{241, 506}, {203, 153}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -5882,11 +5882,11 @@
 			</object>
 			<object class="NSMutableArray" key="dict.values">
 				<bool key="EncodedWithXMLCoder">YES</bool>
-				<string>{17, 17}</string>
-				<string>{17, 17}</string>
+				<string>{15, 15}</string>
+				<string>{8, 8}</string>
 				<string>{9, 8}</string>
 				<string>{7, 2}</string>
-				<string>{17, 17}</string>
+				<string>{8, 8}</string>
 				<string>{83, 83}</string>
 				<string>{15, 15}</string>
 			</object>

@@ -10,7 +10,7 @@
 #import "BXAppController.h"
 #import "BXSession+BXFileManager.h"
 #import "BXSession+BXDragDrop.h"
-#import "BXEmulator.h"
+#import "BXEmulator+BXDOSFileSystem.h"
 #import "BXDrive.h"
 #import "BXValueTransformers.h"
 #import "BXOperation.h"
@@ -257,7 +257,7 @@ enum {
 		if (!hasSelection) return NO;
 		
 		//Check if any of the selected drives are locked or internal
-		for (BXDrive *drive in [[self drives] selectedObjects])
+		for (BXDrive *drive in driveSelection)
 		{
 			if ([drive isLocked] || [drive isInternal]) return NO;
 		}
@@ -265,7 +265,24 @@ enum {
 	}
 	if (action == @selector(openSelectedDrivesInDOS:))
 	{
-		return hasSelection && [session isEmulating] && ![theEmulator isRunningProcess];
+		BOOL isCurrent = [[driveSelection lastObject] isEqualTo: [theEmulator currentDrive]];
+		
+		NSString *title;
+		if (isCurrent)
+		{
+			title = NSLocalizedString(@"Is current drive",
+									  @"Menu item title for when selected drive is already the current DOS drive.");
+		}
+		else title = NSLocalizedString(@"Make current drive",
+									   @"Menu item title for switching to the selected drive in DOS.");
+		
+		[theItem setTitle: title];
+		
+		//Deep breath now: only enable option if...
+		//- only one drive is selected
+		//- the drive isn't already the current drive
+		//- the session is at the DOS prompt
+		return !isCurrent && [driveSelection count] == 1 && [theEmulator isAtPrompt];
 	}
 	
 	if (action == @selector(importSelectedDrives:))

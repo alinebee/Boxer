@@ -21,7 +21,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="35"/>
+			<integer value="125"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -265,7 +265,7 @@ cnQgaXQgaW50byBhIG5ldyBnYW1lYm94LiA</string>
 				<string key="NSFrameSize">{480, 320}</string>
 			</object>
 			<object class="NSView" id="384524801">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">274</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -470,7 +470,6 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{480, 320}</string>
-				<reference key="NSSuperview"/>
 			</object>
 			<object class="NSView" id="762783357">
 				<nil key="NSNextResponder"/>
@@ -568,7 +567,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 				<string key="NSFrameSize">{480, 320}</string>
 			</object>
 			<object class="NSView" id="832643188">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">274</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -624,7 +623,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 										<string>NeXT TIFF v4.0 pasteboard type</string>
 									</object>
 								</object>
-								<string key="NSFrame">{{32, 91}, {136, 88}}</string>
+								<string key="NSFrame">{{32, 103}, {136, 88}}</string>
 								<reference key="NSSuperview" ref="99871927"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSImageCell" key="NSCell" id="235945828">
@@ -787,6 +786,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{480, 320}</string>
+				<reference key="NSSuperview"/>
 			</object>
 			<object class="NSMenu" id="921553869">
 				<string key="NSTitle"/>

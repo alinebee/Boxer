@@ -34,6 +34,8 @@
 	[background drawFromCenter: center radius: innerRadius
 					  toCenter: center radius: outerRadius
 					   options: NSGradientDrawsBeforeStartingLocation | NSGradientDrawsAfterEndingLocation];
+	
+	[background release];
 }
 
 @end
@@ -144,7 +146,7 @@
 
 - (void) drawSpotlightWithFrame: (NSRect)frame inView: (NSView *)controlView withAlpha: (CGFloat)alpha
 {
-	NSImage *spotlight = [NSImage imageNamed: @"WelcomeSpotlight"];
+	NSImage *spotlight = [[NSImage imageNamed: @"WelcomeSpotlight"] copy];
 	[spotlight setFlipped: [controlView isFlipped]];
 	
 	NSRect spotlightFrame;
@@ -155,6 +157,8 @@
 				 fromRect: NSZeroRect
 				operation: NSCompositePlusLighter
 				 fraction: alpha];
+	
+	[spotlight release];
 }
 
 @end

@@ -136,6 +136,8 @@
 	
 	for (NSString *path in [BXPathEnumerator enumeratorAtPath: filePath])
 	{
+		BOOL isWindowsExecutable = NO;
+	
 		//If we find an indication that this is an already-installed game, then we won't bother using any installers.
 		//However, we'll still keep looking for executables: but only so that we can make sure the user really is
 		//importing a proper DOS game (and not a Windows-only game.)
@@ -153,14 +155,15 @@
 			//Exclude windows-only programs, but note how many we've found
 			if ([workspace isWindowsOnlyExecutableAtPath: path])
 			{
+				isWindowsExecutable = YES;
 				numWindowsExecutables++;
-				continue;
 			}
 			
 			//As described above, only bother recording installers if the game isn't already installed
 			if (!isAlreadyInstalledGame)
 			{
 				//If this was the designated installer for this game profile, add it to the installer list
+				//NOTE: we do this even if the file appeared to be Windows-only
 				if (!preferredInstaller && [detectedProfile isDesignatedInstallerAtPath: path])
 				{
 					[detectedInstallers addObject: path];
@@ -168,7 +171,8 @@
 				}
 				
 				//Otherwise if it looks like an installer to us, add it to the installer list
-				else if ([[self class] isInstallerAtPath: path])
+				//NOTE: we only do this if the file isn't Windows-only
+				else if (!isWindowsExecutable && [[self class] isInstallerAtPath: path])
 				{
 					[detectedInstallers addObject: path];
 				}			

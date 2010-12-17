@@ -249,7 +249,7 @@
 	NSUInteger optionKeyDown = [[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask;
 	if (optionKeyDown) return YES;
 
-	NSMutableArray *drivesInUse = [[NSMutableArray alloc] initWithCapacity: [selectedDrives count]];
+	NSMutableArray *drivesInUse = [[[NSMutableArray alloc] initWithCapacity: [selectedDrives count]] autorelease];
 	for (BXDrive *drive in selectedDrives)
 	{
 		if ([drive isLocked]) return NO; //Prevent locked drives from being removed altogether
@@ -272,6 +272,7 @@
 						  modalDelegate: self
 						 didEndSelector: @selector(drivesInUseAlertDidEnd:returnCode:forDrives:)
 							contextInfo: selectedDrives];
+
 		return NO;
 	}
 	return YES;

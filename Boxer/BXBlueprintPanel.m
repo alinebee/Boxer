@@ -65,7 +65,7 @@
 	if (NSIntersectsRect(dirtyRect, shadowRect))
 	{
 		NSGradient *topShadow = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.2f]
-														   endingColor: [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.0f]];
+															  endingColor: [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.0f]];
 		
 		[topShadow drawInRect: shadowRect angle: 270.0f];
 		[topShadow release];
@@ -174,5 +174,6 @@
 		[dropShadow set];
 		[super drawRect: dirtyRect];
 	[NSGraphicsContext restoreGraphicsState];
+	[dropShadow release];
 }
 @end

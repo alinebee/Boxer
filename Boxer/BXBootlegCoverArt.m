@@ -64,7 +64,7 @@
 	NSColor *color		= [self textColor];
 	NSFont *font		= [NSFont fontWithName: [self fontName] size: fontSize];
 	
-	NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+	NSMutableParagraphStyle *style = [[[NSParagraphStyle defaultParagraphStyle] mutableCopy] autorelease];
 	[style setAlignment: NSCenterTextAlignment];
 	[style setMaximumLineHeight: lineHeight];
 	[style setMinimumLineHeight: lineHeight];

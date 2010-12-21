@@ -27,7 +27,7 @@
 		intendedScale	= NSMakeSize(1.0f, 1.0f);
 
 		NSUInteger requiredLength = size.width * size.height * bitDepth;
-		frameData	= [[NSMutableData alloc] initWithCapacity: requiredLength];
+		frameData = [[NSMutableData alloc] initWithCapacity: requiredLength];
 	}
 	return self;
 }

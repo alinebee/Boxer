@@ -50,7 +50,10 @@
 {
 	[[self renderer] updateWithFrame: frame];
 	[self setHidden: frame == nil];
-	[self setNeedsDisplay: YES];
+	//Really we should use setNeedsDisplay: instead of forcing the window to redraw immediately;
+	//however, display results in *much* less tearing and more responsive visuals.
+	[self display];
+	//[self setNeedsDisplay: YES];
 }
 
 - (BXFrameBuffer *)currentFrame
@@ -70,7 +73,7 @@
 
 
 - (void) prepareOpenGL
-{
+{	
 	[[self renderer] prepareForGLContext: [[self openGLContext] CGLContextObj]];
 }
 

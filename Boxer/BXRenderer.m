@@ -102,6 +102,9 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 {
 	CGLContextObj cgl_ctx = glContext;
 	
+	//Enable multithreaded OpenGL execution (if available)
+	CGLEnable(cgl_ctx, kCGLCEMPEngine);
+	
 	//Check what the largest texture size we can support is
 	GLint maxTextureDims;
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureDims);
@@ -111,7 +114,6 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 	supportsFBO = (BOOL)gluCheckExtension((const GLubyte *)"GL_EXT_framebuffer_object",
 										  glGetString(GL_EXTENSIONS));
 	
-	//supportsFBO = NO;
 	if (supportsFBO)
 	{
 		glGenFramebuffersEXT(1, &scalingBuffer);
@@ -148,10 +150,10 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 	
     CGLLockContext(cgl_ctx);
 	
-	[self _prepareFrameTextureForCurrentFrameInCGLContext: glContext];
-	[self _prepareScalingBufferForCurrentFrameInCGLContext: glContext];
+	[self _prepareFrameTextureForCurrentFrameInCGLContext: cgl_ctx];
+	[self _prepareScalingBufferForCurrentFrameInCGLContext: cgl_ctx];
 	
-	[self _renderCurrentFrameInCGLContext: glContext];
+	[self _renderCurrentFrameInCGLContext: cgl_ctx];
 	
     CGLUnlockContext(cgl_ctx);
 	
@@ -183,22 +185,22 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 #pragma mark Private methods
 
 - (void) _renderCurrentFrameInCGLContext: (CGLContextObj)glContext
-{	
+{
 	CGLContextObj cgl_ctx = glContext;
 	
-	GLint contextFramebuffer;
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &contextFramebuffer);
+	GLint contextFramebuffer = 0;
+	if (useScalingBuffer) glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &contextFramebuffer);
+
+	//Commented out as these shouldn't be necessary
+	//glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    //glPushAttrib(GL_ALL_ATTRIB_BITS);
 	
-	glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
-    glPushAttrib(GL_ALL_ATTRIB_BITS);
-	
-	//Enable and disable everything we'll be doing today
+	//Disable everything we don't need
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_SCISSOR_TEST);
 	glDisable(GL_LIGHTING);
 	glDisable(GL_CULL_FACE);
     glDisable(GL_BLEND);
-    glEnable(GL_TEXTURE_RECTANGLE_ARB);
 	
 	//Set the viewport to match the aspect ratio of our frame
 	CGRect viewportRect = CGRectIntegral([self viewportForFrame: [self currentFrame]]);
@@ -219,8 +221,7 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 	{
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, scalingBuffer);
 		
-		//Set the viewport to match the size of the scaling buffer (rather than the layer size)
-		glPushAttrib(GL_VIEWPORT_BIT);
+		//Set the viewport to match the size of the scaling buffer (rather than the viewport size)
 		glViewport(0, 0, (GLsizei)scalingBufferSize.width, (GLsizei)scalingBufferSize.height);
 	}
 	
@@ -228,7 +229,7 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 	//-----------
 
 	NSSize frameSize = [[self currentFrame] size];
-	CGRect frameRegion = CGRectMake(0, 0, frameSize.width, frameSize.height);
+	CGRect frameRegion = CGRectIntegral(CGRectMake(0, 0, frameSize.width, frameSize.height));
 	GLfloat frameVerts[] = {
 		-1,	1,
 		1,	1,
@@ -245,14 +246,17 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 	[self _renderTexture: frameTexture
 			  fromRegion: frameRegion
 				toPoints: frameVerts
-			inCGLContext: glContext];
+			inCGLContext: cgl_ctx];
 	
 	if ([self currentShader]) glUseProgramObjectARB(NULL);
 	
 	if (useScalingBuffer)
 	{
-		//Revert the GL viewport to match the layer size (as set previously)
-		glPopAttrib();
+		//Revert the GL viewport to match the viewport again
+		glViewport((GLint)viewportRect.origin.x,
+				   (GLint)viewportRect.origin.y,
+				   (GLsizei)viewportRect.size.width,
+				   (GLsizei)viewportRect.size.height);
 		
 		//Revert the framebuffer to the context's original target,
 		//so that drawing goes to the proper place from now on
@@ -273,23 +277,28 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 		[self _renderTexture: scalingBufferTexture
 				  fromRegion: scalingRegion
 					toPoints: scalingVerts
-				inCGLContext: glContext];
+				inCGLContext: cgl_ctx];
 	}
 	
 	//Clean up the things we enabled
-    glPopAttrib();
-    glPopClientAttrib();
+    //glPopAttrib();
+    //glPopClientAttrib();
 }
 
 - (void) _renderTexture: (GLuint)texture fromRegion: (CGRect)textureRegion toPoints: (GLfloat *)vertices inCGLContext: (CGLContextObj)glContext
 {
 	CGLContextObj cgl_ctx = glContext;
 	
+	GLfloat minX = CGRectGetMinX(textureRegion),
+			minY = CGRectGetMinY(textureRegion),
+			maxX = CGRectGetMaxX(textureRegion),
+			maxY = CGRectGetMaxY(textureRegion);
+	
     GLfloat texCoords[] = {
-        CGRectGetMinX(textureRegion),	CGRectGetMinY(textureRegion),
-        CGRectGetMaxX(textureRegion),	CGRectGetMinY(textureRegion),
-        CGRectGetMaxX(textureRegion),	CGRectGetMaxY(textureRegion),
-		CGRectGetMinX(textureRegion),	CGRectGetMaxY(textureRegion)
+        minX,	minY,
+        maxX,	minY,
+        maxX,	maxY,
+		minX,	maxY
     };
 	
 	glEnable(GL_TEXTURE_RECTANGLE_ARB);
@@ -335,7 +344,7 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 				if (scalingBufferTexture) glDeleteTextures(1, &scalingBufferTexture);
 				scalingBufferTexture = [self _createTextureForScalingBuffer: scalingBuffer
 																   withSize: newBufferSize
-															   inCGLContext: glContext];
+															   inCGLContext: cgl_ctx];
 			}
 			scalingBufferSize = newBufferSize;
 		}
@@ -351,14 +360,14 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 	{
 		//Wipe out any existing frame texture we have before replacing it
 		if (frameTexture) glDeleteTextures(1, &frameTexture);
-		frameTexture = [self _createTextureForFrameBuffer: [self currentFrame] inCGLContext: glContext];
+		frameTexture = [self _createTextureForFrameBuffer: [self currentFrame] inCGLContext: cgl_ctx];
 		
 		needsNewFrameTexture = NO;
 		needsFrameTextureUpdate = NO;
 	}
 	else if (needsFrameTextureUpdate)
 	{
-		[self _fillTexture: frameTexture withFrameBuffer: [self currentFrame] inCGLContext: glContext];
+		[self _fillTexture: frameTexture withFrameBuffer: [self currentFrame] inCGLContext: cgl_ctx];
 		needsFrameTextureUpdate = NO;
 	}
 }
@@ -386,7 +395,6 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 	//to video memory for fast texture transfers.
 	
 	//These are disabled for now as they produce very apparent frame tearing and shimmering
-	//TODO: look into Apple Fence functions?
 	//glTextureRangeAPPLE(GL_TEXTURE_RECTANGLE_ARB,  texWidth * texHeight * (32 >> 3), [frame bytes]);
 	//glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_STORAGE_HINT_APPLE, GL_STORAGE_CACHED_APPLE);
 	
@@ -410,7 +418,8 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 				 GL_BGRA,						//Byte ordering
 				 GL_UNSIGNED_INT_8_8_8_8_REV,	//Byte packing
 				 [frame bytes]);				//Texture data
-	
+
+#ifdef DEBUG
 	GLenum status = glGetError();
     if (status)
     {
@@ -418,6 +427,7 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 		glDeleteTextures(1, &texture);
 		texture = 0;
 	}
+#endif
 	
     glPixelStorei(GL_UNPACK_CLIENT_STORAGE_APPLE, GL_FALSE);
 	glDisable(GL_TEXTURE_RECTANGLE_ARB);
@@ -444,11 +454,13 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 					GL_UNSIGNED_INT_8_8_8_8_REV,	//Byte packing
 					[frame bytes]);					//Texture data
 	
+#ifdef DEBUG	
 	GLenum status = glGetError();
     if (status)
     {
         NSLog(@"[BXRenderingLayer _fillTexture:withFrameBuffer:inCGLContext:] Could not update texture for frame buffer of size: %@ (OpenGL error %04X)", NSStringFromSize([frame size]), status);
 	}
+#endif
 	
 	glDisable(GL_TEXTURE_RECTANGLE_ARB);
 }
@@ -486,6 +498,7 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 				 GL_UNSIGNED_INT_8_8_8_8_REV,	//Byte packing
 				 NULL);							//Empty data
 	
+#ifdef DEBUG
 	GLenum status = glGetError();
     if (status)
     {
@@ -493,6 +506,7 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 		glDeleteTextures(1, &texture);
 		texture = 0;
 	}
+#endif
 	
 	//Now bind it to the specified buffer
 	if (texture)
@@ -503,6 +517,7 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, buffer);
 		glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_RECTANGLE_ARB, texture, 0);
 		
+#ifdef DEBUG
 		status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
 		if (status != GL_FRAMEBUFFER_COMPLETE_EXT)
 		{
@@ -510,6 +525,8 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 			glDeleteTextures(1, &texture);
 			texture = 0;
 		}
+#endif
+		
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, contextFramebuffer);
 	}
 	

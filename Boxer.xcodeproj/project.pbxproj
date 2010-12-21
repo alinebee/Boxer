@@ -224,6 +224,8 @@
 		9F843FE11226EB1100FD37F1 /* import.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F843FE01226EB1100FD37F1 /* import.png */; };
 		9F8A974A10E7DEF500A4B72A /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8A974910E7DEF500A4B72A /* RegexKitLite.m */; };
 		9F8A976010E7EDDE00A4B72A /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */; };
+		9F8BFE9F12C0EF7B0059030F /* BXDisplayLinkRenderingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8BFE9E12C0EF7B0059030F /* BXDisplayLinkRenderingView.m */; };
+		9F8BFEA612C0F0EC0059030F /* DisplayLinkedDOSWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F8BFEA412C0F0EC0059030F /* DisplayLinkedDOSWindow.xib */; };
 		9F960C7F12AAAB2900568AFD /* BlankShelves.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F960C7E12AAAB2900568AFD /* BlankShelves.png */; };
 		9F9A4C9610F67A1F00E61965 /* GalleryOriginal.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A4C9010F67A1F00E61965 /* GalleryOriginal.png */; };
 		9F9A4C9710F67A1F00E61965 /* GalleryHQx.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A4C9110F67A1F00E61965 /* GalleryHQx.png */; };
@@ -768,6 +770,9 @@
 		9F8A974810E7DEF500A4B72A /* RegexKitLite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegexKitLite.h; sourceTree = "<group>"; };
 		9F8A974910E7DEF500A4B72A /* RegexKitLite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegexKitLite.m; sourceTree = "<group>"; };
 		9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
+		9F8BFE9D12C0EF7B0059030F /* BXDisplayLinkRenderingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDisplayLinkRenderingView.h; sourceTree = "<group>"; };
+		9F8BFE9E12C0EF7B0059030F /* BXDisplayLinkRenderingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDisplayLinkRenderingView.m; sourceTree = "<group>"; };
+		9F8BFEA512C0F0EC0059030F /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/DisplayLinkedDOSWindow.xib; sourceTree = "<group>"; };
 		9F960C7E12AAAB2900568AFD /* BlankShelves.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BlankShelves.png; sourceTree = "<group>"; };
 		9F9A4C9010F67A1F00E61965 /* GalleryOriginal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GalleryOriginal.png; sourceTree = "<group>"; };
 		9F9A4C9110F67A1F00E61965 /* GalleryHQx.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GalleryHQx.png; sourceTree = "<group>"; };
@@ -1065,6 +1070,7 @@
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
+				9F8BFEA412C0F0EC0059030F /* DisplayLinkedDOSWindow.xib */,
 			);
 			name = Boxer;
 			sourceTree = "<group>";
@@ -1210,6 +1216,8 @@
 		9F23EB0111390A2600DC5AB6 /* Rendering */ = {
 			isa = PBXGroup;
 			children = (
+				9F8BFE9D12C0EF7B0059030F /* BXDisplayLinkRenderingView.h */,
+				9F8BFE9E12C0EF7B0059030F /* BXDisplayLinkRenderingView.m */,
 				9FBB86830F5DD070008418E6 /* BXLayerRenderingView.h */,
 				9FBB86840F5DD070008418E6 /* BXLayerRenderingView.m */,
 				9FECE1C011A3244500E0EBB6 /* BXGLRenderingView.h */,
@@ -2171,6 +2179,7 @@
 				9FFC2AC012A19CCC008C2B3B /* Sample Game Icons in Resources */,
 				9F960C7F12AAAB2900568AFD /* BlankShelves.png in Resources */,
 				9FE28F7C12BBE75900EF27C5 /* LayeredDOSWindow.xib in Resources */,
+				9F8BFEA612C0F0EC0059030F /* DisplayLinkedDOSWindow.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2438,6 +2447,7 @@
 				9F7721E912B38C4400072AE8 /* shell_batch.cpp in Sources */,
 				9F7721EA12B38C4400072AE8 /* shell_cmds.cpp in Sources */,
 				9F7721EB12B38C4400072AE8 /* shell_misc.cpp in Sources */,
+				9F8BFE9F12C0EF7B0059030F /* BXDisplayLinkRenderingView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2563,6 +2573,14 @@
 				9F76D3F610CBC3B300C3B081 /* English */,
 			);
 			name = "GNU General Public License.txt";
+			sourceTree = "<group>";
+		};
+		9F8BFEA412C0F0EC0059030F /* DisplayLinkedDOSWindow.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9F8BFEA512C0F0EC0059030F /* English */,
+			);
+			name = DisplayLinkedDOSWindow.xib;
 			sourceTree = "<group>";
 		};
 		9F9A4CA410F67DD800E61965 /* Preferences.xib */ = {

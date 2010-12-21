@@ -27,7 +27,7 @@
 {
 	BXFrameBuffer *currentFrame;
 	Shader *currentShader;
-
+	
 	BOOL supportsFBO;
 	BOOL useScalingBuffer;
 	
@@ -48,17 +48,17 @@
 	
 	NSTimeInterval lastFrameTime;
 	NSTimeInterval renderingTime;
-	CGFloat frameRate;	
+	CGFloat frameRate;
 }
 
 #pragma mark -
 #pragma mark Properties
 
 //The current frame that will be rendered when renderToGLContext: is called.
-@property (retain) BXFrameBuffer *currentFrame;
+@property (retain, nonatomic) BXFrameBuffer *currentFrame;
 
 //The current shader we are using to render with.
-@property (retain) Shader *currentShader;
+@property (retain, nonatomic) Shader *currentShader;
 
 //The frames-per-second we are producing, measured as the time between the last two rendered frames.
 //Note that BXRenderer is only rendered when the frame or viewport changes, so this rate will only

@@ -231,7 +231,15 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 
 - (void) makeWindowControllers
 {
+	//Use layer-based rendering
+	//BXDOSWindowController *controller = [[BXDOSWindowController alloc] initWithWindowNibName: @"LayeredDOSWindow"];
+	
+	//Use display-linked rendering
+	//BXDOSWindowController *controller = [[BXDOSWindowController alloc] initWithWindowNibName: @"DisplayLinkedDOSWindow"];
+
+	//Use regular rendering
 	BXDOSWindowController *controller = [[BXDOSWindowController alloc] initWithWindowNibName: @"DOSWindow"];
+
 	[self addWindowController:		controller];
 	[self setDOSWindowController:	controller];
 	

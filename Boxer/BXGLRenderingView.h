@@ -17,6 +17,6 @@
 {
 	BXRenderer *renderer;
 }
-@property (retain) BXRenderer *renderer;
+@property (retain, nonatomic) BXRenderer *renderer;
 
 @end

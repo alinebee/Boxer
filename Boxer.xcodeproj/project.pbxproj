@@ -1070,7 +1070,6 @@
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
-				9F8BFEA412C0F0EC0059030F /* DisplayLinkedDOSWindow.xib */,
 			);
 			name = Boxer;
 			sourceTree = "<group>";
@@ -1363,6 +1362,7 @@
 		9F496E4C108EEDF700282261 /* XIBs */ = {
 			isa = PBXGroup;
 			children = (
+				9F8BFEA412C0F0EC0059030F /* DisplayLinkedDOSWindow.xib */,
 				9F18137A12999E39009BC4B2 /* GamesFolderPanelOptions.xib */,
 				9F2C28B6129D924E00B172C8 /* FirstRunWindow.xib */,
 				9F45A1CB109C3D3400593456 /* MainMenu.xib */,
@@ -2581,6 +2581,7 @@
 				9F8BFEA512C0F0EC0059030F /* English */,
 			);
 			name = DisplayLinkedDOSWindow.xib;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		9F9A4CA410F67DD800E61965 /* Preferences.xib */ = {
@@ -2736,7 +2737,7 @@
 			buildSettings = {
 				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 20101212.3;
+				CURRENT_PROJECT_VERSION = 20101222.1;
 				GCC_VERSION = 4.0;
 				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH)";
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
@@ -2851,8 +2852,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
-				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 20101212.3;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 20101222.1;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_VERSION = 4.0;
 				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH)";
@@ -2866,7 +2867,7 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
 				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
 				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 20101212.3;
+				CURRENT_PROJECT_VERSION = 20101222.1;
 				GCC_VERSION = 4.0;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 			};

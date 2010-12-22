@@ -227,7 +227,7 @@
 			<key>BXProfileDescription</key>
 			<string>Old games that need low conventional memory.</string>
 			<key>BXProfileConf</key>
-			<string>Low Memory</string>
+			<string>Low memory</string>
 			<key>BXProfileMatches</key>
 			<array>
 				<string>California Games</string>
@@ -243,7 +243,7 @@
 			<key>BXProfileDescription</key>
 			<string>Later games that like a lot of memory.</string>
 			<key>BXProfileConf</key>
-			<string>More Memory</string>
+			<string>More memory</string>
 			<key>BXProfileMatches</key>
 			<array>
 				<string>The Elder Scrolls: Battlespire</string>
@@ -365,7 +365,7 @@
 			<key>BXProfileDescription</key>
 			<string>Protected-mode games that have problems with the dynamic core.</string>
 			<key>BXProfileConf</key>
-			<string>No Dynamic</string>
+			<string>No dynamic</string>
 			<key>BXProfileMatches</key>
 			<array>
 				<string>Alone in the Dark</string>

@@ -447,7 +447,8 @@
 
 - (void) setGameboxName: (NSString *)newName
 {
-	if ([self gamePackage] && [newName length] && ![newName isEqualToString: [self gameboxName]])
+	NSString *originalName = [self gameboxName];
+	if ([self gamePackage] && [newName length] && ![newName isEqualToString: originalName])
 	{
 		NSString *newPath = [self _destinationPathForGameboxName: newName];
 		NSString *currentPath = [[self gamePackage] bundlePath];
@@ -455,7 +456,27 @@
 		NSFileManager *manager = [NSFileManager defaultManager];
 		
 		NSError *moveError;
-		BOOL moved = [manager moveItemAtPath: currentPath toPath: newPath error: &moveError];
+		BOOL moved;
+		
+		//Special case: if the user is just changing the case of the filename, then a regular
+		//move operation may cause a file-already-exists error on case-insensitive filesystems.
+		//So we first rename the file to a temporary name, then back to the final name.
+		if ([[newName lowercaseString] isEqualToString: [originalName lowercaseString]])
+		{
+			NSString *tempPath = [currentPath stringByAppendingPathExtension: @"-renaming"];
+			
+			moved = [manager moveItemAtPath: currentPath toPath: tempPath error: &moveError];
+			if (moved)
+			{
+				moved = [manager moveItemAtPath: tempPath toPath: newPath error: &moveError];
+				//If the second step of the rename failed, then put the file back to its original name
+				if (!moved) [manager moveItemAtPath: tempPath toPath: currentPath error: nil];
+			}
+		}
+		else
+		{
+			moved = [manager moveItemAtPath: currentPath toPath: newPath error: &moveError];
+		}
 		
 		if (moved)
 		{
@@ -497,9 +518,10 @@
 		return NO;
 	}
 	
-	if (![sanitisedName isEqualToString: [self gameboxName]])
+	//Check if a different gamebox already exists with the specified name at the intended destination
+	//(Lowercase comparison avoids an error if the user is just changing the case of the original name)
+	if (![[sanitisedName lowercaseString] isEqualToString: [[self gameboxName] lowercaseString]])
 	{
-		//Check if a file already exists with the specified name at the intended destination
 		NSString *intendedPath = [self _destinationPathForGameboxName: sanitisedName];
 		
 		NSFileManager *manager = [NSFileManager defaultManager];

@@ -21,7 +21,6 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="876"/>
 			<integer value="202"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
@@ -148,7 +147,7 @@
 																		<object class="NSTextFieldCell" key="NSCell" id="89640333">
 																			<int key="NSCellFlags">68288064</int>
 																			<int key="NSCellFlags2">138413056</int>
-																			<string key="NSContents">When this gamebox opens, launch:</string>
+																			<string key="NSContents">When starting up, launch:</string>
 																			<object class="NSFont" key="NSSupport" id="235291261">
 																				<string key="NSName">LucidaGrande-Bold</string>
 																				<double key="NSSize">13</double>
@@ -190,7 +189,7 @@
 																			<int key="NSPeriodicInterval">75</int>
 																			<object class="NSMenuItem" key="NSMenuItem" id="339674880">
 																				<reference key="NSMenu" ref="457796887"/>
-																				<string key="NSTitle">Nothing (Show DOS prompt)</string>
+																				<string key="NSTitle">Nothing (show DOS prompt)</string>
 																				<string key="NSKeyEquiv"/>
 																				<int key="NSMnemonicLoc">2147483647</int>
 																				<int key="NSState">1</int>
@@ -266,18 +265,18 @@
 																		</object>
 																		<string key="themeKey">BXHelpTextTheme</string>
 																	</object>
-																	<object class="BGHUDLabel" id="52470537">
+																	<object class="BGHUDLabel" id="848575404">
 																		<reference key="NSNextResponder" ref="435397895"/>
 																		<int key="NSvFlags">1292</int>
 																		<string key="NSFrame">{{12, 18}, {238, 42}}</string>
 																		<reference key="NSSuperview" ref="435397895"/>
 																		<bool key="NSEnabled">YES</bool>
-																		<object class="NSTextFieldCell" key="NSCell" id="611330802">
+																		<object class="NSTextFieldCell" key="NSCell" id="725785943">
 																			<int key="NSCellFlags">67239424</int>
 																			<int key="NSCellFlags2">138543104</int>
 																			<string key="NSContents">The gamebox will start up at the DOS prompt with a list of programs to launch.</string>
 																			<reference key="NSSupport" ref="26"/>
-																			<reference key="NSControlView" ref="52470537"/>
+																			<reference key="NSControlView" ref="848575404"/>
 																			<reference key="NSBackgroundColor" ref="1046058740"/>
 																			<reference key="NSTextColor" ref="680331616"/>
 																		</object>
@@ -381,7 +380,7 @@
 															<int key="NSCellFlags2">138543104</int>
 															<object class="NSAttributedString" key="NSContents">
 																<string type="base64-UTF8" key="NSString">RHJvcCB5b3VyIG93biBjb3ZlciBhcnQgaGVyZQp0byBjaGFuZ2UgdGhpcyBnYW1l4oCZcyBpY29uLg</string>
-																<object class="NSDictionary" key="NSAttributes" id="803055407">
+																<object class="NSDictionary" key="NSAttributes" id="757000963">
 																	<bool key="EncodedWithXMLCoder">YES</bool>
 																	<object class="NSArray" key="dict.sortedKeys">
 																		<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1216,7 +1215,7 @@
 															<int key="NSCellFlags2">138543104</int>
 															<object class="NSAttributedString" key="NSContents">
 																<string key="NSString">Drop folders, CD-ROMs or disc images here to add them as DOS drives.</string>
-																<reference key="NSAttributes" ref="803055407"/>
+																<reference key="NSAttributes" ref="757000963"/>
 															</object>
 															<reference key="NSSupport" ref="26"/>
 															<reference key="NSControlView" ref="650895764"/>
@@ -1615,7 +1614,7 @@
 			<object class="NSViewController" id="377085148"/>
 			<object class="NSViewController" id="589277066"/>
 			<object class="NSCustomView" id="101756917">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">266</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1624,6 +1623,7 @@
 						<int key="NSvFlags">-2147483383</int>
 						<string key="NSFrame">{{226, 10}, {12, 12}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
+						<reference key="NSWindow"/>
 						<int key="NSTag">6</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="470534946">
@@ -1649,6 +1649,7 @@
 						<int key="NSvFlags">-2147483380</int>
 						<string key="NSFrame">{{49, 9}, {95, 14}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
+						<reference key="NSWindow"/>
 						<int key="NSTag">5</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="251256203">
@@ -1668,6 +1669,7 @@
 						<object class="NSPSMatrix" key="NSDrawMatrix"/>
 						<string key="NSFrame">{{141, 9}, {82, 12}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
+						<reference key="NSWindow"/>
 						<int key="NSpiFlags">16650</int>
 						<double key="NSMaxValue">1</double>
 						<string key="themeKey">BXBlueTheme</string>
@@ -1677,6 +1679,7 @@
 						<int key="NSvFlags">266</int>
 						<string key="NSFrame">{{49, 9}, {186, 14}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
+						<reference key="NSWindow"/>
 						<int key="NSTag">3</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="61342089">
@@ -1695,6 +1698,7 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{49, 24}, {18, 17}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
+						<reference key="NSWindow"/>
 						<int key="NSTag">1</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="621126295">
@@ -1713,11 +1717,12 @@
 						<int key="NSvFlags">270</int>
 						<string key="NSFrame">{{67, 24}, {168, 17}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
+						<reference key="NSWindow"/>
 						<int key="NSTag">2</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="720598392">
 							<int key="NSCellFlags">67239488</int>
-							<int key="NSCellFlags2">272632320</int>
+							<int key="NSCellFlags2">272631296</int>
 							<string key="NSContents">[Display name]</string>
 							<reference key="NSSupport" ref="190746779"/>
 							<reference key="NSControlView" ref="163857552"/>
@@ -1743,6 +1748,7 @@
 						</object>
 						<string key="NSFrame">{{12, 9}, {32, 31}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
+						<reference key="NSWindow"/>
 						<int key="NSTag">4</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="701925773">
@@ -1757,6 +1763,8 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{252, 48}</string>
+				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
 				<string key="NSClassName">BXDriveItemView</string>
 			</object>
 		</object>
@@ -1978,22 +1986,6 @@
 						<reference key="destination" ref="527118087"/>
 					</object>
 					<int key="connectionID">1013</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: representedObject.displayName</string>
-						<reference key="source" ref="163857552"/>
-						<reference key="destination" ref="527118087"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="163857552"/>
-							<reference key="NSDestination" ref="527118087"/>
-							<string key="NSLabel">value: representedObject.displayName</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">representedObject.displayName</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1017</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
@@ -2683,10 +2675,10 @@
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">hidden: selection.gamePackage.targetPath</string>
-						<reference key="source" ref="52470537"/>
+						<reference key="source" ref="848575404"/>
 						<reference key="destination" ref="56494336"/>
 						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="52470537"/>
+							<reference key="NSSource" ref="848575404"/>
 							<reference key="NSDestination" ref="56494336"/>
 							<string key="NSLabel">hidden: selection.gamePackage.targetPath</string>
 							<string key="NSBinding">hidden</string>
@@ -2699,6 +2691,26 @@
 						</object>
 					</object>
 					<int key="connectionID">1458</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: representedObject.path</string>
+						<reference key="source" ref="163857552"/>
+						<reference key="destination" ref="527118087"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="163857552"/>
+							<reference key="NSDestination" ref="527118087"/>
+							<string key="NSLabel">value: representedObject.path</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">representedObject.path</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSValueTransformerName</string>
+								<string key="NS.object.0">BXDriveCompactDisplayPath</string>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1464</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -3154,7 +3166,7 @@
 							<reference ref="641760949"/>
 							<reference ref="191853504"/>
 							<reference ref="111005037"/>
-							<reference ref="52470537"/>
+							<reference ref="848575404"/>
 						</object>
 						<reference key="parent" ref="749303976"/>
 					</object>
@@ -3746,17 +3758,17 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">1455</int>
-						<reference key="object" ref="52470537"/>
+						<reference key="object" ref="848575404"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="611330802"/>
+							<reference ref="725785943"/>
 						</object>
 						<reference key="parent" ref="19874267"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">1456</int>
-						<reference key="object" ref="611330802"/>
-						<reference key="parent" ref="52470537"/>
+						<reference key="object" ref="725785943"/>
+						<reference key="parent" ref="848575404"/>
 					</object>
 				</object>
 			</object>
@@ -4153,7 +4165,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{0, 697}, {252, 48}}</string>
+					<string>{{329, 697}, {252, 48}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<object class="NSAffineTransform"/>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
@@ -4178,7 +4190,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1459</int>
+			<int key="maxID">1464</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -5940,11 +5952,11 @@
 			</object>
 			<object class="NSMutableArray" key="dict.values">
 				<bool key="EncodedWithXMLCoder">YES</bool>
-				<string>{15, 15}</string>
-				<string>{8, 8}</string>
+				<string>{17, 17}</string>
+				<string>{17, 17}</string>
 				<string>{9, 8}</string>
 				<string>{7, 2}</string>
-				<string>{8, 8}</string>
+				<string>{17, 17}</string>
 				<string>{83, 83}</string>
 				<string>{15, 15}</string>
 			</object>

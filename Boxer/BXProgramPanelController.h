@@ -48,8 +48,12 @@
 //Whether the currently executing program is the default program for its gamebox.
 @property (assign, nonatomic) BOOL activeProgramIsDefault;
 
-//The localised display string used for the "Open this program every time" checkbox toggle.
+//Whether the current session currently has any default program.
+@property (readonly, nonatomic) BOOL hasDefaultTarget;
+
+//The localised display string used for the "Open this program every time" toggles.
 @property (readonly, nonatomic) NSString *labelForToggle;
+@property (readonly, nonatomic) NSString *labelForInitialToggle;
 
 
 //An array of {@path, @isDefault} pairs representing executables to display in the program panel.
@@ -75,8 +79,6 @@
 //Will be NO if there's no active program, there's no gamebox, or the active program is outside the gamebox.
 - (BOOL) canSetActiveProgramToDefault;
 
-//Whether the current session currently has any default program.
-- (BOOL) hasDefaultTarget;
 
 
 #pragma mark -

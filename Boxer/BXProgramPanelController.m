@@ -56,6 +56,11 @@
 	return [NSSet setWithObject: @"representedObject.activeProgramPath"];
 }
 
++ (NSSet *)keyPathsForValuesAffectingLabelForInitialToggle
+{
+	return [NSSet setWithObject: @"representedObject.activeProgramPath"];
+}
+
 + (NSSet *)keyPathsForValuesAffectingActiveProgramIsDefault
 {
 	return [NSSet setWithObjects:
@@ -215,6 +220,18 @@
 		@"Launch %@ every time I open this gamebox.",
 		@"Label for default program checkbox in program panel. %@ is the lowercase filename of the currently-active program."
 	);
+	NSString *programPath = [[self representedObject] activeProgramPath];
+	NSString *dosFilename = [[NSValueTransformer valueTransformerForName: @"BXDOSFilename"] transformedValue: programPath];
+	
+	return [NSString stringWithFormat: format, dosFilename, nil];
+}
+
+- (NSString *) labelForInitialToggle
+{
+	NSString *format = NSLocalizedString(
+										 @"Launch %@ every time?",
+										 @"Label for initial default-program question in program panel. %@ is the lowercase filename of the currently-active program."
+										 );
 	NSString *programPath = [[self representedObject] activeProgramPath];
 	NSString *dosFilename = [[NSValueTransformer valueTransformerForName: @"BXDOSFilename"] transformedValue: programPath];
 	

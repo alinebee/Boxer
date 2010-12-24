@@ -40,10 +40,17 @@ enum {
 
 + (void) initialize
 {
-	BXDisplayPathTransformer *displayPath = [[BXDisplayPathTransformer alloc] initWithJoiner: @" ▸ "
-																			   maxComponents: 4];
-	[NSValueTransformer setValueTransformer: displayPath forName: @"BXDriveDisplayPath"];
-	[displayPath release];
+	BXDisplayPathTransformer *fullDisplayPath = [[BXDisplayPathTransformer alloc] initWithJoiner: @" ▸ "
+																				   maxComponents: 4];
+	
+	BXDisplayPathTransformer *compactDisplayPath = [[BXDisplayPathTransformer alloc] initWithJoiner: @" ▸ "
+																					  maxComponents: 2];
+	
+	[NSValueTransformer setValueTransformer: fullDisplayPath forName: @"BXDriveDisplayPath"];
+	[NSValueTransformer setValueTransformer: compactDisplayPath forName: @"BXDriveCompactDisplayPath"];
+	
+	[fullDisplayPath release];
+	[compactDisplayPath release];
 }
 
 - (void) awakeFromNib

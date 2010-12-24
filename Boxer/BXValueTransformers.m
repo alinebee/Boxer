@@ -385,6 +385,7 @@
 	{
 		[components removeObject: @"/"];
 		[components removeObject: @"/Users"];
+		[components removeObject: @"/Volumes"];
 	}
 	
 	NSMutableAttributedString *displayPath = [[NSMutableAttributedString alloc] init];

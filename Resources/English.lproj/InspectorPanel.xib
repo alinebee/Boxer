@@ -21,8 +21,8 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="1071"/>
 			<integer value="876"/>
+			<integer value="202"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -120,7 +120,7 @@
 								<object class="NSTabViewItem" id="45197897">
 									<string key="NSIdentifier">1</string>
 									<object class="NSView" key="NSView" id="428256279">
-										<nil key="NSNextResponder"/>
+										<reference key="NSNextResponder" ref="681208964"/>
 										<int key="NSvFlags">256</int>
 										<object class="NSMutableArray" key="NSSubviews">
 											<bool key="EncodedWithXMLCoder">YES</bool>
@@ -142,44 +142,18 @@
 																	<object class="BGHUDLabel" id="191853504">
 																		<reference key="NSNextResponder" ref="435397895"/>
 																		<int key="NSvFlags">1292</int>
-																		<string key="NSFrame">{{16, 106}, {230, 17}}</string>
+																		<string key="NSFrame">{{11, 106}, {240, 17}}</string>
 																		<reference key="NSSuperview" ref="435397895"/>
 																		<bool key="NSEnabled">YES</bool>
 																		<object class="NSTextFieldCell" key="NSCell" id="89640333">
 																			<int key="NSCellFlags">68288064</int>
 																			<int key="NSCellFlags2">138413056</int>
-																			<object class="NSAttributedString" key="NSContents">
-																				<string key="NSString">Default program:</string>
-																				<object class="NSDictionary" key="NSAttributes">
-																					<bool key="EncodedWithXMLCoder">YES</bool>
-																					<object class="NSArray" key="dict.sortedKeys">
-																						<bool key="EncodedWithXMLCoder">YES</bool>
-																						<string>NSColor</string>
-																						<string>NSFont</string>
-																						<string>NSOriginalFont</string>
-																						<string>NSParagraphStyle</string>
-																					</object>
-																					<object class="NSMutableArray" key="dict.values">
-																						<bool key="EncodedWithXMLCoder">YES</bool>
-																						<object class="NSColor" id="680331616">
-																							<int key="NSColorSpace">3</int>
-																							<bytes key="NSWhite">MQA</bytes>
-																						</object>
-																						<object class="NSFont" id="235291261">
-																							<string key="NSName">LucidaGrande-Bold</string>
-																							<double key="NSSize">13</double>
-																							<int key="NSfFlags">16</int>
-																						</object>
-																						<reference ref="235291261"/>
-																						<object class="NSMutableParagraphStyle">
-																							<int key="NSAlignment">2</int>
-																							<int key="NSLineBreakMode">2</int>
-																							<nil key="NSTabStops"/>
-																						</object>
-																					</object>
-																				</object>
+																			<string key="NSContents">When this gamebox opens, launch:</string>
+																			<object class="NSFont" key="NSSupport" id="235291261">
+																				<string key="NSName">LucidaGrande-Bold</string>
+																				<double key="NSSize">13</double>
+																				<int key="NSfFlags">16</int>
 																			</object>
-																			<reference key="NSSupport" ref="235291261"/>
 																			<reference key="NSControlView" ref="191853504"/>
 																			<object class="NSColor" key="NSBackgroundColor" id="1046058740">
 																				<int key="NSColorSpace">6</int>
@@ -190,14 +164,17 @@
 																					<bytes key="NSWhite">MC42NjY2NjY2NjY3AA</bytes>
 																				</object>
 																			</object>
-																			<reference key="NSTextColor" ref="680331616"/>
+																			<object class="NSColor" key="NSTextColor" id="680331616">
+																				<int key="NSColorSpace">3</int>
+																				<bytes key="NSWhite">MQA</bytes>
+																			</object>
 																		</object>
 																		<string key="themeKey">BXShadowedTextTheme</string>
 																	</object>
 																	<object class="NSPopUpButton" id="641760949">
 																		<reference key="NSNextResponder" ref="435397895"/>
 																		<int key="NSvFlags">1292</int>
-																		<string key="NSFrame">{{17, 74}, {228, 26}}</string>
+																		<string key="NSFrame">{{12, 74}, {238, 26}}</string>
 																		<reference key="NSSuperview" ref="435397895"/>
 																		<bool key="NSEnabled">YES</bool>
 																		<object class="BGHUDPopUpButtonCell" key="NSCell" id="573646503">
@@ -213,7 +190,7 @@
 																			<int key="NSPeriodicInterval">75</int>
 																			<object class="NSMenuItem" key="NSMenuItem" id="339674880">
 																				<reference key="NSMenu" ref="457796887"/>
-																				<string key="NSTitle">None</string>
+																				<string key="NSTitle">Nothing (Show DOS prompt)</string>
 																				<string key="NSKeyEquiv"/>
 																				<int key="NSMnemonicLoc">2147483647</int>
 																				<int key="NSState">1</int>
@@ -226,7 +203,6 @@
 																					<string key="NSResourceName">NSMenuMixedState</string>
 																				</object>
 																				<string key="NSAction">_popUpItemAction:</string>
-																				<int key="NSTag">1</int>
 																				<reference key="NSTarget" ref="573646503"/>
 																			</object>
 																			<bool key="NSMenuItemRespectAlignment">YES</bool>
@@ -242,11 +218,10 @@
 																						<string key="NSTitle"/>
 																						<string key="NSKeyEquiv"/>
 																						<int key="NSMnemonicLoc">2147483647</int>
-																						<int key="NSState">1</int>
 																						<reference key="NSOnImage" ref="877608972"/>
 																						<reference key="NSMixedImage" ref="352430217"/>
 																						<string key="NSAction">_popUpItemAction:</string>
-																						<int key="NSTag">2</int>
+																						<int key="NSTag">1</int>
 																						<reference key="NSTarget" ref="573646503"/>
 																					</object>
 																					<object class="NSMenuItem" id="1013120374">
@@ -257,6 +232,7 @@
 																						<reference key="NSOnImage" ref="877608972"/>
 																						<reference key="NSMixedImage" ref="352430217"/>
 																						<string key="NSAction">_popUpItemAction:</string>
+																						<int key="NSTag">2</int>
 																						<reference key="NSTarget" ref="573646503"/>
 																					</object>
 																				</object>
@@ -272,41 +248,36 @@
 																	<object class="BGHUDLabel" id="111005037">
 																		<reference key="NSNextResponder" ref="435397895"/>
 																		<int key="NSvFlags">1292</int>
-																		<string key="NSFrame">{{19, 42}, {224, 28}}</string>
+																		<string key="NSFrame">{{12, 18}, {238, 42}}</string>
 																		<reference key="NSSuperview" ref="435397895"/>
 																		<bool key="NSEnabled">YES</bool>
 																		<object class="NSTextFieldCell" key="NSCell" id="675160354">
 																			<int key="NSCellFlags">67239424</int>
 																			<int key="NSCellFlags2">138543104</int>
-																			<object class="NSAttributedString" key="NSContents">
-																				<string key="NSString">This program will be launched every time you open this gamebox.</string>
-																				<object class="NSDictionary" key="NSAttributes" id="397465033">
-																					<bool key="EncodedWithXMLCoder">YES</bool>
-																					<object class="NSArray" key="dict.sortedKeys">
-																						<bool key="EncodedWithXMLCoder">YES</bool>
-																						<string>NSColor</string>
-																						<string>NSFont</string>
-																						<string>NSOriginalFont</string>
-																						<string>NSParagraphStyle</string>
-																					</object>
-																					<object class="NSMutableArray" key="dict.values">
-																						<bool key="EncodedWithXMLCoder">YES</bool>
-																						<reference ref="680331616"/>
-																						<object class="NSFont" id="26">
-																							<string key="NSName">LucidaGrande</string>
-																							<double key="NSSize">11</double>
-																							<int key="NSfFlags">3100</int>
-																						</object>
-																						<reference ref="26"/>
-																						<object class="NSMutableParagraphStyle">
-																							<int key="NSAlignment">2</int>
-																							<nil key="NSTabStops"/>
-																						</object>
-																					</object>
-																				</object>
+																			<string key="NSContents">To start up at the DOS prompt instead, hold down Option while the game loads. </string>
+																			<object class="NSFont" key="NSSupport" id="26">
+																				<string key="NSName">LucidaGrande</string>
+																				<double key="NSSize">11</double>
+																				<int key="NSfFlags">3100</int>
 																			</object>
-																			<reference key="NSSupport" ref="26"/>
 																			<reference key="NSControlView" ref="111005037"/>
+																			<reference key="NSBackgroundColor" ref="1046058740"/>
+																			<reference key="NSTextColor" ref="680331616"/>
+																		</object>
+																		<string key="themeKey">BXHelpTextTheme</string>
+																	</object>
+																	<object class="BGHUDLabel" id="52470537">
+																		<reference key="NSNextResponder" ref="435397895"/>
+																		<int key="NSvFlags">1292</int>
+																		<string key="NSFrame">{{12, 18}, {238, 42}}</string>
+																		<reference key="NSSuperview" ref="435397895"/>
+																		<bool key="NSEnabled">YES</bool>
+																		<object class="NSTextFieldCell" key="NSCell" id="611330802">
+																			<int key="NSCellFlags">67239424</int>
+																			<int key="NSCellFlags2">138543104</int>
+																			<string key="NSContents">The gamebox will start up at the DOS prompt with a list of programs to launch.</string>
+																			<reference key="NSSupport" ref="26"/>
+																			<reference key="NSControlView" ref="52470537"/>
 																			<reference key="NSBackgroundColor" ref="1046058740"/>
 																			<reference key="NSTextColor" ref="680331616"/>
 																		</object>
@@ -410,7 +381,26 @@
 															<int key="NSCellFlags2">138543104</int>
 															<object class="NSAttributedString" key="NSContents">
 																<string type="base64-UTF8" key="NSString">RHJvcCB5b3VyIG93biBjb3ZlciBhcnQgaGVyZQp0byBjaGFuZ2UgdGhpcyBnYW1l4oCZcyBpY29uLg</string>
-																<reference key="NSAttributes" ref="397465033"/>
+																<object class="NSDictionary" key="NSAttributes" id="803055407">
+																	<bool key="EncodedWithXMLCoder">YES</bool>
+																	<object class="NSArray" key="dict.sortedKeys">
+																		<bool key="EncodedWithXMLCoder">YES</bool>
+																		<string>NSColor</string>
+																		<string>NSFont</string>
+																		<string>NSOriginalFont</string>
+																		<string>NSParagraphStyle</string>
+																	</object>
+																	<object class="NSMutableArray" key="dict.values">
+																		<bool key="EncodedWithXMLCoder">YES</bool>
+																		<reference ref="680331616"/>
+																		<reference ref="26"/>
+																		<reference ref="26"/>
+																		<object class="NSMutableParagraphStyle">
+																			<int key="NSAlignment">2</int>
+																			<nil key="NSTabStops"/>
+																		</object>
+																	</object>
+																</object>
 															</object>
 															<reference key="NSSupport" ref="26"/>
 															<reference key="NSControlView" ref="1059887128"/>
@@ -426,6 +416,7 @@
 											</object>
 										</object>
 										<string key="NSFrameSize">{264, 350}</string>
+										<reference key="NSSuperview" ref="681208964"/>
 									</object>
 									<string key="NSLabel">Gamebox panel</string>
 									<reference key="NSColor" ref="1046058740"/>
@@ -888,7 +879,7 @@
 								<object class="NSTabViewItem" id="1056279122">
 									<string key="NSIdentifier">3</string>
 									<object class="NSView" key="NSView" id="194898093">
-										<reference key="NSNextResponder" ref="681208964"/>
+										<nil key="NSNextResponder"/>
 										<int key="NSvFlags">256</int>
 										<object class="NSMutableArray" key="NSSubviews">
 											<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1146,7 +1137,6 @@
 											</object>
 										</object>
 										<string key="NSFrameSize">{264, 350}</string>
-										<reference key="NSSuperview" ref="681208964"/>
 									</object>
 									<string key="NSLabel">Mouse panel</string>
 									<reference key="NSColor" ref="1046058740"/>
@@ -1226,7 +1216,7 @@
 															<int key="NSCellFlags2">138543104</int>
 															<object class="NSAttributedString" key="NSContents">
 																<string key="NSString">Drop folders, CD-ROMs or disc images here to add them as DOS drives.</string>
-																<reference key="NSAttributes" ref="397465033"/>
+																<reference key="NSAttributes" ref="803055407"/>
 															</object>
 															<reference key="NSSupport" ref="26"/>
 															<reference key="NSControlView" ref="650895764"/>
@@ -1376,12 +1366,12 @@
 									<reference key="NSTabView" ref="681208964"/>
 								</object>
 							</object>
-							<reference key="NSSelectedTabViewItem" ref="1056279122"/>
+							<reference key="NSSelectedTabViewItem" ref="45197897"/>
 							<reference key="NSFont" ref="190746779"/>
 							<int key="NSTvFlags">6</int>
 							<object class="NSMutableArray" key="NSSubviews">
 								<bool key="EncodedWithXMLCoder">YES</bool>
-								<reference ref="194898093"/>
+								<reference ref="428256279"/>
 							</object>
 						</object>
 					</object>
@@ -1611,6 +1601,7 @@
 					<string>gameSettings.trackMouseWhileUnlocked</string>
 					<string>isGamePackage</string>
 					<string>emulating</string>
+					<string>gamePackage.targetPath</string>
 				</object>
 				<string key="NSObjectClassName">BXSession</string>
 				<object class="_NSManagedProxy" key="_NSManagedProxy"/>
@@ -2669,6 +2660,46 @@
 					</object>
 					<int key="connectionID">1451</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">hidden: selection.gamePackage.targetPath</string>
+						<reference key="source" ref="111005037"/>
+						<reference key="destination" ref="56494336"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="111005037"/>
+							<reference key="NSDestination" ref="56494336"/>
+							<string key="NSLabel">hidden: selection.gamePackage.targetPath</string>
+							<string key="NSBinding">hidden</string>
+							<string key="NSKeyPath">selection.gamePackage.targetPath</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSValueTransformerName</string>
+								<string key="NS.object.0">NSIsNil</string>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1454</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">hidden: selection.gamePackage.targetPath</string>
+						<reference key="source" ref="52470537"/>
+						<reference key="destination" ref="56494336"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="52470537"/>
+							<reference key="NSDestination" ref="56494336"/>
+							<string key="NSLabel">hidden: selection.gamePackage.targetPath</string>
+							<string key="NSBinding">hidden</string>
+							<string key="NSKeyPath">selection.gamePackage.targetPath</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSValueTransformerName</string>
+								<string key="NS.object.0">NSIsNotNil</string>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1458</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -3123,6 +3154,7 @@
 							<reference ref="641760949"/>
 							<reference ref="191853504"/>
 							<reference ref="111005037"/>
+							<reference ref="52470537"/>
 						</object>
 						<reference key="parent" ref="749303976"/>
 					</object>
@@ -3712,6 +3744,20 @@
 						<reference key="object" ref="36598483"/>
 						<reference key="parent" ref="215026082"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1455</int>
+						<reference key="object" ref="52470537"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="611330802"/>
+						</object>
+						<reference key="parent" ref="19874267"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1456</int>
+						<reference key="object" ref="611330802"/>
+						<reference key="parent" ref="52470537"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -3802,6 +3848,9 @@
 					<string>143.IBPluginDependency</string>
 					<string>1434.IBPluginDependency</string>
 					<string>1435.IBPluginDependency</string>
+					<string>1455.IBPluginDependency</string>
+					<string>1455.IBViewBoundsToFrameTransform</string>
+					<string>1456.IBPluginDependency</string>
 					<string>158.IBPluginDependency</string>
 					<string>159.IBPluginDependency</string>
 					<string>160.IBPluginDependency</string>
@@ -3875,6 +3924,7 @@
 					<string>859.IBPluginDependency</string>
 					<string>860.IBPluginDependency</string>
 					<string>861.IBPluginDependency</string>
+					<string>861.IBViewBoundsToFrameTransform</string>
 					<string>862.IBPluginDependency</string>
 					<string>863.IBPluginDependency</string>
 					<string>864.IBEditorWindowLastContentRect</string>
@@ -3995,6 +4045,11 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
+					<object class="NSAffineTransform">
+						<bytes key="NSTransformStruct">P4AAAL+AAABBQAAAwmgAAA</bytes>
+					</object>
+					<string>com.binarymethod.BGHUDAppKitPlugin</string>
+					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
@@ -4084,9 +4139,12 @@
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
+					<object class="NSAffineTransform">
+						<bytes key="NSTransformStruct">P4AAAL+AAABBmAAAwogAAA</bytes>
+					</object>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
-					<string>{{137, 164}, {228, 53}}</string>
+					<string>{{658, 314}, {244, 53}}</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>{{329, 618}, {220, 93}}</string>
@@ -4120,7 +4178,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1451</int>
+			<int key="maxID">1459</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

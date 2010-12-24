@@ -15,6 +15,7 @@
 #import "BXImport.h"
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "NSString+BXPaths.h"
+#import "BXDOSWindowController.h"
 
 
 @interface BXProgramPanelController ()
@@ -25,7 +26,8 @@
 
 @implementation BXProgramPanelController
 @synthesize programList, programScroller;
-@synthesize defaultProgramPanel, programChooserPanel, noProgramsPanel;
+@synthesize defaultProgramPanel, initialDefaultProgramPanel;
+@synthesize programChooserPanel, noProgramsPanel;
 @synthesize finishImportingPanel, installerTipsPanel;
 @synthesize panelExecutables;
 
@@ -37,6 +39,7 @@
 	[self setProgramScroller: nil],		[programScroller release];
 	
 	[self setDefaultProgramPanel: nil], [defaultProgramPanel release];
+	[self setInitialDefaultProgramPanel: nil], [initialDefaultProgramPanel release];
 	[self setProgramChooserPanel: nil], [programChooserPanel release];
 	[self setNoProgramsPanel: nil],		[noProgramsPanel release];
 	[self setFinishImportingPanel: nil],[finishImportingPanel release];
@@ -121,19 +124,35 @@
 		if ([[session emulator] isRunningProcess])
 		{
 			if (![(BXImport *)session isRunningInstaller] && [self canSetActiveProgramToDefault])
-				panel = defaultProgramPanel;
+			{
+				panel = ([self hasDefaultTarget]) ? defaultProgramPanel : initialDefaultProgramPanel;
+			}
 			else
+			{
 				panel = installerTipsPanel;
+			}
 		}
-		else panel = finishImportingPanel;
+		else
+		{
+			panel = finishImportingPanel;
+		}
 	}
 	else
 	{
 		//Show the 'make this program the default' panel only when the session's active program
 		//can be legally set as the default target (i.e., it's located within the gamebox)
-		if ([self canSetActiveProgramToDefault]) panel = defaultProgramPanel;
-		else if	([session programPathsOnPrincipalDrive]) panel = programChooserPanel;
-		else panel = noProgramsPanel;
+		if ([self canSetActiveProgramToDefault])
+		{	
+			panel = ([self hasDefaultTarget]) ? defaultProgramPanel : initialDefaultProgramPanel;
+		}
+		else if	([session programPathsOnPrincipalDrive])
+		{
+			panel = programChooserPanel;
+		}
+		else
+		{
+			panel = noProgramsPanel;
+		}
 	}
 
 	[self setActivePanel: panel];
@@ -226,6 +245,22 @@
 	NSString *activePath = [session activeProgramPath];
 
 	return [session isGamePackage] && [[session gamePackage] validateTargetPath: &activePath error: NULL];
+}
+
+- (BOOL) hasDefaultTarget
+{
+	BXSession *session = [self representedObject];
+	return ([[session gamePackage] targetPath] != nil);
+}
+
+
+#pragma mark -
+#pragma mark IB actions
+
+- (IBAction) setCurrentProgramToDefault: (id)sender
+{
+	[NSApp sendAction: @selector(toggleProgramPanelShown:) to: nil from: self];
+	if ([self canSetActiveProgramToDefault]) [self setActiveProgramIsDefault: YES];
 }
 
 

@@ -171,10 +171,16 @@ enum {
 		[menu removeItem: oldItem];
 	
 	//...and then add all the new ones in their place
-	NSUInteger insertionPoint = startOfPrograms;
-	for (NSMenuItem *newItem in [self _programMenuItems])
+	NSArray *newItems = [self _programMenuItems];
+	
+	if ([newItems count])
 	{
-		[menu insertItem: newItem atIndex: insertionPoint++];
+		NSUInteger insertionPoint = startOfPrograms;
+		
+		for (NSMenuItem *newItem in newItems)
+		{
+			[menu insertItem: newItem atIndex: insertionPoint++];
+		}
 	}
 	
 	[self syncSelection];
@@ -219,14 +225,15 @@ enum {
 			//Sort the executables in order of path depth, so we can prioritise programs 'higher up' in the file heirarchy
 			NSArray *sortedPrograms = [programsInDrive sortedArrayUsingSelector: @selector(pathDepthCompare:)];
 			
-			//Add a separator before each new drive
-			[items addObject: [NSMenuItem separatorItem]];
 			
 			for (NSString *path in sortedPrograms)
 			{
 				NSMenuItem *item = [self _programMenuItemForPath: path onDrive: drive];
 				[items addObject: item];
 			}
+			
+			//Add a separator after each new drive
+			[items addObject: [NSMenuItem separatorItem]];
 			
 			[pool release];
 		}

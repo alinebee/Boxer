@@ -53,4 +53,7 @@
 //The screen which we will render to in fullscreen mode.
 - (NSScreen *) fullScreenTarget;
 
+//Resize the window to fit the specified render size, with an optional smooth resize animation.
+- (void) resizeWindowToRenderingViewSize: (NSSize)newSize animate: (BOOL)performAnimation;
+
 @end

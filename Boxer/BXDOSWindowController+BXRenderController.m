@@ -36,9 +36,6 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 //Returns the view size that should be used for rendering the specified frame.
 - (NSSize) _renderingViewSizeForFrame: (BXFrameBuffer *)frame minSize: (NSSize)minViewSize;
 
-//Resize the window frame to fit the requested render size.
-- (void) _resizeWindowToRenderingViewSize: (NSSize)newSize animate: (BOOL)performAnimation;
-
 @end
 
 @implementation BXDOSWindowController (BXRenderController)
@@ -101,7 +98,7 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 		{
 			NSSize adjustedSize = loadedSize;
 			adjustedSize.height = adjustedSize.width / initialAspectRatio;
-			[self _resizeWindowToRenderingViewSize: adjustedSize animate: NO];
+			[self resizeWindowToRenderingViewSize: adjustedSize animate: NO];
 		}		
 	}
 }
@@ -377,7 +374,7 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 	//Now resize the window to fit the new size and lock its aspect ratio
 	if (needsResize)
 	{
-		[self _resizeWindowToRenderingViewSize: viewSize animate: YES];
+		[self resizeWindowToRenderingViewSize: viewSize animate: YES];
 		[[self window] setContentAspectRatio: viewSize];
 	}
 	
@@ -388,7 +385,7 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 }
 
 //Resize the window frame to the requested render size.
-- (void) _resizeWindowToRenderingViewSize: (NSSize)newSize animate: (BOOL)performAnimation
+- (void) resizeWindowToRenderingViewSize: (NSSize)newSize animate: (BOOL)performAnimation
 {
 	NSWindow *theWindow	= [self window];
 	NSSize currentSize	= [self windowedRenderingViewSize];

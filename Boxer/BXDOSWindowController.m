@@ -23,8 +23,16 @@
 #import "BXSession+BXDragDrop.h"
 #import "BXImport.h"
 
+#import "NSWindow+BXWindowSizing.h"
+#import "BXGeometry.h"
+
+
 //Private methods
 @interface BXDOSWindowController ()
+
+//Resizes the window in anticipation of sliding out the specified view. This will ensure
+//there is enough room on screen to accomodate the new window size.
+- (void) _resizeToAccommodateSlidingView: (NSView *)view;
 
 //Performs the slide animation used to toggle the status bar and program panel on or off
 - (void) _slideView: (NSView *)view shown: (BOOL)show;
@@ -199,6 +207,8 @@
 	{
 		BXDOSWindow *theWindow	= [self window];
 		
+		if (show) [self _resizeToAccommodateSlidingView: statusBar];
+		
 		//temporarily override the other views' resizing behaviour so that they don't slide up as we do this
 		NSUInteger oldContainerMask		= [viewContainer autoresizingMask];
 		NSUInteger oldProgramPanelMask	= [programPanel autoresizingMask];
@@ -225,6 +235,8 @@
 	
 	if (show != [self programPanelShown])
 	{
+		if (show) [self _resizeToAccommodateSlidingView: programPanel];
+		
 		//temporarily override the other views' resizing behaviour so that they don't slide up as we do this
 		NSUInteger oldMask = [viewContainer autoresizingMask];
 		[viewContainer setAutoresizingMask: NSViewMinYMargin];
@@ -457,16 +469,41 @@
 #pragma mark -
 #pragma mark Private methods
 
+//Resizes the window if necessary to accomodate the specified view sliding in
+- (void) _resizeToAccommodateSlidingView: (NSView *)view
+{
+	CGFloat height = [view frame].size.height;
+	NSRect maxFrame = [[[self window] screen] visibleFrame];
+	maxFrame.size.height	-= height;
+	maxFrame.origin.y		+= height;
+	
+	//If the new frame will be too big to be contained on screen, then calculate the largest one that will fit
+	//(Otherwise, Cocoa will screw up the resize and we'll end up with an invalid window size and state)
+	if (!sizeFitsWithinSize([[self window] frame].size, maxFrame.size))
+	{
+		NSSize maxViewSize	= [[self window] contentRectForFrameRect: maxFrame].size;
+		NSSize viewSize		= [[self viewContainer] frame].size;
+		viewSize = constrainToFitSize(viewSize, maxViewSize);
+		
+		[self resizeWindowToRenderingViewSize: viewSize animate: ![self isFullScreen]];
+	}
+}
+
+
 //Performs the slide animation used to toggle the status bar and program panel on or off
 - (void) _slideView: (NSView *)view shown: (BOOL)show
 {
 	NSRect newFrame	= [[self window] frame];
+	NSScreen *screen = [[self window] screen];
 	
 	CGFloat height	= [view frame].size.height;
 	if (!show) height = -height;
 	
 	newFrame.size.height	+= height;
 	newFrame.origin.y		-= height;
+	
+	//Ensure the new frame is positioned to fit on the screen
+	newFrame = [[self window] fullyConstrainFrameRect: newFrame toScreen: screen];
 	
 	if (show) [view setHidden: NO];	//Unhide before sliding out
 	if ([self isFullScreen])

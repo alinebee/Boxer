@@ -3,10 +3,10 @@
 
 @implementation NSWindow (BXWindowSizing)
 
-- (void) setFrameSize:	(NSSize)newSize
-			anchoredOn:	(NSPoint)anchor
-			display:	(BOOL)displayViews
-			animate:	(BOOL)performAnimation
+- (void) setFrameSize: (NSSize)newSize
+		   anchoredOn: (NSPoint)anchor
+			  display: (BOOL)displayViews
+			  animate: (BOOL)performAnimation
 {
 	NSRect newFrame	= resizeRectFromPoint([self frame], newSize, anchor);
 	//Constrain the result to fit tidily on screen

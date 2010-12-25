@@ -36,7 +36,7 @@
 	
 	//Because we have no easy way of telling which segment was just toggled, just synchronise them all
 	
-	if ([sender isSelectedForSegment: BXStatusBarInspectorSegment] != [[NSApp delegate] inspectorPanelShown])
+	if ([sender isSelectedForSegment: BXStatusBarInspectorSegment] != [[BXInspectorController controller] panelShown])
 	{
 		[[NSApp delegate] toggleInspectorPanel: sender];
 	}
@@ -119,7 +119,7 @@
 
 - (void) _syncSegmentedButtonStates
 {	
-	[statusBarControls setSelected: [[NSApp delegate] inspectorPanelShown]				forSegment: BXStatusBarInspectorSegment];
+	[statusBarControls setSelected: [[BXInspectorController controller] panelShown]		forSegment: BXStatusBarInspectorSegment];
 	[statusBarControls setSelected: [[self controller] programPanelShown]				forSegment: BXStatusBarProgramPanelSegment];
 	[statusBarControls setSelected: [[[self controller] inputController] mouseLocked]	forSegment: BXStatusBarMouseLockSegment];
 	
@@ -172,10 +172,10 @@
 						   options: 0
 						   context: nil];
 	
-	[[NSApp delegate] addObserver: self
-					   forKeyPath: @"inspectorPanelShown"
-						  options: 0
-						  context: nil];
+	[[BXInspectorController controller] addObserver: self
+										 forKeyPath: @"panelShown"
+											options: 0
+											context: nil];
 	
 	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 	
@@ -203,7 +203,7 @@
 	[[self controller] removeObserver: self forKeyPath: @"document.isGamePackage"];
 	[[self controller] removeObserver: self forKeyPath: @"programPanelShown"];
 	
-	[[NSApp delegate] removeObserver: self forKeyPath: @"inspectorPanelShown"];
+	[[BXInspectorController controller] removeObserver: self forKeyPath: @"panelShown"];
 	
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
 }

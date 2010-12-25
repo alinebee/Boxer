@@ -22,6 +22,7 @@
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<integer value="202"/>
+			<integer value="979"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1623,7 +1624,6 @@
 						<int key="NSvFlags">-2147483383</int>
 						<string key="NSFrame">{{226, 10}, {12, 12}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
-						<reference key="NSWindow"/>
 						<int key="NSTag">6</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="470534946">
@@ -1649,7 +1649,6 @@
 						<int key="NSvFlags">-2147483380</int>
 						<string key="NSFrame">{{49, 9}, {95, 14}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
-						<reference key="NSWindow"/>
 						<int key="NSTag">5</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="251256203">
@@ -1669,7 +1668,6 @@
 						<object class="NSPSMatrix" key="NSDrawMatrix"/>
 						<string key="NSFrame">{{141, 9}, {82, 12}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
-						<reference key="NSWindow"/>
 						<int key="NSpiFlags">16650</int>
 						<double key="NSMaxValue">1</double>
 						<string key="themeKey">BXBlueTheme</string>
@@ -1679,7 +1677,6 @@
 						<int key="NSvFlags">266</int>
 						<string key="NSFrame">{{49, 9}, {186, 14}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
-						<reference key="NSWindow"/>
 						<int key="NSTag">3</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="61342089">
@@ -1698,7 +1695,6 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{49, 24}, {18, 17}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
-						<reference key="NSWindow"/>
 						<int key="NSTag">1</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="621126295">
@@ -1717,7 +1713,6 @@
 						<int key="NSvFlags">270</int>
 						<string key="NSFrame">{{67, 24}, {168, 17}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
-						<reference key="NSWindow"/>
 						<int key="NSTag">2</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="720598392">
@@ -1748,7 +1743,6 @@
 						</object>
 						<string key="NSFrame">{{12, 9}, {32, 31}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
-						<reference key="NSWindow"/>
 						<int key="NSTag">4</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="701925773">
@@ -1764,7 +1758,6 @@
 				</object>
 				<string key="NSFrameSize">{252, 48}</string>
 				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<string key="NSClassName">BXDriveItemView</string>
 			</object>
 		</object>
@@ -2705,12 +2698,12 @@
 							<string key="NSKeyPath">representedObject.path</string>
 							<object class="NSDictionary" key="NSOptions">
 								<string key="NS.key.0">NSValueTransformerName</string>
-								<string key="NS.object.0">BXDriveCompactDisplayPath</string>
+								<string key="NS.object.0">BXDriveDisplayName</string>
 							</object>
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
 					</object>
-					<int key="connectionID">1464</int>
+					<int key="connectionID">1465</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -4190,7 +4183,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1464</int>
+			<int key="maxID">1465</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -5952,11 +5945,11 @@
 			</object>
 			<object class="NSMutableArray" key="dict.values">
 				<bool key="EncodedWithXMLCoder">YES</bool>
-				<string>{17, 17}</string>
-				<string>{17, 17}</string>
+				<string>{15, 15}</string>
+				<string>{8, 8}</string>
 				<string>{9, 8}</string>
 				<string>{7, 2}</string>
-				<string>{17, 17}</string>
+				<string>{8, 8}</string>
 				<string>{83, 83}</string>
 				<string>{15, 15}</string>
 			</object>

@@ -14,6 +14,7 @@
 #import "BXImportWindowController.h"
 
 #import "BXAppController+BXGamesFolder.h"
+#import "BXInspectorController.h"
 #import "BXGameProfile.h"
 #import "BXImportError.h"
 #import "BXPackage.h"
@@ -689,6 +690,9 @@
 	//Close the program panel before handoff, otherwise it scales weirdly
 	[[self DOSWindowController] setProgramPanelShown: NO];
 	
+	//Close the inspector panel also
+	[[BXInspectorController controller] setPanelShown: NO];
+	
 	//Clear the DOS frame
 	[[self DOSWindowController] updateWithFrame: nil];
 	
@@ -946,7 +950,6 @@
 	//Also hide the Inspector panel if it was open
 	if (![emulator isCancelled] && [self importStage] == BXImportRunningInstaller)
 	{
-		[[NSApp delegate] setInspectorPanelShown: NO];
 		[self finishInstaller];
 	}
 }

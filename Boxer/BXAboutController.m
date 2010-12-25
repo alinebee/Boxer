@@ -7,16 +7,9 @@
 
 #import "BXAboutController.h"
 
-//Interface Builder UI tags
-enum {
-	BXAboutSubtitle		= 1,
-	BXAboutCopyright	= 2,
-	BXAboutWebsiteLink	= 3,
-	BXAboutVersion		= 4
-};
-
 
 @implementation BXAboutController
+@synthesize websiteLink, version;
 
 + (id) controller
 {
@@ -29,7 +22,7 @@ enum {
 //Set up all the appearance properties we couldn't in Interface Builder
 - (void) awakeFromNib
 {
-	NSWindow *theWindow		= [self window];
+	NSWindow *theWindow	= [self window];
 	
 	//Apply our custom background image to the window
 	NSImage *theBackground	= [NSImage imageNamed: @"AboutBackground"];
@@ -38,13 +31,8 @@ enum {
 	//Lets the window be moved by clicking anywhere inside it
 	[theWindow setMovableByWindowBackground: YES];
 	
-	//Grab references to all our little subfields
-	NSView *contentView		= [theWindow contentView];
-	NSTextField *version	= [contentView viewWithTag: BXAboutVersion];
-	NSButton *websiteLink	= [contentView viewWithTag: BXAboutWebsiteLink];
-	
 	//Set the version's number and appearance
-	NSString *versionFormat	= NSLocalizedString(@"v%@ %@", @"Version string for display in About panel. First @ is human-readable version (e.g. 0.9 beta), second @ is build number (e.g. 20090323-1.)");
+	NSString *versionFormat	= NSLocalizedString(@"v%@ %@", @"Version string for display in About panel. First @ is human-readable version (e.g. 1.0beta), second @ is build number (e.g. 20090323-1.)");
 	NSString *versionName	= [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleShortVersionString"];
 	NSString *buildNumber	= [[NSBundle mainBundle] objectForInfoDictionaryKey: (NSString *)kCFBundleVersionKey];
 	NSString *versionString	= [NSString stringWithFormat: versionFormat, versionName, buildNumber, nil];

@@ -12,7 +12,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="1415"/>
+			<integer value="285"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1322,14 +1322,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
-						<string key="label">toggleInspectorPanel:</string>
-						<reference key="source" ref="935372999"/>
-						<reference key="destination" ref="538778010"/>
-					</object>
-					<int key="connectionID">1450</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
 						<string key="label">startSpeaking:</string>
 						<reference key="source" ref="935372999"/>
 						<reference key="destination" ref="674494145"/>
@@ -1738,11 +1730,19 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
-						<string key="label">toggleInspectorPanel:</string>
+						<string key="label">orderFrontInspectorPanel:</string>
 						<reference key="source" ref="935372999"/>
 						<reference key="destination" ref="512917539"/>
 					</object>
-					<int key="connectionID">1879</int>
+					<int key="connectionID">1880</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">orderFrontInspectorPanel:</string>
+						<reference key="source" ref="935372999"/>
+						<reference key="destination" ref="538778010"/>
+					</object>
+					<int key="connectionID">1881</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -2875,7 +2875,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{440, 480}, {237, 193}}</string>
+					<string>{{579, 628}, {237, 193}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2998,10 +2998,10 @@
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
-					<string>{{576, 580}, {200, 93}}</string>
+					<string>{{715, 728}, {200, 93}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
-					<string>{{369, 673}, {339, 20}}</string>
+					<string>{{508, 821}, {339, 20}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -3040,7 +3040,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1879</int>
+			<int key="maxID">1881</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -3075,6 +3075,7 @@
 							<string>orderFrontAboutPanel:</string>
 							<string>orderFrontFirstRunPanel:</string>
 							<string>orderFrontImportGamePanel:</string>
+							<string>orderFrontInspectorPanel:</string>
 							<string>orderFrontPreferencesPanel:</string>
 							<string>orderFrontWelcomePanel:</string>
 							<string>orderFrontWelcomePanelWithFlip:</string>
@@ -3101,6 +3102,7 @@
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
+							<string>id</string>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="actionInfosByName">
@@ -3112,6 +3114,7 @@
 							<string>orderFrontAboutPanel:</string>
 							<string>orderFrontFirstRunPanel:</string>
 							<string>orderFrontImportGamePanel:</string>
+							<string>orderFrontInspectorPanel:</string>
 							<string>orderFrontPreferencesPanel:</string>
 							<string>orderFrontWelcomePanel:</string>
 							<string>orderFrontWelcomePanelWithFlip:</string>
@@ -3142,6 +3145,10 @@
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">orderFrontImportGamePanel:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">orderFrontInspectorPanel:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -3705,12 +3712,24 @@
 				<object class="IBPartialClassDescription">
 					<string key="className">BXProgramPanelController</string>
 					<string key="superclassName">NSViewController</string>
+					<object class="NSMutableDictionary" key="actions">
+						<string key="NS.key.0">setCurrentProgramToDefault:</string>
+						<string key="NS.object.0">id</string>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<string key="NS.key.0">setCurrentProgramToDefault:</string>
+						<object class="IBActionInfo" key="NS.object.0">
+							<string key="name">setCurrentProgramToDefault:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+					</object>
 					<object class="NSMutableDictionary" key="outlets">
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>defaultProgramPanel</string>
 							<string>finishImportingPanel</string>
+							<string>initialDefaultProgramPanel</string>
 							<string>installerTipsPanel</string>
 							<string>noProgramsPanel</string>
 							<string>programChooserPanel</string>
@@ -3719,6 +3738,7 @@
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSView</string>
 							<string>NSView</string>
 							<string>NSView</string>
 							<string>NSView</string>
@@ -3734,6 +3754,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>defaultProgramPanel</string>
 							<string>finishImportingPanel</string>
+							<string>initialDefaultProgramPanel</string>
 							<string>installerTipsPanel</string>
 							<string>noProgramsPanel</string>
 							<string>programChooserPanel</string>
@@ -3748,6 +3769,10 @@
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">finishImportingPanel</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">initialDefaultProgramPanel</string>
 								<string key="candidateClassName">NSView</string>
 							</object>
 							<object class="IBToOneOutletInfo">

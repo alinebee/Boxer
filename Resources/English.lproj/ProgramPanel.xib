@@ -21,10 +21,9 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
+			<integer value="428"/>
+			<integer value="52"/>
 			<integer value="335"/>
-			<integer value="429"/>
-			<integer value="394"/>
-			<integer value="332"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -222,7 +221,7 @@
 								<object class="NSTextFieldCell" key="NSCell" id="118197522">
 									<int key="NSCellFlags">68288064</int>
 									<int key="NSCellFlags2">4326400</int>
-									<string key="NSContents">You can choose another program from the Inspector Panel.</string>
+									<string key="NSContents">You can select other programs from the Inspector Panel.</string>
 									<object class="NSFont" key="NSSupport" id="26">
 										<string key="NSName">LucidaGrande</string>
 										<double key="NSSize">11</double>
@@ -285,7 +284,7 @@
 							<object class="NSButton" id="285486819">
 								<reference key="NSNextResponder" ref="555678485"/>
 								<int key="NSvFlags">269</int>
-								<string key="NSFrame">{{314, 14}, {79, 25}}</string>
+								<string key="NSFrame">{{370, 16}, {90, 25}}</string>
 								<reference key="NSSuperview" ref="555678485"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="794322956">
@@ -309,13 +308,13 @@
 							<object class="BGHUDLabel" id="76256141">
 								<reference key="NSNextResponder" ref="555678485"/>
 								<int key="NSvFlags">269</int>
-								<string key="NSFrame">{{17, 10}, {277, 14}}</string>
+								<string key="NSFrame">{{17, 10}, {319, 14}}</string>
 								<reference key="NSSuperview" ref="555678485"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="946636500">
 									<int key="NSCellFlags">68288064</int>
 									<int key="NSCellFlags2">4326400</int>
-									<string key="NSContents">You can change this later from the Inspector Panel.</string>
+									<string key="NSContents">You can change your choice later from the Inspector Panel.</string>
 									<reference key="NSSupport" ref="26"/>
 									<reference key="NSControlView" ref="76256141"/>
 									<reference key="NSBackgroundColor" ref="870526867"/>
@@ -326,7 +325,7 @@
 							<object class="NSButton" id="799286223">
 								<reference key="NSNextResponder" ref="555678485"/>
 								<int key="NSvFlags">269</int>
-								<string key="NSFrame">{{403, 14}, {138, 25}}</string>
+								<string key="NSFrame">{{470, 16}, {150, 25}}</string>
 								<reference key="NSSuperview" ref="555678485"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="266085088">
@@ -361,7 +360,7 @@
 								<string key="themeKey">BXShadowedTextTheme</string>
 							</object>
 						</object>
-						<string key="NSFrame">{{39, 0}, {561, 64}}</string>
+						<string key="NSFrameSize">{640, 64}</string>
 						<reference key="NSSuperview" ref="1066092163"/>
 						<string key="NSClassName">NSView</string>
 					</object>
@@ -414,7 +413,7 @@
 				<string key="NSClassName">BXProgramPanel</string>
 			</object>
 			<object class="NSCustomView" id="516813016">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">274</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -522,7 +521,6 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{640, 64}</string>
-				<reference key="NSSuperview"/>
 				<string key="NSClassName">BXBlueprintPanel</string>
 			</object>
 			<object class="NSCustomView" id="899602438">
@@ -555,7 +553,7 @@
 							<object class="NSButton" id="452337895">
 								<reference key="NSNextResponder" ref="327747426"/>
 								<int key="NSvFlags">265</int>
-								<string key="NSFrame">{{346, 18}, {132, 25}}</string>
+								<string key="NSFrame">{{346, 16}, {132, 25}}</string>
 								<reference key="NSSuperview" ref="327747426"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="867627875">
@@ -592,7 +590,7 @@
 							<object class="NSButton" id="946525712">
 								<reference key="NSNextResponder" ref="327747426"/>
 								<int key="NSvFlags">265</int>
-								<string key="NSFrame">{{488, 18}, {132, 25}}</string>
+								<string key="NSFrame">{{488, 16}, {132, 25}}</string>
 								<reference key="NSSuperview" ref="327747426"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="483073014">
@@ -1516,7 +1514,7 @@
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
-					<string>{{329, 390}, {640, 64}}</string>
+					<string>{{460, 167}, {640, 64}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
@@ -1534,7 +1532,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
-					<string>{{444, 388}, {640, 64}}</string>
+					<string>{{460, 254}, {640, 64}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<object class="NSAffineTransform"/>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>

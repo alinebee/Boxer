@@ -438,7 +438,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	if ([self currentSession] == theDocument) [self setCurrentSession: nil];
 	
 	//Hide the Inspector panel if there's no longer any sessions open
-	if (![self currentSession]) [self setInspectorPanelShown: NO];
+	if (![self currentSession]) [[BXInspectorController controller] setPanelShown: NO];
 }
 
 
@@ -498,7 +498,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (IBAction) orderFrontWelcomePanel: (id)sender
 {
 	[[[self currentSession] DOSWindowController] exitFullScreen: sender];
-	[[BXWelcomeWindowController controller] showWindow: nil];
+	[[BXWelcomeWindowController controller] showWindow: sender];
 }
 
 - (IBAction) orderFrontWelcomePanelWithFlip: (id)sender
@@ -522,7 +522,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	[self hideWelcomePanel: self];
 	
 	[[[self currentSession] DOSWindowController] exitFullScreen: sender];
-	[[BXFirstRunWindowController controller] showWindow: nil];
+	[[BXFirstRunWindowController controller] showWindow: sender];
 }
 
 - (IBAction) hideWelcomePanel: (id)sender
@@ -548,40 +548,32 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (IBAction) orderFrontAboutPanel: (id)sender
 {
 	[[[self currentSession] DOSWindowController] exitFullScreen: sender];
-	[[BXAboutController controller] showWindow: nil];
+	[[BXAboutController controller] showWindow: sender];
 }
 - (IBAction) orderFrontPreferencesPanel: (id)sender
 {
 	[[[self currentSession] DOSWindowController] exitFullScreen: sender];
-	[[BXPreferencesController controller] showWindow: nil];
+	[[BXPreferencesController controller] showWindow: sender];
 }
 
 - (IBAction) toggleInspectorPanel: (id)sender
 {
-	[self setInspectorPanelShown: ![self inspectorPanelShown]];
-}
-
-- (void) setInspectorPanelShown: (BOOL)show
-{
-	BXInspectorController *inspector = [BXInspectorController controller];
-
-	//Only show the inspector if there is a DOS session running;
-	//otherwise, we have nothing to inspect.
-	if (show && [[self currentSession] isEmulating])
+	BXInspectorController *controller = [BXInspectorController controller];
+	BOOL show = ![controller panelShown];
+	if (!show || [[self currentSession] isEmulating])
 	{
-		[[[self currentSession] DOSWindowController] exitFullScreen: nil];
-		[inspector showWindow: nil];
-	}
-	else if ([inspector isWindowLoaded])
-	{
-		[[inspector window] orderOut: nil];
+		[[[self currentSession] DOSWindowController] exitFullScreen: sender];
+		[controller setPanelShown: show];		
 	}
 }
 
-- (BOOL) inspectorPanelShown
+- (IBAction) orderFrontInspectorPanel: (id)sender
 {
-	BXInspectorController *inspector = [BXInspectorController controller];
-	return [inspector isWindowLoaded] && [[inspector window] isVisible];
+	if ([[self currentSession] isEmulating])
+	{
+		[[[self currentSession] DOSWindowController] exitFullScreen: sender];
+		[[BXInspectorController controller] showWindow: sender];
+	}
 }
 
 - (IBAction) showWebsite:			(id)sender	{ [self openURLFromKey: @"WebsiteURL"]; }
@@ -604,11 +596,12 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	if ([NSApp modalWindow]) return NO;
 	
 	//Don't allow the Inspector panel to be shown if there's no active session.
-	if (theAction == @selector(toggleInspectorPanel:)) return [[self currentSession] isEmulating];
+	if (theAction == @selector(toggleInspectorPanel:) ||
+		theAction == @selector(orderFrontInspectorPanel:))	return [[self currentSession] isEmulating];
 	
 	//Don't allow game imports or the games folder to be opened if no games folder has been set yet.
 	if (theAction == @selector(revealGamesFolder:) ||
-		theAction == @selector(orderFrontImportGamePanel:)) return [self gamesFolderPath] != nil;
+		theAction == @selector(orderFrontImportGamePanel:))	return [self gamesFolderPath] != nil;
 	
 	return [super validateUserInterfaceItem: theItem];
 }

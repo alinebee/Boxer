@@ -31,6 +31,10 @@
 				 blockingMode: (NSAnimationBlockingMode)blockingMode;
 
 
+//Order the window in/out with a simple non-blocking fade effect.
+- (void) fadeInWithDuration: (NSTimeInterval)duration;
+- (void) fadeOutWithDuration: (NSTimeInterval)duration;
+
 #pragma mark -
 #pragma mark Low-level methods
 

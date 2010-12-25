@@ -92,12 +92,10 @@ enum {
 - (IBAction) orderFrontImportGamePanel: (id)sender;		//Display the game import panel.
 
 - (IBAction) orderFrontAboutPanel:	(id)sender;			//Display Boxer's About panel.
-- (IBAction) orderFrontPreferencesPanel: (id)sender;	//Display Boxer's preferences panel. 
+- (IBAction) orderFrontPreferencesPanel: (id)sender;	//Display Boxer's preferences panel.
+- (IBAction) orderFrontInspectorPanel: (id)sender;		//Display Boxer's inspector HUD panel.
 - (IBAction) toggleInspectorPanel: (id)sender;			//Display/hide Boxer's inspector HUD panel.
 
-//Set/get whether the inspector panel is currently open
-- (void) setInspectorPanelShown: (BOOL)show;
-- (BOOL) inspectorPanelShown;
 
 //The URLs and email addresses for the following actions are configured in the Info.plist file.
 

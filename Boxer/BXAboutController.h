@@ -11,6 +11,12 @@
 #import <Cocoa/Cocoa.h>
 
 @interface BXAboutController : NSWindowController
+{
+	IBOutlet NSButton *websiteLink;
+	IBOutlet NSTextField *version;
+}
+@property (retain, nonatomic) NSButton *websiteLink;
+@property (retain, nonatomic) NSTextField *version;
 
 //Provides a singleton instance of the window controller which stays retained for the lifetime
 //of the application. BXAboutController should always be accessed from this singleton.

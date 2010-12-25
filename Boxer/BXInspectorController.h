@@ -27,7 +27,10 @@ enum {
 }
 
 //The segmented tab selector button at the top of the inspector.
-@property (retain, nonatomic) NSSegmentedControl *panelSelector;	
+@property (retain, nonatomic) NSSegmentedControl *panelSelector;
+
+//Whether the inspector panel is currently visible.
+@property (assign, nonatomic) BOOL panelShown;
 
 //A singleton instance of the inspector controller, which is shared by all session windows.
 //The controller should always be accessed through this method.
@@ -38,4 +41,6 @@ enum {
 - (IBAction) showDriveInspectorPanel:	(id)sender;	//Display the drive list panel.
 - (IBAction) showMouseInspectorPanel:	(id)sender;	//Display the mouse panel.
 
+//Show the window if it is hidden, and switch to the specified tab index
+- (void) showPanelAtTabIndex: (NSUInteger)tabIndex;
 @end

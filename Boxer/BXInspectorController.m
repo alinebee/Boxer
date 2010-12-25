@@ -104,27 +104,59 @@ const CGFloat BXMouseSensitivityRange = 2.0f;
 
 - (void) showWindow: (id)sender
 {
-	[super showWindow: sender];
+	[self loadWindow];
+	[[self window] fadeInWithDuration: 0.2];
 	[[self window] applyGaussianBlurWithRadius: BXInspectorPanelBlurRadius];
 }
 
-//A miserable hack to notify BXAppController that the inspector panel has been closed,
-//so that we can update button states immediately. It has so far proven impossible to
-//manage this some other, more preferable way (such as bindings).
++ (NSSet *) keyPathsForValuesAffectingPanelShown
+{
+	return [NSSet setWithObject: @"window.visible"];
+}
+
+- (void) setPanelShown: (BOOL)show
+{
+	if (show)
+	{
+		[self showWindow: self];
+	}
+	else if ([self isWindowLoaded])
+	{
+		[[self window] fadeOutWithDuration: 0.2];
+	}
+}
+
+- (BOOL) panelShown
+{
+	return [self isWindowLoaded] && [[self window] isVisible];
+}
+
 - (BOOL) windowShouldClose: (id)sender
 {
-	[[NSApp delegate] setInspectorPanelShown: NO];
-	return YES;
+	[[self window] fadeOutWithDuration: 0.2];
+	return NO;
+}
+
+- (void) windowDidUpdate: (NSNotification *)notification
+{
+	[self willChangeValueForKey: @"panelShown"];
+	[self didChangeValueForKey: @"panelShown"];
 }
 
 
 #pragma mark -
 #pragma mark Tab selection
 
-- (IBAction) showGameInspectorPanel: (id)sender		{ [[self tabView] selectTabViewItemAtIndex: BXGameInspectorPanelTag]; }
-- (IBAction) showCPUInspectorPanel: (id)sender		{ [[self tabView] selectTabViewItemAtIndex: BXCPUInspectorPanelTag]; }
-- (IBAction) showMouseInspectorPanel: (id)sender	{ [[self tabView] selectTabViewItemAtIndex: BXMouseInspectorPanelTag]; }
-- (IBAction) showDriveInspectorPanel: (id)sender	{ [[self tabView] selectTabViewItemAtIndex: BXDriveInspectorPanelTag]; }
+- (IBAction) showGameInspectorPanel: (id)sender		{ [self showPanelAtTabIndex: BXGameInspectorPanelTag]; }
+- (IBAction) showCPUInspectorPanel: (id)sender		{ [self showPanelAtTabIndex: BXCPUInspectorPanelTag]; }
+- (IBAction) showMouseInspectorPanel: (id)sender	{ [self showPanelAtTabIndex: BXMouseInspectorPanelTag]; }
+- (IBAction) showDriveInspectorPanel: (id)sender	{ [self showPanelAtTabIndex: BXDriveInspectorPanelTag]; }
+
+- (void) showPanelAtTabIndex: (NSUInteger)tabIndex
+{
+	[[self tabView] selectTabViewItemAtIndex: tabIndex];
+	[self showWindow: nil];
+}
 
 - (void) tabView: (NSTabView *)tabView didSelectTabViewItem: (NSTabViewItem *)tabViewItem
 {

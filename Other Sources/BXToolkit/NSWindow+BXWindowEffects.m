@@ -30,6 +30,8 @@
 //Used for showing/hiding windows during a transition.
 - (void) _setAlphaForTransition: (NSNumber *)alphaValue;
 
+//Completes the ordering out from a fadeOutWithDuration: call.
+- (void) _orderOutAfterFade;
 @end
 
 
@@ -79,13 +81,50 @@
 				 withCallback: @selector(_setAlphaForTransition:)
 			   callbackObject: [NSNumber numberWithFloat: 0.0f]
 				 blockingMode: blockingMode];
+	
+	[self willChangeValueForKey: @"visible"];
 	[self orderOut: self];
+	[self didChangeValueForKey: @"visible"];
+	
 	[self setAlphaValue: oldAlpha];
 }
 
 - (void) _setAlphaForTransition: (NSNumber *)alphaValue
 {
 	[self setAlphaValue: [alphaValue floatValue]];
+}
+
+- (void) fadeInWithDuration: (NSTimeInterval)duration
+{
+	if ([self isVisible]) return;
+	
+	[self setAlphaValue: 0.0f];
+	[self orderFront: self];
+	
+	[NSAnimationContext beginGrouping];
+		[[NSAnimationContext currentContext] setDuration: duration];
+		[[self animator] setAlphaValue: 1.0f];
+	[NSAnimationContext endGrouping];
+}
+
+- (void) fadeOutWithDuration: (NSTimeInterval)duration
+{
+	if (![self isVisible]) return;
+	
+	[NSAnimationContext beginGrouping];
+		[[NSAnimationContext currentContext] setDuration: duration];
+		[[self animator] setAlphaValue: 0.0f];
+	[NSAnimationContext endGrouping];
+	[self performSelector: @selector(_orderOutAfterFade) withObject: nil afterDelay: duration];
+}
+
+- (void) _orderOutAfterFade
+{
+	[self willChangeValueForKey: @"visible"];
+	[self orderOut: self];
+	[self didChangeValueForKey: @"visible"];
+	
+	[self setAlphaValue: 1.0f];
 }
 
 

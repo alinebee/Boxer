@@ -27,6 +27,8 @@
 #import <BGHUDAppKit/BGThemeManager.h>
 #import "BXThemes.h"
 #import "NSWindow+BXWindowEffects.h"
+#import "NSWorkspace+BXExecutableTypes.h"
+
 
 NSString * const BXNewSessionParam = @"--openNewSession";
 NSString * const BXShowImportPanelParam = @"--showImportPanel";
@@ -313,6 +315,14 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 							   error: (NSError **)outError
 {
 	NSString *path = [absoluteURL path];
+	
+	NSError *executableError = nil;
+	BXExecutableType exeType = [[NSWorkspace sharedWorkspace] executableTypeAtPath: path error: &executableError];
+	if (exeType)
+	{
+		NSLog(@"%i", exeType);
+	}
+	else [self presentError: executableError];
 	
 	//First go through our existing sessions, checking if any can open the specified URL.
 	//(This will be possible if the URL is accessible to a session's emulated filesystem,

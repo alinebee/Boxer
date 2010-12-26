@@ -13,10 +13,6 @@
 			<array>
 				<string>redalert.mix</string>
 			</array>
-			<key>BXDesignatedInstallers</key>
-			<array>
-				<string>/setup.exe</string>
-			</array>
 		</dict>
 
 		<dict>

@@ -12,7 +12,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="285"/>
+			<integer value="1415"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1730,19 +1730,19 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
-						<string key="label">orderFrontInspectorPanel:</string>
-						<reference key="source" ref="935372999"/>
-						<reference key="destination" ref="512917539"/>
-					</object>
-					<int key="connectionID">1880</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">orderFrontInspectorPanel:</string>
+						<string key="label">toggleInspectorPanel:</string>
 						<reference key="source" ref="935372999"/>
 						<reference key="destination" ref="538778010"/>
 					</object>
-					<int key="connectionID">1881</int>
+					<int key="connectionID">1882</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">toggleInspectorPanel:</string>
+						<reference key="source" ref="935372999"/>
+						<reference key="destination" ref="512917539"/>
+					</object>
+					<int key="connectionID">1883</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -2896,7 +2896,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{113, 386}, {254, 313}}</string>
+					<string>{{621, 508}, {254, 313}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -3040,7 +3040,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1881</int>
+			<int key="maxID">1883</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

@@ -154,7 +154,7 @@
 			numExecutables++;
 			
 			//Exclude windows-only programs, but note how many we've found
-			if ([workspace isWindowsOnlyExecutableAtPath: path])
+			if (![workspace isCompatibleExecutableAtPath: path])
 			{
 				isWindowsExecutable = YES;
 				numWindowsExecutables++;

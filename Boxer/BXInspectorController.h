@@ -24,6 +24,7 @@ enum {
 @interface BXInspectorController : BXTabbedWindowController
 {
 	IBOutlet NSSegmentedControl *panelSelector;
+	BOOL isTemporarilyHidden;
 }
 
 //The segmented tab selector button at the top of the inspector.
@@ -43,4 +44,11 @@ enum {
 
 //Show the window if it is hidden, and switch to the specified tab index
 - (void) showPanelAtTabIndex: (NSUInteger)tabIndex;
+
+//Temporarily hides the panel if it is currently visible:
+//It can then be unhidden with revealIfHidden.
+//This is used to temporarily suppress the inspector panel while the mouse is locked.
+- (void) hideIfVisible;
+- (void) revealIfHidden;
+
 @end

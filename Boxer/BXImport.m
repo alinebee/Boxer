@@ -112,9 +112,10 @@
 			  ofType: (NSString *)typeName
 			   error: (NSError **)outError
 {
-	BOOL didMountVolume;		
+	didMountSourceVolume = NO;
+	
 	NSString *filePath = [[self class] preferredSourcePathForPath: [absoluteURL path]
-												   didMountVolume: &didMountVolume
+												   didMountVolume: &didMountSourceVolume
 															error: outError];
 	
 	//Bail out if we could not determine a suitable source path
@@ -125,7 +126,7 @@
 	BXGameProfile *detectedProfile = [BXGameProfile detectedProfileForPath: filePath searchSubfolders: YES];
 	
 	//Now, scan the source path for installers and installed-game telltales
-	NSMutableArray *detectedInstallers = [NSMutableArray arrayWithCapacity: 10];
+	NSMutableArray *installers = [NSMutableArray arrayWithCapacity: 10];
 	NSString *preferredInstaller = nil;
 	
 	NSUInteger numExecutables = 0;
@@ -141,10 +142,10 @@
 	
 		//If we find an indication that this is an already-installed game, then we won't bother using any installers.
 		//However, we'll still keep looking for executables: but only so that we can make sure the user really is
-		//importing a proper DOS game (and not a Windows-only game.)
+		//importing a proper DOS game and not a Windows-only game.
 		if ([[self class] isPlayableGameTelltaleAtPath: path])
 		{
-			[detectedInstallers removeAllObjects];
+			[installers removeAllObjects];
 			preferredInstaller = nil;
 			isAlreadyInstalledGame = YES;
 		}
@@ -161,75 +162,89 @@
 			}
 			
 			//As described above, only bother recording installers if the game isn't already installed
-			if (!isAlreadyInstalledGame)
+			//Also ignore non-DOS executables, even if they look like installers
+			if (!isWindowsExecutable && !isAlreadyInstalledGame)
 			{
 				//If this was the designated installer for this game profile, add it to the installer list
-				//NOTE: we do this even if the file appeared to be Windows-only
 				if (!preferredInstaller && [detectedProfile isDesignatedInstallerAtPath: path])
 				{
-					[detectedInstallers addObject: path];
+					[installers addObject: path];
 					preferredInstaller = path;
 				}
 				
 				//Otherwise if it looks like an installer to us, add it to the installer list
-				//NOTE: we only do this if the file isn't Windows-only
-				else if (!isWindowsExecutable && [[self class] isInstallerAtPath: path])
+				else if ([[self class] isInstallerAtPath: path])
 				{
-					[detectedInstallers addObject: path];
+					[installers addObject: path];
 				}			
 			}
 		}
 	}
 	
-	if (numExecutables)
+	BOOL succeeded = YES;
+	
+	if (!numExecutables)
 	{
-		if ([detectedInstallers count])
+		//If no executables at all were found, this indicates that the folder was empty
+		//or contains something other than a DOS game; bail out with an appropriate error.
+		
+		succeeded = NO;
+		if (outError) *outError = [BXImportNoExecutablesError errorWithSourcePath: filePath userInfo: nil];
+		
+	}
+	
+	else if (numWindowsExecutables == numExecutables)
+	{
+		//If only Windows executables were found, bail out with an appropriate error message.
+		//TODO: improve this heuristic by filtering out ignorable executables from the list of
+		//executables: e.g. batch files and helper utilities like pkunzip which may be present
+		//in otherwise windows-only games.
+		
+		succeeded = NO;
+		if (outError) *outError = [BXImportWindowsOnlyError errorWithSourcePath: filePath userInfo: nil];
+	}
+	
+	if (succeeded)
+	{
+		if ([installers count])
 		{
-			//Sort the installers by depth to determine the preferred one
-			[detectedInstallers sortUsingSelector: @selector(pathDepthCompare:)];
+			//Sort the installers by depth to present them and to determine a preferred one
+			[installers sortUsingSelector: @selector(pathDepthCompare:)];
 			
 			//If we didn't already find the game profile's own preferred installer,
 			//detect one from the list now
 			if (!preferredInstaller)
 			{
-				preferredInstaller = [[self class] preferredInstallerFromPaths: detectedInstallers];
+				preferredInstaller = [[self class] preferredInstallerFromPaths: installers];
 			}
 		}
+		//Otherwise, the source path contains DOS executables but no installers,
+		//and we'll import it directly.
 		
-		//If no installers were found, check if all executables were Windows-only:
-		//if they were, bail out with a custom error message.
-		//TODO: improve this heuristic by discarding ignorable executables from the list of found
-		//executables found: e.g. batch files and helper utilities like pkunzip.
-		else if (numWindowsExecutables == numExecutables)
-		{
-			if (outError) *outError = [BXImportWindowsOnlyError errorWithSourcePath: filePath userInfo: nil];
-			//Eject any volume that we mounted before we go
-			if (didMountVolume) [workspace unmountAndEjectDeviceAtPath: sourcePath];
-			return NO;
-		}		
+		
+		//If we got this far, then there were no errors and we have a fair idea what to do with this game
+		[self setSourcePath: filePath];
+		[self setGameProfile: detectedProfile];
+		
+		//FIXME: we have to set the preferred installer first because BXImportWindowController is listening
+		//for when we set the installer paths, and relies on knowing the preferred installer in advance.
+		//TODO: move the preferred installer detection off to BXImportWindowController instead, since it's
+		//the only place that uses it?
+		[self setPreferredInstallerPath: preferredInstaller];
+		[self setInstallerPaths: installers];		
+		
+		return YES;
 	}
-	
-	//If no executables at all were found, this indicates that the folder was empty or contains something other than a DOS game; bail out with a custom error message.
 	else
 	{
-		if (outError) *outError = [BXImportNoExecutablesError errorWithSourcePath: filePath userInfo: nil];
 		//Eject any volume we mounted before we go
-		if (didMountVolume) [workspace unmountAndEjectDeviceAtPath: sourcePath];
+		if (didMountSourceVolume)
+		{
+			[workspace unmountAndEjectDeviceAtPath: filePath];
+			didMountSourceVolume = NO;
+		}
 		return NO;
 	}
-	
-	//If we got this far, then there were no errors and we have a fair idea what to do with this game
-	[self setSourcePath: filePath];
-	[self setGameProfile: detectedProfile];
-	
-	//FIXME: we have to set the preferred installer first because BXInstallerPanelController is listening
-	//for when we set the installer paths, and relies on knowing the preferred installer in advance.
-	//TODO: move the preferred installer detection off to BXInstallerPanelController instead, since it's
-	//the only place that uses it?
-	[self setPreferredInstallerPath: preferredInstaller];
-	[self setInstallerPaths: detectedInstallers];		
-	
-	return YES;
 }
 
 
@@ -636,6 +651,13 @@
 {
 	//Sanity checks: if these fail then there is a programming error.
 	NSAssert([self importStage] <= BXImportWaitingForInstaller, @"Cannot call cancelSourcePath after game import has already started.");
+
+	if (didMountSourceVolume)
+	{
+		NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+		[workspace unmountAndEjectDeviceAtPath: [self sourcePath]];
+		didMountSourceVolume = NO;
+	}
 	
 	[self setSourcePath: nil];
 	[self setInstallerPaths: nil];
@@ -1062,11 +1084,11 @@
 }
 
 
-//Delete our newly-minted gamebox if we didn't finish importing it before we were closed.
 - (void) _cleanup
 {
 	[super _cleanup];
 	
+	//Delete our newly-minted gamebox if we didn't finish importing it before we were closed
 	if ([self importStage] != BXImportFinished && [self gamePackage])
 	{
 		NSString *path = [[self gamePackage] bundlePath];
@@ -1075,6 +1097,14 @@
 			NSFileManager *manager = [NSFileManager defaultManager];
 			[manager removeItemAtPath: path error: NULL];	
 		}
+	}
+	
+	//Unmount any source volume that we mounted in the course of importing
+	if (didMountSourceVolume)
+	{
+		NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+		[workspace unmountAndEjectDeviceAtPath: [self sourcePath]];
+		didMountSourceVolume = NO;
 	}
 }
 

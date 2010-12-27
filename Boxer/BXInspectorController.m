@@ -13,6 +13,9 @@
 #import "BXValueTransformers.h"
 #import "NSWindow+BXWindowEffects.h"
 
+#import "BXDOSWindowController.h"
+#import "BXInputController.h"
+
 const CGFloat BXInspectorPanelBlurRadius = 2.0f;
 const CGFloat BXMouseSensitivityRange = 2.0f;
 
@@ -67,6 +70,13 @@ const CGFloat BXMouseSensitivityRange = 2.0f;
 					   forKeyPath: @"currentSession"
 						  options: NSKeyValueObservingOptionInitial
 						  context: nil];
+	
+	
+	//Also listen for mouse-locking events
+	[[NSApp delegate] addObserver: self
+					   forKeyPath: @"currentSession.DOSWindowController.inputController.mouseLocked"
+						  options: NSKeyValueObservingOptionInitial
+						  context: nil];
 }
 
 //Whenever the session changes, update the availability of the gamebox panel
@@ -75,10 +85,9 @@ const CGFloat BXMouseSensitivityRange = 2.0f;
 						 change: (NSDictionary *)change
 						context: (void *)context
 {	
+	BXSession *session = [[NSApp delegate] currentSession];
 	if ([keyPath isEqualToString: @"currentSession"])
 	{
-		BXSession *session = [[NSApp delegate] currentSession];
-		
 		if (session)
 		{
 			//Disable the gamebox tab if the current session is not a gamebox
@@ -100,6 +109,15 @@ const CGFloat BXMouseSensitivityRange = 2.0f;
 			}
 		}
 	}
+	else if ([keyPath isEqualToString: @"currentSession.DOSWindowController.inputController.mouseLocked"])
+	{
+		if (session)
+		{
+			BOOL mouseIsLocked = [[[session DOSWindowController] inputController] mouseLocked];
+			if (mouseIsLocked)	[self hideIfVisible];
+			else				[self revealIfHidden];
+		}
+	}
 }
 
 - (void) showWindow: (id)sender
@@ -107,6 +125,7 @@ const CGFloat BXMouseSensitivityRange = 2.0f;
 	[self loadWindow];
 	[[self window] fadeInWithDuration: 0.2];
 	[[self window] applyGaussianBlurWithRadius: BXInspectorPanelBlurRadius];
+	isTemporarilyHidden = NO;
 }
 
 + (NSSet *) keyPathsForValuesAffectingPanelShown
@@ -123,6 +142,7 @@ const CGFloat BXMouseSensitivityRange = 2.0f;
 	else if ([self isWindowLoaded])
 	{
 		[[self window] fadeOutWithDuration: 0.2];
+		isTemporarilyHidden = NO;
 	}
 }
 
@@ -134,6 +154,7 @@ const CGFloat BXMouseSensitivityRange = 2.0f;
 - (BOOL) windowShouldClose: (id)sender
 {
 	[[self window] fadeOutWithDuration: 0.2];
+	isTemporarilyHidden = NO;
 	return NO;
 }
 
@@ -141,6 +162,25 @@ const CGFloat BXMouseSensitivityRange = 2.0f;
 {
 	[self willChangeValueForKey: @"panelShown"];
 	[self didChangeValueForKey: @"panelShown"];
+}
+
+
+- (void) hideIfVisible
+{
+	if ([self panelShown])
+	{
+		[self setPanelShown: NO];
+		isTemporarilyHidden = YES;
+	}
+}
+
+- (void) revealIfHidden
+{
+	if (isTemporarilyHidden)
+	{
+		[self setPanelShown: YES];
+		isTemporarilyHidden = NO;
+	}
 }
 
 

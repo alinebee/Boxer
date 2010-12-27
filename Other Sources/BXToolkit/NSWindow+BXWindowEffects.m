@@ -105,6 +105,8 @@
 		[[NSAnimationContext currentContext] setDuration: duration];
 		[[self animator] setAlphaValue: 1.0f];
 	[NSAnimationContext endGrouping];
+	
+	[NSObject cancelPreviousPerformRequestsWithTarget: self selector: @selector(_orderOutAfterFade) object: nil];
 }
 
 - (void) fadeOutWithDuration: (NSTimeInterval)duration

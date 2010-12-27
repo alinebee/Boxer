@@ -32,8 +32,8 @@ const NSTimeInterval BXCursorFadeDuration = 0.4;
 const float BXCursorFadeFrameRate = 15.0f;
 
 //If the cursor is warped less than this distance (relative to a 0.0->1.0 square canvas) then
-//the warp will be ignored. Because cursor warping introduces a slight input delay, we use this
-//tolerance to ignore small warps.
+//the OS X cursor will not be warped to match. Because OS X cursor warping introduces a slight
+//input delay, we use this tolerance to ignore small warps.
 const CGFloat BXCursorWarpTolerance = 0.1f;
 
 const float BXMouseLockSoundVolume = 0.5f;

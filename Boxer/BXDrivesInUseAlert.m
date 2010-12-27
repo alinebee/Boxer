@@ -33,7 +33,11 @@
 		else
 		{
 			BXDrive *drive = [drivesInUse lastObject];
-			[self setIcon: [drive icon]];
+			NSImage *icon = [[drive icon] copy];
+			[icon setSize: NSMakeSize(128, 128)];
+			[self setIcon: icon];
+			[icon release];
+			
 			NSString *messageFormat = NSLocalizedString(
 				@"Drive %1$@: is in use by %2$@. Are you sure you want to remove it?",
 				@"Title for confirmation sheet when unmounting a single drive that is in use. %1$@ is the uppercase letter of the drive, %@ is the display-ready name of the current DOS process.");
@@ -48,14 +52,10 @@
 		NSString *unmountLabel	= NSLocalizedString(@"Remove",	@"Used in confirmation sheets to confirm unmounting one or more drives");
 		NSString *cancelLabel	= NSLocalizedString(@"Cancel",	@"Cancel the current action and return to what the user was doing");
 		
-		
-		NSButton *removeButton = [self addButtonWithTitle: unmountLabel];
-		//Prevent the Remove button from being triggered by Enter keypresses, since it can result in dataloss 
-		[removeButton setKeyEquivalent: @""];
+		[self addButtonWithTitle: unmountLabel];
 		
 		NSButton *cancelButton = [self addButtonWithTitle: cancelLabel];
-		//Meanwhile, ensure the cancel button always uses Escape
-		[cancelButton setKeyEquivalent: @"\e"];	
+		[cancelButton setKeyEquivalent: @"\e"];
 	}
 	return self;
 }

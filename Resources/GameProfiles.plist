@@ -226,11 +226,13 @@
 			<string>Low memory</string>
 			<key>BXProfileMatches</key>
 			<array>
+				<string>Blood Money</string>
 				<string>California Games</string>
 				<string>Might and Magic 2</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
+				<string>blood.prg</string>
 				<string>calgames.exe</string>
 				<string>mm2.exe</string>
 			</array>
@@ -261,10 +263,12 @@
 			<key>BXProfileMatches</key>
 			<array>
 				<string>Wrath of Earth</string>
+				<string>Barney Bear Goes to Space</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>woe.exe</string>
+				<string>bbspc.exe</string>
 			</array>
 		</dict>
 		<dict>
@@ -282,6 +286,20 @@
 			<array>
 				<string>ultima.*</string>
 				<string>ultima6.exe</string>
+			</array>
+		</dict>
+		<dict>
+			<key>BXProfileDescription</key>
+			<string>Old games that require CGA video emulation as well as an XT-speed CPU.</string>
+			<key>BXProfileConf</key>
+			<string>XT speed, CGA</string>
+			<key>BXProfileMatches</key>
+			<array>
+				<string>Attack on Altair</string>
+			</array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>altair.com</string>
 			</array>
 		</dict>
 		<dict>

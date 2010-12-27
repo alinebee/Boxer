@@ -124,7 +124,7 @@ typedef struct {
 	//Read the header data into our DOS header struct.
 	[[file readDataOfLength: headerSize] getBytes: &header];
 	
-	//Header is stored in big-endian format, so swap the bytes around to ensure correct comparisons.
+	//Header is stored in little-endian format, so swap the bytes around on PowerPC systems to ensure correct comparisons.
 	unsigned short typeMarker			= NSSwapLittleShortToHost(header.typeMarker);
 	unsigned short numPages				= NSSwapLittleShortToHost(header.numPages);
 	unsigned short lastPageSize			= NSSwapLittleShortToHost(header.lastPageSize);

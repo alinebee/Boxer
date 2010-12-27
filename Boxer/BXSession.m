@@ -23,6 +23,7 @@
 #import "NSString+BXPaths.h"
 #import "NSFileManager+BXTemporaryFiles.h"
 #import "UKFNSubscribeFileWatcher.h"
+#import "NSWorkspace+BXExecutableTypes.h"
 
 
 //How we will store our gamebox-specific settings in user defaults.

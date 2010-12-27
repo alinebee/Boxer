@@ -18,22 +18,30 @@
 NSString * const BXExecutableTypesErrorDomain = @"BXExecutableTypesErrorDomain";
 
 
-//Original DOS EXE type
+//Original DOS EXE type retained by all executables.
 #define BXDOSExecutableMarker			0x5A4D //MZ in little-endian
 
-//Windows EXE types and unlikely to be DOS-compatible
+//Windows EXE types: unlikely to be DOS-compatible but can
+//be found in some hybrid DOS/Windows EXEs and DOS extenders.
 #define BX16BitNewExecutableMarker		0x454E //NE
 #define BX32BitPortableExecutableMarker	0x4550 //PE
 
-//OS/2 EXE types, but also used by some DOS extenders
+//OS/2 EXE types, also used by some DOS extenders.
 #define BX16BitLinearExecutableMarker	0x454C //LE
 #define BX32BitLinearExecutableMarker	0x584C //LX
 
-//Very rare EXE/VXD types that are never DOS-compatible
+//Very rare EXE/VXD types that are never DOS-compatible.
 #define BXW3ExecutableMarker			0x3357 //W3
 #define BXW4ExecutableMarker			0x3457 //W4
 
-#define BX16BitNewExecutableHeaderLength		13
+//Page size in bytes. Used for calculating expected filesize.
+#define BXExecutablePageSize					512
+
+//Expected address of relocation table in new-style executables.
+#define BXExtendedExecutableRelocationAddress	0x40
+
+//Expected new-header lengths for NE and PE executables.
+#define BX16BitNewExecutableHeaderLength		64
 #define BX32BitPortableExecutableHeaderLength	24
 
 //The maximum expected length for a "This program is for Windows only"
@@ -45,9 +53,10 @@ NSString * const BXExecutableTypesErrorDomain = @"BXExecutableTypesErrorDomain";
 //one of those extended types will be smaller than 3.5kb.)
 #define BXMaxWarningStubLength 3584
 
-#define BXExecutablePageSize 512
 
+//Original DOS header format, with extended data.
 //q.v.: http://www.delphidabbler.com/articles?article=8&part=2
+//http://www.fileformat.info/format/exe/corion-mz.htm
 typedef struct {	
     unsigned short typeMarker;				// Filetype marker (always "MZ" for executables)
     unsigned short lastPageSize;			// Bytes on last page of file
@@ -61,8 +70,10 @@ typedef struct {
     unsigned short checksum;				// Checksum
     unsigned short ipValue;					// Initial IP value
     unsigned short csValue;					// Initial (relative) CS value
-    unsigned short relocationTableAddress;	// Address of relocation table
+    unsigned short relocationTableAddress;	// Address of relocation table (always 0x40 for new-style executables)
     unsigned short overlayNumber;			// Overlay number
+	
+	//The rest of these are part of an extended header present in new-style executables
     unsigned short reserved[4];				// Reserved
     unsigned short oemIdentifier;			// OEM identifier (for oemInfo)
     unsigned short oemInfo;					// OEM info (oemIdentifier-specific)
@@ -81,10 +92,9 @@ typedef struct {
 	BXDOSExecutableHeader header;
 	int headerSize = sizeof(BXDOSExecutableHeader);
 	
-	//Get the real size because the size in the DOS Header isn't always correct.
-	unsigned long long realFileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath: path error: NULL] fileSize];
+	unsigned long long realFileSize = [[[[NSFileManager alloc] init] attributesOfItemAtPath: path error: NULL] fileSize];
 	
-	//The file must be large enough to contain the entire DOS Header.
+	//The file must be large enough to contain the entire DOS header.
 	if (realFileSize < (unsigned long long)headerSize)
 	{
 		if (outError)
@@ -111,8 +121,7 @@ typedef struct {
 		return BXExecutableTypeUnknown;
 	}
 	
-	
-	//Read the header data into our DOS header struct
+	//Read the header data into our DOS header struct.
 	[[file readDataOfLength: headerSize] getBytes: &header];
 	
 	//Header is stored in big-endian format, so swap the bytes around to ensure correct comparisons.
@@ -123,8 +132,8 @@ typedef struct {
 	unsigned long newHeaderAddress		= NSSwapLittleLongToHost(header.newHeaderAddress);
 	
 	
-	//DOS Headers always start with the MZ magic number marker:
-	//if this is incorrect, then it's not a real executable.
+	//DOS headers always start with the MZ type marker:
+	//if this differs, then it's not a real executable.
 	if (typeMarker != BXDOSExecutableMarker)
 	{
 		if (outError)
@@ -145,7 +154,7 @@ typedef struct {
 	//If file is shorter than the DOS header thinks it is, or the
 	//relocation table offset is out of range, it means the executable
 	//has been truncated and we cannot meaningfully determine the type.
-	if (realFileSize < expectedFileSize  || expectedFileSize < relocationAddress)
+	if (realFileSize < expectedFileSize || relocationAddress > expectedFileSize)
 	{
 		if (outError)
 		{
@@ -156,13 +165,18 @@ typedef struct {
 		return BXExecutableTypeUnknown;
 	}
 	
-	//New header offset is out of range: assume this is a DOS executable
-	if (realFileSize < newHeaderAddress) return BXExecutableTypeDOS;
+	//The relocation table address should always be 64 for new-style executables:
+	//if this differs, then this is a DOS-only executable.
+	if (relocationAddress != BXExtendedExecutableRelocationAddress) return BXExecutableTypeDOS;
+	
+	//If the offset of the new-style executable header is 0 or out of range, assume this is a DOS executable.
+	if (newHeaderAddress == 0 || (newHeaderAddress + sizeof(unsigned short) > realFileSize)) return BXExecutableTypeDOS;
+	
 
 	
-	//Read in the new-style executable type from the start of the new header address
-	[file seekToFileOffset: newHeaderAddress];
+	//Read in the 2-byte executable type marker from the start of the new-style header.
 	unsigned short newTypeMarker = 0;
+	[file seekToFileOffset: newHeaderAddress];
 	[[file readDataOfLength: sizeof(unsigned short)] getBytes: &newTypeMarker];
 	
 	newTypeMarker = NSSwapLittleShortToHost(newTypeMarker);
@@ -171,31 +185,31 @@ typedef struct {
 	{
 		case BX16BitNewExecutableMarker:			
 		case BX32BitPortableExecutableMarker:
-			//Stub area is unusually large, assume it's a DOS EXE
+			//Stub area is unusually large: assume it contains a legitimate DOS program.
 			if (newHeaderAddress > BXMaxWarningStubLength)
 				return BXExecutableTypeDOS;
 			
 			unsigned long minHeaderLength = (newTypeMarker == BX32BitPortableExecutableMarker) ? BX32BitPortableExecutableHeaderLength : BX16BitNewExecutableHeaderLength;
 			
-			//Malformed: not long enough to accomodate new header, assume it's a DOS EXE
+			//File is not long enough to accomodate expected header: assume the
+			//type marker was just a coincidence, and this actually a DOS executable.
 			if (realFileSize < (newHeaderAddress + minHeaderLength))
 				return BXExecutableTypeDOS;
 
-			//Otherwise, assume it's Windows
+			//Otherwise, assume it's Windows.
 			return BXExecutableTypeWindows;
 		
 		case BX16BitLinearExecutableMarker:
 		case BX32BitLinearExecutableMarker:
-			//Stub area is unusually large, assume it's a DOS EXE
+			//Stub area is unusually large: assume it contains a legitimate DOS program.
 			if (newHeaderAddress > BXMaxWarningStubLength)
 				return BXExecutableTypeDOS;
 			
-			//Otherwise, assume it's OS/2
+			//Otherwise, assume it's OS/2.
 			return BXExecutableTypeOS2;
 
 		case BXW3ExecutableMarker:
 		case BXW4ExecutableMarker:
-			//These are esoteric and only used for weird-ass Windows 3.x drivers and the like
 			return BXExecutableTypeWindows;
 			
 		default:
@@ -210,7 +224,12 @@ typedef struct {
 	if ([self file: filePath matchesTypes: dosOnlyTypes])
 		 return YES;
 	
-	return [self executableTypeAtPath: filePath error: NULL] == BXExecutableTypeDOS;
+	//If it is a .EXE file, perform a more rigorous compatibility check
+	if ([self file: filePath matchesTypes: [NSSet setWithObject: @"com.microsoft.windows-executable"]])
+		 return [self executableTypeAtPath: filePath error: NULL] == BXExecutableTypeDOS;
+		
+	//Otherwise, assume the file is incompatible
+	return NO;
 }
 
 @end

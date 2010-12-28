@@ -38,6 +38,8 @@
 	<string>http://boxerapp.com/donate</string>
 	<key>HelpURL</key>
 	<string>http://boxerapp.com/guide</string>
+	<key>BugReportURL</key>
+	<string>https://bitbucket.org/alunbestor/boxer/issues/new</string>
 	<key>ConfigurationFileHelpURL</key>
 	<string>http://boxerapp.com/guide/dosbox_configuration</string>
 	<key>PerianURL</key>

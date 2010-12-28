@@ -579,6 +579,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 - (IBAction) showWebsite:			(id)sender	{ [self openURLFromKey: @"WebsiteURL"]; }
 - (IBAction) showDonationPage:		(id)sender	{ [self openURLFromKey: @"DonationURL"]; }
+- (IBAction) showBugReportPage:		(id)sender	{ [self openURLFromKey: @"BugReportURL"]; }
 - (IBAction) showPerianDownloadPage:(id)sender	{ [self openURLFromKey: @"PerianURL"]; }
 - (IBAction) sendEmail:				(id)sender
 {

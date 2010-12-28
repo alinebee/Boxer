@@ -12,7 +12,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="1415"/>
+			<integer value="57"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -100,17 +100,25 @@
 									<reference key="NSOnImage" ref="569538535"/>
 									<reference key="NSMixedImage" ref="489554260"/>
 								</object>
-								<object class="NSMenuItem" id="491328301">
+								<object class="NSMenuItem" id="68820179">
 									<reference key="NSMenu" ref="135265988"/>
-									<string key="NSTitle">Provide Boxer Feedback…</string>
+									<string key="NSTitle">Donate to Boxer…</string>
 									<string key="NSKeyEquiv"/>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="569538535"/>
 									<reference key="NSMixedImage" ref="489554260"/>
 								</object>
-								<object class="NSMenuItem" id="68820179">
+								<object class="NSMenuItem" id="491328301">
 									<reference key="NSMenu" ref="135265988"/>
-									<string key="NSTitle">Donate to Boxer…</string>
+									<string key="NSTitle">Send Feedback…</string>
+									<string key="NSKeyEquiv"/>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="569538535"/>
+									<reference key="NSMixedImage" ref="489554260"/>
+								</object>
+								<object class="NSMenuItem" id="948329699">
+									<reference key="NSMenu" ref="135265988"/>
+									<string key="NSTitle">Report a Bug…</string>
 									<string key="NSKeyEquiv"/>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="569538535"/>
@@ -1744,6 +1752,14 @@
 					</object>
 					<int key="connectionID">1883</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">showBugReportPage:</string>
+						<reference key="source" ref="935372999"/>
+						<reference key="destination" ref="948329699"/>
+					</object>
+					<int key="connectionID">1886</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -1811,10 +1827,11 @@
 							<reference ref="271411110"/>
 							<reference ref="1069211949"/>
 							<reference ref="491328301"/>
-							<reference ref="68820179"/>
 							<reference ref="168036105"/>
 							<reference ref="751623511"/>
 							<reference ref="581728426"/>
+							<reference ref="68820179"/>
+							<reference ref="948329699"/>
 						</object>
 						<reference key="parent" ref="251795308"/>
 					</object>
@@ -2615,6 +2632,11 @@
 						<reference key="object" ref="145486562"/>
 						<reference key="parent" ref="176076355"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1884</int>
+						<reference key="object" ref="948329699"/>
+						<reference key="parent" ref="135265988"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -2770,6 +2792,8 @@
 					<string>1874.IBPluginDependency</string>
 					<string>1876.IBPluginDependency</string>
 					<string>1878.IBPluginDependency</string>
+					<string>1884.IBPluginDependency</string>
+					<string>1884.ImportedFromIB2</string>
 					<string>196.IBPluginDependency</string>
 					<string>196.ImportedFromIB2</string>
 					<string>283.IBPluginDependency</string>
@@ -2998,6 +3022,8 @@
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<integer value="1"/>
 					<string>{{715, 728}, {200, 93}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
@@ -3015,7 +3041,7 @@
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
-					<string>{{381, 460}, {252, 213}}</string>
+					<string>{{520, 588}, {252, 233}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -3040,7 +3066,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1883</int>
+			<int key="maxID">1886</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -3081,6 +3107,7 @@
 							<string>orderFrontWelcomePanelWithFlip:</string>
 							<string>revealInFinder:</string>
 							<string>sendEmail:</string>
+							<string>showBugReportPage:</string>
 							<string>showDonationPage:</string>
 							<string>showPerianDownloadPage:</string>
 							<string>showWebsite:</string>
@@ -3088,6 +3115,7 @@
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -3120,6 +3148,7 @@
 							<string>orderFrontWelcomePanelWithFlip:</string>
 							<string>revealInFinder:</string>
 							<string>sendEmail:</string>
+							<string>showBugReportPage:</string>
 							<string>showDonationPage:</string>
 							<string>showPerianDownloadPage:</string>
 							<string>showWebsite:</string>
@@ -3169,6 +3198,10 @@
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">sendEmail:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">showBugReportPage:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">

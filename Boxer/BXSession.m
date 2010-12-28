@@ -660,7 +660,7 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 		//Check if this was the target program for this launch:
 		//if so, check if the program is Windows-only
 		//(we don't want to bother the user if they may be just
-		//trying out programs at the DOS prompt) 
+		//trying out programs at the DOS prompt)
 		NSString *programPath = [[notification userInfo] objectForKey: @"localPath"];
 		if (programPath && [programPath isEqualToString: [self targetPath]])
 		{
@@ -838,7 +838,6 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 			[self mountDrive: bundledDrive];
 		}
 	}
-	//TODO: if we're not loading a package, then C should be the DOS Games folder instead
 	
 	//Automount all currently mounted floppy and CD-ROM volumes
 	[self mountFloppyVolumes];

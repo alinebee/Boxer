@@ -520,7 +520,8 @@ enum {
 		NSString *thePath = [[NSFileManager defaultManager]
 							 stringWithFileSystemRepresentation: filePath
 							 length: strlen(filePath)];
-		return thePath;
+		
+		return [thePath stringByStandardizingPath];
 	}
 	//We can't return a system file path for non-local drives
 	else return nil;

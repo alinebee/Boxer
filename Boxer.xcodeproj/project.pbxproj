@@ -257,7 +257,7 @@
 		9FAE9B8B11F1D7CF000363F7 /* GameDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FAE9B8A11F1D7CF000363F7 /* GameDefaults.plist */; };
 		9FB4F9E411957B55006C8AC9 /* BXFrameBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB4F9E311957B55006C8AC9 /* BXFrameBuffer.m */; };
 		9FB553E10F6EA30900A33017 /* BXCloseAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB553E00F6EA30900A33017 /* BXCloseAlert.m */; };
-		9FB554220F6EAC5F00A33017 /* BXAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB554210F6EAC5F00A33017 /* BXAlert.m */; };
+		9FB554220F6EAC5F00A33017 /* NSAlert+BXAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB554210F6EAC5F00A33017 /* NSAlert+BXAlert.m */; };
 		9FBB86850F5DD070008418E6 /* BXLayerRenderingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBB86840F5DD070008418E6 /* BXLayerRenderingView.m */; };
 		9FBC31D70F56C370001811F2 /* AboutBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC31D10F56C370001811F2 /* AboutBackground.png */; };
 		9FBC31E00F56C383001811F2 /* LockClosing.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC31DD0F56C383001811F2 /* LockClosing.aiff */; };
@@ -819,8 +819,8 @@
 		9FB4F9E311957B55006C8AC9 /* BXFrameBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFrameBuffer.m; sourceTree = "<group>"; };
 		9FB553DF0F6EA30900A33017 /* BXCloseAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCloseAlert.h; sourceTree = "<group>"; };
 		9FB553E00F6EA30900A33017 /* BXCloseAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXCloseAlert.m; sourceTree = "<group>"; };
-		9FB554200F6EAC5F00A33017 /* BXAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXAlert.h; sourceTree = "<group>"; };
-		9FB554210F6EAC5F00A33017 /* BXAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXAlert.m; sourceTree = "<group>"; };
+		9FB554200F6EAC5F00A33017 /* NSAlert+BXAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAlert+BXAlert.h"; sourceTree = "<group>"; };
+		9FB554210F6EAC5F00A33017 /* NSAlert+BXAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAlert+BXAlert.m"; sourceTree = "<group>"; };
 		9FBB86830F5DD070008418E6 /* BXLayerRenderingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXLayerRenderingView.h; sourceTree = "<group>"; };
 		9FBB86840F5DD070008418E6 /* BXLayerRenderingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXLayerRenderingView.m; sourceTree = "<group>"; };
 		9FBC31D10F56C370001811F2 /* AboutBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AboutBackground.png; sourceTree = "<group>"; };
@@ -1328,8 +1328,8 @@
 		9F496E3E108EEB9800282261 /* Alerts */ = {
 			isa = PBXGroup;
 			children = (
-				9FB554200F6EAC5F00A33017 /* BXAlert.h */,
-				9FB554210F6EAC5F00A33017 /* BXAlert.m */,
+				9FB554200F6EAC5F00A33017 /* NSAlert+BXAlert.h */,
+				9FB554210F6EAC5F00A33017 /* NSAlert+BXAlert.m */,
 				9FB553DF0F6EA30900A33017 /* BXCloseAlert.h */,
 				9FB553E00F6EA30900A33017 /* BXCloseAlert.m */,
 				9F76D4CA10CBFFB200C3B081 /* BXVideoFormatAlert.h */,
@@ -2231,7 +2231,7 @@
 				9FC3B2550F62D9CE006DE439 /* BXSession+BXEmulatorController.m in Sources */,
 				9F76C8550F6509EF0068EA1C /* BXDOSWindowController+BXRenderController.m in Sources */,
 				9FB553E10F6EA30900A33017 /* BXCloseAlert.m in Sources */,
-				9FB554220F6EAC5F00A33017 /* BXAlert.m in Sources */,
+				9FB554220F6EAC5F00A33017 /* NSAlert+BXAlert.m in Sources */,
 				9F6311090F70F54300AB1155 /* BXHelpMenuController.m in Sources */,
 				9F573C5A0F8E18B10089D8B7 /* NSWorkspace+BXMountedVolumes.m in Sources */,
 				9F573D390F8E69AF0089D8B7 /* BXPackage.m in Sources */,

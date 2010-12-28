@@ -6,28 +6,23 @@
  */
 
 
-#import "BXAlert.h"
-#import "BXSession.h"
+#import "NSAlert+BXAlert.h"
 
-@implementation BXAlert
+@implementation NSAlert (BXAlert)
 + (id) alert	{ return [[[self alloc] init] autorelease]; }
 
 - (BOOL) adoptIconFromWindow: (NSWindow *)window
 {
-	id document = [[window windowController] document];
-	if ([document isKindOfClass: [BXSession class]])
+	NSImage *icon = [[window standardWindowButton: NSWindowDocumentIconButton] image];
+ 
+	if (icon)
 	{
-		NSImage *sessionIcon = [document representedIcon];
-		if (sessionIcon)
-		{
-			[self setIcon: sessionIcon];
-			return YES;
-		}
-		else
-		{
-			[self setIcon: [NSApp applicationIconImage]];
-			return YES;
-		}
+		//Copy the icon so we can modify the size without affecting the original
+		icon = [icon copy];
+		[icon setSize: NSMakeSize(128, 128)];
+		[self setIcon: icon];
+		[icon release];
+		return YES;
 	}
 	return NO;
 }

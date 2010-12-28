@@ -26,10 +26,18 @@
 #import "NSWorkspace+BXExecutableTypes.h"
 
 
+#pragma mark -
+#pragma mark Constants
+
 //How we will store our gamebox-specific settings in user defaults.
 //%@ is the unique identifier for the gamebox.
 NSString * const BXGameboxSettingsKeyFormat	= @"BXGameSettings: %@";
 NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
+
+//The length of time in seconds after which we count a program as having run successfully.
+//If a program exits before this time, then we check if it's a Windows-only program and
+//warn the user.
+#define BXSuccessfulProgramRunningTimeThreshold 0.2
 
 
 #pragma mark -
@@ -365,10 +373,11 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 		else
 			alert = [BXCloseAlert closeAlertWhileSessionIsEmulating: self];
 		
+		[alert retain];
 		[alert beginSheetModalForWindow: [self windowForSheet]
 						  modalDelegate: self
 						 didEndSelector: @selector(_closeAlertDidEnd:returnCode:contextInfo:)
-							contextInfo: [callback retain]];		 
+							contextInfo: [callback retain]];
 	}
 	else
 	{
@@ -390,10 +399,21 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	[callback setArgument: &shouldClose atIndex: 3];
 	[callback invoke];
 	
-	//Release the previously-retained callback
+	//Release the previously-retained callback and alert instance
 	[callback release];
+	[alert release];
 }
 
+- (void) _windowsOnlyProgramCloseAlertDidEnd: (BXCloseAlert *)alert
+								  returnCode: (int)returnCode
+								 contextInfo: (void *)info
+{
+	if (returnCode == NSAlertFirstButtonReturn)
+	{
+		[self close];
+	}
+	[alert release];
+}
 
 //Save our configuration changes to disk before exiting
 - (void) synchronizeSettings
@@ -616,17 +636,46 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 			[[self DOSWindowController] setProgramPanelShown: NO];
 		}
 	}
+	
+	//Track how long this program has run for
+	programStartTime = [NSDate timeIntervalSinceReferenceDate];
 }
 
 - (void) programDidFinish: (NSNotification *)notification
 {
 	//Clear the active program after every program has run during initial startup
 	//This way, we don't 'hang onto' startup commands in programWillStart:
-	//Once the default target has launched, we only reset the active program when
-	//we return to the DOS prompt.
+	//Once the default target has launched, we only reset the active program
+	//when we return to the DOS prompt.
 	if (!hasLaunched)
 	{
 		[self setActiveProgramPath: nil];		
+	}
+	
+	//Check the running time of the program. If it was suspiciously short,
+	//then check for possible error conditions that we can inform the user about.
+	NSTimeInterval programRunningTime = [NSDate timeIntervalSinceReferenceDate] - programStartTime; 
+	if (programRunningTime < BXSuccessfulProgramRunningTimeThreshold)
+	{
+		//Check if this was the target program for this launch:
+		//if so, check if the program is Windows-only
+		//(we don't want to bother the user if they may be just
+		//trying out programs at the DOS prompt) 
+		NSString *programPath = [[notification userInfo] objectForKey: @"localPath"];
+		if (programPath && [programPath isEqualToString: [self targetPath]])
+		{
+			BXExecutableType programType = [[NSWorkspace sharedWorkspace] executableTypeAtPath: programPath error: NULL];
+			
+			if (programType == BXExecutableTypeWindows)
+			{
+				BXCloseAlert *alert = [BXCloseAlert closeAlertAfterWindowsOnlyProgramExited: programPath];
+				[alert retain];
+				[alert beginSheetModalForWindow: [self windowForSheet]
+								  modalDelegate: self
+								 didEndSelector: @selector(_windowsOnlyProgramCloseAlertDidEnd:returnCode:contextInfo:)
+									contextInfo: nil];
+			}
+		}
 	}
 }
 

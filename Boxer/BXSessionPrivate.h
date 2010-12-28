@@ -57,4 +57,9 @@
 - (void) _closeAlertDidEnd: (BXCloseAlert *)alert
 				returnCode: (int)returnCode
 			   contextInfo: (NSInvocation *)callback;
+
+//Callback for close alert after a windows-only program is failed.
+- (void) _windowsOnlyProgramCloseAlertDidEnd: (BXCloseAlert *)alert
+								  returnCode: (int)returnCode
+								 contextInfo: (void *)info;
 @end

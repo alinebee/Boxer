@@ -50,6 +50,8 @@
 	NSOperationQueue *importQueue;
 	
 	UKFileWatcher *watcher;
+	
+	NSTimeInterval programStartTime;
 }
 
 

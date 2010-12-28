@@ -7,6 +7,7 @@
 
 #import "BXVideoFormatAlert.h"
 #import "BXAppController.h"
+#import "NSAlert+BXAlert.h"
 
 @implementation BXVideoFormatAlert
 - (id) init
@@ -33,7 +34,7 @@
 	return self;
 }
 
-+ (void) alertDidEnd: (BXAlert *)alert returnCode: (int)returnCode contextInfo: (void *)contextInfo
++ (void) alertDidEnd: (NSAlert *)alert returnCode: (int)returnCode contextInfo: (void *)contextInfo
 {
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if ([[alert suppressionButton] state] == NSOnState) [defaults setBool: YES forKey: @"suppressCodecRequiredAlert"];

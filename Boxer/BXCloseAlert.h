@@ -9,12 +9,11 @@
 //BXCloseAlert defines close-this-window confirmation alert sheets for various contexts.
 
 #import <Cocoa/Cocoa.h>
-#import "BXAlert.h"
 
 @class BXSession;
 @class BXImport;
 
-@interface BXCloseAlert : BXAlert
+@interface BXCloseAlert : NSAlert
 
 //Shown after exiting a DOS game and returning to the DOS prompt. Asks the user if they
 //want to close the window or return to DOS.
@@ -28,7 +27,10 @@
 //Shown when closing the window while one or more drive import operations are in progress.
 + (BXCloseAlert *) closeAlertWhileImportingDrives: (BXSession *)theSession;
 
-//Shown when closing the window while a game import is in progress
+//Shown when closing the window while a game import is in progress.
 + (BXCloseAlert *) closeAlertWhileImportingGame: (BXImport *)theSession;
+
+//Shown after a windows-only program has failed to run and exited.
++ (BXCloseAlert *) closeAlertAfterWindowsOnlyProgramExited: (NSString *)programPath;
 
 @end

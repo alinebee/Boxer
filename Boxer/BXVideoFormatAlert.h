@@ -6,10 +6,10 @@
  */
 
 //BXVideoFormatAlert displays a sheet to notify the user that they will need the Perian codec
-//for playing back movies recorded by DOSBox. Kill me now.
+//for playing back movies recorded by DOSBox. This is no longer used since this recording
+//functionality is now disabled.
 
 #import <Cocoa/Cocoa.h>
-#import "BXAlert.h"
 
-@interface BXVideoFormatAlert : BXAlert
+@interface BXVideoFormatAlert : NSAlert
 @end

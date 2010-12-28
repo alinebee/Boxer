@@ -7,6 +7,7 @@
 
 
 #import "BXCloseAlert.h"
+#import "NSAlert+BXAlert.h"
 #import "BXSession.h"
 
 @implementation BXCloseAlert
@@ -88,6 +89,27 @@
 	
 	[[[alert buttons] objectAtIndex: 0] setTitle: NSLocalizedString(@"Stop Importing",
 																	@"Close button for confirmation sheet when closing a game import session.")];
+	
+	return alert;
+}
+
++ (BXCloseAlert *) closeAlertAfterWindowsOnlyProgramExited: (NSString *)programPath
+{	
+	BXCloseAlert *alert = [self alert];
+	
+	NSString *programName = [programPath lastPathComponent];
+	
+	NSString *messageFormat	= NSLocalizedString(@"“%@” is a Microsoft Windows program, which Boxer does not support.",
+												@"Title of warning sheet after running a Windows-only executable. %@ is the original filename of the executable.");
+	
+	[alert setMessageText: [NSString stringWithFormat: messageFormat, programName]];
+	
+	[alert setInformativeText:	NSLocalizedString(@"You may be able to run this program in a Windows emulator instead, such as CrossOver Games.",
+												  @"Informative text of warning sheet after running a Windows-only executable.")];
+	
+	[[[alert buttons] lastObject] setTitle: NSLocalizedString(@"Return to DOS",
+															  @"Cancel button for warning sheet after running a Windows-only executable: will return user to the DOS prompt.")];
+	
 	
 	return alert;
 }

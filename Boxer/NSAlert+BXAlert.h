@@ -6,20 +6,17 @@
  */
 
 
-//BXAlert is a base class for self-contained NSAlert sheets that act as their own delegates.
-//Boxer subclasses this for various alerts whose logic is too basic to warrant offloading
-//to a separate controller.
+//The BXAlert category provides some convenience methods for alerts.
 
 #import <Cocoa/Cocoa.h>
 
-@interface BXAlert : NSAlert
+@interface NSAlert (BXAlert)
 
-//Returns a non-retained BXAlert instance.
+//Returns a non-retained NSAlert instance.
 + (id) alert;
 
 //Set the alert's icon to the represented icon of the specified window.
-//Returns YES if the window had a specific icon, NO otherwise (in which case the alert will use
-//the normal application icon instead.)
+//Returns YES if the window had a specific icon, NO otherwise.
 - (BOOL) adoptIconFromWindow: (NSWindow *)window;
 
 @end

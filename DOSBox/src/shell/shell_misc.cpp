@@ -54,21 +54,27 @@ void DOS_Shell::InputCommand(char * line) {
 	line[0] = '\0';
 
 	std::list<std::string>::iterator it_history = l_history.begin(), it_completion = l_completion.begin();
-
+	
+	
 	while (size) {
-		dos.echo=false;
+		dos.echo=false;		
+		
 		while(!DOS_ReadFile(input_handle,&c,&n)) {
 			Bit16u dummy;
 			DOS_CloseFile(input_handle);
 			DOS_OpenFile("con",2,&dummy);
 			LOG(LOG_MISC,LOG_ERROR)("Reopening the input handle.This is a bug!");
 		}
-
+		
 		//--Added 2010-01-22 by Alun Bestor to let Boxer inject its own input
 		bool executeImmediately = false;
 		if (boxer_handleCommandInput(line, &str_index, &executeImmediately))
 		{
-			if (executeImmediately) size = 0;
+			if (executeImmediately)
+			{
+				size = 0;
+				break;
+			}
 			else
 			{
 				//Correct the visible cursor position and the cached lengths
@@ -77,12 +83,11 @@ void DOS_Shell::InputCommand(char * line) {
 				int cursorOffset = str_len - str_index;
 				while (cursorOffset > 0) {
 					outc(8); cursorOffset--;
-				} 
+				}
+				continue;
 			}
-			continue;
 		}
 		//--End of modifications
-		
 		
 		if (!n) {
 			size=0;			//Kill the while loop
@@ -338,6 +343,16 @@ void DOS_Shell::InputCommand(char * line) {
 			size = 0;       // stop the next loop
 			str_len = 0;    // prevent multiple adds of the same line
 			break;
+				
+		//--Added 2010-12-29 by Alun Bestor to suppress bogus control char
+		//that gets printed for some reason when Boxer injects its own commands
+		//after a program has been run.
+		//FIXME: this indicates a deeper bug (possibly in DOS_ReadFile())
+		//that I haven't tracked down yet.
+		case 0x10:
+			break;
+		//--End of modifications
+		
 		default:
 			if (l_completion.size()) l_completion.clear();
 			if(str_index < str_len && true) { //mem_readb(BIOS_KEYBOARD_FLAGS1)&0x80) dev_con.h ?
@@ -361,6 +376,7 @@ void DOS_Shell::InputCommand(char * line) {
 				str_len++;
 				size--;
 			}
+				
 			DOS_WriteFile(STDOUT,&c,&n);
 			
 			break;

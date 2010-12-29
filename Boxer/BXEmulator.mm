@@ -480,8 +480,12 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 
 - (BOOL) _handleRunLoop
 {
+	//If emulation has been cancelled, then break out of the current DOSBox run loop
 	if ([self isCancelled]) return YES;
+	
+	//If we have a command of our own waiting at the command prompt, then break out of DOSBox's stdin input loop
 	if ([[self commandQueue] count] && [self isAtPrompt]) return YES;
+	
 	return NO;
 }
 

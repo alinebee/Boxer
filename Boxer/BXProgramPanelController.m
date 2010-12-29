@@ -148,7 +148,13 @@
 		//can be legally set as the default target (i.e., it's located within the gamebox)
 		if ([self canSetActiveProgramToDefault])
 		{	
-			panel = ([self hasDefaultTarget]) ? defaultProgramPanel : initialDefaultProgramPanel;
+			//If we have a default program, show the checkbox version;
+			//also keep showing the checkbox if it's already active
+			if ([self hasDefaultTarget] || [self activePanel] == defaultProgramPanel)
+				panel = defaultProgramPanel;
+			//Otherwise, show the Yes/No choice.
+			else
+				panel = initialDefaultProgramPanel;
 		}
 		else if	([session programPathsOnPrincipalDrive])
 		{

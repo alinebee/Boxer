@@ -285,11 +285,14 @@ nil];
 	
 	NSString *filesystemPath = [self pathForDOSPath: cleanedPath];
 	
+	BOOL couldReveal = NO;
 	if (filesystemPath)
 	{
-		[NSApp sendAction: @selector(revealInFinder:) to: nil from: filesystemPath];
+		BXAppController *appController = [NSApp delegate];
+		couldReveal = [appController revealPath: filesystemPath];
 	}
-	else
+	
+	if (!couldReveal)
 	{
 		NSString *errorFormat = NSLocalizedStringFromTable(@"The path \"%1$@\" could not be found, or does not exist in the OS X filesystem.",
 														   @"Shell",

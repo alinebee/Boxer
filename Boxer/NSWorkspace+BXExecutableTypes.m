@@ -92,7 +92,7 @@ typedef struct {
 	BXDOSExecutableHeader header;
 	int headerSize = sizeof(BXDOSExecutableHeader);
 	
-	unsigned long long realFileSize = [[[[NSFileManager alloc] init] attributesOfItemAtPath: path error: NULL] fileSize];
+	unsigned long long realFileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath: path error: NULL] fileSize];
 	
 	//The file must be large enough to contain the entire DOS header.
 	if (realFileSize < (unsigned long long)headerSize)

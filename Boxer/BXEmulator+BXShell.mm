@@ -24,7 +24,7 @@ NSDictionary *commandList = [[NSDictionary alloc] initWithObjectsAndKeys:
 	@"displayStringFromKey:",	@"boxer_displaystring",
 	@"revealPath:",				@"boxer_reveal",
 	@"showShellCommandHelp:",	@"help",
-	@"listDrives:",				@"drives",
+	@"listDrives:",				@"boxer_drives",
 	
 	//Handled by BXDOSWindowController
 	@"toggleFullScreenWithZoom:",					@"fullscreen",
@@ -33,18 +33,18 @@ nil];
 
 //Lookup table of shell commands and the aliases that run them
 NSDictionary *commandAliases = [[NSDictionary alloc] initWithObjectsAndKeys:
-								@"help",		@"commands",
+								//@"help",		@"commands",
 								//Disabled temporarily to avoid interfering with XCOM: TFTD
 								//@"help",		@"intro",
-								@"exit",		@"quit",
-								@"copy",		@"cp",
-								@"rename",		@"move",
-								@"rename",		@"mv",
-								@"del",			@"rm",
-								@"dir",			@"ls",
-								@"type",		@"cat",
-								@"boxer_launch",@"restart",
-								@"mount -u",	@"unmount",
+								//@"exit",		@"quit",
+								//@"copy",		@"cp",
+								//@"rename",		@"move",
+								//@"rename",		@"mv",
+								//@"del",			@"rm",
+								//@"dir",			@"ls",
+								//@"type",		@"cat",
+								//@"boxer_launch",@"restart",
+								//@"mount -u",	@"unmount",
 nil];
 
 

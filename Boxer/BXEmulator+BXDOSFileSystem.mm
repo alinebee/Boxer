@@ -769,8 +769,9 @@ enum {
 	[self didChangeValueForKey: @"mountedDrives"];
 }
 
-- (void) _didCreateFileAtPath: (NSString *)filePath onDrive: (BXDrive *)drive
+- (void) _didCreateFileAtPath: (NSString *)filePath onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
+	BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
 	//Post a notification to whoever's listening
 	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
 							  filePath, @"path",
@@ -782,8 +783,9 @@ enum {
 					   userInfo: userInfo];	
 }
 
-- (void) _didRemoveFileAtPath: (NSString *)filePath onDrive: (BXDrive *)drive
+- (void) _didRemoveFileAtPath: (NSString *)filePath onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
+	BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
 	//Post a notification to whoever's listening
 	NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
 							  filePath, @"path",

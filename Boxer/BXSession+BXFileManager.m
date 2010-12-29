@@ -410,8 +410,10 @@
 		//Todo: the DOS path should include the root folder of every drive, not just Y and Z.
 		NSString *dosPath	= [NSString stringWithFormat: @"%1$@:\\;%1$@:\\UTILS;Z:\\", [toolkitDrive letter], nil];
 		NSString *ultraDir	= [NSString stringWithFormat: @"%@:\\ULTRASND", [toolkitDrive letter], nil];
+		NSString *utilsDir	= [NSString stringWithFormat: @"%@:\\UTILS", [toolkitDrive letter], nil];
 		
 		[theEmulator setVariable: @"path"		to: dosPath		encoding: BXDirectStringEncoding];
+		[theEmulator setVariable: @"boxerutils"	to: utilsDir	encoding: BXDirectStringEncoding];
 		[theEmulator setVariable: @"ultradir"	to: ultraDir	encoding: BXDirectStringEncoding];
 	}	
 }

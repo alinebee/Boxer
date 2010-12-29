@@ -1,0 +1,15 @@
+:network-menu "IPX networking"
+
+[ Host a new network ]
+
+[   Join a network   ]
+
+[?        Quit        ]
+:
+
+:ip-prompt
+Enter the host's IP address:
+[$ IPXIP                   ]
+
+     (e.g. 192.168.0.1)
+:

@@ -10,5 +10,18 @@
                 <type type="file"/>
             </direct-parameter>
         </command>
+		
+		<class name="document" code="docu" description="A DOS session.">
+			<cocoa class="BXSession"/>
+			<property name="name" code="pnam" type="text" access="r" description="Its name.">
+				<cocoa key="displayName"/>
+			</property>
+			<property name="file" code="file" type="file" access="r" description="Its location on disk, if it has one.">
+				<cocoa key="fileURL"/>
+			</property>
+			<responds-to command="close">
+				<cocoa method="handleCloseScriptCommand:"/>
+			</responds-to>
+		</class>
 	</suite>
 </dictionary>

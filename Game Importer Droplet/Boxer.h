@@ -51,13 +51,10 @@ typedef enum BoxerPrintingErrorHandling BoxerPrintingErrorHandling;
 // A document.
 @interface BoxerDocument : SBObject
 
-@property (copy, readonly) NSString *name;  // Its name.
-@property (readonly) BOOL modified;  // Has it been modified since the last save?
+@property (copy, readonly) NSURL *name;  // Its name.
 @property (copy, readonly) NSURL *file;  // Its location on disk, if it has one.
 
 - (void) closeSaving:(BoxerSaveOptions)saving savingIn:(NSURL *)savingIn;  // Close a document.
-- (void) saveIn:(NSURL *)in_ as:(id)as;  // Save a document.
-- (void) printWithProperties:(NSDictionary *)withProperties printDialog:(BOOL)printDialog;  // Print a document.
 - (void) delete;  // Delete an object.
 - (void) duplicateTo:(SBObject *)to withProperties:(NSDictionary *)withProperties;  // Copy an object.
 - (void) moveTo:(SBObject *)to;  // Move an object to a new location.

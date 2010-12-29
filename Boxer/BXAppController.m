@@ -31,6 +31,7 @@
 
 NSString * const BXNewSessionParam = @"--openNewSession";
 NSString * const BXShowImportPanelParam = @"--showImportPanel";
+NSString * const BXImportURLParam = @"--importURL ";
 NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 @interface BXAppController ()
@@ -38,6 +39,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 //Because we can only run one emulation session at a time, we need to launch a second
 //Boxer process for opening additional/subsequent documents
 - (void) _launchProcessWithDocumentAtURL: (NSURL *)URL;
+- (void) _launchProcessWithImportSessionAtURL: (NSURL *)URL;
 - (void) _launchProcessWithUntitledDocument;
 - (void) _launchProcessWithImportPanel;
 
@@ -230,14 +232,23 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 {
 	NSArray *arguments = [[NSProcessInfo processInfo] arguments];
 	
-	if ([arguments containsObject: BXNewSessionParam])
-		[self openUntitledDocumentAndDisplay: YES error: nil];
-	
-	if ([arguments containsObject: BXShowImportPanelParam])
-		[self openImportSessionAndDisplay: YES error: nil];
-	
-	if ([arguments containsObject: BXActivateOnLaunchParam]) 
-		[NSApp activateIgnoringOtherApps: YES];
+	for (NSString *argument in arguments)
+	{
+		if ([argument isEqualToString: BXNewSessionParam])
+			[self openUntitledDocumentAndDisplay: YES error: nil];
+		
+		else if ([argument isEqualToString: BXShowImportPanelParam])
+			[self openImportSessionAndDisplay: YES error: nil];
+		
+		else if ([argument isEqualToString: BXActivateOnLaunchParam]) 
+			[NSApp activateIgnoringOtherApps: YES];
+		
+		else if ([argument hasPrefix: BXImportURLParam])
+		{
+			NSString *importPath = [argument substringFromIndex: [BXImportURLParam length]];
+			[self openImportSessionWithContentsOfURL: [NSURL fileURLWithPath: importPath] display: YES error: nil];
+		}
+	}
 	
 	//If no document was opened during startup, and we didn't launch hidden,
 	//then display the chosen startup window
@@ -415,8 +426,19 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 - (id) openImportSessionWithContentsOfURL: (NSURL *)url display: (BOOL)display error: (NSError **)outError
 {
-	BXImport *importer = [self openImportSessionAndDisplay: display error: outError];
-	[importer importFromSourcePath: [url path]];
+	//If it's too late for us to open an import session, launch a new Boxer process to do it
+	if (![self _canOpenDocumentOfClass: [BXImport class]])
+	{
+		[self _launchProcessWithImportSessionAtURL: url];
+		[self _cancelOpeningWithError: outError];
+		return nil;
+	}
+	else
+	{
+		BXImport *importer = [self openImportSessionAndDisplay: display error: outError];
+		[importer importFromSourcePath: [url path]];
+		return importer;
+	}
 }
 
 
@@ -465,6 +487,14 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 {
 	NSString *executablePath	= [[NSBundle mainBundle] executablePath];
 	NSArray *params				= [NSArray arrayWithObjects: BXShowImportPanelParam, BXActivateOnLaunchParam, nil]; 
+	[NSTask launchedTaskWithLaunchPath: executablePath arguments: params];	
+}
+
+- (void) _launchProcessWithImportSessionAtURL: (NSURL *)URL
+{
+	NSString *executablePath	= [[NSBundle mainBundle] executablePath];
+	NSString *URLParam			= [BXImportURLParam stringByAppendingString: [URL path]];
+	NSArray *params				= [NSArray arrayWithObjects: BXActivateOnLaunchParam, URLParam, nil]; 
 	[NSTask launchedTaskWithLaunchPath: executablePath arguments: params];	
 }
 

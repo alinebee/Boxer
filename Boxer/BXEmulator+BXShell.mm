@@ -304,8 +304,13 @@ nil];
 	return [NSNumber numberWithBool: YES];
 }
 
+@end
+
+
 #pragma mark -
 #pragma mark Private methods
+
+@implementation BXEmulator (BXShellInternals)
 
 - (BOOL) _handleCommand: (NSString *)originalCommand
 	 withArgumentString: (NSString *)originalArgumentString
@@ -479,5 +484,4 @@ nil];
 			   delegateSelector: @selector(didReturnToShell:)
 					   userInfo: nil];
 }
-
 @end

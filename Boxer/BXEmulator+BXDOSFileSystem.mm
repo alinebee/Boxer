@@ -464,10 +464,13 @@ enum {
 	else return nil;
 }
 
+@end
+
 
 #pragma mark -
 #pragma mark Private methods
 
+@implementation BXEmulator (BXDOSFileSystemInternals)
 
 #pragma mark -
 #pragma mark Translating between Boxer and DOSBox drives

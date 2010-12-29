@@ -54,10 +54,7 @@ typedef struct BXDriveGeometry {
 @end
 
 
-//Methods in this category should not be called from outside of BXEmulator. Like, really, I mean it this time.
-//Indeed, this category will not even be seen by other classes, since it is only visible to Objective C++ files.
 @interface BXEmulator (BXDOSFileSystemInternals)
-
 
 #pragma mark -
 #pragma mark Translating between Boxer and DOSBox drives
@@ -77,8 +74,6 @@ typedef struct BXDriveGeometry {
 //Returns nil if there is no corresponding local file (e.g. if the drive is a disk image or DOSBox-internal drive.)
 - (NSString *)_filesystemPathForDOSPath: (const char *)dosPath onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
 
-//Returns a fully-resolved DOS path for the specified (relative or absolute) path on the specified drive.
-- (NSString *)_fullDOSPathForPath: (const char *)dosPath onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
 
 #pragma mark -
 #pragma mark Adding and removing DOSBox drives
@@ -144,6 +139,9 @@ typedef struct BXDriveGeometry {
 
 @end
 
+
+#pragma mark -
+#pragma mark Shell-related internal methods
 
 @interface BXEmulator (BXShellInternals)
 

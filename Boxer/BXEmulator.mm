@@ -402,9 +402,13 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	}
 }
 
+@end
+
 
 #pragma mark -
 #pragma mark Private methods
+
+@implementation BXEmulator (BXEmulatorInternals)
 
 - (DOS_Shell *) _currentShell
 {
@@ -427,8 +431,8 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 }
 
 
-//Synchronising emulation state
-//-----------------------------
+#pragma mark -
+#pragma mark Synchronizing emulation state
 
 //Called by coalface functions to notify Boxer that the emulation state may have changed behind its back
 - (void) _didChangeEmulationState
@@ -458,8 +462,8 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 }
 
 
-//Event-handling
-//--------------
+#pragma mark -
+#pragma mark Runloop handling
 
 - (BOOL) _handleEventLoop
 {

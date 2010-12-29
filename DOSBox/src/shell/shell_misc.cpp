@@ -466,7 +466,7 @@ bool DOS_Shell::Execute(char * name,char * args) {
 		if(bf && !call) delete bf;
 		
 		//--Added 2010-01-21 by Alun Bestor to let Boxer track the executed program
-		boxer_willExecuteFileAtDOSPath(dosPath, driveIndex);
+		boxer_willExecuteFileAtDOSPath(dosPath, Drives[driveIndex]);
 		//--End of modifications
 		
 		bf=new BatchFile(this,fullname,name,line);
@@ -480,7 +480,7 @@ bool DOS_Shell::Execute(char * name,char * args) {
 		}
 		
 		//--Added 2010-01-21 by Alun Bestor to let Boxer track the executed program
-		boxer_willExecuteFileAtDOSPath(dosPath, driveIndex);
+		boxer_willExecuteFileAtDOSPath(dosPath, Drives[driveIndex]);
 		//--End of modifications
 		
 		/* Run the .exe or .com file from the shell */
@@ -542,7 +542,7 @@ bool DOS_Shell::Execute(char * name,char * args) {
 	}
 	
 	//--Added 2010-01-21 by Alun Bestor to let Boxer track the executed program
-	boxer_didExecuteFileAtDOSPath(dosPath, driveIndex);
+	boxer_didExecuteFileAtDOSPath(dosPath, Drives[driveIndex]);
 	//--End of modifications
 	
 	return true; //Executable started

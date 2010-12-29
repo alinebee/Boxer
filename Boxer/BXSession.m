@@ -582,14 +582,10 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	}
 }
 
-//If we have not already launched our default target, do so now (and then display the program picker)
 - (void) runLaunchCommands
-{	
-	if (!hasLaunched)
-	{
-		hasLaunched = YES;
-		[self _launchTarget];
-	}
+{
+	hasLaunched = YES;
+	[self _launchTarget];
 }
 
 - (void) frameComplete: (BXFrameBuffer *)frame

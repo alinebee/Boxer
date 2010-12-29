@@ -5,10 +5,9 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-
-#import "BXEmulator+BXDOSFileSystem.h"
-#import "BXEmulator+BXShell.h"
+#import "BXEmulatorPrivate.h"
 #import "BXEmulatorDelegate.h"
+
 #import "BXDrive.h"
 #import "NSString+BXPaths.h"
 #import "BXGameProfile.h"
@@ -428,9 +427,11 @@ enum {
 {
 	if ([self isExecuting])
 	{
-		NSUInteger index = DOS_GetDefaultDrive();
-		NSString *localPath	= [self _filesystemPathForDOSPath: Drives[index]->curdir atIndex: index];
+		DOS_Drive *currentDOSBoxDrive = Drives[DOS_GetDefaultDrive()];
+		
+		NSString *localPath	= [self _filesystemPathForDOSPath: currentDOSBoxDrive->curdir onDOSBoxDrive: currentDOSBoxDrive];
 		if (localPath) return localPath;
+		
 		//If no accurate local path could be determined, then return the source path of the current drive instead 
 		else return [[self currentDrive] path];		
 	}
@@ -448,12 +449,13 @@ enum {
 
 		if (resolved)
 		{
-			NSString *localPath	= [self _filesystemPathForDOSPath: fullPath atIndex: driveIndex];
+			DOS_Drive *dosboxDrive = Drives[driveIndex];
+			NSString *localPath	= [self _filesystemPathForDOSPath: fullPath onDOSBoxDrive: dosboxDrive];
 			
 			if (localPath) return localPath;
 			else
 			{
-				BXDrive *drive = [self driveAtLetter: [self _driveLetterForIndex: driveIndex]];
+				BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
 				return [drive path];
 			}			
 		}
@@ -497,7 +499,8 @@ enum {
 			return [driveCache objectForKey: [self _driveLetterForIndex: i]];
 		}
 	}
-	return nil;
+	
+	NSAssert(NO, @"No matching Boxer drive was found DOSBox drive.");
 }
 
 - (DOS_Drive *)_DOSBoxDriveMatchingDrive: (BXDrive *)drive
@@ -507,12 +510,9 @@ enum {
 	else return NULL;
 }
 
-- (NSString *)_filesystemPathForDOSPath: (const char *)dosPath atIndex: (NSUInteger)driveIndex
-{
-	DOS_Drive *DOSBoxDrive = Drives[driveIndex];
-	if (!DOSBoxDrive) return nil;
-	
-	localDrive *localDOSBoxDrive = dynamic_cast<localDrive *>(DOSBoxDrive);
+- (NSString *)_filesystemPathForDOSPath: (const char *)dosPath onDOSBoxDrive: (DOS_Drive *)dosboxDrive
+{	
+	localDrive *localDOSBoxDrive = dynamic_cast<localDrive *>(dosboxDrive);
 	if (localDOSBoxDrive)
 	{
 		char filePath[CROSS_LEN];
@@ -530,6 +530,16 @@ enum {
 #pragma mark -
 #pragma mark Adding and removing new DOSBox drives
 
+
+- (NSUInteger) _indexOfDOSBoxDrive: (DOS_Drive *)drive
+{
+	NSUInteger i;
+	for (i=0; i < DOS_DRIVES; i++)
+	{
+		if (Drives[i] == drive) return i;
+	}
+	return NSNotFound;
+}
 
 //Registers a new drive with DOSBox and adds it to the drive list.
 - (BOOL) _addDOSBoxDrive: (DOS_Drive *)drive atIndex: (NSUInteger)index
@@ -840,8 +850,10 @@ enum {
 	return YES;
 }
 
-- (BOOL) _shouldAllowWriteAccessToPath: (NSString *)filePath onDrive: (BXDrive *)drive
+- (BOOL) _shouldAllowWriteAccessToPath: (NSString *)filePath onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {	
+	BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
+	
 	//Don't allow write access to files on drives marked as read-only
 	if ([drive readOnly]) return NO;
 	

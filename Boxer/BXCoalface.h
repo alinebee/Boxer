@@ -33,6 +33,8 @@ extern "C" {
 #define GFX_GetBestMode boxer_idealOutputMode
 #define GFX_ShowMsg boxer_log
 	
+	class DOS_Drive;
+	
 	Bitu boxer_prepareForFrameSize(Bitu width, Bitu height, Bitu gfx_flags, double scalex, double scaley, GFX_CallBack_t callback);
 	bool boxer_startFrame(Bit8u **frameBuffer, Bitu *pitch);
 	void boxer_finishFrame(const uint16_t *dirtyBlocks);
@@ -68,19 +70,19 @@ extern "C" {
 	bool boxer_shouldShowFileWithName(const char *name);
 	
 	//Called from drive_local.cpp: allows Boxer to restrict access to files that DOS programs shouldn't write to.
-	bool boxer_shouldAllowWriteAccessToPath(const char *filePath, Bit8u driveIndex);
+	bool boxer_shouldAllowWriteAccessToPath(const char *filePath, DOS_Drive *dosboxDrive);
 	
 	//Called from dos_programs.cpp et al: informs Boxer of drive mount/unmount events.
 	void boxer_driveDidMount(Bit8u driveIndex);
 	void boxer_driveDidUnmount(Bit8u driveIndex);
 	
 	//Called from drive_local.cpp to notify Boxer when DOSBox has created or deleted a local file.
-	void boxer_didCreateLocalFile(const char *path, Bit8u driveIndex);
-	void boxer_didRemoveLocalFile(const char *path, Bit8u driveIndex);
+	void boxer_didCreateLocalFile(const char *path, DOS_Drive *dosboxDrive);
+	void boxer_didRemoveLocalFile(const char *path, DOS_Drive *dosboxDrive);
 	
 	//Called from shell_misc.cpp to notify Boxer when a program or batchfile is executed.
-	void boxer_willExecuteFileAtDOSPath(const char *dosPath, Bit8u driveIndex);
-	void boxer_didExecuteFileAtDOSPath(const char *dosPath, Bit8u driveIndex);
+	void boxer_willExecuteFileAtDOSPath(const char *dosPath, DOS_Drive *dosboxDrive);
+	void boxer_didExecuteFileAtDOSPath(const char *dosPath, DOS_Drive *dosboxDrive);
 	
 	void boxer_handleEventLoop();
 	void boxer_handleDOSBoxTitleChange(Bit32s cycles, Bits frameskip, bool paused);

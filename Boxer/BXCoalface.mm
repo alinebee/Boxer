@@ -7,10 +7,7 @@
 
 
 #import "BXCoalface.h"
-#import "BXEmulator+BXShell.h"
-#import "BXEmulator+BXDOSFileSystem.h"
-#import "BXInputHandler.h"
-#import "BXVideoHandler.h"
+#import "BXEmulatorPrivate.h"
 
 
 #pragma mark -
@@ -107,7 +104,7 @@ bool boxer_shouldRunShellCommand(char* cmd, char* args)
 	NSString *command			= [NSString stringWithCString: cmd	encoding: BXDirectStringEncoding];
 	NSString *argumentString	= [NSString stringWithCString: args	encoding: BXDirectStringEncoding];
 	
-	BXEmulator *emulator	= [BXEmulator currentEmulator];
+	BXEmulator *emulator = [BXEmulator currentEmulator];
 	return [emulator _handleCommand: command withArgumentString: argumentString];
 }
 
@@ -158,16 +155,16 @@ void boxer_autoexecDidFinish()
 	[emulator _didRunStartupCommands];
 }
 
-void boxer_willExecuteFileAtDOSPath(const char *dosPath, Bit8u driveIndex)
+void boxer_willExecuteFileAtDOSPath(const char *path, DOS_Drive *dosboxDrive)
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	[emulator _willExecuteFileAtDOSPath: dosPath onDrive: driveIndex];
+	[emulator _willExecuteFileAtDOSPath: path onDOSBoxDrive: dosboxDrive];
 }
 
-void boxer_didExecuteFileAtDOSPath(const char *dosPath, Bit8u driveIndex)
+void boxer_didExecuteFileAtDOSPath(const char *path, DOS_Drive *dosboxDrive)
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	[emulator _didExecuteFileAtDOSPath: dosPath onDrive: driveIndex];
+	[emulator _didExecuteFileAtDOSPath: path onDOSBoxDrive: dosboxDrive];
 }
 
 
@@ -176,14 +173,14 @@ void boxer_didExecuteFileAtDOSPath(const char *dosPath, Bit8u driveIndex)
 
 //Whether or not to allow the specified path to be mounted.
 //Called by MOUNT::Run in DOSBox's dos/dos_programs.cpp.
-bool boxer_shouldMountPath(const char *filePath)
+bool boxer_shouldMountPath(const char *path)
 {
-	NSString *thePath = [[NSFileManager defaultManager]
-						 stringWithFileSystemRepresentation: filePath
-						 length: strlen(filePath)];
+	NSString *localPath = [[NSFileManager defaultManager]
+						   stringWithFileSystemRepresentation: path
+						   length: strlen(path)];
 	
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	return [emulator _shouldMountPath: thePath];
+	return [emulator _shouldMountPath: localPath];
 }
 
 //Whether to include a file with the specified name in DOSBox directory listings
@@ -195,15 +192,14 @@ bool boxer_shouldShowFileWithName(const char *name)
 }
 
 //Whether to allow write access to the file at the specified path on the local filesystem
-bool boxer_shouldAllowWriteAccessToPath(const char *filePath, Bit8u driveIndex)
+bool boxer_shouldAllowWriteAccessToPath(const char *path, DOS_Drive *dosboxDrive)
 {
-	NSString *thePath	= [[NSFileManager defaultManager]
-						   stringWithFileSystemRepresentation: filePath
-						   length: strlen(filePath)];
+	NSString *localPath = [[NSFileManager defaultManager] 
+						   stringWithFileSystemRepresentation: path
+						   length: strlen(path)];
 	
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	BXDrive *drive = [emulator driveAtLetter: [emulator _driveLetterForIndex: driveIndex]];
-	return [emulator _shouldAllowWriteAccessToPath: thePath onDrive: drive];
+	return [emulator _shouldAllowWriteAccessToPath: localPath onDOSBoxDrive: dosboxDrive];
 }
 
 //Tells Boxer to resync its cached drives - called by DOSBox functions that add/remove drives
@@ -212,32 +208,31 @@ void boxer_driveDidMount(Bit8u driveIndex)
 	BXEmulator *emulator = [BXEmulator currentEmulator];
 	[emulator _syncDriveCache];
 }
+
 void boxer_driveDidUnmount(Bit8u driveIndex)
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
 	[emulator _syncDriveCache];
 }
 
-void boxer_didCreateLocalFile(const char *path, Bit8u driveIndex)
+void boxer_didCreateLocalFile(const char *path, DOS_Drive *dosboxDrive)
 {
-	NSString *filePath = [[NSFileManager defaultManager] stringWithFileSystemRepresentation: path
-																					 length: strlen(path)];
-	
+	NSString *localPath = [[NSFileManager defaultManager] 
+						   stringWithFileSystemRepresentation: path
+						   length: strlen(path)];	
+
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	
-	BXDrive *drive = [emulator driveAtLetter: [emulator _driveLetterForIndex: driveIndex]];
-	[emulator _didCreateFileAtPath: filePath onDrive: drive];
+	[emulator _didCreateFileAtPath: localPath onDOSBoxDrive: dosboxDrive];
 }
 
-void boxer_didRemoveLocalFile(const char *path, Bit8u driveIndex)
+void boxer_didRemoveLocalFile(const char *path, DOS_Drive *dosboxDrive)
 {
-	NSString *filePath = [[NSFileManager defaultManager] stringWithFileSystemRepresentation: path
-																					 length: strlen(path)];
+	NSString *localPath = [[NSFileManager defaultManager] 
+						   stringWithFileSystemRepresentation: path
+						   length: strlen(path)];
 	
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	
-	BXDrive *drive = [emulator driveAtLetter: [emulator _driveLetterForIndex: driveIndex]];
-	[emulator _didRemoveFileAtPath: filePath onDrive: drive];
+	[emulator _didRemoveFileAtPath: localPath onDOSBoxDrive: dosboxDrive];
 }
 
 

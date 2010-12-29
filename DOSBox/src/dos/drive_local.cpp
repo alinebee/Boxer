@@ -58,6 +58,14 @@ bool localDrive::FileCreate(DOS_File * * file,const char * name,Bit16u /*attribu
 	/* Test if file exists (so we need to truncate it). don't add to dirCache then */
 	bool existing_file=false;
 	
+	//--Added 2010-01-18 by Alun Bestor to allow Boxer to selectively deny write access to files
+	if (!boxer_shouldAllowWriteAccessToPath((const char *)newname, this))
+	{
+		DOS_SetError(DOSERR_ACCESS_DENIED);
+		return false;
+	}
+	//--End of modifications
+	
 	FILE * test=fopen(temp_name,"rb+");
 	if(test) {
 		fclose(test);
@@ -84,16 +92,7 @@ bool localDrive::FileCreate(DOS_File * * file,const char * name,Bit16u /*attribu
 	
 	
 	//--Added 2010-08-21 by Alun Bestor to let Boxer monitor DOSBox's file operations
-	Bit8u i, driveIndex = 0;
-	for (i=0; i < DOS_DRIVES; i++)
-	{
-		if (Drives[i] == this)
-		{
-			driveIndex = i;
-			break;
-		}
-	}
-	boxer_didCreateLocalFile(temp_name, driveIndex);
+	boxer_didCreateLocalFile(temp_name, this);
 	//--End of modifications
 
 	return true;
@@ -118,18 +117,7 @@ bool localDrive::FileOpen(DOS_File * * file,const char * name,Bit32u flags) {
 	//--Added 2010-01-18 by Alun Bestor to allow Boxer to selectively deny write access to files
 	if (!strcmp(type, "rb+"))
 	{
-		//Figure out which drive letter we are for Boxer's benefit
-		Bit8u i, driveIndex = 0;
-		for (i=0; i < DOS_DRIVES; i++)
-		{
-			if (Drives[i] == this)
-			{
-				driveIndex = i;
-				break;
-			}
-		}
-		
-		if (!boxer_shouldAllowWriteAccessToPath((const char *)newname, driveIndex))
+		if (!boxer_shouldAllowWriteAccessToPath((const char *)newname, this))
 		{
 			//Copy-pasted from cdromDrive::FileOpen
 			if ((flags&3)==OPEN_READWRITE) {
@@ -188,15 +176,11 @@ bool localDrive::FileUnlink(const char * name) {
 	CROSS_FILENAME(newname);
 	char *fullname = dirCache.GetExpandName(newname);
 	
-	//--Added 2010-08-21 by Alun Bestor to let Boxer monitor DOSBox's file operations
-	Bit8u ii, driveIndex = 0;
-	for (ii=0; ii < DOS_DRIVES; ii++)
+	//--Added 2010-12-29 by Alun Bestor to let Boxer selectively prevent file operations
+	if (!boxer_shouldAllowWriteAccessToPath((const char *)fullname, this))
 	{
-		if (Drives[ii] == this)
-		{
-			driveIndex = ii;
-			break;
-		}
+		DOS_SetError(DOSERR_ACCESS_DENIED);
+		return false;
 	}
 	//--End of modifications
 	
@@ -224,14 +208,11 @@ bool localDrive::FileUnlink(const char * name) {
 			}
 		}
 		if(!found_file) return false;
-		//--Changed 2010-08-21 by Alun Bestor: this branch should happen if the retried delete *succeeded*, not failed
-		//if (!unlink(fullname)) {
-		if (unlink(fullname)) {
-		//--End of modifications
+		if (!unlink(fullname)) {
 			dirCache.DeleteEntry(newname);
 			
 			//--Added 2010-08-21 by Alun Bestor to let Boxer monitor DOSBox's file operations
-			boxer_didRemoveLocalFile(fullname, driveIndex);
+			boxer_didRemoveLocalFile(fullname, this);
 			//--End of modifications
 			return true;
 		}
@@ -240,7 +221,7 @@ bool localDrive::FileUnlink(const char * name) {
 		dirCache.DeleteEntry(newname);
 		
 		//--Added 2010-08-21 by Alun Bestor to let Boxer monitor DOSBox's file operations
-		boxer_didRemoveLocalFile(fullname, driveIndex);
+		boxer_didRemoveLocalFile(fullname, this);
 		//--End of modifications
 		return true;
 	}
@@ -377,11 +358,27 @@ bool localDrive::MakeDir(const char * dir) {
 	strcpy(newdir,basedir);
 	strcat(newdir,dir);
 	CROSS_FILENAME(newdir);
-#if defined (WIN32)						/* MS Visual C++ */
-	int temp=mkdir(dirCache.GetExpandName(newdir));
-#else
-	int temp=mkdir(dirCache.GetExpandName(newdir),0700);
-#endif
+	char * fullname=dirCache.GetExpandName(newdir);
+	
+	//--Modified 2010-12-29 by Alun Bestor to allow Boxer to selectively prevent file operations,
+	//and to prevent DOSBox from creating folders with the wrong file permissions.
+	/*
+	 #if defined (WIN32)						// MS Visual C++
+	 int temp=mkdir(fullname);
+	 #else
+	 int temp=mkdir(fullname,0700);
+	 #endif
+	 */
+	
+	if (!boxer_shouldAllowWriteAccessToPath((const char *)fullname, this))
+	{
+		DOS_SetError(DOSERR_ACCESS_DENIED);
+		return false;
+	}
+
+	int temp=mkdir(fullname, 0777);
+	//--End of modifications
+	
 	if (temp==0) dirCache.CacheOut(newdir,true);
 
 	return (temp==0);// || ((temp!=0) && (errno==EEXIST));
@@ -392,7 +389,19 @@ bool localDrive::RemoveDir(const char * dir) {
 	strcpy(newdir,basedir);
 	strcat(newdir,dir);
 	CROSS_FILENAME(newdir);
-	int temp=rmdir(dirCache.GetExpandName(newdir));
+	
+	//--Modified 2010-12-29 by Alun Bestor to allow Boxer to selectively prevent file operations
+	char *fullname = dirCache.GetExpandName(newdir);
+	
+	if (!boxer_shouldAllowWriteAccessToPath((const char *)fullname, this))
+	{
+		DOS_SetError(DOSERR_ACCESS_DENIED);
+		return false;
+	}
+	
+	int temp=rmdir(fullname);
+	//--End of modifications
+	
 	if (temp==0) dirCache.DeleteEntry(newdir,true);
 	return (temp==0);
 }
@@ -426,7 +435,18 @@ bool localDrive::Rename(const char * oldname,const char * newname) {
 	strcpy(newnew,basedir);
 	strcat(newnew,newname);
 	CROSS_FILENAME(newnew);
-	int temp=rename(newold,dirCache.GetExpandName(newnew));
+	char *fullname = dirCache.GetExpandName(newnew);
+	
+	//--Added 2010-12-29 by Alun Bestor to let Boxer selectively prevent file operations
+	if (!boxer_shouldAllowWriteAccessToPath((const char *)newold, this) ||
+		!boxer_shouldAllowWriteAccessToPath((const char *)fullname, this))
+	{
+		DOS_SetError(DOSERR_ACCESS_DENIED);
+		return false;
+	}
+	//End of modifications
+	
+	int temp=rename(newold,fullname);
 	if (temp==0) dirCache.CacheOut(newnew);
 	return (temp==0);
 

@@ -7,7 +7,7 @@
 
 
 #import "BXVideoHandler.h"
-#import "BXEmulator.h"
+#import "BXEmulatorPrivate.h"
 #import "BXSession.h"
 #import "BXFrameBuffer.h"
 #import "BXGeometry.h"

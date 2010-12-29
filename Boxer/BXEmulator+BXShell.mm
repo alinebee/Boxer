@@ -5,15 +5,16 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-#import "BXEmulator+BXShell.h"
-#import "BXEmulator+BXDOSFileSystem.h"
+#import "BXEmulatorPrivate.h"
 #import "BXEmulatorDelegate.h"
+
 #import "BXDrive.h"
 #import "BXValueTransformers.h"
 #import "BXInputHandler.h"
 #import "BXAppController.h"
 
 #import "shell.h"
+
 
 //Lookup table of BXEmulator+BXShell selectors and the shell commands that call them
 NSDictionary *commandList = [[NSDictionary alloc] initWithObjectsAndKeys:
@@ -33,6 +34,7 @@ nil];
 //Lookup table of shell commands and the aliases that run them
 NSDictionary *commandAliases = [[NSDictionary alloc] initWithObjectsAndKeys:
 								@"help",		@"commands",
+								//Disabled temporarily to avoid interfering with XCOM: TFTD
 								//@"help",		@"intro",
 								@"exit",		@"quit",
 								@"copy",		@"cp",
@@ -41,15 +43,15 @@ NSDictionary *commandAliases = [[NSDictionary alloc] initWithObjectsAndKeys:
 								@"del",			@"rm",
 								@"dir",			@"ls",
 								@"type",		@"cat",
+								@"boxer_launch",@"restart",
 								@"mount -u",	@"unmount",
 nil];
 
 
 @implementation BXEmulator (BXShell)
 
-
-//Command processing
-//------------------
+#pragma mark -
+#pragma mark Command processing
 
 - (void) executeCommand: (NSString *)theString
 			   encoding: (NSStringEncoding)encoding
@@ -165,9 +167,8 @@ nil];
 }
 
 
-
-//DOS environment and configuration variables
-//-------------------------------------------
+#pragma mark -
+#pragma mark DOS environment and configuration variables
 
 - (void) setVariable: (NSString *)name to: (NSString *)value encoding: (NSStringEncoding)encoding
 {
@@ -182,8 +183,8 @@ nil];
 }
 
 
-//Buffering commands
-//------------------
+#pragma mark -
+#pragma mark Buffering commands
 
 - (void) discardShellInput
 {
@@ -196,13 +197,13 @@ nil];
 }
 
 
-//Actual shell commands you might want to call
-//--------------------------------------------
+#pragma mark -
+#pragma mark Actual shell commands you might want to call
 
 - (id) displayStringFromKey: (NSString *)argumentString
 {
 	//We may need to do additional cleanup and string-splitting here in future
-	NSString *theKey	= argumentString;
+	NSString *theKey = argumentString;
 	
 	NSString *theString = [[NSBundle mainBundle]
 							localizedStringForKey: theKey
@@ -250,8 +251,9 @@ nil];
 		
 		if ([drive isInternal])
 		{
-			localizedFormat = NSLocalizedString(@"%1$@: %2$@\n",
-												"Format for listing internal DOSBox drives via the DRIVES command: %1$@ is the drive letter, %2$@ is the localized drive type.");
+			localizedFormat = NSLocalizedStringFromTable(@"%1$@: %2$@\n",
+														 @"Shell",
+														 @"Format for listing internal DOSBox drives via the DRIVES command: %1$@ is the drive letter, %2$@ is the localized drive type.");
 			description = [NSString stringWithFormat: localizedFormat,
 						   [drive letter],
 						   [drive typeDescription],
@@ -259,8 +261,9 @@ nil];
 		}
 		else
 		{
-			localizedFormat = NSLocalizedString(@"%1$@: %2$@ from %3$@\n",
-												"Format for listing regular drives via the DRIVES command: %1$@ is the drive letter, %2$@ is the localized drive type, %3$@ is the drive's OS X filesystem path");
+			localizedFormat = NSLocalizedStringFromTable(@"%1$@: %2$@ from %3$@\n",
+														 @"Shell",
+														 @"Format for listing regular drives via the DRIVES command: %1$@ is the drive letter, %2$@ is the localized drive type, %3$@ is the drive's OS X filesystem path");
 			description = [NSString stringWithFormat: localizedFormat,
 						   [drive letter],
 						   [drive typeDescription],
@@ -288,7 +291,9 @@ nil];
 	}
 	else
 	{
-		NSString *errorFormat = NSLocalizedString(@"The path \"%1$@\" could not be found, or does not exist in the OS X filesystem.", @"Error message displayed when BOXER_REVEAL cannot resolve a specified drive path.");
+		NSString *errorFormat = NSLocalizedStringFromTable(@"The path \"%1$@\" could not be found, or does not exist in the OS X filesystem.",
+														   @"Shell",
+														   @"Error message displayed when BOXER_REVEAL cannot resolve a specified drive path.");
 		NSString *errorMessage = [NSString stringWithFormat: errorFormat, cleanedPath, nil];
 		[self displayString: errorMessage];
 	}
@@ -413,11 +418,13 @@ nil];
 					   userInfo: nil];
 }
 
-- (void) _willExecuteFileAtDOSPath: (const char *)dosPath onDrive: (NSUInteger)driveIndex
+- (void) _willExecuteFileAtDOSPath: (const char *)dosPath onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
-	BXDrive *drive			= [self driveAtLetter: [self _driveLetterForIndex: driveIndex]];
-	NSString *localPath		= [self _filesystemPathForDOSPath: dosPath atIndex: driveIndex];
-	NSString *fullDOSPath	= [NSString stringWithFormat: @"%@:\%@",
+	BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
+	NSUInteger driveIndex = [self _indexOfDOSBoxDrive: dosboxDrive];
+	
+	NSString *localPath		= [self _filesystemPathForDOSPath: dosPath onDOSBoxDrive: dosboxDrive];
+	NSString *fullDOSPath	= [NSString stringWithFormat: @"%@:\\%@",
 							   [self _driveLetterForIndex: driveIndex],
 							   [NSString stringWithCString: dosPath encoding: BXDirectStringEncoding],
 							   nil];
@@ -437,11 +444,13 @@ nil];
 	
 }
 
-- (void) _didExecuteFileAtDOSPath: (const char *)dosPath onDrive: (NSUInteger)driveIndex
+- (void) _didExecuteFileAtDOSPath: (const char *)dosPath onDOSBoxDrive: (DOS_Drive *)dosboxDrive
 {
-	BXDrive *drive			= [self driveAtLetter: [self _driveLetterForIndex: driveIndex]];
-	NSString *localPath		= [self _filesystemPathForDOSPath: dosPath atIndex: driveIndex];
-	NSString *fullDOSPath	= [NSString stringWithFormat: @"%@:\%@",
+	BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
+	NSUInteger driveIndex = [self _indexOfDOSBoxDrive: dosboxDrive];
+	
+	NSString *localPath		= [self _filesystemPathForDOSPath: dosPath onDOSBoxDrive: dosboxDrive];
+	NSString *fullDOSPath	= [NSString stringWithFormat: @"%@:\\%@",
 							   [self _driveLetterForIndex: driveIndex],
 							   [NSString stringWithCString: dosPath encoding: BXDirectStringEncoding],
 							   nil];

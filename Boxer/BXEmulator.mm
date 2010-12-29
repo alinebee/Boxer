@@ -8,12 +8,8 @@
 //For NSEvent and NSApp
 #import <Cocoa/Cocoa.h>
 
-#import "BXEmulator.h"
+#import "BXEmulatorPrivate.h"
 #import "BXEmulatorDelegate.h"
-
-#import "BXEmulator+BXShell.h"
-#import "BXInputHandler.h"
-#import "BXVideoHandler.h"
 
 #import <SDL/SDL.h>
 #import "cpu.h"

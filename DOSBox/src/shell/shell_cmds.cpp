@@ -255,7 +255,11 @@ void DOS_Shell::CMD_HELP(char * args){
 }
 
 void DOS_Shell::CMD_RENAME(char * args){
-	HELP("RENAME");
+	//--Modified 2010-12-29 by Alun Bestor to show help text when no arguments were given
+	//HELP("RENAME");
+	HELP_IF_NO_ARGS("RENAME");
+	//--End of modifications
+	
 	StripSpaces(args);
 	if(!*args) {SyntaxError();return;}
 	if((strchr(args,'*')!=NULL) || (strchr(args,'?')!=NULL) ) { WriteOut(MSG_Get("SHELL_CMD_NO_WILD"));return;}

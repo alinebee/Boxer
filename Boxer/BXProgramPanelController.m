@@ -20,8 +20,6 @@
 
 @interface BXProgramPanelController ()
 @property (readwrite, retain, nonatomic) NSArray *panelExecutables;
-
-- (void) _safelySyncPanelExecutables: (NSArray *)executables;
 @end
 
 @implementation BXProgramPanelController
@@ -49,7 +47,13 @@
 	[super dealloc];
 }
 
+- (void) awakeFromNib
+{
+	needsExecutableSync = YES;
+}
+
 - (NSString *) nibName	{ return @"ProgramPanel"; }
+
 
 + (NSSet *)keyPathsForValuesAffectingLabelForToggle
 {
@@ -103,13 +107,17 @@
 						change: (NSDictionary *)change
 					   context: (void *)context
 {	
-	//Resync the program panel if it is active and the programs on it would have changed
-	if ([self activePanel] == [self programChooserPanel] &&
-		([keyPath isEqualToString: @"programPathsOnPrincipalDrive"] || [keyPath isEqualToString: @"gamePackage.targetPath"]))
+	//Resync the program selector when the programs on it have changed
+	//Note that we don't call [syncPanelExecutables] directly, because it
+	//may not be visible, and forcing redraws of a hidden NSCollectionView
+	//are dangerous on OS X 10.5. Instead, we cue up a resync for next time
+	//the program selector is displayed
+	if ([keyPath isEqualToString: @"programPathsOnPrincipalDrive"] || [keyPath isEqualToString: @"gamePackage.targetPath"])
 	{
-		[self syncPanelExecutables];
+		needsExecutableSync = YES;
 	}
-	[self syncActivePanel];
+	//Only update the panel contents after a short delay, to allow time for a program to quit
+	[self performSelector: @selector(syncActivePanel) withObject: nil afterDelay: 0.1];
 }
 
 - (void) setView: (NSView *)view
@@ -203,18 +211,18 @@
 		//Add the new panel into the view
 		[previousPanel removeFromSuperview];
 		[mainView addSubview: panel];
-		
-		//Force the program list scroller to recalculate its scroll dimensions. This is necessary in OS X 10.5,
-		//which calculates the initial dimensions incorrectly while the NSCollectionView is being populated.
-		if (panel == programChooserPanel)
-		{
-			if (![[self panelExecutables] count]) [self syncPanelExecutables];
-			[[self programScroller] reflectScrolledClipView: [[self programScroller] contentView]];
-		}
 	}
 	if (panel == programChooserPanel)
 	{
+		if (needsExecutableSync)
+		{
+			[self syncPanelExecutables];
+			//Force panel scrollbar to update in 10.5, which will calculate its scroll region
+			//wrong while the NSCollectionView is populating itself.
+			[[self programScroller] reflectScrolledClipView: [[self programScroller] contentView]];
+		}
 		[self syncProgramButtonStates];
+		
 	}
 }
 
@@ -329,51 +337,13 @@
 		}
 	}
 	
-	if ([BXAppController isRunningOnLeopard])
-	{
-		[self _safelySyncPanelExecutables: listedPrograms];
-	}
-	else
-	{
-		[self setPanelExecutables: listedPrograms];
-	}
+	[self setPanelExecutables: listedPrograms];
+	needsExecutableSync = NO;
 	
 	[programNames release];
 	[listedPrograms release];
 }
 
-
-- (void) _safelySyncPanelExecutables: (NSArray *)executables
-{
-	//OK, you're going to love this.
-	
-	//Our NSCollectionView-powered program list will redraw itself when we set panelExecutables,
-	//since its content is bound to this array. Fine.
-	
-	//But in OS X 10.5, NSCollectionView may try to redraw itself before it's actually ready to do so,
-	//causing a lockFocus assertion error. This will occur very frequently at startup when the CPU speed
-	//is set to certain intervals - DOSBox's CPU cycle speed also determines how and when the UI gets
-	//to update itself, triggering a peculiar edge case here.
-	
-	//So, before setting the panel executables, we perform the check that NSCollectionView itself
-	//should be doing but isn't: if the view is ready to draw, we set the executables and let it draw
-	//itself. If it's not, we wait a short time before trying again.
-	
-	//This ghastly hack is only appropriate for 10.5, so in 10.6 we don't bother with this method.
-	//This code should be removed once DOSBox lives in its own process, or when I hang myself in abject
-	//shame and horror, whichever comes first.
-	
-	if ([[self programList] canDraw])
-	{
-		[self setPanelExecutables: executables];
-	}
-	else if ([self activePanel] == [self programChooserPanel])
-	{
-		//For speed, we assume this is the only kind of delayed perform request we'll ever have.
-		[NSThread cancelPreviousPerformRequestsWithTarget: self];
-		[self performSelector: @selector(_safelySyncPanelExecutables:) withObject: executables afterDelay: 0.05];
-	}
-}
 
 - (NSArray *) executableSortDescriptors
 {

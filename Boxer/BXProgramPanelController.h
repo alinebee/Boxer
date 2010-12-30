@@ -10,6 +10,9 @@
 //responsible for populating the program selection and toggling which picker interface is shown
 //(picker, default program toggle, no programs notice) based on the state of the session.
 
+//TODO: move most of the which-panel-to-show logic upstream into BXSession, which knows a lot
+//more about what to display. The current implementation is a rat's-nest of bindings and predictions.
+
 #import <Cocoa/Cocoa.h>
 
 @class BXSession;
@@ -26,6 +29,7 @@
 	IBOutlet NSScrollView *programScroller;
 	
 	NSArray *panelExecutables;
+	BOOL needsExecutableSync;
 }
 
 

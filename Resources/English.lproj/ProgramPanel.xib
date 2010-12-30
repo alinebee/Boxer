@@ -21,10 +21,8 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="52"/>
-			<integer value="428"/>
 			<integer value="11"/>
-			<integer value="335"/>
+			<integer value="52"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -274,7 +272,7 @@
 				<string key="NSClassName">BXProgramPanel</string>
 			</object>
 			<object class="NSCustomView" id="1066092163">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">274</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -368,7 +366,6 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{640, 64}</string>
-				<reference key="NSSuperview"/>
 				<string key="NSClassName">BXProgramPanel</string>
 			</object>
 			<object class="NSCustomView" id="1029538789">
@@ -526,7 +523,7 @@
 				<string key="NSClassName">BXBlueprintPanel</string>
 			</object>
 			<object class="NSCustomView" id="899602438">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">274</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -616,7 +613,6 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{640, 64}</string>
-				<reference key="NSSuperview"/>
 				<string key="NSClassName">BXBlueprintPanel</string>
 			</object>
 			<object class="NSCustomView" id="80732392">
@@ -1417,6 +1413,7 @@
 					<string>222.IBPluginDependency</string>
 					<string>223.CustomClassName</string>
 					<string>223.IBPluginDependency</string>
+					<string>224.CustomClassName</string>
 					<string>224.IBCollectionViewIntegration.primaryColor</string>
 					<string>224.IBPluginDependency</string>
 					<string>246.IBEditorWindowLastContentRect</string>
@@ -1495,6 +1492,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>BXScroller</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>BXProgramList</string>
 					<reference ref="118422565"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>{{329, 593}, {120, 24}}</string>
@@ -1610,7 +1608,6 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>exitFullScreen:</string>
-							<string>showProgramPanel:</string>
 							<string>toggleFilterType:</string>
 							<string>toggleFullScreen:</string>
 							<string>toggleFullScreenWithZoom:</string>
@@ -1619,7 +1616,6 @@
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -1633,7 +1629,6 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>exitFullScreen:</string>
-							<string>showProgramPanel:</string>
 							<string>toggleFilterType:</string>
 							<string>toggleFullScreen:</string>
 							<string>toggleFullScreenWithZoom:</string>
@@ -1644,10 +1639,6 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<object class="IBActionInfo">
 								<string key="name">exitFullScreen:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">showProgramPanel:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">

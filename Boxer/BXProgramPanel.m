@@ -8,6 +8,7 @@
 
 #import "BXProgramPanel.h"
 #import "NSView+BXDrawing.h"
+#import "BXAppController.h"
 
 @implementation BXProgramPanel
 
@@ -104,4 +105,15 @@
 	
 	[super viewWillDraw];
 }
+@end
+
+
+@implementation BXProgramList
+
+- (void) display
+{
+	if ([self canDraw] || ![BXAppController isRunningOnLeopard]) [super display];
+	else [self setNeedsDisplay: YES];
+}
+
 @end

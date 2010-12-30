@@ -21,8 +21,9 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="428"/>
 			<integer value="52"/>
+			<integer value="428"/>
+			<integer value="11"/>
 			<integer value="335"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
@@ -67,20 +68,20 @@
 			</object>
 			<object class="NSCollectionViewItem" id="72546225"/>
 			<object class="NSCustomView" id="156718782">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">274</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<object class="BGHUDLabel" id="438849360">
 						<reference key="NSNextResponder" ref="156718782"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{221, 42}, {197, 17}}</string>
+						<string key="NSFrame">{{221, 41}, {197, 19}}</string>
 						<reference key="NSSuperview" ref="156718782"/>
 						<int key="NSTag">1</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="622268872">
-							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">1212154880</int>
+							<int key="NSCellFlags">67239424</int>
+							<int key="NSCellFlags2">1212153856</int>
 							<object class="NSAttributedString" key="NSContents">
 								<string key="NSString">Click a program to launch:</string>
 								<object class="NSDictionary" key="NSAttributes">
@@ -200,6 +201,7 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{640, 64}</string>
+				<reference key="NSSuperview"/>
 				<string key="NSClassName">BXProgramPanel</string>
 			</object>
 			<object class="NSCustomView" id="515511690">
@@ -1480,7 +1482,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{254, 641}, {640, 64}}</string>
+					<string>{{329, 641}, {640, 64}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>{{21, 633}, {640, 78}}</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>

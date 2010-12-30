@@ -101,8 +101,9 @@
 - (IBAction) toggleStatusBarShown:		(id)sender;
 - (IBAction) toggleProgramPanelShown:	(id)sender;
 
-//Unconditionally show the program panel.
-- (IBAction) showProgramPanel: (id)sender;
+//Unconditionally show/hide the program panel.
+- (void) showProgramPanel;
+- (void) hideProgramPanel;
 
 
 //Toggle the emulator's active rendering filter.

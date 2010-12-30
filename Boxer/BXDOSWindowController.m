@@ -258,9 +258,14 @@
 	[self setProgramPanelShown:	![self programPanelShown]];
 }
 
-- (IBAction) showProgramPanel: (id)sender
+- (void) showProgramPanel
 {
 	[self setProgramPanelShown: YES];
+}
+
+- (void) hideProgramPanel
+{
+	[self setProgramPanelShown: NO];
 }
 
 - (IBAction) exitFullScreen: (id)sender

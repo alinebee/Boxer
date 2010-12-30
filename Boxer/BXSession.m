@@ -620,16 +620,16 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 		[self setActiveProgramPath: [[notification userInfo] objectForKey: @"localPath"]];
 		[DOSWindowController synchronizeWindowTitleWithDocumentName];
 		
-		//Hide the program picker after launching the default program,
-		//only if the user hasn't manually toggled the panel themselves
-		if (![self userToggledProgramPanel] && [self gamePackage] &&
-			[[self activeProgramPath] isEqualToString: [gamePackage targetPath]])
+		//Hide the program picker shortly after launching a program, if we have
+		//a default program already (and only then if the user hasn't manually
+		//toggled the panel themselves)
+		if (![self userToggledProgramPanel] && [gamePackage targetPath])
 		{
 			[NSObject cancelPreviousPerformRequestsWithTarget: [self DOSWindowController]
-													 selector: @selector(showProgramPanel:)
-													   object: self];
+													 selector: @selector(showProgramPanel)
+													   object: nil];
 			
-			[[self DOSWindowController] setProgramPanelShown: NO];
+			[[self DOSWindowController] performSelector: @selector(hideProgramPanel) withObject: nil afterDelay: 0.05];
 		}
 	}
 	
@@ -639,11 +639,12 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 
 - (void) programDidFinish: (NSNotification *)notification
 {
-	//Clear the active program after every program has run during initial startup
-	//This way, we don't 'hang onto' startup commands in programWillStart:
-	//Once the default target has launched, we only reset the active program
-	//when we return to the DOS prompt.
-	if (!hasLaunched)
+	//Clear the active program when a startup program or 'non-defaultable' program
+	//finishes. This way, programWillStart: won't hang onto programs we can't use
+	//as the default, such as autoexec commands or dispatch batchfiles.
+	//(Note that the active program is always cleared down in didReturnToShell:)
+	NSString *activePath = [self activeProgramPath];
+	if (activePath && (!hasLaunched || ([self gamePackage] && ![[self gamePackage] validateTargetPath: &activePath error: NULL])))
 	{
 		[self setActiveProgramPath: nil];		
 	}
@@ -685,9 +686,13 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	//as the program chooser hasn't been manually toggled from the DOS prompt
 	if ([self isGamePackage] && ![self userToggledProgramPanel] && [[self executables] count])
 	{
+		[NSObject cancelPreviousPerformRequestsWithTarget: [self DOSWindowController]
+												 selector: @selector(hideProgramPanel)
+												   object: nil];
+		
 		//Show only after a delay, so that the window has time to resize after quitting the game
-		[[self DOSWindowController] performSelector: @selector(showProgramPanel:)
-										 withObject: self
+		[[self DOSWindowController] performSelector: @selector(showProgramPanel)
+										 withObject: nil
 										 afterDelay: 1.0];
 	}
 

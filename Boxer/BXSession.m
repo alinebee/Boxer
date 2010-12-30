@@ -234,6 +234,17 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	}
 }
 
+- (void) setActiveProgramPath:(NSString *)newPath
+{
+	if (![newPath isEqualToString: activeProgramPath])
+	{
+		[activeProgramPath release];
+		activeProgramPath = [newPath copy];
+		
+		[DOSWindowController synchronizeWindowTitleWithDocumentName];
+	}
+}
+
 
 #pragma mark -
 #pragma mark Window management
@@ -617,13 +628,14 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	//it in favour of the next program the batch-file runs
 	if (![self activeProgramPath])
 	{
-		[self setActiveProgramPath: [[notification userInfo] objectForKey: @"localPath"]];
-		[DOSWindowController synchronizeWindowTitleWithDocumentName];
+		NSString *activePath = [[notification userInfo] objectForKey: @"localPath"];
+		[self setActiveProgramPath: activePath];
 		
 		//Hide the program picker shortly after launching a program, if we have
-		//a default program already (and only then if the user hasn't manually
-		//toggled the panel themselves)
-		if (![self userToggledProgramPanel] && [gamePackage targetPath])
+		//a default program already or can't adopt this as the default program
+		//(and only then if the user hasn't manually toggled the panel themselves)
+		if (![self userToggledProgramPanel] &&
+			([gamePackage targetPath] || ![gamePackage validateTargetPath: &activePath error: NULL]))
 		{
 			[NSObject cancelPreviousPerformRequestsWithTarget: [self DOSWindowController]
 													 selector: @selector(showProgramPanel)
@@ -680,11 +692,10 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 {
 	//Clear the active program
 	[self setActiveProgramPath: nil];
-	[DOSWindowController synchronizeWindowTitleWithDocumentName];
 	
 	//Show the program chooser after returning to the DOS prompt, as long
 	//as the program chooser hasn't been manually toggled from the DOS prompt
-	if ([self isGamePackage] && ![self userToggledProgramPanel] && [[self executables] count])
+	if ([self isGamePackage] && ![self userToggledProgramPanel] && [[self programPathsOnPrincipalDrive] count])
 	{
 		[NSObject cancelPreviousPerformRequestsWithTarget: [self DOSWindowController]
 												 selector: @selector(hideProgramPanel)
@@ -693,7 +704,7 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 		//Show only after a delay, so that the window has time to resize after quitting the game
 		[[self DOSWindowController] performSelector: @selector(showProgramPanel)
 										 withObject: nil
-										 afterDelay: 1.0];
+										 afterDelay: 0.25];
 	}
 
 	if ([[NSUserDefaults standardUserDefaults] boolForKey: @"startUpInFullScreen"])

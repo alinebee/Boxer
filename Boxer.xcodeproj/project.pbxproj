@@ -2280,6 +2280,7 @@
 				9FC1620E119E9AD700705EA5 /* BXCursorFadeAnimation.m in Sources */,
 				9FECE19011A31B8B00E0EBB6 /* BXRenderer.m in Sources */,
 				9FECE1C211A3244500E0EBB6 /* BXGLRenderingView.m in Sources */,
+				9F8BFE9F12C0EF7B0059030F /* BXDisplayLinkRenderingView.m in Sources */,
 				9F466A4911A924EC00C50965 /* Shader.m in Sources */,
 				9FF1756D11B25F4E00D0FCDC /* BXInputView.m in Sources */,
 				9FF175E711B279F500D0FCDC /* BXVideoHandler.mm in Sources */,
@@ -2449,7 +2450,6 @@
 				9F7721E912B38C4400072AE8 /* shell_batch.cpp in Sources */,
 				9F7721EA12B38C4400072AE8 /* shell_cmds.cpp in Sources */,
 				9F7721EB12B38C4400072AE8 /* shell_misc.cpp in Sources */,
-				9F8BFE9F12C0EF7B0059030F /* BXDisplayLinkRenderingView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

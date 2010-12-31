@@ -22,7 +22,6 @@
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<integer value="11"/>
-			<integer value="52"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -217,6 +216,7 @@
 								<int key="NSvFlags">269</int>
 								<string key="NSFrame">{{36, 10}, {365, 14}}</string>
 								<reference key="NSSuperview" ref="199830071"/>
+								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="118197522">
 									<int key="NSCellFlags">68288064</int>
@@ -238,6 +238,7 @@
 								<int key="NSvFlags">269</int>
 								<string key="NSFrame">{{18, 25}, {403, 18}}</string>
 								<reference key="NSSuperview" ref="199830071"/>
+								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="BGHUDButtonCell" key="NSCell" id="14580453">
 									<int key="NSCellFlags">-2080244160</int>
@@ -264,11 +265,13 @@
 						</object>
 						<string key="NSFrame">{{111, 0}, {439, 64}}</string>
 						<reference key="NSSuperview" ref="515511690"/>
+						<reference key="NSWindow"/>
 						<string key="NSClassName">NSView</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{640, 64}</string>
 				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
 				<string key="NSClassName">BXProgramPanel</string>
 			</object>
 			<object class="NSCustomView" id="1066092163">
@@ -1413,7 +1416,6 @@
 					<string>222.IBPluginDependency</string>
 					<string>223.CustomClassName</string>
 					<string>223.IBPluginDependency</string>
-					<string>224.CustomClassName</string>
 					<string>224.IBCollectionViewIntegration.primaryColor</string>
 					<string>224.IBPluginDependency</string>
 					<string>246.IBEditorWindowLastContentRect</string>
@@ -1492,7 +1494,6 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>BXScroller</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>BXProgramList</string>
 					<reference ref="118422565"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>{{329, 593}, {120, 24}}</string>

@@ -39,8 +39,3 @@ enum {
 - (id) representedObject;
 
 @end
-
-//A bugfix for OS X 10.5's NSCollectionView, which will sometimes try to redraw itself when it's not ready 
-@interface BXProgramList : NSCollectionView
-- (void) display;
-@end

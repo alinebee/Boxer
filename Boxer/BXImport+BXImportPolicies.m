@@ -317,4 +317,19 @@
 	
 	return sanitisedSlashes;
 }
+
+
++ (NSString *) validDOSNameFromName: (NSString *)name
+{
+	NSString *asciiName = [[name lowercaseString] stringByReplacingOccurrencesOfRegex: @"[^a-z0-9\\.]" withString: @""];
+	NSString *baseName	= [asciiName stringByDeletingPathExtension];
+	NSString *extension = [asciiName pathExtension];
+	
+	NSString *shortBaseName		= ([baseName length] > 8) ? [baseName substringToIndex: 8] : baseName;
+	NSString *shortExtension	= ([extension length] > 3) ? [extension substringToIndex: 3] : extension;
+	
+	NSString *shortName = ([shortExtension length]) ? [shortBaseName stringByAppendingPathExtension: shortExtension] : shortBaseName;
+	
+	return shortName;
+}
 @end

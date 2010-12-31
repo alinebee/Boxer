@@ -27,6 +27,7 @@
 #import "NSString+BXPaths.h"
 #import "NSFileManager+BXTemporaryFiles.h"
 #import "BXPathEnumerator.h"
+#import "RegexKitLite.h"
 
 
 //Boxer will delay its handling of volume mount notifications by this many seconds,

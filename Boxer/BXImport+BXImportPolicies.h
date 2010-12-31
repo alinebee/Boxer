@@ -109,4 +109,8 @@ static const NSInteger BXFreeSpaceForCDROMInstall = 700 * 1024 * 1024;
 //Returns an (attempt at an) OSX-safe filename from the provided name.
 //This will replace /, \ and : characters with dashes, and remove leading dots. 
 + (NSString *) validGameboxNameFromName: (NSString *)name;
+
+//Returns a DOSBox-safe lowercase 8.3 filename from the specified filename.
+//This strips out all non-ASCII characters to prevent filename resolution problems at DOSBox's end.
++ (NSString *) validDOSNameFromName: (NSString *)name;
 @end

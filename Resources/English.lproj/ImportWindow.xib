@@ -22,6 +22,7 @@
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<integer value="125"/>
+			<integer value="281"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -675,7 +676,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 							<object class="NSTextField" id="294027108">
 								<reference key="NSNextResponder" ref="99871927"/>
 								<int key="NSvFlags">269</int>
-								<string key="NSFrame">{{148, 36}, {184, 22}}</string>
+								<string key="NSFrame">{{112, 36}, {256, 22}}</string>
 								<reference key="NSSuperview" ref="99871927"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="425752202">
@@ -830,7 +831,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<object class="NSMenuItem" id="213604359">
 						<reference key="NSMenu" ref="604049876"/>
-						<string key="NSTitle">Copy</string>
+						<string key="NSTitle">Copy icon</string>
 						<string key="NSKeyEquiv"/>
 						<int key="NSMnemonicLoc">2147483647</int>
 						<reference key="NSOnImage" ref="927641142"/>
@@ -838,7 +839,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 					</object>
 					<object class="NSMenuItem" id="445960350">
 						<reference key="NSMenu" ref="604049876"/>
-						<string key="NSTitle">Paste</string>
+						<string key="NSTitle">Paste as icon</string>
 						<string key="NSKeyEquiv"/>
 						<int key="NSMnemonicLoc">2147483647</int>
 						<reference key="NSOnImage" ref="927641142"/>
@@ -846,7 +847,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 					</object>
 					<object class="NSMenuItem" id="703048612">
 						<reference key="NSMenu" ref="604049876"/>
-						<string key="NSTitle">Clear Icon</string>
+						<string key="NSTitle">Clear icon</string>
 						<string key="NSKeyEquiv"/>
 						<int key="NSMnemonicLoc">2147483647</int>
 						<reference key="NSOnImage" ref="927641142"/>
@@ -2195,7 +2196,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>BXDelegatedView</string>
-					<string>{{157, 158}, {480, 320}}</string>
+					<string>{{329, 158}, {480, 320}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="0"/>
@@ -2241,7 +2242,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>BXImportDropzone</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{268, 625}, {202, 113}}</string>
+					<string>{{329, 625}, {220, 113}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>

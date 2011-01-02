@@ -161,16 +161,52 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 	//Don't bother if we're already in the correct fullscreen state
 	if ([self isFullScreen] == fullScreen) return;
 	
+	//Let the emulator know it'll be blocked from emulating for a while
+	[[[self document] emulator] willPause];
+	
 	NSWindow *theWindow			= [self window];
 	NSInteger originalLevel		= [theWindow level];
 	NSRect originalFrame		= [theWindow frame];
-	NSScreen *targetScreen		= [self fullScreenTarget];
-	NSRect fullscreenFrame		= [targetScreen frame];
+	NSRect fullscreenFrame		= [[self fullScreenTarget] frame];
 	NSRect zoomedWindowFrame	= [theWindow frameRectForContentRect: fullscreenFrame];
 	
-	[[[self document] emulator] willPause];
 	[theWindow setLevel: NSScreenSaverWindowLevel];
 
+	//Set up the chromeless window we'll use for the fade effect
+	NSPanel *blankingWindow = [[NSPanel alloc] initWithContentRect: NSZeroRect
+														 styleMask: NSBorderlessWindowMask
+														   backing: NSBackingStoreBuffered
+															 defer: YES];
+	[blankingWindow setOneShot: YES];
+	[blankingWindow setReleasedWhenClosed: YES];
+	[blankingWindow setLevel: NSScreenSaverWindowLevel];
+	[blankingWindow setFrame: fullscreenFrame display: NO];
+	[blankingWindow setBackgroundColor: [NSColor blackColor]];
+	
+	
+	//Prepare the zoom-and-fade animation effects
+	NSRect endFrame			= (fullScreen) ? zoomedWindowFrame : originalFrame;
+	NSString *fadeDirection	= (fullScreen) ? NSViewAnimationFadeInEffect : NSViewAnimationFadeOutEffect;
+	
+	NSDictionary *fadeEffect	= [[NSDictionary alloc] initWithObjectsAndKeys:
+								   blankingWindow, NSViewAnimationTargetKey,
+								   fadeDirection, NSViewAnimationEffectKey,
+								   nil];
+	
+	NSDictionary *resizeEffect	= [[NSDictionary alloc] initWithObjectsAndKeys:
+								   theWindow, NSViewAnimationTargetKey,
+								   [NSValue valueWithRect: endFrame], NSViewAnimationEndFrameKey,
+								   nil];
+	
+	NSArray *effects = [[NSArray alloc] initWithObjects: fadeEffect, resizeEffect, nil];
+	NSViewAnimation *animation = [[NSViewAnimation alloc] initWithViewAnimations: effects];
+	[animation setAnimationBlockingMode: NSAnimationBlocking];
+	
+	[fadeEffect release];
+	[resizeEffect release];
+	[effects release];
+	
+	
 	//Make sure we're the key window first before any shenanigans
 	[theWindow makeKeyAndOrderFront: self];
 	
@@ -181,38 +217,53 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 		//so that the aspect ratio appears correct while resizing to fill the window
 		[[self renderingView] setManagesAspectRatio: YES];
 		
-		//First zoom smoothly in to fill the screen...
-		[theWindow setFrame: zoomedWindowFrame display: YES animate: YES];
+		//Bring the blanking window in behind the DOS window, hidden
+		[blankingWindow setAlphaValue: 0.0f];
+		[blankingWindow orderBack: self];
+		
+		//Run the zoome-and-fade animation
+		[animation setDuration: [theWindow animationResizeTime: endFrame]];
+		[animation startAnimation];
 				
-		//Then flip the view into fullscreen mode...
+		//Flip the view into fullscreen mode
 		[self _applyFullScreenState: fullScreen];
 		
-		//...then revert the window back to its original size, while it's hidden by the fullscreen view
-		//We do this so that the window's autosaved frame doesn't get messed up, and so that we don't have
-		//to track the window's former size indepedently while we're in fullscreen mode.
+		//Revert the window back to its original size, while it's hidden by the fullscreen view
+		//We do this so that the window's autosaved frame doesn't get messed up, and so that we
+		//don't have to track the window's former size indepedently while we're in fullscreen mode.
 		[theWindow setFrame: originalFrame display: NO];
 	}
 	else
 	{
-		//First quietly resize the window to fill the screen, while we're still hidden by the fullscreen view...
+		//Resize the DOS window to fill the screen, while it's still hidden by the fullscreen view
 		[theWindow setFrame: zoomedWindowFrame display: YES];
 		
-		//...then flip the view out of fullscreen, which will return it to the zoomed window...
+		//Bring the blanking window in behind the DOS window, ready for animating
+		[blankingWindow orderBack: self];
+		
+		//Flip the view out of fullscreen, which will return it to the zoomed window
 		[self _applyFullScreenState: fullScreen];
 		
 		//Tell the view to continue managing aspect ratio while we resize,
 		//overriding setFullScreen's original behaviour
 		[[self renderingView] setManagesAspectRatio: YES];
 		
-		//...then resize the window back to its original size
-		[theWindow setFrame: originalFrame display: YES animate: YES];
+		//Run the zoom-and-fade animation
+		//(we calculate duration now since we've only just resized the window to its full extent)
+		[animation setDuration: [theWindow animationResizeTime: endFrame]];
+		[animation startAnimation];
 		
 		//Finally tell the view to stop managing aspect ratio again
 		[[self renderingView] setManagesAspectRatio: NO];
 	}
 	[self setResizingProgrammatically: NO];
+	
 	[theWindow setLevel: originalLevel];
 	[[[self document] emulator] didResume];
+	
+	[blankingWindow close];
+	[animation release];
+	
 }
 
 //Snap to multiples of the base render size as we scale

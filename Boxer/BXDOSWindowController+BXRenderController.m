@@ -231,12 +231,14 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 		//Revert the window back to its original size, while it's hidden by the fullscreen view
 		//We do this so that the window's autosaved frame doesn't get messed up, and so that we
 		//don't have to track the window's former size indepedently while we're in fullscreen mode.
+		[theWindow orderOut: self];
 		[theWindow setFrame: originalFrame display: NO];
 	}
 	else
 	{
 		//Resize the DOS window to fill the screen, while it's still hidden by the fullscreen view
 		[theWindow setFrame: zoomedWindowFrame display: YES];
+		[theWindow orderFront: self];
 		
 		//Bring the blanking window in behind the DOS window, ready for animating
 		[blankingWindow orderBack: self];

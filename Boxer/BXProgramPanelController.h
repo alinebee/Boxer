@@ -29,7 +29,6 @@
 	IBOutlet NSScrollView *programScroller;
 	
 	NSArray *panelExecutables;
-	BOOL needsExecutableSync;
 }
 
 

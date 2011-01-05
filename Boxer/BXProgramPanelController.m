@@ -47,11 +47,6 @@
 	[super dealloc];
 }
 
-- (void) awakeFromNib
-{
-	needsExecutableSync = YES;
-}
-
 - (NSString *) nibName	{ return @"ProgramPanel"; }
 
 
@@ -106,15 +101,10 @@
 					  ofObject: (id)object
 						change: (NSDictionary *)change
 					   context: (void *)context
-{	
-	//Resync the program selector when the programs on it have changed
-	//Note that we don't call [syncPanelExecutables] directly, because it
-	//may not be visible, and forcing redraws of a hidden NSCollectionView
-	//are dangerous on OS X 10.5. Instead, we cue up a resync for next time
-	//the program selector is displayed
+{
 	if ([keyPath isEqualToString: @"programPathsOnPrincipalDrive"] || [keyPath isEqualToString: @"gamePackage.targetPath"])
 	{
-		needsExecutableSync = YES;
+		[self syncPanelExecutables];
 	}
 	//Only update the panel contents after a short delay, to allow time for a program to quit
 	[self performSelector: @selector(syncActivePanel) withObject: nil afterDelay: 0.1];
@@ -214,15 +204,10 @@
 	}
 	if (panel == programChooserPanel)
 	{
-		if (needsExecutableSync)
-		{
-			[self syncPanelExecutables];
-			//Force panel scrollbar to update in 10.5, which will calculate its scroll region
-			//wrong while the NSCollectionView is populating itself.
-			[[self programScroller] reflectScrolledClipView: [[self programScroller] contentView]];
-		}
+		//Force panel scrollbar to update in 10.5, which will calculate its scroll region
+		//wrong while the NSCollectionView is populating itself.
+		[[self programScroller] reflectScrolledClipView: [[self programScroller] contentView]];
 		[self syncProgramButtonStates];
-		
 	}
 }
 
@@ -338,7 +323,6 @@
 	}
 	
 	[self setPanelExecutables: listedPrograms];
-	needsExecutableSync = NO;
 	
 	[programNames release];
 	[listedPrograms release];

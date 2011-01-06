@@ -1,5 +1,5 @@
 /* 
- Boxer is copyright 2010 Alun Bestor and contributors.
+ Boxer is copyright 2010-2011 Alun Bestor and contributors.
  This code is adapted from code that is copyright (c) 2010 Jef Wambacq (jefwambacq@gmail.com)
  
  Boxer is released under the GNU General Public License 2.0. A full copy of this license can be

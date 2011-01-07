@@ -122,21 +122,34 @@
 	BXSession *session = [self representedObject];
 	NSView *panel;
 	
+	//Show a different set of program panels when part of the game-import process.
+	//TODO: clean up this bifurcation as there's a lot of duplicated code.
 	if ([session isKindOfClass: [BXImport class]])
 	{
 		if ([[session emulator] isRunningProcess])
 		{
+			//While running a program, check if it's an installer or a regular program:
 			if (![(BXImport *)session isRunningInstaller] && [self canSetActiveProgramToDefault])
 			{
-				panel = ([self hasDefaultTarget]) ? defaultProgramPanel : initialDefaultProgramPanel;
+				//If it's a regular program, allow the user to choose it as the default startup program
+				
+				//If we have a default program, show the checkbox version;
+				//also keep showing the checkbox if it's already active
+				if ([self hasDefaultTarget] || [self activePanel] == defaultProgramPanel)
+					panel = defaultProgramPanel;
+				//Otherwise, show the Yes/No choice.
+				else
+					panel = initialDefaultProgramPanel;
 			}
 			else
 			{
+				//Otherwise, show the panel of installation tips
 				panel = installerTipsPanel;
 			}
 		}
 		else
 		{
+			//Otherwise, show the UI for finishing the import process
 			panel = finishImportingPanel;
 		}
 	}
@@ -204,9 +217,6 @@
 	}
 	if (panel == programChooserPanel)
 	{
-		//Force panel scrollbar to update in 10.5, which will calculate its scroll region
-		//wrong while the NSCollectionView is populating itself.
-		[[self programScroller] reflectScrolledClipView: [[self programScroller] contentView]];
 		[self syncProgramButtonStates];
 	}
 }

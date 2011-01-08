@@ -53,7 +53,6 @@ const CGFloat BXMouseSensitivityRange = 2.0f;
 
 - (void) awakeFromNib
 {
-	[(NSPanel *)[self window] setBecomesKeyOnlyIfNeeded: YES];
 	[[self window] setFrameAutosaveName: @"InspectorPanel"];
 	
 	//Set the initial panel based on the user's last chosen panel (defaulting to the CPU panel)
@@ -125,6 +124,7 @@ const CGFloat BXMouseSensitivityRange = 2.0f;
 	[self loadWindow];
 	[[self window] fadeInWithDuration: 0.2];
 	[[self window] applyGaussianBlurWithRadius: BXInspectorPanelBlurRadius];
+	
 	isTemporarilyHidden = NO;
 }
 
@@ -138,6 +138,13 @@ const CGFloat BXMouseSensitivityRange = 2.0f;
 	if (show)
 	{
 		[self showWindow: self];
+		
+		//Unlock the mouse from the DOS window whenever the Inspector panel is shown
+		//(This will happen automatically for normal windows, but since we're an NSPanel
+		//that doesnt become key automatically, the DOS window doesn't know to release
+		//mouse focus)
+		[NSApp sendAction: @selector(toggleMouseLocked:) to: nil from: [NSNumber numberWithBool: NO]];
+		
 	}
 	else if ([self isWindowLoaded])
 	{

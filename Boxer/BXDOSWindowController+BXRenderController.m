@@ -238,6 +238,7 @@ typedef NSUInteger NSApplicationPresentationOptions;
 	[self setResizingProgrammatically: YES];
 	if (fullScreen)
 	{
+		//Hide the UI components early, before we begin filling the screen
 		SetSystemUIMode(kUIModeAllHidden, kUIOptionAutoShowMenuBar);
 		
 		//Tell the rendering view to start managing aspect ratio correction early,
@@ -271,7 +272,7 @@ typedef NSUInteger NSApplicationPresentationOptions;
 		
 		//Flip the view out of fullscreen, which will return it to the zoomed window
 		[self _applyFullScreenState: fullScreen];
-		
+
 		//Bring the blanking window in behind the DOS window, ready for animating
 		[blankingWindow orderWindow: NSWindowBelow relativeTo: [theWindow windowNumber]];
 		
@@ -286,8 +287,6 @@ typedef NSUInteger NSApplicationPresentationOptions;
 		
 		//Finally tell the view to stop managing aspect ratio again
 		[[self renderingView] setManagesAspectRatio: NO];
-		
-		SetSystemUIMode(kUIModeNormal, 0);
 	}
 	[self setResizingProgrammatically: NO];
 	
@@ -376,6 +375,9 @@ typedef NSUInteger NSApplicationPresentationOptions;
 	
 	if (fullScreen)
 	{
+		//Hide the dock and auto-hide the menu bar
+		SetSystemUIMode(kUIModeAllHidden, kUIOptionAutoShowMenuBar);
+		
 		NSScreen *targetScreen	= [self fullScreenTarget];
 		
 		//Flip the view into fullscreen mode
@@ -437,6 +439,9 @@ typedef NSUInteger NSApplicationPresentationOptions;
 		
 		//Tell the rendering view to stop managing aspect ratio correction
 		[[self renderingView] setManagesAspectRatio: NO];
+		
+		//Unhide the menu bar and dock
+		SetSystemUIMode(kUIModeNormal, 0);
 	}
 	//Kick the emulator's renderer to adjust to the new viewport size
 	[[[[self document] emulator] videoHandler] reset];

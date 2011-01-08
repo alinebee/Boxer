@@ -575,8 +575,13 @@ enum {
 	 
 - (IBAction) toggleMouseLocked: (id)sender
 {
+	BOOL lock;
 	BOOL wasLocked = [self mouseLocked];
-	[self setMouseLocked: !wasLocked];
+	
+	if ([sender respondsToSelector: @selector(boolValue)]) lock = [sender boolValue];
+	else lock = !wasLocked;
+	
+	[self setMouseLocked: lock];
 	
 	//If the mouse state was actually toggled, play a sound to commemorate the occasion
 	if ([self mouseLocked] != wasLocked)

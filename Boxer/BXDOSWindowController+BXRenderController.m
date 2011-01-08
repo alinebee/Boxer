@@ -14,6 +14,7 @@
 #import "BXFrameRenderingView.h"
 #import "BXFrameBuffer.h"
 #import "BXVideoHandler.h"
+#import <Carbon/Carbon.h> //For SetSystemUIMode()
 
 #import "BXGeometry.h"
 
@@ -22,6 +23,28 @@ const CGDisplayFadeInterval BXFullscreenFadeOutDuration	= 0.2f;
 const CGDisplayFadeInterval BXFullscreenFadeInDuration	= 0.4f;
 const NSInteger BXWindowSnapThreshold		= 64;
 const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
+
+
+//These constants are not available in 10.5
+#ifndef NSApplicationPresentationOptions
+
+NSString * const NSFullScreenModeApplicationPresentationOptions = @"NSFullScreenModeApplicationPresentationOptions";
+
+enum {
+	NSApplicationPresentationDefault                    = 0,
+	NSApplicationPresentationAutoHideDock               = (1 <<  0),
+	NSApplicationPresentationHideDock                   = (1 <<  1),
+	NSApplicationPresentationAutoHideMenuBar            = (1 <<  2),
+	NSApplicationPresentationHideMenuBar                = (1 <<  3),
+	NSApplicationPresentationDisableAppleMenu           = (1 <<  4),
+	NSApplicationPresentationDisableProcessSwitching    = (1 <<  5),
+	NSApplicationPresentationDisableForceQuit           = (1 <<  6),
+	NSApplicationPresentationDisableSessionTermination  = (1 <<  7),
+	NSApplicationPresentationDisableHideApplication     = (1 <<  8),
+	NSApplicationPresentationDisableMenuBarTransparency = (1 <<  9)
+};
+typedef NSUInteger NSApplicationPresentationOptions;
+#endif
 
 
 @interface BXDOSWindowController ()
@@ -165,12 +188,11 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 	[[[self document] emulator] willPause];
 	
 	NSWindow *theWindow			= [self window];
-	NSInteger originalLevel		= [theWindow level];
 	NSRect originalFrame		= [theWindow frame];
 	NSRect fullscreenFrame		= [[self fullScreenTarget] frame];
 	NSRect zoomedWindowFrame	= [theWindow frameRectForContentRect: fullscreenFrame];
 	
-	[theWindow setLevel: NSScreenSaverWindowLevel];
+	//[theWindow setLevel: NSScreenSaverWindowLevel];
 
 	//Set up the chromeless window we'll use for the fade effect
 	NSPanel *blankingWindow = [[NSPanel alloc] initWithContentRect: NSZeroRect
@@ -179,7 +201,6 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 															 defer: YES];
 	[blankingWindow setOneShot: YES];
 	[blankingWindow setReleasedWhenClosed: YES];
-	[blankingWindow setLevel: NSScreenSaverWindowLevel];
 	[blankingWindow setFrame: fullscreenFrame display: NO];
 	[blankingWindow setBackgroundColor: [NSColor blackColor]];
 	
@@ -219,32 +240,31 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 		
 		//Bring the blanking window in behind the DOS window, hidden
 		[blankingWindow setAlphaValue: 0.0f];
-		[blankingWindow orderBack: self];
+		[blankingWindow orderWindow: NSWindowBelow relativeTo: [theWindow windowNumber]];
 		
 		//Run the zoome-and-fade animation
 		[animation setDuration: [theWindow animationResizeTime: endFrame]];
 		[animation startAnimation];
 				
-		//Flip the view into fullscreen mode
+		//Hide the blanking window, and flip the view into fullscreen mode
+		[blankingWindow orderOut: self];
 		[self _applyFullScreenState: fullScreen];
 		
 		//Revert the window back to its original size, while it's hidden by the fullscreen view
 		//We do this so that the window's autosaved frame doesn't get messed up, and so that we
 		//don't have to track the window's former size indepedently while we're in fullscreen mode.
-		[theWindow orderOut: self];
 		[theWindow setFrame: originalFrame display: NO];
 	}
 	else
 	{
-		//Resize the DOS window to fill the screen, while it's still hidden by the fullscreen view
-		[theWindow setFrame: zoomedWindowFrame display: YES];
-		[theWindow orderFront: self];
-		
-		//Bring the blanking window in behind the DOS window, ready for animating
-		[blankingWindow orderBack: self];
+		//Resize the DOS window to fill the screen while hidden
+		[theWindow setFrame: zoomedWindowFrame display: NO];
 		
 		//Flip the view out of fullscreen, which will return it to the zoomed window
 		[self _applyFullScreenState: fullScreen];
+		
+		//Bring the blanking window in behind the DOS window, ready for animating
+		[blankingWindow orderWindow: NSWindowBelow relativeTo: [theWindow windowNumber]];
 		
 		//Tell the view to continue managing aspect ratio while we resize,
 		//overriding setFullScreen's original behaviour
@@ -260,7 +280,6 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 	}
 	[self setResizingProgrammatically: NO];
 	
-	[theWindow setLevel: originalLevel];
 	[[[self document] emulator] didResume];
 	
 	[blankingWindow close];
@@ -349,39 +368,61 @@ const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
 		NSScreen *targetScreen	= [self fullScreenTarget];
 		
 		//Flip the view into fullscreen mode
-		[theView enterFullScreenMode: targetScreen withOptions: nil];
+		NSApplicationPresentationOptions presentationOptions = NSApplicationPresentationHideDock | NSApplicationPresentationAutoHideMenuBar;
+		NSDictionary *fullscreenOptions = [NSDictionary dictionaryWithObjectsAndKeys:
+										   [NSNumber numberWithBool: NO], NSFullScreenModeAllScreens,
+										   [NSNumber numberWithUnsignedInteger: presentationOptions], NSFullScreenModeApplicationPresentationOptions,
+										   nil];
 		
-		//Reset the responders to what they should be, since enterFullScreenMode: screws with them
-		[theWindow makeFirstResponder: theView];
+		//Remove ourselves as the old window delegate so that we don't receive
+		//loss-of-focus notifications when switching to fullscreen
+		[theWindow setDelegate: nil];
+		
+		[theView enterFullScreenMode: targetScreen withOptions: fullscreenOptions];
+		
+		NSWindow *fullscreenWindow = [theView window];
+		
+		//Hide the old window altogether
+		[theWindow orderOut: self];
+		
+		//Adopt the fullscreen window, and reset the view's responder back to what it was
+		//before the fullscreen window took it.
+		[fullscreenWindow setDelegate: self];
+		[fullscreenWindow setWindowController: self];
 		[theView setNextResponder: currentResponder];
 		
 		//Ensure that the mouse is locked for fullscreen mode
 		[inputController setMouseLocked: YES];
 		
-		//Tell the rendering view to manage aspect ratio correction in fullscreen mode
+		//Let the rendering view manage aspect ratio correction while in fullscreen mode
 		[[self renderingView] setManagesAspectRatio: YES];
 	}
 	else
 	{
+		NSWindow *fullscreenWindow = [theView window];
+		[fullscreenWindow setDelegate: nil];
+		[fullscreenWindow setWindowController: nil];
+		
+		[theWindow orderWindow: NSWindowBelow relativeTo: [fullscreenWindow windowNumber]];
+		
 		[theView exitFullScreenModeWithOptions: nil];
 		
-		//Tell the rendering view to stop managing aspect ratio correction
-		[[self renderingView] setManagesAspectRatio: NO];
-		
-		//Reset the responders to what they should be, since exitFullScreenModeWithOptions: screws with them
-		[theWindow makeFirstResponder: theView];
-		[theView setNextResponder: currentResponder];
+		[theWindow makeKeyAndOrderFront: self];
 		
 		//Reset the view's frame to match its loyal container, as otherwise it retains its fullscreen frame size
 		[theView setFrame: [theContainer bounds]];
 		[theView setNeedsDisplay: YES];
 		
-		//Cocoa 10.6 bugfix: for some reason this gets forgotten upon the return to windowed mode,
-		//until the window loses and regains focus. Setting it manually fixes it.
-		[theWindow setAcceptsMouseMovedEvents: YES];
+		//Reset the responders to what they should be, since exitFullScreenModeWithOptions: screws with them
+		[theWindow setDelegate: self];
+		[theWindow makeFirstResponder: theView];
+		[theView setNextResponder: currentResponder];
 		
 		//Unlock the mouse after leaving fullscreen
 		[inputController setMouseLocked: NO];
+		
+		//Tell the rendering view to stop managing aspect ratio correction
+		[[self renderingView] setManagesAspectRatio: NO];
 	}
 	//Kick the emulator's renderer to adjust to the new viewport size
 	[[[[self document] emulator] videoHandler] reset];

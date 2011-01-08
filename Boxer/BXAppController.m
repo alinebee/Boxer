@@ -528,14 +528,11 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 - (IBAction) orderFrontWelcomePanel: (id)sender
 {
-	[[[self currentSession] DOSWindowController] exitFullScreen: sender];
 	[[BXWelcomeWindowController controller] showWindow: sender];
 }
 
 - (IBAction) orderFrontWelcomePanelWithFlip: (id)sender
-{
-	[[[self currentSession] DOSWindowController] exitFullScreen: sender];
-	
+{	
 	//This eschews controller showWindow: as that would reveal the window momentarily,
 	//causing a flicker before the window is 're-hidden'.
 	id controller = [BXWelcomeWindowController controller];
@@ -552,7 +549,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	//The welcome panel and first-run panel are mutually exclusive.
 	[self hideWelcomePanel: self];
 	
-	[[[self currentSession] DOSWindowController] exitFullScreen: sender];
 	[[BXFirstRunWindowController controller] showWindow: sender];
 }
 
@@ -578,12 +574,10 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 - (IBAction) orderFrontAboutPanel: (id)sender
 {
-	[[[self currentSession] DOSWindowController] exitFullScreen: sender];
 	[[BXAboutController controller] showWindow: sender];
 }
 - (IBAction) orderFrontPreferencesPanel: (id)sender
 {
-	[[[self currentSession] DOSWindowController] exitFullScreen: sender];
 	[[BXPreferencesController controller] showWindow: sender];
 }
 
@@ -593,7 +587,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	BOOL show = ![controller panelShown];
 	if (!show || [[self currentSession] isEmulating])
 	{
-		[[[self currentSession] DOSWindowController] exitFullScreen: sender];
 		[controller setPanelShown: show];		
 	}
 }
@@ -602,7 +595,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 {
 	if ([[self currentSession] isEmulating])
 	{
-		[[[self currentSession] DOSWindowController] exitFullScreen: sender];
 		[[BXInspectorController controller] showWindow: sender];
 	}
 }

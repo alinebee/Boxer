@@ -138,7 +138,4 @@
 - (void) menuDidOpen:	(NSNotification *) notification;
 - (void) menuDidClose:	(NSNotification *) notification;
 
-- (void) applicationWillHide: (NSNotification *) notification;
-- (void) applicationWillResignActive: (NSNotification *) notification;
-
 @end

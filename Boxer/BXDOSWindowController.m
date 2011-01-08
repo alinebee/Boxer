@@ -111,17 +111,7 @@
 			   selector: @selector(menuDidClose:)
 				   name: NSMenuDidEndTrackingNotification
 				 object: nil];
-	
-	[center addObserver: self
-			   selector: @selector(applicationWillHide:)
-				   name: NSApplicationWillHideNotification
-				 object: NSApp];
-	
-	[center addObserver: self
-			   selector: @selector(applicationWillHide:)
-				   name: NSApplicationWillResignActiveNotification
-				 object: NSApp];
-	
+		
 	//While we're here, register for drag-drop file operations (used for mounting folders and such)
 	[theWindow registerForDraggedTypes: [NSArray arrayWithObjects: NSFilenamesPboardType, NSStringPboardType, nil]];
 	
@@ -142,8 +132,7 @@
 	//Track mouse movement when this is the main window
 	[theWindow setAcceptsMouseMovedEvents: YES];
 	
-	//We don't support content-preservation yet, so disable the check to be slightly more efficient
-	[theWindow setPreservesContentDuringLiveResize: NO];	
+	[theWindow setPreservesContentDuringLiveResize: NO];
 	
 	
 	//Now that we can retrieve the game's identifier from the session,
@@ -237,7 +226,7 @@
 	{
 		if (show) [self _resizeToAccommodateSlidingView: programPanel];
 		
-		//temporarily override the other views' resizing behaviour so that they don't slide up as we do this
+		//Temporarily override the other views' resizing behaviour so that they don't slide up as we do this
 		NSUInteger oldMask = [viewContainer autoresizingMask];
 		[viewContainer setAutoresizingMask: NSViewMinYMargin];
 		
@@ -331,7 +320,7 @@
 		
 		[theItem setTitle: title];
 	
-		return [[self document] isGamePackage];
+		return [[self window] isVisible] && [[self document] isGamePackage];
 	}
 	
 	else if (theAction == @selector(toggleStatusBarShown:))
@@ -343,7 +332,7 @@
 		
 		[theItem setTitle: title];
 	
-		return YES;
+		return [[self window] isVisible];
 	}
 	
     return YES;
@@ -400,12 +389,6 @@
 	[self exitFullScreen: self];
 }
 
-//Drop out of fullscreen mode before showing any sheets
-- (void) windowWillBeginSheet: (NSNotification *) notification
-{
-	[self setFullScreen: NO];
-}
-
 
 //Refresh the DOS renderer after the window resizes, to take the new size into account
 - (void) windowDidResize: (NSNotification *) notification
@@ -436,22 +419,18 @@
 	[[[self document] emulator] didResume];
 }
 
-//Tell the view controller to cancel key events and unlock the mouse
-//We ignore this notification in fullscreen, because we receive it when
-//the view is swapped to AppKit's private fullscreen window
-- (void) windowDidResignKey:	(NSNotification *) notification
+- (void) windowDidResignKey: (NSNotification *) notification
 {
-	if (![self isFullScreen]) [inputController didResignKey];
+	[inputController didResignKey];
 }
-- (void) windowDidResignMain:	(NSNotification *) notification
+- (void) windowDidResignMain: (NSNotification *) notification
 {
-	if (![self isFullScreen]) [inputController didResignKey];
+	[inputController didResignKey];
 }
 
 //Drop out of fullscreen and warn the emulator to prepare for emulation cutout when a menu opens
 - (void) menuDidOpen:	(NSNotification *) notification
 {
-	[self setFullScreen: NO];
 	[[[self document] emulator] willPause];
 }
 
@@ -459,15 +438,6 @@
 - (void) menuDidClose:	(NSNotification *) notification
 {
 	[[[self document] emulator] didResume];
-}
-
-- (void) applicationWillHide: (NSNotification *) notification
-{
-	[self setFullScreen: NO];
-}
-- (void) applicationWillResignActive: (NSNotification *) notification
-{
-	[self setFullScreen: NO];
 }
 
 

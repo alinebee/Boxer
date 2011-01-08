@@ -14,6 +14,11 @@
 @class BXFrameBuffer;
 @protocol BXEmulatorDelegate <NSObject>
 
+//Returns the current viewport and maximum frame size.
+//Used for decisions about scaler rendering.
+@property (readonly) NSSize viewportSize;
+@property (readonly) NSSize maxFrameSize;
+
 #pragma mark -
 #pragma mark Delegate methods
 
@@ -27,11 +32,6 @@
 
 //Tells the delegate that the specified frame has finished rendering.
 - (void) frameComplete: (BXFrameBuffer *)frame;
-
-//Asks the delegate for the current viewport and maximum frame size.
-//Used for decisions about scaler rendering.
-- (NSSize) viewportSize;
-- (NSSize) maxFrameSize;
 
 
 #pragma mark -

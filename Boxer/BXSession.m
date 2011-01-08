@@ -286,6 +286,12 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 	[self start];
 }
 
+- (NSWindow *) windowForSheet
+{
+	if ([[self DOSWindowController] isFullScreen]) return [[self DOSWindowController] fullScreenWindow];
+	else return [super windowForSheet];
+}
+
 - (void) setUserToggledProgramPanel: (BOOL)flag
 {
 	//Finesse: ignore program toggles while a program is running, only pay attention

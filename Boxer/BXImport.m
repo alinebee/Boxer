@@ -292,12 +292,10 @@
 
 - (NSWindow *) windowForSheet
 {
-	NSWindow *dosWindow = (NSWindow *)[[self DOSWindowController] window];
 	NSWindow *importWindow = [[self importWindowController] window];
 
-	if		([dosWindow isVisible]) return dosWindow;
-	else if	([importWindow isVisible]) return importWindow;
-	else return nil;
+	if	([importWindow isVisible]) return importWindow;
+	else return [super windowForSheet];
 }
 
 

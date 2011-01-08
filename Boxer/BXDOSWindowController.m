@@ -107,6 +107,7 @@
 			   selector: @selector(menuDidOpen:)
 				   name: NSMenuDidBeginTrackingNotification
 				 object: nil];
+	
 	[center addObserver: self
 			   selector: @selector(menuDidClose:)
 				   name: NSMenuDidEndTrackingNotification
@@ -151,6 +152,15 @@
 	//This is necessary because the order of windowDidLoad/setDocument: differs between releases and some
 	//of our members may have been nil when setDocument: was first called
 	[self setDocument: [self document]];
+}
+
+- (void) showWindow: (id)sender
+{
+	if ([self isFullScreen])
+	{
+		[[self fullScreenWindow] makeKeyAndOrderFront: sender];
+	}
+	else [super showWindow: sender];
 }
 
 
@@ -335,6 +345,31 @@
 		return [[self window] isVisible];
 	}
 	
+	else if (theAction == @selector(toggleFullScreenWithZoom:))
+	{
+		if (![self isFullScreen])
+			title = NSLocalizedString(@"Enter Full Screen", @"View menu option for entering fullscreen mode.");
+		else
+			title = NSLocalizedString(@"Exit Full Screen", @"View menu option for returning to windowed mode.");
+		
+		[theItem setTitle: title];
+		
+		return YES;
+	}
+	
+	
+	else if (theAction == @selector(toggleFullScreen:))
+	{
+		if (![self isFullScreen])
+			title = NSLocalizedString(@"Enter Full Screen Quickly", @"View menu option for entering fullscreen mode without zooming.");
+		else
+			title = NSLocalizedString(@"Exit Full Screen Quickly", @"View menu option for returning to windowed mode without zooming.");
+		
+		[theItem setTitle: title];
+		
+		return YES;
+	}
+	
     return YES;
 }
 
@@ -381,12 +416,17 @@
 
 - (void) windowWillClose: (NSNotification *)notification
 {
-	[self exitFullScreen: self];
+	[self setFullScreen: NO];
 }
 
 - (void) windowWillMiniaturize: (NSNotification *)notification
 {
-	[self exitFullScreen: self];
+	[self setFullScreen: NO];
+}
+
+- (void) windowWillBeginSheet: (NSNotification *)notification
+{
+	if (![[notification object] isEqualTo: [self fullScreenWindow]]) [self setFullScreen: NO];
 }
 
 
@@ -423,12 +463,13 @@
 {
 	[inputController didResignKey];
 }
+
 - (void) windowDidResignMain: (NSNotification *) notification
 {
 	[inputController didResignKey];
 }
 
-//Drop out of fullscreen and warn the emulator to prepare for emulation cutout when a menu opens
+//Warn the emulator to prepare for emulation cutout when a menu opens
 - (void) menuDidOpen:	(NSNotification *) notification
 {
 	[[[self document] emulator] willPause];

@@ -291,7 +291,7 @@ enum {
 		//Otherwise, pass the left click on as-is
 		else [inputHandler mouseButtonPressed: OSXMouseButtonLeft withModifiers: modifiers];
 	}
-	//If we're clicking on the window while unlocked-tracking is disabled, then lock the mouse immediately
+	//A single click on the window will lock the mouse if unlocked-tracking is disabled or we're in fullscreen mode
 	else if (![self mouseLocked] && ![self trackMouseWhileUnlocked])
 	{
 		[self toggleMouseLocked: self];
@@ -614,9 +614,6 @@ enum {
 	//Don't continue if we're already in the right lock state
 	if (lock == [self mouseLocked]) return;
 	
-	//Don't allow the mouse to be unlocked while in fullscreen mode
-	//if (!lock && [[self view] isInFullScreenMode]) return;
-	
 	//Don't allow the mouse to be locked if the game hasn't indicated mouse support
 	//Tweak: unless we're in fullscreen mode, in which case we only really do it
 	//to hide the mouse cursor.
@@ -654,8 +651,12 @@ enum {
 	//Disabled for now because this makes the mouse jumpy and unpredictable.
 	if (NO && !track && ![self mouseLocked])
 		[self _syncDOSCursorToPointInCanvas: NSMakePoint(0.5f, 0.5f)];
-}	 
+}
 
+- (BOOL) trackMouseWhileUnlocked
+{
+	return trackMouseWhileUnlocked && ![[self view] isInFullScreenMode];
+}
 
 #pragma mark -
 #pragma mark Private methods

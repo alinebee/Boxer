@@ -32,16 +32,16 @@ NSString * const NSFullScreenModeApplicationPresentationOptions = @"NSFullScreen
 
 enum {
 	NSApplicationPresentationDefault                    = 0,
-	NSApplicationPresentationAutoHideDock               = (1 <<  0),
-	NSApplicationPresentationHideDock                   = (1 <<  1),
-	NSApplicationPresentationAutoHideMenuBar            = (1 <<  2),
-	NSApplicationPresentationHideMenuBar                = (1 <<  3),
-	NSApplicationPresentationDisableAppleMenu           = (1 <<  4),
-	NSApplicationPresentationDisableProcessSwitching    = (1 <<  5),
-	NSApplicationPresentationDisableForceQuit           = (1 <<  6),
-	NSApplicationPresentationDisableSessionTermination  = (1 <<  7),
-	NSApplicationPresentationDisableHideApplication     = (1 <<  8),
-	NSApplicationPresentationDisableMenuBarTransparency = (1 <<  9)
+	NSApplicationPresentationAutoHideDock               = (1 << 0),
+	NSApplicationPresentationHideDock                   = (1 << 1),
+	NSApplicationPresentationAutoHideMenuBar            = (1 << 2),
+	NSApplicationPresentationHideMenuBar                = (1 << 3),
+	NSApplicationPresentationDisableAppleMenu           = (1 << 4),
+	NSApplicationPresentationDisableProcessSwitching    = (1 << 5),
+	NSApplicationPresentationDisableForceQuit           = (1 << 6),
+	NSApplicationPresentationDisableSessionTermination  = (1 << 7),
+	NSApplicationPresentationDisableHideApplication     = (1 << 8),
+	NSApplicationPresentationDisableMenuBarTransparency = (1 << 9)
 };
 typedef NSUInteger NSApplicationPresentationOptions;
 #endif
@@ -78,6 +78,9 @@ typedef NSUInteger NSApplicationPresentationOptions;
 		//immediately *before* a resize is usually (always?) video-buffer garbage.
 		//This way, we have the brand-new frame visible in the view while we stretch
 		//it to the intended size, instead of leaving the garbage frame in the view.
+		
+		//TODO: let BXRenderingView handle this by changing its bounds, and listen for
+		//bounds-change notifications so we can resize the window to match
 		[self _resizeToAccommodateFrame: frame];
 	}
 }
@@ -102,7 +105,7 @@ typedef NSUInteger NSApplicationPresentationOptions;
 
 //Returns the current size that the render view would be if it were in windowed mode.
 //This will differ from the actual render view size when in fullscreen mode.
-- (NSSize) windowedRenderingViewSize	{ return [[self viewContainer] bounds].size; }
+- (NSSize) windowedRenderingViewSize { return [[self viewContainer] bounds].size; }
 
 - (void) setFrameAutosaveName: (NSString *)savedName
 {
@@ -130,6 +133,12 @@ typedef NSUInteger NSApplicationPresentationOptions;
 {
 	//TODO: should we switch this to the screen that the our window is on?
 	return [NSScreen mainScreen];
+}
+
+- (NSWindow *) fullScreenWindow
+{
+	if ([self isFullScreen]) return [inputView window];
+	else return nil;
 }
 
 - (BOOL) isFullScreen
@@ -192,13 +201,12 @@ typedef NSUInteger NSApplicationPresentationOptions;
 	NSRect fullscreenFrame		= [[self fullScreenTarget] frame];
 	NSRect zoomedWindowFrame	= [theWindow frameRectForContentRect: fullscreenFrame];
 	
-	//[theWindow setLevel: NSScreenSaverWindowLevel];
-
 	//Set up the chromeless window we'll use for the fade effect
 	NSPanel *blankingWindow = [[NSPanel alloc] initWithContentRect: NSZeroRect
 														 styleMask: NSBorderlessWindowMask
 														   backing: NSBackingStoreBuffered
 															 defer: YES];
+	
 	[blankingWindow setOneShot: YES];
 	[blankingWindow setReleasedWhenClosed: YES];
 	[blankingWindow setFrame: fullscreenFrame display: NO];
@@ -227,13 +235,11 @@ typedef NSUInteger NSApplicationPresentationOptions;
 	[resizeEffect release];
 	[effects release];
 	
-	
-	//Make sure we're the key window first before any shenanigans
-	[theWindow makeKeyAndOrderFront: self];
-	
 	[self setResizingProgrammatically: YES];
 	if (fullScreen)
 	{
+		SetSystemUIMode(kUIModeAllHidden, kUIOptionAutoShowMenuBar);
+		
 		//Tell the rendering view to start managing aspect ratio correction early,
 		//so that the aspect ratio appears correct while resizing to fill the window
 		[[self renderingView] setManagesAspectRatio: YES];
@@ -252,12 +258,15 @@ typedef NSUInteger NSApplicationPresentationOptions;
 		
 		//Revert the window back to its original size, while it's hidden by the fullscreen view
 		//We do this so that the window's autosaved frame doesn't get messed up, and so that we
-		//don't have to track the window's former size indepedently while we're in fullscreen mode.
+		//don't have to track the window's former size independently while we're in fullscreen mode.
 		[theWindow setFrame: originalFrame display: NO];
 	}
 	else
 	{
-		//Resize the DOS window to fill the screen while hidden
+		//Resize the DOS window to fill the screen behind the fullscreen window;
+		//Otherwise, the empty normal-sized window may be visible for a single frame
+		//after switching out of fullscreen mode
+		[theWindow orderBack: self];
 		[theWindow setFrame: zoomedWindowFrame display: NO];
 		
 		//Flip the view out of fullscreen, which will return it to the zoomed window
@@ -277,6 +286,8 @@ typedef NSUInteger NSApplicationPresentationOptions;
 		
 		//Finally tell the view to stop managing aspect ratio again
 		[[self renderingView] setManagesAspectRatio: NO];
+		
+		SetSystemUIMode(kUIModeNormal, 0);
 	}
 	[self setResizingProgrammatically: NO];
 	
@@ -380,13 +391,15 @@ typedef NSUInteger NSApplicationPresentationOptions;
 		
 		[theView enterFullScreenMode: targetScreen withOptions: fullscreenOptions];
 		
-		NSWindow *fullscreenWindow = [theView window];
+		NSWindow *fullscreenWindow = [self fullScreenWindow];
 		
 		//Hide the old window altogether
 		[theWindow orderOut: self];
 		
 		//Adopt the fullscreen window, and reset the view's responder back to what it was
 		//before the fullscreen window took it.
+		[theWindow setDelegate: self];
+		
 		[fullscreenWindow setDelegate: self];
 		[fullscreenWindow setWindowController: self];
 		[theView setNextResponder: currentResponder];
@@ -399,7 +412,8 @@ typedef NSUInteger NSApplicationPresentationOptions;
 	}
 	else
 	{
-		NSWindow *fullscreenWindow = [theView window];
+		NSWindow *fullscreenWindow = [self fullScreenWindow];
+		
 		[fullscreenWindow setDelegate: nil];
 		[fullscreenWindow setWindowController: nil];
 		

@@ -8,24 +8,28 @@
 
 #import "BXDOSWindowController+BXRenderController.h"
 #import "BXDOSWindow.h"
+#import "BXSession.h" //For notifications
 #import "BXEmulator.h"
 #import "NSWindow+BXWindowSizing.h"
 #import "BXInputController.h"
 #import "BXFrameRenderingView.h"
 #import "BXFrameBuffer.h"
 #import "BXVideoHandler.h"
-#import <Carbon/Carbon.h> //For SetSystemUIMode()
 
 #import "BXGeometry.h"
 
 
-const CGDisplayFadeInterval BXFullscreenFadeOutDuration	= 0.2f;
-const CGDisplayFadeInterval BXFullscreenFadeInDuration	= 0.4f;
-const NSInteger BXWindowSnapThreshold		= 64;
-const CGFloat BXIdenticalAspectRatioDelta	= 0.025f;
+#pragma mark -
+#pragma mark Constants
+
+#define BXFullscreenFadeOutDuration	0.2f
+#define BXFullscreenFadeInDuration	0.4f
+#define BXWindowSnapThreshold		64
+#define BXIdenticalAspectRatioDelta	0.025f
 
 
 //These constants are not available in 10.5
+//TODO: move these off to some kind of backporting header
 #ifndef NSApplicationPresentationOptions
 
 NSString * const NSFullScreenModeApplicationPresentationOptions = @"NSFullScreenModeApplicationPresentationOptions";
@@ -152,6 +156,21 @@ typedef NSUInteger NSApplicationPresentationOptions;
 	//Don't bother if we're already in the desired fullscreen state
 	if ([self isFullScreen] == fullScreen) return;
 	
+	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+	NSString *startNotification, *endNotification;
+	if (fullScreen) 
+	{
+		startNotification	= BXSessionWillEnterFullScreenNotification;
+		endNotification		= BXSessionDidEnterFullScreenNotification;
+	}
+	else
+	{
+		startNotification	= BXSessionWillExitFullScreenNotification;
+		endNotification		= BXSessionDidExitFullScreenNotification;
+	}
+	
+	[center postNotificationName: startNotification object: [self document]];	
+	
 	//Set up a screen fade in and out of the fullscreen mode
 	CGError acquiredToken;
 	CGDisplayFadeReservationToken fadeToken;
@@ -185,21 +204,38 @@ typedef NSUInteger NSApplicationPresentationOptions;
 					  );
 	}
 	CGReleaseDisplayFadeReservation(fadeToken);
+	
+	[center postNotificationName: endNotification object: [self document]];
 }
 
 //Zoom the DOS window in or out of fullscreen with a smooth animation
 - (void) setFullScreenWithZoom: (BOOL) fullScreen
 {	
 	//Don't bother if we're already in the correct fullscreen state
-	if ([self isFullScreen] == fullScreen) return;
+	if ([self isFullScreen] == fullScreen) return;	
 	
 	//Let the emulator know it'll be blocked from emulating for a while
 	[[[self document] emulator] willPause];
 	
+	
+	NSString *startNotification, *endNotification;
+	if (fullScreen) 
+	{
+		startNotification	= BXSessionWillEnterFullScreenNotification;
+		endNotification		= BXSessionDidEnterFullScreenNotification;
+	}
+	else
+	{
+		startNotification	= BXSessionWillExitFullScreenNotification;
+		endNotification		= BXSessionDidExitFullScreenNotification;
+	}
+	
+	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 	NSWindow *theWindow			= [self window];
 	NSRect originalFrame		= [theWindow frame];
 	NSRect fullscreenFrame		= [[self fullScreenTarget] frame];
 	NSRect zoomedWindowFrame	= [theWindow frameRectForContentRect: fullscreenFrame];
+	
 	
 	//Set up the chromeless window we'll use for the fade effect
 	NSPanel *blankingWindow = [[NSPanel alloc] initWithContentRect: NSZeroRect
@@ -235,11 +271,13 @@ typedef NSUInteger NSApplicationPresentationOptions;
 	[resizeEffect release];
 	[effects release];
 	
+	[center postNotificationName: startNotification object: [self document]];	
+
 	[self setResizingProgrammatically: YES];
 	if (fullScreen)
 	{
-		//Hide the UI components early, before we begin filling the screen
-		SetSystemUIMode(kUIModeAllHidden, kUIOptionAutoShowMenuBar);
+		//Lock the mouse to hide the cursor while we switch to fullscreen
+		[inputController setMouseLocked: YES];
 		
 		//Tell the rendering view to start managing aspect ratio correction early,
 		//so that the aspect ratio appears correct while resizing to fill the window
@@ -289,12 +327,12 @@ typedef NSUInteger NSApplicationPresentationOptions;
 		[[self renderingView] setManagesAspectRatio: NO];
 	}
 	[self setResizingProgrammatically: NO];
+	[center postNotificationName: endNotification object: [self document]];
 	
 	[[[self document] emulator] didResume];
 	
 	[blankingWindow close];
 	[animation release];
-	
 }
 
 //Snap to multiples of the base render size as we scale
@@ -321,6 +359,12 @@ typedef NSUInteger NSApplicationPresentationOptions;
 	NSSize newProposedSize = [theWindow frameRectForContentRect:renderFrame].size;
 	
 	return newProposedSize;
+}
+
+- (BOOL) windowShouldZoom: (NSWindow *)window toFrame: (NSRect)newFrame
+{
+	//Only allow our regular window to zoom - not a fullscreen window
+	return ![self isFullScreen];
 }
 
 
@@ -375,16 +419,21 @@ typedef NSUInteger NSApplicationPresentationOptions;
 	
 	if (fullScreen)
 	{
-		//Hide the dock and auto-hide the menu bar
-		SetSystemUIMode(kUIModeAllHidden, kUIOptionAutoShowMenuBar);
-		
 		NSScreen *targetScreen	= [self fullScreenTarget];
 		
-		//Flip the view into fullscreen mode
-		NSApplicationPresentationOptions presentationOptions = NSApplicationPresentationHideDock | NSApplicationPresentationAutoHideMenuBar;
+		//Preserve the current application presentation mode
+		//presentationOptions doesn't exist in OS X < 10.6;
+		//this is a workaround to avoid compiler warnings
+		NSNumber *presentationOptions;
+		if ([NSApp respondsToSelector: NSSelectorFromString(@"presentationOptions")])
+		{
+			presentationOptions = [NSApp valueForKey: @"presentationOptions"];
+		}
+		else presentationOptions = [NSNumber numberWithUnsignedInteger: NSApplicationPresentationDefault];
+		
 		NSDictionary *fullscreenOptions = [NSDictionary dictionaryWithObjectsAndKeys:
 										   [NSNumber numberWithBool: NO], NSFullScreenModeAllScreens,
-										   [NSNumber numberWithUnsignedInteger: presentationOptions], NSFullScreenModeApplicationPresentationOptions,
+										   presentationOptions, NSFullScreenModeApplicationPresentationOptions,
 										   nil];
 		
 		//Remove ourselves as the old window delegate so that we don't receive
@@ -439,9 +488,6 @@ typedef NSUInteger NSApplicationPresentationOptions;
 		
 		//Tell the rendering view to stop managing aspect ratio correction
 		[[self renderingView] setManagesAspectRatio: NO];
-		
-		//Unhide the menu bar and dock
-		SetSystemUIMode(kUIModeNormal, 0);
 	}
 	//Kick the emulator's renderer to adjust to the new viewport size
 	[[[[self document] emulator] videoHandler] reset];

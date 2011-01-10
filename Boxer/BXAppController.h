@@ -58,6 +58,15 @@ enum {
 
 
 #pragma mark -
+#pragma mark Managing window behaviour
+
+- (void) sessionWillEnterFullScreen: (NSNotification *)notification;
+- (void) sessionDidExitFullScreen: (NSNotification *)notification;
+- (void) sessionDidUnlockMouse: (NSNotification *)notification;
+- (void) sessionDidLockMouse: (NSNotification *)notification;
+
+
+#pragma mark -
 #pragma mark Opening documents
 
 //A special method for creating a new untitled import session.

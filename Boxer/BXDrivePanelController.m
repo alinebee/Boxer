@@ -276,7 +276,7 @@ enum {
 		NSString *title;
 		if (isCurrent)
 		{
-			title = NSLocalizedString(@"Is current drive",
+			title = NSLocalizedString(@"Current drive",
 									  @"Menu item title for when selected drive is already the current DOS drive.");
 		}
 		else title = NSLocalizedString(@"Make current drive",

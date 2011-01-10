@@ -54,6 +54,10 @@
 //How much to scale mouse motion by.
 @property (assign) CGFloat mouseSensitivity;
 
+//Whether we can currently lock the mouse. This will be YES if the game supports mouse control,
+//or we're in fullscreen mode (so that we can hide the mouse cursor.)
+@property (readonly) BOOL canLockMouse;
+
 #pragma mark -
 #pragma mark Methods
 

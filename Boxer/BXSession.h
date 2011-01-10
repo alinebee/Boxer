@@ -17,6 +17,24 @@
 #import "BXEmulatorDelegate.h"
 #import "BXGameProfile.h"
 
+
+#pragma mark -
+#pragma mark Notifications
+
+//Notifications sent by DOS windows when certain custom UI events occur. The notification object
+//in these cases is BXSession and not the window controller, window or view responsible for the UI event.
+extern NSString * const BXSessionWillEnterFullScreenNotification;
+extern NSString * const BXSessionDidEnterFullScreenNotification;
+extern NSString * const BXSessionWillExitFullScreenNotification;
+extern NSString * const BXSessionDidExitFullScreenNotification;
+
+extern NSString * const BXSessionDidLockMouseNotification;
+extern NSString * const BXSessionDidUnlockMouseNotification;
+
+
+#pragma mark -
+#pragma mark Interface
+
 @class BXEmulator;
 @class BXPackage;
 @class BXDOSWindowController;

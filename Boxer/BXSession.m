@@ -40,6 +40,20 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 #define BXSuccessfulProgramRunningTimeThreshold 0.2
 
 
+
+#pragma mark -
+#pragma mark Notifications
+
+NSString * const BXSessionWillEnterFullScreenNotification	= @"BXSessionWillEnterFullScreen";
+NSString * const BXSessionDidEnterFullScreenNotification	= @"BXSessionDidEnterFullScreen";
+NSString * const BXSessionWillExitFullScreenNotification	= @"BXSessionWillExitFullScreen";
+NSString * const BXSessionDidExitFullScreenNotification		= @"BXSessionDidExitFullScreen";
+
+NSString * const BXSessionDidLockMouseNotification		= @"BXSessionDidLockMouse";
+NSString * const BXSessionDidUnlockMouseNotification	= @"BXSessionDidUnlockMouse";
+
+
+
 #pragma mark -
 #pragma mark Implementation
 

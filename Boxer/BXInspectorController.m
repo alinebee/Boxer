@@ -53,6 +53,8 @@ const CGFloat BXMouseSensitivityRange = 2.0f;
 
 - (void) awakeFromNib
 {
+	[(NSPanel *)[self window] setBecomesKeyOnlyIfNeeded: YES];
+	
 	[[self window] setFrameAutosaveName: @"InspectorPanel"];
 	
 	//Set the initial panel based on the user's last chosen panel (defaulting to the CPU panel)
@@ -67,13 +69,6 @@ const CGFloat BXMouseSensitivityRange = 2.0f;
 	//Listen for changes to the current session
 	[[NSApp delegate] addObserver: self
 					   forKeyPath: @"currentSession"
-						  options: NSKeyValueObservingOptionInitial
-						  context: nil];
-	
-	
-	//Also listen for mouse-locking events
-	[[NSApp delegate] addObserver: self
-					   forKeyPath: @"currentSession.DOSWindowController.inputController.mouseLocked"
 						  options: NSKeyValueObservingOptionInitial
 						  context: nil];
 }
@@ -106,15 +101,6 @@ const CGFloat BXMouseSensitivityRange = 2.0f;
 			{
 				[[self tabView] selectTabViewItemAtIndex: BXCPUInspectorPanelTag];
 			}
-		}
-	}
-	else if ([keyPath isEqualToString: @"currentSession.DOSWindowController.inputController.mouseLocked"])
-	{
-		if (session)
-		{
-			BOOL mouseIsLocked = [[[session DOSWindowController] inputController] mouseLocked];
-			if (mouseIsLocked)	[self hideIfVisible];
-			else				[self revealIfHidden];
 		}
 	}
 }

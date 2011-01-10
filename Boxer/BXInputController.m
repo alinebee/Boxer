@@ -166,7 +166,7 @@ enum {
 		if (representedObject)
 		{
 			//Bind our sensitivity and tracking options to the session settings
-			BXSession *session = (BXSession *)[[[[self view] window] windowController] document];
+			id session = [[[[self view] window] windowController] document];
 			
 			NSDictionary *trackingOptions = [NSDictionary dictionaryWithObject: [NSNumber numberWithBool: YES]
 																		forKey: NSNullPlaceholderBindingOption];
@@ -292,7 +292,7 @@ enum {
 		else [inputHandler mouseButtonPressed: OSXMouseButtonLeft withModifiers: modifiers];
 	}
 	//A single click on the window will lock the mouse if unlocked-tracking is disabled or we're in fullscreen mode
-	else if (![self mouseLocked] && ![self trackMouseWhileUnlocked])
+	else if (![self trackMouseWhileUnlocked])
 	{
 		[self toggleMouseLocked: self];
 	}
@@ -604,7 +604,7 @@ enum {
 	if (theAction == @selector(toggleMouseLocked:))
 	{
 		[menuItem setState: [self mouseLocked]];
-		return [self mouseActive];
+		return [self canLockMouse];
 	}
 	else if (theAction == @selector(toggleTrackMouseWhileUnlocked:))
 	{
@@ -619,23 +619,21 @@ enum {
 	//Don't continue if we're already in the right lock state
 	if (lock == [self mouseLocked]) return;
 	
-	//Don't allow the mouse to be locked if the game hasn't indicated mouse support
-	//Tweak: unless we're in fullscreen mode, in which case we only really do it
-	//to hide the mouse cursor.
-	if (lock && ![self mouseActive]) return;
+	//Don't allow the mouse to be locked unless we're the frontmost application
+	//and the game has indicated mouse support
+	if (lock && ![self canLockMouse]) return;
 	
-	
-	//If we got this far, go ahead!
-	
-	//When locking, always ensure the application and DOS window are active.
-	if (lock)
-	{
-		[NSApp activateIgnoringOtherApps: YES];
-		[[[self view] window] makeKeyAndOrderFront: self];
-	}
+	//When locking, also activate the DOS window.
+	if (lock) [[[self view] window] makeKeyAndOrderFront: self];
 	
 	[self _applyMouseLockState: lock];
 	mouseLocked = lock;
+	
+	//Let everybody know we've grabbed the mouse
+	NSString *notification = (lock) ? BXSessionDidLockMouseNotification : BXSessionDidUnlockMouseNotification;
+	id session = [[[[self view] window] windowController] document];
+	
+	[[NSNotificationCenter defaultCenter] postNotificationName: notification object: session]; 
 }
 
 - (void) setMouseActive: (BOOL)active
@@ -660,7 +658,13 @@ enum {
 
 - (BOOL) trackMouseWhileUnlocked
 {
+	//Tweak: when in fullscreen mode, ignore the current mouse-tracking setting.
 	return trackMouseWhileUnlocked && ![[self view] isInFullScreenMode];
+}
+
+- (BOOL) canLockMouse
+{
+	return [NSApp isActive] && ([self mouseActive] || [[self view] isInFullScreenMode]); 
 }
 
 #pragma mark -

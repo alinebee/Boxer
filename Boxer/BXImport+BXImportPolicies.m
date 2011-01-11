@@ -39,9 +39,9 @@
 	static NSArray *patterns = nil;
 	if (!patterns) patterns = [[NSArray alloc] initWithObjects:
 							   @"^dosinst",
+							   @"^setup\\.",
 							   @"^install\\.",
 							   @"^hdinstal\\.",
-							   @"^setup\\.",
 							   nil];
 	return patterns;
 }

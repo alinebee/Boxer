@@ -426,6 +426,17 @@
 
 - (void) windowWillBeginSheet: (NSNotification *)notification
 {
+	//Unlock the mouse before displaying the sheet: this ensures
+	//that the main menu slides down in fullscreen mode before
+	//the sheet appears.
+	//Otherwise, Cocoa positions the sheet as if the menu was
+	//absent, then the menu appears and covers the sheet.
+	[inputController setMouseLocked: NO];
+	
+	//If for some reason our regular window is picking up the sheet
+	//instead of the fullscreen window, then break out of fullscreen
+	//This should never happen, since [BXSession windowForSheet]
+	//specifically chooses the fullscreen window if it is present
 	if (![[notification object] isEqualTo: [self fullScreenWindow]]) [self setFullScreen: NO];
 }
 

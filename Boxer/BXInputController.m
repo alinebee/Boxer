@@ -645,8 +645,8 @@ enum {
 {
 	mouseActive = active;
 	[self cursorUpdate: nil];
-	//Release the mouse lock when the game stops using the mouse
-	if (!active) [self setMouseLocked: NO];
+	//Release the mouse lock when the game stops using the mouse, unless we're in fullscreen mode
+	if (!active && ![[self controller] isFullScreen]) [self setMouseLocked: NO];
 }
 
 - (void) setTrackMouseWhileUnlocked: (BOOL)track

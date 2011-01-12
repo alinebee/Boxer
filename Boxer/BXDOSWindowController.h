@@ -40,6 +40,9 @@
 	IBOutlet BXInputController *inputController;
 	IBOutlet BXStatusBarController *statusBarController;
 	
+	//Used internally by BXRenderController for managing fullscreen mode
+	NSWindow *fullScreenWindow;
+	
 	//Used internally by BXRenderController for resizing calculations
 	NSSize currentScaledSize;
 	NSSize currentScaledResolution;
@@ -59,6 +62,9 @@
 @property (retain) NSView *viewContainer;	//A wrapper for the input view to aid window-sizing behaviour.
 @property (retain) NSView *programPanel;	//The slide-out program picker panel.
 @property (retain) NSView *statusBar;		//The status bar at the bottom of the window.
+
+//The chromeless window used in fullscreen mode. Will be nil while in windowed mode.
+@property (retain) NSWindow *fullScreenWindow; 
 
 //Indicates that the current resize event is internal and not triggered by user interaction.
 //Used to change our window constraining behaviour and response to resize events.

@@ -13,7 +13,7 @@
 #import "BXAppController.h"
 #import "BXGeometry.h"
 #import "BXCursorFadeAnimation.h"
-#import "BXDOSWindowController.h"
+#import "BXDOSWindowController+BXRenderController.h"
 #import "BXSession.h"
 
 //For keycodes
@@ -91,6 +91,11 @@ enum {
 
 @implementation BXInputController
 @synthesize mouseLocked, mouseActive, trackMouseWhileUnlocked, mouseSensitivity;
+
+- (BXDOSWindowController *) controller
+{
+	return (BXDOSWindowController *)[[[self view] window] windowController];
+}
 
 #pragma mark -
 #pragma mark Initialization and cleanup
@@ -203,7 +208,7 @@ enum {
 
 - (BOOL) mouseInView
 {
-	if ([[self view] isInFullScreenMode] || [self mouseLocked]) return YES;
+	if ([[self controller] isFullScreen] || [self mouseLocked]) return YES;
 	
 	NSPoint mouseLocation = [[[self view] window] mouseLocationOutsideOfEventStream];
 	NSPoint pointInView = [[self view] convertPoint: mouseLocation fromView: nil];
@@ -484,7 +489,7 @@ enum {
 {
 	//Pressing ESC while in fullscreen mode and not running a program will exit fullscreen mode. 	
 	if ([[theEvent charactersIgnoringModifiers] isEqualToString: @"\e"] &&
-		[[self view] isInFullScreenMode] &&
+		[[self controller] isFullScreen] &&
 		![[[self representedObject] emulator] isRunningProcess])
 	{
 		[NSApp sendAction: @selector(exitFullScreen:) to: nil from: self];
@@ -659,12 +664,12 @@ enum {
 - (BOOL) trackMouseWhileUnlocked
 {
 	//Tweak: when in fullscreen mode, ignore the current mouse-tracking setting.
-	return trackMouseWhileUnlocked && ![[self view] isInFullScreenMode];
+	return trackMouseWhileUnlocked && ![[self controller] isFullScreen];
 }
 
 - (BOOL) canLockMouse
 {
-	return [NSApp isActive] && ([self mouseActive] || [[self view] isInFullScreenMode]); 
+	return [NSApp isActive] && ([self mouseActive] || [[self controller] isFullScreen]); 
 }
 
 #pragma mark -

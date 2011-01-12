@@ -14,6 +14,7 @@
 #import <Cocoa/Cocoa.h>
 
 @class BXCursorFadeAnimation;
+@class BXDOSWindowController;
 @class BXInputHandler;
 
 @interface BXInputController : NSViewController
@@ -57,6 +58,9 @@
 //Whether we can currently lock the mouse. This will be YES if the game supports mouse control,
 //or we're in fullscreen mode (so that we can hide the mouse cursor.)
 @property (readonly) BOOL canLockMouse;
+
+//A convenience accessor for the controller of the window our view belongs to.
+@property (readonly) BXDOSWindowController *controller;
 
 #pragma mark -
 #pragma mark Methods

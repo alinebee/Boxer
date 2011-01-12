@@ -28,29 +28,6 @@
 #define BXIdenticalAspectRatioDelta	0.025f
 
 
-//These constants are not available in 10.5
-//TODO: move these off to some kind of backporting header
-#ifndef NSApplicationPresentationOptions
-
-NSString * const NSFullScreenModeApplicationPresentationOptions = @"NSFullScreenModeApplicationPresentationOptions";
-
-enum {
-	NSApplicationPresentationDefault                    = 0,
-	NSApplicationPresentationAutoHideDock               = (1 << 0),
-	NSApplicationPresentationHideDock                   = (1 << 1),
-	NSApplicationPresentationAutoHideMenuBar            = (1 << 2),
-	NSApplicationPresentationHideMenuBar                = (1 << 3),
-	NSApplicationPresentationDisableAppleMenu           = (1 << 4),
-	NSApplicationPresentationDisableProcessSwitching    = (1 << 5),
-	NSApplicationPresentationDisableForceQuit           = (1 << 6),
-	NSApplicationPresentationDisableSessionTermination  = (1 << 7),
-	NSApplicationPresentationDisableHideApplication     = (1 << 8),
-	NSApplicationPresentationDisableMenuBarTransparency = (1 << 9)
-};
-typedef NSUInteger NSApplicationPresentationOptions;
-#endif
-
-
 @interface BXDOSWindowController ()
 
 //Apply the switch to fullscreen mode. Used internally by setFullScreen: and setFullScreenWithZoom:
@@ -76,15 +53,15 @@ typedef NSUInteger NSApplicationPresentationOptions;
 	[renderingView updateWithFrame: frame];
 
 	if (frame != nil)
-	{		
-		//Resize the window to accomodate the frame.
+	{
+		//Resize the window to accomodate the frame when DOS switches resolutions.
 		//IMPLEMENTATION NOTE: We do this after only updating the view, because the frame
-		//immediately *before* a resize is usually (always?) video-buffer garbage.
+		//immediately *before* DOS changes resolution is usually (always?) video-buffer garbage.
 		//This way, we have the brand-new frame visible in the view while we stretch
 		//it to the intended size, instead of leaving the garbage frame in the view.
 		
 		//TODO: let BXRenderingView handle this by changing its bounds, and listen for
-		//bounds-change notifications so we can resize the window to match
+		//bounds-change notifications so we can resize the window to match?
 		[self _resizeToAccommodateFrame: frame];
 	}
 }
@@ -139,15 +116,14 @@ typedef NSUInteger NSApplicationPresentationOptions;
 	return [NSScreen mainScreen];
 }
 
-- (NSWindow *) fullScreenWindow
++ (NSSet *) keyPathsForValuesAffectingFullScreen
 {
-	if ([self isFullScreen]) return [inputView window];
-	else return nil;
+	return [NSSet setWithObject: @"fullScreenWindow"];
 }
 
 - (BOOL) isFullScreen
 {
-	return [inputView isInFullScreenMode];
+	return [self fullScreenWindow] != nil;
 }
 
 //Switch the DOS window in or out of fullscreen with a brief fade
@@ -295,9 +271,9 @@ typedef NSUInteger NSApplicationPresentationOptions;
 		[blankingWindow orderOut: self];
 		[self _applyFullScreenState: fullScreen];
 		
-		//Revert the window back to its original size, while it's hidden by the fullscreen view
-		//We do this so that the window's autosaved frame doesn't get messed up, and so that we
-		//don't have to track the window's former size independently while we're in fullscreen mode.
+		//Revert the window back to its original size, now that it's hidden.
+		//This ensures that it will save the proper frame, and be the expected
+		//size when we return from fullscreen.
 		[theWindow setFrame: originalFrame display: NO];
 	}
 	else
@@ -305,7 +281,6 @@ typedef NSUInteger NSApplicationPresentationOptions;
 		//Resize the DOS window to fill the screen behind the fullscreen window;
 		//Otherwise, the empty normal-sized window may be visible for a single frame
 		//after switching out of fullscreen mode
-		[theWindow orderBack: self];
 		[theWindow setFrame: zoomedWindowFrame display: NO];
 		
 		//Flip the view out of fullscreen, which will return it to the zoomed window
@@ -333,6 +308,30 @@ typedef NSUInteger NSApplicationPresentationOptions;
 	
 	[blankingWindow close];
 	[animation release];
+}
+
+- (void) setFullScreenWindow: (NSWindow *)window
+{
+	if (window != fullScreenWindow)
+	{
+		if (fullScreenWindow)
+		{
+			[fullScreenWindow setDelegate: nil];
+			[fullScreenWindow setWindowController: nil];
+		
+			[fullScreenWindow close];
+			[fullScreenWindow release];
+		}
+
+		fullScreenWindow = [window retain];
+		
+		if (window)
+		{
+			[window setDelegate: self];
+			[window setWindowController: self];
+			[window setReleasedWhenClosed: NO];
+		}
+	}
 }
 
 //Snap to multiples of the base render size as we scale
@@ -409,9 +408,7 @@ typedef NSUInteger NSApplicationPresentationOptions;
 #pragma mark Private methods
 
 - (void) _applyFullScreenState: (BOOL)fullScreen
-{
-	[self willChangeValueForKey: @"fullScreen"];
-	
+{	
 	NSView *theView					= (NSView *)[self inputView];
 	NSView *theContainer			= [self viewContainer]; 
 	NSWindow *theWindow				= [self window];
@@ -420,40 +417,36 @@ typedef NSUInteger NSApplicationPresentationOptions;
 	if (fullScreen)
 	{
 		NSScreen *targetScreen	= [self fullScreenTarget];
+
+		//Make a new chromeless screen-covering window and adopt it as our own
+		BXDOSFullScreenWindow *fullWindow = [[BXDOSFullScreenWindow alloc] initWithContentRect: [targetScreen frame]
+																					 styleMask: NSBorderlessWindowMask
+																					   backing: NSBackingStoreBuffered
+																						 defer: YES];
 		
-		//Preserve the current application presentation mode
-		//presentationOptions doesn't exist in OS X < 10.6;
-		//this is a workaround to avoid compiler warnings
-		NSNumber *presentationOptions;
-		if ([NSApp respondsToSelector: NSSelectorFromString(@"presentationOptions")])
-		{
-			presentationOptions = [NSApp valueForKey: @"presentationOptions"];
-		}
-		else presentationOptions = [NSNumber numberWithUnsignedInteger: NSApplicationPresentationDefault];
+		[fullWindow setBackgroundColor: [NSColor blackColor]];
+		[fullWindow setAcceptsMouseMovedEvents: YES];
+		[self setFullScreenWindow: fullWindow];
+		[fullWindow release];
 		
-		NSDictionary *fullscreenOptions = [NSDictionary dictionaryWithObjectsAndKeys:
-										   [NSNumber numberWithBool: NO], NSFullScreenModeAllScreens,
-										   presentationOptions, NSFullScreenModeApplicationPresentationOptions,
-										   nil];
+		//For some reason, it works best to bring the fullscreen window
+		//on screen before moving over the view: if we do it afterwards,
+		//we get flicker when the windows are swapped
+		[fullWindow makeKeyAndOrderFront: self];
 		
-		//Remove ourselves as the old window delegate so that we don't receive
-		//loss-of-focus notifications when switching to fullscreen
-		[theWindow setDelegate: nil];
+		//Now, swap the view into the new fullscreen window
+		[theView retain];
+		[theView removeFromSuperviewWithoutNeedingDisplay];
+		[fullWindow setContentView: theView];
+		[theView release];
 		
-		[theView enterFullScreenMode: targetScreen withOptions: fullscreenOptions];
-		
-		NSWindow *fullscreenWindow = [self fullScreenWindow];
-		
-		//Hide the old window altogether
-		[theWindow orderOut: self];
-		
-		//Adopt the fullscreen window, and reset the view's responder back to what it was
-		//before the fullscreen window took it.
-		[theWindow setDelegate: self];
-		
-		[fullscreenWindow setDelegate: self];
-		[fullscreenWindow setWindowController: self];
+		//Restore the responders, which got messed up by the window switch
 		[theView setNextResponder: currentResponder];
+		[fullWindow setNextResponder: [theWindow nextResponder]];
+		[fullWindow makeFirstResponder: theView];
+		
+		//Hide the old window
+		[theWindow orderOut: self];
 		
 		//Ensure that the mouse is locked for fullscreen mode
 		[inputController setMouseLocked: YES];
@@ -463,25 +456,28 @@ typedef NSUInteger NSApplicationPresentationOptions;
 	}
 	else
 	{
-		NSWindow *fullscreenWindow = [self fullScreenWindow];
+		//Bring in the original window just behind the fullscreen window,
+		//to avoid flicker when swapping views
+		[theWindow orderWindow: NSWindowBelow relativeTo: [[self fullScreenWindow] windowNumber]];
 		
-		[fullscreenWindow setDelegate: nil];
-		[fullscreenWindow setWindowController: nil];
-		
-		[theWindow orderWindow: NSWindowBelow relativeTo: [fullscreenWindow windowNumber]];
-		
-		[theView exitFullScreenModeWithOptions: nil];
-		
-		[theWindow makeKeyAndOrderFront: self];
-		
-		//Reset the view's frame to match its loyal container, as otherwise it retains its fullscreen frame size
+		//Now, swap the view back into the original window
+		[theView retain];
+		[theView removeFromSuperviewWithoutNeedingDisplay];
 		[theView setFrame: [theContainer bounds]];
-		[theView setNeedsDisplay: YES];
+		[theContainer addSubview: theView];
+		[theView release];
 		
-		//Reset the responders to what they should be, since exitFullScreenModeWithOptions: screws with them
-		[theWindow setDelegate: self];
-		[theWindow makeFirstResponder: theView];
+		//Restore the responders, which got messed up by the window switch
 		[theView setNextResponder: currentResponder];
+		[theWindow makeFirstResponder: theView];
+		
+		//Prevents flicker when swapping windows
+		[theView display];
+		
+		//Reveal the original window and discard the fullscreen window
+		[theWindow makeKeyAndOrderFront: self];
+		[self setFullScreenWindow: nil];
+		
 		
 		//Unlock the mouse after leaving fullscreen
 		[inputController setMouseLocked: NO];
@@ -491,8 +487,6 @@ typedef NSUInteger NSApplicationPresentationOptions;
 	}
 	//Kick the emulator's renderer to adjust to the new viewport size
 	[[[[self document] emulator] videoHandler] reset];
-	
-	[self didChangeValueForKey: @"fullScreen"];
 }
 
 - (BOOL) _resizeToAccommodateFrame: (BXFrameBuffer *)frame

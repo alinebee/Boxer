@@ -47,6 +47,7 @@
 @synthesize renderingView, inputView, viewContainer, statusBar, programPanel;
 @synthesize programPanelController, inputController, statusBarController;
 @synthesize resizingProgrammatically;
+@synthesize fullScreenWindow;
 
 
 //Overridden to make the types explicit, so we don't have to keep casting the return values to avoid compilation warnings
@@ -70,6 +71,7 @@
 {
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
 	
+	[self setFullScreenWindow: nil],		[fullScreenWindow release];
 	[self setProgramPanelController: nil],	[programPanelController release];
 	[self setInputController: nil],			[inputController release];
 	[self setStatusBarController: nil],		[statusBarController release];
@@ -80,6 +82,7 @@
 	
 	[self setProgramPanel: nil],			[programPanel release];
 	[self setStatusBar: nil],				[statusBar release];
+	
 	
 	[super dealloc];
 }
@@ -132,7 +135,6 @@
 	
 	//Track mouse movement when this is the main window
 	[theWindow setAcceptsMouseMovedEvents: YES];
-	
 	[theWindow setPreservesContentDuringLiveResize: NO];
 	
 	
@@ -435,8 +437,8 @@
 	
 	//If for some reason our regular window is picking up the sheet
 	//instead of the fullscreen window, then break out of fullscreen
-	//This should never happen, since [BXSession windowForSheet]
-	//specifically chooses the fullscreen window if it is present
+	//(This should never happen, since [BXSession windowForSheet]
+	//specifically chooses the fullscreen window if it is present)
 	if (![[notification object] isEqualTo: [self fullScreenWindow]]) [self setFullScreen: NO];
 }
 
@@ -472,22 +474,26 @@
 
 - (void) windowDidResignKey: (NSNotification *) notification
 {
-	[inputController didResignKey];
+	//Ignore handoffs between our own windows, which swap key and main window status
+	//when switching to/from fullscreen
+	if ([NSApp keyWindow] != [self fullScreenWindow] && [NSApp keyWindow] != [self window])
+		[inputController didResignKey];
 }
 
 - (void) windowDidResignMain: (NSNotification *) notification
 {
+	if ([NSApp keyWindow] != [self fullScreenWindow] && [NSApp keyWindow] != [self window])
 	[inputController didResignKey];
 }
 
 //Warn the emulator to prepare for emulation cutout when a menu opens
-- (void) menuDidOpen:	(NSNotification *) notification
+- (void) menuDidOpen: (NSNotification *) notification
 {
 	[[[self document] emulator] willPause];
 }
 
 //Let the emulator know the coast is clear
-- (void) menuDidClose:	(NSNotification *) notification
+- (void) menuDidClose: (NSNotification *) notification
 {
 	[[[self document] emulator] didResume];
 }

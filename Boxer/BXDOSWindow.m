@@ -67,3 +67,23 @@
 }
 
 @end
+
+
+@implementation BXDOSFullScreenWindow
+
+//Overridden to make our required controller type explicit
+- (BXDOSWindowController *) windowController
+{
+	return (BXDOSWindowController *)[super windowController];
+}
+
+- (BOOL) canBecomeKeyWindow
+{
+	return YES;
+}
+
+- (BOOL) canBecomeMainWindow
+{
+	return YES;
+}
+@end

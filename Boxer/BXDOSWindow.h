@@ -19,3 +19,9 @@
 - (BXDOSWindowController *) windowController;
 
 @end
+
+@interface BXDOSFullScreenWindow : NSWindow
+
+- (BXDOSWindowController *) windowController;
+
+@end

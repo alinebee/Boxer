@@ -26,17 +26,13 @@
 //Returns YES if the window is in the process of resizing itself.
 @property (readonly) BOOL isResizing;
 
-//Whether the rendering view is currently fullscreen.
-@property (readonly) BOOL isFullScreen;
+//Sets/gets whether the rendering view is currently fullscreen.
+//See also setFullScreenWithZoom:
+@property (assign, getter=isFullScreen) BOOL fullScreen;
 
 //The screen to which we will render in fullscreen mode.
 //This is currently the screen with the main menu on it.
 @property (readonly) NSScreen *fullScreenTarget;
-
-//The window used for presenting fullscreen mode.
-//This will be nil if we are currently in windowed mode.
-@property (readonly) NSWindow *fullScreenWindow;
-
 
 //The maximum BXFrameBuffer size we can render.
 @property (readonly) NSSize maxFrameSize;
@@ -57,11 +53,8 @@
 //frame to ensure the aspect ratio is consistent with what it was before.
 - (void) setFrameAutosaveName: (NSString *)savedName;
 
-//Switch to and from fullscreen mode instantly with no animation.
-- (void) setFullScreen: (BOOL)fullScreen;
-
 //Zoom in and out of fullscreen mode with a smooth window sizing animation.
-- (void) setFullScreenWithZoom: (BOOL) fullScreen;
+- (void) setFullScreenWithZoom: (BOOL)fullScreen;
 
 //Resize the window to fit the specified render size, with an optional smooth resize animation.
 - (void) resizeWindowToRenderingViewSize: (NSSize)newSize animate: (BOOL)performAnimation;

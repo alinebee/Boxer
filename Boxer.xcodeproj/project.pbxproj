@@ -100,7 +100,6 @@
 		9F6BA70510A9FC77005A3E2A /* BXGrowlController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F6BA70410A9FC77005A3E2A /* BXGrowlController.m */; };
 		9F70C19C129036C900A3627F /* Boxer.sdef in Resources */ = {isa = PBXBuildFile; fileRef = 9F70C19B129036C900A3627F /* Boxer.sdef */; };
 		9F765649119403520082A06A /* BXInputController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F765648119403520082A06A /* BXInputController.m */; };
-		9F76C8550F6509EF0068EA1C /* BXDOSWindowController+BXRenderController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F76C8540F6509EF0068EA1C /* BXDOSWindowController+BXRenderController.m */; };
 		9F76D1B910CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F76D1B810CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.m */; };
 		9F76D3F710CBC3B300C3B081 /* GNU General Public License.txt in Resources */ = {isa = PBXBuildFile; fileRef = 9F76D3F510CBC3B300C3B081 /* GNU General Public License.txt */; };
 		9F76D45610CBE5C500C3B081 /* BXSession+BXDragDrop.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F76D45510CBE5C500C3B081 /* BXSession+BXDragDrop.m */; };
@@ -517,8 +516,6 @@
 		9F70C19B129036C900A3627F /* Boxer.sdef */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.sdef; path = Boxer.sdef; sourceTree = "<group>"; };
 		9F765647119403520082A06A /* BXInputController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXInputController.h; sourceTree = "<group>"; };
 		9F765648119403520082A06A /* BXInputController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXInputController.m; sourceTree = "<group>"; };
-		9F76C8530F6509EF0068EA1C /* BXDOSWindowController+BXRenderController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXDOSWindowController+BXRenderController.h"; sourceTree = "<group>"; };
-		9F76C8540F6509EF0068EA1C /* BXDOSWindowController+BXRenderController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXDOSWindowController+BXRenderController.m"; sourceTree = "<group>"; };
 		9F76D1B710CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSWorkspace+BXFileTypes.h"; sourceTree = "<group>"; };
 		9F76D1B810CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSWorkspace+BXFileTypes.m"; sourceTree = "<group>"; };
 		9F76D3F610CBC3B300C3B081 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = English; path = "English.lproj/GNU General Public License.txt"; sourceTree = "<group>"; };
@@ -1973,8 +1970,6 @@
 			children = (
 				9FBC35180F56C7B7001811F2 /* BXDOSWindowController.h */,
 				9FBC35250F56C7B7001811F2 /* BXDOSWindowController.m */,
-				9F76C8530F6509EF0068EA1C /* BXDOSWindowController+BXRenderController.h */,
-				9F76C8540F6509EF0068EA1C /* BXDOSWindowController+BXRenderController.m */,
 				9F59DED810B0159A008DBBC1 /* BXProgramPanelController.h */,
 				9F59DED910B0159A008DBBC1 /* BXProgramPanelController.m */,
 				9F42D9DD1172481800AC6F1F /* BXStatusBarController.h */,
@@ -2231,7 +2226,6 @@
 				9F1D50010F5C0966009F0AB9 /* BXEmulator.mm in Sources */,
 				9FBB86850F5DD070008418E6 /* BXLayerRenderingView.m in Sources */,
 				9FC3B2550F62D9CE006DE439 /* BXSession+BXEmulatorController.m in Sources */,
-				9F76C8550F6509EF0068EA1C /* BXDOSWindowController+BXRenderController.m in Sources */,
 				9FB553E10F6EA30900A33017 /* BXCloseAlert.m in Sources */,
 				9FB554220F6EAC5F00A33017 /* NSAlert+BXAlert.m in Sources */,
 				9F6311090F70F54300AB1155 /* BXHelpMenuController.m in Sources */,

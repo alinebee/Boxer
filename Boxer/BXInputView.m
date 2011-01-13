@@ -10,8 +10,6 @@
 #import "BXGeometry.h"
 #import "NSView+BXDrawing.h"
 
-NSString * const BXViewWillLiveResizeNotification	= @"BXViewWillLiveResizeNotification";
-NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotification";
 
 @implementation BXInputView
 @synthesize appearance;
@@ -148,21 +146,6 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 		[self _drawBackgroundInRect: dirtyRect];
 		[self _drawBrandInRect: dirtyRect];
 	}
-}
-
-
-//Silly notifications to let the window controller know when a live resize operation is starting/stopping,
-//so that it can clean up afterwards.
-- (void) viewWillStartLiveResize
-{	
-	[super viewWillStartLiveResize];
-	[[NSNotificationCenter defaultCenter] postNotificationName: BXViewWillLiveResizeNotification object: self];
-}
-
-- (void) viewDidEndLiveResize
-{
-	[super viewDidEndLiveResize];
-	[[NSNotificationCenter defaultCenter] postNotificationName: BXViewDidLiveResizeNotification object: self];
 }
 
 @end

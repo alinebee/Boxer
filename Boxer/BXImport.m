@@ -10,7 +10,7 @@
 #import "BXSessionPrivate.h"
 
 #import "BXImportDOSWindowController.h"
-#import "BXDOSWindowController+BXRenderController.h"
+#import "BXDOSWindowController.h"
 #import "BXImportWindowController.h"
 
 #import "BXAppController+BXGamesFolder.h"

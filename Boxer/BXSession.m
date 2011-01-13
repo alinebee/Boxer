@@ -12,7 +12,7 @@
 #import "BXBootlegCoverArt.h"
 #import "BXDrive.h"
 #import "BXAppController.h"
-#import "BXDOSWindowController+BXRenderController.h"
+#import "BXDOSWindowController.h"
 #import "BXSession+BXFileManager.h"
 #import "BXEmulatorConfiguration.h"
 #import "BXCloseAlert.h"

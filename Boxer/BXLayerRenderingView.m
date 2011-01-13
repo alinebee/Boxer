@@ -12,6 +12,7 @@
 #import "BXValueTransformers.h"
 #import "BXFrameBuffer.h"
 #import "BXRenderer.h"
+#import "BXDOSWindowController.h" //For notifications
 
 @implementation BXLayerRenderingView
 @synthesize renderingLayer, frameRateLayer;
@@ -114,6 +115,20 @@
 - (BOOL) managesAspectRatio
 {
 	return [[renderingLayer renderer] maintainsAspectRatio];	
+}
+
+//Silly notifications to let the window controller know when a live resize operation is starting/stopping,
+//so that it can clean up afterwards.
+- (void) viewWillStartLiveResize
+{	
+	[super viewWillStartLiveResize];
+	[[NSNotificationCenter defaultCenter] postNotificationName: BXViewWillLiveResizeNotification object: self];
+}
+
+- (void) viewDidEndLiveResize
+{
+	[super viewDidEndLiveResize];
+	[[NSNotificationCenter defaultCenter] postNotificationName: BXViewDidLiveResizeNotification object: self];
 }
 
 @end

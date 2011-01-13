@@ -7,11 +7,8 @@
 
 
 //BXDOSWindowController manages a session window and its dependent views and view controllers.
-//It is responsible for handling drag-drop and window close events, synchronising the window title
-//with the document, and initialising the window to a suitable state for the current session.
-
-//BXDOSWindowController also has a BXRenderController category (q.v.) to manage rendering-specific
-//tasks such as window resizing and fullscreen mode switching.
+//Besides the usual window-controller responsibilities, it handles switching to and from fullscreen
+//and passing frames to the emulator to the rendering view.
 
 
 #import <Cocoa/Cocoa.h>
@@ -28,6 +25,10 @@
 
 @protocol BXFrameRenderingView;
 
+//Produced by our rendering view when it begins/ends a live resize operation.
+extern NSString * const BXViewWillLiveResizeNotification;
+extern NSString * const BXViewDidLiveResizeNotification;
+
 @interface BXDOSWindowController : NSWindowController
 {
 	IBOutlet NSView <BXFrameRenderingView> *renderingView;
@@ -40,10 +41,8 @@
 	IBOutlet BXInputController *inputController;
 	IBOutlet BXStatusBarController *statusBarController;
 	
-	//Used internally by BXRenderController for managing fullscreen mode
 	NSWindow *fullScreenWindow;
 	
-	//Used internally by BXRenderController for resizing calculations
 	NSSize currentScaledSize;
 	NSSize currentScaledResolution;
 	BOOL resizingProgrammatically;
@@ -71,6 +70,28 @@
 @property (assign) BOOL resizingProgrammatically;
 
 
+//Returns the size that the rendering view would currently be *if it were in windowed mode.*
+//This will differ from the actual render view size if in fullscreen mode.
+@property (readonly) NSSize windowedRenderingViewSize;
+
+//Returns YES if the window is in the process of resizing itself.
+@property (readonly) BOOL isResizing;
+
+//Sets/gets whether the rendering view is currently fullscreen.
+//See also setFullScreenWithZoom:
+@property (assign, getter=isFullScreen) BOOL fullScreen;
+
+//The screen to which we will render in fullscreen mode.
+//This is currently the screen with the main menu on it.
+@property (readonly) NSScreen *fullScreenTarget;
+
+//The maximum BXFrameBuffer size we can render.
+@property (readonly) NSSize maxFrameSize;
+
+//The current size of the DOS rendering viewport.
+@property (readonly) NSSize viewportSize;
+
+
 #pragma mark -
 #pragma mark Inherited accessor overrides
 
@@ -78,6 +99,26 @@
 //(and don't have to keep recasting them ourselves)
 - (BXSession *) document;
 - (BXDOSWindow *) window;
+
+
+#pragma mark -
+#pragma mark Renderer-related methods
+
+- (void) updateWithFrame: (BXFrameBuffer *)frame;
+
+//Sets the window to use the specified frame-autosave name, and adjusts the resulting
+//frame to ensure the aspect ratio is consistent with what it was before.
+- (void) setFrameAutosaveName: (NSString *)savedName;
+
+
+#pragma mark -
+#pragma mark Window-sizing and fullscreen methods
+
+//Zoom in and out of fullscreen mode with a smooth window sizing animation.
+- (void) setFullScreenWithZoom: (BOOL)fullScreen;
+
+//Resize the window to fit the specified render size, with an optional smooth resize animation.
+- (void) resizeWindowToRenderingViewSize: (NSSize)newSize animate: (BOOL)performAnimation;
 
 
 #pragma mark -
@@ -132,9 +173,9 @@
 #pragma mark Handling window and UI events
 
 //These tell the emulator to pause itself while a resize is in progress, and clean up when it finishes.
-- (void) windowWillLiveResize: (NSNotification *) notification;
-- (void) windowDidLiveResize: (NSNotification *) notification;
-
+- (void) renderingViewDidResize: (NSNotification *) notification;
+- (void) renderingViewWillLiveResize: (NSNotification *) notification;
+- (void) renderingViewDidLiveResize: (NSNotification *) notification;
 
 //These listen for any time an NSMenu opens or closes, and warn the active emulator
 //to pause or resume emulation. In practice this means muting it to avoid hanging

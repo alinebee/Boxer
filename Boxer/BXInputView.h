@@ -15,12 +15,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-//BXInputView posts these notifications when it begins/ends a live resize operation.
-//TODO: move this behaviour to BXDelegatedView instead
-extern NSString * const BXViewWillLiveResizeNotification;
-extern NSString * const BXViewDidLiveResizeNotification;
-
-
 enum {
 	BXInputViewDefaultAppearance,
 	BXInputViewBlueprintAppearance

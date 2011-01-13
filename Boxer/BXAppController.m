@@ -14,7 +14,7 @@
 #import "BXPreferencesController.h"
 #import "BXWelcomeWindowController.h"
 #import "BXFirstRunWindowController.h"
-#import "BXDOSWindowController+BXRenderController.h"
+#import "BXDOSWindowController.h"
 
 #import "BXSession+BXFileManager.h"
 #import "BXImport.h";

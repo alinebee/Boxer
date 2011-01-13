@@ -8,6 +8,7 @@
 
 #import "BXGLRenderingView.h"
 #import "BXRenderer.h"
+#import "BXDOSWindowController.h" //For notifications
 
 @implementation BXGLRenderingView
 @synthesize renderer;
@@ -96,6 +97,20 @@
 		[[self renderer] renderToGLContext: glContext];
 		[[self openGLContext] flushBuffer];
 	}
+}
+
+//Silly notifications to let the window controller know when a live resize operation is starting/stopping,
+//so that it can clean up afterwards.
+- (void) viewWillStartLiveResize
+{	
+	[super viewWillStartLiveResize];
+	[[NSNotificationCenter defaultCenter] postNotificationName: BXViewWillLiveResizeNotification object: self];
+}
+
+- (void) viewDidEndLiveResize
+{
+	[super viewDidEndLiveResize];
+	[[NSNotificationCenter defaultCenter] postNotificationName: BXViewDidLiveResizeNotification object: self];
 }
 
 @end

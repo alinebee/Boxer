@@ -15,7 +15,7 @@
 #import "BXVideoHandler.h"
 #import "BXEmulatorConfiguration.h"
 
-#import "BXDOSWindowController+BXRenderController.h"
+#import "BXDOSWindowController.h"
 
 
 #pragma mark Private method declarations

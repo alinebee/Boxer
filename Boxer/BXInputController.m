@@ -13,7 +13,7 @@
 #import "BXAppController.h"
 #import "BXGeometry.h"
 #import "BXCursorFadeAnimation.h"
-#import "BXDOSWindowController+BXRenderController.h"
+#import "BXDOSWindowController.h"
 #import "BXSession.h"
 
 //For keycodes
@@ -86,6 +86,10 @@ enum {
 //to remove any latent mouse input from a leftover mouse position.
 - (void) _syncDOSCursorToPointInCanvas: (NSPoint)pointInCanvas;
 
+//Forces a cursor update whenever the window changes size. This works
+//around a bug whereby the current cursor resets whenever the window
+//resizes  (presumably because the tracking areas are being recalculated)
+- (BOOL) _windowDidResize: (NSNotification *)notification;
 @end
 
 
@@ -143,6 +147,14 @@ enum {
 	[cursorFade setOriginalCursor: [NSCursor arrowCursor]];
 	[cursorFade setAnimationBlockingMode: NSAnimationNonblocking];
 	[cursorFade setFrameRate: BXCursorFadeFrameRate];
+	
+	
+	//Listen for window resize events, so that we can redraw the cursor
+	//See note above for _windowDidResize:
+	[[NSNotificationCenter defaultCenter] addObserver: self
+											 selector: @selector(_windowDidResize:)
+												 name: NSWindowDidResizeNotification
+											   object: [[self view] window]];
 }
 
 - (void) dealloc
@@ -674,6 +686,11 @@ enum {
 
 #pragma mark -
 #pragma mark Private methods
+
+- (BOOL) _windowDidResize: (NSNotification *)notification
+{
+	if (![[self controller] isFullScreen]) [self cursorUpdate: nil];
+}
 
 - (BOOL) _controlsCursor
 {

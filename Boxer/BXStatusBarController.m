@@ -8,7 +8,7 @@
 
 #import "BXStatusBarController.h"
 #import "BXAppController.h"
-#import "BXDOSWindowController+BXRenderController.h"
+#import "BXDOSWindowController.h"
 #import "BXInspectorController.h"
 #import "BXInputController.h"
 #import "BXSession.h"

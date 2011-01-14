@@ -654,7 +654,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 		[blankingWindow setAlphaValue: 0.0f];
 		[blankingWindow orderWindow: NSWindowBelow relativeTo: [theWindow windowNumber]];
 		
-		//Run the zoome-and-fade animation
+		//Run the zoom-and-fade animation
 		[animation setDuration: [theWindow animationResizeTime: endFrame]];
 		[animation startAnimation];
 		
@@ -909,6 +909,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	
 	if (fullScreen)
 	{
+		BOOL isKey = [theWindow isKeyWindow];
 		NSScreen *targetScreen	= [self fullScreenTarget];
 		
 		//Make a new chromeless screen-covering window and adopt it as our own
@@ -922,10 +923,11 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 		[self setFullScreenWindow: fullWindow];
 		[fullWindow release];
 		
-		//For some reason, it works best to bring the fullscreen window
-		//on screen before moving over the view: if we do it afterwards,
-		//we get flicker when the windows are swapped
-		[fullWindow makeKeyAndOrderFront: self];
+		//Bring the fullscreen window forward so that it's just above the original window
+		[fullWindow orderWindow: NSWindowAbove relativeTo: [theWindow windowNumber]];
+		
+		//Let the rendering view manage aspect ratio correction while in fullscreen mode
+		[[self renderingView] setManagesAspectRatio: YES];
 		
 		//Now, swap the view into the new fullscreen window
 		[theView retain];
@@ -938,17 +940,19 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 		[fullWindow setNextResponder: [theWindow nextResponder]];
 		[fullWindow makeFirstResponder: theView];
 		
+		//Switch key focus to the new window if appropriate
+		//if (isKey) [fullWindow makeKeyAndOrderFront: self];
+		
 		//Hide the old window
 		[theWindow orderOut: self];
 		
 		//Ensure that the mouse is locked for fullscreen mode
 		[inputController setMouseLocked: YES];
-		
-		//Let the rendering view manage aspect ratio correction while in fullscreen mode
-		[[self renderingView] setManagesAspectRatio: YES];
 	}
 	else
 	{
+		BOOL isKey = [[self fullScreenWindow] isKeyWindow];
+
 		//Bring in the original window just behind the fullscreen window,
 		//to avoid flicker when swapping views
 		[theWindow orderWindow: NSWindowBelow relativeTo: [[self fullScreenWindow] windowNumber]];
@@ -967,10 +971,9 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 		//Prevents flicker when swapping windows
 		[theView display];
 		
-		//Reveal the original window and discard the fullscreen window
-		[theWindow makeKeyAndOrderFront: self];
+		//Make the original window key if appropriate, and discard the fullscreen window
+		if (isKey) [theWindow makeKeyAndOrderFront: self];
 		[self setFullScreenWindow: nil];
-		
 		
 		//Unlock the mouse after leaving fullscreen
 		[inputController setMouseLocked: NO];

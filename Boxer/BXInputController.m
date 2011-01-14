@@ -640,9 +640,6 @@ enum {
 	//and the game has indicated mouse support
 	if (lock && ![self canLockMouse]) return;
 	
-	//When locking, also activate the DOS window.
-	if (lock) [[[self view] window] makeKeyAndOrderFront: self];
-	
 	[self _applyMouseLockState: lock];
 	mouseLocked = lock;
 	
@@ -681,7 +678,7 @@ enum {
 
 - (BOOL) canLockMouse
 {
-	return [NSApp isActive] && ([self mouseActive] || [[self controller] isFullScreen]); 
+	return [NSApp isActive] && [[[self view] window] isKeyWindow] && ([self mouseActive] || [[self controller] isFullScreen]); 
 }
 
 #pragma mark -

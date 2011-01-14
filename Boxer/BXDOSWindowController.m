@@ -941,7 +941,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 		[fullWindow makeFirstResponder: theView];
 		
 		//Switch key focus to the new window if appropriate
-		//if (isKey) [fullWindow makeKeyAndOrderFront: self];
+		if (isKey) [fullWindow makeKeyAndOrderFront: self];
 		
 		//Hide the old window
 		[theWindow orderOut: self];

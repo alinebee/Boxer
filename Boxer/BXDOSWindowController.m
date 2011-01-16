@@ -101,7 +101,6 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 {
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
 	
-	[self setFullScreenWindow: nil],		[fullScreenWindow release];
 	[self setProgramPanelController: nil],	[programPanelController release];
 	[self setInputController: nil],			[inputController release];
 	[self setStatusBarController: nil],		[statusBarController release];
@@ -507,9 +506,11 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	return [NSScreen mainScreen];
 }
 
-+ (NSSet *) keyPathsForValuesAffectingFullScreen
+- (BXDOSFullScreenWindow *) fullScreenWindow
 {
-	return [NSSet setWithObject: @"fullScreenWindow"];
+	if ([[inputView window] isKindOfClass: [BXDOSFullScreenWindow class]])
+		return (BXDOSFullScreenWindow *)[inputView window];
+	else return nil;
 }
 
 - (BOOL) isFullScreen
@@ -701,30 +702,6 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	[animation release];
 }
 
-- (void) setFullScreenWindow: (NSWindow *)window
-{
-	if (window != fullScreenWindow)
-	{
-		if (fullScreenWindow)
-		{
-			[fullScreenWindow setDelegate: nil];
-			[fullScreenWindow setWindowController: nil];
-			
-			[fullScreenWindow close];
-			[fullScreenWindow release];
-		}
-		
-		fullScreenWindow = [window retain];
-		
-		if (window)
-		{
-			[window setDelegate: self];
-			[window setWindowController: self];
-			[window setReleasedWhenClosed: NO];
-		}
-	}
-}
-
 //Snap to multiples of the base render size as we scale
 - (NSSize) windowWillResize: (BXDOSWindow *)theWindow toSize: (NSSize) proposedFrameSize
 {
@@ -902,32 +879,38 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 
 - (void) _applyFullScreenState: (BOOL)fullScreen
 {	
+	[self willChangeValueForKey: @"fullScreen"];
+	
 	NSView *theView					= (NSView *)[self inputView];
 	NSView *theContainer			= [self viewContainer]; 
 	NSWindow *theWindow				= [self window];
 	NSResponder *currentResponder	= [theView nextResponder];
 	
+	BXDOSFullScreenWindow *fullWindow;
+	BOOL isKey;
+	
 	if (fullScreen)
 	{
-		BOOL isKey = [theWindow isKeyWindow];
-		NSScreen *targetScreen	= [self fullScreenTarget];
+		isKey = [theWindow isKeyWindow];
+		NSRect fullScreenFrame = [[self fullScreenTarget] frame];
 		
 		//Make a new chromeless screen-covering window and adopt it as our own
-		BXDOSFullScreenWindow *fullWindow = [[BXDOSFullScreenWindow alloc] initWithContentRect: [targetScreen frame]
-																					 styleMask: NSBorderlessWindowMask
-																					   backing: NSBackingStoreBuffered
-																						 defer: YES];
+		fullWindow = [[BXDOSFullScreenWindow alloc] initWithContentRect: fullScreenFrame
+															  styleMask: NSBorderlessWindowMask
+																backing: NSBackingStoreBuffered
+																  defer: YES];
 		
+		[fullWindow setDelegate: self];
+		[fullWindow setWindowController: self];
+		[fullWindow setReleasedWhenClosed: NO];
 		[fullWindow setBackgroundColor: [NSColor blackColor]];
 		[fullWindow setAcceptsMouseMovedEvents: YES];
-		[self setFullScreenWindow: fullWindow];
-		[fullWindow release];
 		
 		//Bring the fullscreen window forward so that it's just above the original window
 		[fullWindow orderWindow: NSWindowAbove relativeTo: [theWindow windowNumber]];
 		
 		//Let the rendering view manage aspect ratio correction while in fullscreen mode
-		[[self renderingView] setManagesAspectRatio: YES];
+		[renderingView setManagesAspectRatio: YES];
 		
 		//Now, swap the view into the new fullscreen window
 		[theView retain];
@@ -951,11 +934,12 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	}
 	else
 	{
-		BOOL isKey = [[self fullScreenWindow] isKeyWindow];
+		fullWindow = [self fullScreenWindow];
+		isKey = [fullWindow isKeyWindow];
 
 		//Bring in the original window just behind the fullscreen window,
 		//to avoid flicker when swapping views
-		[theWindow orderWindow: NSWindowBelow relativeTo: [[self fullScreenWindow] windowNumber]];
+		[theWindow orderWindow: NSWindowBelow relativeTo: [fullWindow windowNumber]];
 		
 		//Now, swap the view back into the original window
 		[theView retain];
@@ -973,16 +957,23 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 		
 		//Make the original window key if appropriate, and discard the fullscreen window
 		if (isKey) [theWindow makeKeyAndOrderFront: self];
-		[self setFullScreenWindow: nil];
+		
+		[fullWindow setWindowController: nil];
+		[fullWindow setDelegate: nil];
+		[fullWindow close];
+		[fullWindow release];
 		
 		//Unlock the mouse after leaving fullscreen
 		[inputController setMouseLocked: NO];
 		
 		//Tell the rendering view to stop managing aspect ratio correction
-		[[self renderingView] setManagesAspectRatio: NO];
+		[renderingView setManagesAspectRatio: NO];
 	}
+	
 	//Kick the emulator's renderer to adjust to the new viewport size
 	[self _cleanUpAfterResize];
+	
+	[self didChangeValueForKey: @"fullScreen"];
 }
 
 - (BOOL) _resizeToAccommodateFrame: (BXFrameBuffer *)frame

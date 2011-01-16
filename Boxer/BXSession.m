@@ -39,6 +39,17 @@ NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 //warn the user.
 #define BXSuccessfulProgramRunningTimeThreshold 0.2
 
+//How soon after the program to enter fullscreen, if the run-programs-in-fullscreen toggle
+//is enabled. The delay gives the program time to crash andour program panel time to hide.
+#define BXAutoSwitchToFullScreenDelay 0.5
+
+//How soon after launching a program to auto-hide the program panel.
+//This gives the program time to fail miserably.
+#define BXHideProgramPanelDelay 0.1
+
+//How soon after returning to the DOS prompt to display the program panel.
+//The delay gives the window time to resize or return from windowed mode.
+#define BXShowProgramPanelDelay 0.25
 
 
 #pragma mark -
@@ -302,7 +313,7 @@ NSString * const BXSessionDidUnlockMouseNotification	= @"BXSessionDidUnlockMouse
 
 - (NSWindow *) windowForSheet
 {
-	if ([[self DOSWindowController] isFullScreen]) return [[self DOSWindowController] fullScreenWindow];
+	if ([[self DOSWindowController] isFullScreen]) return (NSWindow *)[[self DOSWindowController] fullScreenWindow];
 	else return [super windowForSheet];
 }
 
@@ -641,6 +652,15 @@ NSString * const BXSessionDidUnlockMouseNotification	= @"BXSessionDidUnlockMouse
 - (void) willRunStartupCommands: (NSNotification *)notification {}
 - (void) didRunStartupCommands: (NSNotification *)notification {}
 
+//We leave the panel open when we don't have a default program already,
+//and can adopt the current program as the default program. This way
+//we can ask the user what they want to do with the program.
+- (BOOL) _leaveProgramPanelOpenAfterLaunch
+{
+	NSString *activePath = [[[self activeProgramPath] copy] autorelease];
+	return ![gamePackage targetPath] && [gamePackage validateTargetPath: &activePath error: NULL];
+}
+
 - (void) programWillStart: (NSNotification *)notification
 {
 	//Don't set the active program if we already have one: this way, we keep
@@ -651,17 +671,18 @@ NSString * const BXSessionDidUnlockMouseNotification	= @"BXSessionDidUnlockMouse
 		NSString *activePath = [[notification userInfo] objectForKey: @"localPath"];
 		[self setActiveProgramPath: activePath];
 		
-		//Hide the program picker shortly after launching a program, if we have
-		//a default program already or can't adopt this as the default program
-		//(and only then if the user hasn't manually toggled the panel themselves)
-		if (![self userToggledProgramPanel] &&
-			([gamePackage targetPath] || ![gamePackage validateTargetPath: &activePath error: NULL]))
+		//If the user hasn't manually opened/closed the program panel themselves,
+		//and we don't need to ask the user what to do with this program, then
+		//automatically hide the program panel shortly after launching.
+		if (![self userToggledProgramPanel] && ![self _leaveProgramPanelOpenAfterLaunch])
 		{
 			[NSObject cancelPreviousPerformRequestsWithTarget: [self DOSWindowController]
 													 selector: @selector(showProgramPanel)
 													   object: nil];
 			
-			[[self DOSWindowController] performSelector: @selector(hideProgramPanel) withObject: nil afterDelay: 0.05];
+			[[self DOSWindowController] performSelector: @selector(hideProgramPanel)
+											 withObject: nil
+											 afterDelay: BXHideProgramPanelDelay];
 		}
 	}
 	
@@ -686,10 +707,11 @@ NSString * const BXSessionDidUnlockMouseNotification	= @"BXSessionDidUnlockMouse
 	NSTimeInterval programRunningTime = [NSDate timeIntervalSinceReferenceDate] - programStartTime; 
 	if (programRunningTime < BXSuccessfulProgramRunningTimeThreshold)
 	{
-		//Check if this was the target program for this launch:
-		//if so, check if the program is Windows-only
-		//(we don't want to bother the user if they may be just
-		//trying out programs at the DOS prompt)
+		//If this was the target program for this launch, then
+		//warn if the program is Windows-only.
+		//(we only do this for the target program because we
+		//don't want to bother the user if they're just trying
+		//out programs at the DOS prompt)
 		NSString *programPath = [[notification userInfo] objectForKey: @"localPath"];
 		if (programPath && [programPath isEqualToString: [self targetPath]])
 		{
@@ -724,7 +746,7 @@ NSString * const BXSessionDidUnlockMouseNotification	= @"BXSessionDidUnlockMouse
 		//Show only after a delay, so that the window has time to resize after quitting the game
 		[[self DOSWindowController] performSelector: @selector(showProgramPanel)
 										 withObject: nil
-										 afterDelay: 0.25];
+										 afterDelay: BXShowProgramPanelDelay];
 	}
 
 	if ([[NSUserDefaults standardUserDefaults] boolForKey: @"startUpInFullScreen"])
@@ -737,13 +759,17 @@ NSString * const BXSessionDidUnlockMouseNotification	= @"BXSessionDidUnlockMouse
 
 - (void) didStartGraphicalContext: (NSNotification *)notification
 {
-	if ([[NSUserDefaults standardUserDefaults] boolForKey: @"startUpInFullScreen"])
+	//Tweak: only switch into fullscreen mode if we don't need to prompt
+	//the user about choosing a default program.
+	if ([[NSUserDefaults standardUserDefaults] boolForKey: @"startUpInFullScreen"] &&
+		![self _leaveProgramPanelOpenAfterLaunch])
 	{
-		//Switch to fullscreen mode automatically after a brief delay
-		//This will be cancelled if the context exits within that time - see below
+		//Switch to fullscreen mode automatically after a brief delay:
+		//This will be cancelled if the context exits within that time,
+		//in case of a program that crashes early.
 		[[self DOSWindowController] performSelector: @selector(toggleFullScreenWithZoom:) 
 										  withObject: [NSNumber numberWithBool: YES] 
-										  afterDelay: 0.5];
+										  afterDelay: BXAutoSwitchToFullScreenDelay];
 	}
 }
 

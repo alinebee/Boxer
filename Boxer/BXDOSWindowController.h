@@ -16,6 +16,7 @@
 @class BXEmulator;
 @class BXSession;
 @class BXDOSWindow;
+@class BXDOSFullScreenWindow;
 @class BXProgramPanelController;
 @class BXInputController;
 @class BXStatusBarController;
@@ -41,8 +42,6 @@ extern NSString * const BXViewDidLiveResizeNotification;
 	IBOutlet BXInputController *inputController;
 	IBOutlet BXStatusBarController *statusBarController;
 	
-	NSWindow *fullScreenWindow;
-	
 	NSSize currentScaledSize;
 	NSSize currentScaledResolution;
 	BOOL resizingProgrammatically;
@@ -62,13 +61,9 @@ extern NSString * const BXViewDidLiveResizeNotification;
 @property (retain) NSView *programPanel;	//The slide-out program picker panel.
 @property (retain) NSView *statusBar;		//The status bar at the bottom of the window.
 
-//The chromeless window used in fullscreen mode. Will be nil while in windowed mode.
-@property (retain) NSWindow *fullScreenWindow; 
-
 //Indicates that the current resize event is internal and not triggered by user interaction.
 //Used to change our window constraining behaviour and response to resize events.
 @property (assign) BOOL resizingProgrammatically;
-
 
 //Returns the size that the rendering view would currently be *if it were in windowed mode.*
 //This will differ from the actual render view size if in fullscreen mode.
@@ -76,6 +71,9 @@ extern NSString * const BXViewDidLiveResizeNotification;
 
 //Returns YES if the window is in the process of resizing itself.
 @property (readonly) BOOL isResizing;
+
+//The chromeless window used in fullscreen mode. Will be nil while in windowed mode.
+@property (readonly) BXDOSFullScreenWindow *fullScreenWindow; 
 
 //Sets/gets whether the rendering view is currently fullscreen.
 //See also setFullScreenWithZoom:

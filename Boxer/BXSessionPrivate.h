@@ -47,6 +47,10 @@
 //finishes. Called by runLaunchCommands at the end of AUTOEXEC.BAT.
 - (void) _launchTarget;
 
+//Whether to leave the program panel open after launching a program, so they can decide what to do with it.
+//Used by programWillStart and didStartGraphicalContext.
+- (BOOL) _leaveProgramPanelOpenAfterLaunch;
+
 //Called once the session has exited to save any DOSBox settings we have changed to the gamebox conf.
 - (void) _saveConfiguration: (BXEmulatorConfiguration *)configuration toFile: (NSString *)filePath;
 

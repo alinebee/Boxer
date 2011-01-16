@@ -45,6 +45,7 @@ extern NSString * const BXViewDidLiveResizeNotification;
 	NSSize currentScaledSize;
 	NSSize currentScaledResolution;
 	BOOL resizingProgrammatically;
+	BOOL inFullScreenTransition;
 }
 
 #pragma mark -

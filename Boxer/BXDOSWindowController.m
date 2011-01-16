@@ -515,7 +515,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 
 - (BOOL) isFullScreen
 {
-	return [self fullScreenWindow] != nil;
+	return inFullScreenTransition || [self fullScreenWindow] != nil;
 }
 
 //Switch the DOS window in or out of fullscreen with a brief fade
@@ -585,6 +585,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	//Let the emulator know it'll be blocked from emulating for a while
 	[[[self document] emulator] willPause];
 	
+	inFullScreenTransition = YES;
 	
 	NSString *startNotification, *endNotification;
 	if (fullScreen) 
@@ -694,6 +695,8 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 		[[self renderingView] setManagesAspectRatio: NO];
 	}
 	[self setResizingProgrammatically: NO];
+	inFullScreenTransition = NO;
+	
 	[center postNotificationName: endNotification object: [self document]];
 	
 	[[[self document] emulator] didResume];

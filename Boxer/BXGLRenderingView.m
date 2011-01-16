@@ -75,7 +75,12 @@
 
 - (void) prepareOpenGL
 {	
-	[[self renderer] prepareForGLContext: [[self openGLContext] CGLContextObj]];
+	CGLContextObj cgl_ctx = [[self openGLContext] CGLContextObj];
+	
+	//Enable multithreaded OpenGL execution (if available)
+	CGLEnable(cgl_ctx, kCGLCEMPEngine);
+	
+	[[self renderer] prepareForGLContext: cgl_ctx];
 }
 
 - (void) clearGLContext

@@ -197,6 +197,23 @@
 	<array>
 		<dict>
 			<key>BXProfileDescription</key>
+			<string>Early VGA games that are incompatible with SuperVGA.</string>
+			<key>BXProfileConf</key>
+			<string>VGA-only</string>
+			<key>BXProfileMatches</key>
+			<array>
+				<string>Lemmings</string>
+				<string>Oh No! More Lemmings</string>
+				<string>X-Mas Lemmings</string>
+				<string>Holiday Lemmings</string>
+			</array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>vgalemmi.exe</string>
+			</array>
+		</dict>
+		<dict>
+			<key>BXProfileDescription</key>
 			<string>Sierra AGI games that support Tandy sound.</string>
 			<key>BXProfileConf</key>
 			<string>Sierra AGI</string>

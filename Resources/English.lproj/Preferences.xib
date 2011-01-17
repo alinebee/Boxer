@@ -21,7 +21,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="178"/>
+			<integer value="1"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -216,7 +216,7 @@
 								<bool key="EncodedWithXMLCoder">YES</bool>
 								<object class="NSTabViewItem" id="739836041">
 									<object class="NSView" key="NSView" id="619850360">
-										<reference key="NSNextResponder" ref="764053557"/>
+										<nil key="NSNextResponder"/>
 										<int key="NSvFlags">274</int>
 										<object class="NSMutableArray" key="NSSubviews">
 											<bool key="EncodedWithXMLCoder">YES</bool>
@@ -554,7 +554,6 @@
 											</object>
 										</object>
 										<string key="NSFrameSize">{532, 396}</string>
-										<reference key="NSSuperview" ref="764053557"/>
 									</object>
 									<string key="NSLabel">General</string>
 									<reference key="NSColor" ref="473233401"/>
@@ -562,7 +561,7 @@
 								</object>
 								<object class="NSTabViewItem" id="510671378">
 									<object class="NSView" key="NSView" id="996894748">
-										<nil key="NSNextResponder"/>
+										<reference key="NSNextResponder" ref="764053557"/>
 										<int key="NSvFlags">274</int>
 										<object class="NSMutableArray" key="NSSubviews">
 											<bool key="EncodedWithXMLCoder">YES</bool>
@@ -582,6 +581,7 @@
 																<string key="NSFrame">{{123, 182}, {287, 17}}</string>
 																<reference key="NSSuperview" ref="609505298"/>
 																<bool key="NSViewIsLayerTreeHost">YES</bool>
+																<int key="NSViewLayerContentsRedrawPolicy">2</int>
 																<bool key="NSEnabled">YES</bool>
 																<object class="NSTextFieldCell" key="NSCell" id="186365541">
 																	<int key="NSCellFlags">68288064</int>
@@ -727,7 +727,7 @@
 													<object class="NSTextField" id="300242725">
 														<reference key="NSNextResponder" ref="611757230"/>
 														<int key="NSvFlags">268</int>
-														<string key="NSFrame">{{136, 109}, {279, 28}}</string>
+														<string key="NSFrame">{{137, 109}, {279, 28}}</string>
 														<reference key="NSSuperview" ref="611757230"/>
 														<bool key="NSEnabled">YES</bool>
 														<object class="NSTextFieldCell" key="NSCell" id="909406839">
@@ -765,7 +765,7 @@
 													<object class="NSTextField" id="301640791">
 														<reference key="NSNextResponder" ref="611757230"/>
 														<int key="NSvFlags">268</int>
-														<string key="NSFrame">{{136, 34}, {279, 28}}</string>
+														<string key="NSFrame">{{137, 34}, {279, 28}}</string>
 														<reference key="NSSuperview" ref="611757230"/>
 														<bool key="NSEnabled">YES</bool>
 														<object class="NSTextFieldCell" key="NSCell" id="733651406">
@@ -784,18 +784,19 @@
 											</object>
 										</object>
 										<string key="NSFrameSize">{532, 396}</string>
+										<reference key="NSSuperview" ref="764053557"/>
 									</object>
 									<string key="NSLabel">Display</string>
 									<reference key="NSColor" ref="473233401"/>
 									<reference key="NSTabView" ref="764053557"/>
 								</object>
 							</object>
-							<reference key="NSSelectedTabViewItem" ref="739836041"/>
+							<reference key="NSSelectedTabViewItem" ref="510671378"/>
 							<reference key="NSFont" ref="467860324"/>
 							<int key="NSTvFlags">6</int>
 							<object class="NSMutableArray" key="NSSubviews">
 								<bool key="EncodedWithXMLCoder">YES</bool>
-								<reference ref="619850360"/>
+								<reference ref="996894748"/>
 							</object>
 						</object>
 					</object>

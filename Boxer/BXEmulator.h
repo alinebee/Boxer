@@ -75,17 +75,17 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 #pragma mark Members
 
 //The delegate responsible for this emulator.
-@property (assign) id <BXEmulatorDelegate> delegate;
+@property (assign, nonatomic) id <BXEmulatorDelegate> delegate;
 
-@property (readonly) BXInputHandler *inputHandler;	//Our DOSBox input handler.
-@property (readonly) BXVideoHandler *videoHandler;	//Our DOSBox video and rendering handler.
+@property (readonly, nonatomic) BXInputHandler *inputHandler;	//Our DOSBox input handler.
+@property (readonly, nonatomic) BXVideoHandler *videoHandler;	//Our DOSBox video and rendering handler.
 
 //An array of OS X paths to configuration files that will be/have been loaded by this session during startup.
 //This is read-only: configuration files can be loaded via applyConfigurationAtPath: 
-@property (readonly) NSArray *configFiles;
+@property (readonly, nonatomic) NSArray *configFiles;
 
 //An array of queued command strings to execute on the DOS command line.
-@property (readonly) NSMutableArray *commandQueue;
+@property (readonly, nonatomic) NSMutableArray *commandQueue;
 
 
 #pragma mark -
@@ -93,48 +93,53 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 
 //Whether the emulator is currently running/cancelled respectively. Mirrors interface of NSOperation.
 //The setters are for internal use only and should not be called outside of BXEmulator.
-@property (assign, getter=isExecuting) BOOL executing;
-@property (assign, getter=isCancelled) BOOL cancelled;
+@property (assign, nonatomic, getter=isExecuting) BOOL executing;
+@property (assign, nonatomic, getter=isCancelled) BOOL cancelled;
 
 //Whether DOSBox is currently running a process.
-@property (readonly) BOOL isRunningProcess;
+@property (readonly, nonatomic) BOOL isRunningProcess;
 
 //Returns whether the current process (if any) is an internal process.
-@property (readonly) BOOL processIsInternal;
+@property (readonly, nonatomic) BOOL processIsInternal;
 
 //Returns whether DOSBox is currently inside a batch script.
-@property (readonly) BOOL isInBatchScript;
+@property (readonly, nonatomic) BOOL isInBatchScript;
 
 //Returns whether DOSBox is waiting patiently at the DOS prompt doing nothing.
-@property (readonly) BOOL isAtPrompt;
+@property (readonly, nonatomic) BOOL isAtPrompt;
 
 
 //The following three accessors are intended to be readonly;
 //they are only left as read-write for BXEmulator categories.
 
 //The name of the currently-executing DOSBox process. Will be nil if no process is running.
-@property (copy) NSString *processName;
+@property (copy, nonatomic) NSString *processName;
 
 //The DOS filesystem path of the currently-executing DOSBox process.
 //Will be nil if no process is running.
-@property (copy) NSString *processPath;
+@property (copy, nonatomic) NSString *processPath;
 
 //The local filesystem path of the currently-executing DOSBox process.
 //Will be nil if no process is running or if the process is on an image or DOSBox-internal drive.
-@property (copy) NSString *processLocalPath;
+@property (copy, nonatomic) NSString *processLocalPath;
 
 
 #pragma mark -
 #pragma mark Controlling emulation state
 
 //The current fixed CPU speed.
-@property (assign) NSInteger fixedSpeed;
+@property (assign, nonatomic) NSInteger fixedSpeed;
 
 //Whether we are running at automatic maximum speed.
 @property (assign, getter=isAutoSpeed) BOOL autoSpeed;
 
 //The current CPU core mode.
-@property (assign) BXCoreMode coreMode;
+@property (assign, nonatomic) BXCoreMode coreMode;
+
+//The OS X filesystem path to which the emulator should resolve relative local filesystem paths.
+//This is used by DOSBox commands like MOUNT, IMGMOUNT and CONFIG, and is directly equivalent
+//to the current process's working directory.
+@property (copy, nonatomic) NSString *basePath;
 
 
 #pragma mark -

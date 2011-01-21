@@ -802,6 +802,20 @@ NSString * const BXSessionDidUnlockMouseNotification	= @"BXSessionDidUnlockMouse
 	//Load up our configuration files
 	[self _loadDOSBoxConfigurations];
 	
+	//Set the emulator's current working directory relative to whatever we're opening
+	if ([self fileURL])
+	{
+		NSString *filePath = [[self fileURL] path];
+		BOOL isFolder = NO;
+		if ([[NSFileManager defaultManager] fileExistsAtPath: filePath isDirectory: &isFolder])
+		{
+			//If we're opening a folder/gamebox, use that as the base path; if we're opening
+			//a program or disc image, use its containing folder as the base path instead.
+			NSString *basePath = (isFolder) ? filePath : [filePath stringByDeletingLastPathComponent];
+			[[self emulator] setBasePath: basePath];
+		}
+	}
+	
 	//Start up the emulator itself.
 	[[self emulator] start];
 	//This method will block until completion, so everything following this occurs after the emulator has shut down.

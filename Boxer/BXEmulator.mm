@@ -223,6 +223,22 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	[configFiles addObject: configPath];
 }
 
+- (NSString *) basePath
+{
+	NSFileManager *manager = [[NSFileManager alloc] init];
+	NSString *path = [manager currentDirectoryPath];
+	[manager release];
+	return path;
+}
+
+- (void) setBasePath: (NSString *)basePath
+{
+	NSFileManager *manager = [[NSFileManager alloc] init];
+	[manager changeCurrentDirectoryPath: basePath];
+	[manager release];
+}
+
+
 
 #pragma mark -
 #pragma mark Introspecting emulation state
@@ -378,8 +394,8 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 #pragma mark -
 #pragma mark Handling changes to application focus
 
-//These methods are only necessary if we are running in single-threaded mode,
-//which currently is indicated by the isConcurrent flag
+//These methods are only necessary while we are running in single-threaded mode,
+//and will be the first against the wall when the multiprocess revolution comes.
 - (void) willPause
 {
 	

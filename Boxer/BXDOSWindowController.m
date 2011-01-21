@@ -219,7 +219,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 		NSString *representedPath = [[self document] activeProgramPath];
 		
 		//If no program is running, then use the local filesystem equivalent of the current directory in DOS.
-		if (!representedPath) representedPath = [[[self document] emulator] pathOfCurrentWorkingDirectory];
+		if (!representedPath) representedPath = [[[self document] emulator] pathOfCurrentDirectory];
 		
 		if (representedPath) [[self window] setTitleWithRepresentedFilename: representedPath];
 		else

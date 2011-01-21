@@ -27,13 +27,13 @@
 //The letter of the current drive.
 @property (readonly, nonatomic) NSString *currentDriveLetter;
 
-//The DOS path to the current working directory.
-@property (readonly, nonatomic) NSString *currentWorkingDirectory;
+//The DOS path to the current directory.
+@property (readonly, nonatomic) NSString *currentDirectory;
 
-//The local filesystem path to the current working directory on the current drive.
+//The local filesystem path to the current directory on the current drive.
 //Returns the drive's base path if Boxer cannot 'see into' the drive (e.g. the drive is on a disk image.)
 //Returns nil if the drive does not exist on the local filesystem (e.g. it is a DOSBox-internal drive.)
-@property (readonly, nonatomic) NSString *pathOfCurrentWorkingDirectory;
+@property (readonly, nonatomic) NSString *pathOfCurrentDirectory;
 
 
 #pragma mark -

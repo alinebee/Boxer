@@ -414,7 +414,7 @@ enum {
 	else return nil;
 }
 
-- (NSString *) currentWorkingDirectory
+- (NSString *) currentDirectory
 {
 	if ([self isExecuting])
 	{
@@ -423,7 +423,7 @@ enum {
 	else return nil;
 }
 
-- (NSString *) pathOfCurrentWorkingDirectory
+- (NSString *) pathOfCurrentDirectory
 {
 	if ([self isExecuting])
 	{
@@ -620,7 +620,12 @@ enum {
 		}
 		else
 		{
-			drive = [BXDrive driveFromPath: path atLetter: driveLetter];
+			//Have a decent crack at resolving relative file paths
+			if (![path isAbsolutePath])
+			{
+				path = [[self basePath] stringByAppendingPathComponent: path];
+			}
+			drive = [BXDrive driveFromPath: [path stringByStandardizingPath] atLetter: driveLetter];
 		}
 		[drive setLabel: label];
 		return drive;

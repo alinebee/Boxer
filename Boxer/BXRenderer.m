@@ -110,8 +110,8 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 	//Enable multithreaded OpenGL execution (if available)
 	CGLEnable(cgl_ctx, kCGLCEMPEngine);
 	
-	//Check if the renderer is a GMA 950, which has a buggy fullscreen mode
-	//which we need to compensate for
+	//Check if the renderer is an Intel GMA 950, which has a buggy fullscreen mode
+	//(which we don't have a fix for yet but eventually will.)
 	GLint rendererID = 0;
 	CGLGetParameter(cgl_ctx, kCGLCPCurrentRendererID, &rendererID);
 	requiresFullScreenHack = (rendererID & kCGLRendererIDMatchingMask) == kCGLRendererIntel900ID;

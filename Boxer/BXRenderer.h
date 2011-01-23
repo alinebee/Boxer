@@ -33,6 +33,7 @@
 	
 	CGRect canvas;
 	BOOL maintainsAspectRatio;
+	BOOL requiresFullScreenHack;
 	
 	GLuint frameTexture;
 	GLuint scalingBufferTexture;

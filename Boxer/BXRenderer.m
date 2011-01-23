@@ -9,10 +9,15 @@
 #import "BXRenderer.h"
 #import <OpenGL/CGLMacro.h>
 #import <OpenGL/glu.h>
+#import <OpenGL/CGLRenderers.h>
 #import "Shader.h"
 #import "BXFrameBuffer.h"
 #import "BXGeometry.h"
 
+//Documented but for some reason not present in OpenGL headers
+#ifndef kCGLRendererIDMatchingMask
+#define kCGLRendererIDMatchingMask 0x00FE7F00
+#endif
 
 //When scaling up beyond this we won't bother with the scaling buffer
 const CGFloat BXScalingBufferScaleCutoff = 3.0f;
@@ -105,6 +110,12 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 	//Enable multithreaded OpenGL execution (if available)
 	CGLEnable(cgl_ctx, kCGLCEMPEngine);
 	
+	//Check if the renderer is a GMA 950, which has a buggy fullscreen mode
+	//which we need to compensate for
+	GLint rendererID = 0;
+	CGLGetParameter(cgl_ctx, kCGLCPCurrentRendererID, &rendererID);
+	requiresFullScreenHack = (rendererID & kCGLRendererIDMatchingMask) == kCGLRendererIntel900ID;
+	
 	//Check what the largest texture size we can support is
 	GLint maxTextureDims;
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureDims);
@@ -190,10 +201,6 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 	
 	GLint contextFramebuffer = 0;
 	if (useScalingBuffer) glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &contextFramebuffer);
-
-	//Commented out as these shouldn't be necessary
-	//glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
-    //glPushAttrib(GL_ALL_ATTRIB_BITS);
 	
 	//Disable everything we don't need
 	glDisable(GL_DEPTH_TEST);
@@ -279,10 +286,6 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 					toPoints: scalingVerts
 				inCGLContext: cgl_ctx];
 	}
-	
-	//Clean up the things we enabled
-    //glPopAttrib();
-    //glPopClientAttrib();
 }
 
 - (void) _renderTexture: (GLuint)texture fromRegion: (CGRect)textureRegion toPoints: (GLfloat *)vertices inCGLContext: (CGLContextObj)glContext

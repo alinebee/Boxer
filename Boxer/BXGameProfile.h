@@ -22,9 +22,9 @@
 //Constants used by eraOfGameAtPath:
 enum {
 	BXUnknownEra = 0,
-	BX525DisketteEra,
-	BX35DisketteEra,
-	BXCDROMEra
+	BX525DisketteEra = 1,
+	BX35DisketteEra = 2,
+	BXCDROMEra = 3
 };
 typedef NSUInteger BXGameEra;
 

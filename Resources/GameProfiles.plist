@@ -310,13 +310,19 @@
 			<string>Old games that require CGA video emulation as well as an XT-speed CPU.</string>
 			<key>BXProfileConf</key>
 			<string>XT speed, CGA</string>
+			<key>BXProfileGameEra</key>
+			<integer>1</integer><!--BX525DisketteEra-->
 			<key>BXProfileMatches</key>
 			<array>
 				<string>Attack on Altair</string>
+				<string>Castle Adventure</string>
+				<string>Below the Root</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>altair.com</string>
+				<string>castle.ran</string>
+				<string>btroot.exe</string>
 			</array>
 		</dict>
 		<dict>

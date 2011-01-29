@@ -550,10 +550,10 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 		//Start up the main machine.
 		control->StartUp();
 	}
-	catch (char * error)
+	catch (char *errMessage)
 	{
-		NSLog(@"DOSBox died with the following error: %@",
-			  [NSString stringWithCString: error encoding: BXDirectStringEncoding]);
+		NSLog(@"DOSBox died with the following error: %s",
+			  [NSString stringWithCString: errMessage encoding: BXDirectStringEncoding]);
 	}
 	catch (int)
 	{

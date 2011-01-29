@@ -284,6 +284,7 @@
 		9FBF66AF11F35ADD00DAAB9A /* BXSingleFileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBF66AE11F35ADD00DAAB9A /* BXSingleFileTransfer.m */; };
 		9FC1620E119E9AD700705EA5 /* BXCursorFadeAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC1620D119E9AD700705EA5 /* BXCursorFadeAnimation.m */; };
 		9FC3B2550F62D9CE006DE439 /* BXSession+BXEmulatorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC3B2540F62D9CE006DE439 /* BXSession+BXEmulatorController.m */; };
+		9FC5353512F489F8005E7670 /* 35DisketteShine.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FC5353412F489F8005E7670 /* 35DisketteShine.icns */; };
 		9FC74821122A7C8B00E86E6A /* BXPathEnumerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC74820122A7C8B00E86E6A /* BXPathEnumerator.m */; };
 		9FC8B073121807AD004F6DA2 /* NSView+BXDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC8B072121807AD004F6DA2 /* NSView+BXDrawing.m */; };
 		9FC8B16B12182586004F6DA2 /* BXImportFinalizingPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC8B16A12182586004F6DA2 /* BXImportFinalizingPanelController.m */; };
@@ -312,7 +313,6 @@
 		9FE2172E121EED1E001452E3 /* ImportCoverArtTip.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE2172A121EED1E001452E3 /* ImportCoverArtTip.png */; };
 		9FE2172F121EED1E001452E3 /* ImportRenameTip.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE2172C121EED1E001452E3 /* ImportRenameTip.png */; };
 		9FE28F7C12BBE75900EF27C5 /* LayeredDOSWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FE28F7A12BBE75900EF27C5 /* LayeredDOSWindow.xib */; };
-		9FE8265C10F0EBA000F1B03E /* 35DisketteShine.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE8265A10F0EBA000F1B03E /* 35DisketteShine.png */; };
 		9FE90BF711F8D1DC003CFFFF /* BXDelegatedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE90BF611F8D1DC003CFFFF /* BXDelegatedView.m */; };
 		9FEAA3EC1204595B0085F008 /* BXOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEAA3EB1204595B0085F008 /* BXOperation.m */; };
 		9FECE19011A31B8B00E0EBB6 /* BXRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FECE18F11A31B8B00E0EBB6 /* BXRenderer.m */; };
@@ -861,6 +861,7 @@
 		9FC1620D119E9AD700705EA5 /* BXCursorFadeAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXCursorFadeAnimation.m; sourceTree = "<group>"; };
 		9FC3B2530F62D9CE006DE439 /* BXSession+BXEmulatorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXSession+BXEmulatorController.h"; sourceTree = "<group>"; };
 		9FC3B2540F62D9CE006DE439 /* BXSession+BXEmulatorController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXSession+BXEmulatorController.m"; sourceTree = "<group>"; };
+		9FC5353412F489F8005E7670 /* 35DisketteShine.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = 35DisketteShine.icns; sourceTree = "<group>"; };
 		9FC7481F122A7C8B00E86E6A /* BXPathEnumerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXPathEnumerator.h; sourceTree = "<group>"; };
 		9FC74820122A7C8B00E86E6A /* BXPathEnumerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXPathEnumerator.m; sourceTree = "<group>"; };
 		9FC8B071121807AD004F6DA2 /* NSView+BXDrawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSView+BXDrawing.h"; sourceTree = "<group>"; };
@@ -904,7 +905,6 @@
 		9FE2172B121EED1E001452E3 /* English */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = English; path = English.lproj/ImportCoverArtTip.png; sourceTree = "<group>"; };
 		9FE2172D121EED1E001452E3 /* English */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = English; path = English.lproj/ImportRenameTip.png; sourceTree = "<group>"; };
 		9FE28F7B12BBE75900EF27C5 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/LayeredDOSWindow.xib; sourceTree = "<group>"; };
-		9FE8265A10F0EBA000F1B03E /* 35DisketteShine.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 35DisketteShine.png; sourceTree = "<group>"; };
 		9FE90BF511F8D1DC003CFFFF /* BXDelegatedView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDelegatedView.h; sourceTree = "<group>"; };
 		9FE90BF611F8D1DC003CFFFF /* BXDelegatedView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDelegatedView.m; sourceTree = "<group>"; };
 		9FEAA3EA1204595B0085F008 /* BXOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXOperation.h; sourceTree = "<group>"; };
@@ -1912,8 +1912,8 @@
 				9F2292621225848000ABC0B3 /* WelcomeSpotlight.png */,
 				9FE2172A121EED1E001452E3 /* ImportCoverArtTip.png */,
 				9FE2172C121EED1E001452E3 /* ImportRenameTip.png */,
-				9FE8265A10F0EBA000F1B03E /* 35DisketteShine.png */,
 				9F550664121B057C0042614A /* 35Diskette.icns */,
+				9FC5353412F489F8005E7670 /* 35DisketteShine.icns */,
 				9F550665121B057C0042614A /* CDCase.icns */,
 				9F18124312994474009BC4B2 /* CDCover.icns */,
 				9F550666121B057C0042614A /* 525Diskette.icns */,
@@ -2137,7 +2137,6 @@
 				9FFAFE2D10DE33FB00728BAC /* GameProfiles.plist in Resources */,
 				9FFAFE4310DE343F00728BAC /* Configurations in Resources */,
 				9FBD321710E5144C00031CB6 /* Brand.png in Resources */,
-				9FE8265C10F0EBA000F1B03E /* 35DisketteShine.png in Resources */,
 				9F9A4C9610F67A1F00E61965 /* GalleryOriginal.png in Resources */,
 				9F9A4C9710F67A1F00E61965 /* GalleryHQx.png in Resources */,
 				9F9A4C9810F67A1F00E61965 /* GalleryMAME.png in Resources */,
@@ -2177,6 +2176,7 @@
 				9F960C7F12AAAB2900568AFD /* BlankShelves.png in Resources */,
 				9FE28F7C12BBE75900EF27C5 /* LayeredDOSWindow.xib in Resources */,
 				9F8BFEA612C0F0EC0059030F /* DisplayLinkedDOSWindow.xib in Resources */,
+				9FC5353512F489F8005E7670 /* 35DisketteShine.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

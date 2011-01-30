@@ -336,8 +336,8 @@
 	return [NSString stringWithFormat: format, frameskip + 1];
 }
 
-+ (NSSet *) keyPathsForValuesAffectingSliderSpeed			{ return [NSSet setWithObjects: @"emulating", @"fixedSpeed", @"autoSpeed", nil]; }
-+ (NSSet *) keyPathsForValuesAffectingSpeedDescription		{ return [NSSet setWithObjects: @"emulating", @"fixedSpeed", @"autoSpeed", nil]; }
++ (NSSet *) keyPathsForValuesAffectingSliderSpeed			{ return [NSSet setWithObjects: @"emulating", @"fixedSpeed", @"autoSpeed", @"dynamic", nil]; }
++ (NSSet *) keyPathsForValuesAffectingSpeedDescription		{ return [NSSet setWithObject: @"sliderSpeed"]; }
 + (NSSet *) keyPathsForValuesAffectingFrameskipDescription	{ return [NSSet setWithObjects: @"emulating", @"frameskip", nil]; }
 
 @end

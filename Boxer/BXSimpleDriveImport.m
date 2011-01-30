@@ -54,14 +54,12 @@
 		//Folders of the above types don't need additional work to import: we can just use their filename directly
 		if ([workspace file: drivePath matchesTypes: readyTypes])
 		{
-			return [drivePath lastPathComponent];
+			importedName = [drivePath lastPathComponent];
 		}
 		//Otherwise, it will need to be made into a mountable folder
 		else if (isDir)
 		{
 			importedName = [drive label];
-			//If the drive has a letter, then prepend it in our standard format
-			if ([drive letter]) importedName = [NSString stringWithFormat: @"%@ %@", [drive letter], importedName];
 			
 			NSString *extension	= nil;
 			
@@ -81,6 +79,9 @@
 			}
 			importedName = [importedName stringByAppendingPathExtension: extension];
 		}
+		
+		//If the drive has a letter, then prepend it in our standard format
+		if ([drive letter]) importedName = [NSString stringWithFormat: @"%@ %@", [drive letter], importedName];
 	}
 	return importedName;
 }

@@ -102,6 +102,10 @@
 			<array>
 				<string>dagger.exe</string>
 			</array>
+			<key>BXDesignatedInstallers</key>
+			<array>
+				<string>install.exe</string>
+			</array>
 			<key>BXProfileDriveLabels</key>
 			<dict>
 				<key>BXProfileDriveLabelAny</key>

@@ -6,12 +6,29 @@
 	<array>
 		<dict>
 			<key>BXProfileName</key>
+			<string>Bedlam</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>bedlam.exe</string>
+			</array>
+			<key>BXDesignatedInstallers</key>
+			<array>
+				<string>setup.exe</string>
+			</array>
+		</dict>
+
+		<dict>
+			<key>BXProfileName</key>
 			<string>Command &amp; Conquer - Red Alert</string>
 			<key>BXProfileConf</key>
 			<string>More memory, no GUS</string>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>redalert.mix</string>
+			</array>
+			<key>BXDesignatedInstallers</key>
+			<array>
+				<string>setup.exe</string>
 			</array>
 		</dict>
 

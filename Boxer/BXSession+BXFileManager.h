@@ -27,6 +27,10 @@
 //Returns an array of executable paths located on the 'principal' drive of the session (normally drive C).
 @property (readonly, nonatomic) NSArray *programPathsOnPrincipalDrive;
 
+//Returns whether there are any CD or floppy drives currently mounted in the emulator.
+@property (readonly, nonatomic) BOOL hasCDDrives;
+@property (readonly, nonatomic) BOOL hasFloppyDrives;
+
 
 #pragma mark -
 #pragma mark Helper class methods

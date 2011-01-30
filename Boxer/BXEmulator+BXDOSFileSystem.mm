@@ -19,6 +19,9 @@
 #import "drives.h"
 #import "cdrom.h"
 
+#import "NSWorkspace+BXMountedVolumes.h"
+
+
 //Defined in dos_files.cpp
 extern DOS_File * Files[DOS_FILES];
 extern DOS_Drive * Drives[DOS_DRIVES];
@@ -658,8 +661,24 @@ enum {
 						  withAudio: (BOOL)useCDAudio
 {
 	BXDriveGeometry geometry = BXCDROMGeometry;
+	 
+	NSInteger SDLCDNum = -1;
 	
-	NSInteger SDLCDNum = (useCDAudio) ? 0 : -1;
+	//Check that any audio CDs are actually present before enabling CD audio:
+	//this fixes Warcraft II's copy protection, which will fail if audio tracks
+	//are reported to be present but cannot be found.
+	//IMPLEMENTATION NOTE: we can't just rely on SDL_CDNumDrives(), because that
+	//reports a generic CD device on OS X even when none is present.
+	if (useCDAudio && SDL_CDNumDrives() > 0)
+	{
+		NSArray *audioVolumes = [[NSWorkspace sharedWorkspace] mountedVolumesOfType: audioCDVolumeType];
+		if ([audioVolumes count] > 0)
+		{
+			//NOTE: SDL's CD audio API for OS X only ever exposes one CD, which will be #0.
+			SDLCDNum = 0;
+		}
+	}
+	
 	//NOTE: ioctl is currently unimplemented for OS X in DOSBox 0.74, so this will always fall back to SDL.
 	MSCDEX_SetCDInterface(CDROM_USE_IOCTL_DIO, SDLCDNum);
 	

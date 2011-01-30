@@ -389,6 +389,26 @@
 	return returnValue;
 }
 
++ (NSSet *) keyPathsForValuesAffectingHasFloppyDrives	{ return [NSSet setWithObject: @"drives"]; }
++ (NSSet *) keyPathsForValuesAffectingHasCDDrives		{ return [NSSet setWithObject: @"drives"]; }
+
+- (BOOL) hasFloppyDrives
+{
+	for (BXDrive *drive in [self drives])
+	{
+		if ([drive isFloppy]) return YES;
+	}
+	return NO;
+}
+
+- (BOOL) hasCDDrives
+{
+	for (BXDrive *drive in [self drives])
+	{
+		if ([drive isCDROM]) return YES;
+	}
+	return NO;
+}
 
 - (void) mountToolkitDrive
 {

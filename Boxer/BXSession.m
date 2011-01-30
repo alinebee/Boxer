@@ -911,9 +911,14 @@ NSString * const BXSessionDidUnlockMouseNotification	= @"BXSessionDidUnlockMouse
 		}
 	}
 	
-	//Automount all currently mounted floppy and CD-ROM volumes
-	[self mountFloppyVolumes];
-	[self mountCDVolumes];
+	//Automount all currently mounted floppy and CD-ROM volumes.
+	//TWEAK: don't mount extra drives if the gamebox already contains bundled drives of that type.
+	//This is a hamfisted way of avoiding redundant drive mounts in the case of e.g. recently-imported
+	//games, where we'd otherwise mount the original install disc alongside the newly-bundled drive.
+	//This is a hack and should be replaced with a more sophisticated comparison between the OS X
+	//volume and the bundled drive(s).
+	if (!package || ![self hasFloppyDrives])	[self mountFloppyVolumes];
+	if (!package || ![self hasCDDrives])		[self mountCDVolumes];
 	
 	//Mount our internal DOS toolkit and temporary drives
 	[self mountToolkitDrive];

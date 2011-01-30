@@ -331,6 +331,23 @@
 		</dict>
 		<dict>
 			<key>BXProfileDescription</key>
+			<string>Old games that require CGA video emulation and a faster CPU speed.</string>
+			<key>BXProfileConf</key>
+			<string>AT speed, CGA</string>
+			<key>BXProfileGameEra</key>
+			<integer>1</integer><!--BX525DisketteEra-->
+			<key>BXProfileMatches</key>
+			<array>
+				<string>Rogue</string>
+			</array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>rogue.exe</string>
+				<string>10rogue.exe</string>
+			</array>
+		</dict>
+		<dict>
+			<key>BXProfileDescription</key>
 			<string>386-era games that are sensitive to high CPU speeds.</string>
 			<key>BXProfileConf</key>
 			<string>386 speed</string>

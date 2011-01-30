@@ -422,7 +422,7 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 				 GL_UNSIGNED_INT_8_8_8_8_REV,	//Byte packing
 				 [frame bytes]);				//Texture data
 
-#ifdef DEBUG
+#if BOXER_DEBUG
 	GLenum status = glGetError();
     if (status)
     {
@@ -457,7 +457,7 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 					GL_UNSIGNED_INT_8_8_8_8_REV,	//Byte packing
 					[frame bytes]);					//Texture data
 	
-#ifdef DEBUG	
+#if BOXER_DEBUG	
 	GLenum status = glGetError();
     if (status)
     {
@@ -501,7 +501,7 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 				 GL_UNSIGNED_INT_8_8_8_8_REV,	//Byte packing
 				 NULL);							//Empty data
 	
-#ifdef DEBUG
+#if BOXER_DEBUG
 	GLenum status = glGetError();
     if (status)
     {
@@ -520,7 +520,7 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, buffer);
 		glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_RECTANGLE_ARB, texture, 0);
 		
-#ifdef DEBUG
+#if BOXER_DEBUG
 		status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
 		if (status != GL_FRAMEBUFFER_COMPLETE_EXT)
 		{

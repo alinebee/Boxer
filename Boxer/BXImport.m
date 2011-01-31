@@ -454,7 +454,7 @@
 
 + (NSSet *) keyPathsForValuesAffectingGameboxName	{ return [NSSet setWithObject: @"gamePackage"]; }
 
-- (NSString *)gameboxName
+- (NSString *) gameboxName
 {
 	return [[self gamePackage] gameName]; 
 }

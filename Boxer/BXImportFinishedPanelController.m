@@ -14,11 +14,12 @@
 #import "NSWorkspace+BXFileTypes.h"
 
 @implementation BXImportFinishedPanelController
-@synthesize controller, iconView;
+@synthesize controller, iconView, nameField;
 
 - (void) dealloc
 {
 	[self setIconView: nil], [iconView release];
+	[self setNameField: nil], [nameField release];
 	[super dealloc];
 }
 
@@ -72,13 +73,21 @@
 
 - (IBAction) launchGamebox: (id)sender
 {
-	NSURL *packageURL = [NSURL fileURLWithPath: [[[controller document] gamePackage] bundlePath]];
+	//Clear the window's first responder, to commit any changes being made to the gamebox name.
+	//If the first responder refuses to give it up (because there was a validation error) then
+	//don't continue launching.
 	
-	//Close down the import process finally.
-	[[controller document] close];
-	
-	//Open the newly-minted gamebox in a DOS session.
-	[[NSApp delegate] openDocumentWithContentsOfURL: packageURL display: YES error: NULL];
+	NSWindow *window = [[self nameField] window];
+	if (![window firstResponder] || [window makeFirstResponder: nil])
+	{
+		NSURL *packageURL = [NSURL fileURLWithPath: [[[controller document] gamePackage] bundlePath]];
+		
+		//Close down the import process.
+		[[controller document] close];
+		
+		//Open the newly-minted gamebox in a DOS session.
+		[[NSApp delegate] openDocumentWithContentsOfURL: packageURL display: YES error: NULL];		
+	}
 }
 
 
@@ -104,7 +113,7 @@
 			//If the user tabbed, move focus to the next view; otherwise, clear the focus
 			NSView *nextView = nil;
 			if (command == @selector(insertTab:)) nextView = [control nextKeyView];
-				
+			
 			[[control window] makeFirstResponder: nextView];
 		}
 		else
@@ -115,10 +124,6 @@
 	}
 	return NO;
 }
-
-
-#pragma mark -
-#pragma mark Drag-drop handlers
 
 @end
 

@@ -2,10 +2,10 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
-		<string key="IBDocument.SystemVersion">10H574</string>
+		<string key="IBDocument.SystemVersion">10J567</string>
 		<string key="IBDocument.InterfaceBuilderVersion">823</string>
 		<string key="IBDocument.AppKitVersion">1038.35</string>
-		<string key="IBDocument.HIToolboxVersion">461.00</string>
+		<string key="IBDocument.HIToolboxVersion">462.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<object class="NSArray" key="dict.sortedKeys">
@@ -21,8 +21,8 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="125"/>
 			<integer value="281"/>
+			<integer value="125"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1394,6 +1394,22 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 					</object>
 					<int key="connectionID">354</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nameField</string>
+						<reference key="source" ref="893853583"/>
+						<reference key="destination" ref="294027108"/>
+					</object>
+					<int key="connectionID">355</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">iconView</string>
+						<reference key="source" ref="893853583"/>
+						<reference key="destination" ref="5661821"/>
+					</object>
+					<int key="connectionID">356</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -2322,7 +2338,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">354</int>
+			<int key="maxID">356</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2544,11 +2560,13 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>controller</string>
 							<string>iconView</string>
+							<string>nameField</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>BXImportWindowController</string>
 							<string>BXImportIconDropzone</string>
+							<string>NSTextField</string>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
@@ -2557,6 +2575,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>controller</string>
 							<string>iconView</string>
+							<string>nameField</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -2567,6 +2586,10 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 							<object class="IBToOneOutletInfo">
 								<string key="name">iconView</string>
 								<string key="candidateClassName">BXImportIconDropzone</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">nameField</string>
+								<string key="candidateClassName">NSTextField</string>
 							</object>
 						</object>
 					</object>

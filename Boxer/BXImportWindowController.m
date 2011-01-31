@@ -47,6 +47,15 @@
 						 context: nil];
 }
 
+- (BOOL) windowShouldClose: (id)sender
+{
+	//When the window is about to close, then resign any first responder
+	//to force its changes to be committed. If the first responder refuses
+	//to resign (because of a validation error) then don't allow the window
+	//to close.
+	return ![[self window] firstResponder] || [[self window] makeFirstResponder: nil];
+}
+
 - (void) windowDidLoad
 {
 	[[self window] setContentBorderThickness: BXImportWindowBorderThickness + 1 forEdge: NSMinYEdge];

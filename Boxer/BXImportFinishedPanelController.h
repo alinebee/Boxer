@@ -17,6 +17,7 @@
 {
 	IBOutlet BXImportWindowController *controller;
 	IBOutlet BXImportIconDropzone *iconView;
+	IBOutlet NSTextField *nameField;
 }
 
 //A reference to our window controller.
@@ -24,6 +25,9 @@
 
 //The image well that displays the gamebox icon.
 @property (retain, nonatomic) BXImportIconDropzone *iconView;
+
+//The text field that allows the gamebox's name to be edited.
+@property (retain, nonatomic) NSTextField *nameField;
 
 //The gamebox’s icon itself.
 @property (retain, nonatomic) NSImage *gameboxIcon;

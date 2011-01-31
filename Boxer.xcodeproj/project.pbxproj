@@ -513,6 +513,7 @@
 		9F6BA6F810A9FB92005A3E2A /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Growl.framework; sourceTree = "<group>"; };
 		9F6BA70310A9FC77005A3E2A /* BXGrowlController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXGrowlController.h; sourceTree = "<group>"; };
 		9F6BA70410A9FC77005A3E2A /* BXGrowlController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGrowlController.m; sourceTree = "<group>"; };
+		9F70A02212F731A800D144D2 /* SystemEvents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemEvents.h; sourceTree = "<group>"; };
 		9F70C19B129036C900A3627F /* Boxer.sdef */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.sdef; path = Boxer.sdef; sourceTree = "<group>"; };
 		9F765647119403520082A06A /* BXInputController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXInputController.h; sourceTree = "<group>"; };
 		9F765648119403520082A06A /* BXInputController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXInputController.m; sourceTree = "<group>"; };
@@ -2019,6 +2020,7 @@
 		9FFF978412327D58009B5EE5 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				9F70A02212F731A800D144D2 /* SystemEvents.h */,
 				9F466A4711A924EC00C50965 /* Shader.h */,
 				9F466A4811A924EC00C50965 /* Shader.m */,
 				9FDD4CB411E619D50035BA9E /* CGSPrivate.h */,

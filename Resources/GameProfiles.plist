@@ -6,6 +6,17 @@
 	<array>
 		<dict>
 			<key>BXProfileName</key>
+			<string>Jetfighter</string>
+			<key>BXProfileConf</key>
+			<string>Jetfighter</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>jf.exe</string>
+				<string>jetfight.exe</string>
+			</array>
+		</dict>
+		<dict>
+			<key>BXProfileName</key>
 			<string>Bedlam</string>
 			<key>BXProfileTelltales</key>
 			<array>

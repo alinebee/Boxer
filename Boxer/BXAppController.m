@@ -8,14 +8,13 @@
 
 #import "BXAppController.h"
 #import "BXAppController+BXGamesFolder.h"
+#import "BXAppController+BXApplicationModes.h"
 
 #import "BXAboutController.h"
 #import "BXInspectorController.h"
 #import "BXPreferencesController.h"
 #import "BXWelcomeWindowController.h"
 #import "BXFirstRunWindowController.h"
-#import "BXDOSWindowController.h"
-#import "BXInputController.h"
 
 #import "BXSession+BXFileManager.h"
 #import "BXImport.h";
@@ -28,8 +27,6 @@
 #import <BGHUDAppKit/BGThemeManager.h>
 #import "BXThemes.h"
 #import "NSWindow+BXWindowEffects.h"
-
-#import <Carbon/Carbon.h> //For SetSystemUIMode()
 
 
 NSString * const BXNewSessionParam = @"--openNewSession";
@@ -52,9 +49,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 //Cancel a makeDocument/openDocument request after spawning a new process.
 - (void) _cancelOpeningWithError: (NSError **)outError;
 
-//Set the application UI to the appropriate mode for the current session's
-//fullscreen and mouse-locked status.
-- (void) _syncApplicationPresentationMode;
 
 @end
 
@@ -193,25 +187,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	{
 		generalQueue = [[NSOperationQueue alloc] init];
 		
-		//Listen out for UI notifications so that we can coordinate window behaviour
-		NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-		
-		[center addObserver: self selector: @selector(sessionWillEnterFullScreen:)
-					   name: BXSessionWillEnterFullScreenNotification
-					 object: nil];
-		
-		[center addObserver: self selector: @selector(sessionDidExitFullScreen:)
-					   name: BXSessionDidExitFullScreenNotification
-					 object: nil];
-		
-		[center addObserver: self selector: @selector(sessionDidLockMouse:)
-					   name: BXSessionDidLockMouseNotification
-					 object: nil];
-		
-		[center addObserver: self selector: @selector(sessionDidUnlockMouse:)
-					   name: BXSessionDidUnlockMouseNotification
-					 object: nil];
-		
+		[self _addApplicationModeObservers];
 	}
 	return self;
 }
@@ -224,60 +200,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	[generalQueue release], generalQueue = nil;
 	
 	[super dealloc];
-}
-
-#pragma mark -
-#pragma mark Window behaviour
-
-- (void) _syncApplicationPresentationMode
-{
-	BXDOSWindowController *currentController = [[self currentSession] DOSWindowController];
-	
-	if ([currentController isFullScreen])
-	{
-		if ([[currentController inputController] mouseLocked])
-		{
-			//When the session is fullscreen and mouse-locked, hide all UI components
-			SetSystemUIMode(kUIModeAllHidden, 0);
-		}
-		else
-		{
-			//When the session is fullscreen but the mouse is unlocked,
-			//show the OS X menu but hide the Dock until it is moused over
-			SetSystemUIMode(kUIModeContentSuppressed, 0);
-		}
-	}
-	else
-	{
-		//When there is no fullscreen session, show all UI components normally.
-		SetSystemUIMode(kUIModeNormal, 0);
-	}
-}
-
-- (void) sessionWillEnterFullScreen: (NSNotification *)notification
-{
-	[self _syncApplicationPresentationMode];
-}
-
-- (void) sessionDidExitFullScreen: (NSNotification *)notification
-{
-	[self _syncApplicationPresentationMode];
-}
-
-- (void) sessionDidUnlockMouse: (NSNotification *)notification
-{
-	[self _syncApplicationPresentationMode];
-	
-	//If we were previously concealing the, then reveal it now
-	[[BXInspectorController controller] revealIfHidden];
-}
-
-- (void) sessionDidLockMouse: (NSNotification *)notification
-{
-	[self _syncApplicationPresentationMode];
-	
-	//Conceal the Inspector panel while the mouse is locked
-	[[BXInspectorController controller] hideIfVisible];
 }
 
 

@@ -98,6 +98,7 @@
 		9F6BA6F910A9FB92005A3E2A /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F6BA6F810A9FB92005A3E2A /* Growl.framework */; };
 		9F6BA6FD10A9FBAB005A3E2A /* Growl.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F6BA6F810A9FB92005A3E2A /* Growl.framework */; };
 		9F6BA70510A9FC77005A3E2A /* BXGrowlController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F6BA70410A9FC77005A3E2A /* BXGrowlController.m */; };
+		9F70A09512F7471E00D144D2 /* BXAppController+BXApplicationModes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F70A09412F7471E00D144D2 /* BXAppController+BXApplicationModes.m */; };
 		9F70C19C129036C900A3627F /* Boxer.sdef in Resources */ = {isa = PBXBuildFile; fileRef = 9F70C19B129036C900A3627F /* Boxer.sdef */; };
 		9F765649119403520082A06A /* BXInputController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F765648119403520082A06A /* BXInputController.m */; };
 		9F76D1B910CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F76D1B810CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.m */; };
@@ -514,6 +515,8 @@
 		9F6BA70310A9FC77005A3E2A /* BXGrowlController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXGrowlController.h; sourceTree = "<group>"; };
 		9F6BA70410A9FC77005A3E2A /* BXGrowlController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGrowlController.m; sourceTree = "<group>"; };
 		9F70A02212F731A800D144D2 /* SystemEvents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemEvents.h; sourceTree = "<group>"; };
+		9F70A09312F7471E00D144D2 /* BXAppController+BXApplicationModes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXAppController+BXApplicationModes.h"; sourceTree = "<group>"; };
+		9F70A09412F7471E00D144D2 /* BXAppController+BXApplicationModes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXAppController+BXApplicationModes.m"; sourceTree = "<group>"; };
 		9F70C19B129036C900A3627F /* Boxer.sdef */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.sdef; path = Boxer.sdef; sourceTree = "<group>"; };
 		9F765647119403520082A06A /* BXInputController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXInputController.h; sourceTree = "<group>"; };
 		9F765648119403520082A06A /* BXInputController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXInputController.m; sourceTree = "<group>"; };
@@ -1130,6 +1133,8 @@
 			children = (
 				9FBC35110F56C7B7001811F2 /* BXAppController.h */,
 				9FBC351E0F56C7B7001811F2 /* BXAppController.m */,
+				9F70A09312F7471E00D144D2 /* BXAppController+BXApplicationModes.h */,
+				9F70A09412F7471E00D144D2 /* BXAppController+BXApplicationModes.m */,
 				9F160E6F1236B2A600F8768E /* BXAppController+BXGamesFolder.h */,
 				9F160E701236B2A600F8768E /* BXAppController+BXGamesFolder.m */,
 			);
@@ -2446,6 +2451,7 @@
 				9F7721E912B38C4400072AE8 /* shell_batch.cpp in Sources */,
 				9F7721EA12B38C4400072AE8 /* shell_cmds.cpp in Sources */,
 				9F7721EB12B38C4400072AE8 /* shell_misc.cpp in Sources */,
+				9F70A09512F7471E00D144D2 /* BXAppController+BXApplicationModes.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

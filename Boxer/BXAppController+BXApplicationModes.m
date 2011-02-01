@@ -18,12 +18,6 @@
 #pragma mark -
 #pragma mark Internal constants
 
-//We use a short delay before syncing spaces shortcuts,
-//to avoid toggling them needlessly when switching from
-//one DOS window to another
-//(e.g. during transitions to/from fullscreen mode)
-#define BXSpacesShortcutOverrideDelay 0.1
-
 //The user defaults key under which we store any Spaces arrow-key modifiers that we have overridden.
 NSString * const BXPreviousSpacesArrowKeyModifiersKey = @"previousSpacesArrowKeyModifiers";
 
@@ -177,12 +171,16 @@ NSString * const BXPreviousSpacesArrowKeyModifiersKey = @"previousSpacesArrowKey
 
 - (void) windowDidBecomeKey: (NSNotification *)notification
 {
-	[self performSelector: @selector(syncSpacesKeyboardShortcuts) withObject: nil afterDelay: BXSpacesShortcutOverrideDelay];
+	//A delay of 0 means that it occurs immediately at the end of the current run loop,
+	//after all other effects have occurred
+	[self performSelector: @selector(syncSpacesKeyboardShortcuts) withObject: nil afterDelay: 0];
 }
 
 - (void) windowDidResignKey: (NSNotification *)notification
 {
-	[self performSelector: @selector(syncSpacesKeyboardShortcuts) withObject: nil afterDelay: BXSpacesShortcutOverrideDelay];
+	//A delay of 0 means that it occurs immediately at the end of the current run loop,
+	//after all other effects have occurred
+	[self performSelector: @selector(syncSpacesKeyboardShortcuts) withObject: nil afterDelay: 0];
 }
 
 - (void) sessionDidUnlockMouse: (NSNotification *)notification

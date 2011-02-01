@@ -7,7 +7,7 @@
 
 
 #import "BXFrameBuffer.h"
-
+#import "BXGeometry.h"
 
 @implementation BXFrameBuffer
 @synthesize size, baseResolution, bitDepth, intendedScale;
@@ -25,7 +25,7 @@
 		baseResolution	= targetSize;
 		bitDepth		= depth;
 		intendedScale	= NSMakeSize(1.0f, 1.0f);
-
+		
 		NSUInteger requiredLength = size.width * size.height * bitDepth;
 		frameData = [[NSMutableData alloc] initWithCapacity: requiredLength];
 	}
@@ -49,10 +49,29 @@
 					  ceilf(size.height	* intendedScale.height));
 }
 
+//IMPLEMENTATION NOTE: sometimes the buffer size that DOSBox is using
+//is already a different aspect ratio from the original resolution,
+//e.g. if it is performing pixel pre-doubling to correct for wacky video modes.
+- (NSSize) correctedResolution
+{
+	CGFloat bufferRatio		= aspectRatioOfSize(size);
+	CGFloat resolutionRatio	= aspectRatioOfSize(baseResolution);
+	
+	if (resolutionRatio > 1)
+	{
+		return NSMakeSize(baseResolution.width, baseResolution.width / bufferRatio);
+	}
+	else
+	{
+		return NSMakeSize(baseResolution.height * bufferRatio, baseResolution.height);
+	}
+}
+
 - (NSSize) scaledResolution
 {
-	return NSMakeSize(ceilf(baseResolution.width	* intendedScale.width),
-					  ceilf(baseResolution.height	* intendedScale.height));
+	NSSize correctedResolution = [self correctedResolution];
+	return NSMakeSize(ceilf(correctedResolution.width	* intendedScale.width),
+					  ceilf(correctedResolution.height	* intendedScale.height));
 }
 
 - (const void *) bytes

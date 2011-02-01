@@ -1073,6 +1073,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	CGFloat aspectRatio = aspectRatioOfSize(scaledSize);
 	CGFloat currentAspectRatio = aspectRatioOfSize(viewSize);
 	
+	
 	//If there's only a negligible difference in aspect ratio, then just use the current
 	//or minimum view size (whichever is larger) to eliminate rounding errors.
 	if (ABS(aspectRatio - currentAspectRatio) < BXIdenticalAspectRatioDelta)
@@ -1084,7 +1085,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	{
 		//We preserve height during the aspect ratio adjustment if the new height is equal to the old,
 		//and if we're not setting the size for the first time.
-		BOOL preserveHeight =	!NSEqualSizes(currentScaledSize, NSZeroSize) &&
+		BOOL preserveHeight = !NSEqualSizes(currentScaledSize, NSZeroSize) &&
 		!((NSInteger)currentScaledSize.height % (NSInteger)scaledSize.height);
 		
 		//Now, adjust the view size to fit the aspect ratio of our new rendered size.

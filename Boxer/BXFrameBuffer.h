@@ -25,16 +25,25 @@
 @property (assign) NSSize intendedScale;
 @property (assign) NSSize baseResolution;
 
+//The base resolution corrected to the same aspect ratio as the buffer size,
+//to account for any pixel pre-doubling done by DOSBox.
+@property (readonly) NSSize correctedResolution;
+
+//The width in bytes of one scanline in the buffer.
+@property (readonly) NSInteger pitch;
+
+//The size of the frame scaled to the intended scale.
+@property (readonly) NSSize scaledSize;
+
+//The corrected resolution of the frame scaled to the intended scale.
+@property (readonly) NSSize scaledResolution;
+
+
 + (id) bufferWithSize: (NSSize)targetSize depth: (NSUInteger)depth;
 - (id) initWithSize: (NSSize)targetSize depth: (NSUInteger)depth;
 
-//Return the width in bytes of one scanline in the buffer.
-- (NSInteger) pitch;
-
-//Returns the size of the frame scaled to the intended scale.
 - (NSSize) scaledSize;
 
-//Returns the base resolution of the frame scaled to the intended scale.
 - (NSSize) scaledResolution;
 
 //Return a read-only/mutable pointer to the frame's data.

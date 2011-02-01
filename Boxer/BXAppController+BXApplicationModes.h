@@ -13,9 +13,33 @@
 
 @interface BXAppController (BXApplicationModes)
 
+#pragma mark -
+#pragma mark Class helpers
+
+//Whether the specified keyboard modifiers will cause conflicts with DOS games.
+//Expects an array of NSNumber instances corresponding to SystemEventsEpmd constants.
+//Used by syncSpacesKeyboardShortcuts.
++ (BOOL) keyModifiersWillConflict: (NSArray *)modifiers;
+
+
+#pragma mark -
+#pragma mark Synchronizing application state
+
+//Set the application UI to the appropriate mode for the current session's
+//fullscreen and mouse-locked status.
+- (void) syncApplicationPresentationMode;
+
+//Delicately suppress Spaces shortcuts that can interfere with keyboard control
+//in Boxer.
+- (void) syncSpacesKeyboardShortcuts;
+
+
+#pragma mark -
+#pragma mark Notification observers
+
 //Add necessary notification observers for monitoring Boxer's window state.
-//Exposed here only so that BXAppController can call it during initialization.
-- (void) _addApplicationModeObservers;
+//Exposed here so that BXAppController can call it during initialization.
+- (void) addApplicationModeObservers;
 
 - (void) sessionDidUnlockMouse: (NSNotification *)notification;
 - (void) sessionDidLockMouse: (NSNotification *)notification;

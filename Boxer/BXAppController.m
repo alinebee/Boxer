@@ -187,7 +187,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	{
 		generalQueue = [[NSOperationQueue alloc] init];
 		
-		[self _addApplicationModeObservers];
+		[self addApplicationModeObservers];
 	}
 	return self;
 }
@@ -229,6 +229,13 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 		[self orderFrontWelcomePanel: self];
 	
 	return NO;
+}
+
+- (void) applicationWillFinishLaunching:(NSNotification *)notification
+{
+	//Sync Spaces shortcuts at startup in case we previously crashed
+	//and left them overridden
+	[self syncSpacesKeyboardShortcuts];
 }
 
 - (void) applicationDidFinishLaunching: (NSNotification *)notification
@@ -296,6 +303,10 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	
 	//Save our preferences to disk before exiting
 	[[NSUserDefaults standardUserDefaults] synchronize];
+	
+	//Restore Spaces shortcuts if we were overriding them
+	[self syncSpacesKeyboardShortcuts];
+	
 	
 	//Tell any operations in our queue to cancel themselves
 	[generalQueue cancelAllOperations];

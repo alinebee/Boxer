@@ -16,10 +16,10 @@
 #pragma mark -
 #pragma mark Class helpers
 
-//Whether the specified keyboard modifiers will cause conflicts with DOS games.
+//Returns a non-conflicting set of keyboard modifiers based on the specified keyboard modifiers.
 //Expects an array of NSNumber instances corresponding to SystemEventsEpmd constants.
 //Used by syncSpacesKeyboardShortcuts.
-+ (BOOL) keyModifiersWillConflict: (NSArray *)modifiers;
++ (NSArray *) safeKeyModifiersFromModifiers: (NSArray *)modifiers;
 
 
 #pragma mark -

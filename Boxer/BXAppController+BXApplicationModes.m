@@ -22,7 +22,7 @@
 //to avoid toggling them needlessly when switching from
 //one DOS window to another
 //(e.g. during transitions to/from fullscreen mode)
-#define BXSpacesShortcutOverrideDelay 0.25
+#define BXSpacesShortcutOverrideDelay 0.1
 
 //The user defaults key under which we store any Spaces arrow-key modifiers that we have overridden.
 NSString * const BXPreviousSpacesArrowKeyModifiersKey = @"previousSpacesArrowKeyModifiers";
@@ -30,15 +30,24 @@ NSString * const BXPreviousSpacesArrowKeyModifiersKey = @"previousSpacesArrowKey
 
 @implementation BXAppController (BXApplicationModes)
 
-+ (BOOL) keyModifiersWillConflict: (NSArray *)modifiers
-{
-	//If there's more than one modifier key required, then it's fine.
-	if ([modifiers count] != 1) return NO;
++ (NSArray *) safeKeyModifiersFromModifiers: (NSArray *)modifiers
+{	
+	NSArray *safeModifiers = modifiers;
 	
-	SystemEventsEpmd modifier = [[modifiers lastObject] unsignedIntegerValue];
-	
-	//If the sole modifier is the Ctrl, Opt or Shift key, then it'll likely conflict.
-	return (modifier == SystemEventsEpmdControl || modifier == SystemEventsEpmdOption || modifier == SystemEventsEpmdShift);
+	//If there's more than one modifier key required, or none required,
+	//then the original set is safe already.
+	if ([modifiers count] == 1)
+	{
+		SystemEventsEpmd soleModifier = [[modifiers lastObject] unsignedIntegerValue];
+		
+		//If the sole modifier is the Ctrl, Opt or Shift key, then it'll likely conflict.
+		if (soleModifier == SystemEventsEpmdControl || soleModifier == SystemEventsEpmdOption || soleModifier == SystemEventsEpmdShift)
+		{
+			//We can make the modifiers safe by combining with the Command key.
+			safeModifiers = [modifiers arrayByAddingObject: [NSNumber numberWithUnsignedInteger: SystemEventsEpmdCommand]];
+		}		
+	}
+	return safeModifiers;
 }
 
 - (void) addApplicationModeObservers
@@ -126,15 +135,17 @@ NSString * const BXPreviousSpacesArrowKeyModifiersKey = @"previousSpacesArrowKey
 		if (DOSWindowIsKey && !isSynced)
 		{
 			[systemEvents setSendMode: kAEWaitReply];
-			[systemEvents setTimeout: 0.1f]; //In case System Events has stopped responding, don't wait forever for it
-			NSArray *currentModifiers = [(SBElementArray *)[keyMods get] valueForKey: @"enumCodeValue"];
+			 //In case System Events has stopped responding, don't wait forever for it
+			[systemEvents setTimeout: 0.1f];
 			
-			if ([[self class] keyModifiersWillConflict: currentModifiers])
+			//The key modifiers are returned as an array of NSAppleEventDescriptors: getting the enumCodeValue
+			//from each of these yields an array of NSNumbers, which are easier for us to work with.
+			NSArray *currentModifiers = [(SBElementArray *)[keyMods get] valueForKey: @"enumCodeValue"];
+			NSArray *safeModifiers = [[self class] safeKeyModifiersFromModifiers: currentModifiers];
+			
+			if (![safeModifiers isEqualToArray: currentModifiers])
 			{
 				[systemEvents setSendMode: kAENoReply];
-				
-				//We can make the modifier 'safe' by combining it with the Command key
-				NSArray *safeModifiers = [currentModifiers arrayByAddingObject: [NSNumber numberWithUnsignedInteger: SystemEventsEpmdCommand]];
 				
 				[keyMods setTo: safeModifiers];
 				[defaults setObject: currentModifiers forKey: BXPreviousSpacesArrowKeyModifiersKey];

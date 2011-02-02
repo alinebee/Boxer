@@ -2411,7 +2411,9 @@ void MAPPER_StartUp(Section * sec) {
 
 	usescancodes = false;
 
-	if (section->Get_bool("usescancodes")) {
+	//--Modified 2011-02-03 by Alun Bestor: always disable scancodes, as Boxer is already doing the conversion to SDL keys
+	if (false && section->Get_bool("usescancodes")) {
+	//--End of modifications
 		usescancodes=true;
 
 		/* Note: table has to be tested/updated for various OSs */

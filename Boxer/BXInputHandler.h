@@ -11,6 +11,8 @@
 //instead, it uses abstract methods to receive 'predigested' input data from BXInputController.
 
 #import <Foundation/Foundation.h>
+#import <SDL/SDL.h>
+
 
 @class BXEmulator;
 
@@ -46,13 +48,22 @@
 //Sends a key up/down event with the specified parameters to DOSBox.
 - (void) sendKeyEventWithCode: (unsigned short)keyCode
 					  pressed: (BOOL)pressed
-				withModifiers: (NSUInteger)modifierFlags;
+					modifiers: (NSUInteger)modifierFlags;
 
-//Sends a key up/down event with the specified code, using the current modifier flags.
-- (void) sendKeyEventWithCode: (unsigned short)keyCode pressed: (BOOL)pressed;
+//Sends a keydown followed by a keyup event for the specified OS X keycode
+//and the specified modifiers. Note that the keyup event will be delayed slightly
+//to give it time to register in DOS.
+- (void) sendKeypressWithCode: (unsigned short)keyCode
+					modifiers: (NSUInteger)modifierFlags;
 
-//Sends a keyup and a keydown event for the specified code, using the current modifier flags.
-- (void) sendKeypressWithCode: (unsigned short)keyCode;
+//Sends a keyup and a keydown event for the specified SDL keycode and the specified modifiers.
+//Allows SDL keys that have no OS X keycode equivalent to be triggered in DOS.
+- (void) sendKeyEventWithSDLKey: (SDLKey)sdlKeyCode
+						pressed: (BOOL)pressed
+					  modifiers: (NSUInteger)modifierFlags;
+
+- (void) sendKeypressWithSDLKey: (SDLKey)sdlKeyCode
+					  modifiers: (NSUInteger)modifierFlags;
 
 
 //Returns the DOS keyboard layout code for the currently-active input method in OS X.

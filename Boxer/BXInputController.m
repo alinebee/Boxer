@@ -516,7 +516,7 @@ enum {
 	//Otherwise, pass the keypress on to our input handler.
 	else [[self representedObject] sendKeyEventWithCode: [theEvent keyCode]
 												pressed: YES
-										  withModifiers: [theEvent modifierFlags]];
+											  modifiers: [theEvent modifierFlags]];
 }
 
 - (void) keyUp: (NSEvent *)theEvent
@@ -528,8 +528,8 @@ enum {
 		[super keyUp: theEvent];
 	
 	[[self representedObject] sendKeyEventWithCode: [theEvent keyCode]
-										   pressed: NO withModifiers:
-	 [theEvent modifierFlags]];
+										   pressed: NO
+										 modifiers: [theEvent modifierFlags]];
 }
 
 //Convert flag changes into proper key events
@@ -567,24 +567,43 @@ enum {
 	
 	[[self representedObject] sendKeyEventWithCode: keyCode
 										   pressed: pressed
-									 withModifiers: modifiers];
+										 modifiers: modifiers];
 }
 
 
 #pragma mark -
 #pragma mark Simulating keyboard events
+						
+- (void) _sendSDLKey: (SDLKey)sdlKeyCode
+{
+	[[self representedObject] sendKeypressWithSDLKey: sdlKeyCode
+										   modifiers: [[NSApp currentEvent] modifierFlags]];
+}
 
-- (IBAction) sendEnter: (id)sender	{ [[self representedObject] sendKeypressWithCode: kVK_Return]; }
-- (IBAction) sendF1:	(id)sender	{ [[self representedObject] sendKeypressWithCode: kVK_F1]; }
-- (IBAction) sendF2:	(id)sender	{ [[self representedObject] sendKeypressWithCode: kVK_F2]; }
-- (IBAction) sendF3:	(id)sender	{ [[self representedObject] sendKeypressWithCode: kVK_F3]; }
-- (IBAction) sendF4:	(id)sender	{ [[self representedObject] sendKeypressWithCode: kVK_F4]; }
-- (IBAction) sendF5:	(id)sender	{ [[self representedObject] sendKeypressWithCode: kVK_F5]; }
-- (IBAction) sendF6:	(id)sender	{ [[self representedObject] sendKeypressWithCode: kVK_F6]; }
-- (IBAction) sendF7:	(id)sender	{ [[self representedObject] sendKeypressWithCode: kVK_F7]; }
-- (IBAction) sendF8:	(id)sender	{ [[self representedObject] sendKeypressWithCode: kVK_F8]; }
-- (IBAction) sendF9:	(id)sender	{ [[self representedObject] sendKeypressWithCode: kVK_F9]; }
-- (IBAction) sendF10:	(id)sender	{ [[self representedObject] sendKeypressWithCode: kVK_F10]; }
+- (IBAction) sendF1:	(id)sender	{ [self _sendSDLKey: SDLK_F1]; }
+- (IBAction) sendF2:	(id)sender	{ [self _sendSDLKey: SDLK_F2]; }
+- (IBAction) sendF3:	(id)sender	{ [self _sendSDLKey: SDLK_F3]; }
+- (IBAction) sendF4:	(id)sender	{ [self _sendSDLKey: SDLK_F4]; }
+- (IBAction) sendF5:	(id)sender	{ [self _sendSDLKey: SDLK_F5]; }
+- (IBAction) sendF6:	(id)sender	{ [self _sendSDLKey: SDLK_F6]; }
+- (IBAction) sendF7:	(id)sender	{ [self _sendSDLKey: SDLK_F7]; }
+- (IBAction) sendF8:	(id)sender	{ [self _sendSDLKey: SDLK_F8]; }
+- (IBAction) sendF9:	(id)sender	{ [self _sendSDLKey: SDLK_F9]; }
+- (IBAction) sendF10:	(id)sender	{ [self _sendSDLKey: SDLK_F10]; }
+
+- (IBAction) sendHome:		(id)sender { [self _sendSDLKey: SDLK_HOME]; }
+- (IBAction) sendEnd:		(id)sender { [self _sendSDLKey: SDLK_END]; }
+- (IBAction) sendPageUp:	(id)sender { [self _sendSDLKey: SDLK_PAGEUP]; }
+- (IBAction) sendPageDown:	(id)sender { [self _sendSDLKey: SDLK_PAGEDOWN]; }
+
+- (IBAction) sendInsert:	(id)sender { [self _sendSDLKey: SDLK_INSERT]; }
+- (IBAction) sendDelete:	(id)sender { [self _sendSDLKey: SDLK_DELETE]; }
+- (IBAction) sendPause:		(id)sender { [self _sendSDLKey: SDLK_PAUSE]; }
+
+- (IBAction) sendNumLock:		(id)sender { [self _sendSDLKey: SDLK_NUMLOCK]; }
+- (IBAction) sendScrollLock:	(id)sender { [self _sendSDLKey: SDLK_SCROLLOCK]; }
+- (IBAction) sendPrintScreen:	(id)sender { [self _sendSDLKey: SDLK_PRINT]; }
+
 
 
 #pragma mark -

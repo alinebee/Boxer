@@ -10,7 +10,7 @@
 #import "BXEmulator.h"
 
 #import "BXEventConstants.h"
-#import <AppKit/AppKit.h>	//For NSApp
+#import <AppKit/AppKit.h>	//For NSApp; remove this dependency ASAP
 #import <Carbon/Carbon.h>	//For OSX keycode constants
 #import <SDL/SDL.h>			//For SDL keycode constants
 #import "config.h"
@@ -19,7 +19,10 @@
 
 //How long in seconds to 'hold down' a fake keypress before releasing it.
 //This gives games enough time to register that the key has been pressed.
-const NSTimeInterval BXFakeKeypressReleaseDelay = 0.25; 
+#define BXFakeKeypressReleaseDelay 0.25
+
+#define BXUnknownScancode 0
+
 
 //Declared in mapper.cpp
 void MAPPER_CheckEvent(SDL_Event *event);
@@ -28,14 +31,22 @@ void MAPPER_LosingFocus();
 
 @interface BXInputHandler ()
 
-//A simple performSelector:withObject:afterDelay: wrapper, used by
-//sendKeypressWithCode: for releasing its fake key events after a brief delay.
-- (void) _releaseKeyWithValue: (NSNumber *)value;
+//Simple performSelector:withObject:afterDelay: wrappers, used by
+//sendKeypressWithCode: and sendKeypressWithSDLKey: for releasing
+//their fake key events after a brief delay.
+- (void) _releaseKey: (NSArray *)args;
+- (void) _releaseSDLKey: (NSArray *)args;
 
 //Generates and returns an SDL key event with the specified parameters.
 + (SDL_Event) _SDLKeyEventForKeyCode: (CGKeyCode)keyCode
 							 pressed: (BOOL)pressed
-					   withModifiers: (NSUInteger)modifierFlags;
+						   modifiers: (NSUInteger)modifierFlags;
+
+//Generates and returns an SDL key event for the specified SDL key code,
+//rather than OS X key code. Uses 0 as the device scancode.
++ (SDL_Event) _SDLKeyEventForSDLKey: (SDLKey)sdlKeyCode
+							pressed: (BOOL)pressed
+						  modifiers: (NSUInteger)modifierFlags;
 
 //Returns the SDL key constant corresponding to the specified OS X virtual keycode.
 + (SDLKey) _convertToSDLKeyCode: (CGKeyCode)keyCode;	
@@ -55,8 +66,8 @@ void MAPPER_LosingFocus();
 {
 	if ((self = [super init]))
 	{
-		mousePosition		= NSMakePoint(0.5f, 0.5f);
-		mouseActive			= NO;
+		mousePosition	= NSMakePoint(0.5f, 0.5f);
+		mouseActive		= NO;
 	}
 	return self;
 }
@@ -117,30 +128,61 @@ void MAPPER_LosingFocus();
 
 - (void) sendKeyEventWithCode: (unsigned short)keyCode
 					  pressed: (BOOL)pressed
-				withModifiers: (NSUInteger)modifierFlags
+					modifiers: (NSUInteger)modifierFlags
 {
 	if ([[self emulator] isExecuting])
 	{		
 		SDL_Event keyEvent = [[self class] _SDLKeyEventForKeyCode: keyCode
 														  pressed: pressed
-													withModifiers: modifierFlags];
+														modifiers: modifierFlags];
 		
 		MAPPER_CheckEvent(&keyEvent);
 	}
 }
 
-- (void) sendKeyEventWithCode: (unsigned short)keyCode
-					  pressed: (BOOL)pressed
+- (void) sendKeypressWithCode: (unsigned short)keyCode modifiers: (NSUInteger)modifierFlags
 {
-	[self sendKeyEventWithCode: keyCode pressed: pressed withModifiers: [[NSApp currentEvent] modifierFlags]];
+	[self sendKeyEventWithCode: keyCode
+					   pressed: YES
+					 modifiers: modifierFlags];
+	
+	//Release the key after a brief delay
+	[self performSelector: @selector(_releaseKey:)
+			   withObject: [NSArray arrayWithObjects:
+							[NSNumber numberWithUnsignedInteger: keyCode],
+							[NSNumber numberWithUnsignedInteger: modifierFlags],
+							nil]
+			   afterDelay: BXFakeKeypressReleaseDelay];
 }
 
-- (void) sendKeypressWithCode: (unsigned short)keyCode
+
+- (void) sendKeyEventWithSDLKey: (SDLKey)sdlKeyCode
+						pressed: (BOOL)pressed
+					  modifiers: (NSUInteger)modifierFlags
 {
-	[self sendKeyEventWithCode: keyCode pressed: YES];
+	if ([[self emulator] isExecuting])
+	{		
+		SDL_Event keyEvent = [[self class] _SDLKeyEventForSDLKey: sdlKeyCode
+														 pressed: pressed
+													   modifiers: modifierFlags];
+		
+		MAPPER_CheckEvent(&keyEvent);
+	}
+}
+
+- (void) sendKeypressWithSDLKey: (SDLKey)sdlKeyCode
+					  modifiers: (NSUInteger)modifierFlags 
+{
+	[self sendKeyEventWithSDLKey: sdlKeyCode
+						 pressed: YES
+					   modifiers: modifierFlags];
+	
 	//Release the key after a brief delay
-	[self performSelector: @selector(_releaseKeyWithValue:)
-			   withObject: [NSNumber numberWithInt: (int)keyCode]
+	[self performSelector: @selector(_releaseSDLKey:)
+			   withObject: [NSArray arrayWithObjects:
+							[NSNumber numberWithInteger: sdlKeyCode],
+							[NSNumber numberWithUnsignedInteger: modifierFlags],
+							nil]
 			   afterDelay: BXFakeKeypressReleaseDelay];
 }
 
@@ -252,16 +294,40 @@ void MAPPER_LosingFocus();
 #pragma mark -
 #pragma mark Internal methods
 
-- (void) _releaseKeyWithValue: (NSNumber *)value
+- (void) _releaseKey: (NSArray *)args
 {
-	unsigned short keyCode = (unsigned short)[value intValue];
-	[self sendKeyEventWithCode: keyCode pressed: NO];
+	unsigned short keyCode		= (unsigned short)[[args objectAtIndex: 0] unsignedIntegerValue];
+	NSUInteger modifierFlags	= [[args objectAtIndex: 1] unsignedIntegerValue];
+	
+	[self sendKeyEventWithCode: keyCode pressed: NO modifiers: modifierFlags];
 }
 
+- (void) _releaseSDLKey: (NSArray *)args
+{
+	SDLKey sdlKeyCode			= (SDLKey)[[args objectAtIndex: 0] integerValue];
+	NSUInteger modifierFlags	= [[args objectAtIndex: 1] unsignedIntegerValue];
+	
+	[self sendKeyEventWithSDLKey: sdlKeyCode pressed: NO modifiers: modifierFlags];
+}
+
++ (SDL_Event) _SDLKeyEventForSDLKey: (SDLKey)sdlKeyCode
+							pressed: (BOOL)pressed
+						  modifiers: (NSUInteger)modifierFlags
+{	
+    SDL_Event keyEvent;
+	keyEvent.type		= (pressed) ? SDL_KEYDOWN : SDL_KEYUP;
+	keyEvent.key.state	= (pressed) ? SDL_PRESSED : SDL_RELEASED;
+	
+	keyEvent.key.keysym.scancode = BXUnknownScancode;
+	keyEvent.key.keysym.sym	= sdlKeyCode;
+	keyEvent.key.keysym.mod	= [self _convertToSDLModifiers: modifierFlags];
+	
+	return keyEvent;
+}
 
 + (SDL_Event) _SDLKeyEventForKeyCode: (CGKeyCode)keyCode
 							 pressed: (BOOL)pressed
-					   withModifiers: (NSUInteger)modifierFlags
+						   modifiers: (NSUInteger)modifierFlags
 {
 	
     SDL_Event keyEvent;
@@ -407,7 +473,6 @@ void MAPPER_LosingFocus();
 	}
 	
 	if (keyCode < KEYMAP_SIZE) return map[keyCode];
-	//Just in case
 	else return SDLK_UNKNOWN;
 }
 

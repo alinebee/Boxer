@@ -12,6 +12,11 @@
 
 #import <Foundation/Foundation.h>
 
+
+//Aspect ratios with a difference smaller than this will be considered equivalent
+#define BXIdenticalAspectRatioDelta	0.025f
+
+
 @interface BXFrameBuffer : NSObject
 {
 	NSMutableData *frameData;
@@ -20,13 +25,23 @@
 	NSUInteger bitDepth;
 	NSSize intendedScale;
 }
+
+#pragma mark -
+#pragma mark Properties
+
+
 @property (readonly) NSSize size;
 @property (readonly) NSUInteger bitDepth;
-@property (assign) NSSize intendedScale;
+
+//The original game resolution represented by the framebuffer.
 @property (assign) NSSize baseResolution;
 
-//The base resolution corrected to the same aspect ratio as the buffer size,
-//to account for any pixel pre-doubling done by DOSBox.
+//The scaling factor to apply to the framebuffer to reach the desired aspect ratio.
+@property (assign) NSSize intendedScale;
+
+
+//The base resolution corrected to the same aspect ratio as the underlying buffer size.
+//Needed to account for pixel pre-doubling done by DOSBox.
 @property (readonly) NSSize correctedResolution;
 
 //The width in bytes of one scanline in the buffer.
@@ -38,16 +53,33 @@
 //The corrected resolution of the frame scaled to the intended scale.
 @property (readonly) NSSize scaledResolution;
 
+//Read-only/mutable pointers to the frame's data.
+@property (readonly) const void *bytes;
+@property (readonly) void *mutableBytes;
+
+
+#pragma mark -
+#pragma mark Class helpers
+
+//Returns the scaling factor necessary to translate the specified size
+//to match the specified aspect ratio
++ (NSSize) scalingFactorForSize: (NSSize)frameSize toAspectRatio: (CGFloat)aspectRatio;
+
+#pragma mark -
+#pragma mark Initializers
 
 + (id) bufferWithSize: (NSSize)targetSize depth: (NSUInteger)depth;
 - (id) initWithSize: (NSSize)targetSize depth: (NSUInteger)depth;
 
-- (NSSize) scaledSize;
 
-- (NSSize) scaledResolution;
+#pragma mark -
+#pragma mark Methods
 
-//Return a read-only/mutable pointer to the frame's data.
-- (const void *) bytes;
-- (void *) mutableBytes;
+//Sets the frame buffer to use the specified intended aspect ratio.
+//This does not affect the underlying image data, just the intended scaled size and resolution.
+- (void) useAspectRatio: (CGFloat)aspectRatio;
+
+//Resets the aspect ratio of the framebuffer to use unscaled square pixels.
+- (void) useSquarePixels;
 
 @end

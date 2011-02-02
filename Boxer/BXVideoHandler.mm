@@ -17,6 +17,9 @@
 #import "vga.h"
 
 
+const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
+
+
 #pragma mark -
 #pragma mark Really genuinely private functions
 
@@ -38,6 +41,8 @@
 
 - (NSInteger) _maxFilterScaleForResolution: (NSSize)resolution;
 
+- (void) _applyAspectCorrectionToFrame: (BXFrameBuffer *)frame;
+
 @end
 
 
@@ -46,6 +51,7 @@
 @synthesize emulator;
 @synthesize aspectCorrected;
 @synthesize filterType;
+
 
 - (id) init
 {
@@ -105,7 +111,10 @@
 	if (correct != [self isAspectCorrected])
 	{
 		aspectCorrected = correct;
-		[self reset];		
+		//Reset to force a new frame buffer at the corrected size
+		//TODO: this would be unnecessary if we applied aspect correction higher up
+		//at the windowing level
+		[self reset];
 	}
 }
 
@@ -156,8 +165,30 @@
 #pragma mark -
 #pragma mark DOSBox callbacks
 
+- (void) _applyAspectCorrectionToFrame: (BXFrameBuffer *)frame
+{
+	//If aspect correction is turned on and we're in a graphical game,
+	//then apply the correction. (For now we leave it off for text-modes
+	//since they tend to look crappy scaled at small window sizes.)
+	if ([self isAspectCorrected] && ![self isInTextMode])
+	{
+		[frame useAspectRatio: BX4by3AspectRatio];
+	}
+	else [frame useSquarePixels];
+}
+
 - (void) prepareForOutputSize: (NSSize)outputSize atScale: (NSSize)scale withCallback: (GFX_CallBack_t)newCallback
 {
+	//Synchronise our record of the current video mode with the new video mode
+	BOOL wasTextMode = [self isInTextMode];
+	if (currentVideoMode != vga.mode)
+	{
+		[self willChangeValueForKey: @"isInTextMode"];
+		currentVideoMode = vga.mode;
+		[self didChangeValueForKey: @"isInTextMode"];
+	}
+	BOOL nowTextMode = [self isInTextMode];
+	
 	//If we were in the middle of a frame then cancel it
 	frameInProgress = NO;
 	
@@ -169,31 +200,22 @@
 		BXFrameBuffer *newBuffer = [BXFrameBuffer bufferWithSize: outputSize depth: 4];
 		[self setFrameBuffer: newBuffer];
 	}
-	[[self frameBuffer] setIntendedScale: scale];
+	
 	[[self frameBuffer] setBaseResolution: [self resolution]];
+	[self _applyAspectCorrectionToFrame: [self frameBuffer]];
 	
 	
-	//Synchronise our record of the current video mode with the new video mode
-	if (currentVideoMode != vga.mode)
-	{
-		BOOL wasTextMode = [self isInTextMode];
-		[self willChangeValueForKey: @"isInTextMode"];
-		currentVideoMode = vga.mode;
-		[self didChangeValueForKey: @"isInTextMode"];
-		BOOL nowTextMode = [self isInTextMode];
-		
-		//Started up a graphical application
-		if (wasTextMode && !nowTextMode)
-			[[self emulator] _postNotificationName: @"BXEmulatorDidStartGraphicalContext"
-								  delegateSelector: @selector(didStartGraphicalContext:)
-										  userInfo: nil];
-		
-		//Graphical application returned to text mode
-		else if (!wasTextMode && nowTextMode)
-			[[self emulator] _postNotificationName: @"BXEmulatorDidEndGraphicalContext"
-								  delegateSelector: @selector(didEndGraphicalContext:)
-										  userInfo: nil];
-	}
+	//Send notifications if the display mode has changed
+	
+	if (wasTextMode && !nowTextMode)
+		[[self emulator] _postNotificationName: @"BXEmulatorDidStartGraphicalContext"
+							  delegateSelector: @selector(didStartGraphicalContext:)
+									  userInfo: nil];
+	
+	else if (!wasTextMode && nowTextMode)
+		[[self emulator] _postNotificationName: @"BXEmulatorDidEndGraphicalContext"
+							  delegateSelector: @selector(didEndGraphicalContext:)
+									  userInfo: nil];
 }
 
 - (BOOL) startFrameWithBuffer: (void **)buffer pitch: (NSUInteger *)pitch
@@ -294,12 +316,18 @@
 //ratio is not ~1 then correction is needed.
 - (BOOL) _shouldUseAspectCorrectionForResolution: (NSSize)resolution
 {
+	//DOSBox's aspect correction is now disabled all the time:
+	//we instead do our own scaling to 4:3.
+	return NO;
+	
+	/*
 	BOOL useAspectCorrection = NO;
 	if ([[self emulator] isExecuting])
 	{
 		useAspectCorrection = [self isAspectCorrected] && (ABS(render.src.ratio - 1) > 0.01);
 	}
 	return useAspectCorrection;
+	 */
 }
 
 //Return the appropriate filter size to scale the given resolution up to the specified viewport.

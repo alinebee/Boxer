@@ -12,6 +12,30 @@
 @implementation BXFrameBuffer
 @synthesize size, baseResolution, bitDepth, intendedScale;
 
+
++ (NSSize) scalingFactorForSize: (NSSize)frameSize toAspectRatio: (CGFloat)aspectRatio
+{
+	CGFloat frameAspectRatio = aspectRatioOfSize(frameSize);
+	
+	//If the frame isn't naturally 4:3, work out the necessary scale corrections to make it so
+	if (ABS(aspectRatio - frameAspectRatio) > BXIdenticalAspectRatioDelta)
+	{
+		BOOL preserveHeight = (frameAspectRatio < aspectRatio);
+		NSSize intendedSize = sizeToMatchRatio(frameSize, aspectRatio, preserveHeight);
+		
+		NSAssert1(!NSEqualSizes(intendedSize, NSZeroSize),
+				  @"Invalid frame size passed to [BXFrameBuffer scalingFactorForSize:toAspectRatio:] %@", NSStringFromSize(frameSize));
+		
+		
+		//Calculate the difference between the intended size and the real size, and that is our scaling multiplier!
+		return NSMakeSize(intendedSize.width / frameSize.width,
+						  intendedSize.height / frameSize.height);
+	}
+	//Otherwise, no corrections are required
+	else return NSMakeSize(1, 1);
+}
+
+
 + (id) bufferWithSize: (NSSize)targetSize depth: (NSUInteger)depth
 {
 	return [[[self alloc] initWithSize: targetSize depth: depth] autorelease];
@@ -43,6 +67,17 @@
 	return size.width * bitDepth;
 }
 
+- (void) useAspectRatio: (CGFloat)aspectRatio
+{
+	NSSize scale = [[self class] scalingFactorForSize: [self size] toAspectRatio: aspectRatio];
+	[self setIntendedScale: scale];
+}
+
+- (void) useSquarePixels
+{
+	[self setIntendedScale: NSMakeSize(1, 1)];
+}
+
 - (NSSize) scaledSize
 {
 	return NSMakeSize(ceilf(size.width	* intendedScale.width),
@@ -52,19 +87,13 @@
 //IMPLEMENTATION NOTE: sometimes the buffer size that DOSBox is using
 //is already a different aspect ratio from the original resolution,
 //e.g. if it is performing pixel pre-doubling to correct for wacky video modes.
+//This provides a corrected version of that resolution.
 - (NSSize) correctedResolution
 {
 	CGFloat bufferRatio		= aspectRatioOfSize(size);
 	CGFloat resolutionRatio	= aspectRatioOfSize(baseResolution);
 	
-	if (resolutionRatio > 1)
-	{
-		return NSMakeSize(baseResolution.width, baseResolution.width / bufferRatio);
-	}
-	else
-	{
-		return NSMakeSize(baseResolution.height * bufferRatio, baseResolution.height);
-	}
+	return sizeToMatchRatio(baseResolution, bufferRatio, resolutionRatio < bufferRatio);
 }
 
 - (NSSize) scaledResolution
@@ -83,4 +112,5 @@
 {
 	return [frameData mutableBytes];
 }
+
 @end

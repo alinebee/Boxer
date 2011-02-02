@@ -20,6 +20,14 @@ extern "C" {
 
 	//Returns the aspect ratio (width / height) for size. This will be 0 if either dimension was 0.
 	CGFloat aspectRatioOfSize(NSSize size);
+	
+	//Returns the specified size scaled to match the specified aspect ratio, preserving either width or height.
+	//Will return NSZeroSize if the aspect ratio is 0.
+	NSSize sizeToMatchRatio(NSSize size, CGFloat aspectRatio, BOOL preserveHeight);
+	
+	//Returns the specified size with width and height rounded up to nearest integral values.
+	//Equivalent to NSIntegralRect. Will return NSZeroSize if width or height are 0 or negative.
+	NSSize integralSize(NSSize size);
 
 	//Returns whether the inner size is equal to or less than the outer size.
 	//An analogue for NSContainsRect.

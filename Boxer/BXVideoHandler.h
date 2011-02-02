@@ -17,6 +17,10 @@
 #endif
 
 
+//The standard 4:3 aspect ratio of old displays
+extern const CGFloat BX4by3AspectRatio;
+
+
 typedef NSUInteger BXFilterType;
 
 typedef struct {

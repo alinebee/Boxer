@@ -20,6 +20,22 @@ CGFloat aspectRatioOfSize(NSSize size)
 	return (size.height) ? (size.width / size.height) : 0.0f;
 }
 
+NSSize integralSize(NSSize size)
+{
+	//To match behaviour of NSIntegralRect
+	if (size.width <= 0 || size.height <= 0) return NSZeroSize;
+	return NSMakeSize(ceilf(size.width), ceilf(size.height));
+}
+
+NSSize sizeToMatchRatio(NSSize size, CGFloat aspectRatio, BOOL preserveHeight)
+{
+	//Calculation is impossible - perhaps we should assert here instead
+	if (aspectRatio == 0) return NSZeroSize;
+	
+	if (preserveHeight) return NSMakeSize(size.height * aspectRatio, size.height);
+	else				return NSMakeSize(size.width, size.width / aspectRatio);
+}
+
 BOOL sizeFitsWithinSize(NSSize innerSize, NSSize outerSize)
 {
 	return (innerSize.width <= outerSize.width) && (innerSize.height <= outerSize.height);

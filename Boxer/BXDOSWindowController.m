@@ -35,7 +35,6 @@
 #define BXFullscreenFadeOutDuration	0.2f
 #define BXFullscreenFadeInDuration	0.4f
 #define BXWindowSnapThreshold		64
-#define BXIdenticalAspectRatioDelta	0.025f
 
 NSString * const BXViewWillLiveResizeNotification	= @"BXViewWillLiveResizeNotification";
 NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotification";
@@ -1093,13 +1092,12 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 		if (preserveHeight)
 		{
 			if (minViewSize.height > viewSize.height) viewSize = minViewSize;
-			viewSize.width = roundf(viewSize.height * aspectRatio);
 		}
 		else
 		{
 			if (minViewSize.width > viewSize.width) viewSize = minViewSize;
-			viewSize.height = roundf(viewSize.width / aspectRatio);
 		}
+		viewSize = sizeToMatchRatio(viewSize, aspectRatio, preserveHeight);
 	}
 	
 	//We set the maximum size as that which will fit on the current screen

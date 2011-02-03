@@ -25,7 +25,7 @@ NSString * const BXPreviousSpacesArrowKeyModifiersKey = @"previousSpacesArrowKey
 @implementation BXAppController (BXApplicationModes)
 
 + (NSArray *) safeKeyModifiersFromModifiers: (NSArray *)modifiers
-{	
+{
 	NSArray *safeModifiers = modifiers;
 	
 	//If there's more than one modifier key required, or none required,
@@ -101,6 +101,9 @@ NSString * const BXPreviousSpacesArrowKeyModifiersKey = @"previousSpacesArrowKey
 
 - (void) syncSpacesKeyboardShortcuts
 {
+	//The Spaces Applescript API is broken on Leopard, so don't bother trying
+	if ([[self class] isRunningOnLeopard]) return;
+	
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 	NSArray *oldModifiers = [defaults arrayForKey: BXPreviousSpacesArrowKeyModifiersKey];
 	
@@ -132,6 +135,7 @@ NSString * const BXPreviousSpacesArrowKeyModifiersKey = @"previousSpacesArrowKey
 			 //In case System Events has stopped responding, don't wait forever for it
 			[systemEvents setTimeout: 0.1f];
 			
+			NSLog(@"%@", [arrowKeyPrefs properties]);
 			//The key modifiers are returned as an array of NSAppleEventDescriptors: getting the enumCodeValue
 			//from each of these yields an array of NSNumbers, which are easier for us to work with.
 			NSArray *currentModifiers = [(SBElementArray *)[keyMods get] valueForKey: @"enumCodeValue"];

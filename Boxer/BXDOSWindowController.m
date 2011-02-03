@@ -902,6 +902,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 		[self setFullScreenWindow: fullWindow];
 		[fullWindow setDelegate: self];
 		[fullWindow setWindowController: self];
+		[fullWindow setReleasedWhenClosed: NO];
 		[fullWindow setAcceptsMouseMovedEvents: YES];
 		
 		//Bring the fullscreen window forward so that it's just above the original window

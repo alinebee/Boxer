@@ -135,7 +135,6 @@ NSString * const BXPreviousSpacesArrowKeyModifiersKey = @"previousSpacesArrowKey
 			 //In case System Events has stopped responding, don't wait forever for it
 			[systemEvents setTimeout: 0.1f];
 			
-			NSLog(@"%@", [arrowKeyPrefs properties]);
 			//The key modifiers are returned as an array of NSAppleEventDescriptors: getting the enumCodeValue
 			//from each of these yields an array of NSNumbers, which are easier for us to work with.
 			NSArray *currentModifiers = [(SBElementArray *)[keyMods get] valueForKey: @"enumCodeValue"];

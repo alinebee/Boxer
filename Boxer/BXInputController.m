@@ -599,6 +599,7 @@ enum {
 - (IBAction) sendInsert:	(id)sender { [self _sendSDLKey: SDLK_INSERT]; }
 - (IBAction) sendDelete:	(id)sender { [self _sendSDLKey: SDLK_DELETE]; }
 - (IBAction) sendPause:		(id)sender { [self _sendSDLKey: SDLK_PAUSE]; }
+- (IBAction) sendBreak:		(id)sender { [self _sendSDLKey: SDLK_BREAK]; }
 
 - (IBAction) sendNumLock:		(id)sender { [self _sendSDLKey: SDLK_NUMLOCK]; }
 - (IBAction) sendScrollLock:	(id)sender { [self _sendSDLKey: SDLK_SCROLLOCK]; }

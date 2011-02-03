@@ -194,6 +194,9 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 - (void) dealloc
 {
+	//Remove any notification observers we've registered
+	[[NSNotificationCenter defaultCenter] removeObserver: self];
+	
 	[self setCurrentSession: nil], [currentSession release];
 	[self setGamesFolderPath: nil], [gamesFolderPath release];
 	

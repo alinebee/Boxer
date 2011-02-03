@@ -33,7 +33,7 @@
 	
 	CGRect canvas;
 	BOOL maintainsAspectRatio;
-	BOOL requiresFullScreenHack;
+	BOOL requiresDisplayCaptureSuppression;
 	
 	GLuint frameTexture;
 	GLuint scalingBufferTexture;
@@ -77,6 +77,10 @@
 //Whether to set the GL viewport to match the aspect ratio of the current frame. Set by the view.
 //This is only enabled for fullscreen mode; in windowed mode, the window manages the aspect ratio itself.
 @property (assign) BOOL maintainsAspectRatio;
+
+//Whether we should prevent OS X 10.6 from automatically capturing the display in full screen mode.
+//This is needed for Intel GMA950 chipsets, and the hack itself is implemented by BXDOSWindowController.
+@property (readonly) BOOL requiresDisplayCaptureSuppression;
 
 
 #pragma mark -

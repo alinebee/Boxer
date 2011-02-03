@@ -107,8 +107,8 @@
 - (IBAction) sendInsert:	(id)sender;
 - (IBAction) sendDelete:	(id)sender;
 - (IBAction) sendPause:		(id)sender;
+- (IBAction) sendBreak:		(id)sender;
 
-- (IBAction) sendBreak:			(id)sender;
 - (IBAction) sendNumLock:		(id)sender;
 - (IBAction) sendScrollLock:	(id)sender;
 - (IBAction) sendPrintScreen:	(id)sender;

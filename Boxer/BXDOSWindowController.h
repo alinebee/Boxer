@@ -42,6 +42,8 @@ extern NSString * const BXViewDidLiveResizeNotification;
 	IBOutlet BXInputController *inputController;
 	IBOutlet BXStatusBarController *statusBarController;
 	
+	BXDOSFullScreenWindow *fullScreenWindow;
+	
 	NSSize currentScaledSize;
 	NSSize currentScaledResolution;
 	BOOL resizingProgrammatically;
@@ -52,43 +54,52 @@ extern NSString * const BXViewDidLiveResizeNotification;
 #pragma mark Properties
 
 //Our subsidiary view controllers.
-@property (retain) BXProgramPanelController *programPanelController;
-@property (retain) BXInputController *inputController;
-@property (retain) BXStatusBarController *statusBarController;
+@property (retain, nonatomic) BXProgramPanelController *programPanelController;
+@property (retain, nonatomic) BXInputController *inputController;
+@property (retain, nonatomic) BXStatusBarController *statusBarController;
 
-@property (retain) NSView <BXFrameRenderingView> *renderingView;	//The view that displays DOSBox's graphical output.
-@property (retain) BXInputView *inputView;	//The view that tracks user input. This is also be the view we use for fullscreen.
-@property (retain) NSView *viewContainer;	//A wrapper for the input view to aid window-sizing behaviour.
-@property (retain) NSView *programPanel;	//The slide-out program picker panel.
-@property (retain) NSView *statusBar;		//The status bar at the bottom of the window.
+//The view which displays the emulator's graphical output.
+@property (retain, nonatomic) NSView <BXFrameRenderingView> *renderingView;
+
+//The view that tracks user input. This is also be the view we use for fullscreen.
+@property (retain, nonatomic) BXInputView *inputView;
+
+//A wrapper for the input view, to aid window-sizing behaviour.
+@property (retain, nonatomic) NSView *viewContainer;
+
+//The slide-out program picker panel.
+@property (retain, nonatomic) NSView *programPanel;
+
+//The status bar at the bottom of the window.
+@property (retain, nonatomic) NSView *statusBar;		
 
 //Indicates that the current resize event is internal and not triggered by user interaction.
 //Used to change our window constraining behaviour and response to resize events.
-@property (assign) BOOL resizingProgrammatically;
+@property (assign, nonatomic) BOOL resizingProgrammatically;
 
 //Returns the size that the rendering view would currently be *if it were in windowed mode.*
 //This will differ from the actual render view size if in fullscreen mode.
-@property (readonly) NSSize windowedRenderingViewSize;
+@property (readonly, nonatomic) NSSize windowedRenderingViewSize;
 
 //Returns YES if the window is in the process of resizing itself.
-@property (readonly) BOOL isResizing;
+@property (readonly, nonatomic) BOOL isResizing;
 
 //The chromeless window used in fullscreen mode. Will be nil while in windowed mode.
-@property (readonly) BXDOSFullScreenWindow *fullScreenWindow; 
+@property (retain, readonly, nonatomic) BXDOSFullScreenWindow *fullScreenWindow;
 
 //Sets/gets whether the rendering view is currently fullscreen.
 //See also setFullScreenWithZoom:
-@property (assign, getter=isFullScreen) BOOL fullScreen;
+@property (assign, nonatomic, getter=isFullScreen) BOOL fullScreen;
 
 //The screen to which we will render in fullscreen mode.
 //This is currently the screen with the main menu on it.
-@property (readonly) NSScreen *fullScreenTarget;
+@property (readonly, nonatomic) NSScreen *fullScreenTarget;
 
 //The maximum BXFrameBuffer size we can render.
-@property (readonly) NSSize maxFrameSize;
+@property (readonly, nonatomic) NSSize maxFrameSize;
 
 //The current size of the DOS rendering viewport.
-@property (readonly) NSSize viewportSize;
+@property (readonly, nonatomic) NSSize viewportSize;
 
 
 #pragma mark -

@@ -43,6 +43,10 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 #pragma mark Private method declarations
 
 @interface BXDOSWindowController ()
+@property (retain, nonatomic) BXDOSFullScreenWindow *fullScreenWindow;
+
+//Add notification observers for everything we care about. Called from windowDidLoad.
+- (void) _addObservers;
 
 //Resizes the window in anticipation of sliding out the specified view. This will ensure
 //there is enough room on screen to accomodate the new window size.
@@ -100,6 +104,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 {
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
 	
+	[self setFullScreenWindow: nil],		[fullScreenWindow release];
 	[self setProgramPanelController: nil],	[programPanelController release];
 	[self setInputController: nil],			[inputController release];
 	[self setStatusBarController: nil],		[statusBarController release];
@@ -111,17 +116,12 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	[self setProgramPanel: nil],			[programPanel release];
 	[self setStatusBar: nil],				[statusBar release];
 	
-	
 	[super dealloc];
 }
 
-- (void) windowDidLoad
+- (void) _addObservers
 {
-	NSNotificationCenter *center	= [NSNotificationCenter defaultCenter];
-	BXDOSWindow *theWindow			= [self window];
-	
-	//Set up observing for UI events
-	//------------------------------
+	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 	
 	[center addObserver: self
 			   selector: @selector(renderingViewWillLiveResize:)
@@ -146,10 +146,16 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	[center addObserver: self
 			   selector: @selector(menuDidClose:)
 				   name: NSMenuDidEndTrackingNotification
-				 object: nil];
-		
+				 object: nil];	
+}
+
+
+- (void) windowDidLoad
+{
 	//While we're here, register for drag-drop file operations (used for mounting folders and such)
-	[theWindow registerForDraggedTypes: [NSArray arrayWithObjects: NSFilenamesPboardType, NSStringPboardType, nil]];
+	[[self window] registerForDraggedTypes: [NSArray arrayWithObjects:
+											 NSFilenamesPboardType,
+											 NSStringPboardType, nil]];
 	
 	
 	//Set up the window UI components appropriately
@@ -163,11 +169,9 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	
 	//Apply a border to the window matching the size of the statusbar
 	CGFloat borderThickness = [statusBar frame].size.height + 1.0f;
-	[theWindow setContentBorderThickness: borderThickness forEdge: NSMinYEdge];
-	
-	//Track mouse movement when this is the main window
-	[theWindow setAcceptsMouseMovedEvents: YES];
-	[theWindow setPreservesContentDuringLiveResize: NO];
+	[[self window] setContentBorderThickness: borderThickness forEdge: NSMinYEdge];
+	[[self window] setPreservesContentDuringLiveResize: NO];
+	[[self window] setAcceptsMouseMovedEvents: YES];
 	
 	
 	//Now that we can retrieve the game's identifier from the session,
@@ -183,11 +187,10 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	}
 	
 	//Ensure we get frame resize notifications from the rendering view
-	[renderingView setPostsFrameChangedNotifications: YES];
-	
+	[[self renderingView] setPostsFrameChangedNotifications: YES];
 	
 	//Reassign the document to ensure we've set up our view controllers with references the document/emulator
-	//This is necessary because the order of windowDidLoad/setDocument: differs between releases and some
+	//This is necessary because the order of windowDidLoad/setDocument: differs between OS X releases, and some
 	//of our members may have been nil when setDocument: was first called
 	[self setDocument: [self document]];
 }
@@ -505,13 +508,6 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	return [NSScreen mainScreen];
 }
 
-- (BXDOSFullScreenWindow *) fullScreenWindow
-{
-	if ([[inputView window] isKindOfClass: [BXDOSFullScreenWindow class]])
-		return (BXDOSFullScreenWindow *)[inputView window];
-	else return nil;
-}
-
 - (BOOL) isFullScreen
 {
 	return inFullScreenTransition || [self fullScreenWindow] != nil;
@@ -525,6 +521,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	
 	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 	NSString *startNotification, *endNotification;
+	
 	if (fullScreen) 
 	{
 		startNotification	= BXSessionWillEnterFullScreenNotification;
@@ -902,16 +899,20 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 																backing: NSBackingStoreBuffered
 																  defer: YES];
 		
+		[self setFullScreenWindow: fullWindow];
 		[fullWindow setDelegate: self];
 		[fullWindow setWindowController: self];
-		[fullWindow setReleasedWhenClosed: NO];
-		[fullWindow setBackgroundColor: [NSColor blackColor]];
 		[fullWindow setAcceptsMouseMovedEvents: YES];
 		
 		//Bring the fullscreen window forward so that it's just above the original window
 		[fullWindow orderWindow: NSWindowAbove relativeTo: [theWindow windowNumber]];
 		
+		//Apply a hack to prevent 10.6 capturing the display and ruining life for GMA950 owners.
+		if ([renderingView requiresDisplayCaptureSuppression])
+			[fullWindow suppressDisplayCapture];
+		
 		//Let the rendering view manage aspect ratio correction while in fullscreen mode
+		//We do this here before it gets redrawn in makeKeyAndOrderFront:
 		[renderingView setManagesAspectRatio: YES];
 		
 		//Now, swap the view into the new fullscreen window
@@ -933,6 +934,10 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 		
 		//Ensure that the mouse is locked for fullscreen mode
 		[inputController setMouseLocked: YES];
+		
+		//fullWindow has been retained by setFullScreenWindow above
+		[fullWindow release];
+		
 	}
 	else
 	{
@@ -954,7 +959,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 		[theView setNextResponder: currentResponder];
 		[theWindow makeFirstResponder: theView];
 		
-		//Prevents flicker when swapping windows
+		//Forcing a display now prevents flicker when swapping windows
 		[theView display];
 		
 		//Make the original window key if appropriate, and discard the fullscreen window
@@ -963,7 +968,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 		[fullWindow setWindowController: nil];
 		[fullWindow setDelegate: nil];
 		[fullWindow close];
-		[fullWindow release];
+		[self setFullScreenWindow: nil];
 		
 		//Unlock the mouse after leaving fullscreen
 		[inputController setMouseLocked: NO];

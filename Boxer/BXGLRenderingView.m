@@ -118,4 +118,9 @@
 	[[NSNotificationCenter defaultCenter] postNotificationName: BXViewDidLiveResizeNotification object: self];
 }
 
+- (BOOL) requiresDisplayCaptureSuppression
+{
+	return [[self renderer] requiresDisplayCaptureSuppression];
+}
+
 @end

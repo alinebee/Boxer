@@ -77,6 +77,7 @@
 	return (BXDOSWindowController *)[super windowController];
 }
 
+//Overridden since chromeless NSWindows normally return NO for these
 - (BOOL) canBecomeKeyWindow
 {
 	return YES;
@@ -85,5 +86,48 @@
 - (BOOL) canBecomeMainWindow
 {
 	return YES;
+}
+
+- (NSColor *)backgroundColor
+{
+	return [NSColor blackColor];
+}
+
+- (BOOL) suppressDisplayCapture
+{
+	if (!hiddenOverlay)
+	{
+		//Make the hack window cover a single-pixel region in the bottom left of the window,
+		//to minimize any disruption it causes
+		NSRect overlayWindowFrame = NSMakeRect([self frame].origin.x, [self frame].origin.y, 1, 1);
+		
+		hiddenOverlay = [[NSWindow alloc] initWithContentRect: overlayWindowFrame
+													styleMask: NSBorderlessWindowMask
+													  backing: NSBackingStoreBuffered
+														defer: YES];
+		
+		//Make the overlay window invisible and transparent to mouse events
+		[hiddenOverlay setIgnoresMouseEvents: YES];
+		[hiddenOverlay setBackgroundColor: [NSColor clearColor]];
+		[hiddenOverlay setReleasedWhenClosed: NO];
+		//Ensure it is on-screen at all times
+		[hiddenOverlay orderBack: self];
+		
+		[self addChildWindow: hiddenOverlay ordered: NSWindowAbove];
+	}
+}
+
+- (void) close
+{
+	//TODO: check if this is necessary or if NSWindow automatically removes
+	//its child windows when it closes.
+	if (hiddenOverlay)
+	{
+		[self removeChildWindow: hiddenOverlay];
+		[hiddenOverlay close];
+		[hiddenOverlay release];
+		hiddenOverlay = nil;
+	}
+	[super close];
 }
 @end

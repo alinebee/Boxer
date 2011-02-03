@@ -50,6 +50,7 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 
 @implementation BXRenderer
 @synthesize currentFrame, currentShader, frameRate, renderingTime, canvas, maintainsAspectRatio;
+@synthesize requiresDisplayCaptureSuppression;
 
 - (void) dealloc
 {
@@ -110,11 +111,12 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 	//Enable multithreaded OpenGL execution (if available)
 	CGLEnable(cgl_ctx, kCGLCEMPEngine);
 	
+	
 	//Check if the renderer is an Intel GMA 950, which has a buggy fullscreen mode
-	//(which we don't have a fix for yet but eventually will.)
 	GLint rendererID = 0;
 	CGLGetParameter(cgl_ctx, kCGLCPCurrentRendererID, &rendererID);
-	requiresFullScreenHack = (rendererID & kCGLRendererIDMatchingMask) == kCGLRendererIntel900ID;
+	requiresDisplayCaptureSuppression = (rendererID & kCGLRendererIDMatchingMask) == kCGLRendererIntel900ID;
+	
 	
 	//Check what the largest texture size we can support is
 	GLint maxTextureDims;

@@ -472,7 +472,12 @@ void MAPPER_LosingFocus();
 		mapGenerated = YES;
 	}
 	
-	if (keyCode < KEYMAP_SIZE) return map[keyCode];
+	//Override for transposed kVK_ISO_Section on ISO keyboards
+	if ((keyCode == kVK_ISO_Section || keyCode == kVK_ANSI_Grave) && KBGetLayoutType(LMGetKbdType()) == kKeyboardISO)
+	{
+		return (keyCode == kVK_ISO_Section) ? SDLK_BACKQUOTE : SDLK_WORLD_0;
+	}
+	else if (keyCode < KEYMAP_SIZE) return map[keyCode];
 	else return SDLK_UNKNOWN;
 }
 

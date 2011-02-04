@@ -67,10 +67,14 @@
 
 
 //Returns the DOS keyboard layout code for the currently-active input method in OS X.
-//Returns [BXInputHandler defaultKeyboardLayout] if no appropriate layout could be found.
+//Returns [BXInputHandler defaultKeyboardLayout] if no suitable layout could be found.
 - (NSString *)keyboardLayoutForCurrentInputMethod;
 
-//Returns a dictionary mapping OSX InputServices input method names to DOS keyboard layout codes. 
+//Returns the DOS keyboard layout code for the specified input source ID,
+//or nil if no suitable layout could be found.
++ (NSString *) keyboardLayoutForInputSourceID: (NSString *)inputSourceID;
+
+//Returns a dictionary mapping OS X InputServices input method names to DOS keyboard layout codes. 
 + (NSDictionary *)keyboardLayoutMappings;
 
 //The default DOS keyboard layout that should be used if no more specific one can be found.

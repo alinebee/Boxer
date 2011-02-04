@@ -190,100 +190,109 @@ void MAPPER_LosingFocus();
 #pragma mark -
 #pragma mark Keyboard layout methods
 
-- (NSString *)keyboardLayoutForCurrentInputMethod
+- (NSString *) keyboardLayoutForCurrentInputMethod
 {
 	TISInputSourceRef keyboardRef	= TISCopyCurrentKeyboardLayoutInputSource();
 	NSString *inputSourceID			= (NSString *)TISGetInputSourceProperty(keyboardRef, kTISPropertyInputSourceID);
 	CFRelease(keyboardRef);
 	
-	NSString *layout	= [[[self class] keyboardLayoutMappings] objectForKey: inputSourceID];
+	NSString *layout	= [[self class] keyboardLayoutForInputSourceID: inputSourceID];
 	if (!layout) layout	= [[self class] defaultKeyboardLayout];
 	return layout;
 }
 
-+ (NSDictionary *)keyboardLayoutMappings
+
++ (NSString *) keyboardLayoutForInputSourceID: (NSString *)inputSourceID
+{
+	//Input source IDs are a reverse-DNS string in the form com.companyname.layout.layoutName.
+	//To avoid false negatives, we only look at the last part of this string.
+	NSString *layoutName = [[inputSourceID componentsSeparatedByString: @"."] lastObject];
+	if (layoutName)
+	{
+		return [[self keyboardLayoutMappings] objectForKey: layoutName];
+	}
+	else return nil;
+}
+
++ (NSDictionary *) keyboardLayoutMappings
 {
 	//Note: these are not exact matches, and the ones marked with ?? are purely speculative.
-	//DOSBox doesn't even natively support all of them.
-	//This is a disgusting solution, and will be the first against the wall when the Unicode
-	//revolution comes. 
-	
 	static NSDictionary *mappings = nil;
 	if (!mappings) mappings = [[NSDictionary alloc] initWithObjectsAndKeys:
-							   @"be",	@"com.apple.keylayout.Belgian",
+							   @"be",	@"Belgian",
 							   
-							   @"bg",	@"com.apple.keylayout.Bulgarian",				
-							   @"bg",	@"com.apple.keylayout.Bulgarian-Phonetic",	//??
+							   @"bg",	@"Bulgarian",				
+							   @"bg",	@"Bulgarian-Phonetic",	//??
 							   
-							   @"br",	@"com.apple.keylayout.Brazilian",
+							   @"br",	@"Brazilian",
 							   
-							   @"us",	@"com.apple.keylayout.Canadian",
-							   @"ca",	@"com.apple.keylayout.Canadian-CSA",
+							   @"us",	@"Canadian",
+							   @"ca",	@"Canadian-CSA",
 							   
 							   //Note: DOS cz layout is QWERTY, not QWERTZ like the standard Mac Czech layout
-							   @"cz",	@"com.apple.keylayout.Czech",
-							   @"cz",	@"com.apple.keylayout.Czech-QWERTY",
+							   @"cz",	@"Czech",
+							   @"cz",	@"Czech-QWERTY",
 							   
-							   @"de",	@"com.apple.keylayout.Austrian",
-							   @"de",	@"com.apple.keylayout.German",
+							   @"de",	@"Austrian",
+							   @"de",	@"German",
 							   
-							   @"dk",	@"com.apple.keylayout.Danish",
+							   @"dk",	@"Danish",
 							   
-							   @"dv",	@"com.apple.keylayout.DVORAK-QWERTYCMD",
-							   @"dv",	@"com.apple.keylayout.Dvorak",
+							   @"dv",	@"DVORAK-QWERTYCMD",
+							   @"dv",	@"Dvorak",
 							   
-							   @"es",	@"com.apple.keylayout.Spanish",
-							   @"es",	@"com.apple.keylayout.Spanish-ISO",
+							   @"es",	@"Spanish",
+							   @"es",	@"Spanish-ISO",
 							   
-							   @"fi",	@"com.apple.keylayout.Finnish",
-							   @"fi",	@"com.apple.keylayout.FinnishExtended",
-							   @"fi",	@"com.apple.keylayout.FinnishSami-PC",		//??
+							   @"fi",	@"Finnish",
+							   @"fi",	@"FinnishExtended",
+							   @"fi",	@"FinnishSami-PC",		//??
 							   
 							   //There should be different DOS mappings for French and French Numerical
-							   @"fr",	@"com.apple.keylayout.French",
-							   @"fr",	@"com.apple.keylayout.French-numerical",
+							   @"fr",	@"French",
+							   @"fr",	@"French-numerical",
 							   
-							   @"gk",	@"com.apple.keylayout.Greek",
-							   @"gk",	@"com.apple.keylayout.GreekPolytonic",		//??
+							   @"gk",	@"Greek",
+							   @"gk",	@"GreekPolytonic",		//??
 							   
-							   @"hu",	@"com.apple.keylayout.Hungarian",
+							   @"hu",	@"Hungarian",
 							   
-							   @"is",	@"com.apple.keylayout.Icelandic",
+							   @"is",	@"Icelandic",
 							   
-							   @"it",	@"com.apple.keylayout.Italian",
-							   @"it",	@"com.apple.keylayout.Italian-Pro",			//??
+							   @"it",	@"Italian",
+							   @"it",	@"Italian-Pro",			//??
 							   
-							   @"nl",	@"com.apple.keylayout.Dutch",
+							   @"nl",	@"Dutch",
 							   
-							   @"no",	@"com.apple.keylayout.Norwegian",
-							   @"no",	@"com.apple.keylayout.NorwegianExtended",
-							   @"no",	@"com.apple.keylayout.NorwegianSami-PC",	//??
+							   @"no",	@"Norwegian",
+							   @"no",	@"NorwegianExtended",
+							   @"no",	@"NorwegianSami-PC",	//??
 							   
-							   @"pl",	@"com.apple.keylayout.Polish",
-							   @"pl",	@"com.apple.keylayout.PolishPro",			//??
+							   @"pl",	@"Polish",
+							   @"pl",	@"PolishPro",			//??
 							   
-							   @"po",	@"com.apple.keylayout.Portuguese",
+							   @"po",	@"Portuguese",
 							   
-							   @"ru",	@"com.apple.keylayout.Russian",				//??
-							   @"ru",	@"com.apple.keylayout.Russian-Phonetic",	//??
-							   @"ru",	@"com.apple.keylayout.RussianWin",			//??
+							   @"ru",	@"Russian",				//??
+							   @"ru",	@"Russian-Phonetic",	//??
+							   @"ru",	@"RussianWin",			//??
 							   
-							   @"sf",	@"com.apple.keylayout.SwissFrench",
-							   @"sg",	@"com.apple.keylayout.SwissGerman",
+							   @"sf",	@"SwissFrench",
+							   @"sg",	@"SwissGerman",
 							   
-							   @"sv",	@"com.apple.keylayout.Swedish",
-							   @"sv",	@"com.apple.keylayout.Swedish-Pro",
-							   @"sv",	@"com.apple.keylayout.SwedishSami-PC",		//??
+							   @"sv",	@"Swedish",
+							   @"sv",	@"Swedish-Pro",
+							   @"sv",	@"SwedishSami-PC",		//??
 							   
-							   @"uk",	@"com.apple.keylayout.British",
-							   @"uk",	@"com.apple.keylayout.Irish",				//??
-							   @"uk",	@"com.apple.keylayout.IrishExtended",		//??
-							   @"uk",	@"com.apple.keylayout.Welsh",				//??
+							   @"uk",	@"British",
+							   @"uk",	@"Irish",				//??
+							   @"uk",	@"IrishExtended",		//??
+							   @"uk",	@"Welsh",				//??
 							   
-							   @"us",	@"com.apple.keylayout.Australian",
-							   @"us",	@"com.apple.keylayout.Hawaiian",			//??
-							   @"us",	@"com.apple.keylayout.US",
-							   @"us",	@"com.apple.keylayout.USExtended",
+							   @"us",	@"Australian",
+							   @"us",	@"Hawaiian",			//??
+							   @"us",	@"US",
+							   @"us",	@"USExtended",
 							   nil];
 	return mappings;
 }
@@ -472,11 +481,12 @@ void MAPPER_LosingFocus();
 		mapGenerated = YES;
 	}
 	
-	//Override for transposed kVK_ISO_Section on ISO keyboards
+	//Correction for transposed kVK_ISO_Section/kVK_ANSI_Grave on ISO keyboards
 	if ((keyCode == kVK_ISO_Section || keyCode == kVK_ANSI_Grave) && KBGetLayoutType(LMGetKbdType()) == kKeyboardISO)
 	{
 		return (keyCode == kVK_ISO_Section) ? SDLK_BACKQUOTE : SDLK_WORLD_0;
 	}
+	
 	else if (keyCode < KEYMAP_SIZE) return map[keyCode];
 	else return SDLK_UNKNOWN;
 }

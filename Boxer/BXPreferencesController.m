@@ -87,12 +87,12 @@
 	{
 		if (flag)
 		{
-			[[NSApp delegate] applyShelfAppearanceToPath: path switchToShelfMode: YES];
+			[[NSApp delegate] applyShelfAppearanceToPath: path andSubFolders: YES switchToShelfMode: YES];
 		}
 		else
 		{
 			//Restore the folder to its unshelfed state
-			[[NSApp delegate] removeShelfAppearanceFromPath: path];
+			[[NSApp delegate] removeShelfAppearanceFromPath: path andSubFolders: YES];
 		}		
 	}
 }

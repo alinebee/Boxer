@@ -11,7 +11,6 @@
 
 #import "BXAppController.h"
 
-
 //What shelf appearance to use. Currently only used by assignGamesFolderPath.
 enum BXShelfTypes {
 	BXShelfAuto		= -1,
@@ -96,12 +95,17 @@ typedef NSInteger BXShelfAppearance;
 #pragma mark -
 #pragma mark Customising the games folder
 
-//Apply our custom shelf appearance to the specified path.
+//Apply our custom shelf appearance to the specified path,
+//and optionally all paths within it that contain gameboxes.
 //If switchMode is YES, the folder's Finder window will be switched to icon mode.
-- (void) applyShelfAppearanceToPath: (NSString *)path switchToShelfMode: (BOOL)switchMode;
+- (void) applyShelfAppearanceToPath: (NSString *)path
+					  andSubFolders: (BOOL)applyToSubFolders
+				  switchToShelfMode: (BOOL)switchMode;
 
-//Remove our custom shelf appearance from the specified path.
-- (void) removeShelfAppearanceFromPath: (NSString *)path;
+//Remove our custom shelf appearance from the specified path,
+//and optionally all paths within it that contain gameboxes.
+- (void) removeShelfAppearanceFromPath: (NSString *)path
+						 andSubFolders: (BOOL)applyToSubFolders;
 
 //Copy our sample games into the specified path.
 - (void) addSampleGamesToPath: (NSString *)path;
@@ -120,37 +124,3 @@ typedef NSInteger BXShelfAppearance;
 - (void) promptForMissingGamesFolderInWindow: (NSWindow *)window;
 @end
 
-
-//Add sample games to the specified path, as a fire-and-forget copy.
-//Used by BXAppController+BXGamesFolder addSampleGamesToPath:
-@interface BXSampleGamesCopy : NSOperation
-{
-	NSString *targetPath;
-	NSString *sourcePath;
-	NSFileManager *manager;
-	NSWorkspace *workspace;
-}
-@property (copy) NSString *targetPath;
-@property (copy) NSString *sourcePath;
-
-//Create a new copy operation from the specified source path to the specified path.
-- (id) initFromPath: (NSString *)source toPath: (NSString *)target;
-@end
-
-
-//Checks if one of our helper apps is present and up-to-date at the specified path.
-//Used by BXAppController+BXGamesFolder freshenImporterDroplet:addIfMissing:.
-@interface BXHelperAppCheck : NSOperation
-{
-	NSString *targetPath;
-	NSString *appPath;
-	NSFileManager *manager;
-	BOOL addIfMissing;
-}
-@property (copy) NSString *targetPath;
-@property (copy) NSString *appPath;
-@property (assign) BOOL addIfMissing;
-
-//Create a new app check for the specified path using the specified droplet.
-- (id) initWithTargetPath: (NSString *)pathToCheck forAppAtPath: (NSString *)pathToApp;
-@end

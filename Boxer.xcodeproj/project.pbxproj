@@ -35,6 +35,9 @@
 		9F2120FE1301597E002AB1B7 /* NSImage+BXSaveImages.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2120FD1301597E002AB1B7 /* NSImage+BXSaveImages.m */; };
 		9F2121E7130187A9002AB1B7 /* ShelfTemplateLeopard.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9F2121E5130187A9002AB1B7 /* ShelfTemplateLeopard.jpg */; };
 		9F2121E8130187A9002AB1B7 /* ShelfTemplateSnowLeopard.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9F2121E6130187A9002AB1B7 /* ShelfTemplateSnowLeopard.jpg */; };
+		9F2122E51301BD72002AB1B7 /* BXHelperAppCheck.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2122E41301BD72002AB1B7 /* BXHelperAppCheck.m */; };
+		9F2122EA1301BDE1002AB1B7 /* BXShelfAppearanceOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2122E91301BDE1002AB1B7 /* BXShelfAppearanceOperation.m */; };
+		9F2122EF1301BE6E002AB1B7 /* BXSampleGamesCopy.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2122EE1301BE6E002AB1B7 /* BXSampleGamesCopy.m */; };
 		9F2140FF0F59F28000A5A183 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F2140FE0F59F28000A5A183 /* QuartzCore.framework */; };
 		9F2292631225848000ABC0B3 /* WelcomeSpotlight.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F2292621225848000ABC0B3 /* WelcomeSpotlight.png */; };
 		9F24D2361224336E009C1817 /* Welcome.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F24D2351224336E009C1817 /* Welcome.xib */; };
@@ -416,6 +419,12 @@
 		9F2120FD1301597E002AB1B7 /* NSImage+BXSaveImages.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSImage+BXSaveImages.m"; path = "../NSImage+BXSaveImages.m"; sourceTree = "<group>"; };
 		9F2121E5130187A9002AB1B7 /* ShelfTemplateLeopard.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = ShelfTemplateLeopard.jpg; sourceTree = "<group>"; };
 		9F2121E6130187A9002AB1B7 /* ShelfTemplateSnowLeopard.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = ShelfTemplateSnowLeopard.jpg; sourceTree = "<group>"; };
+		9F2122E31301BD72002AB1B7 /* BXHelperAppCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXHelperAppCheck.h; sourceTree = "<group>"; };
+		9F2122E41301BD72002AB1B7 /* BXHelperAppCheck.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXHelperAppCheck.m; sourceTree = "<group>"; };
+		9F2122E81301BDE1002AB1B7 /* BXShelfAppearanceOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXShelfAppearanceOperation.h; sourceTree = "<group>"; };
+		9F2122E91301BDE1002AB1B7 /* BXShelfAppearanceOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXShelfAppearanceOperation.m; sourceTree = "<group>"; };
+		9F2122ED1301BE6E002AB1B7 /* BXSampleGamesCopy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXSampleGamesCopy.h; sourceTree = "<group>"; };
+		9F2122EE1301BE6E002AB1B7 /* BXSampleGamesCopy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXSampleGamesCopy.m; sourceTree = "<group>"; };
 		9F2140FE0F59F28000A5A183 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
 		9F2292621225848000ABC0B3 /* WelcomeSpotlight.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = WelcomeSpotlight.png; sourceTree = "<group>"; };
 		9F24D2351224336E009C1817 /* Welcome.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Welcome.xib; sourceTree = "<group>"; };
@@ -1139,6 +1148,12 @@
 				9F70A09412F7471E00D144D2 /* BXAppController+BXApplicationModes.m */,
 				9F160E6F1236B2A600F8768E /* BXAppController+BXGamesFolder.h */,
 				9F160E701236B2A600F8768E /* BXAppController+BXGamesFolder.m */,
+				9F2122E31301BD72002AB1B7 /* BXHelperAppCheck.h */,
+				9F2122E41301BD72002AB1B7 /* BXHelperAppCheck.m */,
+				9F2122E81301BDE1002AB1B7 /* BXShelfAppearanceOperation.h */,
+				9F2122E91301BDE1002AB1B7 /* BXShelfAppearanceOperation.m */,
+				9F2122ED1301BE6E002AB1B7 /* BXSampleGamesCopy.h */,
+				9F2122EE1301BE6E002AB1B7 /* BXSampleGamesCopy.m */,
 			);
 			name = "Application Delegate";
 			sourceTree = "<group>";
@@ -2460,6 +2475,9 @@
 				9F70A09512F7471E00D144D2 /* BXAppController+BXApplicationModes.m in Sources */,
 				9F2120F813015653002AB1B7 /* BXShelfArt.m in Sources */,
 				9F2120FE1301597E002AB1B7 /* NSImage+BXSaveImages.m in Sources */,
+				9F2122E51301BD72002AB1B7 /* BXHelperAppCheck.m in Sources */,
+				9F2122EA1301BDE1002AB1B7 /* BXShelfAppearanceOperation.m in Sources */,
+				9F2122EF1301BE6E002AB1B7 /* BXSampleGamesCopy.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

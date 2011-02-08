@@ -9,7 +9,7 @@
 //BXPathEnumerator is an NSDirectoryEnumerator wrapper with a bunch of convenience methods
 //for filtering out unwanted files.
 
-#import <Foundation/Foundation.h>
+#import <AppKit/AppKit.h>
 
 @interface BXPathEnumerator : NSEnumerator
 {
@@ -20,6 +20,9 @@
 	NSSet *fileTypes;
 	NSString *basePath;
 	NSString *currentPath;
+	
+	NSFileManager *manager;
+	NSWorkspace *workspace;
 }
 
 #pragma mark -
@@ -56,6 +59,9 @@
 
 //Return a new autoreleased enumerator for the specified file path.
 + (id) enumeratorAtPath: (NSString *)filePath;
+
+//Initialise a new emulator for the specified file path.
+- (id) initWithPath: (NSString *)filePath;
 
 //Passthroughs for NSDirectoryEnumerator methods.
 - (void) skipDescendents;

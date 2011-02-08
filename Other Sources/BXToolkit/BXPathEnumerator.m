@@ -26,35 +26,60 @@
 @synthesize fileTypes, skipHiddenFiles, skipSubdirectories, skipPackageContents;
 @synthesize basePath, currentPath;
 
+- (id) init
+{
+	if ((self = [super init]))
+	{
+		workspace = [[NSWorkspace alloc] init];
+		manager	= [[NSFileManager alloc] init];
+		
+		//Skip hidden files by default
+		[self setSkipHiddenFiles: YES];
+	}
+	return self;
+}
+
+- (id) initWithPath: (NSString *)filePath
+{
+	if ((self = [self init]))
+	{
+		NSDirectoryEnumerator *directoryEnumerator = [manager enumeratorAtPath: filePath];
+		
+		if (directoryEnumerator)
+		{
+			[self setEnumerator: directoryEnumerator];
+			[self setBasePath: filePath];
+		}
+		else
+		{
+			[self release];
+			return nil;
+		}
+	}
+	return self;
+}
+
 + (id) enumeratorAtPath: (NSString *)filePath
 {
-	NSDirectoryEnumerator *directoryEnumerator = [[NSFileManager defaultManager] enumeratorAtPath: filePath];
-	
-	if (directoryEnumerator)
-	{
-		id wrapper = [[self alloc] init];
-		[wrapper setEnumerator: directoryEnumerator];
-		[wrapper setBasePath: filePath];
-		//Skip hidden files by default
-		[wrapper setSkipHiddenFiles: YES];
-		return [wrapper autorelease];		
-	}
-	else return nil;
+	return [[[self alloc] initWithPath: filePath] autorelease];
 }
 
 - (void) dealloc
 {
-	[self setFileTypes: nil], [fileTypes release];
-	[self setEnumerator: nil], [enumerator release];
-	[self setBasePath: nil], [basePath release];
-	[self setCurrentPath: nil], [currentPath release];
+	[self setFileTypes: nil],	[fileTypes release];
+	[self setEnumerator: nil],	[enumerator release];
+	[self setBasePath: nil],	[basePath release];
+	[self setCurrentPath: nil],	[currentPath release];
+	
+	[manager release], manager = nil;
+	[workspace release], workspace = nil;
+	
 	[super dealloc];
 }
 
 - (id) nextObject
 {
 	NSString *path;
-	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	while ((path = [[self enumerator] nextObject]))
 	{
 		if ([self skipSubdirectories]) [self skipDescendents];

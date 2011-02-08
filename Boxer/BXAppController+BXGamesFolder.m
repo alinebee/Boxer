@@ -9,13 +9,15 @@
 #import "BXAppController+BXGamesFolder.h"
 
 #import "NDAlias+AliasFile.h"
-#import "Finder.h"
-#import "NSWorkspace+BXIcons.h"
-#import "BXPathEnumerator.h"
+#import "NSWorkspace+BXFileTypes.h"
 #import "BXGamesFolderPanelController.h"
-#import "BXCoverArt.h"
+
 #import "BXShelfArt.h"
 #import "NSImage+BXSaveImages.h"
+
+#import "BXSampleGamesCopy.h"
+#import "BXShelfAppearanceOperation.h"
+#import "BXHelperAppCheck.h"
 
 //For determining maximum Finder folder-background sizes
 #import <OpenGL/OpenGL.h>
@@ -258,7 +260,7 @@
 
 	
 	if (applyShelfAppearance)
-		[self applyShelfAppearanceToPath: newPath switchToShelfMode: YES];
+		[self applyShelfAppearanceToPath: newPath andSubFolders: YES switchToShelfMode: YES];
 	
 	if (addSampleGames)			[self addSampleGamesToPath: newPath];
 	if (addImporterDroplet)		[self addImporterDropletToPath: newPath];
@@ -281,7 +283,7 @@
 		if ([manager fileExistsAtPath: backgroundPath])
 		{
 			[self setAppliesShelfAppearanceToGamesFolder: YES];
-			[self applyShelfAppearanceToPath: path switchToShelfMode: NO];
+			[self applyShelfAppearanceToPath: path andSubFolders: YES switchToShelfMode: NO];
 		}
 		
 		//Set the actual games folder last, so that any icon changes from
@@ -325,84 +327,54 @@
 	return [NSSearchPathForDirectoriesInDomains(NSDesktopDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
 }
 
-- (void) applyShelfAppearanceToPath: (NSString *)path switchToShelfMode: (BOOL)switchMode
+- (void) applyShelfAppearanceToPath: (NSString *)path
+					  andSubFolders: (BOOL)applyToSubFolders
+				  switchToShelfMode: (BOOL)switchMode
 {	
-	//Apply our shelf icon to the folder, if it doesn't have a custom icon of its own
-	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	
-	if (![workspace fileHasCustomIcon: path])
-	{
-		NSImage *image = [NSImage imageNamed: @"gamefolder"];
-		[workspace setIcon: image forFile: path options: 0];
-	}
-	
-	//Now apply the icon mode appearance to the folder's Finder window
-	
 	//NOTE: if no shelf artwork could be found or generated, then bail out early
 	NSString *backgroundImagePath = [self shelfArtworkPath];
 	if (backgroundImagePath == nil) return;
 	
+	NSImage *folderIcon = [NSImage imageNamed: @"gamefolder"];
 	
-	//Go go Scripting Bridge
-	FinderApplication *finder = [SBApplication applicationWithBundleIdentifier: @"com.apple.finder"];
-	FinderFolder *folder			= [[finder folders] objectAtLocation: [NSURL fileURLWithPath: path]];
-	FinderFile *backgroundPicture	= [[finder files] objectAtLocation: [NSURL fileURLWithPath: backgroundImagePath]];
+	BXShelfAppearanceApplicator *applicator = [[BXShelfAppearanceApplicator alloc] initWithTargetPath: path
+																				  backgroundImagePath: backgroundImagePath
+																								 icon: folderIcon];
 	
-	//IMPLEMENTATION NOTE: [folder containerWindow] returns an SBObject instead of a FinderWindow.
-	//So to actually DO anything with that window, we need to retrieve the value manually instead.
-	//Furthermore, [FinderFinderWindow class] doesn't exist at compile time, so we need to retrieve
-	//THAT at runtime too.
-	//FFFFUUUUUUUUUCCCCCCCCKKKK AAAAAPPPPLLLLEEESSCCRRRIIPPPPTTTT.
-	FinderFinderWindow *window = (FinderFinderWindow *)[folder propertyWithClass: NSClassFromString(@"FinderFinderWindow") code: (AEKeyword)'cwnd'];
+	[applicator setAppliesToSubFolders: applyToSubFolders];
+	[applicator setSwitchToIconView: switchMode];
 	
-	FinderIconViewOptions *options = window.iconViewOptions;
+	//Cancel any currently-active shelf-appearance application or removal
+	for (NSOperation *operation in [[self generalQueue] operations])
+	{
+		if ([operation isKindOfClass: [BXShelfAppearanceOperation class]] &&
+			[[(BXShelfAppearanceOperation *)operation targetPath] isEqualToString: path]) [operation cancel];
+	}
 	
-	options.textSize			= 12;
-	options.iconSize			= 128;
-	options.backgroundPicture	= backgroundPicture;
-	options.labelPosition		= FinderEposBottom;
-	options.showsItemInfo		= NO;
-	if (options.arrangement == FinderEarrNotArranged)
-		options.arrangement		= FinderEarrArrangedByName;
-	
-	if (switchMode) window.currentView = FinderEcvwIconView;
+	[[self generalQueue] addOperation: applicator];
+	[applicator release];
 }
 
 - (void) removeShelfAppearanceFromPath: (NSString *)path
+						 andSubFolders: (BOOL)applyToSubFolders
 {
-	NSURL *folderURL = [NSURL fileURLWithPath: path];
-	NSURL *parentFolderURL = [NSURL fileURLWithPath: [path stringByDeletingLastPathComponent]];
+	//Revert the folder's appearance to that of its parent folder
+	NSString *parentPath = [path stringByDeletingLastPathComponent];
 	
-	FinderApplication *finder	= [SBApplication applicationWithBundleIdentifier: @"com.apple.finder"];
-	FinderFolder *folder		= [[finder folders] objectAtLocation: folderURL];
-	FinderFolder *parentFolder	= [[finder folders] objectAtLocation: parentFolderURL];
+	BXShelfAppearanceRemover *remover = [[BXShelfAppearanceRemover alloc] initWithTargetPath: path
+																		  appearanceFromPath: parentPath];
 	
-	//To reset the window appearance, copy its properties from its parent folder
-	Class windowClass = NSClassFromString(@"FinderFinderWindow");
-	AEKeyword propertyCode = (AEKeyword)'cwnd';
-	FinderFinderWindow *window = (FinderFinderWindow *)[folder propertyWithClass: windowClass code: propertyCode];
-	FinderFinderWindow *parentWindow = (FinderFinderWindow *)[parentFolder propertyWithClass: windowClass code: propertyCode];
+	[remover setAppliesToSubFolders: applyToSubFolders];
 	
-	FinderIconViewOptions *options = window.iconViewOptions;
-	FinderIconViewOptions *parentOptions = parentWindow.iconViewOptions;
-	
-	//IMPLEMENTATION NOTE: In OS X 10.6, setting the background colour is enough to clear the background picture.
-	//In 10.5 this isn't sufficient - but we can't just set it to nil, or to a nonexistent file, or the parent 
-	//folder's background image, as none of these work.
-	//So, we set it to an empty PNG file we keep around for these occasions. Fuck the world.
-	if ([BXAppController isRunningOnLeopard])
+	//Cancel any currently-active shelf-appearance application or removal
+	for (NSOperation *operation in [[self generalQueue] operations])
 	{
-		NSURL *backgroundImageURL	= [NSURL fileURLWithPath: [[NSBundle mainBundle] pathForImageResource: @"BlankShelves"]];
-		FinderFile *blankPicture	= [[finder files] objectAtLocation: backgroundImageURL];
-		options.backgroundPicture	= (FinderFile *)blankPicture;
+		if ([operation isKindOfClass: [BXShelfAppearanceOperation class]] &&
+			[[(BXShelfAppearanceOperation *)operation targetPath] isEqualToString: path]) [operation cancel];
 	}
-
-	options.iconSize			= parentOptions.iconSize;
-	options.backgroundColor		= parentOptions.backgroundColor;
-	options.textSize			= parentOptions.textSize;
-	options.labelPosition		= parentOptions.labelPosition;
-	options.showsItemInfo		= parentOptions.showsItemInfo;
-		
+	
+	[[self generalQueue] addOperation: remover];
+	[remover release];	
 }
 
 - (BOOL) appliesShelfAppearanceToGamesFolder
@@ -515,11 +487,9 @@
 	{
 		//Each time after we open the game folder, reapply the shelf appearance.
 		//We do this because Finder can sometimes 'lose' the appearance.
-		//IMPLEMENTATION NOTE: we now do this after the folder has opened,
-		//to avoid a delay while applying the style.
 		if ([self appliesShelfAppearanceToGamesFolder])
 		{
-			[self applyShelfAppearanceToPath: path switchToShelfMode: NO];
+			[self applyShelfAppearanceToPath: path andSubFolders: YES switchToShelfMode: NO];
 		}
 		
 		//Also check that there's an up-to-date game importer droplet in the folder.
@@ -539,154 +509,6 @@
 		//deleted behind our backs, so prompt the user to relocate it.
 		NSWindow *window = [sender respondsToSelector: @selector(window)] ? [sender window] : nil;
 		[self promptForMissingGamesFolderInWindow: window];
-	}
-}
-@end
-
-
-@implementation BXSampleGamesCopy
-@synthesize sourcePath, targetPath;
-
-- (id) initFromPath: (NSString *)source toPath: (NSString *)target
-{
-	if ((self = [super init]))
-	{
-		[self setSourcePath: source];
-		[self setTargetPath: target];
-		manager = [[NSFileManager alloc] init];
-		workspace = [[NSWorkspace alloc] init];
-	}
-	return self;
-}
-
-- (void) dealloc
-{
-	[self setSourcePath: nil], [sourcePath release];
-	[self setTargetPath: nil], [targetPath release];
-	[manager release], manager = nil;
-	[workspace release], workspace = nil;
-	[super dealloc];
-}
-
-- (void) main
-{
-	if ([self isCancelled]) return;
-	
-	NSDictionary *attrs	= [NSDictionary dictionaryWithObject: [NSNumber numberWithBool: YES]
-													  forKey: NSFileExtensionHidden];
-	
-	for (NSString *gamePath in [manager contentsOfDirectoryAtPath: sourcePath error: NULL])
-	{
-		if ([self isCancelled]) return;
-		
-		NSString *gameSource		= [sourcePath stringByAppendingPathComponent: gamePath];
-		NSString *gameDestination	= [targetPath stringByAppendingPathComponent: gamePath];
-		
-		//If the folder already has a game of that name, don't copy the game
-		//(we don’t want to overwrite someone's savegames)
-		if (![manager fileExistsAtPath: gameDestination])
-		{
-			[manager copyItemAtPath: gameSource toPath: gameDestination error: NULL];
-			[manager setAttributes: attrs ofItemAtPath: gameDestination error: NULL];
-			
-			NSString *gameName = [[gamePath lastPathComponent] stringByDeletingPathExtension];
-			NSString *iconPath = [[NSBundle mainBundle] pathForResource: gameName
-																 ofType: @"jpg"
-															inDirectory: @"Sample Game Icons"];
-			
-			//Generate a cover art image from this icon (cheaper than storing a full icns file)
-			if (iconPath)
-			{
-				NSImage *image = [[NSImage alloc] initWithContentsOfFile: iconPath];
-				if (image)
-				{
-					NSImage *iconForGame = [BXCoverArt coverArtWithImage: image];
-					[workspace setIcon: iconForGame forFile: gameDestination options: 0];
-				}
-				[image release];
-			}
-		}
-	}	
-}
-
-@end
-
-
-@implementation BXHelperAppCheck
-@synthesize targetPath, appPath, addIfMissing;
-
-- (id) initWithTargetPath: (NSString *)pathToCheck forAppAtPath: (NSString *)pathToApp
-{
-	if ((self = [super init]))
-	{
-		[self setTargetPath: pathToCheck];
-		[self setAppPath: pathToApp];
-		manager = [[NSFileManager alloc] init];
-	}
-	return self;
-}
-
-- (void) dealloc
-{
-	[self setTargetPath: nil], [targetPath release];
-	[self setAppPath: nil], [appPath release];
-	[manager release], manager = nil;
-	
-	[super dealloc];
-}
-
-- (void) main
-{
-	//Bail out early if already cancelled
-	if ([self isCancelled]) return;
-	
-	//Bail out early if we don't have the necessary paths
-	if (!targetPath || !appPath) return;
-	
-	//Get the properties of the app for comparison
-	NSBundle *app		= [NSBundle bundleWithPath: appPath];
-	NSString *appName	= [[app objectForInfoDictionaryKey: @"CFBundleDisplayName"]
-							stringByAppendingPathExtension: @"app"];
-	
-	NSString *appVersion	= [app objectForInfoDictionaryKey: (NSString *)kCFBundleVersionKey];
-	NSString *appIdentifier = [app bundleIdentifier];
-	
-	BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: targetPath];
-	[enumerator setSkipSubdirectories: YES];
-	[enumerator setSkipPackageContents: YES];
-	[enumerator setFileTypes: [NSSet setWithObject: @"com.apple.application"]];
-	
-	//Trawl through the games folder looking for apps with the same identifier
-	for (NSString *filePath in enumerator)
-	{
-		//Bail out if we're cancelled
-		if ([self isCancelled]) return;
-
-		NSBundle *checkedApp = [NSBundle bundleWithPath: filePath];
-		if ([[checkedApp bundleIdentifier] isEqualToString: appIdentifier])
-		{
-			//Check if the app is up-to-date: if not, replace it with our own app
-			NSString *checkedAppVersion = [checkedApp objectForInfoDictionaryKey: (NSString *)kCFBundleVersionKey];
-			if (NSOrderedAscending == [checkedAppVersion compare: appVersion options: NSNumericSearch])
-			{
-				BOOL deleted = [manager removeItemAtPath: filePath error: nil];
-				if (deleted)
-				{
-					NSString *newPath = [[filePath stringByDeletingLastPathComponent] stringByAppendingPathComponent: appName];
-					[manager copyItemAtPath: appPath toPath: newPath error: nil];
-				}
-			}
-			//Bail out once we've found a matching app
-			return;
-		}
-	}
-	
-	//If we got this far, then we didn't find any droplet:
-	//copy a new one into the target folder if desired
-	if (addIfMissing)
-	{
-		NSString *newPath = [targetPath stringByAppendingPathComponent: appName];
-		[manager copyItemAtPath: appPath toPath: newPath error: nil];
 	}
 }
 @end

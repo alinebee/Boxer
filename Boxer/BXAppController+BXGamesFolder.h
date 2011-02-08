@@ -49,9 +49,14 @@ typedef NSInteger BXShelfAppearance;
 //The value for this property is persisted in user defaults.
 @property (assign, nonatomic) BOOL appliesShelfAppearanceToGamesFolder;
 
-//Returns whether we have a games folder preference.
-//This does not check if the folder actually exists.
+//Whether we have a games folder preference.
+//(This does not check if the folder actually exists.)
 @property (readonly, nonatomic) BOOL gamesFolderChosen;
+
+//The path to the shelf artwork to use for games folder backgrounds.
+//This will automatically generate the artwork the first time it is needed.
+//Will be nil if the artwork could not be found or created.
+@property (readonly, nonatomic) NSString *shelfArtworkPath;
 
 
 #pragma mark -
@@ -60,6 +65,7 @@ typedef NSInteger BXShelfAppearance;
 //Returns an array of suggested default paths for the games folder location
 //(which may or may not already exist) for selection when Boxer is first launched.
 + (NSArray *) defaultGamesFolderPaths;
+
 
 #pragma mark -
 #pragma mark Games folder handling

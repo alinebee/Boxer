@@ -42,9 +42,13 @@ enum {
 //A general operation queue for non-session-specific operations.
 @property (retain, readonly) NSOperationQueue *generalQueue;
 
+//Returns YES if there are other Boxer processes currently running, no otherwise.
++ (BOOL) otherBoxersActive;
 
-//Called at class initialization time to initialize Boxer's own user defaults.
-+ (void) setupDefaults;
+//Returns whether the application is running on 10.5 Leopard.
+//This is used to trigger certain bugfixes and adjusts the art we use.
++ (BOOL) isRunningOnLeopard;
+
 
 #pragma mark -
 #pragma mark UTIs
@@ -56,6 +60,26 @@ enum {
 + (NSSet *) mountableFolderTypes;	//All mountable folder UTIs supported by Boxer
 + (NSSet *) mountableImageTypes;	//All mountable disk-image UTIs supported by Boxer
 + (NSSet *) mountableTypes;			//All mountable UTIs supported by Boxer
+
+
+#pragma mark -
+#pragma mark Supporting directories
+
+//Returns Boxer's application support path.
+//If createIfMissing is YES, the folder will be created if it does not exist.
++ (NSString *) supportPathCreatingIfMissing: (BOOL)createIfMissing;
+//Returns Boxer's temporary folder path.
+
+//This will be automatically deleted when all Boxer processes exit.
+//If createIfMissing is YES, the folder will be created if it does not exist.
++ (NSString *) temporaryPathCreatingIfMissing: (BOOL)createIfMissing;
+
+
+#pragma mark -
+#pragma mark Initialization and teardown
+
+//Called at class initialization time to initialize Boxer's own user defaults.
++ (void) setupDefaults;
 
 
 #pragma mark -
@@ -128,9 +152,5 @@ enum {
 //Return the NSWindow located at the specified point.
 //TODO: this should probably be an NSApplication category instead.
 - (NSWindow *) windowAtPoint: (NSPoint)screenPoint;
-
-//Returns whether is running on 10.5 Leopard.
-//This is used to trigger certain bugfixes and adjusts the art we use.
-+ (BOOL) isRunningOnLeopard;
 
 @end

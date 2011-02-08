@@ -135,6 +135,48 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	return (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_5);
 }
 
++ (BOOL) otherBoxersActive
+{
+	NSString *bundleIdentifier	= [[NSBundle mainBundle] bundleIdentifier];
+	NSWorkspace *workspace		= [NSWorkspace sharedWorkspace];
+	
+	for (NSDictionary *appDetails in [workspace launchedApplications])
+	{
+		if ([[appDetails objectForKey: @"NSApplicationBundleIdentifier"] isEqualToString: bundleIdentifier]) return YES;
+	}
+	return NO;
+}
+
++ (NSString *) supportPathCreatingIfMissing: (BOOL)createIfMissing
+{
+	NSString *basePath = [NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
+	NSString *supportPath = [basePath stringByAppendingPathComponent: @"Boxer"];
+	
+	if (createIfMissing)
+	{
+		[[NSFileManager defaultManager] createDirectoryAtPath: supportPath
+								  withIntermediateDirectories: YES
+												   attributes: nil
+														error: NULL];
+	}
+	return supportPath;
+}
+
++ (NSString *) temporaryPathCreatingIfMissing: (BOOL)createIfMissing
+{
+	NSString *basePath = NSTemporaryDirectory();
+	NSString *tempPath = [basePath stringByAppendingPathComponent: @"Boxer"];
+	
+	if (createIfMissing)
+	{
+		[[NSFileManager defaultManager] createDirectoryAtPath: tempPath
+								  withIntermediateDirectories: YES
+												   attributes: nil
+														error: NULL];
+	}
+	return tempPath;
+}
+
 #pragma mark -
 #pragma mark Initialization and teardown
 
@@ -209,17 +251,11 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 #pragma mark -
 #pragma mark Application open/closing behaviour
 
-//Quit after the last window was closed if we are a 'subsidiary' process, to avoid leaving extra Boxers littering the Dock
+//Quit after the last window was closed if we are a 'subsidiary' process,
+//to avoid leaving extra Boxers littering the Dock
 - (BOOL) applicationShouldTerminateAfterLastWindowClosed: (NSApplication *)sender
 {
-	NSString *bundleIdentifier	= [[NSBundle mainBundle] bundleIdentifier];
-	NSWorkspace *workspace		= [NSWorkspace sharedWorkspace];
-	NSUInteger numBoxers = 0;
-	for (NSDictionary *appDetails in [workspace launchedApplications])
-	{
-		if ([[appDetails objectForKey: @"NSApplicationBundleIdentifier"] isEqualToString: bundleIdentifier]) numBoxers++;
-	}
-	return numBoxers > 1;
+	return [[self class] otherBoxersActive];
 }
 
 
@@ -310,10 +346,17 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	//Restore Spaces shortcuts if we were overriding them
 	[self syncSpacesKeyboardShortcuts];
 	
-	
 	//Tell any operations in our queue to cancel themselves
 	[generalQueue cancelAllOperations];
 	[generalQueue waitUntilAllOperationsAreFinished];
+	
+	//If we are the last Boxer process, remove any temporary folder on our way out
+	if (![[self class] otherBoxersActive])
+	{
+		NSFileManager *manager = [NSFileManager defaultManager];
+		NSString *tempPath = [[self class] temporaryPathCreatingIfMissing: NO];
+		[manager removeItemAtPath: tempPath error: NULL];
+	}
 }
 
 

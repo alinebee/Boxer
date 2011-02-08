@@ -1,5 +1,5 @@
 /* 
- Boxer is copyright 2009 Alun Bestor and contributors.
+ Boxer is copyright 2010-2011 Alun Bestor and contributors.
  Boxer is released under the GNU General Public License 2.0. A full copy of this license can be
  found in this XCode project at Resources/English.lproj/GNU General Public License.txt, or read
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
@@ -20,8 +20,8 @@
 @property (retain) NSImage *sourceImage;
 
 
-//Methods governing art appearance
-//--------------------------------
+#pragma mark -
+#pragma mark Art assets
 
 //Returns the drop shadow effect to be applied to icons of the specified size.
 //This shadow ensures the icon stands out on light backgrounds, such as a Finder folder window.
@@ -36,8 +36,8 @@
 + (NSImage *) shineForSize: (NSSize) iconSize;
 
 
-//Rendering methods
-//-----------------
+#pragma mark -
+#pragma mark Rendering methods
 
 //Draws the source image as cover art into the specified frame in the current graphics context.
 - (void) drawInRect: (NSRect)frame;
@@ -54,6 +54,7 @@
 
 //Returns a cover art image rendered from the specified image to 512, 256, 128 and 32x32 sizes,
 //suitable for use as an OS X icon.
+//Note that this returns an NSImage directly, not a BXCoverArt instance.
 + (NSImage *) coverArtWithImage: (NSImage *)image;
 
 @end

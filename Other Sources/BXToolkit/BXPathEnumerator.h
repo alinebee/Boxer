@@ -6,7 +6,8 @@
  */
 
 
-//BXPathEnumerator is an NSDirectoryEnumerator wrapper with a bunch of convenience methods for filtering out unwanted files.
+//BXPathEnumerator is an NSDirectoryEnumerator wrapper with a bunch of convenience methods
+//for filtering out unwanted files.
 
 #import <Foundation/Foundation.h>
 
@@ -29,13 +30,16 @@
 
 //The base path we are iterating.
 @property (readonly, copy, nonatomic) NSString *basePath;
+
 //The full path of the last file returned by nextObject.
 @property (readonly, copy, nonatomic) NSString *currentPath;
 
 //Whether nextObject should ignore hidden files. Is YES by default.
 @property (assign, nonatomic) BOOL skipHiddenFiles;
+
 //Whether nextObject should only enumerate the base path, skipping all subdirectories. Is NO by default.
 @property (assign, nonatomic) BOOL skipSubdirectories;
+
 //Whether nextObject should skip over files located in packages (the packages themselves will still be returned.) Is NO by default.
 @property (assign, nonatomic) BOOL skipPackageContents;
 

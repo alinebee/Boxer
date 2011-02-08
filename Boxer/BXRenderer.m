@@ -119,7 +119,7 @@ const CGFloat BXScalingBufferScaleCutoff = 3.0f;
 	
 	
 	//Check what the largest texture size we can support is
-	GLint maxTextureDims;
+	GLint maxTextureDims = 0;
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureDims);
 	maxTextureSize = CGSizeMake((CGFloat)maxTextureDims, (CGFloat)maxTextureDims);
 	

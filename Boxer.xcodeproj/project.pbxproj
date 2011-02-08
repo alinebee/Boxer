@@ -31,6 +31,10 @@
 		9F20C28B11E5D848005AF541 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28A11E5D848005AF541 /* Sparkle.framework */; };
 		9F20C28E11E5D8B4005AF541 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28D11E5D8B4005AF541 /* QTKit.framework */; };
 		9F20C29711E5DA68005AF541 /* Sparkle.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28A11E5D848005AF541 /* Sparkle.framework */; };
+		9F2120F813015653002AB1B7 /* BXShelfArt.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2120F713015653002AB1B7 /* BXShelfArt.m */; };
+		9F2120FE1301597E002AB1B7 /* NSImage+BXSaveImages.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2120FD1301597E002AB1B7 /* NSImage+BXSaveImages.m */; };
+		9F2121E7130187A9002AB1B7 /* ShelfTemplateLeopard.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9F2121E5130187A9002AB1B7 /* ShelfTemplateLeopard.jpg */; };
+		9F2121E8130187A9002AB1B7 /* ShelfTemplateSnowLeopard.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9F2121E6130187A9002AB1B7 /* ShelfTemplateSnowLeopard.jpg */; };
 		9F2140FF0F59F28000A5A183 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F2140FE0F59F28000A5A183 /* QuartzCore.framework */; };
 		9F2292631225848000ABC0B3 /* WelcomeSpotlight.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F2292621225848000ABC0B3 /* WelcomeSpotlight.png */; };
 		9F24D2361224336E009C1817 /* Welcome.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F24D2351224336E009C1817 /* Welcome.xib */; };
@@ -85,8 +89,6 @@
 		9F59DEDA10B0159A008DBBC1 /* BXProgramPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F59DED910B0159A008DBBC1 /* BXProgramPanelController.m */; };
 		9F59DEDF10B01743008DBBC1 /* ProgramPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F59DEDD10B01743008DBBC1 /* ProgramPanel.xib */; };
 		9F61931B1233D8F000F35AB4 /* BXTabbedWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F61931A1233D8F000F35AB4 /* BXTabbedWindowController.m */; };
-		9F61941212340CA100F35AB4 /* ShelvesForSnowLeopard.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9F61941012340CA100F35AB4 /* ShelvesForSnowLeopard.jpg */; };
-		9F61941312340CA100F35AB4 /* ShelvesForLeopard.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9F61941112340CA100F35AB4 /* ShelvesForLeopard.jpg */; };
 		9F61942412340F5400F35AB4 /* ScriptingBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F61942312340F5400F35AB4 /* ScriptingBridge.framework */; };
 		9F61FC8510DE3F7F00F3896C /* BXGameProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F61FC8410DE3F7F00F3896C /* BXGameProfile.m */; };
 		9F6311090F70F54300AB1155 /* BXHelpMenuController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F6311080F70F54300AB1155 /* BXHelpMenuController.m */; };
@@ -309,7 +311,6 @@
 		9FDC5476120EC8B40063B33D /* BXImportInstallerPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FDC5475120EC8B40063B33D /* BXImportInstallerPanelController.m */; };
 		9FDCA790118F2B7900E2FD74 /* BXCoalface.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCA78F118F2B7900E2FD74 /* BXCoalface.mm */; };
 		9FDCDEFD11B5B83B0032DA4E /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = 9FDCDEFC11B5B83B0032DA4E /* dsa_pub.pem */; };
-		9FE201A60F6D599C00B3A38C /* libz.1.2.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FE201A50F6D599C00B3A38C /* libz.1.2.3.dylib */; };
 		9FE202480F6D749500B3A38C /* Snapshot.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9FE202470F6D749500B3A38C /* Snapshot.aiff */; };
 		9FE2172E121EED1E001452E3 /* ImportCoverArtTip.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE2172A121EED1E001452E3 /* ImportCoverArtTip.png */; };
 		9FE2172F121EED1E001452E3 /* ImportRenameTip.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE2172C121EED1E001452E3 /* ImportRenameTip.png */; };
@@ -409,6 +410,12 @@
 		9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXEmulator.mm; sourceTree = "<group>"; };
 		9F20C28A11E5D848005AF541 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
 		9F20C28D11E5D8B4005AF541 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = "/Volumes/Macintosh HD/System/Library/Frameworks/QTKit.framework"; sourceTree = "<absolute>"; };
+		9F2120F613015653002AB1B7 /* BXShelfArt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXShelfArt.h; sourceTree = "<group>"; };
+		9F2120F713015653002AB1B7 /* BXShelfArt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXShelfArt.m; sourceTree = "<group>"; };
+		9F2120FC1301597E002AB1B7 /* NSImage+BXSaveImages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSImage+BXSaveImages.h"; path = "../NSImage+BXSaveImages.h"; sourceTree = "<group>"; };
+		9F2120FD1301597E002AB1B7 /* NSImage+BXSaveImages.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSImage+BXSaveImages.m"; path = "../NSImage+BXSaveImages.m"; sourceTree = "<group>"; };
+		9F2121E5130187A9002AB1B7 /* ShelfTemplateLeopard.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = ShelfTemplateLeopard.jpg; sourceTree = "<group>"; };
+		9F2121E6130187A9002AB1B7 /* ShelfTemplateSnowLeopard.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = ShelfTemplateSnowLeopard.jpg; sourceTree = "<group>"; };
 		9F2140FE0F59F28000A5A183 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
 		9F2292621225848000ABC0B3 /* WelcomeSpotlight.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = WelcomeSpotlight.png; sourceTree = "<group>"; };
 		9F24D2351224336E009C1817 /* Welcome.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Welcome.xib; sourceTree = "<group>"; };
@@ -494,8 +501,6 @@
 		9F59DEDE10B01743008DBBC1 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/ProgramPanel.xib; sourceTree = "<group>"; };
 		9F6193191233D8F000F35AB4 /* BXTabbedWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXTabbedWindowController.h; sourceTree = "<group>"; };
 		9F61931A1233D8F000F35AB4 /* BXTabbedWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXTabbedWindowController.m; sourceTree = "<group>"; };
-		9F61941012340CA100F35AB4 /* ShelvesForSnowLeopard.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = ShelvesForSnowLeopard.jpg; sourceTree = "<group>"; };
-		9F61941112340CA100F35AB4 /* ShelvesForLeopard.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = ShelvesForLeopard.jpg; sourceTree = "<group>"; };
 		9F61942312340F5400F35AB4 /* ScriptingBridge.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ScriptingBridge.framework; path = System/Library/Frameworks/ScriptingBridge.framework; sourceTree = SDKROOT; };
 		9F61FC8310DE3F7F00F3896C /* BXGameProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXGameProfile.h; sourceTree = "<group>"; };
 		9F61FC8410DE3F7F00F3896C /* BXGameProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGameProfile.m; sourceTree = "<group>"; };
@@ -814,8 +819,8 @@
 		9FAD43BF10A341F6007E8C0D /* UKMainThreadProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UKMainThreadProxy.m; sourceTree = "<group>"; };
 		9FADFE5311EC7E1700990E91 /* BXDigest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDigest.h; sourceTree = "<group>"; };
 		9FADFE5411EC7E1700990E91 /* BXDigest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDigest.m; sourceTree = "<group>"; };
-		9FADFE9511EC932800990E91 /* NSData+HexStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+HexStrings.h"; sourceTree = "<group>"; };
-		9FADFE9611EC932800990E91 /* NSData+HexStrings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+HexStrings.m"; sourceTree = "<group>"; };
+		9FADFE9511EC932800990E91 /* NSData+HexStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSData+HexStrings.h"; path = "../NSData+HexStrings.h"; sourceTree = "<group>"; };
+		9FADFE9611EC932800990E91 /* NSData+HexStrings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSData+HexStrings.m"; path = "../NSData+HexStrings.m"; sourceTree = "<group>"; };
 		9FAE9B8A11F1D7CF000363F7 /* GameDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = GameDefaults.plist; sourceTree = "<group>"; };
 		9FB4F9E211957B55006C8AC9 /* BXFrameBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFrameBuffer.h; sourceTree = "<group>"; };
 		9FB4F9E311957B55006C8AC9 /* BXFrameBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFrameBuffer.m; sourceTree = "<group>"; };
@@ -904,7 +909,6 @@
 		9FDCA78F118F2B7900E2FD74 /* BXCoalface.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXCoalface.mm; sourceTree = "<group>"; };
 		9FDCDEFC11B5B83B0032DA4E /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub.pem; sourceTree = "<group>"; };
 		9FDD4CB411E619D50035BA9E /* CGSPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGSPrivate.h; sourceTree = "<group>"; };
-		9FE201A50F6D599C00B3A38C /* libz.1.2.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.3.dylib; path = usr/lib/libz.1.2.3.dylib; sourceTree = SDKROOT; };
 		9FE202470F6D749500B3A38C /* Snapshot.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = Snapshot.aiff; sourceTree = "<group>"; };
 		9FE2172B121EED1E001452E3 /* English */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = English; path = English.lproj/ImportCoverArtTip.png; sourceTree = "<group>"; };
 		9FE2172D121EED1E001452E3 /* English */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = English; path = English.lproj/ImportRenameTip.png; sourceTree = "<group>"; };
@@ -969,7 +973,6 @@
 				9FBC3C790F56E0D7001811F2 /* CoreMIDI.framework in Frameworks */,
 				9F2140FF0F59F28000A5A183 /* QuartzCore.framework in Frameworks */,
 				9F4E042C0F67E72300427D50 /* AudioToolbox.framework in Frameworks */,
-				9FE201A60F6D599C00B3A38C /* libz.1.2.3.dylib in Frameworks */,
 				9FA2E596109D251100E50623 /* BGHUDAppKit.framework in Frameworks */,
 				9F6BA6F910A9FB92005A3E2A /* Growl.framework in Frameworks */,
 				9F8A976010E7EDDE00A4B72A /* libicucore.dylib in Frameworks */,
@@ -1102,7 +1105,6 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				9FE201A50F6D599C00B3A38C /* libz.1.2.3.dylib */,
 				9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */,
 				9FBC3C130F56D6E8001811F2 /* Bundled Frameworks */,
 				1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */,
@@ -1293,6 +1295,8 @@
 				9F59DA9E10AEF9E0008DBBC1 /* BXCoverArt.m */,
 				9F2AC6E210EFFE8600CFFF72 /* BXBootlegCoverArt.h */,
 				9F2AC6E310EFFE8600CFFF72 /* BXBootlegCoverArt.m */,
+				9F2120F613015653002AB1B7 /* BXShelfArt.h */,
+				9F2120F713015653002AB1B7 /* BXShelfArt.m */,
 			);
 			name = Artwork;
 			sourceTree = "<group>";
@@ -1830,6 +1834,10 @@
 			isa = PBXGroup;
 			children = (
 				9F0F2B9712AD464800CD7078 /* Operations */,
+				9FADFE9511EC932800990E91 /* NSData+HexStrings.h */,
+				9FADFE9611EC932800990E91 /* NSData+HexStrings.m */,
+				9F2120FC1301597E002AB1B7 /* NSImage+BXSaveImages.h */,
+				9F2120FD1301597E002AB1B7 /* NSImage+BXSaveImages.m */,
 				9FFF97931232B718009B5EE5 /* BXMultiPanelWindowController.h */,
 				9FFF97941232B718009B5EE5 /* BXMultiPanelWindowController.m */,
 				9FFBF6AA11A811F7000A1863 /* BXEventConstants.h */,
@@ -1908,11 +1916,11 @@
 		9FBC34390F56C5AC001811F2 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				9F2121E5130187A9002AB1B7 /* ShelfTemplateLeopard.jpg */,
+				9F2121E6130187A9002AB1B7 /* ShelfTemplateSnowLeopard.jpg */,
 				9FFC2ABF12A19CCC008C2B3B /* Sample Game Icons */,
 				9F676BEF1235451B00924B8C /* Display.png */,
 				9F960C7E12AAAB2900568AFD /* BlankShelves.png */,
-				9F61941012340CA100F35AB4 /* ShelvesForSnowLeopard.jpg */,
-				9F61941112340CA100F35AB4 /* ShelvesForLeopard.jpg */,
 				9F843FE01226EB1100FD37F1 /* import.png */,
 				9F4B5283122591960055022A /* prompt.icns */,
 				9F2292621225848000ABC0B3 /* WelcomeSpotlight.png */,
@@ -2030,8 +2038,6 @@
 				9F466A4811A924EC00C50965 /* Shader.m */,
 				9FDD4CB411E619D50035BA9E /* CGSPrivate.h */,
 				9F80BC81123556AD00EBAB23 /* Finder.h */,
-				9FADFE9511EC932800990E91 /* NSData+HexStrings.h */,
-				9FADFE9611EC932800990E91 /* NSData+HexStrings.m */,
 				9F7A8F230F8E705100D1AAD5 /* BXToolkit */,
 				9F59DA1410AE22B9008DBBC1 /* MCAdditions */,
 				9FAD43B610A341F6007E8C0D /* UKKQueue */,
@@ -2171,8 +2177,6 @@
 				9F2292631225848000ABC0B3 /* WelcomeSpotlight.png in Resources */,
 				9F4B5284122591960055022A /* prompt.icns in Resources */,
 				9F843FE11226EB1100FD37F1 /* import.png in Resources */,
-				9F61941212340CA100F35AB4 /* ShelvesForSnowLeopard.jpg in Resources */,
-				9F61941312340CA100F35AB4 /* ShelvesForLeopard.jpg in Resources */,
 				9F676BF01235451B00924B8C /* Display.png in Resources */,
 				9F160DE21236952600F8768E /* Sample Games in Resources */,
 				9F70C19C129036C900A3627F /* Boxer.sdef in Resources */,
@@ -2184,6 +2188,8 @@
 				9FE28F7C12BBE75900EF27C5 /* LayeredDOSWindow.xib in Resources */,
 				9F8BFEA612C0F0EC0059030F /* DisplayLinkedDOSWindow.xib in Resources */,
 				9FC5353512F489F8005E7670 /* 35DisketteShine.icns in Resources */,
+				9F2121E7130187A9002AB1B7 /* ShelfTemplateLeopard.jpg in Resources */,
+				9F2121E8130187A9002AB1B7 /* ShelfTemplateSnowLeopard.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2452,6 +2458,8 @@
 				9F7721EA12B38C4400072AE8 /* shell_cmds.cpp in Sources */,
 				9F7721EB12B38C4400072AE8 /* shell_misc.cpp in Sources */,
 				9F70A09512F7471E00D144D2 /* BXAppController+BXApplicationModes.m in Sources */,
+				9F2120F813015653002AB1B7 /* BXShelfArt.m in Sources */,
+				9F2120FE1301597E002AB1B7 /* NSImage+BXSaveImages.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2764,7 +2772,7 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				GCC_WARN_CHECK_SWITCH_STATEMENTS = YES;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
 				GCC_WARN_MISSING_PARENTHESES = YES;
@@ -2801,7 +2809,7 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				GCC_WARN_CHECK_SWITCH_STATEMENTS = YES;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
 				GCC_WARN_MISSING_PARENTHESES = YES;
@@ -2834,7 +2842,7 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				GCC_WARN_CHECK_SWITCH_STATEMENTS = YES;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
 				GCC_WARN_MISSING_PARENTHESES = YES;

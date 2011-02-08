@@ -14,6 +14,13 @@
 #import "BXPathEnumerator.h"
 #import "BXGamesFolderPanelController.h"
 #import "BXCoverArt.h"
+#import "BXShelfArt.h"
+#import "NSImage+BXSaveImages.h"
+
+//For determining maximum Finder folder-background sizes
+#import <OpenGL/OpenGL.h>
+#import <OpenGL/CGLMacro.h>
+#import <OpenGL/glu.h>
 
 
 #pragma mark -
@@ -21,7 +28,15 @@
 
 @interface BXAppController ()
 
-//Callback for the 'we-couldnt-find-your-games-folder sheet.
+//The maximum size of artwork to generate.
+//This corresponds to Finder's own builtin max size, independent of hardware.
++ (NSSize) _maxArtworkSize;
+
+//The size of shelf artwork to generate.
+//This is dependent on the Finder version and the current graphics chipset.
+- (NSSize) _shelfArtworkSize;
+
+//Callback for the 'we-couldnt-find-your-games-folder' sheet.
 - (void) _gamesFolderPromptDidEnd: (NSAlert *)alert
 					   returnCode: (NSInteger)returnCode
 						   window: (NSWindow *)window;
@@ -32,6 +47,123 @@
 
 
 @implementation BXAppController (BXGamesFolder)
+
+- (NSSize) _maxArtworkSize
+{
+	//4000 appears to be the upper bound for Finder background images
+	//in Snow Leopard, regardless of OpenGL texture limits; backgrounds
+	//larger than this will be shrunk by Finder to fit within 4000x4000,
+	//with undesirable consequences.
+	
+	//(Leopard Finder doesn't seem to have this behaviour,
+	//but 4000x4000 is a reasonable size to stop at anyway.)
+	
+	return NSMakeSize(4000, 4000);
+}
+
+- (NSSize) _shelfArtworkSize
+{
+	NSSize maxArtworkSize = [self _maxArtworkSize];
+	
+	if ([BXAppController isRunningOnLeopard]) return maxArtworkSize;
+	else
+	{
+		//Snow Leopard's Finder uses OpenGL textures for rendering
+		//the window background, so we are limited by the current 
+		//renderer's maximum texture size.
+		GLint maxTextureSize = 0;
+		
+		CGOpenGLDisplayMask displayMask = CGDisplayIDToOpenGLDisplayMask (CGMainDisplayID());
+		CGLPixelFormatAttribute attrs[] = {kCGLPFADisplayMask, displayMask, 0};
+		
+		CGLPixelFormatObj pixelFormat = NULL;
+		GLint numFormats = 0;
+		CGLChoosePixelFormat(attrs, &pixelFormat, &numFormats);
+		
+		if (pixelFormat)
+		{
+			CGLContextObj testContext = NULL;
+			
+			CGLCreateContext(pixelFormat, NULL, &testContext);
+			CGLDestroyPixelFormat(pixelFormat);
+			
+			if (testContext)
+			{
+				CGLContextObj cgl_ctx = testContext;
+				
+				//Just to be safe, check if rectangle textures are supported,
+				//falling back on the square texture size otherwise
+				const GLubyte *extensions = glGetString(GL_EXTENSIONS);
+				BOOL supportsRectangleTextures = gluCheckExtension((const GLubyte *)"GL_ARB_texture_rectangle", extensions);
+				
+				GLenum textureSizeField = supportsRectangleTextures ? GL_MAX_RECTANGLE_TEXTURE_SIZE_ARB : GL_MAX_TEXTURE_SIZE;
+				glGetIntegerv(textureSizeField, &maxTextureSize);
+				
+				CGLDestroyContext (testContext);
+			}
+		}
+		
+		//Crop the GL size to the maximum Finder background size
+		//(see the note under +_maxArtworkSize for details)
+		return NSMakeSize(MIN((CGFloat)maxTextureSize, maxArtworkSize.width),
+						  MIN((CGFloat)maxTextureSize, maxArtworkSize.height));
+	}
+}
+
+
+- (NSString *) shelfArtworkPath
+{
+	BOOL isLeopardFinder = [[self class] isRunningOnLeopard];
+	
+	NSString *artworkFolderPath = [[[self class] supportPathCreatingIfMissing: NO] stringByAppendingPathComponent: @"Shelf artwork"];
+	NSString *artworkName = isLeopardFinder ? @"Leopard.jpg" : @"Snow Leopard.jpg";
+	NSString *artworkPath = [artworkFolderPath stringByAppendingPathComponent: artworkName];
+	
+	//If the folder 
+	NSFileManager *manager = [NSFileManager defaultManager];
+	if (![manager fileExistsAtPath: artworkPath])
+	{
+		//Ensure the base folder exists
+		BOOL folderCreated = [manager createDirectoryAtPath: artworkFolderPath
+								withIntermediateDirectories: YES
+												 attributes: nil
+													  error: NULL];
+		
+		//Don't continue if folder creation failed for some reason
+		if (!folderCreated) return nil;
+		
+		//Now, generate new artwork appropriate for the current Finder version
+		NSSize artworkSize = [self _shelfArtworkSize];
+		
+		
+		//If an appropriate size could not be determined, bail out
+		if (NSEqualSizes(artworkSize, NSZeroSize)) return nil;
+		
+		NSString *shelfTemplate = isLeopardFinder ? @"ShelfTemplateLeopard" : @"ShelfTemplateSnowLeopard";
+		
+		BXShelfArt *shelfArt = [[BXShelfArt alloc] initWithSourceImage: [NSImage imageNamed: shelfTemplate]];
+		
+		NSImage *tiledShelf = [shelfArt tiledImageWithSize: artworkSize];
+		
+		[shelfArt release];
+		
+		
+		NSDictionary *properties = [NSDictionary dictionaryWithObject: [NSNumber numberWithFloat: 1.0f] 
+															   forKey: NSImageCompressionFactor];
+		
+		BOOL imageSaved = [tiledShelf saveToPath: artworkPath
+										withType: NSJPEGFileType
+									  properties: properties
+										   error: NULL];
+		
+		//Bail out if the image could not be saved properly
+		if (!imageSaved) return NO;
+	}
+	
+	//If we got this far then we have a pre-existing or newly-generated shelf image at the specified path.
+	return artworkPath;
+}
+
 
 + (NSArray *) defaultGamesFolderPaths
 {
@@ -206,22 +338,15 @@
 	
 	//Now apply the icon mode appearance to the folder's Finder window
 	
-	NSURL *folderURL = [NSURL fileURLWithPath: path];
+	//NOTE: if no shelf artwork could be found or generated, then bail out early
+	NSString *backgroundImagePath = [self shelfArtworkPath];
+	if (backgroundImagePath == nil) return;
 	
-	//Detect which version of Finder is running, and switch the background image we use accordingly
-	//(Leopard has different icon-view spacing than Snow Leopard)
-	
-	FinderApplication *finder = [SBApplication applicationWithBundleIdentifier: @"com.apple.finder"];
-	
-	BOOL isLeopardFinder = [[self class] isRunningOnLeopard];
-	
-	NSString *backgroundImageResource = (isLeopardFinder) ? @"ShelvesForLeopard" : @"ShelvesForSnowLeopard";
-	
-	NSURL *backgroundImageURL = [NSURL fileURLWithPath: [[NSBundle mainBundle] pathForImageResource: backgroundImageResource]];
 	
 	//Go go Scripting Bridge
-	FinderFolder *folder			= [[finder folders] objectAtLocation: folderURL];
-	FinderFile *backgroundPicture	= [[finder files] objectAtLocation: backgroundImageURL];
+	FinderApplication *finder = [SBApplication applicationWithBundleIdentifier: @"com.apple.finder"];
+	FinderFolder *folder			= [[finder folders] objectAtLocation: [NSURL fileURLWithPath: path]];
+	FinderFile *backgroundPicture	= [[finder files] objectAtLocation: [NSURL fileURLWithPath: backgroundImagePath]];
 	
 	//IMPLEMENTATION NOTE: [folder containerWindow] returns an SBObject instead of a FinderWindow.
 	//So to actually DO anything with that window, we need to retrieve the value manually instead.

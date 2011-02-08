@@ -139,12 +139,13 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 {
 	NSString *bundleIdentifier	= [[NSBundle mainBundle] bundleIdentifier];
 	NSWorkspace *workspace		= [NSWorkspace sharedWorkspace];
+	NSUInteger numBoxers = 0;
 	
 	for (NSDictionary *appDetails in [workspace launchedApplications])
 	{
-		if ([[appDetails objectForKey: @"NSApplicationBundleIdentifier"] isEqualToString: bundleIdentifier]) return YES;
+		if ([[appDetails objectForKey: @"NSApplicationBundleIdentifier"] isEqualToString: bundleIdentifier]) numBoxers++;
 	}
-	return NO;
+	return numBoxers > 1;
 }
 
 + (NSString *) supportPathCreatingIfMissing: (BOOL)createIfMissing

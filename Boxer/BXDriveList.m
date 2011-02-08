@@ -298,7 +298,7 @@ enum {
 {
 	for (BXDriveItemView *view in [self subviews])
 	{
-		if ([[[view delegate] representedObject] isEqualTo: drive]) return view;
+		if ([[[view delegate] representedObject] isEqual: drive]) return view;
 	}
 	return nil;
 }
@@ -359,7 +359,7 @@ enum {
 	if (![(BXAppController *)[NSApp delegate] windowAtPoint: mousePoint]) [poof set];
 	
 	//otherwise, revert any poof cursor (which may already have been changed by valid drag destinations anyway) 
-	else if ([[NSCursor currentCursor] isEqualTo: poof]) [[NSCursor arrowCursor] set];
+	else if ([[NSCursor currentCursor] isEqual: poof]) [[NSCursor arrowCursor] set];
 }
 
 //This is called when dragging completes, and discards the drive if it was not dropped onto a valid destination

@@ -271,7 +271,7 @@ enum {
 	}
 	if (action == @selector(openSelectedDrivesInDOS:))
 	{
-		BOOL isCurrent = [[driveSelection lastObject] isEqualTo: [theEmulator currentDrive]];
+		BOOL isCurrent = [[driveSelection lastObject] isEqual: [theEmulator currentDrive]];
 		
 		NSString *title;
 		if (isCurrent)
@@ -495,7 +495,7 @@ enum {
 {	
 	//Ignore drags that originated from the drive list itself
 	id source = [sender draggingSource];
-	if ([[source window] isEqualTo: [[self view] window]]) return NSDragOperationNone;
+	if ([[source window] isEqual: [[self view] window]]) return NSDragOperationNone;
 	
 	//Otherwise, ask the current session what it would like to do with the files
 	NSPasteboard *pboard = [sender draggingPasteboard];

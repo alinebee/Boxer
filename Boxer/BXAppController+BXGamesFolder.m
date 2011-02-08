@@ -265,8 +265,6 @@
 	if (addSampleGames)			[self addSampleGamesToPath: newPath];
 	if (addImporterDroplet)		[self addImporterDropletToPath: newPath];
 	
-	//Set the actual games folder last, so that any icon changes from
-	//applyShelfAppearanceToPath:switchToShelfMode will get picked up
 	[self setGamesFolderPath: newPath];
 }
 
@@ -286,8 +284,6 @@
 			[self applyShelfAppearanceToPath: path andSubFolders: YES switchToShelfMode: NO];
 		}
 		
-		//Set the actual games folder last, so that any icon changes from
-		//applyShelfAppearanceToPath:switchToShelfMode will get picked up
 		[self setGamesFolderPath: path];
 		
 		return YES;
@@ -349,6 +345,11 @@
 	{
 		if ([operation isKindOfClass: [BXShelfAppearanceOperation class]] &&
 			[[(BXShelfAppearanceOperation *)operation targetPath] isEqualToString: path]) [operation cancel];
+		
+		//BXShelfAppearanceApplicator and BXSampleGamesCopy both use [NSWorkspace setIcon:forFile:options:]
+		//which is not thread-safe. Adding any we find as a dependency ensures we do not attempt to perform
+		//icon operations concurrently.
+		if ([operation isKindOfClass: [BXSampleGamesCopy class]]) [applicator addDependency: operation];
 	}
 	
 	[[self generalQueue] addOperation: applicator];
@@ -366,9 +367,9 @@
 	
 	[remover setAppliesToSubFolders: applyToSubFolders];
 	
-	//Cancel any currently-active shelf-appearance application or removal
 	for (NSOperation *operation in [[self generalQueue] operations])
 	{
+		//Cancel any currently-active shelf-appearance applicator affecting this path
 		if ([operation isKindOfClass: [BXShelfAppearanceOperation class]] &&
 			[[(BXShelfAppearanceOperation *)operation targetPath] isEqualToString: path]) [operation cancel];
 	}
@@ -393,6 +394,24 @@
 	
 	BXSampleGamesCopy *copyOperation = [[BXSampleGamesCopy alloc] initFromPath: sourcePath
 																		toPath: path];
+	
+	for (NSOperation *operation in [[self generalQueue] operations])
+	{
+		//If we're already copying these sample games to the specified location,
+		//don't bother repeating ourselves
+		if ([operation isKindOfClass: [BXSampleGamesCopy class]] &&
+			[[(BXSampleGamesCopy *)operation targetPath] isEqualToString: path] &&
+			[[(BXSampleGamesCopy *)operation sourcePath] isEqualToString: sourcePath])
+		{
+			[copyOperation release];
+			return;
+		}
+		
+		//BXShelfAppearanceApplicator and BXSampleGamesCopy both use [NSWorkspace setIcon:forFile:options:]
+		//which is not thread-safe. Adding any we find as a dependency ensures we do not attempt to perform
+		//icon operations concurrently.
+		if ([operation isKindOfClass: [BXShelfAppearanceApplicator class]]) [copyOperation addDependency: operation];
+	}
 	
 	[generalQueue addOperation: copyOperation];
 	[copyOperation release];
@@ -468,7 +487,8 @@
 		for (NSOperation *operation in [[self generalQueue] operations])
 		{
 			if ([operation isKindOfClass: [BXHelperAppCheck class]] &&
-				[[(BXHelperAppCheck *)operation appPath] isEqualToString: dropletPath]) [operation cancel];
+				[[(BXHelperAppCheck *)operation appPath] isEqualToString: dropletPath] &&
+				[[(BXHelperAppCheck *)operation targetPath] isEqualToString: folderPath]) [operation cancel];
 		}
 		
 		[generalQueue addOperation: checkOperation];

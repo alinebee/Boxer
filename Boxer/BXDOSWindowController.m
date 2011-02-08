@@ -837,14 +837,14 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	//instead of the fullscreen window, then break out of fullscreen
 	//(This should never happen, since [BXSession windowForSheet]
 	//specifically chooses the fullscreen window if it is present)
-	if (![[notification object] isEqualTo: [self fullScreenWindow]]) [self setFullScreen: NO];
+	if (![[notification object] isEqual: [self fullScreenWindow]]) [self setFullScreen: NO];
 }
 
 - (void) windowDidResignKey: (NSNotification *) notification
 {
 	//Ignore handoffs between our own windows, which swap key and main window status
 	//when switching to/from fullscreen
-	if ([NSApp keyWindow] != [self fullScreenWindow] && [NSApp keyWindow] != [self window])
+	if ([NSApp keyWindow] != [self fullScreenWindow] && [[NSApp keyWindow] isEqual: [self window]])
 		[inputController didResignKey];
 }
 

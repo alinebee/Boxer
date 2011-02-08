@@ -316,7 +316,7 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 {
 	[self willChangeValueForKey: @"gameInfo"];
 	
-	BOOL changed = !([[self gameInfoForKey: key] isEqualTo: info]);
+	BOOL changed = !([[self gameInfoForKey: key] isEqual: info]);
 	if (changed)
 	{
 		[(NSMutableDictionary *)[self gameInfo] setObject: info forKey: key];

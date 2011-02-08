@@ -820,7 +820,7 @@
 {
 	for (BXOperation *operation in [importQueue operations])
 	{
-		if ([operation isExecuting] && [[operation contextInfo] isEqualTo: drive]) return YES; 
+		if ([operation isExecuting] && [[operation contextInfo] isEqual: drive]) return YES; 
 	}
 	return NO;
 }
@@ -871,7 +871,7 @@
 {
 	for (BXOperation *operation in [importQueue operations])
 	{
-		if (![operation isFinished] && [[operation contextInfo] isEqualTo: drive])
+		if (![operation isFinished] && [[operation contextInfo] isEqual: drive])
 		{
 			[operation cancel];
 			return YES;
@@ -898,7 +898,7 @@
 			BOOL oldShowDriveNotifications = showDriveNotifications;
 			showDriveNotifications = NO;
 			
-			BOOL wasCurrentDrive = [[[self emulator] currentDrive] isEqualTo: drive];
+			BOOL wasCurrentDrive = [[[self emulator] currentDrive] isEqual: drive];
 			
 			//Unmount the old drive first...
 			if ([self unmountDrive: drive])

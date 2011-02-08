@@ -71,7 +71,7 @@
 {
 	//Show the appropriate panel based on the current stage of the import process
 	if ([self isWindowLoaded] && 
-		[object isEqualTo: [self document]] && 
+		[object isEqual: [self document]] && 
 		[keyPath isEqualToString: @"importStage"])
 	{
 		switch ([[self document] importStage])

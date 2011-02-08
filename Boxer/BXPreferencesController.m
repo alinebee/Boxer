@@ -68,7 +68,7 @@
 						context: (void *)context
 {
 	//Whenever the key path changes, synchronise our filter selection controls
-	if ([object isEqualTo: [NSUserDefaults standardUserDefaults]] && [keyPath isEqualToString: @"filterType"])
+	if ([object isEqual: [NSUserDefaults standardUserDefaults]] && [keyPath isEqualToString: @"filterType"])
 	{
 		[self syncFilterControls];
 	}

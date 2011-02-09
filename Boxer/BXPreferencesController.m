@@ -46,6 +46,14 @@
 						toObject: [NSApp delegate]
 					 withKeyPath: @"gamesFolderPath"
 						 options: bindingOptions];
+	
+	//Set the default tab
+	NSInteger selectedIndex = [[NSUserDefaults standardUserDefaults] integerForKey: @"initialPreferencesPanelIndex"];
+	
+	if (selectedIndex >= 0 && selectedIndex < [[self tabView] numberOfTabViewItems])
+	{
+		[[self tabView] selectTabViewItemAtIndex: selectedIndex];
+	}
 }
 
 - (void) dealloc
@@ -56,6 +64,25 @@
 	[self setGamesFolderSelector: nil],			[gamesFolderSelector release];
 	[self setCurrentGamesFolderItem: nil],		[currentGamesFolderItem release];
 	[super dealloc];
+}
+
+
+#pragma mark -
+#pragma mark Managing and persisting tab state
+
+
+- (void) tabView: (NSTabView *)tabView didSelectTabViewItem: (NSTabViewItem *)tabViewItem
+{
+	[super tabView: tabView didSelectTabViewItem: tabViewItem];
+	
+	//Record the user's choice of tab, and synchronize the selected segment
+	NSInteger selectedIndex = [tabView indexOfTabViewItem: tabViewItem];
+	
+	if (selectedIndex != NSNotFound)
+	{
+		[[NSUserDefaults standardUserDefaults] setInteger: selectedIndex
+												   forKey: @"initialPreferencesPanelIndex"];
+	}
 }
 
 

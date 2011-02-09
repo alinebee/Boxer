@@ -78,10 +78,6 @@
 				<string>uw.exe</string>
 				<string>uwdemo.exe</string>
 			</array>
-			<key>BXDesignatedInstallers</key>
-			<array>
-				<string>uinstall.exe</string>
-			</array>
 		</dict>
 		
 		<dict>
@@ -92,10 +88,6 @@
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>uw2.exe</string>
-			</array>
-			<key>BXDesignatedInstallers</key>
-			<array>
-				<string>uinstall.exe</string>
 			</array>
 		</dict>
 

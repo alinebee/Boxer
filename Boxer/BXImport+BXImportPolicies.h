@@ -38,6 +38,14 @@ static const NSInteger BXFreeSpaceForCDROMInstall = 700 * 1024 * 1024;
 //Uses +installerPatterns:
 + (BOOL) isInstallerAtPath: (NSString *)path;
 
+//Returns a set of filename patterns whose matching files should be ignored
+//altogether when scanning a gamebox for importing. This prevents them showing
+//up in the installers list or throwing off the Windows-only game detection. 
++ (NSSet *) ignoredFilePatterns;
+
+//Whether the file at the specified path should be skipped.
++ (BOOL) isIgnoredFileAtPath: (NSString *)path;
+
 
 #pragma mark -
 #pragma mark Detecting files not to import

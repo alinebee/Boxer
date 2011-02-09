@@ -20,6 +20,7 @@
 	NSSet *fileTypes;
 	NSString *basePath;
 	NSString *currentPath;
+	NSString *relativePath;
 	
 	NSFileManager *manager;
 	NSWorkspace *workspace;
@@ -36,6 +37,9 @@
 
 //The full path of the last file returned by nextObject.
 @property (readonly, copy, nonatomic) NSString *currentPath;
+
+//The path of the last file returned by nextObject, relative to basePath.
+@property (readonly, copy, nonatomic) NSString *relativePath;
 
 //Whether nextObject should ignore hidden files. Is YES by default.
 @property (assign, nonatomic) BOOL skipHiddenFiles;

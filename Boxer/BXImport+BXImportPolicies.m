@@ -21,7 +21,7 @@
 @implementation BXImport (BXImportPolicies)
 
 #pragma mark -
-#pragma mark Detecting installers
+#pragma mark Detecting installers and ignorable files
 
 + (NSSet *) installerPatterns
 {
@@ -57,6 +57,37 @@
 	return NO;
 }
 
++ (NSSet *) ignoredFilePatterns
+{
+	static NSSet *patterns = nil;
+	if (!patterns) patterns = [[NSSet alloc] initWithObjects:
+							   @"(^|/)directx/",		//DirectX redistributables
+							   @"(^|/)acrodos/",		//Adobe acrobat reader for DOS
+							   @"(^|/)acroread\\.exe$", //Adobe acrobat reader for Windows
+							   @"(^|/)uvconfig\\.exe$",	//UniVBE detection program
+							   @"(^|/)autorun",			//Windows CD-autorun stubs
+							   @"(^|/)bootdisk\\.",		//Bootdisk makers
+							   @"(^|/)readme\\.",		//Readme viewers
+							   @"(^|/)pkunzip\\.",		//Archivers
+							   @"(^|/)pkunzjr\\.",
+							   @"(^|/)arj\\.",
+							   @"(^|/)lha\\.",
+							   nil];
+	return patterns;
+}
+
++ (BOOL) isIgnoredFileAtPath: (NSString *)path
+{
+	NSRange matchRange = NSMakeRange(0, [path length]);
+	for (NSString *pattern in [self ignoredFilePatterns])
+	{
+		if ([path isMatchedByRegex: pattern
+						   options: RKLCaseless
+						   inRange: matchRange
+							 error: NULL]) return YES;
+	}
+	return NO;
+}
 
 #pragma mark -
 #pragma mark Detecting files not to import
@@ -65,24 +96,27 @@
 {
 	static NSSet *patterns = nil;
 	if (!patterns) patterns = [[NSSet alloc] initWithObjects:
-							   @"\\.ico$",						//Windows icon files
-							   @"\\.pif$",						//Windows PIF files
-							   @"\\.conf$",						//DOSBox configuration files
-							   @"^dosbox$",						//Anything DOSBox-related
-							   @"^goggame.dll$",				//GOG launcher files
-							   @"^unins000\\.",					//GOG uninstaller files
-							   @"^Graphic mode setup\\.exe$",	//GOG configuration programs
-							   @"^gogwrap.exe$",				//GOG only knows what this one does
+							   @"\\.ico$",							//Windows icon files
+							   @"\\.pif$",							//Windows PIF files
+							   @"\\.conf$",							//DOSBox configuration files
+							   @"(^|/)dosbox",						//Anything DOSBox-related
+							   @"(^|/)goggame\\.dll$",				//GOG launcher files
+							   @"(^|/)unins000\\.",					//GOG uninstaller files
+							   @"(^|/)Graphic mode setup\\.exe$",	//GOG configuration programs
+							   @"(^|/)gogwrap\\.exe$",				//GOG only knows what this one does
 							   nil];
 	return patterns;
 }
 
 + (BOOL) isJunkFileAtPath: (NSString *)path
 {
-	path = [[path lastPathComponent] lowercaseString];
+	NSRange matchRange = NSMakeRange(0, [path length]);
 	for (NSString *pattern in [self junkFilePatterns])
 	{
-		if ([path isMatchedByRegex: pattern]) return YES;
+		if ([path isMatchedByRegex: pattern
+						   options: RKLCaseless
+						   inRange: matchRange
+							 error: NULL]) return YES;
 	}
 	return NO;
 }

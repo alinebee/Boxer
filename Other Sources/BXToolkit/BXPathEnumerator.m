@@ -17,6 +17,7 @@
 @property (readwrite, retain, nonatomic) NSDirectoryEnumerator *enumerator;
 @property (readwrite, copy, nonatomic) NSString *basePath;
 @property (readwrite, copy, nonatomic) NSString *currentPath;
+@property (readwrite, copy, nonatomic) NSString *relativePath;
 
 @end
 
@@ -24,7 +25,7 @@
 @implementation BXPathEnumerator
 @synthesize enumerator;
 @synthesize fileTypes, skipHiddenFiles, skipSubdirectories, skipPackageContents;
-@synthesize basePath, currentPath;
+@synthesize basePath, currentPath, relativePath;
 
 - (id) init
 {
@@ -70,6 +71,7 @@
 	[self setEnumerator: nil],	[enumerator release];
 	[self setBasePath: nil],	[basePath release];
 	[self setCurrentPath: nil],	[currentPath release];
+	[self setRelativePath: nil],	[relativePath release];
 	
 	[manager release], manager = nil;
 	[workspace release], workspace = nil;
@@ -96,6 +98,7 @@
 		if ([self fileTypes] && ![workspace file: fullPath matchesTypes: [self fileTypes]]) continue;
 								 
 		//If we got this far, hand the full path onwards to the calling context
+		[self setRelativePath: path];
 		[self setCurrentPath: fullPath];
 		return fullPath;
 	}

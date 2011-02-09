@@ -5,6 +5,18 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
+//IMPLEMENTATION NOTE: this class is currently a conceptual mess, and needs serious restructuring:
+//- The UI is responsible for ensuring that the import workflow is handled correctly and that
+//  steps are performed in the correct order. Instead of saying "OK, continue with the next
+//  logical step of the operation", the UI says "OK, now run this specific step." Bad.
+//- The import process cannot currently be done unattended as it relies on UI confirmation.
+//  This prevents it being easily scriptable.
+//- Despite being an NSDocument subclass, BXImport instances cannot be loaded from an existing URL:
+//  they have to go through the importFromSourcePath: mechanism.
+//- The import process relies on BXOperations but overloads the standard operationDidFinish notification
+//  handler with switching functionality, instead of providing custom callbacks for different types
+//  of operation. This makes the callback code messy and prone to bugs.
+
 
 #import "BXImport.h"
 #import "BXSessionPrivate.h"
@@ -136,14 +148,25 @@
 	NSSet *executableTypes = [BXAppController executableTypes];
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	
-	for (NSString *path in [BXPathEnumerator enumeratorAtPath: filePath])
+	BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: filePath];
+	
+	//TODO: move this installer detection work off to an NSOperation,
+	//so that we don't block the UI while scanning
+	for (NSString *path in enumerator)
 	{
 		BOOL isWindowsExecutable = NO;
+		
+		//Grab the relative path to use for heuristic filename-pattern checks,
+		//so that the base path doesn't get involved in the heuristic.
+		NSString *relativePath = [enumerator relativePath];
 	
+		//Skip the file altogether if we know it's irrelevant (see [BXImportPolicies +ignoredFilePatterns])
+		if ([[self class] isIgnoredFileAtPath: relativePath]) continue;
+		
 		//If we find an indication that this is an already-installed game, then we won't bother using any installers.
 		//However, we'll still keep looking for executables: but only so that we can make sure the user really is
 		//importing a proper DOS game and not a Windows-only game.
-		if ([[self class] isPlayableGameTelltaleAtPath: path])
+		if ([[self class] isPlayableGameTelltaleAtPath: relativePath])
 		{
 			[installers removeAllObjects];
 			preferredInstaller = nil;
@@ -166,17 +189,17 @@
 			if (!isWindowsExecutable && !isAlreadyInstalledGame)
 			{
 				//If this was the designated installer for this game profile, add it to the installer list
-				if (!preferredInstaller && [detectedProfile isDesignatedInstallerAtPath: path])
+				if (!preferredInstaller && [detectedProfile isDesignatedInstallerAtPath: relativePath])
 				{
 					[installers addObject: path];
 					preferredInstaller = path;
 				}
 				
 				//Otherwise if it looks like an installer to us, add it to the installer list
-				else if ([[self class] isInstallerAtPath: path])
+				else if ([[self class] isInstallerAtPath: relativePath])
 				{
 					[installers addObject: path];
-				}			
+				}
 			}
 		}
 	}
@@ -195,11 +218,6 @@
 	
 	else if (numWindowsExecutables == numExecutables)
 	{
-		//If only Windows executables were found, bail out with an appropriate error message.
-		//TODO: improve this heuristic by filtering out ignorable executables from the list of
-		//executables: e.g. batch files and helper utilities like pkunzip which may be present
-		//in otherwise windows-only games.
-		
 		succeeded = NO;
 		if (outError) *outError = [BXImportWindowsOnlyError errorWithSourcePath: filePath userInfo: nil];
 	}
@@ -228,8 +246,6 @@
 		
 		//FIXME: we have to set the preferred installer first because BXImportWindowController is listening
 		//for when we set the installer paths, and relies on knowing the preferred installer in advance.
-		//TODO: move the preferred installer detection off to BXImportWindowController instead, since it's
-		//the only place that uses it?
 		[self setPreferredInstallerPath: preferredInstaller];
 		[self setInstallerPaths: installers];		
 		
@@ -889,7 +905,12 @@
 	
 	for (NSString *path in enumerator)
 	{
-		if ([[self class] isJunkFileAtPath: path]) [manager removeItemAtPath: path error: nil];
+		//Grab the relative path to use for heuristic filename-pattern checks,
+		//so that the base folder doesn't get involved in the heuristic.
+		NSString *relativePath = [enumerator relativePath];
+		if ([[self class] isJunkFileAtPath: relativePath])
+				[manager removeItemAtPath: path error: nil];
+		
 		else if ([workspace file: path matchesTypes: bundleableTypes])
 		{
 			//If this file is a mountable type, move it into the gamebox's root folder where we can find it 

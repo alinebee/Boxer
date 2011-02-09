@@ -65,6 +65,7 @@
 							   @"(^|/)acrodos/",		//Adobe acrobat reader for DOS
 							   @"(^|/)acroread\\.exe$", //Adobe acrobat reader for Windows
 							   @"(^|/)uvconfig\\.exe$",	//UniVBE detection program
+							   @"(^|/)univbe",			//UniVBE program/redistributable folder
 							   @"(^|/)autorun",			//Windows CD-autorun stubs
 							   @"(^|/)bootdisk\\.",		//Bootdisk makers
 							   @"(^|/)readme\\.",		//Readme viewers

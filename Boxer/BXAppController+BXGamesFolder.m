@@ -340,16 +340,20 @@
 	[applicator setAppliesToSubFolders: applyToSubFolders];
 	[applicator setSwitchToIconView: switchMode];
 	
-	//Cancel any currently-active shelf-appearance application or removal
-	for (NSOperation *operation in [[self generalQueue] operations])
+	for (id operation in [[self generalQueue] operations])
 	{
-		if ([operation isKindOfClass: [BXShelfAppearanceOperation class]] &&
-			[[(BXShelfAppearanceOperation *)operation targetPath] isEqualToString: path]) [operation cancel];
-		
-		//BXShelfAppearanceApplicator and BXSampleGamesCopy both use [NSWorkspace setIcon:forFile:options:]
-		//which is not thread-safe. Adding any we find as a dependency ensures we do not attempt to perform
-		//icon operations concurrently.
-		if ([operation isKindOfClass: [BXSampleGamesCopy class]]) [applicator addDependency: operation];
+		//Check for other operations that are currently being performed on this path
+		if ([operation respondsToSelector: @selector(targetPath)] && [[operation targetPath] isEqualToString: path])
+		{
+			//Cancel any currently-active shelf-appearance application or removal being applied to this path
+			if ([operation isKindOfClass: [BXShelfAppearanceOperation class]]) [operation cancel];
+			
+			//For other types of operations, mark them as a dependency to avoid performing
+			//many simultaneous file operations on the same location.
+			//(Among other things this avoids concurrency problems with NSWorkspace,
+			//which has thread-unsafe methods like -setIcon:forFile:options:)
+			else [applicator addDependency: operation];
+		}
 	}
 	
 	[[self generalQueue] addOperation: applicator];
@@ -367,11 +371,20 @@
 	
 	[remover setAppliesToSubFolders: applyToSubFolders];
 	
-	for (NSOperation *operation in [[self generalQueue] operations])
+	for (id operation in [[self generalQueue] operations])
 	{
-		//Cancel any currently-active shelf-appearance applicator affecting this path
-		if ([operation isKindOfClass: [BXShelfAppearanceOperation class]] &&
-			[[(BXShelfAppearanceOperation *)operation targetPath] isEqualToString: path]) [operation cancel];
+		//Check for other operations that are currently being performed on this path
+		if ([operation respondsToSelector: @selector(targetPath)] && [[operation targetPath] isEqualToString: path])
+		{
+			//Cancel any currently-active shelf-appearance application or removal being applied to this path
+			if ([operation isKindOfClass: [BXShelfAppearanceOperation class]]) [operation cancel];
+			
+			//For other types of operations, mark them as a dependency to avoid performing
+			//many simultaneous file operations on the same location.
+			//(Among other things this avoids concurrency problems with NSWorkspace,
+			//which has thread-unsafe methods like -setIcon:forFile:options:)
+			else [remover addDependency: operation];
+		}
 	}
 	
 	[[self generalQueue] addOperation: remover];
@@ -395,25 +408,29 @@
 	BXSampleGamesCopy *copyOperation = [[BXSampleGamesCopy alloc] initFromPath: sourcePath
 																		toPath: path];
 	
-	for (NSOperation *operation in [[self generalQueue] operations])
+	for (id operation in [[self generalQueue] operations])
 	{
-		//If we're already copying these sample games to the specified location,
-		//don't bother repeating ourselves
-		if ([operation isKindOfClass: [BXSampleGamesCopy class]] &&
-			[[(BXSampleGamesCopy *)operation targetPath] isEqualToString: path] &&
-			[[(BXSampleGamesCopy *)operation sourcePath] isEqualToString: sourcePath])
+		//Check for other operations that are currently being performed on this path
+		if ([operation respondsToSelector: @selector(targetPath)] && [[operation targetPath] isEqualToString: path])
 		{
-			[copyOperation release];
-			return;
+			//If we're already copying these sample games to the specified location,
+			//don't bother repeating ourselves
+			if ([operation isKindOfClass: [BXSampleGamesCopy class]] &&
+				[[operation sourcePath] isEqualToString: sourcePath])
+			{
+				[copyOperation release];
+				return;
+			}
+			
+			//For other types of operations, mark them as a dependency to avoid performing
+			//many simultaneous file operations on the same location.
+			//(Among other things this avoids concurrency problems with NSWorkspace,
+			//which has thread-unsafe methods like -setIcon:forFile:options:)
+			else [copyOperation addDependency: operation];
 		}
-		
-		//BXShelfAppearanceApplicator and BXSampleGamesCopy both use [NSWorkspace setIcon:forFile:options:]
-		//which is not thread-safe. Adding any we find as a dependency ensures we do not attempt to perform
-		//icon operations concurrently.
-		if ([operation isKindOfClass: [BXShelfAppearanceApplicator class]]) [copyOperation addDependency: operation];
 	}
 	
-	[generalQueue addOperation: copyOperation];
+	[[self generalQueue] addOperation: copyOperation];
 	[copyOperation release];
 }
 
@@ -473,27 +490,47 @@
 	return [self freshenImporterDropletAtPath: folderPath addIfMissing: YES];
 }
 
-- (void) freshenImporterDropletAtPath: (NSString *)folderPath addIfMissing: (BOOL)addIfMissing
+- (void) freshenImporterDropletAtPath: (NSString *)path addIfMissing: (BOOL)addIfMissing
 {
 	NSString *dropletPath = [[NSBundle mainBundle] pathForResource: @"Game Importer Droplet" ofType: @"app"];
 	
-	if (dropletPath && folderPath)
+	BXHelperAppCheck *checkOperation = [[BXHelperAppCheck alloc] initWithTargetPath: path
+																	   forAppAtPath: dropletPath];
+	[checkOperation setAddIfMissing: addIfMissing];
+	
+	for (id operation in [[self generalQueue] operations])
 	{
-		BXHelperAppCheck *checkOperation = [[BXHelperAppCheck alloc] initWithTargetPath: folderPath
-																		   forAppAtPath: dropletPath];
-		[checkOperation setAddIfMissing: addIfMissing];
-		
-		//Cancel any currently-active check for the droplet
-		for (NSOperation *operation in [[self generalQueue] operations])
+		//Check for other operations that are currently being performed on this path
+		if ([operation respondsToSelector: @selector(targetPath)] && [[operation targetPath] isEqualToString: path])
 		{
+			//Check for currently-active checks for this droplet
 			if ([operation isKindOfClass: [BXHelperAppCheck class]] &&
-				[[(BXHelperAppCheck *)operation appPath] isEqualToString: dropletPath] &&
-				[[(BXHelperAppCheck *)operation targetPath] isEqualToString: folderPath]) [operation cancel];
+				[[operation appPath] isEqualToString: dropletPath])
+			{
+				//If we're doing the same as the other check, or if we're only checking this time and not adding,
+				//then let the other operation continue and cancel this one
+				if (!addIfMissing || [operation addIfMissing])
+				{
+					[checkOperation release];
+					return;
+				}
+				//Otherwise, cancel the other operation and replace it with our own
+				else
+				{
+					[operation cancel];
+				}
+			}
+			 
+			//For other types of operations, mark them as a dependency to avoid performing
+			//many simultaneous file operations on the same location.
+			//(Among other things this avoids concurrency problems with NSWorkspace,
+			//which has thread-unsafe methods like -setIcon:forFile:options:)
+			else [checkOperation addDependency: operation];
 		}
-		
-		[generalQueue addOperation: checkOperation];
-		[checkOperation release];
 	}
+	
+	[[self generalQueue] addOperation: checkOperation];
+	[checkOperation release];
 }
 
 - (IBAction) revealGamesFolder: (id)sender

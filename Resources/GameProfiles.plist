@@ -6,6 +6,18 @@
 	<array>
 		<dict>
 			<key>BXProfileName</key>
+			<string>Fable</string>
+			<key>BXProfileConf</key>
+			<string>No GUS</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>fable.*</string>
+			</array>
+			<key>BXMountHelperDrivesDuringImport</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>BXProfileName</key>
 			<string>Jetfighter</string>
 			<key>BXProfileConf</key>
 			<string>Jetfighter</string>

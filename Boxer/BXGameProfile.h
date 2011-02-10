@@ -40,6 +40,7 @@ typedef NSUInteger BXGameEra;
 	BXGameEra gameEra;
 	BXDriveType installMedium;
 	NSInteger requiredDiskSpace;
+	BOOL mountHelperDrivesDuringImport;
 }
 
 #pragma mark -
@@ -47,26 +48,33 @@ typedef NSUInteger BXGameEra;
 
 //The human-readable name of the game this profile represents.
 //Will be nil for shared profiles (in which case profileDescription will be available.) 
-@property (copy) NSString *gameName;
+@property (copy, nonatomic) NSString *gameName;
 
 //The configuration file for this game (sans .conf extension), as stored in Resources/Configurations
-@property (copy) NSString *confName;
+@property (copy, nonatomic) NSString *confName;
 
 //The description of what kind of games this game profile covers.
 //Will be nil for game-specific profiles (in which case gameName will be available.)
-@property (copy) NSString *profileDescription;
+@property (copy, nonatomic) NSString *profileDescription;
 
 //Whether this game needs to be installed from a particular kind of drive (e.g. floppy-disk or CD-ROM).
 //If the game has no special requirements, will be BXDriveAutodetect.
-@property (assign) BXDriveType installMedium;
+@property (assign, nonatomic) BXDriveType installMedium;
 
 //The maximum amount of free disk space this game may need to install.
 //Used to assign an appropriate amount of free space on drive C.
 //If the game has no special requirements, this will be BXDefaultFreeSpace.
-@property (assign) NSInteger requiredDiskSpace;
+@property (assign, nonatomic) NSInteger requiredDiskSpace;
 
-//The era of this game. Defaults to BXUnknownEra.
-@property (assign) BXGameEra gameEra;
+//Whether to mount the X and Y helper drives while importing this game.
+//These drives can confuse the installers for some games,
+//e.g. making them offer the wrong default destination drive.
+//Defaults to YES.
+@property (assign, nonatomic) BOOL mountHelperDrivesDuringImport;
+
+//The era of this game, used for deciding on cover art.
+//Defaults to BXUnknownEra, which means Boxer will auto-detect the era.
+@property (assign, nonatomic) BXGameEra gameEra;
 
 
 #pragma mark -

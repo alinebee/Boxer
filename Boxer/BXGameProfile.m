@@ -39,7 +39,8 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 
 
 @implementation BXGameProfile
-@synthesize gameName, confName, profileDescription, installMedium, gameEra, requiredDiskSpace;
+@synthesize gameName, confName, profileDescription;
+@synthesize installMedium, gameEra, requiredDiskSpace, mountHelperDrivesDuringImport;
 
 + (BXGameEra) eraOfGameAtPath: (NSString *)basePath
 {
@@ -119,22 +120,40 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 	return nil;
 }
 
-- (id) initWithDictionary: (NSDictionary *)profileDict
+- (id) init
 {
 	if ((self = [super init]))
+	{
+		//Set our standard defaults
+		[self setInstallMedium: BXDriveAutodetect];
+		[self setRequiredDiskSpace: BXDefaultFreeSpace];
+		[self setMountHelperDrivesDuringImport: YES];
+		[self setGameEra: BXUnknownEra];
+	}
+	return self;
+}
+
+- (id) initWithDictionary: (NSDictionary *)profileDict
+{
+	if ((self = [self init]))
 	{
 		[self setGameName: [profileDict objectForKey: @"BXProfileName"]];
 		[self setConfName: [profileDict objectForKey: @"BXProfileConf"]];
 		[self setProfileDescription: [profileDict objectForKey: @"BXProfileDescription"]];
 		
+		//Leave these at their default values if a particular key wasn't specified
 		NSNumber *medium = [profileDict objectForKey: @"BXInstallMedium"];
-		[self setInstallMedium: (medium) ? [medium integerValue] : BXDriveAutodetect];
+		if (medium) [self setInstallMedium: [medium integerValue]];
 		
 		NSNumber *requiredSpace = [profileDict objectForKey: @"BXRequiredDiskSpace"];
-		[self setRequiredDiskSpace: (requiredSpace) ? [requiredSpace integerValue] : BXDefaultFreeSpace];
+		if (requiredSpace) [self setRequiredDiskSpace: [requiredSpace integerValue]];
+		
+		NSNumber *mountHelperDrives = [profileDict objectForKey: @"BXMountHelperDrivesDuringImport"];
+		if (mountHelperDrives) [self setMountHelperDrivesDuringImport: [mountHelperDrives boolValue]];
 		
 		NSNumber *era = [profileDict objectForKey: @"BXProfileGameEra"];
-		[self setGameEra: (era) ? [era unsignedIntegerValue] : BXUnknownEra];
+		if (era) [self setGameEra: [era unsignedIntegerValue]];
+		
 		
 		//Used by isDesignatedInstallerAtPath:
 		installerPatterns	= [[profileDict objectForKey: @"BXDesignatedInstallers"] retain];

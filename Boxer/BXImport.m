@@ -416,7 +416,7 @@
 		acceptedTypes = [[NSSet alloc] initWithObjects:
 						 @"public.folder",
 						 @"public.iso-image",
-						 @"com-apple.disk-image-cdr",
+						 @"com.apple.disk-image-cdr",
 						 nil];
 	}
 	return acceptedTypes;
@@ -962,7 +962,7 @@
 	{
 		//Yay! We finished copying files (or failed copying files but want to get done with this anyway)
 		//TODO: add proper error checking and display, as a failure during drive import will probably
-		//means an unusable gamebox.
+		//mean an unusable gamebox.
 		[self setTransferOperation: nil];
 		if ([operation respondsToSelector: @selector(importedDrivePath)])
 		{
@@ -1069,9 +1069,12 @@
 	[self mountFloppyVolumes];
 	[self mountCDVolumes];
 	
-	//Mount our internal DOS toolkit and temporary drives
-	[self mountToolkitDrive];
-	[self mountTempDrive];
+	//Mount our internal DOS toolkit and temporary drives unless the profile says otherwise
+	if ([[self gameProfile] mountHelperDrivesDuringImport])
+	{
+		[self mountToolkitDrive];
+		[self mountTempDrive];
+	}
 }
 
 - (BOOL) _generateGameboxWithError: (NSError **)outError

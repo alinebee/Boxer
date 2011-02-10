@@ -682,7 +682,7 @@ enum {
 	//NOTE: ioctl is currently unimplemented for OS X in DOSBox 0.74, so this will always fall back to SDL.
 	MSCDEX_SetCDInterface(CDROM_USE_IOCTL_DIO, SDLCDNum);
 	
-	char driveLetter		= index + 'A'; //Oh to hell with it, I give up on petty lookups
+	char driveLetter		= index + 'A';
 	const char *drivePath	= [path cStringUsingEncoding: BXDirectStringEncoding];
 	
 	int error = -1;

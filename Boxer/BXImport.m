@@ -928,11 +928,11 @@
 	//so they should be done already, but let's wait anyway.
 	[importQueue waitUntilAllOperationsAreFinished];
 	
-	//Clear our file URL, so that we don't appear as representing this gamebox when the user tries to open it
-	[self setFileURL: nil];
-	
 	//That's all folks!
 	[self setImportStage: BXImportFinished];
+	
+	//Add to the recent documents list
+	[[NSDocumentController sharedDocumentController] noteNewRecentDocument: self];
 	
 	//Bounce to notify the user that we're done
 	[NSApp requestUserAttention: NSInformationalRequest];

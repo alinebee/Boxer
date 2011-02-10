@@ -502,6 +502,20 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	}
 }
 
+- (void) noteNewRecentDocument: (NSDocument *)theDocument
+{
+	//Don't add incomplete game imports to the Recent Documents list.
+	if ([theDocument respondsToSelector: @selector(importStage)] &&
+		[(id)theDocument importStage] != BXImportFinished)
+	{
+		return;
+	}
+	else
+	{
+		[super noteNewRecentDocument: theDocument];
+	}
+}
+
 
 //Store the specified document as the current session
 - (void) addDocument: (NSDocument *)theDocument

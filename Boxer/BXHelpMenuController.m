@@ -45,7 +45,8 @@
 
 - (IBAction) showHelp: (id)sender
 {
-	[[NSApp delegate] openURLFromKey: @"HelpURL"];
+	[NSApp showHelp: sender];
+	//[[NSApp delegate] openURLFromKey: @"HelpURL"];
 }
 
 - (IBAction) showGameAtMobygames: (id)sender

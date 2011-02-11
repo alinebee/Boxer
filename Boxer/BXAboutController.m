@@ -6,6 +6,7 @@
  */
 
 #import "BXAboutController.h"
+#import "BXAppController.h"
 
 
 @implementation BXAboutController
@@ -41,4 +42,10 @@
 	//Make the button background appear all the time
 	[websiteLink setShowsBorderOnlyWhileMouseInside: NO];
 }
+
+- (IBAction) showCredits: (id)sender
+{
+	[[NSApp delegate] showHelpAnchor: @"credits"];
+}
+
 @end

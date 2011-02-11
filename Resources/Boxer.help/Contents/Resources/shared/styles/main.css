@@ -1,0 +1,124 @@
+html
+{
+	/* Apply a vignetted background */
+	background: fixed -webkit-gradient(radial, 50% 0, 0, 50% 50%, 700, from(#262626), to(#111), color-stop(40%, #222));
+	text-shadow: rgba(0, 0, 0, 0.25) 0 1px 1px;
+	color: #ccc;
+	font-family: "Helvetica Neue";
+}
+body
+{
+	margin: 0;
+	padding: 0 3em 2em;
+}
+
+p, ul, ol
+{
+	margin: 0 0 1em;
+	line-height: 20px;
+	font-size: 14px;
+}
+
+ul, ol
+{
+	padding: 0 0 0 2em;
+}
+
+ol		{ list-style-type: decimal; }
+ol ol	{ list-style-type: lower-alpha; }
+ul		{ list-style: square; }
+li		{ margin-bottom: 0.25em; }
+
+h1, h2, h3, h4
+{
+	color: white;
+	margin: 0 0 0.5em;
+	font-weight: normal;
+	font-family: "Lucida Grande";
+	text-shadow: rgba(0, 0, 0, 0.5) 0 1px 3px;
+	/* Make the antialiasing less hefty on headings. */
+	-webkit-font-smoothing: antialiased;
+}
+
+h1	{ font-size: 30px; letter-spacing: -1px; }
+h2	{ font-size: 24px; letter-spacing: -1px; }
+h3	{ font-size: 18px; }
+h4	{ font-size: 16px; font-weight: bold; margin-bottom: 0.5em; }
+
+a			{ color: #9ab; text-decoration: none; }
+a:hover,
+a:focus		{ color: white; text-decoration: underline; }
+
+a[rel=external]
+{
+	padding-right: 17px;
+	background: url("../images/popout.png") 100% 75% no-repeat;
+}
+
+blockquote
+{
+	color: #aaa;
+	background: #333;
+	font-style: italic;
+	margin: 1em 0;
+	padding: 1em 2em;
+}
+
+hr
+{
+	height: 0;
+	width: 100%;
+	border: 0;
+	border-top: 3px solid #333;
+	margin: 0.5em 0;
+}
+
+body > h1
+{
+	/* The topmost heading on the page is preceded by an anchor with which we refer to the page.
+	   If we use a margin to separate the heading from the top of the page, then the page will
+	   be scrolled down to the level of the heading when browsing to that anchor.
+	   Using padding here instead ensures the anchor is flush with the top of the page instead.
+	*/
+	padding-top: 1em;
+}
+
+h1:after
+{
+	clear: both;
+	content: " ";
+	display: block;
+}
+
+h1 .page-icon
+{
+	vertical-align: middle;
+	margin: -8px 16px;
+	float: left;
+}
+
+
+.section
+{
+	margin: 1em 0;
+	border-top: 3px solid #333;
+	padding-top: 1em;
+}
+
+.section .section
+{
+	margin: 1em 0;
+	border-top: 1px solid #333;
+	padding-top: 0.5em;
+}
+
+.section:first-child, .section .section:first-child
+{
+	border-top: 0;
+	padding-top: 0;
+}
+
+.aside
+{
+	color: #777;
+}

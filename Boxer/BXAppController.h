@@ -138,6 +138,9 @@ enum {
 //Returns NO if the file at the path did not exist or could not be opened, YES otherwise.
 - (BOOL) revealPath: (NSString *)filePath;
 
+//Open the specified help anchor in the Boxer help.
+- (void) showHelpAnchor: (NSString *)anchor;
+
 //Open the specified URL from the specified Info.plist key. Used internally by UI actions.
 - (void) openURLFromKey:(NSString *)infoKey;
 //Open the specified search-engine URL from the specified Info.plist key, using the specified search parameters.

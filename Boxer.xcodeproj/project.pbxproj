@@ -107,7 +107,6 @@
 		9F70C19C129036C900A3627F /* Boxer.sdef in Resources */ = {isa = PBXBuildFile; fileRef = 9F70C19B129036C900A3627F /* Boxer.sdef */; };
 		9F765649119403520082A06A /* BXInputController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F765648119403520082A06A /* BXInputController.m */; };
 		9F76D1B910CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F76D1B810CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.m */; };
-		9F76D3F710CBC3B300C3B081 /* GNU General Public License.txt in Resources */ = {isa = PBXBuildFile; fileRef = 9F76D3F510CBC3B300C3B081 /* GNU General Public License.txt */; };
 		9F76D45610CBE5C500C3B081 /* BXSession+BXDragDrop.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F76D45510CBE5C500C3B081 /* BXSession+BXDragDrop.m */; };
 		9F76D4CC10CBFFB200C3B081 /* BXVideoFormatAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F76D4CB10CBFFB200C3B081 /* BXVideoFormatAlert.m */; };
 		9F77217612B38C4400072AE8 /* callback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77209F12B38C4400072AE8 /* callback.cpp */; };
@@ -302,7 +301,6 @@
 		9FCBB2DA10A61D6100C28B09 /* Preflight.conf in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2D910A61D6100C28B09 /* Preflight.conf */; };
 		9FCBB2DC10A61E9300C28B09 /* Launch.conf in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2DB10A61E9300C28B09 /* Launch.conf */; };
 		9FCBB6F310A6DDBD00C28B09 /* DOS Toolkit in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB5FE10A6DDBD00C28B09 /* DOS Toolkit */; };
-		9FCDCCE510D2D53C0080A24F /* Original DOSBox Documentation in Resources */ = {isa = PBXBuildFile; fileRef = 9FCDCCE310D2D53C0080A24F /* Original DOSBox Documentation */; };
 		9FCEDF3312B3DFFC00E856A4 /* SDL_sound.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FCEDF3212B3DFFC00E856A4 /* SDL_sound.framework */; };
 		9FD011BD10C2A02F00670CE1 /* BXGameboxPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD011BC10C2A02F00670CE1 /* BXGameboxPanelController.m */; };
 		9FD23D55129AE3B600B2100B /* NSWindow+BXWindowEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD23D54129AE3B600B2100B /* NSWindow+BXWindowEffects.m */; };
@@ -325,6 +323,7 @@
 		9FEF98011191E1EF002024DF /* BXInputHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FEF98001191E1EF002024DF /* BXInputHandler.mm */; };
 		9FF1756D11B25F4E00D0FCDC /* BXInputView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF1756C11B25F4E00D0FCDC /* BXInputView.m */; };
 		9FF175E711B279F500D0FCDC /* BXVideoHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FF175E611B279F500D0FCDC /* BXVideoHandler.mm */; };
+		9FF1789C13056FF700AACB0E /* Boxer.help in Resources */ = {isa = PBXBuildFile; fileRef = 9FF1788E13056FF700AACB0E /* Boxer.help */; };
 		9FF2E9BD11E6F4950051E485 /* BXEmulatorConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF2E9BC11E6F4950051E485 /* BXEmulatorConfiguration.m */; };
 		9FFAFE2D10DE33FB00728BAC /* GameProfiles.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */; };
 		9FFAFE4310DE343F00728BAC /* Configurations in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2E10DE343F00728BAC /* Configurations */; };
@@ -536,7 +535,6 @@
 		9F765648119403520082A06A /* BXInputController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXInputController.m; sourceTree = "<group>"; };
 		9F76D1B710CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSWorkspace+BXFileTypes.h"; sourceTree = "<group>"; };
 		9F76D1B810CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSWorkspace+BXFileTypes.m"; sourceTree = "<group>"; };
-		9F76D3F610CBC3B300C3B081 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = English; path = "English.lproj/GNU General Public License.txt"; sourceTree = "<group>"; };
 		9F76D45410CBE5C500C3B081 /* BXSession+BXDragDrop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXSession+BXDragDrop.h"; sourceTree = "<group>"; };
 		9F76D45510CBE5C500C3B081 /* BXSession+BXDragDrop.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXSession+BXDragDrop.m"; sourceTree = "<group>"; };
 		9F76D4CA10CBFFB200C3B081 /* BXVideoFormatAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXVideoFormatAlert.h; sourceTree = "<group>"; };
@@ -896,7 +894,6 @@
 		9FCBB2D910A61D6100C28B09 /* Preflight.conf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Preflight.conf; sourceTree = "<group>"; };
 		9FCBB2DB10A61E9300C28B09 /* Launch.conf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Launch.conf; sourceTree = "<group>"; };
 		9FCBB5FE10A6DDBD00C28B09 /* DOS Toolkit */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "DOS Toolkit"; sourceTree = "<group>"; };
-		9FCDCCE410D2D53C0080A24F /* English */ = {isa = PBXFileReference; lastKnownFileType = folder; name = English; path = "English.lproj/Original DOSBox Documentation"; sourceTree = "<group>"; };
 		9FCEDF3212B3DFFC00E856A4 /* SDL_sound.framework */ = {isa = PBXFileReference; comments = "This is a fork of the standard BGHUDAppkit framework built with CoreAudio and OGG support. The sourcecode for this framework is available at http://bitbucket.org/alunbestor/sdl_sound-boxer/"; lastKnownFileType = wrapper.framework; path = SDL_sound.framework; sourceTree = "<group>"; };
 		9FD011BB10C2A02F00670CE1 /* BXGameboxPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXGameboxPanelController.h; sourceTree = "<group>"; };
 		9FD011BC10C2A02F00670CE1 /* BXGameboxPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGameboxPanelController.m; sourceTree = "<group>"; };
@@ -937,6 +934,7 @@
 		9FF1756C11B25F4E00D0FCDC /* BXInputView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXInputView.m; sourceTree = "<group>"; };
 		9FF175E511B279F500D0FCDC /* BXVideoHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXVideoHandler.h; sourceTree = "<group>"; };
 		9FF175E611B279F500D0FCDC /* BXVideoHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXVideoHandler.mm; sourceTree = "<group>"; };
+		9FF1788E13056FF700AACB0E /* Boxer.help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Boxer.help; sourceTree = "<group>"; };
 		9FF2E9BB11E6F4950051E485 /* BXEmulatorConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatorConfiguration.h; sourceTree = "<group>"; };
 		9FF2E9BC11E6F4950051E485 /* BXEmulatorConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXEmulatorConfiguration.m; sourceTree = "<group>"; };
 		9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = GameProfiles.plist; sourceTree = "<group>"; };
@@ -1091,6 +1089,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				9FF1788E13056FF700AACB0E /* Boxer.help */,
 				9F70C19B129036C900A3627F /* Boxer.sdef */,
 				9FDCDEFC11B5B83B0032DA4E /* dsa_pub.pem */,
 				9FCBB2DB10A61E9300C28B09 /* Launch.conf */,
@@ -1101,8 +1100,6 @@
 				9F160BD91236952400F8768E /* Sample Games */,
 				9FFAFE2E10DE343F00728BAC /* Configurations */,
 				9FCBB5FE10A6DDBD00C28B09 /* DOS Toolkit */,
-				9FCDCCE310D2D53C0080A24F /* Original DOSBox Documentation */,
-				9F76D3F510CBC3B300C3B081 /* GNU General Public License.txt */,
 				9FBC34390F56C5AC001811F2 /* Images */,
 				9FCBB2CB10A61C6D00C28B09 /* Sounds */,
 				9F496E4C108EEDF700282261 /* XIBs */,
@@ -2160,8 +2157,6 @@
 				9F59D99810AE0956008DBBC1 /* BoxArtShine.png in Resources */,
 				9F59DD2310AF6129008DBBC1 /* Grille.png in Resources */,
 				9F59DEDF10B01743008DBBC1 /* ProgramPanel.xib in Resources */,
-				9F76D3F710CBC3B300C3B081 /* GNU General Public License.txt in Resources */,
-				9FCDCCE510D2D53C0080A24F /* Original DOSBox Documentation in Resources */,
 				9FFAFE2D10DE33FB00728BAC /* GameProfiles.plist in Resources */,
 				9FFAFE4310DE343F00728BAC /* Configurations in Resources */,
 				9FBD321710E5144C00031CB6 /* Brand.png in Resources */,
@@ -2205,6 +2200,7 @@
 				9FC5353512F489F8005E7670 /* 35DisketteShine.icns in Resources */,
 				9F2121E7130187A9002AB1B7 /* ShelfTemplateLeopard.jpg in Resources */,
 				9F2121E8130187A9002AB1B7 /* ShelfTemplateSnowLeopard.jpg in Resources */,
+				9FF1789C13056FF700AACB0E /* Boxer.help in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2597,14 +2593,6 @@
 			path = ..;
 			sourceTree = "<group>";
 		};
-		9F76D3F510CBC3B300C3B081 /* GNU General Public License.txt */ = {
-			isa = PBXVariantGroup;
-			children = (
-				9F76D3F610CBC3B300C3B081 /* English */,
-			);
-			name = "GNU General Public License.txt";
-			sourceTree = "<group>";
-		};
 		9F8BFEA412C0F0EC0059030F /* DisplayLinkedDOSWindow.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -2653,14 +2641,6 @@
 				9FBC345C0F56C64D001811F2 /* English */,
 			);
 			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		9FCDCCE310D2D53C0080A24F /* Original DOSBox Documentation */ = {
-			isa = PBXVariantGroup;
-			children = (
-				9FCDCCE410D2D53C0080A24F /* English */,
-			);
-			name = "Original DOSBox Documentation";
 			sourceTree = "<group>";
 		};
 		9FE2172A121EED1E001452E3 /* ImportCoverArtTip.png */ = {

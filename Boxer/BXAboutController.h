@@ -22,4 +22,6 @@
 //of the application. BXAboutController should always be accessed from this singleton.
 + (id) controller;
 
+//Display the credits and acknowledgements help page
+- (IBAction) showCredits: (id)sender;
 @end

@@ -1,0 +1,9 @@
+/* Styles used by the credits pages. */
+
+#contributing-projects li
+{
+	margin-bottom: 0.5em;
+}
+
+.license	{ margin-left: 0.5em; color: #789; }
+

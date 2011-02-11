@@ -705,6 +705,11 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	return [super validateUserInterfaceItem: theItem];
 }
 
+- (void) showHelpAnchor: (NSString *)anchor
+{
+	NSString *bookID = [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleHelpBookName"];
+	[[NSHelpManager sharedHelpManager] openHelpAnchor: anchor inBook: bookID];
+}
 
 - (void) openURLFromKey: (NSString *)infoKey
 {

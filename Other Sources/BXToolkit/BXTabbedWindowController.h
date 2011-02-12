@@ -23,6 +23,9 @@
 @property (retain, nonatomic) NSTabView *tabView;
 @property (retain, nonatomic) NSToolbar *toolbarForTabs;
 
+//The index of the current tab view item, mostly for scripting purposes.
+@property (assign, nonatomic) NSInteger selectedTabViewItemIndex;
+
 //Select the tab whose index corresponds to the tag of the sender.
 - (IBAction) takeSelectedTabViewItemFromTag: (id <NSValidatedUserInterfaceItem>)sender;
 

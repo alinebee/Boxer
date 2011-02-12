@@ -48,6 +48,9 @@
 		9F2AC6E410EFFE8600CFFF72 /* BXBootlegCoverArt.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2AC6E310EFFE8600CFFF72 /* BXBootlegCoverArt.m */; };
 		9F2C28A2129D906600B172C8 /* BXFirstRunWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2C28A1129D906600B172C8 /* BXFirstRunWindowController.m */; };
 		9F2C28B8129D924E00B172C8 /* FirstRunWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F2C28B6129D924E00B172C8 /* FirstRunWindow.xib */; };
+		9F3FB1AF1306F88800DB8FBE /* BXScriptedPreferences.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3FB1AE1306F88800DB8FBE /* BXScriptedPreferences.m */; };
+		9F3FB1B61306F9FB00DB8FBE /* NSApplication+BXScripting.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3FB1B51306F9FB00DB8FBE /* NSApplication+BXScripting.m */; };
+		9F3FB24E130714D700DB8FBE /* BXScriptedWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3FB24D130714D700DB8FBE /* BXScriptedWindow.m */; };
 		9F4175AB119DBFDD00646B15 /* BXRenderingLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4175AA119DBFDD00646B15 /* BXRenderingLayer.m */; };
 		9F4175F1119DCF7E00646B15 /* BXFrameRateCounterLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4175F0119DCF7E00646B15 /* BXFrameRateCounterLayer.m */; };
 		9F424207109D03F500111D28 /* BXInspectorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F424206109D03F500111D28 /* BXInspectorController.m */; };
@@ -441,6 +444,12 @@
 		9F2C28A1129D906600B172C8 /* BXFirstRunWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFirstRunWindowController.m; sourceTree = "<group>"; };
 		9F2C28B7129D924E00B172C8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/FirstRunWindow.xib; sourceTree = "<group>"; };
 		9F348A9D128F004A0034E780 /* BXWelcomeButtonDraggingDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXWelcomeButtonDraggingDelegate.h; sourceTree = "<group>"; };
+		9F3FB1AD1306F88800DB8FBE /* BXScriptedPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXScriptedPreferences.h; sourceTree = "<group>"; };
+		9F3FB1AE1306F88800DB8FBE /* BXScriptedPreferences.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXScriptedPreferences.m; sourceTree = "<group>"; };
+		9F3FB1B41306F9FB00DB8FBE /* NSApplication+BXScripting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSApplication+BXScripting.h"; sourceTree = "<group>"; };
+		9F3FB1B51306F9FB00DB8FBE /* NSApplication+BXScripting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSApplication+BXScripting.m"; sourceTree = "<group>"; };
+		9F3FB24C130714D700DB8FBE /* BXScriptedWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXScriptedWindow.h; sourceTree = "<group>"; };
+		9F3FB24D130714D700DB8FBE /* BXScriptedWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXScriptedWindow.m; sourceTree = "<group>"; };
 		9F4037B912CB6CA300DAA66C /* BXEmulatorPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatorPrivate.h; sourceTree = "<group>"; };
 		9F4175A9119DBFDD00646B15 /* BXRenderingLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXRenderingLayer.h; sourceTree = "<group>"; };
 		9F4175AA119DBFDD00646B15 /* BXRenderingLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXRenderingLayer.m; sourceTree = "<group>"; };
@@ -1439,6 +1448,12 @@
 			children = (
 				9F511500129055FE00BEC0B9 /* BXImportCommand.h */,
 				9F511501129055FE00BEC0B9 /* BXImportCommand.m */,
+				9F3FB1AD1306F88800DB8FBE /* BXScriptedPreferences.h */,
+				9F3FB1AE1306F88800DB8FBE /* BXScriptedPreferences.m */,
+				9F3FB1B41306F9FB00DB8FBE /* NSApplication+BXScripting.h */,
+				9F3FB1B51306F9FB00DB8FBE /* NSApplication+BXScripting.m */,
+				9F3FB24C130714D700DB8FBE /* BXScriptedWindow.h */,
+				9F3FB24D130714D700DB8FBE /* BXScriptedWindow.m */,
 			);
 			name = Scripting;
 			sourceTree = "<group>";
@@ -2474,6 +2489,9 @@
 				9F2122E51301BD72002AB1B7 /* BXHelperAppCheck.m in Sources */,
 				9F2122EA1301BDE1002AB1B7 /* BXShelfAppearanceOperation.m in Sources */,
 				9F2122EF1301BE6E002AB1B7 /* BXSampleGamesCopy.m in Sources */,
+				9F3FB1AF1306F88800DB8FBE /* BXScriptedPreferences.m in Sources */,
+				9F3FB1B61306F9FB00DB8FBE /* NSApplication+BXScripting.m in Sources */,
+				9F3FB24E130714D700DB8FBE /* BXScriptedWindow.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

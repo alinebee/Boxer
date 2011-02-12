@@ -43,9 +43,9 @@
 	[websiteLink setShowsBorderOnlyWhileMouseInside: NO];
 }
 
-- (IBAction) showCredits: (id)sender
+- (IBAction) showAcknowledgements: (id)sender
 {
-	[[NSApp delegate] showHelpAnchor: @"credits"];
+	[[NSApp delegate] showHelpAnchor: @"acknowledgements"];
 }
 
 @end

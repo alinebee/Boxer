@@ -36,8 +36,6 @@
 	<string>http://boxerapp.com/</string>
 	<key>DonationURL</key>
 	<string>http://boxerapp.com/donate</string>
-	<key>HelpURL</key>
-	<string>http://boxerapp.com/guide</string>
 	<key>BugReportURL</key>
 	<string>https://bitbucket.org/alunbestor/boxer/issues/new</string>
 	<key>ConfigurationFileHelpURL</key>

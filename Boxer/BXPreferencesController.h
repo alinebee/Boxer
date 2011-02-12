@@ -10,6 +10,13 @@
 
 #import "BXTabbedWindowController.h"
 
+
+//Constants for preferences panel tab indexes
+enum {
+	BXGeneralPreferencesPanel,
+	BXDisplayPreferencesPanel
+};
+
 @class BXFilterGallery;
 
 @interface BXPreferencesController : BXTabbedWindowController

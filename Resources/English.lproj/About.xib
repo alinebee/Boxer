@@ -234,19 +234,19 @@ MDAy4oCTMjAxMCBieSB0aGUgRE9TQm94IFRlYW0uA</string>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
-						<string key="label">showCredits:</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="962285433"/>
-					</object>
-					<int key="connectionID">50</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
 						<string key="label">showWebsite:</string>
 						<reference key="source" ref="1003"/>
 						<reference key="destination" ref="327811048"/>
 					</object>
 					<int key="connectionID">51</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">showAcknowledgements:</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="962285433"/>
+					</object>
+					<int key="connectionID">52</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -454,7 +454,7 @@ MDAy4oCTMjAxMCBieSB0aGUgRE9TQm94IFRlYW0uA</string>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">51</int>
+			<int key="maxID">52</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -463,13 +463,13 @@ MDAy4oCTMjAxMCBieSB0aGUgRE9TQm94IFRlYW0uA</string>
 					<string key="className">BXAboutController</string>
 					<string key="superclassName">NSWindowController</string>
 					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">showCredits:</string>
+						<string key="NS.key.0">showAcknowledgements:</string>
 						<string key="NS.object.0">id</string>
 					</object>
 					<object class="NSMutableDictionary" key="actionInfosByName">
-						<string key="NS.key.0">showCredits:</string>
+						<string key="NS.key.0">showAcknowledgements:</string>
 						<object class="IBActionInfo" key="NS.object.0">
-							<string key="name">showCredits:</string>
+							<string key="name">showAcknowledgements:</string>
 							<string key="candidateClassName">id</string>
 						</object>
 					</object>

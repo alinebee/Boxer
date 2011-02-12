@@ -29,15 +29,29 @@
 
 - (void) windowDidLoad
 {
-	if ([[self tabView] selectedTabViewItem])
+	//At load time, fire off initial notification handlers for the
+	//current item to ensure that everything is set up correctly.
+	NSTabViewItem *selectedItem = [[self tabView] selectedTabViewItem];
+	if (selectedItem)
 	{
-		[self tabView: [self tabView] willSelectTabViewItem: [[self tabView] selectedTabViewItem]];
-		[self tabView: [self tabView] didSelectTabViewItem: [[self tabView] selectedTabViewItem]];
+		[self tabView: [self tabView] willSelectTabViewItem: selectedItem];
+		[self tabView: [self tabView] didSelectTabViewItem: selectedItem];
 	}
 }
 
 #pragma mark -
 #pragma mark Tab selection
+
+- (NSInteger) selectedTabViewItemIndex
+{
+	NSTabViewItem *selectedItem = [[self tabView] selectedTabViewItem];
+	if (selectedItem) return [[self tabView] indexOfTabViewItem: selectedItem];
+	else return NSNotFound;
+}
+- (void) setSelectedTabViewItemIndex: (NSInteger)tabIndex
+{
+	[[self tabView] selectTabViewItemAtIndex: tabIndex];
+}
 
 - (IBAction) takeSelectedTabViewItemFromTag: (id <NSValidatedUserInterfaceItem>)sender
 {

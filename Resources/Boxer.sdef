@@ -11,6 +11,33 @@
             </direct-parameter>
         </command>
 		
+		<enumeration name="preferences window panels" code="panl">
+			<enumerator name="General Preferences panel" code="Gpnl">
+				<cocoa integer-value="0"/>
+			</enumerator>
+			<enumerator name="Display Preferences panel" code="Dpnl">
+				<cocoa integer-value="1"/>
+			</enumerator>
+		</enumeration>
+		
+		<class-extension extends="application" description="The Boxer application.">
+			<property name="Boxer preferences" code="Bprf" type="preferences" description="Boxer’s application preferences.">
+				<cocoa key="scriptedPreferences"/>
+			</property>
+		</class-extension>
+		
+		<class name="preferences" code="cprf" description="Boxer’s application preferences.">
+			<cocoa class="BXScriptedPreferences"/>
+			<property name="window" code="Pwnd" type="preferences window" description="Boxer’s application preferences window."/>
+		</class>
+		
+		<class name="preferences window" inherits="window" code="pwnd" description="Boxer’s application preferences window.">
+			<cocoa class="BXScriptedWindow"/>
+			<property name="current panel" code="panl" type="preferences window panels" description="The current panel of the application preferences window.">
+				<cocoa key="selectedTabViewItemIndex"/>
+			</property>
+		</class>
+		
 		<class name="document" code="docu" description="A DOS session.">
 			<cocoa class="BXSession"/>
 			<property name="name" code="pnam" type="text" access="r" description="Its name.">

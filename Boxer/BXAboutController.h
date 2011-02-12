@@ -23,5 +23,5 @@
 + (id) controller;
 
 //Display the credits and acknowledgements help page
-- (IBAction) showCredits: (id)sender;
+- (IBAction) showAcknowledgements: (id)sender;
 @end

@@ -4,7 +4,7 @@ html
 	background: fixed -webkit-gradient(radial, 50% 0, 0, 50% 50%, 700, from(#262626), to(#111), color-stop(40%, #222));
 	text-shadow: rgba(0, 0, 0, 0.25) 0 1px 1px;
 	color: #ccc;
-	font-family: "Helvetica Neue";
+	font: 14px/1.5 "Helvetica Neue";
 }
 body
 {
@@ -15,8 +15,6 @@ body
 p, ul, ol
 {
 	margin: 0 0 1em;
-	line-height: 20px;
-	font-size: 14px;
 }
 
 ul, ol
@@ -41,11 +39,11 @@ h1, h2, h3, h4
 }
 
 h1	{ font-size: 30px; letter-spacing: -1px; }
-h2	{ font-size: 24px; letter-spacing: -1px; }
+h2	{ font-size: 22px; letter-spacing: -1px; }
 h3	{ font-size: 18px; }
 h4	{ font-size: 16px; font-weight: bold; margin-bottom: 0.5em; }
 
-a			{ color: #9ab; text-decoration: none; }
+a:link		{ color: #9ab; text-decoration: none; }
 a:hover,
 a:focus		{ color: white; text-decoration: underline; }
 
@@ -53,6 +51,12 @@ a[rel=external]
 {
 	padding-right: 17px;
 	background: url("../images/popout.png") 100% 75% no-repeat;
+}
+
+a[rel=application-window]
+{
+	padding-right: 17px;
+	background: url("../images/application-popout.png") 100% 75% no-repeat;
 }
 
 blockquote
@@ -72,6 +76,89 @@ hr
 	border-top: 3px solid #333;
 	margin: 0.5em 0;
 }
+
+kbd
+{
+	font-family: Monaco;
+	font-size: 12px;
+	font-weight: normal;
+	padding: 0.1em 0.5em;
+	margin: 0 3px;
+	text-shadow: none;
+	white-space: nowrap;
+	word-spacing: -0.2em;
+	
+	border-top: 1px solid #e9ecef;
+	background: #d9dcdf;
+	color: #364857;
+	
+	min-width: 1em;
+	text-align: center;
+	-webkit-box-shadow: rgba(0,0,0,0.5) 0 1px 2px;
+	border-radius: 4px;
+}
+
+/* Tables */
+
+table
+{
+	border-spacing: 0;
+	border-collapse: collapse;
+	width: 100%;
+	margin: 0 0 1.5em;
+}
+
+tr:first-child td:first-child	{ border-top-left-radius: 10px; }
+tr:first-child td:last-child	{ border-top-right-radius: 10px; }
+tr:last-child td:first-child	{ border-bottom-left-radius: 10px; }
+tr:last-child td:last-child		{ border-bottom-right-radius: 10px; }
+
+th, td
+{
+	text-align: left;
+	vertical-align: baseline;
+	padding: 0.5em 1em 0.5em;
+}
+
+td
+{
+	background: #333;
+	border-bottom: 1px solid #222;
+}
+tr:last-child td	{ border-bottom: 0; }
+
+thead th
+{
+	border-top: 0;
+}
+
+th
+{
+	color: #777;
+}
+
+/* General helper styles */
+
+.under-my-breath, .tip
+{
+	color: #777;
+}
+
+.note
+{
+	background: #333;
+	padding: 0.5em 1em;
+	border-radius: 10px;
+}
+
+/* Example menu paths */
+.menu
+{
+	font-weight: bold;
+}
+
+
+/* Top headings */
 
 body > h1
 {
@@ -97,28 +184,24 @@ h1 .page-icon
 	float: left;
 }
 
+/* Page subdivisions */
 
-.section
+section
 {
-	margin: 1em 0;
+	margin: 1em 0 1.5em;
 	border-top: 3px solid #333;
 	padding-top: 1em;
 }
 
-.section .section
+section section
 {
 	margin: 1em 0;
 	border-top: 1px solid #333;
 	padding-top: 0.5em;
 }
 
-.section:first-child, .section .section:first-child
+section:first-child, section section:first-child
 {
 	border-top: 0;
 	padding-top: 0;
-}
-
-.aside
-{
-	color: #777;
 }

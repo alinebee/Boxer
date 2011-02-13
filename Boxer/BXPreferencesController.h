@@ -55,4 +55,6 @@ enum {
 //Display an open panel for choosing the games folder.
 - (IBAction) showGamesFolderChooser: (id)sender;
 
+//Display help for the Display Preferences panel.
+- (IBAction) showDisplayPreferencesHelp: (id)sender;
 @end

@@ -5,11 +5,14 @@ html
 	text-shadow: rgba(0, 0, 0, 0.25) 0 1px 1px;
 	color: #ccc;
 	font: 14px/1.5 "Helvetica Neue";
+	
+	/* Make the antialiasing less hefty */
+	-webkit-font-smoothing: antialiased;
 }
 body
 {
 	margin: 0;
-	padding: 0 3em 2em;
+	padding: 0 2em 2em;
 }
 
 p, ul, ol
@@ -24,7 +27,7 @@ ul, ol
 
 ol		{ list-style-type: decimal; }
 ol ol	{ list-style-type: lower-alpha; }
-ul		{ list-style: square; }
+ul		{ list-style: square; list-style-image: -webkit-gradient(linear, ); }
 li		{ margin-bottom: 0.25em; }
 
 h1, h2, h3, h4
@@ -34,8 +37,6 @@ h1, h2, h3, h4
 	font-weight: normal;
 	font-family: "Lucida Grande";
 	text-shadow: rgba(0, 0, 0, 0.5) 0 1px 3px;
-	/* Make the antialiasing less hefty on headings. */
-	-webkit-font-smoothing: antialiased;
 }
 
 h1	{ font-size: 30px; letter-spacing: -1px; }
@@ -47,17 +48,7 @@ a:link		{ color: #9ab; text-decoration: none; }
 a:hover,
 a:focus		{ color: white; text-decoration: underline; }
 
-a[rel=external]
-{
-	padding-right: 17px;
-	background: url("../images/popout.png") 100% 75% no-repeat;
-}
-
-a[rel=application-window]
-{
-	padding-right: 17px;
-	background: url("../images/application-popout.png") 100% 75% no-repeat;
-}
+img	{ vertical-align: baseline; }
 
 blockquote
 {
@@ -90,7 +81,7 @@ kbd
 	
 	border-top: 1px solid #e9ecef;
 	background: #d9dcdf;
-	color: #364857;
+	color: black;
 	
 	min-width: 1em;
 	text-align: center;
@@ -138,28 +129,73 @@ th
 }
 
 /* General helper styles */
+/* --------------------- */
 
-.under-my-breath, .tip
+img.floated-left
+{
+	float: left;
+	margin-right: 10px;
+	margin-bottom: 10px;
+}
+img.floated-right
+{
+	float: right;
+	margin-left: 10px;
+	margin-bottom: 10px;
+}
+
+/* Links to external websites */
+a[rel=external]
+{
+	padding-right: 17px;
+	background: url("../images/site-popout.png") 100% 75% no-repeat;
+}
+
+/* Email links */
+a[rel=email]
+{
+	padding-right: 19px;
+	background: url("../images/email-popout.png") 100% 75% no-repeat;
+}
+
+/* Links to open a window of the application */
+a[rel=application-window]
+{
+	padding-right: 18px;
+	margin-right: 2px;
+	font-weight: bold;
+	background: url("../images/application-popout.png") 100% 75% no-repeat;
+}
+
+/* Subtle text */
+.under-my-breath, .note
 {
 	color: #777;
 }
 
-.note
+/* Additional information boxes */
+.tip
 {
+	clear: both;
 	background: #333;
 	padding: 0.5em 1em;
 	border-radius: 10px;
 }
 
-/* Example menu paths */
+/* Example menu paths, imitating the appearance of the OS X application menu */
 .menu
 {
-	font-weight: bold;
+	font-family: 12px "Lucida Grande";
+	padding: 0.2em 0.5em;
+	color: black;
+	font-weight: normal;
+	white-space: nowrap;
+	text-shadow: rgba(255, 255, 255, 0.66) 0 1px 1px;
+	background: -webkit-gradient(linear, 50% 100%, 50% 0, from(#cecece), to(#fafafa));
 }
 
 
 /* Top headings */
-
 body > h1
 {
 	/* The topmost heading on the page is preceded by an anchor with which we refer to the page.
@@ -167,7 +203,7 @@ body > h1
 	   be scrolled down to the level of the heading when browsing to that anchor.
 	   Using padding here instead ensures the anchor is flush with the top of the page instead.
 	*/
-	padding-top: 1em;
+	padding-top: 0.5em;
 }
 
 h1:after
@@ -177,20 +213,36 @@ h1:after
 	display: block;
 }
 
-h1 .page-icon
+h1 .page-icon-32
+{
+	vertical-align: text-bottom;
+	width: 32px;
+	height: 32px;
+}
+
+h1 .page-icon-64
 {
 	vertical-align: middle;
 	margin: -8px 16px;
 	float: left;
+	width: 64px;
+	height: 64px;
 }
 
-/* Page subdivisions */
 
+/* Page subdivisions */
 section
 {
 	margin: 1em 0 1.5em;
 	border-top: 3px solid #333;
 	padding-top: 1em;
+	clear: both;
+}
+section:after
+{
+	clear: both;
+	display: block;
+	content: " ";
 }
 
 section section

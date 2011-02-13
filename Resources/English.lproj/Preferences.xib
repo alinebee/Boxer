@@ -21,7 +21,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="1"/>
+			<integer value="70"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -778,6 +778,26 @@
 															<reference key="NSTextColor" ref="374043504"/>
 														</object>
 													</object>
+													<object class="NSButton" id="337662504">
+														<reference key="NSNextResponder" ref="611757230"/>
+														<int key="NSvFlags">268</int>
+														<string key="NSFrame">{{490, 16}, {25, 25}}</string>
+														<reference key="NSSuperview" ref="611757230"/>
+														<bool key="NSEnabled">YES</bool>
+														<object class="NSButtonCell" key="NSCell" id="79528678">
+															<int key="NSCellFlags">67239424</int>
+															<int key="NSCellFlags2">134217728</int>
+															<string key="NSContents"/>
+															<reference key="NSSupport" ref="467860324"/>
+															<reference key="NSControlView" ref="337662504"/>
+															<int key="NSButtonFlags">-2038415105</int>
+															<int key="NSButtonFlags2">161</int>
+															<string key="NSAlternateContents"/>
+															<string key="NSKeyEquivalent"/>
+															<int key="NSPeriodicDelay">200</int>
+															<int key="NSPeriodicInterval">25</int>
+														</object>
+													</object>
 												</object>
 												<string key="NSFrameSize">{532, 396}</string>
 												<reference key="NSSuperview" ref="996894748"/>
@@ -1102,6 +1122,14 @@
 					</object>
 					<int key="connectionID">262</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">showDisplayPreferencesHelp:</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="337662504"/>
+					</object>
+					<int key="connectionID">265</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -1330,6 +1358,7 @@
 							<reference ref="300242725"/>
 							<reference ref="836268613"/>
 							<reference ref="301640791"/>
+							<reference ref="337662504"/>
 						</object>
 						<reference key="parent" ref="996894748"/>
 					</object>
@@ -1568,6 +1597,20 @@
 						<reference key="object" ref="131177714"/>
 						<reference key="parent" ref="735469156"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">263</int>
+						<reference key="object" ref="337662504"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="79528678"/>
+						</object>
+						<reference key="parent" ref="611757230"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">264</int>
+						<reference key="object" ref="79528678"/>
+						<reference key="parent" ref="337662504"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -1629,6 +1672,8 @@
 					<string>223.IBPluginDependency</string>
 					<string>224.IBPluginDependency</string>
 					<string>225.IBPluginDependency</string>
+					<string>263.IBPluginDependency</string>
+					<string>264.IBPluginDependency</string>
 					<string>70.IBEditorWindowLastContentRect</string>
 					<string>70.IBPluginDependency</string>
 					<string>70.IBUserGuides</string>
@@ -1727,6 +1772,8 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>{{33, 291}, {532, 396}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<object class="NSMutableArray">
@@ -1776,7 +1823,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">262</int>
+			<int key="maxID">265</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -1806,12 +1853,14 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>showDisplayPreferencesHelp:</string>
 							<string>showGamesFolderChooser:</string>
 							<string>toggleDefaultFilterType:</string>
 							<string>toggleShelfAppearance:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>NSButton</string>
@@ -1821,12 +1870,17 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>showDisplayPreferencesHelp:</string>
 							<string>showGamesFolderChooser:</string>
 							<string>toggleDefaultFilterType:</string>
 							<string>toggleShelfAppearance:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBActionInfo">
+								<string key="name">showDisplayPreferencesHelp:</string>
+								<string key="candidateClassName">id</string>
+							</object>
 							<object class="IBActionInfo">
 								<string key="name">showGamesFolderChooser:</string>
 								<string key="candidateClassName">id</string>
@@ -1955,6 +2009,13 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">Other Sources/BXToolkit/BXTabbedWindowController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">NSApplication</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">Boxer/NSApplication+BXScripting.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

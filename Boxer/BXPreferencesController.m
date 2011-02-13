@@ -143,12 +143,17 @@
 	}
 }
 
-//Display an open panel for choosing the games folder.
 - (IBAction) showGamesFolderChooser: (id)sender
 {
 	BXGamesFolderPanelController *chooser = [BXGamesFolderPanelController controller];
 	[chooser showGamesFolderPanelForWindow: [self window]];
 	[[self gamesFolderSelector] selectItemAtIndex: 0];
+}
+
+//Display help for the Display Preferences panel.
+- (IBAction) showDisplayPreferencesHelp: (id)sender
+{
+	[[NSApp delegate] showHelpAnchor: @"display"];
 }
 
 @end

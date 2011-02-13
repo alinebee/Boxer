@@ -90,4 +90,7 @@
 //Used by initialDefaultProgramPanel for accepting the offer to make the current program the default.
 - (IBAction) setCurrentProgramToDefault: (id)sender;
 
+//Used by installerTipsPanel to show the help page for game installation.
+- (IBAction) showInstallerHelp: (id)sender;
+
 @end

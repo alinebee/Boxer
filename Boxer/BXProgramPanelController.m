@@ -289,6 +289,11 @@
 	if ([self canSetActiveProgramToDefault]) [self setActiveProgramIsDefault: YES];
 }
 
+- (IBAction) showInstallerHelp: (id)sender
+{
+	[[NSApp delegate] showHelpAnchor: @"game-installation"];
+}
+
 
 #pragma mark -
 #pragma mark Executable list

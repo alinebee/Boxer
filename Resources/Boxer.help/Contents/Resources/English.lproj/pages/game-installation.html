@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Tips for game installation and configuration</title>
+		<meta name="description" content="Where to install and how to configure sound cards.">
+		<meta name="keywords" content="destination, soundcard, adlib, soundblaster, mpu401">
+		
+		<link rel="stylesheet" type="text/css" href="../../shared/styles/main.css">
+	</head>
+	<body>
+		<a name="game-installation"></a>
+		<h1><img src="../../shared/images/importer-128.png" class="page-icon-64"> Game installation and configuration</h1>
+		
+		<p class="tip">Always install games by dropping them onto the <a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/import.scpt?" rel="application-window">Import window</a> or “Import a new game” droplet.<br>This will run the game’s installer if necessary, and bundle the game into a new <a href="gameboxes.html">gamebox</a>.</p>
+
+		<section>
+			<a name="install-location"></a>
+			<h2>Telling the game where to install</h2>
+		
+			<p><strong>Choose any location on drive C</strong>. The path within drive C doesn’t matter, so go with whatever the game suggests.</p>
+			
+			<p class="note">When importing a game, Boxer creates an empty drive C inside a new <a href="gameboxes.html">gamebox</a>. Installing to drive C will put the game files directly into the gamebox, where they belong.</p>
+		</section>
+		
+		<section>
+			<a name="install-size"></a>
+			<h2>Choosing an install size</h2>
+			<p>Many CD-ROM games offer a choice of installation sizes, where smaller installations leave more data on the CD.</p>
+			
+			<p><strong>It’s usually best to choose the smallest install size</strong>, because Boxer will import the whole CD into the gamebox regardless. A larger install size wastes disk space and will have no effect on loading times.</p>
+			
+			<p class="note">Some games disable features or leave out content at smaller installation sizes. You should choose the maximum size for these games.</p>
+		</section>
+		
+		<section>
+			<a name="soundcard-configuration"></a>
+			<h2>Choosing a sound card</h2>
+			
+			<p>Many games will happily <strong>autodetect the correct sound card settings</strong>. If you need to choose a sound card manually, then Boxer supports the following:</p>
+			
+			<section>
+				<a name="sound-blaster"></a>
+				<h3>Sound Blaster/Pro/16</h3>
+				<p>The most reliable choice and supported by almost all games. Choose Sound Blaster 16 if available, otherwise Pro or regular Sound Blaster. Use the following settings if asked:</p>
+				
+				<table class="sound-configuration">
+					<tr><th>I/O Address:</th><td>220</td></tr>
+					<tr><th>IRQ:</th><td>7</td></tr>
+					<tr><th>DMA:</th><td>1</td></tr>
+				</table>
+			</section>
+			
+			<section>
+				<a name="general-midi"></a>
+				<h3>General MIDI <small>(“MPU-401 compatible”)</small></h3>
+				<p>This provides high-quality MIDI music and is supported by most later DOS games. If the game lets you choose separate soundcards for digital audio and music, choose <strong>Sound Blaster 16 for digital audio</strong> and <strong>General MIDI for music</strong>.</p>
+				
+				<table class="sound-configuration">
+					<tr><th>I/O Address:</th><td>330</td></tr>
+				</table>
+			</section>
+			
+			<section>
+				<a name="gravis-ultrasound"></a>
+				<h3>Gravis Ultrasound/Max <small>(“GUS”)</small></h3>
+				<p>Not widely supported: but in games that properly support it, this can provide more channels of digital audio and better sampled music than <a href="#sound-blaster">Sound Blaster</a> or <a href="#general-midi">General MIDI</a>.</p>
+				
+				<table class="sound-configuration">
+					<tr><th>I/O Address:</th><td>240</td></tr>
+					<tr><th>IRQ:</th><td>5</td></tr>
+					<tr><th>DMA:</th><td>3</td></tr>
+				</table>
+			</section>
+			
+			<section>
+				<a name="adlib"></a>
+				<h3>AdLib</h3>
+				<p>This music-only card was supported by many older games. You should choose <a href="#sound-blaster">Sound Blaster</a> instead if available.</p>
+				
+				<table class="sound-configuration">
+					<tr><th>I/O Address:</th><td>388</td></tr>
+				</table>
+			</section>
+		</section>
+	</body>
+</html>
+
+

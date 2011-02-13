@@ -187,6 +187,7 @@ a[rel=application-window]
 {
 	font-family: 12px "Lucida Grande";
 	padding: 0.2em 0.5em;
+	margin: 0 0.2em;
 	color: black;
 	font-weight: normal;
 	white-space: nowrap;

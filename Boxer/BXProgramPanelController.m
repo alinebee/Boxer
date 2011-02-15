@@ -291,7 +291,7 @@
 
 - (IBAction) showInstallerHelp: (id)sender
 {
-	[[NSApp delegate] showHelpAnchor: @"game-installation"];
+	[[NSApp delegate] showHelpAnchor: @"game-installation-without-preamble"];
 }
 
 

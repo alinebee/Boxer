@@ -154,7 +154,6 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 		NSNumber *era = [profileDict objectForKey: @"BXProfileGameEra"];
 		if (era) [self setGameEra: [era unsignedIntegerValue]];
 		
-		
 		//Used by isDesignatedInstallerAtPath:
 		installerPatterns	= [[profileDict objectForKey: @"BXDesignatedInstallers"] retain];
 		

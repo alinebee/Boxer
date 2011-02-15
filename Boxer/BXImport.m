@@ -1070,7 +1070,7 @@
 	[self mountCDVolumes];
 	
 	//Mount our internal DOS toolkit and temporary drives unless the profile says otherwise
-	if ([[self gameProfile] mountHelperDrivesDuringImport])
+	if (![self gameProfile] || [[self gameProfile] mountHelperDrivesDuringImport])
 	{
 		[self mountToolkitDrive];
 		[self mountTempDrive];

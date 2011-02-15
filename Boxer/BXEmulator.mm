@@ -5,9 +5,6 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-//For NSEvent and NSApp
-#import <Cocoa/Cocoa.h>
-
 #import "BXEmulatorPrivate.h"
 #import "BXEmulatorDelegate.h"
 
@@ -483,18 +480,8 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 
 - (BOOL) _handleEventLoop
 {
-	//Implementation note: in a better world, this code wouldn't be here as event dispatch is normally done
-	//automatically by NSApplication at opportune moments. However, DOSBox's emulation loop completely takes
-	//over the application's main thread, leaving no time for events to get processed and dispatched.
-	//This explicitly pumps NSApplication's event queue for all pending events and sends them on their way.
-	
-	if ([NSThread currentThread] == [NSThread mainThread])
-	{
-		NSEvent *event;
-		while ((event = [NSApp nextEventMatchingMask: NSAnyEventMask untilDate: nil inMode: NSDefaultRunLoopMode dequeue: YES]))
-			[NSApp sendEvent: event];
-
-	}
+	[[self delegate] didBeginRunLoop];
+	[[self delegate] didCompleteRunLoop];
 	return YES;
 }
 

@@ -27,7 +27,7 @@ ul, ol
 
 ol		{ list-style-type: decimal; }
 ol ol	{ list-style-type: lower-alpha; }
-ul		{ list-style: square; list-style-image: -webkit-gradient(linear, ); }
+ul		{ list-style: square; list-style-image: -webkit-gradient(linear, 50% 100%, 50% 0, from(#444), to(#555)); }
 li		{ margin-bottom: 0.25em; }
 
 h1, h2, h3, h4
@@ -166,9 +166,19 @@ a[rel=application-window]
 }
 
 /* Subtle text */
-.under-my-breath, .note
+.under-my-breath
 {
 	color: #777;
+}
+
+/* Expanded explanations */
+
+.note
+{
+	color: #777;
+	padding-left: 22px;
+	background: url("../images/info.png") 0 0.25em no-repeat;
+	float: left;
 }
 
 /* Additional information boxes */
@@ -222,7 +232,7 @@ h1 .page-icon-32
 h1 .page-icon-64
 {
 	vertical-align: middle;
-	margin: -8px 16px;
+	margin: -8px 16px 0;
 	float: left;
 	width: 64px;
 	height: 64px;
@@ -251,7 +261,7 @@ section section
 	padding-top: 0.5em;
 }
 
-section:first-child, section section:first-child
+section:first-child, section section:first-child, section.no-border
 {
 	border-top: 0;
 	padding-top: 0;

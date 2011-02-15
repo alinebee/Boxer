@@ -31,8 +31,13 @@
 - (void) runLaunchCommands;
 
 //Tells the delegate that the specified frame has finished rendering.
-- (void) frameComplete: (BXFrameBuffer *)frame;
+- (void) didCompleteFrame: (BXFrameBuffer *)frame;
 
+//Tells the delegate that the emulator has started/finished one iteration of its run loop.
+//This is currently a misnomer: BXEmulator calls these in the middle of its run loop.
+//This will become more accurate once BXEmulator is multithreaded/multiprocess.
+- (void) didBeginRunLoop;
+- (void) didCompleteRunLoop;
 
 #pragma mark -
 #pragma mark Notifications

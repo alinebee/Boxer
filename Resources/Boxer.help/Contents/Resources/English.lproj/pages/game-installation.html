@@ -2,25 +2,28 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>Tips for game installation and configuration</title>
-		<meta name="description" content="Where to install and how to configure sound cards.">
-		<meta name="keywords" content="destination, soundcard, adlib, soundblaster, mpu401">
+		<title>Game installation tips and sound card settings</title>
+		<meta name="description" content="Where to install and which sound card to choose.">
+		<meta name="keywords" content="destination, soundcard, adlib, soundblaster, mpu401, gus">
 		
 		<link rel="stylesheet" type="text/css" href="../../shared/styles/main.css">
 	</head>
 	<body>
 		<a name="game-installation"></a>
-		<h1><img src="../../shared/images/importer-128.png" class="page-icon-64"> Game installation and configuration</h1>
+		<h1><img src="../../shared/images/importer-128.png" class="page-icon-64">Game installation tips and sound card settings</h1>
 		
-		<p class="tip">Always install games by dropping them onto the <a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/import.scpt?" rel="application-window">Import window</a> or “Import a new game” droplet.<br>This will run the game’s installer if necessary, and bundle the game into a new <a href="gameboxes.html">gamebox</a>.</p>
+		<p class="tip">Always install games by dropping them onto the <a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/import.scpt?" rel="application-window">Import window</a> or “Import a new game” droplet.<br>
+		This will run the game’s installer if necessary, and bundle the game into a new <a href="gameboxes.html">gamebox</a>.</p>
 
-		<section>
+		<a name="game-installation-without-preamble"></a>
+		<section class="no-border">
 			<a name="install-location"></a>
 			<h2>Telling the game where to install</h2>
 		
-			<p><strong>Choose any location on drive C</strong>. The path within drive C doesn’t matter, so go with whatever the game suggests.</p>
+			<p><strong>Choose any location on drive C</strong>. The path within drive C doesn’t matter, so use whatever the game suggests.</p>
 			
-			<p class="note">When importing a game, Boxer creates an empty drive C inside a new <a href="gameboxes.html">gamebox</a>. Installing to drive C will put the game files directly into the gamebox, where they belong.</p>
+			<p class="note">When importing a game, Boxer creates an empty drive C inside a new <a href="gameboxes.html">gamebox</a>.<br>
+			Installing to drive C will put the game files directly into the gamebox, where they belong.</p>
 		</section>
 		
 		<section>
@@ -28,9 +31,10 @@
 			<h2>Choosing an install size</h2>
 			<p>Many CD-ROM games offer a choice of installation sizes, where smaller installations leave more data on the CD.</p>
 			
-			<p><strong>It’s usually best to choose the smallest install size</strong>, because Boxer will import the whole CD into the gamebox regardless. A larger install size wastes disk space and will have no effect on loading times.</p>
+			<p><strong>For most games you should choose the smallest install size</strong>, because Boxer will import the whole CD into the gamebox regardless. A larger install size wastes disk space and will have no effect on loading times.</p>
 			
-			<p class="note">Some games disable features or leave out content at smaller installation sizes. You should choose the maximum size for these games.</p>
+			<p class="note">Some games disable features or leave out content at smaller installation sizes.<br>
+			You should choose the maximum size for those games.</p>
 		</section>
 		
 		<section>
@@ -54,7 +58,7 @@
 			<section>
 				<a name="general-midi"></a>
 				<h3>General MIDI <small>(“MPU-401 compatible”)</small></h3>
-				<p>This provides high-quality MIDI music and is supported by most later DOS games. If the game lets you choose separate soundcards for digital audio and music, choose <strong>Sound Blaster 16 for digital audio</strong> and <strong>General MIDI for music</strong>.</p>
+				<p>This provides high-quality music (better than <a href="#sound-blaster">Sound Blaster</a>) and is supported by most later DOS games. If the game lets you choose separate soundcards for digital audio and music, choose <strong>Sound Blaster 16 for digital audio</strong> and <strong>General MIDI for music</strong>.</p>
 				
 				<table class="sound-configuration">
 					<tr><th>I/O Address:</th><td>330</td></tr>
@@ -65,6 +69,8 @@
 				<a name="gravis-ultrasound"></a>
 				<h3>Gravis Ultrasound/Max <small>(“GUS”)</small></h3>
 				<p>Not widely supported: but in games that properly support it, this can provide more channels of digital audio and better sampled music than <a href="#sound-blaster">Sound Blaster</a> or <a href="#general-midi">General MIDI</a>.</p>
+				
+				<p class="note">If the game’s music card option is labelled “Gravis Ultrasound MIDI synth” then it doesn’t provide native Gravis Ultrasound music, and you should choose <a href="#general-midi">General MIDI</a> instead.</p>
 				
 				<table class="sound-configuration">
 					<tr><th>I/O Address:</th><td>240</td></tr>

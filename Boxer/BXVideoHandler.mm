@@ -244,7 +244,7 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 	if ([self frameBuffer] && dirtyBlocks)
 	{
 		//TODO: send a notification instead?
-		[[[self emulator] delegate] frameComplete: [self frameBuffer]];
+		[[[self emulator] delegate] didCompleteFrame: [self frameBuffer]];
 	}
 	frameInProgress = NO;
 }

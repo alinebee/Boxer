@@ -630,7 +630,32 @@ NSString * const BXSessionDidUnlockMouseNotification	= @"BXSessionDidUnlockMouse
 	[self _launchTarget];
 }
 
-- (void) frameComplete: (BXFrameBuffer *)frame
+- (void) didBeginRunLoop
+{
+	//Implementation note: in a better world, this code wouldn't be here as event dispatch is normally done
+	//automatically by NSApplication at opportune moments. However, DOSBox's emulation loop completely takes
+	//over the application's main thread, leaving no time for events to get processed and dispatched.
+	//This explicitly pumps NSApplication's event queue for all pending events and sends them on their way.
+	
+	//Bugfix: if we are in the process of shutting down, then don't dispatch events:
+	//NSApp may not know yet that our window has closed and will crash when trying
+	//send events to it. This isn't a bug per se but an edge-case with the
+	//NSWindow/NSDocument close flow.
+	
+	NSEvent *event;
+	while (!isClosing && (event = [NSApp nextEventMatchingMask: NSAnyEventMask
+													 untilDate: nil
+														inMode: NSDefaultRunLoopMode
+													   dequeue: YES]))
+	{
+		[NSApp sendEvent: event];
+	}
+}
+
+- (void) didCompleteRunLoop {}
+
+
+- (void) didCompleteFrame: (BXFrameBuffer *)frame
 {
 	[[self DOSWindowController] updateWithFrame: frame];
 }

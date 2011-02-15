@@ -13,7 +13,8 @@
 #pragma mark -
 #pragma mark Application state functions
 
-//This is called at the start of GFX_Events in DOSBox's sdlmain.cpp, to allow us to perform initial actions every time the event loop runs.
+//This is called in place of DOSBox's GFX_Events to allow us to process events when the DOSBox
+//core runloop gives us time.
 void boxer_handleEventLoop()
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];

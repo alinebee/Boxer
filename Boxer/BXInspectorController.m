@@ -6,7 +6,7 @@
  */
 
 #import "BXInspectorController.h"
-#import "BXSession.h"
+#import "BXSession+BXEmulatorControls.h"
 #import "BXEmulator.h"
 #import "BXDrive.h"
 #import "BXAppController.h"
@@ -16,14 +16,21 @@
 #import "BXDOSWindowController.h"
 #import "BXInputController.h"
 
-const CGFloat BXInspectorPanelBlurRadius = 2.0f;
-const CGFloat BXMouseSensitivityRange = 2.0f;
+
+/* Internal constants */
+
+#define BXInspectorPanelBlurRadius 2.0f
+#define BXMouseSensitivityRange 2.0f
 
 @implementation BXInspectorController
 @synthesize panelSelector;
 
 + (void) initialize
 {
+	//Ensure BXSession initializes itself, as BXSession’s initialize method declares
+	//a number of value transformers upon which the Inspector UI depends.
+	[BXSession class];
+	
 	NSArray *sensitivityThresholds = [NSArray arrayWithObjects:
 									  [NSNumber numberWithFloat: 1.0f / BXMouseSensitivityRange],
 									  [NSNumber numberWithFloat: 1.0f],
@@ -107,7 +114,11 @@ const CGFloat BXMouseSensitivityRange = 2.0f;
 
 - (void) showWindow: (id)sender
 {
+	//If there’s no session active, don’t allow the window to be shown
+	if (![[[NSApp delegate] currentSession] isEmulating]) return;
+	
 	[self loadWindow];
+	
 	[[self window] fadeInWithDuration: 0.2];
 	[[self window] applyGaussianBlurWithRadius: BXInspectorPanelBlurRadius];
 	
@@ -129,7 +140,9 @@ const CGFloat BXMouseSensitivityRange = 2.0f;
 		//(This will happen automatically for normal windows, but since we're an NSPanel
 		//that doesnt become key automatically, the DOS window doesn't know to release
 		//mouse focus)
-		[NSApp sendAction: @selector(toggleMouseLocked:) to: nil from: [NSNumber numberWithBool: NO]];
+		[NSApp sendAction: @selector(toggleMouseLocked:)
+					   to: nil
+					 from: [NSNumber numberWithBool: NO]];
 		
 	}
 	else if ([self isWindowLoaded])

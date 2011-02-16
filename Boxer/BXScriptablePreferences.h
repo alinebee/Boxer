@@ -6,17 +6,17 @@
  */
 
 
-//BXScriptedPreferences exposes a scripting API for messing with Boxer's application preferences.
+//BXScriptablePreferences exposes a scripting API for messing with Boxer's application preferences.
 //Currently, this only includes a shortcut to the global preferences window.
 
 #import <Cocoa/Cocoa.h>
 
-@interface BXScriptedPreferences : NSObject
+@interface BXScriptablePreferences : NSObject
 
 //Boxer’s global preferences window.
 @property (readonly) NSWindow *window;
 
 //The singleton for this class.
-+ (BXScriptedPreferences *) sharedPreferences;
++ (BXScriptablePreferences *) sharedPreferences;
 
 @end

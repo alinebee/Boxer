@@ -6,7 +6,7 @@
  */
 
 
-//The BXEmulatorController category is responsible for bridging the session UI with the underlying
+//The BXEmulatorControls category is responsible for bridging the session UI with the underlying
 //emulator state. Most of its methods are UI-facing.
 
 
@@ -37,12 +37,12 @@ enum
 };
 
 //The maximum frameskip level we can set
-const NSUInteger BXMaxFrameskip = 9;
+#define BXMaxFrameskip 9
 
 
 @class BXEmulator;
 
-@interface BXSession (BXEmulatorController)
+@interface BXSession (BXEmulatorControls)
 
 #pragma mark -
 #pragma mark Properties

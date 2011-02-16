@@ -10,10 +10,15 @@
 
 #import <AppKit/AppKit.h>
 
-@class BXScriptedPreferences;
+@class BXScriptablePreferences;
+@class BXScriptableWindow;
 
 @interface NSApplication (BXScripting)
 
-@property (readonly) BXScriptedPreferences *scriptedPreferences;
+//An Applescript API object for modifying Boxer’s application preferences and accessing the preferences window.
+@property (readonly) BXScriptablePreferences *scriptablePreferences;
+
+//An Applescript API object representing the Inspector panel.
+@property (readonly) BXScriptableWindow *scriptableInspectorWindow;
 
 @end

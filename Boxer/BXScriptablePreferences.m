@@ -5,21 +5,21 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-#import "BXScriptedPreferences.h"
+#import "BXScriptablePreferences.h"
 #import "BXPreferencesController.h"
-#import "BXScriptedWindow.h"
+#import "BXScriptableWindow.h"
 
-@implementation BXScriptedPreferences
+@implementation BXScriptablePreferences
 
 - (NSWindow *)window
 {
 	NSWindow *window = [[BXPreferencesController controller] window];
-	return [BXScriptedWindow scriptedWindow: window];
+	return [BXScriptableWindow scriptableWindow: window];
 }
 
-+ (BXScriptedPreferences *) sharedPreferences
++ (BXScriptablePreferences *) sharedPreferences
 {
-	BXScriptedPreferences *preferences = nil;
+	BXScriptablePreferences *preferences = nil;
 	if (!preferences) preferences = [[self alloc] init];
 	return preferences;
 }

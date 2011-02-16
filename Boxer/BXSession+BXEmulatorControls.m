@@ -5,7 +5,7 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-#import "BXSession+BXEmulatorController.h"
+#import "BXSession+BXEmulatorControls.h"
 #import "BXSession+BXFileManager.h"
 #import "BXEmulator+BXShell.h"
 #import "BXEmulator+BXPaste.h"
@@ -29,7 +29,7 @@
 @end
 
 
-@implementation BXSession (BXEmulatorController)
+@implementation BXSession (BXEmulatorControls)
 
 #pragma mark -
 #pragma mark Speed-related helper methods

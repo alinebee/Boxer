@@ -807,7 +807,7 @@ NSString * const BXSessionDidUnlockMouseNotification	= @"BXSessionDidUnlockMouse
 
 - (void) didChangeEmulationState: (NSNotification *)notification
 {
-	//These reside in BXEmulatorController, as should this function, but so be it
+	//These reside in BXEmulatorControls, as should this function, but so be it
 	[self willChangeValueForKey: @"sliderSpeed"];
 	[self didChangeValueForKey: @"sliderSpeed"];
 	

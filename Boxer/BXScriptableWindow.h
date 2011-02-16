@@ -6,7 +6,7 @@
  */
 
 
-//BXScriptedWindow is a wrapper for NSWindow which transparently passes KVO scripting messages
+//BXScriptableWindow is a wrapper for NSWindow which transparently passes KVO scripting messages
 //first to the window controller, then to the window itself if the window controller doesn't
 //respond to that key (or doesn't exist in the first place). 
 
@@ -16,14 +16,14 @@
 #import <Cocoa/Cocoa.h>
 
 
-@interface BXScriptedWindow : NSObject
+@interface BXScriptableWindow : NSObject
 {
 	NSWindow *window;
 }
 
 @property (retain, nonatomic) NSWindow *window;
 
-+ (id) scriptedWindow: (NSWindow *)window;
++ (id) scriptableWindow: (NSWindow *)window;
 - (id) initWithWindow: (NSWindow *)window;
 
 @end

@@ -27,7 +27,7 @@ enum BXDriveTypes {
 typedef NSInteger BXDriveType;
 
 //Setting freeSpace to BXDefaultFreeSpace indicates that the drive should use whatever free space DOSBox thinks is best.
-static const NSInteger BXDefaultFreeSpace = -1;
+#define BXDefaultFreeSpace -1
 
 
 #pragma mark -

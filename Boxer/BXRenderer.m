@@ -20,7 +20,7 @@
 #endif
 
 //When scaling up beyond this we won't bother with the scaling buffer
-const CGFloat BXScalingBufferScaleCutoff = 3.0f;
+#define BXScalingBufferScaleCutoff 3.0f
 
 @interface BXRenderer ()
 

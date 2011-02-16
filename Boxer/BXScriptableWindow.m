@@ -5,13 +5,31 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-#import "BXScriptedWindow.h"
+#import "BXScriptableWindow.h"
 
 
-@implementation BXScriptedWindow
+@implementation BXScriptableWindow
 @synthesize window;
 
-+ (id) scriptedWindow: (NSWindow *)_window
+#pragma mark -
+#pragma mark Introspection
+
+- (NSScriptObjectSpecifier *)objectSpecifier
+{
+	//Masquerade as the window itself
+	return [[self window] objectSpecifier];
+}
+
+- (NSString *) description
+{
+	return [[self window] description];
+}
+
+
+#pragma mark -
+#pragma mark Initialization and deallocation
+
++ (id) scriptableWindow: (NSWindow *)_window
 {
 	return [[[self alloc] initWithWindow: _window] autorelease];
 }
@@ -31,6 +49,11 @@
 	return [super dealloc];
 }
 
+#pragma mark -
+#pragma mark Key/value dispatch
+
+//For keys that aren't handled directly by BXScriptableWindow, pass them first
+//to the window controller and then to the window itself.
 - (id) valueForUndefinedKey: (NSString *)key
 {
 	NSWindowController *controller = [[self window] windowController];
@@ -81,21 +104,21 @@
 	}
 }
 
-- (NSScriptObjectSpecifier *)objectSpecifier
+
+#pragma mark -
+#pragma mark windowScripting overrides
+
+//Route show calls through the window controller instead,
+//which may have custom logic for window visibility
+- (void) setIsVisible: (BOOL)visible
 {
-	//Masquerade as the window itself
-	return [[self window] objectSpecifier];
+	if (visible && [[self window] windowController])
+	{
+		[[[self window] windowController] showWindow: self];
+	}
+	else [[self window] setIsVisible: visible];
 }
 
-+ (Class) class
-{
-	return [NSWindow class];
-}
-
-- (NSString *) description
-{
-	return [[self window] description];
-}
 
 - (id) handleCloseScriptCommand: (NSCloseCommand *)command
 {

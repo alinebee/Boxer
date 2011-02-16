@@ -11,29 +11,54 @@
             </direct-parameter>
         </command>
 		
-		<enumeration name="preferences window panels" code="panl">
-			<enumerator name="General Preferences panel" code="Gpnl">
+		<enumeration name="preferences window panels" code="ePpn">
+			<enumerator name="General Preferences panel" code="GPpn">
 				<cocoa integer-value="0"/>
 			</enumerator>
-			<enumerator name="Display Preferences panel" code="Dpnl">
+			<enumerator name="Display Preferences panel" code="PPpn">
 				<cocoa integer-value="1"/>
 			</enumerator>
 		</enumeration>
 		
+		<enumeration name="inspector window panels" code="eIpn">
+			<enumerator name="Game panel" code="GIpn">
+				<cocoa integer-value="0"/>
+			</enumerator>
+			<enumerator name="CPU panel" code="CIpn">
+				<cocoa integer-value="1"/>
+			</enumerator>
+			<enumerator name="Mouse panel" code="MIpn">
+				<cocoa integer-value="2"/>
+			</enumerator>
+			<enumerator name="Drives panel" code="DIpn">
+				<cocoa integer-value="3"/>
+			</enumerator>
+		</enumeration>
+		
 		<class-extension extends="application" description="The Boxer application.">
-			<property name="Boxer preferences" code="Bprf" type="preferences" description="Boxer’s application preferences.">
-				<cocoa key="scriptedPreferences"/>
+			<property name="Boxer preferences" code="Bprf" type="preferences" access="r" description="Boxer’s application preferences.">
+				<cocoa key="scriptablePreferences"/>
+			</property>
+			<property name="inspector" code="Iwnd" type="inspector window" access="r" description="The Inspector panel.">
+				<cocoa key="scriptableInspectorWindow"/>
 			</property>
 		</class-extension>
 		
-		<class name="preferences" code="cprf" description="Boxer’s application preferences.">
-			<cocoa class="BXScriptedPreferences"/>
-			<property name="window" code="Pwnd" type="preferences window" description="Boxer’s application preferences window."/>
+		<class name="preferences" code="cBpf" description="Boxer’s application preferences.">
+			<cocoa class="BXScriptablePreferences"/>
+			<property name="window" code="Pwnd" type="preferences window" access="r" description="Boxer’s application preferences window."/>
 		</class>
 		
-		<class name="preferences window" inherits="window" code="pwnd" description="Boxer’s application preferences window.">
-			<cocoa class="BXScriptedWindow"/>
-			<property name="current panel" code="panl" type="preferences window panels" description="The current panel of the application preferences window.">
+		<class name="preferences window" inherits="window" code="cPwn" description="Boxer’s application preferences window.">
+			<cocoa class="BXScriptableWindow"/>
+			<property name="current panel" code="pPnl" type="preferences window panels" description="The current panel of the application preferences window.">
+				<cocoa key="selectedTabViewItemIndex"/>
+			</property>
+		</class>
+		
+		<class name="inspector window" inherits="window" code="cIwn" description="The Inspector panel.">
+			<cocoa class="BXScriptableWindow"/>
+			<property name="current panel" code="pPnl" type="inspector window panels" description="The current panel of the inspector.">
 				<cocoa key="selectedTabViewItemIndex"/>
 			</property>
 		</class>

@@ -36,9 +36,9 @@ BXDriveGeometry BXFloppyDiskGeometry	= {512, 1, 2880, 2880};		//1.44MB, 1.44MB f
 BXDriveGeometry BXCDROMGeometry			= {2048, 1, 65535, 0};		//~650MB, no free space
 
 //Media IDs used by _DOSBoxDriveFromPath:freeSpace:geometry:mediaID
-const NSUInteger BXFloppyMediaID	= 0xF0;
-const NSUInteger BXHardDiskMediaID	= 0xF8;
-const NSUInteger BXCDROMMediaID		= BXHardDiskMediaID;
+#define BXFloppyMediaID		0xF0
+#define BXHardDiskMediaID	0xF8
+#define BXCDROMMediaID		0xF8
 
 //Error constants returned by DriveManager::UnmountDrive.
 enum {

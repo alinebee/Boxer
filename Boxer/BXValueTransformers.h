@@ -35,13 +35,13 @@
 
 
 //Simply inverts a number and returns it.
-//Registered as BXFrameRateSliderTransformer by BXSession+BXEmulatorController, which is used for flipping the values of the framerate slider.
+//Registered as BXFrameRateSliderTransformer by BXSession+BXEmulatorControls, which is used for flipping the values of the framerate slider.
 @interface BXInvertNumberTransformer: NSValueTransformer
 @end
 
 
 //Maps sets of numeric ranges (0-1000, 1001-2000 etc.) onto a 0.0->1.0 scale, with equal weight for each range.
-//Registered as BXSpeedSliderTransformer by BXSession+BXEmulatorController, to maps our different CPU speed bands onto a single speed slider.
+//Registered as BXSpeedSliderTransformer by BXSession+BXEmulatorControls, to maps our different CPU speed bands onto a single speed slider.
 //NOTE: sliders using this transformer must have a range from 0.0 to 1.0.
 @interface BXBandedValueTransformer: NSValueTransformer
 {

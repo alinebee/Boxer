@@ -25,18 +25,19 @@
 
 //The number of seconds it takes for the cursor to fade out after entering the window.
 //Cursor animation is flickery so a small duration helps mask this.
-const NSTimeInterval BXCursorFadeDuration = 0.4;
+#define BXCursorFadeDuration 0.4
 
 //The framerate at which to animate the cursor fade.
 //15fps is as fast as is really noticeable.
-const float BXCursorFadeFrameRate = 15.0f;
+#define BXCursorFadeFrameRate 15.0f
 
 //If the cursor is warped less than this distance (relative to a 0.0->1.0 square canvas) then
 //the OS X cursor will not be warped to match. Because OS X cursor warping introduces a slight
 //input delay, we use this tolerance to ignore small warps.
-const CGFloat BXCursorWarpTolerance = 0.1f;
+#define BXCursorWarpTolerance 0.1f
 
-const float BXMouseLockSoundVolume = 0.5f;
+//The volume level at which we'll play the lock/unlock sound effects.
+#define BXMouseLockSoundVolume 0.7f
 
 
 //Flags for which mouse buttons we are currently faking (for Ctrl- and Opt-clicking.)

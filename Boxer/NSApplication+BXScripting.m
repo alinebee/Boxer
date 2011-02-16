@@ -6,12 +6,20 @@
  */
 
 #import "NSApplication+BXScripting.h"
-#import "BXScriptedPreferences.h"
+#import "BXScriptablePreferences.h"
+#import "BXInspectorController.h"
+#import "BXScriptableWindow.h"
 
 @implementation NSApplication (BXScripting)
 
-- (BXScriptedPreferences *)scriptedPreferences
+- (BXScriptablePreferences *)scriptablePreferences
 {
-	return [BXScriptedPreferences sharedPreferences];
+	return [BXScriptablePreferences sharedPreferences];
+}
+
+- (BXScriptableWindow *)scriptableInspectorWindow
+{
+	NSWindow *window = [[BXInspectorController controller] window];
+	return [BXScriptableWindow scriptableWindow: window];
 }
 @end

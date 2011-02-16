@@ -1,11 +1,11 @@
 /* Styles used by the credits and legalese pages. */
 
-#contributing-projects li
+.projects-list li
 {
 	margin-bottom: 0.5em;
 }
 
-#contributing-projects .license-link
+.license-link
 {
 	margin-left: 0.5em;
 	color: #789;

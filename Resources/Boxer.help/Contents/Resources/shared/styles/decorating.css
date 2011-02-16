@@ -1,0 +1,20 @@
+/* Styles used by the decorating page. */
+
+#cover-art-via-import, #cover-art-via-inspector
+{
+	width: 45%;
+	min-width: 300px;
+	padding-bottom: 1em;
+	box-sizing: border-box;
+	text-align: center;
+}
+
+#cover-art-via-import
+{
+	float: left;
+}
+
+#cover-art-via-inspector
+{
+	float: right;
+}

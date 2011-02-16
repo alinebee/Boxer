@@ -25,9 +25,9 @@ ul, ol
 	padding: 0 0 0 2em;
 }
 
-ol		{ list-style-type: decimal; }
-ol ol	{ list-style-type: lower-alpha; }
-ul		{ list-style: square; list-style-image: -webkit-gradient(linear, 50% 100%, 50% 0, from(#444), to(#555)); }
+ol		{ list-style: decimal; }
+ol ol	{ list-style: lower-alpha; }
+ul		{ list-style: square -webkit-gradient(linear, 50% 100%, 50% 0, from(#444), to(#555)); }
 li		{ margin-bottom: 0.25em; }
 
 h1, h2, h3, h4
@@ -140,6 +140,13 @@ img.floated-right
 	float: right;
 	margin-left: 10px;
 	margin-bottom: 10px;
+}
+
+img.fit-to-width
+{
+	display: block;
+	margin: 1em auto;
+	max-width: 100%;
 }
 
 /* Links to external websites */

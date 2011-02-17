@@ -1,11 +1,21 @@
 /* Styles used by the decorating page. */
 
-#cover-art-via-import, #cover-art-via-inspector
+#cover-art-wrapper
 {
-	width: 45%;
-	min-width: 300px;
-	padding-bottom: 1em;
-	box-sizing: border-box;
+	padding: 0.5em 0 1em;
+}
+
+#cover-art-wrapper:after
+{
+	clear: both;
+	content: " ";
+	display: block;
+}
+
+#cover-art-via-import,
+#cover-art-via-inspector
+{
+	width: 50%;
 	text-align: center;
 }
 

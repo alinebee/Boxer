@@ -68,6 +68,12 @@ hr
 	margin: 0.5em 0;
 }
 
+code
+{
+	font-family: Monaco;
+	color: #888;
+}
+
 kbd
 {
 	font-family: Monaco;
@@ -135,6 +141,7 @@ img.floated-left
 	margin-right: 10px;
 	margin-bottom: 10px;
 }
+
 img.floated-right
 {
 	float: right;
@@ -142,10 +149,15 @@ img.floated-right
 	margin-bottom: 10px;
 }
 
-img.fit-to-width
+img.centered
 {
 	display: block;
-	margin: 1em auto;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+img.fit-to-width
+{
 	max-width: 100%;
 }
 
@@ -183,8 +195,8 @@ a[rel=application-window]
 .note
 {
 	color: #777;
-	padding-left: 22px;
-	background: url("../images/info.png") 0 0.25em no-repeat;
+	padding-left: 2em;
+	background: url("../images/info.png") 0.25em 0.25em no-repeat;
 	float: left;
 }
 

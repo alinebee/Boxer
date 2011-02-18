@@ -3,7 +3,7 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Decorating your games</title>
-		<meta name="keywords" content="coverart, boxart, docs, manual">
+		<meta name="keywords" content="decorate, coverart, boxart, docs, manual">
 		<meta name="description" content="How to apply cover-art and bundle documentation with your games.">
 		
 		<link rel="stylesheet" type="text/css" href="../../shared/styles/main.css">
@@ -13,43 +13,42 @@
 		<a name="decorating"></a>
 		<h1>Decorating your games</h1>
 		
+		<img src="../../shared/images/game-shelf.jpg" alt="" class="fit-to-width">
+				
 		<p>Nostalgia doesn’t have to stop at playing your games. Why not make your collection into a shrine to your misspent youth?</p>
 		
 		<section>
 			<a name="cover-art"></a>
 				<h2>Making purty cover-art icons</h2>
 			
-				<img src="../../shared/images/game-shelf.jpg" alt="" class="fit-to-width">
-				
 				<p>Boxer can turn <a href="#finding-cover-art">game cover scans</a> (or any image you like) into high-resolution Finder icons for your games.</p>
 				
-				<div id="cover-art-wrapper">
-				<div id="cover-art-via-import">
-					<h3>For new games:</h3>
-					<p>Import the game and drop your image<br> onto the game icon once it’s finished.</p>
-					<img src="../../shared/images/import-drop-coverart.png" alt="" class="fit-to-width">
-				</div>
-				
-				<div id="cover-art-via-inspector">
-					<h3>For existing games:</h3>
-					<p>Launch the game, <a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/openinspector.scpt?Game" rel="application-window">open the Inspector’s Game tab</a>, and drop your image onto the dropzone.</p>
-					<!--
-					<ol>
-						<li>Open an existing gamebox,</li>
-						<li><a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/openinspector.scpt?Game" rel="application-window">Bring up the Inspector’s Game tab</a>,</li>
-						<li>Drop your image onto the dropzone.</li>
-					</ol>
-					-->
-					<img src="../../shared/images/inspector-drop-coverart.png" alt="" class="fit-to-width">
-				</div>
-				</div>
-				
-				<p>Et voilà! Soon you’ll have a shelf full of gorgeous games.</p>
+				<ul id="cover-art-wrapper">
+					<li id="cover-art-via-import">
+						<h3>For new games:</h3>
+						<p>Import the game and drop your image<br> onto the game icon once it’s finished.</p>
+						<img src="../../shared/images/import-drop-coverart.png" alt="" class="fit-to-width">
+					</li>
+					
+					<li id="cover-art-via-inspector">
+						<h3>For existing games:</h3>
+						<p>Launch the game, <a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/openinspector.scpt?Game" rel="application-window">open the Inspector’s Game tab</a>, and drop your image onto the dropzone.</p>
+						<!--
+						<ol>
+							<li>Open an existing gamebox,</li>
+							<li><a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/openinspector.scpt?Game" rel="application-window">Bring up the Inspector’s Game tab</a>,</li>
+							<li>Drop your image onto the dropzone.</li>
+						</ol>
+						-->
+						<img src="../../shared/images/inspector-drop-coverart.png" alt="" class="fit-to-width">
+					</li>
+				</ul>
 				
 				<p class="tip">If you drop an opaque image (like a JPG), then Boxer will apply a shiny box effect to the icon.<br>
 				If you drop an image with transparency data (like a 32-bit PNG), then Boxer will use the image as-is.</p>
-				
-				<section>
+
+								
+				<section class="no-border">
 					<a name="finding-cover-art"></a>
 					<h3>Where can I find cover art to use?</h3>
 					<ul>
@@ -72,10 +71,10 @@
 			<p>Normally this list shows all text files, PDFs and images inside the gamebox. To customise it:</p>
 			<ol>
 				<li>Browse the gamebox in Finder by right-clicking on the gamebox and choosing <span class="menu">Show package contents</span>,</li>
-				<li>Create a new folder inside the gamebox named <code class="filename">Documentation</code>,
+				<li>Create a new folder inside the gamebox named <span class="filename">Documentation</span>,
 				<li>Fill it with the documentation files you want.</li>
 			</ol>
-			<p class="note">When there’s a <code class="filename">Documentation</code> folder inside the gamebox, the Help list will show everything in that folder and nothing else.</p>
+			<p class="note">When there’s a <span class="filename">Documentation</span> folder inside the gamebox, the Help list will show everything in that folder and nothing else.</p>
 			
 			<section>
 				<a name="finding-documentation"></a>
@@ -87,5 +86,8 @@
 				</ul>
 			</section>
 		</section>
+		
+		<script type="text/javascript" src="../../shared/scripts/zepto.min.js"></script>
+		<script type="text/javascript" src="../../shared/scripts/linkhandlers.js"></script>
 	</body>
 </html>

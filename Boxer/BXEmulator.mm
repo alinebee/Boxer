@@ -108,10 +108,11 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	return [[self internalProcessNames] containsObject: process];
 }
 
-+ (NSString *) configStringForFixedSpeed: (NSInteger)speed isAuto: (BOOL)isAutoSpeed
++ (NSString *) configStringForFixedSpeed: (NSInteger)speed
+								  isAuto: (BOOL)isAutoSpeed
 {
 	if (isAutoSpeed) return @"max";
-	else return [[NSNumber numberWithInteger: speed] stringValue]; 
+	else return [NSString stringWithFormat: @"fixed %i", speed, nil]; 
 }
 
 + (NSString *) configStringForCoreMode: (BXCoreMode)mode

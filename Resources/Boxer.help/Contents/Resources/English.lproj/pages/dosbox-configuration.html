@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>DOSBox configuration parameters</title>
+		<meta name="description" content="Advanced emulation settings for DOSBox Preferences.conf.">
+		
+		<link rel="stylesheet" type="text/css" href="../../shared/styles/main.css">
+		<link rel="stylesheet" type="text/css" href="../../shared/styles/configuration.css">
+	</head>
+	<body>
+		<a name="dosbox-configuration"></a>
+		<h1>DOSBox configuration parameters</h1>
+		
+		<p>These parameters control advanced features of the DOS emulation. If needed, these can be added to your gamebox’s configuration file:</p>
+		
+		<ul>
+			<li>Right-click on your gamebox in Finder and choose <span class="menu">Show package contents</span>,</li>
+			<li>Double-click on the <span class="filename">DOSBox Preferences.conf</span> file inside to open it in TextEdit,</li>
+			<li>Paste in the setting you need, ensuring that you include the <code class="configuration">[section]</code> tag with the setting.</li>
+		</ul>
+		
+		<p class="tip"><em>Boxer’s goal is zero configuration:</em> if a game won’t work in Boxer without custom configuration settings, then <a href="mailto:support@boxerapp.com?subject=Custom%20game%20settings" rel="email">send me the game’s details</a> so Boxer can configure that game automatically in future.</p>
+		
+		<section>
+			<a name="configuration-machine"></a>
+			<h2>Choosing what kind of PC to emulate</h2>
+			
+			<section>
+				<a name="configuration-machine-type"></a>
+				<h3><code class="configuration">[dosbox]<br>machine=<var>(mode)</var></code></h3>
+				<p>The type of computer and video-card to emulate. Modes include:</p>
+				
+				<table class="wide configuration">
+					<tr class="default"><th>[dosbox]<br>machine=svga_s3</th>
+						<td><strong>The default:</strong> S3 Trio64 SuperVGA card with 2MB of video memory.<br>
+	The most capable mode, and suitable for almost all games.</td>
+					</tr>
+					
+					<tr><th>[dosbox]<br>machine=vgaonly</th>
+						<td>VGA card without SuperVGA support. Needed for some games that are incompatible with SVGA or use VGA-specific tricks.</td>
+					</tr>
+					
+					<tr><th>[dosbox]<br>machine=ega</th>
+						<td>16-colour EGA graphics adapter.</td>
+					</tr>
+					
+					<tr><th>[dosbox]<br>machine=tandy</th>
+						<td><strong>Emulates a Tandy 1000 with 3-voice sound.</strong><br>
+						Tandy sound emulation is only available in this mode.</td>
+					</tr>
+					
+					<tr><th>[dosbox]<br>machine=pcjr</th>
+						<td>Emulates an IBM PCjr.</td>
+					</tr>
+					
+					<tr><th>[dosbox]<br>machine=cga</th>
+						<td>4-colour CGA graphics adapter. Provides support for CGA-specific graphical tricks used by some games.</td>
+					</tr>
+					
+					<tr><th>[dosbox]<br>machine=hercules</th>
+						<td>Hercules monochrome graphics adapter.</td>
+					</tr>
+				</table>
+				
+				<p>The following alternate SVGA modes are also available:</p>
+				<table class="wide configuration">
+					<tr><th>[dosbox]<br>machine=svga_et4000</th>
+						<td>Tseng ET-4000 SuperVGA card with 1MB of memory.</td>
+					</tr>
+					<tr><th>[dosbox]<br>machine=svga_et3000</th>
+						<td>Tseng ET-3000 SuperVGA card with 512kB of memory.</td>
+					</tr>
+					<tr><th>[dosbox]<br>machine=svga_paradise</th>
+						<td>Paradise PVGA1A SuperVGA card with 512kB of memory.</td>
+					</tr>
+					<tr><th>[dosbox]<br>machine=svga_oldvbe</th>
+						<td>Same as <code class="configuration">machine=svga_s3</code>, with an older VESA 1.2 BIOS instead of VESA 2.0.</td>
+					</tr>
+					<tr><th>[dosbox]<br>machine=svga_nolfb</th>
+						<td>Same as <code class="configuration">machine=svga_s3</code>, with linear frame buffer modes disabled.</td>
+					</tr>
+				</table>
+			</section>
+		</section>
+		
+		<section>
+			<a name="configuration-memory"></a>
+			<h2>Tweaking memory emulation</h2>
+			
+			<section>
+				<a name="configuration-memory-size"></a>
+				<h3><code class="configuration">[dosbox]<br>memsize=<var>(0–63)</var></code></h3>
+				<p>The amount of extended and expanded memory available, in MB. (This does not include the initial 1MB of conventional and upper memory.)</p>
+				<table class="wide configuration">
+					<tr class="default">
+						<th>[dosbox]<br>memsize=16</th>
+						<td><strong>The default:</strong> emulates 16MB of extended/expanded memory, for 17MB total. Recommended for all games: no DOS game needs more than this, and very few can take advantage of memory beyond 16MB.</td>
+					</tr>
+					<tr>
+						<th>[dosbox]<br>memsize=31</th>
+						<td>Emulates 31MB of extended/expanded memory, for 32MB total.<br>May improve performance in very demanding late-era DOS games.</td>
+					</tr>
+					<tr><th>[dosbox]<br>memsize=63</th>
+						<td>The maximum supported amount of memory. Not recommended.</td>
+					</tr>
+				</table>
+			</section>
+			
+			<section>
+				<a name="configuration-memory-types"></a>
+				<h3><code class="configuration">[dos]<br>
+				ems=<var>(true/false)</var><br>
+				xms=<var>(true/false)</var><br>
+				umb=<var>(true/false)</var>
+				</code></h3>
+			
+				<p>Expanded memory (“EMS”), extended memory (“XMS”), and upper memory (“UMB”) are all emulated by default. These can be selectively disabled for games that don’t support them.</p>
+				<table class="wide configuration">
+					<tr>
+						<th>[dos]<br>ems=false</th>
+						<td>Disable expanded memory emulation.</td>
+					</tr>
+					<tr>
+						<th>[dos]<br>xms=false</th>
+						<td>Disable extended memory emulation.</td>
+					</tr>
+					<tr>
+						<th>[dos]<br>upper=false</th>
+						<td>Disable upper memory emulation.</td>
+					</tr>
+				</table>
+			</section>
+		</section>
+		
+		<section>
+			<a name="configuration-cpu"></a>
+			<h2>Tweaking CPU emulation</h2>
+			<p class="note">The recommended way to adjust these CPU settings is from Boxer’s <a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/openinspector.scpt?CPU" rel="application-window">CPU Inspector Panel</a>.</p>
+			<section>
+				<a name="configuration-coremode"></a>
+				<h3><code class="configuration">[cpu]<br>core=<var>(mode)</var></code></h3>
+				<p>Which CPU emulation technique to use. Modes include:</p>
+				
+				<table class="wide configuration">
+					<tr class="default"><th>[cpu]<br>core=auto</th>
+						<td><strong>The default.</strong> Switches automatically between <code class="configuration">core=normal</code> for older real-mode games, and <code class="configuration">core=dynamic</code> for newer protected-mode games.</td>
+					</tr>
+					<tr><th>[cpu]<br>core=dynamic</th>
+						<td>Provides the best performance, but incompatible with some games and is unavailable on PowerPC Macs.<br>
+						Equivalent to enabling <strong>Optimise for newer games</strong> in the <a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/openinspector.scpt?CPU" rel="application-window">CPU Inspector Panel</a>.</td>
+					</tr>
+					
+					<tr><th>[cpu]<br>core=normal</th>
+						<td>Runs slower than dynamic core, especially for more demanding games, but is more accurate and stable.<br>
+						Equivalent to disabling <strong>Optimise for newer games</strong> in the <a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/openinspector.scpt?CPU" rel="application-window">CPU Inspector Panel</a>.</td>
+					</tr>
+					
+					<tr><th>[cpu]<br>core=simple</th>
+						<td>Similar to <code class="configuration">core=normal</code> but optimised for older real-mode games.</p>
+						</td>
+					</tr>
+				</table>
+			</section>
+			
+			<section>
+				<a name="configuration-cycles"></a>
+				<h3><code class="configuration">[cpu]<br>cycles=<var>(fixed 0-99999/max)</var></code></h3>
+				<p>The emulated CPU speed, expressed as emulated instructions per millisecond. Some examples:</p>
+				
+				<table class="wide configuration">
+					<tr><th>[cpu]<br>cycles=fixed 1000</th>
+						<td>Emulates 1000 CPU instructions per millisecond, giving a similar speed to an 80286 AT.</td>
+					</tr>
+					<tr><th>[cpu]<br>cycles=max</th>
+						<td>Emulates the CPU as fast as your Mac can manage. Equivalent to <strong>dragging the speed slider to Max</strong> on Boxer’s <a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/openinspector.scpt?CPU" rel="application-window">CPU Inspector Panel</a>.</td>
+					</tr>
+					<tr><th>[cpu]<br>cycles=max limit 50000</th>
+						<td>Emulates the CPU as fast as your Mac can manage, <em>up to a maximum</em> of 50,000 instructions per millisecond.</td>
+					</tr>
+					<tr class="default"><th>[cpu]<br>cycles=auto 5000</th>
+						<td><strong>The default.</strong> Emulates at 5000 instructions per millisecond for older real-mode games, switching to maximum speed for newer protected-mode games.</td>
+					</tr>
+				</table>
+				
+				<p class="note">See the <a href="http://www.dosbox.com/wiki/Configuration:CPU#Examples:" rel="external">DOSBox Wiki</a> for more complex examples for this parameter.</p>
+			</section>
+
+			<section>
+				<a name="configuration-cputype"></a>
+				<h3><code class="configuration">[cpu]<br>cputype=<var>(type)</var></code></h3>
+				<p>The kind of CPU to emulate and identify as. Types include:</p>
+				
+				<table class="wide configuration">
+					<tr class="default"><th>[cpu]<br>cputype=auto</th>
+						<td><strong>The default.</strong> Identifies as a 486DX CPU, with emulation behaviour optimised for compatibility and speed. <em>Always use this unless the game needs a different setting.</em></td>
+					</tr>
+					<tr><th>[cpu]<br>cputype=386</th>
+						<td>Supports 386 features only, with optimised page privilege checks.</td>
+					</tr>
+					<tr><th>[cpu]<br>cputype=386_slow</th>
+						<td>Same as <code class="configuration">cputype=386</code>, but with slower strict page privilege checks.</td>
+					</tr>
+					<tr><th>[cpu]<br>
+						cputype=386_prefetch<br>
+						core=normal</th>
+						<td>Same as <code class="configuration">cputype=386</code>, but with optimised prefetch queue emulation.<br>
+						Requires <code class="configuration">core=normal</code>.</td>
+					</tr>
+					<tr><th>[cpu]<br>cputype=486_slow</th>
+						<td>Identifies as a 486DX, with 486-specific behaviour and slower strict page privilege checks.</td>
+					</tr>
+					<tr><th>[cpu]<br>cputype=pentium_slow</th>
+						<td>Identifies as a Pentium CPU with Pentium-specific behaviour.<br>
+						Needed for Windows 95, and for some games that run CPU performance checks.</td>
+					</tr>
+				</table>
+			</section>
+		</section>
+		
+		<section>
+			<a name="configuration-sound"></a>
+			<h2>Sound card emulation</h2>
+		
+			<section>
+				<h3><code class="configuration">[midi]<br>
+				mididevice=<var>(device)</var></code></h3>
+				
+				<p>How Boxer will play back MIDI music. Devices include:</p>
+				
+				<table class="wide configuration">
+					<tr class="default"><th>[midi]<br>mididevice=default</th>
+						<td><strong>The default.</strong> Plays MIDI music through OS X’s CoreAudio MIDI mixer.</td>
+					</tr>
+					<tr><th>[midi]<br>mididevice=coremidi<br>midiconfig=0</th>
+						<td><p>Passes MIDI signals from the game directly to a physical MIDI device connected to your Mac. This is mostly of use for playing MIDI music through a real MT-32 module.</p>
+						
+						<p><code class="configuration">midiconfig</code> determines which MIDI device Boxer should talk to. This should be 0, unless you have multiple devices connected.</p></td>
+					</tr>
+				</table>
+			</section>
+			
+			<section>
+				<a name="configuration-sound-blaster"></a>
+				
+				<h3><code class="configuration">[sblaster]<br>
+				sbtype=<var>(type)</var><br>
+				irq=<var>(5/7)</var>
+				</code></h3>
+				
+				<p>Controls Sound Blaster emulation. Settings include:</p>
+				
+				<table class="wide configuration">
+					<tr class="default">
+						<th>[sblaster]<br>
+							sbtype=sb16<br>
+							sbbase=220<br>
+							irq=7<br>
+							dma=1<br>
+							hdma=5
+						</th>
+						<td>
+							<p><strong>The default settings.</strong> Emulates a Sound Blaster 16, which works for almost all Sound Blaster-compatible games.</p>
+						
+							<p>You may need <code class="configuration">irq=5</code> instead, if the game has been pre-configured for a different IRQ. All other settings should be left at their defaults.</p></td>
+					</tr>
+					<tr><th>[sblaster]<br>sbtype=sbpro2</th>
+						<td>Sound Blaster Pro 2.0: stereo, 8-bit digital audio and OPL-3 synthesis.</td>
+					</tr>
+					<tr><th>[sblaster]<br>sbtype=sbpro1</th>
+						<td>Sound Blaster Pro 1.0: same as above but older OPL-2 synthesis.</td>
+					</tr>
+					<tr><th>[sblaster]<br>sbtype=sb2</th>
+						<td>Sound Blaster 2.0: mono, 8-bit digital audio and OPL-2 synthesis.</td>
+					</tr>
+					<tr><th>[sblaster]<br>sbtype=sb1</th>
+						<td>Sound Blaster 1.0: same as above, but worse sample rate and synthesis.</td>
+					</tr>
+					<tr><th>[sblaster]<br>sbtype=none</th>
+						<td>Disables Sound Blaster emulation entirely.</td>
+					</tr>
+				</table>
+				
+				<p>Other settings:</p>
+				<table class="wide configuration">
+					<tr><th>[sblaster]<br>sbmixer=false</th>
+						<td>Prevents games from modifying the Sound Blaster’s volume.</td>
+					</tr>
+				</table>
+			</section>
+			
+			<section>
+				<a name="configuration-ultrasound"></a>
+				<h3><code class="configuration">[gus]</code><br>
+				gus=<var>(true/false)</var><br>
+				ultradir=<var>(path)</var>
+				</code></h3>
+				
+				<p>Controls Gravis Ultrasound emulation. Settings include:</p>
+				
+				<table class="wide configuration">
+					<tr class="default">
+						<th>[gus]<br>
+							gus=true<br>
+							gusbase=240<br>
+							gusirq=5<br>
+							gusdma=3
+							</th>
+						<td>
+							<p><strong>The default.</strong> Emulates the Gravis Ultrasound with standard factory settings.</p>
+						</td>
+					</tr>
+					<tr><th>[gus]<br>gus=false</th>
+						<td>Disable Gravis Ultrasound emulation.<br>
+						Needed for games that autodetect the Gravis Ultrasound but are incompatible with the emulation.</td>
+					</tr>
+				</table>
+				
+				<p>For playing music, the Gravis Ultrasound relies on sets of instrument sample files, which must be placed in the DOS filesystem.</p>
+				
+				<p><strong>Boxer includes the original Gravis Ultrasound sample set</strong>, but you can add a custom set into your gamebox’s C drive and use them via:</p>
+				
+				<table class="wide configuration">
+					<tr>
+						<th>[gus]<br>
+							ultradir=C:\ULTRASND</th>
+						<td>
+							<p>Tells the Gravis Ultrasound to look in the <span class="filename">C:\ULTRASND</span> folder inside the gamebox for instrument samples.</p>
+							
+							<p>(The default is <span class="filename">Y:\ULTRASND</span>, which contains Boxer’s sample set.)</p>
+						</td>
+					</tr>
+				</table>
+			</section>
+			
+			<section>
+				<a name="configuration-speaker"></a>
+				
+				<h3><code class="configuration">[speaker]<br>
+				pcspeaker=<var>(true/false)</var><br>
+				disney=<var>(true/false)</var>
+				</code></h3>
+				
+				<p>The PC speaker and Disney Sound Source (also known as the “Covox Speech Thing”) are enabled by default but can be selectively disabled.</p>
+				
+				<table class="wide configuration">
+					<tr>
+						<th>[speaker]<br>pcspeaker=false</th>
+						<td>Disable PC speaker sound.</td>
+					</tr>
+					<tr>
+						<th>[speaker]<br>disney=false</th>
+						<td>Disable Disney Sound Source emulation.</td>
+					</tr>
+				</table>
+			</section>
+		</section>
+		
+		<section>
+			<a name="configuration-autoexec"></a>
+			<h2>Autoexec commands</h2>
+			
+			<p>The following commands can be added to the <code class="configuration">[autoexec]</code> section of the configuration file to run at startup:</p>
+			
+			<table class="wide configuration">
+				<tr>
+					<th>[autoexec]<br>univbe</th>
+					<td>Installs the UniVBE VESA driver. This helps some early SVGA games that have VESA incompatibilities.</td>
+				</tr>
+				<tr>
+					<th>[autoexec]<br>loadfix -64</th>
+					<td>“Eats” 64kB of conventional memory (or however many kB you specify.) Needed for games that fail to run if there is too much conventional memory.</td>
+				</tr>
+				<tr>
+					<th>[autoexec]<br>network</th>
+					<td>Opens the IPX network connection menu for starting/joining multiplayer games.</td>
+				</tr>
+			</table>
+			
+			<p>You can also run programs inside the gamebox from the <code class="configuration">[autoexec]</code>. Note that:</p>
+			<ul>
+				<li>You must switch to the program’s directory first, or specify the full DOS path to the program: e.g. <span class="filename">C:\MYGAME\MYTSR.COM</span>.</li>
+				<li>Boxer will launch the gamebox’s default program itself, after all autoexec commands have run.</li>
+			</ul>
+		</section>
+		
+		<section>
+			<a name="configuration-dosbox-notes"></a>
+			<h2>Notes for experienced <a href="http://dosbox.com/" rel="external">DOSBox</a> users:</h2>
+			
+			<ul>
+				<li><p>This page lists only those settings you may <em>need</em> to change in order to get a game to work in Boxer. Most DOSBox configuration settings should be left at their defaults, and so are not listed above.</p></li>
+			
+				<li><p>This page also omits settings that are no longer supported by Boxer. This includes the entire <code class="configuration">[sdl]</code> and <code class="configuration">[joystick]</code> sections, along with settings like <code class="configuration">aspect</code>, <code class="configuration">scaler</code> and <code class="configuration">capture</code>. Adding these settings to a configuration file will have no effect.</p></li>
+				
+				<li>Boxer automatically configures many games that would otherwise require custom DOSBox settings. Make sure the game does not work out-of-the-box before changing the emulation settings, and only add the settings you know are needed.</li>
+			</ul>
+			
+			<p class="tip">If you find a game that needs custom settings, <em>please</em> <a href="mailto:support@boxerapp.com?subject=Custom%20game%20settings" rel="email">send me the game’s details</a> so Boxer can configure that game automatically in future. That way, the next person won’t have to wade through all these miserable configuration parameters in order to play the game they love.</p>
+		</section>
+		
+		<script type="text/javascript" src="../../shared/scripts/zepto.min.js"></script>
+		<script type="text/javascript" src="../../shared/scripts/linkhandlers.js"></script>
+	</body>
+</html>
+
+

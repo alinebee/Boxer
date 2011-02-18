@@ -3,6 +3,8 @@
 #cover-art-wrapper
 {
 	padding: 0.5em 0 1em;
+	margin: 0;
+	list-style: none;
 }
 
 #cover-art-wrapper:after
@@ -15,7 +17,7 @@
 #cover-art-via-import,
 #cover-art-via-inspector
 {
-	width: 50%;
+	width: 48%;
 	text-align: center;
 }
 

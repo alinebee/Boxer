@@ -1,0 +1,19 @@
+.configuration th
+{
+	font-family: Menlo, Monaco, monospace;
+	width: 13em;
+	margin-right: 0;
+}
+
+.default th,
+.default td
+{
+	background-color: #444;
+}
+
+.default th
+{
+	color: #999;
+}
+
+code.configuration { color: white; }

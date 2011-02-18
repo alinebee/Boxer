@@ -44,7 +44,8 @@ h2	{ font-size: 22px; letter-spacing: -1px; }
 h3	{ font-size: 18px; }
 h4	{ font-size: 16px; font-weight: bold; margin-bottom: 0.5em; }
 
-a:link		{ color: #9ab; text-decoration: none; }
+a:link,
+a:visited	{ color: #9ab; text-decoration: none; }
 a:hover,
 a:focus		{ color: white; text-decoration: underline; }
 
@@ -70,13 +71,13 @@ hr
 
 code
 {
-	font-family: Monaco;
-	color: #888;
+	font-family: Menlo, Monaco, monospace;
+	font-size: 100%;
 }
 
 kbd
 {
-	font-family: Monaco;
+	font-family: Monaco, monospace;
 	font-size: 12px;
 	font-weight: normal;
 	padding: 0.1em 0.5em;
@@ -198,6 +199,7 @@ a[rel=application-window]
 	padding-left: 2em;
 	background: url("../images/info.png") 0.25em 0.25em no-repeat;
 	float: left;
+	clear: left;
 }
 
 /* Additional information boxes */
@@ -221,6 +223,9 @@ a[rel=application-window]
 	text-shadow: rgba(255, 255, 255, 0.66) 0 1px 1px;
 	background: -webkit-gradient(linear, 50% 100%, 50% 0, from(#cecece), to(#fafafa));
 }
+
+/* Filename listings */
+.filename	{ color: #888; }
 
 
 /* Top headings */
@@ -280,7 +285,11 @@ section section
 	padding-top: 0.5em;
 }
 
-section:first-child, section section:first-child, section.no-border
+section:first-child,
+section section:first-child,
+h2 + section,
+h3 + section,
+section.no-border
 {
 	border-top: 0;
 	padding-top: 0;

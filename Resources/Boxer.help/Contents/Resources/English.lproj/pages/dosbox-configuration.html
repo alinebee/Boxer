@@ -24,7 +24,7 @@
 		
 		<section>
 			<a name="configuration-machine"></a>
-			<h2>Choosing what kind of PC to emulate</h2>
+			<h2>Emulated machine types</h2>
 			
 			<section>
 				<a name="configuration-machine-type"></a>
@@ -86,7 +86,7 @@
 		
 		<section>
 			<a name="configuration-memory"></a>
-			<h2>Tweaking memory emulation</h2>
+			<h2>Memory emulation</h2>
 			
 			<section>
 				<a name="configuration-memory-size"></a>
@@ -119,11 +119,11 @@
 				<table class="wide configuration">
 					<tr>
 						<th>[dos]<br>ems=false</th>
-						<td>Disable expanded memory emulation.</td>
+						<td>Disables expanded memory emulation.</td>
 					</tr>
 					<tr>
 						<th>[dos]<br>xms=false</th>
-						<td>Disable extended memory emulation.</td>
+						<td>Disables extended memory emulation.</td>
 					</tr>
 					<tr>
 						<th>[dos]<br>upper=false</th>
@@ -135,7 +135,7 @@
 		
 		<section>
 			<a name="configuration-cpu"></a>
-			<h2>Tweaking CPU emulation</h2>
+			<h2>CPU emulation</h2>
 			<p class="note">The recommended way to adjust these CPU settings is from Boxer’s <a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/openinspector.scpt?CPU" rel="application-window">CPU Inspector Panel</a>.</p>
 			<section>
 				<a name="configuration-coremode"></a>
@@ -223,6 +223,25 @@
 			<h2>Sound card emulation</h2>
 		
 			<section>
+				<a name="configuration-mpu401"></a>
+				<h3><code class="configuration">[midi]<br>
+				mpu401=<var>(mode)</var></code></h3>
+				
+				<p>The MIDI interface mode to emulate.</p>
+				<table class="wide configuration">
+					<tr class="default"><th>[midi]<br>mpu401=intelligent</th>
+						<td><strong>The default.</strong> Emulates the <a href="http://en.wikipedia.org/wiki/MPU-401#Modes" rel="external">full MPU-401 MIDI interface</a>.</td>
+					</tr>
+					<tr><th>[midi]<br>mpu401=uart</th>
+						<td>Handles only the MIDI signal relaying needed by games, disabling additional MPU-401 features.</tr>
+						
+					<tr><th>[midi]<br>mpu401=none</th>
+						<td>Disables MIDI emulation entirely.</tr>
+				</table>
+			</section>	
+			
+			<section>
+				<a name="configuration-mididevice"></a>
 				<h3><code class="configuration">[midi]<br>
 				mididevice=<var>(device)</var></code></h3>
 				
@@ -281,7 +300,7 @@
 					</tr>
 				</table>
 				
-				<p>Other settings:</p>
+				<p>Additional settings:</p>
 				<table class="wide configuration">
 					<tr><th>[sblaster]<br>sbmixer=false</th>
 						<td>Prevents games from modifying the Sound Blaster’s volume.</td>
@@ -311,7 +330,7 @@
 						</td>
 					</tr>
 					<tr><th>[gus]<br>gus=false</th>
-						<td>Disable Gravis Ultrasound emulation.<br>
+						<td>Disables Gravis Ultrasound emulation.<br>
 						Needed for games that autodetect the Gravis Ultrasound but are incompatible with the emulation.</td>
 					</tr>
 				</table>
@@ -346,11 +365,11 @@
 				<table class="wide configuration">
 					<tr>
 						<th>[speaker]<br>pcspeaker=false</th>
-						<td>Disable PC speaker sound.</td>
+						<td>Disables PC speaker sound.</td>
 					</tr>
 					<tr>
 						<th>[speaker]<br>disney=false</th>
-						<td>Disable Disney Sound Source emulation.</td>
+						<td>Disables Disney Sound Source emulation.</td>
 					</tr>
 				</table>
 			</section>

@@ -6,6 +6,16 @@
 	<array>
 		<dict>
 			<key>BXProfileName</key>
+			<string>Privateer 2: The Darkening</string>
+			<key>BXProfileConf</key>
+			<string>Privateer 2</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>pad.iff</string>
+			</array>
+		</dict>
+		<dict>
+			<key>BXProfileName</key>
 			<string>Fable</string>
 			<key>BXProfileConf</key>
 			<string>No GUS</string>

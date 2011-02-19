@@ -22,7 +22,7 @@
 	}
 	else
 	{
-		[[NSApp delegate] openImportSessionAndDisplay: YES error: &importError];		
+		[[NSApp delegate] orderFrontImportGamePanel: self];		
 	}
 
 	

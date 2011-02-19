@@ -15,7 +15,7 @@ body
 	padding: 0 2em 2em;
 }
 
-p, ul, ol
+p, ul, ol, dl
 {
 	margin: 0 0 1em;
 }
@@ -29,6 +29,9 @@ ol		{ list-style: decimal; }
 ol ol	{ list-style: lower-alpha; }
 ul		{ list-style: square -webkit-gradient(linear, 50% 100%, 50% 0, from(#444), to(#555)); }
 li		{ margin-bottom: 0.25em; }
+
+dt		{ font-weight: bold; color: #777; }
+dd		{ margin: 0 0 1em; padding: 0 0 0 2em; }
 
 h1, h2, h3, h4
 {
@@ -198,14 +201,11 @@ a[rel=application-window]
 	color: #777;
 	padding-left: 2em;
 	background: url("../images/info.png") 0.25em 0.25em no-repeat;
-	float: left;
-	clear: left;
 }
 
 /* Additional information boxes */
 .tip
 {
-	clear: both;
 	background: #333;
 	padding: 0.5em 1em;
 	border-radius: 10px;
@@ -224,8 +224,11 @@ a[rel=application-window]
 	background: -webkit-gradient(linear, 50% 100%, 50% 0, from(#cecece), to(#fafafa));
 }
 
-/* Filename listings */
-.filename	{ color: #888; }
+/* Filename listings and DOS commands */
+.filename, .command
+{
+	color: #888;
+}
 
 
 /* Top headings */
@@ -287,6 +290,7 @@ section section
 
 section:first-child,
 section section:first-child,
+h1 + section,
 h2 + section,
 h3 + section,
 section.no-border

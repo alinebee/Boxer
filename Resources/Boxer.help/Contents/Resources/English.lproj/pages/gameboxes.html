@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Introducing gameboxes</title>
+		<meta name="description" content="How gameboxes work, how to make ’em and what goes inside ’em.">
+		<meta name="keywords" content="game package, game box, format, document">
+		
+		<link rel="stylesheet" type="text/css" href="../../shared/styles/main.css">
+	</head>
+	<body>
+		<a name="gameboxes"></a>
+		<h1>Introducing gameboxes</h1>
+		
+		<img src="../../shared/images/gamebox-128.png" alt="" width="128" height="128" class="floated-left"> 
+		
+		<div style="margin-left: 144px;">
+			<p>Boxer gameboxes are <strong>self-contained bundles</strong> that store a DOS game with its configuration, documentation, and any extra files it needs to run. Just <strong>double-click on a gamebox and it will launch in Boxer</strong>.</p>
+			
+			<p class="tip">You can move, rename and redistribute a gamebox however you like: the game inside will keep working wherever it goes, and can be played by anyone with Boxer.</p>
+		</div>
+		
+		<section>
+			<a name="gameboxes-making"></a>
+			
+			<a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/import.scpt?"><img src="../../shared/images/importer-128.png" alt="" width="128" height="128" class="floated-right"></a>
+			
+			<h2>Making a gamebox</h2>
+			
+			<ul>
+				<li><p><strong>Drop a game folder, CD-ROM, floppy or disc image onto Boxer’s <a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/import.scpt?" rel="application-window">Import window</a></strong> to make it into a gamebox.</p></li>
+				
+				<li><p>If you have a pre-installed DOS game ready in a folder, you can also <strong>rename the folder to <span class="filename"><var>Game Name</var>.boxer</span></strong> to make it into a gamebox.</p>
+				
+				<p class="note">Renaming the folder to make a gamebox will only work for games that are already installed and ready to play. If in doubt, use Boxer’s <a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/import.scpt?" rel="application-window">Import window</a>.</p></li>
+			</ul>
+		</section>
+		
+		<section>
+			<a name="gameboxes-exploring"></a>
+			<h2>Exploring a gamebox</h2>
+			<img src="../../shared/images/gamebox-contextmenu.png" alt="" width="238" height="128" class="floated-left" id="context-menu" />
+					
+			<p>Although they look and act like single files, gameboxes are really just <strong>ordinary folders with the <span class="filename">.boxer</span> extension</strong>.</p>
+			
+			<p>You can look inside them by right-clicking on the gamebox in Finder, and choosing <span class="menu">Show package contents</span>.</p>
+		</section>
+		
+		<section>
+			<a name="gameboxes-anatomy"></a>
+			<img src="../../shared/images/gamebox-internals.png" alt="" width="312" height=381" class="floated-right">
+			<h2>Anatomy of a gamebox</h2>
+			
+			<ul id="gamebox-structure">
+				<li>
+					<dl>
+						<dt><var>Game name</var>.boxer</dt>
+						<dd>The root folder of the gamebox. The name and icon of this folder represent the gamebox in Finder.</dd>
+					</dl>
+
+					<ul>
+						<li>
+							<dl>
+								<dt>C.harddisk</dt>
+								<dd>The folder containing the game’s C drive. If this is missing, then Boxer will use the gamebox’s root folder as the C drive instead.</dd>
+							</dl>
+						</li>
+						
+						<li>
+							<dl>
+								<dt>A.floppy</dt>
+								<dt>D.harddisk</dt>
+								<dt>E <var>VOLUMELABEL</var>.cdrom</dt>
+								<dt>…</dt>
+								<dd>
+									<p>Extra floppy, CD-ROM and hard disk drives can be stored as <strong>drive folders</strong> inside the gamebox’s root folder. The folder’s file extension determines the type of drive: <span class="filename">.floppy</span>, <span class="filename">.harddisk</span> or <span class="filename">.cdrom</span>.</p>
+									
+									<p class="tip">The initial letter of the folder name specifies which <strong>drive letter</strong> it will use. This can optionally be followed by the <strong>volume label</strong> for the drive (needed for some CD-ROM copy protection schemes.)</p>
+								</dd>
+							</dl>
+						</li>
+						
+						<li>
+							<dl>
+								<dt>F.iso</dt>
+								<dd>
+									<p><strong>Disc images</strong> can also be stored inside the gamebox’s root folder, and will be mounted as extra DOS drives. Boxer recognises <span class="filename">.iso</span>, <span class="filename">.cdr</span> and <span class="filename">.bin</span>+<span class="filename">.cue</span> image formats.</p>
+									
+									<p class="tip">Like drive folders, the first letter of the image name specifies the drive letter. The volume label is determined automatically from the contents of the disc image.</p>
+								</dd>
+							</dl>
+						</li>
+						
+						<li>
+							<dl>
+								<dt>G.cdmedia</dt>
+								<dd>
+									<p>Boxer supports an optional bundle format for storing <span class="filename">.bin</span>+<span class="filename">.cue</span> images: put all of the image files inside a <span class="filename">.cdmedia</span> folder, rename the <span class="filename">.cue</span> file to <span class="filename">tracks.cue</span>, and Boxer will mount the set as a drive.</p>
+									
+									<p class="note">The <span class="filename">.cdmedia</span> format works with any <span class="filename">.bin</span>+<span class="filename">.cue</span> image pair, but is most suitable for tidying up images with lots of external files (such as <span class="filename">.wav</span>/<span class="filename">.ogg</span>/<span class="filename">.mp3</span> audio tracks.)</p>
+								</dd>
+							</dl>
+						</li>
+						
+						<li>
+							<dl>
+								<dt>Documentation</dt>
+								<dd>
+									<p>If this folder is present in the gamebox’s root folder, Boxer will display its contents in the Help menu as game documentation. See <a href="decorating.html#bundled-documentation">Decorating your games</a> for more details.</p>
+								</dd>
+							</dl>
+						</li>
+						
+						<li>
+							<dl>
+								<dt>DOSBox Preferences.conf</dt>
+								<dd>
+									<p>Contains any custom DOSBox emulation settings to use for this game.</p>
+									<p>Created automatically by Boxer and normally empty, but you can add extra <a href="dosbox-configuration.html">DOSBox configuration parameters</a> here if needed.</p>
+								</dd>
+							</dl>
+						</li>
+						
+						<li>
+							<dl>
+								<dt>DOSBox Target</dt>
+								<dd>
+									<p>A symlink to the <strong>default program</strong> for this gamebox, which is launched when you open the gamebox in Finder.</p>
+									
+									<p>Created automatically when you choose a default program from the programs panel or <a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/openinspector.scpt?Game" rel="application-window">Game Inspector panel</a>.</p>
+								</dd>
+							</dl>
+						</li>
+						
+						<li>
+							<dl>
+								<dt>Game Info.plist</dt>
+								<dd>
+									<p>Stores Boxer-specific metadata about the game. Created automatically by Boxer and should be left alone.</p>
+								</dd>
+							</dl>
+						
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</section>
+				
+				
+		<script type="text/javascript" src="../../shared/scripts/zepto.min.js"></script>
+		<script type="text/javascript" src="../../shared/scripts/linkhandlers.js"></script>
+	</body>
+</html>
+
+

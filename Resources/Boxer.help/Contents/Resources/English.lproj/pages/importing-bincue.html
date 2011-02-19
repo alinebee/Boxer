@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Importing games from .bin+.cue disc images</title>
+		<meta name="description" content="Doing it by hand.">
+		<meta name="keywords" content="bincue, bin/cue, bin+cue">
+		
+		<link rel="stylesheet" type="text/css" href="../../shared/styles/main.css">
+	</head>
+	<body>
+		<a name="importing-bincue"></a>
+		<h1>Importing games from <span class="filename">.bin</span>+<span class="filename">.cue</span> disc images</h1>
+		
+		<p>Boxer can’t directly import games from <span class="filename">.bin</span>+<span class="filename">.cue</span> images yet, because it can’t read their contents to find game installers.</p>
+		<p>Instead, you’ll need to make your own gamebox for the image and poke around a bit in DOS:</p>
+			
+		<ol>
+			<li><strong>Create a new folder</strong> and put the <span class="filename">.bin</span> and <span class="filename">.cue</span> files inside it.</li>
+			<li><strong>Rename the folder to <span class="filename"><var>Game Name</var>.boxer</span></strong> to make it into a gamebox, then <strong>doubleclick it</strong> to open it in Boxer.</li>
+			<li><strong>Switch to drive D</strong> (the location of the disc image) and <strong>run the game’s installer</strong>: usually <span class="filename">INSTALL.EXE</span> or similar.</li>
+			<li><strong>Tell the game to install to drive C</strong>. See also <a href="game-installation.html">game installation tips</a>.</li>
+		</ol>
+		
+		<p>Once this is complete, you’ll have an installed and playable game in its own gamebox.</p>
+		
+		<p class="tip"><strong>This process is only necessary for <span class="filename">.bin</span>+<span class="filename">.cue</span> images:</strong> you can import games from other types of images more easily using the <a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/import.scpt?" rel="application-window">Import window</a>.</p>
+		
+		<script type="text/javascript" src="../../shared/scripts/zepto.min.js"></script>
+		<script type="text/javascript" src="../../shared/scripts/linkhandlers.js"></script>
+	</body>
+</html>
+
+

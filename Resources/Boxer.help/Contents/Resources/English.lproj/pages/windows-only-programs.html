@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Windows-only programs</title>
+		<meta name="description" content="How to spot them, and alternatives for Windows emulation.">
+		<meta name="keywords" content="win32, win95, win 32, windows 95, windows 3.1">
+		
+		<link rel="stylesheet" type="text/css" href="../../shared/styles/main.css">
+	</head>
+	<body>
+		<a name="windows-only-programs"></a>
+		<h1>Windows-only programs</h1>
+		
+		<section>
+			<a name="windows-program-telltales"></a>
+			
+			<p>If a program exits immediately at startup saying:</p>
+			<ul>
+				<li>“<samp>This program cannot be run in DOS mode.</samp>”</li>
+				<li>“<samp>This program must be run under Win32</samp>”</li>
+				<li>“<samp>Unknown command or file name: win</samp>”</li>
+			</ul>
+			<p>…or similar, this means that <strong>the program is Microsoft Windows-only</strong> and cannot run in DOS.</p>
+			
+			<p><strong>Boxer can only emulate MS-DOS programs</strong>, and will usually detect and warn you if you try to start a Windows program or import a Windows-only game.</p>
+		</section>
+		
+		<section>
+			<a name="windows-emulators"></a>
+			<h2>Alternatives for Windows emulation</h2>
+		
+			<p><a href="http://www.codeweavers.com/products/cxgames/" rel="external">Crossover Games</a> is a good alternative for running Windows-only games. It has a similar workflow to Boxer, and allows you to install and play many Windows games without needing a copy of Windows itself.</p>
+			
+			<p>Another option is a virtualization suite such as <a href="http://www.parallels.com/products/desktop/" rel="external">Parallels Desktop</a> or <a href="http://www.vmware.com/products/fusion/" rel="external">VMWare Fusion</a>. These let you install and run Windows within a virtual machine on your Mac, and thus require you to have a copy of Windows.</p>
+		</section>
+		
+		<section>
+			<a name="dual-dos-windows-games"></a>
+			<h2>But I thought this <em>was</em> a DOS game!</h2>
+			<p>Many PC games around the 1995–1997 transitional era were released for both MS-DOS <em>and</em> Windows: sometimes as completely separate products, and sometimes as both versions in a single installation.</p>
+			
+			<p>If you encounter a Windows program, it’s worth trying other programs in the same folder to see if they work in DOS. Unfortunately, since DOS and Windows programs both use the <span class="filename">.exe</span> extension, you can only tell by trying to run them.</p>
+			
+			<p class="note">Boxer’s <a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/import.scpt?" rel="application-window">game importer</a> weeds out Windows-only installers and will only offer actual DOS installers to choose from. And if the importer says the whole game is Windows-only, that means it really is.</p>
+		</section>
+		
+		<script type="text/javascript" src="../../shared/scripts/zepto.min.js"></script>
+		<script type="text/javascript" src="../../shared/scripts/linkhandlers.js"></script>
+	</body>
+</html>
+
+

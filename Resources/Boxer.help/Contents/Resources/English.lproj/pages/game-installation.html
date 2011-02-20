@@ -12,8 +12,8 @@
 		<a name="game-installation"></a>
 		<h1><img src="../../shared/images/importer-128.png" class="page-icon-64">Game installation tips</h1>
 		
-		<p class="tip">Always install games by dropping them onto the <a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/import.scpt?" rel="application-window">Import window</a> or “Import a new game” droplet.<br>
-		This will run the game’s installer if necessary, and bundle the game into a new <a href="gameboxes.html">gamebox</a>.</p>
+		<p class="tip">Always install games by dropping them onto the <a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/import.scpt?" rel="application-window">Import window</a> or the “Import a new game” droplet.<br>
+		This runs the game’s installer if necessary and bundles the game into a new <a href="gameboxes.html" rel="topic">gamebox</a>.</p>
 
 		<a name="game-installation-without-preamble"></a>
 		<section class="no-border">
@@ -22,7 +22,7 @@
 		
 			<p><strong>Choose any location on drive C</strong>. The path within drive C doesn’t matter, so use whatever the game suggests.</p>
 			
-			<p class="note">When importing a game, Boxer creates an empty drive C inside a new <a href="gameboxes.html">gamebox</a>.<br>
+			<p class="note">When importing a game, Boxer creates an empty drive C inside a new <a href="gameboxes.html" rel="topic">gamebox</a>.<br>
 			Installing to drive C will put the game files directly into the gamebox, where they belong.</p>
 		</section>
 		
@@ -99,9 +99,9 @@
 			<section>
 				<a name="tandy-sound"></a>
 				<h3>Tandy 3-voice sound</h3>
-				<p><strong>Only available if the game is set to <a href="dosbox-configuration.html#configuration-machine-type">emulate a Tandy 1000 computer</a>.</strong> Provides synthesized music and speech, and is supported by many early games from the 1980s.</p>
+				<p><strong>Only available if the game is set to <a href="dosbox-configuration.html#configuration-machine-type" rel="topic">emulate a Tandy 1000 computer</a>.</strong> Provides synthesized music and speech, and is supported by many EGA-era DOS games.</p>
 				
-				<p class="note">Enabling Tandy graphics and sound emulation requires editing a gamebox’s configuration file by hand. See <a href="dosbox-configuration.html">DOSBox Configuration</a> for details.</p>
+				<p class="note">Enabling Tandy graphics and sound emulation requires adding settings to a gamebox’s configuration file. See <a href="dosbox-configuration.html" rel="topic">DOSBox Configuration</a> for details.</p>
 			</section>
 			
 			<section>
@@ -110,7 +110,7 @@
 				<p>Boxer emulates the tinny little “beeper speaker” included in every DOS-era PC. Requires no configuration and is always available as a last resort, but choose anything else if you can.</p>
 				
 				<div class="note">
-					<p>PC speaker sound is very dependent on the CPU speed: you may need to adjust the CPU speed slider in the <a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/openinspector.scpt?CPU" rel="application-window">CPU Inspector Panel</a> until the game sounds right.</p>
+					<p>PC speaker sound is very dependent on the CPU speed: you may need to press <kbd>Cmd ⌘</kbd>+<kbd>I</kbd> while playing to bring up the <a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/openinspector.scpt?CPU" rel="application-window">CPU Inspector</a>, and adjust the CPU speed slider until the game sounds right.</p>
 					
 					<p>(If you do, then <a href="mailto:support@boxerapp.com?subject=Custom%20game%20settings" rel="email">let me know the right speed</a> so Boxer can configure that game automatically in future.)</p>
 				</div>

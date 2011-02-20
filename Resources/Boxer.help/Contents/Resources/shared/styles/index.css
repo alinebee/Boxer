@@ -69,12 +69,6 @@
 	margin: 0.66em 0;
 }
 
-#side-topics li a
-{
-	/* Eliminate 'dead-zones' when a link wraps to two lines */
-	display: inline-block;
-}
-
 #website-link
 {
 	font-weight: bold;

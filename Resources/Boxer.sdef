@@ -47,6 +47,9 @@
 		<class name="preferences" code="cBpf" description="Boxer’s application preferences.">
 			<cocoa class="BXScriptablePreferences"/>
 			<property name="window" code="Pwnd" type="preferences window" access="r" description="Boxer’s application preferences window."/>
+			<property name="games folder" code="pGam" type="file" description="The POSIX path to Boxer’s DOS Games folder.">
+				<cocoa key="gamesFolderURL"/>
+			</property>
 		</class>
 		
 		<class name="preferences window" inherits="window" code="cPwn" description="Boxer’s application preferences window.">

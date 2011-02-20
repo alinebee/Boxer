@@ -16,8 +16,8 @@
 		<p>These parameters control advanced features of the DOS emulation. If needed, these can be added to your gamebox’s configuration file:</p>
 		
 		<ul>
-			<li>Right-click on your gamebox in Finder and choose <span class="menu">Show package contents</span>,</li>
-			<li>Double-click on the <span class="filename">DOSBox Preferences.conf</span> file inside to open it in TextEdit,</li>
+			<li><a href="gameboxes.html#gameboxes-exploring" rel="topic">Browse the gamebox contents in Finder</a></li>
+			<li>Double-click on the <span class="filename">DOSBox Preferences.conf</span> file inside to open it in TextEdit</li>
 			<li>Paste in the setting you need, ensuring that you include the <code class="configuration">[section]</code> tag with the setting.</li>
 		</ul>
 		
@@ -137,7 +137,8 @@
 		<section>
 			<a name="configuration-cpu"></a>
 			<h2>CPU emulation</h2>
-			<p class="note">The recommended way to adjust these CPU settings is from Boxer’s <a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/openinspector.scpt?CPU" rel="application-window">CPU Inspector Panel</a>.</p>
+			<p class="tip">The recommended way to adjust CPU settings is from Boxer’s <a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/openinspector.scpt?CPU" rel="application-window">CPU Inspector</a>: press <kbd>Cmd ⌘</kbd>+<kbd>I</kbd> while playing.</p>
+			
 			<section>
 				<a name="configuration-coremode"></a>
 				<h3><code class="configuration">[cpu]<br>core=<var>(mode)</var></code></h3>
@@ -149,12 +150,12 @@
 					</tr>
 					<tr><th>[cpu]<br>core=dynamic</th>
 						<td>Provides the best performance, but incompatible with some games and is unavailable on PowerPC Macs.<br>
-						Equivalent to enabling <strong>Optimize for newer games</strong> in the <a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/openinspector.scpt?CPU" rel="application-window">CPU Inspector Panel</a>.</td>
+						Equivalent to enabling <strong>Optimize for newer games</strong> in the <a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/openinspector.scpt?CPU" rel="application-window">CPU Inspector</a>.</td>
 					</tr>
 					
 					<tr><th>[cpu]<br>core=normal</th>
 						<td>Runs slower than dynamic core, especially for more demanding games, but is more accurate and stable.<br>
-						Equivalent to disabling <strong>Optimize for newer games</strong> in the <a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/openinspector.scpt?CPU" rel="application-window">CPU Inspector Panel</a>.</td>
+						Equivalent to disabling <strong>Optimize for newer games</strong> in the <a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/openinspector.scpt?CPU" rel="application-window">CPU Inspector</a>.</td>
 					</tr>
 					
 					<tr><th>[cpu]<br>core=simple</th>
@@ -295,6 +296,12 @@
 					</tr>
 					<tr><th>[sblaster]<br>sbtype=sb1</th>
 						<td>Sound Blaster 1.0: same as above, but worse sample rate and synthesis.</td>
+					</tr>
+					<tr><th>[sblaster]<br>
+							sbtype=sb1<br>
+							oplmode=cms
+						</th>
+						<td>CMS Game Blaster: the precursor to the Sound Blaster, with worse sound and no AdLib compatibility.</td>
 					</tr>
 					<tr><th>[sblaster]<br>sbtype=none</th>
 						<td>Disable Sound Blaster emulation entirely.</td>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Dealing with CD-ROM copy protection</title>
+		<meta name="description" content="How to get around CD checks that fail.">
+		<meta name="keywords" content="ripping, rip, cdrom, copyprotection, copy-protection, missing cd, cd check">
+		
+		<link rel="stylesheet" type="text/css" href="../../shared/styles/main.css">
+	</head>
+	<body>
+		<a name="cdrom-copy-protection"></a>
+		<h1>Dealing with CD-ROM copy protection</h1>
+		
+		<p>Many DOS CD-ROM games have copy-protection which checks if the game’s CD is in the drive. Boxer’s CD emulation sometimes isn’t enough to convince the game that the CD is the real thing.</p>
+		
+		<p><strong>If the game keeps telling you to insert the CD</strong>, even when the CD <em>is</em> in your Mac’s DVD drive, then <strong>try making a disc image</strong> instead: these provide more accurate CD emulation to get around this check.</p>
+		
+		<section>
+			<a name="cdrom-disc-image"></a>
+			
+			<a href="../../shared/images/disk-utility.png" rel="quicklook" class="floated-right"><img src="../../shared/images/disk-utility.png" alt="" width="300" height=""></a>
+			
+			<h2>Making a disc image from a CD-ROM</h2>
+			
+			<ol>
+				<li>Open OS X’s <a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/opendiskutility.scpt?" rel="other-application">Disk Utility</a>.</li>
+				<li>Select the CD-ROM volume in the left hand sidebar, then click <strong>“New Image”</strong>.</li>
+				<li>Change the Image Format to “CD/DVD Master”, then click <strong>“Save”</strong>.<br>
+				<p class="note">This will create a new <span class="filename">.cdr</span> disc image on your Desktop.</p></li>
+				<li>Drag the new disc image onto Boxer’s <a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/import.scpt?" rel="application-window">Import window</a> to reimport the game.</li>
+			</ol>
+		</section>
+		
+		<script type="text/javascript" src="../../shared/scripts/zepto.min.js"></script>
+		<script type="text/javascript" src="../../shared/scripts/linkhandlers.js"></script>
+	</body>
+</html>
+
+

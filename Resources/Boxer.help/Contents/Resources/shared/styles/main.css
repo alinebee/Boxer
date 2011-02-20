@@ -25,6 +25,8 @@ ul, ol
 	padding: 0 0 0 2em;
 }
 
+p + ul, p + ol	{ margin-top: -0.75em; }
+
 ol		{ list-style: decimal; }
 ol ol	{ list-style: lower-alpha; }
 ul		{ list-style: square -webkit-gradient(linear, 50% 100%, 50% 0, from(#444), to(#555)); }
@@ -145,28 +147,28 @@ th
 /* General helper styles */
 /* --------------------- */
 
-img.floated-left
+.floated-left
 {
 	float: left;
 	margin-right: 10px;
 	margin-bottom: 10px;
 }
 
-img.floated-right
+.floated-right
 {
 	float: right;
 	margin-left: 10px;
 	margin-bottom: 10px;
 }
 
-img.centered
+.centered
 {
 	display: block;
 	margin-left: auto;
 	margin-right: auto;
 }
 
-img.fit-to-width
+.fit-to-width
 {
 	max-width: 100%;
 }
@@ -178,6 +180,13 @@ a[rel=external]
 	background: url("../images/site-popout.png") 100% 75% no-repeat;
 }
 
+/* Links to additional topics */
+a[rel=topic]
+{
+	padding-right: 12px;
+	background: url("../images/topic-arrow.png") 100% 75% no-repeat;
+}
+
 /* Email links */
 a[rel=email]
 {
@@ -186,13 +195,33 @@ a[rel=email]
 }
 
 /* Links to open a window of the application */
-a[rel=application-window]
+a[rel=application-window],
+a[rel=other-application]
 {
 	padding-right: 18px;
 	margin-right: 2px;
 	font-weight: bold;
 	background: url("../images/application-popout.png") 100% 75% no-repeat;
 }
+
+/* Links to reveal an image or file in quicklook */
+a[rel=quicklook]
+{
+	display: inline-block;
+	background: url("../images/reveal.png") 50% 40% no-repeat;
+}
+
+a[rel=quicklook] img
+{
+	-webkit-transition: opacity 0.2s ease-out;
+	vertical-align: bottom;
+}
+
+a[rel=quicklook]:hover img
+{
+	opacity: 0.85;
+}
+
 
 /* Subtle text */
 .under-my-breath

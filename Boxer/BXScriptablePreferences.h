@@ -16,6 +16,9 @@
 //Boxer’s global preferences window.
 @property (readonly) NSWindow *window;
 
+//The URL path to Boxer’s DOS Games folder.
+@property (copy) NSURL *gamesFolderURL;
+
 //The singleton for this class.
 + (BXScriptablePreferences *) sharedPreferences;
 

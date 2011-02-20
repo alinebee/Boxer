@@ -7,6 +7,7 @@
 
 #import "BXScriptablePreferences.h"
 #import "BXPreferencesController.h"
+#import "BXAppController+BXGamesFolder.h"
 #import "BXScriptableWindow.h"
 
 @implementation BXScriptablePreferences
@@ -15,6 +16,18 @@
 {
 	NSWindow *window = [[BXPreferencesController controller] window];
 	return [BXScriptableWindow scriptableWindow: window];
+}
+
+- (NSURL *)gamesFolderURL
+{
+	NSString *path = [[NSApp delegate] gamesFolderPath];
+	if (path) return [NSURL fileURLWithPath: path];
+	else return nil;
+}
+
+- (void) setGamesFolderURL: (NSURL *)url
+{
+	[[NSApp delegate] setGamesFolderPath: [url path]];
 }
 
 + (BXScriptablePreferences *) sharedPreferences

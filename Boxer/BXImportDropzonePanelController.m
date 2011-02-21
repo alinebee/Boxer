@@ -11,6 +11,7 @@
 #import "BXImportDropzone.h"
 #import "BXImport.h"
 #import "BXBlueprintPanel.h"
+#import "BXAppController.h"
 
 
 #pragma mark -
@@ -91,6 +92,12 @@
 		[openPanel close];
 		[[[self controller] document] importFromSourcePath: path];
 	}
+}
+
+
+- (IBAction) showImportDropzoneHelp: (id)sender
+{
+	[[NSApp delegate] showHelpAnchor: @"import-drop-game"];
 }
 
 

@@ -90,6 +90,12 @@
 	}
 }
 
+- (IBAction) showImportFinishedHelp: (id)sender
+{
+	[[NSApp delegate] showHelpAnchor: @"import-finished"];
+}
+
+
 
 #pragma mark -
 #pragma mark NSTextField delegate methods

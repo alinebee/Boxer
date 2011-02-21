@@ -183,7 +183,7 @@ a[rel=external]
 /* Links to additional topics */
 a[rel=topic]
 {
-	padding-right: 12px;
+	padding-right: 11px;
 	background: url("../images/topic-arrow.png") 100% 75% no-repeat;
 }
 

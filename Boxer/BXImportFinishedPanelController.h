@@ -40,6 +40,10 @@
 
 //Called when the user drops an image onto the icon view.
 - (IBAction) addCoverArt: (id)sender;
+
+//Display help for this stage of the import process.
+- (IBAction) showImportFinishedHelp: (id)sender;
+
 @end
 
 @interface BXImportIconDropzone : NSImageView

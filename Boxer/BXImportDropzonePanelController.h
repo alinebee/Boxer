@@ -40,4 +40,7 @@
 //Display a file picker for choosing a folder or disc image to import
 - (IBAction) showImportPathPicker: (id)sender;
 
+//Display help for this stage of the import process.
+- (IBAction) showImportDropzoneHelp: (id)sender;
+
 @end

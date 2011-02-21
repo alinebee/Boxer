@@ -10,6 +10,7 @@
 #import "BXImportWindowController.h"
 #import "BXDriveImport.h"
 #import "BXImport.h"
+#import "BXAppController.h"
 
 @implementation BXImportFinalizingPanelController
 @synthesize controller, isIndeterminate, progress, progressDescription;
@@ -78,6 +79,11 @@
 	{
 		return [super keyPathsForValuesAffectingValueForKey: key];
 	}
+}
+
+- (IBAction) showImportFinalizingHelp: (id)sender
+{
+	[[NSApp delegate] showHelpAnchor: @"import-finalizing"];
 }
 
 @end

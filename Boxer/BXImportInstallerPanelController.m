@@ -216,4 +216,9 @@
 	}
 }
 
+- (IBAction) showImportInstallerHelp: (id)sender
+{
+	[[NSApp delegate] showHelpAnchor: @"import-choose-installer"];
+}
+
 @end

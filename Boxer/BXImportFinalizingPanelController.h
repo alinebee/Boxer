@@ -32,4 +32,8 @@
 //Used for populating the description field beneath the progress bar.
 @property (readonly, nonatomic) NSString *progressDescription; 
 
+
+//Display help for this stage of the import process.
+- (IBAction) showImportFinalizingHelp: (id)sender;
+
 @end

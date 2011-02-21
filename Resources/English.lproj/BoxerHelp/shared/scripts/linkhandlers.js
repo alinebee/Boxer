@@ -6,17 +6,17 @@ for special features of the Help Viewer.
 if (navigator.userAgent.indexOf("Help Viewer") > -1)
 {
 	
-	var baseScriptURL = 'x-help-script://net.washboardabs.boxer.help/../shared/scripts/';
+	var baseScriptURL = 'help:runscript=BoxerHelp/shared/scripts/';
 	
 	var emailLinks = $('a[rel=email]');
 	var quicklookLinks = $('a[rel=quicklook]');
 	
 	emailLinks.each(function() {
-		this.href = baseScriptURL + 'openurl.scpt?' + this.href;
+		this.href = baseScriptURL + "openurl.scpt string='" + encodeURI(this.href) + "'";
 	});
 	
 	
 	quicklookLinks.each(function() {
-		this.href = baseScriptURL + 'quicklookurl.scpt?' + this.href;
+		this.href = baseScriptURL + "quicklookurl.scpt string='" + encodeURI(this.href) + "'";
 	});
 }

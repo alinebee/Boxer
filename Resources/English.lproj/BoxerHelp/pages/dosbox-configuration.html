@@ -6,8 +6,8 @@
 		<meta name="description" content="Advanced emulation settings for DOSBox Preferences.conf.">
 		<meta name="keywords" content="dosbox.conf, conf file">
 		
-		<link rel="stylesheet" type="text/css" href="../../shared/styles/main.css">
-		<link rel="stylesheet" type="text/css" href="../../shared/styles/configuration.css">
+		<link rel="stylesheet" type="text/css" href="../shared/styles/main.css">
+		<link rel="stylesheet" type="text/css" href="../shared/styles/configuration.css">
 	</head>
 	<body>
 		<a name="dosbox-configuration"></a>
@@ -137,7 +137,7 @@
 		<section>
 			<a name="configuration-cpu"></a>
 			<h2>CPU emulation</h2>
-			<p class="tip">The recommended way to adjust CPU settings is from Boxer’s <a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/openinspector.scpt?CPU" rel="application-window">CPU Inspector</a>: press <kbd>Cmd ⌘</kbd>+<kbd>I</kbd> while playing.</p>
+			<p class="tip">The recommended way to adjust CPU settings is from Boxer’s <a href="help:runscript=BoxerHelp/shared/scripts/openinspector.scpt string='CPU'" rel="application-window">CPU Inspector</a>: press <kbd>Cmd ⌘</kbd>+<kbd>I</kbd> while playing.</p>
 			
 			<section>
 				<a name="configuration-coremode"></a>
@@ -150,12 +150,12 @@
 					</tr>
 					<tr><th>[cpu]<br>core=dynamic</th>
 						<td>Provides the best performance, but incompatible with some games and is unavailable on PowerPC Macs.<br>
-						Equivalent to enabling <strong>Optimize for newer games</strong> in the <a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/openinspector.scpt?CPU" rel="application-window">CPU Inspector</a>.</td>
+						Equivalent to enabling <strong>Optimize for newer games</strong> in the <a href="help:runscript=BoxerHelp/shared/scripts/openinspector.scpt string='CPU'" rel="application-window">CPU Inspector</a>.</td>
 					</tr>
 					
 					<tr><th>[cpu]<br>core=normal</th>
 						<td>Runs slower than dynamic core, especially for more demanding games, but is more accurate and stable.<br>
-						Equivalent to disabling <strong>Optimize for newer games</strong> in the <a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/openinspector.scpt?CPU" rel="application-window">CPU Inspector</a>.</td>
+						Equivalent to disabling <strong>Optimize for newer games</strong> in the <a href="help:runscript=BoxerHelp/shared/scripts/openinspector.scpt string='CPU'" rel="application-window">CPU Inspector</a>.</td>
 					</tr>
 					
 					<tr><th>[cpu]<br>core=simple</th>
@@ -175,7 +175,7 @@
 						<td>Emulates 1000 CPU instructions per millisecond, giving a similar speed to an 80286 AT.</td>
 					</tr>
 					<tr><th>[cpu]<br>cycles=max</th>
-						<td>Emulates the CPU as fast as your Mac can manage. Equivalent to <strong>dragging the speed slider to Max</strong> on Boxer’s <a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/openinspector.scpt?CPU" rel="application-window">CPU Inspector Panel</a>.</td>
+						<td>Emulates the CPU as fast as your Mac can manage. Equivalent to <strong>dragging the speed slider to Max</strong> on Boxer’s <a href="help:runscript=BoxerHelp/shared/scripts/openinspector.scpt string='CPU'" rel="application-window">CPU Inspector Panel</a>.</td>
 					</tr>
 					<tr><th>[cpu]<br>cycles=max limit 50000</th>
 						<td>Emulates the CPU as fast as your Mac can manage, <em>up to a maximum</em> of 50,000 instructions per millisecond.</td>
@@ -428,8 +428,8 @@
 			<p class="tip">If you find a game that needs custom settings, <em>please</em> <a href="mailto:support@boxerapp.com?subject=Custom%20game%20settings" rel="email">send me the game’s details</a> so Boxer can configure that game automatically in future. That way, the next person won’t have to wade through all these miserable configuration parameters just to play the game they love.</p>
 		</section>
 		
-		<script type="text/javascript" src="../../shared/scripts/zepto.min.js"></script>
-		<script type="text/javascript" src="../../shared/scripts/linkhandlers.js"></script>
+		<script type="text/javascript" src="../shared/scripts/zepto.min.js"></script>
+		<script type="text/javascript" src="../shared/scripts/linkhandlers.js"></script>
 	</body>
 </html>
 

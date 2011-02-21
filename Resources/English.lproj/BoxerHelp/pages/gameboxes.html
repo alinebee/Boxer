@@ -6,13 +6,13 @@
 		<meta name="description" content="How gameboxes work, how to make ’em and what goes inside ’em.">
 		<meta name="keywords" content="game package, game box, format, document">
 		
-		<link rel="stylesheet" type="text/css" href="../../shared/styles/main.css">
+		<link rel="stylesheet" type="text/css" href="../shared/styles/main.css">
 	</head>
 	<body>
 		<a name="gameboxes"></a>
 		<h1>Introducing gameboxes</h1>
 		
-		<img src="../../shared/images/gamebox-128.png" alt="" width="128" height="128" class="floated-left"> 
+		<img src="../shared/images/gamebox-128.png" alt="" width="128" height="128" class="floated-left"> 
 		
 		<div style="margin-left: 144px;">
 			<p>Boxer gameboxes are <strong>self-contained bundles</strong> that store a DOS game with its configuration, documentation, and any extra files it needs to run. Just <strong>double-click on a gamebox and it will launch in Boxer</strong>.</p>
@@ -23,16 +23,16 @@
 		<section>
 			<a name="gameboxes-making"></a>
 			
-			<a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/import.scpt?"><img src="../../shared/images/importer-128.png" alt="" width="128" height="128" class="floated-right"></a>
+			<a href="help:runscript=BoxerHelp/shared/scripts/import.scpt string=''"><img src="../shared/images/importer-128.png" alt="" width="128" height="128" class="floated-right"></a>
 			
 			<h2>Making a gamebox</h2>
 			
 			<ul>
-				<li><p><strong>Drop a game folder, CD-ROM, floppy or disc image onto Boxer’s <a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/import.scpt?" rel="application-window">Import window</a></strong> to make it into a gamebox.</p></li>
+				<li><p><strong>Drop a game folder, CD-ROM, floppy or disc image onto Boxer’s <a href="help:runscript=BoxerHelp/shared/scripts/import.scpt string=''" rel="application-window">Import window</a></strong> to make it into a gamebox.</p></li>
 				
 				<li><p>If you have a pre-installed DOS game ready in a folder, you can also <strong>rename the folder to <span class="filename"><var>Game Name</var>.boxer</span></strong> to make it into a gamebox.</p>
 				
-				<p class="note">Renaming the folder to make a gamebox will only work for games that are already installed and ready to play. If in doubt, use Boxer’s <a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/import.scpt?" rel="application-window">Import window</a>.</p></li>
+				<p class="note">Renaming the folder to make a gamebox will only work for games that are already installed and ready to play. If in doubt, use Boxer’s <a href="help:runscript=BoxerHelp/shared/scripts/import.scpt string=''" rel="application-window">Import window</a>.</p></li>
 			</ul>
 		</section>
 		
@@ -48,7 +48,7 @@
 		
 		<section>
 			<a name="gameboxes-anatomy"></a>
-			<img src="../../shared/images/gamebox-internals.png" alt="" width="312" height="381" class="floated-right">
+			<img src="../shared/images/gamebox-internals.png" alt="" width="312" height="381" class="floated-right">
 			<h2>Anatomy of a gamebox</h2>
 			
 			<ul id="gamebox-structure">
@@ -127,7 +127,7 @@
 								<dd>
 									<p>A symlink to the <strong>default program</strong> for this gamebox, which is launched when you open the gamebox in Finder.</p>
 									
-									<p>Created automatically when you choose a default program from the programs panel or <a href="x-help-script://net.washboardabs.boxer.help/../shared/scripts/openinspector.scpt?Game" rel="application-window">Game Inspector</a>.</p>
+									<p>Created automatically when you choose a default program from the programs panel or <a href="help:runscript=BoxerHelp/shared/scripts/openinspector.scpt string='Game'" rel="application-window">Game Inspector</a>.</p>
 								</dd>
 							</dl>
 						</li>
@@ -147,8 +147,8 @@
 		</section>
 				
 				
-		<script type="text/javascript" src="../../shared/scripts/zepto.min.js"></script>
-		<script type="text/javascript" src="../../shared/scripts/linkhandlers.js"></script>
+		<script type="text/javascript" src="../shared/scripts/zepto.min.js"></script>
+		<script type="text/javascript" src="../shared/scripts/linkhandlers.js"></script>
 	</body>
 </html>
 

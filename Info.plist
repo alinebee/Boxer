@@ -65,9 +65,9 @@
 	<key>OSAScriptingDefinition</key>
 	<string>Boxer.sdef</string>
 	<key>CFBundleHelpBookFolder</key>
-	<string>Boxer.help</string>
+	<string>BoxerHelp</string>
 	<key>CFBundleHelpBookName</key>
-	<string>net.washboardabs.boxer.help</string>
+	<string>Boxer Help</string>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>

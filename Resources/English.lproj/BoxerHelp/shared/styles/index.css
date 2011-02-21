@@ -74,7 +74,8 @@
 	font-weight: bold;
 }
 
-#contact-links a
+#contact-links a:link,
+#contact-links a:visited
 {
 	color: #789;
 }

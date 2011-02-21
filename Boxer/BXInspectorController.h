@@ -37,13 +37,17 @@ enum {
 //The controller should always be accessed through this method.
 + (BXInspectorController *) controller;
 
-- (IBAction) showGameInspectorPanel:	(id)sender;	//Display the gamebox panel.
-- (IBAction) showCPUInspectorPanel:		(id)sender;	//Display the CPU panel.
-- (IBAction) showDriveInspectorPanel:	(id)sender;	//Display the drive list panel.
-- (IBAction) showMouseInspectorPanel:	(id)sender;	//Display the mouse panel.
+//Select the specified panel and reveal the window.
+- (IBAction) showGamePanel:		(id)sender;
+- (IBAction) showCPUPanel:		(id)sender;
+- (IBAction) showDrivesPanel:	(id)sender;
+- (IBAction) showMousePanel:	(id)sender;
 
-//Show the window if it is hidden, and switch to the specified tab index
-- (void) showPanelAtTabIndex: (NSUInteger)tabIndex;
+//Show help pages for the various panels
+- (IBAction) showGamePanelHelp: (id)sender;
+- (IBAction) showCPUPanelHelp: (id)sender;
+- (IBAction) showMousePanelHelp: (id)sender;
+- (IBAction) showDrivesPanelHelp: (id)sender;
 
 //Temporarily hides the panel if it is currently visible:
 //It can then be unhidden with revealIfHidden.

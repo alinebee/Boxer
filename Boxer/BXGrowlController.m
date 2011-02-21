@@ -45,7 +45,7 @@
 	NSArray *driveContexts = [NSArray arrayWithObjects: @"Drive mounted", @"Drive unmounted", @"Drive imported", nil];
 	if ([driveContexts containsObject: clickContext])
 	{ 
-		[[BXInspectorController controller] showDriveInspectorPanel: self];
+		[[BXInspectorController controller] showDrivesPanel: self];
 	}
 }
 

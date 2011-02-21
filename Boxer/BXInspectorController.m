@@ -193,16 +193,10 @@
 #pragma mark -
 #pragma mark Tab selection
 
-- (IBAction) showGameInspectorPanel: (id)sender		{ [self showPanelAtTabIndex: BXGameInspectorPanelTag]; }
-- (IBAction) showCPUInspectorPanel: (id)sender		{ [self showPanelAtTabIndex: BXCPUInspectorPanelTag]; }
-- (IBAction) showMouseInspectorPanel: (id)sender	{ [self showPanelAtTabIndex: BXMouseInspectorPanelTag]; }
-- (IBAction) showDriveInspectorPanel: (id)sender	{ [self showPanelAtTabIndex: BXDriveInspectorPanelTag]; }
-
-- (void) showPanelAtTabIndex: (NSUInteger)tabIndex
-{
-	[[self tabView] selectTabViewItemAtIndex: tabIndex];
-	[self showWindow: nil];
-}
+- (IBAction) showGamePanel: (id)sender		{ [self setSelectedTabViewItemIndex: BXGameInspectorPanelTag];	[self showWindow: sender]; }
+- (IBAction) showCPUPanel: (id)sender		{ [self setSelectedTabViewItemIndex: BXCPUInspectorPanelTag];	[self showWindow: sender]; }
+- (IBAction) showMousePanel: (id)sender		{ [self setSelectedTabViewItemIndex: BXMouseInspectorPanelTag];	[self showWindow: sender]; }
+- (IBAction) showDrivesPanel: (id)sender	{ [self setSelectedTabViewItemIndex: BXDriveInspectorPanelTag];	[self showWindow: sender]; }
 
 - (void) tabView: (NSTabView *)tabView didSelectTabViewItem: (NSTabViewItem *)tabViewItem
 {
@@ -226,5 +220,14 @@
 	return ([tabView indexOfTabViewItem: tabViewItem] != BXGameInspectorPanelTag ||
 			[[[NSApp delegate] currentSession] isGamePackage]);
 }
+
+
+#pragma mark -
+#pragma mark Help
+
+- (IBAction) showGamePanelHelp: (id)sender		{ [[NSApp delegate] showHelpAnchor: @"game-inspector"]; }
+- (IBAction) showCPUPanelHelp: (id)sender		{ [[NSApp delegate] showHelpAnchor: @"adjusting-game-speed"]; }
+- (IBAction) showMousePanelHelp: (id)sender		{ [[NSApp delegate] showHelpAnchor: @"mouse-inspector"]; }
+- (IBAction) showDrivesPanelHelp: (id)sender	{ [[NSApp delegate] showHelpAnchor: @"drive-inspector"]; }
 
 @end

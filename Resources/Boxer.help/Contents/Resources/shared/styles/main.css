@@ -168,6 +168,11 @@ th
 	margin-right: auto;
 }
 
+.cleared
+{
+	clear: both;
+}
+
 .fit-to-width
 {
 	max-width: 100%;
@@ -200,7 +205,6 @@ a[rel=other-application]
 {
 	padding-right: 18px;
 	margin-right: 2px;
-	font-weight: bold;
 	background: url("../images/application-popout.png") 100% 75% no-repeat;
 }
 
@@ -208,6 +212,10 @@ a[rel=other-application]
 a[rel=quicklook]
 {
 	display: inline-block;
+}
+
+a[rel=quicklook]:hover
+{
 	background: url("../images/reveal.png") 50% 40% no-repeat;
 }
 

@@ -25,6 +25,42 @@ ul, ol
 	padding: 0 0 0 2em;
 }
 
+ol.steps 
+{
+	counter-reset: steps;
+	list-style: none;
+	margin: 1em 0;
+}
+
+ol.steps>li
+{
+	margin-bottom: 0.75em;
+	counter-increment: steps;
+}
+
+ol.steps>li:after
+{
+	clear: left;
+}
+
+ol.steps>li:before
+{
+	content: counter(steps);
+	float: left;
+	
+	line-height: 1;
+	padding: 0.25em;
+	width: 1em;
+	margin-left: -2em;
+	
+	color: white;
+	font-size: 0.9em;
+	text-align: center;
+	background: #444;
+	border-radius: 5px;
+	text-shadow: none;
+}
+
 p + ul, p + ol	{ margin-top: -0.75em; }
 
 ol		{ list-style: decimal; }
@@ -178,6 +214,7 @@ th
 	max-width: 100%;
 }
 
+
 /* Links to external websites */
 a[rel=external]
 {
@@ -232,6 +269,7 @@ a[rel=quicklook]:hover img
 
 
 /* Subtle text */
+
 .under-my-breath
 {
 	color: #777;
@@ -273,6 +311,24 @@ a[rel=quicklook]:hover img
 	color: #888;
 }
 
+/* Sequence steps */
+
+.step
+{
+	background-color: #444;
+	display: inline-block;
+	text-align: center;
+	border-radius: 5px;
+	padding: 0 5px;
+	min-width: 1em;
+	color: white;
+	text-shadow: none;
+}
+
+:target + * .step
+{
+	background-color: #fb4;
+}
 
 /* Top headings */
 body > h1

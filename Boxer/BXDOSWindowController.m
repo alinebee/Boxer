@@ -157,6 +157,8 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 											 NSFilenamesPboardType,
 											 NSStringPboardType, nil]];
 	
+	//Listen for UI events that will interrupt emulation
+	[self _addObservers];
 	
 	//Set up the window UI components appropriately
 	//---------------------------------------------

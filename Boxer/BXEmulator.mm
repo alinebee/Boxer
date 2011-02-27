@@ -396,7 +396,6 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 //and will be the first against the wall when the multiprocess revolution comes.
 - (void) willPause
 {
-	
 	if ([self isExecuting] && !isInterrupted)
 	{
 		SDL_PauseAudio(YES);
@@ -522,12 +521,14 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 		control->AddSection_prop("sdl", &MAPPER_StartUp);
 
 		//Load up Boxer's own configuration files
+		NSFileManager *manager = [[NSFileManager alloc] init];
 		for (NSString *configPath in [self configFiles])
 		{
 			configPath = [configPath stringByStandardizingPath];
-			const char * encodedConfigPath = [configPath cStringUsingEncoding: BXDirectStringEncoding];
+			const char * encodedConfigPath = [manager fileSystemRepresentationWithPath: configPath];
 			control->ParseConfigFile((const char * const)encodedConfigPath);
 		}
+		[manager release];
 
 		//Initialise the configuration.
 		control->Init();

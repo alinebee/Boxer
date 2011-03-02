@@ -18,6 +18,7 @@
 	IBOutlet NSPopUpButton *recentDocumentsButton;
 	IBOutlet BXWelcomeButton *importGameButton;
 	IBOutlet BXWelcomeButton *openPromptButton;
+	IBOutlet BXWelcomeButton *showGamesFolderButton;
 }
 
 //The Open Recent popup button.
@@ -29,6 +30,9 @@
 //The open-DOS-prompt button. Drag-drop events onto this button will be handled by this controller.
 @property (retain, nonatomic) BXWelcomeButton *openPromptButton;
 
+//The browse-games-folder button. Has no special behaviour.
+@property (retain, nonatomic) BXWelcomeButton *showGamesFolderButton;
+
 
 //Provides a singleton instance of the window controller which stays retained for the lifetime
 //of the application. The controller should always be accessed from this singleton.
@@ -36,5 +40,8 @@
 
 //Open the URL represented by the sending menu item. Called by items in the Open Recent popup button.
 - (IBAction) openRecentDocument: (NSMenuItem *)sender;
+
+//Reveal the window by bringing it in with a flip transition.
+- (void) showWindowWithFlip: (id)sender;
 
 @end

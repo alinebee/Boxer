@@ -89,13 +89,30 @@ enum {
 
 - (void) showWindow: (id)sender
 {
+	[super showWindow: self];
+	[NSApp runModalForWindow: [self window]];
+}
+
+- (void) showWindowWithFlip: (id)sender
+{
 	[[self window] revealWithTransition: CGSFlip
 							  direction: CGSUp
 							   duration: 0.5
 						   blockingMode: NSAnimationNonblocking];
-	[NSApp runModalForWindow: [self window]];
+	
+	[self showWindow: sender];
 }
 
+- (void) hideWindowWithFlip: (id)sender
+{
+	[[self window] hideWithTransition: CGSFlip
+							direction: CGSDown
+							 duration: 0.5
+						 blockingMode: NSAnimationBlocking];
+	
+	[[self window] close];
+}
+	
 - (void) windowWillClose: (NSNotification *)notification
 {
 	if ([NSApp modalWindow] == [self window]) [NSApp stopModal];
@@ -133,12 +150,7 @@ enum {
 							importerDroplet: YES
 							shelfAppearance: applyShelfAppearance];
 	
-	[[self window] hideWithTransition: CGSFlip
-							direction: CGSDown
-							 duration: 0.5
-						 blockingMode: NSAnimationBlocking];
-	
-	[[self window] close];
+	[self hideWindowWithFlip: self];
 }
 
 - (IBAction) showGamesFolderChooser: (id)sender

@@ -43,10 +43,17 @@
 
 @implementation BXWelcomeButton
 @synthesize draggingDelegate;
+@synthesize hovered;
 
 //Ignore state altogether (overrides BXFilterPortrait behaviour of highlighting when state changes)
 - (void) setState: (NSInteger)value
 {
+}
+
+- (void) setHovered: (BOOL)flag
+{
+	hovered = flag;
+	[[self animator] setIllumination: (flag ? 1.0f : 0.0f)];
 }
 
 #pragma mark -
@@ -71,7 +78,6 @@
 
 
 @implementation BXWelcomeButtonCell
-@synthesize hovered;
 
 - (BXWelcomeButton *) controlView
 {
@@ -91,18 +97,12 @@
 
 - (void) mouseEntered: (NSEvent *)event
 {
-	[self setHovered: YES];
+	[[self controlView] setHovered: YES];
 }
 
 - (void) mouseExited: (NSEvent *)event
 {
-	[self setHovered: NO];
-}
-
-- (void) setHovered: (BOOL)flag
-{
-	hovered = flag;
-	[[[self controlView] animator] setIllumination: (flag ? 1.0f : 0.0f)];
+	[[self controlView] setHovered: NO];
 }
 
 
@@ -117,7 +117,7 @@
 - (NSColor *) titleColor
 {
 	//Render the text in white if this button is highlighted or hovered; otherwise in translucent white
-	if ([self isHighlighted] || [self isHovered])
+	if ([self isHighlighted] || [[self controlView] isHovered])
 		return [NSColor whiteColor];
 	else
 		[NSColor colorWithCalibratedWhite: 1.0f alpha: 0.75f];

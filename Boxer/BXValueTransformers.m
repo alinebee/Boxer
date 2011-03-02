@@ -255,7 +255,7 @@
 }
 
 - (NSArray *) _componentsForPath: (NSString *)path
-{
+{		
 	NSArray *components = nil;
 	if (useFilesystemDisplayPath)
 	{
@@ -274,6 +274,8 @@
 
 - (NSString *) transformedValue: (NSString *)path
 {
+	if (!path) return nil;
+	
 	NSMutableArray *components = [[self _componentsForPath: path] mutableCopy];
 	NSUInteger count = [components count];
 	BOOL shortened = NO;
@@ -333,7 +335,7 @@
 
 - (NSAttributedString *) componentForPath: (NSString *)path
 						  withDefaultIcon: (NSImage *)defaultIcon
-{
+{	
 	NSString *displayName;
 	NSImage *icon;
 
@@ -344,13 +346,13 @@
 	if ([manager fileExistsAtPath: path])
 	{
 		displayName = [manager displayNameAtPath: path];
-		icon = [workspace iconForFile: path];
+		icon = [[[workspace iconForFile: path] copy] autorelease];
 	}
 	else
 	{
 		displayName = [path lastPathComponent];
 		//Fall back on whatever icon NSWorkspace uses for nonexistent files, if no default icon was specified
-		icon = (defaultIcon) ? defaultIcon : [workspace iconForFile: path];
+		icon = (defaultIcon) ? defaultIcon : [[[workspace iconForFile: path] copy] autorelease];
 	}
 	
 	[icon setSize: [self iconSize]];
@@ -374,6 +376,8 @@
 
 - (NSAttributedString *) transformedValue: (NSString *)path
 {
+	if (!path) return nil;
+	
 	NSMutableArray *components = [[path fullPathComponents] mutableCopy];
 	
 	//Bail out early if the path is empty

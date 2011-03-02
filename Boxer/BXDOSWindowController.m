@@ -55,6 +55,9 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 //Performs the slide animation used to toggle the status bar and program panel on or off
 - (void) _slideView: (NSView *)view shown: (BOOL)show;
 
+//Switch to/from fullscreen mode in Lion, which manages its own window transitions.
+- (void) _setFullScreenForLion: (BOOL)fullScreen;
+
 //Apply the switch to fullscreen mode. Used internally by setFullScreen: and setFullScreenWithZoom:
 - (void) _applyFullScreenState: (BOOL)fullScreen;
 
@@ -515,9 +518,38 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	return inFullScreenTransition || [self fullScreenWindow] != nil;
 }
 
+- (void) _setFullScreenForLion: (BOOL)fullScreen
+{
+	//Don't bother if we're already in the desired fullscreen state
+	if ([self isFullScreen] == fullScreen) return;
+
+	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+	NSString *startNotification, *endNotification;
+	
+	if (fullScreen) 
+	{
+		startNotification	= BXSessionWillEnterFullScreenNotification;
+		endNotification		= BXSessionDidEnterFullScreenNotification;
+	}
+	else
+	{
+		startNotification	= BXSessionWillExitFullScreenNotification;
+		endNotification		= BXSessionDidExitFullScreenNotification;
+	}
+	
+	[center postNotificationName: startNotification object: [self document]];
+	
+	[self _applyFullScreenState: fullScreen];
+	
+	[center postNotificationName: endNotification object: [self document]];
+}
+
 //Switch the DOS window in or out of fullscreen with a brief fade
 - (void) setFullScreen: (BOOL)fullScreen
 {
+	//Lion has its own fullscreen transitions, so don't get in the way of those
+	if ([BXAppController isRunningOnLion]) [self _setFullScreenForLion: fullScreen];
+	
 	//Don't bother if we're already in the desired fullscreen state
 	if ([self isFullScreen] == fullScreen) return;
 	
@@ -577,6 +609,9 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 //Zoom the DOS window in or out of fullscreen with a smooth animation
 - (void) setFullScreenWithZoom: (BOOL) fullScreen
 {	
+	//Lion has its own fullscreen transitions, so don't get in the way of those
+	if ([BXAppController isRunningOnLion]) [self _setFullScreenForLion: fullScreen];
+	
 	//Don't bother if we're already in the correct fullscreen state
 	if ([self isFullScreen] == fullScreen) return;	
 	

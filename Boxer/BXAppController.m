@@ -26,7 +26,6 @@
 
 #import <BGHUDAppKit/BGThemeManager.h>
 #import "BXThemes.h"
-#import "NSWindow+BXWindowEffects.h"
 
 
 NSString * const BXNewSessionParam = @"--openNewSession";
@@ -130,9 +129,19 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	return types;
 }
 
-+ (BOOL)isRunningOnLeopard
++ (BOOL) isRunningOnLeopard
 {
 	return (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_5);
+}
+
++ (BOOL) isRunningOnSnowLeopard
+{
+	return (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_6) && ![self isRunningOnLeopard];
+}
+
++ (BOOL) isRunningOnLion
+{
+	return (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_7) && ![self isRunningOnSnowLeopard];
 }
 
 + (BOOL) otherBoxersActive
@@ -282,6 +291,8 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 {
 	NSArray *arguments = [[NSProcessInfo processInfo] arguments];
 	
+	BOOL useFlipTransitions = ![[self class] isRunningOnLion];
+	
 	for (NSString *argument in arguments)
 	{
 		if ([argument isEqualToString: BXNewSessionParam])
@@ -312,16 +323,30 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 		{
 			//Perform with a delay to give the Dock icon bouncing time to finish,
 			//since the Core Graphics flip animation interrupts this otherwise.
-			[NSThread sleepForTimeInterval: 0.4];
-			hasDelayed = YES;
-			[self orderFrontFirstRunPanel: self];
+			if (useFlipTransitions)
+			{
+				[NSThread sleepForTimeInterval: 0.4];
+				hasDelayed = YES;
+				[self orderFrontFirstRunPanelWithFlip: self];
+			}
+			else
+			{
+				[self orderFrontFirstRunPanel: self];
+			}
 		}
 				
 		switch ([[NSUserDefaults standardUserDefaults] integerForKey: @"startupAction"])
 		{
 			case BXStartUpWithWelcomePanel:
-				if (!hasDelayed) [NSThread sleepForTimeInterval: 0.4];
-				[self orderFrontWelcomePanelWithFlip: self];
+				if (useFlipTransitions)
+				{
+					if (!hasDelayed) [NSThread sleepForTimeInterval: 0.4];
+					[self orderFrontWelcomePanelWithFlip: self];
+				}
+				else
+				{
+					[self orderFrontWelcomePanel: self];
+				}
 				break;
 			case BXStartUpWithGamesFolder:
 				[self revealGamesFolder: self];
@@ -608,16 +633,8 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 - (IBAction) orderFrontWelcomePanelWithFlip: (id)sender
 {	
-	//This eschews controller showWindow: as that would reveal the window momentarily,
-	//causing a flicker before the window is 're-hidden'.
-	id controller = [BXWelcomeWindowController controller];
-	[[controller window] revealWithTransition: CGSFlip
-									direction: CGSDown
-									 duration: 0.4
-								 blockingMode: NSAnimationNonblocking];
-	[[controller window] makeKeyWindow];
+	[[BXWelcomeWindowController controller] showWindowWithFlip: sender];
 }
-
 
 - (IBAction) orderFrontFirstRunPanel: (id)sender
 {
@@ -625,6 +642,14 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	[self hideWelcomePanel: self];
 	
 	[[BXFirstRunWindowController controller] showWindow: sender];
+}
+
+- (IBAction) orderFrontFirstRunPanelWithFlip: (id)sender
+{
+	//The welcome panel and first-run panel are mutually exclusive.
+	[self hideWelcomePanel: self];
+	
+	[[BXFirstRunWindowController controller] showWindowWithFlip: sender];
 }
 
 - (IBAction) hideWelcomePanel: (id)sender

@@ -12,11 +12,18 @@
 #import <Cocoa/Cocoa.h>
 
 
-//Not defined in NSApplication until 10.6 (whoopeeeeeee)
+//Not defined in AppKit until 10.6 (whoopeeeeeee)
 #ifndef NSAppKitVersionNumber10_5
 #define NSAppKitVersionNumber10_5 949
 #endif 
 
+#ifndef NSAppKitVersionNumber10_6
+#define NSAppKitVersionNumber10_6 1038
+#endif
+
+#ifndef NSAppKitVersionNumber10_7
+#define NSAppKitVersionNumber10_7 1110
+#endif
 
 @class BXSession;
 
@@ -45,9 +52,11 @@ enum {
 //Returns YES if there are other Boxer processes currently running, no otherwise.
 + (BOOL) otherBoxersActive;
 
-//Returns whether the application is running on 10.5 Leopard.
-//This is used to trigger certain bugfixes and adjusts the art we use.
+//Check which version of OS X we’re running on.
+//This is used to trigger certain bugfixes and window effects, and adjusts the art we use.
 + (BOOL) isRunningOnLeopard;
++ (BOOL) isRunningOnSnowLeopard;
++ (BOOL) isRunningOnLion;
 
 
 #pragma mark -
@@ -109,10 +118,11 @@ enum {
 #pragma mark -
 #pragma mark UI actions
 
-- (IBAction) orderFrontWelcomePanel: (id)sender;		//Display the welcome panel.
-//Display the welcome panel with a flip animation (used only at startup).
+- (IBAction) orderFrontWelcomePanel: (id)sender;		//Display the welcome panel, with or without flipping.
 - (IBAction) orderFrontWelcomePanelWithFlip: (id)sender;
-- (IBAction) orderFrontFirstRunPanel: (id)sender;		//Display the first-run panel.
+- (IBAction) orderFrontFirstRunPanel: (id)sender;		//Display the first-run panel, with or without flipping.
+- (IBAction) orderFrontFirstRunPanelWithFlip: (id)sender;
+
 - (IBAction) hideWelcomePanel: (id)sender;				//Close the welcome panel.
 - (IBAction) orderFrontImportGamePanel: (id)sender;		//Display the game import panel.
 

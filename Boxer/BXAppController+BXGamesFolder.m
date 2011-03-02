@@ -58,7 +58,7 @@
 	//with undesirable consequences.
 	
 	//(Leopard Finder doesn't seem to have this behaviour,
-	//but 4000x4000 is a reasonable size to stop at anyway.)
+	//but 4000x4000 is a reasonable size for us to stop at anyway.)
 	
 	return NSMakeSize(4000, 4000);
 }
@@ -67,12 +67,13 @@
 {
 	NSSize maxArtworkSize = [self _maxArtworkSize];
 	
+	//10.5 is happy with the largest image we can make.
 	if ([BXAppController isRunningOnLeopard]) return maxArtworkSize;
 	else
 	{
-		//Snow Leopard's Finder uses OpenGL textures for rendering
-		//the window background, so we are limited by the current 
-		//renderer's maximum texture size.
+		//Snow Leopard's and Lion's Finder use OpenGL textures for 
+		//rendering the window background, so we are limited by the
+		//current renderer's maximum texture size.
 		GLint maxTextureSize = 0;
 		
 		CGOpenGLDisplayMask displayMask = CGDisplayIDToOpenGLDisplayMask (CGMainDisplayID());

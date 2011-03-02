@@ -11,6 +11,7 @@
 #import "BXValueTransformers.h"
 #import "BXWelcomeView.h"
 #import "BXImport.h"
+#import "NSWindow+BXWindowEffects.h"
 
 
 //The height of the bottom window border.
@@ -36,7 +37,7 @@
 
 
 @implementation BXWelcomeWindowController
-@synthesize recentDocumentsButton, importGameButton, openPromptButton;
+@synthesize recentDocumentsButton, importGameButton, openPromptButton, showGamesFolderButton;
 
 #pragma mark -
 #pragma mark Initialization and deallocation
@@ -61,6 +62,7 @@
 	[self setRecentDocumentsButton: nil],	[recentDocumentsButton release];
 	[self setImportGameButton: nil],		[importGameButton release];
 	[self setOpenPromptButton: nil],		[openPromptButton release];
+	[self setShowGamesFolderButton: nil],	[showGamesFolderButton release];
 	
 	[super dealloc];
 }
@@ -73,6 +75,38 @@
 	NSArray *types = [NSArray arrayWithObject: NSFilenamesPboardType];
 	[[self importGameButton] registerForDraggedTypes: types];
 	[[self openPromptButton] registerForDraggedTypes: types];
+}
+
+- (void) windowDidBecomeKey: (NSNotification *)notification
+{
+	//Highlight the button the mouse is over currently
+	NSView *contentView		= [[self window] contentView];
+	NSPoint mouseLocation	= [[self window] mouseLocationOutsideOfEventStream];
+	NSView *clickTarget		= [contentView hitTest: [contentView convertPoint: mouseLocation fromView: nil]];
+	
+	if ([clickTarget isKindOfClass: [BXWelcomeButton class]])
+	{
+		[(BXWelcomeButton *)clickTarget setHovered: YES];
+	}
+}
+
+- (void) windowDidResignKey: (NSNotification *)notification
+{
+	//Clear the hover state of all welcome buttons when the window
+	//disappears or loses focus
+	[[self showGamesFolderButton] setHovered: NO];
+	[[self importGameButton] setHovered: NO];
+	[[self openPromptButton] setHovered: NO];
+}
+
+- (void) showWindowWithFlip: (id)sender
+{
+	[[self window] revealWithTransition: CGSFlip
+							  direction: CGSDown
+							   duration: 0.4
+						   blockingMode: NSAnimationNonblocking];
+	
+	[self showWindow: sender];
 }
 
 

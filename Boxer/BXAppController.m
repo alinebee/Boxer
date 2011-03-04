@@ -136,12 +136,14 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 + (BOOL) isRunningOnSnowLeopard
 {
-	return (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_6) && ![self isRunningOnLeopard];
+	double appKitVersion = floor(NSAppKitVersionNumber);
+	return (appKitVersion <= NSAppKitVersionNumber10_6 && appKitVersion > NSAppKitVersionNumber10_5);
 }
 
 + (BOOL) isRunningOnLion
 {
-	return (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_7) && ![self isRunningOnSnowLeopard];
+	double appKitVersion = floor(NSAppKitVersionNumber);
+	return (appKitVersion <= NSAppKitVersionNumber10_7 && appKitVersion > NSAppKitVersionNumber10_6);
 }
 
 + (BOOL) otherBoxersActive

@@ -227,7 +227,7 @@
 		if (button == [self openPromptButton] && ![self _canOpenFilePaths: filePaths]) return NO;
 		
 		//If so, highlight the button and go for it
-		[[button cell] setHovered: YES];
+		[button setHovered: YES];
 		return NSDragOperationGeneric;
 	}
 	else return NSDragOperationNone;
@@ -235,13 +235,13 @@
 
 - (void) button: (BXWelcomeButton *)button draggingExited: (id <NSDraggingInfo>)sender
 {
-	[[button cell] setHovered: NO];
+	[button setHovered: NO];
 }
 
 - (BOOL) button: (BXWelcomeButton *)button performDragOperation: (id <NSDraggingInfo>)sender
 {
 	NSPasteboard *pboard = [sender draggingPasteboard];
-	[[button cell] setHovered: NO];
+	[button setHovered: NO];
 	
 	if ([[pboard types] containsObject: NSFilenamesPboardType])
 	{

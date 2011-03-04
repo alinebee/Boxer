@@ -13,7 +13,7 @@
 #import "BXAppController.h"
 
 @implementation BXImportFinalizingPanelController
-@synthesize controller, isIndeterminate, progress, progressDescription;
+@synthesize controller;
 
 - (BOOL) isIndeterminate
 {

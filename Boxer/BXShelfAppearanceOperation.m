@@ -165,7 +165,10 @@
 	if (options.arrangement == FinderEarrNotArranged)
 		options.arrangement		= FinderEarrArrangedByName;
 	
-	if (switchToIconView) window.currentView = FinderEcvwIconView;
+	if (switchToIconView)
+	{
+		window.currentView = FinderEcvwIconView;
+	}
 }
 
 @end

@@ -335,30 +335,34 @@
 
 - (NSAttributedString *) componentForPath: (NSString *)path
 						  withDefaultIcon: (NSImage *)defaultIcon
-{	
+{
 	NSString *displayName;
 	NSImage *icon;
 
 	NSFileManager *manager = [NSFileManager defaultManager];
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-		
+	
 	//Determine the display name and file icon, falling back on sensible defaults if the path doesn't yet exist
 	if ([manager fileExistsAtPath: path])
 	{
 		displayName = [manager displayNameAtPath: path];
-		icon = [[[workspace iconForFile: path] copy] autorelease];
+		icon = [workspace iconForFile: path];
+		
+		//FIXME: For regular folders that don't have a custom icon, NSWorkspace returns a folder icon with
+		//the wrong 16x16 representation (a scaled-down copy of the 512x512 version).
+		//See about substituting the NSFolder named image in this case.
 	}
 	else
 	{
 		displayName = [path lastPathComponent];
-		//Fall back on whatever icon NSWorkspace uses for nonexistent files, if no default icon was specified
-		icon = (defaultIcon) ? defaultIcon : [[[workspace iconForFile: path] copy] autorelease];
+		//If no fallback icon was specified, use whatever icon NSWorkspace provides for nonexistent files.
+		icon = (defaultIcon) ? defaultIcon : [workspace iconForFile: path];
 	}
 	
-	[icon setSize: [self iconSize]];
-	
 	NSTextAttachment *iconAttachment = [[NSTextAttachment alloc] init];
-	[(NSCell *)[iconAttachment attachmentCell] setImage: icon];
+	NSTextAttachmentCell *iconCell = (NSTextAttachmentCell *)[iconAttachment attachmentCell];
+	[iconCell setImage: icon];
+	[[iconCell image] setSize: [self iconSize]];
 	
 	NSMutableAttributedString *component = [[NSAttributedString attributedStringWithAttachment: iconAttachment] mutableCopy];
 	[component addAttributes: [self iconAttributes] range: NSMakeRange(0, [component length])];
@@ -385,7 +389,7 @@
 		return [[[NSAttributedString alloc] init] autorelease];
 	
 	//Hide common system root directories
-	if (hideSystemRoots)
+	if ([self hideSystemRoots])
 	{
 		[components removeObject: @"/"];
 		[components removeObject: @"/Users"];
@@ -406,18 +410,21 @@
 		[attributedEllipsis release];
 	}
 
-	NSUInteger componentsAdded = 0;
-	for (NSString *subPath in components)
+	NSImage *folderIcon = [NSImage imageNamed: @"NSFolder"];
+	NSUInteger i, numComponents = [components count];
+	for (i = 0; i < numComponents; i++)
 	{
 		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 		
-		if (componentsAdded)
-			[displayPath appendAttributedString: attributedJoiner];
-
-		NSAttributedString *componentString = [self componentForPath: subPath withDefaultIcon: [self missingFileIcon]];
-		[displayPath appendAttributedString: componentString];
+		NSString *subPath = [components objectAtIndex: i];
 		
-		componentsAdded++;
+		//Use regular folder icon for all missing path components except for the final one
+		NSImage *defaultIcon = (i == numComponents - 1) ? [self missingFileIcon] : folderIcon;
+		
+		NSAttributedString *componentString = [self componentForPath: subPath withDefaultIcon: defaultIcon];
+		
+		if (i > 0) [displayPath appendAttributedString: attributedJoiner];
+		[displayPath appendAttributedString: componentString];
 		
 		[pool release];
 	}

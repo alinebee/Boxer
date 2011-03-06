@@ -119,13 +119,13 @@
 	NSString *itemTitle	= [manager displayNameAtPath: itemPath];
 	
 	NSMenuItem *newItem = [menu	addItemWithTitle: itemTitle
-								action: itemAction
-								keyEquivalent: @""];
+										  action: itemAction
+								   keyEquivalent: @""];
 	
 	[newItem setRepresentedObject: document];
 
-	[itemIcon setSize: iconSize];
 	[newItem setImage: itemIcon];
+	[[newItem image] setSize: iconSize];
 
 	return newItem;
 }

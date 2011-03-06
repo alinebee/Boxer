@@ -206,13 +206,13 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	[pathTransformer setMissingFileIcon: [NSImage imageNamed: @"gamefolder"]];
 	[pathTransformer setHideSystemRoots: YES];
 	NSMutableParagraphStyle *pathStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-	[pathStyle setLineBreakMode: NSLineBreakByClipping];
+	[pathStyle setLineBreakMode: NSLineBreakByTruncatingMiddle];
 	[[pathTransformer textAttributes] setObject: [pathStyle autorelease] forKey: NSParagraphStyleAttributeName];
 	
 	[NSValueTransformer setValueTransformer: [isEmpty autorelease]		forName: @"BXArrayIsEmpty"];
 	[NSValueTransformer setValueTransformer: [isNotEmpty autorelease]	forName: @"BXArrayIsNotEmpty"];	
 	[NSValueTransformer setValueTransformer: [capitalizer autorelease]	forName: @"BXCapitalizedString"];	
-	[NSValueTransformer setValueTransformer: [pathTransformer autorelease] forName: @"BXDisplayPathWithIcons"];
+	[NSValueTransformer setValueTransformer: [pathTransformer autorelease] forName: @"BXIconifiedGamesFolderPath"];
 	
 	//Initialise our Growl notifier instance
 	[GrowlApplicationBridge setGrowlDelegate: [BXGrowlController controller]];

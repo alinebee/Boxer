@@ -86,7 +86,7 @@
 	
 	if ([clickTarget isKindOfClass: [BXWelcomeButton class]])
 	{
-		[(BXWelcomeButton *)clickTarget setHovered: YES];
+		[(BXWelcomeButton *)clickTarget setHighlighted: YES];
 	}
 }
 
@@ -94,9 +94,9 @@
 {
 	//Clear the hover state of all welcome buttons when the window
 	//disappears or loses focus
-	[[self showGamesFolderButton] setHovered: NO];
-	[[self importGameButton] setHovered: NO];
-	[[self openPromptButton] setHovered: NO];
+	[[self showGamesFolderButton] setHighlighted: NO];
+	[[self importGameButton] setHighlighted: NO];
+	[[self openPromptButton] setHighlighted: NO];
 }
 
 - (void) showWindowWithFlip: (id)sender
@@ -227,7 +227,7 @@
 		if (button == [self openPromptButton] && ![self _canOpenFilePaths: filePaths]) return NO;
 		
 		//If so, highlight the button and go for it
-		[button setHovered: YES];
+		[button setHighlighted: YES];
 		return NSDragOperationGeneric;
 	}
 	else return NSDragOperationNone;
@@ -235,13 +235,13 @@
 
 - (void) button: (BXWelcomeButton *)button draggingExited: (id <NSDraggingInfo>)sender
 {
-	[button setHovered: NO];
+	[button setHighlighted: NO];
 }
 
 - (BOOL) button: (BXWelcomeButton *)button performDragOperation: (id <NSDraggingInfo>)sender
 {
 	NSPasteboard *pboard = [sender draggingPasteboard];
-	[button setHovered: NO];
+	[button setHighlighted: NO];
 	
 	if ([[pboard types] containsObject: NSFilenamesPboardType])
 	{

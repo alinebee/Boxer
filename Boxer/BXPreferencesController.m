@@ -37,15 +37,17 @@
 											   options: NSKeyValueObservingOptionInitial
 											   context: nil];
 	
+	
 	//Bind the attributed title so that it will prettify the current games folder path
 	NSDictionary *bindingOptions = [NSDictionary dictionaryWithObjectsAndKeys:
-									@"BXDisplayPathWithIcons", NSValueTransformerNameBindingOption,
+									@"BXIconifiedGamesFolderPath", NSValueTransformerNameBindingOption,
 									nil];
 	
 	[currentGamesFolderItem bind: @"attributedTitle"
 						toObject: [NSApp delegate]
 					 withKeyPath: @"gamesFolderPath"
 						 options: bindingOptions];
+	
 	
 	//Set the default tab
 	NSInteger selectedIndex = [[NSUserDefaults standardUserDefaults] integerForKey: @"initialPreferencesPanelIndex"];

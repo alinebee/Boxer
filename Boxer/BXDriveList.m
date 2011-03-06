@@ -149,9 +149,9 @@ enum {
 	}
 	return self;
 }
-- (void) mouseEntered: (NSEvent *)event	{ [self setHovered: YES]; }
-- (void) mouseExited: (NSEvent *)event	{ [self setHovered: NO]; }
-- (void) setHovered: (BOOL)hover
+- (void) mouseEntered: (NSEvent *)event	{ [self setHighlighted: YES]; }
+- (void) mouseExited: (NSEvent *)event	{ [self setHighlighted: NO]; }
+- (void) setHighlighted: (BOOL)hover
 {
 	hovered = hover;
 	[[self controlView] setNeedsDisplay: YES];

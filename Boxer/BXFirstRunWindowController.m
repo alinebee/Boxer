@@ -77,7 +77,7 @@ enum {
 
 - (NSMenuItem *) _folderItemForPath: (NSString *)path
 {
-	NSValueTransformer *pathTransformer = [NSValueTransformer valueTransformerForName: @"BXDisplayPathWithIcons"];
+	NSValueTransformer *pathTransformer = [NSValueTransformer valueTransformerForName: @"BXIconifiedGamesFolderPath"];
 	
 	NSMenuItem *item = [[NSMenuItem alloc] init];
 	[item setRepresentedObject: path];

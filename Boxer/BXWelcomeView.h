@@ -21,11 +21,10 @@
 @interface BXWelcomeButton : BXFilterPortrait
 {
 	id <BXWelcomeButtonDraggingDelegate> draggingDelegate;
-	BOOL hovered;
 }
 //The delegate used for drag-drop operations.
 @property (assign) id <BXWelcomeButtonDraggingDelegate> draggingDelegate;
-@property (assign, nonatomic, getter=isHovered) BOOL hovered;
+@property (assign, nonatomic, getter=isHighlighted) BOOL highlighted;
 
 @end
 

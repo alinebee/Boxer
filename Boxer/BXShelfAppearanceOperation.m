@@ -165,6 +165,21 @@
 	if (options.arrangement == FinderEarrNotArranged)
 		options.arrangement		= FinderEarrArrangedByName;
 	
+	//IMPLEMENTATION NOTE: setting the current view while the folder’s window
+	//is *closed* makes the window always open in that mode: equivalent to
+	//enabling the "Always open in Icon View" option in the Cmd-J view options.
+	//Other existing and future Finder windows are unaffected.
+	
+	//Unfortunately, there seems to be no way API via Applescript to *clear*
+	//the view option, so that the window would return to using whatever the
+	//current Finder mode is. This means that our switch to icon view usually
+	//sticks even after removing the shelf appearance. Which is bad.
+	
+	//Setting the current view while the window is *open* only changes the view mode
+	//temporarily for the lifetime of that window, not permanently. However, and unlike
+	//the above, it makes that view mode the default for *future* Finder windows also.
+	//This makes it actually more annoying and disruptive than just having that folder
+	//always open in icon view.
 	if (switchToIconView)
 	{
 		window.currentView = FinderEcvwIconView;

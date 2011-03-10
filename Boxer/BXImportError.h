@@ -28,4 +28,5 @@ enum
 
 @interface BXImportWindowsOnlyError : BXImportError
 + (id) errorWithSourcePath: (NSString *)sourcePath userInfo: (NSDictionary *)userInfo;
+- (NSString *) helpAnchor;
 @end

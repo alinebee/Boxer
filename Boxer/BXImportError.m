@@ -62,8 +62,8 @@ NSString * const BXImportErrorDomain = @"BXImportErrorDomain";
 	);
 	
 	NSString *suggestion = NSLocalizedString(
-		@"You will need to run it in a Windows emulator instead, such as Crossover for Mac.",
-		@"Explanation text shown when importing a folder that contains a Windows-only game. %@ is the display filename of the imported path."
+		@"You may be able to run it in a Windows emulator instead, such as CrossOver Games.",
+		@"Informative text of warning sheet after running a Windows-only executable or importing a Windows-only game."
 	);
 	
 	NSString *description = [NSString stringWithFormat: descriptionFormat, [self displayNameForPath: sourcePath], nil];
@@ -81,4 +81,8 @@ NSString * const BXImportErrorDomain = @"BXImportErrorDomain";
 						userInfo: defaultInfo];
 }
 
+- (NSString *) helpAnchor
+{
+	return @"windows-only-programs";
+}
 @end

@@ -104,12 +104,14 @@
 	
 	[alert setMessageText: [NSString stringWithFormat: messageFormat, programName]];
 	
-	[alert setInformativeText:	NSLocalizedString(@"You may be able to run this program in a Windows emulator instead, such as CrossOver Games.",
-												  @"Informative text of warning sheet after running a Windows-only executable.")];
+	[alert setInformativeText:	NSLocalizedString(@"You may be able to run it in a Windows emulator instead, such as CrossOver Games.",
+												  @"Informative text of warning sheet after running a Windows-only executable or importing a Windows-only game.")];
 	
 	[[[alert buttons] lastObject] setTitle: NSLocalizedString(@"Return to DOS",
 															  @"Cancel button for warning sheet after running a Windows-only executable: will return user to the DOS prompt.")];
 	
+	[alert setShowsHelp: YES];
+	[alert setHelpAnchor: @"windows-only-programs"];
 	
 	return alert;
 }

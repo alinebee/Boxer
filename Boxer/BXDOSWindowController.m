@@ -888,16 +888,11 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 
 - (void) windowDidResignKey: (NSNotification *) notification
 {
-	//Ignore handoffs between our own windows, which swap key and main window status
+	NSWindow *newWindow = [NSApp keyWindow];
+	//Ignore handoffs between our own windows, which swap key window status
 	//when switching to/from fullscreen
-	if ([NSApp keyWindow] != [self fullScreenWindow] && [[NSApp keyWindow] isEqual: [self window]])
+	if (!newWindow || (newWindow != [self window] && newWindow != [self fullScreenWindow]))
 		[inputController didResignKey];
-}
-
-- (void) windowDidResignMain: (NSNotification *) notification
-{
-	if ([NSApp keyWindow] != [self fullScreenWindow] && [NSApp keyWindow] != [self window])
-	[inputController didResignKey];
 }
 
 //Warn the emulator to prepare for emulation cutout when a menu opens

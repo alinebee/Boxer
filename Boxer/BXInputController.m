@@ -520,9 +520,9 @@
 	//Release the three-finger tap finger by finger
 	if (numFingers < 3 && (simulatedMouseButtons & BXMouseButtonLeftAndRightMask) > 0)
 	{
-		//If 0 or 2 fingers remain, release the left button
+		//If 0 or 2 fingers remain, release the left button (as a 2 finger tap corresponds to a right-click)
 		BOOL releaseLeftButton	= (numFingers != 1);
-		//If 0 or 1 finger remains, release the right button
+		//If 0 or 1 finger remains, release the right button (as a 1-finger tap corresponds to a left-click)
 		BOOL releaseRightButton	= (numFingers < 2);
 		
 		if (releaseLeftButton)

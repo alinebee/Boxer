@@ -7,10 +7,22 @@
 
 //BXEventConstants (re)defines some useful constants for handling NSEvents.
 
+
+//These correspond to NSEvent's mouse button numbers
 enum {
-	OSXMouseButtonLeft		= 0,
-	OSXMouseButtonRight		= 1,
-	OSXMouseButtonMiddle	= 2
+	BXMouseButtonLeft	= 0,
+	BXMouseButtonRight	= 1,
+	BXMouseButtonMiddle	= 2
+};
+
+//These correspond to NSEvent's pressedMouseButton masks
+enum {
+	BXNoMouseButtonsMask	= 0,
+	BXMouseButtonLeftMask	= 1U << BXMouseButtonLeft,
+	BXMouseButtonRightMask	= 1U << BXMouseButtonRight,
+	BXMouseButtonMiddleMask	= 1U << BXMouseButtonMiddle,
+	
+	BXMouseButtonLeftAndRightMask = BXMouseButtonLeftMask | BXMouseButtonRightMask
 };
 
 //Modifier flag constants for left- and right-side modifier keys, copied from IOKit/IOLLEvent.h.

@@ -21,6 +21,8 @@
 	BXEmulator *emulator;
 	BOOL mouseActive;
 	NSPoint mousePosition;
+	
+	NSUInteger pressedMouseButtons;
 }
 //Our parent emulator.
 @property (assign) BXEmulator *emulator;
@@ -30,6 +32,9 @@
 
 //Where DOSBox thinks the mouse is.
 @property (assign) NSPoint mousePosition;
+
+//A bitmask of which mouse buttons are currently pressed in DOS.
+@property (readonly, assign) NSUInteger pressedMouseButtons;
 
 
 //Called whenever we lose keyboard input focus. Clears all DOSBox events.

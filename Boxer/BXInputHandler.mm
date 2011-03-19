@@ -29,7 +29,11 @@ void MAPPER_CheckEvent(SDL_Event *event);
 void MAPPER_LosingFocus();
 
 
+#pragma mark -
+#pragma mark Private method declarations
+
 @interface BXInputHandler ()
+@property (readwrite, assign) NSUInteger pressedMouseButtons;
 
 //Simple performSelector:withObject:afterDelay: wrappers, used by
 //sendKeypressWithCode: and sendKeypressWithSDLKey: for releasing
@@ -57,9 +61,12 @@ void MAPPER_LosingFocus();
 @end
 
 
+#pragma mark -
+#pragma mark Implementation
+
 @implementation BXInputHandler
 @synthesize emulator;
-@synthesize mouseActive;
+@synthesize mouseActive, pressedMouseButtons;
 @synthesize mousePosition;
 
 - (id) init
@@ -68,6 +75,7 @@ void MAPPER_LosingFocus();
 	{
 		mousePosition	= NSMakePoint(0.5f, 0.5f);
 		mouseActive		= NO;
+		pressedMouseButtons = BXNoMouseButtonsMask;
 	}
 	return self;
 }
@@ -79,10 +87,19 @@ void MAPPER_LosingFocus();
 {
 	//Release all DOSBox events when we lose focus
 	MAPPER_LosingFocus();
+	
+	//TODO: do mouse releases belong upstream in BXInputController?
+	if (pressedMouseButtons != BXNoMouseButtonsMask)
+	{
+		[self mouseButtonReleased: BXMouseButtonLeft withModifiers: 0];
+		[self mouseButtonReleased: BXMouseButtonRight withModifiers: 0];
+		[self mouseButtonReleased: BXMouseButtonMiddle withModifiers: 0];
+	}
 }
 
 - (BOOL) capsLockEnabled
 {
+	//TODO: make this a flag and push the decision to toggle it upstream to BXInputController
 	return ([[NSApp currentEvent] modifierFlags] & NSAlphaShiftKeyMask);
 }
 
@@ -90,17 +107,30 @@ void MAPPER_LosingFocus();
 #pragma mark -
 #pragma mark Mouse handling
 
-- (void) mouseButtonPressed: (NSInteger)button withModifiers: (NSUInteger) modifierFlags
+- (void) mouseButtonPressed: (NSInteger)button
+			  withModifiers: (NSUInteger) modifierFlags
 {
-	//Happily, DOSBox's mouse button numbering corresponds exactly to OSX's
-	if ([[self emulator] isExecuting]) Mouse_ButtonPressed(button);
+	NSUInteger buttonMask = 1U << button;
+	
+	//Only press the button if it's not already pressed, to avoid duplicate events confusing DOS games.
+	if ([[self emulator] isExecuting] && !([self pressedMouseButtons] & buttonMask))
+	{
+		Mouse_ButtonPressed(button);
+		[self setPressedMouseButtons: pressedMouseButtons | buttonMask];
+	}
 }
 
-
-- (void) mouseButtonReleased: (NSInteger)button withModifiers: (NSUInteger) modifierFlags
+- (void) mouseButtonReleased: (NSInteger)button
+			   withModifiers: (NSUInteger) modifierFlags
 {
-	//Happily, DOSBox's mouse button numbering corresponds exactly to OSX's
-	if ([[self emulator] isExecuting]) Mouse_ButtonReleased(button);
+	NSUInteger buttonMask = 1U << button;
+	
+	//Likewise, only release the button if it was actually pressed.
+	if ([[self emulator] isExecuting] && ([self pressedMouseButtons] & buttonMask))
+	{
+		Mouse_ButtonReleased(button);
+		[self setPressedMouseButtons: pressedMouseButtons & ~buttonMask];
+	}
 }
 
 - (void) mouseMovedToPoint: (NSPoint)point

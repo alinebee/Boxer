@@ -15,6 +15,7 @@
 #import "BXCursorFadeAnimation.h"
 #import "BXDOSWindowController.h"
 #import "BXSession.h"
+#import "BXPostLeopardAPIs.h"
 
 //For keycodes
 #import <Carbon/Carbon.h>
@@ -38,16 +39,6 @@
 
 //The volume level at which we'll play the lock/unlock sound effects.
 #define BXMouseLockSoundVolume 0.7f
-
-
-//Flags for which mouse buttons we are currently faking (for Ctrl- and Opt-clicking.)
-//Note that while these are ORed together, there will currently only ever be one of them active at a time.
-enum {
-	BXNoSimulatedButtons			= 0,
-	BXSimulatedButtonRight			= 1,
-	BXSimulatedButtonMiddle			= 2,
-	BXSimulatedButtonLeftAndRight	= 4,
-};
 
 
 #pragma mark -
@@ -128,6 +119,11 @@ enum {
 	//Insert ourselves into the responder chain as our view's next responder
 	[self setNextResponder: [[self view] nextResponder]];
 	[[self view] setNextResponder: self];
+	
+	//Tell the view to accept touch events for 10.6 and above
+	if ([[self view] respondsToSelector: @selector(setAcceptsTouchEvents:)])
+		[[self view] setAcceptsTouchEvents: YES];
+	
 	
 	//Set up a cursor region in the view for mouse handling
 	NSTrackingAreaOptions options = NSTrackingMouseEnteredAndExited | NSTrackingEnabledDuringMouseDrag | NSTrackingCursorUpdate | NSTrackingActiveInKeyWindow | NSTrackingInVisibleRect | NSTrackingAssumeInside;
@@ -261,6 +257,8 @@ enum {
 {
 	[self setMouseLocked: NO];
 	[[self representedObject] lostFocus];
+	
+	simulatedMouseButtons = BXNoMouseButtonsMask;
 }
 
 #pragma mark -
@@ -282,32 +280,31 @@ enum {
 		if (cmdModified)
 		{
 			[self toggleMouseLocked: self];
-		}		
+		}	
 		//Ctrl-Opt-clicking simulates a simultaneous left- and right-click
-		//(for those rare games that need it, like Syndicate)
 		else if (optModified && ctrlModified)
 		{
-			simulatedMouseButtons |= BXSimulatedButtonLeftAndRight;
-			[inputHandler mouseButtonPressed: OSXMouseButtonLeft withModifiers: modifiers];
-			[inputHandler mouseButtonPressed: OSXMouseButtonRight withModifiers: modifiers];
+			simulatedMouseButtons |= BXMouseButtonLeftAndRightMask;
+			[inputHandler mouseButtonPressed: BXMouseButtonLeft withModifiers: modifiers];
+			[inputHandler mouseButtonPressed: BXMouseButtonRight withModifiers: modifiers];
 		}
 		
 		//Ctrl-clicking simulates a right mouse-click
 		else if (ctrlModified)
 		{
-			simulatedMouseButtons |= BXSimulatedButtonRight;
-			[inputHandler mouseButtonPressed: OSXMouseButtonRight withModifiers: modifiers];
+			simulatedMouseButtons |= BXMouseButtonRightMask;
+			[inputHandler mouseButtonPressed: BXMouseButtonRight withModifiers: modifiers];
 		}
 		
 		//Opt-clicking simulates a middle mouse-click
 		else if (optModified)
 		{
-			simulatedMouseButtons |= BXSimulatedButtonMiddle;
-			[inputHandler mouseButtonPressed: OSXMouseButtonMiddle withModifiers: modifiers];
+			simulatedMouseButtons |= BXMouseButtonMiddleMask;
+			[inputHandler mouseButtonPressed: BXMouseButtonMiddle withModifiers: modifiers];
 		}
 		
 		//Otherwise, pass the left click on as-is
-		else [inputHandler mouseButtonPressed: OSXMouseButtonLeft withModifiers: modifiers];
+		else [inputHandler mouseButtonPressed: BXMouseButtonLeft withModifiers: modifiers];
 	}
 	//A single click on the window will lock the mouse if unlocked-tracking is disabled or we're in fullscreen mode
 	else if (![self trackMouseWhileUnlocked])
@@ -325,7 +322,7 @@ enum {
 {
 	if ([self _controlsCursorWhileMouseInside])
 	{
-		[[self representedObject] mouseButtonPressed: OSXMouseButtonRight
+		[[self representedObject] mouseButtonPressed: BXMouseButtonRight
 									   withModifiers: [theEvent modifierFlags]];
 	}
 	else
@@ -336,9 +333,9 @@ enum {
 
 - (void) otherMouseDown: (NSEvent *)theEvent
 {
-	if ([self _controlsCursorWhileMouseInside] && [theEvent buttonNumber] == OSXMouseButtonMiddle)
+	if ([self _controlsCursorWhileMouseInside] && [theEvent buttonNumber] == BXMouseButtonMiddle)
 	{
-		[[self representedObject] mouseButtonPressed: OSXMouseButtonMiddle
+		[[self representedObject] mouseButtonPressed: BXMouseButtonMiddle
 									   withModifiers: [theEvent modifierFlags]];
 	}
 	else
@@ -356,20 +353,19 @@ enum {
 
 		if (simulatedMouseButtons)
 		{
-			if (simulatedMouseButtons & BXSimulatedButtonLeftAndRight)
-			{
-				[inputHandler mouseButtonReleased: OSXMouseButtonLeft withModifiers: modifiers];
-				[inputHandler mouseButtonReleased: OSXMouseButtonRight withModifiers: modifiers];
-			}
-			if (simulatedMouseButtons & BXSimulatedButtonRight)
-				[inputHandler mouseButtonReleased: OSXMouseButtonRight withModifiers: modifiers];
-			if (simulatedMouseButtons & BXSimulatedButtonMiddle)
-				[inputHandler mouseButtonReleased: OSXMouseButtonMiddle withModifiers: modifiers];
+			if (simulatedMouseButtons & BXMouseButtonLeftMask)
+				[inputHandler mouseButtonReleased: BXMouseButtonLeft withModifiers: modifiers];
 			
-			simulatedMouseButtons = BXNoSimulatedButtons;
+			if (simulatedMouseButtons & BXMouseButtonRightMask)
+				[inputHandler mouseButtonReleased: BXMouseButtonRight withModifiers: modifiers];
+			
+			if (simulatedMouseButtons & BXMouseButtonMiddleMask)
+				[inputHandler mouseButtonReleased: BXMouseButtonMiddle withModifiers: modifiers];
+			
+			simulatedMouseButtons = BXNoMouseButtonsMask;
 		}
 		//Pass the mouse release as-is to our input handler
-		else [inputHandler mouseButtonReleased: OSXMouseButtonLeft withModifiers: modifiers];
+		else [inputHandler mouseButtonReleased: BXMouseButtonLeft withModifiers: modifiers];
 	}
 	else
 	{
@@ -377,11 +373,11 @@ enum {
 	}
 }
 
-- (void) rightMouseUp:(NSEvent *)theEvent
+- (void) rightMouseUp: (NSEvent *)theEvent
 {
 	if ([self _controlsCursorWhileMouseInside])
 	{
-		[[self representedObject] mouseButtonReleased: OSXMouseButtonRight
+		[[self representedObject] mouseButtonReleased: BXMouseButtonRight
 										withModifiers: [theEvent modifierFlags]];
 	}
 	else
@@ -391,12 +387,12 @@ enum {
 
 }
 
-- (void) otherMouseUp:(NSEvent *)theEvent
+- (void) otherMouseUp: (NSEvent *)theEvent
 {
 	//Only pay attention to the middle mouse button; all others can do as they will
-	if ([theEvent buttonNumber] == OSXMouseButtonMiddle && [self _controlsCursorWhileMouseInside])
+	if ([theEvent buttonNumber] == BXMouseButtonMiddle && [self _controlsCursorWhileMouseInside])
 	{
-		[[self representedObject] mouseButtonReleased: OSXMouseButtonMiddle
+		[[self representedObject] mouseButtonReleased: BXMouseButtonMiddle
 										withModifiers: [theEvent modifierFlags]];
 	}		
 	else
@@ -494,6 +490,60 @@ enum {
 	[super mouseEntered: theEvent];
 	[self didChangeValueForKey: @"mouseInView"];
 }
+
+
+#pragma mark -
+#pragma mark Touch events
+
+- (void) touchesBeganWithEvent: (NSEvent *)theEvent
+{
+	NSUInteger numFingers = [[theEvent touchesMatchingPhase: NSTouchPhaseTouching inView: [self view]] count];
+	BXInputHandler *handler = [self representedObject];
+	NSUInteger modifiers = [theEvent modifierFlags];
+	
+	//A three-finger tap simulates pressing the left and right mouse buttons at once
+	if (numFingers == 3 && (simulatedMouseButtons & BXMouseButtonLeftAndRightMask) == 0)
+	{
+		simulatedMouseButtons |= BXMouseButtonLeftAndRightMask;
+		[handler mouseButtonPressed: BXMouseButtonLeft withModifiers: modifiers];
+		[handler mouseButtonPressed: BXMouseButtonRight withModifiers: modifiers];
+	}
+}
+
+- (void) touchesEndedWithEvent: (NSEvent *)theEvent
+{
+	NSUInteger numFingers = [[theEvent touchesMatchingPhase: NSTouchPhaseTouching inView: [self view]] count];
+	
+	BXInputHandler *handler = [self representedObject];
+	NSUInteger modifiers = [theEvent modifierFlags];
+	
+	//Release the three-finger tap finger by finger
+	if (numFingers < 3 && (simulatedMouseButtons & BXMouseButtonLeftAndRightMask) > 0)
+	{
+		//If 0 or 2 fingers remain, release the left button
+		BOOL releaseLeftButton	= (numFingers != 1);
+		//If 0 or 1 finger remains, release the right button
+		BOOL releaseRightButton	= (numFingers < 2);
+		
+		if (releaseLeftButton)
+		{
+			[handler mouseButtonReleased: BXMouseButtonLeft withModifiers: modifiers];
+			simulatedMouseButtons &= ~BXMouseButtonLeftMask;
+		}
+		
+		if (releaseRightButton)
+		{
+			[handler mouseButtonReleased: BXMouseButtonRight withModifiers: modifiers];
+			simulatedMouseButtons &= ~BXMouseButtonRightMask;
+		}
+	}
+}
+
+- (void) touchesCancelledWithEvent: (NSEvent *)theEvent
+{
+	[self touchesEndedWithEvent: theEvent];
+}
+
 
 #pragma mark -
 #pragma mark Key events

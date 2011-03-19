@@ -222,6 +222,7 @@
 - (IBAction) openInDOS:			(id)sender
 {
 	if ([sender respondsToSelector: @selector(representedObject)]) sender = [sender representedObject];
+	
 	NSString *path = nil;
 	
 	//NSString paths
@@ -231,7 +232,7 @@
 	//NSDictionaries with paths
 	else if ([sender isKindOfClass: [NSDictionary class]])	path = [sender objectForKey: @"path"];	
 	
-	if (path) [self openFileAtPath: path];	
+	if (path) [self openFileAtPath: path];
 }
 
 - (IBAction) relaunch: (id)sender
@@ -326,6 +327,9 @@
 	//Get the path to the file in the DOS filesystem
 	NSString *dosPath = [theEmulator DOSPathForPath: path];
 	if (!dosPath) return NO;
+	
+	//Unpause the emulation if it's paused
+	[self setManuallyPaused: NO];
 	
 	if ([[self class] isExecutable: path])
 	{

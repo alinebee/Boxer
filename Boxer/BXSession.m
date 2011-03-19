@@ -79,6 +79,7 @@ NSString * const BXSessionDidUnlockMouseNotification	= @"BXSessionDidUnlockMouse
 @synthesize gameSettings;
 @synthesize drives, executables, documentation;
 @synthesize emulating;
+@synthesize manuallyPaused, autoPaused, interrupted;
 @synthesize userToggledProgramPanel;
 
 #pragma mark -
@@ -259,7 +260,7 @@ NSString * const BXSessionDidUnlockMouseNotification	= @"BXSessionDidUnlockMouse
 	}
 }
 
-- (void) setActiveProgramPath:(NSString *)newPath
+- (void) setActiveProgramPath: (NSString *)newPath
 {
 	if (![newPath isEqualToString: activeProgramPath])
 	{
@@ -643,16 +644,33 @@ NSString * const BXSessionDidUnlockMouseNotification	= @"BXSessionDidUnlockMouse
 	//NSWindow/NSDocument close flow.
 	
 	NSEvent *event;
+	NSDate *untilDate = nil;
+	
 	while (!isClosing && (event = [NSApp nextEventMatchingMask: NSAnyEventMask
-													 untilDate: nil
+													 untilDate: untilDate
 														inMode: NSDefaultRunLoopMode
 													   dequeue: YES]))
 	{
 		[NSApp sendEvent: event];
+		
+		//If we're paused, then keep dispatching events until we unpause;
+		//otherwise, allow execution to resume after the first batch of events has been processed.
+		untilDate = [self isPaused] ? [NSDate distantFuture] : nil;
 	}
 }
 
 - (void) didCompleteRunLoop {}
+
+- (void) _syncPauseState
+{
+	//Tell the emulator to prepare for being paused or to resume after we unpause.
+	//(BXEmulator doesn’t mind if we send these signals multiple times.)
+	if ([self isPaused])	[emulator willPause];
+	else					[emulator didResume];
+	
+	//Update the title to reflect that we’re paused
+	[DOSWindowController synchronizeWindowTitleWithDocumentName];
+}
 
 
 - (void) didCompleteFrame: (BXFrameBuffer *)frame

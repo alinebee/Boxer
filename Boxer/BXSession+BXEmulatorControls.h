@@ -96,8 +96,11 @@ enum
 #pragma mark -
 #pragma mark Interface actions and validation
 
+//Pause/unpause the emulation.
+- (IBAction) togglePaused: (id)sender;
+
 //Increase/decrease the current frameskip by 1.
-- (IBAction) incrementFrameSkip: (id)sender;	
+- (IBAction) incrementFrameSkip: (id)sender;
 - (IBAction) decrementFrameSkip: (id)sender;
 
 //Increase/decrease the CPU speed by an appropriate increment,
@@ -117,9 +120,11 @@ enum
 //Paste data from the clipboard into the DOS session. Currently disabled.
 - (IBAction) paste: (id)sender;
 
-#pragma mark -
-#pragma mark Copy-paste handling
 
-- (BOOL) _canPasteFromPasteboard: (NSPasteboard *)pboard;
+//Display the relevant panels of the Inspector.
+- (IBAction) showGamePanel:		(id)sender;
+- (IBAction) showCPUPanel:		(id)sender;
+- (IBAction) showDrivesPanel:	(id)sender;
+- (IBAction) showMousePanel:	(id)sender;
 
 @end

@@ -5,8 +5,7 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-#import "BXSession+BXEmulatorControls.h"
-#import "BXSession+BXFileManager.h"
+#import "BXSessionPrivate.h"
 #import "BXEmulator+BXShell.h"
 #import "BXEmulator+BXPaste.h"
 #import "BXValueTransformers.h"
@@ -14,8 +13,10 @@
 #import "BXAppController.h"
 #import "BXVideoHandler.h"
 #import "BXEmulatorConfiguration.h"
+#import "BXInspectorController.h"
 
 #import "BXDOSWindowController.h"
+#import "BXInputController.h"
 
 
 #pragma mark Private method declarations
@@ -82,9 +83,50 @@
 	return NSLocalizedString(@"XT speed (%u)",		@"Description for PC-XT 8088 speed class. %u is cycles setting.");
 }
 
-
 #pragma mark -
 #pragma mark Controlling CPU emulation
+
+//Pause states
+
++ (NSSet *)keyPathsForValuesAffectingPaused
+{
+	return [NSSet setWithObjects: @"autoPaused", @"interrupted", nil];
+}
+
+- (BOOL) isPaused
+{
+	//Report that we're paused whenever any of our pause flags are true
+	return manuallyPaused || autoPaused || interrupted;
+}
+
+- (void) setManuallyPaused: (BOOL)flag
+{
+	manuallyPaused = flag;
+	[self _syncPauseState];
+	
+	//Unlock the mouse whenever we are paused deliberately
+	if (flag) [[DOSWindowController inputController] setMouseLocked: NO];
+}
+
+- (void) setAutoPaused: (BOOL)flag
+{
+	autoPaused = flag;
+	[self _syncPauseState];
+}
+
+- (void) setInterrupted: (BOOL)flag
+{
+	interrupted = flag;
+	[self _syncPauseState];
+}
+
+- (IBAction) togglePaused: (id)sender
+{
+	[self setManuallyPaused: ![self manuallyPaused]];
+}
+
+
+//Frame skipping
 
 - (NSUInteger) frameskip
 {
@@ -252,11 +294,31 @@
 	//Defined in BXFileManager
 	if (theAction == @selector(openInDOS:))				return [emulator isAtPrompt];
 	if (theAction == @selector(relaunch:))				return [emulator isAtPrompt];
-
+	
 	if (theAction == @selector(paste:))
 		return [self _canPasteFromPasteboard: [NSPasteboard generalPasteboard]];
 	
 	return [super validateUserInterfaceItem: theItem];
+}
+
+- (BOOL) validateMenuItem: (NSMenuItem *)theItem
+{
+	SEL theAction = [theItem action];
+	NSString *title;
+	
+	if (theAction == @selector(togglePaused:))
+	{
+		if (![self manuallyPaused])
+			title = NSLocalizedString(@"Pause", @"Emulation menu option for pausing the emulator.");
+		else
+			title = NSLocalizedString(@"Resume", @"Emulation menu option for resuming from pause.");
+		
+		[theItem setTitle: title];
+	
+		return [self isEmulating];
+	}
+	
+    return [super validateMenuItem: theItem];
 }
 
 
@@ -340,4 +402,13 @@
 + (NSSet *) keyPathsForValuesAffectingSpeedDescription		{ return [NSSet setWithObject: @"sliderSpeed"]; }
 + (NSSet *) keyPathsForValuesAffectingFrameskipDescription	{ return [NSSet setWithObjects: @"emulating", @"frameskip", nil]; }
 
+
+#pragma mark -
+#pragma mark Inspector actions
+
+//These are passthroughs for when BXInspectorController isn't in the responder chain
+- (IBAction) showGamePanel:		(id)sender	{ [[BXInspectorController controller] showGamePanel: sender]; }
+- (IBAction) showCPUPanel:		(id)sender	{ [[BXInspectorController controller] showCPUPanel: sender]; }
+- (IBAction) showDrivesPanel:	(id)sender	{ [[BXInspectorController controller] showDrivesPanel: sender]; }
+- (IBAction) showMousePanel:	(id)sender	{ [[BXInspectorController controller] showMousePanel: sender]; }
 @end

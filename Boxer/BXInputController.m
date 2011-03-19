@@ -265,7 +265,10 @@
 #pragma mark Mouse events
 
 - (void) mouseDown: (NSEvent *)theEvent
-{		
+{
+	//Unpause the emulation whenever the view is clicked on
+	[[[self controller] document] setManuallyPaused: NO];
+	
 	//Only respond to clicks if we're locked or tracking mouse input while unlocked
 	if ([self _controlsCursorWhileMouseInside])
 	{
@@ -320,6 +323,9 @@
 
 - (void) rightMouseDown: (NSEvent *)theEvent
 {
+	//Unpause the emulation whenever the view is clicked on
+	[[[self controller] document] setManuallyPaused: NO];
+	
 	if ([self _controlsCursorWhileMouseInside])
 	{
 		[[self representedObject] mouseButtonPressed: BXMouseButtonRight
@@ -333,6 +339,9 @@
 
 - (void) otherMouseDown: (NSEvent *)theEvent
 {
+	//Unpause the emulation whenever the view is clicked on
+	[[[self controller] document] setManuallyPaused: NO];
+	
 	if ([self _controlsCursorWhileMouseInside] && [theEvent buttonNumber] == BXMouseButtonMiddle)
 	{
 		[[self representedObject] mouseButtonPressed: BXMouseButtonMiddle
@@ -406,7 +415,7 @@
 //We represent position and delta as as a fraction of the canvas rather than as a fixed unit
 //position, so that they stay consistent when the view size changes.
 - (void) mouseMoved: (NSEvent *)theEvent
-{	
+{
 	//Only apply mouse movement if we're locked or we're accepting unlocked mouse input
 	if ([self _controlsCursorWhileMouseInside])
 	{
@@ -497,50 +506,57 @@
 
 - (void) touchesBeganWithEvent: (NSEvent *)theEvent
 {
-	NSUInteger numFingers = [[theEvent touchesMatchingPhase: NSTouchPhaseTouching inView: [self view]] count];
-	BXInputHandler *handler = [self representedObject];
-	NSUInteger modifiers = [theEvent modifierFlags];
-	
-	//A three-finger tap simulates pressing the left and right mouse buttons at once
-	if (numFingers == 3 && (simulatedMouseButtons & BXMouseButtonLeftAndRightMask) == 0)
+	if ([self _controlsCursorWhileMouseInside])
 	{
-		simulatedMouseButtons |= BXMouseButtonLeftAndRightMask;
-		[handler mouseButtonPressed: BXMouseButtonLeft withModifiers: modifiers];
-		[handler mouseButtonPressed: BXMouseButtonRight withModifiers: modifiers];
+		NSUInteger numFingers = [[theEvent touchesMatchingPhase: NSTouchPhaseTouching inView: [self view]] count];
+		BXInputHandler *handler = [self representedObject];
+		NSUInteger modifiers = [theEvent modifierFlags];
+		
+		//A three-finger tap simulates pressing the left and right mouse buttons at once
+		if (numFingers == 3 && (simulatedMouseButtons & BXMouseButtonLeftAndRightMask) == 0)
+		{
+			simulatedMouseButtons |= BXMouseButtonLeftAndRightMask;
+			[handler mouseButtonPressed: BXMouseButtonLeft withModifiers: modifiers];
+			[handler mouseButtonPressed: BXMouseButtonRight withModifiers: modifiers];
+		}
 	}
 }
 
 - (void) touchesEndedWithEvent: (NSEvent *)theEvent
 {
-	NSUInteger numFingers = [[theEvent touchesMatchingPhase: NSTouchPhaseTouching inView: [self view]] count];
-	
-	BXInputHandler *handler = [self representedObject];
-	NSUInteger modifiers = [theEvent modifierFlags];
-	
-	//Release the three-finger tap finger by finger
-	if (numFingers < 3 && (simulatedMouseButtons & BXMouseButtonLeftAndRightMask) > 0)
+	if ([self _controlsCursorWhileMouseInside])
 	{
-		//If 0 or 2 fingers remain, release the left button (as a 2 finger tap corresponds to a right-click)
-		BOOL releaseLeftButton	= (numFingers != 1);
-		//If 0 or 1 finger remains, release the right button (as a 1-finger tap corresponds to a left-click)
-		BOOL releaseRightButton	= (numFingers < 2);
+		NSUInteger numFingers = [[theEvent touchesMatchingPhase: NSTouchPhaseTouching inView: [self view]] count];
 		
-		if (releaseLeftButton)
-		{
-			[handler mouseButtonReleased: BXMouseButtonLeft withModifiers: modifiers];
-			simulatedMouseButtons &= ~BXMouseButtonLeftMask;
-		}
+		BXInputHandler *handler = [self representedObject];
+		NSUInteger modifiers = [theEvent modifierFlags];
 		
-		if (releaseRightButton)
+		//Release the three-finger tap finger by finger
+		if (numFingers < 3 && (simulatedMouseButtons & BXMouseButtonLeftAndRightMask) > 0)
 		{
-			[handler mouseButtonReleased: BXMouseButtonRight withModifiers: modifiers];
-			simulatedMouseButtons &= ~BXMouseButtonRightMask;
+			//If 0 or 2 fingers remain, release the left button (as a 2 finger tap corresponds to a right-click)
+			BOOL releaseLeftButton	= (numFingers != 1);
+			//If 0 or 1 finger remains, release the right button (as a 1-finger tap corresponds to a left-click)
+			BOOL releaseRightButton	= (numFingers < 2);
+			
+			if (releaseLeftButton)
+			{
+				[handler mouseButtonReleased: BXMouseButtonLeft withModifiers: modifiers];
+				simulatedMouseButtons &= ~BXMouseButtonLeftMask;
+			}
+			
+			if (releaseRightButton)
+			{
+				[handler mouseButtonReleased: BXMouseButtonRight withModifiers: modifiers];
+				simulatedMouseButtons &= ~BXMouseButtonRightMask;
+			}
 		}
 	}
 }
 
 - (void) touchesCancelledWithEvent: (NSEvent *)theEvent
 {
+	//IMPLEMENTATION NOTE: I'm not sure when this ever gets called, but I'm dutifully passing it along anyway
 	[self touchesEndedWithEvent: theEvent];
 }
 
@@ -550,24 +566,32 @@
 
 - (void) keyDown: (NSEvent *)theEvent
 {
+	//If the keypress was command-modified, don't pass it on to the emulator as it indicates
+	//a failed key equivalent.
+	//(This is consistent with how other OS X apps with textinput handle Cmd-keypresses.)
+	if ([theEvent modifierFlags] & NSCommandKeyMask)
+	{
+		[super keyDown: theEvent];
+	}
+	
 	//Pressing ESC while in fullscreen mode and not running a program will exit fullscreen mode. 	
-	if ([[theEvent charactersIgnoringModifiers] isEqualToString: @"\e"] &&
+	else if ([[theEvent charactersIgnoringModifiers] isEqualToString: @"\e"] &&
 		[[self controller] isFullScreen] &&
-		![[[self representedObject] emulator] isRunningProcess])
+		[[[self representedObject] emulator] isAtPrompt])
 	{
 		[NSApp sendAction: @selector(exitFullScreen:) to: nil from: self];
 	}
 	
-	//If the keypress was command-modified, don't pass it on to the emulator as it indicates
-	//a failed key equivalent.
-	//(This is consistent with how other OS X apps with textinput handle Cmd-keypresses.)
-	else if ([theEvent modifierFlags] & NSCommandKeyMask)
-		[super keyDown: theEvent];
-	
 	//Otherwise, pass the keypress on to our input handler.
-	else [[self representedObject] sendKeyEventWithCode: [theEvent keyCode]
-												pressed: YES
-											  modifiers: [theEvent modifierFlags]];
+	else
+	{
+		//Unpause the emulation whenever a key is pressed
+		[[[self controller] document] setManuallyPaused: NO];
+	
+		[[self representedObject] sendKeyEventWithCode: [theEvent keyCode]
+											   pressed: YES
+											 modifiers: [theEvent modifierFlags]];
+	}
 }
 
 - (void) keyUp: (NSEvent *)theEvent
@@ -592,7 +616,7 @@
 	
 	//We can determine which modifier key was involved by its key code,
 	//but we can't determine from the event whether it was pressed or released.
-	//So, we check whether the corresponding modifier flag is active or not.	
+	//So, we check whether the corresponding modifier flag is active or not.
 	switch (keyCode)
 	{
 		case kVK_Control:		flag = BXLeftControlKeyMask;	break;
@@ -767,7 +791,7 @@
 
 - (BOOL) _controlsCursorWhileMouseInside
 {
-	return [self mouseActive] && ([self mouseLocked] || [self trackMouseWhileUnlocked]);
+	return [self mouseActive] && ([self mouseLocked] || [self trackMouseWhileUnlocked]) && ![[[self controller] document] isPaused];
 }
 
 - (NSPoint) _pointOnScreen: (NSPoint)canvasPoint

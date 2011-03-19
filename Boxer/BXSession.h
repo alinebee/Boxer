@@ -62,6 +62,11 @@ extern NSString * const BXSessionDidUnlockMouseNotification;
 	BOOL hasLaunched;
 	BOOL isClosing;
 	BOOL emulating;
+	
+	BOOL manuallyPaused;
+	BOOL autoPaused;
+	BOOL interrupted;
+	
 	BOOL showDriveNotifications;
 	BOOL userToggledProgramPanel;
 	
@@ -131,7 +136,13 @@ extern NSString * const BXSessionDidUnlockMouseNotification;
 //Whether the user has manually toggled the program panel this session.
 //BXSession uses this to finesse when it should auto-show/auto-hide the
 //program panel in response to leaving/returning to the DOS prompt.
-@property (assign) BOOL userToggledProgramPanel;
+@property (assign, nonatomic) BOOL userToggledProgramPanel;
+
+//Pause states
+@property (assign, nonatomic)						BOOL manuallyPaused;	//User toggled pause mode
+@property (assign, nonatomic)						BOOL autoPaused;		//Auto-paused when Boxer loses focus
+@property (assign, nonatomic, getter=isInterrupted)	BOOL interrupted;		//Emulator processing interrupted
+@property (readonly, nonatomic, getter=isPaused)	BOOL paused;			//Currently paused for any reason
 
 
 #pragma mark -

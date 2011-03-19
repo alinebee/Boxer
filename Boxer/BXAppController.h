@@ -49,6 +49,11 @@ enum {
 //A general operation queue for non-session-specific operations.
 @property (retain, readonly) NSOperationQueue *generalQueue;
 
+//An array of open BXSession documents.
+//This is [NSDocumentController documents] filtered to just BXSession subclasses.
+@property (readonly, nonatomic) NSArray *sessions;
+
+
 //Returns YES if there are other Boxer processes currently running, no otherwise.
 + (BOOL) otherBoxersActive;
 

@@ -405,8 +405,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 }
 
 - (void) didResume
-{
-	
+{	
 	if ([self isExecuting] && isInterrupted)
 	{
 		SDL_PauseAudio(NO);
@@ -480,6 +479,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 
 - (BOOL) _handleEventLoop
 {
+	//A bit of a misnomer, as the event loop happens in the middle of DOSBox's runloop
 	[[self delegate] didBeginRunLoop];
 	[[self delegate] didCompleteRunLoop];
 	return YES;

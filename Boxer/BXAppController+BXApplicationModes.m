@@ -202,4 +202,20 @@ NSString * const BXPreviousSpacesArrowKeyModifiersKey = @"previousSpacesArrowKey
 	[[BXInspectorController controller] hideIfVisible];
 }
 
+
+#pragma mark -
+#pragma mark Auto-pausing
+
+- (void) applicationDidBecomeActive: (NSNotification *)notification
+{
+	for (BXSession *session in [self sessions]) [session setAutoPaused: NO];
+}
+
+- (void) applicationWillResignActive: (NSNotification *)notification
+{
+	if ([[NSUserDefaults standardUserDefaults] boolForKey: @"pauseWhileInactive"])
+	{
+		for (BXSession *session in [self sessions]) [session setAutoPaused: YES];
+	}
+}
 @end

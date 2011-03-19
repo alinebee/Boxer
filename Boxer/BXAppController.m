@@ -389,7 +389,17 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 
 #pragma mark -
-#pragma mark Opening new documents
+#pragma mark Document handling
+
+- (NSArray *) sessions
+{
+	NSMutableArray *sessions = [NSMutableArray arrayWithCapacity: 1];
+	for (id document in [self documents])
+	{
+		if ([document isKindOfClass: [BXSession class]]) [sessions addObject: document];
+	}
+	return sessions;
+}
 
 //Customise the open panel
 - (NSInteger) runModalOpenPanel: (NSOpenPanel *)openPanel
@@ -422,12 +432,12 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	NSString *type = [self typeForContentsOfURL: absoluteURL error: nil];
 	if (![type isEqualToString: @"net.washboardabs.boxer-game-package"])
 	{
-		for (id document in [self documents])
+		for (BXSession *session in [self sessions])
 		{
-			if ([document respondsToSelector: @selector(openFileAtPath:)] && [document openFileAtPath: path])
+			if ([session openFileAtPath: path])
 			{
-				if (displayDocument) [document showWindows];
-				return document;
+				if (displayDocument) [session showWindows];
+				return session;
 			}
 		}		
 	}
@@ -619,7 +629,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 		//Only allow a session to open if no emulator has started yet,
 		//and no other sessions are open (which could start their own emulators)
 		if (![BXEmulator canLaunchEmulator]) return NO;
-		for (id document in [self documents]) if ([document isKindOfClass: [BXSession class]]) return NO;
+		if ([[self sessions] count] > 0) return NO;
 	}
 	return YES;
 }
@@ -662,11 +672,11 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (IBAction) orderFrontImportGamePanel: (id)sender
 {
 	//If we already have an import session active, just bring it to the front
-	for (id document in [self documents])
+	for (BXSession *session in [self sessions])
 	{
-		if ([document isKindOfClass: [BXImport class]])
+		if ([session isKindOfClass: [BXImport class]])
 		{
-			[document showWindows];
+			[session showWindows];
 			return;
 		}
 	}

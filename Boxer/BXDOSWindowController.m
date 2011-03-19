@@ -92,7 +92,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 
 
 - (void) setDocument: (BXSession *)document
-{
+{	
 	[super setDocument: document];
 
 	//Assign references to our document for our view controllers, or clear those references when the document is cleared.
@@ -149,7 +149,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	[center addObserver: self
 			   selector: @selector(menuDidClose:)
 				   name: NSMenuDidEndTrackingNotification
-				 object: nil];	
+				 object: nil];
 }
 
 
@@ -218,7 +218,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	if ([[self document] isGamePackage])
 	{
 		//If the session is a gamebox, always use the gamebox for the window title (like a regular NSDocument.)
-		return [super synchronizeWindowTitleWithDocumentName];
+		[super synchronizeWindowTitleWithDocumentName];
 	}
 	else
 	{
@@ -236,6 +236,15 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 			[[self window] setTitle: NSLocalizedString(
 				@"MS-DOS Prompt", @"The standard window title when the session is at the DOS prompt.")];
 		}
+	}
+	
+	if ([[self document] manuallyPaused] || [[self document] autoPaused])
+	{
+		NSString *titleFormat = NSLocalizedString(@"%@ (Paused)",
+												  @"Window title format when session is paused. %@ is the regular title of the window.");
+		
+		NSString *formattedTitle = [NSString stringWithFormat: titleFormat, [[self window] title], nil];
+		[[self window] setTitle: formattedTitle];
 	}
 }
 
@@ -496,7 +505,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 //Warn the emulator to prepare for emulation cutout when the resize starts
 - (void) renderingViewWillLiveResize: (NSNotification *) notification
 {
-	[[[self document] emulator] willPause];
+	[[self document] setInterrupted: YES];
 }
 
 //Catch the end of a live resize event and clean up once we're done
@@ -504,7 +513,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 - (void) renderingViewDidLiveResize: (NSNotification *) notification
 {
 	[self _cleanUpAfterResize];
-	[[[self document] emulator] didResume];
+	[[self document] setInterrupted: NO];
 }
 
 - (NSScreen *) fullScreenTarget
@@ -616,7 +625,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	if ([self isFullScreen] == fullScreen) return;	
 	
 	//Let the emulator know it'll be blocked from emulating for a while
-	[[[self document] emulator] willPause];
+	[[self document] setInterrupted: YES];
 	
 	inFullScreenTransition = YES;
 	
@@ -732,7 +741,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	
 	[center postNotificationName: endNotification object: [self document]];
 	
-	[[[self document] emulator] didResume];
+	[[self document] setInterrupted: NO];
 	
 	[blankingWindow close];
 	[animation release];
@@ -894,13 +903,13 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 //Warn the emulator to prepare for emulation cutout when a menu opens
 - (void) menuDidOpen: (NSNotification *) notification
 {
-	[[[self document] emulator] willPause];
+	[[self document] setInterrupted: YES];
 }
 
 //Let the emulator know the coast is clear
 - (void) menuDidClose: (NSNotification *) notification
 {
-	[[[self document] emulator] didResume];
+	[[self document] setInterrupted: NO];
 }
 
 

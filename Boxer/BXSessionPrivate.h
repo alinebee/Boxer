@@ -9,6 +9,8 @@
 //BXSessionPrivate declares protected methods for BXSession and its subclasses.
 
 #import "BXSession.h"
+#import "BXSession+BXEmulatorControls.h"
+#import "BXSession+BXFileManager.h"
 
 @class BXEmulatorConfiguration;
 @class BXCloseAlert;
@@ -56,6 +58,9 @@
 
 //Cleans up temporary files after the session is closed.
 - (void) _cleanup;
+
+//Pause/unpause the underlying emulator whenever our pause state changes.
+- (void) _syncPauseState;
 
 //Callback for close alert. Confirms document close when window is closed or application is shut down. 
 - (void) _closeAlertDidEnd: (BXCloseAlert *)alert

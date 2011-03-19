@@ -422,6 +422,7 @@
 	[toolkitDrive setLocked: YES];
 	[toolkitDrive setReadOnly: YES];
 	[toolkitDrive setHidden: YES];
+	[toolkitDrive setFreeSpace: 0];
 	toolkitDrive = [self mountDrive: toolkitDrive];
 	
 	//Point DOS to the correct paths if we've mounted the toolkit drive successfully

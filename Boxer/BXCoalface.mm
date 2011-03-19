@@ -126,12 +126,13 @@ const char * boxer_localizedStringForKey(char const *keyStr)
 bool boxer_handleCommandInput(char *cmd, Bitu *cursorPosition, bool *executeImmediately)
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	NSString *newCommand = [emulator _handleCommandInput: [NSString stringWithCString: cmd encoding: BXDirectStringEncoding]
-										atCursorPosition: (NSUInteger *)cursorPosition
-									  executeImmediately: (BOOL *)executeImmediately];
-	if (newCommand)
+	NSString *oldCommandLine = [NSString stringWithCString: cmd encoding: BXDirectStringEncoding];
+	NSString *newCommandLine = [emulator _handleCommandInput: oldCommandLine
+											atCursorPosition: (NSUInteger *)cursorPosition
+										  executeImmediately: (BOOL *)executeImmediately];
+	if (newCommandLine)
 	{
-		const char *newcmd = [newCommand cStringUsingEncoding: BXDirectStringEncoding];
+		const char *newcmd = [newCommandLine cStringUsingEncoding: BXDirectStringEncoding];
 		strcpy(cmd, newcmd);
 		return YES;
 	}

@@ -472,11 +472,13 @@
 				<string>Alone in the Dark 2</string>
 				<string>Alone in the Dark 3</string>
 				<string>Sherlock Holmes: The Case of the Rose Tattoo</string>
+				<string>Royal Flush Pinball</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>objets.itd</string>
 				<string>holmes2.bat</string>
+				<string>rf_sfx</string>
 			</array>
 		</dict>
 		<dict>

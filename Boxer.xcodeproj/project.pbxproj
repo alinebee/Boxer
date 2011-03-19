@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		9F0497C01334C5970001FEE4 /* BXPostLeopardAPIs.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0497BF1334C5970001FEE4 /* BXPostLeopardAPIs.m */; };
 		9F0F2B9512AD3C8500CD7078 /* BXMultiFileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0F2B9412AD3C8500CD7078 /* BXMultiFileTransfer.m */; };
 		9F0F9EDA12108A9000ED7A64 /* BXImportError.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0F9ED912108A9000ED7A64 /* BXImportError.m */; };
 		9F0F9EEF1210901800ED7A64 /* BXMountedVolumesError.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0F9EEE1210901800ED7A64 /* BXMountedVolumesError.m */; };
@@ -382,6 +383,8 @@
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		8D1107320486CEB800E47090 /* Boxer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Boxer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9F0497BE1334C5970001FEE4 /* BXPostLeopardAPIs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXPostLeopardAPIs.h; sourceTree = "<group>"; };
+		9F0497BF1334C5970001FEE4 /* BXPostLeopardAPIs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXPostLeopardAPIs.m; sourceTree = "<group>"; };
 		9F0F2B9312AD3C8500CD7078 /* BXMultiFileTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXMultiFileTransfer.h; sourceTree = "<group>"; };
 		9F0F2B9412AD3C8500CD7078 /* BXMultiFileTransfer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXMultiFileTransfer.m; sourceTree = "<group>"; };
 		9F0F9ED812108A9000ED7A64 /* BXImportError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImportError.h; sourceTree = "<group>"; };
@@ -1860,6 +1863,8 @@
 		9F7A8F230F8E705100D1AAD5 /* BXToolkit */ = {
 			isa = PBXGroup;
 			children = (
+				9F0497BE1334C5970001FEE4 /* BXPostLeopardAPIs.h */,
+				9F0497BF1334C5970001FEE4 /* BXPostLeopardAPIs.m */,
 				9F0F2B9712AD464800CD7078 /* Operations */,
 				9FADFE9511EC932800990E91 /* NSData+HexStrings.h */,
 				9FADFE9611EC932800990E91 /* NSData+HexStrings.m */,
@@ -2492,6 +2497,7 @@
 				9F3FB1AF1306F88800DB8FBE /* BXScriptablePreferences.m in Sources */,
 				9F3FB1B61306F9FB00DB8FBE /* NSApplication+BXScripting.m in Sources */,
 				9F3FB24E130714D700DB8FBE /* BXScriptableWindow.m in Sources */,
+				9F0497C01334C5970001FEE4 /* BXPostLeopardAPIs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

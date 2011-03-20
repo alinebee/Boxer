@@ -273,7 +273,7 @@
 - (void) mouseDown: (NSEvent *)theEvent
 {
 	//Unpause the emulation whenever the view is clicked on
-	[[[self controller] document] setManuallyPaused: NO];
+	[[[self controller] document] setPaused: NO];
 	
 	//Only respond to clicks if we're locked or tracking mouse input while unlocked
 	if ([self _controlsCursorWhileMouseInside])
@@ -330,7 +330,7 @@
 - (void) rightMouseDown: (NSEvent *)theEvent
 {
 	//Unpause the emulation whenever the view is clicked on
-	[[[self controller] document] setManuallyPaused: NO];
+	[[[self controller] document] setPaused: NO];
 	
 	if ([self _controlsCursorWhileMouseInside])
 	{
@@ -346,7 +346,7 @@
 - (void) otherMouseDown: (NSEvent *)theEvent
 {
 	//Unpause the emulation whenever the view is clicked on
-	[[[self controller] document] setManuallyPaused: NO];
+	[[[self controller] document] setPaused: NO];
 	
 	if ([self _controlsCursorWhileMouseInside] && [theEvent buttonNumber] == BXMouseButtonMiddle)
 	{
@@ -592,7 +592,7 @@
 	else
 	{
 		//Unpause the emulation whenever a key is pressed
-		[[[self controller] document] setManuallyPaused: NO];
+		[[[self controller] document] setPaused: NO];
 	
 		[[self representedObject] sendKeyEventWithCode: [theEvent keyCode]
 											   pressed: YES
@@ -812,7 +812,7 @@
 
 - (BOOL) _controlsCursorWhileMouseInside
 {
-	return [self mouseActive] && ([self mouseLocked] || [self trackMouseWhileUnlocked]) && ![[[self controller] document] isPaused];
+	return [self mouseActive] && ([self mouseLocked] || [self trackMouseWhileUnlocked]) && ![[[self controller] document] isSuspended];
 }
 
 - (NSPoint) _pointOnScreen: (NSPoint)canvasPoint

@@ -68,8 +68,9 @@ extern NSString * const BXDidFinishInterruptionNotification;
 	BOOL emulating;
 	
 	BOOL paused;
-	BOOL manuallyPaused;
+	BOOL autoPaused;
 	BOOL interrupted;
+	BOOL suspended;
 	
 	BOOL showDriveNotifications;
 	BOOL userToggledProgramPanel;
@@ -144,11 +145,13 @@ extern NSString * const BXDidFinishInterruptionNotification;
 
 
 //Whether the user has manually paused the emulation.
-@property (assign, nonatomic, getter=isManuallyPaused)	BOOL manuallyPaused;
-//Whether the emulator is currently paused for any reason.
-@property (readonly, nonatomic, getter=isPaused)		BOOL paused;
-//Whether the emulator is currently paused because it has been interrupted by UI events.
+@property (assign, nonatomic, getter=isPaused)			BOOL paused;
+//Whether the emulator is currently suspended because it has been interrupted by UI events.
 @property (readonly, nonatomic, getter=isInterrupted)	BOOL interrupted;
+//Whether the emulator is currently suspended because Boxer is in the background.
+@property (readonly, nonatomic, getter=isAutoPaused)	BOOL autoPaused;
+//Whether the emulator is currently suspended for any reason.
+@property (readonly, nonatomic, getter=isSuspended)		BOOL suspended;
 
 
 #pragma mark -

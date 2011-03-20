@@ -29,7 +29,8 @@
 @property (readwrite, retain, nonatomic) NSArray *documentation;
 
 @property (readwrite, assign, nonatomic, getter=isEmulating)	BOOL emulating;
-@property (readwrite, assign, nonatomic, getter=isPaused)		BOOL paused;
+@property (readwrite, assign, nonatomic, getter=isSuspended)	BOOL suspended;
+@property (readwrite, assign, nonatomic, getter=isAutoPaused)	BOOL autoPaused;
 @property (readwrite, assign, nonatomic, getter=isInterrupted)	BOOL interrupted;
 
 
@@ -76,12 +77,15 @@
 @end
 
 
-@interface BXSession (BXRunLoopInternals)
+@interface BXSession (BXSuspensionBehaviour)
 
-//Pause/unpause the underlying emulator whenever our pause state changes.
-- (void) _syncPauseState;
+- (void) _syncSuspendedState;
+- (void) _syncAutoPausedState;
+- (BOOL) _shouldAutoPause;
 - (void) _registerForPauseNotifications;
 - (void) _deregisterForPauseNotifications;
+- (void) _interruptionWillBegin: (NSNotification *)notification;
+- (void) _interruptionDidFinish: (NSNotification *)notification;
 
 @end
 

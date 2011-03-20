@@ -88,7 +88,7 @@
 
 - (IBAction) togglePaused: (id)sender
 {
-	[self setManuallyPaused: ![self isManuallyPaused]];
+	[self setPaused: ![self isPaused]];
 }
 
 - (NSUInteger) frameskip
@@ -271,7 +271,7 @@
 	
 	if (theAction == @selector(togglePaused:))
 	{
-		if (![self isManuallyPaused])
+		if (![self isPaused])
 			title = NSLocalizedString(@"Pause", @"Emulation menu option for pausing the emulator.");
 		else
 			title = NSLocalizedString(@"Resume", @"Emulation menu option for resuming from pause.");

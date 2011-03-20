@@ -87,6 +87,10 @@ extern NSString * const BXViewDidLiveResizeNotification;
 //The chromeless window used in fullscreen mode. Will be nil while in windowed mode.
 @property (retain, readonly, nonatomic) BXDOSFullScreenWindow *fullScreenWindow;
 
+//The DOS window we are currently showing and rendering into.
+//Will be equal to -window in windowed mode and -fullscreenWindow in fullscreen mode.
+@property (readonly, nonatomic) NSWindow *activeWindow;
+
 //Sets/gets whether the rendering view is currently fullscreen.
 //See also setFullScreenWithZoom:
 @property (assign, nonatomic, getter=isFullScreen) BOOL fullScreen;

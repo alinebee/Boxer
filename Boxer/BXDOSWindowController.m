@@ -229,7 +229,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	}
 	
 	//If emulation is paused (but not simply interrupted by UI events) then indicate this with a title change
-	if ([[self document] isPaused] && ![[self document] isInterrupted])
+	if ([[self document] isPaused] || [[self document] isAutoPaused])
 	{
 		NSString *titleFormat = NSLocalizedString(@"%@ (Paused)",
 												  @"Window title format when session is paused. %@ is the regular title of the window.");
@@ -516,6 +516,12 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 - (BOOL) isFullScreen
 {
 	return inFullScreenTransition || [self fullScreenWindow] != nil;
+}
+
+- (NSWindow *) activeWindow
+{
+	if ([self fullScreenWindow] != nil) return [self fullScreenWindow];
+	else return [self window];
 }
 
 - (void) _setFullScreenForLion: (BOOL)fullScreen

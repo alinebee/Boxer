@@ -81,7 +81,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 @synthesize gameSettings;
 @synthesize drives, executables, documentation;
 @synthesize emulating;
-@synthesize paused, manuallyPaused, interrupted;
+@synthesize paused, autoPaused, interrupted, suspended;
 @synthesize userToggledProgramPanel;
 
 #pragma mark -
@@ -318,7 +318,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (NSWindow *) windowForSheet
 {
-	if ([[self DOSWindowController] isFullScreen]) return (NSWindow *)[[self DOSWindowController] fullScreenWindow];
+	NSWindow *activeWindow = [[self DOSWindowController] activeWindow];
+	if (activeWindow) return activeWindow;
 	else return [super windowForSheet];
 }
 
@@ -678,10 +679,10 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	{
 		[NSApp sendEvent: event];
 		
-		//If we're paused, then keep dispatching events until we unpause;
+		//If we're suspended, keep dispatching events until we are unpaused;
 		//otherwise, allow emulation to resume after the first batch
 		//of events has been processed.
-		untilDate = [self isPaused] ? [NSDate distantFuture] : nil;
+		untilDate = [self isSuspended] ? [NSDate distantFuture] : nil;
 	}
 }
 
@@ -1067,31 +1068,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	if (paused != flag)
 	{
 		paused = flag;
-
-		//Tell the emulator to prepare for being paused or to resume after we unpause.
-		if ([self isPaused])
-		{
-			[emulator willPause];
-			
-			//Also ensure the mouse is unlocked whenever we become paused
-			[[DOSWindowController inputController] setMouseLocked: NO];
-		}
-		else
-		{
-			[emulator didResume];
-		}
-		
-		//Update the title to reflect that we’ve paused/unpaused
-		[DOSWindowController synchronizeWindowTitleWithDocumentName];
-	}
-}
-
-- (void) setManuallyPaused: (BOOL)flag
-{
-	if (manuallyPaused != flag)
-	{
-		manuallyPaused = flag;
-		[self _syncPauseState];
+		[self _syncSuspendedState];
 	}
 }
 
@@ -1100,25 +1077,65 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	if (interrupted != flag)
 	{
 		interrupted = flag;
-		[self _syncPauseState];
+		[self _syncSuspendedState];
 	}
 }
 
-- (void) _syncPauseState
+- (void) setAutoPaused: (BOOL)flag
 {
-	BOOL shouldPause = NO;
-	
-	//Pause if we're in the middle of an interruption or are manually paused
-	if (interrupted || manuallyPaused) shouldPause = YES;
-	
-	//If autopausing is enabled, then pause if the application is inactive or the DOS window isn't visible (e.g. offscreen/miniaturized)
-	else if ([[NSUserDefaults standardUserDefaults] boolForKey: @"pauseWhileInactive"] &&
-			 !([NSApp isActive] && ([[DOSWindowController window] isVisible] || [[DOSWindowController fullScreenWindow] isVisible])))
+	if (autoPaused != flag)
 	{
-		shouldPause = YES;
+		autoPaused = flag;
+		[self _syncSuspendedState];
 	}
+}
+
+- (void) setSuspended: (BOOL)flag
+{
+	if (suspended != flag)
+	{
+		suspended = flag;
+
+		//Tell the emulator to prepare for being suspended or to resume after we unpause.
+		if (suspended)
+		{
+			[emulator willPause];
+			
+			//Also ensure the mouse is unlocked whenever we become suspended
+			[[DOSWindowController inputController] setMouseLocked: NO];
+		}
+		else
+		{
+			[emulator didResume];
+		}
+		
+		//Update the title to reflect that we’ve paused/resumed
+		[DOSWindowController synchronizeWindowTitleWithDocumentName];
+	}
+}
+
+- (void) _syncSuspendedState
+{
+	[self setSuspended: (interrupted || paused || autoPaused)];
+}
+
+- (void) _syncAutoPausedState
+{
+	[self setAutoPaused: [self _shouldAutoPause]];
+}
+
+- (BOOL) _shouldAutoPause
+{
+	//Only auto-pause if the mode is enabled in the user's settings
+	if (![[NSUserDefaults standardUserDefaults] boolForKey: @"pauseWhileInactive"]) return NO;
 	
-	[self setPaused: shouldPause];
+	//Auto-pause if Boxer is in the background
+	if (![NSApp isActive]) return YES;
+	
+	//Auto-pause if the DOS window is hidden
+	if (![[DOSWindowController activeWindow] isVisible]) return YES;
+	
+	return NO;
 }
 
 - (void) _interruptionWillBegin: (NSNotification *)notification
@@ -1137,22 +1154,22 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 	
 	[center addObserver: self
-			   selector: @selector(_syncPauseState)
+			   selector: @selector(_syncAutoPausedState)
 				   name: NSWindowDidMiniaturizeNotification
 				 object: [DOSWindowController window]];
 	
 	[center addObserver: self
-			   selector: @selector(_syncPauseState)
+			   selector: @selector(_syncAutoPausedState)
 				   name: NSWindowDidDeminiaturizeNotification
 				 object: [DOSWindowController window]];
 	
 	[center addObserver: self
-			   selector: @selector(_syncPauseState)
+			   selector: @selector(_syncAutoPausedState)
 				   name: NSApplicationDidResignActiveNotification
 				 object: NSApp];
 	
 	[center addObserver: self
-			   selector: @selector(_syncPauseState)
+			   selector: @selector(_syncAutoPausedState)
 				   name: NSApplicationDidBecomeActiveNotification
 				 object: NSApp];
 	

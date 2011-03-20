@@ -166,12 +166,3 @@
 - (BOOL) cancelImportForDrive: (BXDrive *)drive;
 
 @end
-
-
-//These methods should not be called outside BXSession
-@interface BXSession (BXFileManagerInternals)
-
-- (void) _registerForFilesystemNotifications;
-- (void) _deregisterForFilesystemNotifications;
-
-@end

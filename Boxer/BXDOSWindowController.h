@@ -182,17 +182,9 @@ extern NSString * const BXViewDidLiveResizeNotification;
 #pragma mark -
 #pragma mark Handling window and UI events
 
-//These tell the emulator to pause itself while a resize is in progress, and clean up when it finishes.
+//These tell the session to pause itself while a resize is in progress, and clean up when it finishes.
 - (void) renderingViewDidResize: (NSNotification *) notification;
 - (void) renderingViewWillLiveResize: (NSNotification *) notification;
 - (void) renderingViewDidLiveResize: (NSNotification *) notification;
-
-//These listen for any time an NSMenu opens or closes, and warn the active emulator
-//to pause or resume emulation. In practice this means muting it to avoid hanging
-//music and sound effects while the menu is blocking the thread.
-//TODO: BXEmulator itself should handle this at a lower level by watching out for
-//whenever a new event loop gets created.
-- (void) menuDidOpen:	(NSNotification *) notification;
-- (void) menuDidClose:	(NSNotification *) notification;
 
 @end

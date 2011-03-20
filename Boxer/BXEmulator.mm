@@ -15,17 +15,32 @@
 #import "mapper.h"
 
 
+#pragma mark -
+#pragma mark Global tracking variables
+
 //The singleton emulator instance. Returned by [BXEmulator currentEmulator].
 static BXEmulator *currentEmulator = nil;
 static BOOL hasStartedEmulator = NO;
 
 
+#pragma mark -
+#pragma mark Constants
+
 //Default name that DOSBox uses when there's no process running. Used by processName for string comparisons.
 NSString * const shellProcessName = @"DOSBOX";
 
 
-//String encodings to use when talking to DOSBox
-//----------------------------------------------
+//BXEmulatorDelegate constants, defined here for want of somewhere better to put them.
+NSString * const BXEmulatorDidBeginGraphicalContextNotification		= @"BXEmulatorDidBeginGraphicalContextNotification";
+NSString * const BXEmulatorDidFinishGraphicalContextNotification	= @"BXEmulatorDidFinishGraphicalContextNotification";
+NSString * const BXEmulatorWillRunStartupCommandsNotification		= @"BXEmulatorWillRunStartupCommandsNotification";
+NSString * const BXEmulatorDidRunStartupCommandsNotification		= @"BXEmulatorDidRunStartupCommandsNotification";
+NSString * const BXEmulatorDidCreateFileNotification				= @"BXEmulatorDidCreateFileNotification";
+NSString * const BXEmulatorDidRemoveFileNotification				= @"BXEmulatorDidRemoveFileNotification";
+NSString * const BXEmulatorWillStartProgramNotification				= @"BXEmulatorWillStartProgramNotification";
+NSString * const BXEmulatorDidFinishProgramNotification				= @"BXEmulatorDidFinishProgramNotification";
+NSString * const BXEmulatorDidReturnToShellNotification				= @"BXEmulatorDidReturnToShellNotification";
+
 
 //Use for strings that should be displayed to the user
 NSStringEncoding BXDisplayStringEncoding	= CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingDOSLatin1);
@@ -33,8 +48,8 @@ NSStringEncoding BXDisplayStringEncoding	= CFStringConvertEncodingToNSStringEnco
 NSStringEncoding BXDirectStringEncoding		= NSUTF8StringEncoding;
 
 
-//DOSBox functions and vars we hook into
-//--------------------------------------
+#pragma mark -
+#pragma mark External function definitions
 
 //Defined by us in midi.cpp
 void boxer_toggleMIDIOutput(bool enabled);
@@ -453,7 +468,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	{
 		//Let the delegate know that the emulation state has changed behind its back, so it can re-check CPU settings
 		[self _postNotificationName: @"BXEmulationStateDidChange"
-				   delegateSelector: @selector(didChangeEmulationState:)
+				   delegateSelector: @selector(emulatorDidChangeEmulationState:)
 						   userInfo: nil];
 		
 		[self willChangeValueForKey: @"fixedSpeed"];
@@ -480,8 +495,8 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 - (BOOL) _handleEventLoop
 {
 	//A bit of a misnomer, as the event loop happens in the middle of DOSBox's runloop
-	[[self delegate] didBeginRunLoop];
-	[[self delegate] didCompleteRunLoop];
+	[[self delegate] emulatorDidBeginRunLoop: self];
+	[[self delegate] emulatorDidFinishRunLoop: self];
 	return YES;
 }
 

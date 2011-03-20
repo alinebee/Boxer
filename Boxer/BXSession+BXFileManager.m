@@ -42,9 +42,6 @@
 - (void) volumeWillUnmount:		(NSNotification *)theNotification;
 - (void) filesystemDidChange:	(NSNotification *)theNotification;
 
-- (void) DOSDriveDidMount:		(NSNotification *)theNotification;
-- (void) DOSDriveDidUnmount:	(NSNotification *)theNotification;
-
 - (void) _handleVolumeDidMount: (NSNotification *)theNotification;
 
 - (void) _startTrackingChangesAtPath:	(NSString *)path;
@@ -669,7 +666,7 @@
 	if (package && [path hasPrefix: [package gamePath]]) [package refresh];
 }
 
-- (void) DOSDriveDidMount: (NSNotification *)theNotification
+- (void) emulatorDidMountDrive: (NSNotification *)theNotification
 {	
 	BXDrive *drive = [[theNotification userInfo] objectForKey: @"drive"];
 	
@@ -728,7 +725,7 @@
 	}
 }
 
-- (void) DOSDriveDidUnmount: (NSNotification *)theNotification
+- (void) emulatorDidUnmountDrive: (NSNotification *)theNotification
 {
 	BXDrive *drive = [[theNotification userInfo] objectForKey: @"drive"];
 	

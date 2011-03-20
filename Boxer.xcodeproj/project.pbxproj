@@ -2372,6 +2372,16 @@
 				9F444FCC12AEA28700A2D405 /* BXOperationSet.m in Sources */,
 				9F444FFF12AEBE5200A2D405 /* BXDriveBundleImport.m in Sources */,
 				9F44500212AEC0FC00A2D405 /* BXSimpleDriveImport.m in Sources */,
+				9F70A09512F7471E00D144D2 /* BXAppController+BXApplicationModes.m in Sources */,
+				9F2120F813015653002AB1B7 /* BXShelfArt.m in Sources */,
+				9F2120FE1301597E002AB1B7 /* NSImage+BXSaveImages.m in Sources */,
+				9F2122E51301BD72002AB1B7 /* BXHelperAppCheck.m in Sources */,
+				9F2122EA1301BDE1002AB1B7 /* BXShelfAppearanceOperation.m in Sources */,
+				9F2122EF1301BE6E002AB1B7 /* BXSampleGamesCopy.m in Sources */,
+				9F3FB1AF1306F88800DB8FBE /* BXScriptablePreferences.m in Sources */,
+				9F3FB1B61306F9FB00DB8FBE /* NSApplication+BXScripting.m in Sources */,
+				9F3FB24E130714D700DB8FBE /* BXScriptableWindow.m in Sources */,
+				9F0497C01334C5970001FEE4 /* BXPostLeopardAPIs.m in Sources */,
 				9F77217612B38C4400072AE8 /* callback.cpp in Sources */,
 				9F77217712B38C4400072AE8 /* core_dyn_x86.cpp in Sources */,
 				9F77217812B38C4400072AE8 /* core_dynrec.cpp in Sources */,
@@ -2488,16 +2498,6 @@
 				9F7721E912B38C4400072AE8 /* shell_batch.cpp in Sources */,
 				9F7721EA12B38C4400072AE8 /* shell_cmds.cpp in Sources */,
 				9F7721EB12B38C4400072AE8 /* shell_misc.cpp in Sources */,
-				9F70A09512F7471E00D144D2 /* BXAppController+BXApplicationModes.m in Sources */,
-				9F2120F813015653002AB1B7 /* BXShelfArt.m in Sources */,
-				9F2120FE1301597E002AB1B7 /* NSImage+BXSaveImages.m in Sources */,
-				9F2122E51301BD72002AB1B7 /* BXHelperAppCheck.m in Sources */,
-				9F2122EA1301BDE1002AB1B7 /* BXShelfAppearanceOperation.m in Sources */,
-				9F2122EF1301BE6E002AB1B7 /* BXSampleGamesCopy.m in Sources */,
-				9F3FB1AF1306F88800DB8FBE /* BXScriptablePreferences.m in Sources */,
-				9F3FB1B61306F9FB00DB8FBE /* NSApplication+BXScripting.m in Sources */,
-				9F3FB24E130714D700DB8FBE /* BXScriptableWindow.m in Sources */,
-				9F0497C01334C5970001FEE4 /* BXPostLeopardAPIs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2779,7 +2779,7 @@
 			buildSettings = {
 				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 20110222.1;
+				CURRENT_PROJECT_VERSION = 20110320.1;
 				GCC_VERSION = 4.0;
 				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH)";
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
@@ -2896,7 +2896,7 @@
 			buildSettings = {
 				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 20110222.1;
+				CURRENT_PROJECT_VERSION = 20110320.1;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_VERSION = 4.0;
 				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH)";
@@ -2910,7 +2910,7 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
 				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
 				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 20110222.1;
+				CURRENT_PROJECT_VERSION = 20110320.1;
 				GCC_VERSION = 4.0;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 			};

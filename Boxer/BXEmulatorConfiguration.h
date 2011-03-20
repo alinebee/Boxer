@@ -138,4 +138,8 @@
 //Duplicate settings will be overridden; otherwise existing sections and settings will be left in place.
 - (void) addSettingsFromDictionary: (NSDictionary *)newSettings;
 
+//Eliminates all configuration settings that are identical to those in the specified configuration,
+//leaving only the settings that differ.
+- (void) excludeDuplicateSettingsFromConfiguration: (BXEmulatorConfiguration *)configuration;
+
 @end

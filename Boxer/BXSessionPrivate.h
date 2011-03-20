@@ -15,6 +15,7 @@
 @class BXEmulatorConfiguration;
 @class BXCloseAlert;
 @class BXDrive;
+
 @interface BXSession ()
 
 #pragma mark -
@@ -27,7 +28,9 @@
 @property (readwrite, retain, nonatomic) NSDictionary *executables;
 @property (readwrite, retain, nonatomic) NSArray *documentation;
 
-@property (readwrite, assign, nonatomic, getter=isEmulating) BOOL emulating;
+@property (readwrite, assign, nonatomic, getter=isEmulating)	BOOL emulating;
+@property (readwrite, assign, nonatomic, getter=isPaused)		BOOL paused;
+@property (readwrite, assign, nonatomic, getter=isInterrupted)	BOOL interrupted;
 
 
 #pragma mark -
@@ -59,8 +62,7 @@
 //Cleans up temporary files after the session is closed.
 - (void) _cleanup;
 
-//Pause/unpause the underlying emulator whenever our pause state changes.
-- (void) _syncPauseState;
+
 
 //Callback for close alert. Confirms document close when window is closed or application is shut down. 
 - (void) _closeAlertDidEnd: (BXCloseAlert *)alert
@@ -71,4 +73,21 @@
 - (void) _windowsOnlyProgramCloseAlertDidEnd: (BXCloseAlert *)alert
 								  returnCode: (int)returnCode
 								 contextInfo: (void *)info;
+@end
+
+
+@interface BXSession (BXRunLoopInternals)
+
+//Pause/unpause the underlying emulator whenever our pause state changes.
+- (void) _syncPauseState;
+- (void) _registerForPauseNotifications;
+- (void) _deregisterForPauseNotifications;
+
+@end
+
+@interface BXSession (BXFileManagerInternals)
+
+- (void) _registerForFilesystemNotifications;
+- (void) _deregisterForFilesystemNotifications;
+
 @end

@@ -31,6 +31,10 @@ extern NSString * const BXSessionDidExitFullScreenNotification;
 extern NSString * const BXSessionDidLockMouseNotification;
 extern NSString * const BXSessionDidUnlockMouseNotification;
 
+//Intended to be posted by any part of Boxer that takes over the run loop for a significant time.
+extern NSString * const BXWillBeginInterruptionNotification;
+extern NSString * const BXDidFinishInterruptionNotification;
+
 
 #pragma mark -
 #pragma mark Interface
@@ -63,8 +67,8 @@ extern NSString * const BXSessionDidUnlockMouseNotification;
 	BOOL isClosing;
 	BOOL emulating;
 	
+	BOOL paused;
 	BOOL manuallyPaused;
-	BOOL autoPaused;
 	BOOL interrupted;
 	
 	BOOL showDriveNotifications;
@@ -138,11 +142,13 @@ extern NSString * const BXSessionDidUnlockMouseNotification;
 //program panel in response to leaving/returning to the DOS prompt.
 @property (assign, nonatomic) BOOL userToggledProgramPanel;
 
-//Pause states
-@property (assign, nonatomic)						BOOL manuallyPaused;	//User toggled pause mode
-@property (assign, nonatomic)						BOOL autoPaused;		//Auto-paused when Boxer loses focus
-@property (assign, nonatomic, getter=isInterrupted)	BOOL interrupted;		//Emulator processing interrupted
-@property (readonly, nonatomic, getter=isPaused)	BOOL paused;			//Currently paused for any reason
+
+//Whether the user has manually paused the emulation.
+@property (assign, nonatomic, getter=isManuallyPaused)	BOOL manuallyPaused;
+//Whether the emulator is currently paused for any reason.
+@property (readonly, nonatomic, getter=isPaused)		BOOL paused;
+//Whether the emulator is currently paused because it has been interrupted by UI events.
+@property (readonly, nonatomic, getter=isInterrupted)	BOOL interrupted;
 
 
 #pragma mark -

@@ -13,7 +13,7 @@
 #import "BXDrive.h"
 #import "BXAppController.h"
 #import "BXDOSWindowController.h"
-#import "BXSession+BXFileManager.h"
+#import "BXInputController.h"
 #import "BXEmulatorConfiguration.h"
 #import "BXCloseAlert.h"
 
@@ -63,6 +63,8 @@ NSString * const BXSessionDidExitFullScreenNotification		= @"BXSessionDidExitFul
 NSString * const BXSessionDidLockMouseNotification		= @"BXSessionDidLockMouse";
 NSString * const BXSessionDidUnlockMouseNotification	= @"BXSessionDidUnlockMouse";
 
+NSString * const BXWillBeginInterruptionNotification = @"BXWillBeginInterruptionNotification";
+NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruptionNotification";
 
 
 #pragma mark -
@@ -79,7 +81,7 @@ NSString * const BXSessionDidUnlockMouseNotification	= @"BXSessionDidUnlockMouse
 @synthesize gameSettings;
 @synthesize drives, executables, documentation;
 @synthesize emulating;
-@synthesize manuallyPaused, autoPaused, interrupted;
+@synthesize paused, manuallyPaused, interrupted;
 @synthesize userToggledProgramPanel;
 
 #pragma mark -
@@ -239,6 +241,7 @@ NSString * const BXSessionDidUnlockMouseNotification	= @"BXSessionDidUnlockMouse
 			[[emulator videoHandler] unbind: @"aspectCorrected"];
 			[[emulator videoHandler] unbind: @"filterType"];
 			
+			[self _deregisterForPauseNotifications];
 			[self _deregisterForFilesystemNotifications];
 		}
 		
@@ -256,6 +259,7 @@ NSString * const BXSessionDidUnlockMouseNotification	= @"BXSessionDidUnlockMouse
 			[[newEmulator videoHandler] bind: @"filterType" toObject: defaults withKeyPath: @"filterType" options: nil];
 			
 			[self _registerForFilesystemNotifications];
+			[self _registerForPauseNotifications];
 		}
 	}
 }
@@ -465,7 +469,7 @@ NSString * const BXSessionDidUnlockMouseNotification	= @"BXSessionDidUnlockMouse
 	{
 		//Go through the settings working out which ones we should store in user defaults,
 		//and which ones in the gamebox's configuration file.
-		BXEmulatorConfiguration *gameboxConf = [BXEmulatorConfiguration configuration];
+		BXEmulatorConfiguration *runtimeConf = [BXEmulatorConfiguration configuration];
 		
 		//These are the settings we want to keep in the configuration file
 		NSNumber *fixedSpeed	= [gameSettings objectForKey: @"fixedSpeed"];
@@ -475,7 +479,7 @@ NSString * const BXSessionDidUnlockMouseNotification	= @"BXSessionDidUnlockMouse
 		if (coreMode)
 		{
 			NSString *coreString = [BXEmulator configStringForCoreMode: [coreMode integerValue]];
-			[gameboxConf setValue: coreString forKey: @"core" inSection: @"cpu"];
+			[runtimeConf setValue: coreString forKey: @"core" inSection: @"cpu"];
 		}
 		
 		if (fixedSpeed || isAutoSpeed)
@@ -483,7 +487,7 @@ NSString * const BXSessionDidUnlockMouseNotification	= @"BXSessionDidUnlockMouse
 			NSString *cyclesString = [BXEmulator configStringForFixedSpeed: [fixedSpeed integerValue]
 																	isAuto: [isAutoSpeed boolValue]];
 			
-			[gameboxConf setValue: cyclesString forKey: @"cycles" inSection: @"cpu"];
+			[runtimeConf setValue: cyclesString forKey: @"cycles" inSection: @"cpu"];
 		}
 		
 		//Strip out these settings once we're done, so we won't preserve them in user defaults
@@ -492,7 +496,7 @@ NSString * const BXSessionDidUnlockMouseNotification	= @"BXSessionDidUnlockMouse
 		
 		//Persist the gamebox-specific configuration into the gamebox's configuration file.
 		NSString *configPath = [[self gamePackage] configurationFilePath];
-		[self _saveConfiguration: gameboxConf toFile: configPath];
+		[self _saveConfiguration: runtimeConf toFile: configPath];
 		
 		//Save whatever's left into user defaults.
 		if ([gameSettings count])
@@ -602,10 +606,10 @@ NSString * const BXSessionDidUnlockMouseNotification	= @"BXSessionDidUnlockMouse
 
 
 #pragma mark -
-#pragma mark Delegate methods
+#pragma mark Emulator delegate methods and notifications
 
 //If we have not already performed our own configuration, do so now
-- (void) runPreflightCommands
+- (void) runPreflightCommandsForEmulator: (BXEmulator *)theEmulator
 {
 	if (!hasConfigured)
 	{
@@ -614,32 +618,53 @@ NSString * const BXSessionDidUnlockMouseNotification	= @"BXSessionDidUnlockMouse
 		
 		[self _mountDrivesForSession];
 		
-		//Flag that we have completed our initial game configuration.
-		hasConfigured = YES;
-		
 		//From here on out, it's OK to show drive notifications.
 		showDriveNotifications = YES;
+		
+		//Flag that we have completed our initial game configuration.
+		hasConfigured = YES;
 	
-		//Flag that we are now officially emulating
+		//Flag that we are now officially emulating.
+		//We wait until now because at this point the emulator is in
+		//a properly initialized state, and can respond properly to
+		//commands and settings changes.
+		//TODO: move this decision off to the emulator itself.
 		[self setEmulating: YES];
 	}
 }
 
-- (void) runLaunchCommands
+- (void) runLaunchCommandsForEmulator: (BXEmulator *)theEmulator
 {
 	hasLaunched = YES;
 	[self _launchTarget];
 }
 
-- (void) didBeginRunLoop
+- (void) emulator: (BXEmulator *)theEmulator didFinishFrame: (BXFrameBuffer *)frame
 {
-	//Implementation note: in a better world, this code wouldn't be here as event dispatch is normally done
-	//automatically by NSApplication at opportune moments. However, DOSBox's emulation loop completely takes
-	//over the application's main thread, leaving no time for events to get processed and dispatched.
-	//This explicitly pumps NSApplication's event queue for all pending events and sends them on their way.
+	[[self DOSWindowController] updateWithFrame: frame];
+}
+
+- (NSSize) maxFrameSizeForEmulator: (BXEmulator *)theEmulator
+{
+	return [[self DOSWindowController] maxFrameSize];
+}
+
+- (NSSize) viewportSizeForEmulator: (BXEmulator *)theEmulator
+{
+	return [[self DOSWindowController] viewportSize];
+}
+
+- (void) emulatorDidBeginRunLoop: (BXEmulator *)theEmulator
+{
+	//Implementation note: in a better world, this code wouldn't be here as event
+	//dispatch is normally done automatically by NSApplication at opportune moments.
+	//However, DOSBox's emulation loop takes over the application's main thread,
+	//leaving no time for events to get processed and dispatched.
+	//Hence in each iteration of DOSBox's run loop, we pump NSApplication's event
+	//queue for all pending events and send them on their way.
 	
 	//Bugfix: if we are in the process of shutting down, then don't dispatch events:
-	//NSApp may not know yet that our window has closed and will crash when trying
+	//NSApp may not know yet that our window has closed, and will crash when trying
 	//send events to it. This isn't a bug per se but an edge-case with the
 	//NSWindow/NSDocument close flow.
 	
@@ -654,57 +679,16 @@ NSString * const BXSessionDidUnlockMouseNotification	= @"BXSessionDidUnlockMouse
 		[NSApp sendEvent: event];
 		
 		//If we're paused, then keep dispatching events until we unpause;
-		//otherwise, allow execution to resume after the first batch of events has been processed.
+		//otherwise, allow emulation to resume after the first batch
+		//of events has been processed.
 		untilDate = [self isPaused] ? [NSDate distantFuture] : nil;
 	}
 }
 
-- (void) didCompleteRunLoop {}
-
-- (void) _syncPauseState
-{
-	//Tell the emulator to prepare for being paused or to resume after we unpause.
-	//(BXEmulator doesn’t mind if we send these signals multiple times.)
-	if ([self isPaused])	[emulator willPause];
-	else					[emulator didResume];
-	
-	//Update the title to reflect that we’re paused
-	[DOSWindowController synchronizeWindowTitleWithDocumentName];
-}
+- (void) emulatorDidFinishRunLoop: (BXEmulator *)theEmulator {}
 
 
-- (void) didCompleteFrame: (BXFrameBuffer *)frame
-{
-	[[self DOSWindowController] updateWithFrame: frame];
-}
-
-- (NSSize) maxFrameSize
-{
-	return [[self DOSWindowController] maxFrameSize];
-}
-
-- (NSSize) viewportSize
-{
-	return [[self DOSWindowController] viewportSize];
-}
-
-
-#pragma mark -
-#pragma mark Notifications
-
-- (void) willRunStartupCommands: (NSNotification *)notification {}
-- (void) didRunStartupCommands: (NSNotification *)notification {}
-
-//We leave the panel open when we don't have a default program already,
-//and can adopt the current program as the default program. This way
-//we can ask the user what they want to do with the program.
-- (BOOL) _leaveProgramPanelOpenAfterLaunch
-{
-	NSString *activePath = [[[self activeProgramPath] copy] autorelease];
-	return ![gamePackage targetPath] && [gamePackage validateTargetPath: &activePath error: NULL];
-}
-
-- (void) programWillStart: (NSNotification *)notification
+- (void) emulatorWillStartProgram: (NSNotification *)notification
 {
 	//Don't set the active program if we already have one: this way, we keep
 	//track of when a user launches a batch file and don't immediately discard
@@ -733,7 +717,7 @@ NSString * const BXSessionDidUnlockMouseNotification	= @"BXSessionDidUnlockMouse
 	programStartTime = [NSDate timeIntervalSinceReferenceDate];
 }
 
-- (void) programDidFinish: (NSNotification *)notification
+- (void) emulatorDidFinishProgram: (NSNotification *)notification
 {
 	//Clear the active program when a startup program or 'non-defaultable' program
 	//finishes. This way, programWillStart: won't hang onto programs we can't use
@@ -773,7 +757,7 @@ NSString * const BXSessionDidUnlockMouseNotification	= @"BXSessionDidUnlockMouse
 	}
 }
 
-- (void) didReturnToShell: (NSNotification *)notification
+- (void) emulatorDidReturnToShell: (NSNotification *)notification
 {
 	//Clear the active program
 	[self setActiveProgramPath: nil];
@@ -800,7 +784,7 @@ NSString * const BXSessionDidUnlockMouseNotification	= @"BXSessionDidUnlockMouse
 	}
 }
 
-- (void) didStartGraphicalContext: (NSNotification *)notification
+- (void) emulatorDidBeginGraphicalContext: (NSNotification *)notification
 {
 	//Tweak: only switch into fullscreen mode if we don't need to prompt
 	//the user about choosing a default program.
@@ -816,14 +800,14 @@ NSString * const BXSessionDidUnlockMouseNotification	= @"BXSessionDidUnlockMouse
 	}
 }
 
-- (void) didEndGraphicalContext: (NSNotification *)notification
+- (void) emulatorDidFinishGraphicalContext: (NSNotification *)notification
 {
 	[NSObject cancelPreviousPerformRequestsWithTarget: [self DOSWindowController]
 											 selector: @selector(toggleFullScreenWithZoom:)
 											   object: [NSNumber numberWithBool: YES]];
 }
 
-- (void) didChangeEmulationState: (NSNotification *)notification
+- (void) emulatorDidChangeEmulationState: (NSNotification *)notification
 {
 	//These reside in BXEmulatorControls, as should this function, but so be it
 	[self willChangeValueForKey: @"sliderSpeed"];
@@ -839,6 +823,15 @@ NSString * const BXSessionDidUnlockMouseNotification	= @"BXSessionDidUnlockMouse
 
 #pragma mark -
 #pragma mark Private methods
+
+//We leave the panel open when we don't have a default program already,
+//and can adopt the current program as the default program. This way
+//we can ask the user what they want to do with the program.
+- (BOOL) _leaveProgramPanelOpenAfterLaunch
+{
+	NSString *activePath = [[[self activeProgramPath] copy] autorelease];
+	return ![gamePackage targetPath] && [gamePackage validateTargetPath: &activePath error: NULL];
+}
 
 - (void) _startEmulator
 {
@@ -1043,34 +1036,7 @@ NSString * const BXSessionDidUnlockMouseNotification	= @"BXSessionDidUnlockMouse
 																   inDirectory: @"Configurations"];
 			
 			BXEmulatorConfiguration *profileConf = [BXEmulatorConfiguration configurationWithContentsOfFile: profileConfPath];
-			if (profileConf)
-			{
-				//First go through the settings, checking if any are the same as the profile config's.
-				for (NSString *sectionName in [gameboxConf settings])
-				{
-					NSDictionary *section = [gameboxConf settingsForSection: sectionName];
-					for (NSString *settingName in [section allKeys])
-					{
-						NSString *gameboxValue = [gameboxConf valueForKey: settingName inSection: sectionName];
-						NSString *profileValue = [profileConf valueForKey: settingName inSection: sectionName];
-						
-						//If the value we'd be persisting is the same as the profile's value,
-						//remove it from the persisted configuration file.
-						if ([gameboxValue isEqualToString: profileValue])
-							[gameboxConf removeValueForKey: settingName inSection: sectionName];
-					}
-				}
-				
-				//Now, eliminate duplicate startup commands too.
-				//IMPLEMENTATION NOTE: for now we leave the startup commands alone unless the two sets
-				//have exactly the same commands in the same order. There's too many risks involved 
-				//for us to remove partial sets of duplicate startup commands.
-				NSArray *profileCommands = [profileConf startupCommands];
-				NSArray *gameboxCommands = [gameboxConf startupCommands];
-				
-				if ([gameboxCommands isEqualToArray: profileCommands])
-					[gameboxConf removeStartupCommands];
-			}
+			if (profileConf) [gameboxConf excludeDuplicateSettingsFromConfiguration: profileConf];
 		}
 		
 		[gameboxConf writeToFile: filePath error: NULL];
@@ -1091,5 +1057,140 @@ NSString * const BXSessionDidUnlockMouseNotification	= @"BXSessionDidUnlockMouse
 	[importQueue cancelAllOperations];
 	[importQueue waitUntilAllOperationsAreFinished];
 }
+
+
+#pragma mark -
+#pragma mark Pause-state handling
+
+- (void) setPaused: (BOOL)flag
+{
+	if (paused != flag)
+	{
+		paused = flag;
+
+		//Tell the emulator to prepare for being paused or to resume after we unpause.
+		if ([self isPaused])
+		{
+			[emulator willPause];
+			
+			//Also ensure the mouse is unlocked whenever we become paused
+			[[DOSWindowController inputController] setMouseLocked: NO];
+		}
+		else
+		{
+			[emulator didResume];
+		}
+		
+		//Update the title to reflect that we’ve paused/unpaused
+		[DOSWindowController synchronizeWindowTitleWithDocumentName];
+	}
+}
+
+- (void) setManuallyPaused: (BOOL)flag
+{
+	if (manuallyPaused != flag)
+	{
+		manuallyPaused = flag;
+		[self _syncPauseState];
+	}
+}
+
+- (void) setInterrupted: (BOOL)flag
+{
+	if (interrupted != flag)
+	{
+		interrupted = flag;
+		[self _syncPauseState];
+	}
+}
+
+- (void) _syncPauseState
+{
+	BOOL shouldPause = NO;
+	
+	//Pause if we're in the middle of an interruption or are manually paused
+	if (interrupted || manuallyPaused) shouldPause = YES;
+	
+	//If autopausing is enabled, then pause if the application is inactive or the DOS window isn't visible (e.g. offscreen/miniaturized)
+	else if ([[NSUserDefaults standardUserDefaults] boolForKey: @"pauseWhileInactive"] &&
+			 !([NSApp isActive] && ([[DOSWindowController window] isVisible] || [[DOSWindowController fullScreenWindow] isVisible])))
+	{
+		shouldPause = YES;
+	}
+	
+	[self setPaused: shouldPause];
+}
+
+- (void) _interruptionWillBegin: (NSNotification *)notification
+{
+	[self setInterrupted: YES];
+}
+
+- (void) _interruptionDidFinish: (NSNotification *)notification
+{
+	[self setInterrupted: NO];
+}
+
+
+- (void) _registerForPauseNotifications
+{
+	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+	
+	[center addObserver: self
+			   selector: @selector(_syncPauseState)
+				   name: NSWindowDidMiniaturizeNotification
+				 object: [DOSWindowController window]];
+	
+	[center addObserver: self
+			   selector: @selector(_syncPauseState)
+				   name: NSWindowDidDeminiaturizeNotification
+				 object: [DOSWindowController window]];
+	
+	[center addObserver: self
+			   selector: @selector(_syncPauseState)
+				   name: NSApplicationDidResignActiveNotification
+				 object: NSApp];
+	
+	[center addObserver: self
+			   selector: @selector(_syncPauseState)
+				   name: NSApplicationDidBecomeActiveNotification
+				 object: NSApp];
+	
+	
+	[center addObserver: self
+			   selector: @selector(_interruptionWillBegin:)
+				   name: NSMenuDidBeginTrackingNotification
+				 object: nil];
+	
+	[center addObserver: self
+			   selector: @selector(_interruptionDidFinish:)
+				   name: NSMenuDidEndTrackingNotification
+				 object: nil];
+	
+	[center addObserver: self
+			   selector: @selector(_interruptionWillBegin:)
+				   name: BXWillBeginInterruptionNotification
+				 object: nil];
+	
+	[center addObserver: self
+			   selector: @selector(_interruptionDidFinish:)
+				   name: BXDidFinishInterruptionNotification
+				 object: nil];
+}
+	 
+- (void) _deregisterForPauseNotifications
+{
+	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+	
+	[center removeObserver: self name: NSWindowWillMiniaturizeNotification object: nil];
+	[center removeObserver: self name: NSWindowDidDeminiaturizeNotification object: nil];
+	
+	[center removeObserver: self name: NSApplicationWillResignActiveNotification object: nil];
+	[center removeObserver: self name: NSApplicationDidBecomeActiveNotification object: nil];
+	
+	[center removeObserver: self name: BXWillBeginInterruptionNotification object: nil];
+	[center removeObserver: self name: BXDidFinishInterruptionNotification object: nil];
+}
+
 
 @end

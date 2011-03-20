@@ -224,13 +224,13 @@ nil];
 
 - (id) runPreflightCommands: (NSString *)argumentString
 {
-	[[self delegate] runPreflightCommands];
+	[[self delegate] runPreflightCommandsForEmulator: self];
 	return [NSNumber numberWithBool: YES];
 }
 
 - (id) runLaunchCommands: (NSString *)argumentString
 {
-	[[self delegate] runLaunchCommands];
+	[[self delegate] runLaunchCommandsForEmulator: self];
 	return [NSNumber numberWithBool: YES];
 }
 
@@ -414,15 +414,15 @@ nil];
 	//Before startup, ensure that Boxer's drive cache is up to date.
 	[self _syncDriveCache];
 	
-	[self _postNotificationName: @"BXEmulatorWillRunStartupCommandsNotification"
-			   delegateSelector: @selector(willRunStartupCommands:)
+	[self _postNotificationName: BXEmulatorWillRunStartupCommandsNotification
+			   delegateSelector: @selector(emulatorWillRunStartupCommands:)
 					   userInfo: nil];
 }
 
 - (void) _didRunStartupCommands
 {
-	[self _postNotificationName: @"BXEmulatorDidRunStartupCommandsNotification"
-			   delegateSelector: @selector(didRunStartupCommands:)
+	[self _postNotificationName: BXEmulatorDidRunStartupCommandsNotification
+			   delegateSelector: @selector(emulatorDidRunStartupCommands:)
 					   userInfo: nil];
 }
 
@@ -446,8 +446,8 @@ nil];
 							   drive,		@"drive",
 							   nil];
 	
-	[self _postNotificationName: @"BXEmulatorProgramWillStartNotification"
-			   delegateSelector: @selector(programWillStart:)
+	[self _postNotificationName: BXEmulatorWillStartProgramNotification
+			   delegateSelector: @selector(emulatorWillStartProgram:)
 					   userInfo: userInfo];
 	
 }
@@ -472,16 +472,16 @@ nil];
 	[self setProcessPath: nil];
 	[self setProcessLocalPath: nil];
 	
-	[self _postNotificationName: @"BXEmulatorProgramDidFinishNotification"
-			   delegateSelector: @selector(programDidFinish:)
+	[self _postNotificationName: BXEmulatorDidFinishProgramNotification
+			   delegateSelector: @selector(emulatorDidFinishProgram:)
 					   userInfo: userInfo];
 }
 
 - (void) _didReturnToShell
 {
 	[[self inputHandler] setMouseActive: NO];
-	[self _postNotificationName: @"BXEmulatorProcessDidReturnToShellNotification"
-			   delegateSelector: @selector(didReturnToShell:)
+	[self _postNotificationName: BXEmulatorDidReturnToShellNotification
+			   delegateSelector: @selector(emulatorDidReturnToShell:)
 					   userInfo: nil];
 }
 @end

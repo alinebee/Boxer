@@ -194,7 +194,7 @@ enum {
 			//Post a notification to whoever's listening
 			NSDictionary *userInfo = [NSDictionary dictionaryWithObject: drive forKey: @"drive"];
 			[self _postNotificationName: @"BXDriveDidMountNotification"
-					   delegateSelector: @selector(DOSDriveDidMount:)
+					   delegateSelector: @selector(emulatorDidMountDrive:)
 							   userInfo: userInfo];
 			
 			return drive;
@@ -228,7 +228,7 @@ enum {
 		//Post a notification to whoever's listening
 		NSDictionary *userInfo = [NSDictionary dictionaryWithObject: drive forKey: @"drive"];
 		[self _postNotificationName: @"BXDriveDidUnmountNotification"
-				   delegateSelector: @selector(DOSDriveDidUnmount:)
+				   delegateSelector: @selector(emulatorDidUnmountDrive:)
 						   userInfo: userInfo];
 		
 	}
@@ -765,7 +765,7 @@ enum {
 			//Post a notification to whoever's listening
 			userInfo = [NSDictionary dictionaryWithObject: drive forKey: @"drive"];
 			[self _postNotificationName: @"BXDriveDidMountNotification"
-					   delegateSelector: @selector(DOSDriveDidMount:)
+					   delegateSelector: @selector(emulatorDidMountDrive:)
 							   userInfo: userInfo];
 		}
 		//A drive no longer exists in DOSBox which we have a leftover record for, remove it
@@ -776,7 +776,7 @@ enum {
 			//Post a notification to whoever's listening
 			userInfo = [NSDictionary dictionaryWithObject: drive forKey: @"drive"];
 			[self _postNotificationName: @"BXDriveDidUnmountNotification"
-					   delegateSelector: @selector(DOSDriveDidUnmount:)
+					   delegateSelector: @selector(emulatorDidUnmountDrive:)
 							   userInfo: userInfo];
 		}
 	}
@@ -805,7 +805,7 @@ enum {
 							  drive, @"drive",
 							  nil];
 	
-	[self _postNotificationName: @"BXEmulatorDidCreateFileNotification"
+	[self _postNotificationName: BXEmulatorDidCreateFileNotification
 			   delegateSelector: @selector(emulatorDidCreateFile:)
 					   userInfo: userInfo];	
 }
@@ -819,7 +819,7 @@ enum {
 							  drive, @"drive",
 							  nil];
 	
-	[self _postNotificationName: @"BXEmulatorDidRemoveFileNotification"
+	[self _postNotificationName: BXEmulatorDidRemoveFileNotification
 			   delegateSelector: @selector(emulatorDidRemoveFile:)
 					   userInfo: userInfo];	
 }

@@ -328,6 +328,34 @@ NSString * const emptyFormat = @"^\\s*$";
 	if (startupCommands) [self addStartupCommands: startupCommands];
 }
 
+- (void) excludeDuplicateSettingsFromConfiguration: (BXEmulatorConfiguration *)configuration
+{
+	//First go through all our defined settings, stripping those that are the same in both configurations
+	for (NSString *sectionName in [self settings])
+	{
+		NSDictionary *section = [self settingsForSection: sectionName];
+		for (NSString *settingName in [section allKeys])
+		{
+			NSString *ourValue		= [self valueForKey: settingName inSection: sectionName];
+			NSString *theirValue	= [configuration valueForKey: settingName inSection: sectionName];
+			
+			//Remove our own value if it's identical to the one in the configuration we're comparing to
+			if ([ourValue isEqualToString: theirValue])
+				[self removeValueForKey: settingName inSection: sectionName];
+		}
+	}
+	
+	//Now, eliminate duplicate startup commands too.
+	//IMPLEMENTATION NOTE: for now we leave the startup commands alone unless the two sets
+	//have exactly the same commands in the same order. There's too many risks involved 
+	//for us to remove partial sets of duplicate startup commands.
+	NSArray *ourCommands	= [self startupCommands];
+	NSArray *theirCommands	= [configuration startupCommands];
+	
+	if ([ourCommands isEqualToArray: theirCommands])
+		[self removeStartupCommands];
+}
+
 
 #pragma mark -
 #pragma mark Internal parsing methods

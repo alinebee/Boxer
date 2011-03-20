@@ -86,47 +86,10 @@
 #pragma mark -
 #pragma mark Controlling CPU emulation
 
-//Pause states
-
-+ (NSSet *)keyPathsForValuesAffectingPaused
-{
-	return [NSSet setWithObjects: @"autoPaused", @"interrupted", nil];
-}
-
-- (BOOL) isPaused
-{
-	//Report that we're paused whenever any of our pause flags are true
-	return manuallyPaused || autoPaused || interrupted;
-}
-
-- (void) setManuallyPaused: (BOOL)flag
-{
-	manuallyPaused = flag;
-	[self _syncPauseState];
-	
-	//Unlock the mouse whenever we are paused deliberately
-	if (flag) [[DOSWindowController inputController] setMouseLocked: NO];
-}
-
-- (void) setAutoPaused: (BOOL)flag
-{
-	autoPaused = flag;
-	[self _syncPauseState];
-}
-
-- (void) setInterrupted: (BOOL)flag
-{
-	interrupted = flag;
-	[self _syncPauseState];
-}
-
 - (IBAction) togglePaused: (id)sender
 {
-	[self setManuallyPaused: ![self manuallyPaused]];
+	[self setManuallyPaused: ![self isManuallyPaused]];
 }
-
-
-//Frame skipping
 
 - (NSUInteger) frameskip
 {
@@ -308,7 +271,7 @@
 	
 	if (theAction == @selector(togglePaused:))
 	{
-		if (![self manuallyPaused])
+		if (![self isManuallyPaused])
 			title = NSLocalizedString(@"Pause", @"Emulation menu option for pausing the emulator.");
 		else
 			title = NSLocalizedString(@"Resume", @"Emulation menu option for resuming from pause.");

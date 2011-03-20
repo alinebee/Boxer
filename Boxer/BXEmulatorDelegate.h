@@ -11,60 +11,86 @@
 //the delegate methods BXEmulator needs keeps everyone's responsibilities clear.)
 
 
-@class BXFrameBuffer;
-@protocol BXEmulatorDelegate <NSObject>
+#pragma mark -
+#pragma mark Notification constants
 
-//Returns the current viewport and maximum frame size.
-//Used for decisions about scaler rendering.
-@property (readonly) NSSize viewportSize;
-@property (readonly) NSSize maxFrameSize;
+extern NSString * const BXEmulatorDidBeginGraphicalContextNotification;
+extern NSString * const BXEmulatorDidFinishGraphicalContextNotification;
+extern NSString * const BXEmulatorWillRunStartupCommandsNotification;
+extern NSString * const BXEmulatorDidRunStartupCommandsNotification;
+extern NSString * const BXEmulatorDidCreateFileNotification;
+extern NSString * const BXEmulatorDidRemoveFileNotification;
+extern NSString * const BXEmulatorWillStartProgramNotification;
+extern NSString * const BXEmulatorDidFinishProgramNotification;
+extern NSString * const BXEmulatorDidReturnToShellNotification;
+
+//TODO: define and document user info dictionary keys for each of these notifications.
+
+
+#pragma mark -
+#pragma mark Protocol
+
+@class BXFrameBuffer;
+@class BXEmulator;
+@protocol BXEmulatorDelegate <NSObject>
 
 #pragma mark -
 #pragma mark Delegate methods
 
+//These are only sent to the emulator delegate and are requited to be implemented.
+
+//Requests the current viewport and maximum frame size.
+//Used for decisions about scaler rendering.
+- (NSSize) viewportSizeForEmulator: (BXEmulator *)emulator;
+- (NSSize) maxFrameSizeForEmulator: (BXEmulator *)emulator;
+
+//Tells the delegate that the specified frame has finished rendering.
+- (void) emulator: (BXEmulator *)emulator didFinishFrame: (BXFrameBuffer *)frame;
+
 //Called at the start of AUTOEXEC.BAT to let the delegate run any DOS commands
 //it needs to configure the emulation state.
-- (void) runPreflightCommands;
+- (void) runPreflightCommandsForEmulator: (BXEmulator *)emulator;
 
 //Called at the end of AUTOEXEC.BAT to let the delegate run any DOS commands
 //it wants to with the fully-prepared session.
-- (void) runLaunchCommands;
-
-//Tells the delegate that the specified frame has finished rendering.
-- (void) didCompleteFrame: (BXFrameBuffer *)frame;
+- (void) runLaunchCommandsForEmulator: (BXEmulator *)emulator;
 
 //Tells the delegate that the emulator has started/finished one iteration of its run loop.
 //This is currently a misnomer: BXEmulator calls these in the middle of its run loop.
-//This will become more accurate once BXEmulator is multithreaded/multiprocess.
-- (void) didBeginRunLoop;
-- (void) didCompleteRunLoop;
+//This names will be more accurate once BXEmulator is multithreaded/multiprocess.
+- (void) emulatorDidBeginRunLoop: (BXEmulator *)emulator;
+- (void) emulatorDidFinishRunLoop: (BXEmulator *)emulator;
+
 
 #pragma mark -
 #pragma mark Notifications
 
+//These are sent to the emulator delegate if defined, and posted on the default notification center.
+
 @optional
-//Notifies the delegate that the emulator is about to start processing AUTOEXEC.BAT.
-- (void) willRunStartupCommands: (NSNotification *)notification;
 
-//Notifies the delegate that the emulator has just finished AUTOEXEC.BAT.
-- (void) didRunStartupCommands: (NSNotification *)notification;
+//Posted when the emulator is about to start processing AUTOEXEC.BAT.
+- (void) emulatorWillRunStartupCommands: (NSNotification *)notification;
 
-//Notifies the delegate that the emulator is about to start a program.
-- (void) programWillStart: (NSNotification *)notification;
+//Posted when the emulator has just finished AUTOEXEC.BAT.
+- (void) emulatorDidRunStartupCommands: (NSNotification *)notification;
 
-//Notifies the delegate that a program has just exited.
-- (void) programDidFinish: (NSNotification *)notification;
+//Posted when the emulator is about to start a program.
+- (void) emulatorWillStartProgram: (NSNotification *)notification;
 
-//Notifies the delegate that the emulator has returned control to the DOS prompt.
-- (void) didReturnToShell: (NSNotification *)notification;
+//Posted when a program has just exited.
+- (void) emulatorDidFinishProgram: (NSNotification *)notification;
 
-//Notifies the delegate that the emulator has switched into/out of a graphics mode.
-- (void) didStartGraphicalContext:	(NSNotification *)notification;
-- (void) didEndGraphicalContext:	(NSNotification *)notification;
+//Posted when the emulator has returned control to the DOS prompt.
+- (void) emulatorDidReturnToShell: (NSNotification *)notification;
 
-//Notifies the delegate that CPU emulation settings may have been changed by DOSBox.
+//Posted when the emulator has switched from a text mode to a graphics mode and vice-versa.
+- (void) emulatorDidBeginGraphicalContext:	(NSNotification *)notification;
+- (void) emulatorDidFinishGraphicalContext:	(NSNotification *)notification;
+
+//Posted when CPU emulation settings may have been changed by DOSBox.
 //(Currently no information is provided about what, if anything, has changed.)
-- (void) didChangeEmulationState:	(NSNotification *)notification;
+- (void) emulatorDidChangeEmulationState:	(NSNotification *)notification;
 
 @end
 
@@ -79,11 +105,11 @@
 
 @optional
 //Notifies the delegate that a DOS drive has been added/removed.
-- (void) DOSDriveDidMount:		(NSNotification *)notification;
-- (void) DOSDriveDidUnmount:	(NSNotification *)notification;
+- (void) emulatorDidMountDrive:		(NSNotification *)notification;
+- (void) emulatorDidUnmountDrive:	(NSNotification *)notification;
 
 //Notifies the delegate that Boxer created/deleted a file.
-- (void) emulatorDidCreateFile: (NSNotification *)notification;
-- (void) emulatorDidRemoveFile: (NSNotification *)notification;
+- (void) emulatorDidCreateFile:		(NSNotification *)notification;
+- (void) emulatorDidRemoveFile:		(NSNotification *)notification;
 
 @end

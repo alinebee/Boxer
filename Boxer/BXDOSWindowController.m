@@ -140,16 +140,6 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 			   selector: @selector(renderingViewDidLiveResize:)
 				   name: BXViewDidLiveResizeNotification
 				 object: renderingView];
-	
-	[center addObserver: self
-			   selector: @selector(menuDidOpen:)
-				   name: NSMenuDidBeginTrackingNotification
-				 object: nil];
-	
-	[center addObserver: self
-			   selector: @selector(menuDidClose:)
-				   name: NSMenuDidEndTrackingNotification
-				 object: nil];
 }
 
 
@@ -238,7 +228,8 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 		}
 	}
 	
-	if ([[self document] manuallyPaused] || [[self document] autoPaused])
+	//If emulation is paused (but not simply interrupted by UI events) then indicate this with a title change
+	if ([[self document] isPaused] && ![[self document] isInterrupted])
 	{
 		NSString *titleFormat = NSLocalizedString(@"%@ (Paused)",
 												  @"Window title format when session is paused. %@ is the regular title of the window.");
@@ -505,7 +496,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 //Warn the emulator to prepare for emulation cutout when the resize starts
 - (void) renderingViewWillLiveResize: (NSNotification *) notification
 {
-	[[self document] setInterrupted: YES];
+	[[NSNotificationCenter defaultCenter] postNotificationName: BXWillBeginInterruptionNotification object: self];
 }
 
 //Catch the end of a live resize event and clean up once we're done
@@ -513,7 +504,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 - (void) renderingViewDidLiveResize: (NSNotification *) notification
 {
 	[self _cleanUpAfterResize];
-	[[self document] setInterrupted: NO];
+	[[NSNotificationCenter defaultCenter] postNotificationName: BXDidFinishInterruptionNotification object: self];
 }
 
 - (NSScreen *) fullScreenTarget
@@ -624,8 +615,8 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	//Don't bother if we're already in the correct fullscreen state
 	if ([self isFullScreen] == fullScreen) return;	
 	
-	//Let the emulator know it'll be blocked from emulating for a while
-	[[self document] setInterrupted: YES];
+	//Let the emulation know it'll be blocked from emulating for a while
+	[[NSNotificationCenter defaultCenter] postNotificationName: BXWillBeginInterruptionNotification object: self];
 	
 	inFullScreenTransition = YES;
 	
@@ -741,7 +732,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	
 	[center postNotificationName: endNotification object: [self document]];
 	
-	[[self document] setInterrupted: NO];
+	[[NSNotificationCenter defaultCenter] postNotificationName: BXDidFinishInterruptionNotification object: self];
 	
 	[blankingWindow close];
 	[animation release];
@@ -893,18 +884,6 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	//when switching to/from fullscreen
 	if (!newWindow || (newWindow != [self window] && newWindow != [self fullScreenWindow]))
 		[inputController didResignKey];
-}
-
-//Warn the emulator to prepare for emulation cutout when a menu opens
-- (void) menuDidOpen: (NSNotification *) notification
-{
-	[[self document] setInterrupted: YES];
-}
-
-//Let the emulator know the coast is clear
-- (void) menuDidClose: (NSNotification *) notification
-{
-	[[self document] setInterrupted: NO];
 }
 
 

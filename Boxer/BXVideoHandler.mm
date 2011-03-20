@@ -208,13 +208,13 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 	//Send notifications if the display mode has changed
 	
 	if (wasTextMode && !nowTextMode)
-		[[self emulator] _postNotificationName: @"BXEmulatorDidStartGraphicalContext"
-							  delegateSelector: @selector(didStartGraphicalContext:)
+		[[self emulator] _postNotificationName: BXEmulatorDidBeginGraphicalContextNotification
+							  delegateSelector: @selector(emulatorDidBeginGraphicalContext:)
 									  userInfo: nil];
 	
 	else if (!wasTextMode && nowTextMode)
-		[[self emulator] _postNotificationName: @"BXEmulatorDidEndGraphicalContext"
-							  delegateSelector: @selector(didEndGraphicalContext:)
+		[[self emulator] _postNotificationName: BXEmulatorDidFinishGraphicalContextNotification
+							  delegateSelector: @selector(emulatorDidFinishGraphicalContext:)
 									  userInfo: nil];
 }
 
@@ -243,8 +243,8 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 {
 	if ([self frameBuffer] && dirtyBlocks)
 	{
-		//TODO: send a notification instead?
-		[[[self emulator] delegate] didCompleteFrame: [self frameBuffer]];
+		[[[self emulator] delegate] emulator: [self emulator]
+							  didFinishFrame: [self frameBuffer]];
 	}
 	frameInProgress = NO;
 }
@@ -265,7 +265,7 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 {
 	//Work out how much we will need to scale the resolution to fit the viewport
 	NSSize resolution			= [self resolution];	
-	NSSize viewportSize			= [[[self emulator] delegate] viewportSize];
+	NSSize viewportSize			= [[[self emulator] delegate] viewportSizeForEmulator: [self emulator]];
 	
 	BOOL isTextMode				= [self isInTextMode];
 	BOOL useAspectCorrection	= [self _shouldUseAspectCorrectionForResolution: resolution];	
@@ -377,7 +377,7 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 
 - (NSInteger) _maxFilterScaleForResolution: (NSSize)resolution
 {
-	NSSize maxFrameSize	= [[[self emulator] delegate] maxFrameSize];
+	NSSize maxFrameSize	= [[[self emulator] delegate] maxFrameSizeForEmulator: [self emulator]];
 	//Work out how big a filter operation size we can use, given the maximum output size
 	NSInteger maxScale	= floorf(MIN(maxFrameSize.width / resolution.width, maxFrameSize.height / resolution.height));
 	

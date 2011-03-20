@@ -261,6 +261,12 @@
 	simulatedMouseButtons = BXNoMouseButtonsMask;
 }
 
+- (void) didBecomeKey
+{
+	//Account for any changes to key modifier flags while we didn't have keyboard focus.
+	[self flagsChanged: [NSApp currentEvent]];
+}
+
 #pragma mark -
 #pragma mark Mouse events
 
@@ -607,42 +613,57 @@
 										 modifiers: [theEvent modifierFlags]];
 }
 
-//Convert flag changes into proper key events
+
+//Determine which flags have changed since the last time we checked,
+//and convert those changes into DOS key events.
 - (void) flagsChanged: (NSEvent *)theEvent
-{
-	unsigned short keyCode	= [theEvent keyCode];
-	NSUInteger modifiers	= [theEvent modifierFlags];
-	NSUInteger flag;
+{	
+	NSUInteger newModifiers = [theEvent modifierFlags];
+	//XOR the old and new modifiers to determine which flags have changed
+	NSUInteger changedModifiers = newModifiers ^ lastModifiers;
 	
-	//We can determine which modifier key was involved by its key code,
-	//but we can't determine from the event whether it was pressed or released.
-	//So, we check whether the corresponding modifier flag is active or not.
-	switch (keyCode)
+	if (changedModifiers)
 	{
-		case kVK_Control:		flag = BXLeftControlKeyMask;	break;
-		case kVK_Option:		flag = BXLeftAlternateKeyMask;	break;
-		case kVK_Shift:			flag = BXLeftShiftKeyMask;		break;
+		id handler = [self representedObject];
+
+#define NUM_FLAGS 7
+		
+		//Map flags to their corresponding keycodes, because NSDictionaries are so tedious to write
+		NSUInteger flags[NUM_FLAGS] = {
+			BXLeftControlKeyMask,
+			BXLeftAlternateKeyMask,
+			BXLeftShiftKeyMask,
+			BXRightControlKeyMask,
+			BXRightAlternateKeyMask,
+			BXRightShiftKeyMask,
+			NSAlphaShiftKeyMask
+		};
+		unsigned short keyCodes[NUM_FLAGS] = {
+			kVK_Control,
+			kVK_Option,
+			kVK_Shift,
+			kVK_RightControl,
+			kVK_RightOption,
+			kVK_RightShift,
+			kVK_CapsLock
+		};
+		
+		NSUInteger i;
+		for (i=0; i<NUM_FLAGS; i++)
+		{
+			NSUInteger flag			= flags[i];
+			unsigned short keyCode	= keyCodes[i];
 			
-		case kVK_RightControl:	flag = BXRightControlKeyMask;	break;
-		case kVK_RightOption:	flag = BXRightAlternateKeyMask;	break;
-		case kVK_RightShift:	flag = BXRightShiftKeyMask;		break;
-			
-		case kVK_CapsLock:		flag = NSAlphaShiftKeyMask;		break;
-			
-		default:
-			//Ignore all other modifier types
-			return;
+			//If this flag has changed, then check whether it was pressed or released and post a new keyboard event
+			if ((changedModifiers & flag) == flag)
+			{
+				BOOL pressed = (newModifiers & flag) == flag;
+				[handler sendKeyEventWithCode: keyCode pressed: pressed modifiers: newModifiers];
+			}
+		}
+
+		lastModifiers = newModifiers;
 	}
-	
-	BOOL pressed = (modifiers & flag) == flag;
-	
-	//Implementation note: you might think that CapsLock has to be handled differently since
-	//it's a toggle. However, DOSBox expects a keydown event when CapsLock is toggled on,
-	//and a keyup event when CapsLock is toggled off, so this default behaviour is fine.
-	
-	[[self representedObject] sendKeyEventWithCode: keyCode
-										   pressed: pressed
-										 modifiers: modifiers];
 }
 
 

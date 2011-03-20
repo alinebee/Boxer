@@ -879,11 +879,17 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 
 - (void) windowDidResignKey: (NSNotification *) notification
 {
-	NSWindow *newWindow = [NSApp keyWindow];
+	NSWindow *newKeyWindow = [NSApp keyWindow];
+	
 	//Ignore handoffs between our own windows, which swap key window status
 	//when switching to/from fullscreen
-	if (!newWindow || (newWindow != [self window] && newWindow != [self fullScreenWindow]))
+	if (!newKeyWindow || (newKeyWindow != [self window] && newKeyWindow != [self fullScreenWindow]))
 		[inputController didResignKey];
+}
+
+- (void) windowDidBecomeKey: (NSNotification *)notification
+{	
+	[inputController didBecomeKey];
 }
 
 

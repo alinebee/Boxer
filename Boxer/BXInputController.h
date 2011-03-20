@@ -38,6 +38,8 @@
 	NSPoint distanceWarped;
 	BOOL updatingMousePosition;
 	NSUInteger simulatedMouseButtons;
+	
+	NSUInteger lastModifiers;
 }
 
 #pragma mark -
@@ -77,6 +79,9 @@
 
 //Called by BXDOSWindowController whenever the view loses keyboard focus.
 - (void) didResignKey;
+
+//Called by BXDOSWindowController whenever the view regains keyboard focus.
+- (void) didBecomeKey;
 
 //Lock/unlock the mouse.
 - (IBAction) toggleMouseLocked: (id)sender;

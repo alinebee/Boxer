@@ -618,6 +618,12 @@
 //and convert those changes into DOS key events.
 - (void) flagsChanged: (NSEvent *)theEvent
 {	
+	//IMPLEMENTATION NOTE: this method used to check the keyCode of the event to determine which
+	//modifier key was just toggled. This worked fine for single keypresses, but could miss keys
+	//when multiple modifier keys were pressed or released, causing 'stuck' keys.
+	//The new implementation correctly handles multiple keys and can also be used to synchronise
+	//modifier-key states whenever we regain keyboard focus.
+	
 	NSUInteger newModifiers = [theEvent modifierFlags];
 	//XOR the old and new modifiers to determine which flags have changed
 	NSUInteger changedModifiers = newModifiers ^ lastModifiers;

@@ -6,8 +6,7 @@ characters (# ).
 
 //Printed as a header at the top of the configuration file.
 //%1$@ is the absolute URL to Boxer’s configuration setting documentation.
-"Configuration preamble" = "This configuration file was created by Boxer. In here you can specify any additional DOSBox settings or startup commands needed for this game. You can find a list of supported settings at:
-%1$@";
+"Configuration preamble" = "This configuration file was created by Boxer. In here you can specify any additional DOSBox settings or startup commands needed for this game. You can find a list of supported settings in Boxer's built-in help, under \"DOSBox configuration file parameters\".";
 
 //Printed as a header underneath the [autoexec] section.
 "Preamble for startup commands" = "Any DOS commands you put underneath this heading will be executed when DOS emulation starts, just before the game itself launches. By this point all drives will be mounted and the current drive will be Z.";

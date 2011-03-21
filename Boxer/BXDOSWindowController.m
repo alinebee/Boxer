@@ -427,14 +427,23 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	
 	else if (theAction == @selector(toggleFullScreen:))
 	{
-		if (![self isFullScreen])
-			title = NSLocalizedString(@"Enter Full Screen Quickly", @"View menu option for entering fullscreen mode without zooming.");
+		if ([BXAppController isRunningOnLeopard] || [BXAppController isRunningOnSnowLeopard])
+		{
+			if (![self isFullScreen])
+				title = NSLocalizedString(@"Enter Full Screen Quickly", @"View menu option for entering fullscreen mode without zooming.");
+			else
+				title = NSLocalizedString(@"Exit Full Screen Quickly", @"View menu option for returning to windowed mode without zooming.");
+			
+			[theItem setTitle: title];
+			
+			return YES;
+		}
+		//Lion doesn't use the speedy fullscreen toggle
 		else
-			title = NSLocalizedString(@"Exit Full Screen Quickly", @"View menu option for returning to windowed mode without zooming.");
-		
-		[theItem setTitle: title];
-		
-		return YES;
+		{
+			[theItem setHidden: YES];
+			return NO;
+		}
 	}
 	
     return YES;

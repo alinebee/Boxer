@@ -23,7 +23,8 @@
 {
 	NSString *format = NSLocalizedString(@"Importing %@",
 										 @"Title for game import window. %@ is the name of the gamebox/source path being imported.");
-	return [NSString stringWithFormat: format, displayName, nil];
+	NSString *formattedName = [NSString stringWithFormat: format, displayName, nil];
+	return [super windowTitleForDocumentDisplayName: formattedName];
 }
 
 @end

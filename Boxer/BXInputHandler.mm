@@ -97,6 +97,22 @@ void MAPPER_LosingFocus();
 	}
 }
 
+- (void) setMouseActive: (BOOL)flag
+{
+	if (mouseActive != flag)
+	{
+		mouseActive = flag;
+		
+		//If mouse support is disabled while we still have mouse buttons pressed, then release those buttons
+		if (!mouseActive && pressedMouseButtons != BXNoMouseButtonsMask)
+		{
+			[self mouseButtonReleased: BXMouseButtonLeft withModifiers: 0];
+			[self mouseButtonReleased: BXMouseButtonRight withModifiers: 0];
+			[self mouseButtonReleased: BXMouseButtonMiddle withModifiers: 0];
+		}
+	}
+}
+
 - (BOOL) capsLockEnabled
 {
 	//TODO: make this a flag and push the decision to toggle it upstream to BXInputController

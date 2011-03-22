@@ -983,7 +983,7 @@
 #pragma mark -
 #pragma mark Responses to BXEmulator events
 
-- (void) programWillStart: (NSNotification *)notification
+- (void) emulatorWillStartProgram: (NSNotification *)notification
 {	
 	//Don't set the active program if we already have one
 	//This way, we keep track of when a user launches a batch file and don't immediately discard
@@ -1001,7 +1001,7 @@
 	}
 }
 
-- (void) didReturnToShell: (NSNotification *)notification
+- (void) emulatorDidReturnToShell: (NSNotification *)notification
 {
 	//Clear the active program
 	[self setActiveProgramPath: nil];

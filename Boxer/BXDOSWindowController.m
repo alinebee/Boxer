@@ -218,26 +218,36 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 		//If no program is running, then use the local filesystem equivalent of the current directory in DOS.
 		if (!representedPath) representedPath = [[[self document] emulator] pathOfCurrentDirectory];
 		
-		if (representedPath) [[self window] setTitleWithRepresentedFilename: representedPath];
+		if (representedPath)
+		{
+			NSString *displayName = [[NSFileManager defaultManager] displayNameAtPath: representedPath];
+			[[self window] setRepresentedURL: [NSURL fileURLWithPath: representedPath]];
+			[[self window] setTitle: [self windowTitleForDocumentDisplayName: displayName]];
+		}
 		else
 		{
+			NSString *fallbackTitle = NSLocalizedString(@"MS-DOS Prompt",
+														@"The standard window title when the session is at the DOS prompt.");
 			//If that wasn't available either (e.g. we're on drive Z) then just display a generic title
 			[[self window] setRepresentedURL: nil];
-			[[self window] setTitle: NSLocalizedString(
-				@"MS-DOS Prompt", @"The standard window title when the session is at the DOS prompt.")];
+			[[self window] setTitle: [self windowTitleForDocumentDisplayName: fallbackTitle]];
 		}
 	}
-	
-	//If emulation is paused (but not simply interrupted by UI events) then indicate this with a title change
+}
+
+- (NSString *) windowTitleForDocumentDisplayName: (NSString *)displayName
+{
+	//If emulation is paused (but not simply interrupted by UI events) then indicate this in the title
 	if ([[self document] isPaused] || [[self document] isAutoPaused])
 	{
-		NSString *titleFormat = NSLocalizedString(@"%@ (Paused)",
-												  @"Window title format when session is paused. %@ is the regular title of the window.");
+		NSString *format = NSLocalizedString(@"%@ (Paused)",
+											 @"Window title format when session is paused. %@ is the regular title of the window.");
 		
-		NSString *formattedTitle = [NSString stringWithFormat: titleFormat, [[self window] title], nil];
-		[[self window] setTitle: formattedTitle];
+		return [NSString stringWithFormat: format, displayName, nil];
 	}
+	else return displayName;
 }
+
 
 - (void) setFrameAutosaveName: (NSString *)savedName
 {

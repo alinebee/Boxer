@@ -1132,8 +1132,10 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	//Auto-pause if Boxer is in the background
 	if (![NSApp isActive]) return YES;
 	
-	//Auto-pause if the DOS window is hidden
-	if (![[DOSWindowController activeWindow] isVisible]) return YES;
+	//Auto-pause if the DOS window is miniaturized
+	//IMPLEMENTATION NOTE: we used to toggle this when the DOS window was hidden (not visible),
+	//but that gave rise to corner cases if shouldAutoPause was called just before the window was to appear.
+	if ([[DOSWindowController activeWindow] isMiniaturized]) return YES;
 	
 	return NO;
 }

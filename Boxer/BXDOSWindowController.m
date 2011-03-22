@@ -562,9 +562,13 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 		endNotification		= BXSessionDidExitFullScreenNotification;
 	}
 	
+	inFullScreenTransition = YES;
+	
 	[center postNotificationName: startNotification object: [self document]];
 	
 	[self _applyFullScreenState: fullScreen];
+	
+	inFullScreenTransition = NO;
 	
 	[center postNotificationName: endNotification object: [self document]];
 }
@@ -577,6 +581,8 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	
 	//Don't bother if we're already in the desired fullscreen state
 	if ([self isFullScreen] == fullScreen) return;
+	
+	inFullScreenTransition = YES;
 	
 	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 	NSString *startNotification, *endNotification;
@@ -627,6 +633,8 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 					  );
 	}
 	CGReleaseDisplayFadeReservation(fadeToken);
+	
+	inFullScreenTransition = NO;
 	
 	[center postNotificationName: endNotification object: [self document]];
 }
@@ -836,7 +844,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 #pragma mark -
 #pragma mark Drag-drop handlers
 
-- (NSDragOperation)draggingEntered: (id <NSDraggingInfo>)sender
+- (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)sender
 {
 	NSPasteboard *pboard = [sender draggingPasteboard];	
 	if ([[pboard types] containsObject: NSFilenamesPboardType])
@@ -852,7 +860,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	else return NSDragOperationNone;
 }
 
-- (BOOL)performDragOperation: (id <NSDraggingInfo>)sender
+- (BOOL) performDragOperation: (id <NSDraggingInfo>)sender
 {
 	NSPasteboard *pboard = [sender draggingPasteboard];
  
@@ -989,7 +997,6 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 		
 		//fullWindow has been retained by setFullScreenWindow above
 		[fullWindow release];
-		
 	}
 	else
 	{

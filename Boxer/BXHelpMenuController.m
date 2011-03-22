@@ -124,8 +124,11 @@
 	
 	[newItem setRepresentedObject: document];
 
+	//IMPLEMENTATION NOTE: I'd rather set the menu item image and then change its size,
+	//to avoid modifying the original; but 10.5 doesn't accept that and continues using
+	//the original size. So, we resize before assignment.
+	[itemIcon setSize: iconSize];
 	[newItem setImage: itemIcon];
-	[[newItem image] setSize: iconSize];
 
 	return newItem;
 }

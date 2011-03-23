@@ -259,6 +259,7 @@
 	[[self representedObject] lostFocus];
 	
 	simulatedMouseButtons = BXNoMouseButtonsMask;
+	inThreeFingerTap = NO;
 }
 
 - (void) didBecomeKey
@@ -365,16 +366,16 @@
 	{
 		id inputHandler = [self representedObject];
 		NSUInteger modifiers = [theEvent modifierFlags];
-
-		if (simulatedMouseButtons)
+		
+		if (simulatedMouseButtons != BXNoMouseButtonsMask)
 		{
-			if (simulatedMouseButtons & BXMouseButtonLeftMask)
+			if ((simulatedMouseButtons & BXMouseButtonLeftMask) == BXMouseButtonLeftMask)
 				[inputHandler mouseButtonReleased: BXMouseButtonLeft withModifiers: modifiers];
 			
-			if (simulatedMouseButtons & BXMouseButtonRightMask)
+			if ((simulatedMouseButtons & BXMouseButtonRightMask) == BXMouseButtonRightMask)
 				[inputHandler mouseButtonReleased: BXMouseButtonRight withModifiers: modifiers];
 			
-			if (simulatedMouseButtons & BXMouseButtonMiddleMask)
+			if ((simulatedMouseButtons & BXMouseButtonMiddleMask) == BXMouseButtonMiddleMask)
 				[inputHandler mouseButtonReleased: BXMouseButtonMiddle withModifiers: modifiers];
 			
 			simulatedMouseButtons = BXNoMouseButtonsMask;
@@ -519,9 +520,11 @@
 		NSUInteger modifiers = [theEvent modifierFlags];
 		
 		//A three-finger tap simulates pressing the left and right mouse buttons at once
-		if (numFingers == 3 && (simulatedMouseButtons & BXMouseButtonLeftAndRightMask) == 0)
+		//TWEAK: Only perform this if we're not already simulating buttons with the Ctrl/Opt keys,
+		//as the two methods can conflict and lead to premature button releases.
+		if (numFingers == 3 && (!inThreeFingerTap) && (!simulatedMouseButtons))
 		{
-			simulatedMouseButtons |= BXMouseButtonLeftAndRightMask;
+			inThreeFingerTap = YES;
 			[handler mouseButtonPressed: BXMouseButtonLeft withModifiers: modifiers];
 			[handler mouseButtonPressed: BXMouseButtonRight withModifiers: modifiers];
 		}
@@ -530,32 +533,19 @@
 
 - (void) touchesEndedWithEvent: (NSEvent *)theEvent
 {
-	if ([self _controlsCursorWhileMouseInside])
+	if (inThreeFingerTap && [self _controlsCursorWhileMouseInside])
 	{
 		NSUInteger numFingers = [[theEvent touchesMatchingPhase: NSTouchPhaseTouching inView: [self view]] count];
 		
 		BXInputHandler *handler = [self representedObject];
 		NSUInteger modifiers = [theEvent modifierFlags];
 		
-		//Release the three-finger tap finger by finger
-		if (numFingers < 3 && (simulatedMouseButtons & BXMouseButtonLeftAndRightMask) > 0)
+		//Release the three-finger tap
+		if (numFingers < 3)
 		{
-			//If 0 or 2 fingers remain, release the left button (as a 2 finger tap corresponds to a right-click)
-			BOOL releaseLeftButton	= (numFingers != 1);
-			//If 0 or 1 finger remains, release the right button (as a 1-finger tap corresponds to a left-click)
-			BOOL releaseRightButton	= (numFingers < 2);
-			
-			if (releaseLeftButton)
-			{
-				[handler mouseButtonReleased: BXMouseButtonLeft withModifiers: modifiers];
-				simulatedMouseButtons &= ~BXMouseButtonLeftMask;
-			}
-			
-			if (releaseRightButton)
-			{
-				[handler mouseButtonReleased: BXMouseButtonRight withModifiers: modifiers];
-				simulatedMouseButtons &= ~BXMouseButtonRightMask;
-			}
+			[handler mouseButtonReleased: BXMouseButtonLeft withModifiers: modifiers];
+			[handler mouseButtonReleased: BXMouseButtonRight withModifiers: modifiers];
+			inThreeFingerTap = NO;
 		}
 	}
 }

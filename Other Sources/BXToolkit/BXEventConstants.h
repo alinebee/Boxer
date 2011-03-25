@@ -7,6 +7,7 @@
 
 //BXEventConstants (re)defines some useful constants for handling NSEvents.
 
+#import <Cocoa/Cocoa.h>
 
 //These correspond to NSEvent's mouse button numbers
 enum {
@@ -27,13 +28,17 @@ enum {
 
 //Modifier flag constants for left- and right-side modifier keys, copied from IOKit/IOLLEvent.h.
 //Allows us to distinguish these for sending keypresses for modifier keys.
+
+//IMPLEMENTATION NOTE: these are combined with their respective device-independent modifier masks,
+//to ensure that modifier flags we compare against do actually represent a key event of that type:
+//this avoids collisions with other unrelated device-dependent flags.
 enum {
-	BXLeftControlKeyMask	= 0x00000001,
-	BXLeftShiftKeyMask		= 0x00000002,
-	BXRightShiftKeyMask		= 0x00000004,
-	BXLeftCommandKeyMask	= 0x00000008,
-	BXRightCommandKeyMask	= 0x00000010,
-	BXLeftAlternateKeyMask	= 0x00000020,
-	BXRightAlternateKeyMask	= 0x00000040,
-	BXRightControlKeyMask	= 0x00002000
+	BXLeftControlKeyMask	= 0x00000001 | NSControlKeyMask,
+	BXLeftShiftKeyMask		= 0x00000002 | NSShiftKeyMask,
+	BXRightShiftKeyMask		= 0x00000004 | NSShiftKeyMask,
+	BXLeftCommandKeyMask	= 0x00000008 | NSCommandKeyMask,
+	BXRightCommandKeyMask	= 0x00000010 | NSCommandKeyMask,
+	BXLeftAlternateKeyMask	= 0x00000020 | NSAlternateKeyMask,
+	BXRightAlternateKeyMask	= 0x00000040 | NSAlternateKeyMask,
+	BXRightControlKeyMask	= 0x00002000 | NSControlKeyMask
 };

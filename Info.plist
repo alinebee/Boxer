@@ -57,7 +57,7 @@
 	<key>SUScheduledCheckInterval</key>
 	<integer>86400</integer>
 	<key>SUFeedURL</key>
-	<string>http://boxerapp.com/sparkledev</string>
+	<string>http://boxerapp.com/appcast</string>
 	<key>SUPublicDSAKeyFile</key>
 	<string>dsa_pub.pem</string>
 	<key>NSAppleScriptEnabled</key>

@@ -14,6 +14,7 @@
 				<string>pad.iff</string>
 			</array>
 		</dict>
+		
 		<dict>
 			<key>BXProfileName</key>
 			<string>Fable</string>
@@ -26,6 +27,7 @@
 			<key>BXMountHelperDrivesDuringImport</key>
 			<false/>
 		</dict>
+		
 		<dict>
 			<key>BXProfileName</key>
 			<string>Jetfighter</string>
@@ -37,6 +39,7 @@
 				<string>jetfight.exe</string>
 			</array>
 		</dict>
+		
 		<dict>
 			<key>BXProfileName</key>
 			<string>Bedlam</string>
@@ -154,8 +157,9 @@
 				<string>Daggerfall</string>
 			</dict>
 			<key>BXInstallMedium</key>
-			<integer>2</integer>
+			<integer>2</integer><!-- CD-ROM -->
 		</dict>
+		
 		<dict>
 			<key>BXProfileName</key>
 			<string>King&apos;s Quest VII</string>
@@ -166,6 +170,7 @@
 				<string>kq7.bat</string>
 			</array>
 		</dict>
+		
 		<dict>
 			<key>BXProfileName</key>
 			<string>Screamer 2</string>
@@ -176,6 +181,7 @@
 				<string>cars101.dat</string>
 			</array>
 		</dict>
+		
 		<dict>
 			<key>BXProfileName</key>
 			<string>Need for Speed</string>
@@ -187,6 +193,7 @@
 				<string>nfs_dos.exe</string>
 			</array>
 		</dict>
+		
 		<dict>
 			<key>BXProfileName</key>
 			<string>The 7th Guest</string>
@@ -197,6 +204,7 @@
 				<string>t7g.bat</string>
 			</array>
 		</dict>
+		
 		<dict>
 			<key>BXProfileName</key>
 			<string>Ultima VII</string>
@@ -207,6 +215,7 @@
 				<string>ultima7.com</string>
 			</array>
 		</dict>
+		
 		<dict>
 			<key>BXProfileName</key>
 			<string>Ultima VII Part 2: The Serpent Isle</string>
@@ -217,6 +226,7 @@
 				<string>serpent.com</string>
 			</array>
 		</dict>
+		
 		<dict>
 			<key>BXProfileName</key>
 			<string>Wing Commander II</string>
@@ -227,6 +237,7 @@
 				<string>wc2.*</string>
 			</array>
 		</dict>
+		
 		<dict>
 			<key>BXProfileName</key>
 			<string>Wings of Glory</string>
@@ -241,6 +252,21 @@
 
 	<key>BXGenericProfiles</key>
 	<array>
+		<dict>
+			<key>BXProfileDescription</key>
+			<string>Games that rely on being installed from floppy disk.</string>
+			<key>BXProfileMatches</key>
+			<array>
+				<string>Stunts</string>
+			</array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>adskidms.vce</string>
+			</array>
+			<key>BXInstallMedium</key>
+			<integer>1</integer><!-- Floppy -->
+		</dict>
+		
 		<dict>
 			<key>BXProfileDescription</key>
 			<string>Early VGA games that are incompatible with SuperVGA.</string>

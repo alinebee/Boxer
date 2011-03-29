@@ -32,6 +32,8 @@ typedef NSUInteger NSTouchPhase;
 
 @interface NSEvent (BXPostLeopardTouchAPIs)
 
++ (NSUInteger) modifierFlags;
+
 - (NSSet *)touchesMatchingPhase: (NSTouchPhase)phase inView: (NSView *)view;
 
 @end

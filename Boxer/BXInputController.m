@@ -78,9 +78,13 @@
 //to remove any latent mouse input from a leftover mouse position.
 - (void) _syncDOSCursorToPointInCanvas: (NSPoint)pointInCanvas;
 
+//Resynchronises the current state of the Shift, Ctrl, Alt, CapsLock etc.
+//key, which are represented by event modifier flags.
+- (void) _syncModifierFlags: (NSUInteger)newModifiers;
+
 //Forces a cursor update whenever the window changes size. This works
 //around a bug whereby the current cursor resets whenever the window
-//resizes  (presumably because the tracking areas are being recalculated)
+//resizes (presumably because the tracking areas are being recalculated)
 - (BOOL) _windowDidResize: (NSNotification *)notification;
 @end
 
@@ -265,7 +269,12 @@
 - (void) didBecomeKey
 {
 	//Account for any changes to key modifier flags while we didn't have keyboard focus.
-	[self flagsChanged: [NSApp currentEvent]];
+	
+	//IMPLEMENTATION NOTE CGEventSourceFlagsState returns the currently active modifiers
+	//outside of the event stream. It works the same as the 10.6-only NSEvent +modifierFlags,
+	//but is available on 10.5 and includes side-specific Shift, Ctrl and Alt flags.
+	CGEventFlags currentModifiers = CGEventSourceFlagsState(kCGEventSourceStateCombinedSessionState);
+	[self _syncModifierFlags: (NSUInteger)currentModifiers];
 }
 
 #pragma mark -
@@ -604,9 +613,12 @@
 }
 
 
-//Determine which flags have changed since the last time we checked,
-//and convert those changes into DOS key events.
 - (void) flagsChanged: (NSEvent *)theEvent
+{
+	[self _syncModifierFlags: [theEvent modifierFlags]];
+}
+
+- (void) _syncModifierFlags: (NSUInteger)newModifiers
 {	
 	//IMPLEMENTATION NOTE: this method used to check the keyCode of the event to determine which
 	//modifier key was just toggled. This worked fine for single keypresses, but could miss keys
@@ -614,11 +626,7 @@
 	//The new implementation correctly handles multiple keys and can also be used to synchronise
 	//modifier-key states whenever we regain keyboard focus.
 	
-	NSUInteger newModifiers = [theEvent modifierFlags];
-	//XOR the old and new modifiers to determine which flags have changed
-	NSUInteger changedModifiers = newModifiers ^ lastModifiers;
-	
-	if (changedModifiers)
+	if (newModifiers != lastModifiers)
 	{
 		id handler = [self representedObject];
 
@@ -649,12 +657,17 @@
 		{
 			NSUInteger flag			= flags[i];
 			unsigned short keyCode	= keyCodes[i];
+			  
+			BOOL isPressed	= (newModifiers & flag) == flag;
+			BOOL wasPressed	= (lastModifiers & flag) == flag;
 			
-			//If this flag has changed, then check whether it was pressed or released and post a new keyboard event
-			if ((changedModifiers & flag) == flag)
+			//If this flag has been toggled, then post a new keyboard event
+			//IMPLEMENTATION NOTE: we used to XOR newModifiers and lastModifiers together
+			//and just check if the flag appeared in that, but that was incorrectly ignoring
+			//events when both the left and right version of a key were pressed at the same time.
+			if (isPressed != wasPressed)
 			{
-				BOOL pressed = (newModifiers & flag) == flag;
-				[handler sendKeyEventWithCode: keyCode pressed: pressed modifiers: newModifiers];
+				[handler sendKeyEventWithCode: keyCode pressed: isPressed modifiers: newModifiers];
 			}
 		}
 

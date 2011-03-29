@@ -1034,6 +1034,13 @@
 	}
 }
 
+- (BOOL) _shouldAutoPause
+{
+	//Don't auto-pause the emulation while importing, even if the preference is on:
+	//this allows lengthy copy operations to continue in the background.
+	return NO;
+}
+
 //This uses a different (and simpler) mount behaviour than BXSession to prioritise the
 //source path ahead of other drives.
 - (void) _mountDrivesForSession

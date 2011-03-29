@@ -171,21 +171,25 @@
 {
 	if (representedObject != [self representedObject])
 	{
+		//Bind our sensitivity and tracking options to the session's own settings
+		id session = [[self controller] document];
+		
 		if ([self representedObject])
 		{
 			[self unbind: @"mouseSensitivity"];
 			[self unbind: @"trackMouseWhileUnlocked"];
 			[self unbind: @"mouseActive"];
 			[[self representedObject] removeObserver: self forKeyPath: @"mousePosition"];
+			
+			[session removeObserver: self forKeyPath: @"suspended"];
+			
+			[self didResignKey];
 		}
 		
 		[super setRepresentedObject: representedObject];
 		
 		if (representedObject)
 		{
-			//Bind our sensitivity and tracking options to the session settings
-			id session = [[[[self view] window] windowController] document];
-			
 			NSDictionary *trackingOptions = [NSDictionary dictionaryWithObject: [NSNumber numberWithBool: YES]
 																		forKey: NSNullPlaceholderBindingOption];
 			[self bind: @"trackMouseWhileUnlocked" toObject: session
@@ -202,6 +206,10 @@
 			//TODO: eliminate these bindings as they won’t function across process boundaries
 			[self bind: @"mouseActive" toObject: representedObject withKeyPath: @"mouseActive" options: nil];
 			[representedObject addObserver: self forKeyPath: @"mousePosition" options: 0 context: nil];
+			
+			[session addObserver: self forKeyPath: @"suspended" options: 0 context: nil];
+			
+			[self didBecomeKey];
 		}
 	}
 }
@@ -211,8 +219,16 @@
 						 change: (NSDictionary *)change
 						context: (void *)context
 {
-	//This is the only value we're observing, so don't bother checking the key path
-	[self _emulatorCursorMovedToPointInCanvas: [object mousePosition]];
+	if (!updatingMousePosition && [keyPath isEqualToString: @"mousePosition"])
+	{
+		//Ensure we're synced to the OS X cursor whenever the emulator's mouse position changes
+		[self _emulatorCursorMovedToPointInCanvas: [object mousePosition]];
+	}
+	else if ([keyPath isEqualToString: @"suspended"])
+	{
+		if ([object isSuspended]) [self didResignKey];
+		else [self didBecomeKey];
+	}
 }
 
 	
@@ -275,6 +291,9 @@
 	//but is available on 10.5 and includes side-specific Shift, Ctrl and Alt flags.
 	CGEventFlags currentModifiers = CGEventSourceFlagsState(kCGEventSourceStateCombinedSessionState);
 	[self _syncModifierFlags: (NSUInteger)currentModifiers];
+	
+	//Also sync the cursor state while we're at it, in case it was over the window.
+	[self cursorUpdate: nil];
 }
 
 #pragma mark -
@@ -770,7 +789,7 @@
 	
 	//Let everybody know we've grabbed the mouse
 	NSString *notification = (lock) ? BXSessionDidLockMouseNotification : BXSessionDidUnlockMouseNotification;
-	id session = [[[[self view] window] windowController] document];
+	id session = [[self controller] document];
 	
 	[[NSNotificationCenter defaultCenter] postNotificationName: notification object: session]; 
 }

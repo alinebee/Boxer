@@ -93,11 +93,22 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 
 - (void) setDocument: (BXSession *)document
 {	
+	//Assign references to our document for our view controllers, or clear those references when the document is cleared.
+	//(We're careful about the order in which we do this, because these controllers may need to use the existing object
+	//heirarchy to set up/release bindings.
+	if ([self document])
+	{
+		[programPanelController setRepresentedObject: nil];
+		[inputController setRepresentedObject: nil];
+	}
+
 	[super setDocument: document];
 
-	//Assign references to our document for our view controllers, or clear those references when the document is cleared.
-	[programPanelController setRepresentedObject: document];
-	[inputController setRepresentedObject: [[document emulator] inputHandler]];
+	if (document)
+	{
+		[programPanelController setRepresentedObject: document];
+		[inputController setRepresentedObject: [[document emulator] inputHandler]];
+	}
 }
 
 #pragma mark -

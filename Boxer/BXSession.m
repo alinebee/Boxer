@@ -1100,9 +1100,6 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		if (suspended)
 		{
 			[emulator willPause];
-			
-			//Also ensure the mouse is unlocked whenever we become suspended
-			[[DOSWindowController inputController] setMouseLocked: NO];
 		}
 		else
 		{

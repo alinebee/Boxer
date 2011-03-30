@@ -12,7 +12,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="2058"/>
+			<integer value="1931"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1122,7 +1122,7 @@
 								<object class="NSMenuItem" id="406564016">
 									<reference key="NSMenu" ref="67815420"/>
 									<string key="NSTitle">Speed Up CPU</string>
-									<string key="NSKeyEquiv"></string>
+									<string key="NSKeyEquiv"></string>
 									<int key="NSKeyEquivModMask">1048576</int>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="569538535"/>
@@ -1131,7 +1131,7 @@
 								<object class="NSMenuItem" id="23996182">
 									<reference key="NSMenu" ref="67815420"/>
 									<string key="NSTitle">Slow Down CPU</string>
-									<string key="NSKeyEquiv"></string>
+									<string key="NSKeyEquiv"></string>
 									<int key="NSKeyEquivModMask">1048576</int>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="569538535"/>
@@ -3556,7 +3556,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{617, 621}, {276, 193}}</string>
+					<string>{{617, 621}, {272, 193}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>

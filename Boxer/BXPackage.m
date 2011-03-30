@@ -126,21 +126,10 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 
 - (NSArray *) volumesOfTypes: (NSSet *)acceptedTypes
 {
-	NSMutableArray *volumes	= [NSMutableArray arrayWithCapacity: 10];
-	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
-	NSFileManager *manager	= [NSFileManager defaultManager];
-	NSString *basePath		= [self resourcePath];
-	
-	NSString *fileName, *filePath;
-	for (fileName in [manager contentsOfDirectoryAtPath: basePath error: nil])
-	{
-		//Skip over hidden/metadata files
-		if ([[fileName lastPathComponent] hasPrefix: @"."]) continue;
-
-		filePath = [basePath stringByAppendingPathComponent: fileName];
-		if ([workspace file: filePath matchesTypes: acceptedTypes]) [volumes addObject: filePath];
-	}
-	return volumes;
+	BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: [self resourcePath]];
+	[enumerator setSkipSubdirectories: YES];
+	[enumerator setFileTypes: acceptedTypes];
+	return [enumerator allObjects];
 }
 
 - (NSString *) gamePath { return [self bundlePath]; }

@@ -323,7 +323,7 @@
 	NSUInteger suffix = 2;
 	while ([manager fileExistsAtPath: path])
 	{
-		path = [[basePath stringByAppendingFormat: @" %u", suffix++, nil] stringByAppendingPathExtension: extension];
+		path = [[basePath stringByAppendingFormat: @" (%u)", suffix++, nil] stringByAppendingPathExtension: extension];
 	}
 	
 	NSDictionary *hideFileExtension = [NSDictionary dictionaryWithObject: [NSNumber numberWithBool: YES]

@@ -893,6 +893,8 @@
 	[self setImportStage: BXImportCleaningGamebox];
 
 	NSSet *bundleableTypes = [[BXAppController mountableFolderTypes] setByAddingObjectsFromSet: [BXAppController mountableImageTypes]];
+	//Special case to catch GOG's standalone .GOG images (which are just renamed ISOs)
+	NSSet *gogImageTypes = [NSSet setWithObject:@"com.gog.gog-disk-image"];
 	
 	NSFileManager *manager	= [NSFileManager defaultManager];
 	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
@@ -909,11 +911,43 @@
 		//so that the base folder doesn't get involved in the heuristic.
 		NSString *relativePath = [enumerator relativePath];
 		if ([[self class] isJunkFileAtPath: relativePath])
-				[manager removeItemAtPath: path error: nil];
-		
-		else if ([workspace file: path matchesTypes: bundleableTypes])
 		{
-			//If this file is a mountable type, move it into the gamebox's root folder where we can find it 
+			[manager removeItemAtPath: path error: nil];
+			continue;
+		}
+		
+		
+		BOOL isBundleable = [workspace file: path matchesTypes: bundleableTypes];
+		BOOL isGOGImage = !isBundleable && [workspace file: path matchesTypes: gogImageTypes];
+		
+		//If this file is a mountable type, move it into the gamebox's root folder where we can find it
+		if (isBundleable || isGOGImage)
+		{
+			//Rename standalone .GOG images to .ISO when importing, to make everyone's lives that little bit more obvious.
+			if (isGOGImage)
+			{
+				NSString *basePath = [path stringByDeletingPathExtension];
+				NSArray *cuePaths = [NSArray arrayWithObjects: 
+									 [basePath stringByAppendingPathExtension: @"inst"],
+									 [basePath stringByAppendingPathExtension: @"INST"],
+									 nil];
+				NSString *newPath = [basePath stringByAppendingPathExtension: @"iso"];
+				
+				//Check that this really is a standalone .GOG file: if it's paired with a matching .INST,
+				//then we will import that later instead (and that will bring the .GOG along for the ride anyway.)
+				BOOL hasCue = NO;
+				for (NSString *cuePath in cuePaths) if ([manager fileExistsAtPath: cuePath])
+				{
+					hasCue = YES;
+					break;
+				}
+				
+				//If it's standalone, and we rename it successfully, then continue importing it from the new name
+				if (!hasCue && [manager moveItemAtPath: path toPath: newPath error: nil]) path = newPath;
+				//Otherwise, skip the file and get on with the next one
+				else continue;
+			}
+				 
 			BXDrive *drive = [BXDrive driveFromPath: path atLetter: nil];
 			Class importClass = [BXSimpleDriveImport importClassForDrive: drive];
 			
@@ -924,6 +958,7 @@
 			[importQueue addOperation: importOperation];
 		}
 	}
+	
 	//Any import operations we do in this stage would be moves within the same volume,
 	//so they should be done already, but let's wait anyway.
 	[importQueue waitUntilAllOperationsAreFinished];
@@ -936,6 +971,7 @@
 	
 	//Bounce to notify the user that we're done
 	[NSApp requestUserAttention: NSInformationalRequest];
+	
 }
 
 

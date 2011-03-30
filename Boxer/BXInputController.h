@@ -104,6 +104,8 @@
 - (IBAction) sendF8:	(id)sender;
 - (IBAction) sendF9:	(id)sender;
 - (IBAction) sendF10:	(id)sender;
+- (IBAction) sendF11:	(id)sender;
+- (IBAction) sendF12:	(id)sender;
 
 - (IBAction) sendHome:		(id)sender;
 - (IBAction) sendEnd:		(id)sender;

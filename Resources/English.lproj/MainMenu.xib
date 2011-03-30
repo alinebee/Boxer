@@ -2,17 +2,17 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
-		<string key="IBDocument.SystemVersion">10J567</string>
+		<string key="IBDocument.SystemVersion">10J869</string>
 		<string key="IBDocument.InterfaceBuilderVersion">823</string>
 		<string key="IBDocument.AppKitVersion">1038.35</string>
-		<string key="IBDocument.HIToolboxVersion">462.00</string>
+		<string key="IBDocument.HIToolboxVersion">461.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
 			<string key="NS.object.0">823</string>
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="1931"/>
+			<integer value="2058"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1090,6 +1090,22 @@
 												<reference key="NSOnImage" ref="569538535"/>
 												<reference key="NSMixedImage" ref="489554260"/>
 											</object>
+											<object class="NSMenuItem" id="227456023">
+												<reference key="NSMenu" ref="503647851"/>
+												<string key="NSTitle">F11</string>
+												<string key="NSKeyEquiv"/>
+												<int key="NSMnemonicLoc">2147483647</int>
+												<reference key="NSOnImage" ref="569538535"/>
+												<reference key="NSMixedImage" ref="489554260"/>
+											</object>
+											<object class="NSMenuItem" id="842298577">
+												<reference key="NSMenu" ref="503647851"/>
+												<string key="NSTitle">F12</string>
+												<string key="NSKeyEquiv"/>
+												<int key="NSMnemonicLoc">2147483647</int>
+												<reference key="NSOnImage" ref="569538535"/>
+												<reference key="NSMixedImage" ref="489554260"/>
+											</object>
 										</object>
 									</object>
 								</object>
@@ -2098,6 +2114,22 @@
 					</object>
 					<int key="connectionID">2102</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">sendF11:</string>
+						<reference key="source" ref="935372999"/>
+						<reference key="destination" ref="227456023"/>
+					</object>
+					<int key="connectionID">2128</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">sendF12:</string>
+						<reference key="source" ref="935372999"/>
+						<reference key="destination" ref="842298577"/>
+					</object>
+					<int key="connectionID">2129</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -2996,6 +3028,8 @@
 							<reference ref="114946671"/>
 							<reference ref="1007533018"/>
 							<reference ref="1028527437"/>
+							<reference ref="227456023"/>
+							<reference ref="842298577"/>
 						</object>
 						<reference key="parent" ref="665114175"/>
 					</object>
@@ -3118,6 +3152,16 @@
 						<int key="objectID">2103</int>
 						<reference key="object" ref="726999377"/>
 						<reference key="parent" ref="67815420"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2124</int>
+						<reference key="object" ref="227456023"/>
+						<reference key="parent" ref="503647851"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2126</int>
+						<reference key="object" ref="842298577"/>
+						<reference key="parent" ref="503647851"/>
 					</object>
 				</object>
 			</object>
@@ -3302,6 +3346,8 @@
 					<string>2080.IBPluginDependency</string>
 					<string>2081.IBPluginDependency</string>
 					<string>2103.IBPluginDependency</string>
+					<string>2124.IBPluginDependency</string>
+					<string>2126.IBPluginDependency</string>
 					<string>283.IBPluginDependency</string>
 					<string>283.ImportedFromIB2</string>
 					<string>284.IBPluginDependency</string>
@@ -3524,7 +3570,9 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{894, 321}, {133, 443}}</string>
+					<string>{{893, 281}, {133, 483}}</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -3596,7 +3644,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">2123</int>
+			<int key="maxID">2129</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -4158,6 +4206,8 @@
 							<string>sendDelete:</string>
 							<string>sendEnd:</string>
 							<string>sendF10:</string>
+							<string>sendF11:</string>
+							<string>sendF12:</string>
 							<string>sendF1:</string>
 							<string>sendF2:</string>
 							<string>sendF3:</string>
@@ -4203,6 +4253,8 @@
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
+							<string>id</string>
+							<string>id</string>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="actionInfosByName">
@@ -4213,6 +4265,8 @@
 							<string>sendDelete:</string>
 							<string>sendEnd:</string>
 							<string>sendF10:</string>
+							<string>sendF11:</string>
+							<string>sendF12:</string>
 							<string>sendF1:</string>
 							<string>sendF2:</string>
 							<string>sendF3:</string>
@@ -4249,6 +4303,14 @@
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">sendF10:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">sendF11:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">sendF12:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">

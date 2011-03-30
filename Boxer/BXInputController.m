@@ -714,6 +714,8 @@
 - (IBAction) sendF8:	(id)sender	{ [self _sendSDLKey: SDLK_F8]; }
 - (IBAction) sendF9:	(id)sender	{ [self _sendSDLKey: SDLK_F9]; }
 - (IBAction) sendF10:	(id)sender	{ [self _sendSDLKey: SDLK_F10]; }
+- (IBAction) sendF11:	(id)sender	{ [self _sendSDLKey: SDLK_F11]; }
+- (IBAction) sendF12:	(id)sender	{ [self _sendSDLKey: SDLK_F12]; }
 
 - (IBAction) sendHome:		(id)sender { [self _sendSDLKey: SDLK_HOME]; }
 - (IBAction) sendEnd:		(id)sender { [self _sendSDLKey: SDLK_END]; }

@@ -31,11 +31,11 @@
 /* SDL by default treats numlock and scrolllock different from all other keys.
  * In recent versions this can disabled by a environment variable which we set in sdlmain.cpp
  * Define the following if this is the case */
-#if SDL_VERSION_ATLEAST(1, 2, 14)
-//--Modified 2010-05-30 by Alun Bestor - this fix still needs to be reimplemented in Boxer.
-//#define CAN_USE_LOCK 1
+//--Modified 2011-03-30 by Alun Bestor to reflect that this is now fixed within Boxer
+//#if SDL_VERSION_ATLEAST(1, 2, 14)
+#define CAN_USE_LOCK 1
+//#endif
 //--End of modifications
-#endif
 
 static Bitu call_int16,call_irq1,call_irq6;
 

@@ -10,7 +10,6 @@
 #import "BXEmulator.h"
 
 #import "BXEventConstants.h"
-#import <AppKit/AppKit.h>	//For NSApp; remove this dependency ASAP
 #import <Carbon/Carbon.h>	//For OSX keycode constants
 #import <SDL/SDL.h>			//For SDL keycode constants
 #import "config.h"
@@ -68,6 +67,7 @@ void MAPPER_LosingFocus();
 @synthesize emulator;
 @synthesize mouseActive, pressedMouseButtons;
 @synthesize mousePosition;
+@synthesize capsLockEnabled, numLockEnabled;
 
 - (id) init
 {
@@ -111,12 +111,6 @@ void MAPPER_LosingFocus();
 			[self mouseButtonReleased: BXMouseButtonMiddle withModifiers: 0];
 		}
 	}
-}
-
-- (BOOL) capsLockEnabled
-{
-	//TODO: make this a flag and push the decision to toggle it upstream to BXInputController
-	return ([[NSApp currentEvent] modifierFlags] & NSAlphaShiftKeyMask);
 }
 
 
@@ -177,7 +171,7 @@ void MAPPER_LosingFocus();
 					modifiers: (NSUInteger)modifierFlags
 {
 	if ([[self emulator] isExecuting])
-	{		
+	{
 		SDL_Event keyEvent = [[self class] _SDLKeyEventForKeyCode: keyCode
 														  pressed: pressed
 														modifiers: modifierFlags];

@@ -22,6 +22,9 @@
 	BOOL mouseActive;
 	NSPoint mousePosition;
 	
+	BOOL capsLockEnabled;
+	BOOL numLockEnabled;
+	
 	NSUInteger pressedMouseButtons;
 }
 //Our parent emulator.
@@ -35,6 +38,10 @@
 
 //A bitmask of which mouse buttons are currently pressed in DOS.
 @property (readonly, assign) NSUInteger pressedMouseButtons;
+
+//Whether these key states should be active at the start of the DOS session.
+@property (assign) BOOL capsLockEnabled;
+@property (assign) BOOL numLockEnabled;
 
 
 //Called whenever we lose keyboard input focus. Clears all DOSBox events.

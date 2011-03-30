@@ -270,8 +270,8 @@ bool boxer_capsLockEnabled()
 
 bool boxer_numLockEnabled()
 {
-	//NumLock doesn't exist in Macland. We may one day add a menu toggle for this.
-	return NO;
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+	return [[emulator inputHandler] numLockEnabled];
 }
 
 

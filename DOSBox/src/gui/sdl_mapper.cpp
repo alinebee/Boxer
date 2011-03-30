@@ -2374,7 +2374,7 @@ void MAPPER_Init(void) {
 			(*bit)->ActivateBind(32767,true,true);
 			//FIXME: it looks like SDL finally fixed 'sticky' num- and capslock states and we should do the same.
 			//#if SDL_VERSION_ATLEAST(1, 2, 14)
-			//(*bit)->DeActivateBind(false);
+			(*bit)->DeActivateBind(false);
 			//#endif
 		}
 	}
@@ -2382,7 +2382,7 @@ void MAPPER_Init(void) {
 		for (CBindList_it bit=num_lock_event->bindlist.begin();bit!=num_lock_event->bindlist.end();bit++) {
 			(*bit)->ActivateBind(32767,true,true);
 			//#if SDL_VERSION_ATLEAST(1, 2, 14)
-			//(*bit)->DeActivateBind(false);
+			(*bit)->DeActivateBind(false);
 			//#endif
 		}
 	}

@@ -645,10 +645,9 @@
 	//The new implementation correctly handles multiple keys and can also be used to synchronise
 	//modifier-key states whenever we regain keyboard focus.
 	
+	id handler = [self representedObject];
 	if (newModifiers != lastModifiers)
 	{
-		id handler = [self representedObject];
-
 #define NUM_FLAGS 7
 		
 		//Map flags to their corresponding keycodes, because NSDictionaries are so tedious to write
@@ -686,10 +685,20 @@
 			//events when both the left and right version of a key were pressed at the same time.
 			if (isPressed != wasPressed)
 			{
-				[handler sendKeyEventWithCode: keyCode pressed: isPressed modifiers: newModifiers];
+				//Special handling for capslock key: whenever the flag is toggled,
+				//act like the key was pressed and then released. (We never receive
+				//receive actual keyup events for this key.)
+				if (flag == NSAlphaShiftKeyMask)
+				{
+					[handler sendKeypressWithCode: keyCode modifiers: newModifiers];
+					[handler setCapsLockEnabled: (newModifiers & NSAlphaShiftKeyMask) == NSAlphaShiftKeyMask];
+				}
+				else
+				{
+					[handler sendKeyEventWithCode: keyCode pressed: isPressed modifiers: newModifiers];
+				}
 			}
 		}
-
 		lastModifiers = newModifiers;
 	}
 }

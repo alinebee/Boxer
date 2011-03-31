@@ -40,6 +40,9 @@ BXDriveGeometry BXCDROMGeometry			= {2048, 1, 65535, 0};		//~650MB, no free spac
 #define BXHardDiskMediaID	0xF8
 #define BXCDROMMediaID		0xF8
 
+//Raw disk images larger than this size in bytes will be treated as hard disks
+#define BXFloppyImageSizeCutoff 2880 * 1024
+
 //Error constants returned by DriveManager::UnmountDrive.
 enum {
 	BXUnmountSuccess		= 0,
@@ -167,7 +170,8 @@ enum {
 			DOSBoxDrive = [self _hardDriveFromPath: path freeSpace: [drive freeSpace]];
 			break;
 		case BXDriveFloppyDisk:
-			DOSBoxDrive = [self _floppyDriveFromPath: path freeSpace: [drive freeSpace]];
+			if (isImage)	DOSBoxDrive = [self _floppyDriveFromImageAtPath: path];
+			else			DOSBoxDrive = [self _floppyDriveFromPath: path freeSpace: [drive freeSpace]];
 			break;
 	}
 	
@@ -652,6 +656,16 @@ enum {
 		delete drive;
 		return nil;
 	}
+	return drive;
+}
+
+//Create a new DOS_Drive floppy from a path to a raw disk image.
+- (DOS_Drive *) _floppyDriveFromImageAtPath: (NSString *)path
+{	
+	const char *drivePath = [path cStringUsingEncoding: BXDirectStringEncoding];
+	
+	DOS_Drive *drive = new fatDrive(drivePath, 0, 0, 0, 0, 0);
+	
 	return drive;
 }
 

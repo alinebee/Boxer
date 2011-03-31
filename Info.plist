@@ -123,6 +123,20 @@
 			<key>NSDocumentClass</key>
 			<string>BXSession</string>
 			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>CFBundleTypeName</key>
+			<string>Raw Disk Image</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.winimage.raw-disk-image</string>
+			</array>
+		</dict>
+		<dict>
+			<key>NSDocumentClass</key>
+			<string>BXSession</string>
+			<key>LSHandlerRank</key>
 			<string>Owner</string>
 			<key>CFBundleTypeName</key>
 			<string>Disk Bundle</string>
@@ -380,6 +394,25 @@
 				</array>
 			</dict>
 		</dict>
+		<dict>
+			<key>UTTypeDescription</key>
+			<string>WinImage raw disk image</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.winimage.raw-disk-image</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.disk-image</string>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>ima</string>
+				</array>
+			</dict>
+		</dict>
+
 	</array>
 </dict>
 </plist>

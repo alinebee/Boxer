@@ -48,6 +48,7 @@
 				<string>public.folder</string>
 				<string>public.iso-image</string>
 				<string>com.apple.disk-image-cdr</string>
+				<string>com.winimage.raw-disk-image</string>
 			</array>
 		</dict>
 	</array>

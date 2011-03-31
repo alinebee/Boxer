@@ -6,6 +6,7 @@
  */
 
 #import "NSWorkspace+BXMountedVolumes.h"
+#import "NSWorkspace+BXFileTypes.h"
 #import "NSString+BXPaths.h"
 #import "BXMountedVolumesError.h"
 #include <sys/param.h>
@@ -73,6 +74,7 @@ NSString * const HFSVolumeType		= @"hfs";
 - (NSString *) mountImageAtPath: (NSString *)path error: (NSError **)error
 {
 	path = [path stringByStandardizingPath];
+	BOOL isRawImage = [self file: path matchesTypes: [NSSet setWithObject: @"com.winimage.raw-disk-image"]];
 	
 	NSTask *hdiutil		= [[NSTask alloc] init];
 	NSPipe *outputPipe	= [NSPipe pipe];
@@ -80,8 +82,16 @@ NSString * const HFSVolumeType		= @"hfs";
 	NSData *output;
 	NSDictionary *hdiInfo;
 	
+	NSMutableArray *arguments = [NSMutableArray arrayWithObjects: @"attach", path, @"-plist", nil];
+	//Raw images need additional flags so that hdiutil will recognise them
+	if (isRawImage)
+	{
+		[arguments addObject: @"-imagekey"];
+		[arguments addObject: @"diskimage-class=CRawDiskImage"];
+	}
+	
 	[hdiutil setLaunchPath:		@"/usr/bin/hdiutil"];
-	[hdiutil setArguments:		[NSArray arrayWithObjects: @"attach", path, @"-plist", nil]];
+	[hdiutil setArguments:		arguments];
 	[hdiutil setStandardOutput: outputPipe];
 	[hdiutil setStandardError: errorPipe];
 	

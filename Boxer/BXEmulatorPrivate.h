@@ -99,6 +99,7 @@ typedef struct BXDriveGeometry {
 
 //Create and return new DOSBox drive instance of the appropriate type.
 //This can then be mounted by _addDOSBoxDrive:atIndex:
+- (DOS_Drive *) _floppyDriveFromImageAtPath:(NSString *)path;
 - (DOS_Drive *) _CDROMDriveFromImageAtPath:	(NSString *)path forIndex: (NSUInteger)driveIndex;
 - (DOS_Drive *) _CDROMDriveFromPath:		(NSString *)path forIndex: (NSUInteger)driveIndex withAudio: (BOOL)useCDAudio;
 - (DOS_Drive *) _hardDriveFromPath:			(NSString *)path freeSpace: (NSInteger)freeSpace;

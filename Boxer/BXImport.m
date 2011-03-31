@@ -417,6 +417,7 @@
 						 @"public.folder",
 						 @"public.iso-image",
 						 @"com.apple.disk-image-cdr",
+						 @"com.winimage.raw-disk-image",
 						 nil];
 	}
 	return acceptedTypes;

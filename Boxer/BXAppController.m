@@ -86,6 +86,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	static NSSet *types = nil;
 	if (!types) types = [[NSSet alloc] initWithObjects:
 						 @"net.washboardabs.boxer-floppy-folder",
+						 @"com.winimage.raw-disk-image",
 						 nil];
 	return types;
 }
@@ -107,6 +108,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 						 @"com.apple.disk-image-cdr",			//.cdr
 						 @"com.goldenhawk.cdrwin-cuesheet",		//.cue
 						 @"net.washboardabs.boxer-disk-bundle", //.cdmedia
+						 @"com.winimage.raw-disk-image",		//.ima
 						 nil];
 	return types;
 }

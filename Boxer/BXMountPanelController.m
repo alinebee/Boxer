@@ -119,12 +119,12 @@
 {
 	BXEmulator *theEmulator = [[self representedObject] emulator];
 	NSString *path = [[openPanel URL] path];
+	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	
 	if (path)
 	{
 		//Don't allow drive type to be configured for disc images: instead, force it to CD-ROM while an image is selected
-		BOOL isImage = [[NSWorkspace sharedWorkspace] file: path
-											  matchesTypes: [BXAppController mountableImageTypes]];
+		BOOL isImage = [workspace file: path matchesTypes: [BXAppController mountableImageTypes]];
 		if (isImage)
 		{
 			[driveType setEnabled: NO];
@@ -132,7 +132,9 @@
 			if (!previousDriveTypeSelection)
 			{
 				previousDriveTypeSelection = [driveType selectedItem];
-				[driveType selectItemAtIndex: [driveType indexOfItemWithTag: BXDriveCDROM]];
+				BOOL isFloppyImage = [workspace file: path matchesTypes: [BXAppController floppyVolumeTypes]];
+				NSUInteger optionIndex = [driveType indexOfItemWithTag: isFloppyImage ? BXDriveFloppyDisk : BXDriveCDROM];
+				[driveType selectItemAtIndex: optionIndex];
 			}
 		}
 		else

@@ -71,7 +71,9 @@ NSString * const HFSVolumeType		= @"hfs";
 	return nil;
 }
 
-- (NSString *) mountImageAtPath: (NSString *)path error: (NSError **)error
+- (NSString *) mountImageAtPath: (NSString *)path
+					  invisibly: (BOOL)invisible
+						  error: (NSError **)error
 {
 	path = [path stringByStandardizingPath];
 	BOOL isRawImage = [self file: path matchesTypes: [NSSet setWithObject: @"com.winimage.raw-disk-image"]];
@@ -88,6 +90,10 @@ NSString * const HFSVolumeType		= @"hfs";
 	{
 		[arguments addObject: @"-imagekey"];
 		[arguments addObject: @"diskimage-class=CRawDiskImage"];
+	}
+	if (invisible)
+	{
+		[arguments addObject: @"-nobrowse"];
 	}
 	
 	[hdiutil setLaunchPath:		@"/usr/bin/hdiutil"];

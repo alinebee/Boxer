@@ -36,6 +36,7 @@ extern NSString * const HFSVolumeType;
 //Returns nil and populates error if mounting failed.
 //If invisible is true, the mounted volume will not appear in Finder.
 - (NSString *) mountImageAtPath: (NSString *)path
+					   readOnly: (BOOL)readOnly
 					  invisibly: (BOOL)invisible
 						  error: (NSError **)error;
 

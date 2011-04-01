@@ -193,7 +193,7 @@
 	//If the specified path was a disk image, mount it and use the mounted volume as our source
 	if ([workspace file: path matchesTypes: [NSSet setWithObject: @"public.disk-image"]])
 	{
-		NSString *mountedVolumePath = [workspace mountImageAtPath: path invisibly: YES error: outError];
+		NSString *mountedVolumePath = [workspace mountImageAtPath: path readOnly: YES invisibly: YES error: outError];
 		
 		if (mountedVolumePath)
 		{

@@ -79,7 +79,11 @@ typedef struct {
     unsigned short oemInfo;					// OEM info (oemIdentifier-specific)
     unsigned short reserved2[10];			// Reserved
     unsigned long newHeaderAddress;			// File address of new exe header
-} BXDOSExecutableHeader;
+} __attribute__ ((packed)) BXDOSExecutableHeader;
+
+//IMPLEMENTATION NOTE: the packed attribute tells GCC not to pad the struct's layout to fit
+//convenient boundaries. This is necessary as we will be pouring data directly into the struct,
+//and padding would break the field alignment.
 
 
 #pragma mark -

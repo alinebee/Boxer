@@ -72,6 +72,7 @@ NSString * const HFSVolumeType		= @"hfs";
 }
 
 - (NSString *) mountImageAtPath: (NSString *)path
+					   readOnly: (BOOL)readOnly
 					  invisibly: (BOOL)invisible
 						  error: (NSError **)error
 {
@@ -94,6 +95,10 @@ NSString * const HFSVolumeType		= @"hfs";
 	if (invisible)
 	{
 		[arguments addObject: @"-nobrowse"];
+	}
+	if (readOnly)
+	{
+		[arguments addObject: @"-readonly"];
 	}
 	
 	[hdiutil setLaunchPath:		@"/usr/bin/hdiutil"];

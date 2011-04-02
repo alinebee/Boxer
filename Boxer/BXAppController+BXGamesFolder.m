@@ -311,7 +311,7 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 		if (outError)
 		{
 			NSString *descriptionFormat = NSLocalizedString(
-				@"The “%1$@” folder is managed by OS X and not suitable for keeping your DOS games.",
+				@"“%1$@” is a special OS X folder and not suitable for storing your DOS games.",
 				@"Error message shown after choosing a reserved folder as the location for the DOS Games folder. %1$@ is the display name of the folder."
 			);
 			

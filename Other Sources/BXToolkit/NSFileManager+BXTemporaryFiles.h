@@ -12,6 +12,8 @@
 
 #import <Foundation/Foundation.h>
 
+extern NSString * const BXTemporaryFilesErrorDomain;
+
 @interface NSFileManager (BXTemporaryFiles)
 
 //Creates a new temporary directory in the system temp directory with the specified prefix,

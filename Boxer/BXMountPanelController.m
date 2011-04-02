@@ -212,7 +212,7 @@
 	[self syncMountOptionsForPanel: (NSOpenPanel *)[sender window]];
 }
 
-- (void) panel: (NSOpenPanel *)openPanel directoryDidChange:(NSString *)path
+- (void) panel: (NSOpenPanel *)openPanel directoryDidChange: (NSString *)path
 {
 	[self syncMountOptionsForPanel: openPanel];
 }

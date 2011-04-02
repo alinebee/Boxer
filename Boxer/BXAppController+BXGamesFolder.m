@@ -18,11 +18,19 @@
 #import "BXSampleGamesCopy.h"
 #import "BXShelfAppearanceOperation.h"
 #import "BXHelperAppCheck.h"
+#import "NSString+BXPaths.h"
 
 //For determining maximum Finder folder-background sizes
 #import <OpenGL/OpenGL.h>
 #import <OpenGL/CGLMacro.h>
 #import <OpenGL/glu.h>
+
+
+#pragma mark -
+#pragma mark Error constants
+
+NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
+
 
 
 #pragma mark -
@@ -42,6 +50,10 @@
 - (void) _gamesFolderPromptDidEnd: (NSAlert *)alert
 					   returnCode: (NSInteger)returnCode
 						   window: (NSWindow *)window;
+
+//Returns whether the specified path is a reserved system directory.
+//Used by validateGamesFolderPath:error:
++ (BOOL) _isReservedPath: (NSString *)path;
 
 @end
 
@@ -189,6 +201,27 @@
 	return paths;
 }
 
++ (NSSet *) reservedPaths
+{
+	NSMutableSet *reservedPaths = nil;
+	if (!reservedPaths)
+	{
+		reservedPaths = [[NSMutableSet alloc] initWithObjects: NSHomeDirectory(), nil];
+										 
+		[reservedPaths addObjectsFromArray: NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSAllDomainsMask, YES)];
+		[reservedPaths addObjectsFromArray: NSSearchPathForDirectoriesInDomains(NSAllApplicationsDirectory, NSAllDomainsMask, YES)];
+		[reservedPaths addObjectsFromArray: NSSearchPathForDirectoriesInDomains(NSAllLibrariesDirectory, NSAllDomainsMask, YES)];
+		[reservedPaths addObjectsFromArray: NSSearchPathForDirectoriesInDomains(NSDesktopDirectory, NSAllDomainsMask, YES)];
+		[reservedPaths addObjectsFromArray: NSSearchPathForDirectoriesInDomains(NSDownloadsDirectory, NSAllDomainsMask, YES)];
+		[reservedPaths addObjectsFromArray: NSSearchPathForDirectoriesInDomains(NSUserDirectory, NSAllDomainsMask, YES)];
+#ifdef NSSharedPublicDirectory
+		//10.6-only
+		[reservedPaths addObjectsFromArray: NSSearchPathForDirectoriesInDomains(NSSharedPublicDirectory, NSAllDomainsMask, YES)];
+#endif
+	}
+	return reservedPaths;
+}
+
 + (NSSet *) keyPathsForValuesAffectingGamesFolderChosen
 {
 	return [NSSet setWithObject: @"gamesFolderPath"];
@@ -244,6 +277,100 @@
 		}
 	}
 }
+
++ (BOOL) _isReservedPath: (NSString *)path
+{
+	//Reject reserved paths
+	if ([[[self class] reservedPaths] containsObject: path]) return YES;
+	
+	//Reject paths located inside system library folders (though we allow them within the user's own Library folder)
+	NSArray *libraryPaths = NSSearchPathForDirectoriesInDomains(NSAllLibrariesDirectory, NSLocalDomainMask | NSSystemDomainMask, YES);
+	for (NSString *libraryPath in libraryPaths) if ([path isRootedInPath: libraryPath]) return YES;
+	
+	//Reject base home folder paths
+	NSArray *userDirectoryPaths = NSSearchPathForDirectoriesInDomains(NSUserDirectory, NSAllDomainsMask, YES);
+	NSString *parentPath = [path stringByDeletingLastPathComponent];
+	for (NSString *userDirectoryPath in userDirectoryPaths) if ([parentPath isEqualToString: userDirectoryPath]) return YES;
+
+	//If we got this far then it's not a recognised reserved path
+	return NO;
+}
+
+- (BOOL) validateGamesFolderPath: (id *)ioValue error: (NSError **)outError
+{
+	NSString *path = *ioValue;
+	
+	//Accept nil paths, since these will clear the preference
+	if (!path) return YES;
+	
+	path = [path stringByStandardizingPath];
+	
+	NSFileManager *manager = [NSFileManager defaultManager];
+	if ([[self class] _isReservedPath: path])
+	{
+		if (outError)
+		{
+			NSString *descriptionFormat = NSLocalizedString(
+				@"The “%1$@” folder is managed by OS X and not suitable for keeping your DOS games.",
+				@"Error message shown after choosing a reserved folder as the location for the DOS Games folder. %1$@ is the display name of the folder."
+			);
+			
+			NSString *explanation = NSLocalizedString(
+				@"Please create a subfolder, or choose a different folder you have created yourself.",
+				@"Explanatory text for error message shown after failing to mount an image."
+			);
+			
+			NSString *displayName			= [manager displayNameAtPath: path];
+			if (!displayName) displayName	= [path lastPathComponent];
+			
+			NSString *description = [NSString stringWithFormat: descriptionFormat, displayName, nil];
+					
+			NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+									  description,	NSLocalizedDescriptionKey,
+									  explanation,	NSLocalizedRecoverySuggestionErrorKey,
+									  path,			NSFilePathErrorKey,
+									  nil];
+			
+			*outError = [NSError errorWithDomain: BXGamesFolderErrorDomain
+											code: BXGamesFolderPathInvalid
+										userInfo: userInfo];
+		}
+		
+		return NO;
+	}
+	//Warn if we do not have write permission to access that path
+	else if (![manager isWritableFileAtPath: path])
+	{
+		if (outError)
+		{
+			NSString *descriptionFormat = NSLocalizedString(@"Boxer cannot write to the “%1$@” folder.",
+															@"Error shown when chosen games folder was read-only. %1$@ is the name of the folder.");
+			
+			NSString *explanation = NSLocalizedString(@"Please check the file permissions, or choose a different folder.",
+													  @"Explanatory text shown when chosen games folder was read-only.");
+			
+			NSString *displayName			= [manager displayNameAtPath: path];
+			if (!displayName) displayName	= [path lastPathComponent];
+			
+			NSString *description = [NSString stringWithFormat: descriptionFormat, displayName, nil];
+			
+			NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+									  description, NSLocalizedDescriptionKey,
+									  explanation, NSLocalizedRecoverySuggestionErrorKey,
+									  path, NSFilePathErrorKey,
+									  nil];
+			
+			*outError = [NSError errorWithDomain: NSCocoaErrorDomain
+											code: NSFileWriteNoPermissionError
+										userInfo: userInfo];
+		}
+		return NO;
+	}
+	
+	//If we got this far,the path is OK 
+	return YES;
+}
+
 
 - (void) assignGamesFolderPath: (NSString *)newPath
 			   withSampleGames: (BOOL)addSampleGames

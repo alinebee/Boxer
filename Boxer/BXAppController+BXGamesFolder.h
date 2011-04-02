@@ -11,6 +11,9 @@
 
 #import "BXAppController.h"
 
+#pragma mark -
+#pragma mark Constants
+
 //What shelf appearance to use. Currently only used by assignGamesFolderPath.
 enum BXShelfTypes {
 	BXShelfAuto		= -1,
@@ -21,6 +24,17 @@ enum BXShelfTypes {
 
 typedef NSInteger BXShelfAppearance;
 
+
+//Constants for errors concerning the games folder
+extern NSString * const BXGamesFolderErrorDomain;
+
+enum {
+	BXGamesFolderPathInvalid	//A chosen path for the DOS Games folder was not appropriate. 
+};
+
+
+#pragma mark -
+#pragma mark Interface declaration
 
 @interface BXAppController (BXGamesFolder)
 
@@ -65,6 +79,10 @@ typedef NSInteger BXShelfAppearance;
 //(which may or may not already exist) for selection when Boxer is first launched.
 + (NSArray *) defaultGamesFolderPaths;
 
+//Reserved system paths which may not be chosen as the games folder location
+//(though subfolders within these paths may be acceptable.)
++ (NSSet *) reservedPaths;
+
 
 #pragma mark -
 #pragma mark Games folder handling
@@ -91,6 +109,10 @@ typedef NSInteger BXShelfAppearance;
 			   importerDroplet: (BOOL)addImporterDroplet
 			   shelfAppearance: (BXShelfAppearance)applyShelfAppearance;
 
+//Validate and sanitise the specified games folder path.
+//This will return NO and populate outError if the chosen path was reserved
+//or not writeable by Boxer.
+- (BOOL) validateGamesFolderPath: (id *)ioValue error: (NSError **)outError;
 
 #pragma mark -
 #pragma mark Customising the games folder

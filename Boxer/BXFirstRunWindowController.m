@@ -10,7 +10,6 @@
 #import "NSWindow+BXWindowEffects.h"
 #import "BXAppController+BXGamesFolder.h"
 #import "BXValueTransformers.h"
-#import "NSString+BXPaths.h"
 
 
 //Used to determine where to fill the games folder selector with suggested locations
@@ -167,6 +166,7 @@ enum {
 	[openPanel setCanChooseFiles: NO];
 	[openPanel setTreatsFilePackagesAsDirectories: NO];
 	[openPanel setAllowsMultipleSelection: NO];
+	[openPanel setDelegate: self];
 	
 	[openPanel setPrompt: NSLocalizedString(@"Select", @"Button label for Open panels when selecting a folder.")];
 	[openPanel setMessage: NSLocalizedString(@"Select a folder in which to keep your DOS games:",
@@ -179,6 +179,29 @@ enum {
 						modalDelegate: self
 					   didEndSelector: @selector(setChosenGamesFolder:returnCode:contextInfo:)
 						  contextInfo: nil];
+}
+
+//Delegate validation method for 10.6 and above.
+- (BOOL) panel: (NSOpenPanel *)openPanel validateURL: (NSURL *)url error: (NSError **)outError
+{
+	NSString *path = [url path];
+	return [[NSApp delegate] validateGamesFolderPath: &path error: outError];
+}
+
+//Delegate validation method for 10.5. Will be ignored on 10.6 and above.
+- (BOOL) panel: (NSOpenPanel *)openPanel isValidFilename: (NSString *)path
+{
+	NSError *validationError = nil;
+	BOOL isValid = [[NSApp delegate] validateGamesFolderPath: &path error: &validationError];
+	if (!isValid)
+	{
+		[openPanel presentError: validationError
+				 modalForWindow: openPanel
+					   delegate: nil
+			 didPresentSelector: NULL
+					contextInfo: NULL];
+	}
+	return isValid;
 }
 
 - (void) setChosenGamesFolder: (NSOpenPanel *)openPanel

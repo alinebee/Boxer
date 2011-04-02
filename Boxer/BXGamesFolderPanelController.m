@@ -9,9 +9,8 @@
 #import "BXGamesFolderPanelController.h"
 #import "BXAppController+BXGamesFolder.h"
 
-
 @implementation BXGamesFolderPanelController
-@synthesize copySampleGamesToggle;
+@synthesize copySampleGamesToggle, useShelfAppearanceToggle;
 
 + (id) controller
 {
@@ -23,6 +22,7 @@
 - (void) dealloc
 {
 	[self setCopySampleGamesToggle: nil], copySampleGamesToggle = nil;
+	[self setUseShelfAppearanceToggle: nil], useShelfAppearanceToggle = nil;
 	[super dealloc];
 }
 
@@ -56,6 +56,10 @@
 	[openPanel setPrompt: NSLocalizedString(@"Select", @"Button label for Open panels when selecting a folder.")];
 	[openPanel setMessage: NSLocalizedString(@"Select a folder in which to keep your DOS games:",
 											 @"Help text shown at the top of choose-a-games-folder panel.")];
+	
+	
+	//Set the initial state of the shelf-appearance toggle to match the current preference setting
+	[[self useShelfAppearanceToggle] setState: [[NSApp delegate] appliesShelfAppearanceToGamesFolder]];
 	
 	if (window)
 	{
@@ -92,6 +96,29 @@
 	[self panelSelectionDidChange: openPanel];
 }
 
+//Delegate validation method for 10.6 and above.
+- (BOOL) panel: (NSOpenPanel *)openPanel validateURL: (NSURL *)url error: (NSError **)outError
+{
+	NSString *path = [url path];
+	return [[NSApp delegate] validateGamesFolderPath: &path error: outError];
+}
+
+//Delegate validation method for 10.5. Will be ignored on 10.6 and above.
+- (BOOL) panel: (NSOpenPanel *)openPanel isValidFilename: (NSString *)path
+{
+	NSError *validationError = nil;
+	BOOL isValid = [[NSApp delegate] validateGamesFolderPath: &path error: &validationError];
+	if (!isValid)
+	{
+		[openPanel presentError: validationError
+				 modalForWindow: openPanel
+					   delegate: nil
+			 didPresentSelector: NULL
+					contextInfo: NULL];
+	}
+	return isValid;
+}
+
 - (void) setChosenGamesFolder: (NSOpenPanel *)openPanel
 				   returnCode: (int)returnCode
 				  contextInfo: (void *)contextInfo
@@ -100,7 +127,10 @@
 	{
 		NSString *path = [[openPanel URL] path];
 		BXAppController *controller = [NSApp delegate];
-		BOOL addSampleGames = [[self copySampleGamesToggle] state];
+		BOOL addSampleGames		= [[self copySampleGamesToggle] state];
+		BOOL useShelfAppearance	= [[self useShelfAppearanceToggle] state];
+		
+		[[NSApp delegate] setAppliesShelfAppearanceToGamesFolder: useShelfAppearance];
 		
 		[controller assignGamesFolderPath: path
 						  withSampleGames: addSampleGames

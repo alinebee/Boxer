@@ -132,10 +132,11 @@
 			if (!previousDriveTypeSelection)
 			{
 				previousDriveTypeSelection = [driveType selectedItem];
-				BOOL isFloppyImage = [workspace file: path matchesTypes: [BXAppController floppyVolumeTypes]];
-				NSUInteger optionIndex = [driveType indexOfItemWithTag: isFloppyImage ? BXDriveFloppyDisk : BXDriveCDROM];
-				[driveType selectItemAtIndex: optionIndex];
 			}
+			
+			BOOL isFloppyImage = [workspace file: path matchesTypes: [BXAppController floppyVolumeTypes]];
+			NSUInteger optionIndex = [driveType indexOfItemWithTag: isFloppyImage ? BXDriveFloppyDisk : BXDriveCDROM];
+			[driveType selectItemAtIndex: optionIndex];
 		}
 		else
 		{

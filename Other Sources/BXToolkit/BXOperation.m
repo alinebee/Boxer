@@ -21,7 +21,7 @@ NSString * const BXOperationContextInfoKey	= @"BXOperationContextInfoKey";
 NSString * const BXOperationSuccessKey		= @"BXOperationSuccessKey";
 NSString * const BXOperationErrorKey		= @"BXOperationErrorKey";
 NSString * const BXOperationProgressKey		= @"BXOperationProgressKey";
-NSString * const BXOperationIsIndeterminateKey	= @"BXOperationIsIndeterminateKey";
+NSString * const BXOperationIndeterminateKey	= @"BXOperationIndeterminateKey";
 
 
 @implementation BXOperation
@@ -126,7 +126,7 @@ NSString * const BXOperationIsIndeterminateKey	= @"BXOperationIsIndeterminateKey
 	
 	NSMutableDictionary *progressInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
 										 [NSNumber numberWithFloat: [self currentProgress]],	BXOperationProgressKey,
-										 [NSNumber numberWithBool: [self isIndeterminate]],		BXOperationIsIndeterminateKey,
+										 [NSNumber numberWithBool: [self isIndeterminate]],		BXOperationIndeterminateKey,
 										 nil];
 	if (info) [progressInfo addEntriesFromDictionary: info];
 	

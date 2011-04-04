@@ -44,9 +44,9 @@
 //The full destination path to transfer to, including filename.
 @property (copy) NSString *destinationPath;
 
-//The interval at which to check the progress of our dependent operations and
-//issue overall progress updates.
-//BXOperationSet's overall running time will be a multiple of this interval.
+//The interval at which to check the progress of the file transfer
+//and issue overall progress updates.
+//Our overall running time will be a multiple of this interval.
 @property (assign) NSTimeInterval pollInterval;
 
 #pragma mark -

@@ -52,7 +52,7 @@ extern NSString * const BXOperationProgressKey;
 //An NSNumber boolean indicating whether the operation cannot currently
 //measure its progress in a meaningful way.
 //Included with BXOperationInProgress.
-extern NSString * const BXOperationIsIndeterminateKey;
+extern NSString * const BXOperationIndeterminateKey;
 
 
 @protocol BXOperationDelegate;
@@ -89,7 +89,7 @@ extern NSString * const BXOperationIsIndeterminateKey;
 
 //Indicates whether the process cannot currently provide a meaningful indication
 //of progress (and thus whether the value of currentProgress should be ignored).
-@property (readonly) BOOL isIndeterminate;
+@property (readonly, getter=isIndeterminate) BOOL indeterminate;
 
 //Whether the operation succeeeded or failed. Only relevant once isFinished is YES.
 @property (assign) BOOL succeeded;

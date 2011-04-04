@@ -10,6 +10,7 @@
 #import "BXSimpleDriveImport.h"
 #import "BXDrive.h"
 #import "RegexKitLite.h"
+#import "NSWorkspace+BXFileTypes.h"
 
 //Matches the following lines with optional leading and trailing whitespace:
 //FILE MAX.gog BINARY
@@ -48,6 +49,19 @@ NSString * const BXCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[A
 	return importedName;
 }
 
++ (BOOL) isSuitableForDrive: (BXDrive *)drive
+{
+	NSString *drivePath = [drive path];
+	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+	
+	//Wrap CUE/BINs up into our custom bundle class
+	NSSet *typesForBundling = [NSSet setWithObject: @"com.goldenhawk.cdrwin-cuesheet"];
+	
+	if ([workspace file: drivePath matchesTypes: typesForBundling]) return YES;
+	return NO;
+}
+
+
 + (NSArray *) _pathsInCue: (NSString *)cueContents
 {
 	NSMutableArray *paths = [NSMutableArray arrayWithCapacity: 1];
@@ -75,15 +89,6 @@ NSString * const BXCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[A
 
 #pragma mark -
 #pragma mark Initialization and deallocation
-
-+ (id <BXDriveImport>) importForDrive: (BXDrive *)drive
-						toDestination: (NSString *)destinationFolder
-							copyFiles: (BOOL)copyFiles
-{
-	return [[[self alloc] initForDrive: drive
-						 toDestination: destinationFolder
-							 copyFiles: copyFiles] autorelease];
-}
 
 - (id <BXDriveImport>) initForDrive: (BXDrive *)drive
 					  toDestination: (NSString *)destinationFolder

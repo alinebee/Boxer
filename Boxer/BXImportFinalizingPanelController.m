@@ -69,7 +69,7 @@
 
 + (NSSet *) keyPathsForValuesAffectingValueForKey: (NSString *)key
 {
-	NSSet *progressKeys = [NSSet setWithObjects: @"progressDescription", @"progress", @"isIndeterminate", nil];
+	NSSet *progressKeys = [NSSet setWithObjects: @"progressDescription", @"progress", @"indeterminate", nil];
 	
 	if ([progressKeys containsObject: key])
 	{

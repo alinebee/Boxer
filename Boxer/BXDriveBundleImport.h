@@ -5,7 +5,8 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-
+//BXDriveBundleImport wraps BIN/CUE images and any associated audio tracks into a .cdmedia bundle,
+//rewriting cue paths as necessary.
 
 #import "BXMultiFileTransfer.h"
 #import "BXDriveImport.h"
@@ -17,5 +18,4 @@
 	NSString *_destinationFolder;
 	NSString *_importedDrivePath;
 }
-
 @end

@@ -18,7 +18,7 @@ NSString * const BXFileTransferBytesTransferredKey	= @"BXFileTransferBytesTransf
 NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey";
 
 
-//The interval in seconds at which to poll the progress of the file transfer
+//The default interval in seconds at which to poll the progress of the file transfer
 #define BXFileTransferDefaultPollInterval 0.5
 
 

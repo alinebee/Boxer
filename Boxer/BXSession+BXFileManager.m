@@ -17,9 +17,7 @@
 #import "BXDrive.h"
 #import "BXDrivesInUseAlert.h"
 #import "BXGameProfile.h"
-#import "BXSimpleDriveImport.h"
-
-#import "BXSingleFileTransfer.h"
+#import "BXDriveImport.h"
 
 #import "NSWorkspace+BXMountedVolumes.h"
 #import "NSWorkspace+BXFileTypes.h"
@@ -805,9 +803,9 @@
 {
 	if ([self isGamePackage])
 	{
-		Class importClass = [BXSimpleDriveImport importClassForDrive: drive];
-		NSString *importedName = [importClass nameForDrive: drive];
-		NSString *importedPath = [[[self gamePackage] resourcePath] stringByAppendingPathComponent: importedName];
+		Class importClass		= [BXDriveImport importClassForDrive: drive];
+		NSString *importedName	= [importClass nameForDrive: drive];
+		NSString *importedPath	= [[[self gamePackage] resourcePath] stringByAppendingPathComponent: importedName];
 	
 		//A file already exists with the same name as we would import it with,
 		//which probably means the drive was bundled earlier
@@ -852,10 +850,9 @@
 	{
 		NSString *destinationFolder = [[self gamePackage] resourcePath];
 		
-		Class importClass = [BXSimpleDriveImport importClassForDrive: drive];
-		BXOperation <BXDriveImport> *driveImport = [importClass importForDrive: drive
-																 toDestination: destinationFolder
-																	 copyFiles: YES];
+		BXOperation <BXDriveImport> *driveImport = [BXDriveImport importForDrive: drive
+																   toDestination: destinationFolder
+																	   copyFiles: YES];
 		
 		[driveImport setDelegate: self];
 		[driveImport setContextInfo: drive];

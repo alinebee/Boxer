@@ -242,7 +242,7 @@ NSString * const HFSVolumeType		= @"hfs";
 {
 	NSFileManager *manager = [NSFileManager defaultManager];
 	NSDictionary *fsAttrs = [manager attributesOfFileSystemForPath: path error: nil];
-	NSUInteger volumeSize = [[fsAttrs valueForKey: NSFileSystemSize] integerValue];
+	unsigned long long volumeSize = [[fsAttrs valueForKey: NSFileSystemSize] unsignedLongLongValue];
 	return volumeSize <= BXFloppySizeCutoff;	
 }
 

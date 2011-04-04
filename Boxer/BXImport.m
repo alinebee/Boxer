@@ -950,11 +950,10 @@
 			}
 				 
 			BXDrive *drive = [BXDrive driveFromPath: path atLetter: nil];
-			Class importClass = [BXSimpleDriveImport importClassForDrive: drive];
 			
-			BXOperation <BXDriveImport> *importOperation = [importClass importForDrive: drive
-																		 toDestination: pathForDrives
-																			 copyFiles: NO];
+			BXOperation <BXDriveImport> *importOperation = [BXDriveImport importForDrive: drive
+																		   toDestination: pathForDrives
+																			   copyFiles: NO];
 			
 			[importQueue addOperation: importOperation];
 		}

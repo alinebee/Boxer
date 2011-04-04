@@ -7,10 +7,10 @@
 
 
 #import "BXSimpleDriveImport.h"
-#import "BXDriveBundleImport.h"
 #import "BXAppController.h"
-#import "NSWorkspace+BXFileTypes.h"
 #import "BXDrive.h"
+#import "NSWorkspace+BXFileTypes.h"
+
 
 @interface BXSimpleDriveImport ()
 @property (copy, readwrite) NSString *importedDrivePath;
@@ -26,15 +26,9 @@
 #pragma mark -
 #pragma mark Helper class methods
 
-+ (Class) importClassForDrive: (BXDrive *)drive
++ (BOOL) isSuitableForDrive: (BXDrive *)drive
 {
-	NSString *drivePath = [drive path];
-	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	//Wrap CUE/BINs up into our custom bundle class
-	NSSet *typesForBundling = [NSSet setWithObject: @"com.goldenhawk.cdrwin-cuesheet"];
-	
-	if ([workspace file: drivePath matchesTypes: typesForBundling]) return [BXDriveBundleImport class];
-	else return [BXSimpleDriveImport class];
+	return YES;
 }
 
 + (NSString *) nameForDrive: (BXDrive *)drive
@@ -88,15 +82,6 @@
 
 #pragma mark -
 #pragma mark Initialization and deallocation
-
-+ (id <BXDriveImport>) importForDrive: (BXDrive *)drive
-						toDestination: (NSString *)destinationFolder
-							copyFiles: (BOOL)copyFiles
-{
-	return [[[self alloc] initForDrive: drive
-						 toDestination: destinationFolder
-							 copyFiles: copyFiles] autorelease];
-}
 
 - (id <BXDriveImport>) initForDrive: (BXDrive *)drive
 					  toDestination: (NSString *)destinationFolder

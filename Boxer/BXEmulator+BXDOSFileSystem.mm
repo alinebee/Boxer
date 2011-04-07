@@ -246,25 +246,6 @@ enum {
 	return NO;
 }
 
-- (BOOL) unmountDrivesForPath: (NSString *)path
-{
-	NSString *standardizedPath = [path stringByStandardizingPath];
-	BOOL succeeded = NO;
-	
-	//Implementation note: normally we'd use [driveCache objectEnumerator] for speed,
-	//but unmountDrive: may modify driveCache behind its back which is a Bad Thing.
-	//This way, we get a safer copy of the drive array to work with instead.
-	for (BXDrive *drive in [self mountedDrives])
-	{
-		//TODO: refactor this so that we can move the decision off to BXDrive itself
-		if ([[drive path] isEqualToString: standardizedPath])
-		{
-			succeeded = [self unmountDrive: drive] || succeeded;
-		}
-	}
-	return succeeded;
-}
-
 - (void) refreshMountedDrives
 {
 	if ([self isExecuting])

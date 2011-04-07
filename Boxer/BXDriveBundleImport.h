@@ -11,7 +11,7 @@
 #import "BXMultiFileTransfer.h"
 #import "BXDriveImport.h"
 
-@interface BXDriveBundleImport : BXMultiFileTransfer <BXFileTransfer, BXDriveImport>
+@interface BXDriveBundleImport : BXMultiFileTransfer <BXDriveImport>
 {
 	@private
 	BXDrive *_drive;

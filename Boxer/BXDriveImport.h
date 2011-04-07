@@ -8,6 +8,7 @@
 
 #import "BXOperation.h"
 
+
 @class BXDrive;
 
 @protocol BXDriveImport <NSObject>
@@ -23,7 +24,7 @@
 //The path of the new drive once it is finally imported.
 @property (copy, readonly) NSString *importedDrivePath;
 
-//Whether this is a copy or move operation.
+//Whether the source files will be left behind after importing.
 @property (assign) BOOL copyFiles;
 
 //The number of bytes that will be copied in total, and have been copied so far.
@@ -59,5 +60,12 @@
 							copyFiles: (BOOL)copyFiles;
 
 + (Class) importClassForDrive: (BXDrive *)drive;
+
+@end
+
+//A protocol for import-related error subclasses.
+@protocol BXDriveImportError
+
++ (id) errorWithDrive: (BXDrive *)drive;
 
 @end

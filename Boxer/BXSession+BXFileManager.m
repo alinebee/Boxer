@@ -246,8 +246,9 @@
 	{
 		if ([drive isLocked]) return NO; //Prevent locked drives from being removed altogether
 		
-		//If the drive is in use, then warn about it
-		if ([[self emulator] driveInUseAtLetter: [drive letter]]) [drivesInUse addObject: drive];
+		//If a program is running and the drive is in use, then warn about it
+		if (![[self emulator] isAtPrompt] && [[self emulator] driveInUseAtLetter: [drive letter]])
+			[drivesInUse addObject: drive];
 	}
 	
 	if ([drivesInUse count] > 0)
@@ -511,6 +512,8 @@
 
 - (BOOL) unmountDrive: (BXDrive *)drive
 {
+	//Refuse to eject drives that are currently being imported.
+	if ([self driveIsImporting: drive]) return NO;
 	return [[self emulator] unmountDrive: drive];
 }
 
@@ -526,7 +529,6 @@
 	}
 	return succeeded;
 }
-
 
 #pragma mark -
 #pragma mark OS X filesystem notifications
@@ -645,12 +647,26 @@
 - (void) volumeWillUnmount: (NSNotification *)theNotification
 {
 	NSString *volumePath = [[theNotification userInfo] objectForKey: @"NSDevicePath"];
-	[[self emulator] unmountDrivesForPath: volumePath];
+	//Should already be standardized, but still
+	NSString *standardizedPath = [volumePath stringByStandardizingPath];
 	
-	//Also remove the volume from any drive aliases
 	for (BXDrive *drive in [[self emulator] mountedDrives])
 	{
-		[[drive pathAliases] removeObject: volumePath];
+		//TODO: refactor this so that we can move the decision off to BXDrive itself
+		//(We can't use representsPath: because that includes path aliases too)
+		if ([[drive path] isEqualToString: standardizedPath] || [[drive mountPoint] isEqualToString: standardizedPath])
+		{
+			//NOTE: This will fail to unmount if the drive is currently importing.
+			//This is intentional, because some import methods unmount the volume
+			//themselves while they import. However, it means we can end up with
+			//'ghost' drives if the user physically removes the disk themselves
+			//during import.
+			[self unmountDrive: drive];
+		}
+		else
+		{
+			[[drive pathAliases] removeObject: standardizedPath];
+		}
 	}
 }
 
@@ -907,6 +923,9 @@
 				//If it worked, use the newly-mounted drive from now on
 				if (mountedDrive)
 				{
+					//Make the new drive an alias for the old one.
+					//This prevents it from getting remounted as a duplicate drive.
+					[[mountedDrive pathAliases] addObject: [drive path]];
 					drive = mountedDrive;
 				}
 				//If the mount failed for some reason, then put the old drive back

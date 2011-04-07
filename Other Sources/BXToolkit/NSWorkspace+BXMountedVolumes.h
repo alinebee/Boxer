@@ -48,6 +48,10 @@ extern NSString * const HFSVolumeType;
 //Returns nil if the CD volume has no corresponding data volume.
 - (NSString *) dataVolumeOfAudioCD: (NSString *)volumePath;
 
+//Returns the path of the audio CD volume associated with the specified data CD volume path.
+//Returns nil if the CD volume has no corresponding audio volume.
+- (NSString *) audioVolumeOfDataCD: (NSString *)volumePath;
+
 //Returns the BSD device name (dev/diskXsY) for the specified volume.
 //Returns nil if no matching device name could be determined.
 - (NSString *) BSDNameForVolumePath: (NSString *)volumePath;

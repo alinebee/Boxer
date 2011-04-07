@@ -9,9 +9,7 @@
 #import "NSWorkspace+BXFileTypes.h"
 #import "NSString+BXPaths.h"
 #import "BXMountedVolumesError.h"
-#include <sys/param.h>
 #include <sys/mount.h>
-
 
 #pragma mark -
 #pragma mark Class constants
@@ -201,8 +199,6 @@ NSString * const HFSVolumeType		= @"hfs";
 	return [hdiInfo objectForKey: @"images"];
 }
 
-//Returns the path of the data volume associated with the specified CD volume path.
-//Returns nil if the CD volume has no corresponding data volume.
 - (NSString *) dataVolumeOfAudioCD: (NSString *)audioVolumePath
 {
 	audioVolumePath				= [audioVolumePath stringByStandardizingPath];
@@ -213,6 +209,20 @@ NSString * const HFSVolumeType		= @"hfs";
 	{
 		NSString *dataDeviceName = [self BSDNameForVolumePath: dataVolumePath];
 		if ([dataDeviceName hasPrefix: audioDeviceName]) return dataVolumePath;
+	}
+	return nil;
+}
+
+- (NSString *) audioVolumeOfDataCD: (NSString *)dataVolumePath
+{
+	dataVolumePath				= [dataVolumePath stringByStandardizingPath];
+	NSString *dataDeviceName	= [self BSDNameForVolumePath: dataVolumePath];
+	NSArray *audioVolumes		= [self mountedVolumesOfType: audioCDVolumeType];
+	
+	for (NSString *audioVolumePath in audioVolumes)
+	{
+		NSString *audioDeviceName = [self BSDNameForVolumePath: audioVolumePath];
+		if ([dataDeviceName hasPrefix: audioDeviceName]) return audioVolumePath;
 	}
 	return nil;
 }

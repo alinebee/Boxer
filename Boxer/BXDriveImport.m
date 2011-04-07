@@ -6,7 +6,8 @@
  */
 
 #import "BXDriveImport.h"
-#import "BXISOImport.h"
+#import "BXCDImageImport.h"
+#import "BXBinCueImageImport.h"
 #import "BXDriveBundleImport.h"
 #import "BXSimpleDriveImport.h"
 
@@ -15,7 +16,8 @@
 + (Class) importClassForDrive: (BXDrive *)drive
 {
 	NSArray *importClasses = [NSArray arrayWithObjects:
-							  [BXISOImport class],
+							  [BXBinCueImageImport class],
+							  [BXCDImageImport class],
 							  [BXDriveBundleImport class],
 							  [BXSimpleDriveImport class],
 							  nil];

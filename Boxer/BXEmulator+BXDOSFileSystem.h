@@ -59,10 +59,6 @@
 //Unmount the drive at the specified letter. Returns YES if drive was successfully unmounted, NO otherwise.
 - (BOOL) unmountDriveAtLetter: (NSString *)letter;
 
-//Unmount all drives matching the specified path. Returns YES if any drives were successfully unmounted, NO otherwise.
-- (BOOL) unmountDrivesForPath: (NSString *)path;
-
-
 //Flush the DOS filesystem cache and rescan to synchronise it with the local filesystem state.
 - (void) refreshMountedDrives;
 

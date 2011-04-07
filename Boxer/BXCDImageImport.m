@@ -5,37 +5,20 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-#import "BXISOImport.h"
+#import "BXCDImageImport.h"
 #import "BXFileTransfer.h"
 #import "NSWorkspace+BXMountedVolumes.h"
 #import "BXDrive.h"
 #import "RegexKitLite.h"
 
 
-//The default interval in seconds at which to poll the progress of the image operation
-//This is set fairly high because hdiutil is a bit of a slouch
-#define BXISOImportDefaultPollInterval 5
+NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 
 
 #pragma mark -
-#pragma mark Private method declarations
+#pragma mark Implementations
 
-@interface BXISOImport ()
-@property (assign, readwrite) unsigned long long numBytes;
-@property (assign, readwrite) unsigned long long bytesTransferred;
-@property (assign, readwrite) BXOperationProgress currentProgress;
-@property (assign, readwrite, getter=isIndeterminate) BOOL indeterminate;
-@property (copy, readwrite) NSString *importedDrivePath;
-
-//Polls a task (stored as the userInfo of the timer) to determine the progress of the task
-- (void) _checkImageCreationProgress: (NSTimer *)timer;
-@end
-
-
-#pragma mark -
-#pragma mark Implementation
-
-@implementation BXISOImport
+@implementation BXCDImageImport
 @synthesize drive = _drive;
 @synthesize destinationFolder	= _destinationFolder;
 @synthesize importedDrivePath	= _importedDrivePath;
@@ -43,7 +26,6 @@
 @synthesize bytesTransferred	= _bytesTransferred;
 @synthesize currentProgress		= _currentProgress;
 @synthesize indeterminate		= _indeterminate;
-@synthesize pollInterval		= _pollInterval;
 
 
 #pragma mark -
@@ -83,16 +65,23 @@
 #pragma mark -
 #pragma mark Initialization and deallocation
 
+- (id <BXDriveImport>) init
+{
+	if ((self = [super init]))
+	{
+		[self setIndeterminate: YES];
+	}
+	return self;
+}
+
 - (id <BXDriveImport>) initForDrive: (BXDrive *)drive
 					  toDestination: (NSString *)destinationFolder
 						  copyFiles: (BOOL)copy;
 {
-	if ((self = [super init]))
+	if ((self = [self init]))
 	{
 		[self setDrive: drive];
 		[self setDestinationFolder: destinationFolder];
-		[self setIndeterminate: YES];
-		[self setPollInterval: BXISOImportDefaultPollInterval];
 	}
 	return self;
 }
@@ -121,26 +110,13 @@
 
 - (void) main
 {
-	if ([self isCancelled]) return;
+	if ([self isCancelled] || ![self drive] || ![self destinationFolder]) return;
 	
 	NSString *driveName			= [[self class] nameForDrive: [self drive]];
 	NSString *sourcePath		= [[self drive] path];
 	NSString *destinationPath	= [[self destinationFolder] stringByAppendingPathComponent: driveName];
 	
-	
-	//Determine the /dev/diskx device name of the volume
-	NSString *deviceName = [[NSWorkspace sharedWorkspace] BSDNameForVolumePath: sourcePath];
-	if (!deviceName)
-	{
-		NSDictionary *userInfo = [NSDictionary dictionaryWithObject: sourcePath forKey: NSFilePathErrorKey];
-		NSError *unknownDeviceError = [NSError errorWithDomain: NSCocoaErrorDomain
-														  code: NSFileReadUnknownError
-													  userInfo: userInfo];
-		[self setError: unknownDeviceError];
-		return;
-	}
-	
-	//Measure the size of the volume
+	//Measure the size of the volume to determine how much data we'll be importing
 	NSFileManager *manager = [[NSFileManager alloc] init];
 	NSError *volumeSizeError = nil;
 	NSDictionary *volumeAttrs = [manager attributesOfFileSystemForPath: sourcePath error: &volumeSizeError];
@@ -151,6 +127,20 @@
 	else
 	{
 		[self setError: volumeSizeError];
+		[manager release];
+		return;
+	}
+	
+	//Determine the /dev/diskx device name of the volume
+	NSString *deviceName = [[NSWorkspace sharedWorkspace] BSDNameForVolumePath: sourcePath];
+	if (!deviceName)
+	{
+		NSDictionary *userInfo = [NSDictionary dictionaryWithObject: sourcePath forKey: NSFilePathErrorKey];
+		NSError *unknownDeviceError = [NSError errorWithDomain: NSCocoaErrorDomain
+														  code: NSFileReadUnknownError
+													  userInfo: userInfo];
+		[self setError: unknownDeviceError];
+		[manager release];
 		return;
 	}
 	
@@ -163,9 +153,7 @@
 	}
 	
 	//Prepare the hdiutil task
-	NSTask *hdiutil		= [[NSTask alloc] init];
-	NSPipe *outputPipe	= [NSPipe pipe];
-	
+	NSTask *hdiutil = [[NSTask alloc] init];
 	NSArray *arguments = [NSArray arrayWithObjects:
 						  @"create",
 						  @"-srcdevice", deviceName,
@@ -177,50 +165,41 @@
 	
 	[hdiutil setLaunchPath:		@"/usr/bin/hdiutil"];
 	[hdiutil setArguments:		arguments];
-	[hdiutil setStandardOutput: outputPipe];
+	[hdiutil setStandardOutput: [NSPipe pipe]];
+	[hdiutil setStandardError:	[NSPipe pipe]];
 	
-	//Last chance to bail out...
-	if ([self isCancelled]) return;
+	[self setTask: hdiutil];
+	[hdiutil release];
 	
-	//Let's get importing!
-	[hdiutil launch];
+	//Run the task to completion and monitor its progress
+	[self runTask];
 	
-	//Use a timer to poll the task's progress. (This also keeps the runloop below alive.)
-	NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval: [self pollInterval]
-													  target: self
-													selector: @selector(_checkImageCreationProgress:)
-													userInfo: hdiutil
-													 repeats: YES];
-	
-	//Run the runloop until the image creation is finished, letting the timer call our polling function.
-	//We use a runloop instead of just sleeping, because the runloop lets cancellation messages
-	//get dispatched to us correctly.)
-	while ([hdiutil isRunning] && [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode
-														   beforeDate: [NSDate dateWithTimeIntervalSinceNow: [self pollInterval]]])
+	if (![self error])
 	{
-		//Cancel the image creation if we've been cancelled in the meantime
-		//(this will break out of the loop once the task finishes)
-		if ([self isCancelled]) [hdiutil terminate];
+		//If image creation succeeded, then rename the new image to its final destination name
+		if ([manager fileExistsAtPath: tempDestinationPath])
+		{
+			if (![destinationPath isEqualToString: tempDestinationPath])
+			{
+				BOOL moved = [manager moveItemAtPath: tempDestinationPath toPath: destinationPath error: nil];
+				//If the move failed then don't worry about it: just use the temporary destination path instead
+				if (!moved) destinationPath = tempDestinationPath;
+				
+			}
+			[self setImportedDrivePath: destinationPath];
+		}
+		else
+		{
+			[self setError: [BXCDImageImportRipFailedError errorWithDrive: [self drive]]];
+		}
 	}
-	[timer invalidate];
 	
 	[self setSucceeded: [self error] == nil];
 	
-	//If we succeeded, then rename the new image to its final destination name
-	if ([self succeeded])
-	{
-		if (![destinationPath isEqualToString: tempDestinationPath])
-		{
-			BOOL moved = [manager moveItemAtPath: tempDestinationPath toPath: destinationPath error: nil];
-			//If the move failed then don't worry about it: just use the temporary destination path instead
-			if (!moved) destinationPath = tempDestinationPath;
-		}
-		[self setImportedDrivePath: destinationPath];
-	}
+	[manager release];
 }
 
-
-- (void) _checkImageCreationProgress: (NSTimer *)timer
+- (void) checkTaskProgress: (NSTimer *)timer
 {
 	NSFileHandle *outputHandle = [[[timer userInfo] standardOutput] fileHandleForReading];
 	
@@ -261,4 +240,45 @@
 	return undid;
 }
 
+@end
+
+
+@implementation BXCDImageImportRipFailedError
+
++ (id) errorWithDrive: (BXDrive *)drive
+{
+	NSString *displayName = [drive label];
+	NSString *descriptionFormat = NSLocalizedString(@"The disc “%1$@” could not be converted into a disc image.",
+													@"Error shown when CD-image ripping fails for an unknown reason. %1$@ is the volume label of the drive.");
+	
+	NSString *description	= [NSString stringWithFormat: descriptionFormat, displayName, nil];
+	NSDictionary *userInfo	= [NSDictionary dictionaryWithObjectsAndKeys:
+							   description, NSLocalizedDescriptionKey,
+							   [drive path], NSFilePathErrorKey,
+							   nil];
+	
+	return [NSError errorWithDomain: BXCDImageImportErrorDomain code: BXCDImageImportErrorRipFailed userInfo: userInfo];
+}
+@end
+
+
+@implementation BXCDImageImportDiscInUseError
+
++ (id) errorWithDrive: (BXDrive *)drive
+{
+	NSString *displayName = [drive label];
+	NSString *descriptionFormat = NSLocalizedString(@"The disc “%1$@” could not be converted to a disc image because it is in use by another application.",
+													@"Error shown when CD-image ripping fails because the disc is in use. %1$@ is the volume label of the drive.");
+	
+	NSString *description	= [NSString stringWithFormat: descriptionFormat, displayName, nil];
+	NSString *suggestion	= NSLocalizedString(@"Close Finder windows or other applications that are using the disc, then try importing again.", @"Explanatory message shown when CD-image ripping fails because the disc is in use.");
+	
+	NSDictionary *userInfo	= [NSDictionary dictionaryWithObjectsAndKeys:
+							   description,		NSLocalizedDescriptionKey,
+							   suggestion,		NSLocalizedRecoverySuggestionErrorKey,
+							   [drive path],	NSFilePathErrorKey,
+							   nil];
+	
+	return [NSError errorWithDomain: BXCDImageImportErrorDomain code: BXCDImageImportErrorDiscInUse userInfo: userInfo];
+}
 @end

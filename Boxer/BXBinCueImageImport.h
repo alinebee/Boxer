@@ -5,18 +5,17 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
+//BXBinCueImageImport rips CD-ROM discs to BIN/CUE images that are bundled into a .cdmedia bundle.
 
-//BXSimpleDriveImport handles the importing of a drive to a specified destination.
+#import "BXCDImageImport.h"
 
-#import "BXSingleFileTransfer.h"
-#import "BXDriveImport.h"
-
-@class BXDrive;
-
-@interface BXSimpleDriveImport : BXSingleFileTransfer <BXDriveImport>
+@interface BXBinCueImageImport : BXCDImageImport
 {
-	BXDrive *_drive;
-	NSString *_destinationFolder;
-	NSString *_importedDrivePath;
+	@private
+	BOOL _waitingForUnmount;
+	BOOL _unmountSucceeded;
+	
+	@protected
+	NSFileManager *manager;
 }
 @end

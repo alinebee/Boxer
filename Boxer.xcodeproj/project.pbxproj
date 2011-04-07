@@ -267,8 +267,10 @@
 		9FB4F9E411957B55006C8AC9 /* BXFrameBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB4F9E311957B55006C8AC9 /* BXFrameBuffer.m */; };
 		9FB553E10F6EA30900A33017 /* BXCloseAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB553E00F6EA30900A33017 /* BXCloseAlert.m */; };
 		9FB554220F6EAC5F00A33017 /* NSAlert+BXAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB554210F6EAC5F00A33017 /* NSAlert+BXAlert.m */; };
-		9FBAA6BD134A1A430092BF95 /* BXISOImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBAA6BC134A1A430092BF95 /* BXISOImport.m */; };
+		9FBAA6BD134A1A430092BF95 /* BXCDImageImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBAA6BC134A1A430092BF95 /* BXCDImageImport.m */; };
 		9FBAA6E1134A21A50092BF95 /* BXDriveImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBAA6E0134A21A50092BF95 /* BXDriveImport.m */; };
+		9FBAA878134A66C80092BF95 /* BXBinCueImageImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBAA877134A66C80092BF95 /* BXBinCueImageImport.m */; };
+		9FBAA8F4134AFABD0092BF95 /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBAA8F3134AFABD0092BF95 /* DiskArbitration.framework */; };
 		9FBB86850F5DD070008418E6 /* BXLayerRenderingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBB86840F5DD070008418E6 /* BXLayerRenderingView.m */; };
 		9FBC31D70F56C370001811F2 /* AboutBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC31D10F56C370001811F2 /* AboutBackground.png */; };
 		9FBC31E00F56C383001811F2 /* LockClosing.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9FBC31DD0F56C383001811F2 /* LockClosing.aiff */; };
@@ -331,6 +333,9 @@
 		9FF1756D11B25F4E00D0FCDC /* BXInputView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF1756C11B25F4E00D0FCDC /* BXInputView.m */; };
 		9FF175E711B279F500D0FCDC /* BXVideoHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FF175E611B279F500D0FCDC /* BXVideoHandler.mm */; };
 		9FF2E9BD11E6F4950051E485 /* BXEmulatorConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF2E9BC11E6F4950051E485 /* BXEmulatorConfiguration.m */; };
+		9FF865CF134DAB5A001CE857 /* BXTaskOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF865CE134DAB5A001CE857 /* BXTaskOperation.m */; };
+		9FF86678134DCA16001CE857 /* cdrdao in Resources */ = {isa = PBXBuildFile; fileRef = 9FF86676134DCA16001CE857 /* cdrdao */; };
+		9FF86679134DCA16001CE857 /* toc2cue in Resources */ = {isa = PBXBuildFile; fileRef = 9FF86677134DCA16001CE857 /* toc2cue */; };
 		9FFAFE2D10DE33FB00728BAC /* GameProfiles.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */; };
 		9FFAFE4310DE343F00728BAC /* Configurations in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2E10DE343F00728BAC /* Configurations */; };
 		9FFC2AC012A19CCC008C2B3B /* Sample Game Icons in Resources */ = {isa = PBXBuildFile; fileRef = 9FFC2ABF12A19CCC008C2B3B /* Sample Game Icons */; };
@@ -850,9 +855,12 @@
 		9FB553E00F6EA30900A33017 /* BXCloseAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXCloseAlert.m; sourceTree = "<group>"; };
 		9FB554200F6EAC5F00A33017 /* NSAlert+BXAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAlert+BXAlert.h"; sourceTree = "<group>"; };
 		9FB554210F6EAC5F00A33017 /* NSAlert+BXAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAlert+BXAlert.m"; sourceTree = "<group>"; };
-		9FBAA6BB134A1A430092BF95 /* BXISOImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXISOImport.h; sourceTree = "<group>"; };
-		9FBAA6BC134A1A430092BF95 /* BXISOImport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXISOImport.m; sourceTree = "<group>"; };
+		9FBAA6BB134A1A430092BF95 /* BXCDImageImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCDImageImport.h; sourceTree = "<group>"; };
+		9FBAA6BC134A1A430092BF95 /* BXCDImageImport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXCDImageImport.m; sourceTree = "<group>"; };
 		9FBAA6E0134A21A50092BF95 /* BXDriveImport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDriveImport.m; sourceTree = "<group>"; };
+		9FBAA876134A66C80092BF95 /* BXBinCueImageImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBinCueImageImport.h; sourceTree = "<group>"; };
+		9FBAA877134A66C80092BF95 /* BXBinCueImageImport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBinCueImageImport.m; sourceTree = "<group>"; };
+		9FBAA8F3134AFABD0092BF95 /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
 		9FBB86830F5DD070008418E6 /* BXLayerRenderingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXLayerRenderingView.h; sourceTree = "<group>"; };
 		9FBB86840F5DD070008418E6 /* BXLayerRenderingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXLayerRenderingView.m; sourceTree = "<group>"; };
 		9FBC31D10F56C370001811F2 /* AboutBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AboutBackground.png; sourceTree = "<group>"; };
@@ -954,6 +962,10 @@
 		9FF175E611B279F500D0FCDC /* BXVideoHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXVideoHandler.mm; sourceTree = "<group>"; };
 		9FF2E9BB11E6F4950051E485 /* BXEmulatorConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatorConfiguration.h; sourceTree = "<group>"; };
 		9FF2E9BC11E6F4950051E485 /* BXEmulatorConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXEmulatorConfiguration.m; sourceTree = "<group>"; };
+		9FF865CD134DAB5A001CE857 /* BXTaskOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXTaskOperation.h; sourceTree = "<group>"; };
+		9FF865CE134DAB5A001CE857 /* BXTaskOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXTaskOperation.m; sourceTree = "<group>"; };
+		9FF86676134DCA16001CE857 /* cdrdao */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = cdrdao; sourceTree = "<group>"; };
+		9FF86677134DCA16001CE857 /* toc2cue */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = toc2cue; sourceTree = "<group>"; };
 		9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = GameProfiles.plist; sourceTree = "<group>"; };
 		9FFAFE2E10DE343F00728BAC /* Configurations */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Configurations; sourceTree = "<group>"; };
 		9FFBF67011A7F8F4000A1863 /* BXFrameRenderingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFrameRenderingView.h; sourceTree = "<group>"; };
@@ -1005,6 +1017,7 @@
 				9F61942412340F5400F35AB4 /* ScriptingBridge.framework in Frameworks */,
 				E5CF1840128F81AF0065844A /* PhysFS.framework in Frameworks */,
 				9FCEDF3312B3DFFC00E856A4 /* SDL_sound.framework in Frameworks */,
+				9FBAA8F4134AFABD0092BF95 /* DiskArbitration.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1066,6 +1079,7 @@
 				9FBC32110F56C3E9001811F2 /* Carbon.framework */,
 				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
 				9F61942312340F5400F35AB4 /* ScriptingBridge.framework */,
+				9FBAA8F3134AFABD0092BF95 /* DiskArbitration.framework */,
 			);
 			name = "Linked Frameworks";
 			sourceTree = "<group>";
@@ -1106,6 +1120,8 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				9FF86676134DCA16001CE857 /* cdrdao */,
+				9FF86677134DCA16001CE857 /* toc2cue */,
 				9F569B831312DC620097A0E3 /* BoxerHelp */,
 				9F70C19B129036C900A3627F /* Boxer.sdef */,
 				9FDCDEFC11B5B83B0032DA4E /* dsa_pub.pem */,
@@ -1149,6 +1165,8 @@
 				9F444FCA12AEA28700A2D405 /* BXOperationSet.h */,
 				9F444FCB12AEA28700A2D405 /* BXOperationSet.m */,
 				9F44501012AEC71100A2D405 /* BXFileTransfer.h */,
+				9FF865CD134DAB5A001CE857 /* BXTaskOperation.h */,
+				9FF865CE134DAB5A001CE857 /* BXTaskOperation.m */,
 			);
 			name = Operations;
 			sourceTree = "<group>";
@@ -1184,6 +1202,8 @@
 		9F1CBA55120C783800C5E926 /* Game import */ = {
 			isa = PBXGroup;
 			children = (
+				9FBAA876134A66C80092BF95 /* BXBinCueImageImport.h */,
+				9FBAA877134A66C80092BF95 /* BXBinCueImageImport.m */,
 				9FBAA6E0134A21A50092BF95 /* BXDriveImport.m */,
 				9F1CBA56120C796C00C5E926 /* BXImport.h */,
 				9F1CBA57120C796C00C5E926 /* BXImport.m */,
@@ -1196,8 +1216,8 @@
 				9F444FFE12AEBE5200A2D405 /* BXDriveBundleImport.m */,
 				9F44500012AEC0FC00A2D405 /* BXSimpleDriveImport.h */,
 				9F44500112AEC0FC00A2D405 /* BXSimpleDriveImport.m */,
-				9FBAA6BB134A1A430092BF95 /* BXISOImport.h */,
-				9FBAA6BC134A1A430092BF95 /* BXISOImport.m */,
+				9FBAA6BB134A1A430092BF95 /* BXCDImageImport.h */,
+				9FBAA6BC134A1A430092BF95 /* BXCDImageImport.m */,
 			);
 			name = "Game import";
 			sourceTree = "<group>";
@@ -2229,6 +2249,8 @@
 				9F2121E7130187A9002AB1B7 /* ShelfTemplateLeopard.jpg in Resources */,
 				9F2121E8130187A9002AB1B7 /* ShelfTemplateSnowLeopard.jpg in Resources */,
 				9F569BD51312DC620097A0E3 /* BoxerHelp in Resources */,
+				9FF86678134DCA16001CE857 /* cdrdao in Resources */,
+				9FF86679134DCA16001CE857 /* toc2cue in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2506,8 +2528,10 @@
 				9F7721E912B38C4400072AE8 /* shell_batch.cpp in Sources */,
 				9F7721EA12B38C4400072AE8 /* shell_cmds.cpp in Sources */,
 				9F7721EB12B38C4400072AE8 /* shell_misc.cpp in Sources */,
-				9FBAA6BD134A1A430092BF95 /* BXISOImport.m in Sources */,
+				9FBAA6BD134A1A430092BF95 /* BXCDImageImport.m in Sources */,
 				9FBAA6E1134A21A50092BF95 /* BXDriveImport.m in Sources */,
+				9FBAA878134A66C80092BF95 /* BXBinCueImageImport.m in Sources */,
+				9FF865CF134DAB5A001CE857 /* BXTaskOperation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

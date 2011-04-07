@@ -58,7 +58,8 @@
 	if ([volumeType isEqualToString: dataCDVolumeType] || [volumeType isEqualToString: audioCDVolumeType])
 		return BXDriveCDROM;
 
-	//If the path is a FAT/FAT32 volume, check its volume size: volumes smaller than BXFloppySizeCutoff will be treated as floppy disks.
+	//If the path is a FAT/FAT32 volume, check its volume size:
+	//volumes smaller than BXFloppySizeCutoff will be treated as floppy disks.
 	if ([workspace isFloppyVolumeAtPath: filePath]) return BXDriveFloppyDisk;
 	
 	//Fall back on a standard hard-disk mount

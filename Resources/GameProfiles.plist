@@ -353,11 +353,13 @@
 			<array>
 				<string>Wrath of Earth</string>
 				<string>Barney Bear Goes to Space</string>
+				<string>Another World/Out of this World</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>woe.exe</string>
 				<string>bbspc.exe</string>
+				<string>tabvol.bin</string>
 			</array>
 		</dict>
 		<dict>

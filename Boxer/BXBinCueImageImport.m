@@ -292,8 +292,12 @@ void unmountCallback(DADiskRef disk, DADissenterRef dissenter, void *operation)
 		
 		if (imageSize > 0)
 		{
+			//The image may end up being larger than the original volume, so cap the reported size.
+			imageSize = MAX(imageSize, [self numBytes]);
+			
 			[self setIndeterminate: NO];
 			[self setBytesTransferred: imageSize];
+			
 			BXOperationProgress progress = (float)[self bytesTransferred] / (float)[self numBytes];
 			//Add a margin at either side of the progress to account for lead-in, cleanup and TOC conversion
 			//TODO: move this upstream into setCurrentProgress or somewhere

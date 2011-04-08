@@ -22,7 +22,7 @@
 
 //Whether we can provide an accurate indication of progress.
 //Used for toggling the progressbar to/from indeterminate mode.
-@property (readonly, nonatomic) BOOL isIndeterminate;
+@property (readonly, nonatomic, getter=isIndeterminate) BOOL indeterminate;
 
 //How far through the current import stage we are.
 //Used as the value for the progress bar when isIndeterminate is NO.

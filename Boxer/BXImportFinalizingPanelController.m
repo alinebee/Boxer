@@ -5,7 +5,6 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-
 #import "BXImportFinalizingPanelController.h"
 #import "BXImportWindowController.h"
 #import "BXDriveImport.h"
@@ -36,14 +35,14 @@
 - (NSString *) progressDescription
 {
 	BXImportStage stage = [[controller document] importStage];
+	BXOperation <BXDriveImport> *transfer;
 	
 	switch (stage)
 	{
 		case BXImportCopyingSourceFiles:
-			if ([[controller document] transferOperation])
-			{
-				BXOperation <BXDriveImport> *transfer = [[controller document] transferOperation];	
-				
+			transfer = [[controller document] transferOperation];
+			if (transfer && ![transfer isIndeterminate])
+			{	
 				float sizeInMB		= [transfer numBytes] / 1000000.0f;
 				float transferredMB	= [transfer bytesTransferred] / 1000000.0f;
 				
@@ -73,7 +72,11 @@
 	
 	if ([progressKeys containsObject: key])
 	{
-		return [NSSet setWithObjects: @"controller.document.importStage", @"controller.document.stageProgress", nil];
+		return [NSSet setWithObjects:
+				@"controller.document.importStage",
+				@"controller.document.stageProgress",
+				@"controller.document.stageProgressIndeterminate",
+				nil];
 	}
 	else
 	{

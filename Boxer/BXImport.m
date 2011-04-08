@@ -751,6 +751,7 @@
 	
 	
 	[self setImportStage: BXImportCopyingSourceFiles];
+	[self setStageProgressIndeterminate: YES];
 	
 	//If we don't have a source folder yet, generate one now before continuing
 	//(This will happen if there were no installers, or the user skipped the installer)
@@ -917,7 +918,6 @@
 			continue;
 		}
 		
-		
 		BOOL isBundleable = [workspace file: path matchesTypes: bundleableTypes];
 		BOOL isGOGImage = !isBundleable && [workspace file: path matchesTypes: gogImageTypes];
 		
@@ -1000,7 +1000,11 @@
 		//TODO: add proper error checking and display, as a failure during drive import will probably
 		//mean an unusable gamebox.
 		[self setTransferOperation: nil];
-		if ([operation respondsToSelector: @selector(importedDrivePath)])
+		
+		//If the imported drive is replacing our original C drive, then update the root drive path accordingly
+		//(This is used immediately after in cleanGamebox)
+		if ([operation conformsToProtocol: @protocol(BXDriveImport)] &&
+			[[[(id)operation drive] letter] isEqualToString: @"C"])
 		{
 			[self setRootDrivePath: [(id)operation importedDrivePath]];
 		}

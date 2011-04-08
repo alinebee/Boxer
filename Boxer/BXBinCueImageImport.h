@@ -10,11 +10,7 @@
 #import "BXCDImageImport.h"
 
 @interface BXBinCueImageImport : BXCDImageImport
-{
-	@private
-	BOOL _waitingForUnmount;
-	BOOL _unmountSucceeded;
-	
+{	
 	@protected
 	NSFileManager *manager;
 }

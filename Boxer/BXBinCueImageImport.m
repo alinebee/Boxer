@@ -14,28 +14,48 @@
 
 
 #pragma mark -
-#pragma mark Private method declarations
+#pragma mark Private function declarations
 
-void unmountCallback(DADiskRef disk, DADissenterRef dissenter, void *operation);
+BOOL _unmountSynchronously(DASessionRef session, DADiskRef disk);
+void _unmountCallback(DADiskRef disk, DADissenterRef dissenter, void *succeeded);
 
-
-@interface BXBinCueImageImport ()
-
-- (void) _unmountFailed;
-- (void) _unmountSucceeded;
-
-@end
-
+enum
+{
+	BXUnmountInProgress = -1,
+	BXUnmountFailed = 0,
+	BXUnmountSucceeded = 1
+};
+typedef NSInteger BXUnmountSuccess;
 
 #pragma mark -
 #pragma mark Implementation
 
-//This callback is called by DADiskUnmount once a disk has finished unmounting/failed to unmount.
-void unmountCallback(DADiskRef disk, DADissenterRef dissenter, void *operation)
+void _unmountCallback(DADiskRef disk, DADissenterRef dissenter, void *succeeded)
 {
-	if (dissenter) [(id)operation _unmountFailed];
-	else [(id)operation _unmountSucceeded];
+	*(BXUnmountSuccess *)succeeded = (dissenter) ? BXUnmountFailed : BXUnmountSucceeded;
 }
+
+//DADiskUnmount is asynchronous, so this function calls it and blocks while it waits
+//for the callback to answer whether the disk unmounted successfully or not.
+BOOL _unmountSynchronously(DASessionRef session, DADiskRef disk)
+{
+	BXUnmountSuccess unmountSucceeded = BXUnmountInProgress;
+	NSRunLoop *loop = [NSRunLoop currentRunLoop];
+	CFRunLoopRef cfLoop = [loop getCFRunLoop];
+	
+	DASessionScheduleWithRunLoop(session, cfLoop, kCFRunLoopDefaultMode);
+	DADiskUnmount(disk, kDADiskUnmountOptionWhole, _unmountCallback, &unmountSucceeded);
+	
+	while (unmountSucceeded == BXUnmountInProgress)
+	{
+		[loop runUntilDate: [NSDate dateWithTimeIntervalSinceNow: 0.1]];
+	}
+	
+	DASessionUnscheduleFromRunLoop(session, cfLoop, kCFRunLoopDefaultMode);
+	
+	return unmountSucceeded == BXUnmountSucceeded;
+}
+
 
 @implementation BXBinCueImageImport
 
@@ -110,7 +130,7 @@ void unmountCallback(DADiskRef disk, DADissenterRef dissenter, void *operation)
 	NSString *binName	= @"data.bin";
 	
 	
-	//Determine the /dev/diskx device name for the entire disk
+	//Determine the /dev/diskx device name for the imported volume
 	NSString *volumeDeviceName = [[NSWorkspace sharedWorkspace] BSDNameForVolumePath: sourcePath];
 	if (!volumeDeviceName)
 	{
@@ -121,6 +141,8 @@ void unmountCallback(DADiskRef disk, DADissenterRef dissenter, void *operation)
 		[self setError: unknownDeviceError];
 		return;
 	}
+	
+	//Find the BSD name of the entire disk, so that we can import all its tracks
 	NSString *baseDeviceName = [volumeDeviceName stringByMatching: @"(/dev/disk\\d+)(s\\d+)?" capture: 1];
 	
 	//Use the BSD name to acquire a Disk Arbitration object for the disc
@@ -142,7 +164,8 @@ void unmountCallback(DADiskRef disk, DADissenterRef dissenter, void *operation)
 	NSString *devicePath = nil;
 	unsigned long long diskSize = 0;
 	
-	//Get the I/O Registry device path to feed to cdrdao, and the total size of the volume
+	//Get the I/O Registry device path to feed to cdrdao, along with the total size of the volume
+	//so that we know how much we'll be importing today
 	CFDictionaryRef description = DADiskCopyDescription(disk);
 	if (description)
 	{
@@ -154,6 +177,7 @@ void unmountCallback(DADiskRef disk, DADissenterRef dissenter, void *operation)
 		
 		CFRelease(description);
 	}
+	//If we couldn't determine those for whatever reason then fail early now
 	else
 	{
 		[self setError: [BXCDImageImportRipFailedError errorWithDrive: [self drive]]];
@@ -164,12 +188,14 @@ void unmountCallback(DADiskRef disk, DADissenterRef dissenter, void *operation)
 	
 	[self setNumBytes: diskSize];
 	
-	//Create the destination path since it doesn't (or shouldn't) already exist
+	
+	//Create the .cdimage wrapper for the imported image, since it shouldn't exist yet.
 	NSError *destinationCreationError = nil;
 	BOOL createdDestination = [manager createDirectoryAtPath: destinationPath
 								 withIntermediateDirectories: YES
 												  attributes: nil
 													   error: &destinationCreationError];
+	//If it does exist, or we can't create it for some reason, then stop importing and fail with an error.
 	if (!createdDestination)
 	{
 		[self setError: destinationCreationError];
@@ -178,106 +204,103 @@ void unmountCallback(DADiskRef disk, DADissenterRef dissenter, void *operation)
 		return;
 	}
 	
+	//At this point we have started creating data; we declare the imported path now
+	//so that we can clean it up in BXCDImageImport -undoTransfer if the import is aborted.
 	[self setImportedDrivePath: destinationPath];
-	
 
 	
-	//Unmount the disc's volume (without ejecting) so that cdrdao can access the device exclusively
-	//DADiskUnmount is asynchronous, so we poll while we wait for it to finish ejecting or not.
-	_unmountSucceeded = NO;
-	_waitingForUnmount = YES;
-	NSRunLoop *loop = [NSRunLoop currentRunLoop];
-	DASessionScheduleWithRunLoop(session, [loop getCFRunLoop], kCFRunLoopDefaultMode);
-	DADiskUnmount(disk, kDADiskUnmountOptionWhole, unmountCallback, self);
-	while (_waitingForUnmount && ![self isCancelled])
+	//Unmount the disc's volume without ejecting it, so that cdrdao can access the device exclusively.
+	BOOL unmounted = _unmountSynchronously(session, disk);
+	
+	//If we couldn't unmount the disc then assume it's still in use and fail.
+	if (!unmounted)
 	{
-		[loop runUntilDate: [NSDate dateWithTimeIntervalSinceNow: 0.1]];
+		NSError *discInUse = [BXCDImageImportDiscInUseError errorWithDrive: [self drive]];
+		[self setError: discInUse];
+		
+		CFRelease(disk);
+		CFRelease(session);
 	}
-	DASessionUnscheduleFromRunLoop(session, [loop getCFRunLoop], kCFRunLoopDefaultMode);
+	
+	//Once we get this far, we're ready to actually start the image-ripping task.
+	//(From this point on, if we fail, we have to remount the disk.)
 
-	if (_unmountSucceeded)
+	NSTask *cdrdao = [[NSTask alloc] init];
+	NSString *cdrdaoPath = [[NSBundle mainBundle] pathForResource: @"cdrdao" ofType: nil];
+	
+	//cdrdao uses relative paths in cuesheets as long as we use relative paths, which simplifies our job,
+	//so we provide just the file names as arguments and change the task's working directory to where
+	//we want them put.
+	NSArray *arguments = [NSArray arrayWithObjects:
+						  @"read-cd",
+						  @"--read-raw",
+						  @"--device", devicePath,
+						  @"--driver", @"generic-mmc:0x20000",
+						  @"--datafile", binName,
+						  tocName,
+						  nil];
+	
+	[cdrdao setCurrentDirectoryPath: destinationPath];
+	[cdrdao setLaunchPath:		cdrdaoPath];
+	[cdrdao setArguments:		arguments];
+	[cdrdao setStandardOutput: [NSFileHandle fileHandleWithNullDevice]];
+	
+	[self setTask: cdrdao];
+	[cdrdao release];
+	
+	//Run the task to completion and monitor its progress
+	[self runTask];
+	
+	//If the image creation went smoothly, do final cleanup
+	if (![self error])
 	{
-		//Prepare the cdrdao task
-		NSTask *cdrdao = [[NSTask alloc] init];
-		NSString *cdrdaoPath = [[NSBundle mainBundle] pathForResource: @"cdrdao" ofType: nil];
-		
-		//cdrdao uses relative paths in cuesheets as long as we use relative paths, which simplifies our job,
-		//so we provide the output file names as arguments and change the working directory to where we want them.
-		NSArray *arguments = [NSArray arrayWithObjects:
-							  @"read-cd",
-							  @"--device", devicePath,
-							  @"--driver", @"generic-mmc:0x20000",
-							  @"--datafile", binName,
-							  tocName,
-							  nil];
-		
-		[cdrdao setCurrentDirectoryPath: destinationPath];
-		[cdrdao setLaunchPath:		cdrdaoPath];
-		[cdrdao setArguments:		arguments];
-		[cdrdao setStandardOutput: [NSFileHandle fileHandleWithNullDevice]];
-		
-		[self setTask: cdrdao];
-		[cdrdao release];
-		
-		//Run the task to completion and monitor its progress
-		[self runTask];
-		
-		//If the image creation went smoothly, do final cleanup
-		if (![self error])
+		NSString *tocPath = [destinationPath stringByAppendingPathComponent: tocName];
+		NSString *cuePath = [destinationPath stringByAppendingPathComponent: cueName];
+		if ([manager fileExistsAtPath: tocPath])
 		{
-			NSString *tocPath = [destinationPath stringByAppendingPathComponent: tocName];
-			if ([manager fileExistsAtPath: tocPath])
+			//Now, convert the TOC file to a CUE
+			NSTask *toc2cue = [[NSTask alloc] init];
+			NSString *toc2cuePath = [[NSBundle mainBundle] pathForResource: @"toc2cue" ofType: nil];
+			
+			[toc2cue setLaunchPath:	toc2cuePath];
+			[toc2cue setArguments:	[NSArray arrayWithObjects:
+									 tocPath,
+									 cuePath,
+									 nil]];
+			
+			[toc2cue setStandardOutput: [NSFileHandle fileHandleWithNullDevice]];
+			
+			//toc2cue takes hardly any time to run, so just block until it finishes.
+			[toc2cue launch];
+			[toc2cue waitUntilExit];
+			[toc2cue release];
+			
+			//Once the CUE file is ready, delete the original TOC.
+			if ([manager fileExistsAtPath: cuePath])
 			{
-				//Now, convert the TOC file to a CUE
-				NSTask *toc2cue = [[NSTask alloc] init];
-				NSString *toc2cuePath = [[NSBundle mainBundle] pathForResource: @"toc2cue" ofType: nil];
-				
-				[toc2cue setCurrentDirectoryPath: destinationPath];
-				[toc2cue setLaunchPath:	toc2cuePath];
-				[toc2cue setArguments:	[NSArray arrayWithObjects:
-										 tocName,
-										 cueName,
-										 nil]];
-				
-				[toc2cue setStandardOutput: [NSFileHandle fileHandleWithNullDevice]];
-				
-				//toc2cue takes no time to run, so just wait for it to finish
-				[toc2cue launch];
-				[toc2cue waitUntilExit];
-				[toc2cue release];
-				
-				//Once the CUE file is ready, delete the original TOC
-				if ([manager fileExistsAtPath: [destinationPath stringByAppendingPathComponent: cueName]])
-				{
-					[manager removeItemAtPath: tocPath error: nil];
-				}
-				//Treat it as an error if the CUE file was not generated successfully
-				else
-				{
-					[self setError: [BXCDImageImportRipFailedError errorWithDrive: [self drive]]];
-				}
+				[manager removeItemAtPath: tocPath error: nil];
 			}
+			//Treat it as an error if the CUE file was not generated successfully.
 			else
 			{
 				[self setError: [BXCDImageImportRipFailedError errorWithDrive: [self drive]]];
 			}
 		}
-
-		[self setSucceeded: [self error] == nil];
-		
-		//Ensure the disk is remounted after we're done with everything, whether we succeeded or failed
-		DADiskMount(disk, NULL, kDADiskMountOptionWhole, NULL, NULL);
+		//If the TOC file wasn't created, something went wrong in the ripping process.
+		else
+		{
+			[self setError: [BXCDImageImportRipFailedError errorWithDrive: [self drive]]];
+		}
 	}
-	else
-	{
-		//If the drive could not be unmounted, then assume it's still in use
-		NSError *discInUse = [BXCDImageImportDiscInUseError errorWithDrive: [self drive]];
-		[self setError: discInUse];
-	}
+	
+	//Ensure the disk is remounted after we're done with everything, whether we succeeded or failed
+	DADiskMount(disk, NULL, kDADiskMountOptionWhole, NULL, NULL);
 	
 	//Release Disk Arbitration resources
 	CFRelease(disk);
 	CFRelease(session);
+	
+	[self setSucceeded: [self error] == nil];
 }
 
 - (void) checkTaskProgress: (NSTimer *)timer
@@ -293,7 +316,7 @@ void unmountCallback(DADiskRef disk, DADissenterRef dissenter, void *operation)
 		if (imageSize > 0)
 		{
 			//The image may end up being larger than the original volume, so cap the reported size.
-			imageSize = MAX(imageSize, [self numBytes]);
+			imageSize = MIN(imageSize, [self numBytes]);
 			
 			[self setIndeterminate: NO];
 			[self setBytesTransferred: imageSize];
@@ -301,27 +324,26 @@ void unmountCallback(DADiskRef disk, DADissenterRef dissenter, void *operation)
 			BXOperationProgress progress = (float)[self bytesTransferred] / (float)[self numBytes];
 			//Add a margin at either side of the progress to account for lead-in, cleanup and TOC conversion
 			//TODO: move this upstream into setCurrentProgress or somewhere
-			progress = 0.03f + (progress * 0.96f);
+			progress = 0.03f + (progress * 0.97f);
 			[self setCurrentProgress: progress];
 			
 			NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
 				[NSNumber numberWithUnsignedLongLong:	[self bytesTransferred]],	BXFileTransferBytesTransferredKey,
 				[NSNumber numberWithUnsignedLongLong:	[self numBytes]],			BXFileTransferBytesTotalKey,
 			nil];
+			
 			[self _sendInProgressNotificationWithInfo: info];
 		}
+		else
+		{
+			[self setIndeterminate: YES];
+			[self _sendInProgressNotificationWithInfo: nil];
+		}
 	}
-}
-
-- (void) _unmountFailed
-{
-	_unmountSucceeded = NO;
-	_waitingForUnmount = NO;
-}
-
-- (void) _unmountSucceeded
-{
-	_unmountSucceeded = YES;
-	_waitingForUnmount = NO;
+	else
+	{
+		[self setIndeterminate: YES];
+		[self _sendInProgressNotificationWithInfo: nil];
+	}
 }
 @end

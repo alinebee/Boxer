@@ -35,16 +35,21 @@
 - (NSString *) progressDescription
 {
 	BXImportStage stage = [[controller document] importStage];
-	BXOperation <BXDriveImport> *transfer;
+	BXOperation *transfer;
 	
 	switch (stage)
 	{
 		case BXImportCopyingSourceFiles:
 			transfer = [[controller document] transferOperation];
-			if (transfer && ![transfer isIndeterminate])
+			
+			//IMPLEMENTATION NOTE: because the transfer can technically be any kind of operation,
+			//we make sure it can actually report its transfer size
+			if (transfer && ![transfer isIndeterminate] &&
+				[transfer respondsToSelector:@selector(numBytes)] &&
+				[transfer respondsToSelector:@selector(bytesTransferred)])
 			{	
-				float sizeInMB		= [transfer numBytes] / 1000000.0f;
-				float transferredMB	= [transfer bytesTransferred] / 1000000.0f;
+				float sizeInMB		= [(id)transfer numBytes] / 1000000.0f;
+				float transferredMB	= [(id)transfer bytesTransferred] / 1000000.0f;
 				
 				NSString *format = NSLocalizedString(@"Importing game files… (%1$.01f MB of %2$.01f MB)",
 													 @"Import progress description for copying source files stage. %1 is the number of MB transferred so far as a float, %2 is the total number of MB to be transferred as a float.");

@@ -1123,6 +1123,9 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (BOOL) _shouldAutoPause
 {
+	//Don't auto-pause if the emulator hasn't finished starting up yet
+	if (![self isEmulating]) return NO;
+	
 	//Only auto-pause if the mode is enabled in the user's settings
 	if (![[NSUserDefaults standardUserDefaults] boolForKey: @"pauseWhileInactive"]) return NO;
 	

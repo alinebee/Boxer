@@ -442,7 +442,11 @@
 - (BOOL) isRunningInstaller
 {
 	NSArray *installers = [[self installerPaths] arrayByAddingObject: [self targetPath]];
-	return [installers containsObject: [self activeProgramPath]];
+	
+	if ([installers containsObject: [self activeProgramPath]]) return YES;
+	if ([[self class] isInstallerAtPath: [self activeProgramPath]]) return YES;
+	
+	return NO;
 }
 
 

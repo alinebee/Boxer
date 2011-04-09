@@ -80,7 +80,6 @@ NSString * const HFSVolumeType		= @"hfs";
 	NSTask *hdiutil		= [[NSTask alloc] init];
 	NSPipe *outputPipe	= [NSPipe pipe];
 	NSPipe *errorPipe	= [NSPipe pipe];
-	NSData *output;
 	NSDictionary *hdiInfo;
 	
 	NSMutableArray *arguments = [NSMutableArray arrayWithObjects: @"attach", path, @"-plist", nil];
@@ -105,16 +104,23 @@ NSString * const HFSVolumeType		= @"hfs";
 	[hdiutil setStandardError: errorPipe];
 	
 	[hdiutil launch];
+	
+	//Read off all stdout data (this will block until the task terminates)
+	//FIXME: there's a potential deadlock here if errorPipe's buffer
+	//fills up: errorPipe will block while it waits for its buffer to clear,
+	//but readDataToEndOfFile will keep blocking too.
+	NSData *output = [[outputPipe fileHandleForReading] readDataToEndOfFile];
+	
+	//Ensure the task really has finished
 	[hdiutil waitUntilExit];
 	
 	int returnValue = [hdiutil terminationStatus];
-	
 	[hdiutil release];
 	
 	//If hdiutil couldn't mount the drive, populate an error object with the details
 	if (returnValue > 0)
 	{
-		NSData *errorData		= [[errorPipe fileHandleForReading] availableData];
+		NSData *errorData		= [[errorPipe fileHandleForReading] readDataToEndOfFile];
 		NSString *failureReason	= [[NSString alloc] initWithData: errorData encoding: NSUTF8StringEncoding];
 		
 		NSDictionary *userInfo	= [NSDictionary dictionaryWithObject: failureReason forKey: NSLocalizedFailureReasonErrorKey];
@@ -124,22 +130,23 @@ NSString * const HFSVolumeType		= @"hfs";
 		
 		return nil;
 	}
-	
-	output	= [[outputPipe fileHandleForReading] availableData];
-	hdiInfo	= [NSPropertyListSerialization propertyListFromData: output
+	else
+	{
+		hdiInfo	= [NSPropertyListSerialization propertyListFromData: output
 											   mutabilityOption: NSPropertyListImmutable
 														 format: nil
 											   errorDescription: nil];
 	
-	NSArray *mountPoints = [hdiInfo objectForKey: @"system-entities"];
-	for (NSDictionary *mountPoint in mountPoints)
-	{
-		//Return the first mount point that has a valid volume path
-		NSString *destination = [[mountPoint objectForKey: @"mount-point"] stringByStandardizingPath];
-		if (destination) return destination;
+		NSArray *mountPoints = [hdiInfo objectForKey: @"system-entities"];
+		for (NSDictionary *mountPoint in mountPoints)
+		{
+			//Return the first mount point that has a valid volume path
+			NSString *destination = [[mountPoint objectForKey: @"mount-point"] stringByStandardizingPath];
+			if (destination) return destination;
+		}
+		//TODO: if no mount points were found, populate an error to that effect
+		return nil;
 	}
-	//TODO: if no mount points were found, populate an error to that effect
-	return nil;
 }
 
 - (NSString *) sourceImageForVolume: (NSString *)volumePath
@@ -186,11 +193,12 @@ NSString * const HFSVolumeType		= @"hfs";
 	[hdiutil setStandardOutput: outputPipe];
 	
 	[hdiutil launch];
-	[hdiutil waitUntilExit];
 	
+	output	= [[outputPipe fileHandleForReading] readDataToEndOfFile];
+	
+	[hdiutil waitUntilExit];
 	[hdiutil release];
 	
-	output	= [[outputPipe fileHandleForReading] availableData];
 	hdiInfo	= [NSPropertyListSerialization propertyListFromData: output
 											   mutabilityOption: NSPropertyListImmutable
 														 format: nil

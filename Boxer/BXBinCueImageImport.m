@@ -263,7 +263,6 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 	[cdrdao setCurrentDirectoryPath: destinationPath];
 	[cdrdao setLaunchPath:		cdrdaoPath];
 	[cdrdao setArguments:		arguments];
-	[cdrdao setStandardOutput: [NSFileHandle fileHandleWithNullDevice]];
 	
 	[self setTask: cdrdao];
 	[cdrdao release];

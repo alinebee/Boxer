@@ -159,7 +159,6 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 						  @"-srcdevice", deviceName,
 						  @"-format", @"UDTO",
 						  @"-puppetstrings",
-						  @"-plist",
 						  tempDestinationPath,
 						  nil];
 	
@@ -204,7 +203,7 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 	NSFileHandle *outputHandle = [[[timer userInfo] standardOutput] fileHandleForReading];
 	
 	NSString *currentOutput = [[NSString alloc] initWithData: [outputHandle availableData] encoding: NSUTF8StringEncoding];
-	NSArray *progressValues = [currentOutput componentsMatchedByRegex: @"PERCENT:([\\d.-]+)" capture: 1];
+	NSArray *progressValues = [currentOutput componentsMatchedByRegex: @"PERCENT:(-?[0-9\\.]+)" capture: 1];
 	[currentOutput release];
 	
 	BXOperationProgress latestProgress = [[progressValues lastObject] floatValue];

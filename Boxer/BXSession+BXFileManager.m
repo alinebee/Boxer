@@ -604,6 +604,9 @@
 
 - (void) _handleVolumeDidMount: (NSNotification *)theNotification
 {
+	//Don't respond to mounts if the emulator isn't actually running
+	if (![emulator isExecuting]) return;
+	
 	//Ignore mounts if we currently have the mount panel open;
 	//we assume that the user will want to handle the new volume manually.
 	NSWindow *attachedSheet = [[self windowForSheet] attachedSheet];
@@ -646,6 +649,9 @@
 //pulling out a USB drive or mechanically ejecting a disk)
 - (void) volumeWillUnmount: (NSNotification *)theNotification
 {
+	//Don't respond to unmount events if the emulator isn't actually running
+	if (![emulator isExecuting]) return;
+	
 	NSString *volumePath = [[theNotification userInfo] objectForKey: @"NSDevicePath"];
 	//Should already be standardized, but still
 	NSString *standardizedPath = [volumePath stringByStandardizingPath];

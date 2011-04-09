@@ -729,6 +729,12 @@
 
 - (void) finishInstaller
 {	
+	//Tweak: disable any Growl drive notifications beyond this point.
+	//It will take time for the emulator to shut down fully, during which
+	//our import process may mount/unmount additional disks whose notifications
+	//we don't want to appear.
+	showDriveNotifications = NO;
+	
 	//Stop the installer process, and hand control back to the import window
 	[self cancel];
 	

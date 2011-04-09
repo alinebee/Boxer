@@ -16,44 +16,63 @@
 #pragma mark -
 #pragma mark Private function declarations
 
-BOOL _unmountSynchronously(DASessionRef session, DADiskRef disk);
-void _unmountCallback(DADiskRef disk, DADissenterRef dissenter, void *succeeded);
-
 enum
 {
-	BXUnmountInProgress = -1,
-	BXUnmountFailed = 0,
-	BXUnmountSucceeded = 1
+	BXDADiskOperationInProgress = -1,
+	BXDADiskOperationFailed = 0,
+	BXDADiskOperationSucceeded = 1
 };
-typedef NSInteger BXUnmountSuccess;
+typedef NSInteger BXDADiskOperationStatus;
+
+BOOL _mountSynchronously(DASessionRef, DADiskRef disk, CFURLRef path, DADiskUnmountOptions options);
+BOOL _unmountSynchronously(DASessionRef session, DADiskRef disk, DADiskMountOptions options);
+void _mountCallback(DADiskRef disk, DADissenterRef dissenter, void *status);
 
 #pragma mark -
 #pragma mark Implementation
 
-void _unmountCallback(DADiskRef disk, DADissenterRef dissenter, void *succeeded)
+void _mountCallback(DADiskRef disk, DADissenterRef dissenter, void *status)
 {
-	*(BXUnmountSuccess *)succeeded = (dissenter) ? BXUnmountFailed : BXUnmountSucceeded;
+	*(BXDADiskOperationStatus *)status = (dissenter != NULL) ? BXDADiskOperationFailed : BXDADiskOperationSucceeded;
 }
 
 //DADiskUnmount is asynchronous, so this function calls it and blocks while it waits
 //for the callback to answer whether the disk unmounted successfully or not.
-BOOL _unmountSynchronously(DASessionRef session, DADiskRef disk)
+BOOL _unmountSynchronously(DASessionRef session, DADiskRef disk, DADiskUnmountOptions options)
 {
-	BXUnmountSuccess unmountSucceeded = BXUnmountInProgress;
+	BXDADiskOperationStatus status = BXDADiskOperationInProgress;
 	NSRunLoop *loop = [NSRunLoop currentRunLoop];
 	CFRunLoopRef cfLoop = [loop getCFRunLoop];
 	
 	DASessionScheduleWithRunLoop(session, cfLoop, kCFRunLoopDefaultMode);
-	DADiskUnmount(disk, kDADiskUnmountOptionWhole, _unmountCallback, &unmountSucceeded);
+	DADiskUnmount(disk, options, _mountCallback, &status);
 	
-	while (unmountSucceeded == BXUnmountInProgress)
+	while (status == BXDADiskOperationInProgress)
 	{
 		[loop runUntilDate: [NSDate dateWithTimeIntervalSinceNow: 0.1]];
 	}
 	
 	DASessionUnscheduleFromRunLoop(session, cfLoop, kCFRunLoopDefaultMode);
 	
-	return unmountSucceeded == BXUnmountSucceeded;
+	return status == BXDADiskOperationSucceeded;
+}
+
+BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DADiskMountOptions options)
+{
+	BXDADiskOperationStatus status = BXDADiskOperationInProgress;
+	NSRunLoop *loop = [NSRunLoop currentRunLoop];
+	CFRunLoopRef cfLoop = [loop getCFRunLoop];
+	
+	DASessionScheduleWithRunLoop(session, cfLoop, kCFRunLoopDefaultMode);
+	DADiskMount(disk, path, options, _mountCallback, &status);
+	
+	while (status == BXDADiskOperationInProgress)
+	{
+		[loop runUntilDate: [NSDate dateWithTimeIntervalSinceNow: 0.1]];
+	}
+	DASessionUnscheduleFromRunLoop(session, cfLoop, kCFRunLoopDefaultMode);
+	
+	return status == BXDADiskOperationSucceeded;
 }
 
 
@@ -210,7 +229,7 @@ BOOL _unmountSynchronously(DASessionRef session, DADiskRef disk)
 
 	
 	//Unmount the disc's volume without ejecting it, so that cdrdao can access the device exclusively.
-	BOOL unmounted = _unmountSynchronously(session, disk);
+	BOOL unmounted = _unmountSynchronously(session, disk, kDADiskUnmountOptionWhole);
 	
 	//If we couldn't unmount the disc then assume it's still in use and fail.
 	if (!unmounted)
@@ -220,6 +239,7 @@ BOOL _unmountSynchronously(DASessionRef session, DADiskRef disk)
 		
 		CFRelease(disk);
 		CFRelease(session);
+		return;
 	}
 	
 	//Once we get this far, we're ready to actually start the image-ripping task.
@@ -294,7 +314,7 @@ BOOL _unmountSynchronously(DASessionRef session, DADiskRef disk)
 	}
 	
 	//Ensure the disk is remounted after we're done with everything, whether we succeeded or failed
-	DADiskMount(disk, NULL, kDADiskMountOptionWhole, NULL, NULL);
+	_mountSynchronously(session, disk, NULL, kDADiskMountOptionWhole); 
 	
 	//Release Disk Arbitration resources
 	CFRelease(disk);

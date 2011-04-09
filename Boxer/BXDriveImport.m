@@ -43,4 +43,24 @@
 	else return nil;
 }
 
++ (id <BXDriveImport>) fallbackForFailedImport: (id <BXDriveImport>)failedImport
+{
+	Class fallbackClass = nil;
+	
+	//Use a simple file copy to replace a failed disc-image rip
+	if ([failedImport isKindOfClass: [BXCDImageImport class]])
+	{
+		fallbackClass = [BXSimpleDriveImport class];
+	}
+	
+	if (fallbackClass)
+	{
+		//Create a new import operation with the same parameters as the old one
+		return [[[fallbackClass alloc] initForDrive: [failedImport drive]
+									  toDestination: [failedImport destinationFolder]
+										  copyFiles: [failedImport copyFiles]] autorelease];
+	}
+	//No fallback could be found
+	return nil;
+}
 @end

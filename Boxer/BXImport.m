@@ -75,6 +75,10 @@
 //Determines how (and whether) we import the source path into the gamebox.
 - (BOOL) _gameDidInstall;
 
+//Called once the source file copy operation has completed (successfully or not.)
+//Begins drive cleanup if the operation succeeded or was cancelled, otherwise attempts to fall
+//back on a safer import method if the original one failed.
+- (void) _finishCopyingSourceFiles;
 @end
 
 
@@ -990,26 +994,62 @@
 	else return [super operationInProgress: notification];
 }
 
+- (void) _finishCopyingSourceFiles
+{
+	id operation = [self transferOperation];
+	//Some source-file copies can be simple file transfers
+	BOOL isImport = [operation conformsToProtocol: @protocol(BXDriveImport)];
+	
+	//If the operation succeeded or was cancelled by the user, then 
+	if ([operation succeeded] || [operation isCancelled])
+	{
+		//If the operation was cancelled, then clean up any leftover files
+		if ([operation isCancelled])
+		{
+			if ([operation respondsToSelector: @selector(undoTransfer)]) [operation undoTransfer];
+		}
+		
+		//Otherwise, if the imported drive is replacing our original C drive,
+		//then update the root drive path accordingly so that cleanGamebox
+		//will clean up the right place
+		else if (isImport && [[[operation drive] letter] isEqualToString: @"C"])
+		{
+			[self setRootDrivePath: [operation importedDrivePath]];
+		}
+		
+		[self setTransferOperation: nil];
+		[self cleanGamebox];
+	}
+	else
+	{
+		BXOperation <BXDriveImport> *fallbackImport = nil;
+		
+		if ([operation respondsToSelector: @selector(undoTransfer)]) [operation undoTransfer];
+		
+		//Check if we can retry the operation
+		if (isImport && (fallbackImport = [BXDriveImport fallbackForFailedImport: operation]))
+		{
+			[fallbackImport setDelegate: self];
+			[self setTransferOperation: fallbackImport];
+			[importQueue addOperation: fallbackImport];
+		}
+		//Otherwise, skip the import altogether and pretend everything's OK.
+		//TODO: analyze whether this failure will have resulted in an unusable gamebox,
+		//then warn the user and offer to try importing again.
+		else
+		{
+			[self setTransferOperation: nil];
+			[self cleanGamebox];
+		}
+	}
+}
+
 - (void) operationDidFinish: (NSNotification *)notification
 {
 	BXOperation *operation = [notification object];
-	if ([self importStage] == BXImportCopyingSourceFiles &&
-		operation == [self transferOperation])
+	if ([self importStage] == BXImportCopyingSourceFiles && operation == [self transferOperation])
 	{
-		//Yay! We finished copying files (or failed copying files but want to get done with this anyway)
-		//TODO: add proper error checking and display, as a failure during drive import will probably
-		//mean an unusable gamebox.
-		[self setTransferOperation: nil];
-		
-		//If the imported drive is replacing our original C drive, then update the root drive path accordingly
-		//(This is used immediately after in cleanGamebox)
-		if ([operation conformsToProtocol: @protocol(BXDriveImport)] &&
-			[[[(id)operation drive] letter] isEqualToString: @"C"])
-		{
-			[self setRootDrivePath: [(id)operation importedDrivePath]];
-		}
-		
-		[self cleanGamebox];
+		[self _finishCopyingSourceFiles];
 	}
 	//Only perform the regular post-import behaviour (drive-swapping, notifications etc.)
 	//if we're actually in a DOS session

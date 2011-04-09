@@ -59,7 +59,16 @@
 						toDestination: (NSString *)destinationFolder
 							copyFiles: (BOOL)copyFiles;
 
+//Returns the most suitable operation class to import the specified drive
 + (Class) importClassForDrive: (BXDrive *)drive;
+
+//Returns a safe replacement import operation for the specified failed import,
+//or nil if no fallback was available.
+//The replacement will have the same source drive and destination folder as
+//the original import.
+//Used when e.g. a disc-ripping import fails because of a driver-related issue:
+//this will fall back on a safer method of importing.
++ (id <BXDriveImport>) fallbackForFailedImport: (id <BXDriveImport>)failedImport;
 
 @end
 

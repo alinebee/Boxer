@@ -10,7 +10,7 @@
 #import "BXAppController.h"
 #import "BXValueTransformers.h"
 #import "BXWelcomeView.h"
-#import "BXImport.h"
+#import "BXImportSession.h"
 #import "NSWindow+BXWindowEffects.h"
 
 
@@ -189,7 +189,7 @@
 {
 	for (NSString *path in filePaths)
 	{
-		if (![BXImport canImportFromSourcePath: path]) return NO;
+		if (![BXImportSession canImportFromSourcePath: path]) return NO;
 	}
 	return YES;
 }

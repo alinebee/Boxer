@@ -8,11 +8,11 @@
 
 //BXImportWindowController manages the behaviour of the drive import window and coordinates
 //animation and transitions between the window's various views.
-//It takes its marching orders from the BXImport document class.
+//It takes its marching orders from the BXImportSession document class.
 
 #import "BXMultiPanelWindowController.h"
 
-@class BXImport;
+@class BXImportSession;
 
 @interface BXImportWindowController : BXMultiPanelWindowController
 {
@@ -46,7 +46,7 @@
 
 //Recast NSWindowController's standard accessors so that we get our own classes
 //(and don't have to keep recasting them ourselves.)
-- (BXImport *) document;
+- (BXImportSession *) document;
 
 //Hand off control and appearance from one window controller to another.
 //Used to morph between windows.

@@ -23,8 +23,6 @@
 	IBOutlet NSView *defaultProgramPanel;
 	IBOutlet NSView *initialDefaultProgramPanel;
 	IBOutlet NSView *noProgramsPanel;
-	IBOutlet NSView *finishImportingPanel;
-	IBOutlet NSView *installerTipsPanel;
 	IBOutlet NSCollectionView *programList;
 	IBOutlet NSScrollView *programScroller;
 	
@@ -39,8 +37,6 @@
 @property (retain, nonatomic) NSView *defaultProgramPanel;
 @property (retain, nonatomic) NSView *initialDefaultProgramPanel;
 @property (retain, nonatomic) NSView *noProgramsPanel;
-@property (retain, nonatomic) NSView *finishImportingPanel;
-@property (retain, nonatomic) NSView *installerTipsPanel;
 
 @property (retain, nonatomic) NSCollectionView *programList;
 @property (retain, nonatomic) NSScrollView *programScroller;
@@ -83,14 +79,11 @@
 - (BOOL) canSetActiveProgramToDefault;
 
 
-
 #pragma mark -
 #pragma mark IB Actions
 
 //Used by initialDefaultProgramPanel for accepting the offer to make the current program the default.
 - (IBAction) setCurrentProgramToDefault: (id)sender;
 
-//Used by installerTipsPanel to show the help page for game installation.
-- (IBAction) showInstallerHelp: (id)sender;
 
 @end

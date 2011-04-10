@@ -7,7 +7,7 @@
 
 
 #import "BXImportWindowController.h"
-#import "BXImport.h"
+#import "BXImportSession.h"
 #import "BXGeometry.h"
 #import "NSWindow+BXWindowSizing.h"
 
@@ -19,7 +19,7 @@
 @implementation BXImportWindowController
 @synthesize dropzonePanel, loadingPanel, installerPanel, finalizingPanel, finishedPanel;
 
-- (BXImport *) document { return (BXImport *)[super document]; }
+- (BXImportSession *) document { return (BXImportSession *)[super document]; }
 
 #pragma mark -
 #pragma mark Initialization and deallocation
@@ -76,27 +76,27 @@
 	{
 		switch ([[self document] importStage])
 		{
-			case BXImportWaitingForSourcePath:
+			case BXImportSessionWaitingForSourcePath:
 				[self setCurrentPanel: [self dropzonePanel]];
 				break;
 				
-			case BXImportLoadingSourcePath:
+			case BXImportSessionLoadingSourcePath:
 				[self setCurrentPanel: [self loadingPanel]];
 				break;
 				
-			case BXImportWaitingForInstaller:
-			case BXImportReadyToLaunchInstaller:
-			case BXImportRunningInstaller:
+			case BXImportSessionWaitingForInstaller:
+			case BXImportSessionReadyToLaunchInstaller:
+			case BXImportSessionRunningInstaller:
 				[self setCurrentPanel: [self installerPanel]];
 				break;
 				
-			case BXImportReadyToFinalize:
-			case BXImportCopyingSourceFiles:
-			case BXImportCleaningGamebox:
+			case BXImportSessionReadyToFinalize:
+			case BXImportSessionCopyingSourceFiles:
+			case BXImportSessionCleaningGamebox:
 				[self setCurrentPanel: [self finalizingPanel]];
 				break;
 				
-			case BXImportFinished:
+			case BXImportSessionFinished:
 				[self setCurrentPanel: [self finishedPanel]];
 				break;
 		}
@@ -117,7 +117,7 @@
 		//If the import process has a file to represent, carry on with the default NSWindowController behaviour
 		return [super synchronizeWindowTitleWithDocumentName];
 	}
-	else if ([[self document] importStage] == BXImportFinished)
+	else if ([[self document] importStage] == BXImportSessionFinished)
 	{
 		[[self window] setRepresentedFilename: @""];
 		[[self window] setTitle: NSLocalizedString(@"Import complete",

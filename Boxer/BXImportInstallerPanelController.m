@@ -8,7 +8,7 @@
 
 #import "BXImportInstallerPanelController.h"
 #import "BXImportWindowController.h"
-#import "BXImport.h"
+#import "BXImportSession.h"
 #import "BXAppController.h"
 #import "BXValueTransformers.h"
 #import "NSString+BXPaths.h"

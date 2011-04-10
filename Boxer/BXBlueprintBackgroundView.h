@@ -6,10 +6,10 @@
  */
 
 
-//BXImportDOSWindowController is a subclass of BXDOSWindowController to tweak certain aspects
-//of window appearance and behaviour when running an import session.
+//BXBlueprintBackgroundView draws the custom blueprint background and watermark for the DOS window
+//while importing a game.
 
-#import "BXDOSWindowController.h"
+#import "BXInputView.h"
 
-@interface BXImportDOSWindowController : BXDOSWindowController
+@interface BXBlueprintBackgroundView : BXInputView
 @end

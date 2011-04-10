@@ -6,18 +6,9 @@
  */
 
 
-#import "BXImportDOSWindowController.h"
-#import "BXInputView.h"
+#import "BXDOSImportWindowController.h"
 
-@implementation BXImportDOSWindowController
-
-- (void) windowDidLoad
-{
-	[super windowDidLoad];
-	
-	//Set the appearance of the window background according to what kind of session we're running
-	[[self inputView] setAppearance: BXInputViewBlueprintAppearance];
-}
+@implementation BXDOSImportWindowController
 
 - (NSString *) windowTitleForDocumentDisplayName: (NSString *)displayName
 {

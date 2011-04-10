@@ -15,19 +15,5 @@
 
 #import <Cocoa/Cocoa.h>
 
-enum {
-	BXInputViewDefaultAppearance,
-	BXInputViewBlueprintAppearance
-};
-typedef NSUInteger BXInputViewAppearance;
-
-
 @interface BXInputView : NSView
-{
-	BXInputViewAppearance appearance;
-}
-
-//Which appearance to use when drawing the background
-@property (assign, nonatomic) BXInputViewAppearance appearance;
-
 @end

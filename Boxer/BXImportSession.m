@@ -11,17 +11,17 @@
 //  logical step of the operation", the UI says "OK, now run this specific step." Bad.
 //- The import process cannot currently be done unattended as it relies on UI confirmation.
 //  This prevents it being easily scriptable.
-//- Despite being an NSDocument subclass, BXImport instances cannot be loaded from an existing URL:
+//- Despite being an NSDocument subclass, BXImportSession instances cannot be loaded from an existing URL:
 //  they have to go through the importFromSourcePath: mechanism.
 //- The import process relies on BXOperations but overloads the standard operationDidFinish notification
 //  handler with switching functionality, instead of providing custom callbacks for different types
 //  of operation. This makes the callback code messy and prone to bugs.
 
 
-#import "BXImport.h"
+#import "BXImportSession.h"
 #import "BXSessionPrivate.h"
 
-#import "BXImportDOSWindowController.h"
+#import "BXDOSImportWindowController.h"
 #import "BXDOSWindowController.h"
 #import "BXImportWindowController.h"
 
@@ -37,7 +37,7 @@
 #import "BXSingleFileTransfer.h"
 #import "BXSimpleDriveImport.h"
 
-#import "BXImport+BXImportPolicies.h"
+#import "BXImportSession+BXImportPolicies.h"
 #import "BXSession+BXFileManager.h"
 
 #import "NSWorkspace+BXFileTypes.h"
@@ -51,7 +51,7 @@
 #pragma mark -
 #pragma mark Private method declarations
 
-@interface BXImport ()
+@interface BXImportSession ()
 @property (readwrite, retain, nonatomic) NSArray *installerPaths;
 @property (readwrite, copy, nonatomic) NSString *sourcePath;
 @property (readwrite, copy, nonatomic) NSString *preferredInstallerPath;
@@ -85,7 +85,7 @@
 #pragma mark -
 #pragma mark Actual implementation
 
-@implementation BXImport
+@implementation BXImportSession
 @synthesize importWindowController;
 @synthesize sourcePath, rootDrivePath;
 @synthesize installerPaths, preferredInstallerPath;
@@ -116,9 +116,9 @@
 		[self setFileURL: [NSURL fileURLWithPath: [self sourcePath]]];
 		
 		if ([self gameNeedsInstalling])
-			[self setImportStage: BXImportWaitingForInstaller];
+			[self setImportStage: BXImportSessionWaitingForInstaller];
 		else
-			[self setImportStage: BXImportReadyToFinalize];
+			[self setImportStage: BXImportSessionReadyToFinalize];
 	}
 	return self;
 }
@@ -273,7 +273,7 @@
 
 - (void) makeWindowControllers
 {	
-	BXImportDOSWindowController *DOSController	= [[BXImportDOSWindowController alloc] initWithWindowNibName: @"DOSWindow"];
+	BXDOSImportWindowController *DOSController	= [[BXDOSImportWindowController alloc] initWithWindowNibName: @"DOSImportWindow"];
 	BXImportWindowController *importController	= [[BXImportWindowController alloc] initWithWindowNibName: @"ImportWindow"];
 	
 	[self addWindowController: DOSController];
@@ -300,7 +300,7 @@
 
 - (void) showWindows
 {
-	if ([self importStage] == BXImportRunningInstaller)
+	if ([self importStage] == BXImportSessionRunningInstaller)
 	{
 		[[self DOSWindowController] showWindow: self];
 	}
@@ -327,7 +327,7 @@
 - (BOOL) shouldCloseOnEmulatorExit { return NO; }
 
 //We are considered to have unsaved changes if we have a not-yet-finalized gamebox
-- (BOOL) isDocumentEdited	{ return [self gamePackage] != nil && [self importStage] < BXImportFinished; }
+- (BOOL) isDocumentEdited	{ return [self gamePackage] != nil && [self importStage] < BXImportSessionFinished; }
 
 //Overridden to display our own custom confirmation alert instead of the standard NSDocument one.
 - (void) canCloseDocumentWithDelegate: (id)delegate
@@ -626,8 +626,8 @@
 - (void) importFromSourcePath: (NSString *)path
 {
 	//Sanity checks: if these fail then there is a programming error.
-	NSAssert(path != nil, @"Nil path passed to BXImport importFromSourcePath:");
-	NSAssert([self importStage] <= BXImportWaitingForInstaller, @"Cannot call importFromSourcePath after game import has already started.");
+	NSAssert(path != nil, @"Nil path passed to BXImportSession importFromSourcePath:");
+	NSAssert([self importStage] <= BXImportSessionWaitingForInstaller, @"Cannot call importFromSourcePath after game import has already started.");
 	
 	NSURL *sourceURL = [NSURL fileURLWithPath: [path stringByStandardizingPath]];
 	
@@ -635,7 +635,7 @@
 
 	[self setFileURL: sourceURL];
 
-	[self setImportStage: BXImportLoadingSourcePath];
+	[self setImportStage: BXImportSessionLoadingSourcePath];
 	
 	BOOL readSucceeded = [self readFromURL: sourceURL
 									ofType: nil
@@ -649,7 +649,7 @@
 		{
 			//Bounce to notify the user that we need their input
 			[NSApp requestUserAttention: NSInformationalRequest];
-			[self setImportStage: BXImportWaitingForInstaller];
+			[self setImportStage: BXImportSessionWaitingForInstaller];
 		}
 		else
 		{
@@ -659,7 +659,7 @@
 	else if (readError)
 	{
 		[self setFileURL: nil];
-		[self setImportStage: BXImportWaitingForSourcePath];
+		[self setImportStage: BXImportSessionWaitingForSourcePath];
 		
 		//If we failed, then display the error as a sheet
 		[self presentError: readError
@@ -673,7 +673,7 @@
 - (void) cancelSourcePath
 {
 	//Sanity checks: if these fail then there is a programming error.
-	NSAssert([self importStage] <= BXImportWaitingForInstaller, @"Cannot call cancelSourcePath after game import has already started.");
+	NSAssert([self importStage] <= BXImportSessionWaitingForInstaller, @"Cannot call cancelSourcePath after game import has already started.");
 
 	if (didMountSourceVolume)
 	{
@@ -687,14 +687,14 @@
 	[self setPreferredInstallerPath: nil];
 	[self setFileURL: nil];
 	
-	[self setImportStage: BXImportWaitingForSourcePath];
+	[self setImportStage: BXImportSessionWaitingForSourcePath];
 }
 
 - (void) launchInstaller: (NSString *)path
 {
 	//Sanity checks: if these fail then there is a programming error.
-	NSAssert(path != nil, @"No targetPath specified when BXImport launchInstaller: was called.");
-	NSAssert([self sourcePath] != nil, @"No sourcePath specified when BXImport launchInstaller: was called.");
+	NSAssert(path != nil, @"No targetPath specified when BXImportSession launchInstaller: was called.");
+	NSAssert([self sourcePath] != nil, @"No sourcePath specified when BXImportSession launchInstaller: was called.");
 	
 	//If we don't yet have a game package (and we shouldn't), generate one now
 	if (![self gamePackage])
@@ -702,7 +702,7 @@
 		[self _generateGameboxWithError: NULL];
 	}
 	
-	[self setImportStage: BXImportRunningInstaller];
+	[self setImportStage: BXImportSessionRunningInstaller];
 	
 	[[self importWindowController] setShouldCloseDocument: NO];
 	[[self DOSWindowController] setShouldCloseDocument: YES];
@@ -716,7 +716,7 @@
 - (void) skipInstaller
 {
 	[self setTargetPath: nil];
-	[self setImportStage: BXImportReadyToFinalize];
+	[self setImportStage: BXImportSessionReadyToFinalize];
 	
 	[self importSourceFiles];
 }
@@ -747,7 +747,7 @@
 	//Clear the DOS frame
 	[[self DOSWindowController] updateWithFrame: nil];
 	
-	[self setImportStage: BXImportReadyToFinalize];
+	[self setImportStage: BXImportSessionReadyToFinalize];
 	
 	[[self importWindowController] pickUpFromController: [self DOSWindowController]];
 	
@@ -757,14 +757,14 @@
 - (void) importSourceFiles
 {
 	//Sanity checks: if these fail then there is a programming error.
-	NSAssert([self importStage] == BXImportReadyToFinalize, @"BXImport importSourceFiles: was called before we are ready to finalize.");
-	NSAssert([self sourcePath] != nil, @"No sourcePath specified when BXImport importSourceFiles: was called.");
+	NSAssert([self importStage] == BXImportSessionReadyToFinalize, @"BXImportSession importSourceFiles: was called before we are ready to finalize.");
+	NSAssert([self sourcePath] != nil, @"No sourcePath specified when BXImportSession importSourceFiles: was called.");
 	
 	NSFileManager *manager = [NSFileManager defaultManager];
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	
 	
-	[self setImportStage: BXImportCopyingSourceFiles];
+	[self setImportStage: BXImportSessionCopyingSourceFiles];
 	[self setStageProgressIndeterminate: YES];
 	
 	//If we don't have a source folder yet, generate one now before continuing
@@ -906,7 +906,7 @@
 
 - (void) cleanGamebox
 {	
-	[self setImportStage: BXImportCleaningGamebox];
+	[self setImportStage: BXImportSessionCleaningGamebox];
 
 	NSSet *bundleableTypes = [[BXAppController mountableFolderTypes] setByAddingObjectsFromSet: [BXAppController mountableImageTypes]];
 	//Special case to catch GOG's standalone .GOG images (which are just renamed ISOs)
@@ -978,7 +978,7 @@
 	[importQueue waitUntilAllOperationsAreFinished];
 	
 	//That's all folks!
-	[self setImportStage: BXImportFinished];
+	[self setImportStage: BXImportSessionFinished];
 	
 	//Add to the recent documents list
 	[[NSDocumentController sharedDocumentController] noteNewRecentDocument: self];
@@ -994,7 +994,7 @@
 - (void) operationInProgress: (NSNotification *)notification
 {
 	BXOperation *operation = [notification object];
-	if ([self importStage] == BXImportCopyingSourceFiles && operation == [self transferOperation])
+	if ([self importStage] == BXImportSessionCopyingSourceFiles && operation == [self transferOperation])
 	{
 		//Update our progress to match the operation's progress
 		
@@ -1057,13 +1057,13 @@
 - (void) operationDidFinish: (NSNotification *)notification
 {
 	BXOperation *operation = [notification object];
-	if ([self importStage] == BXImportCopyingSourceFiles && operation == [self transferOperation])
+	if ([self importStage] == BXImportSessionCopyingSourceFiles && operation == [self transferOperation])
 	{
 		[self _finishCopyingSourceFiles];
 	}
 	//Only perform the regular post-import behaviour (drive-swapping, notifications etc.)
 	//if we're actually in a DOS session
-	else if ([self importStage] == BXImportRunningInstaller)
+	else if ([self importStage] == BXImportSessionRunningInstaller)
 	{
 		return [super operationDidFinish: notification];
 	}
@@ -1118,7 +1118,7 @@
 	
 	//Once the emulation session finishes, continue importing (if we're not doing so already)
 	//Also hide the Inspector panel if it was open
-	if (![emulator isCancelled] && [self importStage] == BXImportRunningInstaller)
+	if (![emulator isCancelled] && [self importStage] == BXImportSessionRunningInstaller)
 	{
 		[self finishInstaller];
 	}
@@ -1247,7 +1247,7 @@
 	[super _cleanup];
 	
 	//Delete our newly-minted gamebox if we didn't finish importing it before we were closed
-	if ([self importStage] != BXImportFinished && [self gamePackage])
+	if ([self importStage] != BXImportSessionFinished && [self gamePackage])
 	{
 		NSString *path = [[self gamePackage] bundlePath];
 		if (path)

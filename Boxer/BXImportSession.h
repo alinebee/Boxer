@@ -6,9 +6,9 @@
  */
 
 
-//BXImport is a BXSession document subclass which manages the importing of a new game
+//BXImportSession is a BXSession document subclass which manages the importing of a new game
 //from start to finish.
-//Besides handling the emulator session that runs the game installer, BXImport also
+//Besides handling the emulator session that runs the game installer, BXImportSession also
 //prepares a new gamebox and manages the drag-drop wizard which bookends (or in many cases
 //comprises) the import process.
 
@@ -21,15 +21,15 @@
 
 //Constants returned by importStage;
 enum {
-	BXImportWaitingForSourcePath = 0,
-	BXImportLoadingSourcePath,
-	BXImportWaitingForInstaller,
-	BXImportReadyToLaunchInstaller,
-	BXImportRunningInstaller,
-	BXImportReadyToFinalize,
-	BXImportCopyingSourceFiles,
-	BXImportCleaningGamebox,
-	BXImportFinished
+	BXImportSessionWaitingForSourcePath = 0,
+	BXImportSessionLoadingSourcePath,
+	BXImportSessionWaitingForInstaller,
+	BXImportSessionReadyToLaunchInstaller,
+	BXImportSessionRunningInstaller,
+	BXImportSessionReadyToFinalize,
+	BXImportSessionCopyingSourceFiles,
+	BXImportSessionCleaningGamebox,
+	BXImportSessionFinished
 };
 typedef NSUInteger BXImportStage;
 
@@ -37,7 +37,7 @@ typedef NSUInteger BXImportStage;
 @class BXImportWindowController;
 @protocol BXDriveImport;
 
-@interface BXImport : BXSession <BXOperationDelegate>
+@interface BXImportSession : BXSession <BXOperationDelegate>
 {
 	NSString *sourcePath;
 	BXImportWindowController *importWindowController;
@@ -76,15 +76,15 @@ typedef NSUInteger BXImportStage;
 @property (readonly, assign, nonatomic) BXImportStage importStage;
 
 //How far through the current stage we have progressed.
-//Only relevant during the BXImportLoadingSourcePath and BXImportCopyingSourceFiles stages.
+//Only relevant during the BXImportSessionLoadingSourcePath and BXImportSessionCopyingSourceFiles stages.
 @property (readonly, assign, nonatomic) BXOperationProgress stageProgress;
 
 //Whether our progress cannot be meaningfully determined currently.
-//Only relevant during the BXImportLoadingSourcePath and BXImportCopyingSourceFiles stages.
+//Only relevant during the BXImportSessionLoadingSourcePath and BXImportSessionCopyingSourceFiles stages.
 @property (readonly, assign, nonatomic) BOOL stageProgressIndeterminate;
 
 //The current file copying operation being performed.
-//Only relevant during the BXImportCopyingSourceFiles stage.
+//Only relevant during the BXImportSessionCopyingSourceFiles stage.
 @property (readonly, retain, nonatomic) BXOperation *transferOperation;
 
 

@@ -23,7 +23,7 @@
 #import "BXVideoHandler.h"
 
 #import "BXSession+BXDragDrop.h"
-#import "BXImport.h"
+#import "BXImportSession.h"
 
 #import "NSWindow+BXWindowSizing.h"
 #import "BXGeometry.h"

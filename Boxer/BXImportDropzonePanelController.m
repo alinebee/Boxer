@@ -9,7 +9,7 @@
 #import "BXImportDropzonePanelController.h"
 #import "BXImportWindowController.h"
 #import "BXImportDropzone.h"
-#import "BXImport.h"
+#import "BXImportSession.h"
 #import "BXBlueprintPanel.h"
 #import "BXAppController.h"
 
@@ -20,7 +20,7 @@
 @interface BXImportDropzonePanelController ()
 
 //Handles the response from the choose-a-folder-to-import panel.
-//Will set our BXImport's source path to the chosen file.
+//Will set our BXImportSession's source path to the chosen file.
 - (void) _importChosenPath: (NSOpenPanel *)openPanel
 				returnCode: (int)returnCode
 			   contextInfo: (void *)contextInfo;
@@ -73,7 +73,7 @@
 	
 	[openPanel beginSheetForDirectory: nil
 								 file: nil
-								types: [[BXImport acceptedSourceTypes] allObjects]
+								types: [[BXImportSession acceptedSourceTypes] allObjects]
 					   modalForWindow: [[self view] window]
 						modalDelegate: self
 					   didEndSelector: @selector(_importChosenPath:returnCode:contextInfo:)
@@ -110,7 +110,7 @@
 	if ([[pboard types] containsObject: NSFilenamesPboardType])
 	{
 		NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
-		BXImport *importer = [[self controller] document];
+		BXImportSession *importer = [[self controller] document];
 		for (NSString *path in filePaths)
 		{
 			//If any of the dropped files cannot be imported, reject the drop
@@ -131,7 +131,7 @@
     if ([[pboard types] containsObject: NSFilenamesPboardType])
 	{
         NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
-		BXImport *importer = [[self controller] document];
+		BXImportSession *importer = [[self controller] document];
 		for (NSString *path in filePaths)
 		{
 			if ([[importer class] canImportFromSourcePath: path])

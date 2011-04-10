@@ -11,7 +11,7 @@
 #import <Cocoa/Cocoa.h>
 
 @class BXSession;
-@class BXImport;
+@class BXImportSession;
 
 @interface BXCloseAlert : NSAlert
 
@@ -28,7 +28,7 @@
 + (BXCloseAlert *) closeAlertWhileImportingDrives: (BXSession *)theSession;
 
 //Shown when closing the window while a game import is in progress.
-+ (BXCloseAlert *) closeAlertWhileImportingGame: (BXImport *)theSession;
++ (BXCloseAlert *) closeAlertWhileImportingGame: (BXImportSession *)theSession;
 
 //Shown after a windows-only program has failed to run and exited.
 + (BXCloseAlert *) closeAlertAfterWindowsOnlyProgramExited: (NSString *)programPath;

@@ -9,7 +9,7 @@
 //BXImportFinalizingPanelController manages the finalizing-gamebox view of the game import window.
 
 #import <Cocoa/Cocoa.h>
-#import "BXImport.h"
+#import "BXImportSession.h"
 
 @class BXImportWindowController;
 @interface BXImportFinalizingPanelController : NSViewController

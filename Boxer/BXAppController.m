@@ -17,7 +17,7 @@
 #import "BXFirstRunWindowController.h"
 
 #import "BXSession+BXFileManager.h"
-#import "BXImport.h";
+#import "BXImportSession.h";
 #import "BXEmulator.h";
 
 #import "BXValueTransformers.h"
@@ -502,7 +502,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 {
 	[self hideWelcomePanel: self];
 	//If it's too late for us to open an import session, launch a new Boxer process to do it
-	if (![self _canOpenDocumentOfClass: [BXImport class]])
+	if (![self _canOpenDocumentOfClass: [BXImportSession class]])
 	{
 		[self _launchProcessWithImportPanel];
 		[self _cancelOpeningWithError: outError];
@@ -510,7 +510,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	}
 	else
 	{
-		id session = [[[BXImport alloc] initWithType: nil error: outError] autorelease];
+		id session = [[[BXImportSession alloc] initWithType: nil error: outError] autorelease];
 		if (session)
 		{
 			[self addDocument: session];
@@ -527,7 +527,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (id) openImportSessionWithContentsOfURL: (NSURL *)url display: (BOOL)display error: (NSError **)outError
 {
 	//If it's too late for us to open an import session, launch a new Boxer process to do it
-	if (![self _canOpenDocumentOfClass: [BXImport class]])
+	if (![self _canOpenDocumentOfClass: [BXImportSession class]])
 	{
 		[self _launchProcessWithImportSessionAtURL: url];
 		[self _cancelOpeningWithError: outError];
@@ -535,7 +535,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	}
 	else
 	{
-		BXImport *importer = [self openImportSessionAndDisplay: display error: outError];
+		BXImportSession *importer = [self openImportSessionAndDisplay: display error: outError];
 		[importer importFromSourcePath: [url path]];
 		return importer;
 	}
@@ -545,7 +545,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 {
 	//Don't add incomplete game imports to the Recent Documents list.
 	if ([theDocument respondsToSelector: @selector(importStage)] &&
-		[(id)theDocument importStage] != BXImportFinished)
+		[(id)theDocument importStage] != BXImportSessionFinished)
 	{
 		return;
 	}
@@ -676,7 +676,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	//If we already have an import session active, just bring it to the front
 	for (BXSession *session in [self sessions])
 	{
-		if ([session isKindOfClass: [BXImport class]])
+		if ([session isKindOfClass: [BXImportSession class]])
 		{
 			[session showWindows];
 			return;

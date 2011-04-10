@@ -9,10 +9,8 @@
 #import "BXProgramPanelController.h"
 #import "BXValueTransformers.h"
 #import "BXSession+BXFileManager.h"
-#import "BXAppController.h"
 #import "BXProgramPanel.h"
 #import "BXPackage.h"
-#import "BXImport.h"
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "NSString+BXPaths.h"
 #import "BXDOSWindowController.h"
@@ -26,7 +24,6 @@
 @synthesize programList, programScroller;
 @synthesize defaultProgramPanel, initialDefaultProgramPanel;
 @synthesize programChooserPanel, noProgramsPanel;
-@synthesize finishImportingPanel, installerTipsPanel;
 @synthesize panelExecutables;
 
 - (void) dealloc
@@ -40,8 +37,6 @@
 	[self setInitialDefaultProgramPanel: nil], [initialDefaultProgramPanel release];
 	[self setProgramChooserPanel: nil], [programChooserPanel release];
 	[self setNoProgramsPanel: nil],		[noProgramsPanel release];
-	[self setFinishImportingPanel: nil],[finishImportingPanel release];
-	[self setInstallerTipsPanel: nil],	[installerTipsPanel release];
 	[self setPanelExecutables: nil],	[panelExecutables release];
 	
 	[super dealloc];
@@ -122,59 +117,25 @@
 	BXSession *session = [self representedObject];
 	NSView *panel;
 	
-	//Show a different set of program panels when part of the game-import process.
-	//TODO: clean up this bifurcation as there's a lot of duplicated code.
-	if ([session isKindOfClass: [BXImport class]])
-	{
-		if ([[session emulator] isRunningProcess])
-		{
-			//While running a program, check if it's an installer or a regular program:
-			if (![(BXImport *)session isRunningInstaller] && [self canSetActiveProgramToDefault])
-			{
-				//If it's a regular program, allow the user to choose it as the default startup program
-				
-				//If we have a default program, show the checkbox version;
-				//also keep showing the checkbox if it's already active
-				if ([self hasDefaultTarget] || [self activePanel] == defaultProgramPanel)
-					panel = defaultProgramPanel;
-				//Otherwise, show the Yes/No choice.
-				else
-					panel = initialDefaultProgramPanel;
-			}
-			else
-			{
-				//Otherwise, show the panel of installation tips
-				panel = installerTipsPanel;
-			}
-		}
+	//Show the 'make this program the default' panel only when the session's active program
+	//can be legally set as the default target (i.e., it's located within the gamebox)
+	if ([self canSetActiveProgramToDefault])
+	{	
+		//If we have a default program, show the checkbox version;
+		//also keep showing the checkbox if it's already active
+		if ([self hasDefaultTarget] || [self activePanel] == defaultProgramPanel)
+			panel = defaultProgramPanel;
+		//Otherwise, show the Yes/No choice.
 		else
-		{
-			//Otherwise, show the UI for finishing the import process
-			panel = finishImportingPanel;
-		}
+			panel = initialDefaultProgramPanel;
+	}
+	else if	([session programPathsOnPrincipalDrive])
+	{
+		panel = programChooserPanel;
 	}
 	else
 	{
-		//Show the 'make this program the default' panel only when the session's active program
-		//can be legally set as the default target (i.e., it's located within the gamebox)
-		if ([self canSetActiveProgramToDefault])
-		{	
-			//If we have a default program, show the checkbox version;
-			//also keep showing the checkbox if it's already active
-			if ([self hasDefaultTarget] || [self activePanel] == defaultProgramPanel)
-				panel = defaultProgramPanel;
-			//Otherwise, show the Yes/No choice.
-			else
-				panel = initialDefaultProgramPanel;
-		}
-		else if	([session programPathsOnPrincipalDrive])
-		{
-			panel = programChooserPanel;
-		}
-		else
-		{
-			panel = noProgramsPanel;
-		}
+		panel = noProgramsPanel;
 	}
 
 	[self setActivePanel: panel];
@@ -288,12 +249,6 @@
 	[NSApp sendAction: @selector(toggleProgramPanelShown:) to: nil from: self];
 	if ([self canSetActiveProgramToDefault]) [self setActiveProgramIsDefault: YES];
 }
-
-- (IBAction) showInstallerHelp: (id)sender
-{
-	[[NSApp delegate] showHelpAnchor: @"game-installation-without-preamble"];
-}
-
 
 #pragma mark -
 #pragma mark Executable list

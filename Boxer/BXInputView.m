@@ -12,7 +12,6 @@
 
 
 @implementation BXInputView
-@synthesize appearance;
 
 - (BOOL) acceptsFirstResponder
 {
@@ -45,77 +44,9 @@
 	[background release];
 }
 
-- (void) _drawBlueprintInRect: (NSRect)dirtyRect
-{	
-	NSColor *blueprintColor = [NSColor colorWithPatternImage: [NSImage imageNamed: @"Blueprint.jpg"]];
-	NSSize patternSize		= [[blueprintColor patternImage] size];
-	NSSize viewSize			= [self bounds].size;
-	NSPoint patternOffset	= [self offsetFromWindowOrigin];
-	NSPoint patternPhase	= NSMakePoint(patternOffset.x + ((viewSize.width - patternSize.width) / 2),
-										  patternOffset.y + ((viewSize.height - patternSize.height) / 2));
-	
-	[NSGraphicsContext saveGraphicsState];
-		[[NSGraphicsContext currentContext] setPatternPhase: patternPhase];
-		[blueprintColor set];
-		[NSBezierPath fillRect: [self bounds]];
-	[NSGraphicsContext restoreGraphicsState];
-}
-
-- (void) _drawLightingInRect: (NSRect)dirtyRect
-{
-	NSGradient *lighting = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.2f]
-														 endingColor: [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.4f]];
-	
-	NSRect backgroundRect = [self bounds];
-	NSPoint startPoint	= NSMakePoint(NSMidX(backgroundRect), NSMinY(backgroundRect));
-	NSPoint endPoint	= NSMakePoint(NSMidX(backgroundRect), NSMidY(backgroundRect));
-	CGFloat startRadius = NSWidth(backgroundRect) * 0.1f;
-	CGFloat endRadius	= NSWidth(backgroundRect) * 0.75f;
-	
-	[lighting drawFromCenter: startPoint radius: startRadius
-					toCenter: endPoint radius: endRadius
-					 options: NSGradientDrawsBeforeStartingLocation | NSGradientDrawsAfterEndingLocation];
-	
-	[lighting release];	
-}
-
-
-- (void) _drawShadowInRect: (NSRect)dirtyRect
-{
-	NSRect shadowRect = [self bounds];
-	shadowRect.size.height = 6.0f;
-	
-	if (NSIntersectsRect(dirtyRect, shadowRect))
-	{
-		NSGradient *topShadow = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.2f]
-															  endingColor: [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.0f]];
-		
-		[topShadow drawInRect: shadowRect angle: 90.0f];
-		[topShadow release];
-	}
-}
-
 - (void) _drawBrandInRect: (NSRect)dirtyRect
 {
 	NSImage *brand = [NSImage imageNamed: @"Brand"];
-	[brand setFlipped: YES];
-	NSRect brandRegion;
-	brandRegion.size = [brand size];
-	brandRegion = NSIntegralRect(centerInRect(brandRegion, [self bounds]));
-	
-	if (NSIntersectsRect(dirtyRect, brandRegion))
-	{
-		[brand drawInRect: brandRegion
-				 fromRect: NSZeroRect
-				operation: NSCompositeSourceOver
-				 fraction: 1.0f];	
-	}
-}
-
-
-- (void) _drawBlueprintBrandInRect: (NSRect)dirtyRect
-{
-	NSImage *brand = [NSImage imageNamed: @"BrandWatermark"];
 	[brand setFlipped: YES];
 	NSRect brandRegion;
 	brandRegion.size = [brand size];
@@ -134,18 +65,8 @@
 {
 	[NSBezierPath clipRect: dirtyRect];
 	
-	if (appearance == BXInputViewBlueprintAppearance)
-	{
-		[self _drawBlueprintInRect: dirtyRect];
-		[self _drawBlueprintBrandInRect: dirtyRect];
-		[self _drawLightingInRect: dirtyRect];
-		[self _drawShadowInRect: dirtyRect];
-	}
-	else
-	{
-		[self _drawBackgroundInRect: dirtyRect];
-		[self _drawBrandInRect: dirtyRect];
-	}
+	[self _drawBackgroundInRect: dirtyRect];
+	[self _drawBrandInRect: dirtyRect];
 }
 
 @end

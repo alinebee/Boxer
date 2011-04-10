@@ -9,7 +9,7 @@
 //The BXImportPolicies category defines class-level helper methods that Boxer uses to decide
 //how to import games.
 
-#import "BXImport.h"
+#import "BXImportSession.h"
 
 #pragma mark -
 #pragma mark Class constants
@@ -23,7 +23,7 @@ static const NSInteger BXCDROMSizeThreshold  = 100 * 1024 * 1024;
 static const NSInteger BXFreeSpaceForCDROMInstall = 700 * 1024 * 1024;
 
 @class BXPackage;
-@interface BXImport (BXImportPolicies)
+@interface BXImportSession (BXImportPolicies)
 
 #pragma mark -
 #pragma mark Detecting installers

@@ -9,7 +9,7 @@
 #import "BXImportFinishedPanelController.h"
 #import "BXAppController.h"
 #import "BXImportWindowController.h"
-#import "BXImport.h"
+#import "BXImportSession.h"
 #import "BXCoverArt.h"
 #import "NSWorkspace+BXFileTypes.h"
 

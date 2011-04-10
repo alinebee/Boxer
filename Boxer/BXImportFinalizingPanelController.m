@@ -8,7 +8,7 @@
 #import "BXImportFinalizingPanelController.h"
 #import "BXImportWindowController.h"
 #import "BXDriveImport.h"
-#import "BXImport.h"
+#import "BXImportSession.h"
 #import "BXAppController.h"
 
 @implementation BXImportFinalizingPanelController
@@ -39,7 +39,7 @@
 	
 	switch (stage)
 	{
-		case BXImportCopyingSourceFiles:
+		case BXImportSessionCopyingSourceFiles:
 			transfer = [[controller document] transferOperation];
 			
 			//IMPLEMENTATION NOTE: because the transfer can technically be any kind of operation,
@@ -62,7 +62,7 @@
 										 @"Import progress description for copying source files stage, before size of file transfer is known.");
 			}
 			
-		case BXImportCleaningGamebox:
+		case BXImportSessionCleaningGamebox:
 			return NSLocalizedString(@"Removing unnecessary files…",
 									 @"Import progress description for gamebox cleanup stage.");
 			

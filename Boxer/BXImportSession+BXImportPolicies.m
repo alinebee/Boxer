@@ -6,7 +6,7 @@
  */
 
 
-#import "BXImport+BXImportPolicies.h"
+#import "BXImportSession+BXImportPolicies.h"
 #import "BXSession+BXFileManager.h"
 #import "NSWorkspace+BXMountedVolumes.h"
 #import "NSWorkspace+BXFileTypes.h"
@@ -18,7 +18,7 @@
 #import "BXPathEnumerator.h"
 
 
-@implementation BXImport (BXImportPolicies)
+@implementation BXImportSession (BXImportPolicies)
 
 #pragma mark -
 #pragma mark Detecting installers and ignorable files

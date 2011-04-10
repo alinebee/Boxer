@@ -75,7 +75,7 @@
 }
 
 
-+ (BXCloseAlert *) closeAlertWhileImportingGame: (BXImport *)theSession
++ (BXCloseAlert *) closeAlertWhileImportingGame: (BXImportSession *)theSession
 {
 	BXCloseAlert *alert = [self alert];
 	

@@ -13,9 +13,6 @@
 //  This prevents it being easily scriptable.
 //- Despite being an NSDocument subclass, BXImportSession instances cannot be loaded from an existing URL:
 //  they have to go through the importFromSourcePath: mechanism.
-//- The import process relies on BXOperations but overloads the standard operationDidFinish notification
-//  handler with switching functionality, instead of providing custom callbacks for different types
-//  of operation. This makes the callback code messy and prone to bugs.
 
 
 #import "BXImportSession.h"
@@ -59,7 +56,8 @@
 @property (readwrite, assign, nonatomic) BXImportStage importStage;
 @property (readwrite, assign, nonatomic) BXOperationProgress stageProgress;
 @property (readwrite, assign, nonatomic) BOOL stageProgressIndeterminate;
-@property (readwrite, retain, nonatomic) BXOperation *transferOperation;
+@property (readwrite, retain, nonatomic) BXOperation *sourceFileImportOperation;
+@property (readwrite, assign, nonatomic) BOOL canSkipSourceFileImport;
 
 //Only defined for internal use
 @property (copy, nonatomic) NSString *rootDrivePath;
@@ -71,14 +69,6 @@
 //Return the path to which the current gamebox will be moved if renamed with the specified name.
 - (NSString *) _destinationPathForGameboxName: (NSString *)newName;
 
-//Used after running an installer to check if the installer has installed files to the gamebox.
-//Determines how (and whether) we import the source path into the gamebox.
-- (BOOL) _gameDidInstall;
-
-//Called once the source file copy operation has completed (successfully or not.)
-//Begins drive cleanup if the operation succeeded or was cancelled, otherwise attempts to fall
-//back on a safer import method if the original one failed.
-- (void) _finishCopyingSourceFiles;
 @end
 
 
@@ -89,7 +79,9 @@
 @synthesize importWindowController;
 @synthesize sourcePath, rootDrivePath;
 @synthesize installerPaths, preferredInstallerPath;
-@synthesize importStage, stageProgress, stageProgressIndeterminate, transferOperation;
+@synthesize importStage, stageProgress, stageProgressIndeterminate;
+@synthesize sourceFileImportOperation;
+@synthesize canSkipSourceFileImport;
 
 
 #pragma mark -
@@ -103,7 +95,7 @@
 	[self setInstallerPaths: nil],			[installerPaths release];
 	[self setPreferredInstallerPath: nil],	[preferredInstallerPath release];
 	
-	[self setTransferOperation: nil],		[transferOperation release];
+	[self setSourceFileImportOperation: nil], [sourceFileImportOperation release];
 	[super dealloc];
 }
 
@@ -450,7 +442,7 @@
 }
 
 
-//Overridden to reset the progress whenever we change the stage
+//Synthesized setter is overridden to reset the progress whenever we change the stage
 - (void) setImportStage: (BXImportStage)stage
 {
 	if (stage != importStage)
@@ -721,12 +713,6 @@
 	[self importSourceFiles];
 }
 
-//FIXME: the lone IBAction called directly from the UI. Move this to BXProgramPanelController or something.
-- (IBAction) finishImporting: (id)sender
-{
-	[self finishInstaller];
-}
-
 - (void) finishInstaller
 {	
 	//Tweak: disable any Growl drive notifications beyond this point.
@@ -735,7 +721,7 @@
 	//we don't want to appear.
 	showDriveNotifications = NO;
 	
-	//Stop the installer process, and hand control back to the import window
+	//Stop the installer process
 	[self cancel];
 	
 	//Close the program panel before handoff, otherwise it scales weirdly
@@ -747,21 +733,31 @@
 	//Clear the DOS frame
 	[[self DOSWindowController] updateWithFrame: nil];
 	
+	//Switch to the next stage before handing off, so that the correct panel is visible as soon as we do
 	[self setImportStage: BXImportSessionReadyToFinalize];
 	
+	//Finally, hand off to the import window
 	[[self importWindowController] pickUpFromController: [self DOSWindowController]];
 	
+	//Aaaaand start in on the next stage immediately
 	[self importSourceFiles];
 }
+
+
+#pragma mark -
+#pragma mark Finalizing the import
 
 - (void) importSourceFiles
 {
 	//Sanity checks: if these fail then there is a programming error.
+	//The fact that we're even checking this shit is proof that this class needs refactoring big-time
 	NSAssert([self importStage] == BXImportSessionReadyToFinalize, @"BXImportSession importSourceFiles: was called before we are ready to finalize.");
 	NSAssert([self sourcePath] != nil, @"No sourcePath specified when BXImportSession importSourceFiles: was called.");
 	
+	
 	NSFileManager *manager = [NSFileManager defaultManager];
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+	NSSet *bundleableTypes = [[BXAppController mountableFolderTypes] setByAddingObjectsFromSet: [BXAppController mountableImageTypes]];
 	
 	
 	[self setImportStage: BXImportSessionCopyingSourceFiles];
@@ -774,15 +770,16 @@
 		[self _generateGameboxWithError: NULL];
 	}
 	
-	//At this point, wait for any already-in-progress imports to finish
+	//At this point, wait for any already-in-progress operations to finish
+	//(In case the user started importing volumes via the Drives panel during installation)
 	[importQueue waitUntilAllOperationsAreFinished];
 	
 	
 	//Determine how we should import the source files
 	//-----------------------------------------------
 
-	//If the source path no longer exists, it means the user probably ejected the disk and we can't import
-	//FIXME: make this properly handle the case where the sourcepath is a mounted volume for a disc image
+	//If the source path no longer exists, it means the user probably ejected the disk and we can't import it.
+	//FIXME: make this properly handle the case where the source path was a mounted volume for a disc image.
 	if (![manager fileExistsAtPath: [self sourcePath]])
 	{
 		//Skip straight to cleanup
@@ -792,10 +789,8 @@
 	
 	//If there are already drives in the gamebox other than C, it means the user did their own importing
 	//and we shouldn't interfere with their work
-	NSSet *bundleableTypes = [[BXAppController mountableFolderTypes] setByAddingObjectsFromSet: [BXAppController mountableImageTypes]];
-	
 	NSArray *alreadyBundledVolumes = [[self gamePackage] volumesOfTypes: bundleableTypes];
-	if ([alreadyBundledVolumes count] > 1)
+	if ([alreadyBundledVolumes count] > 1) //There will always be a volume for the C drive
 	{
 		//Skip straight to cleanup
 		[self cleanGamebox];
@@ -805,24 +800,24 @@
 	
 	//At this point, all the edge cases are out of the way and we know we'll need to import something.
 	
-	BXDrive *importDrive = nil;
+	BXDrive *driveToImport = nil;
 	BXOperation *importOperation = nil;
+	BOOL didInstallFiles = [self gameDidInstall];
 	
-	//If the source path is directly bundleable (it is an image or a mountable folder)
-	//then import it into the new gamebox as-is
 	if ([workspace file: [self sourcePath] matchesTypes: bundleableTypes])
 	{
-		//If this file is a mountable type, move it into the gamebox's root folder where we can find it 
-		importDrive = [BXDrive driveFromPath: [self sourcePath] atLetter: nil];
+		//If the source path is directly bundleable (it is an image or a mountable folder)
+		//then import it as a new drive into the gamebox.
+		driveToImport = [BXDrive driveFromPath: [self sourcePath] atLetter: nil];
 		
-		//If this drive is marked as being for drive C, then check what we need to do with our original C drive
-		if ([[importDrive letter] isEqualToString: @"C"])
+		//If the drive is marked as being for drive C, then check what we need to do with our original C drive
+		if ([[driveToImport letter] isEqualToString: @"C"])
 		{	
-			//if any files were installed to the original C drive, then reset the import drive letter
-			//so that the drive imports alongside the existing C drive.
-			if ([self _gameDidInstall])
+			//If any files were installed to the original C drive, then reset the import drive letter
+			//so that the drive will be imported alongside the existing C drive.
+			if (didInstallFiles)
 			{
-				[importDrive setLetter: nil];
+				[driveToImport setLetter: nil];
 			}
 			//Otherwise, delete the original empty C drive so we can replace it with this one
 			else
@@ -830,78 +825,162 @@
 				[manager removeItemAtPath: [self rootDrivePath] error: nil];
 			}
 		}
-		importOperation = [self importForDrive: importDrive startImmediately: NO];
+		importOperation = [self importOperationForDrive: driveToImport startImmediately: NO];
 	}
-	
 	else
 	{
-		//Otherwise, check if the source path is a real floppy disk/CD-ROM,
-		//and thus will always need to be imported as-is
-		
 		NSString *volumePath = [workspace volumeForPath: [self sourcePath]];
 		NSString *volumeType = [workspace volumeTypeForPath: volumePath];
 		
 		BOOL isRealCDROM = [volumeType isEqualToString: dataCDVolumeType];
 		BOOL isRealFloppy = !isRealCDROM && [volumeType isEqualToString: FATVolumeType] && [workspace isFloppySizedVolumeAtPath: volumePath];
 		
-		//If the installer copied files to our C drive, or the source files are on an actual CDROM/floppy,
-		//then import the source files as a fake CD-ROM/floppy drive
-		if (isRealCDROM || isRealFloppy || [self _gameDidInstall])
+		//If the installer copied files to our C drive, or the source files are on a CDROM/floppy volume,
+		//then the source files should be imported as a new CD-ROM/floppy disk.
+		if (didInstallFiles || isRealCDROM || isRealFloppy)
 		{
-			//If the source path is on a disk image, then import the image instead
-			NSString *importPath = [self sourcePath];
+			NSString *pathToImport = [self sourcePath];
 			NSString *sourceImagePath = [workspace sourceImageForVolume: [self sourcePath]];
 			
+			//If the source path is on a DOSBox-compatible disk image, then import the image directly.
 			if (sourceImagePath && [workspace file: sourceImagePath matchesTypes: [BXAppController mountableImageTypes]])
-				importPath = sourceImagePath;
+				pathToImport = sourceImagePath;
 			
-			//If the source is an actual floppy disk, or this game needs to be installed off floppies,
-			//then import the source files as a floppy disk
+			//If the source is an actual floppy disk, or this game expects to be installed off floppies,
+			//then import the source files as a floppy disk.
 			if (isRealFloppy || [[self gameProfile] installMedium] == BXDriveFloppyDisk)
 			{
-				importDrive = [BXDrive floppyDriveFromPath: importPath atLetter: @"A"];
+				driveToImport = [BXDrive floppyDriveFromPath: pathToImport atLetter: @"A"];
 			}
-			//Otherwise, import the source files as a CD-ROM drive
+			//In all other cases, import the source files as a CD-ROM drive.
 			else
 			{
-				importDrive = [BXDrive CDROMFromPath: importPath atLetter: @"D"];
+				driveToImport = [BXDrive CDROMFromPath: pathToImport atLetter: @"D"];
 			}
 			
-			importOperation = [self importForDrive: importDrive startImmediately: NO];
+			importOperation = [self importOperationForDrive: driveToImport startImmediately: NO];
 		}
 		
-		//Otherwise, assume that the source files are an already-installed game:
-		//copy the source files themselves directly into the gamebox
-		
-		//We need to copy the source path into a subfolder of drive C: do this as a regular file copy
-		else if ([[self class] shouldUseSubfolderForSourceFilesAtPath: [self sourcePath]])
-		{
-			NSString *subfolderName	= [[self sourcePath] lastPathComponent];
-			//Ensure the destination name will be DOSBox-compatible
-			NSString *safeName = [[self class] validDOSNameFromName: subfolderName];
-			
-			NSString *destination = [[self rootDrivePath] stringByAppendingPathComponent: safeName];
-			
-			importOperation = [BXSingleFileTransfer transferFromPath: [self sourcePath]
-															  toPath: destination
-														   copyFiles: YES];
-			
-			[importOperation setDelegate: self];
-		}
-		
-		//Otherwise, replace the old drive C with the source path by importing it as a new drive
+		//If the game didn't install anything and we're not importing a CD or floppy disk,
+		//then assume that the source files represent an already-installed game, and copy
+		//the source files directly into the gamebox's C drive.
 		else
 		{
-			[manager removeItemAtPath: [self rootDrivePath] error: nil];
-			importDrive = [BXDrive hardDriveFromPath: [self sourcePath] atLetter: @"C"];
+			//Guess whether the game files expect to be located in the root of drive C (GOG games, Steam games etc.)
+			//or in a subfolder within drive C (almost everything else)
+			BOOL needsSubfolder = [[self class] shouldUseSubfolderForSourceFilesAtPath: [self sourcePath]];
 			
-			importOperation = [self importForDrive: importDrive startImmediately: NO];
+			if (needsSubfolder)
+			{
+				//If we need to copy the source path into a subfolder of drive C,
+				//then do this as a regular file copy rather than a drive import.
+				
+				NSString *subfolderName	= [[self sourcePath] lastPathComponent];
+				//Ensure the destination name will be DOSBox-compatible
+				NSString *safeName = [[self class] validDOSNameFromName: subfolderName];
+				
+				NSString *destination = [[self rootDrivePath] stringByAppendingPathComponent: safeName];
+				
+				importOperation = [BXSingleFileTransfer transferFromPath: [self sourcePath]
+																  toPath: destination
+															   copyFiles: YES];
+			}
+			else
+			{
+				[manager removeItemAtPath: [self rootDrivePath] error: nil];
+				driveToImport	= [BXDrive hardDriveFromPath: [self sourcePath] atLetter: @"C"];
+				importOperation	= [self importOperationForDrive: driveToImport startImmediately: NO];
+			}
 		}
 	}
 	
-	//Set up the import operation and start it running
-	[self setTransferOperation: importOperation];
+	//Set up the import operation and start it running.
+	[self setSourceFileImportOperation: importOperation];
 	[importQueue addOperation: importOperation];
+}
+
+
+#pragma mark BXOperation delegate methods
+
+- (void) setSourceFileImportOperation: (BXOperation *)operation
+{
+	if (operation != [self sourceFileImportOperation])
+	{
+		[sourceFileImportOperation release];
+		sourceFileImportOperation = [operation retain];
+		
+		//Set up our source file import operation with custom callbacks
+		if (operation)
+		{
+			[operation setDelegate: self];
+			[operation setInProgressSelector: @selector(sourceFileImportInProgress:)];
+			[operation setInProgressSelector: @selector(sourceFileImportDidFinish:)];
+		}
+	}
+}
+
+- (void) sourceFileImportInProgress: (NSNotification *)notification
+{
+	id operation = [notification object];
+	//Update our own progress to match the operation's progress
+
+	[self setStageProgressIndeterminate: [operation isIndeterminate]];
+	[self setStageProgress: [operation currentProgress]];
+}
+
+- (void) sourceFileImportDidFinish: (NSNotification *)notification
+{
+	id operation = [notification object];
+	
+	//Some source-file copies can be simple file transfers
+	BOOL isImport = [operation conformsToProtocol: @protocol(BXDriveImport)];
+	
+	//If the operation succeeded or was cancelled by the user,
+	//then proceed with the next stage of the import (cleanup.)
+	if ([operation succeeded] || [operation isCancelled])
+	{
+		//If the operation was cancelled, then clean up any leftover files
+		if ([operation isCancelled])
+		{
+			if ([operation respondsToSelector: @selector(undoTransfer)]) [operation undoTransfer];
+		}
+		
+		//Otherwise, if the imported drive is replacing our original C drive,
+		//then update the root drive path accordingly so that cleanGamebox
+		//will clean up the right place
+		else if (isImport && [[[operation drive] letter] isEqualToString: @"C"])
+		{
+			[self setRootDrivePath: [operation importedDrivePath]];
+		}
+		
+		[self setSourceFileImportOperation: nil];
+		[self cleanGamebox];
+	}
+	
+	//If the operation failed with an error, then determine if we can retry
+	//with a safer import method, and skip to the next stage if not.
+	else
+	{
+		BXOperation <BXDriveImport> *fallbackImport = nil;
+		
+		if ([operation respondsToSelector: @selector(undoTransfer)]) [operation undoTransfer];
+		
+		//Check if we can retry the operation...
+		if (isImport && (fallbackImport = [BXDriveImport fallbackForFailedImport: operation]))
+		{
+			[self setSourceFileImportOperation: fallbackImport];
+			[importQueue addOperation: fallbackImport];
+		}
+		
+		//..and if not, skip the import altogether and pretend everything's OK.
+		//TODO: analyze whether this failure will have resulted in an unusable gamebox,
+		//then warn the user and offer to try importing again.
+		else
+		{
+			[self setSourceFileImportOperation: nil];
+			[self cleanGamebox];
+		}
+	}
 }
 
 - (void) cleanGamebox
@@ -965,10 +1044,12 @@
 				 
 			BXDrive *drive = [BXDrive driveFromPath: path atLetter: nil];
 			
-			BXOperation <BXDriveImport> *importOperation = [BXDriveImport importForDrive: drive
-																		   toDestination: pathForDrives
-																			   copyFiles: NO];
+			BXOperation <BXDriveImport> *importOperation = [BXDriveImport importOperationForDrive: drive
+																					toDestination: pathForDrives
+																						copyFiles: NO];
 			
+			//Note: we don't set ourselves as a delegate for this import operation
+			//because we don't care about success or failure notifications.
 			[importQueue addOperation: importOperation];
 		}
 	}
@@ -986,87 +1067,6 @@
 	//Bounce to notify the user that we're done
 	[NSApp requestUserAttention: NSInformationalRequest];
 	
-}
-
-
-#pragma mark BXOperation delegate methods
-
-- (void) operationInProgress: (NSNotification *)notification
-{
-	BXOperation *operation = [notification object];
-	if ([self importStage] == BXImportSessionCopyingSourceFiles && operation == [self transferOperation])
-	{
-		//Update our progress to match the operation's progress
-		
-		[self setStageProgress: [operation currentProgress]];
-		[self setStageProgressIndeterminate: [operation isIndeterminate]];
-	}
-	else return [super operationInProgress: notification];
-}
-
-- (void) _finishCopyingSourceFiles
-{
-	id operation = [self transferOperation];
-	//Some source-file copies can be simple file transfers
-	BOOL isImport = [operation conformsToProtocol: @protocol(BXDriveImport)];
-	
-	//If the operation succeeded or was cancelled by the user, then 
-	if ([operation succeeded] || [operation isCancelled])
-	{
-		//If the operation was cancelled, then clean up any leftover files
-		if ([operation isCancelled])
-		{
-			if ([operation respondsToSelector: @selector(undoTransfer)]) [operation undoTransfer];
-		}
-		
-		//Otherwise, if the imported drive is replacing our original C drive,
-		//then update the root drive path accordingly so that cleanGamebox
-		//will clean up the right place
-		else if (isImport && [[[operation drive] letter] isEqualToString: @"C"])
-		{
-			[self setRootDrivePath: [operation importedDrivePath]];
-		}
-		
-		[self setTransferOperation: nil];
-		[self cleanGamebox];
-	}
-	else
-	{
-		BXOperation <BXDriveImport> *fallbackImport = nil;
-		
-		if ([operation respondsToSelector: @selector(undoTransfer)]) [operation undoTransfer];
-		
-		//Check if we can retry the operation
-		if (isImport && (fallbackImport = [BXDriveImport fallbackForFailedImport: operation]))
-		{
-			[fallbackImport setDelegate: self];
-			[self setTransferOperation: fallbackImport];
-			[importQueue addOperation: fallbackImport];
-		}
-		//Otherwise, skip the import altogether and pretend everything's OK.
-		//TODO: analyze whether this failure will have resulted in an unusable gamebox,
-		//then warn the user and offer to try importing again.
-		else
-		{
-			[self setTransferOperation: nil];
-			[self cleanGamebox];
-		}
-	}
-}
-
-- (void) operationDidFinish: (NSNotification *)notification
-{
-	BXOperation *operation = [notification object];
-	if ([self importStage] == BXImportSessionCopyingSourceFiles && operation == [self transferOperation])
-	{
-		[self _finishCopyingSourceFiles];
-	}
-	//Only perform the regular post-import behaviour (drive-swapping, notifications etc.)
-	//if we're actually in a DOS session
-	else if ([self importStage] == BXImportSessionRunningInstaller)
-	{
-		return [super operationDidFinish: notification];
-	}
 }
 
 
@@ -1223,7 +1223,7 @@
 	else return NO;
 }
 
-- (BOOL) _gameDidInstall
+- (BOOL) gameDidInstall
 {
 	if (![self rootDrivePath]) return NO;
 	

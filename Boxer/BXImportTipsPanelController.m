@@ -41,15 +41,25 @@
 	[self setActivePanel: panel];
 }
 
-- (IBAction) showInstallerHelp: (id)sender
-{
-	[[NSApp delegate] showHelpAnchor: @"game-installation-without-preamble"];
-}
-
 - (void) syncPanelExecutables
 {
 	//The installer tips panel never shows available executables, so this becomes a no-op.
 	return;
 }
+
+#pragma mark -
+#pragma mark UI actions
+
+- (IBAction) finishImporting: (id)sender
+{
+	BXImportSession *session = [self representedObject];
+	[session finishInstaller];
+}
+
+- (IBAction) showInstallerHelp: (id)sender
+{
+	[[NSApp delegate] showHelpAnchor: @"game-installation-without-preamble"];
+}
+
 
 @end

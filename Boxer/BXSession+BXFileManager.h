@@ -158,11 +158,11 @@
 //the queue immediately and begin importing asynchronously.
 //Will return nil if the drive cannot be imported (e.g. because a drive at
 //the destination already exists.)
-- (BXOperation <BXDriveImport> *) importForDrive: (BXDrive *)drive
+- (BXOperation <BXDriveImport> *) importOperationForDrive: (BXDrive *)drive
 								startImmediately: (BOOL)start;
 
 //Cancel the in-progress import of the specified drive. Returns YES if the import was cancelled,
 //NO if the import had already finished or the drive was not being imported.
-- (BOOL) cancelImportForDrive: (BXDrive *)drive;
+- (BOOL) cancelimportOperationForDrive: (BXDrive *)drive;
 
 @end

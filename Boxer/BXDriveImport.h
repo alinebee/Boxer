@@ -55,7 +55,7 @@
 
 @interface BXDriveImport: BXOperation
 
-+ (id <BXDriveImport>) importForDrive: (BXDrive *)drive
++ (id <BXDriveImport>) importOperationForDrive: (BXDrive *)drive
 						toDestination: (NSString *)destinationFolder
 							copyFiles: (BOOL)copyFiles;
 

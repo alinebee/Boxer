@@ -61,6 +61,12 @@ extern NSString * const BXOperationIndeterminateKey;
 {
 	id <BXOperationDelegate> delegate;
 	id contextInfo;
+	
+	SEL willStartSelector;
+	SEL inProgressSelector;
+	SEL wasCancelledSelector;
+	SEL didFinishSelector;
+	
 	BOOL notifyOnMainThread;
 	
 	BOOL succeeded;
@@ -72,6 +78,14 @@ extern NSString * const BXOperationIndeterminateKey;
 
 //The delegate that will receive notification messages about this operation.
 @property (assign) id <BXOperationDelegate> delegate;
+
+//The callback methods that will be called on the delegate for progress notifications.
+//These default to BXOperationDelegate operationInProgress:, operationDidFinish: etc.
+//and must have the same signatures as those methods.
+@property (assign) SEL willStartSelector;
+@property (assign) SEL inProgressSelector;
+@property (assign) SEL wasCancelledSelector;
+@property (assign) SEL didFinishSelector;
 
 //Arbitrary context info for this operation. Included in notification dictionaries
 //for controlling contexts to use. Note that this is an NSObject and will be retained.

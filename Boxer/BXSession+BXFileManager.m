@@ -865,14 +865,14 @@
 	return YES;
 }
 
-- (BXOperation <BXDriveImport> *) importForDrive: (BXDrive *)drive
-								startImmediately: (BOOL)start
+- (BXOperation <BXDriveImport> *) importOperationForDrive: (BXDrive *)drive
+										 startImmediately: (BOOL)start
 {
 	if ([self canImportDrive: drive])
 	{
 		NSString *destinationFolder = [[self gamePackage] resourcePath];
 		
-		BXOperation <BXDriveImport> *driveImport = [BXDriveImport importForDrive: drive
+		BXOperation <BXDriveImport> *driveImport = [BXDriveImport importOperationForDrive: drive
 																   toDestination: destinationFolder
 																	   copyFiles: YES];
 		
@@ -888,7 +888,7 @@
 	}
 }
 
-- (BOOL) cancelImportForDrive: (BXDrive *)drive
+- (BOOL) cancelimportOperationForDrive: (BXDrive *)drive
 {
 	for (BXOperation *operation in [importQueue operations])
 	{

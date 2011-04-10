@@ -40,7 +40,7 @@
 	switch (stage)
 	{
 		case BXImportSessionCopyingSourceFiles:
-			transfer = [[controller document] transferOperation];
+			transfer = [[controller document] sourceFileImportOperation];
 			
 			//IMPLEMENTATION NOTE: because the transfer can technically be any kind of operation,
 			//we make sure it can actually report its transfer size

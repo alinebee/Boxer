@@ -19,7 +19,7 @@
 #pragma mark -
 #pragma mark Class constants
 
-//Constants returned by importStage;
+//Constants returned by importStage
 enum {
 	BXImportSessionWaitingForSourcePath = 0,
 	BXImportSessionLoadingSourcePath,
@@ -27,11 +27,27 @@ enum {
 	BXImportSessionReadyToLaunchInstaller,
 	BXImportSessionRunningInstaller,
 	BXImportSessionReadyToFinalize,
-	BXImportSessionCopyingSourceFiles,
+	BXImportSessionImportingSourceFiles,
+	BXImportSessionCancellingSourceFileImport,
 	BXImportSessionCleaningGamebox,
 	BXImportSessionFinished
 };
 typedef NSUInteger BXImportStage;
+
+//Constants returned by sourceFileImportType
+enum {
+	BXImportTypeUnknown = 0,			//We haven't decided yet what we're importing from
+	BXImportFromPreInstalledGame,		//Bundling a pre-installed game folder into a gamebox
+	BXImportFromCDVolume,				//Coping from a real CD
+	BXImportFromFloppyVolume,			//Copying from a real floppy disk
+	BXImportFromCDImage,				//Copying from a CD image
+	BXImportFromFloppyImage,			//Copying from a floppy-disk image
+	BXImportFromHardDiskImage,			//Copying from a hard-disk image (currently unused)
+	BXImportFromFolderToCD,				//Converting a folder of game files into a fake CD
+	BXImportFromFolderToFloppy,			//Converting a folder of game files into a fake floppy
+	BXImportFromFolderToHardDisk		//Converting a folder of game files into a secondary hard disk
+};
+typedef NSUInteger BXSourceFileImportType;
 
 
 @class BXImportWindowController;
@@ -54,6 +70,7 @@ typedef NSUInteger BXImportStage;
 	BOOL didMountSourceVolume;
 	
 	BXOperation *sourceFileImportOperation;
+	BXSourceFileImportType sourceFileImportType;
 	BOOL canSkipSourceFileImport;
 }
 
@@ -83,16 +100,20 @@ typedef NSUInteger BXImportStage;
 @property (readonly, assign, nonatomic) BXImportStage importStage;
 
 //How far through the current stage we have progressed.
-//Only relevant during the BXImportSessionLoadingSourcePath and BXImportSessionCopyingSourceFiles stages.
+//Only relevant during the BXImportSessionLoadingSourcePath and BXImportSessionImportingSourceFiles stages.
 @property (readonly, assign, nonatomic) BXOperationProgress stageProgress;
 
 //Whether our progress cannot be meaningfully determined currently.
-//Only relevant during the BXImportSessionLoadingSourcePath and BXImportSessionCopyingSourceFiles stages.
+//Only relevant during the BXImportSessionLoadingSourcePath and BXImportSessionImportingSourceFiles stages.
 @property (readonly, assign, nonatomic) BOOL stageProgressIndeterminate;
 
 //The final import/file transfer operation being performed to import the game's source files into the gamebox.
-//Only relevant during the BXImportSessionCopyingSourceFiles stage.
+//Only relevant during the BXImportSessionImportingSourceFiles stage.
 @property (readonly, retain, nonatomic) BXOperation *sourceFileImportOperation;
+
+//The specific way we are importing the game's source files into the gamebox.
+//This affects descriptions in the progress UI and confirmation prompts.
+@property (readonly, assign, nonatomic) BXSourceFileImportType sourceFileImportType;
 
 //Whether the user is allowed to skip the step of importing the source files into the game folder.
 //Will be NO if the game did not install any files into the gamebox to start with.
@@ -105,7 +126,7 @@ typedef NSUInteger BXImportStage;
 //The UTIs of filetypes we can accept for import.
 + (NSSet *)acceptedSourceTypes;
 
-//Returns whether we can import from the specified path.
+//Whether the specified source path is a folder, volume or image type we can import.
 + (BOOL) canImportFromSourcePath: (NSString *)sourcePath;
 
 //Whether we should run an installer for our current source path.
@@ -148,8 +169,12 @@ typedef NSUInteger BXImportStage;
 //Copy the source files into the gamebox.
 - (void) importSourceFiles;
 
+//Cancel an in-progress source-file import.
+- (void) cancelSourceFileImport;
+
 //Clean up the gamebox and finish the operation.
 - (void) cleanGamebox;
+
 
 #pragma mark -
 #pragma mark Notifications
@@ -157,6 +182,5 @@ typedef NSUInteger BXImportStage;
 //Custom progress callbacks for sourceFileImportOperation.
 - (void) sourceFileImportInProgress: (NSNotification *)notification;
 - (void) sourceFileImportDidFinish: (NSNotification *)notification;
-
 
 @end

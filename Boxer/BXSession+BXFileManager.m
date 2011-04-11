@@ -888,7 +888,7 @@
 	}
 }
 
-- (BOOL) cancelimportOperationForDrive: (BXDrive *)drive
+- (BOOL) cancelImportForDrive: (BXDrive *)drive
 {
 	for (BXOperation *operation in [importQueue operations])
 	{

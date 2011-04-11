@@ -57,6 +57,7 @@
 @property (readwrite, assign, nonatomic) BXOperationProgress stageProgress;
 @property (readwrite, assign, nonatomic) BOOL stageProgressIndeterminate;
 @property (readwrite, retain, nonatomic) BXOperation *sourceFileImportOperation;
+@property (readwrite, assign, nonatomic) BXSourceFileImportType sourceFileImportType;
 @property (readwrite, assign, nonatomic) BOOL canSkipSourceFileImport;
 
 //Only defined for internal use
@@ -80,8 +81,7 @@
 @synthesize sourcePath, rootDrivePath;
 @synthesize installerPaths, preferredInstallerPath;
 @synthesize importStage, stageProgress, stageProgressIndeterminate;
-@synthesize sourceFileImportOperation;
-@synthesize canSkipSourceFileImport;
+@synthesize sourceFileImportOperation, sourceFileImportType, canSkipSourceFileImport;
 
 
 #pragma mark -
@@ -759,10 +759,6 @@
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	NSSet *bundleableTypes = [[BXAppController mountableFolderTypes] setByAddingObjectsFromSet: [BXAppController mountableImageTypes]];
 	
-	
-	[self setImportStage: BXImportSessionCopyingSourceFiles];
-	[self setStageProgressIndeterminate: YES];
-	
 	//If we don't have a source folder yet, generate one now before continuing
 	//(This will happen if there were no installers, or the user skipped the installer)
 	if (![self gamePackage])
@@ -799,15 +795,20 @@
 	
 	
 	//At this point, all the edge cases are out of the way and we know we'll need to import something.
+	//Now we need to decide exactly what we're importing, and how we should import it.
 	
 	BXDrive *driveToImport = nil;
 	BXOperation *importOperation = nil;
-	BOOL didInstallFiles = [self gameDidInstall];
+	BXSourceFileImportType importType = BXImportTypeUnknown;
 	
-	if ([workspace file: [self sourcePath] matchesTypes: bundleableTypes])
+	BOOL didInstallFiles = [self gameDidInstall];
+	BOOL isMountableImage = [workspace file: [self sourcePath] matchesTypes: [BXAppController mountableImageTypes]];
+	BOOL isMountableFolder = !isMountableImage && [workspace file: [self sourcePath] matchesTypes: [BXAppController mountableFolderTypes]];
+	
+	//If the source path is directly bundleable (it is an image or a mountable folder)
+	//then import it as a new drive into the gamebox.
+	if (isMountableImage || isMountableFolder)
 	{
-		//If the source path is directly bundleable (it is an image or a mountable folder)
-		//then import it as a new drive into the gamebox.
 		driveToImport = [BXDrive driveFromPath: [self sourcePath] atLetter: nil];
 		
 		//If the drive is marked as being for drive C, then check what we need to do with our original C drive
@@ -825,6 +826,17 @@
 				[manager removeItemAtPath: [self rootDrivePath] error: nil];
 			}
 		}
+		
+		//Mark what kind of import we're doing based on what the autodetected drive type is
+		switch ([driveToImport type])
+		{
+			case BXDriveCDROM:
+				importType = (isMountableImage) ? BXImportFromCDImage : BXImportFromFolderToCD; break;
+			case BXDriveFloppyDisk:
+				importType = (isMountableImage) ? BXImportFromFloppyImage : BXImportFromFolderToFloppy; break;
+			default:
+				importType = (isMountableImage) ? BXImportFromHardDiskImage : BXImportFromFolderToHardDisk; break;
+		}
 		importOperation = [self importOperationForDrive: driveToImport startImmediately: NO];
 	}
 	else
@@ -841,20 +853,32 @@
 		{
 			NSString *pathToImport = [self sourcePath];
 			NSString *sourceImagePath = [workspace sourceImageForVolume: [self sourcePath]];
-			
+			BOOL isDiskImage = NO;
+		
 			//If the source path is on a DOSBox-compatible disk image, then import the image directly.
 			if (sourceImagePath && [workspace file: sourceImagePath matchesTypes: [BXAppController mountableImageTypes]])
+			{
+				isDiskImage = YES;
 				pathToImport = sourceImagePath;
+			}
 			
 			//If the source is an actual floppy disk, or this game expects to be installed off floppies,
 			//then import the source files as a floppy disk.
 			if (isRealFloppy || [[self gameProfile] installMedium] == BXDriveFloppyDisk)
 			{
+				if (isDiskImage)		importType = BXImportFromFloppyImage;
+				else if (isRealFloppy)	importType = BXImportFromFloppyVolume;
+				else					importType = BXImportFromFolderToFloppy;
+				
 				driveToImport = [BXDrive floppyDriveFromPath: pathToImport atLetter: @"A"];
 			}
 			//In all other cases, import the source files as a CD-ROM drive.
 			else
 			{
+				if (isDiskImage)		importType = BXImportFromCDImage;
+				else if (isRealCDROM)	importType = BXImportFromCDVolume;
+				else					importType = BXImportFromFolderToCD;
+			
 				driveToImport = [BXDrive CDROMFromPath: pathToImport atLetter: @"D"];
 			}
 			
@@ -866,6 +890,8 @@
 		//the source files directly into the gamebox's C drive.
 		else
 		{
+			importType = BXImportFromPreInstalledGame;
+			
 			//Guess whether the game files expect to be located in the root of drive C (GOG games, Steam games etc.)
 			//or in a subfolder within drive C (almost everything else)
 			BOOL needsSubfolder = [[self class] shouldUseSubfolderForSourceFilesAtPath: [self sourcePath]];
@@ -895,8 +921,23 @@
 	}
 	
 	//Set up the import operation and start it running.
+	[self setSourceFileImportType: importType];
 	[self setSourceFileImportOperation: importOperation];
+	[self setCanSkipSourceFileImport: didInstallFiles];
+	[self setImportStage: BXImportSessionImportingSourceFiles];
+	
 	[importQueue addOperation: importOperation];
+}
+
+- (void) cancelSourceFileImport
+{
+	NSOperation *operation = [self sourceFileImportOperation];
+	
+	if (operation && ![operation isFinished] && [self importStage] == BXImportSessionImportingSourceFiles)
+	{
+		[operation cancel];
+		[self setImportStage: BXImportSessionCancellingSourceFileImport];
+	}
 }
 
 
@@ -914,7 +955,7 @@
 		{
 			[operation setDelegate: self];
 			[operation setInProgressSelector: @selector(sourceFileImportInProgress:)];
-			[operation setInProgressSelector: @selector(sourceFileImportDidFinish:)];
+			[operation setDidFinishSelector: @selector(sourceFileImportDidFinish:)];
 		}
 	}
 }

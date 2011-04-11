@@ -11,83 +11,280 @@
 #import "BXImportSession.h"
 #import "BXAppController.h"
 
+#pragma mark -
+#pragma mark Private method declarations
+
+@interface BXImportFinalizingPanelController ()
+
+//Callback for confirmation alert shown by skipSourceFileImport:
+- (void) _skipAlertDidEnd: (NSAlert *)alert
+			   returnCode: (int)returnCode
+			  contextInfo: (void *)contextInfo;
+
+@end
+
+#pragma mark -
+#pragma mark Implementation
+
 @implementation BXImportFinalizingPanelController
 @synthesize controller;
 
-- (BOOL) isIndeterminate
-{
-	return ([[controller document] stageProgressIndeterminate]);
+#pragma mark -
+#pragma mark Skip button behaviour
+
++ (NSString *) skipButtonLabelForImportType: (BXSourceFileImportType)importType
+{	
+	switch (importType)
+	{
+		case BXImportFromCDVolume:
+		case BXImportFromCDImage:
+		case BXImportFromFolderToCD:
+			return NSLocalizedString(@"Skip CD",
+									 @"Button label to skip importing source files as a fake CD-ROM or CD image.");
+		
+		case BXImportFromFloppyVolume:
+		case BXImportFromFloppyImage:
+		case BXImportFromFolderToFloppy:
+			return NSLocalizedString(@"Skip disk",
+									 @"Button label to skip importing source files as a fake floppy disk.");
+			
+		case BXImportFromHardDiskImage:
+		case BXImportFromFolderToHardDisk:
+			return NSLocalizedString(@"Skip disk",
+									 @"Button label to skip importing source files as a hard disk.");
+			
+		default:
+			//This should never be used, as the above cases should cover all situations where the button is visible.
+			return NSLocalizedString(@"Skip this step",
+									 @"Button label to skip importing source files as a hard disk.");
+	}
 }
 
-- (BXOperationProgress) progress
-{
-	BXOperationProgress progress = [[controller document] stageProgress];
+//TODO: refactor all these properties into a single observation method to centralise the skip button's behaviour.
 
-	//Massage the progress with an ease-out curve to make it appear quicker at the start of the transfer
-	//Easing disabled for now because it's obvious on a large progress bar that it’s wrong - this needs
-	//tweaking to be more subtle.
-	//BXOperationProgress easedProgress = -progress * (progress - 2);
-	BXOperationProgress easedProgress = progress;
+- (NSString *) skipButtonLabel
+{
+	BXImportSession *session = [controller document];
+	BXSourceFileImportType importType = [session sourceFileImportType];
 	
-	return easedProgress;
+	return [[self class] skipButtonLabelForImportType: importType];
+}
+
++ (NSSet *) keyPathsForValuesAffectingSkipButtonLabel
+{
+	return [NSSet setWithObject: @"controller.document.sourceFileImportType"];
+}
+
+- (BOOL) showSkipButton
+{
+	
+	BXImportSession *session = [controller document];
+	
+	if (![session canSkipSourceFileImport])		return NO;
+	if (![session sourceFileImportOperation])	return NO;
+	
+	//TWEAK: only allow skipping for actual CD rips, because these are the only
+	//types that will take long enough and make sense to actually skip
+	if (![session sourceFileImportType] != BXImportFromCDVolume);
+	
+	return YES;
+}
+
+- (BOOL) enableSkipButton
+{
+	BXImportSession *session = [controller document];
+	
+	if (![self showSkipButton]) return NO;
+	
+	if ([session importStage] != BXImportSessionImportingSourceFiles) return NO;
+	
+	return YES;
+}
+
++ (NSSet *) keyPathsForValuesAffectingShowSkipButton
+{
+	return [NSSet setWithObjects: @"controller.document.canSkipSourceFileImport", @"controller.document.sourceFileImportOperation", nil];
+}
+
++ (NSSet *) keyPathsForValuesAffectingEnableSkipButton
+{
+	return [[self keyPathsForValuesAffectingShowSkipButton] setByAddingObject: @"controller.document.importStage"];
+}
+
+
+#pragma mark -
+#pragma mark Progress description
+
++ (NSString *) stageDescriptionForImportType: (BXSourceFileImportType)importType
+{
+	switch (importType)
+	{
+		case BXImportFromCDVolume:
+		case BXImportFromCDImage:
+			return NSLocalizedString(@"Importing game CD…",
+									 @"Progress description when importing source files from floppy disk.");
+		
+		case BXImportFromFloppyVolume:
+		case BXImportFromFloppyImage:
+			return NSLocalizedString(@"Importing game disk…",
+									 @"Progress description when importing source files from floppy disk.");
+		
+		case BXImportFromFolderToCD:
+			return NSLocalizedString(@"Importing source files as a CD…",
+									 @"Progress description when importing source files from a folder into a fake CD.");
+		
+		case BXImportFromFolderToFloppy:
+			return NSLocalizedString(@"Importing source files as a floppy disk…",
+									 @"Progress description when importing source files from a folder into a fake floppy disk.");
+		
+		case BXImportFromHardDiskImage:
+		case BXImportFromFolderToHardDisk:
+			return NSLocalizedString(@"Importing source files as a hard disk…",
+									 @"Progress description when importing source files from a folder or disk image into a secondary hard disk.");
+
+		case BXImportFromPreInstalledGame:
+		default:
+			return NSLocalizedString(@"Importing game files…",
+									 @"Generic progress description for importing source files stage.");
+	}
 }
 
 - (NSString *) progressDescription
 {
-	BXImportStage stage = [[controller document] importStage];
-	BXOperation *transfer;
+	BXImportSession *session = [controller document];
+	BXImportStage stage = [session importStage];
 	
-	switch (stage)
+	if (stage == BXImportSessionImportingSourceFiles)
 	{
-		case BXImportSessionCopyingSourceFiles:
-			transfer = [[controller document] sourceFileImportOperation];
+		BXOperation *transfer				= [session sourceFileImportOperation];
+		BXSourceFileImportType importType	= [session sourceFileImportType];
+		NSString *stageDescription			= [[self class] stageDescriptionForImportType: importType];
+		
+		//Append the current file transfer progress to the base description, if available
+		if (transfer && ![transfer isIndeterminate] &&
+			[transfer respondsToSelector: @selector(numBytes)] &&
+			[transfer respondsToSelector: @selector(bytesTransferred)])
+		{	
+			float sizeInMB		= [(id)transfer numBytes] / 1000000.0f;
+			float transferredMB	= [(id)transfer bytesTransferred] / 1000000.0f;
 			
-			//IMPLEMENTATION NOTE: because the transfer can technically be any kind of operation,
-			//we make sure it can actually report its transfer size
-			if (transfer && ![transfer isIndeterminate] &&
-				[transfer respondsToSelector:@selector(numBytes)] &&
-				[transfer respondsToSelector:@selector(bytesTransferred)])
-			{	
-				float sizeInMB		= [(id)transfer numBytes] / 1000000.0f;
-				float transferredMB	= [(id)transfer bytesTransferred] / 1000000.0f;
-				
-				NSString *format = NSLocalizedString(@"Importing game files… (%1$.01f MB of %2$.01f MB)",
-													 @"Import progress description for copying source files stage. %1 is the number of MB transferred so far as a float, %2 is the total number of MB to be transferred as a float.");
-				
-				return [NSString stringWithFormat: format, transferredMB, sizeInMB, nil];
-			}
-			else
-			{
-				return NSLocalizedString(@"Importing game files…",
-										 @"Import progress description for copying source files stage, before size of file transfer is known.");
-			}
+			NSString *format = NSLocalizedString(@"%1$@ (%2$.01f MB of %3$.01f MB)",
+												 @"Import progress description for importing source files stage. %1 is the basic description of the stage as a string (followed by ellipses), %2is the number of MB transferred so far as a float, %3 is the total number of MB to be transferred as a float.");
 			
-		case BXImportSessionCleaningGamebox:
-			return NSLocalizedString(@"Removing unnecessary files…",
-									 @"Import progress description for gamebox cleanup stage.");
-			
-		default:
-			return @"";
+			return [NSString stringWithFormat: format, stageDescription, transferredMB, sizeInMB, nil];
+		}
+		else return stageDescription;
 	}
+	else if (stage == BXImportSessionCancellingSourceFileImport)
+	{
+		return NSLocalizedString(@"Skipping…",
+								 @"Import progress description when source file import has been cancelled.");
+	}
+	else if (stage == BXImportSessionCleaningGamebox)
+	{
+		return NSLocalizedString(@"Removing unnecessary files…",
+								 @"Import progress description for gamebox cleanup stage.");
+			
+	}
+	else return @"";
 }
 
-+ (NSSet *) keyPathsForValuesAffectingValueForKey: (NSString *)key
++ (NSSet *) keyPathsForValuesAffectingProgressDescription
 {
-	NSSet *progressKeys = [NSSet setWithObjects: @"progressDescription", @"progress", @"indeterminate", nil];
+	return [NSSet setWithObjects:
+			@"controller.document.importStage",
+			@"controller.document.sourceFileImportType",
+			@"controller.document.stageProgress",
+			@"controller.document.stageProgressIndeterminate",
+			nil];
+}
+
+
+#pragma mark -
+#pragma mark UI actions
+
++ (NSAlert *) skipAlertForSourcePath: (NSString *)sourcePath
+								type: (BXSourceFileImportType)importType
+{
+	NSString *message;
+	NSString *informativeText;
 	
-	if ([progressKeys containsObject: key])
+	switch (importType)
 	{
-		return [NSSet setWithObjects:
-				@"controller.document.importStage",
-				@"controller.document.stageProgress",
-				@"controller.document.stageProgressIndeterminate",
-				nil];
+		case BXImportFromCDImage:
+		case BXImportFromCDVolume:
+			message = NSLocalizedString(@"Boxer is importing the game’s CD so that you can play without it.",
+										@"Bold message in skip confirmation alert when importing from a CD or CD image.");
+			informativeText = NSLocalizedString(@"If you skip this step now, you can import the CD later from the Drives Inspector panel.",
+												@"Explanatory text in skip confirmation alert when importing from a CD or CD image.");
+			break;
+			
+		case BXImportFromFloppyImage:
+		case BXImportFromFloppyVolume:
+			message = NSLocalizedString(@"Boxer is importing the game’s floppy disk so that the game can find files on it later.",
+										@"Bold message in skip confirmation alert when importing from a floppy disk or floppy image.");
+			informativeText = NSLocalizedString(@"If you skip this step now, you can import the disk later from the Drives Inspector panel.",
+												@"Explanatory text in skip confirmation alert when importing from a floppy disk or floppy image.");
+			break;
+		
+		case BXImportFromFolderToCD:
+		case BXImportFromFolderToFloppy:
+		case BXImportFromFolderToHardDisk:
+		case BXImportFromHardDiskImage:
+		default:
+			message = NSLocalizedString(@"Boxer is importing the game’s source files so that the game can find them later.",
+										@"Bold message in skip confirmation alert when importing from a folder or other source with no more specific message.");
+			informativeText = NSLocalizedString(@"Skipping this step may prevent the game from working if it needs those source files.",
+										@"Explanatory text in skip confirmation alert when importing from a folder or other source with no more specific message.");
+			break;
+	}
+	
+	NSString *skipLabel		= [self skipButtonLabelForImportType: importType];
+	NSString *cancelLabel	= NSLocalizedString(@"Cancel", @"Cancel the current action and return to what the user was doing");		
+	
+	NSAlert *alert = [[NSAlert alloc] init];
+	[alert setMessageText: message];
+	[alert setInformativeText: informativeText];
+	
+	[alert addButtonWithTitle: skipLabel];
+	[[alert addButtonWithTitle: cancelLabel] setKeyEquivalent: @"\e"];	//Ensure the cancel button always uses Escape
+	
+	return [alert autorelease];
+}
+
+- (IBAction) skipSourceFileImport: (id)sender
+{
+	BXImportSession *session = [controller document];
+	NSAlert *skipAlert = [[self class] skipAlertForSourcePath: [session sourcePath]
+														 type: [session sourceFileImportType]];
+	
+	if (skipAlert)
+	{
+		[skipAlert retain];
+		[skipAlert beginSheetModalForWindow: [controller window]
+							  modalDelegate: self
+							 didEndSelector: @selector(_skipAlertDidEnd:returnCode:contextInfo:)
+								contextInfo: nil];
 	}
 	else
 	{
-		return [super keyPathsForValuesAffectingValueForKey: key];
+		[session cancelSourceFileImport];
 	}
 }
+
+- (void) _skipAlertDidEnd: (NSAlert *)alert
+			   returnCode: (int)returnCode
+			  contextInfo: (void *)contextInfo
+{
+	if (returnCode == NSAlertFirstButtonReturn)
+	{
+		[[controller document] cancelSourceFileImport];
+	}
+	
+	//Release the previously-retained alert
+	[alert release];	
+}
+
 
 - (IBAction) showImportFinalizingHelp: (id)sender
 {

@@ -91,7 +91,7 @@
 				break;
 				
 			case BXImportSessionReadyToFinalize:
-			case BXImportSessionCopyingSourceFiles:
+			case BXImportSessionImportingSourceFiles:
 			case BXImportSessionCleaningGamebox:
 				[self setCurrentPanel: [self finalizingPanel]];
 				break;

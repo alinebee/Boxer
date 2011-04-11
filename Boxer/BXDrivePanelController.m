@@ -218,18 +218,18 @@ enum {
 	for (BXDrive *drive in selection) [session importOperationForDrive: drive startImmediately: YES];
 }
 
-- (IBAction) cancelimportOperationForDrive: (id)sender
+- (IBAction) cancelImportForDrive: (id)sender
 {
 	BXDrive *drive = [[(BXDriveItemView *)[sender superview] delegate] representedObject];
 	BXSession *session = [[NSApp delegate] currentSession];
-	if (drive) [session cancelimportOperationForDrive: drive];
+	if (drive) [session cancelImportForDrive: drive];
 }
 - (IBAction) cancelImportsForSelectedDrives: (id)sender
 {
 	NSArray *selection = [[self drives] selectedObjects];
 	BXSession *session = [[NSApp delegate] currentSession];
 	
-	for (BXDrive *drive in selection) [session cancelimportOperationForDrive: drive];
+	for (BXDrive *drive in selection) [session cancelImportForDrive: drive];
 }
 
 - (IBAction) showMountPanel: (id)sender

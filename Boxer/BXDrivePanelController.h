@@ -58,7 +58,7 @@
 - (IBAction) importSelectedDrives: (id)sender;
 
 //Cancel the import operation for the drive represented by the sender.
-- (IBAction) cancelimportOperationForDrive: (id)sender;
+- (IBAction) cancelImportForDrive: (id)sender;
 
 //Cancel the import operations for all currently selected drives.
 - (IBAction) cancelImportsForSelectedDrives: (id)sender;

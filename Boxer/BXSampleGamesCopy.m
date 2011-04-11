@@ -12,14 +12,22 @@
 @implementation BXSampleGamesCopy
 @synthesize sourcePath, targetPath;
 
-- (id) initFromPath: (NSString *)source toPath: (NSString *)target
+- (id) init
 {
 	if ((self = [super init]))
 	{
-		[self setSourcePath: source];
-		[self setTargetPath: target];
 		manager = [[NSFileManager alloc] init];
 		workspace = [[NSWorkspace alloc] init];
+	}
+	return self;
+}
+
+- (id) initFromPath: (NSString *)source toPath: (NSString *)target
+{
+	if ((self = [self init]))
+	{
+		[self setSourcePath: source];
+		[self setTargetPath: target];
 	}
 	return self;
 }

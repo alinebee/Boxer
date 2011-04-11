@@ -28,16 +28,17 @@
 	BXImportSession *session = [self representedObject];
 	NSView *panel;
 	
-	if ([[session emulator] isRunningProcess])
+	if ([[session emulator] isAtPrompt])
+	{
+		//Show the UI for finishing the import process once we return to the DOS prompt
+		panel = finishImportingPanel;
+	}
+	else
 	{
 		//Show installer tips while any program is running
 		panel = installerTipsPanel;
 	}
-	else
-	{
-		//Otherwise, show the UI for finishing the import process
-		panel = finishImportingPanel;
-	}
+	
 	[self setActivePanel: panel];
 }
 

@@ -529,6 +529,8 @@
 		9F59DED810B0159A008DBBC1 /* BXProgramPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXProgramPanelController.h; sourceTree = "<group>"; };
 		9F59DED910B0159A008DBBC1 /* BXProgramPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXProgramPanelController.m; sourceTree = "<group>"; };
 		9F59DEDE10B01743008DBBC1 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/ProgramPanel.xib; sourceTree = "<group>"; };
+		9F60BDEE1352FFE600E47C2C /* BXImportSourceScan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImportSourceScan.h; sourceTree = "<group>"; };
+		9F60BDEF1352FFE600E47C2C /* BXImportSourceScan.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXImportSourceScan.m; sourceTree = "<group>"; };
 		9F6193191233D8F000F35AB4 /* BXTabbedWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXTabbedWindowController.h; sourceTree = "<group>"; };
 		9F61931A1233D8F000F35AB4 /* BXTabbedWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXTabbedWindowController.m; sourceTree = "<group>"; };
 		9F61942312340F5400F35AB4 /* ScriptingBridge.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ScriptingBridge.framework; path = System/Library/Frameworks/ScriptingBridge.framework; sourceTree = SDKROOT; };
@@ -1215,6 +1217,8 @@
 				9F1CBAAA120C830600C5E926 /* BXImportSession+BXImportPolicies.m */,
 				9F0F9ED812108A9000ED7A64 /* BXImportError.h */,
 				9F0F9ED912108A9000ED7A64 /* BXImportError.m */,
+				9F60BDEE1352FFE600E47C2C /* BXImportSourceScan.h */,
+				9F60BDEF1352FFE600E47C2C /* BXImportSourceScan.m */,
 			);
 			name = "Game import session";
 			sourceTree = "<group>";

@@ -85,7 +85,7 @@
 	
 	//TWEAK: only allow skipping for actual CD rips, because these are the only
 	//types that will take long enough and make sense to actually skip
-	if (![session sourceFileImportType] != BXImportFromCDVolume);
+	if ([session sourceFileImportType] != BXImportFromCDVolume) return NO;
 	
 	return YES;
 }

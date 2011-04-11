@@ -274,8 +274,23 @@
 	NSString *iconPath = [path stringByAppendingPathComponent: @"gfw_high.ico"];
 	if ([[NSFileManager defaultManager] fileExistsAtPath: iconPath])
 	{
-		NSImage *icon = [[NSImage alloc] initByReferencingFile: iconPath];
-		return [icon autorelease];
+		NSImage *icon = [[[NSImage alloc] initByReferencingFile: iconPath] autorelease];
+		
+		//TWEAK: strip out the 16x16 and 32x32 versions from GOG icons 
+		//as these are usually terrible 16-colour Windows 3.1 icons.
+		//(We copy the representations array because it's bad form to modify
+		//an array while traversing it)
+		NSArray *reps = [[icon representations] copy];
+		for (NSImageRep *rep in reps)
+		{
+			NSSize size = [rep size];
+			if (size.width <= 32.0f && size.height <= 32.0f) [icon removeRepresentation: rep];
+		}
+		[reps release];
+		
+		//Sanity check: if there are no representations left, forget about the icon
+		if (![[icon representations] count]) return nil;
+		else return icon;
 	}
 	return nil;
 }

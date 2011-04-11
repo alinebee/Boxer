@@ -21,7 +21,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="170"/>
+			<integer value="169"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -553,18 +553,14 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 							<object class="BGHUDLabel" id="739063056">
 								<reference key="NSNextResponder" ref="375787521"/>
 								<int key="NSvFlags">293</int>
-								<string key="NSFrame">{{45, 98}, {392, 14}}</string>
+								<string key="NSFrame">{{45, 98}, {392, 17}}</string>
 								<reference key="NSSuperview" ref="375787521"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="155351076">
 									<int key="NSCellFlags">68288064</int>
-									<int key="NSCellFlags2">138544128</int>
+									<int key="NSCellFlags2">138413056</int>
 									<string key="NSContents">[Current import stage]</string>
-									<object class="NSFont" key="NSSupport">
-										<string key="NSName">LucidaGrande</string>
-										<double key="NSSize">11</double>
-										<int key="NSfFlags">3100</int>
-									</object>
+									<reference key="NSSupport" ref="825762272"/>
 									<reference key="NSControlView" ref="739063056"/>
 									<reference key="NSBackgroundColor" ref="672356819"/>
 									<reference key="NSTextColor" ref="432495097"/>
@@ -618,18 +614,18 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 									<int key="NSPeriodicInterval">25</int>
 								</object>
 							</object>
-							<object class="NSButton" id="745617971">
+							<object class="NSButton" id="70848040">
 								<reference key="NSNextResponder" ref="149569143"/>
 								<int key="NSvFlags">289</int>
 								<string key="NSFrame">{{209, 7}, {123, 25}}</string>
 								<reference key="NSSuperview" ref="149569143"/>
 								<bool key="NSEnabled">YES</bool>
-								<object class="NSButtonCell" key="NSCell" id="267636571">
+								<object class="NSButtonCell" key="NSCell" id="360909848">
 									<int key="NSCellFlags">-2080244224</int>
 									<int key="NSCellFlags2">167772160</int>
 									<string key="NSContents">[Skip this step]</string>
 									<reference key="NSSupport" ref="825762272"/>
-									<reference key="NSControlView" ref="745617971"/>
+									<reference key="NSControlView" ref="70848040"/>
 									<int key="NSButtonFlags">-2038152961</int>
 									<int key="NSButtonFlags2">163</int>
 									<string key="NSAlternateContents"/>
@@ -1017,7 +1013,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 			<object class="NSViewController" id="598393674"/>
 			<object class="NSViewController" id="346304739"/>
 			<object class="NSViewController" id="893853583"/>
-			<object class="NSObjectController" id="940344476">
+			<object class="NSObjectController" id="618049628">
 				<object class="NSMutableArray" key="NSDeclaredKeys">
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>stageProgressIndeterminate</string>
@@ -1529,10 +1525,10 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">title: skipButtonLabel</string>
-						<reference key="source" ref="745617971"/>
+						<reference key="source" ref="70848040"/>
 						<reference key="destination" ref="346304739"/>
 						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="745617971"/>
+							<reference key="NSSource" ref="70848040"/>
 							<reference key="NSDestination" ref="346304739"/>
 							<string key="NSLabel">title: skipButtonLabel</string>
 							<string key="NSBinding">title</string>
@@ -1546,10 +1542,10 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">value: selection.stageProgress</string>
 						<reference key="source" ref="514949822"/>
-						<reference key="destination" ref="940344476"/>
+						<reference key="destination" ref="618049628"/>
 						<object class="NSNibBindingConnector" key="connector">
 							<reference key="NSSource" ref="514949822"/>
-							<reference key="NSDestination" ref="940344476"/>
+							<reference key="NSDestination" ref="618049628"/>
 							<string key="NSLabel">value: selection.stageProgress</string>
 							<string key="NSBinding">value</string>
 							<string key="NSKeyPath">selection.stageProgress</string>
@@ -1562,10 +1558,10 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">animate: selection.stageProgressIndeterminate</string>
 						<reference key="source" ref="514949822"/>
-						<reference key="destination" ref="940344476"/>
-						<object class="NSNibBindingConnector" key="connector" id="607464692">
+						<reference key="destination" ref="618049628"/>
+						<object class="NSNibBindingConnector" key="connector" id="210244497">
 							<reference key="NSSource" ref="514949822"/>
-							<reference key="NSDestination" ref="940344476"/>
+							<reference key="NSDestination" ref="618049628"/>
 							<string key="NSLabel">animate: selection.stageProgressIndeterminate</string>
 							<string key="NSBinding">animate</string>
 							<string key="NSKeyPath">selection.stageProgressIndeterminate</string>
@@ -1578,14 +1574,14 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">isIndeterminate: selection.stageProgressIndeterminate</string>
 						<reference key="source" ref="514949822"/>
-						<reference key="destination" ref="940344476"/>
+						<reference key="destination" ref="618049628"/>
 						<object class="NSNibBindingConnector" key="connector">
 							<reference key="NSSource" ref="514949822"/>
-							<reference key="NSDestination" ref="940344476"/>
+							<reference key="NSDestination" ref="618049628"/>
 							<string key="NSLabel">isIndeterminate: selection.stageProgressIndeterminate</string>
 							<string key="NSBinding">isIndeterminate</string>
 							<string key="NSKeyPath">selection.stageProgressIndeterminate</string>
-							<reference key="NSPreviousConnector" ref="607464692"/>
+							<reference key="NSPreviousConnector" ref="210244497"/>
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
 					</object>
@@ -1595,7 +1591,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 					<object class="IBActionConnection" key="connection">
 						<string key="label">skipSourceFileImport:</string>
 						<reference key="source" ref="346304739"/>
-						<reference key="destination" ref="745617971"/>
+						<reference key="destination" ref="70848040"/>
 					</object>
 					<int key="connectionID">422</int>
 				</object>
@@ -1603,10 +1599,10 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">value: selection.gameboxName</string>
 						<reference key="source" ref="294027108"/>
-						<reference key="destination" ref="940344476"/>
+						<reference key="destination" ref="618049628"/>
 						<object class="NSNibBindingConnector" key="connector">
 							<reference key="NSSource" ref="294027108"/>
-							<reference key="NSDestination" ref="940344476"/>
+							<reference key="NSDestination" ref="618049628"/>
 							<string key="NSLabel">value: selection.gameboxName</string>
 							<string key="NSBinding">value</string>
 							<string key="NSKeyPath">selection.gameboxName</string>
@@ -1622,10 +1618,10 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">contentObject: document</string>
-						<reference key="source" ref="940344476"/>
+						<reference key="source" ref="618049628"/>
 						<reference key="destination" ref="1001"/>
 						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="940344476"/>
+							<reference key="NSSource" ref="618049628"/>
 							<reference key="NSDestination" ref="1001"/>
 							<string key="NSLabel">contentObject: document</string>
 							<string key="NSBinding">contentObject</string>
@@ -1642,10 +1638,10 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">enabled: enableSkipButton</string>
-						<reference key="source" ref="745617971"/>
+						<reference key="source" ref="70848040"/>
 						<reference key="destination" ref="346304739"/>
-						<object class="NSNibBindingConnector" key="connector" id="470921471">
-							<reference key="NSSource" ref="745617971"/>
+						<object class="NSNibBindingConnector" key="connector" id="904286657">
+							<reference key="NSSource" ref="70848040"/>
 							<reference key="NSDestination" ref="346304739"/>
 							<string key="NSLabel">enabled: enableSkipButton</string>
 							<string key="NSBinding">enabled</string>
@@ -1658,10 +1654,10 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">hidden: showSkipButton</string>
-						<reference key="source" ref="745617971"/>
+						<reference key="source" ref="70848040"/>
 						<reference key="destination" ref="346304739"/>
 						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="745617971"/>
+							<reference key="NSSource" ref="70848040"/>
 							<reference key="NSDestination" ref="346304739"/>
 							<string key="NSLabel">hidden: showSkipButton</string>
 							<string key="NSBinding">hidden</string>
@@ -1670,7 +1666,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 								<string key="NS.key.0">NSValueTransformerName</string>
 								<string key="NS.object.0">NSNegateBoolean</string>
 							</object>
-							<reference key="NSPreviousConnector" ref="470921471"/>
+							<reference key="NSPreviousConnector" ref="904286657"/>
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
 					</object>
@@ -2090,7 +2086,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="722755444"/>
 							<reference ref="635326216"/>
-							<reference ref="745617971"/>
+							<reference ref="70848040"/>
 						</object>
 						<reference key="parent" ref="762783357"/>
 					</object>
@@ -2433,21 +2429,21 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">382</int>
-						<reference key="object" ref="745617971"/>
+						<reference key="object" ref="70848040"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="267636571"/>
+							<reference ref="360909848"/>
 						</object>
 						<reference key="parent" ref="149569143"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">383</int>
-						<reference key="object" ref="267636571"/>
-						<reference key="parent" ref="745617971"/>
+						<reference key="object" ref="360909848"/>
+						<reference key="parent" ref="70848040"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">388</int>
-						<reference key="object" ref="940344476"/>
+						<reference key="object" ref="618049628"/>
 						<reference key="parent" ref="0"/>
 						<string key="objectName">Session mediator</string>
 					</object>

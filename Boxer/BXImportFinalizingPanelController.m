@@ -10,6 +10,7 @@
 #import "BXDriveImport.h"
 #import "BXImportSession.h"
 #import "BXAppController.h"
+#import "NSAlert+BXAlert.h"
 
 #pragma mark -
 #pragma mark Private method declarations
@@ -30,85 +31,73 @@
 @synthesize controller;
 
 #pragma mark -
-#pragma mark Skip button behaviour
+#pragma mark Cancel button behaviour
 
-+ (NSString *) skipButtonLabelForImportType: (BXSourceFileImportType)importType
++ (NSString *) cancelButtonLabelForImportType: (BXSourceFileImportType)importType
 {	
 	switch (importType)
 	{
 		case BXImportFromCDVolume:
 		case BXImportFromCDImage:
 		case BXImportFromFolderToCD:
-			return NSLocalizedString(@"Skip CD",
+			return NSLocalizedString(@"Skip CD import",
 									 @"Button label to skip importing source files as a fake CD-ROM or CD image.");
 		
 		case BXImportFromFloppyVolume:
 		case BXImportFromFloppyImage:
 		case BXImportFromFolderToFloppy:
-			return NSLocalizedString(@"Skip disk",
+			return NSLocalizedString(@"Skip disk import",
 									 @"Button label to skip importing source files as a fake floppy disk.");
 			
 		case BXImportFromHardDiskImage:
 		case BXImportFromFolderToHardDisk:
-			return NSLocalizedString(@"Skip disk",
+			return NSLocalizedString(@"Skip disk import",
 									 @"Button label to skip importing source files as a hard disk.");
 			
 		default:
-			//This should never be used, as the above cases should cover all situations where the button is visible.
+			//This should never be used, as the above cases should cover all situations where the label can be used.
 			return NSLocalizedString(@"Skip this step",
-									 @"Button label to skip importing source files as a hard disk.");
+									 @"Button label to skip importing source files when the import type is not known.");
 	}
 }
 
 //TODO: refactor all these properties into a single observation method to centralise the skip button's behaviour.
 
-- (NSString *) skipButtonLabel
+- (NSString *) cancelButtonLabel
 {
 	BXImportSession *session = [controller document];
-	BXSourceFileImportType importType = [session sourceFileImportType];
 	
-	return [[self class] skipButtonLabelForImportType: importType];
+	if ([session sourceFileImportRequired])
+	{
+		//If the import is necessary, then the cancel button represents cancelling the entire game import.
+		return NSLocalizedString(@"Stop importing", @"Button label to cancel the entire game import.");
+	}
+	else
+	{
+		BXSourceFileImportType importType = [session sourceFileImportType];
+		return [[self class] cancelButtonLabelForImportType: importType];
+	}
 }
 
-+ (NSSet *) keyPathsForValuesAffectingSkipButtonLabel
++ (NSSet *) keyPathsForValuesAffectingCancelButtonLabel
 {
-	return [NSSet setWithObject: @"controller.document.sourceFileImportType"];
+	return [NSSet setWithObjects: @"controller.document.sourceFileImportType",  @"controller.document.sourceFileImportRequired", nil];
 }
 
-- (BOOL) showSkipButton
+- (BOOL) cancelButtonEnabled
 {
-	
 	BXImportSession *session = [controller document];
+	BXImportStage stage = [session importStage];
 	
-	if (![session canSkipSourceFileImport])		return NO;
-	if (![session sourceFileImportOperation])	return NO;
-	
-	//TWEAK: only allow skipping for actual CD rips, because these are the only
-	//types that will take long enough and make sense to actually skip
-	if ([session sourceFileImportType] != BXImportFromCDVolume) return NO;
+	//Disable the button when finalizing or skipping.
+	if (stage == BXImportSessionCancellingSourceFileImport || stage == BXImportSessionCleaningGamebox) return NO;
 	
 	return YES;
 }
 
-- (BOOL) enableSkipButton
++ (NSSet *) keyPathsForValuesAffectingCancelButtonEnabled
 {
-	BXImportSession *session = [controller document];
-	
-	if (![self showSkipButton]) return NO;
-	
-	if ([session importStage] != BXImportSessionImportingSourceFiles) return NO;
-	
-	return YES;
-}
-
-+ (NSSet *) keyPathsForValuesAffectingShowSkipButton
-{
-	return [NSSet setWithObjects: @"controller.document.canSkipSourceFileImport", @"controller.document.sourceFileImportOperation", nil];
-}
-
-+ (NSSet *) keyPathsForValuesAffectingEnableSkipButton
-{
-	return [[self keyPathsForValuesAffectingShowSkipButton] setByAddingObject: @"controller.document.importStage"];
+	return [NSSet setWithObject: @"controller.document.importStage"];
 }
 
 
@@ -175,14 +164,9 @@
 		}
 		else return stageDescription;
 	}
-	else if (stage == BXImportSessionCancellingSourceFileImport)
+	else if (stage == BXImportSessionCleaningGamebox || stage == BXImportSessionCancellingSourceFileImport)
 	{
-		return NSLocalizedString(@"Skipping…",
-								 @"Import progress description when source file import has been cancelled.");
-	}
-	else if (stage == BXImportSessionCleaningGamebox)
-	{
-		return NSLocalizedString(@"Removing unnecessary files…",
+		return NSLocalizedString(@"Cleaning up after ourselves…",
 								 @"Import progress description for gamebox cleanup stage.");
 			
 	}
@@ -215,14 +199,14 @@
 		case BXImportFromCDVolume:
 			message = NSLocalizedString(@"Boxer is importing the game’s CD so that you can play without it.",
 										@"Bold message in skip confirmation alert when importing from a CD or CD image.");
-			informativeText = NSLocalizedString(@"If you skip this step now, you can import the CD later from the Drives Inspector panel.",
+			informativeText = NSLocalizedString(@"If you skip this step now, you can import the CD later from the Drives Inspector panel while playing.",
 												@"Explanatory text in skip confirmation alert when importing from a CD or CD image.");
 			break;
 			
 		case BXImportFromFloppyImage:
 		case BXImportFromFloppyVolume:
 			message = NSLocalizedString(@"Boxer is importing the game’s floppy disk so that the game can find files on it later.",
-										@"Bold message in skip confirmation alert when importing from a floppy disk or floppy image.");
+										@"Bold message in skip confirmation alert when importing from a floppy disk or floppy image while playing.");
 			informativeText = NSLocalizedString(@"If you skip this step now, you can import the disk later from the Drives Inspector panel.",
 												@"Explanatory text in skip confirmation alert when importing from a floppy disk or floppy image.");
 			break;
@@ -239,7 +223,7 @@
 			break;
 	}
 	
-	NSString *skipLabel		= [self skipButtonLabelForImportType: importType];
+	NSString *skipLabel		= [self cancelButtonLabelForImportType: importType];
 	NSString *cancelLabel	= NSLocalizedString(@"Cancel", @"Cancel the current action and return to what the user was doing");		
 	
 	NSAlert *alert = [[NSAlert alloc] init];
@@ -252,23 +236,38 @@
 	return [alert autorelease];
 }
 
-- (IBAction) skipSourceFileImport: (id)sender
+- (IBAction) cancelSourceFileImport: (id)sender
 {
 	BXImportSession *session = [controller document];
-	NSAlert *skipAlert = [[self class] skipAlertForSourcePath: [session sourcePath]
-														 type: [session sourceFileImportType]];
-	
-	if (skipAlert)
+	//If the import is required and cannot be skipped, then treat this action as a request
+	//to stop the entire game import process - pass this up to the as a close window attempt
+	//(which will use the standard session machinery for confirming the close.)
+	if ([session sourceFileImportRequired])
 	{
-		[skipAlert retain];
-		[skipAlert beginSheetModalForWindow: [controller window]
-							  modalDelegate: self
-							 didEndSelector: @selector(_skipAlertDidEnd:returnCode:contextInfo:)
-								contextInfo: nil];
+		[[controller window] performClose: sender];
 	}
+	//Otherwise, show a custom are-you-sure-you-want-to-skip-this alert sheet.
 	else
 	{
-		[session cancelSourceFileImport];
+		NSAlert *skipAlert = [[self class] skipAlertForSourcePath: [session sourcePath]
+															 type: [session sourceFileImportType]];
+		
+		if (skipAlert)
+		{
+			[skipAlert adoptIconFromWindow: [controller window]];
+			[skipAlert retain];
+			[skipAlert beginSheetModalForWindow: [controller window]
+								  modalDelegate: self
+								 didEndSelector: @selector(_skipAlertDidEnd:returnCode:contextInfo:)
+									contextInfo: nil];
+		}
+		//If skipAlertForSourcePath:type: thought that it wasn't worth showing any confirmation
+		//at all, then go right ahead and cancel.
+		//TODO: move that decision downstream into BXImportSession. 
+		else
+		{
+			[session cancelSourceFileImport];
+		}
 	}
 }
 

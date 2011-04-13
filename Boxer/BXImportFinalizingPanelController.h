@@ -27,17 +27,16 @@
 //Used for populating the description field beneath the progress bar.
 @property (readonly, nonatomic) NSString *progressDescription;
 
-//Text and visibility properties for the skip-importing-source-files button.
-@property (readonly, nonatomic) NSString * skipButtonLabel;
-@property (readonly, nonatomic) BOOL showSkipButton;
-@property (readonly, nonatomic) BOOL enableSkipButton;
+//The label and enabledness of the stop importing/skip importing button
+@property (readonly, nonatomic) NSString * cancelButtonLabel;
+@property (readonly, nonatomic) BOOL cancelButtonEnabled;
 
 
 #pragma mark -
 #pragma mark Helper class methods
 
-//Helper methods used by progressDescription and skipButtonLabel.
-+ (NSString *) skipButtonLabelForImportType: (BXSourceFileImportType)importType;
+//Helper methods used by progressDescription and cancelButtonLabel.
++ (NSString *) cancelButtonLabelForImportType: (BXSourceFileImportType)importType;
 + (NSString *) stageDescriptionForImportType: (BXSourceFileImportType)importType;
 
 + (NSAlert *) skipAlertForSourcePath: (NSString *)sourcePath
@@ -51,6 +50,6 @@
 - (IBAction) showImportFinalizingHelp: (id)sender;
 
 //Skip the source file import stage. This will show a confirmation prompt.
-- (IBAction) skipSourceFileImport: (id)sender;
+- (IBAction) cancelSourceFileImport: (id)sender;
 
 @end

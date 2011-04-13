@@ -71,7 +71,7 @@ typedef NSUInteger BXSourceFileImportType;
 	
 	BXOperation *sourceFileImportOperation;
 	BXSourceFileImportType sourceFileImportType;
-	BOOL canSkipSourceFileImport;
+	BOOL sourceFileImportRequired;
 }
 
 #pragma mark -
@@ -117,7 +117,7 @@ typedef NSUInteger BXSourceFileImportType;
 
 //Whether the user is allowed to skip the step of importing the source files into the game folder.
 //Will be NO if the game did not install any files into the gamebox to start with.
-@property (readonly, assign, nonatomic) BOOL canSkipSourceFileImport;
+@property (readonly, assign, nonatomic) BOOL sourceFileImportRequired;
 
 
 #pragma mark -

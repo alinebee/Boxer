@@ -32,7 +32,8 @@
 #import "BXCloseAlert.h"
 
 #import "BXSingleFileTransfer.h"
-#import "BXSimpleDriveImport.h"
+#import "BXDriveImport.h"
+#import "BXBinCueImageImport.h"
 
 #import "BXImportSession+BXImportPolicies.h"
 #import "BXSession+BXFileManager.h"
@@ -58,7 +59,7 @@
 @property (readwrite, assign, nonatomic) BOOL stageProgressIndeterminate;
 @property (readwrite, retain, nonatomic) BXOperation *sourceFileImportOperation;
 @property (readwrite, assign, nonatomic) BXSourceFileImportType sourceFileImportType;
-@property (readwrite, assign, nonatomic) BOOL canSkipSourceFileImport;
+@property (readwrite, assign, nonatomic) BOOL sourceFileImportRequired;
 
 //Only defined for internal use
 @property (copy, nonatomic) NSString *rootDrivePath;
@@ -81,7 +82,7 @@
 @synthesize sourcePath, rootDrivePath;
 @synthesize installerPaths, preferredInstallerPath;
 @synthesize importStage, stageProgress, stageProgressIndeterminate;
-@synthesize sourceFileImportOperation, sourceFileImportType, canSkipSourceFileImport;
+@synthesize sourceFileImportOperation, sourceFileImportType, sourceFileImportRequired;
 
 
 #pragma mark -
@@ -923,10 +924,21 @@
 	//Set up the import operation and start it running.
 	[self setSourceFileImportType: importType];
 	[self setSourceFileImportOperation: importOperation];
-	[self setCanSkipSourceFileImport: didInstallFiles];
+	//If the gamebox is empty, then we need to import the source files for it to work at all
+	[self setSourceFileImportRequired: !didInstallFiles];
 	[self setImportStage: BXImportSessionImportingSourceFiles];
 	
 	[importQueue addOperation: importOperation];
+}
+
+- (BOOL) sourceFileImportRequired
+{
+	//TWEAK: we require source files to be imported in all cases except when importing from physical CD.
+	//This is because that's the only situation that doesn't suck to recover from, if it turns
+	//out the game needs the CD (because you can just keep it in the drive and it's happy.)
+	//TODO: make this decision more formal and/or move it up into importSourceFiles.
+	return sourceFileImportRequired || (sourceFileImportType != BXImportFromCDVolume);
+	//return sourceFileImportRequired || (sourceFileImportType == BXImportTypeUnknown);
 }
 
 - (void) cancelSourceFileImport
@@ -999,7 +1011,7 @@
 	}
 	
 	//If the operation failed with an error, then determine if we can retry
-	//with a safer import method, and skip to the next stage if not.
+	//with a safer import method, or skip to the next stage if not.
 	else
 	{
 		BXOperation <BXDriveImport> *fallbackImport = nil;
@@ -1010,7 +1022,14 @@
 		if (isImport && (fallbackImport = [BXDriveImport fallbackForFailedImport: operation]))
 		{
 			[self setSourceFileImportOperation: fallbackImport];
-			[importQueue addOperation: fallbackImport];
+			
+			//IMPLEMENTATION NOTE: we add a short delay before retrying from BIN/CUE imports,
+			//to allow time for the original volume to remount fully.
+			if ([operation isKindOfClass: [BXBinCueImageImport class]])
+			{
+				[importQueue performSelector: @selector(addOperation:) withObject: fallbackImport afterDelay: 2.0];
+			}
+			else [importQueue addOperation: fallbackImport];
 		}
 		
 		//..and if not, skip the import altogether and pretend everything's OK.

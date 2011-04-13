@@ -80,7 +80,7 @@
 	BXCloseAlert *alert = [self alert];
 	
 	NSString *sessionName	= [theSession displayName];
-	NSString *messageFormat	= NSLocalizedString(@"%@ has not finished importing.",
+	NSString *messageFormat	= NSLocalizedString(@"Boxer has not finished importing %@.",
 												@"Title of confirmation sheet when closing a game import session. %@ is the display name of the gamebox.");
 	
 	[alert setMessageText:		[NSString stringWithFormat: messageFormat, sessionName]];

@@ -181,7 +181,8 @@
 			[self unbind: @"mouseActive"];
 			[[self representedObject] removeObserver: self forKeyPath: @"mousePosition"];
 			
-			[session removeObserver: self forKeyPath: @"suspended"];
+			[session removeObserver: self forKeyPath: @"paused"];
+			[session removeObserver: self forKeyPath: @"autoPaused"];
 			
 			[self didResignKey];
 		}
@@ -202,12 +203,15 @@
 		   withKeyPath: @"gameSettings.mouseSensitivity"
 			   options: sensitivityOptions];
 			
-			//Sync our mouse state to the emulator’s own mouse state
-			//TODO: eliminate these bindings as they won’t function across process boundaries
-			[self bind: @"mouseActive" toObject: representedObject withKeyPath: @"mouseActive" options: nil];
+			//Tweak: make the mouse active whenever a program is running, regardless of whether
+			//the emulator says it supports the mouse or not. This fixes games that support the
+			//mouse but don't report that they do so.
+			[self bind: @"mouseActive" toObject: session withKeyPath: @"emulator.isRunningProcess" options: nil];
+			
 			[representedObject addObserver: self forKeyPath: @"mousePosition" options: 0 context: nil];
 			
-			[session addObserver: self forKeyPath: @"suspended" options: 0 context: nil];
+			[session addObserver: self forKeyPath: @"paused" options: 0 context: nil];
+			[session addObserver: self forKeyPath: @"autoPaused" options: 0 context: nil];
 			
 			[self didBecomeKey];
 		}
@@ -224,7 +228,9 @@
 		//Ensure we're synced to the OS X cursor whenever the emulator's mouse position changes
 		[self _emulatorCursorMovedToPointInCanvas: [object mousePosition]];
 	}
-	else if ([keyPath isEqualToString: @"suspended"])
+	//Tweak: we used to observe just the @suspended key, but that meant we'd resign key
+	//and unlock the mouse whenever Boxer interrupted the emulator for UI stuff like window resizing.
+	else if ([keyPath isEqualToString: @"paused"] || [keyPath isEqualToString: @"autoPaused"])
 	{
 		if ([object isSuspended]) [self didResignKey];
 		else [self didBecomeKey];

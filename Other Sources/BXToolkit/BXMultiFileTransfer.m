@@ -58,9 +58,10 @@
    
 - (BXOperationProgress) currentProgress
 {
-	if ([self numBytes])
+	unsigned long long totalBytes = [self numBytes];
+	if (totalBytes > 0)
 	{
-		return (BXOperationProgress)[self bytesTransferred] / (BXOperationProgress)[self numBytes];
+		return (BXOperationProgress)[self bytesTransferred] / (BXOperationProgress)totalBytes;
 	}
 	else return 0.0f;
 }

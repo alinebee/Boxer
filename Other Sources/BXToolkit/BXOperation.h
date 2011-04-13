@@ -14,6 +14,8 @@
 
 typedef float BXOperationProgress;
 
+#define BXUnknownTimeRemaining -1
+
 #pragma mark -
 #pragma mark Notification constants
 
@@ -100,6 +102,11 @@ extern NSString * const BXOperationIndeterminateKey;
 
 //A float from 0.0f to 1.0f indicating how far through its process the operation is.
 @property (readonly) BXOperationProgress currentProgress;
+
+//An estimate of how long remains before the operation completes.
+//Will be 0.0 if the operation has already finished, or BXUnknownTimeRemaining
+//if no estimate can be provided (which usually means isIndeterminate is YES also.)
+@property (readonly) NSTimeInterval timeRemaining;
 
 //Indicates whether the process cannot currently provide a meaningful indication
 //of progress (and thus whether the value of currentProgress should be ignored).

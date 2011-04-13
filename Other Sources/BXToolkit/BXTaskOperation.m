@@ -9,7 +9,7 @@
 #import "BXTaskOperation.h"
 
 //Default to polling task progress every second
-#define BXTaskOperationDefaultPollInterval 1
+#define BXTaskOperationDefaultPollInterval 1.0
 
 
 @implementation BXTaskOperation
@@ -20,7 +20,7 @@
 #pragma mark -
 #pragma mark Initialization and deallocation
 
-+ (id) operationWithTask:(NSTask *)task
++ (id) operationWithTask: (NSTask *)task
 {
 	return [[[self alloc] initWithTask: task] autorelease];
 }
@@ -73,7 +73,7 @@
 - (void) monitorTask: (NSTask *)task
 withProgressCallback: (SEL)callback
 		  atInterval: (NSTimeInterval)interval
-{
+{	
 	//Use a timer to poll the task's progress. (This also keeps the runloop below alive.)
 	NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval: interval
 													  target: self

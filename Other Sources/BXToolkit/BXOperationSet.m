@@ -67,6 +67,11 @@
 #pragma mark -
 #pragma mark Running the operations
 
++ (NSSet *) keyPathsForValuesAffectingCurrentProgress
+{
+	return [NSSet setWithObject: @"operations"];
+}
+
 - (BXOperationProgress) currentProgress
 {
 	//Treat the current progress as the average across all our operations
@@ -86,6 +91,11 @@
 	return totalProgress / (BXOperationProgress)numOperations;
 }
 
++ (NSSet *) keyPathsForValuesAffectingIndeterminate
+{
+	return [NSSet setWithObject: @"operations"];
+}
+
 - (BOOL) isIndeterminate
 {
 	for (BXOperation *operation in [self operations])
@@ -94,6 +104,20 @@
 	}
 	return NO;
 }
+
+- (NSTimeInterval) timeRemaining
+{
+	NSTimeInterval totalRemaining = 0.0;
+	for (BXOperation *operation in [self operations])
+	{
+		NSTimeInterval operationRemaining = [operation timeRemaining];
+		//If any of the operations cannot estimate its time, then throw out the whole estimate
+		if (operationRemaining == BXUnknownTimeRemaining) return BXUnknownTimeRemaining;
+		else totalRemaining += operationRemaining;
+	}
+	return totalRemaining;
+}
+
 
 - (void) main
 {
@@ -142,7 +166,9 @@
 - (void) _postUpdateWithTimer: (NSTimer *)timer
 {
 	[self willChangeValueForKey: @"currentProgress"];
+	[self willChangeValueForKey: @"indeterminate"];
 	[self didChangeValueForKey: @"currentProgress"];
+	[self didChangeValueForKey: @"indeterminate"];
 		
 	[self _sendInProgressNotificationWithInfo: nil];
 }

@@ -211,6 +211,7 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 	if (latestProgress > 0)
 	{
 		[self setIndeterminate: NO];
+		//hdiutil expresses progress as a float percentage from 0 to 100
 		[self setCurrentProgress: latestProgress / 100.0f];
 		[self setBytesTransferred: [self numBytes] * [self currentProgress]];
 		
@@ -220,6 +221,8 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 							  nil];
 		[self _sendInProgressNotificationWithInfo: info];
 	}
+	//hdiutil will print "-1" when its own progress is indeterminate
+	//q.v. man hdiutil and search for -puppetstrings
 	else if (latestProgress == -1)
 	{
 		[self setIndeterminate: YES];

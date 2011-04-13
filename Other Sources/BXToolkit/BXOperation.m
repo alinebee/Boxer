@@ -78,10 +78,20 @@ NSString * const BXOperationIndeterminateKey	= @"BXOperationIndeterminateKey";
 	else [super cancel];
 }
 
-//Intended to be overridden by subclasses to provide more meaningful progress tracking.
+//The following are meant to be overridden by subclasses to provide more meaningful progress tracking.
 - (BXOperationProgress) currentProgress
 {
 	return 0.0f;
+}
+
++ (NSSet *) keyPathsForValuesAffectingTimeRemaining
+{
+	return [NSSet setWithObjects: @"currentProgress", @"isFinished", nil];
+}
+
+- (NSTimeInterval) timeRemaining
+{
+	return [self isFinished] ? 0.0 : BXUnknownTimeRemaining;
 }
 
 - (BOOL) isIndeterminate

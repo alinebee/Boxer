@@ -106,6 +106,11 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 #pragma mark -
 #pragma mark Performing the transfer
 
++ (NSSet *) keyPathsForValuesAffectingCurrentProgress
+{
+	return [NSSet setWithObjects: @"numBytes", @"bytesTransferred", nil];
+}
+
 - (BXOperationProgress) currentProgress
 {
 	if ([self numBytes] > 0)
@@ -113,6 +118,11 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 		return (BXOperationProgress)[self bytesTransferred] / (BXOperationProgress)[self numBytes];		
 	}
 	else return 0;
+}
+
++ (NSSet *) keyPathsForValuesAffectingIndeterminate
+{
+	return [NSSet setWithObject: @"numBytes"];
 }
 
 - (BOOL) isIndeterminate

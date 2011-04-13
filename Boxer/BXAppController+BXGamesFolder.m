@@ -134,7 +134,7 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 	NSString *artworkName = isLeopardFinder ? @"Leopard.jpg" : @"Snow Leopard.jpg";
 	NSString *artworkPath = [artworkFolderPath stringByAppendingPathComponent: artworkName];
 	
-	//If the folder 
+	//If there's no suitable artwork yet, then generate a new image
 	NSFileManager *manager = [NSFileManager defaultManager];
 	if (![manager fileExistsAtPath: artworkPath])
 	{

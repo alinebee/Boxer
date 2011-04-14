@@ -430,9 +430,26 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	//(This will be possible if the URL is accessible to a session's emulated filesystem,
 	//and the session is not already running a program.)
 	
-	//TWEAK: don't do this if the URL is a gamebox: always treat gameboxes as separate documents.
+	//TWEAK: if it’s a gamebox, then check if we have a session open for that gamebox.
+	//If so, ask that session to launch the default program in that gamebox (if there is any)
+	//or else focus it.
 	NSString *type = [self typeForContentsOfURL: absoluteURL error: nil];
-	if (![type isEqualToString: @"net.washboardabs.boxer-game-package"])
+	if ([type isEqualToString: @"net.washboardabs.boxer-game-package"])
+	{
+		for (BXSession *session in [self sessions])
+		{
+			if ([[[session gamePackage] bundlePath] isEqualToString: path])
+			{
+				NSString *defaultTarget = [[session gamePackage] targetPath];
+				if (defaultTarget) [session openFileAtPath: defaultTarget];
+				
+				[session showWindows];
+				return session;
+			}
+		}
+	}
+	//For other filetypes, just see if any of the sessions we have can open the file.
+	else
 	{
 		for (BXSession *session in [self sessions])
 		{

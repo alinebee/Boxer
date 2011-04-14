@@ -37,6 +37,18 @@
 #pragma mark -
 #pragma mark Protected methods
 
+//Whether to leave the program panel open after launching a program, so they can decide what to do with it.
+//Used by programWillStart and didStartGraphicalContext.
+- (BOOL) _leaveProgramPanelOpenAfterLaunch;
+
+//Whether we should close the session (and the application) after returning to the DOS prompt.
+- (BOOL) _shouldCloseOnProgramExit;
+
+//Whether the document should be closed when the emulator process finishes.
+//Normally YES, may be overridden by BXSession subclasses. 
+- (BOOL) _shouldCloseOnEmulatorExit;
+
+
 //Create our BXEmulator instance and starts its main loop.
 //Called internally by [BXSession start], deferred to the end of the main thread's event loop to prevent
 //DOSBox blocking cleanup code.
@@ -53,9 +65,7 @@
 //finishes. Called by runLaunchCommands at the end of AUTOEXEC.BAT.
 - (void) _launchTarget;
 
-//Whether to leave the program panel open after launching a program, so they can decide what to do with it.
-//Used by programWillStart and didStartGraphicalContext.
-- (BOOL) _leaveProgramPanelOpenAfterLaunch;
+
 
 //Called once the session has exited to save any DOSBox settings we have changed to the gamebox conf.
 - (void) _saveConfiguration: (BXEmulatorConfiguration *)configuration toFile: (NSString *)filePath;

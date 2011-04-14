@@ -74,6 +74,7 @@ extern NSString * const BXDidFinishInterruptionNotification;
 	
 	BOOL showDriveNotifications;
 	BOOL userToggledProgramPanel;
+	BOOL userSkippedDefaultProgram;
 	
 	NSOperationQueue *importQueue;
 	
@@ -126,10 +127,6 @@ extern NSString * const BXDidFinishInterruptionNotification;
 
 //Whether this session represents a gamebox.
 @property (readonly, nonatomic) BOOL isGamePackage;
-
-//Whether the document should be closed when the emulator process finishes.
-//Normally YES, may be overridden by BXSession subclasses. 
-@property (readonly, nonatomic) BOOL shouldCloseOnEmulatorExit;
 
 //The display-ready title for the currently-executing DOS process.
 //Will be nil if there is currently no process executing.

@@ -932,7 +932,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 }
 
 - (void) windowDidBecomeKey: (NSNotification *)notification
-{	
+{
 	[inputController didBecomeKey];
 }
 

@@ -210,8 +210,8 @@
 			
 			[representedObject addObserver: self forKeyPath: @"mousePosition" options: 0 context: nil];
 			
-			[session addObserver: self forKeyPath: @"paused" options: 0 context: nil];
-			[session addObserver: self forKeyPath: @"autoPaused" options: 0 context: nil];
+			[session addObserver: self forKeyPath: @"paused" options: NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context: nil];
+			[session addObserver: self forKeyPath: @"autoPaused" options: NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context: nil];
 			
 			[self didBecomeKey];
 		}
@@ -228,12 +228,19 @@
 		//Ensure we're synced to the OS X cursor whenever the emulator's mouse position changes
 		[self _emulatorCursorMovedToPointInCanvas: [object mousePosition]];
 	}
+	
 	//Tweak: we used to observe just the @suspended key, but that meant we'd resign key
 	//and unlock the mouse whenever Boxer interrupted the emulator for UI stuff like window resizing.
 	else if ([keyPath isEqualToString: @"paused"] || [keyPath isEqualToString: @"autoPaused"])
 	{
-		if ([object isSuspended]) [self didResignKey];
-		else [self didBecomeKey];
+		BOOL wasPaused	= [[change objectForKey: NSKeyValueChangeOldKey] boolValue];
+		BOOL isPaused	= [[change objectForKey: NSKeyValueChangeNewKey] boolValue];
+		
+		if (wasPaused != isPaused)
+		{
+			if (isPaused) [self didResignKey];
+			else [self didBecomeKey];
+		}
 	}
 }
 
@@ -615,7 +622,7 @@
 	//Otherwise, pass the keypress on to our input handler.
 	else
 	{
-		//Unpause the emulation whenever a key is pressed
+		//Unpause the emulation whenever a key is pressed.
 		[[[self controller] document] setPaused: NO];
 	
 		[[self representedObject] sendKeyEventWithCode: [theEvent keyCode]

@@ -13,7 +13,6 @@
 #import "BXDrive.h"
 #import "BXAppController.h"
 #import "BXDOSWindowController.h"
-#import "BXInputController.h"
 #import "BXEmulatorConfiguration.h"
 #import "BXCloseAlert.h"
 
@@ -21,7 +20,6 @@
 #import "BXEmulator+BXShell.h"
 #import "NSWorkspace+BXFileTypes.h"
 #import "NSString+BXPaths.h"
-#import "NSFileManager+BXTemporaryFiles.h"
 #import "UKFNSubscribeFileWatcher.h"
 #import "NSWorkspace+BXExecutableTypes.h"
 
@@ -34,10 +32,15 @@
 NSString * const BXGameboxSettingsKeyFormat	= @"BXGameSettings: %@";
 NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
 
-//The length of time in seconds after which we count a program as having run successfully.
-//If a program exits before this time, then we check if it's a Windows-only program and
-//warn the user.
-#define BXSuccessfulProgramRunningTimeThreshold 0.2
+//The length of time in seconds after which we figure that if the program was
+//Windows-only, it would have failed by now. If a program exits before this time,
+//then we check if it's a Windows-only program and warn the user.
+#define BXWindowsOnlyProgramFailTimeThreshold 0.2
+
+//The length of time in seconds after which we count a program as having run successfully,
+//and allow it to auto-quit. If a program exits before this time, we count it as
+//a probable startup crash and leave the user at the DOS prompt to diagnose it.
+#define BXSuccessfulProgramRunningTimeThreshold 10
 
 //How soon after the program to enter fullscreen, if the run-programs-in-fullscreen toggle
 //is enabled. The delay gives the program time to crash andour program panel time to hide.
@@ -372,9 +375,6 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		[super close];
 	}
 }
-
-- (BOOL) shouldCloseOnEmulatorExit { return YES; }
-
 
 //Overridden solely so that NSDocumentController will call canCloseDocumentWithDelegate:
 //in the first place. This otherwise should have no effect and should not show up in the UI.
@@ -733,7 +733,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	//Check the running time of the program. If it was suspiciously short,
 	//then check for possible error conditions that we can inform the user about.
 	NSTimeInterval programRunningTime = [NSDate timeIntervalSinceReferenceDate] - programStartTime; 
-	if (programRunningTime < BXSuccessfulProgramRunningTimeThreshold)
+	if (programRunningTime < BXWindowsOnlyProgramFailTimeThreshold)
 	{
 		//If this was the target program for this launch, then
 		//warn if the program is Windows-only.
@@ -760,8 +760,15 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (void) emulatorDidReturnToShell: (NSNotification *)notification
 {
+	//If we should close after exiting, then close down the application now
+	if ([self _shouldCloseOnProgramExit])
+	{
+		[NSApp terminate: self];
+	}
+	
 	//Clear the active program
 	[self setActiveProgramPath: nil];
+	
 	
 	//Show the program chooser after returning to the DOS prompt, as long
 	//as the program chooser hasn't been manually toggled from the DOS prompt
@@ -825,6 +832,37 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 #pragma mark -
 #pragma mark Private methods
 
+- (BOOL) _shouldCloseOnEmulatorExit { return YES; }
+
+- (BOOL) _shouldCloseOnProgramExit
+{
+	//Don't close if the auto-close preference is disabled for this gamebox
+	if (![[gameSettings objectForKey: @"closeOnExit"] boolValue]) return NO;
+	
+	//Don't close if the user skipped the startup program in order to start up at the DOS prompt
+	if (userSkippedDefaultProgram) return NO;
+	
+	//Don't close if we're running a program other than the default program for the gamebox
+	if (![[self activeProgramPath] isEqualToString: [[self gamePackage] targetPath]]) return NO;
+	
+	//Don't close if there are drive imports in progress
+	if ([[importQueue operations] count]) return NO;
+	
+	//Don't close if the program quit suspiciously early, since this may be a crash
+	NSTimeInterval executionTime = [NSDate timeIntervalSinceReferenceDate] - programStartTime;
+	if (executionTime < BXSuccessfulProgramRunningTimeThreshold) return NO;
+	
+	//If the user is currently holding down the Option key override, then don't quit either.
+	CGEventFlags currentModifiers = CGEventSourceFlagsState(kCGEventSourceStateCombinedSessionState);
+	BOOL optionKeyDown = (currentModifiers & NSAlternateKeyMask) == NSAlternateKeyMask;
+	
+	if (optionKeyDown) return NO;
+	
+	
+	//If we get this far then go right ahead and die
+	return YES;
+}
+
 //We leave the panel open when we don't have a default program already,
 //and can adopt the current program as the default program. This way
 //we can ask the user what they want to do with the program.
@@ -872,7 +910,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	[[self DOSWindowController] updateWithFrame: nil];
 	
 	//Close the document once we're done, if desired
-	if ([self shouldCloseOnEmulatorExit]) [self close];
+	if ([self _shouldCloseOnEmulatorExit]) [self close];
 }
 
 - (void) _loadDOSBoxConfigurations
@@ -973,6 +1011,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 - (void) _launchTarget
 {	
 	//Do any just-in-time configuration, which should override all previous startup stuff
+	//TODO: abstract this to a proper post-autoexec method rather than assuming this is
+	//always going to be called right at the end of the autoexec thankyou very much
 	NSNumber *frameskip = [gameSettings objectForKey: @"frameskip"];
 	
 	//Set the frameskip setting if it's valid
@@ -986,8 +1026,10 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	{
 		//If the Option key was held down, don't launch the gamebox's target;
 		//Instead, just switch to its parent folder
-		NSUInteger optionKeyDown = [[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask;
-		if (optionKeyDown != 0 && [[self class] isExecutable: target])
+		CGEventFlags currentModifiers = CGEventSourceFlagsState(kCGEventSourceStateCombinedSessionState);
+		userSkippedDefaultProgram = (currentModifiers & NSAlternateKeyMask) == NSAlternateKeyMask;
+		
+		if (userSkippedDefaultProgram && [[self class] isExecutable: target])
 		{
 			target = [target stringByDeletingLastPathComponent];
 		}

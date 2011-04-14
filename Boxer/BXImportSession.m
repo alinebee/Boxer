@@ -315,10 +315,6 @@
 #pragma mark -
 #pragma mark Controlling shutdown
 
-//We don't want to close the entire document after the emulated session is finished;
-//instead we carry on and complete the installation process.
-- (BOOL) shouldCloseOnEmulatorExit { return NO; }
-
 //We are considered to have unsaved changes if we have a not-yet-finalized gamebox
 - (BOOL) isDocumentEdited	{ return [self gamePackage] != nil && [self importStage] < BXImportSessionFinished; }
 
@@ -1190,6 +1186,14 @@
 	//this allows lengthy copy operations to continue in the background.
 	return NO;
 }
+
+//We don't want to close the entire document after the emulated session is finished;
+//instead we carry on and complete the installation process.
+- (BOOL) _shouldCloseOnEmulatorExit { return NO; }
+
+//And we DEFINITELY don't want to close when returning to the DOS prompt in any case.
+- (BOOL) _shouldCloseOnProgramExit	{ return NO; }
+
 
 //This uses a different (and simpler) mount behaviour than BXSession to prioritise the
 //source path ahead of other drives.

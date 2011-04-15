@@ -763,7 +763,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	//If we should close after exiting, then close down the application now
 	if ([self _shouldCloseOnProgramExit])
 	{
-		[NSApp terminate: self];
+		[self close];
 	}
 	
 	//Clear the active program
@@ -842,22 +842,20 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	//Don't close if the user skipped the startup program in order to start up at the DOS prompt
 	if (userSkippedDefaultProgram) return NO;
 	
-	//Don't close if we're running a program other than the default program for the gamebox
+	//Don't close if we've been running a program other than the default program for the gamebox
 	if (![[self activeProgramPath] isEqualToString: [[self gamePackage] targetPath]]) return NO;
 	
 	//Don't close if there are drive imports in progress
 	if ([[importQueue operations] count]) return NO;
 	
-	//Don't close if the program quit suspiciously early, since this may be a crash
+	//Don't close if the last program quit suspiciously early, since this may be a crash
 	NSTimeInterval executionTime = [NSDate timeIntervalSinceReferenceDate] - programStartTime;
 	if (executionTime < BXSuccessfulProgramRunningTimeThreshold) return NO;
 	
-	//If the user is currently holding down the Option key override, then don't quit either.
+	//Don't close if the user is currently holding down the Option key override
 	CGEventFlags currentModifiers = CGEventSourceFlagsState(kCGEventSourceStateCombinedSessionState);
 	BOOL optionKeyDown = (currentModifiers & NSAlternateKeyMask) == NSAlternateKeyMask;
-	
 	if (optionKeyDown) return NO;
-	
 	
 	//If we get this far then go right ahead and die
 	return YES;

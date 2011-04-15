@@ -21,12 +21,12 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="850"/>
+			<integer value="202"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 			<string>com.binarymethod.BGHUDAppKitPlugin</string>
+			<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 		</object>
 		<object class="NSMutableDictionary" key="IBDocument.Metadata">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -56,7 +56,7 @@
 				<string key="NSWindowTitle">Inspector</string>
 				<string key="NSWindowClass">NSPanel</string>
 				<nil key="NSViewClass"/>
-				<string key="NSWindowContentMaxSize">{1.79769e+308, 1.79769e+308}</string>
+				<string key="NSWindowContentMaxSize">{3.40282e+38, 3.40282e+38}</string>
 				<object class="NSView" key="NSWindowView" id="55730634">
 					<reference key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
@@ -140,7 +140,7 @@
 																	<object class="BGHUDLabel" id="191853504">
 																		<reference key="NSNextResponder" ref="435397895"/>
 																		<int key="NSvFlags">1292</int>
-																		<string key="NSFrame">{{16, 132}, {230, 17}}</string>
+																		<string key="NSFrame">{{17, 132}, {229, 17}}</string>
 																		<reference key="NSSuperview" ref="435397895"/>
 																		<bool key="NSEnabled">YES</bool>
 																		<object class="NSTextFieldCell" key="NSCell" id="89640333">
@@ -159,7 +159,7 @@
 																				<string key="NSColorName">controlColor</string>
 																				<object class="NSColor" key="NSColor">
 																					<int key="NSColorSpace">3</int>
-																					<bytes key="NSWhite">MC42NjY2NjY2NjY3AA</bytes>
+																					<bytes key="NSWhite">MC42NjY2NjY2ODY1AA</bytes>
 																				</object>
 																			</object>
 																			<object class="NSColor" key="NSTextColor" id="680331616">
@@ -188,7 +188,7 @@
 																			<int key="NSPeriodicInterval">75</int>
 																			<object class="NSMenuItem" key="NSMenuItem" id="339674880">
 																				<reference key="NSMenu" ref="457796887"/>
-																				<string key="NSTitle">Nothing (show DOS prompt)</string>
+																				<string key="NSTitle">Nothing (show a DOS prompt)</string>
 																				<string key="NSKeyEquiv"/>
 																				<int key="NSMnemonicLoc">2147483647</int>
 																				<int key="NSState">1</int>
@@ -266,13 +266,13 @@
 																	<object class="NSButton" id="330803063">
 																		<reference key="NSNextResponder" ref="435397895"/>
 																		<int key="NSvFlags">1292</int>
-																		<string key="NSFrame">{{17, 68}, {228, 18}}</string>
+																		<string key="NSFrame">{{27, 77}, {218, 18}}</string>
 																		<reference key="NSSuperview" ref="435397895"/>
 																		<bool key="NSEnabled">YES</bool>
 																		<object class="BGHUDButtonCell" key="NSCell" id="807765777">
 																			<int key="NSCellFlags">-2080244224</int>
 																			<int key="NSCellFlags2">0</int>
-																			<string key="NSContents">Close Boxer after exiting game</string>
+																			<string key="NSContents">Close window after exiting</string>
 																			<reference key="NSSupport" ref="235291261"/>
 																			<reference key="NSControlView" ref="330803063"/>
 																			<int key="NSButtonFlags">1211912703</int>
@@ -294,13 +294,13 @@
 																	<object class="BGHUDLabel" id="847563818">
 																		<reference key="NSNextResponder" ref="435397895"/>
 																		<int key="NSvFlags">1292</int>
-																		<string key="NSFrame">{{16, 34}, {230, 28}}</string>
+																		<string key="NSFrame">{{26, 43}, {230, 28}}</string>
 																		<reference key="NSSuperview" ref="435397895"/>
 																		<bool key="NSEnabled">YES</bool>
 																		<object class="NSTextFieldCell" key="NSCell" id="179177978">
 																			<int key="NSCellFlags">67239424</int>
 																			<int key="NSCellFlags2">4325376</int>
-																			<string key="NSContents">Hold down Option while exiting to return to the DOS prompt.</string>
+																			<string type="base64-UTF8" key="NSContents">SG9sZCBkb3duIE9wdGlvbiB3aGlsZSBleGl0aW5nCnRvIHJldHVybiB0byB0aGUgRE9TIHByb21wdC4</string>
 																			<object class="NSFont" key="NSSupport" id="26">
 																				<string key="NSName">LucidaGrande</string>
 																				<double key="NSSize">11</double>
@@ -1463,7 +1463,7 @@
 					<reference key="NSSuperview"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1280, 778}}</string>
-				<string key="NSMaxSize">{1.79769e+308, 1.79769e+308}</string>
+				<string key="NSMaxSize">{3.40282e+38, 3.40282e+38}</string>
 				<string key="NSFrameAutosaveName"/>
 			</object>
 			<object class="NSMenu" id="983218472">
@@ -2783,46 +2783,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
-						<string key="label">hidden: selection.gamePackage.targetPath</string>
-						<reference key="source" ref="330803063"/>
-						<reference key="destination" ref="56494336"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="330803063"/>
-							<reference key="NSDestination" ref="56494336"/>
-							<string key="NSLabel">hidden: selection.gamePackage.targetPath</string>
-							<string key="NSBinding">hidden</string>
-							<string key="NSKeyPath">selection.gamePackage.targetPath</string>
-							<object class="NSDictionary" key="NSOptions">
-								<string key="NS.key.0">NSValueTransformerName</string>
-								<string key="NS.object.0">NSIsNil</string>
-							</object>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1509</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">hidden: selection.gamePackage.targetPath</string>
-						<reference key="source" ref="847563818"/>
-						<reference key="destination" ref="56494336"/>
-						<object class="NSNibBindingConnector" key="connector" id="199658685">
-							<reference key="NSSource" ref="847563818"/>
-							<reference key="NSDestination" ref="56494336"/>
-							<string key="NSLabel">hidden: selection.gamePackage.targetPath</string>
-							<string key="NSBinding">hidden</string>
-							<string key="NSKeyPath">selection.gamePackage.targetPath</string>
-							<object class="NSDictionary" key="NSOptions">
-								<string key="NS.key.0">NSValueTransformerName</string>
-								<string key="NS.object.0">NSIsNil</string>
-							</object>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1515</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
 						<string key="label">value: selection.gameSettings.closeOnExit</string>
 						<reference key="source" ref="330803063"/>
 						<reference key="destination" ref="56494336"/>
@@ -2839,15 +2799,55 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
-						<string key="label">hidden2: selection.gameSettings.closeOnExit</string>
+						<string key="label">enabled: selection.gamePackage.targetPath</string>
+						<reference key="source" ref="330803063"/>
+						<reference key="destination" ref="56494336"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="330803063"/>
+							<reference key="NSDestination" ref="56494336"/>
+							<string key="NSLabel">enabled: selection.gamePackage.targetPath</string>
+							<string key="NSBinding">enabled</string>
+							<string key="NSKeyPath">selection.gamePackage.targetPath</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSValueTransformerName</string>
+								<string key="NS.object.0">NSIsNotNil</string>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1528</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">hidden: selection.gameSettings.closeOnExit</string>
+						<reference key="source" ref="847563818"/>
+						<reference key="destination" ref="56494336"/>
+						<object class="NSNibBindingConnector" key="connector" id="866607627">
+							<reference key="NSSource" ref="847563818"/>
+							<reference key="NSDestination" ref="56494336"/>
+							<string key="NSLabel">hidden: selection.gameSettings.closeOnExit</string>
+							<string key="NSBinding">hidden</string>
+							<string key="NSKeyPath">selection.gameSettings.closeOnExit</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSValueTransformerName</string>
+								<string key="NS.object.0">NSNegateBoolean</string>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1533</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">hidden2: selection.gamePackage.targetPath</string>
 						<reference key="source" ref="847563818"/>
 						<reference key="destination" ref="56494336"/>
 						<object class="NSNibBindingConnector" key="connector">
 							<reference key="NSSource" ref="847563818"/>
 							<reference key="NSDestination" ref="56494336"/>
-							<string key="NSLabel">hidden2: selection.gameSettings.closeOnExit</string>
+							<string key="NSLabel">hidden2: selection.gamePackage.targetPath</string>
 							<string key="NSBinding">hidden2</string>
-							<string key="NSKeyPath">selection.gameSettings.closeOnExit</string>
+							<string key="NSKeyPath">selection.gamePackage.targetPath</string>
 							<object class="NSDictionary" key="NSOptions">
 								<bool key="EncodedWithXMLCoder">YES</bool>
 								<object class="NSArray" key="dict.sortedKeys">
@@ -2864,14 +2864,14 @@
 									<integer value="-1"/>
 									<integer value="-1"/>
 									<integer value="-1"/>
-									<string>NSNegateBoolean</string>
+									<string>NSIsNil</string>
 								</object>
 							</object>
-							<reference key="NSPreviousConnector" ref="199658685"/>
+							<reference key="NSPreviousConnector" ref="866607627"/>
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
 					</object>
-					<int key="connectionID">1523</int>
+					<int key="connectionID">1536</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -4091,6 +4091,7 @@
 					<string>1474.IBPluginDependency</string>
 					<string>1475.IBPluginDependency</string>
 					<string>1503.IBPluginDependency</string>
+					<string>1503.IBViewBoundsToFrameTransform</string>
 					<string>1504.IBPluginDependency</string>
 					<string>1513.IBPluginDependency</string>
 					<string>1513.IBViewBoundsToFrameTransform</string>
@@ -4171,6 +4172,7 @@
 					<string>859.IBPluginDependency</string>
 					<string>859.IBViewBoundsToFrameTransform</string>
 					<string>860.IBPluginDependency</string>
+					<string>860.IBViewBoundsToFrameTransform</string>
 					<string>863.IBPluginDependency</string>
 					<string>864.IBEditorWindowLastContentRect</string>
 					<string>864.IBPluginDependency</string>
@@ -4301,10 +4303,13 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
+					<object class="NSAffineTransform">
+						<bytes key="NSTransformStruct">P4AAAL+AAABB2AAAwroAAA</bytes>
+					</object>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<object class="NSAffineTransform">
-						<bytes key="NSTransformStruct">P4AAAL+AAABBmAAAwnAAAA</bytes>
+						<bytes key="NSTransformStruct">P4AAAL+AAABB0AAAwooAAA</bytes>
 					</object>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
@@ -4403,11 +4408,14 @@
 					<object class="NSAffineTransform"/>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<object class="NSAffineTransform">
-						<bytes key="NSTransformStruct">P4AAAL+AAABBMAAAww4AAA</bytes>
+						<bytes key="NSTransformStruct">P4AAAL+AAABBiAAAwxMAAA</bytes>
 					</object>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
+					<object class="NSAffineTransform">
+						<bytes key="NSTransformStruct">P4AAAL+AAABCugAAwvgAAA</bytes>
+					</object>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
-					<string>{{450, 465}, {243, 53}}</string>
+					<string>{{598, 495}, {256, 53}}</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>{{329, 618}, {220, 93}}</string>
@@ -4441,7 +4449,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1523</int>
+			<int key="maxID">1536</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -6280,11 +6288,11 @@
 			</object>
 			<object class="NSMutableArray" key="dict.values">
 				<bool key="EncodedWithXMLCoder">YES</bool>
-				<string>{17, 17}</string>
-				<string>{17, 17}</string>
+				<string>{15, 15}</string>
+				<string>{8, 8}</string>
 				<string>{9, 8}</string>
 				<string>{7, 2}</string>
-				<string>{17, 17}</string>
+				<string>{8, 8}</string>
 				<string>{83, 83}</string>
 				<string>{15, 15}</string>
 			</object>

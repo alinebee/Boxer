@@ -5,7 +5,8 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-//BXBinCueImageImport rips CD-ROM discs to BIN/CUE images that are bundled into a .cdmedia bundle.
+//BXBinCueImageImport rips CD-ROM discs to BIN/CUE images that are bundled into a .cdmedia bundle,
+//using the cdrdao utility.
 
 #import "BXCDImageImport.h"
 
@@ -13,5 +14,10 @@
 {	
 	@protected
 	NSFileManager *manager;
+	BOOL usesErrorCorrection;
 }
+//Enables/disables cdrdao's error-correction when reading audio tracks.
+//This halves the speed of importing when enabled.
+@property (assign) BOOL usesErrorCorrection;
+
 @end

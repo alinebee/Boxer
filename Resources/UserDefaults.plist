@@ -24,5 +24,7 @@
 	<integer>1</integer>
 	<key>applyShelfAppearance</key>
 	<false/>
+	<key>useBinCueErrorCorrection</key>
+	<false/>
 </dict>
 </plist>

@@ -77,6 +77,7 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 
 
 @implementation BXBinCueImageImport
+@synthesize usesErrorCorrection;
 
 + (BOOL) isSuitableForDrive: (BXDrive *)drive
 {
@@ -122,6 +123,7 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 	if ((self = [super init]))
 	{
 		manager = [[NSFileManager alloc] init];
+		[self setUsesErrorCorrection: [[NSUserDefaults standardUserDefaults] boolForKey: @"useBinCueErrorCorrection"]];
  	}
 	return self;
 }
@@ -248,12 +250,18 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 	NSTask *cdrdao = [[NSTask alloc] init];
 	NSString *cdrdaoPath = [[NSBundle mainBundle] pathForResource: @"cdrdao" ofType: nil];
 	
+	//3 is the maximum error correction level, 0 disables error correction altogether.
+	//The three different types of error correct make negligible difference to the overall speed:
+	//they all take about twice as long compared to no error-detection.
+	NSString *errorCorrectionLevel = [self usesErrorCorrection] ? @"3" : @"0";
+	
 	//cdrdao uses relative paths in cuesheets as long as we use relative paths, which simplifies our job,
 	//so we provide just the file names as arguments and change the task's working directory to where
 	//we want them put.
 	NSArray *arguments = [NSArray arrayWithObjects:
 						  @"read-cd",
 						  @"--read-raw",
+						  @"--paranoia-mode", errorCorrectionLevel,
 						  @"--device", devicePath,
 						  @"--driver", @"generic-mmc:0x20000",
 						  @"--datafile", binName,

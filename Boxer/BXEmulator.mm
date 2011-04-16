@@ -220,7 +220,10 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 {
 	if ([self isExecuting] && ![self isCancelled])
 	{
-		//Breaks out of DOSBox's commandline input loop
+		//Immediately kill audio output
+		[self willPause];
+		
+		//Break out of DOSBox's commandline input loop
 		[self discardShellInput];
 		
 		//Tells DOSBox to close the current shell at the end of the commandline input loop

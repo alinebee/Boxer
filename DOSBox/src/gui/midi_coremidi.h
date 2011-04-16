@@ -60,6 +60,9 @@ public:
 	}
 	
 	void Close(void) {
+		// Stop any currently playing channels
+		boxer_mute();
+		
 		// Dispose the port
 		MIDIPortDispose(m_port);
 
@@ -99,6 +102,31 @@ public:
 		// Send the MIDIPacketList
 		MIDISend(m_port,m_endpoint,packetList);
 	}
+	
+	//--Added 2011-04-16 by Alun Bestor to allow Boxer to mute/unmute MIDI output
+	//This sends All Notes Off signals to channels 0-15. This has been tested on an MT-32
+	//and is valid according to the MIDI spec (http://www.midi.org/techspecs/midimessages.php)
+	void boxer_mute(void)
+	{
+#define BXChannelModeChangePrefix 176
+#define BXAllNotesOffMessage 123
+		if (m_port && m_endpoint)
+		{
+			Bit8u cmd[8] = {BXChannelModeChangePrefix, BXAllNotesOffMessage, 0, 0, 0, 0, 0, 0};
+			Bitu i, numChannels = 16;
+			
+			for (i=0; i<numChannels; i++)
+			{
+				//Add the channel number to the mode-change prefix
+				//to get the proper mode-change message
+				cmd[0] += i;
+				PlayMsg(cmd);
+			}
+		}
+	}
+	//This is a no-op, because playback will resume once the DOS game continues sending signals
+	void boxer_unmute(void)	{ }
+	//--End of modifications
 };
 
 MidiHandler_coremidi Midi_coremidi;

@@ -119,7 +119,7 @@ public:
 			{
 				//Add the channel number to the mode-change prefix
 				//to get the proper mode-change message
-				cmd[0] += i;
+				cmd[0] = BXChannelModeChangePrefix + i;
 				PlayMsg(cmd);
 			}
 		}

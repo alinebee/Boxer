@@ -40,6 +40,10 @@
 //The volume level at which we'll play the lock/unlock sound effects.
 #define BXMouseLockSoundVolume 0.7f
 
+//The maximum length a touch-then-release can last in order to be considered a tap.
+#define BXTapDurationThreshold 0.3f
+
+
 
 #pragma mark -
 #pragma mark Private methods
@@ -127,7 +131,6 @@
 	//Tell the view to accept touch events for 10.6 and above
 	if ([[self view] respondsToSelector: @selector(setAcceptsTouchEvents:)])
 		[[self view] setAcceptsTouchEvents: YES];
-	
 	
 	//Set up a cursor region in the view for mouse handling
 	NSTrackingAreaOptions options = NSTrackingMouseEnteredAndExited | NSTrackingEnabledDuringMouseDrag | NSTrackingCursorUpdate | NSTrackingActiveInKeyWindow | NSTrackingInVisibleRect | NSTrackingAssumeInside;
@@ -292,7 +295,7 @@
 	[[self representedObject] lostFocus];
 	
 	simulatedMouseButtons = BXNoMouseButtonsMask;
-	inThreeFingerTap = NO;
+	threeFingerTapStarted = 0;
 }
 
 - (void) didBecomeKey
@@ -557,44 +560,62 @@
 	if ([self _controlsCursorWhileMouseInside])
 	{
 		NSUInteger numFingers = [[theEvent touchesMatchingPhase: NSTouchPhaseTouching inView: [self view]] count];
-		BXInputHandler *handler = [self representedObject];
-		NSUInteger modifiers = [theEvent modifierFlags];
 		
-		//A three-finger tap simulates pressing the left and right mouse buttons at once
-		//TWEAK: Only perform this if we're not already simulating buttons with the Ctrl/Opt keys,
-		//as the two methods can conflict and lead to premature button releases.
-		if (numFingers == 3 && (!inThreeFingerTap) && (!simulatedMouseButtons))
+		//As soon as the user has placed three fingers onto the touch surface,
+		//start tracking for the release to detect this as a three-finger tap gesture.
+		if (numFingers == 3)
 		{
-			inThreeFingerTap = YES;
-			[handler mouseButtonPressed: BXMouseButtonLeft withModifiers: modifiers];
-			[handler mouseButtonPressed: BXMouseButtonRight withModifiers: modifiers];
+			threeFingerTapStarted = [NSDate timeIntervalSinceReferenceDate];
+		}
+		//If the user puts down more fingers, then cancel the gesture.
+		else
+		{
+			threeFingerTapStarted = 0;
 		}
 	}
 }
 
+- (void) swipeWithEvent: (NSEvent *)theEvent
+{
+	//The swipe event is a three-finger gesture based on movement and so may conflict with our own.
+	//(We listen for this instead of for the touchesMovedWithEvent: message because it means we don't
+	//have to bother calculating movement deltas.)
+	threeFingerTapStarted = 0;
+}
+
 - (void) touchesEndedWithEvent: (NSEvent *)theEvent
 {
-	if (inThreeFingerTap && [self _controlsCursorWhileMouseInside])
+	if (threeFingerTapStarted && [self _controlsCursorWhileMouseInside])
 	{
-		NSUInteger numFingers = [[theEvent touchesMatchingPhase: NSTouchPhaseTouching inView: [self view]] count];
-		
-		BXInputHandler *handler = [self representedObject];
-		NSUInteger modifiers = [theEvent modifierFlags];
-		
-		//Release the three-finger tap
-		if (numFingers < 3)
+		//If the touch has gone on for too long to treat as a tap,
+		//then cancel the gesture.
+		if (([NSDate timeIntervalSinceReferenceDate] - threeFingerTapStarted) > BXTapDurationThreshold)
 		{
-			[handler mouseButtonReleased: BXMouseButtonLeft withModifiers: modifiers];
-			[handler mouseButtonReleased: BXMouseButtonRight withModifiers: modifiers];
-			inThreeFingerTap = NO;
+			threeFingerTapStarted = 0;
+		}
+		else
+		{
+			NSUInteger numFingers = [[theEvent touchesMatchingPhase: NSTouchPhaseTouching inView: [self view]] count];
+		
+			//If all fingers have now been lifted from the surface,
+			//then treat this as a proper triple-tap gesture.
+			if (numFingers == 0)
+			{	
+				BXInputHandler *handler = [self representedObject];
+				NSUInteger modifiers = [theEvent modifierFlags];
+			
+				[handler mouseButtonClicked: BXMouseButtonLeft withModifiers: modifiers];
+				[handler mouseButtonClicked: BXMouseButtonRight withModifiers: modifiers];
+				
+				threeFingerTapStarted = 0;
+			}
 		}
 	}
 }
 
 - (void) touchesCancelledWithEvent: (NSEvent *)theEvent
 {
-	//IMPLEMENTATION NOTE: I'm not sure when this ever gets called, but I'm dutifully passing it along anyway
-	[self touchesEndedWithEvent: theEvent];
+	threeFingerTapStarted = 0;
 }
 
 

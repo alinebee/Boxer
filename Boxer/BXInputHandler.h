@@ -48,8 +48,13 @@
 - (void) lostFocus;
 
 //Press/release the specified mouse button, with the specified modifiers.
-- (void) mouseButtonPressed: (NSInteger)button withModifiers: (NSUInteger)modifierFlags;
-- (void) mouseButtonReleased: (NSInteger)button withModifiers: (NSUInteger) modifierFlags;
+- (void) mouseButtonPressed: (NSUInteger)button withModifiers: (NSUInteger)modifierFlags;
+- (void) mouseButtonReleased: (NSUInteger)button withModifiers: (NSUInteger) modifierFlags;
+
+//Press the specified mouse button and then release it a moment later, with the specified modifiers.
+//Note that the release event will be delayed slightly to give it time to register in DOS.
+- (void) mouseButtonClicked: (NSUInteger)button
+			  withModifiers: (NSUInteger)modifierFlags;
 
 //Move the mouse to a relative point on the specified canvas, by the relative delta.
 - (void) mouseMovedToPoint: (NSPoint)point

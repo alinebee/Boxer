@@ -34,7 +34,7 @@ typedef NSUInteger NSTouchPhase;
 
 + (NSUInteger) modifierFlags;
 
-- (NSSet *)touchesMatchingPhase: (NSTouchPhase)phase inView: (NSView *)view;
+- (NSSet *) touchesMatchingPhase: (NSTouchPhase)phase inView: (NSView *)view;
 
 @end
 
@@ -43,6 +43,9 @@ typedef NSUInteger NSTouchPhase;
 
 - (BOOL) acceptsTouchEvents;
 - (void) setAcceptsTouchEvents: (BOOL)flag;
+
+- (BOOL) wantsRestingTouches;
+- (void) setWantsRestingTouches: (BOOL)flag;
 
 @end
 

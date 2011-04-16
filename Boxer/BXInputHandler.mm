@@ -35,10 +35,11 @@ void MAPPER_LosingFocus();
 @property (readwrite, assign) NSUInteger pressedMouseButtons;
 
 //Simple performSelector:withObject:afterDelay: wrappers, used by
-//sendKeypressWithCode: and sendKeypressWithSDLKey: for releasing
-//their fake key events after a brief delay.
+//sendKeypressWithCode:, sendKeypressWithSDLKey: and mouseButtonClicked:
+//for releasing their respective keys/buttons after a brief delay.
 - (void) _releaseKey: (NSArray *)args;
 - (void) _releaseSDLKey: (NSArray *)args;
+- (void) _releaseButton: (NSArray *)args;
 
 //Generates and returns an SDL key event with the specified parameters.
 + (SDL_Event) _SDLKeyEventForKeyCode: (CGKeyCode)keyCode
@@ -117,7 +118,7 @@ void MAPPER_LosingFocus();
 #pragma mark -
 #pragma mark Mouse handling
 
-- (void) mouseButtonPressed: (NSInteger)button
+- (void) mouseButtonPressed: (NSUInteger)button
 			  withModifiers: (NSUInteger) modifierFlags
 {
 	NSUInteger buttonMask = 1U << button;
@@ -130,8 +131,8 @@ void MAPPER_LosingFocus();
 	}
 }
 
-- (void) mouseButtonReleased: (NSInteger)button
-			   withModifiers: (NSUInteger) modifierFlags
+- (void) mouseButtonReleased: (NSUInteger)button
+			   withModifiers: (NSUInteger)modifierFlags
 {
 	NSUInteger buttonMask = 1U << button;
 	
@@ -141,6 +142,20 @@ void MAPPER_LosingFocus();
 		Mouse_ButtonReleased(button);
 		[self setPressedMouseButtons: pressedMouseButtons & ~buttonMask];
 	}
+}
+
+- (void) mouseButtonClicked: (NSUInteger)button
+			  withModifiers: (NSUInteger)modifierFlags
+{
+	[self mouseButtonPressed: button withModifiers: modifierFlags];
+	
+	//Release the button after a brief delay
+	[self performSelector: @selector(_releaseButton:)
+			   withObject: [NSArray arrayWithObjects:
+							[NSNumber numberWithUnsignedInteger: button],
+							[NSNumber numberWithUnsignedInteger: modifierFlags],
+							nil]
+			   afterDelay: BXFakeKeypressReleaseDelay];
 }
 
 - (void) mouseMovedToPoint: (NSPoint)point
@@ -358,6 +373,15 @@ void MAPPER_LosingFocus();
 	
 	[self sendKeyEventWithSDLKey: sdlKeyCode pressed: NO modifiers: modifierFlags];
 }
+
+- (void) _releaseButton: (NSArray *)args
+{
+	NSUInteger button			= [[args objectAtIndex: 0] unsignedIntegerValue];
+	NSUInteger modifierFlags	= [[args objectAtIndex: 1] unsignedIntegerValue];
+	
+	[self mouseButtonReleased: button withModifiers: modifierFlags];
+}
+
 
 + (SDL_Event) _SDLKeyEventForSDLKey: (SDLKey)sdlKeyCode
 							pressed: (BOOL)pressed

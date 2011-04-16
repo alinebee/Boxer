@@ -38,7 +38,7 @@
 	NSPoint distanceWarped;
 	BOOL updatingMousePosition;
 	NSUInteger simulatedMouseButtons;
-	BOOL inThreeFingerTap;
+	NSTimeInterval threeFingerTapStarted;
 	
 	NSUInteger lastModifiers;
 }

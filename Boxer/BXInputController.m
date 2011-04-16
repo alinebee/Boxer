@@ -641,7 +641,9 @@
 	}
 	
 	//Otherwise, pass the keypress on to our input handler.
-	else
+	//TWEAK: ignore repeat keys, as DOSBox implements its own key repeating
+	//and otherwise our own repeats may interfere with games.
+	else if (![theEvent isARepeat])
 	{
 		//Unpause the emulation whenever a key is pressed.
 		[[[self controller] document] setPaused: NO];

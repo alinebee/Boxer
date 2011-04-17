@@ -96,7 +96,7 @@ nil];
 {
 	if (changeDir)
 	{
-		NSString *parentFolder	= [dosPath stringByDeletingLastPathComponent];
+		NSString *parentFolder	= [[dosPath stringByDeletingLastPathComponent] stringByAppendingString: @"/"];
 		NSString *programName	= [dosPath lastPathComponent];
 		
 		[self changeWorkingDirectoryToPath: parentFolder];

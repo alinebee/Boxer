@@ -187,7 +187,8 @@ enum {
 			if (!isImage && driveLabel)
 			{
 				const char *cLabel = [driveLabel cStringUsingEncoding: BXDirectStringEncoding];
-				DOSBoxDrive->SetLabel(cLabel, [drive isCDROM], false);
+				if (cLabel)
+					DOSBoxDrive->SetLabel(cLabel, [drive isCDROM], false);
 			}
 			
 			//Populate the drive with the settings we ended up using, and add the drive to our own drives cache
@@ -371,9 +372,18 @@ enum {
 		NSString *dosName = nil;
 		
 		char buffer[CROSS_LEN] = {0};
-		BOOL hasShortName = DOSBoxDrive->getShortName([frankenPath cStringUsingEncoding: BXDirectStringEncoding],
-													  [fileName cStringUsingEncoding: BXDirectStringEncoding],
-													  buffer);
+		const char *cFrankenPath	= [frankenPath cStringUsingEncoding: BXDirectStringEncoding];
+		const char *cFileName		= [fileName cStringUsingEncoding: BXDirectStringEncoding];
+		
+		BOOL hasShortName = NO;
+		//If the file paths could not be encoded to acceptable C strings,
+		//don't feed them to DOSBox's functions
+		if (cFrankenPath && cFileName)
+		{
+			hasShortName = DOSBoxDrive->getShortName([frankenPath cStringUsingEncoding: BXDirectStringEncoding],
+													 [fileName cStringUsingEncoding: BXDirectStringEncoding],
+													 buffer);
+		}
 			
 		if (hasShortName)
 		{
@@ -431,6 +441,9 @@ enum {
 	if ([self isExecuting])
 	{
 		const char *dosPath = [path cStringUsingEncoding: BXDirectStringEncoding];
+		//If the path couldn't be encoded successfully, don't do further lookups
+		if (!dosPath) return nil;
+		
 		char fullPath[DOS_PATHLENGTH];
 		Bit8u driveIndex;
 		BOOL resolved = DOS_MakeName(dosPath, fullPath, &driveIndex);
@@ -628,6 +641,8 @@ enum {
 	
 	char driveLetter		= index + 'A';
 	const char *drivePath	= [path cStringUsingEncoding: BXDirectStringEncoding];
+	//If the path couldn't be encoded, don't attempt to go further
+	if (!drivePath) return nil;
 	
 	int error = -1;
 	DOS_Drive *drive = new isoDrive(driveLetter, drivePath, BXCDROMMediaID, error);
@@ -644,6 +659,8 @@ enum {
 - (DOS_Drive *) _floppyDriveFromImageAtPath: (NSString *)path
 {	
 	const char *drivePath = [path cStringUsingEncoding: BXDirectStringEncoding];
+	//If the path couldn't be encoded, don't attempt to go further
+	if (!drivePath) return nil;
 	
 	DOS_Drive *drive = new fatDrive(drivePath, 0, 0, 0, 0, 0);
 	
@@ -679,6 +696,8 @@ enum {
 	
 	char driveLetter		= index + 'A';
 	const char *drivePath	= [path cStringUsingEncoding: BXDirectStringEncoding];
+	//If the path couldn't be encoded, don't attempt to go further
+	if (!drivePath) return nil;
 	
 	int error = -1;
 	DOS_Drive *drive = new cdromDrive(driveLetter,
@@ -729,6 +748,9 @@ enum {
 	}
 	
 	const char *drivePath = [path cStringUsingEncoding: BXDirectStringEncoding];
+	//If the path couldn't be encoded, don't attempt to go further
+	if (!drivePath) return nil;
+	
 	return new localDrive(drivePath,
 						  geometry.bytesPerSector,
 						  geometry.sectorsPerCluster,

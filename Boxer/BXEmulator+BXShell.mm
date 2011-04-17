@@ -67,18 +67,18 @@ nil];
 			//then run the command itself and eat the command's output.
 			theString = [theString stringByAppendingString: @" > NUL"];
 			encodedString = (char *)[theString cStringUsingEncoding: encoding];
-			shell->ParseLine(encodedString);
+			if (encodedString) shell->ParseLine(encodedString);
 		}
 		else if ([self isInBatchScript])
 		{
 			//If we're inside a batchfile, we can go ahead and run the command directly.
 			encodedString = (char *)[theString cStringUsingEncoding: encoding];
-			shell->ParseLine(encodedString);
+			if (encodedString) shell->ParseLine(encodedString);
 		}
 		else
 		{
 			//Otherwise we're at the commandline: feed our command into DOSBox's command-line input loop
-			[[self commandQueue] addObject: [theString stringByAppendingString:@"\n"]];
+			[[self commandQueue] addObject: [theString stringByAppendingString: @"\n"]];
 		}
 	}
 }
@@ -112,12 +112,16 @@ nil];
 
 - (void) displayString: (NSString *)theString
 {
-	const char *encodedString = [theString cStringUsingEncoding: BXDisplayStringEncoding];
-	
 	if ([self isExecuting] && ![self isRunningProcess])
 	{
-		DOS_Shell *shell = [self _currentShell];
-		shell->WriteOut(encodedString);
+		//Will be NULL if the string is not encodable
+		const char *encodedString = [theString cStringUsingEncoding: BXDisplayStringEncoding];
+		
+		if (encodedString != NULL)
+		{
+			DOS_Shell *shell = [self _currentShell];
+			shell->WriteOut(encodedString);
+		}
 	}
 }
 
@@ -150,8 +154,8 @@ nil];
 	
 	if ([dosPath length])
 	{
-		char const * const dir = [dosPath cStringUsingEncoding: BXDirectStringEncoding];
-		changedPath = (BOOL)DOS_ChangeDir(dir) || changedPath;
+		const char *dir = [dosPath cStringUsingEncoding: BXDirectStringEncoding];
+		if (dir) changedPath = (BOOL)DOS_ChangeDir(dir) || changedPath;
 	}
 	
 	if (changedPath) [self discardShellInput];
@@ -369,8 +373,11 @@ nil];
 	if ([self isExecuting])
 	{
 		const char *encodedString = [theString cStringUsingEncoding: encoding];
-		DOS_Shell *shell = [self _currentShell];
-		shell->DoCommand((char *)encodedString);
+		if (encodedString)
+		{
+			DOS_Shell *shell = [self _currentShell];
+			shell->DoCommand((char *)encodedString);	
+		}
 	}
 }
 
@@ -381,30 +388,36 @@ nil];
 	NSMutableArray *queue = [self commandQueue];
 	if ([queue count])
 	{
-		NSString *nextCommand = [queue objectAtIndex: 0];
+		NSString *finalCommand = nil;
+		NSString *nextCommand = [[queue objectAtIndex: 0] copy];
 		[queue removeObjectAtIndex: 0];
 		
 		BOOL completeCommand = [nextCommand hasSuffix: @"\n"];
+		
 		//If the command is terminated by a newline, treat it as an entire command and execute it immediately
 		if (completeCommand)
 		{
-			[self displayString: nextCommand];
-			nextCommand = [nextCommand substringToIndex: [nextCommand length] - 1];
+			finalCommand = [nextCommand substringToIndex: [nextCommand length] - 1];
 			*execute = YES;
+			
+			[self displayString: nextCommand];
 		}
+		//Otherwise, treat it as a command snippet and insert it into to the current commandline at the cursor position
 		else
 		{
-			//Otherwise, treat it as a command snippet and insert it into to the current commandline at the cursor position
 			NSString *prefix = [commandLine substringToIndex: *cursorPosition];
 			NSString *suffix = [commandLine substringFromIndex: *cursorPosition];
+			*cursorPosition += [nextCommand length];
+			*execute = NO;
+			
+			finalCommand = [NSString stringWithFormat: @"%@%@%@", prefix, nextCommand, suffix, nil];
+
 			[self displayString: nextCommand];
 			[self displayString: suffix];
-			*cursorPosition += [nextCommand length];
-			
-			nextCommand = [[NSArray arrayWithObjects: prefix, nextCommand, suffix, nil] componentsJoinedByString: @""];
 		}
 		
-		return nextCommand;
+		[nextCommand release];
+		return finalCommand;
 	}
 	else return nil;
 }

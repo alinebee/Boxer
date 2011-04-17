@@ -133,8 +133,12 @@ bool boxer_handleCommandInput(char *cmd, Bitu *cursorPosition, bool *executeImme
 	if (newCommandLine)
 	{
 		const char *newcmd = [newCommandLine cStringUsingEncoding: BXDirectStringEncoding];
-		strcpy(cmd, newcmd);
-		return YES;
+		if (newcmd)
+		{
+			strcpy(cmd, newcmd);
+			return YES;
+		}
+		else return NO;
 	}
 	else return NO;
 }

@@ -28,6 +28,10 @@
 #include "vga.h"
 #include "pic.h"
 
+//--Added 2011-04-18 by Alun Bestor to fix endianness issues in Tandy/CGA line-printing
+#import <CoreFoundation/CFByteOrder.h>
+//--endif
+
 //#undef C_DEBUG
 //#define C_DEBUG 1
 //#define LOG(X,Y) LOG_MSG
@@ -101,18 +105,20 @@ static Bit8u * VGA_Draw_CGA16_Line(Bitu vidstart, Bitu line) {
 		temp3 = temp[i] + temp[i+1] + temp[i+2] + temp[i+3]; i++;
 		temp4 = temp[i] + temp[i+1] + temp[i+2] + temp[i+3]; i++;
 
-		*draw++ = 0x80808080|(temp1|val1) |
+		//--Modified 2011-04-19 by Alun Bestor to fix swapped pixel columns on PowerPC Macs
+		*draw++ = CFSwapInt32HostToLittle(0x80808080|(temp1|val1) |
 		          ((temp2|val1) << 8) |
 		          ((temp3|val1) <<16) |
-		          ((temp4|val1) <<24);
+		          ((temp4|val1) <<24));
 		temp1 = temp[i] + temp[i+1] + temp[i+2] + temp[i+3]; i++;
 		temp2 = temp[i] + temp[i+1] + temp[i+2] + temp[i+3]; i++;
 		temp3 = temp[i] + temp[i+1] + temp[i+2] + temp[i+3]; i++;
 		temp4 = temp[i] + temp[i+1] + temp[i+2] + temp[i+3]; i++;
-		*draw++ = 0x80808080|(temp1|val2) |
+		*draw++ = CFSwapInt32HostToLittle(0x80808080|(temp1|val2) |
 		          ((temp2|val2) << 8) |
 		          ((temp3|val2) <<16) |
-		          ((temp4|val2) <<24);
+		          ((temp4|val2) <<24));
+		//--End of modifications
 	}
 	return TempLine;
 }
@@ -125,10 +131,13 @@ static Bit8u * VGA_Draw_4BPP_Line(Bitu vidstart, Bitu line) {
 		++vidstart;
 		Bitu val2 = base[vidstart & vga.tandy.addr_mask];
 		++vidstart;
-		*draw++=(val1 & 0x0f) << 8  |
+		
+		//--Modified 2011-04-19 by Alun Bestor to fix swapped pixel columns on PowerPC Macs
+		*draw++=CFSwapInt32HostToLittle((val1 & 0x0f) << 8  |
 				(val1 & 0xf0) >> 4  |
 				(val2 & 0x0f) << 24 |
-				(val2 & 0xf0) << 12;
+				(val2 & 0xf0) << 12);
+		//--End of modifications
 	}
 	return TempLine;
 }
@@ -139,10 +148,13 @@ static Bit8u * VGA_Draw_4BPP_Line_Double(Bitu vidstart, Bitu line) {
 	for (Bitu x=0;x<vga.draw.blocks;x++) {
 		Bitu val = base[vidstart & vga.tandy.addr_mask];
 		++vidstart;
-		*draw++=(val & 0xf0) >> 4  |
+		
+		//--Modified 2011-04-19 by Alun Bestor to fix swapped pixel columns on PowerPC Macs
+		*draw++=CFSwapInt32HostToLittle((val & 0xf0) >> 4  |
 				(val & 0xf0) << 4  |
 				(val & 0x0f) << 16 |
-				(val & 0x0f) << 24;
+				(val & 0x0f) << 24);
+		//--End of modifications
 	}
 	return TempLine;
 }

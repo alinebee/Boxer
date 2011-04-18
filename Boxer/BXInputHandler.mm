@@ -196,7 +196,7 @@ void MAPPER_LosingFocus();
 }
 
 - (void) sendKeypressWithCode: (unsigned short)keyCode modifiers: (NSUInteger)modifierFlags
-{
+{	
 	[self sendKeyEventWithCode: keyCode
 					   pressed: YES
 					 modifiers: modifierFlags];

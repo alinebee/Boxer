@@ -206,10 +206,9 @@
 		   withKeyPath: @"gameSettings.mouseSensitivity"
 			   options: sensitivityOptions];
 			
-			//Tweak: make the mouse active whenever a program is running, regardless of whether
-			//the emulator says it supports the mouse or not. This fixes games that support the
-			//mouse but don't report that they do so.
-			[self bind: @"mouseActive" toObject: session withKeyPath: @"emulator.isRunningProcess" options: nil];
+			[self bind: @"mouseActive" toObject: representedObject
+		   withKeyPath: @"mouseActive"
+			   options: nil];
 			
 			[representedObject addObserver: self forKeyPath: @"mousePosition" options: 0 context: nil];
 			

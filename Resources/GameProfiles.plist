@@ -231,10 +231,21 @@
 			<key>BXProfileName</key>
 			<string>Wing Commander II</string>
 			<key>BXProfileConf</key>
-			<string>Wing Commander 2</string>
+			<string>Wing Commander</string>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>wc2.*</string>
+			</array>
+		</dict>
+		
+		<dict>
+			<key>BXProfileName</key>
+			<string>Wing Commander</string>
+			<key>BXProfileConf</key>
+			<string>Wing Commander</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>wingcmdr.cfg</string>
 			</array>
 		</dict>
 		
@@ -286,7 +297,7 @@
 		</dict>
 		<dict>
 			<key>BXProfileDescription</key>
-			<string>Sierra AGI games that support Tandy sound.</string>
+			<string>Sierra AGI games that support Tandy graphics and sound.</string>
 			<key>BXProfileConf</key>
 			<string>Sierra AGI</string>
 			<key>BXProfileMatches</key>
@@ -305,7 +316,7 @@
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
-				<string>agi</string>
+				<string>jr_graf.ovl</string>
 			</array>
 		</dict>
 		<dict>

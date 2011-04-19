@@ -98,6 +98,14 @@ void MAPPER_LosingFocus();
 	}
 }
 
+- (BOOL) mouseActive
+{
+	//Ignore whether the program has actually asked for the mouse,
+	//and just assume that every program needs it. This fixes games
+	//that use the mouse but don't advertise that fact.
+	return ![emulator isAtPrompt];
+}
+
 - (void) setMouseActive: (BOOL)flag
 {
 	if (mouseActive != flag)

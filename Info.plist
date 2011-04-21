@@ -14,10 +14,10 @@
 	<string>net.washboardabs.boxer</string>
 	<key>CFBundleName</key>
 	<string>${PRODUCT_NAME}</string>
-	<key>CFBundleGetInfoString</key>
-	<string>Boxer 1.0.1</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.1</string>
+	<string>${CURRENT_PROJECT_SHORT_VERSION_STRING}</string>
+	<key>NSHumanReadableCopyright</key>
+	<string>© 2011 Alun Bestor. Released under the GNU Public License 2.0.</string>
 	<key>CFBundleSignature</key>
 	<string>Boxr</string>
 	<key>CFBundleVersion</key>

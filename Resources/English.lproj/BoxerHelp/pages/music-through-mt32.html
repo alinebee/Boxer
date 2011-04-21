@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Playing music through your MT-32</title>
+		<meta name="description" content="Making games play their MIDI music through your very own MT-32 Sound Module.">
+		<meta name="keywords" content="roland, mt-32, mt32, cm-32l, cm32l, cm64, cm-64, lapc-i, lapci, lapc-1, lapc1">
+		
+		<link rel="stylesheet" type="text/css" href="../shared/styles/main.css">
+	</head>
+	<body>
+		<a name="swapping-cds"></a>
+		<h1>Playing music through your MT-32</h1>
+		
+		<p>If you’re lucky enough to have a real <a href="http://en.wikipedia.org/wiki/Roland_MT-32" rel="external">Roland MT-32 Sound Module</a> and a USB-to-MIDI adapter, then you can play DOS game music through it. This will provide much better music in games that were composed for it.</p>
+		
+		<h3>To make a game use your MT-32:</h3>
+		
+		<ol class="steps">
+			<li>Connect your MT-32 to your Mac using a USB-to-MIDI adapter, and turn it on.</li>
+			<li>Open the game’s <a href="dosbox-configuration.html" rel="topic">DOSBox Configuration file</a>.</li>
+			<li>Paste the following lines into the configuration file:
+				<pre class="code-example"><code>[midi]
+mididevice=coremidi
+midiconfig=0 delaysysex</code></pre>
+			</li>
+			<li>If the game has a sound setup utility, run it before playing and choose the MT-32 as the music device.</li>
+			<li>Start up the game and enjoy the rich, vibrant music pouring out of your expensive music hardware.</li>
+		</ol>
+		
+		<p class="note">You will need to do these steps for each game that you want to play through the MT-32: otherwise the game’s MIDI music will be sent through OS X’s builtin MIDI synth instead.</p>
+		
+		<p class="tip"><em>If you have a later-model MT-32 with a headphone jack, you can remove the <code>delaysysex</code> flag to reduce game loading times.</em> This flag delays MIDI signals and is only necessary for older MT-32 models, which would otherwise miss custom instruments (or stop playing altogether) if the game sends signals too fast.</p>
+		
+		<script type="text/javascript" src="../shared/scripts/linkhandlers.js"></script>
+	</body>
+</html>
+
+

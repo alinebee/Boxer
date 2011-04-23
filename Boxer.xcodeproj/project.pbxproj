@@ -109,6 +109,8 @@
 		9F6BA70510A9FC77005A3E2A /* BXGrowlController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F6BA70410A9FC77005A3E2A /* BXGrowlController.m */; };
 		9F70A09512F7471E00D144D2 /* BXAppController+BXApplicationModes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F70A09412F7471E00D144D2 /* BXAppController+BXApplicationModes.m */; };
 		9F70C19C129036C900A3627F /* Boxer.sdef in Resources */ = {isa = PBXBuildFile; fileRef = 9F70C19B129036C900A3627F /* Boxer.sdef */; };
+		9F731AF513630820005E564F /* DDHidLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F731AF413630820005E564F /* DDHidLib.framework */; };
+		9F731B1D13630B6D005E564F /* DDHidLib.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F731AF413630820005E564F /* DDHidLib.framework */; };
 		9F765649119403520082A06A /* BXInputController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F765648119403520082A06A /* BXInputController.m */; };
 		9F76D1B910CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F76D1B810CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.m */; };
 		9F76D45610CBE5C500C3B081 /* BXSession+BXDragDrop.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F76D45510CBE5C500C3B081 /* BXSession+BXDragDrop.m */; };
@@ -372,6 +374,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				9F731B1D13630B6D005E564F /* DDHidLib.framework in Copy Bundled Frameworks */,
 				9F19E7E112B3F48200496BCF /* SDL_sound.framework in Copy Bundled Frameworks */,
 				9FBC3D610F56EA82001811F2 /* SDL_net.framework in Copy Bundled Frameworks */,
 				E5CF1899128F81FE0065844A /* PhysFS.framework in Copy Bundled Frameworks */,
@@ -553,6 +556,7 @@
 		9F70A09312F7471E00D144D2 /* BXAppController+BXApplicationModes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXAppController+BXApplicationModes.h"; sourceTree = "<group>"; };
 		9F70A09412F7471E00D144D2 /* BXAppController+BXApplicationModes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXAppController+BXApplicationModes.m"; sourceTree = "<group>"; };
 		9F70C19B129036C900A3627F /* Boxer.sdef */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.sdef; path = Boxer.sdef; sourceTree = "<group>"; };
+		9F731AF413630820005E564F /* DDHidLib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DDHidLib.framework; sourceTree = "<group>"; };
 		9F765647119403520082A06A /* BXInputController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXInputController.h; sourceTree = "<group>"; };
 		9F765648119403520082A06A /* BXInputController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXInputController.m; sourceTree = "<group>"; };
 		9F76D1B710CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSWorkspace+BXFileTypes.h"; sourceTree = "<group>"; };
@@ -1024,6 +1028,7 @@
 				E5CF1840128F81AF0065844A /* PhysFS.framework in Frameworks */,
 				9FCEDF3312B3DFFC00E856A4 /* SDL_sound.framework in Frameworks */,
 				9FBAA8F4134AFABD0092BF95 /* DiskArbitration.framework in Frameworks */,
+				9F731AF513630820005E564F /* DDHidLib.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2035,6 +2040,7 @@
 		9FBC3C130F56D6E8001811F2 /* Bundled Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9F731AF413630820005E564F /* DDHidLib.framework */,
 				E5CF183F128F81AF0065844A /* PhysFS.framework */,
 				9F20C28A11E5D848005AF541 /* Sparkle.framework */,
 				9F6BA6F810A9FB92005A3E2A /* Growl.framework */,

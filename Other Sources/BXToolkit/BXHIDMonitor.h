@@ -43,7 +43,7 @@ extern NSString * const BXHIDDeviceKey;
 @property (readonly, nonatomic) NSArray *matchedDevices;
 
 //This delegate will receive messages directly whenever devices are added or removed.
-@property (retain, nonatomic) id <BXHIDMonitorDelegate> delegate;
+@property (assign, nonatomic) id <BXHIDMonitorDelegate> delegate;
 
 
 #pragma mark -
@@ -86,7 +86,7 @@ extern NSString * const BXHIDDeviceKey;
 @protocol BXHIDMonitorDelegate <NSObject>
 
 @optional
-- (void) monitor: (BXHIDMonitor *)monitor addedHIDDevice: (DDHidDevice *)device;
-- (void) monitor: (BXHIDMonitor *)monitor removedHIDDevice: (DDHidDevice *)device;
+- (void) monitor: (BXHIDMonitor *)monitor didAddHIDDevice: (DDHidDevice *)device;
+- (void) monitor: (BXHIDMonitor *)monitor didRemoveHIDDevice: (DDHidDevice *)device;
 
 @end

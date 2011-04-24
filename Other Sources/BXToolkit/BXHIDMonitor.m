@@ -109,7 +109,7 @@ static void _deviceRemoved(void *context, IOReturn result, void *sender, IOHIDDe
 {
 	[self stopObserving];
 	
-	[self setDelegate: nil]; [delegate release];
+	[self setDelegate: nil];
 	
 	CFRelease(ioManager), ioManager = nil;
 	
@@ -168,19 +168,21 @@ static void _deviceRemoved(void *context, IOReturn result, void *sender, IOHIDDe
 	DDHidDevice *device = [knownDevices objectForKey: key];
 	if (device)
 	{
+		[device retain];
 		[self willChangeValueForKey: @"matchedDevices"];
 		[knownDevices removeObjectForKey: key];
 		[self didChangeValueForKey: @"matchedDevices"];
 		
 		[self deviceRemoved: device];
+		[device release];
 	}
 }
 
 - (void) deviceAdded: (DDHidDevice *)device
 {
-	if ([delegate respondsToSelector: @selector(monitor:addedHIDDevice:)])
+	if ([delegate respondsToSelector: @selector(monitor:didAddHIDDevice:)])
 	{
-		[delegate monitor: self addedHIDDevice: device];
+		[delegate monitor: self didAddHIDDevice: device];
 	}
 	
 	NSNotificationCenter *center = [[NSWorkspace sharedWorkspace] notificationCenter];
@@ -190,9 +192,9 @@ static void _deviceRemoved(void *context, IOReturn result, void *sender, IOHIDDe
 
 - (void) deviceRemoved: (DDHidDevice *)device
 {
-	if ([delegate respondsToSelector: @selector(monitor:removedHIDDevice:)])
+	if ([delegate respondsToSelector: @selector(monitor:didRemoveHIDDevice:)])
 	{
-		[delegate monitor: self removedHIDDevice: device];
+		[delegate monitor: self didRemoveHIDDevice: device];
 	}
 	
 	NSNotificationCenter *center = [[NSWorkspace sharedWorkspace] notificationCenter];

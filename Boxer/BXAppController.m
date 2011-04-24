@@ -9,7 +9,6 @@
 #import "BXAppController.h"
 #import "BXAppController+BXGamesFolder.h"
 #import "BXAppController+BXApplicationModes.h"
-#import "BXHIDMonitor.h"
 
 #import "BXAboutController.h"
 #import "BXInspectorController.h"
@@ -243,12 +242,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	if ((self = [super init]))
 	{
 		generalQueue = [[NSOperationQueue alloc] init];
-		HIDmonitor = [[BXHIDMonitor alloc] init];
-		[HIDmonitor observeDevicesMatching: [NSArray arrayWithObjects:
-											 [BXHIDMonitor joystickDescriptor],
-											 [BXHIDMonitor gamepadDescriptor],
-											 nil]];
-		
 		[self addApplicationModeObservers];
 	}
 	return self;
@@ -263,7 +256,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	[self setGamesFolderPath: nil], [gamesFolderPath release];
 	
 	[generalQueue release], generalQueue = nil;
-	[HIDmonitor release], HIDmonitor = nil;
 	
 	[super dealloc];
 }

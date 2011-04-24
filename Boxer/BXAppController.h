@@ -26,7 +26,6 @@
 #endif
 
 @class BXSession;
-@class BXHIDMonitor;
 
 enum {
 	BXStartUpWithNothing		= 0,
@@ -42,7 +41,6 @@ enum {
 	BOOL hasFinishedLaunching;
 	BOOL hasSyncedSpacesShortcuts;
 	
-	BXHIDMonitor *HIDmonitor;
 	NSOperationQueue *generalQueue;
 }
 //The currently-active DOS session. Changes whenever a new session opens.

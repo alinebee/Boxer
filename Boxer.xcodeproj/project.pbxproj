@@ -315,6 +315,8 @@
 		9FCEDF3312B3DFFC00E856A4 /* SDL_sound.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FCEDF3212B3DFFC00E856A4 /* SDL_sound.framework */; };
 		9FD011BD10C2A02F00670CE1 /* BXGameboxPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD011BC10C2A02F00670CE1 /* BXGameboxPanelController.m */; };
 		9FD1D6251364291600792011 /* DDHidDevice+BXDeviceExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD1D6241364291600792011 /* DDHidDevice+BXDeviceExtensions.m */; };
+		9FD1D7011364819E00792011 /* BXJoystickController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD1D7001364819E00792011 /* BXJoystickController.m */; };
+		9FD1D78A1364991100792011 /* BXHIDEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD1D7891364991100792011 /* BXHIDEvent.m */; };
 		9FD23D55129AE3B600B2100B /* NSWindow+BXWindowEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD23D54129AE3B600B2100B /* NSWindow+BXWindowEffects.m */; };
 		9FD5481411047E420041E1E7 /* BXDrivesInUseAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD5481311047E420041E1E7 /* BXDrivesInUseAlert.m */; };
 		9FD668F11215CDD6009E0118 /* BXBottomBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD668F01215CDD6009E0118 /* BXBottomBar.m */; };
@@ -936,6 +938,10 @@
 		9FD011BC10C2A02F00670CE1 /* BXGameboxPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGameboxPanelController.m; sourceTree = "<group>"; };
 		9FD1D6231364291600792011 /* DDHidDevice+BXDeviceExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DDHidDevice+BXDeviceExtensions.h"; sourceTree = "<group>"; };
 		9FD1D6241364291600792011 /* DDHidDevice+BXDeviceExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DDHidDevice+BXDeviceExtensions.m"; sourceTree = "<group>"; };
+		9FD1D6FF1364819E00792011 /* BXJoystickController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXJoystickController.h; sourceTree = "<group>"; };
+		9FD1D7001364819E00792011 /* BXJoystickController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXJoystickController.m; sourceTree = "<group>"; };
+		9FD1D7881364991100792011 /* BXHIDEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXHIDEvent.h; sourceTree = "<group>"; };
+		9FD1D7891364991100792011 /* BXHIDEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXHIDEvent.m; sourceTree = "<group>"; };
 		9FD23D53129AE3B600B2100B /* NSWindow+BXWindowEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSWindow+BXWindowEffects.h"; sourceTree = "<group>"; };
 		9FD23D54129AE3B600B2100B /* NSWindow+BXWindowEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSWindow+BXWindowEffects.m"; sourceTree = "<group>"; };
 		9FD5481211047E420041E1E7 /* BXDrivesInUseAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDrivesInUseAlert.h; sourceTree = "<group>"; };
@@ -1084,6 +1090,8 @@
 				9F496E3F108EEBB200282261 /* UI helpers */,
 				9F496E3C108EEAD700282261 /* UI controllers */,
 				9F2AC6DB10EFFE2C00CFFF72 /* Artwork */,
+				9FD1D6FF1364819E00792011 /* BXJoystickController.h */,
+				9FD1D7001364819E00792011 /* BXJoystickController.m */,
 			);
 			path = Boxer;
 			sourceTree = "<group>";
@@ -2079,6 +2087,8 @@
 			children = (
 				9F731B2C136323D2005E564F /* BXHIDMonitor.h */,
 				9F731B2D136323D2005E564F /* BXHIDMonitor.m */,
+				9FD1D7881364991100792011 /* BXHIDEvent.h */,
+				9FD1D7891364991100792011 /* BXHIDEvent.m */,
 				9FD1D6231364291600792011 /* DDHidDevice+BXDeviceExtensions.h */,
 				9FD1D6241364291600792011 /* DDHidDevice+BXDeviceExtensions.m */,
 			);
@@ -2574,6 +2584,8 @@
 				9FDE34341351DFD4000DCE44 /* BXImportTipsPanelController.m in Sources */,
 				9F731B2E136323D2005E564F /* BXHIDMonitor.m in Sources */,
 				9FD1D6251364291600792011 /* DDHidDevice+BXDeviceExtensions.m in Sources */,
+				9FD1D7011364819E00792011 /* BXJoystickController.m in Sources */,
+				9FD1D78A1364991100792011 /* BXHIDEvent.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

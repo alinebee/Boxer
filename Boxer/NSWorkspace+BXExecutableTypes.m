@@ -1,9 +1,9 @@
 /* 
- Boxer is copyright 2010-2011 Alun Bestor and contributors.
+ Boxer is copyright 2011 Alun Bestor and contributors.
  This code is adapted from code that is copyright (c) 2010 Jef Wambacq (jefwambacq@gmail.com)
  
  Boxer is released under the GNU General Public License 2.0. A full copy of this license can be
- found in this XCode project at Resources/English.lproj/GNU General Public License.txt, or read
+ found in this XCode project at Resources/English.lproj/BoxerHelp/pages/legalese.html, or read
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 

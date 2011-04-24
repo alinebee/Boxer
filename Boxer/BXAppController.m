@@ -1,7 +1,7 @@
 /* 
- Boxer is copyright 2009 Alun Bestor and contributors.
+ Boxer is copyright 2011 Alun Bestor and contributors.
  Boxer is released under the GNU General Public License 2.0. A full copy of this license can be
- found in this XCode project at Resources/English.lproj/GNU General Public License.txt, or read
+ found in this XCode project at Resources/English.lproj/BoxerHelp/pages/legalese.html, or read
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
@@ -9,6 +9,7 @@
 #import "BXAppController.h"
 #import "BXAppController+BXGamesFolder.h"
 #import "BXAppController+BXApplicationModes.h"
+#import "BXHIDMonitor.h"
 
 #import "BXAboutController.h"
 #import "BXInspectorController.h"
@@ -242,6 +243,11 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	if ((self = [super init]))
 	{
 		generalQueue = [[NSOperationQueue alloc] init];
+		HIDmonitor = [[BXHIDMonitor alloc] init];
+		[HIDmonitor observeDevicesMatching: [NSArray arrayWithObjects:
+											 [BXHIDMonitor joystickDescriptor],
+											 [BXHIDMonitor gamepadDescriptor],
+											 nil]];
 		
 		[self addApplicationModeObservers];
 	}
@@ -257,6 +263,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	[self setGamesFolderPath: nil], [gamesFolderPath release];
 	
 	[generalQueue release], generalQueue = nil;
+	[HIDmonitor release], HIDmonitor = nil;
 	
 	[super dealloc];
 }

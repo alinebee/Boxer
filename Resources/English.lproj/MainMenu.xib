@@ -2133,6 +2133,14 @@
 					</object>
 					<int key="connectionID">2129</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">joystickController</string>
+						<reference key="source" ref="74086318"/>
+						<reference key="destination" ref="407151793"/>
+					</object>
+					<int key="connectionID">2131</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -3654,7 +3662,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">2130</int>
+			<int key="maxID">2131</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -3822,6 +3830,17 @@
 								<string key="name">toggleInspectorPanel:</string>
 								<string key="candidateClassName">id</string>
 							</object>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="outlets">
+						<string key="NS.key.0">joystickController</string>
+						<string key="NS.object.0">BXJoystickController</string>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<string key="NS.key.0">joystickController</string>
+						<object class="IBToOneOutletInfo" key="NS.object.0">
+							<string key="name">joystickController</string>
+							<string key="candidateClassName">BXJoystickController</string>
 						</object>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
@@ -4203,6 +4222,13 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">Boxer/BXHelpMenuController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXInputController</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">Boxer/BXInputController+BXJoysticks.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -5097,6 +5123,13 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBUserSource</string>
 						<string key="minorKey"/>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">NSObject</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">Other Sources/BXToolkit/BXHIDEvent.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

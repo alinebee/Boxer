@@ -126,3 +126,14 @@ typedef NSInteger BXHIDPOVSwitchDirection;
 - (void) HIDKeyUp: (BXHIDEvent *)event;
 
 @end
+
+
+@interface NSObject (BXHIDEventDispatch)
+
+//Returns the appropriate BXHIDDeviceDelegate selector to handle the specified HID event.
++ (SEL) delegateMethodForHIDEvent: (BXHIDEvent *)event;
+
+//Dispatches the specified event to the appropriate BXHIDDeviceDelegate method.
+- (void) dispatchHIDEvent: (BXHIDEvent *)event;
+
+@end

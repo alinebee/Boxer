@@ -9,6 +9,12 @@
 #import "BXJoystickController.h"
 #import "BXHIDEvent.h"
 
+#import "BXAppController.h"
+#import "BXSession.h"
+#import "BXDOSWindowController.h"
+#import "BXInputController+BXJoysticks.h"
+
+
 @implementation BXJoystickController
 @synthesize hidMonitor;
 
@@ -47,14 +53,12 @@
 
 - (void) monitor: (BXHIDMonitor *)monitor didAddHIDDevice: (DDHidDevice *)device
 {
-	NSLog(@"Device added: %@");
 	[(DDHidJoystick *)device setDelegate: self];
 	[device startListening];
 }
 
 - (void) monitor: (BXHIDMonitor *)monitor didRemoveHIDDevice: (DDHidDevice *)device
 {
-	NSLog(@"Device removed: %@");
 	[(DDHidJoystick *)device setDelegate: nil];
 }
 
@@ -62,19 +66,13 @@
 #pragma mark -
 #pragma mark BXHIDDeviceDelegate methods
 
-- (void) HIDJoystickButtonDown: (BXHIDEvent *)event
+- (void) dispatchHIDEvent: (BXHIDEvent *)event
 {
-	NSLog(@"%@", event);
-}
-
-- (void) HIDJoystickButtonUp: (BXHIDEvent *)event
-{
-	NSLog(@"%@", event);
-}
-
-- (void) HIDJoystickAxisChanged: (BXHIDEvent *)event
-{
-	NSLog(@"%@", event);
+	//Forward all HID events to the currently-active DOS session's input controller
+	
+	BXSession *session = [[NSApp delegate] currentSession];
+	BXInputController *controller = [[session DOSWindowController] inputController];
+	[controller dispatchHIDEvent: event];
 }
 
 @end

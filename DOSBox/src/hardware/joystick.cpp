@@ -191,6 +191,10 @@ private:
 public:
 	JOYSTICK(Section* configuration):Module_base(configuration){
 		Section_prop * section=static_cast<Section_prop *>(configuration);
+		
+		//--Disabled 2011-04-25 by Alun Bestor: Boxer now sets the joystick type
+		//in its own time
+		/*
 		const char * type=section->Get_string("joysticktype");
 		if (!strcasecmp(type,"none"))       joytype = JOY_NONE;
 		else if (!strcasecmp(type,"false")) joytype = JOY_NONE;
@@ -201,6 +205,8 @@ public:
 		else if (!strcasecmp(type,"fcs"))   joytype = JOY_FCS;
 		else if (!strcasecmp(type,"ch"))    joytype = JOY_CH;
 		else joytype = JOY_AUTO;
+		*/
+		//--End of modifications
 
 		bool timed = section->Get_bool("timed");
 		if(timed) {
@@ -213,8 +219,14 @@ public:
 		autofire = section->Get_bool("autofire");
 		swap34 = section->Get_bool("swap34");
 		button_wrapping_enabled = section->Get_bool("buttonwrap");
+		
+		//--Disabled 2011-04-25 by Alun Bestor: Boxer sets this itself earlier
+		/*
 		stick[0].enabled = false;
 		stick[1].enabled = false;
+		*/
+		//--End of modifications
+		
 		stick[0].xtick = stick[0].ytick = stick[1].xtick =
 		                 stick[1].ytick = PIC_FullIndex();
 	}

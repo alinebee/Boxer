@@ -26,6 +26,7 @@
 #endif
 
 @class BXSession;
+@class BXJoystickController;
 
 enum {
 	BXStartUpWithNothing		= 0,
@@ -42,9 +43,14 @@ enum {
 	BOOL hasSyncedSpacesShortcuts;
 	
 	NSOperationQueue *generalQueue;
+	
+	IBOutlet BXJoystickController *joystickController;
 }
 //The currently-active DOS session. Changes whenever a new session opens.
 @property (retain, nonatomic) BXSession *currentSession;
+
+//The controller for HID joystick input.
+@property (retain, nonatomic) BXJoystickController *joystickController;
 
 //A general operation queue for non-session-specific operations.
 @property (retain, readonly) NSOperationQueue *generalQueue;

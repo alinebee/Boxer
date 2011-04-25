@@ -16,6 +16,9 @@ enum {
 	BXMouseButtonMiddle	= 2
 };
 
+typedef NSUInteger BXMouseButton;
+
+
 //These correspond to NSEvent's pressedMouseButton masks
 enum {
 	BXNoMouseButtonsMask	= 0,
@@ -25,6 +28,9 @@ enum {
 	
 	BXMouseButtonLeftAndRightMask = BXMouseButtonLeftMask | BXMouseButtonRightMask
 };
+
+typedef NSUInteger BXMouseButtonMask;
+
 
 //Modifier flag constants for left- and right-side modifier keys, copied from IOKit/IOLLEvent.h.
 //Allows us to distinguish these for sending keypresses for modifier keys.

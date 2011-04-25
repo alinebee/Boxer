@@ -11,6 +11,7 @@
 #import "BXInputHandler.h"
 #import "BXEmulator.h"
 #import "BXAppController.h"
+#import "BXJoystickController.h"
 #import "BXGeometry.h"
 #import "BXCursorFadeAnimation.h"
 #import "BXDOSWindowController.h"
@@ -85,6 +86,9 @@
 //Resynchronises the current state of the Shift, Ctrl, Alt, CapsLock etc.
 //key, which are represented by event modifier flags.
 - (void) _syncModifierFlags: (NSUInteger)newModifiers;
+
+//Resynchronises the DOS emulated joystick type based on currently-connected joystick devices.
+- (void) _syncJoystickType;
 
 //Forces a cursor update whenever the window changes size. This works
 //around a bug whereby the current cursor resets whenever the window
@@ -176,7 +180,8 @@
 	{
 		//Bind our sensitivity and tracking options to the session's own settings
 		id session = [[self controller] document];
-		
+		BXJoystickController *joystickController = [[NSApp delegate] joystickController];
+			
 		if ([self representedObject])
 		{
 			[self unbind: @"mouseSensitivity"];
@@ -186,6 +191,9 @@
 			
 			[session removeObserver: self forKeyPath: @"paused"];
 			[session removeObserver: self forKeyPath: @"autoPaused"];
+			
+			[joystickController removeObserver: self forKeyPath: @"joystickDevices"];
+			
 			
 			[self didResignKey];
 		}
@@ -210,10 +218,25 @@
 		   withKeyPath: @"mouseActive"
 			   options: nil];
 			
-			[representedObject addObserver: self forKeyPath: @"mousePosition" options: 0 context: nil];
+			[representedObject addObserver: self
+								forKeyPath: @"mousePosition"
+								   options: 0
+								   context: nil];
 			
-			[session addObserver: self forKeyPath: @"paused" options: NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context: nil];
-			[session addObserver: self forKeyPath: @"autoPaused" options: NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context: nil];
+			[session addObserver: self
+					  forKeyPath: @"paused"
+						 options: NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld
+						 context: nil];
+			
+			[session addObserver: self
+					  forKeyPath: @"autoPaused"
+						 options: NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld
+						 context: nil];
+			
+			[joystickController addObserver: self
+								 forKeyPath: @"joystickDevices"
+									options: NSKeyValueObservingOptionInitial
+									context: nil];
 			
 			[self didBecomeKey];
 		}
@@ -244,6 +267,20 @@
 			else [self didBecomeKey];
 		}
 	}
+	
+	else if ([keyPath isEqualToString: @"joystickDevices"])
+	{
+		[self _syncJoystickType];
+	}
+}
+
+- (void) _syncJoystickType
+{
+	NSArray *joysticks = [[[NSApp delegate] joystickController] joystickDevices];
+
+	NSUInteger numJoysticks = [joysticks count];
+	BXDOSJoystickType type = (numJoysticks > 0) ? BXCHFlightstickPro : BXDOSJoystickTypeNone;
+	[[self representedObject] setJoystickType: type];
 }
 
 	
@@ -291,7 +328,9 @@
 - (void) didResignKey
 {
 	[self setMouseLocked: NO];
-	[[self representedObject] lostFocus];
+	[[self representedObject] releaseKeyboardInput];
+	[[self representedObject] releaseMouseInput];
+	//[[self representedObject] releaseJoystickInput];
 	
 	simulatedMouseButtons = BXNoMouseButtonsMask;
 	threeFingerTapStarted = 0;

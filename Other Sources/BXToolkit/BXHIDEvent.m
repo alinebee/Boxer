@@ -154,6 +154,44 @@
 
 @implementation NSObject (BXHIDEventDispatch)
 
++ (SEL) delegateMethodForHIDEvent: (BXHIDEvent *)event
+{
+	switch ([event type])
+	{
+		case BXHIDMouseAxisChanged:
+			return @selector(HIDMouseAxisChanged:);
+		case BXHIDMouseButtonDown:
+			return @selector(HIDMouseButtonDown:);
+		case BXHIDMouseButtonUp:
+			return @selector(HIDMouseButtonUp:);
+			
+		case BXHIDKeyDown:
+			return @selector(HIDKeyDown:);
+		case BXHIDKeyUp:
+			return @selector(HIDKeyUp:);
+		
+		case BXHIDJoystickAxisChanged:
+			return @selector(HIDJoystickAxisChanged:);
+		case BXHIDJoystickPOVSwitchChanged:
+			return @selector(HIDJoystickPOVSwitchChanged:);
+		case BXHIDJoystickButtonDown:
+			return @selector(HIDJoystickButtonDown:);
+		case BXHIDJoystickButtonUp:
+			return @selector(HIDJoystickButtonUp:);
+		
+		default:
+			return NULL;
+	}
+}
+
+- (void) dispatchHIDEvent: (BXHIDEvent *)event
+{
+	SEL selector = [[self class] delegateMethodForHIDEvent: event];
+	
+	if (selector && [self respondsToSelector: selector])
+		[self performSelector: selector withObject: event];
+}
+
 #pragma mark -
 #pragma mark DDHidMouseDelegate methods
 
@@ -166,63 +204,48 @@
 	[event setDevice: mouse];
 	[event setElement: axis];
 	[event setAxisDelta: value];
-		
-	[(id)self HIDMouseAxisChanged: event];
+	
+	[self dispatchHIDEvent: [event autorelease]];
 }
 
 - (void) ddhidMouse: (DDHidMouse *)mouse xChanged: (SInt32)deltaX
 {
-	if ([self respondsToSelector: @selector(HIDMouseAxisChanged:)])
-	{
-		DDHidElement *axis = [mouse xElement];
-		[self _mouse: mouse axis: axis delta: deltaX];
-	}
+	DDHidElement *axis = [mouse xElement];
+	[self _mouse: mouse axis: axis delta: deltaX];
 }
 
 - (void) ddhidMouse: (DDHidMouse *)mouse yChanged: (SInt32)deltaY
 {
-	if ([self respondsToSelector: @selector(HIDMouseAxisChanged:)])
-	{
-		DDHidElement *axis = [mouse yElement];
-		[self _mouse: mouse axis: axis delta: deltaY];
-	}
+	DDHidElement *axis = [mouse yElement];
+	[self _mouse: mouse axis: axis delta: deltaY];
 }
 
 - (void) ddhidMouse: (DDHidMouse *)mouse wheelChanged: (SInt32)deltaWheel
 {
-	if ([self respondsToSelector: @selector(HIDMouseAxisChanged:)])
-	{
-		DDHidElement *axis = [mouse wheelElement];
-		[self _mouse: mouse axis: axis delta: deltaWheel];
-	}
+	DDHidElement *axis = [mouse wheelElement];
+	[self _mouse: mouse axis: axis delta: deltaWheel];
 }
 
 - (void) ddhidMouse: (DDHidMouse *)mouse buttonDown: (unsigned)buttonNumber
 {
-	if ([self respondsToSelector: @selector(HIDMouseButtonDown:)])
-	{
-		DDHidElement *button = [[mouse buttonElements] objectAtIndex: buttonNumber];
-		BXHIDEvent *event = [[BXHIDEvent alloc] init];
-		[event setType: BXHIDMouseButtonDown];
-		[event setDevice: mouse];
-		[event setElement: button];
+	DDHidElement *button = [[mouse buttonElements] objectAtIndex: buttonNumber];
+	BXHIDEvent *event = [[BXHIDEvent alloc] init];
+	[event setType: BXHIDMouseButtonDown];
+	[event setDevice: mouse];
+	[event setElement: button];
 		
-		[(id)self HIDMouseButtonDown: event];
-	}
+	[self dispatchHIDEvent: [event autorelease]];
 }
 
 - (void) ddhidMouse: (DDHidMouse *)mouse buttonUp: (unsigned)buttonNumber
 {
-	if ([self respondsToSelector: @selector(HIDMouseButtonUp:)])
-	{
-		DDHidElement *button = [[mouse buttonElements] objectAtIndex: buttonNumber];
-		BXHIDEvent *event = [[BXHIDEvent alloc] init];
-		[event setType: BXHIDMouseButtonUp];
-		[event setDevice: mouse];
-		[event setElement: button];
+	DDHidElement *button = [[mouse buttonElements] objectAtIndex: buttonNumber];
+	BXHIDEvent *event = [[BXHIDEvent alloc] init];
+	[event setType: BXHIDMouseButtonUp];
+	[event setDevice: mouse];
+	[event setElement: button];
 		
-		[(id)self HIDMouseButtonUp: event];
-	}
+	[self dispatchHIDEvent: [event autorelease]];
 }
 
 
@@ -241,31 +264,25 @@
 	[event setElement: axis];
 	[event setAxisPosition: value];
 		
-	[(id)self HIDJoystickAxisChanged: event];
+	[self dispatchHIDEvent: [event autorelease]];
 }
 
 - (void) ddhidJoystick: (DDHidJoystick *)joystick
                  stick: (unsigned)stickNumber
               xChanged: (int)value
 {
-	if ([self respondsToSelector: @selector(HIDJoystickAxisChanged:)])
-	{
-		DDHidJoystickStick *stick = [joystick objectInSticksAtIndex: stickNumber];
-		DDHidElement *axis = [stick xAxisElement];
-		[self _joystick: joystick stick: stick axis: axis valueChanged: value];
-	}
+	DDHidJoystickStick *stick = [joystick objectInSticksAtIndex: stickNumber];
+	DDHidElement *axis = [stick xAxisElement];
+	[self _joystick: joystick stick: stick axis: axis valueChanged: value];
 }
 
 - (void) ddhidJoystick: (DDHidJoystick *)joystick
                  stick: (unsigned)stickNumber
               yChanged: (int)value
-{	
-	if ([self respondsToSelector: @selector(HIDJoystickAxisChanged:)])
-	{
-		DDHidJoystickStick *stick = [joystick objectInSticksAtIndex: stickNumber];
-		DDHidElement *axis = [stick yAxisElement];
-		[self _joystick: joystick stick: stick axis: axis valueChanged: value];
-	}
+{
+	DDHidJoystickStick *stick = [joystick objectInSticksAtIndex: stickNumber];
+	DDHidElement *axis = [stick yAxisElement];
+	[self _joystick: joystick stick: stick axis: axis valueChanged: value];
 }
 
 - (void) ddhidJoystick: (DDHidJoystick *)joystick
@@ -273,12 +290,9 @@
              otherAxis: (unsigned)otherAxis
           valueChanged: (int)value
 {
-	if ([self respondsToSelector: @selector(HIDJoystickAxisChanged:)])
-	{
-		DDHidJoystickStick *stick = [joystick objectInSticksAtIndex: stickNumber];
-		DDHidElement *axis = [stick objectInStickElementsAtIndex: otherAxis];
-		[self _joystick: joystick stick: stick axis: axis valueChanged: value];
-	}
+	DDHidJoystickStick *stick = [joystick objectInSticksAtIndex: stickNumber];
+	DDHidElement *axis = [stick objectInStickElementsAtIndex: otherAxis];
+	[self _joystick: joystick stick: stick axis: axis valueChanged: value];
 }
 
 - (void) ddhidJoystick: (DDHidJoystick *)joystick
@@ -286,50 +300,41 @@
              povNumber: (unsigned)povNumber
           valueChanged: (int)value
 {	
-	if ([self respondsToSelector: @selector(HIDJoystickPOVSwitchChanged:)])
-	{
-		DDHidJoystickStick *stick = [joystick objectInSticksAtIndex: stickNumber];
-		DDHidElement *pov = [stick objectInPovElementsAtIndex: povNumber];
+	DDHidJoystickStick *stick = [joystick objectInSticksAtIndex: stickNumber];
+	DDHidElement *pov = [stick objectInPovElementsAtIndex: povNumber];
 		
-		BXHIDEvent *event = [[BXHIDEvent alloc] init];
-		[event setType: BXHIDJoystickPOVSwitchChanged];
-		[event setDevice: joystick];
-		[event setStick: stick];
-		[event setElement: pov];
-		[event setPOVDirection: value];
-		
-		[(id)self HIDJoystickPOVSwitchChanged: event];
-	}
+	BXHIDEvent *event = [[BXHIDEvent alloc] init];
+	[event setType: BXHIDJoystickPOVSwitchChanged];
+	[event setDevice: joystick];
+	[event setStick: stick];
+	[event setElement: pov];
+	[event setPOVDirection: value];
+
+	[self dispatchHIDEvent: [event autorelease]];
 }
 
 - (void) ddhidJoystick: (DDHidJoystick *)joystick
             buttonDown: (unsigned)buttonNumber
 {
-	if ([self respondsToSelector: @selector(HIDJoystickButtonDown:)])
-	{
-		DDHidElement *button = [[joystick buttonElements] objectAtIndex: buttonNumber];
-		BXHIDEvent *event = [[BXHIDEvent alloc] init];
-		[event setType: BXHIDJoystickButtonDown];
-		[event setDevice: joystick];
-		[event setElement: button];
+	DDHidElement *button = [[joystick buttonElements] objectAtIndex: buttonNumber];
+	BXHIDEvent *event = [[BXHIDEvent alloc] init];
+	[event setType: BXHIDJoystickButtonDown];
+	[event setDevice: joystick];
+	[event setElement: button];
 		
-		[(id)self HIDJoystickButtonDown: event];
-	}
+	[self dispatchHIDEvent: [event autorelease]];
 }
 
 - (void) ddhidJoystick: (DDHidJoystick *)joystick
               buttonUp: (unsigned)buttonNumber
 {
-	if ([self respondsToSelector: @selector(HIDJoystickButtonUp:)])
-	{
-		DDHidElement *button = [[joystick buttonElements] objectAtIndex: buttonNumber];
-		BXHIDEvent *event = [[BXHIDEvent alloc] init];
-		[event setType: BXHIDJoystickButtonUp];
-		[event setDevice: joystick];
-		[event setElement: button];
+	DDHidElement *button = [[joystick buttonElements] objectAtIndex: buttonNumber];
+	BXHIDEvent *event = [[BXHIDEvent alloc] init];
+	[event setType: BXHIDJoystickButtonUp];
+	[event setDevice: joystick];
+	[event setElement: button];
 		
-		[(id)self HIDJoystickButtonUp: event];
-	}
+	[self dispatchHIDEvent: [event autorelease]];
 }
 
 #pragma mark -
@@ -357,8 +362,7 @@
 		[event setDevice: keyboard];
 		[event setElement: matchingKey];
 		
-		if (pressed) [(id)self HIDKeyDown: event];
-		else [(id)self HIDKeyUp: event];
+		[self dispatchHIDEvent: [event autorelease]];
 	}
 }
 

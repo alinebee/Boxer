@@ -12,7 +12,7 @@
 #import "BXAppController.h"
 #import "BXSession.h"
 #import "BXDOSWindowController.h"
-#import "BXInputController+BXJoysticks.h"
+#import "BXInputController.h"
 
 
 @implementation BXJoystickController

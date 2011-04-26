@@ -162,7 +162,6 @@
 		9F7721A012B38C4400072AE8 /* midi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77210812B38C4400072AE8 /* midi.cpp */; };
 		9F7721A112B38C4400072AE8 /* render.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77210E12B38C4400072AE8 /* render.cpp */; };
 		9F7721A212B38C4400072AE8 /* render_scalers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77211012B38C4400072AE8 /* render_scalers.cpp */; };
-		9F7721A412B38C4400072AE8 /* sdl_mapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77211912B38C4400072AE8 /* sdl_mapper.cpp */; };
 		9F7721A612B38C4400072AE8 /* adlib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77211C12B38C4400072AE8 /* adlib.cpp */; };
 		9F7721A712B38C4400072AE8 /* cmos.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77211E12B38C4400072AE8 /* cmos.cpp */; };
 		9F7721A812B38C4400072AE8 /* dbopl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77211F12B38C4400072AE8 /* dbopl.cpp */; };
@@ -2542,7 +2541,6 @@
 				9F7721A012B38C4400072AE8 /* midi.cpp in Sources */,
 				9F7721A112B38C4400072AE8 /* render.cpp in Sources */,
 				9F7721A212B38C4400072AE8 /* render_scalers.cpp in Sources */,
-				9F7721A412B38C4400072AE8 /* sdl_mapper.cpp in Sources */,
 				9F7721A612B38C4400072AE8 /* adlib.cpp in Sources */,
 				9F7721A712B38C4400072AE8 /* cmos.cpp in Sources */,
 				9F7721A812B38C4400072AE8 /* dbopl.cpp in Sources */,

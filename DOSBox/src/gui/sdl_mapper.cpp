@@ -2363,9 +2363,7 @@ void MAPPER_RunInternal() {
 
 
 void MAPPER_Init(void) {
-	//--Removed 2011-04-25 by Alun Bestor: Boxer now controls joysticks
-	//InitializeJoysticks();
-	//--End of modifications
+	InitializeJoysticks();
 	
 	CreateLayout();
 	CreateBindGroups();

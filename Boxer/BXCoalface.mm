@@ -8,6 +8,8 @@
 
 #import "BXCoalface.h"
 #import "BXEmulatorPrivate.h"
+#import "setup.h"
+#import "mapper.h"
 
 
 #pragma mark -
@@ -295,3 +297,16 @@ void boxer_log(char const* format,...)
 	printf("%s",buf);
 #endif
 }
+
+
+
+#pragma mark -
+#pragma mark No-ops
+
+//These used to be defined in sdl_mapper.cpp, which we no longer include in Boxer.
+void MAPPER_AddHandler(MAPPER_Handler * handler,MapKeys key,Bitu mods,char const * const eventname,char const * const buttonname) {}
+void MAPPER_Init(void) {}
+void MAPPER_StartUp(Section * sec) {}
+void MAPPER_Run(bool pressed) {}
+void MAPPER_RunInternal() {}
+void MAPPER_LosingFocus(void) {}

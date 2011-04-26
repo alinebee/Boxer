@@ -539,7 +539,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 		DOSBOX_Init();
 		
 		//Registers the mapper's initialiser and configuration file parser.
-		control->AddSection_prop("sdl", &MAPPER_StartUp);
+		//control->AddSection_prop("sdl", &MAPPER_StartUp);
 
 		//Load up Boxer's own configuration files
 		NSFileManager *manager = [[NSFileManager alloc] init];
@@ -553,9 +553,6 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 
 		//Initialise the configuration.
 		control->Init();
-		 
-		//Initialise the key mapper.
-		MAPPER_Init();
 		
 		//Start up the main machine.
 		control->StartUp();

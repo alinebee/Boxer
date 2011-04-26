@@ -49,8 +49,11 @@ static bool write_active = false;
 static bool swap34 = false;
 bool button_wrapping_enabled = true;
 
-extern bool autofire; //sdl_mapper.cpp
-
+//--Modified 2011-04-26 by Alun Bestor: Boxer no longer includes sdl_mapper.cpp
+//extern bool autofire; //sdl_mapper.cpp
+bool autofire;
+//--End of modifications
+ 
 static Bitu read_p201(Bitu port,Bitu iolen) {
 	/* Reset Joystick to 0 after TIMEOUT ms */
 	if(write_active && ((PIC_Ticks - last_write) > TIMEOUT)) {

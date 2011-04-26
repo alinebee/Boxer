@@ -268,7 +268,7 @@
 - (void) didResignKey
 {
 	[self setMouseLocked: NO];
-	[[self representedObject] releaseKeyboardInput];
+	[[self _keyboard] clearInput];
 	[[self representedObject] releaseMouseInput];
 	//[[self representedObject] releaseJoystickInput];
 	

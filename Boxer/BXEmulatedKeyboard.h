@@ -6,10 +6,15 @@
  */
 
 
+//BXEmulatedKeyboard represents the DOS PC's keyboard hardware, and offers an API for sending
+//emulated key events and setting keyboard layout.
+
+
 #import <Foundation/Foundation.h>
 #import "keyboard.h"
 
-//How long keyPressed: should pretend to hold the specified key down for before releasing
+
+//How long keyPressed: should pretend to hold the specified key down before releasing.
 #define BXKeyPressDurationDefault 0.25
 
 
@@ -32,6 +37,9 @@ typedef KBD_KEYS BXDOSKeyCode;
 #pragma mark -
 #pragma mark Keyboard input
 
+//Release all currently-pressed keys, as if the user took their hands off the keyboard.
+- (void) clearInput;
+
 //Press/release the specified key.
 - (void) keyDown: (BXDOSKeyCode)key;
 - (void) keyUp: (BXDOSKeyCode)key;
@@ -42,9 +50,6 @@ typedef KBD_KEYS BXDOSKeyCode;
 
 //Returns whether the specified key is currently pressed.
 - (BOOL) keyIsDown: (BXDOSKeyCode)key;
-
-//Release all currently-pressed keys.
-- (void) clearInput;
 
 
 #pragma mark -

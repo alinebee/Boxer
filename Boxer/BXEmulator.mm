@@ -76,7 +76,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 @synthesize delegate;
 @synthesize configFiles;
 @synthesize commandQueue;
-@synthesize inputHandler, videoHandler, keyboard;
+@synthesize inputHandler, videoHandler, keyboard, joystick;
 @synthesize cancelled, executing;
 
 
@@ -191,6 +191,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	[inputHandler release], inputHandler = nil;
 	[videoHandler release], videoHandler = nil;
 	[keyboard release], keyboard = nil;
+	[joystick release], joystick = nil;
 	
 	[driveCache release], driveCache = nil;
 	[configFiles release], configFiles = nil;
@@ -435,6 +436,36 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	}
 }
 
+
+#pragma mark -
+#pragma mark Managing devices
+
+- (id <BXEmulatedJoystick>) attachJoystickOfType: (Class)joystickType
+{
+	//A joystick is already connected
+	//TODO: replace it?
+	if (joystick) return NO;
+	
+	if ([joystickType conformsToProtocol: @protocol(BXEmulatedJoystick)])
+	{
+		joystick = [[joystickType alloc] init];
+		[joystick didConnect];
+		return joystick;
+	}
+}
+
+- (BOOL) detachJoystick
+{
+	if (!joystick) return NO;
+	
+	[joystick willDisconnect];
+	[joystick release];
+	joystick = nil;
+	
+	return YES;
+}
+
+
 @end
 
 
@@ -537,19 +568,14 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 		//Sets up the vast swathes of DOSBox configuration file parameters,
 		//and registers the shell to start up when we finish initializing.
 		DOSBOX_Init();
-		
-		//Registers the mapper's initialiser and configuration file parser.
-		//control->AddSection_prop("sdl", &MAPPER_StartUp);
 
 		//Load up Boxer's own configuration files
-		NSFileManager *manager = [[NSFileManager alloc] init];
 		for (NSString *configPath in [self configFiles])
 		{
 			configPath = [configPath stringByStandardizingPath];
-			const char * encodedConfigPath = [manager fileSystemRepresentationWithPath: configPath];
-			control->ParseConfigFile((const char * const)encodedConfigPath);
+			const char *encodedConfigPath = [configPath fileSystemRepresentation];
+			control->ParseConfigFile(encodedConfigPath);
 		}
-		[manager release];
 
 		//Initialise the configuration.
 		control->Init();

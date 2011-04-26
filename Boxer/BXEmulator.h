@@ -47,6 +47,7 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 @class BXInputHandler;
 @class BXVideoHandler;
 @class BXEmulatedKeyboard;
+@protocol BXEmulatedJoystick;
 
 @protocol BXEmulatorDelegate;
 
@@ -56,6 +57,7 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 	BXInputHandler *inputHandler;
 	BXVideoHandler *videoHandler;
 	BXEmulatedKeyboard *keyboard;
+	id <BXEmulatedJoystick> joystick;
 	
 	NSString *processName;
 	NSString *processPath;
@@ -82,6 +84,7 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 @property (readonly, nonatomic) BXInputHandler *inputHandler;	//Our DOSBox input handler.
 @property (readonly, nonatomic) BXVideoHandler *videoHandler;	//Our DOSBox video and rendering handler.
 @property (readonly, nonatomic) BXEmulatedKeyboard *keyboard;	//Our emulated keyboard.
+@property (readonly, nonatomic) id <BXEmulatedJoystick> joystick;	//Our emulated joystick. Initially empty.
 
 //An array of OS X paths to configuration files that will be/have been loaded by this session during startup.
 //This is read-only: configuration files can be loaded via applyConfigurationAtPath: 
@@ -187,5 +190,19 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 //This will mute sound and otherwise prepare DOSBox for pausing.
 - (void) willPause;
 - (void) didResume;
+
+
+#pragma mark -
+#pragma mark Managing emulated devices
+
+//Attach an emulated joystick of the specified BXEmulatedJoystick subclass.
+//Will return the new joystick if it was created and attached successfully,
+//or NO if an existing joystick was already attached or joystickType
+//was not a valid BXEmulatedJoystick subclass. 
+- (id <BXEmulatedJoystick>) attachJoystickOfType: (Class)joystickType;
+
+//Remove the current joystick.
+//Will return YES if the joystick was removed, or NO if there was no joystick.
+- (BOOL) detachJoystick;
 
 @end

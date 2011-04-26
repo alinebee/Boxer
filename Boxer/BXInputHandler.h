@@ -14,67 +14,6 @@
 #import "BXEventConstants.h"
 
 
-#pragma mark -
-#pragma mark Constants
-
-enum {
-	BXDOSJoystickTypeAutoDetect = -1,
-	BXDOSJoystickTypeNone = 0,
-	BX2AxisJoystick,
-	BX4AxisJoystick,
-	BXThrustmasterFCS,
-	BXCHFlightstickPro
-};
-typedef NSInteger BXDOSJoystickType;
-
-enum {
-	BXDOSJoystickUntimed = NO,
-	BXDOSJoystickTimed = YES
-};
-typedef BOOL BXDOSJoystickTimingMode;
-
-
-
-enum {
-	BXDOSJoystickAxisX = 0,
-	BXDOSJoystickAxisY = 1,
-	BXDOSJoystick2AxisX = 2,
-	BXDOSJoystick2AxisY = 3,
-	
-	BXCHFlightstickThrottleAxis = 3
-};
-
-typedef NSUInteger BXDOSJoystickAxis;
-
-enum {
-	BXDOSJoystickButton1 = 0,
-	BXDOSJoystickButton2 = 1,
-	BXDOSJoystickButton3 = 2,
-	BXDOSJoystickButton4 = 3,
-	
-	BXDOSJoystick2Button1 = 2,
-	BXDOSJoystick2Button2 = 3,
-	
-	//Only available in CH Flightstick/Combatstick mode
-	BXCHFlightstickButton5 = 4,
-	BXCHFlightstickButton6 = 5
-};
-
-typedef NSUInteger BXDOSJoystickButton;
-
-enum {
-	BXDOSFlightstickPOVCentered = 0,
-	BXDOSFlightstickPOVNorth,
-	BXDOSFlightstickPOVEast,
-	BXDOSFlightstickPOVSouth,
-	BXDOSFlightstickPOVWest
-};
-
-typedef NSUInteger BXDOSFlightstickPOVDirection;
-
-
-
-
 @class BXEmulator;
 
 @interface BXInputHandler : NSObject
@@ -84,8 +23,6 @@ typedef NSUInteger BXDOSFlightstickPOVDirection;
 	NSPoint mousePosition;
 	
 	NSUInteger pressedMouseButtons;
-	
-	BXDOSJoystickType joystickType;
 }
 
 #pragma mark -
@@ -97,9 +34,6 @@ typedef NSUInteger BXDOSFlightstickPOVDirection;
 //Whether we are responding to mouse input.
 @property (assign) BOOL mouseActive;
 
-//What kind of joystick to emulate. Defaults to BXDOSJoystickTypeNone.
-@property (assign) BXDOSJoystickType joystickType;
-
 //Where DOSBox thinks the mouse is.
 @property (assign) NSPoint mousePosition;
 
@@ -109,19 +43,6 @@ typedef NSUInteger BXDOSFlightstickPOVDirection;
 
 //Releases all keyboard buttons/mouse buttons
 - (void) releaseMouseInput;
-- (void) releaseJoystickInput;
-
-
-#pragma mark -
-#pragma mark Joystick input
-
-- (void) joystickButtonPressed: (BXDOSJoystickButton)button;
-- (void) joystickButtonReleased: (BXDOSJoystickButton)button;
-
-- (void) joystickAxisChanged: (BXDOSJoystickAxis)axis toPosition: (float)position;
-- (void) joystickAxisChanged: (BXDOSJoystickAxis)axis byAmount: (float)delta;
-
-- (void) joystickPOVSwitchChangedToDirection: (BXDOSFlightstickPOVDirection)direction;
 
 
 #pragma mark -

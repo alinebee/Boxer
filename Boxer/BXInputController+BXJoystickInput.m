@@ -10,6 +10,7 @@
 #import "BXInputHandler.h"
 #import "BXAppController.h"
 #import "BXJoystickController.h"
+#import "BXEmulatedJoystick.h"
 #import <IOKit/hid/IOHIDLib.h>
 
 
@@ -23,62 +24,85 @@
 
 @implementation BXInputController (BXJoystickInput)
 
+- (id <BXEmulatedJoystick>) _joystick
+{
+	return [[[[self controller] document] emulator] joystick];
+}
+
 - (void) _syncJoystickType
 {
 	NSArray *joysticks = [[[NSApp delegate] joystickController] joystickDevices];
-
+	BXEmulator *emulator = [[[self controller] document] emulator];
+	
 	NSUInteger numJoysticks = [joysticks count];
-	BXDOSJoystickType type = (numJoysticks > 0) ? BXCHFlightstickPro : BXDOSJoystickTypeNone;
-	[[self representedObject] setJoystickType: type];
+	if (numJoysticks > 0) [emulator attachJoystickOfType: [BXCHCombatStick class]];
+	else [emulator detachJoystick];
 }
-
-
 
 - (void) HIDJoystickButtonDown: (BXHIDEvent *)event
 {
-	BXInputHandler *handler = [self representedObject];
+	//BXInputHandler *handler = [self representedObject];
+	id <BXEmulatedJoystick> joystick = [self _joystick];
+	
 	switch ([event buttonNumber])
 	{
 		case kHIDUsage_Button_1:
-			return [handler joystickButtonPressed: BXDOSJoystickButton1];
+			[joystick buttonDown: BXEmulatedJoystickButton1];
+			break;
 			
 		case kHIDUsage_Button_2:
-			return [handler joystickButtonPressed: BXDOSJoystickButton2];
+			[joystick buttonDown: BXEmulatedJoystickButton2];
+			break;
 			
 		case kHIDUsage_Button_3:
-			return [handler joystickButtonPressed: BXDOSJoystickButton3];
+			[joystick buttonDown: BXEmulatedJoystickButton3];
+			break;
 			
 		case kHIDUsage_Button_4:
-			return [handler joystickButtonPressed: BXDOSJoystickButton4];
+			[joystick buttonDown: BXEmulatedJoystickButton4];
+			break;
 	}
 	//Ignore all other buttons
 }
 
 - (void) HIDJoystickButtonUp: (BXHIDEvent *)event
 {
-	BXInputHandler *handler = [self representedObject];
+	//BXInputHandler *handler = [self representedObject];
+	id <BXEmulatedJoystick> joystick = [self _joystick];
+	
 	switch ([event buttonNumber])
 	{
 		case kHIDUsage_Button_1:
-			return [handler joystickButtonReleased: BXDOSJoystickButton1];
+			[joystick buttonUp: BXEmulatedJoystickButton1];
+			break;
 			
 		case kHIDUsage_Button_2:
-			return [handler joystickButtonReleased: BXDOSJoystickButton2];
+			[joystick buttonUp: BXEmulatedJoystickButton2];
+			break;
 			
 		case kHIDUsage_Button_3:
-			return [handler joystickButtonReleased: BXDOSJoystickButton3];
+			[joystick buttonUp: BXEmulatedJoystickButton3];
+			break;
 			
 		case kHIDUsage_Button_4:
-			return [handler joystickButtonReleased: BXDOSJoystickButton4];
-		
-		//TODO: add emulation for CH F-16 Combat Stick buttons 5-6 
+			[joystick buttonUp: BXEmulatedJoystickButton4];
+			break;
+			
+		case kHIDUsage_Button_4+1:
+			[joystick buttonUp: BXCHCombatStickButton5];
+			break;
+			
+		case kHIDUsage_Button_4+2:
+			[joystick buttonUp: BXCHCombatStickButton5];
+			break;
 	}
 	//Ignore all other buttons
 }
 
 - (void) HIDJoystickAxisChanged: (BXHIDEvent *)event
 {
-	BXInputHandler *handler = [self representedObject];
+	//BXInputHandler *handler = [self representedObject];
+	id <BXEmulatedJoystick> joystick = [self _joystick];
 	NSInteger position = [event axisPosition];
 	
 	//If the current position of the axis falls within the deadzone, then set it to 0
@@ -94,21 +118,21 @@
 	switch ([event axis])
 	{
 		case kHIDUsage_GD_X:
-			[handler joystickAxisChanged: BXDOSJoystickAxisX toPosition: fPosition];
+			[joystick axis: BXEmulatedJoystickAxisX movedTo: fPosition];
 			break;
 			
 		case kHIDUsage_GD_Y:
-			[handler joystickAxisChanged: BXDOSJoystickAxisY toPosition: fPosition];
+			[joystick axis: BXEmulatedJoystickAxisY movedTo: fPosition];
 			break;
 			
 		case kHIDUsage_GD_Rx:
 		case kHIDUsage_GD_Z:
-			[handler joystickAxisChanged: BXDOSJoystick2AxisX toPosition: fPosition];
+			[joystick axis: BXEmulatedJoystick2AxisX movedTo: fPosition];
 			break;
 			
 		case kHIDUsage_GD_Ry:
 		case kHIDUsage_GD_Rz:
-			[handler joystickAxisChanged: BXDOSJoystick2AxisY toPosition: fPosition];
+			[joystick axis: BXEmulatedJoystick2AxisY movedTo: fPosition];
 			break;
 			/*
 			if (position != 0)
@@ -120,24 +144,23 @@
 			 */
 			
 		case kHIDUsage_GD_Slider:
-			//Invert the throttle axis
-			[handler joystickAxisChanged: BXCHFlightstickThrottleAxis toPosition: -fPosition];
+			if ([joystick respondsToSelector:@selector(throttleMovedTo:)])
+			{
+				//Invert the throttle axis
+				[(id)joystick throttleMovedTo: -fPosition];
+			}
 			break;
 	}
 }
 
 - (void) HIDJoystickPOVSwitchChanged: (BXHIDEvent *)event
 {
-	BXHIDPOVSwitchDirection direction = [BXHIDEvent closest4WayDirectionForPOV: [event POVDirection]];
-	
-	//FIXME: why are we using different constants and converting between them
-	BXDOSFlightstickPOVDirection dosDirection = BXDOSFlightstickPOVCentered;
-	if (direction != BXHIDPOVCentered)
+	id <BXEmulatedJoystick> joystick = [self _joystick];
+	if ([joystick respondsToSelector: @selector(POVChangedTo:)])
 	{
-		dosDirection = (direction / 9000) + 1;
+		BXEmulatedPOVDirection direction = (BXEmulatedPOVDirection)[event POVDirection];
+		[(id)joystick POVChangedTo: direction];
 	}
-	
-	[[self representedObject] joystickPOVSwitchChangedToDirection: dosDirection];
 }
 
 @end

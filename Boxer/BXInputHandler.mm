@@ -12,7 +12,6 @@
 #import "config.h"
 #import "video.h"
 #import "mouse.h"
-#import "joystick.h"
 
 
 #pragma mark -
@@ -33,7 +32,6 @@
 @synthesize emulator;
 @synthesize mouseActive, pressedMouseButtons;
 @synthesize mousePosition;
-@synthesize joystickType;
 
 - (id) init
 {
@@ -59,22 +57,6 @@
 	}
 }
 
-- (void) releaseJoystickInput
-{
-	//Reset the joystick state to default values
-	[self joystickPOVSwitchChangedToDirection: BXDOSFlightstickPOVCentered];
-	
-	JOYSTICK_Move_X(0, 0.0f);
-	JOYSTICK_Move_Y(0, 0.0f);
-	JOYSTICK_Button(0, 0, NO);
-	JOYSTICK_Button(0, 1, NO);
-	
-	JOYSTICK_Move_X(1, 0.0f);
-	JOYSTICK_Move_Y(1, 0.0f);
-	JOYSTICK_Button(1, 0, NO);
-	JOYSTICK_Button(1, 1, NO);
-}
-
 
 - (BOOL) mouseActive
 {
@@ -98,184 +80,6 @@
 			[self mouseButtonReleased: BXMouseButtonMiddle withModifiers: 0];
 		}
 	}
-}
-
-- (void) setJoystickType: (BXDOSJoystickType)type
-{
-	if ([self joystickType] != type)
-	{
-		joystickType = type;
-	
-		[self releaseJoystickInput];
-		
-		switch (type)
-		{
-			case BXCHFlightstickPro:
-			case BXThrustmasterFCS:
-			case BX4AxisJoystick:
-				JOYSTICK_Enable(0, YES);
-				JOYSTICK_Enable(1, YES);
-				break;
-			
-			case BX2AxisJoystick:
-				JOYSTICK_Enable(0, YES);
-				JOYSTICK_Enable(1, NO);
-				break;
-				
-			default:
-				JOYSTICK_Enable(0, NO);
-				JOYSTICK_Enable(1, NO);
-		}
-	}
-}
-
-#pragma mark -
-#pragma mark Joystick handling
-
-- (void) _joystickButton: (BXDOSJoystickButton)button
-				 pressed: (BOOL)pressed
-{
-	//The CH Flightstick Pro could only represent one button-press at a time,
-	//so unset all the other buttons before setting this one
-	if (pressed && [self joystickType] == BXCHFlightstickPro)
-	{
-		JOYSTICK_Button(0, 0, NO);
-		JOYSTICK_Button(0, 1, NO);
-		JOYSTICK_Button(1, 0, NO);
-		JOYSTICK_Button(1, 1, NO);
-	}
-	
-	//TODO: if CH Flightstick Pro is used, release all other buttons
-	switch (button)
-	{
-		case BXDOSJoystickButton1:
-			JOYSTICK_Button(0, 0, pressed);
-			break;
-			
-		case BXDOSJoystickButton2:
-			JOYSTICK_Button(0, 1, pressed);
-			break;
-			
-		case BXDOSJoystick2Button1: //Also BXDOSJoystickButton3
-			JOYSTICK_Button(1, 0, pressed);
-			break;
-			
-		case BXDOSJoystick2Button2: //Also BXDOSJoystickButton4
-			JOYSTICK_Button(1, 1, pressed);
-			break;
-		
-		//TODO: add emulation for CH F-16 Combat Stick buttons 5-6
-	}
-}
-
-- (void) joystickButtonPressed: (BXDOSJoystickButton)button
-{
-	[self _joystickButton: button pressed: YES];
-}
-
-- (void) joystickButtonReleased: (BXDOSJoystickButton)button
-{
-	[self _joystickButton: button pressed: NO];
-}
-
-- (void) joystickAxisChanged: (BXDOSJoystickAxis)axis toPosition: (float)position
-{
-	switch (axis)
-	{
-		case BXDOSJoystickAxisX:
-			return JOYSTICK_Move_X(0, position);
-		
-		case BXDOSJoystickAxisY:
-			return JOYSTICK_Move_Y(0, position);
-			
-		case BXDOSJoystick2AxisX:
-			return JOYSTICK_Move_X(1, position);
-			
-		case BXDOSJoystick2AxisY:
-			return JOYSTICK_Move_Y(1, position);
-	}
-}
-
-- (void) joystickAxisChanged: (BXDOSJoystickAxis)axis byAmount: (float)delta
-{
-	float currentPosition;
-	BOOL isY;
-	NSUInteger joyNum;
-	
-	switch (axis)
-	{
-		case BXDOSJoystickAxisX:
-			currentPosition = JOYSTICK_GetMove_X(0);
-			joyNum = 0;
-			isY = NO;
-			break;
-		
-		case BXDOSJoystickAxisY:
-			currentPosition = JOYSTICK_GetMove_Y(0);
-			joyNum = 0;
-			isY = YES;
-			break;
-			
-		case BXDOSJoystick2AxisX:
-			currentPosition = JOYSTICK_GetMove_X(1);
-			joyNum = 1;
-			isY = NO;
-			break;
-			
-		case BXDOSJoystick2AxisY:
-			currentPosition = JOYSTICK_GetMove_Y(1);
-			joyNum = 1;
-			isY = YES;
-			break;
-		
-		default:
-			return;
-	}
-	
-	//Apply the delta and clamp the result to fit within -1.0 to +1.0
-	float newPosition = currentPosition + delta;
-	newPosition = fmaxf(fminf(newPosition, 1.0f), -1.0f);
-	
-	NSLog(@"Axis %i changed by: %f (now %f)", axis, delta, newPosition);
-	
-	if (isY) JOYSTICK_Move_Y(joyNum, newPosition);
-	else	 JOYSTICK_Move_X(joyNum, newPosition);
-	
-}
-
-//TODO: add support for hat 2 on CH F-16 Combat Stick
-- (void) joystickPOVSwitchChangedToDirection: (BXDOSFlightstickPOVDirection)direction
-{
-	if ([self joystickType] == BXCHFlightstickPro)
-	{
-		//Bitflags according to:
-		//http://www.epanorama.net/documents/joystick/pc_special.html#chflightpro
-		char flags = 0;
-		switch (direction)
-		{
-			case BXDOSFlightstickPOVNorth:
-				flags = 1 | 2 | 4 | 8;
-				break;
-				
-			case BXDOSFlightstickPOVEast:
-				flags = 1 | 2 | 8;
-				break;
-			
-			case BXDOSFlightstickPOVSouth:
-				flags = 1 | 2 | 4;
-				break;
-				
-			case BXDOSFlightstickPOVWest:
-				flags = 1 | 2;
-				break;
-		}
-		
-		JOYSTICK_Button(0, 0, flags & 1);
-		JOYSTICK_Button(0, 1, flags & 2);
-		JOYSTICK_Button(1, 0, flags & 4);
-		JOYSTICK_Button(1, 1, flags & 8);
-	}
-	//TODO: Thrustmaster FCS hat handling (which uses stick 2 Y axis)
 }
 
 

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Belgian</key>
+	<string>be</string>
+	
+	<key>Bulgarian</key>
+	<string>bg</string>
+	
+	<!-- Unconfirmed -->
+	<key>Bulgarian-Phonetic</key>
+	<string>bg</string>
+	
+	<key>Brazilian</key>
+	<string>br</string>
+	
+	<key>Canadian</key>
+	<string>us</string>
+	
+	<key>Canadian-CSA</key>
+	<string>ca</string>
+	
+	<!-- Note: DOS cz layout is QWERTY, not QWERTZ like the standard Mac Czech layout -->
+	<key>Czech</key>
+	<string>cz</string>
+	
+	<key>Czech-QWERTY</key>
+	<string>cz</string>
+	
+	<key>Austrian</key>
+	<string>de</string>
+	
+	<key>German</key>
+	<string>de</string>
+	
+	<key>Danish</key>
+	<string>dk</string>
+	
+	<key>DVORAK-QWERTYCMD</key>
+	<string>dv</string>
+	
+	<key>Dvorak</key>
+	<string>dv</string>
+	
+	<key>Spanish</key>
+	<string>es</string>
+	
+	<key>Spanish-ISO</key>
+	<string>es</string>
+	
+	<key>Finnish</key>
+	<string>fi</string>
+	
+	<key>FinnishExtended</key>
+	<string>fi</string>
+	
+	<!-- Unconfirmed -->
+	<key>FinnishSami-PC</key>
+	<string>fi</string>
+	
+	<!-- NOTE: There should be different DOS mappings for French and French Numerical -->
+	<key>French</key>
+	<string>fr</string>
+		   
+	<key>French-numerical</key>
+	<string>fr</string>
+	
+	<key>Greek</key>
+	<string>gk</string>
+	
+	<!-- Unconfirmed -->
+	<key>GreekPolytonic</key>
+	<string>gk</string>
+
+	<key>Hungarian</key>
+	<string>hu</string>
+
+	<key>Icelandic</key>
+	<string>is</string>
+
+	<!-- Unconfirmed -->
+	<key>Italian</key>
+	<string>it</string>
+
+	<key>Italian-Pro</key>
+	<string>it</string>
+
+	<key>Dutch</key>
+	<string>nl</string>
+
+	<key>Norwegian</key>
+	<string>no</string>
+	
+	<key>NorwegianExtended</key>
+	<string>no</string>
+	
+	<!-- Unconfirmed -->
+	<key>NorwegianSami-PC</key>
+	<string>no</string>
+	
+	<key>Polish</key>
+	<string>pl</string>
+	
+	<!-- Unconfirmed -->
+	<key>PolishPro</key>
+	<string>pl</string>
+
+	<key>Portuguese</key>
+	<string>po</string>
+
+	<!-- Unconfirmed -->
+	<key>Russian</key>
+	<string>ru</string>
+	
+	<!-- Unconfirmed -->
+	<key>Russian-Phonetic</key>
+	<string>ru</string>
+
+	<!-- Unconfirmed -->
+	<key>RussianWin</key>
+	<string>ru</string>
+
+	<key>SwissFrench</key>
+	<string>sf</string>
+	
+	<key>SwissGerman</key>
+	<string>sg</string>
+	
+	<key>Swedish</key>
+	<string>sv</string>
+	
+	<key>Swedish-Pro</key>
+	<string>sv</string>
+	
+	<!-- Unconfirmed -->
+	<key>SwedishSami-PC</key>
+	<string>sv</string>
+	
+	<key>British</key>
+	<string>uk</string>
+	
+	<!-- Unconfirmed -->
+	<key>Irish</key>
+	<string>uk</string>
+	
+	<!-- Unconfirmed -->
+	<key>IrishExtended</key>
+	<string>uk</string>
+	
+	<!-- Unconfirmed -->
+	<key>Welsh</key>
+	<string>uk</string>
+	
+	<key>Australian</key>
+	<string>us</string>
+	
+	<!-- Unconfirmed -->
+	<key>Hawaiian</key>
+	<string>us</string>
+	
+	<key>US</key>
+	<string>us</string>
+	
+	<key>USExtended</key>
+	<string>us</string>
+</dict>
+</plist>

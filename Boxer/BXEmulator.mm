@@ -76,8 +76,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 @synthesize delegate;
 @synthesize configFiles;
 @synthesize commandQueue;
-@synthesize inputHandler;
-@synthesize videoHandler;
+@synthesize inputHandler, videoHandler, keyboard;
 @synthesize cancelled, executing;
 
 
@@ -177,6 +176,8 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 		
 		inputHandler		= [[BXInputHandler alloc] init];
 		videoHandler		= [[BXVideoHandler alloc] init];
+		keyboard			= [[BXEmulatedKeyboard alloc] init];
+		
 		[inputHandler setEmulator: self];
 		[videoHandler setEmulator: self];
 	}
@@ -189,6 +190,8 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	
 	[inputHandler release], inputHandler = nil;
 	[videoHandler release], videoHandler = nil;
+	[keyboard release], keyboard = nil;
+	
 	[driveCache release], driveCache = nil;
 	[configFiles release], configFiles = nil;
 	[commandQueue release], commandQueue = nil;

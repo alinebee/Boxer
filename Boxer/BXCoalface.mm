@@ -249,7 +249,7 @@ void boxer_didRemoveLocalFile(const char *path, DOS_Drive *dosboxDrive)
 const char * boxer_currentDOSKeyboardLayout()
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	NSString *layoutCode = [[emulator inputHandler] keyboardLayoutForCurrentInputMethod];
+	NSString *layoutCode = [[emulator keyboard] activeLayout];
 	return [layoutCode cStringUsingEncoding: BXDirectStringEncoding];
 }
 
@@ -269,13 +269,13 @@ void boxer_mouseMovedToPoint(float x, float y)
 bool boxer_capsLockEnabled()
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	return [[emulator inputHandler] capsLockEnabled];
+	return [[emulator keyboard] capsLockEnabled];
 }
 
 bool boxer_numLockEnabled()
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	return [[emulator inputHandler] numLockEnabled];
+	return [[emulator keyboard] numLockEnabled];
 }
 
 

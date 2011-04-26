@@ -6,7 +6,7 @@
  */
 
 
-#import "BXInputController.h"
+#import "BXInputControllerPrivate.h"
 #import "BXEventConstants.h"
 #import "BXInputHandler.h"
 #import "BXEmulator.h"
@@ -17,9 +17,6 @@
 #import "BXDOSWindowController.h"
 #import "BXSession.h"
 #import "BXPostLeopardAPIs.h"
-
-//For keycodes
-#import <Carbon/Carbon.h>
 
 
 #pragma mark -
@@ -45,56 +42,6 @@
 #define BXTapDurationThreshold 0.3f
 
 
-
-#pragma mark -
-#pragma mark Private methods
-
-@interface BXInputController ()
-
-//Returns whether we should have control of the mouse cursor state.
-//This is true if the mouse is within the view, the window is key,
-//mouse input is in use by the DOS program, and the mouse is either
-//locked or we track the mouse while it's unlocked.
-- (BOOL) _controlsCursor;
-
-//A quicker version of the above for when we already know/don't care
-//if the mouse is inside the view.
-- (BOOL) _controlsCursorWhileMouseInside;
-
-//Converts a 0.0-1.0 relative canvas offset to a point on screen.
-- (NSPoint) _pointOnScreen: (NSPoint)canvasPoint;
-
-//Converts a point on screen to a 0.0-1.0 relative canvas offset.
-- (NSPoint) _pointInCanvas: (NSPoint)screenPoint;
-
-//Performs the fiddly internal work of locking/unlocking the mouse.
-- (void) _applyMouseLockState: (BOOL)lock;
-
-//Responds to the emulator moving the mouse cursor,
-//either in response to our own signals or of its own accord.
-- (void) _emulatorCursorMovedToPointInCanvas: (NSPoint)point;
-
-//Warps the OS X cursor to the specified point on our virtual mouse canvas.
-//Used when locking and unlocking the mouse and when DOS warps the mouse.
-- (void) _syncOSXCursorToPointInCanvas: (NSPoint)point;
-
-//Warps the DOS cursor to the specified point on our virtual mouse canvas.
-//Used when unlocking the mouse while unlocked mouse tracking is disabled,
-//to remove any latent mouse input from a leftover mouse position.
-- (void) _syncDOSCursorToPointInCanvas: (NSPoint)pointInCanvas;
-
-//Resynchronises the current state of the Shift, Ctrl, Alt, CapsLock etc.
-//key, which are represented by event modifier flags.
-- (void) _syncModifierFlags: (NSUInteger)newModifiers;
-
-//Resynchronises the DOS emulated joystick type based on currently-connected joystick devices.
-- (void) _syncJoystickType;
-
-//Forces a cursor update whenever the window changes size. This works
-//around a bug whereby the current cursor resets whenever the window
-//resizes (presumably because the tracking areas are being recalculated)
-- (BOOL) _windowDidResize: (NSNotification *)notification;
-@end
 
 
 @implementation BXInputController
@@ -238,6 +185,8 @@
 									options: NSKeyValueObservingOptionInitial
 									context: nil];
 			
+			[[self _keyboard] setActiveLayout: [[self class] keyboardLayoutForCurrentInputMethod]];
+			
 			[self didBecomeKey];
 		}
 	}
@@ -272,15 +221,6 @@
 	{
 		[self _syncJoystickType];
 	}
-}
-
-- (void) _syncJoystickType
-{
-	NSArray *joysticks = [[[NSApp delegate] joystickController] joystickDevices];
-
-	NSUInteger numJoysticks = [joysticks count];
-	BXDOSJoystickType type = (numJoysticks > 0) ? BXCHFlightstickPro : BXDOSJoystickTypeNone;
-	[[self representedObject] setJoystickType: type];
 }
 
 	
@@ -655,165 +595,6 @@
 {
 	threeFingerTapStarted = 0;
 }
-
-
-#pragma mark -
-#pragma mark Key events
-
-- (void) keyDown: (NSEvent *)theEvent
-{
-	//If the keypress was command-modified, don't pass it on to the emulator as it indicates
-	//a failed key equivalent.
-	//(This is consistent with how other OS X apps with textinput handle Cmd-keypresses.)
-	if ([theEvent modifierFlags] & NSCommandKeyMask)
-	{
-		[super keyDown: theEvent];
-	}
-	
-	//Pressing ESC while in fullscreen mode and not running a program will exit fullscreen mode. 	
-	else if ([[theEvent charactersIgnoringModifiers] isEqualToString: @"\e"] &&
-		[[self controller] isFullScreen] &&
-		[[[self representedObject] emulator] isAtPrompt])
-	{
-		[NSApp sendAction: @selector(exitFullScreen:) to: nil from: self];
-	}
-	
-	//Otherwise, pass the keypress on to our input handler.
-	//TWEAK: ignore repeat keys, as DOSBox implements its own key repeating
-	//and otherwise our own repeats may interfere with games.
-	else if (![theEvent isARepeat])
-	{
-		//Unpause the emulation whenever a key is pressed.
-		[[[self controller] document] setPaused: NO];
-	
-		[[self representedObject] sendKeyEventWithCode: [theEvent keyCode]
-											   pressed: YES
-											 modifiers: [theEvent modifierFlags]];
-	}
-}
-
-- (void) keyUp: (NSEvent *)theEvent
-{
-	//If the keypress was command-modified, don't pass it on to the emulator as it indicates
-	//a failed key equivalent.
-	//(This is consistent with how other OS X apps with textinput handle Cmd-keypresses.)
-	if ([theEvent modifierFlags] & NSCommandKeyMask)
-		[super keyUp: theEvent];
-	
-	[[self representedObject] sendKeyEventWithCode: [theEvent keyCode]
-										   pressed: NO
-										 modifiers: [theEvent modifierFlags]];
-}
-
-
-- (void) flagsChanged: (NSEvent *)theEvent
-{
-	[self _syncModifierFlags: [theEvent modifierFlags]];
-}
-
-- (void) _syncModifierFlags: (NSUInteger)newModifiers
-{	
-	//IMPLEMENTATION NOTE: this method used to check the keyCode of the event to determine which
-	//modifier key was just toggled. This worked fine for single keypresses, but could miss keys
-	//when multiple modifier keys were pressed or released, causing 'stuck' keys.
-	//The new implementation correctly handles multiple keys and can also be used to synchronise
-	//modifier-key states whenever we regain keyboard focus.
-	
-	id handler = [self representedObject];
-	if (newModifiers != lastModifiers)
-	{
-#define NUM_FLAGS 7
-		
-		//Map flags to their corresponding keycodes, because NSDictionaries are so tedious to write
-		NSUInteger flags[NUM_FLAGS] = {
-			BXLeftControlKeyMask,
-			BXLeftAlternateKeyMask,
-			BXLeftShiftKeyMask,
-			BXRightControlKeyMask,
-			BXRightAlternateKeyMask,
-			BXRightShiftKeyMask,
-			NSAlphaShiftKeyMask
-		};
-		unsigned short keyCodes[NUM_FLAGS] = {
-			kVK_Control,
-			kVK_Option,
-			kVK_Shift,
-			kVK_RightControl,
-			kVK_RightOption,
-			kVK_RightShift,
-			kVK_CapsLock
-		};
-		
-		NSUInteger i;
-		for (i=0; i<NUM_FLAGS; i++)
-		{
-			NSUInteger flag			= flags[i];
-			unsigned short keyCode	= keyCodes[i];
-			  
-			BOOL isPressed	= (newModifiers & flag) == flag;
-			BOOL wasPressed	= (lastModifiers & flag) == flag;
-			
-			//If this flag has been toggled, then post a new keyboard event
-			//IMPLEMENTATION NOTE: we used to XOR newModifiers and lastModifiers together
-			//and just check if the flag appeared in that, but that was incorrectly ignoring
-			//events when both the left and right version of a key were pressed at the same time.
-			if (isPressed != wasPressed)
-			{
-				//Special handling for capslock key: whenever the flag is toggled,
-				//act like the key was pressed and then released. (We never receive
-				//receive actual keyup events for this key.)
-				if (flag == NSAlphaShiftKeyMask)
-				{
-					[handler sendKeypressWithCode: keyCode modifiers: newModifiers];
-					[handler setCapsLockEnabled: (newModifiers & NSAlphaShiftKeyMask) == NSAlphaShiftKeyMask];
-				}
-				else
-				{
-					[handler sendKeyEventWithCode: keyCode pressed: isPressed modifiers: newModifiers];
-				}
-			}
-		}
-		lastModifiers = newModifiers;
-	}
-}
-
-
-#pragma mark -
-#pragma mark Simulating keyboard events
-						
-- (void) _sendSDLKey: (SDLKey)sdlKeyCode
-{
-	[[self representedObject] sendKeypressWithSDLKey: sdlKeyCode
-										   modifiers: [[NSApp currentEvent] modifierFlags]];
-}
-
-- (IBAction) sendF1:	(id)sender	{ [self _sendSDLKey: SDLK_F1]; }
-- (IBAction) sendF2:	(id)sender	{ [self _sendSDLKey: SDLK_F2]; }
-- (IBAction) sendF3:	(id)sender	{ [self _sendSDLKey: SDLK_F3]; }
-- (IBAction) sendF4:	(id)sender	{ [self _sendSDLKey: SDLK_F4]; }
-- (IBAction) sendF5:	(id)sender	{ [self _sendSDLKey: SDLK_F5]; }
-- (IBAction) sendF6:	(id)sender	{ [self _sendSDLKey: SDLK_F6]; }
-- (IBAction) sendF7:	(id)sender	{ [self _sendSDLKey: SDLK_F7]; }
-- (IBAction) sendF8:	(id)sender	{ [self _sendSDLKey: SDLK_F8]; }
-- (IBAction) sendF9:	(id)sender	{ [self _sendSDLKey: SDLK_F9]; }
-- (IBAction) sendF10:	(id)sender	{ [self _sendSDLKey: SDLK_F10]; }
-- (IBAction) sendF11:	(id)sender	{ [self _sendSDLKey: SDLK_F11]; }
-- (IBAction) sendF12:	(id)sender	{ [self _sendSDLKey: SDLK_F12]; }
-
-- (IBAction) sendHome:		(id)sender { [self _sendSDLKey: SDLK_HOME]; }
-- (IBAction) sendEnd:		(id)sender { [self _sendSDLKey: SDLK_END]; }
-- (IBAction) sendPageUp:	(id)sender { [self _sendSDLKey: SDLK_PAGEUP]; }
-- (IBAction) sendPageDown:	(id)sender { [self _sendSDLKey: SDLK_PAGEDOWN]; }
-
-- (IBAction) sendInsert:	(id)sender { [self _sendSDLKey: SDLK_INSERT]; }
-- (IBAction) sendDelete:	(id)sender { [self _sendSDLKey: SDLK_DELETE]; }
-- (IBAction) sendPause:		(id)sender { [self _sendSDLKey: SDLK_PAUSE]; }
-- (IBAction) sendBreak:		(id)sender { [self _sendSDLKey: SDLK_BREAK]; }
-
-- (IBAction) sendNumLock:		(id)sender { [self _sendSDLKey: SDLK_NUMLOCK]; }
-- (IBAction) sendScrollLock:	(id)sender { [self _sendSDLKey: SDLK_SCROLLOCK]; }
-- (IBAction) sendPrintScreen:	(id)sender { [self _sendSDLKey: SDLK_PRINT]; }
-
 
 
 #pragma mark -

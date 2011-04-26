@@ -6,8 +6,10 @@
  */
 
 
-#import "BXInputController+BXJoysticks.h"
+#import "BXInputControllerPrivate.h"
 #import "BXInputHandler.h"
+#import "BXAppController.h"
+#import "BXJoystickController.h"
 #import <IOKit/hid/IOHIDLib.h>
 
 
@@ -19,7 +21,18 @@
 #define BXAxisDeadzone 0.3f
 
 
-@implementation BXInputController (BXJoysticks)
+@implementation BXInputController (BXJoystickInput)
+
+- (void) _syncJoystickType
+{
+	NSArray *joysticks = [[[NSApp delegate] joystickController] joystickDevices];
+
+	NSUInteger numJoysticks = [joysticks count];
+	BXDOSJoystickType type = (numJoysticks > 0) ? BXCHFlightstickPro : BXDOSJoystickTypeNone;
+	[[self representedObject] setJoystickType: type];
+}
+
+
 
 - (void) HIDJoystickButtonDown: (BXHIDEvent *)event
 {
@@ -89,10 +102,12 @@
 			break;
 			
 		case kHIDUsage_GD_Rx:
+		case kHIDUsage_GD_Z:
 			[handler joystickAxisChanged: BXDOSJoystick2AxisX toPosition: fPosition];
 			break;
 			
 		case kHIDUsage_GD_Ry:
+		case kHIDUsage_GD_Rz:
 			[handler joystickAxisChanged: BXDOSJoystick2AxisY toPosition: fPosition];
 			break;
 			/*
@@ -114,7 +129,14 @@
 - (void) HIDJoystickPOVSwitchChanged: (BXHIDEvent *)event
 {
 	BXHIDPOVSwitchDirection direction = [BXHIDEvent closest4WayDirectionForPOV: [event POVDirection]];
-	BXDOSFlightstickPOVDirection dosDirection = direction / 9000;
+	
+	//FIXME: why are we using different constants and converting between them
+	BXDOSFlightstickPOVDirection dosDirection = BXDOSFlightstickPOVCentered;
+	if (direction != BXHIDPOVCentered)
+	{
+		dosDirection = (direction / 9000) + 1;
+	}
+	
 	[[self representedObject] joystickPOVSwitchChangedToDirection: dosDirection];
 }
 

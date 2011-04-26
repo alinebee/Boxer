@@ -46,6 +46,7 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 
 @class BXInputHandler;
 @class BXVideoHandler;
+@class BXEmulatedKeyboard;
 
 @protocol BXEmulatorDelegate;
 
@@ -54,6 +55,7 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 	id <BXEmulatorDelegate> delegate;
 	BXInputHandler *inputHandler;
 	BXVideoHandler *videoHandler;
+	BXEmulatedKeyboard *keyboard;
 	
 	NSString *processName;
 	NSString *processPath;
@@ -79,6 +81,7 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 
 @property (readonly, nonatomic) BXInputHandler *inputHandler;	//Our DOSBox input handler.
 @property (readonly, nonatomic) BXVideoHandler *videoHandler;	//Our DOSBox video and rendering handler.
+@property (readonly, nonatomic) BXEmulatedKeyboard *keyboard;	//Our emulated keyboard.
 
 //An array of OS X paths to configuration files that will be/have been loaded by this session during startup.
 //This is read-only: configuration files can be loaded via applyConfigurationAtPath: 

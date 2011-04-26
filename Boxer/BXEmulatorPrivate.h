@@ -14,6 +14,7 @@
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXInputHandler.h"
 #import "BXVideoHandler.h"
+#import "BXEmulatedKeyboard.h"
 
 
 class DOS_Shell;

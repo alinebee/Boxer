@@ -91,34 +91,4 @@
 - (IBAction) toggleTrackMouseWhileUnlocked: (id)sender;
 
 
-#pragma mark -
-#pragma mark Simulating keypresses
-
-- (IBAction) sendF1:	(id)sender;
-- (IBAction) sendF2:	(id)sender;
-- (IBAction) sendF3:	(id)sender;
-- (IBAction) sendF4:	(id)sender;
-- (IBAction) sendF5:	(id)sender;
-- (IBAction) sendF6:	(id)sender;
-- (IBAction) sendF7:	(id)sender;
-- (IBAction) sendF8:	(id)sender;
-- (IBAction) sendF9:	(id)sender;
-- (IBAction) sendF10:	(id)sender;
-- (IBAction) sendF11:	(id)sender;
-- (IBAction) sendF12:	(id)sender;
-
-- (IBAction) sendHome:		(id)sender;
-- (IBAction) sendEnd:		(id)sender;
-- (IBAction) sendPageUp:	(id)sender;
-- (IBAction) sendPageDown:	(id)sender;
-
-- (IBAction) sendInsert:	(id)sender;
-- (IBAction) sendDelete:	(id)sender;
-- (IBAction) sendPause:		(id)sender;
-- (IBAction) sendBreak:		(id)sender;
-
-- (IBAction) sendNumLock:		(id)sender;
-- (IBAction) sendScrollLock:	(id)sender;
-- (IBAction) sendPrintScreen:	(id)sender;
-
 @end

@@ -312,6 +312,9 @@
 		9FCBB2DA10A61D6100C28B09 /* Preflight.conf in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2D910A61D6100C28B09 /* Preflight.conf */; };
 		9FCBB2DC10A61E9300C28B09 /* Launch.conf in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2DB10A61E9300C28B09 /* Launch.conf */; };
 		9FCBB6F310A6DDBD00C28B09 /* DOS Toolkit in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB5FE10A6DDBD00C28B09 /* DOS Toolkit */; };
+		9FCC2F9A1366EF170013F083 /* BXEmulatedKeyboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FCC2F991366EF170013F083 /* BXEmulatedKeyboard.mm */; };
+		9FCC2FF41366FA820013F083 /* BXInputController+BXKeyboardInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FCC2FF31366FA820013F083 /* BXInputController+BXKeyboardInput.m */; };
+		9FCC303C13670F680013F083 /* KeyboardLayouts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FCC303B13670F680013F083 /* KeyboardLayouts.plist */; };
 		9FCEDF3312B3DFFC00E856A4 /* SDL_sound.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FCEDF3212B3DFFC00E856A4 /* SDL_sound.framework */; };
 		9FD011BD10C2A02F00670CE1 /* BXGameboxPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD011BC10C2A02F00670CE1 /* BXGameboxPanelController.m */; };
 		9FD1D6251364291600792011 /* DDHidDevice+BXDeviceExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD1D6241364291600792011 /* DDHidDevice+BXDeviceExtensions.m */; };
@@ -334,7 +337,7 @@
 		9FE202480F6D749500B3A38C /* Snapshot.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9FE202470F6D749500B3A38C /* Snapshot.aiff */; };
 		9FE2172E121EED1E001452E3 /* ImportCoverArtTip.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE2172A121EED1E001452E3 /* ImportCoverArtTip.png */; };
 		9FE2172F121EED1E001452E3 /* ImportRenameTip.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE2172C121EED1E001452E3 /* ImportRenameTip.png */; };
-		9FE50B591365845200495EBE /* BXInputController+BXJoysticks.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE50B581365845200495EBE /* BXInputController+BXJoysticks.m */; };
+		9FE50B591365845200495EBE /* BXInputController+BXJoystickInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE50B581365845200495EBE /* BXInputController+BXJoystickInput.m */; };
 		9FE90BF711F8D1DC003CFFFF /* BXDelegatedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE90BF611F8D1DC003CFFFF /* BXDelegatedView.m */; };
 		9FEAA3EC1204595B0085F008 /* BXOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEAA3EB1204595B0085F008 /* BXOperation.m */; };
 		9FECE19011A31B8B00E0EBB6 /* BXRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FECE18F11A31B8B00E0EBB6 /* BXRenderer.m */; };
@@ -934,6 +937,12 @@
 		9FCBB2D910A61D6100C28B09 /* Preflight.conf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Preflight.conf; sourceTree = "<group>"; };
 		9FCBB2DB10A61E9300C28B09 /* Launch.conf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Launch.conf; sourceTree = "<group>"; };
 		9FCBB5FE10A6DDBD00C28B09 /* DOS Toolkit */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "DOS Toolkit"; sourceTree = "<group>"; };
+		9FCC2F981366EF170013F083 /* BXEmulatedKeyboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatedKeyboard.h; sourceTree = "<group>"; };
+		9FCC2F991366EF170013F083 /* BXEmulatedKeyboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXEmulatedKeyboard.mm; sourceTree = "<group>"; };
+		9FCC2FF21366FA820013F083 /* BXInputController+BXKeyboardInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXInputController+BXKeyboardInput.h"; sourceTree = "<group>"; };
+		9FCC2FF31366FA820013F083 /* BXInputController+BXKeyboardInput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXInputController+BXKeyboardInput.m"; sourceTree = "<group>"; };
+		9FCC2FF81366FB840013F083 /* BXInputControllerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXInputControllerPrivate.h; sourceTree = "<group>"; };
+		9FCC303B13670F680013F083 /* KeyboardLayouts.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = KeyboardLayouts.plist; sourceTree = "<group>"; };
 		9FCEDF3212B3DFFC00E856A4 /* SDL_sound.framework */ = {isa = PBXFileReference; comments = "This is a fork of the standard BGHUDAppkit framework built with CoreAudio and OGG support. The sourcecode for this framework is available at http://bitbucket.org/alunbestor/sdl_sound-boxer/"; lastKnownFileType = wrapper.framework; path = SDL_sound.framework; sourceTree = "<group>"; };
 		9FD011BB10C2A02F00670CE1 /* BXGameboxPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXGameboxPanelController.h; sourceTree = "<group>"; };
 		9FD011BC10C2A02F00670CE1 /* BXGameboxPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGameboxPanelController.m; sourceTree = "<group>"; };
@@ -970,8 +979,8 @@
 		9FE202470F6D749500B3A38C /* Snapshot.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = Snapshot.aiff; sourceTree = "<group>"; };
 		9FE2172B121EED1E001452E3 /* English */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = English; path = English.lproj/ImportCoverArtTip.png; sourceTree = "<group>"; };
 		9FE2172D121EED1E001452E3 /* English */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = English; path = English.lproj/ImportRenameTip.png; sourceTree = "<group>"; };
-		9FE50B571365845200495EBE /* BXInputController+BXJoysticks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXInputController+BXJoysticks.h"; sourceTree = "<group>"; };
-		9FE50B581365845200495EBE /* BXInputController+BXJoysticks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXInputController+BXJoysticks.m"; sourceTree = "<group>"; };
+		9FE50B571365845200495EBE /* BXInputController+BXJoystickInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXInputController+BXJoystickInput.h"; sourceTree = "<group>"; };
+		9FE50B581365845200495EBE /* BXInputController+BXJoystickInput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXInputController+BXJoystickInput.m"; sourceTree = "<group>"; };
 		9FE90BF511F8D1DC003CFFFF /* BXDelegatedView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDelegatedView.h; sourceTree = "<group>"; };
 		9FE90BF611F8D1DC003CFFFF /* BXDelegatedView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDelegatedView.m; sourceTree = "<group>"; };
 		9FEAA3EA1204595B0085F008 /* BXOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXOperation.h; sourceTree = "<group>"; };
@@ -1163,6 +1172,7 @@
 				9F466AFB11A92C4B00C50965 /* UserDefaults.plist */,
 				9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */,
 				9FAE9B8A11F1D7CF000363F7 /* GameDefaults.plist */,
+				9FCC303B13670F680013F083 /* KeyboardLayouts.plist */,
 				9F160BD91236952400F8768E /* Sample Games */,
 				9FFAFE2E10DE343F00728BAC /* Configurations */,
 				9FCBB5FE10A6DDBD00C28B09 /* DOS Toolkit */,
@@ -1275,6 +1285,7 @@
 		9F1D50280F5C0ACD009F0AB9 /* Emulator */ = {
 			isa = PBXGroup;
 			children = (
+				9FCC2F971366EF030013F083 /* Input */,
 				9F1D4FFF0F5C0966009F0AB9 /* BXEmulator.h */,
 				9F4037B912CB6CA300DAA66C /* BXEmulatorPrivate.h */,
 				9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */,
@@ -1286,8 +1297,6 @@
 				9F44E5E310D17A4C0081B8D2 /* BXEmulator+BXPaste.mm */,
 				9FDCA78E118F2B7900E2FD74 /* BXCoalface.h */,
 				9FDCA78F118F2B7900E2FD74 /* BXCoalface.mm */,
-				9FEF97FF1191E1EF002024DF /* BXInputHandler.h */,
-				9FEF98001191E1EF002024DF /* BXInputHandler.mm */,
 				9FF175E511B279F500D0FCDC /* BXVideoHandler.h */,
 				9FF175E611B279F500D0FCDC /* BXVideoHandler.mm */,
 				9FEBB70E11DF9BB50055933F /* BXEmulatorDelegate.h */,
@@ -1337,6 +1346,7 @@
 		9F27133610C1253E0003CB58 /* DOS window */ = {
 			isa = PBXGroup;
 			children = (
+				9FCC2FF71366FB6E0013F083 /* Input handling */,
 				9FBC35170F56C7B7001811F2 /* BXDOSWindow.h */,
 				9FBC35240F56C7B7001811F2 /* BXDOSWindow.m */,
 				9FBC35180F56C7B7001811F2 /* BXDOSWindowController.h */,
@@ -1345,12 +1355,6 @@
 				9F59DAD410AF1042008DBBC1 /* BXProgramPanel.m */,
 				9F59DED810B0159A008DBBC1 /* BXProgramPanelController.h */,
 				9F59DED910B0159A008DBBC1 /* BXProgramPanelController.m */,
-				9FF1756B11B25F4E00D0FCDC /* BXInputView.h */,
-				9FF1756C11B25F4E00D0FCDC /* BXInputView.m */,
-				9F765647119403520082A06A /* BXInputController.h */,
-				9F765648119403520082A06A /* BXInputController.m */,
-				9FE50B571365845200495EBE /* BXInputController+BXJoysticks.h */,
-				9FE50B581365845200495EBE /* BXInputController+BXJoysticks.m */,
 				9FD668EF1215CDD6009E0118 /* BXBottomBar.h */,
 				9FD668F01215CDD6009E0118 /* BXBottomBar.m */,
 				9F42D9DD1172481800AC6F1F /* BXStatusBarController.h */,
@@ -2087,6 +2091,33 @@
 			name = Sounds;
 			sourceTree = "<group>";
 		};
+		9FCC2F971366EF030013F083 /* Input */ = {
+			isa = PBXGroup;
+			children = (
+				9FEF97FF1191E1EF002024DF /* BXInputHandler.h */,
+				9FEF98001191E1EF002024DF /* BXInputHandler.mm */,
+				9FCC2F981366EF170013F083 /* BXEmulatedKeyboard.h */,
+				9FCC2F991366EF170013F083 /* BXEmulatedKeyboard.mm */,
+			);
+			name = Input;
+			sourceTree = "<group>";
+		};
+		9FCC2FF71366FB6E0013F083 /* Input handling */ = {
+			isa = PBXGroup;
+			children = (
+				9FF1756B11B25F4E00D0FCDC /* BXInputView.h */,
+				9FF1756C11B25F4E00D0FCDC /* BXInputView.m */,
+				9F765647119403520082A06A /* BXInputController.h */,
+				9F765648119403520082A06A /* BXInputController.m */,
+				9FE50B571365845200495EBE /* BXInputController+BXJoystickInput.h */,
+				9FE50B581365845200495EBE /* BXInputController+BXJoystickInput.m */,
+				9FCC2FF21366FA820013F083 /* BXInputController+BXKeyboardInput.h */,
+				9FCC2FF31366FA820013F083 /* BXInputController+BXKeyboardInput.m */,
+				9FCC2FF81366FB840013F083 /* BXInputControllerPrivate.h */,
+			);
+			name = "Input handling";
+			sourceTree = "<group>";
+		};
 		9FD1D622136428F800792011 /* HID */ = {
 			isa = PBXGroup;
 			children = (
@@ -2304,6 +2335,7 @@
 				9FF86679134DCA16001CE857 /* toc2cue in Resources */,
 				9FDE34131351DCDB000DCE44 /* DOSImportWindow.xib in Resources */,
 				9FDE343A1351E127000DCE44 /* ImportTipsPanel.xib in Resources */,
+				9FCC303C13670F680013F083 /* KeyboardLayouts.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2591,7 +2623,9 @@
 				9FD1D6251364291600792011 /* DDHidDevice+BXDeviceExtensions.m in Sources */,
 				9FD1D7011364819E00792011 /* BXJoystickController.m in Sources */,
 				9FD1D78A1364991100792011 /* BXHIDEvent.m in Sources */,
-				9FE50B591365845200495EBE /* BXInputController+BXJoysticks.m in Sources */,
+				9FE50B591365845200495EBE /* BXInputController+BXJoystickInput.m in Sources */,
+				9FCC2F9A1366EF170013F083 /* BXEmulatedKeyboard.mm in Sources */,
+				9FCC2FF41366FA820013F083 /* BXInputController+BXKeyboardInput.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

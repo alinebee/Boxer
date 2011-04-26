@@ -19,7 +19,8 @@
 #ifndef DOSBOX_KEYBOARD_H
 #define DOSBOX_KEYBOARD_H
 
-enum KBD_KEYS {
+//--Modified 2011-04-26 by Alun Bestor to make enum declaration C-compatible
+enum {
 	KBD_NONE,
 	KBD_1,	KBD_2,	KBD_3,	KBD_4,	KBD_5,	KBD_6,	KBD_7,	KBD_8,	KBD_9,	KBD_0,		
 	KBD_q,	KBD_w,	KBD_e,	KBD_r,	KBD_t,	KBD_y,	KBD_u,	KBD_i,	KBD_o,	KBD_p,	
@@ -46,6 +47,9 @@ enum KBD_KEYS {
 	
 	KBD_LAST
 };
+
+typedef unsigned short KBD_KEYS;
+//--End of modifications
 
 void KEYBOARD_ClrBuffer(void);
 void KEYBOARD_AddKey(KBD_KEYS keytype,bool pressed);

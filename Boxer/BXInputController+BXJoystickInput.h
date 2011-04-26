@@ -13,6 +13,6 @@
 #import "BXInputController.h"
 #import "BXHIDEvent.h"
 
-@interface BXInputController (BXJoysticks) <BXHIDDeviceDelegate>
+@interface BXInputController (BXJoystickInput) <BXHIDDeviceDelegate>
 
 @end

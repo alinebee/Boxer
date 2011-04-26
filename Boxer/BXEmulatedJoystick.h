@@ -67,7 +67,6 @@ enum {
 typedef NSInteger BXEmulatedPOVDirection;
 
 
-
 @protocol BXEmulatedJoystick <NSObject>
 
 //Called by BXEmulator when the device is plugged/unplugged.
@@ -123,6 +122,7 @@ typedef NSInteger BXEmulatedPOVDirection;
 @interface BXCHFlightStickPro: BX4AxisJoystick
 
 - (void) POVChangedTo: (BXEmulatedPOVDirection)direction;
+- (BXEmulatedPOVDirection) POVDirection;
 
 - (void) throttleMovedTo: (float)position;
 - (void) throttleMovedBy: (float)delta;
@@ -136,12 +136,14 @@ typedef NSInteger BXEmulatedPOVDirection;
 
 //Secondary hat switch
 - (void) POV2ChangedTo: (BXEmulatedPOVDirection)direction;
+- (BXEmulatedPOVDirection) POV2Direction;
 
 @end
 
 @interface BXThrustmaserFCS: BX4AxisJoystick
 
 - (void) POVChangedTo: (BXEmulatedPOVDirection)direction;
+- (BXEmulatedPOVDirection) POVDirection;
 
 - (void) rudderMovedTo: (float)position;
 - (void) rudderMovedBy: (float)delta;

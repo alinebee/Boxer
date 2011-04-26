@@ -306,6 +306,7 @@
 		9FC8B2E812186171004F6DA2 /* BXImportFinishedPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC8B2E712186171004F6DA2 /* BXImportFinishedPanelController.m */; };
 		9FC8F50C10934F3400AD6307 /* NSString+BXPaths.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC8F50B10934F3400AD6307 /* NSString+BXPaths.m */; };
 		9FC9E4E1136725190095DCDE /* BXEmulatedJoystick.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FC9E4E0136725190095DCDE /* BXEmulatedJoystick.mm */; };
+		9FC9E58F1367514C0095DCDE /* BXCHFlightstick.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FC9E58E1367514C0095DCDE /* BXCHFlightstick.mm */; };
 		9FCBB2D010A61CA800C28B09 /* boxer.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CD10A61CA800C28B09 /* boxer.icns */; };
 		9FCBB2D110A61CA800C28B09 /* executable.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CE10A61CA800C28B09 /* executable.icns */; };
 		9FCBB2D210A61CA800C28B09 /* package.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CF10A61CA800C28B09 /* package.icns */; };
@@ -933,6 +934,9 @@
 		9FC8F50B10934F3400AD6307 /* NSString+BXPaths.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+BXPaths.m"; sourceTree = "<group>"; };
 		9FC9E4DF136725190095DCDE /* BXEmulatedJoystick.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatedJoystick.h; sourceTree = "<group>"; };
 		9FC9E4E0136725190095DCDE /* BXEmulatedJoystick.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXEmulatedJoystick.mm; sourceTree = "<group>"; };
+		9FC9E58E1367514C0095DCDE /* BXCHFlightstick.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXCHFlightstick.mm; sourceTree = "<group>"; };
+		9FC9E59A13675A8B0095DCDE /* BXEmulatedJoystickPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatedJoystickPrivate.h; sourceTree = "<group>"; };
+		9FC9E59B13675A8B0095DCDE /* BXEmulatedJoystickPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatedJoystickPrivate.h; sourceTree = "<group>"; };
 		9FCBB2CD10A61CA800C28B09 /* boxer.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = boxer.icns; sourceTree = "<group>"; };
 		9FCBB2CE10A61CA800C28B09 /* executable.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = executable.icns; sourceTree = "<group>"; };
 		9FCBB2CF10A61CA800C28B09 /* package.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = package.icns; sourceTree = "<group>"; };
@@ -2102,6 +2106,9 @@
 				9FCC2F991366EF170013F083 /* BXEmulatedKeyboard.mm */,
 				9FC9E4DF136725190095DCDE /* BXEmulatedJoystick.h */,
 				9FC9E4E0136725190095DCDE /* BXEmulatedJoystick.mm */,
+				9FC9E59A13675A8B0095DCDE /* BXEmulatedJoystickPrivate.h */,
+				9FC9E59B13675A8B0095DCDE /* BXEmulatedJoystickPrivate.h */,
+				9FC9E58E1367514C0095DCDE /* BXCHFlightstick.mm */,
 			);
 			name = Devices;
 			sourceTree = "<group>";
@@ -2630,6 +2637,7 @@
 				9FCC2F9A1366EF170013F083 /* BXEmulatedKeyboard.mm in Sources */,
 				9FCC2FF41366FA820013F083 /* BXInputController+BXKeyboardInput.m in Sources */,
 				9FC9E4E1136725190095DCDE /* BXEmulatedJoystick.mm in Sources */,
+				9FC9E58F1367514C0095DCDE /* BXCHFlightstick.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

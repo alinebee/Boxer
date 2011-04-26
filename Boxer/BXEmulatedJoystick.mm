@@ -5,70 +5,13 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-#import "BXEmulatedJoystick.h"
-#import "BXHIDEvent.h"
-#import "config.h"
-#import "joystick.h"
-
-enum
-{
-	BXGameportStick1,
-	BXGameportStick2
-};
-
-enum
-{	
-	BXGameportButton1,
-	BXGameportButton2
-};
-
-enum
-{	
-	BXGameportXAxis,
-	BXGameportYAxis
-};
-
-enum
-{
-	BXNoGameportButtonsMask = 0,
-	BXGameportButton1Mask = 1U << 0,
-	BXGameportButton2Mask = 1U << 1,
-	BXGameportButton3Mask = 1U << 2,
-	BXGameportButton4Mask = 1U << 3,
-	BXAllGameportButtonsMask = BXGameportButton1Mask | BXGameportButton2Mask | BXGameportButton3Mask | BXGameportButton4Mask
-};
-
-typedef NSUInteger BXGameportButtonMask;
-
-
-#define BXGameportAxisMin -1.0f
-#define BXGameportAxisMax 1.0f
-#define BXGameportAxisCentered 0.0f
-
-
-#pragma mark -
-#pragma mark Private method declarations
-
-@interface BXBaseEmulatedJoystick ()
-
-//The pressed/released state of all emulated buttons
-@property (assign) BXGameportButtonMask pressedButtons;
-
-//Process the press/release of a joystick button.
-- (void) _setButton: (BXEmulatedJoystickButton)button
-			toState: (BOOL)pressed;
-
-//Called by buttonPressed: after a delay to release the pressed button.
-- (void) _releaseButton: (NSNumber *)button;
-@end
-
+#import "BXEmulatedJoystickPrivate.h"
 
 
 #pragma mark -
 #pragma mark Implementations
 
 @implementation BXBaseEmulatedJoystick
-
 
 - (void) didConnect
 {
@@ -94,12 +37,12 @@ typedef NSUInteger BXGameportButtonMask;
 
 - (void) buttonDown: (BXEmulatedJoystickButton)button
 {
-	[self _setButton: button toState: YES];
+	[self setButton: button toState: YES];
 }
 
 - (void) buttonUp: (BXEmulatedJoystickButton)button
 {
-	[self _setButton: button toState: NO];
+	[self setButton: button toState: NO];
 }
 
 - (BOOL) buttonIsDown: (BXEmulatedJoystickButton)button
@@ -221,7 +164,7 @@ typedef NSUInteger BXGameportButtonMask;
 #pragma mark -
 #pragma mark Private methods
 
-- (void) _setButton: (BXEmulatedJoystickButton)button toState: (BOOL)pressed
+- (void) setButton: (BXEmulatedJoystickButton)button toState: (BOOL)pressed
 {
 	switch (button)
 	{
@@ -282,128 +225,5 @@ typedef NSUInteger BXGameportButtonMask;
 
 - (void) y2AxisMovedTo: (float)position	{ [self axis: BXEmulatedJoystick2AxisY movedTo: position]; }
 - (void) y2AxisMovedBy: (float)delta	{ [self axis: BXEmulatedJoystick2AxisY movedBy: delta]; }
-
-@end
-
-
-//FIXME: this is a naive implementation of the CH series' button-handling behaviour.
-//Copy sdl_mapper's implementation to make it behave more accurately.
-@implementation BXCHFlightStickPro
-
-- (void) clearInput
-{
-	//Preserve the value of the throttle axis, because it does not snap back to center
-	JOYSTICK_Move_X(BXGameportStick1, BXGameportAxisCentered);
-	JOYSTICK_Move_Y(BXGameportStick1, BXGameportAxisCentered);
-	JOYSTICK_Move_X(BXGameportStick2, BXGameportAxisCentered);
-	
-	[self setPressedButtons: BXNoGameportButtonsMask];
-}
-
-- (void) POVChangedTo: (BXEmulatedPOVDirection)direction
-{
-	BXEmulatedPOVDirection normalizedDirection = [BXHIDEvent closest4WayDirectionForPOV: direction];
-	
-	//Bitflags according to:
-	//http://www.epanorama.net/documents/joystick/pc_special.html#chflightpro
-	BXGameportButtonMask buttonMask = 0;
-	switch (normalizedDirection)
-	{
-		case BXEmulatedPOVNorth:
-			buttonMask = BXAllGameportButtonsMask;
-			break;
-			
-		case BXEmulatedPOVEast:
-			buttonMask = BXGameportButton1Mask | BXGameportButton2Mask | BXGameportButton4Mask;
-			break;
-		
-		case BXEmulatedPOVSouth:
-			buttonMask = BXGameportButton1Mask | BXGameportButton2Mask | BXGameportButton3Mask;
-			break;
-			
-		case BXEmulatedPOVWest:
-			buttonMask = BXGameportButton1Mask | BXGameportButton2Mask;
-			break;
-	}
-	
-	[self setPressedButtons: buttonMask];
-}
-
-- (void) throttleMovedTo: (float)position	{ [self axis: BXCHCombatStickThrottleAxis movedTo: position]; }
-- (void) throttleMovedBy: (float)delta		{ [self axis: BXCHCombatStickThrottleAxis movedBy: delta]; }
-
-- (void) rudderMovedTo: (float)position		{ [self axis: BXCHCombatStickRudderAxis movedTo: position]; }
-- (void) rudderMovedBy: (float)delta		{ [self axis: BXCHCombatStickRudderAxis movedBy: delta]; }
-
-
-#pragma mark -
-#pragma mark Private methods
-
-- (void) _setButton: (BXEmulatedJoystickButton)button toState: (BOOL)pressed
-{
-	//The CH Flightstick Pro could only represent one button-press at a time,
-	//so unset all the other buttons before handling the new button-press
-	[self setPressedButtons: BXNoGameportButtonsMask];
-	
-	if (pressed) [super _setButton: button toState: pressed];
-}
-
-@end
-
-
-@implementation BXCHCombatStick
-
-- (void) POV2ChangedTo: (BXEmulatedPOVDirection)direction
-{
-	BXEmulatedPOVDirection normalizedDirection = [BXHIDEvent closest4WayDirectionForPOV: direction];
-	
-	//Bitflags according to:
-	//http://www.epanorama.net/documents/joystick/pc_special.html#chflightpro
-	BXGameportButtonMask buttonMask = 0;
-	switch (normalizedDirection)
-	{
-		case BXEmulatedPOVNorth:
-			buttonMask = BXGameportButton2Mask | BXGameportButton3Mask | BXGameportButton4Mask;
-			break;
-			
-		case BXEmulatedPOVEast:
-			buttonMask = BXGameportButton2Mask | BXGameportButton4Mask;
-			break;
-		
-		case BXEmulatedPOVSouth:
-			buttonMask = BXGameportButton2Mask | BXGameportButton3Mask;
-			break;
-			
-		case BXEmulatedPOVWest:
-			buttonMask = BXGameportButton2Mask | BXGameportButton4Mask;
-			break;
-	}
-	
-	[self setPressedButtons: buttonMask];
-}
-
-#pragma mark -
-#pragma mark Private methods
-
-- (void) _setButton: (BXEmulatedJoystickButton)button toState: (BOOL)pressed
-{
-	//Clear active buttons first
-	[super _setButton: button toState: pressed];
-	
-	if (pressed)
-	{
-		//Handle the additional 5 and 6 buttons
-		switch (button)
-		{
-			case BXCHCombatStickButton5:
-				[self setPressedButtons: BXGameportButton1Mask | BXGameportButton3Mask];
-				break;
-				
-			case BXCHCombatStickButton6:
-				[self setPressedButtons: BXGameportButton1Mask | BXGameportButton4Mask];
-				break;
-		}
-	}
-}
 
 @end

@@ -61,6 +61,14 @@
 		case kHIDUsage_Button_4:
 			[joystick buttonDown: BXEmulatedJoystickButton4];
 			break;
+			
+		case kHIDUsage_Button_4+1:
+			[joystick buttonDown: BXCHCombatStickButton5];
+			break;
+			
+		case kHIDUsage_Button_4+2:
+			[joystick buttonDown: BXCHCombatStickButton6];
+			break;
 	}
 	//Ignore all other buttons
 }

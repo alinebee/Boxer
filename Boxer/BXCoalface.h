@@ -96,6 +96,8 @@ extern "C" {
 	bool boxer_capsLockEnabled();
 	bool boxer_numLockEnabled();
 	
+	double boxer_realTime();
+	
 #if __cplusplus
 } //Extern C
 #endif

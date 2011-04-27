@@ -16,8 +16,8 @@
 //rather than using it as the absolute axis position.
 #define BXAdditiveAxisStrength 0.1f
 
-//Default to a 30% deadzone.
-#define BXAxisDeadzone 0.3f
+//Default to a 25% deadzone.
+#define BXAxisDeadzone 0.25f
 
 
 @implementation BXInputController (BXJoystickInput)

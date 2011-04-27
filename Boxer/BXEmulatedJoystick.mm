@@ -72,22 +72,25 @@
 
 - (void) axis: (BXEmulatedJoystickAxis)axis movedTo: (float)position
 {
+	//Clamp the position to fit within -1.0 to +1.0
+	position = fmaxf(fminf(position, BXGameportAxisMax), BXGameportAxisMin);
+	
 	switch (axis)
 	{
 		case BXEmulatedJoystickAxisX:
-			return JOYSTICK_Move_X(BXGameportStick1, position);
+			JOYSTICK_Move_X(BXGameportStick1, position);
 			break;
 		
 		case BXEmulatedJoystickAxisY:
-			return JOYSTICK_Move_Y(BXGameportStick1, position);
+			JOYSTICK_Move_Y(BXGameportStick1, position);
 			break;
 			
 		case BXEmulatedJoystick2AxisX:
-			return JOYSTICK_Move_X(BXGameportStick2, position);
+			JOYSTICK_Move_X(BXGameportStick2, position);
 			break;
 			
 		case BXEmulatedJoystick2AxisY:
-			return JOYSTICK_Move_Y(BXGameportStick2, position);
+			JOYSTICK_Move_Y(BXGameportStick2, position);
 			break;
 	}
 }
@@ -95,10 +98,7 @@
 - (void) axis: (BXEmulatedJoystickAxis)axis movedBy: (float)delta
 {
 	float oldPosition = [self axisPosition: axis];
-	
-	//Apply the delta and clamp the result to fit within -1.0 to +1.0
 	float newPosition = oldPosition + delta;
-	newPosition = fmaxf(fminf(newPosition, BXGameportAxisMax), BXGameportAxisMin);
 	
 	[self axis: axis movedTo: newPosition];
 }

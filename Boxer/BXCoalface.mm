@@ -299,6 +299,11 @@ void boxer_log(char const* format,...)
 }
 
 
+double boxer_realTime()
+{
+	return CFAbsoluteTimeGetCurrent();
+}
+
 
 #pragma mark -
 #pragma mark No-ops

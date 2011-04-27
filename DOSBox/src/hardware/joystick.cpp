@@ -93,6 +93,7 @@ static Bitu read_p201(Bitu port,Bitu iolen) {
 static Bitu read_p201_timed(Bitu port,Bitu iolen) {
 	Bit8u ret=0xff;
 	double currentTick = PIC_FullIndex();
+	
 	if( stick[0].enabled ){
 		if( stick[0].xtick < currentTick ) ret &=~1;
 		if( stick[0].ytick < currentTick ) ret &=~2;
@@ -128,6 +129,7 @@ static void write_p201(Bitu port,Bitu val,Bitu iolen) {
 
 }
 static void write_p201_timed(Bitu port,Bitu val,Bitu iolen) {
+	
 	// Store writetime index
 	// Axes take time = 24.2 microseconds + ( 0.011 microsecons/ohm * resistance )
 	// to reset to 0

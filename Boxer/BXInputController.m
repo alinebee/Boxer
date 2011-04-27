@@ -625,10 +625,7 @@
 #pragma mark Touch events
 
 - (void) touchesBeganWithEvent: (NSEvent *)theEvent
-{
-	//Unpause whenever the view is tapped on
-	[[self representedObject] setPaused: NO];
-	
+{	
 	if ([self _controlsCursorWhileMouseInside])
 	{
 		NSSet *touches = [theEvent touchesMatchingPhase: NSTouchPhaseTouching
@@ -665,8 +662,11 @@
 			
 			//If all fingers have now been lifted from the surface,
 			//then treat this as a proper triple-tap gesture.
-			if ([touches count])
+			if ([touches count] == 0)
 			{	
+				//Unpause when triple-tapping
+				[[self representedObject] setPaused: NO];
+				
 				BXEmulatedMouse *mouse = [self _emulatedMouse];
 			
 				[mouse buttonPressed: BXMouseButtonLeft];

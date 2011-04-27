@@ -25,7 +25,7 @@
 - (void) _syncJoystickType
 {
 	NSArray *joysticks = [[[NSApp delegate] joystickController] joystickDevices];
-	BXEmulator *emulator = [[[self controller] document] emulator];
+	BXEmulator *emulator = [[self representedObject] emulator];
 	
 	NSUInteger numJoysticks = [joysticks count];
 	if (numJoysticks > 0) [emulator attachJoystickOfType: [BXCHCombatStick class]];

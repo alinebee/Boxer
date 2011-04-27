@@ -66,7 +66,7 @@
 	
 	//Pressing ESC while in fullscreen mode and not running a program will exit fullscreen mode. 	
 	else if ([[theEvent charactersIgnoringModifiers] isEqualToString: @"\e"] &&
-		[[self controller] isFullScreen] &&
+		[[self _windowController] isFullScreen] &&
 		[[[self representedObject] emulator] isAtPrompt])
 	{
 		[NSApp sendAction: @selector(exitFullScreen:) to: nil from: self];
@@ -77,7 +77,7 @@
 	else if (![theEvent isARepeat])
 	{
 		//Unpause the emulation whenever a key is pressed.
-		[[[self controller] document] setPaused: NO];
+		[[self representedObject] setPaused: NO];
 		
 		BXDOSKeyCode key = [[self class] _DOSKeyCodeForSystemKeyCode: [theEvent keyCode]];
 		[[self _emulatedKeyboard] keyDown: key];

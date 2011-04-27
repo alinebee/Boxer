@@ -58,12 +58,12 @@
 //How much to scale mouse motion by.
 @property (assign) CGFloat mouseSensitivity;
 
-//Whether we can currently lock the mouse. This will be YES if the game supports mouse control,
-//or we're in fullscreen mode (so that we can hide the mouse cursor.)
+//Whether we can currently lock the mouse. This will be YES if the game supports mouse control
+//or we're in fullscreen mode (so that we can hide the mouse cursor), NO otherwise.
 @property (readonly) BOOL canLockMouse;
 
-//A convenience accessor for the controller of the window our view belongs to.
-@property (readonly) BXDOSWindowController *controller;
+//Whether the mouse is currently within our view.
+@property (readonly) BOOL mouseInView;
 
 #pragma mark -
 #pragma mark Methods
@@ -76,14 +76,16 @@
 //Called by our cursor animation as a delegate method.
 - (BOOL) animationShouldChangeCursor: (BXCursorFadeAnimation *)cursorAnimation;
 
-//Returns whether the mouse is currently within our view.
-- (BOOL) mouseInView;
 
 //Called by BXDOSWindowController whenever the view loses keyboard focus.
 - (void) didResignKey;
 
 //Called by BXDOSWindowController whenever the view regains keyboard focus.
 - (void) didBecomeKey;
+
+
+#pragma mark -
+#pragma mark UI actions
 
 //Lock/unlock the mouse.
 - (IBAction) toggleMouseLocked: (id)sender;

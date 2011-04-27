@@ -27,10 +27,6 @@
 @implementation BXInputController
 @synthesize mouseLocked, mouseActive, trackMouseWhileUnlocked, mouseSensitivity;
 
-- (BXDOSWindowController *) controller
-{
-	return (BXDOSWindowController *)[[[self view] window] windowController];
-}
 
 #pragma mark -
 #pragma mark Initialization and cleanup
@@ -216,7 +212,7 @@
 
 - (BOOL) mouseInView
 {
-	if ([[self controller] isFullScreen] || [self mouseLocked]) return YES;
+	if ([[self _windowController] isFullScreen] || [self mouseLocked]) return YES;
 	
 	NSPoint mouseLocation = [[[self view] window] mouseLocationOutsideOfEventStream];
 	NSPoint pointInView = [[self view] convertPoint: mouseLocation fromView: nil];
@@ -276,6 +272,117 @@
 	//Also sync the cursor state while we're at it, in case it was over the window.
 	[self cursorUpdate: nil];
 }
+
+
+#pragma mark -
+#pragma mark Mouse focus and locking 
+
+- (void) setMouseLocked: (BOOL)lock
+{	
+	//Don't continue if we're already in the right lock state
+	if (lock == [self mouseLocked]) return;
+	
+	//Don't allow the mouse to be locked unless we're the frontmost application
+	//and the game has indicated mouse support
+	if (lock && ![self canLockMouse]) return;
+	
+	[self _applyMouseLockState: lock];
+	mouseLocked = lock;
+	
+	//Let everybody know we've grabbed the mouse on behalf of our session
+	NSString *notification = (lock) ? BXSessionDidLockMouseNotification : BXSessionDidUnlockMouseNotification;
+	[[NSNotificationCenter defaultCenter] postNotificationName: notification object: [self representedObject]]; 
+}
+
+- (void) setMouseActive: (BOOL)active
+{
+	if (active != mouseActive)
+	{
+		mouseActive = active;
+		[self cursorUpdate: nil];
+		
+		//Release the mouse lock when DOS stops using the mouse, unless we're in fullscreen mode
+		if (!active && ![[self _windowController] isFullScreen]) [self setMouseLocked: NO];
+	}
+}
+
+- (void) setTrackMouseWhileUnlocked: (BOOL)track
+{	
+	if (trackMouseWhileUnlocked != track)
+	{
+		trackMouseWhileUnlocked = track;
+	
+		//If we're disabling tracking, and the mouse is currently unlocked,
+		//then warp the mouse to the center of the window as if we had just unlocked it.
+		
+		//Disabled for now because this makes the mouse jumpy and unpredictable.
+		/*
+		if (!track && ![self mouseLocked])
+			[self _syncEmulatedCursorToPointInCanvas: NSMakePoint(0.5f, 0.5f)];
+		*/
+	}
+}
+
+- (BOOL) trackMouseWhileUnlocked
+{
+	//Tweak: when in fullscreen mode, ignore the current mouse-tracking setting.
+	return trackMouseWhileUnlocked && ![[self _windowController] isFullScreen];
+}
+
+- (BOOL) canLockMouse
+{
+	if (![NSApp isActive]) return NO;
+	
+	if (![[[self view] window] isKeyWindow]) return NO;
+	
+	return ([self mouseActive] || [[self _windowController] isFullScreen]);
+}
+
+
+#pragma mark -
+#pragma mark Interface actions
+
+- (IBAction) toggleMouseLocked: (id)sender
+{
+	BOOL lock;
+	BOOL wasLocked = [self mouseLocked];
+	
+	if ([sender respondsToSelector: @selector(boolValue)]) lock = [sender boolValue];
+	else lock = !wasLocked;
+	
+	[self setMouseLocked: lock];
+	
+	//If the mouse state was actually toggled, play a sound to commemorate the occasion
+	if ([self mouseLocked] != wasLocked)
+	{
+		NSString *lockSoundName	= (wasLocked) ? @"LockOpening" : @"LockClosing";
+		[[NSApp delegate] playUISoundWithName: lockSoundName atVolume: BXMouseLockSoundVolume];
+	}
+}
+
+- (IBAction) toggleTrackMouseWhileUnlocked: (id)sender
+{
+	BOOL track = [self trackMouseWhileUnlocked];
+	[self setTrackMouseWhileUnlocked: !track];
+}
+
+- (BOOL) validateMenuItem: (NSMenuItem *)menuItem
+{
+	SEL theAction = [menuItem action];
+	
+	if (theAction == @selector(toggleMouseLocked:))
+	{
+		[menuItem setState: [self mouseLocked]];
+		return [self canLockMouse];
+	}
+	else if (theAction == @selector(toggleTrackMouseWhileUnlocked:))
+	{
+		[menuItem setState: [self trackMouseWhileUnlocked]];
+		return YES;
+	}
+	return YES;
+}
+
 
 #pragma mark -
 #pragma mark Mouse events
@@ -524,11 +631,12 @@
 	
 	if ([self _controlsCursorWhileMouseInside])
 	{
-		NSUInteger numFingers = [[theEvent touchesMatchingPhase: NSTouchPhaseTouching inView: [self view]] count];
+		NSSet *touches = [theEvent touchesMatchingPhase: NSTouchPhaseTouching
+												 inView: [self view]];
 		
 		//As soon as the user has placed three fingers onto the touch surface,
 		//start tracking for the release to detect this as a three-finger tap gesture.
-		if (numFingers == 3)
+		if ([touches count] == 3)
 		{
 			threeFingerTapStarted = [NSDate timeIntervalSinceReferenceDate];
 		}
@@ -538,14 +646,6 @@
 			threeFingerTapStarted = 0;
 		}
 	}
-}
-
-- (void) swipeWithEvent: (NSEvent *)theEvent
-{
-	//The swipe event is a three-finger gesture based on movement and so may conflict with our own.
-	//(We listen for this instead of for the touchesMovedWithEvent: message because it means we don't
-	//have to bother calculating movement deltas.)
-	threeFingerTapStarted = 0;
 }
 
 - (void) touchesEndedWithEvent: (NSEvent *)theEvent
@@ -560,12 +660,12 @@
 		}
 		else
 		{
-			NSUInteger numFingers = [[theEvent touchesMatchingPhase: NSTouchPhaseTouching
-															 inView: [self view]] count];
-		
+			NSSet *touches = [theEvent touchesMatchingPhase: NSTouchPhaseTouching
+													 inView: [self view]];
+			
 			//If all fingers have now been lifted from the surface,
 			//then treat this as a proper triple-tap gesture.
-			if (numFingers == 0)
+			if ([touches count])
 			{	
 				BXEmulatedMouse *mouse = [self _emulatedMouse];
 			
@@ -578,6 +678,14 @@
 	}
 }
 
+- (void) swipeWithEvent: (NSEvent *)theEvent
+{
+	//The swipe event is a three-finger gesture based on movement and so may conflict with our own.
+	//(We listen for this instead of for the touchesMovedWithEvent: message because it means we don't
+	//have to bother calculating movement deltas.)
+	threeFingerTapStarted = 0;
+}
+
 - (void) touchesCancelledWithEvent: (NSEvent *)theEvent
 {
 	threeFingerTapStarted = 0;
@@ -585,118 +693,9 @@
 
 
 #pragma mark -
-#pragma mark Mouse focus and locking 
-	 
-- (IBAction) toggleMouseLocked: (id)sender
-{
-	BOOL lock;
-	BOOL wasLocked = [self mouseLocked];
-	
-	if ([sender respondsToSelector: @selector(boolValue)]) lock = [sender boolValue];
-	else lock = !wasLocked;
-	
-	[self setMouseLocked: lock];
-	
-	//If the mouse state was actually toggled, play a sound to commemorate the occasion
-	if ([self mouseLocked] != wasLocked)
-	{
-		NSString *lockSoundName	= (wasLocked) ? @"LockOpening" : @"LockClosing";
-		[[NSApp delegate] playUISoundWithName: lockSoundName atVolume: BXMouseLockSoundVolume];
-	}
-}
-
-- (void) setMouseLocked: (BOOL)lock
-{	
-	//Don't continue if we're already in the right lock state
-	if (lock == [self mouseLocked]) return;
-	
-	//Don't allow the mouse to be locked unless we're the frontmost application
-	//and the game has indicated mouse support
-	if (lock && ![self canLockMouse]) return;
-	
-	[self _applyMouseLockState: lock];
-	mouseLocked = lock;
-	
-	//Let everybody know we've grabbed the mouse on behalf of our session
-	NSString *notification = (lock) ? BXSessionDidLockMouseNotification : BXSessionDidUnlockMouseNotification;
-	[[NSNotificationCenter defaultCenter] postNotificationName: notification object: [self representedObject]]; 
-}
-
-- (void) setMouseActive: (BOOL)active
-{
-	if (active != mouseActive)
-	{
-		mouseActive = active;
-		[self cursorUpdate: nil];
-		
-		//Release the mouse lock when DOS stops using the mouse, unless we're in fullscreen mode
-		if (!active && ![[self controller] isFullScreen]) [self setMouseLocked: NO];
-	}
-}
-
-- (void) setTrackMouseWhileUnlocked: (BOOL)track
-{	
-	if (trackMouseWhileUnlocked != track)
-	{
-		trackMouseWhileUnlocked = track;
-	
-		//If we're disabling tracking, and the mouse is currently unlocked,
-		//then warp the mouse to the center of the window as if we had just unlocked it.
-		
-		//Disabled for now because this makes the mouse jumpy and unpredictable.
-		/*
-		if (!track && ![self mouseLocked])
-			[self _syncEmulatedCursorToPointInCanvas: NSMakePoint(0.5f, 0.5f)];
-		*/
-	}
-}
-
-- (BOOL) trackMouseWhileUnlocked
-{
-	//Tweak: when in fullscreen mode, ignore the current mouse-tracking setting.
-	return trackMouseWhileUnlocked && ![[self controller] isFullScreen];
-}
-
-- (BOOL) canLockMouse
-{
-	if (![NSApp isActive]) return NO;
-	
-	if (![[[self view] window] isKeyWindow]) return NO;
-	
-	return ([self mouseActive] || [[self controller] isFullScreen]);
-}
-
-
-#pragma mark -
-#pragma mark Interface actions
-
-- (IBAction) toggleTrackMouseWhileUnlocked: (id)sender
-{
-	BOOL track = [self trackMouseWhileUnlocked];
-	[self setTrackMouseWhileUnlocked: !track];
-}
-
-- (BOOL) validateMenuItem: (NSMenuItem *)menuItem
-{
-	SEL theAction = [menuItem action];
-	
-	if (theAction == @selector(toggleMouseLocked:))
-	{
-		[menuItem setState: [self mouseLocked]];
-		return [self canLockMouse];
-	}
-	else if (theAction == @selector(toggleTrackMouseWhileUnlocked:))
-	{
-		[menuItem setState: [self trackMouseWhileUnlocked]];
-		return YES;
-	}
-	return YES;
-}
-
-
-#pragma mark -
 #pragma mark Private methods
 
+- (BXDOSWindowController *) _windowController	{ return [[self representedObject] DOSWindowController]; }
 - (BXEmulatedMouse *)_emulatedMouse				{ return [[[self representedObject] emulator] mouse]; }
 - (BXEmulatedKeyboard *)_emulatedKeyboard		{ return [[[self representedObject] emulator] keyboard]; }
 - (id <BXEmulatedJoystick>)_emulatedJoystick	{ return [[[self representedObject] emulator] joystick]; }
@@ -704,7 +703,7 @@
 
 - (BOOL) _windowDidResize: (NSNotification *)notification
 {
-	if (![[self controller] isFullScreen]) [self cursorUpdate: nil];
+	if (![[self _windowController] isFullScreen]) [self cursorUpdate: nil];
 }
 
 - (BOOL) _controlsCursor

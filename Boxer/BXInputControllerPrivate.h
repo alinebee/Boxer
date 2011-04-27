@@ -46,6 +46,19 @@
 
 @interface BXInputController ()
 
+#pragma mark -
+#pragma mark Convenience accessors
+
+@property (readonly) BXDOSWindowController *_windowController;
+@property (readonly) BXEmulatedKeyboard *_emulatedKeyboard;
+@property (readonly) BXEmulatedMouse *_emulatedMouse;
+@property (readonly) id <BXEmulatedJoystick> _emulatedJoystick;
+
+
+#pragma mark -
+#pragma mark Methods
+
+
 //Returns whether we should have control of the mouse cursor state.
 //This is true if the mouse is within the view, the window is key,
 //mouse input is in use by the DOS program, and the mouse is either
@@ -84,12 +97,6 @@
 //resizes (presumably because the tracking areas are being recalculated)
 - (BOOL) _windowDidResize: (NSNotification *)notification;
 
-
-//Return a reference to the emulated devices
-- (BXEmulatedKeyboard *)_emulatedKeyboard;
-- (BXEmulatedMouse *)_emulatedMouse;
-- (id <BXEmulatedJoystick>)_emulatedJoystick;
-
 @end
 
 
@@ -107,7 +114,7 @@
 //key, which are represented by event modifier flags.
 - (void) _syncModifierFlags: (NSUInteger)newModifiers;
 
-//Returns the DOS keycode constant corresponding to the specified OSX keycode
+//Returns the DOS keycode constant corresponding to the specified OSX keycode.
 + (BXDOSKeyCode) _DOSKeyCodeForSystemKeyCode: (CGKeyCode)keyCode;
 
 @end

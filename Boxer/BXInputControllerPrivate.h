@@ -12,10 +12,36 @@
 #import "BXInputController+BXKeyboardInput.h"
 #import "BXInputController+BXJoystickInput.h"
 
-#import "BXEmulatedKeyboard.h"
 #import "BXEmulator.h"
+#import "BXEmulatedKeyboard.h"
+#import "BXEmulatedJoystick.h"
+#import "BXEmulatedMouse.h"
+
 #import "BXSession.h"
 #import "BXDOSWindowController.h"
+
+
+#pragma mark -
+#pragma mark Constants for configuring behaviour
+
+//The number of seconds it takes for the cursor to fade out after entering the window.
+//Cursor animation is flickery so a small duration helps mask this.
+#define BXCursorFadeDuration 0.4
+
+//The framerate at which to animate the cursor fade.
+//15fps is as fast as is really noticeable.
+#define BXCursorFadeFrameRate 15.0f
+
+//If the cursor is warped less than this distance (relative to a 0.0->1.0 square canvas) then
+//the OS X cursor will not be warped to match. Because OS X cursor warping introduces a slight
+//input delay, we use this tolerance to ignore small warps.
+#define BXCursorWarpTolerance 0.1f
+
+//The volume level at which we'll play the lock/unlock sound effects.
+#define BXMouseLockSoundVolume 0.7f
+
+//The maximum length a touch-then-release can last in order to be considered a tap.
+#define BXTapDurationThreshold 0.3f
 
 
 @interface BXInputController ()
@@ -41,7 +67,7 @@
 
 //Responds to the emulator moving the mouse cursor,
 //either in response to our own signals or of its own accord.
-- (void) _emulatorCursorMovedToPointInCanvas: (NSPoint)point;
+- (void) _emulatedCursorMovedToPointInCanvas: (NSPoint)point;
 
 //Warps the OS X cursor to the specified point on our virtual mouse canvas.
 //Used when locking and unlocking the mouse and when DOS warps the mouse.
@@ -50,13 +76,19 @@
 //Warps the DOS cursor to the specified point on our virtual mouse canvas.
 //Used when unlocking the mouse while unlocked mouse tracking is disabled,
 //to remove any latent mouse input from a leftover mouse position.
-- (void) _syncDOSCursorToPointInCanvas: (NSPoint)pointInCanvas;
+- (void) _syncEmulatedCursorToPointInCanvas: (NSPoint)pointInCanvas;
 
 
 //Forces a cursor update whenever the window changes size. This works
 //around a bug whereby the current cursor resets whenever the window
 //resizes (presumably because the tracking areas are being recalculated)
 - (BOOL) _windowDidResize: (NSNotification *)notification;
+
+
+//Return a reference to the emulated devices
+- (BXEmulatedKeyboard *)_emulatedKeyboard;
+- (BXEmulatedMouse *)_emulatedMouse;
+- (id <BXEmulatedJoystick>)_emulatedJoystick;
 
 @end
 
@@ -70,9 +102,6 @@
 
 
 @interface BXInputController (BXKeyboardInputInternals)
-
-//Return a reference to the emulated keyboard
-- (BXEmulatedKeyboard *)_keyboard;
 
 //Resynchronises the current state of the Shift, Ctrl, Alt, CapsLock etc.
 //key, which are represented by event modifier flags.

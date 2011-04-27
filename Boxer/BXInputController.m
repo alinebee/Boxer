@@ -7,40 +7,20 @@
 
 
 #import "BXInputControllerPrivate.h"
-#import "BXEventConstants.h"
-#import "BXInputHandler.h"
-#import "BXEmulator.h"
 #import "BXAppController.h"
+#import "BXSession.h"
 #import "BXJoystickController.h"
 #import "BXGeometry.h"
 #import "BXCursorFadeAnimation.h"
 #import "BXDOSWindowController.h"
-#import "BXSession.h"
 #import "BXPostLeopardAPIs.h"
 
+#import "BXEventConstants.h"
 
-#pragma mark -
-#pragma mark Constants for configuring behaviour
-
-//The number of seconds it takes for the cursor to fade out after entering the window.
-//Cursor animation is flickery so a small duration helps mask this.
-#define BXCursorFadeDuration 0.4
-
-//The framerate at which to animate the cursor fade.
-//15fps is as fast as is really noticeable.
-#define BXCursorFadeFrameRate 15.0f
-
-//If the cursor is warped less than this distance (relative to a 0.0->1.0 square canvas) then
-//the OS X cursor will not be warped to match. Because OS X cursor warping introduces a slight
-//input delay, we use this tolerance to ignore small warps.
-#define BXCursorWarpTolerance 0.1f
-
-//The volume level at which we'll play the lock/unlock sound effects.
-#define BXMouseLockSoundVolume 0.7f
-
-//The maximum length a touch-then-release can last in order to be considered a tap.
-#define BXTapDurationThreshold 0.3f
-
+#import "BXEmulator.h"
+#import "BXEmulatedMouse.h"
+#import "BXEmulatedKeyboard.h"
+#import "BXEmulatedJoystick.h"
 
 
 
@@ -62,7 +42,7 @@
 	trackMouseWhileUnlocked = YES;
 	
 	//DOSBox-triggered cursor warp distances which fit within this deadzone will be ignored
-	//to prevent needless input delays. q.v. _emulatorCursorMovedToPointInCanvas:
+	//to prevent needless input delays. q.v. _emulatedCursorMovedToPointInCanvas:
 	cursorWarpDeadzone = NSInsetRect(NSZeroRect, -BXCursorWarpTolerance, -BXCursorWarpTolerance);
 	
 	//The extent of our relative mouse canvas. Mouse coordinates passed to DOSBox will be
@@ -120,34 +100,36 @@
 	[super dealloc];
 }
 
-
-- (void) setRepresentedObject: (BXInputHandler *)representedObject
+- (BXSession *)representedObject
 {
-	if (representedObject != [self representedObject])
+	return (BXSession *)[super representedObject];
+}
+
+- (void) setRepresentedObject: (BXSession *)session
+{
+	BXSession *previousSession = [self representedObject];
+	if (session != previousSession)
 	{
-		//Bind our sensitivity and tracking options to the session's own settings
-		id session = [[self controller] document];
 		BXJoystickController *joystickController = [[NSApp delegate] joystickController];
-			
-		if ([self representedObject])
+		
+		if (previousSession)
 		{
 			[self unbind: @"mouseSensitivity"];
 			[self unbind: @"trackMouseWhileUnlocked"];
 			[self unbind: @"mouseActive"];
-			[[self representedObject] removeObserver: self forKeyPath: @"mousePosition"];
 			
-			[session removeObserver: self forKeyPath: @"paused"];
-			[session removeObserver: self forKeyPath: @"autoPaused"];
+			[previousSession removeObserver: self forKeyPath: @"paused"];
+			[previousSession removeObserver: self forKeyPath: @"autoPaused"];
+			[previousSession removeObserver: self forKeyPath: @"emulator.mouse.position"];
 			
 			[joystickController removeObserver: self forKeyPath: @"joystickDevices"];
-			
 			
 			[self didResignKey];
 		}
 		
-		[super setRepresentedObject: representedObject];
+		[super setRepresentedObject: session];
 		
-		if (representedObject)
+		if (session)
 		{
 			NSDictionary *trackingOptions = [NSDictionary dictionaryWithObject: [NSNumber numberWithBool: YES]
 																		forKey: NSNullPlaceholderBindingOption];
@@ -161,14 +143,9 @@
 		   withKeyPath: @"gameSettings.mouseSensitivity"
 			   options: sensitivityOptions];
 			
-			[self bind: @"mouseActive" toObject: representedObject
-		   withKeyPath: @"mouseActive"
+			[self bind: @"mouseActive" toObject: session
+		   withKeyPath: @"emulator.mouse.active"
 			   options: nil];
-			
-			[representedObject addObserver: self
-								forKeyPath: @"mousePosition"
-								   options: 0
-								   context: nil];
 			
 			[session addObserver: self
 					  forKeyPath: @"paused"
@@ -180,12 +157,20 @@
 						 options: NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld
 						 context: nil];
 			
+			[session addObserver: self
+					  forKeyPath: @"emulator.mouse.position"
+						 options: NSKeyValueObservingOptionInitial
+						 context: nil];
+			
 			[joystickController addObserver: self
 								 forKeyPath: @"joystickDevices"
 									options: NSKeyValueObservingOptionInitial
 									context: nil];
 			
-			[[self _keyboard] setActiveLayout: [[self class] keyboardLayoutForCurrentInputMethod]];
+			//Set the DOS keyboard layout to match the current OS X layout as best as possible
+			//TODO: listen for input source changes
+			NSString *bestLayoutMatch = [[self class] keyboardLayoutForCurrentInputMethod];
+			[[self _emulatedKeyboard] setActiveLayout: bestLayoutMatch];
 			
 			[self didBecomeKey];
 		}
@@ -197,10 +182,12 @@
 						 change: (NSDictionary *)change
 						context: (void *)context
 {
-	if (!updatingMousePosition && [keyPath isEqualToString: @"mousePosition"])
+	//Ignore mouse position updates if we know we were the ones that moved the mouse
+	if (!updatingMousePosition && [keyPath isEqualToString: @"emulator.mouse.position"])
 	{
+		NSPoint mousePosition = [[self _emulatedMouse] position];
 		//Ensure we're synced to the OS X cursor whenever the emulator's mouse position changes
-		[self _emulatorCursorMovedToPointInCanvas: [object mousePosition]];
+		[self _emulatedCursorMovedToPointInCanvas: mousePosition];
 	}
 	
 	//Tweak: we used to observe just the @suspended key, but that meant we'd resign key
@@ -223,7 +210,7 @@
 	}
 }
 
-	
+
 #pragma mark -
 #pragma mark Cursor and event state handling
 
@@ -268,9 +255,10 @@
 - (void) didResignKey
 {
 	[self setMouseLocked: NO];
-	[[self _keyboard] clearInput];
-	[[self representedObject] releaseMouseInput];
-	//[[self representedObject] releaseJoystickInput];
+	
+	[[self _emulatedKeyboard] clearInput];
+	[[self _emulatedMouse] clearInput];
+	[[self _emulatedJoystick] clearInput];
 	
 	simulatedMouseButtons = BXNoMouseButtonsMask;
 	threeFingerTapStarted = 0;
@@ -279,7 +267,6 @@
 - (void) didBecomeKey
 {
 	//Account for any changes to key modifier flags while we didn't have keyboard focus.
-	
 	//IMPLEMENTATION NOTE CGEventSourceFlagsState returns the currently active modifiers
 	//outside of the event stream. It works the same as the 10.6-only NSEvent +modifierFlags,
 	//but is available on 10.5 and includes side-specific Shift, Ctrl and Alt flags.
@@ -295,14 +282,14 @@
 
 - (void) mouseDown: (NSEvent *)theEvent
 {
-	//Unpause the emulation whenever the view is clicked on
-	[[[self controller] document] setPaused: NO];
+	//Unpause whenever the view is clicked on
+	[[self representedObject] setPaused: NO];
 	
 	//Only respond to clicks if we're locked or tracking mouse input while unlocked
 	if ([self _controlsCursorWhileMouseInside])
 	{
-		BXInputHandler *inputHandler = (BXInputHandler *)[self representedObject];
-
+		BXEmulatedMouse *mouse = [self _emulatedMouse];
+		
 		NSUInteger modifiers = [theEvent modifierFlags];
 		BOOL optModified	= (modifiers & NSAlternateKeyMask) > 0;
 		BOOL ctrlModified	= (modifiers & NSControlKeyMask) > 0;
@@ -317,32 +304,34 @@
 		else if (optModified && ctrlModified)
 		{
 			simulatedMouseButtons |= BXMouseButtonLeftAndRightMask;
-			[inputHandler mouseButtonPressed: BXMouseButtonLeft withModifiers: modifiers];
-			[inputHandler mouseButtonPressed: BXMouseButtonRight withModifiers: modifiers];
+			[mouse buttonDown: BXMouseButtonLeft];
+			[mouse buttonDown: BXMouseButtonRight];
 		}
 		
 		//Ctrl-clicking simulates a right mouse-click
 		else if (ctrlModified)
 		{
 			simulatedMouseButtons |= BXMouseButtonRightMask;
-			[inputHandler mouseButtonPressed: BXMouseButtonRight withModifiers: modifiers];
+			[mouse buttonDown: BXMouseButtonRight];
 		}
 		
 		//Opt-clicking simulates a middle mouse-click
 		else if (optModified)
 		{
 			simulatedMouseButtons |= BXMouseButtonMiddleMask;
-			[inputHandler mouseButtonPressed: BXMouseButtonMiddle withModifiers: modifiers];
+			[mouse buttonDown: BXMouseButtonMiddle];
 		}
 		
 		//Otherwise, pass the left click on as-is
-		else [inputHandler mouseButtonPressed: BXMouseButtonLeft withModifiers: modifiers];
+		else [mouse buttonDown: BXMouseButtonLeft];
 	}
+	
 	//A single click on the window will lock the mouse if unlocked-tracking is disabled or we're in fullscreen mode
 	else if (![self trackMouseWhileUnlocked])
 	{
 		[self toggleMouseLocked: self];
 	}
+	
 	//Otherwise, let the mouse event pass on unmolested
 	else
 	{
@@ -352,13 +341,12 @@
 
 - (void) rightMouseDown: (NSEvent *)theEvent
 {
-	//Unpause the emulation whenever the view is clicked on
-	[[[self controller] document] setPaused: NO];
+	//Unpause whenever the view is clicked on
+	[[self representedObject] setPaused: NO];
 	
 	if ([self _controlsCursorWhileMouseInside])
 	{
-		[[self representedObject] mouseButtonPressed: BXMouseButtonRight
-									   withModifiers: [theEvent modifierFlags]];
+		[[self _emulatedMouse] buttonDown: BXMouseButtonRight];
 	}
 	else
 	{
@@ -368,13 +356,12 @@
 
 - (void) otherMouseDown: (NSEvent *)theEvent
 {
-	//Unpause the emulation whenever the view is clicked on
-	[[[self controller] document] setPaused: NO];
+	//Unpause whenever the view is clicked on
+	[[self representedObject] setPaused: NO];
 	
 	if ([self _controlsCursorWhileMouseInside] && [theEvent buttonNumber] == BXMouseButtonMiddle)
 	{
-		[[self representedObject] mouseButtonPressed: BXMouseButtonMiddle
-									   withModifiers: [theEvent modifierFlags]];
+		[[self _emulatedMouse] buttonDown: BXMouseButtonMiddle];
 	}
 	else
 	{
@@ -386,24 +373,23 @@
 {
 	if ([self _controlsCursorWhileMouseInside])
 	{
-		id inputHandler = [self representedObject];
-		NSUInteger modifiers = [theEvent modifierFlags];
+		BXEmulatedMouse *mouse = [self _emulatedMouse];
 		
 		if (simulatedMouseButtons != BXNoMouseButtonsMask)
 		{
 			if ((simulatedMouseButtons & BXMouseButtonLeftMask) == BXMouseButtonLeftMask)
-				[inputHandler mouseButtonReleased: BXMouseButtonLeft withModifiers: modifiers];
+				[mouse buttonUp: BXMouseButtonLeft];
 			
 			if ((simulatedMouseButtons & BXMouseButtonRightMask) == BXMouseButtonRightMask)
-				[inputHandler mouseButtonReleased: BXMouseButtonRight withModifiers: modifiers];
+				[mouse buttonUp: BXMouseButtonRight];
 			
 			if ((simulatedMouseButtons & BXMouseButtonMiddleMask) == BXMouseButtonMiddleMask)
-				[inputHandler mouseButtonReleased: BXMouseButtonMiddle withModifiers: modifiers];
+				[mouse buttonUp: BXMouseButtonMiddle];
 			
 			simulatedMouseButtons = BXNoMouseButtonsMask;
 		}
 		//Pass the mouse release as-is to our input handler
-		else [inputHandler mouseButtonReleased: BXMouseButtonLeft withModifiers: modifiers];
+		else [mouse buttonUp: BXMouseButtonLeft];
 	}
 	else
 	{
@@ -415,8 +401,7 @@
 {
 	if ([self _controlsCursorWhileMouseInside])
 	{
-		[[self representedObject] mouseButtonReleased: BXMouseButtonRight
-										withModifiers: [theEvent modifierFlags]];
+		[[self _emulatedMouse] buttonUp: BXMouseButtonRight];
 	}
 	else
 	{
@@ -430,8 +415,7 @@
 	//Only pay attention to the middle mouse button; all others can do as they will
 	if ([theEvent buttonNumber] == BXMouseButtonMiddle && [self _controlsCursorWhileMouseInside])
 	{
-		[[self representedObject] mouseButtonReleased: BXMouseButtonMiddle
-										withModifiers: [theEvent modifierFlags]];
+		[[self _emulatedMouse] buttonUp: BXMouseButtonMiddle];
 	}		
 	else
 	{
@@ -488,22 +472,22 @@
 			delta.y *= mouseSensitivity;
 		}
 		
-		//Tells _emulatorCursorMovedToPointInCanvas: not to warp the mouse cursor based on
-		//DOSBox mouse position updates from this call.
+		//Ensures we ignore any cursor-moved notifications from the emulator as a result of this call.
 		updatingMousePosition = YES;
 		
-		[[self representedObject] mouseMovedToPoint: pointOnCanvas
-										   byAmount: delta
-										   onCanvas: canvas
-										whileLocked: [self mouseLocked]];
+		[[self _emulatedMouse] movedTo: pointOnCanvas
+									by: delta
+							  onCanvas: canvas
+						   whileLocked: [self mouseLocked]];
 		
-		//Resume paying attention to mouse position updates
+		//Resume paying attention to mouse position updates.
 		updatingMousePosition = NO;
 	}
 	else
 	{
 		[super mouseMoved: theEvent];
 	}
+	
 	//Always reset our internal warp tracking after every mouse movement event,
 	//even if the event is not handled.
 	distanceWarped = NSZeroPoint;
@@ -535,6 +519,9 @@
 
 - (void) touchesBeganWithEvent: (NSEvent *)theEvent
 {
+	//Unpause whenever the view is tapped on
+	[[self representedObject] setPaused: NO];
+	
 	if ([self _controlsCursorWhileMouseInside])
 	{
 		NSUInteger numFingers = [[theEvent touchesMatchingPhase: NSTouchPhaseTouching inView: [self view]] count];
@@ -573,17 +560,17 @@
 		}
 		else
 		{
-			NSUInteger numFingers = [[theEvent touchesMatchingPhase: NSTouchPhaseTouching inView: [self view]] count];
+			NSUInteger numFingers = [[theEvent touchesMatchingPhase: NSTouchPhaseTouching
+															 inView: [self view]] count];
 		
 			//If all fingers have now been lifted from the surface,
 			//then treat this as a proper triple-tap gesture.
 			if (numFingers == 0)
 			{	
-				BXInputHandler *handler = [self representedObject];
-				NSUInteger modifiers = [theEvent modifierFlags];
+				BXEmulatedMouse *mouse = [self _emulatedMouse];
 			
-				[handler mouseButtonClicked: BXMouseButtonLeft withModifiers: modifiers];
-				[handler mouseButtonClicked: BXMouseButtonRight withModifiers: modifiers];
+				[mouse buttonPressed: BXMouseButtonLeft];
+				[mouse buttonPressed: BXMouseButtonRight];
 				
 				threeFingerTapStarted = 0;
 			}
@@ -618,6 +605,71 @@
 	}
 }
 
+- (void) setMouseLocked: (BOOL)lock
+{	
+	//Don't continue if we're already in the right lock state
+	if (lock == [self mouseLocked]) return;
+	
+	//Don't allow the mouse to be locked unless we're the frontmost application
+	//and the game has indicated mouse support
+	if (lock && ![self canLockMouse]) return;
+	
+	[self _applyMouseLockState: lock];
+	mouseLocked = lock;
+	
+	//Let everybody know we've grabbed the mouse on behalf of our session
+	NSString *notification = (lock) ? BXSessionDidLockMouseNotification : BXSessionDidUnlockMouseNotification;
+	[[NSNotificationCenter defaultCenter] postNotificationName: notification object: [self representedObject]]; 
+}
+
+- (void) setMouseActive: (BOOL)active
+{
+	if (active != mouseActive)
+	{
+		mouseActive = active;
+		[self cursorUpdate: nil];
+		
+		//Release the mouse lock when DOS stops using the mouse, unless we're in fullscreen mode
+		if (!active && ![[self controller] isFullScreen]) [self setMouseLocked: NO];
+	}
+}
+
+- (void) setTrackMouseWhileUnlocked: (BOOL)track
+{	
+	if (trackMouseWhileUnlocked != track)
+	{
+		trackMouseWhileUnlocked = track;
+	
+		//If we're disabling tracking, and the mouse is currently unlocked,
+		//then warp the mouse to the center of the window as if we had just unlocked it.
+		
+		//Disabled for now because this makes the mouse jumpy and unpredictable.
+		/*
+		if (!track && ![self mouseLocked])
+			[self _syncEmulatedCursorToPointInCanvas: NSMakePoint(0.5f, 0.5f)];
+		*/
+	}
+}
+
+- (BOOL) trackMouseWhileUnlocked
+{
+	//Tweak: when in fullscreen mode, ignore the current mouse-tracking setting.
+	return trackMouseWhileUnlocked && ![[self controller] isFullScreen];
+}
+
+- (BOOL) canLockMouse
+{
+	if (![NSApp isActive]) return NO;
+	
+	if (![[[self view] window] isKeyWindow]) return NO;
+	
+	return ([self mouseActive] || [[self controller] isFullScreen]);
+}
+
+
+#pragma mark -
+#pragma mark Interface actions
+
 - (IBAction) toggleTrackMouseWhileUnlocked: (id)sender
 {
 	BOOL track = [self trackMouseWhileUnlocked];
@@ -641,58 +693,14 @@
 	return YES;
 }
 
-- (void) setMouseLocked: (BOOL)lock
-{	
-	//Don't continue if we're already in the right lock state
-	if (lock == [self mouseLocked]) return;
-	
-	//Don't allow the mouse to be locked unless we're the frontmost application
-	//and the game has indicated mouse support
-	if (lock && ![self canLockMouse]) return;
-	
-	[self _applyMouseLockState: lock];
-	mouseLocked = lock;
-	
-	//Let everybody know we've grabbed the mouse
-	NSString *notification = (lock) ? BXSessionDidLockMouseNotification : BXSessionDidUnlockMouseNotification;
-	id session = [[self controller] document];
-	
-	[[NSNotificationCenter defaultCenter] postNotificationName: notification object: session]; 
-}
-
-- (void) setMouseActive: (BOOL)active
-{
-	mouseActive = active;
-	[self cursorUpdate: nil];
-	//Release the mouse lock when the game stops using the mouse, unless we're in fullscreen mode
-	if (!active && ![[self controller] isFullScreen]) [self setMouseLocked: NO];
-}
-
-- (void) setTrackMouseWhileUnlocked: (BOOL)track
-{	
-	trackMouseWhileUnlocked = track;
-	
-	//If we're disabling tracking, and the mouse is currently unlocked,
-	//then warp the mouse to the center of the window as if we had just unlocked it.
-	
-	//Disabled for now because this makes the mouse jumpy and unpredictable.
-	if (NO && !track && ![self mouseLocked])
-		[self _syncDOSCursorToPointInCanvas: NSMakePoint(0.5f, 0.5f)];
-}
-
-- (BOOL) trackMouseWhileUnlocked
-{
-	//Tweak: when in fullscreen mode, ignore the current mouse-tracking setting.
-	return trackMouseWhileUnlocked && ![[self controller] isFullScreen];
-}
-
-- (BOOL) canLockMouse
-{
-	return [NSApp isActive] && [[[self view] window] isKeyWindow] && ([self mouseActive] || [[self controller] isFullScreen]); 
-}
 
 #pragma mark -
 #pragma mark Private methods
+
+- (BXEmulatedMouse *)_emulatedMouse				{ return [[[self representedObject] emulator] mouse]; }
+- (BXEmulatedKeyboard *)_emulatedKeyboard		{ return [[[self representedObject] emulator] keyboard]; }
+- (id <BXEmulatedJoystick>)_emulatedJoystick	{ return [[[self representedObject] emulator] joystick]; }
+
 
 - (BOOL) _windowDidResize: (NSNotification *)notification
 {
@@ -701,12 +709,19 @@
 
 - (BOOL) _controlsCursor
 {
-	return [self _controlsCursorWhileMouseInside] && [[[self view] window] isKeyWindow] && [self mouseInView];
+	if (![self _controlsCursorWhileMouseInside]) return NO;
+	
+	if (![[[self view] window] isKeyWindow]) return NO;
+	
+	return [self mouseInView];
 }
 
 - (BOOL) _controlsCursorWhileMouseInside
 {
-	return [self mouseActive] && ([self mouseLocked] || [self trackMouseWhileUnlocked]) && ![[[self controller] document] isSuspended];
+	if (![self mouseActive]) return NO;
+	if ([[self representedObject] isSuspended]) return NO;
+	
+	return ([self mouseLocked] || [self trackMouseWhileUnlocked]);
 }
 
 - (NSPoint) _pointOnScreen: (NSPoint)canvasPoint
@@ -766,14 +781,14 @@
 			NSPoint mouseLocation = [NSEvent mouseLocation];
 			NSPoint canvasLocation = [self _pointInCanvas: mouseLocation];
 			
-			[self _syncDOSCursorToPointInCanvas: canvasLocation];
+			[self _syncEmulatedCursorToPointInCanvas: canvasLocation];
 		}
 	}
 	else
 	{
 		//If we're unlocking the mouse, then sync the OS X mouse cursor
 		//to wherever DOSBox's cursor is located within the view.
-		NSPoint mousePosition = [[self representedObject] mousePosition];
+		NSPoint mousePosition = [[self _emulatedMouse] position];
 		
 		//Constrain the cursor position to slightly inset within the view:
 		//This ensures the mouse doesn't appear outside the view or right
@@ -782,20 +797,23 @@
 		
 		[self _syncOSXCursorToPointInCanvas: mousePosition];
 		
+		
 		//If we don't track the mouse while unlocked, then also tell DOSBox
 		//to warp the mouse to the center of the canvas; this will prevent
 		//the leftover position from latently causing unintended input
 		//(such as scrolling or turning).
 		
 		//Disabled for now because this makes the mouse jumpy and unpredictable.
-		if (NO && ![self trackMouseWhileUnlocked])
+		/*
+		if (![self trackMouseWhileUnlocked])
 		{
-			[self _syncDOSCursorToPointInCanvas: NSMakePoint(0.5f, 0.5f)];
+			[self _syncEmulatedCursorToPointInCanvas: NSMakePoint(0.5f, 0.5f)];
 		}
+		 */
 	}
 }
 
-- (void) _emulatorCursorMovedToPointInCanvas: (NSPoint)pointInCanvas
+- (void) _emulatedCursorMovedToPointInCanvas: (NSPoint)pointInCanvas
 {	
 	//If the mouse warped of its own accord, and we have control of the cursor,
 	//then sync the OS X mouse cursor to match DOSBox's.
@@ -842,12 +860,14 @@
 	CGWarpMouseCursorPosition(cgPointOnScreen);
 }
 
-- (void) _syncDOSCursorToPointInCanvas: (NSPoint)pointInCanvas
+- (void) _syncEmulatedCursorToPointInCanvas: (NSPoint)pointInCanvas
 {
-	NSPoint delta = deltaFromPointToPoint([[self representedObject] mousePosition], pointInCanvas);
-	[[self representedObject] mouseMovedToPoint: pointInCanvas
-									   byAmount: delta
-									   onCanvas: [[self view] bounds]
-									whileLocked: NO];
+	BXEmulatedMouse *mouse = [self _emulatedMouse];
+	NSPoint mousePosition = [mouse position];
+	NSPoint delta = deltaFromPointToPoint(mousePosition, pointInCanvas);
+	[mouse movedTo: pointInCanvas
+				by: delta
+		  onCanvas: [[self view] bounds]
+	   whileLocked: NO];
 }
 @end

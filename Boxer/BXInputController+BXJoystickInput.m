@@ -7,10 +7,8 @@
 
 
 #import "BXInputControllerPrivate.h"
-#import "BXInputHandler.h"
 #import "BXAppController.h"
 #import "BXJoystickController.h"
-#import "BXEmulatedJoystick.h"
 #import <IOKit/hid/IOHIDLib.h>
 
 
@@ -24,11 +22,6 @@
 
 @implementation BXInputController (BXJoystickInput)
 
-- (id <BXEmulatedJoystick>) _joystick
-{
-	return [[[[self controller] document] emulator] joystick];
-}
-
 - (void) _syncJoystickType
 {
 	NSArray *joysticks = [[[NSApp delegate] joystickController] joystickDevices];
@@ -41,8 +34,7 @@
 
 - (void) HIDJoystickButtonDown: (BXHIDEvent *)event
 {
-	//BXInputHandler *handler = [self representedObject];
-	id <BXEmulatedJoystick> joystick = [self _joystick];
+	id <BXEmulatedJoystick> joystick = [self _emulatedJoystick];
 	
 	switch ([event buttonNumber])
 	{
@@ -75,8 +67,7 @@
 
 - (void) HIDJoystickButtonUp: (BXHIDEvent *)event
 {
-	//BXInputHandler *handler = [self representedObject];
-	id <BXEmulatedJoystick> joystick = [self _joystick];
+	id <BXEmulatedJoystick> joystick = [self _emulatedJoystick];
 	
 	switch ([event buttonNumber])
 	{
@@ -109,8 +100,7 @@
 
 - (void) HIDJoystickAxisChanged: (BXHIDEvent *)event
 {
-	//BXInputHandler *handler = [self representedObject];
-	id <BXEmulatedJoystick> joystick = [self _joystick];
+	id <BXEmulatedJoystick> joystick = [self _emulatedJoystick];
 	NSInteger position = [event axisPosition];
 	
 	//If the current position of the axis falls within the deadzone, then set it to 0
@@ -163,7 +153,7 @@
 
 - (void) HIDJoystickPOVSwitchChanged: (BXHIDEvent *)event
 {
-	id <BXEmulatedJoystick> joystick = [self _joystick];
+	id <BXEmulatedJoystick> joystick = [self _emulatedJoystick];
 	if ([joystick respondsToSelector: @selector(POVChangedTo:)])
 	{
 		BXEmulatedPOVDirection direction = (BXEmulatedPOVDirection)[event POVDirection];

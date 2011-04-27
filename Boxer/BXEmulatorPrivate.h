@@ -10,12 +10,13 @@
 //implementation file.
 
 #import "BXEmulator.h"
+#import "BXEmulatorDelegate.h"
 #import "BXEmulator+BXShell.h"
 #import "BXEmulator+BXDOSFileSystem.h"
-#import "BXInputHandler.h"
 #import "BXVideoHandler.h"
 #import "BXEmulatedKeyboard.h"
 #import "BXEmulatedJoystick.h"
+#import "BXEmulatedMouse.h"
 
 
 class DOS_Shell;

@@ -80,7 +80,7 @@
 		[[[self controller] document] setPaused: NO];
 		
 		BXDOSKeyCode key = [[self class] _DOSKeyCodeForSystemKeyCode: [theEvent keyCode]];
-		[[self _keyboard] keyDown: key];
+		[[self _emulatedKeyboard] keyDown: key];
 	}
 }
 
@@ -96,7 +96,7 @@
 	else
 	{
 		BXDOSKeyCode key = [[self class] _DOSKeyCodeForSystemKeyCode: [theEvent keyCode]];
-		[[self _keyboard] keyUp: key];
+		[[self _emulatedKeyboard] keyUp: key];
 	}
 }
 
@@ -110,42 +110,37 @@
 #pragma mark -
 #pragma mark Simulating keyboard events
 
-- (IBAction) sendF1:	(id)sender	{ [[self _keyboard] keyPressed: KBD_f1]; }
-- (IBAction) sendF2:	(id)sender	{ [[self _keyboard] keyPressed: KBD_f2]; }
-- (IBAction) sendF3:	(id)sender	{ [[self _keyboard] keyPressed: KBD_f3]; }
-- (IBAction) sendF4:	(id)sender	{ [[self _keyboard] keyPressed: KBD_f4]; }
-- (IBAction) sendF5:	(id)sender	{ [[self _keyboard] keyPressed: KBD_f5]; }
-- (IBAction) sendF6:	(id)sender	{ [[self _keyboard] keyPressed: KBD_f6]; }
-- (IBAction) sendF7:	(id)sender	{ [[self _keyboard] keyPressed: KBD_f7]; }
-- (IBAction) sendF8:	(id)sender	{ [[self _keyboard] keyPressed: KBD_f8]; }
-- (IBAction) sendF9:	(id)sender	{ [[self _keyboard] keyPressed: KBD_f9]; }
-- (IBAction) sendF10:	(id)sender	{ [[self _keyboard] keyPressed: KBD_f10]; }
-- (IBAction) sendF11:	(id)sender	{ [[self _keyboard] keyPressed: KBD_f11]; }
-- (IBAction) sendF12:	(id)sender	{ [[self _keyboard] keyPressed: KBD_f12]; }
+- (IBAction) sendF1:	(id)sender	{ [[self _emulatedKeyboard] keyPressed: KBD_f1]; }
+- (IBAction) sendF2:	(id)sender	{ [[self _emulatedKeyboard] keyPressed: KBD_f2]; }
+- (IBAction) sendF3:	(id)sender	{ [[self _emulatedKeyboard] keyPressed: KBD_f3]; }
+- (IBAction) sendF4:	(id)sender	{ [[self _emulatedKeyboard] keyPressed: KBD_f4]; }
+- (IBAction) sendF5:	(id)sender	{ [[self _emulatedKeyboard] keyPressed: KBD_f5]; }
+- (IBAction) sendF6:	(id)sender	{ [[self _emulatedKeyboard] keyPressed: KBD_f6]; }
+- (IBAction) sendF7:	(id)sender	{ [[self _emulatedKeyboard] keyPressed: KBD_f7]; }
+- (IBAction) sendF8:	(id)sender	{ [[self _emulatedKeyboard] keyPressed: KBD_f8]; }
+- (IBAction) sendF9:	(id)sender	{ [[self _emulatedKeyboard] keyPressed: KBD_f9]; }
+- (IBAction) sendF10:	(id)sender	{ [[self _emulatedKeyboard] keyPressed: KBD_f10]; }
+- (IBAction) sendF11:	(id)sender	{ [[self _emulatedKeyboard] keyPressed: KBD_f11]; }
+- (IBAction) sendF12:	(id)sender	{ [[self _emulatedKeyboard] keyPressed: KBD_f12]; }
 
-- (IBAction) sendHome:		(id)sender { [[self _keyboard] keyPressed: KBD_home]; }
-- (IBAction) sendEnd:		(id)sender { [[self _keyboard] keyPressed: KBD_end]; }
-- (IBAction) sendPageUp:	(id)sender { [[self _keyboard] keyPressed: KBD_pageup]; }
-- (IBAction) sendPageDown:	(id)sender { [[self _keyboard] keyPressed: KBD_pagedown]; }
+- (IBAction) sendHome:		(id)sender { [[self _emulatedKeyboard] keyPressed: KBD_home]; }
+- (IBAction) sendEnd:		(id)sender { [[self _emulatedKeyboard] keyPressed: KBD_end]; }
+- (IBAction) sendPageUp:	(id)sender { [[self _emulatedKeyboard] keyPressed: KBD_pageup]; }
+- (IBAction) sendPageDown:	(id)sender { [[self _emulatedKeyboard] keyPressed: KBD_pagedown]; }
 
-- (IBAction) sendInsert:	(id)sender { [[self _keyboard] keyPressed: KBD_insert]; }
-- (IBAction) sendDelete:	(id)sender { [[self _keyboard] keyPressed: KBD_delete]; }
-- (IBAction) sendPause:		(id)sender { [[self _keyboard] keyPressed: KBD_pause]; }
+- (IBAction) sendInsert:	(id)sender { [[self _emulatedKeyboard] keyPressed: KBD_insert]; }
+- (IBAction) sendDelete:	(id)sender { [[self _emulatedKeyboard] keyPressed: KBD_delete]; }
+- (IBAction) sendPause:		(id)sender { [[self _emulatedKeyboard] keyPressed: KBD_pause]; }
 //TODO: should we be sending a key combo here?
-- (IBAction) sendBreak:		(id)sender { [[self _keyboard] keyPressed: KBD_pause]; }
+- (IBAction) sendBreak:		(id)sender { [[self _emulatedKeyboard] keyPressed: KBD_pause]; }
 
-- (IBAction) sendNumLock:		(id)sender { [[self _keyboard] keyPressed: KBD_numlock]; }
-- (IBAction) sendScrollLock:	(id)sender { [[self _keyboard] keyPressed: KBD_scrolllock]; }
-- (IBAction) sendPrintScreen:	(id)sender { [[self _keyboard] keyPressed: KBD_printscreen]; }
+- (IBAction) sendNumLock:		(id)sender { [[self _emulatedKeyboard] keyPressed: KBD_numlock]; }
+- (IBAction) sendScrollLock:	(id)sender { [[self _emulatedKeyboard] keyPressed: KBD_scrolllock]; }
+- (IBAction) sendPrintScreen:	(id)sender { [[self _emulatedKeyboard] keyPressed: KBD_printscreen]; }
 
 
 #pragma mark -
 #pragma mark Private methods
-
-- (BXEmulatedKeyboard *)_keyboard
-{
-	return [[[[self controller] document] emulator] keyboard];
-}
 
 - (void) _syncModifierFlags: (NSUInteger)newModifiers
 {	
@@ -194,7 +189,7 @@
 			//events when both the left and right version of a key were pressed at the same time.
 			if (isPressed != wasPressed)
 			{
-				BXEmulatedKeyboard *keyboard = [self _keyboard];
+				BXEmulatedKeyboard *keyboard = [self _emulatedKeyboard];
 				
 				//Special handling for capslock key: whenever the flag is toggled,
 				//act like the key was pressed and then released shortly after.

@@ -12,6 +12,7 @@
 #import "BXSession+BXEmulatorControls.h"
 #import "BXSession+BXFileManager.h"
 
+
 @class BXEmulatorConfiguration;
 @class BXCloseAlert;
 @class BXDrive;

@@ -6,7 +6,6 @@
  */
 
 #import "BXEmulatorPrivate.h"
-#import "BXEmulatorDelegate.h"
 
 #import "BXDrive.h"
 #import "NSString+BXPaths.h"

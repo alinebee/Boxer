@@ -6,11 +6,9 @@
  */
 
 #import "BXEmulatorPrivate.h"
-#import "BXEmulatorDelegate.h"
 
 #import "BXDrive.h"
 #import "BXValueTransformers.h"
-#import "BXInputHandler.h"
 #import "BXAppController.h"
 
 #import "shell.h"
@@ -450,6 +448,9 @@ nil];
 							   [NSString stringWithCString: dosPath encoding: BXDirectStringEncoding],
 							   nil];
 	
+	//IMPLEMENTATION NOTE: we activate the mouse as soon as any program starts,
+	//regardless of whether the game claims to support the mouse or not.
+	[[self mouse] setActive: YES];
 	[self setProcessPath: fullDOSPath];
 	[self setProcessLocalPath: localPath];
 	
@@ -492,7 +493,7 @@ nil];
 
 - (void) _didReturnToShell
 {
-	[[self inputHandler] setMouseActive: NO];
+	[[self mouse] setActive: NO];
 	[self _postNotificationName: BXEmulatorDidReturnToShellNotification
 			   delegateSelector: @selector(emulatorDidReturnToShell:)
 					   userInfo: nil];

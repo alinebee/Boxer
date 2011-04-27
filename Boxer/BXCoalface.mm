@@ -258,14 +258,14 @@ const char * boxer_currentDOSKeyboardLayout()
 void boxer_setMouseActive(bool mouseActive)
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	[[emulator inputHandler] setMouseActive: mouseActive];
+	[[emulator mouse] setActive: mouseActive];
 }
 
 void boxer_mouseMovedToPoint(float x, float y)
 {
 	NSPoint point = NSMakePoint((CGFloat)x, (CGFloat)y);
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	[[emulator inputHandler] setMousePosition: point];
+	[[emulator mouse] setPosition: point];
 }
 
 bool boxer_capsLockEnabled()

@@ -19,7 +19,6 @@
 
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulator.h"
-#import "BXInputHandler.h"
 #import "BXVideoHandler.h"
 
 #import "BXSession+BXDragDrop.h"
@@ -107,7 +106,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	if (document)
 	{
 		[programPanelController setRepresentedObject: document];
-		[inputController setRepresentedObject: [[document emulator] inputHandler]];
+		[inputController setRepresentedObject: document];
 	}
 }
 

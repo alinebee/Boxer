@@ -15,7 +15,7 @@
 
 @class BXCursorFadeAnimation;
 @class BXDOSWindowController;
-@class BXInputHandler;
+@class BXSession;
 
 @interface BXInputController : NSViewController
 #if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_5
@@ -68,8 +68,9 @@
 #pragma mark -
 #pragma mark Methods
 
-//Overridden to specify the class expected for our represented object
-- (void) setRepresentedObject: (BXInputHandler *)representedObject;
+//Overridden to declare the class expected for our represented object
+- (BXSession *)representedObject;
+- (void) setRepresentedObject: (BXSession *)session;
 
 //Returns whether the specified cursor animation should continue.
 //Called by our cursor animation as a delegate method.

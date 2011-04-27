@@ -44,19 +44,19 @@ extern NSStringEncoding BXDisplayStringEncoding;	//Used for strings that will be
 extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings that must be preserved raw
 
 
-@class BXInputHandler;
 @class BXVideoHandler;
 @class BXEmulatedKeyboard;
-@protocol BXEmulatedJoystick;
+@class BXEmulatedMouse;
 
+@protocol BXEmulatedJoystick;
 @protocol BXEmulatorDelegate;
 
 @interface BXEmulator : NSObject
 {
 	id <BXEmulatorDelegate> delegate;
-	BXInputHandler *inputHandler;
 	BXVideoHandler *videoHandler;
 	BXEmulatedKeyboard *keyboard;
+	BXEmulatedMouse *mouse;
 	id <BXEmulatedJoystick> joystick;
 	
 	NSString *processName;
@@ -81,9 +81,9 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 //The delegate responsible for this emulator.
 @property (assign, nonatomic) id <BXEmulatorDelegate> delegate;
 
-@property (readonly, nonatomic) BXInputHandler *inputHandler;	//Our DOSBox input handler.
 @property (readonly, nonatomic) BXVideoHandler *videoHandler;	//Our DOSBox video and rendering handler.
 @property (readonly, nonatomic) BXEmulatedKeyboard *keyboard;	//Our emulated keyboard.
+@property (readonly, nonatomic) BXEmulatedMouse *mouse;			//Our emulated mouse.
 @property (readonly, nonatomic) id <BXEmulatedJoystick> joystick;	//Our emulated joystick. Initially empty.
 
 //An array of OS X paths to configuration files that will be/have been loaded by this session during startup.

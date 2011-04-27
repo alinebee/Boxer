@@ -6,7 +6,6 @@
  */
 
 #import "BXEmulatorPrivate.h"
-#import "BXEmulatorDelegate.h"
 
 #import <SDL/SDL.h>
 #import "cpu.h"
@@ -76,7 +75,8 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 @synthesize delegate;
 @synthesize configFiles;
 @synthesize commandQueue;
-@synthesize inputHandler, videoHandler, keyboard, joystick;
+@synthesize videoHandler;
+@synthesize mouse, keyboard, joystick;
 @synthesize cancelled, executing;
 
 
@@ -174,11 +174,11 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 		commandQueue		= [[NSMutableArray alloc] initWithCapacity: 4];
 		driveCache			= [[NSMutableDictionary alloc] initWithCapacity: DOS_DRIVES];
 		
-		inputHandler		= [[BXInputHandler alloc] init];
 		videoHandler		= [[BXVideoHandler alloc] init];
+		
+		mouse				= [[BXEmulatedMouse alloc] init];
 		keyboard			= [[BXEmulatedKeyboard alloc] init];
 		
-		[inputHandler setEmulator: self];
 		[videoHandler setEmulator: self];
 	}
 	return self;
@@ -188,8 +188,9 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 {	
 	[self setProcessName: nil],	[processName release];
 	
-	[inputHandler release], inputHandler = nil;
 	[videoHandler release], videoHandler = nil;
+	
+	[mouse release],	mouse = nil;
 	[keyboard release], keyboard = nil;
 	[joystick release], joystick = nil;
 	
@@ -442,25 +443,31 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 
 - (id <BXEmulatedJoystick>) attachJoystickOfType: (Class)joystickType
 {
-	//A joystick is already connected
-	//TODO: replace it?
-	if (joystick) return NO;
-	
+	//TODO: can we test this at the signature level?
 	if ([joystickType conformsToProtocol: @protocol(BXEmulatedJoystick)])
 	{
+		//A joystick is already connected, remove it first
+		if (joystick) [self detachJoystick];
+		
+		[self willChangeValueForKey: @"joystick"];
 		joystick = [[joystickType alloc] init];
+		[self didChangeValueForKey: @"joystick"];
+		
 		[joystick didConnect];
 		return joystick;
 	}
+	return nil;
 }
 
 - (BOOL) detachJoystick
 {
 	if (!joystick) return NO;
 	
+	[self willChangeValueForKey: @"joystick"];
 	[joystick willDisconnect];
 	[joystick release];
 	joystick = nil;
+	[self didChangeValueForKey: @"joystick"];
 	
 	return YES;
 }

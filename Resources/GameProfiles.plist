@@ -81,6 +81,17 @@
 
 		<dict>
 			<key>BXProfileName</key>
+			<string>Pro Pinball- Timeshock</string>
+			<key>BXProfileConf</key>
+			<string>Pro Pinball- Timeshock</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>shock8.exe</string>
+			</array>
+		</dict>
+		
+		<dict>
+			<key>BXProfileName</key>
 			<string>System Shock</string>
 			<key>BXProfileTelltales</key>
 			<array>

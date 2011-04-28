@@ -97,7 +97,9 @@
 {
 	static NSSet *patterns = nil;
 	if (!patterns) patterns = [[NSSet alloc] initWithObjects:
-							   @"\\.ico$",							//Windows icon files
+							   //FIX: disabled because some games (e.g. Halloween Harry) actually rely on .ICO files
+							   //@"\\.ico$",						//Windows icon files
+							   
 							   @"\\.pif$",							//Windows PIF files
 							   @"\\.conf$",							//DOSBox configuration files
 							   @"(^|/)dosbox",						//Anything DOSBox-related

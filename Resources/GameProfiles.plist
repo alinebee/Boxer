@@ -436,11 +436,13 @@
 			<array>
 				<string>One Must Fall</string>
 				<string>Theme Park</string>
+				<string>Halloween Harry</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>omf.exe</string>
 				<string>park.bat</string>
+				<string>harry.sb0</string>
 			</array>
 		</dict>
 		<dict>

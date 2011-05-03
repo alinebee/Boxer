@@ -398,17 +398,27 @@
 		BXEmulatedMouse *mouse = [self _emulatedMouse];
 		
 		NSUInteger modifiers = [theEvent modifierFlags];
+		
 		BOOL optModified	= (modifiers & NSAlternateKeyMask) > 0;
 		BOOL ctrlModified	= (modifiers & NSControlKeyMask) > 0;
 		BOOL cmdModified	= (modifiers & NSCommandKeyMask) > 0;
-			
+		BOOL fnModified		= (modifiers & NSFunctionKeyMask) > 0;
+		
+		//Whether to allow Ctrl- and Opt-clicking to simulate different mouse buttons
+		BOOL buttonShortcutsEnabled = [[NSUserDefaults standardUserDefaults] boolForKey: @"enableMouseButtonShortcuts"];
+		
+		//Holding down the fn key temporarily inverts the behaviour of the button shortcuts
+		if (fnModified) buttonShortcutsEnabled = !buttonShortcutsEnabled;
+		
+		
 		//Cmd-clicking toggles mouse-locking
 		if (cmdModified)
 		{
 			[self toggleMouseLocked: self];
-		}	
-		//Ctrl-Opt-clicking simulates a simultaneous left- and right-click
-		else if (optModified && ctrlModified)
+		}
+		
+		//Ctrl+Opt-clicking simulates clicking both buttons simultaneously
+		else if (optModified && ctrlModified && buttonShortcutsEnabled)
 		{
 			simulatedMouseButtons |= BXMouseButtonLeftAndRightMask;
 			[mouse buttonDown: BXMouseButtonLeft];
@@ -416,20 +426,20 @@
 		}
 		
 		//Ctrl-clicking simulates a right mouse-click
-		else if (ctrlModified)
+		else if (ctrlModified && buttonShortcutsEnabled)
 		{
 			simulatedMouseButtons |= BXMouseButtonRightMask;
 			[mouse buttonDown: BXMouseButtonRight];
 		}
 		
 		//Opt-clicking simulates a middle mouse-click
-		else if (optModified)
+		else if (optModified && buttonShortcutsEnabled)
 		{
 			simulatedMouseButtons |= BXMouseButtonMiddleMask;
 			[mouse buttonDown: BXMouseButtonMiddle];
 		}
 		
-		//Otherwise, pass the left click on as-is
+		//Otherwise, pass the left click on to the emulator as-is
 		else [mouse buttonDown: BXMouseButtonLeft];
 	}
 	

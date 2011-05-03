@@ -2,29 +2,37 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>savedRecordingsPath</key>
-	<string>~/Desktop</string>
 	<key>startUpInFullScreen</key>
 	<false/>
+	
 	<key>statusBarShown</key>
 	<true/>
-	<key>windowSnapDistance</key>
-	<integer>64</integer>
+	
 	<key>filterType</key>
 	<integer>0</integer>
+	
 	<key>aspectCorrected</key>
 	<true/>
+	
 	<key>initialInspectorPanelIndex</key>
 	<integer>1</integer>
+	
 	<key>toolkitDriveLetter</key>
 	<string>Y</string>
+	
 	<key>temporaryDriveLetter</key>
 	<string>X</string>
+	
 	<key>startupAction</key>
 	<integer>1</integer>
+	
 	<key>applyShelfAppearance</key>
 	<false/>
+	
 	<key>useBinCueErrorCorrection</key>
 	<false/>
+	
+	<key>enableMouseButtonShortcuts</key>
+	<true/>
 </dict>
 </plist>

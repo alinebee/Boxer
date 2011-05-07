@@ -504,6 +504,7 @@
 			<array>
 				<string>CyberJudas</string>
 				<string>CyberLaw</string>
+				<string>Metaltech: Earthsiege</string>
 				<string>Games using the HMI sound library</string>
 			</array>
 			<key>BXProfileTelltales</key>
@@ -511,6 +512,7 @@
 				<string>cj08.fnt</string>
 				<string>t15_95.dat</string>
 				<string>hmidrv.386</string>
+				<string>es.m50</string>
 			</array>
 		</dict>
 		<dict>

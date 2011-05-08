@@ -17,7 +17,7 @@
 #define BXAdditiveAxisStrength 0.1f
 
 //Default to a 25% deadzone.
-#define BXAxisDeadzone 0.25f
+#define BXAxisDeadzone 0.25f * DDHID_JOYSTICK_VALUE_MAX
 
 
 @implementation BXInputController (BXJoystickInput)
@@ -115,41 +115,65 @@
 - (void) HIDJoystickAxisChanged: (BXHIDEvent *)event
 {
 	id <BXEmulatedJoystick> joystick = [self _emulatedJoystick];
+	DDHidElement *element = [event element];
 	NSInteger position = [event axisPosition];
+
 	
-	//The DOS API takes a floating-point range from -1.0 to +1.0
-	float fPosition = (float)position / (float)DDHID_JOYSTICK_VALUE_MAX;
+	//Check if the axis is unidirectional like a trigger;
+	//if so, map the axis to a range of -65536->0 instead of -65536->65536,
+	//where the axis's resting value will be at 0.
 	
-	//Clamp axis value to 0 if it is within the deadzone
-	if (ABS(fPosition) - BXAxisDeadzone < 0.0f) fPosition = 0.0f;
-	
-	switch ([event axis])
+	BOOL isUniDirectional = ![element minValue] || ![element maxValue];
+	if (isUniDirectional)
 	{
-		case kHIDUsage_GD_X:
-			[joystick axis: BXEmulatedJoystickAxisX movedTo: fPosition];
-			break;
-			
-		case kHIDUsage_GD_Y:
-			[joystick axis: BXEmulatedJoystickAxisY movedTo: fPosition];
-			break;
-			
-		case kHIDUsage_GD_Rx:
-		case kHIDUsage_GD_Z:
-			[joystick axis: BXEmulatedJoystick2AxisX movedTo: fPosition];
-			break;
-			
-		case kHIDUsage_GD_Ry:
-		case kHIDUsage_GD_Rz:
-			[joystick axis: BXEmulatedJoystick2AxisY movedTo: fPosition];
-			break;
+		position = -(DDHID_JOYSTICK_VALUE_MAX + position) / 2.0f;
+	}
+	
+	//Clamp axis value to 0 if it is within the deadzone.
+	if (ABS(position) - BXAxisDeadzone < 0) position = 0;
+	
+	
+	//If the normalized deadzoned position hasn't changed since last time,
+	//then ignore this event.
+	//(This prevents spurious updates from clobbering other inputs, in the
+	//case where multiple inputs are mapped to the same emulated axis.)
+	
+	NSNumber *hash			= [NSNumber numberWithUnsignedInt: [element cookieAsUnsigned]];
+	NSNumber *currentValue	= [NSNumber numberWithInteger: position];
+	NSNumber *lastValue		= [lastJoystickValues objectForKey: hash];
+	
+	if (![lastValue isEqualToNumber: currentValue])
+	{
+		//The DOS API takes a floating-point range from -1.0 to +1.0.
+		float fPosition = (float)position / (float)DDHID_JOYSTICK_VALUE_MAX;
 		
-		case kHIDUsage_GD_Slider:
-			if ([joystick respondsToSelector:@selector(throttleMovedTo:)])
-			{
-				//Invert the throttle axis
-				[(id)joystick throttleMovedTo: -fPosition];
-			}
-			break;
+		switch ([event axis])
+		{
+			case kHIDUsage_GD_X:
+				[joystick axis: BXEmulatedJoystickAxisX movedTo: fPosition];
+				break;
+				
+			case kHIDUsage_GD_Y:
+				[joystick axis: BXEmulatedJoystickAxisY movedTo: fPosition];
+				break;
+				
+			case kHIDUsage_GD_Rx:
+			case kHIDUsage_GD_Z:
+				[joystick axis: BXEmulatedJoystick2AxisX movedTo: fPosition];
+				break;
+				
+			case kHIDUsage_GD_Ry:
+			case kHIDUsage_GD_Rz:
+				[joystick axis: BXEmulatedJoystick2AxisY movedTo: fPosition];
+				break;
+			
+			case kHIDUsage_GD_Slider:
+				if ([joystick respondsToSelector: @selector(throttleMovedTo:)])
+					[(id)joystick throttleMovedTo: fPosition];
+				break;
+		}
+		
+		[lastJoystickValues setObject: currentValue forKey: hash];
 	}
 }
 

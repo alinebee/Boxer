@@ -33,6 +33,9 @@
 
 - (void) awakeFromNib
 {	
+	//Initialize the joystick value tracking dictionary to an empty dictionary
+	lastJoystickValues = [[NSMutableDictionary alloc] initWithCapacity: 15];
+	
 	//Initialize mouse sensitivity and tracking options to a suitable default
 	mouseSensitivity = 1.0f;
 	trackMouseWhileUnlocked = YES;
@@ -92,6 +95,7 @@
 {
 	[cursorFade stopAnimation];
 	[cursorFade release], cursorFade = nil;
+	[lastJoystickValues release], lastJoystickValues = nil;
 	
 	[super dealloc];
 }
@@ -207,8 +211,14 @@
 		}
 	}
 	
-	else if ([keyPath isEqualToString: @"joystickDevices"] ||
-			 [keyPath isEqualToString: @"emulator.joystickSupport"])
+	else if ([keyPath isEqualToString: @"joystickDevices"])
+	{
+		[lastJoystickValues removeAllObjects];
+		[self _syncJoystickType];
+		
+	}
+	
+	else if ([keyPath isEqualToString: @"emulator.joystickSupport"])
 	{
 		[self _syncJoystickType];
 	}

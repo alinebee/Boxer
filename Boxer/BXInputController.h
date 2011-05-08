@@ -41,6 +41,8 @@
 	NSTimeInterval threeFingerTapStarted;
 	
 	NSUInteger lastModifiers;
+	
+	NSMutableDictionary *lastJoystickValues;
 }
 
 #pragma mark -

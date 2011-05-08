@@ -609,6 +609,35 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 #pragma mark -
 #pragma mark Emulator delegate methods and notifications
 
+- (void) emulatorDidInitialize: (NSNotification *)notification
+{
+	//Flag that we are now officially emulating.
+	//We wait until now because at this point the emulator is in
+	//a properly initialized state, and can respond properly to
+	//commands and settings changes.
+	//TODO: move this decision off to the emulator itself.
+	[self setEmulating: YES];
+}
+
+- (void) emulatorDidFinish: (NSNotification *)notification
+{
+	//Flag that we're no longer emulating
+	[self setEmulating: NO];
+	
+	//Clear our drive and program caches (suppressing notifications)
+	[self setActiveProgramPath: nil];
+	
+	showDriveNotifications = NO;
+	[self setDrives: nil];
+	showDriveNotifications = YES;
+
+	//Clear the final rendered frame
+	[[self DOSWindowController] updateWithFrame: nil];
+	
+	//Close the document once we're done, if desired
+	if ([self _shouldCloseOnEmulatorExit]) [self close];
+}
+
 //If we have not already performed our own configuration, do so now
 - (void) runPreflightCommandsForEmulator: (BXEmulator *)theEmulator
 {
@@ -624,13 +653,6 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		
 		//Flag that we have completed our initial game configuration.
 		hasConfigured = YES;
-	
-		//Flag that we are now officially emulating.
-		//We wait until now because at this point the emulator is in
-		//a properly initialized state, and can respond properly to
-		//commands and settings changes.
-		//TODO: move this decision off to the emulator itself.
-		[self setEmulating: YES];
 	}
 }
 
@@ -891,24 +913,6 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	
 	//Start up the emulator itself.
 	[[self emulator] start];
-	//This method will block until completion, so everything following this occurs after the emulator has shut down.
-	
-	
-	//Flag that we're no longer emulating
-	//(This will have been set to YES in runPreflightCommands)
-	[self setEmulating: NO];
-	
-	//Clear our drive and program caches (suppressing notifications)
-	[self setActiveProgramPath: nil];
-	showDriveNotifications = NO;
-	[self setDrives: nil];
-	showDriveNotifications = YES;
-
-	//Clear the final rendered frame
-	[[self DOSWindowController] updateWithFrame: nil];
-	
-	//Close the document once we're done, if desired
-	if ([self _shouldCloseOnEmulatorExit]) [self close];
 }
 
 - (void) _loadDOSBoxConfigurations

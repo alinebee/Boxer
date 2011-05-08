@@ -24,11 +24,25 @@
 
 - (void) _syncJoystickType
 {
-	NSArray *joysticks = [[[NSApp delegate] joystickController] joystickDevices];
 	BXEmulator *emulator = [[self representedObject] emulator];
+	BXJoystickSupportLevel support = [emulator joystickSupport];
 	
+	if (support == BXNoJoystickSupport)
+	{
+		[emulator detachJoystick];
+		return;
+	}
+	
+	NSArray *joysticks = [[[NSApp delegate] joystickController] joystickDevices];
 	NSUInteger numJoysticks = [joysticks count];
-	if (numJoysticks > 0) [emulator attachJoystickOfType: [BXCHCombatStick class]];
+	
+	if (numJoysticks > 0)
+	{
+		Class joystickClass = (support == BXJoystickSupportSimple) ? [BX2AxisJoystick class] : [BX4AxisJoystick class];
+		
+		if (![[emulator joystick] isKindOfClass: joystickClass])
+			[emulator attachJoystickOfType: joystickClass];
+	}
 	else [emulator detachJoystick];
 }
 
@@ -103,15 +117,11 @@
 	id <BXEmulatedJoystick> joystick = [self _emulatedJoystick];
 	NSInteger position = [event axisPosition];
 	
-	//If the current position of the axis falls within the deadzone, then set it to 0
-	
 	//The DOS API takes a floating-point range from -1.0 to +1.0
 	float fPosition = (float)position / (float)DDHID_JOYSTICK_VALUE_MAX;
 	
 	//Clamp axis value to 0 if it is within the deadzone
 	if (ABS(fPosition) - BXAxisDeadzone < 0.0f) fPosition = 0.0f;
-	
-	//NSLog(@"Axis %@ position: %f", [event element], fPosition);
 	
 	switch ([event axis])
 	{
@@ -132,15 +142,7 @@
 		case kHIDUsage_GD_Rz:
 			[joystick axis: BXEmulatedJoystick2AxisY movedTo: fPosition];
 			break;
-			/*
-			if (position != 0)
-			{
-				delta = fPosition * BXAdditiveAxisStrength;
-				return [handler joystickAxisChanged: BXDOSFlightstickThrottleAxis byAmount: -delta];
-			}
-			else return;
-			 */
-			
+		
 		case kHIDUsage_GD_Slider:
 			if ([joystick respondsToSelector:@selector(throttleMovedTo:)])
 			{

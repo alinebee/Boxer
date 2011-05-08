@@ -26,6 +26,7 @@ enum {
 	BXSpeedFixed	= NO,
 	BXSpeedAuto		= YES
 };
+typedef BOOL BXSpeedMode;
 
 enum {
 	BXCoreUnknown	= -1,
@@ -34,9 +35,20 @@ enum {
 	BXCoreSimple	= 2,
 	BXCoreFull		= 3
 };
-
-typedef BOOL BXSpeedMode;
 typedef NSInteger BXCoreMode;
+
+enum {
+	BXGameportTimingPollBased = NO,
+	BXGameportTimingClockBased = YES
+};
+typedef BOOL BXGameportTimingMode;
+
+enum {
+	BXNoJoystickSupport = 0,
+	BXJoystickSupportSimple,
+	BXJoystickSupportFull
+};
+typedef NSUInteger BXJoystickSupportLevel;
 
 
 //C string encodings, used by BXShell executeCommand:encoding: and executeCommand:withArgumentString:encoding:
@@ -76,7 +88,7 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 
 
 #pragma mark -
-#pragma mark Members
+#pragma mark Properties
 
 //The delegate responsible for this emulator.
 @property (assign, nonatomic) id <BXEmulatorDelegate> delegate;
@@ -93,14 +105,18 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 //An array of queued command strings to execute on the DOS command line.
 @property (readonly, nonatomic) NSMutableArray *commandQueue;
 
+//The OS X filesystem path to which the emulator should resolve relative local filesystem paths.
+//This is used by DOSBox commands like MOUNT, IMGMOUNT and CONFIG, and is directly equivalent
+//to the current process's working directory.
+@property (copy, nonatomic) NSString *basePath;
 
 #pragma mark -
 #pragma mark Introspecting emulation state
 
-//Whether the emulator is currently running/cancelled respectively. Mirrors interface of NSOperation.
-//The setters are for internal use only and should not be called outside of BXEmulator.
-@property (assign, nonatomic, getter=isExecuting) BOOL executing;
-@property (assign, nonatomic, getter=isCancelled) BOOL cancelled;
+//Whether the emulator is currently running/cancelled respectively.
+//Mirrors interface of NSOperation.
+@property (readonly, nonatomic, getter=isExecuting) BOOL executing;
+@property (readonly, nonatomic, getter=isCancelled) BOOL cancelled;
 
 //Whether DOSBox is currently running a process.
 @property (readonly, nonatomic) BOOL isRunningProcess;
@@ -114,24 +130,20 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 //Returns whether DOSBox is waiting patiently at the DOS prompt doing nothing.
 @property (readonly, nonatomic) BOOL isAtPrompt;
 
-
-//The following three accessors are intended to be readonly;
-//they are only left as read-write for BXEmulator categories.
-
 //The name of the currently-executing DOSBox process. Will be nil if no process is running.
-@property (copy, nonatomic) NSString *processName;
+@property (readonly, copy, nonatomic) NSString *processName;
 
 //The DOS filesystem path of the currently-executing DOSBox process.
 //Will be nil if no process is running.
-@property (copy, nonatomic) NSString *processPath;
+@property (readonly, copy, nonatomic) NSString *processPath;
 
 //The local filesystem path of the currently-executing DOSBox process.
 //Will be nil if no process is running or if the process is on an image or DOSBox-internal drive.
-@property (copy, nonatomic) NSString *processLocalPath;
+@property (readonly, copy, nonatomic) NSString *processLocalPath;
 
 
 #pragma mark -
-#pragma mark Controlling emulation state
+#pragma mark Controlling emulation settings
 
 //The current fixed CPU speed.
 @property (assign, nonatomic) NSInteger fixedSpeed;
@@ -142,10 +154,11 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 //The current CPU core mode.
 @property (assign, nonatomic) BXCoreMode coreMode;
 
-//The OS X filesystem path to which the emulator should resolve relative local filesystem paths.
-//This is used by DOSBox commands like MOUNT, IMGMOUNT and CONFIG, and is directly equivalent
-//to the current process's working directory.
-@property (copy, nonatomic) NSString *basePath;
+//The current gameport timing mode.
+@property (assign, nonatomic) BXGameportTimingMode gameportTimingMode;
+
+//The game's joystick support.
+@property (readonly, nonatomic) BXJoystickSupportLevel joystickSupport;
 
 
 #pragma mark -
@@ -193,7 +206,7 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 
 
 #pragma mark -
-#pragma mark Managing emulated devices
+#pragma mark Managing gameport devices
 
 //Attach an emulated joystick of the specified BXEmulatedJoystick subclass.
 //Will return the new joystick if it was created and attached successfully,

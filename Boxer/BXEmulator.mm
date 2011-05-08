@@ -12,6 +12,7 @@
 #import "control.h"
 #import "shell.h"
 #import "mapper.h"
+#import "joystick.h"
 
 
 #pragma mark -
@@ -30,15 +31,25 @@ NSString * const shellProcessName = @"DOSBOX";
 
 
 //BXEmulatorDelegate constants, defined here for want of somewhere better to put them.
-NSString * const BXEmulatorDidBeginGraphicalContextNotification		= @"BXEmulatorDidBeginGraphicalContextNotification";
-NSString * const BXEmulatorDidFinishGraphicalContextNotification	= @"BXEmulatorDidFinishGraphicalContextNotification";
+
+NSString * const BXEmulatorWillStartNotification					= @"BXEmulatorWillStartNotification";
+NSString * const BXEmulatorDidInitializeNotification				= @"BXEmulatorDidInitializeNotification";
 NSString * const BXEmulatorWillRunStartupCommandsNotification		= @"BXEmulatorWillRunStartupCommandsNotification";
 NSString * const BXEmulatorDidRunStartupCommandsNotification		= @"BXEmulatorDidRunStartupCommandsNotification";
-NSString * const BXEmulatorDidCreateFileNotification				= @"BXEmulatorDidCreateFileNotification";
-NSString * const BXEmulatorDidRemoveFileNotification				= @"BXEmulatorDidRemoveFileNotification";
+NSString * const BXEmulatorDidFinishNotification					= @"BXEmulatorDidFinishNotification";
+
 NSString * const BXEmulatorWillStartProgramNotification				= @"BXEmulatorWillStartProgramNotification";
 NSString * const BXEmulatorDidFinishProgramNotification				= @"BXEmulatorDidFinishProgramNotification";
 NSString * const BXEmulatorDidReturnToShellNotification				= @"BXEmulatorDidReturnToShellNotification";
+
+NSString * const BXEmulatorDidBeginGraphicalContextNotification		= @"BXEmulatorDidBeginGraphicalContextNotification";
+NSString * const BXEmulatorDidFinishGraphicalContextNotification	= @"BXEmulatorDidFinishGraphicalContextNotification";
+
+NSString * const BXEmulatorDidChangeEmulationStateNotification		= @"BXEmulatorDidChangeEmulationStateNotification";
+
+NSString * const BXEmulatorDidCreateFileNotification				= @"BXEmulatorDidCreateFileNotification";
+NSString * const BXEmulatorDidRemoveFileNotification				= @"BXEmulatorDidRemoveFileNotification";
+
 
 
 //Use for strings that should be displayed to the user
@@ -439,7 +450,36 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 
 
 #pragma mark -
-#pragma mark Managing devices
+#pragma mark Gameport emulation
+
+- (BXGameportTimingMode) gameportTimingMode
+{
+	return (BXGameportTimingMode)gameport_timed;
+}
+
+- (void) setGameportTimingMode: (BXGameportTimingMode)mode
+{
+	if (gameport_timed != mode)
+	{
+		gameport_timed = mode;
+		[[self joystick] clearInput];
+	}
+}
+
+- (BXJoystickSupportLevel) joystickSupport
+{
+	switch (joytype)
+	{
+		case JOY_NONE:
+			return BXNoJoystickSupport;
+			break;
+		case JOY_2AXIS:
+			return BXJoystickSupportSimple;
+			break;
+		default:
+			return BXJoystickSupportFull;
+	}
+}
 
 - (id <BXEmulatedJoystick>) attachJoystickOfType: (Class)joystickType
 {
@@ -510,11 +550,6 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 {
 	if ([self isExecuting])
 	{
-		//Let the delegate know that the emulation state has changed behind its back, so it can re-check CPU settings
-		[self _postNotificationName: @"BXEmulationStateDidChange"
-				   delegateSelector: @selector(emulatorDidChangeEmulationState:)
-						   userInfo: nil];
-		
 		[self willChangeValueForKey: @"fixedSpeed"];
 		[self willChangeValueForKey: @"autoSpeed"];
 		[self willChangeValueForKey: @"frameskip"];
@@ -525,13 +560,45 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 		[self didChangeValueForKey: @"frameskip"];
 		[self didChangeValueForKey: @"coreMode"];
 		
-		
 		NSString *newProcessName = [NSString stringWithCString: RunningProgram encoding: BXDirectStringEncoding];
 		if ([newProcessName isEqualToString: shellProcessName]) newProcessName = nil;
 		[self setProcessName: newProcessName];
+		
+		//Let the delegate know that the emulation state has changed behind its back, so it can re-check CPU settings
+		[self _postNotificationName: BXEmulatorDidChangeEmulationStateNotification
+				   delegateSelector: @selector(emulatorDidChangeEmulationState:)
+						   userInfo: nil];
 	}
 }
 
+- (void) _willStart
+{
+	[self _postNotificationName: BXEmulatorWillStartNotification
+			   delegateSelector: @selector(emulatorWillStart:)
+					   userInfo: nil];
+}
+
+- (void) _didInitialize
+{
+	//These flags will only change during initialization
+	[self willChangeValueForKey: @"gameportTimingMode"];
+	[self willChangeValueForKey: @"joystickSupport"];
+	
+	[self didChangeValueForKey: @"gameportTimingMode"];
+	[self didChangeValueForKey: @"joystickSupport"];
+	
+	//Let the delegate know that the emulation state has changed behind its back, so it can re-check CPU settings
+	[self _postNotificationName: BXEmulatorDidInitializeNotification
+			   delegateSelector: @selector(emulatorDidInitialize:)
+					   userInfo: nil];
+}
+
+- (void) _didFinish
+{
+	[self _postNotificationName: BXEmulatorDidFinishNotification
+			   delegateSelector: @selector(emulatorDidFinish:)
+					   userInfo: nil];
+}
 
 #pragma mark -
 #pragma mark Runloop handling
@@ -559,7 +626,9 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 //This is a cut-down and mashed-up version of DOSBox's old main and GUI_StartUp functions,
 //chopping out all the stuff that Boxer doesn't need or want.
 - (void) _startDOSBox
-{	
+{
+	[self _willStart];
+	
 	//Initialize the SDL modules that DOSBox will need.
 	NSAssert1(!SDL_Init(SDL_INIT_AUDIO|SDL_INIT_TIMER|SDL_INIT_CDROM|SDL_INIT_NOPARACHUTE),
 			  @"SDL failed to initialize with the following error: %s", SDL_GetError());
@@ -587,6 +656,8 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 		//Initialise the configuration.
 		control->Init();
 		
+		[self _didInitialize];
+		
 		//Start up the main machine.
 		control->StartUp();
 	}
@@ -607,6 +678,8 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	
 	//Clean up after DOSBox finishes
 	[[self videoHandler] shutdown];
+	
+	[self _didFinish];
 }
 
 @end

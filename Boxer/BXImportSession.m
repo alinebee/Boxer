@@ -1164,21 +1164,19 @@
 	[[self DOSWindowController] exitFullScreen: self];
 }
 
-
-#pragma mark -
-#pragma mark Private internal methods
-
-- (void) _startEmulator
+- (void) emulatorDidFinish: (NSNotification *)notification
 {
-	[super _startEmulator];
+	[super emulatorDidFinish: notification];
 	
 	//Once the emulation session finishes, continue importing (if we're not doing so already)
-	//Also hide the Inspector panel if it was open
 	if (![emulator isCancelled] && [self importStage] == BXImportSessionRunningInstaller)
 	{
 		[self finishInstaller];
 	}
 }
+
+#pragma mark -
+#pragma mark Private internal methods
 
 - (BOOL) _shouldAutoPause
 {

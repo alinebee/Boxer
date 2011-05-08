@@ -30,6 +30,18 @@ typedef struct BXDriveGeometry {
 } BXDriveGeometry;
 
 
+@interface BXEmulator()
+
+//Overridden to add setters for internal use
+@property (readwrite, nonatomic, getter=isExecuting) BOOL executing;
+@property (readwrite, nonatomic, getter=isCancelled) BOOL cancelled;
+@property (readwrite, copy, nonatomic) NSString *processName;
+@property (readwrite, copy, nonatomic) NSString *processPath;
+@property (readwrite, copy, nonatomic) NSString *processLocalPath;
+
+@end
+
+
 @interface BXEmulator (BXEmulatorInternals)
 
 - (DOS_Shell *) _currentShell;
@@ -53,6 +65,12 @@ typedef struct BXDriveGeometry {
 //Called by DOSBox whenever it changes states we care about. This resyncs BXEmulator's
 //cached notions of the DOSBox state, and posts notifications for relevant properties.
 - (void) _didChangeEmulationState;
+
+//Called at various points throughout the emulator's lifecycle, to send notifications
+//to our emulator delegate.
+- (void) _willStart;
+- (void) _didInitialize;
+- (void) _didFinish;
 
 @end
 

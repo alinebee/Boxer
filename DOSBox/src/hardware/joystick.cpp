@@ -49,7 +49,11 @@ static bool write_active = false;
 static bool swap34 = false;
 bool button_wrapping_enabled = true;
 
-//--Modified 2011-04-26 by Alun Bestor: Boxer no longer includes sdl_mapper.cpp
+//--Modified 2011-05-08 by Alun Bestor to let Boxer set and retrieve the gameport timing programmatically.
+bool gameport_timed = true;
+//--End of modifications
+
+//--Removed 2011-04-26 by Alun Bestor: Boxer no longer includes sdl_mapper.cpp
 //extern bool autofire; //sdl_mapper.cpp
 bool autofire;
 //--End of modifications
@@ -114,6 +118,7 @@ static Bitu read_p201_timed(Bitu port,Bitu iolen) {
 	return ret;
 }
 
+
 static void write_p201(Bitu port,Bitu val,Bitu iolen) {
 	/* Store writetime index */
 	write_active = true;
@@ -148,6 +153,20 @@ static void write_p201_timed(Bitu port,Bitu val,Bitu iolen) {
 		                 (double)((swap34? stick[1].xpos : stick[1].ypos)+1.0) * OHMS);
 	}
 }
+
+
+//--Modified 2011-05-08 by Alun Bestor to let Boxer toggle the gameport timing on the fly.
+static Bitu read_p201_switchable(Bitu port,Bitu iolen) {
+	if (write_active) return read_p201(port, iolen);
+	else return read_p201_timed(port, iolen);
+}
+
+static void write_p201_switchable(Bitu port,Bitu val,Bitu iolen) {
+	if (gameport_timed) write_p201_timed(port, val, iolen);
+	else write_p201(port, val, iolen);
+}
+//--End of modifications
+
 
 void JOYSTICK_Enable(Bitu which,bool enabled) {
 	if (which<2) stick[which].enabled=enabled;
@@ -197,9 +216,6 @@ public:
 	JOYSTICK(Section* configuration):Module_base(configuration){
 		Section_prop * section=static_cast<Section_prop *>(configuration);
 		
-		//--Disabled 2011-04-25 by Alun Bestor: Boxer now sets the joystick type
-		//in its own time
-		/*
 		const char * type=section->Get_string("joysticktype");
 		if (!strcasecmp(type,"none"))       joytype = JOY_NONE;
 		else if (!strcasecmp(type,"false")) joytype = JOY_NONE;
@@ -210,17 +226,21 @@ public:
 		else if (!strcasecmp(type,"fcs"))   joytype = JOY_FCS;
 		else if (!strcasecmp(type,"ch"))    joytype = JOY_CH;
 		else joytype = JOY_AUTO;
-		*/
-		//--End of modifications
 
-		bool timed = section->Get_bool("timed");
-		if(timed) {
-			ReadHandler.Install(0x201,read_p201_timed,IO_MB);
-			WriteHandler.Install(0x201,write_p201_timed,IO_MB);
-		} else {
-			ReadHandler.Install(0x201,read_p201,IO_MB);
-			WriteHandler.Install(0x201,write_p201,IO_MB);
-		}
+		//--Modified 2011-05-08 by Alun Bestor to let Boxer set and retrieve the gameport timing mode.
+		//bool timed = section->Get_bool("timed");
+//		if(timed) {
+//			ReadHandler.Install(0x201,read_p201_timed,IO_MB);
+//			WriteHandler.Install(0x201,write_p201_timed,IO_MB);
+//		} else {
+//			ReadHandler.Install(0x201,read_p201,IO_MB);
+//			WriteHandler.Install(0x201,write_p201,IO_MB);
+//		}
+		gameport_timed = section->Get_bool("timed");
+		ReadHandler.Install(0x201,read_p201_switchable,IO_MB);
+		WriteHandler.Install(0x201,write_p201_switchable,IO_MB);
+		//--End of modifications
+		
 		autofire = section->Get_bool("autofire");
 		swap34 = section->Get_bool("swap34");
 		button_wrapping_enabled = section->Get_bool("buttonwrap");

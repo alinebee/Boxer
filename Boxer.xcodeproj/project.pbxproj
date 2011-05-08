@@ -1108,8 +1108,6 @@
 				9F496E3F108EEBB200282261 /* UI helpers */,
 				9F496E3C108EEAD700282261 /* UI controllers */,
 				9F2AC6DB10EFFE2C00CFFF72 /* Artwork */,
-				9FD1D6FF1364819E00792011 /* BXJoystickController.h */,
-				9FD1D7001364819E00792011 /* BXJoystickController.m */,
 			);
 			path = Boxer;
 			sourceTree = "<group>";
@@ -1402,6 +1400,8 @@
 		9F496E3C108EEAD700282261 /* UI controllers */ = {
 			isa = PBXGroup;
 			children = (
+				9FD1D6FF1364819E00792011 /* BXJoystickController.h */,
+				9FD1D7001364819E00792011 /* BXJoystickController.m */,
 				9FDB601510C0707F00C15CF4 /* BXDockTileController.h */,
 				9FDB601610C0707F00C15CF4 /* BXDockTileController.m */,
 				9F45A422109C867E00593456 /* BXMountPanelController.h */,

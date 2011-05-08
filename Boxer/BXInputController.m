@@ -117,8 +117,10 @@
 			[previousSession removeObserver: self forKeyPath: @"paused"];
 			[previousSession removeObserver: self forKeyPath: @"autoPaused"];
 			[previousSession removeObserver: self forKeyPath: @"emulator.mouse.position"];
+			[previousSession removeObserver: self forKeyPath: @"emulator.joystickSupport"];
 			
 			[joystickController removeObserver: self forKeyPath: @"joystickDevices"];
+			
 			
 			[self didResignKey];
 		}
@@ -163,6 +165,11 @@
 									options: NSKeyValueObservingOptionInitial
 									context: nil];
 			
+			[session addObserver: self
+					  forKeyPath: @"emulator.joystickSupport"
+						 options: NSKeyValueObservingOptionInitial
+						 context: nil];
+			
 			//Set the DOS keyboard layout to match the current OS X layout as best as possible
 			//TODO: listen for input source changes
 			NSString *bestLayoutMatch = [[self class] keyboardLayoutForCurrentInputMethod];
@@ -200,7 +207,8 @@
 		}
 	}
 	
-	else if ([keyPath isEqualToString: @"joystickDevices"])
+	else if ([keyPath isEqualToString: @"joystickDevices"] ||
+			 [keyPath isEqualToString: @"emulator.joystickSupport"])
 	{
 		[self _syncJoystickType];
 	}

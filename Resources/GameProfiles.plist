@@ -276,6 +276,20 @@
 	<array>
 		<dict>
 			<key>BXProfileDescription</key>
+			<string>Games that have trouble with advanced 4-axis joysticks.</string>
+			<key>BXProfileConf</key>
+			<string>Simple joystick</string>
+			<key>BXProfileMatches</key>
+			<array>
+				<string>Wing Commander: Privateer</string>
+			</array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>privater.exe</string>
+			</array>
+		</dict>
+		<dict>
+			<key>BXProfileDescription</key>
 			<string>Games that rely on being installed from floppy disk.</string>
 			<key>BXProfileMatches</key>
 			<array>
@@ -440,7 +454,7 @@
 		</dict>
 		<dict>
 			<key>BXProfileDescription</key>
-			<string>386-era games that are sensitive to high CPU speeds.</string>
+			<string>386/486-era games that are sensitive to high CPU speeds.</string>
 			<key>BXProfileConf</key>
 			<string>386 speed</string>
 			<key>BXProfileMatches</key>

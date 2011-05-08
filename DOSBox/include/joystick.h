@@ -45,6 +45,9 @@ enum JoystickType {
 	JOY_CH
 };
 
+//--Added 2011-05-08 by Alun Bestor to let Boxer set and retrieve the gameport timing mode.
+extern bool gameport_timed;
+//--End of modifications
 extern JoystickType joytype;
 extern bool button_wrapping_enabled;
 #endif

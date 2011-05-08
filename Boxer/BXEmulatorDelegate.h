@@ -14,15 +14,25 @@
 #pragma mark -
 #pragma mark Notification constants
 
-extern NSString * const BXEmulatorDidBeginGraphicalContextNotification;
-extern NSString * const BXEmulatorDidFinishGraphicalContextNotification;
+extern NSString * const BXEmulatorWillStartNotification;
+extern NSString * const BXEmulatorDidInitializeNotification;
 extern NSString * const BXEmulatorWillRunStartupCommandsNotification;
 extern NSString * const BXEmulatorDidRunStartupCommandsNotification;
-extern NSString * const BXEmulatorDidCreateFileNotification;
-extern NSString * const BXEmulatorDidRemoveFileNotification;
+extern NSString * const BXEmulatorDidFinishNotification;
+
 extern NSString * const BXEmulatorWillStartProgramNotification;
 extern NSString * const BXEmulatorDidFinishProgramNotification;
 extern NSString * const BXEmulatorDidReturnToShellNotification;
+
+extern NSString * const BXEmulatorDidChangeEmulationStateNotification;
+
+extern NSString * const BXEmulatorDidBeginGraphicalContextNotification;
+extern NSString * const BXEmulatorDidFinishGraphicalContextNotification;
+
+extern NSString * const BXEmulatorDidCreateFileNotification;
+extern NSString * const BXEmulatorDidRemoveFileNotification;
+
+
 
 //TODO: define and document user info dictionary keys for each of these notifications.
 
@@ -63,17 +73,27 @@ extern NSString * const BXEmulatorDidReturnToShellNotification;
 
 
 #pragma mark -
-#pragma mark Notifications
+#pragma mark Lifecycle notifications
 
 //These are sent to the emulator delegate if defined, and posted on the default notification center.
 
 @optional
 
+//Posted when the emulator is about to start up.
+- (void) emulatorWillStart: (NSNotification *)notification;
+
+//Posted when the emulator has finished parsing configuration files and applying its initial settings.
+- (void) emulatorDidInitialize: (NSNotification *)notification;
+
 //Posted when the emulator is about to start processing AUTOEXEC.BAT.
 - (void) emulatorWillRunStartupCommands: (NSNotification *)notification;
 
-//Posted when the emulator has just finished AUTOEXEC.BAT.
+//Posted when the emulator has just finished processing AUTOEXEC.BAT.
 - (void) emulatorDidRunStartupCommands: (NSNotification *)notification;
+
+//Posted when the emulator shuts down.
+- (void) emulatorDidFinish:	(NSNotification *)notification;
+
 
 //Posted when the emulator is about to start a program.
 - (void) emulatorWillStartProgram: (NSNotification *)notification;

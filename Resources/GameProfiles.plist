@@ -6,6 +6,17 @@
 	<array>
 		<dict>
 			<key>BXProfileName</key>
+			<string>Wing Commander Privateer</string>
+			<key>BXProfileConf</key>
+			<string>Privateer</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>privater.exe</string>
+			</array>
+		</dict>
+		
+		<dict>
+			<key>BXProfileName</key>
 			<string>Privateer 2</string>
 			<key>BXProfileConf</key>
 			<string>Privateer 2</string>
@@ -276,20 +287,6 @@
 	<array>
 		<dict>
 			<key>BXProfileDescription</key>
-			<string>Games that have trouble with advanced 4-axis joysticks.</string>
-			<key>BXProfileConf</key>
-			<string>Simple joystick</string>
-			<key>BXProfileMatches</key>
-			<array>
-				<string>Wing Commander: Privateer</string>
-			</array>
-			<key>BXProfileTelltales</key>
-			<array>
-				<string>privater.exe</string>
-			</array>
-		</dict>
-		<dict>
-			<key>BXProfileDescription</key>
 			<string>Games that rely on being installed from floppy disk.</string>
 			<key>BXProfileMatches</key>
 			<array>
@@ -301,6 +298,21 @@
 			</array>
 			<key>BXInstallMedium</key>
 			<integer>1</integer><!-- Floppy -->
+		</dict>
+		
+		<dict>
+			<key>BXProfileDescription</key>
+			<string>Games that are incompatible with non-US keyboard layouts.</string>
+			<key>BXProfileConf</key>
+			<string>US keyboard</string>
+			<key>BXProfileMatches</key>
+			<array>
+				<string>F-19 Stealth Fighter</string>
+			</array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>f19.com</string>
+			</array>
 		</dict>
 		
 		<dict>
@@ -320,6 +332,7 @@
 				<string>vgalemmi.exe</string>
 			</array>
 		</dict>
+		
 		<dict>
 			<key>BXProfileDescription</key>
 			<string>Sierra AGI games that support Tandy graphics and sound.</string>
@@ -344,6 +357,7 @@
 				<string>jr_graf.ovl</string>
 			</array>
 		</dict>
+		
 		<dict>
 			<key>BXProfileDescription</key>
 			<string>Old games that need low conventional memory.</string>
@@ -362,6 +376,7 @@
 				<string>mm2.exe</string>
 			</array>
 		</dict>
+		
 		<dict>
 			<key>BXProfileDescription</key>
 			<string>Later games that like a lot of memory.</string>
@@ -380,6 +395,7 @@
 				<string>blood.exe</string>
 			</array>
 		</dict>
+		
 		<dict>
 			<key>BXProfileDescription</key>
 			<string>Games that dislike expanded memory (but are not fussy about anything else.)</string>
@@ -398,6 +414,7 @@
 				<string>tabvol.bin</string>
 			</array>
 		</dict>
+		
 		<dict>
 			<key>BXProfileDescription</key>
 			<string>Old games that need a 286-speed CPU for correct timing.</string>
@@ -415,6 +432,7 @@
 				<string>ultima6.exe</string>
 			</array>
 		</dict>
+		
 		<dict>
 			<key>BXProfileDescription</key>
 			<string>Old games that require CGA video emulation as well as an XT-speed CPU.</string>
@@ -435,6 +453,7 @@
 				<string>btroot.exe</string>
 			</array>
 		</dict>
+		
 		<dict>
 			<key>BXProfileDescription</key>
 			<string>Old games that require CGA video emulation and a faster CPU speed.</string>
@@ -452,6 +471,7 @@
 				<string>10rogue.exe</string>
 			</array>
 		</dict>
+		
 		<dict>
 			<key>BXProfileDescription</key>
 			<string>386/486-era games that are sensitive to high CPU speeds.</string>
@@ -470,6 +490,7 @@
 				<string>harry.sb0</string>
 			</array>
 		</dict>
+		
 		<dict>
 			<key>BXProfileDescription</key>
 			<string>486 and Pentium-era games that like high-but-not-too-high CPU speeds.</string>
@@ -489,6 +510,7 @@
 				<string>vesa.drv</string>
 			</array>
 		</dict>
+		
 		<dict>
 			<key>BXProfileDescription</key>
 			<string>Games that like a lot of memory and are incompatible with the Gravis Ultrasound.</string>
@@ -509,6 +531,7 @@
 				<string>skynet.exe</string>
 			</array>
 		</dict>
+		
 		<dict>
 			<key>BXProfileDescription</key>
 			<string>Games that autodetect the Gravis Ultrasound, but are incompatible with the current emulation of it.</string>
@@ -529,6 +552,7 @@
 				<string>es.m50</string>
 			</array>
 		</dict>
+		
 		<dict>
 			<key>BXProfileDescription</key>
 			<string>Protected-mode games that have problems with the dynamic core.</string>
@@ -549,6 +573,7 @@
 				<string>rf_sfx</string>
 			</array>
 		</dict>
+		
 		<dict>
 			<key>BXProfileDescription</key>
 			<string>Real-mode games that benefit from dynamic core and max CPU speed.</string>

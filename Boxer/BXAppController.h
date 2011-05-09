@@ -154,6 +154,8 @@ enum {
 - (IBAction) revealInFinder: (id)sender;			//Reveal the sender's represented object in a new Finder window.
 - (IBAction) openInDefaultApplication: (id)sender;	//Open the sender's represented object with its default app.
 
+//Reveal the path of the current session in a new Finder window.
+- (IBAction) revealCurrentSessionPath: (id)sender;
 
 //Reveal the specified path (or its parent folder, in the case of files) in a new Finder window.
 //Returns NO if the file at the path did not exist or could not be opened, YES otherwise.

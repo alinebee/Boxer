@@ -1239,8 +1239,8 @@ public:
 #endif
 		}
 
-		//--Added 2009-02-23 by Alun Bestor: if no layout was specified, ask Boxer to provide the current OSX layout
-		if (!strlen(layoutname) || !strncasecmp(layoutname, "none", 4) || !strncasecmp(layoutname, "auto", 4))
+		//--Added 2009-02-23 by Alun Bestor: if auto layout was specified, ask Boxer to provide the current OSX layout
+		if (!strncasecmp(layoutname, "auto", 4))
 		{
 			//TODO: also retrieve preferred codepage
 			layoutname = boxer_currentDOSKeyboardLayout();

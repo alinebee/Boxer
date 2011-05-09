@@ -222,11 +222,8 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	}
 	else
 	{
-		//If the session isn't a gamebox, then use the currently-active program as the window title.
-		NSString *representedPath = [[self document] activeProgramPath];
-		
-		//If no program is running, then use the local filesystem equivalent of the current directory in DOS.
-		if (!representedPath) representedPath = [[[self document] emulator] pathOfCurrentDirectory];
+		//If the session isn't a gamebox, then use the current program/directory as the window title.
+		NSString *representedPath = [[self document] currentPath];
 		
 		if (representedPath)
 		{

@@ -747,7 +747,10 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 {	
 	SEL theAction = [theItem action];
 	
-	//Don't allow any actions while a modal window is active.
+	if (theAction == @selector(revealCurrentSessionPath:))
+		return ([[self currentSession] isGamePackage] || [[self currentSession] currentPath] != nil);
+		
+	//Don't allow any of the following actions while a modal window is active.
 	if ([NSApp modalWindow]) return NO;
 	
 	//Don't allow the Inspector panel to be shown if there's no active session.
@@ -757,7 +760,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	//Don't allow game imports or the games folder to be opened if no games folder has been set yet.
 	if (theAction == @selector(revealGamesFolder:) ||
 		theAction == @selector(orderFrontImportGamePanel:))	return [self gamesFolderPath] != nil;
-	
+		
 	return [super validateUserInterfaceItem: theItem];
 }
 
@@ -807,6 +810,20 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	if (path) [self revealPath: path];	
 }
 
+- (IBAction) revealCurrentSessionPath: (id)sender
+{
+	NSString *path = nil;
+	BXSession *session = [self currentSession];
+	if (session)
+	{
+		//When running a gamebox, offer up the gamebox itself
+		if ([session isGamePackage]) path = [[session fileURL] path];
+		//Otherwise, offer up the current DOS program or directory
+		else path = [session currentPath];
+	}
+	if (path) [self revealPath: path];
+}
+
 - (IBAction) openInDefaultApplication: (id)sender
 {
 	if ([sender respondsToSelector: @selector(representedObject)]) sender = [sender representedObject];
@@ -844,7 +861,8 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 
 #pragma mark -
-#pragma mark Sound-related methods
+#pragma mark Miscellaneous UI-related methods
+
 
 //We retrieve OS X's own UI sound setting from their domain
 //(hoping this is future-proof - if we can't find it though, we assume it's yes)
@@ -873,6 +891,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 #pragma mark -
 #pragma mark Event-related methods
 
+//TODO: make this a class method on NSWindow instead
 - (NSWindow *) windowAtPoint: (NSPoint)screenPoint
 {
 	for (NSWindow *window in [NSApp windows])

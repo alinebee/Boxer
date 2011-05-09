@@ -278,6 +278,11 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	}
 }
 
+- (NSString *)currentPath
+{
+	if ([self activeProgramPath]) return [self activeProgramPath];
+	else return [[self emulator] pathOfCurrentDirectory];
+}
 
 #pragma mark -
 #pragma mark Window management

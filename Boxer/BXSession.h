@@ -113,6 +113,10 @@ extern NSString * const BXDidFinishInterruptionNotification;
 //emulator is at the DOS prompt, or when Boxer has no idea what program is running.
 @property (readonly, copy, nonatomic) NSString *activeProgramPath;
 
+//The OS X path of the currently executing DOS program or batch file if one is running,
+//or else the current directory at the DOS prompt. Will be nil if Boxer has no idea where it is.
+@property (readonly, nonatomic) NSString *currentPath;
+
 //A cache of the emulator's drives.
 @property (readonly, retain, nonatomic) NSArray *drives;
 

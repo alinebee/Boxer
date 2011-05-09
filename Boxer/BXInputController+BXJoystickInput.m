@@ -38,7 +38,9 @@
 	
 	if (numJoysticks > 0)
 	{
-		Class joystickClass = (support == BXJoystickSupportSimple) ? [BX2AxisJoystick class] : [BX4AxisJoystick class];
+		Class joystickClass;
+		if (support == BXJoystickSupportFull) joystickClass = [BX4AxisJoystick class];
+		else joystickClass = [BX2AxisJoystick class];
 		
 		if (![[emulator joystick] isKindOfClass: joystickClass])
 			[emulator attachJoystickOfType: joystickClass];
@@ -170,6 +172,8 @@
 			case kHIDUsage_GD_Slider:
 				if ([joystick respondsToSelector: @selector(throttleMovedTo:)])
 					[(id)joystick throttleMovedTo: fPosition];
+				else
+					[joystick axis: BXEmulatedJoystick2AxisY movedTo: fPosition];
 				break;
 		}
 		

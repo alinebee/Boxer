@@ -6,6 +6,17 @@
 	<array>
 		<dict>
 			<key>BXProfileName</key>
+			<string>Another World</string>
+			<key>BXProfileConf</key>
+			<string>Another World</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>tabvol.bin</string>
+			</array>
+		</dict>
+		
+		<dict>
+			<key>BXProfileName</key>
 			<string>Wing Commander Privateer</string>
 			<key>BXProfileConf</key>
 			<string>Privateer</string>
@@ -405,13 +416,11 @@
 			<array>
 				<string>Wrath of Earth</string>
 				<string>Barney Bear Goes to Space</string>
-				<string>Another World/Out of this World</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>woe.exe</string>
 				<string>bbspc.exe</string>
-				<string>tabvol.bin</string>
 			</array>
 		</dict>
 		
@@ -555,7 +564,7 @@
 		
 		<dict>
 			<key>BXProfileDescription</key>
-			<string>Protected-mode games that have problems with the dynamic core.</string>
+			<string>Games that need max speed but have problems with the dynamic core.</string>
 			<key>BXProfileConf</key>
 			<string>No dynamic</string>
 			<key>BXProfileMatches</key>
@@ -565,12 +574,16 @@
 				<string>Alone in the Dark 3</string>
 				<string>Sherlock Holmes: The Case of the Rose Tattoo</string>
 				<string>Royal Flush Pinball</string>
+				<string>Aces of the Pacific</string>
+				<string>Aces Over Europe</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>objets.itd</string>
 				<string>holmes2.bat</string>
 				<string>rf_sfx</string>
+				<string>aces.com</string>
+				<string>aoe.com</string>
 			</array>
 		</dict>
 		

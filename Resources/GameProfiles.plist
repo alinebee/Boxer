@@ -292,6 +292,28 @@
 				<string>wogdata3.tre</string>
 			</array>
 		</dict>
+		
+		<dict>
+			<key>BXProfileName</key>
+			<string>Aces of the Pacific</string>
+			<key>BXProfileConf</key>
+			<string>No dynamic</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>aces.com</string>
+			</array>
+		</dict>
+		
+		<dict>
+			<key>BXProfileName</key>
+			<string>Aces Over Europe</string>
+			<key>BXProfileConf</key>
+			<string>Aces Over Europe</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>aoe.com</string>
+			</array>
+		</dict>
 	</array>
 
 	<key>BXGenericProfiles</key>
@@ -574,16 +596,12 @@
 				<string>Alone in the Dark 3</string>
 				<string>Sherlock Holmes: The Case of the Rose Tattoo</string>
 				<string>Royal Flush Pinball</string>
-				<string>Aces of the Pacific</string>
-				<string>Aces Over Europe</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>objets.itd</string>
 				<string>holmes2.bat</string>
 				<string>rf_sfx</string>
-				<string>aces.com</string>
-				<string>aoe.com</string>
 			</array>
 		</dict>
 		

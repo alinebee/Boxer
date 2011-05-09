@@ -12,7 +12,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="106"/>
+			<integer value="2142"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1175,6 +1175,29 @@
 							</object>
 						</object>
 					</object>
+					<object class="NSMenuItem" id="474615046">
+						<reference key="NSMenu" ref="605083824"/>
+						<string key="NSTitle">Debug</string>
+						<string key="NSKeyEquiv"/>
+						<int key="NSMnemonicLoc">2147483647</int>
+						<reference key="NSOnImage" ref="569538535"/>
+						<reference key="NSMixedImage" ref="489554260"/>
+						<string key="NSAction">submenuAction:</string>
+						<object class="NSMenu" key="NSSubmenu" id="277691241">
+							<string key="NSTitle">Debug</string>
+							<object class="NSMutableArray" key="NSMenuItems">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<object class="NSMenuItem" id="318723750">
+									<reference key="NSMenu" ref="277691241"/>
+									<string key="NSTitle">Use clock-based gameport timing</string>
+									<string key="NSKeyEquiv"/>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="569538535"/>
+									<reference key="NSMixedImage" ref="489554260"/>
+								</object>
+							</object>
+						</object>
+					</object>
 					<object class="NSMenuItem" id="293253799">
 						<reference key="NSMenu" ref="605083824"/>
 						<string key="NSTitle">Window</string>
@@ -2172,6 +2195,38 @@
 					</object>
 					<int key="connectionID">2137</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: currentSession.emulator.gameportTimingMode</string>
+						<reference key="source" ref="34920399"/>
+						<reference key="destination" ref="74086318"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="34920399"/>
+							<reference key="NSDestination" ref="74086318"/>
+							<string key="NSLabel">value: currentSession.emulator.gameportTimingMode</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">currentSession.emulator.gameportTimingMode</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">2146</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: currentSession.emulator.gameportTimingMode</string>
+						<reference key="source" ref="318723750"/>
+						<reference key="destination" ref="74086318"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="318723750"/>
+							<reference key="NSDestination" ref="74086318"/>
+							<string key="NSLabel">value: currentSession.emulator.gameportTimingMode</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">currentSession.emulator.gameportTimingMode</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">2149</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -2214,6 +2269,7 @@
 							<reference ref="33134111"/>
 							<reference ref="605111885"/>
 							<reference ref="466028025"/>
+							<reference ref="474615046"/>
 						</object>
 						<reference key="parent" ref="0"/>
 						<string key="objectName">Main Menu</string>
@@ -3225,6 +3281,29 @@
 						<reference key="object" ref="118784418"/>
 						<reference key="parent" ref="881225046"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2141</int>
+						<reference key="object" ref="474615046"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="277691241"/>
+						</object>
+						<reference key="parent" ref="605083824"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2142</int>
+						<reference key="object" ref="277691241"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="318723750"/>
+						</object>
+						<reference key="parent" ref="474615046"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2143</int>
+						<reference key="object" ref="318723750"/>
+						<reference key="parent" ref="277691241"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -3414,6 +3493,10 @@
 					<string>2132.IBEditorWindowLastContentRect</string>
 					<string>2132.IBPluginDependency</string>
 					<string>2133.IBPluginDependency</string>
+					<string>2141.IBPluginDependency</string>
+					<string>2142.IBEditorWindowLastContentRect</string>
+					<string>2142.IBPluginDependency</string>
+					<string>2143.IBPluginDependency</string>
 					<string>283.IBPluginDependency</string>
 					<string>283.ImportedFromIB2</string>
 					<string>284.IBPluginDependency</string>
@@ -3669,13 +3752,17 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>{{703, 791}, {283, 23}}</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
 					<string>{{703, 721}, {200, 93}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
-					<string>{{410, 814}, {425, 20}}</string>
+					<string>{{410, 814}, {488, 20}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -3714,7 +3801,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">2137</int>
+			<int key="maxID">2149</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

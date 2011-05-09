@@ -146,6 +146,7 @@
 
 - (void) setFixedSpeed: (NSInteger)fixedSpeed
 {
+	[self setAutoSpeed: NO];
 	[emulator setFixedSpeed: fixedSpeed];
 	
 	[gameSettings setObject: [NSNumber numberWithInteger: fixedSpeed] forKey: @"fixedSpeed"];

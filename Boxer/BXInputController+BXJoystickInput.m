@@ -124,8 +124,10 @@
 	//Check if the axis is unidirectional like a trigger;
 	//if so, map the axis to a range of -65536->0 instead of -65536->65536,
 	//where the axis's resting value will be at 0.
+	//Disabled for now because this heuristic isn't good enough: some controllers
+	//map their regular axes from 0->[maxvalue] and have their resting value halfway.
 	
-	BOOL isUniDirectional = ![element minValue] || ![element maxValue];
+	BOOL isUniDirectional = NO; //![element minValue] || ![element maxValue];
 	if (isUniDirectional)
 	{
 		position = -(DDHID_JOYSTICK_VALUE_MAX + position) / 2.0f;

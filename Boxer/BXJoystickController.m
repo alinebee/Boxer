@@ -68,12 +68,11 @@
 
 - (void) dispatchHIDEvent: (BXHIDEvent *)event
 {
-	//Forward all HID events to the currently-active DOS session's input controller
-	
-	BXSession *session = [[NSApp delegate] currentSession];
-	if ([[[session DOSWindowController] window] isKeyWindow])
+	//Forward all HID events to the current window's input controller
+	id activeDocument = [[[NSApp keyWindow] windowController] document];
+	if ([activeDocument isKindOfClass: [BXSession class]])
 	{
-		BXInputController *controller = [[session DOSWindowController] inputController];
+		BXInputController *controller = [[activeDocument DOSWindowController] inputController];
 		[controller dispatchHIDEvent: event];
 	}
 }

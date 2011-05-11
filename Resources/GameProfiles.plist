@@ -320,6 +320,25 @@
 	<array>
 		<dict>
 			<key>BXProfileDescription</key>
+			<string>Games that require clock-based joystick timing.</string>
+			<key>BXProfileConf</key>
+			<string>Timed joystick</string>
+			<key>BXProfileMatches</key>
+			<array>
+				<string>Flight Unlimited</string>
+				<string>Elite/Elite Plus</string>
+				<string>Mechwarrior 2</string>
+			</array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>genpile</string>
+				<string>elite.exe</string>
+				<string>mw2.exe</string>
+			</array>
+		</dict>
+		
+		<dict>
+			<key>BXProfileDescription</key>
 			<string>Games that rely on being installed from floppy disk.</string>
 			<key>BXProfileMatches</key>
 			<array>
@@ -513,12 +532,14 @@
 				<string>One Must Fall</string>
 				<string>Theme Park</string>
 				<string>Halloween Harry</string>
+				<string>F-15 Strike Eagle II</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>omf.exe</string>
 				<string>park.bat</string>
 				<string>harry.sb0</string>
+				<string>f15.com</string>
 			</array>
 		</dict>
 		
@@ -628,6 +649,8 @@
 				<string>Master of Magic</string>
 				<string>Simcity 2000</string>
 				<string>Master of Orion 1</string>
+				<string>Flight Simulator 5</string>
+				<string>Gunship 2000</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
@@ -640,12 +663,14 @@
 				<string>ep1.dat</string>
 				<string>viceroy.exe</string>
 				<string>jm_error.h</string>
-				<string>falcon3.exe</string>
+				<string>falcon3.def</string>
 				<string>torrey_p.crs</string>
 				<string>warlord2.exe</string>
 				<string>magic.exe</string>
 				<string>sc2000.dat</string>
 				<string>orion.exe</string>
+				<string>fs5.exe</string>
+				<string>gs2000.com</string>
 			</array>
 		</dict>
 	</array>

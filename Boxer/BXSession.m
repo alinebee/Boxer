@@ -933,7 +933,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	{
 		BXGameProfile *profile = [[self class] profileForPath: [self targetPath]];
 		[self setGameProfile: profile];
-	}	
+	}
 	
 	//Get the appropriate configuration file for this game profile
 	if ([self gameProfile])

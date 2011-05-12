@@ -328,12 +328,23 @@
 				<string>Flight Unlimited</string>
 				<string>Elite/Elite Plus</string>
 				<string>Mechwarrior 2</string>
+				<string>Descent</string>
+				<string>Gods</string>
+				<string>Space Rogue</string>
+				<string>Gauntlet II</string>
+				<string>Skate or Die</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>genpile</string>
 				<string>elite.exe</string>
 				<string>mw2.exe</string>
+				<string>descent.hog</string>
+				<string>descent1.sow</string>
+				<string>pgods.mus</string>
+				<string>vspace.ctl</string>
+				<string>gauntlet.exe</string>
+				<string>skate.exe</string>
 			</array>
 		</dict>
 		
@@ -354,16 +365,22 @@
 		
 		<dict>
 			<key>BXProfileDescription</key>
-			<string>Games that are incompatible with non-US keyboard layouts.</string>
+			<string>Mid-era Microprose flight simulators</string>
 			<key>BXProfileConf</key>
-			<string>US keyboard</string>
+			<string>Microprose flightsims</string>
 			<key>BXProfileMatches</key>
 			<array>
 				<string>F-19 Stealth Fighter</string>
+				<string>F-117a Stealth Fighter 2.0</string>
+				<string>F-15 Strike Eagle II</string>
+				<string>Gunship 2000</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>f19.com</string>
+				<string>f117.com</string>
+				<string>f15.com</string>
+				<string>gs2000.com</string>
 			</array>
 		</dict>
 		
@@ -532,14 +549,12 @@
 				<string>One Must Fall</string>
 				<string>Theme Park</string>
 				<string>Halloween Harry</string>
-				<string>F-15 Strike Eagle II</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>omf.exe</string>
 				<string>park.bat</string>
 				<string>harry.sb0</string>
-				<string>f15.com</string>
 			</array>
 		</dict>
 		
@@ -650,7 +665,8 @@
 				<string>Simcity 2000</string>
 				<string>Master of Orion 1</string>
 				<string>Flight Simulator 5</string>
-				<string>Gunship 2000</string>
+				<string>Jetfighter 2</string>
+				<string>Grand Prix</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
@@ -670,7 +686,8 @@
 				<string>sc2000.dat</string>
 				<string>orion.exe</string>
 				<string>fs5.exe</string>
-				<string>gs2000.com</string>
+				<string>jf2.exe</string>
+				<string>f1gpdata.dat</string>
 			</array>
 		</dict>
 	</array>

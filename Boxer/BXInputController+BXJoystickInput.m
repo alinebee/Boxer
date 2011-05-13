@@ -71,6 +71,8 @@
 {
 	id <BXEmulatedJoystick> joystick = [self _emulatedJoystick];
 	BOOL isPrimaryController = [[event device] isEqual: primaryController];
+	//Disabled for now because it irritates the hell out of me
+	BOOL wrapButtons = NO;
 	
 	NSUInteger numEmulatedButtons = [joystick numButtons];
 	NSUInteger realButton = [event buttonNumber];
@@ -80,8 +82,10 @@
 	if (!isPrimaryController && (realButton == kHIDUsage_Button_1 || realButton == kHIDUsage_Button_2))
 		realButton += 2;
 	
-	//Wrap controller buttons so that they'll all fit within the number of emulated buttons
-	NSUInteger emulatedButton = ((realButton - 1) % numEmulatedButtons) + 1;
+	NSUInteger emulatedButton = realButton;
+	if (wrapButtons)
+		//Wrap controller buttons so that they'll all fit within the number of emulated buttons
+		emulatedButton = ((realButton - 1) % numEmulatedButtons) + 1;
 	
 	if ([event type] == BXHIDJoystickButtonDown)
 	{

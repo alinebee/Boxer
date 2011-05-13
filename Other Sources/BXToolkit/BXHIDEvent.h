@@ -52,6 +52,9 @@ typedef NSInteger BXHIDPOVSwitchDirection;
 	DDHidElement *element;
 	DDHidJoystickStick *stick;
 	
+	NSUInteger stickNumber;
+	NSUInteger POVNumber;
+	
 	NSInteger axisDelta;
 	NSInteger axisPosition;
 	NSInteger POVDirection;
@@ -72,6 +75,14 @@ typedef NSInteger BXHIDPOVSwitchDirection;
 //The stick on which the element that triggered the event is located.
 //Only relevant for joystick events.
 @property (retain, nonatomic) DDHidJoystickStick *stick;
+
+//The order of the stick in the device's enumeration order.
+//Only relevant for joystick events.
+@property (assign, nonatomic) NSUInteger stickNumber;
+
+//The order of the POV switch in the device's enumeration order.
+//Only relevant for POV events.
+@property (assign, nonatomic) NSUInteger POVNumber;
 
 
 //The following three variables all correspond to the usage ID of the element in question.

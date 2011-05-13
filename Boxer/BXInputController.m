@@ -211,14 +211,8 @@
 		}
 	}
 	
-	else if ([keyPath isEqualToString: @"joystickDevices"])
-	{
-		[lastJoystickValues removeAllObjects];
-		[self _syncJoystickType];
-		
-	}
-	
-	else if ([keyPath isEqualToString: @"emulator.joystickSupport"])
+	else if ([keyPath isEqualToString: @"joystickDevices"] || 
+			 [keyPath isEqualToString: @"emulator.joystickSupport"])
 	{
 		[self _syncJoystickType];
 	}

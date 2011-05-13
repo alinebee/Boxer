@@ -13,6 +13,10 @@
 
 @implementation BXBaseEmulatedJoystick
 
+- (NSUInteger) numButtons		{ return 2; }
+- (NSUInteger) numAxes			{ return 2; }
+- (NSUInteger) numPOVSwitches	{ return 0; }
+
 - (void) didConnect
 {
 	JOYSTICK_Enable(BXGameportStick1, YES);
@@ -206,6 +210,10 @@
 
 
 @implementation BX4AxisJoystick
+
+- (NSUInteger) numButtons		{ return 4; }
+- (NSUInteger) numAxes			{ return 4; }
+- (NSUInteger) numPOVSwitches	{ return 0; }
 
 - (void) didConnect
 {

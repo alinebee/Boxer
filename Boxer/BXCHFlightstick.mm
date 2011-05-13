@@ -26,9 +26,11 @@ enum {
 };
 
 
-//FIXME: this is a naive implementation of the CH series' button-handling behaviour.
-//Copy sdl_mapper's implementation to make it behave more accurately.
 @implementation BXCHFlightStickPro
+
+- (NSUInteger) numButtons		{ return 4; }
+- (NSUInteger) numAxes			{ return 4; }
+- (NSUInteger) numPOVSwitches	{ return 1; }
 
 - (void) clearInput
 {
@@ -140,6 +142,11 @@ enum {
 
 
 @implementation BXCHCombatStick
+
+- (NSUInteger) numButtons		{ return 6; }
+- (NSUInteger) numAxes			{ return 4; }
+- (NSUInteger) numPOVSwitches	{ return 2; }
+
 
 - (void) POV2ChangedTo: (BXEmulatedPOVDirection)direction
 {

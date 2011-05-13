@@ -26,8 +26,8 @@ enum {
 	BXEmulatedJoystick2AxisX = BXEmulatedJoystickAxisX2,
 	BXEmulatedJoystick2AxisY = BXEmulatedJoystickAxisY2,
 	
-	BXCHCombatStickThrottleAxis	= BXEmulatedJoystickAxisX2,
-	BXCHCombatStickRudderAxis	= BXEmulatedJoystickAxisY2,
+	BXCHCombatStickRudderAxis	= BXEmulatedJoystickAxisX2,
+	BXCHCombatStickThrottleAxis	= BXEmulatedJoystickAxisY2,
 	
 	BXThrustmasterFCSHatAxis	= BXEmulatedJoystickAxisX2,
 	BXThrustmasterFCSRudderAxis	= BXEmulatedJoystickAxisY2
@@ -70,6 +70,10 @@ typedef NSInteger BXEmulatedPOVDirection;
 
 
 @protocol BXEmulatedJoystick <NSObject>
+
+@property (readonly, nonatomic) NSUInteger numButtons;
+@property (readonly, nonatomic) NSUInteger numAxes;
+@property (readonly, nonatomic) NSUInteger numPOVSwitches;
 
 //Called by BXEmulator when the device is plugged/unplugged.
 - (void) didConnect;

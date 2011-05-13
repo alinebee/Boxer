@@ -12,6 +12,7 @@
 @implementation BXHIDEvent
 @synthesize type;
 @synthesize device, element, stick;
+@synthesize stickNumber, POVNumber;
 @synthesize axisPosition, axisDelta, POVDirection;
 
 
@@ -24,7 +25,7 @@
 	if (direction < 0 || direction > 36000) return BXHIDPOVCentered;
 	
 	NSInteger ordinal = rintf(direction / 4500.0f);
-	if (ordinal >= 7) ordinal = 0;
+	if (ordinal > 7) ordinal = 0;
 	return ordinal * 4500;
 }
 
@@ -254,6 +255,7 @@
 
 - (void) _joystick: (DDHidJoystick *)joystick
 			 stick: (DDHidJoystickStick *)stick
+	   stickNumber: (NSUInteger)stickNumber
 			  axis: (DDHidElement *)axis
 	  valueChanged: (int)value
 {
@@ -261,6 +263,7 @@
 	[event setType: BXHIDJoystickAxisChanged];
 	[event setDevice: joystick];
 	[event setStick: stick];
+	[event setStickNumber: stickNumber];
 	[event setElement: axis];
 	[event setAxisPosition: value];
 		
@@ -273,7 +276,7 @@
 {
 	DDHidJoystickStick *stick = [joystick objectInSticksAtIndex: stickNumber];
 	DDHidElement *axis = [stick xAxisElement];
-	[self _joystick: joystick stick: stick axis: axis valueChanged: value];
+	[self _joystick: joystick stick: stick stickNumber: stickNumber axis: axis valueChanged: value];
 }
 
 - (void) ddhidJoystick: (DDHidJoystick *)joystick
@@ -282,7 +285,7 @@
 {
 	DDHidJoystickStick *stick = [joystick objectInSticksAtIndex: stickNumber];
 	DDHidElement *axis = [stick yAxisElement];
-	[self _joystick: joystick stick: stick axis: axis valueChanged: value];
+	[self _joystick: joystick stick: stick stickNumber: stickNumber axis: axis valueChanged: value];
 }
 
 - (void) ddhidJoystick: (DDHidJoystick *)joystick
@@ -292,7 +295,7 @@
 {
 	DDHidJoystickStick *stick = [joystick objectInSticksAtIndex: stickNumber];
 	DDHidElement *axis = [stick objectInStickElementsAtIndex: otherAxis];
-	[self _joystick: joystick stick: stick axis: axis valueChanged: value];
+	[self _joystick: joystick stick: stick stickNumber: stickNumber axis: axis valueChanged: value];
 }
 
 - (void) ddhidJoystick: (DDHidJoystick *)joystick
@@ -307,7 +310,9 @@
 	[event setType: BXHIDJoystickPOVSwitchChanged];
 	[event setDevice: joystick];
 	[event setStick: stick];
+	[event setStickNumber: stickNumber];
 	[event setElement: pov];
+	[event setPOVNumber: povNumber];
 	[event setPOVDirection: value];
 
 	[self dispatchHIDEvent: [event autorelease]];

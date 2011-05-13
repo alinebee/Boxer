@@ -16,6 +16,7 @@
 @class BXCursorFadeAnimation;
 @class BXDOSWindowController;
 @class BXSession;
+@class DDHidJoystick;
 
 @interface BXInputController : NSViewController
 #if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_5
@@ -43,6 +44,7 @@
 	NSUInteger lastModifiers;
 	
 	NSMutableDictionary *lastJoystickValues;
+	DDHidJoystick *primaryController;
 }
 
 #pragma mark -

@@ -144,9 +144,9 @@
 				
 			case kHIDUsage_GD_Y:
 				//If the input comes from an additional controller, send it to the second emulated joystick
-				if (!isPrimaryController && [joystick numAxes] > 2) emulatedAxis = BXEmulatedJoystick2AxisX;
-				else emulatedAxis = BXEmulatedJoystickAxisX;
-				[joystick axis: BXEmulatedJoystickAxisY movedTo: fPosition];
+				if (!isPrimaryController && [joystick numAxes] > 2) emulatedAxis = BXEmulatedJoystick2AxisY;
+				else emulatedAxis = BXEmulatedJoystickAxisY;
+				[joystick axis: emulatedAxis movedTo: fPosition];
 				break;
 				
 			case kHIDUsage_GD_Rx:

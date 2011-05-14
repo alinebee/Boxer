@@ -560,7 +560,7 @@
 		
 		<dict>
 			<key>BXProfileDescription</key>
-			<string>486 and Pentium-era games that like high-but-not-too-high CPU speeds.</string>
+			<string>486 and Pentium-era games that like dynamic core and high-but-not-too-high CPU speeds.</string>
 			<key>BXProfileConf</key>
 			<string>486 speed</string>
 			<key>BXProfileMatches</key>
@@ -569,12 +569,14 @@
 				<string>X-COM: Terror From the Deep</string>
 				<string>Warcraft II</string>
 				<string>Space Quest VI</string>
+				<string>Lemmings 3D</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>ufo2exe</string>
 				<string>war2.exe</string>
 				<string>vesa.drv</string>
+				<string>l3d.exe</string>
 			</array>
 		</dict>
 		

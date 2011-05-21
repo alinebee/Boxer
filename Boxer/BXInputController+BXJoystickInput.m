@@ -9,7 +9,7 @@
 #import "BXInputControllerPrivate.h"
 #import "BXAppController.h"
 #import "BXJoystickController.h"
-#import <IOKit/hid/IOHIDLib.h>
+#import "DDHidDevice+BXDeviceExtensions.h"
 
 
 //The multiplier to use when adding a joystick axis's positional input (for e.g. throttle impulses)
@@ -84,8 +84,10 @@
 	
 	NSUInteger emulatedButton = realButton;
 	if (wrapButtons)
+	{
 		//Wrap controller buttons so that they'll all fit within the number of emulated buttons
 		emulatedButton = ((realButton - 1) % numEmulatedButtons) + 1;
+	}
 	
 	if ([event type] == BXHIDJoystickButtonDown)
 	{
@@ -97,36 +99,44 @@
 	}	
 }
 
-- (void) HIDJoystickAxisChanged: (BXHIDEvent *)event
+- (NSInteger) _normalizedAxisPositionForEvent: (BXHIDEvent *)event
 {
-	id <BXEmulatedJoystick> joystick = [self _emulatedJoystick];
-	DDHidElement *element = [event element];
 	NSInteger position = [event axisPosition];
 	
-	BOOL isPrimaryController = [[event device] isEqual: primaryController];
-	
 	//Check if the axis is unidirectional like a trigger;
-	//if so, map the axis to a range of -65536->0 instead of -65536->65536,
-	//where the axis's resting value will be at 0.
+	//if so, map the axis to a range of 0->65536 instead of -65536->65536,
+	//so the axis's resting value will be at 0.
+	BOOL isUniDirectional = ([[event element] minValue] == 0);
+	
 	//Disabled for now because this heuristic isn't good enough: some controllers
 	//map their regular axes from 0->[maxvalue] and have their resting value halfway,
 	//and we can't detect these.
-	BOOL isUniDirectional = NO; //![element minValue] || ![element maxValue];
+	isUniDirectional = NO;
+	
 	if (isUniDirectional)
 	{
-		position = -(DDHID_JOYSTICK_VALUE_MAX + position) / 2.0f;
+		position = (DDHID_JOYSTICK_VALUE_MAX + position) / 2.0f;
 	}
 	
 	//Clamp axis value to 0 if it is within the deadzone.
 	if (ABS(position) - BXAxisDeadzone < 0) position = 0;
 	
+	return position;
+}
+
+- (void) HIDJoystickAxisChanged: (BXHIDEvent *)event
+{
+	id <BXEmulatedJoystick> joystick = [self _emulatedJoystick];
+	DDHidElement *element = [event element];
 	
-	//If the normalized deadzoned position hasn't changed since last time,
-	//then ignore this event.
-	//(This prevents spurious updates from clobbering other inputs, in the
-	//case where multiple inputs are mapped to the same emulated axis.)
+	BOOL isPrimaryController = [[event device] isEqual: primaryController];
+	
+	NSInteger position = [self _normalizedAxisPositionForEvent: event];
 	NSInteger lastPosition = [lastJoystickValues integerValueForHIDElement: element];
 	
+	//Only update the joystick if the element's value has changed since last time.
+	//(This prevents deadzoned updates from clobbering other inputs if there are
+	//multiple inputs mapped to the same emulated axis.)
 	if (position != lastPosition)
 	{
 		//The DOS API takes a floating-point range from -1.0 to +1.0.
@@ -151,15 +161,20 @@
 				
 			case kHIDUsage_GD_Rx:
 			case kHIDUsage_GD_Z:
-				[joystick axis: BXEmulatedJoystickAxisX2 movedTo: fPosition];
+				if ([joystick respondsToSelector: @selector(rudderMovedTo:)])
+					[(id)joystick rudderMovedTo: fPosition];
+				else
+					[joystick axis: BXEmulatedJoystickAxisX2 movedTo: fPosition];
 				break;
 				
 			case kHIDUsage_GD_Ry:
 			case kHIDUsage_GD_Rz:
-				[joystick axis: BXEmulatedJoystickAxisY2 movedTo: fPosition];
-				break;
-			
 			case kHIDUsage_GD_Slider:
+				//NOTE: certain joysticks use Rz/Slider as a stick pair, or use Rz as a twist-axis for rudder
+				//control and Slider as vertical. We should check for the existence of a Slider axis and map Rz
+				//to X2 in that instance.
+				
+				
 				if ([joystick respondsToSelector: @selector(throttleMovedTo:)])
 					[(id)joystick throttleMovedTo: fPosition];
 				else

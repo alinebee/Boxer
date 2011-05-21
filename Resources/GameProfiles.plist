@@ -39,6 +39,17 @@
 		
 		<dict>
 			<key>BXProfileName</key>
+			<string>Blue Max</string>
+			<key>BXProfileConf</key>
+			<string>Blue Max</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>bluemax.exe</string>
+			</array>
+		</dict>
+		
+		<dict>
+			<key>BXProfileName</key>
 			<string>Fable</string>
 			<key>BXProfileConf</key>
 			<string>No GUS</string>

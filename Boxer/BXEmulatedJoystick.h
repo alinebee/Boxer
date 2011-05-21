@@ -29,8 +29,9 @@ enum {
 	BXCHCombatStickRudderAxis	= BXEmulatedJoystickAxisX2,
 	BXCHCombatStickThrottleAxis	= BXEmulatedJoystickAxisY2,
 	
-	BXThrustmasterFCSHatAxis	= BXEmulatedJoystickAxisX2,
-	BXThrustmasterFCSRudderAxis	= BXEmulatedJoystickAxisY2
+	BXThrustmasterFCSRudderAxis		= BXEmulatedJoystickAxisX2,
+	BXThrustmasterFCSHatAxis		= BXEmulatedJoystickAxisY2,
+	BXThrustmasterWCSThrottleAxis	= BXEmulatedJoystickAxisY2
 };
 
 typedef NSUInteger BXEmulatedJoystickAxis;

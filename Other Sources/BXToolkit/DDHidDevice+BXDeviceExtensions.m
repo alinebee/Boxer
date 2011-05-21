@@ -94,4 +94,90 @@ io_service_t createServiceFromHIDDevice(IOHIDDeviceRef deviceRef)
 	return (NSUInteger)[self locationId] + [self vendorId] + [self productId];
 }
 
+- (NSArray *) elementsWithUsage: (DDHidUsage *)usage
+{
+	NSPredicate *matchingUsage = [NSPredicate predicateWithFormat: @"usage = %@", usage, nil];
+	return [[self elements] filteredArrayUsingPredicate: matchingUsage];
+}
+
+@end
+
+
+@implementation DDHidJoystick (BXJoystickExtensions)
+
+- (NSArray *)sticks
+{
+	return mSticks;
+}
+
+- (NSArray *)axisElements
+{
+	NSMutableArray *axes = [[NSMutableArray alloc] initWithCapacity: 10];
+	
+	for (DDHidJoystickStick *stick in [self sticks])
+		[axes addObjectsFromArray: [stick axisElements]];
+
+	return [axes autorelease];
+}
+
+- (NSArray *)povElements
+{
+	NSMutableArray *povs = [[NSMutableArray alloc] initWithCapacity: 10];
+	
+	for (DDHidJoystickStick *stick in [self sticks])
+		[povs addObjectsFromArray: [stick povElements]];
+
+	return [povs autorelease];
+}
+
+- (NSArray *) axisElementsWithUsageID: (unsigned)usageID
+{
+	NSPredicate *matchingUsageID = [NSPredicate predicateWithFormat: @"usage.usageId = %i", usageID, nil];
+	return [[self axisElements] filteredArrayUsingPredicate: matchingUsageID];
+}
+
+- (NSArray *) buttonElementsWithUsageID: (unsigned)usageID
+{
+	NSPredicate *matchingUsageID = [NSPredicate predicateWithFormat: @"usage.usageId = %i", usageID, nil];
+	return [[self buttonElements] filteredArrayUsingPredicate: matchingUsageID];
+}
+@end
+
+@implementation DDHidJoystickStick (BXJoystickStickExtensions)
+
+- (NSArray *)axisElements
+{
+	NSMutableArray *axes = [mStickElements mutableCopy];
+	if (mXAxisElement) [axes addObject: mXAxisElement];
+	if (mYAxisElement) [axes addObject: mYAxisElement];
+	
+	return [axes autorelease];
+}
+
+- (NSArray *)povElements
+{
+	return mPovElements;
+}
+
+- (NSArray *) axisElementsWithUsageID: (unsigned)usageID
+{
+	NSPredicate *matchingUsageID = [NSPredicate predicateWithFormat: @"usage.usageId = %i", usageID, nil];
+	return [[self axisElements] filteredArrayUsingPredicate: matchingUsageID];
+}
+
+@end
+
+
+@implementation DDHidUsage (BXUsageEquality)
+
+- (BOOL) isEqualToUsage: (DDHidUsage *)usage
+{
+	return [self isEqualToUsagePage: [usage usagePage] usageId: [usage usageId]];
+}
+
+- (BOOL) isEqual: (id)object
+{
+	if ([object isKindOfClass: [DDHidUsage class]] && [self isEqualToUsage: object]) return YES;
+	else return [super isEqual: object];
+}
 @end

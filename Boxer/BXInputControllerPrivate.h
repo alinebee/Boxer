@@ -108,6 +108,9 @@
 //Processes a button-press/release.
 - (void) _handleHIDJoystickButtonEvent: (BXHIDEvent *)event;
 
+//Returns a normalized axis value to account for deadzones and unidirectional (trigger) inputs.
+- (NSInteger) _normalizedAxisPositionForEvent: (BXHIDEvent *)event;
+
 @end
 
 

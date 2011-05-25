@@ -344,6 +344,8 @@
 				<string>Space Rogue</string>
 				<string>Gauntlet II</string>
 				<string>Skate or Die</string>
+				<string>F-29 Retaliator</string>
+				<string>US Navy Fighters/Advanced Tactical Fighters</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
@@ -356,6 +358,8 @@
 				<string>vspace.ctl</string>
 				<string>gauntlet.exe</string>
 				<string>skate.exe</string>
+				<string>retal.00</string>
+				<string>timeint.xxx</string>
 			</array>
 		</dict>
 		
@@ -383,7 +387,8 @@
 			<array>
 				<string>F-19 Stealth Fighter</string>
 				<string>F-117a Stealth Fighter 2.0</string>
-				<string>F-15 Strike Eagle II</string>
+				<string>F-15 Strike Eagle II/III</string>
+				<string>F-14 Fleet Defender</string>
 				<string>Gunship 2000</string>
 			</array>
 			<key>BXProfileTelltales</key>
@@ -391,6 +396,7 @@
 				<string>f19.com</string>
 				<string>f117.com</string>
 				<string>f15.com</string>
+				<string>f14.com</string>
 				<string>gs2000.com</string>
 			</array>
 		</dict>
@@ -680,6 +686,7 @@
 				<string>Flight Simulator 5</string>
 				<string>Jetfighter 2</string>
 				<string>Grand Prix</string>
+				<string>Tornado</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
@@ -701,6 +708,7 @@
 				<string>fs5.exe</string>
 				<string>jf2.exe</string>
 				<string>f1gpdata.dat</string>
+				<string>tornado.bat</string>
 			</array>
 		</dict>
 	</array>

@@ -159,7 +159,9 @@ void MIDI_RawOutByte(Bit8u data) {
 						midi.sysex.delay = 30; // Dark Sun 1
 					} else {
 						midi.sysex.delay = (Bitu)(((float)(midi.sysex.used) * 1.25f) * 1000.0f / 3125.0f) + 2;
+						if (midi.sysex.delay < 40) midi.sysex.delay = 40;
 					}
+
 					midi.sysex.start = GetTicks();
 				}
 			}

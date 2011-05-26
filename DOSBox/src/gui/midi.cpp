@@ -159,10 +159,6 @@ void MIDI_RawOutByte(Bit8u data) {
 						midi.sysex.delay = 30; // Dark Sun 1
 					} else {
 						midi.sysex.delay = (Bitu)(((float)(midi.sysex.used) * 1.25f) * 1000.0f / 3125.0f) + 2;
-						//--Added 2011-04-20 by Alun Bestor as a quick fix for Colonel's Bequest,
-						//which is very time-sensitive and sends way too many sysex messages to fix one-by-one
-						if (midi.sysex.delay < 40) midi.sysex.delay = 40;
-						//--End of modifications
 					}
 					midi.sysex.start = GetTicks();
 				}

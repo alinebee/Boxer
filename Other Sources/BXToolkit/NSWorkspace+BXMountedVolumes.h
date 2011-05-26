@@ -32,6 +32,10 @@ extern NSString * const HFSVolumeType;
 //Returns nil if the source image could not be determined (e.g. if the volume is not mounted from a disk image)
 - (NSString *) sourceImageForVolume: (NSString *)volumePath;
 
+//Returns the first path at which the specified source disk image is mounted.
+//Returns nil if the source image is not currently mounted.
+- (NSString *) volumeForSourceImage: (NSString *)imagePath;
+
 //Mounts the disk image at the specified path, and returns the path to the newly-mounted volume if successful.
 //Returns nil and populates error if mounting failed.
 //If invisible is true, the mounted volume will not appear in Finder.

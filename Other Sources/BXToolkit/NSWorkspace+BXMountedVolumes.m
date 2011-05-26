@@ -166,13 +166,37 @@ NSString * const HFSVolumeType		= @"hfs";
 		
 		for (imageInfo in mountedImages)
 		{
-			source		= [imageInfo objectForKey: @"image-path"];
 			mountPoints	= [imageInfo objectForKey: @"system-entities"];
 			for (mountPoint in mountPoints)
 			{
 				destination = [[mountPoint objectForKey: @"mount-point"] stringByStandardizingPath];
-				if ([resolvedPath isEqualToString: destination]) return source;
+				if ([resolvedPath isEqualToString: destination])
+				{
+					source = [[imageInfo objectForKey: @"image-path"] stringByStandardizingPath];
+				}
 			}
+		}
+	}
+	return nil;
+}
+
+- (NSString *) volumeForSourceImage: (NSString *)imagePath
+{
+	NSString *resolvedPath	= [imagePath stringByStandardizingPath];
+	NSArray *mountedImages = [self mountedImages];
+		
+	NSDictionary *imageInfo, *mountPoint;
+	NSString *source, *destination;
+	
+	for (imageInfo in mountedImages)
+	{
+		source = [[imageInfo objectForKey: @"image-path"] stringByStandardizingPath];
+		if ([resolvedPath isEqualToString: source])
+		{
+			//Only use the first mount-point listed in the set
+			mountPoint = [[imageInfo objectForKey: @"system-entities"] objectAtIndex: 0];
+			destination = [[mountPoint objectForKey: @"mount-point"] stringByStandardizingPath];
+			return destination;
 		}
 	}
 	return nil;

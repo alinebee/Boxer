@@ -195,15 +195,22 @@
 	//If the specified path was a disk image, mount it and use the mounted volume as our source
 	if ([workspace file: path matchesTypes: [NSSet setWithObject: @"public.disk-image"]])
 	{
-		NSString *mountedVolumePath = [workspace mountImageAtPath: path readOnly: YES invisibly: YES error: outError];
+		//Check if the path is already mounted as an existing volume
+		NSString *mountedVolumePath = [workspace volumeForSourceImage: path];
+		
+		if (mountedVolumePath) return mountedVolumePath;
+		
+		//If not, mount it ourselves
+		mountedVolumePath = [workspace mountImageAtPath: path readOnly: YES invisibly: YES error: outError];
 		
 		if (mountedVolumePath)
 		{
 			if (didMountVolume) *didMountVolume = YES;
 			return mountedVolumePath;
 		}
+		
 		//If the mount failed, bail out immediately (having passed the error to the calling context)
-		else return nil;
+		return nil;
 	}
 	
 	//If the chosen path was an audio CD, check if it has a corresponding data path and use that instead

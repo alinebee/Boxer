@@ -173,6 +173,7 @@ NSString * const HFSVolumeType		= @"hfs";
 				if ([resolvedPath isEqualToString: destination])
 				{
 					source = [[imageInfo objectForKey: @"image-path"] stringByStandardizingPath];
+					return source;
 				}
 			}
 		}

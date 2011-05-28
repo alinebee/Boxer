@@ -30,6 +30,11 @@
 	return [NSSet setWithObject: @"representedObject.emulator.gameportTimingMode"];
 }
 
++ (NSSet *) keyPathsForValuesAffectingJoystickType
+{
+	return [NSSet setWithObject: @"representedObject.emulator.joystick"];
+}
+
 + (NSSet *) keyPathsForValuesAffectingPreferredJoystickType
 {
 	return [NSSet setWithObject: @"representedObject.gameSettings.preferredJoystickType"];
@@ -56,11 +61,23 @@
 	}
 }
 
+- (Class) joystickType
+{
+	BXSession *session	= [self representedObject];
+	return [[[session emulator] joystick] class];
+}
+
+- (void) setJoystickType: (Class)joystickType
+{
+	[self setPreferredJoystickType: joystickType];
+}
+
 - (Class) preferredJoystickType
 {
+	BXSession *session	= [self representedObject];
+	
 	Class defaultJoystickType = [BX4AxisJoystick class];
 	
-	BXSession *session	= [self representedObject];
 	NSString *className	= (NSString *)[[session gameSettings] objectForKey: @"preferredJoystickType"];
 	
 	//If no setting exists, then fall back on the default joystick type

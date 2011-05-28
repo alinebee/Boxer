@@ -15,6 +15,9 @@
 @class BXInputController;
 
 @interface BXInputPanelController : NSViewController
+#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_5
+< NSMenuDelegate >
+#endif
 {
 	IBOutlet NSPopUpButton *joystickTypeSelector;
 	IBOutlet NSObjectController *sessionMediator;

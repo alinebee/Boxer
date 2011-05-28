@@ -8,15 +8,8 @@
 #import "BXInputPanelController.h"
 #import "BXEmulatedJoystick.h"
 #import "BXSession.h"
-#import "BXInputController.h"
+#import "BXEmulator.h"
 
-enum {
-	BXInputPanelNoJoystickTag			= 0,
-	BXInputPanel2AxisJoystickTag		= 1,
-	BXInputPanel4AxisJoystickTag		= 2,
-	BXInputPanelCHFlightstickProTag		= 3,
-	BXInputPanelThrustmasterFCSTag		= 4
-};
 
 @implementation BXInputPanelController
 @synthesize joystickTypeSelector, sessionMediator;
@@ -44,4 +37,21 @@ enum {
 			nil];
 }
 
+- (void) menuWillOpen: (NSMenu *)menu
+{
+	//Validate the available joystick types
+	BXJoystickSupportLevel supportLevel = [[[self session] emulator] joystickSupport];
+	
+	for (NSMenuItem *menuItem in [menu itemArray])
+	{
+		Class joystickClass = [menuItem representedObject];
+		if (joystickClass)
+		{
+			BOOL enable =	(supportLevel == BXJoystickSupportFull) ||
+							(supportLevel == BXJoystickSupportSimple && ![joystickClass requiresFullJoystickSupport]);
+			
+			[menuItem setEnabled: enable];
+		}
+	}
+}
 @end

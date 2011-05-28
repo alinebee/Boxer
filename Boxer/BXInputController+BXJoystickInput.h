@@ -21,6 +21,9 @@
 //Which joystick type to use if supported, specified as a class conforming to the BXEmulatedJoystick protocol.
 @property (copy, nonatomic) Class preferredJoystickType;
 
+//Which joystick type is currently in use, specified as a class conforming to the BXEmulatedJoystick protocol.
+@property (copy, nonatomic) Class joystickType;
+
 //Validates that the specified joystick class conforms to BXEmulatedJoystick.
 - (BOOL) validatePreferredJoystickType: (id *)ioValue error: (NSError **)outError;
 

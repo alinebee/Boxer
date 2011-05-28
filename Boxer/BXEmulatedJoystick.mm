@@ -20,19 +20,6 @@ NSString * const BXEmulatedJoystickClassKey = @"BXEmulatedJoystickClassKey";
 
 @implementation BXBaseEmulatedJoystick
 
-- (void) didConnect
-{
-	BOOL enableSecondJoystick = [[self class] requiresFullJoystickSupport];
-	JOYSTICK_Enable(BXGameportStick1, YES);
-	JOYSTICK_Enable(BXGameportStick2, enableSecondJoystick);
-}
-
-- (void) willDisconnect
-{
-	JOYSTICK_Enable(BXGameportStick1, NO);
-	JOYSTICK_Enable(BXGameportStick2, NO);
-}
-
 - (void) clearInput
 {
 	JOYSTICK_Move_X(BXGameportStick1, BXGameportAxisCentered);
@@ -42,6 +29,22 @@ NSString * const BXEmulatedJoystickClassKey = @"BXEmulatedJoystickClassKey";
 	
 	[self setPressedButtons: BXNoGameportButtonsMask];
 }
+
+- (void) didConnect
+{
+	BOOL enableSecondJoystick = [[self class] requiresFullJoystickSupport];
+	JOYSTICK_Enable(BXGameportStick1, YES);
+	JOYSTICK_Enable(BXGameportStick2, enableSecondJoystick);
+	//Reset all inputs to default position
+	[self clearInput];
+}
+
+- (void) willDisconnect
+{
+	JOYSTICK_Enable(BXGameportStick1, NO);
+	JOYSTICK_Enable(BXGameportStick2, NO);
+}
+
 
 - (void) buttonDown: (BXEmulatedJoystickButton)button
 {

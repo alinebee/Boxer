@@ -340,6 +340,7 @@
 				<string>Elite/Elite Plus</string>
 				<string>Mechwarrior 2</string>
 				<string>Descent</string>
+				<string>Descent 2</string>
 				<string>Gods</string>
 				<string>Space Rogue</string>
 				<string>Gauntlet II</string>
@@ -354,6 +355,7 @@
 				<string>mw2.exe</string>
 				<string>descent.hog</string>
 				<string>descent1.sow</string>
+				<string>descent2.exe</string>
 				<string>pgods.mus</string>
 				<string>vspace.ctl</string>
 				<string>gauntlet.exe</string>
@@ -471,13 +473,11 @@
 			<key>BXProfileMatches</key>
 			<array>
 				<string>The Elder Scrolls: Battlespire</string>
-				<string>Descent 2</string>
 				<string>Blood</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>spire.bat</string>
-				<string>descent2.exe</string>
 				<string>blood.exe</string>
 			</array>
 		</dict>

@@ -32,8 +32,8 @@
 			[BX2AxisJoystick class],
 			[BX4AxisJoystick class],
 			[BXThrustmasterFCS class],
-			[BXCHFlightStickPro class],
-			[BXCHCombatStick class],
+			//[BXCHFlightStickPro class],
+			//[BXCHCombatStick class],
 			nil];
 }
 

@@ -111,13 +111,21 @@ typedef NSInteger BXHIDPOVSwitchDirection;
 //The angle of the POV switch: normalized to within 0-35999 (clockwise from north) or BXHIDPOVCentered for centered.
 @property (assign, nonatomic) NSInteger POVDirection;
 
+
 #pragma mark -
 #pragma mark Helper class methods
 
 //Returns the closest BXHIDPOVSwitchDirection constant for the specified POV direction.
 + (BXHIDPOVSwitchDirection) closest8WayDirectionForPOV: (NSInteger)direction;
+
+//Normalizes the specified direction to the closest cardinal (NSEW) BXHIDPOVSwitchDirection constant.
 + (BXHIDPOVSwitchDirection) closest4WayDirectionForPOV: (NSInteger)direction;
 
+//Normalizes the specified direction to the closest cardinal (NSEW) BXHIDPOVSwitchDirection constant,
+//taking into account which cardinal POV direction it was in before. This makes the corners
+//'sticky' to avoid unintentional switching.
++ (BXHIDPOVSwitchDirection) closest4WayDirectionForPOV: (NSInteger)direction
+										   previousPOV: (BXHIDPOVSwitchDirection)oldDirection;
 @end
 
 

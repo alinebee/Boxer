@@ -474,18 +474,25 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	if ([self isGamePackage])
 	{
 		//Go through the settings working out which ones we should store in user defaults,
-		//and which ones in the gamebox's configuration file.
+		//and which ones we should store in the gamebox's configuration file.
 		BXEmulatorConfiguration *runtimeConf = [BXEmulatorConfiguration configuration];
 		
 		//These are the settings we want to keep in the configuration file
 		NSNumber *fixedSpeed	= [gameSettings objectForKey: @"fixedSpeed"];
 		NSNumber *isAutoSpeed	= [gameSettings objectForKey: @"autoSpeed"];
 		NSNumber *coreMode		= [gameSettings objectForKey: @"coreMode"];
+		NSNumber *strictGameportTiming = [gameSettings objectForKey: @"strictGameportTiming"];
 		
 		if (coreMode)
 		{
 			NSString *coreString = [BXEmulator configStringForCoreMode: [coreMode integerValue]];
 			[runtimeConf setValue: coreString forKey: @"core" inSection: @"cpu"];
+		}
+		
+		if (strictGameportTiming)
+		{
+			NSString *timingString = [BXEmulator configStringForGameportTimingMode: [strictGameportTiming integerValue]];
+			[runtimeConf setValue: timingString forKey: @"timed" inSection: @"joystick"];
 		}
 		
 		if (fixedSpeed || isAutoSpeed)
@@ -497,7 +504,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		}
 		
 		//Strip out these settings once we're done, so we won't preserve them in user defaults
-		[gameSettings removeObjectsForKeys: [NSArray arrayWithObjects: @"fixedSpeed", @"autoSpeed", @"coreMode", nil]];
+		NSArray *confSettings = [NSArray arrayWithObjects: @"fixedSpeed", @"autoSpeed", @"coreMode", @"strictGameportTiming", nil];
+		[gameSettings removeObjectsForKeys: confSettings];
 
 		
 		//Persist the gamebox-specific configuration into the gamebox's configuration file.

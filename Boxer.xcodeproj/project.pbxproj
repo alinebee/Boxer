@@ -353,6 +353,8 @@
 		9FFAFE2D10DE33FB00728BAC /* GameProfiles.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */; };
 		9FFAFE4310DE343F00728BAC /* Configurations in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2E10DE343F00728BAC /* Configurations */; };
 		9FFC2AC012A19CCC008C2B3B /* Sample Game Icons in Resources */ = {isa = PBXBuildFile; fileRef = 9FFC2ABF12A19CCC008C2B3B /* Sample Game Icons */; };
+		9FFE1F831390F70C005C438A /* BXThrustmasterFCS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FFE1F821390F70C005C438A /* BXThrustmasterFCS.mm */; };
+		9FFE1FDA13911FE5005C438A /* BXInputPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFE1FD913911FE5005C438A /* BXInputPanelController.m */; };
 		9FFF9728123269D1009B5EE5 /* NDAlias+AliasFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9716123269D1009B5EE5 /* NDAlias+AliasFile.m */; };
 		9FFF9729123269D1009B5EE5 /* NDAlias.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9718123269D1009B5EE5 /* NDAlias.m */; };
 		9FFF972A123269D1009B5EE5 /* NDResourceFork+OtherSorces.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF971A123269D1009B5EE5 /* NDResourceFork+OtherSorces.m */; };
@@ -1013,6 +1015,9 @@
 		9FFBF67011A7F8F4000A1863 /* BXFrameRenderingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFrameRenderingView.h; sourceTree = "<group>"; };
 		9FFBF6AA11A811F7000A1863 /* BXEventConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEventConstants.h; sourceTree = "<group>"; };
 		9FFC2ABF12A19CCC008C2B3B /* Sample Game Icons */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Sample Game Icons"; sourceTree = "<group>"; };
+		9FFE1F821390F70C005C438A /* BXThrustmasterFCS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXThrustmasterFCS.mm; sourceTree = "<group>"; };
+		9FFE1FD813911FE5005C438A /* BXInputPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXInputPanelController.h; sourceTree = "<group>"; };
+		9FFE1FD913911FE5005C438A /* BXInputPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXInputPanelController.m; sourceTree = "<group>"; };
 		9FFF9715123269D1009B5EE5 /* NDAlias+AliasFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NDAlias+AliasFile.h"; sourceTree = "<group>"; };
 		9FFF9716123269D1009B5EE5 /* NDAlias+AliasFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NDAlias+AliasFile.m"; sourceTree = "<group>"; };
 		9FFF9717123269D1009B5EE5 /* NDAlias.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NDAlias.h; sourceTree = "<group>"; };
@@ -1378,6 +1383,8 @@
 				9FDAD87E10C182B3004EA7D0 /* BXCoverArtWell.m */,
 				9FD011BB10C2A02F00670CE1 /* BXGameboxPanelController.h */,
 				9FD011BC10C2A02F00670CE1 /* BXGameboxPanelController.m */,
+				9FFE1FD813911FE5005C438A /* BXInputPanelController.h */,
+				9FFE1FD913911FE5005C438A /* BXInputPanelController.m */,
 				9F9E27D411F8C173003EE8F3 /* BXDrivePanelController.h */,
 				9F9E27D511F8C173003EE8F3 /* BXDrivePanelController.m */,
 			);
@@ -2109,6 +2116,7 @@
 				9FC9E59A13675A8B0095DCDE /* BXEmulatedJoystickPrivate.h */,
 				9FC9E59B13675A8B0095DCDE /* BXEmulatedJoystickPrivate.h */,
 				9FC9E58E1367514C0095DCDE /* BXCHFlightstick.mm */,
+				9FFE1F821390F70C005C438A /* BXThrustmasterFCS.mm */,
 			);
 			name = Devices;
 			sourceTree = "<group>";
@@ -2638,6 +2646,8 @@
 				9F7721E912B38C4400072AE8 /* shell_batch.cpp in Sources */,
 				9F7721EA12B38C4400072AE8 /* shell_cmds.cpp in Sources */,
 				9F7721EB12B38C4400072AE8 /* shell_misc.cpp in Sources */,
+				9FFE1F831390F70C005C438A /* BXThrustmasterFCS.mm in Sources */,
+				9FFE1FDA13911FE5005C438A /* BXInputPanelController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

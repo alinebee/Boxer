@@ -12,6 +12,10 @@
 
 #import <Foundation/Foundation.h>
 
+#pragma mark -
+#pragma mark Constants
+
+
 //How long buttonPressed: should pretend to hold the specified button down before releasing.
 #define BXJoystickButtonPressDurationDefault 0.25
 
@@ -70,11 +74,38 @@ enum {
 typedef NSInteger BXEmulatedPOVDirection;
 
 
+#pragma mark -
+#pragma mark Error constants
+
+extern NSString * const BXEmulatedJoystickErrorDomain;
+
+//Class of joystick type, as an Obj-C Class object
+extern NSString * const BXEmulatedJoystickClassKey;
+
+
+enum {
+	BXEmulatedJoystickInvalidType,		//Specified class was not a valid joystick class
+	BXEmulatedJoystickUnsupportedType	//Current game does not support this joystick
+};
+
+
+#pragma mark -
+#pragma mark Joystick protocols
+
 @protocol BXEmulatedJoystick <NSObject>
 
 @property (readonly, nonatomic) NSUInteger numButtons;
 @property (readonly, nonatomic) NSUInteger numAxes;
 @property (readonly, nonatomic) NSUInteger numPOVSwitches;
+
+
+//Returns whether this joystick class needs 4-axis, 4-button joystick support in order to function correctly.
+//Used for filtering out unsupported joysticks when running games that are known to have problems with them.
++ (BOOL) requiresFullJoystickSupport;
+
+//The localized name of this joystick type, for display in the UI.
++ (NSString *) localizedName;
+
 
 //Called by BXEmulator when the device is plugged/unplugged.
 - (void) didConnect;
@@ -101,12 +132,52 @@ typedef NSInteger BXEmulatedPOVDirection;
 - (BOOL) buttonIsDown: (BXEmulatedJoystickButton)button;
 - (float) axisPosition: (BXEmulatedJoystickAxis)axis;
 
+
+@optional
+
+- (void) xAxisMovedTo: (float)position;
+- (void) xAxisMovedBy: (float)delta;
+
+- (void) yAxisMovedTo: (float)position;
+- (void) yAxisMovedBy: (float)delta;
+
+//4-axis joystick axes
+- (void) x2AxisMovedTo: (float)position;
+- (void) x2AxisMovedBy: (float)delta;
+
+- (void) y2AxisMovedTo: (float)position;
+- (void) y2AxisMovedBy: (float)delta;
+
+//Wheel pedal axes
+- (void) acceleratorMovedTo: (float)position;
+- (void) acceleratorMovedBy: (float)delta;
+
+- (void) brakeMovedTo: (float)position;
+- (void) brakeMovedBy: (float)delta;
+
+//Flightstick axes and POV hats
+- (void) throttleMovedTo: (float)position;
+- (void) throttleMovedBy: (float)delta;
+
+- (void) rudderMovedTo: (float)position;
+- (void) rudderMovedBy: (float)delta;
+
+- (void) POVChangedTo: (BXEmulatedPOVDirection)direction;
+- (BXEmulatedPOVDirection) POVDirection;
+
+- (void) POV2ChangedTo: (BXEmulatedPOVDirection)direction;
+- (BXEmulatedPOVDirection) POV2Direction;
+
 @end
 
-@interface BXBaseEmulatedJoystick: NSObject <BXEmulatedJoystick>
+
+#pragma mark -
+#pragma mark Joystick classes
+
+@interface BXBaseEmulatedJoystick: NSObject
 @end
 
-@interface BX2AxisJoystick: BXBaseEmulatedJoystick
+@interface BX2AxisJoystick: BXBaseEmulatedJoystick <BXEmulatedJoystick>
 
 - (void) xAxisMovedTo: (float)position;
 - (void) xAxisMovedBy: (float)delta;
@@ -126,7 +197,7 @@ typedef NSInteger BXEmulatedPOVDirection;
 
 @end
 
-@interface BXCHFlightStickPro: BX4AxisJoystick
+@interface BXCHFlightStickPro: BX2AxisJoystick
 
 - (void) POVChangedTo: (BXEmulatedPOVDirection)direction;
 - (BXEmulatedPOVDirection) POVDirection;
@@ -147,7 +218,7 @@ typedef NSInteger BXEmulatedPOVDirection;
 
 @end
 
-@interface BXThrustmaserFCS: BX4AxisJoystick
+@interface BXThrustmasterFCS: BX2AxisJoystick
 
 - (void) POVChangedTo: (BXEmulatedPOVDirection)direction;
 - (BXEmulatedPOVDirection) POVDirection;

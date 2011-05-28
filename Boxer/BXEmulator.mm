@@ -157,6 +157,11 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	}
 }
 
++ (NSString *) configStringForGameportTimingMode: (BXGameportTimingMode)mode
+{
+	return (mode == BXGameportTimingClockBased) ? @"true" : @"false";
+}
+
 
 #pragma mark -
 #pragma mark Key-value binding helper methods

@@ -180,6 +180,7 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 //Returns the configuration values that reflect the specified settings.
 + (NSString *) configStringForFixedSpeed: (NSInteger)speed isAuto: (BOOL)isAutoSpeed;
 + (NSString *) configStringForCoreMode: (BXCoreMode)mode;
++ (NSString *) configStringForGameportTimingMode: (BXGameportTimingMode)mode;
 
 
 #pragma mark -

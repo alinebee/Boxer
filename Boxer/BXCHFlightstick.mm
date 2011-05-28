@@ -28,6 +28,13 @@ enum {
 
 @implementation BXCHFlightStickPro
 
++ (BOOL) requiresFullJoystickSupport { return YES; }
+
++ (NSString *) localizedName
+{
+	return NSLocalizedString(@"CH Flightstick Pro", @"Localized name for CH Flightstick Pro joystick type.");
+}
+
 - (NSUInteger) numButtons		{ return 4; }
 - (NSUInteger) numAxes			{ return 4; }
 - (NSUInteger) numPOVSwitches	{ return 1; }
@@ -44,7 +51,8 @@ enum {
 
 - (void) POVChangedTo: (BXEmulatedPOVDirection)direction
 {
-	BXEmulatedPOVDirection normalizedDirection = [BXHIDEvent closest4WayDirectionForPOV: direction];
+	BXEmulatedPOVDirection normalizedDirection = [BXHIDEvent closest4WayDirectionForPOV: direction
+																			previousPOV: [self POVDirection]];
 	
 	BXGameportButtonMask buttonMask = BXNoGameportButtonsMask;
 	switch (normalizedDirection)
@@ -68,6 +76,33 @@ enum {
 	
 	[self setPressedButtons: buttonMask];
 }
+
+
+- (BXEmulatedPOVDirection) POVDirection
+{
+	switch ([self pressedButtons])
+	{
+		case BXCHPOVNorthMask:
+			return BXEmulatedPOVNorth;
+			break;
+			
+		case BXCHPOVEastMask:
+			return BXEmulatedPOVEast;
+			break;
+			
+		case BXCHPOVSouthMask:
+			return BXEmulatedPOVSouth;
+			break;
+			
+		case BXCHPOVWestMask:
+			return BXEmulatedPOVWest;
+			break;
+			
+		default:
+			return BXEmulatedPOVCentered;
+	}
+}
+
 
 - (void) throttleMovedTo: (float)position	{ [self axis: BXCHCombatStickThrottleAxis movedTo: position]; }
 - (void) throttleMovedBy: (float)delta		{ [self axis: BXCHCombatStickThrottleAxis movedBy: delta]; }
@@ -113,35 +148,15 @@ enum {
 	}
 }
 
-- (BXEmulatedPOVDirection) POVDirection
-{
-	switch ([self pressedButtons])
-	{
-		case BXCHPOVNorthMask:
-			return BXEmulatedPOVNorth;
-			break;
-			
-		case BXCHPOVEastMask:
-			return BXEmulatedPOVEast;
-			break;
-			
-		case BXCHPOVSouthMask:
-			return BXEmulatedPOVSouth;
-			break;
-			
-		case BXCHPOVWestMask:
-			return BXEmulatedPOVWest;
-			break;
-			
-		default:
-			return BXEmulatedPOVCentered;
-	}
-}
-
 @end
 
 
 @implementation BXCHCombatStick
+
++ (NSString *) localizedName
+{
+	return NSLocalizedString(@"CH F-16 Combatstick", @"Localized name for CH F-16 Combatstick joystick type.");
+}
 
 - (NSUInteger) numButtons		{ return 6; }
 - (NSUInteger) numAxes			{ return 4; }
@@ -150,7 +165,8 @@ enum {
 
 - (void) POV2ChangedTo: (BXEmulatedPOVDirection)direction
 {
-	BXEmulatedPOVDirection normalizedDirection = [BXHIDEvent closest4WayDirectionForPOV: direction];
+	BXEmulatedPOVDirection normalizedDirection = [BXHIDEvent closest4WayDirectionForPOV: direction
+																			previousPOV: [self POV2Direction]];
 	
 	BXGameportButtonMask buttonMask = BXNoGameportButtonsMask;
 	switch (normalizedDirection)

@@ -29,7 +29,7 @@
 	return ordinal * 4500;
 }
 
-//Normalizes the specified direction to the closest cardinal BXHIDPOVSwitchDirection constant.
+//Normalizes the specified direction to the closest cardinal (NSEW) BXHIDPOVSwitchDirection constant.
 + (BXHIDPOVSwitchDirection) closest4WayDirectionForPOV: (NSInteger)direction
 {
 	if (direction < 0 || direction > 36000) return BXHIDPOVCentered;
@@ -37,6 +37,37 @@
 	NSInteger ordinal = rintf(direction / 9000.0f);
 	if (ordinal > 3) ordinal = 0;
 	return ordinal * 9000;
+}
+
+//Normalizes the specified direction to the closest cardinal (NSEW) BXHIDPOVSwitchDirection constant,
+//taking into account which cardinal POV direction it was in before.
+//This makes the corners 'sticky' so that e.g. N to NE will return N, while E to NE will return E.
+//This reduces unintentional switching.
++ (BXHIDPOVSwitchDirection) closest4WayDirectionForPOV: (NSInteger)direction
+										   previousPOV: (BXHIDPOVSwitchDirection)oldDirection
+{
+	BXHIDPOVSwitchDirection closest8WayDirection = [self closest8WayDirectionForPOV: direction];
+	BXHIDPOVSwitchDirection normalizedDirection = closest8WayDirection;
+	
+	switch (closest8WayDirection)
+	{
+		case BXHIDPOVNorthEast:
+			normalizedDirection = (oldDirection == BXHIDPOVNorth) ? BXHIDPOVNorth : BXHIDPOVEast;
+			break;
+			
+		case BXHIDPOVNorthWest:
+			normalizedDirection = (oldDirection == BXHIDPOVNorth) ? BXHIDPOVNorth : BXHIDPOVWest;
+			break;
+			
+		case BXHIDPOVSouthWest:
+			normalizedDirection = (oldDirection == BXHIDPOVSouth) ? BXHIDPOVSouth : BXHIDPOVWest;
+			break;
+			
+		case BXHIDPOVSouthEast:
+			normalizedDirection = (oldDirection == BXHIDPOVSouth) ? BXHIDPOVSouth : BXHIDPOVEast;
+			break;
+	}
+	return normalizedDirection;
 }
 
 

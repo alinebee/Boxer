@@ -9,18 +9,22 @@
 
 
 #pragma mark -
+#pragma mark Error constants
+
+NSString * const BXEmulatedJoystickErrorDomain = @"BXEmulatedJoystickErrorDomain";
+NSString * const BXEmulatedJoystickClassKey = @"BXEmulatedJoystickClassKey";
+
+
+#pragma mark -
 #pragma mark Implementations
 
 @implementation BXBaseEmulatedJoystick
 
-- (NSUInteger) numButtons		{ return 2; }
-- (NSUInteger) numAxes			{ return 2; }
-- (NSUInteger) numPOVSwitches	{ return 0; }
-
 - (void) didConnect
 {
+	BOOL enableSecondJoystick = [[self class] requiresFullJoystickSupport];
 	JOYSTICK_Enable(BXGameportStick1, YES);
-	JOYSTICK_Enable(BXGameportStick2, NO);
+	JOYSTICK_Enable(BXGameportStick2, enableSecondJoystick);
 }
 
 - (void) willDisconnect
@@ -99,14 +103,6 @@
 	}
 }
 
-- (void) axis: (BXEmulatedJoystickAxis)axis movedBy: (float)delta
-{
-	float oldPosition = [self axisPosition: axis];
-	float newPosition = oldPosition + delta;
-	
-	[self axis: axis movedTo: newPosition];
-}
-
 - (float) axisPosition: (BXEmulatedJoystickAxis)axis
 {
 	switch (axis)
@@ -132,9 +128,12 @@
 	}
 }
 
-- (void) buttonPressed: (BXEmulatedJoystickButton)button
+- (void) axis: (BXEmulatedJoystickAxis)axis movedBy: (float)delta
 {
-	[self buttonPressed: button forDuration: BXJoystickButtonPressDurationDefault];
+	float oldPosition = [self axisPosition: axis];
+	float newPosition = oldPosition + delta;
+	
+	[self axis: axis movedTo: newPosition];
 }
 
 - (void) buttonPressed: (BXEmulatedJoystickButton)button forDuration: (NSTimeInterval)duration
@@ -143,6 +142,11 @@
 	[self performSelector: @selector(_releaseButton:)
 			   withObject: [NSNumber numberWithUnsignedInteger: button]
 			   afterDelay: duration];
+}
+
+- (void) buttonPressed: (BXEmulatedJoystickButton)button
+{
+	[self buttonPressed: button forDuration: BXJoystickButtonPressDurationDefault];
 }
 
 - (void) setPressedButtons: (BXGameportButtonMask)buttonMask
@@ -198,7 +202,19 @@
 @end
 
 
+
 @implementation BX2AxisJoystick
+
++ (BOOL) requiresFullJoystickSupport { return NO; }
++ (NSString *) localizedName
+{
+	return NSLocalizedString(@"2-button, 2-axis joystick", @"Localized name for generic 2-axis joystick type.");
+}
+
+- (NSUInteger) numButtons		{ return 2; }
+- (NSUInteger) numAxes			{ return 2; }
+- (NSUInteger) numPOVSwitches	{ return 0; }
+
 
 - (void) xAxisMovedTo: (float)position	{ [self axis: BXEmulatedJoystickAxisX movedTo: position]; }
 - (void) xAxisMovedBy: (float)delta		{ [self axis: BXEmulatedJoystickAxisX movedBy: delta]; }
@@ -211,22 +227,15 @@
 
 @implementation BX4AxisJoystick
 
++ (BOOL) requiresFullJoystickSupport { return YES; }
++ (NSString *) localizedName
+{
+	return NSLocalizedString(@"4-button, 4-axis joystick", @"Localized name for generic 4-axis joystick type.");
+}
+
 - (NSUInteger) numButtons		{ return 4; }
 - (NSUInteger) numAxes			{ return 4; }
 - (NSUInteger) numPOVSwitches	{ return 0; }
-
-- (void) didConnect
-{
-	JOYSTICK_Enable(BXGameportStick1, YES);
-	JOYSTICK_Enable(BXGameportStick2, YES);
-}
-
-- (void) willDisconnect
-{
-	JOYSTICK_Enable(BXGameportStick1, NO);
-	JOYSTICK_Enable(BXGameportStick2, NO);
-}
-
 
 - (void) x2AxisMovedTo: (float)position	{ [self axis: BXEmulatedJoystick2AxisX movedTo: position]; }
 - (void) x2AxisMovedBy: (float)delta	{ [self axis: BXEmulatedJoystick2AxisX movedBy: delta]; }

@@ -15,4 +15,13 @@
 
 @interface BXInputController (BXJoystickInput) <BXHIDDeviceDelegate>
 
+//Whether to use the standard (BXGameportPollBasedTiming) or strict (BXGameportClockBasedTiming) gameport timing mode.
+@property (assign, nonatomic) BOOL strictGameportTiming;
+
+//Which joystick type to use if supported, specified as a class conforming to the BXEmulatedJoystick protocol.
+@property (copy, nonatomic) Class preferredJoystickType;
+
+//Validates that the specified joystick class conforms to BXEmulatedJoystick.
+- (BOOL) validatePreferredJoystickType: (id *)ioValue error: (NSError **)outError;
+
 @end

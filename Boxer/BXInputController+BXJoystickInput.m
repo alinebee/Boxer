@@ -11,7 +11,6 @@
 #import "BXJoystickController.h"
 #import "DDHidDevice+BXDeviceExtensions.h"
 
-
 //The multiplier to use when adding a joystick axis's positional input (for e.g. throttle impulses)
 //rather than using it as the absolute axis position.
 #define BXAdditiveAxisStrength 0.1f
@@ -22,17 +21,166 @@
 
 @implementation BXInputController (BXJoystickInput)
 
+#pragma mark -
+#pragma mark Setting and getting joystick configuration
+
+
++ (NSSet *) keyPathsForValuesAffectingStrictGameportTiming
+{
+	return [NSSet setWithObject: @"representedObject.emulator.gameportTimingMode"];
+}
+
++ (NSSet *) keyPathsForValuesAffectingPreferredJoystickType
+{
+	return [NSSet setWithObject: @"representedObject.gameSettings.preferredJoystickType"];
+}
+
+- (BOOL) strictGameportTiming
+{
+	BXEmulator *emulator = [[self representedObject] emulator];
+	return [emulator gameportTimingMode] == BXGameportTimingClockBased;
+}
+
+- (void) setStrictGameportTiming: (BOOL)flag
+{
+	BXSession *session = [self representedObject];
+	BXEmulator *emulator = [session emulator];
+	
+	BXGameportTimingMode mode = (flag) ? BXGameportTimingClockBased : BXGameportTimingPollBased;
+	if ([emulator gameportTimingMode] != flag)
+	{
+		[emulator setGameportTimingMode: mode];
+		
+		//Preserve changes in the per-game settings
+		[[session gameSettings] setObject: [NSNumber numberWithBool: flag] forKey: @"strictGameportTiming"];
+	}
+}
+
+- (Class) preferredJoystickType
+{
+	Class defaultJoystickType = [BX4AxisJoystick class];
+	
+	BXSession *session	= [self representedObject];
+	NSString *className	= (NSString *)[[session gameSettings] objectForKey: @"preferredJoystickType"];
+	
+	//If no setting exists, then fall back on the default joystick type
+	if (!className) return defaultJoystickType;
+	
+	//Setting was an empty string, indicating no joystick support
+	else if (![className length]) return nil;
+	
+	//Otherwise return the specified joystick type class (or the default joystick type, if no such class exists)
+	else
+	{
+		Class joystickType = NSClassFromString(className);
+		if (joystickType) return joystickType;
+		else return defaultJoystickType;
+	}
+}
+
+- (void) setPreferredJoystickType: (Class)joystickType
+{
+	if (joystickType != [self preferredJoystickType])
+	{
+		NSString *className;
+		//Persist the new joystick type into the per-game settings
+		if (joystickType != nil)
+		{
+			className = NSStringFromClass(joystickType);
+		}
+		else
+		{
+			className = @"";
+		}
+		NSMutableDictionary *gameSettings = [[self representedObject] gameSettings];
+		[gameSettings setObject: className forKey: @"preferredJoystickType"];
+		
+		//Reinitialize the joysticks
+		[self _syncJoystickType];
+	}
+}
+
+- (BOOL) validatePreferredJoystickType: (id *)ioValue error: (NSError **)outError
+{
+	Class joystickClass = *ioValue;
+	
+	//Nil values are just fine, skip all the other checks 
+	if (!joystickClass) return YES;
+	
+	//Unknown classname or non-joystick class
+	if (![joystickClass conformsToProtocol: @protocol(BXEmulatedJoystick)])
+	{
+		if (outError)
+		{
+			NSString *descriptionFormat = NSLocalizedString(@"“%@” is not a valid joystick type.",
+															@"Format for error message when choosing an unrecognised joystick type. %@ is the classname of the chosen joystick type.");
+			
+			NSString *description = [NSString stringWithFormat: descriptionFormat, NSStringFromClass(joystickClass), nil];
+			
+			NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+									  description, NSLocalizedDescriptionKey,
+									  joystickClass, BXEmulatedJoystickClassKey,
+									  nil];
+			
+			*outError = [NSError errorWithDomain: BXEmulatedJoystickErrorDomain
+											code: BXEmulatedJoystickInvalidType
+										userInfo: userInfo];
+		}
+		return NO;
+	}
+	
+	/* Disabled for now: this needs to be moved downstream into BXEmulator, because the preferred joystick type can be set at any time.
+	BXEmulator *emulator = [[self representedObject] emulator];
+	
+	//Joystick class valid but not supported by the current session
+	if ([emulator joystickSupport] == BXNoJoystickSupport || 
+		([emulator joystickSupport] == BXJoystickSupportSimple && [joystickClass requiresFullJoystickSupport]))
+	{
+		if (outError)
+		{
+			NSString *localizedName	= [joystickClass localizedName];
+			NSString *sessionName	= [[self representedObject] displayName];
+			
+			NSString *descriptionFormat = NSLocalizedString(@"Joysticks of type “%1$@” are not supported by %2$@.",
+															@"Format for error message when choosing an unsupported joystick type. %1$@ is the localized name of the chosen joystick type, %2$@ is the display name of the current DOS session.");
+			
+			NSString *description = [NSString stringWithFormat: descriptionFormat, localizedName, sessionName, nil];
+			
+			NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+									  description, NSLocalizedDescriptionKey,
+									  joystickClass, BXEmulatedJoystickClassKey,
+									  nil];
+			
+			*outError = [NSError errorWithDomain: BXEmulatedJoystickErrorDomain
+											code: BXEmulatedJoystickUnsupportedType
+										userInfo: userInfo];
+		}
+		return NO; 
+	}
+	 */
+	
+	//Joystick type is fine, go ahead
+	return YES;
+}
+
+
 - (void) _syncJoystickType
 {
 	BXEmulator *emulator = [[self representedObject] emulator];
 	BXJoystickSupportLevel support = [emulator joystickSupport];
 	
-	if (support == BXNoJoystickSupport)
+	Class preferredJoystickClass = [self preferredJoystickType];
+	
+	//If the current game doesn't support joysticks at all, or the user
+	//has chosen to disable joystick support, then remove all connected
+	//joysticks and don't continue further.
+	if (support == BXNoJoystickSupport || !preferredJoystickClass)
 	{
 		[emulator detachJoystick];
 		return;
 	}
 	
+	//Otherwise, check for currently-connected controllers and 
 	NSArray *controllers = [[[NSApp delegate] joystickController] joystickDevices];
 	NSUInteger numControllers = [controllers count];
 	
@@ -40,11 +188,14 @@
 	{
 		Class joystickClass;
 		
-		//TODO: more sophisticated heuristics here for determining a suitable joystick type
-		if (support == BXJoystickSupportFull) joystickClass = [BX4AxisJoystick class];
+		//TODO: ask BXEmulator to validate the specified class, and fall back on the 2-axis joystick otherwise
+		if (support == BXJoystickSupportFull)
+		{
+			joystickClass = preferredJoystickClass;
+		}
 		else joystickClass = [BX2AxisJoystick class];
 		
-		if (![[emulator joystick] isKindOfClass: joystickClass])
+		if (![[emulator joystick] isMemberOfClass: joystickClass])
 			[emulator attachJoystickOfType: joystickClass];
 		
 		//Record which of the devices will be considered the main input device
@@ -56,6 +207,10 @@
 		primaryController = nil;
 	}
 }
+
+
+#pragma mark -
+#pragma mark Handling joystick events
 
 - (void) HIDJoystickButtonDown: (BXHIDEvent *)event
 {
@@ -126,7 +281,7 @@
 
 - (void) HIDJoystickAxisChanged: (BXHIDEvent *)event
 {
-	id <BXEmulatedJoystick> joystick = [self _emulatedJoystick];
+	id joystick = [self _emulatedJoystick];
 	DDHidElement *element = [event element];
 	
 	BOOL isPrimaryController = [[event device] isEqual: primaryController];
@@ -142,29 +297,39 @@
 		//The DOS API takes a floating-point range from -1.0 to +1.0.
 		float fPosition = (float)position / (float)DDHID_JOYSTICK_VALUE_MAX;
 		
-		BXEmulatedJoystickAxis emulatedAxis;
 		switch ([event axis])
 		{
 			case kHIDUsage_GD_X:
 				//If the input comes from an additional controller, send it to the second emulated joystick
-				if (!isPrimaryController && [joystick numAxes] > 2) emulatedAxis = BXEmulatedJoystick2AxisX;
-				else emulatedAxis = BXEmulatedJoystickAxisX;
-				[joystick axis: emulatedAxis movedTo: fPosition];
+				if (!isPrimaryController && [joystick respondsToSelector: @selector(x2AxisMovedTo:)])
+					[joystick x2AxisMovedTo: fPosition];
+				
+				else if ([joystick respondsToSelector: @selector(xAxisMovedTo:)])
+					[joystick xAxisMovedTo: fPosition];
+				
 				break;
 				
 			case kHIDUsage_GD_Y:
 				//If the input comes from an additional controller, send it to the second emulated joystick
-				if (!isPrimaryController && [joystick numAxes] > 2) emulatedAxis = BXEmulatedJoystick2AxisY;
-				else emulatedAxis = BXEmulatedJoystickAxisY;
-				[joystick axis: emulatedAxis movedTo: fPosition];
+				if (!isPrimaryController && [joystick respondsToSelector: @selector(y2AxisMovedTo:)])
+					[joystick y2AxisMovedTo: fPosition];
+				
+				else if ([joystick respondsToSelector: @selector(yAxisMovedTo:)])
+					[joystick yAxisMovedTo: fPosition];
+				
 				break;
 				
 			case kHIDUsage_GD_Rx:
 			case kHIDUsage_GD_Z:
 				if ([joystick respondsToSelector: @selector(rudderMovedTo:)])
-					[(id)joystick rudderMovedTo: fPosition];
-				else
-					[joystick axis: BXEmulatedJoystickAxisX2 movedTo: fPosition];
+					[joystick rudderMovedTo: fPosition];
+				
+				else if ([joystick respondsToSelector: @selector(x2AxisMovedTo:)])
+					[joystick x2AxisMovedTo: fPosition];
+				
+				else if ([joystick respondsToSelector: @selector(brakeMovedTo:)])
+					[joystick brakeMovedTo: fPosition];
+				
 				break;
 				
 			case kHIDUsage_GD_Ry:
@@ -174,11 +339,15 @@
 				//control and Slider as vertical. We should check for the existence of a Slider axis and map Rz
 				//to X2 in that instance.
 				
-				
 				if ([joystick respondsToSelector: @selector(throttleMovedTo:)])
-					[(id)joystick throttleMovedTo: fPosition];
-				else
-					[joystick axis: BXEmulatedJoystickAxisY2 movedTo: fPosition];
+					[joystick throttleMovedTo: fPosition];
+				
+				else if ([joystick respondsToSelector: @selector(y2AxisMovedTo:)])
+					[joystick y2AxisMovedTo: fPosition];
+				
+				else if ([joystick respondsToSelector: @selector(acceleratorMovedTo:)])
+					[joystick acceleratorMovedTo: fPosition];
+				
 				break;
 		}
 		
@@ -188,29 +357,19 @@
 
 - (void) HIDJoystickPOVSwitchChanged: (BXHIDEvent *)event
 {
-	id <BXEmulatedJoystick> joystick = [self _emulatedJoystick];
+	id joystick = [self _emulatedJoystick];
 	BOOL isPrimaryController = [[event device] isEqual: primaryController];
 	
 	//If the emulated joystick has a POV switch, send the signal to the joystick as-is
 	if ([joystick respondsToSelector: @selector(POVChangedTo:)])
 	{
 		BXEmulatedPOVDirection direction = (BXEmulatedPOVDirection)[event POVDirection];
-		[(id)joystick POVChangedTo: direction];
+		[joystick POVChangedTo: direction];
 	}
 	//Otherwise, make the POV switch simulate the X and Y axes instead
 	//(This makes sense because gamepads often map their D-pad as a POV switch)
 	else
 	{
-		BXEmulatedJoystickAxis xAxis = BXEmulatedJoystickAxisX;
-		BXEmulatedJoystickAxis yAxis = BXEmulatedJoystickAxisY;
-		
-		//Map secondary controller hats or secondary POV switches to the 2nd joystick's axes instead
-		if (!isPrimaryController || [event POVNumber] > 0)
-		{
-			xAxis = BXEmulatedJoystick2AxisX;
-			yAxis = BXEmulatedJoystick2AxisY;
-		}
-		
 		float x, y;
 		
 		NSInteger direction = [BXHIDEvent closest8WayDirectionForPOV: [event POVDirection]];
@@ -256,8 +415,19 @@
 				x= 0.0f, y=0.0f;
 		}
 		
-		[joystick axis: xAxis movedTo: x];
-		[joystick axis: yAxis movedTo: y];
+		//Map secondary controller hats or secondary POV switches to the 2nd joystick's axes instead, if it has them
+		if (!(isPrimaryController || [event POVNumber] > 0)
+			&& [joystick respondsToSelector: @selector(x2AxisMovedTo:)]
+			&& [joystick respondsToSelector: @selector(y2AxisMovedTo:)])
+		{
+			[joystick x2AxisMovedTo: x];
+			[joystick y2AxisMovedTo: y];
+		}
+		else
+		{
+			[joystick xAxisMovedTo: x];
+			[joystick yAxisMovedTo: y];
+		}
 	}
 }
 

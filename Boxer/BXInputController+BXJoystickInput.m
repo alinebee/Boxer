@@ -341,6 +341,9 @@
 				if ([joystick respondsToSelector: @selector(rudderMovedTo:)])
 					[joystick rudderMovedTo: fPosition];
 				
+				else if ([joystick respondsToSelector: @selector(throttleMovedTo:)])
+					[joystick throttleMovedTo: fPosition];
+				
 				else if ([joystick respondsToSelector: @selector(x2AxisMovedTo:)])
 					[joystick x2AxisMovedTo: fPosition];
 				
@@ -358,6 +361,9 @@
 				
 				if ([joystick respondsToSelector: @selector(throttleMovedTo:)])
 					[joystick throttleMovedTo: fPosition];
+				
+				else if ([joystick respondsToSelector: @selector(rudderMovedTo:)])
+					[joystick rudderMovedTo: fPosition];
 				
 				else if ([joystick respondsToSelector: @selector(y2AxisMovedTo:)])
 					[joystick y2AxisMovedTo: fPosition];

@@ -22,6 +22,7 @@
 			<string>Privateer</string>
 			<key>BXProfileTelltales</key>
 			<array>
+				<string>priv.exe</string>
 				<string>privater.exe</string>
 			</array>
 		</dict>
@@ -280,6 +281,11 @@
 			<array>
 				<string>wc2.*</string>
 			</array>
+			<key>BXDesignatedInstallers</key>
+			<array>
+				<!-- CD rereleases of Wing Commander II -->
+				<string>winstall.bat</string>
+			</array>
 		</dict>
 		
 		<dict>
@@ -347,6 +353,7 @@
 				<string>Skate or Die</string>
 				<string>F-29 Retaliator</string>
 				<string>US Navy Fighters/Advanced Tactical Fighters</string>
+				<string>Wing Commander Armada</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
@@ -362,6 +369,7 @@
 				<string>skate.exe</string>
 				<string>retal.00</string>
 				<string>timeint.xxx</string>
+				<string>armada.exe</string>
 			</array>
 		</dict>
 		

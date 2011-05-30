@@ -699,19 +699,16 @@
 	
 		[self _startTrackingChangesAtPath: drivePath];
 
-		if (showDriveNotifications) [[BXGrowlController controller] notifyDriveMounted: drive];
+		if (showDriveNotifications && ![drive isHidden]) [[BXGrowlController controller] notifyDriveMounted: drive];
 		
-		//Determine what executables are stored on this drive, if it's public
-		//Tweak: only do this if we're running a gamebox, since launchable executables
-		//are not displayed for non-gamebox sessions.
-		if ([self isGamePackage] && ![drive isHidden])
+		//If this drive is part of the gamebox, determine what executables are stored inside it
+		if ([self driveIsBundled: drive])
 		{
 			NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 			NSMutableArray *foundExecutables = [NSMutableArray arrayWithCapacity: 10];
 			BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: drivePath];
 			
 			NSSet *mountableFolderTypes	= [BXAppController mountableFolderTypes];
-			NSSet *executableTypes		= [BXAppController executableTypes];
 			for (NSString *path in enumerator)
 			{
 				NSString *fileType = [[enumerator fileAttributes] fileType];
@@ -721,14 +718,9 @@
 				{
 					if ([workspace file: path matchesTypes: mountableFolderTypes]) [enumerator skipDescendents];
 				}
-				else
+				//Filter out non-executables and Windows-only executables
+				else if ([workspace isCompatibleExecutableAtPath: path])
 				{
-					//Skip non-executables
-					if (![workspace file: path matchesTypes: executableTypes]) continue;
-					//Skip windows-only executables
-					//This check is disabled for now because it's so costly
-					//if ([workspace isWindowsOnlyExecutableAtPath: path]) continue;
-					
 					[foundExecutables addObject: path];
 				}
 			}

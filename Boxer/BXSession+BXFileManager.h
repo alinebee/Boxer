@@ -165,4 +165,6 @@
 //NO if the import had already finished or the drive was not being imported.
 - (BOOL) cancelImportForDrive: (BXDrive *)drive;
 
+//Called when a drive has finished importing. Replaces the source drive with the imported version.
+- (void) driveImportDidFinish: (NSNotification *)theNotification;
 @end

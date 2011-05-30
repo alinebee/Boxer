@@ -13,8 +13,7 @@
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXDrive.h"
 #import "BXValueTransformers.h"
-#import "BXOperation.h"
-#import "BXFileTransfer.h"
+#import "BXDriveImport.h"
 #import "BXDriveList.h"
 
 #pragma mark -
@@ -57,7 +56,7 @@ enum {
 	//Register the entire drive panel as a drag-drop target.
 	[[self view] registerForDraggedTypes: [NSArray arrayWithObject: NSFilenamesPboardType]];	
 	
-	//Assign the appropriate menu to the drive menu segment.
+	//Assign the appropriate menu to the drive-actions button segment.
 	[[self driveControls] setMenu: [self driveActionsMenu] forSegment: BXDriveActionsMenuSegment];
 	
 	//Listen for drive import notifications.
@@ -224,6 +223,7 @@ enum {
 	BXSession *session = [[NSApp delegate] currentSession];
 	if (drive) [session cancelImportForDrive: drive];
 }
+
 - (IBAction) cancelImportsForSelectedDrives: (id)sender
 {
 	NSArray *selection = [[self drives] selectedObjects];
@@ -344,12 +344,13 @@ enum {
 
 - (void) operationWillStart: (NSNotification *)notification
 {
-	BXOperation <BXFileTransfer> *transfer = [notification object];
+	BXOperation <BXDriveImport> *transfer = [notification object];
 	
 	//If the notification didn't come from the current session, ignore it
-	if ([transfer delegate] != [[NSApp delegate] currentSession]) return;
+	if (![transfer conformsToProtocol: @protocol(BXDriveImport)] ||
+		[transfer delegate] != [[NSApp delegate] currentSession]) return;
 	
-	BXDrive *drive = [transfer contextInfo];
+	BXDrive *drive = [transfer drive];
 	BXDriveItemView *driveView = [[self driveList] viewForDrive: drive];
 	if (driveView)
 	{
@@ -383,12 +384,13 @@ enum {
 
 - (void) operationInProgress: (NSNotification *)notification
 {
-	BXOperation <BXFileTransfer> *transfer = [notification object];
+	BXOperation <BXDriveImport> *transfer = [notification object];
 	
 	//If the notification didn't come from the current session, ignore it
-	if ([transfer delegate] != [[NSApp delegate] currentSession]) return;
+	if (![transfer conformsToProtocol: @protocol(BXDriveImport)] ||
+		[transfer delegate] != [[NSApp delegate] currentSession]) return;
 		
-	BXDrive *drive = [transfer contextInfo];
+	BXDrive *drive = [transfer drive];
 	BXDriveItemView *driveView = [[self driveList] viewForDrive: drive];
 	if (driveView)
 	{
@@ -423,12 +425,13 @@ enum {
 
 - (void) operationWasCancelled: (NSNotification *)notification
 {
-	BXOperation <BXFileTransfer> *transfer = [notification object];
+	BXOperation <BXDriveImport> *transfer = [notification object];
 	
 	//If the notification didn't come from the current session, ignore it
-	if ([transfer delegate] != [[NSApp delegate] currentSession]) return;
+	if (![transfer conformsToProtocol: @protocol(BXDriveImport)] ||
+		[transfer delegate] != [[NSApp delegate] currentSession]) return;
 	
-	BXDrive *drive = [transfer contextInfo];
+	BXDrive *drive = [transfer drive];
 	BXDriveItemView *driveView = [[self driveList] viewForDrive: drive];
 	if (driveView)
 	{
@@ -450,12 +453,13 @@ enum {
 
 - (void) operationDidFinish: (NSNotification *)notification
 {
-	BXOperation <BXFileTransfer> *transfer = [notification object];
+	BXOperation <BXDriveImport> *transfer = [notification object];
 	
 	//If the notification didn't come from the current session, ignore it
-	if ([transfer delegate] != [[NSApp delegate] currentSession]) return;
+	if (![transfer conformsToProtocol: @protocol(BXDriveImport)] ||
+		[transfer delegate] != [[NSApp delegate] currentSession]) return;
 	
-	BXDrive *drive = [transfer contextInfo];
+	BXDrive *drive = [transfer drive];
 	BXDriveItemView *driveView = [[self driveList] viewForDrive: drive];
 	if (driveView)
 	{

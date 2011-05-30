@@ -869,6 +869,7 @@
 																	   copyFiles: YES];
 		
 		[driveImport setDelegate: self];
+		[driveImport setDidFinishSelector: @selector(driveImportDidFinish:)];
 		[driveImport setContextInfo: drive];
 		
 		if (start) [importQueue addOperation: driveImport];
@@ -893,12 +894,12 @@
 	return NO;
 }
 
-- (void) operationDidFinish: (NSNotification *)theNotification
+- (void) driveImportDidFinish: (NSNotification *)theNotification
 {
 	BXOperation <BXDriveImport> *import = [theNotification object];
-	BXDrive *drive = [import contextInfo];
+	BXDrive *drive = [import drive];
 
-	if (drive && [import succeeded])
+	if ([import succeeded])
 	{
 		//Once the drive has successfully imported, replace the old drive
 		//with the newly-imported version (if the old one is not in use by DOS)

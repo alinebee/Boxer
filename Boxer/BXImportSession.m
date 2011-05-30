@@ -920,7 +920,8 @@
 	//Set up the import operation and start it running.
 	[self setSourceFileImportType: importType];
 	[self setSourceFileImportOperation: importOperation];
-	//If the gamebox is empty, then we need to import the source files for it to work at all
+	//If the gamebox is empty, then we need to import the source files for it to work at all;
+	//so make cancelling the drive import cancel the rest of the import as well.
 	[self setSourceFileImportRequired: !didInstallFiles];
 	[self setImportStage: BXImportSessionImportingSourceFiles];
 	

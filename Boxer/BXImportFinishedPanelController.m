@@ -95,6 +95,11 @@
 	[[NSApp delegate] showHelpAnchor: @"import-finished"];
 }
 
+- (IBAction) searchForCoverArt: (id)sender
+{
+	NSString *search = [[controller document] displayName];
+	[[NSApp delegate] searchURLFromKey: @"CoverArtSearchURL" withSearchString: search];
+}
 
 
 #pragma mark -

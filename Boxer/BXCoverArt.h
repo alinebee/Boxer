@@ -57,4 +57,8 @@
 //Note that this returns an NSImage directly, not a BXCoverArt instance.
 + (NSImage *) coverArtWithImage: (NSImage *)image;
 
+//Returns whether the specified image appears to contain actual transparent/translucent pixels.
+//This is distinct from whether it has an alpha channel, as the alpha channel may go unused
+//(e.g. in an opaque image saved as 32-bit PNG.)
++ (BOOL) imageHasTransparency: (NSImage *)image;
 @end

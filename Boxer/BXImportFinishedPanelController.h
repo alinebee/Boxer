@@ -44,6 +44,8 @@
 //Display help for this stage of the import process.
 - (IBAction) showImportFinishedHelp: (id)sender;
 
+//Search online for cover art for this game.
+- (IBAction) searchForCoverArt: (id)sender;
 @end
 
 @interface BXImportIconDropzone : NSImageView

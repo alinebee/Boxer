@@ -135,9 +135,10 @@
 	//If our source image could not be read, then bail out.
 	if (![image isValid]) return nil;
 	
-	//If our source image already has an alpha channel, then assume that it already has effects of its own and don't process it.
-	if ([[[image representations] lastObject] hasAlpha]) return image;
-
+	//If our source image already has transparency data,
+	//then assume that it already has effects of its own applied and don't process it.
+	if ([[self class] imageHasTransparency: image]) return image;
+	
 	NSImage *coverArt = [[NSImage alloc] init];
 	[coverArt addRepresentation: [self representationForSize: NSMakeSize(512, 512)]];
 	[coverArt addRepresentation: [self representationForSize: NSMakeSize(256, 256)]];
@@ -151,6 +152,42 @@
 {
 	id generator = [[[self alloc] initWithSourceImage: image] autorelease];
 	return [generator coverArt];
+}
+
++ (BOOL) imageHasTransparency: (NSImage *)image
+{
+	BOOL hasTranslucentPixels = NO;
+
+	//Only bother testing transparency if the image has an alpha channel
+	if ([[[image representations] lastObject] hasAlpha])
+	{
+		NSSize imageSize = [image size];
+		
+		//Test 5 pixels in an X pattern: each corner and right in the center of the image.
+		NSPoint testPoints[5] = {
+			NSMakePoint(0,						0),
+			NSMakePoint(imageSize.width - 1.0f,	0),
+			NSMakePoint(0,						imageSize.height - 1.0f),
+			NSMakePoint(imageSize.width - 1.0f,	imageSize.height - 1.0f),
+			NSMakePoint(imageSize.width * 0.5f,	imageSize.height * 0.5f)
+		};
+		NSInteger i;
+						
+		[image lockFocus];
+		for (i=0; i<5; i++)
+		{
+			//If any of the pixels appears to be translucent, then stop looking further.
+			NSColor *pixel = NSReadPixel(testPoints[i]);
+			if (pixel && [pixel alphaComponent] < 0.9)
+			{
+				hasTranslucentPixels = YES;
+				break;
+			}
+		}
+		[image unlockFocus];
+	}
+
+	return hasTranslucentPixels;
 }
 
 @end

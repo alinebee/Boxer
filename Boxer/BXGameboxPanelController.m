@@ -120,9 +120,15 @@ enum {
 	[[self session] openFileAtPath: filePath];
 }
 
-- (IBAction) revealGamebox: (id) sender
+- (IBAction) revealGamebox: (id)sender
 {
 	[[NSApp delegate] revealPath: [[[self session] gamePackage] bundlePath]];
+}
+
+- (IBAction) searchForCoverArt: (id)sender
+{
+	NSString *search = [[self session] displayName];
+	[[NSApp delegate] searchURLFromKey: @"CoverArtSearchURL" withSearchString: search];
 }
 
 - (IBAction) showProgramChooserPanel: (id)sender

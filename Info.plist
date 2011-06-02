@@ -46,6 +46,8 @@
 	<string>http://www.replacementdocs.com/</string>
 	<key>ReplacementDocsSearchURL</key>
 	<string>http://www.replacementdocs.com/search.php?r=0&amp;t=downloads&amp;q=%@</string>
+	<key>CoverArtSearchURL</key>
+	<string>http://images.search.yahoo.com/search/images?p=dos%%20%@%%20cover</string>
 	<key>MobygamesURL</key>
 	<string>http://www.mobygames.com/</string>
 	<key>MobygamesSearchURL</key>

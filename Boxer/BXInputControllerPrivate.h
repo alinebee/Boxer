@@ -105,12 +105,6 @@
 //Resynchronises the DOS emulated joystick type based on currently-connected joystick devices.
 - (void) _syncJoystickType;
 
-//Processes a button-press/release.
-- (void) _handleHIDJoystickButtonEvent: (BXHIDEvent *)event;
-
-//Returns a normalized axis value to account for deadzones and unidirectional (trigger) inputs.
-- (NSInteger) _normalizedAxisPositionForEvent: (BXHIDEvent *)event;
-
 @end
 
 
@@ -123,19 +117,4 @@
 //Returns the DOS keycode constant corresponding to the specified OSX keycode.
 + (BXDOSKeyCode) _DOSKeyCodeForSystemKeyCode: (CGKeyCode)keyCode;
 
-@end
-
-
-//Some extension methods to NSDictionary to make it easier for us to record and retrieve
-//controller values from our lastJoystickValues dictionary
-@interface NSMutableDictionary (BXHIDElementValueRecording)
-
-//Returns the dictionary key to be used for storing the specified element's value
-- (id) keyForHIDElement: (DDHidElement *)element;
-
-//Returns the stored value for the specified element, as an integer
-- (NSInteger) integerValueForHIDElement: (DDHidElement *)element;
-
-//Stores the specified value for the specified element, as an integer
-- (void) setIntegerValue: (NSInteger)value forHIDElement: (DDHidElement *)element;
 @end

@@ -33,8 +33,8 @@
 
 - (void) awakeFromNib
 {	
-	//Initialize the joystick value tracking dictionary to an empty dictionary
-	lastJoystickValues = [[NSMutableDictionary alloc] initWithCapacity: 15];
+	//Initialize the controller profile map to an empty dictionary
+	controllerProfiles = [[NSMutableDictionary alloc] initWithCapacity: 1];
 	
 	//Initialize mouse sensitivity and tracking options to a suitable default
 	mouseSensitivity = 1.0f;
@@ -95,7 +95,7 @@
 {
 	[cursorFade stopAnimation];
 	[cursorFade release], cursorFade = nil;
-	[lastJoystickValues release], lastJoystickValues = nil;
+	[controllerProfiles release], controllerProfiles = nil;
 	
 	[super dealloc];
 }

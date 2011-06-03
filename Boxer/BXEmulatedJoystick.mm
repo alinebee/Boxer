@@ -82,7 +82,7 @@ NSString * const BXEmulatedJoystickClassKey = @"BXEmulatedJoystickClassKey";
 }
 
 - (void) axis: (BXEmulatedJoystickAxis)axis movedTo: (float)position
-{
+{	
 	//Clamp the position to fit within -1.0 to +1.0
 	position = fmaxf(fminf(position, BXGameportAxisMax), BXGameportAxisMin);
 	

@@ -43,7 +43,7 @@
 	
 	NSUInteger lastModifiers;
 	
-	NSMutableDictionary *lastJoystickValues;
+	NSMutableDictionary *controllerProfiles;
 	DDHidJoystick *primaryController;
 }
 

@@ -10,6 +10,8 @@
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		9F0497C01334C5970001FEE4 /* BXPostLeopardAPIs.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0497BF1334C5970001FEE4 /* BXPostLeopardAPIs.m */; };
+		9F06C6D313992E1F00B19DF1 /* BXHIDControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F06C6D213992E1F00B19DF1 /* BXHIDControllerProfile.m */; };
+		9F06C6E113993FB100B19DF1 /* BXHIDInputBinding.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F06C6E013993FB100B19DF1 /* BXHIDInputBinding.m */; };
 		9F0F2B9512AD3C8500CD7078 /* BXMultiFileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0F2B9412AD3C8500CD7078 /* BXMultiFileTransfer.m */; };
 		9F0F9EDA12108A9000ED7A64 /* BXImportError.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0F9ED912108A9000ED7A64 /* BXImportError.m */; };
 		9F0F9EEF1210901800ED7A64 /* BXMountedVolumesError.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0F9EEE1210901800ED7A64 /* BXMountedVolumesError.m */; };
@@ -409,6 +411,10 @@
 		8D1107320486CEB800E47090 /* Boxer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Boxer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F0497BE1334C5970001FEE4 /* BXPostLeopardAPIs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXPostLeopardAPIs.h; sourceTree = "<group>"; };
 		9F0497BF1334C5970001FEE4 /* BXPostLeopardAPIs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXPostLeopardAPIs.m; sourceTree = "<group>"; };
+		9F06C6D113992E1F00B19DF1 /* BXHIDControllerProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXHIDControllerProfile.h; sourceTree = "<group>"; };
+		9F06C6D213992E1F00B19DF1 /* BXHIDControllerProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXHIDControllerProfile.m; sourceTree = "<group>"; };
+		9F06C6DF13993FB100B19DF1 /* BXHIDInputBinding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXHIDInputBinding.h; sourceTree = "<group>"; };
+		9F06C6E013993FB100B19DF1 /* BXHIDInputBinding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXHIDInputBinding.m; sourceTree = "<group>"; };
 		9F0F2B9312AD3C8500CD7078 /* BXMultiFileTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXMultiFileTransfer.h; sourceTree = "<group>"; };
 		9F0F2B9412AD3C8500CD7078 /* BXMultiFileTransfer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXMultiFileTransfer.m; sourceTree = "<group>"; };
 		9F0F9ED812108A9000ED7A64 /* BXImportError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImportError.h; sourceTree = "<group>"; };
@@ -2133,6 +2139,10 @@
 				9FCC2FF21366FA820013F083 /* BXInputController+BXKeyboardInput.h */,
 				9FCC2FF31366FA820013F083 /* BXInputController+BXKeyboardInput.m */,
 				9FCC2FF81366FB840013F083 /* BXInputControllerPrivate.h */,
+				9F06C6D113992E1F00B19DF1 /* BXHIDControllerProfile.h */,
+				9F06C6D213992E1F00B19DF1 /* BXHIDControllerProfile.m */,
+				9F06C6DF13993FB100B19DF1 /* BXHIDInputBinding.h */,
+				9F06C6E013993FB100B19DF1 /* BXHIDInputBinding.m */,
 			);
 			name = "Input handling";
 			sourceTree = "<group>";
@@ -2648,6 +2658,8 @@
 				9F7721EB12B38C4400072AE8 /* shell_misc.cpp in Sources */,
 				9FFE1F831390F70C005C438A /* BXThrustmasterFCS.mm in Sources */,
 				9FFE1FDA13911FE5005C438A /* BXInputPanelController.m in Sources */,
+				9F06C6D313992E1F00B19DF1 /* BXHIDControllerProfile.m in Sources */,
+				9F06C6E113993FB100B19DF1 /* BXHIDInputBinding.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

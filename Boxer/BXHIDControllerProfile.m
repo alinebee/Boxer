@@ -5,52 +5,60 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-#import "BXHIDControllerProfile.h"
-#import "BXEmulatedJoystick.h"
-#import "BXHIDInputBinding.h"
-#import "DDHidDevice+BXDeviceExtensions.h"
+#import "BXHIDControllerProfilePrivate.h"
 
-
-@interface BXHIDControllerProfile ()
-
-
-#pragma mark -
-#pragma mark Private method declarations
-
-+ (BOOL) _matchesHIDController: (DDHidJoystick *)HIDController;
-
-- (void) _generateBindings;
-
-- (id <BXHIDInputBinding>) _bindingForAxisElement: (DDHidElement *)element;
-- (id <BXHIDInputBinding>) _bindingForButtonElement: (DDHidElement *)element;
-- (id <BXHIDInputBinding>) _bindingForPOVElement: (DDHidElement *)element;
-
-@end
-
-
-
-#pragma mark -
-#pragma mark Implementation
 
 @implementation BXHIDControllerProfile
 @synthesize HIDController = _HIDController;
 @synthesize emulatedJoystick = _emulatedJoystick;
 @synthesize bindings = _bindings;
 
-#pragma mark -
-#pragma mark Initialization and deallocation
 
-+ (BOOL) _matchesHIDController: (DDHidJoystick *)HIDController
+#pragma mark -
+#pragma mark Locating custom profiles
+
+static NSMutableArray *profileClasses = nil;
+
+//Keep a record of every BXHIDControllerProfile subclass that comes along
++ (void) registerProfile: (BXHIDControllerProfile *)profile
+{
+	
+	if (!profileClasses)
+		profileClasses = [[NSMutableArray alloc] initWithCapacity: 10];
+	
+	[profileClasses addObject: profile];
+}
+
++ (BOOL) matchesHIDController: (DDHidJoystick *)HIDController
 {
 	return NO;
 }
 
++ (Class) profileClassForHIDController: (DDHidJoystick *)HIDController
+{	
+	//Find a subclass that identifies with this device,
+	//falling back on a generic profile if none was found.
+	for (Class profileClass in profileClasses)
+	{
+		if ([profileClass matchesHIDController: HIDController]) return profileClass;
+	}
+	
+	return self;
+}
+
+
+#pragma mark -
+#pragma mark Initialization and deallocation
+
 + (id) profileForHIDController: (DDHidJoystick *)HIDController
 			toEmulatedJoystick: (id <BXEmulatedJoystick>)emulatedJoystick
 {
-	return [[[self alloc] initWithHIDController: HIDController
-							 toEmulatedJoystick: emulatedJoystick] autorelease];
+	Class profileClass = [self profileClassForHIDController: HIDController];
+	
+	return [[[profileClass alloc] initWithHIDController: HIDController
+									 toEmulatedJoystick: emulatedJoystick] autorelease];
 }
+
 
 - (id) init
 {
@@ -80,6 +88,10 @@
 	[super dealloc];
 }
 
+
+#pragma mark -
+#pragma mark Property accessors
+
 - (void) setHIDController: (DDHidJoystick *)controller
 {
 	if (![controller isEqual: _HIDController])
@@ -87,7 +99,7 @@
 		[_HIDController release];
 		_HIDController = [controller retain];
 		
-		[self _generateBindings];
+		[self generateBindings];
 	}
 }
 
@@ -98,15 +110,29 @@
 		[_emulatedJoystick release];
 		_emulatedJoystick = [joystick retain];
 		
-		[self _generateBindings];
+		[self generateBindings];
 	}
+}
+
+- (void) setBinding: (id <BXHIDInputBinding>)binding
+		 forElement: (DDHidElement *)element
+{
+	DDHidUsage *key = [element usage];
+	if (!binding) [[self bindings] removeObjectForKey: key];
+	else [[self bindings] setObject: binding forKey: key];
+}
+
+- (id <BXHIDInputBinding>) bindingForElement: (DDHidElement *)element
+{
+	DDHidUsage *key = [element usage];
+	return [[self bindings] objectForKey: key];
 }
 
 
 #pragma mark -
 #pragma mark Binding generation
 
-- (void) _generateBindings
+- (void) generateBindings
 {
 	//Clear our existing bindings before we begin
 	[[self bindings] removeAllObjects];
@@ -118,28 +144,39 @@
 	NSArray *buttons		= [[self HIDController] buttonElements];
 	NSArray *POVs			= [[self HIDController] povElements];
 	
-	id <BXHIDInputBinding> binding;
-	
-	for (DDHidElement *element in axes)
+	[self bindAxisElements: axes];
+	[self bindButtonElements: buttons];
+	[self bindPOVElements: POVs];
+}
+
+- (void) bindAxisElements: (NSArray *)elements
+{
+	for (DDHidElement *element in elements)
 	{
-		binding = [self _bindingForAxisElement: element];
-		if (binding) [[self bindings] setObject: binding forKey: [element usage]];
-	}
-	
-	for (DDHidElement *element in buttons)
-	{
-		binding = [self _bindingForButtonElement: element];
-		if (binding) [[self bindings] setObject: binding forKey: [element usage]];
-	}
-	
-	for (DDHidElement *element in POVs)
-	{
-		binding = [self _bindingForPOVElement: element];
-		if (binding) [[self bindings] setObject: binding forKey: [element usage]];
+		id <BXHIDInputBinding> binding = [self generatedBindingForAxisElement: element];
+		[self setBinding: binding forElement: element];
 	}
 }
 
-- (id <BXHIDInputBinding>) _bindingForButtonElement: (DDHidElement *)element
+- (void) bindButtonElements: (NSArray *)elements
+{
+	for (DDHidElement *element in elements)
+	{
+		id <BXHIDInputBinding> binding = [self generatedBindingForButtonElement: element];
+		[self setBinding: binding forElement: element];
+	}
+}
+
+- (void) bindPOVElements: (NSArray *)elements
+{
+	for (DDHidElement *element in elements)
+	{
+		id <BXHIDInputBinding> binding = [self generatedBindingForPOVElement: element];
+		[self setBinding: binding forElement: element];
+	}
+}
+
+- (id <BXHIDInputBinding>) generatedBindingForButtonElement: (DDHidElement *)element
 {
 	id binding = [BXButtonToButton binding];
 	
@@ -150,17 +187,22 @@
 	NSUInteger realButton = [[element usage] usageId];
 	
 	NSUInteger emulatedButton = realButton;
+	//Wrap controller buttons so that they'll fit within the number of emulated buttons
 	if (wrapButtons)
 	{
-		//Wrap controller buttons so that they'll all fit within the number of emulated buttons
 		emulatedButton = ((realButton - 1) % numEmulatedButtons) + 1;
 	}
 	
-	[binding setButton: emulatedButton];
-	return binding;
+	//Ignore all buttons beyond the emulated buttons
+	if (emulatedButton > 0 && emulatedButton <= numEmulatedButtons)
+	{
+		[binding setButton: emulatedButton];
+		return binding;
+	}
+	else return nil;
 }
 
-- (id <BXHIDInputBinding>) _bindingForAxisElement: (DDHidElement *)element
+- (id <BXHIDInputBinding>) generatedBindingForAxisElement: (DDHidElement *)element
 {
 	id <BXEmulatedJoystick> joystick = [self emulatedJoystick];
 	
@@ -192,7 +234,12 @@
 			}
 			break;
 		
+		case kHIDUsage_GD_Dial:
+			//Only seen once, and that was paired with Slider
+			normalizedAxis = kHIDUsage_GD_Rx;
+			
 		case kHIDUsage_GD_Slider:
+			//Commonly used for throttle axes
 			normalizedAxis = kHIDUsage_GD_Ry;
 			
 		default:
@@ -213,8 +260,8 @@
 		case kHIDUsage_GD_Rx:
 			{
 				//Loop through these selectors in order of priority,
-				//assigning to the first available
-				SEL selectors[4] = {rudder, throttle, brake, x2};
+				//assigning to the first available one on the emulated joystick
+				SEL selectors[4] = {rudder, brake, x2};
 				NSUInteger i;
 				for (i=0; i<4; i++)
 				{
@@ -230,8 +277,8 @@
 		case kHIDUsage_GD_Ry:
 			{
 				//Loop through these selectors in order of priority,
-				//assigning to the first available
-				SEL selectors[4] = {throttle, rudder, accelerator, y2};
+				//assigning to the first available one on the emulated joystick
+				SEL selectors[4] = {throttle, accelerator, y2};
 				NSUInteger i;
 				for (i=0; i<4; i++)
 				{
@@ -254,7 +301,7 @@
 	else return nil;
 }
 
-- (id <BXHIDInputBinding>) _bindingForPOVElement: (DDHidElement *)element
+- (id <BXHIDInputBinding>) generatedBindingForPOVElement: (DDHidElement *)element
 {
 	id binding = nil;
 	id <BXEmulatedJoystick> joystick = [self emulatedJoystick];
@@ -288,8 +335,7 @@
 - (void) dispatchHIDEvent: (BXHIDEvent *)event
 {
 	DDHidElement *element = [event element];
-	DDHidUsage *usage = [element usage];
-	id <BXHIDInputBinding> binding = [[self bindings] objectForKey: usage];
+	id <BXHIDInputBinding> binding = [self bindingForElement: element];
 	
 	[binding processEvent: event forTarget: [self emulatedJoystick]];
 }

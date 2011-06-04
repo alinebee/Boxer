@@ -9,6 +9,11 @@
 #import "BXHIDEvent.h"
 #import "BXEmulatedJoystick.h"
 
+
+#define BXDefaultAxisDeadzone 0.25f
+#define BXDefaultAxisToButtonThreshold 0.25f
+
+
 @interface BXBaseHIDInputBinding ()
 
 //A workaround for -performSelector:withObject: only allowing id arguments
@@ -54,7 +59,7 @@
 {
 	if ((self = [super init]))
 	{
-		deadzone = 0.25f;
+		[self setDeadzone: BXDefaultAxisDeadzone];
 		previousValue = 0.0f;
 	}
 	return self;
@@ -104,6 +109,16 @@
 @implementation BXButtonToAxis
 @synthesize pressedValue, releasedValue, axisSelector;
 
+- (id) init
+{
+	if ((self = [super init]))
+	{
+		[self setPressedValue: 1.0f];
+		[self setReleasedValue: 0.0f];
+	}
+	return self;	
+}
+
 - (void) processEvent: (BXHIDEvent *)event
 			forTarget: (id <BXEmulatedJoystick>)target
 {
@@ -127,7 +142,7 @@
 {
 	if ((self = [super init]))
 	{
-		threshold = 0.5f;
+		[self setThreshold: BXDefaultAxisToButtonThreshold];
 		previousValue = NO;
 	}
 	return self;
@@ -135,7 +150,9 @@
 
 - (BOOL) _buttonDown: (NSInteger)axisPosition
 {
-	if (axisPosition > threshold) return YES;
+	float fPosition = (float)axisPosition / (float)DDHID_JOYSTICK_VALUE_MAX;
+	
+	if (fPosition > threshold) return YES;
 	return NO;
 }
 
@@ -161,6 +178,15 @@
 @implementation BXPOVToPOV
 @synthesize POVSelector;
 
+- (id) init
+{
+	if ((self = [super init]))
+	{
+		[self setPOVSelector: @selector(POVChangedTo:)];
+	}
+	return self;
+}
+
 - (void) processEvent: (BXHIDEvent *)event
 			forTarget: (id <BXEmulatedJoystick>)target
 {
@@ -172,29 +198,71 @@
 @end
 
 
+enum {
+	BXButtonsToPOVNoButtons = 0,
+	BXButtonsToPOVNorthMask	= 1 << 0,
+	BXButtonsToPOVSouthMask	= 1 << 1,
+	BXButtonsToPOVEastMask	= 1 << 2,
+	BXButtonsToPOVWestMask	= 1 << 3
+};
+
 @implementation BXButtonsToPOV
 @synthesize POVSelector, northButton, southButton, eastButton, westButton;
 
+- (id) init
+{
+	if ((self = [super init]))
+	{
+		[self setPOVSelector: @selector(POVChangedTo:)];
+	}
+	return self;
+}
+
 - (void) _syncButtonState: (DDHidElement *)button isDown: (BOOL)down
 {
-	if		([button isEqual: [self northButton]])	northDown = down;
-	else if	([button isEqual: [self southButton]])	southDown = down;
-	else if	([button isEqual: [self eastButton]])	eastDown = down;
-	else if	([button isEqual: [self westButton]])	westDown = down;
+	NSUInteger mask = BXButtonsToPOVNoButtons;
+	if		([button isEqual: [self northButton]])	mask = BXButtonsToPOVNorthMask;
+	else if	([button isEqual: [self southButton]])	mask = BXButtonsToPOVSouthMask;
+	else if	([button isEqual: [self eastButton]])	mask = BXButtonsToPOVEastMask;
+	else if	([button isEqual: [self westButton]])	mask = BXButtonsToPOVWestMask;
+	
+	if (down) buttonStates |= mask;
+	else buttonStates &= ~mask;
 }
 
 - (BXEmulatedPOVDirection) _POVDirection
 {
-	//Surely there's a more elegant way than this, but doing it with bitflags just ended up being more code
-	if (northDown && eastDown)	return BXEmulatedPOVNorthEast;
-	if (northDown && westDown)	return BXEmulatedPOVNorthWest;
-	if (southDown && westDown)	return BXEmulatedPOVSouthWest;
-	if (southDown && eastDown)	return BXEmulatedPOVSouthEast;
-	
-	if (northDown)				return BXEmulatedPOVNorth;
-	if (southDown)				return BXEmulatedPOVSouth;
-	if (eastDown)				return BXEmulatedPOVEast;
-	if (westDown)				return BXEmulatedPOVWest;
+	BXEmulatedPOVDirection direction = BXEmulatedPOVCentered;
+	switch (buttonStates)
+	{
+		case BXButtonsToPOVNorthMask:
+			direction = BXEmulatedPOVNorth; break;
+		
+		case BXButtonsToPOVSouthMask:
+			direction = BXEmulatedPOVSouth; break;
+		
+		case BXButtonsToPOVEastMask:
+			direction = BXEmulatedPOVEast; break;
+			
+		case BXButtonsToPOVWestMask:
+			direction = BXEmulatedPOVWest; break;
+			
+		case BXButtonsToPOVNorthMask | BXButtonsToPOVEastMask:
+			direction = BXEmulatedPOVNorthEast; break;
+			
+		case BXButtonsToPOVNorthMask | BXButtonsToPOVWestMask:
+			direction = BXEmulatedPOVNorthWest; break;
+			
+		case BXButtonsToPOVSouthMask | BXButtonsToPOVEastMask:
+			direction = BXEmulatedPOVSouthEast; break;
+			
+		case BXButtonsToPOVSouthMask | BXButtonsToPOVWestMask:
+			direction = BXEmulatedPOVSouthWest; break;
+			
+		//All other directions are deliberately ignored,
+		//so that mashing all the buttons won't produce odd results
+	}
+	return direction;
 }
 
 - (void) processEvent: (BXHIDEvent *)event

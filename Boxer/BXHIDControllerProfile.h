@@ -20,9 +20,12 @@
 #import "BXHIDEvent.h"
 
 @class DDHidJoystick;
+@class DDHidElement;
 @protocol BXEmulatedJoystick;
+@protocol BXHIDInputBinding;
 
-@interface BXHIDControllerProfile : NSObject <BXHIDDeviceDelegate>
+
+@interface BXHIDControllerProfile : NSObject
 {
 	DDHidJoystick *_HIDController;
 	id <BXEmulatedJoystick> _emulatedJoystick;
@@ -35,16 +38,19 @@
 //The emulated joystick whose inputs we are converting to.
 @property (retain, nonatomic) id <BXEmulatedJoystick> emulatedJoystick;
 
-//A dictionary of DDHidElement -> BXHIDInputBinding mappings.
+//A dictionary of DDHidUsage -> BXHIDInputBinding mappings.
 @property (readonly, nonatomic) NSMutableDictionary *bindings;
 
 //Returns a BXControllerProfile that maps the specified HID controller
-//to the specified emulated joystick. This autodetects a suitable profile
-//from the elements of the controller.
+//to the specified emulated joystick.
 + (id) profileForHIDController: (DDHidJoystick *)HIDController
 			toEmulatedJoystick: (id <BXEmulatedJoystick>)emulatedJoystick;
 
 - (id) initWithHIDController: (DDHidJoystick *)HIDController
 		  toEmulatedJoystick: (id <BXEmulatedJoystick>)emulatedJoystick;
+
+//Set/get the specified input binding for the specified element usage
+- (id <BXHIDInputBinding>) bindingForElement: (DDHidElement *)element;
+- (void) setBinding: (id <BXHIDInputBinding>)binding forElement: (DDHidElement *)element;
 
 @end

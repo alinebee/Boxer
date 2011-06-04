@@ -227,3 +227,36 @@ enum {
 - (void) rudderMovedBy: (float)delta;
 
 @end
+
+
+//Racing wheel with accelerator and brake on the Y axis
+@interface BX2AxisWheel: BXBaseEmulatedJoystick <BXEmulatedJoystick>
+{
+	float acceleratorComponent;
+	float brakeComponent;
+}
+- (void) xAxisMovedTo: (float)position;
+- (void) xAxisMovedBy: (float)delta;
+
+- (void) acceleratorMovedTo: (float)position;
+- (void) acceleratorMovedBy: (float)delta;
+
+- (void) brakeMovedTo: (float)position;
+- (void) brakeMovedBy: (float)delta;
+
+@end
+
+
+//Racing wheel with accelerator on X2 axis and brake on Y2 axis
+@interface BX3AxisWheel: BXBaseEmulatedJoystick <BXEmulatedJoystick>
+
+- (void) xAxisMovedTo: (float)position;
+- (void) xAxisMovedBy: (float)delta;
+
+- (void) acceleratorMovedTo: (float)position;
+- (void) acceleratorMovedBy: (float)delta;
+
+- (void) brakeMovedTo: (float)position;
+- (void) brakeMovedBy: (float)delta;
+
+@end

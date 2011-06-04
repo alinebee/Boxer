@@ -90,7 +90,7 @@
 	BOOL previousValue;
 }
 
-//The axis value above which the button will be treated as pressed. Defaults to 0.5f.
+//The axis value above which the button will be treated as pressed. Defaults to 0.25f.
 @property (assign, nonatomic) float threshold;
 
 //The BXEmulatedButton constant of the button to bind to on the emulated joystick.
@@ -119,10 +119,7 @@
 	DDHidElement *southButton;
 	DDHidElement *eastButton;
 	DDHidElement *westButton;
-	BOOL northDown;
-	BOOL southDown;
-	BOOL eastDown;
-	BOOL westDown;
+	NSUInteger buttonStates;
 }
 
 //The POV selector to call on the emulated joystick. Defaults to POVChangedTo:

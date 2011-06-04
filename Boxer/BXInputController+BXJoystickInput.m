@@ -186,6 +186,7 @@
 	//joysticks and don't continue further.
 	if (support == BXNoJoystickSupport || !preferredJoystickClass)
 	{
+		[controllerProfiles removeAllObjects];
 		[emulator detachJoystick];
 		return;
 	}
@@ -207,10 +208,10 @@
 		if (![[emulator joystick] isMemberOfClass: joystickClass])
 			[emulator attachJoystickOfType: joystickClass];
 		
-		//Record which of the devices will be considered the main input device
-		primaryController = [controllers objectAtIndex: 0];
-		
 		//Regenerate controller profiles for each controller
+		//TODO: this is unnecessary work and we should only do this when we know the emulated joystick
+		//has changed and/or the specific device has been added/removed
+		[controllerProfiles removeAllObjects];
 		for (DDHidJoystick *controller in controllers)
 		{
 			BXHIDControllerProfile *profile = [BXHIDControllerProfile profileForHIDController: controller
@@ -221,8 +222,8 @@
 	}
 	else
 	{
+		[controllerProfiles removeAllObjects];
 		[emulator detachJoystick];
-		primaryController = nil;
 	}
 }
 

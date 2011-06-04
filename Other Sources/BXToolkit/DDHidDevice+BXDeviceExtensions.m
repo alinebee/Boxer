@@ -175,6 +175,7 @@ io_service_t createServiceFromHIDDevice(IOHIDDeviceRef deviceRef)
 	//DDHidUsage is immutable, so it's OK for us to retain rather than copying
 	return [self retain];
 }
+
 - (BOOL) isEqualToUsage: (DDHidUsage *)usage
 {
 	return [self isEqualToUsagePage: [usage usagePage] usageId: [usage usageId]];

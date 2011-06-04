@@ -247,3 +247,101 @@ NSString * const BXEmulatedJoystickClassKey = @"BXEmulatedJoystickClassKey";
 - (void) y2AxisMovedBy: (float)delta	{ [self axis: BXEmulatedJoystick2AxisY movedBy: delta]; }
 
 @end
+
+
+@implementation BX2AxisWheel
+
++ (BOOL) requiresFullJoystickSupport { return NO; }
++ (NSString *) localizedName
+{
+	return NSLocalizedString(@"Racing wheel with pedals", @"Localized name for steering wheel joystick type.");
+}
+
+- (NSUInteger) numButtons		{ return 2; }
+- (NSUInteger) numAxes			{ return 2; }
+- (NSUInteger) numPOVSwitches	{ return 0; }
+
+- (void) clearInput
+{
+	acceleratorComponent	= 0.0f;
+	brakeComponent			= 0.0f;
+	[super clearInput];
+}
+
+- (void) _syncYAxisPosition
+{
+	[self axis: BXEmulatedJoystickAxisY movedTo: (acceleratorComponent - brakeComponent)];
+}
+
+- (void) xAxisMovedTo: (float)position	{ [self axis: BXEmulatedJoystickAxisX movedTo: position]; }
+- (void) xAxisMovedBy: (float)delta		{ [self axis: BXEmulatedJoystickAxisX movedBy: delta]; }
+
+- (void) acceleratorMovedTo: (float)position
+{
+	position = ABS(position);
+	acceleratorComponent = MIN(position, 1.0f);
+	[self _syncYAxisPosition];
+}
+
+- (void) acceleratorMovedBy: (float)delta
+{
+	float newPosition = acceleratorComponent + delta;
+	[self acceleratorMovedTo: newPosition];
+}
+
+- (void) brakeMovedTo: (float)position
+{
+	position = ABS(position);
+	brakeComponent = MIN(position, 1.0f);
+	[self _syncYAxisPosition];
+}
+
+- (void) brakeMovedBy: (float)delta
+{
+	float newPosition = brakeComponent + delta;
+	[self brakeMovedTo: newPosition];
+}
+
+@end
+
+
+@implementation BX3AxisWheel
+
++ (BOOL) requiresFullJoystickSupport { return YES; }
++ (NSString *) localizedName
+{
+	return NSLocalizedString(@"Racing wheel with 2-axis pedals", @"Localized name for steering wheel joystick type.");
+}
+
+- (NSUInteger) numButtons		{ return 4; }
+- (NSUInteger) numAxes			{ return 3; }
+- (NSUInteger) numPOVSwitches	{ return 0; }
+
+- (void) xAxisMovedTo: (float)position	{ [self axis: BXEmulatedJoystickAxisX movedTo: position]; }
+- (void) xAxisMovedBy: (float)delta		{ [self axis: BXEmulatedJoystickAxisX movedBy: delta]; }
+
+- (void) acceleratorMovedTo: (float)position
+{
+	position = ABS(position);
+	[self axis: BXEmulatedJoystickAxisY2 movedTo: position];
+}
+
+- (void) acceleratorMovedBy: (float)delta
+{
+	float newPosition = [self axisPosition: BXEmulatedJoystickAxisY2] + delta;
+	[self acceleratorMovedTo: newPosition];
+}
+
+- (void) brakeMovedTo: (float)position
+{
+	position = ABS(position);
+	[self axis: BXEmulatedJoystickAxisX2 movedTo: position];
+}
+
+- (void) brakeMovedBy: (float)delta
+{
+	float newPosition = [self axisPosition: BXEmulatedJoystickAxisX2] + delta;
+	[self brakeMovedTo: newPosition];
+}
+
+@end

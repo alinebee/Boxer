@@ -44,7 +44,6 @@
 	NSUInteger lastModifiers;
 	
 	NSMutableDictionary *controllerProfiles;
-	DDHidJoystick *primaryController;
 }
 
 #pragma mark -

@@ -15,6 +15,16 @@
 
 
 #pragma mark -
+#pragma mark Constants
+
+NSString * const BXControllerProfileDPadLeft	= @"BXControllerProfileDPadLeft";
+NSString * const BXControllerProfileDPadRight	= @"BXControllerProfileDPadRight";
+NSString * const BXControllerProfileDPadUp		= @"BXControllerProfileDPadUp";
+NSString * const BXControllerProfileDPadDown	= @"BXControllerProfileDPadDown";
+
+
+
+#pragma mark -
 #pragma mark Locating custom profiles
 
 static NSMutableArray *profileClasses = nil;
@@ -22,7 +32,6 @@ static NSMutableArray *profileClasses = nil;
 //Keep a record of every BXHIDControllerProfile subclass that comes along
 + (void) registerProfile: (BXHIDControllerProfile *)profile
 {
-	
 	if (!profileClasses)
 		profileClasses = [[NSMutableArray alloc] initWithCapacity: 10];
 	
@@ -144,9 +153,19 @@ static NSMutableArray *profileClasses = nil;
 	NSArray *buttons		= [[self HIDController] buttonElements];
 	NSArray *POVs			= [[self HIDController] povElements];
 	
-	[self bindAxisElements: axes];
-	[self bindButtonElements: buttons];
-	[self bindPOVElements: POVs];
+	//If the controller has a D-pad, then bind it separately from the other buttons
+	NSDictionary *DPad = [self DPadElementsFromButtons: buttons];
+	if ([DPad count])
+	{
+		NSMutableArray *filteredButtons = [NSMutableArray arrayWithArray: buttons];
+		[filteredButtons removeObjectsInArray: [DPad allValues]];
+		buttons = filteredButtons;
+	}
+	
+	if ([axes count])		[self bindAxisElements: axes];
+	if ([buttons count])	[self bindButtonElements: buttons];
+	if ([POVs count])		[self bindPOVElements: POVs];
+	if ([DPad count])		[self bindDPadElements: DPad];
 }
 
 - (void) bindAxisElements: (NSArray *)elements
@@ -340,4 +359,94 @@ static NSMutableArray *profileClasses = nil;
 	[binding processEvent: event forTarget: [self emulatedJoystick]];
 }
 
+@end
+
+
+@implementation BXHIDControllerProfile (BXDPadBindings)
+
+//Override me in subclasses!
+- (NSDictionary *) DPadElementsFromButtons: (NSArray *)buttons
+{
+	return nil;
+}
+
+- (void) bindDPadElements: (NSDictionary *)padElements
+{
+	//Map the D-pad to a POV switch if the joystick has one
+	if ([[self emulatedJoystick] respondsToSelector: @selector(POVChangedTo:)])
+	{
+		[self bindDPadElements: padElements toPOV: @selector(POVChangedTo:)];
+	}
+	//Otherwise, map it to the X and Y axes
+	else
+	{
+		SEL x = @selector(xAxisMovedTo:),
+			y = @selector(yAxisMovedTo:);
+		
+		id joystick = [self emulatedJoystick];
+		if ([joystick respondsToSelector: x] && [joystick respondsToSelector: y])
+		{
+			[self bindDPadElements: padElements toHorizontalAxis: x verticalAxis: y];
+		}
+	}
+}
+
+- (void) bindDPadElements: (NSDictionary *)padElements
+					toPOV: (SEL)povSelector
+{
+	id binding = [BXButtonsToPOV binding];
+	
+	[binding setNorthButton:	[padElements objectForKey: BXControllerProfileDPadUp]];
+	[binding setSouthButton:	[padElements objectForKey: BXControllerProfileDPadDown]];
+	[binding setWestButton:		[padElements objectForKey: BXControllerProfileDPadLeft]];
+	[binding setEastButton:		[padElements objectForKey: BXControllerProfileDPadRight]];
+	
+	for (DDHidElement *element in [padElements objectEnumerator])
+	{
+		[self setBinding: binding forElement: element];
+	}
+}
+
+- (void) bindDPadElements: (NSDictionary *)padElements
+		 toHorizontalAxis: (SEL)xAxisSelector
+			 verticalAxis: (SEL)yAxisSelector
+{
+	for (NSString *key in [padElements keyEnumerator])
+	{
+		DDHidElement *element = [padElements objectForKey: key];
+		
+		float pressedValue = 0;
+		SEL axis = NULL;
+		
+		//Oh for a switch statement
+		if ([key isEqualToString: BXControllerProfileDPadUp])
+		{
+			pressedValue = -1.0f;
+			axis = yAxisSelector;
+		}
+		else if ([key isEqualToString: BXControllerProfileDPadDown])
+		{
+			pressedValue = 1.0f;
+			axis = yAxisSelector;
+		}
+		else if ([key isEqualToString: BXControllerProfileDPadLeft])
+		{
+			pressedValue = -1.0f;
+			axis = xAxisSelector;
+		}
+		else if ([key isEqualToString: BXControllerProfileDPadRight])
+		{
+			pressedValue = 1.0f;
+			axis = xAxisSelector;
+		}
+		
+		if (axis)
+		{
+			id binding = [BXButtonToAxis binding];
+			[binding setPressedValue: pressedValue];
+			[binding setAxisSelector: axis];
+			[self setBinding: binding forElement: element];
+		}
+	}
+}
 @end

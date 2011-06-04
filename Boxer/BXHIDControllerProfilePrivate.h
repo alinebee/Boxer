@@ -14,6 +14,21 @@
 #import "DDHidDevice+BXDeviceExtensions.h"
 
 
+#pragma mark -
+#pragma mark Constants
+
+//Dictionary keys for BXDPadBinding methods
+extern NSString * const BXControllerProfileDPadLeft;
+extern NSString * const BXControllerProfileDPadRight;
+extern NSString * const BXControllerProfileDPadUp;
+extern NSString * const BXControllerProfileDPadDown;
+
+
+
+#pragma mark -
+#pragma mark Private interface
+
+
 @interface BXHIDControllerProfile ()
 
 //Generates the input bindings for the controller to the emulated joystick.
@@ -53,3 +68,26 @@
 + (Class) profileClassForHIDController: (DDHidJoystick *)HIDController;
 
 @end
+
+
+//Helper methods to ease the conversion of a set of D-pad buttons to axis/POV mappings
+//(for devices that represent their D-pad as buttons instead of a POV switch.)
+@interface BXHIDControllerProfile (BXDPadBindings)
+
+//Returns a dictionary of the button elements making up this controller's D-pad.
+//Should return nil if the controller has no button-based D-pad.
+- (NSDictionary *) DPadElementsFromButtons: (NSArray *)buttonElements;
+
+//Bind the specified set of D-pad buttons to best suit the current joystick type.
+- (void) bindDPadElements: (NSDictionary *)padElements;
+
+//Bind the specified set of D-pad buttons to the specified POV.
+- (void) bindDPadElements: (NSDictionary *)padElements toPOV: (SEL)povSelector;
+
+//Bind the specified set of D-pad buttons to the specified X and Y axes.
+- (void) bindDPadElements: (NSDictionary *)padElements
+		 toHorizontalAxis: (SEL)xAxisSelector
+			 verticalAxis: (SEL)yAxisSelector;
+
+@end
+

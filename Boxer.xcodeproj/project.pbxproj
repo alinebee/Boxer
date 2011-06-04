@@ -325,6 +325,7 @@
 		9FD1D78A1364991100792011 /* BXHIDEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD1D7891364991100792011 /* BXHIDEvent.m */; };
 		9FD23D55129AE3B600B2100B /* NSWindow+BXWindowEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD23D54129AE3B600B2100B /* NSWindow+BXWindowEffects.m */; };
 		9FD3A1E4139A358C00D0918E /* BX360ControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD3A1E3139A358C00D0918E /* BX360ControllerProfile.m */; };
+		9FD3A27F139A839600D0918E /* BXSixaxisControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD3A27E139A839600D0918E /* BXSixaxisControllerProfile.m */; };
 		9FD5481411047E420041E1E7 /* BXDrivesInUseAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD5481311047E420041E1E7 /* BXDrivesInUseAlert.m */; };
 		9FD668F11215CDD6009E0118 /* BXBottomBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD668F01215CDD6009E0118 /* BXBottomBar.m */; };
 		9FDAD87F10C182B3004EA7D0 /* BXCoverArtWell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FDAD87E10C182B3004EA7D0 /* BXCoverArtWell.m */; };
@@ -971,6 +972,7 @@
 		9FD23D54129AE3B600B2100B /* NSWindow+BXWindowEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSWindow+BXWindowEffects.m"; sourceTree = "<group>"; };
 		9FD3A1E3139A358C00D0918E /* BX360ControllerProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BX360ControllerProfile.m; sourceTree = "<group>"; };
 		9FD3A1ED139A37AF00D0918E /* BXHIDControllerProfilePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXHIDControllerProfilePrivate.h; sourceTree = "<group>"; };
+		9FD3A27E139A839600D0918E /* BXSixaxisControllerProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXSixaxisControllerProfile.m; sourceTree = "<group>"; };
 		9FD5481211047E420041E1E7 /* BXDrivesInUseAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDrivesInUseAlert.h; sourceTree = "<group>"; };
 		9FD5481311047E420041E1E7 /* BXDrivesInUseAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDrivesInUseAlert.m; sourceTree = "<group>"; };
 		9FD668EF1215CDD6009E0118 /* BXBottomBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBottomBar.h; sourceTree = "<group>"; };
@@ -2148,6 +2150,7 @@
 				9F06C6DF13993FB100B19DF1 /* BXHIDInputBinding.h */,
 				9F06C6E013993FB100B19DF1 /* BXHIDInputBinding.m */,
 				9FD3A1E3139A358C00D0918E /* BX360ControllerProfile.m */,
+				9FD3A27E139A839600D0918E /* BXSixaxisControllerProfile.m */,
 			);
 			name = "Input handling";
 			sourceTree = "<group>";
@@ -2666,6 +2669,7 @@
 				9F06C6D313992E1F00B19DF1 /* BXHIDControllerProfile.m in Sources */,
 				9F06C6E113993FB100B19DF1 /* BXHIDInputBinding.m in Sources */,
 				9FD3A1E4139A358C00D0918E /* BX360ControllerProfile.m in Sources */,
+				9FD3A27F139A839600D0918E /* BXSixaxisControllerProfile.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

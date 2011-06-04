@@ -20,14 +20,37 @@
 
 #define BX360ControllerVendorID			BXHIDVendorIDMicrosoft
 #define BX360ControllerProductID		0x028e
-#define BX360ControllerLeftTrigger		kHIDUsage_GD_Z
-#define BX360ControllerRightTrigger		kHIDUsage_GD_Rz
-#define BX360ControllerLeftShoulder		kHIDUsage_Button_4+1
-#define BX360ControllerRightShoulder	kHIDUsage_Button_4+2
-#define BX360ControllerDPadUp			kHIDUsage_Button_4+8
-#define BX360ControllerDPadDown			kHIDUsage_Button_4+9
-#define BX360ControllerDPadLeft			kHIDUsage_Button_4+10
-#define BX360ControllerDPadRight		kHIDUsage_Button_4+11
+
+enum {
+	BX360ControllerLeftStickX		= kHIDUsage_GD_X,
+	BX360ControllerLeftStickY		= kHIDUsage_GD_Y,
+	BX360ControllerRightStickX		= kHIDUsage_GD_Rx,
+	BX360ControllerRightStickY		= kHIDUsage_GD_Ry,
+	BX360ControllerLeftTrigger		= kHIDUsage_GD_Z,
+	BX360ControllerRightTrigger		= kHIDUsage_GD_Rz
+};
+
+enum {
+	BX360ControllerAButton			= kHIDUsage_Button_1,
+	BX360ControllerBButton,
+	BX360ControllerXButton,
+	BX360ControllerYButton,
+	
+	BX360ControllerLeftShoulder,
+	BX360ControllerRightShoulder,
+	
+	BX360ControllerLeftStickClick,
+	BX360ControllerRightStickClick,
+	
+	BX360ControllerStartButton,
+	BX360ControllerBackButton,
+	BX360ControllerXBoxButton,
+	
+	BX360ControllerDPadUp,
+	BX360ControllerDPadDown,
+	BX360ControllerDPadLeft,
+	BX360ControllerDPadRight
+};
 
 
 
@@ -50,103 +73,74 @@
 	return NO;
 }
 
-//Overridden to bind the 360's D-pad buttons to either a POV switch or X and Y axes.
-- (void) bindButtonElements: (NSArray *)elements
+- (NSDictionary *) DPadElementsFromButtons: (NSArray *)buttons
 {
-	NSMutableArray *filteredElements = [elements mutableCopy];
+	NSMutableDictionary *padElements = [[NSMutableDictionary alloc] initWithCapacity: 4];
 	
-	BOOL asPOV = [[self emulatedJoystick] respondsToSelector: @selector(POVChangedTo:)];
-	if (asPOV)
+	for (DDHidElement *element in buttons)
 	{
-		id binding = [BXButtonsToPOV binding];
-		
-		for (DDHidElement *element in elements)
+		switch ([[element usage] usageId])
 		{
-			BOOL matchedPOV = YES;
-			switch ([[element usage] usageId])
-			{
-				case BX360ControllerDPadUp:
-					[binding setNorthButton: element];
-					break;
+			case BX360ControllerDPadUp:
+				[padElements setObject: element forKey: BXControllerProfileDPadUp];
+				break;
 				
-				case BX360ControllerDPadDown:
-					[binding setSouthButton: element];
-					break;
-					
-				case BX360ControllerDPadLeft:
-					[binding setWestButton: element];
-					break;
+			case BX360ControllerDPadDown:
+				[padElements setObject: element forKey: BXControllerProfileDPadDown];
+				break;
 				
-				case BX360ControllerDPadRight:
-					[binding setEastButton: element];
-					break;
-				default:
-					matchedPOV = NO;
-			}
+			case BX360ControllerDPadLeft:
+				[padElements setObject: element forKey: BXControllerProfileDPadLeft];
+				break;
 			
-			//Take the D-pad buttons out of the running so they won't get bound to something else later
-			if (matchedPOV)
-			{
-				[self setBinding: binding forElement: element];
-				[filteredElements removeObject: element];
-			}
+			case BX360ControllerDPadRight:
+				[padElements setObject: element forKey: BXControllerProfileDPadRight];
+				break;
 		}
-	}
-	else
-	{
-		SEL x = @selector(xAxisMovedTo:),
-			y = @selector(yAxisMovedTo:);
-		
-		id joystick = [self emulatedJoystick];
-		if ([joystick respondsToSelector: x] && [joystick respondsToSelector: y])
-		{
-			for (DDHidElement *element in elements)
-			{
-				float pressedValue = 0;
-				SEL axis = NULL;
-				
-				switch ([[element usage] usageId])
-				{
-					case BX360ControllerDPadUp:
-						pressedValue = -1.0f;
-						axis = y;
-						break;
-					
-					case BX360ControllerDPadDown:
-						pressedValue = 1.0f;
-						axis = y;
-						break;
-						
-					case BX360ControllerDPadLeft:
-						pressedValue = -1.0f;
-						axis = x;
-						break;
-					
-					case BX360ControllerDPadRight:
-						pressedValue = 1.0f;
-						axis = x;
-						break;
-				}
-				
-				if (axis)
-				{
-					id binding = [BXButtonToAxis binding];
-					[binding setPressedValue: pressedValue];
-					[binding setAxisSelector: axis];
-					
-					//Take the D-pad buttons out of the running so they won't get bound to something else later
-					[self setBinding: binding forElement: element];
-					[filteredElements removeObject: element];
-				}
-			}
-		}
+		//Stop looking once we've found all the D-pad buttons
+		if ([padElements count] == 4) break;
 	}
 	
-	//Bind the remaining buttons as usual
-	[super bindButtonElements: filteredElements];
-	[filteredElements release];
+	return [padElements autorelease];
 }
 
+
+//Custom binding for 360 shoulder buttons: bind to buttons 3 & 4 for regular joysticks
+//(where the triggers are buttons 1 & 2), or to 1 & 2 for wheel emulation (where the
+//triggers are the pedals).
+- (id <BXHIDInputBinding>) generatedBindingForButtonElement: (DDHidElement *)element
+{
+	id binding = nil;
+	
+	NSUInteger realButton = [[element usage] usageId];
+	NSUInteger emulatedButton = BXEmulatedJoystickUnknownButton;
+	
+	id joystick = [self emulatedJoystick];
+	BOOL isWheel =	[joystick respondsToSelector: @selector(acceleratorMovedTo:)] &&
+					[joystick respondsToSelector: @selector(brakeMovedTo:)];
+					 
+	switch (realButton)
+	{
+		case BX360ControllerLeftShoulder:
+			emulatedButton = isWheel ? BXEmulatedJoystickButton2 : BXEmulatedJoystickButton4;
+			break;
+		case BX360ControllerRightShoulder:
+			emulatedButton = isWheel ? BXEmulatedJoystickButton1 : BXEmulatedJoystickButton3;
+			break;
+	}
+	
+	if (emulatedButton != BXEmulatedJoystickUnknownButton)
+	{
+		binding = [BXButtonToButton binding];
+		[binding setButton: emulatedButton];
+	}
+	else binding = [super generatedBindingForButtonElement: element];
+	
+	return binding;
+}
+
+//Custom binding for 360 triggers: bind to buttons 1 & 2 for regular joysticks,
+//or to brake/accelerator for wheel emulation.
 - (id <BXHIDInputBinding>) generatedBindingForAxisElement: (DDHidElement *)element
 {
 	NSUInteger axis = [[element usage] usageId];
@@ -157,8 +151,6 @@
 	
 	id binding = nil;
 	
-	//Custom binding for 360 triggers: bound to buttons 1 & 2 for regular joysticks,
-	//or to brake/accelerator for wheel emulation.
 	switch (axis)
 	{
 		case BX360ControllerLeftTrigger:
@@ -190,39 +182,6 @@
 		default:
 			binding = [super generatedBindingForAxisElement: element];
 	}
-	return binding;
-}
-
-- (id <BXHIDInputBinding>) generatedBindingForButtonElement: (DDHidElement *)element
-{
-	id binding = nil;
-	
-	NSUInteger realButton = [[element usage] usageId];
-	NSUInteger emulatedButton = BXEmulatedJoystickUnknownButton;
-	
-	//Custom binding for 360 shoulder buttons: bound to buttons 3 & 4 for regular joysticks,
-	//or to 1 & 2 for wheel emulation.
-	id joystick = [self emulatedJoystick];
-	BOOL isWheel =	[joystick respondsToSelector: @selector(acceleratorMovedTo:)] &&
-					[joystick respondsToSelector: @selector(brakeMovedTo:)];
-					 
-	switch (realButton)
-	{
-		case BX360ControllerLeftShoulder:
-			emulatedButton = isWheel ? BXEmulatedJoystickButton2 : BXEmulatedJoystickButton4;
-			break;
-		case BX360ControllerRightShoulder: //Right shoulder
-			emulatedButton = isWheel ? BXEmulatedJoystickButton1 : BXEmulatedJoystickButton3;
-			break;
-	}
-	
-	if (emulatedButton != BXEmulatedJoystickUnknownButton)
-	{
-		binding = [BXButtonToButton binding];
-		[binding setButton: emulatedButton];
-	}
-	else binding = [super generatedBindingForButtonElement: element];
-	
 	return binding;
 }
 

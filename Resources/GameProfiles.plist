@@ -272,6 +272,18 @@
 			</array>
 		</dict>
 		
+		
+		<dict>
+			<key>BXProfileName</key>
+			<string>Wing Commander</string>
+			<key>BXProfileConf</key>
+			<string>Wing Commander</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>wingcmdr.cfg</string>
+			</array>
+		</dict>
+		
 		<dict>
 			<key>BXProfileName</key>
 			<string>Wing Commander II</string>
@@ -290,12 +302,12 @@
 		
 		<dict>
 			<key>BXProfileName</key>
-			<string>Wing Commander</string>
+			<string>Wing Commander Academy</string>
 			<key>BXProfileConf</key>
 			<string>Wing Commander</string>
 			<key>BXProfileTelltales</key>
 			<array>
-				<string>wingcmdr.cfg</string>
+				<string>wca.exe</string>
 			</array>
 		</dict>
 		
@@ -354,6 +366,7 @@
 				<string>F-29 Retaliator</string>
 				<string>US Navy Fighters/Advanced Tactical Fighters</string>
 				<string>Wing Commander Armada</string>
+				<string>Wing Commander III</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
@@ -370,6 +383,7 @@
 				<string>retal.00</string>
 				<string>timeint.xxx</string>
 				<string>armada.exe</string>
+				<string>wc3.con</string>
 			</array>
 		</dict>
 		

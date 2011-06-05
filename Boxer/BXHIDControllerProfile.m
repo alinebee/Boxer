@@ -256,10 +256,11 @@ static NSMutableArray *profileClasses = nil;
 		case kHIDUsage_GD_Dial:
 			//Only seen once, and that was paired with Slider
 			normalizedAxis = kHIDUsage_GD_Rx;
+			break;
 			
 		case kHIDUsage_GD_Slider:
-			//Commonly used for throttle axes
 			normalizedAxis = kHIDUsage_GD_Ry;
+			break;
 			
 		default:
 			normalizedAxis = axis;

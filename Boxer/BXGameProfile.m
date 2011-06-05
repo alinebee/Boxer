@@ -215,8 +215,6 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 							   
 + (NSDictionary *) _gameProfileData
 {
-	//Cache the data in a static variable, since it will not change over the lifetime of the application
-	//Todo: check if this caching is necessary, or if there's behind-the-scenes caching.
 	static NSDictionary *dict = nil;
 	if (!dict)
 	{

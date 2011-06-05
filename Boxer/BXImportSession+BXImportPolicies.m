@@ -61,14 +61,21 @@
 {
 	static NSSet *patterns = nil;
 	if (!patterns) patterns = [[NSSet alloc] initWithObjects:
-							   @"(^|/)directx/",		//DirectX redistributables
-							   @"(^|/)acrodos/",		//Adobe acrobat reader for DOS
+							   @"(^|/)directx",			//DirectX redistributables
+							   @"(^|/)acrodos",			//Adobe acrobat reader for DOS
 							   @"(^|/)acroread\\.exe$", //Adobe acrobat reader for Windows
 							   @"(^|/)uvconfig\\.exe$",	//UniVBE detection program
 							   @"(^|/)univbe",			//UniVBE program/redistributable folder
+							   
+							   @"(^|/)unins000\\.",					//GOG uninstaller files
+							   @"(^|/)Graphic mode setup\\.exe$",	//GOG configuration programs
+							   @"(^|/)gogwrap\\.exe$",				//GOG only knows what this one does
+							   @"(^|/)dosbox",						//Anything DOSBox-related
+							   
 							   @"(^|/)autorun",			//Windows CD-autorun stubs
 							   @"(^|/)bootdisk\\.",		//Bootdisk makers
 							   @"(^|/)readme\\.",		//Readme viewers
+							   
 							   @"(^|/)pkunzip\\.",		//Archivers
 							   @"(^|/)pkunzjr\\.",
 							   @"(^|/)arj\\.",

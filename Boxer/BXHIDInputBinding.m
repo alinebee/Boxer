@@ -21,6 +21,12 @@
 				 onTarget: (id)target
 				withValue: (void *)value;
 
+//Convert DDHidElement integer axis value into a floating-point range from -1.0 to 1.0.
++ (float) _normalizedAxisValue: (NSInteger)axisValue;
+
+//Convert DDHidElement integer axis value into a floating-point range from 0.0 to 1.0.
++ (float) _normalizedUnidirectionalAxisValue: (NSInteger)axisValue;
+
 @end
 
 @implementation BXBaseHIDInputBinding
@@ -49,11 +55,22 @@
 	[self doesNotRecognizeSelector: _cmd];
 }
 
++ (float) _normalizedAxisValue: (NSInteger)axisValue
+{
+	return (float)axisValue / (float)DDHID_JOYSTICK_VALUE_MAX;
+}
+
++ (float) _normalizedUnidirectionalAxisValue:(NSInteger)axisValue
+{
+	float normalizedValue = [self _normalizedAxisValue: axisValue];
+	return (normalizedValue + 1.0f) * 0.5f;
+}
+
 @end
 
 
 @implementation BXAxisToAxis
-@synthesize deadzone, axisSelector;
+@synthesize deadzone, unidirectional, inverted, axisSelector;
 
 - (id) init
 {
@@ -61,14 +78,26 @@
 	{
 		[self setDeadzone: BXDefaultAxisDeadzone];
 		previousValue = 0.0f;
+		unidirectional = NO;
+		inverted = NO;
 	}
 	return self;
 }
 
-- (float) _normalizedAxisPosition: (NSInteger)axisPosition
+- (float) _normalizedAxisValue: (NSInteger)axisValue
 {	
-	//BXEmulatedJoystick takes a floating-point range from -1.0 to +1.0.
-	float fPosition = (float)axisPosition / (float)DDHID_JOYSTICK_VALUE_MAX;
+	float fPosition;
+	if ([self isUnidirectional])
+	{
+		fPosition = [[self class] _normalizedUnidirectionalAxisValue: axisValue];
+	}
+	else
+	{
+		fPosition = [[self class] _normalizedAxisValue: axisValue];
+	}
+	
+	//Flip the axis if necessary
+	if ([self isInverted]) fPosition *= -1;
 	
 	//Clamp axis value to 0 if it is within the deadzone.
 	if (ABS(fPosition) - [self deadzone] < 0) fPosition = 0;
@@ -79,7 +108,7 @@
 - (void) processEvent: (BXHIDEvent *)event
 			forTarget: (id <BXEmulatedJoystick>)target
 {
-	float axisValue = [self _normalizedAxisPosition: [event axisPosition]];
+	float axisValue = [self _normalizedAxisValue: [event axisPosition]];
 	if (axisValue != previousValue)
 	{
 		[self _performSelector: [self axisSelector] onTarget: target withValue: &axisValue];
@@ -136,7 +165,7 @@
 
 
 @implementation BXAxisToButton
-@synthesize threshold, button;
+@synthesize threshold, unidirectional, button;
 
 - (id) init
 {
@@ -150,9 +179,19 @@
 
 - (BOOL) _buttonDown: (NSInteger)axisPosition
 {
-	float fPosition = (float)axisPosition / (float)DDHID_JOYSTICK_VALUE_MAX;
-	
-	if (fPosition > threshold) return YES;
+	float fPosition;
+	if ([self isUnidirectional])
+	{
+		fPosition = [[self class] _normalizedUnidirectionalAxisValue: axisPosition];
+	}
+	else
+	{
+		fPosition = [[self class] _normalizedAxisValue: axisPosition];
+	}
+
+	//Ignore polarity when checking whether the axis is over the threshold:
+	//This makes both directions on a bidirectional axis act the same.
+	if (ABS(fPosition) > threshold) return YES;
 	return NO;
 }
 

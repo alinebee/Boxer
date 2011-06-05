@@ -164,6 +164,7 @@ enum {
 				binding = [BXAxisToButton binding];
 				[binding setButton: BXEmulatedJoystickButton2];
 			}
+			[binding setUnidirectional: YES];
 			break;
 		
 		case BX360ControllerRightTrigger:
@@ -177,29 +178,13 @@ enum {
 				binding = [BXAxisToButton binding];
 				[binding setButton: BXEmulatedJoystickButton1];
 			}
+			[binding setUnidirectional: YES];
 			break;
 			
 		default:
 			binding = [super generatedBindingForAxisElement: element];
 	}
 	return binding;
-}
-
-- (void) dispatchHIDEvent: (BXHIDEvent *)event
-{
-	//Override the HID framework's treatment of the 360's trigger axes,
-	//so that they are centered when released rather than at minimum.
-	if ([event type] == BXHIDJoystickAxisChanged)
-	{
-		if ([event axis] == BX360ControllerLeftTrigger || [event axis] == BX360ControllerRightTrigger)
-		{
-			//Remaps trigger axis range from DDHID_JOYSTICK_VALUE_MIN -> DDHID_JOYSTICK_VALUE_MAX
-			//to 0 -> DDHID_JOYSTICK_VALUE_MAX
-			NSInteger normalizedPosition = ([event axisPosition] + DDHID_JOYSTICK_VALUE_MAX) / 2;
-			[event setAxisPosition: normalizedPosition];
-		}
-	}
-	[super dispatchHIDEvent: event];
 }
 
 @end

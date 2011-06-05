@@ -37,11 +37,20 @@
 @interface BXAxisToAxis: BXBaseHIDInputBinding
 {
 	SEL axisSelector;
+	BOOL unidirectional;
+	BOOL inverted;
 	float deadzone;
 	float previousValue;
 }
 //Absolute axis values below this amount will be rounded to 0. Defaults to 0.25f.
 @property (assign, nonatomic) float deadzone;
+
+//Whether the axis input is inverted. Defaults to NO.
+@property (assign, nonatomic, getter=isInverted) BOOL inverted;
+
+//Whether the axis input represents a unidirectional trigger. Defaults to NO.
+//If YES, the input will be mapped to 0->1.0 instead of -1.0->1.0.
+@property (assign, nonatomic, getter=isUnidirectional) BOOL unidirectional;
 
 //The axis selector to call on the emulated joystick.
 @property (assign, nonatomic) SEL axisSelector;
@@ -86,12 +95,21 @@
 @interface BXAxisToButton: BXBaseHIDInputBinding
 {
 	float threshold;
+	BOOL unidirectional;
 	NSUInteger button;
 	BOOL previousValue;
 }
 
-//The axis value above which the button will be treated as pressed. Defaults to 0.25f.
+//The normalized axis value over which the button will be treated as pressed.
+//Ignores polarity to treat positive and negative axis values the same,
+//measuring only distance from 0.
+//Defaults to 0.25f.
 @property (assign, nonatomic) float threshold;
+
+//Whether the axis input represents a unidirectional trigger. Defaults to NO.
+//If YES, then the axis input will be normalized to 0->1.0 before considering
+//the threshold.
+@property (assign, nonatomic, getter=isUnidirectional) BOOL unidirectional;
 
 //The BXEmulatedButton constant of the button to bind to on the emulated joystick.
 @property (assign, nonatomic) NSUInteger button;

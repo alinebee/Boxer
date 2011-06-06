@@ -313,6 +313,39 @@
 		
 		<dict>
 			<key>BXProfileName</key>
+			<string>Wing Commander Armada</string>
+			<key>BXProfileConf</key>
+			<string>Timed joystick</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>armada1.adv</string>
+			</array>
+		</dict>
+		
+		<dict>
+			<key>BXProfileName</key>
+			<string>Wing Commander III</string>
+			<key>BXProfileConf</key>
+			<string>Timed joystick</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>wc3.con</string>
+			</array>
+		</dict>
+		
+		<dict>
+			<key>BXProfileName</key>
+			<string>Wing Commander IV</string>
+			<key>BXProfileConf</key>
+			<string>Timed joystick</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>wc4.exe</string>
+			</array>
+		</dict>
+		
+		<dict>
+			<key>BXProfileName</key>
 			<string>Wings of Glory</string>
 			<key>BXProfileConf</key>
 			<string>Wings of Glory</string>
@@ -365,8 +398,6 @@
 				<string>Skate or Die</string>
 				<string>F-29 Retaliator</string>
 				<string>US Navy Fighters/Advanced Tactical Fighters</string>
-				<string>Wing Commander Armada</string>
-				<string>Wing Commander III</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
@@ -382,8 +413,6 @@
 				<string>skate.exe</string>
 				<string>retal.00</string>
 				<string>timeint.xxx</string>
-				<string>armada.exe</string>
-				<string>wc3.con</string>
 			</array>
 		</dict>
 		

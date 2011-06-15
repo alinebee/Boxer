@@ -28,12 +28,24 @@ enum {
 
 @implementation BXCHFlightStickPro
 
-+ (BOOL) requiresFullJoystickSupport { return YES; }
-
 + (NSString *) localizedName
 {
-	return NSLocalizedString(@"CH Flightstick Pro", @"Localized name for CH Flightstick Pro joystick type.");
+	return NSLocalizedString(@"CH Flightstick Pro",
+							 @"Localized name for CH Flightstick Pro joystick type.");
 }
+
++ (NSString *) localizedInformativeText
+{
+	return NSLocalizedString(@"4 buttons, POV hat, rudder and throttle.\nRegisters only one button at a time.",
+							 @"Localized informative text for CH Flightstick Pro joystick type.");
+}
+
++ (NSImage *) icon
+{
+	return [NSImage imageNamed: @"CHFlightstickPro"];
+}
+
++ (BOOL) requiresFullJoystickSupport { return YES; }
 
 - (NSUInteger) numButtons		{ return 4; }
 - (NSUInteger) numAxes			{ return 4; }
@@ -155,8 +167,21 @@ enum {
 
 + (NSString *) localizedName
 {
-	return NSLocalizedString(@"CH F-16 Combatstick", @"Localized name for CH F-16 Combatstick joystick type.");
+	return NSLocalizedString(@"CH F-16 Combatstick",
+							 @"Localized name for CH F-16 Combatstick joystick type.");
 }
+
++ (NSString *) localizedInformativeText
+{
+	return NSLocalizedString(@"Flightstick with 6 buttons, 2 POV hats and throttle wheel. Ideal for flight sims and space sims. Only one button can be pressed at a time.",
+							 @"Localized informative text for CH F-16 Combatstick joystick type.");
+}
+
++ (NSImage *) icon
+{
+	return nil;
+}
+
 
 - (NSUInteger) numButtons		{ return 6; }
 - (NSUInteger) numAxes			{ return 4; }

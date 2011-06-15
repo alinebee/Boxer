@@ -32,12 +32,25 @@
 
 @implementation BXThrustmasterFCS
 
-+ (BOOL) requiresFullJoystickSupport { return YES; }
-
 + (NSString *) localizedName
 {	
-	return NSLocalizedString(@"Thrustmaster FCS", @"Localized name for Thrustmaster FCS joystick type.");
+	return NSLocalizedString(@"Thrustmaster FCS",
+							 @"Localized name for Thrustmaster FCS joystick type.");
 }
+
++ (NSString *) localizedInformativeText
+{
+	return NSLocalizedString(@"4 buttons, POV hat and rudder pedals.\nSuitable for flight sims.",
+							 @"Localized informative text for Thrustmaster FCS joystick type.");
+}
+
++ (NSImage *) icon
+{
+	return [NSImage imageNamed: @"ThrustmasterFCS"];
+}
+
++ (BOOL) requiresFullJoystickSupport { return YES; }
+
 
 - (NSUInteger) numButtons		{ return 4; }
 - (NSUInteger) numAxes			{ return 3; } //Y2 axis is reserved for the POV switch

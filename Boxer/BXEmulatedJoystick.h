@@ -10,7 +10,7 @@
 //They translate high-level device instructions into gameport signals.
 
 
-#import <Foundation/Foundation.h>
+#import <Cocoa/Cocoa.h>
 
 #pragma mark -
 #pragma mark Constants
@@ -98,13 +98,19 @@ enum {
 @property (readonly, nonatomic) NSUInteger numAxes;
 @property (readonly, nonatomic) NSUInteger numPOVSwitches;
 
+//The localized name of this joystick type, for display in the UI.
++ (NSString *) localizedName;
+
+//A localized extended description of this joystick type, for display in the UI along with the localized name.
++ (NSString *) localizedInformativeText;
+
+//An icon representation of this joystick type, for display in the UI.
++ (NSImage *) icon;
+
 
 //Returns whether this joystick class needs 4-axis, 4-button joystick support in order to function correctly.
 //Used for filtering out unsupported joysticks when running games that are known to have problems with them.
 + (BOOL) requiresFullJoystickSupport;
-
-//The localized name of this joystick type, for display in the UI.
-+ (NSString *) localizedName;
 
 
 //Called by BXEmulator when the device is plugged/unplugged.

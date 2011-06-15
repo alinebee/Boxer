@@ -22,8 +22,7 @@
 	IBOutlet NSPopUpButton *joystickTypeSelector;
 	IBOutlet NSObjectController *sessionMediator;
 }
-@property (retain) NSPopUpButton *joystickTypeSelector; //The joystick type selector we populate.
-@property (retain) NSObjectController *sessionMediator;	//The NIB's object-controller proxy for the current session.
-@property (readonly) NSArray *joystickTypes; //The available joystick types, used to populate the joystick type selector.
-
+@property (retain, nonatomic) NSPopUpButton *joystickTypeSelector; //The joystick type selector we populate.
+@property (retain, nonatomic) NSObjectController *sessionMediator;	//The NIB's object-controller proxy for the current session.
+@property (readonly, nonatomic) NSArray *joystickTypes; //The available joystick types, used to populate the joystick type selector.
 @end

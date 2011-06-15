@@ -208,11 +208,23 @@ NSString * const BXEmulatedJoystickClassKey = @"BXEmulatedJoystickClassKey";
 
 @implementation BX2AxisJoystick
 
-+ (BOOL) requiresFullJoystickSupport { return NO; }
 + (NSString *) localizedName
 {
-	return NSLocalizedString(@"2-button, 2-axis joystick", @"Localized name for generic 2-axis joystick type.");
+	return NSLocalizedString(@"Standard joystick", @"Localized name for generic 2-axis joystick type.");
 }
+
++ (NSString *) localizedInformativeText
+{
+	return NSLocalizedString(@"Joystick with 2 buttons and 2 axes. Suitable for most games.",
+							 @"Localized informative text for generic 2-axis joystick type.");	
+}
+
++ (NSImage *) icon
+{
+	return [NSImage imageNamed: @"4AxisJoystick"];
+}
+
++ (BOOL) requiresFullJoystickSupport { return NO; }
 
 - (NSUInteger) numButtons		{ return 2; }
 - (NSUInteger) numAxes			{ return 2; }
@@ -230,11 +242,25 @@ NSString * const BXEmulatedJoystickClassKey = @"BXEmulatedJoystickClassKey";
 
 @implementation BX4AxisJoystick
 
-+ (BOOL) requiresFullJoystickSupport { return YES; }
 + (NSString *) localizedName
 {
-	return NSLocalizedString(@"4-button, 4-axis joystick", @"Localized name for generic 4-axis joystick type.");
+	return NSLocalizedString(@"Standard joystick/gamepad",
+							 @"Localized name for generic 4-axis joystick type.");
 }
+
++ (NSString *) localizedInformativeText
+{
+	return NSLocalizedString(@"4 buttons and up to 4 axes.\nSuitable for most games.",
+							 @"Localized informative text for generic 4-axis joystick type.");	
+}
+
++ (NSImage *) icon
+{
+	return [NSImage imageNamed: @"4AxisJoystick"];
+}
+
+
++ (BOOL) requiresFullJoystickSupport { return YES; }
 
 - (NSUInteger) numButtons		{ return 4; }
 - (NSUInteger) numAxes			{ return 4; }
@@ -251,11 +277,24 @@ NSString * const BXEmulatedJoystickClassKey = @"BXEmulatedJoystickClassKey";
 
 @implementation BX2AxisWheel
 
-+ (BOOL) requiresFullJoystickSupport { return NO; }
 + (NSString *) localizedName
 {
-	return NSLocalizedString(@"Racing wheel with pedals", @"Localized name for steering wheel joystick type.");
+	return NSLocalizedString(@"Racing wheel",
+							 @"Localized name for 2-axis racing wheel joystick type.");
 }
+
++ (NSString *) localizedInformativeText
+{
+	return NSLocalizedString(@"2 buttons and gas/brake pedals on a single axis.",
+							 @"Localized informative text for 2-axis racing wheel.");	
+}
+
++ (NSImage *) icon
+{
+	return [NSImage imageNamed: @"RacingWheel"];
+}
+
++ (BOOL) requiresFullJoystickSupport { return NO; }
 
 - (NSUInteger) numButtons		{ return 2; }
 - (NSUInteger) numAxes			{ return 2; }
@@ -307,11 +346,25 @@ NSString * const BXEmulatedJoystickClassKey = @"BXEmulatedJoystickClassKey";
 
 @implementation BX3AxisWheel
 
-+ (BOOL) requiresFullJoystickSupport { return YES; }
 + (NSString *) localizedName
 {
-	return NSLocalizedString(@"Racing wheel with 2-axis pedals", @"Localized name for steering wheel joystick type.");
+	return NSLocalizedString(@"Racing wheel",
+							 @"Localized name for 3-axis racing wheel joystick type.");
 }
+
++ (NSString *) localizedInformativeText
+{
+	return NSLocalizedString(@"4 buttons and gas/brake pedals\non separate axes.",
+							 @"Localized informative text for 2-axis racing wheel.");	
+}
+
++ (NSImage *) icon
+{
+	return [NSImage imageNamed: @"RacingWheel"];
+}
+
++ (BOOL) requiresFullJoystickSupport { return YES; }
+
 
 - (NSUInteger) numButtons		{ return 4; }
 - (NSUInteger) numAxes			{ return 3; }

@@ -726,8 +726,7 @@
 				<string>The Elder Scrolls: Arena</string>
 				<string>Epic Pinball</string>
 				<string>Colonization</string>
-				<string>Blake Stone</string>
-				<string>Blake Stone 2</string>
+				<string>Blake Stone 1 &amp; 2</string>
 				<string>Falcon 3.0</string>
 				<string>Links</string>
 				<string>Warlords 2</string>
@@ -738,6 +737,7 @@
 				<string>Jetfighter 2</string>
 				<string>Grand Prix</string>
 				<string>Tornado</string>
+				<string>Stunt Island</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
@@ -760,6 +760,7 @@
 				<string>jf2.exe</string>
 				<string>f1gpdata.dat</string>
 				<string>tornado.bat</string>
+				<string>alcatraz.set</string>
 			</array>
 		</dict>
 	</array>

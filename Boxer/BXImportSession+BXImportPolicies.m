@@ -326,17 +326,48 @@
 	NSString *extension	= [[filename pathExtension] lowercaseString];
 	if ([strippedExtensions containsObject: extension]) filename = [filename stringByDeletingPathExtension];
 	
-	//Put a space before a set of numbers preceded by a character:
+	//Remove content enclosed in parentheses and/or square brackets:
+	//Ultima 8 (1994)(Origin Systems)[Rev.2.12] -> Ultima 8
+	filename = [filename stringByReplacingOccurrencesOfRegex: @"[\\[\\(]+.*[\\]\\)]+" withString: @""];
+	
+	//Put a space before a set of numbers preceded by a letter:
 	//ULTIMA8 -> ULTIMA 8
 	filename = [filename stringByReplacingOccurrencesOfRegex: @"([a-zA-Z]+)(\\d+)"
 															withString: @"$1 $2"];
 	
-	//Replace underscores with spaces
+	//Replace underscores with spaces:
+	//ULTIMA_8 -> ULTIMA 8
 	filename = [filename stringByReplacingOccurrencesOfString: @"_" withString: @" "];
 	
-	//Convert the filename to Title Case
-	//ULTIMA 8 -> Ultima 8
-	filename = [filename capitalizedString];
+	//Trim the string and collapse all internal whitespace to single spaces:
+	// Ultima   8  -> Ultima 8
+	filename = [filename stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
+	filename = [filename stringByReplacingOccurrencesOfRegex: @"\\s+" withString: @" "];
+	
+	//Format Roman numerals to uppercase, and everthing else into Title Case:
+	//ultima viii -> Ultima VIII
+	NSMutableArray *words = [[filename componentsSeparatedByCharactersInSet: [NSCharacterSet whitespaceCharacterSet]] mutableCopy];
+	NSUInteger i, numWords = [words count];
+	for (i=0; i<numWords; i++)
+	{
+		NSString *word = [words objectAtIndex: i];
+		
+		//Matches roman numerals from I->XIII; I know of no DOS-era games with more than 13 parts,
+		//and restricting the regex prevents it matching real words inadvertently (like "mix")
+		//TODO: expand this to match common acronyms as well
+		if ([word isMatchedByRegex: @"^[Ii]?[XxVvIi][Ii]*$"])
+			word = [word uppercaseString];
+		else
+			word = [word capitalizedString];
+		
+		[words replaceObjectAtIndex: i withObject: word];
+	}
+	filename = [words componentsJoinedByString: @" "];
+	[words release];
+	
+	
+	//If all these substitutions somehow ended up with an empty string, then fall back on the original filename
+	if (![filename length]) filename = [path lastPathComponent];
 	
 	return filename;
 }

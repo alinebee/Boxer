@@ -49,10 +49,13 @@
 #pragma mark -
 #pragma mark Convenience accessors
 
-@property (readonly) BXDOSWindowController *_windowController;
-@property (readonly) BXEmulatedKeyboard *_emulatedKeyboard;
-@property (readonly) BXEmulatedMouse *_emulatedMouse;
-@property (readonly) id <BXEmulatedJoystick> _emulatedJoystick;
+//Make the available types internally modifiable
+@property (readwrite, retain, nonatomic) NSArray *availableJoystickTypes;
+
+@property (readonly, nonatomic) BXDOSWindowController *_windowController;
+@property (readonly, nonatomic) BXEmulatedKeyboard *_emulatedKeyboard;
+@property (readonly, nonatomic) BXEmulatedMouse *_emulatedMouse;
+@property (readonly, nonatomic) id <BXEmulatedJoystick> _emulatedJoystick;
 
 
 #pragma mark -
@@ -104,6 +107,11 @@
 
 //Resynchronises the DOS emulated joystick type based on currently-connected joystick devices.
 - (void) _syncJoystickType;
+
+//Resynchronises the available joystick types to choose from based on the emulated game's
+//current level of joystick support.
+- (void) _syncAvailableJoystickTypes;
+
 
 @end
 

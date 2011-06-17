@@ -19,8 +19,6 @@
 	IBOutlet NSSegmentedControl *driveControls;
 	IBOutlet NSMenu *driveActionsMenu;
 	IBOutlet BXDriveList *driveList;
-	
-	NSMutableArray *driveDetails;
 }
 
 #pragma mark -
@@ -31,9 +29,6 @@
 @property (retain, nonatomic) NSMenu *driveActionsMenu;
 //The array controller representing the current session's drives.
 @property (retain, nonatomic) NSArrayController *drives;
-
-//The current session's drives and drive import progress, grouped as an NSDictionary.
-@property (readonly, nonatomic) NSArray *driveDetails;
 
 //Sort descriptors and filters for our drive list.
 @property (readonly, nonatomic) NSArray *driveSortDescriptors;

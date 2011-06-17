@@ -40,7 +40,7 @@
 
 + (NSString *) localizedInformativeText
 {
-	return NSLocalizedString(@"4 buttons, POV hat and rudder pedals.\nSuitable for flight sims.",
+	return NSLocalizedString(@"4 buttons, POV hat and rudder pedals.",
 							 @"Localized informative text for Thrustmaster FCS joystick type.");
 }
 

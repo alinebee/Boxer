@@ -13,6 +13,8 @@
 
 
 @implementation BXInputController (BXJoystickInput)
+//Synthesized in BXInputController.m, but compiler overlooks that and throws up warnings otherwise
+@dynamic availableJoystickTypes;
 
 #pragma mark -
 #pragma mark Setting and getting joystick configuration
@@ -31,6 +33,11 @@
 + (NSSet *) keyPathsForValuesAffectingPreferredJoystickType
 {
 	return [NSSet setWithObject: @"representedObject.gameSettings.preferredJoystickType"];
+}
+
++ (NSSet *) keyPathsForValuesAffectingSelectedJoystickTypeIndexes
+{
+	return [NSSet setWithObjects: @"preferredJoystickType", @"availableJoystickTypes", nil];
 }
 
 - (BOOL) strictGameportTiming
@@ -54,32 +61,48 @@
 	}
 }
 
-- (Class) joystickType
+- (NSIndexSet *) selectedJoystickTypeIndexes
 {
-	BXSession *session	= [self representedObject];
-	return [[[session emulator] joystick] class];
+	NSUInteger typeIndex = NSNotFound;
+	Class currentType = [self preferredJoystickType];
+	
+	if (currentType)
+	{
+		typeIndex = [[self availableJoystickTypes] indexOfObject: currentType];
+	}
+	
+	if (typeIndex != NSNotFound) return [NSIndexSet indexSetWithIndex: typeIndex];
+	else return [NSIndexSet indexSet];
 }
 
-- (void) setJoystickType: (Class)joystickType
+- (void) setSelectedJoystickTypeIndexes: (NSIndexSet *)types
 {
-	[self setPreferredJoystickType: joystickType];
+	NSUInteger typeIndex = [types firstIndex];
+	NSArray *availableTypes = [self availableJoystickTypes];
+	if (typeIndex != NSNotFound && typeIndex < [availableTypes count])
+	{
+		Class selectedType = [availableTypes objectAtIndex: typeIndex];
+		if (selectedType)
+		{
+			[self setPreferredJoystickType: selectedType];
+		}
+	}
 }
 
 - (Class) preferredJoystickType
 {
-	BXSession *session	= [self representedObject];
-	
+	BXSession *session = [self representedObject];
 	Class defaultJoystickType = [BX4AxisJoystick class];
 	
-	NSString *className	= (NSString *)[[session gameSettings] objectForKey: @"preferredJoystickType"];
+	NSString *className	= [[session gameSettings] objectForKey: @"preferredJoystickType"];
 	
 	//If no setting exists, then fall back on the default joystick type
 	if (!className) return defaultJoystickType;
 	
-	//Setting was an empty string, indicating no joystick support
+	//If the setting was an empty string, this indicates no joystick support
 	else if (![className length]) return nil;
 	
-	//Otherwise return the specified joystick type class (or the default joystick type, if no such class exists)
+	//Otherwise return the specified joystick type class: or the default joystick type, if no such class exists
 	else
 	{
 		Class joystickType = NSClassFromString(className);
@@ -92,8 +115,8 @@
 {
 	if (joystickType != [self preferredJoystickType])
 	{
-		NSString *className;
 		//Persist the new joystick type into the per-game settings
+		NSString *className;
 		if (joystickType != nil)
 		{
 			className = NSStringFromClass(joystickType);
@@ -105,74 +128,43 @@
 		NSMutableDictionary *gameSettings = [[self representedObject] gameSettings];
 		[gameSettings setObject: className forKey: @"preferredJoystickType"];
 		
-		//Reinitialize the joysticks
+		//Reinitialize the joysticks to use the newly-selected joystick type
 		[self _syncJoystickType];
 	}
 }
 
-- (BOOL) validatePreferredJoystickType: (id *)ioValue error: (NSError **)outError
+- (BOOL) controllerIsConnected
 {
-	Class joystickClass = *ioValue;
-	
-	//Nil values are just fine, skip all the other checks 
-	if (!joystickClass) return YES;
-	
-	//Unknown classname or non-joystick class
-	if (![joystickClass conformsToProtocol: @protocol(BXEmulatedJoystick)])
-	{
-		if (outError)
-		{
-			NSString *descriptionFormat = NSLocalizedString(@"“%@” is not a valid joystick type.",
-															@"Format for error message when choosing an unrecognised joystick type. %@ is the classname of the chosen joystick type.");
-			
-			NSString *description = [NSString stringWithFormat: descriptionFormat, NSStringFromClass(joystickClass), nil];
-			
-			NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-									  description, NSLocalizedDescriptionKey,
-									  joystickClass, BXEmulatedJoystickClassKey,
-									  nil];
-			
-			*outError = [NSError errorWithDomain: BXEmulatedJoystickErrorDomain
-											code: BXEmulatedJoystickInvalidType
-										userInfo: userInfo];
-		}
-		return NO;
-	}
-	
-	/* Disabled for now: this needs to be moved downstream into BXEmulator, because the preferred joystick type can be set at any time.
-	BXEmulator *emulator = [[self representedObject] emulator];
-	
-	//Joystick class valid but not supported by the current session
-	if ([emulator joystickSupport] == BXNoJoystickSupport || 
-		([emulator joystickSupport] == BXJoystickSupportSimple && [joystickClass requiresFullJoystickSupport]))
-	{
-		if (outError)
-		{
-			NSString *localizedName	= [joystickClass localizedName];
-			NSString *sessionName	= [[self representedObject] displayName];
-			
-			NSString *descriptionFormat = NSLocalizedString(@"Joysticks of type “%1$@” are not supported by %2$@.",
-															@"Format for error message when choosing an unsupported joystick type. %1$@ is the localized name of the chosen joystick type, %2$@ is the display name of the current DOS session.");
-			
-			NSString *description = [NSString stringWithFormat: descriptionFormat, localizedName, sessionName, nil];
-			
-			NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-									  description, NSLocalizedDescriptionKey,
-									  joystickClass, BXEmulatedJoystickClassKey,
-									  nil];
-			
-			*outError = [NSError errorWithDomain: BXEmulatedJoystickErrorDomain
-											code: BXEmulatedJoystickUnsupportedType
-										userInfo: userInfo];
-		}
-		return NO; 
-	}
-	 */
-	
-	//Joystick type is fine, go ahead
-	return YES;
+	return [controllerProfiles count] > 0;
 }
 
+- (void) _syncAvailableJoystickTypes
+{
+	//Filter joystick options based on the level of game support for them
+	BXSession *session = [self representedObject];
+	BXJoystickSupportLevel supportLevel = [[session emulator] joystickSupport];
+	
+	NSArray *types;
+	if (supportLevel == BXJoystickSupportFull)
+	{
+		types = [NSArray arrayWithObjects:
+			[BX4AxisJoystick class],
+			[BXThrustmasterFCS class],
+			[BXCHFlightStickPro class],
+			[BX3AxisWheel class],
+			nil];
+	}
+	else if (supportLevel == BXJoystickSupportSimple)
+	{
+		types = [NSArray arrayWithObjects:
+			[BX2AxisJoystick class],
+			[BX2AxisWheel class],
+			nil];
+	}
+	else types = [NSArray array];
+	
+	[self setAvailableJoystickTypes: types];
+}
 
 - (void) _syncJoystickType
 {
@@ -211,6 +203,9 @@
 		//Regenerate controller profiles for each controller
 		//TODO: this is unnecessary work and we should only do this when we know the emulated joystick
 		//has changed and/or the specific device has been added/removed
+		
+		
+		[self willChangeValueForKey: @"controllerIsConnected"];
 		[controllerProfiles removeAllObjects];
 		for (DDHidJoystick *controller in controllers)
 		{
@@ -219,10 +214,13 @@
 			NSNumber *locationID = [NSNumber numberWithLong: [controller locationId]];
 			[controllerProfiles setObject: profile forKey: locationID];
 		}
+		[self didChangeValueForKey: @"controllerIsConnected"];
 	}
 	else
 	{
+		[self willChangeValueForKey: @"controllerIsConnected"];
 		[controllerProfiles removeAllObjects];
+		[self didChangeValueForKey: @"controllerIsConnected"];
 		[emulator detachJoystick];
 	}
 }

@@ -10,6 +10,7 @@
 //a custom subclass of the standard Cocoa collection view to implement drag operations for drives.
 
 #import <Cocoa/Cocoa.h>
+#import "BXCollectionItemView.h"
 
 @class BXDrive;
 @class BXDriveItemView;
@@ -33,14 +34,8 @@
 @end
 
 
-//BXDriveItemView wraps each drive icon in the list. It exposes its collection view item as a delegate,
-//so that its child views can bind to the item and respond to its state appropriately.
-@interface BXDriveItemView : NSView
-{
-	IBOutlet NSCollectionViewItem *delegate;
-}
-//A nonretained reference to the item defining which drive we are representing.
-@property (assign, nonatomic) NSCollectionViewItem *delegate;
+//BXDriveItemView wraps each drive icon in the list.
+@interface BXDriveItemView : BXHUDCollectionItemView
 
 @property (readonly, nonatomic) NSTextField *driveTypeLabel;
 @property (readonly, nonatomic) NSTextField *displayNameLabel;

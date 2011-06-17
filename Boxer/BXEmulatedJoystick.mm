@@ -215,13 +215,13 @@ NSString * const BXEmulatedJoystickClassKey = @"BXEmulatedJoystickClassKey";
 
 + (NSString *) localizedInformativeText
 {
-	return NSLocalizedString(@"Joystick with 2 buttons and 2 axes. Suitable for most games.",
+	return NSLocalizedString(@"Joystick with 2 buttons and 2 axes.",
 							 @"Localized informative text for generic 2-axis joystick type.");	
 }
 
 + (NSImage *) icon
 {
-	return [NSImage imageNamed: @"4AxisJoystick"];
+	return [NSImage imageNamed: @"4ButtonJoystick"];
 }
 
 + (BOOL) requiresFullJoystickSupport { return NO; }
@@ -250,13 +250,13 @@ NSString * const BXEmulatedJoystickClassKey = @"BXEmulatedJoystickClassKey";
 
 + (NSString *) localizedInformativeText
 {
-	return NSLocalizedString(@"4 buttons and up to 4 axes.\nSuitable for most games.",
+	return NSLocalizedString(@"4 buttons and up to 4 generic axes.",
 							 @"Localized informative text for generic 4-axis joystick type.");	
 }
 
 + (NSImage *) icon
 {
-	return [NSImage imageNamed: @"4AxisJoystick"];
+	return [NSImage imageNamed: @"4ButtonJoystick"];
 }
 
 

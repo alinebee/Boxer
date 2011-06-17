@@ -44,6 +44,7 @@
 	NSUInteger lastModifiers;
 	
 	NSMutableDictionary *controllerProfiles;
+	NSArray *availableJoystickTypes;
 }
 
 #pragma mark -
@@ -67,6 +68,7 @@
 
 //Whether the mouse is currently within our view.
 @property (readonly) BOOL mouseInView;
+
 
 #pragma mark -
 #pragma mark Methods

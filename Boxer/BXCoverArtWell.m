@@ -54,6 +54,7 @@
 }
 
 //A jolly downward-pointing arrow to go inside our dropzone
+//TODO: replace this with a PDF image
 + (NSBezierPath *) arrowForFrame: (NSRect)containingFrame withSize: (NSSize)size
 {
 	CGFloat w=size.width, h=size.height;

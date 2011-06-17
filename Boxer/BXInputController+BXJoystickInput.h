@@ -21,10 +21,16 @@
 //Which joystick type to use if supported, specified as a class conforming to the BXEmulatedJoystick protocol.
 @property (copy, nonatomic) Class preferredJoystickType;
 
-//Which joystick type is currently in use, specified as a class conforming to the BXEmulatedJoystick protocol.
-@property (copy, nonatomic) Class joystickType;
+//The joystick types available to choose from, represented as an array of BXEmulatedJoystick-conforming classes.
+//Used by the joystick type picker in the Inspector UI.
+@property (readonly, retain, nonatomic) NSArray *availableJoystickTypes;
 
-//Validates that the specified joystick class conforms to BXEmulatedJoystick.
-- (BOOL) validatePreferredJoystickType: (id *)ioValue error: (NSError **)outError;
+//The index of the currently selected joystick type from availableJoystickTypes.
+//Used by the joystick type picker in the Inspector UI.
+@property (assign, nonatomic) NSIndexSet *selectedJoystickTypeIndexes;
+
+//A flag indicating whether there are currently any supported controllers connected to the Mac.
+//Used by the joystick type picker in the Inspector UI.
+@property (readonly, nonatomic) BOOL controllerIsConnected;
 
 @end

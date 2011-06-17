@@ -219,4 +219,7 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 //Will return YES if the joystick was removed, or NO if there was no joystick.
 - (BOOL) detachJoystick;
 
+//Validates whether the specified class is a valid joystick type and supported by the current session.
+- (BOOL) validateJoystickType: (Class *)ioValue error: (NSError **)outError;
+
 @end

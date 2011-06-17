@@ -99,6 +99,7 @@
 		9F59DD2310AF6129008DBBC1 /* Grille.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F59DD2210AF6129008DBBC1 /* Grille.png */; };
 		9F59DEDA10B0159A008DBBC1 /* BXProgramPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F59DED910B0159A008DBBC1 /* BXProgramPanelController.m */; };
 		9F59DEDF10B01743008DBBC1 /* ProgramPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F59DEDD10B01743008DBBC1 /* ProgramPanel.xib */; };
+		9F60B0DC13AA418300F06BB1 /* BXCollectionItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F60B0DB13AA418300F06BB1 /* BXCollectionItemView.m */; };
 		9F61931B1233D8F000F35AB4 /* BXTabbedWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F61931A1233D8F000F35AB4 /* BXTabbedWindowController.m */; };
 		9F61942412340F5400F35AB4 /* ScriptingBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F61942312340F5400F35AB4 /* ScriptingBridge.framework */; };
 		9F61FC8510DE3F7F00F3896C /* BXGameProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F61FC8410DE3F7F00F3896C /* BXGameProfile.m */; };
@@ -324,6 +325,8 @@
 		9FCC303C13670F680013F083 /* KeyboardLayouts.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FCC303B13670F680013F083 /* KeyboardLayouts.plist */; };
 		9FCEDF3312B3DFFC00E856A4 /* SDL_sound.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FCEDF3212B3DFFC00E856A4 /* SDL_sound.framework */; };
 		9FD011BD10C2A02F00670CE1 /* BXGameboxPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD011BC10C2A02F00670CE1 /* BXGameboxPanelController.m */; };
+		9FD012E313AB845200AF6FE8 /* GamepadTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FD012E213AB845200AF6FE8 /* GamepadTemplate.pdf */; };
+		9FD012FB13AB87E500AF6FE8 /* BXTemplateImageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD012FA13AB87E500AF6FE8 /* BXTemplateImageCell.m */; };
 		9FD1D6251364291600792011 /* DDHidDevice+BXDeviceExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD1D6241364291600792011 /* DDHidDevice+BXDeviceExtensions.m */; };
 		9FD1D7011364819E00792011 /* BXJoystickController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD1D7001364819E00792011 /* BXJoystickController.m */; };
 		9FD1D78A1364991100792011 /* BXHIDEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD1D7891364991100792011 /* BXHIDEvent.m */; };
@@ -362,7 +365,6 @@
 		9FFAFE4310DE343F00728BAC /* Configurations in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2E10DE343F00728BAC /* Configurations */; };
 		9FFC2AC012A19CCC008C2B3B /* Sample Game Icons in Resources */ = {isa = PBXBuildFile; fileRef = 9FFC2ABF12A19CCC008C2B3B /* Sample Game Icons */; };
 		9FFE1F831390F70C005C438A /* BXThrustmasterFCS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FFE1F821390F70C005C438A /* BXThrustmasterFCS.mm */; };
-		9FFE1FDA13911FE5005C438A /* BXInputPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFE1FD913911FE5005C438A /* BXInputPanelController.m */; };
 		9FFF9728123269D1009B5EE5 /* NDAlias+AliasFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9716123269D1009B5EE5 /* NDAlias+AliasFile.m */; };
 		9FFF9729123269D1009B5EE5 /* NDAlias.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9718123269D1009B5EE5 /* NDAlias.m */; };
 		9FFF972A123269D1009B5EE5 /* NDResourceFork+OtherSorces.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF971A123269D1009B5EE5 /* NDResourceFork+OtherSorces.m */; };
@@ -558,6 +560,8 @@
 		9F59DED810B0159A008DBBC1 /* BXProgramPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXProgramPanelController.h; sourceTree = "<group>"; };
 		9F59DED910B0159A008DBBC1 /* BXProgramPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXProgramPanelController.m; sourceTree = "<group>"; };
 		9F59DEDE10B01743008DBBC1 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/ProgramPanel.xib; sourceTree = "<group>"; };
+		9F60B0DA13AA418300F06BB1 /* BXCollectionItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCollectionItemView.h; sourceTree = "<group>"; };
+		9F60B0DB13AA418300F06BB1 /* BXCollectionItemView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXCollectionItemView.m; sourceTree = "<group>"; };
 		9F6193191233D8F000F35AB4 /* BXTabbedWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXTabbedWindowController.h; sourceTree = "<group>"; };
 		9F61931A1233D8F000F35AB4 /* BXTabbedWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXTabbedWindowController.m; sourceTree = "<group>"; };
 		9F61942312340F5400F35AB4 /* ScriptingBridge.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ScriptingBridge.framework; path = System/Library/Frameworks/ScriptingBridge.framework; sourceTree = SDKROOT; };
@@ -970,6 +974,9 @@
 		9FCEDF3212B3DFFC00E856A4 /* SDL_sound.framework */ = {isa = PBXFileReference; comments = "This is a fork of the standard BGHUDAppkit framework built with CoreAudio and OGG support. The sourcecode for this framework is available at http://bitbucket.org/alunbestor/sdl_sound-boxer/"; lastKnownFileType = wrapper.framework; path = SDL_sound.framework; sourceTree = "<group>"; };
 		9FD011BB10C2A02F00670CE1 /* BXGameboxPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXGameboxPanelController.h; sourceTree = "<group>"; };
 		9FD011BC10C2A02F00670CE1 /* BXGameboxPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGameboxPanelController.m; sourceTree = "<group>"; };
+		9FD012E213AB845200AF6FE8 /* GamepadTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = GamepadTemplate.pdf; sourceTree = "<group>"; };
+		9FD012F913AB87E500AF6FE8 /* BXTemplateImageCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXTemplateImageCell.h; sourceTree = "<group>"; };
+		9FD012FA13AB87E500AF6FE8 /* BXTemplateImageCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXTemplateImageCell.m; sourceTree = "<group>"; };
 		9FD1D6231364291600792011 /* DDHidDevice+BXDeviceExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DDHidDevice+BXDeviceExtensions.h"; sourceTree = "<group>"; };
 		9FD1D6241364291600792011 /* DDHidDevice+BXDeviceExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DDHidDevice+BXDeviceExtensions.m"; sourceTree = "<group>"; };
 		9FD1D6FF1364819E00792011 /* BXJoystickController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXJoystickController.h; sourceTree = "<group>"; };
@@ -1035,8 +1042,6 @@
 		9FFBF6AA11A811F7000A1863 /* BXEventConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEventConstants.h; sourceTree = "<group>"; };
 		9FFC2ABF12A19CCC008C2B3B /* Sample Game Icons */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Sample Game Icons"; sourceTree = "<group>"; };
 		9FFE1F821390F70C005C438A /* BXThrustmasterFCS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXThrustmasterFCS.mm; sourceTree = "<group>"; };
-		9FFE1FD813911FE5005C438A /* BXInputPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXInputPanelController.h; sourceTree = "<group>"; };
-		9FFE1FD913911FE5005C438A /* BXInputPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXInputPanelController.m; sourceTree = "<group>"; };
 		9FFF9715123269D1009B5EE5 /* NDAlias+AliasFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NDAlias+AliasFile.h"; sourceTree = "<group>"; };
 		9FFF9716123269D1009B5EE5 /* NDAlias+AliasFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NDAlias+AliasFile.m"; sourceTree = "<group>"; };
 		9FFF9717123269D1009B5EE5 /* NDAlias.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NDAlias.h; sourceTree = "<group>"; };
@@ -1402,8 +1407,6 @@
 				9FDAD87E10C182B3004EA7D0 /* BXCoverArtWell.m */,
 				9FD011BB10C2A02F00670CE1 /* BXGameboxPanelController.h */,
 				9FD011BC10C2A02F00670CE1 /* BXGameboxPanelController.m */,
-				9FFE1FD813911FE5005C438A /* BXInputPanelController.h */,
-				9FFE1FD913911FE5005C438A /* BXInputPanelController.m */,
 				9F9E27D411F8C173003EE8F3 /* BXDrivePanelController.h */,
 				9F9E27D511F8C173003EE8F3 /* BXDrivePanelController.m */,
 			);
@@ -1488,6 +1491,10 @@
 				9F438C5710E3D8C8007D30AD /* BXScroller.m */,
 				9F9E27C311F8C003003EE8F3 /* BXSegmentedCell.h */,
 				9F9E27C411F8C003003EE8F3 /* BXSegmentedCell.m */,
+				9FD012F913AB87E500AF6FE8 /* BXTemplateImageCell.h */,
+				9FD012FA13AB87E500AF6FE8 /* BXTemplateImageCell.m */,
+				9F60B0DA13AA418300F06BB1 /* BXCollectionItemView.h */,
+				9F60B0DB13AA418300F06BB1 /* BXCollectionItemView.m */,
 			);
 			name = "UI helpers";
 			sourceTree = "<group>";
@@ -2049,6 +2056,7 @@
 		9FBC34390F56C5AC001811F2 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				9FD012E213AB845200AF6FE8 /* GamepadTemplate.pdf */,
 				9F7FC94B139EB38300D60320 /* RacingWheel.png */,
 				9FA54098139E85D800999940 /* 4ButtonJoystick.png */,
 				9F0E610E139E1A05004A7A56 /* CHFlightstickPro.png */,
@@ -2389,6 +2397,7 @@
 				9F0E6111139E1A05004A7A56 /* ThrustmasterFCS.png in Resources */,
 				9FA54099139E85D800999940 /* 4ButtonJoystick.png in Resources */,
 				9F7FC94C139EB38300D60320 /* RacingWheel.png in Resources */,
+				9FD012E313AB845200AF6FE8 /* GamepadTemplate.pdf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2681,11 +2690,12 @@
 				9F7721EA12B38C4400072AE8 /* shell_cmds.cpp in Sources */,
 				9F7721EB12B38C4400072AE8 /* shell_misc.cpp in Sources */,
 				9FFE1F831390F70C005C438A /* BXThrustmasterFCS.mm in Sources */,
-				9FFE1FDA13911FE5005C438A /* BXInputPanelController.m in Sources */,
 				9F06C6D313992E1F00B19DF1 /* BXHIDControllerProfile.m in Sources */,
 				9F06C6E113993FB100B19DF1 /* BXHIDInputBinding.m in Sources */,
 				9FD3A1E4139A358C00D0918E /* BX360ControllerProfile.m in Sources */,
 				9FD3A27F139A839600D0918E /* BXSixaxisControllerProfile.m in Sources */,
+				9F60B0DC13AA418300F06BB1 /* BXCollectionItemView.m in Sources */,
+				9FD012FB13AB87E500AF6FE8 /* BXTemplateImageCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

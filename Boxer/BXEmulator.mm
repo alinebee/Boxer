@@ -488,8 +488,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 
 - (id <BXEmulatedJoystick>) attachJoystickOfType: (Class)joystickType
 {
-	//TODO: can we test this at the signature level?
-	if ([joystickType conformsToProtocol: @protocol(BXEmulatedJoystick)])
+	if ([self validateJoystickType: &joystickType error: nil])
 	{
 		//A joystick is already connected, remove it first
 		if (joystick) [self detachJoystick];
@@ -517,6 +516,63 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	return YES;
 }
 
+- (BOOL) validateJoystickType: (Class *)ioValue error: (NSError **)outError
+{
+	Class joystickClass = *ioValue;
+	
+	//Nil values are just fine, skip all the other checks 
+	if (!joystickClass) return YES;
+	
+	//Unknown classname or non-joystick class
+	if (![joystickClass conformsToProtocol: @protocol(BXEmulatedJoystick)])
+	{
+		if (outError)
+		{
+			NSString *descriptionFormat = NSLocalizedString(@"“%@” is not a valid joystick type.",
+															@"Format for error message when choosing an unrecognised joystick type. %@ is the classname of the chosen joystick type.");
+			
+			NSString *description = [NSString stringWithFormat: descriptionFormat, NSStringFromClass(joystickClass), nil];
+			
+			NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+									  description, NSLocalizedDescriptionKey,
+									  joystickClass, BXEmulatedJoystickClassKey,
+									  nil];
+			
+			*outError = [NSError errorWithDomain: BXEmulatedJoystickErrorDomain
+											code: BXEmulatedJoystickInvalidType
+										userInfo: userInfo];
+		}
+		return NO;
+	}
+	
+	//Joystick class valid but not supported by the current session
+	if ([self joystickSupport] == BXNoJoystickSupport || 
+		([self joystickSupport] == BXJoystickSupportSimple && [joystickClass requiresFullJoystickSupport]))
+	{
+		if (outError)
+		{
+			NSString *localizedName	= [joystickClass localizedName];
+			
+			NSString *descriptionFormat = NSLocalizedString(@"Joysticks of type “%1$@” are not supported by the current session.",
+															@"Format for error message when choosing an unsupported joystick type. %1$@ is the localized name of the chosen joystick type.");
+			
+			NSString *description = [NSString stringWithFormat: descriptionFormat, localizedName, nil];
+			
+			NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+									  description, NSLocalizedDescriptionKey,
+									  joystickClass, BXEmulatedJoystickClassKey,
+									  nil];
+			
+			*outError = [NSError errorWithDomain: BXEmulatedJoystickErrorDomain
+											code: BXEmulatedJoystickUnsupportedType
+										userInfo: userInfo];
+		}
+		return NO; 
+	}
+	
+	//Joystick type is fine, go ahead
+	return YES;
+}
 
 @end
 

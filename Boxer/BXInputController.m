@@ -25,7 +25,7 @@
 
 
 @implementation BXInputController
-@synthesize mouseLocked, mouseActive, trackMouseWhileUnlocked, mouseSensitivity;
+@synthesize mouseLocked, mouseActive, trackMouseWhileUnlocked, mouseSensitivity, availableJoystickTypes;
 
 
 #pragma mark -
@@ -96,6 +96,7 @@
 	[cursorFade stopAnimation];
 	[cursorFade release], cursorFade = nil;
 	[controllerProfiles release], controllerProfiles = nil;
+	[self setAvailableJoystickTypes: nil], [availableJoystickTypes release];
 	
 	[super dealloc];
 }
@@ -214,6 +215,7 @@
 	else if ([keyPath isEqualToString: @"joystickDevices"] || 
 			 [keyPath isEqualToString: @"emulator.joystickSupport"])
 	{
+		[self _syncAvailableJoystickTypes];
 		[self _syncJoystickType];
 	}
 }

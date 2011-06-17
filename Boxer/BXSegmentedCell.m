@@ -11,13 +11,13 @@
 //Most of this is copypasta from BGHUDSegmentedCell, because of its monolithic draw functions.
 
 @interface NSSegmentedCell (private)
--(NSRect)rectForSegment:(NSInteger)segment inFrame:(NSRect)frame;
+-(NSRect)rectForSegment: (NSInteger)segment inFrame: (NSRect)frame;
 @end
 
 @implementation BXSegmentedCell
 
-- (void) drawWithFrame: (NSRect)frame inView: (NSView *)view {
-	
+- (void) drawWithFrame: (NSRect)frame inView: (NSView *)view
+{
 	NSBezierPath *border;
 	
 	switch ([self segmentStyle]) {
@@ -74,8 +74,8 @@
 	}
 }
 
-- (void)drawSegment:(NSInteger)segment inFrame:(NSRect)frame withView:(NSView *)view {
-	
+- (void) drawSegment: (NSInteger)segment inFrame: (NSRect)frame withView: (NSView *)view
+{
 	//Calculate rect for this segment
 	//rectForSegment will return too wide a value for the final segment for some reason,
 	//so we have to crop it to the actual view frame
@@ -154,8 +154,8 @@
 	[self drawInteriorForSegment: segment withFrame: fillRect];
 }
 
--(void)drawInteriorForSegment:(NSInteger)segment withFrame:(NSRect)rect {
-	
+-(void) drawInteriorForSegment: (NSInteger)segment withFrame: (NSRect)rect
+{	
 	BOOL isSelected;
 	
 	//In momentary tracking, we should only look at the currently-reported selected segment...

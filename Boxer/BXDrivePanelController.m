@@ -32,7 +32,7 @@ enum {
 
 
 @implementation BXDrivePanelController
-@synthesize driveControls, driveActionsMenu, drives, driveList, driveDetails;
+@synthesize driveControls, driveActionsMenu, drives, driveList;
 
 #pragma mark -
 #pragma mark Initialization and teardown

@@ -1476,7 +1476,7 @@
 														<int key="NSvFlags">274</int>
 														<object class="NSMutableArray" key="NSSubviews">
 															<bool key="EncodedWithXMLCoder">YES</bool>
-															<object class="NSImageView" id="1047235618">
+															<object class="NSImageView" id="547530248">
 																<reference key="NSNextResponder" ref="287644765"/>
 																<int key="NSvFlags">256</int>
 																<object class="NSMutableSet" key="NSDragTypes">
@@ -1495,7 +1495,7 @@
 																<reference key="NSSuperview" ref="287644765"/>
 																<int key="NSViewLayerContentsRedrawPolicy">2</int>
 																<bool key="NSEnabled">YES</bool>
-																<object class="NSImageCell" key="NSCell" id="127046217">
+																<object class="NSImageCell" key="NSCell" id="703035493">
 																	<int key="NSCellFlags">130560</int>
 																	<int key="NSCellFlags2">33554432</int>
 																	<object class="NSCustomResource" key="NSContents">
@@ -1518,7 +1518,7 @@
 																<object class="NSTextFieldCell" key="NSCell" id="514870458">
 																	<int key="NSCellFlags">67239424</int>
 																	<int key="NSCellFlags2">138412032</int>
-																	<string key="NSContents">Connect a game controller to your Mac.</string>
+																	<string key="NSContents">Connect a game controller to your Mac to begin.</string>
 																	<object class="NSFont" key="NSSupport">
 																		<string key="NSName">LucidaGrande</string>
 																		<double key="NSSize">18</double>
@@ -4763,7 +4763,7 @@
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="801176214"/>
-							<reference ref="1047235618"/>
+							<reference ref="547530248"/>
 						</object>
 						<reference key="parent" ref="137436143"/>
 						<string key="objectName">Inactive joystick panel</string>
@@ -4783,84 +4783,31 @@
 						<reference key="parent" ref="801176214"/>
 					</object>
 					<object class="IBObjectRecord">
+						<int key="objectID">1689</int>
+						<reference key="object" ref="547530248"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="703035493"/>
+						</object>
+						<reference key="parent" ref="287644765"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1690</int>
+						<reference key="object" ref="703035493"/>
+						<reference key="parent" ref="547530248"/>
+					</object>
+					<object class="IBObjectRecord">
 						<int key="objectID">1562</int>
 						<reference key="object" ref="966780222"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="419093565"/>
-							<reference ref="1069183679"/>
-							<reference ref="28649303"/>
 							<reference ref="259763901"/>
+							<reference ref="28649303"/>
+							<reference ref="1069183679"/>
+							<reference ref="419093565"/>
 						</object>
 						<reference key="parent" ref="137436143"/>
 						<string key="objectName">Active joystick panel</string>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">1615</int>
-						<reference key="object" ref="419093565"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="279831151"/>
-						</object>
-						<reference key="parent" ref="966780222"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">1616</int>
-						<reference key="object" ref="279831151"/>
-						<reference key="parent" ref="419093565"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">1623</int>
-						<reference key="object" ref="1069183679"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="535700718"/>
-						</object>
-						<reference key="parent" ref="966780222"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">1624</int>
-						<reference key="object" ref="535700718"/>
-						<reference key="parent" ref="1069183679"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">1586</int>
-						<reference key="object" ref="28649303"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="869176791"/>
-						</object>
-						<reference key="parent" ref="966780222"/>
-						<string key="objectName">Joystick type list wrapper</string>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">1636</int>
-						<reference key="object" ref="869176791"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="1063293982"/>
-							<reference ref="934542548"/>
-							<reference ref="678148445"/>
-						</object>
-						<reference key="parent" ref="28649303"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">1637</int>
-						<reference key="object" ref="1063293982"/>
-						<reference key="parent" ref="869176791"/>
-						<string key="objectName">Joystick type list</string>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">1638</int>
-						<reference key="object" ref="934542548"/>
-						<reference key="parent" ref="869176791"/>
-						<string key="objectName">Horizontal Scroller</string>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">1639</int>
-						<reference key="object" ref="678148445"/>
-						<reference key="parent" ref="869176791"/>
-						<string key="objectName">Vertical Scroller</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">1611</int>
@@ -4877,18 +4824,71 @@
 						<reference key="parent" ref="259763901"/>
 					</object>
 					<object class="IBObjectRecord">
-						<int key="objectID">1689</int>
-						<reference key="object" ref="1047235618"/>
+						<int key="objectID">1586</int>
+						<reference key="object" ref="28649303"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="127046217"/>
+							<reference ref="869176791"/>
 						</object>
-						<reference key="parent" ref="287644765"/>
+						<reference key="parent" ref="966780222"/>
+						<string key="objectName">Joystick type list wrapper</string>
 					</object>
 					<object class="IBObjectRecord">
-						<int key="objectID">1690</int>
-						<reference key="object" ref="127046217"/>
-						<reference key="parent" ref="1047235618"/>
+						<int key="objectID">1636</int>
+						<reference key="object" ref="869176791"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="678148445"/>
+							<reference ref="934542548"/>
+							<reference ref="1063293982"/>
+						</object>
+						<reference key="parent" ref="28649303"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1639</int>
+						<reference key="object" ref="678148445"/>
+						<reference key="parent" ref="869176791"/>
+						<string key="objectName">Vertical Scroller</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1638</int>
+						<reference key="object" ref="934542548"/>
+						<reference key="parent" ref="869176791"/>
+						<string key="objectName">Horizontal Scroller</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1637</int>
+						<reference key="object" ref="1063293982"/>
+						<reference key="parent" ref="869176791"/>
+						<string key="objectName">Joystick type list</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1623</int>
+						<reference key="object" ref="1069183679"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="535700718"/>
+						</object>
+						<reference key="parent" ref="966780222"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1624</int>
+						<reference key="object" ref="535700718"/>
+						<reference key="parent" ref="1069183679"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1615</int>
+						<reference key="object" ref="419093565"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="279831151"/>
+						</object>
+						<reference key="parent" ref="966780222"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1616</int>
+						<reference key="object" ref="279831151"/>
+						<reference key="parent" ref="419093565"/>
 					</object>
 				</object>
 			</object>
@@ -5039,6 +5039,7 @@
 					<string>1662.IBPluginDependency</string>
 					<string>1668.IBPluginDependency</string>
 					<string>1679.IBPluginDependency</string>
+					<string>1679.IBViewBoundsToFrameTransform</string>
 					<string>168.IBPluginDependency</string>
 					<string>1685.IBPluginDependency</string>
 					<string>1685.IBViewBoundsToFrameTransform</string>
@@ -5327,6 +5328,7 @@
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<object class="NSAffineTransform"/>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<object class="NSAffineTransform">
@@ -5842,7 +5844,7 @@
 				<object class="IBPartialClassDescription">
 					<string key="className">BXHUDImageCell</string>
 					<string key="superclassName">BXTemplateImageCell</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier" id="280475584">
+					<object class="IBClassDescriptionSource" key="sourceIdentifier" id="200231049">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">Boxer/BXTemplateImageCell.h</string>
 					</object>
@@ -6206,7 +6208,7 @@
 				<object class="IBPartialClassDescription">
 					<string key="className">BXTemplateImageCell</string>
 					<string key="superclassName">NSImageCell</string>
-					<reference key="sourceIdentifier" ref="280475584"/>
+					<reference key="sourceIdentifier" ref="200231049"/>
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">FirstResponder</string>

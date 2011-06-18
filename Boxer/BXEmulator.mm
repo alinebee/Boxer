@@ -222,19 +222,23 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 #pragma mark Controlling emulation state
 
 - (void) start
-{
-	[self setExecuting: YES];
-	
+{	
 	//Record ourselves as the current emulator instance for DOSBox to talk to
 	currentEmulator = self;
 	hasStartedEmulator = YES;
 	
+	[self _willStart];
+	
+	[self setExecuting: YES];
+	
 	//Start DOSBox's main loop
 	[self _startDOSBox];
 	
+	[self setExecuting: NO];
+	
 	if (currentEmulator == self) currentEmulator = nil;
 	
-	[self setExecuting: NO];
+	[self _didFinish];
 }
 
 - (void) cancel
@@ -687,9 +691,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 //This is a cut-down and mashed-up version of DOSBox's old main and GUI_StartUp functions,
 //chopping out all the stuff that Boxer doesn't need or want.
 - (void) _startDOSBox
-{
-	[self _willStart];
-	
+{	
 	//Initialize the SDL modules that DOSBox will need.
 	NSAssert1(!SDL_Init(SDL_INIT_AUDIO|SDL_INIT_TIMER|SDL_INIT_CDROM|SDL_INIT_NOPARACHUTE),
 			  @"SDL failed to initialize with the following error: %s", SDL_GetError());
@@ -739,8 +741,6 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	
 	//Clean up after DOSBox finishes
 	[[self videoHandler] shutdown];
-	
-	[self _didFinish];
 }
 
 @end

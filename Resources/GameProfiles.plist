@@ -272,7 +272,6 @@
 			</array>
 		</dict>
 		
-		
 		<dict>
 			<key>BXProfileName</key>
 			<string>Wing Commander</string>
@@ -374,6 +373,19 @@
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>aoe.com</string>
+			</array>
+		</dict>
+		
+		<dict>
+			<key>BXProfileName</key>
+			<string>Discworld</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>dwu.exe</string>
+			</array>
+			<key>BXDesignatedInstallers</key>
+			<array>
+				<string>disc.bat</string>
 			</array>
 		</dict>
 	</array>

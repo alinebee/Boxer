@@ -88,7 +88,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 @synthesize commandQueue;
 @synthesize videoHandler;
 @synthesize mouse, keyboard, joystick;
-@synthesize cancelled, executing;
+@synthesize cancelled, executing, initialized;
 
 
 #pragma mark -
@@ -174,7 +174,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	return keyPaths;
 }
 
-+ (NSSet *) keyPathsForValuesAffectingIsAtPrompt		{ return [NSSet setWithObjects: @"isRunningProcess", @"isInBatchScript", nil]; }
++ (NSSet *) keyPathsForValuesAffectingIsAtPrompt		{ return [NSSet setWithObjects: @"isRunningProcess", @"isInBatchScript", @"isInitialized", nil]; }
 + (NSSet *) keyPathsForValuesAffectingIsRunningProcess	{ return [NSSet setWithObjects: @"processName", @"processPath", nil]; }
 + (NSSet *) keyPathsForValuesAffectingProcessIsInternal	{ return [NSSet setWithObject: @"processName"]; }
 
@@ -222,7 +222,9 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 #pragma mark Controlling emulation state
 
 - (void) start
-{	
+{
+	if ([self isCancelled]) return;
+	
 	//Record ourselves as the current emulator instance for DOSBox to talk to
 	currentEmulator = self;
 	hasStartedEmulator = YES;
@@ -250,7 +252,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 		
 		//Break out of DOSBox's commandline input loop
 		[self discardShellInput];
-		
+	
 		//Tells DOSBox to close the current shell at the end of the commandline input loop
 		DOS_Shell *shell = [self _currentShell];
 		if (shell) shell->exit = YES;
@@ -308,7 +310,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 
 - (BOOL) isAtPrompt
 {
-	return [self isExecuting] && ![self isRunningProcess] && ![self isInBatchScript];
+	return [self isExecuting] && [self isInitialized] && ![self isRunningProcess] && ![self isInBatchScript];
 }
 
 
@@ -645,6 +647,8 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 
 - (void) _didInitialize
 {
+	[self setInitialized: YES];
+	
 	//These flags will only change during initialization
 	[self willChangeValueForKey: @"gameportTimingMode"];
 	[self willChangeValueForKey: @"joystickSupport"];
@@ -678,9 +682,13 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 
 - (BOOL) _handleRunLoop
 {
-	//If emulation has been cancelled, then break out of the current DOSBox run loop
-	if ([self isCancelled]) return YES;
-	
+	//If emulation has been cancelled or we otherwise want to wrest control away
+	//from DOSBox, then break out of the current DOSBox run loop.
+	//TWEAK: it's only safe to break out once initialization is done, since some
+	//of DOSBox's initialization routines rely on running tasks on the run loop
+	//and may crash if they fail to complete.
+	if ([self isCancelled] && [self isInitialized]) return YES;
+
 	//If we have a command of our own waiting at the command prompt, then break out of DOSBox's stdin input loop
 	if ([[self commandQueue] count] && [self isAtPrompt]) return YES;
 	
@@ -691,7 +699,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 //This is a cut-down and mashed-up version of DOSBox's old main and GUI_StartUp functions,
 //chopping out all the stuff that Boxer doesn't need or want.
 - (void) _startDOSBox
-{	
+{
 	//Initialize the SDL modules that DOSBox will need.
 	NSAssert1(!SDL_Init(SDL_INIT_AUDIO|SDL_INIT_TIMER|SDL_INIT_CDROM|SDL_INIT_NOPARACHUTE),
 			  @"SDL failed to initialize with the following error: %s", SDL_GetError());

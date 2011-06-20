@@ -80,6 +80,7 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 	
 	BOOL cancelled;
 	BOOL executing;
+	BOOL initialized;
 	BOOL isInterrupted;
 	
 	//Used by BXShell
@@ -99,7 +100,7 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 @property (readonly, nonatomic) id <BXEmulatedJoystick> joystick;	//Our emulated joystick. Initially empty.
 
 //An array of OS X paths to configuration files that will be/have been loaded by this session during startup.
-//This is read-only: configuration files can be loaded via applyConfigurationAtPath: 
+//This is read-only: configuration files can be loaded via applyConfigurationAtPath:
 @property (readonly, nonatomic) NSArray *configFiles;
 
 //An array of queued command strings to execute on the DOS command line.
@@ -117,6 +118,10 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 //Mirrors interface of NSOperation.
 @property (readonly, nonatomic, getter=isExecuting) BOOL executing;
 @property (readonly, nonatomic, getter=isCancelled) BOOL cancelled;
+
+//Whether DOSBox has finished initializing. Set to YES after all modules have been initialized
+//but before the DOS machine is started.
+@property (readonly, nonatomic, getter=isInitialized) BOOL initialized;
 
 //Whether DOSBox is currently running a process.
 @property (readonly, nonatomic) BOOL isRunningProcess;

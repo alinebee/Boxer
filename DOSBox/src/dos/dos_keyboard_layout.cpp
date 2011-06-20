@@ -749,7 +749,9 @@ Bitu keyboard_layout::read_codepage_file(const char* codepage_file_name, Bit32s 
 		}
 	}
 
-	static Bit8u cpi_buf[65536];
+	//--Modified 2011-06-20 by Alun Bestor: there is no reason in the world for this to be static
+	/* static */Bit8u cpi_buf[65536];
+	//--End of modifications
 	Bit32u cpi_buf_size=0,size_of_cpxdata=0;;
 	bool upxfound=false;
 	Bit16u found_at_pos=5;
@@ -869,6 +871,11 @@ Bitu keyboard_layout::read_codepage_file(const char* codepage_file_name, Bit32s 
 
 
 	start_pos=host_readd(&cpi_buf[0x13]);
+	
+	//--Added 2011-06-20 by Alun Bestor as a sanity check, preventing crashes in the event that a codepage file cannot be parsed
+	if (start_pos > cpi_buf_size) return KEYB_INVALIDCPFILE;
+	//--End of modifications
+	
 	number_of_codepages=host_readw(&cpi_buf[start_pos]);
 	start_pos+=4;
 

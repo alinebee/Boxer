@@ -35,6 +35,7 @@ typedef struct BXDriveGeometry {
 //Overridden to add setters for internal use
 @property (readwrite, nonatomic, getter=isExecuting) BOOL executing;
 @property (readwrite, nonatomic, getter=isCancelled) BOOL cancelled;
+@property (readwrite, nonatomic, getter=isInitialized) BOOL initialized;
 @property (readwrite, copy, nonatomic) NSString *processName;
 @property (readwrite, copy, nonatomic) NSString *processPath;
 @property (readwrite, copy, nonatomic) NSString *processLocalPath;

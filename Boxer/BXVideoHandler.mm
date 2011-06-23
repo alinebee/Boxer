@@ -27,8 +27,6 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 
 - (BXFilterDefinition) _paramsForFilterType: (BXFilterType)filterType;
 
-- (BOOL) _shouldUseAspectCorrectionForResolution: (NSSize)resolution;
-
 - (BOOL) _shouldApplyFilterType: (BXFilterType)type
 				 fromResolution: (NSSize)resolution
 					 toViewport: (NSSize)viewportSize 
@@ -268,7 +266,6 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 	NSSize viewportSize			= [[[self emulator] delegate] viewportSizeForEmulator: [self emulator]];
 	
 	BOOL isTextMode				= [self isInTextMode];
-	BOOL useAspectCorrection	= [self _shouldUseAspectCorrectionForResolution: resolution];	
 	NSInteger maxFilterScale	= [self _maxFilterScaleForResolution: resolution];	
 	
 	
@@ -297,7 +294,7 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 	
 	
 	//Finally, apply the values to DOSBox
-	render.aspect		= useAspectCorrection;
+	render.aspect		= NO; //We apply our own aspect correction separately
 	render.scale.forced	= YES;
 	render.scale.size	= (Bitu)filterScale;
 	render.scale.op		= (scalerOperation_t)activeType;
@@ -310,25 +307,6 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 	return BXFilters[type];
 }
 
-//Returns whether to apply 4:3 aspect ratio correction to the specified DOS resolution.
-//Currently we ignore the resolution itself, and instead check the pixel aspect ratio
-//from DOSBox directly, as this is based on more data than we have. If the pixel aspect
-//ratio is not ~1 then correction is needed.
-- (BOOL) _shouldUseAspectCorrectionForResolution: (NSSize)resolution
-{
-	//DOSBox's aspect correction is now disabled all the time:
-	//we instead do our own scaling to 4:3.
-	return NO;
-	
-	/*
-	BOOL useAspectCorrection = NO;
-	if ([[self emulator] isExecuting])
-	{
-		useAspectCorrection = [self isAspectCorrected] && (ABS(render.src.ratio - 1) > 0.01);
-	}
-	return useAspectCorrection;
-	 */
-}
 
 //Return the appropriate filter size to scale the given resolution up to the specified viewport.
 //This is usually the viewport height divided by the resolution height and rounded up, to ensure

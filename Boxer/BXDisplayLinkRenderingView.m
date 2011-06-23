@@ -16,7 +16,10 @@ static CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 									  CVOptionFlags* flagsOut,
 									  void* displayLinkContext)
 {
+	//Needed because we're operating in a different thread
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     [(BXGLRenderingView *)displayLinkContext displayIfNeededIgnoringOpacity];
+	[pool drain];
 	return kCVReturnSuccess;
 }
 
@@ -31,7 +34,6 @@ static CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 	[[self renderer] updateWithFrame: frame];
 	[self setHidden: frame == nil];
 	[self setNeedsDisplay: YES];
-	[self display];
 }
 
 - (void) prepareOpenGL

@@ -50,7 +50,7 @@
 	[frameRateLayer setAutoresizingMask: kCALayerMinXMargin | kCALayerMaxYMargin];
 	
 	//Hide the frame-rate display until it is toggled on by a menu action
-	//[frameRateLayer setHidden: YES];
+	[frameRateLayer setHidden: YES];
 	
 	//Hide the rendering layer until we receive our first frame to draw
 	[renderingLayer setHidden: YES];

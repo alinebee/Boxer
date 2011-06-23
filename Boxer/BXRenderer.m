@@ -107,10 +107,7 @@
 - (void) prepareForGLContext: (CGLContextObj)glContext
 {
 	CGLContextObj cgl_ctx = glContext;
-	
-	//Enable multithreaded OpenGL execution (if available)
-	CGLEnable(cgl_ctx, kCGLCEMPEngine);
-	
+
 	
 	//Check if the renderer is an Intel GMA 950, which has a buggy fullscreen mode
 	GLint rendererID = 0;

@@ -92,7 +92,8 @@
 - (Class) preferredJoystickType
 {
 	BXSession *session = [self representedObject];
-	Class defaultJoystickType = [BX4AxisJoystick class];
+	NSArray *availableTypes = [self availableJoystickTypes];
+	Class defaultJoystickType = [availableTypes count] ? [availableTypes objectAtIndex: 0] : nil;
 	
 	NSString *className	= [[session gameSettings] objectForKey: @"preferredJoystickType"];
 	
@@ -106,7 +107,7 @@
 	else
 	{
 		Class joystickType = NSClassFromString(className);
-		if (joystickType) return joystickType;
+		if ([joystickType conformsToProtocol: @protocol(BXEmulatedJoystick)]) return joystickType;
 		else return defaultJoystickType;
 	}
 }

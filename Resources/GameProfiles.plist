@@ -19,7 +19,7 @@
 			<key>BXProfileName</key>
 			<string>Wing Commander Privateer</string>
 			<key>BXProfileConf</key>
-			<string>Privateer</string>
+			<string>Simple joystick</string>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>priv.exe</string>
@@ -35,6 +35,17 @@
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>pad.iff</string>
+			</array>
+		</dict>
+		
+		<dict>
+			<key>BXProfileName</key>
+			<string>LHX Attack Chopper</string>
+			<key>BXProfileConf</key>
+			<string>Simple joystick</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>lhx.exe</string>
 			</array>
 		</dict>
 		

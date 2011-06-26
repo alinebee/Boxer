@@ -45,6 +45,9 @@
 //Whether we should close the session (and the application) after returning to the DOS prompt.
 - (BOOL) _shouldCloseOnProgramExit;
 
+//Whether we should start the emulator as soon as the document is created.
+- (BOOL) _shouldStartImmediately;
+
 //Whether the document should be closed when the emulator process finishes.
 //Normally YES, may be overridden by BXSession subclasses. 
 - (BOOL) _shouldCloseOnEmulatorExit;

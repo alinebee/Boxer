@@ -106,6 +106,7 @@
 {
 	if ((self = [super initWithContentsOfURL: absoluteURL ofType: typeName error: outError]))
 	{
+        //Override the -defined
 		[self setFileURL: [NSURL fileURLWithPath: [self sourcePath]]];
 		
 		if ([self gameNeedsInstalling])
@@ -1189,6 +1190,9 @@
 //We don't want to close the entire document after the emulated session is finished;
 //instead we carry on and complete the installation process.
 - (BOOL) _shouldCloseOnEmulatorExit { return NO; }
+
+//We also don't want to start emulating as soon as the import session is created.
+- (BOOL) _shouldStartImmediately { return NO; }
 
 //And we DEFINITELY don't want to close when returning to the DOS prompt in any case.
 - (BOOL) _shouldCloseOnProgramExit	{ return NO; }

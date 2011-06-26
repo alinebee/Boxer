@@ -153,6 +153,36 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	return self;
 }
 
+//Called when opening an existing file
+- (id) initWithContentsOfURL: (NSURL *)absoluteURL
+                      ofType: (NSString *)typeName
+                       error: (NSError **)outError
+{
+    if ((self = [super initWithContentsOfURL: absoluteURL
+                                      ofType: typeName
+                                       error: outError]))
+    {
+        //Start up the emulator as soon as we're ready
+        //(Super will call readFromURL:, setFileURL: et. al., fully preparing the session for starting)
+        if ([self _shouldStartImmediately]) [self start];
+    }
+    return self;
+}
+
+//Called when opening a new document
+- (id) initWithType: (NSString *)typeName
+              error: (NSError **)outError
+{
+    if ((self = [super initWithType: typeName
+                              error: outError]))
+    {
+        //Start up the emulator as soon as we're ready
+        //See note above
+        if ([self _shouldStartImmediately]) [self start];
+    }
+    return self;
+}
+
 - (void) dealloc
 { 	
 	[self setDOSWindowController: nil],	[DOSWindowController release];
@@ -210,6 +240,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		//in which NSDocument's setFileURL/readFromURL methods are called.
 		[self setFileURL: [NSURL fileURLWithPath: packagePath]];
 	}
+    
 	return YES;
 }
 
@@ -313,15 +344,6 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		[self setDOSWindowController: nil];
 	}
 	[super removeWindowController: windowController];
-}
-
-
-- (void) showWindows
-{
-	[super showWindows];
-	
-	//Start the emulator as soon as our windows appear
-	[self start];
 }
 
 - (NSWindow *) windowForSheet
@@ -868,6 +890,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 #pragma mark Private methods
 
 - (BOOL) _shouldCloseOnEmulatorExit { return YES; }
+- (BOOL) _shouldStartImmediately { return YES; }
 
 - (BOOL) _shouldCloseOnProgramExit
 {

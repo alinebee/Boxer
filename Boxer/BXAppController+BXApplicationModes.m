@@ -101,8 +101,9 @@ NSString * const BXPreviousSpacesArrowKeyModifiersKey = @"previousSpacesArrowKey
 
 - (void) syncSpacesKeyboardShortcuts
 {
-	//The Spaces Applescript API is broken on Leopard, so don't bother trying
-	if ([[self class] isRunningOnLeopard]) return;
+	//The Spaces Applescript API is broken on Leopard, and completely absent on Lion,
+    //so don't bother trying
+	if (![[self class] isRunningOnSnowLeopard]) return;
 	
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 	NSArray *oldModifiers = [defaults arrayForKey: BXPreviousSpacesArrowKeyModifiersKey];

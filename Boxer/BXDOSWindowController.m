@@ -584,8 +584,12 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 - (void) setFullScreen: (BOOL)fullScreen
 {
 	//Lion has its own fullscreen transitions, so don't get in the way of those
-	if ([BXAppController isRunningOnLion]) [self _setFullScreenForLion: fullScreen];
-	
+	if ([BXAppController isRunningOnLion])
+    {
+        [self _setFullScreenForLion: fullScreen];
+        return;
+    }
+    
 	//Don't bother if we're already in the desired fullscreen state
 	if ([self isFullScreen] == fullScreen) return;
 	

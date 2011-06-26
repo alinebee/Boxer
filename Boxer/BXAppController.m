@@ -145,7 +145,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 + (BOOL) isRunningOnLion
 {
 	double appKitVersion = floor(NSAppKitVersionNumber);
-	return (appKitVersion <= NSAppKitVersionNumber10_7 && appKitVersion > NSAppKitVersionNumber10_6);
+	return (appKitVersion > NSAppKitVersionNumber10_6);
 }
 
 + (BOOL) otherBoxersActive

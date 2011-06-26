@@ -54,7 +54,7 @@ extern NSString * const BXControllerProfileDPadDown;
 
 //Registers the specified profile subclass as a custom profile.
 //Should be called in each subclass's +load method.
-+ (void) registerProfile: (BXHIDControllerProfile *)profile;
++ (void) registerProfile: (Class)profile;
 
 //Returns whether the implementing class is suitable for the specified controller.
 //Returns NO by default and is intended to be overridden by subclasses.

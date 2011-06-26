@@ -2916,7 +2916,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_VERSION = "";
 				INFOPLIST_FILE = "Game Importer Droplet/Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
@@ -2938,7 +2938,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_VERSION = "";
 				INFOPLIST_FILE = "Game Importer Droplet/Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
@@ -2962,7 +2962,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_VERSION = "";
 				INFOPLIST_FILE = "Game Importer Droplet/Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
@@ -2982,7 +2982,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_SHORT_VERSION_STRING = 1.0.2;
 				CURRENT_PROJECT_VERSION = 20110421.1;
-				GCC_VERSION = 4.2;
+				GCC_VERSION = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx10.6;
@@ -3104,7 +3104,7 @@
 				CURRENT_PROJECT_SHORT_VERSION_STRING = 1.0.2;
 				CURRENT_PROJECT_VERSION = 20110421.1;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = 4.2;
+				GCC_VERSION = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx10.6;
@@ -3118,7 +3118,7 @@
 				COPY_PHASE_STRIP = YES;
 				CURRENT_PROJECT_SHORT_VERSION_STRING = 1.0.2;
 				CURRENT_PROJECT_VERSION = 20110421.1;
-				GCC_VERSION = 4.2;
+				GCC_VERSION = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				SDKROOT = macosx10.6;
 			};

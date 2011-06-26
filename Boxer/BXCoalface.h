@@ -97,6 +97,8 @@ extern "C" {
 	bool boxer_numLockEnabled();
 	
 	double boxer_realTime();
+    
+    void boxer_log(char const* format,...);
 	
 #if __cplusplus
 } //Extern C

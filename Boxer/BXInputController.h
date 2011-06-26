@@ -51,23 +51,23 @@
 #pragma mark Properties
 
 //Whether the mouse is in use by the DOS program. Set programmatically to match the emulator.
-@property (assign) BOOL mouseActive;
+@property (assign, nonatomic) BOOL mouseActive;
 
 //Whether the mouse is locked to the DOS view.
-@property (assign) BOOL mouseLocked;
+@property (assign, nonatomic) BOOL mouseLocked;
 
 //Whether we should handle mouse movement while the mouse is unlocked from the DOS view.
-@property (assign) BOOL trackMouseWhileUnlocked;
+@property (assign, nonatomic) BOOL trackMouseWhileUnlocked;
 
 //How much to scale mouse motion by.
-@property (assign) CGFloat mouseSensitivity;
+@property (assign, nonatomic) CGFloat mouseSensitivity;
 
 //Whether we can currently lock the mouse. This will be YES if the game supports mouse control
 //or we're in fullscreen mode (so that we can hide the mouse cursor), NO otherwise.
-@property (readonly) BOOL canLockMouse;
+@property (readonly, nonatomic) BOOL canLockMouse;
 
 //Whether the mouse is currently within our view.
-@property (readonly) BOOL mouseInView;
+@property (readonly, nonatomic) BOOL mouseInView;
 
 
 #pragma mark -

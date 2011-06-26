@@ -64,19 +64,19 @@
 //The frames-per-second we are producing, measured as the time between the last two rendered frames.
 //Note that BXRenderer is only rendered when the frame or viewport changes, so this rate will only
 //ever be as fast as the DOS program is changing the screen.
-@property (assign) CGFloat frameRate;
+@property (assign, nonatomic) CGFloat frameRate;
 
 //The time it took to render the last frame, measured as the time renderToGLContext: was called to
 //the time when renderToGLContext: finished. This measures the efficiency of the rendering pipeline.
-@property (assign) NSTimeInterval renderingTime;
+@property (assign, nonatomic) NSTimeInterval renderingTime;
 
 //The bounds of the view/layer in which we are rendering.
 //Set by the view, and used for viewport and scaling calculations.
-@property (assign) CGRect canvas;
+@property (assign, nonatomic) CGRect canvas;
 
 //Whether to set the GL viewport to match the aspect ratio of the current frame. Set by the view.
 //This is only enabled for fullscreen mode; in windowed mode, the window manages the aspect ratio itself.
-@property (assign) BOOL maintainsAspectRatio;
+@property (assign, nonatomic) BOOL maintainsAspectRatio;
 
 //Whether we should prevent OS X 10.6 from automatically capturing the display in full screen mode.
 //This is needed for Intel GMA950 chipsets, and the hack itself is implemented by BXDOSWindowController.

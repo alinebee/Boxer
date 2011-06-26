@@ -80,19 +80,19 @@ typedef struct {
 #pragma mark Properties
 
 //Our parent emulator.
-@property (assign) BXEmulator *emulator;
+@property (assign, nonatomic) BXEmulator *emulator;
 
 //The framebuffer we render our frames into.
-@property (retain) BXFrameBuffer *frameBuffer;
+@property (retain, nonatomic) BXFrameBuffer *frameBuffer;
 
 //Whether to apply 4:3 aspect ratio correction to the rendered output.
-@property (assign, getter=isAspectCorrected) BOOL aspectCorrected;
+@property (assign, nonatomic, getter=isAspectCorrected) BOOL aspectCorrected;
 
 //The current rendering style as a DOSBox filter type constant.
-@property (assign) BXFilterType filterType;
+@property (assign, nonatomic) BXFilterType filterType;
 
 //The current DOSBox frameskip setting.
-@property (assign) NSUInteger frameskip;
+@property (assign, nonatomic) NSUInteger frameskip;
 
 //Returns whether the chosen filter is actually being rendered. This will be NO if the current rendered
 //size is smaller than the minimum size supported by the chosen filter.

@@ -22,7 +22,7 @@
 //The current illumination, which controls the brightness of the portrait and the opacity of the
 //spotlight. This is animatable via -animator and will change automatically when the button's state
 //is toggled on or off.
-@property (assign) CGFloat illumination;
+@property (assign, nonatomic) CGFloat illumination;
 @end
 
 @interface BXFilterPortraitCell : NSButtonCell

@@ -17,8 +17,8 @@
 #import "BXFirstRunWindowController.h"
 
 #import "BXSession+BXFileManager.h"
-#import "BXImportSession.h";
-#import "BXEmulator.h";
+#import "BXImportSession.h"
+#import "BXEmulator.h"
 
 #import "BXValueTransformers.h"
 #import "BXGrowlController.h"

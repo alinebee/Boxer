@@ -10,7 +10,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface BXFirstRunWindowController : NSWindowController
+@interface BXFirstRunWindowController : NSWindowController <NSOpenSavePanelDelegate>
 {	
 	IBOutlet NSPopUpButton *gamesFolderSelector;
 	IBOutlet NSButton *addSampleGamesToggle;

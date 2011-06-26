@@ -30,7 +30,7 @@
 extern NSString * const BXViewWillLiveResizeNotification;
 extern NSString * const BXViewDidLiveResizeNotification;
 
-@interface BXDOSWindowController : NSWindowController
+@interface BXDOSWindowController : NSWindowController <NSWindowDelegate>
 {
 	IBOutlet NSView <BXFrameRenderingView> *renderingView;
 	IBOutlet BXInputView *inputView;

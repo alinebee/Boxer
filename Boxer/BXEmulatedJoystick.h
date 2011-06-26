@@ -181,6 +181,19 @@ enum {
 #pragma mark Joystick classes
 
 @interface BXBaseEmulatedJoystick: NSObject
+- (void) clearInput;
+- (void) didConnect;
+- (void) willDisconnect;
+
+- (void) buttonDown: (BXEmulatedJoystickButton)button;
+- (void) buttonUp: (BXEmulatedJoystickButton)button;
+- (BOOL) buttonIsDown: (BXEmulatedJoystickButton)button;
+- (void) buttonPressed: (BXEmulatedJoystickButton)button;
+- (void) buttonPressed: (BXEmulatedJoystickButton)button forDuration: (NSTimeInterval)duration;
+
+- (void) axis: (BXEmulatedJoystickAxis)axis movedTo: (float)position;
+- (void) axis: (BXEmulatedJoystickAxis)axis movedBy: (float)delta;
+- (float) axisPosition: (BXEmulatedJoystickAxis)axis;
 @end
 
 @interface BX2AxisJoystick: BXBaseEmulatedJoystick <BXEmulatedJoystick>

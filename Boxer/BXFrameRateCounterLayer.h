@@ -15,6 +15,6 @@
 {
 	CGFloat frameRate;
 }
-@property (assign) CGFloat frameRate;
+@property (assign, nonatomic) CGFloat frameRate;
 
 @end

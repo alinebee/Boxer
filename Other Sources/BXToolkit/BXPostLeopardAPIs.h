@@ -15,7 +15,7 @@
 #pragma mark -
 #pragma mark 10.6-only touch APIs
 
-#ifndef NSTouch
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6
 
 enum {
     NSTouchPhaseBegan           = 1U << 0,

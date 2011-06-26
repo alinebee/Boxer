@@ -98,12 +98,12 @@
 
 - (void) mouseEntered: (NSEvent *)event
 {
-	[[self controlView] setHighlighted: YES];
+	[(BXWelcomeButton *)[self controlView] setHighlighted: YES];
 }
 
 - (void) mouseExited: (NSEvent *)event
 {
-	[[self controlView] setHighlighted: NO];
+	[(BXWelcomeButton *)[self controlView] setHighlighted: NO];
 }
 
 
@@ -117,7 +117,7 @@
 
 - (NSColor *) titleColor
 {
-	CGFloat alpha = 0.75f + (0.25f * [[self controlView] illumination]);
+	CGFloat alpha = 0.75f + (0.25f * [(BXWelcomeButton *)[self controlView] illumination]);
 	return [NSColor colorWithCalibratedWhite: 1.0f alpha: alpha];
 }
 

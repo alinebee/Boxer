@@ -30,11 +30,11 @@
 #pragma mark Properties
 
 //Whether we are responding to mouse input.
-@property (assign, getter=isActive) BOOL active;
+@property (assign, nonatomic, getter=isActive) BOOL active;
 
 //The current X and Y coordinates of the mouse relative to a 0.0-to-1.0 canvas.
 //This is synchronised by DOSBox, as the DOS program may warp the mouse itself.
-@property (assign) NSPoint position;
+@property (assign, nonatomic) NSPoint position;
 
 
 //Releases all mouse buttons, as if the user took their hand off the mouse.

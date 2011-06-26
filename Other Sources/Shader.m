@@ -101,7 +101,7 @@ static GLhandleARB LoadShader(GLenum theShaderType,
 		
 		if( *theShaderCompiled == 0 )
 		{
-			NSLog(@">> Failed to compile shader %s\n", theShader);
+			NSLog(@">> Failed to compile shader %s\n", *theShader);
 		} // if
 	} // if
 	else 

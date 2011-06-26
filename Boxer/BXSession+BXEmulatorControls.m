@@ -106,8 +106,7 @@
 - (BOOL) validateFrameskip: (id *)ioValue error: (NSError **)outError
 {
 	NSUInteger theValue = [*ioValue unsignedIntegerValue];
-	if		(theValue < 0)				*ioValue = [NSNumber numberWithUnsignedInteger: 0];
-	else if	(theValue > BXMaxFrameskip)	*ioValue = [NSNumber numberWithUnsignedInteger: BXMaxFrameskip];
+	if	(theValue > BXMaxFrameskip)	*ioValue = [NSNumber numberWithUnsignedInteger: BXMaxFrameskip];
 	return YES;
 }
 

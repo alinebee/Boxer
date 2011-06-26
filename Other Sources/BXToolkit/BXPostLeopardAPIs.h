@@ -6,8 +6,7 @@
  */
 
 //This library contains definitions for APIs and constants that are not available in 10.5,
-//but that we want to access in 10.6 and 10.7, without linking against the 10.6 or 10.7 SDKs
-//(which would make the app incompatible with 10.5 altogether.)
+//but that we want to access in 10.6 and 10.7, without linking against the 10.6 or 10.7 SDKs.
 
 
 #import <Cocoa/Cocoa.h>
@@ -49,6 +48,19 @@ typedef NSUInteger NSTouchPhase;
 
 @end
 
+#endif
 
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED < 1070 //OS X 10.7
+
+//New 10.7 constants for fullscreen behaviour
+enum {
+    NSWindowCollectionBehaviorFullScreenPrimary = 1 << 7,
+    NSWindowCollectionBehaviorFullScreenAuxiliary = 1 << 8
+};
+
+enum {
+    NSFullScreenWindowMask = 1 << 14
+};
 
 #endif

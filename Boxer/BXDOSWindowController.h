@@ -48,6 +48,10 @@ extern NSString * const BXViewDidLiveResizeNotification;
 	NSSize currentScaledResolution;
 	BOOL resizingProgrammatically;
 	BOOL inFullScreenTransition;
+    
+    BOOL statusBarShownBeforeFullscreen;
+    BOOL programPanelShownBeforeFullscreen;
+    NSRect windowFrameBeforeFullscreen;
 }
 
 #pragma mark -
@@ -83,9 +87,6 @@ extern NSString * const BXViewDidLiveResizeNotification;
 
 //Returns YES if the window is in the process of resizing itself.
 @property (readonly, nonatomic) BOOL isResizing;
-
-//The chromeless window used in fullscreen mode. Will be nil while in windowed mode.
-@property (retain, readonly, nonatomic) BXDOSFullScreenWindow *fullScreenWindow;
 
 //The DOS window we are currently showing and rendering into.
 //Will be equal to -window in windowed mode and -fullscreenWindow in fullscreen mode.

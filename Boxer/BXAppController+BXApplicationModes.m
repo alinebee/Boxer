@@ -76,6 +76,12 @@ NSString * const BXPreviousSpacesArrowKeyModifiersKey = @"previousSpacesArrowKey
 
 - (void) syncApplicationPresentationMode
 {
+    //Lion does the right thing with fullscreen modes anyway
+    if ([[self class] isRunningOnLion])
+    {
+        return;
+    }
+    
 	BXDOSWindowController *currentController = [[self currentSession] DOSWindowController];
 	
 	if ([currentController isFullScreen])

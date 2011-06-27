@@ -213,7 +213,7 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 		[self setIndeterminate: NO];
 		//hdiutil expresses progress as a float percentage from 0 to 100
 		[self setCurrentProgress: latestProgress / 100.0f];
-		[self setBytesTransferred: [self numBytes] * [self currentProgress]];
+		[self setBytesTransferred: ([self numBytes] * (double)[self currentProgress])];
 		
 		NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
 							  [NSNumber numberWithUnsignedLongLong:	[self bytesTransferred]],	BXFileTransferBytesTransferredKey,

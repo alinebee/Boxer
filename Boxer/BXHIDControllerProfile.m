@@ -30,7 +30,7 @@ NSString * const BXControllerProfileDPadDown	= @"BXControllerProfileDPadDown";
 static NSMutableArray *profileClasses = nil;
 
 //Keep a record of every BXHIDControllerProfile subclass that comes along
-+ (void) registerProfile: (BXHIDControllerProfile *)profile
++ (void) registerProfile: (Class)profile
 {
 	if (!profileClasses)
 		profileClasses = [[NSMutableArray alloc] initWithCapacity: 10];

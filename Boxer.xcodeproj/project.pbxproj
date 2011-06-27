@@ -226,7 +226,6 @@
 		9F7721DF12B38C4400072AE8 /* mouse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77216112B38C4400072AE8 /* mouse.cpp */; };
 		9F7721E012B38C4400072AE8 /* xms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77216212B38C4400072AE8 /* xms.cpp */; };
 		9F7721E112B38C4400072AE8 /* gui_tk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77216612B38C4400072AE8 /* gui_tk.cpp */; };
-		9F7721E212B38C4400072AE8 /* zmbv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77216912B38C4400072AE8 /* zmbv.cpp */; };
 		9F7721E312B38C4400072AE8 /* cross.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77216C12B38C4400072AE8 /* cross.cpp */; };
 		9F7721E412B38C4400072AE8 /* messages.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77216D12B38C4400072AE8 /* messages.cpp */; };
 		9F7721E512B38C4400072AE8 /* programs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77216E12B38C4400072AE8 /* programs.cpp */; };
@@ -584,7 +583,7 @@
 		9F70A02212F731A800D144D2 /* SystemEvents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemEvents.h; sourceTree = "<group>"; };
 		9F70A09312F7471E00D144D2 /* BXAppController+BXApplicationModes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXAppController+BXApplicationModes.h"; sourceTree = "<group>"; };
 		9F70A09412F7471E00D144D2 /* BXAppController+BXApplicationModes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXAppController+BXApplicationModes.m"; sourceTree = "<group>"; };
-		9F70C19B129036C900A3627F /* Boxer.sdef */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.sdef; path = Boxer.sdef; sourceTree = "<group>"; };
+		9F70C19B129036C900A3627F /* Boxer.sdef */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = Boxer.sdef; sourceTree = "<group>"; };
 		9F731AF413630820005E564F /* DDHidLib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DDHidLib.framework; sourceTree = "<group>"; };
 		9F731B2C136323D2005E564F /* BXHIDMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXHIDMonitor.h; sourceTree = "<group>"; };
 		9F731B2D136323D2005E564F /* BXHIDMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXHIDMonitor.m; sourceTree = "<group>"; };
@@ -2678,7 +2677,6 @@
 				9F7721DF12B38C4400072AE8 /* mouse.cpp in Sources */,
 				9F7721E012B38C4400072AE8 /* xms.cpp in Sources */,
 				9F7721E112B38C4400072AE8 /* gui_tk.cpp in Sources */,
-				9F7721E212B38C4400072AE8 /* zmbv.cpp in Sources */,
 				9F7721E312B38C4400072AE8 /* cross.cpp in Sources */,
 				9F7721E412B38C4400072AE8 /* messages.cpp in Sources */,
 				9F7721E512B38C4400072AE8 /* programs.cpp in Sources */,
@@ -3002,7 +3000,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
@@ -3019,6 +3017,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IBC_PLUGINS = "\"$(SRCROOT)/Frameworks/BGHUDAppKit.framework/Resources/BGHUDAppKitPlugin.ibplugin\"";
 				INFOPLIST_FILE = Info.plist;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				ONLY_ACTIVE_ARCH = YES;
 				"OTHER_CFLAGS[arch=i386]" = "-mstackrealign";
 				PRODUCT_NAME = Boxer;
@@ -3039,7 +3038,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = BOXER_DEBUG;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
@@ -3056,6 +3055,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IBC_PLUGINS = "\"$(SRCROOT)/Frameworks/BGHUDAppKit.framework/Resources/BGHUDAppKitPlugin.ibplugin\"";
 				INFOPLIST_FILE = Info.plist;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				"OTHER_CFLAGS[arch=i386]" = "-mstackrealign";
 				PRODUCT_NAME = Boxer;
 			};
@@ -3073,7 +3073,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
@@ -3090,6 +3090,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IBC_PLUGINS = "\"$(SRCROOT)/Frameworks/BGHUDAppKit.framework/Resources/BGHUDAppKitPlugin.ibplugin\"";
 				INFOPLIST_FILE = Info.plist;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				ONLY_ACTIVE_ARCH = NO;
 				"OTHER_CFLAGS[arch=i386]" = "-mstackrealign";
 				PRODUCT_NAME = Boxer;

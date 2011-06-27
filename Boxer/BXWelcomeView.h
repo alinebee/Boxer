@@ -29,4 +29,5 @@
 @end
 
 @interface BXWelcomeButtonCell : BXFilterPortraitCell
+- (BXWelcomeButton *) controlView;
 @end

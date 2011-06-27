@@ -82,7 +82,7 @@
 
 - (BXWelcomeButton *) controlView
 {
-	return (BXWelcomeButton *)[super controlView];
+    return (BXWelcomeButton *)[super controlView];
 }
 
 - (void) awakeFromNib
@@ -98,12 +98,12 @@
 
 - (void) mouseEntered: (NSEvent *)event
 {
-	[(BXWelcomeButton *)[self controlView] setHighlighted: YES];
+	[[self controlView] setHighlighted: YES];
 }
 
 - (void) mouseExited: (NSEvent *)event
 {
-	[(BXWelcomeButton *)[self controlView] setHighlighted: NO];
+	[[self controlView] setHighlighted: NO];
 }
 
 
@@ -117,7 +117,7 @@
 
 - (NSColor *) titleColor
 {
-	CGFloat alpha = 0.75f + (0.25f * [(BXWelcomeButton *)[self controlView] illumination]);
+	CGFloat alpha = 0.75f + (0.25f * [[self controlView] illumination]);
 	return [NSColor colorWithCalibratedWhite: 1.0f alpha: alpha];
 }
 

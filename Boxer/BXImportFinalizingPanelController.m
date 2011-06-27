@@ -154,8 +154,8 @@
 			[transfer respondsToSelector: @selector(numBytes)] &&
 			[transfer respondsToSelector: @selector(bytesTransferred)])
 		{	
-			float sizeInMB		= [(id)transfer numBytes] / 1000000.0f;
-			float transferredMB	= [(id)transfer bytesTransferred] / 1000000.0f;
+			float sizeInMB		= (float)([(id)transfer numBytes] / 1000000.0);
+			float transferredMB	= (float)([(id)transfer bytesTransferred] / 1000000.0);
 			
 			NSString *format = NSLocalizedString(@"%1$@ (%2$.01f MB of %3$.01f MB)",
 												 @"Import progress description for importing source files stage. %1 is the basic description of the stage as a string (followed by ellipses), %2is the number of MB transferred so far as a float, %3 is the total number of MB to be transferred as a float.");

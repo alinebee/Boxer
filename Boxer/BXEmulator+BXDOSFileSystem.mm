@@ -502,8 +502,7 @@ enum {
 			return [driveCache objectForKey: [self _driveLetterForIndex: i]];
 		}
 	}
-	
-	NSAssert(NO, @"No matching Boxer drive was found DOSBox drive.");
+    return nil;
 }
 
 - (DOS_Drive *)_DOSBoxDriveMatchingDrive: (BXDrive *)drive

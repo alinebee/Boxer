@@ -333,7 +333,7 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 	return identifier;
 }
 
-- (NSString *) setGameIdentifier: (NSString *)identifier
+- (void) setGameIdentifier: (NSString *)identifier
 {
 	[gameInfo setObject: identifier forKey: BXGameIdentifierKey];
 	[gameInfo setObject: [NSNumber numberWithUnsignedInteger: BXGameIdentifierUserSpecified]

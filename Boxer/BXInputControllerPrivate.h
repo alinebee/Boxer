@@ -98,7 +98,7 @@
 //Forces a cursor update whenever the window changes size. This works
 //around a bug whereby the current cursor resets whenever the window
 //resizes (presumably because the tracking areas are being recalculated)
-- (BOOL) _windowDidResize: (NSNotification *)notification;
+- (void) _windowDidResize: (NSNotification *)notification;
 
 @end
 

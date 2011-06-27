@@ -93,7 +93,7 @@
 	return [NSColor blackColor];
 }
 
-- (BOOL) suppressDisplayCapture
+- (void) suppressDisplayCapture
 {
 	if (!hiddenOverlay)
 	{

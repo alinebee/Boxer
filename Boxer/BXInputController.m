@@ -725,7 +725,7 @@
 - (id <BXEmulatedJoystick>)_emulatedJoystick	{ return [[[self representedObject] emulator] joystick]; }
 
 
-- (BOOL) _windowDidResize: (NSNotification *)notification
+- (void) _windowDidResize: (NSNotification *)notification
 {
 	if (![[self _windowController] isFullScreen]) [self cursorUpdate: nil];
 }

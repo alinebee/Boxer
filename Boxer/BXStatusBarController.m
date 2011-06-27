@@ -100,10 +100,8 @@
 			}
 		}
 	}
-	else
-	{
-		return @"";
-	}
+    
+    return @"";
 }
 
 - (void) _statusBarDidResize

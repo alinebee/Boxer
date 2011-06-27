@@ -150,17 +150,19 @@
 
 @implementation BX35Diskette
 
-+ (NSImage *) baseLayerForSize:	(NSSize)size
++ (NSImage *) baseLayerForSize: (NSSize)size
 {
 	return [NSImage imageNamed: @"35Diskette"];
 }
-+ (NSImage *) topLayerForSize:	(NSSize)size
+
++ (NSImage *) topLayerForSize: (NSSize)size
 {
 	if (size.width >= 128)
-		[NSImage imageNamed: @"35DisketteShine"];
+		return [NSImage imageNamed: @"35DisketteShine"];
 	else
 		return nil;
 }
+
 + (CGFloat) lineHeightForSize:	(NSSize)size	{ return 18.0f * (size.width / 128.0f); }
 
 + (NSRect) textRegionForRect: (NSRect)frame

@@ -271,6 +271,7 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 	{
 		return [_manager removeItemAtPath: [self destinationPath] error: nil];
 	}
+    else return NO;
 }
 
 - (void) _checkTransferProgress

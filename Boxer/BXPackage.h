@@ -84,7 +84,7 @@ typedef NSUInteger BXGameIdentifierType;
 @property (readonly, nonatomic) NSString *gameName;
 
 //The unique identifier of this game.
-@property (readonly, nonatomic) NSString *gameIdentifier;
+@property (copy, nonatomic) NSString *gameIdentifier;
 
 
 //An array of absolute file paths to documentation files found inside the gamebox.

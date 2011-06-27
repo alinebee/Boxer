@@ -207,7 +207,7 @@ Bits CNullModem::readChar() {
 	if(telnet && rxchar>=0) return TelnetEmulation((Bit8u)rxchar);
 	else if(rxchar==0xff && !transparent) {// escape char
 		// get the next char
-		Bits rxchar = clientsocket->GetcharNonBlock();
+		rxchar = clientsocket->GetcharNonBlock();
 		if(rxchar==0xff) return rxchar; // 0xff 0xff -> 0xff was meant
 		rxchar&0x1? setCTS(true) : setCTS(false);
 		rxchar&0x2? setDSR(true) : setDSR(false);
@@ -570,13 +570,13 @@ void CNullModem::setBreak (bool /*value*/) {
 /*****************************************************************************/
 void CNullModem::setRTSDTR(bool xrts, bool xdtr) {
 	if(!transparent) {
-		Bit8u control[2];
-		control[0]=0xff;
-		control[1]=0x0;
-		if(xrts) control[1]|=1;
-		if(xdtr) control[1]|=2;
-		if(LCR&LCR_BREAK_MASK) control[1]|=4;
-		if(clientsocket) clientsocket->SendArray(control, 2);
+		Bit8u _control[2];
+		_control[0]=0xff;
+		_control[1]=0x0;
+		if(xrts) _control[1]|=1;
+		if(xdtr) _control[1]|=2;
+		if(LCR&LCR_BREAK_MASK) _control[1]|=4;
+		if(clientsocket) clientsocket->SendArray(_control, 2);
 	}
 }
 void CNullModem::setRTS(bool val) {

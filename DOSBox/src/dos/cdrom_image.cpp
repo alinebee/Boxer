@@ -120,9 +120,9 @@ CDROM_Interface_Image::imagePlayer CDROM_Interface_Image::player = {
 	NULL, NULL, NULL, {0}, 0, 0, 0, false, false };
 
 	
-CDROM_Interface_Image::CDROM_Interface_Image(Bit8u subUnit)
+CDROM_Interface_Image::CDROM_Interface_Image(Bit8u _subUnit)
 {
-	images[subUnit] = this;
+	images[_subUnit] = this;
 	if (refCount == 0) {
 		player.mutex = SDL_CreateMutex();
 		if (!player.channel) {
@@ -290,7 +290,7 @@ bool CDROM_Interface_Image::ReadSector(Bit8u *buffer, bool raw, unsigned long se
 	if (tracks[track].sectorSize != RAW_SECTOR_SIZE && raw) return false;
 	int length = (raw ? RAW_SECTOR_SIZE : COOKED_SECTOR_SIZE);
 
-	if (sector >= tracks[track].start + tracks[track].length) {
+	if (sector >= (unsigned long)(tracks[track].start + tracks[track].length)) {
 		memset(buffer, 0, length);
 		return true;
 	}

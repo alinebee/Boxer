@@ -603,7 +603,7 @@ void VGA_SetupOther(void) {
 	}
 	if (machine==MCH_HERC) {
 		Bitu base=0x3b0;
-		for (Bitu i = 0; i < 4; i++) {
+		for (i = 0; i < 4; i++) {
 			// The registers are repeated as the address is not decoded properly;
 			// The official ports are 3b4, 3b5
 			IO_RegisterWriteHandler(base+i*2,write_crtc_index_other,IO_MB);

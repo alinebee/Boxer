@@ -434,7 +434,7 @@ static void handleIpxRequest(void) {
 		case 0x0006:	// cancel operation
 		{
 			RealPt ecbaddress = RealMake(SegValue(es),reg_si);
-			ECBClass* tmpECB= ECBList;
+			tmpECB= ECBList;
 			ECBClass* tmp2ECB;
 			while(tmpECB) {
 				tmp2ECB=tmpECB->nextECB;

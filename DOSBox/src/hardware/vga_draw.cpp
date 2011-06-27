@@ -611,7 +611,7 @@ static Bit8u * VGA_TEXT_Xlat16_Draw_Line_9(Bitu vidstart, Bitu line) {
 		if (line<vga.draw.cursor.sline) goto skip_cursor;
 		if (line>vga.draw.cursor.eline) goto skip_cursor;
 		draw=(Bit16u*)&TempLine[font_addr*18];
-		Bit8u fg=vga.tandy.draw_base[vga.draw.cursor.address+1]&0xf;
+		fg=vga.tandy.draw_base[vga.draw.cursor.address+1]&0xf;
 		for(int i = 0; i < 8; i++) {
 			*draw++ = vga.dac.xlat16[fg];
 		}

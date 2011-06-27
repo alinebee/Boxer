@@ -750,7 +750,7 @@ static Bitu INT67_Handler(void) {
 		switch (reg_al) {
 			case 0x00: // use physical page numbers
 				{	PhysPt data = SegPhys(ds)+reg_si;
-					for (int i=0; i<reg_cx; i++) {
+					for (i=0; i<reg_cx; i++) {
 						Bit16u logPage	= mem_readw(data); data+=2;
 						Bit16u physPage = mem_readw(data); data+=2;
 						reg_ah = EMM_MapPage(physPage,reg_dx,logPage);
@@ -759,7 +759,7 @@ static Bitu INT67_Handler(void) {
 				} break;
 			case 0x01: // use segment address 
 				{	PhysPt data = SegPhys(ds)+reg_si;
-					for (int i=0; i<reg_cx; i++) {
+					for (i=0; i<reg_cx; i++) {
 						Bit16u logPage	= mem_readw(data); data+=2;
 						reg_ah = EMM_MapSegment(mem_readw(data),reg_dx,logPage); data+=2;
 						if (reg_ah!=EMM_NO_ERROR) break;
@@ -789,7 +789,7 @@ static Bitu INT67_Handler(void) {
 		if (reg_al==0x00) {
 			PhysPt data = SegPhys(es)+reg_di;
 			Bit16u step = 0x1000 / EMM_MAX_PHYS;
-			for (Bit16u i=0; i<EMM_MAX_PHYS; i++) {
+			for (i=0; i<EMM_MAX_PHYS; i++) {
 				mem_writew(data,EMM_PAGEFRAME+step*i);	data+=2;
 				mem_writew(data,i);						data+=2;
 			};

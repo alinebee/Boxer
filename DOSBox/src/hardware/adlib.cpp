@@ -409,34 +409,34 @@ Bit8u Chip::Read( ) {
 
 }
 
-void Module::CacheWrite( Bit32u reg, Bit8u val ) {
+void Module::CacheWrite( Bit32u _reg, Bit8u val ) {
 	//capturing?
 	if ( capture ) {
-		capture->DoWrite( reg, val );
+		capture->DoWrite( _reg, val );
 	}
 	//Store it into the cache
-	cache[ reg ] = val;
+	cache[ _reg ] = val;
 }
 
-void Module::DualWrite( Bit8u index, Bit8u reg, Bit8u val ) {
+void Module::DualWrite( Bit8u index, Bit8u _reg, Bit8u val ) {
 	//Make sure you don't use opl3 features
 	//Don't allow write to disable opl3		
-	if ( reg == 5 ) {
+	if ( _reg == 5 ) {
 		return;
 	}
 	//Only allow 4 waveforms
-	if ( reg >= 0xE0 ) {
+	if ( _reg >= 0xE0 ) {
 		val &= 3;
 	} 
 	//Write to the timer?
-	if ( chip[index].Write( reg, val ) ) 
+	if ( chip[index].Write( _reg, val ) ) 
 		return;
 	//Enabling panning
-	if ( reg >= 0xc0 && reg <=0xc8 ) {
+	if ( _reg >= 0xc0 && _reg <=0xc8 ) {
 		val &= 0x0f;
 		val |= index ? 0xA0 : 0x50;
 	}
-	Bit32u fullReg = reg + (index ? 0x100 : 0);
+	Bit32u fullReg = _reg + (index ? 0x100 : 0);
 	handler->WriteReg( fullReg, val );
 	CacheWrite( fullReg, val );
 }

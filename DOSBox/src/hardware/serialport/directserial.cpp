@@ -303,9 +303,9 @@ void CDirectSerial::setBreak (bool value) {
 }
 
 // updateModemControlLines(mcr) sets DTR and RTS. 
-void CDirectSerial::setRTSDTR(bool rts, bool dtr) {
-	SERIAL_setRTS(comport,rts);
-	SERIAL_setDTR(comport,dtr);
+void CDirectSerial::setRTSDTR(bool _rts, bool _dtr) {
+	SERIAL_setRTS(comport,_rts);
+	SERIAL_setDTR(comport,_dtr);
 }
 
 void CDirectSerial::setRTS(bool val) {

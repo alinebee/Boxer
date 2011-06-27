@@ -1243,7 +1243,7 @@ void Chip::Setup( Bit32u rate ) {
 		Bit8u index, shift;
 		EnvelopeSelect( i, index, shift );
 		//Original amount of samples the attack would take
-		Bit32s original = (Bit32u)( (AttackSamplesTable[ index ] << shift) / scale);
+		Bit32s orig = (Bit32u)( (AttackSamplesTable[ index ] << shift) / scale);
 		 
 		Bit32s guessAdd = (Bit32u)( scale * (EnvelopeIncreaseTable[ index ] << ( RATE_SH - shift - 3 )));
 		Bit32s bestAdd = guessAdd;
@@ -1252,7 +1252,7 @@ void Chip::Setup( Bit32u rate ) {
 			Bit32s volume = ENV_MAX;
 			Bit32s samples = 0;
 			Bit32u count = 0;
-			while ( volume > 0 && samples < original * 2 ) {
+			while ( volume > 0 && samples < orig * 2 ) {
 				count += guessAdd;
 				Bit32s change = count >> RATE_SH;
 				count &= RATE_MASK;
@@ -1262,7 +1262,7 @@ void Chip::Setup( Bit32u rate ) {
 				samples++;
 
 			}
-			Bit32s diff = original - samples;
+			Bit32s diff = orig - samples;
 			Bit32u lDiff = labs( diff );
 			//Init last on first pass
 			if ( lDiff < bestDiff ) {
@@ -1274,11 +1274,11 @@ void Chip::Setup( Bit32u rate ) {
 			//Below our target
 			if ( diff < 0 ) {
 				//Better than the last time
-				Bit32s mul = ((original - diff) << 12) / original;
+				Bit32s mul = ((orig - diff) << 12) / orig;
 				guessAdd = ((guessAdd * mul) >> 12);
 				guessAdd++;
 			} else if ( diff > 0 ) {
-				Bit32s mul = ((original - diff) << 12) / original;
+				Bit32s mul = ((orig - diff) << 12) / orig;
 				guessAdd = (guessAdd * mul) >> 12;
 				guessAdd--;
 			}

@@ -271,8 +271,8 @@ bool Prop_string::CheckValue(Value const& in, bool warn){
 			return true;
 		}
 		if((*it).ToString() == "%u") {
-			Bitu value;
-			if(sscanf(in.ToString().c_str(),"%u",&value) == 1) {
+			Bitu val;
+			if(sscanf(in.ToString().c_str(),"%u",&val) == 1) {
 				return true;
 			}
 		}
@@ -646,13 +646,13 @@ bool Config::PrintConfig(char const * const configfilename) const {
 				std::vector<Value> values = p->GetValues();
 				if (!values.empty()) {
 					fprintf(outfile, "%s%s:", prefix, MSG_Get("CONFIG_SUGGESTED_VALUES"));
-					std::vector<Value>::iterator it = values.begin();
-					while (it != values.end()) {
-						if((*it).ToString() != "%u") { //Hack hack hack. else we need to modify GetValues, but that one is const...
-							if (it != values.begin()) fputs(",", outfile);
-							fprintf(outfile, " %s", (*it).ToString().c_str());
+					std::vector<Value>::iterator value_iter = values.begin();
+					while (value_iter != values.end()) {
+						if((*value_iter).ToString() != "%u") { //Hack hack hack. else we need to modify GetValues, but that one is const...
+							if (value_iter != values.begin()) fputs(",", outfile);
+							fprintf(outfile, " %s", (*value_iter).ToString().c_str());
 						}
-						++it;
+						++value_iter;
 					}
 					fprintf(outfile,".");
 				}

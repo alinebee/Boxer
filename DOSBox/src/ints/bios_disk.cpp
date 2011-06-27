@@ -239,11 +239,11 @@ void imageDisk::Set_Geometry(Bit32u setHeads, Bit32u setCyl, Bit32u setSect, Bit
 	active = true;
 }
 
-void imageDisk::Get_Geometry(Bit32u * getHeads, Bit32u *getCyl, Bit32u *getSect, Bit32u *getSectSize) {
+void imageDisk::Get_Geometry(Bit32u * getHeads, Bit32u *getCyl, Bit32u *getSectors, Bit32u *getSectorSize) {
 	*getHeads = heads;
 	*getCyl = cylinders;
-	*getSect = sectors;
-	*getSectSize = sector_size;
+	*getSectors = sectors;
+	*getSectorSize = sector_size;
 }
 
 Bit8u imageDisk::GetBiosType(void) {

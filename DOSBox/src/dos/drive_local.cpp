@@ -664,13 +664,13 @@ bool MSCDEX_HasMediaChanged(Bit8u subUnit);
 bool MSCDEX_GetVolumeName(Bit8u subUnit, char* name);
 
 
-cdromDrive::cdromDrive(const char driveLetter, const char * startdir,Bit16u _bytes_sector,Bit8u _sectors_cluster,Bit16u _total_clusters,Bit16u _free_clusters,Bit8u _mediaid, int& error)
+cdromDrive::cdromDrive(const char letter, const char * startdir,Bit16u _bytes_sector,Bit8u _sectors_cluster,Bit16u _total_clusters,Bit16u _free_clusters,Bit8u _mediaid, int& error)
 		   :localDrive(startdir,_bytes_sector,_sectors_cluster,_total_clusters,_free_clusters,_mediaid) {
 	// Init mscdex
-	error = MSCDEX_AddDrive(driveLetter,startdir,subUnit);
+	error = MSCDEX_AddDrive(letter,startdir,subUnit);
 	strcpy(info, "CDRom ");
 	strcat(info, startdir);
-	this->driveLetter = driveLetter;
+	this->driveLetter = letter;
 	// Get Volume Label
 	char name[32];
 	if (MSCDEX_GetVolumeName(subUnit,name)) dirCache.SetLabel(name,true,true);

@@ -691,10 +691,10 @@ physfsFile::physfsFile(const char* _name, PHYSFS_file * handle,Bit16u devinfo, c
 	strcpy(pname,physname);
 	time_t mytime = (time_t)PHYSFS_getLastModTime(pname);
 	/* Convert the stat to a FileStat */
-	struct tm *time;
-	if((time=localtime(&mytime))!=0) {
-		this->time=DOS_PackTime((Bit16u)time->tm_hour,(Bit16u)time->tm_min,(Bit16u)time->tm_sec);
-		this->date=DOS_PackDate((Bit16u)(time->tm_year+1900),(Bit16u)(time->tm_mon+1),(Bit16u)time->tm_mday);
+	struct tm *lctime;
+	if((lctime=localtime(&mytime))!=0) {
+		this->time=DOS_PackTime((Bit16u)lctime->tm_hour,(Bit16u)lctime->tm_min,(Bit16u)lctime->tm_sec);
+		this->date=DOS_PackDate((Bit16u)(lctime->tm_year+1900),(Bit16u)(lctime->tm_mon+1),(Bit16u)lctime->tm_mday);
 	} else {
 		this->time=DOS_PackTime(0,0,0);
 		this->date=DOS_PackDate(1980,1,1);
@@ -712,10 +712,10 @@ bool physfsFile::UpdateDateTimeFromHost(void) {
 	if(!open) return false;
 	time_t mytime = (time_t)PHYSFS_getLastModTime(pname);
 	/* Convert the stat to a FileStat */
-	struct tm *time;
-	if((time=localtime(&mytime))!=0) {
-		this->time=DOS_PackTime((Bit16u)time->tm_hour,(Bit16u)time->tm_min,(Bit16u)time->tm_sec);
-		this->date=DOS_PackDate((Bit16u)(time->tm_year+1900),(Bit16u)(time->tm_mon+1),(Bit16u)time->tm_mday);
+	struct tm *lctime;
+	if((lctime=localtime(&mytime))!=0) {
+		this->time=DOS_PackTime((Bit16u)lctime->tm_hour,(Bit16u)lctime->tm_min,(Bit16u)lctime->tm_sec);
+		this->date=DOS_PackDate((Bit16u)(lctime->tm_year+1900),(Bit16u)(lctime->tm_mon+1),(Bit16u)lctime->tm_mday);
 	} else {
 		this->time=DOS_PackTime(0,0,0);
 		this->date=DOS_PackDate(1980,1,1);
@@ -733,11 +733,11 @@ bool MSCDEX_HasMediaChanged(Bit8u subUnit);
 bool MSCDEX_GetVolumeName(Bit8u subUnit, char* name);
 
 
-physfscdromDrive::physfscdromDrive(const char driveLetter, const char * startdir,Bit16u _bytes_sector,Bit8u _sectors_cluster,Bit16u _total_clusters,Bit16u _free_clusters,Bit8u _mediaid, int& error)
+physfscdromDrive::physfscdromDrive(const char letter, const char * startdir,Bit16u _bytes_sector,Bit8u _sectors_cluster,Bit16u _total_clusters,Bit16u _free_clusters,Bit8u _mediaid, int& error)
 		   :physfsDrive(startdir,_bytes_sector,_sectors_cluster,_total_clusters,_free_clusters,_mediaid)
 {
 	// Init mscdex
-	error = MSCDEX_AddDrive(driveLetter,startdir,subUnit);
+	error = MSCDEX_AddDrive(letter,startdir,subUnit);
 	// Get Volume Label
 	char name[32];
 	if (MSCDEX_GetVolumeName(subUnit,name)) dirCache.SetLabel(name,true,true);

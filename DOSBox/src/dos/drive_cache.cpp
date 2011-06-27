@@ -76,7 +76,7 @@ DOS_Drive_Cache::DOS_Drive_Cache(void) {
 	updatelabel = true;
 }
 
-DOS_Drive_Cache::DOS_Drive_Cache(const char* path, DOS_Drive *drive) {
+DOS_Drive_Cache::DOS_Drive_Cache(const char* path, DOS_Drive *drv) {
 	dirBase			= new CFileInfo;
 	save_dir		= 0;
 	srchNr			= 0;
@@ -84,7 +84,7 @@ DOS_Drive_Cache::DOS_Drive_Cache(const char* path, DOS_Drive *drive) {
 	nextFreeFindFirst	= 0;
 	for (Bit32u i=0; i<MAX_OPENDIRS; i++) { dirSearch[i] = 0; free[i] = true; dirFindFirst[i] = 0; };
 	SetDirSort(DIRALPHABETICAL);
-	SetBaseDir(path,drive);
+	SetBaseDir(path,drv);
 	updatelabel = true;
 }
 
@@ -126,10 +126,10 @@ Bit16u DOS_Drive_Cache::GetFreeID(CFileInfo* dir) {
 	return 0;
 }
 
-void DOS_Drive_Cache::SetBaseDir(const char* baseDir, DOS_Drive *drive) {
+void DOS_Drive_Cache::SetBaseDir(const char* baseDir, DOS_Drive *drv) {
 	Bit16u id;
 	strcpy(basePath,baseDir);
-	this->drive = drive;
+	this->drive = drv;
 	if (OpenDir(baseDir,id)) {
 		char* result = 0;
 		ReadDir(id,result);

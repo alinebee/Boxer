@@ -672,7 +672,6 @@ void XGA_DrawWait(Bitu val, Bitu len) {
 					for(Bitu k = 0; k < chunks; k++) { // chunks counter
 						xga.waitcmd.newline = false;
 						for(Bitu n = 0; n < chunksize; n++) { // pixels
-							Bitu mixmode;
 							
 							// This formula can rule the world ;)
 							Bitu mask = 1 << ((((n&0xF8)+(8-(n&0x7)))-1)+chunksize*k);

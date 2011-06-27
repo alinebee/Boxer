@@ -271,7 +271,7 @@ void CSerialModem::EnterIdleState(void){
 	}
 	// get rid of everything
 	if(serversocket) {
-		while(waitingclientsocket=serversocket->Accept())
+		while((waitingclientsocket=serversocket->Accept()))
 			delete waitingclientsocket;
 	} else if (listenport) {
 		
@@ -783,8 +783,8 @@ void CSerialModem::setBreak(bool) {
 	// TODO: handle this
 }
 
-void CSerialModem::setRTSDTR(bool rts, bool dtr) {
-	setDTR(dtr);
+void CSerialModem::setRTSDTR(bool _rts, bool _dtr) {
+	setDTR(_dtr);
 }
 void CSerialModem::setRTS(bool val) {
 	

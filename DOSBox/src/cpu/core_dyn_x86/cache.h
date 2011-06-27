@@ -318,12 +318,12 @@ public:
 		}
 		return 0;
 	}
-	HostPt GetHostReadPt(Bitu phys_page) { 
-		hostmem=old_pagehandler->GetHostReadPt(phys_page);
+	HostPt GetHostReadPt(Bitu _phys_page) { 
+		hostmem=old_pagehandler->GetHostReadPt(_phys_page);
 		return hostmem;
 	}
-	HostPt GetHostWritePt(Bitu phys_page) { 
-		return GetHostReadPt( phys_page );
+	HostPt GetHostWritePt(Bitu _phys_page) { 
+		return GetHostReadPt( _phys_page );
 	}
 public:
 	Bit8u write_map[4096];

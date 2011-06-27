@@ -223,7 +223,7 @@ bool TCPClientSocket::Putchar(Bit8u data) {
 }
 
 bool TCPClientSocket::SendArray(Bit8u* data, Bitu bufsize) {
-	if(SDLNet_TCP_Send(mysock, data, bufsize)!=bufsize) {
+	if(SDLNet_TCP_Send(mysock, data, bufsize)!=(int)bufsize) {
 		isopen=false;
 		return false;
 	}
@@ -237,7 +237,7 @@ bool TCPClientSocket::SendByteBuffered(Bit8u data) {
 		sendbuffer[sendbufferindex]=data;
 		sendbufferindex=0;
 		
-		if(SDLNet_TCP_Send(mysock, sendbuffer, sendbuffersize)!=sendbuffersize) {
+		if(SDLNet_TCP_Send(mysock, sendbuffer, sendbuffersize)!=(int)sendbuffersize) {
 			isopen=false;
 			return false;
 		}
@@ -269,7 +269,7 @@ bool TCPClientSocket::SendArrayBuffered(Bit8u* data, Bitu bufsize) {
 void TCPClientSocket::FlushBuffer() {
 	if(sendbufferindex) {
 		if(SDLNet_TCP_Send(mysock, sendbuffer,
-			sendbufferindex)!=sendbufferindex) {
+			sendbufferindex)!=(int)sendbufferindex) {
 			isopen=false;
 			return;
 		}

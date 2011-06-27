@@ -85,9 +85,9 @@ void CSerialDummy::setBreak(bool value) {
 /*****************************************************************************/
 /* setRTSDTR sets the modem control lines                                   **/
 /*****************************************************************************/
-void CSerialDummy::setRTSDTR(bool rts, bool dtr) {
-	setRTS(rts);
-	setDTR(dtr);
+void CSerialDummy::setRTSDTR(bool _rts, bool _dtr) {
+	setRTS(_rts);
+	setDTR(_dtr);
 }
 void CSerialDummy::setRTS(bool val) {
 #ifdef CHECKIT_TESTPLUG

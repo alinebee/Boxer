@@ -109,7 +109,7 @@ bool CDROM_Interface_Image::AudioFile::read(Bit8u *buffer, int seek, int count)
 int CDROM_Interface_Image::AudioFile::getLength()
 {
 	int length = Sound_GetDuration(sample);
-	return floor((double)length * 176.4f + 0.5f);
+	return (int)floor((length * 176.4) + 0.5);
 }
 #endif
 

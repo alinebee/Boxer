@@ -78,7 +78,7 @@ Bit8u MixTemp[MIXER_BUFSIZE];
 
 MixerChannel * MIXER_AddChannel(MIXER_Handler handler,Bitu freq,const char * name) {
 	MixerChannel * chan=new MixerChannel();
-	chan->scale = 1.0;
+	chan->scale = 1.0f;
 	chan->handler=handler;
 	chan->name=name;
 	chan->SetFreq(freq);

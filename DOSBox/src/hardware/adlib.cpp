@@ -640,7 +640,7 @@ Module::Module( Section* configuration ) : Module_base(configuration) {
 	std::string oplemu( section->Get_string( "oplemu" ) );
 
 	mixerChan = mixerObject.Install(OPL_CallBack,rate,"FM");
-	mixerChan->SetScale( 2.0 );
+	mixerChan->SetScale( 2.0f );
 	if (oplemu == "fast") {
 		handler = new DBOPL::Handler();
 	} else if (oplemu == "compat") {

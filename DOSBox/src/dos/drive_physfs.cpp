@@ -254,7 +254,7 @@ again:
 	
 	/*file is okay, setup everything to be copied in DTA Block */
 	find_size=(Bit32u)PHYSFS_fileLength(full_name);
-	time_t mytime = PHYSFS_getLastModTime(full_name);
+	time_t mytime = (time_t)PHYSFS_getLastModTime(full_name);
 	struct tm *time;
 	if((time=localtime(&mytime))!=0){
 		find_date=DOS_PackDate((Bit16u)(time->tm_year+1900),(Bit16u)(time->tm_mon+1),(Bit16u)time->tm_mday);
@@ -371,7 +371,7 @@ bool physfsDrive::FileStat(const char* name, FileStat_Block * const stat_block) 
 	CROSS_FILENAME(newname);
 	dirCache.ExpandName(newname);
 	normalize(newname,basedir);
-	time_t mytime = PHYSFS_getLastModTime(newname);
+	time_t mytime = (time_t)PHYSFS_getLastModTime(newname);
 	/* Convert the stat to a FileStat */
 	struct tm *time;
 	if((time=localtime(&mytime))!=0) {
@@ -414,7 +414,7 @@ void *physfsDrive::opendir(const char *name) {
 	char myname[CROSS_LEN];
 	strcpy(myname,name);
 	normalize(myname,basedir);
-	if (!PHYSFS_isDirectory(myname)) return false;
+	if (!PHYSFS_isDirectory(myname)) return NULL;
 
 	struct opendirinfo *oinfo = (struct opendirinfo *)malloc(sizeof(struct opendirinfo));
 	oinfo->files = PHYSFS_enumerateFiles(myname);
@@ -558,7 +558,7 @@ bool physfsFile::Read(Bit8u * data,Bit16u * size) {
 	}
 	if (last_action==WRITE) prepareRead();
 	last_action=READ;
-	PHYSFS_sint64 mysize = PHYSFS_read(fhandle,data,1,(PHYSFS_uint64)*size);
+	PHYSFS_sint64 mysize = PHYSFS_read(fhandle,data,1,(PHYSFS_uint32)*size);
 	//LOG_MSG("Read %i bytes (wanted %i) at %i of %s (%s)",(int)mysize,(int)*size,(int)PHYSFS_tell(fhandle),name,PHYSFS_getLastError());
 	*size = (Bit16u)mysize;
 	return true;
@@ -574,13 +574,14 @@ bool physfsFile::Write(Bit8u * data,Bit16u * size) {
 	if (*size==0) {
 		if (PHYSFS_tell(fhandle) == 0) {
 			PHYSFS_close(PHYSFS_openWrite(pname));
+            return false;
 			//LOG_MSG("Truncate %s (%s)",name,PHYSFS_getLastError());
 		} else {
-			LOG_MSG("PHYSFS TODO: truncate not yet implemented (%s at %i)",pname,PHYSFS_tell(fhandle));
+			LOG_MSG("PHYSFS TODO: truncate not yet implemented (%s at %lld)",pname,PHYSFS_tell(fhandle));
 			return false;
 		}
 	} else {
-		PHYSFS_sint64 mysize = PHYSFS_write(fhandle,data,1,(PHYSFS_uint64)*size);
+		PHYSFS_sint64 mysize = PHYSFS_write(fhandle,data,1,(PHYSFS_uint32)*size);
 		//LOG_MSG("Wrote %i bytes (wanted %i) at %i of %s (%s)",(int)mysize,(int)*size,(int)PHYSFS_tell(fhandle),name,PHYSFS_getLastError());
 		*size = (Bit16u)mysize;
 		return true;
@@ -591,7 +592,7 @@ bool physfsFile::Seek(Bit32u * pos,Bit32u type) {
 	switch (type) {
 	case DOS_SEEK_SET:break;
 	case DOS_SEEK_CUR:mypos += PHYSFS_tell(fhandle); break;
-	case DOS_SEEK_END:mypos += PHYSFS_fileLength(fhandle);-mypos; break;
+	case DOS_SEEK_END:mypos += PHYSFS_fileLength(fhandle); break;
 	default:
 	//TODO Give some doserrorcode;
 		return false;//ERROR
@@ -614,6 +615,7 @@ bool physfsFile::prepareRead() {
 	fhandle = PHYSFS_openRead(pname);
 	PHYSFS_seek(fhandle, pos);
 	//LOG_MSG("Goto read (%s at %i)",pname,PHYSFS_tell(fhandle));
+    return true;
 }
 
 #ifndef WIN32
@@ -647,7 +649,7 @@ bool physfsFile::prepareWrite() {
 		PHYSFS_sint64 size;
 		PHYSFS_seek(fhandle, 0);
 		while ((size = PHYSFS_read(fhandle,buffer,1,65536)) > 0) {
-			if (PHYSFS_write(whandle,buffer,1,size) != size) {
+			if (PHYSFS_write(whandle,buffer,1,(PHYSFS_uint32)size) != size) {
 				LOG_MSG("PHYSFS copy-on-write failed: %s.",PHYSFS_getLastError());
 				PHYSFS_close(whandle);
 				return false;
@@ -687,7 +689,7 @@ physfsFile::physfsFile(const char* _name, PHYSFS_file * handle,Bit16u devinfo, c
 	fhandle=handle;
 	info=devinfo;
 	strcpy(pname,physname);
-	time_t mytime = PHYSFS_getLastModTime(pname);
+	time_t mytime = (time_t)PHYSFS_getLastModTime(pname);
 	/* Convert the stat to a FileStat */
 	struct tm *time;
 	if((time=localtime(&mytime))!=0) {
@@ -708,7 +710,7 @@ physfsFile::physfsFile(const char* _name, PHYSFS_file * handle,Bit16u devinfo, c
 
 bool physfsFile::UpdateDateTimeFromHost(void) {
 	if(!open) return false;
-	time_t mytime = PHYSFS_getLastModTime(pname);
+	time_t mytime = (time_t)PHYSFS_getLastModTime(pname);
 	/* Convert the stat to a FileStat */
 	struct tm *time;
 	if((time=localtime(&mytime))!=0) {

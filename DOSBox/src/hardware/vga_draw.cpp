@@ -883,7 +883,7 @@ static void VGA_VerticalTimer(Bitu /*val*/) {
 #endif
 
 	// check if some lines at the top off the screen are blanked
-	float draw_skip = 0.0;
+	float draw_skip = 0.0f;
 	if (GCC_UNLIKELY(vga.draw.vblank_skip)) {
 		draw_skip = (float)(vga.draw.delay.htotal * vga.draw.vblank_skip);
 		vga.draw.address += vga.draw.address_add * (vga.draw.vblank_skip/(vga.draw.address_line_total));

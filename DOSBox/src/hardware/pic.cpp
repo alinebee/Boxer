@@ -528,7 +528,7 @@ void TIMER_AddTick(void) {
 	/* Go through the list of scheduled events and lower their index with 1000 */
 	PICEntry * entry=pic_queue.next_entry;
 	while (entry) {
-		entry->index -= 1.0;
+		entry->index -= 1.0f;
 		entry=entry->next;
 	}
 	/* Call our list of ticker handlers */

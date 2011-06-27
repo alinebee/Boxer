@@ -201,7 +201,7 @@ Bitu PS2_Handler(void) {
 #define MOUSE_RIGHT_RELEASED 16
 #define MOUSE_MIDDLE_PRESSED 32
 #define MOUSE_MIDDLE_RELEASED 64
-#define MOUSE_DELAY 5.0
+#define MOUSE_DELAY 5.0f
 
 void MOUSE_Limit_Events(Bitu /*val*/) {
 	mouse.timer_in_progress = false;

@@ -648,7 +648,7 @@ void CSerialModem::TelnetEmulation(Bit8u * data, Bitu size) {
 
 void CSerialModem::Timer2(void) {
 
-	unsigned long args = 1;
+	//unsigned long args = 1;
 	bool sendbyte = true;
 	Bitu usesize;
 	Bit8u txval;

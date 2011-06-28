@@ -1251,7 +1251,11 @@ public:
 		{
 			//TODO: also retrieve preferred codepage
 			layoutname = boxer_currentDOSKeyboardLayout();
+            //If no layout was recognised, then let DOSBox use the default keyboard behaviour.
+            if (!layoutname) return;
+            
 			//FIX: if the US layout is preferred, then don't continue with codepage detection
+            //and let DOSBox fall back on the default keyboard behaviour.
 			//(this is regular DOSBox behaviour, and otherwise we end up with codepage 858 which has a few bugs)
 			if (!strncasecmp(layoutname, "us", 2)) return;
 		}

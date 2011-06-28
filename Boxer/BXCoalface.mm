@@ -252,7 +252,9 @@ const char * boxer_currentDOSKeyboardLayout()
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
 	NSString *layoutCode = [[emulator keyboard] activeLayout];
-	return [layoutCode cStringUsingEncoding: BXDirectStringEncoding];
+    if (layoutCode)
+        return [layoutCode cStringUsingEncoding: BXDirectStringEncoding];
+    else return NULL;
 }
 
 void boxer_setMouseActive(bool mouseActive)

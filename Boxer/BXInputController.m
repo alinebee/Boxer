@@ -178,8 +178,11 @@
 			//Set the DOS keyboard layout to match the current OS X layout as best as possible
 			//TODO: listen for input source changes
 			NSString *bestLayoutMatch = [[self class] keyboardLayoutForCurrentInputMethod];
-			[[self _emulatedKeyboard] setActiveLayout: bestLayoutMatch];
-			
+            if (bestLayoutMatch)
+            {
+                [[self _emulatedKeyboard] setActiveLayout: bestLayoutMatch];
+			}
+            
 			[self didBecomeKey];
 		}
 	}

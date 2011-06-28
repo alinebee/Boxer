@@ -399,6 +399,18 @@
 				<string>disc.bat</string>
 			</array>
 		</dict>
+        
+		<dict>
+			<key>BXProfileName</key>
+			<string>Tie Fighter</string>
+			<key>BXProfileConf</key>
+			<string>Tie Fighter</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>tie.exe</string>
+				<string>tie.cd</string>
+			</array>
+		</dict>
 	</array>
 
 	<key>BXGenericProfiles</key>
@@ -745,7 +757,6 @@
 				<string>Frontier</string>
 				<string>Blackthorne</string>
 				<string>Star Wars X-Wing</string>
-				<string>Star Wars Tie Fighter</string>
 				<string>The Elder Scrolls: Arena</string>
 				<string>Epic Pinball</string>
 				<string>Colonization</string>
@@ -768,7 +779,6 @@
 				<string>frontier.exe</string>
 				<string>black.exe</string>
 				<string>vga.pac</string>
-				<string>tie.001</string>
 				<string>tamriel.mnu</string>
 				<string>ep1.dat</string>
 				<string>viceroy.exe</string>

@@ -2904,7 +2904,7 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		9F4EC82712907B1F00024B20 /* Debug */ = {
+		9F4EC82712907B1F00024B20 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -2924,14 +2924,13 @@
 				);
 				PRODUCT_NAME = "Game Importer Droplet";
 			};
-			name = Debug;
+			name = Development;
 		};
 		9F4EC82812907B1F00024B20 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
@@ -2948,24 +2947,31 @@
 			};
 			name = Release;
 		};
-		9FE76B331139A11A005EF7B1 /* Debug */ = {
+		9FE76B331139A11A005EF7B1 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = (
+					ppc,
+					x86_64,
+					i386,
+				);
 				CURRENT_PROJECT_SHORT_VERSION_STRING = 1.1pre;
 				CURRENT_PROJECT_VERSION = 20110626.1;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx10.6;
 			};
-			name = Debug;
+			name = Development;
 		};
-		9FE76B341139A11A005EF7B1 /* Debug */ = {
+		9FE76B341139A11A005EF7B1 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = (
+					ppc,
+					i386,
+				);
 				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/Frameworks\"",
@@ -2992,13 +2998,16 @@
 				"OTHER_CFLAGS[arch=i386]" = "-mstackrealign";
 				PRODUCT_NAME = Boxer;
 			};
-			name = Debug;
+			name = Development;
 		};
 		C01FCF4C08A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
+				ARCHS = (
+					ppc,
+					i386,
+				);
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/Frameworks\"",
@@ -3029,7 +3038,11 @@
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = (
+					ppc,
+					x86_64,
+					i386,
+				);
 				CURRENT_PROJECT_SHORT_VERSION_STRING = 1.1pre;
 				CURRENT_PROJECT_VERSION = 20110626.1;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
@@ -3043,7 +3056,7 @@
 		9F4EC82A12907B1F00024B20 /* Build configuration list for PBXNativeTarget "Game Importer Droplet" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9F4EC82712907B1F00024B20 /* Debug */,
+				9F4EC82712907B1F00024B20 /* Development */,
 				9F4EC82812907B1F00024B20 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -3052,7 +3065,7 @@
 		C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "Boxer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9FE76B341139A11A005EF7B1 /* Debug */,
+				9FE76B341139A11A005EF7B1 /* Development */,
 				C01FCF4C08A954540054247B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -3061,7 +3074,7 @@
 		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Boxer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9FE76B331139A11A005EF7B1 /* Debug */,
+				9FE76B331139A11A005EF7B1 /* Development */,
 				C01FCF5008A954540054247B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;

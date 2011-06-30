@@ -2904,7 +2904,7 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		9F4EC82712907B1F00024B20 /* Development */ = {
+		9F4EC82712907B1F00024B20 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -2924,7 +2924,7 @@
 				);
 				PRODUCT_NAME = "Game Importer Droplet";
 			};
-			name = Development;
+			name = Debug;
 		};
 		9F4EC82812907B1F00024B20 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -2947,7 +2947,7 @@
 			};
 			name = Release;
 		};
-		9FE76B331139A11A005EF7B1 /* Development */ = {
+		9FE76B331139A11A005EF7B1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = (
@@ -2961,9 +2961,9 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx10.6;
 			};
-			name = Development;
+			name = Debug;
 		};
-		9FE76B341139A11A005EF7B1 /* Development */ = {
+		9FE76B341139A11A005EF7B1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -2998,7 +2998,7 @@
 				"OTHER_CFLAGS[arch=i386]" = "-mstackrealign";
 				PRODUCT_NAME = Boxer;
 			};
-			name = Development;
+			name = Debug;
 		};
 		C01FCF4C08A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -3032,6 +3032,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				"OTHER_CFLAGS[arch=i386]" = "-mstackrealign";
 				PRODUCT_NAME = Boxer;
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
@@ -3056,7 +3057,7 @@
 		9F4EC82A12907B1F00024B20 /* Build configuration list for PBXNativeTarget "Game Importer Droplet" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9F4EC82712907B1F00024B20 /* Development */,
+				9F4EC82712907B1F00024B20 /* Debug */,
 				9F4EC82812907B1F00024B20 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -3065,7 +3066,7 @@
 		C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "Boxer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9FE76B341139A11A005EF7B1 /* Development */,
+				9FE76B341139A11A005EF7B1 /* Debug */,
 				C01FCF4C08A954540054247B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -3074,7 +3075,7 @@
 		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Boxer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9FE76B331139A11A005EF7B1 /* Development */,
+				9FE76B331139A11A005EF7B1 /* Debug */,
 				C01FCF5008A954540054247B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;

@@ -1,12 +1,12 @@
-h1. Important 4/30/2010
+h1. Important 1/3/2011
 
-BGHUDAppKit is, as of today, going through a small optimization/rewrite/improvement phase.  I will update the entire repository when this is finished.  Please keep posting Issues as I will be tackling these at the same time.
+The App Store branch has been merged into Master.  Please be aware that existing projects that upgrade to the new version will need to toggle any Radio/Check buttons from the existing Bezel style to another and back again.  (IE: A check will need to be toggled to radio and then back to check)  This will setup the new code changes I had to implement for the App Store.
 
 h2. About
 
 BGHUDAppKit 
 Tim Davis @ BinaryMethod.com
-"Homepage":http://www.binarymethod.com/bghudappkit
+"Homepage":http://www.binarymethod.com/
 
 The missing OS X Leopard/Snow Leopard HUD controls.
 
@@ -14,8 +14,6 @@ BGHUDAppKit is a small framework I designed to fill the gap left by Apple when t
 
 Project is hosted on "GitHub":http://github.com/binarygod/BGHUDAppKit/tree/master
 Public GIT Clone URL: git://github.com/binarygod/BGHUDAppKit.git
-
-!http://www.binarymethod.com/images/BGHUDAppKit-Clear.png!
 
 h2. Requirements
 

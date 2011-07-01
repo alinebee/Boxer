@@ -97,7 +97,7 @@
 }
 
 //Delegate validation method for 10.6 and above.
-- (BOOL) panel: (NSOpenPanel *)openPanel validateURL: (NSURL *)url error: (NSError **)outError
+- (BOOL) panel: (id)openPanel validateURL: (NSURL *)url error: (NSError **)outError
 {
 	NSString *path = [url path];
 	return [[NSApp delegate] validateGamesFolderPath: &path error: outError];

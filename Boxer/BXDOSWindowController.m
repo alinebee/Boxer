@@ -819,7 +819,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 }
 
 //Snap to multiples of the base render size as we scale
-- (NSSize) windowWillResize: (BXDOSWindow *)theWindow toSize: (NSSize) proposedFrameSize
+- (NSSize) windowWillResize: (NSWindow *)theWindow toSize: (NSSize) proposedFrameSize
 {
 	//Used to be: [[NSUserDefaults standardUserDefaults] integerForKey: @"windowSnapDistance"];
 	//But is now constant while developing to find the ideal default value
@@ -853,7 +853,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 
 //Return an appropriate "standard" (zoomed) frame for the window given the currently available screen space.
 //We define the standard frame to be the largest multiple of the game resolution, maintaining aspect ratio.
-- (NSRect) windowWillUseStandardFrame: (BXDOSWindow *)theWindow defaultFrame: (NSRect)defaultFrame
+- (NSRect) windowWillUseStandardFrame: (NSWindow *)theWindow defaultFrame: (NSRect)defaultFrame
 {
 	if (![[[self document] emulator] isExecuting]) return defaultFrame;
 	

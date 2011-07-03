@@ -18,42 +18,46 @@
 
 + (JoypadControllerLayout *)layout
 {
-    JoypadControllerLayout *layout = [BXJoypadLayout layout];
-    
-    [layout setName: @"2-axis, 2-button joystick"];
-    
-    [layout addAnalogStickWithFrame: CGRectMake(0, 70, 240, 240)
-                       identifier: kJoyInputAnalogStick1];
-    
-    //Primary buttons: blue, rectangular and tall, located along left of screen
-    [layout addButtonWithFrame: CGRectMake(380,0,100,320) 
-                       label: @"1" 
-                    fontSize: 36
-                       shape: kJoyButtonShapeSquare
-                       color: kJoyButtonColorBlue
-                  identifier: kJoyInputAButton];
-    
-    [layout addButtonWithFrame: CGRectMake(280,0,100,320) 
-                         label: @"2" 
-                      fontSize: 36
-                         shape: kJoyButtonShapeSquare
-                         color: kJoyButtonColorBlue
-                    identifier: kJoyInputBButton];
-    
-    //Meta buttons: pill-shaped, located at the top left
-    [layout addButtonWithFrame: CGRectMake(20,10,110,30) 
-                         label: @"Esc" 
-                      fontSize: 16
-                         shape: kJoyButtonShapePill
-                         color: kJoyButtonColorBlack
-                    identifier: kJoyInputStartButton];
-    
-    [layout addButtonWithFrame: CGRectMake(150,10,110,30) 
-                         label: @"Pause" 
-                      fontSize: 16
-                         shape: kJoyButtonShapePill
-                         color: kJoyButtonColorBlack
-                    identifier: kJoyInputSelectButton];
+    static JoypadControllerLayout *layout = nil;
+    if (!layout)
+    {
+        layout = [[JoypadControllerLayout alloc] init];
+        
+        [layout setName: @"2-axis, 2-button joystick"];
+        
+        [layout addAnalogStickWithFrame: CGRectMake(0, 70, 240, 240)
+                             identifier: kJoyInputAnalogStick1];
+        
+        //Primary buttons: blue, rectangular and tall, located along left of screen
+        [layout addButtonWithFrame: CGRectMake(380,0,100,320) 
+                             label: @"1" 
+                          fontSize: 36
+                             shape: kJoyButtonShapeSquare
+                             color: kJoyButtonColorBlue
+                        identifier: kJoyInputAButton];
+        
+        [layout addButtonWithFrame: CGRectMake(280,0,100,320) 
+                             label: @"2" 
+                          fontSize: 36
+                             shape: kJoyButtonShapeSquare
+                             color: kJoyButtonColorBlue
+                        identifier: kJoyInputBButton];
+        
+        //Meta buttons: pill-shaped, located at the top left
+        [layout addButtonWithFrame: CGRectMake(20,10,110,30) 
+                             label: @"Esc" 
+                          fontSize: 16
+                             shape: kJoyButtonShapePill
+                             color: kJoyButtonColorBlack
+                        identifier: kJoyInputStartButton];
+        
+        [layout addButtonWithFrame: CGRectMake(150,10,110,30) 
+                             label: @"Pause" 
+                          fontSize: 16
+                             shape: kJoyButtonShapePill
+                             color: kJoyButtonColorBlack
+                        identifier: kJoyInputSelectButton];
+    }
     
     return layout;
 }

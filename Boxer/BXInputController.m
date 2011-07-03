@@ -128,7 +128,7 @@
 			[previousSession removeObserver: self forKeyPath: @"emulator.joystickSupport"];
 			
 			[joystickController removeObserver: self forKeyPath: @"joystickDevices"];
-			[joypadController removeObserver: self forKeyPath: @"joypadDevices"];
+			[joypadController removeObserver: self forKeyPath: @"hasJoypadDevices"];
 			
 			
 			[self didResignKey];
@@ -175,7 +175,7 @@
 									context: nil];
             
 			[joypadController addObserver: self
-                               forKeyPath: @"joypadDevices"
+                               forKeyPath: @"hasJoypadDevices"
                                   options: NSKeyValueObservingOptionInitial
                                   context: nil];
 			
@@ -264,7 +264,7 @@
         [self didChangeValueForKey: @"controllersAvailable"];
     }
     
-    else if ([keyPath isEqualToString: @"joypadDevices"])
+    else if ([keyPath isEqualToString: @"hasJoypadDevices"])
     {
         //Connect a joystick if none was available before
 		[self _syncJoystickType];

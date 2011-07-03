@@ -64,7 +64,7 @@
 
 - (BOOL) joypadControllersAvailable
 {
-    return [[[[NSApp delegate] joypadController] joypadDevices] count] > 0;
+    return [[[NSApp delegate] joypadController] hasJoypadDevices];
 }
 
 

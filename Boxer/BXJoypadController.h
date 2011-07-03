@@ -18,9 +18,19 @@
     JoypadManager *joypadManager;
     BOOL suppressReconnectionNotifications;
     JoypadControllerLayout *currentLayout;
+    BOOL hasJoypadDevices;
 }
 @property (readonly, nonatomic) JoypadManager *joypadManager;
+
+//An array of all currently-connected joypad devices being used by Boxer.
 @property (readonly, nonatomic) NSArray *joypadDevices;
+
+//The current joystick controller layout in use.
 @property (retain, nonatomic) JoypadControllerLayout *currentLayout;
+
+//Returns YES if there are any joypad devices connected or in the process
+//of connecting, NO otherwise.
+//Note that this may return YES before a device has appeared in joypadDevices.
+@property (readonly, nonatomic) BOOL hasJoypadDevices;
 
 @end

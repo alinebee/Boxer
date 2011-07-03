@@ -19,6 +19,7 @@
 #pragma mark Private method declarations
 @interface BXJoypadController ()
 
+@property (readwrite, nonatomic) BOOL hasJoypadDevices;
 @property (readonly, nonatomic) BXInputController *activeWindowController;
 
 @end
@@ -26,7 +27,7 @@
 
 @implementation BXJoypadController
 
-@synthesize joypadManager, currentLayout;
+@synthesize joypadManager, currentLayout, hasJoypadDevices;
 
 #pragma mark -
 #pragma mark Initialization and deallocation
@@ -109,7 +110,7 @@
     if ([keyPath isEqualToString: @"currentSession.DOSWindowController.inputController.currentJoypadLayout"])
     {
         JoypadControllerLayout *layout = [[self activeWindowController] currentJoypadLayout];
-        [self setCurrentLayout: layout];
+        if (layout) [self setCurrentLayout: layout];
     }
     //Whenever the active window or its input controller changes,
     //tell all Joypad devices to send their signal to the new one
@@ -127,9 +128,18 @@
          didFindDevice: (JoypadDevice *)device 
    previouslyConnected: (BOOL)wasConnected
 {
+    [self setHasJoypadDevices: YES];
     [joypadManager connectToDevice: device asPlayer: 1];
 }
 
+- (void) joypadManager: (JoypadManager *)manager
+         didLoseDevice: (JoypadDevice *)device
+{
+    if (![[self joypadDevices] count])
+    {
+        [self setHasJoypadDevices: NO];
+    }
+}
 - (void) joypadManager: (JoypadManager *)manager
       deviceDidConnect: (JoypadDevice *)device
                 player: (unsigned int)player

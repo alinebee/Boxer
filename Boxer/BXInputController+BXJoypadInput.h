@@ -1,0 +1,21 @@
+/* 
+ Boxer is copyright 2011 Alun Bestor and contributors.
+ Boxer is released under the GNU General Public License 2.0. A full copy of this license can be
+ found in this XCode project at Resources/English.lproj/BoxerHelp/pages/legalese.html, or read
+ online at [http://www.gnu.org/licenses/gpl-2.0.txt].
+ */
+
+//The BXJoypadInput category handles JoyPad iOS app input passed on from BXJoypadController.
+
+#import "BXInputController.h"
+
+@class JoypadControllerLayout;
+@interface BXInputController (BXJoypadInput)
+
+//Returns a custom Joypad layout appropriate for the currently-selected joystick type.
+@property (readonly, nonatomic) JoypadControllerLayout *currentJoypadLayout;
+
+//Whether any joypad controller devices are currently available.
+@property (readonly, nonatomic) BOOL joypadControllersAvailable;
+
+@end

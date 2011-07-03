@@ -312,8 +312,8 @@ NSString * const BXEmulatedJoystickClassKey = @"BXEmulatedJoystickClassKey";
 	[self axis: BXEmulatedJoystickAxisY movedTo: (acceleratorComponent - brakeComponent)];
 }
 
-- (void) xAxisMovedTo: (float)position	{ [self axis: BXEmulatedJoystickAxisX movedTo: position]; }
-- (void) xAxisMovedBy: (float)delta		{ [self axis: BXEmulatedJoystickAxisX movedBy: delta]; }
+- (void) wheelMovedTo: (float)position	{ [self axis: BXEmulatedJoystickAxisX movedTo: position]; }
+- (void) wheelMovedBy: (float)delta		{ [self axis: BXEmulatedJoystickAxisX movedBy: delta]; }
 
 - (void) acceleratorMovedTo: (float)position
 {
@@ -370,8 +370,8 @@ NSString * const BXEmulatedJoystickClassKey = @"BXEmulatedJoystickClassKey";
 - (NSUInteger) numAxes			{ return 3; }
 - (NSUInteger) numPOVSwitches	{ return 0; }
 
-- (void) xAxisMovedTo: (float)position	{ [self axis: BXEmulatedJoystickAxisX movedTo: position]; }
-- (void) xAxisMovedBy: (float)delta		{ [self axis: BXEmulatedJoystickAxisX movedBy: delta]; }
+- (void) wheelMovedTo: (float)position	{ [self axis: BXEmulatedJoystickAxisX movedTo: position]; }
+- (void) wheelMovedBy: (float)delta		{ [self axis: BXEmulatedJoystickAxisX movedBy: delta]; }
 
 - (void) acceleratorMovedTo: (float)position
 {

@@ -27,6 +27,7 @@
 
 @class BXSession;
 @class BXJoystickController;
+@class BXJoypadController;
 
 enum {
 	BXStartUpWithNothing		= 0,
@@ -45,12 +46,14 @@ enum {
 	NSOperationQueue *generalQueue;
 	
 	IBOutlet BXJoystickController *joystickController;
+	IBOutlet BXJoypadController *joypadController;
 }
 //The currently-active DOS session. Changes whenever a new session opens.
 @property (retain, nonatomic) BXSession *currentSession;
 
-//The controller for HID joystick input.
+//App-wide controllers for HID joystick input and JoyPad app input.
 @property (retain, nonatomic) BXJoystickController *joystickController;
+@property (retain, nonatomic) BXJoypadController *joypadController;
 
 //A general operation queue for non-session-specific operations.
 @property (retain, readonly) NSOperationQueue *generalQueue;

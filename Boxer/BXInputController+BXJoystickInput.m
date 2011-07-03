@@ -19,7 +19,6 @@
 #pragma mark -
 #pragma mark Setting and getting joystick configuration
 
-
 + (NSSet *) keyPathsForValuesAffectingStrictGameportTiming
 {
 	return [NSSet setWithObject: @"representedObject.emulator.gameportTimingMode"];
@@ -32,7 +31,7 @@
 
 + (NSSet *) keyPathsForValuesAffectingPreferredJoystickType
 {
-	return [NSSet setWithObject: @"representedObject.gameSettings.preferredJoystickType"];
+	return [NSSet setWithObjects: @"availableJoystickTypes", @"representedObject.gameSettings.preferredJoystickType", nil];
 }
 
 + (NSSet *) keyPathsForValuesAffectingSelectedJoystickTypeIndexes
@@ -134,9 +133,15 @@
 	}
 }
 
-- (BOOL) controllerIsConnected
+
+- (BOOL) joystickControllersAvailable
 {
-	return [controllerProfiles count] > 0;
+    return [[[[NSApp delegate] joystickController] joystickDevices] count] > 0;
+}
+
+- (BOOL) controllersAvailable
+{
+	return [self joystickControllersAvailable] || [self joypadControllersAvailable];
 }
 
 - (void) _syncAvailableJoystickTypes
@@ -152,7 +157,7 @@
 			[BX4AxisJoystick class],
 			[BXThrustmasterFCS class],
 			[BXCHFlightStickPro class],
-			[BX3AxisWheel class],
+			[BX2AxisWheel class],
 			nil];
 	}
 	else if (supportLevel == BXJoystickSupportSimple)
@@ -174,57 +179,52 @@
 	
 	Class preferredJoystickClass = [self preferredJoystickType];
 	
-	//If the current game doesn't support joysticks at all, or the user
-	//has chosen to disable joystick support, then remove all connected
-	//joysticks and don't continue further.
-	if (support == BXNoJoystickSupport || !preferredJoystickClass)
+	//If the current game doesn't support joysticks, or the user has chosen
+	//to disable joystick support, or there are no real controllers connected,
+    //then remove the emulated joystick and don't continue further.
+	if (support == BXNoJoystickSupport || !preferredJoystickClass || ![self controllersAvailable])
 	{
-		[controllerProfiles removeAllObjects];
 		[emulator detachJoystick];
-		return;
 	}
-	
-	NSArray *controllers = [[[NSApp delegate] joystickController] joystickDevices];
-	NSUInteger numControllers = [controllers count];
-	
-	if (numControllers > 0)
-	{
+	else
+    {
 		Class joystickClass;
 		
-		//TODO: ask BXEmulator to validate the specified class, and fall back on the 2-axis joystick otherwise
+		//TODO: ask BXEmulator to validate the specified class,
+        //and fall back on the 2-axis joystick otherwise
 		if (support == BXJoystickSupportFull)
 		{
 			joystickClass = preferredJoystickClass;
 		}
-		else joystickClass = [BX2AxisJoystick class];
+		else
+        {
+            joystickClass = [BX2AxisJoystick class];
+        }
 		
 		if (![[emulator joystick] isMemberOfClass: joystickClass])
 			[emulator attachJoystickOfType: joystickClass];
-		
-		//Regenerate controller profiles for each controller
-		//TODO: this is unnecessary work and we should only do this when we know the emulated joystick
-		//has changed and/or the specific device has been added/removed
-		
-		
-		[self willChangeValueForKey: @"controllerIsConnected"];
-		[controllerProfiles removeAllObjects];
-		for (DDHidJoystick *controller in controllers)
-		{
-			BXHIDControllerProfile *profile = [BXHIDControllerProfile profileForHIDController: controller
-																		   toEmulatedJoystick: [emulator joystick]];
-			NSNumber *locationID = [NSNumber numberWithLong: [controller locationId]];
-			[controllerProfiles setObject: profile forKey: locationID];
-		}
-		[self didChangeValueForKey: @"controllerIsConnected"];
-	}
-	else
-	{
-		[self willChangeValueForKey: @"controllerIsConnected"];
-		[controllerProfiles removeAllObjects];
-		[self didChangeValueForKey: @"controllerIsConnected"];
-		[emulator detachJoystick];
 	}
 }
+
+- (void) _syncControllerProfiles
+{
+    id <BXEmulatedJoystick> joystick = [[[self representedObject] emulator] joystick];
+    
+    [controllerProfiles removeAllObjects];
+    if (joystick)
+    {
+        NSArray *controllers = [[[NSApp delegate] joystickController] joystickDevices];
+        for (DDHidJoystick *controller in controllers)
+        {
+            BXHIDControllerProfile *profile = [BXHIDControllerProfile profileForHIDController: controller
+                                                                           toEmulatedJoystick: joystick];
+            
+            NSNumber *locationID = [NSNumber numberWithLong: [controller locationId]];
+            [controllerProfiles setObject: profile forKey: locationID];
+        }
+    }
+}
+
 
 
 #pragma mark -

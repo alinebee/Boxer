@@ -10,6 +10,7 @@
 #import "BXAppController.h"
 #import "BXSession.h"
 #import "BXJoystickController.h"
+#import "BXJoypadController.h"
 #import "BXGeometry.h"
 #import "BXCursorFadeAnimation.h"
 #import "BXDOSWindowController.h"
@@ -112,6 +113,7 @@
 	if (session != previousSession)
 	{
 		BXJoystickController *joystickController = [[NSApp delegate] joystickController];
+        BXJoypadController *joypadController = [[NSApp delegate] joypadController];
 		
 		if (previousSession)
 		{
@@ -122,9 +124,11 @@
 			[previousSession removeObserver: self forKeyPath: @"paused"];
 			[previousSession removeObserver: self forKeyPath: @"autoPaused"];
 			[previousSession removeObserver: self forKeyPath: @"emulator.mouse.position"];
+			[previousSession removeObserver: self forKeyPath: @"emulator.joystick"];
 			[previousSession removeObserver: self forKeyPath: @"emulator.joystickSupport"];
 			
 			[joystickController removeObserver: self forKeyPath: @"joystickDevices"];
+			[joypadController removeObserver: self forKeyPath: @"joypadDevices"];
 			
 			
 			[self didResignKey];
@@ -169,7 +173,17 @@
 								 forKeyPath: @"joystickDevices"
 									options: NSKeyValueObservingOptionInitial
 									context: nil];
+            
+			[joypadController addObserver: self
+                               forKeyPath: @"joypadDevices"
+                                  options: NSKeyValueObservingOptionInitial
+                                  context: nil];
 			
+			[session addObserver: self
+					  forKeyPath: @"emulator.joystick"
+						 options: NSKeyValueObservingOptionInitial
+						 context: nil];
+            
 			[session addObserver: self
 					  forKeyPath: @"emulator.joystickSupport"
 						 options: NSKeyValueObservingOptionInitial
@@ -215,12 +229,50 @@
 		}
 	}
 	
-	else if ([keyPath isEqualToString: @"joystickDevices"] || 
-			 [keyPath isEqualToString: @"emulator.joystickSupport"])
+	else if ([keyPath isEqualToString: @"emulator.joystick"])
+    {
+        //Regenerate HID controller profiles for the newly connected joystick
+        [self _syncControllerProfiles];
+    }
+    
+	else if ([keyPath isEqualToString: @"emulator.joystickSupport"])
 	{
-		[self _syncAvailableJoystickTypes];
+        //Ensure that the connected joystick and available joystick types are
+        //appropriate for the emulator's joystick support level
+        [self _syncAvailableJoystickTypes];
 		[self _syncJoystickType];
 	}
+    
+    else if ([keyPath isEqualToString: @"joystickDevices"])
+    {
+        BXEmulator *emulator = [[self representedObject] emulator];
+        id oldJoystick = [emulator joystick];
+        
+        //Connect a joystick if none was available before
+		[self _syncJoystickType];
+        
+        //Regenerate controller profiles for the specified joystick
+        //The controller profiles may have already been synced as a result
+        //of a joystick being added/removed by syncJoystickType above,
+        //so only do this if the joystick didn't change
+        //FIXME: ugh, move this logic to BXJoystickInput
+        BOOL joystickChanged = (oldJoystick != [emulator joystick]);
+        if (!joystickChanged) [self _syncControllerProfiles];
+        
+        //Let the Inspector UI know to switch from the connect-a-controller panel
+        [self willChangeValueForKey: @"controllersAvailable"];
+        [self didChangeValueForKey: @"controllersAvailable"];
+    }
+    
+    else if ([keyPath isEqualToString: @"joypadDevices"])
+    {
+        //Connect a joystick if none was available before
+		[self _syncJoystickType];
+        
+        //Let the Inspector UI know to switch from the connect-a-controller panel
+        [self willChangeValueForKey: @"controllersAvailable"];
+        [self didChangeValueForKey: @"controllersAvailable"];
+	}		 
 }
 
 

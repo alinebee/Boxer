@@ -25,12 +25,17 @@
 //Used by the joystick type picker in the Inspector UI.
 @property (readonly, retain, nonatomic) NSArray *availableJoystickTypes;
 
+
 //The index of the currently selected joystick type from availableJoystickTypes.
 //Used by the joystick type picker in the Inspector UI.
 @property (assign, nonatomic) NSIndexSet *selectedJoystickTypeIndexes;
 
-//A flag indicating whether there are currently any supported controllers connected to the Mac.
-//Used by the joystick type picker in the Inspector UI.
-@property (readonly, nonatomic) BOOL controllerIsConnected;
+
+//Whether any HID joystick/gamepad controller devices are currently available.
+@property (readonly, nonatomic) BOOL joystickControllersAvailable;
+
+//Whether there are currently any supported controllers (either HID joysticks or Joypads)
+//connected to the Mac. Used by the joystick type picker in the Inspector UI.
+@property (readonly, nonatomic) BOOL controllersAvailable;
 
 @end

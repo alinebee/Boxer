@@ -229,6 +229,7 @@ static NSMutableArray *profileClasses = nil;
 		y			= @selector(yAxisMovedTo:),
 		x2			= @selector(x2AxisMovedTo:),
 		y2			= @selector(y2AxisMovedTo:),
+        wheel       = @selector(wheelMovedTo:),
 		rudder		= @selector(rudderMovedTo:),
 		throttle	= @selector(throttleMovedTo:),
 		accelerator = @selector(acceleratorMovedTo:),
@@ -270,7 +271,8 @@ static NSMutableArray *profileClasses = nil;
 	switch (normalizedAxis)
 	{
 		case kHIDUsage_GD_X:
-			if ([joystick respondsToSelector: x]) bindAxis = x;
+			if      ([joystick respondsToSelector: x]) bindAxis = x;
+			else if ([joystick respondsToSelector: wheel]) bindAxis = wheel;
 			break;
 			
 		case kHIDUsage_GD_Y:
@@ -281,9 +283,9 @@ static NSMutableArray *profileClasses = nil;
 			{
 				//Loop through these selectors in order of priority,
 				//assigning to the first available one on the emulated joystick
-				SEL selectors[4] = {rudder, brake, x2};
+				SEL selectors[3] = {rudder, brake, x2};
 				NSUInteger i;
-				for (i=0; i<4; i++)
+				for (i=0; i<3; i++)
 				{
 					if ([joystick respondsToSelector: selectors[i]])
 					{
@@ -298,9 +300,9 @@ static NSMutableArray *profileClasses = nil;
 			{
 				//Loop through these selectors in order of priority,
 				//assigning to the first available one on the emulated joystick
-				SEL selectors[4] = {throttle, accelerator, y2};
+				SEL selectors[3] = {throttle, accelerator, y2};
 				NSUInteger i;
-				for (i=0; i<4; i++)
+				for (i=0; i<3; i++)
 				{
 					if ([joystick respondsToSelector: selectors[i]])
 					{
@@ -326,6 +328,7 @@ static NSMutableArray *profileClasses = nil;
 	id binding = nil;
 	id <BXEmulatedJoystick> joystick = [self emulatedJoystick];
 	
+    //Map POV directly to POV on emulated joystick, if available
 	SEL pov = @selector(POVChangedTo:);
 	if ([joystick respondsToSelector: pov])
 	{
@@ -335,13 +338,23 @@ static NSMutableArray *profileClasses = nil;
 	else
 	{
 		SEL x = @selector(xAxisMovedTo:),
-			y = @selector(yAxisMovedTo:);
+			y = @selector(yAxisMovedTo:),
+            wheel = @selector(wheelMovedTo:);
 		
+        //Otherwise, map the POV to the X and Y axes if available
 		if ([joystick respondsToSelector: x] && [joystick respondsToSelector: y])
 		{
 			binding = [BXPOVToAxes binding];
 			[binding setXAxisSelector: x];
 			[binding setYAxisSelector: y];
+		}
+        
+        //Otherwise, map the POV's left and right directions to the wheel axis if available 
+		if ([joystick respondsToSelector: wheel])
+		{
+			binding = [BXPOVToAxes binding];
+			[binding setXAxisSelector: wheel];
+			[binding setYAxisSelector: NULL];
 		}
 	}
 	return binding;
@@ -382,13 +395,19 @@ static NSMutableArray *profileClasses = nil;
 	else
 	{
 		SEL x = @selector(xAxisMovedTo:),
-			y = @selector(yAxisMovedTo:);
+            y = @selector(yAxisMovedTo:),
+            wheel = @selector(wheelMovedTo:);
 		
 		id joystick = [self emulatedJoystick];
 		if ([joystick respondsToSelector: x] && [joystick respondsToSelector: y])
 		{
 			[self bindDPadElements: padElements toHorizontalAxis: x verticalAxis: y];
 		}
+        
+        else if ([joystick respondsToSelector: wheel])
+        {
+            [self bindDPadElements: padElements toHorizontalAxis: wheel verticalAxis: NULL];
+        }
 	}
 }
 

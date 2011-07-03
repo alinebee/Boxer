@@ -11,6 +11,7 @@
 #import "BXInputController.h"
 #import "BXInputController+BXKeyboardInput.h"
 #import "BXInputController+BXJoystickInput.h"
+#import "BXInputController+BXJoypadInput.h"
 
 #import "BXEmulator.h"
 #import "BXEmulatedKeyboard.h"
@@ -112,6 +113,8 @@
 //current level of joystick support.
 - (void) _syncAvailableJoystickTypes;
 
+//Recreate HID controller profiles whenever the available controllers change or the emulated game's joystick changes.
+- (void) _syncControllerProfiles;
 
 @end
 

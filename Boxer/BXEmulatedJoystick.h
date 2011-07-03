@@ -154,7 +154,10 @@ enum {
 - (void) y2AxisMovedTo: (float)position;
 - (void) y2AxisMovedBy: (float)delta;
 
-//Wheel pedal axes
+//Wheel axes
+- (void) wheelMovedTo: (float)direction;
+- (void) wheelMovedBy: (float)delta;
+
 - (void) acceleratorMovedTo: (float)position;
 - (void) acceleratorMovedBy: (float)delta;
 
@@ -254,8 +257,8 @@ enum {
 	float acceleratorComponent;
 	float brakeComponent;
 }
-- (void) xAxisMovedTo: (float)position;
-- (void) xAxisMovedBy: (float)delta;
+- (void) wheelMovedTo: (float)position;
+- (void) wheelMovedBy: (float)delta;
 
 - (void) acceleratorMovedTo: (float)position;
 - (void) acceleratorMovedBy: (float)delta;
@@ -269,8 +272,8 @@ enum {
 //Racing wheel with accelerator on X2 axis and brake on Y2 axis
 @interface BX3AxisWheel: BXBaseEmulatedJoystick <BXEmulatedJoystick>
 
-- (void) xAxisMovedTo: (float)position;
-- (void) xAxisMovedBy: (float)delta;
+- (void) wheelMovedTo: (float)position;
+- (void) wheelMovedBy: (float)delta;
 
 - (void) acceleratorMovedTo: (float)position;
 - (void) acceleratorMovedBy: (float)delta;

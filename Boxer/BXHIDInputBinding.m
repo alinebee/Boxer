@@ -359,8 +359,11 @@ enum {
 			x= 0.0f, y=0.0f;
 	}
 
-	[self _performSelector: [self xAxisSelector] onTarget: target withValue: &x];
-	[self _performSelector: [self yAxisSelector] onTarget: target withValue: &y];
+    if ([self xAxisSelector])
+        [self _performSelector: [self xAxisSelector] onTarget: target withValue: &x];
+    
+    if ([self yAxisSelector])
+        [self _performSelector: [self yAxisSelector] onTarget: target withValue: &y];
 }
 
 @end

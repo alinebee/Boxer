@@ -305,6 +305,16 @@
 		9FC1620E119E9AD700705EA5 /* BXCursorFadeAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC1620D119E9AD700705EA5 /* BXCursorFadeAnimation.m */; };
 		9FC3B2550F62D9CE006DE439 /* BXSession+BXEmulatorControls.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC3B2540F62D9CE006DE439 /* BXSession+BXEmulatorControls.m */; };
 		9FC5353512F489F8005E7670 /* 35DisketteShine.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FC5353412F489F8005E7670 /* 35DisketteShine.icns */; };
+		9FC637FD13C09B11004478A3 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FC637FC13C09B10004478A3 /* CoreServices.framework */; };
+		9FC6380013C09B79004478A3 /* BXJoypadController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC637FF13C09B79004478A3 /* BXJoypadController.m */; };
+		9FC6380A13C09C5B004478A3 /* libJoypadCocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FC6380913C09C5B004478A3 /* libJoypadCocoa.a */; };
+		9FC6380D13C0A10E004478A3 /* BXInputController+BXJoypadInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6380C13C0A10E004478A3 /* BXInputController+BXJoypadInput.m */; };
+		9FC6382213C0D54C004478A3 /* BX2ButtonJoystickLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6382113C0D54C004478A3 /* BX2ButtonJoystickLayout.m */; };
+		9FC6382513C0D637004478A3 /* BXJoypadLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6382413C0D637004478A3 /* BXJoypadLayout.m */; };
+		9FC6382913C0DB4F004478A3 /* BX4ButtonJoystickLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6382813C0DB4F004478A3 /* BX4ButtonJoystickLayout.m */; };
+		9FC6382C13C0DC49004478A3 /* BXFlightstickLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6382B13C0DC48004478A3 /* BXFlightstickLayout.m */; };
+		9FC6382F13C0E01C004478A3 /* BX4ButtonWheelLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6382E13C0E01B004478A3 /* BX4ButtonWheelLayout.m */; };
+		9FC6383213C0E245004478A3 /* BX2ButtonWheelLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6383113C0E244004478A3 /* BX2ButtonWheelLayout.m */; };
 		9FC74821122A7C8B00E86E6A /* BXPathEnumerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC74820122A7C8B00E86E6A /* BXPathEnumerator.m */; };
 		9FC8B073121807AD004F6DA2 /* NSView+BXDrawing.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC8B072121807AD004F6DA2 /* NSView+BXDrawing.m */; };
 		9FC8B16B12182586004F6DA2 /* BXImportFinalizingPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC8B16A12182586004F6DA2 /* BXImportFinalizingPanelController.m */; };
@@ -942,6 +952,29 @@
 		9FC3B2530F62D9CE006DE439 /* BXSession+BXEmulatorControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXSession+BXEmulatorControls.h"; sourceTree = "<group>"; };
 		9FC3B2540F62D9CE006DE439 /* BXSession+BXEmulatorControls.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXSession+BXEmulatorControls.m"; sourceTree = "<group>"; };
 		9FC5353412F489F8005E7670 /* 35DisketteShine.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = 35DisketteShine.icns; sourceTree = "<group>"; };
+		9FC637FC13C09B10004478A3 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
+		9FC637FE13C09B79004478A3 /* BXJoypadController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXJoypadController.h; sourceTree = "<group>"; };
+		9FC637FF13C09B79004478A3 /* BXJoypadController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXJoypadController.m; sourceTree = "<group>"; };
+		9FC6380213C09C13004478A3 /* JoypadConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JoypadConstants.h; sourceTree = "<group>"; };
+		9FC6380313C09C13004478A3 /* JoypadControllerLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JoypadControllerLayout.h; sourceTree = "<group>"; };
+		9FC6380413C09C13004478A3 /* JoypadDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JoypadDevice.h; sourceTree = "<group>"; };
+		9FC6380513C09C13004478A3 /* JoypadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JoypadManager.h; sourceTree = "<group>"; };
+		9FC6380613C09C13004478A3 /* JoypadSDK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JoypadSDK.h; sourceTree = "<group>"; };
+		9FC6380913C09C5B004478A3 /* libJoypadCocoa.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libJoypadCocoa.a; path = "Other Sources/JoypadCocoaSDK/libJoypadCocoa.a"; sourceTree = "<group>"; };
+		9FC6380B13C0A10E004478A3 /* BXInputController+BXJoypadInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXInputController+BXJoypadInput.h"; sourceTree = "<group>"; };
+		9FC6380C13C0A10E004478A3 /* BXInputController+BXJoypadInput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXInputController+BXJoypadInput.m"; sourceTree = "<group>"; };
+		9FC6382013C0D54C004478A3 /* BX2ButtonJoystickLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BX2ButtonJoystickLayout.h; sourceTree = "<group>"; };
+		9FC6382113C0D54C004478A3 /* BX2ButtonJoystickLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BX2ButtonJoystickLayout.m; sourceTree = "<group>"; };
+		9FC6382313C0D636004478A3 /* BXJoypadLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXJoypadLayout.h; sourceTree = "<group>"; };
+		9FC6382413C0D637004478A3 /* BXJoypadLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXJoypadLayout.m; sourceTree = "<group>"; };
+		9FC6382713C0DB4F004478A3 /* BX4ButtonJoystickLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BX4ButtonJoystickLayout.h; sourceTree = "<group>"; };
+		9FC6382813C0DB4F004478A3 /* BX4ButtonJoystickLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BX4ButtonJoystickLayout.m; sourceTree = "<group>"; };
+		9FC6382A13C0DC48004478A3 /* BXFlightstickLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFlightstickLayout.h; sourceTree = "<group>"; };
+		9FC6382B13C0DC48004478A3 /* BXFlightstickLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFlightstickLayout.m; sourceTree = "<group>"; };
+		9FC6382D13C0E01A004478A3 /* BX4ButtonWheelLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BX4ButtonWheelLayout.h; sourceTree = "<group>"; };
+		9FC6382E13C0E01B004478A3 /* BX4ButtonWheelLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BX4ButtonWheelLayout.m; sourceTree = "<group>"; };
+		9FC6383013C0E244004478A3 /* BX2ButtonWheelLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BX2ButtonWheelLayout.h; sourceTree = "<group>"; };
+		9FC6383113C0E244004478A3 /* BX2ButtonWheelLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BX2ButtonWheelLayout.m; sourceTree = "<group>"; };
 		9FC7481F122A7C8B00E86E6A /* BXPathEnumerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXPathEnumerator.h; sourceTree = "<group>"; };
 		9FC74820122A7C8B00E86E6A /* BXPathEnumerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXPathEnumerator.m; sourceTree = "<group>"; };
 		9FC8B071121807AD004F6DA2 /* NSView+BXDrawing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSView+BXDrawing.h"; sourceTree = "<group>"; };
@@ -1069,6 +1102,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9FC6380A13C09C5B004478A3 /* libJoypadCocoa.a in Frameworks */,
+				9FC637FD13C09B11004478A3 /* CoreServices.framework in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				9FBC32120F56C3E9001811F2 /* Carbon.framework in Frameworks */,
 				9FBC3C160F56D6E8001811F2 /* SDL.framework in Frameworks */,
@@ -1126,6 +1161,7 @@
 				9F1CBA55120C783800C5E926 /* Game import session */,
 				9FDE33FF1351DA0B000DCE44 /* Drive importing */,
 				9F23EB0111390A2600DC5AB6 /* Rendering */,
+				9FC6381213C0B5C0004478A3 /* Input */,
 				9F27133610C1253E0003CB58 /* DOS window */,
 				9F1CBA94120C7D4300C5E926 /* Game import window */,
 				9F27136610C127F90003CB58 /* Inspector panel */,
@@ -1142,6 +1178,7 @@
 		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9FC637FC13C09B10004478A3 /* CoreServices.framework */,
 				9F20C28D11E5D8B4005AF541 /* QTKit.framework */,
 				9F4E042B0F67E72300427D50 /* AudioToolbox.framework */,
 				9F2140FE0F59F28000A5A183 /* QuartzCore.framework */,
@@ -1218,6 +1255,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9FC6380913C09C5B004478A3 /* libJoypadCocoa.a */,
 				9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */,
 				9FBC3C130F56D6E8001811F2 /* Bundled Frameworks */,
 				1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */,
@@ -1316,7 +1354,6 @@
 		9F1D50280F5C0ACD009F0AB9 /* Emulator */ = {
 			isa = PBXGroup;
 			children = (
-				9FCC2F971366EF030013F083 /* Devices */,
 				9F1D4FFF0F5C0966009F0AB9 /* BXEmulator.h */,
 				9F4037B912CB6CA300DAA66C /* BXEmulatorPrivate.h */,
 				9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */,
@@ -1427,8 +1464,6 @@
 		9F496E3C108EEAD700282261 /* UI controllers */ = {
 			isa = PBXGroup;
 			children = (
-				9FD1D6FF1364819E00792011 /* BXJoystickController.h */,
-				9FD1D7001364819E00792011 /* BXJoystickController.m */,
 				9FDB601510C0707F00C15CF4 /* BXDockTileController.h */,
 				9FDB601610C0707F00C15CF4 /* BXDockTileController.m */,
 				9F45A422109C867E00593456 /* BXMountPanelController.h */,
@@ -2123,6 +2158,65 @@
 			path = Frameworks;
 			sourceTree = "<group>";
 		};
+		9FC6380113C09C13004478A3 /* JoypadCocoaSDK */ = {
+			isa = PBXGroup;
+			children = (
+				9FC6380213C09C13004478A3 /* JoypadConstants.h */,
+				9FC6380313C09C13004478A3 /* JoypadControllerLayout.h */,
+				9FC6380413C09C13004478A3 /* JoypadDevice.h */,
+				9FC6380513C09C13004478A3 /* JoypadManager.h */,
+				9FC6380613C09C13004478A3 /* JoypadSDK.h */,
+			);
+			path = JoypadCocoaSDK;
+			sourceTree = "<group>";
+		};
+		9FC6381213C0B5C0004478A3 /* Input */ = {
+			isa = PBXGroup;
+			children = (
+				9FC6382613C0DA0B004478A3 /* Controller profiles */,
+				9FC6381F13C0C786004478A3 /* Joypad layouts */,
+				9FCC2F971366EF030013F083 /* Emulated devices */,
+				9FD1D6FF1364819E00792011 /* BXJoystickController.h */,
+				9FD1D7001364819E00792011 /* BXJoystickController.m */,
+				9FC637FE13C09B79004478A3 /* BXJoypadController.h */,
+				9FC637FF13C09B79004478A3 /* BXJoypadController.m */,
+				9F06C6DF13993FB100B19DF1 /* BXHIDInputBinding.h */,
+				9F06C6E013993FB100B19DF1 /* BXHIDInputBinding.m */,
+			);
+			name = Input;
+			sourceTree = "<group>";
+		};
+		9FC6381F13C0C786004478A3 /* Joypad layouts */ = {
+			isa = PBXGroup;
+			children = (
+				9FC6382313C0D636004478A3 /* BXJoypadLayout.h */,
+				9FC6382413C0D637004478A3 /* BXJoypadLayout.m */,
+				9FC6382013C0D54C004478A3 /* BX2ButtonJoystickLayout.h */,
+				9FC6382113C0D54C004478A3 /* BX2ButtonJoystickLayout.m */,
+				9FC6382713C0DB4F004478A3 /* BX4ButtonJoystickLayout.h */,
+				9FC6382813C0DB4F004478A3 /* BX4ButtonJoystickLayout.m */,
+				9FC6382A13C0DC48004478A3 /* BXFlightstickLayout.h */,
+				9FC6382B13C0DC48004478A3 /* BXFlightstickLayout.m */,
+				9FC6383013C0E244004478A3 /* BX2ButtonWheelLayout.h */,
+				9FC6383113C0E244004478A3 /* BX2ButtonWheelLayout.m */,
+				9FC6382D13C0E01A004478A3 /* BX4ButtonWheelLayout.h */,
+				9FC6382E13C0E01B004478A3 /* BX4ButtonWheelLayout.m */,
+			);
+			name = "Joypad layouts";
+			sourceTree = "<group>";
+		};
+		9FC6382613C0DA0B004478A3 /* Controller profiles */ = {
+			isa = PBXGroup;
+			children = (
+				9F06C6D113992E1F00B19DF1 /* BXHIDControllerProfile.h */,
+				9FD3A1ED139A37AF00D0918E /* BXHIDControllerProfilePrivate.h */,
+				9F06C6D213992E1F00B19DF1 /* BXHIDControllerProfile.m */,
+				9FD3A1E3139A358C00D0918E /* BX360ControllerProfile.m */,
+				9FD3A27E139A839600D0918E /* BXSixaxisControllerProfile.m */,
+			);
+			name = "Controller profiles";
+			sourceTree = "<group>";
+		};
 		9FCBB2CB10A61C6D00C28B09 /* Sounds */ = {
 			isa = PBXGroup;
 			children = (
@@ -2133,7 +2227,7 @@
 			name = Sounds;
 			sourceTree = "<group>";
 		};
-		9FCC2F971366EF030013F083 /* Devices */ = {
+		9FCC2F971366EF030013F083 /* Emulated devices */ = {
 			isa = PBXGroup;
 			children = (
 				9FEF97FF1191E1EF002024DF /* BXEmulatedMouse.h */,
@@ -2147,7 +2241,7 @@
 				9FC9E58E1367514C0095DCDE /* BXCHFlightstick.mm */,
 				9FFE1F821390F70C005C438A /* BXThrustmasterFCS.mm */,
 			);
-			name = Devices;
+			name = "Emulated devices";
 			sourceTree = "<group>";
 		};
 		9FCC2FF71366FB6E0013F083 /* Input handling */ = {
@@ -2161,14 +2255,9 @@
 				9FE50B581365845200495EBE /* BXInputController+BXJoystickInput.m */,
 				9FCC2FF21366FA820013F083 /* BXInputController+BXKeyboardInput.h */,
 				9FCC2FF31366FA820013F083 /* BXInputController+BXKeyboardInput.m */,
+				9FC6380B13C0A10E004478A3 /* BXInputController+BXJoypadInput.h */,
+				9FC6380C13C0A10E004478A3 /* BXInputController+BXJoypadInput.m */,
 				9FCC2FF81366FB840013F083 /* BXInputControllerPrivate.h */,
-				9F06C6D113992E1F00B19DF1 /* BXHIDControllerProfile.h */,
-				9FD3A1ED139A37AF00D0918E /* BXHIDControllerProfilePrivate.h */,
-				9F06C6D213992E1F00B19DF1 /* BXHIDControllerProfile.m */,
-				9F06C6DF13993FB100B19DF1 /* BXHIDInputBinding.h */,
-				9F06C6E013993FB100B19DF1 /* BXHIDInputBinding.m */,
-				9FD3A1E3139A358C00D0918E /* BX360ControllerProfile.m */,
-				9FD3A27E139A839600D0918E /* BXSixaxisControllerProfile.m */,
 			);
 			name = "Input handling";
 			sourceTree = "<group>";
@@ -2232,6 +2321,7 @@
 		9FFF978412327D58009B5EE5 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				9FC6380113C09C13004478A3 /* JoypadCocoaSDK */,
 				9F70A02212F731A800D144D2 /* SystemEvents.h */,
 				9F466A4711A924EC00C50965 /* Shader.h */,
 				9F466A4811A924EC00C50965 /* Shader.m */,
@@ -2693,6 +2783,14 @@
 				9FD3A27F139A839600D0918E /* BXSixaxisControllerProfile.m in Sources */,
 				9F60B0DC13AA418300F06BB1 /* BXCollectionItemView.m in Sources */,
 				9FD012FB13AB87E500AF6FE8 /* BXTemplateImageCell.m in Sources */,
+				9FC6380013C09B79004478A3 /* BXJoypadController.m in Sources */,
+				9FC6380D13C0A10E004478A3 /* BXInputController+BXJoypadInput.m in Sources */,
+				9FC6382213C0D54C004478A3 /* BX2ButtonJoystickLayout.m in Sources */,
+				9FC6382513C0D637004478A3 /* BXJoypadLayout.m in Sources */,
+				9FC6382913C0DB4F004478A3 /* BX4ButtonJoystickLayout.m in Sources */,
+				9FC6382C13C0DC49004478A3 /* BXFlightstickLayout.m in Sources */,
+				9FC6382F13C0E01C004478A3 /* BX4ButtonWheelLayout.m in Sources */,
+				9FC6383213C0E245004478A3 /* BX2ButtonWheelLayout.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2993,9 +3091,15 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IBC_PLUGINS = "\"$(SRCROOT)/Frameworks/BGHUDAppKit.framework/Resources/BGHUDAppKitPlugin.ibplugin\"";
 				INFOPLIST_FILE = Info.plist;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Other Sources/JoypadCocoaSDK\"",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "";
 				"OTHER_CFLAGS[arch=i386]" = "-mstackrealign";
+				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = Boxer;
 			};
 			name = Debug;
@@ -3028,9 +3132,15 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IBC_PLUGINS = "\"$(SRCROOT)/Frameworks/BGHUDAppKit.framework/Resources/BGHUDAppKitPlugin.ibplugin\"";
 				INFOPLIST_FILE = Info.plist;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Other Sources/JoypadCocoaSDK\"",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = "";
 				"OTHER_CFLAGS[arch=i386]" = "-mstackrealign";
+				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = Boxer;
 				VALIDATE_PRODUCT = YES;
 			};

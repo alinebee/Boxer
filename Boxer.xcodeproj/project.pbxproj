@@ -237,6 +237,7 @@
 		9F7721EB12B38C4400072AE8 /* shell_misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77217512B38C4400072AE8 /* shell_misc.cpp */; };
 		9F7FC94C139EB38300D60320 /* RacingWheel.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F7FC94B139EB38300D60320 /* RacingWheel.png */; };
 		9F843FE11226EB1100FD37F1 /* import.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F843FE01226EB1100FD37F1 /* import.png */; };
+		9F87EF7313C1B18900326608 /* BXFlightstickAccelerometerLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F87EF7213C1B18900326608 /* BXFlightstickAccelerometerLayout.m */; };
 		9F8A974A10E7DEF500A4B72A /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8A974910E7DEF500A4B72A /* RegexKitLite.m */; };
 		9F8A976010E7EDDE00A4B72A /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */; };
 		9F8BFE9F12C0EF7B0059030F /* BXDisplayLinkRenderingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8BFE9E12C0EF7B0059030F /* BXDisplayLinkRenderingView.m */; };
@@ -312,7 +313,6 @@
 		9FC6382213C0D54C004478A3 /* BX2ButtonJoystickLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6382113C0D54C004478A3 /* BX2ButtonJoystickLayout.m */; };
 		9FC6382513C0D637004478A3 /* BXJoypadLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6382413C0D637004478A3 /* BXJoypadLayout.m */; };
 		9FC6382913C0DB4F004478A3 /* BX4ButtonJoystickLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6382813C0DB4F004478A3 /* BX4ButtonJoystickLayout.m */; };
-		9FC6382C13C0DC49004478A3 /* BXFlightstickLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6382B13C0DC48004478A3 /* BXFlightstickLayout.m */; };
 		9FC6382F13C0E01C004478A3 /* BX4ButtonWheelLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6382E13C0E01B004478A3 /* BX4ButtonWheelLayout.m */; };
 		9FC6383213C0E245004478A3 /* BX2ButtonWheelLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6383113C0E244004478A3 /* BX2ButtonWheelLayout.m */; };
 		9FC74821122A7C8B00E86E6A /* BXPathEnumerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC74820122A7C8B00E86E6A /* BXPathEnumerator.m */; };
@@ -849,6 +849,8 @@
 		9F7FC94B139EB38300D60320 /* RacingWheel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = RacingWheel.png; sourceTree = "<group>"; };
 		9F80BC81123556AD00EBAB23 /* Finder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Finder.h; sourceTree = "<group>"; };
 		9F843FE01226EB1100FD37F1 /* import.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = import.png; sourceTree = "<group>"; };
+		9F87EF7113C1B18900326608 /* BXFlightstickAccelerometerLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFlightstickAccelerometerLayout.h; sourceTree = "<group>"; };
+		9F87EF7213C1B18900326608 /* BXFlightstickAccelerometerLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFlightstickAccelerometerLayout.m; sourceTree = "<group>"; };
 		9F8A974810E7DEF500A4B72A /* RegexKitLite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegexKitLite.h; sourceTree = "<group>"; };
 		9F8A974910E7DEF500A4B72A /* RegexKitLite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegexKitLite.m; sourceTree = "<group>"; };
 		9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
@@ -2197,6 +2199,8 @@
 				9FC6382813C0DB4F004478A3 /* BX4ButtonJoystickLayout.m */,
 				9FC6382A13C0DC48004478A3 /* BXFlightstickLayout.h */,
 				9FC6382B13C0DC48004478A3 /* BXFlightstickLayout.m */,
+				9F87EF7113C1B18900326608 /* BXFlightstickAccelerometerLayout.h */,
+				9F87EF7213C1B18900326608 /* BXFlightstickAccelerometerLayout.m */,
 				9FC6383013C0E244004478A3 /* BX2ButtonWheelLayout.h */,
 				9FC6383113C0E244004478A3 /* BX2ButtonWheelLayout.m */,
 				9FC6382D13C0E01A004478A3 /* BX4ButtonWheelLayout.h */,
@@ -2788,9 +2792,9 @@
 				9FC6382213C0D54C004478A3 /* BX2ButtonJoystickLayout.m in Sources */,
 				9FC6382513C0D637004478A3 /* BXJoypadLayout.m in Sources */,
 				9FC6382913C0DB4F004478A3 /* BX4ButtonJoystickLayout.m in Sources */,
-				9FC6382C13C0DC49004478A3 /* BXFlightstickLayout.m in Sources */,
 				9FC6382F13C0E01C004478A3 /* BX4ButtonWheelLayout.m in Sources */,
 				9FC6383213C0E245004478A3 /* BX2ButtonWheelLayout.m in Sources */,
+				9F87EF7313C1B18900326608 /* BXFlightstickAccelerometerLayout.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

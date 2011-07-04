@@ -23,7 +23,7 @@
     {
         layout = [[JoypadControllerLayout alloc] init];
         
-        [layout setName: @"2-button racing wheel"];
+        [layout setName: @"Boxer: 2-button racing wheel"];
         
         //We use the accelerometer in lieu of onscreen steering controls
         [layout addAccelerometer];

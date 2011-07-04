@@ -50,8 +50,9 @@
             suppressReconnectionNotifications = YES;
             for (JoypadDevice *device in [joypadManager connectedDevices])
             {
+                NSUInteger playerNum = [device playerNumber];
                 [device disconnect];
-                [joypadManager connectToDevice: device asPlayer: 1];
+                [joypadManager connectToDevice: device asPlayer: playerNum];
             }
             suppressReconnectionNotifications = NO;
         }
@@ -128,8 +129,12 @@
          didFindDevice: (JoypadDevice *)device 
    previouslyConnected: (BOOL)wasConnected
 {
-    [self setHasJoypadDevices: YES];
-    [joypadManager connectToDevice: device asPlayer: 1];
+    //Don't connect more than one device
+    if (![self hasJoypadDevices])
+    {
+        [joypadManager connectToDevice: device asPlayer: 1];
+        [self setHasJoypadDevices: YES];
+    }
 }
 
 - (void) joypadManager: (JoypadManager *)manager

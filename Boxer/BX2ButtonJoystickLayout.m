@@ -23,7 +23,7 @@
     {
         layout = [[JoypadControllerLayout alloc] init];
         
-        [layout setName: @"2-axis, 2-button joystick"];
+        [layout setName: @"Boxer: 2-axis, 2-button joystick"];
         
         [layout addAnalogStickWithFrame: CGRectMake(0, 70, 240, 240)
                              identifier: kJoyInputAnalogStick1];

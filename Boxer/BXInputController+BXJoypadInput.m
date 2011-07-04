@@ -71,9 +71,9 @@
 - (void) joypadDevice: (JoypadDevice *)device
         didAccelerate: (JoypadAcceleration)accel
 {
-    //Map phone rotation to steering
     id joystick = [self _emulatedJoystick];
     
+    //Map phone rotation to steering
     if ([joystick respondsToSelector: @selector(wheelMovedTo:)])
     {
         float rotation  = accel.y;
@@ -88,7 +88,39 @@
         //Values returned by the Joypad SDK are reversed from what emulated joysticks expect
         [joystick wheelMovedTo: -rotation];
         
-        //NSLog(@"%f", -rotation);
+        NSLog(@"%f", -rotation);
+    }
+    else if ([joystick respondsToSelector: @selector(xAxisMovedTo:)] &&
+             [joystick respondsToSelector: @selector(yAxisMovedTo:)])
+    {
+        float x, y;
+        
+        //'Release' input if the device appears to be lying flat
+        //Disabled for now as this doesn't work terribly well
+        if (NO && ABS(accel.z) > BXJoypadRestingThreshold &&
+            ABS(accel.x) > BXJoypadRestingThreshold)
+        {
+            x = 0.0f;
+            y = 0.0f;
+        }
+        else
+        {
+            NSLog(@"roll: %f, pitch: %f, yaw: %f", accel.y, accel.x, accel.z);
+            //Confusing, yes?
+            //The accelerometer's Y is the angle around an axis going straight through
+            //the screen and out the other side. We want this to be our roll axis.
+            //The accelerometer's X is the angle around an axis parallel to the longest
+            //sides of the device. We want this to be our pitch axis. 
+            x = -accel.y;
+            y = accel.x;
+            
+            //Apply a deadzone to the center of each axis
+            if (ABS(x) < BXJoypadRotationDeadzone) x = 0.0f;
+            if (ABS(y) < BXJoypadRotationDeadzone) y = 0.0f;
+        }
+        
+        [joystick xAxisMovedTo: x];
+        [joystick yAxisMovedTo: y];
     }
 }
 
@@ -124,9 +156,11 @@
     
     id joystick = [self _emulatedJoystick];
     
-    //TODO: POV input mapping
-    if ([joystick respondsToSelector: @selector(xAxisMovedTo:)] && 
-        [joystick respondsToSelector: @selector(yAxisMovedTo:)])
+    if ([joystick respondsToSelector: @selector(POVChangedTo:)])
+    {
+    }
+    else if ([joystick respondsToSelector: @selector(xAxisMovedTo:)] && 
+             [joystick respondsToSelector: @selector(yAxisMovedTo:)])
     {
         switch (dpadButton)
         {
@@ -168,7 +202,7 @@
             
         case kJoyInputSelectButton:
             //Pause button
-            //Do nothing: this is a toggle
+            //Do nothing on button up: this is a toggle
             break;
             
         case kJoyInputStartButton:

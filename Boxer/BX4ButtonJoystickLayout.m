@@ -24,14 +24,13 @@
         layout = [[JoypadControllerLayout alloc] init];
     
         //NOTE: we omit the additional 2 axes for lack of space
-        [layout setName: @"2-axis, 4-button joystick"];
+        [layout setName: @"Boxer: 2-axis, 4-button joystick"];
         
         [layout addAnalogStickWithFrame: CGRectMake(0, 70, 240, 240)
                            identifier: kJoyInputAnalogStick1];
         
         /*
         [layout addDpadWithFrame: CGRectMake(0, 70, 240, 240)
-                      dpadOrigin: CGPointMake(120, 190)
                       identifier: kJoyInputDpad1];
          */
         

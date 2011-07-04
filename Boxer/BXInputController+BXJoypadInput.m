@@ -105,7 +105,6 @@
         }
         else
         {
-            NSLog(@"roll: %f, pitch: %f, yaw: %f", accel.y, accel.x, accel.z);
             //Confusing, yes?
             //The accelerometer's Y is the angle around an axis going straight through
             //the screen and out the other side. We want this to be our roll axis.
@@ -114,6 +113,7 @@
             x = -accel.y;
             y = accel.x;
             
+            NSLog(@"Roll: %f, pitch: %f, roll/pitch: %f", x, y, x / y);
             //Apply a deadzone to the center of each axis
             if (ABS(x) < BXJoypadRotationDeadzone) x = 0.0f;
             if (ABS(y) < BXJoypadRotationDeadzone) y = 0.0f;
@@ -130,9 +130,12 @@
 {
     id joystick = [self _emulatedJoystick];
     
-    //TODO: POV input mapping
-    if ([joystick respondsToSelector: @selector(xAxisMovedTo:)] && 
-        [joystick respondsToSelector: @selector(yAxisMovedTo:)])
+    if ([joystick respondsToSelector: @selector(POVChangedTo:)])
+    {
+        
+    }
+    else if ([joystick respondsToSelector: @selector(xAxisMovedTo:)] && 
+             [joystick respondsToSelector: @selector(yAxisMovedTo:)])
     {
         switch (dpadButton)
         {
@@ -158,6 +161,7 @@
     
     if ([joystick respondsToSelector: @selector(POVChangedTo:)])
     {
+        
     }
     else if ([joystick respondsToSelector: @selector(xAxisMovedTo:)] && 
              [joystick respondsToSelector: @selector(yAxisMovedTo:)])

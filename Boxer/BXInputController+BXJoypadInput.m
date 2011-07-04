@@ -71,56 +71,48 @@
 - (void) joypadDevice: (JoypadDevice *)device
         didAccelerate: (JoypadAcceleration)accel
 {
+    float roll, pitch;
+    
+    //These will have a range in radians from PI to -PI.
+    double roll_in_radians  = atan2(accel.y, -accel.x);
+    double pitch_in_radians = atan2(accel.z, -accel.x);
+    
+    //PI/2 (90 degrees counterclockwise) to -PI/2 (90 degrees clockwise)
+    //is what we want to map to the -1.0 to 1.0 range of the emulated joystick.
+    //(We don't need to worry about the overflow to -+2.0, because the emulated
+    //joystick automatically crops axis values to +-1.0)
+    roll = -(float)(roll_in_radians / M_PI_2);
+    pitch = -(float)(pitch_in_radians / M_PI_2);
+    
     id joystick = [self _emulatedJoystick];
     
-    //Map phone rotation to steering
+    //Map roll to steering
     if ([joystick respondsToSelector: @selector(wheelMovedTo:)])
     {
-        float rotation  = accel.y;
-        
-        //'Release' input if the device appears to be lying flat
-        if (ABS(accel.z) > BXJoypadRestingThreshold &&
-            ABS(accel.x) > BXJoypadRestingThreshold) rotation = 0.0f;
-        
         //Apply a deadzone to the center of the wheel range
-        else if (ABS(rotation) < BXJoypadRotationDeadzone) rotation = 0.0f;
+        if (ABS(roll) < BXJoypadRotationDeadzone) roll = 0.0f;
         
-        //Values returned by the Joypad SDK are reversed from what emulated joysticks expect
-        [joystick wheelMovedTo: -rotation];
-        
-        NSLog(@"%f", -rotation);
+        [joystick wheelMovedTo: roll];
     }
+    //Map roll and pitch to X and Y axes
     else if ([joystick respondsToSelector: @selector(xAxisMovedTo:)] &&
              [joystick respondsToSelector: @selector(yAxisMovedTo:)])
     {
-        float x, y;
+        //Normally 0.0 pitch is completely vertical, +1.0 pitch is horizontal.
+        //We want our pitch's 0 resting position to be at about 45 degrees,
+        //and to avoid the user having to push all the way to horizontal as
+        //that will prevent us taking roll readings.
+        //The calculation below will give us 0 at 45 degrees from horizontal,
+        //-1.0 at about 80 degrees from horizontal and 1.0 at about 10 degrees
+        //from horizontal.
+        pitch = (pitch - 0.5f) * 2.5f;
         
-        //'Release' input if the device appears to be lying flat
-        //Disabled for now as this doesn't work terribly well
-        if (NO && ABS(accel.z) > BXJoypadRestingThreshold &&
-            ABS(accel.x) > BXJoypadRestingThreshold)
-        {
-            x = 0.0f;
-            y = 0.0f;
-        }
-        else
-        {
-            //Confusing, yes?
-            //The accelerometer's Y is the angle around an axis going straight through
-            //the screen and out the other side. We want this to be our roll axis.
-            //The accelerometer's X is the angle around an axis parallel to the longest
-            //sides of the device. We want this to be our pitch axis. 
-            x = -accel.y;
-            y = accel.x;
-            
-            NSLog(@"Roll: %f, pitch: %f, roll/pitch: %f", x, y, x / y);
-            //Apply a deadzone to the center of each axis
-            if (ABS(x) < BXJoypadRotationDeadzone) x = 0.0f;
-            if (ABS(y) < BXJoypadRotationDeadzone) y = 0.0f;
-        }
+        //Apply a deadzone to the center of each axis
+        if (ABS(roll) < BXJoypadRotationDeadzone)   roll = 0.0f;
+        if (ABS(pitch) < BXJoypadRotationDeadzone)  pitch = 0.0f;
         
-        [joystick xAxisMovedTo: x];
-        [joystick yAxisMovedTo: y];
+        [joystick xAxisMovedTo: roll];
+        [joystick yAxisMovedTo: pitch];
     }
 }
 
@@ -280,7 +272,7 @@
         [joystick xAxisMovedTo: x];
         [joystick yAxisMovedTo: y];
         
-        NSLog(@"%f, %f", x, y);
+        //NSLog(@"%f, %f", x, y);
     }
 }
 

@@ -82,6 +82,8 @@
 {
     [[NSApp delegate] removeObserver: self forKeyPath: @"currentSession.DOSWindowController.inputController.currentJoypadLayout"];
     
+    [[NSApp delegate] removeObserver: self forKeyPath: @"currentSession.DOSWindowController.inputController"];
+    
     [joypadManager stopFindingDevices];
     [joypadManager release], joypadManager = nil;
     [self setCurrentLayout: nil], [currentLayout release];

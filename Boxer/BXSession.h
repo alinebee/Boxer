@@ -14,6 +14,9 @@
 //(mostly for controlling the emulator.)
 
 #import <Cocoa/Cocoa.h>
+//For suppressing display sleep
+#import <IOKit/pwr_mgt/IOPMLib.h>
+
 #import "BXEmulatorDelegate.h"
 #import "BXGameProfile.h"
 
@@ -81,6 +84,8 @@ extern NSString * const BXDidFinishInterruptionNotification;
 	UKFileWatcher *watcher;
 	
 	NSTimeInterval programStartTime;
+    
+    IOPMAssertionID displaySleepAssertionID;
 }
 
 

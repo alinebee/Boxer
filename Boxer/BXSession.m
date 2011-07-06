@@ -202,6 +202,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	[importQueue release], importQueue = nil;
 	[watcher release], watcher = nil;
 	
+    [self setSuppressesDisplaySleep: NO];
+    
 	[super dealloc];
 }
 
@@ -652,12 +654,18 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	//commands and settings changes.
 	//TODO: move this decision off to the emulator itself.
 	[self setEmulating: YES];
+    
+    //Start preventing the display from going to sleep
+    [self _syncSuppressesDisplaySleep];
 }
 
 - (void) emulatorDidFinish: (NSNotification *)notification
 {
 	//Flag that we're no longer emulating
 	[self setEmulating: NO];
+    
+    //Turn off display-sleep suppression
+    [self _syncSuppressesDisplaySleep];
 	
 	//Clear our drive and program caches (suppressing notifications)
 	[self setActiveProgramPath: nil];
@@ -773,6 +781,9 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	
 	//Track how long this program has run for
 	programStartTime = [NSDate timeIntervalSinceReferenceDate];
+    
+    //Enable/disable display-sleep suppression
+    [self _syncSuppressesDisplaySleep];
 }
 
 - (void) emulatorDidFinishProgram: (NSNotification *)notification
@@ -847,6 +858,9 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		//if we automatically switched into fullscreen at startup
 		[[self DOSWindowController] exitFullScreen: self];
 	}
+    
+    //Enable/disable display-sleep suppression
+    [self _syncSuppressesDisplaySleep];
 }
 
 - (void) emulatorDidBeginGraphicalContext: (NSNotification *)notification
@@ -1177,6 +1191,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		suspended = flag;
 
 		//Tell the emulator to prepare for being suspended, or to resume after we unpause.
+        //Also tell OS X's power management that it's OK/not OK to put the display to sleep.
 		if (suspended)
 		{
 			[emulator willPause];
@@ -1188,6 +1203,9 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		
 		//Update the title to reflect that we’ve paused/resumed
 		[DOSWindowController synchronizeWindowTitleWithDocumentName];
+        
+        //Enable/disable display-sleep suppression
+        [self _syncSuppressesDisplaySleep];
         
         //The suspended state is only checked inside the event loop
         //inside -emulatorDidBeginRunLoop:, which only processes when
@@ -1306,5 +1324,50 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	[center removeObserver: self name: BXDidFinishInterruptionNotification object: nil];
 }
 
+#pragma mark -
+#pragma mark Power management
+
+- (BOOL) suppressesDisplaySleep
+{
+    return (displaySleepAssertionID != kIOPMNullAssertionID);
+}
+
+- (void) setSuppressesDisplaySleep: (BOOL)flag
+{
+    if (flag != [self suppressesDisplaySleep])
+    {
+        if (flag)
+        {
+            NSString *reason = NSLocalizedString(@"Emulating DOS application", @"A reason supplied to the power management system for why Boxer is preventing the Mac's display from sleeping. Must be 128 characters or less");
+            
+            IOReturn success = IOPMAssertionCreateWithName(kIOPMAssertionTypeNoDisplaySleep, 
+                                                           kIOPMAssertionLevelOn,
+                                                           (CFStringRef)reason,
+                                                           &displaySleepAssertionID);
+            if (success != kIOReturnSuccess)
+            {
+                displaySleepAssertionID = kIOPMNullAssertionID;
+            }
+        }
+        else
+        {
+            IOPMAssertionRelease(displaySleepAssertionID);
+            displaySleepAssertionID = kIOPMNullAssertionID;
+        }
+    }
+}
+
+- (BOOL) _shouldSuppressDisplaySleep
+{
+    if (![self isEmulating]) return NO;
+    if ([self isPaused] || [self isAutoPaused]) return NO;
+    if ([[self emulator] isAtPrompt]) return NO;
+    return YES;
+}
+
+- (void) _syncSuppressesDisplaySleep
+{
+    [self setSuppressesDisplaySleep: [self _shouldSuppressDisplaySleep]];
+}
 
 @end

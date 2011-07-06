@@ -101,6 +101,11 @@
 - (void) _interruptionWillBegin: (NSNotification *)notification;
 - (void) _interruptionDidFinish: (NSNotification *)notification;
 
+//When YES, the session will try to prevent the Mac's display from going to sleep.
+@property (assign, nonatomic) BOOL suppressesDisplaySleep;
+
+- (BOOL) _shouldSuppressDisplaySleep;
+- (void) _syncSuppressesDisplaySleep;
 @end
 
 @interface BXSession (BXFileManagerInternals)

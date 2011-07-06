@@ -1180,6 +1180,13 @@
 #pragma mark -
 #pragma mark Private internal methods
 
+- (BOOL) _shouldSuppressDisplaySleep
+{
+    //Always allow the display to go to sleep when it wants, on the assumption
+    //that the emulation isn't doing anything particularly interesting during installation.
+    return NO;
+}
+
 - (BOOL) _shouldAutoPause
 {
 	//Don't auto-pause the emulation while importing, even if the preference is on:

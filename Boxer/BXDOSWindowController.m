@@ -45,6 +45,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 
 @interface BXDOSWindowController ()
 @property (retain, nonatomic) BXDOSFullScreenWindow *fullScreenWindow;
+@property (copy, nonatomic) NSString *autosaveNameBeforeFullscreen;
 
 //Add notification observers for everything we care about. Called from windowDidLoad.
 - (void) _addObservers;
@@ -85,6 +86,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 @synthesize programPanelController, inputController, statusBarController;
 @synthesize resizingProgrammatically;
 @synthesize fullScreenWindow;
+@synthesize autosaveNameBeforeFullscreen;
 
 
 //Overridden to make the types explicit, so we don't have to keep casting the return values to avoid compilation warnings
@@ -131,6 +133,8 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	[self setProgramPanel: nil],			[programPanel release];
 	[self setStatusBar: nil],				[statusBar release];
 	
+    [self setAutosaveNameBeforeFullscreen: nil], [autosaveNameBeforeFullscreen release];
+    
 	[super dealloc];
 }
 
@@ -602,7 +606,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
     
     statusBarShownBeforeFullscreen      = [self statusBarShown];
     programPanelShownBeforeFullscreen   = [self programPanelShown];
-    autosaveNameBeforeFullscreen        = [[[self window] frameAutosaveName] copy];
+    [self setAutosaveNameBeforeFullscreen: [[self window] frameAutosaveName]];
     
     //Override the window name while in fullscreen,
     //so that AppKit does not save the fullscreen frame in preferences
@@ -636,7 +640,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
     [self setProgramPanelShown: YES];
     [inputController setMouseLocked: NO];
     
-    [[self window] setFrameAutosaveName: autosaveNameBeforeFullscreen];
+    [[self window] setFrameAutosaveName: [self autosaveNameBeforeFullscreen]];
 }
 
 - (void) windowWillExitFullScreen: (NSNotification *)notification
@@ -652,7 +656,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
      
     [inputController setMouseLocked: NO];
     
-    [[self window] setFrameAutosaveName: autosaveNameBeforeFullscreen];
+    [[self window] setFrameAutosaveName: [self autosaveNameBeforeFullscreen]];
 }
 
 - (void) windowDidExitFullScreen: (NSNotification *)notification

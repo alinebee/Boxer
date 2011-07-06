@@ -26,13 +26,13 @@
         //NOTE: we omit the additional 2 axes for lack of space
         [layout setName: @"Boxer: 2-axis, 4-button joystick"];
         
+        /*
         [layout addAnalogStickWithFrame: CGRectMake(0, 70, 240, 240)
                            identifier: kJoyInputAnalogStick1];
+        */
         
-        /*
         [layout addDpadWithFrame: CGRectMake(0, 70, 240, 240)
                       identifier: kJoyInputDpad1];
-         */
         
         //Primary buttons: blue, rectangular and tall, located along left of screen
         [layout addButtonWithFrame: CGRectMake(380,100,100,220) 

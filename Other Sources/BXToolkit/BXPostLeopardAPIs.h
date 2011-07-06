@@ -63,4 +63,11 @@ enum {
     NSFullScreenWindowMask = 1 << 14
 };
 
+@interface NSWindow (BXPostLeopardWindowAPIs)
+
+- (void) setRestorable: (BOOL)flag;
+- (BOOL) restorable;
+
+@end
+
 #endif

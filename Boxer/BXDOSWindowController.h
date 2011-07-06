@@ -52,6 +52,8 @@ extern NSString * const BXViewDidLiveResizeNotification;
     BOOL statusBarShownBeforeFullscreen;
     BOOL programPanelShownBeforeFullscreen;
     NSRect windowFrameBeforeFullscreen;
+    
+    NSString *autosaveNameBeforeFullscreen;
 }
 
 #pragma mark -

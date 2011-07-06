@@ -533,6 +533,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 
 //Returns the current size that the render view would be if it were in windowed mode.
 //This will differ from the actual render view size when in fullscreen mode.
+//FIXME: this will give erroneous values for Lion fullscreen mode.
 - (NSSize) windowedRenderingViewSize { return [[self viewContainer] bounds].size; }
 
 
@@ -599,6 +600,10 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
     
     statusBarShownBeforeFullscreen      = [self statusBarShown];
     programPanelShownBeforeFullscreen   = [self programPanelShown];
+    autosaveNameBeforeFullscreen        = [[[self window] frameAutosaveName] copy];
+    
+    //Override the window name while in fullscreen, so that AppKit does not save the fullscreen frame in preferences
+    [[self window] setFrameAutosaveName: @""]; 
     
     [[self renderingView] setManagesAspectRatio: YES];
     [self setStatusBarShown: NO];
@@ -614,6 +619,8 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	[center postNotificationName: BXSessionDidEnterFullScreenNotification object: [self document]];
     
 	inFullScreenTransition = NO;
+    
+    [self _cleanUpAfterResize];
 }
 
 - (void) windowDidFailToEnterFullScreen: (NSWindow *)window
@@ -626,6 +633,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
     [self setProgramPanelShown: YES];
     [inputController setMouseLocked: NO];
     
+    [[self window] setFrameAutosaveName: autosaveNameBeforeFullscreen];
 }
 
 - (void) windowWillExitFullScreen: (NSNotification *)notification
@@ -638,24 +646,32 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
     [[self window] setFrame: windowFrameBeforeFullscreen display: YES];
     [self setStatusBarShown: statusBarShownBeforeFullscreen];
     [self setProgramPanelShown: programPanelShownBeforeFullscreen];
+     
     [inputController setMouseLocked: NO];
+    
+    [[self window] setFrameAutosaveName: autosaveNameBeforeFullscreen];
 }
 
 - (void) windowDidExitFullScreen: (NSNotification *)notification
-{    
+{
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 	[center postNotificationName: BXSessionDidExitFullScreenNotification object: [self document]];
     
 	inFullScreenTransition = NO;
+    
+    [self _cleanUpAfterResize];
 }
 
 - (void) windowDidFailToExitFullScreen: (NSWindow *)window
 {
     //Clean up our preparations for returning to windowed mode
+    [[self window] setFrameAutosaveName: @""];
+    
     [[self renderingView] setManagesAspectRatio: YES];
     [self setStatusBarShown: NO];
     [self setProgramPanelShown: NO];
     [inputController setMouseLocked: YES];
+    
 }
 
 
@@ -1000,7 +1016,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	//instead of the fullscreen window, then break out of fullscreen
 	//(This should never happen, since [BXSession windowForSheet]
 	//specifically chooses the fullscreen window if it is present)
-	if (![[notification object] isEqual: [self fullScreenWindow]]) [self setFullScreen: NO];
+	if (![BXAppController isRunningOnLion] && ![[notification object] isEqual: [self fullScreenWindow]]) [self setFullScreen: NO];
 }
 
 - (void) windowDidResignKey: (NSNotification *) notification

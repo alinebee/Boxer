@@ -318,7 +318,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	
 	//If no document was opened during startup, and we didn't launch hidden,
 	//then display the chosen startup window
-	if (![NSApp isHidden] && ![[self documents] count])
+	if (![NSApp isHidden] && ![[self documents] count] && ![[NSApp windows] count])
 	{
 		BOOL hasDelayed = NO;
 		

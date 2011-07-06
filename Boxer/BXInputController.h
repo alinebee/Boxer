@@ -12,6 +12,7 @@
 //It also manages mouse locking and the appearance and behaviour of the OS X mouse cursor.
 
 #import <Cocoa/Cocoa.h>
+#import "JoypadSDK.h"
 
 @class BXCursorFadeAnimation;
 @class BXDOSWindowController;
@@ -45,6 +46,10 @@
 	
 	NSMutableDictionary *controllerProfiles;
 	NSArray *availableJoystickTypes;
+    
+    //Used internally by BXJoypadInput for tracking joypad state
+    NSUInteger joypadDPadState;
+    JoypadAcceleration joypadFilteredAcceleration;
 }
 
 #pragma mark -

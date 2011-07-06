@@ -13,18 +13,32 @@
 #import "JoypadSDK.h"
 #import "BXEmulatedKeyboard.h"
 
-//Deadzone for Joypad wheel emulation: devices within +/- this number will be treated as centered.
+//Deadzone for Joypad wheel emulation: devices within +/- this deadzone
+//will be treated as centered.
 #define BXJoypadRotationDeadzone 0.15f
 
-//The +/- Z angle beyond which Boxer will treat the phone as resting and ignore input from it.
-#define BXJoypadRestingThreshold 0.9f
-
 //The maximum scale of movement for the analog stick.
-//TODO: figure out what lies behind this constant
+//TODO: figure out what lies behind this constant.
 #define BXJoypadAnalogStickMaxDistance 55.0f
 
+//What fraction of the accelerometer input to mix with the previous input,
+//to derive a smoothed value. Used by joypadDevice:didAccelerate:.
+#define BXJoypadAccelerationFilter 0.2f
+
+//Bitmasks for tracking the current joypad D-pad state.
+enum
+{
+    kJoyDpadNoButtons         = 0,
+    kJoyDpadButtonUpMask      = 1 << 0,
+    kJoyDpadButtonRightMask   = 1 << 1,
+    kJoyDpadButtonDownMask    = 1 << 2,
+    kJoyDpadButtonLeftMask    = 1 << 3
+};
 
 @implementation BXInputController (BXJoypadInput)
+
+#pragma mark -
+#pragma mark Helper class methods
 
 + (NSUInteger) emulatedJoystickButtonForJoypadButton: (JoyInputIdentifier)button
 {
@@ -47,10 +61,46 @@
     }
 }
 
++ (BXEmulatedPOVDirection) emulatedJoystickPOVDirectionForDPadState: (NSUInteger)state
+{
+    BXEmulatedPOVDirection direction = BXEmulatedPOVCentered;
+	switch (state)
+	{
+		case kJoyDpadButtonUpMask:
+			direction = BXEmulatedPOVNorth; break;
+            
+		case kJoyDpadButtonDownMask:
+			direction = BXEmulatedPOVSouth; break;
+            
+		case kJoyDpadButtonRightMask:
+			direction = BXEmulatedPOVEast; break;
+			
+		case kJoyDpadButtonLeftMask:
+			direction = BXEmulatedPOVWest; break;
+			
+		case kJoyDpadButtonUpMask | kJoyDpadButtonRightMask:
+			direction = BXEmulatedPOVNorthEast; break;
+			
+		case kJoyDpadButtonUpMask | kJoyDpadButtonLeftMask:
+			direction = BXEmulatedPOVNorthWest; break;
+			
+		case kJoyDpadButtonDownMask | kJoyDpadButtonRightMask:
+			direction = BXEmulatedPOVSouthEast; break;
+			
+		case kJoyDpadButtonDownMask | kJoyDpadButtonLeftMask:
+			direction = BXEmulatedPOVSouthWest; break;
+	}
+	return direction;
+}
+
 + (NSSet *) keyPathsForValuesAffectingCurrentJoypadLayout
 {
     return [NSSet setWithObject: @"preferredJoystickType"];
 }
+
+
+#pragma mark -
+#pragma mark Housekeeping
 
 - (JoypadControllerLayout *) currentJoypadLayout
 {
@@ -67,15 +117,50 @@
     return [[[NSApp delegate] joypadController] hasJoypadDevices];
 }
 
+//Passed on by BXJoypadController whenever a device is connected/disconnected
+- (void) joypadManager: (JoypadManager *)manager
+      deviceDidConnect: (JoypadDevice *)device
+                player: (unsigned int)player
+{
+    [self _resetJoypadTrackingValues];
+}
+
+- (void) joypadManager: (JoypadManager *)manager
+   deviceDidDisconnect: (JoypadDevice *)device
+                player: (unsigned int)player
+{
+    [self _resetJoypadTrackingValues];
+}
+
+- (void) _resetJoypadTrackingValues
+{
+    joypadDPadState = kJoyDpadNoButtons;
+    joypadFilteredAcceleration.x = 0.0f;
+    joypadFilteredAcceleration.y = 0.0f;
+    joypadFilteredAcceleration.z = 0.0f;
+}
+
+
+#pragma mark -
+#pragma mark Accelerometer handling
 
 - (void) joypadDevice: (JoypadDevice *)device
         didAccelerate: (JoypadAcceleration)accel
 {
     float roll, pitch;
     
+    //Low-pass filter to smooth out accelerometer movement, so that
+    //shaking the device doesn't mess us around.
+    //Copypasta from Apple's Event Handling Guide for iOS: Motion Events
+    float   filterNew = BXJoypadAccelerationFilter,
+            filterOld = 1.0f - filterNew;
+    joypadFilteredAcceleration.x = (accel.x * filterNew) + (joypadFilteredAcceleration.x * filterOld);
+    joypadFilteredAcceleration.y = (accel.y * filterNew) + (joypadFilteredAcceleration.y * filterOld);
+    joypadFilteredAcceleration.z = (accel.z * filterNew) + (joypadFilteredAcceleration.z * filterOld);
+    
     //These will have a range in radians from PI to -PI.
-    double roll_in_radians  = atan2(accel.y, -accel.x);
-    double pitch_in_radians = atan2(accel.z, -accel.x);
+    double roll_in_radians  = atan2(joypadFilteredAcceleration.y, -joypadFilteredAcceleration.x);
+    double pitch_in_radians = atan2(joypadFilteredAcceleration.z, -joypadFilteredAcceleration.x);
     
     //PI/2 (90 degrees counterclockwise) to -PI/2 (90 degrees clockwise)
     //is what we want to map to the -1.0 to 1.0 range of the emulated joystick.
@@ -116,6 +201,9 @@
     }
 }
 
+#pragma mark -
+#pragma mark D-pad handling
+
 - (void) joypadDevice: (JoypadDevice *)device
                  dPad: (JoyInputIdentifier)dpad
              buttonUp: (JoyDpadButton)dpadButton
@@ -124,7 +212,11 @@
     
     if ([joystick respondsToSelector: @selector(POVChangedTo:)])
     {
+        NSUInteger buttonMask = 1 << dpadButton;
+        joypadDPadState &= ~buttonMask;
+        BXEmulatedPOVDirection direction = [[self class] emulatedJoystickPOVDirectionForDPadState: joypadDPadState];
         
+        [joystick POVChangedTo: direction];
     }
     else if ([joystick respondsToSelector: @selector(xAxisMovedTo:)] && 
              [joystick respondsToSelector: @selector(yAxisMovedTo:)])
@@ -153,7 +245,11 @@
     
     if ([joystick respondsToSelector: @selector(POVChangedTo:)])
     {
+        NSUInteger buttonMask = 1 << dpadButton;
+        joypadDPadState |= buttonMask;
+        BXEmulatedPOVDirection direction = [[self class] emulatedJoystickPOVDirectionForDPadState: joypadDPadState];
         
+        [joystick POVChangedTo: direction];
     }
     else if ([joystick respondsToSelector: @selector(xAxisMovedTo:)] && 
              [joystick respondsToSelector: @selector(yAxisMovedTo:)])
@@ -166,7 +262,6 @@
             case kJoyDpadButtonDown:
                 [joystick yAxisMovedTo: 1.0f];
                 break;
-                
             case kJoyDpadButtonLeft:
                 [joystick xAxisMovedTo: -1.0f];
                 break;
@@ -176,6 +271,10 @@
         }
     }  
 }
+
+
+#pragma mark -
+#pragma mark Button handling
 
 - (void) joypadDevice: (JoypadDevice *)device
              buttonUp: (JoyInputIdentifier)button

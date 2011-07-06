@@ -152,11 +152,18 @@
                 player: (unsigned int)player
 {
     [device setDelegate: [self activeWindowController]];
+    
+    //Avoid spamming observers whenever we disconnect and immediately reconnect a device
     if (!suppressReconnectionNotifications)
     {
         [self willChangeValueForKey: @"joypadDevices"];
         [self didChangeValueForKey: @"joypadDevices"];
     }
+    
+    //Let the delegate know that the device has been connected
+    [[device delegate] joypadManager: manager
+                    deviceDidConnect: device
+                              player: player];
 }
 
 - (void) joypadManager: (JoypadManager *)manager
@@ -169,5 +176,9 @@
         [self willChangeValueForKey: @"joypadDevices"];
         [self didChangeValueForKey: @"joypadDevices"];
     }
+    //Let the device's delegate know that the device has been connected
+    [[device delegate] joypadManager: manager
+                 deviceDidDisconnect: device
+                              player: player];
 }
 @end

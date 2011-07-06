@@ -129,3 +129,14 @@
 + (BXDOSKeyCode) _DOSKeyCodeForSystemKeyCode: (CGKeyCode)keyCode;
 
 @end
+
+
+@interface BXInputController (BXJoypadInputInternals)
+
++ (NSUInteger) emulatedJoystickButtonForJoypadButton: (JoyInputIdentifier)button;
++ (BXEmulatedPOVDirection) emulatedJoystickPOVDirectionForDPadState: (NSUInteger)state;
+
+//Called whenever a Joypad disconnects/reconnects to reset internal tracking values.
+- (void) _resetJoypadTrackingValues;
+
+@end

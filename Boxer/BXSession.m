@@ -727,7 +727,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	//NSWindow/NSDocument close flow.
 	
 	NSEvent *event;
-	NSDate *untilDate = nil;
+	NSDate *untilDate = [self isSuspended] ? [NSDate distantFuture] : nil;
 	
 	while (!isClosing && (event = [NSApp nextEventMatchingMask: NSAnyEventMask
 													 untilDate: untilDate
@@ -1176,7 +1176,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	{
 		suspended = flag;
 
-		//Tell the emulator to prepare for being suspended or to resume after we unpause.
+		//Tell the emulator to prepare for being suspended, or to resume after we unpause.
 		if (suspended)
 		{
 			[emulator willPause];
@@ -1188,6 +1188,21 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		
 		//Update the title to reflect that we’ve paused/resumed
 		[DOSWindowController synchronizeWindowTitleWithDocumentName];
+        
+        //The suspended state is only checked inside the event loop
+        //inside -emulatorDidBeginRunLoop:, which only processes when
+        //there's any events in the queue. We post a dummy event to ensure
+        //that the loop ticks over and recognises the pause state.
+        NSEvent *dummyEvent = [NSEvent otherEventWithType: NSApplicationDefined
+                                                 location: NSZeroPoint
+                                            modifierFlags: 0
+                                                timestamp: CFAbsoluteTimeGetCurrent()
+                                             windowNumber: 0
+                                                  context: nil
+                                                  subtype: 0
+                                                    data1: 0
+                                                    data2: 0];
+        [NSApp postEvent: dummyEvent atStart: NO];
 	}
 }
 

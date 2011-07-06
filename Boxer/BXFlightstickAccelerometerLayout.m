@@ -24,7 +24,7 @@
     {
         layout = [[JoypadControllerLayout alloc] init];
         
-        [layout setName: @"Boxer: 4-button flightstick with POV switch"];
+        [layout setName: NSLocalizedString(@"Boxer: 4-button flightstick with POV switch", @"Label for flightstick Joypad layout.")];
         
         //We use the accelerometer in lieu of an onscreen analog stick
         [layout addAccelerometer];
@@ -65,15 +65,15 @@
         
         //Meta buttons: pill-shaped, located at the top center
         [layout addButtonWithFrame: CGRectMake(120,10,110,30) 
-                             label: @"Esc" 
-                          fontSize: 16
+                             label: NSLocalizedString(@"ESC", @"Label for Escape button on Joypad layouts.") 
+                          fontSize: 12
                              shape: kJoyButtonShapePill
                              color: kJoyButtonColorBlack
                         identifier: kJoyInputStartButton];
         
         [layout addButtonWithFrame: CGRectMake(250,10,110,30) 
-                             label: @"Pause" 
-                          fontSize: 16
+                             label: NSLocalizedString(@"PAUSE", @"Label for pause button on Joypad layouts.") 
+                          fontSize: 12
                              shape: kJoyButtonShapePill
                              color: kJoyButtonColorBlack
                         identifier: kJoyInputSelectButton];

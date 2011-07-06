@@ -23,8 +23,7 @@
     {
         layout = [[JoypadControllerLayout alloc] init];
     
-        //NOTE: we omit the additional 2 axes for lack of space
-        [layout setName: @"Boxer: 2-axis, 4-button joystick"];
+        [layout setName: NSLocalizedString(@"Boxer: 2-axis, 4-button joystick", @"Label for standard joystick Joypad layout.")];
         
         /*
         [layout addAnalogStickWithFrame: CGRectMake(0, 70, 240, 240)
@@ -36,46 +35,46 @@
         
         //Primary buttons: blue, rectangular and tall, located along left of screen
         [layout addButtonWithFrame: CGRectMake(380,100,100,220) 
-                           label: @"1" 
-                        fontSize: 36
-                           shape: kJoyButtonShapeSquare
-                           color: kJoyButtonColorBlue
-                      identifier: kJoyInputAButton];
+                             label: @"1" 
+                          fontSize: 36
+                             shape: kJoyButtonShapeSquare
+                             color: kJoyButtonColorBlue
+                        identifier: kJoyInputAButton];
         
         [layout addButtonWithFrame: CGRectMake(280,100,100,220) 
-                           label: @"2" 
-                        fontSize: 36
-                           shape: kJoyButtonShapeSquare
-                           color: kJoyButtonColorBlue
-                      identifier: kJoyInputBButton];
+                             label: @"2" 
+                          fontSize: 36
+                             shape: kJoyButtonShapeSquare
+                             color: kJoyButtonColorBlue
+                        identifier: kJoyInputBButton];
         
         
         //Secondary buttons: black and square, located at top left of screen
         [layout addButtonWithFrame: CGRectMake(380,0,100,100) 
-                           label: @"3" 
-                        fontSize: 36
-                           shape: kJoyButtonShapeSquare
-                           color: kJoyButtonColorBlack
-                      identifier: kJoyInputXButton];
+                             label: @"3" 
+                          fontSize: 36
+                             shape: kJoyButtonShapeSquare
+                             color: kJoyButtonColorBlack
+                        identifier: kJoyInputXButton];
         
         [layout addButtonWithFrame: CGRectMake(280,0,100,100) 
-                           label: @"4" 
-                        fontSize: 36
-                           shape: kJoyButtonShapeSquare
-                           color: kJoyButtonColorBlack
-                      identifier: kJoyInputYButton];
+                             label: @"4" 
+                          fontSize: 36
+                             shape: kJoyButtonShapeSquare
+                             color: kJoyButtonColorBlack
+                        identifier: kJoyInputYButton];
         
         //Meta buttons: pill-shaped, located at the top left
         [layout addButtonWithFrame: CGRectMake(20,10,110,30) 
-                             label: @"Esc" 
-                          fontSize: 16
+                             label: NSLocalizedString(@"ESC", @"Label for Escape button on Joypad layouts.")
+                          fontSize: 12
                              shape: kJoyButtonShapePill
                              color: kJoyButtonColorBlack
                         identifier: kJoyInputStartButton];
         
         [layout addButtonWithFrame: CGRectMake(150,10,110,30) 
-                             label: @"Pause" 
-                          fontSize: 16
+                             label: NSLocalizedString(@"PAUSE", @"Label for pause button on Joypad layouts.") 
+                          fontSize: 12
                              shape: kJoyButtonShapePill
                              color: kJoyButtonColorBlack
                         identifier: kJoyInputSelectButton];

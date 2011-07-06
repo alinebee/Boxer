@@ -23,7 +23,7 @@
     {
         layout = [[JoypadControllerLayout alloc] init];
         
-        [layout setName: @"Boxer: 2-axis, 2-button joystick"];
+        [layout setName: NSLocalizedString(@"Boxer: 2-axis, 2-button joystick", @"Label for simple joystick Joypad layout.")];
         
         /*
          [layout addAnalogStickWithFrame: CGRectMake(0, 70, 240, 240)
@@ -50,15 +50,15 @@
         
         //Meta buttons: pill-shaped, located at the top left
         [layout addButtonWithFrame: CGRectMake(20,10,110,30) 
-                             label: @"Esc" 
-                          fontSize: 16
+                             label: NSLocalizedString(@"ESC", @"Label for Escape button on Joypad layouts.")
+                          fontSize: 12
                              shape: kJoyButtonShapePill
                              color: kJoyButtonColorBlack
                         identifier: kJoyInputStartButton];
         
         [layout addButtonWithFrame: CGRectMake(150,10,110,30) 
-                             label: @"Pause" 
-                          fontSize: 16
+                             label: NSLocalizedString(@"PAUSE", @"Label for pause button on Joypad layouts.") 
+                          fontSize: 12
                              shape: kJoyButtonShapePill
                              color: kJoyButtonColorBlack
                         identifier: kJoyInputSelectButton];

@@ -309,7 +309,7 @@ NSString * const BXEmulatedJoystickClassKey = @"BXEmulatedJoystickClassKey";
 
 - (void) _syncYAxisPosition
 {
-	[self axis: BXEmulatedJoystickAxisY movedTo: (acceleratorComponent - brakeComponent)];
+	[self axis: BXEmulatedJoystickAxisY movedTo: (brakeComponent - acceleratorComponent)];
 }
 
 - (void) wheelMovedTo: (float)position	{ [self axis: BXEmulatedJoystickAxisX movedTo: position]; }
@@ -344,18 +344,18 @@ NSString * const BXEmulatedJoystickClassKey = @"BXEmulatedJoystickClassKey";
 @end
 
 
-@implementation BX3AxisWheel
+@implementation BX4AxisWheel
 
 + (NSString *) localizedName
 {
 	return NSLocalizedString(@"Racing wheel",
-							 @"Localized name for 3-axis racing wheel joystick type.");
+							 @"Localized name for 4-axis racing wheel joystick type.");
 }
 
 + (NSString *) localizedInformativeText
 {
 	return NSLocalizedString(@"4 buttons and gas/brake pedals\non separate axes.",
-							 @"Localized informative text for 2-axis racing wheel.");	
+							 @"Localized informative text for 4-axis racing wheel.");	
 }
 
 + (NSImage *) icon
@@ -365,18 +365,17 @@ NSString * const BXEmulatedJoystickClassKey = @"BXEmulatedJoystickClassKey";
 
 + (BOOL) requiresFullJoystickSupport { return YES; }
 
-
 - (NSUInteger) numButtons		{ return 4; }
-- (NSUInteger) numAxes			{ return 3; }
+- (NSUInteger) numAxes			{ return 4; }
 - (NSUInteger) numPOVSwitches	{ return 0; }
 
-- (void) wheelMovedTo: (float)position	{ [self axis: BXEmulatedJoystickAxisX movedTo: position]; }
-- (void) wheelMovedBy: (float)delta		{ [self axis: BXEmulatedJoystickAxisX movedBy: delta]; }
-
+//Note: the accelerator and brake still power the combined Y axis,
+//as well as their own individual axes
 - (void) acceleratorMovedTo: (float)position
 {
 	position = ABS(position);
-	[self axis: BXEmulatedJoystickAxisY2 movedTo: position];
+	[self axis: BXEmulatedJoystickAxisY2 movedTo: -position];
+    [super acceleratorMovedTo: position];
 }
 
 - (void) acceleratorMovedBy: (float)delta
@@ -388,7 +387,8 @@ NSString * const BXEmulatedJoystickClassKey = @"BXEmulatedJoystickClassKey";
 - (void) brakeMovedTo: (float)position
 {
 	position = ABS(position);
-	[self axis: BXEmulatedJoystickAxisX2 movedTo: position];
+	[self axis: BXEmulatedJoystickAxisX2 movedTo: -position];
+    [super brakeMovedTo: position];
 }
 
 - (void) brakeMovedBy: (float)delta

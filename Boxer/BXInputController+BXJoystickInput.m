@@ -96,17 +96,19 @@
 	
 	NSString *className	= [[session gameSettings] objectForKey: @"preferredJoystickType"];
 	
-	//If no setting exists, then fall back on the default joystick type
+	//If no type has been set, or the type is not available, then fall back on the default joystick type
 	if (!className) return defaultJoystickType;
 	
-	//If the setting was an empty string, this indicates no joystick support
-	else if (![className length]) return nil;
+	//If the type was an empty string, this indicates no joystick support
+	else if ([className isEqualToString: @""]) return nil;
 	
-	//Otherwise return the specified joystick type class: or the default joystick type, if no such class exists
+	//Return the specified joystick type class:
+    //or the default joystick type, if that class is not currently available
 	else
 	{
 		Class joystickType = NSClassFromString(className);
-		if ([joystickType conformsToProtocol: @protocol(BXEmulatedJoystick)]) return joystickType;
+		if ([availableTypes containsObject: joystickType])
+            return joystickType;
 		else return defaultJoystickType;
 	}
 }
@@ -157,7 +159,7 @@
 			[BX4AxisJoystick class],
 			[BXThrustmasterFCS class],
 			[BXCHFlightStickPro class],
-			[BX2AxisWheel class],
+			[BX4AxisWheel class],
 			nil];
 	}
 	else if (supportLevel == BXJoystickSupportSimple)

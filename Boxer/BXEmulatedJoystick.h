@@ -269,16 +269,8 @@ enum {
 @end
 
 
-//Racing wheel with accelerator on X2 axis and brake on Y2 axis
-@interface BX3AxisWheel: BXBaseEmulatedJoystick <BXEmulatedJoystick>
-
-- (void) wheelMovedTo: (float)position;
-- (void) wheelMovedBy: (float)delta;
-
-- (void) acceleratorMovedTo: (float)position;
-- (void) acceleratorMovedBy: (float)delta;
-
-- (void) brakeMovedTo: (float)position;
-- (void) brakeMovedBy: (float)delta;
-
+//Racing wheel with accelerator on X2 axis and brake on Y2 axis,
+//as well as combined input on the Y axis
+@interface BX4AxisWheel: BX2AxisWheel <BXEmulatedJoystick>
 @end
+

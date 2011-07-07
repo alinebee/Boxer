@@ -284,13 +284,13 @@ enum
     switch (button)
     {
         case kJoyInputRButton:
-            //Accelerator pedal
+            //Gas pedal
             if ([joystick respondsToSelector: @selector(acceleratorMovedTo:)])
                 [joystick acceleratorMovedTo: 0.0f];
             break;
         
         case kJoyInputLButton:
-            //Gas pedal
+            //Brake pedal
             if ([joystick respondsToSelector: @selector(brakeMovedTo:)])
                 [joystick brakeMovedTo: 0.0f];
             break;
@@ -322,13 +322,13 @@ enum
     switch (button)
     {
         case kJoyInputRButton:
-            //Accelerator pedal
+            //Gas pedal
             if ([joystick respondsToSelector: @selector(acceleratorMovedTo:)])
                 [joystick acceleratorMovedTo: 1.0f];
             break;
             
         case kJoyInputLButton:
-            //Gas pedal
+            //Brake pedal
             if ([joystick respondsToSelector: @selector(brakeMovedTo:)])
                 [joystick brakeMovedTo: 1.0f];
             break;

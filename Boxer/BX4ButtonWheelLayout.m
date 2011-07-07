@@ -13,7 +13,7 @@
 
 + (void) load
 {
-	[BXJoypadLayout registerLayout: self forJoystickType: [BX3AxisWheel class]];
+	[BXJoypadLayout registerLayout: self forJoystickType: [BX4AxisWheel class]];
 }
 
 + (JoypadControllerLayout *)layout
@@ -34,7 +34,7 @@
                           fontSize: 20
                              shape: kJoyButtonShapeSquare
                              color: kJoyButtonColorBlue
-                        identifier: kJoyInputLButton];
+                        identifier: kJoyInputRButton];
         
         //Brake pedal: blue, rectangular and tall, located along right of screen
         [layout addButtonWithFrame: CGRectMake(0,0,100,320) 
@@ -42,7 +42,7 @@
                           fontSize: 20
                              shape: kJoyButtonShapeSquare
                              color: kJoyButtonColorBlue
-                        identifier: kJoyInputRButton];
+                        identifier: kJoyInputLButton];
         
         //Secondary buttons: circular, arranged in pairs inwards from gas and brake pedals
         [layout addButtonWithFrame: CGRectMake(270,200,90,90) 

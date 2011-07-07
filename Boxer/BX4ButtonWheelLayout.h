@@ -5,7 +5,7 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-//Provides a suitable layout for BX2AxisWheel and BX3AxisWheel:
+//Provides a suitable layout for BX4AxisWheel:
 //Racing wheels with accelerometer control, gas/brake pedals
 //and 4 secondary buttons.
 

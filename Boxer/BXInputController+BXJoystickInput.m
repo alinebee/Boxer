@@ -190,21 +190,8 @@
 	}
 	else
     {
-		Class joystickClass;
-		
-		//TODO: ask BXEmulator to validate the specified class,
-        //and fall back on the 2-axis joystick otherwise
-		if (support == BXJoystickSupportFull)
-		{
-			joystickClass = preferredJoystickClass;
-		}
-		else
-        {
-            joystickClass = [BX2AxisJoystick class];
-        }
-		
-		if (![[emulator joystick] isMemberOfClass: joystickClass])
-			[emulator attachJoystickOfType: joystickClass];
+		if (![[emulator joystick] isMemberOfClass: preferredJoystickClass])
+			[emulator attachJoystickOfType: preferredJoystickClass];
 	}
 }
 

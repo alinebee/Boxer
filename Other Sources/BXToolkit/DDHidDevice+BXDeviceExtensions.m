@@ -105,12 +105,12 @@ io_service_t createServiceFromHIDDevice(IOHIDDeviceRef deviceRef)
 
 @implementation DDHidJoystick (BXJoystickExtensions)
 
-- (NSArray *)sticks
+- (NSArray *) sticks
 {
 	return mSticks;
 }
 
-- (NSArray *)axisElements
+- (NSArray *) axisElements
 {
 	NSMutableArray *axes = [[NSMutableArray alloc] initWithCapacity: 10];
 	
@@ -120,7 +120,7 @@ io_service_t createServiceFromHIDDevice(IOHIDDeviceRef deviceRef)
 	return [axes autorelease];
 }
 
-- (NSArray *)povElements
+- (NSArray *) povElements
 {
 	NSMutableArray *povs = [[NSMutableArray alloc] initWithCapacity: 10];
 	
@@ -141,11 +141,32 @@ io_service_t createServiceFromHIDDevice(IOHIDDeviceRef deviceRef)
 	NSPredicate *matchingUsageID = [NSPredicate predicateWithFormat: @"usage.usageId = %i", usageID, nil];
 	return [[self buttonElements] filteredArrayUsingPredicate: matchingUsageID];
 }
+
+- (DDHidElement *) axisElementWithUsageID: (unsigned)usageID
+{
+    DDHidElement *element;
+	for (DDHidJoystickStick *stick in [self sticks])
+    {
+        element = [stick axisElementWithUsageID: usageID];
+        if (element) return element;
+    }
+    return nil;
+}
+
+- (DDHidElement *) buttonElementWithUsageID: (unsigned)usageID
+{
+	for (DDHidElement *element in [self buttonElements])
+    {
+        if ([[element usage] usageId] == usageID) return element;
+    }
+    return nil;
+}
+
 @end
 
 @implementation DDHidJoystickStick (BXJoystickStickExtensions)
 
-- (NSArray *)axisElements
+- (NSArray *) axisElements
 {
 	NSMutableArray *axes = [mStickElements mutableCopy];
 	if (mXAxisElement) [axes addObject: mXAxisElement];
@@ -154,7 +175,7 @@ io_service_t createServiceFromHIDDevice(IOHIDDeviceRef deviceRef)
 	return [axes autorelease];
 }
 
-- (NSArray *)povElements
+- (NSArray *) povElements
 {
 	return mPovElements;
 }
@@ -165,6 +186,14 @@ io_service_t createServiceFromHIDDevice(IOHIDDeviceRef deviceRef)
 	return [[self axisElements] filteredArrayUsingPredicate: matchingUsageID];
 }
 
+- (DDHidElement *) axisElementWithUsageID: (unsigned)usageID
+{
+    for (DDHidElement *element in [self axisElements])
+    {
+        if ([[element usage] usageId] == usageID) return element;
+    }
+    return nil;
+}
 @end
 
 

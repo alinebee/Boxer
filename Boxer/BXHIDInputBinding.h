@@ -15,7 +15,7 @@
 
 @class BXHIDEvent;
 @class DDHidElement;
-@protocol BXHIDInputBinding
+@protocol BXHIDInputBinding <NSObject>
 
 //Return a input binding of the appropriate type initialized with default values.
 + (id) binding;
@@ -42,6 +42,10 @@
 	float deadzone;
 	float previousValue;
 }
+//Convenience method to return a binding preconfigured to send axis
+//input as the specified button.
++ (id) bindingWithAxisSelector: (SEL)axisSelector;
+
 //Absolute axis values below this amount will be rounded to 0. Defaults to 0.25f.
 @property (assign, nonatomic) float deadzone;
 
@@ -64,6 +68,10 @@
 	NSUInteger button;
 }
 
+//Convenience method to return a binding preconfigured to send button
+//input as the specified button.
++ (id) bindingWithButton: (NSUInteger)button;
+
 //The BXEmulatedButton constant of the button to bind to on the emulated joystick.
 @property (assign, nonatomic) NSUInteger button;
 
@@ -78,6 +86,11 @@
 	float pressedValue;
 	float releasedValue;
 }
+
+//Convenience method to return a binding preconfigured to send button
+//input to the specified axis selector.
++ (id) bindingWithAxisSelector: (SEL)axis;
+
 //The axis value to apply when the button is pressed. Defaults to +1.0f.
 @property (assign, nonatomic) float pressedValue;
 
@@ -100,6 +113,10 @@
 	BOOL previousValue;
 }
 
+//Convenience method to return a binding preconfigured to send axis
+//input as the specified button.
++ (id) bindingWithButton: (NSUInteger)button;
+
 //The normalized axis value over which the button will be treated as pressed.
 //Ignores polarity to treat positive and negative axis values the same,
 //measuring only distance from 0.
@@ -109,6 +126,7 @@
 //Whether the axis input represents a unidirectional trigger. Defaults to NO.
 //If YES, then the axis input will be normalized to 0->1.0 before considering
 //the threshold.
+//(Note that this works slightly differently to unidirectional on BXAxisToAxis.)
 @property (assign, nonatomic, getter=isUnidirectional) BOOL unidirectional;
 
 //The BXEmulatedButton constant of the button to bind to on the emulated joystick.
@@ -161,6 +179,11 @@
 	SEL yAxisSelector;
 }
 
+//Convenience method to return a binding preconfigured to send POV
+//input to the specified selectors.
++ (id) bindingWithXAxisSelector: (SEL)x
+                  YAxisSelector: (SEL)y;
+
 //The POV selector to call on the emulated joystick for WE input.
 //Defaults to xAxisChangedTo:
 @property (assign, nonatomic) SEL xAxisSelector;
@@ -168,5 +191,35 @@
 //The POV selector to call on the emulated joystick for NS input.
 //Defaults to yAxisChangedTo:
 @property (assign, nonatomic) SEL yAxisSelector;
+
+@end
+
+
+//Sends axis input to one of two alternate bindings, depending on whether the
+//input is positive or negative. The selector for the current polarity will be
+//sent the full axis value, while the opposite binding will be sent a value of
+//0.0.
+@interface BXAxisToBindings: BXBaseHIDInputBinding
+{
+	id <BXHIDInputBinding> positiveBinding;
+	id <BXHIDInputBinding> negativeBinding;
+	float previousValue;
+}
+
+//Convenience method to return a binding preconfigured to split axis input
+//to the specified axis selectors.
++ (id) bindingWithPositiveAxisSelector: (SEL)positive
+                  negativeAxisSelector: (SEL)negative;
+
+//Convenience method to return a binding preconfigured to split axis input
+//to the specified buttons.
++ (id) bindingWithPositiveButton: (NSUInteger)positive
+                  negativeButton: (NSUInteger)negative;
+
+//The binding to which to pass positive axis values.
+@property (retain, nonatomic) id <BXHIDInputBinding> positiveBinding;
+
+//The binding to which to pass negative axis values.
+@property (retain, nonatomic) id <BXHIDInputBinding> negativeBinding;
 
 @end

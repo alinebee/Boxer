@@ -41,6 +41,9 @@ extern NSString * const BXControllerProfileDPadDown;
 - (void) bindButtonElements: (NSArray *)elements;
 - (void) bindPOVElements: (NSArray *)elements;
 
+//Called by bindAxisElements: to separate wheel-binding logic from regular axis binding.
+- (void) bindAxisElementsForWheel: (NSArray *)elements;
+
 //Returns a BXHIDInputBinding to bind the specified element on the profile's HID controller
 //to the profile's emulated joystick. Must return nil if the element should not be bound.
 //Used by generateBindings and intended to be overridden by subclasses for individual bindings.

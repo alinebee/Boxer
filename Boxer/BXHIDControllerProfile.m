@@ -170,12 +170,110 @@ static NSMutableArray *profileClasses = nil;
 
 - (void) bindAxisElements: (NSArray *)elements
 {
-	for (DDHidElement *element in elements)
-	{
-		id <BXHIDInputBinding> binding = [self generatedBindingForAxisElement: element];
-		[self setBinding: binding forElement: element];
-	}
+    //Custom binding logic for wheels, as each axis's role depends on what other axes are available
+    if ([[self emulatedJoystick] respondsToSelector: @selector(wheelMovedTo:)])
+    {
+        [self bindAxisElementsForWheel: elements];
+    }
+    else
+    {
+        for (DDHidElement *element in elements)
+        {
+            id <BXHIDInputBinding> binding = [self generatedBindingForAxisElement: element];
+            [self setBinding: binding forElement: element];
+        }
+    }
 }
+
+
+//FIXME: this logic is really hairy and ought to be refactored.
+- (void) bindAxisElementsForWheel: (NSArray *)elements
+{
+    DDHidElement *wheel, *accelerator, *brake;
+    
+    switch([elements count])
+    {
+        case 1:
+            //There's nothing we can do with a single-axis controller.
+            return;
+        case 2:
+            //For 2-axis controllers, just bind the Y axis directly
+            //to accelerator and brake.
+            wheel = [elements objectAtIndex: 0];
+            accelerator = brake = [elements objectAtIndex: 1];
+            break;
+        case 3:
+            //A 3-axis controller may indicate a wheel with its pedals on individual axes.
+            //(Or, it may indicate a simple flightstick, in which case this will be completely
+            //wrong; but a flightstick would suck for wheel control anyway.)
+            wheel       = [elements objectAtIndex: 0];
+            brake       = [elements objectAtIndex: 1];
+            accelerator = [elements objectAtIndex: 2];
+            break;
+        default:
+        {
+            //A controller with 4 or more axes usually means a gamepad.
+            //In this case, we try to keep the accelerator/brake axis
+            //on a separate stick from the wheel, because having steering
+            //and pedals on the same stick is hell to control.
+            
+            //Prefer to explicitly use the X axis for the wheel;
+            //if there isn't one, use the first axis we can find.
+            wheel = [[self HIDController] axisElementWithUsageID: kHIDUsage_GD_X]; 
+            if (!wheel)
+                wheel = [elements objectAtIndex: 0];
+            
+            
+            //Our first preference for the pedals is the second axis of the second
+            //stick, which for gamepads should correspond to the vertical axis
+            //of the right thumbstick (The actual element could have any of a range
+            //of usage IDs, so we can't go by that alas).
+            DDHidElement *pedalAxis;
+            
+            NSArray *sticks = [[self HIDController] sticks];
+            NSUInteger numSticks = [sticks count];
+            if (numSticks > 1)
+            {
+                NSArray *secondStickAxes = [[sticks objectAtIndex: 1] axisElements];
+                if ([secondStickAxes count] > 1)
+                    pedalAxis = [secondStickAxes objectAtIndex: 1];
+            }
+            
+            //Failing that, we fall back on the regular Y axis...
+            if (!pedalAxis)
+                pedalAxis = [[self HIDController] axisElementWithUsageID: kHIDUsage_GD_Y];
+            
+            //...and failing that, we fall back on the second axis we can find.
+            if (!pedalAxis)
+                pedalAxis = [elements objectAtIndex: 1];
+            
+            accelerator = brake = pedalAxis;
+        }
+    }
+    
+    id wheelBinding = [BXAxisToAxis bindingWithAxisSelector: @selector(wheelMovedTo:)];
+    [self setBinding: wheelBinding forElement: wheel];
+    
+    //If the same input is used for both brake and accelerator, map them as a split axis binding.
+    if (brake == accelerator)
+    {
+        id splitBinding = [BXAxisToBindings bindingWithPositiveAxisSelector: @selector(brakeMovedTo:)
+                                                       negativeAxisSelector: @selector(acceleratorMovedTo:)];
+        
+        [self setBinding: splitBinding forElement: accelerator];
+    }
+    //Otherwise map them to the individual axis elements as unidirectional inputs.
+    else
+    {
+        id acceleratorBinding   = [BXAxisToAxis bindingWithAxisSelector: @selector(acceleratorMovedTo:)];
+        id brakeBinding         = [BXAxisToAxis bindingWithAxisSelector: @selector(brakeMovedTo:)];
+        [acceleratorBinding setUnidirectional: YES];
+        [brakeBinding setUnidirectional: YES];
+        [self setBinding: acceleratorBinding forElement: accelerator];
+        [self setBinding: brakeBinding forElement: brake];
+    }
+}
+
 
 - (void) bindButtonElements: (NSArray *)elements
 {
@@ -196,9 +294,7 @@ static NSMutableArray *profileClasses = nil;
 }
 
 - (id <BXHIDInputBinding>) generatedBindingForButtonElement: (DDHidElement *)element
-{
-	id binding = [BXButtonToButton binding];
-	
+{	
 	//Disabled for now because it irritates the hell out of me
 	BOOL wrapButtons = NO;
 	
@@ -215,8 +311,7 @@ static NSMutableArray *profileClasses = nil;
 	//Ignore all buttons beyond the emulated buttons
 	if (emulatedButton > 0 && emulatedButton <= numEmulatedButtons)
 	{
-		[binding setButton: emulatedButton];
-		return binding;
+        return [BXButtonToButton bindingWithButton: emulatedButton];
 	}
 	else return nil;
 }
@@ -229,11 +324,8 @@ static NSMutableArray *profileClasses = nil;
 		y			= @selector(yAxisMovedTo:),
 		x2			= @selector(x2AxisMovedTo:),
 		y2			= @selector(y2AxisMovedTo:),
-        wheel       = @selector(wheelMovedTo:),
 		rudder		= @selector(rudderMovedTo:),
-		throttle	= @selector(throttleMovedTo:),
-		accelerator = @selector(acceleratorMovedTo:),
-		brake		= @selector(brakeMovedTo:);
+        throttle	= @selector(throttleMovedTo:);
 	
 	NSUInteger axis = [[element usage] usageId], normalizedAxis;
 	SEL bindAxis = NULL;
@@ -249,8 +341,8 @@ static NSMutableArray *profileClasses = nil;
 			//Some joysticks pair Rz with Z, in which case it should be normalized to Ry (with Z as Rx);
 			//Otherwise it should be treated as Rx.
 			{
-				BOOL hasZAxis = [[[self HIDController] axisElementsWithUsageID: kHIDUsage_GD_Z] count] > 0;
-				normalizedAxis = (hasZAxis) ? kHIDUsage_GD_Ry : kHIDUsage_GD_Rx;
+				BOOL hasZAxis = [[self HIDController] axisElementWithUsageID: kHIDUsage_GD_Z] != nil;
+                normalizedAxis = (hasZAxis) ? kHIDUsage_GD_Ry : kHIDUsage_GD_Rx;
 			}
 			break;
 		
@@ -271,8 +363,7 @@ static NSMutableArray *profileClasses = nil;
 	switch (normalizedAxis)
 	{
 		case kHIDUsage_GD_X:
-			if      ([joystick respondsToSelector: x]) bindAxis = x;
-			else if ([joystick respondsToSelector: wheel]) bindAxis = wheel;
+			if ([joystick respondsToSelector: x]) bindAxis = x;
 			break;
 			
 		case kHIDUsage_GD_Y:
@@ -280,45 +371,19 @@ static NSMutableArray *profileClasses = nil;
 			break;
 			
 		case kHIDUsage_GD_Rx:
-			{
-				//Loop through these selectors in order of priority,
-				//assigning to the first available one on the emulated joystick
-				SEL selectors[3] = {rudder, brake, x2};
-				NSUInteger i;
-				for (i=0; i<3; i++)
-				{
-					if ([joystick respondsToSelector: selectors[i]])
-					{
-						bindAxis = selectors[i];
-						break;
-					}
-				}
-			}
-			break;
+            if      ([joystick respondsToSelector: rudder])     bindAxis = rudder;
+            else if ([joystick respondsToSelector: x2])         bindAxis = x2;
+        	break;
 			
 		case kHIDUsage_GD_Ry:
-			{
-				//Loop through these selectors in order of priority,
-				//assigning to the first available one on the emulated joystick
-				SEL selectors[3] = {throttle, accelerator, y2};
-				NSUInteger i;
-				for (i=0; i<3; i++)
-				{
-					if ([joystick respondsToSelector: selectors[i]])
-					{
-						bindAxis = selectors[i];
-						break;
-					}
-				}
-			}
+            if      ([joystick respondsToSelector: throttle])   bindAxis = throttle;
+            else if ([joystick respondsToSelector: y2])         bindAxis = y2;
 			break;
 	}
 	
 	if (bindAxis)
 	{
-		id binding = [BXAxisToAxis binding];
-		[binding setAxisSelector: bindAxis];
-		return binding;
+		return [BXAxisToAxis bindingWithAxisSelector: bindAxis];
 	}
 	else return nil;
 }

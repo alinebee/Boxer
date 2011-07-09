@@ -47,9 +47,14 @@ io_service_t createServiceFromHIDDevice(IOHIDDeviceRef deviceRef);
 //Will be empty if no such axis is present on this device.
 - (NSArray *) axisElementsWithUsageID: (unsigned)usageID;
 
-//Returns the first element corresponding to the specified button usage,
-//or nil if no such button is present on this device.
+//Returns all button elements corresponding to the specified button usage.
+//Will be empty if no such button is present on this device.
 - (NSArray *) buttonElementsWithUsageID: (unsigned)usageID;
+
+//Convenience method to return the first matching axis/button element.
+//Returns nil if no matching elements were found.
+- (DDHidElement *) axisElementWithUsageID: (unsigned)usageID;
+- (DDHidElement *) buttonElementWithUsageID: (unsigned)usageID;
 @end
 
 
@@ -62,5 +67,9 @@ io_service_t createServiceFromHIDDevice(IOHIDDeviceRef deviceRef);
 //Returns all axis elements conforming to the specified usage ID.
 //Will be empty if no such axis is present on this stick.
 - (NSArray *) axisElementsWithUsageID: (unsigned)usageID;
+
+//Convenience method to return the first matching axis element.
+//Returns nil if no matching elements were found.
+- (DDHidElement *) axisElementWithUsageID: (unsigned)usageID;
 
 @end

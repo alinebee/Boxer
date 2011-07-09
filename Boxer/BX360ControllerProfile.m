@@ -139,45 +139,21 @@ enum {
 	return binding;
 }
 
-//Custom binding for 360 triggers: bind to buttons 1 & 2 for regular joysticks,
-//or to brake/accelerator for wheel emulation.
+//Bind triggers to buttons 1 & 2 for regular joystick emulation.
 - (id <BXHIDInputBinding>) generatedBindingForAxisElement: (DDHidElement *)element
 {
 	NSUInteger axis = [[element usage] usageId];
-	id joystick = [self emulatedJoystick];
-	
-	SEL accelerator = @selector(acceleratorMovedTo:),
-		brake		= @selector(brakeMovedTo:);
-	
 	id binding = nil;
 	
 	switch (axis)
 	{
 		case BX360ControllerLeftTrigger:
-			if ([joystick respondsToSelector: brake])
-			{
-				binding = [BXAxisToAxis binding];
-				[binding setAxisSelector: brake];
-			}
-			else
-			{
-				binding = [BXAxisToButton binding];
-				[binding setButton: BXEmulatedJoystickButton2];
-			}
+			binding = [BXAxisToButton bindingWithButton: BXEmulatedJoystickButton2];
 			[binding setUnidirectional: YES];
 			break;
 		
 		case BX360ControllerRightTrigger:
-			if ([joystick respondsToSelector: accelerator])
-			{
-				binding = [BXAxisToAxis binding];
-				[binding setAxisSelector: accelerator];
-			}
-			else
-			{
-				binding = [BXAxisToButton binding];
-				[binding setButton: BXEmulatedJoystickButton1];
-			}
+			binding = [BXAxisToButton bindingWithButton: BXEmulatedJoystickButton1];
 			[binding setUnidirectional: YES];
 			break;
 			
@@ -185,6 +161,36 @@ enum {
 			binding = [super generatedBindingForAxisElement: element];
 	}
 	return binding;
+}
+
+//Bind triggers to brake/accelerator for wheel emulation.
+- (void) bindAxisElementsForWheel: (NSArray *)elements
+{
+    //Apply regular controller-to-wheel binding behaviour,
+    //which will otherwise suit the 360 just fine.
+    [super bindAxisElementsForWheel: elements];
+    
+    //Add the triggers as additional pedal inputs.
+    for (DDHidElement *element in elements)
+    {
+        id binding;
+        switch([[element usage] usageId])
+        {
+            case BX360ControllerLeftTrigger:
+                binding = [BXAxisToAxis bindingWithAxisSelector: @selector(brakeMovedTo:)];
+                [binding setUnidirectional: YES];
+                break;
+                
+            case BX360ControllerRightTrigger:
+                binding = [BXAxisToAxis bindingWithAxisSelector: @selector(acceleratorMovedTo:)];
+                [binding setUnidirectional: YES];
+                break;
+            default:
+                binding = nil;
+        }
+        if (binding)
+            [self setBinding: binding forElement: element];
+    }
 }
 
 @end

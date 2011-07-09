@@ -72,6 +72,13 @@
 @implementation BXAxisToAxis
 @synthesize deadzone, unidirectional, inverted, axisSelector;
 
++ (id) bindingWithAxisSelector: (SEL)axis
+{
+    id binding = [self binding];
+    [binding setAxisSelector: axis];
+    return binding;
+}
+
 - (id) init
 {
 	if ((self = [super init]))
@@ -122,6 +129,13 @@
 @implementation BXButtonToButton
 @synthesize button;
 
++ (id) bindingWithButton: (NSUInteger)button
+{
+    id binding = [self binding];
+    [binding setButton: button];
+    return binding;
+}
+
 - (void) processEvent: (BXHIDEvent *)event
 			forTarget: (id <BXEmulatedJoystick>)target
 {
@@ -137,6 +151,13 @@
 
 @implementation BXButtonToAxis
 @synthesize pressedValue, releasedValue, axisSelector;
+
++ (id) bindingWithAxisSelector: (SEL)axis
+{
+    id binding = [self binding];
+    [binding setAxisSelector: axis];
+    return binding;
+}
 
 - (id) init
 {
@@ -166,6 +187,13 @@
 
 @implementation BXAxisToButton
 @synthesize threshold, unidirectional, button;
+
++ (id) bindingWithButton: (NSUInteger)button
+{
+    id binding = [self binding];
+    [binding setButton: button];
+    return binding;
+}
 
 - (id) init
 {
@@ -322,6 +350,15 @@ enum {
 @implementation BXPOVToAxes
 @synthesize xAxisSelector, yAxisSelector;
 
++ (id) bindingWithXAxisSelector: (SEL)x
+                  YAxisSelector: (SEL)y
+{
+    id binding = [self binding];
+    [binding setXAxisSelector: x];
+    [binding setYAxisSelector: y];
+    return binding;
+}
+
 - (void) processEvent: (BXHIDEvent *)event
 			forTarget: (id <BXEmulatedJoystick>)target
 {
@@ -367,3 +404,61 @@ enum {
 }
 
 @end
+
+@implementation BXAxisToBindings
+@synthesize positiveBinding, negativeBinding;
+
++ (id) bindingWithPositiveAxisSelector: (SEL)positive
+                  negativeAxisSelector: (SEL)negative
+{
+    id binding = [self binding];
+    [binding setPositiveBinding: [BXAxisToAxis bindingWithAxisSelector: positive]];
+    [binding setNegativeBinding: [BXAxisToAxis bindingWithAxisSelector: negative]];
+    return binding;
+}
+
++ (id) bindingWithPositiveButton: (NSUInteger)positive
+                  negativeButton: (NSUInteger)negative
+{
+    id binding = [self binding];
+    [binding setPositiveBinding: [BXAxisToButton bindingWithButton: positive]];
+    [binding setNegativeBinding: [BXAxisToButton bindingWithButton: negative]];
+    return binding;
+}                          
+                                 
+- (id) init
+{
+    if ((self = [super init]))
+    {
+		previousValue = 0.0f;
+    }
+    return self;
+}
+
+- (void) dealloc
+{
+    [self setPositiveBinding: nil], [positiveBinding release];
+    [self setNegativeBinding: nil], [negativeBinding release];
+    
+    [super dealloc];
+}
+
+- (void) processEvent: (BXHIDEvent *)event
+			forTarget: (id <BXEmulatedJoystick>)target
+{
+    NSInteger rawValue = [event axisPosition];
+	NSInteger positiveValue = (rawValue > 0) ? rawValue : 0;
+	NSInteger negativeValue = (rawValue < 0) ? rawValue : 0;
+
+    //A bit ugly - we should clone the event instead - but oh well 
+    [event setAxisPosition: positiveValue];
+    [[self positiveBinding] processEvent: event forTarget: target];
+    
+    [event setAxisPosition: negativeValue];
+    [[self negativeBinding] processEvent: event forTarget: target];
+    
+    [event setAxisPosition: rawValue];
+}
+
+@end
+

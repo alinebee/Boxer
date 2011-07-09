@@ -2,205 +2,205 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>English</string>
-	<key>CFBundleExecutable</key>
-	<string>${EXECUTABLE_NAME}</string>
-	<key>CFBundleIconFile</key>
-	<string>boxer.icns</string>
-	<key>CFBundleIdentifier</key>
-	<string>net.washboardabs.boxer</string>
-	<key>CFBundleName</key>
-	<string>${PRODUCT_NAME}</string>
-	<key>CFBundleShortVersionString</key>
-	<string>${CURRENT_PROJECT_SHORT_VERSION_STRING}</string>
-	<key>NSHumanReadableCopyright</key>
-	<string>© 2011 Alun Bestor. Released under the GNU Public License 2.0.</string>
-	<key>CFBundleSignature</key>
-	<string>Boxr</string>
-	<key>CFBundleVersion</key>
-	<string>${CURRENT_PROJECT_VERSION}</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
-	<key>NSMainNibFile</key>
-	<string>MainMenu</string>
-	<key>NSPrincipalClass</key>
-	<string>NSApplication</string>
-	<key>LSMinimumSystemVersion</key>
-	<string>${MACOSX_DEPLOYMENT_TARGET}</string>
-	<key>ContactEmail</key>
-	<string>support@boxerapp.com</string>
-	<key>WebsiteURL</key>
-	<string>http://boxerapp.com/</string>
-	<key>DonationURL</key>
-	<string>http://boxerapp.com/donate</string>
 	<key>BugReportURL</key>
 	<string>https://bitbucket.org/alunbestor/boxer/issues/new</string>
-	<key>ConfigurationFileHelpURL</key>
-	<string>http://boxerapp.com/guide/dosbox_configuration</string>
-	<key>PerianURL</key>
-	<string>http://perian.org/</string>
-	<key>ReplacementDocsURL</key>
-	<string>http://www.replacementdocs.com/</string>
-	<key>ReplacementDocsSearchURL</key>
-	<string>http://www.replacementdocs.com/search.php?r=0&amp;t=downloads&amp;q=%@</string>
-	<key>CoverArtSearchURL</key>
-	<string>http://images.search.yahoo.com/search/images?p=dos%%20%@%%20cover</string>
-	<key>MobygamesURL</key>
-	<string>http://www.mobygames.com/</string>
-	<key>MobygamesSearchURL</key>
-	<string>http://www.mobygames.com/search/quick?p=2&amp;q=%@</string>
-	<key>SUEnableAutomaticChecks</key>
-	<true/>
-	<key>SUEnableSystemProfiling</key>
-	<false/>
-	<key>SUScheduledCheckInterval</key>
-	<integer>86400</integer>
-	<key>SUFeedURL</key>
-	<string>http://boxerapp.com/appcast</string>
-	<key>SUPublicDSAKeyFile</key>
-	<string>dsa_pub.pem</string>
-	<key>NSAppleScriptEnabled</key>
-	<true/>
-	<key>OSAScriptingDefinition</key>
-	<string>Boxer.sdef</string>
-	<key>CFBundleHelpBookFolder</key>
-	<string>BoxerHelp</string>
-	<key>CFBundleHelpBookName</key>
-	<string>Boxer Help</string>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
-			<key>NSDocumentClass</key>
-			<string>BXSession</string>
-			<key>LSHandlerRank</key>
-			<string>Owner</string>
-			<key>CFBundleTypeName</key>
-			<string>Gamebox</string>
 			<key>CFBundleTypeIconFile</key>
 			<string>package.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>Gamebox</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
 			<key>LSItemContentTypes</key>
 			<array>
 				<string>net.washboardabs.boxer-game-package</string>
 			</array>
 			<key>LSTypeIsPackage</key>
 			<true/>
-		</dict>
-		<dict>
 			<key>NSDocumentClass</key>
 			<string>BXSession</string>
-			<key>LSHandlerRank</key>
-			<string>None</string>
+		</dict>
+		<dict>
 			<key>CFBundleTypeName</key>
 			<string>Folder</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>None</string>
 			<key>LSItemContentTypes</key>
 			<array>
 				<string>public.folder</string>
 				<string>net.washboardabs.boxer-mountable-folder</string>
 			</array>
-		</dict>
-		<dict>
 			<key>NSDocumentClass</key>
 			<string>BXSession</string>
-			<key>LSHandlerRank</key>
-			<string>Alternate</string>
+		</dict>
+		<dict>
 			<key>CFBundleTypeName</key>
 			<string>Disc Image</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 			<key>LSItemContentTypes</key>
 			<array>
 				<string>public.iso-image</string>
 				<string>com.apple.disk-image-cdr</string>
 				<string>com.goldenhawk.cdrwin-cuesheet</string>
 			</array>
-		</dict>
-		<dict>
 			<key>NSDocumentClass</key>
 			<string>BXSession</string>
-			<key>LSHandlerRank</key>
-			<string>Alternate</string>
+		</dict>
+		<dict>
 			<key>CFBundleTypeName</key>
 			<string>Raw Disk Image</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 			<key>LSItemContentTypes</key>
 			<array>
 				<string>com.winimage.raw-disk-image</string>
 			</array>
-		</dict>
-		<dict>
 			<key>NSDocumentClass</key>
 			<string>BXSession</string>
-			<key>LSHandlerRank</key>
-			<string>Owner</string>
+		</dict>
+		<dict>
 			<key>CFBundleTypeName</key>
 			<string>Disk Bundle</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
 			<key>LSItemContentTypes</key>
 			<array>
 				<string>net.washboardabs.boxer-disk-bundle</string>
 			</array>
-		</dict>
-		<dict>
 			<key>NSDocumentClass</key>
 			<string>BXSession</string>
-			<key>LSHandlerRank</key>
-			<string>Alternate</string>
-			<key>CFBundleTypeName</key>
-			<string>DOS/Windows Executable</string>
+		</dict>
+		<dict>
 			<key>CFBundleTypeIconFile</key>
 			<string>executable.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>DOS/Windows Executable</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 			<key>LSItemContentTypes</key>
 			<array>
 				<string>com.microsoft.windows-executable</string>
 				<string>com.microsoft.msdos-executable</string>
 				<string>com.microsoft.batch-file</string>
 			</array>
+			<key>NSDocumentClass</key>
+			<string>BXSession</string>
 		</dict>
 	</array>
+	<key>CFBundleExecutable</key>
+	<string>${EXECUTABLE_NAME}</string>
+	<key>CFBundleHelpBookFolder</key>
+	<string>BoxerHelp</string>
+	<key>CFBundleHelpBookName</key>
+	<string>Boxer Help</string>
+	<key>CFBundleIconFile</key>
+	<string>boxer.icns</string>
+	<key>CFBundleIdentifier</key>
+	<string>net.washboardabs.boxer</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>${PRODUCT_NAME}</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>${CURRENT_PROJECT_SHORT_VERSION_STRING}</string>
+	<key>CFBundleSignature</key>
+	<string>Boxr</string>
+	<key>CFBundleVersion</key>
+	<string>${CURRENT_PROJECT_VERSION}</string>
+	<key>ConfigurationFileHelpURL</key>
+	<string>http://boxerapp.com/guide/dosbox_configuration</string>
+	<key>ContactEmail</key>
+	<string>support@boxerapp.com</string>
+	<key>CoverArtSearchURL</key>
+	<string>http://images.search.yahoo.com/search/images?p=dos%%20%@%%20cover</string>
+	<key>DonationURL</key>
+	<string>http://boxerapp.com/donate</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>${MACOSX_DEPLOYMENT_TARGET}</string>
+	<key>MobygamesSearchURL</key>
+	<string>http://www.mobygames.com/search/quick?p=2&amp;q=%@</string>
+	<key>MobygamesURL</key>
+	<string>http://www.mobygames.com/</string>
+	<key>NSAppleScriptEnabled</key>
+	<true/>
+	<key>NSHumanReadableCopyright</key>
+	<string>© 2011 Alun Bestor. Released under the GNU Public License 2.0.</string>
+	<key>NSMainNibFile</key>
+	<string>MainMenu</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+	<key>OSAScriptingDefinition</key>
+	<string>Boxer.sdef</string>
+	<key>PerianURL</key>
+	<string>http://perian.org/</string>
+	<key>JoypadURL</key>
+	<string>http://getjoypad.com/</string>
+	<key>ReplacementDocsSearchURL</key>
+	<string>http://www.replacementdocs.com/search.php?r=0&amp;t=downloads&amp;q=%@</string>
+	<key>ReplacementDocsURL</key>
+	<string>http://www.replacementdocs.com/</string>
+	<key>SUEnableAutomaticChecks</key>
+	<true/>
+	<key>SUEnableSystemProfiling</key>
+	<false/>
+	<key>SUFeedURL</key>
+	<string>http://boxerapp.com/appcast</string>
+	<key>SUPublicDSAKeyFile</key>
+	<string>dsa_pub.pem</string>
+	<key>SUScheduledCheckInterval</key>
+	<integer>86400</integer>
 	<key>UTExportedTypeDeclarations</key>
 	<array>
 		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>com.apple.folder</string>
+			</array>
 			<key>UTTypeDescription</key>
 			<string>Boxer mountable folder</string>
 			<key>UTTypeIdentifier</key>
 			<string>net.washboardabs.boxer-mountable-folder</string>
+		</dict>
+		<dict>
 			<key>UTTypeConformsTo</key>
 			<array>
 				<string>com.apple.folder</string>
 			</array>
-		</dict>
-		<dict>
 			<key>UTTypeDescription</key>
 			<string>Boxer disk bundle</string>
 			<key>UTTypeIdentifier</key>
 			<string>net.washboardabs.boxer-disk-bundle</string>
-			<key>UTTypeConformsTo</key>
-			<array>
-				<string>com.apple.folder</string>
-			</array>
 		</dict>
 		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>com.apple.package</string>
+			</array>
 			<key>UTTypeDescription</key>
 			<string>MS-DOS gamebox</string>
 			<key>UTTypeIconFile</key>
 			<string>package.icns</string>
 			<key>UTTypeIdentifier</key>
 			<string>net.washboardabs.boxer-game-package</string>
-			<key>UTTypeConformsTo</key>
-			<array>
-				<string>com.apple.package</string>
-			</array>
 			<key>UTTypeTagSpecification</key>
 			<dict>
 				<key>public.filename-extension</key>
@@ -211,14 +211,14 @@
 			</dict>
 		</dict>
 		<dict>
-			<key>UTTypeDescription</key>
-			<string>MS-DOS CD-ROM</string>
-			<key>UTTypeIdentifier</key>
-			<string>net.washboardabs.boxer-cdrom-folder</string>
 			<key>UTTypeConformsTo</key>
 			<array>
 				<string>net.washboardabs.boxer-mountable-folder</string>
 			</array>
+			<key>UTTypeDescription</key>
+			<string>MS-DOS CD-ROM</string>
+			<key>UTTypeIdentifier</key>
+			<string>net.washboardabs.boxer-cdrom-folder</string>
 			<key>UTTypeTagSpecification</key>
 			<dict>
 				<key>public.filename-extension</key>
@@ -228,14 +228,14 @@
 			</dict>
 		</dict>
 		<dict>
-			<key>UTTypeDescription</key>
-			<string>MS-DOS floppy disk</string>
-			<key>UTTypeIdentifier</key>
-			<string>net.washboardabs.boxer-floppy-folder</string>
 			<key>UTTypeConformsTo</key>
 			<array>
 				<string>net.washboardabs.boxer-mountable-folder</string>
 			</array>
+			<key>UTTypeDescription</key>
+			<string>MS-DOS floppy disk</string>
+			<key>UTTypeIdentifier</key>
+			<string>net.washboardabs.boxer-floppy-folder</string>
 			<key>UTTypeTagSpecification</key>
 			<dict>
 				<key>public.filename-extension</key>
@@ -245,14 +245,14 @@
 			</dict>
 		</dict>
 		<dict>
-			<key>UTTypeDescription</key>
-			<string>MS-DOS hard disk</string>
-			<key>UTTypeIdentifier</key>
-			<string>net.washboardabs.boxer-harddisk-folder</string>
 			<key>UTTypeConformsTo</key>
 			<array>
 				<string>net.washboardabs.boxer-mountable-folder</string>
 			</array>
+			<key>UTTypeDescription</key>
+			<string>MS-DOS hard disk</string>
+			<key>UTTypeIdentifier</key>
+			<string>net.washboardabs.boxer-harddisk-folder</string>
 			<key>UTTypeTagSpecification</key>
 			<dict>
 				<key>public.filename-extension</key>
@@ -263,14 +263,14 @@
 			</dict>
 		</dict>
 		<dict>
-			<key>UTTypeDescription</key>
-			<string>CD-ROM bundle</string>
-			<key>UTTypeIdentifier</key>
-			<string>net.washboardabs.boxer-cdrom-bundle</string>
 			<key>UTTypeConformsTo</key>
 			<array>
 				<string>net.washboardabs.boxer-disk-bundle</string>
 			</array>
+			<key>UTTypeDescription</key>
+			<string>CD-ROM bundle</string>
+			<key>UTTypeIdentifier</key>
+			<string>net.washboardabs.boxer-cdrom-bundle</string>
 			<key>UTTypeTagSpecification</key>
 			<dict>
 				<key>public.filename-extension</key>
@@ -283,17 +283,17 @@
 	<key>UTImportedTypeDeclarations</key>
 	<array>
 		<dict>
-			<key>UTTypeDescription</key>
-			<string>Microsoft MS-DOS application</string>
-			<key>UTTypeIdentifier</key>
-			<string>com.microsoft.msdos-executable</string>
-			<key>UTTypeIconFile</key>
-			<string>executable.icns</string>
 			<key>UTTypeConformsTo</key>
 			<array>
 				<string>public.data</string>
 				<string>public.executable</string>
 			</array>
+			<key>UTTypeDescription</key>
+			<string>Microsoft MS-DOS application</string>
+			<key>UTTypeIconFile</key>
+			<string>executable.icns</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.microsoft.msdos-executable</string>
 			<key>UTTypeTagSpecification</key>
 			<dict>
 				<key>public.filename-extension</key>
@@ -301,17 +301,17 @@
 			</dict>
 		</dict>
 		<dict>
-			<key>UTTypeDescription</key>
-			<string>Microsoft Windows/MS-DOS batch file</string>
-			<key>UTTypeIdentifier</key>
-			<string>com.microsoft.batch-file</string>
-			<key>UTTypeIconFile</key>
-			<string>executable.icns</string>
 			<key>UTTypeConformsTo</key>
 			<array>
 				<string>public.script</string>
 				<string>public.executable</string>
 			</array>
+			<key>UTTypeDescription</key>
+			<string>Microsoft Windows/MS-DOS batch file</string>
+			<key>UTTypeIconFile</key>
+			<string>executable.icns</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.microsoft.batch-file</string>
 			<key>UTTypeTagSpecification</key>
 			<dict>
 				<key>public.filename-extension</key>
@@ -321,52 +321,52 @@
 			</dict>
 		</dict>
 		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.plain-text</string>
+			</array>
 			<key>UTTypeDescription</key>
 			<string>Configuration file</string>
 			<key>UTTypeIdentifier</key>
 			<string>gnu.org.configuration-file</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>com.apple.ostype</key>
+				<string>DBGc</string>
+				<key>public.filename-extension</key>
+				<string>conf</string>
+			</dict>
+		</dict>
+		<dict>
 			<key>UTTypeConformsTo</key>
 			<array>
 				<string>public.plain-text</string>
 			</array>
-			<key>UTTypeTagSpecification</key>
-			<dict>
-				<key>public.filename-extension</key>
-				<string>conf</string>
-				<key>com.apple.ostype</key>
-				<string>DBGc</string>
-			</dict>
-		</dict>
-		<dict>
 			<key>UTTypeDescription</key>
 			<string>DOSBox translation file</string>
 			<key>UTTypeIdentifier</key>
 			<string>com.dosbox.language-file</string>
-			<key>UTTypeConformsTo</key>
-			<array>
-				<string>public.plain-text</string>
-			</array>
 			<key>UTTypeTagSpecification</key>
 			<dict>
+				<key>com.apple.ostype</key>
+				<string>DBGa</string>
 				<key>public.filename-extension</key>
 				<array>
 					<string>lng</string>
 					<string>lang</string>
 				</array>
-				<key>com.apple.ostype</key>
-				<string>DBGa</string>
 			</dict>
 		</dict>
 		<dict>
-			<key>UTTypeDescription</key>
-			<string>Disc image cue-sheet</string>
-			<key>UTTypeIdentifier</key>
-			<string>com.goldenhawk.cdrwin-cuesheet</string>
 			<key>UTTypeConformsTo</key>
 			<array>
 				<string>public.disk-image</string>
 				<string>public.plain-text</string>
 			</array>
+			<key>UTTypeDescription</key>
+			<string>Disc image cue-sheet</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.goldenhawk.cdrwin-cuesheet</string>
 			<key>UTTypeTagSpecification</key>
 			<dict>
 				<key>public.filename-extension</key>
@@ -379,15 +379,15 @@
 			</dict>
 		</dict>
 		<dict>
-			<key>UTTypeDescription</key>
-			<string>Good Old Games disc image</string>
-			<key>UTTypeIdentifier</key>
-			<string>com.gog.gog-disk-image</string>
 			<key>UTTypeConformsTo</key>
 			<array>
 				<string>public.disk-image</string>
 				<string>public.data</string>
 			</array>
+			<key>UTTypeDescription</key>
+			<string>Good Old Games disc image</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.gog.gog-disk-image</string>
 			<key>UTTypeTagSpecification</key>
 			<dict>
 				<key>public.filename-extension</key>
@@ -397,15 +397,15 @@
 			</dict>
 		</dict>
 		<dict>
-			<key>UTTypeDescription</key>
-			<string>WinImage raw disk image</string>
-			<key>UTTypeIdentifier</key>
-			<string>com.winimage.raw-disk-image</string>
 			<key>UTTypeConformsTo</key>
 			<array>
 				<string>public.disk-image</string>
 				<string>public.data</string>
 			</array>
+			<key>UTTypeDescription</key>
+			<string>WinImage raw disk image</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.winimage.raw-disk-image</string>
 			<key>UTTypeTagSpecification</key>
 			<dict>
 				<key>public.filename-extension</key>
@@ -414,7 +414,8 @@
 				</array>
 			</dict>
 		</dict>
-
 	</array>
+	<key>WebsiteURL</key>
+	<string>http://boxerapp.com/</string>
 </dict>
 </plist>

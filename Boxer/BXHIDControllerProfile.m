@@ -224,12 +224,11 @@ static NSMutableArray *profileClasses = nil;
                 wheel = [elements objectAtIndex: 0];
             
             
-            //Our first preference for the pedals is the second axis of the second
+            //Our ideal preference for the pedals is the second axis of the second
             //stick, which for gamepads should correspond to the vertical axis
-            //of the right thumbstick (The actual element could have any of a range
-            //of usage IDs, so we can't go by that alas).
+            //of the right thumbstick. (The actual element could have any of a
+            //range of usage IDs, so we can't go by that.)
             DDHidElement *pedalAxis;
-            
             NSArray *sticks = [[self HIDController] sticks];
             NSUInteger numSticks = [sticks count];
             if (numSticks > 1)

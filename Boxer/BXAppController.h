@@ -151,6 +151,7 @@ enum {
 - (IBAction) showWebsite:			(id)sender;	//Open the Boxer website in the default browser. 
 - (IBAction) showDonationPage:		(id)sender;	//Open the Boxer donations page in the default browser.
 - (IBAction) showPerianDownloadPage:(id)sender;	//Open the Perian website in the default browser.
+- (IBAction) showJoypadDownloadPage:(id)sender;	//Open the Joypad website in the default browser.
 - (IBAction) showBugReportPage:		(id)sender;	//Open the Bitbucket issue reporting page in the default browser. 
 - (IBAction) sendEmail:				(id)sender;	//Open a new email to Boxer's contact email address.
 

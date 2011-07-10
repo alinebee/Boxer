@@ -36,7 +36,13 @@
 
 + (NSSet *) keyPathsForValuesAffectingSelectedJoystickTypeIndexes
 {
-	return [NSSet setWithObjects: @"preferredJoystickType", @"availableJoystickTypes", nil];
+    //FIXME: selectedJoystickTypeIndexes doesn't depend on or refer to the currently
+    //active joystick at all. However, for some as-yet-unknown reason the Inspector's
+    //joystick UI won't initially highlight the preferred joystick type when
+    //running on 10.7 and when running a gamebox; *unless* we force it to check
+    //the value when the actual joystick changes too. Which makes no sense.
+    //Programming-by-coincidence-a-go-go.
+	return [NSSet setWithObjects: @"joystickType", @"preferredJoystickType", nil];
 }
 
 - (BOOL) strictGameportTiming

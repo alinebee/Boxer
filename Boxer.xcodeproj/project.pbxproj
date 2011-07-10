@@ -3054,8 +3054,8 @@
 			buildSettings = {
 				ARCHS = (
 					ppc,
-					x86_64,
 					i386,
+					x86_64,
 				);
 				CURRENT_PROJECT_SHORT_VERSION_STRING = 1.1pre;
 				CURRENT_PROJECT_VERSION = 20110626.1;
@@ -3070,10 +3070,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = (
-					ppc,
-					i386,
-				);
+				ARCHS = i386;
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3101,7 +3098,7 @@
 					"\"$(SRCROOT)/Other Sources/JoypadCocoaSDK\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "";
 				"OTHER_CFLAGS[arch=i386]" = "-mstackrealign";
 				OTHER_LDFLAGS = "-all_load";
@@ -3142,7 +3139,6 @@
 					"\"$(SRCROOT)/Other Sources/JoypadCocoaSDK\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "";
 				"OTHER_CFLAGS[arch=i386]" = "-mstackrealign";
 				OTHER_LDFLAGS = "-all_load";
@@ -3156,8 +3152,8 @@
 			buildSettings = {
 				ARCHS = (
 					ppc,
-					x86_64,
 					i386,
+					x86_64,
 				);
 				CURRENT_PROJECT_SHORT_VERSION_STRING = 1.1pre;
 				CURRENT_PROJECT_VERSION = 20110626.1;

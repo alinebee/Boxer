@@ -2,9 +2,9 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
-		<string key="IBDocument.SystemVersion">10J869</string>
-		<string key="IBDocument.InterfaceBuilderVersion">823</string>
-		<string key="IBDocument.AppKitVersion">1038.35</string>
+		<string key="IBDocument.SystemVersion">10K540</string>
+		<string key="IBDocument.InterfaceBuilderVersion">851</string>
+		<string key="IBDocument.AppKitVersion">1038.36</string>
 		<string key="IBDocument.HIToolboxVersion">461.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -15,7 +15,7 @@
 			</object>
 			<object class="NSMutableArray" key="dict.values">
 				<bool key="EncodedWithXMLCoder">YES</bool>
-				<string>823</string>
+				<string>851</string>
 				<string>1</string>
 			</object>
 		</object>
@@ -208,7 +208,7 @@
 							<object class="NSButton" id="452337895">
 								<reference key="NSNextResponder" ref="327747426"/>
 								<int key="NSvFlags">265</int>
-								<string key="NSFrame">{{346, 16}, {132, 25}}</string>
+								<string key="NSFrame">{{331, 12}, {152, 32}}</string>
 								<reference key="NSSuperview" ref="327747426"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="867627875">
@@ -218,7 +218,8 @@
 									<reference key="NSSupport" ref="732647970"/>
 									<reference key="NSControlView" ref="452337895"/>
 									<int key="NSButtonFlags">-2038284033</int>
-									<int key="NSButtonFlags2">163</int>
+									<int key="NSButtonFlags2">129</int>
+									<reference key="NSAlternateImage" ref="732647970"/>
 									<string key="NSAlternateContents"/>
 									<string key="NSKeyEquivalent"/>
 									<int key="NSPeriodicDelay">200</int>
@@ -245,7 +246,7 @@
 							<object class="NSButton" id="946525712">
 								<reference key="NSNextResponder" ref="327747426"/>
 								<int key="NSvFlags">265</int>
-								<string key="NSFrame">{{488, 16}, {132, 25}}</string>
+								<string key="NSFrame">{{482, 12}, {144, 32}}</string>
 								<reference key="NSSuperview" ref="327747426"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="483073014">
@@ -255,7 +256,8 @@
 									<reference key="NSSupport" ref="732647970"/>
 									<reference key="NSControlView" ref="946525712"/>
 									<int key="NSButtonFlags">-2038284033</int>
-									<int key="NSButtonFlags2">163</int>
+									<int key="NSButtonFlags2">129</int>
+									<reference key="NSAlternateImage" ref="732647970"/>
 									<string key="NSAlternateContents"/>
 									<string key="NSKeyEquivalent"/>
 									<int key="NSPeriodicDelay">200</int>
@@ -596,7 +598,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">431</int>
+			<int key="maxID">437</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

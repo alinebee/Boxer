@@ -10,6 +10,7 @@
 #import "BXImportSession.h"
 #import "BXGeometry.h"
 #import "NSWindow+BXWindowSizing.h"
+#import "BXAppController.h"
 
 
 //The height of the bottom window border.
@@ -141,26 +142,35 @@
 {
 	NSWindow *fromWindow	= [self window];
 	NSWindow *toWindow		= [controller window];
-	
-	NSRect fromFrame	= [fromWindow frame];
-	//Resize to the size of the final window, centered on the titlebar of the initial window
-	NSRect toFrame		= resizeRectFromPoint(fromFrame, [toWindow frame].size, NSMakePoint(0.5f, 1.0f));
-	
-	//Ensure the final frame fits within the current display
-	toFrame = [toWindow fullyConstrainFrameRect: toFrame toScreen: [fromWindow screen]];
-	
-	
-	//First, hide the destination window and reposition it to exactly the same area and size as our own window
-	[toWindow orderOut: self];
-	[toWindow setFrame: fromFrame display: NO];
-	
-	//Next, swap the two windows around
-	[toWindow makeKeyAndOrderFront: self];
-	[fromWindow orderOut: self];
-	
-	//Resize the destination window back to what it should be
-	[toWindow setFrame: toFrame display: YES animate: YES];
-	
+    
+    //These fancy transitions don't work well at all in Lion, which has its own window popin/popout animations.
+    if ([BXAppController isRunningOnLion])
+    {
+        [fromWindow orderOut: self];
+        [toWindow makeKeyAndOrderFront: self];
+    }
+    else
+    {
+        NSRect fromFrame	= [fromWindow frame];
+        //Resize to the size of the final window, centered on the titlebar of the initial window
+        NSRect toFrame		= resizeRectFromPoint(fromFrame, [toWindow frame].size, NSMakePoint(0.5f, 1.0f));
+        
+        //Ensure the final frame fits within the current display
+        toFrame = [toWindow fullyConstrainFrameRect: toFrame toScreen: [fromWindow screen]];
+        
+        
+        //First, hide the destination window and reposition it to exactly the same area and size as our own window
+        [toWindow orderOut: self];
+        [toWindow setFrame: fromFrame display: NO];
+        
+        //Next, swap the two windows around
+        [toWindow makeKeyAndOrderFront: self];
+        [fromWindow orderOut: self];
+        
+        //Resize the destination window back to what it should be
+        [toWindow setFrame: toFrame display: YES animate: YES];
+    }
+    
 	//The window controller architecture can get confused and reset the should-close-documentness
 	//of window controllers when we swap between them. So, set it explicitly here.
 	[self setShouldCloseDocument: NO];
@@ -173,28 +183,37 @@
 	NSWindow *fromWindow	= [controller window];
 	NSWindow *toWindow		= [self window];
 	
-	NSRect fromFrame	= [fromWindow frame];
-	//Resize to the size of the final window, centered on the titlebar of the initial window
-	NSRect toFrame		= resizeRectFromPoint(fromFrame, [toWindow frame].size, NSMakePoint(0.5f, 1.0f));
-	
-	//Ensure the final frame fits within the current display
-	toFrame = [toWindow fullyConstrainFrameRect: toFrame toScreen: [fromWindow screen]];
+    //These fancy transitions don't work well at all in Lion, which has its own window popin/popout animations.
+    if ([BXAppController isRunningOnLion])
+    {
+        [fromWindow orderOut: self];
+        [toWindow makeKeyAndOrderFront: self];
+    }
+    else
+    {
+        NSRect fromFrame	= [fromWindow frame];
+        //Resize to the size of the final window, centered on the titlebar of the initial window
+        NSRect toFrame		= resizeRectFromPoint(fromFrame, [toWindow frame].size, NSMakePoint(0.5f, 1.0f));
+        
+        //Ensure the final frame fits within the current display
+        toFrame = [toWindow fullyConstrainFrameRect: toFrame toScreen: [fromWindow screen]];
 
-	
-	//Set ourselves to the final size behind the scenes
-	[toWindow orderOut: self];
-	[toWindow setFrame: toFrame display: NO];
-	
-	//Make the initial window scale to our final window location
-	[fromWindow setFrame: toFrame display: YES animate: YES];
+        
+        //Set ourselves to the final size behind the scenes
+        [toWindow orderOut: self];
+        [toWindow setFrame: toFrame display: NO];
+        
+        //Make the initial window scale to our final window location
+        [fromWindow setFrame: toFrame display: YES animate: YES];
 
-	//Finally, close the top window and make ourselves key
-	[toWindow makeKeyAndOrderFront: self];
-	[fromWindow orderOut: self];
-	
-	//Reset the initial window back to what it was before we messed with it
-	[fromWindow setFrame: fromFrame display: NO];
-	
+        //Finally, close the top window and make ourselves key
+        [toWindow makeKeyAndOrderFront: self];
+        [fromWindow orderOut: self];
+        
+        //Reset the initial window back to what it was before we messed with it
+        [fromWindow setFrame: fromFrame display: NO];
+	}
+    
 	//The window controller architecture can get confused and reset the should-close-documentness
 	//of window controllers when we swap between them. So, set it explicitly here.
 	[controller setShouldCloseDocument: NO];

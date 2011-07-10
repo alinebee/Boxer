@@ -89,7 +89,7 @@
 
 @implementation BXProgramItemButton
 @synthesize delegate;
-
+   
 - (id) representedObject
 {
 	return [[self delegate] representedObject];
@@ -101,8 +101,13 @@
 	//TODO: move this into an initializer? Buttons are recreated whenever the default
 	//program changes anyway.
 	BOOL isDefault = [[[self representedObject] objectForKey: @"isDefault"] boolValue];
+    
 	[self setShowsBorderOnlyWhileMouseInside: !isDefault || ![self isEnabled]];
 	
+    //Cosmetic fix for Lion, which changed the button appearance to remove the indent
+    //in the button's unhovered state.
+    [[self cell] setBackgroundStyle: NSBackgroundStyleRaised]; 
+    
 	[super viewWillDraw];
 }
 @end

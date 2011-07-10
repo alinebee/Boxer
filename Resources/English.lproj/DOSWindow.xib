@@ -196,7 +196,7 @@
 											<reference key="NSNextKeyView" ref="910670518"/>
 											<object class="NSOpenGLPixelFormat" key="NSPixelFormat">
 												<object class="NSMutableData" key="NSPixelAttributes">
-													<bytes key="NS.bytes">AAAABQAAAEgAAABJAAAACAAAABgAAAALAAAACAAAAAA</bytes>
+													<bytes key="NS.bytes">AAAABQAAAEgAAABJAAAAAA</bytes>
 												</object>
 											</object>
 										</object>

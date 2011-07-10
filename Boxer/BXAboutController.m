@@ -10,7 +10,7 @@
 
 
 @implementation BXAboutController
-@synthesize websiteLink, version;
+@synthesize version;
 
 + (id) controller
 {
@@ -33,14 +33,11 @@
 	[theWindow setMovableByWindowBackground: YES];
 	
 	//Set the version's number and appearance
-	NSString *versionFormat	= NSLocalizedString(@"v%@ %@", @"Version string for display in About panel. First @ is human-readable version (e.g. 1.0beta), second @ is build number (e.g. 20090323-1.)");
+	NSString *versionFormat	= NSLocalizedString(@"v%1$@ %2$@", @"Version string for display in About panel. %1$@ is human-readable version (e.g. 1.0beta), %2$@ is build number (e.g. 20090323-1.)");
 	NSString *versionName	= [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleShortVersionString"];
 	NSString *buildNumber	= [[NSBundle mainBundle] objectForInfoDictionaryKey: (NSString *)kCFBundleVersionKey];
 	NSString *versionString	= [NSString stringWithFormat: versionFormat, versionName, buildNumber, nil];
 	[version setStringValue: versionString];
-	
-	//Make the button background appear all the time
-	[websiteLink setShowsBorderOnlyWhileMouseInside: NO];
 }
 
 - (IBAction) showAcknowledgements: (id)sender

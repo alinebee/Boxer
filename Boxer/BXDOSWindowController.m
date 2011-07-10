@@ -632,8 +632,6 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
     [inputController setMouseLocked: YES];
     
     renderingViewSizeBeforeFullscreen = [self windowedRenderingViewSize];
-    
-    NSLog(@"Size when entering fullscreen: %@", NSStringFromSize(renderingViewSizeBeforeFullscreen));
 }
 
 - (void) windowDidEnterFullScreen: (NSNotification *)notification
@@ -662,8 +660,6 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 
 - (void) windowWillExitFullScreen: (NSNotification *)notification
 {
-    NSLog(@"Size before exiting fullscreen: %@", NSStringFromSize(renderingViewSizeBeforeFullscreen));
-
 	[self willChangeValueForKey: @"fullScreen"];
 	inFullScreenTransition = YES;
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
@@ -672,7 +668,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
     [[self renderingView] setManagesAspectRatio: NO];
     
     [[self window] setFrameAutosaveName: [self autosaveNameBeforeFullscreen]];
-    [self resizeWindowToRenderingViewSize: renderingViewSizeBeforeFullscreen animate: NO];
+    //[self resizeWindowToRenderingViewSize: renderingViewSizeBeforeFullscreen animate: NO];
     
     [self setStatusBarShown: statusBarShownBeforeFullscreen];
     [self setProgramPanelShown: programPanelShownBeforeFullscreen];
@@ -683,7 +679,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 - (void) windowDidExitFullScreen: (NSNotification *)notification
 {
     //Force the proper size to be reflected in the final window: after windowWillExitFullScreen,
-    //Lion will force the window size back to the size we were when we entered fullscreen;
+    //Lion will have forced the window size back to the size we were when we entered fullscreen,
     //which will be incorrect if the content has changed aspect ratio since then.
     [self resizeWindowToRenderingViewSize: renderingViewSizeBeforeFullscreen animate: NO];
     
@@ -1350,36 +1346,39 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 //Performs the slide animation used to toggle the status bar and program panel on or off
 - (void) _slideView: (NSView *)view shown: (BOOL)show
 {
-	NSRect newFrame	= [[self window] frame];
-	NSScreen *screen = [[self window] screen];
-	
-	CGFloat height	= [view frame].size.height;
-	if (!show) height = -height;
-	
-	newFrame.size.height	+= height;
-	newFrame.origin.y		-= height;
-	
-	//Ensure the new frame is positioned to fit on the screen
-	newFrame = [[self window] fullyConstrainFrameRect: newFrame toScreen: screen];
-	
-	if (show) [view setHidden: NO];	//Unhide before sliding out
-    
     if ([self _isFullScreenOnLion])
     {
-        //If we ever get here it's an accident, because all methods that would call _slideView:
-        //are prevented from doing so in fullscreen.
+        //If we ever get here it's an accident, because all methods that would call
+        //_slideView:shown: are prevented from doing so in Lion fullscreen.
         NSAssert(NO, @"_slideView:shown: called while in Lion fullscreen mode.");
     }
-	else if ([self isFullScreen])
-	{
-        [[self window] setFrame: newFrame display: NO];
-	}
-	else
-	{
-		[[self window] setFrame: newFrame display: YES animate: YES];
-	}
-	
-	if (!show) [view setHidden: YES]; //Hide after sliding in 
+    else
+    {
+        NSRect newFrame	= [[self window] frame];
+        NSScreen *screen = [[self window] screen];
+        
+        CGFloat height	= [view frame].size.height;
+        if (!show) height = -height;
+        
+        newFrame.size.height	+= height;
+        newFrame.origin.y		-= height;
+        
+        //Ensure the new frame is positioned to fit on the screen
+        newFrame = [[self window] fullyConstrainFrameRect: newFrame toScreen: screen];
+        
+        if (show) [view setHidden: NO];	//Unhide before sliding out
+        
+        if ([self isFullScreen])
+        {
+            [[self window] setFrame: newFrame display: NO];
+        }
+        else
+        {
+            [[self window] setFrame: newFrame display: YES animate: YES];
+        }
+        
+        if (!show) [view setHidden: YES]; //Hide after sliding in
+    }
 }
 
 - (BOOL) _isFullScreenOnLion

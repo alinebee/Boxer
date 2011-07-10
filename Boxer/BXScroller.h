@@ -20,6 +20,7 @@
 - (NSSize) slotMargin;			//How big a margin to leave between the edge of the scroller and the visible track
 - (NSColor *)slotFill;			//The color with which to fill the scroller track
 - (NSShadow *)slotShadow;		//The inner shadow to give the scroller track
+- (NSColor *)knobStroke;        //The color with which to stroke the scroller knob (quiet you)
 - (NSGradient *)knobGradient;	//The gradient with which to fill the scroller knob
 @end
 

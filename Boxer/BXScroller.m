@@ -8,8 +8,15 @@
 
 #import "BXScroller.h"
 #import "NSBezierPath+MCAdditions.h"
+#import "BXPostLeopardAPIs.h"
+#import "BXAppController.h"
 
 @implementation BXScroller
+
++ (BOOL) isCompatibleWithOverlayScrollers
+{
+    return YES;
+}
 
 //Appearance properties
 //---------------------
@@ -21,25 +28,49 @@
 	return size.height > size.width;
 }
 
-- (NSSize) knobMargin	{ return NSMakeSize(3.0f, 0.0f); }
-- (NSSize) slotMargin	{ return NSMakeSize(3.0f, 4.0f); }
+- (NSSize) knobMargin
+{
+    if ([self respondsToSelector: @selector(scrollerStyle)] && [self scrollerStyle] == NSScrollerStyleOverlay)
+    {
+        return NSMakeSize(1.0f, 2.0f);
+    }
+    else
+    {
+        return NSMakeSize(3.0f, 2.0f);
+    }
+}
 
-- (NSColor *)slotFill
+- (NSSize) slotMargin
+{
+    if ([self respondsToSelector: @selector(scrollerStyle)] && [self scrollerStyle] == NSScrollerStyleOverlay)
+    {
+        return NSMakeSize(1.0f, 2.0f);
+    }
+    else
+        return NSMakeSize(3.0f, 4.0f);
+}
+
+- (NSColor *) slotFill
 {
 	return [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.2f];
 }
 
-- (NSShadow *)slotShadow
+- (NSShadow *) slotShadow
 {
-	NSShadow *slotShadow = [[NSShadow new] autorelease];
+	NSShadow *slotShadow = [[NSShadow alloc] init];
 	[slotShadow setShadowOffset: NSMakeSize(0.0f, -1.0f)];
 	[slotShadow setShadowBlurRadius: 3];
 	[slotShadow setShadowColor: [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.5f]];
-
-	return slotShadow; 
+    
+	return [slotShadow autorelease];
 }
 
-- (NSGradient *)knobGradient
+- (NSColor *) knobStroke
+{
+    return [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.15f];
+}
+
+- (NSGradient *) knobGradient
 {
 	NSGradient *knobGradient = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.25f alpha: 1.0f]
 															 endingColor: [NSColor colorWithCalibratedWhite: 0.20f alpha: 1.0f]
@@ -51,13 +82,7 @@
 //Draw methods
 //------------
 
-- (BOOL) isOpaque	{ return NO; }
-
-- (void) drawRect: (NSRect)dirtyRect
-{
-	[self drawKnobSlotInRect: [self bounds] highlight: NO];
-	[self drawKnob];
-}
+- (BOOL) isOpaque { return NO; }
 
 - (void) drawKnob
 {
@@ -68,6 +93,7 @@
 	CGFloat	knobRadius;
 	CGFloat	knobGradientAngle;
 	NSGradient *knobGradient	= [self knobGradient];
+    NSColor *knobStroke         = [self knobStroke];
 	NSSize	knobMargin			= [self knobMargin];
 	
 	if ([self isVertical])
@@ -86,8 +112,20 @@
 	NSBezierPath *knobPath = [NSBezierPath bezierPathWithRoundedRect: knobRect
 															 xRadius: knobRadius
 															 yRadius: knobRadius];
-	
-	[knobGradient drawInBezierPath: knobPath angle: knobGradientAngle];
+    
+    [[NSGraphicsContext currentContext] saveGraphicsState];
+    [knobGradient drawInBezierPath: knobPath angle: knobGradientAngle];
+    
+    if (knobStroke)
+    {
+        NSBezierPath *strokePath = [NSBezierPath bezierPathWithRoundedRect: NSInsetRect(knobRect, 0.5f, 0.5f)
+                                                                   xRadius: knobRadius - 0.5f
+                                                                   yRadius: knobRadius - 0.5f];
+        [knobStroke set];
+        [strokePath stroke];
+    }
+    [[NSGraphicsContext currentContext] restoreGraphicsState];
+    
 }
 
 - (void) drawKnobSlotInRect: (NSRect)regionRect highlight:(BOOL)flag
@@ -117,16 +155,34 @@
 															 xRadius: slotRadius
 															 yRadius: slotRadius];
 	
-	[slotFill set];
-	[slotPath fill];
-	[slotPath fillWithInnerShadow: slotShadow];
+    
+    [[NSGraphicsContext currentContext] saveGraphicsState];
+        [slotFill set];
+        [slotPath fill];
+        [slotPath fillWithInnerShadow: slotShadow];
+    [[NSGraphicsContext currentContext] restoreGraphicsState];
 }
 @end
 
 @implementation BXHUDScroller
 
-//Make the knob 1px thinner than the slot on each side
-- (NSSize) knobMargin	{ return NSMakeSize(4.0f, 1.0f); }
+- (NSSize) knobMargin
+{
+    if ([self respondsToSelector: @selector(scrollerStyle)] && [self scrollerStyle] == NSScrollerStyleOverlay)
+    {
+        return NSMakeSize(1.0f, 1.0f);
+    }
+    else
+    {
+        return NSMakeSize(3.0f, 1.0f);
+    }
+}
+
+- (NSColor *) knobStroke
+{
+    //Give scroller a dark halo so it stands out properly
+    return [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.75f];
+}
 
 - (NSGradient *)knobGradient
 {

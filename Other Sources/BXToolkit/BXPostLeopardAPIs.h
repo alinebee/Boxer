@@ -63,10 +63,27 @@ enum {
     NSFullScreenWindowMask = 1 << 14
 };
 
+
 @interface NSWindow (BXPostLeopardWindowAPIs)
 
 - (void) setRestorable: (BOOL)flag;
 - (BOOL) restorable;
+
+@end
+
+
+//New 10.7 scroller behaviour
+
+enum {
+    NSScrollerStyleLegacy       = 0,
+    NSScrollerStyleOverlay      = 1
+};
+typedef NSInteger NSScrollerStyle;
+
+@interface NSScroller (BXPostLeopardScrollerAPIs)
+
+- (NSScrollerStyle)scrollerStyle;
+- (void) setScrollerStyle: (NSScrollerStyle)style;
 
 @end
 

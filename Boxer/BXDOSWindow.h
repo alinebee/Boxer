@@ -15,10 +15,28 @@
 @class BXDOSWindowController;
 
 @interface BXDOSWindow : NSWindow
+{
+    IBOutlet NSView *actualContentView;
+    BOOL canFillScreen;
+}
+//The 'real' content view by which our content size calculations will be constrained;
+//This will not include the program panel or statusbar views.
+@property (retain, nonatomic) NSView *actualContentView;
+
+//Whether to constrain the frame to the screen during resize operations.
+//This is set to YES by BXDOSWindowController during fullscreen transitions
+//to allow the window to fill the screen.
+@property (assign, nonatomic) BOOL canFillScreen;
+
 
 - (BXDOSWindowController *) windowController;
 
+//Return the current size of actualContentView.
+- (NSSize) actualContentViewSize;
+
 @end
+
+
 
 @interface BXDOSFullScreenWindow : NSWindow
 {

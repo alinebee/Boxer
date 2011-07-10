@@ -296,6 +296,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 {
 	NSArray *arguments = [[NSProcessInfo processInfo] arguments];
 	
+    //These do not run correctly on Lion
 	BOOL useFlipTransitions = ![[self class] isRunningOnLion];
 	
 	for (NSString *argument in arguments)

@@ -12,6 +12,13 @@
 #define BXFrameResizeDelayFalloff 7.5
 
 @implementation BXDOSWindow
+@synthesize actualContentView, canFillScreen;
+
+- (void) dealloc
+{
+    [self setActualContentView: nil], [actualContentView release];
+    [super dealloc];
+}
 
 //Overridden to make our required controller type explicit
 - (BXDOSWindowController *) windowController
@@ -33,12 +40,20 @@
 }
 
 
+# pragma mark -
+# pragma mark Content-based resizing
+
+- (NSSize) actualContentViewSize
+{
+    return [[self actualContentView] frame].size;
+}
+
 //Adjust reported content/frame sizes to account for statusbar and program panel
 //This is used to keep content resizing proportional to the shape of the render view, not the shape of the window
-- (NSRect) contentRectForFrameRect:(NSRect)windowFrame
+- (NSRect) contentRectForFrameRect: (NSRect)windowFrame
 {
 	NSRect rect = [super contentRectForFrameRect: windowFrame];
-	NSView *container	= [[self windowController] viewContainer];
+	NSView *container = [self actualContentView];
 
 	CGFloat sizeAdjustment	= [container frame].origin.y;
 	rect.size.height		-= sizeAdjustment;
@@ -50,7 +65,7 @@
 - (NSRect) frameRectForContentRect: (NSRect)windowContent
 {
 	NSRect rect = [super frameRectForContentRect: windowContent];
-	NSView *container	= [[self windowController] viewContainer];
+	NSView *container = [self actualContentView];
 
 	CGFloat sizeAdjustment	= [container frame].origin.y;
 	rect.size.height		+= sizeAdjustment;
@@ -58,11 +73,10 @@
 	
 	return rect;
 }
-
-//Disable constraining if our window controller is taking matters into its own hands 
-- (NSRect)constrainFrameRect:(NSRect)frameRect toScreen:(NSScreen *)screen
+ 
+- (NSRect) constrainFrameRect: (NSRect)frameRect toScreen: (NSScreen *)screen
 {
-	if ([[self windowController] resizingProgrammatically]) return frameRect;
+	if ([self canFillScreen]) return frameRect;
 	else return [super constrainFrameRect: frameRect toScreen: screen];
 }
 

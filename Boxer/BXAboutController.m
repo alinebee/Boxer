@@ -25,11 +25,7 @@
 {
 	NSWindow *theWindow	= [self window];
 	
-	//Apply our custom background image to the window
-	NSImage *theBackground	= [NSImage imageNamed: @"AboutBackground"];
-	[theWindow setBackgroundColor: [NSColor colorWithPatternImage: theBackground]];
-	
-	//Lets the window be moved by clicking anywhere inside it
+	//Let the window be moved by clicking anywhere inside it
 	[theWindow setMovableByWindowBackground: YES];
 	
 	//Set the version's number and appearance
@@ -38,11 +34,31 @@
 	NSString *buildNumber	= [[NSBundle mainBundle] objectForInfoDictionaryKey: (NSString *)kCFBundleVersionKey];
 	NSString *versionString	= [NSString stringWithFormat: versionFormat, versionName, buildNumber, nil];
 	[version setStringValue: versionString];
+    
+    //Add a bottom border to the window
+    [theWindow setContentBorderThickness: 41.0f forEdge: NSMinYEdge];
 }
 
 - (IBAction) showAcknowledgements: (id)sender
 {
 	[[NSApp delegate] showHelpAnchor: @"acknowledgements"];
+}
+
+@end
+
+
+@implementation BXAboutBackgroundView
+
+- (void) drawRect: (NSRect)dirtyRect
+{
+	[NSBezierPath clipRect: dirtyRect];
+    
+    NSImage *background = [NSImage imageNamed: @"AboutBackground"];
+    
+    [background drawInRect: [self bounds]
+                  fromRect: NSZeroRect
+                 operation: NSCompositeSourceOver
+                  fraction: 1.0f];
 }
 
 @end

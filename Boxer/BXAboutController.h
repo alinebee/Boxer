@@ -23,3 +23,8 @@
 //Display the credits and acknowledgements help page
 - (IBAction) showAcknowledgements: (id)sender;
 @end
+
+
+//Simple view to draw the custom About window background.
+@interface BXAboutBackgroundView : NSView
+@end

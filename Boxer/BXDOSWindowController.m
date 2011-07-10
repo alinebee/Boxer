@@ -312,7 +312,6 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 {
 	if (show != [self statusBarShown])
 	{
-        
         if ([self _isFullScreenOnLion])
         {
             statusBarShownBeforeFullscreen = show;
@@ -1231,9 +1230,19 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 //Resize the window frame to the requested render size.
 - (void) resizeWindowToRenderingViewSize: (NSSize)newSize animate: (BOOL)performAnimation
 {
+    //TWEAK: always track the target size for Lion's sake, even when not in fullscreen,
+    //to catch cases where DOS switches resolution *during* a fullscreen transition
+    //(during which _isFullScreenOnLion will actually be NO.). This happens e.g. when
+    //Boxer exits fullscreen upon exiting back to DOS.
+    //If we don't record the change, then the newly-set window size will get clobbered
+    //once Boxer resets the window size at the end of the fullscreen transition.
+    renderingViewSizeBeforeFullscreen = newSize;
+
+    //Don't actually resize the window while in fullscreen on Lion: instead, we record
+    //the size the window should be and set it when exiting fullscreen.
     if ([self _isFullScreenOnLion])
     {
-        renderingViewSizeBeforeFullscreen = newSize;
+        return;
     }
     else
     {

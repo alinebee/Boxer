@@ -84,6 +84,22 @@
 
 - (BOOL) isOpaque { return NO; }
 
+- (void) drawRect: (NSRect)dirtyRect
+{
+    //On 10.7 and above, the regular NSScroller class should handle drawing
+    if ([self respondsToSelector: @selector(scrollerStyle)])
+    {
+        [super drawRect: dirtyRect];
+    }
+    //On 10.6 and below, we wish to override drawing to avoid drawing the 'caps'
+    //on the end of the standard scroller.
+    else
+    {
+        [self drawKnobSlotInRect: [self rectForPart: NSScrollerKnobSlot] highlight: NO];
+        [self drawKnob];
+    }
+}
+
 - (void) drawKnob
 {
 	NSRect regionRect = [self rectForPart: NSScrollerKnob];

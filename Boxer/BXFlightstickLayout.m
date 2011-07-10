@@ -29,11 +29,42 @@
         [layout addAnalogStickWithFrame: CGRectMake(0, 70, 240, 240)
                              identifier: kJoyInputAnalogStick1];
         
+        /*
         //Hat-switch: top center of screen
         [layout addDpadWithFrame: CGRectMake(280, 0, 200, 200)
                       dpadOrigin: CGPointMake(380, 100)
                       identifier: kJoyInputDpad1];
+        */
         
+        [layout addButtonWithFrame: CGRectMake(350,10,60,60) 
+                             label: @"⇡"
+                          fontSize: 36
+                             shape: kJoyButtonShapeRound
+                             color: kJoyButtonColorBlue
+                        identifier: BXJoyInputFakeDPadButtonUp];
+        
+        [layout addButtonWithFrame: CGRectMake(350,90,60,60) 
+                             label: @"⇣"
+                          fontSize: 36
+                             shape: kJoyButtonShapeRound
+                             color: kJoyButtonColorBlue
+                        identifier: BXJoyInputFakeDPadButtonDown];
+        
+        [layout addButtonWithFrame: CGRectMake(295,50,60,60) 
+                             label: @"⇠"
+                          fontSize: 36
+                             shape: kJoyButtonShapeRound
+                             color: kJoyButtonColorBlue
+                        identifier: BXJoyInputFakeDPadButtonLeft];
+        
+        [layout addButtonWithFrame: CGRectMake(405,50,60,60) 
+                             label: @"⇢"
+                          fontSize: 36
+                             shape: kJoyButtonShapeRound
+                             color: kJoyButtonColorBlue
+                        identifier: BXJoyInputFakeDPadButtonRight];
+        
+         
         //Primary buttons: blue, square, located at bottom left of screen
         [layout addButtonWithFrame: CGRectMake(380,240,100,80) 
                              label: @"1" 
@@ -51,16 +82,16 @@
         
         
         //Secondary buttons: black and rectangular, located at middle left of screen
-        [layout addButtonWithFrame: CGRectMake(380,200,100,40) 
+        [layout addButtonWithFrame: CGRectMake(380,160,100,80) 
                              label: @"3" 
-                          fontSize: 24
+                          fontSize: 36
                              shape: kJoyButtonShapeSquare
                              color: kJoyButtonColorBlack
                         identifier: kJoyInputXButton];
         
-        [layout addButtonWithFrame: CGRectMake(280,200,100,40) 
+        [layout addButtonWithFrame: CGRectMake(280,160,100,80) 
                              label: @"4" 
-                          fontSize: 24
+                          fontSize: 36
                              shape: kJoyButtonShapeSquare
                              color: kJoyButtonColorBlack
                         identifier: kJoyInputYButton];

@@ -12,6 +12,16 @@
 
 @protocol BXEmulatedJoystick;
 
+
+//Additional constants for Boxer-specific buttons
+enum {
+    BXJoyInputFirstIdentifier = 100,
+    BXJoyInputFakeDPadButtonUp,
+    BXJoyInputFakeDPadButtonRight,
+    BXJoyInputFakeDPadButtonDown,
+    BXJoyInputFakeDPadButtonLeft
+};
+
 @interface BXJoypadLayout : JoypadControllerLayout
 
 //Register a Joypad controller layout as matching the specified joystick type.

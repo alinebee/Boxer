@@ -303,6 +303,20 @@ enum
         case kJoyInputStartButton:
             //ESC button
             [keyboard keyUp: KBD_esc];
+            break;
+            
+        //'Fake' d-pad buttons for compact flightstick hat switch layouts
+        case BXJoyInputFakeDPadButtonUp:
+        case BXJoyInputFakeDPadButtonDown:
+        case BXJoyInputFakeDPadButtonLeft:
+        case BXJoyInputFakeDPadButtonRight:
+        {
+            NSUInteger buttonMask = 1 << (button - BXJoyInputFakeDPadButtonUp);
+            joypadDPadState &= ~buttonMask;
+            BXEmulatedPOVDirection direction = [[self class] emulatedJoystickPOVDirectionForDPadState: joypadDPadState];
+            [joystick POVChangedTo: direction];
+            break;
+        }
                 
         default:
         {
@@ -341,6 +355,20 @@ enum
         case kJoyInputStartButton:
             //ESC button
             [keyboard keyDown: KBD_esc];
+            break;
+            
+        //'Fake' d-pad buttons for compact flightstick hat switch layouts
+        case BXJoyInputFakeDPadButtonUp:
+        case BXJoyInputFakeDPadButtonDown:
+        case BXJoyInputFakeDPadButtonLeft:
+        case BXJoyInputFakeDPadButtonRight:
+        {
+            NSUInteger buttonMask = 1 << (button - BXJoyInputFakeDPadButtonUp);
+            joypadDPadState |= buttonMask;
+            BXEmulatedPOVDirection direction = [[self class] emulatedJoystickPOVDirectionForDPadState: joypadDPadState];
+            [joystick POVChangedTo: direction];
+            break;
+        }
             
         default:
         {

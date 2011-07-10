@@ -96,7 +96,7 @@
 	
 	NSString *className	= [[session gameSettings] objectForKey: @"preferredJoystickType"];
 	
-	//If no type has been set, or the type is not available, then fall back on the default joystick type
+	//If no type has been set, then fall back on the default joystick type
 	if (!className) return defaultJoystickType;
 	
 	//If the type was an empty string, this indicates no joystick support

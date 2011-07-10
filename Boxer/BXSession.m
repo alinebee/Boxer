@@ -850,15 +850,15 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		[[self DOSWindowController] performSelector: @selector(showProgramPanel)
 										 withObject: nil
 										 afterDelay: BXShowProgramPanelDelay];
+        
+        if ([[NSUserDefaults standardUserDefaults] boolForKey: @"startUpInFullScreen"])
+        {
+            //If we automatically switched into fullscreen at startup, then drop out of
+            //fullscreen mode when we return to the prompt in order to show the program panel.
+            [[self DOSWindowController] exitFullScreen: self];
+        }
 	}
 
-	if ([[NSUserDefaults standardUserDefaults] boolForKey: @"startUpInFullScreen"])
-	{
-		//Drop out of fullscreen mode when we return to the prompt,
-		//if we automatically switched into fullscreen at startup
-		[[self DOSWindowController] exitFullScreen: self];
-	}
-    
     //Enable/disable display-sleep suppression
     [self _syncSuppressesDisplaySleep];
 }

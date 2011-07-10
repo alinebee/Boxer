@@ -149,7 +149,14 @@ enum {
 							importerDroplet: YES
 							shelfAppearance: applyShelfAppearance];
 	
-	[self hideWindowWithFlip: self];
+    if ([BXAppController isRunningOnLion])
+    {
+        [[self window] close];
+    }
+    else
+    {
+        [self hideWindowWithFlip: self];
+    }
 }
 
 - (IBAction) showGamesFolderChooser: (id)sender

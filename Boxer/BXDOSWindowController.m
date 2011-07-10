@@ -193,9 +193,6 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	
     //Set the window's fullscreen behaviour for Lion
     [[self window] setCollectionBehavior: NSWindowCollectionBehaviorFullScreenPrimary];
-    //Disable Lion window restoration (for now - there are too many bugs to fix with it.)
-    if ([[self window] respondsToSelector: @selector(setRestorable:)])
-        [[self window] setRestorable: NO];
 	
 	//Now that we can retrieve the game's identifier from the session,
 	//use the autosaved window size for that game

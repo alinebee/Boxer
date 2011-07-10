@@ -48,7 +48,9 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 //Cancel a makeDocument/openDocument request after spawning a new process.
 - (void) _cancelOpeningWithError: (NSError **)outError;
 
-
+//If no document has been opened at startup, perform our standard post-launch action (displaying the welcome panel etc.)
+//This is called after application:didFinishLaunching:, and once any windows have been restored by Lion.
+- (void) _performPostLaunchActions;
 @end
 
 
@@ -296,9 +298,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 {
 	NSArray *arguments = [[NSProcessInfo processInfo] arguments];
 	
-    //These do not run correctly on Lion
-	BOOL useFlipTransitions = ![[self class] isRunningOnLion];
-	
 	for (NSString *argument in arguments)
 	{
 		if ([argument isEqualToString: BXNewSessionParam])
@@ -316,12 +315,22 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 			[self openImportSessionWithContentsOfURL: [NSURL fileURLWithPath: importPath] display: YES error: nil];
 		}
 	}
-	
-	//If no document was opened during startup, and we didn't launch hidden,
+
+    //Defer our default post-launch actions to the end of the current event cycle,
+    //once after Lion has finished restoring windows.
+    [self performSelector: @selector(_performPostLaunchActions) withObject: nil afterDelay: 0.1];
+}
+
+- (void) _performPostLaunchActions
+{
+    //If no document was opened during startup, and we didn't launch hidden,
 	//then display the chosen startup window
 	if (![NSApp isHidden] && ![[self documents] count] && ![[NSApp windows] count])
 	{
 		BOOL hasDelayed = NO;
+        
+        //These are disabled as they do not run correctly on Lion
+        BOOL useFlipTransitions = ![[self class] isRunningOnLion];
 		
 		//If the user has not chosen a games folder yet, then show them the first-run panel
 		//(This is modal, so execution will not continue until the panel is dismissed.)
@@ -340,7 +349,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 				[self orderFrontFirstRunPanel: self];
 			}
 		}
-				
+        
 		switch ([[NSUserDefaults standardUserDefaults] integerForKey: @"startupAction"])
 		{
 			case BXStartUpWithWelcomePanel:
@@ -365,6 +374,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	
 	hasFinishedLaunching = YES;
 }
+
 
 - (void) applicationWillTerminate: (NSNotification *)notification
 {

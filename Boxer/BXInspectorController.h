@@ -48,6 +48,8 @@ enum {
 - (IBAction) showCPUPanelHelp: (id)sender;
 - (IBAction) showMousePanelHelp: (id)sender;
 - (IBAction) showDrivesPanelHelp: (id)sender;
+- (IBAction) showJoystickPanelHelp: (id)sender;
+- (IBAction) showInactiveJoystickPanelHelp: (id)sender;
 
 //Temporarily hides the panel if it is currently visible:
 //It can then be unhidden with revealIfHidden.

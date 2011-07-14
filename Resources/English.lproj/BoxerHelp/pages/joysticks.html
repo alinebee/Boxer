@@ -3,10 +3,11 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Playing with your joystick</title>
-		<meta name="description" content="How to connect a USB joystick or gamepad, and choosing which DOS joystick to emulate.">
-		<meta name="keywords" content="flight stick, steering wheel, d-pad, coolie hat, pov switch">
+		<meta name="description" content="Connecting a USB joystick or gamepad, and choosing which DOS joystick to emulate.">
+		<meta name="keywords" content="flight stick, steering wheel, d-pad, dpad, hatswitch, coolie hat, pov switch">
 		
 		<link rel="stylesheet" type="text/css" href="../shared/styles/main.css">
+		<link rel="stylesheet" type="text/css" href="../shared/styles/joysticks.css">
 	</head>
 	<body>
 		<a name="joysticks"></a>
@@ -16,13 +17,17 @@
 		
 		<section>
 			<a name="joystick-connecting-hid"></a>
-			<h2>A: Connect a USB or Bluetooth game controller</h2>
+			<h2><span class="step">Option A</span> Connect a USB or Bluetooth game controller</h2>
 		
-			<img src="../shared/images/360-controller.png" alt="" class="floated-left">
+			<img src="../shared/images/360-controller.png" alt="" class="floated-right">
 			
-			<p>Boxer supports <strong>any USB or Bluetooth game controller recognised by OS&nbsp;X</strong>. Most controllers will work out-of-the-box: just <strong>connect the device to your Mac and then launch your game in Boxer</strong>. Boxer will enable joystick emulation and your game should find the emulated joystick automatically.</p>
+			<p>Boxer supports <strong>any USB or Bluetooth game controller recognised by OS&nbsp;X</strong>.</p>
 			
-			<p>Some controllers require additional drivers before OS X will recognise them, while others may not be compatible with OS&nbsp;X altogether. If Boxer and other OS&nbsp;X apps don’t see your controller, consult the device manufacturer for support.</p>
+			<p>To begin, <strong>connect the controller to your Mac and then launch your game in Boxer</strong>. Boxer will enable joystick emulation and your game should find the emulated joystick automatically.</p>
+			
+			<p class="note">You can connect, disconnect or swap controllers at any time while Boxer is running—but some DOS games only check for the presence of a joystick when they first start up.</p>
+			
+			<p>Most controllers will work out-of-the-box, but some may require additional drivers before OS X will recognise them. If Boxer and other OS&nbsp;X apps don’t see your controller, consult the device manufacturer for support.</p>
 			
 			<p class="tip">To get OS&nbsp;X to recognise an <strong>XBOX 360 controller</strong>, you need to install third-party drivers. <a href="http://tattiebogle.net/index.php/ProjectRoot/Xbox360Controller/OsxDriver" rel="external">Get the drivers here</a></p>
 			
@@ -31,9 +36,9 @@
 		
 		<section>
 			<a name="joystick-connecting-joypad"></a>
-			<h2>…or B: Connect an iPhone or iPod Touch running Joypad</h2>
+			<h2><span class="step">Option B</span> Connect an iPhone or iPod Touch running Joypad</h2>
 			
-			<a href="http://getjoypad.com/" class="floated-left"><img src="../shared/images/joypad-logo.png" alt="Get Joypad"></a>
+			<a href="http://getjoypad.com/"><img src="../shared/images/joypad-logo.png" alt="Get Joypad" class="floated-left"></a>
 			<p><a href="http://getjoypad.com/" rel="external">Joypad</a> is a free iOS app that makes your iPhone or iPod Touch into a game controller for your Mac.</p>
 			
 			<p><a href="http://getjoypad.com/" rel="external">Get Joypad from the iOS App Store</a>. Once you have it, <strong>start up Joypad on your iOS device and then launch your game in Boxer.</strong> After a short delay, Boxer should connect to Joypad and you can begin controlling your game with it.</p>
@@ -49,41 +54,41 @@
 			
 			<p>While playing, you can press <kbd>Cmd ⌘</kbd>+<kbd>I</kbd> to bring up the <a href="help:runscript=BoxerHelp/shared/scripts/openinspector.scpt string='Joystick'" rel="application-window">Joystick Inspector</a> and choose a different kind of joystick to emulate. The choices are:</p>
 			
-			<section>
+			<section class="joystick-type">
 				<a name="joystick-emulation-standard"></a>
 				<img src="../shared/images/standard-joystick-128.png" alt="" class="floated-left">
 				<h3>Standard joystick/gamepad (default)</h3>
 				
 				<p>In this mode, Boxer emulates a simple DOS joystick or gamepad with <strong>4 buttons and up to 4 axes</strong> (depending on how many axes your own game controller has.)</p>
 				
-				<p>This is the most reliable option and suitable for most DOS games. Note that older DOS games may only support the first 2 buttons and axes.</p>
+				<p>This is the most reliable option and suitable for most DOS games. Note that older DOS games usually only use the first 2 buttons and axes.</p>
 				
-				<p class="note cleared"><strong>On a modern gamepad:</strong> the left thumbstick is mapped to the “X” and “Y” axes in DOS, and the right thumbstick to the “X2” and “Y2” axes. The directional pad also acts as “X” and “Y”.</p>
+				<p class="note"><strong>On a modern gamepad:</strong> the left thumbstick is mapped to the “X” and “Y” axes in DOS, and the right thumbstick to the “X2” and “Y2” axes. The directional pad also acts as “X” and “Y”.</p>
 			</section>
 			
-			<section>
+			<section class="joystick-type">
 				<a name="joystick-emulation-thrustmaster"></a>
 				<img src="../shared/images/thrustmaster-128.png" alt="" class="floated-left">
 				<h3>Thrustmaster Flight Control System (FCS)</h3>
 				
-				<p>The granddaddy of flightsticks, widely supported by DOS flight simulators: offers 4 buttons, a 4-way hat switch, and rudder pedals (if you have enough axes on your real controller.)</p>
+				<p>The granddaddy of flightsticks, widely supported by DOS flight simulators: offers 4 buttons, a 4-way hat switch, and rudder pedals.</p>
 				
-				<p class="note cleared"><strong>On a modern gamepad:</strong> the left thumbstick is mapped to the “X” and “Y” axes, while the horizontal axis of the right thumbstick acts as the rudder. The directional pad is used as the hat switch.</p>
+				<p class="note"><strong>On a modern gamepad:</strong> the left thumbstick is mapped to the “X” and “Y” axes, while the horizontal axis of the right thumbstick acts as the rudder. The directional pad is used as the hat switch.</p>
 			</section>
 			
-			<section>
+			<section class="joystick-type">
 				<a name="joystick-emulation-flightstick-pro"></a>
 				<img src="../shared/images/flightstick-pro-128.png" alt="" class="floated-left">
 				<h3>CH FlightStick Pro</h3>
 				
 				<p>Another popular and widely-supported DOS flightstick: this has 4 buttons, a 4-way hat switch, rudder pedals and a throttle wheel.</p>
 				
-				<p>Owing to a design limitation, <strong>the FlightStick Pro only recognises one button-press at a time:</strong> it cannot perform multi-button combos. If you don’t need the extra throttle axis, use Thrustmaster instead.</p>
+				<p>Owing to a design limitation, <strong>the FlightStick Pro only recognises one button-press at a time:</strong> it cannot perform multi-button combos.</p>
 				
-				<p class="note cleared"><strong>On a modern gamepad:</strong> the left thumbstick is mapped to the “X” and “Y” axes. The horizontal axis of the right thumbstick acts as the rudder, and the vertical axis as the throttle. The directional pad is used as the hat switch.</p>
+				<p class="note"><strong>On a modern gamepad:</strong> the left thumbstick is mapped to the “X” and “Y” axes. The horizontal axis of the right thumbstick acts as the rudder, and the vertical axis as the throttle. The directional pad is used as the hat switch.</p>
 			</section>
 			
-			<section>
+			<section class="joystick-type">
 				<a name="joystick-emulation-racing-wheel"></a>
 				<img src="../shared/images/racing-wheel-128.png" alt="" class="floated-left">
 				<h3>Racing Wheel</h3>
@@ -92,9 +97,9 @@
 				
 				<p>The brake and accelerator inputs are combined on the “Y” axis, but also sent separately on the “X2” (brake) and “Y2” (accelerator) axes. If you’re playing a racing game that can use pedals on separate axes, tell it to use those for more precise control.</p>
 				
-				<p class="note cleared"><strong>On a modern gamepad:</strong> the left thumbstick is used for steering, while the right thumbstick is accelerator/brake. <strong>If you have an XBOX 360 controller</strong>, the triggers act as brake and accelerator pedals.</p>
+				<p class="note"><strong>On a modern gamepad:</strong> the left thumbstick is used for steering, while the right thumbstick is accelerator/brake. <strong>If you have an XBOX 360 controller</strong>, the triggers act as brake and accelerator pedals.</p>
 				
-				<p class="tip">If you are using <a href="#joystick-connecting-joypad">Joypad</a>, you can steer in this mode by tilting your iPhone/iPod Touch left and right. This will make you look really cool.</p>
+				<p class="tip">If you are using <a href="#joystick-connecting-joypad">Joypad</a>, you can steer in this mode by tilting your iPhone/iPod Touch left and right.</p>
 			</section>
 		</section>
 		
@@ -102,5 +107,3 @@
 		<script type="text/javascript" src="../shared/scripts/linkhandlers.js"></script>
 	</body>
 </html>
-
-

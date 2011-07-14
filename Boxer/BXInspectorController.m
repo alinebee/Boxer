@@ -225,9 +225,12 @@
 #pragma mark -
 #pragma mark Help
 
-- (IBAction) showGamePanelHelp: (id)sender		{ [[NSApp delegate] showHelpAnchor: @"game-inspector"]; }
-- (IBAction) showCPUPanelHelp: (id)sender		{ [[NSApp delegate] showHelpAnchor: @"adjusting-game-speed"]; }
-- (IBAction) showMousePanelHelp: (id)sender		{ [[NSApp delegate] showHelpAnchor: @"mouse-inspector"]; }
-- (IBAction) showDrivesPanelHelp: (id)sender	{ [[NSApp delegate] showHelpAnchor: @"drive-inspector"]; }
+- (IBAction) showGamePanelHelp: (id)sender				{ [[NSApp delegate] showHelpAnchor: @"game-inspector"]; }
+- (IBAction) showCPUPanelHelp: (id)sender				{ [[NSApp delegate] showHelpAnchor: @"adjusting-game-speed"]; }
+- (IBAction) showMousePanelHelp: (id)sender				{ [[NSApp delegate] showHelpAnchor: @"mouse-inspector"]; }
+- (IBAction) showDrivesPanelHelp: (id)sender			{ [[NSApp delegate] showHelpAnchor: @"adding-and-removing-drives"]; }
+
+- (IBAction) showJoystickPanelHelp: (id)sender			{ [[NSApp delegate] showHelpAnchor: @"joystick-emulation-options"]; }
+- (IBAction) showInactiveJoystickPanelHelp: (id)sender	{ [[NSApp delegate] showHelpAnchor: @"joysticks"]; }
 
 @end

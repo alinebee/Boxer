@@ -397,3 +397,8 @@ section.no-border
 	border-top: 0;
 	padding-top: 0;
 }
+
+section.non-cleared
+{
+	clear: none !important;
+}

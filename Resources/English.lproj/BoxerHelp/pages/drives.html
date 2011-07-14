@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Adding and removing DOS drives</title>
+		<meta name="description" content="What to do when it’s time to insert disc 2.">
+		<meta name="keywords" content="disk, disc, mount, imgmount, eject, cdrom, cd-rom">
+		
+		<link rel="stylesheet" type="text/css" href="../shared/styles/main.css">
+	</head>
+	<body>
+		<section>
+			<a name="adding-and-removing-drives"></a>
+			<h1>Adding and removing DOS drives</h1>
+		
+			<img src="../images/inspector-drives.png" alt="" width="276" height="439" class="floated-right">
+			
+			<p>Press <kbd>Cmd ⌘</kbd>+<kbd>I</kbd> to bring up the <a href="help:runscript=BoxerHelp/shared/scripts/openinspector.scpt string='Drives'" rel="application-window">Drives Inspector</a>. This panel shows what drives are currently available in DOS, and lets you add and remove drives.</p>
+		
+			<a name="adding-drives"></a>
+			<h3>To add a drive to DOS:</h3>
+			<ul>
+				<li>
+					<p><strong>If you have a CD-ROM, insert it into your Mac's DVD drive</strong>. Boxer will add it automatically to DOS as a new CD-ROM drive at the next available drive letter.</p>
+					
+					<p>Boxer will do likewise when you insert a 3.5" floppy disk into a USB floppy drive connected to your Mac.</p>
+				</li>
+				
+				<li>
+					<p><strong>If you have a folder or disc image, drag it into the Drives panel.</strong> Boxer will add it as a new drive of the appropriate type (hard disk for regular folders, CD-ROM or floppy disk for disc images), at the next available drive letter.</p>
+				</li>
+				
+				<li>
+					<p><strong>If you need more control over the drive type and letter</strong>, then press the <img src="../shared/images/add-drive-button.png" alt="+" width="42" height="22" style="vertical-align: bottom"> button on the Drives Inspector to bring up a file picker with advanced drive options.</p>
+				</li>
+			</ul>
+			
+			<a name="removing-drives"></a>
+			<h3>To remove a drive from DOS:</h3>
+			<ul>
+				<li><strong>Drag the drive out of the Drives Inspector</strong> until the cursor becomes a puff-of-smoke, and then release it.</li>
+				
+				<li>You can also <strong>select the drive and click the <img src="../shared/images/eject-drive-button.png" alt="-" width="38" height="22" style="vertical-align: bottom"> button</strong>. But that’s not quite as fun.</li>
+			</ul>
+		</section>
+		
+		<section>
+			<a name="bundling-drives"></a>
+			<h2>Bundling a drive into a gamebox</h2>
+			
+			<p>When running a <a href="gameboxes.html" rel="topic">gamebox</a>, the Drives Inspector will display a drive C for the hard disk where your game is installed, and often a drive D for any CD-ROM the game had. These drives are stored inside the gamebox, and always available in DOS when you run the game.</p>
+			
+			<p><strong>If you want additional drives to be always available to the game</strong>, you can bundle them into the gamebox too:</p>
+			
+			<ol class="steps">
+				<li><strong>Add the drive to DOS</strong> by following the <a href="#adding-drives">instructions above</a>.</li>
+				
+				<li><strong>Right-click on the drive</strong> in the Drives Inspector and choose <span class="menu">Import into gamebox</span>.</li>
+			</ol>
+			
+			<p class="note">This process will physically copy the drive’s contents into the gamebox, creating a duplicate of the folder or image originally used for the drive. You don’t need to keep the original around after this.</p>
+		</section>
+		
+		<section>
+			<h3>Further reading</h3>
+		
+			<ul>
+				<li><a href="swapping-cds.html" rel="topic">Swapping CDs in multi-CD games</a></li>
+				<li><a href="gameboxes.html" rel="topic">Introducing gameboxes</a></li>
+			</ul>
+		</section>
+		
+		<script type="text/javascript" src="../shared/scripts/zepto.min.js"></script>
+		<script type="text/javascript" src="../shared/scripts/linkhandlers.js"></script>
+	</body>
+</html>

@@ -18,9 +18,11 @@
 			<a name="joystick-connecting-hid"></a>
 			<h2>A: Connect a USB or Bluetooth game controller</h2>
 		
-			<p>Boxer supports any USB or Bluetooth game controller recognised by OS&nbsp;X. Most controllers will work out-of-the-box: just <strong>connect the device to your Mac and then launch your game in Boxer</strong>. Boxer will activate joystick emulation and your game should find the emulated joystick automatically.</p>
+			<img src="../shared/images/360-controller.png" alt="" class="floated-left">
 			
-			<p>Some controllers require additional drivers before OS X will recognize them, and others may not be compatible with OS X at all. If Boxer and other OS&nbsp;X apps don’t see your controller, consult the device manufacturer for support.</p>
+			<p>Boxer supports <strong>any USB or Bluetooth game controller recognised by OS&nbsp;X</strong>. Most controllers will work out-of-the-box: just <strong>connect the device to your Mac and then launch your game in Boxer</strong>. Boxer will enable joystick emulation and your game should find the emulated joystick automatically.</p>
+			
+			<p>Some controllers require additional drivers before OS X will recognise them, while others may not be compatible with OS&nbsp;X altogether. If Boxer and other OS&nbsp;X apps don’t see your controller, consult the device manufacturer for support.</p>
 			
 			<p class="tip">To get OS&nbsp;X to recognise an <strong>XBOX 360 controller</strong>, you need to install third-party drivers. <a href="http://tattiebogle.net/index.php/ProjectRoot/Xbox360Controller/OsxDriver" rel="external">Get the drivers here</a></p>
 			
@@ -32,11 +34,11 @@
 			<h2>…or B: Connect an iPhone or iPod Touch running Joypad</h2>
 			
 			<a href="http://getjoypad.com/" class="floated-left"><img src="../shared/images/joypad-logo.png" alt="Get Joypad"></a>
-			<p><a href="http://getjoypad.com/" rel="external">Joypad</a> is an application for iOS that makes your iPhone or iPod Touch into a game controller for your Mac.</p>
+			<p><a href="http://getjoypad.com/" rel="external">Joypad</a> is a free iOS app that makes your iPhone or iPod Touch into a game controller for your Mac.</p>
 			
-			<p>You can <a href="http://getjoypad.com/" rel="external">get Joypad from the iOS App Store</a>. Once you have it, <strong>start up Joypad on your iOS device and then launch your game in Boxer.</strong> After a short delay, Boxer should connect to Joypad and you can begin controlling your game with it.</p>
+			<p><a href="http://getjoypad.com/" rel="external">Get Joypad from the iOS App Store</a>. Once you have it, <strong>start up Joypad on your iOS device and then launch your game in Boxer.</strong> After a short delay, Boxer should connect to Joypad and you can begin controlling your game with it.</p>
 			
-			<p class="tip">If Boxer does not connect to Joypad initially, try closing and relaunching Joypad on the iOS device. Consult <a href="http://getjoypad.com/faqs.html" rel="external">Joypad’s Support FAQ for more tips.</a></p>
+			<p class="tip">If Boxer does not connect to Joypad initially, try closing and relaunching Joypad on the iOS device. Consult <a href="http://getjoypad.com/faqs.html" rel="external">Joypad’s Support FAQ</a> for more tips.</p>
 		</section>
 		
 		<section>
@@ -46,10 +48,12 @@
 			<p>By default, <strong>Boxer emulates a simple DOS-era 4-button joystick</strong>. It can also emulate DOS flightsticks or racing wheels instead, to better suit the game you’re playing and the capabilities of your own controller.</p>
 			
 			<p>While playing, you can press <kbd>Cmd ⌘</kbd>+<kbd>I</kbd> to bring up the <a href="help:runscript=BoxerHelp/shared/scripts/openinspector.scpt string='Joystick'" rel="application-window">Joystick Inspector</a> and choose a different kind of joystick to emulate. The choices are:</p>
+			
 			<section>
 				<a name="joystick-emulation-standard"></a>
 				<img src="../shared/images/standard-joystick-128.png" alt="" class="floated-left">
 				<h3>Standard joystick/gamepad (default)</h3>
+				
 				<p>In this mode, Boxer emulates a simple DOS joystick or gamepad with <strong>4 buttons and up to 4 axes</strong> (depending on how many axes your own game controller has.)</p>
 				
 				<p>This is the most reliable option and suitable for most DOS games. Note that older DOS games may only support the first 2 buttons and axes.</p>
@@ -74,7 +78,7 @@
 				
 				<p>Another popular and widely-supported DOS flightstick: this has 4 buttons, a 4-way hat switch, rudder pedals and a throttle wheel.</p>
 				
-				<p>Owing to a design limitation, <strong>the FlightStick Pro only recognises one button-press at a time.</strong> If you don’t need the extra throttle axis, use Thrustmaster instead.</p>
+				<p>Owing to a design limitation, <strong>the FlightStick Pro only recognises one button-press at a time:</strong> it cannot perform multi-button combos. If you don’t need the extra throttle axis, use Thrustmaster instead.</p>
 				
 				<p class="note cleared"><strong>On a modern gamepad:</strong> the left thumbstick is mapped to the “X” and “Y” axes. The horizontal axis of the right thumbstick acts as the rudder, and the vertical axis as the throttle. The directional pad is used as the hat switch.</p>
 			</section>

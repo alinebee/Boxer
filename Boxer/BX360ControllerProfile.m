@@ -16,10 +16,41 @@
 #pragma mark -
 #pragma mark Private constants
 
-#define BXHIDVendorIDMicrosoft 0x45e
+//These constants were taken from the Info.plist for Tattiebogle’s 3rd-party 360 controller driver.
 
-#define BX360ControllerVendorID			BXHIDVendorIDMicrosoft
-#define BX360ControllerProductID		0x028e
+#define BXHIDVendorIDMicrosoft 0x045e
+#define BXHIDVendorIDMadCatz 0x0738
+#define BXHIDVendorIDHori 0x0f0d
+#define BXHIDVendorIDJoyTek 0x162e
+#define BXHIDVendorIDPelican 0x0e6f
+#define BXHIDVendorIDBigBen 0x146b
+
+//The official Microsoft 360 controller
+#define BX360ControllerVendorID         BXHIDVendorIDMicrosoft
+#define BX360ControllerProductID        0x028e
+
+//3rd-party 360 peripherals
+#define BXJoyTek360ControllerVendorID	BXHIDVendorIDJoyTek
+#define BXJoyTek360ControllerProductID  0xbeef //no seriously
+
+#define BXBigBen360ControllerVendorID   BXHIDVendorIDBigBen
+#define BXBigBen360ControllerProductID  0x0601
+
+#define BXPelican360ControllerVendorID  BXHIDVendorIDPelican
+#define BXPelican360ControllerProductID 0x0201
+
+#define BXMadCatzGamepadVendorID        BXHIDVendorIDMadCatz
+#define BXMadCatzGamepadProductID       0x4716
+
+#define BXMadCatzProGamepadVendorID     BXHIDVendorIDMadCatz
+#define BXMadCatzProGamepadProductID    0x4726
+
+#define BXMadCatzMicroConVendorID       BXHIDVendorIDMadCatz
+#define BXMadCatzMicroConProductID      0x4736
+
+#define BXDOA4StickVendorID             BXHIDVendorIDHori
+#define BXDOA4StickProductID            0x000a
+
 
 enum {
 	BX360ControllerLeftStickX		= kHIDUsage_GD_X,
@@ -67,8 +98,24 @@ enum {
 
 + (BOOL) matchesHIDController: (DDHidJoystick *)HIDController
 {
-	if ([HIDController vendorId] == BX360ControllerVendorID &&
-		[HIDController productId] == BX360ControllerProductID) return YES;
+#define numControllerIDs 8
+    static long controllerIDs[numControllerIDs][2] = {
+        {BX360ControllerVendorID,           BX360ControllerProductID},
+        {BXJoyTek360ControllerVendorID,     BXJoyTek360ControllerProductID},
+        {BXBigBen360ControllerVendorID,     BXBigBen360ControllerProductID},
+        {BXPelican360ControllerVendorID,    BXPelican360ControllerProductID},
+        {BXMadCatzGamepadVendorID,          BXMadCatzGamepadProductID},
+        {BXMadCatzProGamepadVendorID,       BXMadCatzProGamepadProductID},
+        {BXMadCatzMicroConVendorID,         BXMadCatzMicroConProductID},
+        {BXDOA4StickVendorID,               BXDOA4StickProductID}
+    };
+    
+    NSUInteger i;
+    for (i=0; i<numControllerIDs; i++)
+    {
+        if ((controllerIDs[i][0] == [HIDController vendorId]) &&
+            (controllerIDs[i][1] == [HIDController productId])) return YES;
+    }
 	
 	return NO;
 }

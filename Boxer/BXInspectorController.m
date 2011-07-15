@@ -197,6 +197,7 @@
 - (IBAction) showCPUPanel: (id)sender		{ [self setSelectedTabViewItemIndex: BXCPUInspectorPanelTag];	[self showWindow: sender]; }
 - (IBAction) showMousePanel: (id)sender		{ [self setSelectedTabViewItemIndex: BXMouseInspectorPanelTag];	[self showWindow: sender]; }
 - (IBAction) showDrivesPanel: (id)sender	{ [self setSelectedTabViewItemIndex: BXDriveInspectorPanelTag];	[self showWindow: sender]; }
+- (IBAction) showJoystickPanel: (id)sender	{ [self setSelectedTabViewItemIndex: BXJoystickInspectorPanelTag];	[self showWindow: sender]; }
 
 - (void) tabView: (NSTabView *)tabView didSelectTabViewItem: (NSTabViewItem *)tabViewItem
 {

@@ -33,6 +33,9 @@
 			<enumerator name="Drives panel" code="DIpn">
 				<cocoa integer-value="3"/>
 			</enumerator>
+			<enumerator name="Joystick panel" code="JIpn">
+				<cocoa integer-value="4"/>
+			</enumerator>
 		</enumeration>
 		
 		<class-extension extends="application" description="The Boxer application.">

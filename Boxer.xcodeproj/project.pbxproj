@@ -88,7 +88,6 @@
 		9F550667121B057C0042614A /* 35Diskette.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F550664121B057C0042614A /* 35Diskette.icns */; };
 		9F550668121B057C0042614A /* CDCase.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F550665121B057C0042614A /* CDCase.icns */; };
 		9F550669121B057C0042614A /* 525Diskette.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F550666121B057C0042614A /* 525Diskette.icns */; };
-		9F569BD51312DC620097A0E3 /* BoxerHelp in Resources */ = {isa = PBXBuildFile; fileRef = 9F569B831312DC620097A0E3 /* BoxerHelp */; };
 		9F573C5A0F8E18B10089D8B7 /* NSWorkspace+BXMountedVolumes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F573C590F8E18B10089D8B7 /* NSWorkspace+BXMountedVolumes.m */; };
 		9F573D390F8E69AF0089D8B7 /* BXPackage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F573D380F8E69AF0089D8B7 /* BXPackage.m */; };
 		9F59D99810AE0956008DBBC1 /* BoxArtShine.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F59D99710AE0956008DBBC1 /* BoxArtShine.png */; };
@@ -371,6 +370,7 @@
 		9FF86679134DCA16001CE857 /* toc2cue in Resources */ = {isa = PBXBuildFile; fileRef = 9FF86677134DCA16001CE857 /* toc2cue */; };
 		9FFAFE2D10DE33FB00728BAC /* GameProfiles.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */; };
 		9FFAFE4310DE343F00728BAC /* Configurations in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2E10DE343F00728BAC /* Configurations */; };
+		9FFB4AB013D052280003BB96 /* BoxerHelp in Resources */ = {isa = PBXBuildFile; fileRef = 9FFB4A5513D052280003BB96 /* BoxerHelp */; };
 		9FFC2AC012A19CCC008C2B3B /* Sample Game Icons in Resources */ = {isa = PBXBuildFile; fileRef = 9FFC2ABF12A19CCC008C2B3B /* Sample Game Icons */; };
 		9FFE1F831390F70C005C438A /* BXThrustmasterFCS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FFE1F821390F70C005C438A /* BXThrustmasterFCS.mm */; };
 		9FFF9728123269D1009B5EE5 /* NDAlias+AliasFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9716123269D1009B5EE5 /* NDAlias+AliasFile.m */; };
@@ -552,7 +552,6 @@
 		9F550664121B057C0042614A /* 35Diskette.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = 35Diskette.icns; sourceTree = "<group>"; };
 		9F550665121B057C0042614A /* CDCase.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = CDCase.icns; sourceTree = "<group>"; };
 		9F550666121B057C0042614A /* 525Diskette.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = 525Diskette.icns; sourceTree = "<group>"; };
-		9F569B841312DC620097A0E3 /* English */ = {isa = PBXFileReference; explicitFileType = wrapper.htmld; name = English; path = English.lproj/BoxerHelp; sourceTree = "<group>"; };
 		9F573C580F8E18B10089D8B7 /* NSWorkspace+BXMountedVolumes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSWorkspace+BXMountedVolumes.h"; sourceTree = "<group>"; };
 		9F573C590F8E18B10089D8B7 /* NSWorkspace+BXMountedVolumes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSWorkspace+BXMountedVolumes.m"; sourceTree = "<group>"; };
 		9F573D370F8E69AF0089D8B7 /* BXPackage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXPackage.h; sourceTree = "<group>"; };
@@ -1071,6 +1070,7 @@
 		9FF86677134DCA16001CE857 /* toc2cue */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = toc2cue; sourceTree = "<group>"; };
 		9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = GameProfiles.plist; sourceTree = "<group>"; };
 		9FFAFE2E10DE343F00728BAC /* Configurations */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Configurations; sourceTree = "<group>"; };
+		9FFB4A5613D052280003BB96 /* English */ = {isa = PBXFileReference; lastKnownFileType = folder; name = English; path = English.lproj/BoxerHelp; sourceTree = "<group>"; };
 		9FFBF67011A7F8F4000A1863 /* BXFrameRenderingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFrameRenderingView.h; sourceTree = "<group>"; };
 		9FFBF6AA11A811F7000A1863 /* BXEventConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEventConstants.h; sourceTree = "<group>"; };
 		9FFC2ABF12A19CCC008C2B3B /* Sample Game Icons */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Sample Game Icons"; sourceTree = "<group>"; };
@@ -1232,9 +1232,9 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				9FFB4A5513D052280003BB96 /* BoxerHelp */,
 				9FF86676134DCA16001CE857 /* cdrdao */,
 				9FF86677134DCA16001CE857 /* toc2cue */,
-				9F569B831312DC620097A0E3 /* BoxerHelp */,
 				9F70C19B129036C900A3627F /* Boxer.sdef */,
 				9FDCDEFC11B5B83B0032DA4E /* dsa_pub.pem */,
 				9FCBB2DB10A61E9300C28B09 /* Launch.conf */,
@@ -2480,7 +2480,6 @@
 				9FC5353512F489F8005E7670 /* 35DisketteShine.icns in Resources */,
 				9F2121E7130187A9002AB1B7 /* ShelfTemplateLeopard.jpg in Resources */,
 				9F2121E8130187A9002AB1B7 /* ShelfTemplateSnowLeopard.jpg in Resources */,
-				9F569BD51312DC620097A0E3 /* BoxerHelp in Resources */,
 				9FF86678134DCA16001CE857 /* cdrdao in Resources */,
 				9FF86679134DCA16001CE857 /* toc2cue in Resources */,
 				9FDE34131351DCDB000DCE44 /* DOSImportWindow.xib in Resources */,
@@ -2491,6 +2490,7 @@
 				9FA54099139E85D800999940 /* 4ButtonJoystick.png in Resources */,
 				9F7FC94C139EB38300D60320 /* RacingWheel.png in Resources */,
 				9FD012E313AB845200AF6FE8 /* GamepadTemplate.pdf in Resources */,
+				9FFB4AB013D052280003BB96 /* BoxerHelp in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2905,14 +2905,6 @@
 			name = MainMenu.xib;
 			sourceTree = "<group>";
 		};
-		9F569B831312DC620097A0E3 /* BoxerHelp */ = {
-			isa = PBXVariantGroup;
-			children = (
-				9F569B841312DC620097A0E3 /* English */,
-			);
-			name = BoxerHelp;
-			sourceTree = "<group>";
-		};
 		9F59DEDD10B01743008DBBC1 /* ProgramPanel.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -3001,6 +2993,14 @@
 				9FE2172D121EED1E001452E3 /* English */,
 			);
 			name = ImportRenameTip.png;
+			sourceTree = "<group>";
+		};
+		9FFB4A5513D052280003BB96 /* BoxerHelp */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9FFB4A5613D052280003BB96 /* English */,
+			);
+			name = BoxerHelp;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

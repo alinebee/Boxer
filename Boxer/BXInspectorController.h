@@ -15,7 +15,8 @@ enum {
 	BXGameInspectorPanelTag		= 0,
 	BXCPUInspectorPanelTag		= 1,
 	BXMouseInspectorPanelTag	= 2,
-	BXDriveInspectorPanelTag	= 3
+	BXDriveInspectorPanelTag	= 3,
+	BXJoystickInspectorPanelTag	= 4
 };
 
 
@@ -42,6 +43,7 @@ enum {
 - (IBAction) showCPUPanel:		(id)sender;
 - (IBAction) showDrivesPanel:	(id)sender;
 - (IBAction) showMousePanel:	(id)sender;
+- (IBAction) showJoystickPanel:	(id)sender;
 
 //Show help pages for the various panels
 - (IBAction) showGamePanelHelp: (id)sender;

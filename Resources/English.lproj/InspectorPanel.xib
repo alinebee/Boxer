@@ -21,7 +21,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="1071"/>
+			<integer value="125"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -123,7 +123,7 @@
 							<object class="NSMutableArray" key="NSTabViewItems">
 								<bool key="EncodedWithXMLCoder">YES</bool>
 								<object class="NSTabViewItem" id="45197897">
-									<string key="NSIdentifier">1</string>
+									<string key="NSIdentifier">0</string>
 									<object class="NSView" key="NSView" id="428256279">
 										<nil key="NSNextResponder"/>
 										<int key="NSvFlags">256</int>
@@ -459,7 +459,7 @@
 									<reference key="NSTabView" ref="681208964"/>
 								</object>
 								<object class="NSTabViewItem" id="670612504">
-									<string key="NSIdentifier">2</string>
+									<string key="NSIdentifier">1</string>
 									<object class="NSView" key="NSView" id="708850558">
 										<nil key="NSNextResponder"/>
 										<int key="NSvFlags">256</int>
@@ -929,7 +929,7 @@
 									<reference key="NSTabView" ref="681208964"/>
 								</object>
 								<object class="NSTabViewItem" id="1056279122">
-									<string key="NSIdentifier">3</string>
+									<string key="NSIdentifier">2</string>
 									<object class="NSView" key="NSView" id="194898093">
 										<reference key="NSNextResponder" ref="681208964"/>
 										<int key="NSvFlags">256</int>
@@ -1217,7 +1217,7 @@
 									<reference key="NSTabView" ref="681208964"/>
 								</object>
 								<object class="NSTabViewItem" id="79271469">
-									<string key="NSIdentifier">4</string>
+									<string key="NSIdentifier">3</string>
 									<object class="NSView" key="NSView" id="732220087">
 										<nil key="NSNextResponder"/>
 										<int key="NSvFlags">256</int>
@@ -1463,7 +1463,7 @@
 									<reference key="NSTabView" ref="681208964"/>
 								</object>
 								<object class="NSTabViewItem" id="970355323">
-									<string key="NSIdentifier">5</string>
+									<string key="NSIdentifier">4</string>
 									<object class="NSView" key="NSView" id="1019944720">
 										<nil key="NSNextResponder"/>
 										<int key="NSvFlags">256</int>
@@ -5403,7 +5403,7 @@ A</string>
 					</object>
 					<string>BXSegmentedCell</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
-					<integer value="3"/>
+					<integer value="4"/>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
@@ -6312,12 +6312,14 @@ A</string>
 							<string>showGamePanel:</string>
 							<string>showGamePanelHelp:</string>
 							<string>showInactiveJoystickPanelHelp:</string>
+							<string>showJoystickPanel:</string>
 							<string>showJoystickPanelHelp:</string>
 							<string>showMousePanel:</string>
 							<string>showMousePanelHelp:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -6341,6 +6343,7 @@ A</string>
 							<string>showGamePanel:</string>
 							<string>showGamePanelHelp:</string>
 							<string>showInactiveJoystickPanelHelp:</string>
+							<string>showJoystickPanel:</string>
 							<string>showJoystickPanelHelp:</string>
 							<string>showMousePanel:</string>
 							<string>showMousePanelHelp:</string>
@@ -6373,6 +6376,10 @@ A</string>
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">showInactiveJoystickPanelHelp:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">showJoystickPanel:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">

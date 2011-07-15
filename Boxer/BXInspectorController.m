@@ -210,7 +210,6 @@
 		[[NSUserDefaults standardUserDefaults] setInteger: selectedIndex
 												   forKey: @"initialInspectorPanelIndex"];
 		
-		
 		[[self panelSelector] selectSegmentWithTag: selectedIndex];
 	}
 }
@@ -219,6 +218,11 @@
 {
 	return ([tabView indexOfTabViewItem: tabViewItem] != BXGameInspectorPanelTag ||
 			[[[NSApp delegate] currentSession] isGamePackage]);
+}
+
+- (BOOL) shouldSyncWindowTitleToTabLabel: (NSString *)label
+{
+    return YES;
 }
 
 

@@ -2,10 +2,10 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
-		<string key="IBDocument.SystemVersion">10J567</string>
-		<string key="IBDocument.InterfaceBuilderVersion">823</string>
-		<string key="IBDocument.AppKitVersion">1038.35</string>
-		<string key="IBDocument.HIToolboxVersion">462.00</string>
+		<string key="IBDocument.SystemVersion">10K540</string>
+		<string key="IBDocument.InterfaceBuilderVersion">851</string>
+		<string key="IBDocument.AppKitVersion">1038.36</string>
+		<string key="IBDocument.HIToolboxVersion">461.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<object class="NSArray" key="dict.sortedKeys">
@@ -15,7 +15,7 @@
 			</object>
 			<object class="NSMutableArray" key="dict.values">
 				<bool key="EncodedWithXMLCoder">YES</bool>
-				<string>823</string>
+				<string>851</string>
 				<string>1</string>
 			</object>
 		</object>
@@ -555,7 +555,7 @@
 										</object>
 										<string key="NSFrameSize">{532, 396}</string>
 									</object>
-									<string key="NSLabel">General</string>
+									<string key="NSLabel">General Preferences</string>
 									<reference key="NSColor" ref="473233401"/>
 									<reference key="NSTabView" ref="764053557"/>
 								</object>
@@ -806,7 +806,7 @@
 										<string key="NSFrameSize">{532, 396}</string>
 										<reference key="NSSuperview" ref="764053557"/>
 									</object>
-									<string key="NSLabel">Display</string>
+									<string key="NSLabel">Display Preferences</string>
 									<reference key="NSColor" ref="473233401"/>
 									<reference key="NSTabView" ref="764053557"/>
 								</object>
@@ -1709,9 +1709,9 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{329, 182}, {532, 396}}</string>
+					<string>{{366, 182}, {532, 396}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{329, 182}, {532, 396}}</string>
+					<string>{{366, 182}, {532, 396}}</string>
 					<boolean value="NO"/>
 					<string>{196, 240}</string>
 					<string>{{357, 418}, {480, 270}}</string>

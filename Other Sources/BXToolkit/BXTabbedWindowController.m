@@ -151,5 +151,18 @@
 {
 	//Sync the toolbar selection after switching tabs
 	[[self toolbarForTabs] setSelectedItemIdentifier: [tabViewItem identifier]];
+    
+    //Sync the window title to the selected tab's label if desired
+    NSString *tabLabel = [tabViewItem label];
+    if (tabLabel && [self shouldSyncWindowTitleToTabLabel: tabLabel])
+    {
+        NSString *title = [self windowTitleForDocumentDisplayName: tabLabel];
+        [[self window] setTitle: title];
+    }
+}
+
+- (BOOL) shouldSyncWindowTitleToTabLabel: (NSString *)label
+{
+    return NO;
 }
 @end

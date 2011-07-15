@@ -454,7 +454,7 @@
 										</object>
 										<string key="NSFrameSize">{296, 362}</string>
 									</object>
-									<string key="NSLabel">Gamebox panel</string>
+									<string key="NSLabel">Gamebox Inspector</string>
 									<reference key="NSColor" ref="1046058740"/>
 									<reference key="NSTabView" ref="681208964"/>
 								</object>
@@ -924,7 +924,7 @@
 										</object>
 										<string key="NSFrameSize">{296, 362}</string>
 									</object>
-									<string key="NSLabel">CPU panel</string>
+									<string key="NSLabel">CPU Inspector</string>
 									<reference key="NSColor" ref="1046058740"/>
 									<reference key="NSTabView" ref="681208964"/>
 								</object>
@@ -1212,7 +1212,7 @@
 										<string key="NSFrameSize">{296, 362}</string>
 										<reference key="NSSuperview" ref="681208964"/>
 									</object>
-									<string key="NSLabel">Mouse panel</string>
+									<string key="NSLabel">Mouse Inspector</string>
 									<reference key="NSColor" ref="1046058740"/>
 									<reference key="NSTabView" ref="681208964"/>
 								</object>
@@ -1458,7 +1458,7 @@
 										</object>
 										<string key="NSFrameSize">{296, 362}</string>
 									</object>
-									<string key="NSLabel">Drive panel</string>
+									<string key="NSLabel">Drives Inspector</string>
 									<reference key="NSColor" ref="1046058740"/>
 									<reference key="NSTabView" ref="681208964"/>
 								</object>
@@ -1849,7 +1849,7 @@ A</string>
 										</object>
 										<string key="NSFrameSize">{296, 362}</string>
 									</object>
-									<string key="NSLabel">Joystick Panel</string>
+									<string key="NSLabel">Joystick Inspector</string>
 									<reference key="NSColor" ref="1046058740"/>
 									<reference key="NSTabView" ref="681208964"/>
 								</object>

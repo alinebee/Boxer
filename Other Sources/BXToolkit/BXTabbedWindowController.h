@@ -32,4 +32,11 @@
 //Select the tab whose index corresponds to the tag of the selected control segment.
 - (IBAction) takeSelectedTabViewItemFromSegment: (NSSegmentedControl *)sender;
 
+//Whether the controller should set the window title to the specified label
+//(taken from the selected tab.)
+//NO by default: intended to be overridden by subclasses.
+//If YES, then whenever the selected tab changes, the tab's label will be sent
+//to windowTitleForDocumentDisplayName: and the result assigned as the window title.
+- (BOOL) shouldSyncWindowTitleToTabLabel: (NSString *)label;
+
 @end

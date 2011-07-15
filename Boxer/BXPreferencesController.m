@@ -87,6 +87,10 @@
 	}
 }
 
+- (BOOL) shouldSyncWindowTitleToTabLabel: (NSString *)label
+{
+    return YES;
+}
 
 #pragma mark -
 #pragma mark Managing filter gallery state

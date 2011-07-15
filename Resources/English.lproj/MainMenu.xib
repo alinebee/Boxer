@@ -3747,7 +3747,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">2159</int>
+			<int key="maxID">2161</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -3775,12 +3775,14 @@
 							<string>sendEmail:</string>
 							<string>showBugReportPage:</string>
 							<string>showDonationPage:</string>
+							<string>showJoypadDownloadPage:</string>
 							<string>showPerianDownloadPage:</string>
 							<string>showWebsite:</string>
 							<string>toggleInspectorPanel:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -3822,6 +3824,7 @@
 							<string>sendEmail:</string>
 							<string>showBugReportPage:</string>
 							<string>showDonationPage:</string>
+							<string>showJoypadDownloadPage:</string>
 							<string>showPerianDownloadPage:</string>
 							<string>showWebsite:</string>
 							<string>toggleInspectorPanel:</string>
@@ -3890,6 +3893,10 @@
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">showDonationPage:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">showJoypadDownloadPage:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -4541,11 +4548,15 @@
 							<string>showDrivesPanelHelp:</string>
 							<string>showGamePanel:</string>
 							<string>showGamePanelHelp:</string>
+							<string>showInactiveJoystickPanelHelp:</string>
+							<string>showJoystickPanelHelp:</string>
 							<string>showMousePanel:</string>
 							<string>showMousePanelHelp:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -4566,6 +4577,8 @@
 							<string>showDrivesPanelHelp:</string>
 							<string>showGamePanel:</string>
 							<string>showGamePanelHelp:</string>
+							<string>showInactiveJoystickPanelHelp:</string>
+							<string>showJoystickPanelHelp:</string>
 							<string>showMousePanel:</string>
 							<string>showMousePanelHelp:</string>
 						</object>
@@ -4593,6 +4606,14 @@
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">showGamePanelHelp:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">showInactiveJoystickPanelHelp:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">showJoystickPanelHelp:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">

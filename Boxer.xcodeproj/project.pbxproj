@@ -271,6 +271,7 @@
 		9FADFE5511EC7E1700990E91 /* BXDigest.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FADFE5411EC7E1700990E91 /* BXDigest.m */; };
 		9FADFE9711EC932800990E91 /* NSData+HexStrings.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FADFE9611EC932800990E91 /* NSData+HexStrings.m */; };
 		9FAE9B8B11F1D7CF000363F7 /* GameDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FAE9B8A11F1D7CF000363F7 /* GameDefaults.plist */; };
+		9FB446EB13D23BD900E69AF5 /* BXG25ControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB446EA13D23BD900E69AF5 /* BXG25ControllerProfile.m */; };
 		9FB4F9E411957B55006C8AC9 /* BXFrameBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB4F9E311957B55006C8AC9 /* BXFrameBuffer.m */; };
 		9FB553E10F6EA30900A33017 /* BXCloseAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB553E00F6EA30900A33017 /* BXCloseAlert.m */; };
 		9FB554220F6EAC5F00A33017 /* NSAlert+BXAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB554210F6EAC5F00A33017 /* NSAlert+BXAlert.m */; };
@@ -898,6 +899,7 @@
 		9FADFE9511EC932800990E91 /* NSData+HexStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSData+HexStrings.h"; path = "../NSData+HexStrings.h"; sourceTree = "<group>"; };
 		9FADFE9611EC932800990E91 /* NSData+HexStrings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSData+HexStrings.m"; path = "../NSData+HexStrings.m"; sourceTree = "<group>"; };
 		9FAE9B8A11F1D7CF000363F7 /* GameDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = GameDefaults.plist; sourceTree = "<group>"; };
+		9FB446EA13D23BD900E69AF5 /* BXG25ControllerProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXG25ControllerProfile.m; sourceTree = "<group>"; };
 		9FB4F9E211957B55006C8AC9 /* BXFrameBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFrameBuffer.h; sourceTree = "<group>"; };
 		9FB4F9E311957B55006C8AC9 /* BXFrameBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFrameBuffer.m; sourceTree = "<group>"; };
 		9FB553DF0F6EA30900A33017 /* BXCloseAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCloseAlert.h; sourceTree = "<group>"; };
@@ -2217,6 +2219,7 @@
 				9F06C6D213992E1F00B19DF1 /* BXHIDControllerProfile.m */,
 				9FD3A1E3139A358C00D0918E /* BX360ControllerProfile.m */,
 				9FD3A27E139A839600D0918E /* BXSixaxisControllerProfile.m */,
+				9FB446EA13D23BD900E69AF5 /* BXG25ControllerProfile.m */,
 			);
 			name = "Controller profiles";
 			sourceTree = "<group>";
@@ -2795,6 +2798,7 @@
 				9FC6383213C0E245004478A3 /* BX2ButtonWheelLayout.m in Sources */,
 				9F87EF7A13C232B600326608 /* BXFlightstickLayout.m in Sources */,
 				9F5B6B7213C3529500E9CA18 /* BXInputController+BXJoypadInput.m in Sources */,
+				9FB446EB13D23BD900E69AF5 /* BXG25ControllerProfile.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

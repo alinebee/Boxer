@@ -7,7 +7,7 @@
 
 
 #import "BXHIDMonitor.h"
-#import "DDHIDDevice+BXDeviceExtensions.h"
+#import "DDHidDevice+BXDeviceExtensions.h"
 
 
 #pragma mark -

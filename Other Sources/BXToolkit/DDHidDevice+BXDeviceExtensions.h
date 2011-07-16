@@ -13,11 +13,6 @@
 #import <DDHidLib/DDHidLib.h>
 #import <IOKit/hid/IOHIDLib.h>
 
-io_service_t createServiceFromHIDDevice(IOHIDDeviceRef deviceRef);
-
-@interface DDHidUsage (BXUsageEquality)
-- (BOOL) isEqualToUsage: (DDHidUsage *)usage;
-@end
 
 @interface DDHidDevice (BXDeviceExtensions)
 
@@ -33,6 +28,10 @@ io_service_t createServiceFromHIDDevice(IOHIDDeviceRef deviceRef);
 //Returns an array of all elements matching the specified usage.
 //Will be empty if no such elements are present on the device.
 - (NSArray *) elementsWithUsage: (DDHidUsage *)usage;
+
+//Returns the first element matching the specified usage,
+//or nil if no elements were found.
+- (DDHidElement *) elementWithUsage: (DDHidUsage *)usage;
 @end
 
 

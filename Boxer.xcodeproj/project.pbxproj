@@ -254,6 +254,7 @@
 		9F9E27C511F8C003003EE8F3 /* BXSegmentedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9E27C411F8C003003EE8F3 /* BXSegmentedCell.m */; };
 		9F9E27D611F8C173003EE8F3 /* BXDrivePanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9E27D511F8C173003EE8F3 /* BXDrivePanelController.m */; };
 		9F9FE70410FA5F5800E3944B /* NSWorkspace+BXIcons.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9FE70310FA5F5800E3944B /* NSWorkspace+BXIcons.m */; };
+		9FA0C9E313D24FF3000F6FCB /* DDHidUsage+BXUsageExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA0C9E213D24FF3000F6FCB /* DDHidUsage+BXUsageExtensions.m */; };
 		9FA2E596109D251100E50623 /* BGHUDAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FA2E595109D251100E50623 /* BGHUDAppKit.framework */; };
 		9FA2E5D9109D255300E50623 /* BGHUDAppKit.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FA2E595109D251100E50623 /* BGHUDAppKit.framework */; };
 		9FA54099139E85D800999940 /* 4ButtonJoystick.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FA54098139E85D800999940 /* 4ButtonJoystick.png */; };
@@ -874,6 +875,8 @@
 		9F9E27D511F8C173003EE8F3 /* BXDrivePanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDrivePanelController.m; sourceTree = "<group>"; };
 		9F9FE70210FA5F5800E3944B /* NSWorkspace+BXIcons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSWorkspace+BXIcons.h"; sourceTree = "<group>"; };
 		9F9FE70310FA5F5800E3944B /* NSWorkspace+BXIcons.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSWorkspace+BXIcons.m"; sourceTree = "<group>"; };
+		9FA0C9E113D24FF3000F6FCB /* DDHidUsage+BXUsageExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DDHidUsage+BXUsageExtensions.h"; sourceTree = "<group>"; };
+		9FA0C9E213D24FF3000F6FCB /* DDHidUsage+BXUsageExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DDHidUsage+BXUsageExtensions.m"; sourceTree = "<group>"; };
 		9FA2E595109D251100E50623 /* BGHUDAppKit.framework */ = {isa = PBXFileReference; comments = "This is a fork of the standard BGHUDAppkit framework with various fixes and improvements. The sourcecode for this framework is available at http://bitbucket.org/alunbestor/bghudappkit-boxer/"; explicitFileType = wrapper.framework; path = BGHUDAppKit.framework; sourceTree = "<group>"; };
 		9FA54098139E85D800999940 /* 4ButtonJoystick.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 4ButtonJoystick.png; sourceTree = "<group>"; };
 		9FA5D68111EB6CCC0012DFA5 /* BXLineEnumerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXLineEnumerator.h; sourceTree = "<group>"; };
@@ -2278,6 +2281,8 @@
 				9FD1D7891364991100792011 /* BXHIDEvent.m */,
 				9FD1D6231364291600792011 /* DDHidDevice+BXDeviceExtensions.h */,
 				9FD1D6241364291600792011 /* DDHidDevice+BXDeviceExtensions.m */,
+				9FA0C9E113D24FF3000F6FCB /* DDHidUsage+BXUsageExtensions.h */,
+				9FA0C9E213D24FF3000F6FCB /* DDHidUsage+BXUsageExtensions.m */,
 			);
 			name = HID;
 			sourceTree = "<group>";
@@ -2799,6 +2804,7 @@
 				9F87EF7A13C232B600326608 /* BXFlightstickLayout.m in Sources */,
 				9F5B6B7213C3529500E9CA18 /* BXInputController+BXJoypadInput.m in Sources */,
 				9FB446EB13D23BD900E69AF5 /* BXG25ControllerProfile.m in Sources */,
+				9FA0C9E313D24FF3000F6FCB /* DDHidUsage+BXUsageExtensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

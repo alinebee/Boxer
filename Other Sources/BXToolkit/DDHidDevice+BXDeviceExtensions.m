@@ -6,7 +6,10 @@
  */
 
 
-#import "DDHIDDevice+BXDeviceExtensions.h"
+#import "DDHidDevice+BXDeviceExtensions.h"
+#import "DDHidUsage+BXUsageExtensions.h"
+
+io_service_t createServiceFromHIDDevice(IOHIDDeviceRef deviceRef);
 
 //Use a shortcut function for 10.6
 //(We retain the service object to maintain consistency with the 10.5 version)
@@ -98,6 +101,15 @@ io_service_t createServiceFromHIDDevice(IOHIDDeviceRef deviceRef)
 {
 	NSPredicate *matchingUsage = [NSPredicate predicateWithFormat: @"usage = %@", usage, nil];
 	return [[self elements] filteredArrayUsingPredicate: matchingUsage];
+}
+
+- (DDHidElement *) elementWithUsage: (DDHidUsage *)usage
+{
+    for (DDHidElement *element in [self elements])
+    {
+        if ([[element usage] isEqualToUsage: usage]) return element;
+    }
+    return nil;
 }
 
 @end
@@ -193,26 +205,5 @@ io_service_t createServiceFromHIDDevice(IOHIDDeviceRef deviceRef)
         if ([[element usage] usageId] == usageID) return element;
     }
     return nil;
-}
-@end
-
-
-@implementation DDHidUsage (BXUsageEquality)
-
-- (id) copyWithZone: (NSZone *)zone
-{
-	//DDHidUsage is immutable, so it's OK for us to retain rather than copying
-	return [self retain];
-}
-
-- (BOOL) isEqualToUsage: (DDHidUsage *)usage
-{
-	return [self isEqualToUsagePage: [usage usagePage] usageId: [usage usageId]];
-}
-
-- (BOOL) isEqual: (id)object
-{
-	if ([object isKindOfClass: [DDHidUsage class]] && [self isEqualToUsage: object]) return YES;
-	else return [super isEqual: object];
 }
 @end

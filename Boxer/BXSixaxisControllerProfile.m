@@ -64,12 +64,11 @@ enum {
 	[BXHIDControllerProfile registerProfile: self];
 }
 
-+ (BOOL) matchesHIDController: (DDHidJoystick *)HIDController
-{	
-	if ([HIDController vendorId] == BXSixaxisControllerVendorID &&
-		[HIDController productId] == BXSixaxisControllerProductID) return YES;
-	
-	return NO;
++ (NSArray *) matchedIDs
+{
+    return [NSArray arrayWithObjects:
+            [self matchForVendorID: BXSixaxisControllerVendorID productID: BXSixaxisControllerProductID],
+            nil];
 }
 
 - (NSDictionary *) DPadElementsFromButtons: (NSArray *)buttons

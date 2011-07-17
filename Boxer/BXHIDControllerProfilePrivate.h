@@ -60,15 +60,24 @@ extern NSString * const BXControllerProfileDPadDown;
 + (void) registerProfile: (Class)profile;
 
 //Returns whether the implementing class is suitable for the specified controller.
-//Returns NO by default and is intended to be overridden by subclasses.
 //Used by BXHIDControllerProfile profileClassForHIDController: to find custom
 //profile classes for known devices.
+//Uses matchIDs by default, but can be overridden by subclasses to perform custom matching.
 + (BOOL) matchesHIDController: (DDHidJoystick *)HIDController;
 
 //Returns the BXHIDControllerProfile subclass most suited for the specified controller,
 //falling back on BXHIDControllerProfile itself if none more suitable is found.
 //Should not be overridden.
 + (Class) profileClassForHIDController: (DDHidJoystick *)HIDController;
+
+//Returns an array of NSDictionaries containing vendorID and usageID pairs,
+//which this profile should match. Used by matchesHIDController:.
+//Returns an empty array by default, and is intended to be overridden by subclasses. 
++ (NSArray *) matchedIDs;
+
+//Helper method for generating match definitions. For use by subclasses overriding matchedIDs.
++ (NSDictionary *) matchForVendorID: (long)vendorID
+                          productID: (long)productID;
 
 @end
 

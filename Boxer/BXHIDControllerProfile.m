@@ -23,7 +23,6 @@ NSString * const BXControllerProfileDPadUp		= @"BXControllerProfileDPadUp";
 NSString * const BXControllerProfileDPadDown	= @"BXControllerProfileDPadDown";
 
 
-
 #pragma mark -
 #pragma mark Locating custom profiles
 
@@ -38,9 +37,31 @@ static NSMutableArray *profileClasses = nil;
 	[profileClasses addObject: profile];
 }
 
++ (NSArray *)matchedIDs
+{
+    return [NSArray array];
+}
+
++ (NSDictionary *) matchForVendorID: (long)vendorID
+                          productID: (long)productID
+{
+    return [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithLong: vendorID], @"vendorID",
+            [NSNumber numberWithLong: productID], @"productID",
+    nil];
+}
+
 + (BOOL) matchesHIDController: (DDHidJoystick *)HIDController
 {
-	return NO;
+    for (NSDictionary *pairs in [self matchedIDs])
+    {
+        long vendorID = [[pairs objectForKey: @"vendorID"] longValue],
+            productID = [[pairs objectForKey: @"productID"] longValue];
+        
+        if ([HIDController vendorId] == vendorID ||
+            [HIDController productId] == productID) return YES;
+    }
+    return NO;
 }
 
 + (Class) profileClassForHIDController: (DDHidJoystick *)HIDController
@@ -480,10 +501,10 @@ static NSMutableArray *profileClasses = nil;
 {
 	id binding = [BXButtonsToPOV binding];
 	
-	[binding setNorthButton:	[padElements objectForKey: BXControllerProfileDPadUp]];
-	[binding setSouthButton:	[padElements objectForKey: BXControllerProfileDPadDown]];
-	[binding setWestButton:		[padElements objectForKey: BXControllerProfileDPadLeft]];
-	[binding setEastButton:		[padElements objectForKey: BXControllerProfileDPadRight]];
+	[binding setNorthButtonUsage:	[(DDHidElement *)[padElements objectForKey: BXControllerProfileDPadUp] usage]];
+	[binding setSouthButtonUsage:	[(DDHidElement *)[padElements objectForKey: BXControllerProfileDPadDown] usage]];
+	[binding setWestButtonUsage:	[(DDHidElement *)[padElements objectForKey: BXControllerProfileDPadLeft] usage]];
+	[binding setEastButtonUsage:	[(DDHidElement *)[padElements objectForKey: BXControllerProfileDPadRight] usage]];
 	
 	for (DDHidElement *element in [padElements objectEnumerator])
 	{

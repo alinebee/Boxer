@@ -14,10 +14,10 @@
 
 
 @class BXHIDEvent;
-@class DDHidElement;
-@protocol BXHIDInputBinding <NSObject>
+@class DDHidUsage;
+@protocol BXHIDInputBinding <NSObject, NSCoding>
 
-//Return a input binding of the appropriate type initialized with default values.
+//Return an input binding of the appropriate type initialized with default values.
 + (id) binding;
 
 //Translate the specified event and perform the appropriate action on the destination joystick.
@@ -151,10 +151,10 @@
 @interface BXButtonsToPOV: BXBaseHIDInputBinding
 {
 	SEL POVSelector;
-	DDHidElement *northButton;
-	DDHidElement *southButton;
-	DDHidElement *eastButton;
-	DDHidElement *westButton;
+	DDHidUsage *northButtonUsage;
+	DDHidUsage *southButtonUsage;
+	DDHidUsage *eastButtonUsage;
+	DDHidUsage *westButtonUsage;
 	NSUInteger buttonStates;
 }
 
@@ -163,10 +163,10 @@
 
 //The buttons corresponding to the N, S, E and W directions on the POV switch.
 //Their pressed/released state is tracked individually.
-@property (assign, nonatomic) DDHidElement *northButton;
-@property (assign, nonatomic) DDHidElement *southButton;
-@property (assign, nonatomic) DDHidElement *eastButton;
-@property (assign, nonatomic) DDHidElement *westButton;
+@property (copy, nonatomic) DDHidUsage *northButtonUsage;
+@property (copy, nonatomic) DDHidUsage *southButtonUsage;
+@property (copy, nonatomic) DDHidUsage *eastButtonUsage;
+@property (copy, nonatomic) DDHidUsage *westButtonUsage;
 
 @end
 

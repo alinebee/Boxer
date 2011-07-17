@@ -68,22 +68,12 @@ enum {
 	[BXHIDControllerProfile registerProfile: self];
 }
 
-+ (BOOL) matchesHIDController: (DDHidJoystick *)HIDController
++ (NSArray *) matchedIDs
 {
-#define numControllerIDs 2
-    static long controllerIDs[numControllerIDs][2] = {
-        {BXG25ControllerVendorID,   BXG25ControllerProductID},
-        {BXG27ControllerVendorID,   BXG27ControllerProductID}
-    };
-    
-    NSUInteger i;
-    for (i=0; i<numControllerIDs; i++)
-    {
-        if ((controllerIDs[i][0] == [HIDController vendorId]) &&
-            (controllerIDs[i][1] == [HIDController productId])) return YES;
-    }
-	
-	return NO;
+    return [NSArray arrayWithObjects:
+            [self matchForVendorID: BXG25ControllerVendorID productID: BXG25ControllerProductID],
+            [self matchForVendorID: BXG27ControllerVendorID productID: BXG27ControllerProductID],
+            nil];
 }
 
 //Manual binding for G25/G27 buttons

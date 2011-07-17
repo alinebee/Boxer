@@ -11,6 +11,7 @@
 
 
 #import "BXHIDControllerProfilePrivate.h"
+#import "DDHidUsage+BXUsageExtensions.h"
 
 
 #pragma mark -
@@ -96,28 +97,23 @@ enum {
 	[BXHIDControllerProfile registerProfile: self];
 }
 
-+ (BOOL) matchesHIDController: (DDHidJoystick *)HIDController
++ (NSArray *) matchedIDs
 {
-#define numControllerIDs 8
-    static long controllerIDs[numControllerIDs][2] = {
-        {BX360ControllerVendorID,           BX360ControllerProductID},
-        {BXJoyTek360ControllerVendorID,     BXJoyTek360ControllerProductID},
-        {BXBigBen360ControllerVendorID,     BXBigBen360ControllerProductID},
-        {BXPelican360ControllerVendorID,    BXPelican360ControllerProductID},
-        {BXMadCatzGamepadVendorID,          BXMadCatzGamepadProductID},
-        {BXMadCatzProGamepadVendorID,       BXMadCatzProGamepadProductID},
-        {BXMadCatzMicroConVendorID,         BXMadCatzMicroConProductID},
-        {BXDOA4StickVendorID,               BXDOA4StickProductID}
-    };
-    
-    NSUInteger i;
-    for (i=0; i<numControllerIDs; i++)
+    static NSArray *matches = nil;
+    if (!matches)
     {
-        if ((controllerIDs[i][0] == [HIDController vendorId]) &&
-            (controllerIDs[i][1] == [HIDController productId])) return YES;
+        matches = [NSArray arrayWithObjects:
+                   [self matchForVendorID: BX360ControllerVendorID           productID: BX360ControllerProductID],
+                   [self matchForVendorID: BXJoyTek360ControllerVendorID     productID: BXJoyTek360ControllerProductID],
+                   [self matchForVendorID: BXBigBen360ControllerVendorID     productID: BXBigBen360ControllerProductID],
+                   [self matchForVendorID: BXPelican360ControllerVendorID    productID: BXPelican360ControllerProductID],
+                   [self matchForVendorID: BXMadCatzGamepadVendorID          productID: BXMadCatzGamepadProductID],
+                   [self matchForVendorID: BXMadCatzProGamepadVendorID       productID: BXMadCatzProGamepadProductID],
+                   [self matchForVendorID: BXMadCatzMicroConVendorID         productID: BXMadCatzMicroConProductID],
+                   [self matchForVendorID: BXDOA4StickVendorID               productID: BXDOA4StickProductID],
+                   nil];
     }
-	
-	return NO;
+    return matches;
 }
 
 - (NSDictionary *) DPadElementsFromButtons: (NSArray *)buttons

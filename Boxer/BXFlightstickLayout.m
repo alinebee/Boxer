@@ -84,14 +84,14 @@
         //Secondary buttons: black and rectangular, located at middle left of screen
         [layout addButtonWithFrame: CGRectMake(380,160,100,80) 
                              label: @"3" 
-                          fontSize: 36
+                          fontSize: 28
                              shape: kJoyButtonShapeSquare
                              color: kJoyButtonColorBlack
                         identifier: kJoyInputXButton];
         
         [layout addButtonWithFrame: CGRectMake(280,160,100,80) 
                              label: @"4" 
-                          fontSize: 36
+                          fontSize: 28
                              shape: kJoyButtonShapeSquare
                              color: kJoyButtonColorBlack
                         identifier: kJoyInputYButton];

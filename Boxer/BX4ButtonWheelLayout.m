@@ -61,14 +61,14 @@
         
         [layout addButtonWithFrame: CGRectMake(270,100,90,90) 
                              label: @"3" 
-                          fontSize: 36
+                          fontSize: 28
                              shape: kJoyButtonShapeRound
                              color: kJoyButtonColorBlack
                         identifier: kJoyInputXButton];
         
         [layout addButtonWithFrame: CGRectMake(120,100,90,90) 
                              label: @"4" 
-                          fontSize: 36
+                          fontSize: 28
                              shape: kJoyButtonShapeRound
                              color: kJoyButtonColorBlack
                         identifier: kJoyInputYButton];

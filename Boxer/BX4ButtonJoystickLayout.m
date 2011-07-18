@@ -36,14 +36,14 @@
         //Primary buttons: blue, rectangular and tall, located along left of screen
         [layout addButtonWithFrame: CGRectMake(380,100,100,220) 
                              label: @"1" 
-                          fontSize: 36
+                          fontSize: 40
                              shape: kJoyButtonShapeSquare
                              color: kJoyButtonColorBlue
                         identifier: kJoyInputAButton];
         
         [layout addButtonWithFrame: CGRectMake(280,100,100,220) 
                              label: @"2" 
-                          fontSize: 36
+                          fontSize: 40
                              shape: kJoyButtonShapeSquare
                              color: kJoyButtonColorBlue
                         identifier: kJoyInputBButton];
@@ -52,14 +52,14 @@
         //Secondary buttons: black and square, located at top left of screen
         [layout addButtonWithFrame: CGRectMake(380,0,100,100) 
                              label: @"3" 
-                          fontSize: 36
+                          fontSize: 28
                              shape: kJoyButtonShapeSquare
                              color: kJoyButtonColorBlack
                         identifier: kJoyInputXButton];
         
         [layout addButtonWithFrame: CGRectMake(280,0,100,100) 
                              label: @"4" 
-                          fontSize: 36
+                          fontSize: 28
                              shape: kJoyButtonShapeSquare
                              color: kJoyButtonColorBlack
                         identifier: kJoyInputYButton];

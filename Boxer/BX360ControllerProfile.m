@@ -154,31 +154,27 @@ enum {
 - (id <BXHIDInputBinding>) generatedBindingForButtonElement: (DDHidElement *)element
 {
 	id binding = nil;
-	
-	NSUInteger realButton = [[element usage] usageId];
-	NSUInteger emulatedButton = BXEmulatedJoystickUnknownButton;
-	
 	id joystick = [self emulatedJoystick];
+    
 	BOOL isWheel =	[joystick respondsToSelector: @selector(acceleratorMovedTo:)] &&
 					[joystick respondsToSelector: @selector(brakeMovedTo:)];
 					 
-	switch (realButton)
+	switch ([[element usage] usageId])
 	{
 		case BX360ControllerLeftShoulder:
-			emulatedButton = isWheel ? BXEmulatedJoystickButton2 : BXEmulatedJoystickButton4;
+            binding = [BXButtonToButton bindingWithButton:
+                       isWheel ? BXEmulatedJoystickButton2 : BXEmulatedJoystickButton4];
 			break;
+            
 		case BX360ControllerRightShoulder:
-			emulatedButton = isWheel ? BXEmulatedJoystickButton1 : BXEmulatedJoystickButton3;
+			binding = [BXButtonToButton bindingWithButton:
+                       isWheel ? BXEmulatedJoystickButton1 : BXEmulatedJoystickButton3];
 			break;
+            
+        default:
+            binding = [super generatedBindingForButtonElement: element];
 	}
-	
-	if (emulatedButton != BXEmulatedJoystickUnknownButton)
-	{
-		binding = [BXButtonToButton binding];
-		[binding setButton: emulatedButton];
-	}
-	else binding = [super generatedBindingForButtonElement: element];
-	
+		
 	return binding;
 }
 
@@ -228,6 +224,7 @@ enum {
                 binding = [BXAxisToAxis bindingWithAxisSelector: @selector(acceleratorMovedTo:)];
                 [binding setUnidirectional: YES];
                 break;
+                
             default:
                 binding = nil;
         }

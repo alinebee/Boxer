@@ -103,69 +103,58 @@ enum {
 //Manual binding for Sixaxis buttons because they're numbered in a crazy-ass order.
 - (id <BXHIDInputBinding>) generatedBindingForButtonElement: (DDHidElement *)element
 {
-	id binding = nil;
+	id binding;
 	id joystick = [self emulatedJoystick];
-	
-	NSUInteger realButton = [[element usage] usageId];
-	NSUInteger emulatedButton = BXEmulatedJoystickUnknownButton;
-	NSUInteger numEmulatedButtons = [joystick numButtons];
 	
 	BOOL isWheel =	[joystick respondsToSelector: @selector(acceleratorMovedTo:)] &&
 					[joystick respondsToSelector: @selector(brakeMovedTo:)];
 
-	//Map trigger buttons to accelerate/brake if emulating a wheel
-	if (isWheel && (realButton == BXSixaxisControllerLeftTrigger || realButton == BXSixaxisControllerRightTrigger))
-	{
-		SEL axis;
-		if (realButton == BXSixaxisControllerLeftTrigger) axis = @selector(brakeMovedTo:);
-		else axis = @selector(acceleratorMovedTo:);
-		
-		binding = [BXButtonToAxis binding];
-		[binding setAxisSelector: axis];
-	}
-	else
-	{
-		switch (realButton)
-		{
-			case BXSixaxisControllerXButton:
-				emulatedButton = BXEmulatedJoystickButton1;
-				break;
-				
-			case BXSixaxisControllerCircleButton:
-				emulatedButton = BXEmulatedJoystickButton2;
-				break;
-			
-			case BXSixaxisControllerSquareButton:
-				emulatedButton = BXEmulatedJoystickButton3;
-				break;
-			
-			case BXSixaxisControllerTriangleButton:
-				emulatedButton = BXEmulatedJoystickButton4;
-				break;
-				
-			case BXSixaxisControllerLeftTrigger:
-				emulatedButton = BXEmulatedJoystickButton2;
-				break;
-			case BXSixaxisControllerRightTrigger:
-				emulatedButton = BXEmulatedJoystickButton1;
-				break;
-				
-			case BXSixaxisControllerLeftShoulder:
-				emulatedButton = isWheel ? BXEmulatedJoystickButton2 : BXEmulatedJoystickButton4;
-				break;
-			case BXSixaxisControllerRightShoulder:
-				emulatedButton = isWheel ? BXEmulatedJoystickButton1 : BXEmulatedJoystickButton3;
-				break;
-				
-			//Leave all other buttons unbound
-		}
-		
-		if (emulatedButton != BXEmulatedJoystickUnknownButton && emulatedButton <= numEmulatedButtons)
-		{
-			binding = [BXButtonToButton binding];
-			[binding setButton: emulatedButton];
-		}
-	}
+    switch ([[element usage] usageId])
+    {
+        case BXSixaxisControllerXButton:
+            binding = [BXButtonToButton bindingWithButton: BXEmulatedJoystickButton1];
+            break;
+            
+        case BXSixaxisControllerCircleButton:
+            binding = [BXButtonToButton bindingWithButton: BXEmulatedJoystickButton2];
+            break;
+        
+        case BXSixaxisControllerSquareButton:
+            binding = [BXButtonToButton bindingWithButton: BXEmulatedJoystickButton3];
+            break;
+        
+        case BXSixaxisControllerTriangleButton:
+            binding = [BXButtonToButton bindingWithButton: BXEmulatedJoystickButton4];
+            break;
+            
+        case BXSixaxisControllerLeftTrigger:
+            if (isWheel)
+                binding = [BXButtonToAxis bindingWithAxisSelector: @selector(brakeMovedTo:)];
+            else
+                binding = [BXButtonToButton bindingWithButton: BXEmulatedJoystickButton2];
+            break;
+            
+        case BXSixaxisControllerRightTrigger:
+            if (isWheel)
+                binding = [BXButtonToAxis bindingWithAxisSelector: @selector(acceleratorMovedTo:)];
+            else
+                binding = [BXButtonToButton bindingWithButton: BXEmulatedJoystickButton1];
+            break;
+            
+        case BXSixaxisControllerLeftShoulder:
+            binding = [BXButtonToButton bindingWithButton:
+                       isWheel ? BXEmulatedJoystickButton2 : BXEmulatedJoystickButton4];
+            break;
+            
+        case BXSixaxisControllerRightShoulder:
+            binding = [BXButtonToButton bindingWithButton:
+                       isWheel ? BXEmulatedJoystickButton1 : BXEmulatedJoystickButton3];
+            break;
+        
+        default:
+            //Leave all other buttons unbound
+            binding = nil;
+    }
 	
 	return binding;
 }

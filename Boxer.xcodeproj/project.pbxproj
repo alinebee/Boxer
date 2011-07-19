@@ -306,6 +306,7 @@
 		9FBD321710E5144C00031CB6 /* Brand.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBD321610E5144C00031CB6 /* Brand.png */; };
 		9FBF66AF11F35ADD00DAAB9A /* BXSingleFileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBF66AE11F35ADD00DAAB9A /* BXSingleFileTransfer.m */; };
 		9FC1620E119E9AD700705EA5 /* BXCursorFadeAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC1620D119E9AD700705EA5 /* BXCursorFadeAnimation.m */; };
+		9FC2F84013D60FBD00BD4F6B /* BXDualActionControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC2F83F13D60FBD00BD4F6B /* BXDualActionControllerProfile.m */; };
 		9FC3B2550F62D9CE006DE439 /* BXSession+BXEmulatorControls.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC3B2540F62D9CE006DE439 /* BXSession+BXEmulatorControls.m */; };
 		9FC5353512F489F8005E7670 /* 35DisketteShine.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FC5353412F489F8005E7670 /* 35DisketteShine.icns */; };
 		9FC637FD13C09B11004478A3 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FC637FC13C09B10004478A3 /* CoreServices.framework */; };
@@ -955,6 +956,7 @@
 		9FBF66FC11F376B900DAAB9A /* BXOperationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXOperationDelegate.h; sourceTree = "<group>"; };
 		9FC1620C119E9AD700705EA5 /* BXCursorFadeAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCursorFadeAnimation.h; sourceTree = "<group>"; };
 		9FC1620D119E9AD700705EA5 /* BXCursorFadeAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXCursorFadeAnimation.m; sourceTree = "<group>"; };
+		9FC2F83F13D60FBD00BD4F6B /* BXDualActionControllerProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDualActionControllerProfile.m; sourceTree = "<group>"; };
 		9FC3B2530F62D9CE006DE439 /* BXSession+BXEmulatorControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXSession+BXEmulatorControls.h"; sourceTree = "<group>"; };
 		9FC3B2540F62D9CE006DE439 /* BXSession+BXEmulatorControls.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXSession+BXEmulatorControls.m"; sourceTree = "<group>"; };
 		9FC5353412F489F8005E7670 /* 35DisketteShine.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = 35DisketteShine.icns; sourceTree = "<group>"; };
@@ -2223,6 +2225,7 @@
 				9FD3A1E3139A358C00D0918E /* BX360ControllerProfile.m */,
 				9FD3A27E139A839600D0918E /* BXSixaxisControllerProfile.m */,
 				9FB446EA13D23BD900E69AF5 /* BXG25ControllerProfile.m */,
+				9FC2F83F13D60FBD00BD4F6B /* BXDualActionControllerProfile.m */,
 			);
 			name = "Controller profiles";
 			sourceTree = "<group>";
@@ -2805,6 +2808,7 @@
 				9F5B6B7213C3529500E9CA18 /* BXInputController+BXJoypadInput.m in Sources */,
 				9FB446EB13D23BD900E69AF5 /* BXG25ControllerProfile.m in Sources */,
 				9FA0C9E313D24FF3000F6FCB /* DDHidUsage+BXUsageExtensions.m in Sources */,
+				9FC2F84013D60FBD00BD4F6B /* BXDualActionControllerProfile.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

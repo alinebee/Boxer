@@ -10,6 +10,7 @@
 #import "BXSession+BXEmulatorControls.h"
 #import "BXGeometry.h"
 #import "BXDrive.h"
+#import "BXPackage.h"
 #import "BXValueTransformers.h"
 #import "BXInspectorController.h"
 
@@ -19,11 +20,37 @@
 #define BXFullscreenBezelDuration 2.5
 #define BXCPUBezelDuration 0.75
 #define BXThrottleBezelDuration 0.75
-#define BXDriveBezelDuration 1.0 
+#define BXDriveBezelDuration 2.5
 
 
 @implementation BXBezelController
-@synthesize driveAddedBezel, driveRemovedBezel, fullscreenBezel, CPUSpeedBezel, throttleBezel;
+@synthesize driveAddedBezel, driveRemovedBezel, driveImportedBezel, fullscreenBezel, CPUSpeedBezel, throttleBezel;
+
++ (void) initialize
+{
+    NSValueTransformer *transformer = [[BXDisplayPathTransformer alloc] initWithJoiner: @" ▸ " maxComponents: 3];
+    
+    [NSValueTransformer setValueTransformer: transformer forName: @"BXBezelDrivePathTransformer"];
+    [transformer release];
+}
+
++ (NSImage *) bezelIconForDrive: (BXDrive *)drive
+{
+    NSString *iconName;
+    switch ([drive type])
+    {
+        case BXDriveCDROM:
+            iconName = @"CDROMTemplate";
+            break;
+        case BXDriveFloppyDisk:
+            iconName = @"DisketteTemplate";
+            break;
+        default:
+            iconName = @"HardDiskTemplate";
+    }
+    
+    return [NSImage imageNamed: iconName];
+}
 
 + (id) controller
 {
@@ -43,6 +70,7 @@
 {
     [self setDriveAddedBezel: nil],     [driveAddedBezel release];
     [self setDriveRemovedBezel: nil],   [driveRemovedBezel release];
+    [self setDriveImportedBezel: nil],  [driveImportedBezel release];
     [self setFullscreenBezel: nil],     [fullscreenBezel release];
     [self setCPUSpeedBezel: nil],       [CPUSpeedBezel release];
     [self setThrottleBezel: nil],       [throttleBezel release];
@@ -189,18 +217,43 @@
            priority: BXBezelPriorityNormal];
 }
 
+- (void) showDriveAddedBezelForDrive: (BXDrive *)drive
+{
+    NSView *bezel = [self driveAddedBezel];
+    
+    NSImage *iconImage = [[self class] bezelIconForDrive: drive];
+    
+    NSString *labelFormat = NSLocalizedString(@"%1$@ %2$@ added", @"Label for drive-added bezel notification. %1$@ is the drive type and %2$@ is the drive letter.");
+    NSString *labelDescription = [NSString stringWithFormat: labelFormat, [drive typeDescription], [drive letter], nil];
+    
+    NSValueTransformer *pathTransformer = [NSValueTransformer valueTransformerForName: @"BXBezelDrivePathTransformer"];
+    NSString *displayPath = [pathTransformer transformedValue: [drive path]];
+    
+    NSImageView *icon   = [bezel viewWithTag: BXBezelIcon];
+    NSTextField *label  = [bezel viewWithTag: BXBezelDriveLabel];
+    NSTextField *path   = [bezel viewWithTag: BXBezelDrivePath];
+    
+    [icon setImage: iconImage];
+    [label setStringValue: labelDescription];
+    [path setStringValue: displayPath];
+    
+    [self showBezel: bezel
+        forDuration: BXDriveBezelDuration
+           priority: BXBezelPriorityNormal];
+}
+
 - (void) showDriveRemovedBezelForDrive: (BXDrive *)drive
 {
     NSView *bezel = [self driveRemovedBezel];
-    NSImage *iconImage = [NSImage imageNamed: @"ejectTemplate"];
+    NSImage *iconImage = [NSImage imageNamed: @"EjectTemplate"];
     
-    NSString *labelFormat = NSLocalizedString(@"Drive %@ ejected", @"Label for drive-removed bezel notification. %@ is the drive's letter.");
-    NSString *labelDescription = [NSString stringWithFormat: labelFormat, [drive letter], nil];
+    NSString *labelFormat = NSLocalizedString(@"%1$@ %2$@ ejected", @"Label for drive-removed bezel notification. %1$@ is the drive type and %2$@ is the drive letter.");
+    NSString *labelDescription = [NSString stringWithFormat: labelFormat, [drive typeDescription], [drive letter], nil];
     
-    NSImageView *icon = [bezel viewWithTag: BXBezelIcon];
-    NSTextField *label = [bezel viewWithTag: BXBezelLevelLabel];
+    NSImageView *icon   = [bezel viewWithTag: BXBezelIcon];
+    NSTextField *label  = [bezel viewWithTag: BXBezelDriveLabel];
     
-    [icon setValue: iconImage];
+    [icon setImage: iconImage];
     [label setStringValue: labelDescription];
     
     [self showBezel: bezel
@@ -208,39 +261,21 @@
            priority: BXBezelPriorityNormal];
 }
 
-
-- (void) showDriveAddedBezelForDrive: (BXDrive *)drive
+- (void) showDriveImportedBezelForDrive: (BXDrive *)drive
+                              toPackage: (BXPackage *)package
 {
-    NSView *bezel = [self driveAddedBezel];
+    NSView *bezel = [self driveImportedBezel];
     
-    NSString *iconName;
-    switch ([drive type])
-    {
-        case BXDriveCDROM:
-            iconName = @"cdromTemplate";
-            break;
-        case BXDriveFloppyDisk:
-            iconName = @"floppyTemplate";
-            break;
-        default:
-            iconName = @"hardDiskTemplate";
-    }
+    NSImage *iconImage = [[self class] bezelIconForDrive: drive];
     
-    NSImage *iconImage = [NSImage imageNamed: iconName];
-    
-    NSString *labelFormat = NSLocalizedString(@"Drive %@ added", @"Label for drive-added bezel notification. %@ is the drive's letter.");
-    NSString *labelDescription = [NSString stringWithFormat: labelFormat, [drive letter], nil];
-    
-    BXDisplayPathTransformer *pathTransformer = [[BXDisplayPathTransformer alloc] initWithJoiner: @" ▸ " maxComponents: 0];
-    NSString *displayPath = [pathTransformer transformedValue: [drive path]];
+    NSString *labelFormat = NSLocalizedString(@"%1$@ %2$@ imported", @"Label for drive-imported bezel notification. %1$@ is the drive type and %2$@ is the drive letter.");
+	NSString *labelDescription = [NSString stringWithFormat: labelFormat, [drive typeDescription], [drive letter], nil];
     
     NSImageView *icon   = [bezel viewWithTag: BXBezelIcon];
     NSTextField *label  = [bezel viewWithTag: BXBezelDriveLabel];
-    NSTextField *path   = [bezel viewWithTag: BXBezelDrivePath];
     
-    [icon setValue: iconImage];
+    [icon setImage: iconImage];
     [label setStringValue: labelDescription];
-    [path setStringValue: displayPath];
     
     [self showBezel: bezel
         forDuration: BXDriveBezelDuration

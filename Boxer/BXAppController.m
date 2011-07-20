@@ -21,7 +21,6 @@
 #import "BXEmulator.h"
 
 #import "BXValueTransformers.h"
-#import "BXGrowlController.h"
 #import "NSString+BXPaths.h"
 
 #import <BGHUDAppKit/BGThemeManager.h>
@@ -217,9 +216,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	[NSValueTransformer setValueTransformer: [isNotEmpty autorelease]	forName: @"BXArrayIsNotEmpty"];	
 	[NSValueTransformer setValueTransformer: [capitalizer autorelease]	forName: @"BXCapitalizedString"];	
 	[NSValueTransformer setValueTransformer: [pathTransformer autorelease] forName: @"BXIconifiedGamesFolderPath"];
-	
-	//Initialise our Growl notifier instance
-	[GrowlApplicationBridge setGrowlDelegate: [BXGrowlController controller]];
 
 	//Register our BGHUD UI themes
 	[[BGThemeManager keyedManager] setTheme: [[BXShadowedTextTheme new] autorelease]	forKey: @"BXShadowedTextTheme"];

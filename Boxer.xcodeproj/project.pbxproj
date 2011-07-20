@@ -33,6 +33,10 @@
 		9F1CBBA8120CB99D00C5E926 /* BXImportDropzone.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBBA7120CB99D00C5E926 /* BXImportDropzone.m */; };
 		9F1CBCAD120CCF3900C5E926 /* Blueprint.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9F1CBCAC120CCF3900C5E926 /* Blueprint.jpg */; };
 		9F1D50010F5C0966009F0AB9 /* BXEmulator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */; };
+		9F1F2BD913D764FA007B0CC1 /* CDROMTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F1F2BD513D764FA007B0CC1 /* CDROMTemplate.pdf */; };
+		9F1F2BDA13D764FA007B0CC1 /* DisketteTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F1F2BD613D764FA007B0CC1 /* DisketteTemplate.pdf */; };
+		9F1F2BDB13D764FA007B0CC1 /* EjectTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F1F2BD713D764FA007B0CC1 /* EjectTemplate.pdf */; };
+		9F1F2BDC13D764FA007B0CC1 /* HardDiskTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F1F2BD813D764FA007B0CC1 /* HardDiskTemplate.pdf */; };
 		9F20C28B11E5D848005AF541 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28A11E5D848005AF541 /* Sparkle.framework */; };
 		9F20C28E11E5D8B4005AF541 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28D11E5D8B4005AF541 /* QTKit.framework */; };
 		9F20C29711E5DA68005AF541 /* Sparkle.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28A11E5D848005AF541 /* Sparkle.framework */; };
@@ -108,9 +112,6 @@
 		9F69128C10A2DF8D00EA78CD /* BXValueTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F69128B10A2DF8D00EA78CD /* BXValueTransformers.m */; };
 		9F69133310A2F62A00EA78CD /* BXDrive.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F69133210A2F62A00EA78CD /* BXDrive.m */; };
 		9F6A79041203547800D2097D /* gamefolder.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F6A79031203547800D2097D /* gamefolder.icns */; };
-		9F6BA6F910A9FB92005A3E2A /* Growl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F6BA6F810A9FB92005A3E2A /* Growl.framework */; };
-		9F6BA6FD10A9FBAB005A3E2A /* Growl.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F6BA6F810A9FB92005A3E2A /* Growl.framework */; };
-		9F6BA70510A9FC77005A3E2A /* BXGrowlController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F6BA70410A9FC77005A3E2A /* BXGrowlController.m */; };
 		9F70277B13D706CC00606B4C /* BXBezelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F70277A13D706CC00606B4C /* BXBezelController.m */; };
 		9F70277D13D70CA600606B4C /* Bezel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F70277C13D70CA600606B4C /* Bezel.xib */; };
 		9F70278413D72D8100606B4C /* BXHUDControls.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F70278313D72D8100606B4C /* BXHUDControls.m */; };
@@ -417,7 +418,6 @@
 				9FBC3D610F56EA82001811F2 /* SDL_net.framework in Copy Bundled Frameworks */,
 				E5CF1899128F81FE0065844A /* PhysFS.framework in Copy Bundled Frameworks */,
 				9F20C29711E5DA68005AF541 /* Sparkle.framework in Copy Bundled Frameworks */,
-				9F6BA6FD10A9FBAB005A3E2A /* Growl.framework in Copy Bundled Frameworks */,
 				9FA2E5D9109D255300E50623 /* BGHUDAppKit.framework in Copy Bundled Frameworks */,
 				9FBC3D600F56EA82001811F2 /* SDL.framework in Copy Bundled Frameworks */,
 			);
@@ -472,6 +472,10 @@
 		9F1CBCAC120CCF3900C5E926 /* Blueprint.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Blueprint.jpg; sourceTree = "<group>"; };
 		9F1D4FFF0F5C0966009F0AB9 /* BXEmulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulator.h; sourceTree = "<group>"; };
 		9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXEmulator.mm; sourceTree = "<group>"; };
+		9F1F2BD513D764FA007B0CC1 /* CDROMTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = CDROMTemplate.pdf; sourceTree = "<group>"; };
+		9F1F2BD613D764FA007B0CC1 /* DisketteTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = DisketteTemplate.pdf; sourceTree = "<group>"; };
+		9F1F2BD713D764FA007B0CC1 /* EjectTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = EjectTemplate.pdf; sourceTree = "<group>"; };
+		9F1F2BD813D764FA007B0CC1 /* HardDiskTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = HardDiskTemplate.pdf; sourceTree = "<group>"; };
 		9F20C28A11E5D848005AF541 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
 		9F20C28D11E5D8B4005AF541 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = "/Volumes/Macintosh HD/System/Library/Frameworks/QTKit.framework"; sourceTree = "<absolute>"; };
 		9F2120F613015653002AB1B7 /* BXShelfArt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXShelfArt.h; sourceTree = "<group>"; };
@@ -594,9 +598,6 @@
 		9F69133110A2F62A00EA78CD /* BXDrive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDrive.h; sourceTree = "<group>"; };
 		9F69133210A2F62A00EA78CD /* BXDrive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDrive.m; sourceTree = "<group>"; };
 		9F6A79031203547800D2097D /* gamefolder.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = gamefolder.icns; sourceTree = "<group>"; };
-		9F6BA6F810A9FB92005A3E2A /* Growl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Growl.framework; sourceTree = "<group>"; };
-		9F6BA70310A9FC77005A3E2A /* BXGrowlController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXGrowlController.h; sourceTree = "<group>"; };
-		9F6BA70410A9FC77005A3E2A /* BXGrowlController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGrowlController.m; sourceTree = "<group>"; };
 		9F70277913D706CC00606B4C /* BXBezelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBezelController.h; sourceTree = "<group>"; };
 		9F70277A13D706CC00606B4C /* BXBezelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBezelController.m; sourceTree = "<group>"; };
 		9F70277C13D70CA600606B4C /* Bezel.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Bezel.xib; sourceTree = "<group>"; };
@@ -1133,7 +1134,6 @@
 				9F2140FF0F59F28000A5A183 /* QuartzCore.framework in Frameworks */,
 				9F4E042C0F67E72300427D50 /* AudioToolbox.framework in Frameworks */,
 				9FA2E596109D251100E50623 /* BGHUDAppKit.framework in Frameworks */,
-				9F6BA6F910A9FB92005A3E2A /* Growl.framework in Frameworks */,
 				9F8A976010E7EDDE00A4B72A /* libicucore.dylib in Frameworks */,
 				9F20C28B11E5D848005AF541 /* Sparkle.framework in Frameworks */,
 				9F20C28E11E5D8B4005AF541 /* QTKit.framework in Frameworks */,
@@ -1165,8 +1165,6 @@
 				9F5114FF129055DE00BEC0B9 /* Scripting */,
 				9F160E6E1236B28900F8768E /* Application Delegate */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
-				9F6BA70310A9FC77005A3E2A /* BXGrowlController.h */,
-				9F6BA70410A9FC77005A3E2A /* BXGrowlController.m */,
 				9F573D370F8E69AF0089D8B7 /* BXPackage.h */,
 				9F573D380F8E69AF0089D8B7 /* BXPackage.m */,
 				9F69133110A2F62A00EA78CD /* BXDrive.h */,
@@ -2111,6 +2109,10 @@
 		9FBC34390F56C5AC001811F2 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				9F1F2BD513D764FA007B0CC1 /* CDROMTemplate.pdf */,
+				9F1F2BD613D764FA007B0CC1 /* DisketteTemplate.pdf */,
+				9F1F2BD813D764FA007B0CC1 /* HardDiskTemplate.pdf */,
+				9F1F2BD713D764FA007B0CC1 /* EjectTemplate.pdf */,
 				9F70278513D730D000606B4C /* BunnyTemplate.png */,
 				9F70278613D730D000606B4C /* TurtleTemplate.png */,
 				9FD012E213AB845200AF6FE8 /* GamepadTemplate.pdf */,
@@ -2172,7 +2174,6 @@
 				9F731AF413630820005E564F /* DDHidLib.framework */,
 				E5CF183F128F81AF0065844A /* PhysFS.framework */,
 				9F20C28A11E5D848005AF541 /* Sparkle.framework */,
-				9F6BA6F810A9FB92005A3E2A /* Growl.framework */,
 				9FA2E595109D251100E50623 /* BGHUDAppKit.framework */,
 				9FBC3C140F56D6E8001811F2 /* SDL.framework */,
 				9FBC3C150F56D6E8001811F2 /* SDL_net.framework */,
@@ -2520,6 +2521,10 @@
 				9F70277D13D70CA600606B4C /* Bezel.xib in Resources */,
 				9F70278713D730D000606B4C /* BunnyTemplate.png in Resources */,
 				9F70278813D730D000606B4C /* TurtleTemplate.png in Resources */,
+				9F1F2BD913D764FA007B0CC1 /* CDROMTemplate.pdf in Resources */,
+				9F1F2BDA13D764FA007B0CC1 /* DisketteTemplate.pdf in Resources */,
+				9F1F2BDB13D764FA007B0CC1 /* EjectTemplate.pdf in Resources */,
+				9F1F2BDC13D764FA007B0CC1 /* HardDiskTemplate.pdf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2586,7 +2591,6 @@
 				9FAD43C310A341F6007E8C0D /* UKKQueue.m in Sources */,
 				9FAD43C410A341F6007E8C0D /* UKMainThreadProxy.m in Sources */,
 				9FA85CD510A357A600E6457F /* BXSession+BXFileManager.m in Sources */,
-				9F6BA70510A9FC77005A3E2A /* BXGrowlController.m in Sources */,
 				9F544A8010AB44C40030FED5 /* BXThemes.m in Sources */,
 				9F59DA1810AE22D8008DBBC1 /* NSBezierPath+MCAdditions.m in Sources */,
 				9F59DA9F10AEF9E0008DBBC1 /* BXCoverArt.m in Sources */,

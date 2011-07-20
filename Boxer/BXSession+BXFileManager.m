@@ -12,7 +12,6 @@
 #import "BXEmulator+BXShell.h"
 #import "UKFNSubscribeFileWatcher.h"
 #import "BXMountPanelController.h"
-#import "BXGrowlController.h"
 #import "BXPackage.h"
 #import "BXDrive.h"
 #import "BXDrivesInUseAlert.h"
@@ -26,6 +25,7 @@
 #import "NSFileManager+BXTemporaryFiles.h"
 #import "BXPathEnumerator.h"
 #import "RegexKitLite.h"
+#import "BXBezelController.h"
 
 
 //Boxer will delay its handling of volume mount notifications by this many seconds,
@@ -699,7 +699,8 @@
 	
 		[self _startTrackingChangesAtPath: drivePath];
 
-		if (showDriveNotifications && ![drive isHidden]) [[BXGrowlController controller] notifyDriveMounted: drive];
+		if (showDriveNotifications && ![drive isHidden])
+            [[BXBezelController controller] showDriveAddedBezelForDrive: drive];
 		
 		//If this drive is part of the gamebox, determine what executables are stored inside it
 		if ([self driveIsBundled: drive])
@@ -750,7 +751,8 @@
 		//Only stop tracking if there are no other drives mapping to that path either.
 		if (![[self emulator] pathIsDOSAccessible: path]) [self _stopTrackingChangesAtPath: path];
 	
-		if (showDriveNotifications) [[BXGrowlController controller] notifyDriveUnmounted: drive];
+		if (showDriveNotifications)
+            [[BXBezelController controller] showDriveRemovedBezelForDrive: drive];
 	}
 	
 	if ([executables objectForKey: [drive letter]])
@@ -938,8 +940,8 @@
 			showDriveNotifications = oldShowDriveNotifications;
 		} 
 		
-		//Post a Growl notification that this drive was successfully imported.
-		[[BXGrowlController controller] notifyDriveImported: drive toPackage: [self gamePackage]];
+		//Display a notification that this drive was successfully imported.
+        [[BXBezelController controller] showDriveImportedBezelForDrive: drive toPackage: [self gamePackage]];
 	}
 	else if ([import error])
 	{

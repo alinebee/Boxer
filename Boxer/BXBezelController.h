@@ -21,19 +21,21 @@ typedef NSUInteger BXBezelPriority;
 
 //XIB view flags for indicating different roles within a bezel
 enum {
-    BXBezelIcon = 0,          //Decorative icon 
-    BXBezelLevel = 1,         //Level indicator
-    BXBezelLevelLabel = 2,    //Descriptive label for level indicator
+    BXBezelIcon = 1,          //Decorative icon 
+    BXBezelLevel = 2,         //Level indicator
+    BXBezelLevelLabel = 3,    //Descriptive label for level indicator
     
-    BXBezelDriveLabel = 3,    //Descriptive label for drive
-    BXBezelDrivePath = 4      //File path for drive
+    BXBezelDriveLabel = 4,    //Descriptive label for drive
+    BXBezelDrivePath = 5      //File path for drive
 };
 
 @class BXDrive;
+@class BXPackage;
 @interface BXBezelController : NSWindowController
 {
     IBOutlet NSView *driveAddedBezel;
     IBOutlet NSView *driveRemovedBezel;
+    IBOutlet NSView *driveImportedBezel;
     IBOutlet NSView *fullscreenBezel;
     IBOutlet NSView *CPUSpeedBezel;
     IBOutlet NSView *throttleBezel;
@@ -44,9 +46,10 @@ enum {
 #pragma mark -
 #pragma mark Properties
 
-//The bezel view used for drive inserted/ejected notifications.
+//The bezel view used for drive inserted/ejected/imported notifications.
 @property (retain, nonatomic) NSView *driveAddedBezel;
 @property (retain, nonatomic) NSView *driveRemovedBezel;
+@property (retain, nonatomic) NSView *driveImportedBezel;
 
 //The bezel used for fullscreen toggle notifications.
 @property (retain, nonatomic) NSView *fullscreenBezel;
@@ -66,11 +69,17 @@ enum {
 //The singleton controller to which all bezel requests should be directed.
 + (id) controller;
 
+//Returns the icon image to use for representing the specified drive.
++ (NSImage *) bezelIconForDrive: (BXDrive *)drive;
+
 #pragma mark -
 #pragma mark Methods
 
 - (void) showDriveAddedBezelForDrive: (BXDrive *)drive;
 - (void) showDriveRemovedBezelForDrive: (BXDrive *)drive;
+- (void) showDriveImportedBezelForDrive: (BXDrive *)drive
+                              toPackage: (BXPackage *)package;
+
 - (void) showFullscreenBezel;
 
 - (void) showCPUSpeedBezelForSpeed: (NSInteger)cpuSpeed;

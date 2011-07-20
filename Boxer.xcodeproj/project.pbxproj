@@ -937,7 +937,6 @@
 		9FBC34490F56C5D1001811F2 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/DOSBox.strings; sourceTree = "<group>"; };
 		9FBC344B0F56C5D1001811F2 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Shell.strings; sourceTree = "<group>"; };
 		9FBC345C0F56C64D001811F2 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		9FBC350F0F56C7B7001811F2 /* BXBezel.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = BXBezel.h; sourceTree = "<group>"; };
 		9FBC35100F56C7B7001811F2 /* BXAboutController.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = BXAboutController.h; sourceTree = "<group>"; };
 		9FBC35110F56C7B7001811F2 /* BXAppController.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = BXAppController.h; sourceTree = "<group>"; };
 		9FBC35140F56C7B7001811F2 /* BXSession.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = BXSession.h; sourceTree = "<group>"; };
@@ -946,7 +945,6 @@
 		9FBC35180F56C7B7001811F2 /* BXDOSWindowController.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = BXDOSWindowController.h; sourceTree = "<group>"; };
 		9FBC35190F56C7B7001811F2 /* NSWindow+BXWindowSizing.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = "NSWindow+BXWindowSizing.h"; sourceTree = "<group>"; };
 		9FBC351B0F56C7B7001811F2 /* BXGeometry.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = BXGeometry.h; sourceTree = "<group>"; };
-		9FBC351C0F56C7B7001811F2 /* BXBezel.m */ = {isa = PBXFileReference; comments = "Disabled for now because it doesn't play nice with SDL's OpenGL output. Once it is added, we will need to link in the QuartzCore framework."; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = BXBezel.m; sourceTree = "<group>"; };
 		9FBC351D0F56C7B7001811F2 /* BXAboutController.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = BXAboutController.m; sourceTree = "<group>"; };
 		9FBC351E0F56C7B7001811F2 /* BXAppController.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = BXAppController.m; sourceTree = "<group>"; };
 		9FBC35210F56C7B7001811F2 /* BXSession.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = BXSession.m; sourceTree = "<group>"; };
@@ -1541,8 +1539,6 @@
 				9F544A7F10AB44C40030FED5 /* BXThemes.m */,
 				9F69128A10A2DF8D00EA78CD /* BXValueTransformers.h */,
 				9F69128B10A2DF8D00EA78CD /* BXValueTransformers.m */,
-				9FBC350F0F56C7B7001811F2 /* BXBezel.h */,
-				9FBC351C0F56C7B7001811F2 /* BXBezel.m */,
 				9F438C5610E3D8C8007D30AD /* BXScroller.h */,
 				9F438C5710E3D8C8007D30AD /* BXScroller.m */,
 				9F9E27C311F8C003003EE8F3 /* BXSegmentedCell.h */,

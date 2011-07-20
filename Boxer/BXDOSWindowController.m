@@ -784,7 +784,6 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
         return;
     }
 	
-	
 	//Let the emulation know it'll be blocked from emulating for a while
 	[[NSNotificationCenter defaultCenter] postNotificationName: BXWillBeginInterruptionNotification object: self];
 	

@@ -17,6 +17,7 @@
 
 #import "BXDOSWindowController.h"
 #import "BXInputController.h"
+#import "BXBezelController.h"
 
 
 #pragma mark Private method declarations
@@ -75,12 +76,21 @@
 
 + (NSString *) cpuClassFormatForSpeed: (NSInteger)speed
 {
-	if (speed >= BXPentiumSpeedThreshold)	return NSLocalizedString(@"Pentium speed (%u)",	@"Description for Pentium speed class. %u is cycles setting.");
-	if (speed >= BX486SpeedThreshold)		return NSLocalizedString(@"486 speed (%u)",		@"Description for 80486 speed class. %u is cycles setting.");
-	if (speed >= BX386SpeedThreshold)		return NSLocalizedString(@"386 speed (%u)",		@"Description for 80386 speed class. %u is cycles setting.");
-	if (speed >= BX286SpeedThreshold)		return NSLocalizedString(@"AT speed (%u)",		@"Description for PC-AT 80286 speed class. %u is cycles setting.");
+	if (speed >= BXPentiumSpeedThreshold)	return NSLocalizedString(@"Pentium speed (%u cycles)",	@"Description for Pentium speed class. %u is cycles setting.");
+	if (speed >= BX486SpeedThreshold)		return NSLocalizedString(@"486 speed (%u cycles)",		@"Description for 80486 speed class. %u is cycles setting.");
+	if (speed >= BX386SpeedThreshold)		return NSLocalizedString(@"386 speed (%u cycles)",		@"Description for 80386 speed class. %u is cycles setting.");
+	if (speed >= BX286SpeedThreshold)		return NSLocalizedString(@"AT speed (%u cycles)",		@"Description for PC-AT 80286 speed class. %u is cycles setting.");
 	
-	return NSLocalizedString(@"XT speed (%u)",		@"Description for PC-XT 8088 speed class. %u is cycles setting.");
+	return NSLocalizedString(@"XT speed (%u cycles)",		@"Description for PC-XT 8088 speed class. %u is cycles setting.");
+}
+
++ (NSString *) descriptionForSpeed: (NSInteger)speed
+{
+    if (speed == BXAutoSpeed)
+    	return NSLocalizedString(@"Maximum speed", @"Description for current CPU speed when in automatic CPU throttling mode.");
+    
+    else
+        return [NSString stringWithFormat: [self cpuClassFormatForSpeed: speed], speed, nil];
 }
 
 #pragma mark -
@@ -135,27 +145,41 @@
 	[emulator setAutoSpeed: isAuto];
 	
 	//Preserve changes to the speed settings
-	[gameSettings setObject: [NSNumber numberWithBool: isAuto] forKey: @"autoSpeed"];
+	[gameSettings setObject: [NSNumber numberWithInteger: BXAutoSpeed] forKey: @"CPUSpeed"];
+    
+    [[BXBezelController controller] showCPUSpeedBezelForSpeed: BXAutoSpeed];
 }
 
-- (NSInteger) fixedSpeed
+- (NSInteger) CPUSpeed
 {
-	return [emulator fixedSpeed];
+	return [emulator isAutoSpeed] ? BXAutoSpeed : [emulator fixedSpeed];
 }
 
-- (void) setFixedSpeed: (NSInteger)fixedSpeed
+- (void) setCPUSpeed: (NSInteger)speed
 {
-	[self setAutoSpeed: NO];
-	[emulator setFixedSpeed: fixedSpeed];
-	
-	[gameSettings setObject: [NSNumber numberWithInteger: fixedSpeed] forKey: @"fixedSpeed"];
+    if (speed == BXAutoSpeed)
+    {
+        [self setAutoSpeed: YES];
+    }
+    else
+    {
+        [self setAutoSpeed: NO];
+        [emulator setFixedSpeed: speed];
+        
+        [gameSettings setObject: [NSNumber numberWithInteger: speed] forKey: @"CPUSpeed"];
+        
+        [[BXBezelController controller] showCPUSpeedBezelForSpeed: speed];
+    }
 }
 
-- (BOOL) validateFixedSpeed: (id *)ioValue error: (NSError **)outError
+- (BOOL) validateCPUSpeed: (id *)ioValue error: (NSError **)outError
 {
 	NSInteger theValue = [*ioValue integerValue];
-	if		(theValue < BXMinSpeedThreshold) *ioValue = [NSNumber numberWithInteger: BXMinSpeedThreshold];
-	else if	(theValue > BXMaxSpeedThreshold) *ioValue = [NSNumber numberWithInteger: BXMaxSpeedThreshold];
+    if (theValue != BXAutoSpeed)
+    {
+        if		(theValue < BXMinSpeedThreshold) *ioValue = [NSNumber numberWithInteger: BXMinSpeedThreshold];
+        else if	(theValue > BXMaxSpeedThreshold) *ioValue = [NSNumber numberWithInteger: BXMaxSpeedThreshold];
+    }
 	return YES;
 }
 
@@ -163,7 +187,7 @@
 {
 	if ([self speedAtMaximum]) return;
 	
-	NSInteger currentSpeed = [self fixedSpeed];
+	NSInteger currentSpeed = [self CPUSpeed];
 	
 	if (currentSpeed >= BXMaxSpeedThreshold) [self setAutoSpeed: YES];
 	else
@@ -174,8 +198,8 @@
 		
 		//Validate our final value before assigning it
 		NSNumber *newSpeed = [NSNumber numberWithInteger: currentSpeed + increment];
-		if ([self validateFixedSpeed: &newSpeed error: nil])
-			[self setFixedSpeed: [newSpeed integerValue]];
+		if ([self validateCPUSpeed: &newSpeed error: nil])
+			[self setCPUSpeed: [newSpeed integerValue]];
 	}
 }
 
@@ -185,11 +209,11 @@
 	
 	if ([self isAutoSpeed])
 	{
-		[self setFixedSpeed: BXMaxSpeedThreshold];
+		[self setCPUSpeed: BXMaxSpeedThreshold];
 	}
 	else
 	{
-		NSInteger currentSpeed	= [self fixedSpeed];
+		NSInteger currentSpeed	= [self CPUSpeed];
 		NSInteger increment		= [[self class] incrementAmountForSpeed: currentSpeed goingUp: NO];
 		//This snaps the speed to the nearest increment rather than doing straight subtraction
 		NSInteger diff			= (currentSpeed % increment);
@@ -197,8 +221,8 @@
 		
 		//Validate our final value before assigning it
 		NSNumber *newSpeed = [NSNumber numberWithInteger: currentSpeed - increment];
-		if ([self validateFixedSpeed: &newSpeed error: nil])
-			[self setFixedSpeed: [newSpeed integerValue]];
+		if ([self validateCPUSpeed: &newSpeed error: nil])
+			[self setCPUSpeed: [newSpeed integerValue]];
 	}
 }
 
@@ -206,16 +230,16 @@
 - (void) setSliderSpeed: (NSInteger)speed
 {
 	//If we're at the maximum speed, bump it into auto-throttling mode
-	if (speed >= BXMaxSpeedThreshold) [self setAutoSpeed: YES];
-	
-	//Otherwise, set the fixed speed
-	else [self setFixedSpeed: speed];
+	if (speed >= BXMaxSpeedThreshold) speed = BXAutoSpeed;
+	[self setCPUSpeed: speed];
 }
 
 - (NSInteger) sliderSpeed
 {
-	//Report the max fixed speed if we're in auto-throttling mode
-	return ([self isAutoSpeed]) ? BXMaxSpeedThreshold : [self fixedSpeed];
+	//Report the max fixed speed if we're in auto-throttling mode,
+    //so that the knob will appear at the top end of the slider
+    //instead of the bottom
+	return ([self isAutoSpeed]) ? BXMaxSpeedThreshold : [self CPUSpeed];
 }
 
 //Snap fixed speed to even increments, unless the Option key is held down
@@ -286,7 +310,7 @@
 
 
 //Used to selectively enable/disable menu items by validateUserInterfaceItem
-- (BOOL) speedAtMinimum		{ return ![self isAutoSpeed] && [self fixedSpeed] <= BXMinSpeedThreshold; }
+- (BOOL) speedAtMinimum		{ return ![self isAutoSpeed] && [self CPUSpeed] <= BXMinSpeedThreshold; }
 - (BOOL) speedAtMaximum		{ return [self isAutoSpeed]; }
 
 - (BOOL) frameskipAtMinimum	{ return [self frameskip] <= 0; }
@@ -337,15 +361,7 @@
 - (NSString *) speedDescription
 {	
 	if (![self isEmulating]) return @"";
-
-	if ([self isAutoSpeed])
-		return NSLocalizedString(@"Maximized speed", @"Description for current CPU speed when in automatic CPU throttling mode.");
-	else
-	{
-		NSInteger speed		= [self fixedSpeed];
-		NSString *format	= [[self class] cpuClassFormatForSpeed: speed];
-		return [NSString stringWithFormat: format, speed];
-	}
+    return [[self class] descriptionForSpeed: [self CPUSpeed]];
 }
 
 - (NSString *) frameskipDescription
@@ -361,7 +377,7 @@
 	return [NSString stringWithFormat: format, frameskip + 1];
 }
 
-+ (NSSet *) keyPathsForValuesAffectingSliderSpeed			{ return [NSSet setWithObjects: @"emulating", @"fixedSpeed", @"autoSpeed", @"dynamic", nil]; }
++ (NSSet *) keyPathsForValuesAffectingSliderSpeed			{ return [NSSet setWithObjects: @"emulating", @"CPUSpeed", @"autoSpeed", @"dynamic", nil]; }
 + (NSSet *) keyPathsForValuesAffectingSpeedDescription		{ return [NSSet setWithObject: @"sliderSpeed"]; }
 + (NSSet *) keyPathsForValuesAffectingFrameskipDescription	{ return [NSSet setWithObjects: @"emulating", @"frameskip", nil]; }
 

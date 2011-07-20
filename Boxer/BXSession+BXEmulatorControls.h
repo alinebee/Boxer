@@ -36,6 +36,8 @@ enum
 	BXMinSpeedIncrement		= 50	//50->1000,		19 increments in band
 };
 
+#define BXAutoSpeed -1
+
 //The maximum frameskip level we can set
 #define BXMaxFrameskip 9
 
@@ -50,10 +52,10 @@ enum
 //The number of frames to be skipped for each frame that is played
 @property (assign, nonatomic) NSUInteger frameskip;
 
-//The fixed (non-maximised) CPU speed
-@property (assign, nonatomic) NSInteger fixedSpeed;
+//The CPU speed, as a fixed cycles number or BXAutoSpeed (if autoSpeed is YES).
+@property (assign, nonatomic) NSInteger CPUSpeed;
 
-//Whether the CPU speed is scaled to the maximum possible ("auto" is a misnomer)
+//Whether the CPU speed is automatically scaled to the maximum possible value.
 @property (assign, nonatomic, getter=isAutoSpeed) BOOL autoSpeed;
 
 //The slider speed snaps the CPU speed to fixed increments and automatically bumps
@@ -92,6 +94,9 @@ enum
 //corresponding to the specified speed.
 + (NSString *) cpuClassFormatForSpeed: (NSInteger)speed;
 
+//Returns a version of the above pre-formatted with the specified speed.
++ (NSString *) descriptionForSpeed: (NSInteger)speed;
+
 
 #pragma mark -
 #pragma mark Interface actions and validation
@@ -109,7 +114,7 @@ enum
 - (IBAction) decrementSpeed: (id)sender;
 
 //Caps the speed within minimum and maximum limits
-- (BOOL) validateFixedSpeed: (id *)ioValue error: (NSError **)outError;
+- (BOOL) validateCPUSpeed: (id *)ioValue error: (NSError **)outError;
 
 //Caps the frameskip amount within minimum and maximum limits
 - (BOOL) validateFrameskip: (id *)ioValue error: (NSError **)outError;

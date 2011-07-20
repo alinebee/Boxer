@@ -10,6 +10,7 @@
 #import "BXDOSWindowController.h"
 #import "BXInputController.h"
 #import "BXSession.h"
+#import "BXBezelController.h"
 
 #import "SystemEvents.h"
 #import <Carbon/Carbon.h> //For SetSystemUIMode()
@@ -57,11 +58,11 @@ NSString * const BXPreviousSpacesArrowKeyModifiersKey = @"previousSpacesArrowKey
 				   name: NSWindowDidResignKeyNotification
 				 object: nil];
 	
-	[center addObserver: self selector: @selector(syncApplicationPresentationMode)
+	[center addObserver: self selector: @selector(sessionDidEnterFullScreenMode:)
 				   name: BXSessionWillEnterFullScreenNotification
 				 object: nil];
 	
-	[center addObserver: self selector: @selector(syncApplicationPresentationMode)
+	[center addObserver: self selector: @selector(sessionDidExitFullScreenMode:)
 				   name: BXSessionDidExitFullScreenNotification
 				 object: nil];
 	
@@ -209,6 +210,23 @@ NSString * const BXPreviousSpacesArrowKeyModifiersKey = @"previousSpacesArrowKey
 	
 	//Conceal the Inspector panel while the mouse is locked
 	[[BXInspectorController controller] hideIfVisible];
+}
+
+- (void) sessionDidEnterFullScreenMode: (NSNotification *)notification
+{
+	[self syncApplicationPresentationMode];
+    
+    [[BXBezelController controller] showFullscreenBezel];
+}
+
+- (void) sessionDidExitFullScreenMode: (NSNotification *)notification
+{
+	[self syncApplicationPresentationMode];
+    
+    //Hide the fullscreen notification if it's still visible
+    BXBezelController *bezel = [BXBezelController controller];
+    if ([bezel currentBezel] == [bezel fullscreenBezel])
+        [bezel hideBezel];
 }
 
 @end

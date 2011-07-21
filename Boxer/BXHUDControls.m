@@ -22,6 +22,22 @@
 @implementation BXHUDLevelIndicatorCell
 @synthesize indicatorShadow, indicatorColor;
 
++ (CGFloat) heightForControlSize: (NSControlSize)size
+{
+    switch (size)
+    {
+        case NSMiniControlSize:
+            return 10.0f;
+            
+        case NSSmallControlSize:
+            return 12.0f;
+        
+        case NSRegularControlSize:
+        default:
+            return 14.0f;
+    }
+}
+
 - (void) dealloc
 {
 	[self setIndicatorColor: nil], [indicatorColor release];
@@ -52,23 +68,22 @@
 - (void) drawWithFrame: (NSRect)cellFrame
                 inView: (NSView *)controlView
 {
-    NSRect indicatorFrame = [self drawingRectForBounds: cellFrame];
-    
-    CGFloat height = 14.0f;
-    indicatorFrame.origin.y += (indicatorFrame.size.height - height) / 2.0f;
-    indicatorFrame.size.height = height;
-    
-    //Ensure the draw region has sufficient clearance to not clip its shadow
-    //TODO: we should expand the draw region of the control view instead
+    //Offset the draw region to give room for our shadow
+    //TODO: we should just expand the dirty region of the control view instead
     CGFloat shadowSize  = [[self indicatorShadow] shadowBlurRadius];
     NSSize shadowOffset = [[self indicatorShadow] shadowOffset];
     NSRect shadowClearance  = NSInsetRect(cellFrame, shadowSize, shadowSize);
     shadowClearance.origin.x -= shadowOffset.width;
     shadowClearance.origin.y -= shadowOffset.height;
     
-    indicatorFrame = NSIntegralRect(constrainToRect(indicatorFrame, shadowClearance, NSMakePoint(0.5f, 0.5f)));
+    NSRect indicatorFrame = [self drawingRectForBounds: shadowClearance];
+    CGFloat maxHeight = indicatorFrame.size.height;
+    CGFloat height = MIN(maxHeight, [[self class] heightForControlSize: [self controlSize]]);
     
-    
+    //Center the indicator vertically in the available space
+    indicatorFrame.origin.y += (maxHeight - height) / 2.0f;
+    indicatorFrame.size.height = height;
+
     NSRect borderRect       = NSInsetRect(indicatorFrame, 1.0f, 1.0f);
     NSRect levelRect        = NSInsetRect(indicatorFrame, 4.0f, 4.0f);
     

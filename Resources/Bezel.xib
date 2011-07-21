@@ -113,6 +113,7 @@ A</string>
 						</object>
 						<string key="NSFrame">{{260, 42}, {24, 24}}</string>
 						<reference key="NSSuperview" ref="262078921"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="48927340"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="222996761">
@@ -144,8 +145,9 @@ A</string>
 								<string>NeXT TIFF v4.0 pasteboard type</string>
 							</object>
 						</object>
-						<string key="NSFrame">{{12, 41}, {24, 24}}</string>
+						<string key="NSFrame">{{15, 41}, {24, 24}}</string>
 						<reference key="NSSuperview" ref="262078921"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="613313033"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="30691410">
@@ -165,8 +167,9 @@ A</string>
 					<object class="NSLevelIndicator" id="613313033">
 						<reference key="NSNextResponder" ref="262078921"/>
 						<int key="NSvFlags">266</int>
-						<string key="NSFrame">{{41, 45}, {219, 20}}</string>
+						<string key="NSFrame">{{41, 43}, {219, 20}}</string>
 						<reference key="NSSuperview" ref="262078921"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="546181327"/>
 						<int key="NSTag">2</int>
 						<bool key="NSEnabled">YES</bool>
@@ -191,6 +194,7 @@ A</string>
 						<int key="NSvFlags">290</int>
 						<string key="NSFrame">{{20, 15}, {260, 19}}</string>
 						<reference key="NSSuperview" ref="262078921"/>
+						<reference key="NSWindow"/>
 						<int key="NSTag">3</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="639055398">
@@ -210,11 +214,12 @@ A</string>
 				</object>
 				<string key="NSFrameSize">{300, 80}</string>
 				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="433158987"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
 			<object class="NSCustomView" id="486365284">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -258,6 +263,7 @@ A</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{240, 80}</string>
+				<reference key="NSSuperview"/>
 				<reference key="NSNextKeyView" ref="319377139"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
@@ -283,7 +289,6 @@ A</string>
 						</object>
 						<string key="NSFrame">{{86, 72}, {128, 128}}</string>
 						<reference key="NSSuperview" ref="759628227"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="386939600"/>
 						<int key="NSTag">1</int>
 						<bool key="NSEnabled">YES</bool>
@@ -306,7 +311,6 @@ A</string>
 						<int key="NSvFlags">306</int>
 						<string key="NSFrame">{{20, 23}, {260, 14}}</string>
 						<reference key="NSSuperview" ref="759628227"/>
-						<reference key="NSWindow"/>
 						<int key="NSTag">5</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="438852623">
@@ -328,7 +332,6 @@ A</string>
 						<int key="NSvFlags">306</int>
 						<string key="NSFrame">{{20, 40}, {260, 24}}</string>
 						<reference key="NSSuperview" ref="759628227"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="851829758"/>
 						<int key="NSTag">4</int>
 						<bool key="NSEnabled">YES</bool>
@@ -345,7 +348,6 @@ A</string>
 				</object>
 				<string key="NSFrameSize">{300, 220}</string>
 				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="457239935"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>

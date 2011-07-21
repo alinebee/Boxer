@@ -31,6 +31,9 @@
 @property (copy, nonatomic) NSColor *indicatorColor;
 @property (copy, nonatomic) NSShadow *indicatorShadow;
 
+//Returns the height used for the level indicator at the specified control size
++ (CGFloat) heightForControlSize: (NSControlSize)size;
+
 @end
 
 

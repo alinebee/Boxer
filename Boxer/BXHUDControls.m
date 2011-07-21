@@ -59,6 +59,7 @@
     indicatorFrame.size.height = height;
     
     //Ensure the draw region has sufficient clearance to not clip its shadow
+    //TODO: we should expand the draw region of the control view instead
     CGFloat shadowSize  = [[self indicatorShadow] shadowBlurRadius];
     NSSize shadowOffset = [[self indicatorShadow] shadowOffset];
     NSRect shadowClearance  = NSInsetRect(cellFrame, shadowSize, shadowSize);

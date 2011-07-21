@@ -6,8 +6,9 @@
  */
 
 
-#import "NSString+BXWordWrap.h"
+#import "NSString+BXStringFormatting.h"
 #import "BXLineEnumerator.h"
+#import "RegexKitLite.h"
 
 #pragma mark -
 #pragma mark Private method declarations
@@ -26,9 +27,22 @@
 #pragma mark -
 #pragma mark Implementation
 
-@implementation NSString (BXWordWrap)
+@implementation NSString (BXStringFormatting)
 
-- (NSEnumerator *)lineEnumerator
+- (NSString *) sentenceCapitalizedString
+{
+    //Figure out where the first actual word character is located:
+    //this will skip over leading punctuation.
+    NSRange firstLetter = [self rangeOfRegex: @"^\\W*(\\w)" capture: 1];
+    if (firstLetter.location != NSNotFound)
+    {
+        NSString *capitalizedLetter = [[self substringWithRange: firstLetter] uppercaseString];
+        return [self stringByReplacingCharactersInRange: firstLetter withString: capitalizedLetter];
+    }
+    else return self;
+}
+
+- (NSEnumerator *) lineEnumerator
 {
 	return [[[BXLineEnumerator alloc] initWithString: self] autorelease];
 }

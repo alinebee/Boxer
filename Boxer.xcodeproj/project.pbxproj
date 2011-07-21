@@ -269,7 +269,7 @@
 		9FA9E256121FD5BA006E20C4 /* DropzoneTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FA9E255121FD5BA006E20C4 /* DropzoneTemplate.pdf */; };
 		9FA9E281121FD874006E20C4 /* PanelExpandTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FA9E27F121FD874006E20C4 /* PanelExpandTemplate.pdf */; };
 		9FA9E282121FD874006E20C4 /* PanelCollapseTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FA9E280121FD874006E20C4 /* PanelCollapseTemplate.pdf */; };
-		9FAA44A711EB24A90042B986 /* NSString+BXWordWrap.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAA44A611EB24A90042B986 /* NSString+BXWordWrap.m */; };
+		9FAA44A711EB24A90042B986 /* NSString+BXStringFormatting.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAA44A611EB24A90042B986 /* NSString+BXStringFormatting.m */; };
 		9FAA451511EB40180042B986 /* Configuration.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9FAA451411EB40180042B986 /* Configuration.strings */; };
 		9FAD43C010A341F6007E8C0D /* UKFileWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD43B810A341F6007E8C0D /* UKFileWatcher.m */; };
 		9FAD43C110A341F6007E8C0D /* UKFNSubscribeFileWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD43BA10A341F6007E8C0D /* UKFNSubscribeFileWatcher.m */; };
@@ -901,8 +901,8 @@
 		9FA9E27F121FD874006E20C4 /* PanelExpandTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = PanelExpandTemplate.pdf; sourceTree = "<group>"; };
 		9FA9E280121FD874006E20C4 /* PanelCollapseTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = PanelCollapseTemplate.pdf; sourceTree = "<group>"; };
 		9FAA445511EB1CC40042B986 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Configuration.strings; sourceTree = "<group>"; };
-		9FAA44A511EB24A90042B986 /* NSString+BXWordWrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+BXWordWrap.h"; sourceTree = "<group>"; };
-		9FAA44A611EB24A90042B986 /* NSString+BXWordWrap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+BXWordWrap.m"; sourceTree = "<group>"; };
+		9FAA44A511EB24A90042B986 /* NSString+BXStringFormatting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+BXStringFormatting.h"; sourceTree = "<group>"; };
+		9FAA44A611EB24A90042B986 /* NSString+BXStringFormatting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+BXStringFormatting.m"; sourceTree = "<group>"; };
 		9FAD43B710A341F6007E8C0D /* UKFileWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UKFileWatcher.h; sourceTree = "<group>"; };
 		9FAD43B810A341F6007E8C0D /* UKFileWatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UKFileWatcher.m; sourceTree = "<group>"; };
 		9FAD43B910A341F6007E8C0D /* UKFNSubscribeFileWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UKFNSubscribeFileWatcher.h; sourceTree = "<group>"; };
@@ -2052,8 +2052,8 @@
 				9FC8B072121807AD004F6DA2 /* NSView+BXDrawing.m */,
 				9FC8F50A10934F3400AD6307 /* NSString+BXPaths.h */,
 				9FC8F50B10934F3400AD6307 /* NSString+BXPaths.m */,
-				9FAA44A511EB24A90042B986 /* NSString+BXWordWrap.h */,
-				9FAA44A611EB24A90042B986 /* NSString+BXWordWrap.m */,
+				9FAA44A511EB24A90042B986 /* NSString+BXStringFormatting.h */,
+				9FAA44A611EB24A90042B986 /* NSString+BXStringFormatting.m */,
 				9F13F9CE11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.h */,
 				9F13F9CF11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m */,
 				9F573C580F8E18B10089D8B7 /* NSWorkspace+BXMountedVolumes.h */,
@@ -2625,7 +2625,7 @@
 				9FF1756D11B25F4E00D0FCDC /* BXInputView.m in Sources */,
 				9FF175E711B279F500D0FCDC /* BXVideoHandler.mm in Sources */,
 				9FF2E9BD11E6F4950051E485 /* BXEmulatorConfiguration.m in Sources */,
-				9FAA44A711EB24A90042B986 /* NSString+BXWordWrap.m in Sources */,
+				9FAA44A711EB24A90042B986 /* NSString+BXStringFormatting.m in Sources */,
 				9FA5D68311EB6CCC0012DFA5 /* BXLineEnumerator.m in Sources */,
 				9FADFE5511EC7E1700990E91 /* BXDigest.m in Sources */,
 				9FADFE9711EC932800990E91 /* NSData+HexStrings.m in Sources */,

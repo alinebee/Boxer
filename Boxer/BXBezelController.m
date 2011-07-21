@@ -13,14 +13,15 @@
 #import "BXPackage.h"
 #import "BXValueTransformers.h"
 #import "BXInspectorController.h"
+#import "NSString+BXStringFormatting.h"
 
 
 #define BXBezelFadeDuration 0.25
 
-#define BXFullscreenBezelDuration 2.5
+#define BXFullscreenBezelDuration 3
+#define BXDriveBezelDuration 3
 #define BXCPUBezelDuration 0.75
 #define BXThrottleBezelDuration 0.75
-#define BXDriveBezelDuration 2.5
 
 
 @implementation BXBezelController
@@ -219,6 +220,11 @@
 
 - (void) showDriveAddedBezelForDrive: (BXDrive *)drive
 {
+    //Tweak: if the drives inspector panel is visible, don’t bother showing the bezel.
+    BXInspectorController *inspector = [BXInspectorController controller];
+    if ([inspector panelShown] && [inspector selectedTabViewItemIndex] == BXDriveInspectorPanelTag)
+        return;
+    
     NSView *bezel = [self driveAddedBezel];
     
     NSImage *iconImage = [[self class] bezelIconForDrive: drive];
@@ -234,7 +240,7 @@
     NSTextField *path   = [bezel viewWithTag: BXBezelDrivePath];
     
     [icon setImage: iconImage];
-    [label setStringValue: labelDescription];
+    [label setStringValue: [labelDescription sentenceCapitalizedString]];
     [path setStringValue: displayPath];
     
     [self showBezel: bezel
@@ -244,6 +250,11 @@
 
 - (void) showDriveRemovedBezelForDrive: (BXDrive *)drive
 {
+    //Tweak: if the drives inspector panel is visible, don’t bother showing the bezel.
+    BXInspectorController *inspector = [BXInspectorController controller];
+    if ([inspector panelShown] && [inspector selectedTabViewItemIndex] == BXDriveInspectorPanelTag)
+        return;
+    
     NSView *bezel = [self driveRemovedBezel];
     NSImage *iconImage = [NSImage imageNamed: @"EjectTemplate"];
     
@@ -254,7 +265,7 @@
     NSTextField *label  = [bezel viewWithTag: BXBezelDriveLabel];
     
     [icon setImage: iconImage];
-    [label setStringValue: labelDescription];
+    [label setStringValue: [labelDescription sentenceCapitalizedString]];
     
     [self showBezel: bezel
         forDuration: BXDriveBezelDuration
@@ -264,6 +275,11 @@
 - (void) showDriveImportedBezelForDrive: (BXDrive *)drive
                               toPackage: (BXPackage *)package
 {
+    //Tweak: if the drives inspector panel is visible, don’t bother showing the bezel.
+    BXInspectorController *inspector = [BXInspectorController controller];
+    if ([inspector panelShown] && [inspector selectedTabViewItemIndex] == BXDriveInspectorPanelTag)
+        return;
+    
     NSView *bezel = [self driveImportedBezel];
     
     NSImage *iconImage = [[self class] bezelIconForDrive: drive];
@@ -275,7 +291,7 @@
     NSTextField *label  = [bezel viewWithTag: BXBezelDriveLabel];
     
     [icon setImage: iconImage];
-    [label setStringValue: labelDescription];
+    [label setStringValue: [labelDescription sentenceCapitalizedString]];
     
     [self showBezel: bezel
         forDuration: BXDriveBezelDuration

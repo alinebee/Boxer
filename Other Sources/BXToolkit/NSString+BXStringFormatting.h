@@ -6,12 +6,15 @@
  */
 
 
-//The BXWordWrap category adds methods for hard-wrapping NSStrings to a specified column width
-//for writing text files.
+//The BXStringFormatting category adds methods for adjusting the formatting of strings
+//and hard-wrapping NSStrings to a specified column width.
 
 #import <Foundation/Foundation.h>
 
-@interface NSString (BXWordWrap)
+@interface NSString (BXStringFormatting)
+
+//Returns the string with the first letter of the first word capitalized.
+- (NSString *) sentenceCapitalizedString;
 
 //Returns an enumerator for looping easily over the lines in a string.
 - (NSEnumerator *) lineEnumerator;

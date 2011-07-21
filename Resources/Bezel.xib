@@ -53,7 +53,6 @@
 						<int key="NSvFlags">274</int>
 						<string key="NSFrame">{{20, 20}, {300, 50}}</string>
 						<reference key="NSSuperview" ref="959508283"/>
-						<reference key="NSNextKeyView"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="422971973">
 							<int key="NSCellFlags">67239424</int>
@@ -93,7 +92,7 @@ A</string>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
 			<object class="NSCustomView" id="262078921">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -210,6 +209,7 @@ A</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{300, 80}</string>
+				<reference key="NSSuperview"/>
 				<reference key="NSNextKeyView" ref="433158987"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
@@ -307,7 +307,6 @@ A</string>
 						<string key="NSFrame">{{20, 23}, {260, 14}}</string>
 						<reference key="NSSuperview" ref="759628227"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<int key="NSTag">5</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="438852623">
@@ -351,7 +350,7 @@ A</string>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
 			<object class="NSCustomView" id="962612140">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -372,7 +371,6 @@ A</string>
 						</object>
 						<string key="NSFrame">{{86, 72}, {128, 128}}</string>
 						<reference key="NSSuperview" ref="962612140"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="30954813"/>
 						<int key="NSTag">1</int>
 						<bool key="NSEnabled">YES</bool>
@@ -395,8 +393,6 @@ A</string>
 						<int key="NSvFlags">306</int>
 						<string key="NSFrame">{{17, 40}, {266, 24}}</string>
 						<reference key="NSSuperview" ref="962612140"/>
-						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<int key="NSTag">4</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="128157044">
@@ -411,13 +407,11 @@ A</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{300, 220}</string>
-				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="237268684"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
 			<object class="NSCustomView" id="271727742">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -438,7 +432,6 @@ A</string>
 						</object>
 						<string key="NSFrame">{{86, 72}, {128, 128}}</string>
 						<reference key="NSSuperview" ref="271727742"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="160133539"/>
 						<int key="NSTag">1</int>
 						<bool key="NSEnabled">YES</bool>
@@ -461,8 +454,6 @@ A</string>
 						<int key="NSvFlags">306</int>
 						<string key="NSFrame">{{20, 40}, {260, 24}}</string>
 						<reference key="NSSuperview" ref="271727742"/>
-						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<int key="NSTag">4</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="614521328">
@@ -477,8 +468,6 @@ A</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{300, 220}</string>
-				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="938304970"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
@@ -1077,7 +1066,7 @@ A</string>
 				<string>{13, 14}</string>
 				<string>{128, 128}</string>
 				<string>{128, 128}</string>
-				<string>{128, 108}</string>
+				<string>{128, 128}</string>
 				<string>{18, 10}</string>
 			</object>
 		</object>

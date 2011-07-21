@@ -7,7 +7,8 @@
 
 
 //BXLineEnumerator allows easy enumeration of the lines of an NSString.
-//It is exposed as a method on NSString by the BXWordWrap category, but can be used separately also.
+//It is exposed as a method on NSString by the BXStringFormatting category,
+//but can be used separately also.
 
 #import <Foundation/Foundation.h>
 

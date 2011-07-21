@@ -12,10 +12,13 @@
 #import <Cocoa/Cocoa.h>
 #import "BXEmulatedJoystick.h"
 
-
+@protocol BXHIDInputBindingDelegate;
 @class BXHIDEvent;
 @class DDHidUsage;
 @protocol BXHIDInputBinding <NSObject, NSCoding>
+
+//The delegate to which to send input notifications. This is not retained.
+@property (assign, nonatomic) id <BXHIDInputBindingDelegate> delegate;
 
 //Return an input binding of the appropriate type initialized with default values.
 + (id) binding;
@@ -30,6 +33,9 @@
 //The base implementation of the BXHIDInputBinding class, containing common logic used by all bindings.
 //Not directly instantiatable.
 @interface BXBaseHIDInputBinding: NSObject <BXHIDInputBinding>
+{
+    id <BXHIDInputBindingDelegate> delegate;
+}
 @end
 
 
@@ -58,6 +64,22 @@
 
 //The axis selector to call on the emulated joystick.
 @property (assign, nonatomic) SEL axisSelector;
+
+@end
+
+
+//Adds input from an HID controller axis to the current value of an emulated axis:
+//Used for emulating axes that don’t return to center.
+@interface BXAxisToAxisAdditive: BXAxisToAxis
+{
+    NSTimeInterval lastUpdated;
+    float ratePerSecond;
+    NSTimer *inputTimer;
+}
+
+//How much to increment the emulated axis per second if the controller axis input is at full strength.
+//Defaults to 1.0f: the emulated axis will go from 0 to 1.0 in 1 second when the axis is on full.
+@property (assign, nonatomic) float ratePerSecond;
 
 @end
 
@@ -222,4 +244,15 @@
 //The binding to which to pass negative axis values.
 @property (retain, nonatomic) id <BXHIDInputBinding> negativeBinding;
 
+@end
+
+
+
+@protocol BXHIDInputBindingDelegate <NSObject>
+
+//Called by processEvent:forTarget: whenever updating an emulated joystick.
+- (void) binding: (id <BXHIDInputBinding>)binding
+ didUpdateTarget: (id <BXEmulatedJoystick>)target
+   usingSelector: (SEL)selector
+          object: (id)object;
 @end

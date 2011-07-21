@@ -15,6 +15,8 @@
 #define BXDefaultAxisToButtonThreshold 0.25f
 #define BXDefaultButtonToAxisPressedValue 1.0f
 #define BXDefaultButtonToAxisReleasedValue 0.0f
+#define BXDefaultAdditiveAxisRate 1.0f
+#define BXDefaultAdditiveAxisInputRate 30.0 //30 frames per second
 
 
 @interface BXBaseHIDInputBinding ()
@@ -34,6 +36,7 @@
 
 
 @implementation BXBaseHIDInputBinding
+@synthesize delegate;
 
 + (id) binding
 {
@@ -52,10 +55,10 @@
 }
 
 - (void) _performSelector: (SEL)selector
-				 onTarget: (id)target
+				 onTarget: (id <BXEmulatedJoystick>)target
 				withValue: (void *)value
 {
-	NSMethodSignature *signature = [target methodSignatureForSelector: selector];
+	NSMethodSignature *signature = [(id)target methodSignatureForSelector: selector];
 	NSInvocation *action = [NSInvocation invocationWithMethodSignature: signature];
     
 	[action setSelector: selector];
@@ -170,8 +173,118 @@
 	if (axisValue != previousValue)
 	{
 		[self _performSelector: [self axisSelector] onTarget: target withValue: &axisValue];
+        [[self delegate] binding: self
+                 didUpdateTarget: target
+                   usingSelector: [self axisSelector]
+                          object: [NSNumber numberWithFloat: axisValue]];
 		previousValue = axisValue;
 	}
+}
+
+@end
+
+
+@implementation BXAxisToAxisAdditive
+@synthesize ratePerSecond;
+
+- (id) init
+{
+	if ((self = [super init]))
+	{
+		[self setRatePerSecond: BXDefaultAdditiveAxisRate];
+	}
+	return self;
+}
+
+- (id) initWithCoder: (NSCoder *)coder
+{
+    if ((self = [super initWithCoder: coder]))
+    {
+        if ([coder containsValueForKey: @"strength"])
+            [self setRatePerSecond: [coder decodeFloatForKey: @"strength"]];
+    }
+    return self;
+}
+
+- (void) encodeWithCoder: (NSCoder *)coder
+{
+    [super encodeWithCoder: coder];
+    
+    //Don’t persist defaults
+    if ([self ratePerSecond] != BXDefaultAdditiveAxisRate)
+        [coder encodeFloat: [self ratePerSecond] forKey: @"strength"];
+}
+
+#pragma mark -
+#pragma mark Timed updates
+
+- (void) _updateWithTimer: (NSTimer *)timer
+{
+    if (previousValue != 0.0f)
+    {
+        id <BXEmulatedJoystick> target = [timer userInfo];
+ 
+        float impulseValue = ([self ratePerSecond] * previousValue) / (float)BXDefaultAdditiveAxisInputRate;
+    
+        [self _performSelector: [self axisSelector] onTarget: target withValue: &impulseValue];
+        
+        [[self delegate] binding: self
+                 didUpdateTarget: target
+                   usingSelector: [self axisSelector]
+                          object: [NSNumber numberWithFloat: impulseValue]];
+    }
+}
+
+- (void) _stopUpdating
+{
+    if (inputTimer)
+    {
+        [inputTimer invalidate];
+        [inputTimer release];
+        inputTimer = nil;
+    }
+}
+
+- (void) _startUpdatingTarget: (id <BXEmulatedJoystick>)target
+{
+    if (!inputTimer || [inputTimer userInfo] != target)
+    {
+        [self _stopUpdating];
+        
+        inputTimer = [NSTimer scheduledTimerWithTimeInterval: (1000 / BXDefaultAdditiveAxisInputRate)
+                                                      target: self
+                                                    selector: @selector(_updateWithTimer:)
+                                                    userInfo: target
+                                                     repeats: YES];
+        
+        [inputTimer retain];
+    }
+}
+
+- (void) processEvent: (BXHIDEvent *)event
+			forTarget: (id <BXEmulatedJoystick>)target
+{
+	previousValue = [self _normalizedAxisValue: [event axisPosition]];
+    
+    //EXPLANATION: BXAxisToAxisAdditive gradually increments/decrements
+    //its emulated axis when the input axis is outside its deadzone.
+    //Because we may not receive ongoing input signals from the axis
+    //(e.g. if it is being held at maximum), we use a timer to update
+    //the emulated axis periodically with whatever the latest value
+    //of the input axis is.
+    
+    //Once the input axis returns to center, we cancel the timer: this
+    //leaves the emulated axis at whatever value it had reached.
+    
+    if (previousValue != 0.0f)  [self _startUpdatingTarget: target];
+    else                        [self _stopUpdating];
+}
+
+- (void) dealloc
+{
+    [self _stopUpdating];
+    
+    [super dealloc];
 }
 
 @end
@@ -276,6 +389,11 @@
 		axisValue = [self releasedValue];
 	
 	[self _performSelector: [self axisSelector] onTarget: target withValue: &axisValue];
+    
+    [[self delegate] binding: self
+             didUpdateTarget: target
+               usingSelector: [self axisSelector]
+                      object: [NSNumber numberWithFloat: axisValue]];
 }
 
 @end
@@ -404,6 +522,11 @@
 	BXEmulatedPOVDirection direction = [event POVDirection];
 	
 	[self _performSelector: [self POVSelector] onTarget: target withValue: &direction];
+    
+    [[self delegate] binding: self
+             didUpdateTarget: target
+               usingSelector: [self POVSelector]
+                      object: [NSNumber numberWithInteger: direction]];
 }
 
 @end
@@ -523,6 +646,11 @@ enum {
 	BXEmulatedPOVDirection direction = [self _POVDirection];
 	
 	[self _performSelector: [self POVSelector] onTarget: target withValue: &direction];
+    
+    [[self delegate] binding: self
+             didUpdateTarget: target
+               usingSelector: [self POVSelector]
+                      object: [NSNumber numberWithInteger: direction]];
 }
 
 @end
@@ -602,10 +730,21 @@ enum {
 	}
 
     if ([self xAxisSelector])
+    {
         [self _performSelector: [self xAxisSelector] onTarget: target withValue: &x];
-    
+        [[self delegate] binding: self
+                 didUpdateTarget: target
+                   usingSelector: [self xAxisSelector]
+                          object: [NSNumber numberWithFloat: x]];
+    }
     if ([self yAxisSelector])
+    {
         [self _performSelector: [self yAxisSelector] onTarget: target withValue: &y];
+        [[self delegate] binding: self
+                 didUpdateTarget: target
+                   usingSelector: [self yAxisSelector]
+                          object: [NSNumber numberWithFloat: y]];
+    }
 }
 
 @end

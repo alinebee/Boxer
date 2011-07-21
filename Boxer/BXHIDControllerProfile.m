@@ -6,9 +6,11 @@
  */
 
 #import "BXHIDControllerProfilePrivate.h"
+#import "BXBezelController.h"
 
 
 @implementation BXHIDControllerProfile
+
 @synthesize HIDController = _HIDController;
 @synthesize emulatedJoystick = _emulatedJoystick;
 @synthesize bindings = _bindings;
@@ -147,6 +149,8 @@ static NSMutableArray *profileClasses = nil;
 - (void) setBinding: (id <BXHIDInputBinding>)binding
 		 forElement: (DDHidElement *)element
 {
+    [binding setDelegate: self];
+    
 	DDHidUsage *key = [element usage];
 	if (!binding) [[self bindings] removeObjectForKey: key];
 	else [[self bindings] setObject: binding forKey: key];
@@ -348,7 +352,6 @@ static NSMutableArray *profileClasses = nil;
         throttle	= @selector(throttleMovedTo:);
 	
 	NSUInteger axis = [[element usage] usageId], normalizedAxis;
-	SEL bindAxis = NULL;
 	
 	//First, normalize the axes to known conventions
 	switch (axis)
@@ -383,29 +386,42 @@ static NSMutableArray *profileClasses = nil;
 	switch (normalizedAxis)
 	{
 		case kHIDUsage_GD_X:
-			if ([joystick respondsToSelector: x]) bindAxis = x;
+			if ([joystick respondsToSelector: x])
+                return [BXAxisToAxis bindingWithAxisSelector: x];
+            
 			break;
 			
 		case kHIDUsage_GD_Y:
-			if ([joystick respondsToSelector: y]) bindAxis = y;
+			if ([joystick respondsToSelector: y])
+                return [BXAxisToAxis bindingWithAxisSelector: y];
+            
 			break;
 			
 		case kHIDUsage_GD_Rx:
-            if      ([joystick respondsToSelector: rudder])     bindAxis = rudder;
-            else if ([joystick respondsToSelector: x2])         bindAxis = x2;
+            if ([joystick respondsToSelector: rudder])
+                return [BXAxisToAxis bindingWithAxisSelector: rudder];
+            
+            else if ([joystick respondsToSelector: x2])
+                return [BXAxisToAxis bindingWithAxisSelector: x2];
+            
         	break;
 			
 		case kHIDUsage_GD_Ry:
-            if      ([joystick respondsToSelector: throttle])   bindAxis = throttle;
-            else if ([joystick respondsToSelector: y2])         bindAxis = y2;
+            if ([joystick respondsToSelector: throttle])
+            {
+                //Special handling for flightstick throttle on axes that spring
+                //back to center: use an additive axis instead of an absolute one.
+                //TODO: heuristics to detect proper throttle wheels that *don't*
+                //spring back to center.
+                return [BXAxisToAxisAdditive bindingWithAxisSelector: throttle];
+            }
+            else if ([joystick respondsToSelector: y2])
+                return [BXAxisToAxis bindingWithAxisSelector: y2];
+            
 			break;
 	}
-	
-	if (bindAxis)
-	{
-		return [BXAxisToAxis bindingWithAxisSelector: bindAxis];
-	}
-	else return nil;
+    
+    return nil;
 }
 
 - (id <BXHIDInputBinding>) generatedBindingForPOVElement: (DDHidElement *)element
@@ -456,6 +472,20 @@ static NSMutableArray *profileClasses = nil;
 	id <BXHIDInputBinding> binding = [self bindingForElement: element];
 	
 	[binding processEvent: event forTarget: [self emulatedJoystick]];
+}
+
+- (void) binding: (id<BXHIDInputBinding>)binding
+ didUpdateTarget: (id<BXEmulatedJoystick>)target
+   usingSelector: (SEL)selector
+          object: (id)object
+{
+    //Send a notification whenever a throttle binding updates itself
+    if ([binding isKindOfClass: [BXAxisToAxisAdditive class]]
+         && [(id)binding axisSelector] == @selector(throttleMovedBy:))
+    {
+        float throttleValue = [(NSNumber *)object floatValue];
+        [[BXBezelController controller] showThrottleBezelForValue: throttleValue];
+    }
 }
 
 @end

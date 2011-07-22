@@ -9,6 +9,21 @@
 
 
 #pragma mark -
+#pragma mark Constants
+
+//These correspond to property names in BXEmulatedJoystick protocols
+NSString * const BXAxisX            = @"xAxis";
+NSString * const BXAxisY            = @"yAxis";
+NSString * const BXAxisX2           = @"x2Axis";
+NSString * const BXAxisY2           = @"y2Axis";
+NSString * const BXAxisThrottle     = @"throttleAxis";
+NSString * const BXAxisRudder       = @"rudderAxis";
+NSString * const BXAxisWheel        = @"wheelAxis";
+NSString * const BXAxisAccelerator  = @"acceleratorAxis";
+NSString * const BXAxisBrake        = @"brakeAxis";
+
+
+#pragma mark -
 #pragma mark Error constants
 
 NSString * const BXEmulatedJoystickErrorDomain = @"BXEmulatedJoystickErrorDomain";
@@ -19,6 +34,31 @@ NSString * const BXEmulatedJoystickClassKey = @"BXEmulatedJoystickClassKey";
 #pragma mark Implementations
 
 @implementation BXBaseEmulatedJoystick
+
++ (BXEmulatedPOVDirection) closest4WayDirectionForPOV: (BXEmulatedPOVDirection)direction
+                                          previousPOV: (BXEmulatedPOVDirection)oldDirection
+{
+    BXEmulatedPOVDirection normalizedDirection = direction;
+	switch (normalizedDirection)
+	{
+		case BXEmulatedPOVNorthEast:
+			normalizedDirection = (oldDirection == BXEmulatedPOVNorth) ? BXEmulatedPOVNorth : BXEmulatedPOVEast;
+			break;
+			
+		case BXEmulatedPOVNorthWest:
+			normalizedDirection = (oldDirection == BXEmulatedPOVNorth) ? BXEmulatedPOVNorth : BXEmulatedPOVWest;
+			break;
+			
+		case BXEmulatedPOVSouthWest:
+			normalizedDirection = (oldDirection == BXEmulatedPOVSouth) ? BXEmulatedPOVSouth : BXEmulatedPOVWest;
+			break;
+			
+		case BXEmulatedPOVSouthEast:
+			normalizedDirection = (oldDirection == BXEmulatedPOVSouth) ? BXEmulatedPOVSouth : BXEmulatedPOVEast;
+			break;
+	}
+	return normalizedDirection;
+}
 
 - (void) clearInput
 {
@@ -81,48 +121,75 @@ NSString * const BXEmulatedJoystickClassKey = @"BXEmulatedJoystickClassKey";
 	}
 }
 
-- (void) axis: (BXEmulatedJoystickAxis)axis movedTo: (float)position
+# pragma mark -
+# pragma mark Emulated axis accessors
+
++ (BOOL) instancesSupportAxis: (NSString *)axisName
+{
+    return [self instancesRespondToSelector: NSSelectorFromString(axisName)];
+}
+
+- (BOOL) supportsAxis: (NSString *)axisName
+{
+    return [self respondsToSelector: NSSelectorFromString(axisName)];   
+}
+
+- (void) setPosition: (float)position forAxis: (NSString *)axis
+{
+    [self setValue: [NSNumber numberWithFloat: position] forKey: axis];
+}
+
+- (float) positionForAxis: (NSString *)axis
+{
+    return [[self valueForKey: axis] floatValue]; 
+}
+
+
+#pragma mark -
+#pragma mark Gameport axis accessors (for internal use only)
+
+- (void) setPosition: (float)position forGameportAxis: (BXGameportAxis)axis 
 {	
 	//Clamp the position to fit within -1.0 to +1.0
 	position = fmaxf(fminf(position, BXGameportAxisMax), BXGameportAxisMin);
 	
 	switch (axis)
 	{
-		case BXEmulatedJoystickAxisX:
+		case BXGameportXAxis:
 			JOYSTICK_Move_X(BXGameportStick1, position);
 			break;
 		
-		case BXEmulatedJoystickAxisY:
+		case BXGameportYAxis:
 			JOYSTICK_Move_Y(BXGameportStick1, position);
 			break;
 			
-		case BXEmulatedJoystick2AxisX:
+		case BXGameportX2Axis:
 			JOYSTICK_Move_X(BXGameportStick2, position);
 			break;
 			
-		case BXEmulatedJoystick2AxisY:
+		case BXGameportY2Axis:
 			JOYSTICK_Move_Y(BXGameportStick2, position);
 			break;
 	}
 }
 
-- (float) axisPosition: (BXEmulatedJoystickAxis)axis
+- (float) positionForGameportAxis: (BXGameportAxis)axis
 {
 	switch (axis)
 	{
-		case BXEmulatedJoystickAxisX:
+		case BXGameportXAxis:
 			return JOYSTICK_GetMove_X(BXGameportStick1);
 			break;
 		
-		case BXEmulatedJoystickAxisY:
+		case BXGameportYAxis:
 			return JOYSTICK_GetMove_Y(BXGameportStick1);
 			break;
 			
-		case BXEmulatedJoystick2AxisX:
+		case BXGameportX2Axis:
 			return JOYSTICK_GetMove_X(BXGameportStick2);
 			break;
 			
-		case BXEmulatedJoystick2AxisY:
+		case BXGameportY2Axis:
 			return JOYSTICK_GetMove_Y(BXGameportStick2);
 			break;
 		
@@ -131,25 +198,17 @@ NSString * const BXEmulatedJoystickClassKey = @"BXEmulatedJoystickClassKey";
 	}
 }
 
-- (void) axis: (BXEmulatedJoystickAxis)axis movedBy: (float)delta
-{
-	float oldPosition = [self axisPosition: axis];
-	float newPosition = oldPosition + delta;
-	
-	[self axis: axis movedTo: newPosition];
-}
-
 - (void) buttonPressed: (BXEmulatedJoystickButton)button forDuration: (NSTimeInterval)duration
 {
 	[self buttonDown: button];
-	[self performSelector: @selector(_releaseButton:)
+	[self performSelector: @selector(releaseButton:)
 			   withObject: [NSNumber numberWithUnsignedInteger: button]
 			   afterDelay: duration];
 }
 
 - (void) buttonPressed: (BXEmulatedJoystickButton)button
 {
-	[self buttonPressed: button forDuration: BXJoystickButtonPressDurationDefault];
+	[self buttonPressed: button forDuration: BXJoystickButtonPressDefaultDuration];
 }
 
 - (void) setPressedButtons: (BXGameportButtonMask)buttonMask
@@ -197,7 +256,7 @@ NSString * const BXEmulatedJoystickClassKey = @"BXEmulatedJoystickClassKey";
 	}
 }
 
-- (void) _releaseButton: (NSNumber *)button
+- (void) releaseButton: (NSNumber *)button
 {
 	[self buttonUp: [button unsignedIntegerValue]];
 }
@@ -228,14 +287,13 @@ NSString * const BXEmulatedJoystickClassKey = @"BXEmulatedJoystickClassKey";
 
 - (NSUInteger) numButtons		{ return 2; }
 - (NSUInteger) numAxes			{ return 2; }
-- (NSUInteger) numPOVSwitches	{ return 0; }
 
 
-- (void) xAxisMovedTo: (float)position	{ [self axis: BXEmulatedJoystickAxisX movedTo: position]; }
-- (void) xAxisMovedBy: (float)delta		{ [self axis: BXEmulatedJoystickAxisX movedBy: delta]; }
+- (float) xAxis { return [self positionForGameportAxis: BXGameportXAxis]; }
+- (float) yAxis { return [self positionForGameportAxis: BXGameportYAxis]; }
 
-- (void) yAxisMovedTo: (float)position	{ [self axis: BXEmulatedJoystickAxisY movedTo: position]; }
-- (void) yAxisMovedBy: (float)delta		{ [self axis: BXEmulatedJoystickAxisY movedBy: delta]; }
+- (void) setXAxis: (float)position	{ [self setPosition: position forGameportAxis: BXGameportXAxis]; }
+- (void) setYAxis: (float)position	{ [self setPosition: position forGameportAxis: BXGameportYAxis]; }
 
 @end
 
@@ -264,13 +322,12 @@ NSString * const BXEmulatedJoystickClassKey = @"BXEmulatedJoystickClassKey";
 
 - (NSUInteger) numButtons		{ return 4; }
 - (NSUInteger) numAxes			{ return 4; }
-- (NSUInteger) numPOVSwitches	{ return 0; }
 
-- (void) x2AxisMovedTo: (float)position	{ [self axis: BXEmulatedJoystick2AxisX movedTo: position]; }
-- (void) x2AxisMovedBy: (float)delta	{ [self axis: BXEmulatedJoystick2AxisX movedBy: delta]; }
+- (float) x2Axis    { return [self positionForGameportAxis: BXGameportX2Axis]; }
+- (float) y2Axis    { return [self positionForGameportAxis: BXGameportY2Axis]; }
 
-- (void) y2AxisMovedTo: (float)position	{ [self axis: BXEmulatedJoystick2AxisY movedTo: position]; }
-- (void) y2AxisMovedBy: (float)delta	{ [self axis: BXEmulatedJoystick2AxisY movedBy: delta]; }
+- (void) setX2Axis: (float)position { [self setPosition: position forGameportAxis: BXGameportX2Axis]; }
+- (void) setY2Axis: (float)position { [self setPosition: position forGameportAxis: BXGameportY2Axis]; }
 
 @end
 
@@ -298,7 +355,6 @@ NSString * const BXEmulatedJoystickClassKey = @"BXEmulatedJoystickClassKey";
 
 - (NSUInteger) numButtons		{ return 2; }
 - (NSUInteger) numAxes			{ return 2; }
-- (NSUInteger) numPOVSwitches	{ return 0; }
 
 - (void) clearInput
 {
@@ -307,38 +363,27 @@ NSString * const BXEmulatedJoystickClassKey = @"BXEmulatedJoystickClassKey";
 	[super clearInput];
 }
 
-- (void) _syncYAxisPosition
+- (void) _syncPedalAxisPosition
 {
-	[self axis: BXEmulatedJoystickAxisY movedTo: (brakeComponent - acceleratorComponent)];
+	[self setPosition: (brakeComponent - acceleratorComponent) forGameportAxis: BXWheelCombinedPedalAxis];
 }
 
-- (void) wheelMovedTo: (float)position	{ [self axis: BXEmulatedJoystickAxisX movedTo: position]; }
-- (void) wheelMovedBy: (float)delta		{ [self axis: BXEmulatedJoystickAxisX movedBy: delta]; }
+- (float) wheelAxis         { return [self positionForGameportAxis: BXWheelWheelAxis]; }
+- (float) acceleratorAxis   { return acceleratorComponent; }
+- (float) brakeAxis         { return brakeComponent; }
 
-- (void) acceleratorMovedTo: (float)position
+- (void) setWheelAxis: (float)position { [self setPosition: position forGameportAxis: BXWheelWheelAxis]; }
+- (void) setAcceleratorAxis: (float)position
 {
 	position = ABS(position);
 	acceleratorComponent = MIN(position, 1.0f);
-	[self _syncYAxisPosition];
+	[self _syncPedalAxisPosition];
 }
-
-- (void) acceleratorMovedBy: (float)delta
-{
-	float newPosition = acceleratorComponent + delta;
-	[self acceleratorMovedTo: newPosition];
-}
-
-- (void) brakeMovedTo: (float)position
+- (void) setBrakeAxis: (float)position
 {
 	position = ABS(position);
 	brakeComponent = MIN(position, 1.0f);
-	[self _syncYAxisPosition];
-}
-
-- (void) brakeMovedBy: (float)delta
-{
-	float newPosition = brakeComponent + delta;
-	[self brakeMovedTo: newPosition];
+	[self _syncPedalAxisPosition];
 }
 
 @end
@@ -367,34 +412,22 @@ NSString * const BXEmulatedJoystickClassKey = @"BXEmulatedJoystickClassKey";
 
 - (NSUInteger) numButtons		{ return 4; }
 - (NSUInteger) numAxes			{ return 4; }
-- (NSUInteger) numPOVSwitches	{ return 0; }
+
 
 //Note: the accelerator and brake still power the combined Y axis,
 //as well as their own individual axes
-- (void) acceleratorMovedTo: (float)position
+- (void) setAcceleratorAxis: (float)position
 {
 	position = ABS(position);
-	[self axis: BXEmulatedJoystickAxisY2 movedTo: -position];
-    [super acceleratorMovedTo: position];
+	[self setPosition: -position forGameportAxis: BXWheelAcceleratorAxis];
+    [super setAcceleratorAxis: position];
 }
 
-- (void) acceleratorMovedBy: (float)delta
-{
-	float newPosition = [self axisPosition: BXEmulatedJoystickAxisY2] + delta;
-	[self acceleratorMovedTo: newPosition];
-}
-
-- (void) brakeMovedTo: (float)position
+- (void) setBrakeAxis: (float)position
 {
 	position = ABS(position);
-	[self axis: BXEmulatedJoystickAxisX2 movedTo: -position];
-    [super brakeMovedTo: position];
-}
-
-- (void) brakeMovedBy: (float)delta
-{
-	float newPosition = [self axisPosition: BXEmulatedJoystickAxisX2] + delta;
-	[self brakeMovedTo: newPosition];
+	[self setPosition: -position forGameportAxis: BXWheelBrakeAxis];
+    [super setBrakeAxis: position];
 }
 
 @end

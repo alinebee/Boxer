@@ -48,7 +48,6 @@
 	NSArray *availableJoystickTypes;
     
     //Used internally by BXJoypadInput for tracking joypad state
-    NSUInteger joypadDPadState;
     JoypadAcceleration joypadFilteredAcceleration;
 }
 

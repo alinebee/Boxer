@@ -25,15 +25,6 @@
 //to derive a smoothed value. Used by joypadDevice:didAccelerate:.
 #define BXJoypadAccelerationFilter 0.2f
 
-//Bitmasks for tracking the current joypad D-pad state.
-enum
-{
-    kJoyDpadNoButtons         = 0,
-    kJoyDpadButtonUpMask      = 1 << 0,
-    kJoyDpadButtonRightMask   = 1 << 1,
-    kJoyDpadButtonDownMask    = 1 << 2,
-    kJoyDpadButtonLeftMask    = 1 << 3
-};
 
 @implementation BXInputController (BXJoypadInput)
 
@@ -61,46 +52,34 @@ enum
     }
 }
 
-+ (BXEmulatedPOVDirection) emulatedJoystickPOVDirectionForDPadState: (NSUInteger)state
++ (BXEmulatedPOVDirection) emulatedPOVDirectionForDPadButton: (JoyDpadButton)dpadButton
 {
     BXEmulatedPOVDirection direction = BXEmulatedPOVCentered;
-	switch (state)
+	switch (dpadButton)
 	{
-		case kJoyDpadButtonUpMask:
+		case kJoyDpadButtonUp:
 			direction = BXEmulatedPOVNorth; break;
             
-		case kJoyDpadButtonDownMask:
+		case kJoyDpadButtonDown:
 			direction = BXEmulatedPOVSouth; break;
             
-		case kJoyDpadButtonRightMask:
+		case kJoyDpadButtonRight:
 			direction = BXEmulatedPOVEast; break;
 			
-		case kJoyDpadButtonLeftMask:
+		case kJoyDpadButtonLeft:
 			direction = BXEmulatedPOVWest; break;
-			
-		case kJoyDpadButtonUpMask | kJoyDpadButtonRightMask:
-			direction = BXEmulatedPOVNorthEast; break;
-			
-		case kJoyDpadButtonUpMask | kJoyDpadButtonLeftMask:
-			direction = BXEmulatedPOVNorthWest; break;
-			
-		case kJoyDpadButtonDownMask | kJoyDpadButtonRightMask:
-			direction = BXEmulatedPOVSouthEast; break;
-			
-		case kJoyDpadButtonDownMask | kJoyDpadButtonLeftMask:
-			direction = BXEmulatedPOVSouthWest; break;
 	}
 	return direction;
-}
-
-+ (NSSet *) keyPathsForValuesAffectingCurrentJoypadLayout
-{
-    return [NSSet setWithObject: @"preferredJoystickType"];
 }
 
 
 #pragma mark -
 #pragma mark Housekeeping
+
++ (NSSet *) keyPathsForValuesAffectingCurrentJoypadLayout
+{
+    return [NSSet setWithObject: @"preferredJoystickType"];
+}
 
 - (JoypadControllerLayout *) currentJoypadLayout
 {
@@ -134,7 +113,6 @@ enum
 
 - (void) _resetJoypadTrackingValues
 {
-    joypadDPadState = kJoyDpadNoButtons;
     joypadFilteredAcceleration.x = 0.0f;
     joypadFilteredAcceleration.y = 0.0f;
     joypadFilteredAcceleration.z = 0.0f;
@@ -172,16 +150,15 @@ enum
     id joystick = [self _emulatedJoystick];
     
     //Map roll to steering
-    if ([joystick respondsToSelector: @selector(wheelMovedTo:)])
+    if ([joystick conformsToProtocol: @protocol(BXEmulatedWheel)])
     {
         //Apply a deadzone to the center of the wheel range
         if (ABS(roll) < BXJoypadRotationDeadzone) roll = 0.0f;
         
-        [joystick wheelMovedTo: roll];
+        [joystick setWheelAxis: roll];
     }
     //Map roll and pitch to X and Y axes
-    else if ([joystick respondsToSelector: @selector(xAxisMovedTo:)] &&
-             [joystick respondsToSelector: @selector(yAxisMovedTo:)])
+    else if ([joystick supportsAxis: @"xAxis"] && [joystick supportsAxis: @"yAxis"])
     {
         //Normally 0.0 pitch is completely vertical, +1.0 pitch is horizontal.
         //We want our pitch's 0 resting position to be at about 45 degrees,
@@ -196,8 +173,8 @@ enum
         if (ABS(roll) < BXJoypadRotationDeadzone)   roll = 0.0f;
         if (ABS(pitch) < BXJoypadRotationDeadzone)  pitch = 0.0f;
         
-        [joystick xAxisMovedTo: roll];
-        [joystick yAxisMovedTo: pitch];
+        [joystick setXAxis: roll];
+        [joystick setYAxis: pitch];
     }
 }
 
@@ -210,27 +187,23 @@ enum
 {
     id joystick = [self _emulatedJoystick];
     
-    if ([joystick respondsToSelector: @selector(POVChangedTo:)])
+    if ([joystick conformsToProtocol: @protocol(BXEmulatedFlightstick)])
     {
-        NSUInteger buttonMask = 1 << dpadButton;
-        joypadDPadState &= ~buttonMask;
-        BXEmulatedPOVDirection direction = [[self class] emulatedJoystickPOVDirectionForDPadState: joypadDPadState];
-        
-        [joystick POVChangedTo: direction];
+        BXEmulatedPOVDirection direction = [[self class] emulatedPOVDirectionForDPadButton: dpadButton];
+        [joystick POV: 0 directionUp: direction];
     }
-    else if ([joystick respondsToSelector: @selector(xAxisMovedTo:)] && 
-             [joystick respondsToSelector: @selector(yAxisMovedTo:)])
+    else if ([joystick supportsAxis: @"xAxis"] && [joystick supportsAxis: @"yAxis"])
     {
         switch (dpadButton)
         {
             case kJoyDpadButtonUp:
             case kJoyDpadButtonDown:
-                [joystick yAxisMovedTo: 0.0f];
+                [joystick setYAxis: 0.0f];
                 break;
                 
             case kJoyDpadButtonLeft:
             case kJoyDpadButtonRight:
-                [joystick xAxisMovedTo: 0.0f];
+                [joystick setXAxis: 0.0f];
                 break;
         }
     } 
@@ -243,30 +216,26 @@ enum
     
     id joystick = [self _emulatedJoystick];
     
-    if ([joystick respondsToSelector: @selector(POVChangedTo:)])
+    if ([joystick conformsToProtocol: @protocol(BXEmulatedFlightstick)])
     {
-        NSUInteger buttonMask = 1 << dpadButton;
-        joypadDPadState |= buttonMask;
-        BXEmulatedPOVDirection direction = [[self class] emulatedJoystickPOVDirectionForDPadState: joypadDPadState];
-        
-        [joystick POVChangedTo: direction];
+        BXEmulatedPOVDirection direction = [[self class] emulatedPOVDirectionForDPadButton: dpadButton];
+        [joystick POV: 0 directionDown: direction];
     }
-    else if ([joystick respondsToSelector: @selector(xAxisMovedTo:)] && 
-             [joystick respondsToSelector: @selector(yAxisMovedTo:)])
+    else if ([joystick supportsAxis: @"xAxis"] && [joystick supportsAxis: @"yAxis"])
     {
         switch (dpadButton)
         {
             case kJoyDpadButtonUp:
-                [joystick yAxisMovedTo: -1.0f];
+                [joystick setYAxis: -1.0f];
                 break;
             case kJoyDpadButtonDown:
-                [joystick yAxisMovedTo: 1.0f];
+                [joystick setYAxis: 1.0f];
                 break;
             case kJoyDpadButtonLeft:
-                [joystick xAxisMovedTo: -1.0f];
+                [joystick setXAxis: -1.0f];
                 break;
             case kJoyDpadButtonRight:
-                [joystick xAxisMovedTo: 1.0f];
+                [joystick setXAxis: 1.0f];
                 break;
         }
     }  
@@ -281,18 +250,18 @@ enum
 {
     id joystick = [self _emulatedJoystick];
     BXEmulatedKeyboard *keyboard = [self _emulatedKeyboard];
+    
+    BOOL isWheel = [joystick conformsToProtocol: @protocol(BXEmulatedWheel)];
     switch (button)
     {
         case kJoyInputRButton:
             //Gas pedal
-            if ([joystick respondsToSelector: @selector(acceleratorMovedTo:)])
-                [joystick acceleratorMovedTo: 0.0f];
+            if (isWheel) [joystick setAcceleratorAxis: 0.0f];
             break;
         
         case kJoyInputLButton:
             //Brake pedal
-            if ([joystick respondsToSelector: @selector(brakeMovedTo:)])
-                [joystick brakeMovedTo: 0.0f];
+            if (isWheel) [joystick setBrakeAxis: 0.0f];
             break;
             
         case kJoyInputSelectButton:
@@ -307,17 +276,21 @@ enum
             
         //'Fake' d-pad buttons for compact flightstick hat switch layouts
         case BXJoyInputFakeDPadButtonUp:
-        case BXJoyInputFakeDPadButtonDown:
-        case BXJoyInputFakeDPadButtonLeft:
-        case BXJoyInputFakeDPadButtonRight:
-        {
-            NSUInteger buttonMask = 1 << (button - BXJoyInputFakeDPadButtonUp);
-            joypadDPadState &= ~buttonMask;
-            BXEmulatedPOVDirection direction = [[self class] emulatedJoystickPOVDirectionForDPadState: joypadDPadState];
-            [joystick POVChangedTo: direction];
+            [joystick POV: 0 directionUp: BXEmulatedPOVNorth];
             break;
-        }
-                
+            
+        case BXJoyInputFakeDPadButtonDown:
+            [joystick POV: 0 directionUp: BXEmulatedPOVSouth];
+            break;
+            
+        case BXJoyInputFakeDPadButtonLeft:
+            [joystick POV: 0 directionUp: BXEmulatedPOVWest];
+            break;
+            
+        case BXJoyInputFakeDPadButtonRight:
+            [joystick POV: 0 directionUp: BXEmulatedPOVEast];
+            break;
+        
         default:
         {
             NSUInteger joyButton = [[self class] emulatedJoystickButtonForJoypadButton: button];
@@ -333,18 +306,18 @@ enum
 {
     id joystick = [self _emulatedJoystick];
     BXEmulatedKeyboard *keyboard = [self _emulatedKeyboard];
+    
+    BOOL isWheel = [joystick conformsToProtocol: @protocol(BXEmulatedWheel)];
     switch (button)
     {
         case kJoyInputRButton:
             //Gas pedal
-            if ([joystick respondsToSelector: @selector(acceleratorMovedTo:)])
-                [joystick acceleratorMovedTo: 1.0f];
+            if (isWheel) [joystick setAcceleratorAxis: 1.0f];
             break;
             
         case kJoyInputLButton:
             //Brake pedal
-            if ([joystick respondsToSelector: @selector(brakeMovedTo:)])
-                [joystick brakeMovedTo: 1.0f];
+            if (isWheel) [joystick setBrakeAxis: 1.0f];
             break;
             
         case kJoyInputSelectButton:
@@ -356,20 +329,24 @@ enum
             //ESC button
             [keyboard keyDown: KBD_esc];
             break;
-            
+        
         //'Fake' d-pad buttons for compact flightstick hat switch layouts
         case BXJoyInputFakeDPadButtonUp:
-        case BXJoyInputFakeDPadButtonDown:
-        case BXJoyInputFakeDPadButtonLeft:
-        case BXJoyInputFakeDPadButtonRight:
-        {
-            NSUInteger buttonMask = 1 << (button - BXJoyInputFakeDPadButtonUp);
-            joypadDPadState |= buttonMask;
-            BXEmulatedPOVDirection direction = [[self class] emulatedJoystickPOVDirectionForDPadState: joypadDPadState];
-            [joystick POVChangedTo: direction];
+            [joystick POV: 0 directionDown: BXEmulatedPOVNorth];
             break;
-        }
             
+        case BXJoyInputFakeDPadButtonDown:
+            [joystick POV: 0 directionDown: BXEmulatedPOVSouth];
+            break;
+            
+        case BXJoyInputFakeDPadButtonLeft:
+            [joystick POV: 0 directionDown: BXEmulatedPOVWest];
+            break;
+            
+        case BXJoyInputFakeDPadButtonRight:
+            [joystick POV: 0 directionDown: BXEmulatedPOVEast];
+            break;
+
         default:
         {
             NSUInteger joyButton = [[self class] emulatedJoystickButtonForJoypadButton: button];
@@ -386,8 +363,7 @@ enum
 {
     id joystick = [self _emulatedJoystick];
     
-    if ([joystick respondsToSelector: @selector(xAxisMovedTo:)] &&
-        [joystick respondsToSelector: @selector(yAxisMovedTo:)])
+    if ([joystick supportsAxis: @"xAxis"] && [joystick supportsAxis: @"yAxis"])
     {
         //Joypad SDK provides stick position as polar coordinates
         //(angle and distance); we need to convert this to cartesian
@@ -396,10 +372,8 @@ enum
         float x = cosf(newPosition.angle) * scale;
         float y = -sinf(newPosition.angle) * scale;
         
-        [joystick xAxisMovedTo: x];
-        [joystick yAxisMovedTo: y];
-        
-        //NSLog(@"%f, %f", x, y);
+        [joystick setXAxis: x];
+        [joystick setYAxis: y];
     }
 }
 

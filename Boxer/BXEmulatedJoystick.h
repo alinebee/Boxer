@@ -17,28 +17,18 @@
 
 
 //How long buttonPressed: should pretend to hold the specified button down before releasing.
-#define BXJoystickButtonPressDurationDefault 0.25
+#define BXJoystickButtonPressDefaultDuration 0.25
 
 
-enum {
-	BXEmulatedJoystickUnknownAxis = 0,
-	BXEmulatedJoystickAxisX,
-	BXEmulatedJoystickAxisY,
-	BXEmulatedJoystickAxisX2,
-	BXEmulatedJoystickAxisY2,
-	
-	BXEmulatedJoystick2AxisX = BXEmulatedJoystickAxisX2,
-	BXEmulatedJoystick2AxisY = BXEmulatedJoystickAxisY2,
-	
-	BXCHFlightstickProRudderAxis	= BXEmulatedJoystickAxisX2,
-	BXCHFlightstickProThrottleAxis	= BXEmulatedJoystickAxisY2,
-	
-	BXThrustmasterFCSRudderAxis		= BXEmulatedJoystickAxisX2,
-	BXThrustmasterFCSHatAxis		= BXEmulatedJoystickAxisY2,
-	BXThrustmasterWCSThrottleAxis	= BXEmulatedJoystickAxisY2
-};
-
-typedef NSUInteger BXEmulatedJoystickAxis;
+extern NSString * const BXAxisX;
+extern NSString * const BXAxisY;
+extern NSString * const BXAxisX2;
+extern NSString * const BXAxisY2;
+extern NSString * const BXAxisThrottle;
+extern NSString * const BXAxisRudder;
+extern NSString * const BXAxisWheel;
+extern NSString * const BXAxisAccelerator;
+extern NSString * const BXAxisBrake;
 
 
 enum {
@@ -58,20 +48,21 @@ enum {
 typedef NSUInteger BXEmulatedJoystickButton;
 
 
-//These correspond exactly to the BXHIDPOVxxx constants
+//Unlike BXHIDPOVxxx constants, these are bitmasks
 enum {
-	BXEmulatedPOVCentered	= -1,
-	BXEmulatedPOVNorth		= 0,
-	BXEmulatedPOVNorthEast	= 45 * 100,
-	BXEmulatedPOVEast		= 90 * 100,
-	BXEmulatedPOVSouthEast	= 135 * 100,
-	BXEmulatedPOVSouth		= 180 * 100,
-	BXEmulatedPOVSouthWest	= 225 * 100,
-	BXEmulatedPOVWest		= 270 * 100,
-	BXEmulatedPOVNorthWest	= 315 * 100
+	BXEmulatedPOVCentered	= 0,
+	BXEmulatedPOVNorth		= 1U << 0,
+	BXEmulatedPOVEast		= 1U << 1,
+	BXEmulatedPOVSouth		= 1U << 2,
+	BXEmulatedPOVWest		= 1U << 3,
+    
+    BXEmulatedPOVNorthEast  = BXEmulatedPOVNorth | BXEmulatedPOVEast,
+    BXEmulatedPOVNorthWest  = BXEmulatedPOVNorth | BXEmulatedPOVWest,
+    BXEmulatedPOVSouthEast  = BXEmulatedPOVSouth | BXEmulatedPOVEast,
+    BXEmulatedPOVSouthWest  = BXEmulatedPOVSouth | BXEmulatedPOVWest
 };
 
-typedef NSInteger BXEmulatedPOVDirection;
+typedef NSUInteger BXEmulatedPOVDirection;
 
 
 #pragma mark -
@@ -96,7 +87,6 @@ enum {
 
 @property (readonly, nonatomic) NSUInteger numButtons;
 @property (readonly, nonatomic) NSUInteger numAxes;
-@property (readonly, nonatomic) NSUInteger numPOVSwitches;
 
 //The localized name of this joystick type, for display in the UI.
 + (NSString *) localizedName;
@@ -107,11 +97,9 @@ enum {
 //An icon representation of this joystick type, for display in the UI.
 + (NSImage *) icon;
 
-
 //Returns whether this joystick class needs 4-axis, 4-button joystick support in order to function correctly.
 //Used for filtering out unsupported joysticks when running games that are known to have problems with them.
 + (BOOL) requiresFullJoystickSupport;
-
 
 //Called by BXEmulator when the device is plugged/unplugged.
 - (void) didConnect;
@@ -124,58 +112,59 @@ enum {
 - (void) buttonDown: (BXEmulatedJoystickButton)button;
 - (void) buttonUp: (BXEmulatedJoystickButton)button;
 
+//Report the current state of the specified button or axis.
+- (BOOL) buttonIsDown: (BXEmulatedJoystickButton)button;
+
 //Imitates the specified button being pressed and released after the default/specified delay.
 - (void) buttonPressed: (BXEmulatedJoystickButton)button;
 - (void) buttonPressed: (BXEmulatedJoystickButton)button forDuration: (NSTimeInterval)duration;
 
-//Move the specified axis to the specified position.
-- (void) axis: (BXEmulatedJoystickAxis)axis movedTo: (float)position;
 
-//Move the specified axis by the specified relative amount.
-- (void) axis: (BXEmulatedJoystickAxis)axis movedBy: (float)delta;
+//Returns whether the joystick type supports the specified axis (as a property name).
++ (BOOL) instancesSupportAxis: (NSString *)axis;
+- (BOOL) supportsAxis: (NSString *)axis;
 
-//Report the current state of the specified button or axis.
-- (BOOL) buttonIsDown: (BXEmulatedJoystickButton)button;
-- (float) axisPosition: (BXEmulatedJoystickAxis)axis;
+//Sets/gets the current value for the specified axis property name.
+//It is quicker and easier to use the direct axis properties where available (xAxis etc.)
+- (float) positionForAxis: (NSString *)axis;
+- (void) setPosition: (float)position forAxis: (NSString *)axis;
 
 
 @optional
 
-- (void) xAxisMovedTo: (float)position;
-- (void) xAxisMovedBy: (float)delta;
+@property (assign) float xAxis;
+@property (assign) float yAxis;
+@property (assign) float x2Axis;
+@property (assign) float y2Axis;
 
-- (void) yAxisMovedTo: (float)position;
-- (void) yAxisMovedBy: (float)delta;
+@end
 
-//4-axis joystick axes
-- (void) x2AxisMovedTo: (float)position;
-- (void) x2AxisMovedBy: (float)delta;
 
-- (void) y2AxisMovedTo: (float)position;
-- (void) y2AxisMovedBy: (float)delta;
+@protocol BXEmulatedWheel <BXEmulatedJoystick>
 
-//Wheel axes
-- (void) wheelMovedTo: (float)direction;
-- (void) wheelMovedBy: (float)delta;
+@property (assign) float wheelAxis;
+@property (assign) float acceleratorAxis;
+@property (assign) float brakeAxis;
 
-- (void) acceleratorMovedTo: (float)position;
-- (void) acceleratorMovedBy: (float)delta;
+@end
 
-- (void) brakeMovedTo: (float)position;
-- (void) brakeMovedBy: (float)delta;
 
-//Flightstick axes and POV hats
-- (void) throttleMovedTo: (float)position;
-- (void) throttleMovedBy: (float)delta;
+@protocol BXEmulatedFlightstick <BXEmulatedJoystick>
 
-- (void) rudderMovedTo: (float)position;
-- (void) rudderMovedBy: (float)delta;
+@property (readonly, nonatomic) NSUInteger numPOVSwitches;
 
-- (void) POVChangedTo: (BXEmulatedPOVDirection)direction;
-- (BXEmulatedPOVDirection) POVDirection;
+- (void) POV: (NSUInteger)POVNumber changedTo: (BXEmulatedPOVDirection)direction;
 
-- (void) POV2ChangedTo: (BXEmulatedPOVDirection)direction;
-- (BXEmulatedPOVDirection) POV2Direction;
+- (void) POV: (NSUInteger)POVNumber directionDown: (BXEmulatedPOVDirection)direction;
+- (void) POV: (NSUInteger)POVNumber directionUp: (BXEmulatedPOVDirection)direction;
+
+- (BOOL) POV: (NSUInteger)POVNumber directionIsDown: (BXEmulatedPOVDirection)direction;
+- (BXEmulatedPOVDirection) directionForPOV: (NSUInteger)POVNumber;
+
+@optional
+
+@property (assign) float throttleAxis;
+@property (assign) float rudderAxis;
 
 @end
 
@@ -184,6 +173,7 @@ enum {
 #pragma mark Joystick classes
 
 @interface BXBaseEmulatedJoystick: NSObject
+
 - (void) clearInput;
 - (void) didConnect;
 - (void) willDisconnect;
@@ -191,86 +181,60 @@ enum {
 - (void) buttonDown: (BXEmulatedJoystickButton)button;
 - (void) buttonUp: (BXEmulatedJoystickButton)button;
 - (BOOL) buttonIsDown: (BXEmulatedJoystickButton)button;
+
 - (void) buttonPressed: (BXEmulatedJoystickButton)button;
 - (void) buttonPressed: (BXEmulatedJoystickButton)button forDuration: (NSTimeInterval)duration;
 
-- (void) axis: (BXEmulatedJoystickAxis)axis movedTo: (float)position;
-- (void) axis: (BXEmulatedJoystickAxis)axis movedBy: (float)delta;
-- (float) axisPosition: (BXEmulatedJoystickAxis)axis;
+- (float) positionForAxis: (NSString *)axis;
+- (void) setPosition: (float)position forAxis: (NSString *)axis;
 @end
+
 
 @interface BX2AxisJoystick: BXBaseEmulatedJoystick <BXEmulatedJoystick>
 
-- (void) xAxisMovedTo: (float)position;
-- (void) xAxisMovedBy: (float)delta;
-
-- (void) yAxisMovedTo: (float)position;
-- (void) yAxisMovedBy: (float)delta;
+@property (assign) float xAxis;
+@property (assign) float yAxis;
 
 @end
+
 
 @interface BX4AxisJoystick: BX2AxisJoystick
 
-- (void) x2AxisMovedTo: (float)position;
-- (void) x2AxisMovedBy: (float)delta;
-
-- (void) y2AxisMovedTo: (float)position;
-- (void) y2AxisMovedBy: (float)delta;
+@property (assign) float x2Axis;
+@property (assign) float y2Axis;
 
 @end
 
-@interface BXCHFlightStickPro: BX2AxisJoystick
 
-- (void) POVChangedTo: (BXEmulatedPOVDirection)direction;
-- (BXEmulatedPOVDirection) POVDirection;
+@interface BXCHFlightStickPro: BX2AxisJoystick <BXEmulatedFlightstick>
 
-- (void) throttleMovedTo: (float)position;
-- (void) throttleMovedBy: (float)delta;
-
-- (void) rudderMovedTo: (float)position;
-- (void) rudderMovedBy: (float)delta;
+@property (assign) float throttleAxis;
+@property (assign) float rudderAxis;
 
 @end
 
 @interface BXCHCombatStick: BXCHFlightStickPro
-
-//Secondary hat switch
-- (void) POV2ChangedTo: (BXEmulatedPOVDirection)direction;
-- (BXEmulatedPOVDirection) POV2Direction;
-
 @end
 
-@interface BXThrustmasterFCS: BX2AxisJoystick
 
-- (void) POVChangedTo: (BXEmulatedPOVDirection)direction;
-- (BXEmulatedPOVDirection) POVDirection;
+@interface BXThrustmasterFCS: BX2AxisJoystick <BXEmulatedFlightstick>
 
-- (void) rudderMovedTo: (float)position;
-- (void) rudderMovedBy: (float)delta;
+@property (assign) float rudderAxis;
 
 @end
 
 
 //Racing wheel with accelerator and brake on the Y axis
-@interface BX2AxisWheel: BXBaseEmulatedJoystick <BXEmulatedJoystick>
+@interface BX2AxisWheel: BXBaseEmulatedJoystick <BXEmulatedWheel>
 {
 	float acceleratorComponent;
 	float brakeComponent;
 }
-- (void) wheelMovedTo: (float)position;
-- (void) wheelMovedBy: (float)delta;
-
-- (void) acceleratorMovedTo: (float)position;
-- (void) acceleratorMovedBy: (float)delta;
-
-- (void) brakeMovedTo: (float)position;
-- (void) brakeMovedBy: (float)delta;
-
 @end
 
 
 //Racing wheel with accelerator on X2 axis and brake on Y2 axis,
 //as well as combined input on the Y axis
-@interface BX4AxisWheel: BX2AxisWheel <BXEmulatedJoystick>
+@interface BX4AxisWheel: BX2AxisWheel
 @end
 

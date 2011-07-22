@@ -127,13 +127,13 @@ enum {
         switch([[element usage] usageId])
         {
             case BXG25WheelAxis:
-                binding = [BXAxisToAxis bindingWithAxisSelector: @selector(wheelMovedTo:)];
+                binding = [BXAxisToAxis bindingWithAxis: @"wheelAxis"];
                 [binding setDeadzone: BXG25WheelDeadzone];
                 break;
                 
             case BXG25PedalAxis:
-                binding = [BXAxisToBindings bindingWithPositiveAxisSelector: @selector(brakeMovedTo:)
-                                                       negativeAxisSelector: @selector(acceleratorMovedTo:)];
+                binding = [BXAxisToBindings bindingWithPositiveAxis: @"brakeAxis"
+                                                       negativeAxis: @"acceleratorAxis"];
                 
                 [binding setDeadzone: BXG25PedalDeadzone];
                 break;

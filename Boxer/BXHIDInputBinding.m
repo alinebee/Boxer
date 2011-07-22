@@ -15,16 +15,13 @@
 #define BXDefaultAxisToButtonThreshold 0.25f
 #define BXDefaultButtonToAxisPressedValue 1.0f
 #define BXDefaultButtonToAxisReleasedValue 0.0f
-#define BXDefaultAdditiveAxisRate 1.0f
+
+#define BXDefaultAdditiveAxisEmulatedDeadzone 0.05f
+#define BXDefaultAdditiveAxisRate 2.0f //Go from 0 to max in half a second
 #define BXDefaultAdditiveAxisInputRate 30.0 //30 frames per second
 
 
 @interface BXBaseHIDInputBinding ()
-
-//A workaround for -performSelector:withObject: only allowing id arguments
-- (void) _performSelector: (SEL)selector
-				 onTarget: (id)target
-				withValue: (void *)value;
 
 //Convert DDHidElement integer axis value into a floating-point range from -1.0 to 1.0.
 + (float) _normalizedAxisValue: (NSInteger)axisValue;
@@ -36,7 +33,6 @@
 
 
 @implementation BXBaseHIDInputBinding
-@synthesize delegate;
 
 + (id) binding
 {
@@ -54,19 +50,6 @@
 {
 }
 
-- (void) _performSelector: (SEL)selector
-				 onTarget: (id <BXEmulatedJoystick>)target
-				withValue: (void *)value
-{
-	NSMethodSignature *signature = [(id)target methodSignatureForSelector: selector];
-	NSInvocation *action = [NSInvocation invocationWithMethodSignature: signature];
-    
-	[action setSelector: selector];
-	[action setTarget: target];
-	[action setArgument: value atIndex: 2];
-	[action invoke];
-}
-
 - (void) processEvent: (BXHIDEvent *)event
 			forTarget: (id <BXEmulatedJoystick>)target
 {
@@ -79,7 +62,7 @@
 	return (float)axisValue / (float)DDHID_JOYSTICK_VALUE_MAX;
 }
 
-+ (float) _normalizedUnidirectionalAxisValue:(NSInteger)axisValue
++ (float) _normalizedUnidirectionalAxisValue: (NSInteger)axisValue
 {
 	float normalizedValue = [self _normalizedAxisValue: axisValue];
 	return (normalizedValue + 1.0f) * 0.5f;
@@ -89,12 +72,12 @@
 
 
 @implementation BXAxisToAxis
-@synthesize deadzone, unidirectional, inverted, axisSelector;
+@synthesize deadzone, unidirectional, inverted, axis;
 
-+ (id) bindingWithAxisSelector: (SEL)axis
++ (id) bindingWithAxis: (NSString *)axisName
 {
     id binding = [self binding];
-    [binding setAxisSelector: axis];
+    [binding setAxis: axisName];
     return binding;
 }
 
@@ -111,12 +94,17 @@
 	return self;
 }
 
+- (void) dealloc
+{
+    [self setAxis: nil], [axis release];
+    [super dealloc];
+}
+
 - (id) initWithCoder: (NSCoder *)coder
 {
     if ((self = [super initWithCoder: coder]))
     {
-        SEL axis = NSSelectorFromString([coder decodeObjectForKey: @"axis"]);
-        [self setAxisSelector: axis];
+        [self setAxis: [coder decodeObjectForKey: @"axis"]];
          
         if ([coder containsValueForKey: @"deadzone"])
             [self setDeadzone: [coder decodeFloatForKey: @"deadzone"]];
@@ -131,8 +119,7 @@
 {
     [super encodeWithCoder: coder];
     
-    NSString *axis = NSStringFromSelector([self axisSelector]);
-    [coder encodeObject: axis forKey: @"axis"];
+    [coder encodeObject: [self axis] forKey: @"axis"];
     
     //Don’t persist defaults
     if ([self deadzone] != BXDefaultAxisDeadzone)
@@ -172,11 +159,7 @@
 	float axisValue = [self _normalizedAxisValue: [event axisPosition]];
 	if (axisValue != previousValue)
 	{
-		[self _performSelector: [self axisSelector] onTarget: target withValue: &axisValue];
-        [[self delegate] binding: self
-                 didUpdateTarget: target
-                   usingSelector: [self axisSelector]
-                          object: [NSNumber numberWithFloat: axisValue]];
+        [(id)target setValue: [NSNumber numberWithFloat: axisValue] forKey: [self axis]];
 		previousValue = axisValue;
 	}
 }
@@ -185,13 +168,14 @@
 
 
 @implementation BXAxisToAxisAdditive
-@synthesize ratePerSecond;
+@synthesize ratePerSecond, delegate, emulatedDeadzone;
 
 - (id) init
 {
 	if ((self = [super init]))
 	{
 		[self setRatePerSecond: BXDefaultAdditiveAxisRate];
+        [self setEmulatedDeadzone: BXDefaultAdditiveAxisEmulatedDeadzone];
 	}
 	return self;
 }
@@ -202,6 +186,9 @@
     {
         if ([coder containsValueForKey: @"strength"])
             [self setRatePerSecond: [coder decodeFloatForKey: @"strength"]];
+        
+        if ([coder containsValueForKey: @"emulated deadzone"])
+            [self setEmulatedDeadzone: [coder decodeFloatForKey: @"emulated deadzone"]];
     }
     return self;
 }
@@ -213,6 +200,10 @@
     //Don’t persist defaults
     if ([self ratePerSecond] != BXDefaultAdditiveAxisRate)
         [coder encodeFloat: [self ratePerSecond] forKey: @"strength"];
+    
+    if ([self emulatedDeadzone] != BXDefaultAdditiveAxisEmulatedDeadzone)
+        [coder encodeFloat: [self emulatedDeadzone] forKey: @"emulated deadzone"];
+        
 }
 
 #pragma mark -
@@ -222,16 +213,20 @@
 {
     if (previousValue != 0.0f)
     {
-        id <BXEmulatedJoystick> target = [timer userInfo];
+        id target = [timer userInfo];
  
-        float impulseValue = ([self ratePerSecond] * previousValue) / (float)BXDefaultAdditiveAxisInputRate;
+        float increment = ([self ratePerSecond] * previousValue) / (float)BXDefaultAdditiveAxisInputRate;
     
-        [self _performSelector: [self axisSelector] onTarget: target withValue: &impulseValue];
+        float currentValue = [[target valueForKey: [self axis]] floatValue];
+        float newValue = currentValue + increment;
         
-        [[self delegate] binding: self
-                 didUpdateTarget: target
-                   usingSelector: [self axisSelector]
-                          object: [NSNumber numberWithFloat: impulseValue]];
+        //Apply a deadzone to the incremeneted value to snap very low values to 0.
+        //This make it easier to center the input.
+        if ((ABS(newValue) - [self emulatedDeadzone]) < 0) newValue = 0;
+        
+        [target setValue: [NSNumber numberWithFloat: newValue] forKey: [self axis]];
+        
+        [[self delegate] binding: self didSendInputToTarget: target];
     }
 }
 
@@ -251,7 +246,7 @@
     {
         [self _stopUpdating];
         
-        inputTimer = [NSTimer scheduledTimerWithTimeInterval: (1000 / BXDefaultAdditiveAxisInputRate)
+        inputTimer = [NSTimer scheduledTimerWithTimeInterval: (1.0f / BXDefaultAdditiveAxisInputRate)
                                                       target: self
                                                     selector: @selector(_updateWithTimer:)
                                                     userInfo: target
@@ -329,12 +324,12 @@
 
 
 @implementation BXButtonToAxis
-@synthesize pressedValue, releasedValue, axisSelector;
+@synthesize pressedValue, releasedValue, axis;
 
-+ (id) bindingWithAxisSelector: (SEL)axis
++ (id) bindingWithAxis: (NSString *)axisName
 {
     id binding = [self binding];
-    [binding setAxisSelector: axis];
+    [binding setAxis: axisName];
     return binding;
 }
 
@@ -348,13 +343,17 @@
 	return self;	
 }
 
+- (void) dealloc
+{
+    [self setAxis: nil], [axis release];
+    [super dealloc];
+}
 
 - (id) initWithCoder: (NSCoder *)coder
 {
     if ((self = [super initWithCoder: coder]))
     {
-        SEL axis = NSSelectorFromString([coder decodeObjectForKey: @"axis"]);
-        [self setAxisSelector: axis];
+        [self setAxis: [coder decodeObjectForKey: @"axis"]];
         
         if ([coder containsValueForKey: @"pressed"])
             [self setPressedValue: [coder decodeFloatForKey: @"pressed"]];
@@ -368,8 +367,7 @@
 {
     [super encodeWithCoder: coder];
     
-    NSString *axis = NSStringFromSelector([self axisSelector]);
-    [coder encodeObject: axis forKey: @"axis"];
+    [coder encodeObject: [self axis] forKey: @"axis"];
     
     //Don’t persist defaults
     if ([self pressedValue] != BXDefaultButtonToAxisPressedValue)
@@ -388,12 +386,7 @@
 	else
 		axisValue = [self releasedValue];
 	
-	[self _performSelector: [self axisSelector] onTarget: target withValue: &axisValue];
-    
-    [[self delegate] binding: self
-             didUpdateTarget: target
-               usingSelector: [self axisSelector]
-                      object: [NSNumber numberWithFloat: axisValue]];
+    [(id)target setValue: [NSNumber numberWithFloat: axisValue] forKey: [self axis]];
 }
 
 @end
@@ -487,13 +480,13 @@
 
 
 @implementation BXPOVToPOV
-@synthesize POVSelector;
+@synthesize POVNumber;
 
 - (id) init
 {
 	if ((self = [super init]))
 	{
-		[self setPOVSelector: @selector(POVChangedTo:)];
+		[self setPOVNumber: 0];
 	}
 	return self;
 }
@@ -502,8 +495,7 @@
 {
     if ((self = [super initWithCoder: coder]))
     {
-        SEL povSelector = NSSelectorFromString([coder decodeObjectForKey: @"pov"]);
-        [self setPOVSelector: povSelector];
+        [self setPOVNumber: [coder decodeIntegerForKey: @"pov"]];
     }
     return self;
 }
@@ -511,53 +503,119 @@
 - (void) encodeWithCoder: (NSCoder *)coder
 {
     [super encodeWithCoder: coder];
-    
-    NSString *povSelector = NSStringFromSelector([self POVSelector]);
-    [coder encodeObject: povSelector forKey: @"povSelector"];
+    [coder encodeInteger: [self POVNumber] forKey: @"pov"];
+}
+
++ (BXEmulatedPOVDirection) emulatedDirectionForHIDDirection: (BXHIDPOVSwitchDirection)direction
+{
+    BXHIDPOVSwitchDirection normalizedDirection = [BXHIDEvent closest8WayDirectionForPOV: direction];
+    switch (normalizedDirection)
+    {
+        case BXHIDPOVNorth:
+            return BXEmulatedPOVNorth;
+            break;
+        case BXHIDPOVEast:
+            return BXEmulatedPOVEast;
+            break;
+        case BXHIDPOVSouth:
+            return BXEmulatedPOVSouth;
+            break;
+        case BXHIDPOVWest:
+            return BXEmulatedPOVWest;
+            break;
+        
+        case BXHIDPOVNorthWest:
+            return BXEmulatedPOVNorthWest;
+            break;
+        case BXHIDPOVNorthEast:
+            return BXEmulatedPOVNorthEast;
+            break;
+        case BXHIDPOVSouthEast:
+            return BXEmulatedPOVSouthEast;
+            break;
+        case BXHIDPOVSouthWest:
+            return BXEmulatedPOVSouthWest;
+            break;
+            
+        default:
+            return BXEmulatedPOVCentered;
+    }
 }
 
 - (void) processEvent: (BXHIDEvent *)event
 			forTarget: (id <BXEmulatedJoystick>)target
 {
-	BXEmulatedPOVDirection direction = [event POVDirection];
+	BXEmulatedPOVDirection direction = [[self class] emulatedDirectionForHIDDirection: [event POVDirection]];
 	
-	[self _performSelector: [self POVSelector] onTarget: target withValue: &direction];
-    
-    [[self delegate] binding: self
-             didUpdateTarget: target
-               usingSelector: [self POVSelector]
-                      object: [NSNumber numberWithInteger: direction]];
+    [(id <BXEmulatedFlightstick>)target POV: [self POVNumber] changedTo: direction];
 }
 
 @end
 
 
-enum {
-	BXButtonsToPOVNoButtons = 0,
-	BXButtonsToPOVNorthMask	= 1 << 0,
-	BXButtonsToPOVSouthMask	= 1 << 1,
-	BXButtonsToPOVEastMask	= 1 << 2,
-	BXButtonsToPOVWestMask	= 1 << 3
-};
+@implementation BXButtonToPOV
+@synthesize POVNumber, direction;
 
-@implementation BXButtonsToPOV
-@synthesize POVSelector, northButtonUsage, southButtonUsage, eastButtonUsage, westButtonUsage;
++ (id) bindingWithDirection: (BXEmulatedPOVDirection) direction
+{
+    id binding = [[self alloc] init];
+    [binding setDirection: direction];
+    return [binding autorelease];
+}
 
 - (id) init
 {
 	if ((self = [super init]))
 	{
-		[self setPOVSelector: @selector(POVChangedTo:)];
+		[self setPOVNumber: 0];
 	}
 	return self;
 }
 
+- (id) initWithCoder: (NSCoder *)coder
+{
+    if ((self = [super initWithCoder: coder]))
+    {
+        [self setPOVNumber: [coder decodeIntegerForKey: @"pov"]];
+        [self setDirection: [coder decodeIntegerForKey: @"direction"]];
+    }
+    return self;
+}
+
+- (void) encodeWithCoder: (NSCoder *)coder
+{
+    [super encodeWithCoder: coder];
+    [coder encodeInteger: [self POVNumber] forKey: @"pov"];
+    [coder encodeInteger: [self direction] forKey: @"direction"];
+}
+
+- (void) processEvent: (BXHIDEvent *)event
+			forTarget: (id <BXEmulatedJoystick>)target
+{
+	if ([event type] == BXHIDJoystickButtonDown)
+        [(id <BXEmulatedFlightstick>)target POV: [self POVNumber] directionDown: [self direction]];
+	else
+        [(id <BXEmulatedFlightstick>)target POV: [self POVNumber] directionUp: [self direction]];
+}
+
+@end
+
+@implementation BXPOVToAxes
+@synthesize xAxis, yAxis;
+
++ (id) bindingWithXAxis: (NSString *)x
+                  YAxis: (NSString *)y
+{
+    BXPOVToAxes *binding = [self binding];
+    [binding setXAxis: x];
+    [binding setYAxis: y];
+    return binding;
+}
+
 - (void) dealloc
 {
-    [[self northButtonUsage] release], [self setNorthButtonUsage: nil];
-    [[self southButtonUsage] release], [self setSouthButtonUsage: nil];
-    [[self eastButtonUsage] release], [self setEastButtonUsage: nil];
-    [[self westButtonUsage] release], [self setWestButtonUsage: nil];
+    [self setXAxis: nil], [xAxis release];
+    [self setYAxis: nil], [yAxis release];
     [super dealloc];
 }
 
@@ -565,13 +623,8 @@ enum {
 {
     if ((self = [super initWithCoder: coder]))
     {
-        SEL povSelector = NSSelectorFromString([coder decodeObjectForKey: @"pov"]);
-        [self setPOVSelector: povSelector];
-        
-        [self setNorthButtonUsage: BXUsageFromName([coder decodeObjectForKey: @"north"])];
-        [self setSouthButtonUsage: BXUsageFromName([coder decodeObjectForKey: @"south"])];
-        [self setEastButtonUsage: BXUsageFromName([coder decodeObjectForKey: @"east"])];
-        [self setWestButtonUsage: BXUsageFromName([coder decodeObjectForKey: @"west"])];
+        [self setXAxis: [coder decodeObjectForKey: @"east-west"]];
+        [self setYAxis: [coder decodeObjectForKey: @"north-south"]];
     }
     return self;
 }
@@ -580,116 +633,8 @@ enum {
 {
     [super encodeWithCoder: coder];
     
-    NSString *povSelector = NSStringFromSelector([self POVSelector]);
-    [coder encodeObject: povSelector forKey: @"povSelector"];
-    
-    [coder encodeObject: [[self northButtonUsage] usageName] forKey: @"north"];
-    [coder encodeObject: [[self southButtonUsage] usageName] forKey: @"south"];
-    [coder encodeObject: [[self eastButtonUsage] usageName] forKey: @"east"];
-    [coder encodeObject: [[self westButtonUsage] usageName] forKey: @"west"];
-}
-
-- (void) _syncButtonState: (DDHidUsage *)buttonUsage isDown: (BOOL)down
-{
-	NSUInteger mask = BXButtonsToPOVNoButtons;
-	if		([buttonUsage isEqualToUsage: [self northButtonUsage]])	mask = BXButtonsToPOVNorthMask;
-	else if	([buttonUsage isEqualToUsage: [self southButtonUsage]])	mask = BXButtonsToPOVSouthMask;
-	else if	([buttonUsage isEqualToUsage: [self eastButtonUsage]])  mask = BXButtonsToPOVEastMask;
-	else if	([buttonUsage isEqualToUsage: [self westButtonUsage]])  mask = BXButtonsToPOVWestMask;
-	
-	if (down) buttonStates |= mask;
-	else buttonStates &= ~mask;
-}
-
-- (BXEmulatedPOVDirection) _POVDirection
-{
-	BXEmulatedPOVDirection direction = BXEmulatedPOVCentered;
-	switch (buttonStates)
-	{
-		case BXButtonsToPOVNorthMask:
-			direction = BXEmulatedPOVNorth; break;
-		
-		case BXButtonsToPOVSouthMask:
-			direction = BXEmulatedPOVSouth; break;
-		
-		case BXButtonsToPOVEastMask:
-			direction = BXEmulatedPOVEast; break;
-			
-		case BXButtonsToPOVWestMask:
-			direction = BXEmulatedPOVWest; break;
-			
-		case BXButtonsToPOVNorthMask | BXButtonsToPOVEastMask:
-			direction = BXEmulatedPOVNorthEast; break;
-			
-		case BXButtonsToPOVNorthMask | BXButtonsToPOVWestMask:
-			direction = BXEmulatedPOVNorthWest; break;
-			
-		case BXButtonsToPOVSouthMask | BXButtonsToPOVEastMask:
-			direction = BXEmulatedPOVSouthEast; break;
-			
-		case BXButtonsToPOVSouthMask | BXButtonsToPOVWestMask:
-			direction = BXEmulatedPOVSouthWest; break;
-			
-		//All other directions are deliberately ignored,
-		//so that mashing all the buttons won't produce odd results
-	}
-	return direction;
-}
-
-- (void) processEvent: (BXHIDEvent *)event
-			forTarget: (id <BXEmulatedJoystick>)target
-{
-	DDHidElement *button = [event element];
-	BOOL down = ([event type] == BXHIDJoystickButtonDown);
-	[self _syncButtonState: [button usage] isDown: down];
-	
-	BXEmulatedPOVDirection direction = [self _POVDirection];
-	
-	[self _performSelector: [self POVSelector] onTarget: target withValue: &direction];
-    
-    [[self delegate] binding: self
-             didUpdateTarget: target
-               usingSelector: [self POVSelector]
-                      object: [NSNumber numberWithInteger: direction]];
-}
-
-@end
-
-
-@implementation BXPOVToAxes
-@synthesize xAxisSelector, yAxisSelector;
-
-+ (id) bindingWithXAxisSelector: (SEL)x
-                  YAxisSelector: (SEL)y
-{
-    id binding = [self binding];
-    [binding setXAxisSelector: x];
-    [binding setYAxisSelector: y];
-    return binding;
-}
-
-- (id) initWithCoder: (NSCoder *)coder
-{
-    if ((self = [super initWithCoder: coder]))
-    {
-        SEL xAxis = NSSelectorFromString([coder decodeObjectForKey: @"east-west"]);
-        [self setXAxisSelector: xAxis];
-        
-        SEL yAxis = NSSelectorFromString([coder decodeObjectForKey: @"north-south"]);
-        [self setYAxisSelector: yAxis];
-    }
-    return self;
-}
-
-- (void) encodeWithCoder: (NSCoder *)coder
-{
-    [super encodeWithCoder: coder];
-    
-    NSString    *xAxis = NSStringFromSelector([self xAxisSelector]),
-                *yAxis = NSStringFromSelector([self yAxisSelector]);
-    
-    [coder encodeObject: xAxis forKey: @"east-west"];
-    [coder encodeObject: yAxis forKey: @"north-south"];
+    [coder encodeObject: [self xAxis] forKey: @"east-west"];
+    [coder encodeObject: [self yAxis] forKey: @"north-south"];
 }
 
 - (void) processEvent: (BXHIDEvent *)event
@@ -729,21 +674,13 @@ enum {
 			x= 0.0f, y=0.0f;
 	}
 
-    if ([self xAxisSelector])
+    if ([self xAxis])
     {
-        [self _performSelector: [self xAxisSelector] onTarget: target withValue: &x];
-        [[self delegate] binding: self
-                 didUpdateTarget: target
-                   usingSelector: [self xAxisSelector]
-                          object: [NSNumber numberWithFloat: x]];
+        [(id)target setValue: [NSNumber numberWithFloat: x] forKey: [self xAxis]];
     }
-    if ([self yAxisSelector])
+    if ([self yAxis])
     {
-        [self _performSelector: [self yAxisSelector] onTarget: target withValue: &y];
-        [[self delegate] binding: self
-                 didUpdateTarget: target
-                   usingSelector: [self yAxisSelector]
-                          object: [NSNumber numberWithFloat: y]];
+        [(id)target setValue: [NSNumber numberWithFloat: y] forKey: [self yAxis]];
     }
 }
 
@@ -752,12 +689,12 @@ enum {
 @implementation BXAxisToBindings
 @synthesize positiveBinding, negativeBinding;
 
-+ (id) bindingWithPositiveAxisSelector: (SEL)positive
-                  negativeAxisSelector: (SEL)negative
++ (id) bindingWithPositiveAxis: (NSString *)positive
+                  negativeAxis: (NSString *)negative
 {
     id binding = [self binding];
-    [binding setPositiveBinding: [BXAxisToAxis bindingWithAxisSelector: positive]];
-    [binding setNegativeBinding: [BXAxisToAxis bindingWithAxisSelector: negative]];
+    [binding setPositiveBinding: [BXAxisToAxis bindingWithAxis: positive]];
+    [binding setNegativeBinding: [BXAxisToAxis bindingWithAxis: negative]];
     return binding;
 }
 

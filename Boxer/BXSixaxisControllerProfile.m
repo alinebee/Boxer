@@ -106,8 +106,7 @@ enum {
 	id binding;
 	id joystick = [self emulatedJoystick];
 	
-	BOOL isWheel =	[joystick respondsToSelector: @selector(acceleratorMovedTo:)] &&
-					[joystick respondsToSelector: @selector(brakeMovedTo:)];
+	BOOL isWheel =	[joystick conformsToProtocol: @protocol(BXEmulatedWheel)];
 
     switch ([[element usage] usageId])
     {
@@ -129,14 +128,14 @@ enum {
             
         case BXSixaxisControllerLeftTrigger:
             if (isWheel)
-                binding = [BXButtonToAxis bindingWithAxisSelector: @selector(brakeMovedTo:)];
+                binding = [BXButtonToAxis bindingWithAxis: @"brakeAxis"];
             else
                 binding = [BXButtonToButton bindingWithButton: BXEmulatedJoystickButton2];
             break;
             
         case BXSixaxisControllerRightTrigger:
             if (isWheel)
-                binding = [BXButtonToAxis bindingWithAxisSelector: @selector(acceleratorMovedTo:)];
+                binding = [BXButtonToAxis bindingWithAxis: @"acceleratorAxis"];
             else
                 binding = [BXButtonToButton bindingWithButton: BXEmulatedJoystickButton1];
             break;

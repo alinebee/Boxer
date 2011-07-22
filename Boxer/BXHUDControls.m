@@ -115,9 +115,9 @@
         for (i = 1; i < numTicks - 1; i++)
         {
             CGFloat tickPosition = (i / (CGFloat)(numTicks - 1));
-            CGFloat xOffset = levelRect.size.width * tickPosition;
+            CGFloat xOffset = (levelRect.size.width * tickPosition);
             
-            NSRect tickRect = NSMakeRect(xOffset, levelRect.origin.y, 1.0f, levelRect.size.height);
+            NSRect tickRect = NSMakeRect(levelRect.origin.x + xOffset, levelRect.origin.y, 1.0f, levelRect.size.height);
             tickRect = NSIntegralRect(tickRect);
             tickRect.size.width = 1.0f;
             

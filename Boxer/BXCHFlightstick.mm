@@ -25,6 +25,16 @@ enum {
 	BXCHCombatStickButton6Mask = BXGameportButton1Mask | BXGameportButton4Mask
 };
 
+enum {
+    BXCHFlightstickProRudderAxis    = BXGameportX2Axis,
+    BXCHFlightstickProThrottleAxis  = BXGameportY2Axis
+};
+
+enum {
+    BXCHFlightstickPrimaryPOV,
+    BXCHFlightstickSecondaryPOV
+};
+
 
 @implementation BXCHFlightStickPro
 
@@ -61,66 +71,93 @@ enum {
 	[self setPressedButtons: BXNoGameportButtonsMask];
 }
 
-- (void) POVChangedTo: (BXEmulatedPOVDirection)direction
+- (void) POV: (NSUInteger)POVNumber changedTo: (BXEmulatedPOVDirection)direction
 {
-	BXEmulatedPOVDirection normalizedDirection = [BXHIDEvent closest4WayDirectionForPOV: direction
-																			previousPOV: [self POVDirection]];
-	
-	BXGameportButtonMask buttonMask = BXNoGameportButtonsMask;
-	switch (normalizedDirection)
-	{
-		case BXEmulatedPOVNorth:
-			buttonMask = BXCHPOVNorthMask;
-			break;
-			
-		case BXEmulatedPOVEast:
-			buttonMask = BXCHPOVEastMask;
-			break;
-		
-		case BXEmulatedPOVSouth:
-			buttonMask = BXCHPOVSouthMask;
-			break;
-			
-		case BXEmulatedPOVWest:
-			buttonMask = BXCHPOVWestMask;
-			break;
-	}
-	
-	[self setPressedButtons: buttonMask];
+    if (POVNumber == BXCHFlightstickPrimaryPOV)
+    {
+        //Convert diagonals to one of the cardinal points
+        BXEmulatedPOVDirection normalizedDirection = [[self class] closest4WayDirectionForPOV: direction
+                                                                                  previousPOV: [self directionForPOV: POVNumber]];
+        
+        BXGameportButtonMask buttonMask = BXNoGameportButtonsMask;
+        switch (normalizedDirection)
+        {
+            case BXEmulatedPOVNorth:
+                buttonMask = BXCHPOVNorthMask;
+                break;
+                
+            case BXEmulatedPOVEast:
+                buttonMask = BXCHPOVEastMask;
+                break;
+            
+            case BXEmulatedPOVSouth:
+                buttonMask = BXCHPOVSouthMask;
+                break;
+                
+            case BXEmulatedPOVWest:
+                buttonMask = BXCHPOVWestMask;
+                break;
+        }
+        
+        [self setPressedButtons: buttonMask];
+    }
+}
+
+- (BXEmulatedPOVDirection) directionForPOV: (NSUInteger)POVNumber
+{
+    if (POVNumber == BXCHFlightstickPrimaryPOV)
+    {
+        switch ([self pressedButtons])
+        {
+            case BXCHPOVNorthMask:
+                return BXEmulatedPOVNorth;
+                break;
+                
+            case BXCHPOVEastMask:
+                return BXEmulatedPOVEast;
+                break;
+                
+            case BXCHPOVSouthMask:
+                return BXEmulatedPOVSouth;
+                break;
+                
+            case BXCHPOVWestMask:
+                return BXEmulatedPOVWest;
+                break;
+                
+            default:
+                return BXEmulatedPOVCentered;
+        }
+    }
+    else
+    {
+        return BXEmulatedPOVCentered;
+    }
+}
+
+- (void) POV: (NSUInteger)POVNumber directionDown: (BXEmulatedPOVDirection)direction
+{
+    BXEmulatedPOVDirection currentDirection = [self directionForPOV: POVNumber];
+    [self POV: POVNumber changedTo: currentDirection | direction];
+}
+
+- (void) POV: (NSUInteger)POVNumber directionUp: (BXEmulatedPOVDirection)direction
+{
+    BXEmulatedPOVDirection currentDirection = [self directionForPOV: POVNumber];
+    [self POV: POVNumber changedTo: currentDirection & ~direction];
+}
+
+- (BOOL) POV: (NSUInteger)POVNumber directionIsDown: (BXEmulatedPOVDirection)direction
+{
+    return ([self directionForPOV: POVNumber] & direction) == direction;
 }
 
 
-- (BXEmulatedPOVDirection) POVDirection
-{
-	switch ([self pressedButtons])
-	{
-		case BXCHPOVNorthMask:
-			return BXEmulatedPOVNorth;
-			break;
-			
-		case BXCHPOVEastMask:
-			return BXEmulatedPOVEast;
-			break;
-			
-		case BXCHPOVSouthMask:
-			return BXEmulatedPOVSouth;
-			break;
-			
-		case BXCHPOVWestMask:
-			return BXEmulatedPOVWest;
-			break;
-			
-		default:
-			return BXEmulatedPOVCentered;
-	}
-}
+- (float) throttleAxis  { return [self positionForGameportAxis: BXCHFlightstickProThrottleAxis]; }
+- (float) rudderAxis    { return [self positionForGameportAxis: BXCHFlightstickProRudderAxis]; }
 
-
-- (void) throttleMovedTo: (float)position	{ [self axis: BXCHFlightstickProThrottleAxis movedTo: position]; }
-- (void) throttleMovedBy: (float)delta		{ [self axis: BXCHFlightstickProThrottleAxis movedBy: delta]; }
-
-- (void) rudderMovedTo: (float)position		{ [self axis: BXCHFlightstickProRudderAxis movedTo: position]; }
-- (void) rudderMovedBy: (float)delta		{ [self axis: BXCHFlightstickProRudderAxis movedBy: delta]; }
+- (void) setThrottleAxis: (float)position  { [self setPosition: position forGameportAxis: BXCHFlightstickProThrottleAxis]; }
+- (void) setRudderAxis: (float)position    { [self setPosition: position forGameportAxis: BXCHFlightstickProRudderAxis]; }
 
 
 - (void) setButton: (BXEmulatedJoystickButton)button toState: (BOOL)pressed
@@ -188,57 +225,72 @@ enum {
 - (NSUInteger) numPOVSwitches	{ return 2; }
 
 
-- (void) POV2ChangedTo: (BXEmulatedPOVDirection)direction
+//Handle the secondary POV switch
+- (void) POV: (NSUInteger)POVNumber changedTo: (BXEmulatedPOVDirection)direction
 {
-	BXEmulatedPOVDirection normalizedDirection = [BXHIDEvent closest4WayDirectionForPOV: direction
-																			previousPOV: [self POV2Direction]];
-	
-	BXGameportButtonMask buttonMask = BXNoGameportButtonsMask;
-	switch (normalizedDirection)
-	{
-		case BXEmulatedPOVNorth:
-			buttonMask = BXCHPOV2NorthMask;
-			break;
-			
-		case BXEmulatedPOVEast:
-			buttonMask = BXCHPOV2EastMask;
-			break;
-		
-		case BXEmulatedPOVSouth:
-			buttonMask = BXCHPOV2SouthMask;
-			break;
-			
-		case BXEmulatedPOVWest:
-			buttonMask = BXCHPOV2WestMask;
-			break;
-	}
-	
-	[self setPressedButtons: buttonMask];
+    if (POVNumber == BXCHFlightstickSecondaryPOV)
+    {
+        BXEmulatedPOVDirection normalizedDirection = [[self class] closest4WayDirectionForPOV: direction
+                                                                                  previousPOV: [self directionForPOV: POVNumber]];
+        
+        BXGameportButtonMask buttonMask = BXNoGameportButtonsMask;
+        switch (normalizedDirection)
+        {
+            case BXEmulatedPOVNorth:
+                buttonMask = BXCHPOV2NorthMask;
+                break;
+                
+            case BXEmulatedPOVEast:
+                buttonMask = BXCHPOV2EastMask;
+                break;
+            
+            case BXEmulatedPOVSouth:
+                buttonMask = BXCHPOV2SouthMask;
+                break;
+                
+            case BXEmulatedPOVWest:
+                buttonMask = BXCHPOV2WestMask;
+                break;
+        }
+        
+        [self setPressedButtons: buttonMask];
+    }
+    else
+    {
+        [super POV: POVNumber changedTo: direction];
+    }
 }
 
-- (BXEmulatedPOVDirection) POV2Direction
+- (BXEmulatedPOVDirection) directionForPOV: (NSUInteger)POVNumber
 {
-	switch ([self pressedButtons])
-	{
-		case BXCHPOV2NorthMask:
-			return BXEmulatedPOVNorth;
-			break;
-			
-		case BXCHPOV2EastMask:
-			return BXEmulatedPOVEast;
-			break;
-			
-		case BXCHPOV2SouthMask:
-			return BXEmulatedPOVSouth;
-			break;
-			
-		case BXCHPOV2WestMask:
-			return BXEmulatedPOVWest;
-			break;
-		
-		default:
-			return BXEmulatedPOVCentered;
+    if (POVNumber == BXCHFlightstickSecondaryPOV)
+    {
+        switch ([self pressedButtons])
+        {
+            case BXCHPOV2NorthMask:
+                return BXEmulatedPOVNorth;
+                break;
+                
+            case BXCHPOV2EastMask:
+                return BXEmulatedPOVEast;
+                break;
+                
+            case BXCHPOV2SouthMask:
+                return BXEmulatedPOVSouth;
+                break;
+                
+            case BXCHPOV2WestMask:
+                return BXEmulatedPOVWest;
+                break;
+            
+            default:
+                return BXEmulatedPOVCentered;
+        }
 	}
+    else
+    {
+        return [super directionForPOV: POVNumber];
+    }
 }
 
 - (void) setButton: (BXEmulatedJoystickButton)button toState: (BOOL)pressed

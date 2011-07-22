@@ -202,15 +202,15 @@
     
     NSString *format = NSLocalizedString(@"%u%% throttle", @"Label for flightstick throttle-adjusted bezel notification. %u is the current throttle value expressed as a percentage from 0 to 100%.");
     
-    //The throttle is expressed as a value from -1.0 to 1.0:
+    //The throttle is expressed as a value from 1.0 (min) to -1.0 (max):
     //Convert it to a percentage from 0-100.
-    NSUInteger percentage = 50 * (throttleValue + 1.0f);
+    NSUInteger percentage = 50 * (1.0f - throttleValue);
     NSString *throttleDescription = [NSString stringWithFormat: format, percentage, nil];
     
     NSLevelIndicator *level = [bezel viewWithTag: BXBezelLevel];
     NSTextField *label      = [bezel viewWithTag: BXBezelLevelLabel];
     
-    [level setFloatValue: throttleValue];
+    [level setIntegerValue: percentage];
     [label setStringValue: throttleDescription];
     
     [self showBezel: bezel

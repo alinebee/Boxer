@@ -12,13 +12,13 @@
 #import <Cocoa/Cocoa.h>
 #import "BXEmulatedJoystick.h"
 
-@protocol BXHIDInputBindingDelegate;
 @class BXHIDEvent;
 @class DDHidUsage;
-@protocol BXHIDInputBinding <NSObject, NSCoding>
 
-//The delegate to which to send input notifications. This is not retained.
-@property (assign, nonatomic) id <BXHIDInputBindingDelegate> delegate;
+#pragma mark -
+#pragma mark Protocols
+
+@protocol BXHIDInputBinding <NSObject, NSCoding>
 
 //Return an input binding of the appropriate type initialized with default values.
 + (id) binding;
@@ -30,27 +30,48 @@
 @end
 
 
-//The base implementation of the BXHIDInputBinding class, containing common logic used by all bindings.
-//Not directly instantiatable.
+//Represents a binding that sends periodic input outside of the normal event flow.
+//It has a delegate to which it sends notification messages whenever it posts input.
+
+@protocol BXPeriodicInputBindingDelegate;
+@protocol BXPeriodicInputBinding <BXHIDInputBinding>
+
+@property (assign, nonatomic) id <BXPeriodicInputBindingDelegate> delegate;
+
+@end
+
+@protocol BXPeriodicInputBindingDelegate <NSObject>
+
+//Posted to the delegate whenever the specified binding sends its input.
+//(It is up to the delegate to interrogate the binding as to what that input was.)
+- (void) binding: (id <BXPeriodicInputBinding>) binding didSendInputToTarget: (id <BXEmulatedJoystick>)target;
+
+@end
+
+
+#pragma mark -
+#pragma mark Concrete binding types
+
+
+//The base implementation of the BXHIDInputBinding class,
+//containing common logic used by all bindings.
+//Should not be used directly.
 @interface BXBaseHIDInputBinding: NSObject <BXHIDInputBinding>
-{
-    id <BXHIDInputBindingDelegate> delegate;
-}
 @end
 
 
 //Translates an axis on an HID controller to an emulated joystick axis.
 @interface BXAxisToAxis: BXBaseHIDInputBinding
 {
-	SEL axisSelector;
+	NSString *axis;
 	BOOL unidirectional;
 	BOOL inverted;
 	float deadzone;
 	float previousValue;
 }
 //Convenience method to return a binding preconfigured to send axis
-//input as the specified button.
-+ (id) bindingWithAxisSelector: (SEL)axisSelector;
+//input to the specified axis.
++ (id) bindingWithAxis: (NSString *)axisName;
 
 //Absolute axis values below this amount will be rounded to 0. Defaults to 0.25f.
 @property (assign, nonatomic) float deadzone;
@@ -62,25 +83,30 @@
 //If YES, the input will be mapped to 0->1.0 instead of -1.0->1.0.
 @property (assign, nonatomic, getter=isUnidirectional) BOOL unidirectional;
 
-//The axis selector to call on the emulated joystick.
-@property (assign, nonatomic) SEL axisSelector;
+//The axis to set on the emulated joystick, specified as a property key name.
+@property (copy, nonatomic) NSString *axis;
 
 @end
 
 
 //Adds input from an HID controller axis to the current value of an emulated axis:
 //Used for emulating axes that don’t return to center.
-@interface BXAxisToAxisAdditive: BXAxisToAxis
+@interface BXAxisToAxisAdditive: BXAxisToAxis <BXPeriodicInputBinding>
 {
     NSTimeInterval lastUpdated;
     float ratePerSecond;
+    float emulatedDeadzone;
     NSTimer *inputTimer;
+    id <BXPeriodicInputBindingDelegate> delegate;
 }
 
 //How much to increment the emulated axis per second if the controller axis input is at full strength.
 //Defaults to 1.0f: the emulated axis will go from 0 to 1.0 in 1 second when the axis is on full.
 @property (assign, nonatomic) float ratePerSecond;
 
+//The range to 'snap' to 0 when incrementing the emulated axis. Defaults to 0.1.
+//Note that this is independent from the deadzone property, which applies a deadzone to the real axis.
+@property (assign, nonatomic) float emulatedDeadzone;
 @end
 
 
@@ -104,14 +130,14 @@
 //with specific axis values for the pressed/released state of the button.
 @interface BXButtonToAxis: BXBaseHIDInputBinding
 {
-	SEL axisSelector;
+	NSString *axis;
 	float pressedValue;
 	float releasedValue;
 }
 
 //Convenience method to return a binding preconfigured to send button
-//input to the specified axis selector.
-+ (id) bindingWithAxisSelector: (SEL)axis;
+//input to the specified axis.
++ (id) bindingWithAxis: (NSString *)axisName;
 
 //The axis value to apply when the button is pressed. Defaults to +1.0f.
 @property (assign, nonatomic) float pressedValue;
@@ -119,8 +145,8 @@
 //The axis value to apply when the button is released. Defaults to 0.0f.
 @property (assign, nonatomic) float releasedValue;
 
-//The axis selector to call on the emulated joystick.
-@property (assign, nonatomic) SEL axisSelector;
+//The axis to set on the emulated joystick, specified as a property key name.
+@property (copy, nonatomic) NSString *axis;
 
 @end
 
@@ -160,35 +186,29 @@
 //Translates a POV switch or D-pad on an HID controller to an emulated POV switch.
 @interface BXPOVToPOV: BXBaseHIDInputBinding
 {
-	SEL POVSelector;
+	NSUInteger POVNumber;
 }
 
-//The POV selector to call on the emulated joystick. Defaults to POVChangedTo:
-@property (assign, nonatomic) SEL POVSelector;
+//The POV number to apply to on the emulated joystick. Defaults to 0.
+@property (assign, nonatomic) NSUInteger POVNumber;
 
 @end
 
 
-//Translates a set of 4 buttons on an HID controller to an emulated POV switch.
-@interface BXButtonsToPOV: BXBaseHIDInputBinding
+//Translates a button to a single cardinal POV direction
+@interface BXButtonToPOV: BXBaseHIDInputBinding
 {
-	SEL POVSelector;
-	DDHidUsage *northButtonUsage;
-	DDHidUsage *southButtonUsage;
-	DDHidUsage *eastButtonUsage;
-	DDHidUsage *westButtonUsage;
-	NSUInteger buttonStates;
+	NSUInteger POVNumber;
+    BXEmulatedPOVDirection direction;
+    
 }
+//The POV number to apply to on the emulated joystick. Defaults to 0.
+@property (assign, nonatomic) NSUInteger POVNumber;
 
-//The POV selector to call on the emulated joystick. Defaults to POVChangedTo:
-@property (assign, nonatomic) SEL POVSelector;
+//The direction to apply when the button is pressed.
+@property (assign, nonatomic) BXEmulatedPOVDirection direction;
 
-//The buttons corresponding to the N, S, E and W directions on the POV switch.
-//Their pressed/released state is tracked individually.
-@property (copy, nonatomic) DDHidUsage *northButtonUsage;
-@property (copy, nonatomic) DDHidUsage *southButtonUsage;
-@property (copy, nonatomic) DDHidUsage *eastButtonUsage;
-@property (copy, nonatomic) DDHidUsage *westButtonUsage;
++ (id) bindingWithDirection: (BXEmulatedPOVDirection) direction;
 
 @end
 
@@ -197,28 +217,28 @@
 //on the emulated joystick, such that WE will set the X axis and NS will set the Y axis.
 @interface BXPOVToAxes: BXBaseHIDInputBinding
 {
-	SEL xAxisSelector;
-	SEL yAxisSelector;
+	NSString *xAxis;
+	NSString *yAxis;
 }
 
 //Convenience method to return a binding preconfigured to send POV
-//input to the specified selectors.
-+ (id) bindingWithXAxisSelector: (SEL)x
-                  YAxisSelector: (SEL)y;
+//input to the specified axes.
++ (id) bindingWithXAxis: (NSString *)x
+                  YAxis: (NSString *)y;
 
-//The POV selector to call on the emulated joystick for WE input.
+//The axis to set on the emulated joystick for WE input.
 //Defaults to xAxisChangedTo:
-@property (assign, nonatomic) SEL xAxisSelector;
+@property (copy, nonatomic) NSString *xAxis;
 
-//The POV selector to call on the emulated joystick for NS input.
+//The axis to set on the emulated joystick for NS input.
 //Defaults to yAxisChangedTo:
-@property (assign, nonatomic) SEL yAxisSelector;
+@property (copy, nonatomic) NSString *yAxis;
 
 @end
 
 
 //Sends axis input to one of two alternate bindings, depending on whether the
-//input is positive or negative. The selector for the current polarity will be
+//input is positive or negative. The binding for the current polarity will be
 //sent the full axis value, while the opposite binding will be sent a value of
 //0.0.
 @interface BXAxisToBindings: BXBaseHIDInputBinding
@@ -229,9 +249,9 @@
 }
 
 //Convenience method to return a binding preconfigured to split axis input
-//to the specified axis selectors.
-+ (id) bindingWithPositiveAxisSelector: (SEL)positive
-                  negativeAxisSelector: (SEL)negative;
+//to the specified axes, specified as property key names.
++ (id) bindingWithPositiveAxis: (NSString *)positive
+                  negativeAxis: (NSString *)negative;
 
 //Convenience method to return a binding preconfigured to split axis input
 //to the specified buttons.
@@ -244,15 +264,4 @@
 //The binding to which to pass negative axis values.
 @property (retain, nonatomic) id <BXHIDInputBinding> negativeBinding;
 
-@end
-
-
-
-@protocol BXHIDInputBindingDelegate <NSObject>
-
-//Called by processEvent:forTarget: whenever updating an emulated joystick.
-- (void) binding: (id <BXHIDInputBinding>)binding
- didUpdateTarget: (id <BXEmulatedJoystick>)target
-   usingSelector: (SEL)selector
-          object: (id)object;
 @end

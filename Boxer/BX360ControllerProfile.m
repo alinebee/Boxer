@@ -156,8 +156,7 @@ enum {
 	id binding = nil;
 	id joystick = [self emulatedJoystick];
     
-	BOOL isWheel =	[joystick respondsToSelector: @selector(acceleratorMovedTo:)] &&
-					[joystick respondsToSelector: @selector(brakeMovedTo:)];
+	BOOL isWheel =	[joystick conformsToProtocol: @protocol(BXEmulatedWheel)];
 					 
 	switch ([[element usage] usageId])
 	{
@@ -216,12 +215,12 @@ enum {
         switch([[element usage] usageId])
         {
             case BX360ControllerLeftTrigger:
-                binding = [BXAxisToAxis bindingWithAxisSelector: @selector(brakeMovedTo:)];
+                binding = [BXAxisToAxis bindingWithAxis: @"brakeAxis"];
                 [binding setUnidirectional: YES];
                 break;
                 
             case BX360ControllerRightTrigger:
-                binding = [BXAxisToAxis bindingWithAxisSelector: @selector(acceleratorMovedTo:)];
+                binding = [BXAxisToAxis bindingWithAxis: @"acceleratorAxis"];
                 [binding setUnidirectional: YES];
                 break;
                 

@@ -22,9 +22,17 @@
 #define BXThrustmasterFCSPOVWest		0.5f
 #define BXThrustmasterFCSPOVCentered	1.0f
 
+#define BXThrustmasterPrimaryPOV 0
+
 //The amount of leeway to use when mapping an axis value back to a POV-switch constant.
-//Used by BXThrustmasterFCS -POVDirection.
+//Used by BXThrustmasterFCS -directionOfPOV:
 #define BXThrustmasterFCSPOVThreshold 0.25f
+
+enum
+{
+    BXThrustmasterFCSRudderAxis = BXGameportX2Axis,
+    BXThrustmasterFCSHatAxis = BXGameportY2Axis
+};
 
 
 #pragma mark -
@@ -65,51 +73,71 @@
 	JOYSTICK_Move_Y(BXGameportStick2, BXThrustmasterFCSPOVCentered);
 }
 
-- (void) POVChangedTo: (BXEmulatedPOVDirection)direction
+- (void) POV: (NSUInteger)POVNumber changedTo: (BXEmulatedPOVDirection)direction
 {
-	BXEmulatedPOVDirection normalizedDirection = [BXHIDEvent closest4WayDirectionForPOV: direction
-																			previousPOV: [self POVDirection]];
-	
-	float axisValue = BXThrustmasterFCSPOVCentered;
-	switch (normalizedDirection)
-	{
-		case BXEmulatedPOVNorth:
-			axisValue = BXThrustmasterFCSPOVNorth;
-			break;
-			
-		case BXEmulatedPOVEast:
-			axisValue = BXThrustmasterFCSPOVEast;
-			break;
-		
-		case BXEmulatedPOVSouth:
-			axisValue = BXThrustmasterFCSPOVSouth;
-			break;
-			
-		case BXEmulatedPOVWest:
-			axisValue = BXThrustmasterFCSPOVWest;
-			break;
-	}
-	
-	[self axis: BXThrustmasterFCSHatAxis movedTo: axisValue];
+    if (POVNumber == BXThrustmasterPrimaryPOV)
+    {
+        BXEmulatedPOVDirection normalizedDirection = [[self class] closest4WayDirectionForPOV: direction
+                                                                                  previousPOV: [self directionForPOV: POVNumber]];
+        
+        float axisValue = BXThrustmasterFCSPOVCentered;
+        switch (normalizedDirection)
+        {
+            case BXEmulatedPOVNorth:
+                axisValue = BXThrustmasterFCSPOVNorth;
+                break;
+                
+            case BXEmulatedPOVEast:
+                axisValue = BXThrustmasterFCSPOVEast;
+                break;
+            
+            case BXEmulatedPOVSouth:
+                axisValue = BXThrustmasterFCSPOVSouth;
+                break;
+                
+            case BXEmulatedPOVWest:
+                axisValue = BXThrustmasterFCSPOVWest;
+                break;
+        }
+        
+        [self setPosition: axisValue forGameportAxis: BXThrustmasterFCSHatAxis];
+    }
 }
 
-- (BXEmulatedPOVDirection) POVDirection
+- (BXEmulatedPOVDirection) directionForPOV: (NSUInteger)POVNumber
 {
-	float axisValue = [self axisPosition: BXThrustmasterFCSHatAxis];	// Value from -1.0 to 1.0
-	float threshold = axisValue + BXThrustmasterFCSPOVThreshold;		// Value from -0.75 to 1.25
-	
-	if (threshold > BXThrustmasterFCSPOVCentered)	return BXEmulatedPOVCentered;
-	if (threshold > BXThrustmasterFCSPOVWest)		return BXEmulatedPOVWest;
-	if (threshold > BXThrustmasterFCSPOVSouth)		return BXEmulatedPOVSouth;
-	if (threshold > BXThrustmasterFCSPOVEast)		return BXEmulatedPOVEast;
-	return BXEmulatedPOVNorth;
+    if (POVNumber == BXThrustmasterPrimaryPOV)
+    {
+        float axisValue = [self positionForGameportAxis: BXThrustmasterFCSHatAxis];	// Value from -1.0 to 1.0
+        float threshold = axisValue + BXThrustmasterFCSPOVThreshold;		// Value from -0.75 to 1.25
+        
+        if (threshold > BXThrustmasterFCSPOVCentered)	return BXEmulatedPOVCentered;
+        if (threshold > BXThrustmasterFCSPOVWest)		return BXEmulatedPOVWest;
+        if (threshold > BXThrustmasterFCSPOVSouth)		return BXEmulatedPOVSouth;
+        if (threshold > BXThrustmasterFCSPOVEast)		return BXEmulatedPOVEast;
+        return BXEmulatedPOVNorth;
+    }
+    else return BXEmulatedPOVCentered;
 }
 
-- (void) rudderMovedTo: (float)position		{ [self axis: BXThrustmasterFCSRudderAxis movedTo: position]; }
-- (void) rudderMovedBy: (float)delta		{ [self axis: BXThrustmasterFCSRudderAxis movedBy: delta]; }
+- (void) POV: (NSUInteger)POVNumber directionDown: (BXEmulatedPOVDirection)direction
+{
+    BXEmulatedPOVDirection currentDirection = [self directionForPOV: POVNumber];
+    [self POV: POVNumber changedTo: currentDirection | direction];
+}
 
-//The Y2 axis is reserved for the hat, so we ignore regular input on it
-//TODO: remove our inheritance from BX4AxisJoystick so this isn't necessary
-- (void) y2AxisMovedTo: (float)position {}
-- (void) y2AxisMovedBy: (float)delta {}
+- (void) POV: (NSUInteger)POVNumber directionUp: (BXEmulatedPOVDirection)direction
+{
+    BXEmulatedPOVDirection currentDirection = [self directionForPOV: POVNumber];
+    [self POV: POVNumber changedTo: currentDirection & ~direction];
+}
+
+- (BOOL) POV: (NSUInteger)POVNumber directionIsDown: (BXEmulatedPOVDirection)direction
+{
+    return ([self directionForPOV: POVNumber] & direction) == direction;
+}
+
+- (float) rudderAxis                        { return [self positionForGameportAxis: BXThrustmasterFCSRudderAxis]; }
+- (void) setRudderAxis: (float)position		{ [self setPosition: position forGameportAxis: BXThrustmasterFCSRudderAxis]; }
+
 @end

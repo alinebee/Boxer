@@ -10,16 +10,16 @@
 
 #import "BXHIDControllerProfilePrivate.h"
 
-
 #pragma mark -
 #pragma mark Private constants
 
 #define BXVendorIDLogitech 0x046d
 
-//NOTE: it appears Logitech have reused the Dual Action pad's product ID
-//for at least the F310 gamepad, and likely later models also.
 #define BXDualActionVendorID	BXVendorIDLogitech
 #define BXDualActionProductID	0xc216
+
+#define BXF310VendorID          BXVendorIDLogitech
+#define BXF310ProductID         0xc21d
 
 
 //Shoulder and trigger buttons
@@ -45,6 +45,7 @@ enum {
 {
     return [NSArray arrayWithObjects:
             [self matchForVendorID: BXDualActionVendorID productID: BXDualActionProductID],
+            [self matchForVendorID: BXF310VendorID productID: BXF310ProductID],
             nil];
 }
 
@@ -56,21 +57,20 @@ enum {
 	id binding = nil;
 	
 	id joystick = [self emulatedJoystick];
-	BOOL isWheel =	[joystick respondsToSelector: @selector(acceleratorMovedTo:)] &&
-                    [joystick respondsToSelector: @selector(brakeMovedTo:)];
+	BOOL isWheel =	[joystick conformsToProtocol: @protocol(BXEmulatedWheel)];
     
 	switch ([[element usage] usageId])
 	{
         case BXDualActionControllerLeftTrigger:
             if (isWheel)
-                binding = [BXButtonToAxis bindingWithAxisSelector: @selector(brakeMovedTo:)];
+                binding = [BXButtonToAxis bindingWithAxis: @"brakeAxis"];
             else
                 binding = [BXButtonToButton bindingWithButton: BXEmulatedJoystickButton2];
             break;
             
         case BXDualActionControllerRightTrigger:
             if (isWheel)
-                binding = [BXButtonToAxis bindingWithAxisSelector: @selector(acceleratorMovedTo:)];
+                binding = [BXButtonToAxis bindingWithAxis: @"acceleratorAxis"];
             else
                 binding = [BXButtonToButton bindingWithButton: BXEmulatedJoystickButton1];
             break;

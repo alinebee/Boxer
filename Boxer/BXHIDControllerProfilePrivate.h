@@ -29,7 +29,7 @@ extern NSString * const BXControllerProfileDPadDown;
 #pragma mark Private interface
 
 
-@interface BXHIDControllerProfile () <BXHIDInputBindingDelegate>
+@interface BXHIDControllerProfile () <BXPeriodicInputBinding>
 
 //Generates the input bindings for the controller to the emulated joystick.
 //Called whenever the controller or emulated joystick are changed.
@@ -94,12 +94,13 @@ extern NSString * const BXControllerProfileDPadDown;
 - (void) bindDPadElements: (NSDictionary *)padElements;
 
 //Bind the specified set of D-pad buttons to the specified POV.
-- (void) bindDPadElements: (NSDictionary *)padElements toPOV: (SEL)povSelector;
+- (void) bindDPadElements: (NSDictionary *)padElements
+                    toPOV: (NSUInteger)POVNumber;
 
 //Bind the specified set of D-pad buttons to the specified X and Y axes.
 - (void) bindDPadElements: (NSDictionary *)padElements
-		 toHorizontalAxis: (SEL)xAxisSelector
-			 verticalAxis: (SEL)yAxisSelector;
+		 toHorizontalAxis: (NSString *)xAxis
+			 verticalAxis: (NSString *)yAxis;
 
 @end
 

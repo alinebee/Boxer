@@ -53,7 +53,7 @@ enum {
             nil];
 }
 
-//Custom binding for 360 shoulder buttons: bind to buttons 3 & 4 for regular joysticks
+//Custom binding for shoulder buttons: bind to buttons 3 & 4 for regular joysticks
 //(where the triggers are buttons 1 & 2), or to 1 & 2 for wheel emulation (where the
 //triggers are the pedals).
 - (id <BXHIDInputBinding>) generatedBindingForButtonElement: (DDHidElement *)element

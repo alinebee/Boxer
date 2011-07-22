@@ -116,11 +116,11 @@ enum {
 }
 
 
-- (void) throttleMovedTo: (float)position	{ [self axis: BXCHCombatStickThrottleAxis movedTo: position]; }
-- (void) throttleMovedBy: (float)delta		{ [self axis: BXCHCombatStickThrottleAxis movedBy: delta]; }
+- (void) throttleMovedTo: (float)position	{ [self axis: BXCHFlightstickProThrottleAxis movedTo: position]; }
+- (void) throttleMovedBy: (float)delta		{ [self axis: BXCHFlightstickProThrottleAxis movedBy: delta]; }
 
-- (void) rudderMovedTo: (float)position		{ [self axis: BXCHCombatStickRudderAxis movedTo: position]; }
-- (void) rudderMovedBy: (float)delta		{ [self axis: BXCHCombatStickRudderAxis movedBy: delta]; }
+- (void) rudderMovedTo: (float)position		{ [self axis: BXCHFlightstickProRudderAxis movedTo: position]; }
+- (void) rudderMovedBy: (float)delta		{ [self axis: BXCHFlightstickProRudderAxis movedBy: delta]; }
 
 
 - (void) setButton: (BXEmulatedJoystickButton)button toState: (BOOL)pressed

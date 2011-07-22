@@ -30,8 +30,8 @@ enum {
 	BXEmulatedJoystick2AxisX = BXEmulatedJoystickAxisX2,
 	BXEmulatedJoystick2AxisY = BXEmulatedJoystickAxisY2,
 	
-	BXCHCombatStickRudderAxis	= BXEmulatedJoystickAxisX2,
-	BXCHCombatStickThrottleAxis	= BXEmulatedJoystickAxisY2,
+	BXCHFlightstickProRudderAxis	= BXEmulatedJoystickAxisX2,
+	BXCHFlightstickProThrottleAxis	= BXEmulatedJoystickAxisY2,
 	
 	BXThrustmasterFCSRudderAxis		= BXEmulatedJoystickAxisX2,
 	BXThrustmasterFCSHatAxis		= BXEmulatedJoystickAxisY2,

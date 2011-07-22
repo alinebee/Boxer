@@ -349,7 +349,7 @@ static NSMutableArray *profileClasses = nil;
 		x2			= @selector(x2AxisMovedTo:),
 		y2			= @selector(y2AxisMovedTo:),
 		rudder		= @selector(rudderMovedTo:),
-        throttle	= @selector(throttleMovedTo:);
+        throttle	= @selector(throttleMovedBy:);
 	
 	NSUInteger axis = [[element usage] usageId], normalizedAxis;
 	
@@ -479,11 +479,12 @@ static NSMutableArray *profileClasses = nil;
    usingSelector: (SEL)selector
           object: (id)object
 {
-    //Send a notification whenever a throttle binding updates itself
+    //Show a notification bezel whenever a throttle binding updates itself
     if ([binding isKindOfClass: [BXAxisToAxisAdditive class]]
          && [(id)binding axisSelector] == @selector(throttleMovedBy:))
     {
-        float throttleValue = [(NSNumber *)object floatValue];
+        //Get the current value of the throttle after it has been incremented
+        float throttleValue = [target axisPosition: BXCHFlightstickProThrottleAxis];
         [[BXBezelController controller] showThrottleBezelForValue: throttleValue];
     }
 }

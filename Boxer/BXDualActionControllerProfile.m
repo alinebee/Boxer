@@ -15,11 +15,15 @@
 
 #define BXVendorIDLogitech 0x046d
 
+//NOTE: while in DirectInput mode, the F310 and F510 report themselves as the older
+//dual-action and rumblepad 2 models respectively. These gamepads only work in DirectInput
+//mode on OS X, as the alternative (XInput mode) does not report an HID profile.
+
 #define BXDualActionVendorID	BXVendorIDLogitech
 #define BXDualActionProductID	0xc216
 
-#define BXF310VendorID          BXVendorIDLogitech
-#define BXF310ProductID         0xc21d
+#define BXRumblePad2VendorID    BXVendorIDLogitech
+#define BXRumblePad2ProductID   0xc218
 
 
 //Shoulder and trigger buttons
@@ -45,7 +49,7 @@ enum {
 {
     return [NSArray arrayWithObjects:
             [self matchForVendorID: BXDualActionVendorID productID: BXDualActionProductID],
-            [self matchForVendorID: BXF310VendorID productID: BXF310ProductID],
+            [self matchForVendorID: BXRumblePad2VendorID productID: BXRumblePad2ProductID],
             nil];
 }
 

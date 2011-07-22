@@ -229,8 +229,8 @@
     
     NSImage *iconImage = [[self class] bezelIconForDrive: drive];
     
-    NSString *labelFormat = NSLocalizedString(@"%1$@ %2$@ added", @"Label for drive-added bezel notification. %1$@ is the drive type and %2$@ is the drive letter.");
-    NSString *labelDescription = [NSString stringWithFormat: labelFormat, [drive typeDescription], [drive letter], nil];
+    NSString *labelFormat = NSLocalizedString(@"Drive %1$@ added", @"Label for drive-added bezel notification. %1$@ is the drive letter.");
+    NSString *labelDescription = [NSString stringWithFormat: labelFormat, [drive letter], nil];
     
     NSValueTransformer *pathTransformer = [NSValueTransformer valueTransformerForName: @"BXBezelDrivePathTransformer"];
     NSString *displayPath = [pathTransformer transformedValue: [drive path]];
@@ -240,7 +240,7 @@
     NSTextField *path   = [bezel viewWithTag: BXBezelDrivePath];
     
     [icon setImage: iconImage];
-    [label setStringValue: [labelDescription sentenceCapitalizedString]];
+    [label setStringValue: labelDescription];
     [path setStringValue: displayPath];
     
     [self showBezel: bezel
@@ -258,14 +258,14 @@
     NSView *bezel = [self driveRemovedBezel];
     NSImage *iconImage = [NSImage imageNamed: @"EjectTemplate"];
     
-    NSString *labelFormat = NSLocalizedString(@"%1$@ %2$@ ejected", @"Label for drive-removed bezel notification. %1$@ is the drive type and %2$@ is the drive letter.");
-    NSString *labelDescription = [NSString stringWithFormat: labelFormat, [drive typeDescription], [drive letter], nil];
+    NSString *labelFormat = NSLocalizedString(@"Drive %1$@ ejected", @"Label for drive-removed bezel notification. %1$@ is the drive letter.");
+    NSString *labelDescription = [NSString stringWithFormat: labelFormat, [drive letter], nil];
     
     NSImageView *icon   = [bezel viewWithTag: BXBezelIcon];
     NSTextField *label  = [bezel viewWithTag: BXBezelDriveLabel];
     
     [icon setImage: iconImage];
-    [label setStringValue: [labelDescription sentenceCapitalizedString]];
+    [label setStringValue: labelDescription];
     
     [self showBezel: bezel
         forDuration: BXDriveBezelDuration
@@ -284,14 +284,14 @@
     
     NSImage *iconImage = [[self class] bezelIconForDrive: drive];
     
-    NSString *labelFormat = NSLocalizedString(@"%1$@ %2$@ imported", @"Label for drive-imported bezel notification. %1$@ is the drive type and %2$@ is the drive letter.");
-	NSString *labelDescription = [NSString stringWithFormat: labelFormat, [drive typeDescription], [drive letter], nil];
+    NSString *labelFormat = NSLocalizedString(@"Drive %2$@ imported", @"Label for drive-imported bezel notification. %1$@ is the drive letter.");
+	NSString *labelDescription = [NSString stringWithFormat: labelFormat, [drive letter], nil];
     
     NSImageView *icon   = [bezel viewWithTag: BXBezelIcon];
     NSTextField *label  = [bezel viewWithTag: BXBezelDriveLabel];
     
     [icon setImage: iconImage];
-    [label setStringValue: [labelDescription sentenceCapitalizedString]];
+    [label setStringValue: labelDescription];
     
     [self showBezel: bezel
         forDuration: BXDriveBezelDuration

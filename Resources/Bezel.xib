@@ -51,7 +51,7 @@
 					<object class="NSTextField" id="537414232">
 						<reference key="NSNextResponder" ref="959508283"/>
 						<int key="NSvFlags">274</int>
-						<string key="NSFrame">{{20, 20}, {300, 50}}</string>
+						<string key="NSFrame">{{20, 23}, {301, 44}}</string>
 						<reference key="NSSuperview" ref="959508283"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView"/>
@@ -61,9 +61,9 @@
 							<int key="NSCellFlags2">138412032</int>
 							<string type="base64-UTF8" key="NSContents">UHJlc3Mg4oyYRiB0byBleGl0IGZ1bGxzY3JlZW4uCuKMmC1jbGljayB0byBhY2Nlc3MgdGhlIG1lbnUu
 A</string>
-							<object class="NSFont" key="NSSupport" id="78583867">
+							<object class="NSFont" key="NSSupport" id="954562412">
 								<string key="NSName">LucidaGrande</string>
-								<double key="NSSize">20</double>
+								<double key="NSSize">18</double>
 								<int key="NSfFlags">16</int>
 							</object>
 							<reference key="NSControlView" ref="537414232"/>
@@ -88,14 +88,14 @@ A</string>
 						</object>
 					</object>
 				</object>
-				<string key="NSFrameSize">{340, 90}</string>
+				<string key="NSFrameSize">{341, 90}</string>
 				<reference key="NSSuperview"/>
 				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="537414232"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
 			<object class="NSCustomView" id="262078921">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -192,7 +192,7 @@ A</string>
 					<object class="NSTextField" id="48927340">
 						<reference key="NSNextResponder" ref="262078921"/>
 						<int key="NSvFlags">290</int>
-						<string key="NSFrame">{{20, 15}, {260, 19}}</string>
+						<string key="NSFrame">{{20, 12}, {260, 22}}</string>
 						<reference key="NSSuperview" ref="262078921"/>
 						<int key="NSTag">3</int>
 						<bool key="NSEnabled">YES</bool>
@@ -200,11 +200,7 @@ A</string>
 							<int key="NSCellFlags">67239488</int>
 							<int key="NSCellFlags2">138414080</int>
 							<string key="NSContents">[386 speed (3000 cycles)]</string>
-							<object class="NSFont" key="NSSupport" id="191011271">
-								<string key="NSName">LucidaGrande</string>
-								<double key="NSSize">16</double>
-								<int key="NSfFlags">16</int>
-							</object>
+							<reference key="NSSupport" ref="954562412"/>
 							<reference key="NSControlView" ref="48927340"/>
 							<reference key="NSBackgroundColor" ref="372717747"/>
 							<reference key="NSTextColor" ref="1005397457"/>
@@ -212,6 +208,7 @@ A</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{300, 80}</string>
+				<reference key="NSSuperview"/>
 				<reference key="NSNextKeyView" ref="433158987"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
@@ -225,7 +222,6 @@ A</string>
 						<int key="NSvFlags">266</int>
 						<string key="NSFrame">{{20, 45}, {200, 20}}</string>
 						<reference key="NSSuperview" ref="486365284"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="178236079"/>
 						<int key="NSTag">2</int>
 						<bool key="NSEnabled">YES</bool>
@@ -244,17 +240,15 @@ A</string>
 					<object class="NSTextField" id="178236079">
 						<reference key="NSNextResponder" ref="486365284"/>
 						<int key="NSvFlags">290</int>
-						<string key="NSFrame">{{20, 18}, {200, 19}}</string>
+						<string key="NSFrame">{{20, 15}, {200, 22}}</string>
 						<reference key="NSSuperview" ref="486365284"/>
-						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<int key="NSTag">3</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="533750479">
 							<int key="NSCellFlags">67239488</int>
 							<int key="NSCellFlags2">138414080</int>
 							<string key="NSContents">[100% throttle]</string>
-							<reference key="NSSupport" ref="191011271"/>
+							<reference key="NSSupport" ref="954562412"/>
 							<reference key="NSControlView" ref="178236079"/>
 							<reference key="NSBackgroundColor" ref="372717747"/>
 							<reference key="NSTextColor" ref="1005397457"/>
@@ -263,12 +257,11 @@ A</string>
 				</object>
 				<string key="NSFrameSize">{240, 80}</string>
 				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="319377139"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
 			<object class="NSCustomView" id="759628227">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -287,7 +280,7 @@ A</string>
 								<string>NeXT TIFF v4.0 pasteboard type</string>
 							</object>
 						</object>
-						<string key="NSFrame">{{86, 72}, {128, 128}}</string>
+						<string key="NSFrame">{{46, 52}, {128, 128}}</string>
 						<reference key="NSSuperview" ref="759628227"/>
 						<reference key="NSNextKeyView" ref="386939600"/>
 						<int key="NSTag">1</int>
@@ -306,52 +299,31 @@ A</string>
 						</object>
 						<bool key="NSEditable">YES</bool>
 					</object>
-					<object class="NSTextField" id="851829758">
-						<reference key="NSNextResponder" ref="759628227"/>
-						<int key="NSvFlags">306</int>
-						<string key="NSFrame">{{20, 23}, {260, 14}}</string>
-						<reference key="NSSuperview" ref="759628227"/>
-						<int key="NSTag">5</int>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSTextFieldCell" key="NSCell" id="438852623">
-							<int key="NSCellFlags">67239488</int>
-							<int key="NSCellFlags2">138544640</int>
-							<string key="NSContents">[Home &gt; DOS Games &gt; Blah.cdrom]</string>
-							<object class="NSFont" key="NSSupport">
-								<string key="NSName">LucidaGrande</string>
-								<double key="NSSize">11</double>
-								<int key="NSfFlags">3100</int>
-							</object>
-							<reference key="NSControlView" ref="851829758"/>
-							<reference key="NSBackgroundColor" ref="372717747"/>
-							<reference key="NSTextColor" ref="1005397457"/>
-						</object>
-					</object>
 					<object class="NSTextField" id="386939600">
 						<reference key="NSNextResponder" ref="759628227"/>
 						<int key="NSvFlags">306</int>
-						<string key="NSFrame">{{20, 40}, {260, 24}}</string>
+						<string key="NSFrame">{{17, 29}, {186, 22}}</string>
 						<reference key="NSSuperview" ref="759628227"/>
-						<reference key="NSNextKeyView" ref="851829758"/>
 						<int key="NSTag">4</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="1049302131">
 							<int key="NSCellFlags">67239488</int>
 							<int key="NSCellFlags2">138414080</int>
 							<string key="NSContents">[Drive D added]</string>
-							<reference key="NSSupport" ref="78583867"/>
+							<reference key="NSSupport" ref="954562412"/>
 							<reference key="NSControlView" ref="386939600"/>
 							<reference key="NSBackgroundColor" ref="372717747"/>
 							<reference key="NSTextColor" ref="1005397457"/>
 						</object>
 					</object>
 				</object>
-				<string key="NSFrameSize">{300, 220}</string>
+				<string key="NSFrameSize">{220, 200}</string>
+				<reference key="NSSuperview"/>
 				<reference key="NSNextKeyView" ref="457239935"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
 			<object class="NSCustomView" id="962612140">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -370,7 +342,7 @@ A</string>
 								<string>NeXT TIFF v4.0 pasteboard type</string>
 							</object>
 						</object>
-						<string key="NSFrame">{{86, 72}, {128, 128}}</string>
+						<string key="NSFrame">{{46, 52}, {128, 128}}</string>
 						<reference key="NSSuperview" ref="962612140"/>
 						<reference key="NSNextKeyView" ref="30954813"/>
 						<int key="NSTag">1</int>
@@ -392,27 +364,29 @@ A</string>
 					<object class="NSTextField" id="30954813">
 						<reference key="NSNextResponder" ref="962612140"/>
 						<int key="NSvFlags">306</int>
-						<string key="NSFrame">{{17, 40}, {266, 24}}</string>
+						<string key="NSFrame">{{17, 29}, {186, 22}}</string>
 						<reference key="NSSuperview" ref="962612140"/>
+						<reference key="NSNextKeyView"/>
 						<int key="NSTag">4</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="128157044">
 							<int key="NSCellFlags">67239488</int>
 							<int key="NSCellFlags2">138414080</int>
 							<string key="NSContents">[Drive D ejected]</string>
-							<reference key="NSSupport" ref="78583867"/>
+							<reference key="NSSupport" ref="954562412"/>
 							<reference key="NSControlView" ref="30954813"/>
 							<reference key="NSBackgroundColor" ref="372717747"/>
 							<reference key="NSTextColor" ref="1005397457"/>
 						</object>
 					</object>
 				</object>
-				<string key="NSFrameSize">{300, 220}</string>
+				<string key="NSFrameSize">{220, 200}</string>
+				<reference key="NSSuperview"/>
 				<reference key="NSNextKeyView" ref="237268684"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
 			<object class="NSCustomView" id="271727742">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -431,7 +405,7 @@ A</string>
 								<string>NeXT TIFF v4.0 pasteboard type</string>
 							</object>
 						</object>
-						<string key="NSFrame">{{86, 72}, {128, 128}}</string>
+						<string key="NSFrame">{{46, 52}, {128, 128}}</string>
 						<reference key="NSSuperview" ref="271727742"/>
 						<reference key="NSNextKeyView" ref="160133539"/>
 						<int key="NSTag">1</int>
@@ -453,22 +427,24 @@ A</string>
 					<object class="NSTextField" id="160133539">
 						<reference key="NSNextResponder" ref="271727742"/>
 						<int key="NSvFlags">306</int>
-						<string key="NSFrame">{{20, 40}, {260, 24}}</string>
+						<string key="NSFrame">{{17, 29}, {186, 22}}</string>
 						<reference key="NSSuperview" ref="271727742"/>
+						<reference key="NSNextKeyView"/>
 						<int key="NSTag">4</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="614521328">
 							<int key="NSCellFlags">67239488</int>
 							<int key="NSCellFlags2">138414080</int>
 							<string key="NSContents">[Drive D imported]</string>
-							<reference key="NSSupport" ref="78583867"/>
+							<reference key="NSSupport" ref="954562412"/>
 							<reference key="NSControlView" ref="160133539"/>
 							<reference key="NSBackgroundColor" ref="372717747"/>
 							<reference key="NSTextColor" ref="1005397457"/>
 						</object>
 					</object>
 				</object>
-				<string key="NSFrameSize">{300, 220}</string>
+				<string key="NSFrameSize">{220, 200}</string>
+				<reference key="NSSuperview"/>
 				<reference key="NSNextKeyView" ref="938304970"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
@@ -689,7 +665,6 @@ A</string>
 						<reference key="object" ref="759628227"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="851829758"/>
 							<reference ref="457239935"/>
 							<reference ref="386939600"/>
 						</object>
@@ -709,20 +684,6 @@ A</string>
 						<int key="objectID">31</int>
 						<reference key="object" ref="1049302131"/>
 						<reference key="parent" ref="386939600"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">32</int>
-						<reference key="object" ref="851829758"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="438852623"/>
-						</object>
-						<reference key="parent" ref="759628227"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">33</int>
-						<reference key="object" ref="438852623"/>
-						<reference key="parent" ref="851829758"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">34</int>
@@ -842,9 +803,6 @@ A</string>
 					<string>30.CustomClassName</string>
 					<string>30.IBPluginDependency</string>
 					<string>31.IBPluginDependency</string>
-					<string>32.CustomClassName</string>
-					<string>32.IBPluginDependency</string>
-					<string>33.IBPluginDependency</string>
 					<string>35.CustomClassName</string>
 					<string>37.IBPluginDependency</string>
 					<string>38.CustomClassName</string>
@@ -881,9 +839,6 @@ A</string>
 					<string>BXHUDLevelIndicatorCell</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>BXHUDLabel</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>BXHUDLabel</string>

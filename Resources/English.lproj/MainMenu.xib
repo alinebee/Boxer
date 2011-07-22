@@ -1331,7 +1331,7 @@
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<object class="NSMenuItem" id="118784418">
 						<reference key="NSMenu" ref="881225046"/>
-						<string key="NSTitle">Show game in Finder</string>
+						<string key="NSTitle">Show Game in Finder</string>
 						<string key="NSKeyEquiv"/>
 						<int key="NSMnemonicLoc">2147483647</int>
 						<reference key="NSOnImage" ref="569538535"/>
@@ -4549,12 +4549,14 @@
 							<string>showGamePanel:</string>
 							<string>showGamePanelHelp:</string>
 							<string>showInactiveJoystickPanelHelp:</string>
+							<string>showJoystickPanel:</string>
 							<string>showJoystickPanelHelp:</string>
 							<string>showMousePanel:</string>
 							<string>showMousePanelHelp:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -4578,6 +4580,7 @@
 							<string>showGamePanel:</string>
 							<string>showGamePanelHelp:</string>
 							<string>showInactiveJoystickPanelHelp:</string>
+							<string>showJoystickPanel:</string>
 							<string>showJoystickPanelHelp:</string>
 							<string>showMousePanel:</string>
 							<string>showMousePanelHelp:</string>
@@ -4610,6 +4613,10 @@
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">showInactiveJoystickPanelHelp:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">showJoystickPanel:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">

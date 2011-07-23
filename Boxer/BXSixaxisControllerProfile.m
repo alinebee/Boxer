@@ -14,9 +14,7 @@
 #pragma mark -
 #pragma mark Private constants
 
-#define BXVendorIDSony 0x054C
-
-#define BXSixaxisControllerVendorID		BXVendorIDSony
+#define BXSixaxisControllerVendorID		BXHIDVendorIDSony
 #define BXSixaxisControllerProductID	0x0268
 
 enum {

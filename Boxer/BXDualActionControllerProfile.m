@@ -13,16 +13,14 @@
 #pragma mark -
 #pragma mark Private constants
 
-#define BXVendorIDLogitech 0x046d
-
 //NOTE: while in DirectInput mode, the F310 and F510 report themselves as the older
 //Dual-Action and RumblePad 2 models respectively. These gamepads only work in DirectInput
 //mode on OS X, as the alternative (XInput mode) does not report an HID profile.
 
-#define BXDualActionVendorID	BXVendorIDLogitech
+#define BXDualActionVendorID	BXHIDVendorIDLogitech
 #define BXDualActionProductID	0xc216
 
-#define BXRumblePad2VendorID    BXVendorIDLogitech
+#define BXRumblePad2VendorID    BXHIDVendorIDLogitech
 #define BXRumblePad2ProductID   0xc218
 
 

@@ -19,8 +19,6 @@
 #define BXG25PedalDeadzone 0.1f
 
 
-#define BXHIDVendorIDLogitech 0x046d
-
 #define BXG25ControllerVendorID         BXHIDVendorIDLogitech
 #define BXG25ControllerProductID        0xc294
 

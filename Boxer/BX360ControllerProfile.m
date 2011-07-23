@@ -17,14 +17,6 @@
 #pragma mark -
 #pragma mark Private constants
 
-//These constants were taken from the Info.plist for Tattiebogle’s 3rd-party 360 controller driver.
-
-#define BXHIDVendorIDMicrosoft 0x045e
-#define BXHIDVendorIDMadCatz 0x0738
-#define BXHIDVendorIDHori 0x0f0d
-#define BXHIDVendorIDJoyTek 0x162e
-#define BXHIDVendorIDPelican 0x0e6f
-#define BXHIDVendorIDBigBen 0x146b
 
 //The official Microsoft 360 controller
 #define BX360ControllerVendorID         BXHIDVendorIDMicrosoft

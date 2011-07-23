@@ -24,6 +24,17 @@ extern NSString * const BXControllerProfileDPadUp;
 extern NSString * const BXControllerProfileDPadDown;
 
 
+#define BXHIDVendorIDMicrosoft 0x045e
+#define BXHIDVendorIDSony 0x054c
+#define BXHIDVendorIDLogitech 0x046d
+
+#define BXHIDVendorIDMadCatz 0x0738
+#define BXHIDVendorIDHori 0x0f0d
+#define BXHIDVendorIDJoyTek 0x162e
+#define BXHIDVendorIDPelican 0x0e6f
+#define BXHIDVendorIDBigBen 0x146b
+
+
 
 #pragma mark -
 #pragma mark Private interface

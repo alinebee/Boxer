@@ -330,6 +330,7 @@
 		9FC8F50C10934F3400AD6307 /* NSString+BXPaths.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC8F50B10934F3400AD6307 /* NSString+BXPaths.m */; };
 		9FC9E4E1136725190095DCDE /* BXEmulatedJoystick.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FC9E4E0136725190095DCDE /* BXEmulatedJoystick.mm */; };
 		9FC9E58F1367514C0095DCDE /* BXCHFlightstick.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FC9E58E1367514C0095DCDE /* BXCHFlightstick.mm */; };
+		9FCA702213DAE6F5006C5DF8 /* BXCoalfaceDrives.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FCA702113DAE6F5006C5DF8 /* BXCoalfaceDrives.mm */; };
 		9FCBB2D010A61CA800C28B09 /* boxer.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CD10A61CA800C28B09 /* boxer.icns */; };
 		9FCBB2D110A61CA800C28B09 /* executable.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CE10A61CA800C28B09 /* executable.icns */; };
 		9FCBB2D210A61CA800C28B09 /* package.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CF10A61CA800C28B09 /* package.icns */; };
@@ -1009,6 +1010,8 @@
 		9FC9E58E1367514C0095DCDE /* BXCHFlightstick.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXCHFlightstick.mm; sourceTree = "<group>"; };
 		9FC9E59A13675A8B0095DCDE /* BXEmulatedJoystickPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatedJoystickPrivate.h; sourceTree = "<group>"; };
 		9FC9E59B13675A8B0095DCDE /* BXEmulatedJoystickPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatedJoystickPrivate.h; sourceTree = "<group>"; };
+		9FCA702013DAE6B1006C5DF8 /* BXCoalfaceDrives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCoalfaceDrives.h; sourceTree = "<group>"; };
+		9FCA702113DAE6F5006C5DF8 /* BXCoalfaceDrives.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXCoalfaceDrives.mm; sourceTree = "<group>"; };
 		9FCBB2CD10A61CA800C28B09 /* boxer.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = boxer.icns; sourceTree = "<group>"; };
 		9FCBB2CE10A61CA800C28B09 /* executable.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = executable.icns; sourceTree = "<group>"; };
 		9FCBB2CF10A61CA800C28B09 /* package.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = package.icns; sourceTree = "<group>"; };
@@ -1380,13 +1383,15 @@
 				9F675DE40F8F4D49001FCE5F /* BXEmulator+BXDOSFileSystem.mm */,
 				9F44E5E210D17A4C0081B8D2 /* BXEmulator+BXPaste.h */,
 				9F44E5E310D17A4C0081B8D2 /* BXEmulator+BXPaste.mm */,
-				9FDCA78E118F2B7900E2FD74 /* BXCoalface.h */,
-				9FDCA78F118F2B7900E2FD74 /* BXCoalface.mm */,
 				9FF175E511B279F500D0FCDC /* BXVideoHandler.h */,
 				9FF175E611B279F500D0FCDC /* BXVideoHandler.mm */,
 				9FEBB70E11DF9BB50055933F /* BXEmulatorDelegate.h */,
 				9FF2E9BB11E6F4950051E485 /* BXEmulatorConfiguration.h */,
 				9FF2E9BC11E6F4950051E485 /* BXEmulatorConfiguration.m */,
+				9FDCA78E118F2B7900E2FD74 /* BXCoalface.h */,
+				9FDCA78F118F2B7900E2FD74 /* BXCoalface.mm */,
+				9FCA702013DAE6B1006C5DF8 /* BXCoalfaceDrives.h */,
+				9FCA702113DAE6F5006C5DF8 /* BXCoalfaceDrives.mm */,
 			);
 			comments = "The sourcefiles in this group interface directly with DOSBox's internals. For this reason, they need to be compiled as Objective C++ rather than Objective C.";
 			name = Emulator;
@@ -2833,6 +2838,7 @@
 				9FC2F84013D60FBD00BD4F6B /* BXDualActionControllerProfile.m in Sources */,
 				9F70277B13D706CC00606B4C /* BXBezelController.m in Sources */,
 				9F70278413D72D8100606B4C /* BXHUDControls.m in Sources */,
+				9FCA702213DAE6F5006C5DF8 /* BXCoalfaceDrives.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

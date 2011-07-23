@@ -29,6 +29,11 @@
 #include "cross.h"
 #include "bios.h"
 
+//--Added 2011-04-18 by Alun Bestor to fix FAT image endianness bugs
+#import "BXCoalfaceDrives.h"
+//--endif
+
+
 #define IMGTYPE_FLOPPY 0
 #define IMGTYPE_ISO    1
 #define IMGTYPE_HDD	   2
@@ -661,6 +666,10 @@ fatDrive::fatDrive(const char *sysFilename, Bit32u bytesector, Bit32u cylsector,
 
 		loadedDisk->Read_Sector(0,0,1,&mbrData);
 
+        //--Added 2011-07-23 by Alun Bestor to correct byte order for PowerPC endianness
+        mbrData = boxer_FATPartitionTableLittleToHost(mbrData);
+        //--End of modifications
+        
 		if(mbrData.magic1!= 0x55 ||	mbrData.magic2!= 0xaa) LOG_MSG("Possibly invalid partition table in disk image.");
 
 		startSector = 63;
@@ -683,6 +692,11 @@ fatDrive::fatDrive(const char *sysFilename, Bit32u bytesector, Bit32u cylsector,
 	}
 
 	loadedDisk->Read_AbsoluteSector(0+partSectOff,&bootbuffer);
+    
+    //--Added 2011-07-22 by Alun Bestor to correct byte order for PowerPC endianness
+    bootbuffer = boxer_FATBootstrapLittleToHost(bootbuffer);
+    //--End of modifications
+    
 	if ((bootbuffer.magic1 != 0x55) || (bootbuffer.magic2 != 0xaa)) {
 		/* Not a FAT filesystem */
 		LOG_MSG("Loaded image has no valid magicnumbers at the end!");
@@ -931,6 +945,10 @@ nextfile:
 	dirPos++;
 	dta.SetDirID(dirPos);
 
+    //--Added 2011-07-23 by Alun Bestor to correct byte order for PowerPC endianness.
+    sectbuf[entryoffset] = boxer_FATDirEntryLittleToHost(sectbuf[entryoffset]);
+    //--End of modifications
+    
 	/* Deleted file entry */
 	if (sectbuf[entryoffset].entryname[0] == 0xe5) goto nextfile;
 
@@ -1022,7 +1040,10 @@ bool fatDrive::directoryBrowse(Bit32u dirClustNumber, direntry *useEntry, Bit32s
 			loadedDisk->Read_AbsoluteSector(tmpsector,sectbuf);
 		}
 		dirPos++;
-
+        
+        //--Added 2011-07-23 by Alun Bestor to correct byte order for PowerPC endianness.
+        sectbuf[entryoffset] = boxer_FATDirEntryLittleToHost(sectbuf[entryoffset]);
+        //--End of modifications
 
 		/* End of directory list */
 		if (sectbuf[entryoffset].entryname[0] == 0x00) return false;
@@ -1057,13 +1078,17 @@ bool fatDrive::directoryChange(Bit32u dirClustNumber, direntry *useEntry, Bit32s
 		}
 		dirPos++;
 
-
 		/* End of directory list */
 		if (sectbuf[entryoffset].entryname[0] == 0x00) return false;
 		--entNum;
 	}
 	if(tmpsector != 0) {
         memcpy(&sectbuf[entryoffset], useEntry, sizeof(direntry));
+        
+        //--Added 2011-07-23 by Alun Bestor to correct byte order for PowerPC endianness.
+        sectbuf[entryoffset] = boxer_FATDirEntryHostToLittle(sectbuf[entryoffset]);
+        //--End of modifications
+        
 		loadedDisk->Write_AbsoluteSector(tmpsector, sectbuf);
         return true;
 	} else {
@@ -1104,7 +1129,13 @@ bool fatDrive::addDirectoryEntry(Bit32u dirClustNumber, direntry useEntry) {
 
 		/* Deleted file entry or end of directory list */
 		if ((sectbuf[entryoffset].entryname[0] == 0xe5) || (sectbuf[entryoffset].entryname[0] == 0x00)) {
+            
 			sectbuf[entryoffset] = useEntry;
+            
+            //--Added 2011-07-23 by Alun Bestor to correct byte order coming from PowerPC endianness.
+            sectbuf[entryoffset] = boxer_FATDirEntryHostToLittle(sectbuf[entryoffset]);
+            //--End of modifications
+            
 			loadedDisk->Write_AbsoluteSector(tmpsector,sectbuf);
 			break;
 		}

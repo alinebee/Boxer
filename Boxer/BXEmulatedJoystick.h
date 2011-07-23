@@ -185,6 +185,9 @@ enum {
 - (void) buttonPressed: (BXEmulatedJoystickButton)button;
 - (void) buttonPressed: (BXEmulatedJoystickButton)button forDuration: (NSTimeInterval)duration;
 
++ (BOOL) instancesSupportAxis: (NSString *)axisName;
+- (BOOL) supportsAxis: (NSString *)axisName;
+
 - (float) positionForAxis: (NSString *)axis;
 - (void) setPosition: (float)position forAxis: (NSString *)axis;
 @end

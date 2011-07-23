@@ -158,7 +158,7 @@
         [joystick setWheelAxis: roll];
     }
     //Map roll and pitch to X and Y axes
-    else if ([joystick supportsAxis: @"xAxis"] && [joystick supportsAxis: @"yAxis"])
+    else if ([joystick supportsAxis: BXAxisX] && [joystick supportsAxis: BXAxisY])
     {
         //Normally 0.0 pitch is completely vertical, +1.0 pitch is horizontal.
         //We want our pitch's 0 resting position to be at about 45 degrees,
@@ -192,7 +192,7 @@
         BXEmulatedPOVDirection direction = [[self class] emulatedPOVDirectionForDPadButton: dpadButton];
         [joystick POV: 0 directionUp: direction];
     }
-    else if ([joystick supportsAxis: @"xAxis"] && [joystick supportsAxis: @"yAxis"])
+    else if ([joystick supportsAxis: BXAxisX] && [joystick supportsAxis: BXAxisY])
     {
         switch (dpadButton)
         {
@@ -221,7 +221,7 @@
         BXEmulatedPOVDirection direction = [[self class] emulatedPOVDirectionForDPadButton: dpadButton];
         [joystick POV: 0 directionDown: direction];
     }
-    else if ([joystick supportsAxis: @"xAxis"] && [joystick supportsAxis: @"yAxis"])
+    else if ([joystick supportsAxis: BXAxisX] && [joystick supportsAxis: BXAxisY])
     {
         switch (dpadButton)
         {
@@ -363,7 +363,7 @@
 {
     id joystick = [self _emulatedJoystick];
     
-    if ([joystick supportsAxis: @"xAxis"] && [joystick supportsAxis: @"yAxis"])
+    if ([joystick supportsAxis: BXAxisX] && [joystick supportsAxis: BXAxisY])
     {
         //Joypad SDK provides stick position as polar coordinates
         //(angle and distance); we need to convert this to cartesian

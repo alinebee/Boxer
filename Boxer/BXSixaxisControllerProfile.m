@@ -128,14 +128,14 @@ enum {
             
         case BXSixaxisControllerLeftTrigger:
             if (isWheel)
-                binding = [BXButtonToAxis bindingWithAxis: @"brakeAxis"];
+                binding = [BXButtonToAxis bindingWithAxis: BXAxisBrake];
             else
                 binding = [BXButtonToButton bindingWithButton: BXEmulatedJoystickButton2];
             break;
             
         case BXSixaxisControllerRightTrigger:
             if (isWheel)
-                binding = [BXButtonToAxis bindingWithAxis: @"acceleratorAxis"];
+                binding = [BXButtonToAxis bindingWithAxis: BXAxisAccelerator];
             else
                 binding = [BXButtonToButton bindingWithButton: BXEmulatedJoystickButton1];
             break;

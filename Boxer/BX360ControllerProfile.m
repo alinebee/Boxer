@@ -215,12 +215,12 @@ enum {
         switch([[element usage] usageId])
         {
             case BX360ControllerLeftTrigger:
-                binding = [BXAxisToAxis bindingWithAxis: @"brakeAxis"];
+                binding = [BXAxisToAxis bindingWithAxis: BXAxisBrake];
                 [binding setUnidirectional: YES];
                 break;
                 
             case BX360ControllerRightTrigger:
-                binding = [BXAxisToAxis bindingWithAxis: @"acceleratorAxis"];
+                binding = [BXAxisToAxis bindingWithAxis: BXAxisAccelerator];
                 [binding setUnidirectional: YES];
                 break;
                 

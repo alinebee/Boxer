@@ -247,10 +247,9 @@ static NSMutableArray *profileClasses = nil;
                 wheel = [elements objectAtIndex: 0];
             
             
-            //Our ideal preference for the pedals is the second axis of the second
+            //Our preference for the pedals is the second axis of the second
             //stick, which for gamepads should correspond to the vertical axis
-            //of the right thumbstick. (The actual element could have any of a
-            //range of usage IDs, so we can't go by that.)
+            //of the right thumbstick.
             DDHidElement *pedalAxis;
             NSArray *sticks = [[self HIDController] sticks];
             NSUInteger numSticks = [sticks count];
@@ -261,11 +260,11 @@ static NSMutableArray *profileClasses = nil;
                     pedalAxis = [secondStickAxes objectAtIndex: 1];
             }
             
-            //Failing that, we fall back on the regular Y axis...
+            //Failing that, fall back on the regular Y axis...
             if (!pedalAxis)
                 pedalAxis = [[self HIDController] axisElementWithUsageID: kHIDUsage_GD_Y];
             
-            //...and failing that, we fall back on the second axis we can find.
+            //...and failing that, fall back on the second axis we can find.
             if (!pedalAxis)
                 pedalAxis = [elements objectAtIndex: 1];
             
@@ -405,7 +404,7 @@ static NSMutableArray *profileClasses = nil;
                 //TODO: heuristics to detect proper throttle wheels that *don't*
                 //spring back to center.
                 
-                id binding = [BXAxisToAxisAdditive bindingWithAxis: @"throttleAxis"];
+                id <BXPeriodicInputBinding> binding = [BXAxisToAxisAdditive bindingWithAxis: @"throttleAxis"];
                 [binding setDelegate: self];
                 return binding;
             }

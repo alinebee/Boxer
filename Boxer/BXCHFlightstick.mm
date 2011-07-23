@@ -61,6 +61,16 @@ enum {
 - (NSUInteger) numAxes			{ return 4; }
 - (NSUInteger) numPOVSwitches	{ return 1; }
 
+
+- (void) didConnect
+{
+    [super didConnect];
+    
+    //Center the throttle axis after connection,
+    //since clearInput will not do this normally
+	JOYSTICK_Move_Y(BXGameportStick2, BXGameportAxisCentered);
+}
+
 - (void) clearInput
 {
 	JOYSTICK_Move_X(BXGameportStick1, BXGameportAxisCentered);

@@ -29,7 +29,7 @@ extern NSString * const BXControllerProfileDPadDown;
 #pragma mark Private interface
 
 
-@interface BXHIDControllerProfile () <BXPeriodicInputBinding>
+@interface BXHIDControllerProfile () <BXPeriodicInputBindingDelegate>
 
 //Generates the input bindings for the controller to the emulated joystick.
 //Called whenever the controller or emulated joystick are changed.

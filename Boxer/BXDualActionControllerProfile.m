@@ -16,7 +16,7 @@
 #define BXVendorIDLogitech 0x046d
 
 //NOTE: while in DirectInput mode, the F310 and F510 report themselves as the older
-//dual-action and rumblepad 2 models respectively. These gamepads only work in DirectInput
+//Dual-Action and RumblePad 2 models respectively. These gamepads only work in DirectInput
 //mode on OS X, as the alternative (XInput mode) does not report an HID profile.
 
 #define BXDualActionVendorID	BXVendorIDLogitech
@@ -26,12 +26,27 @@
 #define BXRumblePad2ProductID   0xc218
 
 
-//Shoulder and trigger buttons
 enum {
-	BXDualActionControllerLeftShoulder	= kHIDUsage_Button_4+1,
+    BXDualActionButton1 = kHIDUsage_Button_1,
+    BXDualActionButton2,
+    BXDualActionButton3,
+    BXDualActionButton4,
+    
+	BXDualActionControllerLeftShoulder,
 	BXDualActionControllerRightShoulder,
 	BXDualActionControllerLeftTrigger,
-	BXDualActionControllerRightTrigger
+	BXDualActionControllerRightTrigger,
+    
+    BXDualActionControllerBackButton,
+	BXDualActionControllerStartButton,
+    BXDualActionControllerLeftStickClick,
+	BXDualActionControllerRightStickClick,
+
+    //Enumerated and labelled in dumb order, nice one guys!
+    BXFx10AButton = BXDualActionButton2,
+    BXFx10BButton = BXDualActionButton3,
+    BXFx10XButton = BXDualActionButton1,
+    BXFx10YButton = BXDualActionButton4
 };
 
 @interface BXDualActionControllerProfile : BXHIDControllerProfile
@@ -88,6 +103,26 @@ enum {
             binding = [BXButtonToButton bindingWithButton:
                        isWheel ? BXEmulatedJoystickButton1 : BXEmulatedJoystickButton3];
 			break;
+            
+        //Remap the Fx10 face buttons to a more sensible layout.
+        //This will make the button labels incorrect on the original Dual-Action/RumblePad 2,
+        //but the Fx10 series is probably more common these days.
+        //TODO: figure out a heuristic to tell the difference between the two 'eras'.
+        case BXFx10AButton:
+            binding = [BXButtonToButton bindingWithButton: BXEmulatedJoystickButton1];
+            break;
+            
+        case BXFx10BButton:
+            binding = [BXButtonToButton bindingWithButton: BXEmulatedJoystickButton2];
+            break;
+            
+        case BXFx10XButton:
+            binding = [BXButtonToButton bindingWithButton: BXEmulatedJoystickButton3];
+            break;
+            
+        case BXFx10YButton:
+            binding = [BXButtonToButton bindingWithButton: BXEmulatedJoystickButton4];
+            break;
             
         default:
             binding = [super generatedBindingForButtonElement: element];

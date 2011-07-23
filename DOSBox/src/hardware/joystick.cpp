@@ -157,11 +157,13 @@ static void write_p201_timed(Bitu port,Bitu val,Bitu iolen) {
 
 //--Modified 2011-05-08 by Alun Bestor to let Boxer toggle the gameport timing on the fly.
 static Bitu read_p201_switchable(Bitu port,Bitu iolen) {
-	if (gameport_timed && !write_active) return read_p201_timed(port, iolen);
+    boxer_setJoystickActive(true);
+    if (gameport_timed && !write_active) return read_p201_timed(port, iolen);
 	else return read_p201(port, iolen);
 }
 
 static void write_p201_switchable(Bitu port,Bitu val,Bitu iolen) {
+    boxer_setJoystickActive(true);
 	if (gameport_timed) write_p201_timed(port, val, iolen);
 	else write_p201(port, val, iolen);
 }

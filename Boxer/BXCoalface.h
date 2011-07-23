@@ -90,6 +90,7 @@ extern "C" {
 	//Called from dosbox.cpp to short-circuit the emulation loop.	
 	bool boxer_handleRunLoop();
 	
+    void boxer_setJoystickActive(bool joystickActive);
 	void boxer_setMouseActive(bool mouseActive);
 	void boxer_mouseMovedToPoint(float x, float y);
 	

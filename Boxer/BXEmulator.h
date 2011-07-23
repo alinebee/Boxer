@@ -70,6 +70,8 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 	BXEmulatedKeyboard *keyboard;
 	BXEmulatedMouse *mouse;
 	id <BXEmulatedJoystick> joystick;
+    
+    BOOL joystickActive;
 	
 	NSString *processName;
 	NSString *processPath;
@@ -162,8 +164,15 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 //The current gameport timing mode.
 @property (assign, nonatomic) BXGameportTimingMode gameportTimingMode;
 
-//The game's joystick support.
+//The game's level of joystick support:
+//none, simple (2-button, 2-axis) or full (4-button, 4-axis).
+//This is determined from the "joysticktype" conf setting,
+//and affects the choice of joystick types Boxer offers.
 @property (readonly, nonatomic) BXJoystickSupportLevel joystickSupport;
+
+//Whether the current program has indicated that it accepts joystick input,
+//by attempting to read from the gameport.
+@property (readonly, nonatomic) BOOL joystickActive;
 
 
 #pragma mark -

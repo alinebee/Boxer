@@ -40,6 +40,8 @@ typedef struct BXDriveGeometry {
 @property (readwrite, copy, nonatomic) NSString *processPath;
 @property (readwrite, copy, nonatomic) NSString *processLocalPath;
 
+@property (readwrite, nonatomic) BOOL joystickActive;
+
 @end
 
 

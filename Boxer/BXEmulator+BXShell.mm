@@ -493,7 +493,11 @@ nil];
 
 - (void) _didReturnToShell
 {
+    //Indicate the session has stopped listening for mouse and joystick
+    //input now that it has returned to the DOS prompt.
 	[[self mouse] setActive: NO];
+    [self setJoystickActive: NO];
+    
 	[self _postNotificationName: BXEmulatorDidReturnToShellNotification
 			   delegateSelector: @selector(emulatorDidReturnToShell:)
 					   userInfo: nil];

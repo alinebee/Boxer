@@ -51,10 +51,8 @@
 					<object class="NSTextField" id="537414232">
 						<reference key="NSNextResponder" ref="959508283"/>
 						<int key="NSvFlags">274</int>
-						<string key="NSFrame">{{20, 23}, {301, 44}}</string>
+						<string key="NSFrame">{{20, 23}, {300, 44}}</string>
 						<reference key="NSSuperview" ref="959508283"/>
-						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="422971973">
 							<int key="NSCellFlags">67239424</int>
@@ -88,9 +86,8 @@ A</string>
 						</object>
 					</object>
 				</object>
-				<string key="NSFrameSize">{341, 90}</string>
+				<string key="NSFrameSize">{340, 90}</string>
 				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="537414232"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
@@ -261,7 +258,7 @@ A</string>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
 			<object class="NSCustomView" id="759628227">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -318,7 +315,6 @@ A</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{220, 200}</string>
-				<reference key="NSSuperview"/>
 				<reference key="NSNextKeyView" ref="457239935"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
@@ -366,7 +362,6 @@ A</string>
 						<int key="NSvFlags">306</int>
 						<string key="NSFrame">{{17, 29}, {186, 22}}</string>
 						<reference key="NSSuperview" ref="962612140"/>
-						<reference key="NSNextKeyView"/>
 						<int key="NSTag">4</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="128157044">
@@ -429,7 +424,6 @@ A</string>
 						<int key="NSvFlags">306</int>
 						<string key="NSFrame">{{17, 29}, {186, 22}}</string>
 						<reference key="NSSuperview" ref="271727742"/>
-						<reference key="NSNextKeyView"/>
 						<int key="NSTag">4</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="614521328">
@@ -446,6 +440,58 @@ A</string>
 				<string key="NSFrameSize">{220, 200}</string>
 				<reference key="NSSuperview"/>
 				<reference key="NSNextKeyView" ref="938304970"/>
+				<string key="NSClassName">BXBezelView</string>
+			</object>
+			<object class="NSCustomView" id="277571684">
+				<reference key="NSNextResponder"/>
+				<int key="NSvFlags">268</int>
+				<object class="NSMutableArray" key="NSSubviews">
+					<bool key="EncodedWithXMLCoder">YES</bool>
+					<object class="NSTextField" id="172960755">
+						<reference key="NSNextResponder" ref="277571684"/>
+						<int key="NSvFlags">266</int>
+						<string key="NSFrame">{{17, 20}, {306, 36}}</string>
+						<reference key="NSSuperview" ref="277571684"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSTextFieldCell" key="NSCell" id="290505995">
+							<int key="NSCellFlags">67239424</int>
+							<int key="NSCellFlags2">138412032</int>
+							<string type="base64-UTF8" key="NSContents">WW91IG1heSBuZWVkIHRvIHR1cm4gb24Kam95c3RpY2sgY29udHJvbCB3aXRoaW4gdGhlIGdhbWUuA</string>
+							<object class="NSFont" key="NSSupport">
+								<string key="NSName">LucidaGrande</string>
+								<double key="NSSize">14</double>
+								<int key="NSfFlags">16</int>
+							</object>
+							<reference key="NSControlView" ref="172960755"/>
+							<reference key="NSBackgroundColor" ref="372717747"/>
+							<reference key="NSTextColor" ref="1005397457"/>
+						</object>
+					</object>
+					<object class="NSTextField" id="647359916">
+						<reference key="NSNextResponder" ref="277571684"/>
+						<int key="NSvFlags">266</int>
+						<string key="NSFrame">{{17, 64}, {306, 44}}</string>
+						<reference key="NSSuperview" ref="277571684"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView" ref="172960755"/>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSTextFieldCell" key="NSCell" id="1021451359">
+							<int key="NSCellFlags">67239424</int>
+							<int key="NSCellFlags2">138412032</int>
+							<string type="base64-UTF8" key="NSContents">VGhpcyBnYW1lIGlzIG5vdCByZXNwb25kaW5nCnRvIGpveXN0aWNrIGlucHV0Lg</string>
+							<reference key="NSSupport" ref="954562412"/>
+							<reference key="NSControlView" ref="647359916"/>
+							<reference key="NSBackgroundColor" ref="372717747"/>
+							<reference key="NSTextColor" ref="1005397457"/>
+						</object>
+					</object>
+				</object>
+				<string key="NSFrameSize">{340, 128}</string>
+				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
+				<reference key="NSNextKeyView" ref="647359916"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
 		</object>
@@ -499,6 +545,14 @@ A</string>
 						<reference key="destination" ref="962612140"/>
 					</object>
 					<int key="connectionID">50</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">joystickIgnoredBezel</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="277571684"/>
+					</object>
+					<int key="connectionID">54</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -777,6 +831,45 @@ A</string>
 						<reference key="object" ref="166234175"/>
 						<reference key="parent" ref="938304970"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">51</int>
+						<reference key="object" ref="277571684"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="172960755"/>
+							<reference ref="647359916"/>
+						</object>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Joystick Ignored Bezel</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">52</int>
+						<reference key="object" ref="647359916"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="1021451359"/>
+						</object>
+						<reference key="parent" ref="277571684"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">53</int>
+						<reference key="object" ref="1021451359"/>
+						<reference key="parent" ref="647359916"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">55</int>
+						<reference key="object" ref="172960755"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="290505995"/>
+						</object>
+						<reference key="parent" ref="277571684"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">56</int>
+						<reference key="object" ref="290505995"/>
+						<reference key="parent" ref="172960755"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -816,6 +909,13 @@ A</string>
 					<string>48.CustomClassName</string>
 					<string>5.CustomClassName</string>
 					<string>5.IBPluginDependency</string>
+					<string>51.IBPluginDependency</string>
+					<string>52.CustomClassName</string>
+					<string>52.IBPluginDependency</string>
+					<string>53.IBPluginDependency</string>
+					<string>55.CustomClassName</string>
+					<string>55.IBPluginDependency</string>
+					<string>56.IBPluginDependency</string>
 					<string>6.IBPluginDependency</string>
 					<string>7.IBPluginDependency</string>
 					<string>8.CustomClassName</string>
@@ -858,6 +958,13 @@ A</string>
 					<string>BXHUDLabel</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>BXHUDLabel</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>BXHUDLabel</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>BXHUDLabel</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -876,7 +983,7 @@ A</string>
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">50</int>
+			<int key="maxID">56</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -901,10 +1008,12 @@ A</string>
 							<string>driveImportedBezel</string>
 							<string>driveRemovedBezel</string>
 							<string>fullscreenBezel</string>
+							<string>joystickIgnoredBezel</string>
 							<string>throttleBezel</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSView</string>
 							<string>NSView</string>
 							<string>NSView</string>
 							<string>NSView</string>
@@ -922,6 +1031,7 @@ A</string>
 							<string>driveImportedBezel</string>
 							<string>driveRemovedBezel</string>
 							<string>fullscreenBezel</string>
+							<string>joystickIgnoredBezel</string>
 							<string>throttleBezel</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
@@ -944,6 +1054,10 @@ A</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">fullscreenBezel</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">joystickIgnoredBezel</string>
 								<string key="candidateClassName">NSView</string>
 							</object>
 							<object class="IBToOneOutletInfo">

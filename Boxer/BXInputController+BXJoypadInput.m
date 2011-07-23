@@ -12,6 +12,9 @@
 #import "BXJoypadLayout.h"
 #import "JoypadSDK.h"
 #import "BXEmulatedKeyboard.h"
+#import "BXBezelController.h"
+#import "BXVideoHandler.h"
+
 
 //Deadzone for Joypad wheel emulation: devices within +/- this deadzone
 //will be treated as centered.
@@ -94,6 +97,17 @@
 - (BOOL) joypadControllersAvailable
 {
     return [[[NSApp delegate] joypadController] hasJoypadDevices];
+}
+
+- (void) _warnIfJoystickInactive
+{
+    //If the game has loaded and seems to be ignoring joystick input right now,
+    //and the user is poking away in Joypad, show a notification
+    BXEmulator *emulator = [[self representedObject] emulator];
+    if (![emulator joystickActive] && [emulator isRunningProcess] && ![[emulator videoHandler] isInTextMode])
+    {
+        [[BXBezelController controller] showJoystickIgnoredBezel];
+    }
 }
 
 //Passed on by BXJoypadController whenever a device is connected/disconnected
@@ -213,6 +227,7 @@
                  dPad: (JoyInputIdentifier)dpad
            buttonDown: (JoyDpadButton)dpadButton
 {
+    [self _warnIfJoystickInactive];
     
     id joystick = [self _emulatedJoystick];
     
@@ -304,6 +319,8 @@
 - (void) joypadDevice: (JoypadDevice *)device
            buttonDown: (JoyInputIdentifier)button
 {
+    [self _warnIfJoystickInactive];
+
     id joystick = [self _emulatedJoystick];
     BXEmulatedKeyboard *keyboard = [self _emulatedKeyboard];
     
@@ -361,6 +378,8 @@
           analogStick: (JoyInputIdentifier)stick
               didMove: (JoypadStickPosition)newPosition
 {
+    [self _warnIfJoystickInactive];
+
     id joystick = [self _emulatedJoystick];
     
     if ([joystick supportsAxis: BXAxisX] && [joystick supportsAxis: BXAxisY])

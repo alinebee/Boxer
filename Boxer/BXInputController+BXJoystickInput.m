@@ -10,7 +10,20 @@
 #import "BXAppController.h"
 #import "BXJoystickController.h"
 #import "BXHIDControllerProfile.h"
+#import "BXBezelController.h"
+#import "BXVideoHandler.h"
 
+
+#pragma mark -
+#pragma mark Constants
+
+//Axis input over this amount will be considered obviously deliberate,
+//rather than slop from a loose controller axis. Used by HIDEventIsDeliberate:
+#define BXDeliberateAxisInputThreshold DDHID_JOYSTICK_VALUE_MAX / 2
+
+
+#pragma mark -
+#pragma mark Implementation
 
 @implementation BXInputController (BXJoystickInput)
 //Synthesized in BXInputController.m, but compiler overlooks that and throws up warnings otherwise
@@ -225,9 +238,26 @@
 #pragma mark -
 #pragma mark Handling HID events
 
++ (BOOL) HIDEventIsDeliberate: (BXHIDEvent *)event
+{
+    if ([event type] == BXHIDJoystickButtonDown) return YES;
+    if ([event POVDirection] != BXHIDPOVCentered) return YES;
+    if (ABS([event axisPosition]) > BXDeliberateAxisInputThreshold) return YES;
+    return NO;
+}
+
 //Send the event on to the controller profile for the specified device
 - (void) dispatchHIDEvent: (BXHIDEvent *)event
 {
+    //If the game has loaded and seems to be ignoring joystick input right now,
+    //and the user is making 'significant' controller input, show a notification
+    BXEmulator *emulator = [[self representedObject] emulator];
+    if (![emulator joystickActive] && [emulator isRunningProcess] && ![[emulator videoHandler] isInTextMode] && [[self class] HIDEventIsDeliberate: event])
+    {
+        [[BXBezelController controller] showJoystickIgnoredBezel];
+    }
+    
+    
 	DDHidDevice *device = [event device];
 	NSNumber *locationID = [NSNumber numberWithLong: [device locationId]];
 	

@@ -87,7 +87,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 @synthesize configFiles;
 @synthesize commandQueue;
 @synthesize videoHandler;
-@synthesize mouse, keyboard, joystick;
+@synthesize mouse, keyboard, joystick, joystickActive;
 @synthesize cancelled, executing, initialized;
 
 
@@ -475,6 +475,18 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 		gameport_timed = mode;
 		[[self joystick] clearInput];
 	}
+}
+
+- (void) setJoystickActive: (BOOL)flag
+{
+    //TWEAK: disregard attempts to access the gameport when there's nothing connected to it.
+    //This way, the joystickActive flag indicates to Boxer whether the game is *still* listening
+    //to input, rather than whether the game looked for a joystick that wasn't there at startup
+    //and then gave up.
+    if ([self joystick] || !flag)
+    {
+        joystickActive = flag;
+    }
 }
 
 - (BXJoystickSupportLevel) joystickSupport

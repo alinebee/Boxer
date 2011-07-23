@@ -14,6 +14,7 @@
 #pragma mark Constants
 
 enum {
+    BXBezelPriorityLow,
     BXBezelPriorityNormal,
     BXBezelPriorityHigh
 };
@@ -37,6 +38,7 @@ enum {
     IBOutlet NSView *driveRemovedBezel;
     IBOutlet NSView *driveImportedBezel;
     IBOutlet NSView *fullscreenBezel;
+    IBOutlet NSView *joystickIgnoredBezel;
     IBOutlet NSView *CPUSpeedBezel;
     IBOutlet NSView *throttleBezel;
     
@@ -53,6 +55,9 @@ enum {
 
 //The bezel used for fullscreen toggle notifications.
 @property (retain, nonatomic) NSView *fullscreenBezel;
+
+//The bezel used for notifying the user that the joystick is being ignored.
+@property (retain, nonatomic) NSView *joystickIgnoredBezel;
 
 //The bezel view used for CPU speed notifications.
 @property (retain, nonatomic) NSView *CPUSpeedBezel;
@@ -81,6 +86,7 @@ enum {
                               toPackage: (BXPackage *)package;
 
 - (void) showFullscreenBezel;
+- (void) showJoystickIgnoredBezel;
 
 - (void) showCPUSpeedBezelForSpeed: (NSInteger)cpuSpeed;
 - (void) showThrottleBezelForValue: (float)throttleValue;

@@ -116,6 +116,9 @@
 //Recreate HID controller profiles whenever the available controllers change or the emulated game's joystick changes.
 - (void) _syncControllerProfiles;
 
+//Returns whether the event represents a deliberate user action rather than 'noise' from the device.
++ (BOOL) HIDEventIsDeliberate: (BXHIDEvent *)event;
+
 @end
 
 
@@ -138,5 +141,9 @@
 
 //Called whenever a Joypad disconnects/reconnects to reset internal tracking values.
 - (void) _resetJoypadTrackingValues;
+
+//Show a warning to the user if the game seems to be ignoring joystick input.
+//Called internally if Joypad input is received while the joystick is inactive.
+- (void) _warnIfJoystickInactive;
 
 @end

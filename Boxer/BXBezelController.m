@@ -18,14 +18,15 @@
 
 #define BXBezelFadeDuration 0.25
 
-#define BXFullscreenBezelDuration 3
-#define BXDriveBezelDuration 3
+#define BXFullscreenBezelDuration 3.0
+#define BXJoystickIgnoredBezelDuration 3.0
+#define BXDriveBezelDuration 3.0
 #define BXCPUBezelDuration 0.75
 #define BXThrottleBezelDuration 0.75
 
 
 @implementation BXBezelController
-@synthesize driveAddedBezel, driveRemovedBezel, driveImportedBezel, fullscreenBezel, CPUSpeedBezel, throttleBezel;
+@synthesize driveAddedBezel, driveRemovedBezel, driveImportedBezel, fullscreenBezel, joystickIgnoredBezel, CPUSpeedBezel, throttleBezel;
 
 + (void) initialize
 {
@@ -140,7 +141,7 @@
 
 - (void) hideBezel
 {
-    currentPriority = BXBezelPriorityNormal;
+    currentPriority = BXBezelPriorityLow;
     [[self window] fadeOutWithDuration: BXBezelFadeDuration];
 }
 
@@ -164,6 +165,13 @@
     [self showBezel: [self fullscreenBezel]
         forDuration: BXFullscreenBezelDuration
            priority: BXBezelPriorityHigh];
+}
+
+- (void) showJoystickIgnoredBezel
+{
+    [self showBezel: [self joystickIgnoredBezel]
+        forDuration: BXJoystickIgnoredBezelDuration
+           priority: BXBezelPriorityLow];
 }
 
 - (void) showCPUSpeedBezelForSpeed: (NSInteger)cpuSpeed

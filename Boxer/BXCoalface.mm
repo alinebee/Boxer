@@ -263,6 +263,12 @@ void boxer_setMouseActive(bool mouseActive)
 	[[emulator mouse] setActive: mouseActive];
 }
 
+void boxer_setJoystickActive(bool joystickActive)
+{
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+	[emulator setJoystickActive: joystickActive];
+}
+
 void boxer_mouseMovedToPoint(float x, float y)
 {
 	NSPoint point = NSMakePoint((CGFloat)x, (CGFloat)y);

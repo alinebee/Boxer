@@ -204,16 +204,20 @@ enum {
 //Bind triggers to brake/accelerator for wheel emulation.
 - (void) bindAxisElementsForWheel: (NSArray *)elements
 {
-    //Apply regular controller-to-wheel binding behaviour,
-    //which will otherwise suit the 360 just fine.
-    [super bindAxisElementsForWheel: elements];
-    
-    //Add the triggers as additional pedal inputs.
     for (DDHidElement *element in elements)
     {
         id binding;
         switch([[element usage] usageId])
         {
+            case BX360ControllerLeftStickX:
+                binding = [BXAxisToAxis bindingWithAxis: BXAxisWheel];
+                break;
+                
+            case BX360ControllerRightStickY:
+                binding = [BXAxisToBindings bindingWithPositiveAxis: BXAxisBrake
+                                                       negativeAxis: BXAxisAccelerator];
+                break;
+                
             case BX360ControllerLeftTrigger:
                 binding = [BXAxisToAxis bindingWithAxis: BXAxisBrake];
                 [binding setUnidirectional: YES];

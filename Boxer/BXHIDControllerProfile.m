@@ -209,10 +209,12 @@ static NSMutableArray *profileClasses = nil;
 }
 
 
-//FIXME: this logic is really hairy and ought to be refactored.
 - (void) bindAxisElementsForWheel: (NSArray *)elements
 {
     DDHidElement *wheel, *accelerator, *brake;
+    
+    //Sort the elements by usage, to compensate for devices that enumerate them in a funny order
+    NSArray *sortedElements = [elements sortedArrayUsingSelector: @selector(compareByUsage:)];
     
     switch([elements count])
     {
@@ -222,53 +224,33 @@ static NSMutableArray *profileClasses = nil;
         case 2:
             //For 2-axis controllers, just bind the Y axis directly
             //to accelerator and brake.
-            wheel = [elements objectAtIndex: 0];
-            accelerator = brake = [elements objectAtIndex: 1];
+            wheel = [sortedElements objectAtIndex: 0];
+            accelerator = brake = [sortedElements objectAtIndex: 1];
             break;
         case 3:
             //A 3-axis controller may indicate a wheel with its pedals on individual axes.
             //(Or, it may indicate a simple flightstick, in which case this will be completely
             //wrong; but a flightstick would suck for wheel control anyway.)
-            wheel       = [elements objectAtIndex: 0];
-            brake       = [elements objectAtIndex: 1];
-            accelerator = [elements objectAtIndex: 2];
+            wheel       = [sortedElements objectAtIndex: 0];
+            brake       = [sortedElements objectAtIndex: 1];
+            accelerator = [sortedElements objectAtIndex: 2];
             break;
         default:
         {
-            //A controller with 4 or more axes usually means a gamepad.
+            //A controller with 4 or more axes usually means a gamepad
+            //(It may also mean an advanced flightstick, but see above.)
             //In this case, we try to keep the accelerator/brake axis
             //on a separate stick from the wheel, because having steering
             //and pedals on the same stick is hell to control.
             
             //Prefer to explicitly use the X axis for the wheel;
             //if there isn't one, use the first axis we can find.
-            wheel = [[self HIDController] axisElementWithUsageID: kHIDUsage_GD_X]; 
-            if (!wheel)
-                wheel = [elements objectAtIndex: 0];
+            wheel = [sortedElements objectAtIndex: 0];
             
-            
-            //Our preference for the pedals is the second axis of the second
-            //stick, which for gamepads should correspond to the vertical axis
-            //of the right thumbstick.
-            DDHidElement *pedalAxis;
-            NSArray *sticks = [[self HIDController] sticks];
-            NSUInteger numSticks = [sticks count];
-            if (numSticks > 1)
-            {
-                NSArray *secondStickAxes = [[sticks objectAtIndex: 1] axisElements];
-                if ([secondStickAxes count] > 1)
-                    pedalAxis = [secondStickAxes objectAtIndex: 1];
-            }
-            
-            //Failing that, fall back on the regular Y axis...
-            if (!pedalAxis)
-                pedalAxis = [[self HIDController] axisElementWithUsageID: kHIDUsage_GD_Y];
-            
-            //...and failing that, fall back on the second axis we can find.
-            if (!pedalAxis)
-                pedalAxis = [elements objectAtIndex: 1];
-            
-            accelerator = brake = pedalAxis;
+            //Our preference for the pedals is the fourth axis in enumeration order,
+            //which for gamepads should correspond to the vertical axis of the right
+            //thumbstick.
+            accelerator = brake = [sortedElements objectAtIndex: 3];
         }
     }
     
@@ -352,7 +334,7 @@ static NSMutableArray *profileClasses = nil;
 			
 		case kHIDUsage_GD_Rz:
 			//Some joysticks pair Rz with Z, in which case it should be normalized to Ry (with Z as Rx);
-			//Otherwise it should be treated as Rx.
+			//Others pair it with Slider, in which case it should be treated as Rx.
 			{
 				BOOL hasZAxis = [[self HIDController] axisElementWithUsageID: kHIDUsage_GD_Z] != nil;
                 normalizedAxis = (hasZAxis) ? kHIDUsage_GD_Ry : kHIDUsage_GD_Rx;
@@ -360,7 +342,7 @@ static NSMutableArray *profileClasses = nil;
 			break;
 		
 		case kHIDUsage_GD_Dial:
-			//Only seen once, and that was paired with Slider
+			//Only seen once, and that was paired with Slider.
 			normalizedAxis = kHIDUsage_GD_Rx;
 			break;
 			

@@ -768,6 +768,7 @@
 				<string>Star Wars X-Wing</string>
 				<string>The Elder Scrolls: Arena</string>
 				<string>Epic Pinball</string>
+                <string>Pinball Dreams 1 &amp; 2, Pinball Fantasies</string>
 				<string>Colonization</string>
 				<string>Blake Stone 1 &amp; 2</string>
 				<string>Falcon 3.0</string>
@@ -790,6 +791,7 @@
 				<string>vga.pac</string>
 				<string>tamriel.mnu</string>
 				<string>ep1.dat</string>
+                <string>thing.sdr</string>
 				<string>viceroy.exe</string>
 				<string>jm_error.h</string>
 				<string>falcon3.def</string>

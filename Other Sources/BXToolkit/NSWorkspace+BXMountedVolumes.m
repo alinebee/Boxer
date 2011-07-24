@@ -75,7 +75,10 @@ NSString * const HFSVolumeType		= @"hfs";
 						  error: (NSError **)error
 {
 	path = [path stringByStandardizingPath];
-	BOOL isRawImage = [self file: path matchesTypes: [NSSet setWithObject: @"com.winimage.raw-disk-image"]];
+	BOOL isRawImage = [self file: path matchesTypes: [NSSet setWithObjects:
+                        @"com.winimage.raw-disk-image",
+                        @"com.microsoft.virtualpc-disk-image",
+                        nil]];
 	
 	NSTask *hdiutil		= [[NSTask alloc] init];
 	NSPipe *outputPipe	= [NSPipe pipe];

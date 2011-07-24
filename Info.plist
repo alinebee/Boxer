@@ -67,6 +67,7 @@
 			<key>LSItemContentTypes</key>
 			<array>
 				<string>com.winimage.raw-disk-image</string>
+				<string>com.microsoft.virtualpc-disk-image</string>
 			</array>
 			<key>NSDocumentClass</key>
 			<string>BXSession</string>
@@ -340,26 +341,6 @@
 		<dict>
 			<key>UTTypeConformsTo</key>
 			<array>
-				<string>public.plain-text</string>
-			</array>
-			<key>UTTypeDescription</key>
-			<string>DOSBox translation file</string>
-			<key>UTTypeIdentifier</key>
-			<string>com.dosbox.language-file</string>
-			<key>UTTypeTagSpecification</key>
-			<dict>
-				<key>com.apple.ostype</key>
-				<string>DBGa</string>
-				<key>public.filename-extension</key>
-				<array>
-					<string>lng</string>
-					<string>lang</string>
-				</array>
-			</dict>
-		</dict>
-		<dict>
-			<key>UTTypeConformsTo</key>
-			<array>
 				<string>public.disk-image</string>
 				<string>public.plain-text</string>
 			</array>
@@ -411,6 +392,24 @@
 				<key>public.filename-extension</key>
 				<array>
 					<string>ima</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.disk-image</string>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>VirtualPC floppy disk image</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.microsoft.virtualpc-disk-image</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>vfd</string>
 				</array>
 			</dict>
 		</dict>

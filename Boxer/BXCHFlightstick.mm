@@ -31,8 +31,9 @@ enum {
 };
 
 enum {
-    BXCHFlightstickPrimaryPOV,
-    BXCHFlightstickSecondaryPOV
+    BXCHFlightstickPrimaryPOV = 0,
+    BXCHCombatStickPrimaryPOV = BXCHFlightstickPrimaryPOV,
+    BXCHCombatStickSecondaryPOV = 1
 };
 
 
@@ -79,12 +80,21 @@ enum {
 	//Preserve the value of the throttle axis, because it does not snap back to center
 	
 	[self setPressedButtons: BXNoGameportButtonsMask];
+    
+    povDirectionMask = BXEmulatedPOVCentered;
 }
 
 - (void) POV: (NSUInteger)POVNumber changedTo: (BXEmulatedPOVDirection)direction
 {
     if (POVNumber == BXCHFlightstickPrimaryPOV)
     {
+        
+        //IMPLEMENTATION NOTE: we track the active POV direction flags
+        //separately, so that POV:directionDown: can handle transitions
+        //across diagonals.
+        povDirectionMask = direction;
+        
+        
         //Convert diagonals to one of the cardinal points
         BXEmulatedPOVDirection normalizedDirection = [[self class] closest4WayDirectionForPOV: direction
                                                                                   previousPOV: [self directionForPOV: POVNumber]];
@@ -147,14 +157,18 @@ enum {
 
 - (void) POV: (NSUInteger)POVNumber directionDown: (BXEmulatedPOVDirection)direction
 {
-    BXEmulatedPOVDirection currentDirection = [self directionForPOV: POVNumber];
-    [self POV: POVNumber changedTo: currentDirection | direction];
+    if (POVNumber == BXCHFlightstickPrimaryPOV)
+    {
+        [self POV: POVNumber changedTo: povDirectionMask | direction];
+    }
 }
 
 - (void) POV: (NSUInteger)POVNumber directionUp: (BXEmulatedPOVDirection)direction
 {
-    BXEmulatedPOVDirection currentDirection = [self directionForPOV: POVNumber];
-    [self POV: POVNumber changedTo: currentDirection & ~direction];
+    if (POVNumber == BXCHFlightstickPrimaryPOV)
+    {
+        [self POV: POVNumber changedTo: povDirectionMask & ~direction];
+    }
 }
 
 - (BOOL) POV: (NSUInteger)POVNumber directionIsDown: (BXEmulatedPOVDirection)direction
@@ -234,12 +248,20 @@ enum {
 - (NSUInteger) numAxes			{ return 4; }
 - (NSUInteger) numPOVSwitches	{ return 2; }
 
+- (void) clearInput
+{
+    pov2DirectionMask = BXEmulatedPOVCentered;
+    [super clearInput];
+}
 
 //Handle the secondary POV switch
 - (void) POV: (NSUInteger)POVNumber changedTo: (BXEmulatedPOVDirection)direction
 {
-    if (POVNumber == BXCHFlightstickSecondaryPOV)
+    if (POVNumber == BXCHCombatStickSecondaryPOV)
     {
+        //See note above for BXCHFlightstickPro implementation
+        pov2DirectionMask = direction;
+        
         BXEmulatedPOVDirection normalizedDirection = [[self class] closest4WayDirectionForPOV: direction
                                                                                   previousPOV: [self directionForPOV: POVNumber]];
         
@@ -273,7 +295,7 @@ enum {
 
 - (BXEmulatedPOVDirection) directionForPOV: (NSUInteger)POVNumber
 {
-    if (POVNumber == BXCHFlightstickSecondaryPOV)
+    if (POVNumber == BXCHCombatStickSecondaryPOV)
     {
         switch ([self pressedButtons])
         {
@@ -302,6 +324,25 @@ enum {
         return [super directionForPOV: POVNumber];
     }
 }
+
+- (void) POV: (NSUInteger)POVNumber directionDown: (BXEmulatedPOVDirection)direction
+{
+    if (POVNumber == BXCHCombatStickSecondaryPOV)
+    {
+        [self POV: POVNumber changedTo: pov2DirectionMask | direction];
+    }
+    else [super POV: POVNumber directionDown: direction];
+}
+
+- (void) POV: (NSUInteger)POVNumber directionUp: (BXEmulatedPOVDirection)direction
+{
+    if (POVNumber == BXCHCombatStickSecondaryPOV)
+    {
+        [self POV: POVNumber changedTo: pov2DirectionMask & ~direction];
+    }
+    else [super POV: POVNumber directionUp: direction];
+}
+
 
 - (void) setButton: (BXEmulatedJoystickButton)button toState: (BOOL)pressed
 {

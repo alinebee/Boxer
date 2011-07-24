@@ -71,12 +71,17 @@ enum
 	JOYSTICK_Move_X(BXGameportStick2, BXGameportAxisCentered);
 	//Set the hat axis to its proper center position
 	JOYSTICK_Move_Y(BXGameportStick2, BXThrustmasterFCSPOVCentered);
+    
+    povDirectionMask = BXEmulatedPOVCentered;
 }
 
 - (void) POV: (NSUInteger)POVNumber changedTo: (BXEmulatedPOVDirection)direction
 {
     if (POVNumber == BXThrustmasterPrimaryPOV)
     {
+        //See note under BXCHFlightstickPro implementation
+        povDirectionMask = direction;
+        
         BXEmulatedPOVDirection normalizedDirection = [[self class] closest4WayDirectionForPOV: direction
                                                                                   previousPOV: [self directionForPOV: POVNumber]];
         
@@ -122,14 +127,18 @@ enum
 
 - (void) POV: (NSUInteger)POVNumber directionDown: (BXEmulatedPOVDirection)direction
 {
-    BXEmulatedPOVDirection currentDirection = [self directionForPOV: POVNumber];
-    [self POV: POVNumber changedTo: currentDirection | direction];
+    if (POVNumber == BXThrustmasterPrimaryPOV)
+    {
+        [self POV: POVNumber changedTo: povDirectionMask | direction];
+    }
 }
 
 - (void) POV: (NSUInteger)POVNumber directionUp: (BXEmulatedPOVDirection)direction
 {
-    BXEmulatedPOVDirection currentDirection = [self directionForPOV: POVNumber];
-    [self POV: POVNumber changedTo: currentDirection & ~direction];
+    if (POVNumber == BXThrustmasterPrimaryPOV)
+    {
+        [self POV: POVNumber changedTo: povDirectionMask & ~direction];
+    }
 }
 
 - (BOOL) POV: (NSUInteger)POVNumber directionIsDown: (BXEmulatedPOVDirection)direction

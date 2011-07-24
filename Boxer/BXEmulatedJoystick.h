@@ -210,6 +210,9 @@ enum {
 
 
 @interface BXCHFlightStickPro: BX2AxisJoystick <BXEmulatedFlightstick>
+{
+    BXEmulatedPOVDirection povDirectionMask;
+}
 
 @property (assign) float throttleAxis;
 @property (assign) float rudderAxis;
@@ -217,10 +220,16 @@ enum {
 @end
 
 @interface BXCHCombatStick: BXCHFlightStickPro
+{
+    BXEmulatedPOVDirection pov2DirectionMask;
+}
 @end
 
 
 @interface BXThrustmasterFCS: BX2AxisJoystick <BXEmulatedFlightstick>
+{
+    BXEmulatedPOVDirection povDirectionMask;
+}
 
 @property (assign) float rudderAxis;
 

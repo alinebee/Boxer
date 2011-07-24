@@ -7,6 +7,7 @@
 
 #import "BXHUDControls.h"
 #import "BXGeometry.h"
+#import "NSShadow+BXShadowExtensions.h"
 
 
 #define BXBezelBorderRadius 20.0f
@@ -55,28 +56,27 @@
 	
 	if (![self indicatorShadow])
 	{
-		NSShadow *theShadow = [[NSShadow alloc] init];
-		
-		[theShadow setShadowBlurRadius: 3.0f];
-		[theShadow setShadowOffset: NSMakeSize(0.0f, -1.0f)];
-		
+		NSShadow *theShadow = [NSShadow shadowWithBlurRadius: 3.0f
+                                                      offset: NSMakeSize(0.0f, -1.0f)];
 		[self setIndicatorShadow: theShadow];
-		[theShadow release];
 	}
+}
+
+- (NSRect) drawingRectForBounds: (NSRect)theRect
+{
+    NSRect drawingRect = [super drawingRectForBounds: theRect];
+    if ([self indicatorShadow])
+    {
+        //If we have a shadow set, then constrain the draw region to accomodate the shadow
+        drawingRect = [[self indicatorShadow] insetRectForShadow: drawingRect];
+    }
+    return drawingRect;
 }
 
 - (void) drawWithFrame: (NSRect)cellFrame
                 inView: (NSView *)controlView
 {
-    //Offset the draw region to give room for our shadow
-    //TODO: we should just expand the dirty region of the control view instead
-    CGFloat shadowSize  = [[self indicatorShadow] shadowBlurRadius];
-    NSSize shadowOffset = [[self indicatorShadow] shadowOffset];
-    NSRect shadowClearance  = NSInsetRect(cellFrame, shadowSize, shadowSize);
-    shadowClearance.origin.x -= shadowOffset.width;
-    shadowClearance.origin.y -= shadowOffset.height;
-    
-    NSRect indicatorFrame = [self drawingRectForBounds: shadowClearance];
+    NSRect indicatorFrame = NSIntegralRect([self drawingRectForBounds: cellFrame]);
     CGFloat maxHeight = indicatorFrame.size.height;
     CGFloat height = MIN(maxHeight, [[self class] heightForControlSize: [self controlSize]]);
     

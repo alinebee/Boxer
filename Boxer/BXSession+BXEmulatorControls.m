@@ -99,6 +99,11 @@
 - (IBAction) togglePaused: (id)sender
 {
 	[self setPaused: ![self isPaused]];
+    
+    if ([self isPaused])
+        [[BXBezelController controller] showPauseBezel];
+    else
+        [[BXBezelController controller] showPlayBezel];
 }
 
 - (NSUInteger) frameskip
@@ -146,8 +151,6 @@
 	
 	//Preserve changes to the speed settings
 	[gameSettings setObject: [NSNumber numberWithInteger: BXAutoSpeed] forKey: @"CPUSpeed"];
-    
-    [[BXBezelController controller] showCPUSpeedBezelForSpeed: BXAutoSpeed];
 }
 
 - (NSInteger) CPUSpeed
@@ -167,8 +170,6 @@
         [emulator setFixedSpeed: speed];
         
         [gameSettings setObject: [NSNumber numberWithInteger: speed] forKey: @"CPUSpeed"];
-        
-        [[BXBezelController controller] showCPUSpeedBezelForSpeed: speed];
     }
 }
 
@@ -201,6 +202,8 @@
 		if ([self validateCPUSpeed: &newSpeed error: nil])
 			[self setCPUSpeed: [newSpeed integerValue]];
 	}
+    
+    [[BXBezelController controller] showCPUSpeedBezelForSpeed: [self CPUSpeed]];
 }
 
 - (IBAction) decrementSpeed: (id)sender
@@ -224,6 +227,8 @@
 		if ([self validateCPUSpeed: &newSpeed error: nil])
 			[self setCPUSpeed: [newSpeed integerValue]];
 	}
+    
+    [[BXBezelController controller] showCPUSpeedBezelForSpeed: [self CPUSpeed]];
 }
 
 

@@ -18,6 +18,7 @@
 
 #define BXBezelFadeDuration 0.25
 
+#define BXPauseBezelDuration 1.0
 #define BXFullscreenBezelDuration 3.0
 #define BXJoystickIgnoredBezelDuration 3.0
 #define BXDriveBezelDuration 3.0
@@ -26,7 +27,9 @@
 
 
 @implementation BXBezelController
-@synthesize driveAddedBezel, driveRemovedBezel, driveImportedBezel, fullscreenBezel, joystickIgnoredBezel, CPUSpeedBezel, throttleBezel;
+@synthesize driveAddedBezel, driveRemovedBezel, driveImportedBezel;
+@synthesize pauseBezel, playBezel, fullscreenBezel;
+@synthesize joystickIgnoredBezel, CPUSpeedBezel, throttleBezel;
 
 + (void) initialize
 {
@@ -70,12 +73,15 @@
 
 - (void) dealloc
 {
-    [self setDriveAddedBezel: nil],     [driveAddedBezel release];
-    [self setDriveRemovedBezel: nil],   [driveRemovedBezel release];
-    [self setDriveImportedBezel: nil],  [driveImportedBezel release];
-    [self setFullscreenBezel: nil],     [fullscreenBezel release];
-    [self setCPUSpeedBezel: nil],       [CPUSpeedBezel release];
-    [self setThrottleBezel: nil],       [throttleBezel release];
+    [self setDriveAddedBezel: nil],         [driveAddedBezel release];
+    [self setDriveRemovedBezel: nil],       [driveRemovedBezel release];
+    [self setDriveImportedBezel: nil],      [driveImportedBezel release];
+    [self setFullscreenBezel: nil],         [fullscreenBezel release];
+    [self setPauseBezel: nil],              [pauseBezel release];
+    [self setPlayBezel: nil],               [playBezel release];
+    [self setCPUSpeedBezel: nil],           [CPUSpeedBezel release];
+    [self setThrottleBezel: nil],           [throttleBezel release];
+    [self setJoystickIgnoredBezel: nil],    [joystickIgnoredBezel release];
     
     [super dealloc];
 }
@@ -160,6 +166,20 @@
 #pragma mark -
 #pragma mark Bezel-specific display methods
 
+- (void) showPauseBezel
+{
+    [self showBezel: [self pauseBezel]
+        forDuration: BXPauseBezelDuration
+           priority: BXBezelPriorityHigh];
+}
+
+- (void) showPlayBezel
+{
+    [self showBezel: [self playBezel]
+        forDuration: BXPauseBezelDuration
+           priority: BXBezelPriorityHigh];    
+}
+
 - (void) showFullscreenBezel
 {
     [self showBezel: [self fullscreenBezel]
@@ -190,7 +210,7 @@
     
     //Make maximum (auto) values appear at the end of the speed scale
     NSInteger displayedSpeed = (cpuSpeed == BXAutoSpeed) ? BXMaxSpeedThreshold : cpuSpeed;
-    
+       
     //TODO: set these up with a binding instead?
     NSValueTransformer *cpuScale = [NSValueTransformer valueTransformerForName: @"BXSpeedSliderTransformer"];
     

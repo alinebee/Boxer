@@ -7,6 +7,7 @@
 
 #import "BXTemplateImageCell.h"
 #import "BXGeometry.h"
+#import "NSShadow+BXShadowExtensions.h"
 
 @implementation BXTemplateImageCell
 @synthesize imageColor, imageShadow;
@@ -55,6 +56,17 @@
 	[super dealloc];
 }
 
+- (NSRect) imageRectForBounds: (NSRect)theRect
+{
+    NSRect imageRect = [super imageRectForBounds: theRect];
+    if ([self imageShadow])
+    {
+        //If we have a shadow set, then constrain the image region to accomodate the shadow
+        imageRect = [[self imageShadow] insetRectForShadow: imageRect];
+    }
+    return imageRect;
+}
+
 - (void) drawInteriorWithFrame: (NSRect)cellFrame inView: (NSView *)controlView
 {	
 	//Apply our foreground colour and shadow when drawing any template image
@@ -62,7 +74,8 @@
 	{
 		NSImage *templateImage = [[self image] copy];
 		
-        NSRect drawRegion = [self imageRectForBounds: cellFrame];
+        NSRect drawRegion = NSIntegralRect([self imageRectForBounds: cellFrame]);
+        
         NSSize imageSize = [templateImage size];
         
         NSPoint anchor = [[self class] anchorForAlignment: [self imageAlignment]];

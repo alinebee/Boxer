@@ -41,6 +41,8 @@ enum {
     IBOutlet NSView *joystickIgnoredBezel;
     IBOutlet NSView *CPUSpeedBezel;
     IBOutlet NSView *throttleBezel;
+    IBOutlet NSView *pauseBezel;
+    IBOutlet NSView *playBezel;
     
     BXBezelPriority currentPriority;
 }
@@ -65,6 +67,11 @@ enum {
 //The bezel view used for flightstick throttle notifications.
 @property (retain, nonatomic) NSView *throttleBezel;
 
+//Pause/play bezel views.
+@property (retain, nonatomic) NSView *pauseBezel;
+@property (retain, nonatomic) NSView *playBezel;
+
+
 //The last bezel that was displayed.
 @property (readonly, nonatomic) NSView *currentBezel;
 
@@ -85,11 +92,15 @@ enum {
 - (void) showDriveImportedBezelForDrive: (BXDrive *)drive
                               toPackage: (BXPackage *)package;
 
+- (void) showPauseBezel;
+- (void) showPlayBezel;
+
 - (void) showFullscreenBezel;
 - (void) showJoystickIgnoredBezel;
 
 - (void) showCPUSpeedBezelForSpeed: (NSInteger)cpuSpeed;
 - (void) showThrottleBezelForValue: (float)throttleValue;
+
 
 - (void) showBezel: (NSView *)bezel
        forDuration: (NSTimeInterval)duration

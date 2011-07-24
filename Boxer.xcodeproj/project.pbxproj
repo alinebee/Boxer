@@ -247,6 +247,7 @@
 		9F8A974A10E7DEF500A4B72A /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8A974910E7DEF500A4B72A /* RegexKitLite.m */; };
 		9F8A976010E7EDDE00A4B72A /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */; };
 		9F8BFE9F12C0EF7B0059030F /* BXDisplayLinkRenderingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8BFE9E12C0EF7B0059030F /* BXDisplayLinkRenderingView.m */; };
+		9F8F482513DC74CA00C7E022 /* NSShadow+BXShadowExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8F482413DC74CA00C7E022 /* NSShadow+BXShadowExtensions.m */; };
 		9F960C7F12AAAB2900568AFD /* BlankShelves.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F960C7E12AAAB2900568AFD /* BlankShelves.png */; };
 		9F9A4C9610F67A1F00E61965 /* GalleryOriginal.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A4C9010F67A1F00E61965 /* GalleryOriginal.png */; };
 		9F9A4C9710F67A1F00E61965 /* GalleryHQx.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A4C9110F67A1F00E61965 /* GalleryHQx.png */; };
@@ -257,6 +258,8 @@
 		9F9A4CA110F67D2C00E61965 /* BXPreferencesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9A4CA010F67D2C00E61965 /* BXPreferencesController.m */; };
 		9F9A4CA610F67DD800E61965 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A4CA410F67DD800E61965 /* Preferences.xib */; };
 		9F9A4CA910F6824B00E61965 /* BXFilterGallery.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9A4CA810F6824B00E61965 /* BXFilterGallery.m */; };
+		9F9C68E013DC8D4A0066A974 /* PauseTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F9C68DE13DC8D4A0066A974 /* PauseTemplate.pdf */; };
+		9F9C68E113DC8D4A0066A974 /* PlayTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F9C68DF13DC8D4A0066A974 /* PlayTemplate.pdf */; };
 		9F9E27C511F8C003003EE8F3 /* BXSegmentedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9E27C411F8C003003EE8F3 /* BXSegmentedCell.m */; };
 		9F9E27D611F8C173003EE8F3 /* BXDrivePanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9E27D511F8C173003EE8F3 /* BXDrivePanelController.m */; };
 		9F9FE70410FA5F5800E3944B /* NSWorkspace+BXIcons.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9FE70310FA5F5800E3944B /* NSWorkspace+BXIcons.m */; };
@@ -872,6 +875,8 @@
 		9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
 		9F8BFE9D12C0EF7B0059030F /* BXDisplayLinkRenderingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDisplayLinkRenderingView.h; sourceTree = "<group>"; };
 		9F8BFE9E12C0EF7B0059030F /* BXDisplayLinkRenderingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDisplayLinkRenderingView.m; sourceTree = "<group>"; };
+		9F8F482313DC74CA00C7E022 /* NSShadow+BXShadowExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSShadow+BXShadowExtensions.h"; sourceTree = "<group>"; };
+		9F8F482413DC74CA00C7E022 /* NSShadow+BXShadowExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSShadow+BXShadowExtensions.m"; sourceTree = "<group>"; };
 		9F960C7E12AAAB2900568AFD /* BlankShelves.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BlankShelves.png; sourceTree = "<group>"; };
 		9F9A4C9010F67A1F00E61965 /* GalleryOriginal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GalleryOriginal.png; sourceTree = "<group>"; };
 		9F9A4C9110F67A1F00E61965 /* GalleryHQx.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GalleryHQx.png; sourceTree = "<group>"; };
@@ -884,6 +889,8 @@
 		9F9A4CA510F67DD800E61965 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/Preferences.xib; sourceTree = "<group>"; };
 		9F9A4CA710F6824B00E61965 /* BXFilterGallery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFilterGallery.h; sourceTree = "<group>"; };
 		9F9A4CA810F6824B00E61965 /* BXFilterGallery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFilterGallery.m; sourceTree = "<group>"; };
+		9F9C68DE13DC8D4A0066A974 /* PauseTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = PauseTemplate.pdf; sourceTree = "<group>"; };
+		9F9C68DF13DC8D4A0066A974 /* PlayTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = PlayTemplate.pdf; sourceTree = "<group>"; };
 		9F9E27C311F8C003003EE8F3 /* BXSegmentedCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXSegmentedCell.h; sourceTree = "<group>"; };
 		9F9E27C411F8C003003EE8F3 /* BXSegmentedCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXSegmentedCell.m; sourceTree = "<group>"; };
 		9F9E27D411F8C173003EE8F3 /* BXDrivePanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDrivePanelController.h; sourceTree = "<group>"; };
@@ -2071,6 +2078,8 @@
 				9F61931A1233D8F000F35AB4 /* BXTabbedWindowController.m */,
 				9FD23D53129AE3B600B2100B /* NSWindow+BXWindowEffects.h */,
 				9FD23D54129AE3B600B2100B /* NSWindow+BXWindowEffects.m */,
+				9F8F482313DC74CA00C7E022 /* NSShadow+BXShadowExtensions.h */,
+				9F8F482413DC74CA00C7E022 /* NSShadow+BXShadowExtensions.m */,
 			);
 			path = BXToolkit;
 			sourceTree = "<group>";
@@ -2114,10 +2123,12 @@
 		9FBC34390F56C5AC001811F2 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				9F9C68DE13DC8D4A0066A974 /* PauseTemplate.pdf */,
+				9F9C68DF13DC8D4A0066A974 /* PlayTemplate.pdf */,
+				9F1F2BD713D764FA007B0CC1 /* EjectTemplate.pdf */,
 				9F1F2BD513D764FA007B0CC1 /* CDROMTemplate.pdf */,
 				9F1F2BD613D764FA007B0CC1 /* DisketteTemplate.pdf */,
 				9F1F2BD813D764FA007B0CC1 /* HardDiskTemplate.pdf */,
-				9F1F2BD713D764FA007B0CC1 /* EjectTemplate.pdf */,
 				9F70278513D730D000606B4C /* BunnyTemplate.png */,
 				9F70278613D730D000606B4C /* TurtleTemplate.png */,
 				9FD012E213AB845200AF6FE8 /* GamepadTemplate.pdf */,
@@ -2530,6 +2541,8 @@
 				9F1F2BDA13D764FA007B0CC1 /* DisketteTemplate.pdf in Resources */,
 				9F1F2BDB13D764FA007B0CC1 /* EjectTemplate.pdf in Resources */,
 				9F1F2BDC13D764FA007B0CC1 /* HardDiskTemplate.pdf in Resources */,
+				9F9C68E013DC8D4A0066A974 /* PauseTemplate.pdf in Resources */,
+				9F9C68E113DC8D4A0066A974 /* PlayTemplate.pdf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2839,6 +2852,7 @@
 				9F70277B13D706CC00606B4C /* BXBezelController.m in Sources */,
 				9F70278413D72D8100606B4C /* BXHUDControls.m in Sources */,
 				9FCA702213DAE6F5006C5DF8 /* BXCoalfaceDrives.mm in Sources */,
+				9F8F482513DC74CA00C7E022 /* NSShadow+BXShadowExtensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

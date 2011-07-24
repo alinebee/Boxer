@@ -142,6 +142,78 @@
 	else return [path stringByDeletingLastPathComponent]; 
 }
 
++ (NSArray *) executablesInDrive: (BXDrive *)drive error: (NSError **)outError
+{
+    NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+    NSMutableArray *foundExecutables = [NSMutableArray arrayWithCapacity: 10];
+    
+    NSString *drivePath = [drive path];
+    NSString *scanPath  = drivePath;
+    
+    BOOL didMountVolume = NO;
+    BOOL isMountedImage = NO;
+    
+    //If the path is an image mountable by HDIUtil, mount it so we can look inside it
+    if ([workspace file: drivePath matchesTypes: [BXAppController OSXMountableImageTypes]])
+    {
+        isMountedImage = YES;
+        
+        //First, check if it's already mounted
+        scanPath = [workspace volumeForSourceImage: drivePath];
+        
+        //If it's not, mount it ourselves
+        if (!scanPath)
+        {
+            scanPath = [workspace mountImageAtPath: drivePath readOnly: YES invisibly: YES error: outError];
+            
+            //If we couldn't mount it, silently give up
+            if (!scanPath) return nil;
+            
+            else didMountVolume = YES;
+        }
+    }
+    
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init]; 
+    
+    NSSet *mountableFolderTypes	= [BXAppController mountableFolderTypes];
+    BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: scanPath];
+    
+    for (NSString *path in enumerator)
+    {
+        NSString *fileType = [[enumerator fileAttributes] fileType];
+        
+        //Filter out the contents of any nested drive folders
+        if ([fileType isEqualToString: NSFileTypeDirectory])
+        {
+            if ([workspace file: path matchesTypes: mountableFolderTypes]) [enumerator skipDescendents];
+        }
+        
+        //Filter out non-executables and Windows-only executables
+        else if ([workspace isCompatibleExecutableAtPath: path])
+        {
+            //If this is on a mounted image, correct the path to be relative to the original image
+            if (isMountedImage)
+            {
+                path = [drivePath stringByAppendingPathComponent: [enumerator relativePath]];
+            }
+            
+            [foundExecutables addObject: path];
+        }
+    }
+    
+    [pool drain];
+    
+    //IMPLEMENTATION NOTE: unmounting needs to be done after the pool has drained
+    //and the directory enumerator released. Before then, the enumerator will keep
+    //the disk too 'busy' to eject.
+    if (didMountVolume)
+    {
+        [workspace unmountAndEjectDeviceAtPath: scanPath];
+    }
+    
+    return foundExecutables;
+}
+
 
 #pragma mark -
 #pragma mark Filetype helper methods
@@ -329,7 +401,7 @@
 	
 	if ([[self class] isExecutable: path])
 	{
-		//If an executable was specified, execute it!
+		//If an executable was specified, execute it
 		[theEmulator executeProgramAtPath: dosPath changingDirectory: YES];
 	}
 	else
@@ -702,38 +774,23 @@
 		if (showDriveNotifications && ![drive isHidden])
             [[BXBezelController controller] showDriveAddedBezelForDrive: drive];
 		
-		//If this drive is part of the gamebox, determine what executables are stored inside it
+		//If this drive is part of the gamebox, determine what executables are stored on it
+        //TODO: move this work off to an NSOperation and perform it asynchronously
 		if ([self driveIsBundled: drive])
 		{
-			NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-			NSMutableArray *foundExecutables = [NSMutableArray arrayWithCapacity: 10];
-			BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: drivePath];
+			NSArray *foundExecutables = [[self class] executablesInDrive: drive error: nil];
 			
-			NSSet *mountableFolderTypes	= [BXAppController mountableFolderTypes];
-			for (NSString *path in enumerator)
-			{
-				NSString *fileType = [[enumerator fileAttributes] fileType];
-				
-				//Filter out the contents of any nested drive folders
-				if ([fileType isEqualToString: NSFileTypeDirectory])
-				{
-					if ([workspace file: path matchesTypes: mountableFolderTypes]) [enumerator skipDescendents];
-				}
-				//Filter out non-executables and Windows-only executables
-				else if ([workspace isCompatibleExecutableAtPath: path])
-				{
-					[foundExecutables addObject: path];
-				}
-			}
-			
-			//Only send notifications if any executables were found
-			BOOL notify = ([foundExecutables count] > 0);
-			
-			//TODO: is there a better notification method we could use here?
-			if (notify) [self willChangeValueForKey: @"executables"];
-			[executables setObject: [NSMutableArray arrayWithArray: foundExecutables]
-							forKey: [drive letter]];
-			if (notify) [self didChangeValueForKey: @"executables"];
+            if (foundExecutables)
+            {
+                //Only send notifications if any executables were found, to prevent unnecessary redraws
+                BOOL notify = ([foundExecutables count] > 0);
+                
+                //TODO: is there a better notification method we could use here?
+                if (notify) [self willChangeValueForKey: @"executables"];
+                [executables setObject: [NSMutableArray arrayWithArray: foundExecutables]
+                                forKey: [drive letter]];
+                if (notify) [self didChangeValueForKey: @"executables"];
+            }
 		}
 	}
 }

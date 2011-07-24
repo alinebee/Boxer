@@ -82,6 +82,7 @@ enum {
 + (NSSet *) floppyVolumeTypes;		//UTIs that should be mounted as DOS floppy drives
 + (NSSet *) mountableFolderTypes;	//All mountable folder UTIs supported by Boxer
 + (NSSet *) mountableImageTypes;	//All mountable disk-image UTIs supported by Boxer
++ (NSSet *) OSXMountableImageTypes; //All disk-image UTIs that OSX's hdiutil can mount
 + (NSSet *) mountableTypes;			//All mountable UTIs supported by Boxer
 
 

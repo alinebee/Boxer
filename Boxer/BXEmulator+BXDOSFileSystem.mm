@@ -333,6 +333,7 @@ enum {
 - (NSString *) DOSPathForPath: (NSString *)path
 {
 	BXDrive *drive = [self driveForPath: path];
+    
 	if (drive) return [self DOSPathForPath: path onDrive: drive];
 	else return nil;
 }

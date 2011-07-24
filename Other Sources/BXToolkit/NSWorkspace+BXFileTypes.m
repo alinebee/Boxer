@@ -13,19 +13,29 @@
 - (BOOL) file: (NSString *)filePath matchesTypes: (NSSet *)acceptedTypes
 {
 	NSString *fileType = [self typeOfFile: filePath error: nil];
+    
+    //If OS X can determine a UTI for the specified file, then check if that UTI matches one of the specified types
 	if (fileType)
 	{
-		NSString *fileExtension	= [filePath pathExtension];
-		BOOL testExtension		= [fileExtension length] > 0;
-
 		for (NSString *acceptedType in acceptedTypes)
 		{
 			if ([self type: fileType conformsToType: acceptedType]) return YES;
-			//NSWorkspace typeOfFile: has a bug whereby it may return an overly generic UTI for a file or folder
-			//instead of a proper specific UTI. So, we also also check the file extension to be sure.
-			if (testExtension && [self filenameExtension: fileExtension isValidForType: acceptedType]) return YES;
 		}
 	}
+    
+    //If no filetype match was found, check whether the file extension alone matches any of the specified types.
+    //(This allows us to judge filetypes based on filename alone, e.g. for nonexistent/inaccessible files;
+    //and works around an NSWorkspace typeOfFile: limitation whereby it may return an overly generic UTI
+    //for a file or folder instead of a proper specific UTI.
+    NSString *fileExtension	= [filePath pathExtension];
+    if ([fileExtension length] > 0)
+    {
+        for (NSString *acceptedType in acceptedTypes)
+		{
+			if ([self filenameExtension: fileExtension isValidForType: acceptedType]) return YES;
+		}
+    }
+    
 	return NO;
 }
 

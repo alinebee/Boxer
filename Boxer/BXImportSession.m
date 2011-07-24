@@ -402,20 +402,13 @@
 
 + (NSSet *)acceptedSourceTypes
 {
-	static NSSet *acceptedTypes = nil;
-	if (!acceptedTypes)
-	{
-		//A subset of our usual mountable types: we only accept regular folders and disk image
-		//formats which can be mounted by hdiutil (so that we can inspect their filesystems)
-		acceptedTypes = [[NSSet alloc] initWithObjects:
-						 @"public.folder",
-						 @"public.iso-image",
-						 @"com.apple.disk-image-cdr",
-						 @"com.winimage.raw-disk-image",
-                         @"com.microsoft.virtualpc-disk-image",
-						 nil];
-	}
-	return acceptedTypes;
+	static NSSet *types = nil;
+    
+    //A subset of our usual mountable types: we only accept regular folders and disk image
+    //formats which can be mounted by hdiutil (so that we can inspect their filesystems)
+	if (!types) types = [[[BXAppController OSXMountableImageTypes] setByAddingObject: @"public.folder"] retain];
+    
+    return types;
 }
 
 + (BOOL) canImportFromSourcePath: (NSString *)path

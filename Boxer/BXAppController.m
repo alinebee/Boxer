@@ -116,12 +116,25 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	return types;
 }
 
++ (NSSet *) OSXMountableImageTypes
+{
+	static NSSet *types = nil;
+	if (!types) types = [[NSSet alloc] initWithObjects:
+                         @"public.iso-image",
+                         @"com.apple.disk-image-cdr",
+                         @"com.winimage.raw-disk-image",
+                         @"com.microsoft.virtualpc-disk-image",
+						 nil];
+	return types;
+}
+
 + (NSSet *) mountableTypes
 {
 	static NSSet *types = nil;
 	if (!types) types = [[[self mountableImageTypes] setByAddingObject: @"public.directory"] retain];
 	return types;
 }
+
 
 + (NSSet *) executableTypes
 {

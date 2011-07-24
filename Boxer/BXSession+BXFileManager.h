@@ -48,6 +48,13 @@
 //Otherwise, the parent folder of the item, or the item itself if it is a folder, will be returned (and shouldRecurse will be NO). 
 + (NSString *) gameDetectionPointForPath: (NSString *)path shouldSearchSubfolders: (BOOL *)shouldRecurse;
 
+//Returns an array of file paths for all compatible executables located on the specified drive.
+//Returns nil and populates outError if an error prevented us from scanning. 
+//In the case of disk images, this method will silently mount the drive, read the executables,
+//then unmount it afterwards; and file paths will be prefixed with the original image path,
+//rather than the mounted volume path (which will no longer be valid).
++ (NSArray *) executablesInDrive: (BXDrive *)drive error: (NSError **)outError;
+
 
 #pragma mark -
 #pragma mark Filetype-related class methods

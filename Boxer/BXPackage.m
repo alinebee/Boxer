@@ -19,8 +19,9 @@
 #pragma mark Constants
 
 //Application-wide constants.
-NSString * const BXGameIdentifierKey = @"BXGameIdentifier";
-NSString * const BXGameIdentifierTypeKey = @"BXGameIdentifierType";
+NSString * const BXGameIdentifierKey        = @"BXGameIdentifier";
+NSString * const BXGameIdentifierTypeKey    = @"BXGameIdentifierType";
+NSString * const BXTargetProgramKey         = @"BXDefaultProgramPath";
 
 NSString * const BXTargetSymlinkName			= @"DOSBox Target";
 NSString * const BXConfigurationFileName		= @"DOSBox Preferences";
@@ -136,46 +137,46 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 
 - (NSString *) targetPath
 {
-	//Retrieve the target path from the symlink the first time it is requested, then cache it for later
-	if (!targetPath)
+    NSString *targetPath = [self gameInfoForKey: BXTargetProgramKey];
+    
+	//Resolve the path from a gamebox-relative path into an absolute path
+    if (targetPath)
+    {
+        targetPath = [[self resourcePath] stringByAppendingPathComponent: targetPath];
+    }
+    //If there's no target path stored in game info, check for an old-style symlink
+    else
 	{
 		NSString *symlinkPath = [self pathForResource: BXTargetSymlinkName ofType: nil];
-		targetPath = [symlinkPath stringByResolvingSymlinksInPath];
-	
-		//If the path is unchanged, this indicates a broken link
-		if ([targetPath isEqualToString: symlinkPath]) targetPath = nil;
-		else [targetPath copy];
+        targetPath = [symlinkPath stringByResolvingSymlinksInPath];
+        
+        if (targetPath)
+        {
+            //If the resolved symlink path is the same as the path to the symlink itself,
+            //this indicates it was a broken link that could not be resolved
+            if ([targetPath isEqualToString: symlinkPath]) targetPath = nil;
+            else
+            {
+                //Once we've resolved the symlink, store it in the game info for future use
+                [self setTargetPath: targetPath];
+            }
+        }
 	}
+    
 	return targetPath;
 }
 
 - (void) setTargetPath: (NSString *)path
 {
-	if (![targetPath isEqualToString: path])
-	{
-		[targetPath release];
-		targetPath = [path copy];
-		
-		//Now persist the target path as a symlink
-		//----------------------------------------
-		
-		NSFileManager *manager	= [NSFileManager defaultManager];
-		NSString *linkLocation	= [[self resourcePath] stringByAppendingPathComponent: BXTargetSymlinkName];
-		
-		//Todo: handle errors better (at all)!
-		//First, attempt to delete any existing link
-		[manager removeItemAtPath: linkLocation error: nil];
-		
-		//If a new path was specified, create a new link
-		if (path)
-		{
-			//Make the link relative to the game package
-			NSString *basePath		= [self resourcePath];
-			NSString *relativePath	= [path pathRelativeToPath: basePath];
-		
-			[manager createSymbolicLinkAtPath: linkLocation withDestinationPath: relativePath error: nil];
-		}
-	}
+    if (path)
+    {
+        //Make the path relative to the game package
+        NSString *basePath		= [self resourcePath];
+        NSString *relativePath	= [path pathRelativeToPath: basePath];
+    
+        [self setGameInfo: relativePath forKey: BXTargetProgramKey];
+    }
+    else [self setGameInfo: nil forKey: BXTargetProgramKey];
 }
 
 - (BOOL) validateTargetPath: (id *)ioValue error: (NSError **)outError
@@ -183,8 +184,10 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 	NSString *filePath = *ioValue;
 	NSFileManager *manager = [NSFileManager defaultManager];
 	
-	//If the file does not exist, show an error
-	if (![manager fileExistsAtPath: filePath])
+	//If the destination file does not exist, show an error
+    //TWEAK: this condition is disabled for now, to allow links to files within
+    //disk images.
+	if (NO && ![manager fileExistsAtPath: filePath])
 	{
 		if (outError)
 		{
@@ -220,6 +223,7 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 		}
 		return NO;
 	}
+    
 	return YES;
 }
 
@@ -305,10 +309,13 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 {
 	[self willChangeValueForKey: @"gameInfo"];
 	
-	BOOL changed = !([[self gameInfoForKey: key] isEqual: info]);
-	if (changed)
+	if (![[self gameInfoForKey: key] isEqual: info])
 	{
-		[(NSMutableDictionary *)[self gameInfo] setObject: info forKey: key];
+        if (info)
+            [(NSMutableDictionary *)[self gameInfo] setObject: info forKey: key];
+        else
+            [(NSMutableDictionary *)[self gameInfo] removeObjectForKey: key];
+        
 		[self _persistGameInfo];		
 	}
 	[self didChangeValueForKey: @"gameInfo"];

@@ -61,7 +61,8 @@ extern NSString * const BXDidFinishInterruptionNotification;
 	BXDOSWindowController *DOSWindowController;
 	
 	NSString *targetPath;
-	NSString *activeProgramPath;
+	NSString *lastExecutedProgramPath;
+    NSString *lastLaunchedProgramPath;
 	NSString *temporaryFolderPath;
 	
 	BOOL hasStarted;
@@ -69,6 +70,7 @@ extern NSString * const BXDidFinishInterruptionNotification;
 	BOOL hasLaunched;
 	BOOL isClosing;
 	BOOL emulating;
+    BOOL executingLaunchedProgram;
 	
 	BOOL paused;
 	BOOL autoPaused;
@@ -114,9 +116,21 @@ extern NSString * const BXDidFinishInterruptionNotification;
 //The OS X path of the executable to launch (or folder to switch to) when the emulator starts.
 @property (copy, nonatomic) NSString *targetPath;
 
-//The OS X path of the currently executing DOS program or batch file. Will be nil if the
-//emulator is at the DOS prompt, or when Boxer has no idea what program is running.
-@property (readonly, copy, nonatomic) NSString *activeProgramPath;
+
+//The OS X path of the last DOS program or batch file that was executed from the DOS prompt.
+//Will be nil if the emulator is at the DOS prompt, or if Boxer is unable to locate the
+//program within the local filesystem.
+@property (readonly, copy, nonatomic) NSString *lastExecutedProgramPath;
+
+//The OS X path of the last program the user launched through Boxer. Will be nil when the
+//emulator is at the DOS prompt or if the user has launched a program manually from the DOS prompt.
+@property (readonly, copy, nonatomic) NSString *lastLaunchedProgramPath;
+
+//The OS X path of Boxer's 'best guess' at the currently active program.
+//This corresponds to lastExecutedProgramPath if available, falling back on lastLaunchedProgramPath.
+//Will be nil if the emulator is at the DOS prompt.
+@property (readonly, nonatomic) NSString *activeProgramPath;
+
 
 //The OS X path of the currently executing DOS program or batch file if one is running,
 //or else the current directory at the DOS prompt. Will be nil if Boxer has no idea where it is.

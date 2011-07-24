@@ -36,8 +36,15 @@ extern NSString * const BXGameIdentifierKey;
 //Will be an NSNumber of BXGameIdentifierTypes.
 extern NSString * const BXGameIdentifierTypeKey;
 
+//The gameInfo key under which we store the default program path,
+//relative to the base folder of the gamebox.
+extern NSString * const BXTargetProgramKey;
+
 //The filename of the symlink pointing to the gamebox's target executable.
+//No longer used.
 extern NSString * const BXTargetSymlinkName;
+
+
 
 //The filename and extension of the gamebox configuration file.
 extern NSString * const BXConfigurationFileName;
@@ -65,7 +72,6 @@ typedef NSUInteger BXGameIdentifierType;
 
 @interface BXPackage : NSBundle
 {
-	NSString *targetPath;
 	NSMutableDictionary *gameInfo;
 }
 

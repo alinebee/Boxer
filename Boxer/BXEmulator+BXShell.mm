@@ -454,11 +454,12 @@ nil];
 	[self setProcessPath: fullDOSPath];
 	[self setProcessLocalPath: localPath];
 	
-	NSDictionary *userInfo	= [NSDictionary dictionaryWithObjectsAndKeys:
-							   localPath,	@"localPath",
-							   fullDOSPath,	@"DOSPath",
-							   drive,		@"drive",
-							   nil];
+	NSMutableDictionary *userInfo	= [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                       fullDOSPath, @"DOSPath",
+                                       drive,       @"drive",
+                                       nil];
+    
+    if (localPath) [userInfo setObject: localPath forKey: @"localPath"];
 	
 	[self _postNotificationName: BXEmulatorWillStartProgramNotification
 			   delegateSelector: @selector(emulatorWillStartProgram:)
@@ -477,11 +478,12 @@ nil];
 							   [NSString stringWithCString: dosPath encoding: BXDirectStringEncoding],
 							   nil];
 	
-	NSDictionary *userInfo	= [NSDictionary dictionaryWithObjectsAndKeys:
-							   localPath,	@"localPath",
-							   fullDOSPath,	@"DOSPath",
-							   drive,		@"drive",
-							   nil];
+	NSMutableDictionary *userInfo	= [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                       fullDOSPath, @"DOSPath",
+                                       drive,       @"drive",
+                                       nil];
+    
+    if (localPath) [userInfo setObject: localPath forKey: @"localPath"];
 	
 	[self setProcessPath: nil];
 	[self setProcessLocalPath: nil];

@@ -1130,11 +1130,14 @@
 	//Don't set the active program if we already have one
 	//This way, we keep track of when a user launches a batch file and don't immediately discard
 	//it in favour of the next program the batch-file runs
-	if (![self activeProgramPath])
+	if (![self lastExecutedProgramPath])
 	{
-		[self setActiveProgramPath: [[notification userInfo] objectForKey: @"localPath"]];
-		[DOSWindowController synchronizeWindowTitleWithDocumentName];
-	
+        NSString *programPath = [[notification userInfo] objectForKey: @"localPath"];
+        if (programPath)
+        {
+            [self setLastExecutedProgramPath: programPath];
+        }
+        
 		//Always show the program panel when installing
 		//(Show only after a delay, so that the installer has time to start up)
 		[[self DOSWindowController] performSelector: @selector(showProgramPanel)
@@ -1146,8 +1149,8 @@
 - (void) emulatorDidReturnToShell: (NSNotification *)notification
 {
 	//Clear the active program
-	[self setActiveProgramPath: nil];
-	[DOSWindowController synchronizeWindowTitleWithDocumentName];
+	[self setLastExecutedProgramPath: nil];
+    [self setLastLaunchedProgramPath: nil];
 	
 	//Show the program chooser after returning to the DOS prompt
 	//(Show only after a delay, so that the window has time to resize after quitting the game)

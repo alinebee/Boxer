@@ -79,7 +79,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 @synthesize gamePackage;
 @synthesize emulator;
 @synthesize targetPath;
-@synthesize activeProgramPath;
+@synthesize lastExecutedProgramPath, lastLaunchedProgramPath;
 @synthesize gameProfile;
 @synthesize gameSettings;
 @synthesize drives, executables, documentation;
@@ -191,7 +191,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	[self setGameProfile: nil],			[gameProfile release];
 	[self setGameSettings: nil],		[gameSettings release];
 	[self setTargetPath: nil],			[targetPath release];
-	[self setActiveProgramPath: nil],	[activeProgramPath release];
+	[self setLastExecutedProgramPath: nil],	[lastExecutedProgramPath release];
+	[self setLastLaunchedProgramPath: nil],	[lastLaunchedProgramPath release];
 	
 	[self setDrives: nil],				[drives release];
 	[self setExecutables: nil],			[executables release];
@@ -300,15 +301,10 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	}
 }
 
-- (void) setActiveProgramPath: (NSString *)newPath
+- (NSString *)activeProgramPath
 {
-	if (![newPath isEqualToString: activeProgramPath])
-	{
-		[activeProgramPath release];
-		activeProgramPath = [newPath copy];
-		
-		[DOSWindowController synchronizeWindowTitleWithDocumentName];
-	}
+    if ([self lastExecutedProgramPath]) return [self lastExecutedProgramPath];
+    else return [self lastLaunchedProgramPath];
 }
 
 - (NSString *)currentPath
@@ -642,7 +638,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 + (NSSet *) keyPathsForValuesAffectingIsGamePackage		{ return [NSSet setWithObject: @"gamePackage"]; }
 + (NSSet *) keyPathsForValuesAffectingRepresentedIcon	{ return [NSSet setWithObject: @"gamePackage.coverArt"]; }
-
++ (NSSet *) keyPathsForValuesAffectingCurrentPath       { return [NSSet setWithObject: @"activeProgramPath"]; }
++ (NSSet *) keyPathsForValuesAffectingActiveProgramPath { return [NSSet setWithObjects: @"lastExecutedProgramPath", @"lastLaunchedProgramPath", nil]; }
 
 #pragma mark -
 #pragma mark Emulator delegate methods and notifications
@@ -669,7 +666,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     [self _syncSuppressesDisplaySleep];
 	
 	//Clear our drive and program caches (suppressing notifications)
-	[self setActiveProgramPath: nil];
+	[self setLastExecutedProgramPath: nil];
+    [self setLastLaunchedProgramPath: nil];
 	
 	showDriveNotifications = NO;
 	[self setDrives: nil];
@@ -757,14 +755,21 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (void) emulatorWillStartProgram: (NSNotification *)notification
 {
+    //Flag that the program the user launched is now executing.
+    executingLaunchedProgram = YES;
+    
 	//Don't set the active program if we already have one: this way, we keep
 	//track of when a user launches a batch file and don't immediately discard
 	//it in favour of the next program the batch-file runs
-	if (![self activeProgramPath])
+	if (![self lastExecutedProgramPath])
 	{
-		NSString *activePath = [[notification userInfo] objectForKey: @"localPath"];
-		[self setActiveProgramPath: activePath];
-		
+		NSString *programPath = [[notification userInfo] objectForKey: @"localPath"];
+        
+        if ([programPath length])
+        {
+            [self setLastExecutedProgramPath: programPath];
+		}
+        
 		//If the user hasn't manually opened/closed the program panel themselves,
 		//and we don't need to ask the user what to do with this program, then
 		//automatically hide the program panel shortly after launching.
@@ -789,14 +794,15 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (void) emulatorDidFinishProgram: (NSNotification *)notification
 {
-	//Clear the active program when a startup program or 'non-defaultable' program
-	//finishes. This way, programWillStart: won't hang onto programs we can't use
-	//as the default, such as autoexec commands or dispatch batchfiles.
-	//(Note that the active program is always cleared down in didReturnToShell:)
-	NSString *activePath = [self activeProgramPath];
-	if (activePath && (!hasLaunched || ([self gamePackage] && ![[self gamePackage] validateTargetPath: &activePath error: NULL])))
+	//Clear the last executed program when a startup program or 'non-defaultable'
+    //program finishes. This way, programWillStart: won't hang onto programs
+    //we can't use as the default, such as autoexec commands or dispatch batchfiles.
+	//(Note that the last executed program is always cleared down in didReturnToShell:)
+	NSString *executedPath = [self lastExecutedProgramPath];
+	if (executedPath && (!hasLaunched || ([self gamePackage] && ![[self gamePackage] validateTargetPath: &executedPath error: NULL])))
 	{
-		[self setActiveProgramPath: nil];		
+		[self setLastExecutedProgramPath: nil];
+        //TODO: extend this to lastLaunchedProgramPath too?
 	}
 	
 	//Check the running time of the program. If it was suspiciously short,
@@ -810,7 +816,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		//don't want to bother the user if they're just trying
 		//out programs at the DOS prompt)
 		NSString *programPath = [[notification userInfo] objectForKey: @"localPath"];
-		if (programPath && [programPath isEqualToString: [self targetPath]])
+		if ([programPath length] && [programPath isEqualToString: [self targetPath]])
 		{
 			BXExecutableType programType = [[NSWorkspace sharedWorkspace] executableTypeAtPath: programPath error: NULL];
 			
@@ -835,10 +841,16 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		[self close];
 	}
 	
-	//Clear the active program
-	[self setActiveProgramPath: nil];
-	
-	
+	//If a program has been properly launched, clear the active program.
+    //(We don't want to clear it if we've nipped back to the DOS prompt
+    //while we're still in the process of launching the program.)
+    if (executingLaunchedProgram)
+	{
+        executingLaunchedProgram = NO;
+        [self setLastExecutedProgramPath: nil];
+        [self setLastLaunchedProgramPath: nil];
+	}
+        
 	//Show the program chooser after returning to the DOS prompt, as long
 	//as the program chooser hasn't been manually toggled from the DOS prompt
 	if ([self isGamePackage] && ![self userToggledProgramPanel] && [[self programPathsOnPrincipalDrive] count])
@@ -1201,9 +1213,6 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		{
 			[emulator didResume];
 		}
-		
-		//Update the title to reflect that we’ve paused/resumed
-		[DOSWindowController synchronizeWindowTitleWithDocumentName];
         
         //Enable/disable display-sleep suppression
         [self _syncSuppressesDisplaySleep];
@@ -1221,6 +1230,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
                                                   subtype: 0
                                                     data1: 0
                                                     data2: 0];
+        
         [NSApp postEvent: dummyEvent atStart: NO];
 	}
 }

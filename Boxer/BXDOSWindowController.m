@@ -125,9 +125,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 #pragma mark Initialisation and cleanup
 
 - (void) dealloc
-{
-	[[NSNotificationCenter defaultCenter] removeObserver: self];
-	
+{	
 	[self setFullScreenWindow: nil],		[fullScreenWindow release];
 	[self setProgramPanelController: nil],	[programPanelController release];
 	[self setInputController: nil],			[inputController release];
@@ -163,6 +161,19 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 			   selector: @selector(renderingViewDidLiveResize:)
 				   name: BXViewDidLiveResizeNotification
 				 object: renderingView];
+    
+    [[self document] addObserver: self forKeyPath: @"currentPath" options: 0 context: nil];
+    [[self document] addObserver: self forKeyPath: @"paused" options: 0 context: nil];
+    [[self document] addObserver: self forKeyPath: @"autoPaused" options: 0 context: nil];
+}
+
+- (void) _removeObservers
+{
+	[[NSNotificationCenter defaultCenter] removeObserver: self];
+    
+    [[self document] removeObserver: self forKeyPath: @"currentPath"];
+    [[self document] removeObserver: self forKeyPath: @"paused"];
+    [[self document] removeObserver: self forKeyPath: @"autoPaused"];
 }
 
 
@@ -227,6 +238,17 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 
 #pragma mark -
 #pragma mark Syncing window title
+
+- (void) observeValueForKeyPath: (NSString *)keyPath
+                       ofObject: (id)object
+                         change: (NSDictionary *)change
+                        context: (void *)context
+{
+    if ([keyPath isEqualToString: @"currentPath"] || [keyPath isEqualToString: @"paused"] || [keyPath isEqualToString: @"autoPaused"])
+    {
+        [self synchronizeWindowTitleWithDocumentName];
+    }
+}
 
 - (void) synchronizeWindowTitleWithDocumentName
 {

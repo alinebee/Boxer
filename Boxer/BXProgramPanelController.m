@@ -210,16 +210,21 @@
 
 - (BOOL) activeProgramIsDefault
 {
-	NSString *defaultProgram	= [[[self representedObject] gamePackage] targetPath];
-	NSString *activeProgram		= [[self representedObject] activeProgramPath];
+	BXSession *session = [self representedObject];
+    
+	NSString *defaultProgram	= [[session gamePackage] targetPath];
+	NSString *activeProgram		= [session activeProgramPath];
 
 	return [activeProgram isEqualToString: defaultProgram];
 }
 
 - (void) setActiveProgramIsDefault: (BOOL) isDefault
 {	
-	BXPackage *gamePackage	= [[self representedObject] gamePackage];
-	NSString *activeProgram	= [[self representedObject] activeProgramPath];
+	BXSession *session = [self representedObject];
+    
+	BXPackage *gamePackage	= [session gamePackage];
+	NSString *activeProgram	= [session activeProgramPath];
+    
 	if (!gamePackage || !activeProgram) return;
 	
 	if (isDefault)							[gamePackage setTargetPath: activeProgram];
@@ -228,10 +233,10 @@
 
 - (BOOL) canSetActiveProgramToDefault
 {
-	BXSession *session = [self representedObject];
-	NSString *activePath = [session activeProgramPath];
-
-	return [session isGamePackage] && [[session gamePackage] validateTargetPath: &activePath error: NULL];
+ 	BXSession *session = [self representedObject];
+	NSString *activeProgram = [session activeProgramPath];
+    
+	return (activeProgram != nil) && [[session gamePackage] validateTargetPath: &activeProgram error: NULL];
 }
 
 - (BOOL) hasDefaultTarget

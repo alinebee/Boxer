@@ -6,6 +6,7 @@
  */
 
 #import "BXSession+BXFileManager.h"
+#import "BXSessionPrivate.h"
 #import "BXAppController.h"
 
 #import "BXEmulator+BXDOSFileSystem.h"
@@ -402,6 +403,7 @@
 	if ([[self class] isExecutable: path])
 	{
 		//If an executable was specified, execute it
+        [self setLastLaunchedProgramPath: path];
 		[theEmulator executeProgramAtPath: dosPath changingDirectory: YES];
 	}
 	else

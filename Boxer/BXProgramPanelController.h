@@ -23,6 +23,7 @@
 	IBOutlet NSView *defaultProgramPanel;
 	IBOutlet NSView *initialDefaultProgramPanel;
 	IBOutlet NSView *noProgramsPanel;
+    
 	IBOutlet NSCollectionView *programList;
 	IBOutlet NSScrollView *programScroller;
 	
@@ -54,6 +55,8 @@
 @property (readonly, nonatomic) NSString *labelForToggle;
 @property (readonly, nonatomic) NSString *labelForInitialToggle;
 
+//Whether the current session is in the middle scanning for more programs.
+@property (readonly, nonatomic) BOOL programScanInProgress;
 
 //An array of {@path, @isDefault} pairs representing executables to display in the program panel.
 @property (readonly, retain, nonatomic) NSArray *panelExecutables;

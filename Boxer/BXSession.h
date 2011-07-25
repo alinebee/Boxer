@@ -82,6 +82,7 @@ extern NSString * const BXDidFinishInterruptionNotification;
 	BOOL userSkippedDefaultProgram;
 	
 	NSOperationQueue *importQueue;
+    NSOperationQueue *scanQueue;
 	
 	UKFileWatcher *watcher;
 	

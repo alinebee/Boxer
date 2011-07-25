@@ -18,6 +18,8 @@
 	BOOL skipSubdirectories;
 	BOOL skipPackageContents;
 	NSSet *fileTypes;
+    NSPredicate *predicate;
+    
 	NSString *basePath;
 	NSString *currentPath;
 	NSString *relativePath;
@@ -32,8 +34,8 @@
 //The enumerator we use internally for iterating the directory contents.
 @property (readonly, retain, nonatomic) NSDirectoryEnumerator *enumerator;
 
-//The base path we are iterating.
-@property (readonly, copy, nonatomic) NSString *basePath;
+//The base path to iterate. Should not be modified during iteration.
+@property (copy, nonatomic) NSString *basePath;
 
 //The full path of the last file returned by nextObject.
 @property (readonly, copy, nonatomic) NSString *currentPath;
@@ -52,6 +54,10 @@
 
 //What UTI filetypes nextObject will return. If nil, files of any type will be returned.
 @property (copy, nonatomic) NSSet *fileTypes;
+
+//If specified, only files whose paths match this predicate will be returned.
+@property (copy, nonatomic) NSPredicate *predicate;
+
 
 //Passthroughs for NSDirectoryEnumerator methods.
 @property (readonly, nonatomic) NSDictionary *fileAttributes;

@@ -21,7 +21,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="125"/>
+			<integer value="850"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -125,7 +125,7 @@
 								<object class="NSTabViewItem" id="45197897">
 									<string key="NSIdentifier">0</string>
 									<object class="NSView" key="NSView" id="428256279">
-										<nil key="NSNextResponder"/>
+										<reference key="NSNextResponder" ref="681208964"/>
 										<int key="NSvFlags">256</int>
 										<object class="NSMutableArray" key="NSSubviews">
 											<bool key="EncodedWithXMLCoder">YES</bool>
@@ -453,6 +453,7 @@
 											</object>
 										</object>
 										<string key="NSFrameSize">{296, 362}</string>
+										<reference key="NSSuperview" ref="681208964"/>
 									</object>
 									<string key="NSLabel">Gamebox Inspector</string>
 									<reference key="NSColor" ref="1046058740"/>
@@ -931,7 +932,7 @@
 								<object class="NSTabViewItem" id="1056279122">
 									<string key="NSIdentifier">2</string>
 									<object class="NSView" key="NSView" id="194898093">
-										<reference key="NSNextResponder" ref="681208964"/>
+										<nil key="NSNextResponder"/>
 										<int key="NSvFlags">256</int>
 										<object class="NSMutableArray" key="NSSubviews">
 											<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1210,7 +1211,6 @@
 											</object>
 										</object>
 										<string key="NSFrameSize">{296, 362}</string>
-										<reference key="NSSuperview" ref="681208964"/>
 									</object>
 									<string key="NSLabel">Mouse Inspector</string>
 									<reference key="NSColor" ref="1046058740"/>
@@ -1854,12 +1854,12 @@ A</string>
 									<reference key="NSTabView" ref="681208964"/>
 								</object>
 							</object>
-							<reference key="NSSelectedTabViewItem" ref="1056279122"/>
+							<reference key="NSSelectedTabViewItem" ref="45197897"/>
 							<reference key="NSFont" ref="190746779"/>
 							<int key="NSTvFlags">6</int>
 							<object class="NSMutableArray" key="NSSubviews">
 								<bool key="EncodedWithXMLCoder">YES</bool>
-								<reference ref="194898093"/>
+								<reference ref="428256279"/>
 							</object>
 						</object>
 					</object>
@@ -2111,6 +2111,7 @@ A</string>
 					<string>DOSWindowController.inputController.strictGameportTiming</string>
 					<string>DOSWindowController.inputController.availableJoystickTypes</string>
 					<string>DOSWindowController.inputController</string>
+					<string>isScanningForExecutables</string>
 				</object>
 				<string key="NSObjectClassName">BXSession</string>
 				<object class="_NSManagedProxy" key="_NSManagedProxy"/>
@@ -3656,6 +3657,26 @@ A</string>
 						<reference key="destination" ref="627817547"/>
 					</object>
 					<int key="connectionID">1729</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">enabled: selection.isScanningForExecutables</string>
+						<reference key="source" ref="641760949"/>
+						<reference key="destination" ref="56494336"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="641760949"/>
+							<reference key="NSDestination" ref="56494336"/>
+							<string key="NSLabel">enabled: selection.isScanningForExecutables</string>
+							<string key="NSBinding">enabled</string>
+							<string key="NSKeyPath">selection.isScanningForExecutables</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSValueTransformerName</string>
+								<string key="NS.object.0">NSNegateBoolean</string>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1732</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -5716,7 +5737,7 @@ A</string>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1729</int>
+			<int key="maxID">1732</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

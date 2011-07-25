@@ -52,11 +52,19 @@ NSString * const BXOperationIndeterminateKey	= @"BXOperationIndeterminateKey";
 	[super dealloc];
 }
 
+- (BOOL) canStart
+{
+    return YES;
+}
+
 - (void) start
 {
-	[self _sendWillStartNotificationWithInfo: nil];
-	[super start];
-	[self _sendDidFinishNotificationWithInfo: nil];
+    if ([self canStart])
+    {
+        [self _sendWillStartNotificationWithInfo: nil];
+        [super start];
+        [self _sendDidFinishNotificationWithInfo: nil];
+    }
 }
 
 - (void) cancel

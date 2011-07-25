@@ -15,7 +15,6 @@
 
 @interface BXPathEnumerator ()
 @property (readwrite, retain, nonatomic) NSDirectoryEnumerator *enumerator;
-@property (readwrite, copy, nonatomic) NSString *basePath;
 @property (readwrite, copy, nonatomic) NSString *currentPath;
 @property (readwrite, copy, nonatomic) NSString *relativePath;
 
@@ -24,7 +23,7 @@
 
 @implementation BXPathEnumerator
 @synthesize enumerator;
-@synthesize fileTypes, skipHiddenFiles, skipSubdirectories, skipPackageContents;
+@synthesize fileTypes, skipHiddenFiles, skipSubdirectories, skipPackageContents, predicate;
 @synthesize basePath, currentPath, relativePath;
 
 - (id) init
@@ -44,18 +43,7 @@
 {
 	if ((self = [self init]))
 	{
-		NSDirectoryEnumerator *directoryEnumerator = [manager enumeratorAtPath: filePath];
-		
-		if (directoryEnumerator)
-		{
-			[self setEnumerator: directoryEnumerator];
-			[self setBasePath: filePath];
-		}
-		else
-		{
-			[self release];
-			return nil;
-		}
+		[self setBasePath: filePath];
 	}
 	return self;
 }
@@ -72,11 +60,31 @@
 	[self setBasePath: nil],	[basePath release];
 	[self setCurrentPath: nil],	[currentPath release];
 	[self setRelativePath: nil],	[relativePath release];
+    [self setPredicate: nil],   [predicate release];
 	
 	[manager release], manager = nil;
 	[workspace release], workspace = nil;
 	
 	[super dealloc];
+}
+
+- (void) setBasePath: (NSString *)path
+{
+    if (basePath != path)
+    {
+        [basePath release];
+        basePath = [path copy];
+        
+        //Create an enumerator for the specified path
+        if (basePath)
+        {
+            [self setEnumerator: [manager enumeratorAtPath: basePath]];
+        }
+        else
+        {
+            [self setEnumerator: nil];
+        }
+    }
 }
 
 - (id) nextObject
@@ -94,6 +102,10 @@
 		//Skip files within packages
 		if ([self skipPackageContents] && [workspace isFilePackageAtPath: path]) [self skipDescendents];
 		
+        
+        //Skip files that don't match our predicate
+        if ([self predicate] && ![[self predicate] evaluateWithObject: fullPath]) continue;
+        
 		//Skip files not on our filetype whitelist
 		if ([self fileTypes] && ![workspace file: fullPath matchesTypes: [self fileTypes]]) continue;
 								 

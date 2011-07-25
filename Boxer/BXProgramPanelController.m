@@ -55,6 +55,11 @@
 	return [NSSet setWithObject: @"representedObject.activeProgramPath"];
 }
 
++ (NSSet *)keyPathsForValuesAffectingProgramScanInProgress
+{
+	return [NSSet setWithObjects: @"representedObject.isScanningForExecutables", @"panelExecutables", nil];
+}
+
 + (NSSet *)keyPathsForValuesAffectingActiveProgramIsDefault
 {
 	return [NSSet setWithObjects:
@@ -101,7 +106,9 @@
 	{
 		[self syncPanelExecutables];
 	}
-	//Only update the panel contents after a short delay, to allow time for a program to quit
+    
+    //Update the current panel after any change we're listening for
+	//(Update the panel contents after a short delay, to allow time for a program to quit)
 	[self performSelector: @selector(syncActivePanel) withObject: nil afterDelay: 0.1];
 }
 
@@ -133,10 +140,10 @@
 	{
 		panel = programChooserPanel;
 	}
-	else
-	{
+    else
+    {   
 		panel = noProgramsPanel;
-	}
+    }
 
 	[self setActivePanel: panel];
 }
@@ -182,6 +189,14 @@
 	}
 }
 
+- (BOOL) programScanInProgress
+{
+    //Tweak: report that the scan is still in progress if it has just finished and has found executables.
+    //Otherwise, there will be a brief flash of "there are no programs..." as we switch panels to the
+    //actual program list.
+    //Ughhhhhhhhhhh.
+    return [[self representedObject] isScanningForExecutables] || [[self panelExecutables] count];
+}
 
 //Returns the display string used for the "open this program every time" checkbox toggle
 - (NSString *) labelForToggle

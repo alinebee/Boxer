@@ -16,6 +16,7 @@
 @class BXDrive;
 @class BXDrivesInUseAlert;
 @class BXOperation;
+@class BXExecutableScan;
 @protocol BXDriveImport;
 
 @interface BXSession (BXFileManager) <BXEmulatorFileSystemDelegate, BXOperationDelegate>
@@ -30,6 +31,10 @@
 //Returns whether there are any CD or floppy drives currently mounted in the emulator.
 @property (readonly, nonatomic) BOOL hasCDDrives;
 @property (readonly, nonatomic) BOOL hasFloppyDrives;
+
+//Returns whether there are currently any imports/executable scans in progress.
+@property (readonly, nonatomic) BOOL isImportingDrives;
+@property (readonly, nonatomic) BOOL isScanningForExecutables;
 
 
 #pragma mark -
@@ -47,13 +52,6 @@
 //If path is on a CD or floppy volume, then the volume will be returned (and shouldRecurse will be YES).
 //Otherwise, the parent folder of the item, or the item itself if it is a folder, will be returned (and shouldRecurse will be NO). 
 + (NSString *) gameDetectionPointForPath: (NSString *)path shouldSearchSubfolders: (BOOL *)shouldRecurse;
-
-//Returns an array of file paths for all compatible executables located on the specified drive.
-//Returns nil and populates outError if an error prevented us from scanning. 
-//In the case of disk images, this method will silently mount the drive, read the executables,
-//then unmount it afterwards; and file paths will be prefixed with the original image path,
-//rather than the mounted volume path (which will no longer be valid).
-+ (NSArray *) executablesInDrive: (BXDrive *)drive error: (NSError **)outError;
 
 
 #pragma mark -
@@ -138,6 +136,24 @@
 					 returnCode: (NSInteger)returnCode
 					  forDrives: (NSArray *)selectedDrives;
 
+
+#pragma mark -
+#pragma mark Executable scanning
+
+//Returns a scan operation for the specified drive.
+- (BXExecutableScan *) executableScanForDrive: (BXDrive *)drive
+                             startImmediately: (BOOL)start;
+
+//Aborts the scan for the specified drive.
+//Returns YES if a scan was aborted, NO if no scan was in progress.
+- (BOOL) cancelExecutableScanForDrive: (BXDrive *)drive;
+
+//Returns whether the specified drive is being scanned for executables.
+- (BOOL) isScanningForExecutablesInDrive: (BXDrive *)drive;
+
+//Called when an executable scan has finished.
+//Updates the executable cache for the specified drive.
+- (void) executableScanDidFinish: (NSNotification *)theNotification;
 
 
 #pragma mark -

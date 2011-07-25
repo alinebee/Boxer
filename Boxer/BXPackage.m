@@ -187,7 +187,8 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 	//If the destination file does not exist, show an error
     //TWEAK: this condition is disabled for now, to allow links to files within
     //disk images.
-	if (NO && ![manager fileExistsAtPath: filePath])
+    /*
+	if (![manager fileExistsAtPath: filePath])
 	{
 		if (outError)
 		{
@@ -200,6 +201,7 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 		}
 		return NO;
 	}
+     */
 	
 	//Reject target paths that are not located inside the gamebox
 	if (![filePath isRootedInPath: [self gamePath]])

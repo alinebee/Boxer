@@ -110,6 +110,8 @@ extern NSString * const BXOperationIndeterminateKey;
 
 //Indicates whether the process cannot currently provide a meaningful indication
 //of progress (and thus whether the value of currentProgress should be ignored).
+//Returns YES by default; intended to be overridden by subclasses that can offer
+//meaningful progress tracking.
 @property (readonly, getter=isIndeterminate) BOOL indeterminate;
 
 //Whether the operation succeeeded or failed. Only relevant once isFinished is YES.
@@ -127,6 +129,10 @@ extern NSString * const BXOperationIndeterminateKey;
 
 //These methods are for the use of BXOperation subclasses only.
 @interface BXOperation ()
+
+//Returns whether the operation has enough information to begin.
+//Returns YES; can be overridden by subclasses to restrict starting conditions.
+- (BOOL) canStart;
 
 //Post one of the corresponding notifications.
 - (void) _sendWillStartNotificationWithInfo: (NSDictionary *)info;

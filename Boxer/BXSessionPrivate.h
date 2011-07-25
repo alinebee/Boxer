@@ -113,5 +113,6 @@
 
 - (void) _registerForFilesystemNotifications;
 - (void) _deregisterForFilesystemNotifications;
+- (void) _hasActiveImports;
 
 @end

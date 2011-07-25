@@ -148,6 +148,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		[self setGameSettings: defaults];
 		
 		importQueue = [[NSOperationQueue alloc] init];
+		scanQueue = [[NSOperationQueue alloc] init];
 		watcher = [[UKFNSubscribeFileWatcher alloc] init];
 	}
 	return self;
@@ -200,6 +201,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		
 	[temporaryFolderPath release], temporaryFolderPath = nil;
 	
+	[scanQueue release], scanQueue = nil;
 	[importQueue release], importQueue = nil;
 	[watcher release], watcher = nil;
 	
@@ -419,15 +421,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	[callback setArgument: &self atIndex: 2];
 	[callback setArgument: &contextInfo atIndex: 4];	
 	
-	BOOL hasActiveImports = NO;
-	for (NSOperation *import in [importQueue operations])
-	{
-		if (![import isFinished] && ![import isCancelled])
-		{
-			hasActiveImports = YES;
-			break;
-		}
-	}
+	BOOL hasActiveImports = [self isImportingDrives];
+	
 	
 	//We confirm the close if a process is running and if we're not already shutting down
 	BOOL shouldConfirm = hasActiveImports ||
@@ -853,7 +848,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         
 	//Show the program chooser after returning to the DOS prompt, as long
 	//as the program chooser hasn't been manually toggled from the DOS prompt
-	if ([self isGamePackage] && ![self userToggledProgramPanel] && [[self programPathsOnPrincipalDrive] count])
+	if ([self isGamePackage] && ![self userToggledProgramPanel] && ([[self programPathsOnPrincipalDrive] count] || [self isScanningForExecutables]))
 	{
 		[NSObject cancelPreviousPerformRequestsWithTarget: [self DOSWindowController]
 												 selector: @selector(hideProgramPanel)
@@ -931,7 +926,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	if (![[self activeProgramPath] isEqualToString: [[self gamePackage] targetPath]]) return NO;
 	
 	//Don't close if there are drive imports in progress
-	if ([[importQueue operations] count]) return NO;
+	if ([self isImportingDrives]) return NO;
 	
 	//Don't close if the last program quit suspiciously early, since this may be a crash
 	NSTimeInterval executionTime = [NSDate timeIntervalSinceReferenceDate] - programStartTime;
@@ -1160,10 +1155,15 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		[manager removeItemAtPath: temporaryFolderPath error: NULL];
 	}
 	
-	//Cancel any in-progress drive imports and clear delegates
+	//Cancel any in-progress operations specific to this session
 	[[importQueue operations] makeObjectsPerformSelector: @selector(setDelegate:) withObject: nil];
 	[importQueue cancelAllOperations];
+    
+    [[scanQueue operations] makeObjectsPerformSelector: @selector(setDelegate:) withObject: nil];
+    [scanQueue cancelAllOperations];
+    
 	[importQueue waitUntilAllOperationsAreFinished];
+	[scanQueue waitUntilAllOperationsAreFinished];
 }
 
 

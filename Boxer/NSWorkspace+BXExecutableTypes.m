@@ -228,9 +228,15 @@ typedef struct {
 	if ([self file: filePath matchesTypes: dosOnlyTypes])
 		 return YES;
 	
-	//If it is a .EXE file, perform a more rigorous compatibility check
+	//If it is an .EXE file, perform a more rigorous compatibility check
 	if ([self file: filePath matchesTypes: [NSSet setWithObject: @"com.microsoft.windows-executable"]])
-		 return [self executableTypeAtPath: filePath error: NULL] == BXExecutableTypeDOS;
+    {
+        BXExecutableType exeType = [self executableTypeAtPath: filePath error: NULL];
+        
+        //TWEAK: if the executable type could not be determined, assume it is compatible.
+        //This allows us to pass on files that cannot be read.
+        return (exeType == BXExecutableTypeDOS) || (exeType == BXExecutableTypeUnknown);
+    }
 		
 	//Otherwise, assume the file is incompatible
 	return NO;

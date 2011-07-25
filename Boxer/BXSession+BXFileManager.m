@@ -18,6 +18,7 @@
 #import "BXDrivesInUseAlert.h"
 #import "BXGameProfile.h"
 #import "BXDriveImport.h"
+#import "BXExecutableScan.h"
 
 #import "NSWorkspace+BXMountedVolumes.h"
 #import "NSWorkspace+BXFileTypes.h"
@@ -143,78 +144,6 @@
 	else return [path stringByDeletingLastPathComponent]; 
 }
 
-+ (NSArray *) executablesInDrive: (BXDrive *)drive error: (NSError **)outError
-{
-    NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-    NSMutableArray *foundExecutables = [NSMutableArray arrayWithCapacity: 10];
-    
-    NSString *drivePath = [drive path];
-    NSString *scanPath  = drivePath;
-    
-    BOOL didMountVolume = NO;
-    BOOL isMountedImage = NO;
-    
-    //If the path is an image mountable by HDIUtil, mount it so we can look inside it
-    if ([workspace file: drivePath matchesTypes: [BXAppController OSXMountableImageTypes]])
-    {
-        isMountedImage = YES;
-        
-        //First, check if it's already mounted
-        scanPath = [workspace volumeForSourceImage: drivePath];
-        
-        //If it's not, mount it ourselves
-        if (!scanPath)
-        {
-            scanPath = [workspace mountImageAtPath: drivePath readOnly: YES invisibly: YES error: outError];
-            
-            //If we couldn't mount it, silently give up
-            if (!scanPath) return nil;
-            
-            else didMountVolume = YES;
-        }
-    }
-    
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init]; 
-    
-    NSSet *mountableFolderTypes	= [BXAppController mountableFolderTypes];
-    BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: scanPath];
-    
-    for (NSString *path in enumerator)
-    {
-        NSString *fileType = [[enumerator fileAttributes] fileType];
-        
-        //Filter out the contents of any nested drive folders
-        if ([fileType isEqualToString: NSFileTypeDirectory])
-        {
-            if ([workspace file: path matchesTypes: mountableFolderTypes]) [enumerator skipDescendents];
-        }
-        
-        //Filter out non-executables and Windows-only executables
-        else if ([workspace isCompatibleExecutableAtPath: path])
-        {
-            //If this is on a mounted image, correct the path to be relative to the original image
-            if (isMountedImage)
-            {
-                path = [drivePath stringByAppendingPathComponent: [enumerator relativePath]];
-            }
-            
-            [foundExecutables addObject: path];
-        }
-    }
-    
-    [pool drain];
-    
-    //IMPLEMENTATION NOTE: unmounting needs to be done after the pool has drained
-    //and the directory enumerator released. Before then, the enumerator will keep
-    //the disk too 'busy' to eject.
-    if (didMountVolume)
-    {
-        [workspace unmountAndEjectDeviceAtPath: scanPath];
-    }
-    
-    return foundExecutables;
-}
-
 
 #pragma mark -
 #pragma mark Filetype helper methods
@@ -273,7 +202,7 @@
 
 + (NSSet *) keyPathsForValuesAffectingProgramPathsOnPrincipalDrive
 {
-	return [NSSet setWithObject: @"principalDrive"];
+	return [NSSet setWithObjects: @"principalDrive", @"executables", nil];
 }
 
 - (NSArray *) programPathsOnPrincipalDrive
@@ -776,23 +705,11 @@
 		if (showDriveNotifications && ![drive isHidden])
             [[BXBezelController controller] showDriveAddedBezelForDrive: drive];
 		
-		//If this drive is part of the gamebox, determine what executables are stored on it
-        //TODO: move this work off to an NSOperation and perform it asynchronously
-		if ([self driveIsBundled: drive])
+		//If this drive is part of the gamebox, scan it for executables
+        //to display in the program panel
+        if ([self driveIsBundled: drive])
 		{
-			NSArray *foundExecutables = [[self class] executablesInDrive: drive error: nil];
-			
-            if (foundExecutables)
-            {
-                //Only send notifications if any executables were found, to prevent unnecessary redraws
-                BOOL notify = ([foundExecutables count] > 0);
-                
-                //TODO: is there a better notification method we could use here?
-                if (notify) [self willChangeValueForKey: @"executables"];
-                [executables setObject: [NSMutableArray arrayWithArray: foundExecutables]
-                                forKey: [drive letter]];
-                if (notify) [self didChangeValueForKey: @"executables"];
-            }
+			[self executableScanForDrive: drive startImmediately: YES];
 		}
 	}
 }
@@ -804,10 +721,13 @@
 	//We access it this way so that KVO notifications get posted properly
 	[[self mutableArrayValueForKey: @"drives"] removeObject: drive];
 	
+    //Stop scanning for executables on the drive
+    [self cancelExecutableScanForDrive: drive];
+    
 	if (![drive isInternal])
 	{
 		NSString *path = [drive path];
-		//Only stop tracking if there are no other drives mapping to that path either.
+		//Stop tracking for changes on the drive, if there are no other drives mapping to that path either.
 		if (![[self emulator] pathIsDOSAccessible: path]) [self _stopTrackingChangesAtPath: path];
 	
 		if (showDriveNotifications)
@@ -834,6 +754,8 @@
 	if (driveExecutables)
 	{
 		NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+        
+        //Disabled windows-only file check for now to avoid slowdowns
 		if ([workspace file: path matchesTypes: [BXAppController executableTypes]]) // && ![workspace isWindowsOnlyExecutableAtPath: path]
 		{
 			[self willChangeValueForKey: @"executables"];
@@ -849,7 +771,7 @@
 	BXDrive *drive = [[notification userInfo] objectForKey: @"drive"];
 	NSString *path = [[notification userInfo] objectForKey: @"path"];
 	
-	//The drive is in our executables cache: remove any reference to the deleted file) 
+	//The drive is in our executables cache: remove any reference to the deleted file
 	NSMutableArray *driveExecutables = [executables objectForKey: [drive letter]];
 	if (driveExecutables && [driveExecutables containsObject: path])
 	{
@@ -857,6 +779,81 @@
 		[driveExecutables removeObject: path];
 		[self didChangeValueForKey: @"executables"];
 	}
+}
+
+#pragma mark -
+#pragma mark Drive executable scanning
+
+- (BXExecutableScan *) executableScanForDrive: (BXDrive *)drive
+                             startImmediately: (BOOL)start
+{
+    BXExecutableScan *scan = [BXExecutableScan scanWithBasePath: [drive path]];
+    [scan setDelegate: self];
+    [scan setDidFinishSelector: @selector(executableScanDidFinish:)];
+    [scan setContextInfo: drive];
+    
+    if (start)
+    {
+        [self willChangeValueForKey: @"isScanningForExecutables"];
+        [scanQueue addOperation: scan];
+        [self didChangeValueForKey: @"isScanningForExecutables"];
+    }
+    return scan;
+}
+
+- (BOOL) isScanningForExecutables
+{
+    for (NSOperation *operation in [scanQueue operations])
+	{
+		if (![operation isFinished] && ![operation isCancelled]) return YES;
+	}    
+    return NO;
+}
+
+- (BOOL) isScanningForExecutablesInDrive: (BXDrive *)drive
+{
+    for (BXExecutableScan *operation in [scanQueue operations])
+	{
+		if ([[operation contextInfo] isEqual: drive] && ![operation isExecuting]) return YES;
+	}    
+    return NO;
+}
+
+- (BOOL) cancelExecutableScanForDrive: (BXDrive *)drive
+{
+    for (BXExecutableScan *operation in [scanQueue operations])
+	{
+		if (![operation isFinished] && [[operation contextInfo] isEqual: drive])
+        {
+            [self willChangeValueForKey: @"isScanningForExecutables"];
+            [operation cancel];
+            [self didChangeValueForKey: @"isScanningForExecutables"];
+            return YES;
+        }
+	}    
+    return NO;   
+}
+
+- (void) executableScanDidFinish: (NSNotification *)theNotification
+{
+    BXExecutableScan *scan = [theNotification object];
+	BXDrive *drive = [scan contextInfo];
+    
+    [self willChangeValueForKey: @"isScanningForExecutables"];
+	if ([scan succeeded])
+	{
+        NSArray *driveExecutables = [scan matchingPaths];
+        
+        //Only send notifications if any executables were found, to prevent unnecessary redraws
+        BOOL notify = ([driveExecutables count] > 0);
+            
+        //TODO: is there a better notification method we could use here?
+        if (notify) [self willChangeValueForKey: @"executables"];
+        [executables setObject: [NSMutableArray arrayWithArray: driveExecutables]
+                        forKey: [drive letter]];
+        if (notify) [self didChangeValueForKey: @"executables"];
+	}
+    [self didChangeValueForKey: @"isScanningForExecutables"];
 }
 
 #pragma mark -
@@ -953,6 +950,15 @@
 		}
 	}
 	return NO;
+}
+
+- (BOOL) isImportingDrives
+{
+    for (NSOperation *import in [importQueue operations])
+	{
+		if (![import isFinished] && ![import isCancelled]) return YES;
+	}    
+    return NO;
 }
 
 - (void) driveImportDidFinish: (NSNotification *)theNotification

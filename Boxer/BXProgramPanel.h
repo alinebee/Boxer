@@ -10,6 +10,7 @@
 //program picker panel views.
 
 #import <Cocoa/Cocoa.h>
+#import "YRKSpinningProgressIndicator.h"
 
 //Interface Builder tags
 enum {

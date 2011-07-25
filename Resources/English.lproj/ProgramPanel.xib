@@ -21,7 +21,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="66"/>
+			<integer value="429"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -201,7 +201,7 @@
 				<string key="NSClassName">BXProgramPanel</string>
 			</object>
 			<object class="NSCustomView" id="515511690">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">274</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -210,6 +210,27 @@
 						<int key="NSvFlags">293</int>
 						<object class="NSMutableArray" key="NSSubviews">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="BGHUDLabel" id="153252213">
+								<reference key="NSNextResponder" ref="199830071"/>
+								<int key="NSvFlags">266</int>
+								<string key="NSFrame">{{36, 10}, {386, 14}}</string>
+								<reference key="NSSuperview" ref="199830071"/>
+								<bool key="NSEnabled">YES</bool>
+								<object class="NSTextFieldCell" key="NSCell" id="1001171223">
+									<int key="NSCellFlags">68288064</int>
+									<int key="NSCellFlags2">4326400</int>
+									<string key="NSContents">Hold down Option during startup to get the DOS prompt instead.</string>
+									<object class="NSFont" key="NSSupport" id="26">
+										<string key="NSName">LucidaGrande</string>
+										<double key="NSSize">11</double>
+										<int key="NSfFlags">3100</int>
+									</object>
+									<reference key="NSControlView" ref="153252213"/>
+									<reference key="NSBackgroundColor" ref="870526867"/>
+									<reference key="NSTextColor" ref="407403670"/>
+								</object>
+								<string key="themeKey">BXShadowedTextTheme</string>
+							</object>
 							<object class="NSButton" id="924340279">
 								<reference key="NSNextResponder" ref="199830071"/>
 								<int key="NSvFlags">269</int>
@@ -250,10 +271,11 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{640, 64}</string>
+				<reference key="NSSuperview"/>
 				<string key="NSClassName">BXProgramPanel</string>
 			</object>
 			<object class="NSCustomView" id="1066092163">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">274</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -267,6 +289,7 @@
 								<int key="NSvFlags">269</int>
 								<string key="NSFrame">{{370, 16}, {90, 25}}</string>
 								<reference key="NSSuperview" ref="555678485"/>
+								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="794322956">
 									<int key="NSCellFlags">-2080244224</int>
@@ -287,16 +310,13 @@
 								<int key="NSvFlags">269</int>
 								<string key="NSFrame">{{17, 10}, {319, 14}}</string>
 								<reference key="NSSuperview" ref="555678485"/>
+								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="946636500">
 									<int key="NSCellFlags">68288064</int>
 									<int key="NSCellFlags2">4326400</int>
 									<string key="NSContents">You can change your choice later from the Inspector Panel.</string>
-									<object class="NSFont" key="NSSupport" id="26">
-										<string key="NSName">LucidaGrande</string>
-										<double key="NSSize">11</double>
-										<int key="NSfFlags">3100</int>
-									</object>
+									<reference key="NSSupport" ref="26"/>
 									<reference key="NSControlView" ref="76256141"/>
 									<reference key="NSBackgroundColor" ref="870526867"/>
 									<reference key="NSTextColor" ref="407403670"/>
@@ -308,6 +328,7 @@
 								<int key="NSvFlags">269</int>
 								<string key="NSFrame">{{470, 16}, {150, 25}}</string>
 								<reference key="NSSuperview" ref="555678485"/>
+								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="266085088">
 									<int key="NSCellFlags">-2080244224</int>
@@ -328,6 +349,7 @@
 								<int key="NSvFlags">269</int>
 								<string key="NSFrame">{{17, 26}, {277, 18}}</string>
 								<reference key="NSSuperview" ref="555678485"/>
+								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="312440514">
 									<int key="NSCellFlags">67239424</int>
@@ -343,10 +365,13 @@
 						</object>
 						<string key="NSFrameSize">{640, 64}</string>
 						<reference key="NSSuperview" ref="1066092163"/>
+						<reference key="NSWindow"/>
 						<string key="NSClassName">NSView</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{640, 64}</string>
+				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
 				<string key="NSClassName">BXProgramPanel</string>
 			</object>
 			<object class="NSCustomView" id="1029538789">
@@ -360,6 +385,7 @@
 						<object class="NSPSMatrix" key="NSDrawMatrix"/>
 						<string key="NSFrame">{{304, 14}, {32, 32}}</string>
 						<reference key="NSSuperview" ref="1029538789"/>
+						<reference key="NSWindow"/>
 						<int key="NSpiFlags">20490</int>
 						<double key="NSMaxValue">100</double>
 					</object>
@@ -368,6 +394,7 @@
 						<int key="NSvFlags">266</int>
 						<string key="NSFrame">{{17, 10}, {606, 14}}</string>
 						<reference key="NSSuperview" ref="1029538789"/>
+						<reference key="NSWindow"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="512924413">
 							<int key="NSCellFlags">68288064</int>
@@ -385,6 +412,7 @@
 						<int key="NSvFlags">266</int>
 						<string key="NSFrame">{{17, 27}, {606, 17}}</string>
 						<reference key="NSSuperview" ref="1029538789"/>
+						<reference key="NSWindow"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="59349482">
 							<int key="NSCellFlags">68288064</int>
@@ -400,6 +428,7 @@
 				</object>
 				<string key="NSFrameSize">{640, 64}</string>
 				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
 				<string key="NSClassName">BXProgramPanel</string>
 			</object>
 			<object class="NSCustomView" id="80732392">
@@ -972,6 +1001,7 @@
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="924340279"/>
+							<reference ref="153252213"/>
 						</object>
 						<reference key="parent" ref="515511690"/>
 					</object>
@@ -994,6 +1024,20 @@
 						<reference key="object" ref="399757585"/>
 						<reference key="parent" ref="1029538789"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">451</int>
+						<reference key="object" ref="153252213"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="1001171223"/>
+						</object>
+						<reference key="parent" ref="199830071"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">452</int>
+						<reference key="object" ref="1001171223"/>
+						<reference key="parent" ref="153252213"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -1008,8 +1052,10 @@
 					<string>11.editorWindowContentRectSynchronizationRect</string>
 					<string>13.IBPluginDependency</string>
 					<string>150.IBPluginDependency</string>
+					<string>150.IBViewBoundsToFrameTransform</string>
 					<string>151.IBPluginDependency</string>
 					<string>156.IBPluginDependency</string>
+					<string>156.IBViewBoundsToFrameTransform</string>
 					<string>157.IBPluginDependency</string>
 					<string>16.IBPluginDependency</string>
 					<string>221.IBPluginDependency</string>
@@ -1043,6 +1089,9 @@
 					<string>422.IBPluginDependency</string>
 					<string>441.IBPluginDependency</string>
 					<string>441.IBViewBoundsToFrameTransform</string>
+					<string>451.IBPluginDependency</string>
+					<string>451.IBViewBoundsToFrameTransform</string>
+					<string>452.IBPluginDependency</string>
 					<string>52.IBEditorWindowLastContentRect</string>
 					<string>52.IBPluginDependency</string>
 					<string>52.IBViewBoundsToFrameTransform</string>
@@ -1062,8 +1111,14 @@
 					<string>{{21, 633}, {640, 78}}</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
+					<object class="NSAffineTransform">
+						<bytes key="NSTransformStruct">P4AAAL+AAABBkAAAwiQAAA</bytes>
+					</object>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
+					<object class="NSAffineTransform">
+						<bytes key="NSTransformStruct">P4AAAL+AAABBiAAAwbAAAA</bytes>
+					</object>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -1107,7 +1162,12 @@
 					<object class="NSAffineTransform">
 						<bytes key="NSTransformStruct">P4AAAL+AAABDmAAAwiAAAA</bytes>
 					</object>
-					<string>{{387, 558}, {640, 64}}</string>
+					<string>com.binarymethod.BGHUDAppKitPlugin</string>
+					<object class="NSAffineTransform">
+						<bytes key="NSTransformStruct">P4AAAL+AAADCngAAwbgAAA</bytes>
+					</object>
+					<string>com.binarymethod.BGHUDAppKitPlugin</string>
+					<string>{{388, 440}, {640, 64}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<object class="NSAffineTransform"/>
 					<string>{{354, 532}, {640, 64}}</string>
@@ -1133,7 +1193,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">450</int>
+			<int key="maxID">453</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

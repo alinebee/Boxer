@@ -661,9 +661,13 @@ enum {
 	//If the path couldn't be encoded, don't attempt to go further
 	if (!drivePath) return nil;
 	
-	DOS_Drive *drive = new fatDrive(drivePath, 0, 0, 0, 0, 0);
-	
-	return drive;
+	fatDrive *drive = new fatDrive(drivePath, 0, 0, 0, 0, 0);
+	if (!drive->created_successfully)
+    {
+        delete drive;
+        return nil;
+    }
+	return (DOS_Drive *)drive;
 }
 
 //Create a new DOS_Drive CDROM from a path to a filesystem folder.

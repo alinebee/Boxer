@@ -670,7 +670,15 @@ fatDrive::fatDrive(const char *sysFilename, Bit32u bytesector, Bit32u cylsector,
         mbrData = boxer_FATPartitionTableLittleToHost(mbrData);
         //--End of modifications
         
-		if(mbrData.magic1!= 0x55 ||	mbrData.magic2!= 0xaa) LOG_MSG("Possibly invalid partition table in disk image.");
+		if(mbrData.magic1!= 0x55 ||	mbrData.magic2!= 0xaa)
+        {
+            LOG_MSG("Possibly invalid partition table in disk image.");
+            
+            //--Added 2011-07-22 by Alun Bestor to bail out of reading invalid images
+            created_successfully = false;
+            return;
+            //--End of modifications
+        }
 
 		startSector = 63;
 		int m;
@@ -700,6 +708,11 @@ fatDrive::fatDrive(const char *sysFilename, Bit32u bytesector, Bit32u cylsector,
 	if ((bootbuffer.magic1 != 0x55) || (bootbuffer.magic2 != 0xaa)) {
 		/* Not a FAT filesystem */
 		LOG_MSG("Loaded image has no valid magicnumbers at the end!");
+        
+        //--Added 2011-07-22 by Alun Bestor to bail out of reading invalid images
+		created_successfully = false;
+		return;
+        //--End of modifications
 	}
 
 	if(!bootbuffer.sectorsperfat) {

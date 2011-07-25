@@ -21,7 +21,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="429"/>
+			<integer value="66"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -210,13 +210,14 @@
 						<int key="NSvFlags">293</int>
 						<object class="NSMutableArray" key="NSSubviews">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<object class="BGHUDLabel" id="153252213">
+							<object class="BGHUDLabel" id="892111976">
 								<reference key="NSNextResponder" ref="199830071"/>
 								<int key="NSvFlags">266</int>
 								<string key="NSFrame">{{36, 10}, {386, 14}}</string>
 								<reference key="NSSuperview" ref="199830071"/>
+								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
-								<object class="NSTextFieldCell" key="NSCell" id="1001171223">
+								<object class="NSTextFieldCell" key="NSCell" id="595588560">
 									<int key="NSCellFlags">68288064</int>
 									<int key="NSCellFlags2">4326400</int>
 									<string key="NSContents">Hold down Option during startup to get the DOS prompt instead.</string>
@@ -225,7 +226,7 @@
 										<double key="NSSize">11</double>
 										<int key="NSfFlags">3100</int>
 									</object>
-									<reference key="NSControlView" ref="153252213"/>
+									<reference key="NSControlView" ref="892111976"/>
 									<reference key="NSBackgroundColor" ref="870526867"/>
 									<reference key="NSTextColor" ref="407403670"/>
 								</object>
@@ -236,6 +237,7 @@
 								<int key="NSvFlags">269</int>
 								<string key="NSFrame">{{18, 25}, {403, 18}}</string>
 								<reference key="NSSuperview" ref="199830071"/>
+								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="BGHUDButtonCell" key="NSCell" id="14580453">
 									<int key="NSCellFlags">-2080244160</int>
@@ -267,11 +269,13 @@
 						</object>
 						<string key="NSFrame">{{111, 0}, {439, 64}}</string>
 						<reference key="NSSuperview" ref="515511690"/>
+						<reference key="NSWindow"/>
 						<string key="NSClassName">NSView</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{640, 64}</string>
 				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
 				<string key="NSClassName">BXProgramPanel</string>
 			</object>
 			<object class="NSCustomView" id="1066092163">
@@ -385,8 +389,7 @@
 						<object class="NSPSMatrix" key="NSDrawMatrix"/>
 						<string key="NSFrame">{{304, 14}, {32, 32}}</string>
 						<reference key="NSSuperview" ref="1029538789"/>
-						<reference key="NSWindow"/>
-						<int key="NSpiFlags">20490</int>
+						<int key="NSpiFlags">28682</int>
 						<double key="NSMaxValue">100</double>
 					</object>
 					<object class="BGHUDLabel" id="257783006">
@@ -394,7 +397,6 @@
 						<int key="NSvFlags">266</int>
 						<string key="NSFrame">{{17, 10}, {606, 14}}</string>
 						<reference key="NSSuperview" ref="1029538789"/>
-						<reference key="NSWindow"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="512924413">
 							<int key="NSCellFlags">68288064</int>
@@ -412,7 +414,6 @@
 						<int key="NSvFlags">266</int>
 						<string key="NSFrame">{{17, 27}, {606, 17}}</string>
 						<reference key="NSSuperview" ref="1029538789"/>
-						<reference key="NSWindow"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="59349482">
 							<int key="NSCellFlags">68288064</int>
@@ -428,7 +429,6 @@
 				</object>
 				<string key="NSFrameSize">{640, 64}</string>
 				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<string key="NSClassName">BXProgramPanel</string>
 			</object>
 			<object class="NSCustomView" id="80732392">
@@ -1001,7 +1001,7 @@
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="924340279"/>
-							<reference ref="153252213"/>
+							<reference ref="892111976"/>
 						</object>
 						<reference key="parent" ref="515511690"/>
 					</object>
@@ -1026,17 +1026,17 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">451</int>
-						<reference key="object" ref="153252213"/>
+						<reference key="object" ref="892111976"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="1001171223"/>
+							<reference ref="595588560"/>
 						</object>
 						<reference key="parent" ref="199830071"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">452</int>
-						<reference key="object" ref="1001171223"/>
-						<reference key="parent" ref="153252213"/>
+						<reference key="object" ref="595588560"/>
+						<reference key="parent" ref="892111976"/>
 					</object>
 				</object>
 			</object>

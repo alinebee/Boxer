@@ -88,6 +88,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	if (!types) types = [[NSSet alloc] initWithObjects:
 						 @"net.washboardabs.boxer-floppy-folder",
 						 @"com.winimage.raw-disk-image",
+                         @"com.apple.disk-image-ndif",
                          @"com.microsoft.virtualpc-disk-image",
 						 nil];
 	return types;
@@ -112,6 +113,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 						 @"net.washboardabs.boxer-disk-bundle", //.cdmedia
 						 @"com.winimage.raw-disk-image",		//.ima
                          @"com.microsoft.virtualpc-disk-image", //.vfd
+                         @"com.apple.disk-image-ndif",          //.img
 						 nil];
 	return types;
 }
@@ -124,6 +126,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
                          @"com.apple.disk-image-cdr",
                          @"com.winimage.raw-disk-image",
                          @"com.microsoft.virtualpc-disk-image",
+                         @"com.apple.disk-image-ndif",
 						 nil];
 	return types;
 }

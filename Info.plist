@@ -68,6 +68,7 @@
 			<array>
 				<string>com.winimage.raw-disk-image</string>
 				<string>com.microsoft.virtualpc-disk-image</string>
+				<string>com.apple.disk-image-ndif</string>
 			</array>
 			<key>NSDocumentClass</key>
 			<string>BXSession</string>
@@ -392,6 +393,8 @@
 				<key>public.filename-extension</key>
 				<array>
 					<string>ima</string>
+                    <!--Claimed already by com.apple.disk-image-ndif-->
+					<!--<string>img</string>-->
 				</array>
 			</dict>
 		</dict>

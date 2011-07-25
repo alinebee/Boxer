@@ -54,8 +54,9 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 @property (retain, nonatomic) BXDOSFullScreenWindow *fullScreenWindow;
 @property (copy, nonatomic) NSString *autosaveNameBeforeFullscreen;
 
-//Add notification observers for everything we care about. Called from windowDidLoad.
+//Add/remove notification observers for everything we care about. Called from windowDidLoad.
 - (void) _addObservers;
+- (void) _removeObservers;
 
 //Resizes the window in anticipation of sliding out the specified view. This will ensure
 //there is enough room on screen to accomodate the new window size.
@@ -126,6 +127,8 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 
 - (void) dealloc
 {	
+    [self _removeObservers];
+    
 	[self setFullScreenWindow: nil],		[fullScreenWindow release];
 	[self setProgramPanelController: nil],	[programPanelController release];
 	[self setInputController: nil],			[inputController release];
@@ -162,18 +165,21 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 				   name: BXViewDidLiveResizeNotification
 				 object: renderingView];
     
-    [[self document] addObserver: self forKeyPath: @"currentPath" options: 0 context: nil];
-    [[self document] addObserver: self forKeyPath: @"paused" options: 0 context: nil];
-    [[self document] addObserver: self forKeyPath: @"autoPaused" options: 0 context: nil];
+    //Why don't we just observe document directly, and do so in setDocument:, you ask?
+    //Because AppKit sets a window controller's document in a fucked-up way and it's
+    //not safe to attach observations to it directly.
+    [self addObserver: self forKeyPath: @"document.currentPath" options: 0 context: nil];
+    [self addObserver: self forKeyPath: @"document.paused" options: 0 context: nil];
+    [self addObserver: self forKeyPath: @"document.autoPaused" options: 0 context: nil];
 }
 
 - (void) _removeObservers
 {
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
     
-    [[self document] removeObserver: self forKeyPath: @"currentPath"];
-    [[self document] removeObserver: self forKeyPath: @"paused"];
-    [[self document] removeObserver: self forKeyPath: @"autoPaused"];
+    [self removeObserver: self forKeyPath: @"document.currentPath"];
+    [self removeObserver: self forKeyPath: @"document.paused"];
+    [self removeObserver: self forKeyPath: @"document.autoPaused"];
 }
 
 

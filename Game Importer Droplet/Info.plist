@@ -20,6 +20,7 @@
 				<string>com.apple.disk-image-cdr</string>
 				<string>com.winimage.raw-disk-image</string>
 				<string>com.microsoft.virtualpc-disk-image</string>
+                <string>com.apple.disk-image-ndif</string>
 			</array>
 		</dict>
 	</array>

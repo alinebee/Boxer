@@ -176,12 +176,23 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
     
         [self setGameInfo: relativePath forKey: BXTargetProgramKey];
     }
-    else [self setGameInfo: nil forKey: BXTargetProgramKey];
+    else
+    {
+        [self setGameInfo: nil forKey: BXTargetProgramKey];
+        
+        //Delete any leftover symlink
+		NSString *symlinkPath = [self pathForResource: BXTargetSymlinkName ofType: nil];
+        [[NSFileManager defaultManager] removeItemAtPath: symlinkPath error: nil];
+    }
 }
 
 - (BOOL) validateTargetPath: (id *)ioValue error: (NSError **)outError
 {
 	NSString *filePath = *ioValue;
+    
+    //Nil values will clear the target path
+    if (filePath == nil) return YES;
+    
 	NSFileManager *manager = [NSFileManager defaultManager];
 	
 	//If the destination file does not exist, show an error

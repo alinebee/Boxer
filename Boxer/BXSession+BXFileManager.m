@@ -803,9 +803,9 @@
 
 - (BOOL) isScanningForExecutables
 {
-    for (NSOperation *operation in [scanQueue operations])
+    for (NSOperation *scan in [scanQueue operations])
 	{
-		if (![operation isFinished] && ![operation isCancelled]) return YES;
+		if (![scan isFinished] && ![scan isCancelled]) return YES;
 	}    
     return NO;
 }
@@ -814,7 +814,7 @@
 {
     for (BXExecutableScan *operation in [scanQueue operations])
 	{
-		if ([[operation contextInfo] isEqual: drive] && ![operation isExecuting]) return YES;
+		if ([operation isExecuting] && [[operation contextInfo] isEqual: drive]) return YES;
 	}    
     return NO;
 }
@@ -841,12 +841,12 @@
     
     [self willChangeValueForKey: @"isScanningForExecutables"];
 	if ([scan succeeded])
-	{
+	{   
         NSArray *driveExecutables = [scan matchingPaths];
         
         //Only send notifications if any executables were found, to prevent unnecessary redraws
         BOOL notify = ([driveExecutables count] > 0);
-            
+        
         //TODO: is there a better notification method we could use here?
         if (notify) [self willChangeValueForKey: @"executables"];
         [executables setObject: [NSMutableArray arrayWithArray: driveExecutables]

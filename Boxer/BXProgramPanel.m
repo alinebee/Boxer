@@ -43,36 +43,17 @@
 	if (NSIntersectsRect(grilleStrip, dirtyRect))
 	{
 		NSPoint patternOffset	= [self offsetFromWindowOrigin];
-		NSPoint grillePhase		= NSMakePoint(patternOffset.x + ((panelRegion.size.width - patternSize.width) / 2),																patternOffset.y + grilleStrip.origin.y);
+        
+        NSPoint grillePhase		= NSMakePoint(patternOffset.x + ((panelRegion.size.width - patternSize.width) / 2),																patternOffset.y + grilleStrip.origin.y);
 		
 		NSBezierPath *grillePath	= [NSBezierPath bezierPathWithRect: grilleStrip];
-		NSView *title				= [self viewWithTag: BXProgramPanelTitle];
-		
-		//If the panel has a visible title, then clip out a portion of the grille pattern to accommodate it.
-		if (title && ![title isHidden])
-		{
-			NSRect titleMask		= [title frame];
-			
-			//Round the mask's width to increments of the pattern, so that we don't cut off half a hole in the grille.
-			titleMask.size.width	= ceilf(titleMask.size.width / patternSize.width) * patternSize.width;
-			titleMask.origin.x		= (panelRegion.size.width - titleMask.size.width) / 2;
-			
-			//Also reduce the mask's height so that it only masks areas within the strip.
-			titleMask.size.height	= NSMaxY(titleMask) - grilleStrip.origin.y;
-			titleMask.origin.y		= grilleStrip.origin.y;
-			
-			[grillePath appendBezierPathWithRect: titleMask];
-			//The winding rules are a cheap way of subtracting the rect from our path, which only works in the simplest of cases.
-			[grillePath setWindingRule: NSEvenOddWindingRule]; 
-		}
-		
-		NSColor *grillePattern	= [NSColor colorWithPatternImage: grille];
+		NSColor *grillePattern      = [NSColor colorWithPatternImage: grille];
 		
 		//Finally, draw the grille strip.
 		[NSGraphicsContext saveGraphicsState];
-		[grillePattern set];
-		[[NSGraphicsContext currentContext] setPatternPhase: grillePhase];
-		[grillePath fill];
+            [[NSGraphicsContext currentContext] setPatternPhase: grillePhase];
+            [grillePattern set];
+            [grillePath fill];
 		[NSGraphicsContext restoreGraphicsState];
 	}	
 }
@@ -83,6 +64,16 @@
 	
 	[self _drawGradientInRect: dirtyRect];
 	[self _drawGrilleInRect: dirtyRect];
+    
+    //If we contain a title then redraw the gradient behind the title
+    //and over the grille, to create a knockout effect
+    NSView *title = [self viewWithTag: BXProgramPanelTitle];
+    if (title && ![title isHiddenOrHasHiddenAncestor])
+    {
+        NSRect titleMask = [title frame];
+        [NSBezierPath clipRect: titleMask];
+        [self _drawGradientInRect: titleMask];
+    }
 }
 @end
 

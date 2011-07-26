@@ -21,10 +21,11 @@
 @end
 
 @implementation BXProgramPanelController
-@synthesize programList, programScroller;
+@synthesize programList, programScroller, scanSpinner;
 @synthesize defaultProgramPanel, initialDefaultProgramPanel;
-@synthesize programChooserPanel, noProgramsPanel;
+@synthesize programChooserPanel, noProgramsPanel, scanningForProgramsPanel;
 @synthesize panelExecutables;
+@synthesize lastActiveProgramPath;
 
 - (void) dealloc
 {
@@ -32,41 +33,21 @@
 	
 	[self setProgramList: nil],			[programList release];
 	[self setProgramScroller: nil],		[programScroller release];
+    [self setScanSpinner: nil],         [scanSpinner release];
 	
-	[self setDefaultProgramPanel: nil], [defaultProgramPanel release];
-	[self setInitialDefaultProgramPanel: nil], [initialDefaultProgramPanel release];
-	[self setProgramChooserPanel: nil], [programChooserPanel release];
-	[self setNoProgramsPanel: nil],		[noProgramsPanel release];
+	[self setDefaultProgramPanel: nil],         [defaultProgramPanel release];
+	[self setInitialDefaultProgramPanel: nil],  [initialDefaultProgramPanel release];
+	[self setProgramChooserPanel: nil],         [programChooserPanel release];
+	[self setNoProgramsPanel: nil],             [noProgramsPanel release];
+	[self setScanningForProgramsPanel: nil],    [scanningForProgramsPanel release];
+    
 	[self setPanelExecutables: nil],	[panelExecutables release];
+    [self setLastActiveProgramPath: nil], [lastActiveProgramPath release];
 	
 	[super dealloc];
 }
 
 - (NSString *) nibName	{ return @"ProgramPanel"; }
-
-
-+ (NSSet *)keyPathsForValuesAffectingLabelForToggle
-{
-	return [NSSet setWithObject: @"representedObject.activeProgramPath"];
-}
-
-+ (NSSet *)keyPathsForValuesAffectingLabelForInitialToggle
-{
-	return [NSSet setWithObject: @"representedObject.activeProgramPath"];
-}
-
-+ (NSSet *)keyPathsForValuesAffectingProgramScanInProgress
-{
-	return [NSSet setWithObjects: @"representedObject.isScanningForExecutables", @"panelExecutables", nil];
-}
-
-+ (NSSet *)keyPathsForValuesAffectingActiveProgramIsDefault
-{
-	return [NSSet setWithObjects:
-			@"representedObject.activeProgramPath",
-			@"representedObject.gamePackage.targetPath",
-			nil];
-}
 
 + (void) initialize
 {
@@ -107,6 +88,12 @@
 		[self syncPanelExecutables];
 	}
     
+    else if ([keyPath isEqualToString: @"activeProgramPath"])
+    {
+        NSString *path = [object activeProgramPath];
+        if (path) [self setLastActiveProgramPath: path];
+    }
+    
     //Update the current panel after any change we're listening for
 	//(Update the panel contents after a short delay, to allow time for a program to quit)
 	[self performSelector: @selector(syncActivePanel) withObject: nil afterDelay: 0.1];
@@ -139,7 +126,12 @@
 	else if	([session programPathsOnPrincipalDrive])
 	{
 		panel = programChooserPanel;
+        [self syncProgramButtonStates];
 	}
+    else if ([session isScanningForExecutables])
+    {
+        panel = scanningForProgramsPanel;
+    }
     else
     {   
 		panel = noProgramsPanel;
@@ -171,66 +163,99 @@
 - (void) setActivePanel: (NSView *)panel
 {
 	NSView *previousPanel = [self activePanel];
-	
+    
 	if (previousPanel != panel)
 	{
 		NSView *mainView = [self view];
 		
-		//Resize the panel first to fit the container
+		//Resize the panel to fit the current container size,
+        //and unhide it if it was previously hidden
 		[panel setFrame: [mainView bounds]];
-		
+		[panel setHidden: NO];
+        
 		//Add the new panel into the view
-		[previousPanel removeFromSuperview];
-		[mainView addSubview: panel];
+        //If there's a previous panel on display, then fade out the old panel
+        [mainView addSubview: panel positioned: NSWindowBelow relativeTo: previousPanel];
+        if (previousPanel && ![mainView isHidden])
+        {
+            
+            NSDictionary *fadeOut = [NSDictionary dictionaryWithObjectsAndKeys:
+                                     previousPanel, NSViewAnimationTargetKey,
+                                     NSViewAnimationFadeOutEffect, NSViewAnimationEffectKey,
+                                     nil];
+            
+            NSViewAnimation *animation = [[NSViewAnimation alloc] init];
+            [animation setAnimationBlockingMode: NSAnimationBlocking];
+            [animation setViewAnimations: [NSArray arrayWithObject: fadeOut]];
+            [animation setDuration: 0.25];
+            [animation startAnimation];
+            
+            [animation release];
+        }
+        [previousPanel removeFromSuperview];
+        [mainView setNeedsDisplay: YES];
 	}
-	if (panel == programChooserPanel)
-	{
-		[self syncProgramButtonStates];
-	}
-}
-
-- (BOOL) programScanInProgress
-{
-    //Tweak: report that the scan is still in progress if it has just finished and has found executables.
-    //Otherwise, there will be a brief flash of "there are no programs..." as we switch panels to the
-    //actual program list.
-    //Ughhhhhhhhhhh.
-    return [[self representedObject] isScanningForExecutables] || [[self panelExecutables] count];
 }
 
 //Returns the display string used for the "open this program every time" checkbox toggle
-- (NSString *) labelForToggle
+- (NSString *) labelForDefaultProgramToggle
 {
-	NSString *format = NSLocalizedString(
-		@"Launch %@ every time I open this gamebox.",
-		@"Label for default program checkbox in program panel. %@ is the lowercase filename of the currently-active program."
-	);
-	NSString *programPath = [[self representedObject] activeProgramPath];
-	NSString *dosFilename = [[NSValueTransformer valueTransformerForName: @"BXDOSFilename"] transformedValue: programPath];
-	
-	return [NSString stringWithFormat: format, dosFilename, nil];
+    NSString *programPath = [self lastActiveProgramPath];
+    if (programPath)
+    {
+        NSString *format = NSLocalizedString(
+            @"Launch %@ every time I open this gamebox.",
+            @"Label for default program checkbox in program panel. %@ is the lowercase filename of the currently-active program."
+        );
+        
+        NSString *displayName = [[NSValueTransformer valueTransformerForName: @"BXDOSFilename"] transformedValue: programPath];
+        return [NSString stringWithFormat: format, displayName, nil];
+    }
+    else return nil;
 }
 
-- (NSString *) labelForInitialToggle
+- (NSString *) labelForInitialDefaultProgramToggle
 {
-	NSString *format = NSLocalizedString(
-										 @"Launch %@ every time?",
-										 @"Label for initial default-program question in program panel. %@ is the lowercase filename of the currently-active program."
-										 );
-	NSString *programPath = [[self representedObject] activeProgramPath];
-	NSString *dosFilename = [[NSValueTransformer valueTransformerForName: @"BXDOSFilename"] transformedValue: programPath];
-	
-	return [NSString stringWithFormat: format, dosFilename, nil];
+    NSString *programPath = [self lastActiveProgramPath];
+	if (programPath)
+    {
+        NSString *format = NSLocalizedString(
+            @"Launch %@ every time?",
+            @"Label for initial default-program question in program panel. %@ is the lowercase filename of the currently-active program."
+        );
+        
+        NSString *displayName = [[NSValueTransformer valueTransformerForName: @"BXDOSFilename"] transformedValue: programPath];
+        return [NSString stringWithFormat: format, displayName, nil];
+    }
+    else return nil;
+}
+
++ (NSSet *) keyPathsForValuesAffectingLabelForDefaultProgramToggle
+{
+    return [NSSet setWithObject: @"lastActiveProgramPath"];
+}
+
++ (NSSet *) keyPathsForValuesAffectingLabelForInitialDefaultProgramToggle
+{
+    return [NSSet setWithObject: @"lastActiveProgramPath"];
 }
 
 - (BOOL) activeProgramIsDefault
 {
 	BXSession *session = [self representedObject];
     
-	NSString *defaultProgram	= [[session gamePackage] targetPath];
-	NSString *activeProgram		= [session activeProgramPath];
+	NSString *activeProgram = [self lastActiveProgramPath];
 
-	return [activeProgram isEqualToString: defaultProgram];
+    NSString *defaultProgram = [[session gamePackage] targetPath];
+    return [activeProgram isEqualToString: defaultProgram];
+}
+
++ (NSSet *)keyPathsForValuesAffectingActiveProgramIsDefault
+{
+	return [NSSet setWithObjects:
+			@"lastActiveProgramPath",
+			@"representedObject.gamePackage.targetPath",
+			nil];
 }
 
 - (void) setActiveProgramIsDefault: (BOOL) isDefault

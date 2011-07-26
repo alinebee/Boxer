@@ -23,11 +23,16 @@
 	IBOutlet NSView *defaultProgramPanel;
 	IBOutlet NSView *initialDefaultProgramPanel;
 	IBOutlet NSView *noProgramsPanel;
+    IBOutlet NSView *scanningForProgramsPanel;
+    
+    IBOutlet NSProgressIndicator *scanSpinner;
     
 	IBOutlet NSCollectionView *programList;
 	IBOutlet NSScrollView *programScroller;
 	
 	NSArray *panelExecutables;
+    
+    NSString *lastActiveProgramPath;
 }
 
 
@@ -38,6 +43,9 @@
 @property (retain, nonatomic) NSView *defaultProgramPanel;
 @property (retain, nonatomic) NSView *initialDefaultProgramPanel;
 @property (retain, nonatomic) NSView *noProgramsPanel;
+@property (retain, nonatomic) NSView *scanningForProgramsPanel;
+
+@property (retain, nonatomic) NSProgressIndicator *scanSpinner;
 
 @property (retain, nonatomic) NSCollectionView *programList;
 @property (retain, nonatomic) NSScrollView *programScroller;
@@ -52,17 +60,19 @@
 @property (readonly, nonatomic) BOOL hasDefaultTarget;
 
 //The localised display string used for the "Open this program every time" toggles.
-@property (readonly, nonatomic) NSString *labelForToggle;
-@property (readonly, nonatomic) NSString *labelForInitialToggle;
-
-//Whether the current session is in the middle scanning for more programs.
-@property (readonly, nonatomic) BOOL programScanInProgress;
+@property (readonly, nonatomic) NSString *labelForDefaultProgramToggle;
+@property (readonly, nonatomic) NSString *labelForInitialDefaultProgramToggle;
 
 //An array of {@path, @isDefault} pairs representing executables to display in the program panel.
 @property (readonly, retain, nonatomic) NSArray *panelExecutables;
 
 //An array of descriptors for consumers to sort panelExecutables with
 @property (readonly, retain, nonatomic) NSArray *executableSortDescriptors;
+
+//A record of the last program that was running. This is kept up-to-date whenever
+//the current program changes, but the last value remains after we have quit back to DOS.
+//(This is used to avoid showing null labels in the UI while we're quitting.)
+@property (copy, nonatomic) NSString *lastActiveProgramPath;
 
 
 #pragma mark -

@@ -794,10 +794,12 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     //we can't use as the default, such as autoexec commands or dispatch batchfiles.
 	//(Note that the last executed program is always cleared down in didReturnToShell:)
 	NSString *executedPath = [self lastExecutedProgramPath];
-	if (executedPath && (!hasLaunched || ([self gamePackage] && ![[self gamePackage] validateTargetPath: &executedPath error: NULL])))
+    BOOL executedPathCanBeDefault = (executedPath && hasLaunched && [[self gamePackage] validateTargetPath: &executedPath error: nil]);
+	if (!executedPathCanBeDefault)
 	{
 		[self setLastExecutedProgramPath: nil];
-        //TODO: extend this to lastLaunchedProgramPath too?
+        //TODO: do we need to extend this to lastLaunchedProgramPath too?
+        //The logic here is pretty damn fuzzy.
 	}
 	
 	//Check the running time of the program. If it was suspiciously short,
@@ -848,7 +850,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         
 	//Show the program chooser after returning to the DOS prompt, as long
 	//as the program chooser hasn't been manually toggled from the DOS prompt
-	if ([self isGamePackage] && ![self userToggledProgramPanel] && ([[self programPathsOnPrincipalDrive] count] || [self isScanningForExecutables]))
+	if ([self isGamePackage] && ![self userToggledProgramPanel])
 	{
 		[NSObject cancelPreviousPerformRequestsWithTarget: [self DOSWindowController]
 												 selector: @selector(hideProgramPanel)
@@ -1020,7 +1022,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		//(This may get replaced below by a custom bundled C volume)
 		BXDrive *packageDrive = [BXDrive hardDriveFromPath: [package gamePath] atLetter: @"C"];
 		packageDrive = [self mountDrive: packageDrive];
-		
+        		
 		//Then, mount any extra volumes included in the game package
 		NSMutableArray *packageVolumes = [NSMutableArray arrayWithCapacity: 10];
 		[packageVolumes addObjectsFromArray: [package floppyVolumes]];

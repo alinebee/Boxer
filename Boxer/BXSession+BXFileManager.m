@@ -321,10 +321,10 @@
 {
 	BXEmulator *theEmulator = [self emulator];
 	if (![theEmulator isExecuting] || [theEmulator isRunningProcess]) return NO;
-
+    
 	//Get the path to the file in the DOS filesystem
 	NSString *dosPath = [theEmulator DOSPathForPath: path];
-	if (!dosPath) return NO;
+	if (!dosPath || ![theEmulator DOSPathExists: dosPath]) return NO;
 	
 	//Unpause the emulation if it's paused
 	[self setPaused: NO];

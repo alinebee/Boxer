@@ -285,7 +285,7 @@
 	
 	//If the target program isn't in the list, and it is actually available in DOS, add it in too
 	if (defaultTarget && ![filteredPaths containsObject: defaultTarget] &&
-		[[session emulator] pathIsDOSAccessible: defaultTarget])
+		[[session emulator] pathExistsInDOS: defaultTarget])
 		filteredPaths = [filteredPaths arrayByAddingObject: defaultTarget];
 	
 	NSMutableSet *programNames = [[NSMutableSet alloc] initWithCapacity: [filteredPaths count]];

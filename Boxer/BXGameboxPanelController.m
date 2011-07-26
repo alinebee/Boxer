@@ -154,8 +154,11 @@ enum {
 - (BOOL) panel: (id)sender shouldShowFilename: (NSString *)filename
 {
 	BXSession *session = [self session];
+    
 	//Disable files that are outside the gamebox or that aren't accessible in DOS
 	if (![filename isRootedInPath: [[session gamePackage] gamePath]]) return NO;
+    
+    //Note: we could test if the file actually exists in DOS, but that's kinda expensive.
 	if (![[session emulator] pathIsDOSAccessible: filename]) return NO;
 	return YES;
 }

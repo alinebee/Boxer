@@ -316,6 +316,43 @@ enum {
 	return NO;
 }
 
+- (BOOL) pathExistsInDOS: (NSString *)path
+{
+    NSString *dosPath = [self DOSPathForPath: path];
+    if (!dosPath) return NO;
+    
+    return [self DOSPathExists: dosPath];
+}
+
+- (BOOL) DOSPathExists: (NSString *)dosPath
+{
+    DOS_Drive *dosDrive;
+    
+	dosPath = [dosPath stringByReplacingOccurrencesOfString: @"/" withString: @"\\"];
+    
+    //If the path starts with a drive letter, pop it off
+	if ([dosPath length] >= 2 && [dosPath characterAtIndex: 1] == (unichar)':')
+	{
+		NSString *driveLetter = [dosPath substringToIndex: 1];
+		//Snip off the drive letter from the front of the path
+		dosPath = [dosPath substringFromIndex: 2];
+		
+        NSUInteger driveIndex = [self _indexOfDriveLetter: driveLetter];
+        dosDrive = Drives[driveIndex];
+	}
+    else dosDrive = Drives[DOS_GetDefaultDrive()];
+    
+    if (!dosDrive) return NO;
+    
+    //If the path was empty (e.g. nothing more than a drive letter)
+    //then it represents the current or root path, so yes it exists
+    if (![dosPath length]) return YES;
+	
+    //Otherwise, ask the drive itself
+    return dosDrive->FileExists([dosPath cStringUsingEncoding: BXDirectStringEncoding]);
+}
+
+
 - (BXDrive *) driveForPath: (NSString *)path
 {	
 	//Sort the drives by path depth, so that deeper mounts are picked over 'shallower' ones.

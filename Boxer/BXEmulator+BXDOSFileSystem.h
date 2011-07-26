@@ -85,6 +85,12 @@
 //way of determining if a volume is mounted at all.
 - (BOOL) pathIsDOSAccessible: (NSString *)path;
 
+//Returns whether the specified OS X path exists within the DOS filesystem.
+- (BOOL) pathExistsInDOS: (NSString *)path;
+
+//Returns whether the specified DOS path exists within the DOS filesystem.
+- (BOOL) DOSPathExists: (NSString *)dosPath;
+
 //Returns the 'best match' drive on which the specified path is accessible.
 //(If a path is accessible on several drives, this will return the 'deepest-nested' drive,
 //to handle gameboxes that have additional drives inside them. 

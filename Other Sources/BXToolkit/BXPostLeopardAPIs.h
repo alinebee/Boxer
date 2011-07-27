@@ -87,4 +87,12 @@ typedef NSInteger NSScrollerStyle;
 
 @end
 
+
+
+@interface NSDocumentController (BXPostLeopardRestorationAPIs)
+
++ (void) restoreWindowWithIdentifier: (NSString *)identifier
+                               state: (NSCoder *)state
+                   completionHandler: (void (^)(NSWindow *, NSError *))completionHandler;
+@end
 #endif

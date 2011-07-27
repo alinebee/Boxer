@@ -26,6 +26,8 @@
 #import <BGHUDAppKit/BGThemeManager.h>
 #import "BXThemes.h"
 
+#import "BXPostLeopardAPIs.h"
+
 
 NSString * const BXNewSessionParam = @"--openNewSession";
 NSString * const BXShowImportPanelParam = @"--showImportPanel";
@@ -47,9 +49,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 //Cancel a makeDocument/openDocument request after spawning a new process.
 - (void) _cancelOpeningWithError: (NSError **)outError;
 
-//If no document has been opened at startup, perform our standard post-launch action (displaying the welcome panel etc.)
-//This is called after application:didFinishLaunching:, and once any windows have been restored by Lion.
-- (void) _performPostLaunchActions;
 @end
 
 
@@ -282,6 +281,24 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 #pragma mark -
 #pragma mark Application open/closing behaviour
 
++ (void) restoreWindowWithIdentifier: (NSString *)identifier
+                               state: (NSCoder *)state
+                   completionHandler: (void (^)(NSWindow *, NSError *))completionHandler
+{
+    //Disable Lion window restoration if we already opened a document at startup, 
+    //or if there are other Boxer instances currently running.
+    if ([self otherBoxersActive] || [[[self sharedDocumentController] documents] count])
+    {
+        completionHandler(nil, nil);
+    }
+    else
+    {
+        [super restoreWindowWithIdentifier: identifier
+                                     state: state
+                         completionHandler: completionHandler];
+    }
+}
+
 //Quit after the last window was closed if we are a 'subsidiary' process,
 //to avoid leaving extra Boxers littering the Dock
 - (BOOL) applicationShouldTerminateAfterLastWindowClosed: (NSApplication *)sender
@@ -289,27 +306,13 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	return [[self class] otherBoxersActive];
 }
 
-
-//Don't open a new empty document when switching back to the application:
-//instead, show the welcome panel if that's the default startup behaviour.
-- (BOOL) applicationShouldOpenUntitledFile: (NSApplication *)theApplication
-{
-	if (hasFinishedLaunching && 
-		[[NSUserDefaults standardUserDefaults] integerForKey: @"startupAction"] == BXStartUpWithWelcomePanel)
-		[self orderFrontWelcomePanel: self];
-	
-	return NO;
-}
-
-- (void) applicationWillFinishLaunching:(NSNotification *)notification
+- (void) applicationWillFinishLaunching: (NSNotification *)notification
 {
 	//Sync Spaces shortcuts at startup in case we previously crashed
 	//and left them overridden
 	[self syncSpacesKeyboardShortcuts];
-}
 
-- (void) applicationDidFinishLaunching: (NSNotification *)notification
-{
+    //Determine if we were passed any startup parameters we need to act upon
 	NSArray *arguments = [[NSProcessInfo processInfo] arguments];
 	
 	for (NSString *argument in arguments)
@@ -329,17 +332,14 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 			[self openImportSessionWithContentsOfURL: [NSURL fileURLWithPath: importPath] display: YES error: nil];
 		}
 	}
-
-    //Defer our default post-launch actions to the end of the current event cycle,
-    //once after Lion has finished restoring windows.
-    [self performSelector: @selector(_performPostLaunchActions) withObject: nil afterDelay: 0.1];
 }
 
-- (void) _performPostLaunchActions
+//If no other window was opened during startup, show our startup window (or first-run window).
+//Note that this is only called at startup, not when re-focusing the application: that
+//functionality is overridden below in applicationShouldHandleReopen:hasVisibleWindows:  
+- (BOOL) applicationShouldOpenUntitledFile: (NSApplication *)theApplication
 {
-    //If no document was opened during startup, and we didn't launch hidden,
-	//then display the chosen startup window
-	if (![NSApp isHidden] && ![[self documents] count] && ![[NSApp windows] count])
+	if (![NSApp isHidden])
 	{
 		BOOL hasDelayed = NO;
         
@@ -385,10 +385,19 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 				break;
 		}
 	}
-	
-	hasFinishedLaunching = YES;
+    return NO;
 }
 
+//Don't open a new empty document when switching back to the application:
+//instead, show the welcome panel if that's the default startup behaviour.
+- (BOOL)applicationShouldHandleReopen: (NSApplication *)theApplication
+                    hasVisibleWindows: (BOOL)hasVisibleWindows
+{
+	if (!hasVisibleWindows && [[NSUserDefaults standardUserDefaults] integerForKey: @"startupAction"] == BXStartUpWithWelcomePanel)
+		[self orderFrontWelcomePanel: self];
+	
+	return NO;
+}
 
 - (void) applicationWillTerminate: (NSNotification *)notification
 {

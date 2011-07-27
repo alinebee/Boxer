@@ -250,7 +250,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
                          change: (NSDictionary *)change
                         context: (void *)context
 {
-    if ([keyPath isEqualToString: @"currentPath"] || [keyPath isEqualToString: @"paused"] || [keyPath isEqualToString: @"autoPaused"])
+    if ([keyPath isEqualToString: @"document.currentPath"] || [keyPath isEqualToString: @"document.paused"] || [keyPath isEqualToString: @"document.autoPaused"])
     {
         [self synchronizeWindowTitleWithDocumentName];
     }

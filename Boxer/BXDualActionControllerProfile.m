@@ -14,14 +14,19 @@
 #pragma mark Private constants
 
 //NOTE: while in DirectInput mode, the F310 and F510 report themselves as the older
-//Dual-Action and RumblePad 2 models respectively. These gamepads only work in DirectInput
-//mode on OS X, as the alternative (XInput mode) does not report an HID profile.
+//Dual-Action and RumblePad 2 models respectively (and presumably, the F710 as the
+//Cordless RumblePad 2, though this is not confirmed.) These gamepads only work in
+//DirectInput mode on OS X, as the alternative (XInput mode) does not report an HID
+//profile.
 
 #define BXDualActionVendorID	BXHIDVendorIDLogitech
 #define BXDualActionProductID	0xc216
 
 #define BXRumblePad2VendorID    BXHIDVendorIDLogitech
 #define BXRumblePad2ProductID   0xc218
+
+#define BXCordlessRumblePad2VendorID    BXHIDVendorIDLogitech
+#define BXCordlessRumblePad2ProductID   0xc219
 
 
 enum {
@@ -63,6 +68,7 @@ enum {
     return [NSArray arrayWithObjects:
             [self matchForVendorID: BXDualActionVendorID productID: BXDualActionProductID],
             [self matchForVendorID: BXRumblePad2VendorID productID: BXRumblePad2ProductID],
+            [self matchForVendorID: BXCordlessRumblePad2VendorID productID: BXCordlessRumblePad2ProductID],
             nil];
 }
 

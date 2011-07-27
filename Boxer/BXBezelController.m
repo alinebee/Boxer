@@ -15,6 +15,7 @@
 #import "BXInspectorController.h"
 #import "NSString+BXStringFormatting.h"
 #import "BXHIDMonitor.h"
+#import "BXPostLeopardAPIs.h"
 
 
 #define BXBezelFadeDuration 0.25
@@ -108,6 +109,7 @@
     [bezelWindow setOpaque: NO];
     [bezelWindow setIgnoresMouseEvents: YES];
     [bezelWindow setLevel: NSPopUpMenuWindowLevel];
+    [bezelWindow setCollectionBehavior: NSWindowCollectionBehaviorCanJoinAllSpaces | NSWindowCollectionBehaviorFullScreenAuxiliary];
     
     [self setWindow: [bezelWindow autorelease]];
 }

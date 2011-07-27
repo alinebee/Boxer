@@ -58,10 +58,18 @@ NSString * const BXPreviousSpacesArrowKeyModifiersKey = @"previousSpacesArrowKey
 				   name: NSWindowDidResignKeyNotification
 				 object: nil];
 	
-	[center addObserver: self selector: @selector(sessionDidEnterFullScreenMode:)
+	[center addObserver: self selector: @selector(sessionWillEnterFullScreenMode:)
 				   name: BXSessionWillEnterFullScreenNotification
 				 object: nil];
+    
+	[center addObserver: self selector: @selector(sessionDidEnterFullScreenMode:)
+				   name: BXSessionDidEnterFullScreenNotification
+				 object: nil];
 	
+	[center addObserver: self selector: @selector(sessionWillExitFullScreenMode:)
+				   name: BXSessionWillExitFullScreenNotification
+				 object: nil];
+    
 	[center addObserver: self selector: @selector(sessionDidExitFullScreenMode:)
 				   name: BXSessionDidExitFullScreenNotification
 				 object: nil];
@@ -211,22 +219,27 @@ NSString * const BXPreviousSpacesArrowKeyModifiersKey = @"previousSpacesArrowKey
 	//Conceal the Inspector panel while the mouse is locked
 	[[BXInspectorController controller] hideIfVisible];
 }
+- (void) sessionWillEnterFullScreenMode: (NSNotification *)notification
+{
+	[self syncApplicationPresentationMode];
+}
 
 - (void) sessionDidEnterFullScreenMode: (NSNotification *)notification
 {
-	[self syncApplicationPresentationMode];
-    
     [[BXBezelController controller] showFullscreenBezel];
+}
+
+- (void) sessionWillExitFullScreenMode: (NSNotification *)notification
+{
+    //Hide the fullscreen notification if it's still visible
+    BXBezelController *bezel = [BXBezelController controller];
+    if ([bezel currentBezel] == [bezel fullscreenBezel])
+        [[bezel window] orderOut: self];
 }
 
 - (void) sessionDidExitFullScreenMode: (NSNotification *)notification
 {
 	[self syncApplicationPresentationMode];
-    
-    //Hide the fullscreen notification if it's still visible
-    BXBezelController *bezel = [BXBezelController controller];
-    if ([bezel currentBezel] == [bezel fullscreenBezel])
-        [bezel hideBezel];
 }
 
 @end

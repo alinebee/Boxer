@@ -44,7 +44,9 @@
 - (void) sessionDidUnlockMouse: (NSNotification *)notification;
 - (void) sessionDidLockMouse: (NSNotification *)notification;
 
+- (void) sessionWillEnterFullScreenMode: (NSNotification *)notification;
 - (void) sessionDidEnterFullScreenMode: (NSNotification *)notification;
+- (void) sessionWillExitFullScreenMode: (NSNotification *)notification;
 - (void) sessionDidExitFullScreenMode: (NSNotification *)notification;
 
 @end

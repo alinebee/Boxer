@@ -65,6 +65,7 @@
 		[[self representedObject] removeObserver: self forKeyPath: @"programPathsOnPrincipalDrive"];
 		[[self representedObject] removeObserver: self forKeyPath: @"gamePackage.targetPath"];
 		[[self representedObject] removeObserver: self forKeyPath: @"activeProgramPath"];
+		[[self representedObject] removeObserver: self forKeyPath: @"isScanningForExecutables"];
 	}
 	
 	[super setRepresentedObject: session];
@@ -74,6 +75,7 @@
 		[session addObserver: self forKeyPath: @"programPathsOnPrincipalDrive" options: 0 context: nil];
 		[session addObserver: self forKeyPath: @"gamePackage.targetPath" options: 0 context: nil];
 		[session addObserver: self forKeyPath: @"activeProgramPath" options: 0 context: nil];
+		[session addObserver: self forKeyPath: @"isScanningForExecutables" options: 0 context: nil];
 	}
 }
 
@@ -95,7 +97,8 @@
     }
     
     //Update the current panel after any change we're listening for
-	//(Update the panel contents after a short delay, to allow time for a program to quit)
+	//(Update the panel contents after a short delay, to allow time for a program
+    //to quit at startup - this way we don't flash one panel and then go straight back to another.)
 	[self performSelector: @selector(syncActivePanel) withObject: nil afterDelay: 0.1];
 }
 

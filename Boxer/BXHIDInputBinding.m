@@ -11,7 +11,7 @@
 #import "DDHidUsage+BXUsageExtensions.h"
 
 
-#define BXDefaultAxisDeadzone 0.15f
+#define BXDefaultAxisDeadzone 0.20f
 #define BXDefaultAxisToButtonThreshold 0.25f
 #define BXDefaultButtonToAxisPressedValue 1.0f
 #define BXDefaultButtonToAxisReleasedValue 0.0f

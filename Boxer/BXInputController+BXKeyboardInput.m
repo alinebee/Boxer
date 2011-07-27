@@ -64,7 +64,7 @@
 		[super keyDown: theEvent];
 	}
 	
-	//Pressing ESC while in fullscreen mode and not running a program will exit fullscreen mode. 	
+	//Pressing ESC while in fullscreen mode and not running a program will exit fullscreen mode.
 	else if ([[theEvent charactersIgnoringModifiers] isEqualToString: @"\e"] &&
 		[[self _windowController] isFullScreen] &&
 		[[[self representedObject] emulator] isAtPrompt])

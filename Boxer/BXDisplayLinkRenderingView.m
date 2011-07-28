@@ -9,6 +9,18 @@
 #import "BXDisplayLinkRenderingView.h"
 #import "BXRenderer.h"
 
+#pragma mark -
+#pragma mark Private interface declaration
+
+@interface BXDisplayLinkRenderingView ()
+@end
+	 
+	 
+@implementation BXDisplayLinkRenderingView
+
+#pragma mark -
+#pragma mark Rendering methods
+
 static CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 									  const CVTimeStamp* now,
 									  const CVTimeStamp* outputTime,
@@ -18,16 +30,13 @@ static CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 {
 	//Needed because we're operating in a different thread
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    [(BXGLRenderingView *)displayLinkContext displayIfNeededIgnoringOpacity];
+	
+	BXGLRenderingView *view = (BXGLRenderingView *)displayLinkContext;
+	[view displayIfNeededIgnoringOpacity];
+	 
 	[pool drain];
 	return kCVReturnSuccess;
 }
-
-
-@implementation BXDisplayLinkRenderingView
-
-#pragma mark -
-#pragma mark Rendering methods
 
 - (void) updateWithFrame: (BXFrameBuffer *)frame
 {

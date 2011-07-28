@@ -18,7 +18,6 @@
 #import "BXImportSession.h"
 #import "BXSessionPrivate.h"
 
-#import "BXDOSImportWindowController.h"
 #import "BXDOSWindowController.h"
 #import "BXImportWindowController.h"
 
@@ -267,7 +266,7 @@
 
 - (void) makeWindowControllers
 {	
-	BXDOSImportWindowController *DOSController	= [[BXDOSImportWindowController alloc] initWithWindowNibName: @"DOSImportWindow"];
+	BXDOSWindowController *DOSController		= [[BXDOSWindowController alloc] initWithWindowNibName: @"DOSImportWindow"];
 	BXImportWindowController *importController	= [[BXImportWindowController alloc] initWithWindowNibName: @"ImportWindow"];
 	
 	[self addWindowController: DOSController];

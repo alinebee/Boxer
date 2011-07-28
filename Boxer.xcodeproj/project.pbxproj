@@ -52,7 +52,6 @@
 		9F24D24D122439E0009C1817 /* BXWelcomeWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F24D24C122439E0009C1817 /* BXWelcomeWindowController.m */; };
 		9F24D25012243C9A009C1817 /* BXWelcomeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F24D24F12243C9A009C1817 /* BXWelcomeView.m */; };
 		9F25C4E212130B5E0025CB2C /* BrandWatermark.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F25C4E112130B5E0025CB2C /* BrandWatermark.png */; };
-		9F25C52712130E030025CB2C /* BXDOSImportWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F25C52612130E030025CB2C /* BXDOSImportWindowController.m */; };
 		9F2AC6E410EFFE8600CFFF72 /* BXBootlegCoverArt.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2AC6E310EFFE8600CFFF72 /* BXBootlegCoverArt.m */; };
 		9F2C28A2129D906600B172C8 /* BXFirstRunWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2C28A1129D906600B172C8 /* BXFirstRunWindowController.m */; };
 		9F2C28B8129D924E00B172C8 /* FirstRunWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F2C28B6129D924E00B172C8 /* FirstRunWindow.xib */; };
@@ -505,8 +504,6 @@
 		9F24D24F12243C9A009C1817 /* BXWelcomeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXWelcomeView.m; sourceTree = "<group>"; };
 		9F25C1FD1212BB450025CB2C /* BXSessionPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXSessionPrivate.h; sourceTree = "<group>"; };
 		9F25C4E112130B5E0025CB2C /* BrandWatermark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BrandWatermark.png; sourceTree = "<group>"; };
-		9F25C52512130E030025CB2C /* BXDOSImportWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDOSImportWindowController.h; sourceTree = "<group>"; };
-		9F25C52612130E030025CB2C /* BXDOSImportWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDOSImportWindowController.m; sourceTree = "<group>"; };
 		9F2AC6E210EFFE8600CFFF72 /* BXBootlegCoverArt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBootlegCoverArt.h; sourceTree = "<group>"; };
 		9F2AC6E310EFFE8600CFFF72 /* BXBootlegCoverArt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBootlegCoverArt.m; sourceTree = "<group>"; };
 		9F2C28A0129D906600B172C8 /* BXFirstRunWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFirstRunWindowController.h; sourceTree = "<group>"; };
@@ -1376,8 +1373,6 @@
 				9FC8B16A12182586004F6DA2 /* BXImportFinalizingPanelController.m */,
 				9FC8B2E612186171004F6DA2 /* BXImportFinishedPanelController.h */,
 				9FC8B2E712186171004F6DA2 /* BXImportFinishedPanelController.m */,
-				9F25C52512130E030025CB2C /* BXDOSImportWindowController.h */,
-				9F25C52612130E030025CB2C /* BXDOSImportWindowController.m */,
 				9FDE341D1351DE26000DCE44 /* BXBlueprintBackgroundView.h */,
 				9FDE341E1351DE26000DCE44 /* BXBlueprintBackgroundView.m */,
 				9FDE34321351DFD4000DCE44 /* BXImportTipsPanelController.h */,
@@ -2673,7 +2668,6 @@
 				9FDC5476120EC8B40063B33D /* BXImportInstallerPanelController.m in Sources */,
 				9F0F9EDA12108A9000ED7A64 /* BXImportError.m in Sources */,
 				9F0F9EEF1210901800ED7A64 /* BXMountedVolumesError.m in Sources */,
-				9F25C52712130E030025CB2C /* BXDOSImportWindowController.m in Sources */,
 				9FD668F11215CDD6009E0118 /* BXBottomBar.m in Sources */,
 				9FC8B073121807AD004F6DA2 /* NSView+BXDrawing.m in Sources */,
 				9FC8B16B12182586004F6DA2 /* BXImportFinalizingPanelController.m in Sources */,

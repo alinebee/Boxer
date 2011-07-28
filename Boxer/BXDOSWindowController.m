@@ -287,15 +287,23 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 
 - (NSString *) windowTitleForDocumentDisplayName: (NSString *)displayName
 {
+	//If we're running an import session then modify the window title to reflect that
+	if ([[self document] isKindOfClass: [BXImportSession class]])
+	{
+		NSString *importWindowFormat = NSLocalizedString(@"Importing %@",
+														 @"Title for game import window. %@ is the name of the gamebox/source path being imported.");
+		displayName = [NSString stringWithFormat: importWindowFormat, displayName, nil];
+	}
+	
 	//If emulation is paused (but not simply interrupted by UI events) then indicate this in the title
 	if ([[self document] isPaused] || [[self document] isAutoPaused])
 	{
-		NSString *format = NSLocalizedString(@"%@ (Paused)",
-											 @"Window title format when session is paused. %@ is the regular title of the window.");
+		NSString *pausedFormat = NSLocalizedString(@"%@ (Paused)",
+												   @"Window title format when session is paused. %@ is the regular title of the window.");
 		
-		return [NSString stringWithFormat: format, displayName, nil];
+		displayName = [NSString stringWithFormat: pausedFormat, displayName, nil];
 	}
-	else return displayName;
+	return displayName;
 }
 
 
@@ -1144,6 +1152,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 		[theView removeFromSuperviewWithoutNeedingDisplay];
 		[fullWindow setContentView: theView];
 		[theView release];
+		
 		
 		//Restore the responders, which got messed up by the window switch
 		[theView setNextResponder: currentResponder];

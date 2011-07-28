@@ -9,7 +9,6 @@
 #import "BXEmulator+BXShell.h"
 #import "BXEmulator+BXPaste.h"
 #import "BXValueTransformers.h"
-#import "BXVideoFormatAlert.h"
 #import "BXAppController.h"
 #import "BXVideoHandler.h"
 #import "BXEmulatorConfiguration.h"

@@ -49,6 +49,12 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 //Cancel a makeDocument/openDocument request after spawning a new process.
 - (void) _cancelOpeningWithError: (NSError **)outError;
 
+//Defer restoration of the specified window under Lion, until after the application
+//has finished loading and we have opened any other windows we have.
+- (void) deferRestorationOfWindowWithIdentifier: (NSString *)identifier
+										  state: (NSCoder *)state
+							  completionHandler: (void (^)(NSWindow *, NSError *))completionHandler;
+
 @end
 
 
@@ -274,6 +280,8 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	
 	[generalQueue release], generalQueue = nil;
 	
+	[deferredWindowRestorations release], deferredWindowRestorations = nil;
+	
 	[super dealloc];
 }
 
@@ -285,19 +293,46 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
                                state: (NSCoder *)state
                    completionHandler: (void (^)(NSWindow *, NSError *))completionHandler
 {
-    //Disable Lion window restoration if we already opened a document at startup, 
-    //or if there are other Boxer instances currently running.
-    if ([self otherBoxersActive] || [[[self sharedDocumentController] documents] count])
-    {
-        completionHandler(nil, nil);
-    }
-    else
-    {
-        [super restoreWindowWithIdentifier: identifier
-                                     state: state
-                         completionHandler: completionHandler];
-    }
+	//Normally, Lion begins restoring previous windows *before* opening any document
+	//that the app was launched to open. We want to bump window restoration until *after*
+	//that point, because we only want to restore windows when we don't have a document
+	//open already.
+	
+	//To make this happen, we preserve the window restoration request and execute it (or not)
+	//downstairs in application:didFinishLaunching:
+	
+	[[NSApp delegate] deferRestorationOfWindowWithIdentifier: identifier
+													   state: state
+										   completionHandler: completionHandler];
+
 }
+
+- (void) deferRestorationOfWindowWithIdentifier: (NSString *)identifier
+										  state: (NSCoder *)state
+							  completionHandler: (void (^)(NSWindow *, NSError *))completionHandler
+{
+	
+	void (^continueRestoring)(void) = ^(void){
+		[NSDocumentController restoreWindowWithIdentifier: identifier
+													state: state
+										completionHandler: completionHandler];
+	};
+	
+	//If we haven't finished launching yet, queue it up for later
+	if (!hasFinishedLaunching)
+	{
+		if (!deferredWindowRestorations)
+			deferredWindowRestorations = [[NSMutableArray alloc] initWithCapacity: 1];
+		[deferredWindowRestorations addObject: continueRestoring];
+	}
+	//If we've already finished launching, then go ahead and restore the window now
+	else
+	{
+		continueRestoring();
+	}
+
+}
+
 
 //Quit after the last window was closed if we are a 'subsidiary' process,
 //to avoid leaving extra Boxers littering the Dock
@@ -330,6 +365,19 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 		{
 			NSString *importPath = [argument substringFromIndex: [BXImportURLParam length]];
 			[self openImportSessionWithContentsOfURL: [NSURL fileURLWithPath: importPath] display: YES error: nil];
+		}
+	}
+}
+
+- (void) applicationDidFinishLaunching: (NSNotification *)notification
+{
+	//Only continue restoring windows if we haven't opened any other document by now,
+	//and if there are no other Boxer instances running.
+	if ([deferredWindowRestorations count] && ![[self documents] count] && ![[self class] otherBoxersActive])
+	{
+		for (void (^continueRestoring)(void) in deferredWindowRestorations)
+		{
+			continueRestoring();
 		}
 	}
 }

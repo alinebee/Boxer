@@ -6,12 +6,9 @@
  */
 
 
-//FIXME: This has had 10.7 fullscreen behaviour bolted hastily onto it, and as a result
-//the window sizing logic is forked in many odd places. This has led to sizing bugs in
-//Lion and needless inconsistencies with how fullscreen is handled between versions.
-//The window sizing logic needs to be rewritten extensively, with a 10.7-style fullscreen
-//API reimplemented on BXDOSWindow for earlier OS versions, to keep the logic
-//consistent and robust during fullscreen transitions.
+//FIXME: fullscreen switching needs to be rewritten extensively to use a single window instead
+//of two, and to move at least some of the work off to the window class itself - consistent with
+//a 10.7-style fullscreen API.
 
 #import "BXDOSWindowControllerPrivate.h"
 #import "BXDOSWindow.h"

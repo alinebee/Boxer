@@ -128,7 +128,6 @@
 		9F765649119403520082A06A /* BXInputController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F765648119403520082A06A /* BXInputController.m */; };
 		9F76D1B910CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F76D1B810CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.m */; };
 		9F76D45610CBE5C500C3B081 /* BXSession+BXDragDrop.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F76D45510CBE5C500C3B081 /* BXSession+BXDragDrop.m */; };
-		9F76D4CC10CBFFB200C3B081 /* BXVideoFormatAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F76D4CB10CBFFB200C3B081 /* BXVideoFormatAlert.m */; };
 		9F77217612B38C4400072AE8 /* callback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77209F12B38C4400072AE8 /* callback.cpp */; };
 		9F77217712B38C4400072AE8 /* core_dyn_x86.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720A812B38C4400072AE8 /* core_dyn_x86.cpp */; };
 		9F77217812B38C4400072AE8 /* core_dynrec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720BA12B38C4400072AE8 /* core_dynrec.cpp */; };
@@ -630,8 +629,6 @@
 		9F76D1B810CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSWorkspace+BXFileTypes.m"; sourceTree = "<group>"; };
 		9F76D45410CBE5C500C3B081 /* BXSession+BXDragDrop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXSession+BXDragDrop.h"; sourceTree = "<group>"; };
 		9F76D45510CBE5C500C3B081 /* BXSession+BXDragDrop.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXSession+BXDragDrop.m"; sourceTree = "<group>"; };
-		9F76D4CA10CBFFB200C3B081 /* BXVideoFormatAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXVideoFormatAlert.h; sourceTree = "<group>"; };
-		9F76D4CB10CBFFB200C3B081 /* BXVideoFormatAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXVideoFormatAlert.m; sourceTree = "<group>"; };
 		9F77207412B38C4400072AE8 /* bios.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bios.h; sourceTree = "<group>"; };
 		9F77207512B38C4400072AE8 /* bios_disk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bios_disk.h; sourceTree = "<group>"; };
 		9F77207612B38C4400072AE8 /* callback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = callback.h; sourceTree = "<group>"; };
@@ -1544,8 +1541,6 @@
 				9FB554210F6EAC5F00A33017 /* NSAlert+BXAlert.m */,
 				9FB553DF0F6EA30900A33017 /* BXCloseAlert.h */,
 				9FB553E00F6EA30900A33017 /* BXCloseAlert.m */,
-				9F76D4CA10CBFFB200C3B081 /* BXVideoFormatAlert.h */,
-				9F76D4CB10CBFFB200C3B081 /* BXVideoFormatAlert.m */,
 				9FD5481211047E420041E1E7 /* BXDrivesInUseAlert.h */,
 				9FD5481311047E420041E1E7 /* BXDrivesInUseAlert.m */,
 			);
@@ -2631,7 +2626,6 @@
 				9FD011BD10C2A02F00670CE1 /* BXGameboxPanelController.m in Sources */,
 				9F76D1B910CA9DFB00C3B081 /* NSWorkspace+BXFileTypes.m in Sources */,
 				9F76D45610CBE5C500C3B081 /* BXSession+BXDragDrop.m in Sources */,
-				9F76D4CC10CBFFB200C3B081 /* BXVideoFormatAlert.m in Sources */,
 				9F44E5E410D17A4C0081B8D2 /* BXEmulator+BXPaste.mm in Sources */,
 				9F61FC8510DE3F7F00F3896C /* BXGameProfile.m in Sources */,
 				9F438C5810E3D8C8007D30AD /* BXScroller.m in Sources */,

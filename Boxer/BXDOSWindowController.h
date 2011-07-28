@@ -48,12 +48,6 @@ extern NSString * const BXViewDidLiveResizeNotification;
 	NSSize currentScaledResolution;
 	BOOL resizingProgrammatically;
 	BOOL inFullScreenTransition;
-    
-    BOOL statusBarShownBeforeFullscreen;
-    BOOL programPanelShownBeforeFullscreen;
-    NSSize renderingViewSizeBeforeFullscreen;
-    
-    NSString *autosaveNameBeforeFullscreen;
 }
 
 #pragma mark -
@@ -70,25 +64,11 @@ extern NSString * const BXViewDidLiveResizeNotification;
 //The view that tracks user input. This is also be the view we use for fullscreen.
 @property (retain, nonatomic) BXInputView *inputView;
 
-//A wrapper for the input view, to aid window-sizing behaviour.
-@property (retain, nonatomic) NSView *viewContainer;
-
 //The slide-out program picker panel.
 @property (retain, nonatomic) NSView *programPanel;
 
 //The status bar at the bottom of the window.
-@property (retain, nonatomic) NSView *statusBar;		
-
-//Indicates that the current resize event is internal and not triggered by user interaction.
-//Used to change our window constraining behaviour and response to resize events.
-@property (assign, nonatomic) BOOL resizingProgrammatically;
-
-//Returns the size that the rendering view would currently be *if it were in windowed mode.*
-//This will differ from the actual render view size if in fullscreen mode.
-@property (readonly, nonatomic) NSSize windowedRenderingViewSize;
-
-//Returns YES if the window is in the process of resizing itself.
-@property (readonly, nonatomic) BOOL isResizing;
+@property (retain, nonatomic) NSView *statusBar;
 
 //The DOS window we are currently showing and rendering into.
 //Will be equal to -window in windowed mode and -fullscreenWindow in fullscreen mode.

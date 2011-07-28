@@ -88,7 +88,7 @@ NSString * const BXPreviousSpacesArrowKeyModifiersKey = @"previousSpacesArrowKey
     //Lion does the right thing with fullscreen modes anyway,
     //and the UI modes below seem to have changed in Lion such
     //that they don't Do The Right Thing.
-    if ([[self class] isRunningOnLion])
+    if ([[self class] isRunningOnLionOrAbove])
     {
         return;
     }

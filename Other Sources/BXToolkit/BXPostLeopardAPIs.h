@@ -69,6 +69,8 @@ enum {
 - (void) setRestorable: (BOOL)flag;
 - (BOOL) restorable;
 
+- (IBAction) toggleFullScreen: (id)sender;
+
 @end
 
 

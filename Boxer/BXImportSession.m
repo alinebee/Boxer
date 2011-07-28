@@ -265,20 +265,16 @@
 #pragma mark Window management
 
 - (void) makeWindowControllers
-{	
-	BXDOSWindowController *DOSController		= [[BXDOSWindowController alloc] initWithWindowNibName: @"DOSImportWindow"];
+{
+	[super makeWindowControllers];
+	
 	BXImportWindowController *importController	= [[BXImportWindowController alloc] initWithWindowNibName: @"ImportWindow"];
 	
-	[self addWindowController: DOSController];
 	[self addWindowController: importController];
-	
-	[self setDOSWindowController: DOSController];
 	[self setImportWindowController: importController];
 	
-	[DOSController setShouldCloseDocument: YES];
 	[importController setShouldCloseDocument: YES];
-	
-	[DOSController release];
+
 	[importController release];
 }
 

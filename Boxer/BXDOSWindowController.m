@@ -13,7 +13,7 @@
 //API reimplemented on BXDOSWindow for earlier OS versions, to keep the logic
 //consistent and robust during fullscreen transitions.
 
-#import "BXDOSWindowController.h"
+#import "BXDOSWindowControllerPrivate.h"
 #import "BXDOSWindow.h"
 #import "BXAppController.h"
 #import "BXProgramPanelController.h"
@@ -34,56 +34,9 @@
 #import "NSWindow+BXWindowSizing.h"
 #import "BXGeometry.h"
 
-#import "BXPostLeopardAPIs.h"
-
-
-#pragma mark -
-#pragma mark Constants
-
-#define BXFullscreenFadeOutDuration	0.2f
-#define BXFullscreenFadeInDuration	0.4f
-#define BXWindowSnapThreshold		64
 
 NSString * const BXViewWillLiveResizeNotification	= @"BXViewWillLiveResizeNotification";
 NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotification";
-
-
-#pragma mark Private method declarations
-
-@interface BXDOSWindowController ()
-@property (retain, nonatomic) BXDOSFullScreenWindow *fullScreenWindow;
-@property (copy, nonatomic) NSString *autosaveNameBeforeFullscreen;
-
-//Add/remove notification observers for everything we care about. Called from windowDidLoad.
-- (void) _addObservers;
-- (void) _removeObservers;
-
-//Resizes the window in anticipation of sliding out the specified view. This will ensure
-//there is enough room on screen to accomodate the new window size.
-- (void) _resizeToAccommodateSlidingView: (NSView *)view;
-
-//Performs the slide animation used to toggle the status bar and program panel on or off
-- (void) _slideView: (NSView *)view shown: (BOOL)show;
-
-//Apply the switch to fullscreen mode. Used internally by setFullScreen: and setFullScreenWithZoom:
-- (void) _applyFullScreenState: (BOOL)fullScreen;
-
-//Resize the window if needed to accomodate the specified frame.
-//Returns YES if the window was actually resized, NO otherwise.
-- (BOOL) _resizeToAccommodateFrame: (BXFrameBuffer *)frame;
-
-//Returns the view size that should be used for rendering the specified frame.
-- (NSSize) _renderingViewSizeForFrame: (BXFrameBuffer *)frame minSize: (NSSize)minViewSize;
-
-//Forces the emulator's video handler to recalculate its filter settings at the end of a resize event.
-- (void) _cleanUpAfterResize;
-
-//Returns YES when we're in fullscreen mode in Lion, NO otherwise. Used for switching logic
-//on how to handle showing/hiding of window panels.
-- (BOOL) _isFullScreenOnLion;
-@end
-
-
 
 @implementation BXDOSWindowController
 
@@ -92,9 +45,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 
 @synthesize renderingView, inputView, viewContainer, statusBar, programPanel;
 @synthesize programPanelController, inputController, statusBarController;
-@synthesize resizingProgrammatically;
 @synthesize fullScreenWindow;
-@synthesize autosaveNameBeforeFullscreen;
 
 
 //Overridden to make the types explicit, so we don't have to keep casting the return values to avoid compilation warnings
@@ -140,8 +91,6 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	
 	[self setProgramPanel: nil],			[programPanel release];
 	[self setStatusBar: nil],				[statusBar release];
-	
-    [self setAutosaveNameBeforeFullscreen: nil], [autosaveNameBeforeFullscreen release];
     
 	[super dealloc];
 }
@@ -207,9 +156,6 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	[[self window] setContentBorderThickness: borderThickness forEdge: NSMinYEdge];
 	[[self window] setPreservesContentDuringLiveResize: NO];
 	[[self window] setAcceptsMouseMovedEvents: YES];
-	
-    //Set the window's fullscreen behaviour for Lion
-    [[self window] setCollectionBehavior: NSWindowCollectionBehaviorFullScreenPrimary];
 	
 	//Now that we can retrieve the game's identifier from the session,
 	//use the autosaved window size for that game
@@ -335,43 +281,34 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 
 - (BOOL) statusBarShown
 {
-    if ([self _isFullScreenOnLion]) return statusBarShownBeforeFullscreen;
-    else return ![statusBar isHidden];
+    return ![statusBar isHidden];
 }
 - (BOOL) programPanelShown
 {
-    if ([self _isFullScreenOnLion]) return programPanelShownBeforeFullscreen;
-    else return ![programPanel isHidden];
+    return ![programPanel isHidden];
 }
 
 - (void) setStatusBarShown: (BOOL)show
 {
 	if (show != [self statusBarShown])
 	{
-        if ([self _isFullScreenOnLion])
-        {
-            statusBarShownBeforeFullscreen = show;
-        }
-        else
-        {
-            BXDOSWindow *theWindow	= [self window];
-            
-            if (show) [self _resizeToAccommodateSlidingView: statusBar];
-            
-            //temporarily override the other views' resizing behaviour so that they don't slide up as we do this
-            NSUInteger oldContainerMask		= [viewContainer autoresizingMask];
-            NSUInteger oldProgramPanelMask	= [programPanel autoresizingMask];
-            [viewContainer	setAutoresizingMask: NSViewMinYMargin];
-            [programPanel	setAutoresizingMask: NSViewMinYMargin];
-            
-            //toggle the resize indicator on/off also (it doesn't play nice with the program panel)
-            if (!show)	[theWindow setShowsResizeIndicator: NO];
-            [self _slideView: statusBar shown: show];
-            if (show)	[theWindow setShowsResizeIndicator: YES];
-            
-            [viewContainer	setAutoresizingMask: oldContainerMask];
-            [programPanel	setAutoresizingMask: oldProgramPanelMask];
-        }
+		BXDOSWindow *theWindow	= [self window];
+		
+		if (show) [self _resizeToAccommodateSlidingView: statusBar];
+		
+		//temporarily override the other views' resizing behaviour so that they don't slide up as we do this
+		NSUInteger oldContainerMask		= [viewContainer autoresizingMask];
+		NSUInteger oldProgramPanelMask	= [programPanel autoresizingMask];
+		[viewContainer	setAutoresizingMask: NSViewMinYMargin];
+		[programPanel	setAutoresizingMask: NSViewMinYMargin];
+		
+		//toggle the resize indicator on/off also (it doesn't play nice with the program panel)
+		if (!show)	[theWindow setShowsResizeIndicator: NO];
+		[self _slideView: statusBar shown: show];
+		if (show)	[theWindow setShowsResizeIndicator: YES];
+		
+		[viewContainer	setAutoresizingMask: oldContainerMask];
+		[programPanel	setAutoresizingMask: oldProgramPanelMask];
 	}
 }
 
@@ -382,22 +319,15 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	
 	if (show != [self programPanelShown])
 	{
-        if ([self _isFullScreenOnLion])
-        {
-            programPanelShownBeforeFullscreen = show;
-        }
-        else
-        {
-            if (show) [self _resizeToAccommodateSlidingView: programPanel];
-            
-            //Temporarily override the other views' resizing behaviour so that they don't slide up as we do this
-            NSUInteger oldMask = [viewContainer autoresizingMask];
-            [viewContainer setAutoresizingMask: NSViewMinYMargin];
-            
-            [self _slideView: programPanel shown: show];
-            
-            [viewContainer setAutoresizingMask: oldMask];
-        }
+		if (show) [self _resizeToAccommodateSlidingView: programPanel];
+		
+		//Temporarily override the other views' resizing behaviour so that they don't slide up as we do this
+		NSUInteger oldMask = [viewContainer autoresizingMask];
+		[viewContainer setAutoresizingMask: NSViewMinYMargin];
+		
+		[self _slideView: programPanel shown: show];
+		
+		[viewContainer setAutoresizingMask: oldMask];
 	}
 }
 
@@ -413,6 +343,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
     //record the current statusbar state in the user defaults
     [[NSUserDefaults standardUserDefaults] setBool: show forKey: @"statusBarShown"];
 }
+
 - (IBAction) toggleProgramPanelShown: (id)sender
 {
 	[[self document] setUserToggledProgramPanel: YES];
@@ -521,23 +452,14 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	
 	else if (theAction == @selector(toggleFullScreen:))
 	{
-		//Lion doesn't use the speedy fullscreen toggle
-        if ([BXAppController isRunningOnLion])
-        {
-			[theItem setHidden: YES];
-			return NO;
-        }
+		if (![self isFullScreen])
+			title = NSLocalizedString(@"Enter Full Screen Quickly", @"View menu option for entering fullscreen mode without zooming.");
 		else
-        {
-			if (![self isFullScreen])
-				title = NSLocalizedString(@"Enter Full Screen Quickly", @"View menu option for entering fullscreen mode without zooming.");
-			else
-				title = NSLocalizedString(@"Exit Full Screen Quickly", @"View menu option for returning to windowed mode without zooming.");
-			
-			[theItem setTitle: title];
-			
-			return YES;
-		}
+			title = NSLocalizedString(@"Exit Full Screen Quickly", @"View menu option for returning to windowed mode without zooming.");
+		
+		[theItem setTitle: title];
+		
+		return YES;
 	}
 	
     return YES;
@@ -580,11 +502,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 //This will differ from the actual render view size when in fullscreen mode.
 - (NSSize) windowedRenderingViewSize
 {
-    if ([self _isFullScreenOnLion])
-    {
-        return renderingViewSizeBeforeFullscreen;
-    }
-    else return [[self window] actualContentViewSize];
+	return [[self window] actualContentViewSize];
 }
 
 
@@ -593,7 +511,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 
 - (BOOL) isResizing
 {
-	return [self resizingProgrammatically] || [inputView inLiveResize];
+	return resizingProgrammatically || [inputView inLiveResize];
 }
 
 - (void) renderingViewDidResize: (NSNotification *) notification
@@ -625,14 +543,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 
 - (BOOL) isFullScreen
 {
-    if ([BXAppController isRunningOnLion])
-    {
-        return inFullScreenTransition || ([[self window] styleMask] & NSFullScreenWindowMask) == NSFullScreenWindowMask;
-    }
-    else
-    {
-        return inFullScreenTransition || [self fullScreenWindow] != nil;
-    }
+	return inFullScreenTransition || [self fullScreenWindow] != nil;
 }
 
 - (NSWindow *) activeWindow
@@ -641,116 +552,11 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	else return [self window];
 }
 
-//10.7 fullscreen notifications
-- (void) windowWillEnterFullScreen: (NSNotification *)notification
-{
-	[self willChangeValueForKey: @"fullScreen"];
-	inFullScreenTransition = YES;
-    
-    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-	[center postNotificationName: BXSessionWillEnterFullScreenNotification object: [self document]];
-    
-    statusBarShownBeforeFullscreen      = [self statusBarShown];
-    programPanelShownBeforeFullscreen   = [self programPanelShown];
-    [self setAutosaveNameBeforeFullscreen: [[self window] frameAutosaveName]];
-    
-    //Override the window name while in fullscreen,
-    //so that AppKit does not save the fullscreen frame in preferences
-    [[self window] setFrameAutosaveName: @""]; 
-    
-    [[self renderingView] setManagesAspectRatio: YES];
-    [self setStatusBarShown: NO];
-    [self setProgramPanelShown: NO];
-    [inputController setMouseLocked: YES];
-    
-    renderingViewSizeBeforeFullscreen = [self windowedRenderingViewSize];
-}
-
-- (void) windowDidEnterFullScreen: (NSNotification *)notification
-{
-    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-	[center postNotificationName: BXSessionDidEnterFullScreenNotification object: [self document]];
-    
-	inFullScreenTransition = NO;
-	[self didChangeValueForKey: @"fullScreen"];
-}
-
-- (void) windowDidFailToEnterFullScreen: (NSWindow *)window
-{
-    //Clean up all our preparations for fullscreen mode
-    [[self window] setFrameAutosaveName: [self autosaveNameBeforeFullscreen]];
-    [self resizeWindowToRenderingViewSize: renderingViewSizeBeforeFullscreen animate: NO];
-    
-    [[self renderingView] setManagesAspectRatio: NO];
-    [self setStatusBarShown: YES];
-    [self setProgramPanelShown: YES];
-    [inputController setMouseLocked: NO];
-    
-    inFullScreenTransition = NO;
-	[self didChangeValueForKey: @"fullScreen"];
-}
-
-- (void) windowWillExitFullScreen: (NSNotification *)notification
-{
-	[self willChangeValueForKey: @"fullScreen"];
-	inFullScreenTransition = YES;
-    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-	[center postNotificationName: BXSessionWillExitFullScreenNotification object: [self document]];
-    
-    [[self renderingView] setManagesAspectRatio: NO];
-    
-    [[self window] setFrameAutosaveName: [self autosaveNameBeforeFullscreen]];
-    //[self resizeWindowToRenderingViewSize: renderingViewSizeBeforeFullscreen animate: NO];
-    
-    [self setStatusBarShown: statusBarShownBeforeFullscreen];
-    [self setProgramPanelShown: programPanelShownBeforeFullscreen];
-     
-    [inputController setMouseLocked: NO];
-}
-
-- (void) windowDidExitFullScreen: (NSNotification *)notification
-{
-    //Force the proper size to be reflected in the final window: after windowWillExitFullScreen,
-    //Lion will have forced the window size back to the size we were when we entered fullscreen,
-    //which will be incorrect if the content has changed aspect ratio since then.
-    [self resizeWindowToRenderingViewSize: renderingViewSizeBeforeFullscreen animate: NO];
-    
-    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-	[center postNotificationName: BXSessionDidExitFullScreenNotification object: [self document]];
-    
-	inFullScreenTransition = NO;
-	[self didChangeValueForKey: @"fullScreen"];
-}
-
-- (void) windowDidFailToExitFullScreen: (NSWindow *)window
-{
-    //Clean up our preparations for returning to windowed mode
-    [[self window] setFrameAutosaveName: @""];
-    
-    [[self renderingView] setManagesAspectRatio: YES];
-    [self setStatusBarShown: NO];
-    [self setProgramPanelShown: NO];
-    [inputController setMouseLocked: YES];
-    
-    inFullScreenTransition = NO;
-	[self didChangeValueForKey: @"fullScreen"];
-}
-
-
 //Switch the DOS window in or out of fullscreen with a brief fade
 - (void) setFullScreen: (BOOL)fullScreen
 {
 	//Don't bother if we're already in the desired fullscreen state
 	if ([self isFullScreen] == fullScreen) return;
-    
-	//Lion has its own fullscreen transitions, so don't get in the way of those
-	if ([[self window] respondsToSelector: @selector(toggleFullScreen:)])
-    {
-        [(id)[self window] toggleFullScreen: self];
-        return;
-    }
-	
-	inFullScreenTransition = YES;
 	
 	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 	NSString *startNotification, *endNotification;
@@ -766,7 +572,9 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 		endNotification		= BXSessionDidExitFullScreenNotification;
 	}
 	
-	[center postNotificationName: startNotification object: [self document]];	
+	[center postNotificationName: startNotification object: [self document]];
+	
+	inFullScreenTransition = YES;
 	
 	//Set up a screen fade in and out of the fullscreen mode
 	CGError acquiredToken;
@@ -811,14 +619,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 - (void) setFullScreenWithZoom: (BOOL) fullScreen
 {	
 	//Don't bother if we're already in the correct fullscreen state
-	if ([self isFullScreen] == fullScreen) return;	
-    
-    //Lion has its own fullscreen transitions, so don't get in the way of those
-	if ([[self window] respondsToSelector: @selector(toggleFullScreen:)])
-    {
-        [(id)[self window] toggleFullScreen: self];
-        return;
-    }
+	if ([self isFullScreen] == fullScreen) return;
 	
 	//Let the emulation know it'll be blocked from emulating for a while
 	[[NSNotificationCenter defaultCenter] postNotificationName: BXWillBeginInterruptionNotification object: self];
@@ -880,7 +681,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	
 	[center postNotificationName: startNotification object: [self document]];	
 	
-	[self setResizingProgrammatically: YES];
+	resizingProgrammatically = YES;
     [[self window] setCanFillScreen: YES];
 	if (fullScreen)
 	{
@@ -934,7 +735,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 		[[self renderingView] setManagesAspectRatio: NO];
 	}
     [[self window] setCanFillScreen: NO];
-	[self setResizingProgrammatically: NO];
+	resizingProgrammatically = NO;
 	inFullScreenTransition = NO;
 	
 	[center postNotificationName: endNotification object: [self document]];
@@ -1058,7 +859,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 
 - (void) windowWillClose: (NSNotification *)notification
 {
-	if (![BXAppController isRunningOnLion]) [self setFullScreen: NO];
+	[self setFullScreen: NO];
 }
 
 - (void) windowWillMiniaturize: (NSNotification *)notification
@@ -1079,7 +880,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	//instead of the fullscreen window, then break out of fullscreen
 	//(This should never happen, since [BXSession windowForSheet]
 	//specifically chooses the fullscreen window if it is present)
-	if (![BXAppController isRunningOnLion] && ![[notification object] isEqual: [self fullScreenWindow]]) [self setFullScreen: NO];
+	if (![[notification object] isEqual: [self fullScreenWindow]]) [self setFullScreen: NO];
 }
 
 - (void) windowDidResignKey: (NSNotification *) notification
@@ -1266,51 +1067,33 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 //Resize the window frame to the requested render size.
 - (void) resizeWindowToRenderingViewSize: (NSSize)newSize animate: (BOOL)performAnimation
 {
-    //TWEAK: always track the target size for Lion's sake, even when not in fullscreen,
-    //to catch cases where DOS switches resolution *during* a fullscreen transition
-    //(during which _isFullScreenOnLion will actually be NO.). This happens e.g. when
-    //Boxer exits fullscreen upon exiting back to DOS.
-    //If we don't record the change, then the newly-set window size will get clobbered
-    //once Boxer resets the window size at the end of the fullscreen transition.
-    renderingViewSizeBeforeFullscreen = newSize;
-
-    //Don't actually resize the window while in fullscreen on Lion: instead, we record
-    //the size the window should be and set it when exiting fullscreen.
-    if ([self _isFullScreenOnLion])
-    {
-        return;
-    }
-    else
-    {
-        NSWindow *theWindow	= [self window];
-        NSSize currentSize	= [self windowedRenderingViewSize];
-        
-        if (!NSEqualSizes(currentSize, newSize))
-        {
-            NSSize windowSize	= [theWindow frame].size;
-            windowSize.width	+= newSize.width	- currentSize.width;
-            windowSize.height	+= newSize.height	- currentSize.height;
-            
-            //Resize relative to center of titlebar
-            NSRect newFrame		= resizeRectFromPoint([theWindow frame], windowSize, NSMakePoint(0.5f, 1.0f));
-            //Constrain the result to fit tidily on screen
-            newFrame			= [theWindow fullyConstrainFrameRect: newFrame toScreen: [theWindow screen]];
-            
-            newFrame = NSIntegralRect(newFrame);
-            
-            [self setResizingProgrammatically: YES];
-            
-            if ([self isFullScreen])
-            {
-                [theWindow setFrame: newFrame display: NO];
-            }
-            else
-            {
-                [theWindow setFrame: newFrame display: YES animate: performAnimation];
-            }
-            [self setResizingProgrammatically: NO];
-        }
-    }
+	NSWindow *theWindow	= [self window];
+	NSSize currentSize	= [self windowedRenderingViewSize];
+	
+	if (!NSEqualSizes(currentSize, newSize))
+	{
+		NSSize windowSize	= [theWindow frame].size;
+		windowSize.width	+= newSize.width	- currentSize.width;
+		windowSize.height	+= newSize.height	- currentSize.height;
+		
+		//Resize relative to center of titlebar
+		NSRect newFrame		= resizeRectFromPoint([theWindow frame], windowSize, NSMakePoint(0.5f, 1.0f));
+		//Constrain the result to fit tidily on screen
+		newFrame			= [theWindow fullyConstrainFrameRect: newFrame toScreen: [theWindow screen]];
+		
+		newFrame = NSIntegralRect(newFrame);
+		
+		resizingProgrammatically = YES;
+		if ([self isFullScreen])
+		{
+			[theWindow setFrame: newFrame display: NO];
+		}
+		else
+		{
+			[theWindow setFrame: newFrame display: YES animate: performAnimation];
+		}
+		resizingProgrammatically = NO;
+	}
 }
 
 //Returns the most appropriate view size for the intended output size, given the size of the current window.
@@ -1388,44 +1171,36 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 //Performs the slide animation used to toggle the status bar and program panel on or off
 - (void) _slideView: (NSView *)view shown: (BOOL)show
 {
-    if ([self _isFullScreenOnLion])
-    {
-        //If we ever get here it's an accident, because all methods that would call
-        //_slideView:shown: are prevented from doing so in Lion fullscreen.
-        NSAssert(NO, @"_slideView:shown: called while in Lion fullscreen mode.");
-    }
-    else
-    {
-        NSRect newFrame	= [[self window] frame];
-        NSScreen *screen = [[self window] screen];
-        
-        CGFloat height	= [view frame].size.height;
-        if (!show) height = -height;
-        
-        newFrame.size.height	+= height;
-        newFrame.origin.y		-= height;
-        
-        //Ensure the new frame is positioned to fit on the screen
-        newFrame = [[self window] fullyConstrainFrameRect: newFrame toScreen: screen];
-        
-        if (show) [view setHidden: NO];	//Unhide before sliding out
-        
-        if ([self isFullScreen])
-        {
-            [[self window] setFrame: newFrame display: NO];
-        }
-        else
-        {
-            [[self window] setFrame: newFrame display: YES animate: YES];
-        }
-        
-        if (!show) [view setHidden: YES]; //Hide after sliding in
-    }
+	NSRect newFrame	= [[self window] frame];
+	NSScreen *screen = [[self window] screen];
+	
+	CGFloat height	= [view frame].size.height;
+	if (!show) height = -height;
+	
+	newFrame.size.height	+= height;
+	newFrame.origin.y		-= height;
+	
+	//Ensure the new frame is positioned to fit on the screen
+	newFrame = [[self window] fullyConstrainFrameRect: newFrame toScreen: screen];
+	
+	if (show) [view setHidden: NO];	//Unhide before sliding out
+	
+	//Don't bother animating if we're applying the transformation to our 'proxy' window
+	if ([self isFullScreen])
+	{
+		[[self window] setFrame: newFrame display: NO];
+	}
+	else
+	{
+		[[self window] setFrame: newFrame display: YES animate: YES];
+	}
+	
+	if (!show) [view setHidden: YES]; //Hide after sliding in
 }
 
-- (BOOL) _isFullScreenOnLion
+- (BOOL) _isReallyInFullScreen
 {
-    return [BXAppController isRunningOnLion] && [self isFullScreen] && !inFullScreenTransition;
+    return [self isFullScreen] && !inFullScreenTransition;
 }
 
 @end

@@ -12,7 +12,7 @@
 #import "BXBootlegCoverArt.h"
 #import "BXDrive.h"
 #import "BXAppController.h"
-#import "BXDOSWindowController.h"
+#import "BXDOSWindowControllerLion.h"
 #import "BXEmulatorConfiguration.h"
 #import "BXCloseAlert.h"
 
@@ -320,15 +320,16 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (void) makeWindowControllers
 {
-	//Use layer-based rendering
-	//BXDOSWindowController *controller = [[BXDOSWindowController alloc] initWithWindowNibName: @"LayeredDOSWindow"];
+	BXDOSWindowController *controller;
+	if ([BXAppController isRunningOnLionOrAbove])
+	{
+		controller = [[BXDOSWindowControllerLion alloc] initWithWindowNibName: @"DOSWindow"];
+	}
+	else
+	{
+		controller = [[BXDOSWindowController alloc] initWithWindowNibName: @"DOSWindow"];
+	}
 	
-	//Use display-linked rendering
-	//BXDOSWindowController *controller = [[BXDOSWindowController alloc] initWithWindowNibName: @"DisplayLinkedDOSWindow"];
-
-	//Use regular rendering
-	BXDOSWindowController *controller = [[BXDOSWindowController alloc] initWithWindowNibName: @"DOSWindow"];
-
 	[self addWindowController:		controller];
 	[self setDOSWindowController:	controller];
 	

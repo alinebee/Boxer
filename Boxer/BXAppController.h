@@ -69,7 +69,7 @@ enum {
 //This is used to trigger certain bugfixes and window effects, and adjusts the art we use.
 + (BOOL) isRunningOnLeopard;
 + (BOOL) isRunningOnSnowLeopard;
-+ (BOOL) isRunningOnLion;
++ (BOOL) isRunningOnLionOrAbove;
 
 
 #pragma mark -

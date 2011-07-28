@@ -160,7 +160,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	return (appKitVersion <= NSAppKitVersionNumber10_6 && appKitVersion > NSAppKitVersionNumber10_5);
 }
 
-+ (BOOL) isRunningOnLion
++ (BOOL) isRunningOnLionOrAbove
 {
 	double appKitVersion = floor(NSAppKitVersionNumber);
 	return (appKitVersion > NSAppKitVersionNumber10_6);
@@ -344,7 +344,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 		BOOL hasDelayed = NO;
         
         //These are disabled as they do not run correctly on Lion
-        BOOL useFlipTransitions = ![[self class] isRunningOnLion];
+        BOOL useFlipTransitions = ![[self class] isRunningOnLionOrAbove];
 		
 		//If the user has not chosen a games folder yet, then show them the first-run panel
 		//(This is modal, so execution will not continue until the panel is dismissed.)

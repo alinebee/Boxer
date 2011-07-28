@@ -149,7 +149,7 @@ enum {
 							importerDroplet: YES
 							shelfAppearance: applyShelfAppearance];
 	
-    if ([BXAppController isRunningOnLion])
+    if ([BXAppController isRunningOnLionOrAbove])
     {
         [[self window] close];
     }

@@ -144,7 +144,7 @@
 	NSWindow *toWindow		= [controller window];
     
     //These fancy transitions don't work well at all in Lion, which has its own window popin/popout animations.
-    if ([BXAppController isRunningOnLion])
+    if ([BXAppController isRunningOnLionOrAbove])
     {
         [fromWindow orderOut: self];
         [toWindow makeKeyAndOrderFront: self];
@@ -184,7 +184,7 @@
 	NSWindow *toWindow		= [self window];
 	
     //These fancy transitions don't work well at all in Lion, which has its own window popin/popout animations.
-    if ([BXAppController isRunningOnLion])
+    if ([BXAppController isRunningOnLionOrAbove])
     {
         [fromWindow orderOut: self];
         [toWindow makeKeyAndOrderFront: self];

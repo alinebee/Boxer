@@ -298,22 +298,21 @@ static NSMutableArray *profileClasses = nil;
 
 - (id <BXHIDInputBinding>) generatedBindingForButtonElement: (DDHidElement *)element
 {	
-	//Disabled for now because it irritates the hell out of me
-	BOOL wrapButtons = NO;
+    //Only assign buttons up to 8. Buttons 1-4 are usually face buttons,
+    //and 5-8 are usually front buttons (on gamepads) or base buttons (on joysticks.)
+    //Once we get above 8 however, we're into the realm of start/select buttons and
+    //thumbstick-clicks, and we don't want to bind those automatically.
+	NSUInteger maxButtons = 8;
 	
 	NSUInteger numEmulatedButtons = [[self emulatedJoystick] numButtons];
 	NSUInteger realButton = [[element usage] usageId];
 	
 	NSUInteger emulatedButton = realButton;
+    
 	//Wrap controller buttons so that they'll fit within the number of emulated buttons
-	if (wrapButtons)
+	if (realButton <= maxButtons)
 	{
 		emulatedButton = ((realButton - 1) % numEmulatedButtons) + 1;
-	}
-	
-	//Ignore all buttons beyond the emulated buttons
-	if (emulatedButton > 0 && emulatedButton <= numEmulatedButtons)
-	{
         return [BXButtonToButton bindingWithButton: emulatedButton];
 	}
 	else return nil;

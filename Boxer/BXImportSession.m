@@ -1135,8 +1135,8 @@
         
 		//Always show the program panel when installing
 		//(Show only after a delay, so that the installer has time to start up)
-		[[self DOSWindowController] performSelector: @selector(showProgramPanel)
-										 withObject: nil
+		[[self DOSWindowController] performSelector: @selector(showProgramPanel:)
+										 withObject: self
 										 afterDelay: 1.0];
 	}
 }
@@ -1149,8 +1149,8 @@
 	
 	//Show the program chooser after returning to the DOS prompt
 	//(Show only after a delay, so that the window has time to resize after quitting the game)
-	[[self DOSWindowController] performSelector: @selector(showProgramPanel)
-									 withObject: nil
+	[[self DOSWindowController] performSelector: @selector(showProgramPanel:)
+									 withObject: self
 									 afterDelay: 1.0];
 	
 	//Always drop out of fullscreen mode when we return to the prompt,

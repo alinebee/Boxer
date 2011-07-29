@@ -330,7 +330,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	{
 		continueRestoring();
 	}
-
 }
 
 

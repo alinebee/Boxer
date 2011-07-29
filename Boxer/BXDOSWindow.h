@@ -10,41 +10,24 @@
 //BXDOSWindowController and exists mainly just to override NSWindow's default window sizing
 //and constraining methods.
 
-#import <Cocoa/Cocoa.h>
+#import "BXFullScreenCapableWindow.h"
 
 @class BXDOSWindowController;
 
-@interface BXDOSWindow : NSWindow
+@interface BXDOSWindow : BXFullScreenCapableWindow
 {
     IBOutlet NSView *actualContentView;
-    BOOL canFillScreen;
-}
-//The 'real' content view by which our content size calculations will be constrained;
-//This will not include the program panel or statusbar views.
-@property (retain, nonatomic) NSView *actualContentView;
-
-//Whether to constrain the frame to the screen during resize operations.
-//This is set to YES by BXDOSWindowController during fullscreen transitions
-//to allow the window to fill the screen.
-@property (assign, nonatomic) BOOL canFillScreen;
-
-
-- (BXDOSWindowController *) windowController;
-
-//Return the current size of actualContentView.
-- (NSSize) actualContentViewSize;
-
-@end
-
-
-
-@interface BXDOSFullScreenWindow : NSWindow
-{
+    
 	//The hidden overlay window we use for our fullscreen display-capture suppression hack.
 	NSWindow *hiddenOverlay;
 }
+//The 'real' content view by which our content size calculations will be constrained,
+//and which will fill the screen in fullscreen mode. This is distinct from the window's
+//top-level content view and does not include the program panel or statusbar views.
+@property (retain, nonatomic) NSView *actualContentView;
 
-- (BXDOSWindowController *) windowController;
+//Return the current size of actualContentView.
+- (NSSize) actualContentViewSize;
 
 //Prevents OS X 10.6 from automatically capturing the contents of this window in fullscreen,
 //by creating a hidden overlay child window on top of this one. This hack is necessary for

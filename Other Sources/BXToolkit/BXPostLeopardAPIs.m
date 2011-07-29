@@ -7,4 +7,12 @@
 
 #import "BXPostLeopardAPIs.h"
 
-//Herein will lie any extern definitions
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED < 1070 //OS X 10.7
+
+NSString * const NSWindowWillEnterFullScreenNotification = @"NSWindowWillEnterFullScreenNotification";
+NSString * const NSWindowDidEnterFullScreenNotification = @"NSWindowDidEnterFullScreenNotification";
+NSString * const NSWindowWillExitFullScreenNotification = @"NSWindowWillExitFullScreenNotification";
+NSString * const NSWindowDidExitFullScreenNotification = @"NSWindowDidExitFullScreenNotification";
+
+#endif

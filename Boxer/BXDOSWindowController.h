@@ -16,7 +16,6 @@
 @class BXEmulator;
 @class BXSession;
 @class BXDOSWindow;
-@class BXDOSFullScreenWindow;
 @class BXProgramPanelController;
 @class BXInputController;
 @class BXStatusBarController;
@@ -42,12 +41,12 @@ extern NSString * const BXViewDidLiveResizeNotification;
 	IBOutlet BXInputController *inputController;
 	IBOutlet BXStatusBarController *statusBarController;
 	
-	BXDOSFullScreenWindow *fullScreenWindow;
-	
-	NSSize currentScaledSize;
+    NSSize currentScaledSize;
 	NSSize currentScaledResolution;
 	BOOL resizingProgrammatically;
-	BOOL inFullScreenTransition;
+    
+    NSSize renderingViewSizeBeforeFullScreen;
+    NSString *autosaveNameBeforeFullScreen;
 }
 
 #pragma mark -
@@ -69,18 +68,6 @@ extern NSString * const BXViewDidLiveResizeNotification;
 
 //The status bar at the bottom of the window.
 @property (retain, nonatomic) NSView *statusBar;
-
-//The DOS window we are currently showing and rendering into.
-//Will be equal to -window in windowed mode and -fullscreenWindow in fullscreen mode.
-@property (readonly, nonatomic) NSWindow *activeWindow;
-
-//Sets/gets whether the rendering view is currently fullscreen.
-//See also setFullScreenWithZoom:
-@property (assign, nonatomic, getter=isFullScreen) BOOL fullScreen;
-
-//The screen to which we will render in fullscreen mode.
-//This is currently the screen with the main menu on it.
-@property (readonly, nonatomic) NSScreen *fullScreenTarget;
 
 //The maximum BXFrameBuffer size we can render.
 @property (readonly, nonatomic) NSSize maxFrameSize;
@@ -109,13 +96,11 @@ extern NSString * const BXViewDidLiveResizeNotification;
 
 
 #pragma mark -
-#pragma mark Window-sizing and fullscreen methods
-
-//Zoom in and out of fullscreen mode with a smooth window sizing animation.
-- (void) setFullScreenWithZoom: (BOOL)fullScreen;
+#pragma mark Window-sizing methods
 
 //Resize the window to fit the specified render size, with an optional smooth resize animation.
-- (void) resizeWindowToRenderingViewSize: (NSSize)newSize animate: (BOOL)performAnimation;
+- (void) resizeWindowToRenderingViewSize: (NSSize)newSize
+                                 animate: (BOOL)performAnimation;
 
 
 #pragma mark -
@@ -130,29 +115,22 @@ extern NSString * const BXViewDidLiveResizeNotification;
 #pragma mark -
 #pragma mark Interface actions
 
-//Toggle instantly in and out of fullscreen mode.
-- (IBAction) toggleFullScreen: (id)sender;
-
-//Zoom in and out of fullscreen mode with a smooth window sizing animation.
-//Toggles setFullScreenWithZoom:
-- (IBAction) toggleFullScreenWithZoom: (id)sender;
-
-//Exit back to a window, if in fullscreen; otherwise do nothing.
-//This is triggered by pressing ESC when at the DOS prompt.
-- (IBAction) exitFullScreen: (id)sender;
-
 //Toggle the status bar and program panel components on and off.
 - (IBAction) toggleStatusBarShown:		(id)sender;
 - (IBAction) toggleProgramPanelShown:	(id)sender;
 
 //Unconditionally show/hide the program panel.
-- (void) showProgramPanel;
-- (void) hideProgramPanel;
-
+- (IBAction) showProgramPanel: (id)sender;
+- (IBAction) hideProgramPanel: (id)sender;
 
 //Toggle the emulator's active rendering filter.
 - (IBAction) toggleFilterType: (id)sender;
 
+- (IBAction) toggleFullScreen: (id)sender;
+- (IBAction) toggleFullScreenWithoutAnimation: (id)sender;
+
+- (IBAction) enterFullScreen: (id)sender;
+- (IBAction) exitFullScreen: (id)sender;
 
 #pragma mark -
 #pragma mark Toggling UI components

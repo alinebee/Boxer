@@ -14,15 +14,16 @@
 #pragma mark -
 #pragma mark Constants
 
-#define BXFullscreenFadeOutDuration	0.2f
-#define BXFullscreenFadeInDuration	0.4f
-#define BXWindowSnapThreshold		64
+#define BXWindowSnapThreshold 64
 
 
 #pragma mark Private method declarations
 
 @interface BXDOSWindowController ()
-@property (retain, nonatomic) BXDOSFullScreenWindow *fullScreenWindow;
+
+//A backup of the window's frame name, stored while we're in fullscreen mode
+//(which clears the window's frame name temporarily so that the fullscreen frame isn't saved.)
+@property (copy, nonatomic) NSString *autosaveNameBeforeFullScreen;
 
 //A wrapper for the input view, to aid window-sizing behaviour.
 @property (retain, nonatomic) NSView *viewContainer;
@@ -33,7 +34,6 @@
 //Returns the size that the rendering view would currently be *if it were in windowed mode.*
 //This will differ from the actual render view size if in fullscreen mode.
 @property (readonly, nonatomic) NSSize windowedRenderingViewSize;
-
 
 
 //Add/remove notification observers for everything we care about. Called from windowDidLoad.
@@ -47,9 +47,6 @@
 //Performs the slide animation used to toggle the status bar and program panel on or off
 - (void) _slideView: (NSView *)view shown: (BOOL)show;
 
-//Apply the switch to fullscreen mode. Used internally by setFullScreen: and setFullScreenWithZoom:
-- (void) _applyFullScreenState: (BOOL)fullScreen;
-
 //Resize the window if needed to accomodate the specified frame.
 //Returns YES if the window was actually resized, NO otherwise.
 - (BOOL) _resizeToAccommodateFrame: (BXFrameBuffer *)frame;
@@ -59,9 +56,6 @@
 
 //Forces the emulator's video handler to recalculate its filter settings at the end of a resize event.
 - (void) _cleanUpAfterResize;
-
-//Returns whether we are actually in fullscreen mode, and not transitioning to or from it.
-- (BOOL) _isReallyInFullScreen;
 
 @end
 

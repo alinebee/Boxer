@@ -12,18 +12,12 @@
 #define BXFrameResizeDelayFalloff 7.5
 
 @implementation BXDOSWindow
-@synthesize actualContentView, canFillScreen;
+@synthesize actualContentView;
 
 - (void) dealloc
 {
     [self setActualContentView: nil], [actualContentView release];
     [super dealloc];
-}
-
-//Overridden to make our required controller type explicit
-- (BXDOSWindowController *) windowController
-{
-	return (BXDOSWindowController *)[super windowController];
 }
 
 //Overridden to smooth out the speed of shorter resize animations,
@@ -73,39 +67,10 @@
 	
 	return rect;
 }
- 
-- (NSRect) constrainFrameRect: (NSRect)frameRect toScreen: (NSScreen *)screen
-{
-	if ([self canFillScreen]) return frameRect;
-	else return [super constrainFrameRect: frameRect toScreen: screen];
-}
-
-@end
 
 
-@implementation BXDOSFullScreenWindow
-
-//Overridden to make our required controller type explicit
-- (BXDOSWindowController *) windowController
-{
-	return (BXDOSWindowController *)[super windowController];
-}
-
-//Overridden since chromeless NSWindows normally return NO for these
-- (BOOL) canBecomeKeyWindow
-{
-	return YES;
-}
-
-- (BOOL) canBecomeMainWindow
-{
-	return YES;
-}
-
-- (NSColor *)backgroundColor
-{
-	return [NSColor blackColor];
-}
+#pragma mark -
+#pragma mark Fullscreen rendering fixes
 
 - (void) suppressDisplayCapture
 {
@@ -144,4 +109,5 @@
 	}
 	[super close];
 }
+
 @end

@@ -63,6 +63,11 @@ enum {
     NSFullScreenWindowMask = 1 << 14
 };
 
+extern NSString * const NSWindowWillEnterFullScreenNotification;
+extern NSString * const NSWindowDidEnterFullScreenNotification;
+extern NSString * const NSWindowWillExitFullScreenNotification;
+extern NSString * const NSWindowDidExitFullScreenNotification;
+
 
 @interface NSWindow (BXPostLeopardWindowAPIs)
 
@@ -72,6 +77,22 @@ enum {
 - (IBAction) toggleFullScreen: (id)sender;
 
 @end
+
+//New NSWindowDelegate methods
+@interface NSObject (BXPostLeopardWindowDelegateAPIs)
+
+- (void) windowWillEnterFullScreen: (NSNotification *)notification;
+- (void) windowDidEnterFullScreen: (NSNotification *)notification;
+- (void) windowWillExitFullScreen: (NSNotification *)notification;
+- (void) windowDidExitFullScreen: (NSNotification *)notification;
+
+- (void) windowDidFailToEnterFullScreen: (NSWindow *)window;
+- (void) windowDidFailToExitFullScreen: (NSWindow *)window;
+
+- (NSSize) window: (NSWindow *)window willUseFullScreenContentSize: (NSSize)proposedSize;
+
+@end
+
 
 
 //New 10.7 scroller behaviour

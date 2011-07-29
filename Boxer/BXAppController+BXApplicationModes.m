@@ -8,6 +8,7 @@
 #import "BXAppController+BXApplicationModes.h"
 #import "BXInspectorController.h"
 #import "BXDOSWindowController.h"
+#import "BXDOSWindow.h"
 #import "BXInputController.h"
 #import "BXSession.h"
 #import "BXBezelController.h"
@@ -95,7 +96,8 @@ NSString * const BXPreviousSpacesArrowKeyModifiersKey = @"previousSpacesArrowKey
     
 	BXDOSWindowController *currentController = [[self currentSession] DOSWindowController];
 	
-	if ([currentController isFullScreen])
+    //TODO: finesse this to check for transition state
+	if ([[currentController window] isFullScreen])
 	{
 		if ([[currentController inputController] mouseLocked])
 		{

@@ -356,6 +356,7 @@
 		9FD3A27F139A839600D0918E /* BXSixaxisControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD3A27E139A839600D0918E /* BXSixaxisControllerProfile.m */; };
 		9FD5481411047E420041E1E7 /* BXDrivesInUseAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD5481311047E420041E1E7 /* BXDrivesInUseAlert.m */; };
 		9FD668F11215CDD6009E0118 /* BXBottomBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD668F01215CDD6009E0118 /* BXBottomBar.m */; };
+		9FD95D6A13E2A45C005EF2C0 /* BXFullScreenCapableWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD95D6913E2A45C005EF2C0 /* BXFullScreenCapableWindow.m */; };
 		9FDAD87F10C182B3004EA7D0 /* BXCoverArtWell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FDAD87E10C182B3004EA7D0 /* BXCoverArtWell.m */; };
 		9FDB601710C0707F00C15CF4 /* BXDockTileController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FDB601610C0707F00C15CF4 /* BXDockTileController.m */; };
 		9FDC544E120EBFE70063B33D /* BXImportDropzonePanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FDC544D120EBFE70063B33D /* BXImportDropzonePanelController.m */; };
@@ -1056,6 +1057,8 @@
 		9FD5481311047E420041E1E7 /* BXDrivesInUseAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDrivesInUseAlert.m; sourceTree = "<group>"; };
 		9FD668EF1215CDD6009E0118 /* BXBottomBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBottomBar.h; sourceTree = "<group>"; };
 		9FD668F01215CDD6009E0118 /* BXBottomBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBottomBar.m; sourceTree = "<group>"; };
+		9FD95D6813E2A45C005EF2C0 /* BXFullScreenCapableWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFullScreenCapableWindow.h; sourceTree = "<group>"; };
+		9FD95D6913E2A45C005EF2C0 /* BXFullScreenCapableWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFullScreenCapableWindow.m; sourceTree = "<group>"; };
 		9FDAD87D10C182B3004EA7D0 /* BXCoverArtWell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCoverArtWell.h; sourceTree = "<group>"; };
 		9FDAD87E10C182B3004EA7D0 /* BXCoverArtWell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXCoverArtWell.m; sourceTree = "<group>"; };
 		9FDB601510C0707F00C15CF4 /* BXDockTileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDockTileController.h; sourceTree = "<group>"; };
@@ -2087,6 +2090,8 @@
 				9FD23D54129AE3B600B2100B /* NSWindow+BXWindowEffects.m */,
 				9F8F482313DC74CA00C7E022 /* NSShadow+BXShadowExtensions.h */,
 				9F8F482413DC74CA00C7E022 /* NSShadow+BXShadowExtensions.m */,
+				9FD95D6813E2A45C005EF2C0 /* BXFullScreenCapableWindow.h */,
+				9FD95D6913E2A45C005EF2C0 /* BXFullScreenCapableWindow.m */,
 			);
 			path = BXToolkit;
 			sourceTree = "<group>";
@@ -2861,6 +2866,7 @@
 				9F58BB5113DD975F00358512 /* BXFileScan.m in Sources */,
 				9F58BB5413DDAC3A00358512 /* BXExecutableScan.m in Sources */,
 				9F0C0BD713E1751E0039C081 /* BXDOSWindowControllerLion.m in Sources */,
+				9FD95D6A13E2A45C005EF2C0 /* BXFullScreenCapableWindow.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

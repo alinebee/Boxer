@@ -14,6 +14,7 @@
 #import "BXGeometry.h"
 #import "BXCursorFadeAnimation.h"
 #import "BXDOSWindowController.h"
+#import "BXDOSWindow.h"
 #import "BXPostLeopardAPIs.h"
 
 #import "BXEventConstants.h"
@@ -281,7 +282,7 @@
 
 - (BOOL) mouseInView
 {
-	if ([[self _windowController] isFullScreen] || [self mouseLocked]) return YES;
+	if ([self mouseLocked]) return YES;
 	
 	NSPoint mouseLocation = [[[self view] window] mouseLocationOutsideOfEventStream];
 	NSPoint pointInView = [[self view] convertPoint: mouseLocation fromView: nil];
@@ -371,7 +372,7 @@
 		[self cursorUpdate: nil];
 		
 		//Release the mouse lock when DOS stops using the mouse, unless we're in fullscreen mode
-		if (!active && ![[self _windowController] isFullScreen]) [self setMouseLocked: NO];
+		if (!active && ![[[self _windowController] window] isFullScreen]) [self setMouseLocked: NO];
 	}
 }
 
@@ -395,7 +396,7 @@
 - (BOOL) trackMouseWhileUnlocked
 {
 	//Tweak: when in fullscreen mode, ignore the current mouse-tracking setting.
-	return trackMouseWhileUnlocked && ![[self _windowController] isFullScreen];
+	return trackMouseWhileUnlocked && ![[[self _windowController] window] isFullScreen];
 }
 
 - (BOOL) canLockMouse
@@ -404,7 +405,8 @@
 	
 	if (![[[self view] window] isKeyWindow]) return NO;
 	
-	return ([self mouseActive] || [[self _windowController] isFullScreen]);
+    //Always allow the mouse to be locked in fullscreen mode, even when the mouse is not active.
+	return ([self mouseActive] || [[[self _windowController] window] isFullScreen]);
 }
 
 
@@ -782,7 +784,8 @@
 
 - (void) _windowDidResize: (NSNotification *)notification
 {
-	if (![[self _windowController] isFullScreen]) [self cursorUpdate: nil];
+    //Don't update the cursor in fullscreen mode
+	if (![[[self _windowController] window] isFullScreen]) [self cursorUpdate: nil];
 }
 
 - (BOOL) _controlsCursor

@@ -8,6 +8,7 @@
 
 #import "BXInputControllerPrivate.h"
 #import "BXEventConstants.h"
+#import "BXDOSWindow.h"
 
 #import <Carbon/Carbon.h> //For keycodes
 
@@ -66,7 +67,7 @@
 	
 	//Pressing ESC while in fullscreen mode and not running a program will exit fullscreen mode.
 	else if ([[theEvent charactersIgnoringModifiers] isEqualToString: @"\e"] &&
-		[[self _windowController] isFullScreen] &&
+		[[[self _windowController] window] isFullScreen] &&
 		[[[self representedObject] emulator] isAtPrompt])
 	{
 		[NSApp sendAction: @selector(exitFullScreen:) to: nil from: self];

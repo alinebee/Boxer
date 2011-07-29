@@ -347,13 +347,6 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	[super removeWindowController: windowController];
 }
 
-- (NSWindow *) windowForSheet
-{
-	NSWindow *activeWindow = [[self DOSWindowController] activeWindow];
-	if (activeWindow) return activeWindow;
-	else return [super windowForSheet];
-}
-
 - (void) setUserToggledProgramPanel: (BOOL)flag
 {
 	//Finesse: ignore program toggles while a program is running, only pay attention
@@ -772,11 +765,11 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		if (![self userToggledProgramPanel] && ![self _leaveProgramPanelOpenAfterLaunch])
 		{
 			[NSObject cancelPreviousPerformRequestsWithTarget: [self DOSWindowController]
-													 selector: @selector(showProgramPanel)
-													   object: nil];
+													 selector: @selector(showProgramPanel:)
+													   object: self];
 			
-			[[self DOSWindowController] performSelector: @selector(hideProgramPanel)
-											 withObject: nil
+			[[self DOSWindowController] performSelector: @selector(hideProgramPanel:)
+											 withObject: self
 											 afterDelay: BXHideProgramPanelDelay];
 		}
 	}
@@ -854,12 +847,12 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	if ([self isGamePackage] && ![self userToggledProgramPanel])
 	{
 		[NSObject cancelPreviousPerformRequestsWithTarget: [self DOSWindowController]
-												 selector: @selector(hideProgramPanel)
-												   object: nil];
+												 selector: @selector(hideProgramPanel:)
+												   object: self];
 		
 		//Show only after a delay, so that the window has time to resize after quitting the game
-		[[self DOSWindowController] performSelector: @selector(showProgramPanel)
-										 withObject: nil
+		[[self DOSWindowController] performSelector: @selector(showProgramPanel:)
+										 withObject: self
 										 afterDelay: BXShowProgramPanelDelay];
         
         if ([[NSUserDefaults standardUserDefaults] boolForKey: @"startUpInFullScreen"])
@@ -884,8 +877,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		//Switch to fullscreen mode automatically after a brief delay:
 		//This will be cancelled if the context exits within that time,
 		//in case of a program that crashes early.
-		[[self DOSWindowController] performSelector: @selector(toggleFullScreenWithZoom:) 
-										  withObject: [NSNumber numberWithBool: YES] 
+		[[self DOSWindowController] performSelector: @selector(enterFullScreen:) 
+										  withObject: self
 										  afterDelay: BXAutoSwitchToFullScreenDelay];
 	}
 }
@@ -893,8 +886,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 - (void) emulatorDidFinishGraphicalContext: (NSNotification *)notification
 {
 	[NSObject cancelPreviousPerformRequestsWithTarget: [self DOSWindowController]
-											 selector: @selector(toggleFullScreenWithZoom:)
-											   object: [NSNumber numberWithBool: YES]];
+											 selector: @selector(toggleFullScreen:)
+											   object: self];
 }
 
 - (void) emulatorDidChangeEmulationState: (NSNotification *)notification
@@ -1262,7 +1255,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	//Auto-pause if the DOS window is miniaturized
 	//IMPLEMENTATION NOTE: we used to toggle this when the DOS window was hidden (not visible),
 	//but that gave rise to corner cases if shouldAutoPause was called just before the window was to appear.
-	if ([[DOSWindowController activeWindow] isMiniaturized]) return YES;
+	if ([[DOSWindowController window] isMiniaturized]) return YES;
 	
 	return NO;
 }

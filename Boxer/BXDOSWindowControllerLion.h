@@ -13,10 +13,7 @@
 
 @interface BXDOSWindowControllerLion : BXDOSWindowController
 {
-    BOOL statusBarShownBeforeFullscreen;
-    BOOL programPanelShownBeforeFullscreen;
-    NSSize renderingViewSizeBeforeFullscreen;
-    
-    NSString *autosaveNameBeforeFullscreen;
+    BOOL statusBarShownBeforeFullScreen;
+    BOOL programPanelShownBeforeFullScreen;
 }
 @end

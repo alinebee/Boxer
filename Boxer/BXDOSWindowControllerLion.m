@@ -26,6 +26,10 @@
 	
     //Set the window's fullscreen behaviour for Lion
     [[self window] setCollectionBehavior: NSWindowCollectionBehaviorFullScreenPrimary];
+    
+    //Disable window restoration for DOS sessions
+    //(This does not play nice with our application lifecycle)
+    [[self window] setRestorable: NO];
 }
 
 

@@ -46,11 +46,8 @@ enum {
 	
 	IBOutlet BXJoystickController *joystickController;
 	IBOutlet BXJoypadController *joypadController;
-	
-	NSMutableArray *deferredWindowRestorations;
-	
-	BOOL hasFinishedLaunching;
 }
+
 //The currently-active DOS session. Changes whenever a new session opens.
 @property (retain, nonatomic) BXSession *currentSession;
 

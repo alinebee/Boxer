@@ -34,4 +34,11 @@
 //Intel GMA950 chipsets, where implicit display capturing causes severe flickering artifacts.
 - (void) suppressDisplayCapture;
 
+
+//Convenience methods to force a certain fullscreen state.
+//Enters fullscreen with an animation.
+- (IBAction) enterFullScreen: (id)sender;
+//Exits fullscreen without an animation.
+- (IBAction) exitFullScreen: (id)sender;
+
 @end

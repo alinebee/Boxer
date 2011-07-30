@@ -13,6 +13,7 @@
 #import "BXDrive.h"
 #import "BXAppController.h"
 #import "BXDOSWindowControllerLion.h"
+#import "BXDOSWindow.h"
 #import "BXEmulatorConfiguration.h"
 #import "BXCloseAlert.h"
 
@@ -859,7 +860,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         {
             //If we automatically switched into fullscreen at startup, then drop out of
             //fullscreen mode when we return to the prompt in order to show the program panel.
-            [[self DOSWindowController] exitFullScreen: self];
+            [[[self DOSWindowController] window] exitFullScreen: self];
         }
 	}
 
@@ -877,16 +878,16 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		//Switch to fullscreen mode automatically after a brief delay:
 		//This will be cancelled if the context exits within that time,
 		//in case of a program that crashes early.
-		[[self DOSWindowController] performSelector: @selector(enterFullScreen:) 
-										  withObject: self
-										  afterDelay: BXAutoSwitchToFullScreenDelay];
+		[[[self DOSWindowController] window] performSelector: @selector(enterFullScreen:) 
+                                                  withObject: self
+                                                  afterDelay: BXAutoSwitchToFullScreenDelay];
 	}
 }
 
 - (void) emulatorDidFinishGraphicalContext: (NSNotification *)notification
 {
-	[NSObject cancelPreviousPerformRequestsWithTarget: [self DOSWindowController]
-											 selector: @selector(toggleFullScreen:)
+	[NSObject cancelPreviousPerformRequestsWithTarget: [[self DOSWindowController] window]
+											 selector: @selector(enterFullScreen:)
 											   object: self];
 }
 

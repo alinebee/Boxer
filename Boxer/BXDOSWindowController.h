@@ -12,6 +12,7 @@
 
 
 #import <Cocoa/Cocoa.h>
+#import "BXFullScreenCapableWindow.h"
 
 @class BXEmulator;
 @class BXSession;
@@ -29,7 +30,7 @@
 extern NSString * const BXViewWillLiveResizeNotification;
 extern NSString * const BXViewDidLiveResizeNotification;
 
-@interface BXDOSWindowController : NSWindowController <NSWindowDelegate>
+@interface BXDOSWindowController : NSWindowController <BXFullScreenCapableWindowDelegate>
 {
 	IBOutlet NSView <BXFrameRenderingView> *renderingView;
 	IBOutlet BXInputView *inputView;
@@ -125,12 +126,6 @@ extern NSString * const BXViewDidLiveResizeNotification;
 
 //Toggle the emulator's active rendering filter.
 - (IBAction) toggleFilterType: (id)sender;
-
-- (IBAction) toggleFullScreen: (id)sender;
-- (IBAction) toggleFullScreenWithoutAnimation: (id)sender;
-
-- (IBAction) enterFullScreen: (id)sender;
-- (IBAction) exitFullScreen: (id)sender;
 
 #pragma mark -
 #pragma mark Toggling UI components

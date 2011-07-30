@@ -15,7 +15,9 @@
 	[self setFrame: NSIntegralRect(newFrame) display: displayViews animate: performAnimation];
 }
 
-- (void) setFrameSizeKeepingWithinScreen: (NSSize)newSize display: (BOOL)displayViews animate: (BOOL)performAnimation
+- (void) setFrameSizeKeepingWithinScreen: (NSSize)newSize
+                                 display: (BOOL)displayViews
+                                 animate: (BOOL)performAnimation
 {
 	NSRect windowFrame	= [self frame];
 	NSRect screenFrame	= [[NSScreen mainScreen] visibleFrame];
@@ -24,7 +26,7 @@
 	NSPoint midPoint	= NSMakePoint(NSMidX(windowFrame), NSMidY(windowFrame));
 	NSPoint anchor		= pointRelativeToRect(midPoint, screenFrame);
 
-	anchor.y = 1;		//Tweak: keep the window title in the same position instead of centering vertically
+	anchor.y = 1; //Tweak: keep the window title in the same position instead of centering vertically
 
 	[self setFrameSize:	newSize
 			anchoredOn: anchor
@@ -32,7 +34,8 @@
 			animate:	performAnimation];
 }
 
-- (NSRect)fullyConstrainFrameRect: (NSRect)theRect toScreen: (NSScreen *)theScreen
+- (NSRect) fullyConstrainFrameRect: (NSRect)theRect
+                          toScreen: (NSScreen *)theScreen
 {
 	NSRect screenRect = [theScreen visibleFrame];
 	
@@ -53,6 +56,18 @@
 	
 	//...but let NSWindow constrainRect make sure the titlebar is always visible for us
 	return [self constrainFrameRect: theRect toScreen: theScreen];
+}
+
+
+- (NSRect) frameRectForContentSize: (NSSize)contentSize
+                   relativeToFrame: (NSRect)windowFrame
+                        anchoredAt: (NSPoint)anchor
+{
+    NSRect contentRect = NSMakeRect(0, 0, contentSize.width, contentSize.height);
+    NSRect newFrame = [self frameRectForContentRect: contentRect];
+    
+    NSRect centeredFrame = resizeRectFromPoint(windowFrame, newFrame.size, anchor);
+    return centeredFrame;
 }
 
 @end

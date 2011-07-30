@@ -34,6 +34,51 @@
 }
 
 
+#pragma mark -
+#pragma mark UI actions
+
+- (IBAction) exitFullScreen: (id)sender
+{
+	[self setFullScreen: NO animate: NO];
+}
+
+- (IBAction) enterFullScreen: (id)sender
+{
+	[self setFullScreen: YES animate: YES];
+}
+
+- (BOOL) validateMenuItem: (NSMenuItem *)theItem
+{
+    SEL theAction = [theItem action];
+    NSString *title;
+	if (theAction == @selector(toggleFullScreen:))
+	{
+		if (![self isFullScreen])
+			title = NSLocalizedString(@"Enter Full Screen", @"View menu option for entering fullscreen mode.");
+		else
+			title = NSLocalizedString(@"Exit Full Screen", @"View menu option for returning to windowed mode.");
+		
+		[theItem setTitle: title];
+		
+		return YES;
+	}
+	
+	else if (theAction == @selector(toggleFullScreenWithoutAnimation:))
+	{
+		if (![self isFullScreen])
+			title = NSLocalizedString(@"Enter Full Screen Quickly", @"View menu option for entering fullscreen mode without zooming.");
+		else
+			title = NSLocalizedString(@"Exit Full Screen Quickly", @"View menu option for returning to windowed mode without zooming.");
+		
+		[theItem setTitle: title];
+		
+		return YES;
+	}
+    
+    else return [super validateMenuItem: theItem];
+}
+
+
 # pragma mark -
 # pragma mark Content-based resizing
 
@@ -42,28 +87,60 @@
     return [[self actualContentView] frame].size;
 }
 
+
+
+//Returns the difference between the window content frame
+//and the frame of the actual view
+- (NSRect) _actualContentOffset
+{
+    NSRect offset = NSZeroRect;
+    
+    if ([self contentView])
+    {
+        NSRect windowContentFrame = [[self contentView] frame];
+        NSRect actualContentFrame = [[self actualContentView] frame];
+        
+        offset.size.width   = windowContentFrame.size.width - actualContentFrame.size.width;
+        offset.size.height  = windowContentFrame.size.height - actualContentFrame.size.height;
+        offset.origin.x     = windowContentFrame.origin.x - actualContentFrame.origin.x;
+        offset.origin.y     = windowContentFrame.origin.y - actualContentFrame.origin.y;
+    }
+    
+    return offset;
+}
+
+
 //Adjust reported content/frame sizes to account for statusbar and program panel
 //This is used to keep content resizing proportional to the shape of the render view, not the shape of the window
+
 - (NSRect) contentRectForFrameRect: (NSRect)windowFrame
 {
 	NSRect rect = [super contentRectForFrameRect: windowFrame];
-	NSView *container = [self actualContentView];
-
-	CGFloat sizeAdjustment	= [container frame].origin.y;
-	rect.size.height		-= sizeAdjustment;
-	rect.origin.y			+= sizeAdjustment;
-
+    
+    //Determine the current difference between our actual content view
+    //and the window's content view, and adjust the calculated rect accordingly.
+    NSRect contentOffset = [self _actualContentOffset];
+    
+    rect.size.width     -= contentOffset.size.width;
+    rect.size.height    -= contentOffset.size.height;
+    rect.origin.x       -= contentOffset.origin.x;
+    rect.origin.y       -= contentOffset.origin.y;
+    
 	return rect;
 }
 
 - (NSRect) frameRectForContentRect: (NSRect)windowContent
 {
 	NSRect rect = [super frameRectForContentRect: windowContent];
-	NSView *container = [self actualContentView];
-
-	CGFloat sizeAdjustment	= [container frame].origin.y;
-	rect.size.height		+= sizeAdjustment;
-	rect.origin.y			-= sizeAdjustment;
+    
+    //Determine the current difference between our actual content view
+    //and the window's content view, and adjust the calculated rect accordingly.
+    NSRect contentOffset = [self _actualContentOffset];
+    
+    rect.size.width     += contentOffset.size.width;
+    rect.size.height    += contentOffset.size.height;
+    rect.origin.x       += contentOffset.origin.x;
+    rect.origin.y       += contentOffset.origin.y;
 	
 	return rect;
 }

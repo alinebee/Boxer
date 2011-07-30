@@ -34,12 +34,6 @@
     [[self window] setCollectionBehavior: NSWindowCollectionBehaviorFullScreenPrimary];
 }
 
-- (void) windowWillClose: (NSNotification *)notification
-{
-	//BXDOSWindowController normally exits fullscreen when the window closes.
-	//Lion doesn't like this, so we don't do it.
-}
-
 
 - (void) windowWillEnterFullScreen: (NSNotification *)notification
 {
@@ -72,23 +66,6 @@
     [super windowDidFailToExitFullScreen: window];
     [self setStatusBarShown: NO];
     [self setProgramPanelShown: NO];
-}
-
-#pragma mark -
-#pragma mark UI validation
-
-- (BOOL) validateMenuItem: (NSMenuItem *)theItem
-{
-	SEL theAction = [theItem action];
-	
-	//Lion doesn't use the speedy fullscreen toggle
-	if (theAction == @selector(toggleFullScreenWithoutAnimation:))
-	{
-		[theItem setHidden: YES];
-		return NO;
-	}
-	
-	else return [super validateMenuItem: theItem];
 }
 
 

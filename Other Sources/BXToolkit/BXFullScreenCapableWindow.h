@@ -18,6 +18,7 @@
 #define BXDefaultFullscreenFadeOutDuration	0.2f
 #define BXDefaultFullscreenFadeInDuration	0.4f
 
+@protocol BXFullScreenCapableWindowDelegate;
 
 @interface BXFullScreenCapableWindow : NSWindow {
 @private
@@ -25,6 +26,7 @@
     BOOL inFullScreenTransition;
     
     NSRect windowedFrame;
+    NSUInteger windowedStyleMask;
 }
 
 #pragma mark -
@@ -36,11 +38,6 @@
 //Whether we are in the middle of transitioning to/from fullscreen mode.
 //The value of isFullScreen indicates which state we're transitioning to.)
 @property (readonly, nonatomic, getter=isInFullScreenTransition) BOOL inFullScreenTransition;
-
-//The window frame to which we will return from fullscreen mode.
-//Set automatically to the window frame when entering fullscreen,
-//but can be modified while in fullscreen.
-@property (assign, nonatomic) NSRect windowedFrame;
 
 
 #pragma mark -
@@ -60,5 +57,18 @@
 //This will behave the same as toggleFullScreen: on Lion,
 //because Lion's built-in animation is always used.
 - (IBAction) toggleFullScreenWithoutAnimation: (id)sender;
+
+@end
+
+
+
+@protocol BXFullScreenCapableWindowDelegate <NSWindowDelegate>
+
+@optional
+
+//Asks the delegate to approve the target window frame we'll
+//return to from fullscreen mode. If desired, it can return
+//a new window frame to use.
+- (NSRect) window: (NSWindow *)window willReturnToFrame: (NSRect)frame;
 
 @end

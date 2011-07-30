@@ -18,8 +18,9 @@
 #import "BXImportSession.h"
 #import "BXSessionPrivate.h"
 
-#import "BXDOSWindowController.h"
+#import "BXDOSWindowControllerLion.h"
 #import "BXImportWindowController.h"
+#import "BXDOSWindow.h"
 
 #import "BXAppController+BXGamesFolder.h"
 #import "BXInspectorController.h"
@@ -266,7 +267,22 @@
 
 - (void) makeWindowControllers
 {
-	[super makeWindowControllers];
+    BXDOSWindowController *controller;
+	if ([BXAppController isRunningOnLionOrAbove])
+	{
+		controller = [[BXDOSWindowControllerLion alloc] initWithWindowNibName: @"DOSImportWindow"];
+	}
+	else
+	{
+		controller = [[BXDOSWindowController alloc] initWithWindowNibName: @"DOSImportWindow"];
+	}
+	
+	[self addWindowController:		controller];
+	[self setDOSWindowController:	controller];
+	
+	[controller setShouldCloseDocument: YES];
+    [controller release];
+    
 	
 	BXImportWindowController *importController	= [[BXImportWindowController alloc] initWithWindowNibName: @"ImportWindow"];
 	
@@ -1155,7 +1171,7 @@
 	
 	//Always drop out of fullscreen mode when we return to the prompt,
 	//so that users can see the "finish importing" option
-	[[self DOSWindowController] exitFullScreen: self];
+	[[[self DOSWindowController] window] exitFullScreen: self];
 }
 
 - (void) emulatorDidFinish: (NSNotification *)notification

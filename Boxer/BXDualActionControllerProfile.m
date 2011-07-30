@@ -109,9 +109,9 @@ enum {
 			break;
             
         //Remap the Fx10 face buttons to a more sensible layout.
-        //This will make the button labels incorrect on the original Dual-Action/RumblePad 2,
-        //but the Fx10 series is probably more common these days.
+        //Disabled for now as this would be too disruptive on earlier models.
         //TODO: figure out a heuristic to tell the difference between the two 'eras'.
+            /*
         case BXFx10AButton:
             binding = [BXButtonToButton bindingWithButton: BXEmulatedJoystickButton1];
             break;
@@ -127,6 +127,7 @@ enum {
         case BXFx10YButton:
             binding = [BXButtonToButton bindingWithButton: BXEmulatedJoystickButton4];
             break;
+             */
             
         default:
             binding = [super generatedBindingForButtonElement: element];

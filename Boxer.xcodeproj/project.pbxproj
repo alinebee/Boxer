@@ -398,6 +398,7 @@
 		9FFF972F123269D1009B5EE5 /* NSString+NDCarbonUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9725123269D1009B5EE5 /* NSString+NDCarbonUtilities.m */; };
 		9FFF9730123269D1009B5EE5 /* NSURL+NDCarbonUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9727123269D1009B5EE5 /* NSURL+NDCarbonUtilities.m */; };
 		9FFF97951232B718009B5EE5 /* BXMultiPanelWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF97941232B718009B5EE5 /* BXMultiPanelWindowController.m */; };
+		B7900B3E13E47D9E00B37913 /* BXPrecisionProControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = B7900B3D13E47D9E00B37913 /* BXPrecisionProControllerProfile.m */; };
 		E5CF1840128F81AF0065844A /* PhysFS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5CF183F128F81AF0065844A /* PhysFS.framework */; };
 		E5CF1899128F81FE0065844A /* PhysFS.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = E5CF183F128F81AF0065844A /* PhysFS.framework */; };
 /* End PBXBuildFile section */
@@ -1131,6 +1132,7 @@
 		9FFF9727123269D1009B5EE5 /* NSURL+NDCarbonUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+NDCarbonUtilities.m"; sourceTree = "<group>"; };
 		9FFF97931232B718009B5EE5 /* BXMultiPanelWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXMultiPanelWindowController.h; sourceTree = "<group>"; };
 		9FFF97941232B718009B5EE5 /* BXMultiPanelWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXMultiPanelWindowController.m; sourceTree = "<group>"; };
+		B7900B3D13E47D9E00B37913 /* BXPrecisionProControllerProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXPrecisionProControllerProfile.m; sourceTree = "<group>"; };
 		E5CF183F128F81AF0065844A /* PhysFS.framework */ = {isa = PBXFileReference; comments = "This is a fork of the standard PhysFS 2.0.1 library built with ZIP support. The sourcecode for this framework is available at http://bitbucket.org/alunbestor/physfs-boxer/"; lastKnownFileType = wrapper.framework; path = PhysFS.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -2270,6 +2272,7 @@
 				9FD3A27E139A839600D0918E /* BXSixaxisControllerProfile.m */,
 				9FB446EA13D23BD900E69AF5 /* BXG25ControllerProfile.m */,
 				9FC2F83F13D60FBD00BD4F6B /* BXDualActionControllerProfile.m */,
+				B7900B3D13E47D9E00B37913 /* BXPrecisionProControllerProfile.m */,
 			);
 			name = "Controller profiles";
 			sourceTree = "<group>";
@@ -2867,6 +2870,7 @@
 				9F58BB5413DDAC3A00358512 /* BXExecutableScan.m in Sources */,
 				9F0C0BD713E1751E0039C081 /* BXDOSWindowControllerLion.m in Sources */,
 				9FD95D6A13E2A45C005EF2C0 /* BXFullScreenCapableWindow.m in Sources */,
+				B7900B3E13E47D9E00B37913 /* BXPrecisionProControllerProfile.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

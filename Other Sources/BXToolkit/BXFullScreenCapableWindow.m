@@ -27,16 +27,20 @@
                                      fromFrame: (NSRect)fromFrame
                                        toFrame: (NSRect)toFrame;
 
-//Send the appropriate notifications
-- (void) _willEnterFullScreen;
-- (void) _didEnterFullScreen;
+//Send out the appropriate notifications
+- (void) _postWillEnterFullScreenNotification;
+- (void) _postDidEnterFullScreenNotification;
 
-- (void) _willExitFullScreen;
-- (void) _didExitFullScreen;
+- (void) _postWillExitFullScreenNotification;
+- (void) _postDidExitFullScreenNotification;
 
 //Posts a notification for toggling to/from fullscreen to the delegate and the standard notification center
 - (void) _postFullScreenNotificationWithName: (NSString *)notificationName
                               delegateMethod: (SEL)delegateMethod;
+
+//Listen for Lion's yes-we're-finally-finished-exiting-fullscreen notification,
+//to perform any last cleanup
+- (void) _lionDidExitFullScreen: (NSNotification *)notification;
 @end
 
 
@@ -135,24 +139,41 @@
     
     if (togglingFullScreen)
     {
-        [self setInFullScreenTransition: NO];
+        //IMPLEMENTATION NOTE: Lion isn't anywhere near finished switching back to fullscreen
+        //by this point. It does a lot of work after this that's only properly finished once 
+        //the NSWindowDidExitFullScreenNotification has been sent out.
+        //Because we want to do some additional work at that point, and because the code buried
+        //behind a PRIVATE FUCKING API, we temporarily listen for that notification.
+        [[NSNotificationCenter defaultCenter] addObserver: self
+                                                 selector: @selector(_lionDidExitFullScreen:)
+                                                     name: NSWindowDidExitFullScreenNotification
+                                                   object: self];
         
-        if (wasInFullScreen)
-        {
-            //Allow the window delegate to modify the final window size to which we return.
-            //(Unfortunately this can only be done after Lion's fullscreen transition
-            //has finished, resulting in an ugly jump.)
-            if ([[self delegate] respondsToSelector: @selector(window:willReturnToFrame:)])
-            {
-                NSRect windowFrame = [(id)[self delegate] window: self
-                                               willReturnToFrame: [self frame]];
-                
-                [self setFrame: windowFrame display: YES];
-            }
-        }
+        [self setInFullScreenTransition: NO];
     }
     
 }
+
+- (void) _lionDidExitFullScreen: (NSNotification *)notification
+{
+    //Allow the window delegate to modify the final window size to which we return.
+    //Unfortunately, we cannot do this any earlier in Lion's fullscreen transition
+    //process because the very last FUCKING thing it does is unconditionally reset
+    //the window back to the frame it had when we entered fullscreen.
+    if ([[self delegate] respondsToSelector: @selector(window:willReturnToFrame:)])
+    {
+        NSRect windowFrame = [(id)[self delegate] window: self
+                                       willReturnToFrame: [self frame]];
+        
+        [self setFrame: windowFrame display: YES];
+    }
+    
+    //Stop listening for the notification that got us here
+    [[NSNotificationCenter defaultCenter] removeObserver: self
+                                                    name: NSWindowDidExitFullScreenNotification
+                                                  object: self];
+}
+
 
 - (void) setFullScreen: (BOOL)flag animate: (BOOL)animate
 {
@@ -172,7 +193,7 @@
         //When entering fullscreen, save the current window frame and calculate final fullscreen frame
         if (flag)
         {
-            [self _willEnterFullScreen];
+            [self _postWillEnterFullScreenNotification];
             
             //Back up original window states
             windowedFrame = fromFrame;
@@ -181,7 +202,7 @@
             //Disable window resizing while in fullscreen mode
             [self setStyleMask: windowedStyleMask & ~NSResizableWindowMask];
              
-            
+
             NSRect contentFrame = [[self screen] frame];
             
             //Allow the delegate to override our fullscreen content size
@@ -195,7 +216,7 @@
         //When exiting fullscreen, return to the window frame we saved earlier
         else
         {
-            [self _willExitFullScreen];
+            [self _postWillExitFullScreenNotification];
             
             [self setStyleMask: windowedStyleMask];
             
@@ -225,8 +246,8 @@
         [self setInFullScreenTransition: NO];
         
         //Send the appropriate notification signals once we're done
-        if (flag)   [self _didEnterFullScreen];
-        else        [self _didExitFullScreen];
+        if (flag)   [self _postDidEnterFullScreenNotification];
+        else        [self _postDidExitFullScreenNotification];
     }
 }
 
@@ -356,25 +377,25 @@
     [[NSNotificationCenter defaultCenter] postNotification: notification];
 }
 
-- (void) _willEnterFullScreen
+- (void) _postWillEnterFullScreenNotification
 {
     [self _postFullScreenNotificationWithName: NSWindowWillEnterFullScreenNotification
                                delegateMethod: @selector(windowWillEnterFullScreen:)];
 }
 
-- (void) _didEnterFullScreen
+- (void) _postDidEnterFullScreenNotification
 {
     [self _postFullScreenNotificationWithName: NSWindowDidEnterFullScreenNotification
                                delegateMethod: @selector(windowDidEnterFullScreen:)];
 }
 
-- (void) _willExitFullScreen
+- (void) _postWillExitFullScreenNotification
 {
     [self _postFullScreenNotificationWithName: NSWindowWillExitFullScreenNotification
                                delegateMethod: @selector(windowWillExitFullScreen:)];
 }
 
-- (void) _didExitFullScreen
+- (void) _postDidExitFullScreenNotification
 {
     [self _postFullScreenNotificationWithName: NSWindowDidExitFullScreenNotification
                                delegateMethod: @selector(windowDidExitFullScreen:)];

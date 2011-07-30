@@ -65,19 +65,6 @@
     [super setProgramPanelShown: programPanelShownBeforeFullScreen animate: NO];
 }
 
-- (void) windowDidExitFullScreen: (NSNotification *)notification
-{
-    //KLUDGE: Lion discards our carefully corrected window frame just before calling
-    //windowDidExitFullscreen:, and replaces it with the original window size.
-    //Force it back to what it *should be* here, resulting in an ugly window jump. 
-    //Then pray they improve the fucking API in future to make this unnecessary.
-    
-    NSRect correctedFrame = [self window: [self window] willReturnToFrame: [[self window] frame]];
-    [[self window] setFrame: correctedFrame display: YES];
-    
-    [self _cleanUpAfterResize];
-}
-
 - (void) windowDidFailToExitFullScreen: (NSWindow *)window
 {
     [super windowDidFailToExitFullScreen: window];

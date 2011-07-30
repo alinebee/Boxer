@@ -111,14 +111,15 @@
 
 
 //Adjust reported content/frame sizes to account for statusbar and program panel
-//This is used to keep content resizing proportional to the shape of the render view, not the shape of the window
+//This is used to keep content resizing proportional to the shape of the render view,
+//not the shape of the window.
 
 - (NSRect) contentRectForFrameRect: (NSRect)windowFrame
 {
 	NSRect rect = [super contentRectForFrameRect: windowFrame];
     
-    //Determine the current difference between our actual content view
-    //and the window's content view, and adjust the calculated rect accordingly.
+    //Determine the current difference between our actual content view and
+    //the window's content view, and adjust the calculated rect accordingly.
     NSRect contentOffset = [self _actualContentOffset];
     
     rect.size.width     -= contentOffset.size.width;
@@ -133,8 +134,6 @@
 {
 	NSRect rect = [super frameRectForContentRect: windowContent];
     
-    //Determine the current difference between our actual content view
-    //and the window's content view, and adjust the calculated rect accordingly.
     NSRect contentOffset = [self _actualContentOffset];
     
     rect.size.width     += contentOffset.size.width;

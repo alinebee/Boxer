@@ -98,8 +98,8 @@
     //Load our views from the NIB as usual
     [super loadWindow];
     
-    //Create our own window, as one is not defined in the NIB
-    //(we need a borderless window, which XCode can't define in a NIB file.)
+    //Create our own window, as one is not defined in the NIB.
+    //(we need a borderless transparent window, which XCode can't define in a NIB file.)
     NSWindow *bezelWindow = [[NSWindow alloc] initWithContentRect: NSZeroRect
                                                         styleMask: NSBorderlessWindowMask
                                                           backing: NSBackingStoreBuffered

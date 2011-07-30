@@ -96,7 +96,6 @@ NSString * const BXPreviousSpacesArrowKeyModifiersKey = @"previousSpacesArrowKey
     
 	BXDOSWindowController *currentController = [[self currentSession] DOSWindowController];
 	
-    //TODO: finesse this to check for transition state
 	if ([[currentController window] isFullScreen])
 	{
 		if ([[currentController inputController] mouseLocked])

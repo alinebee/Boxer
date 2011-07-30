@@ -14,8 +14,20 @@
 #pragma mark -
 #pragma mark Private constants
 
-#define BXPrecisionProControllerVendorID         BXHIDVendorIDMicrosoft
-#define BXPrecisionProControllerProductID        0x0008
+#define BXPrecisionProControllerVendorID        BXHIDVendorIDMicrosoft
+#define BXPrecisionProControllerProductID       0x0008
+
+//These have not been tested to determine if the button layouts match to the Precision Pro.
+//Hence this is a guess, based on photos and product-line history.
+#define BXForceFeedback2ControllerVendorID      BXHIDVendorIDMicrosoft
+#define BXForceFeedback2ControllerProductID     0x001b
+
+#define BXPrecision2ControllerVendorID      BXHIDVendorIDMicrosoft
+#define BXPrecision2ControllerProductID     0x0038
+
+#define BXSidewinderControllerVendorID      BXHIDVendorIDMicrosoft
+#define BXSidewinderControllerProductID     0x003c
+
 
 enum {
     BXPrecisionProThrottleAxis = kHIDUsage_GD_Slider
@@ -37,6 +49,9 @@ enum {
 {
     return [NSArray arrayWithObjects:
             [self matchForVendorID: BXPrecisionProControllerVendorID productID: BXPrecisionProControllerProductID],
+            [self matchForVendorID: BXForceFeedback2ControllerVendorID productID: BXForceFeedback2ControllerProductID],
+            [self matchForVendorID: BXPrecision2ControllerVendorID productID: BXPrecision2ControllerProductID],
+            [self matchForVendorID: BXSidewinderControllerVendorID productID: BXSidewinderControllerProductID],
             nil];
 }
 

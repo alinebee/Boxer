@@ -18,9 +18,12 @@
 #pragma mark Private constants
 
 
-//The official Microsoft 360 controller
+//The official Microsoft 360 controllers
 #define BX360ControllerVendorID         BXHIDVendorIDMicrosoft
 #define BX360ControllerProductID        0x028e
+
+#define BX360WirelessControllerVendorID BXHIDVendorIDMicrosoft
+#define BX360WirelessControllerProductID 0x028f
 
 //3rd-party 360 peripherals
 #define BXJoyTek360ControllerVendorID	BXHIDVendorIDJoyTek
@@ -96,6 +99,7 @@ enum {
     {
         matches = [NSArray arrayWithObjects:
                    [self matchForVendorID: BX360ControllerVendorID           productID: BX360ControllerProductID],
+                   [self matchForVendorID: BX360WirelessControllerVendorID   productID: BX360WirelessControllerProductID],
                    [self matchForVendorID: BXJoyTek360ControllerVendorID     productID: BXJoyTek360ControllerProductID],
                    [self matchForVendorID: BXBigBen360ControllerVendorID     productID: BXBigBen360ControllerProductID],
                    [self matchForVendorID: BXPelican360ControllerVendorID    productID: BXPelican360ControllerProductID],

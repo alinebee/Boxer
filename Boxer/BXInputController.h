@@ -92,6 +92,11 @@
 //Called by BXDOSWindowController whenever the view regains keyboard focus.
 - (void) didBecomeKey;
 
+//Applies the specified mouse-lock state.
+//If force is NO, the mouse will not be locked if canLockMouse returns NO.
+//If force is YES, it will be locked regardless.
+- (void) setMouseLocked: (BOOL)locked
+                  force: (BOOL)force;
 
 #pragma mark -
 #pragma mark UI actions

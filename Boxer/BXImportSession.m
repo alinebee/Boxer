@@ -728,7 +728,7 @@
 	[self cancel];
 	
 	//Close the program panel before handoff, otherwise it scales weirdly
-	[[self DOSWindowController] setProgramPanelShown: NO];
+	[[self DOSWindowController] hideProgramPanel: self];
 	
 	//Close the inspector panel also
 	[[BXInspectorController controller] setPanelShown: NO];

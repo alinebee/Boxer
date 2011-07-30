@@ -46,18 +46,6 @@
 @implementation BXFullScreenCapableWindow
 @synthesize fullScreen, inFullScreenTransition;
 
-/*
-- (id <BXFullScreenCapableWindowDelegate>) delegate
-{
-    return [self delegate];
-}
-
-- (void) setDelegate: (id <BXFullScreenCapableWindowDelegate>)newDelegate
-{
-    [super setDelegate: newDelegate];
-}
-*/
-
 #pragma mark -
 #pragma mark UI actions and validation
 
@@ -127,8 +115,8 @@
         
     
     //Test whether we're transitioning to/from fullscreen based on Lion's fullscreen mask.
-    BOOL wasInFullScreen    = ([self styleMask] & NSFullScreenWindowMask);
-    BOOL willBeInFullScreen = (styleMask & NSFullScreenWindowMask);
+    BOOL wasInFullScreen    = ([self styleMask] & NSFullScreenWindowMask) == NSFullScreenWindowMask;
+    BOOL willBeInFullScreen = (styleMask & NSFullScreenWindowMask) == NSFullScreenWindowMask;
     
     BOOL togglingFullScreen = (wasInFullScreen != willBeInFullScreen);
     
@@ -142,7 +130,7 @@
             windowedFrame = [self frame];
         }
     }
-        
+    
     [super setStyleMask: styleMask];
     
     if (togglingFullScreen)
@@ -151,9 +139,9 @@
         
         if (wasInFullScreen)
         {
-            //Allow the window delegate to modify the final window size we return to
-            //Unfortunately this can only be done after Lion's fullscreen transition
-            //has finished, resulting in an ugly jump
+            //Allow the window delegate to modify the final window size to which we return.
+            //(Unfortunately this can only be done after Lion's fullscreen transition
+            //has finished, resulting in an ugly jump.)
             if ([[self delegate] respondsToSelector: @selector(window:willReturnToFrame:)])
             {
                 NSRect windowFrame = [(id)[self delegate] window: self
@@ -163,6 +151,7 @@
             }
         }
     }
+    
 }
 
 - (void) setFullScreen: (BOOL)flag animate: (BOOL)animate
@@ -174,12 +163,9 @@
     {
         [super toggleFullScreen: self];
     }
+    //Otherwise, get on with rolling our own
     else
     {
-        //Otherwise, get on with rolling our own
-        [self setInFullScreenTransition: YES];
-        [self setFullScreen: flag];
-        
         NSRect fromFrame = [self frame];
         NSRect toFrame;
         
@@ -210,6 +196,7 @@
         else
         {
             [self _willExitFullScreen];
+            
             [self setStyleMask: windowedStyleMask];
             
             //Calculate an appropriate frame for the intended windowed content size,
@@ -223,7 +210,10 @@
                 toFrame = [(id)[self delegate] window: self willReturnToFrame: toFrame];
             }
         }
-
+        
+        [self setInFullScreenTransition: YES];
+        [self setFullScreen: flag];
+        
         if (animate)    [self _applyFullScreenState: flag
                                           fromFrame: fromFrame
                                             toFrame: toFrame];
@@ -232,11 +222,11 @@
                                                           fromFrame: fromFrame
                                                             toFrame: toFrame];
         
+        [self setInFullScreenTransition: NO];
+        
         //Send the appropriate notification signals once we're done
         if (flag)   [self _didEnterFullScreen];
         else        [self _didExitFullScreen];
-        
-        [self setInFullScreenTransition: NO];
     }
 }
 

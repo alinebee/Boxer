@@ -311,15 +311,21 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 										  state: (NSCoder *)state
 							  completionHandler: (void (^)(NSWindow *, NSError *))completionHandler
 {
-	
-	void (^continueRestoring)(void) = ^(void){
-		[NSDocumentController restoreWindowWithIdentifier: identifier
-													state: state
-										completionHandler: completionHandler];
+    [completionHandler retain];
+    
+	void (^continueRestoring)(void) = ^(void) {
+        
+		[NSDocumentController restoreWindowWithIdentifier: [identifier copy]
+													state: [state retain]
+										completionHandler: [completionHandler retain]];
+        
+        //completionHandler(nil, nil);
+        
+       [completionHandler release];
 	};
 	
 	//If we haven't finished launching yet, queue it up for later
-	if (!hasFinishedLaunching)
+	if (NO && !hasFinishedLaunching)
 	{
 		if (!deferredWindowRestorations)
 			deferredWindowRestorations = [[NSMutableArray alloc] initWithCapacity: 1];

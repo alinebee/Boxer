@@ -347,21 +347,32 @@
 #pragma mark -
 #pragma mark Mouse focus and locking 
 
-- (void) setMouseLocked: (BOOL)lock
-{	
+- (void) setMouseLocked: (BOOL)lock force: (BOOL)force
+{
+    [self willChangeValueForKey: @"mouseLocked"];
+    
 	//Don't continue if we're already in the right lock state
-	if (lock == [self mouseLocked]) return;
+	if (lock != [self mouseLocked])
+    {
+        BOOL canLockMouse = (force || [self canLockMouse]);
+
+        if (!lock || canLockMouse)
+        {
+            [self _applyMouseLockState: lock];
+            mouseLocked = lock;
+            
+            //Let everybody know we've grabbed the mouse on behalf of our session
+            NSString *notification = (lock) ? BXSessionDidLockMouseNotification : BXSessionDidUnlockMouseNotification;
+            [[NSNotificationCenter defaultCenter] postNotificationName: notification object: [self representedObject]]; 
+        }
+    }
 	
-	//Don't allow the mouse to be locked unless we're the frontmost application
-	//and the game has indicated mouse support
-	if (lock && ![self canLockMouse]) return;
-	
-	[self _applyMouseLockState: lock];
-	mouseLocked = lock;
-	
-	//Let everybody know we've grabbed the mouse on behalf of our session
-	NSString *notification = (lock) ? BXSessionDidLockMouseNotification : BXSessionDidUnlockMouseNotification;
-	[[NSNotificationCenter defaultCenter] postNotificationName: notification object: [self representedObject]]; 
+    [self didChangeValueForKey: @"mouseLocked"];
+}
+
+- (void) setMouseLocked: (BOOL)lock
+{
+    [self setMouseLocked: lock force: NO];
 }
 
 - (void) setMouseActive: (BOOL)active

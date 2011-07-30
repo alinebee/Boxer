@@ -15,12 +15,6 @@
 #import "BXFrameRenderingView.h"
 
 
-@interface BXDOSWindowControllerLion ()
-
-//Returns whether we really are in fullscreen mode and not transitioning to/from it
-- (BOOL) _reallyIsFullScreen;
-@end
-
 @implementation BXDOSWindowControllerLion
 
 #pragma mark -
@@ -35,6 +29,9 @@
 }
 
 
+#pragma mark -
+#pragma mark Fullscreen transitions
+
 - (void) windowWillEnterFullScreen: (NSNotification *)notification
 {
     [super windowWillEnterFullScreen: notification];
@@ -43,29 +40,45 @@
     statusBarShownBeforeFullScreen      = [self statusBarShown];
     programPanelShownBeforeFullScreen   = [self programPanelShown];
     
-    [self setStatusBarShown: NO];
-    [self setProgramPanelShown: NO];
+    //Note: we call super instead of self to show/hide these elements during our
+    //fullscreen transition, because we've overridden them ourselves to disable
+    //showing/hiding when in fullscreen.
+    [super setStatusBarShown: NO animate: NO];
+    [super setProgramPanelShown: NO animate: NO];
 }
 
 - (void) windowDidFailToEnterFullScreen: (NSWindow *)window
 {
     [super windowDidFailToEnterFullScreen: window];
-    [self setStatusBarShown: statusBarShownBeforeFullScreen];
-    [self setProgramPanelShown: programPanelShownBeforeFullScreen];
+    [super setStatusBarShown: statusBarShownBeforeFullScreen animate: NO];
+    [super setProgramPanelShown: programPanelShownBeforeFullScreen animate: NO];
 }
 
 - (void) windowWillExitFullScreen: (NSNotification *)notification
 {
     [super windowWillExitFullScreen: notification];
-    [self setStatusBarShown: statusBarShownBeforeFullScreen];
-    [self setProgramPanelShown: programPanelShownBeforeFullScreen];
+    [super setStatusBarShown: statusBarShownBeforeFullScreen animate: NO];
+    [super setProgramPanelShown: programPanelShownBeforeFullScreen animate: NO];
+}
+
+- (void) windowDidExitFullScreen: (NSNotification *)notification
+{
+    //KLUDGE: Lion discards our carefully corrected window frame just before calling
+    //windowDidExitFullscreen:, and replaces it with the original window size.
+    //Force it back to what it *should be* here, resulting in an ugly window jump. 
+    //Then pray they improve the fucking API in future to make this unnecessary.
+    
+    NSRect correctedFrame = [self window: [self window] willReturnToFrame: [[self window] frame]];
+    [[self window] setFrame: correctedFrame display: YES];
+    
+    [self _cleanUpAfterResize];
 }
 
 - (void) windowDidFailToExitFullScreen: (NSWindow *)window
 {
     [super windowDidFailToExitFullScreen: window];
-    [self setStatusBarShown: NO];
-    [self setProgramPanelShown: NO];
+    [super setStatusBarShown: NO animate: NO];
+    [super setProgramPanelShown: NO animate: NO];
 }
 
 
@@ -77,58 +90,42 @@
 //elements while in Lion fullscreen. So instead we save their intended state and apply that when returning
 //from fullscreen mode.
 //However, we do allow the toggles to go ahead while we're transitioning to/from fullscreen, because our
-//own fullscreen delegate handlers call these to set up the window.
+//own fullscreen notification handlers call these to set up the window.
 - (BOOL) statusBarShown
 {
-    if ([self _reallyIsFullScreen])
+    if ([[self window] isFullScreen])
         return statusBarShownBeforeFullScreen;
     else return [super statusBarShown];
 }
 
 - (BOOL) programPanelShown
 {
-    if ([self _reallyIsFullScreen])
+    if ([[self window] isFullScreen])
         return programPanelShownBeforeFullScreen;
     else return [super programPanelShown];
 }
 
-- (void) setStatusBarShown: (BOOL)show
+- (void) setStatusBarShown: (BOOL)show animate: (BOOL)animate
 {
     statusBarShownBeforeFullScreen = show;
-
-	if (![self _reallyIsFullScreen])
+    
+    if (![[self window] isFullScreen])
 	{
-		[super setStatusBarShown: show];
+		[super setStatusBarShown: show animate: animate];
 	}
 }
 
-- (void) setProgramPanelShown: (BOOL)show
+- (void) setProgramPanelShown: (BOOL)show animate: (BOOL)animate
 {
 	//Don't open the program panel if we're not running a gamebox
 	if (show && ![[self document] isGamePackage]) return;
 	
     programPanelShownBeforeFullScreen = show;
 	
-	if (![self _reallyIsFullScreen])
+    if (![[self window] isFullScreen])
 	{
-		[super setProgramPanelShown: show];
+		[super setProgramPanelShown: show animate: animate];
 	}
 }
 
-- (void) _slideView: (NSView *)view shown: (BOOL)show
-{
-	if ([self _reallyIsFullScreen])
-    {
-        //If we ever get here it's an accident, because all methods that would call
-        //_slideView:shown: are prevented from doing so when in Lion fullscreen.
-        NSAssert(NO, @"_slideView:shown: called while in Lion fullscreen mode.");
-    }
-	return [super _slideView: view shown: show];
-}
-
-
-- (BOOL) _reallyIsFullScreen
-{
-    return [[self window] isFullScreen] && ![[self window] isInFullScreenTransition];
-}
 @end

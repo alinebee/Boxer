@@ -34,7 +34,6 @@ extern NSString * const BXViewDidLiveResizeNotification;
 {
 	IBOutlet NSView <BXFrameRenderingView> *renderingView;
 	IBOutlet BXInputView *inputView;
-	IBOutlet NSView *viewContainer;
 	IBOutlet NSView *statusBar;
 	IBOutlet NSView *programPanel;
 
@@ -91,27 +90,6 @@ extern NSString * const BXViewDidLiveResizeNotification;
 
 - (void) updateWithFrame: (BXFrameBuffer *)frame;
 
-//Sets the window to use the specified frame-autosave name, and adjusts the resulting
-//frame to ensure the aspect ratio is consistent with what it was before.
-- (void) setFrameAutosaveName: (NSString *)savedName;
-
-
-#pragma mark -
-#pragma mark Window-sizing methods
-
-//Resize the window to fit the specified render size, with an optional smooth resize animation.
-- (void) resizeWindowToRenderingViewSize: (NSSize)newSize
-                                 animate: (BOOL)performAnimation;
-
-
-#pragma mark -
-#pragma mark Drag and drop
-
-//The session window responds to dropped files and folders, mounting them as new DOS drives and/or opening
-//them in DOS if appropriate. These methods call corresponding methods on BXSession+BXDragDrop.
-- (NSDragOperation)draggingEntered:	(id < NSDraggingInfo >)sender;
-- (BOOL)performDragOperation:		(id < NSDraggingInfo >)sender;
-
 
 #pragma mark -
 #pragma mark Interface actions
@@ -132,19 +110,12 @@ extern NSString * const BXViewDidLiveResizeNotification;
 
 //Get/set whether the statusbar should be shown.
 - (BOOL) statusBarShown;
-- (void) setStatusBarShown:		(BOOL)show;
+- (void) setStatusBarShown: (BOOL)show
+                   animate: (BOOL)animate;
 
 //Get/set whether the program panel should be shown.
 - (BOOL) programPanelShown;
-- (void) setProgramPanelShown:	(BOOL)show;
-
-
-#pragma mark -
-#pragma mark Handling window and UI events
-
-//These tell the session to pause itself while a resize is in progress, and clean up when it finishes.
-- (void) renderingViewDidResize: (NSNotification *) notification;
-- (void) renderingViewWillLiveResize: (NSNotification *) notification;
-- (void) renderingViewDidLiveResize: (NSNotification *) notification;
+- (void) setProgramPanelShown: (BOOL)show
+                      animate: (BOOL)animate;
 
 @end

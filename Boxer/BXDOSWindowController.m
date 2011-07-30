@@ -36,7 +36,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 #pragma mark -
 #pragma mark Accessors
 
-@synthesize renderingView, inputView, viewContainer, statusBar, programPanel;
+@synthesize renderingView, inputView, statusBar, programPanel;
 @synthesize programPanelController, inputController, statusBarController;
 @synthesize autosaveNameBeforeFullScreen;
 
@@ -77,7 +77,6 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	[self setInputController: nil],			[inputController release];
 	[self setStatusBarController: nil],		[statusBarController release];
 
-	[self setViewContainer: nil],			[viewContainer release];
 	[self setInputView: nil],				[inputView release];
 	[self setRenderingView: nil],			[renderingView release];
 	
@@ -140,10 +139,10 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	//---------------------------------------------
 	
 	//Show/hide the statusbar based on user's preference
-	[self setStatusBarShown: [[NSUserDefaults standardUserDefaults] boolForKey: @"statusBarShown"]];
+	[self setStatusBarShown: [[NSUserDefaults standardUserDefaults] boolForKey: @"statusBarShown"] animate: NO];
 	
 	//Hide the program panel by default - our parent session decides when it's appropriate to display this
-	[self setProgramPanelShown: NO];
+	[self setProgramPanelShown: NO animate: NO];
 	
 	//Apply a border to the window matching the size of the statusbar
 	CGFloat borderThickness = [statusBar frame].size.height + 1.0f;
@@ -268,51 +267,63 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 {
     return ![statusBar isHidden];
 }
+
 - (BOOL) programPanelShown
 {
     return ![programPanel isHidden];
 }
 
-- (void) setStatusBarShown: (BOOL)show
+- (void) setStatusBarShown: (BOOL)show animate: (BOOL)animate
 {
-	if (show != [self statusBarShown])
+	if (show == [statusBar isHidden])
 	{
+        [self willChangeValueForKey: @"statusBarShown"];
+        
 		BXDOSWindow *theWindow	= [self window];
+        NSView *contentView = [[self window] actualContentView];
 		
 		if (show) [self _resizeToAccommodateSlidingView: statusBar];
 		
 		//temporarily override the other views' resizing behaviour so that they don't slide up as we do this
-		NSUInteger oldContainerMask		= [viewContainer autoresizingMask];
+		NSUInteger oldContainerMask		= [contentView autoresizingMask];
 		NSUInteger oldProgramPanelMask	= [programPanel autoresizingMask];
-		[viewContainer	setAutoresizingMask: NSViewMinYMargin];
+		[contentView    setAutoresizingMask: NSViewMinYMargin];
 		[programPanel	setAutoresizingMask: NSViewMinYMargin];
 		
 		//toggle the resize indicator on/off also (it doesn't play nice with the program panel)
 		if (!show)	[theWindow setShowsResizeIndicator: NO];
-		[self _slideView: statusBar shown: show];
+		[self _slideView: statusBar shown: show animate: animate];
 		if (show)	[theWindow setShowsResizeIndicator: YES];
 		
-		[viewContainer	setAutoresizingMask: oldContainerMask];
+		[contentView	setAutoresizingMask: oldContainerMask];
 		[programPanel	setAutoresizingMask: oldProgramPanelMask];
+        
+        [self didChangeValueForKey: @"statusBarShown"];
 	}
 }
 
-- (void) setProgramPanelShown: (BOOL)show
+- (void) setProgramPanelShown: (BOOL)show animate: (BOOL)animate
 {
 	//Don't open the program panel if we're not running a gamebox
 	if (show && ![[self document] isGamePackage]) return;
 	
-	if (show != [self programPanelShown])
+	if (show == [programPanel isHidden])
 	{
+        [self willChangeValueForKey: @"programPanelShown"];
+        
 		if (show) [self _resizeToAccommodateSlidingView: programPanel];
 		
+        NSView *contentView = [[self window] actualContentView];
+        
 		//Temporarily override the other views' resizing behaviour so that they don't slide up as we do this
-		NSUInteger oldMask = [viewContainer autoresizingMask];
-		[viewContainer setAutoresizingMask: NSViewMinYMargin];
+		NSUInteger oldMask = [contentView autoresizingMask];
+		[contentView setAutoresizingMask: NSViewMinYMargin];
 		
-		[self _slideView: programPanel shown: show];
+		[self _slideView: programPanel shown: show animate: animate];
 		
-		[viewContainer setAutoresizingMask: oldMask];
+		[contentView setAutoresizingMask: oldMask];
+        
+        [self didChangeValueForKey: @"programPanelShown"];
 	}
 }
 
@@ -323,7 +334,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 - (IBAction) toggleStatusBarShown: (id)sender
 {
     BOOL show = ![self statusBarShown];
-    [self setStatusBarShown: show];
+    [self setStatusBarShown: show animate: YES];
     
     //record the current statusbar state in the user defaults
     [[NSUserDefaults standardUserDefaults] setBool: show forKey: @"statusBarShown"];
@@ -332,17 +343,17 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 - (IBAction) toggleProgramPanelShown: (id)sender
 {
 	[[self document] setUserToggledProgramPanel: YES];
-	[self setProgramPanelShown:	![self programPanelShown]];
+	[self setProgramPanelShown:	![self programPanelShown] animate: YES];
 }
 
 - (void) showProgramPanel: (id)sender
 {
-	[self setProgramPanelShown: YES];
+	[self setProgramPanelShown: YES animate: YES];
 }
 
 - (void) hideProgramPanel: (id)sender
 {
-	[self setProgramPanelShown: NO];
+	[self setProgramPanelShown: NO animate: YES];
 }
 
 - (IBAction) toggleFilterType: (id)sender
@@ -543,6 +554,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 
 - (void) windowWillEnterFullScreen: (NSNotification *)notification
 {
+    
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 	[center postNotificationName: BXSessionWillEnterFullScreenNotification object: [self document]];
     
@@ -552,7 +564,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
     [[self window] setFrameAutosaveName: @""];
     
     [[self renderingView] setManagesAspectRatio: YES];
-    [inputController setMouseLocked: YES];
+    [inputController setMouseLocked: YES force: YES];
     
     renderingViewSizeBeforeFullScreen = [[self window] actualContentViewSize];
 }
@@ -578,7 +590,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
     [[self window] setFrameAutosaveName: [self autosaveNameBeforeFullScreen]];
     
     [[self renderingView] setManagesAspectRatio: NO];
-    [inputController setMouseLocked: NO];
+    [inputController setMouseLocked: NO force: YES];
 }
 
 - (void) windowWillExitFullScreen: (NSNotification *)notification
@@ -586,7 +598,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 	[center postNotificationName: BXSessionWillExitFullScreenNotification object: [self document]];
     
-    [inputController setMouseLocked: NO];
+    [inputController setMouseLocked: NO force: YES];
 }
 
 - (void) windowDidExitFullScreen: (NSNotification *)notification
@@ -613,7 +625,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
     //Clean up our preparations for returning to windowed mode
     [[self window] setFrameAutosaveName: @""];
     
-    [inputController setMouseLocked: YES];
+    [inputController setMouseLocked: YES force: YES];
 }
 
 - (NSRect) window: (NSWindow *)window willReturnToFrame: (NSRect)frame
@@ -851,7 +863,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	if (!sizeFitsWithinSize([[self window] frame].size, maxFrame.size))
 	{
 		NSSize maxViewSize	= [[self window] contentRectForFrameRect: maxFrame].size;
-		NSSize viewSize		= [[self viewContainer] frame].size;
+		NSSize viewSize		= [self windowedRenderingViewSize];
 		viewSize = constrainToFitSize(viewSize, maxViewSize);
 		
 		[self resizeWindowToRenderingViewSize: viewSize animate: YES];
@@ -860,31 +872,31 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 
 
 //Performs the slide animation used to toggle the status bar and program panel on or off
-- (void) _slideView: (NSView *)view shown: (BOOL)show
+- (void) _slideView: (NSView *)view shown: (BOOL)show animate: (BOOL)animate
 {
-	if (show) [view setHidden: NO];	//Unhide before sliding out
+    BOOL isFullScreen = [[self window] isFullScreen] || [[self window] isInFullScreenTransition];
+
+	
+    if (show) [view setHidden: NO];	//Unhide before sliding out
     
-	NSRect newFrame	= [[self window] frame];
-	NSScreen *screen = [[self window] screen];
+	NSRect currentFrame	= [[self window] frame];
 	
 	CGFloat height	= [view frame].size.height;
 	if (!show) height = -height;
 	
+    NSRect newFrame = currentFrame;
 	newFrame.size.height	+= height;
 	newFrame.origin.y		-= height;
-	
-    
-    BOOL isFullScreen = [[self window] isFullScreen] || [[self window] isInFullScreenTransition];
     
 	//Ensure the new frame is positioned to fit on the screen
 	if (!isFullScreen) newFrame = [[self window] fullyConstrainFrameRect: newFrame
-                                                               toScreen: screen];
+                                                                toScreen: [[self window] screen]];
 	
 	//Don't bother animating if we're in fullscreen, just let the transition happen instantly
     //(It will happen offscreen anyway)
 	[[self window] setFrame: newFrame
                     display: YES
-                    animate: !isFullScreen];
+                    animate: animate && !isFullScreen];
 	
 	if (!show) [view setHidden: YES]; //Hide after sliding in
 }

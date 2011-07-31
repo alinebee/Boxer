@@ -83,7 +83,13 @@
 {
 	NSUInteger typeIndex = NSNotFound;
 	Class currentType = [self preferredJoystickType];
-	
+    
+    //Convert nils into the placeholder type
+    if (currentType == nil)
+    {
+        currentType = [BXNullJoystickPlaceholder class];
+    }
+    
 	if (currentType)
 	{
 		typeIndex = [[self availableJoystickTypes] indexOfObject: currentType];
@@ -100,8 +106,12 @@
 	if (typeIndex != NSNotFound && typeIndex < [availableTypes count])
 	{
 		Class selectedType = [availableTypes objectAtIndex: typeIndex];
+        
 		if (selectedType)
 		{
+            //Convert the nil placeholder into a proper nil
+            if ([selectedType isEqual: [BXNullJoystickPlaceholder class]]) selectedType = nil;
+            
 			[self setPreferredJoystickType: selectedType];
 		}
 	}
@@ -111,10 +121,12 @@
 {
 	BXSession *session = [self representedObject];
 	NSArray *availableTypes = [self availableJoystickTypes];
+    
 	Class defaultJoystickType = [availableTypes count] ? [availableTypes objectAtIndex: 0] : nil;
+    if (defaultJoystickType == [BXNullJoystickPlaceholder class]) defaultJoystickType = nil;
 	
 	NSString *className	= [[session gameSettings] objectForKey: @"preferredJoystickType"];
-	
+    
 	//If no type has been set, then fall back on the default joystick type
 	if (!className) return defaultJoystickType;
 	
@@ -148,7 +160,7 @@
 		}
 		NSMutableDictionary *gameSettings = [[self representedObject] gameSettings];
 		[gameSettings setObject: className forKey: @"preferredJoystickType"];
-		
+
 		//Reinitialize the joysticks to use the newly-selected joystick type
 		[self _syncJoystickType];
 	}
@@ -175,20 +187,22 @@
 	if (supportLevel == BXJoystickSupportFull)
 	{
 		types = [NSArray arrayWithObjects:
-			[BX4AxisJoystick class],
-			[BXThrustmasterFCS class],
-			[BXCHFlightStickPro class],
-			[BX4AxisWheel class],
-			nil];
+                 [BX4AxisJoystick class],
+                 [BXThrustmasterFCS class],
+                 [BXCHFlightStickPro class],
+                 [BX4AxisWheel class],
+                 [BXNullJoystickPlaceholder class],
+                 nil];
 	}
 	else if (supportLevel == BXJoystickSupportSimple)
 	{
 		types = [NSArray arrayWithObjects:
-			[BX2AxisJoystick class],
-			[BX2AxisWheel class],
-			nil];
+                 [BX2AxisJoystick class],
+                 [BX2AxisWheel class],
+                 [BXNullJoystickPlaceholder class],
+                 nil];
 	}
-	else types = [NSArray array];
+	else types = [NSArray arrayWithObject: [BXNullJoystickPlaceholder class]];
 	
 	[self setAvailableJoystickTypes: types];
 }
@@ -216,7 +230,7 @@
 
 - (void) _syncControllerProfiles
 {
-    id <BXEmulatedJoystick> joystick = [[[self representedObject] emulator] joystick];
+    id <BXEmulatedJoystick> joystick = [self _emulatedJoystick];
     
     [controllerProfiles removeAllObjects];
     if (joystick)
@@ -246,23 +260,63 @@
     return NO;
 }
 
+
+- (BOOL) _activeProgramIsIgnoringJoystick
+{
+    BXEmulator *emulator = [[self representedObject] emulator];
+
+    //If we've received gameport read signals, then the game isn't ignoring the joystick.
+    if ([emulator joystickActive]) return NO;
+    
+    //If joystick emulation is not active, there's no joystick to ignore.
+    if (![self _emulatedJoystick]) return NO;
+    
+    //If the game doesn't seem to be loaded yet (i.e. is still in text mode),
+    //don't consider joystick input as being ignored.
+    //(This way we don't bug the user if they're just mucking around on the
+    //controller while watching the game load.)
+    if ([[emulator videoHandler] isInTextMode]) return NO;
+    
+    //If we get this far then yes, the current program does seem to be ignoring the joystick.
+    return YES;
+}
+
+
 //Send the event on to the controller profile for the specified device
 - (void) dispatchHIDEvent: (BXHIDEvent *)event
 {
-    //If the game has loaded and seems to be ignoring joystick input right now,
-    //and the user is making 'significant' controller input, show a notification
-    BXEmulator *emulator = [[self representedObject] emulator];
-    if (![emulator joystickActive] && [emulator isRunningProcess] && ![[emulator videoHandler] isInTextMode] && [[self class] HIDEventIsDeliberate: event])
+    //If the game is not reading joystick input right now, and the user is making
+    //'significant' controller input, show a notification that the game is ignoring them.
+    if ([self _activeProgramIsIgnoringJoystick] && [[self class] HIDEventIsDeliberate: event])
     {
         [[BXBezelController controller] showJoystickIgnoredBezel];
     }
-    
     
 	DDHidDevice *device = [event device];
 	NSNumber *locationID = [NSNumber numberWithLong: [device locationId]];
 	
 	BXHIDControllerProfile *profile = [controllerProfiles objectForKey: locationID];
 	[profile dispatchHIDEvent: event];
+}
+
+@end
+
+
+@implementation BXNullJoystickPlaceholder
+
++ (NSString *) localizedName
+{
+    return NSLocalizedString(@"No joystick", @"Localized name for joystick-disabled option.");
+}
+
++ (NSString *) localizedInformativeText
+{
+    return NSLocalizedString(@"Disable joystick emulation.", @"Localized descriptive text for joystick-disabled option.");
+}
+
++ (NSImage *) icon
+{
+    return [NSImage imageNamed: @"NoJoystickTemplate"];
 }
 
 @end

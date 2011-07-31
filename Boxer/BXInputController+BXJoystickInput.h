@@ -11,6 +11,7 @@
 //to BXInputHandler.
 
 #import "BXInputController.h"
+#import "BXEmulatedJoystick.h"
 #import "BXHIDEvent.h"
 
 @interface BXInputController (BXJoystickInput) <BXHIDDeviceDelegate>
@@ -38,4 +39,9 @@
 //connected to the Mac. Used by the joystick type picker in the Inspector UI.
 @property (readonly, nonatomic) BOOL controllersAvailable;
 
+@end
+
+
+//A placeholder class representing no joystick, for the joystick type selector.
+@interface BXNullJoystickPlaceholder: NSObject <BXEmulatedJoystickUIDescriptor>
 @end

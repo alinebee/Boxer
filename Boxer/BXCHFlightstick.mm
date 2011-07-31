@@ -47,7 +47,7 @@ enum {
 
 + (NSString *) localizedInformativeText
 {
-	return NSLocalizedString(@"4 buttons, POV hat, rudder and throttle.\nRegisters only one button at a time.",
+	return NSLocalizedString(@"4 buttons, POV hat, rudder and throttle.",
 							 @"Localized informative text for CH Flightstick Pro joystick type.");
 }
 
@@ -234,13 +234,14 @@ enum {
 
 + (NSString *) localizedInformativeText
 {
-	return NSLocalizedString(@"Flightstick with 6 buttons, 2 POV hats and throttle wheel. Ideal for flight sims and space sims. Only one button can be pressed at a time.",
+	return NSLocalizedString(@"6 buttons, 2 POV hats, rudder and throttle.",
 							 @"Localized informative text for CH F-16 Combatstick joystick type.");
 }
 
 + (NSImage *) icon
 {
-	return nil;
+    //Note: does not yet exist
+	return [NSImage imageNamed: @"CHCombatStick"];
 }
 
 

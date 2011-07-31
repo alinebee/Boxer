@@ -59,7 +59,7 @@
 - (NSRect) imageRectForBounds: (NSRect)theRect
 {
     NSRect imageRect = [super imageRectForBounds: theRect];
-    if ([self imageShadow])
+    if ([self imageShadow] && [[self image] isTemplate])
     {
         //If we have a shadow set, then constrain the image region to accomodate the shadow
         imageRect = [[self imageShadow] insetRectForShadow: imageRect];
@@ -129,23 +129,22 @@
 
 @implementation BXHUDImageCell
 
-- (void) awakeFromNib
+- (NSColor *) imageColor
 {
-	if (![self imageColor])
-	{
-		[self setImageColor: [NSColor whiteColor]];
-	}
-	
-	if (![self imageShadow])
-	{
-		NSShadow *theShadow = [[NSShadow alloc] init];
+    if (!imageColor) imageColor = [[NSColor whiteColor] retain];
+    return imageColor;
+}
+
+- (NSShadow *) imageShadow
+{
+    if (!imageShadow)
+    {
+        imageShadow = [[NSShadow alloc] init];
 		
-		[theShadow setShadowBlurRadius: 3.0f];
-		[theShadow setShadowOffset: NSMakeSize(0.0f, -1.0f)];
-		
-		[self setImageShadow: theShadow];
-		[theShadow release];
-	}
+		[imageShadow setShadowBlurRadius: 3.0f];
+		[imageShadow setShadowOffset: NSMakeSize(0.0f, -1.0f)];
+    }
+    return imageShadow;
 }
 
 @end

@@ -103,10 +103,10 @@ enum {
                        isWheel ? BXEmulatedJoystickButton2 : BXEmulatedJoystickButton4];
 			break;
             
-		case BXDualActionControllerRightShoulder:
+        case BXDualActionControllerRightShoulder:
             binding = [BXButtonToButton bindingWithButton:
                        isWheel ? BXEmulatedJoystickButton1 : BXEmulatedJoystickButton3];
-			break;
+            break;
             
         //Remap the Fx10 face buttons to a more sensible layout.
         //Disabled for now as this would be too disruptive on earlier models.

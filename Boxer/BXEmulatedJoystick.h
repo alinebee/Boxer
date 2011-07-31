@@ -83,10 +83,7 @@ enum {
 #pragma mark -
 #pragma mark Joystick protocols
 
-@protocol BXEmulatedJoystick <NSObject>
-
-@property (readonly, nonatomic) NSUInteger numButtons;
-@property (readonly, nonatomic) NSUInteger numAxes;
+@protocol BXEmulatedJoystickUIDescriptor <NSObject>
 
 //The localized name of this joystick type, for display in the UI.
 + (NSString *) localizedName;
@@ -97,9 +94,17 @@ enum {
 //An icon representation of this joystick type, for display in the UI.
 + (NSImage *) icon;
 
+@end
+
+@protocol BXEmulatedJoystick <BXEmulatedJoystickUIDescriptor>
+
 //Returns whether this joystick class needs 4-axis, 4-button joystick support in order to function correctly.
 //Used for filtering out unsupported joysticks when running games that are known to have problems with them.
 + (BOOL) requiresFullJoystickSupport;
+
+//The number of buttons the joystick responds to.
+//TODO: make this a class property?
+@property (readonly, nonatomic) NSUInteger numButtons;
 
 //Called by BXEmulator when the device is plugged/unplugged.
 - (void) didConnect;
@@ -151,6 +156,7 @@ enum {
 
 @protocol BXEmulatedFlightstick <BXEmulatedJoystick>
 
+//The number of POV switches the joystick responds to.
 @property (readonly, nonatomic) NSUInteger numPOVSwitches;
 
 - (void) POV: (NSUInteger)POVNumber changedTo: (BXEmulatedPOVDirection)direction;

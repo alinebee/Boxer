@@ -101,10 +101,9 @@
 
 - (void) _warnIfJoystickInactive
 {
-    //If the game has loaded and seems to be ignoring joystick input right now,
+    //If the game seems to be ignoring joystick input right now,
     //and the user is poking away in Joypad, show a notification
-    BXEmulator *emulator = [[self representedObject] emulator];
-    if (![emulator joystickActive] && [emulator isRunningProcess] && ![[emulator videoHandler] isInTextMode])
+    if ([self _activeProgramIsIgnoringJoystick])
     {
         [[BXBezelController controller] showJoystickIgnoredBezel];
     }

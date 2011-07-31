@@ -6,10 +6,12 @@
  */
 
 
-//Custom controller profile for the Logitech MOMO Racing Force Feedback Wheel. Also applies for:
+//Custom controller profile for the Logitech MOMO Racing Force Feedback Wheel.
+//This happily uses a common Logitech layout that also applies to:
 //- MOMO Force (same sans shifter)
-//- Wingman Formula Force GP (same sans shifter and only 4 wheel buttons)
-//- Wingman Formula Force (same sans shifter and only 2 wheel buttons)
+//- Wingman Formula GP and Formula Force GP (same sans shifter, and only 4 wheel buttons)
+//- Wingman Formula and Formula Force (earlier models of the above)
+
 
 #import "BXHIDControllerProfilePrivate.h"
 
@@ -23,17 +25,23 @@
 #define BXMOMORacingPedalDeadzone 0.1f
 
 
-#define BXMOMORacingControllerVendorID        BXHIDVendorIDLogitech
-#define BXMOMORacingControllerProductID       0xca03
+#define BXMOMORacingControllerVendorID      BXHIDVendorIDLogitech
+#define BXMOMORacingControllerProductID     0xca03
 
-#define BXMOMOForceControllerVendorID         BXHIDVendorIDLogitech
-#define BXMOMOForceControllerProductID        0xc295
+#define BXMOMOForceControllerVendorID       BXHIDVendorIDLogitech
+#define BXMOMOForceControllerProductID      0xc295
 
-#define BXFormulaForceGPControllerVendorID    BXHIDVendorIDLogitech
-#define BXFormulaForceGPControllerProductID   0xc293
+#define BXFormulaForceGPControllerVendorID  BXHIDVendorIDLogitech
+#define BXFormulaForceGPControllerProductID 0xc293
 
-#define BXFormulaForceControllerVendorID      BXHIDVendorIDLogitech
-#define BXFormulaForceControllerProductID     0xc291
+#define BXFormulaGPControllerVendorID       BXHIDVendorIDLogitech
+#define BXFormulaGPControllerProductID      0xc202
+
+#define BXFormulaForceControllerVendorID    BXHIDVendorIDLogitech
+#define BXFormulaForceControllerProductID   0xc291
+
+#define BXFormulaControllerVendorID         BXHIDVendorIDLogitech
+#define BXFormulaControllerProductID        0xc20e
 
 enum {
     BXMOMORacingWheelAxis = kHIDUsage_GD_X,
@@ -76,7 +84,9 @@ enum {
             [self matchForVendorID: BXMOMORacingControllerVendorID      productID: BXMOMORacingControllerProductID],
             [self matchForVendorID: BXMOMOForceControllerVendorID       productID: BXMOMOForceControllerProductID],
             [self matchForVendorID: BXFormulaForceGPControllerVendorID  productID: BXFormulaForceGPControllerProductID],
+            [self matchForVendorID: BXFormulaGPControllerVendorID       productID: BXFormulaGPControllerProductID],
             [self matchForVendorID: BXFormulaForceControllerVendorID    productID: BXFormulaForceControllerProductID],
+            [self matchForVendorID: BXFormulaControllerVendorID         productID: BXFormulaControllerProductID],
             nil];
 }
 

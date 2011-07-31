@@ -6,7 +6,9 @@
  */
 
 
-//Custom controller profile for the Logitech G25 and G27 wheels.
+//Custom controller profile for the Logitech MOMO Racing Force Feedback Wheel, and its earlier
+//cousin the MOMO Force (which is the same layout sans shifter, and *probably* the same button
+//enumeration order.)
 
 #import "BXHIDControllerProfilePrivate.h"
 
@@ -14,56 +16,46 @@
 #pragma mark -
 #pragma mark Private constants
 
-//Use a much smaller than usual deadzone for the G25/G27
-#define BXG25WheelDeadzone 0.05f
-#define BXG25PedalDeadzone 0.1f
+
+//Use a much smaller than usual deadzone for the MOMO
+#define BXMOMORacingWheelDeadzone 0.05f
+#define BXMOMORacingPedalDeadzone 0.1f
 
 
-#define BXG25ControllerVendorID             BXHIDVendorIDLogitech
-#define BXG25ControllerProductID            0xc299
+#define BXMOMORacingControllerVendorID        BXHIDVendorIDLogitech
+#define BXMOMORacingControllerProductID       0xca03
 
-//It seems at least some G25s identify themselves as this on OS X?
-#define BXDrivingForceControllerVendorID    BXHIDVendorIDLogitech
-#define BXDrivingForceControllerProductID   0xc294
-
-#define BXG27ControllerVendorID         BXHIDVendorIDLogitech
-#define BXG27ControllerProductID        0xc29b
+#define BXMOMOForceControllerVendorID         BXHIDVendorIDLogitech
+#define BXMOMOForceControllerProductID        0xc295
 
 enum {
-    BXG25WheelAxis = kHIDUsage_GD_X,
-    BXG25PedalAxis = kHIDUsage_GD_Y
+    BXMOMORacingWheelAxis = kHIDUsage_GD_X,
+    BXMOMORacingPedalAxis = kHIDUsage_GD_Y
 };
 
 enum {
-	BXG25DashboardButton1 = kHIDUsage_Button_1,
-	BXG25DashboardButton2,
-	BXG25DashboardButton3,
-	BXG25DashboardButton4,
-	
-	BXG25LeftPaddle,
-	BXG25RightPaddle,
+	BXMOMORacingLeftPaddle = kHIDUsage_Button_1,
+	BXMOMORacingRightPaddle,
     
-	BXG25WheelButton1,
-	BXG25WheelButton2,
+    //Numbered from left to right, top to bottom
+    BXMOMORacingWheelButton1,
+	BXMOMORacingWheelButton2,
+	BXMOMORacingWheelButton3,
+	BXMOMORacingWheelButton4,
+	BXMOMORacingWheelButton5,
+	BXMOMORacingWheelButton6,
 	
-	BXG25DashboardButton5,
-	BXG25DashboardButton6,
-	BXG25DashboardButton7,
-	BXG25DashboardButton8,
-	
-	BXG25ShifterDown = BXG25DashboardButton7,
-	BXG25ShifterUp   = BXG25DashboardButton8
-    
-    //TODO: enumerate the additional buttons on the G27
+	BXMOMORacingShifterDown,
+	BXMOMORacingShifterUp
 };
 
 
 
-@interface BXG25ControllerProfile: BXHIDControllerProfile
+@interface BXMOMORacingControllerProfile: BXHIDControllerProfile
 @end
 
 
-@implementation BXG25ControllerProfile
+@implementation BXMOMORacingControllerProfile
 
 + (void) load
 {
@@ -73,13 +65,11 @@ enum {
 + (NSArray *) matchedIDs
 {
     return [NSArray arrayWithObjects:
-            [self matchForVendorID: BXG25ControllerVendorID productID: BXG25ControllerProductID],
-            [self matchForVendorID: BXDrivingForceControllerVendorID productID: BXDrivingForceControllerProductID],
-            [self matchForVendorID: BXG27ControllerVendorID productID: BXG27ControllerProductID],
+            [self matchForVendorID: BXMOMORacingControllerVendorID productID: BXMOMORacingControllerProductID],
+            [self matchForVendorID: BXMOMOForceControllerVendorID productID: BXMOMOForceControllerProductID],
             nil];
 }
 
-//Manual binding for G25/G27 buttons
 - (id <BXHIDInputBinding>) generatedBindingForButtonElement: (DDHidElement *)element
 {
 	id binding = nil;
@@ -91,25 +81,25 @@ enum {
     
     switch (realButton)
     {
-        case BXG25RightPaddle:
-        case BXG25ShifterUp:
+        case BXMOMORacingRightPaddle:
+        case BXMOMORacingShifterUp:
             emulatedButton = BXEmulatedJoystickButton1;
             break;
             
-        case BXG25LeftPaddle:
-        case BXG25ShifterDown:
+        case BXMOMORacingLeftPaddle:
+        case BXMOMORacingShifterDown:
             emulatedButton = BXEmulatedJoystickButton2;
             break;
             
-        case BXG25WheelButton1:
+        case BXMOMORacingWheelButton1:
             emulatedButton = BXEmulatedJoystickButton3;
             break;
             
-        case BXG25WheelButton2:
+        case BXMOMORacingWheelButton2:
             emulatedButton = BXEmulatedJoystickButton4;
             break;
             
-        //Leave all other buttons unbound
+            //Leave all other buttons unbound
     }
     
     if (emulatedButton != BXEmulatedJoystickUnknownButton && emulatedButton <= numEmulatedButtons)
@@ -129,16 +119,16 @@ enum {
         id binding;
         switch([[element usage] usageId])
         {
-            case BXG25WheelAxis:
+            case BXMOMORacingWheelAxis:
                 binding = [BXAxisToAxis bindingWithAxis: BXAxisWheel];
-                [binding setDeadzone: BXG25WheelDeadzone];
+                [binding setDeadzone: BXMOMORacingWheelDeadzone];
                 break;
                 
-            case BXG25PedalAxis:
+            case BXMOMORacingPedalAxis:
                 binding = [BXAxisToBindings bindingWithPositiveAxis: BXAxisBrake
                                                        negativeAxis: BXAxisAccelerator];
                 
-                [binding setDeadzone: BXG25PedalDeadzone];
+                [binding setDeadzone: BXMOMORacingPedalDeadzone];
                 break;
                 
             default:
@@ -149,5 +139,4 @@ enum {
             [self setBinding: binding forElement: element];
     }
 }
-
 @end

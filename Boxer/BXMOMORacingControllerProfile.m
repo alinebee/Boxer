@@ -6,9 +6,10 @@
  */
 
 
-//Custom controller profile for the Logitech MOMO Racing Force Feedback Wheel, and its earlier
-//cousin the MOMO Force (which is the same layout sans shifter, and *probably* the same button
-//enumeration order.)
+//Custom controller profile for the Logitech MOMO Racing Force Feedback Wheel. Also applies for:
+//- MOMO Force (same sans shifter)
+//- Wingman Formula Force GP (same sans shifter and only 4 wheel buttons)
+//- Wingman Formula Force (same sans shifter and only 2 wheel buttons)
 
 #import "BXHIDControllerProfilePrivate.h"
 
@@ -28,6 +29,12 @@
 #define BXMOMOForceControllerVendorID         BXHIDVendorIDLogitech
 #define BXMOMOForceControllerProductID        0xc295
 
+#define BXFormulaForceGPControllerVendorID    BXHIDVendorIDLogitech
+#define BXFormulaForceGPControllerProductID   0xc293
+
+#define BXFormulaForceControllerVendorID      BXHIDVendorIDLogitech
+#define BXFormulaForceControllerProductID     0xc291
+
 enum {
     BXMOMORacingWheelAxis = kHIDUsage_GD_X,
     BXMOMORacingPedalAxis = kHIDUsage_GD_Y
@@ -45,6 +52,7 @@ enum {
 	BXMOMORacingWheelButton5,
 	BXMOMORacingWheelButton6,
 	
+    //Not present on MOMO Force/Formula Force GP
 	BXMOMORacingShifterDown,
 	BXMOMORacingShifterUp
 };
@@ -65,8 +73,10 @@ enum {
 + (NSArray *) matchedIDs
 {
     return [NSArray arrayWithObjects:
-            [self matchForVendorID: BXMOMORacingControllerVendorID productID: BXMOMORacingControllerProductID],
-            [self matchForVendorID: BXMOMOForceControllerVendorID productID: BXMOMOForceControllerProductID],
+            [self matchForVendorID: BXMOMORacingControllerVendorID      productID: BXMOMORacingControllerProductID],
+            [self matchForVendorID: BXMOMOForceControllerVendorID       productID: BXMOMOForceControllerProductID],
+            [self matchForVendorID: BXFormulaForceGPControllerVendorID  productID: BXFormulaForceGPControllerProductID],
+            [self matchForVendorID: BXFormulaForceControllerVendorID    productID: BXFormulaForceControllerProductID],
             nil];
 }
 
@@ -99,7 +109,7 @@ enum {
             emulatedButton = BXEmulatedJoystickButton4;
             break;
             
-            //Leave all other buttons unbound
+            //Leave all other wheel buttons unbound for now
     }
     
     if (emulatedButton != BXEmulatedJoystickUnknownButton && emulatedButton <= numEmulatedButtons)

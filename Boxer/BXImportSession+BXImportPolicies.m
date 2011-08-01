@@ -75,6 +75,9 @@
 							   @"(^|/)autorun",			//Windows CD-autorun stubs
 							   @"(^|/)bootdisk\\.",		//Bootdisk makers
 							   @"(^|/)readme\\.",		//Readme viewers
+                               
+                               @"(^|/)foo\\.bat",       //Backup script included by mistake
+                                                        //on some X-Wing CDROM editions
 							   
 							   @"(^|/)pkunzip\\.",		//Archivers
 							   @"(^|/)pkunzjr\\.",

@@ -346,7 +346,6 @@
 	[listedPrograms release];
 }
 
-
 - (NSArray *) executableSortDescriptors
 {
 	NSSortDescriptor *sortDefaultFirst = [[NSSortDescriptor alloc] initWithKey: @"isDefault" ascending: NO];

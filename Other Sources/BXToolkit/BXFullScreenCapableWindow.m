@@ -190,6 +190,9 @@
         NSRect fromFrame = [self frame];
         NSRect toFrame;
         
+        [self setInFullScreenTransition: YES];
+        [self setFullScreen: flag];
+        
         //When entering fullscreen, save the current window frame and calculate final fullscreen frame
         if (flag)
         {
@@ -231,9 +234,6 @@
                 toFrame = [(id)[self delegate] window: self willReturnToFrame: toFrame];
             }
         }
-        
-        [self setInFullScreenTransition: YES];
-        [self setFullScreen: flag];
         
         if (animate)    [self _applyFullScreenState: flag
                                           fromFrame: fromFrame

@@ -8,6 +8,7 @@
 
 #import "BXDisplayLinkRenderingView.h"
 #import "BXRenderer.h"
+#import "BXAppController.h"
 
 #pragma mark -
 #pragma mark Private interface declaration
@@ -38,42 +39,61 @@ static CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 	return kCVReturnSuccess;
 }
 
+- (id) initWithCoder: (NSCoder *)decoder
+{
+	if ((self = [super initWithCoder: decoder]))
+	{
+		//Don't use this class on Leopard, as the DisplayLink approach has rubbish performance on it.
+		//Instead, quietly replace ourselves with an instance of our superclass.
+		if ([BXAppController isRunningOnLeopard])
+		{
+			[self release];
+			return [[BXGLRenderingView alloc] initWithCoder: decoder];
+		}
+	}
+	return self;
+}
+
 - (void) updateWithFrame: (BXFrameBuffer *)frame
 {
 	[[self renderer] updateWithFrame: frame];
 	[self setHidden: frame == nil];
+	
 	[self setNeedsDisplay: YES];
 }
 
 - (void) prepareOpenGL
 {
 	//Synchronize buffer swaps with vertical refresh rate
-    //Disabled for now as this will block emulation at inopportune times
-    //while we wait for the next vertical refresh.
-    //GLint swapInt = 1;
-    //[[self openGLContext] setValues: &swapInt forParameter: NSOpenGLCPSwapInterval];
+	//Disabled for now as this will block emulation at inopportune times
+	//while we wait for the next vertical refresh.
+	//GLint swapInt = 1;
+	//[[self openGLContext] setValues: &swapInt forParameter: NSOpenGLCPSwapInterval];
 	
-    // Create a display link capable of being used with all active displays
-    CVDisplayLinkCreateWithActiveCGDisplays(&displayLink);
+	// Create a display link capable of being used with all active displays
+	CVDisplayLinkCreateWithActiveCGDisplays(&displayLink);
 	
-    // Set the renderer output callback function
-    CVDisplayLinkSetOutputCallback(displayLink, &BXDisplayLinkCallback, self);
+	// Set the renderer output callback function
+	CVDisplayLinkSetOutputCallback(displayLink, &BXDisplayLinkCallback, self);
 	
-    // Set the display link for the current renderer
-    CGLContextObj cglContext = [[self openGLContext] CGLContextObj];
-    CGLPixelFormatObj cglPixelFormat = [[self pixelFormat] CGLPixelFormatObj];
-    CVDisplayLinkSetCurrentCGDisplayFromOpenGLContext(displayLink, cglContext, cglPixelFormat);
+	// Set the display link for the current renderer
+	CGLContextObj cglContext = [[self openGLContext] CGLContextObj];
+	CGLPixelFormatObj cglPixelFormat = [[self pixelFormat] CGLPixelFormatObj];
+	CVDisplayLinkSetCurrentCGDisplayFromOpenGLContext(displayLink, cglContext, cglPixelFormat);
 	
-    // Activate the display link
-    CVDisplayLinkStart(displayLink);
+	// Activate the display link
+	CVDisplayLinkStart(displayLink);
 	
 	[super prepareOpenGL];
 }
 
 - (void) clearGLContext
 {
-	CVDisplayLinkRelease(displayLink);
-    displayLink = NULL;
+	if (displayLink)
+	{
+		CVDisplayLinkRelease(displayLink);
+		displayLink = NULL;
+	}
 	[super clearGLContext];
 }
 

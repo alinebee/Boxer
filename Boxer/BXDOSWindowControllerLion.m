@@ -8,11 +8,8 @@
 
 #import "BXDOSWindowControllerLion.h"
 #import "BXDOSWindowControllerPrivate.h"
-#import "BXDOSWindow.h"
 #import "BXPostLeopardAPIs.h"
-#import "BXInputController.h"
 #import "BXSession.h"
-#import "BXFrameRenderingView.h"
 
 
 @implementation BXDOSWindowControllerLion

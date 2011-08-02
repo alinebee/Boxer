@@ -9,15 +9,12 @@
 #import "BXDOSWindowControllerPrivate.h"
 #import "BXDOSWindow.h"
 #import "BXAppController.h"
-#import "BXProgramPanelController.h"
 #import "BXInputController.h"
 #import "BXPackage.h"
 
 #import "BXFrameRenderingView.h"
 #import "BXFrameBuffer.h"
-#import "BXInputView.h"
 
-#import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulator.h"
 #import "BXVideoHandler.h"
 

@@ -47,7 +47,9 @@ static CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 
 - (void) prepareOpenGL
 {
-	// Synchronize buffer swaps with vertical refresh rate
+	//Synchronize buffer swaps with vertical refresh rate
+    //Disabled for now as this will block emulation at inopportune times
+    //while we wait for the next vertical refresh.
     //GLint swapInt = 1;
     //[[self openGLContext] setValues: &swapInt forParameter: NSOpenGLCPSwapInterval];
 	
@@ -71,6 +73,7 @@ static CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 - (void) clearGLContext
 {
 	CVDisplayLinkRelease(displayLink);
+    displayLink = NULL;
 	[super clearGLContext];
 }
 

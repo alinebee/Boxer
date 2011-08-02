@@ -32,6 +32,16 @@
     [[self window] setRestorable: NO];
 }
 
+- (void) windowWillClose: (NSNotification *)notification
+{
+    //Workaround for a Lion bug whereby if the window close button is triggered
+    //by a touch event that includes a resting touch, then the event system may
+    //try to send touchesCancelled: events to a now-deallocated view.
+    //Turning off touch events just before window close seems to prevent this
+    //from happening, though the udnerlying bug is likely to get fixed in
+    //a later Lion update.
+    [[self inputView] setAcceptsTouchEvents: NO];
+}
 
 #pragma mark -
 #pragma mark Fullscreen transitions

@@ -625,6 +625,14 @@
 	NSString *volumePath	= [[theNotification userInfo] objectForKey: @"NSDevicePath"];
 	NSString *volumeType	= [workspace volumeTypeForPath: volumePath];
 	
+    //Ignore mount if we're scanning this volume for executables:
+    //this indicates that the scan is responsible for the mount,
+    //and it's not a user-mounted drive.
+    for (BXExecutableScan *scan in [scanQueue operations])
+    {
+        if ([[scan basePath] isEqualToString: volumePath]) return;
+    }
+    
 	//Only mount volumes that are of an appropriate type
 	if (![automountedTypes containsObject: volumeType]) return;
 	

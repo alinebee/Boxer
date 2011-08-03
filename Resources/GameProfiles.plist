@@ -17,6 +17,17 @@
 		
 		<dict>
 			<key>BXProfileName</key>
+			<string>Turrican II</string>
+			<key>BXProfileConf</key>
+			<string>Turrican 2</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>turrican.*</string>
+			</array>
+		</dict>
+        
+		<dict>
+			<key>BXProfileName</key>
 			<string>Wing Commander Privateer</string>
 			<key>BXProfileConf</key>
 			<string>Simple joystick</string>
@@ -48,15 +59,37 @@
 				<string>lhx.exe</string>
 			</array>
 		</dict>
+        
+        <dict>
+			<key>BXProfileName</key>
+			<string>The Lion King</string>
+			<key>BXProfileConf</key>
+			<string>Simple joystick</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>lionking.exe</string>
+			</array>
+		</dict>
+        
+		<dict>
+			<key>BXProfileName</key>
+			<string>LHX Attack Chopper</string>
+			<key>BXProfileConf</key>
+			<string>Simple joystick</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>lhx.exe</string>
+			</array>
+		</dict>
 		
 		<dict>
 			<key>BXProfileName</key>
-			<string>Blue Max</string>
+			<string>Dawn Patrol</string>
 			<key>BXProfileConf</key>
-			<string>Blue Max</string>
+			<string>Dawn Patrol</string>
 			<key>BXProfileTelltales</key>
 			<array>
-				<string>bluemax.exe</string>
+				<string>patrol.exe</string>
 			</array>
 		</dict>
 		
@@ -426,6 +459,21 @@
 
 	<key>BXGenericProfiles</key>
 	<array>
+        <dict>
+			<key>BXProfileDescription</key>
+			<string>Games that are incompatible with joystick emulation.</string>
+			<key>BXProfileConf</key>
+			<string>No joystick</string>
+			<key>BXProfileMatches</key>
+			<array>
+				<string>Mortal Kombat Trilogy</string>
+			</array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>mkbgrnd.bmp</string>
+			</array>
+		</dict>
+            
 		<dict>
 			<key>BXProfileDescription</key>
 			<string>Games that require clock-based joystick timing.</string>
@@ -439,6 +487,7 @@
 				<string>Descent</string>
 				<string>Descent 2</string>
 				<string>Gods</string>
+                <string>Xenon 2- Megablast</string>
 				<string>Space Rogue</string>
 				<string>Gauntlet II</string>
 				<string>Skate or Die</string>
@@ -454,6 +503,7 @@
 				<string>descent1.sow</string>
 				<string>descent2.exe</string>
 				<string>pgods.mus</string>
+                <string>xenon2.exe</string>
 				<string>vspace.ctl</string>
 				<string>gauntlet.exe</string>
 				<string>skate.exe</string>
@@ -783,6 +833,7 @@
 				<string>Grand Prix</string>
 				<string>Tornado</string>
 				<string>Stunt Island</string>
+                <string>Wolfenstein 3D</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
@@ -807,6 +858,7 @@
 				<string>f1gpdata.dat</string>
 				<string>tornado.bat</string>
 				<string>alcatraz.set</string>
+                <string>wolf3d.exe</string>
 			</array>
 		</dict>
 	</array>

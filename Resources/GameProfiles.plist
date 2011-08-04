@@ -178,7 +178,7 @@
 			</array>
 			<key>BXDesignatedInstallers</key>
 			<array>
-				<string>/inst/initial.exe</string>
+				<string>initial.exe</string>
 			</array>
 		</dict>
 		

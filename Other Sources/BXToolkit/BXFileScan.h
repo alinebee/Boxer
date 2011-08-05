@@ -6,9 +6,9 @@
  */
 
 
-//BXFileScan is a BXOperation subclass class for performing asynchronous filesystem
-//scans for files matching certain criteria.
-//This is essentially a reimplementation of BXPathEnumerator as a standalone operation.
+//BXFileScan is a BXOperation subclass for performing asynchronous filesystem
+//scans for files matching certain criteria, populating the operation's matchingPaths
+//property with them.
 
 #import "BXOperation.h"
 #import <AppKit/AppKit.h>
@@ -23,7 +23,7 @@ extern NSString * const BXFileScanLastMatchKey;
 #pragma mark -
 #pragma mark Interface declaration
 
-@class BXPathEnumerator;
+@protocol BXFilesystemEnumeration;
 @interface BXFileScan : BXOperation
 {
 	NSString *basePath;
@@ -49,6 +49,8 @@ extern NSString * const BXFileScanLastMatchKey;
 @property (copy, nonatomic) NSString *basePath;
 
 //The array of matched files, which will be gradually populated throughout the scan.
+//File paths are relative to basePath; a set of absolute paths can be retrieved by
+//performing [[scan basePath] stringsByAppendingPaths: [scan matchingPaths]].
 @property (readonly, nonatomic) NSArray *matchingPaths;
 
 //Optional: the maximum number of matches to return. Defaults to 0, which means no limit.
@@ -83,12 +85,11 @@ extern NSString * const BXFileScanLastMatchKey;
 //Returns an autoreleased file scan operation with the specified base path.
 + (id) scanWithBasePath: (NSString *)basePath;
 
-
-//Returns whether the specified file path (relative to basePath) matches
-//our search criteria.
-//Returns YES if filePath matches fileTypes and predicate, NO otherwise.
-//Can be overridden by subclasses to implement custom filtering.
-- (BOOL) isMatchingPath: (NSString *)relativePath;
+//Returns a new autoreleased instance of the enumerator to scan with.
+//By default this returns an NSDirectoryEnumerator instance configured
+//to scan basePath, but can be overridden by subclasses to use a
+//different enumeration class or to scan a different path than the base.
+- (id <BXFilesystemEnumeration>) enumerator;
 
 
 //Returns whether the contents of the specified subpath (relative to basePath)
@@ -98,10 +99,41 @@ extern NSString * const BXFileScanLastMatchKey;
 //custom subfolder filtering.
 - (BOOL) shouldScanSubpath: (NSString *)relativePath;
 
+//Called for every file found during the scan. By default, this checks the file with
+//isMatchingPath:. If the file matches, it calls addMatchingPath: and posts an
+//in-progress notification with the match as the BXFileScanLastMatchKey entry.
+
+//Returns whether the scan should continue after this match. The default implementation
+//will return NO if maxMatches is set and enough matches have been found, YES otherwise.
+
+//This is intended as a customisation point for subclasses to implement more advanced
+//match handling that can't be handled by isMatchingPath: and addMatchingPath:.
+- (BOOL) matchAgainstPath: (NSString *)relativePath;
+
+
+//Returns whether the specified file path (relative to basePath) matches
+//our search criteria.
+//Returns YES if filePath matches fileTypes and predicate, NO otherwise.
+//Can be overridden by subclasses to implement custom filtering.
+- (BOOL) isMatchingPath: (NSString *)relativePath;
+
 //Adds the specified path (relative to basePath) into the set of matched paths.
-//Called whenever a match is found. Can be overridden by subclasses
-//to perform custom logic, such as rewriting the path or adding
-//it to additional collections.
+//Called whenever a match is found. Can be overridden by subclasses to perform
+//custom logic, such as rewriting the path or adding it to additional collections.
 - (void) addMatchingPath: (NSString *)relativePath;
+
+@end
+
+
+
+//A protocol for enumerators to be used by NSFileScan. The interface
+//is a subset of NSDirectoryEnumerator: see that for details.
+@protocol BXFilesystemEnumeration <NSFastEnumeration, NSObject>
+
+- (NSArray *) allObjects;
+- (id) nextObject;
+
+- (void) skipDescendents;
+- (NSDictionary *) fileAttributes;
 
 @end

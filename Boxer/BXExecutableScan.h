@@ -6,14 +6,11 @@
  */
 
 
-//BXExecutableScan is a BXFileScan subclass designed for finding compatible executables in a path.
+//BXExecutableScan is a BXFileScan subclass designed for finding compatible
+//executables in a path.
 
-#import "BXFileScan.h"
-#import <Cocoa/Cocoa.h>
+#import "BXImageAwareFileScan.h"
 
-@interface BXExecutableScan : BXFileScan
-{
-    NSString *imagePath;
-}
+@interface BXExecutableScan : BXImageAwareFileScan
 
 @end

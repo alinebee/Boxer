@@ -25,6 +25,7 @@
 		9F1812BF12996340009BC4B2 /* YRKSpinningProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1812BD12996337009BC4B2 /* YRKSpinningProgressIndicator.m */; };
 		9F18133B129990D5009BC4B2 /* BXGamesFolderPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F18133A129990D5009BC4B2 /* BXGamesFolderPanelController.m */; };
 		9F18137C12999E39009BC4B2 /* GamesFolderPanelOptions.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F18137A12999E39009BC4B2 /* GamesFolderPanelOptions.xib */; };
+		9F18BE9513EB07190047C217 /* BXInstallerScan.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F18BE9413EB07190047C217 /* BXInstallerScan.m */; };
 		9F19E7E112B3F48200496BCF /* SDL_sound.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FCEDF3212B3DFFC00E856A4 /* SDL_sound.framework */; };
 		9F1CBA58120C796C00C5E926 /* BXImportSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBA57120C796C00C5E926 /* BXImportSession.m */; };
 		9F1CBA97120C7D9000C5E926 /* BXImportWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBA96120C7D9000C5E926 /* BXImportWindowController.m */; };
@@ -107,6 +108,7 @@
 		9F60B0DC13AA418300F06BB1 /* BXCollectionItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F60B0DB13AA418300F06BB1 /* BXCollectionItemView.m */; };
 		9F61931B1233D8F000F35AB4 /* BXTabbedWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F61931A1233D8F000F35AB4 /* BXTabbedWindowController.m */; };
 		9F61942412340F5400F35AB4 /* ScriptingBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F61942312340F5400F35AB4 /* ScriptingBridge.framework */; };
+		9F61F78313EC2D5100505436 /* BXImageAwareFileScan.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F61F78213EC2D5100505436 /* BXImageAwareFileScan.m */; };
 		9F61FC8510DE3F7F00F3896C /* BXGameProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F61FC8410DE3F7F00F3896C /* BXGameProfile.m */; };
 		9F6311090F70F54300AB1155 /* BXHelpMenuController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F6311080F70F54300AB1155 /* BXHelpMenuController.m */; };
 		9F676BF01235451B00924B8C /* Display.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F676BEF1235451B00924B8C /* Display.png */; };
@@ -470,6 +472,8 @@
 		9F181339129990D5009BC4B2 /* BXGamesFolderPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXGamesFolderPanelController.h; sourceTree = "<group>"; };
 		9F18133A129990D5009BC4B2 /* BXGamesFolderPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGamesFolderPanelController.m; sourceTree = "<group>"; };
 		9F18137B12999E39009BC4B2 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/GamesFolderPanelOptions.xib; sourceTree = "<group>"; };
+		9F18BE9313EB07190047C217 /* BXInstallerScan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXInstallerScan.h; sourceTree = "<group>"; };
+		9F18BE9413EB07190047C217 /* BXInstallerScan.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXInstallerScan.m; sourceTree = "<group>"; };
 		9F1CBA56120C796C00C5E926 /* BXImportSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImportSession.h; sourceTree = "<group>"; };
 		9F1CBA57120C796C00C5E926 /* BXImportSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXImportSession.m; sourceTree = "<group>"; };
 		9F1CBA95120C7D9000C5E926 /* BXImportWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImportWindowController.h; sourceTree = "<group>"; };
@@ -598,6 +602,8 @@
 		9F6193191233D8F000F35AB4 /* BXTabbedWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXTabbedWindowController.h; sourceTree = "<group>"; };
 		9F61931A1233D8F000F35AB4 /* BXTabbedWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXTabbedWindowController.m; sourceTree = "<group>"; };
 		9F61942312340F5400F35AB4 /* ScriptingBridge.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ScriptingBridge.framework; path = System/Library/Frameworks/ScriptingBridge.framework; sourceTree = SDKROOT; };
+		9F61F78113EC2D5100505436 /* BXImageAwareFileScan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImageAwareFileScan.h; sourceTree = "<group>"; };
+		9F61F78213EC2D5100505436 /* BXImageAwareFileScan.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXImageAwareFileScan.m; sourceTree = "<group>"; };
 		9F61FC8310DE3F7F00F3896C /* BXGameProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXGameProfile.h; sourceTree = "<group>"; };
 		9F61FC8410DE3F7F00F3896C /* BXGameProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXGameProfile.m; sourceTree = "<group>"; };
 		9F6311070F70F54300AB1155 /* BXHelpMenuController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXHelpMenuController.h; sourceTree = "<group>"; };
@@ -1321,6 +1327,8 @@
 				9FF865CE134DAB5A001CE857 /* BXTaskOperation.m */,
 				9F58BB4F13DD975F00358512 /* BXFileScan.h */,
 				9F58BB5013DD975F00358512 /* BXFileScan.m */,
+				9F61F78113EC2D5100505436 /* BXImageAwareFileScan.h */,
+				9F61F78213EC2D5100505436 /* BXImageAwareFileScan.m */,
 			);
 			name = Operations;
 			sourceTree = "<group>";
@@ -1362,6 +1370,8 @@
 				9F1CBAAA120C830600C5E926 /* BXImportSession+BXImportPolicies.m */,
 				9F0F9ED812108A9000ED7A64 /* BXImportError.h */,
 				9F0F9ED912108A9000ED7A64 /* BXImportError.m */,
+				9F18BE9313EB07190047C217 /* BXInstallerScan.h */,
+				9F18BE9413EB07190047C217 /* BXInstallerScan.m */,
 			);
 			name = "Game import session";
 			sourceTree = "<group>";
@@ -2879,6 +2889,8 @@
 				9FD95D6A13E2A45C005EF2C0 /* BXFullScreenCapableWindow.m in Sources */,
 				B7900B3E13E47D9E00B37913 /* BXPrecisionProControllerProfile.m in Sources */,
 				9FA1CF6813E5B44000416D74 /* BXMOMORacingControllerProfile.m in Sources */,
+				9F18BE9513EB07190047C217 /* BXInstallerScan.m in Sources */,
+				9F61F78313EC2D5100505436 /* BXImageAwareFileScan.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

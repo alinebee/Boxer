@@ -630,7 +630,7 @@
     //and it's not a user-mounted drive.
     for (BXExecutableScan *scan in [scanQueue operations])
     {
-        if ([[scan basePath] isEqualToString: volumePath]) return;
+        if ([[scan mountedPath] isEqualToString: volumePath]) return;
     }
     
 	//Only mount volumes that are of an appropriate type
@@ -849,8 +849,9 @@
     
     [self willChangeValueForKey: @"isScanningForExecutables"];
 	if ([scan succeeded])
-	{   
-        NSArray *driveExecutables = [scan matchingPaths];
+	{
+        //Construct absolute paths out of the relative ones returned by the scan.
+        NSArray *driveExecutables = [[scan basePath] stringsByAppendingPaths: [scan matchingPaths]];
         
         //Only send notifications if any executables were found, to prevent unnecessary redraws
         BOOL notify = ([driveExecutables count] > 0);

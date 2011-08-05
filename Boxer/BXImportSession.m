@@ -100,13 +100,13 @@
 	[super dealloc];
 }
 
-- (id)initWithContentsOfURL: (NSURL *)absoluteURL
-					 ofType: (NSString *)typeName
-					  error: (NSError **)outError
+- (id) initWithContentsOfURL: (NSURL *)absoluteURL
+					  ofType: (NSString *)typeName
+					   error: (NSError **)outError
 {
 	if ((self = [super initWithContentsOfURL: absoluteURL ofType: typeName error: outError]))
 	{
-        //Override the -defined
+        //Override the Appkit-defined file URL determination
 		[self setFileURL: [NSURL fileURLWithPath: [self sourcePath]]];
 		
 		if ([self gameNeedsInstalling])

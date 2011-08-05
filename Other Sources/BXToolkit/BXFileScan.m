@@ -76,6 +76,24 @@ NSString * const BXFileScanLastMatchKey = @"BXFileScanLastMatch";
     return [matchingPaths lastObject];
 }
 
+- (BOOL) matchAgainstPath: (NSString *)relativePath
+{
+    if ([self isMatchingPath: relativePath])
+    {
+        [self addMatchingPath: relativePath];
+        
+        NSDictionary *userInfo = [NSDictionary dictionaryWithObject: [self lastMatch]
+                                                             forKey: BXFileScanLastMatchKey];
+        
+        [self _sendInProgressNotificationWithInfo: userInfo];
+    
+        //Check if we have enough matches now: if so, stop scanning.
+        if ([self maxMatches] && [matchingPaths count] >= [self maxMatches]) return NO;
+    }
+    
+    return YES;
+}
+
 - (BOOL) isMatchingPath: (NSString *)relativePath
 {
     if ([self skipHiddenFiles] && [[relativePath lastPathComponent] hasPrefix: @"."]) return NO;
@@ -106,10 +124,8 @@ NSString * const BXFileScanLastMatchKey = @"BXFileScanLastMatch";
 
 - (void) addMatchingPath: (NSString *)relativePath
 {
-    NSString *fullPath = [[self basePath] stringByAppendingPathComponent: relativePath];
-    
     //Ensures KVO notifications are sent properly
-	[[self mutableArrayValueForKey: @"matchingPaths"] addObject: fullPath];
+	[[self mutableArrayValueForKey: @"matchingPaths"] addObject: relativePath];
 }
 
 - (BOOL) canStart
@@ -118,18 +134,23 @@ NSString * const BXFileScanLastMatchKey = @"BXFileScanLastMatch";
     return ([self basePath] != nil);
 }
 
+- (id <BXFilesystemEnumeration>) enumerator
+{
+    return (id <BXFilesystemEnumeration>)[manager enumeratorAtPath: [self basePath]];
+}
+
 - (void) main
 {
     //Empty the matches before we begin
     [matchingPaths removeAllObjects];    
     
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    
-    NSDirectoryEnumerator *enumerator = [manager enumeratorAtPath: [self basePath]];
+    id <BXFilesystemEnumeration> enumerator = [self enumerator];
     
     for (NSString *relativePath in enumerator)
     {
         if ([self isCancelled]) break;
+        
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
         
         NSString *fileType = [[enumerator fileAttributes] fileType];
         if ([fileType isEqualToString: NSFileTypeDirectory])
@@ -137,21 +158,13 @@ NSString * const BXFileScanLastMatchKey = @"BXFileScanLastMatch";
             if (![self shouldScanSubpath: relativePath])
                 [enumerator skipDescendents];
         }
-            
-        if ([self isMatchingPath: relativePath])
-        {
-            [self addMatchingPath: relativePath];
-            
-            NSDictionary *userInfo = [NSDictionary dictionaryWithObject: [self lastMatch]
-                                                                 forKey: BXFileScanLastMatchKey];
-            
-            [self _sendInProgressNotificationWithInfo: userInfo];
-        }
         
-        if ([self isCancelled] || ([self maxMatches] && [matchingPaths count] >= [self maxMatches])) break;
+        BOOL keepScanning = [self matchAgainstPath: relativePath];
+        
+        [pool drain];
+        
+        if ([self isCancelled] || !keepScanning) break;
     }
-    
-    [pool drain];
     
     [self setSucceeded: ![self error]];
 }

@@ -10,7 +10,7 @@
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.delphine.another-world</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>Another World</string>
 			<key>BXProfileConf</key>
 			<string>Another World</string>
@@ -23,7 +23,7 @@
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.factor5.turrican-2</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>Turrican II</string>
 			<key>BXProfileConf</key>
 			<string>Turrican 2</string>
@@ -36,7 +36,7 @@
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.origin.privateer</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>Wing Commander Privateer</string>
 			<key>BXProfileConf</key>
 			<string>Simple joystick</string>
@@ -50,7 +50,7 @@
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.origin.privateer-2</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>Privateer 2</string>
 			<key>BXProfileConf</key>
 			<string>Privateer 2</string>
@@ -63,7 +63,7 @@
         <dict>
             <key>BXProfileIdentifier</key>
             <string>com.westwood.the-lion-king</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>The Lion King</string>
 			<key>BXProfileConf</key>
 			<string>Simple joystick</string>
@@ -76,7 +76,7 @@
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.ea.lhx</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>LHX Attack Chopper</string>
 			<key>BXProfileConf</key>
 			<string>Simple joystick</string>
@@ -89,7 +89,7 @@
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.rowansoftware.dawn-patrol</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>Dawn Patrol</string>
 			<key>BXProfileConf</key>
 			<string>Dawn Patrol</string>
@@ -102,7 +102,7 @@
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.simbiosis.fable</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>Fable</string>
 			<key>BXProfileConf</key>
 			<string>No GUS</string>
@@ -117,7 +117,7 @@
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.velocity.jetfighter</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>Jetfighter</string>
 			<key>BXProfileConf</key>
 			<string>Jetfighter</string>
@@ -131,7 +131,7 @@
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.gtinteractive.bedlam</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>Bedlam</string>
 			<key>BXProfileTelltales</key>
 			<array>
@@ -146,7 +146,7 @@
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.westwood.red-alert</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>Command &amp; Conquer - Red Alert</string>
 			<key>BXProfileConf</key>
 			<string>More memory, no GUS</string>
@@ -162,8 +162,8 @@
 
 		<dict>
             <key>BXProfileIdentifier</key>
-            <string>com.empireinteractive.pro-binball-the-web</string>
-			<key>BXProfileName</key>
+            <string>com.empireinteractive.pro-pinball-the-web</string>
+			<key>BXProfileGameName</key>
 			<string>Pro Pinball- The Web</string>
 			<key>BXProfileConf</key>
 			<string>Pro Pinball- The Web</string>
@@ -175,8 +175,8 @@
 
 		<dict>
             <key>BXProfileIdentifier</key>
-            <string>com.empireinteractive.pro-binball-timeshock</string>
-			<key>BXProfileName</key>
+            <string>com.empireinteractive.pro-pinball-timeshock</string>
+			<key>BXProfileGameName</key>
 			<string>Pro Pinball- Timeshock</string>
 			<key>BXProfileConf</key>
 			<string>Pro Pinball- Timeshock</string>
@@ -189,7 +189,7 @@
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.origin.system-shock</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>System Shock</string>
 			<key>BXProfileTelltales</key>
 			<array>
@@ -205,7 +205,7 @@
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.origin.ultima-underworld</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>Ultima Underworld</string>
 			<key>BXProfileConf</key>
 			<string>Dynamic</string>
@@ -219,7 +219,7 @@
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.origin.ultima-underworld-2</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>Ultima Underworld II</string>
 			<key>BXProfileConf</key>
 			<string>Dynamic</string>
@@ -232,7 +232,7 @@
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.psygnosis.destruction-derby-2</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>Destruction Derby 2</string>
 			<key>BXProfileConf</key>
 			<string>Destruction Derby 2</string>
@@ -245,7 +245,7 @@
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.acclaim.i-have-no-mouth-and-i-must-scream</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>I Have No Mouth and I Must Scream</string>
 			<key>BXProfileConf</key>
 			<string>I Have No Mouth</string>
@@ -258,7 +258,7 @@
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.bethesda.daggerfall</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>Daggerfall</string>
 			<key>BXProfileConf</key>
 			<string>More memory, no GUS</string>
@@ -282,7 +282,7 @@
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.sierra.kings-quest-7</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>King&apos;s Quest VII</string>
 			<key>BXProfileConf</key>
 			<string>KQ7</string>
@@ -295,7 +295,7 @@
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.virgin.screamer-2</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>Screamer 2</string>
 			<key>BXProfileConf</key>
 			<string>Screamer 2</string>
@@ -308,7 +308,7 @@
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.ea.the-need-for-speed</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>The Need for Speed</string>
 			<key>BXProfileConf</key>
 			<string>Need for Speed</string>
@@ -322,7 +322,7 @@
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.trilobyte.7th-guest</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>The 7th Guest</string>
 			<key>BXProfileConf</key>
 			<string>The 7th Guest</string>
@@ -335,7 +335,7 @@
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.origin.ultima-7</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>Ultima VII</string>
 			<key>BXProfileConf</key>
 			<string>Ultima VII</string>
@@ -348,7 +348,7 @@
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.origin.serpent-isle</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>Ultima VII Part 2: The Serpent Isle</string>
 			<key>BXProfileConf</key>
 			<string>Ultima VII</string>
@@ -361,7 +361,7 @@
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.origin.wing-commander</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>Wing Commander</string>
 			<key>BXProfileConf</key>
 			<string>Wing Commander</string>
@@ -374,7 +374,7 @@
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.origin.wing-commander-2</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>Wing Commander II</string>
 			<key>BXProfileConf</key>
 			<string>Wing Commander</string>
@@ -393,7 +393,7 @@
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.origin.wing-commander-academy</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>Wing Commander Academy</string>
 			<key>BXProfileConf</key>
 			<string>Wing Commander</string>
@@ -406,7 +406,7 @@
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.origin.wing-commander-armada</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>Wing Commander Armada</string>
 			<key>BXProfileConf</key>
 			<string>Timed joystick</string>
@@ -419,7 +419,7 @@
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.origin.wing-commander-3</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>Wing Commander III</string>
 			<key>BXProfileConf</key>
 			<string>Timed joystick</string>
@@ -432,7 +432,7 @@
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.origin.wing-commander-4</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>Wing Commander IV</string>
 			<key>BXProfileConf</key>
 			<string>Timed joystick</string>
@@ -445,7 +445,7 @@
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.origin.wings-of-glory</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>Wings of Glory</string>
 			<key>BXProfileConf</key>
 			<string>Wings of Glory</string>
@@ -458,7 +458,7 @@
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.dynamix.aces-of-the-pacific</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>Aces of the Pacific</string>
 			<key>BXProfileConf</key>
 			<string>No dynamic</string>
@@ -471,7 +471,7 @@
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.dynamix.aces-over-europe</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>Aces Over Europe</string>
 			<key>BXProfileConf</key>
 			<string>Aces Over Europe</string>
@@ -484,7 +484,7 @@
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.perfect10.discworld</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>Discworld</string>
 			<key>BXProfileTelltales</key>
 			<array>
@@ -499,7 +499,7 @@
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.lucasarts.tie-fighter</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>Tie Fighter</string>
 			<key>BXProfileConf</key>
 			<string>Tie Fighter</string>
@@ -513,7 +513,7 @@
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.dynamix.earthsiege</string>
-			<key>BXProfileName</key>
+			<key>BXProfileGameName</key>
 			<string>Earthsiege</string>
 			<key>BXProfileConf</key>
 			<string>Earthsiege</string>

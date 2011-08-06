@@ -142,10 +142,10 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 {
 	if ((self = [self init]))
 	{
-		[self setGameName: [profileDict objectForKey: @"BXProfileName"]];
-		[self setConfName: [profileDict objectForKey: @"BXProfileConf"]];
-		[self setProfileDescription: [profileDict objectForKey: @"BXProfileDescription"]];
-        [self setIdentifier: [profileDict objectForKey: @"BXProfileIdentifier"]];
+        [self setIdentifier:            [profileDict objectForKey: @"BXProfileIdentifier"]];
+		[self setGameName:              [profileDict objectForKey: @"BXProfileGameName"]];
+		[self setProfileDescription:    [profileDict objectForKey: @"BXProfileDescription"]];
+		[self setConfName:              [profileDict objectForKey: @"BXProfileConf"]];
 		
 		//Leave these at their default values if a particular key wasn't specified
 		NSNumber *medium = [profileDict objectForKey: @"BXInstallMedium"];

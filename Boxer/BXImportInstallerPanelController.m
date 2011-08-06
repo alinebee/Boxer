@@ -86,8 +86,7 @@
 	//...and then add all the new ones in their place
 	NSUInteger insertionPoint = 0;
 	
-	NSArray *installerPaths				= [[[self controller] document] installerPaths];
-	NSString *preferredInstallerPath	= [[[self controller] document] preferredInstallerPath];
+	NSArray *installerPaths = [[[self controller] document] installerPaths];
 	
 	if (installerPaths)
 	{		
@@ -97,19 +96,14 @@
 			
 			NSMenuItem *item = [self _installerSelectorItemForPath: installerPath];
 			
-			//Bump the preferred installer to the top of the list
-			if ([installerPath isEqualToString: preferredInstallerPath])
-				[menu insertItem: item atIndex: 0];
-			else
-				[menu insertItem: item atIndex: insertionPoint];
-				  
+            [menu insertItem: item atIndex: insertionPoint];
 			
 			insertionPoint++;
 			
 			[pool release];
 		}
 		
-		//Always select the first installer in the list
+		//Always select the first installer in the list, as this is the preferred installer
 		[[self installerSelector] selectItemAtIndex: 0];
 	}
 	

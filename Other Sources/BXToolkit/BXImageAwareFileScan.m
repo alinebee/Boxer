@@ -12,7 +12,7 @@
 
 
 @implementation BXImageAwareFileScan
-@synthesize mountedVolumePath, ejectAfterScanning;
+@synthesize mountedVolumePath, ejectAfterScanning, didMountVolume;
 
 - (id) init
 {
@@ -28,6 +28,13 @@
     [self setMountedVolumePath: nil], [mountedVolumePath release];
     
     [super dealloc];
+}
+
+- (NSString *) fullPathFromRelativePath: (NSString *)relativePath
+{
+    //Return paths relative to the mounted volume instead, if available.
+    NSString *filesystemRoot = ([self mountedVolumePath]) ? [self mountedVolumePath] : [self basePath];
+    return [filesystemRoot stringByAppendingPathComponent: relativePath];
 }
 
 //If we have a mounted volume path for an image, enumerate that instead of the original base path

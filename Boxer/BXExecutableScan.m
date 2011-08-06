@@ -16,7 +16,7 @@
 {
     if ([super isMatchingPath: relativePath])
     {
-        NSString *fullPath = [[self basePath] stringByAppendingPathComponent: relativePath];
+        NSString *fullPath = [self fullPathFromRelativePath: relativePath];
         return [workspace isCompatibleExecutableAtPath: fullPath];
     }
     else
@@ -29,7 +29,7 @@
 {
     if ([super shouldScanSubpath: relativePath])
     {
-        NSString *fullPath = [[self basePath] stringByAppendingPathComponent: relativePath];
+        NSString *fullPath = [self fullPathFromRelativePath: relativePath];
         
         //Filter out the contents of any nested drive folders
         return ![workspace file: fullPath matchesTypes: [BXAppController mountableFolderTypes]];

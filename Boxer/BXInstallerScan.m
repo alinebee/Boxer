@@ -51,12 +51,12 @@
             isAlreadyInstalled = YES;
         }
         
-        NSString *absolutePath = [[self basePath] stringByAppendingPathComponent: relativePath];
+        NSString *fullPath = [self fullPathFromRelativePath: relativePath];
         NSSet *executableTypes = [BXAppController executableTypes];
         
-        if ([workspace file: absolutePath matchesTypes: executableTypes])
+        if ([workspace file: fullPath matchesTypes: executableTypes])
         {
-            if ([workspace isCompatibleExecutableAtPath: absolutePath])
+            if ([workspace isCompatibleExecutableAtPath: fullPath])
             {
                 [self addDOSExecutable: relativePath];
                 
@@ -64,6 +64,11 @@
                 if ([BXImportSession isInstallerAtPath: relativePath])
                 {
                     [self addMatchingPath: relativePath];
+                    
+                    NSDictionary *userInfo = [NSDictionary dictionaryWithObject: [self lastMatch]
+                                                                         forKey: BXFileScanLastMatchKey];
+                    
+                    [self _sendInProgressNotificationWithInfo: userInfo];
                 }
             }
             //Skip windows executables, but keep a record of the ones we do find

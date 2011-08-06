@@ -1153,10 +1153,10 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	}
 	
 	//Cancel any in-progress operations specific to this session
-	[[importQueue operations] makeObjectsPerformSelector: @selector(setDelegate:) withObject: nil];
+	//[[importQueue operations] makeObjectsPerformSelector: @selector(setDelegate:) withObject: nil];
 	[importQueue cancelAllOperations];
-    
-    [[scanQueue operations] makeObjectsPerformSelector: @selector(setDelegate:) withObject: nil];
+
+    //[[scanQueue operations] makeObjectsPerformSelector: @selector(setDelegate:) withObject: nil];
     [scanQueue cancelAllOperations];
     
 	[importQueue waitUntilAllOperationsAreFinished];

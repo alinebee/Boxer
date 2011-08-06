@@ -30,11 +30,16 @@ typedef NSInteger BXFileScanEjectionBehaviour;
 
 //The volume path at which the original source disk image is mounted.
 //Only valid while scanning a disk image.
-@property (copy, nonatomic) NSString *mountedVolumePath;
+@property (copy) NSString *mountedVolumePath;
+
+//Whether the file scan operation mounted an image volume itself while scanning.
+//This will be NO if scanning a regular folder or if the scanned image was
+//already mounted by the time we came to scan it.
+@property (readonly) BOOL didMountVolume;
 
 //Whether to automatically unmount any mounted path after the scan is complete.
-//By default. this will only unmount if the scan itself was responsible for mounting
-//the path.
-@property (assign, nonatomic) BXFileScanEjectionBehaviour ejectAfterScanning;
+//By default this will only unmount if the scan itself was responsible for
+//mounting the path.
+@property (assign) BXFileScanEjectionBehaviour ejectAfterScanning;
 
 @end

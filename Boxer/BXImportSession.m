@@ -107,11 +107,11 @@
 					  ofType: (NSString *)typeName
 					   error: (NSError **)outError
 {
-    
 	if ((self = [super initWithContentsOfURL: absoluteURL ofType: typeName error: outError]))
 	{
+        [self setImportStage: BXImportSessionLoadingSourcePath];
         //Override the Appkit-defined file URL determination, in case our
-        //source path differs from the provided URL.
+        //final source path differs from the provided URL.
 		[self setFileURL: [NSURL fileURLWithPath: [self sourcePath]]];
 	}
 	return self;
@@ -125,15 +125,12 @@
 	didMountSourceVolume = NO;
 	
 	NSString *filePath = [[self class] preferredSourcePathForPath: [absoluteURL path]
-												   didMountVolume: &didMountSourceVolume
 															error: outError];
 	
 	//Bail out if we could not determine a suitable source path
 	//(in which case the error will have been populated)
 	if (!filePath) return NO;
-	
     [self setSourcePath: filePath];
-    [self setImportStage: BXImportSessionLoadingSourcePath];
                           
     //Create an installer scan operation to perform the actual 'loading' of the URL
     //(scanning it for installer executables, game profile etc.)
@@ -141,6 +138,12 @@
     BXInstallerScan *scan = [BXInstallerScan scanWithBasePath: filePath];
     [scan setDelegate: self];
     [scan setDidFinishSelector: @selector(installerScanDidFinish:)];
+    
+    //Don't automatically eject any image that the scan had to mount: instead
+    //we'll use the mounted volume ourselves for later operations, and eject
+    //it at the end of importing.
+    [scan setEjectAfterScanning: BXFileScanNeverEject];
+    
     [scanQueue addOperation: scan];
 		
     return YES;
@@ -153,7 +156,21 @@
     if ([scan succeeded])
     {
         [self setGameProfile: [scan detectedProfile]];
-        [self setInstallerPaths: [scan matchingPaths]];
+        
+        //If we were scanning an image, then use the mounted image volume
+        //as our source path instead.
+        if ([scan mountedVolumePath])
+        {
+            [self setSourcePath: [scan mountedVolumePath]];
+            didMountSourceVolume = [scan didMountVolume];
+        }
+        else
+        {
+            [self setSourcePath: [scan basePath]];
+        }
+        
+        [self setFileURL: [NSURL fileURLWithPath: [self sourcePath]]];
+        [self setInstallerPaths: [[self sourcePath] stringsByAppendingPaths: [scan matchingPaths]]];
         
         //If the scan found installers, and doesn't otherwise think
         //the game is already installed, then we'll ask the user to
@@ -176,6 +193,15 @@
         [self setFileURL: nil];
 		[self setImportStage: BXImportSessionWaitingForSourcePath];
 		
+        //Eject any disk that was mounted as a result of the scan
+        if ([scan didMountVolume])
+        {
+            NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+            [workspace unmountAndEjectDeviceAtPath: [scan mountedVolumePath]];
+            didMountSourceVolume = NO;
+        }
+        
+        
         //If there was an error that wasn't just that the operation was cancelled,
         //display it to the user now.
         NSError *error = [scan error];
@@ -570,25 +596,30 @@
 	NSURL *sourceURL = [NSURL fileURLWithPath: [path stringByStandardizingPath]];
 	
 	NSError *readError = nil;
+    
 	BOOL readSucceeded = [self readFromURL: sourceURL
 									ofType: nil
 									 error: &readError];
     
-	if (readSucceeded)
-	{
-		[self setFileURL: [NSURL fileURLWithPath: [self sourcePath]]];
-	}
-	else if (readError)
-	{
+    if (readSucceeded)
+    {
+        [self setImportStage: BXImportSessionLoadingSourcePath];
+        [self setFileURL: [NSURL fileURLWithPath: [self sourcePath]]];
+    }
+	else
+    {
 		[self setFileURL: nil];
 		[self setImportStage: BXImportSessionWaitingForSourcePath];
-		
-		//If we failed, then display the error as a sheet
-		[self presentError: readError
-			modalForWindow: [self windowForSheet]
-		 		  delegate: nil
-		didPresentSelector: NULL
-			   contextInfo: NULL];
+        
+        if (readError)
+        {
+            //If we failed, then display the error as a sheet
+            [self presentError: readError
+                modalForWindow: [self windowForSheet]
+                      delegate: nil
+            didPresentSelector: NULL
+                   contextInfo: NULL];
+        }
 	}
 }
 

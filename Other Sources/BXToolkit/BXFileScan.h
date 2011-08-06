@@ -122,6 +122,13 @@ extern NSString * const BXFileScanLastMatchKey;
 //custom logic, such as rewriting the path or adding it to additional collections.
 - (void) addMatchingPath: (NSString *)relativePath;
 
+//Returns the full filesystem path for the specified relative path.
+//Intended as a convenience function for internal checks: all file paths returned
+//by the scan should still be expressed as relative to the base path.
+//The default implementation resolves the path relative to basePath,
+//but this can be overridden by subclasses if needed.
+- (NSString *) fullPathFromRelativePath: (NSString *)relativePath;
+
 @end
 
 

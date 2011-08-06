@@ -76,6 +76,11 @@ NSString * const BXFileScanLastMatchKey = @"BXFileScanLastMatch";
     return [matchingPaths lastObject];
 }
 
+- (NSString *) fullPathFromRelativePath: (NSString *)relativePath
+{
+    return [[self basePath] stringByAppendingPathComponent: relativePath];
+}
+
 - (BOOL) matchAgainstPath: (NSString *)relativePath
 {
     if ([self isMatchingPath: relativePath])
@@ -86,7 +91,7 @@ NSString * const BXFileScanLastMatchKey = @"BXFileScanLastMatch";
                                                              forKey: BXFileScanLastMatchKey];
         
         [self _sendInProgressNotificationWithInfo: userInfo];
-    
+        
         //Check if we have enough matches now: if so, stop scanning.
         if ([self maxMatches] && [matchingPaths count] >= [self maxMatches]) return NO;
     }
@@ -102,7 +107,7 @@ NSString * const BXFileScanLastMatchKey = @"BXFileScanLastMatch";
     
     if ([self fileTypes])
     {
-        NSString *fullPath = [[self basePath] stringByAppendingPathComponent: relativePath];
+        NSString *fullPath = [self fullPathFromRelativePath: relativePath];
         if (![workspace file: fullPath matchesTypes: [self fileTypes]]) return NO;
     }
     
@@ -115,7 +120,7 @@ NSString * const BXFileScanLastMatchKey = @"BXFileScanLastMatch";
     
     if ([self skipPackageContents])
     {
-        NSString *fullPath = [[self basePath] stringByAppendingPathComponent: relativePath];
+        NSString *fullPath = [self fullPathFromRelativePath: relativePath];
         if ([workspace isFilePackageAtPath: fullPath]) return NO;
     }
     

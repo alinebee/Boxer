@@ -83,7 +83,6 @@ static const NSInteger BXFreeSpaceForCDROMInstall = 700 * 1024 * 1024;
 //didMountVolume will be YES if this method mounted the volume on which the source path resides.
 //If this encountered any error when determining the source path, outError will be populated with a suitable error.
 + (NSString *) preferredSourcePathForPath: (NSString *)path
-						   didMountVolume: (BOOL *)didMountVolume
 									error: (NSError **)outError;
 
 //Returns a recommended installer from the list of possible installers,

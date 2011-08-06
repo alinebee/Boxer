@@ -7,9 +7,11 @@
 
 
 //BXInstallerScan is used by BXImportSession for locating DOS game installers within a path
-//or volume. It also collects overall file data about the source while scanning, which
-//BXImportSession uses to determine whether a game needs installing (or is in fact not
-//a DOS game at all.)
+//or volume. It populates its matchingPaths with all the DOS installers it finds, ordered
+//by relevance - with the preferred installer first. 
+
+//It also collects overall file data about the source while scanning, such as the game profile
+//and whether the game appears to be already installed (or not a DOS game at all).
 
 #import "BXImageAwareFileScan.h"
 

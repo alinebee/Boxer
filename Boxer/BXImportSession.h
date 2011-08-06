@@ -128,10 +128,6 @@ typedef NSUInteger BXSourceFileImportType;
 //Whether the specified source path is a folder, volume or image type we can import.
 + (BOOL) canImportFromSourcePath: (NSString *)sourcePath;
 
-//Whether we should run an installer for our current source path.
-//Will be YES if we detected any installers for the source path, NO otherwise.
-- (BOOL) gameNeedsInstalling;
-
 //Whether the game has installed any files into the gamebox's C drive.
 //Only relevant after the game's installer has been run.
 - (BOOL) gameDidInstall;

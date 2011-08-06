@@ -549,22 +549,25 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	}
 	else
 	{
-		id session = [[[BXImportSession alloc] initWithType: nil error: outError] autorelease];
-		if (session)
+		BXImportSession *importer = [[BXImportSession alloc] initWithType: nil error: outError];
+		if (importer)
 		{
-			[self addDocument: session];
+			[self addDocument: importer];
 			if (displayDocument)
 			{
-				[session makeWindowControllers];
-				[session showWindows];
+				[importer makeWindowControllers];
+				[importer showWindows];
 			}
 		}
-		return session;
+		return [importer autorelease];
 	}
 }
 
-- (id) openImportSessionWithContentsOfURL: (NSURL *)url display: (BOOL)display error: (NSError **)outError
+- (id) openImportSessionWithContentsOfURL: (NSURL *)url
+                                  display: (BOOL)displayDocument
+                                    error: (NSError **)outError
 {
+	[self hideWelcomePanel: self];
 	//If it's too late for us to open an import session, launch a new Boxer process to do it
 	if (![self _canOpenDocumentOfClass: [BXImportSession class]])
 	{
@@ -574,9 +577,19 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	}
 	else
 	{
-		BXImportSession *importer = [self openImportSessionAndDisplay: display error: outError];
-		[importer importFromSourcePath: [url path]];
-		return importer;
+		BXImportSession *importer = [[BXImportSession alloc] initWithContentsOfURL: url
+                                                                            ofType: nil
+                                                                             error: outError];
+		if (importer)
+		{
+			[self addDocument: importer];
+			if (displayDocument)
+			{
+				[importer makeWindowControllers];
+				[importer showWindows];
+			}
+		}
+		return [importer autorelease];
 	}
 }
 

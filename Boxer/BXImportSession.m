@@ -11,9 +11,12 @@
 //  logical step of the operation", the UI says "OK, now run this specific step." Bad.
 //- The import process cannot currently be done unattended as it relies on UI confirmation.
 //  This prevents it being easily scriptable.
-//- Despite being an NSDocument subclass, BXImportSession instances cannot be loaded from an existing URL:
-//  they have to go through the importFromSourcePath: mechanism.
-
+//- The life cycle of this class goes against the grain of Cocoa's document architecture:
+//  'blank' documents are created in order to show the what-do-you-want-to-import picker,
+//  and then populated after that with a file URL once the user has chosen a source.
+//  Instead, the initial source picker (which is conceptually identical to an Open File dialog)
+//  should be handled by a separate class that creates fully prepared import sessions to continue
+//  the import process.
 
 #import "BXImportSession.h"
 #import "BXSessionPrivate.h"
@@ -104,6 +107,7 @@
 					  ofType: (NSString *)typeName
 					   error: (NSError **)outError
 {
+    
 	if ((self = [super initWithContentsOfURL: absoluteURL ofType: typeName error: outError]))
 	{
         //Override the Appkit-defined file URL determination, in case our
@@ -151,19 +155,32 @@
         [self setGameProfile: [scan detectedProfile]];
         [self setInstallerPaths: [scan matchingPaths]];
         
-		if ([self gameNeedsInstalling])
+        //If the scan found installers, and doesn't otherwise think
+        //the game is already installed, then we'll ask the user to
+        //choose which installer to use.
+		if (![scan isAlreadyInstalled] && [[self installerPaths] count])
+        {
 			[self setImportStage: BXImportSessionWaitingForInstaller];
+            [NSApp requestUserAttention: NSInformationalRequest];
+        }
+        //Otherwise, we'll get on with finalizing the import directly.
 		else
-			[self setImportStage: BXImportSessionReadyToFinalize];
+        {
+			[self skipInstaller];
+        }
     }
     else
     {
         [self setSourcePath: nil];
+        [self setInstallerPaths: nil];
         [self setFileURL: nil];
 		[self setImportStage: BXImportSessionWaitingForSourcePath];
 		
+        //If there was an error that wasn't just that the operation was cancelled,
+        //display it to the user now.
         NSError *error = [scan error];
-        if (error && !([[error domain] isEqualToString: NSCocoaErrorDomain] && [error code] == NSUserCancelledError))
+        if (error && !([[error domain] isEqualToString: NSCocoaErrorDomain] &&
+                       [error code] == NSUserCancelledError))
         {
             //If we failed, then display the error as a sheet
             [self presentError: error
@@ -339,11 +356,6 @@
 {
 	return [[NSWorkspace sharedWorkspace] file: path
 								  matchesTypes: [self acceptedSourceTypes]];
-}
-
-- (BOOL) gameNeedsInstalling
-{
-	return ([[self installerPaths] count] > 0);
 }
 
 + (NSSet *) keyPathsForValuesAffectingPreferredInstallerPath
@@ -543,9 +555,12 @@
 #pragma mark Import steps
 
 //IMPLEMENTATION NOTE: this is essentially a reimplementation of initWithContentsOfURL:fileType:withError:
-//but designed to be called programmatically after the document has been created, to 'fill it in'.
+//designed to be called programmatically after the document has been created, to 'fill in the gaps'.
 //The actual work of this method is mostly done by readFromURL:ofType:error:, and this method just
 //displays any error from that method.
+//(This is going against the grain of how Cocoa documents are meant to work, and indicates that our
+//'drop what you want to import here' stage of the import process should not be managed by a blank
+//BXImportSession at all: but by a separate class that creates import sessions itself.)
 - (void) importFromSourcePath: (NSString *)path
 {
 	//Sanity checks: if these fail then there is a programming error.
@@ -601,7 +616,6 @@
 	}
 	
 	[self setSourcePath: nil];
-	[self setInstallerPaths: nil];
 	[self setFileURL: nil];
 	
 	[self setImportStage: BXImportSessionWaitingForSourcePath];
@@ -673,6 +687,8 @@
 #pragma mark -
 #pragma mark Finalizing the import
 
+
+//FIXME: this is a massive function, and a lot of its work could be split up.
 - (void) importSourceFiles
 {
 	//Sanity checks: if these fail then there is a programming error.
@@ -983,6 +999,8 @@
 	NSString *pathToClean	= [self rootDrivePath];
 	NSString *pathForDrives	= [[self gamePackage] resourcePath];
 	
+    
+    //TODO: make all this code asynchronous also.
 	BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: pathToClean];
 	[enumerator setSkipHiddenFiles: NO];
 	
@@ -1003,7 +1021,8 @@
 		//If this file is a mountable type, move it into the gamebox's root folder where we can find it
 		if (isBundleable || isGOGImage)
 		{
-			//Rename standalone .GOG images to .ISO when importing, to make everyone's lives that little bit more obvious.
+			//Rename standalone .GOG images to .ISO when importing, to make everyone's lives
+            //that little bit more obvious.
 			if (isGOGImage)
 			{
 				NSString *basePath = [path stringByDeletingPathExtension];

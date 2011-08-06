@@ -25,8 +25,26 @@
 #pragma mark -
 #pragma mark Initialization and deallocation
 
+- (void) windowDidLoad
+{
+	[[self window] setContentBorderThickness: BXImportWindowBorderThickness + 1 forEdge: NSMinYEdge];
+	
+	//Default to the dropzone panel when we initially load (this will be overridden later anyway)
+	[self setCurrentPanel: [self dropzonePanel]];
+    
+    //Observe ourselves for changes to the document or its import stage,
+    //so we can sync the active panel.
+    [self addObserver: self
+           forKeyPath: @"document.importStage"
+              options: NSKeyValueObservingOptionInitial
+              context: nil];
+}
+
 - (void) dealloc
 {
+    //Remove self-observation set up upstairs in windowDidLoad:
+    [self removeObserver: self forKeyPath: @"document.importStage"];
+    
 	[self setDropzonePanel: nil],	[dropzonePanel release];
 	[self setLoadingPanel: nil],	[loadingPanel release];
 	[self setInstallerPanel: nil],	[installerPanel release];
@@ -34,18 +52,6 @@
 	[self setFinishedPanel: nil],	[finishedPanel release];
 	
 	[super dealloc];
-}
-
-- (void) setDocument: (NSDocument *)document
-{
-	[[self document] removeObserver: self forKeyPath: @"importStage"];
-	
-	[super setDocument: document];
-	
-	[[self document] addObserver: self
-					  forKeyPath: @"importStage"
-						 options: 0
-						 context: nil];
 }
 
 - (BOOL) windowShouldClose: (id)sender
@@ -57,51 +63,46 @@
 	return ![[self window] firstResponder] || [[self window] makeFirstResponder: nil];
 }
 
-- (void) windowDidLoad
-{
-	[[self window] setContentBorderThickness: BXImportWindowBorderThickness + 1 forEdge: NSMinYEdge];
-	
-	//Default to the dropzone panel when we initially load (this will be overridden later anyway)
-	[self setCurrentPanel: [self dropzonePanel]];
-}
-
 - (void) observeValueForKeyPath: (NSString *)keyPath
 					   ofObject: (id)object
 						 change: (NSDictionary *)change
 						context: (void *)context
 {
 	//Show the appropriate panel based on the current stage of the import process
-	if ([self isWindowLoaded] && 
-		[object isEqual: [self document]] && 
-		[keyPath isEqualToString: @"importStage"])
+	if ([keyPath isEqualToString: @"document.importStage"])
 	{
-		switch ([[self document] importStage])
-		{
-			case BXImportSessionWaitingForSourcePath:
-				[self setCurrentPanel: [self dropzonePanel]];
-				break;
-				
-			case BXImportSessionLoadingSourcePath:
-				[self setCurrentPanel: [self loadingPanel]];
-				break;
-				
-			case BXImportSessionWaitingForInstaller:
-			case BXImportSessionReadyToLaunchInstaller:
-			case BXImportSessionRunningInstaller:
-				[self setCurrentPanel: [self installerPanel]];
-				break;
-				
-			case BXImportSessionReadyToFinalize:
-			case BXImportSessionImportingSourceFiles:
-			case BXImportSessionCleaningGamebox:
-				[self setCurrentPanel: [self finalizingPanel]];
-				break;
-				
-			case BXImportSessionFinished:
-				[self setCurrentPanel: [self finishedPanel]];
-				break;
-		}
+        [self syncActivePanel];
 	}
+}
+
+- (void) syncActivePanel
+{
+    switch ([[self document] importStage])
+    {
+        case BXImportSessionWaitingForSourcePath:
+            [self setCurrentPanel: [self dropzonePanel]];
+            break;
+            
+        case BXImportSessionLoadingSourcePath:
+            [self setCurrentPanel: [self loadingPanel]];
+            break;
+            
+        case BXImportSessionWaitingForInstaller:
+        case BXImportSessionReadyToLaunchInstaller:
+        case BXImportSessionRunningInstaller:
+            [self setCurrentPanel: [self installerPanel]];
+            break;
+            
+        case BXImportSessionReadyToFinalize:
+        case BXImportSessionImportingSourceFiles:
+        case BXImportSessionCleaningGamebox:
+            [self setCurrentPanel: [self finalizingPanel]];
+            break;
+            
+        case BXImportSessionFinished:
+            [self setCurrentPanel: [self finishedPanel]];
+            break;
+    }
 }
 
 - (NSString *) windowTitleForDocumentDisplayName: (NSString *)displayName

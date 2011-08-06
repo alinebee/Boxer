@@ -119,8 +119,8 @@
 {
     if ([self succeeded])
     {
-        //Additional failure logic: if we didn't find any executables, then this isn't
-        //a game we can import and we should treat this as a failure.
+        //If we didn't find any executables, then this isn't a game
+        //we can import and we should treat this as a failure.
         if ([[self DOSExecutables] count] == 0)
         {
             NSError *noDOSGameError;
@@ -139,10 +139,9 @@
             [self setError: noDOSGameError];
         }
         
-        //Otherwise, if the game doesn't look like it's already installed,
-        //then determine a preferred installer from among those discovered
-        //in the scan.
-        else if (![self isAlreadyInstalled])
+        //Otherwise, determine a preferred installer from among those
+        //discovered in the scan.
+        else
         {
             NSString *preferredInstallerPath = nil;
             
@@ -166,7 +165,7 @@
             //then pick one from the set of discovered installers
             if (!preferredInstallerPath)
             {
-                preferredInstallerPath = [[self class] preferredInstallerFromPaths: matchingPaths];
+                preferredInstallerPath = [BXImportSession preferredInstallerFromPaths: matchingPaths];
             }
             
             [self willChangeValueForKey: @"matchingPaths"];

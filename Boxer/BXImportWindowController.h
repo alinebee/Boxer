@@ -55,4 +55,8 @@
 //Return control to us from the specified window controller. 
 - (void) pickUpFromController: (NSWindowController *)controller;
 
+//Ensure the appropriate panel is displayed in the import window.
+//This is called automatically whenever the import session's stage changes.
+- (void) syncActivePanel;
+
 @end

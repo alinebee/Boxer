@@ -280,18 +280,13 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
                 
                 if (identifier && profileVersion)
                 {
-                    //Check if the version number under which the detected profile was saved is older
-                    //than the current Boxer version. If it is, then we'll redetect rather than use
-                    //a profile detected under a previous version.
-                    BOOL profileOutdated = [profileVersion compare: [BXAppController buildNumber]
+                    //Check if the profile catalogue version under which the detected profile was saved
+                    //is older than the current catalogue version. If it is, then we'll redetect rather
+                    //than use a profile detected from a previous version.
+                    BOOL profileOutdated = [profileVersion compare: [BXGameProfile catalogueVersion]
                                                            options: NSNumericSearch] == NSOrderedAscending;
                     
-#if BOXER_DEBUG
-                    //Disable saved profiles when in Debug mode,
-                    //forcing the profile to always be detected
-                    NSLog(@"Overridding profile %@, saved under %@ (was outdated: %i)", identifier, profileVersion, profileOutdated);
-                    profileOutdated = YES;
-#endif
+                    NSLog(@"Previously detected profile: %@, was outdated: %i", identifier, profileOutdated);
                     
                     if (!profileOutdated)
                     {
@@ -317,12 +312,11 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
             NSString *identifier = [gameProfile identifier];
             if (identifier)
             {
-                NSLog(@"Setting game profile as: %@", identifier);
                 [gameSettings setObject: identifier forKey: BXGameboxSettingsProfileKey];
                 
-                //Also store the Boxer version under which the game profile was decided,
-                //so that we can invalidate outdated detections.
-                [gameSettings setObject: [BXAppController buildNumber] forKey: BXGameboxSettingsProfileVersionKey];
+                //Also store the catalogue version under which the game profile was decided,
+                //so that we can invalidate old detections whenever the catalogue is updated.
+                [gameSettings setObject: [BXGameProfile catalogueVersion] forKey: BXGameboxSettingsProfileVersionKey];
             }
         }
     }

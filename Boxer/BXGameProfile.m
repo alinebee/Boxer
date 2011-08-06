@@ -76,7 +76,7 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 	return BX35DisketteEra;
 }
 
-
++ (NSString *) catalogueVersion     { return [[self _gameProfileData] objectForKey: @"BXGameProfileCatalogueVersion"]; }
 + (NSArray *) genericProfiles		{ return [[self _gameProfileData] objectForKey: @"BXGenericProfiles"]; }
 + (NSArray *) specificGameProfiles	{ return [[self _gameProfileData] objectForKey: @"BXSpecificGameProfiles"]; }
 

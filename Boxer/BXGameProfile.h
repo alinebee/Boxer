@@ -88,6 +88,11 @@ extern NSString * const BXUnknownProfileIdentifier;
 #pragma mark -
 #pragma mark Helper class methods
 
+//The version of the current profile detection catalogue.
+//This is used for invalidating profiles that were detected and saved under
+//previous versions of Boxer (and which may have since been superseded.)
++ (NSString *) catalogueVersion;
+
 //Returns an array of generic profiles that match multiple games.
 //This corresponds the contents of the BXGenericProfiles key in GameProfiles.plist.
 + (NSArray *) genericProfiles;

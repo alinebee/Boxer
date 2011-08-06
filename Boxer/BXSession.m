@@ -289,7 +289,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 #if BOXER_DEBUG
                     //Disable saved profiles when in Debug mode,
                     //forcing the profile to always be detected
-                    NSLog(@"Overridding profile %@, saved under %@", identifier, profileVersion);
+                    NSLog(@"Overridding profile %@, saved under %@ (was outdated: %i)", identifier, profileVersion, profileOutdated);
                     profileOutdated = YES;
 #endif
                     

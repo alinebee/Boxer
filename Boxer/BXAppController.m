@@ -168,7 +168,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 + (NSString *) localizedVersion
 {
-    return [[[NSBundle mainBundle] localizedInfoDictionary] objectForKey: @"CFBundleShortVersionString"];
+    return [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleShortVersionString"];
 }
 
 + (NSString *) buildNumber
@@ -813,27 +813,27 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 - (void) showHelpAnchor: (NSString *)anchor
 {
-	NSString *bookID = [[[NSBundle mainBundle] localizedInfoDictionary] objectForKey: @"CFBundleHelpBookName"];
+	NSString *bookID = [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleHelpBookName"];
 	[[NSHelpManager sharedHelpManager] openHelpAnchor: anchor inBook: bookID];
 }
 
 - (void) openURLFromKey: (NSString *)infoKey
 {
-	NSString *URLString = [[[NSBundle mainBundle] localizedInfoDictionary] objectForKey: infoKey];
+	NSString *URLString = [[NSBundle mainBundle] objectForInfoDictionaryKey: infoKey];
 	if ([URLString length]) [[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString: URLString]];
 }
 
 - (void) searchURLFromKey: (NSString *)infoKey withSearchString: (NSString *)search
 {
 	NSString *encodedSearch = [search stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
-	NSString *siteString	= [[[NSBundle mainBundle] localizedInfoDictionary] objectForKey: infoKey];
+	NSString *siteString	= [[NSBundle mainBundle] objectForInfoDictionaryKey: infoKey];
 	NSString *URLString		= [NSString stringWithFormat: siteString, encodedSearch, nil];
 	if ([URLString length]) [[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString: URLString]];
 }
 
 - (void) sendEmailFromKey: (NSString *)infoKey withSubject:(NSString *)subject
 {
-	NSString *address = [[[NSBundle mainBundle] localizedInfoDictionary] objectForKey: infoKey];
+	NSString *address = [[NSBundle mainBundle] objectForInfoDictionaryKey: infoKey];
 	if ([address length])
 	{
 		NSString *encodedSubject	= [subject stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding];

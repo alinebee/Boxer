@@ -12,11 +12,20 @@
 
 
 @implementation BXImageAwareFileScan
-@synthesize mountedPath;
+@synthesize mountedVolumePath, ejectAfterScanning;
+
+- (id) init
+{
+    if ((self = [super init]))
+    {
+        [self setEjectAfterScanning: BXFileScanAutoEject];
+    }
+    return self;
+}
 
 - (void) dealloc
 {
-    [self setMountedPath: nil], [mountedPath release];
+    [self setMountedVolumePath: nil], [mountedVolumePath release];
     
     [super dealloc];
 }
@@ -24,15 +33,15 @@
 //If we have a mounted volume path for an image, enumerate that instead of the original base path
 - (id <BXFilesystemEnumeration>) enumerator
 {
-    if ([self mountedPath])
-        return (id <BXFilesystemEnumeration>)[manager enumeratorAtPath: [self mountedPath]];
+    if ([self mountedVolumePath])
+        return (id <BXFilesystemEnumeration>)[manager enumeratorAtPath: [self mountedVolumePath]];
     else return [super enumerator];
 }
 
-- (void) main
+- (void) willStart
 {
     NSString *volumePath = nil;
-    BOOL didMountVolume = NO;
+    didMountVolume = NO;
     
     //If the target path is on a disk image, then mount the image for scanning
     if ([workspace file: [self basePath] matchesTypes: [NSSet setWithObject: @"public.disk-image"]])
@@ -59,17 +68,24 @@
             else didMountVolume = YES;
         }
         
-        [self setMountedPath: volumePath];
-    }
-    
-    //Perform the rest of the scan as usual
-    [super main];
-    
-    //If we mounted a volume ourselves in order to scan it, unmount it once we're done
-    if (didMountVolume)
+        [self setMountedVolumePath: volumePath];
+    }    
+}
+
+- (void) didFinish
+{
+    //If we mounted a volume ourselves in order to scan it,
+    //or we've been told to always eject, then unmount the volume
+    //once we're done
+    if ([self mountedVolumePath])
     {
-        [workspace unmountAndEjectDeviceAtPath: [self mountedPath]];
-    }
+        if (([self ejectAfterScanning] == BXFileScanAlwaysEject) ||
+            (didMountVolume && [self ejectAfterScanning] == BXFileScanAutoEject))
+        {
+            [workspace unmountAndEjectDeviceAtPath: [self mountedVolumePath]];
+            [self setMountedVolumePath: nil];
+        }
+    }    
 }
 
 @end

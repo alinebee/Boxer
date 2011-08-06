@@ -13,13 +13,28 @@
 #import "BXFileScan.h"
 
 
+enum {
+    BXFileScanAutoEject = -1,
+    BXFileScanNeverEject = 0,
+    BXFileScanAlwaysEject = 1
+};
+typedef NSInteger BXFileScanEjectionBehaviour;
+
+    
 @interface BXImageAwareFileScan : BXFileScan
 {
-    NSString *mountedPath;
+    NSString *mountedVolumePath;
+    BXFileScanEjectionBehaviour ejectAfterScanning;
+    BOOL didMountVolume;
 }
 
-//The path at which the original source disk image is mounted.
+//The volume path at which the original source disk image is mounted.
 //Only valid while scanning a disk image.
-@property (copy, nonatomic) NSString *mountedPath;
+@property (copy, nonatomic) NSString *mountedVolumePath;
+
+//Whether to automatically unmount any mounted path after the scan is complete.
+//By default. this will only unmount if the scan itself was responsible for mounting
+//the path.
+@property (assign, nonatomic) BXFileScanEjectionBehaviour ejectAfterScanning;
 
 @end

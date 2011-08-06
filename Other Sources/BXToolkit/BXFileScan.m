@@ -131,7 +131,7 @@ NSString * const BXFileScanLastMatchKey = @"BXFileScanLastMatch";
 - (BOOL) canStart
 {
     //If no base path has been set, we cannot begin
-    return ([self basePath] != nil);
+    return [super canStart] && ([self basePath] != nil);
 }
 
 - (id <BXFilesystemEnumeration>) enumerator
@@ -141,29 +141,33 @@ NSString * const BXFileScanLastMatchKey = @"BXFileScanLastMatch";
 
 - (void) main
 {
-    //Empty the matches before we begin
-    [matchingPaths removeAllObjects];    
-    
-    id <BXFilesystemEnumeration> enumerator = [self enumerator];
-    
-    for (NSString *relativePath in enumerator)
+    //In case we were cancelled upstairs in willStart
+    if (![self isCancelled])
     {
-        if ([self isCancelled]) break;
+        //Empty the matches before we begin
+        [matchingPaths removeAllObjects];
         
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        id <BXFilesystemEnumeration> enumerator = [self enumerator];
         
-        NSString *fileType = [[enumerator fileAttributes] fileType];
-        if ([fileType isEqualToString: NSFileTypeDirectory])
+        for (NSString *relativePath in enumerator)
         {
-            if (![self shouldScanSubpath: relativePath])
-                [enumerator skipDescendents];
+            if ([self isCancelled]) break;
+            
+            NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+            
+            NSString *fileType = [[enumerator fileAttributes] fileType];
+            if ([fileType isEqualToString: NSFileTypeDirectory])
+            {
+                if (![self shouldScanSubpath: relativePath])
+                    [enumerator skipDescendents];
+            }
+            
+            BOOL keepScanning = [self matchAgainstPath: relativePath];
+            
+            [pool drain];
+            
+            if ([self isCancelled] || !keepScanning) break;
         }
-        
-        BOOL keepScanning = [self matchAgainstPath: relativePath];
-        
-        [pool drain];
-        
-        if ([self isCancelled] || !keepScanning) break;
     }
     
     [self setSucceeded: ![self error]];

@@ -43,6 +43,8 @@
 #import "NSWorkspace+BXExecutableTypes.h"
 #import "NSString+BXPaths.h"
 
+#import "BXInstallerScan.h"
+
 #import "BXPathEnumerator.h"
 
 
@@ -52,7 +54,6 @@
 @interface BXImportSession ()
 @property (readwrite, retain, nonatomic) NSArray *installerPaths;
 @property (readwrite, copy, nonatomic) NSString *sourcePath;
-@property (readwrite, copy, nonatomic) NSString *preferredInstallerPath;
 
 @property (readwrite, assign, nonatomic) BXImportStage importStage;
 @property (readwrite, assign, nonatomic) BXOperationProgress stageProgress;
@@ -80,7 +81,7 @@
 @implementation BXImportSession
 @synthesize importWindowController;
 @synthesize sourcePath, rootDrivePath;
-@synthesize installerPaths, preferredInstallerPath;
+@synthesize installerPaths;
 @synthesize importStage, stageProgress, stageProgressIndeterminate;
 @synthesize sourceFileImportOperation, sourceFileImportType, sourceFileImportRequired;
 
@@ -94,7 +95,6 @@
 	[self setSourcePath: nil],				[sourcePath release];
 	[self setRootDrivePath: nil],			[rootDrivePath release];
 	[self setInstallerPaths: nil],			[installerPaths release];
-	[self setPreferredInstallerPath: nil],	[preferredInstallerPath release];
 	
 	[self setSourceFileImportOperation: nil], [sourceFileImportOperation release];
 	[super dealloc];
@@ -106,18 +106,14 @@
 {
 	if ((self = [super initWithContentsOfURL: absoluteURL ofType: typeName error: outError]))
 	{
-        //Override the Appkit-defined file URL determination
+        //Override the Appkit-defined file URL determination, in case our
+        //source path differs from the provided URL.
 		[self setFileURL: [NSURL fileURLWithPath: [self sourcePath]]];
-		
-		if ([self gameNeedsInstalling])
-			[self setImportStage: BXImportSessionWaitingForInstaller];
-		else
-			[self setImportStage: BXImportSessionReadyToFinalize];
 	}
 	return self;
 }
 
-//Reads in a source path and determines how best to install it
+
 - (BOOL) readFromURL: (NSURL *)absoluteURL
 			  ofType: (NSString *)typeName
 			   error: (NSError **)outError
@@ -132,133 +128,51 @@
 	//(in which case the error will have been populated)
 	if (!filePath) return NO;
 	
-	//Now, autodetect the game from the source path
-	BXGameProfile *detectedProfile = [BXGameProfile detectedProfileForPath: filePath searchSubfolders: YES];
-	
-	//Now, scan the source path for installers and installed-game telltales
-	NSMutableArray *installers = [NSMutableArray arrayWithCapacity: 10];
-	NSString *preferredInstaller = nil;
-	
-	NSUInteger numExecutables = 0;
-	NSUInteger numWindowsExecutables = 0;
-	BOOL isAlreadyInstalledGame = NO;
-	
-	NSSet *executableTypes = [BXAppController executableTypes];
-	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	
-	BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: filePath];
-	
-	//TODO: move this installer detection work off to an NSOperation,
-	//so that we don't block the UI while scanning
-	for (NSString *path in enumerator)
-	{
-		BOOL isWindowsExecutable = NO;
+    [self setSourcePath: filePath];
+    [self setImportStage: BXImportSessionLoadingSourcePath];
+                          
+    //Create an installer scan operation to perform the actual 'loading' of the URL
+    //(scanning it for installer executables, game profile etc.)
+    //The didFinish callback will continue the actual import process from this point.
+    BXInstallerScan *scan = [BXInstallerScan scanWithBasePath: filePath];
+    [scan setDelegate: self];
+    [scan setDidFinishSelector: @selector(installerScanDidFinish:)];
+    [scanQueue addOperation: scan];
 		
-		//Grab the relative path to use for heuristic filename-pattern checks,
-		//so that the base path doesn't get involved in the heuristic.
-		NSString *relativePath = [enumerator relativePath];
-	
-		//Skip the file altogether if we know it's irrelevant (see [BXImportPolicies +ignoredFilePatterns])
-		if ([[self class] isIgnoredFileAtPath: relativePath]) continue;
+    return YES;
+}
+
+- (void) installerScanDidFinish: (NSNotification *)notification
+{
+    BXInstallerScan *scan = [notification object];
+    
+    if ([scan succeeded])
+    {
+        [self setGameProfile: [scan detectedProfile]];
+        [self setInstallerPaths: [scan matchingPaths]];
+        
+		if ([self gameNeedsInstalling])
+			[self setImportStage: BXImportSessionWaitingForInstaller];
+		else
+			[self setImportStage: BXImportSessionReadyToFinalize];
+    }
+    else
+    {
+        [self setSourcePath: nil];
+        [self setFileURL: nil];
+		[self setImportStage: BXImportSessionWaitingForSourcePath];
 		
-		//If we find an indication that this is an already-installed game, then we won't bother using any installers.
-		//However, we'll still keep looking for executables: but only so that we can make sure the user really is
-		//importing a proper DOS game and not a Windows-only game.
-		if ([[self class] isPlayableGameTelltaleAtPath: relativePath])
-		{
-			[installers removeAllObjects];
-			preferredInstaller = nil;
-			isAlreadyInstalledGame = YES;
-		}
-		
-		if ([workspace file: path matchesTypes: executableTypes])
-		{
-			numExecutables++;
-			
-			//Exclude windows-only programs, but note how many we've found
-			if (![workspace isCompatibleExecutableAtPath: path])
-			{
-				isWindowsExecutable = YES;
-				numWindowsExecutables++;
-			}
-			
-			//As described above, only bother recording installers if the game isn't already installed
-			//Also ignore non-DOS executables, even if they look like installers
-			if (!isWindowsExecutable && !isAlreadyInstalledGame)
-			{
-				//If this was the designated installer for this game profile, add it to the installer list
-				if (!preferredInstaller && [detectedProfile isDesignatedInstallerAtPath: relativePath])
-				{
-					[installers addObject: path];
-					preferredInstaller = path;
-				}
-				
-				//Otherwise if it looks like an installer to us, add it to the installer list
-				else if ([[self class] isInstallerAtPath: relativePath])
-				{
-					[installers addObject: path];
-				}
-			}
-		}
-	}
-	
-	BOOL succeeded = YES;
-	
-	if (!numExecutables)
-	{
-		//If no executables at all were found, this indicates that the folder was empty
-		//or contains something other than a DOS game; bail out with an appropriate error.
-		
-		succeeded = NO;
-		if (outError) *outError = [BXImportNoExecutablesError errorWithSourcePath: filePath userInfo: nil];
-		
-	}
-	
-	else if (numWindowsExecutables == numExecutables)
-	{
-		succeeded = NO;
-		if (outError) *outError = [BXImportWindowsOnlyError errorWithSourcePath: filePath userInfo: nil];
-	}
-	
-	if (succeeded)
-	{
-		if ([installers count])
-		{
-			//Sort the installers by depth to present them and to determine a preferred one
-			[installers sortUsingSelector: @selector(pathDepthCompare:)];
-			
-			//If we didn't already find the game profile's own preferred installer,
-			//detect one from the list now
-			if (!preferredInstaller)
-			{
-				preferredInstaller = [[self class] preferredInstallerFromPaths: installers];
-			}
-		}
-		//Otherwise, the source path contains DOS executables but no installers,
-		//and we'll import it directly.
-		
-		
-		//If we got this far, then there were no errors and we have a fair idea what to do with this game
-		[self setSourcePath: filePath];
-		[self setGameProfile: detectedProfile];
-		
-		//FIXME: we have to set the preferred installer first because BXImportWindowController is listening
-		//for when we set the installer paths, and relies on knowing the preferred installer in advance.
-		[self setPreferredInstallerPath: preferredInstaller];
-		[self setInstallerPaths: installers];		
-		
-		return YES;
-	}
-	else
-	{
-		//Eject any volume we mounted before we go
-		if (didMountSourceVolume)
-		{
-			[workspace unmountAndEjectDeviceAtPath: filePath];
-			didMountSourceVolume = NO;
-		}
-		return NO;
-	}
+        NSError *error = [scan error];
+        if (error && !([[error domain] isEqualToString: NSCocoaErrorDomain] && [error code] == NSUserCancelledError))
+        {
+            //If we failed, then display the error as a sheet
+            [self presentError: error
+                modalForWindow: [self windowForSheet]
+                      delegate: nil
+            didPresentSelector: NULL
+                   contextInfo: NULL];
+        }
+    }
 }
 
 
@@ -290,7 +204,6 @@
 	[self setImportWindowController: importController];
 	
 	[importController setShouldCloseDocument: YES];
-
 	[importController release];
 }
 
@@ -354,7 +267,7 @@
 		[alert beginSheetModalForWindow: [self windowForSheet]
 						  modalDelegate: self
 						 didEndSelector: @selector(_closeAlertDidEnd:returnCode:contextInfo:)
-							contextInfo: [callback retain]];		 
+							contextInfo: [callback retain]];
 	}
 	else
 	{
@@ -433,6 +346,17 @@
 	return ([[self installerPaths] count] > 0);
 }
 
++ (NSSet *) keyPathsForValuesAffectingPreferredInstallerPath
+{
+    return [NSSet setWithObject: @"installerPaths"];
+}
+
+- (NSString *) preferredInstallerPath
+{
+    if ([[self installerPaths] count])
+        return [[self installerPaths] objectAtIndex: 0];
+    else return nil;
+}
 
 - (BOOL) isRunningInstaller
 {
@@ -618,6 +542,10 @@
 #pragma mark -
 #pragma mark Import steps
 
+//IMPLEMENTATION NOTE: this is essentially a reimplementation of initWithContentsOfURL:fileType:withError:
+//but designed to be called programmatically after the document has been created, to 'fill it in'.
+//The actual work of this method is mostly done by readFromURL:ofType:error:, and this method just
+//displays any error from that method.
 - (void) importFromSourcePath: (NSString *)path
 {
 	//Sanity checks: if these fail then there is a programming error.
@@ -627,29 +555,13 @@
 	NSURL *sourceURL = [NSURL fileURLWithPath: [path stringByStandardizingPath]];
 	
 	NSError *readError = nil;
-
-	[self setFileURL: sourceURL];
-
-	[self setImportStage: BXImportSessionLoadingSourcePath];
-	
 	BOOL readSucceeded = [self readFromURL: sourceURL
 									ofType: nil
 									 error: &readError];
-	
+    
 	if (readSucceeded)
 	{
 		[self setFileURL: [NSURL fileURLWithPath: [self sourcePath]]];
-		
-		if ([self gameNeedsInstalling])
-		{
-			//Bounce to notify the user that we need their input
-			[NSApp requestUserAttention: NSInformationalRequest];
-			[self setImportStage: BXImportSessionWaitingForInstaller];
-		}
-		else
-		{
-			[self skipInstaller];
-		}
 	}
 	else if (readError)
 	{
@@ -665,11 +577,22 @@
 	}
 }
 
+- (void) cancelInstallerScan
+{
+	//Sanity checks: if these fail then there is a programming error.
+	NSAssert([self importStage] <= BXImportSessionLoadingSourcePath, @"Cannot call cancelInstallerScan after scan is finished.");
+    
+    [scanQueue cancelAllOperations];
+    
+    //Our installerScanDidFinish: callback will take care of resetting
+    //the import state back to how it should be.
+}
+
 - (void) cancelSourcePath
 {
 	//Sanity checks: if these fail then there is a programming error.
 	NSAssert([self importStage] <= BXImportSessionWaitingForInstaller, @"Cannot call cancelSourcePath after game import has already started.");
-
+    
 	if (didMountSourceVolume)
 	{
 		NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
@@ -679,7 +602,6 @@
 	
 	[self setSourcePath: nil];
 	[self setInstallerPaths: nil];
-	[self setPreferredInstallerPath: nil];
 	[self setFileURL: nil];
 	
 	[self setImportStage: BXImportSessionWaitingForSourcePath];
@@ -705,6 +627,7 @@
 	
 	//Set the installer as the target executable for this session
 	[self setTargetPath: path];
+    //Aaaand start emulating!
 	[self start];
 }
 
@@ -724,7 +647,7 @@
 	//we don't want to appear.
 	showDriveNotifications = NO;
 	
-	//Stop the installer process
+	//Stop the emulation process
 	[self cancel];
 	
 	//Close the program panel before handoff, otherwise it scales weirdly

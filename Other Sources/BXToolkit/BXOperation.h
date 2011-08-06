@@ -131,8 +131,18 @@ extern NSString * const BXOperationIndeterminateKey;
 @interface BXOperation ()
 
 //Returns whether the operation has enough information to begin.
-//Returns YES; can be overridden by subclasses to restrict starting conditions.
+//Base implementation just returns YES; can be overridden by subclasses
+//to restrict starting conditions.
 - (BOOL) canStart;
+
+//Called just before main and after OperationWillStartNotifications have been sent.
+//Base implementation does nothing; intended to be overridden by subclasses.
+- (void) willStart;
+
+//Called just after main has exited and before OperationDidFinishNotifications
+//have been sent.
+//Base implementation does nothing; intended to be overridden by subclasses.
+- (void) didFinish;
 
 //Post one of the corresponding notifications.
 - (void) _sendWillStartNotificationWithInfo: (NSDictionary *)info;

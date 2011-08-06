@@ -54,15 +54,21 @@ NSString * const BXOperationIndeterminateKey	= @"BXOperationIndeterminateKey";
 
 - (BOOL) canStart
 {
-    return YES;
+    //Don’t bother starting if we were already cancelled
+    return ![self isCancelled];
 }
+
+- (void) willStart {}
+- (void) didFinish {}
 
 - (void) start
 {
     if ([self canStart])
     {
         [self _sendWillStartNotificationWithInfo: nil];
+        [self willStart];
         [super start];
+        [self didFinish];
         [self _sendDidFinishNotificationWithInfo: nil];
     }
 }

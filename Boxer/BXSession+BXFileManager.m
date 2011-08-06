@@ -630,7 +630,7 @@
     //and it's not a user-mounted drive.
     for (BXExecutableScan *scan in [scanQueue operations])
     {
-        if ([[scan mountedPath] isEqualToString: volumePath]) return;
+        if ([[scan mountedVolumePath] isEqualToString: volumePath]) return;
     }
     
 	//Only mount volumes that are of an appropriate type

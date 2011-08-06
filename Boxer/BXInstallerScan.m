@@ -11,10 +11,11 @@
 #import "NSWorkspace+BXFileTypes.h"
 #import "NSWorkspace+BXExecutableTypes.h"
 #import "BXAppController.h"
+#import "BXImportError.h"
 
 
 @implementation BXInstallerScan
-@synthesize windowsExecutables, DOSExecutables, isAlreadyInstalled;
+@synthesize windowsExecutables, DOSExecutables, isAlreadyInstalled, detectedProfile;
 
 - (id) init
 {
@@ -30,6 +31,7 @@
 {
     [windowsExecutables release], windowsExecutables = nil;
     [DOSExecutables release], DOSExecutables = nil;
+    [self setDetectedProfile: nil], [detectedProfile release];
     
     [super dealloc];
 }
@@ -83,6 +85,111 @@
 - (void) addDOSExecutable: (NSString *)relativePath
 {
     [[self mutableArrayValueForKey: @"DOSExecutables"] addObject: relativePath];
+}
+
+//Overridden to scan the folder structure to determine a game profile before
+//we start scanning for actual installers.
+//Implementation note: 
+- (void) willStart
+{
+    //Allow the superclass to mount any volume we need for scanning
+    [super willStart];
+    
+    if (![self detectedProfile])
+    {
+        //If we are scanning a mounted image, scan the mounted volume path for the game profile
+        //instead of the base image path. 
+        NSString *profileScanPath = ([self mountedVolumePath]) ? [self mountedVolumePath] : [self basePath];
+        
+        //IMPLEMENTATION NOTE: detectedProfileForPath:searchSubfolders: trawls the same
+        //directory structure as our own installer scan, so it would be more efficient
+        //to do profile detection in the same loop as installer detection.
+        //However, profile detection relies on iterating the same file structure multiple
+        //times in order to scan for different profile 'priorities' so this isn't an option.
+        //Also, it appears OS X's directory enumerator caches the result of a directory
+        //scan so that subsequent reiterations do not do disk I/O.
+        BXGameProfile *profile = [BXGameProfile detectedProfileForPath: profileScanPath
+                                                  searchSubfolders: YES];
+    
+        [self setDetectedProfile: profile];
+    }
+}
+
+- (void) didFinish
+{
+    if ([self succeeded])
+    {
+        //Additional failure logic: if we didn't find any executables, then this isn't
+        //a game we can import and we should treat this as a failure.
+        if ([[self DOSExecutables] count] == 0)
+        {
+            NSError *noDOSGameError;
+            
+            //If there were windows executables present, this is probably a Windows-only game
+            if ([[self windowsExecutables] count] > 0)
+            {
+                noDOSGameError = [BXImportWindowsOnlyError errorWithSourcePath: [self basePath] userInfo: nil];
+            }    
+            //Otherwise, the folder may be empty or contains something other than a DOS game
+            //TODO: additional logic to detect Classic Mac games.
+            else
+            {
+                noDOSGameError = [BXImportNoExecutablesError errorWithSourcePath: [self basePath] userInfo: nil];
+            }
+            [self setError: noDOSGameError];
+        }
+        
+        //Otherwise, if the game doesn't look like it's already installed,
+        //then determine a preferred installer from among those discovered
+        //in the scan.
+        else if (![self isAlreadyInstalled])
+        {
+            NSString *preferredInstallerPath = nil;
+            
+            if ([self detectedProfile])
+            {
+                //Check through all the DOS executables in order of path depth, to see
+                //if any of them match the game profile's idea of a preferred installer:
+                //if so, we'll add it to the list of installers (if it's not already there)
+                //and use it as the preferred one.
+                for (NSString *relativePath in [DOSExecutables sortedArrayUsingSelector: @selector(pathDepthCompare:)])
+                {
+                    if ([[self detectedProfile] isDesignatedInstallerAtPath: relativePath])
+                    {
+                        preferredInstallerPath = relativePath;
+                        break;
+                    }
+                }
+            }
+            
+            //If the game profile didn't suggest a preferred installer,
+            //then pick one from the set of discovered installers
+            if (!preferredInstallerPath)
+            {
+                preferredInstallerPath = [[self class] preferredInstallerFromPaths: matchingPaths];
+            }
+            
+            [self willChangeValueForKey: @"matchingPaths"];
+            
+            //Sort the installers we found by depth, to prioritise the ones in the root directory.
+            [matchingPaths sortUsingSelector: @selector(pathDepthCompare:)];
+            
+            //Bump the preferred installer up to the first entry in the list of installers.
+            if (preferredInstallerPath)
+            {
+                [matchingPaths removeObject: preferredInstallerPath];
+                [matchingPaths insertObject: preferredInstallerPath atIndex: 0];
+            }
+            
+            [self didChangeValueForKey: @"matchingPaths"];
+        }
+        
+        [self setSucceeded: ![self error]];
+    }
+    
+    //Let our superclass unmount any volumes that were mounted in the course of the scan,
+    //now that we no longer need access to the filesystem.
+    [super didFinish];
 }
 
 @end

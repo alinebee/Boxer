@@ -19,11 +19,17 @@
     NSMutableArray *windowsExecutables;
     NSMutableArray *DOSExecutables;
     BOOL isAlreadyInstalled;
+    
+    BXGameProfile *detectedProfile;
 } 
 
 //The relative paths of all DOS and Windows executables discovered during scanning.
 @property (readonly, nonatomic) NSArray *windowsExecutables;
 @property (readonly, nonatomic) NSArray *DOSExecutables;
+
+//The profile of the game at the base path, used for discovery of additional installers.
+//If left unspecified, this will be autodetected during scanning.
+@property (retain, nonatomic) BXGameProfile *detectedProfile;
 
 //Whether the game at the base path appears to be already installed.
 @property (readonly, nonatomic) BOOL isAlreadyInstalled;

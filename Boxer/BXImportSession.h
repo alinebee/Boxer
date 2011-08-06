@@ -58,7 +58,6 @@ typedef NSUInteger BXSourceFileImportType;
 	NSString *sourcePath;
 	BXImportWindowController *importWindowController;
 	NSArray *installerPaths;
-	NSString *preferredInstallerPath;
 	
 	NSString *rootDrivePath;
 	
@@ -88,8 +87,8 @@ typedef NSUInteger BXSourceFileImportType;
 //The range of possible DOS installers to choose from.
 @property (readonly, retain, nonatomic) NSArray *installerPaths;
 
-//The path of the installer we recommend. Autodetected whenever installerPaths is set.
-@property (readonly, copy, nonatomic) NSString *preferredInstallerPath;
+//The path of the installer we will choose as the default from among installerPaths.
+@property (readonly, nonatomic) NSString *preferredInstallerPath;
 
 //The display filename of the gamebox, minus extension.
 //Changing this will rename the gamebox file itself.
@@ -154,6 +153,9 @@ typedef NSUInteger BXSourceFileImportType;
 //and continues to the next step of importing.
 - (void) importFromSourcePath: (NSString *)path;
 
+//Cancels an in-progress installer scan started from importFromSourcePath:.
+- (void) cancelInstallerScan;
+
 //Cancels a previously-specified source path and returns to the source path choice step.
 - (void) cancelSourcePath;
 
@@ -182,5 +184,8 @@ typedef NSUInteger BXSourceFileImportType;
 //Custom progress callbacks for sourceFileImportOperation.
 - (void) sourceFileImportInProgress: (NSNotification *)notification;
 - (void) sourceFileImportDidFinish: (NSNotification *)notification;
+
+//Custom progress callbacks for our installer scanner.
+- (void) installerScanDidFinish: (NSNotification *)notification;
 
 @end

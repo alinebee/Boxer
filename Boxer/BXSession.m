@@ -30,8 +30,11 @@
 
 //How we will store our gamebox-specific settings in user defaults.
 //%@ is the unique identifier for the gamebox.
-NSString * const BXGameboxSettingsKeyFormat	= @"BXGameSettings: %@";
-NSString * const BXGameboxSettingsNameKey	= @"BXGameName";
+NSString * const BXGameboxSettingsKeyFormat     = @"BXGameSettings: %@";
+NSString * const BXGameboxSettingsNameKey       = @"BXGameName";
+NSString * const BXGameboxSettingsProfileKey    = @"BXGameProfile";
+NSString * const BXGameboxSettingsProfileVersionKey = @"BXGameProfileVersion";
+
 
 //The length of time in seconds after which we figure that if the program was
 //Windows-only, it would have failed by now. If a program exits before this time,
@@ -139,8 +142,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 {
 	if ((self = [super init]))
 	{
-		NSString *defaultsPath			= [[NSBundle mainBundle] pathForResource: @"GameDefaults" ofType: @"plist"];
-		NSMutableDictionary *defaults	= [NSMutableDictionary dictionaryWithContentsOfFile: defaultsPath];
+		NSString *defaultsPath = [[NSBundle mainBundle] pathForResource: @"GameDefaults" ofType: @"plist"];
+		NSMutableDictionary *defaults = [NSMutableDictionary dictionaryWithContentsOfFile: defaultsPath];
 		
 		[self setDrives: [NSMutableArray arrayWithCapacity: 10]];
 		[self setExecutables: [NSMutableDictionary dictionaryWithCapacity: 10]];
@@ -257,7 +260,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		[gamePackage release];
 		gamePackage = [package retain];
 		
-		//Also load up the settings for this gamebox
+		//Also load up the settings and game profile for this gamebox
 		if (gamePackage)
 		{
 			NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -265,10 +268,64 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 			
 			NSDictionary *gameboxSettings = [defaults objectForKey: defaultsKey];
 			
-			//Merge the loaded values in, rather than replacing the settings altogether.
-			[gameSettings addEntriesFromDictionary: gameboxSettings]; 
+			//Merge the loaded values in, rather than replacing the default settings altogether.
+			[gameSettings addEntriesFromDictionary: gameboxSettings];
+            
+            //If we don't already have a game profile assigned,
+            //then load any previously detected game profile for this game
+            if (![self gameProfile])
+            {
+                NSString *identifier        = [gameSettings objectForKey: BXGameboxSettingsProfileKey];
+                NSString *profileVersion    = [gameSettings objectForKey: BXGameboxSettingsProfileVersionKey];
+                
+                if (identifier && profileVersion)
+                {
+                    //Check if the version number under which the detected profile was saved is older
+                    //than the current Boxer version. If it is, then we'll redetect rather than use
+                    //a profile detected under a previous version.
+                    BOOL profileOutdated = [profileVersion compare: [BXAppController buildNumber]
+                                                           options: NSNumericSearch] == NSOrderedAscending;
+                    
+#if BOXER_DEBUG
+                    //Disable saved profiles when in Debug mode,
+                    //forcing the profile to always be detected
+                    NSLog(@"Overridding profile %@, saved under %@", identifier, profileVersion);
+                    profileOutdated = YES;
+#endif
+                    
+                    if (!profileOutdated)
+                    {
+                        BXGameProfile *profile = [BXGameProfile profileWithIdentifier: identifier];
+                        [self setGameProfile: profile];
+                    }
+                }
+            }
 		}
 	}
+}
+
+- (void) setGameProfile: (BXGameProfile *)profile
+{
+    if (![[self gameProfile] isEqual: profile])
+    {
+        [gameProfile release];
+        gameProfile = [profile retain];
+        
+        //Save the profile into our game settings so we can retrieve it quicker later
+        if (gameProfile)
+        {
+            NSString *identifier = [gameProfile identifier];
+            if (identifier)
+            {
+                NSLog(@"Setting game profile as: %@", identifier);
+                [gameSettings setObject: identifier forKey: BXGameboxSettingsProfileKey];
+                
+                //Also store the Boxer version under which the game profile was decided,
+                //so that we can invalidate outdated detections.
+                [gameSettings setObject: [BXAppController buildNumber] forKey: BXGameboxSettingsProfileVersionKey];
+            }
+        }
+    }
 }
 
 - (void) setEmulator: (BXEmulator *)newEmulator

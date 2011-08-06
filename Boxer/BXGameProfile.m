@@ -27,6 +27,10 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 //Loads, caches and returns the contents of GameProfiles.plist to avoid multiple hits to the filesystem.
 + (NSDictionary *) _gameProfileData;
 
+//Generates, caches and returns a dictionary of identifier -> profile lookups.
+//Used by profileWithIdentifier:
++ (NSDictionary *) _identifierIndex;
+
 //Generates, caches and returns an array of lookup tables in order of priority.
 //Used by detectedProfileForPath: to perform detection in multiple passes of the file heirarchy.
 + (NSArray *) _lookupTables;
@@ -37,9 +41,8 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 @end
 
 
-
 @implementation BXGameProfile
-@synthesize gameName, confName, profileDescription;
+@synthesize gameName, confName, identifier, profileDescription;
 @synthesize installMedium, gameEra, requiredDiskSpace, mountHelperDrivesDuringImport;
 
 + (BXGameEra) eraOfGameAtPath: (NSString *)basePath
@@ -80,8 +83,13 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 #pragma mark -
 #pragma mark Initializers
 
-+ (BXGameProfile *)detectedProfileForPath: (NSString *)basePath
-						 searchSubfolders: (BOOL)searchSubfolders
++ (BXGameProfile *)profileWithIdentifier: (NSString *)identifier
+{
+    return [[self _identifierIndex] objectForKey: identifier];
+}
+
++ (BXGameProfile *) detectedProfileForPath: (NSString *)basePath
+						  searchSubfolders: (BOOL)searchSubfolders
 {
 	NSFileManager *manager	= [NSFileManager defaultManager];
 	NSDictionary *matchingProfile;
@@ -140,6 +148,7 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 		[self setGameName: [profileDict objectForKey: @"BXProfileName"]];
 		[self setConfName: [profileDict objectForKey: @"BXProfileConf"]];
 		[self setProfileDescription: [profileDict objectForKey: @"BXProfileDescription"]];
+        [self setIdentifier: [profileDict objectForKey: @"BXProfileIdentifier"]];
 		
 		//Leave these at their default values if a particular key wasn't specified
 		NSNumber *medium = [profileDict objectForKey: @"BXInstallMedium"];
@@ -165,6 +174,7 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 
 - (void) dealloc
 {
+    [self setIdentifier: nil], [identifier release];
 	[self setGameName: nil], [gameName release];
 	[self setConfName: nil], [confName release];
 	[self setProfileDescription: nil], [profileDescription release];
@@ -224,6 +234,23 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 	return dict;
 }
 
++ (NSDictionary *) _identifierIndex
+{
+    static NSMutableDictionary *lookups = nil;
+    if (!lookups)
+    {
+        lookups = [[NSMutableDictionary alloc] initWithCapacity: 200];
+        NSArray *allProfiles = [[self specificGameProfiles] arrayByAddingObjectsFromArray: [self genericProfiles]];
+        
+        for (NSDictionary *profile in allProfiles)
+        {
+            NSString *identifier = [profile objectForKey: @"BXProfileIdentifier"];
+            if (identifier) [lookups setObject: profile forKey: identifier];
+        }
+    }
+    return lookups;
+}
+
 + (NSArray *) _lookupTables
 {
 	static NSArray *lookupTables = nil;
@@ -242,7 +269,8 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 	NSMutableDictionary *lookups = [[NSMutableDictionary alloc] initWithCapacity: 200];
 	for (NSDictionary *profile in profiles)
 	{
-		for (NSString *telltale in [profile objectForKey: @"BXProfileTelltales"]) [lookups setObject: profile forKey: telltale]; 
+		for (NSString *telltale in [profile objectForKey: @"BXProfileTelltales"])
+            [lookups setObject: profile forKey: telltale]; 
 	}
 	return [lookups autorelease];
 }

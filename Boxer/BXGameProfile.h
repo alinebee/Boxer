@@ -31,6 +31,7 @@ typedef NSUInteger BXGameEra;
 
 @interface BXGameProfile : NSObject
 {
+    NSString *identifier;
 	NSString *gameName;
 	NSString *confName;
 	NSString *profileDescription;
@@ -45,6 +46,9 @@ typedef NSUInteger BXGameEra;
 
 #pragma mark -
 #pragma mark Properties
+
+//A unique identifier for this profile. Used for quick lookups via +profileWithIdentifier:.
+@property (copy, nonatomic) NSString *identifier;
 
 //The human-readable name of the game this profile represents.
 //Will be nil for shared profiles (in which case profileDescription will be available.) 
@@ -96,11 +100,17 @@ typedef NSUInteger BXGameEra;
 #pragma mark -
 #pragma mark Initializers
 
+//Returns the game profile matching the specified identifier,
+//or nil if no such profile was found.
++ (BXGameProfile *)profileWithIdentifier: (NSString *)identifier;
+
 //Detects and returns an appropriate game profile for the specified path,
 //by scanning for telltale files in the file heirarchy starting at basePath.
-//If searchSubfolders is false, only the base path will be scanned without
+//Will return nil if no profile could be found.
+//If searchSubfolders is NO, only the base path will be scanned without
 //recursing into subfolders.
-+ (BXGameProfile *) detectedProfileForPath: (NSString *)basePath searchSubfolders: (BOOL) searchSubfolders;
++ (BXGameProfile *) detectedProfileForPath: (NSString *)basePath
+                          searchSubfolders: (BOOL) searchSubfolders;
 
 //Creates a new profile from the specified GameProfiles.plist-format dictionary.
 - (id) initWithDictionary: (NSDictionary *)profileDictionary;

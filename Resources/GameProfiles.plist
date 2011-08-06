@@ -5,6 +5,8 @@
 	<key>BXSpecificGameProfiles</key>
 	<array>
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.delphine.another-world</string>
 			<key>BXProfileName</key>
 			<string>Another World</string>
 			<key>BXProfileConf</key>
@@ -16,6 +18,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.factor5.turrican-2</string>
 			<key>BXProfileName</key>
 			<string>Turrican II</string>
 			<key>BXProfileConf</key>
@@ -27,6 +31,8 @@
 		</dict>
         
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.origin.privateer</string>
 			<key>BXProfileName</key>
 			<string>Wing Commander Privateer</string>
 			<key>BXProfileConf</key>
@@ -39,6 +45,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.origin.privateer-2</string>
 			<key>BXProfileName</key>
 			<string>Privateer 2</string>
 			<key>BXProfileConf</key>
@@ -48,19 +56,10 @@
 				<string>pad.iff</string>
 			</array>
 		</dict>
-		
-		<dict>
-			<key>BXProfileName</key>
-			<string>LHX Attack Chopper</string>
-			<key>BXProfileConf</key>
-			<string>Simple joystick</string>
-			<key>BXProfileTelltales</key>
-			<array>
-				<string>lhx.exe</string>
-			</array>
-		</dict>
         
         <dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.westwood.the-lion-king</string>
 			<key>BXProfileName</key>
 			<string>The Lion King</string>
 			<key>BXProfileConf</key>
@@ -72,6 +71,8 @@
 		</dict>
         
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.ea.lhx</string>
 			<key>BXProfileName</key>
 			<string>LHX Attack Chopper</string>
 			<key>BXProfileConf</key>
@@ -83,6 +84,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.rowansoftware.dawn-patrol</string>
 			<key>BXProfileName</key>
 			<string>Dawn Patrol</string>
 			<key>BXProfileConf</key>
@@ -94,6 +97,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.simbiosis.fable</string>
 			<key>BXProfileName</key>
 			<string>Fable</string>
 			<key>BXProfileConf</key>
@@ -107,6 +112,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.velocity.jetfighter</string>
 			<key>BXProfileName</key>
 			<string>Jetfighter</string>
 			<key>BXProfileConf</key>
@@ -119,6 +126,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.gtinteractive.bedlam</string>
 			<key>BXProfileName</key>
 			<string>Bedlam</string>
 			<key>BXProfileTelltales</key>
@@ -132,6 +141,8 @@
 		</dict>
 
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.westwood.red-alert</string>
 			<key>BXProfileName</key>
 			<string>Command &amp; Conquer - Red Alert</string>
 			<key>BXProfileConf</key>
@@ -147,6 +158,8 @@
 		</dict>
 
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.empireinteractive.pro-binball-the-web</string>
 			<key>BXProfileName</key>
 			<string>Pro Pinball- The Web</string>
 			<key>BXProfileConf</key>
@@ -158,6 +171,8 @@
 		</dict>
 
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.empireinteractive.pro-binball-timeshock</string>
 			<key>BXProfileName</key>
 			<string>Pro Pinball- Timeshock</string>
 			<key>BXProfileConf</key>
@@ -169,6 +184,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.origin.system-shock</string>
 			<key>BXProfileName</key>
 			<string>System Shock</string>
 			<key>BXProfileTelltales</key>
@@ -183,6 +200,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.origin.ultima-underworld</string>
 			<key>BXProfileName</key>
 			<string>Ultima Underworld</string>
 			<key>BXProfileConf</key>
@@ -195,6 +214,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.origin.ultima-underworld-2</string>
 			<key>BXProfileName</key>
 			<string>Ultima Underworld II</string>
 			<key>BXProfileConf</key>
@@ -206,6 +227,8 @@
 		</dict>
 
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.psygnosis.destruction-derby-2</string>
 			<key>BXProfileName</key>
 			<string>Destruction Derby 2</string>
 			<key>BXProfileConf</key>
@@ -217,6 +240,8 @@
 		</dict>
 
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.acclaim.i-have-no-mouth-and-i-must-scream</string>
 			<key>BXProfileName</key>
 			<string>I Have No Mouth and I Must Scream</string>
 			<key>BXProfileConf</key>
@@ -228,6 +253,8 @@
 		</dict>
 
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.bethesda.daggerfall</string>
 			<key>BXProfileName</key>
 			<string>Daggerfall</string>
 			<key>BXProfileConf</key>
@@ -250,6 +277,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.sierra.kings-quest-7</string>
 			<key>BXProfileName</key>
 			<string>King&apos;s Quest VII</string>
 			<key>BXProfileConf</key>
@@ -261,6 +290,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.virgin.screamer-2</string>
 			<key>BXProfileName</key>
 			<string>Screamer 2</string>
 			<key>BXProfileConf</key>
@@ -272,8 +303,10 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.ea.the-need-for-speed</string>
 			<key>BXProfileName</key>
-			<string>Need for Speed</string>
+			<string>The Need for Speed</string>
 			<key>BXProfileConf</key>
 			<string>Need for Speed</string>
 			<key>BXProfileTelltales</key>
@@ -284,6 +317,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.trilobyte.7th-guest</string>
 			<key>BXProfileName</key>
 			<string>The 7th Guest</string>
 			<key>BXProfileConf</key>
@@ -295,6 +330,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.origin.ultima-7</string>
 			<key>BXProfileName</key>
 			<string>Ultima VII</string>
 			<key>BXProfileConf</key>
@@ -306,6 +343,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.origin.serpent-isle</string>
 			<key>BXProfileName</key>
 			<string>Ultima VII Part 2: The Serpent Isle</string>
 			<key>BXProfileConf</key>
@@ -317,6 +356,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.origin.wing-commander</string>
 			<key>BXProfileName</key>
 			<string>Wing Commander</string>
 			<key>BXProfileConf</key>
@@ -328,6 +369,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.origin.wing-commander-2</string>
 			<key>BXProfileName</key>
 			<string>Wing Commander II</string>
 			<key>BXProfileConf</key>
@@ -335,6 +378,7 @@
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>wc2.*</string>
+                <string>communic.yu2</string>
 			</array>
 			<key>BXDesignatedInstallers</key>
 			<array>
@@ -344,6 +388,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.origin.wing-commander-academy</string>
 			<key>BXProfileName</key>
 			<string>Wing Commander Academy</string>
 			<key>BXProfileConf</key>
@@ -355,6 +401,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.origin.wing-commander-armada</string>
 			<key>BXProfileName</key>
 			<string>Wing Commander Armada</string>
 			<key>BXProfileConf</key>
@@ -366,6 +414,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.origin.wing-commander-3</string>
 			<key>BXProfileName</key>
 			<string>Wing Commander III</string>
 			<key>BXProfileConf</key>
@@ -377,6 +427,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.origin.wing-commander-4</string>
 			<key>BXProfileName</key>
 			<string>Wing Commander IV</string>
 			<key>BXProfileConf</key>
@@ -388,6 +440,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.origin.wings-of-glory</string>
 			<key>BXProfileName</key>
 			<string>Wings of Glory</string>
 			<key>BXProfileConf</key>
@@ -399,6 +453,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.dynamix.aces-of-the-pacific</string>
 			<key>BXProfileName</key>
 			<string>Aces of the Pacific</string>
 			<key>BXProfileConf</key>
@@ -410,6 +466,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.dynamix.aces-over-europe</string>
 			<key>BXProfileName</key>
 			<string>Aces Over Europe</string>
 			<key>BXProfileConf</key>
@@ -421,6 +479,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.perfect10.discworld</string>
 			<key>BXProfileName</key>
 			<string>Discworld</string>
 			<key>BXProfileTelltales</key>
@@ -434,6 +494,8 @@
 		</dict>
         
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.lucasarts.tie-fighter</string>
 			<key>BXProfileName</key>
 			<string>Tie Fighter</string>
 			<key>BXProfileConf</key>
@@ -446,6 +508,8 @@
 		</dict>
         
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.dynamix.earthsiege</string>
 			<key>BXProfileName</key>
 			<string>Earthsiege</string>
 			<key>BXProfileConf</key>
@@ -460,6 +524,8 @@
 	<key>BXGenericProfiles</key>
 	<array>
         <dict>
+            <key>BXProfileIdentifier</key>
+            <string>net.washboardabs.no-joystick-games</string>
 			<key>BXProfileDescription</key>
 			<string>Games that are incompatible with joystick emulation.</string>
 			<key>BXProfileConf</key>
@@ -475,6 +541,8 @@
 		</dict>
             
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>net.washboardabs.timed-joystick-games</string>
 			<key>BXProfileDescription</key>
 			<string>Games that require clock-based joystick timing.</string>
 			<key>BXProfileConf</key>
@@ -513,6 +581,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>net.washboardabs.floppy-installer-games</string>
 			<key>BXProfileDescription</key>
 			<string>Games that rely on being installed from floppy disk.</string>
 			<key>BXProfileMatches</key>
@@ -528,6 +598,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.microprose.flight-simulators</string>
 			<key>BXProfileDescription</key>
 			<string>Mid-era Microprose flight simulators</string>
 			<key>BXProfileConf</key>
@@ -551,6 +623,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>net.washboardabs.vga-only-games</string>
 			<key>BXProfileDescription</key>
 			<string>Early VGA games that are incompatible with SuperVGA.</string>
 			<key>BXProfileConf</key>
@@ -569,6 +643,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>net.washboardabs.tandy-games</string>
 			<key>BXProfileDescription</key>
 			<string>Sierra AGI games that support Tandy graphics and sound.</string>
 			<key>BXProfileConf</key>
@@ -594,6 +670,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>net.washboardabs.low-memory-games</string>
 			<key>BXProfileDescription</key>
 			<string>Old games that need low conventional memory.</string>
 			<key>BXProfileConf</key>
@@ -613,6 +691,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>net.washboardabs.extra-memory-games</string>
 			<key>BXProfileDescription</key>
 			<string>Later games that like a lot of memory.</string>
 			<key>BXProfileConf</key>
@@ -630,6 +710,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>net.washboardabs.no-ems-games</string>
 			<key>BXProfileDescription</key>
 			<string>Games that dislike expanded memory (but are not fussy about anything else.)</string>
 			<key>BXProfileConf</key>
@@ -647,6 +729,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>net.washboardabs.at-games</string>
 			<key>BXProfileDescription</key>
 			<string>Old games that need a 286-speed CPU for correct timing.</string>
 			<key>BXProfileConf</key>
@@ -665,6 +749,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>net.washboardabs.xt-cga-games</string>
 			<key>BXProfileDescription</key>
 			<string>Old games that require CGA video emulation as well as an XT-speed CPU.</string>
 			<key>BXProfileConf</key>
@@ -686,6 +772,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>net.washboardabs.at-cga-games</string>
 			<key>BXProfileDescription</key>
 			<string>Old games that require CGA video emulation and a faster CPU speed.</string>
 			<key>BXProfileConf</key>
@@ -704,6 +792,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>net.washboardabs.386-games</string>
 			<key>BXProfileDescription</key>
 			<string>386/486-era games that are sensitive to high CPU speeds.</string>
 			<key>BXProfileConf</key>
@@ -723,6 +813,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>net.washboardabs.486-games</string>
 			<key>BXProfileDescription</key>
 			<string>486 and Pentium-era games that like dynamic core and high-but-not-too-high CPU speeds.</string>
 			<key>BXProfileConf</key>
@@ -745,6 +837,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>net.washboardabs.extra-memory-no-gus-games</string>
 			<key>BXProfileDescription</key>
 			<string>Games that like a lot of memory and are incompatible with the Gravis Ultrasound.</string>
 			<key>BXProfileConf</key>
@@ -766,6 +860,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>net.washboardabs.no-gus-games</string>
 			<key>BXProfileDescription</key>
 			<string>Games that autodetect the Gravis Ultrasound, but are incompatible with the current emulation of it.</string>
 			<key>BXProfileConf</key>
@@ -785,6 +881,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>net.washboardabs.no-dynamic-core-games</string>
 			<key>BXProfileDescription</key>
 			<string>Games that need max speed but have problems with the dynamic core.</string>
 			<key>BXProfileConf</key>
@@ -806,6 +904,8 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>net.washboardabs.dynamic-core-games</string>
 			<key>BXProfileDescription</key>
 			<string>Real-mode games that benefit from dynamic core and max CPU speed.</string>
 			<key>BXProfileConf</key>

@@ -166,6 +166,17 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	return (appKitVersion > NSAppKitVersionNumber10_6);
 }
 
++ (NSString *) localizedVersion
+{
+    return [[[NSBundle mainBundle] localizedInfoDictionary] objectForKey: @"CFBundleShortVersionString"];
+}
+
++ (NSString *) buildNumber
+{
+    return [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleVersion"];
+}
+
+
 + (BOOL) otherBoxersActive
 {
 	NSString *bundleIdentifier	= [[NSBundle mainBundle] bundleIdentifier];
@@ -773,8 +784,8 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (IBAction) sendEmail:				(id)sender
 {
 	NSString *subject		= @"Boxer feedback";
-	NSString *versionName	= [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleShortVersionString"];
-	NSString *buildNumber	= [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleVersion"];
+	NSString *versionName	= [[self class] localizedVersion];
+	NSString *buildNumber	= [[self class] buildNumber];
 	NSString *fullSubject	= [NSString stringWithFormat: @"%@ (v%@ %@)", subject, versionName, buildNumber, nil];
 	[self sendEmailFromKey: @"ContactEmail" withSubject: fullSubject];
 }
@@ -802,27 +813,27 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 - (void) showHelpAnchor: (NSString *)anchor
 {
-	NSString *bookID = [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleHelpBookName"];
+	NSString *bookID = [[[NSBundle mainBundle] localizedInfoDictionary] objectForKey: @"CFBundleHelpBookName"];
 	[[NSHelpManager sharedHelpManager] openHelpAnchor: anchor inBook: bookID];
 }
 
 - (void) openURLFromKey: (NSString *)infoKey
 {
-	NSString *URLString = [[NSBundle mainBundle] objectForInfoDictionaryKey: infoKey];
+	NSString *URLString = [[[NSBundle mainBundle] localizedInfoDictionary] objectForKey: infoKey];
 	if ([URLString length]) [[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString: URLString]];
 }
 
 - (void) searchURLFromKey: (NSString *)infoKey withSearchString: (NSString *)search
 {
 	NSString *encodedSearch = [search stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
-	NSString *siteString	= [[NSBundle mainBundle] objectForInfoDictionaryKey: infoKey];
+	NSString *siteString	= [[[NSBundle mainBundle] localizedInfoDictionary] objectForKey: infoKey];
 	NSString *URLString		= [NSString stringWithFormat: siteString, encodedSearch, nil];
 	if ([URLString length]) [[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString: URLString]];
 }
 
 - (void) sendEmailFromKey: (NSString *)infoKey withSubject:(NSString *)subject
 {
-	NSString *address = [[NSBundle mainBundle] objectForInfoDictionaryKey: infoKey];
+	NSString *address = [[[NSBundle mainBundle] localizedInfoDictionary] objectForKey: infoKey];
 	if ([address length])
 	{
 		NSString *encodedSubject	= [subject stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding];

@@ -73,6 +73,11 @@ enum {
 + (BOOL) isRunningOnLionOrAbove;
 
 
+//The application version and internal build number
++ (NSString *) localizedVersion;
++ (NSString *) buildNumber;
+
+
 #pragma mark -
 #pragma mark UTIs
 

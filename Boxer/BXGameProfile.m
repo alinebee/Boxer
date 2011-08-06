@@ -9,6 +9,7 @@
 #import "BXGameProfile.h"
 #import "BXDrive.h"
 
+NSString * const BXUnknownProfileIdentifier = @"net.washboardabs.unknown-game";
 
 //Directories larger than this size (in bytes) will be treated as CD-era games by eraOfGameAtPath:
 const NSUInteger BXDisketteGameSizeThreshold = 20 * 1024 * 1024;
@@ -99,11 +100,6 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 	
 	//We check the entire filesystem for one set of profiles first, before starting on the next:
 	//This allows game-specific profiles to override generic ones that would otherwise match sooner.
-	
-	//FIXME: this approach may still be too näive and could return false positives when we have a
-	//more specific game profile that is matched earlier by a less specific one. This could be fixed
-	//by matching all profiles and then sorting them by 'relevance', at a cost of scanning the entire
-	//file heirarchy for each profile (which is a big cost).
 	for (NSDictionary *lookups in [self _lookupTables])
 	{
 		NSDirectoryEnumerator *enumerator = [manager enumeratorAtPath: basePath];
@@ -137,6 +133,7 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 		[self setRequiredDiskSpace: BXDefaultFreeSpace];
 		[self setMountHelperDrivesDuringImport: YES];
 		[self setGameEra: BXUnknownEra];
+        [self setIdentifier: BXUnknownProfileIdentifier];
 	}
 	return self;
 }

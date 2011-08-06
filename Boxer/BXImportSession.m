@@ -1161,6 +1161,14 @@
 #pragma mark -
 #pragma mark Private internal methods
 
+- (BOOL) _shouldPersistGameProfile: (BXGameProfile *)profile
+{
+    //Do not persist game profiles that were detected during game importing,
+    //as not all the game's files may be available at this point: potentially
+    //causing false negatives.
+    return NO;
+}
+
 - (BOOL) _shouldSuppressDisplaySleep
 {
     //Always allow the display to go to sleep when it wants, on the assumption

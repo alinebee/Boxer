@@ -75,6 +75,11 @@
 //Called once the session has exited to save any DOSBox settings we have changed to the gamebox conf.
 - (void) _saveConfiguration: (BXEmulatorConfiguration *)configuration toFile: (NSString *)filePath;
 
+//Returns whether we should cache the specified game profile in our game settings, to avoid needing
+//to redetect it later. Base implementation returns YES in all cases.
+- (BOOL) _shouldPersistGameProfile: (BXGameProfile *)profile;
+
+
 //Cleans up temporary files after the session is closed.
 - (void) _cleanup;
 

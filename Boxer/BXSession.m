@@ -311,8 +311,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         [gameProfile release];
         gameProfile = [profile retain];
         
-        //Save the profile into our game settings so we can retrieve it quicker later
-        if (gameProfile)
+        //Save the profile into our game settings so that we can retrieve it quicker later
+        if (gameProfile && [self _shouldPersistGameProfile: gameProfile])
         {
             NSString *identifier = [gameProfile identifier];
             if (identifier)
@@ -965,6 +965,11 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 #pragma mark -
 #pragma mark Private methods
 
+- (BOOL) _shouldPersistGameProfile: (BXGameProfile *)profile
+{
+    return YES;
+}
+
 - (BOOL) _shouldCloseOnEmulatorExit { return YES; }
 - (BOOL) _shouldStartImmediately { return YES; }
 
@@ -1039,6 +1044,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	if ([self targetPath] && ![self gameProfile])
 	{
 		BXGameProfile *profile = [[self class] profileForPath: [self targetPath]];
+        //If no specific game can be found, then store it explicitly as an unknown game
+        if (!profile) profile = [[[BXGameProfile alloc] init] autorelease];
 		[self setGameProfile: profile];
 	}
 	

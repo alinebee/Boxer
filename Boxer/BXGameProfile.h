@@ -29,6 +29,10 @@ enum {
 typedef NSUInteger BXGameEra;
 
 
+//The default identifier string used for game profiles that don't match a known profile.
+extern NSString * const BXUnknownProfileIdentifier;
+
+
 @interface BXGameProfile : NSObject
 {
     NSString *identifier;

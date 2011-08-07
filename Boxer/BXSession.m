@@ -286,8 +286,6 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
                     BOOL profileOutdated = [profileVersion compare: [BXGameProfile catalogueVersion]
                                                            options: NSNumericSearch] == NSOrderedAscending;
                     
-                    NSLog(@"Previously detected profile: %@, was outdated: %i", identifier, profileOutdated);
-                    
                     if (!profileOutdated)
                     {
                         BXGameProfile *profile = [BXGameProfile profileWithIdentifier: identifier];

@@ -86,7 +86,9 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 
 + (BXGameProfile *)profileWithIdentifier: (NSString *)identifier
 {
-    return [[self _identifierIndex] objectForKey: identifier];
+    NSDictionary *profileData = [[self _identifierIndex] objectForKey: identifier];
+    if (profileData) return [[[self alloc] initWithDictionary: profileData] autorelease];
+    else return nil;
 }
 
 + (BXGameProfile *) detectedProfileForPath: (NSString *)basePath

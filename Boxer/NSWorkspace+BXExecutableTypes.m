@@ -57,28 +57,28 @@ NSString * const BXExecutableTypesErrorDomain = @"BXExecutableTypesErrorDomain";
 //Original DOS header format, with extended data.
 //q.v.: http://www.delphidabbler.com/articles?article=8&part=2
 //http://www.fileformat.info/format/exe/corion-mz.htm
-typedef struct {	
-    unsigned short typeMarker;				// Filetype marker (always "MZ" for executables)
-    unsigned short lastPageSize;			// Bytes on last page of file
-    unsigned short numPages;				// Pages in file
-    unsigned short numRelocations;			// Relocations
-    unsigned short numHeaderParagraphs;		// Size of header in paragraphs
-	unsigned short minExtraParagraphs;		// Minimum extra paragraphs needed
-	unsigned short maxExtraParagraphs;		// Maximum extra paragraphs needed
-    unsigned short ssValue;					// Initial (relative) SS value
-    unsigned short spValue;					// Initial SP value
-    unsigned short checksum;				// Checksum
-    unsigned short ipValue;					// Initial IP value
-    unsigned short csValue;					// Initial (relative) CS value
-    unsigned short relocationTableAddress;	// Address of relocation table (always 0x40 for new-style executables)
-    unsigned short overlayNumber;			// Overlay number
+typedef struct {
+	uint16_t typeMarker;				// Filetype marker (always "MZ" for executables)
+    uint16_t lastPageSize;			// Bytes on last page of file
+    uint16_t numPages;				// Pages in file
+    uint16_t numRelocations;			// Relocations
+    uint16_t numHeaderParagraphs;		// Size of header in paragraphs
+	uint16_t minExtraParagraphs;		// Minimum extra paragraphs needed
+	uint16_t maxExtraParagraphs;		// Maximum extra paragraphs needed
+    uint16_t ssValue;					// Initial (relative) SS value
+    uint16_t spValue;					// Initial SP value
+    uint16_t checksum;				// Checksum
+    uint16_t ipValue;					// Initial IP value
+    uint16_t csValue;					// Initial (relative) CS value
+    uint16_t relocationTableAddress;	// Address of relocation table (always 0x40 for new-style executables)
+    uint16_t overlayNumber;			// Overlay number
 	
 	//The rest of these are part of an extended header present in new-style executables
-    unsigned short reserved[4];				// Reserved
-    unsigned short oemIdentifier;			// OEM identifier (for oemInfo)
-    unsigned short oemInfo;					// OEM info (oemIdentifier-specific)
-    unsigned short reserved2[10];			// Reserved
-    unsigned long newHeaderAddress;			// File address of new exe header
+    uint16_t reserved[4];				// Reserved
+    uint16_t oemIdentifier;			// OEM identifier (for oemInfo)
+    uint16_t oemInfo;					// OEM info (oemIdentifier-specific)
+    uint16_t reserved2[10];			// Reserved
+    uint32_t newHeaderAddress;			// File address of new exe header
 } __attribute__ ((packed)) BXDOSExecutableHeader;
 
 //IMPLEMENTATION NOTE: the packed attribute tells GCC not to pad the struct's layout to fit
@@ -92,24 +92,11 @@ typedef struct {
 @implementation NSWorkspace (BXExecutableTypes)
 
 - (BXExecutableType) executableTypeAtPath: (NSString *)path error: (NSError **)outError
-{	
+{
+    if (outError) *outError = nil;
+    
 	BXDOSExecutableHeader header;
 	int headerSize = sizeof(BXDOSExecutableHeader);
-	
-	unsigned long long realFileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath: path error: NULL] fileSize];
-	
-	//The file must be large enough to contain the entire DOS header.
-	if (realFileSize < (unsigned long long)headerSize)
-	{
-		if (outError)
-		{
-			*outError = [NSError errorWithDomain: BXExecutableTypesErrorDomain
-											code: BXExecutableTruncated
-										userInfo: nil];
-		}
-		return BXExecutableTypeUnknown;
-	}
-	
 	
 	NSFileHandle *file = [NSFileHandle fileHandleForReadingAtPath: path];
 	
@@ -124,9 +111,40 @@ typedef struct {
 		}
 		return BXExecutableTypeUnknown;
 	}
-	
+    
+    [file seekToEndOfFile];
+    unsigned long long realFileSize = [file offsetInFile];
+    [file seekToFileOffset: 0];
+    
+	//The file must be large enough to contain the entire DOS header.
+	if (realFileSize < (unsigned long long)headerSize)
+	{
+		if (outError)
+		{
+			*outError = [NSError errorWithDomain: BXExecutableTypesErrorDomain
+											code: BXExecutableTruncated
+										userInfo: nil];
+		}
+		return BXExecutableTypeUnknown;
+	}
+    
 	//Read the header data into our DOS header struct.
-	[[file readDataOfLength: headerSize] getBytes: &header];
+    //(We need to do this in a try...catch block because readDataOfLength:
+    //will raise an NSFileOperationException if it cannot read for some reason.
+    @try
+    {
+        [[file readDataOfLength: headerSize] getBytes: &header];
+    }
+    @catch (NSException *exception)
+    {
+        if (outError)
+		{
+			*outError = [NSError errorWithDomain: BXExecutableTypesErrorDomain
+											code: BXCouldNotReadExecutable
+										userInfo: nil];
+		}
+		return BXExecutableTypeUnknown;
+    }
 	
 	//Header is stored in little-endian format, so swap the bytes around on PowerPC systems to ensure correct comparisons.
 	unsigned short typeMarker			= NSSwapLittleShortToHost(header.typeMarker);
@@ -221,21 +239,19 @@ typedef struct {
 	}
 }
 
-- (BOOL) isCompatibleExecutableAtPath: (NSString *)filePath
+- (BOOL) isCompatibleExecutableAtPath: (NSString *)filePath error: (NSError **)outError
 {
 	//Automatically assume .COM and .BAT files are DOS-compatible
 	NSSet *dosOnlyTypes = [NSSet setWithObjects: @"com.microsoft.msdos-executable", @"com.microsoft.batch-file", nil];
 	if ([self file: filePath matchesTypes: dosOnlyTypes])
 		 return YES;
 	
-	//If it is an .EXE file, perform a more rigorous compatibility check
+	//If it is an .EXE file, perform a more rigorous compatibility check.
 	if ([self file: filePath matchesTypes: [NSSet setWithObject: @"com.microsoft.windows-executable"]])
     {
-        BXExecutableType exeType = [self executableTypeAtPath: filePath error: NULL];
+        BXExecutableType exeType = [self executableTypeAtPath: filePath error: outError];
         
-        //TWEAK: if the executable type could not be determined, assume it is compatible.
-        //This allows us to pass on files that cannot be read.
-        return (exeType == BXExecutableTypeDOS) || (exeType == BXExecutableTypeUnknown);
+        return (exeType == BXExecutableTypeDOS);
     }
 		
 	//Otherwise, assume the file is incompatible

@@ -56,7 +56,7 @@
         
         if ([workspace file: fullPath matchesTypes: executableTypes])
         {
-            if ([workspace isCompatibleExecutableAtPath: fullPath])
+            if ([workspace isCompatibleExecutableAtPath: fullPath error: NULL])
             {
                 [self addDOSExecutable: relativePath];
                 

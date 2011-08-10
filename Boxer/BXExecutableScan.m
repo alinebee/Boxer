@@ -17,7 +17,7 @@
     if ([super isMatchingPath: relativePath])
     {
         NSString *fullPath = [self fullPathFromRelativePath: relativePath];
-        return [workspace isCompatibleExecutableAtPath: fullPath];
+        return [workspace isCompatibleExecutableAtPath: fullPath error: NULL];
     }
     else
     {

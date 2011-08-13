@@ -12,6 +12,11 @@
 
 #import "BXEmulator.h"
 
+//The maximum number of CD-ROM drives supported by MSCDEX.
+//Drives beyond this will fail to mount.
+#define BXMaxCDROMDrives 7
+
+
 @class BXDrive;
 
 @interface BXEmulator (BXDOSFileSystem)
@@ -50,14 +55,20 @@
 #pragma mark Mounting and unmounting drives
 
 //Mount the specified drive as a new DOS drive, autodetecting the appropriate drive letter if needed.
-//Returns the drive, updated to match the chosen drive letter, or nil if the drive could not be mounted.
-- (BXDrive *) mountDrive: (BXDrive *)drive;
+//Returns the drive, updated to match the chosen drive letter, or nil and populates outError if the drive
+//could not be mounted.
+- (BXDrive *) mountDrive: (BXDrive *)drive
+                   error: (NSError **)outError;
 
-//Unmount the specified drive letter. Returns YES if drive was successfully unmounted, NO otherwise.
-- (BOOL) unmountDrive: (BXDrive *)drive;
+//Unmount the specified drive letter. Returns YES if drive was successfully unmounted, 
+//or NO and populates outError otherwise.
+- (BOOL) unmountDrive: (BXDrive *)drive
+                error: (NSError **)outError;
 
-//Unmount the drive at the specified letter. Returns YES if drive was successfully unmounted, NO otherwise.
-- (BOOL) unmountDriveAtLetter: (NSString *)letter;
+//Unmount the drive at the specified letter. Returns YES if drive was successfully unmounted,
+//or NO and populates outError otherwise.
+- (BOOL) unmountDriveAtLetter: (NSString *)letter
+                        error: (NSError **)outError;
 
 //Flush the DOS filesystem cache and rescan to synchronise it with the local filesystem state.
 - (void) refreshMountedDrives;

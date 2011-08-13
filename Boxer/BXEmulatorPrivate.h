@@ -10,6 +10,7 @@
 //implementation file.
 
 #import "BXEmulator.h"
+#import "BXEmulatorErrors.h"
 #import "BXEmulatorDelegate.h"
 #import "BXEmulator+BXShell.h"
 #import "BXEmulator+BXDOSFileSystem.h"
@@ -17,6 +18,10 @@
 #import "BXEmulatedKeyboard.h"
 #import "BXEmulatedJoystick.h"
 #import "BXEmulatedMouse.h"
+
+
+#pragma mark -
+#pragma mark Constants and type definitions
 
 
 class DOS_Shell;
@@ -28,6 +33,52 @@ typedef struct BXDriveGeometry {
 	NSUInteger numClusters;
 	NSUInteger freeClusters;
 } BXDriveGeometry;
+
+
+
+//Media IDs used by _DOSBoxDriveFromPath:freeSpace:geometry:mediaID:error:
+#define BXFloppyMediaID		0xF0
+#define BXHardDiskMediaID	0xF8
+#define BXCDROMMediaID		0xF8
+
+//Raw disk images larger than this size in bytes will be treated as hard disks
+#define BXFloppyImageSizeCutoff 2880 * 1024
+
+
+
+#pragma mark -
+#pragma mark Error states
+
+//Error domains used for errors generated internally by DOSBox itself.
+//Such errors are handled by BXEmulator and should never reach outside classes.
+extern NSString * const BXDOSBoxErrorDomain;
+extern NSString * const BXDOSBoxUnmountErrorDomain;
+extern NSString * const BXDOSBoxMountErrorDomain;
+
+
+//Error constants used by BXDOSFilesystem _unmountDriveAtIndex:error:
+enum {
+    BXDOSBoxUnmountUnknownError             = -1,
+	BXDOSBoxUnmountSuccess                  = 0,
+    
+	BXDOSBoxUnmountLockedDrive              = 1,    //Drive is an internal DOSBox drive (i.e. Z) and cannot be unmounted
+	BXDOSBoxUnmountNonContiguousCDROMDrives = 2     //Unmounting the drive would make CD-ROM drive letters non-sequential
+};
+
+
+//Error constants used by BXDOSFilesystem's DOSBox drive constructors.
+enum {
+    BXDOSBoxMountUnknownError               = -1,
+	BXDOSBoxMountSuccess                    = 0,
+    
+    BXDOSBoxMountNonContiguousCDROMDrives   = 1,    //CD-ROM drive letters would not be sequential
+    BXDOSBoxMountNotSupported               = 2,    //No longer returned anywhere, as far as I can tell
+    BXDOSBoxMountCouldNotReadSource         = 3,    //Could not read the drive's source file
+    BXDOSBoxMountTooManyCDROMDrives         = 4,    //Exceeded maximum number of MSCDEX drives
+	BXDOSBoxMountSuccessCDROMLimited        = 5,    //Local folder was mounted as a CD-ROM, thus limited emulation
+    
+    BXDOSBoxMountInvalidImageFormat         = 6,    //Disc image was corrupted or type could not be determined
+};
 
 
 @interface BXEmulator()
@@ -110,29 +161,48 @@ typedef struct BXDriveGeometry {
 //Returns YES if the drive was successfully added, or NO if there was an error
 //(e.g. there was already a drive at that index).
 //TODO: should populate an optional NSError object for cases like this.
-- (BOOL) _addDOSBoxDrive: (DOS_Drive *)drive atIndex: (NSUInteger)driveIndex;
+- (BOOL) _addDOSBoxDrive: (DOS_Drive *)drive
+                 atIndex: (NSUInteger)driveIndex;
 
 //Unmounts the DOSBox drive at the specified index and clears any references to the drive.
-//Returns YES if the drive was successfully removed, or NO if there was an error
-//(e.g. there was no drive at that index.)
+//Returns YES if the drive was successfully removed, or NO abd populates outError
+//if the unmount failed (e.g. it was an internal drive or there was no drive at that index.)
 //TODO: should populate an optional NSError object for cases like this.
-- (BOOL) _unmountDOSBoxDriveAtIndex: (NSUInteger)driveIndex;
+- (BOOL) _unmountDOSBoxDriveAtIndex: (NSUInteger)driveIndex error: (NSError **)outError;
 
 //Generates a Boxer drive object for a drive at the specified drive index.
 - (BXDrive *)_driveFromDOSBoxDriveAtIndex: (NSUInteger)driveIndex;
 
 //Create and return new DOSBox drive instance of the appropriate type.
 //This can then be mounted by _addDOSBoxDrive:atIndex:
-- (DOS_Drive *) _floppyDriveFromImageAtPath:(NSString *)path;
-- (DOS_Drive *) _CDROMDriveFromImageAtPath:	(NSString *)path forIndex: (NSUInteger)driveIndex;
-- (DOS_Drive *) _CDROMDriveFromPath:		(NSString *)path forIndex: (NSUInteger)driveIndex withAudio: (BOOL)useCDAudio;
-- (DOS_Drive *) _hardDriveFromPath:			(NSString *)path freeSpace: (NSInteger)freeSpace;
-- (DOS_Drive *) _floppyDriveFromPath:		(NSString *)path freeSpace: (NSInteger)freeSpace;
+- (DOS_Drive *) _floppyDriveFromImageAtPath: (NSString *)path
+                                      error: (NSError **)outError;
+
+- (DOS_Drive *) _hardDriveFromImageAtPath: (NSString *)path
+                                    error: (NSError **)outError;
+
+- (DOS_Drive *) _CDROMDriveFromImageAtPath:	(NSString *)path
+                                  forIndex: (NSUInteger)driveIndex
+                                     error: (NSError **)outError;
+
+- (DOS_Drive *) _CDROMDriveFromPath: (NSString *)path
+                           forIndex: (NSUInteger)driveIndex
+                          withAudio: (BOOL)useCDAudio
+                              error: (NSError **)outError;
+
+- (DOS_Drive *) _hardDriveFromPath: (NSString *)path
+                         freeSpace: (NSInteger)freeSpace
+                             error: (NSError **)outError;
+
+- (DOS_Drive *) _floppyDriveFromPath: (NSString *)path
+                           freeSpace: (NSInteger)freeSpace
+                               error: (NSError **)outError;
 
 - (DOS_Drive *) _DOSBoxDriveFromPath: (NSString *)path
 						   freeSpace: (NSInteger)freeSpace
 							geometry: (BXDriveGeometry)size
-							 mediaID: (NSUInteger)mediaID;
+							 mediaID: (NSUInteger)mediaID
+                               error: (NSError **)outError;
 
 //Synchronizes Boxer's mounted drive cache with DOSBox's drive array,
 //adding and removing drives as necessary.

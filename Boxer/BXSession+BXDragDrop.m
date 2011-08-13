@@ -10,6 +10,7 @@
 #import "BXSession+BXFileManager.h"
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulator+BXPaste.h"
+#import "BXEmulatorErrors.h"
 #import "NSWorkspace+BXFileTypes.h"
 #import "NSWorkspace+BXMountedVolumes.h"
 
@@ -115,8 +116,20 @@
 	//Make a new mount for the path if we need
 	if ([self shouldMountDriveForPath: filePath])
 	{
-		BXDrive *drive = [self mountDriveForPath: filePath];
-		if (!drive) return NO; //mount failed, don't continue further
+        NSError *mountError = nil;
+		BXDrive *drive = [self mountDriveForPath: filePath error: &mountError];
+		if (!drive)
+        {
+            if (mountError)
+            {
+                [self presentError: mountError
+                    modalForWindow: [self windowForSheet]
+                          delegate: nil
+                didPresentSelector: NULL
+                       contextInfo: NULL];
+            }
+            return NO; //mount failed, don't continue further
+        }
 		performedAction = YES;
 	}
 	

@@ -57,6 +57,8 @@ NSStringEncoding BXDisplayStringEncoding	= CFStringConvertEncodingToNSStringEnco
 //Use for strings that should be left unmunged (usually filesystem paths)
 NSStringEncoding BXDirectStringEncoding		= NSUTF8StringEncoding;
 
+NSString * const BXDOSBoxErrorDomain = @"BXDOSBoxErrorDomain";
+
 
 #pragma mark -
 #pragma mark External function definitions

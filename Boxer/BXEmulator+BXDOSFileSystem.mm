@@ -21,41 +21,29 @@
 #import "NSWorkspace+BXMountedVolumes.h"
 
 
+
+#pragma mark -
+#pragma mark Constants
+
+NSString * const BXDOSBoxUnmountErrorDomain  = @"BXDOSBoxUnmountErrorDomain";
+NSString * const BXDOSBoxMountErrorDomain    = @"BXDOSBoxMountErrorDomain";
+
+
+//Drive geometry constants passed to _DOSBoxDriveFromPath:freeSpace:geometry:mediaID:error:
+BXDriveGeometry BXHardDiskGeometry		= {512, 127, 16383, 4031};	//~1GB, ~250MB free space
+BXDriveGeometry BXFloppyDiskGeometry	= {512, 1, 2880, 2880};		//1.44MB, 1.44MB free space
+BXDriveGeometry BXCDROMGeometry			= {2048, 1, 65535, 0};		//~650MB, no free space
+
+
+#pragma mark -
+#pragma mark Externs
+
 //Defined in dos_files.cpp
 extern DOS_File * Files[DOS_FILES];
 extern DOS_Drive * Drives[DOS_DRIVES];
 
 //Defined in dos_mscdex.cpp
 void MSCDEX_SetCDInterface(int intNr, int forceCD);
-
-
-//Drive geometry constants passed to _DOSBoxDriveFromPath:freeSpace:geometry:mediaID
-BXDriveGeometry BXHardDiskGeometry		= {512, 127, 16383, 4031};	//~1GB, ~250MB free space
-BXDriveGeometry BXFloppyDiskGeometry	= {512, 1, 2880, 2880};		//1.44MB, 1.44MB free space
-BXDriveGeometry BXCDROMGeometry			= {2048, 1, 65535, 0};		//~650MB, no free space
-
-//Media IDs used by _DOSBoxDriveFromPath:freeSpace:geometry:mediaID
-#define BXFloppyMediaID		0xF0
-#define BXHardDiskMediaID	0xF8
-#define BXCDROMMediaID		0xF8
-
-//Raw disk images larger than this size in bytes will be treated as hard disks
-#define BXFloppyImageSizeCutoff 2880 * 1024
-
-//Error constants returned by DriveManager::UnmountDrive.
-enum {
-	BXUnmountSuccess		= 0,
-	BXUnmountLockedDrive	= 1,
-	BXUnmountMultipleCDROMs	= 2
-};
-
-//Error constants returned by the cdromDrive class constructor.
-//I can't be bothered going through all of them to give them proper names yet,
-//but when I do then we'll generate NSError objects from them.
-enum {
-	BXMakeCDROMSuccess			= 0,
-	BXMakeCDROMSuccessLimited	= 5,
-};
 
 
 
@@ -127,15 +115,24 @@ enum {
 #pragma mark -
 #pragma mark Drive mounting and unmounting
 
-- (BXDrive *) mountDrive: (BXDrive *)drive
+- (BXDrive *) mountDrive: (BXDrive *)drive error: (NSError **)outError
 {
-	if (![self isExecuting]) return nil;
-	
+    //This is not permitted and indicates a programming error
+    NSAssert([self isExecuting], @"mountDrive:error: called while emulator is not running.");
+    
+    if (outError) *outError = nil;
+    
 	NSFileManager *manager	= [NSFileManager defaultManager];
+	NSString *mountPath = [drive mountPoint];
 	BOOL isFolder;
 	
-	//File did not exist, don't continue mounting
-	if (![manager fileExistsAtPath: [drive mountPoint] isDirectory: &isFolder]) return nil;
+	//File does not exist or cannot be read, don't continue mounting
+	if (![manager fileExistsAtPath: mountPath isDirectory: &isFolder] ||
+        ![manager isReadableFileAtPath: mountPath])
+    {
+        if (outError) *outError = [BXEmulatorCouldNotReadDriveError errorWithDrive: drive];
+        return nil;
+    }
 	
 	BOOL isImage = !isFolder;
 
@@ -143,43 +140,82 @@ enum {
 	NSString *driveLabel = [drive label];
 	
 	
-	//Choose an appropriate drive letter to mount it at,
-	//if one hasn't been specified (or if it is already taken)
-	if (!driveLetter || [self driveAtLetter: driveLetter] != nil)
-		driveLetter = [self preferredLetterForDrive: drive];
+	//Choose an appropriate drive letter to mount the drive at,
+	//if one hasn't been specified.
+	if (!driveLetter) driveLetter = [self preferredLetterForDrive: drive];
 	
-	//No drive letters were available - do not attempt to mount
-	//TODO: populate an NSError object also!
-	if (driveLetter == nil) return nil;
+	//If no drive letters were available, do not continue.
+	if (driveLetter == nil)
+    {
+        if (outError) *outError = [BXEmulatorOutOfDriveLettersError errorWithDrive: drive];
+        return nil;
+    }
+    //Don't continue if there's already a drive at this letter either.
+    else if ([self driveAtLetter: driveLetter] != nil)
+    {
+        if (outError) *outError = [BXEmulatorDriveLetterOccupiedError errorWithDrive: drive];
+        return nil;
+    }
+    
+    //If we got this far, then we're ready to let DOSBox have a crack at the drive.
 	
 	
 	DOS_Drive *DOSBoxDrive = NULL;
 	NSUInteger index = [self _indexOfDriveLetter: driveLetter];
-	NSString *path = [drive mountPoint];
-	//The standardized path returned by BXDrive will not have a trailing slash, so add it ourselves
-	if (isFolder) path = [path stringByAppendingString: @"/"];
+    
+	//The standardized path returned by BXDrive will not have a trailing slash,
+    //but DOSBox expects it, so add it ourselves
+	if (isFolder) mountPath = [mountPath stringByAppendingString: @"/"];
 	
-	switch ([drive type])
-	{
-		case BXDriveCDROM:
-			if (isImage)	DOSBoxDrive = [self _CDROMDriveFromImageAtPath: path forIndex: index];
-			else			DOSBoxDrive = [self _CDROMDriveFromPath: path forIndex: index withAudio: [drive usesCDAudio]];
-			break;
-		case BXDriveHardDisk:
-			DOSBoxDrive = [self _hardDriveFromPath: path freeSpace: [drive freeSpace]];
-			break;
-		case BXDriveFloppyDisk:
-			if (isImage)	DOSBoxDrive = [self _floppyDriveFromImageAtPath: path];
-			else			DOSBoxDrive = [self _floppyDriveFromPath: path freeSpace: [drive freeSpace]];
-			break;
-	}
+    NSError *mountError = nil;
+    if (isImage)
+    {
+        switch ([drive type])
+        {
+            case BXDriveCDROM:
+                DOSBoxDrive = [self _CDROMDriveFromImageAtPath: mountPath
+                                                      forIndex: index
+                                                         error: &mountError];
+                break;
+            case BXDriveHardDisk:
+                DOSBoxDrive = [self _hardDriveFromImageAtPath: mountPath
+                                                        error: &mountError];
+                break;
+            case BXDriveFloppyDisk:
+                DOSBoxDrive = [self _floppyDriveFromImageAtPath: mountPath
+                                                          error: &mountError];
+                break;
+        }
+    }
+    else
+    {
+        switch ([drive type])
+        {
+            case BXDriveCDROM:
+                DOSBoxDrive = [self _CDROMDriveFromPath: mountPath
+                                               forIndex: index
+                                              withAudio: [drive usesCDAudio]
+                                                  error: &mountError];
+                break;
+                
+            case BXDriveHardDisk:
+                DOSBoxDrive = [self _hardDriveFromPath: mountPath
+                                             freeSpace: [drive freeSpace]
+                                                 error: &mountError];
+                break;
+                
+            case BXDriveFloppyDisk:
+                DOSBoxDrive = [self _floppyDriveFromPath: mountPath
+                                               freeSpace: [drive freeSpace]
+                                                   error: &mountError];
+                break;
+        }
+    }
 	
 	//DOSBox successfully created the drive object
 	if (DOSBoxDrive)
 	{
-		//Now add the drive to DOSBox's drive list
-		//We do this after recording it in driveCache, so that _syncDriveCache won't bother generating
-		//a new drive object for it
+		//Now add the drive to DOSBox's own drive list
 		if ([self _addDOSBoxDrive: DOSBoxDrive atIndex: index])
 		{
 			//And set its label appropriately (unless its an image, which carry their own labels)
@@ -192,11 +228,13 @@ enum {
 			
 			//Populate the drive with the settings we ended up using, and add the drive to our own drives cache
 			[drive setLetter: driveLetter];
-			[drive setDOSBoxLabel: [NSString stringWithCString: DOSBoxDrive->GetLabel() encoding: BXDirectStringEncoding]];
+			[drive setDOSBoxLabel: [NSString stringWithCString: DOSBoxDrive->GetLabel()
+                                                      encoding: BXDirectStringEncoding]];
 			[self _addDriveToCache: drive];
 			
 			//Post a notification to whoever's listening
 			NSDictionary *userInfo = [NSDictionary dictionaryWithObject: drive forKey: @"drive"];
+            
 			[self _postNotificationName: @"BXDriveDidMountNotification"
 					   delegateSelector: @selector(emulatorDidMountDrive:)
 							   userInfo: userInfo];
@@ -205,21 +243,63 @@ enum {
 		}
 		else
 		{
+            //The only reason this can fail currently is if another drive has been inserted at the same letter.
+            //We check for this and fail earlier, but this could possibly still happen if there's a race condition.
+            //TODO: let _addDOSBoxDrive:atIndex: populate an error.
+            if (outError) *outError = [BXEmulatorDriveLetterOccupiedError errorWithDrive: drive];
+            
 			delete DOSBoxDrive;
 			return nil;
 		}
 	}
-	else return nil;
+	else
+    {
+        //Figure out what went wrong, and transform it into a more presentable error type.
+        if (outError)
+        {
+            if ([[mountError domain] isEqualToString: BXDOSBoxMountErrorDomain])
+            {
+                switch ([mountError code])
+                {
+                    case BXDOSBoxMountNonContiguousCDROMDrives:
+                        *outError = [BXEmulatorNonContiguousDrivesError errorWithDrive: drive];
+                        break;
+                    case BXDOSBoxMountCouldNotReadSource:
+                        *outError = [BXEmulatorCouldNotReadDriveError errorWithDrive: drive];
+                        break;
+                    case BXDOSBoxMountTooManyCDROMDrives:
+                        *outError = [BXEmulatorOutOfCDROMDrivesError errorWithDrive: drive];
+                        break;
+                    case BXDOSBoxMountInvalidImageFormat:
+                        *outError = [BXEmulatorInvalidImageError errorWithDrive: drive];
+                        break;
+                    default:
+                        *outError = mountError;
+                }
+            }
+            else *outError = mountError;
+        }
+        return nil;
+    }
 }
 
-- (BOOL) unmountDrive: (BXDrive *)drive
+- (BOOL) unmountDrive: (BXDrive *)drive error: (NSError **)outError
 {
-	if (![self isExecuting] || [drive isInternal] || [drive isLocked]) return NO;
+    //This is not permitted and indicates a programming error
+    NSAssert([self isExecuting], @"unmountDrive:error: called while emulator is not running.");
+    
+	if ([drive isInternal] || [drive isLocked])
+    {
+        if (outError) *outError = [BXEmulatorDriveLockedError errorWithDrive: drive];
+        return NO;
+    }
 	
 	NSUInteger index	= [self _indexOfDriveLetter: [drive letter]];
 	BOOL isCurrentDrive = (index == DOS_GetDefaultDrive());
 
-	BOOL unmounted = [self _unmountDOSBoxDriveAtIndex: index];
+    NSError *unmountError = nil;
+	BOOL unmounted = [self _unmountDOSBoxDriveAtIndex: index
+                                                error: &unmountError];
 	
 	if (unmounted)
 	{
@@ -234,15 +314,33 @@ enum {
 		[self _postNotificationName: @"BXDriveDidUnmountNotification"
 				   delegateSelector: @selector(emulatorDidUnmountDrive:)
 						   userInfo: userInfo];
-		
 	}
+    else if (outError)
+    {   
+        //Transform DOSBox's error codes into our own
+        if ([[unmountError domain] isEqualToString: BXDOSBoxUnmountErrorDomain])
+        {
+            switch ([unmountError code])
+            {
+                case BXDOSBoxUnmountLockedDrive:
+                    *outError = [BXEmulatorDriveLockedError errorWithDrive: drive];
+                    break;
+                case BXDOSBoxUnmountNonContiguousCDROMDrives:
+                    *outError = [BXEmulatorNonContiguousDrivesError errorWithDrive: drive];
+                    break;
+                default:
+                    *outError = unmountError;
+            }
+        }
+        else *outError = unmountError;
+    }
 	return unmounted;
 }
 
-- (BOOL) unmountDriveAtLetter: (NSString *)letter
+- (BOOL) unmountDriveAtLetter: (NSString *)letter error: (NSError **)outError
 {	
 	BXDrive *drive = [self driveAtLetter: letter];
-	if (drive) return [self unmountDrive: drive];
+	if (drive) return [self unmountDrive: drive error: outError];
 	return NO;
 }
 
@@ -582,12 +680,13 @@ enum {
 }
 
 //Registers a new drive with DOSBox and adds it to the drive list.
-- (BOOL) _addDOSBoxDrive: (DOS_Drive *)drive atIndex: (NSUInteger)index
+- (BOOL) _addDOSBoxDrive: (DOS_Drive *)drive
+                 atIndex: (NSUInteger)index
 {
 	NSAssert1(index < DOS_DRIVES, @"index %u passed to _addDOSBoxDrive was beyond the range of DOSBox's drive array.", index);
 	
 	//There was already a drive at that index, bail out
-	//TODO: populate an NSError object as well.
+	//TODO: populate an NSError object as well?
 	if (Drives[index]) return NO;
 	
 	Drives[index] = drive;
@@ -598,43 +697,49 @@ enum {
 
 //Unmounts the DOSBox drive at the specified index and clears any references to the drive.
 - (BOOL) _unmountDOSBoxDriveAtIndex: (NSUInteger)index
+                              error: (NSError **)outError
 {
-	//The specified drive is not mounted, bail out.
-	//TODO: populate an NSError object as well.
+	//The specified drive is not mounted, don't continue
+    //(We don't treat this as an error situation either.)
 	if (!Drives[index]) return NO;
 	
-	//Close any files that DOSBox had open on that drive before unmounting it
-	//TODO: port this code back to DOSBox itself, as it will not currently occur
-	//if user unmounts a drive with the MOUNT command (not that this usually matters,
-	//since there should be no open files while at the commandline, but still)
-	
-	int i;
-	for (i=0; i<DOS_FILES; i++)
+    NSInteger result = DriveManager::UnmountDrive(index);
+	if (result == BXDOSBoxUnmountSuccess)
 	{
-		if (Files[i] && Files[i]->GetDrive() == index)
-		{
-			//DOS_File->GetDrive() returns 0 for the special CON system file,
-			//which also corresponds to the drive index for A, so make sure we don't
-			//close this by mistake.
-			if (index == 0 && !strcmp(Files[i]->GetName(), "CON")) continue;
-			
-			//Code copy-pasted from localDrive::FileUnlink in drive_local.cpp
-			//Only relevant for local drives, but harmless to perform on other types of drives.
-			while (Files[i]->IsOpen())
-			{
-				Files[i]->Close();
-				if (Files[i]->RemoveRef() <= 0) break;
-			}
-		}
-	}
-	
-	NSInteger result = DriveManager::UnmountDrive(index);
-	if (result == BXUnmountSuccess)
-	{
+        //Close any files that DOSBox had open on this drive after unmounting it
+        //TODO: port this code back to DOSBox itself, as it will not currently occur
+        //if user unmounts a drive with the MOUNT command (not that this usually matters,
+        //since there should be no open files while at the commandline, but still)
+        int i;
+        for (i=0; i<DOS_FILES; i++)
+        {
+            if (Files[i] && Files[i]->GetDrive() == index)
+            {
+                //DOS_File->GetDrive() returns 0 for the special CON system file,
+                //which also corresponds to the drive index for A, so make sure we don't
+                //close this by mistake.
+                if (index == 0 && !strcmp(Files[i]->GetName(), "CON")) continue;
+                
+                //Code copy-pasted from localDrive::FileUnlink in drive_local.cpp
+                //Only relevant for local drives, but harmless to perform on other types of drives.
+                while (Files[i]->IsOpen())
+                {
+                    Files[i]->Close();
+                    if (Files[i]->RemoveRef() <= 0) break;
+                }
+            }
+        }
+        
 		Drives[index] = NULL;
 		return YES;
 	}
-	else return NO;
+	else
+    {
+        if (outError) *outError = [NSError errorWithDomain: BXDOSBoxUnmountErrorDomain
+                                                      code: result
+                                                  userInfo: nil];
+        return NO;
+    }
 }
 
 
@@ -671,7 +776,9 @@ enum {
 }
 
 //Create a new DOS_Drive CDROM from a path to a disc image.
-- (DOS_Drive *) _CDROMDriveFromImageAtPath: (NSString *)path forIndex: (NSUInteger)index
+- (DOS_Drive *) _CDROMDriveFromImageAtPath: (NSString *)path
+                                  forIndex: (NSUInteger)index
+                                     error: (NSError **)outError
 {
 	MSCDEX_SetCDInterface(CDROM_USE_SDL, -1);
 	
@@ -680,37 +787,66 @@ enum {
 	//If the path couldn't be encoded, don't attempt to go further
 	if (!drivePath) return nil;
 	
-	int error = -1;
-	DOS_Drive *drive = new isoDrive(driveLetter, drivePath, BXCDROMMediaID, error);
+	int errorCode = BXDOSBoxMountUnknownError;
+	DOS_Drive *drive = new isoDrive(driveLetter, drivePath, BXCDROMMediaID, errorCode);
 	
-	if (!(error == BXMakeCDROMSuccess || error == BXMakeCDROMSuccessLimited))
+	if (errorCode == BXDOSBoxMountSuccess || errorCode == BXDOSBoxMountSuccessCDROMLimited)
 	{
+        return drive;
+    }
+    else
+    {
 		delete drive;
-		return nil;
+     
+        if (outError) *outError = [NSError errorWithDomain: BXDOSBoxMountErrorDomain
+                                                      code: errorCode
+                                                  userInfo: nil];
+        
+        return nil;
 	}
 	return drive;
 }
 
 //Create a new DOS_Drive floppy from a path to a raw disk image.
 - (DOS_Drive *) _floppyDriveFromImageAtPath: (NSString *)path
+                                      error: (NSError **)outError
 {	
 	const char *drivePath = [path cStringUsingEncoding: BXDirectStringEncoding];
 	//If the path couldn't be encoded, don't attempt to go further
 	if (!drivePath) return nil;
 	
 	fatDrive *drive = new fatDrive(drivePath, 0, 0, 0, 0, 0);
-	if (!drive->created_successfully)
+	if (!drive || !drive->created_successfully)
     {
         delete drive;
+    
+        //Assume this is always a corrupted-image problem
+        if (outError) *outError = [NSError errorWithDomain: BXDOSBoxMountErrorDomain
+                                                      code: BXDOSBoxMountInvalidImageFormat
+                                                  userInfo: nil];
+        
         return nil;
     }
 	return (DOS_Drive *)drive;
+}
+
+//Create a new DOS_Drive floppy from a path to a raw disk image.
+//Currently unimplemented as this requires data about the
+//volume layout of the image.
+- (DOS_Drive *) _hardDriveFromImageAtPath: (NSString *)path
+                                    error: (NSError **)outError
+{
+    if (outError) *outError = [NSError errorWithDomain: BXDOSBoxMountErrorDomain
+                                                  code: BXDOSBoxMountInvalidImageFormat
+                                              userInfo: nil];
+    return nil;
 }
 
 //Create a new DOS_Drive CDROM from a path to a filesystem folder.
 - (DOS_Drive *) _CDROMDriveFromPath: (NSString *)path
 						   forIndex: (NSUInteger)index
 						  withAudio: (BOOL)useCDAudio
+                              error: (NSError **)outError
 {
 	BXDriveGeometry geometry = BXCDROMGeometry;
 	 
@@ -739,7 +875,7 @@ enum {
 	//If the path couldn't be encoded, don't attempt to go further
 	if (!drivePath) return nil;
 	
-	int error = -1;
+	int errorCode = BXDOSBoxMountUnknownError;
 	DOS_Drive *drive = new cdromDrive(driveLetter,
 									  drivePath,
 									  geometry.bytesPerSector,
@@ -747,32 +883,47 @@ enum {
 									  geometry.numClusters,
 									  geometry.freeClusters,
 									  BXCDROMMediaID,
-									  error);
+									  errorCode);
 	
-	if (!(error == BXMakeCDROMSuccess || error == BXMakeCDROMSuccessLimited))
-	{
-		delete drive;
+    if (errorCode == BXDOSBoxMountSuccess || errorCode == BXDOSBoxMountSuccessCDROMLimited)
+    {
+        return drive;
+    }
+    else
+    {
+        delete drive;
+        
+        if (outError)
+            *outError = [NSError errorWithDomain: BXDOSBoxMountErrorDomain
+                                            code: errorCode
+                                        userInfo: nil];
+		
 		return nil;
 	}
-	return drive;
 }
 
 //Create a new DOS_Drive hard disk from a path to a filesystem folder.
-- (DOS_Drive *) _hardDriveFromPath: (NSString *)path freeSpace: (NSInteger)freeSpace
+- (DOS_Drive *) _hardDriveFromPath: (NSString *)path
+                         freeSpace: (NSInteger)freeSpace
+                             error: (NSError **)outError
 {
 	return [self _DOSBoxDriveFromPath: path
 							freeSpace: freeSpace
 							 geometry: BXHardDiskGeometry
-							  mediaID: BXHardDiskMediaID];
+							  mediaID: BXHardDiskMediaID
+                                error: outError];
 }
 
 //Create a new DOS_Drive floppy disk from a path to a filesystem folder.
-- (DOS_Drive *) _floppyDriveFromPath: (NSString *)path freeSpace: (NSInteger)freeSpace
+- (DOS_Drive *) _floppyDriveFromPath: (NSString *)path
+                           freeSpace: (NSInteger)freeSpace
+                               error: (NSError **)outError
 {
 	return [self _DOSBoxDriveFromPath: path
 							freeSpace: freeSpace
 							 geometry: BXFloppyDiskGeometry
-							  mediaID: BXFloppyMediaID];
+							  mediaID: BXFloppyMediaID
+                                error: outError];
 }
 
 //Internal DOS_Drive localdrive function for the two wrapper methods above
@@ -780,6 +931,7 @@ enum {
 						   freeSpace: (NSInteger)freeSpace
 							geometry: (BXDriveGeometry)geometry
 							 mediaID: (NSUInteger)mediaID
+                               error: (NSError **)outError
 {
 	if (freeSpace != BXDefaultFreeSpace)
 	{
@@ -787,10 +939,10 @@ enum {
 		geometry.freeClusters = freeSpace / bytesPerCluster;
 	}
 	
-	const char *drivePath = [path cStringUsingEncoding: BXDirectStringEncoding];
-	//If the path couldn't be encoded, don't attempt to go further
-	if (!drivePath) return nil;
+	const char *drivePath = [[NSFileManager defaultManager] fileSystemRepresentationWithPath: path];
 	
+    //NOTE: as far as DOSBox is concerned there's actually nothing that can go wrong here,
+    //so outError goes unused.
 	return new localDrive(drivePath,
 						  geometry.bytesPerSector,
 						  geometry.sectorsPerCluster,

@@ -11,6 +11,7 @@
 #import "BXSession+BXFileManager.h"
 #import "BXSession+BXDragDrop.h"
 #import "BXEmulator+BXDOSFileSystem.h"
+#import "BXEmulatorErrors.h"
 #import "BXDrive.h"
 #import "BXValueTransformers.h"
 #import "BXDriveImport.h"
@@ -206,7 +207,19 @@ enum {
 	NSArray *selection = [[self drives] selectedObjects];
 	BXSession *session = [[NSApp delegate] currentSession];
 	if ([session shouldUnmountDrives: selection sender: self])
-		[session unmountDrives: selection];
+    {
+        NSError *unmountError = nil;
+		[session unmountDrives: selection error: &unmountError];
+        if (unmountError)
+        {
+            NSWindow *targetWindow = [[[NSApp delegate] currentSession] windowForSheet];
+            [targetWindow presentError: unmountError
+                        modalForWindow: targetWindow
+                              delegate: nil
+                    didPresentSelector: NULL
+                           contextInfo: NULL];
+        }
+    }
 }
 
 - (IBAction) importSelectedDrives: (id)sender

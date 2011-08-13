@@ -10,6 +10,7 @@
 #import "BXAppController.h"
 
 #import "BXEmulator+BXDOSFileSystem.h"
+#import "BXEmulatorErrors.h"
 #import "BXEmulator+BXShell.h"
 #import "UKFNSubscribeFileWatcher.h"
 #import "BXMountPanelController.h"
@@ -278,7 +279,19 @@
 					  forDrives: (NSArray *)selectedDrives
 {
 	[alert release];
-	if (returnCode == NSAlertFirstButtonReturn) [self unmountDrives: selectedDrives];
+	if (returnCode == NSAlertFirstButtonReturn)
+    {
+        NSError *unmountError = nil;
+        [self unmountDrives: selectedDrives error: &unmountError];
+        if (unmountError)
+        {
+            [self presentError: unmountError
+                modalForWindow: [self windowForSheet]
+                      delegate: nil
+            didPresentSelector: NULL
+                   contextInfo: NULL];
+        }
+    }
 }
 
 
@@ -299,7 +312,7 @@
 	return NO;
 }
 
-- (BXDrive *) mountDriveForPath: (NSString *)path
+- (BXDrive *) mountDriveForPath: (NSString *)path error: (NSError **)outError
 {
 	NSFileManager *manager = [NSFileManager defaultManager];
 	BXEmulator *theEmulator = [self emulator];
@@ -314,7 +327,7 @@
 	NSString *mountPoint	= [[self class] preferredMountPointForPath: path];
 	BXDrive *drive			= [BXDrive driveFromPath: mountPoint atLetter: nil];
 	
-	return [self mountDrive: drive];
+	return [self mountDrive: drive error: outError];
 }
 
 - (BOOL) openFileAtPath: (NSString *)path
@@ -346,7 +359,7 @@
 
 //Mount drives for all CD-ROMs that are currently mounted in OS X (as long as they're not already mounted, that is)
 //Returns YES if any drives were mounted, NO otherwise
-- (BOOL) mountCDVolumes
+- (BOOL) mountCDVolumesWithError: (NSError **)outError
 {
 	BXEmulator *theEmulator = [self emulator];
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
@@ -364,8 +377,14 @@
 		if (![theEmulator pathIsMountedAsDrive: volume])
 		{
 			BXDrive *drive = [BXDrive CDROMFromPath: volume atLetter: nil];
-			drive = [self mountDrive: drive];
+            drive = [self mountDrive: drive error: outError];
 			if (drive != nil) returnValue = YES;
+            
+            //If there was any error in mounting a drive,
+            //then bail out and don't attempt to mount further drives
+            //TODO: check the actual error to determine whether we can
+            //continue after failure.
+            else return NO;
 		}
 	}
 	return returnValue;
@@ -373,7 +392,7 @@
 
 //Mount drives for all floppy-sized FAT volumes that are currently mounted in OS X.
 //Returns YES if any drives were mounted, NO otherwise.
-- (BOOL) mountFloppyVolumes
+- (BOOL) mountFloppyVolumesWithError: (NSError **)outError
 {
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	NSArray *volumePaths = [workspace mountedVolumesOfType: FATVolumeType];
@@ -385,8 +404,14 @@
 		if (![theEmulator pathIsMountedAsDrive: volumePath] && [workspace isFloppySizedVolumeAtPath: volumePath])
 		{
 			BXDrive *drive = [BXDrive floppyDriveFromPath: volumePath atLetter: nil];
-			drive = [self mountDrive: drive];
+			drive = [self mountDrive: drive error: outError];
 			if (drive != nil) returnValue = YES;
+            
+            //If there was any error in mounting a drive,
+            //then bail out and don't attempt to mount further drives
+            //TODO: check the actual error to determine whether we can
+            //continue after failure.
+            else return NO;
 		}
 	}
 	return returnValue;
@@ -413,7 +438,7 @@
 	return NO;
 }
 
-- (void) mountToolkitDrive
+- (void) mountToolkitDriveWithError: (NSError **)outError
 {
 	BXEmulator *theEmulator = [self emulator];
 
@@ -426,7 +451,7 @@
 	[toolkitDrive setReadOnly: YES];
 	[toolkitDrive setHidden: YES];
 	[toolkitDrive setFreeSpace: 0];
-	toolkitDrive = [self mountDrive: toolkitDrive];
+	toolkitDrive = [self mountDrive: toolkitDrive error: outError];
 	
 	//Point DOS to the correct paths if we've mounted the toolkit drive successfully
 	//TODO: we should treat this as an error if it didn't mount!
@@ -443,7 +468,7 @@
 	}	
 }
 
-- (void) mountTempDrive
+- (void) mountTempDriveWithError: (NSError **)outError
 {
 	BXEmulator *theEmulator = [self emulator];
 
@@ -460,7 +485,7 @@
 		[tempDrive setLocked: YES];
 		[tempDrive setHidden: YES];
 		
-		tempDrive = [self mountDrive: tempDrive];
+		tempDrive = [self mountDrive: tempDrive error: outError];
 		
 		if (tempDrive)
 		{
@@ -471,8 +496,10 @@
 	}	
 }
 
-- (BXDrive *) mountDrive: (BXDrive *)drive
+- (BXDrive *) mountDrive: (BXDrive *)drive error: (NSError **)outError
 {
+    if (outError) *outError = nil;
+    
 	//Allow the game profile to override the drive label if needed
 	NSString *customLabel = nil;
 	if ([self gameProfile]) customLabel = [[self gameProfile] labelForDrive: drive];
@@ -501,34 +528,44 @@
 			[imageDrive setLocked: [drive isLocked]];
 			[[imageDrive pathAliases] addObject: [drive path]];
 			
-			BXDrive *returnedDrive = [[self emulator] mountDrive: imageDrive];
+            NSError *mountError = nil;
+			BXDrive *returnedDrive = [[self emulator] mountDrive: imageDrive error: &mountError];
 			//If mounting the image fails, then try again with the original drive
-			if (!returnedDrive) returnedDrive = [[self emulator] mountDrive: drive];
+			if (!returnedDrive && [mountError code] == BXDOSFilesystemInvalidImage)
+            {
+                returnedDrive = [[self emulator] mountDrive: drive error: &mountError];
+            }
+            if (outError) *outError = mountError;
+            
 			return returnedDrive;
 		}
 	}
 	else
 	{
-		return [[self emulator] mountDrive: drive];
+		return [[self emulator] mountDrive: drive error: outError];
 	}
 }
 
 - (BOOL) unmountDrive: (BXDrive *)drive
+                error: (NSError **)outError
 {
 	//Refuse to eject drives that are currently being imported.
 	if ([self driveIsImporting: drive]) return NO;
-	return [[self emulator] unmountDrive: drive];
+	return [[self emulator] unmountDrive: drive error: outError];
 }
 
 
-//Simple helper function to unmount a set of drives. Returns YES if any drives were unmounted, NO otherwise.
+//Simple helper function to unmount a set of drives. Returns YES if all drives were unmounted,
+//NO if there was an error or no drives were selected.
 //Implemented just so that BXDrivePanelController doesn't have to know about BXEmulator+BXDOSFileSystem.
-- (BOOL) unmountDrives: (NSArray *)selectedDrives
+- (BOOL) unmountDrives: (NSArray *)selectedDrives error: (NSError **)outError
 {
 	BOOL succeeded = NO;
 	for (BXDrive *drive in selectedDrives)
 	{
-		succeeded = [self unmountDrive: drive] || succeeded;
+        if ([self unmountDrive: drive error: outError]) succeeded = YES;
+        //If any of the drive unmounts failed, don't continue further
+        else return NO;
 	}
 	return succeeded;
 }
@@ -650,7 +687,9 @@
 	//Alright, if we got this far then it's ok to mount a new drive for it
 	BXDrive *drive = [BXDrive driveFromPath: mountPoint atLetter: nil];
 	
-	[self mountDrive: drive];
+    //Ignore errors when automounting volumes, since these
+    //are not directly triggered by the user.
+	[self mountDrive: drive error: nil];
 }
 
 //Implementation note: this handler is called in response to NSVolumeWillUnmountNotifications,
@@ -678,7 +717,7 @@
 			//themselves while they import. However, it means we can end up with
 			//'ghost' drives if the user physically removes the disk themselves
 			//during import.
-			[self unmountDrive: drive];
+			[self unmountDrive: drive error: nil];
 		}
 		else
 		{
@@ -991,10 +1030,11 @@
 			BOOL wasCurrentDrive = [[[self emulator] currentDrive] isEqual: drive];
 			
 			//Unmount the old drive first...
-			if ([self unmountDrive: drive])
+			if ([self unmountDrive: drive error: nil])
 			{
 				//...then mount the new one in its place
-				BXDrive *mountedDrive = [self mountDrive: importedDrive];
+                NSError *mountError = nil;
+				BXDrive *mountedDrive = [self mountDrive: importedDrive error: &mountError];
 				//If it worked, use the newly-mounted drive from now on
 				if (mountedDrive)
 				{
@@ -1006,7 +1046,7 @@
 				//If the mount failed for some reason, then put the old drive back
 				else
 				{
-					[self mountDrive: drive];
+					[self mountDrive: drive error: &mountError];
 				}
 				//Switch to the new drive, if the replaced drive was the active drive
 				if (wasCurrentDrive) [[self emulator] changeToDriveLetter: [drive letter]];

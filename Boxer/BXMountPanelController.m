@@ -9,6 +9,7 @@
 #import "BXSession+BXFileManager.h"
 #import "BXAppController.h"
 #import "BXEmulator+BXDOSFileSystem.h"
+#import "BXEmulatorErrors.h"
 #import "BXEmulator+BXShell.h"
 #import "NSWorkspace+BXFileTypes.h"
 #import "BXDrive.h"
@@ -247,10 +248,26 @@
 		
 		BXDrive *drive = [BXDrive driveFromPath: path atLetter: preferredLetter withType: preferredType];
 		[drive setReadOnly: readOnly];
-		drive = [[self representedObject] mountDrive: drive];
+        
+        NSError *mountError = nil;
+		drive = [[self representedObject] mountDrive: drive error: &mountError];
 		
-		//If we're not in the middle of something, switch to the new mount
-		if (drive != nil) [[self representedObject] openFileAtPath: [drive path]];
+		//Switch to the new mount after adding it
+		if (drive)
+        {
+            [[self representedObject] openFileAtPath: [drive path]];
+        }
+        //Display the error to the user as a sheet in the same window we are on
+        else if (mountError)
+        {
+            NSWindow *window = [openPanel parentWindow];
+            [openPanel close];
+            [[self representedObject] presentError: mountError
+                                    modalForWindow: window
+                                          delegate: nil
+                                didPresentSelector: NULL
+                                       contextInfo: nil];
+        }
 	}
 	[self setRepresentedObject: nil];
 }

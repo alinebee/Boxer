@@ -836,7 +836,7 @@ bool physfscdromDrive::isRemovable(void) {
 }
 
 Bits physfscdromDrive::UnMount(void) {
-	return true;
+	return 0;
 }
 
 #endif // C_HAVE_PHYSFS

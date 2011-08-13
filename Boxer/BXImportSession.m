@@ -1217,23 +1217,26 @@
 	
 	
 	//Mount our new empty gamebox as drive C
+    //TODO: actually perform any error-handling with this error object
+    NSError *mountError = nil;
+    
 	BXDrive *destinationDrive = [BXDrive hardDriveFromPath: [self rootDrivePath] atLetter: @"C"];
 	[destinationDrive setFreeSpace: freeSpace];
-	[self mountDrive: destinationDrive];
+	[self mountDrive: destinationDrive error: &mountError];
 	
 	//Then, create a drive of the appropriate type from the source files and mount away
 	BXDrive *sourceDrive = [BXDrive driveFromPath: [self sourcePath] atLetter: nil withType: installMedium];
-	[self mountDrive: sourceDrive];
+	[self mountDrive: sourceDrive error: &mountError];
 	
 	//Automount all currently mounted floppy and CD-ROM volumes
-	[self mountFloppyVolumes];
-	[self mountCDVolumes];
+	[self mountFloppyVolumesWithError: &mountError];
+	[self mountCDVolumesWithError: &mountError];
 	
 	//Mount our internal DOS toolkit and temporary drives unless the profile says otherwise
 	if (![self gameProfile] || [[self gameProfile] mountHelperDrivesDuringImport])
 	{
-		[self mountToolkitDrive];
-		[self mountTempDrive];
+		[self mountToolkitDriveWithError: &mountError];
+		[self mountTempDriveWithError: &mountError];
 	}
 }
 

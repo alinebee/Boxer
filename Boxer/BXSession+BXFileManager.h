@@ -13,6 +13,24 @@
 #import "BXSession.h"
 #import "BXOperationDelegate.h"
 
+
+#pragma mark -
+#pragma mark Constants
+
+enum {
+    BXDriveMountReplaceExistingCDROM    = 1 << 0,
+    BXDriveMountReplaceExistingFloppy   = 1 << 1,
+    BXDriveMountReplaceExistingHardDisk = 1 << 2,
+    BXDriveMountReplaceDriveAtLetter    = 1 << 3,
+    BXDriveMountDefaultOptions
+};
+
+typedef NSUInteger BXDriveMountOptions;
+
+
+#pragma mark -
+#pragma mark Public interface
+
 @class BXDrive;
 @class BXDrivesInUseAlert;
 @class BXOperation;
@@ -99,25 +117,30 @@
 //Automount all ISO9660 CD-ROM volumes that are currently mounted in OS X.
 //Will not create new mounts for ones that are already mounted.
 //Returns YES if any new volumes were created, NO otherwise.
-- (BOOL) mountCDVolumes;
+- (BOOL) mountCDVolumesWithError: (NSError **)outError;
 
 //Mount all floppy-sized FAT volumes that are currently mounted in OS X.
 //Will not create new mounts for ones that are already mounted.
 //Returns YES if any drives were mounted, NO otherwise.
-- (BOOL) mountFloppyVolumes;
+- (BOOL) mountFloppyVolumesWithError: (NSError **)outError;
 
 //Mount Boxer's internal toolkit drive at the appropriate drive letter (defined in the application preferences.)
-- (void) mountToolkitDrive;
+- (void) mountToolkitDriveWithError: (NSError **)outError;
 
 //Create a temporary folder and mount it at the appropriate drive letter (defined in the application preferences.)
-- (void) mountTempDrive;
+- (void) mountTempDriveWithError: (NSError **)outError;
 
-//A wrapper around BXDOSFileSystem mountDrive: and unmountDrive: to add additional Boxer-specific logic.
-- (BXDrive *) mountDrive: (BXDrive *)drive;
-- (BOOL) unmountDrive: (BXDrive *)drive;
+//A wrapper around BXDOSFileSystem mountDrive: and unmountDrive: to add additional
+//Boxer-specific logic.
+//Returns nil and populates outError, if the specified drive could not be mounted.
+- (BXDrive *) mountDrive: (BXDrive *)drive error: (NSError **)outError;
+- (BOOL) unmountDrive: (BXDrive *)drive error: (NSError **)outError;
 
-//Unmount the BXDrives in the specified array.
-- (BOOL) unmountDrives: (NSArray *)selectedDrives;
+//Unmount the BXDrives in the specified array. Returns YES if all drives were unmounted,
+//NO if there was an error (in which case outError will be populated) or if selectedDrives
+//is empty.
+- (BOOL) unmountDrives: (NSArray *)selectedDrives
+                 error: (NSError **)outError;
 
 //Returns whether the specified path should be mounted as a new drive.
 //Returns YES if the path isn't already DOS-accessible or deserves its own drive anyway, NO otherwise.
@@ -125,7 +148,7 @@
 
 //Adds a new drive to expose the specified path, using preferredMountPointForPath:
 //to choose an appropriate base location for the drive.
-- (BXDrive *) mountDriveForPath: (NSString *)path;
+- (BXDrive *) mountDriveForPath: (NSString *)path error: (NSError **)outError;
 
 //Returns whether the specified drives are allowed to be unmounted.
 //This may display a confirmation sheet and return NO.

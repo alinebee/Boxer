@@ -1067,12 +1067,13 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 - (void) _mountDrivesForSession
 {
 	BXPackage *package = [self gamePackage];
+    NSError *mountError = nil;
 	if (package)
 	{
 		//Mount the game package as a new hard drive, at drive C
 		//(This may get replaced below by a custom bundled C volume)
 		BXDrive *packageDrive = [BXDrive hardDriveFromPath: [package gamePath] atLetter: @"C"];
-		packageDrive = [self mountDrive: packageDrive];
+		packageDrive = [self mountDrive: packageDrive error: &mountError];
         		
 		//Then, mount any extra volumes included in the game package
 		NSMutableArray *packageVolumes = [NSMutableArray arrayWithCapacity: 10];
@@ -1087,7 +1088,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 			//The bundled drive was explicitly set to drive C, so override our existing C package-drive with it
 			if ([[bundledDrive letter] isEqualToString: [packageDrive letter]])
 			{
-				[self unmountDrive: packageDrive];
+				[self unmountDrive: packageDrive error: nil];
 				
 				//Rewrite the target to point to the new C drive, if it was pointing to the old one
 				if ([[self targetPath] isEqualToString: [packageDrive path]]) [self setTargetPath: volumePath];
@@ -1095,7 +1096,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 				//Aaand use this as our package drive from here on
 				packageDrive = bundledDrive;
 			}
-			[self mountDrive: bundledDrive];
+			[self mountDrive: bundledDrive error: nil];
 		}
 	}
 	
@@ -1105,19 +1106,19 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	//games, where we'd otherwise mount the original install disc alongside the newly-bundled drive.
 	//This is a hack and should be replaced with a more sophisticated comparison between the OS X
 	//volume and the bundled drive(s).
-	if (!package || ![self hasFloppyDrives])	[self mountFloppyVolumes];
-	if (!package || ![self hasCDDrives])		[self mountCDVolumes];
+	if (!package || ![self hasFloppyDrives])	[self mountFloppyVolumesWithError: &mountError];
+	if (!package || ![self hasCDDrives])		[self mountCDVolumesWithError: &mountError];
 	
 	//Mount our internal DOS toolkit and temporary drives
-	[self mountToolkitDrive];
-	[self mountTempDrive];
+	[self mountToolkitDriveWithError: &mountError];
+	[self mountTempDriveWithError: &mountError];
 	
 	
 	//Once all regular drives are in place, make a mount point allowing access to our target program/folder,
 	//if it's not already accessible in DOS.
 	if ([self targetPath])
 	{
-		if ([self shouldMountDriveForPath: targetPath]) [self mountDriveForPath: targetPath];
+		if ([self shouldMountDriveForPath: targetPath]) [self mountDriveForPath: targetPath error: &mountError];
 	}
 }
 

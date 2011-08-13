@@ -57,6 +57,7 @@
 		9F2AC6E410EFFE8600CFFF72 /* BXBootlegCoverArt.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2AC6E310EFFE8600CFFF72 /* BXBootlegCoverArt.m */; };
 		9F2C28A2129D906600B172C8 /* BXFirstRunWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2C28A1129D906600B172C8 /* BXFirstRunWindowController.m */; };
 		9F2C28B8129D924E00B172C8 /* FirstRunWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F2C28B6129D924E00B172C8 /* FirstRunWindow.xib */; };
+		9F3E57A513F694B40070A14D /* BXEmulatorErrors.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3E57A413F694B40070A14D /* BXEmulatorErrors.m */; };
 		9F3FB1AF1306F88800DB8FBE /* BXScriptablePreferences.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3FB1AE1306F88800DB8FBE /* BXScriptablePreferences.m */; };
 		9F3FB1B61306F9FB00DB8FBE /* NSApplication+BXScripting.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3FB1B51306F9FB00DB8FBE /* NSApplication+BXScripting.m */; };
 		9F3FB24E130714D700DB8FBE /* BXScriptableWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3FB24D130714D700DB8FBE /* BXScriptableWindow.m */; };
@@ -523,6 +524,8 @@
 		9F2C28A1129D906600B172C8 /* BXFirstRunWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFirstRunWindowController.m; sourceTree = "<group>"; };
 		9F2C28B7129D924E00B172C8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/FirstRunWindow.xib; sourceTree = "<group>"; };
 		9F348A9D128F004A0034E780 /* BXWelcomeButtonDraggingDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXWelcomeButtonDraggingDelegate.h; sourceTree = "<group>"; };
+		9F3E57A313F694B40070A14D /* BXEmulatorErrors.h */ = {isa = PBXFileReference; fileEncoding = 4; path = BXEmulatorErrors.h; sourceTree = "<group>"; };
+		9F3E57A413F694B40070A14D /* BXEmulatorErrors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXEmulatorErrors.m; sourceTree = "<group>"; };
 		9F3FB1AD1306F88800DB8FBE /* BXScriptablePreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXScriptablePreferences.h; sourceTree = "<group>"; };
 		9F3FB1AE1306F88800DB8FBE /* BXScriptablePreferences.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXScriptablePreferences.m; sourceTree = "<group>"; };
 		9F3FB1B41306F9FB00DB8FBE /* NSApplication+BXScripting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSApplication+BXScripting.h"; sourceTree = "<group>"; };
@@ -1430,6 +1433,8 @@
 				9FDCA78F118F2B7900E2FD74 /* BXCoalface.mm */,
 				9FCA702013DAE6B1006C5DF8 /* BXCoalfaceDrives.h */,
 				9FCA702113DAE6F5006C5DF8 /* BXCoalfaceDrives.mm */,
+				9F3E57A313F694B40070A14D /* BXEmulatorErrors.h */,
+				9F3E57A413F694B40070A14D /* BXEmulatorErrors.m */,
 			);
 			comments = "The sourcefiles in this group interface directly with DOSBox's internals. For this reason, they need to be compiled as Objective C++ rather than Objective C.";
 			name = Emulator;
@@ -2915,6 +2920,7 @@
 				9F61F78313EC2D5100505436 /* BXImageAwareFileScan.m in Sources */,
 				9F81CFB913EEA3F4008F0265 /* BXISOImage.m in Sources */,
 				9F98589713EF71F600E66877 /* BXBinCueImage.m in Sources */,
+				9F3E57A513F694B40070A14D /* BXEmulatorErrors.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

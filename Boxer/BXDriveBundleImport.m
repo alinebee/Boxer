@@ -8,16 +8,10 @@
 
 #import "BXDriveBundleImport.h"
 #import "BXSimpleDriveImport.h"
+#import "BXBinCueImage.h"
 #import "BXDrive.h"
 #import "RegexKitLite.h"
 #import "NSWorkspace+BXFileTypes.h"
-
-//Matches the following lines with optional leading and trailing whitespace:
-//FILE MAX.gog BINARY
-//FILE "MAX.gog" BINARY
-//FILE "Armin van Buuren - A State of Trance 179 (16-12-2004) Part2.wav" WAV
-//FILE 01_armin_van_buuren_-_in_the_mix_(asot179)-cable-12-16-2004-hsalive.mp3 MP3
-NSString * const BXCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[A-Z]+";
 
 
 @interface BXDriveBundleImport ()
@@ -60,32 +54,6 @@ NSString * const BXCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[A
 	if ([workspace file: drivePath matchesTypes: typesForBundling]) return YES;
 	return NO;
 }
-
-
-+ (NSArray *) _pathsInCue: (NSString *)cueContents
-{
-	NSMutableArray *paths = [NSMutableArray arrayWithCapacity: 1];
-	
-	NSRange usefulComponents = NSMakeRange(1, 2);
-	NSArray *matches = [cueContents arrayOfCaptureComponentsMatchedByRegex: BXCueFileDescriptorSyntax];
-	
-	for (NSArray *components in matches)
-	{
-		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-		for (NSString *fileName in [components subarrayWithRange: usefulComponents])
-		{
-			if ([fileName length])
-			{
-				[paths addObject: fileName];
-				break;
-			}
-		}
-		[pool release];
-	}
-	
-	return paths;
-}
-
 
 #pragma mark -
 #pragma mark Initialization and deallocation
@@ -134,7 +102,7 @@ NSString * const BXCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[A
 		return;
 	}
 	
-	NSArray *relatedPaths		= [[self class] _pathsInCue: cueContents];
+	NSArray *relatedPaths		= [BXBinCueImage rawPathsInCueContents: cueContents];
 	NSUInteger numRelatedPaths	= [relatedPaths count];
 	
 	if ([self isCancelled]) return;

@@ -112,6 +112,7 @@ typedef struct {
 		return BXExecutableTypeUnknown;
 	}
     
+    //Measure how large the file really is
     [file seekToEndOfFile];
     unsigned long long realFileSize = [file offsetInFile];
     [file seekToFileOffset: 0];
@@ -173,6 +174,7 @@ typedef struct {
 	if (lastPageSize > 0)
 		expectedFileSize += (lastPageSize - BXExecutablePageSize);
 	
+    
 	//If file is shorter than the DOS header thinks it is, or the
 	//relocation table offset is out of range, it means the executable
 	//has been truncated and we cannot meaningfully determine the type.
@@ -189,17 +191,19 @@ typedef struct {
 	
 	//The relocation table address should always be 64 for new-style executables:
 	//if this differs, then this is a DOS-only executable.
-	if (relocationAddress != BXExtendedExecutableRelocationAddress) return BXExecutableTypeDOS;
+	if (relocationAddress != BXExtendedExecutableRelocationAddress)
+        return BXExecutableTypeDOS;
 	
-	//If the offset of the new-style executable header is 0 or out of range, assume this is a DOS executable.
-	if (newHeaderAddress == 0 || (newHeaderAddress + sizeof(unsigned short) > realFileSize)) return BXExecutableTypeDOS;
-	
+	//If the offset of the new-style executable header is 0 or out of range,
+    //assume that this is a DOS executable.
+	if (newHeaderAddress == 0 || (newHeaderAddress + sizeof(uint16_t) > realFileSize))
+        return BXExecutableTypeDOS;
 
 	
 	//Read in the 2-byte executable type marker from the start of the new-style header.
-	unsigned short newTypeMarker = 0;
+	uint16_t newTypeMarker = 0;
 	[file seekToFileOffset: newHeaderAddress];
-	[[file readDataOfLength: sizeof(unsigned short)] getBytes: &newTypeMarker];
+	[[file readDataOfLength: sizeof(uint16_t)] getBytes: &newTypeMarker];
 	
 	newTypeMarker = NSSwapLittleShortToHost(newTypeMarker);
 	
@@ -214,7 +218,7 @@ typedef struct {
 			unsigned long minHeaderLength = (newTypeMarker == BX32BitPortableExecutableMarker) ? BX32BitPortableExecutableHeaderLength : BX16BitNewExecutableHeaderLength;
 			
 			//File is not long enough to accomodate expected header: assume the
-			//type marker was just a coincidence, and this actually a DOS executable.
+			//type marker was just a coincidence, and this is actually a DOS executable.
 			if (realFileSize < (newHeaderAddress + minHeaderLength))
 				return BXExecutableTypeDOS;
 

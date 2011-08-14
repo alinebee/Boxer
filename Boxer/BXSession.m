@@ -1062,16 +1062,16 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     
     if (package)
 	{
-        //Custom mounting behaviour during initialization: put CD-ROM
-        //and floppy drives into queues, don't overwrite previous drives,
-        //don't bother checking for backing images (there won't be any
-        //volumes inside a gamebox), don't send drive-mounting
-        //or unmounting notifications.
+        //Custom mounting behaviour during initialization: put drives
+        //into queues only with drives at the same drive letter, don't
+        //replace previous drives with subsequent ones, don't bother
+        //checking for backing images (there won't be any volumes inside
+        //a gamebox), don't send drive-added notifications.
         
         //TODO: deal with any mounting errors that occurred. Since all this happens automatically
         //during startup, we can't give errors straight to the user as they will seem cryptic.
         
-        BXDriveMountOptions mountOptions = BXDriveQueueIfAppropriate;
+        BXDriveMountOptions mountOptions = BXDriveQueueWithExisting;
         BXDriveUnmountOptions unmountOptions = BXDriveForceUnmount;
         
 		//Mount the game package as a new hard drive, at drive C.

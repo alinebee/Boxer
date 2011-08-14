@@ -798,9 +798,19 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     {
 		delete drive;
      
-        if (outError) *outError = [NSError errorWithDomain: BXDOSBoxMountErrorDomain
-                                                      code: errorCode
-                                                  userInfo: nil];
+        if (outError) 
+        {
+            //TWEAK: DOSBox ISO drives will return the error BXDOSBoxMountCouldNotReadSource
+            //if the disc image couldn't be parsed for any reason.
+            //We already know by now that the file already exists and is readable,
+            //so clearly this was because of an invalid image: use the more explicit error code.
+            if (errorCode == BXDOSBoxMountCouldNotReadSource)
+                errorCode = BXDOSBoxMountInvalidImageFormat;
+            
+            *outError = [NSError errorWithDomain: BXDOSBoxMountErrorDomain
+                                            code: errorCode
+                                        userInfo: nil];
+        }
         
         return nil;
 	}

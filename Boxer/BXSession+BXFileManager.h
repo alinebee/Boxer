@@ -17,15 +17,69 @@
 #pragma mark -
 #pragma mark Constants
 
+//Bitflag options to pass to mountDrive:options:error:.
+
+//The queue options below are mutually exclusive: if multiple options
+//are included, the earliest option in the list will take priority.
 enum {
-    BXDriveMountReplaceExistingCDROM    = 1 << 0,
-    BXDriveMountReplaceExistingFloppy   = 1 << 1,
-    BXDriveMountReplaceExistingHardDisk = 1 << 2,
-    BXDriveMountReplaceDriveAtLetter    = 1 << 3,
-    BXDriveMountDefaultOptions
+    BXDriveQueueIfAppropriate       = 1U << 0,  //Acts as BXDriveQueueWithSameType for CD-ROMs
+                                                //and floppy drives, and as BXDriveNeverQueue
+                                                //for hard drives.
+    
+    BXDriveQueueWithExisting        = 1U << 1,  //If a drive letter was specified, and a drive
+                                                //already exists at that letter, put the drive
+                                                //into a queue with it.
+                                                //If no drive letter was specified, use the next
+                                                //free drive letter.
+    
+    BXDriveQueueWithSameType        = 1U << 2,  //If no drive letter was specified, put the drive
+                                                //into a queue with any others of the same type.
+                                                //If a drive letter was specified, act as
+                                                //BXDriveQueueWithExisting.
+    
+    BXDriveReplaceExisting          = 1U << 3,  //Unmount all other drives at the same letter,
+                                                //before mounting this one.
+    
+    BXDriveNeverQueue               = 1U << 4   //Avoid placing the drive into any queues.
+                                                //If it conflicts with an existing drive letter,
+                                                //then reassign it to the next free drive letter.
+};
+
+enum {
+    BXDriveMountImmediately         = 1U << 5,  //Add the drive to the front of a queue, unmounting
+                                                //any current drive from the queue and mounting this
+                                                //drive in its place.
+                                                //If the current drive is in use and is not a CD-ROM
+                                                //or floppy (which can be ejected at any time) then
+                                                //this option is ignored.
+};
+
+enum {
+    BXDriveMountImageIfAvailable    = 1U << 8   //If the source path for this drive is a filesystem
+                                                //volume, then any backing image for that volume
+                                                //will be used instead of the volume itself.
+};
+
+//These options are applicable to unmountDrive:options:error: also.
+enum {
+    BXDriveShowNotifications        = 1U << 9   //Notification bezels will be shown when this drive
+                                                //is added/ejected.
+};
+
+//These options only apply to unmountDrive:options:error:
+enum {
+    BXDriveForceUnmount             = 1U << 10  //Force the drive to be ejected, regardless of whether
+                                                //it is in use or being imported.
+};
+
+
+enum {
+    BXDefaultDriveMountOptions = BXDriveQueueIfAppropriate | BXDriveMountImmediately | BXDriveShowNotifications | BXDriveMountImageIfAvailable,
+    BXDefaultDriveUnmountOptions = BXDriveShowNotifications
 };
 
 typedef NSUInteger BXDriveMountOptions;
+typedef NSUInteger BXDriveUnmountOptions;
 
 
 #pragma mark -
@@ -130,16 +184,27 @@ typedef NSUInteger BXDriveMountOptions;
 //Create a temporary folder and mount it at the appropriate drive letter (defined in the application preferences.)
 - (void) mountTempDriveWithError: (NSError **)outError;
 
-//A wrapper around BXDOSFileSystem mountDrive: and unmountDrive: to add additional
-//Boxer-specific logic.
+
+//Mounts the specified drive, using the specified mounting options. If successful,
+//returns a drive reflecting the drive actually mounted (this may be different from
+//the drive that was passed in.)
 //Returns nil and populates outError, if the specified drive could not be mounted.
-- (BXDrive *) mountDrive: (BXDrive *)drive error: (NSError **)outError;
-- (BOOL) unmountDrive: (BXDrive *)drive error: (NSError **)outError;
+- (BXDrive *) mountDrive: (BXDrive *)drive
+                 options: (BXDriveMountOptions)options
+                   error: (NSError **)outError;
+
+//Unmounts the specified drive, using the specified unmounting options.
+//Returns YES if the drive could be unmounted, NO otherwise.
+- (BOOL) unmountDrive: (BXDrive *)drive
+              options: (BXDriveUnmountOptions)options
+                error: (NSError **)outError;
+
 
 //Unmount the BXDrives in the specified array. Returns YES if all drives were unmounted,
 //NO if there was an error (in which case outError will be populated) or if selectedDrives
 //is empty.
 - (BOOL) unmountDrives: (NSArray *)selectedDrives
+               options: (BXDriveUnmountOptions)options
                  error: (NSError **)outError;
 
 //Returns whether the specified path should be mounted as a new drive.
@@ -148,11 +213,14 @@ typedef NSUInteger BXDriveMountOptions;
 
 //Adds a new drive to expose the specified path, using preferredMountPointForPath:
 //to choose an appropriate base location for the drive.
-- (BXDrive *) mountDriveForPath: (NSString *)path error: (NSError **)outError;
+- (BXDrive *) mountDriveForPath: (NSString *)path
+                        options: (BXDriveMountOptions)options
+                          error: (NSError **)outError;
 
 //Returns whether the specified drives are allowed to be unmounted.
 //This may display a confirmation sheet and return NO.
-- (BOOL) shouldUnmountDrives:	(NSArray *)selectedDrives sender: (id)sender;
+- (BOOL) shouldUnmountDrives: (NSArray *)selectedDrives
+                      sender: (id)sender;
 
 //Called when the "are you sure you want to unmount this drive?" alert is closed.
 - (void) drivesInUseAlertDidEnd: (BXDrivesInUseAlert *)alert

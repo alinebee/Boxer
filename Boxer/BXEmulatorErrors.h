@@ -36,7 +36,8 @@ enum {
                                                 //before or after a previous CD drive (MSCDEX limitation.)
     BXDOSFilesystemMSCDEXOutOfCDROMDrives,      //Exceeded the maximum number of CD drives supported (MSCDEX limitation.)
     
-    BXDOSFilesystemDriveLocked          //A drive could not be ejected because it was a required internal drive.
+    BXDOSFilesystemDriveLocked,         //A drive could not be ejected because it was a required internal drive.
+    BXDOSFilesystemDriveInUse           //A drive could not be ejected because it was currently in use.
 };
 
 
@@ -84,4 +85,7 @@ enum {
 @end
 
 @interface BXEmulatorDriveLockedError : NSError <BXDriveError>
+@end
+
+@interface BXEmulatorDriveInUseError : NSError <BXDriveError>
 @end

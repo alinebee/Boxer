@@ -77,7 +77,6 @@ extern NSString * const BXDidFinishInterruptionNotification;
 	BOOL interrupted;
 	BOOL suspended;
 	
-	BOOL showDriveNotifications;
 	BOOL userToggledProgramPanel;
 	BOOL userSkippedDefaultProgram;
 	

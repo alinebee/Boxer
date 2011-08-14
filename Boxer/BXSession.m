@@ -708,9 +708,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	[self setLastExecutedProgramPath: nil];
     [self setLastLaunchedProgramPath: nil];
 	
-	showDriveNotifications = NO;
 	[self setDrives: nil];
-	showDriveNotifications = YES;
 
 	//Clear the final rendered frame
 	[[self DOSWindowController] updateWithFrame: nil];
@@ -724,13 +722,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 {
 	if (!hasConfigured)
 	{
-		//Conceal drive notifications during startup
-		showDriveNotifications = NO;
-		
 		[self _mountDrivesForSession];
-		
-		//From here on out, it's OK to show drive notifications.
-		showDriveNotifications = YES;
 		
 		//Flag that we have completed our initial game configuration.
 		hasConfigured = YES;
@@ -1067,13 +1059,28 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 - (void) _mountDrivesForSession
 {
 	BXPackage *package = [self gamePackage];
-    NSError *mountError = nil;
-	if (package)
+    
+    if (package)
 	{
-		//Mount the game package as a new hard drive, at drive C
-		//(This may get replaced below by a custom bundled C volume)
+        //Custom mounting behaviour during initialization: put CD-ROM
+        //and floppy drives into queues, don't overwrite previous drives,
+        //don't bother checking for backing images (there won't be any
+        //volumes inside a gamebox), don't send drive-mounting
+        //or unmounting notifications.
+        
+        //TODO: deal with any mounting errors that occurred. Since all this happens automatically
+        //during startup, we can't give errors straight to the user as they will seem cryptic.
+        
+        BXDriveMountOptions mountOptions = BXDriveQueueIfAppropriate;
+        BXDriveUnmountOptions unmountOptions = BXDriveForceUnmount;
+        
+		//Mount the game package as a new hard drive, at drive C.
+		//(This may get replaced below by a custom bundled C volume;
+        //we do it now to reserve drive C so that it doesn't get autoassigned.)
 		BXDrive *packageDrive = [BXDrive hardDriveFromPath: [package gamePath] atLetter: @"C"];
-		packageDrive = [self mountDrive: packageDrive error: &mountError];
+		packageDrive = [self mountDrive: packageDrive
+                                options: mountOptions
+                                  error: nil];
         		
 		//Then, mount any extra volumes included in the game package
 		NSMutableArray *packageVolumes = [NSMutableArray arrayWithCapacity: 10];
@@ -1085,40 +1092,57 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		for (NSString *volumePath in packageVolumes)
 		{
 			bundledDrive = [BXDrive driveFromPath: volumePath atLetter: nil];
-			//The bundled drive was explicitly set to drive C, so override our existing C package-drive with it
+			//If the bundled drive was explicitly set to drive C, then override
+            //our existing C package-drive with it
 			if ([[bundledDrive letter] isEqualToString: [packageDrive letter]])
 			{
-				[self unmountDrive: packageDrive error: nil];
+				[self unmountDrive: packageDrive
+                           options: unmountOptions
+                             error: nil];
 				
 				//Rewrite the target to point to the new C drive, if it was pointing to the old one
-				if ([[self targetPath] isEqualToString: [packageDrive path]]) [self setTargetPath: volumePath];
+				if ([[self targetPath] isEqualToString: [packageDrive path]])
+                    [self setTargetPath: volumePath];
 				
 				//Aaand use this as our package drive from here on
 				packageDrive = bundledDrive;
 			}
-			[self mountDrive: bundledDrive error: nil];
+			[self mountDrive: bundledDrive
+                     options: mountOptions
+                       error: nil];
 		}
 	}
 	
 	//Automount all currently mounted floppy and CD-ROM volumes.
-	//TWEAK: don't mount extra drives if the gamebox already contains bundled drives of that type.
-	//This is a hamfisted way of avoiding redundant drive mounts in the case of e.g. recently-imported
-	//games, where we'd otherwise mount the original install disc alongside the newly-bundled drive.
-	//This is a hack and should be replaced with a more sophisticated comparison between the OS X
-	//volume and the bundled drive(s).
-	if (!package || ![self hasFloppyDrives])	[self mountFloppyVolumesWithError: &mountError];
-	if (!package || ![self hasCDDrives])		[self mountCDVolumesWithError: &mountError];
+	if (!package)	[self mountFloppyVolumesWithError: nil];
+	if (!package)	[self mountCDVolumesWithError: nil];
 	
 	//Mount our internal DOS toolkit and temporary drives
-	[self mountToolkitDriveWithError: &mountError];
-	[self mountTempDriveWithError: &mountError];
+	[self mountToolkitDriveWithError: nil];
+	[self mountTempDriveWithError: nil];
 	
-	
-	//Once all regular drives are in place, make a mount point allowing access to our target program/folder,
-	//if it's not already accessible in DOS.
+	//Once all regular drives are in place, check if our target program/folder
+    //is now accessible in DOS; if not, add another drive allowing access to it.
 	if ([self targetPath])
 	{
-		if ([self shouldMountDriveForPath: targetPath]) [self mountDriveForPath: targetPath error: &mountError];
+        if ([self shouldMountDriveForPath: targetPath])
+        {
+            //Unlike the drives built into the package, we do actually
+            //want to show errors if something goes wrong here.
+		    NSError *mountError = nil;
+            [self mountDriveForPath: targetPath
+                            options: BXDriveNeverQueue | BXDriveMountImageIfAvailable
+                              error: &mountError];
+            
+            if (mountError)
+            {
+                [self presentError: mountError
+                    modalForWindow: [self windowForSheet]
+                          delegate: nil
+                didPresentSelector: NULL
+                       contextInfo: NULL];
+            }
+        }
 	}
 }
 

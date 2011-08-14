@@ -117,7 +117,9 @@
 	if ([self shouldMountDriveForPath: filePath])
 	{
         NSError *mountError = nil;
-		BXDrive *drive = [self mountDriveForPath: filePath error: &mountError];
+		BXDrive *drive = [self mountDriveForPath: filePath
+                                         options: BXDefaultDriveMountOptions
+                                           error: &mountError];
 		if (!drive)
         {
             if (mountError)

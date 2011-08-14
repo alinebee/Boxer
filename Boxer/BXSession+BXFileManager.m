@@ -48,7 +48,6 @@
 - (void) _startTrackingChangesAtPath:	(NSString *)path;
 - (void) _stopTrackingChangesAtPath:	(NSString *)path;
 
-
 @end
 
 
@@ -282,7 +281,10 @@
 	if (returnCode == NSAlertFirstButtonReturn)
     {
         NSError *unmountError = nil;
-        [self unmountDrives: selectedDrives error: &unmountError];
+        [self unmountDrives: selectedDrives
+                    options: BXDefaultDriveUnmountOptions
+                      error: &unmountError];
+        
         if (unmountError)
         {
             [self presentError: unmountError
@@ -312,7 +314,9 @@
 	return NO;
 }
 
-- (BXDrive *) mountDriveForPath: (NSString *)path error: (NSError **)outError
+- (BXDrive *) mountDriveForPath: (NSString *)path
+                        options: (BXDriveMountOptions)options
+                          error: (NSError **)outError
 {
 	NSFileManager *manager = [NSFileManager defaultManager];
 	BXEmulator *theEmulator = [self emulator];
@@ -327,7 +331,7 @@
 	NSString *mountPoint	= [[self class] preferredMountPointForPath: path];
 	BXDrive *drive			= [BXDrive driveFromPath: mountPoint atLetter: nil];
 	
-	return [self mountDrive: drive error: outError];
+	return [self mountDrive: drive options: options error: outError];
 }
 
 - (BOOL) openFileAtPath: (NSString *)path
@@ -357,8 +361,9 @@
 }
 
 
-//Mount drives for all CD-ROMs that are currently mounted in OS X (as long as they're not already mounted, that is)
-//Returns YES if any drives were mounted, NO otherwise
+//Mount drives for all CD-ROMs that are currently mounted in OS X
+//(as long as they're not already mounted in DOS, that is.)
+//Returns YES if any drives were mounted, NO otherwise.
 - (BOOL) mountCDVolumesWithError: (NSError **)outError
 {
 	BXEmulator *theEmulator = [self emulator];
@@ -370,14 +375,24 @@
 	//as 'shadow' audio volumes for those data CDs.)
 	if (![volumes count])
 		volumes = [workspace mountedVolumesOfType: audioCDVolumeType];
-	
+    
+    //Queue these drives with any existing CD-ROM drives,
+    //use a backing image if available, and don't show
+    //drive-added notifications
+    BXDriveMountOptions mountOptions = BXDriveMountImageIfAvailable | BXDriveQueueWithSameType;
+    
 	BOOL returnValue = NO;
 	for (NSString *volume in volumes)
 	{
 		if (![theEmulator pathIsMountedAsDrive: volume])
 		{
-			BXDrive *drive = [BXDrive CDROMFromPath: volume atLetter: nil];
-            drive = [self mountDrive: drive error: outError];
+			BXDrive *drive = [BXDrive CDROMFromPath: volume
+                                           atLetter: nil];
+
+            drive = [self mountDrive: drive 
+                             options: mountOptions
+                               error: outError];
+            
 			if (drive != nil) returnValue = YES;
             
             //If there was any error in mounting a drive,
@@ -398,13 +413,22 @@
 	NSArray *volumePaths = [workspace mountedVolumesOfType: FATVolumeType];
 	BXEmulator *theEmulator = [self emulator];
 	
+    //Queue these drives with any existing floppy drives,
+    //use a backing image if available, and don't show
+    //drive-added notifications
+    BXDriveMountOptions mountOptions = BXDriveMountImageIfAvailable | BXDriveQueueWithSameType;
+    
 	BOOL returnValue = NO;
 	for (NSString *volumePath in volumePaths)
 	{
 		if (![theEmulator pathIsMountedAsDrive: volumePath] && [workspace isFloppySizedVolumeAtPath: volumePath])
 		{
 			BXDrive *drive = [BXDrive floppyDriveFromPath: volumePath atLetter: nil];
-			drive = [self mountDrive: drive error: outError];
+            
+            drive = [self mountDrive: drive
+                             options: mountOptions
+                               error: outError];
+            
 			if (drive != nil) returnValue = YES;
             
             //If there was any error in mounting a drive,
@@ -451,7 +475,10 @@
 	[toolkitDrive setReadOnly: YES];
 	[toolkitDrive setHidden: YES];
 	[toolkitDrive setFreeSpace: 0];
-	toolkitDrive = [self mountDrive: toolkitDrive error: outError];
+    //Replace any existing drive at the same letter, and don't show any notifications
+	toolkitDrive = [self mountDrive: toolkitDrive
+                            options: BXDriveReplaceExisting
+                              error: outError];
 	
 	//Point DOS to the correct paths if we've mounted the toolkit drive successfully
 	//TODO: we should treat this as an error if it didn't mount!
@@ -475,7 +502,7 @@
 	//Mount a temporary folder at the appropriate drive
 	NSFileManager *manager		= [NSFileManager defaultManager];
 	NSString *tempDriveLetter	= [[NSUserDefaults standardUserDefaults] stringForKey: @"temporaryDriveLetter"];
-	NSString *tempDrivePath		= [manager createTemporaryDirectoryWithPrefix: @"Boxer" error: NULL];
+	NSString *tempDrivePath		= [manager createTemporaryDirectoryWithPrefix: @"Boxer" error: outError];
 	
 	if (tempDrivePath)
 	{
@@ -485,85 +512,249 @@
 		[tempDrive setLocked: YES];
 		[tempDrive setHidden: YES];
 		
-		tempDrive = [self mountDrive: tempDrive error: outError];
+        //Replace any existing drive at the same letter, and don't show any notifications
+		tempDrive = [self mountDrive: tempDrive
+                             options: BXDriveReplaceExisting
+                               error: outError];
 		
 		if (tempDrive)
 		{
 			NSString *tempPath = [NSString stringWithFormat: @"%@:\\", [tempDrive letter], nil];
 			[theEmulator setVariable: @"temp"	to: tempPath	encoding: BXDirectStringEncoding];
 			[theEmulator setVariable: @"tmp"	to: tempPath	encoding: BXDirectStringEncoding];
-		}		
+		}
+        //If we couldn't mount the temporary folder for some reason, then delete it
+        else
+        {
+            [manager removeItemAtPath: tempDrivePath error: nil];
+        }
 	}	
 }
 
-- (BXDrive *) mountDrive: (BXDrive *)drive error: (NSError **)outError
+- (BXDrive *) mountDrive: (BXDrive *)drive
+                 options: (BXDriveMountOptions)options
+                   error: (NSError **)outError
 {
     if (outError) *outError = nil;
     
-	//Allow the game profile to override the drive label if needed
-	NSString *customLabel = nil;
-	if ([self gameProfile]) customLabel = [[self gameProfile] labelForDrive: drive];
-	if (customLabel) [drive setLabel: customLabel];
+    if (options == 0) options = BXDefaultDriveMountOptions;
+    
+    //Determine which queue behaviour is applicable
+#define NUM_QUEUE_OPTIONS 5
+    BXDriveMountOptions queueOptions[NUM_QUEUE_OPTIONS] = {BXDriveQueueIfAppropriate, BXDriveQueueWithExisting, BXDriveQueueWithSameType, BXDriveReplaceExisting, BXDriveNeverQueue};
+    BXDriveMountOptions queueBehaviour = BXDriveQueueIfAppropriate;
+    NSUInteger i;
+    for (i=0; i<NUM_QUEUE_OPTIONS; i++)
+    {
+        if (options & queueOptions[i]) { queueBehaviour = queueOptions[i]; break; }
+    }
 	
-	//Check if the specified path has a DOSBox-compatible image backing it:
-	//if so, mount that instead, and assign the current path as an alias.
-	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	NSString *sourceImagePath = [workspace sourceImageForVolume: [drive path]];
-	if (sourceImagePath && [workspace file: sourceImagePath matchesTypes: [BXAppController mountableImageTypes]])
-	{
-		//Check if the source image is already mounted:
-		//if so, then just add the path as an alias to that existing drive
-		BXDrive *existingDrive = [[self emulator] driveForPath: sourceImagePath];
-		if (existingDrive)
-		{
-			[[existingDrive pathAliases] addObject: [drive path]];
-			return existingDrive;
-		}
-		//Otherwise, make a new drive using the image, and mount that instead
-		else
-		{
-			BXDrive *imageDrive = [BXDrive driveFromPath: sourceImagePath atLetter: [drive letter] withType: [drive type]];
-			[imageDrive setReadOnly: [drive readOnly]];
-			[imageDrive setHidden: [drive isHidden]];
-			[imageDrive setLocked: [drive isLocked]];
-			[[imageDrive pathAliases] addObject: [drive path]];
-			
-            NSError *mountError = nil;
-			BXDrive *returnedDrive = [[self emulator] mountDrive: imageDrive error: &mountError];
-			//If mounting the image fails, then try again with the original drive
-			if (!returnedDrive && [mountError code] == BXDOSFilesystemInvalidImage)
+    if (queueBehaviour == BXDriveQueueIfAppropriate)
+    {
+        if ([drive type] == BXDriveCDROM || [drive type] == BXDriveFloppyDisk)
+            queueBehaviour = BXDriveQueueWithSameType;
+        else
+            queueBehaviour = BXDriveNeverQueue;
+    }
+    
+    //BXDriveQueueWithSameType behaviour:
+    //If the drive doesn't have a specific drive letter, then try to find
+    //other drives of the same type to queue it with.
+    if (![drive letter] && queueBehaviour == BXDriveQueueWithSameType)
+    {
+        for (BXDrive *otherDrive in [self drives])
+        {
+            if ([drive type] == [otherDrive type])
             {
-                returnedDrive = [[self emulator] mountDrive: drive error: &mountError];
+                [drive setLetter: [otherDrive letter]];
+                break;
             }
-            if (outError) *outError = mountError;
-            
-			return returnedDrive;
-		}
-	}
-	else
-	{
-		return [[self emulator] mountDrive: drive error: outError];
-	}
+        }
+    }
+    
+    //Allow the game profile to override the drive label if needed.
+    //TODO: make this subject to an options flag?
+	NSString *customLabel = [[self gameProfile] labelForDrive: drive];
+	if (customLabel) [drive setLabel: customLabel];
+    
+
+    BXDrive *driveToMount = drive;
+    BXDrive *fallbackDrive = nil;
+    
+	if (options & BXDriveMountImageIfAvailable)
+    {
+        //Check if the specified path has a DOSBox-compatible image backing it:
+        //if so then try to mount that instead, and assign the current path as an alias.
+        NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+        NSString *sourceImagePath = [workspace sourceImageForVolume: [drive path]];
+        
+        if (sourceImagePath && [workspace file: sourceImagePath matchesTypes: [BXAppController mountableImageTypes]])
+        {
+            //Check if the source image is already mounted:
+            //if so, then just add the path as an alias to that existing drive.
+            //TODO: make this subject to an options flag.
+            BXDrive *existingDrive = [[self emulator] driveForPath: sourceImagePath];
+            if (existingDrive)
+            {
+                [[existingDrive pathAliases] addObject: [drive path]];
+                return existingDrive;
+            }
+            //Otherwise, make a new drive using the image, and mount that instead.
+            else
+            {
+                BXDrive *imageDrive = [BXDrive driveFromPath: sourceImagePath
+                                                    atLetter: [drive letter]
+                                                    withType: [drive type]];
+                
+                [imageDrive setReadOnly: [drive readOnly]];
+                [imageDrive setHidden: [drive isHidden]];
+                [imageDrive setLocked: [drive isLocked]];
+                [[imageDrive pathAliases] addObject: [drive path]];
+                
+                driveToMount = imageDrive;
+                fallbackDrive = drive;
+            }
+        }
+    }
+    
+    BXDrive *mountedDrive = nil;
+    BXDrive *replacedDrive = nil;
+    BOOL replacedDriveWasCurrent = NO;
+    
+    do
+    {
+        NSError *mountError = nil;
+        mountedDrive = [[self emulator] mountDrive: driveToMount error: &mountError];
+    
+        //If mounting fails, check what the failure was and try to recover
+        if (!mountedDrive)
+        {
+            switch ([mountError code])
+            {
+                //The drive letter was already taken: decide what to do
+                //based on our queueing behaviour.
+                case BXDOSFilesystemDriveLetterOccupied:
+                    if (queueBehaviour == BXDriveNeverQueue)
+                    {
+                        //Clear the preferred drive letter,
+                        //to let the drive take the next available letter.
+                        [driveToMount setLetter: nil];
+                    }
+                    //If we want to replace the existing drive, or we want to queue
+                    //but push this to the front, then unmount the previous drive.
+                    else if (queueBehaviour == BXDriveReplaceExisting || (options & BXDriveMountImmediately))
+                    {
+                        NSError *unmountError = nil;
+                        replacedDrive = [[self emulator] driveAtLetter: [driveToMount letter]];
+                        replacedDriveWasCurrent = [[[self emulator] currentDrive] isEqual: replacedDrive];
+                        
+                        BOOL unmounted = [[self emulator] unmountDrive: replacedDrive
+                                                                 error: &unmountError];
+                        //If we couldn't unmount the drive, then bail the hell out
+                        if (!unmounted && unmountError)
+                        {
+                            if (outError) *outError = unmountError;
+                            return nil;
+                        }
+                    }
+                    //Otherwise, we want to queue the drive at the back of the list.
+                    //But because we haven't actually implemented queuing yet, this means
+                    //we just silently ignore the drive mount.
+                    else
+                    {
+                        return nil;
+                    }
+                    break;
+                    
+                //The image couldn't be mounted: if we have a fallback volume, use that instead.
+                //Otherwise, bail out altogether
+                case BXDOSFilesystemInvalidImage:
+                    if (fallbackDrive)
+                    {
+                        driveToMount = fallbackDrive;
+                        fallbackDrive = nil;
+                    }
+                    else
+                    {
+                        if (outError) *outError = mountError;
+                        return nil;
+                    }
+                    break;
+                
+                //Bail out completely after any other error - after putting back any drive
+                //we were attempting to replace
+                default:
+                    if (replacedDrive)
+                    {
+                        [[self emulator] mountDrive: replacedDrive error: nil];
+                        if (replacedDriveWasCurrent && [[self emulator] isAtPrompt])
+                            [[self emulator] changeToDriveLetter: [replacedDrive letter]];
+                    }
+                    if (outError) *outError = mountError;
+                    return nil;
+            }
+        }
+    }
+    while (!mountedDrive);
+    
+    //If we got this far then we have successfully mounted a drive!
+    //Post a notification about it if appropriate.
+    if (options & BXDriveShowNotifications)
+    {
+        //If we replaced an existing drive then show a slightly different notification
+        if (replacedDrive)
+        {
+            [[BXBezelController controller] showDriveSwappedBezelFromDrive: replacedDrive toDrive: mountedDrive];
+        }
+        else
+        {
+            [[BXBezelController controller] showDriveAddedBezelForDrive: mountedDrive];
+        }
+    }
+    
+    //If we replaced DOS's current drive in the course of ejecting, then switch 
+    if (replacedDrive && replacedDriveWasCurrent && [[self emulator] isAtPrompt])
+    {
+        [[self emulator] changeToDriveLetter: [mountedDrive letter]];
+    }
+    
+    return mountedDrive;
 }
 
+
 - (BOOL) unmountDrive: (BXDrive *)drive
+              options: (BXDriveUnmountOptions)options
                 error: (NSError **)outError
 {
 	//Refuse to eject drives that are currently being imported.
-	if ([self driveIsImporting: drive]) return NO;
-	return [[self emulator] unmountDrive: drive error: outError];
+	if (!(options & BXDriveForceUnmount) && [self driveIsImporting: drive])
+    {
+        if (outError) *outError = [BXEmulatorDriveInUseError errorWithDrive: drive];
+        return NO;
+    }
+    else
+    {
+        BOOL unmounted = [[self emulator] unmountDrive: drive error: outError];
+        if (unmounted && (options & BXDriveShowNotifications))
+        {
+            [[BXBezelController controller] showDriveRemovedBezelForDrive: drive];
+        }
+        return unmounted;
+    }
 }
 
 
 //Simple helper function to unmount a set of drives. Returns YES if all drives were unmounted,
 //NO if there was an error or no drives were selected.
 //Implemented just so that BXDrivePanelController doesn't have to know about BXEmulator+BXDOSFileSystem.
-- (BOOL) unmountDrives: (NSArray *)selectedDrives error: (NSError **)outError
+- (BOOL) unmountDrives: (NSArray *)selectedDrives
+               options: (BXDriveUnmountOptions)options
+                 error: (NSError **)outError
 {
 	BOOL succeeded = NO;
 	for (BXDrive *drive in selectedDrives)
 	{
-        if ([self unmountDrive: drive error: outError]) succeeded = YES;
+        if ([self unmountDrive: drive options: options error: outError]) succeeded = YES;
         //If any of the drive unmounts failed, don't continue further
         else return NO;
 	}
@@ -689,7 +880,7 @@
 	
     //Ignore errors when automounting volumes, since these
     //are not directly triggered by the user.
-	[self mountDrive: drive error: nil];
+	[self mountDrive: drive options: BXDefaultDriveMountOptions error: nil];
 }
 
 //Implementation note: this handler is called in response to NSVolumeWillUnmountNotifications,
@@ -717,7 +908,9 @@
 			//themselves while they import. However, it means we can end up with
 			//'ghost' drives if the user physically removes the disk themselves
 			//during import.
-			[self unmountDrive: drive error: nil];
+			[self unmountDrive: drive
+                       options: BXDefaultDriveUnmountOptions
+                         error: nil];
 		}
 		else
 		{
@@ -748,9 +941,6 @@
 		NSString *drivePath = [drive path];
 	
 		[self _startTrackingChangesAtPath: drivePath];
-
-		if (showDriveNotifications && ![drive isHidden])
-            [[BXBezelController controller] showDriveAddedBezelForDrive: drive];
 		
 		//If this drive is part of the gamebox, scan it for executables
         //to display in the program panel
@@ -776,9 +966,6 @@
 		NSString *path = [drive path];
 		//Stop tracking for changes on the drive, if there are no other drives mapping to that path either.
 		if (![[self emulator] pathIsDOSAccessible: path]) [self _stopTrackingChangesAtPath: path];
-	
-		if (showDriveNotifications)
-            [[BXBezelController controller] showDriveRemovedBezelForDrive: drive];
 	}
 	
 	if ([executables objectForKey: [drive letter]])
@@ -1012,50 +1199,37 @@
 - (void) driveImportDidFinish: (NSNotification *)theNotification
 {
 	BXOperation <BXDriveImport> *import = [theNotification object];
-	BXDrive *drive = [import drive];
+	BXDrive *originalDrive = [import drive];
 
 	if ([import succeeded])
 	{
 		//Once the drive has successfully imported, replace the old drive
-		//with the newly-imported version (if the old one is not in use by DOS)
-		if (![[self emulator] driveInUseAtLetter: [drive letter]])
+		//with the newly-imported version (if the old one is not currently in use)
+		if (![[self emulator] driveInUseAtLetter: [originalDrive letter]])
 		{
 			NSString *destinationPath	= [import importedDrivePath];
-			BXDrive *importedDrive		= [BXDrive driveFromPath: destinationPath atLetter: [drive letter]];
+			BXDrive *importedDrive		= [BXDrive driveFromPath: destinationPath
+                                                        atLetter: [originalDrive letter]];
 			
-			//Temporarily suppress drive mount/unmount notifications
-			BOOL oldShowDriveNotifications = showDriveNotifications;
-			showDriveNotifications = NO;
-			
-			BOOL wasCurrentDrive = [[[self emulator] currentDrive] isEqual: drive];
-			
-			//Unmount the old drive first...
-			if ([self unmountDrive: drive error: nil])
-			{
-				//...then mount the new one in its place
-                NSError *mountError = nil;
-				BXDrive *mountedDrive = [self mountDrive: importedDrive error: &mountError];
-				//If it worked, use the newly-mounted drive from now on
-				if (mountedDrive)
-				{
-					//Make the new drive an alias for the old one.
-					//This prevents it from getting remounted as a duplicate drive.
-					[[mountedDrive pathAliases] addObject: [drive path]];
-					drive = mountedDrive;
-				}
-				//If the mount failed for some reason, then put the old drive back
-				else
-				{
-					[self mountDrive: drive error: &mountError];
-				}
-				//Switch to the new drive, if the replaced drive was the active drive
-				if (wasCurrentDrive) [[self emulator] changeToDriveLetter: [drive letter]];
-			}
-			showDriveNotifications = oldShowDriveNotifications;
+			//Replace the original drive with the newly-imported drive,
+            //without showing notifications or bothering to check for
+            //backing images.
+            NSError *mountError = nil;
+            BXDrive *mountedDrive = [self mountDrive: importedDrive
+                                             options: BXDriveReplaceExisting
+                                               error: &mountError];
+            
+            if (mountedDrive)
+            {
+                //Make the new drive an alias for the old one.
+                //(This will prevent it from getting remounted as a duplicate drive.)
+                [[mountedDrive pathAliases] addObject: [originalDrive path]];
+            }
 		} 
 		
 		//Display a notification that this drive was successfully imported.
-        [[BXBezelController controller] showDriveImportedBezelForDrive: drive toPackage: [self gamePackage]];
+        [[BXBezelController controller] showDriveImportedBezelForDrive: originalDrive
+                                                             toPackage: [self gamePackage]];
 	}
 	else if ([import error])
 	{

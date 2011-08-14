@@ -22,11 +22,11 @@ NSString * const BXDOSFilesystemErrorDriveKey = @"BXDOSFilesystemErrorDriveKey";
 + (id) errorWithDrive: (BXDrive *)drive
 {
     NSString *displayName = [[drive path] lastPathComponent];
-	NSString *descriptionFormat = NSLocalizedString(@"“%1$@” could not be accessed.",
+	NSString *descriptionFormat = NSLocalizedString(@"The file “%1$@” could not be read.",
 													@"Error shown when a drive's source path does not exist or could not be accessed. %1$@ is the filename of the drive's source path.");
 	
 	NSString *description	= [NSString stringWithFormat: descriptionFormat, displayName, nil];
-    NSString *suggestion    = NSLocalizedString(@"Ensure that the volume containing this resource is available and that you have permission to access it.", @"Recovery suggestion shown when a drive's source path does not exist or could not be accessed.");
+    NSString *suggestion    = NSLocalizedString(@"Ensure that you have permission to access this file and that the volume containing it is still available.", @"Recovery suggestion shown when a drive's source path does not exist or could not be accessed.");
     
     NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                               description, NSLocalizedDescriptionKey,
@@ -46,13 +46,16 @@ NSString * const BXDOSFilesystemErrorDriveKey = @"BXDOSFilesystemErrorDriveKey";
 + (id) errorWithDrive: (BXDrive *)drive
 {
     NSString *displayName = [[drive path] lastPathComponent];
-	NSString *descriptionFormat = NSLocalizedString(@"“%1$@” is corrupt or not a recognized disc image format.",
+	NSString *descriptionFormat = NSLocalizedString(@"The disk image “%1$@” could not be opened.",
 													@"Error shown when a drive's source image could not be loaded by DOSBox. %1$@ is the filename of the image.");
+    
+    NSString *suggestion    = NSLocalizedString(@"The disk image file may be corrupted or incomplete.", @"Recovery suggestion shown when a drive's source image could not be loaded by DOSBox.");
 	
 	NSString *description	= [NSString stringWithFormat: descriptionFormat, displayName, nil];
     
     NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                               description, NSLocalizedDescriptionKey,
+                              suggestion, NSLocalizedRecoverySuggestionErrorKey,
                               drive, BXDOSFilesystemErrorDriveKey,
                               nil];
     
@@ -170,6 +173,27 @@ NSString * const BXDOSFilesystemErrorDriveKey = @"BXDOSFilesystemErrorDriveKey";
     
     return [self errorWithDomain: BXDOSFilesystemErrorDomain
                             code: BXDOSFilesystemDriveLocked
+                        userInfo: userInfo];
+}
+@end
+
+
+@implementation BXEmulatorDriveInUseError
+
++ (id) errorWithDrive: (BXDrive *)drive
+{
+	NSString *descriptionFormat = NSLocalizedString(@"Drive %1$@ is currently busy and cannot be ejected.",
+													@"Error shown when a drive was in use and cannot be ejected. %1$@ is the drive's letter.");
+	
+	NSString *description	= [NSString stringWithFormat: descriptionFormat, [drive letter], nil];
+    
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                              description, NSLocalizedDescriptionKey,
+                              drive, BXDOSFilesystemErrorDriveKey,
+                              nil];
+    
+    return [self errorWithDomain: BXDOSFilesystemErrorDomain
+                            code: BXDOSFilesystemDriveInUse
                         userInfo: userInfo];
 }
 @end

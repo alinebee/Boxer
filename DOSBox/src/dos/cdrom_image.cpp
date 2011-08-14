@@ -153,11 +153,15 @@ bool CDROM_Interface_Image::SetDevice(char* path, int forceCD)
 	if (LoadCueSheet(path)) return true;
 	if (LoadIsoFile(path)) return true;
 	
+    //--Disabled 2011-08-14 by Alun Bestor: how about no?
+    /*
 	// print error message on dosbox console
 	char buf[MAX_LINE_LENGTH];
 	snprintf(buf, MAX_LINE_LENGTH, "Could not load image file: %s\n", path);
 	Bit16u size = (Bit16u)strlen(buf);
 	DOS_WriteFile(STDOUT, (Bit8u*)buf, &size);
+     */
+    //--End of modifications
 	return false;
 }
 

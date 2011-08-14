@@ -686,12 +686,6 @@
 
 - (void) finishInstaller
 {	
-	//Tweak: disable any Growl drive notifications beyond this point.
-	//It will take time for the emulator to shut down fully, during which
-	//our import process may mount/unmount additional disks whose notifications
-	//we don't want to appear.
-	showDriveNotifications = NO;
-	
 	//Stop the emulation process
 	[self cancel];
 	
@@ -1217,16 +1211,21 @@
 	
 	
 	//Mount our new empty gamebox as drive C
+    
     //TODO: actually perform any error-handling with this error object
     NSError *mountError = nil;
     
 	BXDrive *destinationDrive = [BXDrive hardDriveFromPath: [self rootDrivePath] atLetter: @"C"];
 	[destinationDrive setFreeSpace: freeSpace];
-	[self mountDrive: destinationDrive error: &mountError];
+	[self mountDrive: destinationDrive
+             options: BXDriveReplaceExisting
+               error: &mountError];
 	
 	//Then, create a drive of the appropriate type from the source files and mount away
 	BXDrive *sourceDrive = [BXDrive driveFromPath: [self sourcePath] atLetter: nil withType: installMedium];
-	[self mountDrive: sourceDrive error: &mountError];
+	[self mountDrive: sourceDrive
+             options: BXDriveQueueIfAppropriate & BXDriveMountImageIfAvailable
+               error: &mountError];
 	
 	//Automount all currently mounted floppy and CD-ROM volumes
 	[self mountFloppyVolumesWithError: &mountError];

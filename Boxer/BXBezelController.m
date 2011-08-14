@@ -29,16 +29,15 @@
 
 
 @implementation BXBezelController
-@synthesize driveAddedBezel, driveRemovedBezel, driveImportedBezel;
+@synthesize driveAddedBezel, driveSwappedBezel, driveRemovedBezel, driveImportedBezel;
 @synthesize pauseBezel, playBezel, fullscreenBezel;
 @synthesize joystickIgnoredBezel, CPUSpeedBezel, throttleBezel;
 
 + (void) initialize
 {
-    NSValueTransformer *transformer = [[BXDisplayPathTransformer alloc] initWithJoiner: @" ▸ " maxComponents: 3];
-    
-    [NSValueTransformer setValueTransformer: transformer forName: @"BXBezelDrivePathTransformer"];
-    [transformer release];
+	NSValueTransformer *displayName = [[BXDisplayNameTransformer alloc] init];
+    [NSValueTransformer setValueTransformer: displayName forName: @"BXBezelDrivePathTransformer"];
+    [displayName release];
 }
 
 + (NSImage *) bezelIconForDrive: (BXDrive *)drive
@@ -76,6 +75,7 @@
 - (void) dealloc
 {
     [self setDriveAddedBezel: nil],         [driveAddedBezel release];
+    [self setDriveSwappedBezel: nil],       [driveSwappedBezel release];
     [self setDriveRemovedBezel: nil],       [driveRemovedBezel release];
     [self setDriveImportedBezel: nil],      [driveImportedBezel release];
     [self setFullscreenBezel: nil],         [fullscreenBezel release];
@@ -280,6 +280,39 @@
     NSTextField *path   = [bezel viewWithTag: BXBezelDrivePath];
     
     [icon setImage: iconImage];
+    [label setStringValue: labelDescription];
+    [path setStringValue: displayPath];
+    
+    [self showBezel: bezel
+        forDuration: BXDriveBezelDuration
+           priority: BXBezelPriorityNormal];
+}
+
+- (void) showDriveSwappedBezelFromDrive: (BXDrive *)fromDrive toDrive: (BXDrive *)toDrive
+{
+    //Tweak: if the drives inspector panel is visible, don’t bother showing the bezel.
+    BXInspectorController *inspector = [BXInspectorController controller];
+    if ([inspector panelShown] && [inspector selectedTabViewItemIndex] == BXDriveInspectorPanelTag)
+        return;
+    
+    NSView *bezel = [self driveSwappedBezel];
+    
+    NSImage *fromIconImage  = [[self class] bezelIconForDrive: fromDrive];
+    NSImage *toIconImage    = [[self class] bezelIconForDrive: toDrive];
+    
+    NSString *labelFormat = NSLocalizedString(@"Drive %1$@ swapped", @"Label for drive-swapped bezel notification. %1$@ is the drive letter.");
+    NSString *labelDescription = [NSString stringWithFormat: labelFormat, [toDrive letter], nil];
+    
+    NSValueTransformer *pathTransformer = [NSValueTransformer valueTransformerForName: @"BXBezelDrivePathTransformer"];
+    NSString *displayPath = [pathTransformer transformedValue: [toDrive path]];
+    
+    NSImageView *fromIcon   = [bezel viewWithTag: BXBezelDriveFromIcon];
+    NSImageView *toIcon   = [bezel viewWithTag: BXBezelDriveToIcon];
+    NSTextField *label  = [bezel viewWithTag: BXBezelDriveLabel];
+    NSTextField *path   = [bezel viewWithTag: BXBezelDrivePath];
+    
+    [fromIcon setImage: fromIconImage];
+    [toIcon setImage: toIconImage];
     [label setStringValue: labelDescription];
     [path setStringValue: displayPath];
     

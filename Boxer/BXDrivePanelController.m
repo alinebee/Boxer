@@ -209,7 +209,9 @@ enum {
 	if ([session shouldUnmountDrives: selection sender: self])
     {
         NSError *unmountError = nil;
-		[session unmountDrives: selection error: &unmountError];
+		[session unmountDrives: selection
+                       options: BXDefaultDriveUnmountOptions
+                         error: &unmountError];
         if (unmountError)
         {
             NSWindow *targetWindow = [[[NSApp delegate] currentSession] windowForSheet];

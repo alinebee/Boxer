@@ -27,7 +27,10 @@ enum {
     BXBezelLevelLabel = 3,    //Descriptive label for level indicator
     
     BXBezelDriveLabel = 4,    //Descriptive label for drive
-    BXBezelDrivePath = 5      //File path for drive
+    BXBezelDrivePath = 5,     //File path for drive
+    
+    BXBezelDriveFromIcon = 1,        //The icon of the drive we are switching from
+    BXBezelDriveToIcon = 6           //The icon of the drive we are switching to
 };
 
 @class BXDrive;
@@ -35,6 +38,7 @@ enum {
 @interface BXBezelController : NSWindowController
 {
     IBOutlet NSView *driveAddedBezel;
+    IBOutlet NSView *driveSwappedBezel;
     IBOutlet NSView *driveRemovedBezel;
     IBOutlet NSView *driveImportedBezel;
     IBOutlet NSView *fullscreenBezel;
@@ -52,6 +56,7 @@ enum {
 
 //The bezel view used for drive inserted/ejected/imported notifications.
 @property (retain, nonatomic) NSView *driveAddedBezel;
+@property (retain, nonatomic) NSView *driveSwappedBezel;
 @property (retain, nonatomic) NSView *driveRemovedBezel;
 @property (retain, nonatomic) NSView *driveImportedBezel;
 
@@ -89,6 +94,8 @@ enum {
 
 - (void) showDriveAddedBezelForDrive: (BXDrive *)drive;
 - (void) showDriveRemovedBezelForDrive: (BXDrive *)drive;
+- (void) showDriveSwappedBezelFromDrive: (BXDrive *)fromDrive
+                                toDrive: (BXDrive *)toDrive;
 - (void) showDriveImportedBezelForDrive: (BXDrive *)drive
                               toPackage: (BXPackage *)package;
 

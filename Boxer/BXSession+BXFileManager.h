@@ -46,7 +46,7 @@ enum {
 };
 
 enum {
-    BXDriveMountImmediately         = 1U << 5,  //Add the drive to the front of a queue, unmounting
+    BXDriveAddToFrontOfQueue        = 1U << 5,  //Add the drive to the front of a queue, unmounting
                                                 //any current drive from the queue and mounting this
                                                 //drive in its place.
                                                 //If the current drive is in use and is not a CD-ROM
@@ -55,12 +55,12 @@ enum {
 };
 
 enum {
-    BXDriveMountImageIfAvailable    = 1U << 8   //If the source path for this drive is a filesystem
-                                                //volume, then any backing image for that volume
-                                                //will be used instead of the volume itself.
+    BXDriveUseBackingImageIfAvailable    = 1U << 8  //If the source path for this drive is a filesystem
+                                                    //volume, then any backing image for that volume
+                                                    //will be used instead of the volume itself.
 };
 
-//These options are applicable to unmountDrive:options:error: also.
+//These options are applicable to both mountDrive:options:error and unmountDrive:options:error:.
 enum {
     BXDriveShowNotifications        = 1U << 9   //Notification bezels will be shown when this drive
                                                 //is added/ejected.
@@ -74,7 +74,34 @@ enum {
 
 
 enum {
-    BXDefaultDriveMountOptions = BXDriveQueueIfAppropriate | BXDriveMountImmediately | BXDriveShowNotifications | BXDriveMountImageIfAvailable,
+    //Behaviour when mounting a drive via drag-drop or from Add New Drive,
+    //or when inserting a floppy or CD after emulation has started.
+    //Will queue floppy and CD drives with other drives of the same type,
+    //unless a specific drive letter was assigned, and will push the drive
+    //o the front of the queue to make it available immediately.
+    BXDefaultDriveMountOptions = BXDriveQueueIfAppropriate | BXDriveAddToFrontOfQueue | BXDriveShowNotifications | BXDriveUseBackingImageIfAvailable,
+    
+    //Behaviour when mounting the gamebox's drives at the start of emulation.
+    //Disables notification and searching for backing images, and will only
+    //queue drives if they have the same letter.
+    BXBundledDriveMountOptions = BXDriveQueueWithExisting,
+    
+    //Behaviour when mounting Boxer's built-in utility and temp drives
+    //at the start of emulation. Forces these drives to be used.
+    BXBuiltinDriveMountOptions = BXDriveReplaceExisting,
+    
+    //Behaviour when mounting OS X floppy/CD volumes at the start of emulation.
+    //Same as default behaviour, but lower priority and without notifications.
+    BXSystemVolumeMountOptions = BXDriveQueueIfAppropriate | BXDriveUseBackingImageIfAvailable,
+    
+    //Options for automounting the target folder/executable of a DOS session.
+    //Will always use a separate drive, and will not show notifications.
+    BXTargetMountOptions = BXDriveNeverQueue | BXDriveUseBackingImageIfAvailable,
+    
+    //Options for mounting the source path for a game import. Same as above.
+    BXImportSourceMountOptions = BXDriveNeverQueue | BXDriveUseBackingImageIfAvailable,
+    
+    //Used for regular drive unmounting via drag-drop.
     BXDefaultDriveUnmountOptions = BXDriveShowNotifications
 };
 

@@ -1071,15 +1071,13 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         //TODO: deal with any mounting errors that occurred. Since all this happens automatically
         //during startup, we can't give errors straight to the user as they will seem cryptic.
         
-        BXDriveMountOptions mountOptions = BXDriveQueueWithExisting;
-        BXDriveUnmountOptions unmountOptions = BXDriveForceUnmount;
         
 		//Mount the game package as a new hard drive, at drive C.
 		//(This may get replaced below by a custom bundled C volume;
         //we do it now to reserve drive C so that it doesn't get autoassigned.)
 		BXDrive *packageDrive = [BXDrive hardDriveFromPath: [package gamePath] atLetter: @"C"];
 		packageDrive = [self mountDrive: packageDrive
-                                options: mountOptions
+                                options: BXBundledDriveMountOptions
                                   error: nil];
         		
 		//Then, mount any extra volumes included in the game package
@@ -1092,12 +1090,13 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		for (NSString *volumePath in packageVolumes)
 		{
 			bundledDrive = [BXDrive driveFromPath: volumePath atLetter: nil];
+            
 			//If the bundled drive was explicitly set to drive C, then override
             //our existing C package-drive with it
 			if ([[bundledDrive letter] isEqualToString: [packageDrive letter]])
 			{
 				[self unmountDrive: packageDrive
-                           options: unmountOptions
+                           options: 0
                              error: nil];
 				
 				//Rewrite the target to point to the new C drive, if it was pointing to the old one
@@ -1108,7 +1107,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 				packageDrive = bundledDrive;
 			}
 			[self mountDrive: bundledDrive
-                     options: mountOptions
+                     options: BXBundledDriveMountOptions
                        error: nil];
 		}
 	}
@@ -1122,16 +1121,16 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	[self mountTempDriveWithError: nil];
 	
 	//Once all regular drives are in place, check if our target program/folder
-    //is now accessible in DOS; if not, add another drive allowing access to it.
+    //is now accessible in DOS: if not, add another drive allowing access to it.
 	if ([self targetPath])
 	{
         if ([self shouldMountDriveForPath: targetPath])
         {
-            //Unlike the drives built into the package, we do actually
+            //Unlike the drives built into the gamebox, we do actually
             //want to show errors if something goes wrong here.
 		    NSError *mountError = nil;
             [self mountDriveForPath: targetPath
-                            options: BXDriveNeverQueue | BXDriveMountImageIfAvailable
+                            options: BXTargetMountOptions
                               error: &mountError];
             
             if (mountError)

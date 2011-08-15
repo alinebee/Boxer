@@ -376,11 +376,6 @@
 	if (![volumes count])
 		volumes = [workspace mountedVolumesOfType: audioCDVolumeType];
     
-    //Queue these drives with any existing CD-ROM drives,
-    //use a backing image if available, and don't show
-    //drive-added notifications
-    BXDriveMountOptions mountOptions = BXDriveMountImageIfAvailable | BXDriveQueueWithSameType;
-    
 	BOOL returnValue = NO;
 	for (NSString *volume in volumes)
 	{
@@ -390,7 +385,7 @@
                                            atLetter: nil];
 
             drive = [self mountDrive: drive 
-                             options: mountOptions
+                             options: BXSystemVolumeMountOptions
                                error: outError];
             
 			if (drive != nil) returnValue = YES;
@@ -412,11 +407,6 @@
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	NSArray *volumePaths = [workspace mountedVolumesOfType: FATVolumeType];
 	BXEmulator *theEmulator = [self emulator];
-	
-    //Queue these drives with any existing floppy drives,
-    //use a backing image if available, and don't show
-    //drive-added notifications
-    BXDriveMountOptions mountOptions = BXDriveMountImageIfAvailable | BXDriveQueueWithSameType;
     
 	BOOL returnValue = NO;
 	for (NSString *volumePath in volumePaths)
@@ -426,7 +416,7 @@
 			BXDrive *drive = [BXDrive floppyDriveFromPath: volumePath atLetter: nil];
             
             drive = [self mountDrive: drive
-                             options: mountOptions
+                             options: BXSystemVolumeMountOptions
                                error: outError];
             
 			if (drive != nil) returnValue = YES;
@@ -475,9 +465,9 @@
 	[toolkitDrive setReadOnly: YES];
 	[toolkitDrive setHidden: YES];
 	[toolkitDrive setFreeSpace: 0];
-    //Replace any existing drive at the same letter, and don't show any notifications
+    
 	toolkitDrive = [self mountDrive: toolkitDrive
-                            options: BXDriveReplaceExisting
+                            options: BXBuiltinDriveMountOptions
                               error: outError];
 	
 	//Point DOS to the correct paths if we've mounted the toolkit drive successfully
@@ -514,7 +504,7 @@
 		
         //Replace any existing drive at the same letter, and don't show any notifications
 		tempDrive = [self mountDrive: tempDrive
-                             options: BXDriveReplaceExisting
+                             options: BXBuiltinDriveMountOptions
                                error: outError];
 		
 		if (tempDrive)
@@ -581,7 +571,7 @@
     BXDrive *driveToMount = drive;
     BXDrive *fallbackDrive = nil;
     
-	if (options & BXDriveMountImageIfAvailable)
+	if (options & BXDriveUseBackingImageIfAvailable)
     {
         //Check if the specified path has a DOSBox-compatible image backing it:
         //if so then try to mount that instead, and assign the current path as an alias.
@@ -642,7 +632,7 @@
                     }
                     //If we want to replace the existing drive, or we want to queue
                     //but push this to the front, then unmount the previous drive.
-                    else if (queueBehaviour == BXDriveReplaceExisting || (options & BXDriveMountImmediately))
+                    else if (queueBehaviour == BXDriveReplaceExisting || (options & BXDriveAddToFrontOfQueue))
                     {
                         NSError *unmountError = nil;
                         replacedDrive = [[self emulator] driveAtLetter: [driveToMount letter]];

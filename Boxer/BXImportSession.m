@@ -1218,13 +1218,13 @@
 	BXDrive *destinationDrive = [BXDrive hardDriveFromPath: [self rootDrivePath] atLetter: @"C"];
 	[destinationDrive setFreeSpace: freeSpace];
 	[self mountDrive: destinationDrive
-             options: BXDriveReplaceExisting
+             options: BXBundledDriveMountOptions
                error: &mountError];
 	
 	//Then, create a drive of the appropriate type from the source files and mount away
 	BXDrive *sourceDrive = [BXDrive driveFromPath: [self sourcePath] atLetter: nil withType: installMedium];
 	[self mountDrive: sourceDrive
-             options: BXDriveQueueIfAppropriate & BXDriveMountImageIfAvailable
+             options: BXImportSourceMountOptions
                error: &mountError];
 	
 	//Automount all currently mounted floppy and CD-ROM volumes

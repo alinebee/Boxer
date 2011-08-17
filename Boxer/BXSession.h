@@ -54,7 +54,7 @@ extern NSString * const BXDidFinishInterruptionNotification;
 	BXGameProfile *gameProfile;
 	NSMutableDictionary *gameSettings;
 	
-	NSMutableArray *drives;
+	NSMutableDictionary *drives;
 	NSMutableDictionary *executables;
 	NSMutableArray *documentation;
 	
@@ -136,10 +136,10 @@ extern NSString * const BXDidFinishInterruptionNotification;
 //or else the current directory at the DOS prompt. Will be nil if Boxer has no idea where it is.
 @property (readonly, nonatomic) NSString *currentPath;
 
-//A cache of the emulator's drives.
-@property (readonly, retain, nonatomic) NSArray *drives;
+//A lookup table of all mounted and queued drives, organised by drive letter.
+@property (readonly, retain, nonatomic) NSDictionary *drives;
 
-//A cache of the designated executables, organised by drive.
+//A lookup table of all known executables on mounted drives, organised by drive letter.
 @property (readonly, retain, nonatomic) NSDictionary *executables;
 
 //A cache of the documentation found in this session's gamebox.

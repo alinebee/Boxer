@@ -185,23 +185,6 @@ enum {
 	}
 }
 
-//My god what a pain in the ass
-//We can't just grab array controller's selected objects because we don't know about the array controller;
-//we're only bound to its contents and its selectionIndexes, not its selectedObjects :(
-- (NSArray *) selectedDrives
-{
-	NSIndexSet *selection	= [self selectionIndexes];
-	NSArray *values			= [self content];
-	NSUInteger i, numValues	= [values count];
-	NSMutableArray *selectedObjects = [NSMutableArray arrayWithCapacity: [selection count]];
-	
-	for (i=0; i<numValues; i++)
-	{
-		if ([selection containsIndex: i]) [selectedObjects addObject: [values objectAtIndex: i]];
-	}
-	return (NSArray *)selectedObjects;
-}
-
 - (NSArray *) selectedViews
 {	
 	NSMutableArray *selectedViews = [NSMutableArray arrayWithCapacity: [[self selectionIndexes] count]];
@@ -238,32 +221,32 @@ enum {
 
 - (void) mouseDragged: (NSEvent *)theEvent
 {		
-	//Get a list of all file paths of the selected drives
-	NSMutableArray *filePaths = [NSMutableArray arrayWithCapacity: [[self selectionIndexes] count]];
-	for (BXDrive *drive in [self selectedDrives]) [filePaths addObject: [drive path]];
-	
-	//Make a new pasteboard with the paths 
-	NSPasteboard *pboard = [NSPasteboard pasteboardWithName: NSDragPboard];
-	[pboard declareTypes:[NSArray arrayWithObject: NSFilenamesPboardType] owner:self];	
-	[pboard setPropertyList: filePaths forType: NSFilenamesPboardType];
-	
-
-	//Hide all of the selected views while we drag them, and choose one to be the visible source of the drag
-	NSArray *selectedViews = [self selectedViews];
-	NSView *draggedView = [selectedViews lastObject];
-	NSImage *draggedImage = [self draggableImageFromView: draggedView];
-	
-	for (NSView *itemView in selectedViews) [itemView setHidden: YES];
-
-	//Implementation note: slideBack would be nice but it can't be cancelled by the source :(
-	//Which we would want to do after discarding the drive.
-	[draggedView dragImage: draggedImage
-						at: NSZeroPoint
-					offset: NSZeroSize
-					 event: theEvent
-				pasteboard: pboard
-					source: self
-				 slideBack: NO];
+    //Make a new pasteboard and get our delegate to set it up for us
+	NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName: NSDragPboard];
+    
+    BOOL continueDrag = [[self delegate] collectionView: self
+                                    writeItemsAtIndexes: [self selectionIndexes]
+                                           toPasteboard: pasteboard];
+    
+    if (continueDrag)
+    {
+        //Hide all of the selected views while we drag them, and choose one to be the visible source of the drag
+        NSArray *selectedViews = [self selectedViews];
+        NSView *draggedView = [selectedViews lastObject];
+        NSImage *draggedImage = [self draggableImageFromView: draggedView];
+        
+        for (NSView *itemView in selectedViews) [itemView setHidden: YES];
+        
+        //Implementation note: slideBack would be nice but it can't be cancelled by the source :(
+        //Which we would want to do after discarding the drive.
+        [draggedView dragImage: draggedImage
+                            at: NSZeroPoint
+                        offset: NSZeroSize
+                         event: theEvent
+                    pasteboard: pasteboard
+                        source: self
+                     slideBack: NO];
+    }
 }
 
 //While dragging, this checks for valid Boxer windows under the cursor; if there aren't any, it displays
@@ -283,9 +266,9 @@ enum {
 
 //This is called when dragging completes, and discards the drive if it was not dropped onto a valid destination
 //(or back onto the drive list).
-- (void)draggedImage: (NSImage *)draggedImage
-			 endedAt: (NSPoint)screenPoint
-		   operation: (NSDragOperation)operation
+- (void) draggedImage: (NSImage *)draggedImage
+			  endedAt: (NSPoint)screenPoint
+		    operation: (NSDragOperation)operation
 {
 	NSPoint mousePoint = [NSEvent mouseLocation];
 	

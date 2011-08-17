@@ -177,44 +177,12 @@
 
 
 #pragma mark -
-#pragma mark File and folder mounting
+#pragma mark Miscellaneous file and folder methods
 
-+ (NSSet *) keyPathsForValuesAffectingPrincipalDrive
+- (IBAction) relaunch: (id)sender
 {
-	return [NSSet setWithObject: @"executables"];
+	if ([self targetPath]) [self openFileAtPath: [self targetPath]];
 }
-
-- (BXDrive *) principalDrive
-{
-	//Prioritise drive C, if it's available and has executables on it
-	if ([[executables objectForKey: @"C"] count]) return [emulator driveAtLetter: @"C"];
-	
-	//Otherwise, go through the drives in letter order and return the first one that has programs on it
-	NSArray *sortedDrives = [[self drives] sortedArrayUsingSelector: @selector(letterCompare:)];
-	
-	for (BXDrive *drive in sortedDrives)
-	{
-		NSString *letter = [drive letter];
-		if ([[executables objectForKey: letter] count]) return drive;
-	}
-	return nil;
-}
-
-+ (NSSet *) keyPathsForValuesAffectingProgramPathsOnPrincipalDrive
-{
-	return [NSSet setWithObjects: @"principalDrive", @"executables", nil];
-}
-
-- (NSArray *) programPathsOnPrincipalDrive
-{
-	NSString *driveLetter = [[self principalDrive] letter];
-	if (driveLetter) return [executables objectForKey: driveLetter];
-	else return nil;
-}
-
-
-- (IBAction) refreshFolders:	(id)sender	{ [[self emulator] refreshMountedDrives]; }
-- (IBAction) showMountPanel:	(id)sender	{ [[BXMountPanelController controller] showMountPanelForSession: self]; }
 
 - (IBAction) openInDOS:			(id)sender
 {
@@ -232,10 +200,83 @@
 	if (path) [self openFileAtPath: path];
 }
 
-- (IBAction) relaunch: (id)sender
+
+
+#pragma mark -
+#pragma mark Drive queuing
+
+- (NSArray *) allDrives
 {
-	if ([self targetPath]) [self openFileAtPath: [self targetPath]];
+    NSMutableArray *allDrives = [NSMutableArray arrayWithCapacity: 10];
+    NSArray *sortedLetters = [[drives allKeys] sortedArrayUsingSelector: @selector(compare:)];
+    for (NSString *letter in sortedLetters)
+    {
+        NSArray *queue = [drives objectForKey: letter];
+        [allDrives addObjectsFromArray: queue];
+    }
+    return allDrives;
 }
+
+- (NSArray *) mountedDrives
+{
+    return [emulator mountedDrives];
+}
+
++ (NSSet *) keyPathsForValuesAffectingAllDrives
+{
+    return [NSSet setWithObject: @"drives"];
+}
+
++ (NSSet *) keyPathsForValuesAffectingMountedDrives
+{
+    return [NSSet setWithObject: @"emulator.mountedDrives"];
+}
+
+- (BOOL) driveIsMounted: (BXDrive *)drive
+{
+    return ([[emulator mountedDrives] containsObject: drive]);
+}
+
+- (void) enqueueDrive: (BXDrive *)drive
+{
+    NSString *letter = [drive letter];
+    NSAssert1(letter != nil, @"Drive %@ passed to enqueueDrive had no letter assigned.", drive);
+    
+    [self willChangeValueForKey: @"drives"];
+    NSMutableArray *queue = [drives objectForKey: letter];
+    if (queue && ![queue containsObject: drive])
+    {
+        [queue addObject: drive];
+    }
+    else
+    {
+        queue = [NSMutableArray arrayWithObject: drive];
+        [drives setObject: queue forKey: letter];
+    }
+    [self didChangeValueForKey: @"drives"];
+}
+
+- (void) dequeueDrive: (BXDrive *)drive
+{
+    //If the specified drive is currently being imported, then refuse to remove it from the queue:
+    //we don't want it to disappear from the UI until we're good and ready.
+    //TODO: approach this a different way, have the drive panel slip in drives that are still
+    //importing.
+    if ([self driveIsImporting: drive]) return;
+    
+    NSString *letter = [drive letter];
+    NSAssert1(letter != nil, @"Drive %@ passed to dequeueDrive had no letter assigned.", drive);
+    
+    [self willChangeValueForKey: @"drives"];
+    [[drives objectForKey: letter] removeObject: drive];
+    [self didChangeValueForKey: @"drives"];
+}
+
+
+#pragma mark -
+#pragma mark Drive mounting
+
+- (IBAction) showMountPanel:	(id)sender	{ [[BXMountPanelController controller] showMountPanelForSession: self]; }
 
 - (BOOL) shouldUnmountDrives: (NSArray *)selectedDrives sender: (id)sender
 {
@@ -364,7 +405,7 @@
 //Mount drives for all CD-ROMs that are currently mounted in OS X
 //(as long as they're not already mounted in DOS, that is.)
 //Returns YES if any drives were mounted, NO otherwise.
-- (BOOL) mountCDVolumesWithError: (NSError **)outError
+- (NSArray *) mountCDVolumesWithError: (NSError **)outError
 {
 	BXEmulator *theEmulator = [self emulator];
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
@@ -376,7 +417,7 @@
 	if (![volumes count])
 		volumes = [workspace mountedVolumesOfType: audioCDVolumeType];
     
-	BOOL returnValue = NO;
+    NSMutableArray *mountedDrives = [NSMutableArray arrayWithCapacity: 10];
 	for (NSString *volume in volumes)
 	{
 		if (![theEmulator pathIsMountedAsDrive: volume])
@@ -388,27 +429,27 @@
                              options: BXSystemVolumeMountOptions
                                error: outError];
             
-			if (drive != nil) returnValue = YES;
+            if (drive) [mountedDrives addObject: drive];
             
             //If there was any error in mounting a drive,
             //then bail out and don't attempt to mount further drives
             //TODO: check the actual error to determine whether we can
             //continue after failure.
-            else return NO;
+            else return nil;
 		}
 	}
-	return returnValue;
+	return mountedDrives;
 }
 
 //Mount drives for all floppy-sized FAT volumes that are currently mounted in OS X.
 //Returns YES if any drives were mounted, NO otherwise.
-- (BOOL) mountFloppyVolumesWithError: (NSError **)outError
+- (NSArray *) mountFloppyVolumesWithError: (NSError **)outError
 {
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	NSArray *volumePaths = [workspace mountedVolumesOfType: FATVolumeType];
 	BXEmulator *theEmulator = [self emulator];
     
-	BOOL returnValue = NO;
+    NSMutableArray *mountedDrives = [NSMutableArray arrayWithCapacity: 10];
 	for (NSString *volumePath in volumePaths)
 	{
 		if (![theEmulator pathIsMountedAsDrive: volumePath] && [workspace isFloppySizedVolumeAtPath: volumePath])
@@ -419,40 +460,19 @@
                              options: BXSystemVolumeMountOptions
                                error: outError];
             
-			if (drive != nil) returnValue = YES;
+            if (drive) [mountedDrives addObject: drive];
             
             //If there was any error in mounting a drive,
             //then bail out and don't attempt to mount further drives
             //TODO: check the actual error to determine whether we can
             //continue after failure.
-            else return NO;
+            else return nil;
 		}
 	}
-	return returnValue;
+	return mountedDrives;
 }
 
-+ (NSSet *) keyPathsForValuesAffectingHasFloppyDrives	{ return [NSSet setWithObject: @"drives"]; }
-+ (NSSet *) keyPathsForValuesAffectingHasCDDrives		{ return [NSSet setWithObject: @"drives"]; }
-
-- (BOOL) hasFloppyDrives
-{
-	for (BXDrive *drive in [self drives])
-	{
-		if ([drive isFloppy]) return YES;
-	}
-	return NO;
-}
-
-- (BOOL) hasCDDrives
-{
-	for (BXDrive *drive in [self drives])
-	{
-		if ([drive isCDROM]) return YES;
-	}
-	return NO;
-}
-
-- (void) mountToolkitDriveWithError: (NSError **)outError
+- (BXDrive *) mountToolkitDriveWithError: (NSError **)outError
 {
 	BXEmulator *theEmulator = [self emulator];
 
@@ -482,10 +502,11 @@
 		[theEmulator setVariable: @"path"		to: dosPath		encoding: BXDirectStringEncoding];
 		[theEmulator setVariable: @"boxerutils"	to: utilsDir	encoding: BXDirectStringEncoding];
 		[theEmulator setVariable: @"ultradir"	to: ultraDir	encoding: BXDirectStringEncoding];
-	}	
+	}
+    return toolkitDrive;
 }
 
-- (void) mountTempDriveWithError: (NSError **)outError
+- (BXDrive *) mountTempDriveWithError: (NSError **)outError
 {
 	BXEmulator *theEmulator = [self emulator];
 
@@ -518,7 +539,10 @@
         {
             [manager removeItemAtPath: tempDrivePath error: nil];
         }
+        
+        return tempDrive;
 	}	
+    return nil;
 }
 
 - (BXDrive *) mountDrive: (BXDrive *)drive
@@ -552,7 +576,7 @@
     //other drives of the same type to queue it with.
     if (![drive letter] && queueBehaviour == BXDriveQueueWithSameType)
     {
-        for (BXDrive *otherDrive in [self drives])
+        for (BXDrive *otherDrive in [self allDrives])
         {
             if ([drive type] == [otherDrive type])
             {
@@ -647,11 +671,11 @@
                             return nil;
                         }
                     }
-                    //Otherwise, we want to queue the drive at the back of the list.
-                    //But because we haven't actually implemented queuing yet, this means
-                    //we just silently ignore the drive mount.
+                    //Otherwise, queue the drive for future mounting
+                    //but don't continue mounting it now.
                     else
                     {
+                        [self enqueueDrive: drive];
                         return nil;
                     }
                     break;
@@ -716,21 +740,16 @@
               options: (BXDriveUnmountOptions)options
                 error: (NSError **)outError
 {
-	//Refuse to eject drives that are currently being imported.
-	if (!(options & BXDriveForceUnmount) && [self driveIsImporting: drive])
+    BOOL unmounted = [[self emulator] unmountDrive: drive error: outError];
+    if (unmounted)
     {
-        if (outError) *outError = [BXEmulatorDriveInUseError errorWithDrive: drive];
-        return NO;
-    }
-    else
-    {
-        BOOL unmounted = [[self emulator] unmountDrive: drive error: outError];
-        if (unmounted && (options & BXDriveShowNotifications))
-        {
+        if (options & BXDriveShowNotifications)
             [[BXBezelController controller] showDriveRemovedBezelForDrive: drive];
-        }
-        return unmounted;
+        
+        if (options & BXDriveRemoveFromQueue)
+            [self dequeueDrive: drive];
     }
+    return unmounted;
 }
 
 
@@ -750,6 +769,42 @@
 	}
 	return succeeded;
 }
+
+
+#pragma mark -
+#pragma mark Managing executables
+
++ (NSSet *) keyPathsForValuesAffectingPrincipalDrive
+{
+	return [NSSet setWithObject: @"executables"];
+}
+
+- (BXDrive *) principalDrive
+{
+	//Prioritise drive C, if it's available and has executables on it
+	if ([[executables objectForKey: @"C"] count]) return [emulator driveAtLetter: @"C"];
+    
+	//Otherwise through all the mounted drives and return the first one that we have programs for.
+    NSArray *sortedLetters = [[executables allKeys] sortedArrayUsingSelector: @selector(compare:)];
+	for (NSString *letter in sortedLetters)
+	{
+		if ([[executables objectForKey: letter] count]) return [emulator driveAtLetter: letter];
+	}
+	return nil;
+}
+
++ (NSSet *) keyPathsForValuesAffectingProgramPathsOnPrincipalDrive
+{
+	return [NSSet setWithObjects: @"executables", nil];
+}
+
+- (NSArray *) programPathsOnPrincipalDrive
+{
+	NSString *driveLetter = [[self principalDrive] letter];
+	if (driveLetter) return [executables objectForKey: driveLetter];
+	else return nil;
+}
+
 
 #pragma mark -
 #pragma mark OS X filesystem notifications
@@ -880,27 +935,37 @@
 //pulling out a USB drive or mechanically ejecting a disk)
 - (void) volumeWillUnmount: (NSNotification *)theNotification
 {
-	//Don't respond to unmount events if the emulator isn't actually running
+	//Ignore unmount events if the emulator isn't actually running
 	if (![emulator isExecuting]) return;
 	
 	NSString *volumePath = [[theNotification userInfo] objectForKey: @"NSDevicePath"];
 	//Should already be standardized, but still
 	NSString *standardizedPath = [volumePath stringByStandardizingPath];
 	
-	for (BXDrive *drive in [[self emulator] mountedDrives])
+	for (BXDrive *drive in [self allDrives])
 	{
-		//TODO: refactor this so that we can move the decision off to BXDrive itself
+        //TODO: refactor this so that we can move the decision off to BXDrive itself
 		//(We can't use representsPath: because that includes path aliases too)
 		if ([[drive path] isEqualToString: standardizedPath] || [[drive mountPoint] isEqualToString: standardizedPath])
 		{
-			//NOTE: This will fail to unmount if the drive is currently importing.
-			//This is intentional, because some import methods unmount the volume
-			//themselves while they import. However, it means we can end up with
-			//'ghost' drives if the user physically removes the disk themselves
-			//during import.
-			[self unmountDrive: drive
-                       options: BXDefaultDriveUnmountOptions
-                         error: nil];
+            //Drive import processes may unmount a volume themselves in the course
+            //of importing it: in which case we want to leave the drive in place.
+            //(TODO: check that this is still the desired behaviour, now that we
+            //have implemented drive queues.)
+            if ([self driveIsImporting: drive]) continue;
+            
+            //If the drive is mounted, then unmount it now and remove it from the drive list.
+            if ([self driveIsMounted: drive])
+            {
+                [self unmountDrive: drive
+                           options: BXVolumeUnmountingDriveUnmountOptions
+                             error: nil];
+            }
+            //If the drive is not mounted, then just remove it from the drive list.
+            else
+            {
+                [self dequeueDrive: drive];
+            }
 		}
 		else
 		{
@@ -922,9 +987,9 @@
 - (void) emulatorDidMountDrive: (NSNotification *)theNotification
 {	
 	BXDrive *drive = [[theNotification userInfo] objectForKey: @"drive"];
-	
-	//We access it this way so that KVO notifications get posted properly
-	[[self mutableArrayValueForKey: @"drives"] addObject: drive];
+    
+    //Add the drive to our set of known drives
+    [self enqueueDrive: drive];
 	
 	if (![drive isInternal])
 	{
@@ -945,9 +1010,6 @@
 {
 	BXDrive *drive = [[theNotification userInfo] objectForKey: @"drive"];
 	
-	//We access it this way so that KVO notifications get posted properly
-	[[self mutableArrayValueForKey: @"drives"] removeObject: drive];
-	
     //Stop scanning for executables on the drive
     [self cancelExecutableScanForDrive: drive];
     
@@ -958,6 +1020,7 @@
 		if (![[self emulator] pathIsDOSAccessible: path]) [self _stopTrackingChangesAtPath: path];
 	}
 	
+    //Remove the cached executable list when the drive is unmounted
 	if ([executables objectForKey: [drive letter]])
 	{
 		[self willChangeValueForKey: @"executables"];
@@ -1214,6 +1277,9 @@
                 //Make the new drive an alias for the old one.
                 //(This will prevent it from getting remounted as a duplicate drive.)
                 [[mountedDrive pathAliases] addObject: [originalDrive path]];
+                
+                //Forget about the previous drive altogether so it no longer appears in the drive queue.
+                [self dequeueDrive: originalDrive];
             }
 		} 
 		

@@ -47,6 +47,7 @@ typedef NSInteger BXDriveType;
 	BOOL readOnly;
 	BOOL locked;
 	BOOL hidden;
+    BOOL mounted;
 	NSImage *icon;
 }
 

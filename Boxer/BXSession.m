@@ -145,7 +145,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		NSString *defaultsPath = [[NSBundle mainBundle] pathForResource: @"GameDefaults" ofType: @"plist"];
 		NSMutableDictionary *defaults = [NSMutableDictionary dictionaryWithContentsOfFile: defaultsPath];
 		
-		[self setDrives: [NSMutableArray arrayWithCapacity: 10]];
+		[self setDrives: [NSMutableDictionary dictionaryWithCapacity: 10]];
 		[self setExecutables: [NSMutableDictionary dictionaryWithCapacity: 10]];
 		
 		[self setEmulator: [[[BXEmulator alloc] init] autorelease]];
@@ -1087,21 +1087,25 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		[packageVolumes addObjectsFromArray: [package cdVolumes]];
 		
 		BXDrive *bundledDrive;
-		for (NSString *volumePath in packageVolumes)
+		BOOL hasProperDriveC = NO;
+        for (NSString *volumePath in packageVolumes)
 		{
 			bundledDrive = [BXDrive driveFromPath: volumePath atLetter: nil];
             
 			//If the bundled drive was explicitly set to drive C, then override
-            //our existing C package-drive with it
-			if ([[bundledDrive letter] isEqualToString: [packageDrive letter]])
+            //our original C package-drive with it
+			if (!hasProperDriveC && [[bundledDrive letter] isEqualToString: [packageDrive letter]])
 			{
 				[self unmountDrive: packageDrive
-                           options: 0
+                           options: BXDriveRemoveFromQueue
                              error: nil];
 				
 				//Rewrite the target to point to the new C drive, if it was pointing to the old one
 				if ([[self targetPath] isEqualToString: [packageDrive path]])
                     [self setTargetPath: volumePath];
+                
+                //Forget about the package drive altogether, so it won't show up in the drive list
+                //as waiting to b
 				
 				//Aaand use this as our package drive from here on
 				packageDrive = bundledDrive;

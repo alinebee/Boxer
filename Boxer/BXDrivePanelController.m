@@ -33,7 +33,8 @@ enum {
 
 
 @implementation BXDrivePanelController
-@synthesize driveControls, driveActionsMenu, drives, driveList;
+@synthesize driveControls, driveActionsMenu, driveList;
+@synthesize driveStates, selectedDriveStateIndexes;
 
 #pragma mark -
 #pragma mark Initialization and teardown
@@ -66,100 +67,107 @@ enum {
 	[center addObserver: self selector: @selector(operationDidFinish:) name: BXOperationDidFinish object: nil];
 	[center addObserver: self selector: @selector(operationInProgress:) name: BXOperationInProgress object: nil];
 	[center addObserver: self selector: @selector(operationWasCancelled:) name: BXOperationWasCancelled object: nil];
+    
+    [[NSApp delegate] addObserver: self
+                       forKeyPath: @"currentSession.allDrives"
+                          options: NSKeyValueObservingOptionInitial
+                          context: nil];
+    
+    [[NSApp delegate] addObserver: self
+                       forKeyPath: @"currentSession.mountedDrives"
+                          options: NSKeyValueObservingOptionInitial
+                          context: nil];
 }
 
 - (void) dealloc
 {
+    [[NSApp delegate] removeObserver: self forKeyPath: @"currentSession.allDrives"];
+    [[NSApp delegate] removeObserver: self forKeyPath: @"currentSession.mountedDrives"];
+    
 	//Clean up notifications
 	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 	[center removeObserver: self];
-	
+    
+    [driveStates release],              driveStates = nil;
+	[self setSelectedDriveStateIndexes: nil], [selectedDriveStateIndexes release];
+    
 	[self setDriveList: nil],			[driveList release];
-	[self setDrives: nil],				[drives release];
 	[self setDriveControls: nil],		[driveControls release];
 	[self setDriveActionsMenu: nil],	[driveActionsMenu release];
 	[super dealloc];
 }
 
-//To explain why we have the observers set up below the way we do:
-//NSArrayController has a bug in 10.5 and 10.6 whereby it won't post correctly provide the new or old values
-//in change notifications about its content. So, we have to observe the content of our NSCollectionView instead,
-//which has the same data but sends proper notifications about it.
-//Meanwhile, NSCollectionView has a bug in 10.5 whereby it won't post notifications on its selectionIndexes if
-//the selection is changed by calling setSelected: on a collectionViewItem. So, we have to observe the selection
-//indexes of our NSArrayController instead, which likewise has the same data but sends proper notifications about it.
-//What a fucking shambles.
-- (void) setDriveList: (BXDriveList *)theList
+
+
+- (void) _syncDriveStates
 {
-	if (theList != driveList)
-	{
-		[driveList removeObserver: self forKeyPath: @"content"];
-		
-		[driveList release];
-		driveList = [theList retain];
-		
-		[driveList addObserver: self
-					forKeyPath: @"content"
-					   options: NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld
-					   context: nil];
-	}
+    BXSession *session = [[NSApp delegate] currentSession];
+    NSArray *drives = [session allDrives];
+    
+    [self willChangeValueForKey: @"driveStates"];
+    
+    [driveStates release];
+    driveStates = [[NSMutableArray alloc] initWithCapacity: [drives count]];
+    for (BXDrive *drive in drives)
+    {
+        //Skip hidden and internal drives altogether
+        if ([drive isInternal] || [drive isHidden]) continue;
+        
+        BOOL isMounted = [session driveIsMounted: drive];
+        NSDictionary *driveState = [[NSDictionary alloc] initWithObjectsAndKeys:
+                                    drive,                                  @"drive",
+                                    [NSNumber numberWithBool: isMounted],   @"isMounted",
+                                    nil];
+        
+        [driveStates addObject: driveState];
+        [driveState release];
+    }
+    [self didChangeValueForKey: @"driveStates"];
 }
 
-- (void) setDrives: (NSArrayController *)newDrives
+- (void) _syncButtonStates
 {
-	if (drives != newDrives)
-	{
-		[drives removeObserver: self forKeyPath: @"selectionIndexes"];
-		
-		[drives release];
-		drives = [newDrives retain];
-		
-		[drives addObserver: self
-				 forKeyPath: @"selectionIndexes"
-					options: NSKeyValueObservingOptionInitial
-					context: nil];
-	}
+	//Disable the appropriate drive controls when there are no selected items or no session.
+    BOOL hasSession		= ([[NSApp delegate] currentSession] != nil);
+    BOOL hasSelection	= ([[self selectedDriveStateIndexes] count] > 0);
+    [[self driveControls] setEnabled: hasSession	forSegment: BXAddDriveSegment];
+    [[self driveControls] setEnabled: hasSelection	forSegment: BXRemoveDrivesSegment];
+    [[self driveControls] setEnabled: hasSelection	forSegment: BXDriveActionsMenuSegment];
 }
+
+- (void) setSelectedDriveStateIndexes: (NSIndexSet *)indexes
+{
+    if ([indexes isNotEqualTo: [self selectedDriveStateIndexes]])
+    {
+        [selectedDriveStateIndexes release];
+        selectedDriveStateIndexes = [indexes retain];
+        
+        //Sync the action buttons whenever our selection changes
+        [self _syncButtonStates];
+    }
+}
+
+- (NSArray *) selectedDrives
+{
+    if ([selectedDriveStateIndexes count])
+    {
+        NSArray *selectedDriveStates = [driveStates objectsAtIndexes: selectedDriveStateIndexes];
+        return [selectedDriveStates valueForKey: @"drive"];
+    }
+    else return [NSArray array];
+}
+                             
 
 - (void) observeValueForKeyPath: (NSString *)keyPath
 					   ofObject: (id)object
 						 change: (NSDictionary *)change
 						context: (void *)context
 {
-	//Disable the appropriate drive controls when there are no selected items.
-	if ([keyPath isEqualToString: @"selectionIndexes"])
-	{
-		BOOL hasSession		= ([[NSApp delegate] currentSession] != nil);
-		BOOL hasSelection	= ([[object selectionIndexes] count] > 0);
-		[[self driveControls] setEnabled: hasSession	forSegment: BXAddDriveSegment];
-		[[self driveControls] setEnabled: hasSelection	forSegment: BXRemoveDrivesSegment];
-		[[self driveControls] setEnabled: hasSelection	forSegment: BXDriveActionsMenuSegment];
-	}
-	
-	//Select newly-added drives.
-	//IMPLEMENTATION NOTE: in an ideal world we'd be able to handle this by listening for
-	//NSKeyValueChangeInsertion notifications.
-	//However, those are not sent correctly by NSArrayController nor by NSCollectionView,
-	//so we have to do the work by hand: comparing old and new arrays to find out what was added.
-	else if ([keyPath isEqualToString: @"content"])
-	{
-		NSArray *oldDrives = [change valueForKey: NSKeyValueChangeOldKey];
-		NSArray *newDrives = [change valueForKey: NSKeyValueChangeNewKey];
-		
-		NSUInteger i, numDrives = [newDrives count];
-		NSMutableIndexSet *selectedIndexes = [[NSMutableIndexSet alloc] init];
-		
-		for (i = 0; i < numDrives; i++)
-		{
-			if (![oldDrives containsObject: [newDrives objectAtIndex: i]])
-			{
-				[selectedIndexes addIndex: i];
-			}
-		}
-		
-		[[self drives] addSelectionIndexes: selectedIndexes];
-		[selectedIndexes release];
-	}
+    if ([keyPath isEqualToString: @"currentSession.allDrives"] || [keyPath isEqualToString: @"currentSession.mountedDrives"])
+    {
+        [self _syncDriveStates];
+        [self _syncButtonStates];
+    }
 }
 
 
@@ -191,20 +199,20 @@ enum {
 
 - (IBAction) revealSelectedDrivesInFinder: (id)sender
 {
-	NSArray *selection = [[self drives] selectedObjects];
+	NSArray *selection = [self selectedDrives];
 	for (BXDrive *drive in selection) [NSApp sendAction: @selector(revealInFinder:) to: nil from: drive];
 }
 
 - (IBAction) openSelectedDrivesInDOS: (id)sender
 {
 	//Only bother grabbing the last drive selected
-	BXDrive *drive = [[[self drives] selectedObjects] lastObject];
+	BXDrive *drive = [[self selectedDrives] lastObject];
 	if (drive) [NSApp sendAction: @selector(openInDOS:) to: nil from: drive];
 }
 
 - (IBAction) unmountSelectedDrives: (id)sender
 {
-	NSArray *selection = [[self drives] selectedObjects];
+	NSArray *selection = [self selectedDrives];
 	BXSession *session = [[NSApp delegate] currentSession];
 	if ([session shouldUnmountDrives: selection sender: self])
     {
@@ -226,7 +234,7 @@ enum {
 
 - (IBAction) importSelectedDrives: (id)sender
 {
-	NSArray *selection = [[self drives] selectedObjects];
+	NSArray *selection = [self selectedDrives];
 	BXSession *session = [[NSApp delegate] currentSession];
 
 	for (BXDrive *drive in selection) [session importOperationForDrive: drive startImmediately: YES];
@@ -241,7 +249,7 @@ enum {
 
 - (IBAction) cancelImportsForSelectedDrives: (id)sender
 {
-	NSArray *selection = [[self drives] selectedObjects];
+	NSArray *selection = [self selectedDrives];
 	BXSession *session = [[NSApp delegate] currentSession];
 	
 	for (BXDrive *drive in selection) [session cancelImportForDrive: drive];
@@ -265,7 +273,7 @@ enum {
 	//If there's currently no active session, we can't do anything
 	if (!session) return NO;
 	
-	NSArray *driveSelection = [[self drives] selectedObjects];
+	NSArray *driveSelection = [self selectedDrives];
 	BOOL hasSelection = ([driveSelection count] > 0);
 	BOOL isGamebox = [session isGamePackage];
 	BXEmulator *theEmulator = [session emulator];
@@ -491,20 +499,6 @@ enum {
 		[typeLabel setHidden: NO];
 	}
 }
-				 
-#pragma mark -
-#pragma mark Drive list sorting
-
-- (NSArray *) driveSortDescriptors
-{
-	NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey: @"letter" ascending: YES];
-	return [NSArray arrayWithObject: [descriptor autorelease]];
-}
-
-- (NSPredicate *) driveFilterPredicate
-{
-	return [NSPredicate predicateWithFormat: @"isInternal == NO && isHidden == NO"];
-}
 
 
 #pragma mark -
@@ -538,6 +532,21 @@ enum {
 		return [session handleDroppedFiles: filePaths withLaunching: NO];
 	}		
 	return NO;
+}
+
+
+- (BOOL) collectionView: (NSCollectionView *)collectionView
+    writeItemsAtIndexes: (NSIndexSet *)indexes
+           toPasteboard: (NSPasteboard *)pasteboard
+{
+    //Get a list of all file paths of the selected drives
+    NSArray *chosenDrives = [[self driveStates] objectsAtIndexes: indexes];
+    NSArray *filePaths = [chosenDrives valueForKeyPath: @"drive.path"];
+    
+    [pasteboard declareTypes: [NSArray arrayWithObject: NSFilenamesPboardType] owner: self];	
+    [pasteboard setPropertyList: filePaths forType: NSFilenamesPboardType];
+    
+    return YES;
 }
 
 @end

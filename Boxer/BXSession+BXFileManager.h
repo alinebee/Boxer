@@ -68,8 +68,8 @@ enum {
 
 //These options only apply to unmountDrive:options:error:
 enum {
-    BXDriveForceUnmount             = 1U << 10  //Force the drive to be ejected, regardless of whether
-                                                //it is in use or being imported.
+    BXDriveRemoveFromQueue          = 1U << 10  //Forget about the drive altogether, rather than letting
+                                                //it remain in the queue to be remounted.
 };
 
 
@@ -82,9 +82,9 @@ enum {
     BXDefaultDriveMountOptions = BXDriveQueueIfAppropriate | BXDriveAddToFrontOfQueue | BXDriveShowNotifications | BXDriveUseBackingImageIfAvailable,
     
     //Behaviour when mounting the gamebox's drives at the start of emulation.
-    //Disables notification and searching for backing images, and will only
-    //queue drives if they have the same letter.
-    BXBundledDriveMountOptions = BXDriveQueueWithExisting,
+    //Disables notification and searching for backing images, and will queue
+    //CD and floppy drives with others of their own kind.
+    BXBundledDriveMountOptions = BXDriveQueueIfAppropriate,
     
     //Behaviour when mounting Boxer's built-in utility and temp drives
     //at the start of emulation. Forces these drives to be used.
@@ -101,8 +101,11 @@ enum {
     //Options for mounting the source path for a game import. Same as above.
     BXImportSourceMountOptions = BXDriveNeverQueue | BXDriveUseBackingImageIfAvailable,
     
-    //Used for regular drive unmounting via drag-drop.
-    BXDefaultDriveUnmountOptions = BXDriveShowNotifications
+    //Options for regular drive unmounting via drag-drop.
+    BXDefaultDriveUnmountOptions = BXDriveShowNotifications,
+    
+    //Behaviour when unmounting drives as a result of a volume being ejected.
+    BXVolumeUnmountingDriveUnmountOptions = BXDriveShowNotifications | BXDriveRemoveFromQueue
 };
 
 typedef NSUInteger BXDriveMountOptions;
@@ -124,16 +127,17 @@ typedef NSUInteger BXDriveUnmountOptions;
 //This is normally drive C, but otherwise is the first available drive letter with programs on it.
 @property (readonly, nonatomic) BXDrive *principalDrive;
 
-//Returns an array of executable paths located on the 'principal' drive of the session (normally drive C).
+//An array of executable paths located on the 'principal' drive of the session (normally drive C).
 @property (readonly, nonatomic) NSArray *programPathsOnPrincipalDrive;
 
-//Returns whether there are any CD or floppy drives currently mounted in the emulator.
-@property (readonly, nonatomic) BOOL hasCDDrives;
-@property (readonly, nonatomic) BOOL hasFloppyDrives;
-
-//Returns whether there are currently any imports/executable scans in progress.
+//Return whether there are currently any imports/executable scans in progress.
 @property (readonly, nonatomic) BOOL isImportingDrives;
 @property (readonly, nonatomic) BOOL isScanningForExecutables;
+
+//A flat array of all queued and mounted drives, ordered by drive letter and then by queue order.
+@property (readonly, nonatomic) NSArray *allDrives;
+//An array of all mounted drives, ordered by drive letter.
+@property (readonly, nonatomic) NSArray *mountedDrives;
 
 
 #pragma mark -
@@ -186,30 +190,18 @@ typedef NSUInteger BXDriveUnmountOptions;
 
 
 #pragma mark -
-#pragma mark Mounting drives
+#pragma mark Mounting and queuing drives
 
-//Tells the emulator to flush its DOS drive caches to reflect changes in the OS X filesystem.
-//No longer used, since we explicitly listen for changes to the underlying filesystem and do this automatically.
-- (IBAction) refreshFolders:	(id)sender;
+//Adds the specified drive into the appropriate drive queue,
+//without mounting it.
+- (void) enqueueDrive: (BXDrive *)drive;
 
-//Display the mount-a-new-drive sheet in this session's window.
-- (IBAction) showMountPanel:	(id)sender;
+//Removes the specified drive from the appropriate queue.
+//Will fail if the drive is currently mounted.
+- (void) dequeueDrive: (BXDrive *)drive;
 
-//Automount all ISO9660 CD-ROM volumes that are currently mounted in OS X.
-//Will not create new mounts for ones that are already mounted.
-//Returns YES if any new volumes were created, NO otherwise.
-- (BOOL) mountCDVolumesWithError: (NSError **)outError;
-
-//Mount all floppy-sized FAT volumes that are currently mounted in OS X.
-//Will not create new mounts for ones that are already mounted.
-//Returns YES if any drives were mounted, NO otherwise.
-- (BOOL) mountFloppyVolumesWithError: (NSError **)outError;
-
-//Mount Boxer's internal toolkit drive at the appropriate drive letter (defined in the application preferences.)
-- (void) mountToolkitDriveWithError: (NSError **)outError;
-
-//Create a temporary folder and mount it at the appropriate drive letter (defined in the application preferences.)
-- (void) mountTempDriveWithError: (NSError **)outError;
+//Returns whether the specified drive is currently mounted in the emulator.
+- (BOOL) driveIsMounted: (BXDrive *)drive;
 
 
 //Mounts the specified drive, using the specified mounting options. If successful,
@@ -227,9 +219,39 @@ typedef NSUInteger BXDriveUnmountOptions;
                 error: (NSError **)outError;
 
 
-//Unmount the BXDrives in the specified array. Returns YES if all drives were unmounted,
-//NO if there was an error (in which case outError will be populated) or if selectedDrives
-//is empty.
+//Display the mount-a-new-drive sheet in this session's window.
+- (IBAction) showMountPanel: (id)sender;
+
+//Automount all ISO9660 CD-ROM volumes that are currently mounted in OS X.
+//Will not create new mounts for ones that are already mounted.
+//Returns an array of all drives mounted, which will be empty if none
+//were available to mount.
+//Returns nil and populates outError if there is an error with mounting
+//any drive.
+- (NSArray *) mountCDVolumesWithError: (NSError **)outError;
+
+//Mount all floppy-sized FAT volumes that are currently mounted in OS X.
+//Will not create new mounts for ones that are already mounted.
+//Returns an array of all drives mounted, which will be empty if none
+//were available to mount.
+//Returns nil and populates outError if there is an error with mounting
+//any drive. 
+- (NSArray *) mountFloppyVolumesWithError: (NSError **)outError;
+
+//Mount Boxer's internal toolkit drive at the appropriate drive letter.
+//Returns the mounted drive, or returns nil and populates outError if
+//the drive could not be mounted.
+- (BXDrive *) mountToolkitDriveWithError: (NSError **)outError;
+
+//Create a temporary folder and mount it at the appropriate drive letter.
+//Returns the mounted drive, or returns nil and populates outError if
+//the drive could not be mounted.
+- (BXDrive *) mountTempDriveWithError: (NSError **)outError;
+
+
+//Unmount the BXDrives in the specified array. Returns YES if all drives
+//were unmounted, NO if there was an error (in which case outError will
+//be populated) or if selectedDrives is empty.
 - (BOOL) unmountDrives: (NSArray *)selectedDrives
                options: (BXDriveUnmountOptions)options
                  error: (NSError **)outError;

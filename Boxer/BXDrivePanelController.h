@@ -12,13 +12,15 @@
 #import "BXOperationDelegate.h"
 
 @class BXDriveList;
-
+@class BXDrive;
 @interface BXDrivePanelController : NSViewController <BXOperationDelegate>
 {
-	IBOutlet NSArrayController *drives;
 	IBOutlet NSSegmentedControl *driveControls;
 	IBOutlet NSMenu *driveActionsMenu;
 	IBOutlet BXDriveList *driveList;
+    
+    NSMutableArray *driveStates;
+    NSIndexSet *selectedDriveStateIndexes;
 }
 
 #pragma mark -
@@ -27,12 +29,15 @@
 @property (retain, nonatomic) BXDriveList *driveList;
 @property (retain, nonatomic) NSSegmentedControl *driveControls;
 @property (retain, nonatomic) NSMenu *driveActionsMenu;
-//The array controller representing the current session's drives.
-@property (retain, nonatomic) NSArrayController *drives;
 
-//Sort descriptors and filters for our drive list.
-@property (readonly, nonatomic) NSArray *driveSortDescriptors;
-@property (readonly, nonatomic) NSPredicate *driveFilterPredicate;
+//An array of dictionaries representing all queued and mounted drives,
+//along with their mount status and any other inspector-specific data.
+@property (readonly, nonatomic) NSArray *driveStates;
+
+//The currently-selected drives, formatted for our array controller.
+@property (retain, nonatomic) NSIndexSet *selectedDriveStateIndexes;
+//The currently-selected drives, formatted for our personal use.
+@property (readonly, nonatomic) NSArray *selectedDrives;
 
 
 #pragma mark -
@@ -68,5 +73,9 @@
 //Handle drag-dropping of files and folders to mount as drives.
 - (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)sender;
 - (BOOL) performDragOperation: (id <NSDraggingInfo>)sender;
+
+- (BOOL) collectionView: (NSCollectionView *)collectionView
+    writeItemsAtIndexes: (NSIndexSet *)indexes
+           toPasteboard: (NSPasteboard *)pasteboard;
 
 @end

@@ -203,6 +203,10 @@ typedef NSUInteger BXDriveUnmountOptions;
 //Returns whether the specified drive is currently mounted in the emulator.
 - (BOOL) driveIsMounted: (BXDrive *)drive;
 
+//Returns the first queued drive that represents this path,
+//or nil if no such drive is found.
+- (BXDrive *) queuedDriveForPath: (NSString *)path;
+
 
 //Mounts the specified drive, using the specified mounting options. If successful,
 //returns a drive reflecting the drive actually mounted (this may be different from

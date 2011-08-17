@@ -113,6 +113,11 @@ typedef NSInteger BXDriveType;
 //Ignored for DOSBox internal drives (which are always hidden).
 @property (assign, nonatomic, getter=isHidden) BOOL hidden;
 
+//Whether this drive is mounted in an emulation session. 
+//This is merely a flag to make displaying the state of a drive easier; setting it to YES
+//will not actually mount the drive, just indicate that it is mounted somewhere.
+@property (assign, nonatomic, getter=isMounted) BOOL mounted;
+
 
 #pragma mark -
 #pragma mark Immutable properties

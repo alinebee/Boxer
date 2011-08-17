@@ -21,8 +21,8 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="1562"/>
 			<integer value="979"/>
+			<integer value="1562"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -3534,15 +3534,15 @@ A</string>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: representedObject.drive.path</string>
+						<string key="label">value: representedObject.path</string>
 						<reference key="source" ref="163857552"/>
 						<reference key="destination" ref="527118087"/>
 						<object class="NSNibBindingConnector" key="connector">
 							<reference key="NSSource" ref="163857552"/>
 							<reference key="NSDestination" ref="527118087"/>
-							<string key="NSLabel">value: representedObject.drive.path</string>
+							<string key="NSLabel">value: representedObject.path</string>
 							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">representedObject.drive.path</string>
+							<string key="NSKeyPath">representedObject.path</string>
 							<object class="NSDictionary" key="NSOptions">
 								<string key="NS.key.0">NSValueTransformerName</string>
 								<string key="NS.object.0">BXDriveDisplayName</string>
@@ -3550,19 +3550,19 @@ A</string>
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
 					</object>
-					<int key="connectionID">1733</int>
+					<int key="connectionID">1743</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
-						<string key="label">displayPatternValue1: representedObject.drive.letter</string>
+						<string key="label">displayPatternValue1: representedObject.letter</string>
 						<reference key="source" ref="724221988"/>
 						<reference key="destination" ref="527118087"/>
 						<object class="NSNibBindingConnector" key="connector">
 							<reference key="NSSource" ref="724221988"/>
 							<reference key="NSDestination" ref="527118087"/>
-							<string key="NSLabel">displayPatternValue1: representedObject.drive.letter</string>
+							<string key="NSLabel">displayPatternValue1: representedObject.letter</string>
 							<string key="NSBinding">displayPatternValue1</string>
-							<string key="NSKeyPath">representedObject.drive.letter</string>
+							<string key="NSKeyPath">representedObject.letter</string>
 							<object class="NSDictionary" key="NSOptions">
 								<string key="NS.key.0">NSDisplayPattern</string>
 								<string key="NS.object.0">%{value1}@:</string>
@@ -3570,35 +3570,19 @@ A</string>
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
 					</object>
-					<int key="connectionID">1734</int>
+					<int key="connectionID">1744</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: representedObject.drive.icon</string>
-						<reference key="source" ref="1059830828"/>
-						<reference key="destination" ref="527118087"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="1059830828"/>
-							<reference key="NSDestination" ref="527118087"/>
-							<string key="NSLabel">value: representedObject.drive.icon</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">representedObject.drive.icon</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1735</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: representedObject.drive.typeDescription</string>
+						<string key="label">value: representedObject.typeDescription</string>
 						<reference key="source" ref="1057456829"/>
 						<reference key="destination" ref="527118087"/>
 						<object class="NSNibBindingConnector" key="connector">
 							<reference key="NSSource" ref="1057456829"/>
 							<reference key="NSDestination" ref="527118087"/>
-							<string key="NSLabel">value: representedObject.drive.typeDescription</string>
+							<string key="NSLabel">value: representedObject.typeDescription</string>
 							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">representedObject.drive.typeDescription</string>
+							<string key="NSKeyPath">representedObject.typeDescription</string>
 							<object class="NSDictionary" key="NSOptions">
 								<string key="NS.key.0">NSValueTransformerName</string>
 								<string key="NS.object.0">BXCapitalizedString</string>
@@ -3606,19 +3590,35 @@ A</string>
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
 					</object>
-					<int key="connectionID">1736</int>
+					<int key="connectionID">1745</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
-						<string key="label">contentArray: driveStates</string>
+						<string key="label">value: representedObject.icon</string>
+						<reference key="source" ref="1059830828"/>
+						<reference key="destination" ref="527118087"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="1059830828"/>
+							<reference key="NSDestination" ref="527118087"/>
+							<string key="NSLabel">value: representedObject.icon</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">representedObject.icon</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1746</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">contentArray: drives</string>
 						<reference key="source" ref="19644052"/>
 						<reference key="destination" ref="589277066"/>
 						<object class="NSNibBindingConnector" key="connector">
 							<reference key="NSSource" ref="19644052"/>
 							<reference key="NSDestination" ref="589277066"/>
-							<string key="NSLabel">contentArray: driveStates</string>
+							<string key="NSLabel">contentArray: drives</string>
 							<string key="NSBinding">contentArray</string>
-							<string key="NSKeyPath">driveStates</string>
+							<string key="NSKeyPath">drives</string>
 							<object class="NSDictionary" key="NSOptions">
 								<string key="NS.key.0">NSValidatesImmediately</string>
 								<boolean value="YES" key="NS.object.0"/>
@@ -3626,23 +3626,23 @@ A</string>
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
 					</object>
-					<int key="connectionID">1738</int>
+					<int key="connectionID">1747</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
-						<string key="label">selectionIndexes: selectedDriveStateIndexes</string>
+						<string key="label">selectionIndexes: selectedDriveIndexes</string>
 						<reference key="source" ref="19644052"/>
 						<reference key="destination" ref="589277066"/>
 						<object class="NSNibBindingConnector" key="connector">
 							<reference key="NSSource" ref="19644052"/>
 							<reference key="NSDestination" ref="589277066"/>
-							<string key="NSLabel">selectionIndexes: selectedDriveStateIndexes</string>
+							<string key="NSLabel">selectionIndexes: selectedDriveIndexes</string>
 							<string key="NSBinding">selectionIndexes</string>
-							<string key="NSKeyPath">selectedDriveStateIndexes</string>
+							<string key="NSKeyPath">selectedDriveIndexes</string>
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
 					</object>
-					<int key="connectionID">1741</int>
+					<int key="connectionID">1748</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -5686,7 +5686,7 @@ A</string>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1741</int>
+			<int key="maxID">1748</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

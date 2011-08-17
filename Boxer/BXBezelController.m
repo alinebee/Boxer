@@ -262,7 +262,7 @@
 {
     //Tweak: if the drives inspector panel is visible, don’t bother showing the bezel.
     BXInspectorController *inspector = [BXInspectorController controller];
-    if ([inspector panelShown] && [inspector selectedTabViewItemIndex] == BXDriveInspectorPanelTag)
+    if (NO && [inspector panelShown] && [inspector selectedTabViewItemIndex] == BXDriveInspectorPanelTag)
         return;
     
     NSView *bezel = [self driveAddedBezel];
@@ -292,7 +292,7 @@
 {
     //Tweak: if the drives inspector panel is visible, don’t bother showing the bezel.
     BXInspectorController *inspector = [BXInspectorController controller];
-    if ([inspector panelShown] && [inspector selectedTabViewItemIndex] == BXDriveInspectorPanelTag)
+    if (NO && [inspector panelShown] && [inspector selectedTabViewItemIndex] == BXDriveInspectorPanelTag)
         return;
     
     NSView *bezel = [self driveSwappedBezel];
@@ -325,7 +325,7 @@
 {
     //Tweak: if the drives inspector panel is visible, don’t bother showing the bezel.
     BXInspectorController *inspector = [BXInspectorController controller];
-    if ([inspector panelShown] && [inspector selectedTabViewItemIndex] == BXDriveInspectorPanelTag)
+    if (NO && [inspector panelShown] && [inspector selectedTabViewItemIndex] == BXDriveInspectorPanelTag)
         return;
     
     NSView *bezel = [self driveRemovedBezel];
@@ -334,11 +334,16 @@
     NSString *labelFormat = NSLocalizedString(@"Drive %1$@ ejected", @"Label for drive-removed bezel notification. %1$@ is the drive letter.");
     NSString *labelDescription = [NSString stringWithFormat: labelFormat, [drive letter], nil];
     
+    NSValueTransformer *pathTransformer = [NSValueTransformer valueTransformerForName: @"BXBezelDrivePathTransformer"];
+    NSString *displayPath = [pathTransformer transformedValue: [drive path]];
+    
     NSImageView *icon   = [bezel viewWithTag: BXBezelIcon];
     NSTextField *label  = [bezel viewWithTag: BXBezelDriveLabel];
+    NSTextField *path   = [bezel viewWithTag: BXBezelDrivePath];
     
     [icon setImage: iconImage];
     [label setStringValue: labelDescription];
+    [path setStringValue: displayPath];
     
     [self showBezel: bezel
         forDuration: BXDriveBezelDuration

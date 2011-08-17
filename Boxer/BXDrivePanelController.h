@@ -19,8 +19,7 @@
 	IBOutlet NSMenu *driveActionsMenu;
 	IBOutlet BXDriveList *driveList;
     
-    NSMutableArray *driveStates;
-    NSIndexSet *selectedDriveStateIndexes;
+    NSIndexSet *selectedDriveIndexes;
 }
 
 #pragma mark -
@@ -30,12 +29,16 @@
 @property (retain, nonatomic) NSSegmentedControl *driveControls;
 @property (retain, nonatomic) NSMenu *driveActionsMenu;
 
-//An array of dictionaries representing all queued and mounted drives,
-//along with their mount status and any other inspector-specific data.
-@property (readonly, nonatomic) NSArray *driveStates;
+//The list of drives to display for the current session.
+//This is pre-filtered with driveFilterPredicate.
+@property (readonly, nonatomic) NSArray *drives;
 
 //The currently-selected drives, formatted for our array controller.
-@property (retain, nonatomic) NSIndexSet *selectedDriveStateIndexes;
+@property (retain, nonatomic) NSIndexSet *selectedDriveIndexes;
+
+//How our array controller should filter our drives.
+@property (readonly, nonatomic) NSPredicate *driveFilterPredicate;
+
 //The currently-selected drives, formatted for our personal use.
 @property (readonly, nonatomic) NSArray *selectedDrives;
 

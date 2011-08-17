@@ -34,7 +34,7 @@ enum {
 
 @implementation BXDrivePanelController
 @synthesize driveControls, driveActionsMenu, driveList;
-@synthesize driveStates, selectedDriveStateIndexes;
+@synthesize selectedDriveIndexes;
 
 #pragma mark -
 #pragma mark Initialization and teardown
@@ -55,6 +55,9 @@ enum {
 
 - (void) awakeFromNib
 {
+    //Make our represented object be the drive-list of the current session.
+    [self bind: @"representedObject" toObject: [NSApp delegate] withKeyPath: @"currentSession.allDrives" options: nil];
+    
 	//Register the entire drive panel as a drag-drop target.
 	[[self view] registerForDraggedTypes: [NSArray arrayWithObject: NSFilenamesPboardType]];	
 	
@@ -67,29 +70,16 @@ enum {
 	[center addObserver: self selector: @selector(operationDidFinish:) name: BXOperationDidFinish object: nil];
 	[center addObserver: self selector: @selector(operationInProgress:) name: BXOperationInProgress object: nil];
 	[center addObserver: self selector: @selector(operationWasCancelled:) name: BXOperationWasCancelled object: nil];
-    
-    [[NSApp delegate] addObserver: self
-                       forKeyPath: @"currentSession.allDrives"
-                          options: NSKeyValueObservingOptionInitial
-                          context: nil];
-    
-    [[NSApp delegate] addObserver: self
-                       forKeyPath: @"currentSession.mountedDrives"
-                          options: NSKeyValueObservingOptionInitial
-                          context: nil];
 }
 
 - (void) dealloc
 {
-    [[NSApp delegate] removeObserver: self forKeyPath: @"currentSession.allDrives"];
-    [[NSApp delegate] removeObserver: self forKeyPath: @"currentSession.mountedDrives"];
-    
-	//Clean up notifications
+	//Clean up notifications and bindings
+    [self unbind: @"currentSession.allDrives"];
 	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 	[center removeObserver: self];
     
-    [driveStates release],              driveStates = nil;
-	[self setSelectedDriveStateIndexes: nil], [selectedDriveStateIndexes release];
+	[self setSelectedDriveIndexes: nil], [selectedDriveIndexes release];
     
 	[self setDriveList: nil],			[driveList release];
 	[self setDriveControls: nil],		[driveControls release];
@@ -97,50 +87,38 @@ enum {
 	[super dealloc];
 }
 
-
-
-- (void) _syncDriveStates
-{
-    BXSession *session = [[NSApp delegate] currentSession];
-    NSArray *drives = [session allDrives];
-    
-    [self willChangeValueForKey: @"driveStates"];
-    
-    [driveStates release];
-    driveStates = [[NSMutableArray alloc] initWithCapacity: [drives count]];
-    for (BXDrive *drive in drives)
-    {
-        //Skip hidden and internal drives altogether
-        if ([drive isInternal] || [drive isHidden]) continue;
-        
-        BOOL isMounted = [session driveIsMounted: drive];
-        NSDictionary *driveState = [[NSDictionary alloc] initWithObjectsAndKeys:
-                                    drive,                                  @"drive",
-                                    [NSNumber numberWithBool: isMounted],   @"isMounted",
-                                    nil];
-        
-        [driveStates addObject: driveState];
-        [driveState release];
-    }
-    [self didChangeValueForKey: @"driveStates"];
-}
-
 - (void) _syncButtonStates
 {
 	//Disable the appropriate drive controls when there are no selected items or no session.
     BOOL hasSession		= ([[NSApp delegate] currentSession] != nil);
-    BOOL hasSelection	= ([[self selectedDriveStateIndexes] count] > 0);
+    BOOL hasSelection	= ([[self selectedDriveIndexes] count] > 0);
     [[self driveControls] setEnabled: hasSession	forSegment: BXAddDriveSegment];
     [[self driveControls] setEnabled: hasSelection	forSegment: BXRemoveDrivesSegment];
     [[self driveControls] setEnabled: hasSelection	forSegment: BXDriveActionsMenuSegment];
 }
 
-- (void) setSelectedDriveStateIndexes: (NSIndexSet *)indexes
+
++ (NSSet *) keyPathsForValuesAffectingDrives
 {
-    if ([indexes isNotEqualTo: [self selectedDriveStateIndexes]])
+    return [NSSet setWithObject: @"representedObject"];
+}
+
+- (NSArray *) drives
+{
+    return [[self representedObject] filteredArrayUsingPredicate: [self driveFilterPredicate]];
+}
+
+- (NSPredicate *) driveFilterPredicate
+{
+    return [NSPredicate predicateWithFormat: @"isHidden = NO && isInternal = NO"];
+}
+
+- (void) setSelectedDriveIndexes: (NSIndexSet *)indexes
+{
+    if ([indexes isNotEqualTo: [self selectedDriveIndexes]])
     {
-        [selectedDriveStateIndexes release];
-        selectedDriveStateIndexes = [indexes retain];
+        [selectedDriveIndexes release];
+        selectedDriveIndexes = [indexes retain];
         
         //Sync the action buttons whenever our selection changes
         [self _syncButtonStates];
@@ -149,25 +127,12 @@ enum {
 
 - (NSArray *) selectedDrives
 {
-    if ([selectedDriveStateIndexes count])
+    if ([selectedDriveIndexes count])
     {
-        NSArray *selectedDriveStates = [driveStates objectsAtIndexes: selectedDriveStateIndexes];
-        return [selectedDriveStates valueForKey: @"drive"];
+        NSArray *drives = [[[NSApp delegate] currentSession] allDrives];
+        return [drives objectsAtIndexes: selectedDriveIndexes];
     }
     else return [NSArray array];
-}
-                             
-
-- (void) observeValueForKeyPath: (NSString *)keyPath
-					   ofObject: (id)object
-						 change: (NSDictionary *)change
-						context: (void *)context
-{
-    if ([keyPath isEqualToString: @"currentSession.allDrives"] || [keyPath isEqualToString: @"currentSession.mountedDrives"])
-    {
-        [self _syncDriveStates];
-        [self _syncButtonStates];
-    }
 }
 
 
@@ -540,8 +505,8 @@ enum {
            toPasteboard: (NSPasteboard *)pasteboard
 {
     //Get a list of all file paths of the selected drives
-    NSArray *chosenDrives = [[self driveStates] objectsAtIndexes: indexes];
-    NSArray *filePaths = [chosenDrives valueForKeyPath: @"drive.path"];
+    NSArray *chosenDrives = [[self drives] objectsAtIndexes: indexes];
+    NSArray *filePaths = [chosenDrives valueForKeyPath: @"path"];
     
     [pasteboard declareTypes: [NSArray arrayWithObject: NSFilenamesPboardType] owner: self];	
     [pasteboard setPropertyList: filePaths forType: NSFilenamesPboardType];

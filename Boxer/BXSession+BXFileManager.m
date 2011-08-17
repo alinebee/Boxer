@@ -244,15 +244,16 @@
     
     [self willChangeValueForKey: @"drives"];
     NSMutableArray *queue = [drives objectForKey: letter];
-    if (queue && ![queue containsObject: drive])
-    {
-        [queue addObject: drive];
-    }
-    else
+    if (!queue)
     {
         queue = [NSMutableArray arrayWithObject: drive];
         [drives setObject: queue forKey: letter];
     }
+    else if (![queue containsObject: drive])
+    {
+        [queue addObject: drive];
+    }
+    
     [self didChangeValueForKey: @"drives"];
 }
 
@@ -272,6 +273,14 @@
     [self didChangeValueForKey: @"drives"];
 }
 
+- (BXDrive *) queuedDriveForPath: (NSString *)path
+{
+	for (BXDrive *drive in [self allDrives])
+	{
+		if ([drive representsPath: path]) return drive;
+	}
+	return nil;
+}
 
 #pragma mark -
 #pragma mark Drive mounting
@@ -370,9 +379,22 @@
 	
 	//Choose an appropriate mount point and create the new drive for it
 	NSString *mountPoint	= [[self class] preferredMountPointForPath: path];
-	BXDrive *drive			= [BXDrive driveFromPath: mountPoint atLetter: nil];
-	
-	return [self mountDrive: drive options: options error: outError];
+    
+    //Check if there's already a drive in the queue that matches this mount point:
+    //if so, mount it if necessary and return that
+    BXDrive *existingDrive  = [self queuedDriveForPath: mountPoint];
+    if (existingDrive)
+    {
+        if (![self driveIsMounted: existingDrive])
+            existingDrive = [self mountDrive: existingDrive options: options error: outError];
+        return existingDrive;
+    }
+    //Otherwise, create a new drive for the mount
+    else
+    {
+        BXDrive *drive = [BXDrive driveFromPath: mountPoint atLetter: nil];
+        return [self mountDrive: drive options: options error: outError];
+    }
 }
 
 - (BOOL) openFileAtPath: (NSString *)path
@@ -988,6 +1010,9 @@
 {	
 	BXDrive *drive = [[theNotification userInfo] objectForKey: @"drive"];
     
+    //Flag the drive as being mounted
+    [drive setMounted: YES];
+    
     //Add the drive to our set of known drives
     [self enqueueDrive: drive];
 	
@@ -1010,6 +1035,9 @@
 {
 	BXDrive *drive = [[theNotification userInfo] objectForKey: @"drive"];
 	
+    //Flag the drive as no longer being mounted
+    [drive setMounted: NO];
+    
     //Stop scanning for executables on the drive
     [self cancelExecutableScanForDrive: drive];
     

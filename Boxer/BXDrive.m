@@ -17,7 +17,7 @@
 @synthesize path, mountPoint, pathAliases;
 @synthesize letter, label, DOSBoxLabel, icon;
 @synthesize type, freeSpace;
-@synthesize usesCDAudio, readOnly, locked, hidden;
+@synthesize usesCDAudio, readOnly, locked, hidden, mounted;
 
 #pragma mark -
 #pragma mark Class methods

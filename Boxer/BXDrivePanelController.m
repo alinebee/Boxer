@@ -58,6 +58,10 @@ enum {
     //Make our represented object be the drive-list of the current session.
     [self bind: @"representedObject" toObject: [NSApp delegate] withKeyPath: @"currentSession.allDrives" options: nil];
     
+    //Listen for changes to the current session's mounted drives, so we can enable/disable our action buttons
+    [[NSApp delegate] addObserver: self forKeyPath: @"currentSession.mountedDrives" options: 0 context: NULL];
+    
+    
 	//Register the entire drive panel as a drag-drop target.
 	[[self view] registerForDraggedTypes: [NSArray arrayWithObject: NSFilenamesPboardType]];	
 	
@@ -76,6 +80,8 @@ enum {
 {
 	//Clean up notifications and bindings
     [self unbind: @"currentSession.allDrives"];
+    [[NSApp delegate] removeObserver: self forKeyPath: @"currentSession.mountedDrives"];
+    
 	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 	[center removeObserver: self];
     
@@ -87,14 +93,33 @@ enum {
 	[super dealloc];
 }
 
-- (void) _syncButtonStates
+- (void) observeValueForKeyPath: (NSString *)keyPath
+                       ofObject: (id)object
+                         change: (NSDictionary *)change
+                        context: (void *)context
+{
+    if ([keyPath isEqualToString: @"currentSession.mountedDrives"]) [self syncButtonStates];
+}
+
+- (void) syncButtonStates
 {
 	//Disable the appropriate drive controls when there are no selected items or no session.
-    BOOL hasSession		= ([[NSApp delegate] currentSession] != nil);
-    BOOL hasSelection	= ([[self selectedDriveIndexes] count] > 0);
-    [[self driveControls] setEnabled: hasSession	forSegment: BXAddDriveSegment];
-    [[self driveControls] setEnabled: hasSelection	forSegment: BXRemoveDrivesSegment];
-    [[self driveControls] setEnabled: hasSelection	forSegment: BXDriveActionsMenuSegment];
+    BXSession *session      = [[NSApp delegate] currentSession];
+    NSArray *selectedDrives = [self selectedDrives];
+    BOOL hasSelection       = ([selectedDrives count] > 0);
+    BOOL selectionContainsMountedDrives   = NO;
+    for (BXDrive *drive in selectedDrives)
+    {
+        if ([session driveIsMounted: drive])
+        {
+            selectionContainsMountedDrives = YES;
+            break;
+        }
+    }
+    
+    [[self driveControls] setEnabled: (session != nil)                  forSegment: BXAddDriveSegment];
+    [[self driveControls] setEnabled: selectionContainsMountedDrives    forSegment: BXRemoveDrivesSegment];
+    [[self driveControls] setEnabled: hasSelection                      forSegment: BXDriveActionsMenuSegment];
 }
 
 
@@ -121,7 +146,7 @@ enum {
         selectedDriveIndexes = [indexes retain];
         
         //Sync the action buttons whenever our selection changes
-        [self _syncButtonStates];
+        [self syncButtonStates];
     }
 }
 
@@ -184,6 +209,28 @@ enum {
         NSError *unmountError = nil;
 		[session unmountDrives: selection
                        options: BXDefaultDriveUnmountOptions
+                         error: &unmountError];
+        if (unmountError)
+        {
+            NSWindow *targetWindow = [[[NSApp delegate] currentSession] windowForSheet];
+            [targetWindow presentError: unmountError
+                        modalForWindow: targetWindow
+                              delegate: nil
+                    didPresentSelector: NULL
+                           contextInfo: NULL];
+        }
+    }
+}
+
+- (IBAction) removeSelectedDrives: (id)sender
+{
+	NSArray *selection = [self selectedDrives];
+	BXSession *session = [[NSApp delegate] currentSession];
+	if ([session shouldUnmountDrives: selection sender: self])
+    {
+        NSError *unmountError = nil;
+		[session unmountDrives: selection
+                       options: BXDefaultDriveUnmountOptions | BXDriveRemoveFromQueue
                          error: &unmountError];
         if (unmountError)
         {
@@ -498,7 +545,6 @@ enum {
 	}		
 	return NO;
 }
-
 
 - (BOOL) collectionView: (NSCollectionView *)collectionView
     writeItemsAtIndexes: (NSIndexSet *)indexes

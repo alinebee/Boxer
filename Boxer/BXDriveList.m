@@ -278,7 +278,7 @@ enum {
 		//(IBActions do not provide a return value, so we can't find out directly
 		//if the action succeeded or failed)
 		NSUInteger oldItems = [[self content] count];
-		[NSApp sendAction: @selector(unmountSelectedDrives:) to: [self delegate] from: self];
+		[NSApp sendAction: @selector(removeSelectedDrives:) to: [self delegate] from: self];
 		NSUInteger newItems = [[self content] count];
 		
 		//If any drives were removed by the action, display the poof animation

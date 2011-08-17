@@ -54,8 +54,11 @@
 //Change to the first selected drive in DOS. This action is disabled if a process is running.
 - (IBAction) openSelectedDrivesInDOS: (id)sender; 
 
-//Unmount the selected drives from DOS.
+//Unmount the selected drives from DOS, while leaving them in the drive list.
 - (IBAction) unmountSelectedDrives: (id)sender;
+
+//Unmount the selected drives from DOS, and remove them from the drive list altogether.
+- (IBAction) removeSelectedDrives: (id)sender;
 
 //Import the selected drives into the gamebox.
 - (IBAction) importSelectedDrives: (id)sender;
@@ -69,6 +72,9 @@
 //Display the mount panel.
 - (IBAction) showMountPanel: (id)sender;
 
+//Re-syncs the status and actions of the button bar, whenever
+//the selection changes or drives get mounted/unmounted.
+- (void) syncButtonStates;
 
 #pragma mark -
 #pragma mark Drag-dropping

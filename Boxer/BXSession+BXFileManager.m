@@ -296,6 +296,10 @@
 	NSMutableArray *drivesInUse = [[[NSMutableArray alloc] initWithCapacity: [selectedDrives count]] autorelease];
 	for (BXDrive *drive in selectedDrives)
 	{
+        //If the drive isn't mounted anyway, then ignore it
+        //(we may receive a mix of mounted and unmounted drives)
+        if ([self driveIsMounted: drive]) continue;
+            
 		if ([drive isLocked]) return NO; //Prevent locked drives from being removed altogether
 		
 		//If a program is running and the drive is in use, then warn about it
@@ -762,16 +766,27 @@
               options: (BXDriveUnmountOptions)options
                 error: (NSError **)outError
 {
-    BOOL unmounted = [[self emulator] unmountDrive: drive error: outError];
-    if (unmounted)
+    if ([self driveIsMounted: drive])
     {
-        if (options & BXDriveShowNotifications)
-            [[BXBezelController controller] showDriveRemovedBezelForDrive: drive];
-        
+        BOOL unmounted = [[self emulator] unmountDrive: drive error: outError];
+        if (unmounted)
+        {
+            if (options & BXDriveShowNotifications)
+                [[BXBezelController controller] showDriveRemovedBezelForDrive: drive];
+            
+            if (options & BXDriveRemoveFromQueue)
+                [self dequeueDrive: drive];
+        }
+        return unmounted;
+    }
+    //If the drive isn't mounted, but we requested that it be removed from the queue
+    //after unmounting, then do that now
+    else
+    {
         if (options & BXDriveRemoveFromQueue)
             [self dequeueDrive: drive];
+        return NO;
     }
-    return unmounted;
 }
 
 

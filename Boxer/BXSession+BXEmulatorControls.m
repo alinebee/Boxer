@@ -292,6 +292,36 @@
 	return [super validateUserInterfaceItem: theItem];
 }
 
+- (NSAttributedString *) _menuItemLabelForDrive: (BXDrive *)drive withBaseTitle: (NSString *)baseTitle
+{
+    //Display drive titles smaller and greyed out.
+    //We use a transcluent black rather than the system grey color, so that
+    //it gets properly inverted to white when the menu item is selected.
+    NSDictionary *driveTitleAttrs = [NSDictionary dictionaryWithObjectsAndKeys:
+                                     [NSFont menuFontOfSize: [NSFont smallSystemFontSize]], NSFontAttributeName,
+                                     [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.5f], NSForegroundColorAttributeName,
+                                     nil];
+    
+    //Display the base title in the standard menu font. We need to explicitly set this
+    //because NSAttributedString defaults to Helvetica 12pt, and not Lucida Grande 14pt
+    //(the proper menu font.)
+    NSDictionary *baseTitleAttrs = [NSDictionary dictionaryWithObjectsAndKeys:
+                                    [NSFont menuFontOfSize: 14], NSFontAttributeName,
+                                    nil];
+    
+    NSString *separator = @"  ";
+    NSMutableAttributedString *title = [[NSMutableAttributedString alloc] initWithString: [baseTitle stringByAppendingString: separator]
+                                                                              attributes: baseTitleAttrs];
+    
+    NSAttributedString *driveTitle = [[NSAttributedString alloc] initWithString: [drive title]
+                                                                     attributes: driveTitleAttrs];
+    
+    [title appendAttributedString: driveTitle];
+    [driveTitle release];
+    
+    return [title autorelease];
+}
+
 - (BOOL) validateMenuItem: (NSMenuItem *)theItem
 {
 	SEL theAction = [theItem action];
@@ -308,7 +338,61 @@
 	
 		return [self isEmulating];
 	}
-	
+    else if (theAction == @selector(mountNextDrivesInQueues:))
+    {
+        if ([self isEmulating])
+        {
+            //Figure out the drive that will be switched to by the menu item,
+            //and append its title to that of the menu item.
+            for (NSArray *queue in [[self drives] objectEnumerator])
+            {
+                BXDrive *drive = [self nextDriveInQueue: queue atOffset: 1];
+                if (drive)
+                {
+                    if ([drive isCDROM])
+                        title = NSLocalizedString(@"Next Disc", @"Menu item for cycling to the next queued CD-ROM.");
+                    else
+                        title = NSLocalizedString(@"Next Disk", @"Menu item for cycling to the next queued floppy or hard disk.");
+                    
+                    NSAttributedString *attributedTitle = [self _menuItemLabelForDrive: drive withBaseTitle: title];                    
+                    [theItem setAttributedTitle: attributedTitle];
+                    return YES;
+                }
+            }
+        }
+        
+        //If no next drive is found, or we're not emulating, then disable the menu item altogether and reset its title.
+        [theItem setTitle: NSLocalizedString(@"Next Disc", @"Menu item for cycling to the next queued CD-ROM.")];
+        return NO;
+    }
+    else if (theAction == @selector(mountPreviousDrivesInQueues:))
+    {
+        if ([self isEmulating])
+        {
+            //Figure out the drive that will be switched to by the menu item,
+            //and append its title to that of the menu item.
+            for (NSArray *queue in [[self drives] objectEnumerator])
+            {
+                BXDrive *drive = [self nextDriveInQueue: queue atOffset: -1];
+                if (drive)
+                {
+                    if ([drive isCDROM])
+                        title = NSLocalizedString(@"Previous Disc", @"Menu item for cycling to the previous queued CD-ROM.");
+                    else
+                        title = NSLocalizedString(@"Previous Disk", @"Menu item for cycling to the previous queued floppy or hard disk.");
+                    
+                    NSAttributedString *attributedTitle = [self _menuItemLabelForDrive: drive withBaseTitle: title];                    
+                    [theItem setAttributedTitle: attributedTitle];
+                    return YES;
+                }
+            }
+        }
+        
+        //If no previous drive is found, then disable the menu item altogether.
+        //If no next drive is found, then disable the menu item altogether and reset its title.
+        [theItem setTitle: NSLocalizedString(@"Previous Disc", @"Menu item for cycling to the previous queued CD-ROM.")];
+        return NO;
+    }
     return [super validateMenuItem: theItem];
 }
 

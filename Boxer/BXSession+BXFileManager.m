@@ -285,7 +285,66 @@
 #pragma mark -
 #pragma mark Drive mounting
 
-- (IBAction) showMountPanel:	(id)sender	{ [[BXMountPanelController controller] showMountPanelForSession: self]; }
+- (IBAction) showMountPanel: (id)sender
+{
+    [[BXMountPanelController controller] showMountPanelForSession: self];
+}
+
+- (NSUInteger) indexOfCurrentDriveInQueue: (NSArray *)queue
+{
+    NSUInteger i, numInQueue = [queue count];
+    for (i=0; i < numInQueue; i++)
+    {
+        if ([self driveIsMounted: [queue objectAtIndex: i]]) return i; 
+    }
+    return NSNotFound;
+}
+
+- (BXDrive *) nextDriveInQueue: (NSArray *)queue atOffset: (NSInteger)offset
+{
+    //Don't bother cycling a queue with less than 2 drives
+    if ([queue count] > 1)
+    {
+        //Find the index of the currently-mounted drive, to which offset is relative.
+        NSUInteger currentIndex = [self indexOfCurrentDriveInQueue: queue];
+        
+        //If there is no currently-mounted drive in this queue, don't cycle it.
+        if (currentIndex != NSNotFound)
+        {
+            NSUInteger nextIndex = (currentIndex + offset) % [queue count];
+            return [queue objectAtIndex: nextIndex];
+        }
+    }
+    return nil;
+}
+
+- (IBAction) mountNextDrivesInQueues: (id)sender
+{
+    for (NSArray *queue in [drives objectEnumerator])
+    {
+        BXDrive *nextDrive = [self nextDriveInQueue: queue atOffset: 1];
+        if (nextDrive)
+        {
+            [self mountDrive: nextDrive
+                     options: BXDriveReplaceExisting | BXDriveShowNotifications
+                       error: nil];
+        }
+    }
+}
+
+- (IBAction) mountPreviousDrivesInQueues: (id)sender
+{
+    for (NSArray *queue in [drives objectEnumerator])
+    {
+        BXDrive *previousDrive = [self nextDriveInQueue: queue atOffset: -1];
+        if (previousDrive)
+        {
+            [self mountDrive: previousDrive
+                     options: BXDriveReplaceExisting | BXDriveShowNotifications
+                       error: nil];
+        }
+    }
+}
 
 - (BOOL) shouldUnmountDrives: (NSArray *)selectedDrives sender: (id)sender
 {
@@ -609,6 +668,10 @@
                    error: (NSError **)outError
 {
     if (outError) *outError = nil;
+    
+    //Sanity check: if this drive is already mounted, don't bother retrying.
+    if ([self driveIsMounted: drive]) return drive;
+    
     
     if (options == 0) options = BXDefaultDriveMountOptions;
     

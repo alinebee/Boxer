@@ -2,7 +2,7 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
-		<string key="IBDocument.SystemVersion">10K540</string>
+		<string key="IBDocument.SystemVersion">10K549</string>
 		<string key="IBDocument.InterfaceBuilderVersion">1306</string>
 		<string key="IBDocument.AppKitVersion">1038.36</string>
 		<string key="IBDocument.HIToolboxVersion">461.00</string>
@@ -1167,6 +1167,24 @@
 									<reference key="NSOnImage" ref="569538535"/>
 									<reference key="NSMixedImage" ref="489554260"/>
 								</object>
+								<object class="NSMenuItem" id="1058182379">
+									<reference key="NSMenu" ref="67815420"/>
+									<string key="NSTitle">Next Disc</string>
+									<string key="NSKeyEquiv"></string>
+									<int key="NSKeyEquivModMask">1048576</int>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="569538535"/>
+									<reference key="NSMixedImage" ref="489554260"/>
+								</object>
+								<object class="NSMenuItem" id="261374938">
+									<reference key="NSMenu" ref="67815420"/>
+									<string key="NSTitle">Previous Disc</string>
+									<string key="NSKeyEquiv"></string>
+									<int key="NSKeyEquivModMask">1048576</int>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="569538535"/>
+									<reference key="NSMixedImage" ref="489554260"/>
+								</object>
 								<object class="NSMenuItem" id="46091028">
 									<reference key="NSMenu" ref="67815420"/>
 									<string key="NSTitle">Show DOS Drives</string>
@@ -2202,6 +2220,22 @@
 					</object>
 					<int key="connectionID">2163</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">mountNextDrivesInQueues:</string>
+						<reference key="source" ref="935372999"/>
+						<reference key="destination" ref="1058182379"/>
+					</object>
+					<int key="connectionID">2166</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">mountPreviousDrivesInQueues:</string>
+						<reference key="source" ref="935372999"/>
+						<reference key="destination" ref="261374938"/>
+					</object>
+					<int key="connectionID">2167</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -3011,10 +3045,12 @@
 							<reference ref="406564016"/>
 							<reference ref="23996182"/>
 							<reference ref="789450847"/>
-							<reference ref="46091028"/>
 							<reference ref="800794685"/>
 							<reference ref="665114175"/>
 							<reference ref="726999377"/>
+							<reference ref="1058182379"/>
+							<reference ref="261374938"/>
+							<reference ref="46091028"/>
 						</object>
 						<reference key="parent" ref="466028025"/>
 					</object>
@@ -3260,6 +3296,16 @@
 						<reference key="object" ref="96241277"/>
 						<reference key="parent" ref="0"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2164</int>
+						<reference key="object" ref="1058182379"/>
+						<reference key="parent" ref="67815420"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2165</int>
+						<reference key="object" ref="261374938"/>
+						<reference key="parent" ref="67815420"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -3450,6 +3496,8 @@
 					<string>2132.IBPluginDependency</string>
 					<string>2133.IBPluginDependency</string>
 					<string>2158.IBPluginDependency</string>
+					<string>2164.IBPluginDependency</string>
+					<string>2165.IBPluginDependency</string>
 					<string>283.IBPluginDependency</string>
 					<string>283.ImportedFromIB2</string>
 					<string>284.IBPluginDependency</string>
@@ -3706,6 +3754,8 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
@@ -3747,7 +3797,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">2163</int>
+			<int key="maxID">2167</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -3957,22 +4007,14 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>enterFullScreen:</string>
-							<string>exitFullScreen:</string>
 							<string>hideProgramPanel:</string>
 							<string>showProgramPanel:</string>
 							<string>toggleFilterType:</string>
-							<string>toggleFullScreen:</string>
-							<string>toggleFullScreenWithoutAnimation:</string>
 							<string>toggleProgramPanelShown:</string>
 							<string>toggleStatusBarShown:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -3984,26 +4026,14 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>enterFullScreen:</string>
-							<string>exitFullScreen:</string>
 							<string>hideProgramPanel:</string>
 							<string>showProgramPanel:</string>
 							<string>toggleFilterType:</string>
-							<string>toggleFullScreen:</string>
-							<string>toggleFullScreenWithoutAnimation:</string>
 							<string>toggleProgramPanelShown:</string>
 							<string>toggleStatusBarShown:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<object class="IBActionInfo">
-								<string key="name">enterFullScreen:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">exitFullScreen:</string>
-								<string key="candidateClassName">id</string>
-							</object>
 							<object class="IBActionInfo">
 								<string key="name">hideProgramPanel:</string>
 								<string key="candidateClassName">id</string>
@@ -4014,14 +4044,6 @@
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">toggleFilterType:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">toggleFullScreen:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">toggleFullScreenWithoutAnimation:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -4045,7 +4067,6 @@
 							<string>renderingView</string>
 							<string>statusBar</string>
 							<string>statusBarController</string>
-							<string>viewContainer</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -4056,7 +4077,6 @@
 							<string>NSView</string>
 							<string>NSView</string>
 							<string>BXStatusBarController</string>
-							<string>NSView</string>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
@@ -4070,7 +4090,6 @@
 							<string>renderingView</string>
 							<string>statusBar</string>
 							<string>statusBarController</string>
-							<string>viewContainer</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -4101,10 +4120,6 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">statusBarController</string>
 								<string key="candidateClassName">BXStatusBarController</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">viewContainer</string>
-								<string key="candidateClassName">NSView</string>
 							</object>
 						</object>
 					</object>
@@ -4152,6 +4167,7 @@
 							<string>importSelectedDrives:</string>
 							<string>interactWithDriveOptions:</string>
 							<string>openSelectedDrivesInDOS:</string>
+							<string>removeSelectedDrives:</string>
 							<string>revealSelectedDrivesInFinder:</string>
 							<string>showMountPanel:</string>
 							<string>unmountSelectedDrives:</string>
@@ -4162,6 +4178,7 @@
 							<string>id</string>
 							<string>id</string>
 							<string>NSSegmentedControl</string>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -4177,6 +4194,7 @@
 							<string>importSelectedDrives:</string>
 							<string>interactWithDriveOptions:</string>
 							<string>openSelectedDrivesInDOS:</string>
+							<string>removeSelectedDrives:</string>
 							<string>revealSelectedDrivesInFinder:</string>
 							<string>showMountPanel:</string>
 							<string>unmountSelectedDrives:</string>
@@ -4204,6 +4222,10 @@
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
+								<string key="name">removeSelectedDrives:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
 								<string key="name">revealSelectedDrivesInFinder:</string>
 								<string key="candidateClassName">id</string>
 							</object>
@@ -4224,14 +4246,12 @@
 							<string>driveActionsMenu</string>
 							<string>driveControls</string>
 							<string>driveList</string>
-							<string>drives</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>NSMenu</string>
 							<string>NSSegmentedControl</string>
 							<string>BXDriveList</string>
-							<string>NSArrayController</string>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
@@ -4241,7 +4261,6 @@
 							<string>driveActionsMenu</string>
 							<string>driveControls</string>
 							<string>driveList</string>
-							<string>drives</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -4256,10 +4275,6 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">driveList</string>
 								<string key="candidateClassName">BXDriveList</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">drives</string>
-								<string key="candidateClassName">NSArrayController</string>
 							</object>
 						</object>
 					</object>
@@ -4830,9 +4845,10 @@
 							<string>decrementSpeed:</string>
 							<string>incrementFrameSkip:</string>
 							<string>incrementSpeed:</string>
+							<string>mountNextDrivesInQueues:</string>
+							<string>mountPreviousDrivesInQueues:</string>
 							<string>openInDOS:</string>
 							<string>paste:</string>
-							<string>refreshFolders:</string>
 							<string>relaunch:</string>
 							<string>showCPUPanel:</string>
 							<string>showDrivesPanel:</string>
@@ -4857,6 +4873,7 @@
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
+							<string>id</string>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="actionInfosByName">
@@ -4867,9 +4884,10 @@
 							<string>decrementSpeed:</string>
 							<string>incrementFrameSkip:</string>
 							<string>incrementSpeed:</string>
+							<string>mountNextDrivesInQueues:</string>
+							<string>mountPreviousDrivesInQueues:</string>
 							<string>openInDOS:</string>
 							<string>paste:</string>
-							<string>refreshFolders:</string>
 							<string>relaunch:</string>
 							<string>showCPUPanel:</string>
 							<string>showDrivesPanel:</string>
@@ -4897,15 +4915,19 @@
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
+								<string key="name">mountNextDrivesInQueues:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">mountPreviousDrivesInQueues:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
 								<string key="name">openInDOS:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">paste:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">refreshFolders:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">

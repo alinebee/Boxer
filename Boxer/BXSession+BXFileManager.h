@@ -231,6 +231,22 @@ typedef NSUInteger BXDriveUnmountOptions;
 //Display the mount-a-new-drive sheet in this session's window.
 - (IBAction) showMountPanel: (id)sender;
 
+//Returns the index of the currently mounted drive in the specified queue.
+//Returns NSNotFound if no drive in the queue is mounted.
+- (NSUInteger) indexOfCurrentDriveInQueue: (NSArray *)queue;
+
+//Returns the next/previous drive in the specified queue, at the specified offset
+//from the currently-mounted drive.
+//Returns nil if there are fewer than 2 drives in the queue or if there are no
+//mounted drives in the queue.
+- (BXDrive *) nextDriveInQueue: (NSArray *)queue
+                      atOffset: (NSInteger)offset;
+
+//Cycle forward/backward through all drive queues.
+- (IBAction) mountNextDrivesInQueues: (id)sender;
+- (IBAction) mountPreviousDrivesInQueues: (id)sender;
+
+
 //Automount all ISO9660 CD-ROM volumes that are currently mounted in OS X.
 //Will not create new mounts for ones that are already mounted.
 //Returns an array of all drives mounted, which will be empty if none

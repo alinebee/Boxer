@@ -53,7 +53,7 @@
 		//Otherwise, it will need to be made into a mountable folder
 		else if (isDir)
 		{
-			importedName = [drive label];
+			importedName = [drive volumeLabel];
 			
 			NSString *extension	= nil;
 			

@@ -31,9 +31,23 @@
 @end
 
 
-//BXDriveItemView wraps each drive icon in the list.
+//BXDriveItemView represents each drive in the list and acts
+//as a view controller for its corresponding BXDriveItemView.
+@interface BXDriveItem : BXCollectionItem
+
+//The icon to display for the drive we represent.
+@property (readonly, nonatomic) NSImage *icon;
+
+//The type description to display for our drive.
+@property (readonly, nonatomic) NSString *typeDescription;
+
+@end
+
+
+//BXDriveItemView displays each drive entry in the list.
 @interface BXDriveItemView : BXHUDCollectionItemView
 
+//Our subviews
 @property (readonly, nonatomic) NSTextField *driveTypeLabel;
 @property (readonly, nonatomic) NSTextField *displayNameLabel;
 @property (readonly, nonatomic) NSTextField *letterLabel;

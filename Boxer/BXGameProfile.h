@@ -128,7 +128,7 @@ extern NSString * const BXUnknownProfileIdentifier;
 #pragma mark Methods affecting emulation behaviour
 
 //Returns an customised drive label for the specified drive.
-- (NSString *) labelForDrive: (BXDrive *)drive;
+- (NSString *) volumeLabelForDrive: (BXDrive *)drive;
 
 //Returns whether the file at the specified path is the designated installer for this game.
 - (BOOL) isDesignatedInstallerAtPath: (NSString *)path;

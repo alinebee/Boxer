@@ -33,13 +33,6 @@
 @synthesize pauseBezel, playBezel, fullscreenBezel;
 @synthesize joystickIgnoredBezel, CPUSpeedBezel, throttleBezel;
 
-+ (void) initialize
-{
-	NSValueTransformer *displayName = [[BXDisplayNameTransformer alloc] init];
-    [NSValueTransformer setValueTransformer: displayName forName: @"BXBezelDrivePathTransformer"];
-    [displayName release];
-}
-
 + (NSImage *) bezelIconForDrive: (BXDrive *)drive
 {
     NSString *iconName;
@@ -218,7 +211,7 @@
     NSString *speedDescription = [BXSession descriptionForSpeed: cpuSpeed];
     
     NSLevelIndicator *level = [bezel viewWithTag: BXBezelLevel];
-    NSTextField *label      = [bezel viewWithTag: BXBezelLevelLabel];
+    NSTextField *label      = [bezel viewWithTag: BXBezelLevelStatus];
     
     //Make maximum (auto) values appear at the end of the speed scale
     NSInteger displayedSpeed = (cpuSpeed == BXAutoSpeed) ? BXMaxSpeedThreshold : cpuSpeed;
@@ -248,7 +241,7 @@
     NSString *throttleDescription = [NSString stringWithFormat: format, percentage, nil];
     
     NSLevelIndicator *level = [bezel viewWithTag: BXBezelLevel];
-    NSTextField *label      = [bezel viewWithTag: BXBezelLevelLabel];
+    NSTextField *label      = [bezel viewWithTag: BXBezelLevelStatus];
     
     [level setIntegerValue: percentage];
     [label setStringValue: throttleDescription];
@@ -258,30 +251,36 @@
            priority: BXBezelPriorityNormal];
 }
 
+- (BOOL) shouldShowDriveNotifications
+{
+    //Suppress drive notifications while the Drive Inspector panel is open.
+    //Disabled for now; there's enough extra info provided by the bezels that
+    //they aren't redundant to show while the inspector is open.
+    
+    //BXInspectorController *inspector = [BXInspectorController controller];
+    //return !([inspector panelShown] && [inspector selectedTabViewItemIndex] == BXDriveInspectorPanelTag);
+
+    return YES;
+}
+
 - (void) showDriveAddedBezelForDrive: (BXDrive *)drive
 {
-    //Tweak: if the drives inspector panel is visible, don’t bother showing the bezel.
-    BXInspectorController *inspector = [BXInspectorController controller];
-    if (NO && [inspector panelShown] && [inspector selectedTabViewItemIndex] == BXDriveInspectorPanelTag)
-        return;
+    if (![self shouldShowDriveNotifications]) return;
     
-    NSView *bezel = [self driveAddedBezel];
+    NSView *bezel               = [self driveAddedBezel];
+    NSImageView *icon           = [bezel viewWithTag: BXBezelIcon];
+    NSTextField *actionLabel    = [bezel viewWithTag: BXBezelDriveAction];
+    NSTextField *titleLabel     = [bezel viewWithTag: BXBezelDriveTitle];
     
     NSImage *iconImage = [[self class] bezelIconForDrive: drive];
+    NSString *driveTitle = [drive title];
     
-    NSString *labelFormat = NSLocalizedString(@"Drive %1$@ added", @"Label for drive-added bezel notification. %1$@ is the drive letter.");
-    NSString *labelDescription = [NSString stringWithFormat: labelFormat, [drive letter], nil];
-    
-    NSValueTransformer *pathTransformer = [NSValueTransformer valueTransformerForName: @"BXBezelDrivePathTransformer"];
-    NSString *displayPath = [pathTransformer transformedValue: [drive path]];
-    
-    NSImageView *icon   = [bezel viewWithTag: BXBezelIcon];
-    NSTextField *label  = [bezel viewWithTag: BXBezelDriveLabel];
-    NSTextField *path   = [bezel viewWithTag: BXBezelDrivePath];
-    
-    [icon setImage: iconImage];
-    [label setStringValue: labelDescription];
-    [path setStringValue: displayPath];
+    NSString *actionFormat = NSLocalizedString(@"Drive %1$@ added", @"Label for drive-added bezel notification. %1$@ is the drive letter.");
+    NSString *actionDescription = [NSString stringWithFormat: actionFormat, [drive letter], nil];
+                             
+    [icon setImage:                 iconImage];
+    [actionLabel setStringValue:    actionDescription];
+    [titleLabel setStringValue:     driveTitle];
     
     [self showBezel: bezel
         forDuration: BXDriveBezelDuration
@@ -290,31 +289,25 @@
 
 - (void) showDriveSwappedBezelFromDrive: (BXDrive *)fromDrive toDrive: (BXDrive *)toDrive
 {
-    //Tweak: if the drives inspector panel is visible, don’t bother showing the bezel.
-    BXInspectorController *inspector = [BXInspectorController controller];
-    if (NO && [inspector panelShown] && [inspector selectedTabViewItemIndex] == BXDriveInspectorPanelTag)
-        return;
+    if (![self shouldShowDriveNotifications]) return;
     
-    NSView *bezel = [self driveSwappedBezel];
+    NSView *bezel               = [self driveSwappedBezel];
+    NSImageView *fromIcon       = [bezel viewWithTag: BXBezelDriveFromIcon];
+    NSImageView *toIcon         = [bezel viewWithTag: BXBezelDriveToIcon];
+    NSTextField *actionLabel    = [bezel viewWithTag: BXBezelDriveAction];
+    NSTextField *titleLabel     = [bezel viewWithTag: BXBezelDriveTitle];
     
+    NSString *driveTitle    = [toDrive title];
     NSImage *fromIconImage  = [[self class] bezelIconForDrive: fromDrive];
     NSImage *toIconImage    = [[self class] bezelIconForDrive: toDrive];
     
-    NSString *labelFormat = NSLocalizedString(@"Drive %1$@ swapped", @"Label for drive-swapped bezel notification. %1$@ is the drive letter.");
-    NSString *labelDescription = [NSString stringWithFormat: labelFormat, [toDrive letter], nil];
-    
-    NSValueTransformer *pathTransformer = [NSValueTransformer valueTransformerForName: @"BXBezelDrivePathTransformer"];
-    NSString *displayPath = [pathTransformer transformedValue: [toDrive path]];
-    
-    NSImageView *fromIcon   = [bezel viewWithTag: BXBezelDriveFromIcon];
-    NSImageView *toIcon   = [bezel viewWithTag: BXBezelDriveToIcon];
-    NSTextField *label  = [bezel viewWithTag: BXBezelDriveLabel];
-    NSTextField *path   = [bezel viewWithTag: BXBezelDrivePath];
-    
-    [fromIcon setImage: fromIconImage];
-    [toIcon setImage: toIconImage];
-    [label setStringValue: labelDescription];
-    [path setStringValue: displayPath];
+    NSString *actionFormat = NSLocalizedString(@"Drive %1$@ swapped", @"Label for drive-swapped bezel notification. %1$@ is the drive letter.");
+    NSString *actionDescription = [NSString stringWithFormat: actionFormat, [toDrive letter], nil];
+        
+    [fromIcon setImage:             fromIconImage];
+    [toIcon setImage:               toIconImage];
+    [actionLabel setStringValue:    actionDescription];
+    [titleLabel setStringValue:     driveTitle];
     
     [self showBezel: bezel
         forDuration: BXDriveBezelDuration
@@ -323,27 +316,23 @@
 
 - (void) showDriveRemovedBezelForDrive: (BXDrive *)drive
 {
-    //Tweak: if the drives inspector panel is visible, don’t bother showing the bezel.
-    BXInspectorController *inspector = [BXInspectorController controller];
-    if (NO && [inspector panelShown] && [inspector selectedTabViewItemIndex] == BXDriveInspectorPanelTag)
-        return;
+    if (![self shouldShowDriveNotifications]) return;
     
-    NSView *bezel = [self driveRemovedBezel];
-    NSImage *iconImage = [NSImage imageNamed: @"EjectTemplate"];
+    NSView *bezel               = [self driveRemovedBezel];
+    NSImageView *icon           = [bezel viewWithTag: BXBezelIcon];
+    NSTextField *actionLabel    = [bezel viewWithTag: BXBezelDriveAction];
+    NSTextField *titleLabel     = [bezel viewWithTag: BXBezelDriveTitle];
+
+    NSImage *iconImage      = [NSImage imageNamed: @"EjectTemplate"];
+    NSString *driveTitle    = [drive title];
     
-    NSString *labelFormat = NSLocalizedString(@"Drive %1$@ ejected", @"Label for drive-removed bezel notification. %1$@ is the drive letter.");
-    NSString *labelDescription = [NSString stringWithFormat: labelFormat, [drive letter], nil];
+    NSString *actionFormat = NSLocalizedString(@"Drive %1$@ ejected", @"Label for drive-removed bezel notification. %1$@ is the drive letter.");
+    NSString *actionDescription = [NSString stringWithFormat: actionFormat, [drive letter], nil];
     
-    NSValueTransformer *pathTransformer = [NSValueTransformer valueTransformerForName: @"BXBezelDrivePathTransformer"];
-    NSString *displayPath = [pathTransformer transformedValue: [drive path]];
     
-    NSImageView *icon   = [bezel viewWithTag: BXBezelIcon];
-    NSTextField *label  = [bezel viewWithTag: BXBezelDriveLabel];
-    NSTextField *path   = [bezel viewWithTag: BXBezelDrivePath];
-    
-    [icon setImage: iconImage];
-    [label setStringValue: labelDescription];
-    [path setStringValue: displayPath];
+    [icon setImage:                 iconImage];
+    [actionLabel setStringValue:    actionDescription];
+    [titleLabel setStringValue:     driveTitle];
     
     [self showBezel: bezel
         forDuration: BXDriveBezelDuration
@@ -353,23 +342,22 @@
 - (void) showDriveImportedBezelForDrive: (BXDrive *)drive
                               toPackage: (BXPackage *)package
 {
-    //Tweak: if the drives inspector panel is visible, don’t bother showing the bezel.
-    BXInspectorController *inspector = [BXInspectorController controller];
-    if ([inspector panelShown] && [inspector selectedTabViewItemIndex] == BXDriveInspectorPanelTag)
-        return;
+    if (![self shouldShowDriveNotifications]) return;
     
-    NSView *bezel = [self driveImportedBezel];
+    NSView *bezel               = [self driveImportedBezel];
+    NSImageView *icon           = [bezel viewWithTag: BXBezelIcon];
+    NSTextField *actionLabel    = [bezel viewWithTag: BXBezelDriveAction];
+    NSTextField *titleLabel     = [bezel viewWithTag: BXBezelDriveTitle];
     
     NSImage *iconImage = [[self class] bezelIconForDrive: drive];
+    NSString *driveTitle = [drive title];
     
-    NSString *labelFormat = NSLocalizedString(@"Drive %2$@ imported", @"Label for drive-imported bezel notification. %1$@ is the drive letter.");
-	NSString *labelDescription = [NSString stringWithFormat: labelFormat, [drive letter], nil];
+    NSString *actionFormat = NSLocalizedString(@"Drive %2$@ imported", @"Label for drive-imported bezel notification. %1$@ is the drive letter.");
+	NSString *actionDescription = [NSString stringWithFormat: actionFormat, [drive letter], nil];
     
-    NSImageView *icon   = [bezel viewWithTag: BXBezelIcon];
-    NSTextField *label  = [bezel viewWithTag: BXBezelDriveLabel];
-    
-    [icon setImage: iconImage];
-    [label setStringValue: labelDescription];
+    [icon setImage:                 iconImage];
+    [actionLabel setStringValue:    actionDescription];
+    [titleLabel setStringValue:     driveTitle];
     
     [self showBezel: bezel
         forDuration: BXDriveBezelDuration

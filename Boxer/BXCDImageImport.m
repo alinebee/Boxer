@@ -249,7 +249,7 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 
 + (id) errorWithDrive: (BXDrive *)drive
 {
-	NSString *displayName = [drive label];
+	NSString *displayName = [drive title];
 	NSString *descriptionFormat = NSLocalizedString(@"The disc “%1$@” could not be converted into a disc image.",
 													@"Error shown when CD-image ripping fails for an unknown reason. %1$@ is the volume label of the drive.");
 	
@@ -268,7 +268,7 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 
 + (id) errorWithDrive: (BXDrive *)drive
 {
-	NSString *displayName = [drive label];
+	NSString *displayName = [drive title];
 	NSString *descriptionFormat = NSLocalizedString(@"The disc “%1$@” could not be converted to a disc image because it is in use by another application.",
 													@"Error shown when CD-image ripping fails because the disc is in use. %1$@ is the volume label of the drive.");
 	

@@ -2793,14 +2793,6 @@ A</string>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">drives</string>
-						<reference key="source" ref="589277066"/>
-						<reference key="destination" ref="19644052"/>
-					</object>
-					<int key="connectionID">1321</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">driveControls</string>
 						<reference key="source" ref="589277066"/>
 						<reference key="destination" ref="781654671"/>
@@ -3534,26 +3526,6 @@ A</string>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: representedObject.path</string>
-						<reference key="source" ref="163857552"/>
-						<reference key="destination" ref="527118087"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="163857552"/>
-							<reference key="NSDestination" ref="527118087"/>
-							<string key="NSLabel">value: representedObject.path</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">representedObject.path</string>
-							<object class="NSDictionary" key="NSOptions">
-								<string key="NS.key.0">NSValueTransformerName</string>
-								<string key="NS.object.0">BXDriveDisplayName</string>
-							</object>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1743</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
 						<string key="label">displayPatternValue1: representedObject.letter</string>
 						<reference key="source" ref="724221988"/>
 						<reference key="destination" ref="527118087"/>
@@ -3571,42 +3543,6 @@ A</string>
 						</object>
 					</object>
 					<int key="connectionID">1744</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: representedObject.typeDescription</string>
-						<reference key="source" ref="1057456829"/>
-						<reference key="destination" ref="527118087"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="1057456829"/>
-							<reference key="NSDestination" ref="527118087"/>
-							<string key="NSLabel">value: representedObject.typeDescription</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">representedObject.typeDescription</string>
-							<object class="NSDictionary" key="NSOptions">
-								<string key="NS.key.0">NSValueTransformerName</string>
-								<string key="NS.object.0">BXCapitalizedString</string>
-							</object>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1745</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: representedObject.icon</string>
-						<reference key="source" ref="1059830828"/>
-						<reference key="destination" ref="527118087"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="1059830828"/>
-							<reference key="NSDestination" ref="527118087"/>
-							<string key="NSLabel">value: representedObject.icon</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">representedObject.icon</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1746</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
@@ -3643,6 +3579,58 @@ A</string>
 						</object>
 					</object>
 					<int key="connectionID">1748</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: representedObject.title</string>
+						<reference key="source" ref="163857552"/>
+						<reference key="destination" ref="527118087"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="163857552"/>
+							<reference key="NSDestination" ref="527118087"/>
+							<string key="NSLabel">value: representedObject.title</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">representedObject.title</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1750</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: icon</string>
+						<reference key="source" ref="1059830828"/>
+						<reference key="destination" ref="527118087"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="1059830828"/>
+							<reference key="NSDestination" ref="527118087"/>
+							<string key="NSLabel">value: icon</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">icon</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1751</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: typeDescription</string>
+						<reference key="source" ref="1057456829"/>
+						<reference key="destination" ref="527118087"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="1057456829"/>
+							<reference key="NSDestination" ref="527118087"/>
+							<string key="NSLabel">value: typeDescription</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">typeDescription</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSValueTransformerName</string>
+								<string key="NS.object.0">BXCapitalizedString</string>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1752</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -3789,7 +3777,7 @@ A</string>
 						<int key="objectID">337</int>
 						<reference key="object" ref="527118087"/>
 						<reference key="parent" ref="0"/>
-						<string key="objectName">Mounted Drive Item</string>
+						<string key="objectName">Drive Item</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">1281</int>
@@ -3870,12 +3858,12 @@ A</string>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="1057456829"/>
-							<reference ref="682806378"/>
 							<reference ref="1013267985"/>
 							<reference ref="163857552"/>
 							<reference ref="724221988"/>
 							<reference ref="1059830828"/>
 							<reference ref="106440638"/>
+							<reference ref="682806378"/>
 						</object>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -5064,6 +5052,7 @@ A</string>
 					<string>-1.IBPluginDependency</string>
 					<string>-2.IBPluginDependency</string>
 					<string>-3.IBPluginDependency</string>
+					<string>1000.CustomClassName</string>
 					<string>1000.IBPluginDependency</string>
 					<string>1001.IBPluginDependency</string>
 					<string>1002.IBPluginDependency</string>
@@ -5122,6 +5111,7 @@ A</string>
 					<string>1289.IBPluginDependency</string>
 					<string>1333.IBPluginDependency</string>
 					<string>1334.IBPluginDependency</string>
+					<string>1334.IBViewBoundsToFrameTransform</string>
 					<string>1335.IBPluginDependency</string>
 					<string>1336.IBPluginDependency</string>
 					<string>1337.IBPluginDependency</string>
@@ -5323,6 +5313,7 @@ A</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>BXHUDImageCell</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
@@ -5397,6 +5388,9 @@ A</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
+					<object class="NSAffineTransform">
+						<bytes key="NSTransformStruct">P4AAAL+AAABCRAAAwagAAA</bytes>
+					</object>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -5573,7 +5567,7 @@ A</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>BXCollectionItem</string>
+					<string>BXDriveItem</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<reference ref="0"/>
 					<object class="NSAffineTransform">
@@ -5686,7 +5680,7 @@ A</string>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1748</int>
+			<int key="maxID">1752</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -6041,12 +6035,17 @@ A</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
-					<string key="className">BXDriveItemButtonCell</string>
-					<string key="superclassName">NSButtonCell</string>
+					<string key="className">BXDriveItem</string>
+					<string key="superclassName">NSCollectionViewItem</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier" id="359472022">
 						<string key="majorKey">IBDocumentRelativeSource</string>
 						<string key="minorKey">../../Boxer/BXDriveList.h</string>
 					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXDriveItemButtonCell</string>
+					<string key="superclassName">NSButtonCell</string>
+					<reference key="sourceIdentifier" ref="359472022"/>
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">BXDriveItemView</string>
@@ -6081,6 +6080,7 @@ A</string>
 							<string>importSelectedDrives:</string>
 							<string>interactWithDriveOptions:</string>
 							<string>openSelectedDrivesInDOS:</string>
+							<string>removeSelectedDrives:</string>
 							<string>revealSelectedDrivesInFinder:</string>
 							<string>showMountPanel:</string>
 							<string>unmountSelectedDrives:</string>
@@ -6091,6 +6091,7 @@ A</string>
 							<string>id</string>
 							<string>id</string>
 							<string>NSSegmentedControl</string>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -6106,6 +6107,7 @@ A</string>
 							<string>importSelectedDrives:</string>
 							<string>interactWithDriveOptions:</string>
 							<string>openSelectedDrivesInDOS:</string>
+							<string>removeSelectedDrives:</string>
 							<string>revealSelectedDrivesInFinder:</string>
 							<string>showMountPanel:</string>
 							<string>unmountSelectedDrives:</string>
@@ -6133,6 +6135,10 @@ A</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
+								<string key="name">removeSelectedDrives:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
 								<string key="name">revealSelectedDrivesInFinder:</string>
 								<string key="candidateClassName">id</string>
 							</object>
@@ -6153,14 +6159,12 @@ A</string>
 							<string>driveActionsMenu</string>
 							<string>driveControls</string>
 							<string>driveList</string>
-							<string>drives</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>NSMenu</string>
 							<string>NSSegmentedControl</string>
 							<string>BXDriveList</string>
-							<string>NSArrayController</string>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
@@ -6170,7 +6174,6 @@ A</string>
 							<string>driveActionsMenu</string>
 							<string>driveControls</string>
 							<string>driveList</string>
-							<string>drives</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -6185,10 +6188,6 @@ A</string>
 							<object class="IBToOneOutletInfo">
 								<string key="name">driveList</string>
 								<string key="candidateClassName">BXDriveList</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">drives</string>
-								<string key="candidateClassName">NSArrayController</string>
 							</object>
 						</object>
 					</object>

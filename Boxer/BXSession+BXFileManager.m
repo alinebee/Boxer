@@ -504,9 +504,12 @@
 
 	NSString *toolkitDriveLetter	= [[NSUserDefaults standardUserDefaults] stringForKey: @"toolkitDriveLetter"];
 	NSString *toolkitFiles			= [[NSBundle mainBundle] pathForResource: @"DOS Toolkit" ofType: nil];
+    
 	BXDrive *toolkitDrive			= [BXDrive hardDriveFromPath: toolkitFiles atLetter: toolkitDriveLetter];
+    [toolkitDrive setTitle: NSLocalizedString(@"DOS Toolkit", @"The display title for Boxer’s toolkit drive.")];
 	
-	//Hide and lock the toolkit drive so that it will not appear in the drive manager UI
+	//Hide and lock the toolkit drive so that it cannot be ejected and will not appear in the drive inspector,
+    //and make it read-only with 0 bytes free so that it will not appear as a valid installation target to DOS games.
 	[toolkitDrive setLocked: YES];
 	[toolkitDrive setReadOnly: YES];
 	[toolkitDrive setHidden: YES];
@@ -520,7 +523,9 @@
 	//TODO: we should treat this as an error if it didn't mount!
 	if (toolkitDrive)
 	{
-		//Todo: the DOS path should include the root folder of every drive, not just Y and Z.
+		//TODO: the DOS path should include the root folder of every drive, not just Y and Z.
+        //We should also have a proper API for adding to the DOS path, rather than overriding
+        //it completely like this.
 		NSString *dosPath	= [NSString stringWithFormat: @"%1$@:\\;%1$@:\\UTILS;Z:\\", [toolkitDrive letter], nil];
 		NSString *ultraDir	= [NSString stringWithFormat: @"%@:\\ULTRASND", [toolkitDrive letter], nil];
 		NSString *utilsDir	= [NSString stringWithFormat: @"%@:\\UTILS", [toolkitDrive letter], nil];
@@ -546,6 +551,9 @@
 		temporaryFolderPath = [tempDrivePath retain];
 		
 		BXDrive *tempDrive = [BXDrive hardDriveFromPath: tempDrivePath atLetter: tempDriveLetter];
+        [tempDrive setTitle: NSLocalizedString(@"Temporary files", @"The display title for Boxer’s temp drive.")];
+        
+        //Hide and lock the temp drive so that it cannot be ejected and will not appear in the drive inspector.
 		[tempDrive setLocked: YES];
 		[tempDrive setHidden: YES];
 		
@@ -571,6 +579,31 @@
     return nil;
 }
 
+- (NSString *) preferredLetterForDrive: (BXDrive *)drive
+                    withQueueBehaviour: (NSUInteger)queueBehaviour
+{
+    //Resolve appropriate behaviour based on the drive type
+    if (queueBehaviour == BXDriveQueueIfAppropriate)
+    {
+        if ([drive type] == BXDriveCDROM || [drive type] == BXDriveFloppyDisk)
+            queueBehaviour = BXDriveQueueWithSameType;
+        else
+            queueBehaviour = BXDriveNeverQueue;
+    }
+    
+    if (queueBehaviour == BXDriveQueueWithSameType)
+    {
+        for (BXDrive *knownDrive in [self allDrives])
+        {
+            if ([knownDrive type] == [drive type])
+                return [knownDrive letter];
+        }
+    }
+    
+    //TODO: move the logic from that function to here instead?
+    return [emulator preferredLetterForDrive: drive];
+}
+
 - (BXDrive *) mountDrive: (BXDrive *)drive
                  options: (BXDriveMountOptions)options
                    error: (NSError **)outError
@@ -582,7 +615,7 @@
     //Determine which queue behaviour is applicable
 #define NUM_QUEUE_OPTIONS 5
     BXDriveMountOptions queueOptions[NUM_QUEUE_OPTIONS] = {BXDriveQueueIfAppropriate, BXDriveQueueWithExisting, BXDriveQueueWithSameType, BXDriveReplaceExisting, BXDriveNeverQueue};
-    BXDriveMountOptions queueBehaviour = BXDriveQueueIfAppropriate;
+    NSUInteger queueBehaviour = BXDriveQueueIfAppropriate;
     NSUInteger i;
     for (i=0; i<NUM_QUEUE_OPTIONS; i++)
     {
@@ -597,27 +630,20 @@
             queueBehaviour = BXDriveNeverQueue;
     }
     
-    //BXDriveQueueWithSameType behaviour:
-    //If the drive doesn't have a specific drive letter, then try to find
-    //other drives of the same type to queue it with.
-    if (![drive letter] && queueBehaviour == BXDriveQueueWithSameType)
+    //If the drive doesn't have a specific drive letter,
+    //determine one now based on the specified queue behaviour.
+    if (![drive letter])
     {
-        for (BXDrive *otherDrive in [self allDrives])
-        {
-            if ([drive type] == [otherDrive type])
-            {
-                [drive setLetter: [otherDrive letter]];
-                break;
-            }
-        }
+        NSString *preferredLetter = [self preferredLetterForDrive: drive
+                                               withQueueBehaviour: queueBehaviour];
+        [drive setLetter: preferredLetter];
     }
     
     //Allow the game profile to override the drive label if needed.
     //TODO: make this subject to an options flag?
-	NSString *customLabel = [[self gameProfile] labelForDrive: drive];
-	if (customLabel) [drive setLabel: customLabel];
+	NSString *customLabel = [[self gameProfile] volumeLabelForDrive: drive];
+	if (customLabel) [drive setVolumeLabel: customLabel];
     
-
     BXDrive *driveToMount = drive;
     BXDrive *fallbackDrive = nil;
     
@@ -780,7 +806,7 @@
         return unmounted;
     }
     //If the drive isn't mounted, but we requested that it be removed from the queue
-    //after unmounting, then do that now
+    //after unmounting anyway, then do that now
     else
     {
         if (options & BXDriveRemoveFromQueue)
@@ -1254,8 +1280,8 @@
 		NSString *destinationFolder = [[self gamePackage] resourcePath];
 		
 		BXOperation <BXDriveImport> *driveImport = [BXDriveImport importOperationForDrive: drive
-																   toDestination: destinationFolder
-																	   copyFiles: YES];
+                                                                            toDestination: destinationFolder
+                                                                                copyFiles: YES];
 		
 		[driveImport setDelegate: self];
 		[driveImport setDidFinishSelector: @selector(driveImportDidFinish:)];

@@ -137,7 +137,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 	BOOL isImage = !isFolder;
 
 	NSString *driveLetter = [drive letter];
-	NSString *driveLabel = [drive label];
+	NSString *driveLabel = [drive volumeLabel];
 	
 	
 	//Choose an appropriate drive letter to mount the drive at,
@@ -228,7 +228,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 			
 			//Populate the drive with the settings we ended up using, and add the drive to our own drives cache
 			[drive setLetter: driveLetter];
-			[drive setDOSBoxLabel: [NSString stringWithCString: DOSBoxDrive->GetLabel()
+			[drive setVolumeLabel: [NSString stringWithCString: DOSBoxDrive->GetLabel()
                                                       encoding: BXDirectStringEncoding]];
 			[self _addDriveToCache: drive];
 			
@@ -769,7 +769,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 			}
 			drive = [BXDrive driveFromPath: [path stringByStandardizingPath] atLetter: driveLetter];
 		}
-		[drive setLabel: label];
+		[drive setVolumeLabel: label];
 		return drive;
 	}
 	else return nil;

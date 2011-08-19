@@ -194,9 +194,9 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 #pragma mark -
 #pragma mark Methods affecting emulation behaviour
 
-- (NSString *) labelForDrive: (BXDrive *)drive
+- (NSString *) volumeLabelForDrive: (BXDrive *)drive
 {
-	NSString *defaultLabel = [drive label];
+	NSString *defaultLabel = [drive volumeLabel];
 	//If we don't have any label overrides, just use its original label
 	if (![driveLabelMappings count]) return defaultLabel;
 	

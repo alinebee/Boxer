@@ -30,8 +30,8 @@
 }
 
 + (id <BXDriveImport>) importOperationForDrive: (BXDrive *)drive
-						toDestination: (NSString *)destinationFolder
-							copyFiles: (BOOL)copyFiles
+                                 toDestination: (NSString *)destinationFolder
+                                     copyFiles: (BOOL)copyFiles
 {
 	Class importClass = [self importClassForDrive: drive];
 	if (importClass)

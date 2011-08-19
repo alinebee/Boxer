@@ -20,17 +20,17 @@ enum {
 };
 typedef NSUInteger BXBezelPriority;
 
-//XIB view flags for indicating different roles within a bezel
+//XIB view flags for indicating different view roles within a bezel
 enum {
-    BXBezelIcon = 1,          //Decorative icon 
-    BXBezelLevel = 2,         //Level indicator
-    BXBezelLevelLabel = 3,    //Descriptive label for level indicator
+    BXBezelIcon             = 1,    //Decorative icon for the bezel
+    BXBezelLevel            = 2,    //Level indicator
+    BXBezelLevelStatus      = 3,    //Label describing the status indicated in the level indicator
     
-    BXBezelDriveLabel = 4,    //Descriptive label for drive
-    BXBezelDrivePath = 5,     //File path for drive
+    BXBezelDriveAction      = 4,    //Label describing what's happening to the drive
+    BXBezelDriveTitle       = 5,    //Display title of the drive
     
-    BXBezelDriveFromIcon = 1,        //The icon of the drive we are switching from
-    BXBezelDriveToIcon = 6           //The icon of the drive we are switching to
+    BXBezelDriveFromIcon    = 1,    //The icon of the drive we are switching from
+    BXBezelDriveToIcon      = 6     //The icon of the drive we are switching to
 };
 
 @class BXDrive;
@@ -91,6 +91,11 @@ enum {
 
 #pragma mark -
 #pragma mark Methods
+
+//Whether to show or suppress drive notifications.
+//Currently this always returns YES.
+- (BOOL) shouldShowDriveNotifications;
+
 
 - (void) showDriveAddedBezelForDrive: (BXDrive *)drive;
 - (void) showDriveRemovedBezelForDrive: (BXDrive *)drive;

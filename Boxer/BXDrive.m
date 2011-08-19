@@ -15,7 +15,7 @@
 
 @implementation BXDrive
 @synthesize path, mountPoint, pathAliases;
-@synthesize letter, label, DOSBoxLabel, icon;
+@synthesize letter, title, volumeLabel, icon;
 @synthesize type, freeSpace;
 @synthesize usesCDAudio, readOnly, locked, hidden, mounted;
 
@@ -66,7 +66,13 @@
 	return BXDriveHardDisk;
 }
 
-+ (NSString *) preferredLabelForPath: (NSString *)filePath
++ (NSString *) preferredTitleForPath: (NSString *)filePath
+{
+    //Well that was easy.
+	return [[NSFileManager defaultManager] displayNameAtPath: filePath];
+}
+
++ (NSString *) preferredVolumeLabelForPath: (NSString *)filePath
 {
 	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
 						   
@@ -80,9 +86,8 @@
 								   @"floppy",
 								   @"harddisk",
 								   nil];
-						   
-						   
-	NSString *baseName		= [filePath lastPathComponent];
+
+    NSString *baseName		= [filePath lastPathComponent];
 	NSString *extension		= [[baseName pathExtension] lowercaseString];
 	if ([strippedExtensions containsObject: extension]) baseName = [baseName stringByDeletingPathExtension];
 	
@@ -91,7 +96,7 @@
 	if ([workspace file: filePath matchesTypes: [BXAppController mountableFolderTypes]])
 	{
 		NSString *detectedLabel	= [baseName stringByMatching: @"^([a-xA-X] )?(.+)$" capture: 2];
-		if (detectedLabel) return detectedLabel;		
+		if (detectedLabel) return detectedLabel;
 	}
 
 	//For all other cases, just use the base filename as the drive label
@@ -184,8 +189,8 @@
 {
 	[self setLetter: nil],		[letter release];
 	[self setPath: nil],		[path release];
-	[self setLabel: nil],		[label release];
-	[self setDOSBoxLabel: nil],	[DOSBoxLabel release];
+	[self setTitle: nil],		[title release];
+	[self setVolumeLabel: nil],	[volumeLabel release];
 	[self setIcon: nil],		[icon release];
 	
 	[pathAliases release], pathAliases = nil;
@@ -209,9 +214,10 @@
 				[self setMountPoint: [[self class] mountPointForPath: filePath]];
 			}
 			
-			//Automatically parse the drive letter and label from the name of the drive
-			if (![self letter])	[self setLetter:	[[self class] preferredDriveLetterForPath: filePath]];
-			if (![self label])	[self setLabel:		[[self class] preferredLabelForPath: filePath]];
+			//Automatically parse the drive letter, title and volume label from the name of the drive
+			if (![self letter])         [self setLetter:        [[self class] preferredDriveLetterForPath: filePath]];
+			if (![self volumeLabel])	[self setVolumeLabel:	[[self class] preferredVolumeLabelForPath: filePath]];
+			if (![self title])          [self setTitle:         [[self class] preferredTitleForPath: filePath]];
 		}
 	}
 }
@@ -227,14 +233,14 @@
 	}
 }
 
-- (void) setDOSBoxLabel: (NSString *)newLabel
+- (void) setVolumeLabel: (NSString *)newLabel
 {
-	if (![DOSBoxLabel isEqualToString: newLabel])
+	if (![volumeLabel isEqualToString: newLabel])
 	{
-		[DOSBoxLabel release];
-		DOSBoxLabel = [newLabel copy];
+		[volumeLabel release];
+		volumeLabel = [newLabel copy];
 		
-		if (![[self label] length]) [self setLabel: DOSBoxLabel];
+		if (![[self title] length]) [self setTitle: volumeLabel];
 	}
 }
 
@@ -323,8 +329,8 @@
 
 - (NSString *) displayName
 {
-	if ([self label]) return [self label];
-	else if ([self DOSBoxLabel]) return [self DOSBoxLabel];
+	if ([self title]) return [self title];
+	else if ([self volumeLabel]) return [self volumeLabel];
 	else if ([self path])
 	{
 		NSFileManager *manager = [NSFileManager defaultManager];

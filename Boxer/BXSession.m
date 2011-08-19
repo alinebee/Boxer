@@ -1076,6 +1076,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		//(This may get replaced below by a custom bundled C volume;
         //we do it now to reserve drive C so that it doesn't get autoassigned.)
 		BXDrive *packageDrive = [BXDrive hardDriveFromPath: [package gamePath] atLetter: @"C"];
+        [packageDrive setTitle: NSLocalizedString(@"Game drive", @"The display title for the gamebox’s C drive.")];
+        
 		packageDrive = [self mountDrive: packageDrive
                                 options: BXBundledDriveMountOptions
                                   error: nil];
@@ -1103,6 +1105,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 				//Rewrite the target to point to the new C drive, if it was pointing to the old one
 				if ([[self targetPath] isEqualToString: [packageDrive path]])
                     [self setTargetPath: volumePath];
+                
+                [bundledDrive setTitle: [packageDrive title]];
                 
                 //Forget about the package drive altogether, so it won't show up in the drive list
                 //as waiting to b

@@ -52,64 +52,54 @@
 	
 	[self populateDrivesFromSession: theSession];
 
-	[openPanel	beginSheetForDirectory: nil
-				file: nil
-				types: [[BXAppController mountableTypes] allObjects]
-				modalForWindow: [theSession windowForSheet]
-				modalDelegate: self
-				didEndSelector: @selector(mountChosenItem:returnCode:contextInfo:)
-				contextInfo: nil];	
+    NSString *baseDirectory = [[theSession gamePackage] resourcePath];
+    
+	[openPanel beginSheetForDirectory: baseDirectory
+                                 file: nil
+                                types: [[BXAppController mountableTypes] allObjects]
+                       modalForWindow: [theSession windowForSheet]
+                        modalDelegate: self
+                       didEndSelector: @selector(mountChosenItem:returnCode:contextInfo:)
+                          contextInfo: nil];	
 }
 
 //(Re)initialise the possible values for drive letters
 - (void) populateDrivesFromSession: (BXSession *)theSession
 {	
 	BXEmulator *theEmulator = [theSession emulator];
-	
-	NSFileManager *manager	= [NSFileManager defaultManager];
 	NSArray *driveLetters	= [BXEmulator driveLetters];
-	
-	//The maximum number of components to show in file paths
-	NSUInteger maxComponents=2;
 	
 	//First, strip any existing options after the first two (which are Auto and a divider)
 	while ([driveLetter numberOfItems] > 2) [driveLetter removeItemAtIndex: 2];
 	
-	
-	//Now, repopulate the menu again
-	
+	//Now, repopulate the menu
 	for (NSString *letter in driveLetters)
 	{
-		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-		
-		NSMenuItem *option	= [[NSMenuItem new] autorelease];
+    	NSMenuItem *option	= [[NSMenuItem alloc] init];
 		NSString *title		= [NSString stringWithFormat: @"%@:", letter];
-		BXDrive *drive		= [theEmulator driveAtLetter: letter];
+		BXDrive *drive      = [theEmulator driveAtLetter: letter];
 		
-		//The drive letter is already taken - mark it as unselectable and list a human-readable path
+        //Mark already-occupied drive letters with the title of the drive occupying that letter.
+        //Also, disable locked drive letters (and hide hidden drives altogether).
 		if (drive)
 		{
-			[option setEnabled: NO];
-			if (![drive isInternal])
-			{
-				NSArray *displayComponents	= [manager componentsToDisplayForPath: [drive path]];
-				NSUInteger numComponents	= [displayComponents count];
-				
-				if (numComponents > maxComponents)
-					displayComponents = [displayComponents subarrayWithRange: NSMakeRange(numComponents - maxComponents, maxComponents)];
-
-				NSString *displayPath = [displayComponents componentsJoinedByString: @" ▸ "];
-				
-				title = [title stringByAppendingFormat: @"  %@", displayPath, nil];
-			}
+            //If the drive is hidden or an internal DOSBox drive, skip it altogether
+            //and don't show an entry
+            if ([drive isHidden] || [drive isInternal]) continue;
+            
+            //If the drive is locked, disable the entry - it cannot be replaced
+            if ([drive isLocked]) [option setEnabled: NO];
+            
+            //Append the drive title to the letter to form the menu item's label
+            title = [title stringByAppendingFormat: @" (%@)", [drive title], nil];
 		}
 		
 		[option setTitle: title];
 		[option setRepresentedObject: letter];
 		
 		[[driveLetter menu] addItem: option];
-		
-		[pool release];
+        
+        [option release];
 	}
 	
 	[driveLetter selectItemAtIndex: 0];
@@ -118,13 +108,14 @@
 //Toggle the mount panel options depending on the selected file
 - (void) syncMountOptionsForPanel: (NSOpenPanel *)openPanel
 {
-	BXEmulator *theEmulator = [[self representedObject] emulator];
+    BXSession *session = [self representedObject];
 	NSString *path = [[openPanel URL] path];
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	
 	if (path)
 	{
-		//Don't allow drive type to be configured for disc images: instead, force it to CD-ROM while an image is selected
+		//Don't allow drive type to be configured for disc images: instead,
+        //force it to CD-ROM/floppy while an appropriate image is selected
 		BOOL isImage = [workspace file: path matchesTypes: [BXAppController mountableImageTypes]];
 		if (isImage)
 		{
@@ -156,7 +147,8 @@
 		BXDriveType preferredType	= [BXDrive preferredTypeForPath: path];
 
 		BXDrive *fakeDrive			= [BXDrive driveFromPath: path atLetter: nil withType: selectedType];
-		NSString *preferredLetter	= [theEmulator preferredLetterForDrive: fakeDrive];
+		NSString *preferredLetter	= [session preferredLetterForDrive: fakeDrive
+                                                    withQueueBehaviour: BXDriveQueueIfAppropriate];
 		
 		NSMenuItem *autoTypeOption		= [driveType itemAtIndex: 0];
 		NSMenuItem *preferredTypeOption	= [driveType itemAtIndex: [driveType indexOfItemWithTag: preferredType]];
@@ -240,6 +232,8 @@
 {
 	if (returnCode == NSOKButton)
 	{
+        BXSession *session = [self representedObject];
+        
 		NSString *path = [[openPanel URL] path];
 		
 		BXDriveType preferredType	= [[driveType selectedItem] tag];
@@ -250,23 +244,25 @@
 		[drive setReadOnly: readOnly];
         
         NSError *mountError = nil;
-		drive = [[self representedObject] mountDrive: drive error: &mountError];
+		drive = [session mountDrive: drive
+                            options: BXDefaultDriveMountOptions
+                              error: &mountError];
 		
 		//Switch to the new mount after adding it
 		if (drive)
         {
-            [[self representedObject] openFileAtPath: [drive path]];
+            [session openFileAtPath: [drive path]];
         }
         //Display the error to the user as a sheet in the same window we are on
         else if (mountError)
         {
             NSWindow *window = [openPanel parentWindow];
             [openPanel close];
-            [[self representedObject] presentError: mountError
-                                    modalForWindow: window
-                                          delegate: nil
-                                didPresentSelector: NULL
-                                       contextInfo: nil];
+            [session presentError: mountError
+                   modalForWindow: window
+                         delegate: nil
+               didPresentSelector: NULL
+                      contextInfo: nil];
         }
 	}
 	[self setRepresentedObject: nil];

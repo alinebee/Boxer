@@ -207,6 +207,11 @@ typedef NSUInteger BXDriveUnmountOptions;
 //or nil if no such drive is found.
 - (BXDrive *) queuedDriveForPath: (NSString *)path;
 
+//Returns the most appropriate letter at which to mount/queue the specified drive,
+//based on the specified queue behaviour. Used by mountDrive:options:error to choose
+//a letter when a drive has not been given one already.
+- (NSString *) preferredLetterForDrive: (BXDrive *)drive
+                    withQueueBehaviour: (NSUInteger)queueBehaviour;
 
 //Mounts the specified drive, using the specified mounting options. If successful,
 //returns a drive reflecting the drive actually mounted (this may be different from

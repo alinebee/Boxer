@@ -39,8 +39,8 @@ typedef NSInteger BXDriveType;
 	NSString *mountPoint;
 	NSMutableSet *pathAliases;
 	NSString *letter;
-	NSString *label;
-	NSString *DOSBoxLabel;
+	NSString *title;
+	NSString *volumeLabel;
 	BXDriveType type;
 	NSInteger freeSpace;
 	BOOL usesCDAudio;
@@ -78,14 +78,15 @@ typedef NSInteger BXDriveType;
 //property of the returned drive to match.
 @property (copy, nonatomic) NSString *letter;
 
-//The DOS disk label to use for this drive. For folder-based drives this will be
-//auto-generated from the folder's OS X filename, if not explicitly provided.
-//The label does not apply to disk images, which encapsulate their own drive label.
-@property (copy, nonatomic) NSString *label;
+//The display title to show for this drive in drive lists. Automatically derived from
+//the source path of the drive, but can be modified.
+@property (copy, nonatomic) NSString *title;
 
-//The label given to this drive by DOSBox, based on @label but munged to conform
-//to DOS volume label requirements. Will be nil until a volume has been mounted.
-@property (copy, nonatomic) NSString *DOSBoxLabel;
+//The volume label to use for this drive in DOS. For CD-ROM and floppy drives this is derived
+//from the folder/volume name. For image-based drives this value is ignored, since the volume
+//label is stored inside the image itself.
+//This will be updated with the drive's actual DOSBox label once a volume has been mounted.
+@property (copy, nonatomic) NSString *volumeLabel;
 
 //The icon representing this drive. This will be taken from the drive path's filesystem icon.
 @property (copy, nonatomic) NSImage *icon;
@@ -144,14 +145,18 @@ typedef NSInteger BXDriveType;
 
 //Auto-detects the appropriate drive type for the specified path, based on the path's UTI and the
 //filesystem of the path's volume: e.g. folders located on CD-ROM volume will be detected as CD-ROMs.
-+ (BXDriveType) preferredTypeForPath:	(NSString *)filePath;
++ (BXDriveType) preferredTypeForPath: (NSString *)filePath;
 
-//Autogenerates a suitable DOS label for the specified path.
+//Autogenerates a suitable DOS volume label for the specified path.
 //For disk images, this will be nil (their volume labels are stored internally);
 //For regular folders and CD-ROM volumes, this will be their filename;
-//For .floppy, .cdrom and .harddisk folders, this will be their filename minus extension
-//and parsed drive letter (see preferredDriveLetterForPath: below.)
-+ (NSString *) preferredLabelForPath:	(NSString *)filePath;
+//For .floppy, .cdrom and .harddisk folders, this will be their filename
+//minus extension and parsed drive letter (see preferredDriveLetterForPath: below.)
++ (NSString *) preferredVolumeLabelForPath: (NSString *)filePath;
+
+//Autogenerates a suitable display title for the specified path.
+//This is currently the base filename of the path, including file extension.
++ (NSString *) preferredTitleForPath: (NSString *)filePath;
 
 //Parses a recommended drive letter from the specified path. For disk images and Boxer mountable folders,
 //this will be the first letter of the filename if the filename starts with a single letter followed by a space.

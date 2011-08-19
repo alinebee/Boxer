@@ -24,6 +24,48 @@ enum {
 	BXDriveItemProgressMeterCancel	= 6
 };
 
+@implementation BXDriveItem
+
+- (NSImage *) icon
+{
+    NSString *iconName;
+    switch ([(BXDrive *)[self representedObject] type])
+    {
+        case BXDriveCDROM:
+            iconName = @"CDROMTemplate";
+            break;
+        case BXDriveFloppyDisk:
+            iconName = @"DisketteTemplate";
+            break;
+        default:
+            iconName = @"HardDiskTemplate";
+    }
+    
+    return [NSImage imageNamed: iconName];
+}
+
+- (NSString *) typeDescription
+{
+    NSString *description = [(BXDrive *)[self representedObject] typeDescription];
+    if (![[self representedObject] isMounted])
+    {
+        NSString *inactiveDescriptionFormat = NSLocalizedString(@"%@ (inactive)", @"Description format for inactive drives. %@ is the original description of the drive (e.g. 'CD-ROM', 'hard disk' etc.)");
+        description = [NSString stringWithFormat: inactiveDescriptionFormat, description, nil];
+    }
+    return description;
+}
+
++ (NSSet *) keyPathsForValuesAffectingTypeDescription
+{
+    return [NSSet setWithObjects: @"representedObject.typeDescription", @"representedObject.mounted", nil];
+}
+
++ (NSSet *) keyPathsForValuesAffectingIcon
+{
+    return [NSSet setWithObject: @"representedObject.type"];
+}
+@end
+
 
 @implementation BXDriveItemView
 

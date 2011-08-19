@@ -17,6 +17,15 @@
 
 - (NSString *)themeKey { return @"BXBlueTheme"; }
 
+//Fixes a BGHUDLabel/NSTextField bug where toggling enabledness
+//won't cause a redraw.
+- (void) setEnabled: (BOOL)flag
+{
+    [super setEnabled: flag];
+    //NOTE: calling setNeedsDisplay: doesn't help; only actually
+    //touching the value seems to force a redraw.
+    [self setStringValue: [self stringValue]];
+}
 @end
 
 

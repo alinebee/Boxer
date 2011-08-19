@@ -68,12 +68,14 @@ enum {
 	//Assign the appropriate menu to the drive-actions button segment.
 	[[self driveControls] setMenu: [self driveActionsMenu] forSegment: BXDriveActionsMenuSegment];
 	
-	//Listen for drive import notifications.
+	//Listen for drive import notifications and drive-added notifications.
 	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 	[center addObserver: self selector: @selector(operationWillStart:) name: BXOperationWillStart object: nil];
 	[center addObserver: self selector: @selector(operationDidFinish:) name: BXOperationDidFinish object: nil];
 	[center addObserver: self selector: @selector(operationInProgress:) name: BXOperationInProgress object: nil];
 	[center addObserver: self selector: @selector(operationWasCancelled:) name: BXOperationWasCancelled object: nil];
+    
+	[center addObserver: self selector: @selector(emulatorDriveDidMount:) name: @"BXDriveDidMountNotification" object: nil];
 }
 
 - (void) dealloc
@@ -98,7 +100,21 @@ enum {
                          change: (NSDictionary *)change
                         context: (void *)context
 {
-    if ([keyPath isEqualToString: @"currentSession.mountedDrives"]) [self syncButtonStates];
+    if ([keyPath isEqualToString: @"currentSession.mountedDrives"])
+    {
+        [self syncButtonStates];
+    }
+}
+
+//Select the latest drive whenever a drive is added
+- (void) emulatorDriveDidMount: (NSNotification *)notification
+{
+    BXDrive *drive = [[notification userInfo] objectForKey: @"drive"];
+    NSUInteger driveIndex = [[self drives] indexOfObject: drive];
+    if (driveIndex != NSNotFound)
+    {
+        [self setSelectedDriveIndexes: [NSIndexSet indexSetWithIndex: driveIndex]];
+    }
 }
 
 - (void) syncButtonStates
@@ -200,6 +216,31 @@ enum {
 	if (drive) [NSApp sendAction: @selector(openInDOS:) to: nil from: drive];
 }
 
+- (IBAction) mountSelectedDrives: (id)sender
+{
+	NSArray *selection = [self selectedDrives];
+	BXSession *session = [[NSApp delegate] currentSession];
+    
+    for (BXDrive *drive in selection)
+    {
+        NSError *unmountError;
+        [session mountDrive: drive
+                    options: BXDefaultDriveMountOptions
+                      error: &unmountError];
+        
+        if (unmountError)
+        {
+            NSWindow *targetWindow = [[[NSApp delegate] currentSession] windowForSheet];
+            [targetWindow presentError: unmountError
+                        modalForWindow: targetWindow
+                              delegate: nil
+                    didPresentSelector: NULL
+                           contextInfo: NULL];
+            break;
+        }
+    }
+}
+
 - (IBAction) unmountSelectedDrives: (id)sender
 {
 	NSArray *selection = [self selectedDrives];
@@ -208,8 +249,9 @@ enum {
     {
         NSError *unmountError = nil;
 		[session unmountDrives: selection
-                       options: BXDefaultDriveUnmountOptions
+                       options: BXDefaultDriveUnmountOptions | BXDriveForceRemoval
                          error: &unmountError];
+        
         if (unmountError)
         {
             NSWindow *targetWindow = [[[NSApp delegate] currentSession] windowForSheet];
@@ -230,7 +272,7 @@ enum {
     {
         NSError *unmountError = nil;
 		[session unmountDrives: selection
-                       options: BXDefaultDriveUnmountOptions | BXDriveRemoveFromQueue
+                       options: BXDefaultDriveUnmountOptions | BXDriveRemoveFromQueue | BXDriveForceRemoval
                          error: &unmountError];
         if (unmountError)
         {

@@ -325,9 +325,22 @@
         BXDrive *nextDrive = [self nextDriveInQueue: queue atOffset: 1];
         if (nextDrive)
         {
+            NSError *mountError;
             [self mountDrive: nextDrive
                      options: BXDriveReplaceExisting | BXDriveShowNotifications
-                       error: nil];
+                       error: &mountError];
+            
+            if (mountError)
+            {
+                [self presentError: mountError
+                    modalForWindow: [self windowForSheet]
+                          delegate: nil
+                didPresentSelector: NULL
+                       contextInfo: NULL];
+                
+                //Don't continue mounting if we encounter a problem
+                break;
+            }
         }
     }
 }
@@ -339,9 +352,22 @@
         BXDrive *previousDrive = [self nextDriveInQueue: queue atOffset: -1];
         if (previousDrive)
         {
+            NSError *mountError;
             [self mountDrive: previousDrive
                      options: BXDriveReplaceExisting | BXDriveShowNotifications
                        error: nil];
+            
+            if (mountError)
+            {
+                [self presentError: mountError
+                    modalForWindow: [self windowForSheet]
+                          delegate: nil
+                didPresentSelector: NULL
+                       contextInfo: NULL];
+                
+                //Don't continue mounting if we encounter a problem
+                break;
+            }
         }
     }
 }
@@ -357,7 +383,7 @@
 	{
         //If the drive isn't mounted anyway, then ignore it
         //(we may receive a mix of mounted and unmounted drives)
-        if ([self driveIsMounted: drive]) continue;
+        if (![self driveIsMounted: drive]) continue;
             
 		if ([drive isLocked]) return NO; //Prevent locked drives from being removed altogether
 		
@@ -393,13 +419,16 @@
 	[alert release];
 	if (returnCode == NSAlertFirstButtonReturn)
     {
+        //It's OK to force removal here since we've already gotten permission
+        //from the user to eject in-use drives.
         NSError *unmountError = nil;
         [self unmountDrives: selectedDrives
-                    options: BXDefaultDriveUnmountOptions
+                    options: BXDefaultDriveUnmountOptions | BXDriveForceRemoval
                       error: &unmountError];
         
         if (unmountError)
         {
+            [[alert window] close];
             [self presentError: unmountError
                 modalForWindow: [self windowForSheet]
                       delegate: nil
@@ -777,7 +806,10 @@
                         replacedDrive = [[self emulator] driveAtLetter: [driveToMount letter]];
                         replacedDriveWasCurrent = [[[self emulator] currentDrive] isEqual: replacedDrive];
                         
+                        BOOL force = (options & BXDriveForceRemoval);
+                        
                         BOOL unmounted = [[self emulator] unmountDrive: replacedDrive
+                                                                 force: force
                                                                  error: &unmountError];
                         //If we couldn't unmount the drive, then bail the hell out
                         if (!unmounted && unmountError)
@@ -857,7 +889,10 @@
 {
     if ([self driveIsMounted: drive])
     {
-        BOOL unmounted = [[self emulator] unmountDrive: drive error: outError];
+        BOOL force = (options & BXDriveForceRemoval);
+        BOOL unmounted = [[self emulator] unmountDrive: drive
+                                                 force: force
+                                                 error: outError];
         if (unmounted)
         {
             if (options & BXDriveShowNotifications)

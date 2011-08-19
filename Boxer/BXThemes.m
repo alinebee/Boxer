@@ -57,6 +57,11 @@
 
 @implementation BXBlueTheme
 
+- (NSColor *) disabledTextColor
+{
+    return [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.5f];
+}
+
 - (NSGradient *) highlightGradient
 {
 	NSColor *selectionColor	= [[NSColor alternateSelectedControlColor] colorWithAlphaComponent: [self alphaValue]];

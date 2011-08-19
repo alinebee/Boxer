@@ -283,7 +283,9 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     }
 }
 
-- (BOOL) unmountDrive: (BXDrive *)drive error: (NSError **)outError
+- (BOOL) unmountDrive: (BXDrive *)drive
+                force: (BOOL)force
+                error: (NSError **)outError
 {
     //This is not permitted and indicates a programming error
     NSAssert([self isExecuting], @"unmountDrive:error: called while emulator is not running.");
@@ -291,6 +293,13 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 	if ([drive isInternal] || [drive isLocked])
     {
         if (outError) *outError = [BXEmulatorDriveLockedError errorWithDrive: drive];
+        return NO;
+    }
+    
+    //If the drive is a hard disk and is in use, prevent it being ejected
+    if (!force && [self driveInUseAtLetter: [drive letter]])
+    {
+        if (outError) *outError = [BXEmulatorDriveInUseError errorWithDrive: drive];
         return NO;
     }
 	
@@ -335,13 +344,6 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
         else *outError = unmountError;
     }
 	return unmounted;
-}
-
-- (BOOL) unmountDriveAtLetter: (NSString *)letter error: (NSError **)outError
-{	
-	BXDrive *drive = [self driveAtLetter: letter];
-	if (drive) return [self unmountDrive: drive error: outError];
-	return NO;
 }
 
 - (void) refreshMountedDrives
@@ -1049,6 +1051,10 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 
 - (BOOL) _DOSBoxDriveInUseAtIndex: (NSUInteger)index
 {
+    //If we're at the DOS prompt, then any open file handles are leftovers
+    //and can be safely ignored, so don't bother checking.
+    if ([self isAtPrompt]) return NO;
+
 	int i;
 	for (i=0; i<DOS_FILES; i++)
 	{

@@ -10,7 +10,7 @@
 #import "NSShadow+BXShadowExtensions.h"
 
 @implementation BXTemplateImageCell
-@synthesize imageColor, imageShadow;
+@synthesize imageColor, disabledImageColor, imageShadow;
 
 + (NSPoint) anchorForAlignment: (NSImageAlignment)alignment
 {
@@ -50,8 +50,9 @@
 
 - (void) dealloc
 {
-	[self setImageColor: nil], [imageColor release];
-	[self setImageShadow: nil], [imageShadow release];
+	[self setImageColor: nil],          [imageColor release];
+	[self setDisabledImageColor: nil],  [disabledImageColor release];
+	[self setImageShadow: nil],         [imageShadow release];
 	
 	[super dealloc];
 }
@@ -72,11 +73,8 @@
 	//Apply our foreground colour and shadow when drawing any template image
 	if ([[self image] isTemplate])
 	{
-		NSImage *templateImage = [[self image] copy];
-		
-        NSRect drawRegion = NSIntegralRect([self imageRectForBounds: cellFrame]);
-        
-        NSSize imageSize = [templateImage size];
+		NSRect drawRegion = NSIntegralRect([self imageRectForBounds: cellFrame]);
+        NSSize imageSize = [[self image] size];
         
         NSPoint anchor = [[self class] anchorForAlignment: [self imageAlignment]];
         
@@ -102,14 +100,23 @@
         
 		scaledFrame = NSIntegralRect(scaledFrame);
         
-		//First resize the image to the intended size and fill it with the foreground colour
+        NSColor *color = ([self isEnabled]) ? [self imageColor] : [self disabledImageColor];
+        
+        
+        //Use the template image as a mask to create a new image composed entirely of our color.
+		NSImage *templateImage = [[NSImage alloc] init];
 		[templateImage setSize: scaledFrame.size];
+        NSRect drawRect = NSMakeRect(0.0f, 0.0f, scaledFrame.size.width, scaledFrame.size.height);
 		[templateImage lockFocus];
-			[[self imageColor] set];
-			NSRectFillUsingOperation(NSMakeRect(0.0f, 0.0f, scaledFrame.size.width, scaledFrame.size.height), NSCompositeSourceAtop);
+			[color set];
+			NSRectFillUsingOperation(drawRect, NSCompositeSourceOver);
+            [[self image] drawInRect: drawRect
+                            fromRect: NSZeroRect
+                           operation: NSCompositeDestinationIn
+                            fraction: 1.0f];
 		[templateImage unlockFocus];
 		
-		//Then render the matted image into the final context along with the drop shadow
+		//Then, render the single-color image into the final context along with the drop shadow
 		[NSGraphicsContext saveGraphicsState];
 			[[self imageShadow] set];
 			[templateImage drawInRect: scaledFrame
@@ -133,6 +140,12 @@
 {
     if (!imageColor) imageColor = [[NSColor whiteColor] retain];
     return imageColor;
+}
+
+- (NSColor *) disabledImageColor
+{
+    if (!disabledImageColor) disabledImageColor = [[NSColor colorWithCalibratedWhite: 1.0f alpha: 0.5f] retain];
+    return disabledImageColor;
 }
 
 - (NSShadow *) imageShadow

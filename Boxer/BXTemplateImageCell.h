@@ -12,10 +12,12 @@
 @interface BXTemplateImageCell : NSImageCell
 {
 	NSColor *imageColor;
+	NSColor *disabledImageColor;
 	NSShadow *imageShadow;
 }
 
 @property (copy, nonatomic) NSColor *imageColor;
+@property (copy, nonatomic) NSColor *disabledImageColor;
 @property (copy, nonatomic) NSShadow *imageShadow;
 
 @end

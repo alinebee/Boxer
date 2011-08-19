@@ -60,6 +60,11 @@ enum {
     return [NSSet setWithObjects: @"representedObject.typeDescription", @"representedObject.mounted", nil];
 }
 
++ (NSSet *) keyPathsForValuesAffectingTextColor
+{
+    return [NSSet setWithObject: @"representedObject.type"];
+}
+
 + (NSSet *) keyPathsForValuesAffectingIcon
 {
     return [NSSet setWithObject: @"representedObject.type"];
@@ -213,6 +218,9 @@ enum {
             case NSLeftMouseDragged: 
 				return [self mouseDragged: eventInDrag];
 			case NSLeftMouseUp:
+                //If the user double-clicked, trigger a drive-mount action
+                if ([eventInDrag clickCount] > 1)
+                    [NSApp sendAction: @selector(mountSelectedDrives:) to: [self delegate] from: self];
 				return [self mouseUp: eventInDrag];
         }
     };

@@ -54,6 +54,9 @@
 //Change to the first selected drive in DOS. This action is disabled if a process is running.
 - (IBAction) openSelectedDrivesInDOS: (id)sender; 
 
+//Mount the selected drives in DOS.
+- (IBAction) mountSelectedDrives: (id)sender;
+
 //Unmount the selected drives from DOS, while leaving them in the drive list.
 - (IBAction) unmountSelectedDrives: (id)sender;
 
@@ -75,6 +78,9 @@
 //Re-syncs the status and actions of the button bar, whenever
 //the selection changes or drives get mounted/unmounted.
 - (void) syncButtonStates;
+
+//Called whenever a new drive is mounted, to auto-select that drive in the panel.
+- (void) emulatorDriveDidMount: (NSNotification *)notification;
 
 #pragma mark -
 #pragma mark Drag-dropping

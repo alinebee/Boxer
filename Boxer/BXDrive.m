@@ -34,9 +34,9 @@
 {
 	static NSArray *descriptions = nil;
 	if (!descriptions) descriptions = [[NSArray alloc] initWithObjects:
-		NSLocalizedString(@"hard drive",			@"Label for hard disk mounts."),				//BXDriveTypeHardDisk
-		NSLocalizedString(@"floppy drive",			@"Label for floppy-disk mounts."),				//BXDriveTypeFloppyDisk
-		NSLocalizedString(@"CD-ROM drive",			@"Label for CD-ROM drive mounts."),				//BXDriveTypeCDROM
+		NSLocalizedString(@"hard disk",             @"Label for hard disk mounts."),				//BXDriveTypeHardDisk
+		NSLocalizedString(@"floppy disk",           @"Label for floppy-disk mounts."),				//BXDriveTypeFloppyDisk
+		NSLocalizedString(@"CD-ROM",                @"Label for CD-ROM drive mounts."),				//BXDriveTypeCDROM
 		NSLocalizedString(@"internal system disk",	@"Label for DOSBox virtual drives (i.e. Z)."),	//BXDriveTypeInternal
 	nil];
 	NSAssert1(driveType >= BXDriveHardDisk && (NSUInteger)driveType < [descriptions count],

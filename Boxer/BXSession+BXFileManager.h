@@ -68,8 +68,10 @@ enum {
 
 //These options only apply to unmountDrive:options:error:
 enum {
-    BXDriveRemoveFromQueue          = 1U << 10  //Forget about the drive altogether, rather than letting
+    BXDriveRemoveFromQueue          = 1U << 10, //Forget about the drive altogether, rather than letting
                                                 //it remain in the queue to be remounted.
+    BXDriveForceRemoval             = 1U << 11  //Force the drive to be unmounted even if it appears
+                                                //to be in use.
 };
 
 

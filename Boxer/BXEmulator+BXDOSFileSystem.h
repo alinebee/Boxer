@@ -62,13 +62,10 @@
 
 //Unmount the specified drive letter. Returns YES if drive was successfully unmounted, 
 //or NO and populates outError otherwise.
+//If force is YES, the drive will be unmounted even if it is currently in use.
 - (BOOL) unmountDrive: (BXDrive *)drive
+                force: (BOOL)force
                 error: (NSError **)outError;
-
-//Unmount the drive at the specified letter. Returns YES if drive was successfully unmounted,
-//or NO and populates outError otherwise.
-- (BOOL) unmountDriveAtLetter: (NSString *)letter
-                        error: (NSError **)outError;
 
 //Flush the DOS filesystem cache and rescan to synchronise it with the local filesystem state.
 - (void) refreshMountedDrives;

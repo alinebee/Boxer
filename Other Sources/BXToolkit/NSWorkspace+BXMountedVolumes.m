@@ -76,6 +76,7 @@ NSString * const HFSVolumeType		= @"hfs";
 {
 	path = [path stringByStandardizingPath];
     
+    //TODO: abstract this list somewhere else
 	BOOL isRawImage = [self file: path matchesTypes: [NSSet setWithObjects:
                         @"com.winimage.raw-disk-image",
                         @"com.apple.disk-image-ndif",

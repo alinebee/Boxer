@@ -1216,6 +1216,8 @@
     NSError *mountError = nil;
     
 	BXDrive *destinationDrive = [BXDrive hardDriveFromPath: [self rootDrivePath] atLetter: @"C"];
+    [destinationDrive setTitle: NSLocalizedString(@"Destination Drive", @"The display title for the gamebox’s C drive when importing a game.")];
+    
 	[destinationDrive setFreeSpace: freeSpace];
 	[self mountDrive: destinationDrive
             ifExists: BXDriveReplace
@@ -1224,7 +1226,9 @@
 	
 	//Then, create a drive of the appropriate type from the source files and mount away
 	BXDrive *sourceDrive = [BXDrive driveFromPath: [self sourcePath] atLetter: nil withType: installMedium];
-	[self mountDrive: sourceDrive
+	[sourceDrive setTitle: NSLocalizedString(@"Source Drive", @"The display title for the source drive when importing.")];
+    
+    [self mountDrive: sourceDrive
             ifExists: BXDriveReplace
              options: BXImportSourceMountOptions
                error: &mountError];

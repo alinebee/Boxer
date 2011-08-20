@@ -273,7 +273,7 @@ typedef NSUInteger BXDriveMountOptions;
 //Unmount the BXDrives in the specified array. Returns YES if all drives
 //were unmounted, NO if there was an error (in which case outError will
 //be populated) or if selectedDrives is empty.
-- (BOOL) unmountDrives: (NSArray *)selectedDrives
+- (BOOL) unmountDrives: (NSArray *)drivesToUnmount
                options: (BXDriveMountOptions)options
                  error: (NSError **)outError;
 

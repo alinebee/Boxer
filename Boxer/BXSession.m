@@ -1076,7 +1076,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		//(This may get replaced below by a custom bundled C volume;
         //we do it now to reserve drive C so that it doesn't get autoassigned.)
 		BXDrive *packageDrive = [BXDrive hardDriveFromPath: [package gamePath] atLetter: @"C"];
-        [packageDrive setTitle: NSLocalizedString(@"Game drive", @"The display title for the gamebox’s C drive.")];
+        [packageDrive setTitle: NSLocalizedString(@"Game Drive", @"The display title for the gamebox’s C drive.")];
         
 		packageDrive = [self mountDrive: packageDrive
                                ifExists: BXDriveReplace
@@ -1129,8 +1129,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	}
 	
 	//Automount all currently mounted floppy and CD-ROM volumes.
-	if (!package)	[self mountFloppyVolumesWithError: nil];
-	if (!package)	[self mountCDVolumesWithError: nil];
+	[self mountFloppyVolumesWithError: nil];
+	[self mountCDVolumesWithError: nil];
 	
 	//Mount our internal DOS toolkit and temporary drives
 	[self mountToolkitDriveWithError: nil];

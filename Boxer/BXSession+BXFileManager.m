@@ -648,7 +648,7 @@
 		temporaryFolderPath = [tempDrivePath retain];
 		
 		BXDrive *tempDrive = [BXDrive hardDriveFromPath: tempDrivePath atLetter: tempDriveLetter];
-        [tempDrive setTitle: NSLocalizedString(@"Temporary files", @"The display title for Boxer’s temp drive.")];
+        [tempDrive setTitle: NSLocalizedString(@"Temporary Files", @"The display title for Boxer’s temp drive.")];
         
         //Hide and lock the temp drive so that it cannot be ejected and will not appear in the drive inspector.
 		[tempDrive setLocked: YES];
@@ -713,7 +713,6 @@
     //Sanity check: BXDriveReassign cannot be used along with
     //BXDriveKeepWithSameType, so clear that flag.
     if (conflictBehaviour == BXDriveReassign) options &= ~BXDriveKeepWithSameType;
-    
     
     
     //If the drive doesn't have a specific drive letter,
@@ -903,18 +902,22 @@
         else if (options & BXDriveForceUnmountingIfRemovable &&
                 ([drive type] == BXDriveCDROM || [drive type] == BXDriveFloppyDisk)) force = YES;
         
+        //If requested, try to find another drive in the same queue
+        //to replace the unmounted one with.
         BXDrive *replacementDrive = nil;
         BOOL driveWasCurrent = NO;
         if (options & BXDriveReplaceWithSiblingFromQueue)
         {
-            //Work out which sibling drive we'll be replacing this with.
             replacementDrive = [self siblingOfQueuedDrive: drive atOffset: 1];
+            if ([replacementDrive isEqual: drive]) replacementDrive = nil;
             driveWasCurrent = [[[self emulator] currentDrive] isEqual: drive];
         }
+        
         
         BOOL unmounted = [[self emulator] unmountDrive: drive
                                                  force: force
                                                  error: outError];
+        
         if (unmounted)
         {
             if (replacementDrive)
@@ -924,6 +927,7 @@
                                             options: BXReplaceWithSiblingDriveMountOptions
                                               error: nil];
                 
+                //Remember to change back to the same drive once we're done unmounting.
                 if (replacementDrive && driveWasCurrent && [[self emulator] isAtPrompt])
                 {
                     [[self emulator] changeToDriveLetter: [replacementDrive letter]];
@@ -932,6 +936,7 @@
             
             if (options & BXDriveShowNotifications)
             {
+                //Show a slightly different notification if we swapped in another drive.
                 if (replacementDrive)
                 {
                     [[BXBezelController controller] showDriveSwappedBezelFromDrive: drive
@@ -944,13 +949,15 @@
             }
             
             if (options & BXDriveRemoveExistingFromQueue)
+            {
                 [self dequeueDrive: drive];
+            }
             
         }
         return unmounted;
     }
     //If the drive isn't mounted, but we requested that it be removed from the queue
-    //after unmounting anyway, then do that now
+    //after unmounting anyway, then do that now.
     else
     {
         if (options & BXDriveRemoveExistingFromQueue)
@@ -960,15 +967,12 @@
 }
 
 
-//Simple helper function to unmount a set of drives. Returns YES if all drives were unmounted,
-//NO if there was an error or no drives were selected.
-//Implemented just so that BXDrivePanelController doesn't have to know about BXEmulator+BXDOSFileSystem.
-- (BOOL) unmountDrives: (NSArray *)selectedDrives
+- (BOOL) unmountDrives: (NSArray *)drivesToUnmount
                options: (BXDriveMountOptions)options
                  error: (NSError **)outError
 {
 	BOOL succeeded = NO;
-	for (BXDrive *drive in selectedDrives)
+	for (BXDrive *drive in drivesToUnmount)
 	{
         if ([self unmountDrive: drive options: options error: outError]) succeeded = YES;
         //If any of the drive unmounts failed, don't continue further
@@ -1123,19 +1127,31 @@
 	//Only mount FAT volumes that are floppy-sized
 	if ([volumeType isEqualToString: FATVolumeType] && ![workspace isFloppySizedVolumeAtPath: volumePath]) return;
 	
-	//Only mount volumes that aren't already mounted as drives
 	NSString *mountPoint = [[self class] preferredMountPointForPath: volumePath];
 	if ([[self emulator] pathIsMountedAsDrive: mountPoint]) return;
 	
+    //If an existing drive corresponds to this volume already,
+    //then mount it if it's not already
+    BXDrive *existingDrive  = [self queuedDriveForPath: mountPoint];
+    if (existingDrive)
+    {
+        [self mountDrive: existingDrive
+                ifExists: BXDriveReplace
+                 options: BXDefaultDriveMountOptions
+                   error: nil];
+    }
 	//Alright, if we got this far then it's ok to mount a new drive for it
-	BXDrive *drive = [BXDrive driveFromPath: mountPoint atLetter: nil];
-	
-    //Ignore errors when automounting volumes, since these
-    //are not directly triggered by the user.
-	[self mountDrive: drive
-            ifExists: BXDriveReplace
-             options: BXDefaultDriveMountOptions
-               error: nil];
+    else
+    {
+        BXDrive *drive = [BXDrive driveFromPath: mountPoint atLetter: nil];
+        
+        //Ignore errors when automounting volumes, since these
+        //are not directly triggered by the user.
+        [self mountDrive: drive
+                ifExists: BXDriveReplace
+                 options: BXDefaultDriveMountOptions
+                   error: nil];
+    }
 }
 
 //Implementation note: this handler is called in response to NSVolumeWillUnmountNotifications,
@@ -1155,7 +1171,8 @@
 	for (BXDrive *drive in [self allDrives])
 	{
         //TODO: refactor this so that we can move the decision off to BXDrive itself
-		//(We can't use representsPath: because that includes path aliases too)
+		//(We can't use representsPath: because that includes path aliases too, and we
+        //don't want to eject backing-image drives inadvertently.)
 		if ([[drive path] isEqualToString: standardizedPath] || [[drive mountPoint] isEqualToString: standardizedPath])
 		{
             //Drive import processes may unmount a volume themselves in the course
@@ -1254,12 +1271,11 @@
 	//The drive is in our executables cache: check if the created file path was an executable
 	//(If so, add it to the executables cache) 
 	NSMutableArray *driveExecutables = [executables mutableArrayValueForKey: [drive letter]];
-	if (driveExecutables)
+	if (driveExecutables && ![driveExecutables containsObject: path])
 	{
 		NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
         
-        //Disabled windows-only file check for now to avoid slowdowns
-		if ([workspace file: path matchesTypes: [BXAppController executableTypes]]) // && ![workspace isWindowsOnlyExecutableAtPath: path]
+		if ([workspace isCompatibleExecutableAtPath: path error: nil])
 		{
 			[self willChangeValueForKey: @"executables"];
 			[driveExecutables addObject: path];
@@ -1488,7 +1504,7 @@
             //backing images.
 			if ([self driveIsMounted: originalDrive])
             {
-                //Replace the original drive with the newly-imported drive,
+                //Replace the original drive with the newly-imported drive.
                 NSError *mountError = nil;
                 BXDrive *mountedDrive = [self mountDrive: importedDrive
                                                 ifExists: BXDriveReplace

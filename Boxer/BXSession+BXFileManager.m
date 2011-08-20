@@ -288,6 +288,7 @@
     else
     {
         [self willChangeValueForKey: @"drives"];
+        [queue removeObject: newDrive];
         [queue replaceObjectAtIndex: oldDriveIndex withObject: newDrive];
         [self didChangeValueForKey: @"drives"];
     }
@@ -832,19 +833,16 @@
                     break;
                     
                 //The image couldn't be mounted: if we have a fallback volume, use that instead.
-                //Otherwise, bail out altogether.
+                //Otherwise, bail out altogether (and restore any drive we replaced).
                 case BXDOSFilesystemInvalidImage:
                     if (fallbackDrive)
                     {
                         driveToMount = fallbackDrive;
                         fallbackDrive = nil;
+                        break;
                     }
-                    else
-                    {
-                        if (outError) *outError = mountError;
-                        return nil;
-                    }
-                    break;
+                    //If not, let the switch statement continue down into default:
+                    //so that we remount any replaced drive
                 
                 //Bail out completely after any other error - once we put back any drive
                 //we tried to replace.

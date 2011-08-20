@@ -54,6 +54,10 @@
 //Change to the first selected drive in DOS. This action is disabled if a process is running.
 - (IBAction) openSelectedDrivesInDOS: (id)sender; 
 
+//Mount/unmount the selected drives in DOS. Will call mountSelectedDrives: if all selected
+//drives are unmounted, or unmountSelectedDrives: if one or more selected drives is mounted.
+- (IBAction) toggleSelectedDrives: (id)sender;
+
 //Mount the selected drives in DOS.
 - (IBAction) mountSelectedDrives: (id)sender;
 

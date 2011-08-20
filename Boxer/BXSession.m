@@ -1102,7 +1102,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
                 
                 BXDrive *mountedDrive = [self mountDrive: bundledDrive
                                                 ifExists: BXDriveReplace
-                                                 options: BXDriveRemoveExistingFromQueue
+                                                 options: BXDriveForceUnmounting | BXDriveRemoveExistingFromQueue
                                                    error: nil];
                 
                 if (mountedDrive)

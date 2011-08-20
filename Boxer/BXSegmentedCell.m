@@ -7,6 +7,7 @@
 
 
 #import "BXSegmentedCell.h"
+#import "NSImage+BXImageEffects.h"
 
 //Most of this is copypasta from BGHUDSegmentedCell, because of its monolithic draw functions.
 
@@ -200,14 +201,14 @@
 	
 	if([super imageForSegment: segment] != nil) {
 		
-		//Copy the image since we will be modifying its size and/or tinting it
+		//Copy the image since we will be modifying its size and flipping it
 		NSImage *image = [[[self imageForSegment: segment] copy] autorelease];
 		
 		[image setFlipped: YES];
 		
 		if([self imageScalingForSegment: segment] == NSImageScaleProportionallyDown) {
 			
-			CGFloat newHeight = roundf(rect.size.height - 7);
+			CGFloat newHeight = roundf(rect.size.height - 8);
 			CGFloat resizeRatio = newHeight / [image size].height;
 			
 			NSSize newSize = NSMakeSize([image size].width * resizeRatio, newHeight);
@@ -215,17 +216,11 @@
 			[image setSize: newSize];
 		}
 		
+        //Make the image into a single-color mask
 		if ([image isTemplate])
 		{
-			NSColor *tint = [NSColor whiteColor];
-			
-			NSRect bounds = NSZeroRect;
-			bounds.size = [image size];   
-			
-			[image lockFocus];
-			[tint set];
-			NSRectFillUsingOperation(bounds, NSCompositeSourceAtop);
-			[image unlockFocus];
+            NSColor *imageColor = [[[BGThemeManager keyedManager] themeForKey: self.themeKey] textColor];
+            image = [image maskedImageWithColor: imageColor atSize: [image size]];
 		}
 		
 		if([self labelForSegment: segment] != nil && ![[self labelForSegment: segment] isEqualToString: @""]) {
@@ -247,6 +242,9 @@
 			imageRect.origin.x += (BGCenterX(rect) - ([image size].width /2));
 			imageRect.size = [image size];
 		}
+        
+        //TWEAK: round the origin to fixed units, to prevent blurring.
+        imageRect.origin = NSIntegralRect(imageRect).origin;
 		
 		NSShadow *imageShadow = [[[BGThemeManager keyedManager] themeForKey: self.themeKey] dropShadow];
 		
@@ -260,7 +258,7 @@
 		if (useShadow) [imageShadow set];
 		
 		[image drawInRect: imageRect
-				 fromRect: NSZeroRect 
+				 fromRect: NSZeroRect
 				operation: NSCompositeSourceAtop
 				 fraction: imageAlpha];
 		[NSGraphicsContext restoreGraphicsState];

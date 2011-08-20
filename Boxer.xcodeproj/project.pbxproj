@@ -37,7 +37,6 @@
 		9F1D50010F5C0966009F0AB9 /* BXEmulator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */; };
 		9F1F2BD913D764FA007B0CC1 /* CDROMTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F1F2BD513D764FA007B0CC1 /* CDROMTemplate.pdf */; };
 		9F1F2BDA13D764FA007B0CC1 /* DisketteTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F1F2BD613D764FA007B0CC1 /* DisketteTemplate.pdf */; };
-		9F1F2BDB13D764FA007B0CC1 /* EjectTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F1F2BD713D764FA007B0CC1 /* EjectTemplate.pdf */; };
 		9F1F2BDC13D764FA007B0CC1 /* HardDiskTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F1F2BD813D764FA007B0CC1 /* HardDiskTemplate.pdf */; };
 		9F20C28B11E5D848005AF541 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28A11E5D848005AF541 /* Sparkle.framework */; };
 		9F20C28E11E5D8B4005AF541 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28D11E5D8B4005AF541 /* QTKit.framework */; };
@@ -322,6 +321,8 @@
 		9FBC3D610F56EA82001811F2 /* SDL_net.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C150F56D6E8001811F2 /* SDL_net.framework */; };
 		9FBD321710E5144C00031CB6 /* Brand.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBD321610E5144C00031CB6 /* Brand.png */; };
 		9FBF66AF11F35ADD00DAAB9A /* BXSingleFileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBF66AE11F35ADD00DAAB9A /* BXSingleFileTransfer.m */; };
+		9FC14E83140040BE00EB7DB1 /* EjectTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FC14E81140040BE00EB7DB1 /* EjectTemplate.pdf */; };
+		9FC14E84140040BE00EB7DB1 /* InsertTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FC14E82140040BE00EB7DB1 /* InsertTemplate.pdf */; };
 		9FC1620E119E9AD700705EA5 /* BXCursorFadeAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC1620D119E9AD700705EA5 /* BXCursorFadeAnimation.m */; };
 		9FC2F84013D60FBD00BD4F6B /* BXDualActionControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC2F83F13D60FBD00BD4F6B /* BXDualActionControllerProfile.m */; };
 		9FC3B2550F62D9CE006DE439 /* BXSession+BXEmulatorControls.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC3B2540F62D9CE006DE439 /* BXSession+BXEmulatorControls.m */; };
@@ -494,7 +495,6 @@
 		9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXEmulator.mm; sourceTree = "<group>"; };
 		9F1F2BD513D764FA007B0CC1 /* CDROMTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = CDROMTemplate.pdf; sourceTree = "<group>"; };
 		9F1F2BD613D764FA007B0CC1 /* DisketteTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = DisketteTemplate.pdf; sourceTree = "<group>"; };
-		9F1F2BD713D764FA007B0CC1 /* EjectTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = EjectTemplate.pdf; sourceTree = "<group>"; };
 		9F1F2BD813D764FA007B0CC1 /* HardDiskTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = HardDiskTemplate.pdf; sourceTree = "<group>"; };
 		9F20C28A11E5D848005AF541 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
 		9F20C28D11E5D8B4005AF541 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = "/Volumes/Macintosh HD/System/Library/Frameworks/QTKit.framework"; sourceTree = "<absolute>"; };
@@ -1001,6 +1001,8 @@
 		9FBF66AD11F35ADD00DAAB9A /* BXSingleFileTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXSingleFileTransfer.h; sourceTree = "<group>"; };
 		9FBF66AE11F35ADD00DAAB9A /* BXSingleFileTransfer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXSingleFileTransfer.m; sourceTree = "<group>"; };
 		9FBF66FC11F376B900DAAB9A /* BXOperationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXOperationDelegate.h; sourceTree = "<group>"; };
+		9FC14E81140040BE00EB7DB1 /* EjectTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = EjectTemplate.pdf; sourceTree = "<group>"; };
+		9FC14E82140040BE00EB7DB1 /* InsertTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = InsertTemplate.pdf; sourceTree = "<group>"; };
 		9FC1620C119E9AD700705EA5 /* BXCursorFadeAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCursorFadeAnimation.h; sourceTree = "<group>"; };
 		9FC1620D119E9AD700705EA5 /* BXCursorFadeAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXCursorFadeAnimation.m; sourceTree = "<group>"; };
 		9FC2F83F13D60FBD00BD4F6B /* BXDualActionControllerProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDualActionControllerProfile.m; sourceTree = "<group>"; };
@@ -2186,7 +2188,8 @@
 				9F96969713E59CA100FB51EC /* NoJoystickTemplate.pdf */,
 				9F9C68DE13DC8D4A0066A974 /* PauseTemplate.pdf */,
 				9F9C68DF13DC8D4A0066A974 /* PlayTemplate.pdf */,
-				9F1F2BD713D764FA007B0CC1 /* EjectTemplate.pdf */,
+				9FC14E81140040BE00EB7DB1 /* EjectTemplate.pdf */,
+				9FC14E82140040BE00EB7DB1 /* InsertTemplate.pdf */,
 				9F1F2BD513D764FA007B0CC1 /* CDROMTemplate.pdf */,
 				9F1F2BD613D764FA007B0CC1 /* DisketteTemplate.pdf */,
 				9F1F2BD813D764FA007B0CC1 /* HardDiskTemplate.pdf */,
@@ -2602,11 +2605,12 @@
 				9F70278813D730D000606B4C /* TurtleTemplate.png in Resources */,
 				9F1F2BD913D764FA007B0CC1 /* CDROMTemplate.pdf in Resources */,
 				9F1F2BDA13D764FA007B0CC1 /* DisketteTemplate.pdf in Resources */,
-				9F1F2BDB13D764FA007B0CC1 /* EjectTemplate.pdf in Resources */,
 				9F1F2BDC13D764FA007B0CC1 /* HardDiskTemplate.pdf in Resources */,
 				9F9C68E013DC8D4A0066A974 /* PauseTemplate.pdf in Resources */,
 				9F9C68E113DC8D4A0066A974 /* PlayTemplate.pdf in Resources */,
 				9F96969813E59CA100FB51EC /* NoJoystickTemplate.pdf in Resources */,
+				9FC14E83140040BE00EB7DB1 /* EjectTemplate.pdf in Resources */,
+				9FC14E84140040BE00EB7DB1 /* InsertTemplate.pdf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -23,7 +23,7 @@
 //The segment indexes of the drive options control
 enum {
 	BXAddDriveSegment			= 0,
-	BXRemoveDrivesSegment		= 1,
+	BXToggleDrivesSegment		= 1,
 	BXDriveActionsMenuSegment	= 2
 };
 
@@ -123,7 +123,7 @@ enum {
     BXSession *session      = [[NSApp delegate] currentSession];
     NSArray *selectedDrives = [self selectedDrives];
     BOOL hasSelection       = ([selectedDrives count] > 0);
-    BOOL selectionContainsMountedDrives   = NO;
+    BOOL selectionContainsMountedDrives = NO;
     for (BXDrive *drive in selectedDrives)
     {
         if ([session driveIsMounted: drive])
@@ -133,9 +133,14 @@ enum {
         }
     }
     
-    [[self driveControls] setEnabled: (session != nil)                  forSegment: BXAddDriveSegment];
-    [[self driveControls] setEnabled: selectionContainsMountedDrives    forSegment: BXRemoveDrivesSegment];
-    [[self driveControls] setEnabled: hasSelection                      forSegment: BXDriveActionsMenuSegment];
+    [[self driveControls] setEnabled: (session != nil)  forSegment: BXAddDriveSegment];
+    [[self driveControls] setEnabled: hasSelection      forSegment: BXToggleDrivesSegment];
+    [[self driveControls] setEnabled: hasSelection      forSegment: BXDriveActionsMenuSegment];
+    
+    NSString *toggleImageName = (!hasSelection || selectionContainsMountedDrives) ? @"EjectTemplate" : @"InsertTemplate";
+    NSImage *toggleImage = [NSImage imageNamed: toggleImageName];
+    [[self driveControls] setImage: toggleImage
+                        forSegment: BXToggleDrivesSegment];
 }
 
 
@@ -189,8 +194,8 @@ enum {
 			[self showMountPanel: sender];
 			break;
 			
-		case BXRemoveDrivesSegment:
-			[self unmountSelectedDrives: sender];
+		case BXToggleDrivesSegment:
+			[self toggleSelectedDrives: sender];
 			break;
 			
 		case BXDriveActionsMenuSegment:
@@ -214,6 +219,27 @@ enum {
 	//Only bother grabbing the last drive selected
 	BXDrive *drive = [[self selectedDrives] lastObject];
 	if (drive) [NSApp sendAction: @selector(openInDOS:) to: nil from: drive];
+}
+
+- (IBAction) toggleSelectedDrives: (id)sender
+{
+ 	NSArray *selection = [self selectedDrives];
+	BXSession *session = [[NSApp delegate] currentSession];
+    
+    //If any of the drives are mounted, this will act as an unmount operation.
+    //Otherwise, it will act as a mount operation.
+    //(A moot point, since we only allow one item to be selected at the moment.)
+    BOOL selectionContainsMountedDrives = NO;
+    for (BXDrive *drive in selection)
+    {
+        if ([session driveIsMounted: drive])
+        {
+            selectionContainsMountedDrives = YES;
+            break;
+        }
+    }
+    if (selectionContainsMountedDrives) [self unmountSelectedDrives: sender];
+    else                                [self mountSelectedDrives: sender];
 }
 
 - (IBAction) mountSelectedDrives: (id)sender
@@ -327,37 +353,54 @@ enum {
 	BXSession *session = [[NSApp delegate] currentSession];
 	//If there's currently no active session, we can't do anything
 	if (!session) return NO;
+    
 	
-	NSArray *driveSelection = [self selectedDrives];
-	BOOL hasSelection = ([driveSelection count] > 0);
+	NSArray *selectedDrives = [self selectedDrives];
 	BOOL isGamebox = [session isGamePackage];
+    BOOL hasSelection = [selectedDrives count] > 0;
 	BXEmulator *theEmulator = [session emulator];
-	
+
+    
 	SEL action = [theItem action];
 	
 	if (action == @selector(revealSelectedDrivesInFinder:)) return hasSelection;
-	if (action == @selector(unmountSelectedDrives:))
+	if (action == @selector(removeSelectedDrives:))
 	{
-		if (!hasSelection) return NO;
-		
+        if (!hasSelection) return NO;
+        
+        BOOL selectionContainsMountedDrives = NO;
 		//Check if any of the selected drives are locked or internal
-		for (BXDrive *drive in driveSelection)
+		for (BXDrive *drive in selectedDrives)
 		{
 			if ([drive isLocked] || [drive isInternal]) return NO;
+            if (!selectionContainsMountedDrives && [session driveIsMounted: drive])
+                selectionContainsMountedDrives = YES;
 		}
+        
+        NSString *title;
+        if (selectionContainsMountedDrives)
+            title = NSLocalizedString(@"Eject and Remove from List", @"Label for drive panel menu item to remove selected drives entirely from the drive list. Shown when one or more selected drives is currently mounted.");
+        else
+            title = NSLocalizedString(@"Remove from List", @"Label for drive panel menu item to remove selected drives entirely from the drive list. Shown when all selected drives are inactive.");
+        
+        [theItem setTitle: title];
+        
 		return YES;
 	}
+    
 	if (action == @selector(openSelectedDrivesInDOS:))
 	{
-		BOOL isCurrent = [[driveSelection lastObject] isEqual: [theEmulator currentDrive]];
+        if (!hasSelection) return NO;
+        
+		BOOL isCurrent = [[selectedDrives lastObject] isEqual: [theEmulator currentDrive]];
 		
 		NSString *title;
 		if (isCurrent)
 		{
-			title = NSLocalizedString(@"Current drive",
+			title = NSLocalizedString(@"Current Drive",
 									  @"Menu item title for when selected drive is already the current DOS drive.");
 		}
-		else title = NSLocalizedString(@"Make current drive",
+		else title = NSLocalizedString(@"Make Current Drive",
 									   @"Menu item title for switching to the selected drive in DOS.");
 		
 		[theItem setTitle: title];
@@ -366,29 +409,29 @@ enum {
 		//- only one drive is selected
 		//- the drive isn't already the current drive
 		//- the session is at the DOS prompt
-		return !isCurrent && [driveSelection count] == 1 && [theEmulator isAtPrompt];
+		return !isCurrent && [selectedDrives count] == 1 && [theEmulator isAtPrompt];
 	}
 	
 	if (action == @selector(importSelectedDrives:))
 	{
-		//Initial label for drive import items (may be modified below)
-		[theItem setTitle: NSLocalizedString(@"Import into gamebox", @"Drive import menu item title.")];
+    	//Initial label for drive import items (may be modified below)
+		[theItem setTitle: NSLocalizedString(@"Import into Gamebox", @"Drive import menu item title.")];
 		
 		//Hide this item altogether if we're not running a session
 		[theItem setHidden: !isGamebox];
 		if (!isGamebox || !hasSelection) return NO;
 		 
 		//Check if any of the selected drives are being imported, already imported, or otherwise cannot be imported
-		for (BXDrive *drive in driveSelection)
+		for (BXDrive *drive in selectedDrives)
 		{
 			if ([session driveIsImporting: drive])
 			{
-				[theItem setTitle: NSLocalizedString(@"Importing into gamebox…", @"Drive import menu item title, when selected drive(s) are already in the gamebox.")];
+				[theItem setTitle: NSLocalizedString(@"Importing into Gamebox…", @"Drive import menu item title, when selected drive(s) are already in the gamebox.")];
 				return NO;
 			}
 			else if ([session driveIsBundled: drive] || [session equivalentDriveIsBundled: drive])
 			{
-				[theItem setTitle: NSLocalizedString(@"Included in gamebox", @"Drive import menu item title, when selected drive(s) are already in the gamebox.")];
+				[theItem setTitle: NSLocalizedString(@"Included in Gamebox", @"Drive import menu item title, when selected drive(s) are already in the gamebox.")];
 				return NO;
 			}
 			else if (![session canImportDrive: drive]) return NO;
@@ -399,7 +442,9 @@ enum {
 	
 	if (action == @selector(cancelImportsForSelectedDrives:))
 	{
-		if (isGamebox) for (BXDrive *drive in driveSelection)
+        if (!hasSelection) return NO;
+        
+		if (isGamebox) for (BXDrive *drive in selectedDrives)
 		{	
 			//If any of the selected drives are being imported, then enable and unhide the item
 			if ([session driveIsImporting: drive])
@@ -412,6 +457,32 @@ enum {
 		[theItem setHidden: YES];
 		return NO;
 	}
+    
+    if (action == @selector(toggleSelectedDrives:))
+    {
+        if (!hasSelection) return NO;
+        
+        //Update the title to reflect whether this will adding or remove drives
+        BOOL selectionContainsMountedDrives = NO;
+        for (BXDrive *drive in selectedDrives)
+        {
+            if ([session driveIsMounted: drive])
+            {
+                selectionContainsMountedDrives = YES;
+                break;
+            }
+        }
+        
+        NSString *title;
+        if (selectionContainsMountedDrives)
+            title = NSLocalizedString(@"Eject", @"Label for drive panel menu item to eject selected drives.");
+        else
+            title = NSLocalizedString(@"Open", @"Label for drive panel menu item to remount selected drives.");
+        
+        [theItem setTitle: title];
+        
+        return YES;
+    }
 	
 	return YES;
 }

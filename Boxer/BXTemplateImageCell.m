@@ -8,6 +8,8 @@
 #import "BXTemplateImageCell.h"
 #import "BXGeometry.h"
 #import "NSShadow+BXShadowExtensions.h"
+#import "NSImage+BXImageEffects.h"
+
 
 @implementation BXTemplateImageCell
 @synthesize imageColor, disabledImageColor, imageShadow;
@@ -102,29 +104,18 @@
         
         NSColor *color = ([self isEnabled]) ? [self imageColor] : [self disabledImageColor];
         
-        
-        //Use the template image as a mask to create a new image composed entirely of our color.
-		NSImage *templateImage = [[NSImage alloc] init];
-		[templateImage setSize: scaledFrame.size];
-        NSRect drawRect = NSMakeRect(0.0f, 0.0f, scaledFrame.size.width, scaledFrame.size.height);
-		[templateImage lockFocus];
-			[color set];
-			NSRectFillUsingOperation(drawRect, NSCompositeSourceOver);
-            [[self image] drawInRect: drawRect
-                            fromRect: NSZeroRect
-                           operation: NSCompositeDestinationIn
-                            fraction: 1.0f];
-		[templateImage unlockFocus];
+        //Use the template image as a mask to create a new image composed entirely of one color.
+        NSImage *maskedImage = [[self image] maskedImageWithColor: color
+                                                           atSize: scaledFrame.size];
 		
 		//Then, render the single-color image into the final context along with the drop shadow
 		[NSGraphicsContext saveGraphicsState];
 			[[self imageShadow] set];
-			[templateImage drawInRect: scaledFrame
-                             fromRect: NSZeroRect
-                            operation: NSCompositeSourceOver
-                             fraction: 1.0f];
+			[maskedImage drawInRect: scaledFrame
+                           fromRect: NSZeroRect
+                          operation: NSCompositeSourceOver
+                           fraction: 1.0f];
 		[NSGraphicsContext restoreGraphicsState];
-		[templateImage release];
 	}
 	else
 	{

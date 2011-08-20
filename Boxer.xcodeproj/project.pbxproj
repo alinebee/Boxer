@@ -375,6 +375,7 @@
 		9FDE34341351DFD4000DCE44 /* BXImportTipsPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FDE34331351DFD4000DCE44 /* BXImportTipsPanelController.m */; };
 		9FDE34371351E0F5000DCE44 /* Welcome.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FDE34361351E0F5000DCE44 /* Welcome.xib */; };
 		9FDE343A1351E127000DCE44 /* ImportTipsPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9FDE34381351E127000DCE44 /* ImportTipsPanel.xib */; };
+		9FE1B61313FFBE430001640C /* NSImage+BXImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE1B61213FFBE430001640C /* NSImage+BXImageEffects.m */; };
 		9FE202480F6D749500B3A38C /* Snapshot.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9FE202470F6D749500B3A38C /* Snapshot.aiff */; };
 		9FE2172E121EED1E001452E3 /* ImportCoverArtTip.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE2172A121EED1E001452E3 /* ImportCoverArtTip.png */; };
 		9FE2172F121EED1E001452E3 /* ImportRenameTip.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE2172C121EED1E001452E3 /* ImportRenameTip.png */; };
@@ -1099,6 +1100,8 @@
 		9FDE34321351DFD4000DCE44 /* BXImportTipsPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImportTipsPanelController.h; sourceTree = "<group>"; };
 		9FDE34331351DFD4000DCE44 /* BXImportTipsPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXImportTipsPanelController.m; sourceTree = "<group>"; };
 		9FDE34391351E127000DCE44 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/ImportTipsPanel.xib; sourceTree = "<group>"; };
+		9FE1B61113FFBE430001640C /* NSImage+BXImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSImage+BXImageEffects.h"; sourceTree = "<group>"; };
+		9FE1B61213FFBE430001640C /* NSImage+BXImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSImage+BXImageEffects.m"; sourceTree = "<group>"; };
 		9FE202470F6D749500B3A38C /* Snapshot.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = Snapshot.aiff; sourceTree = "<group>"; };
 		9FE2172B121EED1E001452E3 /* English */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = English; path = English.lproj/ImportCoverArtTip.png; sourceTree = "<group>"; };
 		9FE2172D121EED1E001452E3 /* English */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = English; path = English.lproj/ImportRenameTip.png; sourceTree = "<group>"; };
@@ -2083,6 +2086,8 @@
 				9FADFE9611EC932800990E91 /* NSData+HexStrings.m */,
 				9F2120FC1301597E002AB1B7 /* NSImage+BXSaveImages.h */,
 				9F2120FD1301597E002AB1B7 /* NSImage+BXSaveImages.m */,
+				9FE1B61113FFBE430001640C /* NSImage+BXImageEffects.h */,
+				9FE1B61213FFBE430001640C /* NSImage+BXImageEffects.m */,
 				9FFF97931232B718009B5EE5 /* BXMultiPanelWindowController.h */,
 				9FFF97941232B718009B5EE5 /* BXMultiPanelWindowController.m */,
 				9FFBF6AA11A811F7000A1863 /* BXEventConstants.h */,
@@ -2921,6 +2926,7 @@
 				9F3E57A513F694B40070A14D /* BXEmulatorErrors.m in Sources */,
 				9FB642A313FEB71D00385DD3 /* BXISOImage.m in Sources */,
 				9FB642A413FEB71D00385DD3 /* BXBinCueImage.m in Sources */,
+				9FE1B61313FFBE430001640C /* NSImage+BXImageEffects.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

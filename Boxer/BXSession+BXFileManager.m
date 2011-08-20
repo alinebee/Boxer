@@ -273,6 +273,26 @@
     [self didChangeValueForKey: @"drives"];
 }
 
+- (void) replaceQueuedDrive: (BXDrive *)oldDrive
+                  withDrive: (BXDrive *)newDrive
+{
+    NSString *letter = [newDrive letter];
+    NSAssert1(letter != nil, @"Drive %@ passed to replaceQueuedDrive:withDrive: had no letter assigned.", newDrive);
+    
+    NSMutableArray *queue = [drives objectForKey: letter];
+    NSUInteger oldDriveIndex = [queue indexOfObject: oldDrive];
+    
+    //If there was no queue to start with, or the old drive wasn't queued,
+    //then just queue the new drive normally.
+    if (!queue || oldDriveIndex == NSNotFound) [self enqueueDrive: newDrive];
+    else
+    {
+        [self willChangeValueForKey: @"drives"];
+        [queue replaceObjectAtIndex: oldDriveIndex withObject: newDrive];
+        [self didChangeValueForKey: @"drives"];
+    }
+}
+
 - (BXDrive *) queuedDriveForPath: (NSString *)path
 {
 	for (BXDrive *drive in [self allDrives])
@@ -282,6 +302,30 @@
 	return nil;
 }
 
+- (NSUInteger) indexOfQueuedDrive: (BXDrive *)drive
+{
+    NSString *letter = [drive letter];
+    if (!letter) return NSNotFound;
+    
+    NSArray *queue = [drives objectForKey: letter];
+    return [queue indexOfObject: drive];
+}
+
+- (BXDrive *) siblingOfQueuedDrive: (BXDrive *)drive
+                          atOffset: (NSInteger)offset
+{
+    NSString *letter = [drive letter];
+    if (!letter) return nil;
+    
+    NSArray *queue = [drives objectForKey: letter];
+    NSUInteger queueIndex = [queue indexOfObject: drive];
+    if (queueIndex == NSNotFound) return nil;
+    
+    NSUInteger siblingIndex = (queueIndex + offset) % [queue count];
+    return [queue objectAtIndex: siblingIndex];
+}
+
+
 #pragma mark -
 #pragma mark Drive mounting
 
@@ -290,44 +334,17 @@
     [[BXMountPanelController controller] showMountPanelForSession: self];
 }
 
-- (NSUInteger) indexOfCurrentDriveInQueue: (NSArray *)queue
+- (void) _mountQueuedSiblingsAtOffset: (NSInteger)offset
 {
-    NSUInteger i, numInQueue = [queue count];
-    for (i=0; i < numInQueue; i++)
+    for (BXDrive *currentDrive in [self mountedDrives])
     {
-        if ([self driveIsMounted: [queue objectAtIndex: i]]) return i; 
-    }
-    return NSNotFound;
-}
-
-- (BXDrive *) nextDriveInQueue: (NSArray *)queue atOffset: (NSInteger)offset
-{
-    //Don't bother cycling a queue with less than 2 drives
-    if ([queue count] > 1)
-    {
-        //Find the index of the currently-mounted drive, to which offset is relative.
-        NSUInteger currentIndex = [self indexOfCurrentDriveInQueue: queue];
-        
-        //If there is no currently-mounted drive in this queue, don't cycle it.
-        if (currentIndex != NSNotFound)
-        {
-            NSUInteger nextIndex = (currentIndex + offset) % [queue count];
-            return [queue objectAtIndex: nextIndex];
-        }
-    }
-    return nil;
-}
-
-- (IBAction) mountNextDrivesInQueues: (id)sender
-{
-    for (NSArray *queue in [drives objectEnumerator])
-    {
-        BXDrive *nextDrive = [self nextDriveInQueue: queue atOffset: 1];
-        if (nextDrive)
+        BXDrive *siblingDrive = [self siblingOfQueuedDrive: currentDrive atOffset: offset];
+        if (siblingDrive && ![siblingDrive isEqual: currentDrive])
         {
             NSError *mountError;
-            [self mountDrive: nextDrive
-                     options: BXDriveReplaceExisting | BXDriveShowNotifications
+            [self mountDrive: siblingDrive
+                    ifExists: BXDriveReplace
+                     options: BXDefaultDriveMountOptions
                        error: &mountError];
             
             if (mountError)
@@ -345,31 +362,14 @@
     }
 }
 
+- (IBAction) mountNextDrivesInQueues: (id)sender
+{
+    [self _mountQueuedSiblingsAtOffset: 1];
+}
+
 - (IBAction) mountPreviousDrivesInQueues: (id)sender
 {
-    for (NSArray *queue in [drives objectEnumerator])
-    {
-        BXDrive *previousDrive = [self nextDriveInQueue: queue atOffset: -1];
-        if (previousDrive)
-        {
-            NSError *mountError;
-            [self mountDrive: previousDrive
-                     options: BXDriveReplaceExisting | BXDriveShowNotifications
-                       error: nil];
-            
-            if (mountError)
-            {
-                [self presentError: mountError
-                    modalForWindow: [self windowForSheet]
-                          delegate: nil
-                didPresentSelector: NULL
-                       contextInfo: NULL];
-                
-                //Don't continue mounting if we encounter a problem
-                break;
-            }
-        }
-    }
+    [self _mountQueuedSiblingsAtOffset: -1];
 }
 
 - (BOOL) shouldUnmountDrives: (NSArray *)selectedDrives sender: (id)sender
@@ -423,7 +423,7 @@
         //from the user to eject in-use drives.
         NSError *unmountError = nil;
         [self unmountDrives: selectedDrives
-                    options: BXDefaultDriveUnmountOptions | BXDriveForceRemoval
+                    options: BXDefaultDriveUnmountOptions | BXDriveForceUnmounting
                       error: &unmountError];
         
         if (unmountError)
@@ -457,6 +457,7 @@
 }
 
 - (BXDrive *) mountDriveForPath: (NSString *)path
+                       ifExists: (BXDriveConflictBehaviour)conflictBehaviour
                         options: (BXDriveMountOptions)options
                           error: (NSError **)outError
 {
@@ -477,15 +478,20 @@
     BXDrive *existingDrive  = [self queuedDriveForPath: mountPoint];
     if (existingDrive)
     {
-        if (![self driveIsMounted: existingDrive])
-            existingDrive = [self mountDrive: existingDrive options: options error: outError];
+        existingDrive = [self mountDrive: existingDrive
+                                ifExists: conflictBehaviour
+                                 options: options
+                                   error: outError];
         return existingDrive;
     }
     //Otherwise, create a new drive for the mount
     else
     {
         BXDrive *drive = [BXDrive driveFromPath: mountPoint atLetter: nil];
-        return [self mountDrive: drive options: options error: outError];
+        return [self mountDrive: drive
+                       ifExists: conflictBehaviour
+                        options: options
+                          error: outError];
     }
 }
 
@@ -540,6 +546,7 @@
                                            atLetter: nil];
 
             drive = [self mountDrive: drive 
+                            ifExists: BXDriveQueue
                              options: BXSystemVolumeMountOptions
                                error: outError];
             
@@ -571,6 +578,7 @@
 			BXDrive *drive = [BXDrive floppyDriveFromPath: volumePath atLetter: nil];
             
             drive = [self mountDrive: drive
+                            ifExists: BXDriveQueue
                              options: BXSystemVolumeMountOptions
                                error: outError];
             
@@ -604,6 +612,7 @@
 	[toolkitDrive setFreeSpace: 0];
     
 	toolkitDrive = [self mountDrive: toolkitDrive
+                           ifExists: BXDriveReplace
                             options: BXBuiltinDriveMountOptions
                               error: outError];
 	
@@ -647,6 +656,7 @@
 		
         //Replace any existing drive at the same letter, and don't show any notifications
 		tempDrive = [self mountDrive: tempDrive
+                            ifExists: BXDriveReplace
                              options: BXBuiltinDriveMountOptions
                                error: outError];
 		
@@ -668,18 +678,12 @@
 }
 
 - (NSString *) preferredLetterForDrive: (BXDrive *)drive
-                    withQueueBehaviour: (NSUInteger)queueBehaviour
+                               options: (BXDriveMountOptions)options
 {
-    //Resolve appropriate behaviour based on the drive type
-    if (queueBehaviour == BXDriveQueueIfAppropriate)
-    {
-        if ([drive type] == BXDriveCDROM || [drive type] == BXDriveFloppyDisk)
-            queueBehaviour = BXDriveQueueWithSameType;
-        else
-            queueBehaviour = BXDriveNeverQueue;
-    }
-    
-    if (queueBehaviour == BXDriveQueueWithSameType)
+    //If we want to keep this drive with others of its ilk, then return
+    //the drive letter of the first drive of that type.
+    if ((options & BXDriveKeepWithSameType) &&
+        ([drive type] == BXDriveCDROM || [drive type] == BXDriveFloppyDisk))
     {
         for (BXDrive *knownDrive in [self allDrives])
         {
@@ -693,46 +697,35 @@
 }
 
 - (BXDrive *) mountDrive: (BXDrive *)drive
+                ifExists: (BXDriveConflictBehaviour)conflictBehaviour
                  options: (BXDriveMountOptions)options
                    error: (NSError **)outError
 {
     if (outError) *outError = nil;
     
-    //Sanity check: if this drive is already mounted, don't bother retrying.
+    //If this drive is already mounted, don't bother retrying.
     if ([self driveIsMounted: drive]) return drive;
     
+    //Sanity check: BXDriveReplaceWithSiblingFromQueue is not applicable
+    //when mounting a new drive, so ensure it is not set.
+    options &= ~BXDriveReplaceWithSiblingFromQueue;
     
-    if (options == 0) options = BXDefaultDriveMountOptions;
+    //Sanity check: BXDriveReassign cannot be used along with
+    //BXDriveKeepWithSameType, so clear that flag.
+    if (conflictBehaviour == BXDriveReassign) options &= ~BXDriveKeepWithSameType;
     
-    //Determine which queue behaviour is applicable
-#define NUM_QUEUE_OPTIONS 5
-    BXDriveMountOptions queueOptions[NUM_QUEUE_OPTIONS] = {BXDriveQueueIfAppropriate, BXDriveQueueWithExisting, BXDriveQueueWithSameType, BXDriveReplaceExisting, BXDriveNeverQueue};
-    NSUInteger queueBehaviour = BXDriveQueueIfAppropriate;
-    NSUInteger i;
-    for (i=0; i<NUM_QUEUE_OPTIONS; i++)
-    {
-        if (options & queueOptions[i]) { queueBehaviour = queueOptions[i]; break; }
-    }
-	
-    if (queueBehaviour == BXDriveQueueIfAppropriate)
-    {
-        if ([drive type] == BXDriveCDROM || [drive type] == BXDriveFloppyDisk)
-            queueBehaviour = BXDriveQueueWithSameType;
-        else
-            queueBehaviour = BXDriveNeverQueue;
-    }
+    
     
     //If the drive doesn't have a specific drive letter,
-    //determine one now based on the specified queue behaviour.
+    //determine one now based on the specified options.
     if (![drive letter])
     {
         NSString *preferredLetter = [self preferredLetterForDrive: drive
-                                               withQueueBehaviour: queueBehaviour];
+                                                          options: options];
         [drive setLetter: preferredLetter];
     }
     
-    //Allow the game profile to override the drive label if needed.
-    //TODO: make this subject to an options flag?
+    //Allow the game profile to override the drive volume label if needed.
 	NSString *customLabel = [[self gameProfile] volumeLabelForDrive: drive];
 	if (customLabel) [drive setVolumeLabel: customLabel];
     
@@ -748,9 +741,9 @@
         
         if (sourceImagePath && [workspace file: sourceImagePath matchesTypes: [BXAppController mountableImageTypes]])
         {
-            //Check if the source image is already mounted:
-            //if so, then just add the path as an alias to that existing drive.
-            //TODO: make this subject to an options flag.
+            //Check if the source image is already mounted: if so,
+            //then just add the path as an alias to that existing drive
+            //and pretend we mounted that drive.
             BXDrive *existingDrive = [[self emulator] driveForPath: sourceImagePath];
             if (existingDrive)
             {
@@ -784,51 +777,63 @@
         NSError *mountError = nil;
         mountedDrive = [[self emulator] mountDrive: driveToMount error: &mountError];
     
-        //If mounting fails, check what the failure was and try to recover
+        //If mounting fails, check what the failure was and try to recover.
         if (!mountedDrive)
         {
             switch ([mountError code])
             {
                 //The drive letter was already taken: decide what to do
-                //based on our queueing behaviour.
+                //based on our conflict behaviour.
                 case BXDOSFilesystemDriveLetterOccupied:
-                    if (queueBehaviour == BXDriveNeverQueue)
+                    switch (conflictBehaviour)
                     {
-                        //Clear the preferred drive letter,
-                        //to let the drive take the next available letter.
-                        [driveToMount setLetter: nil];
-                    }
-                    //If we want to replace the existing drive, or we want to queue
-                    //but push this to the front, then unmount the previous drive.
-                    else if (queueBehaviour == BXDriveReplaceExisting || (options & BXDriveAddToFrontOfQueue))
-                    {
-                        NSError *unmountError = nil;
-                        replacedDrive = [[self emulator] driveAtLetter: [driveToMount letter]];
-                        replacedDriveWasCurrent = [[[self emulator] currentDrive] isEqual: replacedDrive];
-                        
-                        BOOL force = (options & BXDriveForceRemoval);
-                        
-                        BOOL unmounted = [[self emulator] unmountDrive: replacedDrive
-                                                                 force: force
-                                                                 error: &unmountError];
-                        //If we couldn't unmount the drive, then bail the hell out
-                        if (!unmounted && unmountError)
+                        //Pick a new drive letter and try again.
+                        case BXDriveReassign:
                         {
-                            if (outError) *outError = unmountError;
-                            return nil;
+                            NSString *newLetter = [self preferredLetterForDrive: driveToMount
+                                                                        options: options];
+                            [driveToMount setLetter: newLetter];
+                            break;
                         }
-                    }
-                    //Otherwise, queue the drive for future mounting
-                    //but don't continue mounting it now.
-                    else
-                    {
-                        [self enqueueDrive: drive];
-                        return nil;
+                        
+                        //Try to unmount the existing drive and try again.
+                        case BXDriveReplace:
+                        {
+                            NSError *unmountError = nil;
+                            replacedDrive           = [[self emulator] driveAtLetter: [driveToMount letter]];
+                            replacedDriveWasCurrent = [[[self emulator] currentDrive] isEqual: replacedDrive];
+                            
+                            //If the drive we're replacing is a floppy or CD, then force
+                            //it to eject even if it's busy; DOS programs should be able
+                            //to handle this at least semi-gracefully.
+                            BOOL unmounted = [self unmountDrive: replacedDrive
+                                                        options: options
+                                                          error: &unmountError];
+                            
+                            //If we couldn't unmount the drive, then bail out.
+                            if (!unmounted && unmountError)
+                            {
+                                if (outError) *outError = unmountError;
+                                return nil;
+                            }
+                            
+                            break;
+                        }
+                            
+                        //Add the conflicting drive into a queue alongside the existing drive,
+                        //and give up on mounting.
+                        case BXDriveQueue:
+                        default:
+                        {
+                            [self enqueueDrive: driveToMount];
+                            return nil;
+                            break;
+                        }
                     }
                     break;
                     
                 //The image couldn't be mounted: if we have a fallback volume, use that instead.
-                //Otherwise, bail out altogether
+                //Otherwise, bail out altogether.
                 case BXDOSFilesystemInvalidImage:
                     if (fallbackDrive)
                     {
@@ -842,12 +847,13 @@
                     }
                     break;
                 
-                //Bail out completely after any other error - after putting back any drive
-                //we were attempting to replace
+                //Bail out completely after any other error - once we put back any drive
+                //we tried to replace.
                 default:
                     if (replacedDrive)
                     {
                         [[self emulator] mountDrive: replacedDrive error: nil];
+                        
                         if (replacedDriveWasCurrent && [[self emulator] isAtPrompt])
                             [[self emulator] changeToDriveLetter: [replacedDrive letter]];
                     }
@@ -865,7 +871,8 @@
         //If we replaced an existing drive then show a slightly different notification
         if (replacedDrive)
         {
-            [[BXBezelController controller] showDriveSwappedBezelFromDrive: replacedDrive toDrive: mountedDrive];
+            [[BXBezelController controller] showDriveSwappedBezelFromDrive: replacedDrive
+                                                                   toDrive: mountedDrive];
         }
         else
         {
@@ -873,7 +880,9 @@
         }
     }
     
-    //If we replaced DOS's current drive in the course of ejecting, then switch 
+    //If we replaced DOS's current drive in the course of ejecting, then switch
+    //to the new drive.
+    //TODO: make it so that we don't switch away from the drive in the first place.
     if (replacedDrive && replacedDriveWasCurrent && [[self emulator] isAtPrompt])
     {
         [[self emulator] changeToDriveLetter: [mountedDrive letter]];
@@ -884,22 +893,59 @@
 
 
 - (BOOL) unmountDrive: (BXDrive *)drive
-              options: (BXDriveUnmountOptions)options
+              options: (BXDriveMountOptions)options
                 error: (NSError **)outError
 {
     if ([self driveIsMounted: drive])
     {
-        BOOL force = (options & BXDriveForceRemoval);
+        BOOL force = NO;
+        if      (options & BXDriveForceUnmounting) force = YES;
+        else if (options & BXDriveForceUnmountingIfRemovable &&
+                ([drive type] == BXDriveCDROM || [drive type] == BXDriveFloppyDisk)) force = YES;
+        
+        BXDrive *replacementDrive = nil;
+        BOOL driveWasCurrent = NO;
+        if (options & BXDriveReplaceWithSiblingFromQueue)
+        {
+            //Work out which sibling drive we'll be replacing this with.
+            replacementDrive = [self siblingOfQueuedDrive: drive atOffset: 1];
+            driveWasCurrent = [[[self emulator] currentDrive] isEqual: drive];
+        }
+        
         BOOL unmounted = [[self emulator] unmountDrive: drive
                                                  force: force
                                                  error: outError];
         if (unmounted)
         {
-            if (options & BXDriveShowNotifications)
-                [[BXBezelController controller] showDriveRemovedBezelForDrive: drive];
+            if (replacementDrive)
+            {
+                replacementDrive = [self mountDrive: replacementDrive
+                                           ifExists: BXDriveQueue
+                                            options: BXReplaceWithSiblingDriveMountOptions
+                                              error: nil];
+                
+                if (replacementDrive && driveWasCurrent && [[self emulator] isAtPrompt])
+                {
+                    [[self emulator] changeToDriveLetter: [replacementDrive letter]];
+                }
+            }
             
-            if (options & BXDriveRemoveFromQueue)
+            if (options & BXDriveShowNotifications)
+            {
+                if (replacementDrive)
+                {
+                    [[BXBezelController controller] showDriveSwappedBezelFromDrive: drive
+                                                                           toDrive: replacementDrive];
+                }
+                else
+                {
+                    [[BXBezelController controller] showDriveRemovedBezelForDrive: drive];
+                }
+            }
+            
+            if (options & BXDriveRemoveExistingFromQueue)
                 [self dequeueDrive: drive];
+            
         }
         return unmounted;
     }
@@ -907,7 +953,7 @@
     //after unmounting anyway, then do that now
     else
     {
-        if (options & BXDriveRemoveFromQueue)
+        if (options & BXDriveRemoveExistingFromQueue)
             [self dequeueDrive: drive];
         return NO;
     }
@@ -918,7 +964,7 @@
 //NO if there was an error or no drives were selected.
 //Implemented just so that BXDrivePanelController doesn't have to know about BXEmulator+BXDOSFileSystem.
 - (BOOL) unmountDrives: (NSArray *)selectedDrives
-               options: (BXDriveUnmountOptions)options
+               options: (BXDriveMountOptions)options
                  error: (NSError **)outError
 {
 	BOOL succeeded = NO;
@@ -1086,7 +1132,10 @@
 	
     //Ignore errors when automounting volumes, since these
     //are not directly triggered by the user.
-	[self mountDrive: drive options: BXDefaultDriveMountOptions error: nil];
+	[self mountDrive: drive
+            ifExists: BXDriveReplace
+             options: BXDefaultDriveMountOptions
+               error: nil];
 }
 
 //Implementation note: this handler is called in response to NSVolumeWillUnmountNotifications,
@@ -1424,29 +1473,38 @@
 	if ([import succeeded])
 	{
 		//Once the drive has successfully imported, replace the old drive
-		//with the newly-imported version (if the old one is not currently in use)
+		//with the newly-imported version (as long as the old one is not currently in use)
 		if (![[self emulator] driveInUseAtLetter: [originalDrive letter]])
 		{
-			NSString *destinationPath	= [import importedDrivePath];
+            NSString *destinationPath	= [import importedDrivePath];
 			BXDrive *importedDrive		= [BXDrive driveFromPath: destinationPath
                                                         atLetter: [originalDrive letter]];
 			
-			//Replace the original drive with the newly-imported drive,
-            //without showing notifications or bothering to check for
-            //backing images.
-            NSError *mountError = nil;
-            BXDrive *mountedDrive = [self mountDrive: importedDrive
-                                             options: BXDriveReplaceExisting
-                                               error: &mountError];
+            //Make the new drive an alias for the old one.
+            [[importedDrive pathAliases] addObject: [originalDrive path]];
             
-            if (mountedDrive)
+            //If the old drive was currently mounted, then replace it entirely:
+            //without showing notifications, or bothering to check for
+            //backing images.
+			if ([self driveIsMounted: originalDrive])
             {
-                //Make the new drive an alias for the old one.
-                //(This will prevent it from getting remounted as a duplicate drive.)
-                [[mountedDrive pathAliases] addObject: [originalDrive path]];
-                
-                //Forget about the previous drive altogether so it no longer appears in the drive queue.
-                [self dequeueDrive: originalDrive];
+                //Replace the original drive with the newly-imported drive,
+                NSError *mountError = nil;
+                BXDrive *mountedDrive = [self mountDrive: importedDrive
+                                                ifExists: BXDriveReplace
+                                                 options: 0
+                                                   error: &mountError];
+                if (mountedDrive)
+                {
+                    [self replaceQueuedDrive: originalDrive
+                                   withDrive: mountedDrive];
+                }
+            }
+            //Otherwise, just replace the original drive in the same position in its queue.
+            else
+            {
+                [self replaceQueuedDrive: originalDrive
+                               withDrive: importedDrive];
             }
 		} 
 		

@@ -23,7 +23,7 @@
 #define BXPauseBezelDuration 1.0
 #define BXFullscreenBezelDuration 3.0
 #define BXJoystickIgnoredBezelDuration 3.0
-#define BXDriveBezelDuration 3.0
+#define BXDriveBezelDuration 2.0
 #define BXCPUBezelDuration 0.75
 #define BXThrottleBezelDuration 0.75
 

@@ -120,4 +120,8 @@
 - (void) _deregisterForFilesystemNotifications;
 - (void) _hasActiveImports;
 
+//Used by mountNextDrivesInQueues and mountPreviousDrivesInQueues
+//to centralise mounting logic.
+- (void) _mountQueuedSiblingsAtOffset: (NSInteger)offset;
+
 @end

@@ -1079,6 +1079,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         [packageDrive setTitle: NSLocalizedString(@"Game drive", @"The display title for the gamebox’s C drive.")];
         
 		packageDrive = [self mountDrive: packageDrive
+                               ifExists: BXDriveReplace
                                 options: BXBundledDriveMountOptions
                                   error: nil];
         		
@@ -1088,35 +1089,42 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		[packageVolumes addObjectsFromArray: [package hddVolumes]];
 		[packageVolumes addObjectsFromArray: [package cdVolumes]];
 		
-		BXDrive *bundledDrive;
 		BOOL hasProperDriveC = NO;
         for (NSString *volumePath in packageVolumes)
 		{
-			bundledDrive = [BXDrive driveFromPath: volumePath atLetter: nil];
+			BXDrive *bundledDrive = [BXDrive driveFromPath: volumePath atLetter: nil];
             
-			//If the bundled drive was explicitly set to drive C, then override
-            //our original C package-drive with it
+			//If a bundled drive was explicitly set to use drive C,
+            //then replace our original C package-drive with it
 			if (!hasProperDriveC && [[bundledDrive letter] isEqualToString: [packageDrive letter]])
 			{
-				[self unmountDrive: packageDrive
-                           options: BXDriveRemoveFromQueue
-                             error: nil];
-				
-				//Rewrite the target to point to the new C drive, if it was pointing to the old one
-				if ([[self targetPath] isEqualToString: [packageDrive path]])
-                    [self setTargetPath: volumePath];
-                
                 [bundledDrive setTitle: [packageDrive title]];
                 
-                //Forget about the package drive altogether, so it won't show up in the drive list
-                //as waiting to b
-				
-				//Aaand use this as our package drive from here on
-				packageDrive = bundledDrive;
+                BXDrive *mountedDrive = [self mountDrive: bundledDrive
+                                                ifExists: BXDriveReplace
+                                                 options: BXDriveRemoveExistingFromQueue
+                                                   error: nil];
+                
+                if (mountedDrive)
+                {
+				    //Rewrite our target to point to the new C drive, if it was pointing to the old one
+                    if ([[self targetPath] isEqualToString: [packageDrive path]])
+                        [self setTargetPath: volumePath];
+                    
+                    //Don't look any further for a C drive
+                    hasProperDriveC = YES;
+                    
+                    //Aaand use this as our package drive from here on
+                    packageDrive = bundledDrive;
+				}
 			}
-			[self mountDrive: bundledDrive
-                     options: BXBundledDriveMountOptions
-                       error: nil];
+            else
+            {
+                [self mountDrive: bundledDrive
+                        ifExists: BXDriveQueue
+                         options: BXBundledDriveMountOptions
+                           error: nil];
+            }
 		}
 	}
 	
@@ -1138,6 +1146,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
             //want to show errors if something goes wrong here.
 		    NSError *mountError = nil;
             [self mountDriveForPath: targetPath
+                           ifExists: BXDriveReplace
                             options: BXTargetMountOptions
                               error: &mountError];
             

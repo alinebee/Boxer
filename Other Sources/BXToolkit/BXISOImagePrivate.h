@@ -70,6 +70,8 @@
 //Returns the raw data at the specified sector range.
 - (NSData *) _readDataFromSectorRange: (NSRange)range;
 
+//Populate a cache of all paths in the image filesystem.
+- (void) _populatePathCache;
 @end
 
 
@@ -102,6 +104,7 @@
 
 //The date at which the file was written to the image.
 @property (readonly, nonatomic) NSDate *creationDate;
+
 
 #pragma mark -
 #pragma mark Methods

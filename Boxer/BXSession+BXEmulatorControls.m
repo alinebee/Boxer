@@ -344,17 +344,18 @@
         {
             //Figure out the drive that will be switched to by the menu item,
             //and append its title to that of the menu item.
-            for (NSArray *queue in [[self drives] objectEnumerator])
+            for (BXDrive *currentDrive in [self mountedDrives])
             {
-                BXDrive *drive = [self nextDriveInQueue: queue atOffset: 1];
-                if (drive)
+                BXDrive *nextDrive = [self siblingOfQueuedDrive: currentDrive atOffset: 1];
+                if (nextDrive && ![nextDrive isEqual: currentDrive])
                 {
-                    if ([drive isCDROM])
+                    if ([nextDrive isCDROM])
                         title = NSLocalizedString(@"Next Disc", @"Menu item for cycling to the next queued CD-ROM.");
                     else
                         title = NSLocalizedString(@"Next Disk", @"Menu item for cycling to the next queued floppy or hard disk.");
                     
-                    NSAttributedString *attributedTitle = [self _menuItemLabelForDrive: drive withBaseTitle: title];                    
+                    NSAttributedString *attributedTitle = [self _menuItemLabelForDrive: nextDrive
+                                                                         withBaseTitle: title];                    
                     [theItem setAttributedTitle: attributedTitle];
                     return YES;
                 }
@@ -371,17 +372,18 @@
         {
             //Figure out the drive that will be switched to by the menu item,
             //and append its title to that of the menu item.
-            for (NSArray *queue in [[self drives] objectEnumerator])
+            for (BXDrive *currentDrive in [self mountedDrives])
             {
-                BXDrive *drive = [self nextDriveInQueue: queue atOffset: -1];
-                if (drive)
+                BXDrive *previousDrive = [self siblingOfQueuedDrive: currentDrive atOffset: -1];
+                if (previousDrive && ![previousDrive isEqual: currentDrive])
                 {
-                    if ([drive isCDROM])
+                    if ([previousDrive isCDROM])
                         title = NSLocalizedString(@"Previous Disc", @"Menu item for cycling to the previous queued CD-ROM.");
                     else
                         title = NSLocalizedString(@"Previous Disk", @"Menu item for cycling to the previous queued floppy or hard disk.");
                     
-                    NSAttributedString *attributedTitle = [self _menuItemLabelForDrive: drive withBaseTitle: title];                    
+                    NSAttributedString *attributedTitle = [self _menuItemLabelForDrive: previousDrive
+                                                                         withBaseTitle: title];                    
                     [theItem setAttributedTitle: attributedTitle];
                     return YES;
                 }

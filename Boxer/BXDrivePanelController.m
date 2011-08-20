@@ -225,6 +225,7 @@ enum {
     {
         NSError *unmountError;
         [session mountDrive: drive
+                   ifExists: BXDriveReplace
                     options: BXDefaultDriveMountOptions
                       error: &unmountError];
         
@@ -249,7 +250,7 @@ enum {
     {
         NSError *unmountError = nil;
 		[session unmountDrives: selection
-                       options: BXDefaultDriveUnmountOptions | BXDriveForceRemoval
+                       options: BXDefaultDriveUnmountOptions | BXDriveForceUnmounting
                          error: &unmountError];
         
         if (unmountError)
@@ -272,7 +273,7 @@ enum {
     {
         NSError *unmountError = nil;
 		[session unmountDrives: selection
-                       options: BXDefaultDriveUnmountOptions | BXDriveRemoveFromQueue | BXDriveForceRemoval
+                       options: BXDefaultDriveUnmountOptions | BXDriveForceUnmounting | BXDriveRemoveExistingFromQueue
                          error: &unmountError];
         if (unmountError)
         {

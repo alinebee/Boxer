@@ -17,101 +17,91 @@
 #pragma mark -
 #pragma mark Constants
 
-//Bitflag options to pass to mountDrive:options:error:.
 
-//The queue options below are mutually exclusive: if multiple options
-//are included, the earliest option in the list will take priority.
+//Options for resolving drive letter conflicts when mounting drives
 enum {
-    BXDriveQueueIfAppropriate       = 1U << 0,  //Acts as BXDriveQueueWithSameType for CD-ROMs
-                                                //and floppy drives, and as BXDriveNeverQueue
-                                                //for hard drives.
-    
-    BXDriveQueueWithExisting        = 1U << 1,  //If a drive letter was specified, and a drive
-                                                //already exists at that letter, put the drive
-                                                //into a queue with it.
-                                                //If no drive letter was specified, use the next
-                                                //free drive letter.
-    
-    BXDriveQueueWithSameType        = 1U << 2,  //If no drive letter was specified, put the drive
-                                                //into a queue with any others of the same type.
-                                                //If a drive letter was specified, act as
-                                                //BXDriveQueueWithExisting.
-    
-    BXDriveReplaceExisting          = 1U << 3,  //Unmount all other drives at the same letter,
-                                                //before mounting this one.
-    
-    BXDriveNeverQueue               = 1U << 4   //Avoid placing the drive into any queues.
-                                                //If it conflicts with an existing drive letter,
-                                                //then reassign it to the next free drive letter.
+    BXDriveReplace,     //Replace any existing drive at the same drive letter.
+    BXDriveQueue,       //Queue behind any existing drive at the same drive letter.
+    BXDriveReassign     //Assign the new drive to the next available free drive letter.
 };
 
-enum {
-    BXDriveAddToFrontOfQueue        = 1U << 5,  //Add the drive to the front of a queue, unmounting
-                                                //any current drive from the queue and mounting this
-                                                //drive in its place.
-                                                //If the current drive is in use and is not a CD-ROM
-                                                //or floppy (which can be ejected at any time) then
-                                                //this option is ignored.
-};
+typedef NSUInteger BXDriveConflictBehaviour;
 
+
+//Bitflag options for mountDrive:ifExists:options:error:.
 enum {
-    BXDriveUseBackingImageIfAvailable    = 1U << 8  //If the source path for this drive is a filesystem
+    BXDriveKeepWithSameType             = 1U << 0,  //Try to mount the drive at the same letter as an
+                                                    //existing drive of the same type, if it doesn't
+                                                    //have a more specific drive letter of its own.
+                                                    //This is currently only respected for CD-ROM and
+                                                    //floppy drives, and will have no effect in
+                                                    //combination with BXDriveReassign.
+    
+    BXDriveUseBackingImageIfAvailable   = 1U << 1   //If the source path for this drive is a filesystem
                                                     //volume, then any backing image for that volume
                                                     //will be used instead of the volume itself.
 };
 
-//These options are applicable to both mountDrive:options:error and unmountDrive:options:error:.
+//These options are applicable to both mountDrive:ifExists:options:error and unmountDrive:options:error:.
 enum {
-    BXDriveShowNotifications        = 1U << 9   //Notification bezels will be shown when this drive
-                                                //is added/ejected.
-};
+    BXDriveShowNotifications            = 1U << 2,  //Notification bezels will be shown when this drive
+                                                    //is added/ejected.
+    
+    BXDriveRemoveExistingFromQueue      = 1U << 3,  //Forget about any unmounted/replaced drive altogether,
+                                                    //rather than letting it remain in the queue to be
+                                                    //remounted.
+    
+    BXDriveReplaceWithSiblingFromQueue  = 1U << 4,  //When a drive is unmounted, replace it with the next
+                                                    //drive in the same queue, if available.
+                                                    //Only applicable to unmountDrive:options:error:.
+    
+    BXDriveForceUnmounting              = 1U << 5,  //Force any unmounted/replaced drive to be unmounted
+                                                    //even if it appears to be in use.
+    
+    BXDriveForceUnmountingIfRemovable   = 1U << 6,  //Act as BXDriveForceUnmounting if the drive in question
+                                                    //is a floppy-disk or CD-ROM. Has no effect for hard disks.
 
-//These options only apply to unmountDrive:options:error:
-enum {
-    BXDriveRemoveFromQueue          = 1U << 10, //Forget about the drive altogether, rather than letting
-                                                //it remain in the queue to be remounted.
-    BXDriveForceRemoval             = 1U << 11  //Force the drive to be unmounted even if it appears
-                                                //to be in use.
 };
-
 
 enum {
     //Behaviour when mounting a drive via drag-drop or from Add New Drive,
     //or when inserting a floppy or CD after emulation has started.
     //Will queue floppy and CD drives with other drives of the same type,
     //unless a specific drive letter was assigned, and will push the drive
-    //o the front of the queue to make it available immediately.
-    BXDefaultDriveMountOptions = BXDriveQueueIfAppropriate | BXDriveAddToFrontOfQueue | BXDriveShowNotifications | BXDriveUseBackingImageIfAvailable,
+    //to the front of the queue to make it available immediately.
+    BXDefaultDriveMountOptions = BXDriveKeepWithSameType | BXDriveShowNotifications | BXDriveUseBackingImageIfAvailable | BXDriveForceUnmountingIfRemovable,
     
     //Behaviour when mounting the gamebox's drives at the start of emulation.
     //Disables notification and searching for backing images, and will queue
     //CD and floppy drives with others of their own kind.
-    BXBundledDriveMountOptions = BXDriveQueueIfAppropriate,
-    
-    //Behaviour when mounting Boxer's built-in utility and temp drives
-    //at the start of emulation. Forces these drives to be used.
-    BXBuiltinDriveMountOptions = BXDriveReplaceExisting,
+    BXBundledDriveMountOptions = BXDriveKeepWithSameType,
     
     //Behaviour when mounting OS X floppy/CD volumes at the start of emulation.
-    //Same as default behaviour, but lower priority and without notifications.
-    BXSystemVolumeMountOptions = BXDriveQueueIfAppropriate | BXDriveUseBackingImageIfAvailable,
+    //Same as default behaviour, but will look for backing images also.
+    BXSystemVolumeMountOptions = BXDriveKeepWithSameType | BXDriveUseBackingImageIfAvailable,
+    
+    //Behaviour when mounting Boxer's built-in utility and temp drives
+    //at the start of emulation. Will force these to replace existing drives.
+    BXBuiltinDriveMountOptions = BXDriveRemoveExistingFromQueue,
     
     //Options for automounting the target folder/executable of a DOS session.
-    //Will always use a separate drive, and will not show notifications.
-    BXTargetMountOptions = BXDriveNeverQueue | BXDriveUseBackingImageIfAvailable,
+    BXTargetMountOptions = BXDriveKeepWithSameType | BXDriveUseBackingImageIfAvailable,
     
-    //Options for mounting the source path for a game import. Same as above.
-    BXImportSourceMountOptions = BXDriveNeverQueue | BXDriveUseBackingImageIfAvailable,
+    //Options for mounting the source path for a game import.
+    BXImportSourceMountOptions = BXDriveKeepWithSameType | BXDriveUseBackingImageIfAvailable,
     
-    //Options for regular drive unmounting via drag-drop.
+    //Options for mounting replacement drives when a system volume becomes unavailable.
+    BXReplaceWithSiblingDriveMountOptions = BXDriveUseBackingImageIfAvailable,
+    
+    //Options for regular drive unmounting.
     BXDefaultDriveUnmountOptions = BXDriveShowNotifications,
     
+    
     //Behaviour when unmounting drives as a result of a volume being ejected.
-    BXVolumeUnmountingDriveUnmountOptions = BXDriveShowNotifications | BXDriveRemoveFromQueue
+    BXVolumeUnmountingDriveUnmountOptions = BXDriveShowNotifications | BXDriveRemoveExistingFromQueue | BXDriveForceUnmounting | BXDriveReplaceWithSiblingFromQueue
 };
 
 typedef NSUInteger BXDriveMountOptions;
-typedef NSUInteger BXDriveUnmountOptions;
 
 
 #pragma mark -
@@ -202,6 +192,10 @@ typedef NSUInteger BXDriveUnmountOptions;
 //Will fail if the drive is currently mounted.
 - (void) dequeueDrive: (BXDrive *)drive;
 
+//Replace the specified old drive with the specified new drive
+//at the same position in its queue. Used after importing a drive.
+- (void) replaceQueuedDrive: (BXDrive *)oldDrive withDrive: (BXDrive *)newDrive;
+
 //Returns whether the specified drive is currently mounted in the emulator.
 - (BOOL) driveIsMounted: (BXDrive *)drive;
 
@@ -210,39 +204,39 @@ typedef NSUInteger BXDriveUnmountOptions;
 - (BXDrive *) queuedDriveForPath: (NSString *)path;
 
 //Returns the most appropriate letter at which to mount/queue the specified drive,
-//based on the specified queue behaviour. Used by mountDrive:options:error to choose
-//a letter when a drive has not been given one already.
+//based on the specified drive mount options. Used by mountDrive:ifExists:options:error
+//to choose a letter when a drive has not been given one already.
 - (NSString *) preferredLetterForDrive: (BXDrive *)drive
-                    withQueueBehaviour: (NSUInteger)queueBehaviour;
+                               options: (BXDriveMountOptions)options;
 
 //Mounts the specified drive, using the specified mounting options. If successful,
 //returns a drive reflecting the drive actually mounted (this may be different from
 //the drive that was passed in.)
 //Returns nil and populates outError, if the specified drive could not be mounted.
 - (BXDrive *) mountDrive: (BXDrive *)drive
+                ifExists: (BXDriveConflictBehaviour)conflictBehaviour
                  options: (BXDriveMountOptions)options
                    error: (NSError **)outError;
 
 //Unmounts the specified drive, using the specified unmounting options.
 //Returns YES if the drive could be unmounted, NO otherwise.
 - (BOOL) unmountDrive: (BXDrive *)drive
-              options: (BXDriveUnmountOptions)options
+              options: (BXDriveMountOptions)options
                 error: (NSError **)outError;
 
 
 //Display the mount-a-new-drive sheet in this session's window.
 - (IBAction) showMountPanel: (id)sender;
 
-//Returns the index of the currently mounted drive in the specified queue.
-//Returns NSNotFound if no drive in the queue is mounted.
-- (NSUInteger) indexOfCurrentDriveInQueue: (NSArray *)queue;
+//Returns the index of the currently mounted drive in the queue.
+//Returns the index of the specified drive within its queue.
+//Returns NSNotFound if the drive is not in a queue.
+- (NSUInteger) indexOfQueuedDrive: (BXDrive *)drive;
 
-//Returns the next/previous drive in the specified queue, at the specified offset
-//from the currently-mounted drive.
-//Returns nil if there are fewer than 2 drives in the queue or if there are no
-//mounted drives in the queue.
-- (BXDrive *) nextDriveInQueue: (NSArray *)queue
-                      atOffset: (NSInteger)offset;
+//Returns the next/previous drive in the same queue,
+//at the specified offset from the specified drive.
+- (BXDrive *) siblingOfQueuedDrive: (BXDrive *)drive
+                          atOffset: (NSInteger)offset;
 
 //Cycle forward/backward through all drive queues.
 - (IBAction) mountNextDrivesInQueues: (id)sender;
@@ -280,7 +274,7 @@ typedef NSUInteger BXDriveUnmountOptions;
 //were unmounted, NO if there was an error (in which case outError will
 //be populated) or if selectedDrives is empty.
 - (BOOL) unmountDrives: (NSArray *)selectedDrives
-               options: (BXDriveUnmountOptions)options
+               options: (BXDriveMountOptions)options
                  error: (NSError **)outError;
 
 //Returns whether the specified path should be mounted as a new drive.
@@ -290,6 +284,7 @@ typedef NSUInteger BXDriveUnmountOptions;
 //Adds a new drive to expose the specified path, using preferredMountPointForPath:
 //to choose an appropriate base location for the drive.
 - (BXDrive *) mountDriveForPath: (NSString *)path
+                       ifExists: (BXDriveConflictBehaviour)conflictBehaviour
                         options: (BXDriveMountOptions)options
                           error: (NSError **)outError;
 
@@ -329,8 +324,8 @@ typedef NSUInteger BXDriveUnmountOptions;
 //Returns whether the specified drive is located inside the session's gamebox.
 - (BOOL) driveIsBundled: (BXDrive *)drive;
 
-//Returns whether a drive with the same name is located inside the session's gamebox.
-//(which probably means the drive has been previously imported.)
+//Returns whether a drive with the same destination name is located inside
+//the session's gamebox. (Which probably means the drive has been previously imported.)
 - (BOOL) equivalentDriveIsBundled: (BXDrive *)drive;
 
 //Returns whether the specified drive is currently being imported.

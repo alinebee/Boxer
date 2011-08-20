@@ -314,10 +314,7 @@ int extdate_to_int(uint8_t *digits, int length)
 #endif
     
     //Now then, let's pull in the path table bit by bit
-    NSUInteger offset;
-    
-    
-    
+    //NSUInteger offset;
 }
 @end
 

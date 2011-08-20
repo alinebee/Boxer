@@ -148,7 +148,7 @@
 
 		BXDrive *fakeDrive			= [BXDrive driveFromPath: path atLetter: nil withType: selectedType];
 		NSString *preferredLetter	= [session preferredLetterForDrive: fakeDrive
-                                                    withQueueBehaviour: BXDriveQueueIfAppropriate];
+                                                                options: BXDriveKeepWithSameType];
 		
 		NSMenuItem *autoTypeOption		= [driveType itemAtIndex: 0];
 		NSMenuItem *preferredTypeOption	= [driveType itemAtIndex: [driveType indexOfItemWithTag: preferredType]];
@@ -245,6 +245,7 @@
         
         NSError *mountError = nil;
 		drive = [session mountDrive: drive
+                           ifExists: BXDriveReplace
                             options: BXDefaultDriveMountOptions
                               error: &mountError];
 		

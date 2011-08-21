@@ -1323,9 +1323,12 @@
     {
         for (BXExecutableScan *otherScan in [scanQueue operations])
         {
+            //Ignore completed scans
+            if ([otherScan isFinished]) continue;
+
             //If a scan for this drive is already in progress and hasn't been cancelled,
             //then use that scan instead.
-            if ([[otherScan contextInfo] isEqual: drive] && ![otherScan isCancelled])
+            if (![otherScan isCancelled] && [[otherScan contextInfo] isEqual: drive])
             {
                 return otherScan;
             }
@@ -1365,17 +1368,21 @@
 
 - (BOOL) cancelExecutableScanForDrive: (BXDrive *)drive
 {
+    BOOL didCancelScan = NO;
     for (BXExecutableScan *operation in [scanQueue operations])
 	{
-		if (![operation isFinished] && [[operation contextInfo] isEqual: drive])
+        //Ignore completed scans
+        if ([operation isFinished]) continue;
+        
+		if ([[operation contextInfo] isEqual: drive])
         {
             [self willChangeValueForKey: @"isScanningForExecutables"];
             [operation cancel];
             [self didChangeValueForKey: @"isScanningForExecutables"];
-            return YES;
+            didCancelScan = YES;
         }
 	}    
-    return NO;   
+    return didCancelScan;
 }
 
 - (void) executableScanDidFinish: (NSNotification *)theNotification

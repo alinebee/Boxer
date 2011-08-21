@@ -201,9 +201,13 @@ NSString * const HFSVolumeType		= @"hfs";
 		if ([resolvedPath isEqualToString: source])
 		{
 			//Only use the first mount-point listed in the set
-			mountPoint = [[imageInfo objectForKey: @"system-entities"] objectAtIndex: 0];
-			destination = [[mountPoint objectForKey: @"mount-point"] stringByStandardizingPath];
-			return destination;
+            NSArray *entities = [imageInfo objectForKey: @"system-entities"];
+            if ([entities count])
+            {
+                mountPoint  = [entities objectAtIndex: 0];
+                destination = [[mountPoint objectForKey: @"mount-point"] stringByStandardizingPath];
+                return destination;
+            }
 		}
 	}
 	return nil;

@@ -1557,7 +1557,7 @@ A</string>
 																		<string>NeXT TIFF v4.0 pasteboard type</string>
 																	</object>
 																</object>
-																<string key="NSFrame">{{44, 209}, {208, 130}}</string>
+																<string key="NSFrame">{{49, 211}, {198, 126}}</string>
 																<reference key="NSSuperview" ref="287644765"/>
 																<int key="NSViewLayerContentsRedrawPolicy">2</int>
 																<bool key="NSEnabled">YES</bool>
@@ -2167,7 +2167,7 @@ aGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 								<string>NeXT TIFF v4.0 pasteboard type</string>
 							</object>
 						</object>
-						<string key="NSFrame">{{12, 9}, {32, 32}}</string>
+						<string key="NSFrame">{{9, 6}, {38, 38}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
 						<int key="NSTag">4</int>
 						<bool key="NSEnabled">YES</bool>
@@ -6879,8 +6879,8 @@ aGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<string>{17, 17}</string>
 				<string>{128, 80}</string>
-				<string>{17, 17}</string>
-				<string>{17, 17}</string>
+				<string>{15, 15}</string>
+				<string>{8, 8}</string>
 				<string>{9, 8}</string>
 				<string>{7, 2}</string>
 				<string>{83, 83}</string>

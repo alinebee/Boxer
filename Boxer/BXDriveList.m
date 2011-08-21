@@ -322,18 +322,27 @@ enum {
 {
 	NSPoint mousePoint = [NSEvent mouseLocation];
 	
+    BOOL unhideSelection = YES;
 	if (operation == NSDragOperationNone && ![(BXAppController *)[NSApp delegate] windowAtPoint: mousePoint])
 	{
 		//Send the remove-these-drives action and see whether any drives were removed
 		//(IBActions do not provide a return value, so we can't find out directly
 		//if the action succeeded or failed)
+        NSUInteger numSelected = [[self selectionIndexes] count];
+        
 		NSUInteger oldItems = [[self content] count];
 		[NSApp sendAction: @selector(removeSelectedDrives:) to: [self delegate] from: self];
 		NSUInteger newItems = [[self content] count];
 		
 		//If any drives were removed by the action, display the poof animation
 		if (newItems < oldItems)
-		{		
+		{
+            //If all of the drives in our selection were removed by the action,
+            //then don't unhide the hidden drives from the list.
+            //(Otherwise, if one or more of the drives couldn't be removed,
+            //we can't tell which ones; so unhide all of them to be safe.)
+            if (newItems <= (oldItems - numSelected)) unhideSelection = NO;
+            
 			//Calculate the center-point of the image for displaying the poof icon
 			NSRect imageRect;
 			imageRect.size		= [draggedImage size];
@@ -355,7 +364,12 @@ enum {
 	}
 	
 	//Once the drag has finished, clean up by unhiding the dragged items
-	for (NSView *itemView in [self selectedViews]) [itemView setHidden: NO];
+    //(Unless all the dragged items were ejected and removed, in which case
+    //leave them hidden so that they don't reappear and then vanish again.)
+	if (unhideSelection)
+    {
+        for (NSView *itemView in [self selectedViews]) [itemView setHidden: NO];
+    }
 }
 
 @end

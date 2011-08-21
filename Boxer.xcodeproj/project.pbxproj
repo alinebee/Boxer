@@ -35,9 +35,6 @@
 		9F1CBBA8120CB99D00C5E926 /* BXImportDropzone.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBBA7120CB99D00C5E926 /* BXImportDropzone.m */; };
 		9F1CBCAD120CCF3900C5E926 /* Blueprint.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9F1CBCAC120CCF3900C5E926 /* Blueprint.jpg */; };
 		9F1D50010F5C0966009F0AB9 /* BXEmulator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */; };
-		9F1F2BD913D764FA007B0CC1 /* CDROMTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F1F2BD513D764FA007B0CC1 /* CDROMTemplate.pdf */; };
-		9F1F2BDA13D764FA007B0CC1 /* DisketteTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F1F2BD613D764FA007B0CC1 /* DisketteTemplate.pdf */; };
-		9F1F2BDC13D764FA007B0CC1 /* HardDiskTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F1F2BD813D764FA007B0CC1 /* HardDiskTemplate.pdf */; };
 		9F20C28B11E5D848005AF541 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28A11E5D848005AF541 /* Sparkle.framework */; };
 		9F20C28E11E5D8B4005AF541 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28D11E5D8B4005AF541 /* QTKit.framework */; };
 		9F20C29711E5DA68005AF541 /* Sparkle.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28A11E5D848005AF541 /* Sparkle.framework */; };
@@ -262,8 +259,6 @@
 		9F9A4CA110F67D2C00E61965 /* BXPreferencesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9A4CA010F67D2C00E61965 /* BXPreferencesController.m */; };
 		9F9A4CA610F67DD800E61965 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A4CA410F67DD800E61965 /* Preferences.xib */; };
 		9F9A4CA910F6824B00E61965 /* BXFilterGallery.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9A4CA810F6824B00E61965 /* BXFilterGallery.m */; };
-		9F9C68E013DC8D4A0066A974 /* PauseTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F9C68DE13DC8D4A0066A974 /* PauseTemplate.pdf */; };
-		9F9C68E113DC8D4A0066A974 /* PlayTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F9C68DF13DC8D4A0066A974 /* PlayTemplate.pdf */; };
 		9F9E27C511F8C003003EE8F3 /* BXSegmentedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9E27C411F8C003003EE8F3 /* BXSegmentedCell.m */; };
 		9F9E27D611F8C173003EE8F3 /* BXDrivePanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9E27D511F8C173003EE8F3 /* BXDrivePanelController.m */; };
 		9F9FE70410FA5F5800E3944B /* NSWorkspace+BXIcons.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9FE70310FA5F5800E3944B /* NSWorkspace+BXIcons.m */; };
@@ -321,8 +316,6 @@
 		9FBC3D610F56EA82001811F2 /* SDL_net.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C150F56D6E8001811F2 /* SDL_net.framework */; };
 		9FBD321710E5144C00031CB6 /* Brand.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBD321610E5144C00031CB6 /* Brand.png */; };
 		9FBF66AF11F35ADD00DAAB9A /* BXSingleFileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBF66AE11F35ADD00DAAB9A /* BXSingleFileTransfer.m */; };
-		9FC14E83140040BE00EB7DB1 /* EjectTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FC14E81140040BE00EB7DB1 /* EjectTemplate.pdf */; };
-		9FC14E84140040BE00EB7DB1 /* InsertTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FC14E82140040BE00EB7DB1 /* InsertTemplate.pdf */; };
 		9FC1620E119E9AD700705EA5 /* BXCursorFadeAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC1620D119E9AD700705EA5 /* BXCursorFadeAnimation.m */; };
 		9FC2F84013D60FBD00BD4F6B /* BXDualActionControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC2F83F13D60FBD00BD4F6B /* BXDualActionControllerProfile.m */; };
 		9FC3B2550F62D9CE006DE439 /* BXSession+BXEmulatorControls.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC3B2540F62D9CE006DE439 /* BXSession+BXEmulatorControls.m */; };
@@ -397,6 +390,13 @@
 		9FFB4AB013D052280003BB96 /* BoxerHelp in Resources */ = {isa = PBXBuildFile; fileRef = 9FFB4A5513D052280003BB96 /* BoxerHelp */; };
 		9FFC2AC012A19CCC008C2B3B /* Sample Game Icons in Resources */ = {isa = PBXBuildFile; fileRef = 9FFC2ABF12A19CCC008C2B3B /* Sample Game Icons */; };
 		9FFE1F831390F70C005C438A /* BXThrustmasterFCS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FFE1F821390F70C005C438A /* BXThrustmasterFCS.mm */; };
+		9FFF635F14013F4D007E8B47 /* HardDiskTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FFF635914013F4D007E8B47 /* HardDiskTemplate.pdf */; };
+		9FFF636014013F4D007E8B47 /* CDROMTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FFF635A14013F4D007E8B47 /* CDROMTemplate.pdf */; };
+		9FFF636114013F4D007E8B47 /* PauseTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FFF635B14013F4D007E8B47 /* PauseTemplate.pdf */; };
+		9FFF636214013F4D007E8B47 /* PlayTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FFF635C14013F4D007E8B47 /* PlayTemplate.pdf */; };
+		9FFF636314013F4D007E8B47 /* EjectTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FFF635D14013F4D007E8B47 /* EjectTemplate.pdf */; };
+		9FFF636414013F4D007E8B47 /* InsertTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FFF635E14013F4D007E8B47 /* InsertTemplate.pdf */; };
+		9FFF636C140150C3007E8B47 /* DisketteTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FFF636B140150C3007E8B47 /* DisketteTemplate.pdf */; };
 		9FFF9728123269D1009B5EE5 /* NDAlias+AliasFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9716123269D1009B5EE5 /* NDAlias+AliasFile.m */; };
 		9FFF9729123269D1009B5EE5 /* NDAlias.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF9718123269D1009B5EE5 /* NDAlias.m */; };
 		9FFF972A123269D1009B5EE5 /* NDResourceFork+OtherSorces.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FFF971A123269D1009B5EE5 /* NDResourceFork+OtherSorces.m */; };
@@ -493,9 +493,6 @@
 		9F1CBCAC120CCF3900C5E926 /* Blueprint.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Blueprint.jpg; sourceTree = "<group>"; };
 		9F1D4FFF0F5C0966009F0AB9 /* BXEmulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulator.h; sourceTree = "<group>"; };
 		9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXEmulator.mm; sourceTree = "<group>"; };
-		9F1F2BD513D764FA007B0CC1 /* CDROMTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = CDROMTemplate.pdf; sourceTree = "<group>"; };
-		9F1F2BD613D764FA007B0CC1 /* DisketteTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = DisketteTemplate.pdf; sourceTree = "<group>"; };
-		9F1F2BD813D764FA007B0CC1 /* HardDiskTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = HardDiskTemplate.pdf; sourceTree = "<group>"; };
 		9F20C28A11E5D848005AF541 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
 		9F20C28D11E5D8B4005AF541 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = "/Volumes/Macintosh HD/System/Library/Frameworks/QTKit.framework"; sourceTree = "<absolute>"; };
 		9F2120F613015653002AB1B7 /* BXShelfArt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXShelfArt.h; sourceTree = "<group>"; };
@@ -916,8 +913,6 @@
 		9F9A4CA510F67DD800E61965 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/Preferences.xib; sourceTree = "<group>"; };
 		9F9A4CA710F6824B00E61965 /* BXFilterGallery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFilterGallery.h; sourceTree = "<group>"; };
 		9F9A4CA810F6824B00E61965 /* BXFilterGallery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFilterGallery.m; sourceTree = "<group>"; };
-		9F9C68DE13DC8D4A0066A974 /* PauseTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = PauseTemplate.pdf; sourceTree = "<group>"; };
-		9F9C68DF13DC8D4A0066A974 /* PlayTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = PlayTemplate.pdf; sourceTree = "<group>"; };
 		9F9E27C311F8C003003EE8F3 /* BXSegmentedCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXSegmentedCell.h; sourceTree = "<group>"; };
 		9F9E27C411F8C003003EE8F3 /* BXSegmentedCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXSegmentedCell.m; sourceTree = "<group>"; };
 		9F9E27D411F8C173003EE8F3 /* BXDrivePanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDrivePanelController.h; sourceTree = "<group>"; };
@@ -1001,8 +996,6 @@
 		9FBF66AD11F35ADD00DAAB9A /* BXSingleFileTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXSingleFileTransfer.h; sourceTree = "<group>"; };
 		9FBF66AE11F35ADD00DAAB9A /* BXSingleFileTransfer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXSingleFileTransfer.m; sourceTree = "<group>"; };
 		9FBF66FC11F376B900DAAB9A /* BXOperationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXOperationDelegate.h; sourceTree = "<group>"; };
-		9FC14E81140040BE00EB7DB1 /* EjectTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = EjectTemplate.pdf; sourceTree = "<group>"; };
-		9FC14E82140040BE00EB7DB1 /* InsertTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = InsertTemplate.pdf; sourceTree = "<group>"; };
 		9FC1620C119E9AD700705EA5 /* BXCursorFadeAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCursorFadeAnimation.h; sourceTree = "<group>"; };
 		9FC1620D119E9AD700705EA5 /* BXCursorFadeAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXCursorFadeAnimation.m; sourceTree = "<group>"; };
 		9FC2F83F13D60FBD00BD4F6B /* BXDualActionControllerProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDualActionControllerProfile.m; sourceTree = "<group>"; };
@@ -1137,6 +1130,13 @@
 		9FFBF6AA11A811F7000A1863 /* BXEventConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEventConstants.h; sourceTree = "<group>"; };
 		9FFC2ABF12A19CCC008C2B3B /* Sample Game Icons */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Sample Game Icons"; sourceTree = "<group>"; };
 		9FFE1F821390F70C005C438A /* BXThrustmasterFCS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXThrustmasterFCS.mm; sourceTree = "<group>"; };
+		9FFF635914013F4D007E8B47 /* HardDiskTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = HardDiskTemplate.pdf; sourceTree = "<group>"; };
+		9FFF635A14013F4D007E8B47 /* CDROMTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = CDROMTemplate.pdf; sourceTree = "<group>"; };
+		9FFF635B14013F4D007E8B47 /* PauseTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = PauseTemplate.pdf; sourceTree = "<group>"; };
+		9FFF635C14013F4D007E8B47 /* PlayTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = PlayTemplate.pdf; sourceTree = "<group>"; };
+		9FFF635D14013F4D007E8B47 /* EjectTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = EjectTemplate.pdf; sourceTree = "<group>"; };
+		9FFF635E14013F4D007E8B47 /* InsertTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = InsertTemplate.pdf; sourceTree = "<group>"; };
+		9FFF636B140150C3007E8B47 /* DisketteTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = DisketteTemplate.pdf; sourceTree = "<group>"; };
 		9FFF9715123269D1009B5EE5 /* NDAlias+AliasFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NDAlias+AliasFile.h"; sourceTree = "<group>"; };
 		9FFF9716123269D1009B5EE5 /* NDAlias+AliasFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NDAlias+AliasFile.m"; sourceTree = "<group>"; };
 		9FFF9717123269D1009B5EE5 /* NDAlias.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NDAlias.h; sourceTree = "<group>"; };
@@ -2186,13 +2186,13 @@
 			isa = PBXGroup;
 			children = (
 				9F96969713E59CA100FB51EC /* NoJoystickTemplate.pdf */,
-				9F9C68DE13DC8D4A0066A974 /* PauseTemplate.pdf */,
-				9F9C68DF13DC8D4A0066A974 /* PlayTemplate.pdf */,
-				9FC14E81140040BE00EB7DB1 /* EjectTemplate.pdf */,
-				9FC14E82140040BE00EB7DB1 /* InsertTemplate.pdf */,
-				9F1F2BD513D764FA007B0CC1 /* CDROMTemplate.pdf */,
-				9F1F2BD613D764FA007B0CC1 /* DisketteTemplate.pdf */,
-				9F1F2BD813D764FA007B0CC1 /* HardDiskTemplate.pdf */,
+				9FFF636B140150C3007E8B47 /* DisketteTemplate.pdf */,
+				9FFF635914013F4D007E8B47 /* HardDiskTemplate.pdf */,
+				9FFF635A14013F4D007E8B47 /* CDROMTemplate.pdf */,
+				9FFF635B14013F4D007E8B47 /* PauseTemplate.pdf */,
+				9FFF635C14013F4D007E8B47 /* PlayTemplate.pdf */,
+				9FFF635D14013F4D007E8B47 /* EjectTemplate.pdf */,
+				9FFF635E14013F4D007E8B47 /* InsertTemplate.pdf */,
 				9F70278513D730D000606B4C /* BunnyTemplate.png */,
 				9F70278613D730D000606B4C /* TurtleTemplate.png */,
 				9FD012E213AB845200AF6FE8 /* GamepadTemplate.pdf */,
@@ -2603,14 +2603,14 @@
 				9F70277D13D70CA600606B4C /* Bezel.xib in Resources */,
 				9F70278713D730D000606B4C /* BunnyTemplate.png in Resources */,
 				9F70278813D730D000606B4C /* TurtleTemplate.png in Resources */,
-				9F1F2BD913D764FA007B0CC1 /* CDROMTemplate.pdf in Resources */,
-				9F1F2BDA13D764FA007B0CC1 /* DisketteTemplate.pdf in Resources */,
-				9F1F2BDC13D764FA007B0CC1 /* HardDiskTemplate.pdf in Resources */,
-				9F9C68E013DC8D4A0066A974 /* PauseTemplate.pdf in Resources */,
-				9F9C68E113DC8D4A0066A974 /* PlayTemplate.pdf in Resources */,
 				9F96969813E59CA100FB51EC /* NoJoystickTemplate.pdf in Resources */,
-				9FC14E83140040BE00EB7DB1 /* EjectTemplate.pdf in Resources */,
-				9FC14E84140040BE00EB7DB1 /* InsertTemplate.pdf in Resources */,
+				9FFF635F14013F4D007E8B47 /* HardDiskTemplate.pdf in Resources */,
+				9FFF636014013F4D007E8B47 /* CDROMTemplate.pdf in Resources */,
+				9FFF636114013F4D007E8B47 /* PauseTemplate.pdf in Resources */,
+				9FFF636214013F4D007E8B47 /* PlayTemplate.pdf in Resources */,
+				9FFF636314013F4D007E8B47 /* EjectTemplate.pdf in Resources */,
+				9FFF636414013F4D007E8B47 /* InsertTemplate.pdf in Resources */,
+				9FFF636C140150C3007E8B47 /* DisketteTemplate.pdf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3193,8 +3193,8 @@
 					i386,
 					x86_64,
 				);
-				CURRENT_PROJECT_SHORT_VERSION_STRING = 1.1.1;
-				CURRENT_PROJECT_VERSION = 20110820.1;
+				CURRENT_PROJECT_SHORT_VERSION_STRING = 1.1.2pre;
+				CURRENT_PROJECT_VERSION = 20110821.1;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx10.6;
@@ -3291,8 +3291,8 @@
 					i386,
 					x86_64,
 				);
-				CURRENT_PROJECT_SHORT_VERSION_STRING = 1.1.1;
-				CURRENT_PROJECT_VERSION = 20110820.1;
+				CURRENT_PROJECT_SHORT_VERSION_STRING = 1.1.2pre;
+				CURRENT_PROJECT_VERSION = 20110821.1;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				SDKROOT = macosx10.6;
 				VALID_ARCHS = "i386 x86_64 ppc";

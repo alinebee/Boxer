@@ -44,7 +44,7 @@
 				<string key="NSClassName">NSApplication</string>
 			</object>
 			<object class="NSCustomView" id="959508283">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -53,7 +53,6 @@
 						<int key="NSvFlags">274</int>
 						<string key="NSFrame">{{20, 23}, {300, 44}}</string>
 						<reference key="NSSuperview" ref="959508283"/>
-						<reference key="NSNextKeyView"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="422971973">
 							<int key="NSCellFlags">67239424</int>
@@ -88,12 +87,11 @@ YmFyLg</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{340, 90}</string>
-				<reference key="NSSuperview"/>
 				<reference key="NSNextKeyView" ref="537414232"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
 			<object class="NSCustomView" id="262078921">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -206,12 +204,11 @@ YmFyLg</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{300, 80}</string>
-				<reference key="NSSuperview"/>
 				<reference key="NSNextKeyView" ref="433158987"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
 			<object class="NSCustomView" id="486365284">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -254,7 +251,6 @@ YmFyLg</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{240, 80}</string>
-				<reference key="NSSuperview"/>
 				<reference key="NSNextKeyView" ref="319377139"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
@@ -278,7 +274,7 @@ YmFyLg</string>
 								<string>NeXT TIFF v4.0 pasteboard type</string>
 							</object>
 						</object>
-						<string key="NSFrame">{{62, 78}, {96, 96}}</string>
+						<string key="NSFrame">{{59, 75}, {102, 102}}</string>
 						<reference key="NSSuperview" ref="759628227"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="386939600"/>
@@ -287,12 +283,8 @@ YmFyLg</string>
 						<object class="NSImageCell" key="NSCell" id="1032065341">
 							<int key="NSCellFlags">130560</int>
 							<int key="NSCellFlags2">33554432</int>
-							<object class="NSCustomResource" key="NSContents" id="66053744">
-								<string key="NSClassName">NSImage</string>
-								<string key="NSResourceName">DisketteTemplate</string>
-							</object>
 							<int key="NSAlign">0</int>
-							<int key="NSScale">0</int>
+							<int key="NSScale">3</int>
 							<int key="NSStyle">0</int>
 							<bool key="NSAnimates">NO</bool>
 						</object>
@@ -386,7 +378,7 @@ YmFyLg</string>
 								<string>NeXT TIFF v4.0 pasteboard type</string>
 							</object>
 						</object>
-						<string key="NSFrame">{{62, 78}, {96, 96}}</string>
+						<string key="NSFrame">{{59, 75}, {102, 102}}</string>
 						<reference key="NSSuperview" ref="962612140"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="30954813"/>
@@ -400,7 +392,7 @@ YmFyLg</string>
 								<string key="NSResourceName">EjectTemplate</string>
 							</object>
 							<int key="NSAlign">0</int>
-							<int key="NSScale">0</int>
+							<int key="NSScale">3</int>
 							<int key="NSStyle">0</int>
 							<bool key="NSAnimates">NO</bool>
 						</object>
@@ -471,7 +463,7 @@ YmFyLg</string>
 								<string>NeXT TIFF v4.0 pasteboard type</string>
 							</object>
 						</object>
-						<string key="NSFrame">{{62, 78}, {96, 96}}</string>
+						<string key="NSFrame">{{59, 75}, {102, 102}}</string>
 						<reference key="NSSuperview" ref="271727742"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="160133539"/>
@@ -484,8 +476,8 @@ YmFyLg</string>
 								<string key="NSClassName">NSImage</string>
 								<string key="NSResourceName">CDROMTemplate</string>
 							</object>
-							<int key="NSAlign">8</int>
-							<int key="NSScale">0</int>
+							<int key="NSAlign">0</int>
+							<int key="NSScale">3</int>
 							<int key="NSStyle">0</int>
 							<bool key="NSAnimates">NO</bool>
 						</object>
@@ -561,7 +553,7 @@ YmFyLg</string>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
 			<object class="NSCustomView" id="522861424">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -580,8 +572,10 @@ YmFyLg</string>
 								<string>NeXT TIFF v4.0 pasteboard type</string>
 							</object>
 						</object>
-						<string key="NSFrame">{{32, 32}, {96, 96}}</string>
+						<string key="NSFrame">{{29, 29}, {102, 102}}</string>
 						<reference key="NSSuperview" ref="522861424"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
 						<int key="NSTag">1</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="63342060">
@@ -592,7 +586,7 @@ YmFyLg</string>
 								<string key="NSResourceName">PauseTemplate</string>
 							</object>
 							<int key="NSAlign">0</int>
-							<int key="NSScale">0</int>
+							<int key="NSScale">3</int>
 							<int key="NSStyle">0</int>
 							<bool key="NSAnimates">NO</bool>
 						</object>
@@ -600,11 +594,13 @@ YmFyLg</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{160, 160}</string>
+				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="450901117"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
 			<object class="NSCustomView" id="649574169">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -623,8 +619,10 @@ YmFyLg</string>
 								<string>NeXT TIFF v4.0 pasteboard type</string>
 							</object>
 						</object>
-						<string key="NSFrame">{{32, 32}, {96, 96}}</string>
+						<string key="NSFrame">{{29, 29}, {102, 102}}</string>
 						<reference key="NSSuperview" ref="649574169"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
 						<int key="NSTag">1</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="32039733">
@@ -635,7 +633,7 @@ YmFyLg</string>
 								<string key="NSResourceName">PlayTemplate</string>
 							</object>
 							<int key="NSAlign">0</int>
-							<int key="NSScale">0</int>
+							<int key="NSScale">3</int>
 							<int key="NSStyle">0</int>
 							<bool key="NSAnimates">NO</bool>
 						</object>
@@ -643,6 +641,8 @@ YmFyLg</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{160, 160}</string>
+				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="76646009"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
@@ -700,7 +700,7 @@ YmFyLg</string>
 								<string>NeXT TIFF v4.0 pasteboard type</string>
 							</object>
 						</object>
-						<string key="NSFrame">{{128, 91}, {72, 72}}</string>
+						<string key="NSFrame">{{129, 92}, {70, 70}}</string>
 						<reference key="NSSuperview" ref="791075297"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="399942024"/>
@@ -709,9 +709,8 @@ YmFyLg</string>
 						<object class="NSImageCell" key="NSCell" id="73303814">
 							<int key="NSCellFlags">130560</int>
 							<int key="NSCellFlags2">33554432</int>
-							<reference key="NSContents" ref="66053744"/>
 							<int key="NSAlign">0</int>
-							<int key="NSScale">0</int>
+							<int key="NSScale">3</int>
 							<int key="NSStyle">0</int>
 							<bool key="NSAnimates">NO</bool>
 						</object>
@@ -732,7 +731,7 @@ YmFyLg</string>
 								<string>NeXT TIFF v4.0 pasteboard type</string>
 							</object>
 						</object>
-						<string key="NSFrame">{{20, 91}, {72, 72}}</string>
+						<string key="NSFrame">{{21, 92}, {70, 70}}</string>
 						<reference key="NSSuperview" ref="791075297"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="808261380"/>
@@ -741,9 +740,8 @@ YmFyLg</string>
 						<object class="NSImageCell" key="NSCell" id="56604813">
 							<int key="NSCellFlags">130560</int>
 							<int key="NSCellFlags2">33554432</int>
-							<reference key="NSContents" ref="66053744"/>
 							<int key="NSAlign">0</int>
-							<int key="NSScale">0</int>
+							<int key="NSScale">3</int>
 							<int key="NSStyle">0</int>
 							<bool key="NSAnimates">NO</bool>
 						</object>
@@ -1749,7 +1747,6 @@ YmFyLg</string>
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<string>BunnyTemplate</string>
 				<string>CDROMTemplate</string>
-				<string>DisketteTemplate</string>
 				<string>EjectTemplate</string>
 				<string>NSRightFacingTriangleTemplate</string>
 				<string>PauseTemplate</string>
@@ -1759,12 +1756,11 @@ YmFyLg</string>
 			<object class="NSMutableArray" key="dict.values">
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<string>{13, 14}</string>
-				<string>{128, 128}</string>
-				<string>{128, 128}</string>
-				<string>{128, 104}</string>
+				<string>{32, 32}</string>
+				<string>{15, 13}</string>
 				<string>{9, 9}</string>
-				<string>{96, 128}</string>
-				<string>{96, 128}</string>
+				<string>{10, 13}</string>
+				<string>{10, 13}</string>
 				<string>{18, 10}</string>
 			</object>
 		</object>

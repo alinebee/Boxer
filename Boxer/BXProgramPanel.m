@@ -24,6 +24,7 @@
 							  [backgroundColor shadowWithLevel: 0.5f],	1.0f,
 							  nil];
 	
+    [NSBezierPath clipRect: dirtyRect];
 	[background drawInRect: [self bounds] angle: 90.0f];
 	[background release];
 }
@@ -40,7 +41,7 @@
 	grilleStrip.origin.y	= panelRegion.size.height - grilleStrip.size.height;	//Align the grille along the top of the panel
 	
 	//Only bother drawing the grille if it intersects with the region being drawn
-	if (NSIntersectsRect(grilleStrip, dirtyRect))
+	if ([self needsToDrawRect: grilleStrip])
 	{
 		NSPoint patternOffset	= [self offsetFromWindowOrigin];
         
@@ -60,8 +61,6 @@
 
 - (void) drawRect: (NSRect)dirtyRect
 {
-	[NSBezierPath clipRect: dirtyRect];
-	
 	[self _drawGradientInRect: dirtyRect];
 	[self _drawGrilleInRect: dirtyRect];
     
@@ -71,8 +70,9 @@
     if (title && ![title isHiddenOrHasHiddenAncestor])
     {
         NSRect titleMask = [title frame];
-        [NSBezierPath clipRect: titleMask];
-        [self _drawGradientInRect: titleMask];
+        
+        if ([self needsToDrawRect: titleMask])
+            [self _drawGradientInRect: titleMask];
     }
 }
 @end

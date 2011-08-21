@@ -52,7 +52,7 @@
 	brandRegion.size = [brand size];
 	brandRegion = NSIntegralRect(centerInRect(brandRegion, [self bounds]));
 	
-	if (NSIntersectsRect(dirtyRect, brandRegion))
+	if ([self needsToDrawRect: brandRegion])
 	{
 		[brand drawInRect: brandRegion
 				 fromRect: NSZeroRect

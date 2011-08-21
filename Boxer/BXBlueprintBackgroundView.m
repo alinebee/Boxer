@@ -36,7 +36,7 @@
 	brandRegion.size = [brand size];
 	brandRegion = NSIntegralRect(centerInRect(brandRegion, [self bounds]));
 	
-	if (NSIntersectsRect(dirtyRect, brandRegion))
+	if ([self needsToDrawRect: brandRegion])
 	{
 		[brand drawInRect: brandRegion
 				 fromRect: NSZeroRect
@@ -68,7 +68,7 @@
 	NSRect shadowRect = [self bounds];
 	shadowRect.size.height = 6.0f;
 	
-	if (NSIntersectsRect(dirtyRect, shadowRect))
+	if ([self needsToDrawRect: shadowRect])
 	{
 		NSGradient *topShadow = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.2f]
 															  endingColor: [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.0f]];

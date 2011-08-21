@@ -16,7 +16,7 @@
 	bezelRect.origin.y += bezelRect.size.height - 1.0f;
 	bezelRect.size.height = 1.0f;
 	
-	if (NSIntersectsRect(dirtyRect, bezelRect))
+	if ([self needsToDrawRect: bezelRect])
 	{
 		NSColor *bezelColor = [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.5f];
 		

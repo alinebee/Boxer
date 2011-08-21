@@ -741,14 +741,23 @@
         
         if (sourceImagePath && [workspace file: sourceImagePath matchesTypes: [BXAppController mountableImageTypes]])
         {
-            //Check if the source image is already mounted: if so,
-            //then just add the path as an alias to that existing drive
-            //and pretend we mounted that drive.
-            BXDrive *existingDrive = [[self emulator] driveForPath: sourceImagePath];
-            if (existingDrive)
-            {
+            //Check if we already have another drive representing the source path
+            //at the requested drive letter: if so, then just add the path as an
+            //alias to that existing drive, and mount that drive instead
+            //(assuming it isn't already.)
+            //TODO: should we handle this case upstairs in mountDriveForPath:?
+            BXDrive *existingDrive = [self queuedDriveForPath: sourceImagePath];
+            if (![existingDrive isEqual: drive] && [[existingDrive letter] isEqual: [drive letter]])
+            {   
                 [[existingDrive pathAliases] addObject: [drive path]];
-                return existingDrive;
+                if ([self driveIsMounted: existingDrive])
+                {
+                    return existingDrive;
+                }
+                else
+                {
+                    driveToMount = existingDrive;
+                }
             }
             //Otherwise, make a new drive using the image, and mount that instead.
             else
@@ -1304,13 +1313,31 @@
 - (BXExecutableScan *) executableScanForDrive: (BXDrive *)drive
                              startImmediately: (BOOL)start
 {
-    BXExecutableScan *scan = [BXExecutableScan scanWithBasePath: [drive path]];
+    NSString *scanPath = [drive path];
+    BXExecutableScan *scan = [BXExecutableScan scanWithBasePath: scanPath];
     [scan setDelegate: self];
     [scan setDidFinishSelector: @selector(executableScanDidFinish:)];
     [scan setContextInfo: drive];
     
     if (start)
     {
+        for (BXExecutableScan *otherScan in [scanQueue operations])
+        {
+            //If a scan for this drive is already in progress and hasn't been cancelled,
+            //then use that scan instead.
+            if ([[otherScan contextInfo] isEqual: drive] && ![otherScan isCancelled])
+            {
+                return otherScan;
+            }
+            
+            //If there's a scan going on for the same path, then make ours wait for that
+            //one to finish. This prevents image scans from piling up and confusing
+            //the hell out of our volume-mount notification observers.
+            else if ([[otherScan basePath] isEqualToString: scanPath] ||
+                     [[otherScan mountedVolumePath] isEqualToString: scanPath])
+                [scan addDependency: otherScan];
+        }    
+
         [self willChangeValueForKey: @"isScanningForExecutables"];
         [scanQueue addOperation: scan];
         [self didChangeValueForKey: @"isScanningForExecutables"];
@@ -1329,9 +1356,9 @@
 
 - (BOOL) isScanningForExecutablesInDrive: (BXDrive *)drive
 {
-    for (BXExecutableScan *operation in [scanQueue operations])
+    for (BXExecutableScan *scan in [scanQueue operations])
 	{
-		if ([operation isExecuting] && [[operation contextInfo] isEqual: drive]) return YES;
+		if ([scan isExecuting] && [[scan contextInfo] isEqual: drive]) return YES;
 	}    
     return NO;
 }

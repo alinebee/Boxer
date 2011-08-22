@@ -351,7 +351,7 @@ enum {
 			NSPoint midPoint = NSMakePoint(NSMidX(imageRect), NSMidY(imageRect));
 
 			//We make it square instead of fitting the width of the image,
-			//because the image may include a big fat horizontal margin 
+            //to avoid distorting the puff of smoke
 			NSSize poofSize = imageRect.size;
 			poofSize.width = poofSize.height;
 			

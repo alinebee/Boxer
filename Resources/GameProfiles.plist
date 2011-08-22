@@ -425,8 +425,12 @@
 			<string>Timed joystick</string>
 			<key>BXProfileTelltales</key>
 			<array>
-				<string>wc3.con</string>
+				<string>wc3.*</string>
 			</array>
+            <key>BXDesignatedInstallers</key>
+            <array>
+                <string>wc3.exe</string>
+            </array>
 		</dict>
 		
 		<dict>

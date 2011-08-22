@@ -740,7 +740,7 @@
 	
 	//Determine how we should import the source files
 	//-----------------------------------------------
-
+    
 	//If the source path no longer exists, it means the user probably
     //ejected the disk and we can't import it.
 	//FIXME: make this properly handle the case where the source path

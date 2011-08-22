@@ -65,12 +65,12 @@
 	
 	//If the path is (itself or inside) a gamebox or mountable folder, use that as the mount point.
 	NSString *container = [workspace parentOfFile: filePath matchingTypes: [[self class] preferredMountPointTypes]];
-	if (container) return container;
+    if (container) return container;
 	
 	//Check what kind of volume the file is on
 	NSString *volumePath = [workspace volumeForPath: filePath];
 	NSString *volumeType = [workspace volumeTypeForPath: filePath];
-	
+    
 	//If it's on a data CD volume or floppy volume, use the base folder of the volume as the mount point
 	if ([volumeType isEqualToString: dataCDVolumeType] || [workspace isFloppyVolumeAtPath: volumePath])
 	{
@@ -1090,10 +1090,11 @@
 	//often the audio volume will send a mount notification before its data volume exists.
 	
 	//To work around this, we add a slight delay before we process the volume mount notification,
-	//to allow other volumes to finish mounting.
-	[self performSelector: @selector(_handleVolumeDidMount:)
-			   withObject: theNotification
-			   afterDelay: BXVolumeMountDelay];
+    //to allow other volumes time to finish mounting.
+    
+    [self performSelector: @selector(_handleVolumeDidMount:)
+               withObject: theNotification
+               afterDelay: BXVolumeMountDelay];
 }
 
 - (void) _handleVolumeDidMount: (NSNotification *)theNotification
@@ -1115,6 +1116,9 @@
 	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
 	NSString *volumePath	= [[theNotification userInfo] objectForKey: @"NSDevicePath"];
 	NSString *volumeType	= [workspace volumeTypeForPath: volumePath];
+    
+    //Ignore the mount if it's a hidden volume.
+    if (![workspace volumeIsVisibleAtPath: volumePath]) return;
 	
     //Ignore mount if we're scanning this volume for executables:
     //this indicates that the scan is responsible for the mount,
@@ -1135,6 +1139,7 @@
 	if ([volumeType isEqualToString: FATVolumeType] && ![workspace isFloppySizedVolumeAtPath: volumePath]) return;
 	
 	NSString *mountPoint = [[self class] preferredMountPointForPath: volumePath];
+    
 	if ([[self emulator] pathIsMountedAsDrive: mountPoint]) return;
 	
     //If an existing drive corresponds to this volume already,

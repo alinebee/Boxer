@@ -13,7 +13,6 @@
 #import "BXGeometry.h"
 
 
-
 //The tags of the component parts of drive item views
 enum {
 	BXDriveItemLetterLabel			= 1,
@@ -237,13 +236,7 @@ enum {
 
 - (NSArray *) selectedViews
 {	
-	NSMutableArray *selectedViews = [NSMutableArray arrayWithCapacity: [[self selectionIndexes] count]];
-	
-	for (BXDriveItemView *view in [self subviews])
-	{
-		if ([[view delegate] isSelected]) [selectedViews addObject: view];
-	}
-	return (NSArray *)selectedViews;
+    return [[self subviews] objectsAtIndexes: [self selectionIndexes]];
 }
 
 - (BXDriveItemView *) viewForDrive: (BXDrive *)drive
@@ -263,10 +256,17 @@ enum {
 	return (isLocal) ? NSDragOperationPrivate : NSDragOperationNone;
 }
 
-- (NSImage *) draggableImageFromView: (NSView *)itemView
+- (NSImage *) draggingImageForItemsAtIndexes: (NSIndexSet *)indexes
+                                   withEvent: (NSEvent *)event
+                                      offset: (NSPointPointer)dragImageOffset
 {
-	NSData *imageData = [itemView dataWithPDFInsideRect: [itemView bounds]];
-	return [[[NSImage alloc] initWithData: imageData] autorelease];
+    NSView *itemView = [[self selectedViews] lastObject];
+    if (itemView)
+    {
+        NSData *imageData = [itemView dataWithPDFInsideRect: [itemView bounds]];
+        return [[[NSImage alloc] initWithData: imageData] autorelease];
+    }
+    else return nil;
 }
 
 - (void) mouseDragged: (NSEvent *)theEvent
@@ -280,95 +280,21 @@ enum {
     
     if (continueDrag)
     {
-        //Hide all of the selected views while we drag them, and choose one to be the visible source of the drag
-        NSArray *selectedViews = [self selectedViews];
-        NSView *draggedView = [selectedViews lastObject];
-        NSImage *draggedImage = [self draggableImageFromView: draggedView];
+        //Choose one out of the selection to be the visible source of the drag
+        NSArray *selectedViews  = [self selectedViews];
+        NSView *draggedView     = [selectedViews lastObject];
         
-        for (NSView *itemView in selectedViews) [itemView setHidden: YES];
+        NSImage *draggedImage   = [self draggingImageForItemsAtIndexes: [self selectionIndexes]
+                                                             withEvent: theEvent
+                                                                offset: nil];
         
-        //Implementation note: slideBack would be nice but it can't be cancelled by the source :(
-        //Which we would want to do after discarding the drive.
         [draggedView dragImage: draggedImage
                             at: NSZeroPoint
                         offset: NSZeroSize
                          event: theEvent
                     pasteboard: pasteboard
-                        source: self
+                        source: [self delegate]
                      slideBack: NO];
-    }
-}
-
-//While dragging, this checks for valid Boxer windows under the cursor; if there aren't any, it displays
-//a disappearing item cursor (poof) to indicate the action will discard the dragged drive(s).
-- (void) draggedImage: (NSImage *)draggedImage movedTo: (NSPoint)screenPoint
-{	
-	NSPoint mousePoint = [NSEvent mouseLocation];
-	NSCursor *poof = [NSCursor disappearingItemCursor];
-	
-	//If there's no Boxer window under the mouse cursor,
-	//change the cursor to a poof to indicate we will discard the drive
-	if (![(BXAppController *)[NSApp delegate] windowAtPoint: mousePoint]) [poof set];
-	
-	//otherwise, revert any poof cursor (which may already have been changed by valid drag destinations anyway) 
-	else if ([[NSCursor currentCursor] isEqual: poof]) [[NSCursor arrowCursor] set];
-}
-
-//This is called when dragging completes, and discards the drive if it was not dropped onto a valid destination
-//(or back onto the drive list).
-- (void) draggedImage: (NSImage *)draggedImage
-			  endedAt: (NSPoint)screenPoint
-		    operation: (NSDragOperation)operation
-{
-	NSPoint mousePoint = [NSEvent mouseLocation];
-	
-    BOOL unhideSelection = YES;
-	if (operation == NSDragOperationNone && ![(BXAppController *)[NSApp delegate] windowAtPoint: mousePoint])
-	{
-		//Send the remove-these-drives action and see whether any drives were removed
-		//(IBActions do not provide a return value, so we can't find out directly
-		//if the action succeeded or failed)
-        NSUInteger numSelected = [[self selectionIndexes] count];
-        
-		NSUInteger oldItems = [[self content] count];
-		[NSApp sendAction: @selector(removeSelectedDrives:) to: [self delegate] from: self];
-		NSUInteger newItems = [[self content] count];
-		
-		//If any drives were removed by the action, display the poof animation
-		if (newItems < oldItems)
-		{
-            //If all of the drives in our selection were removed by the action,
-            //then don't unhide the hidden drives from the list.
-            //(Otherwise, if one or more of the drives couldn't be removed,
-            //we can't tell which ones; so unhide all of them to be safe.)
-            if (newItems <= (oldItems - numSelected)) unhideSelection = NO;
-            
-			//Calculate the center-point of the image for displaying the poof icon
-			NSRect imageRect;
-			imageRect.size		= [draggedImage size];
-			imageRect.origin	= screenPoint;	
-
-			NSPoint midPoint = NSMakePoint(NSMidX(imageRect), NSMidY(imageRect));
-
-			//We make it square instead of fitting the width of the image,
-            //to avoid distorting the puff of smoke
-			NSSize poofSize = imageRect.size;
-			poofSize.width = poofSize.height;
-			
-			//Play the poof animation
-			NSShowAnimationEffect(NSAnimationEffectPoof, midPoint, poofSize, nil, nil, nil);
-		}
-		
-		//Reset the cursor back to normal in any case
-		[[NSCursor arrowCursor] set];
-	}
-	
-	//Once the drag has finished, clean up by unhiding the dragged items
-    //(Unless all the dragged items were ejected and removed, in which case
-    //leave them hidden so that they don't reappear and then vanish again.)
-	if (unhideSelection)
-    {
-        for (NSView *itemView in [self selectedViews]) [itemView setHidden: NO];
     }
 }
 

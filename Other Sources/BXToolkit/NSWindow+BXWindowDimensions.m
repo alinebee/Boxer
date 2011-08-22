@@ -1,7 +1,19 @@
-#import "NSWindow+BXWindowSizing.h"
+#import "NSWindow+BXWindowDimensions.h"
 #import "BXGeometry.h"
 
-@implementation NSWindow (BXWindowSizing)
+@implementation NSWindow (BXWindowDimensions)
+
++ (NSWindow *) windowAtPoint: (NSPoint)screenPoint
+{
+    //TODO: this is not particularly clever and may give false positives/negatives.
+    //For instance, it may return a window that is at that point but underneath
+    //another app's window.
+	for (NSWindow *window in [NSApp windows])
+	{
+		if ([window isVisible] && NSPointInRect(screenPoint, window.frame)) return window;
+	}
+	return nil;
+}
 
 - (void) setFrameSize: (NSSize)newSize
 		   anchoredOn: (NSPoint)anchor

@@ -41,6 +41,26 @@ NSString * const HFSVolumeType		= @"hfs";
 	return matches;
 }
 
+- (BOOL) volumeIsVisibleAtPath: (NSString *)path
+{
+    NSFileManager *manager = [NSFileManager defaultManager];
+    
+    //10.6 and above
+    if ([manager respondsToSelector: @selector(mountedVolumeURLsIncludingResourceValuesForKeys:options:)])
+    {
+        NSArray *volumeURLs = [manager mountedVolumeURLsIncludingResourceValuesForKeys: nil
+                                                                              options: NSVolumeEnumerationSkipHiddenVolumes];
+        
+        NSURL *fileURL = [NSURL fileURLWithPath: path];
+        return [volumeURLs containsObject: fileURL];
+    }
+    //10.5 and below
+    else 
+    {
+        return [[self mountedLocalVolumePaths] containsObject: path];
+    }
+}
+
 - (NSString *) volumeTypeForPath: (NSString *)path
 {
 	NSString *volumeType = nil;
@@ -62,9 +82,17 @@ NSString * const HFSVolumeType		= @"hfs";
 	//Sort the volumes by length from longest to shortest, to make sure we get the right volume (and not a parent volume)
 	NSArray *sortedVolumes	= [volumes sortedArrayUsingSelector: @selector(pathDepthCompare:)];
 	
+    //TWEAK: if the path is located within /Volumes/, don't return the
+    //root directory if we can't find the path anywhere in /Volumes/.
+    //(That would indicate that the volume is hidden or in some other
+    //way unavailable, and deserves a nil.)
+    BOOL restrictToVolumes = [path isRootedInPath: @"/Volumes/"];
+    
 	for (NSString *volumePath in [sortedVolumes reverseObjectEnumerator])
 	{
-		if ([resolvedPath hasPrefix: volumePath]) return volumePath;
+        if (restrictToVolumes && ![volumePath isRootedInPath: @"/Volumes/"]) continue;
+        
+		if ([resolvedPath isRootedInPath: volumePath]) return volumePath;
 	}
 	return nil;
 }

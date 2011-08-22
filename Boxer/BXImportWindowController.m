@@ -9,7 +9,7 @@
 #import "BXImportWindowController.h"
 #import "BXImportSession.h"
 #import "BXGeometry.h"
-#import "NSWindow+BXWindowSizing.h"
+#import "NSWindow+BXWindowDimensions.h"
 #import "BXAppController.h"
 
 

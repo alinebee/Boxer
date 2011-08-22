@@ -16,6 +16,8 @@
 #import "BXValueTransformers.h"
 #import "BXDriveImport.h"
 #import "BXDriveList.h"
+#import "NSWindow+BXWindowDimensions.h"
+
 
 #pragma mark -
 #pragma mark Private constants
@@ -268,15 +270,14 @@ enum {
     }
 }
 
-- (IBAction) unmountSelectedDrives: (id)sender
+- (BOOL) _unmountDrives: (NSArray *)drives options: (BXDriveMountOptions)options
 {
-	NSArray *selection = [self selectedDrives];
-	BXSession *session = [[NSApp delegate] currentSession];
-	if ([session shouldUnmountDrives: selection sender: self])
+    BXSession *session = [[NSApp delegate] currentSession];
+	if ([session shouldUnmountDrives: drives sender: self])
     {
         NSError *unmountError = nil;
-		[session unmountDrives: selection
-                       options: BXDefaultDriveUnmountOptions | BXDriveForceUnmounting
+		[session unmountDrives: drives
+                       options: options
                          error: &unmountError];
         
         if (unmountError)
@@ -287,30 +288,23 @@ enum {
                               delegate: nil
                     didPresentSelector: NULL
                            contextInfo: NULL];
+            return NO;
         }
+        else return YES;
     }
+    else return NO;
+}
+
+- (IBAction) unmountSelectedDrives: (id)sender
+{
+	NSArray *selection = [self selectedDrives];
+    [self _unmountDrives: selection options: BXDefaultDriveUnmountOptions];
 }
 
 - (IBAction) removeSelectedDrives: (id)sender
 {
 	NSArray *selection = [self selectedDrives];
-	BXSession *session = [[NSApp delegate] currentSession];
-	if ([session shouldUnmountDrives: selection sender: self])
-    {
-        NSError *unmountError = nil;
-		[session unmountDrives: selection
-                       options: BXDefaultDriveUnmountOptions | BXDriveForceUnmounting | BXDriveRemoveExistingFromQueue
-                         error: &unmountError];
-        if (unmountError)
-        {
-            NSWindow *targetWindow = [[[NSApp delegate] currentSession] windowForSheet];
-            [targetWindow presentError: unmountError
-                        modalForWindow: targetWindow
-                              delegate: nil
-                    didPresentSelector: NULL
-                           contextInfo: NULL];
-        }
-    }
+    [self _unmountDrives: selection options: BXDefaultDriveUnmountOptions | BXDriveRemoveExistingFromQueue];
 }
 
 - (IBAction) importSelectedDrives: (id)sender
@@ -672,6 +666,95 @@ enum {
     [pasteboard setPropertyList: filePaths forType: NSFilenamesPboardType];
     
     return YES;
+}
+
+- (NSDragOperation) draggingSourceOperationMaskForLocal: (BOOL)isLocal
+{
+	return (isLocal) ? NSDragOperationPrivate : NSDragOperationNone;
+}
+
+//Required for us to work as a dragging source *rolls eyes all the way out of head*
+- (NSWindow *) window
+{
+    return [[self view] window];
+}
+
+- (void) draggedImage: (NSImage *)image beganAt: (NSPoint)screenPoint
+{
+    NSArray *selectedViews = [driveList selectedViews];
+    
+    for (NSView *itemView in selectedViews) [itemView setHidden: YES];
+}
+
+//While dragging, this checks for valid Boxer windows under the cursor; if there aren't any, it displays
+//a disappearing item cursor (poof) to indicate the action will discard the dragged drive(s).
+- (void) draggedImage: (NSImage *)draggedImage
+              movedTo: (NSPoint)screenPoint
+{
+	NSPoint mousePoint = [NSEvent mouseLocation];
+	NSCursor *poof = [NSCursor disappearingItemCursor];
+	
+	//If there's no Boxer window under the mouse cursor,
+	//change the cursor to a poof to indicate we will discard the drive
+	if (![NSWindow windowAtPoint: mousePoint]) [poof set];
+	
+	//otherwise, revert any poof cursor (which may already have been changed
+    //by valid drag destinations anyway) 
+	else if ([[NSCursor currentCursor] isEqual: poof]) [[NSCursor arrowCursor] set];
+}
+
+//This is called when dragging completes, and discards the drive if it was not dropped onto a valid destination
+//(or back onto the drive list).
+- (void) draggedImage: (NSImage *)draggedImage
+			  endedAt: (NSPoint)screenPoint
+		    operation: (NSDragOperation)operation
+{
+	NSPoint mousePoint = [NSEvent mouseLocation];
+	
+    BOOL unhideSelection = YES;
+    
+    //If the user dropped these items outside the app, then remove them
+    //(operation will be private if the drag landed on a window outside the app)
+	if (operation == NSDragOperationNone && ![NSWindow windowAtPoint: mousePoint])
+	{
+        BOOL drivesRemoved = [self _unmountDrives: [self selectedDrives]
+                                          options: BXDefaultDriveUnmountOptions | BXDriveRemoveExistingFromQueue];
+        
+		//If the drives were successfully removed by the action,
+        //display the poof animation
+		if (drivesRemoved)
+		{
+            //Leave the selected drives hidden, so that their
+            //disappearing animation won't be visible.
+            unhideSelection = NO;
+            
+			//Calculate the center-point of the image for displaying the poof icon
+			NSRect imageRect;
+			imageRect.size		= [draggedImage size];
+			imageRect.origin	= screenPoint;	
+            
+			NSPoint midPoint = NSMakePoint(NSMidX(imageRect), NSMidY(imageRect));
+            
+			//We make it square instead of fitting the width of the image,
+            //to avoid distorting the puff of smoke
+			NSSize poofSize = imageRect.size;
+			poofSize.width = poofSize.height;
+			
+			//Play the poof animation
+			NSShowAnimationEffect(NSAnimationEffectPoof, midPoint, poofSize, nil, nil, nil);
+		}
+	}
+	
+	//Once the drag has finished, clean up by unhiding the dragged items
+    //(Unless all the dragged items were ejected and removed, in which case
+    //leave them hidden so that they don't reappear and then vanish again.)
+	if (unhideSelection)
+    {
+        for (NSView *itemView in [driveList selectedViews]) [itemView setHidden: NO];
+    }
+    
+    //Reset the cursor back to normal
+    [[NSCursor arrowCursor] set];
 }
 
 @end

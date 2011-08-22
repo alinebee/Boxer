@@ -305,7 +305,7 @@
 		9FBC35310F56C7B7001811F2 /* BXEmulator+BXShell.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35230F56C7B7001811F2 /* BXEmulator+BXShell.mm */; };
 		9FBC35320F56C7B7001811F2 /* BXDOSWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35240F56C7B7001811F2 /* BXDOSWindow.m */; };
 		9FBC35330F56C7B7001811F2 /* BXDOSWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35250F56C7B7001811F2 /* BXDOSWindowController.m */; };
-		9FBC35340F56C7B7001811F2 /* NSWindow+BXWindowSizing.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35260F56C7B7001811F2 /* NSWindow+BXWindowSizing.m */; };
+		9FBC35340F56C7B7001811F2 /* NSWindow+BXWindowDimensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35260F56C7B7001811F2 /* NSWindow+BXWindowDimensions.m */; };
 		9FBC35360F56C7B7001811F2 /* BXGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35280F56C7B7001811F2 /* BXGeometry.m */; };
 		9FBC3C160F56D6E8001811F2 /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C140F56D6E8001811F2 /* SDL.framework */; };
 		9FBC3C170F56D6E9001811F2 /* SDL_net.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C150F56D6E8001811F2 /* SDL_net.framework */; };
@@ -975,7 +975,7 @@
 		9FBC35160F56C7B7001811F2 /* BXEmulator+BXShell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXEmulator+BXShell.h"; sourceTree = "<group>"; };
 		9FBC35170F56C7B7001811F2 /* BXDOSWindow.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = BXDOSWindow.h; sourceTree = "<group>"; };
 		9FBC35180F56C7B7001811F2 /* BXDOSWindowController.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = BXDOSWindowController.h; sourceTree = "<group>"; };
-		9FBC35190F56C7B7001811F2 /* NSWindow+BXWindowSizing.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = "NSWindow+BXWindowSizing.h"; sourceTree = "<group>"; };
+		9FBC35190F56C7B7001811F2 /* NSWindow+BXWindowDimensions.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = "NSWindow+BXWindowDimensions.h"; sourceTree = "<group>"; };
 		9FBC351B0F56C7B7001811F2 /* BXGeometry.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = BXGeometry.h; sourceTree = "<group>"; };
 		9FBC351D0F56C7B7001811F2 /* BXAboutController.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = BXAboutController.m; sourceTree = "<group>"; };
 		9FBC351E0F56C7B7001811F2 /* BXAppController.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = BXAppController.m; sourceTree = "<group>"; };
@@ -983,7 +983,7 @@
 		9FBC35230F56C7B7001811F2 /* BXEmulator+BXShell.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "BXEmulator+BXShell.mm"; sourceTree = "<group>"; };
 		9FBC35240F56C7B7001811F2 /* BXDOSWindow.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = BXDOSWindow.m; sourceTree = "<group>"; };
 		9FBC35250F56C7B7001811F2 /* BXDOSWindowController.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = BXDOSWindowController.m; sourceTree = "<group>"; };
-		9FBC35260F56C7B7001811F2 /* NSWindow+BXWindowSizing.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = "NSWindow+BXWindowSizing.m"; sourceTree = "<group>"; };
+		9FBC35260F56C7B7001811F2 /* NSWindow+BXWindowDimensions.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = "NSWindow+BXWindowDimensions.m"; sourceTree = "<group>"; };
 		9FBC35280F56C7B7001811F2 /* BXGeometry.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; path = BXGeometry.m; sourceTree = "<group>"; };
 		9FBC3A7F0F56CEA2001811F2 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		9FBC3C140F56D6E8001811F2 /* SDL.framework */ = {isa = PBXFileReference; comments = "This is the stock SDL 1.2.14 framework, downloaded from http://www.libsdl.org/"; lastKnownFileType = wrapper.framework; path = SDL.framework; sourceTree = "<group>"; };
@@ -2105,8 +2105,6 @@
 				9F0F9EEE1210901800ED7A64 /* BXMountedVolumesError.m */,
 				9FC7481F122A7C8B00E86E6A /* BXPathEnumerator.h */,
 				9FC74820122A7C8B00E86E6A /* BXPathEnumerator.m */,
-				9FBC35190F56C7B7001811F2 /* NSWindow+BXWindowSizing.h */,
-				9FBC35260F56C7B7001811F2 /* NSWindow+BXWindowSizing.m */,
 				9FC8B071121807AD004F6DA2 /* NSView+BXDrawing.h */,
 				9FC8B072121807AD004F6DA2 /* NSView+BXDrawing.m */,
 				9FC8F50A10934F3400AD6307 /* NSString+BXPaths.h */,
@@ -2123,6 +2121,8 @@
 				9F9FE70310FA5F5800E3944B /* NSWorkspace+BXIcons.m */,
 				9F6193191233D8F000F35AB4 /* BXTabbedWindowController.h */,
 				9F61931A1233D8F000F35AB4 /* BXTabbedWindowController.m */,
+				9FBC35190F56C7B7001811F2 /* NSWindow+BXWindowDimensions.h */,
+				9FBC35260F56C7B7001811F2 /* NSWindow+BXWindowDimensions.m */,
 				9FD23D53129AE3B600B2100B /* NSWindow+BXWindowEffects.h */,
 				9FD23D54129AE3B600B2100B /* NSWindow+BXWindowEffects.m */,
 				9F8F482313DC74CA00C7E022 /* NSShadow+BXShadowExtensions.h */,
@@ -2655,7 +2655,7 @@
 				9FBC35310F56C7B7001811F2 /* BXEmulator+BXShell.mm in Sources */,
 				9FBC35320F56C7B7001811F2 /* BXDOSWindow.m in Sources */,
 				9FBC35330F56C7B7001811F2 /* BXDOSWindowController.m in Sources */,
-				9FBC35340F56C7B7001811F2 /* NSWindow+BXWindowSizing.m in Sources */,
+				9FBC35340F56C7B7001811F2 /* NSWindow+BXWindowDimensions.m in Sources */,
 				9FBC35360F56C7B7001811F2 /* BXGeometry.m in Sources */,
 				9F1D50010F5C0966009F0AB9 /* BXEmulator.mm in Sources */,
 				9FBB86850F5DD070008418E6 /* BXLayerRenderingView.m in Sources */,

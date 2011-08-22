@@ -934,18 +934,4 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	}
 }
 
-
-#pragma mark -
-#pragma mark Event-related methods
-
-//TODO: make this a class method on NSWindow instead
-- (NSWindow *) windowAtPoint: (NSPoint)screenPoint
-{
-	for (NSWindow *window in [NSApp windows])
-	{
-		if ([window isVisible] && NSPointInRect(screenPoint, window.frame)) return window;
-	}
-	return nil;
-}
-
 @end

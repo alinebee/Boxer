@@ -21,7 +21,7 @@
 #import "BXSession+BXDragDrop.h"
 #import "BXImportSession.h"
 
-#import "NSWindow+BXWindowSizing.h"
+#import "NSWindow+BXWindowDimensions.h"
 #import "BXGeometry.h"
 
 

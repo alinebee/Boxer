@@ -181,12 +181,4 @@ enum {
 //Open a new email to the address given by the specified Info.plist key, with the specified subject line.
 - (void) sendEmailFromKey:(NSString *)infoKey withSubject: (NSString *)subject;
 
-
-#pragma mark -
-#pragma mark Miscellaneous helpers
-
-//Return the NSWindow located at the specified point.
-//TODO: this should probably be an NSApplication category instead.
-- (NSWindow *) windowAtPoint: (NSPoint)screenPoint;
-
 @end

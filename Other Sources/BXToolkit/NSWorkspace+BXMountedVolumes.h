@@ -19,6 +19,11 @@ extern NSString * const HFSVolumeType;
 
 
 @interface NSWorkspace (BXMountedVolumes)
+
+//Returns whether the volume at the specified file path is visible in Finder.
+//If this is NO, it means the volume has been mounted hidden (and should probably be ignored.)
+- (BOOL) volumeIsVisibleAtPath: (NSString *)path;
+
 //Returns all mounted filesystems of the specified filesystem type.
 - (NSArray *) mountedVolumesOfType: (NSString *)volumeType;
 

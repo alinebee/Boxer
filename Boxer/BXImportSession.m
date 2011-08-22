@@ -741,8 +741,10 @@
 	//Determine how we should import the source files
 	//-----------------------------------------------
 
-	//If the source path no longer exists, it means the user probably ejected the disk and we can't import it.
-	//FIXME: make this properly handle the case where the source path was a mounted volume for a disc image.
+	//If the source path no longer exists, it means the user probably
+    //ejected the disk and we can't import it.
+	//FIXME: make this properly handle the case where the source path
+    //was a mounted volume for a disc image.
 	if (![manager fileExistsAtPath: [self sourcePath]])
 	{
 		//Skip straight to cleanup
@@ -750,8 +752,9 @@
 		return;
 	}
 	
-	//If there are already drives in the gamebox other than C, it means the user did their own importing
-	//and we shouldn't interfere with their work
+	//If there are already drives in the gamebox other than C,
+    //it means the user did their own importing and we shouldn't
+    //interfere with their work
 	NSArray *alreadyBundledVolumes = [[self gamePackage] volumesOfTypes: bundleableTypes];
 	if ([alreadyBundledVolumes count] > 1) //There will always be a volume for the C drive
 	{
@@ -761,16 +764,20 @@
 	}
 	
 	
-	//At this point, all the edge cases are out of the way and we know we'll need to import something.
-	//Now we need to decide exactly what we're importing, and how we should import it.
+	//At this point, all the edge cases are out of the way
+    //and we know we'll need to import something.
+	//Now we need to decide exactly what we're importing,
+    //and how we should import it.
 	
 	BXDrive *driveToImport = nil;
 	BXOperation *importOperation = nil;
 	BXSourceFileImportType importType = BXImportTypeUnknown;
 	
 	BOOL didInstallFiles = [self gameDidInstall];
-	BOOL isMountableImage = [workspace file: [self sourcePath] matchesTypes: [BXAppController mountableImageTypes]];
-	BOOL isMountableFolder = !isMountableImage && [workspace file: [self sourcePath] matchesTypes: [BXAppController mountableFolderTypes]];
+	BOOL isMountableImage = [workspace file: [self sourcePath]
+                               matchesTypes: [BXAppController mountableImageTypes]];
+	BOOL isMountableFolder = !isMountableImage && [workspace file: [self sourcePath]
+                                                     matchesTypes: [BXAppController mountableFolderTypes]];
 	
 	//If the source path is directly bundleable (it is an image or a mountable folder)
 	//then import it as a new drive into the gamebox.
@@ -806,6 +813,11 @@
 		}
 		importOperation = [self importOperationForDrive: driveToImport startImmediately: NO];
 	}
+    
+    //Otherwise, we need to decide if the source path represents an already-installed
+    //game folder (which should be imported directly to the C drive) or whether it
+    //represents the original install media (which should be imported as a separate
+    //CD-ROM/floppy disk.)
 	else
 	{
 		NSString *volumePath = [workspace volumeForPath: [self sourcePath]];
@@ -814,8 +826,9 @@
 		BOOL isRealCDROM = [volumeType isEqualToString: dataCDVolumeType];
 		BOOL isRealFloppy = !isRealCDROM && [volumeType isEqualToString: FATVolumeType] && [workspace isFloppySizedVolumeAtPath: volumePath];
 		
-		//If the installer copied files to our C drive, or the source files are on a CDROM/floppy volume,
-		//then the source files should be imported as a new CD-ROM/floppy disk.
+		//If the installer copied files to our C drive, or the source files are on
+        //a CDROM/floppy volume, then the source files presumably represent the original
+        //install media and should be imported as a new CD-ROM/floppy disk.
 		if (didInstallFiles || isRealCDROM || isRealFloppy)
 		{
 			NSString *pathToImport = [self sourcePath];
@@ -859,8 +872,9 @@
 		{
 			importType = BXImportFromPreInstalledGame;
 			
-			//Guess whether the game files expect to be located in the root of drive C (GOG games, Steam games etc.)
-			//or in a subfolder within drive C (almost everything else)
+			//Guess whether the game files expect to be located in the root of drive C
+            //(GOG games, Steam games etc.) or in a subfolder within drive C
+            //(almost everything else)
 			BOOL needsSubfolder = [[self class] shouldUseSubfolderForSourceFilesAtPath: [self sourcePath]];
 			
 			if (needsSubfolder)
@@ -880,6 +894,8 @@
 			}
 			else
 			{
+                //Otherwise, remove the old empty C drive we created and import
+                //the source path as a new C drive in its place.
 				[manager removeItemAtPath: [self rootDrivePath] error: nil];
 				driveToImport	= [BXDrive hardDriveFromPath: [self sourcePath] atLetter: @"C"];
 				importOperation	= [self importOperationForDrive: driveToImport startImmediately: NO];
@@ -890,6 +906,7 @@
 	//Set up the import operation and start it running.
 	[self setSourceFileImportType: importType];
 	[self setSourceFileImportOperation: importOperation];
+    
 	//If the gamebox is empty, then we need to import the source files for it to work at all;
 	//so make cancelling the drive import cancel the rest of the import as well.
 	[self setSourceFileImportRequired: !didInstallFiles];
@@ -900,10 +917,10 @@
 
 - (BOOL) sourceFileImportRequired
 {
-	//TWEAK: we require source files to be imported in all cases except when importing from physical CD.
+	//We require source files to be imported in all cases except when importing from physical CD.
 	//This is because that's the only situation that doesn't suck to recover from, if it turns
-	//out the game needs the CD (because you can just keep it in the drive and it's happy.)
-	//TODO: make this decision more formal and/or move it up into importSourceFiles.
+	//out the game needs the CD (because you can just keep it in the drive and Boxer's happy.)
+	//TODO: make this decision more formal and/or move it upstairs into importSourceFiles.
 	return sourceFileImportRequired || (sourceFileImportType != BXImportFromCDVolume);
 	//return sourceFileImportRequired || (sourceFileImportType == BXImportTypeUnknown);
 }
@@ -1015,8 +1032,10 @@
 	[self setImportStage: BXImportSessionCleaningGamebox];
 
 	NSSet *bundleableTypes = [[BXAppController mountableFolderTypes] setByAddingObjectsFromSet: [BXAppController mountableImageTypes]];
-	//Special case to catch GOG's standalone .GOG images (which are just renamed ISOs)
-	NSSet *gogImageTypes = [NSSet setWithObject:@"com.gog.gog-disk-image"];
+    
+    //Special case to catch GOG's standalone .GOG images (which are just renamed ISOs)
+	NSSet *gogImageTypes = [NSSet setWithObject: @"com.gog.gog-disk-image"];
+    
 	
 	NSFileManager *manager	= [NSFileManager defaultManager];
 	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
@@ -1041,6 +1060,14 @@
 		}
 		
 		BOOL isBundleable = [workspace file: path matchesTypes: bundleableTypes];
+        
+        //TWEAK: exclude .img images from the bundleable types, because it is more
+        //likely that these are regular resource files for a DOS game, not actual images.
+        //TODO: validate whether each image is actually a proper image, regardless
+        //of file extension.
+        if (isBundleable && [[[path pathExtension] lowercaseString] isEqualToString: @"img"])
+            isBundleable = NO;
+        
 		BOOL isGOGImage = !isBundleable && [workspace file: path matchesTypes: gogImageTypes];
 		
 		//If this file is a mountable type, move it into the gamebox's root folder where we can find it

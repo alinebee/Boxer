@@ -291,12 +291,13 @@ typedef NSUInteger BXDriveMountOptions;
 //Returns whether the specified drives are allowed to be unmounted.
 //This may display a confirmation sheet and return NO.
 - (BOOL) shouldUnmountDrives: (NSArray *)selectedDrives
+                usingOptions: (BXDriveMountOptions)options
                       sender: (id)sender;
 
 //Called when the "are you sure you want to unmount this drive?" alert is closed.
 - (void) drivesInUseAlertDidEnd: (BXDrivesInUseAlert *)alert
 					 returnCode: (NSInteger)returnCode
-					  forDrives: (NSArray *)selectedDrives;
+                    contextInfo: (NSDictionary *)contextInfo;
 
 
 #pragma mark -

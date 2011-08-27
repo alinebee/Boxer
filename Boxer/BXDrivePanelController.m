@@ -25,6 +25,7 @@
 //The segment indexes of the drive options control
 enum {
 	BXAddDriveSegment			= 0,
+	BXRemoveDrivesSegment		= 1,
 	BXToggleDrivesSegment		= 1,
 	BXDriveActionsMenuSegment	= 2
 };
@@ -136,13 +137,15 @@ enum {
     }
     
     [[self driveControls] setEnabled: (session != nil)  forSegment: BXAddDriveSegment];
-    [[self driveControls] setEnabled: hasSelection      forSegment: BXToggleDrivesSegment];
+    [[self driveControls] setEnabled: hasSelection      forSegment: BXRemoveDrivesSegment];
     [[self driveControls] setEnabled: hasSelection      forSegment: BXDriveActionsMenuSegment];
     
+    /*
     NSString *toggleImageName = (!hasSelection || selectionContainsMountedDrives) ? @"EjectTemplate" : @"InsertTemplate";
     NSImage *toggleImage = [NSImage imageNamed: toggleImageName];
     [[self driveControls] setImage: toggleImage
                         forSegment: BXToggleDrivesSegment];
+     */
 }
 
 
@@ -196,8 +199,8 @@ enum {
 			[self showMountPanel: sender];
 			break;
 			
-		case BXToggleDrivesSegment:
-			[self toggleSelectedDrives: sender];
+		case BXRemoveDrivesSegment:
+			[self removeSelectedDrives: sender];
 			break;
 			
 		case BXDriveActionsMenuSegment:
@@ -273,7 +276,9 @@ enum {
 - (BOOL) _unmountDrives: (NSArray *)drives options: (BXDriveMountOptions)options
 {
     BXSession *session = [[NSApp delegate] currentSession];
-	if ([session shouldUnmountDrives: drives sender: self])
+	if ([session shouldUnmountDrives: drives
+                        usingOptions: options
+                              sender: self])
     {
         NSError *unmountError = nil;
 		[session unmountDrives: drives
@@ -469,9 +474,9 @@ enum {
         
         NSString *title;
         if (selectionContainsMountedDrives)
-            title = NSLocalizedString(@"Eject", @"Label for drive panel menu item to eject selected drives.");
+            title = NSLocalizedString(@"Deactivate", @"Label for drive panel menu item to eject selected drives.");
         else
-            title = NSLocalizedString(@"Open", @"Label for drive panel menu item to remount selected drives.");
+            title = NSLocalizedString(@"Activate", @"Label for drive panel menu item to remount selected drives.");
         
         [theItem setTitle: title];
         

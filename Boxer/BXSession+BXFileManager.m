@@ -373,7 +373,9 @@
     [self _mountQueuedSiblingsAtOffset: -1];
 }
 
-- (BOOL) shouldUnmountDrives: (NSArray *)selectedDrives sender: (id)sender
+- (BOOL) shouldUnmountDrives: (NSArray *)selectedDrives 
+                usingOptions: (BXDriveMountOptions)options
+                      sender: (id)sender
 {
 	//If the Option key was held down, bypass this check altogether and allow any drive to be unmounted
 	NSUInteger optionKeyDown = [[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask;
@@ -385,8 +387,9 @@
         //If the drive isn't mounted anyway, then ignore it
         //(we may receive a mix of mounted and unmounted drives)
         if (![self driveIsMounted: drive]) continue;
-            
-		if ([drive isLocked]) return NO; //Prevent locked drives from being removed altogether
+        
+        //Prevent locked drives from being removed altogether
+		if ([drive isLocked]) return NO;
 		
 		//If a program is running and the drive is in use, then warn about it
 		if (![[self emulator] isAtPrompt] && [[self emulator] driveInUseAtLetter: [drive letter]])
@@ -403,10 +406,15 @@
 			sheetWindow = [sender window];
 		else sheetWindow = [self windowForSheet]; 
 		
+        NSDictionary *contextInfo = [[NSDictionary alloc] initWithObjectsAndKeys:
+                                     selectedDrives, @"drives",
+                                     [NSNumber numberWithInteger: options], @"options",
+                                     nil];
+        
 		[alert beginSheetModalForWindow: sheetWindow
 						  modalDelegate: self
-						 didEndSelector: @selector(drivesInUseAlertDidEnd:returnCode:forDrives:)
-							contextInfo: selectedDrives];
+						 didEndSelector: @selector(drivesInUseAlertDidEnd:returnCode:contextInfo:)
+							contextInfo: contextInfo];
 
 		return NO;
 	}
@@ -415,16 +423,18 @@
 
 - (void) drivesInUseAlertDidEnd: (BXDrivesInUseAlert *)alert
 					 returnCode: (NSInteger)returnCode
-					  forDrives: (NSArray *)selectedDrives
+                    contextInfo: (NSDictionary *)contextInfo
 {
-	[alert release];
 	if (returnCode == NSAlertFirstButtonReturn)
     {
+        NSArray *selectedDrives = [contextInfo objectForKey: @"drives"];
+        BXDriveMountOptions options = [[contextInfo objectForKey: @"options"] unsignedIntegerValue];
+        
         //It's OK to force removal here since we've already gotten permission
         //from the user to eject in-use drives.
         NSError *unmountError = nil;
         [self unmountDrives: selectedDrives
-                    options: BXDefaultDriveUnmountOptions | BXDriveForceUnmounting
+                    options: options | BXDriveForceUnmounting
                       error: &unmountError];
         
         if (unmountError)
@@ -437,6 +447,8 @@
                    contextInfo: NULL];
         }
     }
+    [alert release];
+	[contextInfo release];
 }
 
 

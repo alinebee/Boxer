@@ -11,6 +11,7 @@
 #import "BXDrive.h"
 #import "BXDrivePanelController.h"
 #import "BXGeometry.h"
+#import "NSShadow+BXShadowExtensions.h"
 
 
 //The tags of the component parts of drive item views
@@ -171,6 +172,66 @@ enum {
 			 fromRect: NSZeroRect
 			operation: NSCompositeSourceOver
 			 fraction: opacity];
+}
+@end
+
+
+@implementation BXDriveLetterCell
+
+- (BOOL) drawsBackground
+{
+    return NO;
+}
+
+- (NSColor *) backgroundColor
+{
+    if ([self isEnabled])
+        return [NSColor whiteColor];
+    else
+        return [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.5f];
+}
+
+- (NSShadow *) dropShadow
+{
+    return [NSShadow shadowWithBlurRadius: 3.0f offset: NSMakeSize(0, -1.0f)];
+}
+
+- (void) drawInteriorWithFrame: (NSRect)frame inView: (NSView *)controlView
+{
+    NSShadow *dropShadow = [self dropShadow];
+    NSRect frameForShadow = [dropShadow insetRectForShadow: frame];
+    CGFloat cornerRadius = frameForShadow.size.height / 2;
+    NSBezierPath *pill = [NSBezierPath bezierPathWithRoundedRect: frameForShadow
+                                                         xRadius: cornerRadius
+                                                         yRadius: cornerRadius];
+    
+    //We render the drive letter knocked out on a solid background.
+    //To do this, we first render the regular text to a temporary image, and then
+    //the pill on top with a special compositing mode to knock out the drive letter.
+    //We can then draw the rendered pill into the final view context.
+    //(If we tried to draw everything directly into the view, we'd get really screwy
+    //knockout effects and weird shadow behaviour and basically it just won't work.)
+    
+    NSImage *tempImage = [[NSImage alloc] init];
+    [tempImage setSize: frame.size];
+    [tempImage lockFocus];
+        [super drawInteriorWithFrame: frame inView: controlView];
+        
+        [[NSGraphicsContext currentContext] setCompositingOperation: NSCompositeSourceOut];
+    
+        [[self backgroundColor] set];
+        [pill fill];
+    [tempImage unlockFocus];
+    
+    [[NSGraphicsContext currentContext] saveGraphicsState];
+        [[self dropShadow] set];
+        [tempImage drawInRect: frame
+                     fromRect: NSZeroRect
+                    operation: NSCompositeSourceOver
+                     fraction: 1.0f];
+    [[NSGraphicsContext currentContext] restoreGraphicsState];
+    
+    [tempImage release];
 }
 @end
 

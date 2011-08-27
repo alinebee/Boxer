@@ -461,7 +461,7 @@ enum {
     {
         if (!hasSelection) return NO;
         
-        //Update the title to reflect whether this will adding or remove drives
+        //Update the title to reflect whether this will add or remove drives
         BOOL selectionContainsMountedDrives = NO;
         for (BXDrive *drive in selectedDrives)
         {

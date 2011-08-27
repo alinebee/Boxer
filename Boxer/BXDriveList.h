@@ -66,3 +66,8 @@
 }
 @property (assign, getter=isHovered) BOOL hovered;
 @end
+
+
+//A custom appearance for drive labels.
+@interface BXDriveLetterCell : NSTextFieldCell
+@end

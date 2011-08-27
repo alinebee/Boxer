@@ -474,9 +474,9 @@ enum {
         
         NSString *title;
         if (selectionContainsMountedDrives)
-            title = NSLocalizedString(@"Deactivate", @"Label for drive panel menu item to eject selected drives.");
+            title = NSLocalizedString(@"Eject", @"Label for drive panel menu item to eject selected drives.");
         else
-            title = NSLocalizedString(@"Activate", @"Label for drive panel menu item to remount selected drives.");
+            title = NSLocalizedString(@"Open", @"Label for drive panel menu item to remount selected drives.");
         
         [theItem setTitle: title];
         

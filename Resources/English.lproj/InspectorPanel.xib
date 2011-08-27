@@ -1278,7 +1278,7 @@
 																		<string key="NSResourceName">NSRemoveTemplate</string>
 																	</object>
 																	<string key="NSSegmentItemLabel"/>
-																	<string key="NSSegmentItemTooltip">Eject selected drives</string>
+																	<string key="NSSegmentItemTooltip">Remove selected drives from list</string>
 																	<int key="NSSegmentItemTag">1</int>
 																	<int key="NSSegmentItemImageScaling">0</int>
 																</object>

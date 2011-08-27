@@ -254,13 +254,9 @@
 - (BOOL) shouldShowDriveNotifications
 {
     //Suppress drive notifications while the Drive Inspector panel is open.
-    //Disabled for now; there's enough extra info provided by the bezels that
-    //they aren't redundant to show while the inspector is open.
     
-    //BXInspectorController *inspector = [BXInspectorController controller];
-    //return !([inspector panelShown] && [inspector selectedTabViewItemIndex] == BXDriveInspectorPanelTag);
-
-    return YES;
+    BXInspectorController *inspector = [BXInspectorController controller];
+    return !([inspector panelShown] && [inspector selectedTabViewItemIndex] == BXDriveInspectorPanelTag);
 }
 
 - (void) showDriveAddedBezelForDrive: (BXDrive *)drive

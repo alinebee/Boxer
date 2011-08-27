@@ -44,7 +44,7 @@
 	[openPanel setCanChooseFiles: YES];
 	[openPanel setCanChooseDirectories: YES];
 	[openPanel setTreatsFilePackagesAsDirectories: YES];
-	[openPanel setMessage:	NSLocalizedString(@"Choose a folder, CD-ROM or disc image to add as a new DOS drive.", @"Help text shown at the top of mount-a-new-drive panel.")];
+	[openPanel setMessage:	NSLocalizedString(@"Choose a folder, CD-ROM or disc image to add as a DOS drive.", @"Help text shown at the top of mount-a-new-drive panel.")];
 	[openPanel setPrompt:	NSLocalizedString(@"Add drive", @"Label shown on accept button in mount-a-new-drive panel.")];
 	
 	[openPanel setAccessoryView: [self view]];

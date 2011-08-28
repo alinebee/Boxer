@@ -16,4 +16,13 @@
 //although it will work with any image.
 - (NSImage *) maskedImageWithColor: (NSColor *)color atSize: (NSSize)targetSize;
 
+//A partial implementation of 10.6's drawInRect:fromRect:operation:fraction:respectFlipped:hints
+//for 10.5. This does not support rendering hints but will correctly respect the graphics
+//context's flipped status.
+- (void) drawInRect: (NSRect)dstSpacePortionRect
+           fromRect: (NSRect)srcSpacePortionRect
+          operation: (NSCompositingOperation)op 
+           fraction: (CGFloat)requestedAlpha
+     respectFlipped: (BOOL)respectContextIsFlipped;
+
 @end

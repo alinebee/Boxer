@@ -12,6 +12,7 @@
 #import "BXDrivePanelController.h"
 #import "BXGeometry.h"
 #import "NSShadow+BXShadowExtensions.h"
+#import "NSImage+BXImageEffects.h"
 
 
 //The tags of the component parts of drive item views
@@ -231,7 +232,7 @@ enum {
                                                                yRadius: cornerRadius - 0.5f];
     
     
-    //We display the drive letter knocked out on a solid background.
+    //When active, we display the drive letter knocked out on a solid background.
     //To do this, we first render the regular text to a temporary image, and then
     //the pill on top with a special compositing mode to knock out the drive letter.
     //We can then draw the rendered pill into the final view context.
@@ -240,9 +241,9 @@ enum {
     
     NSImage *tempImage = [[NSImage alloc] init];
     [tempImage setSize: frame.size];
+    
     [tempImage lockFocus];
         [super drawInteriorWithFrame: frame inView: controlView];
-    
         if ([self isEnabled])
         {
             [[self backgroundColor] set];
@@ -258,10 +259,12 @@ enum {
     
     [[NSGraphicsContext currentContext] saveGraphicsState];
         [[self dropShadow] set];
+    
         [tempImage drawInRect: frame
                      fromRect: NSZeroRect
                     operation: NSCompositeSourceOver
-                     fraction: 1.0f];
+                     fraction: 1.0f
+               respectFlipped: YES];
     [[NSGraphicsContext currentContext] restoreGraphicsState];
     
     [tempImage release];

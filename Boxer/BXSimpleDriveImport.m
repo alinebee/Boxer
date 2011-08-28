@@ -108,14 +108,43 @@
 #pragma mark -
 #pragma mark The actual operation, finally
 
-- (void) willPerformOperation
+- (void) setDrive: (BXDrive *)newDrive
 {
-	NSString *driveName		= [[self class] nameForDrive: [self drive]];
-	NSString *destination	= [[self destinationFolder] stringByAppendingPathComponent: driveName];
-	
-	[self setSourcePath: [[self drive] path]];
-	[self setDestinationPath: destination];
-	[self setImportedDrivePath: destination];
+    if (![_drive isEqual: newDrive])
+    {
+        [_drive release];
+        _drive = [newDrive retain];
+        
+        [self setSourcePath: [newDrive path]];
+    }
+}
+
+//Automatically populate the destination path the first time we need it,
+//based on the drive and destination folder.
+- (NSString *) destinationPath
+{
+    if (![super destinationPath] && [self drive] && [self destinationFolder])
+    {
+        NSString *driveName		= [[self class] nameForDrive: [self drive]];
+        NSString *destination	= [[self destinationFolder] stringByAppendingPathComponent: driveName];
+        
+        [self setDestinationPath: destination];
+    }
+    return [super destinationPath];
+}
+
+- (void) didPerformOperation
+{
+    //Populate the imported drive path once we're done, assuming nothing went wrong.
+    if (![self error])
+    {
+        [self setImportedDrivePath: [self destinationPath]];
+    }
+}
+
+- (BOOL) succeeded
+{
+    return [super succeeded] && [self importedDrivePath];
 }
 
 - (BOOL) undoTransfer

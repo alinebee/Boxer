@@ -542,13 +542,13 @@
 {
 	BXEmulator *theEmulator = [self emulator];
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	NSArray *volumes = [workspace mountedVolumesOfType: dataCDVolumeType];
+	NSArray *volumes = [workspace mountedVolumesOfType: dataCDVolumeType includingHidden: NO];
 	
 	//If there were no data CD volumes, then check for audio CD volumes and mount them instead
 	//(We avoid doing this if there were data CD volumes, since the audio CDs will then be used
 	//as 'shadow' audio volumes for those data CDs.)
 	if (![volumes count])
-		volumes = [workspace mountedVolumesOfType: audioCDVolumeType];
+		volumes = [workspace mountedVolumesOfType: audioCDVolumeType includingHidden: NO];
     
     NSMutableArray *mountedDrives = [NSMutableArray arrayWithCapacity: 10];
 	for (NSString *volume in volumes)
@@ -580,7 +580,7 @@
 - (NSArray *) mountFloppyVolumesWithError: (NSError **)outError
 {
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	NSArray *volumePaths = [workspace mountedVolumesOfType: FATVolumeType];
+	NSArray *volumePaths = [workspace mountedVolumesOfType: FATVolumeType includingHidden: NO];
 	BXEmulator *theEmulator = [self emulator];
     
     NSMutableArray *mountedDrives = [NSMutableArray arrayWithCapacity: 10];
@@ -726,7 +726,6 @@
     //Sanity check: BXDriveReassign cannot be used along with
     //BXDriveKeepWithSameType, so clear that flag.
     if (conflictBehaviour == BXDriveReassign) options &= ~BXDriveKeepWithSameType;
-    
     
     //If the drive doesn't have a specific drive letter,
     //determine one now based on the specified options.

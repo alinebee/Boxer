@@ -26,9 +26,9 @@ NSString * const HFSVolumeType		= @"hfs";
 
 @implementation NSWorkspace (BXMountedVolumes)
 
-- (NSArray *) mountedVolumesOfType: (NSString *)requiredType
+- (NSArray *) mountedVolumesOfType: (NSString *)requiredType includingHidden: (BOOL)hidden
 {
-	NSArray *volumes		= [self mountedLocalVolumePaths];
+	NSArray *volumes		= [self mountedLocalVolumePathsIncludingHidden: hidden];
 	NSMutableArray *matches	= [NSMutableArray arrayWithCapacity: 5];
 	
 	NSString *volumePath, *volumeType;
@@ -41,24 +41,30 @@ NSString * const HFSVolumeType		= @"hfs";
 	return matches;
 }
 
-- (BOOL) volumeIsVisibleAtPath: (NSString *)path
+- (NSArray *) mountedLocalVolumePathsIncludingHidden: (BOOL)hidden
 {
     NSFileManager *manager = [NSFileManager defaultManager];
-    
     //10.6 and above
     if ([manager respondsToSelector: @selector(mountedVolumeURLsIncludingResourceValuesForKeys:options:)])
     {
+        NSVolumeEnumerationOptions options = (hidden) ? 0 : NSVolumeEnumerationSkipHiddenVolumes;
         NSArray *volumeURLs = [manager mountedVolumeURLsIncludingResourceValuesForKeys: nil
-                                                                              options: NSVolumeEnumerationSkipHiddenVolumes];
+                                                                               options: options];
         
-        NSURL *fileURL = [NSURL fileURLWithPath: path];
-        return [volumeURLs containsObject: fileURL];
+        
+        return [volumeURLs valueForKey: @"path"];
     }
     //10.5 and below
+    //NOTE: there appears to be no way to detect whether a volume is hidden in 10.5.
     else 
     {
-        return [[self mountedLocalVolumePaths] containsObject: path];
+        return [self mountedLocalVolumePaths];
     }
+}
+
+- (BOOL) volumeIsVisibleAtPath: (NSString *)path
+{   
+    return [[self mountedLocalVolumePathsIncludingHidden: NO] containsObject: path];
 }
 
 - (NSString *) volumeTypeForPath: (NSString *)path
@@ -89,13 +95,13 @@ NSString * const HFSVolumeType		= @"hfs";
     //to make sure we get the right volume (and not a parent volume)
     //TODO: make this use mountedVolumeURLsIncludingResourceValuesForKeys:options
     //so that it'll pick up all available volumes on 10.6+
-	NSArray *volumes		= [self mountedLocalVolumePaths];
+	NSArray *volumes		= [self mountedLocalVolumePathsIncludingHidden: YES];
 	NSArray *sortedVolumes	= [volumes sortedArrayUsingSelector: @selector(pathDepthCompare:)];
 	
     //TWEAK: if the path is located within /Volumes/, don't return the
     //root directory if we can't find the path anywhere in /Volumes/.
-    //(That would indicate that the volume is hidden or in some other
-    //way unavailable, and deserves a nil.)
+    //(That would indicate that the volume is in some way unavailable,
+    //and that deserves a nil.)
     BOOL restrictToVolumes = [path isRootedInPath: volumesBasePath];
     
 	for (NSString *volumePath in [sortedVolumes reverseObjectEnumerator])
@@ -197,10 +203,10 @@ NSString * const HFSVolumeType		= @"hfs";
 {
 	NSString *resolvedPath	= [volumePath stringByStandardizingPath];
 	
-	//Optimisation: if the path is not in mountedRemovableMedia,
-	//assume it doesn't have a source image and don't check further
-	NSArray *removableMedia = [self mountedRemovableMedia];
-	if ([removableMedia containsObject: resolvedPath])
+	//Optimisation: if the path is not a known volume, assume
+    //it doesn't have a source image and don't check further
+	NSArray *knownVolumes = [self mountedLocalVolumePathsIncludingHidden: YES];
+	if ([knownVolumes containsObject: resolvedPath])
 	{
 		NSArray *mountedImages = [self mountedImages];	
 		
@@ -284,7 +290,7 @@ NSString * const HFSVolumeType		= @"hfs";
 {
 	audioVolumePath				= [audioVolumePath stringByStandardizingPath];
 	NSString *audioDeviceName	= [self BSDNameForVolumePath: audioVolumePath];
-	NSArray *dataVolumes		= [self mountedVolumesOfType: dataCDVolumeType];
+	NSArray *dataVolumes		= [self mountedVolumesOfType: dataCDVolumeType includingHidden: YES];
 	
 	for (NSString *dataVolumePath in dataVolumes)
 	{
@@ -298,7 +304,7 @@ NSString * const HFSVolumeType		= @"hfs";
 {
 	dataVolumePath				= [dataVolumePath stringByStandardizingPath];
 	NSString *dataDeviceName	= [self BSDNameForVolumePath: dataVolumePath];
-	NSArray *audioVolumes		= [self mountedVolumesOfType: audioCDVolumeType];
+	NSArray *audioVolumes		= [self mountedVolumesOfType: audioCDVolumeType includingHidden: YES];
 	
 	for (NSString *audioVolumePath in audioVolumes)
 	{

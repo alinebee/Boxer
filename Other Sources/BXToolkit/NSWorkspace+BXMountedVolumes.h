@@ -20,12 +20,17 @@ extern NSString * const HFSVolumeType;
 
 @interface NSWorkspace (BXMountedVolumes)
 
+//Returns an array of visible locally mounted volumes.
+//If hidden is YES, or on 10.5, this will also include invisible volumes.
+- (NSArray *) mountedLocalVolumePathsIncludingHidden: (BOOL)hidden;
+
 //Returns whether the volume at the specified file path is visible in Finder.
 //If this is NO, it means the volume has been mounted hidden (and should probably be ignored.)
 - (BOOL) volumeIsVisibleAtPath: (NSString *)path;
 
 //Returns all mounted filesystems of the specified filesystem type.
-- (NSArray *) mountedVolumesOfType: (NSString *)volumeType;
+//If hidden is YES, or on 10.5, this will also include invisible volumes.
+- (NSArray *) mountedVolumesOfType: (NSString *)volumeType includingHidden: (BOOL)hidden;
 
 //Returns the underlying filesystem type of the specified path.
 - (NSString *) volumeTypeForPath: (NSString *)path;

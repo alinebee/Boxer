@@ -136,7 +136,7 @@
 		//Initialise properties to sensible defaults
 		[self setType:			BXDriveHardDisk];
 		[self setFreeSpace:		BXDefaultFreeSpace];
-		[self setUsesCDAudio:	YES];
+		[self setUsesCDAudio:	NO];
 		[self setReadOnly:		NO];
 		pathAliases = [[NSMutableSet alloc] initWithCapacity: 1];
 	}
@@ -145,6 +145,8 @@
 
 - (id) initFromPath: (NSString *)drivePath atLetter: (NSString *)driveLetter withType: (BXDriveType)driveType
 {
+    NSAssert1(!(drivePath == nil && driveType != BXDriveInternal), @"Nil drive path passed to BXDrive -initFromPath:atLetter:withType:. Drive type was %i, which is not permitted to have an empty drive path.", driveType);
+    
 	if ((self = [self init]))
 	{
 		if (driveLetter) [self setLetter: driveLetter];

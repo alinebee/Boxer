@@ -54,7 +54,7 @@
 
 - (BOOL) shouldPerformOperation
 {
-    return [super shouldPerformOperation] && [self task];
+    return [super shouldPerformOperation];// && [self task];
 }
 
 - (void) performOperation

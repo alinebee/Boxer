@@ -136,7 +136,7 @@
 		//Initialise properties to sensible defaults
 		[self setType:			BXDriveHardDisk];
 		[self setFreeSpace:		BXDefaultFreeSpace];
-		[self setUsesCDAudio:	NO];
+		[self setUsesCDAudio:	YES];
 		[self setReadOnly:		NO];
 		pathAliases = [[NSMutableSet alloc] initWithCapacity: 1];
 	}

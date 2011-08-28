@@ -52,11 +52,6 @@
 #pragma mark -
 #pragma mark Task execution
 
-- (BOOL) shouldPerformOperation
-{
-    return [super shouldPerformOperation];// && [self task];
-}
-
 - (void) performOperation
 {
 	[[self task] launch];

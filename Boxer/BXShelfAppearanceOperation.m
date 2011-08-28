@@ -65,7 +65,7 @@
 }
 
 - (void) main
-{	
+{
 	NSAssert(targetPath != nil, @"BXShelfAppearanceApplicator started without target path.");
 	
 	//Bail out early if already cancelled

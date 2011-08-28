@@ -83,10 +83,14 @@
 #pragma mark -
 #pragma mark The actual operation, finally
 
-- (void) main
+
+- (BOOL) shouldPerformOperation
 {
-	if ([self isCancelled]) return;
-	
+    return [super shouldPerformOperation] && [self drive] && [self destinationFolder];
+}
+
+- (void) performOperation
+{	
 	NSString *driveName			= [[self class] nameForDrive: [self drive]];
 	
 	NSString *sourcePath		= [[self drive] path];
@@ -135,9 +139,10 @@
 		
 		[self setPathsToTransfer: transferPaths];		
 		
-		[super main];
+        //Perform the standard file import
+		[super performOperation];
 		
-		if ([self succeeded])
+		if (![self error])
 		{
 			//Once the transfer's finished, generate a revised cue file and write it to the new bundle
 			NSMutableString *revisedCue = [cueContents mutableCopy];
@@ -154,8 +159,8 @@
 			}
 			
 			NSString *finalCuePath = [destinationPath stringByAppendingPathComponent: @"tracks.cue"];
-			NSError *cueError = nil;
 			
+            NSError *cueError = nil;
 			BOOL cueWritten = [revisedCue writeToFile: finalCuePath
 										   atomically: YES
 											 encoding: NSUTF8StringEncoding
@@ -165,7 +170,6 @@
 			if (!cueWritten)
 			{
 				[self setError: cueError];
-				[self setSucceeded: NO];
 			}
 			else if (![self copyFiles])
 			{
@@ -174,7 +178,7 @@
 				[manager removeItemAtPath: sourcePath error: nil];
 			}
 		}
-	}	
+	}
 }
 
 - (BOOL) undoTransfer

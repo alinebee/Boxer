@@ -1351,8 +1351,8 @@
             }
             
             //If there's a scan going on for the same path, then make ours wait for that
-            //one to finish. This prevents image scans from piling up and confusing
-            //the hell out of our volume-mount notification observers.
+            //one to finish. This prevents image scans from piling up and un/re-mounting
+            //drives out of turn.
             else if ([[otherScan basePath] isEqualToString: scanPath] ||
                      [[otherScan mountedVolumePath] isEqualToString: scanPath])
                 [scan addDependency: otherScan];

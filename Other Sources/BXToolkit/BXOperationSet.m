@@ -119,10 +119,8 @@
 }
 
 
-- (void) main
-{
-	if ([self isCancelled]) return;
-	
+- (void) performOperation
+{	
 	NSOperationQueue *queue = [[NSOperationQueue alloc] init];
 
 	//Queue up all transfer operations before letting them all start at once
@@ -157,8 +155,6 @@
 			}
 		}		
 	}
-	
-	[self setSucceeded: [self error] == nil];
 	
 	[queue release];
 }

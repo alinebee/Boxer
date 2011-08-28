@@ -33,9 +33,6 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 @property (readwrite) NSUInteger filesTransferred;
 @property (readwrite, copy) NSString *currentPath;
 
-//Returns whether we can start the transfer. Should also populate @error (but currently doesn't).
-- (BOOL) _canBeginTransfer;
-
 //Start up the FSFileOperation. Returns NO and populates @error if the transfer could not be started.
 - (BOOL) _beginTransfer;
 
@@ -130,39 +127,38 @@ NSString * const BXFileTransferCurrentPathKey		= @"BXFileTransferCurrentPathKey"
 	return [self numBytes] == 0;
 }
 
-- (void) main
-{
-	if (![self _canBeginTransfer]) return;
-	
+- (void) performOperation
+{	
 	//Start up the file transfer, bailing out if it could not be started
-	if (![self _beginTransfer]) return;
-	
-	//Use a timer to poll the FSFileOperation. (This also keeps the runloop below alive.)
-	NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval: [self pollInterval]
-													  target: self
-													selector: @selector(_checkTransferProgress)
-													userInfo: NULL
-													 repeats: YES];
-	
-	//Run the runloop until the transfer is finished, letting the timer call our polling function.
-	//We use a runloop instead of just sleeping, because the runloop lets cancellation messages
-	//get dispatched to us correctly.)
-	while (_stage != kFSOperationStageComplete && [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode
-																		   beforeDate: [NSDate dateWithTimeIntervalSinceNow: [self pollInterval]]])
-	{
-		//Cancel the file operation if we've been cancelled in the meantime
-		//(this will break out of the loop once the file operation finishes)
-		if ([self isCancelled]) FSFileOperationCancel(_fileOp);
+	if ([self _beginTransfer])
+    {
+        //Use a timer to poll the FSFileOperation. (This also keeps the runloop below alive.)
+        NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval: [self pollInterval]
+                                                          target: self
+                                                        selector: @selector(_checkTransferProgress)
+                                                        userInfo: NULL
+                                                         repeats: YES];
+        
+        //Run the runloop until the transfer is finished, letting the timer call our polling function.
+        //We use a runloop instead of just sleeping, because the runloop lets cancellation messages
+        //get dispatched to us correctly.)
+        while (_stage != kFSOperationStageComplete && [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode
+                                                                               beforeDate: [NSDate dateWithTimeIntervalSinceNow: [self pollInterval]]])
+        {
+            //Cancel the file operation if we've been cancelled in the meantime
+            //(this will break out of the loop once the file operation finishes)
+            if ([self isCancelled]) FSFileOperationCancel(_fileOp);
+        }
+        [timer invalidate];
 	}
-	[timer invalidate];
-	
-	[self setSucceeded: [self error] == nil];
 }
 
-- (BOOL) _canBeginTransfer
+- (BOOL) shouldPerformOperation
 {	
-	//Sanity checks: if we have no source or destination path or we're already cancelled, bail out now.
-	if ([self isCancelled] || ![self sourcePath] || ![self destinationPath]) return NO;
+    if (![super shouldPerformOperation]) return NO;
+    
+	//Sanity checks: if we have no source or destination path, bail out now.
+	if (![self sourcePath] || ![self destinationPath]) return NO;
 	
 	//Don't start if the source path doesn't exist.
 	if (![_manager fileExistsAtPath: [self sourcePath]])

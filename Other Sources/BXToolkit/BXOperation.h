@@ -71,7 +71,6 @@ extern NSString * const BXOperationIndeterminateKey;
 	
 	BOOL notifyOnMainThread;
 	
-	BOOL succeeded;
 	NSError *error;
 }
 
@@ -114,11 +113,15 @@ extern NSString * const BXOperationIndeterminateKey;
 //meaningful progress tracking.
 @property (readonly, getter=isIndeterminate) BOOL indeterminate;
 
-//Whether the operation succeeeded or failed. Only relevant once isFinished is YES.
-@property (assign) BOOL succeeded;
+//Whether the operation has succeeeded or failed: only applicable once the operation
+//finishes, though it can be called at any time.
+//In the base implementation, this will return NO if the operation has generated
+//an error, or YES otherwise (even if the operation has not yet finished.)
+//This can be overridden by subclasses.
+@property (readonly) BOOL succeeded;
 
 //Any showstopping error that occurred when performing the operation.
-//Populated once the operation finishes.
+//If this is set, succeeded will be NO.
 @property (retain) NSError *error;
 
 @end
@@ -131,18 +134,32 @@ extern NSString * const BXOperationIndeterminateKey;
 @interface BXOperation ()
 
 //Returns whether the operation has enough information to begin.
-//Base implementation just returns YES; can be overridden by subclasses
-//to restrict starting conditions.
-- (BOOL) canStart;
+//If this returns NO then willPerformOperation, performOperation and
+//didPerformOperation will not be called.
+//The base implementation returns NO if the operation has been cancelled
+//already, YES otherwise; can be overridden by subclasses to further
+//restrict starting conditions.
+//If this returns NO, then main will exit immediately.
+- (BOOL) shouldPerformOperation;
 
-//Called just before main and after OperationWillStartNotifications have been sent.
+//Called at the start of main, just before performOperation and after
+//BXOperationWillStartNotifications have been sent. Will not be called
+//if shouldPerformOperation returned NO. 
 //Base implementation does nothing; intended to be overridden by subclasses.
-- (void) willStart;
+- (void) willPerformOperation;
 
-//Called just after main has exited and before OperationDidFinishNotifications
-//have been sent.
+//Called at the end of main, after performOperation has exited and before
+//BXOperationDidFinishNotifications have been sent. Will not be called if
+//shouldPerformOperation returned NO. 
 //Base implementation does nothing; intended to be overridden by subclasses.
-- (void) didFinish;
+- (void) didPerformOperation;
+
+//Performs the main work of the operation. This is called from BXOperation's main,
+//if shouldPerformOperation returns YES and if the operation has not already been
+//cancelled (e.g. in willPerformOperation.)
+//Base implementation does nothing; intended to be overridden by subclasses.
+- (void) performOperation;
+
 
 //Post one of the corresponding notifications.
 - (void) _sendWillStartNotificationWithInfo: (NSDictionary *)info;

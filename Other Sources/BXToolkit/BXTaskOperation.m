@@ -52,17 +52,13 @@
 #pragma mark -
 #pragma mark Task execution
 
-- (void) main
+- (BOOL) shouldPerformOperation
 {
-	[self runTask];
-	
-	[self setSucceeded: [self error] == nil];
+    return [super shouldPerformOperation] && [self task];
 }
 
-- (void) runTask
+- (void) performOperation
 {
-	if ([self isCancelled] || ![self task]) return;
-	
 	[[self task] launch];
 	
 	[self monitorTask: [self task]

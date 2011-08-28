@@ -138,10 +138,13 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 #pragma mark -
 #pragma mark Task execution
 
-- (void) main
+- (BOOL) shouldPerformOperation
 {
-	if ([self isCancelled] || ![self drive] || ![self destinationFolder]) return;
-	
+    return [super shouldPerformOperation] && [self drive] && [self destinationFolder];
+}
+
+- (void) performOperation
+{	
 	NSString *driveName			= [[self class] nameForDrive: [self drive]];
 	NSString *sourcePath		= [[self drive] path];
 	NSString *destinationPath	= [[self destinationFolder] stringByAppendingPathComponent: driveName];
@@ -276,7 +279,7 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 	[cdrdao release];
 	
 	//Run the task to completion and monitor its progress
-	[self runTask];
+	[super performOperation];
 	
 	//If the image creation went smoothly, do final cleanup
 	if (![self error])
@@ -326,8 +329,6 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 	//Release Disk Arbitration resources
 	CFRelease(disk);
 	CFRelease(session);
-	
-	[self setSucceeded: [self error] == nil];
 }
 
 - (void) checkTaskProgress: (NSTimer *)timer

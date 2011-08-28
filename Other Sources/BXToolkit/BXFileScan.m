@@ -133,10 +133,10 @@ NSString * const BXFileScanLastMatchKey = @"BXFileScanLastMatch";
 	[[self mutableArrayValueForKey: @"matchingPaths"] addObject: relativePath];
 }
 
-- (BOOL) canStart
+- (BOOL) shouldPerformOperation
 {
     //If no base path has been set, we cannot begin
-    return [super canStart] && ([self basePath] != nil);
+    return [super shouldPerformOperation] && ([self basePath] != nil);
 }
 
 - (id <BXFilesystemEnumeration>) enumerator
@@ -144,38 +144,33 @@ NSString * const BXFileScanLastMatchKey = @"BXFileScanLastMatch";
     return (id <BXFilesystemEnumeration>)[manager enumeratorAtPath: [self basePath]];
 }
 
-- (void) main
+- (void) performOperation
 {
     //In case we were cancelled upstairs in willStart
-    if (![self isCancelled])
-    {
-        //Empty the matches before we begin
-        [matchingPaths removeAllObjects];
-        
-        id <BXFilesystemEnumeration> enumerator = [self enumerator];
-        
-        for (NSString *relativePath in enumerator)
-        {
-            if ([self isCancelled]) break;
-            
-            NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-            
-            NSString *fileType = [[enumerator fileAttributes] fileType];
-            if ([fileType isEqualToString: NSFileTypeDirectory])
-            {
-                if (![self shouldScanSubpath: relativePath])
-                    [enumerator skipDescendents];
-            }
-            
-            BOOL keepScanning = [self matchAgainstPath: relativePath];
-            
-            [pool drain];
-            
-            if ([self isCancelled] || !keepScanning) break;
-        }
-    }
+    //Empty the matches before we begin
+    [matchingPaths removeAllObjects];
     
-    [self setSucceeded: ![self error]];
+    id <BXFilesystemEnumeration> enumerator = [self enumerator];
+    
+    for (NSString *relativePath in enumerator)
+    {
+        if ([self isCancelled]) break;
+        
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        
+        NSString *fileType = [[enumerator fileAttributes] fileType];
+        if ([fileType isEqualToString: NSFileTypeDirectory])
+        {
+            if (![self shouldScanSubpath: relativePath])
+                [enumerator skipDescendents];
+        }
+        
+        BOOL keepScanning = [self matchAgainstPath: relativePath];
+        
+        [pool drain];
+        
+        if ([self isCancelled] || !keepScanning) break;
+    }
 }
 
 @end

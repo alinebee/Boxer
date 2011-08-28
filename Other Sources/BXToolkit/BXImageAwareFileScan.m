@@ -45,7 +45,7 @@
     else return [super enumerator];
 }
 
-- (void) willStart
+- (void) willPerformOperation
 {
     NSString *volumePath = nil;
     didMountVolume = NO;
@@ -69,7 +69,6 @@
             if (!volumePath)
             {
                 [self setError: mountError];
-                [self setSucceeded: NO];
                 return;
             }
             else didMountVolume = YES;
@@ -79,7 +78,7 @@
     }    
 }
 
-- (void) didFinish
+- (void) didPerformOperation
 {
     //If we mounted a volume ourselves in order to scan it,
     //or we've been told to always eject, then unmount the volume

@@ -108,10 +108,13 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 	//An ISO rip operation is always a copy, so this is a no-op
 }
 
-- (void) main
+- (BOOL) shouldPerformOperation
 {
-	if ([self isCancelled] || ![self drive] || ![self destinationFolder]) return;
-	
+    return [super shouldPerformOperation] && [self drive] && [self destinationFolder];
+}
+
+- (void) performOperation
+{
 	NSString *driveName			= [[self class] nameForDrive: [self drive]];
 	NSString *sourcePath		= [[self drive] path];
 	NSString *destinationPath	= [[self destinationFolder] stringByAppendingPathComponent: driveName];
@@ -171,7 +174,7 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 	[hdiutil release];
 	
 	//Run the task to completion and monitor its progress
-	[self runTask];
+	[super performOperation];
 	
 	if (![self error])
 	{
@@ -192,8 +195,6 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 			[self setError: [BXCDImageImportRipFailedError errorWithDrive: [self drive]]];
 		}
 	}
-	
-	[self setSucceeded: [self error] == nil];
 	
 	[manager release];
 }

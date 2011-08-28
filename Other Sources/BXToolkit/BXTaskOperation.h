@@ -38,13 +38,9 @@
 #pragma mark -
 #pragma mark Task execution
 
-//Launches the task and calls monitorTask:withProgressCallback:atInterval:
-//with the task, checkTaskProgress: and pollInterval as arguments.
-//Called internally by main.
-- (void) runTask;
 
-//Used by -main to monitor the specified task while running the run loop:
-//returns when cancelled, or when the task finishes of its own accord.
+//Used by -performOperation to monitor the specified task while running the run
+//loop: returns when cancelled, or when the task finishes of its own accord.
 //The selected callback should have the same signature as checkTaskProgress,
 //and will be called periodically at the specified polling interval.
 //It will receive the poll timer with userInfo set to the specified task.

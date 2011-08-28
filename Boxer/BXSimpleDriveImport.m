@@ -108,17 +108,14 @@
 #pragma mark -
 #pragma mark The actual operation, finally
 
-- (void) main
+- (void) willPerformOperation
 {
 	NSString *driveName		= [[self class] nameForDrive: [self drive]];
 	NSString *destination	= [[self destinationFolder] stringByAppendingPathComponent: driveName];
 	
 	[self setSourcePath: [[self drive] path]];
 	[self setDestinationPath: destination];
-	
 	[self setImportedDrivePath: destination];
-	
-	[super main];
 }
 
 - (BOOL) undoTransfer

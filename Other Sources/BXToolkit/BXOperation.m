@@ -26,7 +26,7 @@ NSString * const BXOperationIndeterminateKey	= @"BXOperationIndeterminateKey";
 
 @implementation BXOperation
 @synthesize delegate, contextInfo, notifyOnMainThread;
-@synthesize succeeded, error;
+@synthesize error;
 @synthesize willStartSelector, wasCancelledSelector, inProgressSelector, didFinishSelector;
 
 - (id) init
@@ -52,26 +52,33 @@ NSString * const BXOperationIndeterminateKey	= @"BXOperationIndeterminateKey";
 	[super dealloc];
 }
 
-- (BOOL) canStart
+- (void) start
 {
-    //Don’t bother starting if we were already cancelled
+    [self _sendWillStartNotificationWithInfo: nil];
+    [super start];
+    [self _sendDidFinishNotificationWithInfo: nil];
+}
+
+- (void) main
+{
+    if ([self shouldPerformOperation])
+    {
+        [self willPerformOperation];
+        //In case willPerformOperation has cancelled us already
+        if (![self isCancelled]) [self performOperation];
+        [self didPerformOperation];
+    }
+}
+
+- (BOOL) shouldPerformOperation
+{
+    //Don’t bother starting if we are already cancelled
     return ![self isCancelled];
 }
 
-- (void) willStart {}
-- (void) didFinish {}
-
-- (void) start
-{
-    if ([self canStart])
-    {
-        [self _sendWillStartNotificationWithInfo: nil];
-        [self willStart];
-        [super start];
-        [self didFinish];
-        [self _sendDidFinishNotificationWithInfo: nil];
-    }
-}
+- (void) willPerformOperation {}
+- (void) didPerformOperation {}
+- (void) performOperation {}
 
 - (void) cancel
 {	
@@ -90,6 +97,11 @@ NSString * const BXOperationIndeterminateKey	= @"BXOperationIndeterminateKey";
 		[self _sendWasCancelledNotificationWithInfo: nil];
 	}
 	else [super cancel];
+}
+
+- (BOOL) succeeded
+{
+    return ![self error];
 }
 
 //The following are meant to be overridden by subclasses to provide more meaningful progress tracking.

@@ -95,10 +95,10 @@
 //Overridden to scan the folder structure to determine a game profile before
 //we start scanning for actual installers.
 //Implementation note: 
-- (void) willStart
+- (void) willPerformOperation
 {
     //Allow the superclass to mount any volume we need for scanning
-    [super willStart];
+    [super willPerformOperation];
     
     if (![self detectedProfile])
     {
@@ -120,9 +120,9 @@
     }
 }
 
-- (void) didFinish
+- (void) didPerformOperation
 {
-    if ([self succeeded])
+    if (![self error])
     {
         //If we didn't find any executables, then this isn't a game
         //we can import and we should treat this as a failure.
@@ -187,13 +187,11 @@
             
             [self didChangeValueForKey: @"matchingPaths"];
         }
-        
-        [self setSucceeded: ![self error]];
     }
     
     //Let our superclass unmount any volumes that were mounted in the course of the scan,
     //now that we no longer need access to the filesystem.
-    [super didFinish];
+    [super didPerformOperation];
 }
 
 @end

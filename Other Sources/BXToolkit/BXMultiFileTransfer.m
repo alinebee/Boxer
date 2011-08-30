@@ -118,7 +118,7 @@
 #pragma mark -
 #pragma mark Performing the transfer
 
-- (void) willPerformOperation
+- (void) performOperation
 {
     //Build file transfer operations for each pair of paths
 	for (NSString *sourcePath in [[self pathsToTransfer] keyEnumerator])
@@ -130,6 +130,8 @@
 																	  copyFiles: [self copyFiles]];
 		[[self operations] addObject: transfer];
 	}
+    
+    [super performOperation];
 }
 
 - (void) _sendInProgressNotificationWithInfo: (NSDictionary *)info

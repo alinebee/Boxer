@@ -128,20 +128,19 @@
         //we can import and we should treat this as a failure.
         if ([[self DOSExecutables] count] == 0)
         {
-            NSError *noDOSGameError;
-            
             //If there were windows executables present, this is probably a Windows-only game
             if ([[self windowsExecutables] count] > 0)
             {
-                noDOSGameError = [BXImportWindowsOnlyError errorWithSourcePath: [self basePath] userInfo: nil];
+                [self setError: [BXImportWindowsOnlyError errorWithSourcePath: [self basePath]
+                                                                     userInfo: nil]];
             }    
             //Otherwise, the folder may be empty or contains something other than a DOS game
             //TODO: additional logic to detect Classic Mac games.
             else
             {
-                noDOSGameError = [BXImportNoExecutablesError errorWithSourcePath: [self basePath] userInfo: nil];
+                [self setError: [BXImportNoExecutablesError errorWithSourcePath: [self basePath]
+                                                                       userInfo: nil]];
             }
-            [self setError: noDOSGameError];
         }
         
         //Otherwise, determine a preferred installer from among those

@@ -72,9 +72,9 @@ NSString * const emptyFormat = @"^\\s*$";
 	return [[[self alloc] initWithString: configuration] autorelease];
 }
 
-+ (id) configurationWithContentsOfFile: (NSString *)filePath
++ (id) configurationWithContentsOfFile: (NSString *)filePath error: (NSError **)outError
 {
-	return [[[self alloc] initWithContentsOfFile: filePath] autorelease];
+	return [[[self alloc] initWithContentsOfFile: filePath error: outError] autorelease];
 }
 
 + (id) configuration
@@ -83,9 +83,11 @@ NSString * const emptyFormat = @"^\\s*$";
 }
 
 
-- (id) initWithContentsOfFile: (NSString *)filePath
+- (id) initWithContentsOfFile: (NSString *)filePath error: (NSError **)outError
 {
-	NSString *fileContents = [NSString stringWithContentsOfFile: filePath usedEncoding: NULL error: NULL];
+	NSString *fileContents = [NSString stringWithContentsOfFile: filePath
+                                                   usedEncoding: NULL
+                                                          error: outError];
 
 	if (fileContents)
 	{
@@ -104,7 +106,6 @@ NSString * const emptyFormat = @"^\\s*$";
 {
 	if ((self = [self init]))
 	{
-		//TODO: error checking
 		[self _parseSettingsFromString: configuration];
 	}
 	return self;

@@ -45,7 +45,8 @@
 #pragma mark Loading and saving configurations
 
 //Returns an autoreleased instance initialized with the settings in the file at the specified path.
-+ (id) configurationWithContentsOfFile: (NSString *)filePath;
+//Will return nil and populate outError on failure to read the file.
++ (id) configurationWithContentsOfFile: (NSString *)filePath error: (NSError **)outError;
 
 //Returns an autoreleased instance initialized with settings parsed from the specified string.
 + (id) configurationWithString: (NSString *)configuration;
@@ -55,7 +56,8 @@
 
 
 //Initializes with the settings in the file at the specified path.
-- (id) initWithContentsOfFile: (NSString *)filePath;
+//Will return nil and populate outError on failure to read the file.
+- (id) initWithContentsOfFile: (NSString *)filePath error: (NSError **)outError;
 
 //Initializes with settings parsed from the specified DOSBox-formatted configuration string.
 - (id) initWithString: (NSString *)configuration;
@@ -80,10 +82,12 @@
 #pragma mark -
 #pragma mark Setting and getting individual settings
 
-//Sets/gets the value for the setting with the specified key in the specified section.
+//Gets the value for the setting with the specified key under the specified section.
+//Will return nil if the setting is not found.
 - (NSString *) valueForKey: (NSString *)settingName
 				 inSection: (NSString *)sectionName;
 
+//Sets the value for the setting with the specified key under the specified section.
 - (void) setValue: (NSString *)settingValue
 		   forKey: (NSString *)settingName
 		inSection: (NSString *)sectionName;

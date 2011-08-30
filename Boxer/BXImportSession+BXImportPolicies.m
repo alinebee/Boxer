@@ -16,6 +16,8 @@
 #import "BXPackage.h"
 #import "BXAppController.h"
 #import "BXPathEnumerator.h"
+#import "BXEmulatorConfiguration.h"
+
 
 
 @implementation BXImportSession (BXImportPolicies)
@@ -395,7 +397,6 @@
 	return sanitisedSlashes;
 }
 
-
 + (NSString *) validDOSNameFromName: (NSString *)name
 {
 	NSString *asciiName = [[name lowercaseString] stringByReplacingOccurrencesOfRegex: @"[^a-z0-9\\.]" withString: @""];
@@ -409,4 +410,90 @@
 	
 	return shortName;
 }
+
+NSInteger filenameLengthSort(NSString *path1, NSString *path2, void *context)
+{
+    NSUInteger length1 = [[path1 lastPathComponent] length];
+    NSUInteger length2 = [[path2 lastPathComponent] length];
+    
+    if (length1 < length2)
+        return NSOrderedAscending;
+    else if (length1 > length2)
+        return NSOrderedDescending;
+    else
+        return NSOrderedSame;
+}
+
++ (NSString *) preferredConfigurationFileFromPath: (NSString *)path
+                                            error: (NSError **)error
+{
+    //Compare configuration filenames by length to determine the shortest
+    //(which we deem most likely to be the 'default')
+    BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: path];
+    [enumerator setFileTypes: [NSSet setWithObject: @"gnu.org.configuration-file"]];
+    
+    NSArray *paths = [enumerator allObjects];
+    if ([paths count])
+    {
+        NSArray *sortedPaths = [paths sortedArrayUsingFunction: filenameLengthSort
+                                                       context: NULL];
+    
+        return [sortedPaths objectAtIndex: 0];
+    }
+    else return nil;
+}
+
++ (BXEmulatorConfiguration *) sanitizedVersionOfConfiguration: (BXEmulatorConfiguration *)configuration
+{
+    BXEmulatorConfiguration *sanitizedConfiguration = [BXEmulatorConfiguration configuration];
+    
+    //A dictionary of property names indexed by section, that we deem relevant to copy across
+    NSDictionary *relevantSettings = [NSDictionary dictionaryWithObjectsAndKeys:
+      [NSSet setWithObjects: @"machine", @"memsize", nil],                      @"dosbox",
+      [NSSet setWithObjects: @"ems", @"xms", @"umb", nil],                      @"dos",
+      [NSSet setWithObjects: @"core", @"cputype", @"cycles", nil],              @"cpu",
+      [NSSet setWithObjects: @"mpu401", nil],                                   @"midi",
+      [NSSet setWithObjects: @"sbtype", @"sbbase", @"irq", @"dma", @"hdma", @"oplmode", @"oplemu", @"sbmixer", nil],  @"sblaster",
+      [NSSet setWithObjects: @"gus", @"gusbase", @"gusirq", @"gusdma", nil],    @"gus",
+      [NSSet setWithObjects: @"pcspeaker", @"tandy", @"disney", nil],           @"speaker",
+      [NSSet setWithObjects: @"joysticktype", @"timed", nil],                   @"joystick",
+      nil];
+    
+    for (NSString *section in [relevantSettings keyEnumerator])
+    {
+        for (NSString *setting in [relevantSettings objectForKey: section])
+        {
+            NSString *value = [configuration valueForKey: setting inSection: section];
+            if (value != nil) [sanitizedConfiguration setValue: value forKey: setting inSection: section];
+        }
+    }
+    
+    //Now, let's handle the autoexec block.
+    //Autoexec lines matching the following patterns will be stripped from the autoexec;
+    //Everything else will be let through unharmed.
+    NSArray *ignoredAutoexecPatterns = [NSArray arrayWithObjects:
+                                        @"^[@\\s]*echo off",
+                                        @"^[@\\s]*mount ",
+                                        @"^[@\\s]*imgmount ",
+                                        @"^[@\\s]*ipxnet ",
+                                        @"^[@\\s]*exit",
+                                        nil];
+    
+    for (NSString *command in [configuration startupCommands])
+    {
+        BOOL isIgnorable = NO;
+        for (NSString *pattern in ignoredAutoexecPatterns)
+        {
+            if ([[command lowercaseString] isMatchedByRegex: pattern])
+            {
+                isIgnorable = YES;
+                break;
+            }
+        }
+        
+        if (!isIgnorable) [sanitizedConfiguration addStartupCommand: command];
+    }
+    return sanitizedConfiguration;
+}
+
 @end

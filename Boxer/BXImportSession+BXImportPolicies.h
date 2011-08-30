@@ -23,6 +23,7 @@ static const NSInteger BXCDROMSizeThreshold  = 100 * 1024 * 1024;
 static const NSInteger BXFreeSpaceForCDROMInstall = 700 * 1024 * 1024;
 
 @class BXPackage;
+@class BXEmulatorConfiguration;
 @interface BXImportSession (BXImportPolicies)
 
 #pragma mark -
@@ -120,4 +121,21 @@ static const NSInteger BXFreeSpaceForCDROMInstall = 700 * 1024 * 1024;
 //Returns a DOSBox-safe lowercase 8.3 filename from the specified filename.
 //This strips out all non-ASCII characters to prevent filename resolution problems at DOSBox's end.
 + (NSString *) validDOSNameFromName: (NSString *)name;
+
+
+#pragma mark -
+#pragma mark Importing pre-existing DOSBox configurations
+
+//Returns the path to the most appropriate DOSBox configuration file within the specified path,
+//or nil if none could be found.
+//HEURISTIC: in the event that multiple configuration files are found, this returns the one with
+//the shortest name. This is intended to handle e.g. GOG games that come with client/server
+//configurations as well as standalone configurations, where the former have "_client"/"_server"
+//suffixes applied to the base name of the latter.
++ (NSString *) preferredConfigurationFileFromPath: (NSString *)path error: (NSError **)error;
+
+//Returns a new DOSBox configuration cherry-picked from the specified configuration.
+//This will strip out all settings that are redundant or that will interfere with Boxer.
++ (BXEmulatorConfiguration *) sanitizedVersionOfConfiguration: (BXEmulatorConfiguration *)configuration;
+
 @end

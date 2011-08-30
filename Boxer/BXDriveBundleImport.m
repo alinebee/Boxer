@@ -90,7 +90,7 @@
 }
 
 - (void) performOperation
-{	
+{   
 	NSString *driveName			= [[self class] nameForDrive: [self drive]];
 	
 	NSString *sourcePath		= [[self drive] path];
@@ -180,6 +180,7 @@
 		}
 	}
 }
+
 
 - (BOOL) undoTransfer
 {

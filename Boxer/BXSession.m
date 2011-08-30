@@ -1199,7 +1199,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	//Save the configuration if any changes have been made, or if the file at that path does not exist.
 	if (!fileExists || ![configuration isEmpty])
 	{
-		BXEmulatorConfiguration *gameboxConf = [BXEmulatorConfiguration configurationWithContentsOfFile: filePath];
+		BXEmulatorConfiguration *gameboxConf = [BXEmulatorConfiguration configurationWithContentsOfFile: filePath error: nil];
 		
 		//If a configuration file exists at that path already, then merge
 		//the changes with its existing settings.
@@ -1232,7 +1232,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 																		ofType: @"conf"
 																   inDirectory: @"Configurations"];
 			
-			BXEmulatorConfiguration *profileConf = [BXEmulatorConfiguration configurationWithContentsOfFile: profileConfPath];
+			BXEmulatorConfiguration *profileConf = [BXEmulatorConfiguration configurationWithContentsOfFile: profileConfPath error: nil];
 			if (profileConf) [gameboxConf excludeDuplicateSettingsFromConfiguration: profileConf];
 		}
 		

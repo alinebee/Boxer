@@ -8,7 +8,7 @@
 
 #import "BXFullScreenCapableWindow.h"
 #import "BXPostLeopardAPIs.h"
-#import "NSWindow+BXWindowSizing.h"
+#import "NSWindow+BXWindowDimensions.h"
 
 
 #pragma mark -

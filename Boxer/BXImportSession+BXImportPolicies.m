@@ -456,7 +456,10 @@ NSInteger filenameLengthSort(NSString *path1, NSString *path2, void *context)
       [NSSet setWithObjects: @"sbtype", @"sbbase", @"irq", @"dma", @"hdma", @"oplmode", @"oplemu", @"sbmixer", nil],  @"sblaster",
       [NSSet setWithObjects: @"gus", @"gusbase", @"gusirq", @"gusdma", nil],    @"gus",
       [NSSet setWithObjects: @"pcspeaker", @"tandy", @"disney", nil],           @"speaker",
-      [NSSet setWithObjects: @"joysticktype", @"timed", nil],                   @"joystick",
+      //NOTE: we don't import joystick settings for now, because GOG games ship with
+      //mostly incorrect joystick settings and we already have auto-configurations
+      //for a lot of the problem games they sell.
+      //[NSSet setWithObjects: @"joysticktype", @"timed", nil],                   @"joystick",
       nil];
     
     for (NSString *section in [relevantSettings keyEnumerator])

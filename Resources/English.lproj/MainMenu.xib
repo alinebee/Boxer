@@ -1167,6 +1167,14 @@
 									<reference key="NSOnImage" ref="569538535"/>
 									<reference key="NSMixedImage" ref="489554260"/>
 								</object>
+								<object class="NSMenuItem" id="46091028">
+									<reference key="NSMenu" ref="67815420"/>
+									<string key="NSTitle">Show DOS Drives</string>
+									<string key="NSKeyEquiv"/>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="569538535"/>
+									<reference key="NSMixedImage" ref="489554260"/>
+								</object>
 								<object class="NSMenuItem" id="1058182379">
 									<reference key="NSMenu" ref="67815420"/>
 									<string key="NSTitle">Next Disc</string>
@@ -1181,14 +1189,6 @@
 									<string key="NSTitle">Previous Disc</string>
 									<string key="NSKeyEquiv"></string>
 									<int key="NSKeyEquivModMask">1179648</int>
-									<int key="NSMnemonicLoc">2147483647</int>
-									<reference key="NSOnImage" ref="569538535"/>
-									<reference key="NSMixedImage" ref="489554260"/>
-								</object>
-								<object class="NSMenuItem" id="46091028">
-									<reference key="NSMenu" ref="67815420"/>
-									<string key="NSTitle">Show DOS Drives</string>
-									<string key="NSKeyEquiv"/>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="569538535"/>
 									<reference key="NSMixedImage" ref="489554260"/>
@@ -3048,9 +3048,9 @@
 							<reference ref="800794685"/>
 							<reference ref="665114175"/>
 							<reference ref="726999377"/>
+							<reference ref="46091028"/>
 							<reference ref="1058182379"/>
 							<reference ref="261374938"/>
-							<reference ref="46091028"/>
 						</object>
 						<reference key="parent" ref="466028025"/>
 					</object>

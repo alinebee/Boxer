@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
     <key>BXGameProfileCatalogueVersion</key>
-    <string>20110806.1</string>
+    <string>20110830.2</string>
     
 	<key>BXSpecificGameProfiles</key>
 	<array>
@@ -298,10 +298,23 @@
 			<key>BXProfileGameName</key>
 			<string>Screamer 2</string>
 			<key>BXProfileConf</key>
-			<string>Screamer 2</string>
+			<string>Screamer</string>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>cars101.dat</string>
+			</array>
+		</dict>
+        
+		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.virgin.screamer</string>
+			<key>BXProfileGameName</key>
+			<string>Screamer</string>
+			<key>BXProfileConf</key>
+			<string>Screamer</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>map1h.dat</string>
 			</array>
 		</dict>
 		

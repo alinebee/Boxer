@@ -1222,9 +1222,13 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 																			@"Used in generated configuration files as a commented header underneath the [autoexec] section.")];
 		
 		
-		//If we have an auto-detected game profile, check against its configuration file
-		//and eliminate any duplicate configuration parameters. This way, we don't persist
-		//settings we don't need to.
+		//Compare against the combined configuration we'll inherit from Boxer's base settings plus
+        //the profile-specific configuration (if any), and eliminate any duplicate configuration
+        //parameters from the gamebox conf. This way, we don't persist settings we don't need to.
+        NSString *baseConfPath = [[NSBundle mainBundle] pathForResource: @"Preflight" ofType: @"conf"];
+        BXEmulatorConfiguration *baseConf = [BXEmulatorConfiguration configurationWithContentsOfFile: baseConfPath error: nil];
+        [baseConf removeStartupCommands];
+        
 		NSString *profileConfName = [gameProfile confName];
 		if (profileConfName)
 		{
@@ -1233,8 +1237,10 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 																   inDirectory: @"Configurations"];
 			
 			BXEmulatorConfiguration *profileConf = [BXEmulatorConfiguration configurationWithContentsOfFile: profileConfPath error: nil];
-			if (profileConf) [gameboxConf excludeDuplicateSettingsFromConfiguration: profileConf];
+            if (profileConf) [baseConf addSettingsFromConfiguration: profileConf];
 		}
+        
+        [gameboxConf excludeDuplicateSettingsFromConfiguration: baseConf];
 		
 		[gameboxConf writeToFile: filePath error: NULL];
 	}

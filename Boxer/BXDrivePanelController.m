@@ -686,9 +686,11 @@ enum {
 
 - (void) draggedImage: (NSImage *)image beganAt: (NSPoint)screenPoint
 {
-    NSArray *selectedViews = [driveList selectedViews];
-    
-    for (NSView *itemView in selectedViews) [itemView setHidden: YES];
+    for (BXDrive *drive in [self selectedDrives])
+    {
+        NSView *itemView = [driveList viewForDrive: drive];
+        [itemView setHidden: YES];
+    }
 }
 
 //While dragging, this checks for valid Boxer windows under the cursor; if there aren't any, it displays
@@ -755,7 +757,11 @@ enum {
     //leave them hidden so that they don't reappear and then vanish again.)
 	if (unhideSelection)
     {
-        for (NSView *itemView in [driveList selectedViews]) [itemView setHidden: NO];
+        for (BXDrive *drive in [self selectedDrives])
+        {
+            NSView *itemView = [driveList viewForDrive: drive];
+            [itemView setHidden: NO];
+        }
     }
     
     //Reset the cursor back to normal

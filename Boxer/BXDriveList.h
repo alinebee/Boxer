@@ -22,9 +22,6 @@
 }
 @property (assign, nonatomic) BXDrivePanelController *delegate;
 
-//An array of BXDriveItemViews corresponding to the current selection.
-@property (readonly, nonatomic) NSArray *selectedViews;
-
 //Returns the view that represents the specified drive.
 - (BXDriveItemView *) viewForDrive: (BXDrive *)drive;
 

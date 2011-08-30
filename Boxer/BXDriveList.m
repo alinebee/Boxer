@@ -331,11 +331,6 @@ enum {
 	}
 }
 
-- (NSArray *) selectedViews
-{	
-    return [[self subviews] objectsAtIndexes: [self selectionIndexes]];
-}
-
 - (BXDriveItemView *) viewForDrive: (BXDrive *)drive
 {
 	for (BXDriveItemView *view in [self subviews])
@@ -357,7 +352,9 @@ enum {
                                    withEvent: (NSEvent *)event
                                       offset: (NSPointPointer)dragImageOffset
 {
-    NSView *itemView = [[self selectedViews] lastObject];
+    //TODO: render images for all selected drives, once we allow more than one
+    BXDrive *firstSelectedDrive = [[self content] objectAtIndex: [indexes firstIndex]];
+    NSView *itemView = [self viewForDrive: firstSelectedDrive];
     if (itemView)
     {
         NSData *imageData = [itemView dataWithPDFInsideRect: [itemView bounds]];
@@ -367,7 +364,12 @@ enum {
 }
 
 - (void) mouseDragged: (NSEvent *)theEvent
-{		
+{
+    NSIndexSet *indexes = [self selectionIndexes];
+    
+    //Ignore the drag if we have nothing selected.
+    if (![indexes count]) return;
+    
     //Make a new pasteboard and get our delegate to set it up for us
 	NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName: NSDragPboard];
     
@@ -378,20 +380,20 @@ enum {
     if (continueDrag)
     {
         //Choose one out of the selection to be the visible source of the drag
-        NSArray *selectedViews  = [self selectedViews];
-        NSView *draggedView     = [selectedViews lastObject];
-        
-        NSImage *draggedImage   = [self draggingImageForItemsAtIndexes: [self selectionIndexes]
+        NSImage *draggedImage   = [self draggingImageForItemsAtIndexes: indexes
                                                              withEvent: theEvent
                                                                 offset: nil];
+    
+        BXDrive *firstSelectedDrive = [[self content] objectAtIndex: [indexes firstIndex]];
+        NSView *itemView = [self viewForDrive: firstSelectedDrive];
         
-        [draggedView dragImage: draggedImage
-                            at: NSZeroPoint
-                        offset: NSZeroSize
-                         event: theEvent
-                    pasteboard: pasteboard
-                        source: [self delegate]
-                     slideBack: NO];
+        [itemView dragImage: draggedImage
+                         at: NSZeroPoint
+                     offset: NSZeroSize
+                      event: theEvent
+                 pasteboard: pasteboard
+                     source: [self delegate]
+                  slideBack: NO];
     }
 }
 

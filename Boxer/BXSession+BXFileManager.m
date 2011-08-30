@@ -693,10 +693,9 @@
 - (NSString *) preferredLetterForDrive: (BXDrive *)drive
                                options: (BXDriveMountOptions)options
 {
-    //If we want to keep this drive with others of its ilk, then return
-    //the drive letter of the first drive of that type.
-    if ((options & BXDriveKeepWithSameType) &&
-        ([drive type] == BXDriveCDROM || [drive type] == BXDriveFloppyDisk))
+    //If we want to keep this drive with others of its ilk,
+    //then use the letter of the first drive of that type.
+    if ((options & BXDriveKeepWithSameType) && ([drive type] == BXDriveCDROM || [drive type] == BXDriveFloppyDisk))
     {
         for (BXDrive *knownDrive in [self allDrives])
         {
@@ -705,8 +704,20 @@
         }
     }
     
-    //TODO: move the logic from that function to here instead?
-    return [emulator preferredLetterForDrive: drive];
+    //Otherwise, pick the next suitable drive letter for that type
+    //that isn't already queued.
+    NSArray *letters;
+	if ([drive isFloppy])		letters = [BXEmulator floppyDriveLetters];
+	else if ([drive isCDROM])	letters = [BXEmulator CDROMDriveLetters];
+	else						letters = [BXEmulator hardDriveLetters];
+    
+	for (NSString *letter in letters)
+    {
+        if (![[[self drives] objectForKey: letter] count]) return letter;
+    }
+    
+    //Uh-oh, looks like all suitable drive letters are taken! Bummer.
+    return nil;
 }
 
 - (BXDrive *) mountDrive: (BXDrive *)drive

@@ -95,11 +95,23 @@
 	return YES;
 }
 
-+ (NSSet *) keyPathsForValuesAffectingCancelButtonEnabled
+- (BOOL) showAdditionalCDTips
 {
-	return [NSSet setWithObject: @"controller.document.importStage"];
+    BXSourceFileImportType importType = [[controller document] sourceFileImportType];
+    
+    return (importType == BXImportFromCDImage || importType == BXImportFromCDVolume);
 }
 
++ (NSSet *) keyPathsForValuesAffectingCancelButtonEnabled
+{
+	return [NSSet setWithObject: @"controller.document.sourceFileImportType"];
+}
+
+
++ (NSSet *) keyPathsForValuesAffectingShowAdditionalCDTips
+{
+	return [NSSet setWithObject: @"controller.document.sourceFileImportOperation"];
+}
 
 #pragma mark -
 #pragma mark Progress description

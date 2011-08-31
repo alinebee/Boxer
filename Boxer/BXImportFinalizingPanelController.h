@@ -27,9 +27,13 @@
 //Used for populating the description field beneath the progress bar.
 @property (readonly, nonatomic) NSString *progressDescription;
 
-//The label and enabledness of the stop importing/skip importing button
+//The label and enabledness of the stop importing/skip importing button.
 @property (readonly, nonatomic) NSString * cancelButtonLabel;
 @property (readonly, nonatomic) BOOL cancelButtonEnabled;
+
+//Whether to show the tip about importing additional CDs.
+//Will be YES if the source is a CD-ROM or CD image, NO otherwise.
+@property (readonly, nonatomic) BOOL showAdditionalCDTips;
 
 
 #pragma mark -

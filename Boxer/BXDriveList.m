@@ -97,18 +97,6 @@ enum {
 - (BOOL) mouseDownCanMoveWindow	{ return NO; }
 - (BOOL) acceptsFirstMouse: (NSEvent *)theEvent { return YES; }
 
-//Overridden so that we indicate that every click has hit us instead of our descendants.
-- (NSView *) hitTest: (NSPoint)thePoint
-{
-	NSView *hitView = [super hitTest: thePoint];
-	if (hitView != nil)
-	{
-		//TWEAK: if the view has an action, let the click go through unless it's disabled
-		if (![hitView respondsToSelector: @selector(action)] || ![(id)hitView action] || ![(id)hitView isEnabled]) hitView = self;
-	}
-	return hitView;
-}
-
 @end
 
 
@@ -136,43 +124,37 @@ enum {
 	return YES;
 }
 
-- (void) drawImage: (NSImage *)image withFrame: (NSRect)frame inView: (NSView *)controlView
+- (void) drawImage: (NSImage *)image
+         withFrame: (NSRect)frame
+            inView: (NSView *)controlView
 {
-	CGFloat opacity = 0.5f;
-	NSColor *tint = [NSColor whiteColor];
-	
-	if (![self isEnabled])
+	CGFloat opacity;
+	NSColor *tint;
+
+	if ([self isEnabled])
+	{
+        tint = [NSColor whiteColor];
+		if ([self isHighlighted])   opacity = 1.0f;
+		else if ([self isHovered])  opacity = 0.75f;
+        else                        opacity = 0.5f;
+	}
+	else
 	{
 		tint = [NSColor blackColor];
 		opacity = 0.25f;
 	}
-	else
-	{
-		if ([self isHighlighted])  opacity = 1.0f;
-		else if ([self isHovered]) opacity = 0.75f;
-	}
 	
 	if ([image isTemplate])
 	{
-		NSImage *tintedImage = [image copy];
-		[tintedImage setSize: frame.size];
-		
-		NSRect bounds = NSZeroRect;
-		bounds.size = [tintedImage size];
-		
-		
-		[tintedImage lockFocus];
-			[tint set];
-			NSRectFillUsingOperation(bounds, NSCompositeSourceAtop);
-		[tintedImage unlockFocus];
-		
-		image = [tintedImage autorelease];
+		image = [image maskedImageWithColor: tint
+                                     atSize: frame.size];
 	}
 	
 	[image drawInRect: frame
 			 fromRect: NSZeroRect
 			operation: NSCompositeSourceOver
-			 fraction: opacity];
+			 fraction: opacity
+       respectFlipped: YES];
 }
 @end
 
@@ -284,17 +266,24 @@ enum {
 
 - (void) _selectItemAtPoint: (NSPoint)point
 {
-	id clickedView = [self hitTest: point];
+	NSView *clickedView = [self hitTest: point];
 	
-	if ([clickedView isKindOfClass: [BXDriveItemView class]])
+    //If the user clicked on our own background, instead of a drive element, then clear the selection
+	if ([clickedView isEqual: self])
 	{
-		[[clickedView delegate] setSelected: YES];
-	}
-	else
-	{
-		//Clear our selection
 		[self setSelectionIndexes: [NSIndexSet indexSet]];
 	}
+    //Otherwise, go through the parents of the selected view to see if any of them are a drive element
+    else
+    {
+        while (![clickedView isKindOfClass: [BXDriveItemView class]])
+        {
+            clickedView = [clickedView superview];
+            if ([clickedView isEqual: self]) return;
+        }
+        
+		[[(BXDriveItemView *)clickedView delegate] setSelected: YES];
+    }
 }
 
 //This amounts to a complete reimplementation of NSCollectionView's default mouseDown implementation,
@@ -314,9 +303,6 @@ enum {
             case NSLeftMouseDragged: 
 				return [self mouseDragged: eventInDrag];
 			case NSLeftMouseUp:
-                //If the user double-clicked, trigger a drive-mount action
-                if ([eventInDrag clickCount] > 1)
-                    [NSApp sendAction: @selector(mountSelectedDrives:) to: [self delegate] from: self];
 				return [self mouseUp: eventInDrag];
         }
     };
@@ -325,9 +311,14 @@ enum {
 //If the user Cmd-clicked, reveal the drive in Finder
 - (void) mouseUp: (NSEvent *)theEvent
 {
-	if ([theEvent clickCount] > 1 && ([theEvent modifierFlags] & NSCommandKeyMask))
+    //If the user double-clicked, trigger a drive-mount action or a reveal action, depending on the Cmd key modifier
+	if ([theEvent clickCount] > 1)
 	{
-		[NSApp sendAction: @selector(revealSelectedDrivesInFinder:) to: [self delegate] from: self];
+        SEL action;
+        if ([theEvent modifierFlags] & NSCommandKeyMask) action = @selector(revealSelectedDrivesInFinder:);
+        else action = @selector(mountSelectedDrives:);
+        
+		[NSApp sendAction: action to: [self delegate] from: self];
 	}
 }
 

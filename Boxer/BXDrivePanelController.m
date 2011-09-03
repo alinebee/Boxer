@@ -31,6 +31,21 @@ enum {
 };
 
 
+//Tags for the component parts of drive item views
+enum {
+	BXDriveItemLetterLabel			= 1,
+	BXDriveItemNameLabel			= 2,
+	BXDriveItemTypeLabel			= 3,
+	BXDriveItemIcon					= 4,
+    
+	BXDriveItemProgressMeterLabel	= 5,
+	BXDriveItemProgressMeterCancel	= 6,
+    
+	BXDriveItemToggle               = 7,
+	BXDriveItemReveal               = 8
+};
+
+
 #pragma mark -
 #pragma mark Implementation
 
@@ -58,7 +73,7 @@ enum {
 
 - (void) awakeFromNib
 {
-    //Make our represented object be the drive-list of the current session.
+    //Make our represented object be the drive array for the current session.
     [self bind: @"representedObject" toObject: [NSApp delegate] withKeyPath: @"currentSession.allDrives" options: nil];
     
     //Listen for changes to the current session's mounted drives, so we can enable/disable our action buttons
@@ -492,137 +507,54 @@ enum {
 
 - (void) operationWillStart: (NSNotification *)notification
 {
-	BXOperation <BXDriveImport> *transfer = [notification object];
+	BXOperation *transfer = [notification object];
 	
-	//If the notification didn't come from the current session, ignore it
-	if (![transfer conformsToProtocol: @protocol(BXDriveImport)] ||
-		[transfer delegate] != [[NSApp delegate] currentSession]) return;
-	
-	BXDrive *drive = [transfer drive];
-	BXDriveItemView *driveView = [[self driveList] viewForDrive: drive];
-	if (driveView)
-	{
-		NSProgressIndicator *progressMeter	= [driveView progressMeter];
-		NSTextField *progressMeterLabel		= [driveView progressMeterLabel];
-		NSTextField *typeLabel				= [driveView driveTypeLabel];
-		NSButton *progressMeterCancel		= [driveView progressMeterCancel];
-		
-		//Start off with an indeterminate progress meter before we know the size of the operation
-		[progressMeter setIndeterminate: YES];
-		[progressMeter setUsesThreadedAnimation: YES];
-		[progressMeter startAnimation: self];
-		
-		//Initialise the progress value to a suitable point
-		//(in case we're receiving this notification in the middle of a transfer)
-		[progressMeter setDoubleValue: [transfer currentProgress]];
-		
-		//Enable the cancel button
-		[progressMeterCancel setEnabled: YES];
-		
-		//Set label text appropriately
-		[progressMeterLabel setStringValue: NSLocalizedString(@"Importing…", @"Initial drive import progress meter label, before transfer size is known.")];
-		
-		//Unhide the progress indicator and hide the type label it covers
-		[typeLabel setHidden: YES];
-		[progressMeter setHidden: NO];
-		[progressMeterCancel setHidden: NO];
-		[progressMeterLabel setHidden: NO];		
-	}
+	if ([transfer conformsToProtocol: @protocol(BXDriveImport)])
+    {
+        BXDrive *drive = [(id <BXDriveImport>)transfer drive];
+        BXDriveItem *item = [[self driveList] itemForDrive: drive];
+        
+        if (item) [item driveImportWillStart: notification];
+    }
 }
 
 - (void) operationInProgress: (NSNotification *)notification
 {
-	BXOperation <BXDriveImport> *transfer = [notification object];
+	BXOperation *transfer = [notification object];
 	
-	//If the notification didn't come from the current session, ignore it
-	if (![transfer conformsToProtocol: @protocol(BXDriveImport)] ||
-		[transfer delegate] != [[NSApp delegate] currentSession]) return;
-		
-	BXDrive *drive = [transfer drive];
-	BXDriveItemView *driveView = [[self driveList] viewForDrive: drive];
-	if (driveView)
-	{
-		NSProgressIndicator *progressMeter = [driveView progressMeter];
-		NSTextField *progressMeterLabel = [driveView progressMeterLabel];
-		
-		if ([transfer isIndeterminate])
-		{
-			[progressMeter setIndeterminate: YES];
-		}
-		else
-		{
-			BXOperationProgress progress = [transfer currentProgress];
-			
-			//Massage the progress with an ease-out curve to make it appear quicker at the start of the transfer
-			BXOperationProgress easedProgress = -progress * (progress - 2);
-			
-			[progressMeter setIndeterminate: NO];
-			
-			//If we know the progress, set the label text appropriately
-			[progressMeter setDoubleValue: easedProgress];
-			[progressMeter setNeedsDisplay: YES];
-			NSString *progressFormat = NSLocalizedString(@"%1$i%% of %2$i MB",
-														 @"Drive import progress meter label. %1 is the current progress as an unsigned integer percentage, %2 is the total size of the transfer as an unsigned integer in megabytes");
-			
-			NSUInteger progressPercent	= (NSUInteger)round(easedProgress * 100.0);
-			NSUInteger sizeInMB			= (NSUInteger)ceil([transfer numBytes] / 1000.0 / 1000.0);
-			[progressMeterLabel setStringValue: [NSString stringWithFormat: progressFormat, progressPercent, sizeInMB, nil]];			
-		}
-	}
+	if ([transfer conformsToProtocol: @protocol(BXDriveImport)])
+    {
+        BXDrive *drive = [(id <BXDriveImport>)transfer drive];
+        BXDriveItem *item = [[self driveList] itemForDrive: drive];
+        
+        if (item) [item driveImportInProgress: notification];
+    }
 }
 
 - (void) operationWasCancelled: (NSNotification *)notification
 {
-	BXOperation <BXDriveImport> *transfer = [notification object];
+	BXOperation *transfer = [notification object];
 	
-	//If the notification didn't come from the current session, ignore it
-	if (![transfer conformsToProtocol: @protocol(BXDriveImport)] ||
-		[transfer delegate] != [[NSApp delegate] currentSession]) return;
-	
-	BXDrive *drive = [transfer drive];
-	BXDriveItemView *driveView = [[self driveList] viewForDrive: drive];
-	if (driveView)
-	{
-		NSProgressIndicator *progressMeter	= [driveView progressMeter];
-		NSTextField *progressMeterLabel		= [driveView progressMeterLabel];
-		NSButton *progressMeterCancel		= [driveView progressMeterCancel];
-		
-		//Switch the progress meter to indeterminate when operation is cancelled
-		[progressMeter setIndeterminate: YES];
-		[progressMeter startAnimation: self];
-		
-		//Disable the cancel button
-		[progressMeterCancel setEnabled: NO];
-		
-		//Change label text appropriately
-		[progressMeterLabel setStringValue: NSLocalizedString(@"Cancelling…", @"Drive import progress meter label when import operation is cancelled.")];
-	}
+	if ([transfer conformsToProtocol: @protocol(BXDriveImport)])
+    {
+        BXDrive *drive = [(id <BXDriveImport>)transfer drive];
+        BXDriveItem *item = [[self driveList] itemForDrive: drive];
+        
+        if (item) [item driveImportWasCancelled: notification];
+    }
 }
 
 - (void) operationDidFinish: (NSNotification *)notification
 {
-	BXOperation <BXDriveImport> *transfer = [notification object];
+	BXOperation *transfer = [notification object];
 	
-	//If the notification didn't come from the current session, ignore it
-	if (![transfer conformsToProtocol: @protocol(BXDriveImport)] ||
-		[transfer delegate] != [[NSApp delegate] currentSession]) return;
-	
-	BXDrive *drive = [transfer drive];
-	BXDriveItemView *driveView = [[self driveList] viewForDrive: drive];
-	if (driveView)
-	{
-		NSProgressIndicator *progressMeter	= [driveView progressMeter];
-		NSTextField *progressMeterLabel		= [driveView progressMeterLabel];
-		NSButton *progressMeterCancel		= [driveView progressMeterCancel];
-		NSTextField *typeLabel				= [driveView driveTypeLabel];
-		
-		//Re-hide the various bits of the animation
-		[progressMeter stopAnimation: self];
-		[progressMeter setHidden: YES];
-		[progressMeterLabel setHidden: YES];
-		[progressMeterCancel setHidden: YES];
-		[typeLabel setHidden: NO];
-	}
+	if ([transfer conformsToProtocol: @protocol(BXDriveImport)])
+    {
+        BXDrive *drive = [(id <BXDriveImport>)transfer drive];
+        BXDriveItem *item = [[self driveList] itemForDrive: drive];
+        
+        if (item) [item driveImportDidFinish: notification];
+    }
 }
 
 
@@ -769,3 +701,157 @@ enum {
 }
 
 @end
+
+
+@implementation BXDriveItem
+@synthesize importing;
+
+//IMPLEMENTATION NOTE: BXCollectionView does not correctly clone IBOutlets
+//when cloning collection view items, so we can't just outlet-link to the
+//subviews we care about. Instead, we have to trawl the view structure
+//to grab them, which is especially painful for progressMeter because
+//it doesn't support tags.
+- (NSTextField *) progressMeterLabel	{ return [[self view] viewWithTag: BXDriveItemProgressMeterLabel]; }
+- (NSButton *) progressMeterCancel		{ return [[self view] viewWithTag: BXDriveItemProgressMeterCancel]; }
+- (NSProgressIndicator *) progressMeter
+{
+    for (id view in [[self view] subviews])
+	{
+		if ([view isKindOfClass: [NSProgressIndicator class]]) return view;
+	}
+	return nil;
+}
+
+
+- (BOOL) isMounted
+{
+    return [[self representedObject] isMounted];
+}
+
+- (NSImage *) icon
+{
+    NSString *iconName;
+    switch ([(BXDrive *)[self representedObject] type])
+    {
+        case BXDriveCDROM:
+            iconName = @"CDROMTemplate";
+            break;
+        case BXDriveFloppyDisk:
+            iconName = @"DisketteTemplate";
+            break;
+        default:
+            iconName = @"HardDiskTemplate";
+    }
+    
+    return [NSImage imageNamed: iconName];
+}
+
+- (NSImage *) iconForToggle
+{
+    NSString *imageName = [self isMounted] ? @"EjectTemplate": @"InsertTemplate";
+    return [NSImage imageNamed: imageName];
+}
+
+- (NSString *) typeDescription
+{
+    NSString *description = [(BXDrive *)[self representedObject] typeDescription];
+    if (![self isMounted])
+    {
+        NSString *inactiveDescriptionFormat = NSLocalizedString(@"%@ (ejected)", @"Description format for inactive drives. %@ is the original description of the drive (e.g. 'CD-ROM', 'hard disk' etc.)");
+        description = [NSString stringWithFormat: inactiveDescriptionFormat, description, nil];
+    }
+    return description;
+}
+
++ (NSSet *) keyPathsForValuesAffectingTypeDescription   { return [NSSet setWithObjects: @"representedObject.typeDescription", @"mounted", nil]; }
++ (NSSet *) keyPathsForValuesAffectingIcon              { return [NSSet setWithObject: @"representedObject.type"]; }
++ (NSSet *) keyPathsForValuesAffectingIconForToggle     { return [NSSet setWithObject: @"mounted"]; }
++ (NSSet *) keyPathsForValuesAffectingMounted           { return [NSSet setWithObject: @"representedObject.mounted"]; }
++ (NSSet *) keyPathsForValuesAffectingDriveActionsShown { return [NSSet setWithObject: @"selected"]; }
+
+
+- (void) driveImportWillStart: (NSNotification *)notification
+{
+    BXOperation <BXDriveImport> *transfer = [notification object];
+    
+    NSProgressIndicator *progressMeter  = [self progressMeter];
+    NSButton *progressMeterCancel       = [self progressMeterCancel];
+    NSTextField *progressMeterLabel     = [self progressMeterLabel];
+    
+    //Start off with an indeterminate progress meter before we know the size of the operation
+    [progressMeter setIndeterminate: YES];
+    [progressMeter setUsesThreadedAnimation: YES];
+    [progressMeter startAnimation: self];
+    
+    //Initialise the progress value to a suitable point
+    //(in case we're receiving this notification in the middle of a transfer)
+    [progressMeter setDoubleValue: [transfer currentProgress]];
+    
+    //Enable the cancel button
+    [progressMeterCancel setEnabled: YES];
+    
+    //Set label text appropriately
+    [progressMeterLabel setStringValue: NSLocalizedString(@"Importing…", @"Initial drive import progress meter label, before transfer size is known.")];
+    
+    [self setImporting: YES];
+}
+
+- (void) driveImportInProgress: (NSNotification *)notification
+{
+    BXOperation <BXDriveImport> *transfer = [notification object];
+    
+    NSProgressIndicator *progressMeter  = [self progressMeter];
+    NSTextField *progressMeterLabel     = [self progressMeterLabel];
+    
+    if ([transfer isIndeterminate])
+    {
+        [progressMeter setIndeterminate: YES];
+    }
+    else
+    {
+        BXOperationProgress progress = [transfer currentProgress];
+        
+        //Massage the progress with a gentle ease-out curve to make it appear quicker at the start of the transfer
+        BXOperationProgress easedProgress = -progress * (progress - 2);
+
+        [progressMeter setIndeterminate: NO];
+        [progressMeter setDoubleValue: easedProgress];
+        [progressMeter setNeedsDisplay: YES];
+        
+        //Now that we know the progress, set the label text appropriately
+        NSString *progressFormat = NSLocalizedString(@"%1$i%% of %2$i MB",
+                                                     @"Drive import progress meter label. %1 is the current progress as an unsigned integer percentage, %2 is the total size of the transfer as an unsigned integer in megabytes");
+        
+        NSUInteger progressPercent	= (NSUInteger)round(easedProgress * 100.0);
+        NSUInteger sizeInMB			= (NSUInteger)ceil([transfer numBytes] / 1000.0 / 1000.0);
+        [progressMeterLabel setStringValue: [NSString stringWithFormat: progressFormat, progressPercent, sizeInMB, nil]];			
+    }
+}
+
+- (void) driveImportWasCancelled: (NSNotification *)notification
+{
+    //Switch the progress meter to indeterminate when operation is cancelled
+    NSProgressIndicator *progressMeter  = [self progressMeter];
+    NSButton *progressMeterCancel       = [self progressMeterCancel];
+    NSTextField *progressMeterLabel     = [self progressMeterLabel];
+    
+    [progressMeter setIndeterminate: YES];
+    [progressMeter startAnimation: self];
+    
+    //Disable the cancel button
+    [progressMeterCancel setEnabled: NO];
+    
+    //Change label text appropriately
+    [progressMeterLabel setStringValue: NSLocalizedString(@"Cancelling…",
+                                                          @"Drive import progress meter label when import operation is cancelled.")];
+}
+
+- (void) driveImportDidFinish: (NSNotification *)notification
+{
+    NSProgressIndicator *progressMeter  = [self progressMeter];
+    
+    [progressMeter stopAnimation: self];
+    [self setImporting: NO];
+}
+@end
+

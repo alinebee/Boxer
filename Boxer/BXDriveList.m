@@ -15,84 +15,7 @@
 #import "NSImage+BXImageEffects.h"
 
 
-//The tags of the component parts of drive item views
-enum {
-	BXDriveItemLetterLabel			= 1,
-	BXDriveItemNameLabel			= 2,
-	BXDriveItemTypeLabel			= 3,
-	BXDriveItemIcon					= 4,
-	BXDriveItemProgressMeterLabel	= 5,
-	BXDriveItemProgressMeterCancel	= 6
-};
-
-@implementation BXDriveItem
-
-- (NSImage *) icon
-{
-    NSString *iconName;
-    switch ([(BXDrive *)[self representedObject] type])
-    {
-        case BXDriveCDROM:
-            iconName = @"CDROMTemplate";
-            break;
-        case BXDriveFloppyDisk:
-            iconName = @"DisketteTemplate";
-            break;
-        default:
-            iconName = @"HardDiskTemplate";
-    }
-    
-    return [NSImage imageNamed: iconName];
-}
-
-- (NSString *) typeDescription
-{
-    NSString *description = [(BXDrive *)[self representedObject] typeDescription];
-    if (![[self representedObject] isMounted])
-    {
-        NSString *inactiveDescriptionFormat = NSLocalizedString(@"%@ (ejected)", @"Description format for inactive drives. %@ is the original description of the drive (e.g. 'CD-ROM', 'hard disk' etc.)");
-        description = [NSString stringWithFormat: inactiveDescriptionFormat, description, nil];
-    }
-    return description;
-}
-
-+ (NSSet *) keyPathsForValuesAffectingTypeDescription
-{
-    return [NSSet setWithObjects: @"representedObject.typeDescription", @"representedObject.mounted", nil];
-}
-
-+ (NSSet *) keyPathsForValuesAffectingTextColor
-{
-    return [NSSet setWithObject: @"representedObject.type"];
-}
-
-+ (NSSet *) keyPathsForValuesAffectingIcon
-{
-    return [NSSet setWithObject: @"representedObject.type"];
-}
-@end
-
-
 @implementation BXDriveItemView
-
-//Quick accessors for our subviews
-- (NSImageView *) driveIcon				{ return [self viewWithTag: BXDriveItemIcon]; }
-- (NSTextField *) driveTypeLabel		{ return [self viewWithTag: BXDriveItemTypeLabel]; }
-- (NSTextField *) displayNameLabel		{ return [self viewWithTag: BXDriveItemNameLabel]; }
-- (NSTextField *) letterLabel			{ return [self viewWithTag: BXDriveItemLetterLabel]; }
-- (NSTextField *) progressMeterLabel	{ return [self viewWithTag: BXDriveItemProgressMeterLabel]; }
-- (NSButton *) progressMeterCancel		{ return [self viewWithTag: BXDriveItemProgressMeterCancel]; }
-
-//Progress meters don't have a tag field, which means we have to track the damn thing down by hand
-//(Limiting us to only having one progress meter in the entire view)
-- (NSProgressIndicator *) progressMeter
-{
-	for (id view in [self subviews])
-	{
-		if ([view isKindOfClass: [NSProgressIndicator class]]) return view;
-	}
-	return nil;
-}
 
 - (BOOL) mouseDownCanMoveWindow	{ return NO; }
 - (BOOL) acceptsFirstMouse: (NSEvent *)theEvent { return YES; }
@@ -330,6 +253,18 @@ enum {
 	}
 	return nil;
 }
+
+
+- (BXDriveItem *) itemForDrive: (BXDrive *)drive
+{
+	for (BXDriveItemView *view in [self subviews])
+	{
+        BXDriveItem *item = (id)[view delegate];
+		if ([[item representedObject] isEqual: drive]) return item;
+	}
+	return nil;
+}
+
 
 #pragma mark -
 #pragma mark Drag-dropping

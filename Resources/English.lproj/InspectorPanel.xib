@@ -21,7 +21,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="431"/>
+			<integer value="434"/>
 			<integer value="979"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
@@ -1339,7 +1339,7 @@ IGRyaXZlcy4</string>
 																					<bool key="EncodedWithXMLCoder">YES</bool>
 																					<object class="NSCollectionView" id="501105234">
 																						<reference key="NSNextResponder" ref="531264091"/>
-																						<int key="NSvFlags">274</int>
+																						<int key="NSvFlags">4370</int>
 																						<string key="NSFrameSize">{296, 267}</string>
 																						<reference key="NSSuperview" ref="531264091"/>
 																						<string key="NSMinGridSize">{0, 0}</string>
@@ -2184,24 +2184,6 @@ aGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 						</object>
 						<bool key="NSEditable">YES</bool>
 					</object>
-					<object class="BGHUDLabel" id="1057456829">
-						<reference key="NSNextResponder" ref="101756917"/>
-						<int key="NSvFlags">266</int>
-						<string key="NSFrame">{{49, 9}, {230, 14}}</string>
-						<reference key="NSSuperview" ref="101756917"/>
-						<int key="NSTag">3</int>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSTextFieldCell" key="NSCell" id="61342089">
-							<int key="NSCellFlags">67239488</int>
-							<int key="NSCellFlags2">272762368</int>
-							<string key="NSContents">[Drive type]</string>
-							<reference key="NSSupport" ref="26"/>
-							<reference key="NSControlView" ref="1057456829"/>
-							<reference key="NSBackgroundColor" ref="1046058740"/>
-							<reference key="NSTextColor" ref="680331616"/>
-						</object>
-						<string key="themeKey">BXBlueTheme</string>
-					</object>
 					<object class="NSButton" id="560756325">
 						<reference key="NSNextResponder" ref="101756917"/>
 						<int key="NSvFlags">265</int>
@@ -2215,13 +2197,9 @@ aGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 							<string key="NSContents"/>
 							<reference key="NSSupport" ref="190746779"/>
 							<reference key="NSControlView" ref="560756325"/>
-							<int key="NSButtonFlags">-935051009</int>
+							<int key="NSButtonFlags">105136383</int>
 							<int key="NSButtonFlags2">134</int>
 							<object class="NSCustomResource" key="NSNormalImage">
-								<string key="NSClassName">NSImage</string>
-								<string key="NSResourceName">InsertTemplate</string>
-							</object>
-							<object class="NSCustomResource" key="NSAlternateImage">
 								<string key="NSClassName">NSImage</string>
 								<string key="NSResourceName">EjectTemplate</string>
 							</object>
@@ -2307,6 +2285,24 @@ aGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 						<reference key="NSSuperview" ref="101756917"/>
 						<int key="NSpiFlags">16650</int>
 						<double key="NSMaxValue">1</double>
+						<string key="themeKey">BXBlueTheme</string>
+					</object>
+					<object class="BGHUDLabel" id="1057456829">
+						<reference key="NSNextResponder" ref="101756917"/>
+						<int key="NSvFlags">266</int>
+						<string key="NSFrame">{{49, 9}, {230, 14}}</string>
+						<reference key="NSSuperview" ref="101756917"/>
+						<int key="NSTag">3</int>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSTextFieldCell" key="NSCell" id="61342089">
+							<int key="NSCellFlags">67239488</int>
+							<int key="NSCellFlags2">272762368</int>
+							<string key="NSContents">[Drive type]</string>
+							<reference key="NSSupport" ref="26"/>
+							<reference key="NSControlView" ref="1057456829"/>
+							<reference key="NSBackgroundColor" ref="1046058740"/>
+							<reference key="NSTextColor" ref="680331616"/>
+						</object>
 						<string key="themeKey">BXBlueTheme</string>
 					</object>
 				</object>
@@ -3579,54 +3575,6 @@ aGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 					<int key="connectionID">1752</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">enabled: representedObject.mounted</string>
-						<reference key="source" ref="163857552"/>
-						<reference key="destination" ref="527118087"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="163857552"/>
-							<reference key="NSDestination" ref="527118087"/>
-							<string key="NSLabel">enabled: representedObject.mounted</string>
-							<string key="NSBinding">enabled</string>
-							<string key="NSKeyPath">representedObject.mounted</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1756</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">enabled: representedObject.mounted</string>
-						<reference key="source" ref="1059830828"/>
-						<reference key="destination" ref="527118087"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="1059830828"/>
-							<reference key="NSDestination" ref="527118087"/>
-							<string key="NSLabel">enabled: representedObject.mounted</string>
-							<string key="NSBinding">enabled</string>
-							<string key="NSKeyPath">representedObject.mounted</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1760</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">enabled: representedObject.mounted</string>
-						<reference key="source" ref="1057456829"/>
-						<reference key="destination" ref="527118087"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="1057456829"/>
-							<reference key="NSDestination" ref="527118087"/>
-							<string key="NSLabel">enabled: representedObject.mounted</string>
-							<string key="NSBinding">enabled</string>
-							<string key="NSKeyPath">representedObject.mounted</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1762</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
 						<string key="label">toggleSelectedDrives:</string>
 						<reference key="source" ref="589277066"/>
@@ -3708,22 +3656,6 @@ aGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
-						<string key="label">enabled: representedObject.mounted</string>
-						<reference key="source" ref="525221673"/>
-						<reference key="destination" ref="527118087"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="525221673"/>
-							<reference key="NSDestination" ref="527118087"/>
-							<string key="NSLabel">enabled: representedObject.mounted</string>
-							<string key="NSBinding">enabled</string>
-							<string key="NSKeyPath">representedObject.mounted</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1787</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
 						<string key="label">value: representedObject.letter</string>
 						<reference key="source" ref="525221673"/>
 						<reference key="destination" ref="527118087"/>
@@ -3756,30 +3688,114 @@ aGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
-						<string key="label">hidden: selected</string>
-						<reference key="source" ref="243944952"/>
+						<string key="label">enabled: mounted</string>
+						<reference key="source" ref="163857552"/>
 						<reference key="destination" ref="527118087"/>
 						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="243944952"/>
+							<reference key="NSSource" ref="163857552"/>
 							<reference key="NSDestination" ref="527118087"/>
-							<string key="NSLabel">hidden: selected</string>
-							<string key="NSBinding">hidden</string>
-							<string key="NSKeyPath">selected</string>
-							<object class="NSDictionary" key="NSOptions">
-								<string key="NS.key.0">NSValueTransformerName</string>
-								<string key="NS.object.0">NSNegateBoolean</string>
-							</object>
+							<string key="NSLabel">enabled: mounted</string>
+							<string key="NSBinding">enabled</string>
+							<string key="NSKeyPath">mounted</string>
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
 					</object>
-					<int key="connectionID">1803</int>
+					<int key="connectionID">1811</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">enabled: mounted</string>
+						<reference key="source" ref="525221673"/>
+						<reference key="destination" ref="527118087"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="525221673"/>
+							<reference key="NSDestination" ref="527118087"/>
+							<string key="NSLabel">enabled: mounted</string>
+							<string key="NSBinding">enabled</string>
+							<string key="NSKeyPath">mounted</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1812</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">enabled: mounted</string>
+						<reference key="source" ref="1057456829"/>
+						<reference key="destination" ref="527118087"/>
+						<object class="NSNibBindingConnector" key="connector" id="174103917">
+							<reference key="NSSource" ref="1057456829"/>
+							<reference key="NSDestination" ref="527118087"/>
+							<string key="NSLabel">enabled: mounted</string>
+							<string key="NSBinding">enabled</string>
+							<string key="NSKeyPath">mounted</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1813</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">enabled: mounted</string>
+						<reference key="source" ref="1059830828"/>
+						<reference key="destination" ref="527118087"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="1059830828"/>
+							<reference key="NSDestination" ref="527118087"/>
+							<string key="NSLabel">enabled: mounted</string>
+							<string key="NSBinding">enabled</string>
+							<string key="NSKeyPath">mounted</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1814</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">image: iconForToggle</string>
+						<reference key="source" ref="560756325"/>
+						<reference key="destination" ref="527118087"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="560756325"/>
+							<reference key="NSDestination" ref="527118087"/>
+							<string key="NSLabel">image: iconForToggle</string>
+							<string key="NSBinding">image</string>
+							<string key="NSKeyPath">iconForToggle</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1817</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">progressMeter</string>
+						<reference key="source" ref="527118087"/>
+						<reference key="destination" ref="106440638"/>
+					</object>
+					<int key="connectionID">1824</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">progressMeterCancel</string>
+						<reference key="source" ref="527118087"/>
+						<reference key="destination" ref="1013267985"/>
+					</object>
+					<int key="connectionID">1825</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">progressMeterLabel</string>
+						<reference key="source" ref="527118087"/>
+						<reference key="destination" ref="682806378"/>
+					</object>
+					<int key="connectionID">1826</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">hidden: selected</string>
 						<reference key="source" ref="560756325"/>
 						<reference key="destination" ref="527118087"/>
-						<object class="NSNibBindingConnector" key="connector">
+						<object class="NSNibBindingConnector" key="connector" id="520480897">
 							<reference key="NSSource" ref="560756325"/>
 							<reference key="NSDestination" ref="527118087"/>
 							<string key="NSLabel">hidden: selected</string>
@@ -3792,7 +3808,172 @@ aGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
 					</object>
-					<int key="connectionID">1804</int>
+					<int key="connectionID">1829</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">hidden2: importing</string>
+						<reference key="source" ref="560756325"/>
+						<reference key="destination" ref="527118087"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="560756325"/>
+							<reference key="NSDestination" ref="527118087"/>
+							<string key="NSLabel">hidden2: importing</string>
+							<string key="NSBinding">hidden2</string>
+							<string key="NSKeyPath">importing</string>
+							<object class="NSDictionary" key="NSOptions">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<object class="NSArray" key="dict.sortedKeys">
+									<bool key="EncodedWithXMLCoder">YES</bool>
+									<string>NSMultipleValuesPlaceholder</string>
+									<string>NSNoSelectionPlaceholder</string>
+									<string>NSNotApplicablePlaceholder</string>
+									<string>NSNullPlaceholder</string>
+								</object>
+								<object class="NSMutableArray" key="dict.values">
+									<bool key="EncodedWithXMLCoder">YES</bool>
+									<integer value="-1"/>
+									<integer value="-1"/>
+									<integer value="-1"/>
+									<integer value="-1"/>
+								</object>
+							</object>
+							<reference key="NSPreviousConnector" ref="520480897"/>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1831</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">hidden: selected</string>
+						<reference key="source" ref="243944952"/>
+						<reference key="destination" ref="527118087"/>
+						<object class="NSNibBindingConnector" key="connector" id="464933056">
+							<reference key="NSSource" ref="243944952"/>
+							<reference key="NSDestination" ref="527118087"/>
+							<string key="NSLabel">hidden: selected</string>
+							<string key="NSBinding">hidden</string>
+							<string key="NSKeyPath">selected</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSValueTransformerName</string>
+								<string key="NS.object.0">NSNegateBoolean</string>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1834</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">hidden2: importing</string>
+						<reference key="source" ref="243944952"/>
+						<reference key="destination" ref="527118087"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="243944952"/>
+							<reference key="NSDestination" ref="527118087"/>
+							<string key="NSLabel">hidden2: importing</string>
+							<string key="NSBinding">hidden2</string>
+							<string key="NSKeyPath">importing</string>
+							<object class="NSDictionary" key="NSOptions">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<object class="NSArray" key="dict.sortedKeys">
+									<bool key="EncodedWithXMLCoder">YES</bool>
+									<string>NSMultipleValuesPlaceholder</string>
+									<string>NSNoSelectionPlaceholder</string>
+									<string>NSNotApplicablePlaceholder</string>
+									<string>NSNullPlaceholder</string>
+								</object>
+								<object class="NSMutableArray" key="dict.values">
+									<bool key="EncodedWithXMLCoder">YES</bool>
+									<integer value="-1"/>
+									<integer value="-1"/>
+									<integer value="-1"/>
+									<integer value="-1"/>
+								</object>
+							</object>
+							<reference key="NSPreviousConnector" ref="464933056"/>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1835</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">hidden: importing</string>
+						<reference key="source" ref="1057456829"/>
+						<reference key="destination" ref="527118087"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="1057456829"/>
+							<reference key="NSDestination" ref="527118087"/>
+							<string key="NSLabel">hidden: importing</string>
+							<string key="NSBinding">hidden</string>
+							<string key="NSKeyPath">importing</string>
+							<reference key="NSPreviousConnector" ref="174103917"/>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1837</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">hidden: importing</string>
+						<reference key="source" ref="682806378"/>
+						<reference key="destination" ref="527118087"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="682806378"/>
+							<reference key="NSDestination" ref="527118087"/>
+							<string key="NSLabel">hidden: importing</string>
+							<string key="NSBinding">hidden</string>
+							<string key="NSKeyPath">importing</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSValueTransformerName</string>
+								<string key="NS.object.0">NSNegateBoolean</string>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1840</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">hidden: importing</string>
+						<reference key="source" ref="106440638"/>
+						<reference key="destination" ref="527118087"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="106440638"/>
+							<reference key="NSDestination" ref="527118087"/>
+							<string key="NSLabel">hidden: importing</string>
+							<string key="NSBinding">hidden</string>
+							<string key="NSKeyPath">importing</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSValueTransformerName</string>
+								<string key="NS.object.0">NSNegateBoolean</string>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1843</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">hidden: importing</string>
+						<reference key="source" ref="1013267985"/>
+						<reference key="destination" ref="527118087"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="1013267985"/>
+							<reference key="NSDestination" ref="527118087"/>
+							<string key="NSLabel">hidden: importing</string>
+							<string key="NSBinding">hidden</string>
+							<string key="NSKeyPath">importing</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSValueTransformerName</string>
+								<string key="NS.object.0">NSNegateBoolean</string>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1846</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -5288,6 +5469,7 @@ aGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 					<string>1288.IBPluginDependency</string>
 					<string>1289.IBPluginDependency</string>
 					<string>1333.IBPluginDependency</string>
+					<string>1333.IBViewBoundsToFrameTransform</string>
 					<string>1334.CustomClassName</string>
 					<string>1334.IBPluginDependency</string>
 					<string>1334.IBViewBoundsToFrameTransform</string>
@@ -5579,6 +5761,9 @@ aGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
+					<object class="NSAffineTransform">
+						<bytes key="NSTransformStruct">P4AAAL+AAABDDQAAwZgAAA</bytes>
+					</object>
 					<string>BXHUDLabel</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<object class="NSAffineTransform">
@@ -5900,7 +6085,7 @@ aGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1807</int>
+			<int key="maxID">1846</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -6257,15 +6442,57 @@ aGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 				<object class="IBPartialClassDescription">
 					<string key="className">BXDriveItem</string>
 					<string key="superclassName">BXCollectionItem</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier" id="359472022">
+					<object class="NSMutableDictionary" key="outlets">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>progressMeter</string>
+							<string>progressMeterCancel</string>
+							<string>progressMeterLabel</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSProgressIndicator</string>
+							<string>NSButton</string>
+							<string>NSTextField</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>progressMeter</string>
+							<string>progressMeterCancel</string>
+							<string>progressMeterLabel</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBToOneOutletInfo">
+								<string key="name">progressMeter</string>
+								<string key="candidateClassName">NSProgressIndicator</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">progressMeterCancel</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">progressMeterLabel</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier" id="979387021">
 						<string key="majorKey">IBDocumentRelativeSource</string>
-						<string key="minorKey">../../Boxer/BXDriveList.h</string>
+						<string key="minorKey">../../Boxer/BXDrivePanelController.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">BXDriveItemButtonCell</string>
 					<string key="superclassName">NSButtonCell</string>
-					<reference key="sourceIdentifier" ref="359472022"/>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier" id="359472022">
+						<string key="majorKey">IBDocumentRelativeSource</string>
+						<string key="minorKey">../../Boxer/BXDriveList.h</string>
+					</object>
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">BXDriveItemView</string>
@@ -6430,10 +6657,7 @@ aGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 							</object>
 						</object>
 					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBDocumentRelativeSource</string>
-						<string key="minorKey">../../Boxer/BXDrivePanelController.h</string>
-					</object>
+					<reference key="sourceIdentifier" ref="979387021"/>
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">BXGameboxPanelController</string>
@@ -7041,7 +7265,6 @@ aGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<string>EjectTemplate</string>
 				<string>GamepadTemplate</string>
-				<string>InsertTemplate</string>
 				<string>NSActionTemplate</string>
 				<string>NSAddTemplate</string>
 				<string>NSMenuCheckmark</string>
@@ -7055,7 +7278,6 @@ aGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<string>{128, 128}</string>
 				<string>{128, 80}</string>
-				<string>{128, 128}</string>
 				<string>{17, 17}</string>
 				<string>{17, 17}</string>
 				<string>{9, 8}</string>

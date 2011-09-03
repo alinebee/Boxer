@@ -10,6 +10,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import "BXOperationDelegate.h"
+#import "BXCollectionItemView.h"
 
 @class BXDriveList;
 @class BXDrive;
@@ -97,4 +98,44 @@
     writeItemsAtIndexes: (NSIndexSet *)indexes
            toPasteboard: (NSPasteboard *)pasteboard;
 
+@end
+
+
+//BXDriveItem represents each drive in the list and acts
+//as a view controller for its corresponding BXDriveItemView.
+@interface BXDriveItem : BXCollectionItem
+{
+    BOOL importing;
+}
+
+//The icon to display for the drive we represent.
+@property (readonly, nonatomic) NSImage *icon;
+
+//The type description to display for our drive.
+@property (readonly, nonatomic) NSString *typeDescription;
+
+//The icon to display on the insert/eject toggle.
+@property (readonly, nonatomic) NSImage *iconForToggle;
+
+//A remapping of BXDrive -mounted (in preparation for phasing it out.)
+@property (readonly, nonatomic, getter=isMounted) BOOL mounted;
+
+//Whether this drive is currently being imported to the gamebox.
+//Used to toggle the visibility of import progress fields in the drive item view.
+@property (assign, nonatomic, getter=isImporting) BOOL importing;
+
+
+//Progress meter fields within the drive item view.
+//These will be updated programmatically throughout the import progress.
+@property (readonly, nonatomic) NSProgressIndicator *progressMeter;
+@property (readonly, nonatomic) NSTextField *progressMeterLabel;
+@property (readonly, nonatomic) NSButton *progressMeterCancel;
+
+
+//Import notifications dispatched by BXDrivePanelController,
+//to the drive item for the drive being imported.
+- (void) driveImportWillStart: (NSNotification *)notification;
+- (void) driveImportInProgress: (NSNotification *)notification;
+- (void) driveImportWasCancelled: (NSNotification *)notification;
+- (void) driveImportDidFinish: (NSNotification *)notification;
 @end

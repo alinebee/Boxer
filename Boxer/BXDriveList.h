@@ -13,6 +13,7 @@
 #import "BXCollectionItemView.h"
 
 @class BXDrive;
+@class BXDriveItem;
 @class BXDriveItemView;
 @class BXDrivePanelController;
 
@@ -25,34 +26,14 @@
 //Returns the view that represents the specified drive.
 - (BXDriveItemView *) viewForDrive: (BXDrive *)drive;
 
-@end
-
-
-//BXDriveItemView represents each drive in the list and acts
-//as a view controller for its corresponding BXDriveItemView.
-@interface BXDriveItem : BXCollectionItem
-
-//The icon to display for the drive we represent.
-@property (readonly, nonatomic) NSImage *icon;
-
-//The type description to display for our drive.
-@property (readonly, nonatomic) NSString *typeDescription;
+//Returns the collection view item representing the specified drive.
+- (BXDriveItem *) itemForDrive: (BXDrive *)drive;
 
 @end
 
 
 //BXDriveItemView displays each drive entry in the list.
 @interface BXDriveItemView : BXHUDCollectionItemView
-
-//Our subviews
-@property (readonly, nonatomic) NSTextField *driveTypeLabel;
-@property (readonly, nonatomic) NSTextField *displayNameLabel;
-@property (readonly, nonatomic) NSTextField *letterLabel;
-@property (readonly, nonatomic) NSTextField *progressMeterLabel;
-@property (readonly, nonatomic) NSImageView *driveIcon;
-@property (readonly, nonatomic) NSProgressIndicator *progressMeter;
-@property (readonly, nonatomic) NSButton *progressMeterCancel;
-
 @end
 
 

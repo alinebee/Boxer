@@ -54,33 +54,6 @@ static void _deviceRemoved(void *context, IOReturn result, void *sender, IOHIDDe
 #pragma mark -
 #pragma mark Helper class methods
 
-+ (NSSet *) HIDRemapperBundleIdentifiers
-{
-    static NSSet *set = nil;
-    if (!set) set = [[NSSet alloc] initWithObjects:
-                     @"com.carvware.gpcdaemonlauncher",         //Gamepad Companion's background process
-                     @"com.orderedbytes.ControllerMateHelper",  //ControllerMate's helper process
-                     nil];
-    
-    return set;
-}
-
-+ (NSArray *) runningHIDRemappers
-{
-    NSMutableArray *apps = [NSMutableArray arrayWithCapacity: 2];
-    if ([[NSWorkspace sharedWorkspace] respondsToSelector: @selector(runningApplications)])
-    {
-        for (NSString *bundleID in [self HIDRemapperBundleIdentifiers])
-        {
-            NSArray *appsWithID = [NSRunningApplication runningApplicationsWithBundleIdentifier: bundleID];
-            if ([appsWithID count]) [apps addObjectsFromArray: appsWithID];
-        }
-    }
-    
-    return apps;
-}
-
-
 + (NSDictionary *) joystickDescriptor
 {
 	return [NSDictionary dictionaryWithObjectsAndKeys:
@@ -113,6 +86,7 @@ static void _deviceRemoved(void *context, IOReturn result, void *sender, IOHIDDe
 			nil];
 }
 
+
 - (NSArray *) matchedDevices
 {
 	return [[knownDevices allValues] sortedArrayUsingSelector: @selector(compareByLocationId:)];
@@ -134,6 +108,8 @@ static void _deviceRemoved(void *context, IOReturn result, void *sender, IOHIDDe
 
 - (void) dealloc
 {
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
+    
 	[self stopObserving];
 	
 	[self setDelegate: nil];

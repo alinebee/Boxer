@@ -15,11 +15,33 @@
 @interface BXJoystickController: NSObject <BXHIDMonitorDelegate>
 {
 	BXHIDMonitor *hidMonitor;
+    NSArray *recentHIDRemappers;
 }
 @property (readonly, nonatomic) BXHIDMonitor *hidMonitor;
 
 //An array of DDHIDJoystick instances for each joystick currently connected.
 //Corresponds to hidMonitor matchedDevices.
 @property (readonly, nonatomic) NSArray *joystickDevices;
+
+//An array of bundle identifiers of known HID remappers that were running last we checked.
+//(This will be cached, and the cache cleared whenever Boxer loses the application focus.)
+@property (readonly, nonatomic) NSArray *recentHIDRemappers;
+
+
+#pragma mark -
+#pragma mark Helper class methods
+
+//Returns a set of bundle identifiers for known HID remapper tools that may
+//interfere with/affect Boxer's HID controller support.
++ (NSSet *) HIDRemapperIdentifiers;
+
+//Returns an array of bundle identifiers for known HID remappers that are currently running.
+//(This call may be expensive, so recentHIDRemappers should be used instead if
+//up-to-the-minute data is not needed.)
++ (NSArray *) runningHIDRemapperIdentifiers;
+
+//Flushes our cache of known HID remappers. Called whenever Boxer loses then regains
+//the application focus.
+- (void) clearRecentHIDRemappers;
 
 @end

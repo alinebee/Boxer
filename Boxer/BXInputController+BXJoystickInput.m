@@ -277,6 +277,11 @@
     //controller while watching the game load.)
     if ([[emulator videoHandler] isInTextMode]) return NO;
     
+    //If there are known joystick/gamepad remapper tools running, assume
+    //that they're handling joystick input on behalf of Boxer.
+    if ([[[[NSApp delegate] joystickController] recentHIDRemappers] count]) return NO;
+    
+    
     //If we get this far then yes, the current program does seem to be ignoring the joystick.
     return YES;
 }

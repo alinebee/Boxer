@@ -49,14 +49,6 @@ extern NSString * const BXHIDDeviceKey;
 #pragma mark -
 #pragma mark Helper class methods
 
-//Returns a set of bundle identifiers for known HID remapper tools that may
-//interfere with/affect Boxer's HID controller support.
-+ (NSSet *) HIDRemapperBundleIdentifiers;
-
-//Returns an array of NSRunningApplication instances matching HIDRemapperBundleIdentifiers.
-//Always returns an empty array on 10.5.
-+ (NSArray *) runningHIDRemappers;
-
 //Descriptors to feed to observeDevicesMatching:
 + (NSDictionary *) joystickDescriptor;
 + (NSDictionary *) gamepadDescriptor;

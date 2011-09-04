@@ -27,10 +27,20 @@
 										 [BXHIDMonitor joystickDescriptor],
 										 [BXHIDMonitor gamepadDescriptor],
 										 nil]];
+
+    //Clear our cache of running HID remappers whenever Boxer regains the application focus
+    //(since the user may have launched/quit other applications while we were inactive).
+    [[NSNotificationCenter defaultCenter] addObserver: self
+                                             selector: @selector(clearRecentHIDRemappers)                                                                     name: NSApplicationDidBecomeActiveNotification
+                                               object: NSApp];
 }
 
 - (void) dealloc
 {
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
+    
+    [recentHIDRemappers release], recentHIDRemappers = nil;
+    
 	[hidMonitor stopObserving];
 	[hidMonitor release], hidMonitor = nil;
 	
@@ -45,6 +55,68 @@
 - (NSArray *)joystickDevices
 {
 	return [hidMonitor matchedDevices];
+}
+
+
+#pragma mark -
+#pragma mark HID remapper helper methods
+
++ (NSSet *) HIDRemapperIdentifiers
+{
+    static NSSet *set = nil;
+    if (!set) set = [[NSSet alloc] initWithObjects:
+                     @"com.carvware.gpcdaemonlauncher",         //Gamepad Companion's background process
+                     @"com.orderedbytes.ControllerMateHelper",  //ControllerMate's helper process
+                     nil];
+    
+    return set;
+}
+
++ (NSArray *) runningHIDRemapperIdentifiers
+{
+    NSMutableArray *apps = [NSMutableArray arrayWithCapacity: 2];
+    NSSet *identifiers = [self HIDRemapperIdentifiers];
+    
+    //10.6+
+    if ([[NSWorkspace sharedWorkspace] respondsToSelector: @selector(runningApplications)])
+    {
+        for (NSString *bundleID in identifiers)
+        {
+            NSArray *appsWithID = [NSRunningApplication runningApplicationsWithBundleIdentifier: bundleID];
+            if ([appsWithID count]) [apps addObject: bundleID];
+        }
+    }
+    //10.5
+    else
+    {
+        NSArray *runningApps = [[NSWorkspace sharedWorkspace] launchedApplications];
+        for (NSDictionary *appDetails in runningApps)
+        {
+            NSString *bundleID = [appDetails objectForKey: @"NSApplicationBundleIdentifier"];
+            if ([identifiers containsObject: bundleID])
+            {
+                [apps addObject: bundleID];
+            }
+        }
+    }
+    
+    return apps;
+}
+
+- (NSArray *) recentHIDRemappers
+{
+    //Populate the remapper array the first time we are asked
+    if (!recentHIDRemappers)
+    {
+        recentHIDRemappers = [[[self class] runningHIDRemapperIdentifiers] retain];
+    }
+    return recentHIDRemappers;
+}
+
+- (void) clearRecentHIDRemappers
+{
+    [recentHIDRemappers release];
+    recentHIDRemappers = nil;
 }
 
 

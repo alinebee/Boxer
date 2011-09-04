@@ -706,7 +706,7 @@ enum {
 @implementation BXDriveItem
 @synthesize importing;
 
-//IMPLEMENTATION NOTE: BXCollectionView does not correctly clone IBOutlets
+//IMPLEMENTATION NOTE: NSCollectionView does not correctly clone IBOutlets
 //when cloning collection view items, so we can't just outlet-link to the
 //subviews we care about. Instead, we have to trawl the view structure
 //to grab them, which is especially painful for progressMeter because

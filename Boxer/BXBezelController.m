@@ -185,15 +185,6 @@
 
 - (void) showJoystickIgnoredBezel
 {
-    if (!([[self window] isVisible] && [[self currentBezel] isEqual: [self joystickIgnoredBezel]]))
-    {
-        //Check if there are any controller helpers running, which may
-        //be remapping joystick input themselves.
-        //If there are then don't warn the user, as the game is probably
-        //receiving the input some other way.
-        if ([[BXHIDMonitor runningHIDRemappers] count]) return;
-    }
-    
     [self showBezel: [self joystickIgnoredBezel]
         forDuration: BXJoystickIgnoredBezelDuration
            priority: BXBezelPriorityLow];

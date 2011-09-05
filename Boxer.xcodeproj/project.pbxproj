@@ -3237,7 +3237,6 @@
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "";
 				"OTHER_CFLAGS[arch=i386]" = "-mstackrealign";
-				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = Boxer;
 			};
 			name = Debug;
@@ -3277,7 +3276,6 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				OTHER_CFLAGS = "";
 				"OTHER_CFLAGS[arch=i386]" = "-mstackrealign";
-				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = Boxer;
 				VALIDATE_PRODUCT = YES;
 			};

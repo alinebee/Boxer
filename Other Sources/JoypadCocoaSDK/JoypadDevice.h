@@ -5,91 +5,77 @@
 //  Created by Lou Zell on 2/25/11.
 //  Copyright 2011 Hazelmade. All rights reserved.
 //
+//  Please email questions to me, Lou, at lzell11@gmail.com
+//
 
 #import <Foundation/Foundation.h>
-#import "JoypadManager.h"
+#import "JoypadConstants.h"
 
-@class JoypadDeviceNetworker;
-@class JoypadManager;
-
-typedef struct
-{
-  float x;
-  float y;
-  float z;
-}JoypadAcceleration;
-
-// Angle is in radians.
-typedef struct
-{
-  float angle;
-  float distance;
-}JoypadStickPosition;
-
-#if TARGET_OS_IPHONE || (MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_5)
-@interface JoypadDevice : NSObject<NSNetServiceDelegate>
-#else
 @interface JoypadDevice : NSObject
-#endif
-{
-  NSString *name;
-  NSString *ipAddress;
-  UInt16 port;
-  NSNetService *netService;
-  BOOL isConnected;
-  BOOL lostConnection;
-  unsigned int playerNumber;
-  JoypadDeviceNetworker *deviceNetworker;
-  JoypadManager *manager;
-  NSArray *inputElements;
-  
-  UInt64 previousState;
 
-  id delegate;
-  
-  // When the -connect method is called, we must first check to
-  // see if the netService has been resolved into an IP and port.
-  // If it has not, we set the toConnect flag and resolve the
-  // service.  When the service finishes resolving, we connect.
-  BOOL toConnect;
-}
-
--(id)initWithManager:(JoypadManager *)manager;
-
-#pragma mark Actions
--(void)connect;
--(void)disconnect;
-
-#pragma mark DeviceNetworker Called Actions
--(void)deviceNetworkerDidConnect:(JoypadDeviceNetworker *)networker;
--(void)deviceNetworkerDidDisconnect:(JoypadDeviceNetworker *)networker;
--(void)deviceNetworker:(JoypadDeviceNetworker *)networker didReceiveNextState:(UInt64)nextState;
-
-#pragma mark Getters
--(NSString *)name;
--(NSString *)ipAddress;
--(UInt16)port;
--(NSNetService *)netService;
--(BOOL)isConnected;
--(BOOL)lostConnection;
--(unsigned int)playerNumber;
--(id)delegate;
--(JoypadManager *)manager;
-
-#pragma mark Setters
--(void)setName:(NSString *)s;
--(void)setIpAddress:(NSString *)s;
--(void)setPort:(UInt16)p;
--(void)setNetService:(NSNetService *)service;
--(void)setLostConnection:(BOOL)yn;
--(void)setPlayerNumber:(unsigned int)player;
+/**
+ * Sets the object that will receive input from a JoypadDevice.
+ * See the JoypadDeviceDelegate Category at the bottom of this header.
+ */
 -(void)setDelegate:(id)aDelegate;
+
+/**
+ * Gets the object that will receive input from a JoypadDevice.
+ * See the JoypadDeviceDelegate Category at the bottom of this header.
+ */
+-(id)delegate;
+
+/**
+ * The name of this device.  This is the name that is displayed 
+ * in iTunes when you connect your phone.
+ */
+-(NSString *)name;
+
+/**
+ * The player number of this device.  You set the player number when 
+ * you initiate a connection.  For example:
+ *
+ *   -[JoypadManager connectToDevice:aDevice asPlayer:2];
+ *   
+ */
+-(unsigned int)playerNumber;
+
+/**
+ * Is the device currently connected.
+ */
+-(BOOL)isConnected;
+
+/**
+ * Force a disconnect.
+ */
+-(void)disconnect;
 
 @end
 
-#pragma mark -
+
+
 @interface NSObject (JoypadDeviceDelegate)
 
+/**
+ 
+ Implement the following methods in the class that will receive input from Joypad.
+ For example, if you would like an instance of MyClass to receive accelerometer data, 
+ you would implement something like this in MyClass:
+ 
+  +----------------------------------------------------------------------------------------+
+  | @implementation MyClass                                                                |
+  |                                                                                        |
+  | -(void)joypadDevice:(JoypadDevice *)device didAccelerate:(JoypadAcceleration)accel     |
+  | {                                                                                      |
+  |   NSLog(@"Received new accel data => x: %f, y: %f, z: %f", accel.x, accel.y, accel.z); |
+  | }                                                                                      |
+  |                                                                                        |
+  | @end                                                                                   |
+  +----------------------------------------------------------------------------------------+
+ 
+ Please see the sample project that comes with the SDK download for more examples.
+ 
+ */
 -(void)joypadDevice:(JoypadDevice *)device didAccelerate:(JoypadAcceleration)accel;
 -(void)joypadDevice:(JoypadDevice *)device dPad:(JoyInputIdentifier)dpad buttonUp:(JoyDpadButton)dpadButton;
 -(void)joypadDevice:(JoypadDevice *)device dPad:(JoyInputIdentifier)dpad buttonDown:(JoyDpadButton)dpadButton;

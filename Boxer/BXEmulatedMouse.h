@@ -14,7 +14,12 @@
 
 
 //How long buttonPressed: should pretend to hold the specified button down before releasing.
-#define BXMouseButtonPressDurationDefault 0.25
+#define BXMouseButtonPressDurationDefault 0.1
+
+//The minimum duration for a mouse button press. Buttons that are released before this
+//will be 'held down' until this time has elapsed, preventing ultra-quick taps from
+//getting missed by a game's mouse-polling.
+#define BXMouseButtonPressDurationMinimum 0.05
 
 
 @interface BXEmulatedMouse: NSObject
@@ -23,6 +28,7 @@
 	NSPoint position;
 	
 	BXMouseButtonMask pressedButtons;
+    NSTimeInterval lastButtonDown[BXMouseButtonMax];
 }
 
 

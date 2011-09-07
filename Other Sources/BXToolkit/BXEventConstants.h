@@ -13,7 +13,8 @@
 enum {
 	BXMouseButtonLeft	= 0,
 	BXMouseButtonRight	= 1,
-	BXMouseButtonMiddle	= 2
+	BXMouseButtonMiddle	= 2,
+    BXMouseButtonMax    = 3
 };
 
 typedef NSUInteger BXMouseButton;

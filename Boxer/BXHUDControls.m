@@ -154,6 +154,14 @@
     }
 }
 
+
+#pragma mark -
+#pragma mark Animation methods
+
+//These needed to be reimplemented because NSProgressIndicator's own
+//implementation causes nasty ugly overdraws for some goddamn reason.
+//Note that these do not perform threaded animation yet.
+
 - (void) performAnimation: (NSTimer*)timer
 {
     [self setNeedsDisplay: YES];

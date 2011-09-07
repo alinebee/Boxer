@@ -8,6 +8,7 @@
 #import "BXHUDControls.h"
 #import "BXGeometry.h"
 #import "NSShadow+BXShadowExtensions.h"
+#import "NSBezierPath+MCAdditions.h"
 
 
 #define BXBezelBorderRadius 20.0f
@@ -27,6 +28,178 @@
     [self setStringValue: [self stringValue]];
 }
 @end
+
+
+@implementation BXHUDProgressIndicator
+
+- (BOOL) isOpaque
+{
+    return NO;
+}
+
+- (BOOL) isBezeled
+{
+    return NO;
+}
+
+- (NSBezierPath *) stripePathForFrame: (NSRect)frame
+                        animationTime: (NSTimeInterval)timeInterval
+{
+    CGFloat stripeWidth = frame.size.height;
+    
+    //Expand the frame so that our stripe will be unbroken.
+    frame.size.width += (stripeWidth * 4);
+    frame.origin.x -= (stripeWidth * 2);
+    
+    NSPoint offset = frame.origin;
+    
+    //Choose the starting offset based on our animation time: we complete
+    //one full cycle of the stripes in a second.
+    //TODO: abstract this calculation and allow it to have arbitrary timing.
+    double ms = (long long)(timeInterval * 1000) % 1000;
+    float animationProgress = (float)(ms / 1000);
+    offset.x += (stripeWidth * 2 * animationProgress);
+    
+    //Now, walk across the frame drawing parallelograms!
+    NSBezierPath *stripePath = [[NSBezierPath alloc] init];
+    
+    while(offset.x <= NSMaxX(frame))
+    {
+        [stripePath moveToPoint: offset];
+        [stripePath lineToPoint: NSMakePoint(offset.x + stripeWidth,          offset.y)];
+        [stripePath lineToPoint: NSMakePoint(offset.x + (stripeWidth * 2),    offset.y + stripeWidth)];
+        [stripePath lineToPoint: NSMakePoint(offset.x + stripeWidth,          offset.y + stripeWidth)];
+        [stripePath closePath];
+        
+        offset.x += (stripeWidth * 2);
+    }
+    
+    return [stripePath autorelease];
+}
+
+- (void) drawRect: (NSRect)dirtyRect
+{
+    NSColor *strokeColor = [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.5f];
+    NSColor *fillColor = [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.25f];
+    
+    NSShadow *fillShadow = [NSShadow shadowWithBlurRadius: 2.0f offset: NSMakeSize(0.0f, -1.0f)];
+    
+    NSRect canvas           = NSIntegralRect([self bounds]);
+    NSRect fillRegion       = NSInsetRect(canvas, 1.0f, 1.0f);
+    NSRect strokeRegion     = NSInsetRect(canvas, 0.5f, 0.5f);
+    
+    NSBezierPath *fillPath = [NSBezierPath bezierPathWithRoundedRect: fillRegion
+                                                             xRadius: fillRegion.size.height / 2
+                                                             yRadius: fillRegion.size.height / 2];
+    
+    NSBezierPath *strokePath = [NSBezierPath bezierPathWithRoundedRect: strokeRegion
+                                                               xRadius: strokeRegion.size.height / 2
+                                                               yRadius: strokeRegion.size.height / 2];
+    
+    NSRect progressRegion = NSInsetRect(canvas, 2.0f, 2.0f);
+    NSBezierPath *progressPath = [NSBezierPath bezierPathWithRoundedRect: progressRegion
+                                                                 xRadius: progressRegion.size.height / 2
+                                                                 yRadius: progressRegion.size.height / 2];
+    
+    [NSGraphicsContext saveGraphicsState];
+        [strokeColor setStroke];
+        [fillColor setFill];
+    
+        [fillPath fill];
+        [fillPath fillWithInnerShadow: fillShadow];
+        [strokePath stroke];
+    [NSGraphicsContext restoreGraphicsState];
+    
+    
+    if ([self isIndeterminate])
+    {
+        NSColor *stripeColor = [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.25f];
+		NSGradient *progressGradient = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.5f]
+                                                                     endingColor: [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.25f]];
+        
+        NSBezierPath *stripePath = [self stripePathForFrame: progressRegion
+                                              animationTime: [NSDate timeIntervalSinceReferenceDate]];
+        
+        [NSGraphicsContext saveGraphicsState];
+            [progressGradient drawInBezierPath: progressPath
+                                         angle: 90.0f];
+        
+            [progressPath addClip];
+            [stripeColor setFill];
+            [stripePath fill];
+        [NSGraphicsContext restoreGraphicsState];
+    }
+    else
+    {
+        NSGradient *progressGradient = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 1.0f alpha: 1.0f]
+                                                                     endingColor: [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.66f]];
+        
+        //Work out how full the progress bar should be, and calculate from that how much of the path to draw
+		double progress = ([self doubleValue] - [self minValue]) / ([self maxValue] - [self minValue]);
+        
+        NSRect progressClip = progressRegion;
+        progressClip.size.width *= (float)progress;
+        progressClip = NSIntegralRect(progressClip);
+        
+        [NSGraphicsContext saveGraphicsState];
+            [NSBezierPath clipRect: progressClip];
+            
+            [progressGradient drawInBezierPath: progressPath
+                                         angle: 90.0f];
+            
+            //[progressPath fillWithInnerShadow: progressGlow];
+        [NSGraphicsContext restoreGraphicsState];
+        
+        [progressGradient release];
+    }
+}
+
+- (void) performAnimation: (NSTimer*)timer
+{
+    [self setNeedsDisplay: YES];
+}
+
+- (void) startAnimation: (id)sender
+{
+    if (!animationTimer)
+    {
+        animationTimer = [NSTimer scheduledTimerWithTimeInterval: 5.0/60.0
+                                                          target: self
+                                                        selector: @selector(performAnimation:)
+                                                        userInfo: nil
+                                                         repeats: YES];
+        [animationTimer retain];
+    }
+}
+
+- (void) stopAnimation: (id)sender
+{
+    if (animationTimer)
+    {
+        [animationTimer invalidate];
+        [animationTimer release];
+        animationTimer = nil;
+    }
+}
+
+- (void) viewDidMoveToWindow
+{
+    [super viewDidMoveToWindow];
+    
+    if (![self window])
+        [self stopAnimation: self];
+}
+
+- (void) dealloc
+{
+    if (animationTimer)
+        [self stopAnimation: self];
+    
+    [super dealloc];
+}
+
+@end
+
 
 
 @implementation BXHUDLevelIndicatorCell

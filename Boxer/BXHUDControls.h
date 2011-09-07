@@ -21,6 +21,15 @@
 @interface BXHUDLabel : BGHUDLabel
 @end
 
+
+//An indented progress controller designed for HUD panels.
+@interface BXHUDProgressIndicator: NSProgressIndicator
+{
+    NSTimer *animationTimer;
+}
+@end
+
+
 //A shadowed white level indicator designed for bezel notifications.
 @interface BXHUDLevelIndicatorCell : NSLevelIndicatorCell
 {

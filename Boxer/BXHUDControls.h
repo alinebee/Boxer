@@ -22,11 +22,22 @@
 @end
 
 
-//An indented progress controller designed for HUD panels.
+//A translucent white progress indicator designed for HUD panels.
 @interface BXHUDProgressIndicator: NSProgressIndicator
 {
     NSTimer *animationTimer;
 }
+
+//Draw methods called from drawRect:
+- (NSBezierPath *) stripePathForFrame: (NSRect)frame
+                        animationTime: (NSTimeInterval)timeInterval;
+- (void) drawProgressInRect: (NSRect)dirtyRect;
+- (void) drawIndeterminateProgressInRect: (NSRect)dirtyRect;
+- (void) drawSlotInRect: (NSRect)dirtyRect;
+
+//Called each time the animation timer fires.
+- (void) performAnimation: (NSTimer *)timer;
+
 @end
 
 

@@ -421,7 +421,7 @@
 				 GL_UNSIGNED_INT_8_8_8_8_REV,	//Byte packing
 				 [frame bytes]);				//Texture data
 
-#if BOXER_DEBUG
+#ifdef BOXER_DEBUG
 	GLenum status = glGetError();
     if (status)
     {
@@ -456,7 +456,7 @@
 					GL_UNSIGNED_INT_8_8_8_8_REV,	//Byte packing
 					[frame bytes]);					//Texture data
 	
-#if BOXER_DEBUG	
+#ifdef BOXER_DEBUG	
 	GLenum status = glGetError();
     if (status)
     {
@@ -500,7 +500,7 @@
 				 GL_UNSIGNED_INT_8_8_8_8_REV,	//Byte packing
 				 NULL);							//Empty data
 	
-#if BOXER_DEBUG
+#ifdef BOXER_DEBUG
 	GLenum status = glGetError();
     if (status)
     {
@@ -519,7 +519,7 @@
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, buffer);
 		glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_RECTANGLE_ARB, texture, 0);
 		
-#if BOXER_DEBUG
+#ifdef BOXER_DEBUG
 		status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
 		if (status != GL_FRAMEBUFFER_COMPLETE_EXT)
 		{

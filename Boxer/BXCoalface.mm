@@ -294,7 +294,7 @@ bool boxer_numLockEnabled()
 
 void boxer_log(char const* format,...)
 {
-#if BOXER_DEBUG
+#ifdef BOXER_DEBUG
 	//Copypasta from sdlmain.cpp
 	char buf[512];
 	va_list msg;

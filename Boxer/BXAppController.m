@@ -354,7 +354,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 			{
 				[NSThread sleepForTimeInterval: 0.4];
 				hasDelayed = YES;
-				[self orderFrontFirstRunPanelWithFlip: self];
+				[self orderFrontFirstRunPanelWithTransition: self];
 			}
 			else
 			{
@@ -368,7 +368,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 				if (useFlipTransitions)
 				{
 					if (!hasDelayed) [NSThread sleepForTimeInterval: 0.4];
-					[self orderFrontWelcomePanelWithFlip: self];
+					[self orderFrontWelcomePanelWithTransition: self];
 				}
 				else
 				{
@@ -708,9 +708,9 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	[[BXWelcomeWindowController controller] showWindow: sender];
 }
 
-- (IBAction) orderFrontWelcomePanelWithFlip: (id)sender
+- (IBAction) orderFrontWelcomePanelWithTransition: (id)sender
 {	
-	[[BXWelcomeWindowController controller] showWindowWithFlip: sender];
+	[[BXWelcomeWindowController controller] showWindowWithTransition: sender];
 }
 
 - (IBAction) orderFrontFirstRunPanel: (id)sender
@@ -721,12 +721,12 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	[[BXFirstRunWindowController controller] showWindow: sender];
 }
 
-- (IBAction) orderFrontFirstRunPanelWithFlip: (id)sender
+- (IBAction) orderFrontFirstRunPanelWithTransition: (id)sender
 {
 	//The welcome panel and first-run panel are mutually exclusive.
 	[self hideWelcomePanel: self];
 	
-	[[BXFirstRunWindowController controller] showWindowWithFlip: sender];
+	[[BXFirstRunWindowController controller] showWindowWithTransition: sender];
 }
 
 - (IBAction) hideWelcomePanel: (id)sender

@@ -10,9 +10,20 @@
 //to use on windows.
 
 #import <Cocoa/Cocoa.h>
-#import "CGSPrivate.h"
 
 @interface NSWindow (BXWindowEffects)
+
+//Order the window in/out with a simple non-blocking fade effect.
+- (void) fadeInWithDuration: (NSTimeInterval)duration;
+- (void) fadeOutWithDuration: (NSTimeInterval)duration;
+
+@end
+
+#ifdef USE_PRIVATE_APIS
+
+#import "CGSPrivate.h"
+
+@interface NSWindow (BXPrivateAPIWindowEffects)
 
 //Applies a gaussian blur filter behind the window background.
 //Only useful for HUD-style translucent windows.
@@ -29,11 +40,6 @@
 					direction: (CGSTransitionOption)direction
 					 duration: (NSTimeInterval)duration
 				 blockingMode: (NSAnimationBlockingMode)blockingMode;
-
-
-//Order the window in/out with a simple non-blocking fade effect.
-- (void) fadeInWithDuration: (NSTimeInterval)duration;
-- (void) fadeOutWithDuration: (NSTimeInterval)duration;
 
 #pragma mark -
 #pragma mark Low-level methods
@@ -52,3 +58,5 @@
 			   blockingMode: (NSAnimationBlockingMode)blockingMode;
 
 @end
+
+#endif

@@ -92,22 +92,30 @@ enum {
 	[NSApp runModalForWindow: [self window]];
 }
 
-- (void) showWindowWithFlip: (id)sender
+- (void) showWindowWithTransition: (id)sender
 {
+#ifdef USE_PRIVATE_APIS
 	[[self window] revealWithTransition: CGSFlip
 							  direction: CGSUp
 							   duration: 0.5
 						   blockingMode: NSAnimationNonblocking];
-	
+#else
+    [[self window] fadeInWithDuration: 0.5];
+#endif
+    
 	[self showWindow: sender];
 }
 
-- (void) hideWindowWithFlip: (id)sender
+- (void) hideWindowWithTransition: (id)sender
 {
+#ifdef USE_PRIVATE_APIS
 	[[self window] hideWithTransition: CGSFlip
 							direction: CGSDown
 							 duration: 0.5
 						 blockingMode: NSAnimationBlocking];
+#else
+    [[self window] fadeOutWithDuration: 0.5];
+#endif
 	
 	[[self window] close];
 }
@@ -155,7 +163,7 @@ enum {
     }
     else
     {
-        [self hideWindowWithFlip: self];
+        [self hideWindowWithTransition: self];
     }
 }
 

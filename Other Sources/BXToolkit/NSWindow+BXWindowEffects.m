@@ -10,8 +10,57 @@
 
 #pragma mark -
 #pragma mark Private method declarations
-@interface NSWindow ()
 
+@interface NSWindow ()
+//Completes the ordering out from a fadeOutWithDuration: call.
+- (void) _orderOutAfterFade;
+@end
+
+
+@implementation NSWindow (BXWindowEffects)
+
+- (void) fadeInWithDuration: (NSTimeInterval)duration
+{
+	if ([self isVisible]) return;
+	
+	[self setAlphaValue: 0.0f];
+	[self orderFront: self];
+	
+	[NSAnimationContext beginGrouping];
+    [[NSAnimationContext currentContext] setDuration: duration];
+    [[self animator] setAlphaValue: 1.0f];
+	[NSAnimationContext endGrouping];
+	
+	[NSObject cancelPreviousPerformRequestsWithTarget: self selector: @selector(_orderOutAfterFade) object: nil];
+}
+
+- (void) fadeOutWithDuration: (NSTimeInterval)duration
+{
+	if (![self isVisible]) return;
+	
+	[NSAnimationContext beginGrouping];
+    [[NSAnimationContext currentContext] setDuration: duration];
+    [[self animator] setAlphaValue: 0.0f];
+	[NSAnimationContext endGrouping];
+	[self performSelector: @selector(_orderOutAfterFade) withObject: nil afterDelay: duration];
+}
+
+- (void) _orderOutAfterFade
+{
+	[self willChangeValueForKey: @"visible"];
+	[self orderOut: self];
+	[self didChangeValueForKey: @"visible"];
+	
+	[self setAlphaValue: 1.0f];
+}
+
+@end
+
+
+
+#ifdef USE_PRIVATE_APIS
+
+@interface NSWindow ()
 //Cleans up after a transition by releasing the specified handle.
 - (void) _releaseTransitionHandle: (NSNumber *)handleNum;
 
@@ -20,22 +69,18 @@
 //transition is invoked: this allows the callback to update the window state
 //(or show/hide the window) for the end of the transition.
 - (void) _applyCGSTransition: (CGSTransitionType)type
-				   direction: (CGSTransitionOption)direction
-					duration: (NSTimeInterval)duration
-				withCallback: (SEL)callback
-			  callbackObject: (id)callbackObj
-				blockingMode: (NSAnimationBlockingMode)blockingMode;
+direction: (CGSTransitionOption)direction
+duration: (NSTimeInterval)duration
+withCallback: (SEL)callback
+callbackObject: (id)callbackObj
+blockingMode: (NSAnimationBlockingMode)blockingMode;
 
 //Takes the float value of the specified number and sets the window's alpha to it.
 //Used for showing/hiding windows during a transition.
 - (void) _setAlphaForTransition: (NSNumber *)alphaValue;
-
-//Completes the ordering out from a fadeOutWithDuration: call.
-- (void) _orderOutAfterFade;
 @end
 
-
-@implementation NSWindow (BXWindowEffects)
+@implementation NSWindow (BXPrivateAPIWindowEffects)
 
 #pragma mark -
 #pragma mark High-level methods you might actually want to call
@@ -93,42 +138,6 @@
 {
 	[self setAlphaValue: [alphaValue floatValue]];
 }
-
-- (void) fadeInWithDuration: (NSTimeInterval)duration
-{
-	if ([self isVisible]) return;
-	
-	[self setAlphaValue: 0.0f];
-	[self orderFront: self];
-	
-	[NSAnimationContext beginGrouping];
-		[[NSAnimationContext currentContext] setDuration: duration];
-		[[self animator] setAlphaValue: 1.0f];
-	[NSAnimationContext endGrouping];
-	
-	[NSObject cancelPreviousPerformRequestsWithTarget: self selector: @selector(_orderOutAfterFade) object: nil];
-}
-
-- (void) fadeOutWithDuration: (NSTimeInterval)duration
-{
-	if (![self isVisible]) return;
-	
-	[NSAnimationContext beginGrouping];
-		[[NSAnimationContext currentContext] setDuration: duration];
-		[[self animator] setAlphaValue: 0.0f];
-	[NSAnimationContext endGrouping];
-	[self performSelector: @selector(_orderOutAfterFade) withObject: nil afterDelay: duration];
-}
-
-- (void) _orderOutAfterFade
-{
-	[self willChangeValueForKey: @"visible"];
-	[self orderOut: self];
-	[self didChangeValueForKey: @"visible"];
-	
-	[self setAlphaValue: 1.0f];
-}
-
 
 #pragma mark -
 #pragma mark Low-level effects
@@ -235,3 +244,4 @@
 }
 
 @end
+#endif

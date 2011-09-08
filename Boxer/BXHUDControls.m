@@ -77,16 +77,15 @@
     return [stripePath autorelease];
 }
 
-- (void) drawRect: (NSRect)dirtyRect
+- (void) drawSlotInRect: (NSRect)dirtyRect
 {
     NSColor *strokeColor = [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.5f];
     NSColor *fillColor = [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.25f];
     
     NSShadow *fillShadow = [NSShadow shadowWithBlurRadius: 2.0f offset: NSMakeSize(0.0f, -1.0f)];
     
-    NSRect canvas           = NSIntegralRect([self bounds]);
-    NSRect fillRegion       = NSInsetRect(canvas, 1.0f, 1.0f);
-    NSRect strokeRegion     = NSInsetRect(canvas, 0.5f, 0.5f);
+    NSRect fillRegion       = NSInsetRect([self bounds], 1.0f, 1.0f);
+    NSRect strokeRegion     = NSInsetRect([self bounds], 0.5f, 0.5f);
     
     NSBezierPath *fillPath = [NSBezierPath bezierPathWithRoundedRect: fillRegion
                                                              xRadius: fillRegion.size.height / 2
@@ -96,61 +95,88 @@
                                                                xRadius: strokeRegion.size.height / 2
                                                                yRadius: strokeRegion.size.height / 2];
     
-    NSRect progressRegion = NSInsetRect(canvas, 2.0f, 2.0f);
-    NSBezierPath *progressPath = [NSBezierPath bezierPathWithRoundedRect: progressRegion
-                                                                 xRadius: progressRegion.size.height / 2
-                                                                 yRadius: progressRegion.size.height / 2];
-    
     [NSGraphicsContext saveGraphicsState];
         [strokeColor setStroke];
         [fillColor setFill];
-    
+        
         [fillPath fill];
         [fillPath fillWithInnerShadow: fillShadow];
         [strokePath stroke];
     [NSGraphicsContext restoreGraphicsState];
+}
+
+- (void) drawIndeterminateProgressInRect: (NSRect)dirtyRect
+{
+    NSRect progressRegion = NSInsetRect([self bounds], 2.0f, 2.0f);
     
-    
-    if ([self isIndeterminate])
+    if ([self needsToDrawRect: progressRegion])
     {
-        NSColor *stripeColor = [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.25f];
-		NSGradient *progressGradient = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.5f]
-                                                                     endingColor: [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.25f]];
+        NSBezierPath *progressPath = [NSBezierPath bezierPathWithRoundedRect: progressRegion
+                                                                     xRadius: progressRegion.size.height / 2
+                                                                     yRadius: progressRegion.size.height / 2];
         
         NSBezierPath *stripePath = [self stripePathForFrame: progressRegion
                                               animationTime: [NSDate timeIntervalSinceReferenceDate]];
         
+        NSColor *stripeColor = [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.25f];
+        NSGradient *progressGradient = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.5f]
+                                                                     endingColor: [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.25f]];
+        
         [NSGraphicsContext saveGraphicsState];
+            [progressPath addClip];
+        
             [progressGradient drawInBezierPath: progressPath
                                          angle: 90.0f];
-        
-            [progressPath addClip];
+            
             [stripeColor setFill];
             [stripePath fill];
         [NSGraphicsContext restoreGraphicsState];
+        
+        [progressGradient release];
     }
-    else
+}
+
+- (void) drawProgressInRect: (NSRect)dirtyRect
+{
+    NSRect progressRegion = NSInsetRect([self bounds], 2.0f, 2.0f);
+    
+    //Work out how full the progress bar should be, and calculate from that how much of the path to draw
+    double progress = ([self doubleValue] - [self minValue]) / ([self maxValue] - [self minValue]);
+    
+    NSRect progressClip = progressRegion;
+    progressClip.size.width = roundf(progressClip.size.width * (float)progress);
+    
+    if ([self needsToDrawRect: progressClip])
     {
+        NSBezierPath *progressPath = [NSBezierPath bezierPathWithRoundedRect: progressRegion
+                                                                     xRadius: progressRegion.size.height / 2
+                                                                     yRadius: progressRegion.size.height / 2];
+        
         NSGradient *progressGradient = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 1.0f alpha: 1.0f]
                                                                      endingColor: [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.66f]];
-        
-        //Work out how full the progress bar should be, and calculate from that how much of the path to draw
-		double progress = ([self doubleValue] - [self minValue]) / ([self maxValue] - [self minValue]);
-        
-        NSRect progressClip = progressRegion;
-        progressClip.size.width *= (float)progress;
-        progressClip = NSIntegralRect(progressClip);
         
         [NSGraphicsContext saveGraphicsState];
             [NSBezierPath clipRect: progressClip];
             
             [progressGradient drawInBezierPath: progressPath
                                          angle: 90.0f];
-            
-            //[progressPath fillWithInnerShadow: progressGlow];
         [NSGraphicsContext restoreGraphicsState];
         
         [progressGradient release];
+    }
+}
+
+- (void) drawRect: (NSRect)dirtyRect
+{
+    [self drawSlotInRect: dirtyRect];
+    
+    if ([self isIndeterminate])
+    {
+        [self drawIndeterminateProgressInRect: dirtyRect];
+    }
+    else
+    {
+        [self drawProgressInRect: dirtyRect];
     }
 }
 
@@ -162,15 +188,17 @@
 //implementation causes nasty ugly overdraws for some goddamn reason.
 //Note that these do not perform threaded animation yet.
 
-- (void) performAnimation: (NSTimer*)timer
+- (void) performAnimation: (NSTimer *)timer
 {
-    [self setNeedsDisplay: YES];
+    if ([self isIndeterminate])
+        [self setNeedsDisplay: YES];
 }
 
 - (void) startAnimation: (id)sender
 {
     if (!animationTimer)
     {
+        //Animate every 1/12th of a second, same as NSProgressIndicator.
         animationTimer = [NSTimer scheduledTimerWithTimeInterval: 5.0/60.0
                                                           target: self
                                                         selector: @selector(performAnimation:)

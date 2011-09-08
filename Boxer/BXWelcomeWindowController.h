@@ -42,6 +42,6 @@
 - (IBAction) openRecentDocument: (NSMenuItem *)sender;
 
 //Reveal the window by bringing it in with a flip transition.
-- (void) showWindowWithFlip: (id)sender;
+- (void) showWindowWithTransition: (id)sender;
 
 @end

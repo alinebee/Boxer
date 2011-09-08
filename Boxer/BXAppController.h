@@ -138,10 +138,10 @@ enum {
 #pragma mark -
 #pragma mark UI actions
 
-- (IBAction) orderFrontWelcomePanel: (id)sender;		//Display the welcome panel, with or without flipping.
-- (IBAction) orderFrontWelcomePanelWithFlip: (id)sender;
-- (IBAction) orderFrontFirstRunPanel: (id)sender;		//Display the first-run panel, with or without flipping.
-- (IBAction) orderFrontFirstRunPanelWithFlip: (id)sender;
+- (IBAction) orderFrontWelcomePanel: (id)sender;		//Display the welcome panel.
+- (IBAction) orderFrontWelcomePanelWithTransition: (id)sender;
+- (IBAction) orderFrontFirstRunPanel: (id)sender;		//Display the first-run panel.
+- (IBAction) orderFrontFirstRunPanelWithTransition: (id)sender;
 
 - (IBAction) hideWelcomePanel: (id)sender;				//Close the welcome panel.
 - (IBAction) orderFrontImportGamePanel: (id)sender;		//Display the game import panel.

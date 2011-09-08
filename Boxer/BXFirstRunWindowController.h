@@ -38,6 +38,6 @@
 				  contextInfo: (void *)contextInfo;
 
 //Show/hide the window with a flip animation.
-- (void) showWindowWithFlip: (id)sender;
-- (void) hideWindowWithFlip: (id)sender;
+- (void) showWindowWithTransition: (id)sender;
+- (void) hideWindowWithTransition: (id)sender;
 @end

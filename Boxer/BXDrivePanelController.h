@@ -130,6 +130,9 @@
 @property (readonly, nonatomic) NSProgressIndicator *progressMeter;
 @property (readonly, nonatomic) NSTextField *progressMeterLabel;
 @property (readonly, nonatomic) NSButton *progressMeterCancel;
+@property (readonly, nonatomic) NSTextField *driveTypeLabel;
+@property (readonly, nonatomic) NSButton *driveToggleButton;
+@property (readonly, nonatomic) NSButton *driveRevealButton;
 
 
 //Import notifications dispatched by BXDrivePanelController,

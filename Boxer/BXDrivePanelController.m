@@ -17,6 +17,8 @@
 #import "BXDriveImport.h"
 #import "BXDriveList.h"
 #import "NSWindow+BXWindowDimensions.h"
+#import <QuartzCore/QuartzCore.h>
+#import "NSView+BXViewEffects.h"
 
 
 #pragma mark -
@@ -707,12 +709,19 @@ enum {
 @synthesize importing;
 
 //IMPLEMENTATION NOTE: NSCollectionView does not correctly clone IBOutlets
-//when cloning collection view items, so we can't just outlet-link to the
-//subviews we care about. Instead, we have to trawl the view structure
-//to grab them, which is especially painful for progressMeter because
-//it doesn't support tags.
+//when cloning collection view items whose views are stored within the same
+//nib, so we can't just outlet-link to the subviews we care about.
+//Instead, we have to trawl the view structure to grab them, which is
+//especially painful for progressMeter because it doesn't support tags.
+//(We could fix this by moving the drive view off to a separate nib, but
+//that won't works on OS X 10.5.)
+
 - (NSTextField *) progressMeterLabel	{ return [[self view] viewWithTag: BXDriveItemProgressMeterLabel]; }
 - (NSButton *) progressMeterCancel		{ return [[self view] viewWithTag: BXDriveItemProgressMeterCancel]; }
+- (NSTextField *) driveTypeLabel        { return [[self view] viewWithTag: BXDriveItemTypeLabel]; }
+- (NSButton *) driveToggleButton        { return [[self view] viewWithTag: BXDriveItemToggle]; }
+- (NSButton *) driveRevealButton        { return [[self view] viewWithTag: BXDriveItemReveal]; }
+
 - (NSProgressIndicator *) progressMeter
 {
     for (id view in [[self view] subviews])
@@ -769,6 +778,23 @@ enum {
 + (NSSet *) keyPathsForValuesAffectingMounted           { return [NSSet setWithObject: @"representedObject.mounted"]; }
 + (NSSet *) keyPathsForValuesAffectingDriveActionsShown { return [NSSet setWithObject: @"selected"]; }
 
+- (void) setImporting: (BOOL)flag
+{
+    if (flag != [self isImporting])
+    {
+        importing = flag;
+        
+        NSTimeInterval fadeDuration = 0.25;
+        
+        [[self progressMeter] fadeToHidden: !flag withDuration: fadeDuration];
+        [[self progressMeterCancel] fadeToHidden: !flag withDuration: fadeDuration];
+        [[self progressMeterLabel] fadeToHidden: !flag withDuration: fadeDuration];
+        
+        [[self driveTypeLabel] fadeToHidden: flag withDuration: fadeDuration];
+        [[self driveToggleButton] fadeToHidden: flag withDuration: fadeDuration];
+        [[self driveRevealButton] fadeToHidden: flag withDuration: fadeDuration];
+    }
+}
 
 - (void) driveImportWillStart: (NSNotification *)notification
 {
@@ -780,7 +806,6 @@ enum {
     
     //Start off with an indeterminate progress meter before we know the size of the operation
     [progressMeter setIndeterminate: YES];
-    [progressMeter setUsesThreadedAnimation: YES];
     [progressMeter startAnimation: self];
     
     //Initialise the progress value to a suitable point
@@ -816,7 +841,6 @@ enum {
 
         [progressMeter setIndeterminate: NO];
         [progressMeter setDoubleValue: easedProgress];
-        [progressMeter setNeedsDisplay: YES];
         
         //Now that we know the progress, set the label text appropriately
         NSString *progressFormat = NSLocalizedString(@"%1$i%% of %2$i MB",

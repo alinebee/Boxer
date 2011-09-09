@@ -44,7 +44,8 @@ enum {
 	BXDriveItemProgressMeterCancel	= 6,
     
 	BXDriveItemToggle               = 7,
-	BXDriveItemReveal               = 8
+	BXDriveItemReveal               = 8,
+	BXDriveItemImport               = 9
 };
 
 
@@ -424,7 +425,7 @@ enum {
 	if (action == @selector(importSelectedDrives:))
 	{
     	//Initial label for drive import items (may be modified below)
-		[theItem setTitle: NSLocalizedString(@"Import into Gamebox", @"Drive import menu item title.")];
+		[theItem setTitle: NSLocalizedString(@"Import into Gamebox", @"Menu item title/tooltip for importing drive into gamebox.")];
 		
 		//Hide this item altogether if we're not running a session
 		[theItem setHidden: !isGamebox];
@@ -484,9 +485,9 @@ enum {
         
         NSString *title;
         if (selectionContainsMountedDrives)
-            title = NSLocalizedString(@"Eject", @"Label for drive panel menu item to eject selected drives.");
+            title = NSLocalizedString(@"Eject", @"Label/tooltip for ejecting mounted drives.");
         else
-            title = NSLocalizedString(@"Open", @"Label for drive panel menu item to remount selected drives.");
+            title = NSLocalizedString(@"Insert", @"Label/tooltip for mounting unmounted drives.");
         
         [theItem setTitle: title];
         
@@ -714,6 +715,7 @@ enum {
 - (NSTextField *) driveTypeLabel        { return [[self view] viewWithTag: BXDriveItemTypeLabel]; }
 - (NSButton *) driveToggleButton        { return [[self view] viewWithTag: BXDriveItemToggle]; }
 - (NSButton *) driveRevealButton        { return [[self view] viewWithTag: BXDriveItemReveal]; }
+- (NSButton *) driveImportButton        { return [[self view] viewWithTag: BXDriveItemImport]; }
 
 - (NSProgressIndicator *) progressMeter
 {
@@ -724,10 +726,20 @@ enum {
 	return nil;
 }
 
+- (BOOL) canImport
+{
+    return [[[NSApp delegate] currentSession] canImportDrive: [self representedObject]];
+}
+
+- (BOOL) isBundled
+{
+    return [[[NSApp delegate] currentSession] driveIsBundled: [self representedObject]];
+}
+
 
 - (BOOL) isMounted
 {
-    return [[self representedObject] isMounted];
+    return [[[NSApp delegate] currentSession] driveIsMounted: [self representedObject]];
 }
 
 - (NSImage *) icon
@@ -754,9 +766,37 @@ enum {
     return [NSImage imageNamed: imageName];
 }
 
+- (NSString *) tooltipForToggle
+{
+    if ([self isMounted])
+        return NSLocalizedString(@"Eject", @"Label/tooltip for ejecting mounted drives.");
+    else
+        return NSLocalizedString(@"Insert", @"Label/tooltip for mounting unmounted drives.");
+}
+
+- (NSString *) tooltipForReveal
+{
+    return NSLocalizedString(@"Show in Finder", @"Label/tooltip for opening drives in a Finder window.");
+}
+
+- (NSString *) tooltipForCancel
+{
+    return NSLocalizedString(@"Cancel Import", @"Label/tooltip for cancelling in-progress drive import.");
+}
+
+- (NSString *) tooltipForBundle
+{
+    return NSLocalizedString(@"Import into Gamebox", @"Menu item title/tooltip for importing drive into gamebox.");
+}
+
 - (NSString *) typeDescription
 {
     NSString *description = [(BXDrive *)[self representedObject] typeDescription];
+    if ([self isBundled])
+    {
+        NSString *bundledDescriptionFormat = NSLocalizedString(@"gamebox %@", @"Description format for bundled drives. %@ is the original description of the drive (e.g. 'CD-ROM', 'hard disk' etc.)");
+        description = [NSString stringWithFormat: bundledDescriptionFormat, description, nil];
+    }
     if (![self isMounted])
     {
         NSString *inactiveDescriptionFormat = NSLocalizedString(@"%@ (ejected)", @"Description format for inactive drives. %@ is the original description of the drive (e.g. 'CD-ROM', 'hard disk' etc.)");
@@ -765,11 +805,15 @@ enum {
     return description;
 }
 
-+ (NSSet *) keyPathsForValuesAffectingTypeDescription   { return [NSSet setWithObjects: @"representedObject.typeDescription", @"mounted", nil]; }
++ (NSSet *) keyPathsForValuesAffectingTypeDescription   { return [NSSet setWithObjects: @"representedObject.typeDescription", @"mounted", @"bundled", nil]; }
+
 + (NSSet *) keyPathsForValuesAffectingIcon              { return [NSSet setWithObject: @"representedObject.type"]; }
 + (NSSet *) keyPathsForValuesAffectingIconForToggle     { return [NSSet setWithObject: @"mounted"]; }
++ (NSSet *) keyPathsForValuesAffectingTooltipForToggle  { return [NSSet setWithObject: @"mounted"]; }
+
 + (NSSet *) keyPathsForValuesAffectingMounted           { return [NSSet setWithObject: @"representedObject.mounted"]; }
-+ (NSSet *) keyPathsForValuesAffectingDriveActionsShown { return [NSSet setWithObject: @"selected"]; }
++ (NSSet *) keyPathsForValuesAffectingBundled           { return [NSSet setWithObject: @"importing"]; }
+
 
 - (void) setImporting: (BOOL)flag
 {
@@ -786,6 +830,7 @@ enum {
         [[self driveTypeLabel] fadeToHidden: flag withDuration: fadeDuration];
         [[self driveToggleButton] fadeToHidden: flag withDuration: fadeDuration];
         [[self driveRevealButton] fadeToHidden: flag withDuration: fadeDuration];
+        [[self driveImportButton] fadeToHidden: flag withDuration: fadeDuration];
     }
 }
 

@@ -317,6 +317,7 @@
 		9FBC3D600F56EA82001811F2 /* SDL.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C140F56D6E8001811F2 /* SDL.framework */; };
 		9FBC3D610F56EA82001811F2 /* SDL_net.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C150F56D6E8001811F2 /* SDL_net.framework */; };
 		9FBD321710E5144C00031CB6 /* Brand.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBD321610E5144C00031CB6 /* Brand.png */; };
+		9FBDC591141A0E5D00171176 /* BundleFreestandingTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FBDC590141A0E5D00171176 /* BundleFreestandingTemplate.pdf */; };
 		9FBF66AF11F35ADD00DAAB9A /* BXSingleFileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBF66AE11F35ADD00DAAB9A /* BXSingleFileTransfer.m */; };
 		9FC1620E119E9AD700705EA5 /* BXCursorFadeAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC1620D119E9AD700705EA5 /* BXCursorFadeAnimation.m */; };
 		9FC2F84013D60FBD00BD4F6B /* BXDualActionControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC2F83F13D60FBD00BD4F6B /* BXDualActionControllerProfile.m */; };
@@ -998,6 +999,7 @@
 		9FBC3C770F56E0D7001811F2 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = /System/Library/Frameworks/CoreMIDI.framework; sourceTree = "<absolute>"; };
 		9FBC3CB10F56E32C001811F2 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Info.plist; sourceTree = "<group>"; };
 		9FBD321610E5144C00031CB6 /* Brand.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Brand.png; sourceTree = "<group>"; };
+		9FBDC590141A0E5D00171176 /* BundleFreestandingTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = BundleFreestandingTemplate.pdf; sourceTree = "<group>"; };
 		9FBF66AD11F35ADD00DAAB9A /* BXSingleFileTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXSingleFileTransfer.h; sourceTree = "<group>"; };
 		9FBF66AE11F35ADD00DAAB9A /* BXSingleFileTransfer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXSingleFileTransfer.m; sourceTree = "<group>"; };
 		9FBF66FC11F376B900DAAB9A /* BXOperationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXOperationDelegate.h; sourceTree = "<group>"; };
@@ -2194,6 +2196,7 @@
 		9FBC34390F56C5AC001811F2 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				9FBDC590141A0E5D00171176 /* BundleFreestandingTemplate.pdf */,
 				9F955B5E141A05990068EF71 /* InsertFreestandingTemplate.pdf */,
 				9F955B5F141A05990068EF71 /* EjectFreestandingTemplate.pdf */,
 				9F96969713E59CA100FB51EC /* NoJoystickTemplate.pdf */,
@@ -2624,6 +2627,7 @@
 				9FFF636C140150C3007E8B47 /* DisketteTemplate.pdf in Resources */,
 				9F955B60141A05990068EF71 /* InsertFreestandingTemplate.pdf in Resources */,
 				9F955B61141A05990068EF71 /* EjectFreestandingTemplate.pdf in Resources */,
+				9FBDC591141A0E5D00171176 /* BundleFreestandingTemplate.pdf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

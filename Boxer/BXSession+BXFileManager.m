@@ -557,19 +557,28 @@
 		{
 			BXDrive *drive = [BXDrive CDROMFromPath: volume
                                            atLetter: nil];
+            
+            //Figure out the right drive letter early, so that driveIsBundled:
+            //will correctly locate imported versions of this drive.
+            [drive setLetter: [self preferredLetterForDrive: drive options: BXSystemVolumeMountOptions]];
 
-            drive = [self mountDrive: drive 
-                            ifExists: BXDriveQueue
-                             options: BXSystemVolumeMountOptions
-                               error: outError];
-            
-            if (drive) [mountedDrives addObject: drive];
-            
-            //If there was any error in mounting a drive,
-            //then bail out and don't attempt to mount further drives
-            //TODO: check the actual error to determine whether we can
-            //continue after failure.
-            else return nil;
+            //Tweak: only automount the discovered drive if we don't
+            //already have an imported version of it in our gamebox.
+            if (![self driveIsBundled: drive])
+            {
+                drive = [self mountDrive: drive 
+                                ifExists: BXDriveQueue
+                                 options: BXSystemVolumeMountOptions
+                                   error: outError];
+                
+                if (drive) [mountedDrives addObject: drive];
+                
+                //If there was any error in mounting a drive,
+                //then bail out and don't attempt to mount further drives
+                //TODO: check the actual error to determine whether we can
+                //continue after failure.
+                else return nil;
+            }
 		}
 	}
 	return mountedDrives;
@@ -590,18 +599,27 @@
 		{
 			BXDrive *drive = [BXDrive floppyDriveFromPath: volumePath atLetter: nil];
             
-            drive = [self mountDrive: drive
-                            ifExists: BXDriveQueue
-                             options: BXSystemVolumeMountOptions
-                               error: outError];
+            //Figure out the right drive letter early, so that driveIsBundled:
+            //will correctly locate imported versions of this drive.
+            [drive setLetter: [self preferredLetterForDrive: drive options: BXSystemVolumeMountOptions]];
             
-            if (drive) [mountedDrives addObject: drive];
-            
-            //If there was any error in mounting a drive,
-            //then bail out and don't attempt to mount further drives
-            //TODO: check the actual error to determine whether we can
-            //continue after failure.
-            else return nil;
+            //Tweak: only automount the discovered drive if we don't
+            //already have an imported version of it in our gamebox.
+            if (![self driveIsBundled: drive])
+            {
+                drive = [self mountDrive: drive
+                                ifExists: BXDriveQueue
+                                 options: BXSystemVolumeMountOptions
+                                   error: outError];
+                
+                if (drive) [mountedDrives addObject: drive];
+                
+                //If there was any error in mounting a drive,
+                //then bail out and don't attempt to mount further drives
+                //TODO: check the actual error to determine whether we can
+                //continue after failure.
+                else return nil;
+            }
 		}
 	}
 	return mountedDrives;

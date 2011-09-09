@@ -117,10 +117,25 @@
 //The icon to display on the insert/eject toggle.
 @property (readonly, nonatomic) NSImage *iconForToggle;
 
-//A remapping of BXDrive -mounted (in preparation for phasing it out.)
+//Tooltips for buttons in the drive item list.
+//(These have to be applied via bindings, because IB doesn't
+//let you assign tooltips >:( )
+@property (readonly, nonatomic) NSString *tooltipForToggle;
+@property (readonly, nonatomic) NSString *tooltipForBundle;
+@property (readonly, nonatomic) NSString *tooltipForReveal;
+@property (readonly, nonatomic) NSString *tooltipForCancel;
+
+
+//Whether this drive is currently mounted.
 @property (readonly, nonatomic, getter=isMounted) BOOL mounted;
 
-//Whether this drive is currently being imported to the gamebox.
+//Whether this drive can be imported into the current gamebox.
+@property (readonly, nonatomic) BOOL canImport;
+
+//Whether this drive is part of the current gamebox.
+@property (readonly, nonatomic, getter=isBundled) BOOL bundled;
+
+//Whether this drive is currently being imported into the gamebox.
 //Used to toggle the visibility of import progress fields in the drive item view.
 @property (assign, nonatomic, getter=isImporting) BOOL importing;
 
@@ -133,6 +148,7 @@
 @property (readonly, nonatomic) NSTextField *driveTypeLabel;
 @property (readonly, nonatomic) NSButton *driveToggleButton;
 @property (readonly, nonatomic) NSButton *driveRevealButton;
+@property (readonly, nonatomic) NSButton *driveImportButton;
 
 
 //Import notifications dispatched by BXDrivePanelController,

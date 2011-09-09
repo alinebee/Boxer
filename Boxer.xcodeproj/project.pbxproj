@@ -248,6 +248,8 @@
 		9F8A976010E7EDDE00A4B72A /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */; };
 		9F8BFE9F12C0EF7B0059030F /* BXDisplayLinkRenderingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8BFE9E12C0EF7B0059030F /* BXDisplayLinkRenderingView.m */; };
 		9F8F482513DC74CA00C7E022 /* NSShadow+BXShadowExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8F482413DC74CA00C7E022 /* NSShadow+BXShadowExtensions.m */; };
+		9F955B60141A05990068EF71 /* InsertFreestandingTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F955B5E141A05990068EF71 /* InsertFreestandingTemplate.pdf */; };
+		9F955B61141A05990068EF71 /* EjectFreestandingTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F955B5F141A05990068EF71 /* EjectFreestandingTemplate.pdf */; };
 		9F960C7F12AAAB2900568AFD /* BlankShelves.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F960C7E12AAAB2900568AFD /* BlankShelves.png */; };
 		9F96969813E59CA100FB51EC /* NoJoystickTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F96969713E59CA100FB51EC /* NoJoystickTemplate.pdf */; };
 		9F9A4C9610F67A1F00E61965 /* GalleryOriginal.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A4C9010F67A1F00E61965 /* GalleryOriginal.png */; };
@@ -899,6 +901,8 @@
 		9F8BFE9E12C0EF7B0059030F /* BXDisplayLinkRenderingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDisplayLinkRenderingView.m; sourceTree = "<group>"; };
 		9F8F482313DC74CA00C7E022 /* NSShadow+BXShadowExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSShadow+BXShadowExtensions.h"; sourceTree = "<group>"; };
 		9F8F482413DC74CA00C7E022 /* NSShadow+BXShadowExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSShadow+BXShadowExtensions.m"; sourceTree = "<group>"; };
+		9F955B5E141A05990068EF71 /* InsertFreestandingTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = InsertFreestandingTemplate.pdf; sourceTree = "<group>"; };
+		9F955B5F141A05990068EF71 /* EjectFreestandingTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = EjectFreestandingTemplate.pdf; sourceTree = "<group>"; };
 		9F960C7E12AAAB2900568AFD /* BlankShelves.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BlankShelves.png; sourceTree = "<group>"; };
 		9F96969713E59CA100FB51EC /* NoJoystickTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = NoJoystickTemplate.pdf; sourceTree = "<group>"; };
 		9F98589513EF71F600E66877 /* BXBinCueImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBinCueImage.h; sourceTree = "<group>"; };
@@ -2190,6 +2194,8 @@
 		9FBC34390F56C5AC001811F2 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				9F955B5E141A05990068EF71 /* InsertFreestandingTemplate.pdf */,
+				9F955B5F141A05990068EF71 /* EjectFreestandingTemplate.pdf */,
 				9F96969713E59CA100FB51EC /* NoJoystickTemplate.pdf */,
 				9FFF636B140150C3007E8B47 /* DisketteTemplate.pdf */,
 				9FFF635914013F4D007E8B47 /* HardDiskTemplate.pdf */,
@@ -2616,6 +2622,8 @@
 				9FFF636314013F4D007E8B47 /* EjectTemplate.pdf in Resources */,
 				9FFF636414013F4D007E8B47 /* InsertTemplate.pdf in Resources */,
 				9FFF636C140150C3007E8B47 /* DisketteTemplate.pdf in Resources */,
+				9F955B60141A05990068EF71 /* InsertFreestandingTemplate.pdf in Resources */,
+				9F955B61141A05990068EF71 /* EjectFreestandingTemplate.pdf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

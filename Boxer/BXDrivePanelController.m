@@ -156,13 +156,6 @@ enum {
     [[self driveControls] setEnabled: (session != nil)  forSegment: BXAddDriveSegment];
     [[self driveControls] setEnabled: hasSelection      forSegment: BXRemoveDrivesSegment];
     [[self driveControls] setEnabled: hasSelection      forSegment: BXDriveActionsMenuSegment];
-    
-    /*
-    NSString *toggleImageName = (!hasSelection || selectionContainsMountedDrives) ? @"EjectTemplate" : @"InsertTemplate";
-    NSImage *toggleImage = [NSImage imageNamed: toggleImageName];
-    [[self driveControls] setImage: toggleImage
-                        forSegment: BXToggleDrivesSegment];
-     */
 }
 
 
@@ -757,7 +750,7 @@ enum {
 
 - (NSImage *) iconForToggle
 {
-    NSString *imageName = [self isMounted] ? @"EjectTemplate": @"InsertTemplate";
+    NSString *imageName = [self isMounted] ? @"EjectFreestandingTemplate": @"InsertFreestandingTemplate";
     return [NSImage imageNamed: imageName];
 }
 

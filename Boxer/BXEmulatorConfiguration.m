@@ -204,9 +204,16 @@ NSString * const emptyFormat = @"^\\s*$";
 
 - (void) setStartupCommands: (NSArray *)commands
 {
-	NSMutableArray *mutableCommands = [commands mutableCopy];
-	[sections setObject: mutableCommands forKey: @"autoexec"];
-	[mutableCommands release];
+    if (commands)
+    {
+        NSMutableArray *mutableCommands = [commands mutableCopy];
+        [sections setObject: mutableCommands forKey: @"autoexec"];
+        [mutableCommands release];
+    }
+    else
+    {
+        [self removeStartupCommands];
+    }
 }
 
 - (void) removeStartupCommands
@@ -224,12 +231,14 @@ NSString * const emptyFormat = @"^\\s*$";
 	else
 	{
 		//If we don't have an autoexec section yet, create a new one
-		[self setStartupCommands: [NSArray arrayWithObject: command]];
+		[self setStartupCommands: [NSMutableArray arrayWithObject: command]];
 	}
 }
 
 - (void) addStartupCommands: (NSArray *)newCommands
 {
+    if (![newCommands count]) return;
+    
 	NSMutableArray *commands = [sections objectForKey: @"autoexec"];
 	if (commands)
 	{
@@ -276,19 +285,28 @@ NSString * const emptyFormat = @"^\\s*$";
 	return [sections objectForKey: sectionName];
 }
 
-- (void) setSettings: (NSDictionary *)newSettings forSection:(NSString *)sectionName
+- (void) setSettings: (NSDictionary *)newSettings forSection: (NSString *)sectionName
 {
-	NSMutableDictionary *section = [newSettings mutableCopy];
-	[sections setObject: section forKey: sectionName];
-	[section release];
+    if (newSettings)
+    {
+        NSMutableDictionary *section = [newSettings mutableCopy];
+        [sections setObject: section forKey: sectionName];
+        [section release];
+    }
+    else
+    {
+        [self removeSection: sectionName];
+    }
 }
 
 - (void) addSettings: (NSDictionary *)newSettings toSection: (NSString *)sectionName
-{
+{   
 	//The autoexec section is an array, not a dictionary, and must be accessed with different methods
 	NSAssert(![sectionName isEqualToString: @"autoexec"],
 			 @"Startup commands should be added with [BXEmulatorConfiguration addStartupCommands].");
 	
+    if (![newSettings count]) return;
+    
 	NSMutableDictionary *section = [sections objectForKey: sectionName];
 	if (section)
 	{

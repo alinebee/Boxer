@@ -40,23 +40,23 @@
 		case BXImportFromCDVolume:
 		case BXImportFromCDImage:
 		case BXImportFromFolderToCD:
-			return NSLocalizedString(@"Skip CD import",
+			return NSLocalizedString(@"Skip CD import…",
 									 @"Button label to skip importing source files as a fake CD-ROM or CD image.");
 		
 		case BXImportFromFloppyVolume:
 		case BXImportFromFloppyImage:
 		case BXImportFromFolderToFloppy:
-			return NSLocalizedString(@"Skip disk import",
+			return NSLocalizedString(@"Skip disk import…",
 									 @"Button label to skip importing source files as a fake floppy disk.");
 			
 		case BXImportFromHardDiskImage:
 		case BXImportFromFolderToHardDisk:
-			return NSLocalizedString(@"Skip disk import",
+			return NSLocalizedString(@"Skip disk import…",
 									 @"Button label to skip importing source files as a hard disk.");
 			
 		default:
 			//This should never be used, as the above cases should cover all situations where the label can be used.
-			return NSLocalizedString(@"Skip this step",
+			return NSLocalizedString(@"Skip this step…",
 									 @"Button label to skip importing source files when the import type is not known.");
 	}
 }
@@ -70,7 +70,7 @@
 	if ([session sourceFileImportRequired])
 	{
 		//If the import is necessary, then the cancel button represents cancelling the entire game import.
-		return NSLocalizedString(@"Stop importing", @"Button label to cancel the entire game import.");
+		return NSLocalizedString(@"Stop importing…", @"Button label to cancel the entire game import.");
 	}
 	else
 	{

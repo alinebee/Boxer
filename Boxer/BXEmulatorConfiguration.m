@@ -155,7 +155,9 @@ NSString * const emptyFormat = @"^\\s*$";
 #pragma mark -
 #pragma mark Setting and getting individual settings
 
-- (void) setValue: (NSString *)settingValue forKey: (NSString *)settingName inSection: (NSString *)sectionName
+- (void) setValue: (NSString *)settingValue
+           forKey: (NSString *)settingName
+        inSection: (NSString *)sectionName
 {
 	//The autoexec section is an array, not a dictionary, and must be accessed with different methods
 	NSAssert(![sectionName isEqualToString: @"autoexec"],

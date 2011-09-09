@@ -61,6 +61,7 @@
 - (void) awakeFromNib
 {
 	[(NSPanel *)[self window] setBecomesKeyOnlyIfNeeded: YES];
+    [(NSPanel *)[self window] setFloatingPanel: NO];
 	
 	[[self window] setFrameAutosaveName: @"InspectorPanel"];
 	

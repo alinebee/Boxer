@@ -174,7 +174,7 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 	[hdiutil release];
 	
 	//Run the task to completion and monitor its progress
-	[super performOperation];
+	[self runTask];
 	
 	if (![self error])
 	{

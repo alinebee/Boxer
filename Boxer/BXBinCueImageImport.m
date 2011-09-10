@@ -279,7 +279,7 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 	[cdrdao release];
 	
 	//Run the task to completion and monitor its progress
-	[super performOperation];
+	[self runTask];
 	
 	//If the image creation went smoothly, do final cleanup
 	if (![self error])

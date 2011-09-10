@@ -478,7 +478,7 @@
 	BXEmulator *theEmulator = [self emulator];
 
 	//Emulator isn't running
-	if (![theEmulator isExecuting]) return nil;
+	if (![self isEmulating]) return nil;
 
 	//File doesn't exist, bail out
 	if (![manager fileExistsAtPath: path isDirectory: NULL]) return nil;
@@ -511,7 +511,7 @@
 - (BOOL) openFileAtPath: (NSString *)path
 {
 	BXEmulator *theEmulator = [self emulator];
-	if (![theEmulator isExecuting] || [theEmulator isRunningProcess]) return NO;
+	if (![self isEmulating] || [theEmulator isRunningProcess]) return NO;
     
 	//Get the path to the file in the DOS filesystem
 	NSString *dosPath = [theEmulator DOSPathForPath: path];
@@ -1122,7 +1122,7 @@
 - (void) _handleVolumeDidMount: (NSNotification *)theNotification
 {
 	//Don't respond to mounts if the emulator isn't actually running
-	if (![emulator isExecuting]) return;
+	if (![self isEmulating]) return;
 	
 	//Ignore mounts if we currently have the mount panel open;
 	//we assume that the user will want to handle the new volume manually.
@@ -1196,7 +1196,7 @@
 - (void) volumeWillUnmount: (NSNotification *)theNotification
 {
 	//Ignore unmount events if the emulator isn't actually running
-	if (![emulator isExecuting]) return;
+	if (![self isEmulating]) return;
 	
 	NSString *volumePath = [[theNotification userInfo] objectForKey: @"NSDevicePath"];
 	//Should already be standardized, but still

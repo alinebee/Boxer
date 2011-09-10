@@ -38,6 +38,9 @@
 #pragma mark -
 #pragma mark Task execution
 
+//Runs the task to completion, while calling monitorTask:withProgressCallback:atInterval:
+//periodically to update our completion status.
+- (void) runTask;
 
 //Used by -performOperation to monitor the specified task while running the run
 //loop: returns when cancelled, or when the task finishes of its own accord.

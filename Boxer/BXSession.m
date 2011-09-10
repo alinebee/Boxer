@@ -425,7 +425,14 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 }
 
 //Cancel the DOSBox emulator
-- (void) cancel { [[self emulator] cancel]; }
+- (void) cancel
+{
+    [[self emulator] cancel];
+    //Flag ourselves early as no longer emulating: this
+    //disables certain parts of our behaviour to prevent
+    //interference while the emulator is shutting down.
+    [self setEmulating: NO];
+}
 
 
 #pragma mark -

@@ -54,6 +54,11 @@
 
 - (void) performOperation
 {
+    [self runTask];
+}
+
+- (void) runTask
+{
 	[[self task] launch];
 	
 	[self monitorTask: [self task]

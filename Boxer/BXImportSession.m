@@ -337,7 +337,7 @@
 	
 	//If the alert has three buttons it means it's a save/don't save confirmation instead of
 	//a close/cancel confirmation
-	//TODO: for god's sake this is idiotic, we should detect this with contextinfo or alert class
+	//FIXME: for god's sake this is idiotic, we should detect this with contextinfo or alert class
 	if ([[alert buttons] count] == 3)
 	{
 		//Cancel button

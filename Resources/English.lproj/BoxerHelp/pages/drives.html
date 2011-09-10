@@ -13,52 +13,81 @@
 			<a name="adding-and-removing-drives"></a>
 			<h1>Adding and removing DOS drives</h1>
 		
-			<img src="../images/inspector-drives.png" alt="" width="308" height="451" class="floated-right">
+			<img src="../images/inspector-drives.png" alt="" width="308" height="461" class="floated-right">
 			
-			<p>Press <kbd>Cmd ⌘</kbd>+<kbd>I</kbd> to bring up the <a href="help:runscript=BoxerHelp/shared/scripts/openinspector.scpt string='Drives'" rel="application-window">Drives Inspector</a>. This panel shows what drives are currently available in DOS, and lets you add and remove drives.</p>
+			<p>Go to <span class="menu">Emulation ▸ Show DOS Drives</span> to open the <a href="help:runscript=BoxerHelp/shared/scripts/openinspector.scpt string='Drives'" rel="application-window">Drives Inspector</a>. This panel shows what DOS drives are available and lets you add, remove, and swap between drives.</p>
 		
-			<a name="adding-drives"></a>
-			<h3>To add a drive to DOS:</h3>
-			<ul>
-				<li>
-					<p><strong>If you have a CD-ROM, insert it into your Mac's DVD drive</strong>. Boxer will add it automatically to DOS as a new CD-ROM drive at the next available drive letter.</p>
+			<section class="non-cleared">
+				<a name="adding-drives"></a>
+				<h3>To add a drive to DOS:</h3>
+				<ul>
+					<li>
+						<p><strong>If you have a physical CD, insert it into your Mac’s DVD drive</strong>. Boxer will add it automatically to DOS.</p>
+						
+						<p>Boxer will do likewise when you insert a 3.5" floppy disk into a USB floppy drive connected to your Mac.</p>
+					</li>
 					
-					<p>Boxer will do likewise when you insert a 3.5" floppy disk into a USB floppy drive connected to your Mac.</p>
-				</li>
-				
-				<li>
-					<p><strong>If you have a folder or disc image, drag it into the Drives panel.</strong> Boxer will add it as a new drive of the appropriate type (hard disk for regular folders, CD-ROM or floppy disk for disc images), at the next available drive letter.</p>
-				</li>
-				
-				<li>
-					<p><strong>If you need more control over the drive type and letter</strong>, then press the <img src="../shared/images/add-drive-button.png" alt="+" width="42" height="22" style="vertical-align: bottom"> button on the Drives Inspector to bring up a file picker with advanced drive options.</p>
-				</li>
-			</ul>
+					<li>
+						<p><strong>If you have a folder or disc image, drag it into the Drives panel or into the main DOS window.</strong> Boxer will add it as a new drive of the appropriate type (hard disk for regular folders, CD-ROM or floppy disk for disc images).</p>
+					</li>
+					
+					<li>
+						<p><strong>If you need more control over the drive type and letter</strong>, press the <img src="../shared/images/add-drive-button.png" alt="+" width="41" height="22" style="vertical-align: bottom"> button on the Drives Inspector to bring up a file picker with advanced drive options.</p>
+					</li>
+				</ul>
+			</section>
 			
-			<a name="removing-drives"></a>
-			<h3>To remove a drive from DOS:</h3>
-			<ul>
-				<li><strong>Drag the drive out of the Drives Inspector</strong> until the cursor changes to a puff of smoke, and then release it.</li>
+			<section class="non-cleared">
+				<a name="swapping-drives"></a>
+				<h3>To swap between CDs/floppies:</h3>
 				
-				<li>You can also <strong>select the drive and click the <img src="../shared/images/eject-drive-button.png" alt="-" width="38" height="22" style="vertical-align: bottom"> button</strong>. But that’s not quite as fun.</li>
-			</ul>
+				<p>When you add CD-ROM or floppy drives, they will <strong>go into a queue with any previous CD/floppy</strong> using the same drive letter. This ensures the game will always find its discs at the right place.</p>
+				
+				<p>You can then swap between each CD/floppy in a queue:</p>
+				
+				<ul>
+					<li>Go to <span class="menu">Emulation ▸ Next Disc</span> to cycle through all the CDs/floppies in the queue; or</li>
+					<li>Go to the Drives Inspector and <strong>double-click a specific CD/floppy</strong> to swap to it.</li>
+				</ul>
+				
+				<p class="note"><strong>If you want to have CDs/floppies on separate drive letters</strong> — e.g. one floppy at drive A and another at drive B — then <strong>add the drives manually with the <img src="../shared/images/add-drive-button.png" alt="+" width="41" height="22" style="vertical-align: bottom"> button</strong> as described above.</p>
+			</section>
+			
+			<section class="non-cleared">
+				<a name="removing-drives"></a>
+				<h3>To remove a drive from DOS:</h3>
+				
+				<ul>
+					<li>
+						<p><strong>Drag the drive out of the Drives Inspector</strong> until the cursor changes to a puff of smoke, and then release it. The drive will be removed from DOS and will disappear from the list.</p>
+					</li>
+					
+					<li>
+						<p><strong>If you just want to temporarily disable a drive</strong>, then <strong>select the drive and click the <img src="../shared/images/eject-drive-button.png" alt="Eject" style="vertical-align: middle"> button</strong>: this removes the drive from DOS but leaves it in the drive list.<br>You can re-enable the drive by double-clicking it or pressing the <img src="../shared/images/insert-drive-button.png" alt="Eject" style="vertical-align: middle"> button.</p>
+					</li>
+				</ul>
+			</section>
 		</section>
 		
 		<section>
 			<a name="bundling-drives"></a>
-			<h2>Bundling a drive into a gamebox</h2>
+			<h2>Bundling additional drives into a gamebox</h2>
 			
-			<p>When running a <a href="gameboxes.html" rel="topic">gamebox</a>, the Drives Inspector will display a drive C for the hard disk where your game is installed, and often a drive D for any CD-ROM the game had. These drives are stored inside the gamebox, and always available in DOS when you run the game.</p>
+			<p>Each of your gameboxes contains a drive C for the hard disk where the game is installed, and often a drive D for the game’s CD-ROM. Because they’re part of the gamebox, <strong>these drives are always available in DOS when you run the game.</strong></p>
 			
-			<p><strong>If you want additional drives to be always available to the game</strong>, you can bundle them into the gamebox too:</p>
+			<p>If you want additional drives to be always available to the game — for instance, extra CDs for a multi-CD game — <strong>then you can bundle them into the gamebox</strong> too:</p>
 			
 			<ol class="steps">
-				<li><strong>Add the drive to DOS</strong> by following the <a href="#adding-drives">instructions above</a>.</li>
+				<li><strong>Add the drive to DOS</strong> if it isn’t already, by following the <a href="#adding-drives">instructions above</a>.</li>
 				
-				<li><strong>Right-click on the drive</strong> in the Drives Inspector and choose <span class="menu">Import into gamebox</span>.</li>
+				<li>In the Drives Inspector, <strong>select the drive and click on the <img src="../shared/images/bundle-drive-button.png" alt="CD sliding into box" style="vertical-align: middle"> icon</strong>; or, right-click on the drive and choose <span class="menu">Import into Gamebox</span>.</li>
+				
+				<li><strong>Make a cup of tea</strong> while the drive imports.</li>
 			</ol>
 			
-			<p class="note">This process will physically copy the drive’s contents into the gamebox, creating a duplicate of the folder or image originally used for the drive. You don’t need to keep the original around after this.</p>
+			<p>Once the import is finished, the drive will be a permanent part of the gamebox and always there when you run the game.</p>
+			
+			<p class="note">The import process will <strong>physically copy the drive’s contents into the gamebox</strong>, creating a duplicate of the original folder or image used for the drive. You don’t need to keep the original around after this.</p>
 		</section>
 		
 		<section>

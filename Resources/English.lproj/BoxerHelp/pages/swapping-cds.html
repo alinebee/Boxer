@@ -4,7 +4,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Swapping CDs in multi-CD games</title>
 		<meta name="description" content="What to do when it’s time to insert disc 2.">
-		<meta name="keywords" content="multicd, cdrom, swap, discs, mount, imgmount">
+		<meta name="keywords" content="multicd, cdrom, swap, switch, disk, disc, mount, imgmount">
 		
 		<link rel="stylesheet" type="text/css" href="../shared/styles/main.css">
 	</head>
@@ -12,21 +12,38 @@
 		<a name="swapping-cds"></a>
 		<h1>Swapping CDs in multi-CD games</h1>
 		
-		<section>
-		<img src="../images/inspector-drives.png" alt="" width="308" height="451" class="floated-right">
-		<ol class="steps">
-			<li>Press <kbd>Cmd ⌘</kbd>+<kbd>I</kbd> to bring up the <a href="help:runscript=BoxerHelp/shared/scripts/openinspector.scpt string='Drives'" rel="application-window">Drives Inspector</a>.</li>
+		<img src="../images/inspector-drives.png" alt="" width="308" height="461" class="floated-right">
 			
-			<li>Select the current <nobr>CD-ROM</nobr> and eject it, by dragging it out of the window or clicking the <img src="../shared/images/eject-drive-button.png" alt="-" width="38" height="22" style="vertical-align: bottom"> button.</li>
+		<section class="non-cleared" style="margin-right: 320px;">
+			<p>If your game comes on more than one CD, then it’s easy to switch to the next CD:</p>
 			
-			<li><ul class="unbulleted">
-				<li><em>If you have a physical CD:</em> <strong>insert it into your Mac’s CD/DVD drive</strong> and it will be added automatically to DOS.</li>
-				<li><em>If you have a folder or disc image:</em> <strong>drag it into the Drives panel</strong> to add it to DOS.</li>
-			</ul></li>
-		</ol>
+			<ul>
+				<li><strong>If you have a physical CD:</strong> insert it into your Mac’s DVD drive.</li>
+				<li><strong>If you have a folder or disc image:</strong> drag it into the game window.</li>
+			</ul>
+			
+			<p>The new CD will replace the previous CD at the same drive letter. You can then tell the game to continue loading.</p>
+				
+			<section class="non-cleared">
+				<h3>Swapping back and forth between CDs</h3>
+				
+				<p>Once you’ve added a new CD like this, <strong>it goes into a queue with any previous CDs</strong>. You can then <strong>swap between each CD in a queue:</strong></p>
+					
+				<ul>
+					<li>Go to <span class="menu">Emulation ▸ Next Disc</span> to cycle through all the CDs in the queue; or</li>
+					<li>Go to <span class="menu">Emulation ▸ Show DOS Drives</span> and <strong>double-click a specific CD</strong> to swap to it.</li>
+				</ul>
+			</section>
+			
+			<section class="non-cleared">
+				<h3>Bundling additional CDs into the gamebox</h3>
+				
+				<p>If you don’t want to fish out your CDs every time you play, <strong>you can <a href="drives.html#bundling-drives" rel="topic">import additional CDs into the gamebox</a> from the <a href="help:runscript=BoxerHelp/shared/scripts/openinspector.scpt string='Drives'" rel="application-window">Drives Inspector</a>.</strong></p>
+				<p>This rips the CDs and makes them part of your gamebox, which means they’re always there to swap between: just choose <span class="menu">Emulation ▸ Next Disc</span> whenever you need the next CD.</p>
+			</section>
 		</section>
 		
-		<section class="non-cleared">
+		<section>
 			<h3>Further reading</h3>
 		
 			<ul>

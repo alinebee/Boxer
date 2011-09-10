@@ -392,13 +392,15 @@ section section:first-child,
 h1 + section,
 h2 + section,
 h3 + section,
+img + section,
 section.no-border
 {
 	border-top: 0;
 	padding-top: 0;
 }
 
-section.non-cleared
+section.non-cleared,
+section.non-cleared:after
 {
 	clear: none !important;
 }

@@ -47,7 +47,7 @@
         return NSMakeSize(1.0f, 2.0f);
     }
     else
-        return NSMakeSize(3.0f, 4.0f);
+        return NSMakeSize(3.0f, 2.0f);
 }
 
 - (NSColor *) slotFill

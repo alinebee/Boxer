@@ -2121,7 +2121,7 @@ A</string>
 						<reference key="NSNextResponder" ref="101756917"/>
 						<int key="NSvFlags">-2147482358</int>
 						<object class="NSPSMatrix" key="NSDrawMatrix"/>
-						<string key="NSFrame">{{141, 9}, {126, 12}}</string>
+						<string key="NSFrame">{{141, 9}, {114, 12}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
 						<int key="NSViewLayerContentsRedrawPolicy">2</int>
 						<int key="NSpiFlags">16650</int>
@@ -2150,8 +2150,8 @@ A</string>
 					</object>
 					<object class="BGHUDLabel" id="163857552">
 						<reference key="NSNextResponder" ref="101756917"/>
-						<int key="NSvFlags">270</int>
-						<string key="NSFrame">{{69, 24}, {156, 17}}</string>
+						<int key="NSvFlags">266</int>
+						<string key="NSFrame">{{69, 24}, {144, 17}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
 						<int key="NSTag">2</int>
 						<bool key="NSEnabled">YES</bool>
@@ -2198,7 +2198,7 @@ A</string>
 					<object class="NSButton" id="623232860">
 						<reference key="NSNextResponder" ref="101756917"/>
 						<int key="NSvFlags">265</int>
-						<string key="NSFrame">{{229, 22}, {18, 18}}</string>
+						<string key="NSFrame">{{217, 22}, {18, 18}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
 						<int key="NSTag">9</int>
 						<bool key="NSEnabled">YES</bool>
@@ -2223,7 +2223,7 @@ A</string>
 					<object class="NSButton" id="243944952">
 						<reference key="NSNextResponder" ref="101756917"/>
 						<int key="NSvFlags">265</int>
-						<string key="NSFrame">{{248, 22}, {18, 18}}</string>
+						<string key="NSFrame">{{236, 22}, {18, 18}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
 						<int key="NSTag">8</int>
 						<bool key="NSEnabled">YES</bool>
@@ -2248,7 +2248,7 @@ A</string>
 					<object class="NSButton" id="560756325">
 						<reference key="NSNextResponder" ref="101756917"/>
 						<int key="NSvFlags">265</int>
-						<string key="NSFrame">{{267, 22}, {18, 18}}</string>
+						<string key="NSFrame">{{255, 22}, {18, 18}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
 						<int key="NSTag">7</int>
 						<bool key="NSEnabled">YES</bool>
@@ -2273,7 +2273,7 @@ A</string>
 					<object class="NSButton" id="1013267985">
 						<reference key="NSNextResponder" ref="101756917"/>
 						<int key="NSvFlags">-2147483383</int>
-						<string key="NSFrame">{{270, 9}, {12, 12}}</string>
+						<string key="NSFrame">{{258, 9}, {12, 12}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
 						<int key="NSTag">6</int>
 						<bool key="NSEnabled">YES</bool>
@@ -2298,7 +2298,7 @@ A</string>
 					<object class="BGHUDLabel" id="1057456829">
 						<reference key="NSNextResponder" ref="101756917"/>
 						<int key="NSvFlags">266</int>
-						<string key="NSFrame">{{49, 8}, {230, 14}}</string>
+						<string key="NSFrame">{{49, 8}, {218, 14}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
 						<int key="NSTag">3</int>
 						<bool key="NSEnabled">YES</bool>
@@ -2332,7 +2332,7 @@ A</string>
 						<string key="themeKey">BXBlueTheme</string>
 					</object>
 				</object>
-				<string key="NSFrameSize">{296, 48}</string>
+				<string key="NSFrameSize">{284, 48}</string>
 				<reference key="NSSuperview"/>
 				<string key="NSClassName">BXDriveItemView</string>
 			</object>
@@ -6059,7 +6059,7 @@ A</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{406, 697}, {296, 48}}</string>
+					<string>{{406, 697}, {284, 48}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<object class="NSAffineTransform"/>
 					<string>BXHUDLabel</string>

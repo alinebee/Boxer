@@ -271,6 +271,7 @@
     [self willChangeValueForKey: @"drives"];
     [[drives objectForKey: letter] removeObject: drive];
     [self didChangeValueForKey: @"drives"];
+    
 }
 
 - (void) replaceQueuedDrive: (BXDrive *)oldDrive
@@ -384,6 +385,9 @@
 	NSMutableArray *drivesInUse = [[[NSMutableArray alloc] initWithCapacity: [selectedDrives count]] autorelease];
 	for (BXDrive *drive in selectedDrives)
 	{
+        //If the drive is importing, refuse to unmount/dequeue it altogether.
+        if ([self driveIsImporting: drive]) return NO;
+        
         //If the drive isn't mounted anyway, then ignore it
         //(we may receive a mix of mounted and unmounted drives)
         if (![self driveIsMounted: drive]) continue;
@@ -475,7 +479,6 @@
                           error: (NSError **)outError
 {
 	NSFileManager *manager = [NSFileManager defaultManager];
-	BXEmulator *theEmulator = [self emulator];
 
 	//Emulator isn't running
 	if (![self isEmulating]) return nil;

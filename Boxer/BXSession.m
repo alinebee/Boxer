@@ -456,7 +456,10 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 //Overridden solely so that NSDocumentController will call canCloseDocumentWithDelegate:
 //in the first place. This otherwise should have no effect and should not show up in the UI.
-- (BOOL) isDocumentEdited	{ return [[self emulator] isRunningProcess]; }
+- (BOOL) isDocumentEdited
+{
+    return [[self emulator] isRunningProcess] || [self isImportingDrives];
+}
 
 //Overridden to display our own custom confirmation alert instead of the standard NSDocument one.
 - (void) canCloseDocumentWithDelegate: (id)delegate
@@ -470,7 +473,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	[callback setSelector: shouldCloseSelector];
 	[callback setTarget: delegate];
 	[callback setArgument: &self atIndex: 2];
-	[callback setArgument: &contextInfo atIndex: 4];	
+	[callback setArgument: &contextInfo atIndex: 4];
 	
 	BOOL hasActiveImports = [self isImportingDrives];
 	

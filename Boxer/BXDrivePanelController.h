@@ -106,7 +106,25 @@
 @interface BXDriveItem : BXCollectionItem
 {
     BOOL importing;
+    
+    IBOutlet NSProgressIndicator *progressMeter;
+    IBOutlet NSTextField *progressMeterLabel;
+    IBOutlet NSButton *progressMeterCancel;
+    IBOutlet NSTextField *driveTypeLabel;
+    IBOutlet NSButton *driveToggleButton;
+    IBOutlet NSButton *driveRevealButton;
+    IBOutlet NSButton *driveImportButton;
 }
+
+//Progress meter fields within the drive item view.
+//These will be updated programmatically throughout the import progress.
+@property (retain, nonatomic) NSProgressIndicator *progressMeter;
+@property (retain, nonatomic) NSTextField *progressMeterLabel;
+@property (retain, nonatomic) NSButton *progressMeterCancel;
+@property (retain, nonatomic) NSTextField *driveTypeLabel;
+@property (retain, nonatomic) NSButton *driveToggleButton;
+@property (retain, nonatomic) NSButton *driveRevealButton;
+@property (retain, nonatomic) NSButton *driveImportButton;
 
 //The icon to display for the drive we represent.
 @property (readonly, nonatomic) NSImage *icon;
@@ -129,26 +147,12 @@
 //Whether this drive is currently mounted.
 @property (readonly, nonatomic, getter=isMounted) BOOL mounted;
 
-//Whether this drive can be imported into the current gamebox.
-@property (readonly, nonatomic) BOOL canImport;
-
 //Whether this drive is part of the current gamebox.
 @property (readonly, nonatomic, getter=isBundled) BOOL bundled;
 
 //Whether this drive is currently being imported into the gamebox.
 //Used to toggle the visibility of import progress fields in the drive item view.
 @property (assign, nonatomic, getter=isImporting) BOOL importing;
-
-
-//Progress meter fields within the drive item view.
-//These will be updated programmatically throughout the import progress.
-@property (readonly, nonatomic) NSProgressIndicator *progressMeter;
-@property (readonly, nonatomic) NSTextField *progressMeterLabel;
-@property (readonly, nonatomic) NSButton *progressMeterCancel;
-@property (readonly, nonatomic) NSTextField *driveTypeLabel;
-@property (readonly, nonatomic) NSButton *driveToggleButton;
-@property (readonly, nonatomic) NSButton *driveRevealButton;
-@property (readonly, nonatomic) NSButton *driveImportButton;
 
 
 //Import notifications dispatched by BXDrivePanelController,

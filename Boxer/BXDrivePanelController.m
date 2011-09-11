@@ -17,8 +17,6 @@
 #import "BXDriveImport.h"
 #import "BXDriveList.h"
 #import "NSWindow+BXWindowDimensions.h"
-#import <QuartzCore/QuartzCore.h>
-#import "NSView+BXViewEffects.h"
 
 
 #pragma mark -
@@ -699,48 +697,137 @@ enum {
 @end
 
 
+@interface BXDriveItem ()
+
+//Populates IB outlets with subviews after initializing/cloning a drive item
+- (void) _prepareSubviews;
+
+//Shows/hides the drive controls and progress indicators, based on the current
+//state of the drive item.
+- (void) _syncControlsShown;
+- (void) _syncProgressShown;
+@end
+
 @implementation BXDriveItem
 @synthesize importing;
+@synthesize progressMeter, progressMeterLabel, progressMeterCancel;
+@synthesize driveTypeLabel, driveToggleButton, driveRevealButton, driveImportButton;
 
-//IMPLEMENTATION NOTE: NSCollectionView does not correctly clone IBOutlets
-//when cloning collection view items whose views are stored within the same
-//nib, so we can't just outlet-link to the subviews we care about.
-//Instead, we have to trawl the view structure to grab them, which is
-//especially painful for progressMeter because it doesn't support tags.
-//(We could fix this by moving the drive view off to a separate nib, but
-//that won't works on OS X 10.5.)
-
-- (NSTextField *) progressMeterLabel	{ return [[self view] viewWithTag: BXDriveItemProgressMeterLabel]; }
-- (NSButton *) progressMeterCancel		{ return [[self view] viewWithTag: BXDriveItemProgressMeterCancel]; }
-- (NSTextField *) driveTypeLabel        { return [[self view] viewWithTag: BXDriveItemTypeLabel]; }
-- (NSButton *) driveToggleButton        { return [[self view] viewWithTag: BXDriveItemToggle]; }
-- (NSButton *) driveRevealButton        { return [[self view] viewWithTag: BXDriveItemReveal]; }
-- (NSButton *) driveImportButton        { return [[self view] viewWithTag: BXDriveItemImport]; }
-
-- (NSProgressIndicator *) progressMeter
+- (void) _prepareSubviews
 {
-    for (id view in [[self view] subviews])
-	{
-		if ([view isKindOfClass: [NSProgressIndicator class]]) return view;
-	}
-	return nil;
+    //IMPLEMENTATION NOTE: NSCollectionView does not correctly clone IBOutlets
+    //when cloning collection view items whose views are stored within the same
+    //nib, so we can't just outlet-link to the subviews we care about.
+    //Instead, we have to hunt the view heirarchy to grab them whenever we copy
+    //a collection view item: which is especially painful for progressMeter
+    //because it doesn't support tags.
+    //(We'll fix this when we switch to 10.6 by moving the drive view off to
+    //a separate nib, but that won't work on OS X 10.5.)
+    
+    NSView *view = [self view];
+    
+    [self setProgressMeterLabel:    [view viewWithTag: BXDriveItemProgressMeterLabel]];
+    [self setProgressMeterCancel:   [view viewWithTag: BXDriveItemProgressMeterCancel]];
+    
+    [self setDriveTypeLabel:        [view viewWithTag: BXDriveItemTypeLabel]];
+    [self setDriveToggleButton:     [view viewWithTag: BXDriveItemToggle]];
+    [self setDriveRevealButton:     [view viewWithTag: BXDriveItemReveal]];
+    [self setDriveImportButton:     [view viewWithTag: BXDriveItemImport]];
+    
+    for (id subview in [view subviews])
+    {
+        if ([subview isKindOfClass: [NSProgressIndicator class]])
+        {
+            [self setProgressMeter: subview];
+        }
+    }
+    
+    [self _syncControlsShown];
+    [self _syncProgressShown];
 }
 
-- (BOOL) canImport
+- (void) _syncControlsShown
 {
-    return [[[NSApp delegate] currentSession] canImportDrive: [self representedObject]];
+    BOOL showControls = ([self isSelected] && ![self isImporting]);
+    BOOL canImport = [[[NSApp delegate] currentSession] canImportDrive: [self representedObject]];
+    
+    [NSAnimationContext beginGrouping];
+        [[NSAnimationContext currentContext] setDuration: 0.25];
+        [[driveToggleButton animator] setHidden: !showControls];
+        [[driveRevealButton animator] setHidden: !showControls];
+        [[driveImportButton animator] setHidden: !(showControls && canImport)];
+    [NSAnimationContext endGrouping];
+}
+
+- (void) _syncProgressShown
+{
+    BOOL showProgress = [self isImporting];
+    
+    [NSAnimationContext beginGrouping];
+        [[NSAnimationContext currentContext] setDuration: 0.25];
+        [[driveTypeLabel animator] setHidden: showProgress];
+        [[progressMeter animator] setHidden: !showProgress];
+        [[progressMeterLabel animator] setHidden: !showProgress];
+        [[progressMeterCancel animator] setHidden: !showProgress];
+    [NSAnimationContext endGrouping];
+}
+
+- (void) setSelected: (BOOL)flag
+{
+    [super setSelected: flag];
+    [self _syncControlsShown];
+}
+
+- (void) setImporting: (BOOL)flag
+{
+    if (flag != [self isImporting])
+    {
+        importing = flag;
+        
+        [self _syncControlsShown];
+        [self _syncProgressShown];
+    }
+}
+
+//Overridden to perform additional view initialization when copying.
+- (id) copyWithZone: (NSZone *)zone
+{
+    id copy = [super copyWithZone: zone];
+    [copy _prepareSubviews];
+    return copy;
+}
+
+- (void) setView: (NSView *)view
+{
+    [super setView: view];
+    [self _prepareSubviews];
+}
+
+- (void) dealloc
+{
+    [self setProgressMeter: nil], [progressMeter release];
+    [self setProgressMeterLabel: nil], [progressMeterLabel release];
+    [self setProgressMeterCancel: nil], [progressMeterCancel release];
+    [self setDriveTypeLabel: nil], [driveTypeLabel release];
+    [self setDriveToggleButton: nil], [driveToggleButton release];
+    [self setDriveRevealButton: nil], [driveRevealButton release];
+    [self setDriveImportButton: nil], [driveImportButton release];
+    
+    [super dealloc];
 }
 
 - (BOOL) isBundled
 {
     return [[[NSApp delegate] currentSession] driveIsBundled: [self representedObject]];
 }
-
++ (NSSet *) keyPathsForValuesAffectingBundled { return [NSSet setWithObject: @"importing"]; }
 
 - (BOOL) isMounted
 {
     return [[[NSApp delegate] currentSession] driveIsMounted: [self representedObject]];
 }
++ (NSSet *) keyPathsForValuesAffectingMounted { return [NSSet setWithObject: @"representedObject.mounted"]; }
+
 
 - (NSImage *) icon
 {
@@ -759,12 +846,16 @@ enum {
     
     return [NSImage imageNamed: iconName];
 }
++ (NSSet *) keyPathsForValuesAffectingIcon { return [NSSet setWithObject: @"representedObject.type"]; }
+
 
 - (NSImage *) iconForToggle
 {
     NSString *imageName = [self isMounted] ? @"EjectFreestandingTemplate": @"InsertFreestandingTemplate";
     return [NSImage imageNamed: imageName];
 }
++ (NSSet *) keyPathsForValuesAffectingIconForToggle { return [NSSet setWithObject: @"mounted"]; }
+
 
 - (NSString *) tooltipForToggle
 {
@@ -773,21 +864,26 @@ enum {
     else
         return NSLocalizedString(@"Insert", @"Label/tooltip for mounting unmounted drives.");
 }
++ (NSSet *) keyPathsForValuesAffectingTooltipForToggle  { return [NSSet setWithObject: @"mounted"]; }
+
 
 - (NSString *) tooltipForReveal
 {
     return NSLocalizedString(@"Show in Finder", @"Label/tooltip for opening drives in a Finder window.");
 }
 
+
 - (NSString *) tooltipForCancel
 {
     return NSLocalizedString(@"Cancel Import", @"Label/tooltip for cancelling in-progress drive import.");
 }
 
+
 - (NSString *) tooltipForBundle
 {
     return NSLocalizedString(@"Import into Gamebox", @"Menu item title/tooltip for importing drive into gamebox.");
 }
+
 
 - (NSString *) typeDescription
 {
@@ -804,43 +900,12 @@ enum {
     }
     return description;
 }
-
 + (NSSet *) keyPathsForValuesAffectingTypeDescription   { return [NSSet setWithObjects: @"representedObject.typeDescription", @"mounted", @"bundled", nil]; }
 
-+ (NSSet *) keyPathsForValuesAffectingIcon              { return [NSSet setWithObject: @"representedObject.type"]; }
-+ (NSSet *) keyPathsForValuesAffectingIconForToggle     { return [NSSet setWithObject: @"mounted"]; }
-+ (NSSet *) keyPathsForValuesAffectingTooltipForToggle  { return [NSSet setWithObject: @"mounted"]; }
-
-+ (NSSet *) keyPathsForValuesAffectingMounted           { return [NSSet setWithObject: @"representedObject.mounted"]; }
-+ (NSSet *) keyPathsForValuesAffectingBundled           { return [NSSet setWithObject: @"importing"]; }
-
-
-- (void) setImporting: (BOOL)flag
-{
-    if (flag != [self isImporting])
-    {
-        importing = flag;
-        
-        NSTimeInterval fadeDuration = 0.25;
-        
-        [[self progressMeter] fadeToHidden: !flag withDuration: fadeDuration];
-        [[self progressMeterCancel] fadeToHidden: !flag withDuration: fadeDuration];
-        [[self progressMeterLabel] fadeToHidden: !flag withDuration: fadeDuration];
-        
-        [[self driveTypeLabel] fadeToHidden: flag withDuration: fadeDuration];
-        [[self driveToggleButton] fadeToHidden: flag withDuration: fadeDuration];
-        [[self driveRevealButton] fadeToHidden: flag withDuration: fadeDuration];
-        [[self driveImportButton] fadeToHidden: flag withDuration: fadeDuration];
-    }
-}
 
 - (void) driveImportWillStart: (NSNotification *)notification
 {
     BXOperation <BXDriveImport> *transfer = [notification object];
-    
-    NSProgressIndicator *progressMeter  = [self progressMeter];
-    NSButton *progressMeterCancel       = [self progressMeterCancel];
-    NSTextField *progressMeterLabel     = [self progressMeterLabel];
     
     //Start off with an indeterminate progress meter before we know the size of the operation
     [progressMeter setIndeterminate: YES];
@@ -862,9 +927,6 @@ enum {
 - (void) driveImportInProgress: (NSNotification *)notification
 {
     BXOperation <BXDriveImport> *transfer = [notification object];
-    
-    NSProgressIndicator *progressMeter  = [self progressMeter];
-    NSTextField *progressMeterLabel     = [self progressMeterLabel];
     
     if ([transfer isIndeterminate])
     {
@@ -893,10 +955,6 @@ enum {
 - (void) driveImportWasCancelled: (NSNotification *)notification
 {
     //Switch the progress meter to indeterminate when operation is cancelled
-    NSProgressIndicator *progressMeter  = [self progressMeter];
-    NSButton *progressMeterCancel       = [self progressMeterCancel];
-    NSTextField *progressMeterLabel     = [self progressMeterLabel];
-    
     [progressMeter setIndeterminate: YES];
     [progressMeter startAnimation: self];
     
@@ -910,8 +968,6 @@ enum {
 
 - (void) driveImportDidFinish: (NSNotification *)notification
 {
-    NSProgressIndicator *progressMeter  = [self progressMeter];
-    
     [progressMeter stopAnimation: self];
     [self setImporting: NO];
 }

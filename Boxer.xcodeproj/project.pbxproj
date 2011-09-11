@@ -360,7 +360,6 @@
 		9FD3A27F139A839600D0918E /* BXSixaxisControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD3A27E139A839600D0918E /* BXSixaxisControllerProfile.m */; };
 		9FD5481411047E420041E1E7 /* BXDrivesInUseAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD5481311047E420041E1E7 /* BXDrivesInUseAlert.m */; };
 		9FD668F11215CDD6009E0118 /* BXBottomBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD668F01215CDD6009E0118 /* BXBottomBar.m */; };
-		9FD909691418E4AC00DCCF4E /* NSView+BXViewEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD909681418E4AC00DCCF4E /* NSView+BXViewEffects.m */; };
 		9FD95D6A13E2A45C005EF2C0 /* BXFullScreenCapableWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD95D6913E2A45C005EF2C0 /* BXFullScreenCapableWindow.m */; };
 		9FDAD87F10C182B3004EA7D0 /* BXCoverArtWell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FDAD87E10C182B3004EA7D0 /* BXCoverArtWell.m */; };
 		9FDB601710C0707F00C15CF4 /* BXDockTileController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FDB601610C0707F00C15CF4 /* BXDockTileController.m */; };
@@ -1082,8 +1081,6 @@
 		9FD5481311047E420041E1E7 /* BXDrivesInUseAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDrivesInUseAlert.m; sourceTree = "<group>"; };
 		9FD668EF1215CDD6009E0118 /* BXBottomBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBottomBar.h; sourceTree = "<group>"; };
 		9FD668F01215CDD6009E0118 /* BXBottomBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBottomBar.m; sourceTree = "<group>"; };
-		9FD909671418E4AC00DCCF4E /* NSView+BXViewEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSView+BXViewEffects.h"; sourceTree = "<group>"; };
-		9FD909681418E4AC00DCCF4E /* NSView+BXViewEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSView+BXViewEffects.m"; sourceTree = "<group>"; };
 		9FD95D6813E2A45C005EF2C0 /* BXFullScreenCapableWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFullScreenCapableWindow.h; sourceTree = "<group>"; };
 		9FD95D6913E2A45C005EF2C0 /* BXFullScreenCapableWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFullScreenCapableWindow.m; sourceTree = "<group>"; };
 		9FDAD87D10C182B3004EA7D0 /* BXCoverArtWell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCoverArtWell.h; sourceTree = "<group>"; };
@@ -2134,8 +2131,6 @@
 				9FBC35260F56C7B7001811F2 /* NSWindow+BXWindowDimensions.m */,
 				9FD23D53129AE3B600B2100B /* NSWindow+BXWindowEffects.h */,
 				9FD23D54129AE3B600B2100B /* NSWindow+BXWindowEffects.m */,
-				9FD909671418E4AC00DCCF4E /* NSView+BXViewEffects.h */,
-				9FD909681418E4AC00DCCF4E /* NSView+BXViewEffects.m */,
 				9F8F482313DC74CA00C7E022 /* NSShadow+BXShadowExtensions.h */,
 				9F8F482413DC74CA00C7E022 /* NSShadow+BXShadowExtensions.m */,
 				9FD95D6813E2A45C005EF2C0 /* BXFullScreenCapableWindow.h */,
@@ -2948,7 +2943,6 @@
 				9FB642A313FEB71D00385DD3 /* BXISOImage.m in Sources */,
 				9FB642A413FEB71D00385DD3 /* BXBinCueImage.m in Sources */,
 				9FE1B61313FFBE430001640C /* NSImage+BXImageEffects.m in Sources */,
-				9FD909691418E4AC00DCCF4E /* NSView+BXViewEffects.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

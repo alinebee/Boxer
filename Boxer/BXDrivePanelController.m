@@ -704,8 +704,8 @@ enum {
 
 //Shows/hides the drive controls and progress indicators, based on the current
 //state of the drive item.
-- (void) _syncControlsShown;
-- (void) _syncProgressShown;
+- (void) _syncControlsShownWithAnimation: (BOOL)animate;
+- (void) _syncProgressShownWithAnimation: (BOOL)animate;
 @end
 
 @implementation BXDriveItem
@@ -742,29 +742,29 @@ enum {
         }
     }
     
-    [self _syncControlsShown];
-    [self _syncProgressShown];
+    [self _syncControlsShownWithAnimation: NO];
+    [self _syncProgressShownWithAnimation: NO];
 }
 
-- (void) _syncControlsShown
+- (void) _syncControlsShownWithAnimation: (BOOL)animate
 {
     BOOL showControls = ([self isSelected] && ![self isImporting]);
-    BOOL canImport = [[[NSApp delegate] currentSession] canImportDrive: [self representedObject]];
+    BOOL showImportControl = showControls && [[[NSApp delegate] currentSession] canImportDrive: [self representedObject]];
     
     [NSAnimationContext beginGrouping];
-        [[NSAnimationContext currentContext] setDuration: 0.25];
+        [[NSAnimationContext currentContext] setDuration: animate ? 0.25 : 0.0];
         [[driveToggleButton animator] setHidden: !showControls];
         [[driveRevealButton animator] setHidden: !showControls];
-        [[driveImportButton animator] setHidden: !(showControls && canImport)];
+        [[driveImportButton animator] setHidden: !showImportControl];
     [NSAnimationContext endGrouping];
 }
 
-- (void) _syncProgressShown
+- (void) _syncProgressShownWithAnimation: (BOOL)animate
 {
     BOOL showProgress = [self isImporting];
     
     [NSAnimationContext beginGrouping];
-        [[NSAnimationContext currentContext] setDuration: 0.25];
+        [[NSAnimationContext currentContext] setDuration: animate ? 0.25 : 0.0];
         [[driveTypeLabel animator] setHidden: showProgress];
         [[progressMeter animator] setHidden: !showProgress];
         [[progressMeterLabel animator] setHidden: !showProgress];
@@ -775,7 +775,7 @@ enum {
 - (void) setSelected: (BOOL)flag
 {
     [super setSelected: flag];
-    [self _syncControlsShown];
+    [self _syncControlsShownWithAnimation: NO];
 }
 
 - (void) setImporting: (BOOL)flag
@@ -784,8 +784,8 @@ enum {
     {
         importing = flag;
         
-        [self _syncControlsShown];
-        [self _syncProgressShown];
+        [self _syncControlsShownWithAnimation: YES];
+        [self _syncProgressShownWithAnimation: YES];
     }
 }
 

@@ -1148,8 +1148,40 @@
 									<reference key="NSOnImage" ref="569538535"/>
 									<reference key="NSMixedImage" ref="489554260"/>
 								</object>
-								<object class="NSMenuItem" id="553473906">
-									<reference key="NSMenu" ref="67815420"/>
+							</object>
+						</object>
+					</object>
+					<object class="NSMenuItem" id="394772807">
+						<reference key="NSMenu" ref="605083824"/>
+						<string key="NSTitle">Drives</string>
+						<string key="NSKeyEquiv"/>
+						<int key="NSMnemonicLoc">2147483647</int>
+						<reference key="NSOnImage" ref="569538535"/>
+						<reference key="NSMixedImage" ref="489554260"/>
+						<string key="NSAction">submenuAction:</string>
+						<object class="NSMenu" key="NSSubmenu" id="561895638">
+							<string key="NSTitle">Drives</string>
+							<object class="NSMutableArray" key="NSMenuItems">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<object class="NSMenuItem" id="218939289">
+									<reference key="NSMenu" ref="561895638"/>
+									<string key="NSTitle">Add DOS Drive…</string>
+									<string key="NSKeyEquiv">O</string>
+									<int key="NSKeyEquivModMask">1048576</int>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="569538535"/>
+									<reference key="NSMixedImage" ref="489554260"/>
+								</object>
+								<object class="NSMenuItem" id="384668648">
+									<reference key="NSMenu" ref="561895638"/>
+									<string key="NSTitle">Show DOS Drives</string>
+									<string key="NSKeyEquiv"/>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="569538535"/>
+									<reference key="NSMixedImage" ref="489554260"/>
+								</object>
+								<object class="NSMenuItem" id="424872924">
+									<reference key="NSMenu" ref="561895638"/>
 									<bool key="NSIsDisabled">YES</bool>
 									<bool key="NSIsSeparator">YES</bool>
 									<string key="NSTitle"/>
@@ -1158,25 +1190,8 @@
 									<reference key="NSOnImage" ref="569538535"/>
 									<reference key="NSMixedImage" ref="489554260"/>
 								</object>
-								<object class="NSMenuItem" id="199087150">
-									<reference key="NSMenu" ref="67815420"/>
-									<string key="NSTitle">Add DOS Drive…</string>
-									<string key="NSKeyEquiv">O</string>
-									<int key="NSKeyEquivModMask">1048576</int>
-									<int key="NSMnemonicLoc">2147483647</int>
-									<reference key="NSOnImage" ref="569538535"/>
-									<reference key="NSMixedImage" ref="489554260"/>
-								</object>
-								<object class="NSMenuItem" id="46091028">
-									<reference key="NSMenu" ref="67815420"/>
-									<string key="NSTitle">Show DOS Drives</string>
-									<string key="NSKeyEquiv"/>
-									<int key="NSMnemonicLoc">2147483647</int>
-									<reference key="NSOnImage" ref="569538535"/>
-									<reference key="NSMixedImage" ref="489554260"/>
-								</object>
-								<object class="NSMenuItem" id="1058182379">
-									<reference key="NSMenu" ref="67815420"/>
+								<object class="NSMenuItem" id="272539670">
+									<reference key="NSMenu" ref="561895638"/>
 									<string key="NSTitle">Next Disc</string>
 									<string key="NSKeyEquiv"></string>
 									<int key="NSKeyEquivModMask">1179648</int>
@@ -1184,8 +1199,8 @@
 									<reference key="NSOnImage" ref="569538535"/>
 									<reference key="NSMixedImage" ref="489554260"/>
 								</object>
-								<object class="NSMenuItem" id="261374938">
-									<reference key="NSMenu" ref="67815420"/>
+								<object class="NSMenuItem" id="441841986">
+									<reference key="NSMenu" ref="561895638"/>
 									<string key="NSTitle">Previous Disc</string>
 									<string key="NSKeyEquiv"></string>
 									<int key="NSKeyEquivModMask">1179648</int>
@@ -1909,14 +1924,6 @@
 					<int key="connectionID">1886</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">showMountPanel:</string>
-						<reference key="source" ref="935372999"/>
-						<reference key="destination" ref="199087150"/>
-					</object>
-					<int key="connectionID">2031</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">value: values.pauseWhileInactive</string>
 						<reference key="source" ref="173528469"/>
@@ -1963,14 +1970,6 @@
 						<reference key="destination" ref="789450847"/>
 					</object>
 					<int key="connectionID">2043</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">showDrivesPanel:</string>
-						<reference key="source" ref="935372999"/>
-						<reference key="destination" ref="46091028"/>
-					</object>
-					<int key="connectionID">2044</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
@@ -2224,17 +2223,33 @@
 					<object class="IBActionConnection" key="connection">
 						<string key="label">mountNextDrivesInQueues:</string>
 						<reference key="source" ref="935372999"/>
-						<reference key="destination" ref="1058182379"/>
+						<reference key="destination" ref="272539670"/>
 					</object>
-					<int key="connectionID">2166</int>
+					<int key="connectionID">2175</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">showMountPanel:</string>
+						<reference key="source" ref="935372999"/>
+						<reference key="destination" ref="218939289"/>
+					</object>
+					<int key="connectionID">2176</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
 						<string key="label">mountPreviousDrivesInQueues:</string>
 						<reference key="source" ref="935372999"/>
-						<reference key="destination" ref="261374938"/>
+						<reference key="destination" ref="441841986"/>
 					</object>
-					<int key="connectionID">2167</int>
+					<int key="connectionID">2177</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">showDrivesPanel:</string>
+						<reference key="source" ref="935372999"/>
+						<reference key="destination" ref="384668648"/>
+					</object>
+					<int key="connectionID">2178</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -2278,6 +2293,7 @@
 							<reference ref="33134111"/>
 							<reference ref="605111885"/>
 							<reference ref="466028025"/>
+							<reference ref="394772807"/>
 						</object>
 						<reference key="parent" ref="0"/>
 						<string key="objectName">Main Menu</string>
@@ -3040,17 +3056,12 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="353619833"/>
 							<reference ref="173528469"/>
-							<reference ref="553473906"/>
-							<reference ref="199087150"/>
 							<reference ref="406564016"/>
 							<reference ref="23996182"/>
 							<reference ref="789450847"/>
 							<reference ref="800794685"/>
 							<reference ref="665114175"/>
 							<reference ref="726999377"/>
-							<reference ref="46091028"/>
-							<reference ref="1058182379"/>
-							<reference ref="261374938"/>
 						</object>
 						<reference key="parent" ref="466028025"/>
 					</object>
@@ -3062,21 +3073,6 @@
 					<object class="IBObjectRecord">
 						<int key="objectID">2027</int>
 						<reference key="object" ref="173528469"/>
-						<reference key="parent" ref="67815420"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">2028</int>
-						<reference key="object" ref="553473906"/>
-						<reference key="parent" ref="67815420"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">2029</int>
-						<reference key="object" ref="46091028"/>
-						<reference key="parent" ref="67815420"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">2030</int>
-						<reference key="object" ref="199087150"/>
 						<reference key="parent" ref="67815420"/>
 					</object>
 					<object class="IBObjectRecord">
@@ -3297,14 +3293,51 @@
 						<reference key="parent" ref="0"/>
 					</object>
 					<object class="IBObjectRecord">
-						<int key="objectID">2164</int>
-						<reference key="object" ref="1058182379"/>
-						<reference key="parent" ref="67815420"/>
+						<int key="objectID">2168</int>
+						<reference key="object" ref="394772807"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="561895638"/>
+						</object>
+						<reference key="parent" ref="605083824"/>
 					</object>
 					<object class="IBObjectRecord">
-						<int key="objectID">2165</int>
-						<reference key="object" ref="261374938"/>
-						<reference key="parent" ref="67815420"/>
+						<int key="objectID">2169</int>
+						<reference key="object" ref="561895638"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="218939289"/>
+							<reference ref="272539670"/>
+							<reference ref="441841986"/>
+							<reference ref="424872924"/>
+							<reference ref="384668648"/>
+						</object>
+						<reference key="parent" ref="394772807"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2171</int>
+						<reference key="object" ref="218939289"/>
+						<reference key="parent" ref="561895638"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2172</int>
+						<reference key="object" ref="384668648"/>
+						<reference key="parent" ref="561895638"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2173</int>
+						<reference key="object" ref="272539670"/>
+						<reference key="parent" ref="561895638"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2174</int>
+						<reference key="object" ref="441841986"/>
+						<reference key="parent" ref="561895638"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2179</int>
+						<reference key="object" ref="424872924"/>
+						<reference key="parent" ref="561895638"/>
 					</object>
 				</object>
 			</object>
@@ -3455,9 +3488,6 @@
 					<string>196.IBPluginDependency</string>
 					<string>196.ImportedFromIB2</string>
 					<string>2027.IBPluginDependency</string>
-					<string>2028.IBPluginDependency</string>
-					<string>2029.IBPluginDependency</string>
-					<string>2030.IBPluginDependency</string>
 					<string>2033.IBPluginDependency</string>
 					<string>2034.IBPluginDependency</string>
 					<string>2035.IBPluginDependency</string>
@@ -3496,8 +3526,13 @@
 					<string>2132.IBPluginDependency</string>
 					<string>2133.IBPluginDependency</string>
 					<string>2158.IBPluginDependency</string>
-					<string>2164.IBPluginDependency</string>
-					<string>2165.IBPluginDependency</string>
+					<string>2168.IBPluginDependency</string>
+					<string>2169.IBPluginDependency</string>
+					<string>2171.IBPluginDependency</string>
+					<string>2172.IBPluginDependency</string>
+					<string>2173.IBPluginDependency</string>
+					<string>2174.IBPluginDependency</string>
+					<string>2179.IBPluginDependency</string>
 					<string>283.IBPluginDependency</string>
 					<string>283.ImportedFromIB2</string>
 					<string>284.IBPluginDependency</string>
@@ -3717,9 +3752,6 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>{{889, 281}, {133, 483}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -3750,6 +3782,11 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>{{366, 788}, {194, 23}}</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -3797,7 +3834,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">2167</int>
+			<int key="maxID">2179</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -3813,12 +3850,12 @@
 							<string>openInDefaultApplication:</string>
 							<string>orderFrontAboutPanel:</string>
 							<string>orderFrontFirstRunPanel:</string>
-							<string>orderFrontFirstRunPanelWithFlip:</string>
+							<string>orderFrontFirstRunPanelWithTransition:</string>
 							<string>orderFrontImportGamePanel:</string>
 							<string>orderFrontInspectorPanel:</string>
 							<string>orderFrontPreferencesPanel:</string>
 							<string>orderFrontWelcomePanel:</string>
-							<string>orderFrontWelcomePanelWithFlip:</string>
+							<string>orderFrontWelcomePanelWithTransition:</string>
 							<string>revealCurrentSessionPath:</string>
 							<string>revealGamesFolder:</string>
 							<string>revealInFinder:</string>
@@ -3862,12 +3899,12 @@
 							<string>openInDefaultApplication:</string>
 							<string>orderFrontAboutPanel:</string>
 							<string>orderFrontFirstRunPanel:</string>
-							<string>orderFrontFirstRunPanelWithFlip:</string>
+							<string>orderFrontFirstRunPanelWithTransition:</string>
 							<string>orderFrontImportGamePanel:</string>
 							<string>orderFrontInspectorPanel:</string>
 							<string>orderFrontPreferencesPanel:</string>
 							<string>orderFrontWelcomePanel:</string>
-							<string>orderFrontWelcomePanelWithFlip:</string>
+							<string>orderFrontWelcomePanelWithTransition:</string>
 							<string>revealCurrentSessionPath:</string>
 							<string>revealGamesFolder:</string>
 							<string>revealInFinder:</string>
@@ -3898,7 +3935,7 @@
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
-								<string key="name">orderFrontFirstRunPanelWithFlip:</string>
+								<string key="name">orderFrontFirstRunPanelWithTransition:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -3918,7 +3955,7 @@
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
-								<string key="name">orderFrontWelcomePanelWithFlip:</string>
+								<string key="name">orderFrontWelcomePanelWithTransition:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">

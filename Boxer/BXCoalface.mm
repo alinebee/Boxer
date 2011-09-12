@@ -306,6 +306,20 @@ void boxer_log(char const* format,...)
 #endif
 }
 
+void boxer_die(const char *functionName, const char *fileName, int lineNumber, const char * format,...)
+{
+	char err[512];
+	va_list params;
+	va_start(params, format);
+	vsprintf(err, format, params);
+	va_end(params);
+
+    [[NSAssertionHandler currentHandler] handleFailureInFunction: [NSString stringWithUTF8String: functionName]
+                                                            file: [NSString stringWithUTF8String: fileName]
+                                                      lineNumber: lineNumber
+                                                     description: [NSString stringWithUTF8String: err]];
+}
+
 
 double boxer_realTime()
 {

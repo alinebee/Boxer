@@ -32,6 +32,7 @@ extern "C" {
 #define GFX_SetPalette boxer_setPalette
 #define GFX_GetBestMode boxer_idealOutputMode
 #define GFX_ShowMsg boxer_log
+#define E_Exit(format,...) boxer_die(__PRETTY_FUNCTION__, __FILE__, __LINE__, format, ##__VA_ARGS__)
 	
 	class DOS_Drive;
 	
@@ -100,6 +101,7 @@ extern "C" {
 	double boxer_realTime();
     
     void boxer_log(char const* format,...);
+    void boxer_die(char const *functionName, char const *fileName, int lineNumber, char const* format,...);
 	
 #if __cplusplus
 } //Extern C

@@ -21,6 +21,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
+			<integer value="66"/>
 			<integer value="429"/>
 			<integer value="221"/>
 		</object>
@@ -277,7 +278,7 @@
 				<string key="NSClassName">NSView</string>
 			</object>
 			<object class="NSCustomView" id="1066092163">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">274</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -291,7 +292,6 @@
 								<int key="NSvFlags">269</int>
 								<string key="NSFrame">{{370, 16}, {90, 25}}</string>
 								<reference key="NSSuperview" ref="555678485"/>
-								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="794322956">
 									<int key="NSCellFlags">-2080244224</int>
@@ -312,7 +312,6 @@
 								<int key="NSvFlags">269</int>
 								<string key="NSFrame">{{17, 10}, {336, 14}}</string>
 								<reference key="NSSuperview" ref="555678485"/>
-								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="946636500">
 									<int key="NSCellFlags">67239488</int>
@@ -330,7 +329,6 @@
 								<int key="NSvFlags">269</int>
 								<string key="NSFrame">{{470, 16}, {150, 25}}</string>
 								<reference key="NSSuperview" ref="555678485"/>
-								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="266085088">
 									<int key="NSCellFlags">-2080244224</int>
@@ -351,7 +349,6 @@
 								<int key="NSvFlags">269</int>
 								<string key="NSFrame">{{17, 26}, {336, 18}}</string>
 								<reference key="NSSuperview" ref="555678485"/>
-								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="312440514">
 									<int key="NSCellFlags">67239488</int>
@@ -367,23 +364,20 @@
 						</object>
 						<string key="NSFrameSize">{640, 64}</string>
 						<reference key="NSSuperview" ref="1066092163"/>
-						<reference key="NSWindow"/>
 						<string key="NSClassName">NSView</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{640, 64}</string>
-				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<string key="NSClassName">NSView</string>
 			</object>
 			<object class="NSCustomView" id="1029538789">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">274</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<object class="NSProgressIndicator" id="399757585">
 						<reference key="NSNextResponder" ref="1029538789"/>
-						<int key="NSvFlags">1292</int>
+						<int key="NSvFlags">1293</int>
 						<object class="NSPSMatrix" key="NSDrawMatrix"/>
 						<string key="NSFrame">{{304, 14}, {32, 32}}</string>
 						<reference key="NSSuperview" ref="1029538789"/>
@@ -392,6 +386,7 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{640, 64}</string>
+				<reference key="NSSuperview"/>
 				<string key="NSClassName">NSView</string>
 			</object>
 			<object class="NSCustomView" id="626641734">

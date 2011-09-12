@@ -307,7 +307,7 @@ cnQgaXQgaW50byBhIG5ldyBnYW1lYm94LiA</string>
 				<reference key="NSSuperview"/>
 			</object>
 			<object class="NSView" id="384524801">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">274</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -321,7 +321,6 @@ cnQgaXQgaW50byBhIG5ldyBnYW1lYm94LiA</string>
 								<int key="NSvFlags">292</int>
 								<string key="NSFrame">{{52, 120}, {116, 17}}</string>
 								<reference key="NSSuperview" ref="867951720"/>
-								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="299333245">
 									<int key="NSCellFlags">68288064</int>
@@ -343,7 +342,6 @@ cnQgaXQgaW50byBhIG5ldyBnYW1lYm94LiA</string>
 								<int key="NSvFlags">290</int>
 								<string key="NSFrame">{{176, 114}, {253, 26}}</string>
 								<reference key="NSSuperview" ref="867951720"/>
-								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSPopUpButtonCell" key="NSCell" id="491306683">
 									<int key="NSCellFlags">-2076049856</int>
@@ -407,7 +405,6 @@ cnQgaXQgaW50byBhIG5ldyBnYW1lYm94LiA</string>
 								<int key="NSvFlags">293</int>
 								<string key="NSFrame">{{72, 64}, {337, 34}}</string>
 								<reference key="NSSuperview" ref="867951720"/>
-								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="187495464">
 									<int key="NSCellFlags">67239424</int>
@@ -426,7 +423,6 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 								<int key="NSvFlags">293</int>
 								<string key="NSFrame">{{69, 158}, {343, 58}}</string>
 								<reference key="NSSuperview" ref="867951720"/>
-								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="700719066">
 									<int key="NSCellFlags">67239424</int>
@@ -442,7 +438,6 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 						</object>
 						<string key="NSFrame">{{0, 40}, {480, 280}}</string>
 						<reference key="NSSuperview" ref="384524801"/>
-						<reference key="NSWindow"/>
 						<string key="NSClassName">BXBlueprintPanel</string>
 					</object>
 					<object class="NSCustomView" id="1065075942">
@@ -455,7 +450,6 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 								<int key="NSvFlags">268</int>
 								<string key="NSFrame">{{15, 7}, {25, 25}}</string>
 								<reference key="NSSuperview" ref="1065075942"/>
-								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="546629348">
 									<int key="NSCellFlags">67239424</int>
@@ -476,7 +470,6 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 								<int key="NSvFlags">289</int>
 								<string key="NSFrame">{{270, 7}, {60, 25}}</string>
 								<reference key="NSSuperview" ref="1065075942"/>
-								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="284357024">
 									<int key="NSCellFlags">-2080244224</int>
@@ -497,7 +490,6 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 								<int key="NSvFlags">292</int>
 								<string key="NSFrame">{{55, 7}, {104, 25}}</string>
 								<reference key="NSSuperview" ref="1065075942"/>
-								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="134499466">
 									<int key="NSCellFlags">-2080244224</int>
@@ -518,7 +510,6 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 								<int key="NSvFlags">289</int>
 								<string key="NSFrame">{{340, 7}, {125, 25}}</string>
 								<reference key="NSSuperview" ref="1065075942"/>
-								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="1010249392">
 									<int key="NSCellFlags">-2080244224</int>
@@ -537,13 +528,10 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 						</object>
 						<string key="NSFrameSize">{480, 40}</string>
 						<reference key="NSSuperview" ref="384524801"/>
-						<reference key="NSWindow"/>
 						<string key="NSClassName">BXBottomBar</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{480, 320}</string>
-				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 			</object>
 			<object class="NSView" id="762783357">
 				<reference key="NSNextResponder"/>
@@ -564,8 +552,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 								<object class="NSTextFieldCell" key="NSCell" id="631552956">
 									<int key="NSCellFlags">67239424</int>
 									<int key="NSCellFlags2">138412032</int>
-									<string type="base64-UTF8" key="NSContents">SWYgeW91ciBnYW1lIGhhcyBtb3JlIENEcywgeW91IGNhbiBpbXBvcnQgdGhlbQpsYXRlciBmcm9tIHRo
-ZSBEcml2ZXMgSW5zcGVjdG9yIHdoaWxlIHlvdSBwbGF5Lg</string>
+									<string key="NSContents">If your game has more than one CD, you can import the rest later from the Drives Inspector while you play.</string>
 									<reference key="NSSupport" ref="825762272"/>
 									<reference key="NSControlView" ref="245018764"/>
 									<reference key="NSBackgroundColor" ref="672356819"/>

@@ -285,10 +285,23 @@
 			<key>BXProfileGameName</key>
 			<string>King&apos;s Quest VII</string>
 			<key>BXProfileConf</key>
-			<string>KQ7</string>
+			<string>Sound Blaster Pro</string>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>kq7.bat</string>
+			</array>
+		</dict>
+        
+		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.mindscape.angel-devoid</string>
+			<key>BXProfileGameName</key>
+			<string>Angel Devoid</string>
+			<key>BXProfileConf</key>
+			<string>Sound Blaster Pro</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>angel.exe</string>
 			</array>
 		</dict>
 		

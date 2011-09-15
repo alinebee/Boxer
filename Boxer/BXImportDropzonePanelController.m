@@ -77,7 +77,7 @@
 					   modalForWindow: [[self view] window]
 						modalDelegate: self
 					   didEndSelector: @selector(_importChosenPath:returnCode:contextInfo:)
-						  contextInfo: nil];
+						  contextInfo: NULL];
 }
 
 - (void) _importChosenPath: (NSOpenPanel *)openPanel

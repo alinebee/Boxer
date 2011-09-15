@@ -93,7 +93,7 @@
 //Callback for close alert after a windows-only program is failed.
 - (void) _windowsOnlyProgramCloseAlertDidEnd: (BXCloseAlert *)alert
 								  returnCode: (int)returnCode
-								 contextInfo: (void *)info;
+								 contextInfo: (void *)contextInfo;
 @end
 
 

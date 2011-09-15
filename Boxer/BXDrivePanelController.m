@@ -432,7 +432,7 @@ enum {
 		//Check if any of the selected drives are being imported, already imported, or otherwise cannot be imported
 		for (BXDrive *drive in selectedDrives)
 		{
-			if ([session driveIsImporting: drive])
+			if ([session activeImportOperationForDrive: drive])
 			{
 				[theItem setTitle: NSLocalizedString(@"Importing into Gamebox…", @"Drive import menu item title, when selected drive(s) are already in the gamebox.")];
 				return NO;
@@ -455,7 +455,7 @@ enum {
 		if (isGamebox) for (BXDrive *drive in selectedDrives)
 		{	
 			//If any of the selected drives are being imported, then enable and unhide the item
-			if ([session driveIsImporting: drive])
+			if ([session activeImportOperationForDrive: drive])
 			{
 				[theItem setHidden: NO];
 				return YES;

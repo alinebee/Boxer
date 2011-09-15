@@ -528,7 +528,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (void) _windowsOnlyProgramCloseAlertDidEnd: (BXCloseAlert *)alert
 								  returnCode: (int)returnCode
-								 contextInfo: (void *)info
+								 contextInfo: (void *)contextInfo
 {
 	if (returnCode == NSAlertFirstButtonReturn)
 	{
@@ -870,7 +870,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 				[alert beginSheetModalForWindow: [self windowForSheet]
 								  modalDelegate: self
 								 didEndSelector: @selector(_windowsOnlyProgramCloseAlertDidEnd:returnCode:contextInfo:)
-									contextInfo: nil];
+									contextInfo: NULL];
 			}
 		}
 	}

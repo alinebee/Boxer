@@ -31,6 +31,11 @@
 	return YES;
 }
 
++ (BOOL) driveUnavailableDuringImport
+{
+    return NO;
+}
+
 + (NSString *) nameForDrive: (BXDrive *)drive
 {
 	NSString *importedName = nil;

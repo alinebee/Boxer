@@ -31,6 +31,11 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 #pragma mark -
 #pragma mark Helper class methods
 
++ (BOOL) driveUnavailableDuringImport
+{
+    return NO;
+}
+
 + (BOOL) isSuitableForDrive: (BXDrive *)drive
 {
 	NSString *drivePath = [drive path];

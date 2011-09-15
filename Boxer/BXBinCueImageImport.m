@@ -79,6 +79,12 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 @implementation BXBinCueImageImport
 @synthesize usesErrorCorrection;
 
++ (BOOL) driveUnavailableDuringImport
+{
+    //cdrdao requires the source volume to be unmounted before it can rip it.
+    return YES;
+}
+
 + (BOOL) isSuitableForDrive: (BXDrive *)drive
 {
 	NSString *drivePath = [drive path];

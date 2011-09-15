@@ -259,11 +259,12 @@
 
 - (void) dequeueDrive: (BXDrive *)drive
 {
-    //If the specified drive is currently being imported, then refuse to remove it from the queue:
-    //we don't want it to disappear from the UI until we're good and ready.
-    //TODO: approach this a different way, have the drive panel slip in drives that are still
-    //importing.
-    if ([self driveIsImporting: drive]) return;
+    //If the specified drive is currently being imported, then refuse to remove
+    //it from the queue: we don't want it to disappear from the UI until we're
+    //good and ready.
+    //TODO: expand this to prevent dequeuing drives that are currently mounted
+    //or that should not be removed for other reasons.
+    if ([self activeImportOperationForDrive: drive]) return;
     
     NSString *letter = [drive letter];
     NSAssert1(letter != nil, @"Drive %@ passed to dequeueDrive had no letter assigned.", drive);
@@ -386,7 +387,7 @@
 	for (BXDrive *drive in selectedDrives)
 	{
         //If the drive is importing, refuse to unmount/dequeue it altogether.
-        if ([self driveIsImporting: drive]) return NO;
+        if ([self activeImportOperationForDrive: drive]) return NO;
         
         //If the drive isn't mounted anyway, then ignore it
         //(we may receive a mix of mounted and unmounted drives)
@@ -814,82 +815,105 @@
         //If mounting fails, check what the failure was and try to recover.
         if (!mountedDrive)
         {
-            switch ([mountError code])
+            NSInteger errCode = [mountError code];
+            BOOL isDOSFilesystemError = [[mountError domain] isEqualToString: BXDOSFilesystemErrorDomain];
+            
+            //The drive letter was already taken: decide what to do based on our conflict behaviour.
+            if (isDOSFilesystemError && errCode == BXDOSFilesystemDriveLetterOccupied)
             {
-                //The drive letter was already taken: decide what to do
-                //based on our conflict behaviour.
-                case BXDOSFilesystemDriveLetterOccupied:
-                    switch (conflictBehaviour)
-                    {
-                        //Pick a new drive letter and try again.
-                        case BXDriveReassign:
+                switch (conflictBehaviour)
+                {
+                    //Pick a new drive letter and try again.
+                    case BXDriveReassign:
                         {
                             NSString *newLetter = [self preferredLetterForDrive: driveToMount
                                                                         options: options];
                             [driveToMount setLetter: newLetter];
-                            break;
                         }
-                        
-                        //Try to unmount the existing drive and try again.
-                        case BXDriveReplace:
+                        break;
+                    
+                    //Try to unmount the existing drive and try again.
+                    case BXDriveReplace:
                         {
                             NSError *unmountError = nil;
                             replacedDrive           = [[self emulator] driveAtLetter: [driveToMount letter]];
                             replacedDriveWasCurrent = [[[self emulator] currentDrive] isEqual: replacedDrive];
                             
-                            //If the drive we're replacing is a floppy or CD, then force
-                            //it to eject even if it's busy; DOS programs should be able
-                            //to handle this at least semi-gracefully.
                             BOOL unmounted = [self unmountDrive: replacedDrive
                                                         options: options
                                                           error: &unmountError];
                             
-                            //If we couldn't unmount the drive, then bail out.
-                            if (!unmounted && unmountError)
+                            //If we couldn't unmount the drive we're trying to replace,
+                            //then queue up the desired drive anyway and then give up.
+                            if (!unmounted)
                             {
+                                [self enqueueDrive: driveToMount];
                                 if (outError) *outError = unmountError;
                                 return nil;
                             }
-                            
-                            break;
                         }
-                            
-                        //Add the conflicting drive into a queue alongside the existing drive,
-                        //and give up on mounting.
-                        case BXDriveQueue:
-                        default:
+                        break;
+                        
+                    //Add the conflicting drive into a queue alongside the existing drive,
+                    //and give up on mounting for now.
+                    case BXDriveQueue:
+                    default:
                         {
                             [self enqueueDrive: driveToMount];
                             return nil;
-                            break;
                         }
-                    }
-                    break;
+                }
+            }
+            
+            //Disc image couldn't be recognised: if we have a fallback volume,
+            //switch to that instead and continue mounting.
+            //(If we don't, we'll continue bailing out.)
+            else if (isDOSFilesystemError && errCode == BXDOSFilesystemInvalidImage && fallbackDrive)
+            {
+                driveToMount = fallbackDrive;
+                fallbackDrive = nil;
+            }
+            
+            //Bail out completely after any other error - once we put back
+            //any drive we tried to replace.
+            else
+            {
+                //Tweak: if we failed because we couldn't read the source file/volume,
+                //check if this could be because of an import operation.
+                //If so, rephrase the error with a more helpful description.
+                if (isDOSFilesystemError && errCode == BXDOSFilesystemCouldNotReadDrive &&
+                    [[[self activeImportOperationForDrive: driveToMount] class] driveUnavailableDuringImport])
+                {
+                    NSString *descriptionFormat = NSLocalizedString(@"The drive “%1$@” is unavailable while it is being imported.",
+                                                                    @"Error shown when a drive cannot be mounted because it is busy being imported.");
                     
-                //The image couldn't be mounted: if we have a fallback volume, use that instead.
-                //Otherwise, bail out altogether (and restore any drive we replaced).
-                case BXDOSFilesystemInvalidImage:
-                    if (fallbackDrive)
-                    {
-                        driveToMount = fallbackDrive;
-                        fallbackDrive = nil;
-                        break;
-                    }
-                    //If not, let the switch statement continue down into default:
-                    //so that we remount any replaced drive
+                    NSString *description = [NSString stringWithFormat: descriptionFormat, [driveToMount title], nil];
+                    NSString *suggestion = NSLocalizedString(@"You can use the drive once the import has completed or been cancelled.", @"Recovery suggestion shown when a drive cannot be mounted because it is busy being imported.");
+                    
+                    
+                    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                                              description,  NSLocalizedDescriptionKey,
+                                              suggestion,   NSLocalizedRecoverySuggestionErrorKey,
+                                              mountError,   NSUnderlyingErrorKey,
+                                              driveToMount, BXDOSFilesystemErrorDriveKey,
+                                              nil];
+                    
+                    mountError = [NSError errorWithDomain: [mountError domain]
+                                                     code: [mountError code]
+                                                 userInfo: userInfo];
+                }
                 
-                //Bail out completely after any other error - once we put back any drive
-                //we tried to replace.
-                default:
-                    if (replacedDrive)
+                if (replacedDrive)
+                {
+                    [[self emulator] mountDrive: replacedDrive error: nil];
+                    
+                    if (replacedDriveWasCurrent && [[self emulator] isAtPrompt])
                     {
-                        [[self emulator] mountDrive: replacedDrive error: nil];
-                        
-                        if (replacedDriveWasCurrent && [[self emulator] isAtPrompt])
-                            [[self emulator] changeToDriveLetter: [replacedDrive letter]];
+                        [[self emulator] changeToDriveLetter: [replacedDrive letter]];
                     }
-                    if (outError) *outError = mountError;
-                    return nil;
+                }
+                if (outError) *outError = mountError;
+                return nil;
             }
         }
     }
@@ -1216,7 +1240,7 @@
             //of importing it: in which case we want to leave the drive in place.
             //(TODO: check that this is still the desired behaviour, now that we
             //have implemented drive queues.)
-            if ([self driveIsImporting: drive]) continue;
+            if ([[[self activeImportOperationForDrive: drive] class] driveUnavailableDuringImport]) continue;
             
             //If the drive is mounted, then unmount it now and remove it from the drive list.
             if ([self driveIsMounted: drive])
@@ -1344,6 +1368,9 @@
                              startImmediately: (BOOL)start
 {
     NSString *scanPath = [drive path];
+    //Don't scan non-physical drives
+    if (!scanPath) return nil;
+    
     BXExecutableScan *scan = [BXExecutableScan scanWithBasePath: scanPath];
     [scan setDelegate: self];
     [scan setDidFinishSelector: @selector(executableScanDidFinish:)];
@@ -1387,13 +1414,13 @@
     return NO;
 }
 
-- (BOOL) isScanningForExecutablesInDrive: (BXDrive *)drive
+- (BXExecutableScan *) activeExecutableScanForDrive: (BXDrive *)drive
 {
     for (BXExecutableScan *scan in [scanQueue operations])
 	{
-		if ([scan isExecuting] && [[scan contextInfo] isEqual: drive]) return YES;
+		if ([scan isExecuting] && [[scan contextInfo] isEqual: drive]) return scan;
 	}    
-    return NO;
+    return nil;
 }
 
 - (BOOL) cancelExecutableScanForDrive: (BXDrive *)drive
@@ -1443,19 +1470,21 @@
 
 - (BOOL) driveIsBundled: (BXDrive *)drive
 {
-	if ([self isGamePackage])
+	if ([drive path] && [self isGamePackage])
 	{
-		NSString *gameboxPath = [[self gamePackage] bundlePath];
+		NSString *bundlePath = [[self gamePackage] resourcePath];
 		NSString *drivePath = [drive path];
 
-		if ([drivePath isRootedInPath: gameboxPath]) return YES;
+		if ([drivePath isEqualToString: bundlePath] ||
+            [[drivePath stringByDeletingLastPathComponent] isEqualToString: bundlePath])
+            return YES;
 	}
 	return NO;
 }
 
 - (BOOL) equivalentDriveIsBundled: (BXDrive *)drive
 {
-	if ([self isGamePackage])
+	if ([drive path] && [self isGamePackage])
 	{
 		Class importClass		= [BXDriveImport importClassForDrive: drive];
 		NSString *importedName	= [importClass nameForDrive: drive];
@@ -1470,13 +1499,13 @@
 	return NO;
 }
 
-- (BOOL) driveIsImporting: (BXDrive *)drive
+- (BXOperation <BXDriveImport> *) activeImportOperationForDrive: (BXDrive *)drive
 {
-	for (BXOperation *operation in [importQueue operations])
+	for (BXOperation <BXDriveImport> *import in [importQueue operations])
 	{
-		if ([operation isExecuting] && [[operation contextInfo] isEqual: drive]) return YES; 
+		if ([import isExecuting] && [[import drive] isEqual: drive]) return import; 
 	}
-	return NO;
+	return nil;
 }
 
 - (BOOL) canImportDrive: (BXDrive *)drive
@@ -1489,7 +1518,7 @@
 	if ([drive isInternal] || [drive isHidden]) return NO;
 	
 	//...the drive is currently being imported or is already bundled in the current gamebox
-	if ([self driveIsImporting: drive] ||
+	if ([self activeImportOperationForDrive: drive] ||
 		[self driveIsBundled: drive] ||
 		[self equivalentDriveIsBundled: drive]) return NO;
 	
@@ -1510,9 +1539,28 @@
 		
 		[driveImport setDelegate: self];
 		[driveImport setDidFinishSelector: @selector(driveImportDidFinish:)];
-		[driveImport setContextInfo: drive];
-		
-		if (start) [importQueue addOperation: driveImport];
+    	
+		if (start)
+        {
+            //If we'll lose access to the drive during importing,
+            //eject it but leave it in the drive queue: and make
+            //a note to remount it afterwards.
+            if ([self driveIsMounted: drive] && [[driveImport class] driveUnavailableDuringImport])
+            {
+                [self unmountDrive: drive
+                           options: BXDriveForceUnmounting | BXDriveReplaceWithSiblingFromQueue
+                             error: nil];
+                
+                NSDictionary *contextInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                                             [NSNumber numberWithBool: YES], @"remountAfterImport",
+                                             nil];
+                
+                [driveImport setContextInfo: contextInfo];
+            }
+            
+            [importQueue addOperation: driveImport];
+        }
+        
 		return driveImport;
 	}
 	else
@@ -1523,11 +1571,11 @@
 
 - (BOOL) cancelImportForDrive: (BXDrive *)drive
 {
-	for (BXOperation *operation in [importQueue operations])
+	for (BXOperation <BXDriveImport> *import in [importQueue operations])
 	{
-		if (![operation isFinished] && [[operation contextInfo] isEqual: drive])
+		if (![import isFinished] && [[import drive] isEqual: drive])
 		{
-			[operation cancel];
+			[import cancel];
 			return YES;
 		}
 	}
@@ -1547,6 +1595,8 @@
 {
 	BXOperation <BXDriveImport> *import = [theNotification object];
 	BXDrive *originalDrive = [import drive];
+    
+    BOOL remountDrive = [[[import contextInfo] objectForKey: @"remountAfterImport"] boolValue];
 
 	if ([import succeeded])
 	{
@@ -1561,17 +1611,21 @@
             //Make the new drive an alias for the old one.
             [[importedDrive pathAliases] addObject: [originalDrive path]];
             
-            //If the old drive was currently mounted, then replace it entirely:
-            //without showing notifications, or bothering to check for
-            //backing images.
-			if ([self driveIsMounted: originalDrive])
+            //If the old drive is currently mounted, or was mounted back when we started
+            //then replace it entirely.
+			if (remountDrive || [self driveIsMounted: originalDrive])
             {
-                //Replace the original drive with the newly-imported drive.
+                //Mount the new drive without showing notification
+                //or bothering to check for backing images.
+                //Note that this will automatically fail if the old
+                //drive is still in use.
                 NSError *mountError = nil;
                 BXDrive *mountedDrive = [self mountDrive: importedDrive
                                                 ifExists: BXDriveReplace
                                                  options: 0
                                                    error: &mountError];
+                
+                //Remove the old drive from the queue, once we've mounted the new one.
                 if (mountedDrive)
                 {
                     [self replaceQueuedDrive: originalDrive
@@ -1584,7 +1638,7 @@
                 [self replaceQueuedDrive: originalDrive
                                withDrive: importedDrive];
             }
-		} 
+		}
 		
 		//Display a notification that this drive was successfully imported.
         [[BXBezelController controller] showDriveImportedBezelForDrive: originalDrive
@@ -1596,6 +1650,16 @@
 		
 		//Unwind failed transfers, whatever the reason
 		[import undoTransfer];
+        
+        //Remount the original drive, if it was unmounted as a result of the import
+        if (remountDrive)
+        {
+            NSError *mountError = nil;
+            [self mountDrive: originalDrive
+                    ifExists: BXDriveReplace
+                     options: 0
+                       error: &mountError];
+        }
 		
 		//Display a sheet for the error, unless it was just the user cancelling
 		if (!([[importError domain] isEqualToString: NSCocoaErrorDomain] && [importError code] == NSUserCancelledError))
@@ -1604,7 +1668,7 @@
 				modalForWindow: [self windowForSheet]
 					  delegate: nil
 			didPresentSelector: NULL
-				   contextInfo: nil];
+				   contextInfo: NULL];
 		}
 	}
 }

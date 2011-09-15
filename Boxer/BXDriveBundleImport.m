@@ -29,6 +29,11 @@
 #pragma mark -
 #pragma mark Helper class methods
 
++ (BOOL) driveUnavailableDuringImport
+{
+    return NO;
+}
+
 + (NSString *) nameForDrive: (BXDrive *)drive
 {
 	NSString *importedName = nil;

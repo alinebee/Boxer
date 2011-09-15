@@ -60,7 +60,7 @@
                        modalForWindow: [theSession windowForSheet]
                         modalDelegate: self
                        didEndSelector: @selector(mountChosenItem:returnCode:contextInfo:)
-                          contextInfo: nil];	
+                          contextInfo: NULL];	
 }
 
 //(Re)initialise the possible values for drive letters
@@ -263,7 +263,7 @@
                    modalForWindow: window
                          delegate: nil
                didPresentSelector: NULL
-                      contextInfo: nil];
+                      contextInfo: NULL];
         }
 	}
 	[self setRepresentedObject: nil];

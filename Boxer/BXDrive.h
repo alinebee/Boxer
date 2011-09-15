@@ -88,9 +88,6 @@ typedef NSInteger BXDriveType;
 //This will be updated with the drive's actual DOSBox label once a volume has been mounted.
 @property (copy, nonatomic) NSString *volumeLabel;
 
-//The icon representing this drive. This will be taken from the drive path's filesystem icon.
-@property (copy, nonatomic) NSImage *icon;
-
 //The type of DOS drive to mount, as a BXDriveType constant (see above.) This will
 //be auto-detected based on the source folder or image, if not explicitly provided.
 @property (assign, nonatomic) BXDriveType type;

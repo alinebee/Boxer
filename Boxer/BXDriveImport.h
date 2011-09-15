@@ -38,6 +38,12 @@
 //Returns the name under which the specified drive would be saved.
 + (NSString *) nameForDrive: (BXDrive *)drive;
 
+//Returns whether the drive will become inaccessible during this import.
+//This will cause the drive to be unmounted for the duration of the import,
+//and then remounted once the import finishes.
++ (BOOL) driveUnavailableDuringImport;
+
+
 //Return a suitably initialized BXOperation subclass for transferring the drive.
 - (id <BXDriveImport>) initForDrive: (BXDrive *)drive
 					  toDestination: (NSString *)destinationFolder

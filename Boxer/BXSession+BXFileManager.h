@@ -311,8 +311,9 @@ typedef NSUInteger BXDriveMountOptions;
 //Returns YES if a scan was aborted, NO if no scan was in progress.
 - (BOOL) cancelExecutableScanForDrive: (BXDrive *)drive;
 
-//Returns whether the specified drive is being scanned for executables.
-- (BOOL) isScanningForExecutablesInDrive: (BXDrive *)drive;
+//Returns any ongoing executable scan for the specified specified drive,
+//or nil if no scan is in progress.
+- (BXExecutableScan *) activeExecutableScanForDrive: (BXDrive *)drive;
 
 //Called when an executable scan has finished.
 //Updates the executable cache for the specified drive.
@@ -329,8 +330,9 @@ typedef NSUInteger BXDriveMountOptions;
 //the session's gamebox. (Which probably means the drive has been previously imported.)
 - (BOOL) equivalentDriveIsBundled: (BXDrive *)drive;
 
-//Returns whether the specified drive is currently being imported.
-- (BOOL) driveIsImporting: (BXDrive *)drive;
+//Returns any ongoing import operation for the specified drive,
+//or nil if no import is in progress.
+- (BXOperation <BXDriveImport> *) activeImportOperationForDrive: (BXDrive *)drive;
 
 //Returns whether the specified drive can be imported.
 //Will be NO if:

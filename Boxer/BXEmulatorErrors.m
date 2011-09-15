@@ -40,7 +40,6 @@ NSString * const BXDOSFilesystemErrorDriveKey = @"BXDOSFilesystemErrorDriveKey";
 }
 @end
 
-
 @implementation BXEmulatorInvalidImageError
 
 + (id) errorWithDrive: (BXDrive *)drive

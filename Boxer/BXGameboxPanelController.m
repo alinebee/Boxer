@@ -148,7 +148,7 @@ enum {
 					   modalForWindow: [[self view] window]
 						modalDelegate: self
 					   didEndSelector: @selector(_setChosenProgramAsDefault:returnCode:contextInfo:)
-						  contextInfo: nil];
+						  contextInfo: NULL];
 }
 
 - (BOOL) panel: (id)sender shouldShowFilename: (NSString *)filename

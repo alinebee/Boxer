@@ -69,7 +69,7 @@
 						   modalForWindow: window
 							modalDelegate: self
 						   didEndSelector: @selector(setChosenGamesFolder:returnCode:contextInfo:)
-							  contextInfo: nil];
+							  contextInfo: NULL];
 	}
 	else
 	{

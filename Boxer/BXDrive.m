@@ -15,7 +15,7 @@
 
 @implementation BXDrive
 @synthesize path, mountPoint, pathAliases;
-@synthesize letter, title, volumeLabel, icon;
+@synthesize letter, title, volumeLabel;
 @synthesize type, freeSpace;
 @synthesize usesCDAudio, readOnly, locked, hidden, mounted;
 
@@ -151,13 +151,7 @@
 	{
 		if (driveLetter) [self setLetter: driveLetter];
 		
-		if (drivePath)
-		{
-			[self setPath: drivePath];
-			//Fetch the filesystem icon for the drive path
-			NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-			[self setIcon: [workspace iconForFile: [self path]]];
-		}
+		if (drivePath) [self setPath: drivePath];
 		
 		//Detect the appropriate mount type for the specified path
 		if (driveType == BXDriveAutodetect) driveType = [[self class] preferredTypeForPath: [self path]];
@@ -193,7 +187,6 @@
 	[self setPath: nil],		[path release];
 	[self setTitle: nil],		[title release];
 	[self setVolumeLabel: nil],	[volumeLabel release];
-	[self setIcon: nil],		[icon release];
 	
 	[pathAliases release], pathAliases = nil;
 	[super dealloc];

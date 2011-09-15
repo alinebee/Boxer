@@ -172,7 +172,7 @@
 					   modalForWindow: [[self view] window]
 						modalDelegate: self
 					   didEndSelector: @selector(_addChosenInstaller:returnCode:contextInfo:)
-						  contextInfo: nil];	
+						  contextInfo: NULL];	
 }
 
 - (BOOL) panel: (id)sender shouldShowFilename: (NSString *)filename

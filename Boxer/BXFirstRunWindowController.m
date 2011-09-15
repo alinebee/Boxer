@@ -193,7 +193,7 @@ enum {
 					   modalForWindow: [self window]
 						modalDelegate: self
 					   didEndSelector: @selector(setChosenGamesFolder:returnCode:contextInfo:)
-						  contextInfo: nil];
+						  contextInfo: NULL];
 }
 
 //Delegate validation method for 10.6 and above.

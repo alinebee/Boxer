@@ -279,7 +279,7 @@
 			[skipAlert beginSheetModalForWindow: [controller window]
 								  modalDelegate: self
 								 didEndSelector: @selector(_skipAlertDidEnd:returnCode:contextInfo:)
-									contextInfo: nil];
+									contextInfo: NULL];
 		}
 		//If skipAlertForSourcePath:type: thought that it wasn't worth showing any confirmation
 		//at all, then go right ahead and cancel.

@@ -11,6 +11,14 @@
 #import "BXMultiFileTransfer.h"
 #import "BXDriveImport.h"
 
+//Domain and constants for errors encountered during disc-image ripping
+extern NSString * const BXDriveBundleErrorDomain;
+
+enum {
+	BXDriveBundleCouldNotParseCue //Could not rip the cue file to determine source files
+};
+
+
 @interface BXDriveBundleImport : BXMultiFileTransfer <BXDriveImport>
 {
 	@private
@@ -18,4 +26,8 @@
 	NSString *_destinationFolder;
 	NSString *_importedDrivePath;
 }
+@end
+
+
+@interface BXDriveBundleCueParseError : NSError <BXDriveImportError>
 @end

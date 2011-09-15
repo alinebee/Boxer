@@ -140,10 +140,16 @@
 
 - (void) didPerformOperation
 {
-    //Populate the imported drive path once we're done, assuming nothing went wrong.
+    //If nothing went wrong, then populate the imported drive path once we're done.
     if (![self error])
     {
         [self setImportedDrivePath: [self destinationPath]];
+    }
+    //If the import failed for any reason (including cancellation),
+    //then clean up the partial files.
+    else
+    {
+        [self undoTransfer];
     }
 }
 

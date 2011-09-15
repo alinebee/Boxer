@@ -152,14 +152,11 @@
 - (BOOL) undoTransfer
 {
 	BOOL undid = NO;
-	if ([self copyFiles])
-	{
-		//Tell each component file transfer to undo whatever it did
-		for (BXSingleFileTransfer *transfer in [self operations])
-		{
-			if ([transfer undoTransfer]) undid = YES;
-		}
-	}
+    //Tell each component file transfer to undo whatever it did
+    for (BXSingleFileTransfer *transfer in [self operations])
+    {
+        if ([transfer undoTransfer]) undid = YES;
+    }
 	return undid;
 }
 @end

@@ -975,19 +975,16 @@
 	//then proceed with the next stage of the import (cleanup.)
 	if ([operation succeeded] || [operation isCancelled])
 	{
-		//If the operation was cancelled, then clean up any leftover files
-		if ([operation isCancelled])
+		if (![operation isCancelled])
 		{
-			if ([operation respondsToSelector: @selector(undoTransfer)]) [operation undoTransfer];
-		}
-		
-		//Otherwise, if the imported drive is replacing our original C drive,
-		//then update the root drive path accordingly so that cleanGamebox
-		//will clean up the right place
-		else if (isImport && [[[operation drive] letter] isEqualToString: @"C"])
-		{
-			[self setRootDrivePath: [operation importedDrivePath]];
-		}
+            //If the imported drive is replacing our original C drive, then
+            //update the root drive path accordingly so that cleanGamebox
+            //will clean up the right place.
+            if (isImport && [[[operation drive] letter] isEqualToString: @"C"])
+            {
+                [self setRootDrivePath: [operation importedDrivePath]];
+            }
+        }
 		
 		[self setSourceFileImportOperation: nil];
 		[self cleanGamebox];
@@ -998,8 +995,6 @@
 	else
 	{
 		BXOperation <BXDriveImport> *fallbackImport = nil;
-		
-		if ([operation respondsToSelector: @selector(undoTransfer)]) [operation undoTransfer];
 		
 		//Check if we can retry the operation...
 		if (isImport && (fallbackImport = [BXDriveImport fallbackForFailedImport: operation]))

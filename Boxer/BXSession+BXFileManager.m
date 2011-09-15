@@ -1646,11 +1646,6 @@
 	}
 	else if ([import error])
 	{
-		NSError *importError = [import error];
-		
-		//Unwind failed transfers, whatever the reason
-		[import undoTransfer];
-        
         //Remount the original drive, if it was unmounted as a result of the import
         if (remountDrive)
         {
@@ -1661,8 +1656,10 @@
                        error: &mountError];
         }
 		
-		//Display a sheet for the error, unless it was just the user cancelling
-		if (!([[importError domain] isEqualToString: NSCocoaErrorDomain] && [importError code] == NSUserCancelledError))
+        //Display a sheet for the error, unless it was just the user cancelling
+		NSError *importError = [import error];
+		if (!([[importError domain] isEqualToString: NSCocoaErrorDomain] &&
+              [importError code] == NSUserCancelledError))
 		{
 			[self presentError: importError
 				modalForWindow: [self windowForSheet]

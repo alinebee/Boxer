@@ -202,6 +202,11 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 	}
 	
 	[manager release];
+    
+    
+    //If the import failed for any reason (including cancellation),
+    //then clean up the partial files.
+    if ([self error]) [self undoTransfer];
 }
 
 - (void) checkTaskProgress: (NSTimer *)timer
@@ -257,7 +262,7 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 {
 	NSString *displayName = [drive title];
 	NSString *descriptionFormat = NSLocalizedString(@"The disc “%1$@” could not be converted into a disc image.",
-													@"Error shown when CD-image ripping fails for an unknown reason. %1$@ is the volume label of the drive.");
+													@"Error shown when CD-image ripping fails for an unknown reason. %1$@ is the display title of the drive.");
 	
 	NSString *description	= [NSString stringWithFormat: descriptionFormat, displayName, nil];
 	NSDictionary *userInfo	= [NSDictionary dictionaryWithObjectsAndKeys:
@@ -276,7 +281,7 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 {
 	NSString *displayName = [drive title];
 	NSString *descriptionFormat = NSLocalizedString(@"The disc “%1$@” could not be converted to a disc image because it is in use by another application.",
-													@"Error shown when CD-image ripping fails because the disc is in use. %1$@ is the volume label of the drive.");
+													@"Error shown when CD-image ripping fails because the disc is in use. %1$@ is the display title of the drive.");
 	
 	NSString *description	= [NSString stringWithFormat: descriptionFormat, displayName, nil];
 	NSString *suggestion	= NSLocalizedString(@"Close Finder windows or other applications that are using the disc, then try importing again.", @"Explanatory message shown when CD-image ripping fails because the disc is in use.");

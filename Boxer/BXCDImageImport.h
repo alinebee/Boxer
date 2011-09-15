@@ -14,9 +14,9 @@
 extern NSString * const BXCDImageImportErrorDomain;
 
 enum {
-	BXCDImageImportErrorRipFailed,		//Could not rip the image for an unknown reason
-	BXCDImageImportErrorDiscReadError,	//Failed to read the contents of the disc
-	BXCDImageImportErrorDiscInUse		//Could not begin ripping because the disc is in use
+	BXCDImageImportErrorRipFailed,          //Could not rip the image for an unknown reason
+	BXCDImageImportErrorCouldNotReadDisc,	//Failed to read the contents of the disc
+	BXCDImageImportErrorDiscInUse           //Could not begin ripping because the disc is in use
 };
 
 

@@ -62,8 +62,8 @@
 @interface BXDriveImport: BXOperation
 
 + (id <BXDriveImport>) importOperationForDrive: (BXDrive *)drive
-						toDestination: (NSString *)destinationFolder
-							copyFiles: (BOOL)copyFiles;
+                                 toDestination: (NSString *)destinationFolder
+                                     copyFiles: (BOOL)copyFiles;
 
 //Returns the most suitable operation class to import the specified drive
 + (Class) importClassForDrive: (BXDrive *)drive;

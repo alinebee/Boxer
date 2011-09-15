@@ -14,6 +14,9 @@
 #import "NSWorkspace+BXFileTypes.h"
 
 
+NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
+
+
 @interface BXDriveBundleImport ()
 @property (copy, readwrite) NSString *importedDrivePath;
 @end
@@ -104,7 +107,10 @@
 	[self setImportedDrivePath: destinationPath];
 	
 	NSError *readError = nil;
-	NSString *cueContents		= [[NSString alloc] initWithContentsOfFile: sourcePath usedEncoding: NULL error: &readError];
+	NSString *cueContents = [[NSString alloc] initWithContentsOfFile: sourcePath
+                                                        usedEncoding: NULL
+                                                               error: &readError];
+    
 	if (!cueContents)
 	{
 		[self setError: readError];
@@ -114,76 +120,87 @@
 	NSArray *relatedPaths		= [BXBinCueImage rawPathsInCueContents: cueContents];
 	NSUInteger numRelatedPaths	= [relatedPaths count];
 	
+    
+    //Bail out if we aren't able to parse the source files from this cue.
+    if (!numRelatedPaths)
+    {
+        NSError *cueParseError = [BXDriveBundleCueParseError errorWithDrive: [self drive]];
+        [self setError: cueParseError];
+        return;
+    }
+    
 	if ([self isCancelled]) return;
-	
-	if (cueContents && numRelatedPaths)
-	{
-		//Work out what to do with the related file paths we've parsed from the cue file
-		NSString *sourceBasePath = [sourcePath stringByDeletingLastPathComponent];
-		NSMutableDictionary *revisedPaths	= [NSMutableDictionary dictionaryWithCapacity: numRelatedPaths];
-		NSMutableDictionary *transferPaths	= [NSMutableDictionary dictionaryWithCapacity: numRelatedPaths];
-		
-		for (NSString *fromPath in relatedPaths)
-		{
-			//Rewrite Windows-style paths
-			NSString *sanitisedFromPath = [fromPath stringByReplacingOccurrencesOfString: @"\\" withString: @"/"];
-			
-			NSString *fullFromPath	= [[sourceBasePath stringByAppendingPathComponent: sanitisedFromPath] stringByStandardizingPath];
-			NSString *fromName		= [fullFromPath lastPathComponent];
-			NSString *fullToPath	= [destinationPath stringByAppendingPathComponent: fromName];
-			
-			[transferPaths setObject: fullToPath forKey: fullFromPath];
-			
-			//Make a note of the path if it needs to be changed when we rewrite the CUE file
-			//(e.g. if it's in a subdirectory that will no longer exist when the files are imported)
-			if (![fromPath isEqualToString: fromName])
-				[revisedPaths setObject: fromName forKey: fromPath];
-		}
-		
-		if ([self isCancelled]) return;
-		
-		[self setPathsToTransfer: transferPaths];		
-		
-        //Perform the standard file import
-		[super performOperation];
-		
-		if (![self error])
-		{
-			//Once the transfer's finished, generate a revised cue file and write it to the new bundle
-			NSMutableString *revisedCue = [cueContents mutableCopy];
-			for (NSString *oldPath in [revisedPaths keyEnumerator])
-			{
-				NSString *newPath = [revisedPaths objectForKey: oldPath];
-				//FIXME: this could break the CUE file if an old filename is exactly
-				//the same as a standard CUE keyword. Which is never going to happen,
-				//but we really should track the ranges of each path as well.
-				[revisedCue replaceOccurrencesOfString: oldPath
-											withString: newPath
-											   options: NSLiteralSearch
-												 range: NSMakeRange(0, [revisedCue length])];
-			}
-			
-			NSString *finalCuePath = [destinationPath stringByAppendingPathComponent: @"tracks.cue"];
-			
-            NSError *cueError = nil;
-			BOOL cueWritten = [revisedCue writeToFile: finalCuePath
-										   atomically: YES
-											 encoding: NSUTF8StringEncoding
-												error: &cueError];
-			[revisedCue release];
-			
-			if (!cueWritten)
-			{
-				[self setError: cueError];
-			}
-			else if (![self copyFiles])
-			{
-				//If we were moving rather than copying, then delete the original cue file once we've written the new one
-				NSFileManager *manager = [[NSFileManager alloc] init];
-				[manager removeItemAtPath: sourcePath error: nil];
-			}
-		}
-	}
+    
+    //Work out what to do with the related file paths we've parsed from the cue file
+    NSString *sourceBasePath = [sourcePath stringByDeletingLastPathComponent];
+    NSMutableDictionary *revisedPaths	= [NSMutableDictionary dictionaryWithCapacity: numRelatedPaths];
+    NSMutableDictionary *transferPaths	= [NSMutableDictionary dictionaryWithCapacity: numRelatedPaths];
+    
+    for (NSString *fromPath in relatedPaths)
+    {
+        //Rewrite Windows-style paths
+        NSString *sanitisedFromPath = [fromPath stringByReplacingOccurrencesOfString: @"\\" withString: @"/"];
+        
+        NSString *fullFromPath	= [[sourceBasePath stringByAppendingPathComponent: sanitisedFromPath] stringByStandardizingPath];
+        NSString *fromName		= [fullFromPath lastPathComponent];
+        NSString *fullToPath	= [destinationPath stringByAppendingPathComponent: fromName];
+        
+        [transferPaths setObject: fullToPath forKey: fullFromPath];
+        
+        //Make a note of the path if it needs to be changed when we rewrite the CUE file
+        //(e.g. if it's in a subdirectory that will no longer exist when the files are imported)
+        if (![fromPath isEqualToString: fromName])
+            [revisedPaths setObject: fromName forKey: fromPath];
+    }
+    
+    if ([self isCancelled]) return;
+    
+    [self setPathsToTransfer: transferPaths];		
+    
+    //Perform the standard file import
+    [super performOperation];
+    
+    if (![self error])
+    {
+        //Once the transfer's finished, generate a revised cue file and write it to the new bundle
+        NSMutableString *revisedCue = [cueContents mutableCopy];
+        for (NSString *oldPath in [revisedPaths keyEnumerator])
+        {
+            NSString *newPath = [revisedPaths objectForKey: oldPath];
+            //FIXME: this could break the CUE file if an old filename is exactly
+            //the same as a standard CUE keyword. Which is never going to happen,
+            //but we really should track the ranges of each path as well.
+            [revisedCue replaceOccurrencesOfString: oldPath
+                                        withString: newPath
+                                           options: NSLiteralSearch
+                                             range: NSMakeRange(0, [revisedCue length])];
+        }
+        
+        NSString *finalCuePath = [destinationPath stringByAppendingPathComponent: @"tracks.cue"];
+        
+        NSError *cueError = nil;
+        BOOL cueWritten = [revisedCue writeToFile: finalCuePath
+                                       atomically: YES
+                                         encoding: NSUTF8StringEncoding
+                                            error: &cueError];
+        [revisedCue release];
+        
+        if (!cueWritten)
+        {
+            [self setError: cueError];
+        }
+        else if (![self copyFiles])
+        {
+            //If we were moving rather than copying, then delete the original
+            //cue file once we've written the new one
+            NSFileManager *manager = [[NSFileManager alloc] init];
+            [manager removeItemAtPath: sourcePath error: nil];
+        }
+    }
+    
+    //If the import failed for any reason (including cancellation),
+    //then clean up the partial files.
+    if ([self error]) [self undoTransfer];
 }
 
 
@@ -196,5 +213,29 @@
 		undid = [manager removeItemAtPath: [self importedDrivePath] error: nil];
 	}
 	return undid;
+}
+@end
+
+
+@implementation BXDriveBundleCueParseError
+
++ (id) errorWithDrive: (BXDrive *)drive
+{
+	NSString *displayName = [drive title];
+	NSString *descriptionFormat = NSLocalizedString(@"The image “%1$@” could not be imported because Boxer was unable to determine its source files.",
+													@"Error shown when drive bundle importing fails because the CUE file could not be parsed. %1$@ is the display title of the drive.");
+	
+	NSString *description	= [NSString stringWithFormat: descriptionFormat, displayName, nil];
+	NSString *suggestion	= NSLocalizedString(@"This image may be in a format that Boxer does not support.", @"Explanatory message shown when drive bundle importing fails because the CUE file could not be parsed.");
+	
+	NSDictionary *userInfo	= [NSDictionary dictionaryWithObjectsAndKeys:
+							   description,		NSLocalizedDescriptionKey,
+							   suggestion,		NSLocalizedRecoverySuggestionErrorKey,
+							   [drive path],	NSFilePathErrorKey,
+							   nil];
+	
+	return [NSError errorWithDomain: BXDriveBundleErrorDomain
+                               code: BXDriveBundleCouldNotParseCue
+                           userInfo: userInfo];
 }
 @end

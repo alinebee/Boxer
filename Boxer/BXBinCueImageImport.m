@@ -328,13 +328,18 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 			[self setError: [BXCDImageImportRipFailedError errorWithDrive: [self drive]]];
 		}
 	}
-	
+    
 	//Ensure the disk is remounted after we're done with everything, whether we succeeded or failed
 	_mountSynchronously(session, disk, NULL, kDADiskMountOptionWhole); 
 	
 	//Release Disk Arbitration resources
 	CFRelease(disk);
 	CFRelease(session);
+    
+    
+    //If the import failed for any reason (including cancellation),
+    //then clean up the partial files.
+    if ([self error]) [self undoTransfer];
 }
 
 - (void) checkTaskProgress: (NSTimer *)timer

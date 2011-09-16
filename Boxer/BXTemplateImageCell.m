@@ -81,6 +81,7 @@
         NSPoint anchor = [[self class] anchorForAlignment: [self imageAlignment]];
         
         NSRect imageFrame = NSMakeRect(0.0f, 0.0f, imageSize.width, imageSize.height);
+        
         NSRect scaledFrame;
         
         switch ([self imageScaling])

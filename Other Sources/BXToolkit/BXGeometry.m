@@ -101,9 +101,14 @@ NSRect fitInRect(NSRect innerRect, NSRect outerRect, NSPoint anchor)
 
 NSRect constrainToRect(NSRect innerRect, NSRect outerRect, NSPoint anchor)
 {
-	if (NSContainsRect(outerRect, innerRect))
+	if (sizeFitsWithinSize(innerRect.size, outerRect.size))
+    {
 		return alignInRectWithAnchor(innerRect, outerRect, anchor);
-	else return fitInRect(innerRect, outerRect, anchor);
+    }
+	else
+    {
+        return fitInRect(innerRect, outerRect, anchor);
+    }
 }
 
 NSPoint clampPointToRect(NSPoint point, NSRect rect)

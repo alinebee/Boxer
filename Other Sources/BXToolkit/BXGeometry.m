@@ -20,6 +20,11 @@ CGFloat aspectRatioOfSize(NSSize size)
 	return (size.height) ? (size.width / size.height) : 0.0f;
 }
 
+NSPoint integralPoint(NSPoint point)
+{
+    return NSMakePoint(roundf(point.x), roundf(point.y));
+}
+
 NSSize integralSize(NSSize size)
 {
 	//To match behaviour of NSIntegralRect

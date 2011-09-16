@@ -6,16 +6,17 @@
  */
 
 
-#import "BXSegmentedCell.h"
+#import "BXHUDSegmentedCell.h"
 #import "NSImage+BXImageEffects.h"
+#import "BXGeometry.h"
 
 //Most of this is copypasta from BGHUDSegmentedCell, because of its monolithic draw functions.
 
-@interface NSSegmentedCell (private)
--(NSRect)rectForSegment: (NSInteger)segment inFrame: (NSRect)frame;
+@interface NSSegmentedCell ()
+- (NSRect) rectForSegment: (NSInteger)segment inFrame: (NSRect)frame;
 @end
 
-@implementation BXSegmentedCell
+@implementation BXHUDSegmentedCell
 
 - (void) drawWithFrame: (NSRect)frame inView: (NSView *)view
 {

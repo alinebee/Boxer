@@ -11,7 +11,7 @@
 #import <BGHUDAppKit/BGHUDAppKit.h>
 #import "BXScroller.h"
 #import "BXTemplateImageCell.h"
-#import "BXSegmentedCell.h"
+#import "BXHUDSegmentedCell.h"
 
 
 //BGHUDAppKit control subclasses hardcoded to use BXBlueTheme

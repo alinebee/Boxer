@@ -6,11 +6,11 @@
  */
 
 
-//BXSegmentedCell is a tweak to BGHUDSegmentedCell to add rounder corners and support template
+//BXHUDSegmentedCell is a tweak to BGHUDSegmentedCell to add rounder corners and support template
 //image rendering. It will eventually be factored back into the BGHUDAppKit codebase.
 
 #import <Cocoa/Cocoa.h>
 #import <BGHUDAppKit/BGHUDAppKit.h>
 
-@interface BXSegmentedCell : BGHUDSegmentedCell
+@interface BXHUDSegmentedCell : BGHUDSegmentedCell
 @end

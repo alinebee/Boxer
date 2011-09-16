@@ -24,8 +24,11 @@ extern "C" {
 	//Returns the specified size scaled to match the specified aspect ratio, preserving either width or height.
 	//Will return NSZeroSize if the aspect ratio is 0.
 	NSSize sizeToMatchRatio(NSSize size, CGFloat aspectRatio, BOOL preserveHeight);
-	
-	//Returns the specified size with width and height rounded up to nearest integral values.
+
+    //Returns the specified point with x and y snapped to the nearest integral values.
+    NSPoint integralPoint(NSPoint point);
+        
+	//Returns the specified size with width and height rounded up to the nearest integral values.
 	//Equivalent to NSIntegralRect. Will return NSZeroSize if width or height are 0 or negative.
 	NSSize integralSize(NSSize size);
 

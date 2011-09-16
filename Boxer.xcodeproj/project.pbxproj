@@ -261,7 +261,7 @@
 		9F9A4CA110F67D2C00E61965 /* BXPreferencesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9A4CA010F67D2C00E61965 /* BXPreferencesController.m */; };
 		9F9A4CA610F67DD800E61965 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A4CA410F67DD800E61965 /* Preferences.xib */; };
 		9F9A4CA910F6824B00E61965 /* BXFilterGallery.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9A4CA810F6824B00E61965 /* BXFilterGallery.m */; };
-		9F9E27C511F8C003003EE8F3 /* BXSegmentedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9E27C411F8C003003EE8F3 /* BXSegmentedCell.m */; };
+		9F9E27C511F8C003003EE8F3 /* BXHUDSegmentedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9E27C411F8C003003EE8F3 /* BXHUDSegmentedCell.m */; };
 		9F9E27D611F8C173003EE8F3 /* BXDrivePanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9E27D511F8C173003EE8F3 /* BXDrivePanelController.m */; };
 		9F9FE70410FA5F5800E3944B /* NSWorkspace+BXIcons.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9FE70310FA5F5800E3944B /* NSWorkspace+BXIcons.m */; };
 		9FA0C9E313D24FF3000F6FCB /* DDHidUsage+BXUsageExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA0C9E213D24FF3000F6FCB /* DDHidUsage+BXUsageExtensions.m */; };
@@ -918,8 +918,8 @@
 		9F9A4CA510F67DD800E61965 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/Preferences.xib; sourceTree = "<group>"; };
 		9F9A4CA710F6824B00E61965 /* BXFilterGallery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFilterGallery.h; sourceTree = "<group>"; };
 		9F9A4CA810F6824B00E61965 /* BXFilterGallery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFilterGallery.m; sourceTree = "<group>"; };
-		9F9E27C311F8C003003EE8F3 /* BXSegmentedCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXSegmentedCell.h; sourceTree = "<group>"; };
-		9F9E27C411F8C003003EE8F3 /* BXSegmentedCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXSegmentedCell.m; sourceTree = "<group>"; };
+		9F9E27C311F8C003003EE8F3 /* BXHUDSegmentedCell.h */ = {isa = PBXFileReference; fileEncoding = 4; path = BXHUDSegmentedCell.h; sourceTree = "<group>"; };
+		9F9E27C411F8C003003EE8F3 /* BXHUDSegmentedCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXHUDSegmentedCell.m; sourceTree = "<group>"; };
 		9F9E27D411F8C173003EE8F3 /* BXDrivePanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDrivePanelController.h; sourceTree = "<group>"; };
 		9F9E27D511F8C173003EE8F3 /* BXDrivePanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDrivePanelController.m; sourceTree = "<group>"; };
 		9F9FE70210FA5F5800E3944B /* NSWorkspace+BXIcons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSWorkspace+BXIcons.h"; sourceTree = "<group>"; };
@@ -1601,8 +1601,8 @@
 				9F69128B10A2DF8D00EA78CD /* BXValueTransformers.m */,
 				9F438C5610E3D8C8007D30AD /* BXScroller.h */,
 				9F438C5710E3D8C8007D30AD /* BXScroller.m */,
-				9F9E27C311F8C003003EE8F3 /* BXSegmentedCell.h */,
-				9F9E27C411F8C003003EE8F3 /* BXSegmentedCell.m */,
+				9F9E27C311F8C003003EE8F3 /* BXHUDSegmentedCell.h */,
+				9F9E27C411F8C003003EE8F3 /* BXHUDSegmentedCell.m */,
 				9FD012F913AB87E500AF6FE8 /* BXTemplateImageCell.h */,
 				9FD012FA13AB87E500AF6FE8 /* BXTemplateImageCell.m */,
 				9F60B0DA13AA418300F06BB1 /* BXCollectionItemView.h */,
@@ -2728,7 +2728,7 @@
 				9FADFE9711EC932800990E91 /* NSData+HexStrings.m in Sources */,
 				9FBF66AF11F35ADD00DAAB9A /* BXSingleFileTransfer.m in Sources */,
 				9F13F9D011F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m in Sources */,
-				9F9E27C511F8C003003EE8F3 /* BXSegmentedCell.m in Sources */,
+				9F9E27C511F8C003003EE8F3 /* BXHUDSegmentedCell.m in Sources */,
 				9F9E27D611F8C173003EE8F3 /* BXDrivePanelController.m in Sources */,
 				9FE90BF711F8D1DC003CFFFF /* BXDelegatedView.m in Sources */,
 				9FEAA3EC1204595B0085F008 /* BXOperation.m in Sources */,

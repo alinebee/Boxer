@@ -21,7 +21,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="1071"/>
+			<integer value="1279"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -931,7 +931,7 @@
 								<object class="NSTabViewItem" id="1056279122">
 									<string key="NSIdentifier">2</string>
 									<object class="NSView" key="NSView" id="194898093">
-										<reference key="NSNextResponder" ref="681208964"/>
+										<nil key="NSNextResponder"/>
 										<int key="NSvFlags">256</int>
 										<object class="NSMutableArray" key="NSSubviews">
 											<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1211,7 +1211,6 @@ IGNhdXNlcyB1bndhbnRlZCBtb3ZlbWVudCB3aGVuIGl0IGxlYXZlcyB0aGUgd2luZG93Lg</string>
 											</object>
 										</object>
 										<string key="NSFrameSize">{296, 372}</string>
-										<reference key="NSSuperview" ref="681208964"/>
 									</object>
 									<string key="NSLabel">Mouse Inspector</string>
 									<reference key="NSColor" ref="1046058740"/>
@@ -1220,7 +1219,7 @@ IGNhdXNlcyB1bndhbnRlZCBtb3ZlbWVudCB3aGVuIGl0IGxlYXZlcyB0aGUgd2luZG93Lg</string>
 								<object class="NSTabViewItem" id="79271469">
 									<string key="NSIdentifier">3</string>
 									<object class="NSView" key="NSView" id="732220087">
-										<nil key="NSNextResponder"/>
+										<reference key="NSNextResponder" ref="681208964"/>
 										<int key="NSvFlags">256</int>
 										<object class="NSMutableArray" key="NSSubviews">
 											<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1456,6 +1455,7 @@ IGRyaXZlcy4</string>
 											</object>
 										</object>
 										<string key="NSFrameSize">{296, 372}</string>
+										<reference key="NSSuperview" ref="681208964"/>
 									</object>
 									<string key="NSLabel">Drives Inspector</string>
 									<reference key="NSColor" ref="1046058740"/>
@@ -1837,12 +1837,12 @@ A</string>
 									<reference key="NSTabView" ref="681208964"/>
 								</object>
 							</object>
-							<reference key="NSSelectedTabViewItem" ref="1056279122"/>
+							<reference key="NSSelectedTabViewItem" ref="79271469"/>
 							<reference key="NSFont" ref="190746779"/>
 							<int key="NSTvFlags">6</int>
 							<object class="NSMutableArray" key="NSSubviews">
 								<bool key="EncodedWithXMLCoder">YES</bool>
-								<reference ref="194898093"/>
+								<reference ref="732220087"/>
 							</object>
 						</object>
 					</object>
@@ -5688,7 +5688,7 @@ A</string>
 					<object class="NSAffineTransform">
 						<bytes key="NSTransformStruct">P4AAAL+AAABBYAAAw8eAAA</bytes>
 					</object>
-					<string>BXSegmentedCell</string>
+					<string>BXHUDSegmentedCell</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<integer value="4"/>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
@@ -5699,7 +5699,7 @@ A</string>
 					<object class="NSAffineTransform">
 						<bytes key="NSTransformStruct">P4AAAL+AAABCkAAAwhwAAA</bytes>
 					</object>
-					<string>BXSegmentedCell</string>
+					<string>BXHUDSegmentedCell</string>
 					<string>com.binarymethod.BGHUDAppKitPlugin</string>
 					<integer value="1"/>
 					<string>BXDrivePanelController</string>
@@ -6123,12 +6123,12 @@ A</string>
 							<string>openInDefaultApplication:</string>
 							<string>orderFrontAboutPanel:</string>
 							<string>orderFrontFirstRunPanel:</string>
-							<string>orderFrontFirstRunPanelWithFlip:</string>
+							<string>orderFrontFirstRunPanelWithTransition:</string>
 							<string>orderFrontImportGamePanel:</string>
 							<string>orderFrontInspectorPanel:</string>
 							<string>orderFrontPreferencesPanel:</string>
 							<string>orderFrontWelcomePanel:</string>
-							<string>orderFrontWelcomePanelWithFlip:</string>
+							<string>orderFrontWelcomePanelWithTransition:</string>
 							<string>revealCurrentSessionPath:</string>
 							<string>revealInFinder:</string>
 							<string>sendEmail:</string>
@@ -6170,12 +6170,12 @@ A</string>
 							<string>openInDefaultApplication:</string>
 							<string>orderFrontAboutPanel:</string>
 							<string>orderFrontFirstRunPanel:</string>
-							<string>orderFrontFirstRunPanelWithFlip:</string>
+							<string>orderFrontFirstRunPanelWithTransition:</string>
 							<string>orderFrontImportGamePanel:</string>
 							<string>orderFrontInspectorPanel:</string>
 							<string>orderFrontPreferencesPanel:</string>
 							<string>orderFrontWelcomePanel:</string>
-							<string>orderFrontWelcomePanelWithFlip:</string>
+							<string>orderFrontWelcomePanelWithTransition:</string>
 							<string>revealCurrentSessionPath:</string>
 							<string>revealInFinder:</string>
 							<string>sendEmail:</string>
@@ -6205,7 +6205,7 @@ A</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
-								<string key="name">orderFrontFirstRunPanelWithFlip:</string>
+								<string key="name">orderFrontFirstRunPanelWithTransition:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -6225,7 +6225,7 @@ A</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
-								<string key="name">orderFrontWelcomePanelWithFlip:</string>
+								<string key="name">orderFrontWelcomePanelWithTransition:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -6396,6 +6396,73 @@ A</string>
 				<object class="IBPartialClassDescription">
 					<string key="className">BXDriveItem</string>
 					<string key="superclassName">BXCollectionItem</string>
+					<object class="NSMutableDictionary" key="outlets">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>driveImportButton</string>
+							<string>driveRevealButton</string>
+							<string>driveToggleButton</string>
+							<string>driveTypeLabel</string>
+							<string>progressMeter</string>
+							<string>progressMeterCancel</string>
+							<string>progressMeterLabel</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSTextField</string>
+							<string>NSProgressIndicator</string>
+							<string>NSButton</string>
+							<string>NSTextField</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>driveImportButton</string>
+							<string>driveRevealButton</string>
+							<string>driveToggleButton</string>
+							<string>driveTypeLabel</string>
+							<string>progressMeter</string>
+							<string>progressMeterCancel</string>
+							<string>progressMeterLabel</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBToOneOutletInfo">
+								<string key="name">driveImportButton</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">driveRevealButton</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">driveToggleButton</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">driveTypeLabel</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">progressMeter</string>
+								<string key="candidateClassName">NSProgressIndicator</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">progressMeterCancel</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">progressMeterLabel</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+						</object>
+					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier" id="979387021">
 						<string key="majorKey">IBDocumentRelativeSource</string>
 						<string key="minorKey">../../Boxer/BXDrivePanelController.h</string>
@@ -6702,6 +6769,14 @@ A</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
+					<string key="className">BXHUDSegmentedCell</string>
+					<string key="superclassName">BGHUDSegmentedCell</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBDocumentRelativeSource</string>
+						<string key="minorKey">../../Boxer/BXHUDSegmentedCell.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">BXInspectorController</string>
 					<string key="superclassName">BXTabbedWindowController</string>
 					<object class="NSMutableDictionary" key="actions">
@@ -6835,14 +6910,6 @@ A</string>
 					<string key="className">BXScroller</string>
 					<string key="superclassName">NSScroller</string>
 					<reference key="sourceIdentifier" ref="192615367"/>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXSegmentedCell</string>
-					<string key="superclassName">BGHUDSegmentedCell</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBDocumentRelativeSource</string>
-						<string key="minorKey">../../Boxer/BXSegmentedCell.h</string>
-					</object>
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">BXSession</string>
@@ -7200,11 +7267,11 @@ A</string>
 				<string>{128, 128}</string>
 				<string>{128, 128}</string>
 				<string>{128, 80}</string>
-				<string>{15, 15}</string>
-				<string>{8, 8}</string>
+				<string>{17, 17}</string>
+				<string>{17, 17}</string>
 				<string>{9, 8}</string>
 				<string>{7, 2}</string>
-				<string>{8, 8}</string>
+				<string>{17, 17}</string>
 				<string>{14, 14}</string>
 				<string>{83, 83}</string>
 				<string>{15, 15}</string>

@@ -918,7 +918,7 @@
 		9F9A4CA510F67DD800E61965 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/Preferences.xib; sourceTree = "<group>"; };
 		9F9A4CA710F6824B00E61965 /* BXFilterGallery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFilterGallery.h; sourceTree = "<group>"; };
 		9F9A4CA810F6824B00E61965 /* BXFilterGallery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFilterGallery.m; sourceTree = "<group>"; };
-		9F9E27C311F8C003003EE8F3 /* BXHUDSegmentedCell.h */ = {isa = PBXFileReference; fileEncoding = 4; path = BXHUDSegmentedCell.h; sourceTree = "<group>"; };
+		9F9E27C311F8C003003EE8F3 /* BXHUDSegmentedCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXHUDSegmentedCell.h; sourceTree = "<group>"; };
 		9F9E27C411F8C003003EE8F3 /* BXHUDSegmentedCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXHUDSegmentedCell.m; sourceTree = "<group>"; };
 		9F9E27D411F8C173003EE8F3 /* BXDrivePanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDrivePanelController.h; sourceTree = "<group>"; };
 		9F9E27D511F8C173003EE8F3 /* BXDrivePanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDrivePanelController.m; sourceTree = "<group>"; };
@@ -1306,8 +1306,8 @@
 				9FCBB2DB10A61E9300C28B09 /* Launch.conf */,
 				9FCBB2D910A61D6100C28B09 /* Preflight.conf */,
 				9F466AFB11A92C4B00C50965 /* UserDefaults.plist */,
-				9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */,
 				9FAE9B8A11F1D7CF000363F7 /* GameDefaults.plist */,
+				9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */,
 				9FCC303B13670F680013F083 /* KeyboardLayouts.plist */,
 				9F160BD91236952400F8768E /* Sample Games */,
 				9FFAFE2E10DE343F00728BAC /* Configurations */,

@@ -481,48 +481,42 @@
 		
 		NSUInteger modifiers = [theEvent modifierFlags];
 		
-		BOOL optModified	= (modifiers & NSAlternateKeyMask) > 0;
-		BOOL ctrlModified	= (modifiers & NSControlKeyMask) > 0;
-		BOOL cmdModified	= (modifiers & NSCommandKeyMask) > 0;
-		BOOL fnModified		= (modifiers & NSFunctionKeyMask) > 0;
-		
-		//Whether to allow Ctrl- and Opt-clicking to simulate different mouse buttons
-		BOOL buttonShortcutsEnabled = [[NSUserDefaults standardUserDefaults] boolForKey: @"enableMouseButtonShortcuts"];
-		
-		//Holding down the fn key temporarily inverts the behaviour of the button shortcuts
-		if (fnModified) buttonShortcutsEnabled = !buttonShortcutsEnabled;
-		
-		
-		//Cmd-clicking toggles mouse-locking
-		if (cmdModified)
+        //Cmd-clicking toggles mouse-locking and causes the actual click to be ignored.
+		if ((modifiers & NSCommandKeyMask) == NSCommandKeyMask)
 		{
 			[self toggleMouseLocked: self];
 		}
-		
-		//Ctrl+Opt-clicking simulates clicking both buttons simultaneously
-		else if (optModified && ctrlModified && buttonShortcutsEnabled)
-		{
-			simulatedMouseButtons |= BXMouseButtonLeftAndRightMask;
-			[mouse buttonDown: BXMouseButtonLeft];
-			[mouse buttonDown: BXMouseButtonRight];
-		}
-		
-		//Ctrl-clicking simulates a right mouse-click
-		else if (ctrlModified && buttonShortcutsEnabled)
-		{
-			simulatedMouseButtons |= BXMouseButtonRightMask;
-			[mouse buttonDown: BXMouseButtonRight];
-		}
-		
-		//Opt-clicking simulates a middle mouse-click
-		else if (optModified && buttonShortcutsEnabled)
-		{
-			simulatedMouseButtons |= BXMouseButtonMiddleMask;
-			[mouse buttonDown: BXMouseButtonMiddle];
-		}
-		
-		//Otherwise, pass the left click on to the emulator as-is
-		else [mouse buttonDown: BXMouseButtonLeft];
+        else
+        {
+            //Check if our right-mouse-button/both-mouse-button shortcut modifiers are being
+            //pressed: if so, simulate the appropriate kind of mouse click.
+            NSDictionary *gameSettings = [[self representedObject] gameSettings];
+            
+            NSUInteger rightButtonModifierMask = [[gameSettings objectForKey: @"mouseButtonModifierRight"] unsignedIntegerValue];
+            
+            NSUInteger bothButtonsModifierMask = [[gameSettings objectForKey: @"mouseButtonModifierBoth"] unsignedIntegerValue];
+                    
+            //Check if our both-buttons-at-once modifiers are being pressed.
+            if ((modifiers & bothButtonsModifierMask) == bothButtonsModifierMask)
+            {
+                simulatedMouseButtons |= BXMouseButtonLeftAndRightMask;
+                [mouse buttonDown: BXMouseButtonLeft];
+                [mouse buttonDown: BXMouseButtonRight];
+            }
+            
+            //Check if our right-button modifiers are being pressed.
+            else if ((modifiers & rightButtonModifierMask) == rightButtonModifierMask)
+            {
+                simulatedMouseButtons |= BXMouseButtonRightMask;
+                [mouse buttonDown: BXMouseButtonRight];
+            }
+            
+            //Otherwise, pass the left click on to the emulator as-is.
+            else
+            {
+                [mouse buttonDown: BXMouseButtonLeft];   
+            }
+        }
 	}
 	
 	//A single click on the window will lock the mouse if unlocked-tracking is disabled or we're in fullscreen mode

@@ -497,7 +497,7 @@
             NSUInteger bothButtonsModifierMask = [[gameSettings objectForKey: @"mouseButtonModifierBoth"] unsignedIntegerValue];
                     
             //Check if our both-buttons-at-once modifiers are being pressed.
-            if ((modifiers & bothButtonsModifierMask) == bothButtonsModifierMask)
+            if (bothButtonsModifierMask > 0 && (modifiers & bothButtonsModifierMask) == bothButtonsModifierMask)
             {
                 simulatedMouseButtons |= BXMouseButtonLeftAndRightMask;
                 [mouse buttonDown: BXMouseButtonLeft];
@@ -505,7 +505,7 @@
             }
             
             //Check if our right-button modifiers are being pressed.
-            else if ((modifiers & rightButtonModifierMask) == rightButtonModifierMask)
+            else if (rightButtonModifierMask > 0 && (modifiers & rightButtonModifierMask) == rightButtonModifierMask)
             {
                 simulatedMouseButtons |= BXMouseButtonRightMask;
                 [mouse buttonDown: BXMouseButtonRight];

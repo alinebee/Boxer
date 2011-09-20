@@ -456,8 +456,60 @@
 	[contextInfo release];
 }
 
+- (BOOL) validateDrivePath: (NSString **)ioValue
+                     error: (NSError **)outError
+{
+    NSString *drivePath = *ioValue;
+	NSFileManager *manager = [NSFileManager defaultManager];
+    
+    //Fully resolve the path to eliminate any symlinks, tildes and backtracking
+	NSString *resolvedPath = [drivePath stringByStandardizingPath];
+    
+    BOOL isDir, exists = [manager fileExistsAtPath: resolvedPath isDirectory: &isDir];
+    if (!exists)
+    {
+        if (outError)
+        {
+            NSDictionary *userInfo = [NSDictionary dictionaryWithObject: resolvedPath
+                                                                 forKey: NSFilePathErrorKey];
+            
+            *outError = [NSError errorWithDomain: NSCocoaErrorDomain
+                                            code: NSFileNoSuchFileError
+                                        userInfo: userInfo];
+        }
+        return NO;
+    }
+                            
+    //Check if the path represents any restricted folders.
+    //(Only bother to do this for folders: we can assume disc images are not system folders.)
+    if (isDir)
+    {
+        NSString *rootPath = NSOpenStepRootDirectory();
+        if ([resolvedPath isEqualToString: rootPath])
+        {
+            if (outError)
+            {
+                *outError = [BXSessionCannotMountSystemFolderError errorWithPath: drivePath
+                                                                        userInfo: nil];
+            }
+            return NO;
+        }
+        
+        NSArray *restrictedPaths = NSSearchPathForDirectoriesInDomains(NSAllLibrariesDirectory, NSAllDomainsMask, YES);
+        for (NSString *testPath in restrictedPaths) if ([resolvedPath isRootedInPath: testPath])
+        {
+            if (outError)
+            {
+                *outError = [BXSessionCannotMountSystemFolderError errorWithPath: drivePath
+                                                                        userInfo: nil];
+            }
+            return NO;
+        }
+    }
+    return YES;
+}
 
-- (BOOL) shouldMountDriveForPath: (NSString *)path
+- (BOOL) shouldMountNewDriveForPath: (NSString *)path
 {
 	//If the file isn't already accessible from DOS, we should mount it
 	BXEmulator *theEmulator = [self emulator];
@@ -479,20 +531,17 @@
                         options: (BXDriveMountOptions)options
                           error: (NSError **)outError
 {
-	NSFileManager *manager = [NSFileManager defaultManager];
-
-	//Emulator isn't running
-	if (![self isEmulating]) return nil;
-
-	//File doesn't exist, bail out
-	if (![manager fileExistsAtPath: path isDirectory: NULL]) return nil;
+	NSAssert1([self isEmulating], @"mountDriveForPath:ifExists:options:error: called for %@ while emulator is not running.", path);
+    
+    if (![self validateDrivePath: &path error: outError]) return nil;
+    
 	
 	//Choose an appropriate mount point and create the new drive for it
-	NSString *mountPoint	= [[self class] preferredMountPointForPath: path];
+	NSString *mountPoint = [[self class] preferredMountPointForPath: path];
     
     //Check if there's already a drive in the queue that matches this mount point:
     //if so, mount it if necessary and return that
-    BXDrive *existingDrive  = [self queuedDriveForPath: mountPoint];
+    BXDrive *existingDrive = [self queuedDriveForPath: mountPoint];
     if (existingDrive)
     {
         existingDrive = [self mountDrive: existingDrive

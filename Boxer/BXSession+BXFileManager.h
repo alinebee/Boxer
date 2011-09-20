@@ -277,9 +277,16 @@ typedef NSUInteger BXDriveMountOptions;
                options: (BXDriveMountOptions)options
                  error: (NSError **)outError;
 
+
+//Returns whether to allow the specified path to be mounted as a drive:
+//populating outError with the reason why not, if provided.
+- (BOOL) validateDrivePath: (NSString **)ioValue
+                     error: (NSError **)outError;
+
 //Returns whether the specified path should be mounted as a new drive.
-//Returns YES if the path isn't already DOS-accessible or deserves its own drive anyway, NO otherwise.
-- (BOOL) shouldMountDriveForPath: (NSString *)path;
+//Returns YES if the path isn't already DOS-accessible or deserves its
+//own drive anyway, NO otherwise.
+- (BOOL) shouldMountNewDriveForPath: (NSString *)path;
 
 //Adds a new drive to expose the specified path, using preferredMountPointForPath:
 //to choose an appropriate base location for the drive.
@@ -287,6 +294,8 @@ typedef NSUInteger BXDriveMountOptions;
                        ifExists: (BXDriveConflictBehaviour)conflictBehaviour
                         options: (BXDriveMountOptions)options
                           error: (NSError **)outError;
+
+
 
 //Returns whether the specified drives are allowed to be unmounted.
 //This may display a confirmation sheet and return NO.

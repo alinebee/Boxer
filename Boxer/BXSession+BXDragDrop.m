@@ -95,7 +95,7 @@
 	if (isInProcess && [[self class] isExecutable: filePath]) return NSDragOperationNone;
 	
 	//If the path is already accessible in DOS, and doesn't deserve its own mount point...
-	if (![self shouldMountDriveForPath: filePath])
+	if (![self shouldMountNewDriveForPath: filePath])
 	{
 		//...then we'd change the working directory to it, if we're not already busy; otherwise we'd reject it.
 		return (isInProcess) ? NSDragOperationNone : NSDragOperationLink;
@@ -114,7 +114,7 @@
 	BOOL performedAction = NO;
 	
 	//Make a new mount for the path if we need
-	if ([self shouldMountDriveForPath: filePath])
+	if ([self shouldMountNewDriveForPath: filePath])
 	{
         NSError *mountError = nil;
 		BXDrive *drive = [self mountDriveForPath: filePath

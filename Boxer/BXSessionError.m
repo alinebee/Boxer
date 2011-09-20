@@ -6,19 +6,49 @@
  */
 
 
-#import "BXImportError.h"
+#import "BXSessionError.h"
 
 
-NSString * const BXImportErrorDomain = @"BXImportErrorDomain";
+NSString * const BXSessionErrorDomain = @"BXSessionErrorDomain";
 
+@implementation BXSessionError
 
-@implementation BXImportError
-
-+ (NSString *)displayNameForPath: (NSString *)path
+//Helper method for getting human-readable names from paths.
++ (NSString *) displayNameForPath: (NSString *)path
 {
 	NSString *displayName			= [[NSFileManager defaultManager] displayNameAtPath: path];
 	if (!displayName) displayName	= [path lastPathComponent];
 	return displayName;
+}
+
+@end
+
+@implementation BXImportError
+@end
+
+
+@implementation BXSessionCannotMountSystemFolderError
+
++ (id) errorWithPath: (NSString *)folderPath userInfo: (NSDictionary *)userInfo
+{
+    NSString *descriptionFormat = NSLocalizedString(@"MS-DOS is not permitted to access OS X system folders like “%@”.",
+                                                    @"Error message shown when user tries to mount a system folder as a DOS drive. %@ is the requested folder path."
+                                                    );
+    
+    NSString *suggestion = NSLocalizedString(@"Instead, choose one of your own folders, or a disc mounted in OS X.", @"Recovery suggestion shown when user tries to mount a system folder as a DOS drive.");
+    
+    NSString *description = [NSString stringWithFormat: descriptionFormat, [self displayNameForPath: folderPath], nil];
+    NSMutableDictionary *defaultInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                                        description,    NSLocalizedDescriptionKey,
+                                        suggestion,     NSLocalizedRecoverySuggestionErrorKey,
+                                        folderPath,     NSFilePathErrorKey,
+                                        nil];
+    
+	if (userInfo) [defaultInfo addEntriesFromDictionary: userInfo];
+    
+	return [self errorWithDomain: BXSessionErrorDomain
+							code: BXSessionCannotMountSystemFolder
+						userInfo: defaultInfo];
 }
 @end
 
@@ -44,7 +74,7 @@ NSString * const BXImportErrorDomain = @"BXImportErrorDomain";
 	
 	if (userInfo) [defaultInfo addEntriesFromDictionary: userInfo];
 	
-	return [self errorWithDomain: BXImportErrorDomain
+	return [self errorWithDomain: BXSessionErrorDomain
 							code: BXImportNoExecutablesInSourcePath
 						userInfo: defaultInfo];
 }
@@ -76,7 +106,7 @@ NSString * const BXImportErrorDomain = @"BXImportErrorDomain";
 	
 	if (userInfo) [defaultInfo addEntriesFromDictionary: userInfo];
 	
-	return [self errorWithDomain: BXImportErrorDomain
+	return [self errorWithDomain: BXSessionErrorDomain
 							code: BXImportSourcePathIsWindowsOnly
 						userInfo: defaultInfo];
 }

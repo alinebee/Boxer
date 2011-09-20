@@ -11,7 +11,7 @@
 #import "NSWorkspace+BXFileTypes.h"
 #import "NSWorkspace+BXExecutableTypes.h"
 #import "BXAppController.h"
-#import "BXImportError.h"
+#import "BXSessionError.h"
 
 
 @implementation BXInstallerScan

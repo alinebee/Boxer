@@ -11,6 +11,7 @@
 #import "BXSession.h"
 #import "BXSession+BXEmulatorControls.h"
 #import "BXSession+BXFileManager.h"
+#import "BXSessionError.h"
 
 
 @class BXEmulatorConfiguration;

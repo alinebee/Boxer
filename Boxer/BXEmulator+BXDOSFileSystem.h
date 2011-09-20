@@ -115,10 +115,5 @@
 //Will return nil if the path could not be resolved.
 - (NSString *) pathForDOSPath: (NSString *)path;
 
-#pragma mark -
-#pragma mark Filesystem validation
-
-//Returns whether the specified path is safe for DOS programs to access (i.e. not a system folder)
-+ (BOOL) pathIsSafeToMount: (NSString *)thePath;
 
 @end

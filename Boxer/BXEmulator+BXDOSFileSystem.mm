@@ -95,23 +95,6 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 }
 
 
-//Returns whether a specific folder is safe to mount from DOS
-//This is used to restrict access to the root folder and library folders
-//TODO: whitelist ~/Library/Cache/
-+ (BOOL) pathIsSafeToMount: (NSString *)thePath
-{
-	//Fully resolve the path to eliminate any symlinks, tildes and backtracking
-	NSString *resolvedPath		= [thePath stringByStandardizingPath];
-	NSString *rootPath			= NSOpenStepRootDirectory();
-	if ([resolvedPath isEqualToString: rootPath]) return NO;
-	
-	NSArray *restrictedPaths	= NSSearchPathForDirectoriesInDomains(NSAllLibrariesDirectory, NSAllDomainsMask, YES);
-	for (NSString *testPath in restrictedPaths) if ([resolvedPath hasPrefix: testPath]) return NO;
-	
-	return YES;
-}
-
-
 #pragma mark -
 #pragma mark Drive mounting and unmounting
 
@@ -1077,18 +1060,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 //Todo: this assumes that the check is being called from the shell; we should instead populate an NSError with the error details and let the upstream context handle it
 - (BOOL) _shouldMountPath: (NSString *)thePath
 {
-	if (![[self class] pathIsSafeToMount: thePath])
-	{
-		NSString *errorMessage = NSLocalizedStringFromTable(
-															@"Mounting system folders such as %@ is not permitted.",
-															@"Shell", 
-															@"Printed to the DOS shell when the user attempts to mount a system folder. %@ is the fully resolved folder path, which may not be the path they entered."
-															);
-		
-		[self displayString: [NSString stringWithFormat: errorMessage, thePath]];
-		return NO;
-	}
-	else return YES;
+	return [[self delegate] emulator: self shouldMountDriveFromShell: thePath];
 }
 
 //Todo: supplement this by getting entire OS X filepaths out of DOSBox, instead of just filenames

@@ -16,7 +16,7 @@
 		9F0E6110139E1A05004A7A56 /* CHFlightstickPro.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F0E610E139E1A05004A7A56 /* CHFlightstickPro.png */; };
 		9F0E6111139E1A05004A7A56 /* ThrustmasterFCS.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F0E610F139E1A05004A7A56 /* ThrustmasterFCS.png */; };
 		9F0F2B9512AD3C8500CD7078 /* BXMultiFileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0F2B9412AD3C8500CD7078 /* BXMultiFileTransfer.m */; };
-		9F0F9EDA12108A9000ED7A64 /* BXImportError.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0F9ED912108A9000ED7A64 /* BXImportError.m */; };
+		9F0F9EDA12108A9000ED7A64 /* BXSessionError.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0F9ED912108A9000ED7A64 /* BXSessionError.m */; };
 		9F0F9EEF1210901800ED7A64 /* BXMountedVolumesError.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0F9EEE1210901800ED7A64 /* BXMountedVolumesError.m */; };
 		9F13F9D011F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F13F9CF11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m */; };
 		9F160DE21236952600F8768E /* Sample Games in Resources */ = {isa = PBXBuildFile; fileRef = 9F160BD91236952400F8768E /* Sample Games */; };
@@ -465,8 +465,8 @@
 		9F0E610F139E1A05004A7A56 /* ThrustmasterFCS.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ThrustmasterFCS.png; sourceTree = "<group>"; };
 		9F0F2B9312AD3C8500CD7078 /* BXMultiFileTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXMultiFileTransfer.h; sourceTree = "<group>"; };
 		9F0F2B9412AD3C8500CD7078 /* BXMultiFileTransfer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXMultiFileTransfer.m; sourceTree = "<group>"; };
-		9F0F9ED812108A9000ED7A64 /* BXImportError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImportError.h; sourceTree = "<group>"; };
-		9F0F9ED912108A9000ED7A64 /* BXImportError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXImportError.m; sourceTree = "<group>"; };
+		9F0F9ED812108A9000ED7A64 /* BXSessionError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXSessionError.h; sourceTree = "<group>"; };
+		9F0F9ED912108A9000ED7A64 /* BXSessionError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXSessionError.m; sourceTree = "<group>"; };
 		9F0F9EED1210901800ED7A64 /* BXMountedVolumesError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXMountedVolumesError.h; sourceTree = "<group>"; };
 		9F0F9EEE1210901800ED7A64 /* BXMountedVolumesError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXMountedVolumesError.m; sourceTree = "<group>"; };
 		9F13F9CE11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+BXTemporaryFiles.h"; sourceTree = "<group>"; };
@@ -1390,8 +1390,6 @@
 				9F1CBA57120C796C00C5E926 /* BXImportSession.m */,
 				9F1CBAA9120C830600C5E926 /* BXImportSession+BXImportPolicies.h */,
 				9F1CBAAA120C830600C5E926 /* BXImportSession+BXImportPolicies.m */,
-				9F0F9ED812108A9000ED7A64 /* BXImportError.h */,
-				9F0F9ED912108A9000ED7A64 /* BXImportError.m */,
 				9F18BE9313EB07190047C217 /* BXInstallerScan.h */,
 				9F18BE9413EB07190047C217 /* BXInstallerScan.m */,
 			);
@@ -1573,6 +1571,8 @@
 				9F76D45510CBE5C500C3B081 /* BXSession+BXDragDrop.m */,
 				9F58BB5213DDAC3A00358512 /* BXExecutableScan.h */,
 				9F58BB5313DDAC3A00358512 /* BXExecutableScan.m */,
+				9F0F9ED812108A9000ED7A64 /* BXSessionError.h */,
+				9F0F9ED912108A9000ED7A64 /* BXSessionError.m */,
 			);
 			name = "DOS session";
 			sourceTree = "<group>";
@@ -2740,7 +2740,7 @@
 				9F1CBBA8120CB99D00C5E926 /* BXImportDropzone.m in Sources */,
 				9FDC544E120EBFE70063B33D /* BXImportDropzonePanelController.m in Sources */,
 				9FDC5476120EC8B40063B33D /* BXImportInstallerPanelController.m in Sources */,
-				9F0F9EDA12108A9000ED7A64 /* BXImportError.m in Sources */,
+				9F0F9EDA12108A9000ED7A64 /* BXSessionError.m in Sources */,
 				9F0F9EEF1210901800ED7A64 /* BXMountedVolumesError.m in Sources */,
 				9FD668F11215CDD6009E0118 /* BXBottomBar.m in Sources */,
 				9FC8B073121807AD004F6DA2 /* NSView+BXDrawing.m in Sources */,
@@ -3205,7 +3205,7 @@
 					x86_64,
 				);
 				CURRENT_PROJECT_SHORT_VERSION_STRING = 1.1.2pre;
-				CURRENT_PROJECT_VERSION = 20110821.1;
+				CURRENT_PROJECT_VERSION = 20110919.1;
 				GCC_PREPROCESSOR_DEFINITIONS = USE_PRIVATE_APIS;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				ONLY_ACTIVE_ARCH = YES;
@@ -3305,7 +3305,7 @@
 					x86_64,
 				);
 				CURRENT_PROJECT_SHORT_VERSION_STRING = 1.1.2pre;
-				CURRENT_PROJECT_VERSION = 20110821.1;
+				CURRENT_PROJECT_VERSION = 20110919.1;
 				GCC_PREPROCESSOR_DEFINITIONS = USE_PRIVATE_APIS;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				SDKROOT = macosx10.6;

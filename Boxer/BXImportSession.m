@@ -28,7 +28,6 @@
 #import "BXAppController+BXGamesFolder.h"
 #import "BXInspectorController.h"
 #import "BXGameProfile.h"
-#import "BXImportError.h"
 #import "BXPackage.h"
 #import "BXDrive.h"
 #import "BXEmulator.h"

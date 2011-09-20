@@ -760,6 +760,22 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	return [[self DOSWindowController] viewportSize];
 }
 
+- (BOOL) emulator: (BXEmulator *)theEmulator shouldMountDriveFromShell: (NSString *)drivePath
+{
+    NSError *validationError = nil;
+    BOOL shouldMount = [self validateDrivePath: &drivePath error: &validationError];
+    
+    if (validationError)
+    {
+        [self presentError: validationError
+            modalForWindow: [self windowForSheet]
+                  delegate: nil
+        didPresentSelector: NULL
+               contextInfo: NULL];
+    }
+    return shouldMount;
+}
+
 - (void) emulatorDidBeginRunLoop: (BXEmulator *)theEmulator
 {
 	//Implementation note: in a better world, this code wouldn't be here as event
@@ -1150,7 +1166,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     //is now accessible in DOS: if not, add another drive allowing access to it.
 	if ([self targetPath])
 	{
-        if ([self shouldMountDriveForPath: targetPath])
+        if ([self shouldMountNewDriveForPath: targetPath])
         {
             //Unlike the drives built into the gamebox, we do actually
             //want to show errors if something goes wrong here.

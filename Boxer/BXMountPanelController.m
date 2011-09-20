@@ -218,10 +218,7 @@
 
 - (BOOL) panel: (NSOpenPanel *)openPanel shouldShowFilename: (NSString *)path
 {
-	NSFileManager *manager = [NSFileManager defaultManager];
-	
-	if (![BXEmulator pathIsSafeToMount: path]) return NO;
-	if (![manager isReadableFileAtPath: path]) return NO;
+	if (![[self representedObject] validateDrivePath: &path error: nil]) return NO;
 	
 	return YES;
 }

@@ -47,7 +47,7 @@ extern NSString * const BXEmulatorDidRemoveFileNotification;
 #pragma mark -
 #pragma mark Delegate methods
 
-//These are only sent to the emulator delegate and are requited to be implemented.
+//These are only sent to the emulator delegate and are required to be implemented.
 
 //Requests the current viewport and maximum frame size.
 //Used for decisions about scaler rendering.
@@ -70,6 +70,10 @@ extern NSString * const BXEmulatorDidRemoveFileNotification;
 //This names will be more accurate once BXEmulator is multithreaded/multiprocess.
 - (void) emulatorDidBeginRunLoop: (BXEmulator *)emulator;
 - (void) emulatorDidFinishRunLoop: (BXEmulator *)emulator;
+
+//Called whenever a path is mounted from the DOS MOUNT command.
+//Return NO to prevent the mount.
+- (BOOL) emulator: (BXEmulator *)emulator shouldMountDriveFromShell: (NSString *)drive;
 
 
 #pragma mark -

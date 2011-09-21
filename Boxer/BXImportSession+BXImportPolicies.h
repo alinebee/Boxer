@@ -135,7 +135,16 @@ static const NSInteger BXFreeSpaceForCDROMInstall = 700 * 1024 * 1024;
 + (NSString *) preferredConfigurationFileFromPath: (NSString *)path error: (NSError **)error;
 
 //Returns a new DOSBox configuration cherry-picked from the specified configuration.
-//This will strip out all settings that are redundant or that will interfere with Boxer.
+//This will strip out all settings that are redundant, or that will interfere with Boxer.
+//The resulting configuration will have no autoexec commands.
 + (BXEmulatorConfiguration *) sanitizedVersionOfConfiguration: (BXEmulatorConfiguration *)configuration;
+
+//Returns an array of just the mount commands in the specified configuration's autoexec.
++ (NSArray *) mountCommandsFromConfiguration: (BXEmulatorConfiguration *)configuration;
+
+//Returns an array of the commands in the specified configuration's autoexec that are
+//responsible for launching the game and that should hence be bundled into a launcher batchfile.
+//This excludes mount commands and 'junk' like echo, rem, cls and exit.
++ (NSArray *) launchCommandsFromConfiguration: (BXEmulatorConfiguration *)configuration;
 
 @end

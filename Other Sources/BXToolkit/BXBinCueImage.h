@@ -31,4 +31,8 @@
 //Given a string representing, returns the raw paths in the exact form they are written.
 + (NSArray *) rawPathsInCueContents: (NSString *)cueContents;
 
+//Returns YES if the specified path contains a parseable cue file, NO otherwise.
+//Populates outError if there is a problem accessing the file.
++ (BOOL) isCueAtPath: (NSString *)cuePath error: (NSError **)outError;
+
 @end

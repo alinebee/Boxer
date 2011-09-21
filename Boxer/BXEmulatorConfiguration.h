@@ -11,6 +11,7 @@
 
 #import <Foundation/Foundation.h>
 
+
 @interface BXEmulatorConfiguration : NSObject
 {
 	//Our private storage of configuration sections

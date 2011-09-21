@@ -20,6 +20,7 @@
 
 #import "BXImportSession.h"
 #import "BXSessionPrivate.h"
+#import "BXEmulator+BXDOSFileSystem.h"
 
 #import "BXDOSWindowControllerLion.h"
 #import "BXImportWindowController.h"
@@ -30,7 +31,6 @@
 #import "BXGameProfile.h"
 #import "BXPackage.h"
 #import "BXDrive.h"
-#import "BXEmulator.h"
 #import "BXCloseAlert.h"
 
 #import "BXSingleFileTransfer.h"
@@ -71,11 +71,6 @@
 
 //Create a new empty game package for our source path.
 - (BOOL) _generateGameboxWithError: (NSError **)error;
-
-//Import DOSBox configurations from our source path.
-//Called within cleanGamebox, after the rest of the gamebox
-//has been set up, but before cleaning up unnecessary files.
-- (void) _importDOSBoxConfiguration;
 
 //Return the path to which the current gamebox will be moved if renamed with the specified name.
 - (NSString *) _destinationPathForGameboxName: (NSString *)newName;
@@ -746,7 +741,7 @@
 	if (![manager fileExistsAtPath: [self sourcePath]])
 	{
 		//Skip straight to cleanup
-		[self cleanGamebox];
+		[self finalizeGamebox];
 		return;
 	}
 	
@@ -757,7 +752,7 @@
 	if ([alreadyBundledVolumes count] > 1) //There will always be a volume for the C drive
 	{
 		//Skip straight to cleanup
-		[self cleanGamebox];
+		[self finalizeGamebox];
 		return;
 	}
 	
@@ -986,7 +981,7 @@
         }
 		
 		[self setSourceFileImportOperation: nil];
-		[self cleanGamebox];
+		[self finalizeGamebox];
 	}
 	
 	//If the operation failed with an error, then determine if we can retry
@@ -1015,20 +1010,16 @@
 		else
 		{
 			[self setSourceFileImportOperation: nil];
-			[self cleanGamebox];
+			[self finalizeGamebox];
 		}
 	}
 }
 
-- (void) cleanGamebox
+- (void) finalizeGamebox
 {
 	[self setImportStage: BXImportSessionCleaningGamebox];
 
 	NSSet *bundleableTypes = [[BXAppController mountableFolderTypes] setByAddingObjectsFromSet: [BXAppController mountableImageTypes]];
-    
-    //Special case to catch GOG's standalone .GOG images (which are just renamed ISOs)
-	NSSet *gogImageTypes = [NSSet setWithObject: @"com.gog.gog-disk-image"];
-    
 	
 	NSFileManager *manager	= [NSFileManager defaultManager];
 	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
@@ -1037,13 +1028,71 @@
 	NSString *pathForDrives	= [[self gamePackage] resourcePath];
     
     
-    //Import any bundled DOSBox configuration now, after we've imported all
-    //source files but before we've cleaned the configurations out of existence.
-    [self _importDOSBoxConfiguration];
+    //Import any bundled DOSBox configuration: converting any mount commands
+    //into drive imports, and any launch commands into a launcher batch file.
+    
+    NSString *bundledConfigPath = [[self class] preferredConfigurationFileFromPath: [self rootDrivePath]
+                                                                             error: nil];
+    
+    if (bundledConfigPath)
+    {
+        BXEmulatorConfiguration *bundledConfig = [BXEmulatorConfiguration configurationWithContentsOfFile: bundledConfigPath error: nil];
+        
+        if (bundledConfig)
+        {
+            //Strip out all the junk we don't care about from the original game configuration.
+            BXEmulatorConfiguration *sanitizedConfig = [[self class] sanitizedVersionOfConfiguration: bundledConfig];
+            
+            //Import any drives that were mounted in the (original) autoexec.
+            NSArray *mountCommands = [[self class] mountCommandsFromConfiguration: bundledConfig];
+            
+            for (NSString *mountCommand in mountCommands)
+            {
+                BXDrive *drive = [BXEmulator driveFromMountCommand: mountCommand
+                                                          basePath: [self rootDrivePath]
+                                                             error: nil];
+                
+                
+                //Tweak: ignore drive C mounts, as we already have our drive C ready
+                //(and if we fucked it up, then it's a bit late to change, as all our
+                //other drives are located inside it at the moment.)
+                if (drive && ![[drive letter] isEqualToString: @"C"])
+                {
+                    BXOperation <BXDriveImport> *importOperation = [BXDriveImport importOperationForDrive: drive
+                                                                                            toDestination: pathForDrives
+                                                                                                copyFiles: NO];
+                    
+                    [importQueue addOperation: importOperation];
+                }
+            }
+            
+            //If the original autoexec contained any launch commands, convert those
+            //into a launcher batchfile in the root drive: we then assign that as
+            //the default program to launch.
+            NSArray *launchCommands = [[self class] launchCommandsFromConfiguration: bundledConfig];
+            
+            if ([launchCommands count])
+            {
+                NSString *launchPath = [[self rootDrivePath] stringByAppendingPathComponent: @"bxlaunch.bat"];
+                NSString *startupCommandString = [launchCommands componentsJoinedByString: @"\r\n"];
+                
+                BOOL createdLauncher = [startupCommandString writeToFile: launchPath
+                                                              atomically: NO
+                                                                encoding: BXDisplayStringEncoding
+                                                                   error: nil];
+                
+                if (createdLauncher) [[self gamePackage] setTargetPath: launchPath];
+            }
+            
+            //Finally, save the sanitized configuration into the gamebox.
+            NSString *configPath = [[self gamePackage] configurationFilePath];
+            [self _saveConfiguration: sanitizedConfig toFile: configPath];
+        }
+    }
+    
     
     //After picking up any bundled configuration, scan the imported contents
-    //stripping out unnecessary files and migrating bundled disc images.
-    //TODO: make all this code asynchronous also.
+    //to strip out unnecessary files and migrate any remaining disc images.
     
 	BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: pathToClean];
 	[enumerator setSkipHiddenFiles: NO];
@@ -1061,45 +1110,17 @@
 		
 		BOOL isBundleable = [workspace file: path matchesTypes: bundleableTypes];
         
-        //TWEAK: exclude .img images from the bundleable types, because it is more
+        //TWEAK: exclude .img images from the bundleable types, because it is much more
         //likely that these are regular resource files for a DOS game, not actual images.
         //TODO: validate whether each found image is actually a proper image, regardless
         //of file extension.
         if (isBundleable && [[[path pathExtension] lowercaseString] isEqualToString: @"img"])
             isBundleable = NO;
         
-        BOOL isGOGImage = !isBundleable && [workspace file: path matchesTypes: gogImageTypes];
-        
         
         //If this file is a mountable type, move it into the gamebox's root folder where we can find it.
-		if (isBundleable || isGOGImage)
+		if (isBundleable)
 		{
-			//Rename standalone .GOG images to .ISO when importing, to make everyone's lives
-            //that little bit more obvious.
-			if (isGOGImage)
-			{
-				NSString *basePath = [path stringByDeletingPathExtension];
-				NSArray *cuePaths = [NSArray arrayWithObjects: 
-									 [basePath stringByAppendingPathExtension: @"inst"],
-									 [basePath stringByAppendingPathExtension: @"INST"],
-									 nil];
-				NSString *newPath = [basePath stringByAppendingPathExtension: @"iso"];
-				
-				//Check that this really is a standalone .GOG file: if it's paired with a matching .INST,
-				//then we will import that later instead (and that will bring the .GOG along for the ride anyway.)
-				BOOL hasCue = NO;
-				for (NSString *cuePath in cuePaths) if ([manager fileExistsAtPath: cuePath])
-				{
-					hasCue = YES;
-					break;
-				}
-				
-				//If it's standalone, and we rename it successfully, then continue importing it from the new name
-				if (!hasCue && [manager moveItemAtPath: path toPath: newPath error: nil]) path = newPath;
-				//Otherwise, skip the file and get on with the next one
-				else continue;
-			}
-            
 			BXDrive *drive = [BXDrive driveFromPath: path atLetter: nil];
 			
 			BXOperation <BXDriveImport> *importOperation = [BXDriveImport importOperationForDrive: drive
@@ -1132,9 +1153,8 @@
 
 - (void) emulatorWillStartProgram: (NSNotification *)notification
 {	
-	//Don't set the active program if we already have one
-	//This way, we keep track of when a user launches a batch file and don't immediately discard
-	//it in favour of the next program the batch-file runs
+	//Don't set the active program if we already have one: this way, we keep track of when a user launches
+    //a batch file, and don't immediately discard it in favour of the next program the batch-file runs
 	if (![self lastExecutedProgramPath])
 	{
         NSString *programPath = [[notification userInfo] objectForKey: @"localPath"];
@@ -1178,6 +1198,7 @@
 		[self finishInstaller];
 	}
 }
+
 
 #pragma mark -
 #pragma mark Private internal methods
@@ -1323,44 +1344,6 @@
 	else return NO;
 }
 
-
-- (void) _importDOSBoxConfiguration
-{
-    NSString *bundledConfigPath = [[self class] preferredConfigurationFileFromPath: [self rootDrivePath]
-                                                                             error: nil];
-    
-    if (bundledConfigPath)
-    {
-        BXEmulatorConfiguration *bundledConfig = [BXEmulatorConfiguration configurationWithContentsOfFile: bundledConfigPath error: nil];
-        
-        if (bundledConfig)
-        {
-            //Strip out all the junk we don't care about from the bundled game configuration.
-            BXEmulatorConfiguration *sanitizedConfig = [[self class] sanitizedVersionOfConfiguration: bundledConfig];
-            
-            //If the game had an autoexec, convert that into a launchable batch file
-            //in the root drive, and assign that as the default program to launch.
-            if ([[sanitizedConfig startupCommands] count])
-            {
-                NSString *launchPath = [[self rootDrivePath] stringByAppendingPathComponent: @"bxlaunch.bat"];
-                NSString *startupCommands = [[sanitizedConfig startupCommands] componentsJoinedByString: @"\r\n"];
-                
-                BOOL createdLaunchBatchFile = [startupCommands writeToFile: launchPath
-                                                                atomically: NO
-                                                                  encoding: BXDisplayStringEncoding
-                                                                     error: nil];
-                
-                if (createdLaunchBatchFile) [[self gamePackage] setTargetPath: launchPath];
-                
-                [sanitizedConfig removeStartupCommands];
-            }
-            
-            //Now, save the sanitized configuration into the gamebox
-            NSString *configPath = [[self gamePackage] configurationFilePath];
-            [self _saveConfiguration: sanitizedConfig toFile: configPath];
-        }
-    }
-}
 
 - (BOOL) gameDidInstall
 {

@@ -109,16 +109,17 @@
 {
 	static NSSet *patterns = nil;
 	if (!patterns) patterns = [[NSSet alloc] initWithObjects:
-							   //FIX: disabled because some games (e.g. Halloween Harry) actually rely on .ICO files
-							   //@"\\.ico$",						//Windows icon files
-							   
-							   @"\\.pif$",							//Windows PIF files
-							   @"\\.conf$",							//DOSBox configuration files
 							   @"(^|/)dosbox",						//Anything DOSBox-related
-							   @"(^|/)goggame\\.dll$",				//GOG launcher files
+							   @"(^|/)goggame(.*)\\.dll",           //GOG launcher files
 							   @"(^|/)unins000\\.",					//GOG uninstaller files
 							   @"(^|/)Graphic mode setup\\.exe$",	//GOG configuration programs
 							   @"(^|/)gogwrap\\.exe$",				//GOG only knows what this one does
+                               @"(^|/)innosetup_license.txt",       //More GOG cruft
+							   @"(^|/)gfw_high(.*)\\.ico$",         //GOG icon files
+							   @"(^|/)support\\.ico$",
+							   
+							   @"\\.pif$",							//Windows PIF files
+							   @"\\.conf$",							//DOSBox configuration files
 							   nil];
 	return patterns;
 }
@@ -223,7 +224,11 @@
 	{
 		for (NSString *path in paths)
 		{
-			if ([[[path lastPathComponent] lowercaseString] isMatchedByRegex: pattern]) return path;
+			if ([[path lastPathComponent] isMatchedByRegex: pattern
+                                                   options: RKLCaseless
+                                                   inRange: NSMakeRange(0, [path length])
+                                                     error: nil])
+                return path;
 		}
 	}
 	return nil;
@@ -470,33 +475,59 @@ NSInteger filenameLengthSort(NSString *path1, NSString *path2, void *context)
             if (value != nil) [sanitizedConfiguration setValue: value forKey: setting inSection: section];
         }
     }
+    return sanitizedConfiguration;
+}
+
++ (BOOL) _startupCommand: (NSString *)command matchesPatterns: (NSSet *)patterns
+{
+    for (NSString *pattern in patterns)
+    {
+        if ([command isMatchedByRegex: pattern
+                              options: RKLCaseless
+                              inRange: NSMakeRange(0, [command length])
+                                error: nil])
+        {
+            return YES;
+        }
+    }
+    return NO;
+}
+
++ (NSArray *) launchCommandsFromConfiguration: (BXEmulatorConfiguration *)configuration
+{
+    NSSet *patternsToIgnore = [NSSet setWithObjects:
+                               @"^[@\\s]*echo off",
+                               @"^[@\\s]*rem ",
+                               @"^[@\\s]*mount ",
+                               @"^[@\\s]*imgmount ",
+                               @"^[@\\s]*exit",
+                               nil];
     
-    //Now, let's handle the autoexec block.
-    //Autoexec lines matching the following patterns will be stripped from the autoexec;
-    //Everything else will be let through unharmed.
-    NSArray *ignoredAutoexecPatterns = [NSArray arrayWithObjects:
-                                        @"^[@\\s]*echo off",
-                                        @"^[@\\s]*mount ",
-                                        @"^[@\\s]*imgmount ",
-                                        @"^[@\\s]*ipxnet ",
-                                        @"^[@\\s]*exit",
-                                        nil];
+    NSMutableArray *matches = [[NSMutableArray alloc] initWithCapacity: 10];
     
     for (NSString *command in [configuration startupCommands])
     {
-        BOOL isIgnorable = NO;
-        for (NSString *pattern in ignoredAutoexecPatterns)
-        {
-            if ([[command lowercaseString] isMatchedByRegex: pattern])
-            {
-                isIgnorable = YES;
-                break;
-            }
-        }
-        
-        if (!isIgnorable) [sanitizedConfiguration addStartupCommand: command];
+        if (![self _startupCommand: command matchesPatterns: patternsToIgnore])
+            [matches addObject: command];
     }
-    return sanitizedConfiguration;
+    return [matches autorelease];
 }
+
++ (NSArray *) mountCommandsFromConfiguration: (BXEmulatorConfiguration *)configuration
+{
+    NSSet *patternsToMatch = [NSSet setWithObjects:
+                              @"^[@\\s]*mount ",
+                              @"^[@\\s]*imgmount ",
+                              nil];
+    
+    NSMutableArray *matches = [[NSMutableArray alloc] initWithCapacity: 10];
+    for (NSString *command in [configuration startupCommands])
+    {
+        if ([[self class] _startupCommand: command matchesPatterns: patternsToMatch])
+            [matches addObject: command];
+    }
+    return [matches autorelease];
+}
+
 
 @end

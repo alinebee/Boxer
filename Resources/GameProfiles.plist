@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
     <key>BXGameProfileCatalogueVersion</key>
-    <string>20110830.2</string>
+    <string>20110922.1</string>
     
 	<key>BXSpecificGameProfiles</key>
 	<array>
@@ -213,6 +213,7 @@
 			<array>
 				<string>uw.exe</string>
 				<string>uwdemo.exe</string>
+                <string>underom1</string>
 			</array>
 		</dict>
 		
@@ -226,6 +227,7 @@
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>uw2.exe</string>
+                <string>underom2</string>
 			</array>
 		</dict>
 

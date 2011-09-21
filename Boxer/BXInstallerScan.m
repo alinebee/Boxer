@@ -124,28 +124,8 @@
 {
     if (![self error])
     {
-        //If we didn't find any executables, then this isn't a game
-        //we can import and we should treat this as a failure.
-        if ([[self DOSExecutables] count] == 0)
-        {
-            //If there were windows executables present, this is probably a Windows-only game
-            if ([[self windowsExecutables] count] > 0)
-            {
-                [self setError: [BXImportWindowsOnlyError errorWithSourcePath: [self basePath]
-                                                                     userInfo: nil]];
-            }    
-            //Otherwise, the folder may be empty or contains something other than a DOS game
-            //TODO: additional logic to detect Classic Mac games.
-            else
-            {
-                [self setError: [BXImportNoExecutablesError errorWithSourcePath: [self basePath]
-                                                                       userInfo: nil]];
-            }
-        }
-        
-        //Otherwise, determine a preferred installer from among those
-        //discovered in the scan.
-        else
+        //Determine a preferred installer from among those discovered in the scan.
+        if ([[self DOSExecutables] count])
         {
             NSString *preferredInstallerPath = nil;
             
@@ -185,6 +165,32 @@
             }
             
             [self didChangeValueForKey: @"matchingPaths"];
+        }
+        
+        //If we didn't find any executables and couldn't identify this as a known game,
+        //then this isn't a game we can import and we should treat it as a failure.
+        
+        //IMPLEMENTATION NOTE: if we didn't find any DOS executables, but *did*
+        //identify a profile for the game, then we give it the benefit of the doubt.
+        //This case usually means that the game is preinstalled and the game
+        //files are buried away on a disc image inside the source folder.
+        //(e.g. GOG releases of Wing Commander 3 and Ultima Underworld 1 & 2)
+        
+        else if (!([self isAlreadyInstalled] && [self detectedProfile]))
+        {   
+            //If there were windows executables present, this is probably a Windows-only game.
+            if ([[self windowsExecutables] count] > 0)
+            {
+                [self setError: [BXImportWindowsOnlyError errorWithSourcePath: [self basePath]
+                                                                     userInfo: nil]];
+            }    
+            //Otherwise, the folder may be empty or contains something other than a DOS game.
+            //TODO: additional logic to detect Classic Mac games.
+            else
+            {
+                [self setError: [BXImportNoExecutablesError errorWithSourcePath: [self basePath]
+                                                                       userInfo: nil]];
+            }
         }
     }
     

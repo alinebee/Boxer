@@ -171,7 +171,7 @@ typedef NSUInteger BXSourceFileImportType;
 - (void) cancelSourceFileImport;
 
 //Clean up the gamebox and finish the operation.
-- (void) cleanGamebox;
+- (void) finalizeGamebox;
 
 
 #pragma mark -

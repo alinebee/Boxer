@@ -50,12 +50,13 @@
 		
 		NSSet *readyTypes = [[BXAppController mountableFolderTypes] setByAddingObjectsFromSet: [BXAppController mountableImageTypes]];
 		
-		//Folders of the above types don't need additional work to import: we can just use their filename directly
+		//Files and folders of the above types don't need additional renaming before import:
+        //we can just use their filename directly.
 		if ([workspace file: drivePath matchesTypes: readyTypes])
 		{
 			importedName = [drivePath lastPathComponent];
 		}
-		//Otherwise, it will need to be made into a mountable folder
+		//Otherwise: if it's a directory, it will need to be renamed as a mountable folder.
 		else if (isDir)
 		{
 			importedName = [drive volumeLabel];
@@ -78,6 +79,15 @@
 			}
 			importedName = [importedName stringByAppendingPathExtension: extension];
 		}
+        //Otherwise: if it's a file, then it's *presumably* an ISO disc image
+        //that's been given a dumb file extension (hello GOG!) and should be
+        //renamed to something sensible.
+        //TODO: validate that it is in fact an ISO image, once we have ISO parsing ready.
+        else
+        {
+            NSString *baseName = [[drivePath lastPathComponent] stringByDeletingPathExtension];
+            importedName = [baseName stringByAppendingPathExtension: @"iso"];
+        }
 		
 		//If the drive has a letter, then prepend it in our standard format
 		if ([drive letter]) importedName = [NSString stringWithFormat: @"%@ %@", [drive letter], importedName];

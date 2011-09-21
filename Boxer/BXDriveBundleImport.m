@@ -17,6 +17,7 @@
 NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
 
 
+
 @interface BXDriveBundleImport ()
 @property (copy, readwrite) NSString *importedDrivePath;
 @end
@@ -56,10 +57,14 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
 	NSString *drivePath = [drive path];
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	
-	//Wrap CUE/BINs up into our custom bundle class
-	NSSet *typesForBundling = [NSSet setWithObject: @"com.goldenhawk.cdrwin-cuesheet"];
+	NSSet *cueTypes = [NSSet setWithObject: @"com.goldenhawk.cdrwin-cuesheet"];
 	
-	if ([workspace file: drivePath matchesTypes: typesForBundling]) return YES;
+    //If OS X thinks the file's extension makes it a valid CUE file, treat it as a match.
+	if ([workspace file: drivePath matchesTypes: cueTypes]) return YES;
+    
+    //If the file can be parsed as a CUE, treat it as a match too (catches renamed GOG images.)
+    if ([BXBinCueImage isCueAtPath: drivePath error: nil]) return YES;
+
 	return NO;
 }
 

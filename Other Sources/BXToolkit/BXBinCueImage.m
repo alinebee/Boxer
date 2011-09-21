@@ -17,6 +17,9 @@
 //FILE 01_armin_van_buuren_-_in_the_mix_(asot179)-cable-12-16-2004-hsalive.mp3 MP3
 NSString * const BXCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[A-Z]+";
 
+//The maximum size in bytes that a cue file is expected to be, before we consider it not a cue file.
+//This is used as a sanity check by +isCueAtPath: to avoid scanning large files unnecessarily.
+#define BXCueMaxFileSize 10240
 
 
 @implementation BXBinCueImage
@@ -39,6 +42,8 @@ NSString * const BXCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[A
 		{
 			if ([fileName length])
 			{
+                //Normalize escaped quotes
+                fileName = [fileName stringByReplacingOccurrencesOfString: @"\\\"" withString: @"\""];
 				[paths addObject: fileName];
 				break;
 			}
@@ -99,6 +104,28 @@ NSString * const BXCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[A
     return [resolvedPaths objectAtIndex: 0];
 }
 
++ (BOOL) isCueAtPath: (NSString *)cuePath error: (NSError **)outError
+{
+    NSFileManager *manager = [NSFileManager defaultManager];
+    
+    BOOL isDir, exists = [manager fileExistsAtPath: cuePath isDirectory: &isDir];
+    //TODO: populate outError
+    if (!exists || isDir) return NO;
+    
+    unsigned long long fileSize = [[manager attributesOfItemAtPath: cuePath error: outError] fileSize];
+    
+    //If the file is too large, assume it can't be a file and bail out
+    if (!fileSize ||  fileSize > BXCueMaxFileSize) return NO;
+    
+    //Otherwise, load it in and see if it appears to contain any usable paths
+    NSString *cueContents = [[NSString alloc] initWithContentsOfFile: cuePath
+                                                        usedEncoding: NULL
+                                                               error: outError];
+    
+    if (!cueContents) return NO;
+    
+    return [cueContents isMatchedByRegex: BXCueFileDescriptorSyntax];
+}
 
 
 - (id) init

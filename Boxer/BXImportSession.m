@@ -1048,19 +1048,24 @@
             
             for (NSString *mountCommand in mountCommands)
             {
+                //TWEAK: use the config's own dir as the base path instead of the root drive,
+                //just in case there's a funny folder structure going on.
+                NSString *basePath = [bundledConfigPath stringByDeletingLastPathComponent];
                 BXDrive *drive = [BXEmulator driveFromMountCommand: mountCommand
-                                                          basePath: [self rootDrivePath]
+                                                          basePath: basePath
                                                              error: nil];
                 
                 
-                //Tweak: ignore drive C mounts, as we already have our drive C ready
-                //(and if we fucked it up, then it's a bit late to change, as all our
-                //other drives are located inside it at the moment.)
+                //TWEAK: ignore drive C mounts, as we already have our drive C.
+                //(And if we fucked it up, then it's a bit late to change now.)
                 if (drive && ![[drive letter] isEqualToString: @"C"])
                 {
+                    //TWEAK: Copy the drive files if they lie outside the gamebox,
+                    //otherwise move them.
+                    BOOL copy = ![[drive path] isRootedInPath: [self rootDrivePath]];
                     BXOperation <BXDriveImport> *importOperation = [BXDriveImport importOperationForDrive: drive
                                                                                             toDestination: pathForDrives
-                                                                                                copyFiles: NO];
+                                                                                                copyFiles: copy];
                     
                     [importQueue addOperation: importOperation];
                 }

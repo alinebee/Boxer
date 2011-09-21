@@ -30,19 +30,21 @@ NSDictionary *commandList = [[NSDictionary alloc] initWithObjectsAndKeys:
 nil];
 
 //Lookup table of shell commands and the aliases that run them
+//These have been replaced with actual batch files located in
+//Boxer's toolkit drive: this allows them to appear in autocomplete.
 NSDictionary *commandAliases = [[NSDictionary alloc] initWithObjectsAndKeys:
-								//@"help",		@"commands",
+								//@"help",          @"commands",
 								//Disabled temporarily to avoid interfering with XCOM: TFTD
-								//@"help",		@"intro",
-								//@"exit",		@"quit",
-								//@"copy",		@"cp",
+								//@"help",          @"intro",
+								//@"exit",          @"quit",
+								//@"copy",          @"cp",
 								//@"rename",		@"move",
 								//@"rename",		@"mv",
 								//@"del",			@"rm",
 								//@"dir",			@"ls",
-								//@"type",		@"cat",
-								//@"boxer_launch",@"restart",
-								//@"mount -u",	@"unmount",
+								//@"type",          @"cat",
+								//@"boxer_launch",  @"restart",
+								//@"mount -u",      @"unmount",
 nil];
 
 

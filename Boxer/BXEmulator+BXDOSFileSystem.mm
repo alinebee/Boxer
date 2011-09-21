@@ -95,6 +95,67 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 }
 
 
++ (BXDrive *) driveFromMountCommand: (NSString *)mountCommand
+                           basePath: (NSString *)basePath
+                              error: (NSError **)outError
+{
+    NSString *basePattern = @"(?:mount\\s+|imgmount\\s+)(?# Optional command name )?([a-z])(?# Drive letter )\\s+(\"(?:\\\\?+.)*?\"(?# Double-quoted path, respecting escaped quotes )|\\S+(?# Unquoted path with no spaces ))(.*)(?# Additional mount parameters )";
+    
+    NSArray *matches = [mountCommand captureComponentsMatchedByRegex: basePattern
+                                                             options: RKLCaseless
+                                                               range: NSMakeRange(0, [mountCommand length])
+                                                               error: outError];
+    
+    //This would indicate a parse error
+    if ([matches count] != 4) return nil;
+    
+    NSString *letter    = [matches objectAtIndex: 1];
+    NSString *path      = [matches objectAtIndex: 2];
+    NSString *params    = [matches objectAtIndex: 3];
+    
+    //Trim surrounding quotes from the path, standardize slashes and escaped quotes.
+    path = [path stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @"\""]];
+    path = [path stringByReplacingOccurrencesOfString: @"\\\"" withString: @"\""];
+    path = [path stringByReplacingOccurrencesOfString: @"\\" withString: @"/"];
+    
+    //Resolve the path relative to the base path, if provided, then standardize the path.
+    if (basePath && ![path isAbsolutePath])
+        path = [basePath stringByAppendingPathComponent: path];
+    
+    path = [path stringByStandardizingPath];
+    
+    //Trim extra whitespace from additional parameters.
+    params = [params stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
+    
+    //Determine the desired drive type from the -t parameter, if present.
+    BXDriveType type = BXDriveAutodetect;
+    if ([params length])
+    {
+        NSString *typePattern = @"-t\\s(cdrom|iso|floppy|hdd|dir)";
+        NSString *typeParam = [[params componentsMatchedByRegex: typePattern
+                                                        options: RKLCaseless
+                                                          range: NSMakeRange(0, [params length])
+                                                        capture: 1
+                                                          error: outError] lastObject];
+        
+        if (typeParam)
+        {
+            typeParam = [typeParam lowercaseString];
+            if ([typeParam isEqualToString: @"cdrom"] || [typeParam isEqualToString: @"iso"])
+                type = BXDriveCDROM;
+            else if ([typeParam isEqualToString: @"floppy"])
+                type = BXDriveFloppyDisk;
+            else if ([typeParam isEqualToString: @"hdd"] || [typeParam isEqualToString: @"dir"])
+                type = BXDriveHardDisk;
+        }
+    }
+    
+    return [BXDrive driveFromPath: path
+                         atLetter: letter
+                         withType: type];
+}
+
+
 #pragma mark -
 #pragma mark Drive mounting and unmounting
 

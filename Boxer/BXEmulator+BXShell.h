@@ -15,8 +15,9 @@
 
 @interface BXEmulator (BXShell)
 
-//Command processing
-//------------------
+#pragma mark -
+#pragma mark Command handling
+
 
 //Runs the specified command string as if it had been typed on the commandline. Encoding should be either BXDirectStringEncoding or BXDisplayStringEncoding.
 - (void) executeCommand: (NSString *)theString

@@ -51,6 +51,15 @@
 + (NSSet *) dosFileExclusions;		//Filenames to hide from DOS directory listings
 
 
+//Generates a drive from the specified mount/imgmount command string,
+//with or without the mount/imgmount command name.
+//If basePath is specified, relative paths will be resolved relative to that.
+//Returns nil and populates outError, if mount command could not be parsed.
++ (BXDrive *) driveFromMountCommand: (NSString *)mountCommand
+                           basePath: (NSString *)basePath
+                              error: (NSError **)outError;
+
+
 #pragma mark -
 #pragma mark Mounting and unmounting drives
 

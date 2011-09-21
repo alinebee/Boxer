@@ -460,6 +460,11 @@
                      error: (NSError **)outError
 {
     NSString *drivePath = *ioValue;
+    
+    //A nil path was specified for some reason, don't continue but don't populate an error.
+    //FIXME: should this be an assertion?
+    if (!drivePath) return NO;
+    
 	NSFileManager *manager = [NSFileManager defaultManager];
     
     //Fully resolve the path to eliminate any symlinks, tildes and backtracking
@@ -495,7 +500,8 @@
             return NO;
         }
         
-        NSArray *restrictedPaths = NSSearchPathForDirectoriesInDomains(NSAllLibrariesDirectory, NSAllDomainsMask, YES);
+        //Restrict all system library folders, but not the user's own library folder.
+        NSArray *restrictedPaths = NSSearchPathForDirectoriesInDomains(NSAllLibrariesDirectory, NSAllDomainsMask & ~NSUserDomainMask, YES);
         for (NSString *testPath in restrictedPaths) if ([resolvedPath isRootedInPath: testPath])
         {
             if (outError)
@@ -533,11 +539,12 @@
 {
 	NSAssert1([self isEmulating], @"mountDriveForPath:ifExists:options:error: called for %@ while emulator is not running.", path);
     
-    if (![self validateDrivePath: &path error: outError]) return nil;
-    
-	
 	//Choose an appropriate mount point and create the new drive for it
 	NSString *mountPoint = [[self class] preferredMountPointForPath: path];
+    
+    //Make sure the mount point exists and is suitable to use
+    if (![self validateDrivePath: &mountPoint error: outError]) return nil;
+    
     
     //Check if there's already a drive in the queue that matches this mount point:
     //if so, mount it if necessary and return that

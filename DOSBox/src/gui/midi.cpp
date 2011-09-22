@@ -88,6 +88,8 @@ MidiHandler Midi_none;
 
 /* Include different midi drivers, lowest ones get checked first for default */
 
+#include "midi_mt32.h"
+
 #if defined(MACOSX)
 
 #include "midi_coremidi.h"

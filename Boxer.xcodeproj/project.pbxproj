@@ -61,6 +61,7 @@
 		9F4175F1119DCF7E00646B15 /* BXFrameRateCounterLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4175F0119DCF7E00646B15 /* BXFrameRateCounterLayer.m */; };
 		9F424207109D03F500111D28 /* BXInspectorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F424206109D03F500111D28 /* BXInspectorController.m */; };
 		9F424222109D061000111D28 /* InspectorPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F45A1C5109C3CB400593456 /* InspectorPanel.xib */; };
+		9F42BA41142B6144000D5F5E /* Munt.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FAD39D6142B5FC5005752E9 /* Munt.framework */; };
 		9F42D9DF1172481800AC6F1F /* BXStatusBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F42D9DE1172481800AC6F1F /* BXStatusBarController.m */; };
 		9F438C5810E3D8C8007D30AD /* BXScroller.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F438C5710E3D8C8007D30AD /* BXScroller.m */; };
 		9F444FCC12AEA28700A2D405 /* BXOperationSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F444FCB12AEA28700A2D405 /* BXOperationSet.m */; };
@@ -276,6 +277,7 @@
 		9FA9E282121FD874006E20C4 /* PanelCollapseTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FA9E280121FD874006E20C4 /* PanelCollapseTemplate.pdf */; };
 		9FAA44A711EB24A90042B986 /* NSString+BXStringFormatting.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAA44A611EB24A90042B986 /* NSString+BXStringFormatting.m */; };
 		9FAA451511EB40180042B986 /* Configuration.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9FAA451411EB40180042B986 /* Configuration.strings */; };
+		9FAD39D7142B5FC5005752E9 /* Munt.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FAD39D6142B5FC5005752E9 /* Munt.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		9FAD43C010A341F6007E8C0D /* UKFileWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD43B810A341F6007E8C0D /* UKFileWatcher.m */; };
 		9FAD43C110A341F6007E8C0D /* UKFNSubscribeFileWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD43BA10A341F6007E8C0D /* UKFNSubscribeFileWatcher.m */; };
 		9FAD43C310A341F6007E8C0D /* UKKQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD43BD10A341F6007E8C0D /* UKKQueue.m */; };
@@ -439,6 +441,7 @@
 				9F20C29711E5DA68005AF541 /* Sparkle.framework in Copy Bundled Frameworks */,
 				9FA2E5D9109D255300E50623 /* BGHUDAppKit.framework in Copy Bundled Frameworks */,
 				9FBC3D600F56EA82001811F2 /* SDL.framework in Copy Bundled Frameworks */,
+				9F42BA41142B6144000D5F5E /* Munt.framework in Copy Bundled Frameworks */,
 			);
 			name = "Copy Bundled Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -897,6 +900,7 @@
 		9F87EF7113C1B18900326608 /* BXFlightstickAccelerometerLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFlightstickAccelerometerLayout.h; sourceTree = "<group>"; };
 		9F87EF7213C1B18900326608 /* BXFlightstickAccelerometerLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFlightstickAccelerometerLayout.m; sourceTree = "<group>"; };
 		9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
+		9F8B8B25142B5C5B0077B6F2 /* midi_mt32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = midi_mt32.h; sourceTree = "<group>"; };
 		9F8BFE9D12C0EF7B0059030F /* BXDisplayLinkRenderingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDisplayLinkRenderingView.h; sourceTree = "<group>"; };
 		9F8BFE9E12C0EF7B0059030F /* BXDisplayLinkRenderingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDisplayLinkRenderingView.m; sourceTree = "<group>"; };
 		9F8F482313DC74CA00C7E022 /* NSShadow+BXShadowExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSShadow+BXShadowExtensions.h"; sourceTree = "<group>"; };
@@ -939,6 +943,7 @@
 		9FAA445511EB1CC40042B986 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Configuration.strings; sourceTree = "<group>"; };
 		9FAA44A511EB24A90042B986 /* NSString+BXStringFormatting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+BXStringFormatting.h"; sourceTree = "<group>"; };
 		9FAA44A611EB24A90042B986 /* NSString+BXStringFormatting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+BXStringFormatting.m"; sourceTree = "<group>"; };
+		9FAD39D6142B5FC5005752E9 /* Munt.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Munt.framework; sourceTree = "<group>"; };
 		9FAD43B710A341F6007E8C0D /* UKFileWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UKFileWatcher.h; sourceTree = "<group>"; };
 		9FAD43B810A341F6007E8C0D /* UKFileWatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UKFileWatcher.m; sourceTree = "<group>"; };
 		9FAD43B910A341F6007E8C0D /* UKFNSubscribeFileWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UKFNSubscribeFileWatcher.h; sourceTree = "<group>"; };
@@ -1194,6 +1199,7 @@
 				9FBAA8F4134AFABD0092BF95 /* DiskArbitration.framework in Frameworks */,
 				9F731AF513630820005E564F /* DDHidLib.framework in Frameworks */,
 				9F731B52136331A9005E564F /* IOKit.framework in Frameworks */,
+				9FAD39D7142B5FC5005752E9 /* Munt.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1923,6 +1929,7 @@
 				9F77210B12B38C4400072AE8 /* midi_coremidi.h */,
 				9F77210C12B38C4400072AE8 /* midi_oss.h */,
 				9F77210D12B38C4400072AE8 /* midi_win32.h */,
+				9F8B8B25142B5C5B0077B6F2 /* midi_mt32.h */,
 				9F77210E12B38C4400072AE8 /* render.cpp */,
 				9F77210F12B38C4400072AE8 /* render_loops.h */,
 				9F77211012B38C4400072AE8 /* render_scalers.cpp */,
@@ -1933,9 +1940,9 @@
 				9F77211512B38C4400072AE8 /* render_templates_hq2x.h */,
 				9F77211612B38C4400072AE8 /* render_templates_hq3x.h */,
 				9F77211712B38C4400072AE8 /* render_templates_sai.h */,
+				9F77211A12B38C4400072AE8 /* sdlmain.cpp */,
 				9F77211812B38C4400072AE8 /* sdl_gui.cpp */,
 				9F77211912B38C4400072AE8 /* sdl_mapper.cpp */,
-				9F77211A12B38C4400072AE8 /* sdlmain.cpp */,
 			);
 			path = gui;
 			sourceTree = "<group>";
@@ -2260,6 +2267,7 @@
 		9FBC3C130F56D6E8001811F2 /* Bundled Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9FAD39D6142B5FC5005752E9 /* Munt.framework */,
 				9F731AF413630820005E564F /* DDHidLib.framework */,
 				E5CF183F128F81AF0065844A /* PhysFS.framework */,
 				9F20C28A11E5D848005AF541 /* Sparkle.framework */,

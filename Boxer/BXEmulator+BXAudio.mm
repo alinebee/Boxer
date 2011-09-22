@@ -33,7 +33,6 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
 
 - (void) _displayMT32LCDMessage: (NSString *)message
 {
-    NSLog(@"%@", message);
     NSDictionary *userInfo = [NSDictionary dictionaryWithObject: message forKey: @"message"];
     [self _postNotificationName: BXEmulatorDidDisplayMT32MessageNotification
                delegateSelector: @selector(emulatorDidDisplayMT32Message:)

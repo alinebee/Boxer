@@ -277,7 +277,9 @@ public:
           SDL_SemPost(mt32.sem);
      } else {
 #endif
-          _synth->playMsg(*((Bit32u*) msg));
+         //--Modified 2011-09-22 by Alun Bestor to fix endianness bug from byte-array casting.
+          _synth->playMsg(boxer_MIDIMessageToLong(msg));
+         //--End of modifications
 #ifdef MT32MULTICORE
      }
 #endif
@@ -296,6 +298,7 @@ public:
           }
       }
 #endif
+         
       if(sysex[0] == 0xf0) {
          _synth->playSysex(sysex, len);
       } else {

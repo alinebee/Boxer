@@ -23,3 +23,8 @@ int boxer_reportMT32Message(void *userData, MT32Emu::ReportType type, const void
 
 //Callback for debug/error messages from the MT-32 emulator.
 void boxer_logMT32DebugMessage(void *userData, const char *fmt, va_list list);
+
+//Convert a 4-byte array to a 32-bit integer for MT32Emu::Synth->playMsg calls,
+//maintaining the expected endianness.
+Bit32u boxer_MIDIMessageToLong(Bit8u *msg);
+

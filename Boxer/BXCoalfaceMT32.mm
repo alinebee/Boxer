@@ -10,6 +10,7 @@
 #import "BXCoalfaceMT32.h"
 #import "RegexKitLite.h"
 #import "MT32Emu/FileStream.h"
+#import <CoreFoundation/CFByteOrder.h>
 
 
 MT32Emu::File *boxer_openMT32ROM(void *userData, const char *filename)
@@ -61,4 +62,10 @@ void boxer_logMT32DebugMessage(void *userData, const char *fmt, va_list list)
 #ifdef BOXER_DEBUG
     NSLogv([NSString stringWithUTF8String: fmt], list);
 #endif
+}
+
+Bit32u boxer_MIDIMessageToLong(Bit8u *msg)
+{
+    Bit32u longMsg = ((Bit32u*)msg)[0];
+    return CFSwapInt32LittleToHost(longMsg);
 }

@@ -46,7 +46,7 @@ int boxer_reportMT32Message(void *userData, MT32Emu::ReportType type, const void
         case MT32Emu::ReportType_lcdMessage:
             {
                 NSString *message = [NSString stringWithUTF8String: (const char *)reportData];
-                [[BXEmulator currentEmulator] _displayMT32LCDMessage: message];
+                [[BXEmulator currentEmulator] _didDisplayMT32LCDMessage: message];
             }
             break;
         default:

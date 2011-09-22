@@ -27,4 +27,3 @@ void boxer_logMT32DebugMessage(void *userData, const char *fmt, va_list list);
 //Convert a 4-byte array to a 32-bit integer for MT32Emu::Synth->playMsg calls,
 //maintaining the expected endianness.
 Bit32u boxer_MIDIMessageToLong(Bit8u *msg);
-

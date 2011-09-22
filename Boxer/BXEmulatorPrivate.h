@@ -287,9 +287,9 @@ enum {
 //framework.
 - (NSString *) _pathForMT32ROMNamed: (NSString *)romName;
 
-//Called when a game displays a message on the MT-32's LCD display.
+//Called when a game sends a message to show on the MT-32's LCD.
 //Will send a BXEmulatorDidDisplayMT32MessageNotification with
 //the message as the value of the @"message" userInfo key.
-- (void) _displayMT32LCDMessage: (NSString *)message;
+- (void) _didDisplayMT32LCDMessage: (NSString *)message;
 
 @end

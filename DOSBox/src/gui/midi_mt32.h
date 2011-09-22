@@ -239,6 +239,7 @@ public:
           mt32.thread = SDL_CreateThread(MT32_Thread, NULL);
       }
 #endif
+       
       return true;
    };
 

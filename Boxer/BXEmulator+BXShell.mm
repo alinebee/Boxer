@@ -23,6 +23,7 @@ NSDictionary *commandList = [[NSDictionary alloc] initWithObjectsAndKeys:
 	@"revealPath:",				@"boxer_reveal",
 	@"showShellCommandHelp:",	@"help",
 	@"listDrives:",				@"boxer_drives",
+    @"displayMT32LCDMessage:",  @"boxer_mt32say",
 	
 	//Handled by BXDOSWindowController
 	@"toggleFullScreenWithZoom:",					@"fullscreen",

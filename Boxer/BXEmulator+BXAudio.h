@@ -12,4 +12,9 @@
 
 @interface BXEmulator (BXAudio)
 
+//Sends an LCD message via Sysex to the MT-32 emulator
+//(or to a real MT-32, in CoreMIDI mode.)
+//Intended for debugging.
+- (id) displayMT32LCDMessage: (NSString *)message;
+
 @end

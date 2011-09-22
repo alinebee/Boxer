@@ -1,7 +1,10 @@
-#include "Munt/mt32emu.h"
+#include "MT32Emu/mt32emu.h"
 #include "mixer.h"
 #include "control.h"
 #include "SDL_thread.h"
+//--Added 2011-09-22 by Alun Bestor to allow Boxer to hook into MT-32 emulation. 
+#import "BXCoalfaceMT32.h"
+//--End of modifications
 
 #include <iostream>
 #include <string>
@@ -51,7 +54,7 @@ MT32Emu::Synth *_usesynth;
 MixerChannel *mt32chan = NULL;
 bool mt32ReverseStereo = false;
 
-static struct {
+struct mt32 {
 #ifdef MT32MULTICORE
 	SDL_mutex * mutex;
 	SDL_semaphore * sem;
@@ -62,7 +65,7 @@ static struct {
 
 	Bit8u len, play;
 	Bit8u Temp[MIXER_BUFSIZE], msg[SYSEX_SIZE];
-} mt32;
+};
 
 void ReverseStereo(Bitu len, Bit16s *buf) {
 	for(Bitu i = 0; i < len; i++) {
@@ -182,7 +185,14 @@ public:
       tmpProp.reverbLevel = 3;
       tmpProp.userData = this;
       //tmpProp.printDebug = &vdebug;
-      tmpProp.report = &report;
+      //--Modified 2011-09-22 by Alun Bestor to use Boxer's own callbacks instead.
+      //tmpProp.report = &report;
+      tmpProp.report = &boxer_reportMT32Message;
+      tmpProp.openFile = &boxer_openMT32ROM;
+      tmpProp.closeFile = &boxer_closeMT32ROM;
+      tmpProp.printDebug = &boxer_logMT32DebugMessage;
+      //--End of modifications 
+       
       _synth = new MT32Emu::Synth();
       if (_synth->open(tmpProp)==0) {
          LOG(LOG_ALL,LOG_ERROR)("MT32:Error initialising emulation");

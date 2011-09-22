@@ -11,7 +11,7 @@
 #import "BXGameProfile.h"
 #import "BXBootlegCoverArt.h"
 #import "BXDrive.h"
-#import "BXAppController.h"
+#import "BXAppController+BXSupportFiles.h"
 #import "BXDOSWindowControllerLion.h"
 #import "BXDOSWindow.h"
 #import "BXEmulatorConfiguration.h"
@@ -758,6 +758,16 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 - (NSSize) viewportSizeForEmulator: (BXEmulator *)theEmulator
 {
 	return [[self DOSWindowController] viewportSize];
+}
+
+- (NSString *) pathToMT32ControlROMForEmulator: (BXEmulator *)emulator
+{
+    return [BXAppController pathToMT32ControlROM];
+}
+
+- (NSString *) pathToMT32PCMROMForEmulator: (BXEmulator *)emulator
+{
+    return [BXAppController pathToMT32PCMROM];
 }
 
 - (BOOL) emulator: (BXEmulator *)theEmulator shouldMountDriveFromShell: (NSString *)drivePath

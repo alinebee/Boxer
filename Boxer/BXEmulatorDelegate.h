@@ -32,6 +32,8 @@ extern NSString * const BXEmulatorDidFinishGraphicalContextNotification;
 extern NSString * const BXEmulatorDidCreateFileNotification;
 extern NSString * const BXEmulatorDidRemoveFileNotification;
 
+extern NSString * const BXEmulatorDidDisplayMT32MessageNotification;
+
 
 
 //TODO: define and document user info dictionary keys for each of these notifications.
@@ -122,9 +124,6 @@ extern NSString * const BXEmulatorDidRemoveFileNotification;
 #pragma mark -
 #pragma mark Additional filesystem-related delegate methods
 
-//FIXME: this additional protocol is only necessary because of our maddening habit
-//of separating large classes into categories. If/when BXFileManager stops being
-//a category of BXSession, this protocol can be refined out of existence.
 @protocol BXEmulatorFileSystemDelegate <NSObject>
 
 @optional
@@ -135,5 +134,19 @@ extern NSString * const BXEmulatorDidRemoveFileNotification;
 //Notifies the delegate that Boxer created/deleted a file.
 - (void) emulatorDidCreateFile:		(NSNotification *)notification;
 - (void) emulatorDidRemoveFile:		(NSNotification *)notification;
+
+@end
+
+
+@protocol BXEmulatorMT32EmulationDelegate <NSObject>
+
+//Return the filesystem paths for the ROMs that the emulator should use.
+- (NSString *) pathToMT32ControlROMForEmulator: (BXEmulator *)emulator;
+- (NSString *) pathToMT32PCMROMForEmulator: (BXEmulator *)emulator;
+
+@optional
+
+//Posted whenever a game tells the MT-32 to display an LCD message.
+- (void) emulatorDidDisplayMT32Message: (NSNotification *)notification;
 
 @end

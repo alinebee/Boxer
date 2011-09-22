@@ -47,7 +47,7 @@ extern NSString * const BXDidFinishInterruptionNotification;
 @class BXDOSWindowController;
 @class UKFileWatcher;
 
-@interface BXSession : NSDocument <BXEmulatorDelegate>
+@interface BXSession : NSDocument <BXEmulatorDelegate, BXEmulatorMT32EmulationDelegate>
 {	
 	BXEmulator *emulator;
 	BXPackage *gamePackage;

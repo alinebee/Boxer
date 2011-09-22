@@ -102,7 +102,7 @@ extern "C" {
     
     void boxer_log(char const* format,...);
     void boxer_die(char const *functionName, char const *fileName, int lineNumber, char const* format,...);
-	
+    
 #if __cplusplus
 } //Extern C
 #endif

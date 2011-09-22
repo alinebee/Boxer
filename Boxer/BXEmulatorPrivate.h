@@ -14,6 +14,7 @@
 #import "BXEmulatorDelegate.h"
 #import "BXEmulator+BXShell.h"
 #import "BXEmulator+BXDOSFileSystem.h"
+#import "BXEmulator+BXAudio.h"
 #import "BXVideoHandler.h"
 #import "BXEmulatedKeyboard.h"
 #import "BXEmulatedJoystick.h"
@@ -268,5 +269,27 @@ enum {
 
 //Called by DOSBox just after a program finishes executing and exits. Sends a delegate notification.
 - (void) _didExecuteFileAtDOSPath: (const char *)dosPath onDOSBoxDrive: (DOS_Drive *)dosboxDrive;
+
+@end
+
+
+#pragma mark -
+#pragma mark Audio-related internal methods
+
+@interface BXEmulator (BXAudioInternals)
+
+//Returns the file path for the specified MT-32 ROM,
+//or nil if no such ROM is available. This calls
+//one of the delegate methods pathToMT32ControlROMForEmulator:
+//or pathToMT32PCMROMForEmulator: to retrieve the path.
+//ROMName is expected to be one of MT32_CONTROL.ROM, MT32_PCM.ROM,
+//CM32L_CONTROL.ROM or CM32L_PCM.ROM, as specified by the MT32Emu
+//framework.
+- (NSString *) _pathForMT32ROMNamed: (NSString *)romName;
+
+//Called when a game displays a message on the MT-32's LCD display.
+//Will send a BXEmulatorDidDisplayMT32MessageNotification with
+//the message as the value of the @"message" userInfo key.
+- (void) _displayMT32LCDMessage: (NSString *)message;
 
 @end

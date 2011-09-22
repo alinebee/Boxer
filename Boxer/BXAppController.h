@@ -92,19 +92,6 @@ enum {
 
 
 #pragma mark -
-#pragma mark Supporting directories
-
-//Returns Boxer's application support path.
-//If createIfMissing is YES, the folder will be created if it does not exist.
-+ (NSString *) supportPathCreatingIfMissing: (BOOL)createIfMissing;
-//Returns Boxer's temporary folder path.
-
-//This will be automatically deleted when all Boxer processes exit.
-//If createIfMissing is YES, the folder will be created if it does not exist.
-+ (NSString *) temporaryPathCreatingIfMissing: (BOOL)createIfMissing;
-
-
-#pragma mark -
 #pragma mark Initialization and teardown
 
 //Called at class initialization time to initialize Boxer's own user defaults.

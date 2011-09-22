@@ -7,9 +7,9 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>Munt</string>
+	<string>MT32Emu</string>
 	<key>CFBundleIdentifier</key>
-	<string>net.washboardabs.Munt</string>
+	<string>net.sourceforge.munt.MT32Emu</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>

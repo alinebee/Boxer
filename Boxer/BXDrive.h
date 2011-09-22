@@ -9,8 +9,7 @@
 //BXDrive represents a single DOS drive and encapsulates all the data needed to mount the drive
 //and locate it on the OS X filesystem. BXDrives are mounted via BXFileSystem's mountDrive: method.
 
-//Could be Foundation, except we use NSImage
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
 
 #pragma mark -
@@ -48,7 +47,6 @@ typedef NSInteger BXDriveType;
 	BOOL locked;
 	BOOL hidden;
     BOOL mounted;
-	NSImage *icon;
 }
 
 

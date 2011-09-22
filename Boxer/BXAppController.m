@@ -6,7 +6,7 @@
  */
 
 
-#import "BXAppController.h"
+#import "BXAppController+BXSupportFiles.h"
 #import "BXAppController+BXGamesFolder.h"
 #import "BXAppController+BXApplicationModes.h"
 
@@ -190,35 +190,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	return numBoxers > 1;
 }
 
-+ (NSString *) supportPathCreatingIfMissing: (BOOL)createIfMissing
-{
-	NSString *basePath = [NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
-	NSString *supportPath = [basePath stringByAppendingPathComponent: @"Boxer"];
-	
-	if (createIfMissing)
-	{
-		[[NSFileManager defaultManager] createDirectoryAtPath: supportPath
-								  withIntermediateDirectories: YES
-												   attributes: nil
-														error: NULL];
-	}
-	return supportPath;
-}
-
-+ (NSString *) temporaryPathCreatingIfMissing: (BOOL)createIfMissing
-{
-	NSString *basePath = NSTemporaryDirectory();
-	NSString *tempPath = [basePath stringByAppendingPathComponent: @"Boxer"];
-	
-	if (createIfMissing)
-	{
-		[[NSFileManager defaultManager] createDirectoryAtPath: tempPath
-								  withIntermediateDirectories: YES
-												   attributes: nil
-														error: NULL];
-	}
-	return tempPath;
-}
 
 #pragma mark -
 #pragma mark Initialization and teardown

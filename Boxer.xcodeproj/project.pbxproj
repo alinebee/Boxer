@@ -53,6 +53,11 @@
 		9F2AC6E410EFFE8600CFFF72 /* BXBootlegCoverArt.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2AC6E310EFFE8600CFFF72 /* BXBootlegCoverArt.m */; };
 		9F2C28A2129D906600B172C8 /* BXFirstRunWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2C28A1129D906600B172C8 /* BXFirstRunWindowController.m */; };
 		9F2C28B8129D924E00B172C8 /* FirstRunWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F2C28B6129D924E00B172C8 /* FirstRunWindow.xib */; };
+		9F34BE40142B700100A69FAF /* BXCoalfaceMT32.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F34BE3E142B700100A69FAF /* BXCoalfaceMT32.mm */; };
+		9F34BE5B142B76D800A69FAF /* MT32Emu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F34BE5A142B76D800A69FAF /* MT32Emu.framework */; };
+		9F34BE5C142B76F500A69FAF /* MT32Emu.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F34BE5A142B76D800A69FAF /* MT32Emu.framework */; };
+		9F34BE5F142B851800A69FAF /* BXEmulator+BXAudio.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F34BE5E142B851700A69FAF /* BXEmulator+BXAudio.mm */; };
+		9F34BE62142B917100A69FAF /* BXAppController+BXSupportFiles.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F34BE61142B917100A69FAF /* BXAppController+BXSupportFiles.m */; };
 		9F3E57A513F694B40070A14D /* BXEmulatorErrors.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3E57A413F694B40070A14D /* BXEmulatorErrors.m */; };
 		9F3FB1AF1306F88800DB8FBE /* BXScriptablePreferences.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3FB1AE1306F88800DB8FBE /* BXScriptablePreferences.m */; };
 		9F3FB1B61306F9FB00DB8FBE /* NSApplication+BXScripting.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3FB1B51306F9FB00DB8FBE /* NSApplication+BXScripting.m */; };
@@ -61,7 +66,6 @@
 		9F4175F1119DCF7E00646B15 /* BXFrameRateCounterLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4175F0119DCF7E00646B15 /* BXFrameRateCounterLayer.m */; };
 		9F424207109D03F500111D28 /* BXInspectorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F424206109D03F500111D28 /* BXInspectorController.m */; };
 		9F424222109D061000111D28 /* InspectorPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F45A1C5109C3CB400593456 /* InspectorPanel.xib */; };
-		9F42BA41142B6144000D5F5E /* Munt.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FAD39D6142B5FC5005752E9 /* Munt.framework */; };
 		9F42D9DF1172481800AC6F1F /* BXStatusBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F42D9DE1172481800AC6F1F /* BXStatusBarController.m */; };
 		9F438C5810E3D8C8007D30AD /* BXScroller.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F438C5710E3D8C8007D30AD /* BXScroller.m */; };
 		9F444FCC12AEA28700A2D405 /* BXOperationSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F444FCB12AEA28700A2D405 /* BXOperationSet.m */; };
@@ -277,7 +281,6 @@
 		9FA9E282121FD874006E20C4 /* PanelCollapseTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FA9E280121FD874006E20C4 /* PanelCollapseTemplate.pdf */; };
 		9FAA44A711EB24A90042B986 /* NSString+BXStringFormatting.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAA44A611EB24A90042B986 /* NSString+BXStringFormatting.m */; };
 		9FAA451511EB40180042B986 /* Configuration.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9FAA451411EB40180042B986 /* Configuration.strings */; };
-		9FAD39D7142B5FC5005752E9 /* Munt.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FAD39D6142B5FC5005752E9 /* Munt.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		9FAD43C010A341F6007E8C0D /* UKFileWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD43B810A341F6007E8C0D /* UKFileWatcher.m */; };
 		9FAD43C110A341F6007E8C0D /* UKFNSubscribeFileWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD43BA10A341F6007E8C0D /* UKFNSubscribeFileWatcher.m */; };
 		9FAD43C310A341F6007E8C0D /* UKKQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FAD43BD10A341F6007E8C0D /* UKKQueue.m */; };
@@ -441,7 +444,7 @@
 				9F20C29711E5DA68005AF541 /* Sparkle.framework in Copy Bundled Frameworks */,
 				9FA2E5D9109D255300E50623 /* BGHUDAppKit.framework in Copy Bundled Frameworks */,
 				9FBC3D600F56EA82001811F2 /* SDL.framework in Copy Bundled Frameworks */,
-				9F42BA41142B6144000D5F5E /* Munt.framework in Copy Bundled Frameworks */,
+				9F34BE5C142B76F500A69FAF /* MT32Emu.framework in Copy Bundled Frameworks */,
 			);
 			name = "Copy Bundled Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -528,6 +531,13 @@
 		9F2C28A1129D906600B172C8 /* BXFirstRunWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFirstRunWindowController.m; sourceTree = "<group>"; };
 		9F2C28B7129D924E00B172C8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/FirstRunWindow.xib; sourceTree = "<group>"; };
 		9F348A9D128F004A0034E780 /* BXWelcomeButtonDraggingDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXWelcomeButtonDraggingDelegate.h; sourceTree = "<group>"; };
+		9F34BE3E142B700100A69FAF /* BXCoalfaceMT32.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXCoalfaceMT32.mm; sourceTree = "<group>"; };
+		9F34BE3F142B700100A69FAF /* BXCoalfaceMT32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCoalfaceMT32.h; sourceTree = "<group>"; };
+		9F34BE5A142B76D800A69FAF /* MT32Emu.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = MT32Emu.framework; sourceTree = "<group>"; };
+		9F34BE5D142B851700A69FAF /* BXEmulator+BXAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXEmulator+BXAudio.h"; sourceTree = "<group>"; };
+		9F34BE5E142B851700A69FAF /* BXEmulator+BXAudio.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "BXEmulator+BXAudio.mm"; sourceTree = "<group>"; };
+		9F34BE60142B917100A69FAF /* BXAppController+BXSupportFiles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXAppController+BXSupportFiles.h"; sourceTree = "<group>"; };
+		9F34BE61142B917100A69FAF /* BXAppController+BXSupportFiles.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXAppController+BXSupportFiles.m"; sourceTree = "<group>"; };
 		9F3E57A313F694B40070A14D /* BXEmulatorErrors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatorErrors.h; sourceTree = "<group>"; };
 		9F3E57A413F694B40070A14D /* BXEmulatorErrors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXEmulatorErrors.m; sourceTree = "<group>"; };
 		9F3FB1AD1306F88800DB8FBE /* BXScriptablePreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXScriptablePreferences.h; sourceTree = "<group>"; };
@@ -943,7 +953,6 @@
 		9FAA445511EB1CC40042B986 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Configuration.strings; sourceTree = "<group>"; };
 		9FAA44A511EB24A90042B986 /* NSString+BXStringFormatting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+BXStringFormatting.h"; sourceTree = "<group>"; };
 		9FAA44A611EB24A90042B986 /* NSString+BXStringFormatting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+BXStringFormatting.m"; sourceTree = "<group>"; };
-		9FAD39D6142B5FC5005752E9 /* Munt.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Munt.framework; sourceTree = "<group>"; };
 		9FAD43B710A341F6007E8C0D /* UKFileWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UKFileWatcher.h; sourceTree = "<group>"; };
 		9FAD43B810A341F6007E8C0D /* UKFileWatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UKFileWatcher.m; sourceTree = "<group>"; };
 		9FAD43B910A341F6007E8C0D /* UKFNSubscribeFileWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UKFNSubscribeFileWatcher.h; sourceTree = "<group>"; };
@@ -1199,7 +1208,7 @@
 				9FBAA8F4134AFABD0092BF95 /* DiskArbitration.framework in Frameworks */,
 				9F731AF513630820005E564F /* DDHidLib.framework in Frameworks */,
 				9F731B52136331A9005E564F /* IOKit.framework in Frameworks */,
-				9FAD39D7142B5FC5005752E9 /* Munt.framework in Frameworks */,
+				9F34BE5B142B76D800A69FAF /* MT32Emu.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1370,6 +1379,8 @@
 				9F70A09412F7471E00D144D2 /* BXAppController+BXApplicationModes.m */,
 				9F160E6F1236B2A600F8768E /* BXAppController+BXGamesFolder.h */,
 				9F160E701236B2A600F8768E /* BXAppController+BXGamesFolder.m */,
+				9F34BE60142B917100A69FAF /* BXAppController+BXSupportFiles.h */,
+				9F34BE61142B917100A69FAF /* BXAppController+BXSupportFiles.m */,
 				9F2122E31301BD72002AB1B7 /* BXHelperAppCheck.h */,
 				9F2122E41301BD72002AB1B7 /* BXHelperAppCheck.m */,
 				9F2122E81301BDE1002AB1B7 /* BXShelfAppearanceOperation.h */,
@@ -1439,6 +1450,8 @@
 				9F675DE40F8F4D49001FCE5F /* BXEmulator+BXDOSFileSystem.mm */,
 				9F44E5E210D17A4C0081B8D2 /* BXEmulator+BXPaste.h */,
 				9F44E5E310D17A4C0081B8D2 /* BXEmulator+BXPaste.mm */,
+				9F34BE5D142B851700A69FAF /* BXEmulator+BXAudio.h */,
+				9F34BE5E142B851700A69FAF /* BXEmulator+BXAudio.mm */,
 				9FF175E511B279F500D0FCDC /* BXVideoHandler.h */,
 				9FF175E611B279F500D0FCDC /* BXVideoHandler.mm */,
 				9FEBB70E11DF9BB50055933F /* BXEmulatorDelegate.h */,
@@ -1448,6 +1461,8 @@
 				9FDCA78F118F2B7900E2FD74 /* BXCoalface.mm */,
 				9FCA702013DAE6B1006C5DF8 /* BXCoalfaceDrives.h */,
 				9FCA702113DAE6F5006C5DF8 /* BXCoalfaceDrives.mm */,
+				9F34BE3F142B700100A69FAF /* BXCoalfaceMT32.h */,
+				9F34BE3E142B700100A69FAF /* BXCoalfaceMT32.mm */,
 				9F3E57A313F694B40070A14D /* BXEmulatorErrors.h */,
 				9F3E57A413F694B40070A14D /* BXEmulatorErrors.m */,
 			);
@@ -1756,7 +1771,6 @@
 				9F77210112B38C4400072AE8 /* fpu */,
 				9F77210512B38C4400072AE8 /* gui */,
 				9F77211B12B38C4400072AE8 /* hardware */,
-				9F77215112B38C4400072AE8 /* ints */,
 				9F77216412B38C4400072AE8 /* libs */,
 				9F77216B12B38C4400072AE8 /* misc */,
 				9F77217112B38C4400072AE8 /* shell */,
@@ -1767,6 +1781,7 @@
 		9F77209E12B38C4400072AE8 /* cpu */ = {
 			isa = PBXGroup;
 			children = (
+				9F77215112B38C4400072AE8 /* ints */,
 				9F77209F12B38C4400072AE8 /* callback.cpp */,
 				9F7720A012B38C4400072AE8 /* core_dyn_x86 */,
 				9F7720A812B38C4400072AE8 /* core_dyn_x86.cpp */,
@@ -2036,7 +2051,8 @@
 				9F77216212B38C4400072AE8 /* xms.cpp */,
 				9F77216312B38C4400072AE8 /* xms.h */,
 			);
-			path = ints;
+			name = ints;
+			path = ../ints;
 			sourceTree = "<group>";
 		};
 		9F77216412B38C4400072AE8 /* libs */ = {
@@ -2267,7 +2283,7 @@
 		9FBC3C130F56D6E8001811F2 /* Bundled Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				9FAD39D6142B5FC5005752E9 /* Munt.framework */,
+				9F34BE5A142B76D800A69FAF /* MT32Emu.framework */,
 				9F731AF413630820005E564F /* DDHidLib.framework */,
 				E5CF183F128F81AF0065844A /* PhysFS.framework */,
 				9F20C28A11E5D848005AF541 /* Sparkle.framework */,
@@ -2951,6 +2967,9 @@
 				9FB642A413FEB71D00385DD3 /* BXBinCueImage.m in Sources */,
 				9FE1B61313FFBE430001640C /* NSImage+BXImageEffects.m in Sources */,
 				9F740BDE142A24A400BA66B4 /* RegexKitLite.m in Sources */,
+				9F34BE40142B700100A69FAF /* BXCoalfaceMT32.mm in Sources */,
+				9F34BE5F142B851800A69FAF /* BXEmulator+BXAudio.mm in Sources */,
+				9F34BE62142B917100A69FAF /* BXAppController+BXSupportFiles.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

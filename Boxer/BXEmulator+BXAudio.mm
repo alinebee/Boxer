@@ -44,13 +44,16 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
 
 - (id) displayMT32LCDMessage: (NSString *)message
 {
-    //Crop the message to 14 characters
 #define MSG_LENGTH 20
 #define SYSEX_LENGTH 30
 #define SYSEX_ADDRESS_OFFSET 5
 #define SYSEX_MSG_OFFSET 8
 #define SYSEX_CHECKSUM_OFFSET SYSEX_LENGTH - 2
+
+    //Strip surrounding quotes from the message
+    message = [message stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @"\""]];
     
+    //Crop the message to 14 characters
     if ([message length] > MSG_LENGTH)
         message = [message substringToIndex: MSG_LENGTH];
     

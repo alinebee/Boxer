@@ -69,7 +69,7 @@
 	
 	if ([image isTemplate])
 	{
-		image = [image maskedImageWithColor: tint
+		image = [image imageFilledWithColor: tint
                                      atSize: frame.size];
 	}
 	

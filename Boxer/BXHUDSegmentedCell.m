@@ -221,7 +221,7 @@
 		if ([image isTemplate])
 		{
             NSColor *imageColor = [[[BGThemeManager keyedManager] themeForKey: self.themeKey] textColor];
-            image = [image maskedImageWithColor: imageColor atSize: [image size]];
+            image = [image imageFilledWithColor: imageColor atSize: [image size]];
 		}
 		
 		if([self labelForSegment: segment] != nil && ![[self labelForSegment: segment] isEqualToString: @""]) {

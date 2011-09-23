@@ -151,6 +151,15 @@ void MIDI_RawOutByte(Bit8u data) {
 				LOG(LOG_ALL,LOG_ERROR)("MIDI:Skipping invalid MT-32 SysEx midi message (too short to contain a checksum)");
 			} else {
 //				LOG(LOG_ALL,LOG_NORMAL)("Play sysex; address:%02X %02X %02X, length:%4d, delay:%3d", midi.sysex.buf[5], midi.sysex.buf[6], midi.sysex.buf[7], midi.sysex.used, midi.sysex.delay);
+                
+                if (midi.sysex.used >= 4)
+                {
+                    if (midi.sysex.buf[1] == 0x41 && midi.sysex.buf[3] == 0x16)
+                        printf("MT32 sysex\n");
+                    else
+                        printf("Unknown sysex: %02X %02X", midi.sysex.buf[1], midi.sysex.buf[3]);
+                }
+                
 				midi.handler->PlaySysex(midi.sysex.buf, midi.sysex.used);
 				if (midi.sysex.start) {
 					if (midi.sysex.buf[5] == 0x7F) {

@@ -22,6 +22,7 @@ typedef NSUInteger BXBezelPriority;
 
 //XIB view flags for indicating different view roles within a bezel
 enum {
+    BXBezelMessage          = 7,    //Message imparted by the bezel
     BXBezelIcon             = 1,    //Decorative icon for the bezel
     BXBezelLevel            = 2,    //Level indicator
     BXBezelLevelStatus      = 3,    //Label describing the status indicated in the level indicator
@@ -47,6 +48,7 @@ enum {
     IBOutlet NSView *throttleBezel;
     IBOutlet NSView *pauseBezel;
     IBOutlet NSView *playBezel;
+    IBOutlet NSView *MT32MessageBezel;
     
     BXBezelPriority currentPriority;
 }
@@ -72,6 +74,9 @@ enum {
 //The bezel view used for flightstick throttle notifications.
 @property (retain, nonatomic) NSView *throttleBezel;
 
+//The bezel view used for MT-32 LCD messages.
+@property (retain, nonatomic) NSView *MT32MessageBezel;
+
 //Pause/play bezel views.
 @property (retain, nonatomic) NSView *pauseBezel;
 @property (retain, nonatomic) NSView *playBezel;
@@ -96,7 +101,6 @@ enum {
 //Currently this always returns YES.
 - (BOOL) shouldShowDriveNotifications;
 
-
 - (void) showDriveAddedBezelForDrive: (BXDrive *)drive;
 - (void) showDriveRemovedBezelForDrive: (BXDrive *)drive;
 - (void) showDriveSwappedBezelFromDrive: (BXDrive *)fromDrive
@@ -109,6 +113,8 @@ enum {
 
 - (void) showFullscreenBezel;
 - (void) showJoystickIgnoredBezel;
+
+- (void) showMT32BezelForMessage: (NSString *)message;
 
 - (void) showCPUSpeedBezelForSpeed: (NSInteger)cpuSpeed;
 - (void) showThrottleBezelForValue: (float)throttleValue;

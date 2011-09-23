@@ -9,12 +9,18 @@
 
 @interface NSImage (BXImageEffects)
 
-//Returns an image filled with the specified color at the specified size,
-//using the current image as a mask. The resulting image will be a bitmap.
+//Returns a new version of the image filled with the specified color at the
+//specified size, using the current image's alpha channel. The resulting image
+//will be a bitmap.
 //Pass NSZeroSize as the size to use the size of the original image.
 //Intended for use with black-and-transparent template images,
 //although it will work with any image.
-- (NSImage *) maskedImageWithColor: (NSColor *)color atSize: (NSSize)targetSize;
+- (NSImage *) imageFilledWithColor: (NSColor *)color atSize: (NSSize)targetSize;
+
+//Returns a new version of the image masked by the specified image, at the
+//specified size. The resulting image will be a bitmap.
+- (NSImage *) imageMaskedByImage: (NSImage *)mask atSize: (NSSize)targetSize;
+
 
 //A partial implementation of 10.6's drawInRect:fromRect:operation:fraction:respectFlipped:hints
 //for 10.5. This does not support rendering hints but will correctly respect the graphics

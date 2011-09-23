@@ -15,6 +15,7 @@
 #import "BXPreferencesController.h"
 #import "BXWelcomeWindowController.h"
 #import "BXFirstRunWindowController.h"
+#import "BXBezelController.h"
 
 #import "BXSession+BXFileManager.h"
 #import "BXImportSession.h"
@@ -276,7 +277,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	//Sync Spaces shortcuts at startup in case we previously crashed
 	//and left them overridden
 	[self syncSpacesKeyboardShortcuts];
-
 }
 
 - (void) applicationDidFinishLaunching: (NSNotification *)notification

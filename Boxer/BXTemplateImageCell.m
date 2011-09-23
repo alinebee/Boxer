@@ -106,7 +106,7 @@
         NSColor *color = ([self isEnabled]) ? [self imageColor] : [self disabledImageColor];
         
         //Use the template image as a mask to create a new image composed entirely of one color.
-        NSImage *maskedImage = [[self image] maskedImageWithColor: color
+        NSImage *maskedImage = [[self image] imageFilledWithColor: color
                                                            atSize: scaledFrame.size];
 		
 		//Then, render the single-color image into the final context along with the drop shadow

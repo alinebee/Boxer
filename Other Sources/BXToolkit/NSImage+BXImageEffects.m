@@ -9,7 +9,7 @@
 
 @implementation NSImage (BXImageEffects)
 
-- (NSImage *) maskedImageWithColor: (NSColor *)color atSize: (NSSize)targetSize
+- (NSImage *) imageFilledWithColor: (NSColor *)color atSize: (NSSize)targetSize
 {
     if (NSEqualSizes(targetSize, NSZeroSize)) targetSize = [self size];
     
@@ -29,6 +29,26 @@
     
     return [maskedImage autorelease];
 }
+
+- (NSImage *) imageMaskedByImage: (NSImage *)image atSize: (NSSize)targetSize
+{
+    if (NSEqualSizes(targetSize, NSZeroSize)) targetSize = [self size];
+    
+    NSImage *maskedImage = [self copy];
+    [maskedImage setSize: targetSize];
+    
+    NSRect imageRect = NSMakeRect(0.0f, 0.0f, targetSize.width, targetSize.height);
+    
+    [maskedImage lockFocus];
+        [image drawInRect: imageRect
+                 fromRect: NSZeroRect
+                operation: NSCompositeDestinationIn 
+                 fraction: 1.0f];
+    [maskedImage unlockFocus];
+    
+    return [maskedImage autorelease];
+}
+
 
 - (void) drawInRect: (NSRect)dstSpacePortionRect
            fromRect: (NSRect)srcSpacePortionRect

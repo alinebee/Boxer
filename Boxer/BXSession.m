@@ -16,6 +16,7 @@
 #import "BXDOSWindow.h"
 #import "BXEmulatorConfiguration.h"
 #import "BXCloseAlert.h"
+#import "BXBezelController.h"
 
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulator+BXShell.h"
@@ -979,6 +980,12 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	
 	[self willChangeValueForKey: @"dynamic"];
 	[self didChangeValueForKey: @"dynamic"];	
+}
+
+- (void) emulatorDidDisplayMT32Message: (NSNotification *)notification
+{
+    NSString *message = [[notification userInfo] objectForKey: @"message"];
+    [[BXBezelController controller] showMT32BezelForMessage: message];
 }
 
 

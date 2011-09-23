@@ -26,12 +26,14 @@
 #define BXDriveBezelDuration 2.0
 #define BXCPUBezelDuration 0.75
 #define BXThrottleBezelDuration 0.75
+#define BXMT32MessageBezelDuration 4.0
 
 
 @implementation BXBezelController
 @synthesize driveAddedBezel, driveSwappedBezel, driveRemovedBezel, driveImportedBezel;
 @synthesize pauseBezel, playBezel, fullscreenBezel;
 @synthesize joystickIgnoredBezel, CPUSpeedBezel, throttleBezel;
+@synthesize MT32MessageBezel;
 
 + (NSImage *) bezelIconForDrive: (BXDrive *)drive
 {
@@ -77,6 +79,7 @@
     [self setCPUSpeedBezel: nil],           [CPUSpeedBezel release];
     [self setThrottleBezel: nil],           [throttleBezel release];
     [self setJoystickIgnoredBezel: nil],    [joystickIgnoredBezel release];
+    [self setMT32MessageBezel: nil],        [MT32MessageBezel release];
     
     [super dealloc];
 }
@@ -241,6 +244,25 @@
         forDuration: BXThrottleBezelDuration
            priority: BXBezelPriorityNormal];
 }
+
+- (void) showMT32BezelForMessage: (NSString *)message
+{
+    NSView *bezel = [self MT32MessageBezel];
+    
+    NSTextField *messageField = [bezel viewWithTag: BXBezelMessage];
+    
+    //TWEAK: if it's the same message getting spammed again and again,
+    //don't re-show the bezel. King's Quest IV likes to do this.
+    if (![[messageField stringValue] isEqualToString: message])
+    {
+        [messageField setStringValue: message];
+        
+        [self showBezel: bezel
+            forDuration: BXMT32MessageBezelDuration
+               priority: BXBezelPriorityNormal];
+    }
+}
+
 
 - (BOOL) shouldShowDriveNotifications
 {

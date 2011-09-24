@@ -53,7 +53,7 @@
 		9F2AC6E410EFFE8600CFFF72 /* BXBootlegCoverArt.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2AC6E310EFFE8600CFFF72 /* BXBootlegCoverArt.m */; };
 		9F2C28A2129D906600B172C8 /* BXFirstRunWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2C28A1129D906600B172C8 /* BXFirstRunWindowController.m */; };
 		9F2C28B8129D924E00B172C8 /* FirstRunWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F2C28B6129D924E00B172C8 /* FirstRunWindow.xib */; };
-		9F34BE40142B700100A69FAF /* BXCoalfaceMT32.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F34BE3E142B700100A69FAF /* BXCoalfaceMT32.mm */; };
+		9F34BE40142B700100A69FAF /* BXCoalfaceAudio.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F34BE3E142B700100A69FAF /* BXCoalfaceAudio.mm */; };
 		9F34BE5B142B76D800A69FAF /* MT32Emu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F34BE5A142B76D800A69FAF /* MT32Emu.framework */; };
 		9F34BE5C142B76F500A69FAF /* MT32Emu.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F34BE5A142B76D800A69FAF /* MT32Emu.framework */; };
 		9F34BE5F142B851800A69FAF /* BXEmulator+BXAudio.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F34BE5E142B851700A69FAF /* BXEmulator+BXAudio.mm */; };
@@ -534,8 +534,8 @@
 		9F2C28A1129D906600B172C8 /* BXFirstRunWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFirstRunWindowController.m; sourceTree = "<group>"; };
 		9F2C28B7129D924E00B172C8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/FirstRunWindow.xib; sourceTree = "<group>"; };
 		9F348A9D128F004A0034E780 /* BXWelcomeButtonDraggingDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXWelcomeButtonDraggingDelegate.h; sourceTree = "<group>"; };
-		9F34BE3E142B700100A69FAF /* BXCoalfaceMT32.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXCoalfaceMT32.mm; sourceTree = "<group>"; };
-		9F34BE3F142B700100A69FAF /* BXCoalfaceMT32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCoalfaceMT32.h; sourceTree = "<group>"; };
+		9F34BE3E142B700100A69FAF /* BXCoalfaceAudio.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXCoalfaceAudio.mm; sourceTree = "<group>"; };
+		9F34BE3F142B700100A69FAF /* BXCoalfaceAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCoalfaceAudio.h; sourceTree = "<group>"; };
 		9F34BE5A142B76D800A69FAF /* MT32Emu.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = MT32Emu.framework; sourceTree = "<group>"; };
 		9F34BE5D142B851700A69FAF /* BXEmulator+BXAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXEmulator+BXAudio.h"; sourceTree = "<group>"; };
 		9F34BE5E142B851700A69FAF /* BXEmulator+BXAudio.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "BXEmulator+BXAudio.mm"; sourceTree = "<group>"; };
@@ -1468,8 +1468,8 @@
 				9FDCA78F118F2B7900E2FD74 /* BXCoalface.mm */,
 				9FCA702013DAE6B1006C5DF8 /* BXCoalfaceDrives.h */,
 				9FCA702113DAE6F5006C5DF8 /* BXCoalfaceDrives.mm */,
-				9F34BE3F142B700100A69FAF /* BXCoalfaceMT32.h */,
-				9F34BE3E142B700100A69FAF /* BXCoalfaceMT32.mm */,
+				9F34BE3F142B700100A69FAF /* BXCoalfaceAudio.h */,
+				9F34BE3E142B700100A69FAF /* BXCoalfaceAudio.mm */,
 				9F3E57A313F694B40070A14D /* BXEmulatorErrors.h */,
 				9F3E57A413F694B40070A14D /* BXEmulatorErrors.m */,
 			);
@@ -2980,7 +2980,7 @@
 				9FB642A413FEB71D00385DD3 /* BXBinCueImage.m in Sources */,
 				9FE1B61313FFBE430001640C /* NSImage+BXImageEffects.m in Sources */,
 				9F740BDE142A24A400BA66B4 /* RegexKitLite.m in Sources */,
-				9F34BE40142B700100A69FAF /* BXCoalfaceMT32.mm in Sources */,
+				9F34BE40142B700100A69FAF /* BXCoalfaceAudio.mm in Sources */,
 				9F34BE5F142B851800A69FAF /* BXEmulator+BXAudio.mm in Sources */,
 				9F34BE62142B917100A69FAF /* BXAppController+BXSupportFiles.m in Sources */,
 				9FBEC4F0142CE8300016964A /* BXMT32LCDDisplay.m in Sources */,

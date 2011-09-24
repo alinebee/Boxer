@@ -3,7 +3,7 @@
 #include "control.h"
 #include "SDL_thread.h"
 //--Added 2011-09-22 by Alun Bestor to allow Boxer to hook into MT-32 emulation. 
-#import "BXCoalfaceMT32.h"
+#import "BXCoalfaceAudio.h"
 //--End of modifications
 
 #include <iostream>

@@ -7,7 +7,7 @@
 
 #import <Foundation/Foundation.h>
 #import "BXEmulatorPrivate.h"
-#import "BXCoalfaceMT32.h"
+#import "BXCoalfaceAudio.h"
 #import "RegexKitLite.h"
 #import "MT32Emu/FileStream.h"
 #import <CoreFoundation/CFByteOrder.h>

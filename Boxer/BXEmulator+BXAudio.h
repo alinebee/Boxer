@@ -14,11 +14,26 @@
 @protocol BXMIDIDevice;
 @interface BXEmulator (BXAudio) <BXEmulatedMT32Delegate>
 
+#pragma mark -
+#pragma mark Helper class methods
+
+//Returns YES if the specified sysex message is explicitly intended
+//for a Roland MT-32, NO otherwise.
++ (BOOL) isMT32Sysex: (uint8_t *)message length: (NSUInteger)length;
+
+//Returns YES if the specified sysex message is a generic message
+//expected to be supported by any General MIDI-compliant device,
+//or NO if it is manufacturer-specific (or not a valid sysex.)
++ (BOOL) isGeneralMIDISysex: (uint8_t *)message length: (NSUInteger)length;
+
+
+#pragma mark -
+#pragma mark MIDI processing
 
 //Sends an LCD message via Sysex to the MT-32 emulator
 //(or to a real MT-32, in CoreMIDI mode.)
 //Intended for debugging.
-- (id) displayMT32LCDMessage: (NSString *)message;
+- (void) sendMT32LCDMessage: (NSString *)message;
 
 //Creates a new MIDI device of the specified type, ready for use by the emulator
 //but not assigned as the active device.
@@ -30,9 +45,6 @@
 - (BOOL) attachMIDIDeviceOfType: (BXMIDIDeviceType)type error: (NSError **)outError;
 
 - (void) sendMIDIMessage: (uint8_t *)message length: (NSUInteger)length;
-- (void) sendMIDISysEx: (uint8_t *)message length: (NSUInteger)length;
+- (void) sendMIDISysex: (uint8_t *)message length: (NSUInteger)length;
 
-//Returns YES if the specified sysex message is explicitly intended
-//for a Roland MT-32, NO otherwise.
-- (BOOL) isMT32SysEx: (uint8_t *)message length: (NSUInteger)length;
 @end

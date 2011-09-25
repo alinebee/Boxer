@@ -196,7 +196,7 @@
     MusicDeviceMIDIEvent(unit, status, data1, data2, 0);
 }
 
-- (void) handleSysEx: (const UInt8 *)message length: (NSUInteger)length
+- (void) handleSysex: (const UInt8 *)message length: (NSUInteger)length
 {
     NSAssert(unit != NULL, @"handleSysEx:length: called before successful initialization.");
     

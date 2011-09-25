@@ -41,5 +41,5 @@ void boxer_sendMIDIMessage(Bit8u *msg)
 
 void boxer_sendMIDISysEx(Bit8u *msg, Bit8u len)
 {
-    [[BXEmulator currentEmulator] sendMIDISysEx: msg length: len];
+    [[BXEmulator currentEmulator] sendMIDISysex: msg length: len];
 }

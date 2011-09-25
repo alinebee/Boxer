@@ -35,7 +35,7 @@
                 length: (NSUInteger)length;
 
 //Play a System Exclusive message of arbitrary length.
-- (void) handleSysEx: (const UInt8 *)message
+- (void) handleSysex: (const UInt8 *)message
               length: (NSUInteger)length;
 
 //Pause/resume MIDI playback.

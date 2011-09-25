@@ -10,6 +10,7 @@
 #import "BXDrive.h"
 #import "BXValueTransformers.h"
 #import "BXAppController.h"
+#import "BXEmulatedMT32.h"
 
 #import "shell.h"
 
@@ -23,7 +24,7 @@ NSDictionary *commandList = [[NSDictionary alloc] initWithObjectsAndKeys:
 	@"revealPath:",				@"boxer_reveal",
 	@"showShellCommandHelp:",	@"help",
 	@"listDrives:",				@"boxer_drives",
-    @"displayMT32LCDMessage:",  @"boxer_mt32say",
+    @"sayToMT32:",              @"boxer_mt32say",
 	
 	//Handled by BXDOSWindowController
 	@"toggleFullScreenWithZoom:",					@"fullscreen",
@@ -283,6 +284,15 @@ nil];
 	return [NSNumber numberWithBool: YES];
 }
 
+- (id) sayToMT32: (NSString *)argumentString
+{
+    //Strip surrounding quotes from the message
+    NSString *cleanedString = [argumentString stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @"\""]];
+    
+    [self sendMT32LCDMessage: cleanedString];
+    return [NSNumber numberWithBool: YES];
+}
+
 - (id) revealPath: (NSString *)argumentString
 {
 	NSString *cleanedPath = [argumentString stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
@@ -502,6 +512,15 @@ nil];
     //input now that it has returned to the DOS prompt.
 	[[self mouse] setActive: NO];
     [self setJoystickActive: NO];
+    
+    //If Boxer had autodetected an MT-32, clear the music device now
+    //so that we can redetect it next time we run a program. (Handles
+    //users trying out different music options in the game's setup.)
+    if ([self preferredMIDIDeviceType] == BXMIDIDeviceTypeAuto &&
+        [[self activeMIDIDevice] isKindOfClass: [BXEmulatedMT32 class]])
+        [self setActiveMIDIDevice: nil];
+
+
     
 	[self _postNotificationName: BXEmulatorDidReturnToShellNotification
 			   delegateSelector: @selector(emulatorDidReturnToShell:)

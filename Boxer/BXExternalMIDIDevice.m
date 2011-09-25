@@ -215,7 +215,7 @@
 
 }
 
-- (void) handleSysEx: (const UInt8 *)message length: (NSUInteger)length
+- (void) handleSysex: (const UInt8 *)message length: (NSUInteger)length
 {
     //IMPLEMENTATION NOTE: we should send the message with MIDISendSysex,
     //which is asynchronous and designed for large datasets. However, that
@@ -228,8 +228,8 @@
 
 - (void) pause
 {
-    //Send All Notes Off signals to channels 0-15 to kill any lingering notes. This has been
-    //tested on an MT-32 and is valid according to the MIDI spec:
+    //Send All Notes Off signals to channels 0-15 to kill any lingering notes.
+    //This has been tested on an MT-32 and is valid according to the MIDI spec:
     //http://www.midi.org/techspecs/midimessages.php
 	
     UInt8 message[3] = {BXChannelModeChangePrefix, BXAllNotesOffMessage, 0};

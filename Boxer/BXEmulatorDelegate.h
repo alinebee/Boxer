@@ -77,12 +77,16 @@ extern NSString * const BXEmulatorDidDisplayMT32MessageNotification;
 //Return NO to prevent the mount.
 - (BOOL) emulator: (BXEmulator *)emulator shouldMountDriveFromShell: (NSString *)drive;
 
+//Return the filesystem paths for the ROMs that the emulator should use.
+- (NSString *) pathToMT32ControlROMForEmulator: (BXEmulator *)emulator;
+- (NSString *) pathToMT32PCMROMForEmulator: (BXEmulator *)emulator;
+
 
 #pragma mark -
 #pragma mark Lifecycle notifications
 
-//These are sent to the emulator delegate if defined, and posted on the default notification center.
 
+//These are sent to the emulator delegate if defined, and posted on the default notification center.
 @optional
 
 //Posted when the emulator is about to start up.
@@ -118,6 +122,9 @@ extern NSString * const BXEmulatorDidDisplayMT32MessageNotification;
 //(Currently no information is provided about what, if anything, has changed.)
 - (void) emulatorDidChangeEmulationState:	(NSNotification *)notification;
 
+//Posted whenever a game tells the MT-32 to display an LCD message.
+- (void) emulatorDidDisplayMT32Message: (NSNotification *)notification;
+
 @end
 
 
@@ -137,16 +144,3 @@ extern NSString * const BXEmulatorDidDisplayMT32MessageNotification;
 
 @end
 
-
-@protocol BXEmulatorMT32EmulationDelegate <NSObject>
-
-//Return the filesystem paths for the ROMs that the emulator should use.
-- (NSString *) pathToMT32ControlROMForEmulator: (BXEmulator *)emulator;
-- (NSString *) pathToMT32PCMROMForEmulator: (BXEmulator *)emulator;
-
-@optional
-
-//Posted whenever a game tells the MT-32 to display an LCD message.
-- (void) emulatorDidDisplayMT32Message: (NSNotification *)notification;
-
-@end

@@ -15,6 +15,7 @@
 #import "BXEmulator+BXShell.h"
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulator+BXAudio.h"
+#import "BXMIDIDevice.h"
 #import "BXVideoHandler.h"
 #import "BXEmulatedKeyboard.h"
 #import "BXEmulatedJoystick.h"

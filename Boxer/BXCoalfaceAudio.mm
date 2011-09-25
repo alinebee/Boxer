@@ -9,63 +9,37 @@
 #import "BXEmulatorPrivate.h"
 #import "BXCoalfaceAudio.h"
 #import "RegexKitLite.h"
-#import "MT32Emu/FileStream.h"
 #import <CoreFoundation/CFByteOrder.h>
 
+extern Bit8u MIDI_evt_len[256];
 
-MT32Emu::File *boxer_openMT32ROM(void *userData, const char *filename)
+void boxer_suggestMIDIHandler(const char *handlerName)
+{
+    NSString *name = [[NSString stringWithCString: handlerName encoding: BXDirectStringEncoding] lowercaseString];
+    
+    BXMIDIDeviceType preferredType = BXMIDIDeviceTypeAuto;
+    
+    if      ([name isEqualToString: @"mt32"])       preferredType = BXMIDIDeviceTypeMT32;
+    else if ([name isEqualToString: @"coreaudio"])  preferredType = BXMIDIDeviceTypeGeneralMIDI;
+    else if ([name isEqualToString: @"coremidi"])   preferredType = BXMIDIDeviceTypeExternal;
+    
+    [[BXEmulator currentEmulator] setPreferredMIDIDeviceType: preferredType];
+}
+
+bool boxer_MIDIAvailable()
 {
     BXEmulator *emulator = [BXEmulator currentEmulator];
-    
-    NSString *requestedROMName = [NSString stringWithUTF8String: filename];
-    NSString *ROMPath = [emulator _pathForMT32ROMNamed: requestedROMName];
-    
-    if (ROMPath)
-    {
-        MT32Emu::FileStream *file = new MT32Emu::FileStream();
-        if (!file->open([ROMPath fileSystemRepresentation]))
-        {
-            delete file;
-            return NULL;
-        }
-        else return file;
-    }
-    else return NULL;
+    return [emulator activeMIDIDevice] != nil || [emulator preferredMIDIDeviceType] != BXMIDIDeviceTypeNone;
 }
 
-void boxer_closeMT32ROM(void *userData, MT32Emu::File *file)
+void boxer_sendMIDIMessage(Bit8u *msg)
 {
-    file->close();
+    //Look up how long the message is expected to be, based on the type of message.
+    NSUInteger len = MIDI_evt_len[*msg];
+    [[BXEmulator currentEmulator] sendMIDIMessage: msg length: len];
 }
 
-//Callback for reporting various messages from the MT-32 emulator.
-int boxer_reportMT32Message(void *userData, MT32Emu::ReportType type, const void *reportData)
+void boxer_sendMIDISysEx(Bit8u *msg, Bit8u len)
 {
-    switch (type)
-    {
-        case MT32Emu::ReportType_lcdMessage:
-            {
-                NSString *message = [NSString stringWithUTF8String: (const char *)reportData];
-                [[BXEmulator currentEmulator] _didDisplayMT32LCDMessage: message];
-            }
-            break;
-        default:
-#ifdef BOXER_DEBUG
-            NSLog(@"MT-32 message of type: %d", type);
-#endif
-    }
-    return 0;
-}
-
-void boxer_logMT32DebugMessage(void *userData, const char *fmt, va_list list)
-{
-#ifdef BOXER_DEBUG
-    NSLogv([NSString stringWithUTF8String: fmt], list);
-#endif
-}
-
-Bit32u boxer_MIDIMessageToLong(Bit8u *msg)
-{
-    Bit32u longMsg = ((Bit32u*)msg)[0];
-    return CFSwapInt32LittleToHost(longMsg);
+    [[BXEmulator currentEmulator] sendMIDISysEx: msg length: len];
 }

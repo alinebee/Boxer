@@ -32,8 +32,10 @@ extern "C" {
 #define GFX_SetPalette boxer_setPalette
 #define GFX_GetBestMode boxer_idealOutputMode
 #define GFX_ShowMsg boxer_log
+#define MIDI_Available boxer_MIDIAvailable
 #define E_Exit(format,...) boxer_die(__PRETTY_FUNCTION__, __FILE__, __LINE__, format, ##__VA_ARGS__)
-	
+
+    
 	class DOS_Drive;
 	
 	Bitu boxer_prepareForFrameSize(Bitu width, Bitu height, Bitu gfx_flags, double scalex, double scaley, GFX_CallBack_t callback);

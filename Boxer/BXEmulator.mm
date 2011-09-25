@@ -63,9 +63,6 @@ NSString * const BXDOSBoxErrorDomain = @"BXDOSBoxErrorDomain";
 #pragma mark -
 #pragma mark External function definitions
 
-//Defined by us in midi.cpp
-void boxer_toggleMIDIOutput(bool enabled);
-
 //defined in dos_execute.cpp
 extern const char* RunningProgram;
 
@@ -87,10 +84,13 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 @synthesize processName, processPath, processLocalPath;
 @synthesize delegate;
 @synthesize configFiles;
-@synthesize commandQueue;
 @synthesize videoHandler;
 @synthesize mouse, keyboard, joystick, joystickActive;
 @synthesize cancelled, executing, initialized;
+
+@synthesize commandQueue;
+
+@synthesize activeMIDIDevice, preferredMIDIDeviceType;
 
 
 #pragma mark -
@@ -446,7 +446,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	if ([self isExecuting] && !isInterrupted)
 	{
 		SDL_PauseAudio(YES);
-		boxer_toggleMIDIOutput(NO);
+        [[self activeMIDIDevice] pause];
 		isInterrupted = YES;
 	}
 }
@@ -456,7 +456,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	if ([self isExecuting] && isInterrupted)
 	{
 		SDL_PauseAudio(NO);
-		boxer_toggleMIDIOutput(YES);
+        [[self activeMIDIDevice] resume];
 		isInterrupted = NO;
 	}
 }

@@ -50,6 +50,14 @@ enum {
 };
 typedef NSUInteger BXJoystickSupportLevel;
 
+enum {
+    BXMIDIDeviceTypeAuto        = -1,
+    BXMIDIDeviceTypeNone        = 0,
+    BXMIDIDeviceTypeGeneralMIDI = 1,
+    BXMIDIDeviceTypeMT32        = 2,
+    BXMIDIDeviceTypeExternal    = 3
+};
+typedef NSInteger BXMIDIDeviceType;
 
 //C string encodings, used by BXShell executeCommand:encoding: and executeCommand:withArgumentString:encoding:
 extern NSStringEncoding BXDisplayStringEncoding;	//Used for strings that will be displayed to the user
@@ -62,6 +70,8 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 
 @protocol BXEmulatedJoystick;
 @protocol BXEmulatorDelegate;
+
+@protocol BXMIDIDevice;
 
 @interface BXEmulator : NSObject
 {
@@ -87,6 +97,10 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 	
 	//Used by BXShell
 	NSMutableArray *commandQueue;
+    
+    //Used by BXAudio
+    id <BXMIDIDevice> activeMIDIDevice;
+    BXMIDIDeviceType preferredMIDIDeviceType;
 }
 
 
@@ -104,9 +118,6 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 //An array of OS X paths to configuration files that will be/have been loaded by this session during startup.
 //This is read-only: configuration files can be loaded via applyConfigurationAtPath:
 @property (readonly, nonatomic) NSArray *configFiles;
-
-//An array of queued command strings to execute on the DOS command line.
-@property (readonly, nonatomic) NSMutableArray *commandQueue;
 
 //The OS X filesystem path to which the emulator should resolve relative local filesystem paths.
 //This is used by DOSBox commands like MOUNT, IMGMOUNT and CONFIG, and is directly equivalent
@@ -173,6 +184,17 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 //Whether the current program has indicated that it accepts joystick input,
 //by attempting to read from the gameport.
 @property (readonly, nonatomic) BOOL joystickActive;
+
+//An array of queued command strings to execute on the DOS command line.
+@property (readonly, nonatomic) NSMutableArray *commandQueue;
+
+//The kind of MIDI device expected by the game we're playing. Populated
+//based on the mididevice property in the gamebox configuration file.
+@property (assign, nonatomic) BXMIDIDeviceType preferredMIDIDeviceType;
+
+//The device to which we are currently sending MIDI signals.
+//One of MT32MIDIDevice, MIDISynth or externalMIDIDevice.
+@property (retain, nonatomic) id <BXMIDIDevice> activeMIDIDevice;
 
 
 #pragma mark -

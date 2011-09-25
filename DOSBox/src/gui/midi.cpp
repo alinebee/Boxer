@@ -33,6 +33,10 @@
 #include "hardware.h"
 #include "timer.h"
 
+//--Added 2011-09-25 by Alun Bestor to let Boxer hook into MIDI messaging
+#include "BXCoalfaceAudio.h"
+//--End of modifications
+
 #define SYSEX_SIZE 1024
 #define RAWBUF	1024
 
@@ -76,40 +80,37 @@ public:
 	virtual const char * GetName(void) { return "none"; };
 	virtual ~MidiHandler() { };
 	MidiHandler * next;
-
-
-	//--Added 2009-03-11 by Alun Bestor to allow Boxer to mute/unmute MIDI output
-	virtual void boxer_mute() {};
-	virtual void boxer_unmute() {};
-	//--End of modifications
 };
 
 MidiHandler Midi_none;
 
 /* Include different midi drivers, lowest ones get checked first for default */
 
-#include "midi_mt32.h"
+//--Disabled 2011-09-25 by Alun Bestor: all MIDI handling is now done by Boxer
 
-#if defined(MACOSX)
+//#if defined(MACOSX)
+//
+//#include "midi_coremidi.h"
+//#include "midi_coreaudio.h"
+//
+//#elif defined (WIN32)
+//
+//#include "midi_win32.h"
+//
+//#else
+//
+//#include "midi_oss.h"
+//
+//#endif
+//
+//#if defined (HAVE_ALSA)
+//
+//#include "midi_alsa.h"
+//
+//#endif
 
-#include "midi_coremidi.h"
-#include "midi_coreaudio.h"
+//--End of modifications
 
-#elif defined (WIN32)
-
-#include "midi_win32.h"
-
-#else
-
-#include "midi_oss.h"
-
-#endif
-
-#if defined (HAVE_ALSA)
-
-#include "midi_alsa.h"
-
-#endif
 
 static struct {
 	Bitu status;
@@ -136,7 +137,10 @@ void MIDI_RawOutByte(Bit8u data) {
 	/* Test for a realtime MIDI message */
 	if (data>=0xf8) {
 		midi.rt_buf[0]=data;
-		midi.handler->PlayMsg(midi.rt_buf);
+        //--Replaced 2011-09-25 by Alun Bestor to pass messages on to our own MIDI handling
+        //midi.handler->PlayMsg(midi.rt_buf);
+        boxer_sendMIDIMessage(midi.rt_buf);
+        //--End of modifications
 		return;
 	}	 
 	/* Test for a active sysex tranfer */
@@ -152,15 +156,11 @@ void MIDI_RawOutByte(Bit8u data) {
 			} else {
 //				LOG(LOG_ALL,LOG_NORMAL)("Play sysex; address:%02X %02X %02X, length:%4d, delay:%3d", midi.sysex.buf[5], midi.sysex.buf[6], midi.sysex.buf[7], midi.sysex.used, midi.sysex.delay);
                 
-                if (midi.sysex.used >= 4)
-                {
-                    if (midi.sysex.buf[1] == 0x41 && midi.sysex.buf[3] == 0x16)
-                        printf("MT32 sysex\n");
-                    else
-                        printf("Unknown sysex: %02X %02X", midi.sysex.buf[1], midi.sysex.buf[3]);
-                }
+                //--Replaced 2011-09-25 by Alun Bestor to pass messages on to our own MIDI handling
+				//midi.handler->PlaySysex(midi.sysex.buf, midi.sysex.used);
+                boxer_sendMIDISysEx(midi.sysex.buf, midi.sysex.used);
+                //--End of modifications
                 
-				midi.handler->PlaySysex(midi.sysex.buf, midi.sysex.used);
 				if (midi.sysex.start) {
 					if (midi.sysex.buf[5] == 0x7F) {
 						midi.sysex.delay = 290; // All Parameters reset
@@ -200,21 +200,33 @@ void MIDI_RawOutByte(Bit8u data) {
 			if (CaptureState & CAPTURE_MIDI) {
 				CAPTURE_AddMidi(false, midi.cmd_len, midi.cmd_buf);
 			}
-			midi.handler->PlayMsg(midi.cmd_buf);
+            
+            //--Replaced 2011-09-25 by Alun Bestor to pass messages on to our own MIDI handling
+            //midi.handler->PlayMsg(midi.cmd_buf);
+            boxer_sendMIDIMessage(midi.cmd_buf);
+            //--End of modifications
+            
 			midi.cmd_pos=1;		//Use Running status
 		}
 	}
 }
 
-bool MIDI_Available(void)  {
-	return midi.available;
-}
+//--Disabled 2011-09-25 by Alun Bestor to let Boxer field such questions itself
+//bool MIDI_Available(void)  {
+//	return midi.available;
+//}
+//--End of modifications
 
 class MIDI:public Module_base{
 public:
 	MIDI(Section* configuration):Module_base(configuration){
 		Section_prop * section=static_cast<Section_prop *>(configuration);
 		const char * dev=section->Get_string("mididevice");
+        
+        //--Added 2011-09-25 by Alun Bestor to let Boxer pick up on the suggested MIDI device
+        boxer_suggestMIDIHandler(dev);
+        //--End of modifications
+        
 		std::string fullconf=section->Get_string("midiconfig");
 		/* If device = "default" go for first handler that works */
 		MidiHandler * handler;
@@ -231,6 +243,11 @@ public:
 		midi.status=0x00;
 		midi.cmd_pos=0;
 		midi.cmd_len=0;
+        
+        //--Modified 2011-09-25 by Alun Bestor: DOSBox's MIDI handlers are all disabled,
+        //so skip straight to the 'none' handler.
+        goto getdefault;
+        
 		if (!strcasecmp(dev,"default")) goto getdefault;
 		handler=handler_list;
 		while (handler) {
@@ -276,13 +293,3 @@ void MIDI_Init(Section * sec) {
 	test = new MIDI(sec);
 	sec->AddDestroyFunction(&MIDI_Destroy,true);
 }
-
-
-//--Added 2009-03-11 by Alun Bestor to allow Boxer to mute/unmute MIDI output
-void boxer_toggleMIDIOutput(bool enabled)
-{
-	if (!midi.available) return;
-	if (enabled)	midi.handler->boxer_unmute();
-	else			midi.handler->boxer_mute();
-}
-//--End of modifications

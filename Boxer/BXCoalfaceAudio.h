@@ -5,25 +5,14 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-//BXCoalfaceMT32 defines C++-facing Boxer hooks for MUNT MT-32 emulation.
-//These (mostly) pass the decision-making upstairs to the BXEmulator+BXAudio category.
-
 #import "BXCoalface.h"
-#import "MT32Emu/mt32emu.h"
 
+//Tell BXEmulator what the preferred MIDI handler is, as defined in the DOSBox configuration.
+void boxer_suggestMIDIHandler(const char *handlerName);
 
-//Callback for loading ROM files.
-MT32Emu::File *boxer_openMT32ROM(void *userData, const char *filename);
+//Tells DOSBox whether MIDI is currently available or not.
+bool boxer_MIDIAvailable();
 
-//Callback for closing ROM files.
-void boxer_closeMT32ROM(void *userData, MT32Emu::File *file);
-
-//Callback for reporting various messages from the MT-32 emulator.
-int boxer_reportMT32Message(void *userData, MT32Emu::ReportType type, const void *reportData);
-
-//Callback for debug/error messages from the MT-32 emulator.
-void boxer_logMT32DebugMessage(void *userData, const char *fmt, va_list list);
-
-//Convert a 4-byte array to a 32-bit integer for MT32Emu::Synth->playMsg calls,
-//maintaining the expected endianness.
-Bit32u boxer_MIDIMessageToLong(Bit8u *msg);
+//Dispatch MIDI messages sent from DOSBox's MPU-401 emulation.
+void boxer_sendMIDIMessage(Bit8u *msg);
+void boxer_sendMIDISysEx(Bit8u *msg, Bit8u len);

@@ -118,6 +118,7 @@ BXEmulatedMT32 *_currentEmulatedMT32;
 - (void) handleSysex: (const UInt8 *)message length: (NSUInteger)length
 {
     NSAssert(_synth, @"handleSysEx:length: called before successful initialization.");
+    
     if (message[0] == 0xf0) _synth->playSysex(message, length);
     else _synth->playSysexWithoutFraming(message, length);
 }

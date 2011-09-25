@@ -15,4 +15,4 @@ bool boxer_MIDIAvailable();
 
 //Dispatch MIDI messages sent from DOSBox's MPU-401 emulation.
 void boxer_sendMIDIMessage(Bit8u *msg);
-void boxer_sendMIDISysEx(Bit8u *msg, Bit8u len);
+void boxer_sendMIDISysex(Bit8u *msg, Bitu len);

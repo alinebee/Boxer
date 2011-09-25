@@ -158,7 +158,7 @@ void MIDI_RawOutByte(Bit8u data) {
                 
                 //--Replaced 2011-09-25 by Alun Bestor to pass messages on to our own MIDI handling
 				//midi.handler->PlaySysex(midi.sysex.buf, midi.sysex.used);
-                boxer_sendMIDISysEx(midi.sysex.buf, midi.sysex.used);
+                boxer_sendMIDISysex(midi.sysex.buf, midi.sysex.used);
                 //--End of modifications
                 
 				if (midi.sysex.start) {

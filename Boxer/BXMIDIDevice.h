@@ -42,4 +42,10 @@
 - (void) pause;
 - (void) resume;
 
+//Close down the connection and free up all resources.
+//Should be called by dealloc, but may be called sooner manually.
+//After this has been called, the MIDI device is expected to be
+//in an unusable state.
+- (void) close;
+
 @end

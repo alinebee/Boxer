@@ -102,12 +102,15 @@ enum {
 
 - (DOS_Shell *) _currentShell;
 
-//Called during DOSBox's event handling function: returns YES to abort event handling
-//for that loop or NO to continue it.
-- (BOOL) _handleEventLoop;
+//Called when DOSBox is ready to process events during the run loop.
+- (void) _processEvents;
 
-//Called during DOSBox's run loop: returns YES to short-circuit the loop.
-- (BOOL) _handleRunLoop;
+//Called during DOSBox's run loop: return NO to short-circuit the loop.
+- (BOOL) _runLoopShouldContinue;
+
+//Called at the start and end of each iteration of DOSBox's run loop.
+- (void) _runLoopWillStart;
+- (void) _runLoopDidFinish;
 
 //Called at emulator startup.
 - (void) _startDOSBox;

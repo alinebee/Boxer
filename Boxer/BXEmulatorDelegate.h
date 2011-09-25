@@ -67,10 +67,12 @@ extern NSString * const BXEmulatorDidDisplayMT32MessageNotification;
 //it wants to with the fully-prepared session.
 - (void) runLaunchCommandsForEmulator: (BXEmulator *)emulator;
 
-//Tells the delegate that the emulator has started/finished one iteration of its run loop.
-//This is currently a misnomer: BXEmulator calls these in the middle of its run loop.
-//This names will be more accurate once BXEmulator is multithreaded/multiprocess.
-- (void) emulatorDidBeginRunLoop: (BXEmulator *)emulator;
+//Called when the emulator is ready to process events for the current
+//iteration of its run loop.
+- (void) processEventsForEmulator: (BXEmulator *)emulator;
+
+//Called whenever the emulator starts/finishes one iteration of its run loop.
+- (void) emulatorWillStartRunLoop: (BXEmulator *)emulator;
 - (void) emulatorDidFinishRunLoop: (BXEmulator *)emulator;
 
 //Called whenever a path is mounted from the DOS MOUNT command.

@@ -43,6 +43,15 @@
 
 - (void) dealloc
 {
+    [self close];
+    
+    [soundFontPath release], soundFontPath = nil;
+    
+    [super dealloc];
+}
+
+- (void) close
+{
     if (graph)
     {
         AUGraphStop(graph);
@@ -50,11 +59,8 @@
     }
     graph = NULL;
     unit = NULL;
-    
-    [soundFontPath release], soundFontPath = nil;
-    
-    [super dealloc];
 }
+
 
 - (BOOL) _prepareAudioGraphWithError: (NSError **)outError
 {

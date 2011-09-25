@@ -129,7 +129,7 @@ static Bitu Normal_Loop(void) {
 	Bits ret;
 	while (1) {
 		//--Added 2009-12-27 by Alun Bestor to short-circuit the emulation loop when we need to
-		if (boxer_handleRunLoop()) return 1;
+		if (!boxer_runLoopShouldContinue()) return 1;
 		//--End of modifications
 		
 		if (PIC_RunQueue()) {
@@ -245,7 +245,12 @@ void DOSBOX_SetNormalLoop() {
 void DOSBOX_RunMachine(void){
 	Bitu ret;
 	do {
+        //--Modified 2011-09-25 by Alun Bestor to bracket iterations of the run loop
+        //with our own callbacks.
+        boxer_runLoopWillStart();
 		ret=(*loop)();
+        boxer_runLoopDidFinish();
+        //--End of modifications.
 	} while (!ret);
 }
 

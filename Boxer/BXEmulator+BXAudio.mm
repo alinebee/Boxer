@@ -112,7 +112,8 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
 # pragma mark -
 # pragma mark MIDI output handling
 
-- (id <BXMIDIDevice>) MIDIDeviceForType: (BXMIDIDeviceType)type error: (NSError **)outError
+- (id <BXMIDIDevice>) MIDIDeviceForType: (BXMIDIDeviceType)type
+                                  error: (NSError **)outError
 {
     id <BXMIDIDevice> device = nil;
     

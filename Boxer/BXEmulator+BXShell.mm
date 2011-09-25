@@ -518,8 +518,9 @@ nil];
     //users trying out different music options in the game's setup.)
     if ([self preferredMIDIDeviceType] == BXMIDIDeviceTypeAuto &&
         [[self activeMIDIDevice] isKindOfClass: [BXEmulatedMT32 class]])
+    {
         [self setActiveMIDIDevice: nil];
-
+    }
 
     
 	[self _postNotificationName: BXEmulatorDidReturnToShellNotification

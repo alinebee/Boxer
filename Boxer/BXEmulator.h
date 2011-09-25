@@ -94,6 +94,10 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 	BOOL executing;
 	BOOL initialized;
 	BOOL isInterrupted;
+    
+    //The autorelease pool for the current iteration of DOSBox's run loop.
+    //Created in _willStartRunLoop and released in _didFinishRunLoop.
+    NSAutoreleasePool *poolForRunLoop;
 	
 	//Used by BXShell
 	NSMutableArray *commandQueue;

@@ -97,9 +97,15 @@
 
 - (void) dealloc
 {
+    [self close];
+    [super dealloc];
+}
+
+- (void) close
+{
     if (_port)
     {
-        //Ensure the device stops playing notes before shutting down
+        //Ensure the device stops playing notes when closing
         [self pause];
         
         MIDIPortDispose(_port);
@@ -114,8 +120,6 @@
     
     //This does not need disposing, because we did not create it ourselves
     _destination = NULL;
-    
-    [super dealloc];
 }
 
 - (BOOL) _connectToDestination: (MIDIEndpointRef)destination

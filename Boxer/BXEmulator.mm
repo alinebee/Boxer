@@ -205,7 +205,8 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 - (void) dealloc
 {	
 	[self setProcessName: nil],	[processName release];
-	
+	[self setActiveMIDIDevice: nil], [activeMIDIDevice release];
+    
 	[videoHandler release], videoHandler = nil;
 	
 	[mouse release],	mouse = nil;
@@ -215,6 +216,8 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	[driveCache release], driveCache = nil;
 	[configFiles release], configFiles = nil;
 	[commandQueue release], commandQueue = nil;
+    
+    [poolForRunLoop drain], poolForRunLoop = nil;
 	
 	[super dealloc];
 }
@@ -686,27 +689,44 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 #pragma mark -
 #pragma mark Runloop handling
 
-- (BOOL) _handleEventLoop
+- (void) _processEvents
 {
-	//A bit of a misnomer, as the event loop happens in the middle of DOSBox's runloop
-	[[self delegate] emulatorDidBeginRunLoop: self];
-	[[self delegate] emulatorDidFinishRunLoop: self];
-	return YES;
+    [[self delegate] processEventsForEmulator: self];
 }
 
-- (BOOL) _handleRunLoop
+- (BOOL) _runLoopShouldContinue
 {
 	//If emulation has been cancelled or we otherwise want to wrest control away
 	//from DOSBox, then break out of the current DOSBox run loop.
 	//TWEAK: it's only safe to break out once initialization is done, since some
 	//of DOSBox's initialization routines rely on running tasks on the run loop
 	//and may crash if they fail to complete.
-	if ([self isCancelled] && [self isInitialized]) return YES;
+	if ([self isCancelled] && [self isInitialized]) return NO;
 
-	//If we have a command of our own waiting at the command prompt, then break out of DOSBox's stdin input loop
-	if ([[self commandQueue] count] && [self isAtPrompt]) return YES;
+	//If we have a command of our own waiting at the command prompt,
+    //then break out of DOSBox's stdin input loop
+	if ([[self commandQueue] count] && [self isAtPrompt]) return NO;
 	
-	return NO;
+	return YES;
+}
+
+- (void) _runLoopWillStart
+{
+    //Create an autorelease pool for this iteration of the runloop
+    if (!poolForRunLoop) poolForRunLoop = [[NSAutoreleasePool alloc] init];
+    
+	[[self delegate] emulatorWillStartRunLoop: self];
+}
+
+- (void) _runLoopDidFinish
+{
+	[[self delegate] emulatorDidFinishRunLoop: self];
+    
+    if (poolForRunLoop)
+    {
+        [poolForRunLoop drain];
+        poolForRunLoop = nil;
+    }
 }
 
 

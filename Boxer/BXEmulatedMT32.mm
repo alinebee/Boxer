@@ -69,7 +69,7 @@ BXEmulatedMT32 *_currentEmulatedMT32;
     return self;
 }
 
-- (void) dealloc
+- (void) close
 {
     if (_synth)
     {
@@ -85,12 +85,16 @@ BXEmulatedMT32 *_currentEmulatedMT32;
         _mixerChannel = NULL;
     }
     
+    if (_currentEmulatedMT32 == self) _currentEmulatedMT32 = nil;
+}
+
+- (void) dealloc
+{
+    [self close];
+    
     [self setSynthError: nil], [_synthError release];
     [self setPCMROMPath: nil], [_PCMROMPath release];
     [self setControlROMPath: nil], [_controlROMPath release];
-    
-    
-    if (_currentEmulatedMT32 == self) _currentEmulatedMT32 = nil;
     
     [super dealloc];
 }

@@ -22,7 +22,7 @@ extern "C" {
 #import "video.h"
 	
 //Remapped replacements for DOSBox's old sdlmain functions
-#define GFX_Events boxer_handleEventLoop
+#define GFX_Events boxer_processEvents
 #define GFX_StartUpdate boxer_startFrame
 #define GFX_EndUpdate boxer_finishFrame
 #define Mouse_AutoLock boxer_setMouseActive
@@ -87,11 +87,13 @@ extern "C" {
 	void boxer_willExecuteFileAtDOSPath(const char *dosPath, DOS_Drive *dosboxDrive);
 	void boxer_didExecuteFileAtDOSPath(const char *dosPath, DOS_Drive *dosboxDrive);
 	
-	void boxer_handleEventLoop();
 	void boxer_handleDOSBoxTitleChange(Bit32s cycles, Bits frameskip, bool paused);
 	
-	//Called from dosbox.cpp to short-circuit the emulation loop.	
-	bool boxer_handleRunLoop();
+	//Called from dosbox.cpp to allow control over the emulation loop.
+	void boxer_runLoopWillStart();
+	bool boxer_runLoopShouldContinue();
+	void boxer_runLoopDidFinish();
+	void boxer_processEvents();
 	
     void boxer_setJoystickActive(bool joystickActive);
 	void boxer_setMouseActive(bool mouseActive);

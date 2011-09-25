@@ -787,7 +787,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     return shouldMount;
 }
 
-- (void) emulatorDidBeginRunLoop: (BXEmulator *)theEmulator
+- (void) processEventsForEmulator: (BXEmulator *)theEmulator
 {
 	//Implementation note: in a better world, this code wouldn't be here as event
 	//dispatch is normally done automatically by NSApplication at opportune moments.
@@ -809,15 +809,20 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 														inMode: NSDefaultRunLoopMode
 													   dequeue: YES]))
 	{
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        
 		[NSApp sendEvent: event];
 		
 		//If we're suspended, keep dispatching events until we are unpaused;
 		//otherwise, allow emulation to resume after the first batch
 		//of events has been processed.
 		untilDate = [self isSuspended] ? [NSDate distantFuture] : nil;
+        
+        [pool drain];
 	}
 }
 
+- (void) emulatorWillStartRunLoop: (BXEmulator *)theEmulator {}
 - (void) emulatorDidFinishRunLoop: (BXEmulator *)theEmulator {}
 
 

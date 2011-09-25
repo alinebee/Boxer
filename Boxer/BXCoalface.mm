@@ -17,17 +17,27 @@
 
 //This is called in place of DOSBox's GFX_Events to allow us to process events when the DOSBox
 //core runloop gives us time.
-void boxer_handleEventLoop()
+void boxer_processEvents()
 {
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	[emulator _handleEventLoop];
+	[[BXEmulator currentEmulator] _processEvents];
 }
 
-//This is called at the start of DOSBox_NormalLoop, and allows us to short-circuit the current run loop if needed.
-bool boxer_handleRunLoop()
+//Called at the start and end of every iteration of DOSBOX_RunMachine.
+void boxer_runLoopWillStart()
 {
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	return [emulator _handleRunLoop];	
+	[[BXEmulator currentEmulator] _runLoopWillStart];
+}
+
+void boxer_runLoopDidFinish()
+{
+	[[BXEmulator currentEmulator] _runLoopDidFinish];
+}
+
+//This is called at the start of DOSBox_NormalLoop, and
+///allows us to short-circuit the current run loop if needed.
+bool boxer_runLoopShouldContinue()
+{
+	return [[BXEmulator currentEmulator] _runLoopShouldContinue];
 }
 
 //Notifies Boxer of changes to title and speed settings

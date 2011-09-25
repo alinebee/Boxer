@@ -145,7 +145,8 @@
         return NO;
     }
     
-    return true;
+    _destination = destination;
+    return YES;
     
 }
 

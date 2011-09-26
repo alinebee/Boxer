@@ -145,17 +145,17 @@
                 }
             }
             
+            [self willChangeValueForKey: @"matchingPaths"];
+            
+            //Sort the installers we found by depth, to prioritise the ones in the root directory.
+            [matchingPaths sortUsingSelector: @selector(pathDepthCompare:)];
+            
             //If the game profile didn't suggest a preferred installer,
             //then pick one from the set of discovered installers
             if (!preferredInstallerPath)
             {
                 preferredInstallerPath = [BXImportSession preferredInstallerFromPaths: matchingPaths];
             }
-            
-            [self willChangeValueForKey: @"matchingPaths"];
-            
-            //Sort the installers we found by depth, to prioritise the ones in the root directory.
-            [matchingPaths sortUsingSelector: @selector(pathDepthCompare:)];
             
             //Bump the preferred installer up to the first entry in the list of installers.
             if (preferredInstallerPath)

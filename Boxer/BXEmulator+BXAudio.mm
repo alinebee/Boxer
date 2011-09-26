@@ -36,22 +36,6 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
 
 @implementation BXEmulator (BXAudio)
 
-- (NSString *) _pathForMT32ROMNamed: (NSString *)ROMName
-{
-    ROMName = [ROMName lowercaseString];
-    
-    if ([ROMName isMatchedByRegex: @"control"])
-    {
-        return [[self delegate] pathToMT32ControlROMForEmulator: self];
-    }
-    else if ([ROMName isMatchedByRegex: @"pcm"])
-    {
-        return [[self delegate] pathToMT32PCMROMForEmulator: self];
-    }
-    else return nil;
-}
-
-
 - (void) emulatedMT32: (BXEmulatedMT32 *)MT32 didDisplayMessage: (NSString *)message
 {
     NSDictionary *userInfo = [NSDictionary dictionaryWithObject: message forKey: @"message"];
@@ -151,8 +135,8 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
     return [device autorelease];
 }
 
-- (BOOL) attachMIDIDeviceOfType: (BXMIDIDeviceType)type
-                          error: (NSError **)outError
+- (id <BXMIDIDevice>) attachMIDIDeviceOfType: (BXMIDIDeviceType)type
+                                       error: (NSError **)outError
 {
     id <BXMIDIDevice> device = [self MIDIDeviceForType: type error: outError];
     
@@ -160,7 +144,7 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
     {
         NSLog(@"Setting active MIDI device to %@", device);
         [self setActiveMIDIDevice: device];
-        return YES;
+        return device;
     }
     else
     {
@@ -171,7 +155,7 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
             [self setPreferredMIDIDeviceType: BXMIDIDeviceTypeGeneralMIDI];
             return [self attachMIDIDeviceOfType: BXMIDIDeviceTypeGeneralMIDI error: outError];
         }
-        return NO;
+        else return nil;
     }
 }
 
@@ -187,21 +171,34 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
 
 - (void) sendMIDISysex: (NSData *)message
 {
-    if ([self preferredMIDIDeviceType] == BXMIDIDeviceTypeAuto)
+    if ([self _shouldAutodetectMT32])
     {
-        //If we receive an MT-32-specific sysex message, and we're set to auto-detect
-        //the appropriate MIDI device type, then swap out our current MIDI device for
-        //an emulated MT-32.
-        if (![[self activeMIDIDevice] isKindOfClass: [BXEmulatedMT32 class]] &&
-            [[self class] isMT32Sysex: message])
+        //Check if the message we've received is intended for an MT-32,
+        //and if so how 'conclusive' it is that the game is playing MT-32 music.
+        BOOL confirmsSupport, isMT32Sysex = [[self class] isMT32Sysex: message
+                                                indicatingMT32Support: &confirmsSupport];
+        if (isMT32Sysex)
         {
-            BOOL succeeded = [self attachMIDIDeviceOfType: BXMIDIDeviceTypeMT32 error: NULL];
-    #ifdef BOXER_DEBUG
-            if (succeeded)
+            //If this sysex conclusively indicates that the game is playing MT-32 music,
+            //swap to the emulated MT-32 immediately and deliver any messages it missed.
+            if (confirmsSupport)
             {
-                [self sendMT32LCDMessage: @"Activating MT-32"];
+                id device = [self attachMIDIDeviceOfType: BXMIDIDeviceTypeMT32 error: NULL];
+                if ([device isKindOfClass: [BXEmulatedMT32 class]])
+                {
+                    [self _flushPendingSysexMessages];
+#ifdef BOXER_DEBUG
+                    [self sendMT32LCDMessage: @"    MT-32 Active    "];
+#endif
+                }
+                else [self _clearPendingSysexMessages];
             }
-    #endif
+            //Otherwise, queue up the sysex so that we can deliver it to the emulated MT-32
+            //later if we decide to switch, ensuring it won't miss out on any startup commands.
+            else
+            {
+                [self _queueSysexMessage: message];
+            }
         }
     }
     
@@ -214,9 +211,10 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
     [[self activeMIDIDevice] handleSysex: message];
 }
 
-
-+ (BOOL) isMT32Sysex: (NSData *)message
++ (BOOL) isMT32Sysex: (NSData *)message indicatingMT32Support: (BOOL *)indicatesSupport
 {
+    if (indicatesSupport) *indicatesSupport = NO;
+    
     //Too short to be a valid sysex message.
     if ([message length] < 5) return NO;
         
@@ -230,17 +228,18 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
     if (manufacturerID != BXGMManufacturerIDRoland) return NO;
     if (!(modelID == BXRolandSysexModelIDMT32 || BXRolandSysexModelIDD50)) return NO;
     
-    //Some General MIDI drivers (used by Origin and Westwood among others)
-    //send sysex messages telling the MT-32 to reset and setting up basic channel
-    //and reverb settings: but will then proceed to deliver General MIDI music to
-    //the MT-32 anyway. We want to ignore these messages, so that we don't
-    //enable MT-32 emulation erroneously for those drivers.
-    //(If the game is using these drivers but really does have MT-32 music then
-    //it'll send more sysex messages than just these anyway, so we'll catch it.)
-    if (commandType == BXRolandSysexDataSend &&
-        (baseAddress == BXRolandSysexAddressReset || baseAddress == BXRolandSysexAddressSystemArea)) return NO;
+    if (indicatesSupport)
+    {
+        //Some General MIDI drivers (used by Origin and Westwood among others)
+        //send sysex messages telling the MT-32 to reset and setting up basic channel
+        //and reverb settings: but will then proceed to deliver General MIDI music to
+        //the MT-32 anyway. We want to treat those message as inconclusives, so that
+        //we don't activate MT-32 emulation erroneously for those drivers.
+        if (commandType == BXRolandSysexDataSend &&
+            (baseAddress == BXRolandSysexAddressReset || baseAddress == BXRolandSysexAddressSystemArea)) *indicatesSupport = NO;
+        else *indicatesSupport = YES;
+    }
     
-    //If we got this far, then it's an MT-32 sysex we should care about.
     return YES;
 }
 
@@ -255,6 +254,49 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
     //These manufacturer IDs are reserved for manufacturer-agnostic General MIDI messages
     //supported by any GM-compliant device.
     return manufacturerID == BXGMManufacturerIDRealtime || manufacturerID == BXGMManufacturerIDNonRealtime;
+}
+
+
+#pragma mark -
+#pragma mark Private methods
+
+- (BOOL) _shouldAutodetectMT32
+{
+    return [self preferredMIDIDeviceType] == BXMIDIDeviceTypeAuto && ![[self activeMIDIDevice] isKindOfClass: [BXEmulatedMT32 class]];
+}
+
+- (void) _resetMIDIDeviceDetection
+{
+    [self _clearPendingSysexMessages];
+    if ([self preferredMIDIDeviceType] == BXMIDIDeviceTypeAuto)
+    {
+        [self setActiveMIDIDevice: nil];
+    }
+}
+
+- (void) _queueSysexMessage: (NSData *)message
+{
+    NSLog(@"Queueing sysex for delivery: %@", message);
+    //Copy the message before queuing, as it may be backed by a buffer we don't own.
+    [pendingSysexMessages addObject: [NSData dataWithData: message]];
+}
+
+- (void) _flushPendingSysexMessages
+{
+    if ([self activeMIDIDevice])
+    {
+        for (NSData *message in pendingSysexMessages)
+        {
+            NSLog(@"Delivering queued sysex: %@", message);
+            [[self activeMIDIDevice] handleSysex: message];
+        }
+    }
+    [self _clearPendingSysexMessages];
+}
+
+- (void) _clearPendingSysexMessages
+{
+    [pendingSysexMessages removeAllObjects];
 }
 
 @end

@@ -196,6 +196,8 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 		
 		mouse				= [[BXEmulatedMouse alloc] init];
 		keyboard			= [[BXEmulatedKeyboard alloc] init];
+        
+		pendingSysexMessages    = [[NSMutableArray alloc] initWithCapacity: 10];
 		
 		[videoHandler setEmulator: self];
 	}
@@ -216,8 +218,10 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	[driveCache release], driveCache = nil;
 	[configFiles release], configFiles = nil;
 	[commandQueue release], commandQueue = nil;
+    [pendingSysexMessages release], pendingSysexMessages = nil;
     
     [poolForRunLoop drain], poolForRunLoop = nil;
+    
 	
 	[super dealloc];
 }

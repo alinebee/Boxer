@@ -19,7 +19,10 @@
 
 //Returns YES if the specified sysex message is explicitly intended
 //for a Roland MT-32, NO otherwise.
-+ (BOOL) isMT32Sysex: (NSData *)message;
+//If indicatesSupport is provided, this will be set to YES if the
+//message indicates the game will provide music tailored to the MT-32,
+//NO if it's inconclusive.
++ (BOOL) isMT32Sysex: (NSData *)message indicatingMT32Support: (BOOL *)indicatesSupport;
 
 //Returns YES if the specified sysex message is a generic message
 //expected to be supported by any General MIDI-compliant device,
@@ -40,9 +43,9 @@
 - (id <BXMIDIDevice>) MIDIDeviceForType: (BXMIDIDeviceType)type error: (NSError **)outError;
 
 //Attach a new active MIDI device of the specified type.
-//Returns YES if the device was initialized and attached successfully,
-//or NO and populates outError if the device could not be created.
-- (BOOL) attachMIDIDeviceOfType: (BXMIDIDeviceType)type error: (NSError **)outError;
+//Returns the newly-attached device if it was initialized and attached successfully,
+//or nil and populates outError if the device could not be created.
+- (id <BXMIDIDevice>) attachMIDIDeviceOfType: (BXMIDIDeviceType)type error: (NSError **)outError;
 
 //Dispatch the specified MIDI message/sysex onward to the active MIDI device.
 - (void) sendMIDIMessage: (NSData *)message;

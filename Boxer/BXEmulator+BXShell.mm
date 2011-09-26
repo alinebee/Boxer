@@ -513,14 +513,11 @@ nil];
 	[[self mouse] setActive: NO];
     [self setJoystickActive: NO];
     
-    //If Boxer had autodetected an MT-32, clear the music device now
-    //so that we can redetect it next time we run a program. (Handles
-    //users trying out different music options in the game's setup.)
-    if ([self preferredMIDIDeviceType] == BXMIDIDeviceTypeAuto &&
-        [[self activeMIDIDevice] isKindOfClass: [BXEmulatedMT32 class]])
-    {
-        [self setActiveMIDIDevice: nil];
-    }
+    //Clear our autodetected MIDI music device now, so that we can redetect
+    //it next time we run a program. (This lets users try out different
+    //music options in the game's setup, without the emulation staying locked
+    //to a particular MIDI mode.)
+    [self _resetMIDIDeviceDetection];
 
     
 	[self _postNotificationName: BXEmulatorDidReturnToShellNotification

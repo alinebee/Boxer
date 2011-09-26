@@ -291,9 +291,18 @@ enum {
 //framework.
 - (NSString *) _pathForMT32ROMNamed: (NSString *)romName;
 
-//Called when a game sends a message to show on the MT-32's LCD.
-//Will send a BXEmulatorDidDisplayMT32MessageNotification with
-//the message as the value of the @"message" userInfo key.
-- (void) _didDisplayMT32LCDMessage: (NSString *)message;
+//Removes any automatically chosen MIDI device so that we can redetect it.
+//Called when emulator returns to the DOS prompt.
+- (void) _resetMIDIDeviceDetection;
 
+//Used to queue up copies of sysex messages that we received before
+//deciding on a MIDI device. These are delivered to a new device
+//if we change our mind midstream about what kind of device to use.
+- (void) _queueSysexMessage: (NSData *)message;
+//Deliver queued sysex messages to the active MIDI device, and empty the queue.
+- (void) _flushPendingSysexMessages;
+//Clear the sysex queue without delivering messages.
+- (void) _clearPendingSysexMessages;
+//Returns whether we should keep listening for MT-32 messages.
+- (BOOL) _shouldAutodetectMT32;
 @end

@@ -105,6 +105,7 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
     //Used by BXAudio
     id <BXMIDIDevice> activeMIDIDevice;
     BXMIDIDeviceType preferredMIDIDeviceType;
+    NSMutableArray *pendingSysexMessages;
 }
 
 

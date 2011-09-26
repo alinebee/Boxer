@@ -168,15 +168,15 @@
 
 + (BOOL) isPlayableGameTelltaleAtPath: (NSString *)path
 {
-	path = [[path lastPathComponent] lowercaseString];
+	NSString *fileName = [[path lastPathComponent] lowercaseString];
 	
 	//Do a quick test first using just the extension
-	if ([[self playableGameTelltaleExtensions] containsObject: [path pathExtension]]) return YES;
+	if ([[self playableGameTelltaleExtensions] containsObject: [fileName pathExtension]]) return YES;
 	
 	//Next, test against our filename patterns
 	for (NSString *pattern in [self playableGameTelltalePatterns])
 	{
-		if ([path isMatchedByRegex: pattern]) return YES;
+		if ([fileName isMatchedByRegex: pattern]) return YES;
 	}
 	
 	return NO;
@@ -224,10 +224,11 @@
 	{
 		for (NSString *path in paths)
 		{
-			if ([[path lastPathComponent] isMatchedByRegex: pattern
-                                                   options: RKLCaseless
-                                                   inRange: NSMakeRange(0, [path length])
-                                                     error: nil])
+            NSString *fileName = [path lastPathComponent];
+			if ([fileName isMatchedByRegex: pattern
+                                   options: RKLCaseless
+                                   inRange: NSMakeRange(0, [fileName length])
+                                     error: nil])
                 return path;
 		}
 	}

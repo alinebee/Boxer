@@ -27,6 +27,9 @@
 #define BXRolandSysexDataRequest 0x11
 #define BXRolandSysexDataSend 0x12
 
+#define BXRolandSysexAddressSystemArea 0x10
+#define BXRolandSysexAddressReset 0x7F
+
 
 NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDisplayMT32MessageNotification";
 
@@ -189,8 +192,8 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
         //If we receive an MT-32-specific sysex message, and we're set to auto-detect
         //the appropriate MIDI device type, then swap out our current MIDI device for
         //an emulated MT-32.
-        if ([[self class] isMT32Sysex: message length: length] &&
-            ![[self activeMIDIDevice] isKindOfClass: [BXEmulatedMT32 class]])
+        if (![[self activeMIDIDevice] isKindOfClass: [BXEmulatedMT32 class]] &&
+            [[self class] isMT32Sysex: message length: length])
         {
             BOOL succeeded = [self attachMIDIDeviceOfType: BXMIDIDeviceTypeMT32 error: NULL];
     #ifdef BOXER_DEBUG
@@ -214,14 +217,30 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
 
 + (BOOL) isMT32Sysex: (uint8_t *)message length: (NSUInteger)length
 {
-    //Too short to be a valid SysEx message
+    //Too short to be a valid sysex message.
     if (length < 5) return NO;
+        
+    UInt8   manufacturerID = message[1],
+            modelID = message[3],
+            commandType = message[4],
+            baseAddress = message[5];
     
-    UInt8 manufacturerID = message[1], modelID = message[3];
+    //Command is intended for a different device than a Roland MT-32.
+    if (manufacturerID != BXGMManufacturerIDRoland) return NO;
+    if (!(modelID == BXRolandSysexModelIDMT32 || BXRolandSysexModelIDD50)) return NO;
     
-    //The MT-32 is also compatible with a subset of the Roland D-50's MIDI instruction set.
-    return (manufacturerID == BXGMManufacturerIDRoland) &&
-            (modelID == BXRolandSysexModelIDMT32 || modelID == BXRolandSysexModelIDD50);
+    //Some General MIDI drivers (used by Origin and Westwood among others)
+    //send sysex messages telling the MT-32 to reset and setting up basic channel
+    //and reverb settings: but will then proceed to deliver General MIDI music to
+    //the MT-32 anyway. We want to ignore these messages, so that we don't
+    //enable MT-32 emulation erroneously for those drivers.
+    //(If the game is using these drivers but really does have MT-32 music then
+    //it'll send more sysex messages than just these anyway, so we'll catch it.)
+    if (commandType == BXRolandSysexDataSend &&
+        (baseAddress == BXRolandSysexAddressReset || baseAddress == BXRolandSysexAddressSystemArea)) return NO;
+    
+    //If we got this far, then it's an MT-32 sysex we should care about.
+    return YES;
 }
 
 + (BOOL) isGeneralMIDISysex: (uint8_t *)message length: (NSUInteger)length

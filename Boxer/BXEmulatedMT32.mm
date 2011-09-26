@@ -116,8 +116,8 @@ MixerChannel *_mixerChannel;
     NSAssert(length > 0, @"0-length message received by handleMessage:length:");
     
     //MT32Emu's playMsg takes standard 3-byte MIDI messages as a 32-bit integer, which
-    //is a terrible idea, but there you go. We need to convert our byte array to such,
-    //and allow for differing endianness on PowerPC Macs.
+    //is a terrible idea, but there you go. We need to pack our byte array into such
+    //an integer, allowing for the differing endianness on PowerPC Macs.
     UInt8 status = message[0];
     UInt8 data1 = (length > 1) ? message[1] : 0;
     UInt8 data2 = (length > 2) ? message[2] : 0;

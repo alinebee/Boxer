@@ -12,7 +12,10 @@
 
 #import <Foundation/Foundation.h>
 #import "BXMIDIDevice.h"
-#import "MT32Emu/mt32emu.h"
+
+#ifdef __cplusplus
+    #import "MT32Emu/mt32emu.h"
+#endif
 
 
 #pragma mark -
@@ -39,8 +42,9 @@ enum {
     id <BXEmulatedMT32Delegate> _delegate;
     NSError *_synthError;
     
-    //TODO: hide the following from Obj-C contexts
+#ifdef __cplusplus
     MT32Emu::Synth *_synth;
+#endif
 }
 
 @property (copy, nonatomic) NSString *PCMROMPath;

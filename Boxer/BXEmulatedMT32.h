@@ -13,7 +13,6 @@
 #import <Foundation/Foundation.h>
 #import "BXMIDIDevice.h"
 #import "MT32Emu/mt32emu.h"
-#import "mixer.h"
 
 
 #pragma mark -
@@ -42,8 +41,6 @@ enum {
     
     //TODO: hide the following from Obj-C contexts
     MT32Emu::Synth *_synth;
-    MixerChannel *_mixerChannel;
-    
 }
 
 @property (copy, nonatomic) NSString *PCMROMPath;

@@ -206,28 +206,29 @@
 - (void) handleMessage: (const UInt8 *)message length: (NSUInteger)length
 {
     NSAssert(_port && _destination, @"handleMessage:length: called before successful initialization.");
+    NSAssert(length > 0, @"0-length message received by handleMessage:length:");
     
-    UInt8 buffer[128];
+    UInt8 buffer[sizeof(MIDIPacketList)];
     MIDIPacketList *packetList = (MIDIPacketList *)buffer;
 	MIDIPacket *currentPacket = MIDIPacketListInit(packetList);
     
-    //Add message to the MIDIPacketList
     MIDIPacketListAdd(packetList, sizeof(buffer), currentPacket, (MIDITimeStamp)0, length, message);
-    
-    // Send the MIDIPacketList
     MIDISend(_port, _destination, packetList);
-
 }
 
 - (void) handleSysex: (const UInt8 *)message length: (NSUInteger)length
 {
-    //IMPLEMENTATION NOTE: we should send the message with MIDISendSysex,
-    //which is asynchronous and designed for large datasets. However, that
-    //would require us to copy the message ourselves (it's a buffer, so
-    //DOSBox may overwrite the original) and manage the copy's lifecycle
-    //beyond the scope of this function.
-    //tl;dr version: MIDISend is slower but much much simpler.
-    [self handleMessage: message length: length];
+//The same length as DOSBox's MIDI message buffer, plus padding for extra data used by the packet list.
+//(Technically a sysex message could be much longer than 1024 bytes, but it would be truncated by DOSBox
+//before it ever reaches us.)
+#define MAX_SYSEX_PACKET_SIZE 1024 * 4
+
+    UInt8 buffer[MAX_SYSEX_PACKET_SIZE];
+    MIDIPacketList *packetList = (MIDIPacketList *)buffer;
+	MIDIPacket *currentPacket = MIDIPacketListInit(packetList);
+    
+    MIDIPacketListAdd(packetList, sizeof(buffer), currentPacket, (MIDITimeStamp)0, length, message);
+    MIDISend(_port, _destination, packetList);
 }
 
 - (void) pause

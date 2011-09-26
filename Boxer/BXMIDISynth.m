@@ -190,10 +190,10 @@
     else return NO;
 }
 
-- (void) handleMessage: (const UInt8 *)message
-                length: (NSUInteger)length
+- (void) handleMessage: (const UInt8 *)message length: (NSUInteger)length
 {
     NSAssert(unit != NULL, @"handleMessage:length: called before successful initialization.");
+    NSAssert(length > 0, @"0-length message received by handleMessage:length:");
     
     UInt8 status = message[0];
     UInt8 data1 = (length > 1) ? message[1] : 0;
@@ -205,6 +205,7 @@
 - (void) handleSysex: (const UInt8 *)message length: (NSUInteger)length
 {
     NSAssert(unit != NULL, @"handleSysEx:length: called before successful initialization.");
+    NSAssert(length > 0, @"0-length message received by handleSysex:length:");
     
     MusicDeviceSysEx(unit, message, length);
 }

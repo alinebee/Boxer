@@ -9,6 +9,7 @@
 #import "RegexKitLite.h"
 #import "MT32Emu/Filestream.h"
 #import "BXEmulatedMT32Delegate.h"
+#import "mixer.h"
 
 
 NSString * const BXEmulatedMT32ErrorDomain = @"BXEmulatedMT32ErrorDomain";
@@ -43,7 +44,11 @@ void _renderOutput(Bitu len);
 @synthesize PCMROMPath = _PCMROMPath, controlROMPath = _controlROMPath;
 @synthesize synthError = _synthError;
 
+//Used by the DOSBox mixer, to flag the active MT-32 instance to which we should send the callback.
 BXEmulatedMT32 *_currentEmulatedMT32;
+//Used to track the single mixer channel to which the active MT-32 instance will mix.
+MixerChannel *_mixerChannel;
+
 
 - (id <BXMIDIDevice>) initWithPCMROM: (NSString *)PCMROM
                           controlROM: (NSString *)controlROM
@@ -78,14 +83,16 @@ BXEmulatedMT32 *_currentEmulatedMT32;
         _synth = NULL;
     }
     
-    if (_mixerChannel)
+    if (_currentEmulatedMT32 == self)
     {
-        _mixerChannel->Enable(false);
-        MIXER_DelChannel(_mixerChannel);
-        _mixerChannel = NULL;
+        _currentEmulatedMT32 = nil;
+        if (_mixerChannel)
+        {
+            _mixerChannel->Enable(false);
+            MIXER_DelChannel(_mixerChannel);
+            _mixerChannel = NULL;
+        }
     }
-    
-    if (_currentEmulatedMT32 == self) _currentEmulatedMT32 = nil;
 }
 
 - (void) dealloc
@@ -106,10 +113,16 @@ BXEmulatedMT32 *_currentEmulatedMT32;
 - (void) handleMessage: (const UInt8 *)message length: (NSUInteger)length
 {
     NSAssert(_synth, @"handleMessage:length: called before successful initialization.");
+    NSAssert(length > 0, @"0-length message received by handleMessage:length:");
     
-    //MT32Emu's synth takes messages as a 32-bit integer, which is a terrible idea, but there you go.
-    //We need to convert our byte array to such, and allow for differing endianness on PowerPC Macs.
-    UInt8 paddedMsg[4] = { message[0], message[1], message[2], 0};
+    //MT32Emu's playMsg takes standard 3-byte MIDI messages as a 32-bit integer, which
+    //is a terrible idea, but there you go. We need to convert our byte array to such,
+    //and allow for differing endianness on PowerPC Macs.
+    UInt8 status = message[0];
+    UInt8 data1 = (length > 1) ? message[1] : 0;
+    UInt8 data2 = (length > 2) ? message[2] : 0;
+    
+    UInt8 paddedMsg[4] = { status, data1, data2, 0};
     UInt32 intMsg = ((UInt32 *)paddedMsg)[0];
     
     _synth->playMsg(CFSwapInt32LittleToHost(intMsg));
@@ -118,8 +131,11 @@ BXEmulatedMT32 *_currentEmulatedMT32;
 - (void) handleSysex: (const UInt8 *)message length: (NSUInteger)length
 {
     NSAssert(_synth, @"handleSysEx:length: called before successful initialization.");
+    NSAssert(length > 0, @"0-length message received by handleSysex:length:");
     
-    if (message[0] == 0xf0) _synth->playSysex(message, length);
+    //FIXME: we should never receive an unframed sysex, so that should be an assertion
+    //instead of a valid branch.
+    if (message[0] == BXSysExStart) _synth->playSysex(message, length);
     else _synth->playSysexWithoutFraming(message, length);
 }
 
@@ -175,8 +191,11 @@ BXEmulatedMT32 *_currentEmulatedMT32;
         return NO;
     }
     
-    _mixerChannel = MIXER_AddChannel(_renderOutput,properties.sampleRate, "MT32");
-    _mixerChannel->Enable(YES);
+    if (!_mixerChannel)
+    {
+        _mixerChannel = MIXER_AddChannel(_renderOutput, properties.sampleRate, "MT32");
+        _mixerChannel->Enable(YES);
+    }
     
     return YES;
 }

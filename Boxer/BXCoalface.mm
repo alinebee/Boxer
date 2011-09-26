@@ -101,7 +101,7 @@ void boxer_setPalette(Bitu start,Bitu count,GFX_PalEntry * entries)
 	//surface palettes which are irrelevant to OpenGL.
 	//Furthermore it should never be called: if it does, that means DOSBox thinks it's using
 	//surface output and this is a bug.
-	NSLog(@"boxer_setPalette called. This is a bug and should never happen.");
+	NSCAssert(NO, @"boxer_setPalette called. This is a bug and should never happen.");
 }
 
 

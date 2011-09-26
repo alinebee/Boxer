@@ -280,6 +280,7 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
 
 - (void) _queueSysexMessage: (NSData *)message
 {
+    NSLog(@"Queueing sysex: %@", message);
     //Copy the message before queuing, as it may be backed by a buffer we don't own.
     [pendingSysexMessages addObject: [NSData dataWithData: message]];
 }

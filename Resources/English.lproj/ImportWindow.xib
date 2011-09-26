@@ -21,8 +21,8 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
+			<integer value="168"/>
 			<integer value="317"/>
-			<integer value="169"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -552,7 +552,7 @@ YW5kIHJlYWR5IHRvIHBsYXkuA</string>
 								<object class="NSTextFieldCell" key="NSCell" id="631552956">
 									<int key="NSCellFlags">67239424</int>
 									<int key="NSCellFlags2">138412032</int>
-									<string key="NSContents">If your game has more than one CD, you can import the rest later from the Drives Inspector while you play.</string>
+									<string key="NSContents">If your game has more than one CD, you can import the others later from the Drives Inspector while you play.</string>
 									<reference key="NSSupport" ref="825762272"/>
 									<reference key="NSControlView" ref="245018764"/>
 									<reference key="NSBackgroundColor" ref="672356819"/>

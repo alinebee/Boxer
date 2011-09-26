@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
     <key>BXGameProfileCatalogueVersion</key>
-    <string>20110922.1</string>
+    <string>20110927.2</string>
     
 	<key>BXSpecificGameProfiles</key>
 	<array>
@@ -646,6 +646,8 @@
 				<string>F-15 Strike Eagle II/III</string>
 				<string>F-14 Fleet Defender</string>
 				<string>Gunship 2000</string>
+				<string>B-17 Flying Fortress</string>
+                <string>Harrier Jump Jet</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
@@ -654,6 +656,8 @@
 				<string>f15.com</string>
 				<string>f14.com</string>
 				<string>gs2000.com</string>
+				<string>b17.exe</string>
+                <string>harr.com</string>
 			</array>
 		</dict>
 		

@@ -63,7 +63,7 @@ void boxer_sendMIDIMessage(Bit8u *msg)
     
     if (len)
     {
-        [[BXEmulator currentEmulator] sendMIDIMessage: msg length: len];
+        [[BXEmulator currentEmulator] sendMIDIMessage: [NSData dataWithBytesNoCopy: msg length: len freeWhenDone: NO]];
     }    
 #ifdef BOXER_DEBUG
     //DOSBox's MIDI event table declares undefined MIDI statuses as having 0 length.
@@ -78,5 +78,5 @@ void boxer_sendMIDIMessage(Bit8u *msg)
 
 void boxer_sendMIDISysex(Bit8u *msg, Bitu len)
 {
-    [[BXEmulator currentEmulator] sendMIDISysex: msg length: len];
+    [[BXEmulator currentEmulator] sendMIDISysex: [NSData dataWithBytesNoCopy: msg length: len freeWhenDone: NO]];
 }

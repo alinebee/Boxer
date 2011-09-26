@@ -110,17 +110,18 @@ MixerChannel *_mixerChannel;
 #pragma mark -
 #pragma mark MIDI processing
 
-- (void) handleMessage: (const UInt8 *)message length: (NSUInteger)length
+- (void) handleMessage: (NSData *)message
 {
-    NSAssert(_synth, @"handleMessage:length: called before successful initialization.");
-    NSAssert(length > 0, @"0-length message received by handleMessage:length:");
+    NSAssert(_synth, @"handleMessage: called before successful initialization.");
+    NSAssert([message length] > 0, @"0-length message received by handleMessage:");
     
     //MT32Emu's playMsg takes standard 3-byte MIDI messages as a 32-bit integer, which
     //is a terrible idea, but there you go. We need to pack our byte array into such
     //an integer, allowing for the differing endianness on PowerPC Macs.
-    UInt8 status = message[0];
-    UInt8 data1 = (length > 1) ? message[1] : 0;
-    UInt8 data2 = (length > 2) ? message[2] : 0;
+    UInt8 *contents = (UInt8 *)[message bytes];
+    UInt8 status = contents[0];
+    UInt8 data1 = ([message length] > 1) ? contents[1] : 0;
+    UInt8 data2 = ([message length] > 2) ? contents[2] : 0;
     
     UInt8 paddedMsg[4] = { status, data1, data2, 0};
     UInt32 intMsg = ((UInt32 *)paddedMsg)[0];
@@ -128,15 +129,12 @@ MixerChannel *_mixerChannel;
     _synth->playMsg(CFSwapInt32LittleToHost(intMsg));
 }
 
-- (void) handleSysex: (const UInt8 *)message length: (NSUInteger)length
+- (void) handleSysex: (NSData *)message
 {
-    NSAssert(_synth, @"handleSysEx:length: called before successful initialization.");
-    NSAssert(length > 0, @"0-length message received by handleSysex:length:");
+    NSAssert(_synth, @"handleSysEx: called before successful initialization.");
+    NSAssert([message length] > 0, @"0-length message received by handleSysex:");
     
-    //FIXME: we should never receive an unframed sysex, so that should be an assertion
-    //instead of a valid branch.
-    if (message[0] == BXSysExStart) _synth->playSysex(message, length);
-    else _synth->playSysexWithoutFraming(message, length);
+    _synth->playSysex((UInt8 *)[message bytes], [message length]);
 }
 
 - (void) resume

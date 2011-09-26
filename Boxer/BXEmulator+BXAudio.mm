@@ -108,7 +108,7 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
     checksum = 128 - (checksum % 128);
     sysex[SYSEX_CHECKSUM_OFFSET] = checksum;
     
-    [self sendMIDISysex: sysex length: SYSEX_LENGTH];
+    [self sendMIDISysex: [NSData dataWithBytes: sysex length: SYSEX_LENGTH]];
 }
 
 
@@ -175,17 +175,17 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
     }
 }
 
-- (void) sendMIDIMessage: (uint8_t *)message length: (NSUInteger)length
+- (void) sendMIDIMessage: (NSData *)message
 {
     //Connect a MIDI device the first time we need one
     if (![self activeMIDIDevice] && [self preferredMIDIDeviceType] != BXMIDIDeviceTypeNone)
     {
         [self attachMIDIDeviceOfType: [self preferredMIDIDeviceType] error: NULL];
     }
-    [[self activeMIDIDevice] handleMessage: message length: length];
+    [[self activeMIDIDevice] handleMessage: message];
 }
 
-- (void) sendMIDISysex: (uint8_t *)message length: (NSUInteger)length
+- (void) sendMIDISysex: (NSData *)message
 {
     if ([self preferredMIDIDeviceType] == BXMIDIDeviceTypeAuto)
     {
@@ -193,7 +193,7 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
         //the appropriate MIDI device type, then swap out our current MIDI device for
         //an emulated MT-32.
         if (![[self activeMIDIDevice] isKindOfClass: [BXEmulatedMT32 class]] &&
-            [[self class] isMT32Sysex: message length: length])
+            [[self class] isMT32Sysex: message])
         {
             BOOL succeeded = [self attachMIDIDeviceOfType: BXMIDIDeviceTypeMT32 error: NULL];
     #ifdef BOXER_DEBUG
@@ -211,19 +211,20 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
         [self attachMIDIDeviceOfType: [self preferredMIDIDeviceType] error: NULL];
     }
         
-    [[self activeMIDIDevice] handleSysex: message length: length];
+    [[self activeMIDIDevice] handleSysex: message];
 }
 
 
-+ (BOOL) isMT32Sysex: (uint8_t *)message length: (NSUInteger)length
++ (BOOL) isMT32Sysex: (NSData *)message
 {
     //Too short to be a valid sysex message.
-    if (length < 5) return NO;
+    if ([message length] < 5) return NO;
         
-    UInt8   manufacturerID = message[1],
-            modelID = message[3],
-            commandType = message[4],
-            baseAddress = message[5];
+    const UInt8 *contents = (const UInt8 *)[message bytes];
+    UInt8   manufacturerID  = contents[1],
+            modelID         = contents[3],
+            commandType     = contents[4],
+            baseAddress     = contents[5];
     
     //Command is intended for a different device than a Roland MT-32.
     if (manufacturerID != BXGMManufacturerIDRoland) return NO;
@@ -243,12 +244,13 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
     return YES;
 }
 
-+ (BOOL) isGeneralMIDISysex: (uint8_t *)message length: (NSUInteger)length
++ (BOOL) isGeneralMIDISysex: (NSData *)message
 {
     //Too short to be a valid SysEx message
-    if (length < 5) return NO;
+    if ([message length] < 5) return NO;
     
-    UInt8 manufacturerID = message[1];
+    const UInt8 *contents = (const UInt8 *)[message bytes];
+    UInt8 manufacturerID = contents[1];
     
     //These manufacturer IDs are reserved for manufacturer-agnostic General MIDI messages
     //supported by any GM-compliant device.

@@ -31,12 +31,10 @@
 
 //Handle a standard MIDI message, which will be between 1 and 3 bytes
 //long depending on the type of message.
-- (void) handleMessage: (const UInt8 *)message
-                length: (NSUInteger)length;
+- (void) handleMessage: (NSData *)message;
 
-//Play a System Exclusive message of arbitrary length.
-- (void) handleSysex: (const UInt8 *)message
-              length: (NSUInteger)length;
+//Handle a System Exclusive message of arbitrary length.
+- (void) handleSysex: (NSData *)message;
 
 //Pause/resume MIDI playback.
 - (void) pause;

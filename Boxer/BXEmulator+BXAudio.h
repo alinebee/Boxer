@@ -19,12 +19,12 @@
 
 //Returns YES if the specified sysex message is explicitly intended
 //for a Roland MT-32, NO otherwise.
-+ (BOOL) isMT32Sysex: (uint8_t *)message length: (NSUInteger)length;
++ (BOOL) isMT32Sysex: (NSData *)message;
 
 //Returns YES if the specified sysex message is a generic message
 //expected to be supported by any General MIDI-compliant device,
 //or NO if it is manufacturer-specific (or not a valid sysex.)
-+ (BOOL) isGeneralMIDISysex: (uint8_t *)message length: (NSUInteger)length;
++ (BOOL) isGeneralMIDISysex: (NSData *)message;
 
 
 #pragma mark -
@@ -44,7 +44,8 @@
 //or NO and populates outError if the device could not be created.
 - (BOOL) attachMIDIDeviceOfType: (BXMIDIDeviceType)type error: (NSError **)outError;
 
-- (void) sendMIDIMessage: (uint8_t *)message length: (NSUInteger)length;
-- (void) sendMIDISysex: (uint8_t *)message length: (NSUInteger)length;
+//Dispatch the specified MIDI message/sysex onward to the active MIDI device.
+- (void) sendMIDIMessage: (NSData *)message;
+- (void) sendMIDISysex: (NSData *)message;
 
 @end

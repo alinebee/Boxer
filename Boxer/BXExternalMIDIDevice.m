@@ -203,31 +203,34 @@
 #pragma mark -
 #pragma mark MIDI processing
 
-- (void) handleMessage: (const UInt8 *)message length: (NSUInteger)length
+- (void) handleMessage: (NSData *)message
 {
-    NSAssert(_port && _destination, @"handleMessage:length: called before successful initialization.");
-    NSAssert(length > 0, @"0-length message received by handleMessage:length:");
+    NSAssert(_port && _destination, @"handleMessage: called before successful initialization.");
+    NSAssert([message length] > 0, @"0-length message received by handleMessage:");
     
     UInt8 buffer[sizeof(MIDIPacketList)];
     MIDIPacketList *packetList = (MIDIPacketList *)buffer;
 	MIDIPacket *currentPacket = MIDIPacketListInit(packetList);
     
-    MIDIPacketListAdd(packetList, sizeof(buffer), currentPacket, (MIDITimeStamp)0, length, message);
+    MIDIPacketListAdd(packetList, sizeof(buffer), currentPacket, (MIDITimeStamp)0, [message length], (UInt8 *)[message bytes]);
     MIDISend(_port, _destination, packetList);
 }
 
-- (void) handleSysex: (const UInt8 *)message length: (NSUInteger)length
+- (void) handleSysex: (NSData *)message
 {
 //The same length as DOSBox's MIDI message buffer, plus padding for extra data used by the packet list.
 //(Technically a sysex message could be much longer than 1024 bytes, but it would be truncated by DOSBox
 //before it ever reaches us.)
 #define MAX_SYSEX_PACKET_SIZE 1024 * 4
 
+    NSAssert(_port && _destination, @"handleMessage: called before successful initialization.");
+    NSAssert([message length] > 0, @"0-length message received by handleMessage:");
+
     UInt8 buffer[MAX_SYSEX_PACKET_SIZE];
     MIDIPacketList *packetList = (MIDIPacketList *)buffer;
 	MIDIPacket *currentPacket = MIDIPacketListInit(packetList);
     
-    MIDIPacketListAdd(packetList, sizeof(buffer), currentPacket, (MIDITimeStamp)0, length, message);
+    MIDIPacketListAdd(packetList, sizeof(buffer), currentPacket, (MIDITimeStamp)0, [message length], (UInt8 *)[message bytes]);
     MIDISend(_port, _destination, packetList);
 }
 
@@ -245,7 +248,7 @@
         //Add the channel number to the mode-change prefix
         //to get the proper mode-change message for that channel.
         message[0] = BXChannelModeChangePrefix + i;
-        [self handleMessage: message length: 3];
+        [self handleMessage: [NSData dataWithBytes: message length: 3]];
     }
 }
 

@@ -190,24 +190,25 @@
     else return NO;
 }
 
-- (void) handleMessage: (const UInt8 *)message length: (NSUInteger)length
+- (void) handleMessage: (NSData *)message
 {
-    NSAssert(unit != NULL, @"handleMessage:length: called before successful initialization.");
-    NSAssert(length > 0, @"0-length message received by handleMessage:length:");
+    NSAssert(unit != NULL, @"handleMessage: called before successful initialization.");
+    NSAssert([message length] > 0, @"0-length message received by handleMessage:");
     
-    UInt8 status = message[0];
-    UInt8 data1 = (length > 1) ? message[1] : 0;
-    UInt8 data2 = (length > 2) ? message[2] : 0;
+    UInt8 *contents = (UInt8 *)[message bytes];
+    UInt8 status = contents[0];
+    UInt8 data1 = ([message length] > 1) ? contents[1] : 0;
+    UInt8 data2 = ([message length] > 2) ? contents[2] : 0;
     
     MusicDeviceMIDIEvent(unit, status, data1, data2, 0);
 }
 
-- (void) handleSysex: (const UInt8 *)message length: (NSUInteger)length
+- (void) handleSysex: (NSData *)message
 {
-    NSAssert(unit != NULL, @"handleSysEx:length: called before successful initialization.");
-    NSAssert(length > 0, @"0-length message received by handleSysex:length:");
+    NSAssert(unit != NULL, @"handleSysEx: called before successful initialization.");
+    NSAssert([message length] > 0, @"0-length message received by handleSysex:");
     
-    MusicDeviceSysEx(unit, message, length);
+    MusicDeviceSysEx(unit, (UInt8 *)[message bytes], [message length]);
 }
 
 - (void) pause

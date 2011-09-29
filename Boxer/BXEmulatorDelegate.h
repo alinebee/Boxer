@@ -11,6 +11,7 @@
 //the delegate methods BXEmulator needs keeps everyone's responsibilities clear.)
 
 
+
 #pragma mark -
 #pragma mark Notification constants
 
@@ -44,6 +45,7 @@ extern NSString * const BXEmulatorDidDisplayMT32MessageNotification;
 
 @class BXFrameBuffer;
 @class BXEmulator;
+@protocol BXMIDIDevice;
 @protocol BXEmulatorDelegate <NSObject>
 
 #pragma mark -
@@ -78,12 +80,8 @@ extern NSString * const BXEmulatorDidDisplayMT32MessageNotification;
 //Called whenever a path is mounted from the DOS MOUNT command.
 //Return NO to prevent the mount.
 - (BOOL) emulator: (BXEmulator *)emulator shouldMountDriveFromShell: (NSString *)drive;
-
-//Return the filesystem paths for the ROMs that the emulator should use.
-- (NSString *) pathToMT32ControlROMForEmulator: (BXEmulator *)emulator;
-- (NSString *) pathToMT32PCMROMForEmulator: (BXEmulator *)emulator;
-
-
+                        
+                        
 #pragma mark -
 #pragma mark Lifecycle notifications
 
@@ -124,9 +122,6 @@ extern NSString * const BXEmulatorDidDisplayMT32MessageNotification;
 //(Currently no information is provided about what, if anything, has changed.)
 - (void) emulatorDidChangeEmulationState:	(NSNotification *)notification;
 
-//Posted whenever a game tells the MT-32 to display an LCD message.
-- (void) emulatorDidDisplayMT32Message: (NSNotification *)notification;
-
 @end
 
 
@@ -146,3 +141,24 @@ extern NSString * const BXEmulatorDidDisplayMT32MessageNotification;
 
 @end
 
+
+#pragma mark -
+#pragma mark Additional audio-related delegate methods
+
+@protocol BXEmulatorAudioDelegate <NSObject>
+
+//Return the filesystem paths for the ROMs that the emulator should use.
+- (NSString *) pathToMT32ControlROMForEmulator: (BXEmulator *)emulator;
+- (NSString *) pathToMT32PCMROMForEmulator: (BXEmulator *)emulator;
+
+//Create and return the MIDI output device to use for the specified device type.
+//Return nil to use the default MIDI device for that type.
+//Used to selectively override the default MIDI handling to pipe it to an external
+//MIDI device when one is available.
+- (id <BXMIDIDevice>) MIDIDeviceForType: (NSInteger)type;
+
+@optional
+
+//Posted whenever a game tells the MT-32 to display an LCD message.
+- (void) emulatorDidDisplayMT32Message: (NSNotification *)notification;
+@end

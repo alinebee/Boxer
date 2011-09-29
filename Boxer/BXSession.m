@@ -11,12 +11,11 @@
 #import "BXGameProfile.h"
 #import "BXBootlegCoverArt.h"
 #import "BXDrive.h"
-#import "BXAppController+BXSupportFiles.h"
+#import "BXAppController.h"
 #import "BXDOSWindowControllerLion.h"
 #import "BXDOSWindow.h"
 #import "BXEmulatorConfiguration.h"
 #import "BXCloseAlert.h"
-#import "BXBezelController.h"
 
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulator+BXShell.h"
@@ -342,7 +341,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		{
 			NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 			
-			[newEmulator setDelegate: self];
+			[newEmulator setDelegate: (id)self];
 			
 			//FIXME: we shouldn't be using bindings for these
 			[[newEmulator videoHandler] bind: @"aspectCorrected" toObject: defaults withKeyPath: @"aspectCorrected" options: nil];
@@ -761,15 +760,6 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	return [[self DOSWindowController] viewportSize];
 }
 
-- (NSString *) pathToMT32ControlROMForEmulator: (BXEmulator *)emulator
-{
-    return [BXAppController pathToMT32ControlROM];
-}
-
-- (NSString *) pathToMT32PCMROMForEmulator: (BXEmulator *)emulator
-{
-    return [BXAppController pathToMT32PCMROM];
-}
 
 - (BOOL) emulator: (BXEmulator *)theEmulator shouldMountDriveFromShell: (NSString *)drivePath
 {
@@ -985,12 +975,6 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	
 	[self willChangeValueForKey: @"dynamic"];
 	[self didChangeValueForKey: @"dynamic"];	
-}
-
-- (void) emulatorDidDisplayMT32Message: (NSNotification *)notification
-{
-    NSString *message = [[notification userInfo] objectForKey: @"message"];
-    [[BXBezelController controller] showMT32BezelForMessage: message];
 }
 
 

@@ -70,12 +70,14 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 
 @protocol BXEmulatedJoystick;
 @protocol BXEmulatorDelegate;
+@protocol BXEmulatorFileSystemDelegate;
+@protocol BXEmulatorAudioDelegate;
 
 @protocol BXMIDIDevice;
 
 @interface BXEmulator : NSObject
 {
-	id <BXEmulatorDelegate> delegate;
+	id <BXEmulatorDelegate, BXEmulatorFileSystemDelegate, BXEmulatorAudioDelegate> delegate;
 	BXVideoHandler *videoHandler;
 	BXEmulatedKeyboard *keyboard;
 	BXEmulatedMouse *mouse;
@@ -113,7 +115,7 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 #pragma mark Properties
 
 //The delegate responsible for this emulator.
-@property (assign, nonatomic) id <BXEmulatorDelegate> delegate;
+@property (assign, nonatomic) id <BXEmulatorDelegate, BXEmulatorFileSystemDelegate, BXEmulatorAudioDelegate> delegate;
 
 @property (readonly, nonatomic) BXVideoHandler *videoHandler;	//Our DOSBox video and rendering handler.
 @property (readonly, nonatomic) BXEmulatedKeyboard *keyboard;	//Our emulated keyboard.

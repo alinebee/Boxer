@@ -54,7 +54,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 
 @implementation BXAppController
-@synthesize currentSession, generalQueue, joystickController, joypadController;
+@synthesize currentSession, generalQueue, joystickController, joypadController, MIDIDeviceBrowser;
 
 
 #pragma mark -
@@ -254,6 +254,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	[self setGamesFolderPath: nil], [gamesFolderPath release];
 	[self setJoystickController: nil], [joystickController release];
 	[self setJoypadController: nil], [joypadController release];
+	[self setMIDIDeviceBrowser: nil], [MIDIDeviceBrowser release];
 	
 	[generalQueue release], generalQueue = nil;
 	

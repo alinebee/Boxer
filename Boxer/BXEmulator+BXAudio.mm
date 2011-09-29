@@ -105,41 +105,51 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
 {
     id <BXMIDIDevice> device = nil;
     
-    switch (type)
+    //First, see what the delegate has to say: if it provides us with a MIDI device,
+    //we don't need to bother.
+    device = [[self delegate] MIDIDeviceForType: type];
+    
+    if (!device)
     {
-        case BXMIDIDeviceTypeNone:
-            device = nil;
-            break;
-            
-        case BXMIDIDeviceTypeExternal:
-            device = [[BXExternalMIDIDevice alloc] initWithDestinationAtIndex: 0
-                                                                        error: outError];
-            break;
-            
-        case BXMIDIDeviceTypeMT32:
-            {
-            NSString *PCMROMPath = [[self delegate] pathToMT32PCMROMForEmulator: self];
-            NSString *controlROMPath = [[self delegate] pathToMT32ControlROMForEmulator: self];
-            
-            device = [[BXEmulatedMT32 alloc] initWithPCMROM: PCMROMPath
-                                                 controlROM: controlROMPath
-                                                   delegate: self
-                                                      error: outError];
-            }
-            break;
-            
-        case BXMIDIDeviceTypeGeneralMIDI:
-        default:
-            device = [[BXMIDISynth alloc] initWithError: outError];
-            break;
+        switch (type)
+        {
+            case BXMIDIDeviceTypeNone:
+                device = nil;
+                break;
+                
+            case BXMIDIDeviceTypeExternal:
+                device = [[BXExternalMIDIDevice alloc] initWithDestinationAtIndex: 0
+                                                                            error: outError];
+                break;
+                
+            case BXMIDIDeviceTypeMT32:
+                {
+                NSString *PCMROMPath        = [[self delegate] pathToMT32PCMROMForEmulator: self];
+                NSString *controlROMPath    = [[self delegate] pathToMT32ControlROMForEmulator: self];
+                
+                device = [[BXEmulatedMT32 alloc] initWithPCMROM: PCMROMPath
+                                                     controlROM: controlROMPath
+                                                       delegate: self
+                                                          error: outError];
+                }
+                break;
+                
+            case BXMIDIDeviceTypeGeneralMIDI:
+            default:
+                device = [[BXMIDISynth alloc] initWithError: outError];
+                break;
+                
+        }
+        [device autorelease];
     }
-    return [device autorelease];
+    return device;
 }
 
 - (id <BXMIDIDevice>) attachMIDIDeviceOfType: (BXMIDIDeviceType)type
                                        error: (NSError **)outError
 {
-    id <BXMIDIDevice> device = [self MIDIDeviceForType: type error: outError];
+    NSError *error = nil;
+    id <BXMIDIDevice> device = [self MIDIDeviceForType: type error: &error];
     
     if (device)
     {
@@ -148,14 +158,22 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
     }
     else
     {
-        if (type == BXMIDIDeviceTypeMT32)
+        if ([[error domain] isEqualToString: BXEmulatedMT32ErrorDomain])
         {
-            //Disable our auto-detection so we don't keep trying to create an emulated MT-32.
-            //TODO: send a message to our delegate informing them of our failure.
+            //If an MT-32 emulator cannot be created, then fall back on the regular MIDI synth.
+            //Disable our auto-detection at the same time, so we won't keep trying to create an
+            //emulated MT-32 if we keep picking up MT-32 messages from the game.
+            //TODO: send a message to our delegate informing them of our failure, and let them
+            //handle this logic.
+            
             [self setPreferredMIDIDeviceType: BXMIDIDeviceTypeGeneralMIDI];
             return [self attachMIDIDeviceOfType: BXMIDIDeviceTypeGeneralMIDI error: outError];
         }
-        else return nil;
+        else
+        {
+            if (outError) *outError = error;
+            return nil;
+        }
     }
 }
 

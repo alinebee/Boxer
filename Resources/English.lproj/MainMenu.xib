@@ -1358,6 +1358,12 @@
 			<object class="NSCustomObject" id="407151793">
 				<string key="NSClassName">BXJoystickController</string>
 			</object>
+			<object class="NSCustomObject" id="96241277">
+				<string key="NSClassName">BXJoypadController</string>
+			</object>
+			<object class="NSCustomObject" id="273627598">
+				<string key="NSClassName">BXMIDIDeviceBrowser</string>
+			</object>
 			<object class="NSMenu" id="881225046">
 				<string key="NSTitle"/>
 				<object class="NSMutableArray" key="NSMenuItems">
@@ -1371,9 +1377,6 @@
 						<reference key="NSMixedImage" ref="489554260"/>
 					</object>
 				</object>
-			</object>
-			<object class="NSCustomObject" id="96241277">
-				<string key="NSClassName">BXJoypadController</string>
 			</object>
 		</object>
 		<object class="IBObjectContainer" key="IBDocument.Objects">
@@ -2250,6 +2253,14 @@
 						<reference key="destination" ref="384668648"/>
 					</object>
 					<int key="connectionID">2178</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">MIDIDeviceBrowser</string>
+						<reference key="source" ref="74086318"/>
+						<reference key="destination" ref="273627598"/>
+					</object>
+					<int key="connectionID">2181</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -3339,6 +3350,11 @@
 						<reference key="object" ref="424872924"/>
 						<reference key="parent" ref="561895638"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2180</int>
+						<reference key="object" ref="273627598"/>
+						<reference key="parent" ref="0"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -3533,6 +3549,7 @@
 					<string>2173.IBPluginDependency</string>
 					<string>2174.IBPluginDependency</string>
 					<string>2179.IBPluginDependency</string>
+					<string>2180.IBPluginDependency</string>
 					<string>283.IBPluginDependency</string>
 					<string>283.ImportedFromIB2</string>
 					<string>284.IBPluginDependency</string>
@@ -3793,6 +3810,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<integer value="1"/>
@@ -3834,7 +3852,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">2179</int>
+			<int key="maxID">2181</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -4004,11 +4022,13 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>MIDIDeviceBrowser</string>
 							<string>joypadController</string>
 							<string>joystickController</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>BXMIDIDeviceBrowser</string>
 							<string>BXJoypadController</string>
 							<string>BXJoystickController</string>
 						</object>
@@ -4017,11 +4037,16 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>MIDIDeviceBrowser</string>
 							<string>joypadController</string>
 							<string>joystickController</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBToOneOutletInfo">
+								<string key="name">MIDIDeviceBrowser</string>
+								<string key="candidateClassName">BXMIDIDeviceBrowser</string>
+							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">joypadController</string>
 								<string key="candidateClassName">BXJoypadController</string>
@@ -4790,6 +4815,14 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/BXJoystickController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXMIDIDeviceBrowser</string>
+					<string key="superclassName">NSObject</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXMIDIDeviceBrowser.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

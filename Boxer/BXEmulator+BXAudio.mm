@@ -265,26 +265,18 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
     return YES;
 }
 
-+ (BOOL) isGeneralMIDISysex: (NSData *)message
-{
-    //Too short to be a valid SysEx message
-    if ([message length] < 5) return NO;
-    
-    const UInt8 *contents = (const UInt8 *)[message bytes];
-    UInt8 manufacturerID = contents[1];
-    
-    //These manufacturer IDs are reserved for manufacturer-agnostic General MIDI messages
-    //supported by any GM-compliant device.
-    return manufacturerID == BXGMManufacturerIDRealtime || manufacturerID == BXGMManufacturerIDNonRealtime;
-}
-
 
 #pragma mark -
 #pragma mark Private methods
 
 - (BOOL) _shouldAutodetectMT32
 {
-    return [self preferredMIDIDeviceType] == BXMIDIDeviceTypeAuto && ![[self activeMIDIDevice] isKindOfClass: [BXEmulatedMT32 class]];
+    //Only try to autodetect the MT-32 if no explicit MIDI type was specified for this game,
+    //and if we're not already sending to a MIDI device that supports MT-32 music.
+    if ([self preferredMIDIDeviceType] != BXMIDIDeviceTypeAuto) return NO;
+    if ([[self activeMIDIDevice] supportsMT32Music]) return NO;
+    
+    return YES;
 }
 
 - (void) _resetMIDIDeviceDetection

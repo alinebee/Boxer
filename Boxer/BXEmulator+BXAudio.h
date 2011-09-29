@@ -20,14 +20,9 @@
 //Returns YES if the specified sysex message is explicitly intended
 //for a Roland MT-32, NO otherwise.
 //If indicatesSupport is provided, this will be set to YES if the
-//message indicates the game will provide music tailored to the MT-32,
-//NO if it's inconclusive.
+//message indicates the game will definitely provide music tailored
+//to the MT-32, NO if it's inconclusive.
 + (BOOL) isMT32Sysex: (NSData *)message indicatingMT32Support: (BOOL *)indicatesSupport;
-
-//Returns YES if the specified sysex message is a generic message
-//expected to be supported by any General MIDI-compliant device,
-//or NO if it is manufacturer-specific (or not a valid sysex.)
-+ (BOOL) isGeneralMIDISysex: (NSData *)message;
 
 
 #pragma mark -

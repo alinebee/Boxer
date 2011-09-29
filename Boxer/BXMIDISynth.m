@@ -24,6 +24,8 @@
 @implementation BXMIDISynth
 @synthesize soundFontPath;
 
+- (BOOL) supportsMT32Music { return NO; }
+
 
 #pragma mark -
 #pragma mark Initialization and cleanup

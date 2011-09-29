@@ -44,11 +44,14 @@ void _renderOutput(Bitu len);
 @synthesize PCMROMPath = _PCMROMPath, controlROMPath = _controlROMPath;
 @synthesize synthError = _synthError;
 
+
 //Used by the DOSBox mixer, to flag the active MT-32 instance to which we should send the callback.
 BXEmulatedMT32 *_currentEmulatedMT32;
 //Used to track the single mixer channel to which the active MT-32 instance will mix.
 MixerChannel *_mixerChannel;
 
+
+- (BOOL) supportsMT32Music { return YES; }
 
 - (id <BXMIDIDevice>) initWithPCMROM: (NSString *)PCMROM
                           controlROM: (NSString *)controlROM

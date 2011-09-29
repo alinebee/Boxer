@@ -26,11 +26,14 @@
 
 @protocol BXMIDIDevice <NSObject>
 
+//Returns whether this device can play back MT-32 music properly.
+- (BOOL) supportsMT32Music;
+
 #pragma mark -
 #pragma mark Instance methods
 
-//Handle a standard MIDI message, which will be between 1 and 3 bytes
-//long depending on the type of message.
+//Handle a standard MIDI message, which will be between 1 and 3
+//bytes long depending on the type of message.
 - (void) handleMessage: (NSData *)message;
 
 //Handle a System Exclusive message of arbitrary length.

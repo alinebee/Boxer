@@ -46,6 +46,12 @@
 #pragma mark -
 #pragma mark Initialization and cleanup
 
+- (BOOL) supportsMT32Music
+{
+    //TODO: make this contingent on a flag
+    return YES;
+}
+
 - (id <BXMIDIDevice>) initWithDestination: (MIDIEndpointRef)destination
                                     error: (NSError **)outError
 {

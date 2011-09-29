@@ -8,7 +8,7 @@
 #import "BXSession+BXAudioControls.h"
 #import "BXBezelController.h"
 #import "BXAppController+BXSupportFiles.h"
-#import "BXExternalMIDIDevice.h"
+#import "BXExternalMT32.h"
 #import "BXEmulator+BXAudio.h"
 #import "BXMIDIDeviceBrowser.h"
 
@@ -41,8 +41,8 @@
         {
             MIDIUniqueID uniqueID = [deviceID integerValue];
             //Try and create connecting to that ID: if we succeed, tell the emulator to use that.
-            BXExternalMIDIDevice *device = [[BXExternalMIDIDevice alloc] initWithDestinationAtUniqueID: uniqueID
-                                                                                                 error: nil];
+            BXExternalMIDIDevice *device = [[BXExternalMT32 alloc] initWithDestinationAtUniqueID: uniqueID
+                                                                                           error: nil];
             
             if (device) return [device autorelease];
         }

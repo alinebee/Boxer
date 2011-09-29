@@ -6,7 +6,7 @@
  */
 
 #import "BXMIDIDeviceBrowser.h"
-#import "BXMIDIDevice.h"
+#import "BXMIDIConstants.h"
 
 
 #define BXMIDIInputListenerDefaultTimeout 1
@@ -39,19 +39,20 @@
     {
 #define BXMT32IdentityRequestLength 13
         const UInt8 requestContent[BXMT32IdentityRequestLength] = {
-            BXSysExStart,
+            BXSysexStart,
             
-            0x41, 0x10, 0x16, //Sysex is addressed to MT-32
+            //Sysex is addressed to MT-32
+            BXSysexManufacturerIDRoland, BXRolandSysexDeviceIDDefault, BXRolandSysexModelIDMT32,
             
-            0x11, //Request data
+            BXRolandSysexDataRequest,
             
             0x05, 0x00, 0x00, //Ask for value from the patch memory
             
-            0x00, 0x00, 0x01, //Ask for 1 byte
+            0x00, 0x00, 0x01, //Ask for 1 byte only please
             
-            0x7A,
+            0x7A, //Checksum
             
-            BXSysExEnd
+            BXSysexEnd
         };
         
         request = [[NSData alloc] initWithBytes: requestContent
@@ -67,9 +68,10 @@
     {
 #define BXMT32IdentityResponseLength 4
         const UInt8 responseContent[BXMT32IdentityResponseLength] = {
-            BXSysExStart,
-            0x41, 0x10, 0x16 //Sysex comes from MT-32
-            //We don't care about anything after this point
+            BXSysexStart,
+            //Sysex comes from MT-32
+            BXSysexManufacturerIDRoland, BXRolandSysexDeviceIDDefault, BXRolandSysexModelIDMT32
+            //We don't care about the rest of the message beyond this
         };
         
         response = [[NSData alloc] initWithBytes: responseContent
@@ -204,17 +206,15 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
             
             MIDIPacketListAdd(packets, sizeof(buffer), currentPacket, (MIDITimeStamp)0, [request length], (const UInt8 *)[request bytes]);
 
-            
-            //Once the listener is ready, send out the request message.
             errCode = MIDISend(_outputPort, destination, packets);
             
+            //If the message was sent out successfully, create a new listener to track the replies
+            //from this destination's corresponding source.
             if (errCode == noErr)
             {
-                //Create a new listener to track the replies from this destination's
-                //corresponding source.
                 BXMIDIInputListener *listener = [[BXMIDIInputListener alloc] initWithDelegate: self];
-                
                 [listener listenToSource: source onPort: _inputPort contextInfo: destination];
+                
                 [_listeners addObject: listener];
                 [listener release];
             }

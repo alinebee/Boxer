@@ -111,7 +111,12 @@ MixerChannel *_mixerChannel;
 
 
 #pragma mark -
-#pragma mark MIDI processing
+#pragma mark MIDI processing and status
+
+//Since we're processing on the same thread, the emulator is always ready to go
+- (BOOL) isProcessing       { return NO; }
+- (NSDate *) dateWhenReady  { return [NSDate distantPast]; }
+
 
 - (void) handleMessage: (NSData *)message
 {

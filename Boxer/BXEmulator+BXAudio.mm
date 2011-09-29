@@ -12,25 +12,6 @@
 #import "BXMIDISynth.h"
 
 
-#pragma mark -
-#pragma mark Private constants
-
-#define BXGMManufacturerIDRoland 0x41
-#define BXGMManufacturerIDNonRealtime 0x7E
-#define BXGMManufacturerIDRealtime 0x7F
-
-#define BXRolandSysexModelIDMT32 0x16
-#define BXRolandSysexModelIDD50 0x14
-
-#define BXRolandSysexDeviceIDDefault 0x10
-
-#define BXRolandSysexDataRequest 0x11
-#define BXRolandSysexDataSend 0x12
-
-#define BXRolandSysexAddressSystemArea 0x10
-#define BXRolandSysexAddressReset 0x7F
-#define BXRolandSysexAddressDisplay 0x20
-
 
 NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDisplayMT32MessageNotification";
 
@@ -61,9 +42,9 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
     NSData *chars = [message dataUsingEncoding: NSASCIIStringEncoding allowLossyConversion: YES];
     
     unsigned char sysex[SYSEX_LENGTH] = {
-        BXSysExStart,
+        BXSysexStart,
         
-        BXGMManufacturerIDRoland, BXRolandSysexDeviceIDDefault, BXRolandSysexModelIDMT32,
+        BXSysexManufacturerIDRoland, BXRolandSysexDeviceIDDefault, BXRolandSysexModelIDMT32,
         
         BXRolandSysexDataSend,
         
@@ -77,7 +58,7 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
         //The checksum, which we'll replace later
         0xFF,
         
-        BXSysExEnd
+        BXSysexEnd
     };
     
     //Paste the message into the sysex
@@ -184,7 +165,13 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
     {
         [self attachMIDIDeviceOfType: [self preferredMIDIDeviceType] error: NULL];
     }
-    [[self activeMIDIDevice] handleMessage: message];
+    
+    if ([self activeMIDIDevice])
+    {
+        //If we're not ready to send yet, wait until we are.
+        [self _waitUntilActiveMIDIDeviceIsReady];
+        [[self activeMIDIDevice] handleMessage: message];
+    }
 }
 
 - (void) sendMIDISysex: (NSData *)message
@@ -202,12 +189,12 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
             if (confirmsSupport)
             {
                 id device = [self attachMIDIDeviceOfType: BXMIDIDeviceTypeMT32 error: NULL];
-                if ([device isKindOfClass: [BXEmulatedMT32 class]])
+                if ([device supportsMT32Music])
                 {
-                    [self _flushPendingSysexMessages];
 #ifdef BOXER_DEBUG
                     [self sendMT32LCDMessage: @"    MT-32 Active    "];
 #endif
+                    [self _flushPendingSysexMessages];
                 }
                 else [self _clearPendingSysexMessages];
             }
@@ -225,8 +212,13 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
     {
         [self attachMIDIDeviceOfType: [self preferredMIDIDeviceType] error: NULL];
     }
-        
-    [[self activeMIDIDevice] handleSysex: message];
+
+    if ([self activeMIDIDevice])
+    {
+        //If we're not ready to send yet, wait until we are.
+        [self _waitUntilActiveMIDIDeviceIsReady];
+        [[self activeMIDIDevice] handleSysex: message];
+    }
 }
 
 + (BOOL) isMT32Sysex: (NSData *)message indicatingMT32Support: (BOOL *)indicatesSupport
@@ -243,7 +235,7 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
             baseAddress     = contents[5];
     
     //Command is intended for a different device than a Roland MT-32.
-    if (manufacturerID != BXGMManufacturerIDRoland) return NO;
+    if (manufacturerID != BXSysexManufacturerIDRoland) return NO;
     if (!(modelID == BXRolandSysexModelIDMT32 || modelID == BXRolandSysexModelIDD50)) return NO;
     
     if (indicatesSupport)
@@ -290,7 +282,6 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
 
 - (void) _queueSysexMessage: (NSData *)message
 {
-    NSLog(@"Queueing sysex: %@", message);
     //Copy the message before queuing, as it may be backed by a buffer we don't own.
     [pendingSysexMessages addObject: [NSData dataWithData: message]];
 }
@@ -301,6 +292,8 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
     {
         for (NSData *message in pendingSysexMessages)
         {
+            //If we're not ready to send yet, wait until we are.
+            [self _waitUntilActiveMIDIDeviceIsReady];
             [[self activeMIDIDevice] handleSysex: message];
         }
     }
@@ -310,6 +303,16 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
 - (void) _clearPendingSysexMessages
 {
     [pendingSysexMessages removeAllObjects];
+}
+
+- (void) _waitUntilActiveMIDIDeviceIsReady
+{
+    //TODO: pass this stall back on up to BXSession to handle, so it can
+    //run the event loop while we wait.
+    if ([[self activeMIDIDevice] isProcessing])
+    {
+        [NSThread sleepUntilDate: [[self activeMIDIDevice] dateWhenReady]];
+    }
 }
 
 @end

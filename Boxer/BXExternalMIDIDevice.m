@@ -8,6 +8,11 @@
 #import "BXExternalMIDIDevice.h"
 
 
+//The default seconds-per-byte delay to allow after sending a sysex.
+//Equivalent to the MIDI 1.0 specified delay of 3125 bytes/sec.
+#define BXExternalMIDIDeviceDefaultSysexRate 1.0f / 3125.0f
+
+
 #pragma mark -
 #pragma mark Private method declarations
 
@@ -28,6 +33,7 @@
 #pragma mark Implementation
 
 @implementation BXExternalMIDIDevice
+@synthesize dateWhenReady = _dateWhenReady;
 
 #pragma mark -
 #pragma mark Class helper methods
@@ -37,6 +43,7 @@
     return NSLocalizedString(@"Boxer",
                              @"Descriptive name for Boxer’s MIDI client when communicating with external MIDI devices.");
 }
+
 + (NSString *) defaultPortName
 {
     return NSLocalizedString(@"Boxer MIDI Out",
@@ -46,11 +53,16 @@
 #pragma mark -
 #pragma mark Initialization and cleanup
 
-- (BOOL) supportsMT32Music
+- (id <BXMIDIDevice>) init
 {
-    //TODO: make this contingent on a flag
-    return YES;
+    if ((self = [super init]))
+    {
+        [self setDateWhenReady: [NSDate distantPast]];
+        _secondsPerByte = BXExternalMIDIDeviceDefaultSysexRate;
+    }
+    return self;
 }
+
 
 - (id <BXMIDIDevice>) initWithDestination: (MIDIEndpointRef)destination
                                     error: (NSError **)outError
@@ -104,6 +116,7 @@
 - (void) dealloc
 {
     [self close];
+    [self setDateWhenReady: nil], [_dateWhenReady release];
     [super dealloc];
 }
 
@@ -156,6 +169,15 @@
     }
     
     _destination = destination;
+    
+    //Determine the speed at which we should send to this destination
+    SInt32 maxSysexSpeed = 0;
+    errCode = MIDIObjectGetIntegerProperty(destination, kMIDIPropertyMaxSysExSpeed, &maxSysexSpeed);
+    if (errCode == noErr)
+    {
+        _secondsPerByte = 1.0f / (NSTimeInterval)maxSysexSpeed;
+    }
+    
     return YES;
     
 }
@@ -207,7 +229,25 @@
 }
 
 #pragma mark -
-#pragma mark MIDI processing
+#pragma mark MIDI processing and status
+
+- (NSTimeInterval) processingDelayForSysex: (NSData *)sysex
+{
+    return _secondsPerByte * [sysex length];
+}
+
+- (BOOL) supportsMT32Music
+{
+    //Technically we don't know, so this is a 'maybe'.
+    return YES;
+}
+
+- (BOOL) isProcessing
+{
+    //We're still processing if our readiness date is in the future
+    return [[self dateWhenReady] timeIntervalSinceNow] > 0;
+}
+
 
 - (void) handleMessage: (NSData *)message
 {
@@ -219,6 +259,7 @@
 	MIDIPacket *currentPacket = MIDIPacketListInit(packetList);
     
     MIDIPacketListAdd(packetList, sizeof(buffer), currentPacket, (MIDITimeStamp)0, [message length], (UInt8 *)[message bytes]);
+    
     MIDISend(_port, _destination, packetList);
 }
 
@@ -237,7 +278,13 @@
 	MIDIPacket *currentPacket = MIDIPacketListInit(packetList);
     
     MIDIPacketListAdd(packetList, sizeof(buffer), currentPacket, (MIDITimeStamp)0, [message length], (UInt8 *)[message bytes]);
+    
     MIDISend(_port, _destination, packetList);
+    
+    //Now, calculate how long it should take the device to process all that
+    NSTimeInterval processingDelay = [self processingDelayForSysex: message];
+    if (processingDelay > 0)
+        [self setDateWhenReady: [NSDate dateWithTimeIntervalSinceNow: processingDelay]];
 }
 
 - (void) pause

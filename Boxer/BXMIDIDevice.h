@@ -9,17 +9,7 @@
 //MIDI devices, to which BXEmulator can send MIDI output.
 
 #import <Foundation/Foundation.h>
-
-
-#pragma mark -
-#pragma mark Helper constants for MIDI devices
-
-#define BXSysExStart 0xF0
-#define BXSysExEnd 0xF7
-
-#define BXChannelModeChangePrefix 0xB0
-#define BXAllNotesOffMessage 0x7B
-
+#import "BXMIDIConstants.h"
 
 #pragma mark -
 #pragma mark Protocol declaration
@@ -27,7 +17,16 @@
 @protocol BXMIDIDevice <NSObject>
 
 //Returns whether this device can play back MT-32 music properly.
-- (BOOL) supportsMT32Music;
+@property (readonly, nonatomic) BOOL supportsMT32Music;
+
+//Returns whether this device is still processing events.
+//If YES, further messages should not be sent until dateWhenReady.
+@property (readonly, nonatomic, getter=isProcessing) BOOL processing;
+
+//The date at which this device will next be able to receive events.
+//Sending events before this may result in skipped or truncated messages.
+@property (readonly, copy, nonatomic) NSDate *dateWhenReady;
+
 
 #pragma mark -
 #pragma mark Instance methods

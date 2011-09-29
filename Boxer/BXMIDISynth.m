@@ -129,7 +129,13 @@
 
 
 #pragma mark -
-#pragma mark MIDI processing
+#pragma mark MIDI processing and status
+
+
+//The MIDI synth is *always* ready to party
+- (BOOL) isProcessing       { return NO; }
+- (NSDate *) dateWhenReady  { return [NSDate distantPast]; }
+
 
 - (BOOL) loadSoundFontAtPath: (NSString *)path
                        error: (NSError **)outError

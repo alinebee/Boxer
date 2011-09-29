@@ -299,10 +299,16 @@ enum {
 //deciding on a MIDI device. These are delivered to a new device
 //if we change our mind midstream about what kind of device to use.
 - (void) _queueSysexMessage: (NSData *)message;
+
 //Deliver queued sysex messages to the active MIDI device, and empty the queue.
 - (void) _flushPendingSysexMessages;
+
 //Clear the sysex queue without delivering messages.
 - (void) _clearPendingSysexMessages;
+
 //Returns whether we should keep listening for MT-32 messages.
 - (BOOL) _shouldAutodetectMT32;
+
+//Sleeps the thread until the active MIDI device is ready to receive messages.
+- (void) _waitUntilActiveMIDIDeviceIsReady;
 @end

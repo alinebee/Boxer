@@ -60,6 +60,7 @@
 		9F34BE62142B917100A69FAF /* BXAppController+BXSupportFiles.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F34BE61142B917100A69FAF /* BXAppController+BXSupportFiles.m */; };
 		9F3E57A513F694B40070A14D /* BXEmulatorErrors.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3E57A413F694B40070A14D /* BXEmulatorErrors.m */; };
 		9F3EDA171434A6E4009BFBA2 /* BXSession+BXAudioControls.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3EDA161434A6E4009BFBA2 /* BXSession+BXAudioControls.m */; };
+		9F3EDA1B1434B48D009BFBA2 /* BXExternalMT32.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3EDA1A1434B48D009BFBA2 /* BXExternalMT32.m */; };
 		9F3FB1AF1306F88800DB8FBE /* BXScriptablePreferences.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3FB1AE1306F88800DB8FBE /* BXScriptablePreferences.m */; };
 		9F3FB1B61306F9FB00DB8FBE /* NSApplication+BXScripting.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3FB1B51306F9FB00DB8FBE /* NSApplication+BXScripting.m */; };
 		9F3FB24E130714D700DB8FBE /* BXScriptableWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3FB24D130714D700DB8FBE /* BXScriptableWindow.m */; };
@@ -551,6 +552,9 @@
 		9F3E57A413F694B40070A14D /* BXEmulatorErrors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXEmulatorErrors.m; sourceTree = "<group>"; };
 		9F3EDA151434A6E4009BFBA2 /* BXSession+BXAudioControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXSession+BXAudioControls.h"; sourceTree = "<group>"; };
 		9F3EDA161434A6E4009BFBA2 /* BXSession+BXAudioControls.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXSession+BXAudioControls.m"; sourceTree = "<group>"; };
+		9F3EDA191434B48D009BFBA2 /* BXExternalMT32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXExternalMT32.h; sourceTree = "<group>"; };
+		9F3EDA1A1434B48D009BFBA2 /* BXExternalMT32.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXExternalMT32.m; sourceTree = "<group>"; };
+		9F3EDA1C1434CB8C009BFBA2 /* BXMIDIConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXMIDIConstants.h; sourceTree = "<group>"; };
 		9F3FB1AD1306F88800DB8FBE /* BXScriptablePreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXScriptablePreferences.h; sourceTree = "<group>"; };
 		9F3FB1AE1306F88800DB8FBE /* BXScriptablePreferences.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXScriptablePreferences.m; sourceTree = "<group>"; };
 		9F3FB1B41306F9FB00DB8FBE /* NSApplication+BXScripting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSApplication+BXScripting.h"; sourceTree = "<group>"; };
@@ -2217,6 +2221,7 @@
 		9F902C1D142E169800843B01 /* MIDI */ = {
 			isa = PBXGroup;
 			children = (
+				9F3EDA1C1434CB8C009BFBA2 /* BXMIDIConstants.h */,
 				9F86DB3E1431EF5F00A2EFB6 /* BXMIDIDeviceBrowser.h */,
 				9F86DB3F1431EF5F00A2EFB6 /* BXMIDIDeviceBrowser.m */,
 				9F902C1F142E16C800843B01 /* BXMIDIDevice.h */,
@@ -2227,6 +2232,8 @@
 				9F165384142E8AFE00CAADBF /* BXEmulatedMT32Delegate.h */,
 				9F902C28142E199100843B01 /* BXExternalMIDIDevice.h */,
 				9F902C29142E199100843B01 /* BXExternalMIDIDevice.m */,
+				9F3EDA191434B48D009BFBA2 /* BXExternalMT32.h */,
+				9F3EDA1A1434B48D009BFBA2 /* BXExternalMT32.m */,
 			);
 			name = MIDI;
 			sourceTree = "<group>";
@@ -3026,6 +3033,7 @@
 				9F902C2A142E199100843B01 /* BXExternalMIDIDevice.m in Sources */,
 				9F86DB401431EF5F00A2EFB6 /* BXMIDIDeviceBrowser.m in Sources */,
 				9F3EDA171434A6E4009BFBA2 /* BXSession+BXAudioControls.m in Sources */,
+				9F3EDA1B1434B48D009BFBA2 /* BXExternalMT32.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

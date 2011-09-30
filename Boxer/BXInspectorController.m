@@ -61,7 +61,9 @@
 - (void) awakeFromNib
 {
 	[(NSPanel *)[self window] setBecomesKeyOnlyIfNeeded: YES];
-    [(NSPanel *)[self window] setFloatingPanel: NO];
+    //Leave inspector as floating panel for now, as it screws up royally with 10.7's
+    //fullscreen mode for some reason.
+    //[(NSPanel *)[self window] setFloatingPanel: NO];
 	
 	[[self window] setFrameAutosaveName: @"InspectorPanel"];
 	

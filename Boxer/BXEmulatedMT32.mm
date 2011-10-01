@@ -51,7 +51,9 @@ BXEmulatedMT32 *_currentEmulatedMT32;
 MixerChannel *_mixerChannel;
 
 
-- (BOOL) supportsMT32Music { return YES; }
+- (BOOL) supportsMT32Music          { return YES; }
+- (BOOL) supportsGeneralMIDIMusic   { return NO; }
+
 
 - (id <BXMIDIDevice>) initWithPCMROM: (NSString *)PCMROM
                           controlROM: (NSString *)controlROM

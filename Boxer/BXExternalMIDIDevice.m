@@ -34,6 +34,7 @@
 
 @implementation BXExternalMIDIDevice
 @synthesize dateWhenReady = _dateWhenReady;
+@synthesize destination = _destination;
 
 #pragma mark -
 #pragma mark Class helper methods
@@ -237,6 +238,12 @@
 }
 
 - (BOOL) supportsMT32Music
+{
+    //Technically we don't know, so this is a 'maybe'.
+    return YES;
+}
+
+- (BOOL) supportsGeneralMIDIMusic
 {
     //Technically we don't know, so this is a 'maybe'.
     return YES;

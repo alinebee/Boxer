@@ -14,6 +14,9 @@
 
 @implementation BXExternalMT32
 
+- (BOOL) supportsMT32Music          { return YES; }
+- (BOOL) supportsGeneralMIDIMusic   { return NO; }
+
 - (NSTimeInterval) processingDelayForSysex: (NSData *)sysex
 {
     //The calculations for these sysex processing delays have been adapted from DOSBox's delaysysex patch.

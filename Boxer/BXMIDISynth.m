@@ -22,9 +22,7 @@
 #pragma mark Implementation
 
 @implementation BXMIDISynth
-@synthesize soundFontPath;
-
-- (BOOL) supportsMT32Music { return NO; }
+@synthesize soundFontPath = _soundFontPath;
 
 
 #pragma mark -
@@ -47,20 +45,20 @@
 {
     [self close];
     
-    [soundFontPath release], soundFontPath = nil;
+    [_soundFontPath release], _soundFontPath = nil;
     
     [super dealloc];
 }
 
 - (void) close
 {
-    if (graph)
+    if (_graph)
     {
-        AUGraphStop(graph);
-        DisposeAUGraph(graph);
+        AUGraphStop(_graph);
+        DisposeAUGraph(_graph);
     }
-    graph = NULL;
-    unit = NULL;
+    _graph = NULL;
+    _unit = NULL;
 }
 
 
@@ -88,32 +86,32 @@
 #define REQUIRE(result) if ((errCode = result) != noErr) break
     
     do {
-        REQUIRE(NewAUGraph(&graph));
+        REQUIRE(NewAUGraph(&_graph));
         //Create nodes for our input synth and our output, and connect them together
-        REQUIRE(AUGraphAddNode(graph, &outputDesc, &outputNode));
-        REQUIRE(AUGraphAddNode(graph, &synthDesc, &synthNode));
-        REQUIRE(AUGraphConnectNodeInput(graph, synthNode, 0, outputNode, 0));
+        REQUIRE(AUGraphAddNode(_graph, &outputDesc, &outputNode));
+        REQUIRE(AUGraphAddNode(_graph, &synthDesc, &synthNode));
+        REQUIRE(AUGraphConnectNodeInput(_graph, synthNode, 0, outputNode, 0));
         
         //Open and initialize the graph and its units
-        REQUIRE(AUGraphOpen(graph));
-        REQUIRE(AUGraphInitialize(graph));
+        REQUIRE(AUGraphOpen(_graph));
+        REQUIRE(AUGraphInitialize(_graph));
         
         //Get a reference to the audio unit for the synth.
-        REQUIRE(AUGraphNodeInfo(graph, synthNode, NULL, &unit));
+        REQUIRE(AUGraphNodeInfo(_graph, synthNode, NULL, &_unit));
         
         //Finally start processing the graph.
         //(Technically, we could move this to the first time we receive a MIDI message.)
-        REQUIRE(AUGraphStart(graph));
+        REQUIRE(AUGraphStart(_graph));
     }
     while (NO);
     
     if (errCode)
     {
         //Clean up after ourselves if there was an error
-        if (graph)
+        if (_graph)
         {
-            DisposeAUGraph(graph);
-            graph = NULL;
+            DisposeAUGraph(_graph);
+            _graph = NULL;
         }
         
         if (outError)
@@ -131,6 +129,9 @@
 #pragma mark -
 #pragma mark MIDI processing and status
 
+- (BOOL) supportsMT32Music          { return NO; }
+- (BOOL) supportsGeneralMIDIMusic   { return YES; }
+
 
 //The MIDI synth is *always* ready to party
 - (BOOL) isProcessing       { return NO; }
@@ -140,16 +141,16 @@
 - (BOOL) loadSoundFontAtPath: (NSString *)path
                        error: (NSError **)outError
 {
-    NSAssert(unit != NULL, @"loadSoundFontAtPath:error: called before successful initialization.");
+    NSAssert(_unit != NULL, @"loadSoundFontAtPath:error: called before successful initialization.");
     
-    if (![path isEqualToString: soundFontPath])
+    if (![path isEqualToString: _soundFontPath])
     {
         OSStatus errCode = noErr;
         
         //Clear an existing soundfont
         if (path == nil)
         {
-            errCode = AudioUnitSetProperty(unit,
+            errCode = AudioUnitSetProperty(_unit,
                                            kMusicDeviceProperty_SoundBankFSRef,
                                            kAudioUnitScope_Global,
                                            0,
@@ -165,7 +166,7 @@
             
             if (errCode == noErr)
             {
-                errCode = AudioUnitSetProperty(unit,
+                errCode = AudioUnitSetProperty(_unit,
                                                kMusicDeviceProperty_SoundBankFSRef,
                                                kAudioUnitScope_Global,
                                                0,
@@ -189,8 +190,8 @@
         else
         {
             [self willChangeValueForKey: @"soundFontPath"];
-            [soundFontPath release];
-            soundFontPath = [path retain];
+            [_soundFontPath release];
+            _soundFontPath = [path retain];
             [self didChangeValueForKey: @"soundFontPath"];
             return YES;
         }
@@ -200,7 +201,7 @@
 
 - (void) handleMessage: (NSData *)message
 {
-    NSAssert(unit != NULL, @"handleMessage: called before successful initialization.");
+    NSAssert(_unit != NULL, @"handleMessage: called before successful initialization.");
     NSAssert([message length] > 0, @"0-length message received by handleMessage:");
     
     UInt8 *contents = (UInt8 *)[message bytes];
@@ -208,27 +209,27 @@
     UInt8 data1 = ([message length] > 1) ? contents[1] : 0;
     UInt8 data2 = ([message length] > 2) ? contents[2] : 0;
     
-    MusicDeviceMIDIEvent(unit, status, data1, data2, 0);
+    MusicDeviceMIDIEvent(_unit, status, data1, data2, 0);
 }
 
 - (void) handleSysex: (NSData *)message
 {
-    NSAssert(unit != NULL, @"handleSysEx: called before successful initialization.");
+    NSAssert(_unit != NULL, @"handleSysEx: called before successful initialization.");
     NSAssert([message length] > 0, @"0-length message received by handleSysex:");
     
-    MusicDeviceSysEx(unit, (UInt8 *)[message bytes], [message length]);
+    MusicDeviceSysEx(_unit, (UInt8 *)[message bytes], [message length]);
 }
 
 - (void) pause
 {
-    NSAssert(graph != NULL, @"pause called before successful initialization.");
-    AUGraphStop(graph);
+    NSAssert(_graph != NULL, @"pause called before successful initialization.");
+    AUGraphStop(_graph);
 }
 
 - (void) resume
 {
-    NSAssert(graph != NULL, @"resume called before successful initialization.");
-    AUGraphStart(graph);
+    NSAssert(_graph != NULL, @"resume called before successful initialization.");
+    AUGraphStart(_graph);
 }
 
 @end

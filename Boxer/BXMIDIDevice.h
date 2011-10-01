@@ -19,6 +19,9 @@
 //Returns whether this device can play back MT-32 music properly.
 @property (readonly, nonatomic) BOOL supportsMT32Music;
 
+//Returns whether this device can play back General MIDI music properly.
+@property (readonly, nonatomic) BOOL supportsGeneralMIDIMusic;
+
 //Returns whether this device is still processing events.
 //If YES, further messages should not be sent until dateWhenReady.
 @property (readonly, nonatomic, getter=isProcessing) BOOL processing;

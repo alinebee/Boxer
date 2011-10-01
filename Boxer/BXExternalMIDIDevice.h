@@ -23,6 +23,9 @@
     NSDate *_dateWhenReady;
 }
 
+//The destination this device is connecting to. Set at initialization time.
+@property (readonly, nonatomic) MIDIEndpointRef destination;
+
 //Settable, for the benefit of our subclasses
 @property (readwrite, copy, nonatomic) NSDate *dateWhenReady;
 

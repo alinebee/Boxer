@@ -185,7 +185,7 @@
 {
     [self showBezel: [self fullscreenBezel]
         forDuration: BXFullscreenBezelDuration
-           priority: BXBezelPriorityHigh];
+           priority: BXBezelPriorityNormal];
 }
 
 - (void) showJoystickIgnoredBezel
@@ -261,7 +261,7 @@
         
         [self showBezel: bezel
             forDuration: BXMT32MessageBezelDuration
-               priority: BXBezelPriorityNormal];
+               priority: BXBezelPriorityHigh];
     }
 }
 

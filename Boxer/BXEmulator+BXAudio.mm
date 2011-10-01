@@ -95,9 +95,10 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
 
 - (id <BXMIDIDevice>) attachMIDIDeviceForDescription: (NSDictionary *)description
 {
-    id <BXMIDIDevice> device = [[self delegate] MIDIDeviceForEmulator: self description: description];
+    id <BXMIDIDevice> device = [[self delegate] MIDIDeviceForEmulator: self
+                                                   meetingDescription: description];
     
-    if (device) [self setActiveMIDIDevice: device];
+    [self setActiveMIDIDevice: device];
     return device;
 }
 

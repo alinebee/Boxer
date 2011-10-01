@@ -25,7 +25,7 @@
 }
 
 - (id <BXMIDIDevice>) MIDIDeviceForEmulator: (BXEmulator *)theEmulator
-                                description: (NSDictionary *)description
+                         meetingDescription: (NSDictionary *)description
 {
     //Defaults to BXMIDIMusicAutodetect if unspecified.
     BXMIDIMusicType musicType = [[description objectForKey: BXMIDIMusicTypeKey] integerValue];

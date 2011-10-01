@@ -148,7 +148,7 @@ extern NSString * const BXEmulatorDidDisplayMT32MessageNotification;
 
 //Create and return a MIDI output device suitable for the specified description.
 - (id <BXMIDIDevice>) MIDIDeviceForEmulator: (BXEmulator *)emulator
-                                description: (NSDictionary *)description;
+                         meetingDescription: (NSDictionary *)description;
 
 @optional
 

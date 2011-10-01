@@ -154,7 +154,7 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
                 //autodetection so we don't keep trying.
                 else
                 {
-                    MT32AutodetectionFailed = YES;
+                    [self setAutodetectsMT32: NO];
                     [self _clearPendingSysexMessages];
                 }
             }
@@ -218,25 +218,31 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
 #pragma mark -
 #pragma mark Private methods
 
+- (void) setRequestedMIDIDeviceDescription: (NSDictionary *)newDescription
+{
+    if (![requestedMIDIDeviceDescription isEqual: newDescription])
+    {
+        [requestedMIDIDeviceDescription release];
+        requestedMIDIDeviceDescription = [newDescription retain];
+        
+        //Enable MT-32 autodetection if the description doesn't have a specific music type in mind.
+        BXMIDIMusicType musicType = [[newDescription objectForKey: BXMIDIMusicTypeKey] integerValue];
+        [self setAutodetectsMT32: (musicType == BXMIDIMusicAutodetect)];
+    }
+}
+
 - (BOOL) _shouldAutodetectMT32
 {
-    //If we've manually turned off autodetection for this emulation session
-    //(e.g. after a failed attempt to emulate/connect to an MT-32) then stop trying.
-    if (MT32AutodetectionFailed) return NO;
-    
-    //Try to autodetect the MT-32 only if no explicit MIDI type was specified for this game,
-    //and if we're not already sending to a MIDI device that supports MT-32 music.
-    if ([self musicType] != BXMIDIMusicAutodetect) return NO;
-    if ([[self activeMIDIDevice] supportsMT32Music]) return NO;
-    
-    return YES;
+    //Try to autodetect the MT-32 only if autodetection was enabled,
+    //and if we don't already have a MIDI device that supports MT-32 music.
+    return ([self autodetectsMT32] && ![[self activeMIDIDevice] supportsMT32Music]);
 }
 
 - (void) _resetMIDIDeviceDetection
 {
     [self _clearPendingSysexMessages];
     //Clear the active MIDI device so that we can redetect it next time
-    if ([self musicType] == BXMIDIMusicAutodetect)
+    if ([self autodetectsMT32])
     {
         [self setActiveMIDIDevice: nil];
     }
@@ -279,7 +285,9 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
 
 - (void) _attachRequestedMIDIDeviceIfNeeded
 {
-    if (![self activeMIDIDevice] && [self musicType] != BXMIDIMusicDisabled)
+    NSDictionary *description = [self requestedMIDIDeviceDescription];
+    BXMIDIMusicType musicType = [[description objectForKey: BXMIDIMusicTypeKey] integerValue];
+    if (![self activeMIDIDevice] && musicType != BXMIDIMusicDisabled)
     {
         [self attachMIDIDeviceForDescription: [self requestedMIDIDeviceDescription]];
     }

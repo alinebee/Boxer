@@ -90,7 +90,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 
 @synthesize commandQueue;
 
-@synthesize activeMIDIDevice, requestedMIDIDeviceDescription;
+@synthesize activeMIDIDevice, requestedMIDIDeviceDescription, autodetectsMT32;
 
 
 #pragma mark -

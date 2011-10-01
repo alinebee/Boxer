@@ -100,7 +100,7 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
     id <BXMIDIDevice> activeMIDIDevice;
     NSDictionary *requestedMIDIDeviceDescription;
     NSMutableArray *pendingSysexMessages;
-    BOOL MT32AutodetectionFailed;
+    BOOL autodetectsMT32;
 }
 
 
@@ -195,6 +195,11 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 //The device to which we are currently sending MIDI signals.
 //One of MT32MIDIDevice, MIDISynth or externalMIDIDevice.
 @property (retain, nonatomic) id <BXMIDIDevice> activeMIDIDevice;
+
+//Whether to autodetect when a game is playing MT-32 music.
+//If YES, and the game detects MT-32 myusic, it will try to switch
+//to an MT-32-capable MIDI device.
+@property (assign, nonatomic) BOOL autodetectsMT32;
 
 
 #pragma mark -

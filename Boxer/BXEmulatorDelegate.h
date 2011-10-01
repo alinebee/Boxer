@@ -152,6 +152,13 @@ extern NSString * const BXEmulatorDidDisplayMT32MessageNotification;
 
 @optional
 
+//Called when the specified MIDI device isn't ready to receive signals.
+//Return YES to make the emulator sleep on the current thread until
+//the specified date, or NO to let the emulator send its message anyway.
+//If the delegate does not respond to this signal, the emulator will
+//assume the answer is YES.
+- (BOOL) emulator: (BXEmulator *)emulator shouldWaitForMIDIDevice: (id <BXMIDIDevice>)device untilDate: (NSDate *)date;
+
 //Posted whenever a game tells the MT-32 to display an LCD message.
 - (void) emulatorDidDisplayMT32Message: (NSNotification *)notification;
 @end

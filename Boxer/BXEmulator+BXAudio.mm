@@ -98,7 +98,7 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
     id <BXMIDIDevice> device = [[self delegate] MIDIDeviceForEmulator: self
                                                    meetingDescription: description];
     
-    [self setActiveMIDIDevice: device];
+    if (device) [self setActiveMIDIDevice: device];
     return device;
 }
 
@@ -275,19 +275,26 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
 
 - (void) _waitUntilActiveMIDIDeviceIsReady
 {
-    //TODO: pass this stall back on up to BXSession to handle, so it can
-    //run the event loop while we wait.
-    if ([[self activeMIDIDevice] isProcessing])
+    id <BXMIDIDevice> device = [self activeMIDIDevice];
+    BOOL askDelegate = [[self delegate] respondsToSelector: @selector(emulator:shouldWaitForMIDIDevice:untilDate:)];
+    
+    while ([device isProcessing])
     {
-        [NSThread sleepUntilDate: [[self activeMIDIDevice] dateWhenReady]];
+        NSDate *date = [device dateWhenReady];
+        BOOL keepWaiting = YES;
+        
+        if (askDelegate) keepWaiting = [[self delegate] emulator: self
+                                         shouldWaitForMIDIDevice: device
+                                                       untilDate: date];
+        
+        if (keepWaiting) [NSThread sleepUntilDate: date];
+        else break;
     }
 }
 
 - (void) _attachRequestedMIDIDeviceIfNeeded
 {
-    NSDictionary *description = [self requestedMIDIDeviceDescription];
-    BXMIDIMusicType musicType = [[description objectForKey: BXMIDIMusicTypeKey] integerValue];
-    if (![self activeMIDIDevice] && musicType != BXMIDIMusicDisabled)
+    if (![self activeMIDIDevice])
     {
         [self attachMIDIDeviceForDescription: [self requestedMIDIDeviceDescription]];
     }

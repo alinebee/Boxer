@@ -93,11 +93,9 @@ void boxer_suggestMIDIHandler(const char *handlerName, const char *configParams)
 
 bool boxer_MIDIAvailable()
 {
-    BXEmulator *emulator = [BXEmulator currentEmulator];
-    if ([emulator activeMIDIDevice]) return YES;
-    
-    BXMIDIMusicType type = [[[emulator requestedMIDIDeviceDescription] objectForKey: BXMIDIMusicTypeKey] integerValue];
-    return (type != BXMIDIMusicDisabled);
+    //Always treat MIDI as available, even if we're using a dummy MIDI handler.
+    //(This actually matches DOSBox's behaviour.)
+    return YES;
 }
 
 void boxer_sendMIDIMessage(Bit8u *msg)

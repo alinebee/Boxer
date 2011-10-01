@@ -120,6 +120,7 @@
 		9F69128C10A2DF8D00EA78CD /* BXValueTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F69128B10A2DF8D00EA78CD /* BXValueTransformers.m */; };
 		9F69133310A2F62A00EA78CD /* BXDrive.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F69133210A2F62A00EA78CD /* BXDrive.m */; };
 		9F6A79041203547800D2097D /* gamefolder.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F6A79031203547800D2097D /* gamefolder.icns */; };
+		9F6C1CDA14373AF600601ACB /* BXDummyMIDIDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F6C1CD914373AF600601ACB /* BXDummyMIDIDevice.m */; };
 		9F70277B13D706CC00606B4C /* BXBezelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F70277A13D706CC00606B4C /* BXBezelController.m */; };
 		9F70277D13D70CA600606B4C /* Bezel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F70277C13D70CA600606B4C /* Bezel.xib */; };
 		9F70278413D72D8100606B4C /* BXHUDControls.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F70278313D72D8100606B4C /* BXHUDControls.m */; };
@@ -652,6 +653,8 @@
 		9F69133110A2F62A00EA78CD /* BXDrive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDrive.h; sourceTree = "<group>"; };
 		9F69133210A2F62A00EA78CD /* BXDrive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDrive.m; sourceTree = "<group>"; };
 		9F6A79031203547800D2097D /* gamefolder.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = gamefolder.icns; sourceTree = "<group>"; };
+		9F6C1CD814373AF600601ACB /* BXDummyMIDIDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDummyMIDIDevice.h; sourceTree = "<group>"; };
+		9F6C1CD914373AF600601ACB /* BXDummyMIDIDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDummyMIDIDevice.m; sourceTree = "<group>"; };
 		9F70277913D706CC00606B4C /* BXBezelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBezelController.h; sourceTree = "<group>"; };
 		9F70277A13D706CC00606B4C /* BXBezelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBezelController.m; sourceTree = "<group>"; };
 		9F70277C13D70CA600606B4C /* Bezel.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Bezel.xib; sourceTree = "<group>"; };
@@ -2234,6 +2237,8 @@
 				9F902C29142E199100843B01 /* BXExternalMIDIDevice.m */,
 				9F3EDA191434B48D009BFBA2 /* BXExternalMT32.h */,
 				9F3EDA1A1434B48D009BFBA2 /* BXExternalMT32.m */,
+				9F6C1CD814373AF600601ACB /* BXDummyMIDIDevice.h */,
+				9F6C1CD914373AF600601ACB /* BXDummyMIDIDevice.m */,
 			);
 			name = MIDI;
 			sourceTree = "<group>";
@@ -3034,6 +3039,7 @@
 				9F86DB401431EF5F00A2EFB6 /* BXMIDIDeviceBrowser.m in Sources */,
 				9F3EDA171434A6E4009BFBA2 /* BXSession+BXAudioControls.m in Sources */,
 				9F3EDA1B1434B48D009BFBA2 /* BXExternalMT32.m in Sources */,
+				9F6C1CDA14373AF600601ACB /* BXDummyMIDIDevice.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

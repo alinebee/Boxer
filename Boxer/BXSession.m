@@ -321,7 +321,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 }
 
 - (void) setEmulator: (BXEmulator *)newEmulator
-{	
+{
 	if (newEmulator != emulator)
 	{
 		if (emulator)
@@ -779,42 +779,11 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (void) processEventsForEmulator: (BXEmulator *)theEmulator
 {
-	//Implementation note: in a better world, this code wouldn't be here as event
-	//dispatch is normally done automatically by NSApplication at opportune moments.
-	//However, DOSBox's emulation loop takes over the application's main thread,
-	//leaving no time for events to get processed and dispatched.
-	//Hence in each iteration of DOSBox's run loop, we pump NSApplication's event
-	//queue for all pending events and send them on their way.
-	
-	//Bugfix: if we are in the process of shutting down, then don't dispatch events:
-	//NSApp may not know yet that our window has closed, and will crash when trying
-	//send events to it. This isn't a bug per se but an edge-case with the
-	//NSWindow/NSDocument close flow.
-	
-	NSEvent *event;
-	NSDate *untilDate = [self isSuspended] ? [NSDate distantFuture] : nil;
-	
-	while (!isClosing && (event = [NSApp nextEventMatchingMask: NSAnyEventMask
-													 untilDate: untilDate
-														inMode: NSDefaultRunLoopMode
-													   dequeue: YES]))
-	{
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-        
-		[NSApp sendEvent: event];
-		
-		//If we're suspended, keep dispatching events until we are unpaused;
-		//otherwise, allow emulation to resume after the first batch
-		//of events has been processed.
-		untilDate = [self isSuspended] ? [NSDate distantFuture] : nil;
-        
-        [pool drain];
-	}
+	[self _processEventsUntilDate: nil];
 }
 
 - (void) emulatorWillStartRunLoop: (BXEmulator *)theEmulator {}
 - (void) emulatorDidFinishRunLoop: (BXEmulator *)theEmulator {}
-
 
 - (void) emulatorWillStartProgram: (NSNotification *)notification
 {
@@ -980,6 +949,52 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 #pragma mark -
 #pragma mark Private methods
+
+- (void) _processEventsUntilDate: (NSDate *)requestedDate
+{
+    //Implementation note: in a better world, this code wouldn't be here as event
+	//dispatch is normally done automatically by NSApplication at opportune moments.
+	//However, DOSBox's emulation loop takes over the application's main thread,
+	//leaving no time for events to get processed and dispatched.
+	//Hence in each iteration of DOSBox's run loop, we pump NSApplication's event
+	//queue for all pending events and send them on their way.
+    
+    //Once BXEmulator is running in its own thread/process, this will be unnecessary
+    //and we can ditch it altogether.
+	
+	//Bugfix: if we are in the process of shutting down, then don't dispatch events:
+	//NSApp may not know yet that our window has closed, and will crash when trying
+	//send events to it. This isn't a bug per se but an edge-case with the
+	//NSWindow/NSDocument close flow.
+	
+    NSEvent *event;
+    [requestedDate retain];
+    
+	NSDate *untilDate = [self isSuspended] ? [NSDate distantFuture] : requestedDate;
+	
+	while (!isClosing && (event = [NSApp nextEventMatchingMask: NSAnyEventMask
+													 untilDate: untilDate
+														inMode: NSDefaultRunLoopMode
+													   dequeue: YES]))
+	{
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        
+		[NSApp sendEvent: event];
+		
+		//If we're suspended, keep dispatching events until we are unpaused;
+        //otherwise, exit once our original requested date has passed (which
+        //will be after the first batch of events has been processed,
+        //if requestedDate was nil or in the past.)
+		untilDate = [self isSuspended] ? [NSDate distantFuture] : requestedDate;
+        
+        [pool drain];
+	}
+    
+    [requestedDate release];
+}
+
+#pragma mark -
+#pragma mark Behavioural modifiers
 
 - (BOOL) _shouldPersistGameProfile: (BXGameProfile *)profile
 {
@@ -1403,7 +1418,6 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	[self setInterrupted: NO];
 }
 
-
 - (void) _registerForPauseNotifications
 {
 	NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
@@ -1463,6 +1477,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	[center removeObserver: self name: BXWillBeginInterruptionNotification object: nil];
 	[center removeObserver: self name: BXDidFinishInterruptionNotification object: nil];
 }
+
 
 #pragma mark -
 #pragma mark Power management

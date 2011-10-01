@@ -10,6 +10,7 @@
 
 #import "BXSession.h"
 #import "BXSession+BXEmulatorControls.h"
+#import "BXSession+BXAudioControls.h"
 #import "BXSession+BXFileManager.h"
 #import "BXSessionError.h"
 
@@ -100,6 +101,9 @@
 
 @interface BXSession (BXSuspensionBehaviour)
 
+//When YES, the session will try to prevent the Mac's display from going to sleep.
+@property (assign, nonatomic) BOOL suppressesDisplaySleep;
+
 - (void) _syncSuspendedState;
 - (void) _syncAutoPausedState;
 - (BOOL) _shouldAutoPause;
@@ -108,11 +112,14 @@
 - (void) _interruptionWillBegin: (NSNotification *)notification;
 - (void) _interruptionDidFinish: (NSNotification *)notification;
 
-//When YES, the session will try to prevent the Mac's display from going to sleep.
-@property (assign, nonatomic) BOOL suppressesDisplaySleep;
-
 - (BOOL) _shouldSuppressDisplaySleep;
 - (void) _syncSuppressesDisplaySleep;
+
+//Run the application's event loop until the specified date.
+//Pass nil as the date to process pending events and then return immediately.
+//(Note that execution will stay in this method while emulation is suspended,
+//exiting only once the suspension is over and the requested date has past.)
+- (void) _processEventsUntilDate: (NSDate *)date;
 @end
 
 @interface BXSession (BXFileManagerInternals)

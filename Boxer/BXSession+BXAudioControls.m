@@ -5,7 +5,7 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-#import "BXSession+BXAudioControls.h"
+#import "BXSessionPrivate.h"
 #import "BXBezelController.h"
 #import "BXAppController+BXSupportFiles.h"
 #import "BXEmulator+BXAudio.h"
@@ -13,7 +13,9 @@
 
 #import "BXEmulatedMT32.h"
 #import "BXMIDISynth.h"
+#import "BXExternalMIDIDevice.h"
 #import "BXExternalMT32.h"
+#import "BXDummyMIDIDevice.h"
 
 
 @implementation BXSession (BXAudioControls)
@@ -27,6 +29,9 @@
 - (id <BXMIDIDevice>) MIDIDeviceForEmulator: (BXEmulator *)theEmulator
                          meetingDescription: (NSDictionary *)description
 {
+    //TODO: make this method handle errors properly, or at least log them.
+    id <BXMIDIDevice> device;
+    
     //Defaults to BXMIDIMusicAutodetect if unspecified.
     BXMIDIMusicType musicType = [[description objectForKey: BXMIDIMusicTypeKey] integerValue];
     
@@ -34,20 +39,17 @@
     BOOL preferExternal = [[description objectForKey: BXMIDIPreferExternalKey] boolValue];
     
     
-    //Disable MIDI music altogether if requested.
-    if (musicType == BXMIDIMusicDisabled)
-    {
-        return nil;
-    }
-    
-    //Otherwise, decide what MIDI device would best fulfill the specified description.
-    id <BXMIDIDevice> device = nil;
-    
     //Check if the device the emulator is already using is a suitable match,
     //and just return that if so.
     if ([self MIDIDevice: [theEmulator activeMIDIDevice] meetsDescription: description])
     {
         return [theEmulator activeMIDIDevice];
+    }
+    
+    //Use a dummy MIDI device if MIDI music is disabled.
+    if (musicType == BXMIDIMusicDisabled)
+    {
+        return [[[BXDummyMIDIDevice alloc] init] autorelease];
     }
     
     //If the emulator wants an external MIDI device if available, try and find the one
@@ -113,7 +115,9 @@
             else
             {
                 //TODO: display the error reason if initialization
-                //failed for any other reason than missing ROMs.
+                //failed for any other reason than missing ROMs: i.e.
+                //if the ROMs were invalid, this needs to be actioned
+                //by the user.
             }
         }
     }
@@ -128,6 +132,7 @@
     }
     else
     {
+        //If the, then we're in big trouble, but 
         device = [[BXMIDISynth alloc] initWithError: NULL];
         return [device autorelease];
     }
@@ -135,12 +140,12 @@
 
 - (BOOL) MIDIDevice: (id <BXMIDIDevice>)device meetsDescription: (NSDictionary *)description
 {
+    if (device == nil) return NO;
+    
     BXMIDIMusicType musicType = [[description objectForKey: BXMIDIMusicTypeKey] integerValue];
     
     
-    //If MIDI music is disabled, any device at all is an unsuitable match.
-    if (musicType == BXMIDIMusicDisabled) return (device == nil);
-    else if (device == nil) return NO;
+    if (musicType == BXMIDIMusicDisabled) return ([device isKindOfClass: [BXDummyMIDIDevice class]]);
     
     
     //Check external devices to make sure they meet external-device-specific requirements.
@@ -172,5 +177,13 @@
     //If we got this far then we've run out of reasons to reject the device
     //and so it meets the specified description.
     return YES;
+}
+
+- (BOOL) emulator: (BXEmulator *)emulator shouldWaitForMIDIDevice: (id<BXMIDIDevice>)device untilDate: (NSDate *)date
+{
+    //Handle the delay ourselves more gracefully by running the event loop until the time is up.
+    NSLog(@"Waiting for MIDI device for %f seconds", [date timeIntervalSinceNow]);
+    [self _processEventsUntilDate: date];
+    return NO;
 }
 @end

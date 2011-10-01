@@ -36,23 +36,68 @@ Bit8u BXMIDIMessageLength[256] = {
     1,2,3,2, 0,0,1,1, 1,0,1,1, 1,0,1,1   // 0xf0
 };
 
-void boxer_suggestMIDIHandler(const char *handlerName)
+void boxer_suggestMIDIHandler(const char *handlerName, const char *configParams)
 {
-    NSString *name = [[NSString stringWithCString: handlerName encoding: BXDirectStringEncoding] lowercaseString];
+    NSString *name = [[[NSString stringWithCString: handlerName encoding: BXDirectStringEncoding]
+                       stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]] lowercaseString];
+    NSString *params = [[NSString stringWithCString: configParams encoding: BXDirectStringEncoding]
+                        stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
     
-    BXMIDIDeviceType preferredType = BXMIDIDeviceTypeAuto;
     
-    if      ([name isEqualToString: @"mt32"])       preferredType = BXMIDIDeviceTypeMT32;
-    else if ([name isEqualToString: @"coreaudio"])  preferredType = BXMIDIDeviceTypeGeneralMIDI;
-    else if ([name isEqualToString: @"coremidi"])   preferredType = BXMIDIDeviceTypeExternal;
+    NSMutableDictionary *description = [[NSMutableDictionary alloc] initWithCapacity: 3];
+    BXMIDIMusicType musicType = BXMIDIMusicAutodetect;
     
-    [[BXEmulator currentEmulator] setPreferredMIDIDeviceType: preferredType];
+    if ([name isEqualToString: @"none"])
+    {
+        musicType = BXMIDIMusicDisabled;
+    }
+    if ([name isEqualToString: @"mt32"])
+    {
+        musicType = BXMIDIMusicMT32;
+    }
+    else if ([name isEqualToString: @"coreaudio"])
+    {
+        musicType = BXMIDIMusicGeneralMIDI;
+    }
+    else if ([name isEqualToString: @"coremidi"])
+    {
+        [description setObject: [NSNumber numberWithBool: YES]
+                        forKey: BXMIDIPreferExternalKey];
+        
+        //If the configuration parameter string starts with a number,
+        //grab that as the destination index.
+        if ([params isMatchedByRegex: @"^\\d+"])
+        {
+            NSString *indexString = [[params componentsMatchedByRegex: @"^(\\d+)" capture: 1] objectAtIndex: 0];
+            NSInteger destinationIndex = [indexString integerValue];
+            
+            [description setObject: [NSNumber numberWithInteger: destinationIndex]
+                            forKey: BXMIDIExternalDeviceIndexKey];
+        }
+        
+        //Check for the delaysysex flag, which indicates we need to use
+        //sysex delays suitable for older MT-32s when talking to the device.
+        if ([params isMatchedByRegex: @"delaysysex"])
+        {
+            [description setObject: [NSNumber numberWithBool: YES]
+                            forKey: BXMIDIExternalDeviceNeedsMT32SysexDelaysKey];
+        }
+    }
+    
+    [description setObject: [NSNumber numberWithInteger: musicType] forKey: BXMIDIMusicTypeKey];
+    
+    [[BXEmulator currentEmulator] setRequestedMIDIDeviceDescription: description];
+    
+    [description release];
 }
 
 bool boxer_MIDIAvailable()
 {
     BXEmulator *emulator = [BXEmulator currentEmulator];
-    return [emulator activeMIDIDevice] != nil || [emulator preferredMIDIDeviceType] != BXMIDIDeviceTypeNone;
+    if ([emulator activeMIDIDevice]) return YES;
+    
+    BXMIDIMusicType type = [[[emulator requestedMIDIDeviceDescription] objectForKey: BXMIDIMusicTypeKey] integerValue];
+    return (type != BXMIDIMusicDisabled);
 }
 
 void boxer_sendMIDIMessage(Bit8u *msg)

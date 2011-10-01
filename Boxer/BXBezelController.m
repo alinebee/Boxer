@@ -27,13 +27,14 @@
 #define BXCPUBezelDuration 0.75
 #define BXThrottleBezelDuration 0.75
 #define BXMT32MessageBezelDuration 4.0
+#define BXMT32MissingBezelDuration 3.0
 
 
 @implementation BXBezelController
 @synthesize driveAddedBezel, driveSwappedBezel, driveRemovedBezel, driveImportedBezel;
 @synthesize pauseBezel, playBezel, fullscreenBezel;
 @synthesize joystickIgnoredBezel, CPUSpeedBezel, throttleBezel;
-@synthesize MT32MessageBezel;
+@synthesize MT32MessageBezel, MT32MissingBezel;
 
 + (NSImage *) bezelIconForDrive: (BXDrive *)drive
 {
@@ -80,6 +81,7 @@
     [self setThrottleBezel: nil],           [throttleBezel release];
     [self setJoystickIgnoredBezel: nil],    [joystickIgnoredBezel release];
     [self setMT32MessageBezel: nil],        [MT32MessageBezel release];
+    [self setMT32MissingBezel: nil],        [MT32MissingBezel release];
     
     [super dealloc];
 }
@@ -261,6 +263,13 @@
             forDuration: BXMT32MessageBezelDuration
                priority: BXBezelPriorityNormal];
     }
+}
+
+- (void) showMT32MissingBezel
+{
+    [self showBezel: [self MT32MissingBezel]
+        forDuration: BXMT32MissingBezelDuration
+           priority: BXBezelPriorityLow];
 }
 
 

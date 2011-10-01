@@ -7,8 +7,8 @@
 
 #import "BXCoalface.h"
 
-//Tell BXEmulator what the preferred MIDI handler is, as defined in the DOSBox configuration.
-void boxer_suggestMIDIHandler(const char *handlerName);
+//Tell BXEmulator the preferred MIDI handler according to the DOSBox configuration.
+void boxer_suggestMIDIHandler(const char *handlerName, const char *configParams);
 
 //Tells DOSBox whether MIDI is currently available or not.
 bool boxer_MIDIAvailable();

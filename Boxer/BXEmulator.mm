@@ -90,7 +90,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 
 @synthesize commandQueue;
 
-@synthesize activeMIDIDevice, preferredMIDIDeviceType;
+@synthesize activeMIDIDevice, requestedMIDIDeviceDescription;
 
 
 #pragma mark -
@@ -198,7 +198,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 		keyboard			= [[BXEmulatedKeyboard alloc] init];
         
 		pendingSysexMessages    = [[NSMutableArray alloc] initWithCapacity: 10];
-		
+        
 		[videoHandler setEmulator: self];
 	}
 	return self;
@@ -208,6 +208,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 {	
 	[self setProcessName: nil],	[processName release];
 	[self setActiveMIDIDevice: nil], [activeMIDIDevice release];
+    [self setRequestedMIDIDeviceDescription: nil], [requestedMIDIDeviceDescription release];
     
 	[videoHandler release], videoHandler = nil;
 	

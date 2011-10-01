@@ -222,22 +222,29 @@ public:
 	MIDI(Section* configuration):Module_base(configuration){
 		Section_prop * section=static_cast<Section_prop *>(configuration);
 		const char * dev=section->Get_string("mididevice");
+		std::string fullconf=section->Get_string("midiconfig");
         
         //--Added 2011-09-25 by Alun Bestor to let Boxer pick up on the suggested MIDI device
-        boxer_suggestMIDIHandler(dev);
+        boxer_suggestMIDIHandler(dev, fullconf.c_str());
         //--End of modifications
         
-		std::string fullconf=section->Get_string("midiconfig");
 		/* If device = "default" go for first handler that works */
 		MidiHandler * handler;
 //		MAPPER_AddHandler(MIDI_SaveRawEvent,MK_f8,MMOD1|MMOD2,"caprawmidi","Cap MIDI");
+        
+        //Disabled 2011-09-30 by Alun Bestor: Boxer now handles sysex delays itself
+        /*
 		midi.sysex.delay = 0;
 		midi.sysex.start = 0;
+        
 		if (fullconf.find("delaysysex") != std::string::npos) {
 			midi.sysex.start = GetTicks();
 			fullconf.erase(fullconf.find("delaysysex"));
 			LOG_MSG("MIDI:Using delayed SysEx processing");
 		}
+         */
+        //--End of modifications
+        
 		std::remove(fullconf.begin(), fullconf.end(), ' ');
 		const char * conf = fullconf.c_str();
 		midi.status=0x00;
@@ -247,6 +254,7 @@ public:
         //--Modified 2011-09-25 by Alun Bestor: DOSBox's MIDI handlers are all disabled,
         //so skip straight to the 'none' handler.
         goto getdefault;
+        //--End of modifications
         
 		if (!strcasecmp(dev,"default")) goto getdefault;
 		handler=handler_list;

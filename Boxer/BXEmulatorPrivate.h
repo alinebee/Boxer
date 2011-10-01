@@ -311,4 +311,10 @@ enum {
 
 //Sleeps the thread until the active MIDI device is ready to receive messages.
 - (void) _waitUntilActiveMIDIDeviceIsReady;
+
+//Creates and attaches a new MIDI device matching the requested MIDI device description,
+//if no device is attached already and if MIDI music is not disabled altogether.
+//Called from handleSysex: and handleMessage: to create the MIDI device the first
+//time it is needed.
+- (void) _attachRequestedMIDIDeviceIfNeeded;
 @end

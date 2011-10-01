@@ -49,6 +49,7 @@ enum {
     IBOutlet NSView *pauseBezel;
     IBOutlet NSView *playBezel;
     IBOutlet NSView *MT32MessageBezel;
+    IBOutlet NSView *MT32MissingBezel;
     
     BXBezelPriority currentPriority;
 }
@@ -76,6 +77,8 @@ enum {
 
 //The bezel view used for MT-32 LCD messages.
 @property (retain, nonatomic) NSView *MT32MessageBezel;
+//The bezel view used for notifying the user that they need an MT-32 to hear proper music.
+@property (retain, nonatomic) NSView *MT32MissingBezel;
 
 //Pause/play bezel views.
 @property (retain, nonatomic) NSView *pauseBezel;
@@ -115,6 +118,7 @@ enum {
 - (void) showJoystickIgnoredBezel;
 
 - (void) showMT32BezelForMessage: (NSString *)message;
+- (void) showMT32MissingBezel;
 
 - (void) showCPUSpeedBezelForSpeed: (NSInteger)cpuSpeed;
 - (void) showThrottleBezelForValue: (float)throttleValue;

@@ -50,14 +50,6 @@ enum {
 };
 typedef NSUInteger BXJoystickSupportLevel;
 
-enum {
-    BXMIDIDeviceTypeAuto        = -1,
-    BXMIDIDeviceTypeNone        = 0,
-    BXMIDIDeviceTypeGeneralMIDI = 1,
-    BXMIDIDeviceTypeMT32        = 2,
-    BXMIDIDeviceTypeExternal    = 3
-};
-typedef NSInteger BXMIDIDeviceType;
 
 //C string encodings, used by BXShell executeCommand:encoding: and executeCommand:withArgumentString:encoding:
 extern NSStringEncoding BXDisplayStringEncoding;	//Used for strings that will be displayed to the user
@@ -106,8 +98,9 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
     
     //Used by BXAudio
     id <BXMIDIDevice> activeMIDIDevice;
-    BXMIDIDeviceType preferredMIDIDeviceType;
+    NSDictionary *requestedMIDIDeviceDescription;
     NSMutableArray *pendingSysexMessages;
+    BOOL MT32AutodetectionFailed;
 }
 
 
@@ -195,9 +188,9 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 //An array of queued command strings to execute on the DOS command line.
 @property (readonly, nonatomic) NSMutableArray *commandQueue;
 
-//The kind of MIDI device expected by the game we're playing. Populated
-//based on the mididevice property in the gamebox configuration file.
-@property (assign, nonatomic) BXMIDIDeviceType preferredMIDIDeviceType;
+//The properties requested by the game for what kind of MIDI playback
+//device we should use. See BXAudio for keys and constants.
+@property (retain, nonatomic) NSDictionary * requestedMIDIDeviceDescription;
 
 //The device to which we are currently sending MIDI signals.
 //One of MT32MIDIDevice, MIDISynth or externalMIDIDevice.

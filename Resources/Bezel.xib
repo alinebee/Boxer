@@ -53,7 +53,6 @@
 						<int key="NSvFlags">274</int>
 						<string key="NSFrame">{{20, 23}, {300, 44}}</string>
 						<reference key="NSSuperview" ref="959508283"/>
-						<reference key="NSNextKeyView"/>
 						<int key="NSTag">7</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="422971973">
@@ -211,7 +210,7 @@ YmFyLg</string>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
 			<object class="NSCustomView" id="486365284">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -254,11 +253,12 @@ YmFyLg</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{240, 80}</string>
+				<reference key="NSSuperview"/>
 				<reference key="NSNextKeyView" ref="319377139"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
 			<object class="NSCustomView" id="759628227">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -333,6 +333,7 @@ YmFyLg</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{220, 200}</string>
+				<reference key="NSSuperview"/>
 				<reference key="NSNextKeyView" ref="457239935"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
@@ -495,7 +496,7 @@ YmFyLg</string>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
 			<object class="NSCustomView" id="277571684">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -504,6 +505,7 @@ YmFyLg</string>
 						<int key="NSvFlags">266</int>
 						<string key="NSFrame">{{17, 20}, {306, 36}}</string>
 						<reference key="NSSuperview" ref="277571684"/>
+						<reference key="NSNextKeyView"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="290505995">
 							<int key="NSCellFlags">67239424</int>
@@ -534,6 +536,7 @@ YmFyLg</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{340, 128}</string>
+				<reference key="NSSuperview"/>
 				<reference key="NSNextKeyView" ref="647359916"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
@@ -624,7 +627,7 @@ YmFyLg</string>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
 			<object class="NSCustomView" id="791075297">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -758,7 +761,6 @@ YmFyLg</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{220, 200}</string>
-				<reference key="NSSuperview"/>
 				<reference key="NSNextKeyView" ref="908266419"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
@@ -772,7 +774,6 @@ YmFyLg</string>
 						<int key="NSvFlags">274</int>
 						<string key="NSFrame">{{20, 20}, {380, 47}}</string>
 						<reference key="NSSuperview" ref="901407490"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView"/>
 						<int key="NSTag">7</int>
 						<bool key="NSEnabled">YES</bool>
@@ -789,8 +790,55 @@ YmFyLg</string>
 				</object>
 				<string key="NSFrameSize">{423, 90}</string>
 				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="681728244"/>
+				<string key="NSClassName">BXBezelView</string>
+			</object>
+			<object class="NSCustomView" id="1025926106">
+				<reference key="NSNextResponder"/>
+				<int key="NSvFlags">268</int>
+				<object class="NSMutableArray" key="NSSubviews">
+					<bool key="EncodedWithXMLCoder">YES</bool>
+					<object class="NSTextField" id="26910164">
+						<reference key="NSNextResponder" ref="1025926106"/>
+						<int key="NSvFlags">266</int>
+						<string key="NSFrame">{{17, 20}, {306, 36}}</string>
+						<reference key="NSSuperview" ref="1025926106"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSTextFieldCell" key="NSCell" id="505008570">
+							<int key="NSCellFlags">67239424</int>
+							<int key="NSCellFlags2">138412032</int>
+							<string type="base64-UTF8" key="NSContents">WW91IGNhbiBhZGQgTVQtMzIgUk9NcwppbiBCb3hlcuKAmXMgQXVkaW8gcHJlZmVyZW5jZXMuA</string>
+							<reference key="NSSupport" ref="752334892"/>
+							<reference key="NSControlView" ref="26910164"/>
+							<reference key="NSBackgroundColor" ref="372717747"/>
+							<reference key="NSTextColor" ref="1005397457"/>
+						</object>
+					</object>
+					<object class="NSTextField" id="1013020905">
+						<reference key="NSNextResponder" ref="1025926106"/>
+						<int key="NSvFlags">266</int>
+						<string key="NSFrame">{{17, 42}, {306, 66}}</string>
+						<reference key="NSSuperview" ref="1025926106"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView" ref="26910164"/>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSTextFieldCell" key="NSCell" id="20077924">
+							<int key="NSCellFlags">67239424</int>
+							<int key="NSCellFlags2">138412032</int>
+							<string key="NSContents">MT-32 ROMs are required to play this game’s music correctly.</string>
+							<reference key="NSSupport" ref="954562412"/>
+							<reference key="NSControlView" ref="1013020905"/>
+							<reference key="NSBackgroundColor" ref="372717747"/>
+							<reference key="NSTextColor" ref="1005397457"/>
+						</object>
+					</object>
+				</object>
+				<string key="NSFrameSize">{340, 128}</string>
+				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
+				<reference key="NSNextKeyView" ref="1013020905"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
 		</object>
@@ -884,6 +932,14 @@ YmFyLg</string>
 						<reference key="destination" ref="901407490"/>
 					</object>
 					<int key="connectionID">88</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">MT32MissingBezel</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="1025926106"/>
+					</object>
+					<int key="connectionID">94</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1386,7 +1442,7 @@ YmFyLg</string>
 							<reference ref="681728244"/>
 						</object>
 						<reference key="parent" ref="0"/>
-						<string key="objectName">MT-32 Bezel</string>
+						<string key="objectName">MT-32 Message Bezel</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">86</int>
@@ -1401,6 +1457,45 @@ YmFyLg</string>
 						<int key="objectID">87</int>
 						<reference key="object" ref="963652823"/>
 						<reference key="parent" ref="681728244"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">89</int>
+						<reference key="object" ref="1025926106"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="1013020905"/>
+							<reference ref="26910164"/>
+						</object>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">MT-32 Missing Bezel</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">90</int>
+						<reference key="object" ref="1013020905"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="20077924"/>
+						</object>
+						<reference key="parent" ref="1025926106"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">91</int>
+						<reference key="object" ref="26910164"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="505008570"/>
+						</object>
+						<reference key="parent" ref="1025926106"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">92</int>
+						<reference key="object" ref="505008570"/>
+						<reference key="parent" ref="26910164"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">93</int>
+						<reference key="object" ref="20077924"/>
+						<reference key="parent" ref="1013020905"/>
 					</object>
 				</object>
 			</object>
@@ -1497,7 +1592,14 @@ YmFyLg</string>
 					<string>86.CustomClassName</string>
 					<string>86.IBPluginDependency</string>
 					<string>87.IBPluginDependency</string>
+					<string>89.IBPluginDependency</string>
 					<string>9.IBPluginDependency</string>
+					<string>90.CustomClassName</string>
+					<string>90.IBPluginDependency</string>
+					<string>91.CustomClassName</string>
+					<string>91.IBPluginDependency</string>
+					<string>92.IBPluginDependency</string>
+					<string>93.IBPluginDependency</string>
 				</object>
 				<object class="NSMutableArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1591,6 +1693,13 @@ YmFyLg</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>BXHUDLabel</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>BXHUDLabel</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
@@ -1605,7 +1714,7 @@ YmFyLg</string>
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">88</int>
+			<int key="maxID">94</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -1627,6 +1736,7 @@ YmFyLg</string>
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>CPUSpeedBezel</string>
 							<string>MT32MessageBezel</string>
+							<string>MT32MissingBezel</string>
 							<string>driveAddedBezel</string>
 							<string>driveImportedBezel</string>
 							<string>driveRemovedBezel</string>
@@ -1639,6 +1749,7 @@ YmFyLg</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSView</string>
 							<string>NSView</string>
 							<string>NSView</string>
 							<string>NSView</string>
@@ -1658,6 +1769,7 @@ YmFyLg</string>
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>CPUSpeedBezel</string>
 							<string>MT32MessageBezel</string>
+							<string>MT32MissingBezel</string>
 							<string>driveAddedBezel</string>
 							<string>driveImportedBezel</string>
 							<string>driveRemovedBezel</string>
@@ -1676,6 +1788,10 @@ YmFyLg</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">MT32MessageBezel</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">MT32MissingBezel</string>
 								<string key="candidateClassName">NSView</string>
 							</object>
 							<object class="IBToOneOutletInfo">

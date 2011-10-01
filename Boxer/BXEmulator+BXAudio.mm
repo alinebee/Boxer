@@ -9,11 +9,18 @@
 #import "RegexKitLite.h"
 #import "BXEmulatedMT32.h"
 #import "BXExternalMIDIDevice.h"
+#import "BXExternalMT32.h"
 #import "BXMIDISynth.h"
 
 
 
 NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDisplayMT32MessageNotification";
+
+NSString * const BXMIDIMusicTypeKey                 = @"MIDI Music Type";
+NSString * const BXMIDIPreferExternalKey            = @"Prefer External MIDI Device";
+NSString * const BXMIDIExternalDeviceIndexKey       = @"External Device Index";
+NSString * const BXMIDIExternalDeviceUniqueIDKey    = @"External Device Unique ID";
+NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sysex Delays";
 
 
 @implementation BXEmulator (BXAudio)
@@ -81,90 +88,23 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
 # pragma mark -
 # pragma mark MIDI output handling
 
-- (id <BXMIDIDevice>) MIDIDeviceForType: (BXMIDIDeviceType)type
-                                  error: (NSError **)outError
+- (BXMIDIMusicType) musicType
 {
-    id <BXMIDIDevice> device = nil;
-    
-    //First, see what the delegate has to say: if it provides us with a MIDI device,
-    //we don't need to bother.
-    device = [[self delegate] MIDIDeviceForType: type];
-    
-    if (!device)
-    {
-        switch (type)
-        {
-            case BXMIDIDeviceTypeNone:
-                device = nil;
-                break;
-                
-            case BXMIDIDeviceTypeExternal:
-                device = [[BXExternalMIDIDevice alloc] initWithDestinationAtIndex: 0
-                                                                            error: outError];
-                break;
-                
-            case BXMIDIDeviceTypeMT32:
-                {
-                NSString *PCMROMPath        = [[self delegate] pathToMT32PCMROMForEmulator: self];
-                NSString *controlROMPath    = [[self delegate] pathToMT32ControlROMForEmulator: self];
-                
-                device = [[BXEmulatedMT32 alloc] initWithPCMROM: PCMROMPath
-                                                     controlROM: controlROMPath
-                                                       delegate: self
-                                                          error: outError];
-                }
-                break;
-                
-            case BXMIDIDeviceTypeGeneralMIDI:
-            default:
-                device = [[BXMIDISynth alloc] initWithError: outError];
-                break;
-                
-        }
-        [device autorelease];
-    }
-    return device;
+    return [[[self requestedMIDIDeviceDescription] objectForKey: BXMIDIMusicTypeKey] integerValue];
 }
 
-- (id <BXMIDIDevice>) attachMIDIDeviceOfType: (BXMIDIDeviceType)type
-                                       error: (NSError **)outError
+- (id <BXMIDIDevice>) attachMIDIDeviceForDescription: (NSDictionary *)description
 {
-    NSError *error = nil;
-    id <BXMIDIDevice> device = [self MIDIDeviceForType: type error: &error];
+    id <BXMIDIDevice> device = [[self delegate] MIDIDeviceForEmulator: self description: description];
     
-    if (device)
-    {
-        [self setActiveMIDIDevice: device];
-        return device;
-    }
-    else
-    {
-        if ([[error domain] isEqualToString: BXEmulatedMT32ErrorDomain])
-        {
-            //If an MT-32 emulator cannot be created, then fall back on the regular MIDI synth.
-            //Disable our auto-detection at the same time, so we won't keep trying to create an
-            //emulated MT-32 if we keep picking up MT-32 messages from the game.
-            //TODO: send a message to our delegate informing them of our failure, and let them
-            //handle this logic.
-            
-            [self setPreferredMIDIDeviceType: BXMIDIDeviceTypeGeneralMIDI];
-            return [self attachMIDIDeviceOfType: BXMIDIDeviceTypeGeneralMIDI error: outError];
-        }
-        else
-        {
-            if (outError) *outError = error;
-            return nil;
-        }
-    }
+    if (device) [self setActiveMIDIDevice: device];
+    return device;
 }
 
 - (void) sendMIDIMessage: (NSData *)message
 {
-    //Connect a MIDI device the first time we need one
-    if (![self activeMIDIDevice] && [self preferredMIDIDeviceType] != BXMIDIDeviceTypeNone)
-    {
-        [self attachMIDIDeviceOfType: [self preferredMIDIDeviceType] error: NULL];
-    }
+    //Connect to our requested MIDI device the first time we need one.
+    [self _attachRequestedMIDIDeviceIfNeeded];
     
     if ([self activeMIDIDevice])
     {
@@ -176,41 +116,55 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
 
 - (void) sendMIDISysex: (NSData *)message
 {
+    //Connect to our requested MIDI device the first time we need one.
+    [self _attachRequestedMIDIDeviceIfNeeded];
+    
+    //Autodetect if the music we're receiving would be suitable for an MT-32:
+    //If so, and our current device can't play MT-32 music, try switching to one that can.
     if ([self _shouldAutodetectMT32])
     {
-        //Check if the message we've received is intended for an MT-32,
+        //Check if the message we've received was intended for an MT-32,
         //and if so, how 'conclusive' it is that the game is playing MT-32 music.
-        BOOL confirmsSupport, isMT32Sysex = [[self class] isMT32Sysex: message
-                                                indicatingMT32Support: &confirmsSupport];
+        BOOL supportConfirmed, isMT32Sysex = [[self class] isMT32Sysex: message
+                                                 indicatingMT32Support: &supportConfirmed];
         if (isMT32Sysex)
         {
             //If this sysex conclusively indicates that the game is playing MT-32 music,
-            //swap to the emulated MT-32 immediately and deliver any messages it missed.
-            if (confirmsSupport)
+            //then try to swap in an MT-32-supporting device immediately.
+            if (supportConfirmed)
             {
-                id device = [self attachMIDIDeviceOfType: BXMIDIDeviceTypeMT32 error: NULL];
+                NSDictionary *description = [NSDictionary dictionaryWithObjectsAndKeys:
+                                             [NSNumber numberWithInteger: BXMIDIMusicMT32], BXMIDIMusicTypeKey,
+                                             nil];
+                
+                id device = [self attachMIDIDeviceForDescription: description];
+                
+                //If the new device does indeed support the MT-32 (i.e., we didn't fail
+                //to create one and fall back on something else) then send it the MT-32
+                //messages it missed.
                 if ([device supportsMT32Music])
                 {
 #ifdef BOXER_DEBUG
-                    [self sendMT32LCDMessage: @"    MT-32 Active    "];
+                    [self sendMT32LCDMessage: @"BOXER:::MT-32 Active"];
 #endif
                     [self _flushPendingSysexMessages];
                 }
-                else [self _clearPendingSysexMessages];
+                //If we couldn't attach an MT-32-supporting MIDI device, then disable
+                //autodetection so we don't keep trying.
+                else
+                {
+                    MT32AutodetectionFailed = YES;
+                    [self _clearPendingSysexMessages];
+                }
             }
-            //Otherwise, queue up the sysex so that we can deliver it to the emulated MT-32
-            //later if we decide to switch, ensuring it won't miss out on any startup commands.
+            //If we couldn't yet confirm that the game is playing MT-32 music, queue up
+            //the MT-32 sysex we received so that we can deliver it to an MT-32 device
+            //later. This ensures it won't miss out on any startup commands.
             else
             {
                 [self _queueSysexMessage: message];
             }
         }
-    }
-    
-    //Connect a MIDI device the first time we need one
-    if (![self activeMIDIDevice] && [self preferredMIDIDeviceType] != BXMIDIDeviceTypeNone)
-    {
-        [self attachMIDIDeviceOfType: [self preferredMIDIDeviceType] error: NULL];
     }
 
     if ([self activeMIDIDevice])
@@ -247,8 +201,10 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
         if (commandType == BXRolandSysexDataSend &&
             (baseAddress == BXRolandSysexAddressReset || baseAddress == BXRolandSysexAddressSystemArea)) *indicatesSupport = NO;
         
-        //Some MIDI files (so far, only Strike Commander's) contain embedded display
-        //messages: these should be treated as inconclusive.
+        //Some MIDI songs (so far, only Strike Commander's) contain embedded display
+        //messages: these should be treated as inconclusive, since the songs are shared
+        //between the game's MT-32 and General MIDI modes and these messages will be
+        //sent even when the game is in General MIDI mode.
         else if (commandType == BXRolandSysexDataSend && baseAddress == BXRolandSysexAddressDisplay) *indicatesSupport = NO;
         
         else *indicatesSupport = YES;
@@ -263,9 +219,13 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
 
 - (BOOL) _shouldAutodetectMT32
 {
-    //Only try to autodetect the MT-32 if no explicit MIDI type was specified for this game,
+    //If we've manually turned off autodetection for this emulation session
+    //(e.g. after a failed attempt to emulate/connect to an MT-32) then stop trying.
+    if (MT32AutodetectionFailed) return NO;
+    
+    //Try to autodetect the MT-32 only if no explicit MIDI type was specified for this game,
     //and if we're not already sending to a MIDI device that supports MT-32 music.
-    if ([self preferredMIDIDeviceType] != BXMIDIDeviceTypeAuto) return NO;
+    if ([self musicType] != BXMIDIMusicAutodetect) return NO;
     if ([[self activeMIDIDevice] supportsMT32Music]) return NO;
     
     return YES;
@@ -274,7 +234,8 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
 - (void) _resetMIDIDeviceDetection
 {
     [self _clearPendingSysexMessages];
-    if ([self preferredMIDIDeviceType] == BXMIDIDeviceTypeAuto)
+    //Clear the active MIDI device so that we can redetect it next time
+    if ([self musicType] == BXMIDIMusicAutodetect)
     {
         [self setActiveMIDIDevice: nil];
     }
@@ -312,6 +273,14 @@ NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDi
     if ([[self activeMIDIDevice] isProcessing])
     {
         [NSThread sleepUntilDate: [[self activeMIDIDevice] dateWhenReady]];
+    }
+}
+
+- (void) _attachRequestedMIDIDeviceIfNeeded
+{
+    if (![self activeMIDIDevice] && [self musicType] != BXMIDIMusicDisabled)
+    {
+        [self attachMIDIDeviceForDescription: [self requestedMIDIDeviceDescription]];
     }
 }
 

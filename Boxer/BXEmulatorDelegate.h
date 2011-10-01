@@ -36,7 +36,6 @@ extern NSString * const BXEmulatorDidRemoveFileNotification;
 extern NSString * const BXEmulatorDidDisplayMT32MessageNotification;
 
 
-
 //TODO: define and document user info dictionary keys for each of these notifications.
 
 
@@ -147,15 +146,9 @@ extern NSString * const BXEmulatorDidDisplayMT32MessageNotification;
 
 @protocol BXEmulatorAudioDelegate <NSObject>
 
-//Return the filesystem paths for the ROMs that the emulator should use.
-- (NSString *) pathToMT32ControlROMForEmulator: (BXEmulator *)emulator;
-- (NSString *) pathToMT32PCMROMForEmulator: (BXEmulator *)emulator;
-
-//Create and return the MIDI output device to use for the specified device type.
-//Return nil to use the default MIDI device for that type.
-//Used to selectively override the default MIDI handling to pipe it to an external
-//MIDI device when one is available.
-- (id <BXMIDIDevice>) MIDIDeviceForType: (NSInteger)type;
+//Create and return a MIDI output device suitable for the specified description.
+- (id <BXMIDIDevice>) MIDIDeviceForEmulator: (BXEmulator *)emulator
+                                description: (NSDictionary *)description;
 
 @optional
 

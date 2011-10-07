@@ -10,7 +10,6 @@
 
 @implementation BXMT32ROMDropzone
 @synthesize ROMType = _ROMType;
-@synthesize title = _title;
 @synthesize highlighted = _highlighted;
 
 - (void) awakeFromNib
@@ -48,7 +47,7 @@
     _titleLayer.shadowRadius = 3.0f;
     _titleLayer.shadowOpacity = 0.75f;
     
-    
+    //Keep the title layer in sync with the button's label.
     [_titleLayer bind: @"string" toObject: self withKeyPath: @"title" options: nil];
     
     [_backgroundLayer addSublayer: _CM32LLayer];
@@ -80,7 +79,6 @@
     [_MT32Layer release], _MT32Layer = nil;
     [_CM32LLayer release], _CM32LLayer = nil;
     
-    [self setTitle: nil], [_title release];
     [super dealloc];
 }
 

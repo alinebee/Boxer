@@ -71,9 +71,14 @@
                                                  name: NSApplicationDidBecomeActiveNotification
                                                object: NSApp];
     
+    
+    //Set up the audio preferences panel as a drag target for file drops.
+    NSView *audioPrefsView = [[[self tabView] tabViewItemAtIndex: BXAudioPreferencesPanel] view];
+	[audioPrefsView registerForDraggedTypes: [NSArray arrayWithObject: NSFilenamesPboardType]];
 	
-	//Set the default tab
-	NSInteger selectedIndex = [[NSUserDefaults standardUserDefaults] integerForKey: @"initialPreferencesPanelIndex"];
+    
+	//Select the tab that the user had open last time.
+    NSInteger selectedIndex = [[NSUserDefaults standardUserDefaults] integerForKey: @"initialPreferencesPanelIndex"];
 	
 	if (selectedIndex >= 0 && selectedIndex < [[self tabView] numberOfTabViewItems])
 	{
@@ -219,32 +224,84 @@
     [[self MT32ROMUsageHelpText] setHidden: (type == BXMT32ROMTypeUnknown)];
 }
 
+- (BOOL) handleROMImportFromPaths: (NSArray *)paths
+{
+    NSError *error = nil;
+    BOOL succeeded = [[NSApp delegate] importMT32ROMsFromPaths: paths error: &error];
+    
+    if (error)
+    {
+        [self presentError: error
+            modalForWindow: [self window]
+                  delegate: nil
+        didPresentSelector: NULL
+               contextInfo: NULL];
+    }
+    return succeeded;
+}
+
 - (IBAction) showMT32ROMsInFinder: (id)sender
 {
-    NSString *controlPath   = [[NSApp delegate] pathToMT32ControlROM];
-    NSString *PCMPath       = [[NSApp delegate] pathToMT32PCMROM];
-    
-    if      (controlPath)   [[NSApp delegate] revealPath: controlPath];
-    else if (PCMPath)       [[NSApp delegate] revealPath: PCMPath];
+    NSString *basePath = [[NSApp delegate] MT32ROMPathCreatingIfMissing: YES];
+    if (basePath) [[NSApp delegate] revealPath: basePath];
 }
 
 - (IBAction) showMT32ROMFileChooser: (id)sender
 {
+    NSOpenPanel *openPanel = [NSOpenPanel openPanel];
+	
+	[openPanel setCanCreateDirectories: NO];
+	[openPanel setCanChooseDirectories: YES];
+	[openPanel setCanChooseFiles: YES];
+	[openPanel setTreatsFilePackagesAsDirectories: NO];
+	[openPanel setAllowsMultipleSelection: YES];
+	[openPanel setDelegate: self];
+	
+	[openPanel setPrompt: NSLocalizedString(@"Import", @"Label for confirm button shown in MT-32 ROM file chooser panel.")];
+	[openPanel setMessage: NSLocalizedString(@"Select the MT-32 control ROM and PCM ROM to import.",
+											 @"Help text shown at the top of MT-32 ROM file chooser panel.")];
+	
+    //Note: we use straight file extension comparisons instead
+    //of UTI codes because the ".rom" extension is owned by a
+    //dozen-and-one console emulators and any UTI definition
+    //of our own would just fight with them.
+    NSArray *fileExtensions = [NSArray arrayWithObject: @"rom"];
     
+    [[self MT32ROMDropzone] setHighlighted: YES];
+    [openPanel beginSheetForDirectory: nil
+                                 file: nil
+                                types: fileExtensions
+                       modalForWindow: [self window]
+                        modalDelegate: self
+                       didEndSelector: @selector(MT32ROMFileChooserDidEnd:returnCode:contextInfo:)
+                          contextInfo: NULL];
 }
 
-
-- (BOOL) validateUserInterfaceItem: (id <NSValidatedUserInterfaceItem>)item
+- (void) MT32ROMFileChooserDidEnd: (NSOpenPanel *)openPanel
+                       returnCode: (int)returnCode
+                      contextInfo: (void *)contextInfo
 {
-    SEL action = [item action];
-    if (action == @selector(showMT32ROMsInFinder:))
-    {
-        //Enable the option only if we have any ROMs in place.
-        return ([[NSApp delegate] pathToMT32PCMROM] || [[NSApp delegate] pathToMT32ControlROM]);
+    [[self MT32ROMDropzone] setHighlighted: NO];
+    if (returnCode == NSOKButton)
+	{
+        NSArray *paths = [[openPanel URLs] valueForKey: @"path"];
+        
+        //Close the panel before attempting to import, so that
+        //any error message from the panel won't screw up.
+        [openPanel close];
+        
+        [self handleROMImportFromPaths: paths];
     }
-    
-    return YES;
 }
+
+
+//Display help for the Display Preferences panel.
+- (IBAction) showAudioPreferencesHelp: (id)sender
+{
+	[[NSApp delegate] showHelpAnchor: @"audio"];
+}
+
+
 
 
 #pragma mark -
@@ -304,5 +361,35 @@
 {
 	[[NSApp delegate] showHelpAnchor: @"display"];
 }
+
+
+#pragma mark -
+#pragma mark Drag-drop events for MT-32 ROM adding
+
+- (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)sender
+{
+	NSPasteboard *pboard = [sender draggingPasteboard];
+	if ([[pboard types] containsObject: NSFilenamesPboardType])
+	{
+        //Don't bother validating the ROMs here,
+        //just change the cursor to show we'll accept them.
+        return NSDragOperationCopy;
+	}
+	else return NSDragOperationNone;
+}
+
+- (BOOL) performDragOperation: (id <NSDraggingInfo>)sender
+{	
+	NSPasteboard *pboard = [sender draggingPasteboard];
+	if ([[pboard types] containsObject: NSFilenamesPboardType])
+	{
+		NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
+        
+        //This will validate the ROMs and reject them if they could not be imported.
+        return [self handleROMImportFromPaths: filePaths];
+	}		
+	return NO;
+}
+
 
 @end

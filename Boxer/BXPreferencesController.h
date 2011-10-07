@@ -14,13 +14,14 @@
 //Constants for preferences panel tab indexes
 enum {
 	BXGeneralPreferencesPanel,
-	BXDisplayPreferencesPanel
+	BXDisplayPreferencesPanel,
+	BXAudioPreferencesPanel
 };
 
 @class BXFilterGallery;
 @class BXMT32ROMDropzone;
 
-@interface BXPreferencesController : BXTabbedWindowController
+@interface BXPreferencesController : BXTabbedWindowController <NSOpenSavePanelDelegate>
 {
 	IBOutlet BXFilterGallery *filterGallery;
 	IBOutlet NSPopUpButton *gamesFolderSelector;
@@ -66,20 +67,37 @@ enum {
 //Display an open panel for choosing the games folder.
 - (IBAction) showGamesFolderChooser: (id)sender;
 
-
 #pragma mark -
 #pragma mark Audio controls
 
 //Synchronises the display of the MT-32 ROM dropzone to the currently-installed ROM.
-//This is called through Key-Value Observing whenever the ROMs change.
+//This is called through Key-Value Observing whenever ROMs are imported, and also 
+//whenever the focus returns to Boxer from another application (in case the user has
+//manually added the ROMs themselves in Finder).
 - (void) syncMT32ROMState;
 
+//Show the MT-32 ROMs folder in Finder, creating it if it doesn't already exist.
 - (IBAction) showMT32ROMsInFinder: (id)sender;
+
+//Show the ROM file chooser panel.
 - (IBAction) showMT32ROMFileChooser: (id)sender;
+- (void) MT32ROMFileChooserDidEnd: (NSOpenPanel *)openPanel
+                       returnCode: (int)returnCode
+                      contextInfo: (void *)contextInfo;
+
+//Display help for the Audio Preferences panel.
+- (IBAction) showAudioPreferencesHelp: (id)sender;
+
+//Does the work of importing ROMs from the specified path. Called when drag-dropping
+//ROMs onto the MT-32 ROM dropzone or choosing them from the file picker.
+//Will display an error sheet in the Preferences window if importing failed.
+- (BOOL) handleROMImportFromPaths: (NSArray *)paths;
+
 
 #pragma mark -
 #pragma mark Help
 
 //Display help for the Display Preferences panel.
 - (IBAction) showDisplayPreferencesHelp: (id)sender;
+
 @end

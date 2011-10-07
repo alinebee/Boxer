@@ -191,8 +191,8 @@ NSString * const MT32PCMROMFilenamePattern = @"pcm";
     
     //We store the ROMs we've discovered here, indexed by ROM type.
     //This lets us pair up ROMs easily once we're done.
-    NSMutableDictionary *foundControlROMs = [NSMutableDictionary dictionaryWithCapacity: NUM_ROM_TYPES];
-    NSMutableDictionary *foundPCMROMs = [NSMutableDictionary dictionaryWithCapacity: NUM_ROM_TYPES];
+    NSMutableDictionary *controlROMs    = [NSMutableDictionary dictionaryWithCapacity: NUM_ROM_TYPES];
+    NSMutableDictionary *PCMROMs        = [NSMutableDictionary dictionaryWithCapacity: NUM_ROM_TYPES];
     
     NSFileManager *manager = [NSFileManager defaultManager];
     
@@ -212,7 +212,7 @@ NSString * const MT32PCMROMFilenamePattern = @"pcm";
         if (!isDir && [self _isValidMT32ROMAtPath: path type: &type isControlROM: &isControlROM])
         {
             NSNumber *key = [NSNumber numberWithInteger: type];
-            NSMutableDictionary *dict = isControlROM ? foundControlROMs : foundPCMROMs;
+            NSMutableDictionary *dict = isControlROM ? controlROMs : PCMROMs;
             if (![dict objectForKey: key]) [dict setObject: path forKey: key];
         }
         else if (isDir)
@@ -230,41 +230,38 @@ NSString * const MT32PCMROMFilenamePattern = @"pcm";
                 if ([self _isValidMT32ROMAtPath: subpath type: &type isControlROM: &isControlROM])
                 {
                     NSNumber *key = [NSNumber numberWithInteger: type];
-                    NSMutableDictionary *dict = isControlROM ? foundControlROMs : foundPCMROMs;
+                    NSMutableDictionary *dict = isControlROM ? controlROMs : PCMROMs;
                     if (![dict objectForKey: key]) [dict setObject: subpath forKey: key];
                 }
                 
                 //If we've now found all the ROMs we'll ever need, then stop looking.
-                if ([foundControlROMs count] == NUM_ROM_TYPES && [foundPCMROMs count] == NUM_ROM_TYPES) break;
+                if ([controlROMs count] == NUM_ROM_TYPES && [PCMROMs count] == NUM_ROM_TYPES) break;
             }
         }
-        if ([foundControlROMs count] == NUM_ROM_TYPES && [foundPCMROMs count] == NUM_ROM_TYPES) break;
+        if ([controlROMs count] == NUM_ROM_TYPES && [PCMROMs count] == NUM_ROM_TYPES) break;
     }
     
     //Now, let's see what we found in the hunt.
-    NSString *foundControlROM = nil;
-    NSString *foundPCMROM = nil;
-    BXMT32ROMType foundControlROMType = BXMT32ROMTypeUnknown;
-    BXMT32ROMType foundPCMROMType = BXMT32ROMTypeUnknown;
+    NSString *controlROM = nil;
+    NSString *PCMROM = nil;
     
     //Match a control ROM up with a compatible PCM ROM if we can.
-    //Sort the keys in reverse type order, so we can pick out CM-32L ROMs in preference to MT-32 ones.
-    NSArray *sortedKeys = [[foundControlROMs allKeys] sortedArrayUsingSelector: @selector(compare:)];
-    
+    //Sort the keys so that we pick out CM-32L ROMs in preference to MT-32 ones.
+    //(Our type constant for the CM-32L is higher than our one for the MT-32.)
+    NSArray *sortedKeys = [[controlROMs allKeys] sortedArrayUsingSelector: @selector(compare:)];
     for (NSNumber *key in [sortedKeys reverseObjectEnumerator])
     {
-        if ([foundPCMROMs objectForKey: key])
+        if ([PCMROMs objectForKey: key])
         {
-            foundControlROM = [foundControlROMs objectForKey: key];
-            foundPCMROM     = [foundPCMROMs objectForKey: key];
-            foundControlROMType = foundPCMROMType = [key integerValue];
+            controlROM = [controlROMs objectForKey: key];
+            PCMROM     = [PCMROMs objectForKey: key];
             break;
         }
     }
     
     //If we couldn't find a pair of matching ROMs, then try and find a single ROM
     //(and only one) to match against our existing ROMs.
-    if (!foundControlROM && !foundPCMROM)
+    if (!controlROM && !PCMROM)
     {
         NSString *currentControlROM = [self pathToMT32ControlROM];
         NSString *currentPCMROM     = [self pathToMT32PCMROM];
@@ -274,18 +271,18 @@ NSString * const MT32PCMROMFilenamePattern = @"pcm";
         BXMT32ROMType currentPCMROMType     = [BXEmulatedMT32 typeOfPCMROMAtPath: currentPCMROM
                                                                            error: nil];
         
-        //If we have a valid control ROM already, pick out a matching PCM ROM
+        //If we have a valid control ROM already, then try to pick out a matching PCM ROM.
         if (currentControlROMType)
         {
-            foundPCMROM = [foundPCMROMs objectForKey: [NSNumber numberWithInteger: currentControlROMType]];
+            PCMROM = [PCMROMs objectForKey: [NSNumber numberWithInteger: currentControlROMType]];
             
             //If we couldn't find a match, but we did find other ROMs that don't match,
             //then flag this as a mismatch error
-            if (!foundPCMROM && [foundPCMROMs count])
+            if (!PCMROM && [PCMROMs count])
             {
                 if (outError)
                 {
-                    NSString *conflictingROM = [[foundPCMROMs allValues] lastObject];
+                    NSString *conflictingROM = [[PCMROMs allValues] lastObject];
                     NSString *titleFormat = NSLocalizedString(@"“%1$@” is from a different MT-32 model than the existing control ROM.",
                                                               @"Error message shown when user attempts to add a PCM ROM that doesn't match an already-imported control ROM. %1$@ is the filename of the new ROM.");
                     
@@ -304,18 +301,24 @@ NSString * const MT32PCMROMFilenamePattern = @"pcm";
                 }
                 return NO;
             }
+            //If no PCM ROMs were given, check if we're being given a new control ROM 
+            //to replace our existing one.
+            else if (![PCMROMs count] && [controlROMs count])
+            {
+                controlROM = [[controlROMs allValues] lastObject];
+            }
         }
         
         //If we have a valid PCM ROM and didn't just find another ROM to replace it,
-        //then pick out a matching control ROM for it
-        if (currentPCMROMType && !foundPCMROM)
+        //then try to pick out a matching control ROM for it
+        if (currentPCMROMType && !PCMROM)
         {
-            foundControlROM = [foundControlROMs objectForKey: [NSNumber numberWithInteger: currentPCMROMType]];
-            if (!foundControlROM && [foundControlROMs count])
+            controlROM = [controlROMs objectForKey: [NSNumber numberWithInteger: currentPCMROMType]];
+            if (!controlROM && [controlROMs count])
             {
                 if (outError)
                 {
-                    NSString *conflictingROM = [[foundControlROMs allValues] lastObject];
+                    NSString *conflictingROM = [[controlROMs allValues] lastObject];
                     NSString *titleFormat = NSLocalizedString(@"“%1$@” is from a different MT-32 model than the existing PCM ROM.",
                                                               @"Error message shown when user attempts to add a control ROM that doesn't match an already-imported PCM ROM. %1$@ is the filename of the new ROM.");
                     
@@ -334,36 +337,39 @@ NSString * const MT32PCMROMFilenamePattern = @"pcm";
                 }
                 return NO;
             }
+            //If no control ROMs were given, check if we're being given a new PCM ROM 
+            //to replace our existing one.
+            else if (![controlROMs count] && [PCMROMs count])
+            {
+                PCMROM = [[PCMROMs allValues] lastObject];
+            }
         }
         
         //If we don't have *any* ROMs yet, then just pick any control ROM or PCM ROM to import
         //(But not both, since if we got this far then any pairs we found were mismatched.)
         if (!currentControlROMType && !currentPCMROMType)
         {
-            foundControlROM = [[foundControlROMs allValues] lastObject];
-            if (!foundControlROM)
-                foundPCMROM = [[foundPCMROMs allValues] lastObject];
+            controlROM = [[controlROMs allValues] lastObject];
+            if (!controlROM)
+                PCMROM = [[PCMROMs allValues] lastObject];
         }
     }
     
-    //Phew. OK! If we found a control ROM or a PCM ROM or both, import them now.
-    BOOL importedControlROM = NO;
-    BOOL importedPCMROM = NO;
-    
-    if (foundControlROM)
+    //If we found a control ROM or a PCM ROM or both, import them now.
+    if (controlROM)
     {
-        importedControlROM = [self importMT32ControlROM: foundControlROM error: outError];
-        //If the import failed for some reason, bail out before we do more damage.
-        if (!importedControlROM) return NO;
+        BOOL succeeded = [self importMT32ControlROM: controlROM error: outError];
+        //If the import failed for some reason, bail out before we do any more damage.
+        if (!succeeded) return NO;
     }
-    if (foundPCMROM)
+    if (PCMROM)
     {
-        importedPCMROM = [self importMT32PCMROM: foundPCMROM error: outError];
-        if (!importedPCMROM) return NO;
+        BOOL succeeded = [self importMT32PCMROM: PCMROM error: outError];
+        if (!succeeded) return NO;
     }
     
-    //Hooray! We accomplished something today.
-    if (importedControlROM || importedPCMROM) return YES;
+    //Hooray! We imported something today.
+    if (controlROM || PCMROM) return YES;
     
     
     //If we got this far, we couldn't find any ROMs to import.

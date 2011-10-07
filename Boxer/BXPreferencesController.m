@@ -162,12 +162,12 @@
     //If ROMs are installed correctly, show the user what kind they have.
     if (type == BXMT32ROMTypeMT32)
     {
-        title = NSLocalizedString(@"Roland MT-32 emulation is active.",
+        title = NSLocalizedString(@"Roland MT-32 emulation is now active.",
                                   @"Title shown in MT-32 ROM dropzone when MT-32 ROMs are installed.");
     }
     else if (type == BXMT32ROMTypeCM32L)
     {
-        title = NSLocalizedString(@"Roland CM-32L emulation is active.",
+        title = NSLocalizedString(@"Roland CM-32L emulation is now active.",
                                   @"Title shown in MT-32 ROM dropzone when CM-32L ROMs are installed.");
     }
     
@@ -182,7 +182,7 @@
                 //If neither ROM is present, show the standard prompt.
                 if (!PCMPath && !controlPath)
                 {
-                    title = NSLocalizedString(@"Drop MT-32 ROMs here to activate MT-32 emulation.",
+                    title = NSLocalizedString(@"Drop MT-32 ROMs here to enable MT-32 emulation.",
                                               @"Title shown in MT-32 ROM dropzone when no ROMs are present.");
                 }
                 //If one or the other ROM is missing, tell the user which kind they still need.

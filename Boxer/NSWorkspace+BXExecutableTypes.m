@@ -94,55 +94,59 @@ typedef struct {
 - (BXExecutableType) executableTypeAtPath: (NSString *)path error: (NSError **)outError
 {
     if (outError) *outError = nil;
-    
-	BXDOSExecutableHeader header;
-	int headerSize = sizeof(BXDOSExecutableHeader);
-	
-	NSFileHandle *file = [NSFileHandle fileHandleForReadingAtPath: path];
+    NSFileHandle *file = [NSFileHandle fileHandleForReadingAtPath: path];
 	
 	//File could not be opened for reading, bail out
 	if (!file)
 	{
 		if (outError)
 		{
+            NSDictionary *userInfo = [NSDictionary dictionaryWithObject: path forKey: NSFilePathErrorKey];
 			*outError = [NSError errorWithDomain: BXExecutableTypesErrorDomain
 											code: BXCouldNotReadExecutable
-										userInfo: nil];
+										userInfo: userInfo];
 		}
 		return BXExecutableTypeUnknown;
 	}
     
-    //Measure how large the file really is
-    [file seekToEndOfFile];
-    unsigned long long realFileSize = [file offsetInFile];
-    [file seekToFileOffset: 0];
-    
-	//The file must be large enough to contain the entire DOS header.
-	if (realFileSize < (unsigned long long)headerSize)
-	{
-		if (outError)
-		{
-			*outError = [NSError errorWithDomain: BXExecutableTypesErrorDomain
-											code: BXExecutableTruncated
-										userInfo: nil];
-		}
-		return BXExecutableTypeUnknown;
-	}
     
 	//Read the header data into our DOS header struct.
     //(We need to do this in a try...catch block because readDataOfLength:
     //will raise an NSFileOperationException if it cannot read for some reason.
+    BXDOSExecutableHeader header;
+	unsigned long long realFileSize = 0;
+	int headerSize = sizeof(BXDOSExecutableHeader);
+    
     @try
     {
+        //Measure how large the file really is
+        [file seekToEndOfFile];
+        realFileSize = [file offsetInFile];
+        [file seekToFileOffset: 0];
+        
+        //The file must be large enough to contain the entire DOS header.
+        if (realFileSize < (unsigned long long)headerSize)
+        {
+            if (outError)
+            {
+                NSDictionary *userInfo = [NSDictionary dictionaryWithObject: path forKey: NSFilePathErrorKey];
+                *outError = [NSError errorWithDomain: BXExecutableTypesErrorDomain
+                                                code: BXExecutableTruncated
+                                            userInfo: userInfo];
+            }
+            return BXExecutableTypeUnknown;
+        }
+        
         [[file readDataOfLength: headerSize] getBytes: &header];
     }
     @catch (NSException *exception)
     {
         if (outError)
 		{
+            NSDictionary *userInfo = [NSDictionary dictionaryWithObject: path forKey: NSFilePathErrorKey];
 			*outError = [NSError errorWithDomain: BXExecutableTypesErrorDomain
 											code: BXCouldNotReadExecutable
-										userInfo: nil];
+										userInfo: userInfo];
 		}
 		return BXExecutableTypeUnknown;
     }

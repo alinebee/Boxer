@@ -11,12 +11,16 @@
 #import "BXValueTransformers.h"
 #import "BXGamesFolderPanelController.h"
 #import "BXAppController+BXGamesFolder.h"
+#import "BXAppController+BXSupportFiles.h"
+#import "BXMT32ROMDropzone.h"
+#import "BXEmulatedMT32.h"
 
 #pragma mark -
 #pragma mark Implementation
 
 @implementation BXPreferencesController
 @synthesize filterGallery, gamesFolderSelector, currentGamesFolderItem;
+@synthesize MT32ROMDropzone, MT32ROMMissingHelpText, MT32ROMUsageHelpText;
 
 #pragma mark -
 #pragma mark Initialization and deallocation
@@ -48,6 +52,25 @@
 					 withKeyPath: @"gamesFolderPath"
 						 options: bindingOptions];
 	
+    
+    //Listen for changes to the ROMs so that we can set the correct device in the ROM dropzone.
+    [[NSApp delegate] addObserver: self
+                       forKeyPath: @"pathToMT32ControlROM"
+                          options: NSKeyValueObservingOptionInitial
+                          context: nil];
+    
+    [[NSApp delegate] addObserver: self
+                       forKeyPath: @"pathToMT32PCMROM"
+                          options: NSKeyValueObservingOptionInitial
+                          context: nil];
+    
+    //Rerun the MT-32 ROM syncing each time Boxer regains the application focus,
+    //to cover the user manually adding them in Finder.
+    [[NSNotificationCenter defaultCenter] addObserver: self
+                                             selector: @selector(syncMT32ROMState)
+                                                 name: NSApplicationDidBecomeActiveNotification
+                                               object: NSApp];
+    
 	
 	//Set the default tab
 	NSInteger selectedIndex = [[NSUserDefaults standardUserDefaults] integerForKey: @"initialPreferencesPanelIndex"];
@@ -60,14 +83,37 @@
 
 - (void) dealloc
 {
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
+    [[NSApp delegate] removeObserver: self forKeyPath: @"pathToMT32ControlROM"];
+    [[NSApp delegate] removeObserver: self forKeyPath: @"pathToMT32PCMROM"];
+    
 	[currentGamesFolderItem unbind: @"attributedTitle"];
 	
+    [self setMT32ROMMissingHelpText: nil],      [MT32ROMMissingHelpText release];
+    [self setMT32ROMUsageHelpText: nil],        [MT32ROMUsageHelpText release];
+    [self setMT32ROMDropzone: nil],             [MT32ROMDropzone release];
 	[self setFilterGallery: nil],				[filterGallery release];
 	[self setGamesFolderSelector: nil],			[gamesFolderSelector release];
 	[self setCurrentGamesFolderItem: nil],		[currentGamesFolderItem release];
 	[super dealloc];
 }
 
+
+- (void) observeValueForKeyPath: (NSString *)keyPath
+					   ofObject: (id)object
+						 change: (NSDictionary *)change
+						context: (void *)context
+{
+	//Whenever the key path changes, synchronise our filter selection controls
+	if ([keyPath isEqualToString: @"filterType"])
+	{
+		[self syncFilterControls];
+	}
+    else if ([keyPath isEqualToString: @"pathToMT32ControlROM"] || [keyPath isEqualToString: @"pathToMT32PCMROM"])
+    {
+        [self syncMT32ROMState];
+    }
+}
 
 #pragma mark -
 #pragma mark Managing and persisting tab state
@@ -92,20 +138,117 @@
     return YES;
 }
 
+
+#pragma mark -
+#pragma mark Managing MT-32 ROMs
+
+- (void) syncMT32ROMState
+{
+    NSString *controlPath   = [[NSApp delegate] pathToMT32ControlROM];
+    NSString *PCMPath       = [[NSApp delegate] pathToMT32PCMROM];
+    
+    NSError *error = nil;
+    BXMT32ROMType type = [BXEmulatedMT32 typeofROMPairWithControlROMPath: controlPath
+                                                              PCMROMPath: PCMPath
+                                                                   error: &error];
+    
+    NSString *title;
+    
+    //If ROMs are installed correctly, show the user what kind they have.
+    if (type == BXMT32ROMTypeMT32)
+    {
+        title = NSLocalizedString(@"Roland MT-32 emulation is active.",
+                                  @"Title shown in MT-32 ROM dropzone when MT-32 ROMs are installed.");
+    }
+    else if (type == BXMT32ROMTypeCM32L)
+    {
+        title = NSLocalizedString(@"Roland CM-32L emulation is active.",
+                                  @"Title shown in MT-32 ROM dropzone when CM-32L ROMs are installed.");
+    }
+    
+    //Otherwise, work out what went wrong.
+    else if ([[error domain] isEqualToString: BXEmulatedMT32ErrorDomain])
+    {
+        switch ([error code])
+        {
+            //One or both ROMs are not installed yet.
+            case BXEmulatedMT32MissingROM:
+            {
+                //If neither ROM is present, show the standard prompt.
+                if (!PCMPath && !controlPath)
+                {
+                    title = NSLocalizedString(@"Drop MT-32 ROMs here to activate MT-32 emulation.",
+                                              @"Title shown in MT-32 ROM dropzone when no ROMs are present.");
+                }
+                //If one or the other ROM is missing, tell the user which kind they still need.
+                else
+                {
+                    NSString *titleFormat, *expectedROMName;
+                    if (!PCMPath)
+                    {
+                        BXMT32ROMType controlType = [BXEmulatedMT32 typeOfControlROMAtPath: controlPath error: nil];
+                        expectedROMName = (controlType == BXMT32ROMTypeCM32L) ? @"CM32L_PCM.ROM" : @"MT32_PCM.ROM";
+                        titleFormat = NSLocalizedString(@"Now drop in the matching PCM ROM\n(e.g. “%1$@”.)",
+                                                        @"Title shown in MT-32 ROM dropzone when a control ROM is present without a PCM ROM. %1$@ is the expected name of the matching ROM.");
+                    }
+                    else
+                    {
+                        BXMT32ROMType PCMType = [BXEmulatedMT32 typeOfPCMROMAtPath: PCMPath error: nil];
+                        expectedROMName = (PCMType == BXMT32ROMTypeCM32L) ? @"CM32L_CONTROL.ROM" : @"MT32_CONTROL.ROM";
+                        titleFormat = NSLocalizedString(@"Now drop in the matching control ROM\n(e.g. “%1$@”.)",
+                                                        @"Title shown in MT-32 ROM dropzone when a PCM ROM is present without a control ROM. %1$@ is the expected name of the matching ROM.");
+                    }
+                    
+                    title = [NSString stringWithFormat: titleFormat, expectedROMName];
+                }
+                break;
+            }
+                
+            //ROMs were invalid or could not be read.
+            default:
+                title = NSLocalizedString(@"The current MT-32 ROMs are invalid.\nPlease drop in new ROMs to replace them.",
+                                          @"Title shown in MT-32 ROM dropzone when user has manually added invalid or unreadable ROMs."); 
+        }
+    }
+    
+    [[self MT32ROMDropzone] setROMType: type];
+    [[self MT32ROMDropzone] setTitle: title];
+    
+    //Toggle the help text depending on whether we have valid ROMs or not.
+    [[self MT32ROMMissingHelpText] setHidden: (type != BXMT32ROMTypeUnknown)];
+    [[self MT32ROMUsageHelpText] setHidden: (type == BXMT32ROMTypeUnknown)];
+}
+
+- (IBAction) showMT32ROMsInFinder: (id)sender
+{
+    NSString *controlPath   = [[NSApp delegate] pathToMT32ControlROM];
+    NSString *PCMPath       = [[NSApp delegate] pathToMT32PCMROM];
+    
+    if      (controlPath)   [[NSApp delegate] revealPath: controlPath];
+    else if (PCMPath)       [[NSApp delegate] revealPath: PCMPath];
+}
+
+- (IBAction) showMT32ROMFileChooser: (id)sender
+{
+    
+}
+
+
+- (BOOL) validateUserInterfaceItem: (id <NSValidatedUserInterfaceItem>)item
+{
+    SEL action = [item action];
+    if (action == @selector(showMT32ROMsInFinder:))
+    {
+        //Enable the option only if we have any ROMs in place.
+        return ([[NSApp delegate] pathToMT32PCMROM] || [[NSApp delegate] pathToMT32ControlROM]);
+    }
+    
+    return YES;
+}
+
+
 #pragma mark -
 #pragma mark Managing filter gallery state
-
-- (void) observeValueForKeyPath: (NSString *)keyPath
-					   ofObject: (id)object
-						 change: (NSDictionary *)change
-						context: (void *)context
-{
-	//Whenever the key path changes, synchronise our filter selection controls
-	if ([object isEqual: [NSUserDefaults standardUserDefaults]] && [keyPath isEqualToString: @"filterType"])
-	{
-		[self syncFilterControls];
-	}
-}
 
 - (IBAction) toggleShelfAppearance: (NSButton *)sender
 {

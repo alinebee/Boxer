@@ -131,7 +131,7 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 {
 	BOOL isLeopardFinder = [[self class] isRunningOnLeopard];
 	
-	NSString *artworkFolderPath = [[[self class] supportPathCreatingIfMissing: NO] stringByAppendingPathComponent: @"Shelf artwork"];
+	NSString *artworkFolderPath = [[self supportPathCreatingIfMissing: NO] stringByAppendingPathComponent: @"Shelf artwork"];
 	NSString *artworkName = isLeopardFinder ? @"Leopard.jpg" : @"Snow Leopard.jpg";
 	NSString *artworkPath = [artworkFolderPath stringByAppendingPathComponent: artworkName];
 	

@@ -18,17 +18,24 @@ enum {
 };
 
 @class BXFilterGallery;
+@class BXMT32ROMDropzone;
 
 @interface BXPreferencesController : BXTabbedWindowController
 {
 	IBOutlet BXFilterGallery *filterGallery;
 	IBOutlet NSPopUpButton *gamesFolderSelector;
 	IBOutlet NSMenuItem *currentGamesFolderItem;
+    IBOutlet BXMT32ROMDropzone *MT32ROMDropzone;
+    IBOutlet NSView *MT32ROMMissingHelpText;
+    IBOutlet NSView *MT32ROMUsageHelpText;
 }
 
 @property (retain, nonatomic) BXFilterGallery *filterGallery;
 @property (retain, nonatomic) NSPopUpButton *gamesFolderSelector;
 @property (retain, nonatomic) NSMenuItem *currentGamesFolderItem;
+@property (retain, nonatomic) BXMT32ROMDropzone *MT32ROMDropzone;
+@property (retain, nonatomic) NSView *MT32ROMMissingHelpText;
+@property (retain, nonatomic) NSView *MT32ROMUsageHelpText;
 
 //Provides a singleton instance of the window controller which stays retained for the lifetime
 //of the application. BXPreferencesController should always be accessed from this singleton.
@@ -36,7 +43,7 @@ enum {
 
 
 #pragma mark -
-#pragma mark Managing filter gallery state
+#pragma mark Filter gallery controls
 
 //Change the default render filter to match the sender's tag.
 //Note that this uses an intentionally different name from the toggleFilterType: defined on
@@ -52,8 +59,26 @@ enum {
 //This is called through Key-Value Observing whenever the filter preference changes.
 - (void) syncFilterControls;
 
+
+#pragma mark -
+#pragma mark General preferences controls
+
 //Display an open panel for choosing the games folder.
 - (IBAction) showGamesFolderChooser: (id)sender;
+
+
+#pragma mark -
+#pragma mark Audio controls
+
+//Synchronises the display of the MT-32 ROM dropzone to the currently-installed ROM.
+//This is called through Key-Value Observing whenever the ROMs change.
+- (void) syncMT32ROMState;
+
+- (IBAction) showMT32ROMsInFinder: (id)sender;
+- (IBAction) showMT32ROMFileChooser: (id)sender;
+
+#pragma mark -
+#pragma mark Help
 
 //Display help for the Display Preferences panel.
 - (IBAction) showDisplayPreferencesHelp: (id)sender;

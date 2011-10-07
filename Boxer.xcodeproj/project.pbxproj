@@ -35,6 +35,7 @@
 		9F1CBBA8120CB99D00C5E926 /* BXImportDropzone.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBBA7120CB99D00C5E926 /* BXImportDropzone.m */; };
 		9F1CBCAD120CCF3900C5E926 /* Blueprint.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9F1CBCAC120CCF3900C5E926 /* Blueprint.jpg */; };
 		9F1D50010F5C0966009F0AB9 /* BXEmulator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */; };
+		9F1F00AB143F091300FF163A /* Audio.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F1F00AA143F091300FF163A /* Audio.png */; };
 		9F20C28B11E5D848005AF541 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28A11E5D848005AF541 /* Sparkle.framework */; };
 		9F20C28E11E5D8B4005AF541 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28D11E5D8B4005AF541 /* QTKit.framework */; };
 		9F20C29711E5DA68005AF541 /* Sparkle.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28A11E5D848005AF541 /* Sparkle.framework */; };
@@ -100,6 +101,10 @@
 		9F567F60143B363A0021C493 /* MT32Shelf.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F567F5F143B363A0021C493 /* MT32Shelf.png */; };
 		9F573C5A0F8E18B10089D8B7 /* NSWorkspace+BXMountedVolumes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F573C590F8E18B10089D8B7 /* NSWorkspace+BXMountedVolumes.m */; };
 		9F573D390F8E69AF0089D8B7 /* BXPackage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F573D380F8E69AF0089D8B7 /* BXPackage.m */; };
+		9F586CEB143E41C200E840C8 /* BXMT32ROMDropzone.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F586CEA143E41C200E840C8 /* BXMT32ROMDropzone.m */; };
+		9F586CEE143E4A0100E840C8 /* CALayer+BXLayerAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F586CED143E4A0100E840C8 /* CALayer+BXLayerAdditions.m */; };
+		9F586CF1143E51DD00E840C8 /* CM32L.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F586CEF143E51DD00E840C8 /* CM32L.png */; };
+		9F586CF2143E51DD00E840C8 /* MT32.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F586CF0143E51DD00E840C8 /* MT32.png */; };
 		9F58BB5113DD975F00358512 /* BXFileScan.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F58BB5013DD975F00358512 /* BXFileScan.m */; };
 		9F58BB5413DDAC3A00358512 /* BXExecutableScan.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F58BB5313DDAC3A00358512 /* BXExecutableScan.m */; };
 		9F59D99810AE0956008DBBC1 /* BoxArtShine.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F59D99710AE0956008DBBC1 /* BoxArtShine.png */; };
@@ -256,6 +261,7 @@
 		9F86DB401431EF5F00A2EFB6 /* BXMIDIDeviceBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F86DB3F1431EF5F00A2EFB6 /* BXMIDIDeviceBrowser.m */; };
 		9F87EF7A13C232B600326608 /* BXFlightstickLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6382B13C0DC48004478A3 /* BXFlightstickLayout.m */; };
 		9F8A976010E7EDDE00A4B72A /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */; };
+		9F8A9CD2143E120B00C37A93 /* MT32ROMTypes.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9F8A9CD1143E120B00C37A93 /* MT32ROMTypes.plist */; };
 		9F8BFE9F12C0EF7B0059030F /* BXDisplayLinkRenderingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8BFE9E12C0EF7B0059030F /* BXDisplayLinkRenderingView.m */; };
 		9F8F482513DC74CA00C7E022 /* NSShadow+BXShadowExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8F482413DC74CA00C7E022 /* NSShadow+BXShadowExtensions.m */; };
 		9F902C24142E183500843B01 /* BXMIDISynth.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F902C23142E183500843B01 /* BXMIDISynth.m */; };
@@ -514,6 +520,7 @@
 		9F1CBCAC120CCF3900C5E926 /* Blueprint.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Blueprint.jpg; sourceTree = "<group>"; };
 		9F1D4FFF0F5C0966009F0AB9 /* BXEmulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulator.h; sourceTree = "<group>"; };
 		9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXEmulator.mm; sourceTree = "<group>"; };
+		9F1F00AA143F091300FF163A /* Audio.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Audio.png; sourceTree = "<group>"; };
 		9F20C28A11E5D848005AF541 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
 		9F20C28D11E5D8B4005AF541 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = "/Volumes/Macintosh HD/System/Library/Frameworks/QTKit.framework"; sourceTree = "<absolute>"; };
 		9F2120F613015653002AB1B7 /* BXShelfArt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXShelfArt.h; sourceTree = "<group>"; };
@@ -619,6 +626,12 @@
 		9F573C590F8E18B10089D8B7 /* NSWorkspace+BXMountedVolumes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSWorkspace+BXMountedVolumes.m"; sourceTree = "<group>"; };
 		9F573D370F8E69AF0089D8B7 /* BXPackage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXPackage.h; sourceTree = "<group>"; };
 		9F573D380F8E69AF0089D8B7 /* BXPackage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXPackage.m; sourceTree = "<group>"; };
+		9F586CE9143E41C200E840C8 /* BXMT32ROMDropzone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXMT32ROMDropzone.h; sourceTree = "<group>"; };
+		9F586CEA143E41C200E840C8 /* BXMT32ROMDropzone.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXMT32ROMDropzone.m; sourceTree = "<group>"; };
+		9F586CEC143E4A0100E840C8 /* CALayer+BXLayerAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CALayer+BXLayerAdditions.h"; sourceTree = "<group>"; };
+		9F586CED143E4A0100E840C8 /* CALayer+BXLayerAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CALayer+BXLayerAdditions.m"; sourceTree = "<group>"; };
+		9F586CEF143E51DD00E840C8 /* CM32L.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CM32L.png; sourceTree = "<group>"; };
+		9F586CF0143E51DD00E840C8 /* MT32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MT32.png; sourceTree = "<group>"; };
 		9F58BB4F13DD975F00358512 /* BXFileScan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFileScan.h; sourceTree = "<group>"; };
 		9F58BB5013DD975F00358512 /* BXFileScan.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFileScan.m; sourceTree = "<group>"; };
 		9F58BB5213DDAC3A00358512 /* BXExecutableScan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXExecutableScan.h; sourceTree = "<group>"; };
@@ -932,6 +945,7 @@
 		9F87EF7113C1B18900326608 /* BXFlightstickAccelerometerLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFlightstickAccelerometerLayout.h; sourceTree = "<group>"; };
 		9F87EF7213C1B18900326608 /* BXFlightstickAccelerometerLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFlightstickAccelerometerLayout.m; sourceTree = "<group>"; };
 		9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
+		9F8A9CD1143E120B00C37A93 /* MT32ROMTypes.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = MT32ROMTypes.plist; sourceTree = "<group>"; };
 		9F8B8B25142B5C5B0077B6F2 /* midi_mt32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = midi_mt32.h; sourceTree = "<group>"; };
 		9F8BFE9D12C0EF7B0059030F /* BXDisplayLinkRenderingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDisplayLinkRenderingView.h; sourceTree = "<group>"; };
 		9F8BFE9E12C0EF7B0059030F /* BXDisplayLinkRenderingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDisplayLinkRenderingView.m; sourceTree = "<group>"; };
@@ -1357,6 +1371,7 @@
 				9FAE9B8A11F1D7CF000363F7 /* GameDefaults.plist */,
 				9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */,
 				9FCC303B13670F680013F083 /* KeyboardLayouts.plist */,
+				9F8A9CD1143E120B00C37A93 /* MT32ROMTypes.plist */,
 				9F160BD91236952400F8768E /* Sample Games */,
 				9FFAFE2E10DE343F00728BAC /* Configurations */,
 				9FCBB5FE10A6DDBD00C28B09 /* DOS Toolkit */,
@@ -2196,6 +2211,8 @@
 				9F8F482413DC74CA00C7E022 /* NSShadow+BXShadowExtensions.m */,
 				9FD95D6813E2A45C005EF2C0 /* BXFullScreenCapableWindow.h */,
 				9FD95D6913E2A45C005EF2C0 /* BXFullScreenCapableWindow.m */,
+				9F586CEC143E4A0100E840C8 /* CALayer+BXLayerAdditions.h */,
+				9F586CED143E4A0100E840C8 /* CALayer+BXLayerAdditions.m */,
 			);
 			path = BXToolkit;
 			sourceTree = "<group>";
@@ -2252,6 +2269,8 @@
 				9F9A4CA010F67D2C00E61965 /* BXPreferencesController.m */,
 				9F9A4CA710F6824B00E61965 /* BXFilterGallery.h */,
 				9F9A4CA810F6824B00E61965 /* BXFilterGallery.m */,
+				9F586CE9143E41C200E840C8 /* BXMT32ROMDropzone.h */,
+				9F586CEA143E41C200E840C8 /* BXMT32ROMDropzone.m */,
 			);
 			name = "Preferences panel";
 			sourceTree = "<group>";
@@ -2274,6 +2293,8 @@
 		9FBC34390F56C5AC001811F2 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				9F586CEF143E51DD00E840C8 /* CM32L.png */,
+				9F586CF0143E51DD00E840C8 /* MT32.png */,
 				9F567F5F143B363A0021C493 /* MT32Shelf.png */,
 				9FBEC4F2142CEB770016964A /* MT32LCDFontTemplate.png */,
 				9FBEC4F3142CEB770016964A /* MT32LCDGridTemplate.png */,
@@ -2299,6 +2320,7 @@
 				9F2121E6130187A9002AB1B7 /* ShelfTemplateSnowLeopard.jpg */,
 				9FFC2ABF12A19CCC008C2B3B /* Sample Game Icons */,
 				9F676BEF1235451B00924B8C /* Display.png */,
+				9F1F00AA143F091300FF163A /* Audio.png */,
 				9F960C7E12AAAB2900568AFD /* BlankShelves.png */,
 				9F843FE01226EB1100FD37F1 /* import.png */,
 				9F4B5283122591960055022A /* prompt.icns */,
@@ -2713,6 +2735,10 @@
 				9FBEC4F4142CEB770016964A /* MT32LCDFontTemplate.png in Resources */,
 				9FBEC4F5142CEB770016964A /* MT32LCDGridTemplate.png in Resources */,
 				9F567F60143B363A0021C493 /* MT32Shelf.png in Resources */,
+				9F8A9CD2143E120B00C37A93 /* MT32ROMTypes.plist in Resources */,
+				9F586CF1143E51DD00E840C8 /* CM32L.png in Resources */,
+				9F586CF2143E51DD00E840C8 /* MT32.png in Resources */,
+				9F1F00AB143F091300FF163A /* Audio.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3044,6 +3070,8 @@
 				9F3EDA171434A6E4009BFBA2 /* BXSession+BXAudioControls.m in Sources */,
 				9F3EDA1B1434B48D009BFBA2 /* BXExternalMT32.m in Sources */,
 				9F6C1CDA14373AF600601ACB /* BXDummyMIDIDevice.m in Sources */,
+				9F586CEB143E41C200E840C8 /* BXMT32ROMDropzone.m in Sources */,
+				9F586CEE143E4A0100E840C8 /* CALayer+BXLayerAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

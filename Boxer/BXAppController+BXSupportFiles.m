@@ -8,11 +8,12 @@
 #import "BXAppController+BXSupportFiles.h"
 #import "BXPathEnumerator.h"
 #import "RegexKitLite.h"
+#import "BXEmulatedMT32.h"
 
 
 @implementation BXAppController (BXSupportFiles)
 
-+ (NSString *) supportPathCreatingIfMissing: (BOOL)createIfMissing
+- (NSString *) supportPathCreatingIfMissing: (BOOL)createIfMissing
 {
 	NSString *basePath = [NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
 	NSString *supportPath = [basePath stringByAppendingPathComponent: @"Boxer"];
@@ -27,7 +28,7 @@
 	return supportPath;
 }
 
-+ (NSString *) temporaryPathCreatingIfMissing: (BOOL)createIfMissing
+- (NSString *) temporaryPathCreatingIfMissing: (BOOL)createIfMissing
 {
 	NSString *basePath = NSTemporaryDirectory();
 	NSString *tempPath = [basePath stringByAppendingPathComponent: @"Boxer"];
@@ -42,7 +43,7 @@
 	return tempPath;
 }
 
-+ (NSString *) MT32ROMPathCreatingIfMissing: (BOOL)createIfMissing
+- (NSString *) MT32ROMPathCreatingIfMissing: (BOOL)createIfMissing
 {
 	NSString *supportPath   = [self supportPathCreatingIfMissing: NO];
     NSString *ROMPath       = [supportPath stringByAppendingPathComponent: @"MT-32 ROMs"];
@@ -61,7 +62,7 @@
 //The user may have put the ROM files into the folder themselves,
 //so we can't rely on them having a consistent naming scheme.
 //Instead, return the first file that matches a flexible filename pattern.
-+ (NSString *) _pathToMT32ROMMatchingPattern: (NSString *)pattern
+- (NSString *) _pathToMT32ROMMatchingPattern: (NSString *)pattern
 {
     NSString *ROMPath = [self MT32ROMPathCreatingIfMissing: NO];
     
@@ -83,17 +84,17 @@
     return nil;
 }
 
-+ (NSString *) pathToMT32ControlROM
+- (NSString *) pathToMT32ControlROM
 {
     return [self _pathToMT32ROMMatchingPattern: @"control"];
 }
 
-+ (NSString *) pathToMT32PCMROM
+- (NSString *) pathToMT32PCMROM
 {
     return [self _pathToMT32ROMMatchingPattern: @"pcm"];
 }
 
-+ (BOOL) _importMT32ROMFromPath: (NSString *)sourcePath
+- (BOOL) _importMT32ROMFromPath: (NSString *)sourcePath
                          toName: (NSString *)fileName
                           error: (NSError **)outError
 {
@@ -110,16 +111,49 @@
     return succeeded;
 }
 
-+ (BOOL) importMT32ControlROM: (NSString *)ROMPath
+- (BOOL) importMT32ControlROM: (NSString *)ROMPath
                         error: (NSError **)outError
 {
-    return [self _importMT32ROMFromPath: ROMPath toName: @"Control.rom" error: outError];
+    BOOL isValid = [self validateMT32ControlROM: &ROMPath error: outError];
+    if (isValid)
+    {
+        [self willChangeValueForKey: @"pathToMT32ControlROM"];
+        BOOL succeeded = [self _importMT32ROMFromPath: ROMPath toName: @"Control.rom" error: outError];
+        [self didChangeValueForKey: @"pathToMT32ControlROM"];
+        return succeeded;
+    }
+    else return NO;
 }
 
-+ (BOOL) importMT32PCMROM: (NSString *)ROMPath
+- (BOOL) importMT32PCMROM: (NSString *)ROMPath
                     error: (NSError **)outError
 {
-    return [self _importMT32ROMFromPath: ROMPath toName: @"PCM.rom" error: outError];
+    BOOL isValid = [self validateMT32PCMROM: &ROMPath error: outError];
+    if (isValid)
+    {
+        [self willChangeValueForKey: @"pathToMT32PCMROM"];
+        BOOL succeeded =  [self _importMT32ROMFromPath: ROMPath toName: @"PCM.rom" error: outError];
+        [self didChangeValueForKey: @"pathToMT32PCMROM"];
+        return succeeded;
+    }
+    else return NO;
+}
+
+- (BOOL) importMT32ROMsFromPaths: (NSArray *)paths error: (NSError **)outError
+{
+    return NO;
+}
+
+- (BOOL) validateMT32ControlROM: (NSString **)ioValue error: (NSError **)outError
+{
+    NSString *ROMPath = *ioValue;
+    return [BXEmulatedMT32 typeOfControlROMAtPath: ROMPath error: outError] != BXMT32ROMTypeUnknown;
+}
+
+- (BOOL) validateMT32PCMROM: (NSString **)ioValue error: (NSError **)outError
+{
+    NSString *ROMPath = *ioValue;
+    return [BXEmulatedMT32 typeOfPCMROMAtPath: ROMPath error: outError] != BXMT32ROMTypeUnknown;
 }
 
 @end

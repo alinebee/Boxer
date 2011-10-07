@@ -389,7 +389,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	if (![[self class] otherBoxersActive])
 	{
 		NSFileManager *manager = [NSFileManager defaultManager];
-		NSString *tempPath = [[self class] temporaryPathCreatingIfMissing: NO];
+		NSString *tempPath = [self temporaryPathCreatingIfMissing: NO];
 		[manager removeItemAtPath: tempPath error: NULL];
 	}
 }

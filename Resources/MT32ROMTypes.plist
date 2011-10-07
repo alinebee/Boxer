@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<dict>
+		<key>name</key>
+		<string> ver1.04 14 July 87 </string>
+		<key>nameOffset</key>
+		<integer>0x4015</integer>
+        <key>pcmSize</key>
+        <integer>512</integer>
+		<key>type</key>
+		<integer>1</integer><!--MT-32-->
+	</dict>
+	<dict>
+		<key>name</key>
+		<string> ver1.05 06 Aug, 87 </string>
+		<key>nameOffset</key>
+		<integer>0x4015</integer>
+        <key>pcmSize</key>
+        <integer>512</integer>
+		<key>type</key>
+		<integer>1</integer><!--MT-32-->
+	</dict>
+	<dict>
+		<key>name</key>
+		<string> ver1.06 31 Aug, 87 </string>
+		<key>nameOffset</key>
+		<integer>0x4015</integer>
+        <key>pcmSize</key>
+        <integer>512</integer>
+		<key>type</key>
+		<integer>1</integer><!--MT-32-->
+	</dict>
+	<dict>
+		<key>name</key>
+		<string> ver1.07 10 Oct, 87 </string>
+		<key>nameOffset</key>
+		<integer>0x4011</integer>
+        <key>pcmSize</key>
+        <integer>512</integer>
+		<key>type</key>
+		<integer>1</integer><!--MT-32-->
+	</dict>
+	<dict>
+		<key>name</key>
+		<string>verX.XX  30 Sep, 88 </string>
+		<key>nameOffset</key>
+		<integer>0x4011</integer>
+        <key>pcmSize</key>
+        <integer>512</integer>
+		<key>type</key>
+		<integer>1</integer><!--MT-32-->
+	</dict>
+	<dict>
+		<key>name</key>
+		<string>CM32/LAPC1.00 890404</string>
+		<key>nameOffset</key>
+		<integer>0x2206</integer>
+        <key>pcmSize</key>
+        <integer>1024</integer>
+		<key>type</key>
+		<integer>2</integer><!--CM-32L-->
+	</dict>
+    
+	<dict>
+		<key>name</key>
+		<string>CM32/LAPC1.02 891205</string>
+		<key>nameOffset</key>
+		<integer>0x2206</integer>
+        <key>pcmSize</key>
+        <integer>1024</integer>
+		<key>type</key>
+		<integer>2</integer><!--CM-32L-->
+	</dict>
+</array>
+</plist>

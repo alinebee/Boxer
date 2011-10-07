@@ -97,8 +97,8 @@
         }
         
         NSError *emulatedMT32Error = nil;
-        device = [[BXEmulatedMT32 alloc] initWithPCMROM: [BXAppController pathToMT32PCMROM]
-                                             controlROM: [BXAppController pathToMT32ControlROM]
+        device = [[BXEmulatedMT32 alloc] initWithPCMROM: [[NSApp delegate] pathToMT32PCMROM]
+                                             controlROM: [[NSApp delegate] pathToMT32ControlROM]
                                                delegate: theEmulator
                                                   error: &emulatedMT32Error];
         

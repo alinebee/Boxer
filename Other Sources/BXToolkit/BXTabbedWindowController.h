@@ -19,9 +19,14 @@
 {
 	IBOutlet NSTabView *mainTabView;
 	IBOutlet NSToolbar *toolbarForTabs;
+    BOOL animatesTabTransitionsWithFade;
 }
 @property (retain, nonatomic) NSTabView *tabView;
 @property (retain, nonatomic) NSToolbar *toolbarForTabs;
+
+//Whether to animate the switch between tabs with a fade-out as well as a resize.
+//NO by default, as this does not play nice with layer-backed views.
+@property (assign, nonatomic) BOOL animatesTabTransitionsWithFade;
 
 //The index of the current tab view item, mostly for scripting purposes.
 @property (assign, nonatomic) NSInteger selectedTabViewItemIndex;

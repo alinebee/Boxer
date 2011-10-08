@@ -13,7 +13,7 @@
 #pragma mark Implementation
 
 @implementation BXTabbedWindowController
-@synthesize tabView = mainTabView, toolbarForTabs;
+@synthesize tabView = mainTabView, toolbarForTabs, animatesTabTransitionsWithFade;
 
 
 #pragma mark -
@@ -88,29 +88,55 @@
 	
 	if ((currentItem != tabViewItem) && [[self window] isVisible])
 	{
-		//The tab-view loses the first responder when we hide the original view,
-		//so we restore it once we've finished animating
-		NSResponder *firstResponder = [[self window] firstResponder];
-		
-		NSDictionary *resize	= [NSDictionary dictionaryWithObjectsAndKeys:
-								   [self window], NSViewAnimationTargetKey,
-								   [NSValue valueWithRect: newFrame], NSViewAnimationEndFrameKey,
-								   nil];
-		
-		NSDictionary *fadeOut	= [NSDictionary dictionaryWithObjectsAndKeys:
-								   oldView, NSViewAnimationTargetKey,
-								   NSViewAnimationFadeOutEffect, NSViewAnimationEffectKey,
-								   nil];
-		
-		NSViewAnimation *animation = [[NSViewAnimation alloc] initWithViewAnimations: [NSArray arrayWithObjects: fadeOut, resize, nil]];
-		
-		[animation setDuration: 0.3];
-		[animation setAnimationBlockingMode: NSAnimationBlocking];
-		[animation startAnimation];
-		[animation release];
-		
-		[oldView setHidden: NO];
-		
+        //The tab-view loses the first responder when we hide the original view,
+        //so we restore it once we've finished animating
+        NSResponder *firstResponder = [[self window] firstResponder];
+        
+        //If a fade transition is enabled, synchronise the resizing and fading animations
+        if ([self animatesTabTransitionsWithFade])
+        {
+            NSDictionary *resize	= [NSDictionary dictionaryWithObjectsAndKeys:
+                                       [self window], NSViewAnimationTargetKey,
+                                       [NSValue valueWithRect: newFrame], NSViewAnimationEndFrameKey,
+                                       nil];
+            
+            NSDictionary *fadeOut	= [NSDictionary dictionaryWithObjectsAndKeys:
+                                       oldView, NSViewAnimationTargetKey,
+                                       NSViewAnimationFadeOutEffect, NSViewAnimationEffectKey,
+                                       nil];
+            
+            NSViewAnimation *animation = [[NSViewAnimation alloc] initWithViewAnimations: [NSArray arrayWithObjects: fadeOut, resize, nil]];
+            
+            [animation setDuration: 0.25];
+            [animation setAnimationBlockingMode: NSAnimationBlocking];
+            [animation startAnimation];
+            [animation release];
+            
+            [oldView setHidden: NO];
+		}
+        //Otherwise, if we need to resize the window, then hide the original view
+        //while animating the resize.
+        else if (!NSEqualRects(oldFrame, newFrame))
+        {
+            [oldView setHidden: YES];
+            
+            NSDictionary *resize	= [NSDictionary dictionaryWithObjectsAndKeys:
+                                       [self window], NSViewAnimationTargetKey,
+                                       [NSValue valueWithRect: newFrame], NSViewAnimationEndFrameKey,
+                                       nil];
+            
+            //IMPLEMENTATION NOTE: We could just use setFrame:display:animate:,
+            //but we want a constant speed between tab transitions
+            NSViewAnimation *animation = [[NSViewAnimation alloc] initWithViewAnimations: [NSArray arrayWithObject: resize]];
+            
+            [animation setDuration: 0.25];
+            [animation setAnimationBlockingMode: NSAnimationBlocking];
+            [animation startAnimation];
+            [animation release];
+            
+            [oldView setHidden: NO];
+        }
+        
 		//Restore the first responder
 		[[self window] makeFirstResponder: firstResponder];
 	}

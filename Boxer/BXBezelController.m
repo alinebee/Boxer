@@ -249,6 +249,9 @@
 
 - (void) showMT32BezelForMessage: (NSString *)message
 {
+    //Suppress MT-32 messages if the relevant user-defaults option is disabled.
+    if (![[NSUserDefaults standardUserDefaults] boolForKey: @"showMT32LCDMessages"]) return;
+    
     NSView *bezel = [self MT32MessageBezel];
     
     NSTextField *messageField = [bezel viewWithTag: BXBezelMessage];

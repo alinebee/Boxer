@@ -44,7 +44,7 @@
 			<p>Many games will happily <strong>autodetect the correct sound card settings</strong>. If you need to choose a sound card manually, then Boxer supports the following:</p>
 			
 			<section>
-				<a name="sound-blaster"></a>
+				<a name="sound-blaster-configuration"></a>
 				<h3>Sound Blaster/Pro/16</h3>
 				<p>The most reliable choice and supported by almost all games. Choose Sound Blaster 16 if available, otherwise Pro or regular Sound Blaster. Use the following settings if asked:</p>
 				
@@ -57,9 +57,9 @@
 			</section>
 			
 			<section>
-				<a name="general-midi"></a>
+				<a name="general-midi-configuration"></a>
 				<h3>General MIDI <small>(“MPU-401 compatible”)</small></h3>
-				<p>This provides high-quality music (better than <a href="#sound-blaster">Sound Blaster</a>) and is supported by most later DOS games. If the game lets you choose separate soundcards for digital audio and music, choose <strong>Sound Blaster 16 for digital audio</strong> and <strong>General MIDI for music</strong>.</p>
+				<p>This provides high-quality music (better than <a href="#sound-blaster-configuration">Sound Blaster</a>) and is supported by most later DOS games. If the game lets you choose separate soundcards for digital audio and music, choose <strong>Sound Blaster 16 for digital audio</strong> and <strong>General MIDI for music</strong>.</p>
 				
 				<table class="sound-configuration">
 					<tr><th>I/O Address:</th><td>330</td></tr>
@@ -67,11 +67,23 @@
 			</section>
 			
 			<section>
-				<a name="gravis-ultrasound"></a>
-				<h3>Gravis Ultrasound/Max <small>(“GUS”)</small></h3>
-				<p>Not widely supported: but in games that properly support it, this can provide more channels of digital audio and better sampled music than <a href="#sound-blaster">Sound Blaster</a> or <a href="#general-midi">General MIDI</a>.</p>
+				<a name="mt-32-configuration"></a>
+				<h3>Roland MT-32 <small>(“CM-32L”, “LAPC-I”)</small></h3>
+				<p><strong><a href="music-through-mt32.html">Requires MT-32 ROMs or a real MT-32.</a></strong> The precursor to General MIDI, this provides excellent-quality music and is supported by many games from the late 80s and early 90s.</p>
 				
-				<p class="note">If the game’s music card option is labelled “Gravis Ultrasound MIDI synth” then it doesn’t provide native Gravis Ultrasound music, and you should choose <a href="#general-midi">General MIDI</a> instead.</p>
+				<p>If the game also supports <a href="#general-midi-configuration">General MIDI</a>, it’s usually better to choose that instead.</p>
+				
+				<table class="sound-configuration">
+					<tr><th>I/O Address:</th><td>330</td></tr>
+				</table>
+			</section>
+			
+			<section>
+				<a name="gravis-ultrasound-configuration"></a>
+				<h3>Gravis Ultrasound/Max <small>(“GUS”)</small></h3>
+				<p>Not widely supported: but in games that do properly support it, this can provide better-quality sound and music than <a href="#sound-blaster-configuration">Sound Blaster</a> or <a href="#general-midi-configuration">General MIDI</a>.</p>
+				
+				<p class="note">If the game’s music card option is labelled “Gravis Ultrasound MIDI synth” then it doesn’t provide native Gravis Ultrasound music, and you should choose <a href="#general-midi-configuration">General MIDI</a> instead.</p>
 				
 				<table class="sound-configuration">
 					<tr><th>I/O Address:</th><td>240</td></tr>
@@ -81,9 +93,9 @@
 			</section>
 		
 			<section>
-				<a name="adlib"></a>
+				<a name="adlib-configuration"></a>
 				<h3>AdLib</h3>
-				<p>This early music-only card became a de facto standard, and is supported by most DOS games. Choose <a href="#sound-blaster">Sound Blaster</a> instead if the game supports it.</p>
+				<p>This early music-only card became a de facto standard, and is supported by most DOS games. Choose <a href="#sound-blaster-configuration">Sound Blaster</a> instead if the game supports it.</p>
 				
 				<table class="sound-configuration">
 					<tr><th>I/O Address:</th><td>388</td></tr>
@@ -91,13 +103,13 @@
 			</section>
 			
 			<section>
-				<a name="tandy-sound"></a>
+				<a name="disney-sound-source-configuration"></a>
 				<h3>Disney Sound Source/Covox Speech Thing</small></h3>
 				<p>A cheap sound peripheral that provided low-quality digital sound. Supported by some games and demos. Requires no extra configuration.</p>
 			</section>
 			
 			<section>
-				<a name="tandy-sound"></a>
+				<a name="tandy-sound-configuration"></a>
 				<h3>Tandy 3-voice sound</h3>
 				<p><strong>Only available if the game is set to <a href="dosbox-configuration.html#configuration-machine-type" rel="topic">emulate a Tandy 1000 computer</a>.</strong> Provides synthesized music and speech, and is supported by many EGA-era DOS games.</p>
 				
@@ -105,12 +117,12 @@
 			</section>
 			
 			<section>
-				<a name="pc-speaker"></a>
+				<a name="pc-speaker-configuration"></a>
 				<h3>PC speaker</h3>
-				<p>Boxer emulates the tinny little “beeper speaker” included in every DOS-era PC. Requires no configuration and is always available as a last resort, but choose anything else if you can.</p>
+				<p>Boxer emulates the tinny little “beeper speaker” included in every DOS-era PC. Requires no configuration and is always available as a last resort, but choose <em>anything else</em> if you can.</p>
 				
 				<div class="note">
-					<p>PC speaker sound is very dependent on the CPU speed: you may need to press <kbd>Cmd ⌘</kbd>+<kbd>I</kbd> while playing to bring up the <a href="help:runscript=BoxerHelp/shared/scripts/openinspector.scpt string='CPU'" rel="application-window">CPU Inspector</a>, and adjust the CPU speed slider until the game sounds right.</p>
+					<p>PC speaker sound is very dependent on the CPU speed: you may need adjust the CPU speed from the <a href="help:runscript=BoxerHelp/shared/scripts/openinspector.scpt string='CPU'" rel="application-window">CPU Inspector</a> until the game sounds right.</p>
 					
 					<p>(If you do, then <a href="mailto:support@boxerapp.com?subject=Custom%20game%20settings" rel="email">let me know the right speed</a> so Boxer can configure that game automatically in future.)</p>
 				</div>

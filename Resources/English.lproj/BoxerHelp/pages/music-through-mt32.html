@@ -2,35 +2,64 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>Playing music through your MT-32</title>
-		<meta name="description" content="Making games play their MIDI music through your very own MT-32 Sound Module.">
-		<meta name="keywords" content="roland, mt-32, mt32, cm-32l, cm32l, cm64, cm-64, lapc-i, lapci, lapc-1, lapc1">
+		<title>Playing MT-32 music</title>
+		<meta name="description" content="Playing MT-32 music in supporting games: with MT-32 ROMs or your real MT-32.">
+		<meta name="keywords" content="roland, mt-32, mt32, cm-32l, cm32l, cm64, cm-64, lapc-i, lapci, lapc-1, lapc1, munt">
 		
 		<link rel="stylesheet" type="text/css" href="../shared/styles/main.css">
 	</head>
 	<body>
-		<a name="swapping-cds"></a>
-		<h1>Playing music through your MT-32</h1>
+		<a name="mt32-music"></a>
 		
-		<p>If you’re lucky enough to have a real <a href="http://en.wikipedia.org/wiki/Roland_MT-32" rel="external">Roland MT-32 Sound Module</a> and a USB-to-MIDI adapter, then you can play DOS game music through it. This will provide much better music in games that were composed for it.</p>
+		<h1>Playing MT-32 music</h1>
 		
-		<h3>To make a game use your MT-32:</h3>
+		<img src="../shared/images/mt32.png" width="514" height="142" class="centered">
 		
-		<ol class="steps">
-			<li>Connect your MT-32 to your Mac using a USB-to-MIDI adapter, and turn it on.</li>
-			<li>Open the game’s <a href="dosbox-configuration.html" rel="topic">DOSBox Configuration file</a>.</li>
-			<li>Paste the following lines into the configuration file:
-				<pre class="code-example"><code>[midi]
-mididevice=coremidi
-midiconfig=0 delaysysex</code></pre>
-			</li>
-			<li>If the game has a sound setup utility, run it before playing and choose the MT-32 as the music device.</li>
-			<li>Start up the game and enjoy the rich, vibrant music pouring out of your expensive music hardware.</li>
-		</ol>
+		<p>Many games from the late 80s and early 90s supported the <a href="http://en.wikipedia.org/wiki/Roland_MT-32" rel="external">Roland MT-32 Sound Module</a> to play rich, vibrant MIDI music.</p>
 		
-		<p class="note">You will need to do these steps for each game that you want to play through the MT-32: otherwise the game’s MIDI music will be sent through OS X’s builtin MIDI synth instead.</p>
+		<p class="cleared"><strong>Boxer emulates an MT-32, but needs <a href="#mt32-emulation">MT-32 ROM files</a></strong> to enable the emulation. Boxer can also <strong><a href="#real-mt32">play MT-32 music through your real MT-32</a></strong> if you have one, with no ROMs required.</p>
 		
-		<p class="tip"><em>If you have a later-model MT-32 with a headphone jack, you can remove the <code>delaysysex</code> flag to reduce game loading times.</em> This flag delays MIDI signals and is only necessary for older MT-32 models, which would otherwise miss custom instruments (or stop playing altogether) if the game sends signals too fast.</p>
+		<section>
+			<a name="mt32-emulation"></a>
+			<h2>Adding ROMs to enable MT-32 emulation</h2>
+			
+			<p><strong>Boxer’s MT-32 emulation requires MT-32 ROMs that are not legal to distribute.</strong> Boxer doesn’t come with these, so you’ll have to <a href="http://www.google.com/search?q=mt32+rom+download" rel="external">find and download the MT-32 ROMs</a> yourself.</p>
+			
+			<p class="tip">The ROMs come in two parts: a “Control ROM” (named something like <code class="filename">MT32_CONTROL.ROM</code>) and a “PCM ROM” (named something like <code class="filename">MT32_PCM.ROM</code>). Boxer needs both of these ROMs.</p>
+			
+			<p>Once you’ve got the PCM and Control ROMs:</p>
+			
+			<ol class="steps">
+				<li><strong>Open Boxer’s <a href="help:runscript=BoxerHelp/shared/scripts/openprefs.scpt string='Audio'" rel="application-window">Audio Preferences panel</a>.</strong></li>
+				<li><strong>Drag your MT-32 ROMs into the panel</strong>. Boxer will import them and enable MT-32 emulation.</li>
+				<li>Set up your games to use “Roland MT-32” (or “LAPC-I”) for music, if they support it.</li>
+				<li>Enjoy the dulcet sounds of your youth!</li>
+			</ol>
+		</section>
+		
+		<section>
+			<a name="real-mt32"></a>
+			<h2>Playing music through your real MT-32</h2>
+			<p>If you’re lucky enough to own a real MT-32, then you can <strong>play DOS game music through your MT-32 directly</strong>.</p>
+			
+			<ol class="steps">
+				<li><strong>Connect your MT-32 to your Mac</strong> using a USB-to-MIDI adapter. Make sure the MT-32 is turned on and connected to your speakers.</li>
+				<li>Set up your games to use “Roland MT-32” (or “LAPC-I”) for music, if they support it.</li>
+				<li>When a game plays music meant for the MT-32, <strong>Boxer will pipe the music to your real MT-32 automatically</strong>. That’s all there is to it!</li>
+			</ol>
+			 
+			<p class="note">Boxer will still play General MIDI music through your Mac’s regular sound output, not through the MT-32: music meant for General MIDI would sound wrong if played back through the MT-32.</p>
+		</section>
+		
+		<section>
+			<h3>Further reading</h3>
+		
+			<ul>
+				<li><a href="game-installation.html" rel="topic">Choosing a sound card</a></li>
+				<li><a href="http://en.wikipedia.org/wiki/List_of_MT-32-compatible_computer_games" rel="external">An (incomplete) list of games that support the MT-32</a></li>
+			</ul>
+		</section>
+		
 		
 		<script type="text/javascript" src="../shared/scripts/linkhandlers.js"></script>
 	</body>

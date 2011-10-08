@@ -11,6 +11,7 @@
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		9F0102E01440543500942713 /* MT32ShelfHighlight.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F0102DF1440543500942713 /* MT32ShelfHighlight.png */; };
 		9F0102E21440561E00942713 /* MT32Shelf.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9F0102E11440561E00942713 /* MT32Shelf.jpg */; };
+		9F0102E5144078E300942713 /* BoxerHelp in Resources */ = {isa = PBXBuildFile; fileRef = 9F0102E3144078E300942713 /* BoxerHelp */; };
 		9F0497C01334C5970001FEE4 /* BXPostLeopardAPIs.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0497BF1334C5970001FEE4 /* BXPostLeopardAPIs.m */; };
 		9F06C6D313992E1F00B19DF1 /* BXHIDControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F06C6D213992E1F00B19DF1 /* BXHIDControllerProfile.m */; };
 		9F06C6E113993FB100B19DF1 /* BXHIDInputBinding.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F06C6E013993FB100B19DF1 /* BXHIDInputBinding.m */; };
@@ -413,7 +414,6 @@
 		9FF86679134DCA16001CE857 /* toc2cue in Resources */ = {isa = PBXBuildFile; fileRef = 9FF86677134DCA16001CE857 /* toc2cue */; };
 		9FFAFE2D10DE33FB00728BAC /* GameProfiles.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */; };
 		9FFAFE4310DE343F00728BAC /* Configurations in Resources */ = {isa = PBXBuildFile; fileRef = 9FFAFE2E10DE343F00728BAC /* Configurations */; };
-		9FFB4AB013D052280003BB96 /* BoxerHelp in Resources */ = {isa = PBXBuildFile; fileRef = 9FFB4A5513D052280003BB96 /* BoxerHelp */; };
 		9FFC2AC012A19CCC008C2B3B /* Sample Game Icons in Resources */ = {isa = PBXBuildFile; fileRef = 9FFC2ABF12A19CCC008C2B3B /* Sample Game Icons */; };
 		9FFE1F831390F70C005C438A /* BXThrustmasterFCS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FFE1F821390F70C005C438A /* BXThrustmasterFCS.mm */; };
 		9FFF635F14013F4D007E8B47 /* HardDiskTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FFF635914013F4D007E8B47 /* HardDiskTemplate.pdf */; };
@@ -478,6 +478,7 @@
 		8D1107320486CEB800E47090 /* Boxer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Boxer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F0102DF1440543500942713 /* MT32ShelfHighlight.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MT32ShelfHighlight.png; sourceTree = "<group>"; };
 		9F0102E11440561E00942713 /* MT32Shelf.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = MT32Shelf.jpg; sourceTree = "<group>"; };
+		9F0102E4144078E300942713 /* English */ = {isa = PBXFileReference; lastKnownFileType = folder; name = English; path = English.lproj/BoxerHelp; sourceTree = "<group>"; };
 		9F0497BE1334C5970001FEE4 /* BXPostLeopardAPIs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXPostLeopardAPIs.h; sourceTree = "<group>"; };
 		9F0497BF1334C5970001FEE4 /* BXPostLeopardAPIs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXPostLeopardAPIs.m; sourceTree = "<group>"; };
 		9F06C6D113992E1F00B19DF1 /* BXHIDControllerProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXHIDControllerProfile.h; sourceTree = "<group>"; };
@@ -1194,7 +1195,6 @@
 		9FF86677134DCA16001CE857 /* toc2cue */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = toc2cue; sourceTree = "<group>"; };
 		9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = GameProfiles.plist; sourceTree = "<group>"; };
 		9FFAFE2E10DE343F00728BAC /* Configurations */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Configurations; sourceTree = "<group>"; };
-		9FFB4A5613D052280003BB96 /* English */ = {isa = PBXFileReference; lastKnownFileType = folder; name = English; path = English.lproj/BoxerHelp; sourceTree = "<group>"; };
 		9FFBF67011A7F8F4000A1863 /* BXFrameRenderingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFrameRenderingView.h; sourceTree = "<group>"; };
 		9FFBF6AA11A811F7000A1863 /* BXEventConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEventConstants.h; sourceTree = "<group>"; };
 		9FFC2ABF12A19CCC008C2B3B /* Sample Game Icons */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Sample Game Icons"; sourceTree = "<group>"; };
@@ -1362,7 +1362,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				9FFB4A5513D052280003BB96 /* BoxerHelp */,
+				9F0102E3144078E300942713 /* BoxerHelp */,
 				9FF86676134DCA16001CE857 /* cdrdao */,
 				9FF86677134DCA16001CE857 /* toc2cue */,
 				9F70C19B129036C900A3627F /* Boxer.sdef */,
@@ -2720,7 +2720,6 @@
 				9FA54099139E85D800999940 /* 4ButtonJoystick.png in Resources */,
 				9F7FC94C139EB38300D60320 /* RacingWheel.png in Resources */,
 				9FD012E313AB845200AF6FE8 /* GamepadTemplate.pdf in Resources */,
-				9FFB4AB013D052280003BB96 /* BoxerHelp in Resources */,
 				9F70277D13D70CA600606B4C /* Bezel.xib in Resources */,
 				9F70278713D730D000606B4C /* BunnyTemplate.png in Resources */,
 				9F70278813D730D000606B4C /* TurtleTemplate.png in Resources */,
@@ -2743,6 +2742,7 @@
 				9F1F00AB143F091300FF163A /* Audio.png in Resources */,
 				9F0102E01440543500942713 /* MT32ShelfHighlight.png in Resources */,
 				9F0102E21440561E00942713 /* MT32Shelf.jpg in Resources */,
+				9F0102E5144078E300942713 /* BoxerHelp in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3099,6 +3099,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		9F0102E3144078E300942713 /* BoxerHelp */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9F0102E4144078E300942713 /* English */,
+			);
+			name = BoxerHelp;
+			sourceTree = "<group>";
+		};
 		9F18137A12999E39009BC4B2 /* GamesFolderPanelOptions.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -3274,14 +3282,6 @@
 				9FE2172D121EED1E001452E3 /* English */,
 			);
 			name = ImportRenameTip.png;
-			sourceTree = "<group>";
-		};
-		9FFB4A5513D052280003BB96 /* BoxerHelp */ = {
-			isa = PBXVariantGroup;
-			children = (
-				9FFB4A5613D052280003BB96 /* English */,
-			);
-			name = BoxerHelp;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

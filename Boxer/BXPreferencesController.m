@@ -296,7 +296,7 @@
 //Display help for the Display Preferences panel.
 - (IBAction) showAudioPreferencesHelp: (id)sender
 {
-	[[NSApp delegate] showHelpAnchor: @"audio"];
+	[[NSApp delegate] showHelpAnchor: @"mt32-music"];
 }
 
 

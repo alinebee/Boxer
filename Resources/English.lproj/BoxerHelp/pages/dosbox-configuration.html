@@ -120,15 +120,15 @@
 				<table class="wide configuration">
 					<tr>
 						<th><code class="configuration">[dos]<br>ems=false</code></th>
-						<td>Disable expanded memory emulation.</td>
+						<td>Disables expanded memory emulation.</td>
 					</tr>
 					<tr>
 						<th><code class="configuration">[dos]<br>xms=false</code></th>
-						<td>Disable extended memory emulation.</td>
+						<td>Disables extended memory emulation.</td>
 					</tr>
 					<tr>
 						<th><code class="configuration">[dos]<br>upper=false</code></th>
-						<td>Disable upper memory emulation.</td>
+						<td>Disables upper memory emulation.</td>
 					</tr>
 				</table>
 			</section>
@@ -137,7 +137,7 @@
 		<section>
 			<a name="configuration-cpu"></a>
 			<h2>CPU emulation</h2>
-			<p class="tip">The recommended way to adjust CPU settings is from Boxer’s <a href="help:runscript=BoxerHelp/shared/scripts/openinspector.scpt string='CPU'" rel="application-window">CPU Inspector</a>: press <kbd>Cmd ⌘</kbd>+<kbd>I</kbd> while playing.</p>
+			<p class="note"><strong>The recommended way to adjust CPU settings</strong> is from Boxer’s <a href="help:runscript=BoxerHelp/shared/scripts/openinspector.scpt string='CPU'" rel="application-window">CPU Inspector</a>: press <kbd>Cmd ⌘</kbd>+<kbd>I</kbd> while playing. This provides easier access to common CPU tweaks.</p>
 			
 			<section>
 				<a name="configuration-coremode"></a>
@@ -233,10 +233,19 @@
 				
 				<table class="wide configuration">
 					<tr class="default"><th><code class="configuration">[midi]<br>mididevice=default</code></th>
-						<td><strong>The default.</strong> Plays MIDI music through OS X’s CoreAudio MIDI mixer.</td>
+						<td><strong>The default.</strong> Automatically selects the best device for the music being played: <code class="configuration">coreaudio</code> for General MIDI music, and <code class="configuration">mt32</code> for MT-32 music.</td>
 					</tr>
+					
+					<tr><th><code class="configuration">[midi]<br>mididevice=coreaudio</code></th>
+						<td>Plays MIDI music through OS X’s built-in General MIDI synth.</td>
+					</tr>
+					
+					<tr><th><code class="configuration">[midi]<br>mididevice=mt32</code></th>
+						<td>Plays MIDI music through Boxer’s MT-32 emulation (<a href="music-through-mt32.html">if MT-32 ROMs are available</a>), or through a real MT-32 device (if one is connected to your Mac.)</td>
+					</tr>
+					
 					<tr><th><code class="configuration">[midi]<br>mididevice=coremidi<br>midiconfig=0</code></th>
-						<td><p>Passes MIDI signals from the game directly to a physical MIDI device connected to your Mac. This is mostly of use for playing MIDI music through a real MT-32 module.</p>
+						<td><p>Sends MIDI music to a physical MIDI device connected to your Mac.</p>
 						
 						<p><code class="configuration">midiconfig</code> determines which MIDI device Boxer should talk to. This should be 0, unless you have multiple devices connected.</p></td>
 					</tr>
@@ -257,7 +266,7 @@
 						<td>Handles only the MIDI signal relaying needed by games, disabling additional MPU-401 features.</tr>
 						
 					<tr><th><code class="configuration">[midi]<br>mpu401=none</code></th>
-						<td>Disable MIDI emulation entirely.</tr>
+						<td>Disables MIDI emulation entirely.</tr>
 				</table>
 			</section>
 			
@@ -304,7 +313,7 @@
 						<td>CMS Game Blaster: the precursor to the Sound Blaster, with worse sound and no AdLib compatibility.</td>
 					</tr>
 					<tr><th><code class="configuration">[sblaster]<br>sbtype=none</code></th>
-						<td>Disable Sound Blaster emulation entirely.</td>
+						<td>Disables Sound Blaster emulation entirely.</td>
 					</tr>
 				</table>
 				
@@ -339,7 +348,7 @@
 						</td>
 					</tr>
 					<tr><th><code class="configuration">[gus]<br>gus=false</code></th>
-						<td>Disable Gravis Ultrasound emulation.<br>
+						<td>Disables Gravis Ultrasound emulation.<br>
 						Needed for games that autodetect the Gravis Ultrasound but are incompatible with the emulation.</td>
 					</tr>
 				</table>
@@ -374,14 +383,36 @@
 				<table class="wide configuration">
 					<tr>
 						<th><code class="configuration">[speaker]<br>pcspeaker=false</code></th>
-						<td>Disable PC speaker sound.</td>
+						<td>Disables PC speaker sound.</td>
 					</tr>
 					<tr>
 						<th><code class="configuration">[speaker]<br>disney=false</code></th>
-						<td>Disable Disney Sound Source emulation.</td>
+						<td>Disables Disney Sound Source emulation.</td>
 					</tr>
 				</table>
 			</section>
+		</section>
+		
+		<section>
+			<a name="configuration-joystick"></a>
+				
+			<h3><code class="configuration">[joystick]<br>
+			joysticktype=<var>(auto/2axis)</var><br>
+			timed=<var>(true/false)</var>
+			</code></h3>
+			
+			<p class="note"><strong>The recommended way to adjust joystick settings</strong> is from Boxer’s <a href="help:runscript=BoxerHelp/shared/scripts/openinspector.scpt string='Joystick'" rel="application-window">Joystick Inspector</a>: press <kbd>Cmd ⌘</kbd>+<kbd>I</kbd> while playing. The configuration settings below control low-level aspects of the gameport emulation, and do not affect the kind of joystick being emulated.</p>
+			
+			<table class="wide configuration">
+				<tr>
+					<th><code class="configuration">[joystick]<br>joysticktype=2axis</code></th>
+					<td><strong>Forces Boxer to emulate joysticks with only 2 axes and 2 buttons.</strong> Needed for some older games that have problems with advanced 4-axis/4-button joysticks.</td>
+				</tr>
+				<tr>
+					<th><code class="configuration">[joystick]<br>timed=true</code></th>
+					<td>Enables an alternative gameport timing method, useful if the joystick otherwise drifts or behaves erratically in-game. Equivalent to enabling <strong>Use strict gameport timing</strong> in the <a href="help:runscript=BoxerHelp/shared/scripts/openinspector.scpt string='Joystick'" rel="application-window">Joystick Inspector</a>.</td>
+				</tr>
+			</table>
 		</section>
 		
 		<section>
@@ -420,7 +451,7 @@
 			<ul>
 				<li><p>This page lists only those settings that you may <em>need</em> to change in order to get a game to work in Boxer. Most DOSBox settings should be left at their defaults, and these are not listed above.</p></li>
 			
-				<li><p>This page also omits DOSBox settings that are no longer supported by Boxer and so will have no effect. This includes the entire <code class="configuration">[sdl]</code> and <code class="configuration">[joystick]</code> sections, along with settings like <code class="configuration">aspect</code>, <code class="configuration">scaler</code> and <code class="configuration">capture</code>.</p></li>
+				<li><p>This page also omits DOSBox settings that are no longer supported by Boxer and so will have no effect. This includes the entire <code class="configuration">[sdl]</code> section, along with settings like <code class="configuration">aspect</code>, <code class="configuration">scaler</code> and <code class="configuration">capture</code>.</p></li>
 				
 				<li>Boxer automatically configures many games that would otherwise require custom DOSBox settings. <strong>Make sure the game does not work out-of-the-box</strong> before changing the emulation settings, and only add the settings you know are needed.</li>
 			</ul>

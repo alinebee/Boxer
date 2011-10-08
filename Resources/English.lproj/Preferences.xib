@@ -22,7 +22,6 @@
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<integer value="270"/>
-			<integer value="295"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -966,8 +965,8 @@ LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
 													</object>
 													<object class="NSButton" id="119062980">
 														<reference key="NSNextResponder" ref="221307292"/>
-														<int key="NSvFlags">-2147483380</int>
-														<string key="NSFrame">{{490, 32}, {25, 25}}</string>
+														<int key="NSvFlags">268</int>
+														<string key="NSFrame">{{490, 16}, {25, 25}}</string>
 														<reference key="NSSuperview" ref="221307292"/>
 														<int key="NSViewLayerContentsRedrawPolicy">2</int>
 														<bool key="NSEnabled">YES</bool>
@@ -1929,8 +1928,8 @@ LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="604479938"/>
 							<reference ref="324424019"/>
-							<reference ref="119062980"/>
 							<reference ref="118682712"/>
+							<reference ref="119062980"/>
 						</object>
 						<reference key="parent" ref="223883958"/>
 						<string key="objectName">View</string>
@@ -2267,7 +2266,7 @@ LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<object class="NSAffineTransform">
-						<bytes key="NSTransformStruct">P4AAAL+AAABDfQAAwyoAAA</bytes>
+						<bytes key="NSTransformStruct">P4AAAL+AAABD9QAAwlwAAA</bytes>
 					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>BXMT32ROMDropzone</string>

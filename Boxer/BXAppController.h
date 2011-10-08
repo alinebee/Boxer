@@ -47,7 +47,8 @@ enum {
 	
 	IBOutlet BXJoystickController *joystickController;
 	IBOutlet BXJoypadController *joypadController;
-	IBOutlet BXMIDIDeviceBrowser *MIDIDeviceBrowser;
+	
+    BXMIDIDeviceBrowser *MIDIDeviceBrowser;
 }
 
 //The currently-active DOS session. Changes whenever a new session opens.

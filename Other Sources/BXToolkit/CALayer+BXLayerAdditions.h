@@ -8,7 +8,7 @@
 //BXLayerAdditions contains extensions to CALayer to make them play nicer with the rest of Cocoa.
 
 #import <Cocoa/Cocoa.h>
-
+#import <QuartzCore/QuartzCore.h>
 
 @interface CALayer (BXLayerAdditions)
 

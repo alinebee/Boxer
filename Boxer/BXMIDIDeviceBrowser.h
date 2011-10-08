@@ -5,7 +5,14 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-//BXMIDIDeviceBrowser is used for scanning connected MIDI devices to find MT-32s.
+//BXMIDIDeviceBrowser is used for scanning connected MIDI devices to find MT-32s and listening
+//for device connections/disconnections.
+//It is built as an NSOperation that runs until cancelled, handling all MIDI requests on
+//a separate thread.
+
+//(This isn't to avoid blocking the main thread when communicating with MIDI devices - CoreMIDI
+//handles this asynchronously on its own thread anyway - but to avoid lengthy connection times
+//when initially creating a CoreMIDI client.)
 
 #import <Foundation/Foundation.h>
 #import <CoreMIDI/CoreMIDI.h>
@@ -27,21 +34,20 @@
 
 @end
 
-@interface BXMIDIDeviceBrowser : NSObject <BXMIDIInputListenerDelegate>
+@interface BXMIDIDeviceBrowser : NSOperation <BXMIDIInputListenerDelegate>
 {
     MIDIClientRef _client;
     MIDIPortRef _outputPort;
     MIDIPortRef _inputPort;
     NSMutableArray *_discoveredMT32s;
     NSMutableArray *_listeners;
+    
+    NSThread *_thread;
 }
 
 //An array of unique destination IDs for MT-32s found during our scan.
 //This will be populated and depopulated as devices are added and removed.
-@property (readonly, nonatomic) NSArray *discoveredMT32s;
-
-- (void) scanDestination: (MIDIEndpointRef)destination;
-- (void) scanDestinations;
+@property (readonly) NSArray *discoveredMT32s;
 
 @end
 
@@ -50,12 +56,15 @@
 //and tracks the raw MIDI data it receives from that source, sending messages
 //to its delegate whenever new data arrives or the connection times out
 //(stops sending data).
+
 //BXMIDIDeviceBrowser uses instances of BXMIDIInputListener to track the sources
 //to which it is listening, to sniff the data coming from those ports in response
 //to its requests, and to clean up source connections when they're no longer needed.
 
 //Note that while BXMIDIListener receives MIDI data on a dedicated CoreMIDI thread,
-//it always delivers notifications about that data on the main thread.
+//it always delivers notifications about that data on the thread upon which
+//listenToSource:onPort:contextInfo was called.
+
 @interface BXMIDIInputListener : NSObject
 {
     id <BXMIDIInputListenerDelegate> _delegate;

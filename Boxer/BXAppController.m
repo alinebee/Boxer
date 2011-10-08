@@ -20,6 +20,7 @@
 #import "BXSession+BXFileManager.h"
 #import "BXImportSession.h"
 #import "BXEmulator.h"
+#import "BXMIDIDeviceBrowser.h"
 
 #import "BXValueTransformers.h"
 #import "NSString+BXPaths.h"
@@ -278,6 +279,10 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	//Sync Spaces shortcuts at startup in case we previously crashed
 	//and left them overridden
 	[self syncSpacesKeyboardShortcuts];
+    
+    //Start scanning for MIDI devices now
+    [self setMIDIDeviceBrowser: [[[BXMIDIDeviceBrowser alloc] init] autorelease]];
+    [generalQueue addOperation: [self MIDIDeviceBrowser]];
 }
 
 - (void) applicationDidFinishLaunching: (NSNotification *)notification

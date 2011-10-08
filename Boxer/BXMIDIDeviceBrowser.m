@@ -10,7 +10,11 @@
 
 
 #define BXMIDIInputListenerDefaultTimeout 1
+#define BXMIDIDeviceBrowserLoopInterval 0.1
 
+
+#pragma mark -
+#pragma mark Private method declarations
 
 @interface BXMIDIDeviceBrowser()
 
@@ -26,8 +30,17 @@
 
 - (void) _MIDINotificationReceived: (const MIDINotification *)message;
 
+//Scan the specified MIDI destination for an MT-32.
+- (void) scanDestination: (MIDIEndpointRef)destination;
+
+//Scan all currently-connected destinations for MT-32s.
+- (void) scanDestinations;
+
 @end
 
+
+#pragma mark -
+#pragma mark Implementation
 
 @implementation BXMIDIDeviceBrowser
 @synthesize discoveredMT32s = _discoveredMT32s;
@@ -132,8 +145,12 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
                     NSNumber *storedID = [NSNumber numberWithInteger: destinationID];
                     if ([_discoveredMT32s containsObject: storedID])
                     {
-                        NSMutableArray *mutableDestinations = [self mutableArrayValueForKey: @"discoveredMT32s"];
-                        [mutableDestinations removeObject: storedID];
+                        //Synchronize to avoid problems if another thread is currently accessing the MT-32 list.
+                        @synchronized(_discoveredMT32s)
+                        {
+                            NSMutableArray *mutableDestinations = [self mutableArrayValueForKey: @"discoveredMT32s"];
+                            [mutableDestinations removeObject: storedID];
+                        }
                     }
                 }
             }
@@ -163,8 +180,13 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
             
             if (errCode == noErr)
             {
-                NSMutableArray *mutableDestinations = [self mutableArrayValueForKey: @"discoveredMT32s"];
-                [mutableDestinations addObject: [NSNumber numberWithInteger: destinationID]];
+                NSLog(@"Found MT-32 device!");
+                //Synchronize to avoid problems if another thread is currently accessing the MT-32 list.
+                @synchronized(_discoveredMT32s)
+                {
+                    NSMutableArray *mutableDestinations = [self mutableArrayValueForKey: @"discoveredMT32s"];
+                    [mutableDestinations addObject: [NSNumber numberWithInteger: destinationID]];
+                }
             }
         }
         
@@ -181,8 +203,21 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
 }
 
 
+
 #pragma mark -
 #pragma mark Scanning
+
+//Because we may be writing to discoveredMT32s at the same time as it's accessed,
+//we synchronize it and return a copy to the calling context.
+- (NSArray *) discoveredMT32s
+{
+    NSArray *MT32s;
+    @synchronized(_discoveredMT32s)
+    {
+        MT32s = [[NSArray alloc] initWithArray: _discoveredMT32s copyItems: YES];
+    }
+    return [MT32s autorelease];
+}
 
 - (void) scanDestination: (MIDIEndpointRef)destination
 {
@@ -239,37 +274,71 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
 {
     if ((self = [super init]))
     {
-        //Create our listeners pool and MT-32 results pool
+         //Create our listeners pool and MT-32 results pool
         _listeners = [[NSMutableArray alloc] initWithCapacity: 1];
         _discoveredMT32s = [[NSMutableArray alloc] initWithCapacity: 1];
-        
-        //Create a MIDI client
-        OSStatus errCode = MIDIClientCreate((CFStringRef)@"Boxer MT-32 Scanner", _didReceiveMIDINotification, self, &_client);
-        
-        //Create the port we will use for sending out MIDI requests.
-        if (errCode == noErr)
-        {
-            errCode = MIDIOutputPortCreate(_client, (CFStringRef)@"MT-32 Scanner Out", &_outputPort);
-        }
-        
-        //Create the port we will use for receiving responses to our MIDI requests.
-        if (errCode == noErr)
-        {
-            _inputPort = [BXMIDIInputListener createListeningPortForClient: _client
-                                                                  withName: @"MT-32 Scanner In"
-                                                                     error: NULL];
-        }
-        
-        [self scanDestinations];
     }
     return self;
 }
 
-- (void) dealloc
+- (void) main
 {
+    //Bail out early if we've already been cancelled.
+    if ([self isCancelled]) return;
+    
+    _thread = [NSThread currentThread];
+
+    //Create a MIDI client
+    OSStatus errCode = MIDIClientCreate((CFStringRef)@"Boxer MT-32 Scanner", _didReceiveMIDINotification, self, &_client);
+
+    //Create the port we will use for sending out MIDI requests.
+    if (errCode == noErr)
+    {
+        errCode = MIDIOutputPortCreate(_client, (CFStringRef)@"MT-32 Scanner Out", &_outputPort);
+    }
+
+    //Create the port we will use for receiving responses to our MIDI requests.
+    if (errCode == noErr)
+    {
+        _inputPort = [BXMIDIInputListener createListeningPortForClient: _client
+                                                              withName: @"MT-32 Scanner In"
+                                                                 error: NULL];
+    }
+    
+    //If we created everything we need, start browsing for devices.
+    if (![self isCancelled] && _client && _outputPort && _inputPort)
+    {
+        //Begin by scanning any already-connected MIDI destinations.
+        [self scanDestinations];
+        
+        //Keep the operation running until we're cancelled,
+        //listening for MIDI device connections and disconnections.
+        while (![self isCancelled] && [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode
+                                                               beforeDate: [NSDate distantFuture]]);
+        
+    }
+    //Clean up once we're done.
     MIDIClientDispose(_client);
     _client = NULL;
-    
+    _thread = nil;
+}
+
+- (void) cancel
+{
+    //Make sure cancel requests are handled on our own operation thread,
+    //so that the thread's runloop will return upstairs in main.
+    if (_thread && [NSThread currentThread] != _thread)
+    {
+        [self performSelector: _cmd onThread: _thread withObject: nil waitUntilDone: NO];
+    }
+    else
+    {
+        [super cancel];
+    }
+}
+
+- (void) dealloc
+{
     [_listeners release], _listeners = nil;
     [_discoveredMT32s release], _discoveredMT32s = nil;
     

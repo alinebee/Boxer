@@ -8,6 +8,21 @@
 #import "BXMT32ROMDropzone.h"
 #import "CALayer+BXLayerAdditions.h"
 
+#pragma mark -
+#pragma mark Private method declarations
+
+@interface BXMT32ROMDropzone ()
+
+//Set up which device is displayed and how it should be highlighted.
+//Called whenever the ROM type changes or we highlight/unhighlight the field.
+- (void) _syncDisplayedDevice;
+
+@end
+
+
+#pragma mark -
+#pragma mark Implementation
+
 @implementation BXMT32ROMDropzone
 @synthesize ROMType = _ROMType;
 @synthesize highlighted = _highlighted;
@@ -17,22 +32,32 @@
     _backgroundLayer    = [[CALayer alloc] init];
     _CM32LLayer         = [[CALayer alloc] init];
     _MT32Layer          = [[CALayer alloc] init];
+    _highlightLayer     = [[CALayer alloc] init];
     _titleLayer         = [[CATextLayer alloc] init];
     
     //Retrieve the images we'll be using for the shelf and devices,
     //and set the layers to use them.
-    [_backgroundLayer setContentsFromImageNamed: @"MT32Shelf.png"];
-    [_CM32LLayer setContentsFromImageNamed: @"CM32L.png"];
-    [_MT32Layer setContentsFromImageNamed: @"MT32.png"];
+    [_backgroundLayer setContentsFromImageNamed: @"MT32Shelf"];
+    [_CM32LLayer setContentsFromImageNamed: @"CM32L"];
+    [_MT32Layer setContentsFromImageNamed: @"MT32"];
+    [_highlightLayer setContentsFromImageNamed: @"MT32ShelfHighlight"];
     
     //Force the shelf and device layers to the same size as the view.
     _backgroundLayer.frame = NSRectToCGRect(self.bounds);
-    _CM32LLayer.frame = _MT32Layer.frame = _backgroundLayer.bounds;
+    _CM32LLayer.frame = _MT32Layer.frame = _highlightLayer.frame = _backgroundLayer.bounds;
+    
     
     //Start the device layers hidden - we'll unhide them selectively
     //when our type is changed.
     _CM32LLayer.hidden = YES;
     _MT32Layer.hidden = YES;
+    _highlightLayer.hidden = YES;
+    
+    //Add a hidden glow to the CM-32L and MT-32 layers,
+    //which will be unhidden when we highlight.
+    _MT32Layer.shadowRadius = _CM32LLayer.shadowRadius = 6;
+    _MT32Layer.shadowColor = _CM32LLayer.shadowColor = CGColorGetConstantColor(kCGColorWhite);
+    
 
     //Set up the title text layer to sit 20 pixels in from the shelf edges.
     _titleLayer.frame = CGRectIntegral(CGRectInset(_backgroundLayer.bounds, 20.0f, 20.0f));
@@ -53,15 +78,30 @@
     [_backgroundLayer addSublayer: _CM32LLayer];
     [_backgroundLayer addSublayer: _MT32Layer];
     [_backgroundLayer addSublayer: _titleLayer];
+    [_backgroundLayer addSublayer: _highlightLayer];
     
     [self setLayer: _backgroundLayer];
     [self setWantsLayer: YES];
 }
 
+- (void) setHighlighted: (BOOL)flag
+{
+    if ([self isHighlighted] != flag)
+    {
+        _highlighted = flag;
+        [self _syncDisplayedDevice];
+    }
+}
+
 - (void) _syncDisplayedDevice
 {
-    _CM32LLayer.hidden  = !(self.ROMType == BXMT32ROMTypeCM32L);
-    _MT32Layer.hidden   = !(self.ROMType == BXMT32ROMTypeMT32);
+    _CM32LLayer.hidden      = !(self.ROMType == BXMT32ROMTypeCM32L);
+    _MT32Layer.hidden       = !(self.ROMType == BXMT32ROMTypeMT32);
+    _highlightLayer.hidden  = !(self.ROMType == BXMT32ROMTypeUnknown && [self isHighlighted]);
+    
+    _MT32Layer.shadowOpacity    = [self isHighlighted] ? 1: 0;
+    _CM32LLayer.shadowOpacity   = [self isHighlighted] ? 1: 0;
+    
 }
 
 - (void) setROMType: (BXMT32ROMType)ROMType
@@ -78,6 +118,8 @@
     [_backgroundLayer release], _backgroundLayer = nil;
     [_MT32Layer release], _MT32Layer = nil;
     [_CM32LLayer release], _CM32LLayer = nil;
+    [_highlightLayer release], _highlightLayer = nil;
+    [_titleLayer release], _titleLayer = nil;
     
     [super dealloc];
 }

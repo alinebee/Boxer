@@ -21,7 +21,7 @@
 		</object>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="289"/>
+			<integer value="270"/>
 			<integer value="295"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
@@ -879,7 +879,7 @@
 														<object class="NSButtonCell" key="NSCell" id="687211329">
 															<int key="NSCellFlags">67239424</int>
 															<int key="NSCellFlags2">134217728</int>
-															<string key="NSContents">[Drop your MT-32 ROMs here]</string>
+															<string key="NSContents">[Drop MT-32 ROMs here to enable MT-32 emulation]</string>
 															<reference key="NSSupport" ref="467860324"/>
 															<reference key="NSControlView" ref="118682712"/>
 															<int key="NSButtonFlags">134365439</int>
@@ -1027,7 +1027,7 @@ LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<object class="NSMenuItem" id="781988308">
 						<reference key="NSMenu" ref="352386710"/>
-						<string key="NSTitle">Add MT-32 ROMs…</string>
+						<string key="NSTitle">[Add MT-32 ROMs…]</string>
 						<string key="NSKeyEquiv"/>
 						<int key="NSMnemonicLoc">2147483647</int>
 						<reference key="NSOnImage" ref="556359552"/>
@@ -1035,7 +1035,7 @@ LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
 					</object>
 					<object class="NSMenuItem" id="97489963">
 						<reference key="NSMenu" ref="352386710"/>
-						<string key="NSTitle">Show ROMs in Finder</string>
+						<string key="NSTitle">[Show ROMs in Finder]</string>
 						<string key="NSKeyEquiv"/>
 						<int key="NSMnemonicLoc">2147483647</int>
 						<reference key="NSOnImage" ref="556359552"/>
@@ -2261,7 +2261,7 @@ LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
 						<bytes key="NSTransformStruct">P4AAAL+AAABBiAAAwnQAAA</bytes>
 					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{366, 791}, {196, 43}}</string>
+					<string>{{366, 791}, {205, 43}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>

@@ -18,6 +18,7 @@
     CALayer *_backgroundLayer;
     CALayer *_CM32LLayer;
     CALayer *_MT32Layer;
+    CALayer *_highlightLayer;
     CATextLayer *_titleLayer;
 }
 

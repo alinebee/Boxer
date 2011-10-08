@@ -258,7 +258,7 @@
 	[openPanel setDelegate: self];
 	
 	[openPanel setPrompt: NSLocalizedString(@"Import", @"Label for confirm button shown in MT-32 ROM file chooser panel.")];
-	[openPanel setMessage: NSLocalizedString(@"Select the MT-32 control ROM and PCM ROM to import.",
+	[openPanel setMessage: NSLocalizedString(@"Select the MT-32 control ROM and PCM ROM to use.",
 											 @"Help text shown at the top of MT-32 ROM file chooser panel.")];
 	
     //Note: we use straight file extension comparisons instead
@@ -267,7 +267,6 @@
     //of our own would just fight with them.
     NSArray *fileExtensions = [NSArray arrayWithObject: @"rom"];
     
-    [[self MT32ROMDropzone] setHighlighted: YES];
     [openPanel beginSheetForDirectory: nil
                                  file: nil
                                 types: fileExtensions
@@ -281,7 +280,6 @@
                        returnCode: (int)returnCode
                       contextInfo: (void *)contextInfo
 {
-    [[self MT32ROMDropzone] setHighlighted: NO];
     if (returnCode == NSOKButton)
 	{
         NSArray *paths = [[openPanel URLs] valueForKey: @"path"];
@@ -302,6 +300,36 @@
 }
 
 
+//Customise the menu item titles in the MT-32 shelf's right-click menu,
+//depending on whether ROMs are present yet or not.
+- (BOOL) validateMenuItem: (NSMenuItem *)menuItem
+{
+    if ([menuItem action] == @selector(showMT32ROMFileChooser:))
+    {
+        NSString *title;
+        //If we already have a valid ROM, then replace it
+        if ([[self MT32ROMDropzone] ROMType] != BXMT32ROMTypeUnknown)
+            title = NSLocalizedString(@"Replace MT-32 ROMs…", @"Title of menu item for choosing MT-32 ROMs to replace the existing set.");
+        
+        else
+            title = NSLocalizedString(@"Add MT-32 ROMs…", @"Title of menu item for choosing MT-32 ROMs to add when no ROMs are already present.");
+        
+        [menuItem setTitle: title];
+    }
+    else if ([menuItem action] == @selector(showMT32ROMsInFinder:))
+    {
+        NSString *title;
+        //If we already have a valid ROM, then replace it
+        if ([[self MT32ROMDropzone] ROMType] != BXMT32ROMTypeUnknown)
+            title = NSLocalizedString(@"Show ROMs in Finder", @"Title of menu item for revealing the MT-32 ROM folder in Finder, when ROMs are already present.");
+        
+        else
+            title = NSLocalizedString(@"Show ROM folder in Finder", @"Title of menu item for revealing the MT-32 ROM folder in Finder, when no ROMs are present.");
+        
+        [menuItem setTitle: title];
+    }
+    return YES;    
+}
 
 
 #pragma mark -
@@ -371,6 +399,10 @@
 	NSPasteboard *pboard = [sender draggingPasteboard];
 	if ([[pboard types] containsObject: NSFilenamesPboardType])
 	{
+        //Highlight the shelf when the drag operation is over it,
+        //if the pasteboard contents are acceptable
+        [[self MT32ROMDropzone] setHighlighted: YES];
+        
         //Don't bother validating the ROMs here,
         //just change the cursor to show we'll accept them.
         return NSDragOperationCopy;
@@ -380,6 +412,9 @@
 
 - (BOOL) performDragOperation: (id <NSDraggingInfo>)sender
 {	
+    //Unhighlight the shelf when the drag operation is done
+    [[self MT32ROMDropzone] setHighlighted: NO];
+    
 	NSPasteboard *pboard = [sender draggingPasteboard];
 	if ([[pboard types] containsObject: NSFilenamesPboardType])
 	{
@@ -387,9 +422,14 @@
         
         //This will validate the ROMs and reject them if they could not be imported.
         return [self handleROMImportFromPaths: filePaths];
-	}		
+	}
 	return NO;
 }
 
+- (void) draggingExited: (id<NSDraggingInfo>)sender
+{
+    //Unhighlight the shelf when the drag operation leaves it
+    [[self MT32ROMDropzone] setHighlighted: NO];
+}
 
 @end

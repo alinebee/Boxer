@@ -95,12 +95,18 @@
 
 - (void) _syncDisplayedDevice
 {
+    [CATransaction begin];
+    [CATransaction setAnimationDuration: 0.75];
+    
     _CM32LLayer.hidden      = !(self.ROMType == BXMT32ROMTypeCM32L);
     _MT32Layer.hidden       = !(self.ROMType == BXMT32ROMTypeMT32);
     _highlightLayer.hidden  = !(self.ROMType == BXMT32ROMTypeUnknown && [self isHighlighted]);
     
+    [CATransaction commit];
+    
     _MT32Layer.shadowOpacity    = [self isHighlighted] ? 1: 0;
     _CM32LLayer.shadowOpacity   = [self isHighlighted] ? 1: 0;
+    
     
 }
 

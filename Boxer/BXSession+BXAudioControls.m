@@ -182,7 +182,7 @@
 - (BOOL) emulator: (BXEmulator *)emulator shouldWaitForMIDIDevice: (id<BXMIDIDevice>)device untilDate: (NSDate *)date
 {
     //Handle the delay ourselves more gracefully by running the event loop until the time is up.
-    NSLog(@"Waiting for MIDI device for %f seconds", [date timeIntervalSinceNow]);
+    //NSLog(@"Waiting for MIDI device for %f seconds", [date timeIntervalSinceNow]);
     [self _processEventsUntilDate: date];
     return NO;
 }

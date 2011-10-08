@@ -180,7 +180,6 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
             
             if (errCode == noErr)
             {
-                NSLog(@"Found MT-32 device!");
                 //Synchronize to avoid problems if another thread is currently accessing the MT-32 list.
                 @synchronized(_discoveredMT32s)
                 {

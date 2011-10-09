@@ -20,7 +20,7 @@
 #endif
 
 //When scaling up beyond this we won't bother with the scaling buffer
-#define BXScalingBufferScaleCutoff 3.0f
+#define BXScalingBufferScaleCutoff 4.0f
 
 @interface BXRenderer ()
 

@@ -9,7 +9,8 @@
 #import "BXMIDIConstants.h"
 
 
-#define BXMIDIInputListenerDefaultTimeout 2
+//How long (in seconds) Boxer will wait before giving up on a response from a MIDI device.
+#define BXMIDIInputListenerDefaultTimeout 1
 
 
 #pragma mark -
@@ -27,13 +28,27 @@
 //it as being an MT-32.
 + (NSData *) _MT32ExpectedResponseHeader;
 
+//Called when a CoreMIDI event notification is received (e.g. a device
+//connection or disconnection.)
+void _didReceiveMIDINotification(const MIDINotification *message, void *context);
 - (void) _MIDINotificationReceived: (const MIDINotification *)message;
 
 //Scan the specified MIDI destination for an MT-32.
-- (void) scanDestination: (MIDIEndpointRef)destination;
+- (void) _scanDestination: (MIDIEndpointRef)destination;
 
 //Scan all currently-connected destinations for MT-32s.
-- (void) scanDestinations;
+- (void) _scanAvailableDestinations;
+
+//Returns the currently-active listener for the specified source,
+//or nil if no listener is found.
+- (BXMIDIInputListener *) _listenerForSource: (MIDIEndpointRef)source;
+
+//Returns our best guess at the MIDI source corresponding to the specified destination. 
+//This will first try to find an available source on the same entity as the destination,
+//falling back on any available source in the system. (Skips sources we're already
+//listening to on behalf of other destinations, as this would otherwise lead to mixups
+//where we wouldn't be able to tell which destination a message is for.)
+- (MIDIEndpointRef) _probableSourceForDestination: (MIDIEndpointRef)destination;
 
 @end
 
@@ -43,6 +58,100 @@
 
 @implementation BXMIDIDeviceMonitor
 @synthesize discoveredMT32s = _discoveredMT32s;
+
+#pragma mark -
+#pragma mark Public API
+
+//Because we may be writing to discoveredMT32s at the same time as it's accessed,
+//we synchronize it and return a copy to the calling context.
+- (NSArray *) discoveredMT32s
+{
+    NSArray *MT32s;
+    @synchronized(_discoveredMT32s)
+    {
+        MT32s = [[NSArray alloc] initWithArray: _discoveredMT32s copyItems: YES];
+    }
+    return [MT32s autorelease];
+}
+
+- (id) init
+{
+    if ((self = [super init]))
+    {
+        //Create our listeners pool and MT-32 results pool
+        _listeners = [[NSMutableArray alloc] initWithCapacity: 1];
+        _discoveredMT32s = [[NSMutableArray alloc] initWithCapacity: 1];
+    }
+    return self;
+}
+
+- (void) main
+{
+    //Bail out early if we've already been cancelled.
+    if ([self isCancelled]) return;
+    
+    _thread = [NSThread currentThread];
+    
+    //Create a MIDI client
+    OSStatus errCode = MIDIClientCreate((CFStringRef)@"Boxer MT-32 Scanner", _didReceiveMIDINotification, self, &_client);
+    
+    //Create the port we will use for sending out MIDI requests.
+    if (errCode == noErr)
+    {
+        errCode = MIDIOutputPortCreate(_client, (CFStringRef)@"MT-32 Scanner Out", &_outputPort);
+    }
+    
+    //Create the port we will use for receiving responses to our MIDI requests.
+    if (errCode == noErr)
+    {
+        _inputPort = [BXMIDIInputListener createListeningPortForClient: _client
+                                                              withName: @"MT-32 Scanner In"
+                                                                 error: NULL];
+    }
+    
+    //If we created everything we need, start browsing for devices.
+    if (![self isCancelled] && _client && _outputPort && _inputPort)
+    {
+        //Begin by scanning any already-connected MIDI destinations.
+        [self _scanAvailableDestinations];
+        
+        //Keep the operation running until we're cancelled,
+        //listening for MIDI device connections and disconnections.
+        while (![self isCancelled] && [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode
+                                                               beforeDate: [NSDate distantFuture]]);
+        
+    }
+    //Clean up once we're done.
+    MIDIClientDispose(_client);
+    _client = NULL;
+    _thread = nil;
+}
+
+- (void) cancel
+{
+    //Make sure cancel requests are handled on our own operation thread,
+    //so that the thread's runloop will return upstairs in main.
+    if (_thread && [NSThread currentThread] != _thread)
+    {
+        [self performSelector: _cmd onThread: _thread withObject: nil waitUntilDone: NO];
+    }
+    else
+    {
+        [super cancel];
+    }
+}
+
+- (void) dealloc
+{
+    [_listeners release], _listeners = nil;
+    [_discoveredMT32s release], _discoveredMT32s = nil;
+    
+    [super dealloc];
+}
+
+
+#pragma mark -
+#pragma mark Request constants
 
 + (NSData *) _MT32IdentityRequest
 {
@@ -92,8 +201,9 @@
     return response;
 }
 
+
 #pragma mark -
-#pragma mark Event callbacks
+#pragma mark MIDI event handling
 
 void _didReceiveMIDINotification(const MIDINotification *message, void *context)
 {
@@ -113,7 +223,7 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
         {
             MIDIEndpointRef destination = (MIDIEndpointRef)notification->child;
             NSLog(@"Scanning newly-connected MIDI destination");
-            [self scanDestination: destination];
+            [self _scanDestination: destination];
         }
     }
     
@@ -219,25 +329,13 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
 #pragma mark -
 #pragma mark Scanning
 
-//Because we may be writing to discoveredMT32s at the same time as it's accessed,
-//we synchronize it and return a copy to the calling context.
-- (NSArray *) discoveredMT32s
-{
-    NSArray *MT32s;
-    @synchronized(_discoveredMT32s)
-    {
-        MT32s = [[NSArray alloc] initWithArray: _discoveredMT32s copyItems: YES];
-    }
-    return [MT32s autorelease];
-}
-
-- (MIDIEndpointRef) _listenerForEndpoint: (MIDIEndpointRef)endpoint
+- (BXMIDIInputListener *) _listenerForSource: (MIDIEndpointRef)source
 {
     for (BXMIDIInputListener *listener in _listeners)
     {
-        if ([listener source] == endpoint || (MIDIEndpointRef)[listener contextInfo] == endpoint) return endpoint;
+        if ([listener source] == source) return listener;
     }
-    return NULL;
+    return nil;
 }
 
 - (MIDIEndpointRef) _probableSourceForDestination: (MIDIEndpointRef)destination
@@ -248,16 +346,18 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
     
     if (errCode == noErr)
     {
+        MIDIEndpointRef source;
+        
         //Check if this entity possesses a corresponding source for this destination.
         NSUInteger i, numSources = MIDIEntityGetNumberOfSources(entity);
         if (numSources > 0)
         {
             for (i = 0; i < numSources; i++)
             {
-                MIDIEndpointRef source = MIDIEntityGetSource(entity, i);
+                source = MIDIEntityGetSource(entity, i);
                 
                 //Skip sources we're already listening to.
-                if (![self _listenerForEndpoint: source]) return source;
+                if (![self _listenerForSource: source]) return source;
             }
         }
         
@@ -269,10 +369,10 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
             
             for (i = 0; i < numSources; i++)
             {
-                MIDIEndpointRef source = MIDIGetSource(i);
+                source = MIDIGetSource(i);
                 
                 //Skip sources we're already listening to.
-                if (![self _listenerForEndpoint: source]) return source;
+                if (![self _listenerForSource: source]) return source;
             }
         }
     }
@@ -281,7 +381,7 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
     return NULL;
 }
 
-- (void) scanDestination: (MIDIEndpointRef)destination
+- (void) _scanDestination: (MIDIEndpointRef)destination
 {
     //Look for a source that matches this destination:
     //this is what we'll listen on for response messages.
@@ -313,94 +413,15 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
     }
 }
 
-- (void) scanDestinations
+- (void) _scanAvailableDestinations
 {
     NSLog(@"Number of destinations: %lu sources: %lu", MIDIGetNumberOfDestinations(), MIDIGetNumberOfSources());
     NSUInteger i, numDestinations = MIDIGetNumberOfDestinations();
     for (i = 0; i < numDestinations; i++)
     {
         NSLog(@"Scanning MIDI destination at index %i", i);
-        [self scanDestination: MIDIGetDestination(i)];
+        [self _scanDestination: MIDIGetDestination(i)];
     }
-}
-
-
-#pragma mark -
-#pragma mark Initialization and deallocation
-
-- (id) init
-{
-    if ((self = [super init]))
-    {
-         //Create our listeners pool and MT-32 results pool
-        _listeners = [[NSMutableArray alloc] initWithCapacity: 1];
-        _discoveredMT32s = [[NSMutableArray alloc] initWithCapacity: 1];
-    }
-    return self;
-}
-
-- (void) main
-{
-    //Bail out early if we've already been cancelled.
-    if ([self isCancelled]) return;
-    
-    _thread = [NSThread currentThread];
-
-    //Create a MIDI client
-    OSStatus errCode = MIDIClientCreate((CFStringRef)@"Boxer MT-32 Scanner", _didReceiveMIDINotification, self, &_client);
-
-    //Create the port we will use for sending out MIDI requests.
-    if (errCode == noErr)
-    {
-        errCode = MIDIOutputPortCreate(_client, (CFStringRef)@"MT-32 Scanner Out", &_outputPort);
-    }
-
-    //Create the port we will use for receiving responses to our MIDI requests.
-    if (errCode == noErr)
-    {
-        _inputPort = [BXMIDIInputListener createListeningPortForClient: _client
-                                                              withName: @"MT-32 Scanner In"
-                                                                 error: NULL];
-    }
-    
-    //If we created everything we need, start browsing for devices.
-    if (![self isCancelled] && _client && _outputPort && _inputPort)
-    {
-        //Begin by scanning any already-connected MIDI destinations.
-        [self scanDestinations];
-        
-        //Keep the operation running until we're cancelled,
-        //listening for MIDI device connections and disconnections.
-        while (![self isCancelled] && [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode
-                                                               beforeDate: [NSDate distantFuture]]);
-        
-    }
-    //Clean up once we're done.
-    MIDIClientDispose(_client);
-    _client = NULL;
-    _thread = nil;
-}
-
-- (void) cancel
-{
-    //Make sure cancel requests are handled on our own operation thread,
-    //so that the thread's runloop will return upstairs in main.
-    if (_thread && [NSThread currentThread] != _thread)
-    {
-        [self performSelector: _cmd onThread: _thread withObject: nil waitUntilDone: NO];
-    }
-    else
-    {
-        [super cancel];
-    }
-}
-
-- (void) dealloc
-{
-    [_listeners release], _listeners = nil;
-    [_discoveredMT32s release], _discoveredMT32s = nil;
-    
-    [super dealloc];
 }
 
 @end
@@ -531,14 +552,7 @@ void _didReceiveMIDIInput(const MIDIPacketList *packets, void *portContext, void
         packet = MIDIPacketNext(packet);
     }
     
-    //The current method will have been called on CoreMIDI's dedicated thread.
-    //To avoid gruesome threading issues, we push the actual collation and
-    //notification of data onto the thread from which we were told to start
-    //listening.
-    [self performSelector: @selector(_addPacketData:)
-                 onThread: _notificationThread
-               withObject: packetData
-            waitUntilDone: NO];
+    [self _addPacketData: packetData];
     
     [packetData release];
 }
@@ -561,6 +575,18 @@ void _didReceiveMIDIInput(const MIDIPacketList *packets, void *portContext, void
 
 - (void) _addPacketData: (NSData *)data
 {
+    //To avoid gruesome threading issues, ensure we only add new data and
+    //send notifications about it on the thread from which we were told to 
+    //start listening.
+    if ([NSThread currentThread] != _notificationThread)
+    {
+        [self performSelector: _cmd
+                     onThread: _notificationThread
+                   withObject: data
+                waitUntilDone: NO];
+        return;
+    }
+    
     //Make sure we're still listening. If we've been cancelled in between receiving
     //the original packet and getting around to recording it, then treat the packet
     //as though it never arrived.

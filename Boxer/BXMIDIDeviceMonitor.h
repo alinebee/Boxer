@@ -47,6 +47,8 @@
 
 //An array of unique destination IDs for MT-32s found during our scan.
 //This will be populated and depopulated as devices are added and removed.
+//This property is thread-safe and key-value-coding compliant, though KVC
+//notifications will be sent on the operation's thread.)
 @property (readonly) NSArray *discoveredMT32s;
 
 @end

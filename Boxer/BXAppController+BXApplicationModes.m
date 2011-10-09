@@ -148,56 +148,63 @@ NSString * const BXPreviousSpacesArrowKeyModifiersKey = @"previousSpacesArrowKey
         //If we're already in sync, then don't bother continuing further.
         if (DOSWindowIsKey != isSynced)
         {
-            SystemEventsApplication *systemEvents = [SBApplication applicationWithBundleIdentifier: @"com.apple.systemevents"];
-            SystemEventsSpacesShortcut *arrowKeyPrefs = systemEvents.exposePreferences.spacesPreferences.arrowKeyModifiers;
-            
-            //IMPLEMENTATION NOTE: in an ideal world we'd access the keyModifiers property of arrowKeyPrefs.
-            //However, this has been defined in the System Events header as a single OSType constant, when in
-            //fact the real property returns an array of constants. In order to set and get this array,
-            //we need to use a direct reference to the property as seen below.
-            SBObject *keyMods = [arrowKeyPrefs propertyWithCode: 'spky'];
-            
-            //A Boxer session has the keyboard focus, but we haven't yet suppressed the Spaces shortcuts:
-            //if we need to, apply the suppression now, and keep a record of the old values
-            if (DOSWindowIsKey && !isSynced)
+            @try
             {
-                [systemEvents setSendMode: kAEWaitReply];
-                 //In case System Events has stopped responding, don't wait forever for it
-                [systemEvents setTimeout: 0.1f];
+                SystemEventsApplication *systemEvents = [SBApplication applicationWithBundleIdentifier: @"com.apple.systemevents"];
+                SystemEventsSpacesShortcut *arrowKeyPrefs = systemEvents.exposePreferences.spacesPreferences.arrowKeyModifiers;
                 
-                //The key modifiers are returned as an array of NSAppleEventDescriptors: getting the enumCodeValue
-                //from each of these yields an array of NSNumbers, which are easier for us to work with.
-                NSArray *currentModifiers = [(SBElementArray *)[keyMods get] valueForKey: @"enumCodeValue"];
-                NSArray *safeModifiers = [[self class] safeKeyModifiersFromModifiers: currentModifiers];
+                //IMPLEMENTATION NOTE: in an ideal world we'd access the keyModifiers property of arrowKeyPrefs.
+                //However, this has been defined in the System Events header as a single OSType constant, when in
+                //fact the real property returns an array of constants. In order to set and get this array,
+                //we need to use a direct reference to the property as seen below.
+                SBObject *keyMods = [arrowKeyPrefs propertyWithCode: 'spky'];
                 
-                if (![safeModifiers isEqualToArray: currentModifiers])
+                //A Boxer session has the keyboard focus, but we haven't yet suppressed the Spaces shortcuts:
+                //if we need to, apply the suppression now, and keep a record of the old values
+                if (DOSWindowIsKey && !isSynced)
+                {
+                    [systemEvents setSendMode: kAEWaitReply];
+                     //In case System Events has stopped responding, don't wait forever for it
+                    [systemEvents setTimeout: 0.1f];
+                    
+                    //The key modifiers are returned as an array of NSAppleEventDescriptors: getting the enumCodeValue
+                    //from each of these yields an array of NSNumbers, which are easier for us to work with.
+                    NSArray *currentModifiers = [(SBElementArray *)[keyMods get] valueForKey: @"enumCodeValue"];
+                    NSArray *safeModifiers = [[self class] safeKeyModifiersFromModifiers: currentModifiers];
+                    
+                    if (![safeModifiers isEqualToArray: currentModifiers])
+                    {
+                        [systemEvents setSendMode: kAENoReply];
+                        
+                        [keyMods setTo: safeModifiers];
+                        [defaults setObject: currentModifiers forKey: BXPreviousSpacesArrowKeyModifiersKey];
+                        
+                        //IMPLEMENTATION NOTE: we commit the user defaults to disk immediately, in case
+                        //we crash while we still have keyboard focus. This way, when the user next starts
+                        //up Boxer, it will notice that there's an overridden modifier and restore it below.
+                        [defaults synchronize];
+                    }
+                    //Flag that we've synced even if we didn't need to make any changes, so that we don't
+                    //have to keep checking the shortcuts each time.
+                    hasSyncedSpacesShortcuts = YES;
+                }
+                
+                //A Boxer session has lost keyboard focus, but we're still suppressing Spaces shortcuts:
+                //remove the suppression, revert the shortcuts to what they were, and erase our User Defaults
+                //backup of the key modifiers.
+                else if (!DOSWindowIsKey && isSynced)
                 {
                     [systemEvents setSendMode: kAENoReply];
-                    
-                    [keyMods setTo: safeModifiers];
-                    [defaults setObject: currentModifiers forKey: BXPreviousSpacesArrowKeyModifiersKey];
-                    
-                    //IMPLEMENTATION NOTE: we commit the user defaults to disk immediately, in case
-                    //we crash while we still have keyboard focus. This way, when the user next starts
-                    //up Boxer, it will notice that there's an overridden modifier and restore it below.
+                    [keyMods setTo: oldModifiers];
+                    [defaults removeObjectForKey: BXPreviousSpacesArrowKeyModifiersKey];
                     [defaults synchronize];
+                    
+                    hasSyncedSpacesShortcuts = NO;
                 }
-                //Flag that we've synced even if we didn't need to make any changes, so that we don't
-                //have to keep checking the shortcuts each time.
-                hasSyncedSpacesShortcuts = YES;
             }
-            
-            //A Boxer session has lost keyboard focus, but we're still suppressing Spaces shortcuts:
-            //remove the suppression, revert the shortcuts to what they were, and erase our User Defaults
-            //backup of the key modifiers.
-            else if (!DOSWindowIsKey && isSynced)
+            @catch (NSException *exception)
             {
-                [systemEvents setSendMode: kAENoReply];
-                [keyMods setTo: oldModifiers];
-                [defaults removeObjectForKey: BXPreviousSpacesArrowKeyModifiersKey];
-                [defaults synchronize];
-                
-                hasSyncedSpacesShortcuts = NO;
+                //If any Applescript errors occur when talking to System Events, give up and ignore them
             }
         }
         

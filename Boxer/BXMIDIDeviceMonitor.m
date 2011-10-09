@@ -9,8 +9,7 @@
 #import "BXMIDIConstants.h"
 
 
-#define BXMIDIInputListenerDefaultTimeout 1
-#define BXMIDIDeviceBrowserLoopInterval 0.1
+#define BXMIDIInputListenerDefaultTimeout 2
 
 
 #pragma mark -
@@ -232,49 +231,91 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
     return [MT32s autorelease];
 }
 
-- (void) scanDestination: (MIDIEndpointRef)destination
+- (MIDIEndpointRef) _listenerForEndpoint: (MIDIEndpointRef)endpoint
 {
-    MIDIEntityRef entity = nil;
+    for (BXMIDIInputListener *listener in _listeners)
+    {
+        if ([listener source] == endpoint || (MIDIEndpointRef)[listener contextInfo] == endpoint) return endpoint;
+    }
+    return NULL;
+}
+
+- (MIDIEndpointRef) _probableSourceForDestination: (MIDIEndpointRef)destination
+{
+    MIDIEntityRef entity = NULL;
+    
     OSStatus errCode = MIDIEndpointGetEntity(destination, &entity);
     
     if (errCode == noErr)
     {
-        MIDIEndpointRef source = nil;
-        
-        NSLog(@"Entity for destination has %lu source(s) and %lu destination(s)", MIDIEntityGetNumberOfSources(entity), MIDIEntityGetNumberOfDestinations(entity));
-        
-        if (MIDIEntityGetNumberOfSources(entity) > 0)
-            source = MIDIEntityGetSource(entity, 0);
-        
-        if (source)
+        //Check if this entity possesses a corresponding source for this destination.
+        NSUInteger i, numSources = MIDIEntityGetNumberOfSources(entity);
+        if (numSources > 0)
         {
-            //Construct the MIDI message we want to send to this destination
-            NSData *request = [[self class] _MT32IdentityRequest];
-            
-            UInt8 buffer[sizeof(MIDIPacketList)];
-            MIDIPacketList *packets = (MIDIPacketList *)buffer;
-            MIDIPacket *currentPacket = MIDIPacketListInit(packets);
-            
-            MIDIPacketListAdd(packets, sizeof(buffer), currentPacket, (MIDITimeStamp)0, [request length], (const UInt8 *)[request bytes]);
-
-            errCode = MIDISend(_outputPort, destination, packets);
-            
-            //If the message was sent out successfully, create a new listener to track the replies
-            //from this destination's corresponding source.
-            if (errCode == noErr)
+            for (i = 0; i < numSources; i++)
             {
-                BXMIDIInputListener *listener = [[BXMIDIInputListener alloc] initWithDelegate: self];
-                [listener listenToSource: source onPort: _inputPort contextInfo: destination];
+                MIDIEndpointRef source = MIDIEntityGetSource(entity, i);
                 
-                [_listeners addObject: listener];
-                [listener release];
+                //Skip sources we're already listening to.
+                if (![self _listenerForEndpoint: source]) return source;
             }
+        }
+        
+        //If the destination's own entity doesn't have any sources,
+        //then fall back on the first unused source we can find in the system.
+        else
+        {
+            numSources = MIDIGetNumberOfSources();
+            
+            for (i = 0; i < numSources; i++)
+            {
+                MIDIEndpointRef source = MIDIGetSource(i);
+                
+                //Skip sources we're already listening to.
+                if (![self _listenerForEndpoint: source]) return source;
+            }
+        }
+    }
+    
+    //If we got this far, we couldn't find any suitable source.
+    return NULL;
+}
+
+- (void) scanDestination: (MIDIEndpointRef)destination
+{
+    //Look for a source that matches this destination:
+    //this is what we'll listen on for response messages.
+    MIDIEndpointRef source = [self _probableSourceForDestination: destination];
+    
+    if (source)
+    {
+        //Construct the MIDI message we want to send to this destination
+        NSData *request = [[self class] _MT32IdentityRequest];
+        
+        UInt8 buffer[sizeof(MIDIPacketList)];
+        MIDIPacketList *packets = (MIDIPacketList *)buffer;
+        MIDIPacket *currentPacket = MIDIPacketListInit(packets);
+        
+        MIDIPacketListAdd(packets, sizeof(buffer), currentPacket, (MIDITimeStamp)0, [request length], (const UInt8 *)[request bytes]);
+
+        OSStatus errCode = MIDISend(_outputPort, destination, packets);
+        
+        //If the message was sent out successfully, create a new listener to track the replies
+        //from this destination's corresponding source.
+        if (errCode == noErr)
+        {
+            BXMIDIInputListener *listener = [[BXMIDIInputListener alloc] initWithDelegate: self];
+            [listener listenToSource: source onPort: _inputPort contextInfo: destination];
+            
+            [_listeners addObject: listener];
+            [listener release];
         }
     }
 }
 
 - (void) scanDestinations
 {
+    NSLog(@"Number of destinations: %lu sources: %lu", MIDIGetNumberOfDestinations(), MIDIGetNumberOfSources());
     NSUInteger i, numDestinations = MIDIGetNumberOfDestinations();
     for (i = 0; i < numDestinations; i++)
     {

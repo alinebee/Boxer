@@ -29,8 +29,8 @@
 //fullscreen and mouse-locked status.
 - (void) syncApplicationPresentationMode;
 
-//Delicately suppress Spaces shortcuts that can interfere with keyboard control
-//in Boxer.
+//Delicately suppress Spaces shortcuts that can't interfere with keyboard
+//control in Boxer.
 - (void) syncSpacesKeyboardShortcuts;
 
 

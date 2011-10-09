@@ -5,7 +5,7 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-//BXMIDIDeviceBrowser is used for scanning connected MIDI devices to find MT-32s and listening
+//BXMIDIDeviceMonitor is used for scanning connected MIDI devices to find MT-32s and listening
 //for device connections/disconnections.
 //It is built as an NSOperation that runs until cancelled, handling all MIDI requests on
 //a separate thread.
@@ -34,7 +34,7 @@
 
 @end
 
-@interface BXMIDIDeviceBrowser : NSOperation <BXMIDIInputListenerDelegate>
+@interface BXMIDIDeviceMonitor : NSOperation <BXMIDIInputListenerDelegate>
 {
     MIDIClientRef _client;
     MIDIPortRef _outputPort;

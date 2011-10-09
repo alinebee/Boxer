@@ -9,7 +9,7 @@
 #import "BXBezelController.h"
 #import "BXAppController+BXSupportFiles.h"
 #import "BXEmulator+BXAudio.h"
-#import "BXMIDIDeviceBrowser.h"
+#import "BXMIDIDeviceMonitor.h"
 
 #import "BXEmulatedMT32.h"
 #import "BXMIDISynth.h"
@@ -87,7 +87,7 @@
     //if we can't find a real MT-32, then try MUNT emulation.
     if (musicType == BXMIDIMusicMT32)
     {
-        NSArray *deviceIDs = [[[NSApp delegate] MIDIDeviceBrowser] discoveredMT32s];
+        NSArray *deviceIDs = [[[NSApp delegate] MIDIDeviceMonitor] discoveredMT32s];
         for (NSNumber *deviceID in deviceIDs)
         {
             device = [[BXExternalMT32 alloc] initWithDestinationAtUniqueID: [deviceID integerValue]

@@ -5,7 +5,7 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-#import "BXMIDIDeviceBrowser.h"
+#import "BXMIDIDeviceMonitor.h"
 #import "BXMIDIConstants.h"
 
 
@@ -16,7 +16,7 @@
 #pragma mark -
 #pragma mark Private method declarations
 
-@interface BXMIDIDeviceBrowser()
+@interface BXMIDIDeviceMonitor()
 
 //The message we send to MIDI devices to check if they're MT-32s.
 //This is an MT-32-specific message requesting an arbitrary byte value
@@ -26,7 +26,7 @@
 
 //The response stub we need to receive from a MIDI device to identify
 //it as being an MT-32.
-+ (NSData *) _MT32ExpectedResponse;
++ (NSData *) _MT32ExpectedResponseHeader;
 
 - (void) _MIDINotificationReceived: (const MIDINotification *)message;
 
@@ -42,7 +42,7 @@
 #pragma mark -
 #pragma mark Implementation
 
-@implementation BXMIDIDeviceBrowser
+@implementation BXMIDIDeviceMonitor
 @synthesize discoveredMT32s = _discoveredMT32s;
 
 + (NSData *) _MT32IdentityRequest
@@ -74,7 +74,7 @@
     return request;
 }
 
-+ (NSData *) _MT32ExpectedResponse
++ (NSData *) _MT32ExpectedResponseHeader
 {
     static NSData *response = nil;
     if (!response)
@@ -98,11 +98,13 @@
 
 void _didReceiveMIDINotification(const MIDINotification *message, void *context)
 {
-    [(BXMIDIDeviceBrowser *)context _MIDINotificationReceived: message];
+    [(BXMIDIDeviceMonitor *)context _MIDINotificationReceived: message];
 }
 
 - (void) _MIDINotificationReceived: (const MIDINotification *)message
 {
+    NSLog(@"MIDI notification received of type %ld", message->messageID);
+    
     //If a new destination was added, start scanning it.
     if (message->messageID == kMIDIMsgObjectAdded)
     {
@@ -111,6 +113,7 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
         if (notification->childType == kMIDIObjectType_Destination)
         {
             MIDIEndpointRef destination = (MIDIEndpointRef)notification->child;
+            NSLog(@"Scanning newly-connected MIDI destination");
             [self scanDestination: destination];
         }
     }
@@ -125,6 +128,11 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
         if (type == kMIDIObjectType_Destination || type == kMIDIObjectType_Source)
         {
             MIDIEndpointRef endpoint = (MIDIEndpointRef)notification->child;
+            
+            if (type == kMIDIObjectType_Destination)
+                NSLog(@"Cleaning up disconnected MIDI destination");
+            else
+                NSLog(@"Cleaning up disconnected MIDI source");
             
             for (BXMIDIInputListener *listener in [NSArray arrayWithArray: _listeners])
             {
@@ -161,17 +169,16 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
 - (void) MIDIInputListener: (BXMIDIInputListener *)listener
               receivedData: (NSData *)data
 {
-    
     NSData *fullResponse = [listener receivedData];
-    NSData *expectedResponse = [[self class] _MT32ExpectedResponse];
+    NSData *expectedHeader = [[self class] _MT32ExpectedResponseHeader];
     
     //If we've received enough of a response to be able to tell, search
     //the data we've received to see if it contains our expected response.
-    if ([fullResponse length] >= [expectedResponse length])
+    if ([fullResponse length] >= [expectedHeader length])
     {
-        NSData *comparison = [fullResponse subdataWithRange: NSMakeRange(0, [expectedResponse length])];
+        NSData *comparison = [fullResponse subdataWithRange: NSMakeRange(0, [expectedHeader length])];
         //We have a winner!
-        if ([comparison isEqualToData: expectedResponse])
+        if ([comparison isEqualToData: expectedHeader])
         {
             MIDIEndpointRef destination = (MIDIEndpointRef)[listener contextInfo];
             MIDIUniqueID destinationID;
@@ -180,6 +187,8 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
             
             if (errCode == noErr)
             {
+                NSLog(@"MT-32 found at destination ID %ld", destinationID);
+                
                 //Synchronize to avoid problems if another thread is currently accessing the MT-32 list.
                 @synchronized(_discoveredMT32s)
                 {
@@ -197,6 +206,7 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
 
 - (BOOL) MIDIInputListenerShouldStopListeningAfterTimeout: (BXMIDIInputListener *)listener
 {
+    NSLog(@"MIDI input listener timed out.");
     [_listeners removeObject: listener];
     return YES;
 }
@@ -226,6 +236,9 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
     if (errCode == noErr)
     {
         MIDIEndpointRef source = nil;
+        
+        NSLog(@"Entity for destination has %lu source(s) and %lu destination(s)", MIDIEntityGetNumberOfSources(entity), MIDIEntityGetNumberOfDestinations(entity));
+        
         if (MIDIEntityGetNumberOfSources(entity) > 0)
             source = MIDIEntityGetSource(entity, 0);
         
@@ -261,6 +274,7 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
     NSUInteger i, numDestinations = MIDIGetNumberOfDestinations();
     for (i = 0; i < numDestinations; i++)
     {
+        NSLog(@"Scanning MIDI destination at index %i", i);
         [self scanDestination: MIDIGetDestination(i)];
     }
 }

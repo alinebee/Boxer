@@ -260,7 +260,7 @@
 		9F7721EB12B38C4400072AE8 /* shell_misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77217512B38C4400072AE8 /* shell_misc.cpp */; };
 		9F7FC94C139EB38300D60320 /* RacingWheel.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F7FC94B139EB38300D60320 /* RacingWheel.png */; };
 		9F843FE11226EB1100FD37F1 /* import.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F843FE01226EB1100FD37F1 /* import.png */; };
-		9F86DB401431EF5F00A2EFB6 /* BXMIDIDeviceBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F86DB3F1431EF5F00A2EFB6 /* BXMIDIDeviceBrowser.m */; };
+		9F86DB401431EF5F00A2EFB6 /* BXMIDIDeviceMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F86DB3F1431EF5F00A2EFB6 /* BXMIDIDeviceMonitor.m */; };
 		9F87EF7A13C232B600326608 /* BXFlightstickLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6382B13C0DC48004478A3 /* BXFlightstickLayout.m */; };
 		9F8A976010E7EDDE00A4B72A /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */; };
 		9F8A9CD2143E120B00C37A93 /* MT32ROMTypes.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9F8A9CD1143E120B00C37A93 /* MT32ROMTypes.plist */; };
@@ -943,8 +943,8 @@
 		9F81CFBA13EEAD6D008F0265 /* BXISOImagePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXISOImagePrivate.h; sourceTree = "<group>"; };
 		9F81CFBB13EED386008F0265 /* BXISOImageConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXISOImageConstants.h; sourceTree = "<group>"; };
 		9F843FE01226EB1100FD37F1 /* import.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = import.png; sourceTree = "<group>"; };
-		9F86DB3E1431EF5F00A2EFB6 /* BXMIDIDeviceBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXMIDIDeviceBrowser.h; sourceTree = "<group>"; };
-		9F86DB3F1431EF5F00A2EFB6 /* BXMIDIDeviceBrowser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXMIDIDeviceBrowser.m; sourceTree = "<group>"; };
+		9F86DB3E1431EF5F00A2EFB6 /* BXMIDIDeviceMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; path = BXMIDIDeviceMonitor.h; sourceTree = "<group>"; };
+		9F86DB3F1431EF5F00A2EFB6 /* BXMIDIDeviceMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXMIDIDeviceMonitor.m; sourceTree = "<group>"; };
 		9F87EF7113C1B18900326608 /* BXFlightstickAccelerometerLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFlightstickAccelerometerLayout.h; sourceTree = "<group>"; };
 		9F87EF7213C1B18900326608 /* BXFlightstickAccelerometerLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFlightstickAccelerometerLayout.m; sourceTree = "<group>"; };
 		9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
@@ -2246,8 +2246,8 @@
 			isa = PBXGroup;
 			children = (
 				9F3EDA1C1434CB8C009BFBA2 /* BXMIDIConstants.h */,
-				9F86DB3E1431EF5F00A2EFB6 /* BXMIDIDeviceBrowser.h */,
-				9F86DB3F1431EF5F00A2EFB6 /* BXMIDIDeviceBrowser.m */,
+				9F86DB3E1431EF5F00A2EFB6 /* BXMIDIDeviceMonitor.h */,
+				9F86DB3F1431EF5F00A2EFB6 /* BXMIDIDeviceMonitor.m */,
 				9F902C1F142E16C800843B01 /* BXMIDIDevice.h */,
 				9F902C22142E183500843B01 /* BXMIDISynth.h */,
 				9F902C23142E183500843B01 /* BXMIDISynth.m */,
@@ -3070,7 +3070,7 @@
 				9F902C24142E183500843B01 /* BXMIDISynth.m in Sources */,
 				9F902C27142E198100843B01 /* BXEmulatedMT32.mm in Sources */,
 				9F902C2A142E199100843B01 /* BXExternalMIDIDevice.m in Sources */,
-				9F86DB401431EF5F00A2EFB6 /* BXMIDIDeviceBrowser.m in Sources */,
+				9F86DB401431EF5F00A2EFB6 /* BXMIDIDeviceMonitor.m in Sources */,
 				9F3EDA171434A6E4009BFBA2 /* BXSession+BXAudioControls.m in Sources */,
 				9F3EDA1B1434B48D009BFBA2 /* BXExternalMT32.m in Sources */,
 				9F6C1CDA14373AF600601ACB /* BXDummyMIDIDevice.m in Sources */,

@@ -20,7 +20,7 @@
 #import "BXSession+BXFileManager.h"
 #import "BXImportSession.h"
 #import "BXEmulator.h"
-#import "BXMIDIDeviceBrowser.h"
+#import "BXMIDIDeviceMonitor.h"
 
 #import "BXValueTransformers.h"
 #import "NSString+BXPaths.h"
@@ -55,7 +55,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 
 @implementation BXAppController
-@synthesize currentSession, generalQueue, joystickController, joypadController, MIDIDeviceBrowser;
+@synthesize currentSession, generalQueue, joystickController, joypadController, MIDIDeviceMonitor;
 
 
 #pragma mark -
@@ -255,7 +255,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	[self setGamesFolderPath: nil], [gamesFolderPath release];
 	[self setJoystickController: nil], [joystickController release];
 	[self setJoypadController: nil], [joypadController release];
-	[self setMIDIDeviceBrowser: nil], [MIDIDeviceBrowser release];
+	[self setMIDIDeviceMonitor: nil], [MIDIDeviceMonitor release];
 	
 	[generalQueue release], generalQueue = nil;
 	
@@ -281,8 +281,8 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	[self syncSpacesKeyboardShortcuts];
     
     //Start scanning for MIDI devices now
-    [self setMIDIDeviceBrowser: [[[BXMIDIDeviceBrowser alloc] init] autorelease]];
-    [generalQueue addOperation: [self MIDIDeviceBrowser]];
+    [self setMIDIDeviceMonitor: [[[BXMIDIDeviceMonitor alloc] init] autorelease]];
+    [generalQueue addOperation: [self MIDIDeviceMonitor]];
 }
 
 - (void) applicationDidFinishLaunching: (NSNotification *)notification

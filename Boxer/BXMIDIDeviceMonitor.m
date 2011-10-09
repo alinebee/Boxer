@@ -197,6 +197,10 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
                 }
             }
         }
+        else
+        {
+            NSLog(@"Non-matching response from MIDI device: %@", fullResponse);
+        }
         
         //After establishing whether or not it's an MT-32, disconnect from this device.
         [listener stopListening];

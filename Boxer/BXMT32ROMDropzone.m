@@ -106,8 +106,6 @@
     
     _MT32Layer.shadowOpacity    = [self isHighlighted] ? 1: 0;
     _CM32LLayer.shadowOpacity   = [self isHighlighted] ? 1: 0;
-    
-    
 }
 
 - (void) setROMType: (BXMT32ROMType)ROMType

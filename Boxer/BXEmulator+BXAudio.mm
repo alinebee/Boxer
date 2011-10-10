@@ -98,7 +98,14 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
     id <BXMIDIDevice> device = [[self delegate] MIDIDeviceForEmulator: self
                                                    meetingDescription: description];
     
-    if (device) [self setActiveMIDIDevice: device];
+    if (device)
+    {
+        [self setActiveMIDIDevice: device];
+#ifdef BOXER_DEBUG
+        //When debugging, display an LCD message so that we know MT-32 mode has kicked in
+        if ([device isKindOfClass: [BXEmulatedMT32 class]]) [self sendMT32LCDMessage: @"BOXER:::MT-32 Active"];
+#endif
+    }
     return device;
 }
 
@@ -145,9 +152,6 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
                 //messages it missed.
                 if ([device supportsMT32Music])
                 {
-#ifdef BOXER_DEBUG
-                    [self sendMT32LCDMessage: @"BOXER:::MT-32 Active"];
-#endif
                     [self _flushPendingSysexMessages];
                 }
                 //If we couldn't attach an MT-32-supporting MIDI device, then disable

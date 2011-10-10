@@ -3,10 +3,28 @@
 <plist version="1.0">
 <dict>
     <key>BXGameProfileCatalogueVersion</key>
-    <string>20111010.2</string>
+    <string>20111011.1</string>
     
 	<key>BXSpecificGameProfiles</key>
 	<array>
+        <dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.ea.birds-of-prey</string>
+			<key>BXProfileGameName</key>
+			<string>Birds of Prey</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>bopinc.com</string>
+			</array>
+			<key>BXProfileDriveLabels</key>
+			<dict>
+				<key>BXProfileDriveLabelAny</key>
+				<string>BOP_INST__1</string>
+			</dict>
+			<key>BXInstallMedium</key>
+			<integer>1</integer><!-- Floppy -->
+		</dict>
+        
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.delphine.another-world</string>
@@ -282,6 +300,19 @@
 		</dict>
 		
 		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.sierra.kings-quest-7</string>
+			<key>BXProfileGameName</key>
+			<string>King&apos;s Quest VII</string>
+			<key>BXProfileConf</key>
+			<string>Sound Blaster Pro</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>kq7.bat</string>
+			</array>
+		</dict>
+        
+        <dict>
             <key>BXProfileIdentifier</key>
             <string>com.sierra.kings-quest-7</string>
 			<key>BXProfileGameName</key>
@@ -597,6 +628,7 @@
 				<string>F-29 Retaliator</string>
 				<string>US Navy Fighters/Advanced Tactical Fighters</string>
                 <string>Mortal Kombat</string>
+                <string>Team Suzuki</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
@@ -614,6 +646,7 @@
 				<string>retal.00</string>
 				<string>timeint.xxx</string>
                 <string>mktitle1.gra</string>
+                <string>suzuki.exe</string>
 			</array>
 		</dict>
 		
@@ -634,6 +667,25 @@
 			<integer>1</integer><!-- Floppy -->
 		</dict>
 		
+        <dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.microprose.early-flight-simulators</string>
+			<key>BXProfileDescription</key>
+			<string>Early Microprose flight simulators</string>
+			<key>BXProfileConf</key>
+			<string>Early Microprose flightsims</string>
+			<key>BXProfileMatches</key>
+			<array>
+				<string>F-19 Stealth Fighter</string>
+                <string>Knights of the Sky</string>
+			</array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>f19.com</string>
+                <string>spad13.rb</string>
+			</array>
+        </dict>
+        
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.microprose.flight-simulators</string>
@@ -643,7 +695,6 @@
 			<string>Microprose flightsims</string>
 			<key>BXProfileMatches</key>
 			<array>
-				<string>F-19 Stealth Fighter</string>
 				<string>F-117a Stealth Fighter 2.0</string>
 				<string>F-15 Strike Eagle II/III</string>
 				<string>F-14 Fleet Defender</string>
@@ -652,10 +703,10 @@
                 <string>Harrier Jump Jet</string>
                 <string>A.T.A.C</string>
                 <string>Dogfight: 80 Years of Aerial Warfare</string>
+                <string>Knights of the Sky</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
-				<string>f19.com</string>
 				<string>f117.com</string>
 				<string>f15.com</string>
 				<string>f14.com</string>
@@ -807,12 +858,14 @@
 				<string>Attack on Altair</string>
 				<string>Castle Adventure</string>
 				<string>Below the Root</string>
+                <string>Striker</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>altair.com</string>
 				<string>castle.ran</string>
 				<string>btroot.exe</string>
+                <string>strklogo.dat</string>
 			</array>
 		</dict>
 		
@@ -980,6 +1033,7 @@
 				<string>Stunt Island</string>
                 <string>Wolfenstein 3D</string>
                 <string>Geekwad: Games of the Galaxy</string>
+                <string>Return of the Phantom</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
@@ -1006,6 +1060,7 @@
 				<string>alcatraz.set</string>
                 <string>wolf3d.exe</string>
                 <string>geekwad.exe</string>
+                <string>phantom.res</string>
 			</array>
 		</dict>
 	</array>

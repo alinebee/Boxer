@@ -265,6 +265,9 @@
 {
     BXEmulator *emulator = [[self representedObject] emulator];
 
+    //If the emulator isn't running anything, then no, the game isn't ignoring the joystick.
+    if (![emulator isRunningProcess]) return NO;
+    
     //If we've received gameport read signals, then the game isn't ignoring the joystick.
     if ([emulator joystickActive]) return NO;
     

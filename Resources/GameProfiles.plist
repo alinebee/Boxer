@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
     <key>BXGameProfileCatalogueVersion</key>
-    <string>20111008.1</string>
+    <string>20111010.2</string>
     
 	<key>BXSpecificGameProfiles</key>
 	<array>
@@ -596,6 +596,7 @@
 				<string>Skate or Die</string>
 				<string>F-29 Retaliator</string>
 				<string>US Navy Fighters/Advanced Tactical Fighters</string>
+                <string>Mortal Kombat</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
@@ -612,6 +613,7 @@
 				<string>skate.exe</string>
 				<string>retal.00</string>
 				<string>timeint.xxx</string>
+                <string>mktitle1.gra</string>
 			</array>
 		</dict>
 		
@@ -649,6 +651,7 @@
 				<string>B-17 Flying Fortress</string>
                 <string>Harrier Jump Jet</string>
                 <string>A.T.A.C</string>
+                <string>Dogfight: 80 Years of Aerial Warfare</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
@@ -660,6 +663,7 @@
 				<string>b17.exe</string>
                 <string>harr.com</string>
                 <string>atac1.dat</string>
+                <string>dog.exe</string>
 			</array>
 		</dict>
 		
@@ -975,6 +979,7 @@
 				<string>Tornado</string>
 				<string>Stunt Island</string>
                 <string>Wolfenstein 3D</string>
+                <string>Geekwad: Games of the Galaxy</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
@@ -1000,6 +1005,7 @@
 				<string>tornado.bat</string>
 				<string>alcatraz.set</string>
                 <string>wolf3d.exe</string>
+                <string>geekwad.exe</string>
 			</array>
 		</dict>
 	</array>

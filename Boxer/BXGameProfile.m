@@ -228,7 +228,7 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 	if (!dict)
 	{
 		NSString *profilePath = [[NSBundle mainBundle] pathForResource: @"GameProfiles" ofType: @"plist"];
-		dict = [[NSDictionary alloc] initWithContentsOfFile: profilePath]; 
+		dict = [[NSDictionary alloc] initWithContentsOfFile: profilePath];
 	}
 	return dict;
 }

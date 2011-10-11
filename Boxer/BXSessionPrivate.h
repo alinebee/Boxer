@@ -61,9 +61,6 @@
 //DOSBox blocking cleanup code.
 - (void) _startEmulator;
 
-//Apply our chain of DOSBox configuration files (preflight, autodetected, gamebox, launch) to the emulator.
-- (void) _loadDOSBoxConfigurations;
-
 //Set up the emulator context with drive mounts and drive-related configuration settings. Called in
 //runPreflightCommands at the start of AUTOEXEC.BAT, before any other commands or settings are run.
 - (void) _mountDrivesForSession;

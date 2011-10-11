@@ -728,6 +728,44 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	if ([self _shouldCloseOnEmulatorExit]) [self close];
 }
 
+- (NSArray *) configurationPathsForEmulator: (BXEmulator *)emulator
+{
+    NSMutableArray *configPaths = [[NSMutableArray alloc] initWithCapacity: 4];
+    
+    //Load Boxer's baseline configuration first.
+    [configPaths addObject: [[NSBundle mainBundle] pathForResource: @"Preflight" ofType: @"conf"]];
+
+	//If we don't have a manually-defined game-profile already,
+    //detect the game profile from our target path and set it now.
+	if ([self targetPath] && ![self gameProfile])
+	{
+		BXGameProfile *profile = [[self class] profileForPath: [self targetPath]];
+        
+        //If no specific game can be found, then store it explicitly as an unknown game.
+        if (!profile) profile = [[[BXGameProfile alloc] init] autorelease];
+		[self setGameProfile: profile];
+	}
+	
+	//Load the appropriate configuration files from our game profile.
+    for (NSString *confName in [[self gameProfile] configurations])
+    {
+        NSString *profileConf = [[NSBundle mainBundle] pathForResource: confName
+                                                                ofType: @"conf"
+                                                           inDirectory: @"Configurations"];
+        if (profileConf) [configPaths addObject: profileConf];
+    }
+	
+	//Next, load the gamebox's own configuration file if it has one.
+    NSString *packageConf = [[self gamePackage] configurationFile];
+    if (packageConf) [configPaths addObject: packageConf];
+    
+	
+    //Last but not least, load Boxer's launch configuration.
+    [configPaths addObject: [[NSBundle mainBundle] pathForResource: @"Launch" ofType: @"conf"]];
+    
+    return [configPaths autorelease];
+}
+
 //If we have not already performed our own configuration, do so now
 - (void) runPreflightCommandsForEmulator: (BXEmulator *)theEmulator
 {
@@ -1045,10 +1083,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 }
 
 - (void) _startEmulator
-{
-	//Load up our configuration files
-	[self _loadDOSBoxConfigurations];
-	
+{	
 	//Set the emulator's current working directory relative to whatever we're opening
 	if ([self fileURL])
 	{
@@ -1065,46 +1100,6 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	
 	//Start up the emulator itself.
 	[[self emulator] start];
-}
-
-- (void) _loadDOSBoxConfigurations
-{
-	//The configuration files we will be using today, loaded in this order.
-	NSString *preflightConf	= [[NSBundle mainBundle] pathForResource: @"Preflight" ofType: @"conf"];
-	NSString *profileConf	= nil;
-	NSString *packageConf	= nil;
-	NSString *launchConf	= [[NSBundle mainBundle] pathForResource: @"Launch" ofType: @"conf"];
-	
-	//If we don't have a manually-defined game-profile, detect the game profile from our target path
-	if ([self targetPath] && ![self gameProfile])
-	{
-		BXGameProfile *profile = [[self class] profileForPath: [self targetPath]];
-        //If no specific game can be found, then store it explicitly as an unknown game
-        if (!profile) profile = [[[BXGameProfile alloc] init] autorelease];
-		[self setGameProfile: profile];
-	}
-	
-	//Get the appropriate configuration file for this game profile
-	if ([self gameProfile])
-	{
-		NSString *configName = [[self gameProfile] confName];
-		if (configName)
-		{
-			profileConf = [[NSBundle mainBundle] pathForResource: configName
-														  ofType: @"conf"
-													 inDirectory: @"Configurations"];
-		}
-	}
-	
-	//Get the gamebox's own configuration file, if it has one
-	if ([self gamePackage]) packageConf = [[self gamePackage] configurationFile];
-	
-	
-	//Apply all our configuration files in order.
-	[emulator applyConfigurationAtPath: preflightConf];
-	if (profileConf) [emulator applyConfigurationAtPath: profileConf];
-	if (packageConf) [emulator applyConfigurationAtPath: packageConf];
-	[emulator applyConfigurationAtPath: launchConf];	
 }
 
 - (void) _mountDrivesForSession
@@ -1274,15 +1269,15 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		
 		
 		//Compare against the combined configuration we'll inherit from Boxer's base settings plus
-        //the profile-specific configuration (if any), and eliminate any duplicate configuration
+        //the profile-specific configurations (if any), and eliminate any duplicate configuration
         //parameters from the gamebox conf. This way, we don't persist settings we don't need to.
         NSString *baseConfPath = [[NSBundle mainBundle] pathForResource: @"Preflight" ofType: @"conf"];
         BXEmulatorConfiguration *baseConf = [BXEmulatorConfiguration configurationWithContentsOfFile: baseConfPath error: nil];
         [baseConf removeStartupCommands];
         
-		NSString *profileConfName = [gameProfile confName];
-		if (profileConfName)
-		{
+        NSArray *profileConfs = [gameProfile configurations];
+		for (NSString *profileConfName in profileConfs)
+        {
 			NSString *profileConfPath = [[NSBundle mainBundle] pathForResource: profileConfName
 																		ofType: @"conf"
 																   inDirectory: @"Configurations"];

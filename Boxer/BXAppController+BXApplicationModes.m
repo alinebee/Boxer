@@ -214,16 +214,12 @@ NSString * const BXPreviousSpacesArrowKeyModifiersKey = @"previousSpacesArrowKey
 
 - (void) windowDidBecomeKey: (NSNotification *)notification
 {
-	//A delay of 0 means that it occurs immediately at the end of the current run loop,
-	//after all other effects have occurred
-	[self performSelector: @selector(syncSpacesKeyboardShortcuts) withObject: nil afterDelay: 0];
+	[self syncSpacesKeyboardShortcuts];
 }
 
 - (void) windowDidResignKey: (NSNotification *)notification
 {
-	//A delay of 0 means that it occurs immediately at the end of the current run loop,
-	//after all other effects have occurred
-	[self performSelector: @selector(syncSpacesKeyboardShortcuts) withObject: nil afterDelay: 0];
+	[self syncSpacesKeyboardShortcuts];
 }
 
 - (void) sessionDidUnlockMouse: (NSNotification *)notification

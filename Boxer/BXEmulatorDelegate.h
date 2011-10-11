@@ -57,6 +57,12 @@ extern NSString * const BXEmulatorDidDisplayMT32MessageNotification;
 - (NSSize) viewportSizeForEmulator: (BXEmulator *)emulator;
 - (NSSize) maxFrameSizeForEmulator: (BXEmulator *)emulator;
 
+//Called during initialization to get an array of paths to configuration files that
+//the emulator session should load, in the order in which they should be loaded
+//(settings in later configurations will override earlier ones.)
+//May return nil or an empty array, to load no configuration files.
+- (NSArray *) configurationPathsForEmulator: (BXEmulator *)emulator;
+
 //Tells the delegate that the specified frame has finished rendering.
 - (void) emulator: (BXEmulator *)emulator didFinishFrame: (BXFrameBuffer *)frame;
 

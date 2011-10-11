@@ -37,10 +37,10 @@ extern NSString * const BXUnknownProfileIdentifier;
 {
     NSString *identifier;
 	NSString *gameName;
-	NSString *confName;
 	NSString *profileDescription;
 	NSDictionary *driveLabelMappings;
 	NSArray *installerPatterns;
+	NSArray *configurations;
 	
 	BXGameEra gameEra;
 	BXDriveType installMedium;
@@ -58,8 +58,9 @@ extern NSString * const BXUnknownProfileIdentifier;
 //Will be nil for shared profiles (in which case profileDescription will be available.) 
 @property (copy, nonatomic) NSString *gameName;
 
-//The configuration file for this game (sans .conf extension), as stored in Resources/Configurations
-@property (copy, nonatomic) NSString *confName;
+//The configuration file(s) to use for this game (sans path and .conf extension),
+//as stored in Resources/Configurations
+@property (copy, nonatomic) NSArray *configurations;
 
 //The description of what kind of games this game profile covers.
 //Will be nil for game-specific profiles (in which case gameName will be available.)

@@ -83,7 +83,6 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 @implementation BXEmulator
 @synthesize processName, processPath, processLocalPath;
 @synthesize delegate;
-@synthesize configFiles;
 @synthesize videoHandler;
 @synthesize mouse, keyboard, joystick, joystickActive;
 @synthesize cancelled, executing, initialized;
@@ -188,7 +187,6 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 {
 	if ((self = [super init]))
 	{
-		configFiles			= [[NSMutableArray alloc] initWithCapacity: 10];
 		commandQueue		= [[NSMutableArray alloc] initWithCapacity: 4];
 		driveCache			= [[NSMutableDictionary alloc] initWithCapacity: DOS_DRIVES];
 		
@@ -218,7 +216,6 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	[joystick release], joystick = nil;
 	
 	[driveCache release], driveCache = nil;
-	[configFiles release], configFiles = nil;
 	[commandQueue release], commandQueue = nil;
     [pendingSysexMessages release], pendingSysexMessages = nil;
     
@@ -270,11 +267,6 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	}
 
 	[self setCancelled: YES];
-}
-
-- (void) applyConfigurationAtPath: (NSString *)configPath;
-{
-	[configFiles addObject: configPath];
 }
 
 - (NSString *) basePath
@@ -756,8 +748,9 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 		//and registers the shell to start up when we finish initializing.
 		DOSBOX_Init();
 
-		//Load up Boxer's own configuration files
-		for (NSString *configPath in [self configFiles])
+		//Ask our delegate for the configuration files we should be loading today.
+        NSArray *configPaths = [[self delegate] configurationPathsForEmulator: self];
+		for (NSString *configPath in configPaths)
 		{
 			configPath = [configPath stringByStandardizingPath];
 			const char *encodedConfigPath = [configPath fileSystemRepresentation];

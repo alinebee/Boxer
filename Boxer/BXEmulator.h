@@ -81,7 +81,6 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 	NSString *processPath;
 	NSString *processLocalPath;
 	
-	NSMutableArray *configFiles;
 	NSMutableDictionary *driveCache;
 	
 	BOOL cancelled;
@@ -114,10 +113,6 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 @property (readonly, nonatomic) BXEmulatedKeyboard *keyboard;	//Our emulated keyboard.
 @property (readonly, nonatomic) BXEmulatedMouse *mouse;			//Our emulated mouse.
 @property (readonly, nonatomic) id <BXEmulatedJoystick> joystick;	//Our emulated joystick. Initially empty.
-
-//An array of OS X paths to configuration files that will be/have been loaded by this session during startup.
-//This is read-only: configuration files can be loaded via applyConfigurationAtPath:
-@property (readonly, nonatomic) NSArray *configFiles;
 
 //The OS X filesystem path to which the emulator should resolve relative local filesystem paths.
 //This is used by DOSBox commands like MOUNT, IMGMOUNT and CONFIG, and is directly equivalent
@@ -232,10 +227,6 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 
 //Stop emulation.
 - (void) cancel;
-
-//Load the DOSBox configuration file at the specified path.
-//Currently, this only takes effect if done before [BXEmulator start] is called.
-- (void) applyConfigurationAtPath: (NSString *)configPath;
 
 
 #pragma mark -

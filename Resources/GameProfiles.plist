@@ -3,10 +3,57 @@
 <plist version="1.0">
 <dict>
     <key>BXGameProfileCatalogueVersion</key>
-    <string>20111011.3</string>
+    <string>20111012.4</string>
     
 	<key>BXSpecificGameProfiles</key>
 	<array>
+		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.spectrum-holobyte.falcon-3</string>
+			<key>BXProfileGameName</key>
+			<string>Falcon 3.0</string>
+			<key>BXProfileConfigurations</key>
+            <array>
+                <string>Dynamic</string>
+                <string>MT-32</string>
+            </array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>falcon3.def</string>
+			</array>
+		</dict>
+        
+		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.lucasarts.monkey-island</string>
+			<key>BXProfileGameName</key>
+			<string>The Secret of Monkey Island</string>
+			<key>BXProfileConfigurations</key>
+            <array>
+                <string>MT-32</string>
+            </array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>monkey.exe</string>
+			</array>
+		</dict>
+        
+		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.delphine.flashback</string>
+			<key>BXProfileGameName</key>
+			<string>Flashback</string>
+			<key>BXProfileConfigurations</key>
+            <array>
+                <string>Dynamic</string>
+                <string>MT-32</string>
+            </array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>fb.exe</string>
+			</array>
+		</dict>
+        
         <dict>
             <key>BXProfileIdentifier</key>
             <string>com.ea.birds-of-prey</string>
@@ -695,9 +742,12 @@
             </array>
 			<key>BXProfileMatches</key>
 			<array>
+                <string>Dune</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
+                <string>dune.exe</string>
+                <string>dune.bat</string><!-- CD version -->
 			</array>
          </dict>
         
@@ -1161,7 +1211,6 @@
             </array>
 			<key>BXProfileMatches</key>
 			<array>
-				<string>Flashback</string>
 				<string>Frontier</string>
 				<string>Blackthorne</string>
 				<string>Star Wars X-Wing</string>
@@ -1171,7 +1220,6 @@
                 <string>Pinball Dreams Deluxe, Pinball Dreams 2, Pinball Fantasies</string>
 				<string>Colonization</string>
 				<string>Blake Stone 1 &amp; 2</string>
-				<string>Falcon 3.0</string>
 				<string>Links</string>
 				<string>Warlords 2</string>
 				<string>Master of Magic</string>
@@ -1188,7 +1236,6 @@
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
-				<string>fb.exe</string>
 				<string>frontier.exe</string>
 				<string>black.exe</string>
 				<string>vga.pac</string>
@@ -1198,7 +1245,6 @@
                 <string>thing.sdr</string>
 				<string>viceroy.exe</string>
 				<string>jm_error.h</string>
-				<string>falcon3.def</string>
 				<string>torrey_p.crs</string>
 				<string>warlord2.exe</string>
 				<string>magic.exe</string>

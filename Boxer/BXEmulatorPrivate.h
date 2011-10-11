@@ -293,7 +293,7 @@ enum {
 
 //Removes any automatically chosen MIDI device so that we can redetect it.
 //Called when emulator returns to the DOS prompt.
-- (void) _resetMIDIDeviceDetection;
+- (void) _resetMIDIDevice;
 
 //Used to queue up copies of sysex messages that we received before
 //deciding on a MIDI device. These are delivered to a new device

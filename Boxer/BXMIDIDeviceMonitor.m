@@ -7,6 +7,7 @@
 
 #import "BXMIDIDeviceMonitor.h"
 #import "BXMIDIConstants.h"
+#import "BXExternalMT32+BXMT32Sysexes.h"
 
 
 //How long (in seconds) Boxer will wait before giving up on a response from a MIDI device.
@@ -158,26 +159,10 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
     static NSData *request = nil;
     if (!request)
     {
-#define BXMT32IdentityRequestLength 13
-        const UInt8 requestContent[BXMT32IdentityRequestLength] = {
-            BXSysexStart,
-            
-            //Sysex is addressed to MT-32
-            BXSysexManufacturerIDRoland, BXRolandSysexDeviceIDDefault, BXRolandSysexModelIDMT32,
-            
-            BXRolandSysexDataRequest,
-            
-            0x05, 0x00, 0x00, //Ask for value from the patch memory
-            
-            0x00, 0x00, 0x01, //Ask for 1 byte only please
-            
-            0x7A, //Checksum
-            
-            BXSysexEnd
-        };
-        
-        request = [[NSData alloc] initWithBytes: requestContent
-                                         length: BXMT32IdentityRequestLength];
+        //Perform an arbitrary request for a byte from patch memory.
+        UInt8 address[3] = { BXMT32SysexAddressPatchMemory, 0x00, 0x00 };
+        request = [BXExternalMT32 sysexRequestForDataOfLength: 1 fromAddress: address];
+        [request retain];
     }
     return request;
 }
@@ -187,16 +172,17 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
     static NSData *response = nil;
     if (!response)
     {
-#define BXMT32IdentityResponseLength 4
-        const UInt8 responseContent[BXMT32IdentityResponseLength] = {
+        const UInt8 responseContent[BXRolandSysexHeaderLength] = {
             BXSysexStart,
-            //Sysex comes from MT-32
-            BXSysexManufacturerIDRoland, BXRolandSysexDeviceIDDefault, BXRolandSysexModelIDMT32
+            
+            BXSysexManufacturerIDRoland, BXRolandSysexDeviceIDDefault, BXRolandSysexModelIDMT32,
+            
+            BXRolandSysexSend
             //We don't care about the rest of the message beyond this
         };
         
         response = [[NSData alloc] initWithBytes: responseContent
-                                          length: BXMT32IdentityResponseLength];
+                                          length: BXRolandSysexHeaderLength];
     }
     return response;
 }

@@ -208,6 +208,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	[scanQueue release], scanQueue = nil;
 	[importQueue release], importQueue = nil;
 	[watcher release], watcher = nil;
+    [MT32MessagesReceived release], MT32MessagesReceived = nil;
 	
     [self setSuppressesDisplaySleep: NO];
     
@@ -884,6 +885,9 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         [self setLastExecutedProgramPath: nil];
         [self setLastLaunchedProgramPath: nil];
 	}
+    
+    //Clear our cache of sent MT-32 messages on behalf of BXAudioControls.
+    [MT32MessagesReceived removeAllObjects];
         
 	//Show the program chooser after returning to the DOS prompt, as long
 	//as the program chooser hasn't been manually toggled from the DOS prompt

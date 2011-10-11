@@ -88,6 +88,9 @@ extern NSString * const BXDidFinishInterruptionNotification;
 	NSTimeInterval programStartTime;
     
     IOPMAssertionID displaySleepAssertionID;
+    
+    //Used by BXAudioControls
+    NSMutableSet *MT32MessagesReceived;
 }
 
 

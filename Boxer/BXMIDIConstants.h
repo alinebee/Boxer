@@ -11,6 +11,22 @@
 #define BXSysexStart 0xF0
 #define BXSysexEnd 0xF7
 
+
+#pragma mark -
+#pragma mark Roland sysex message format
+
+//Start byte, manufacturer ID, device ID, model ID, message Type
+#define BXRolandSysexHeaderLength 5
+//High byte, middle byte, low byte
+#define BXRolandSysexAddressLength 3
+//High byte, middle byte, low byte
+#define BXRolandSysexRequestSizeLength 3
+//Checksum, end byte
+#define BXRolandSysexTailLength 2
+
+
+#define BXRolandSysexChecksumModulus 128
+
 #define BXSysexManufacturerIDRoland 0x41
 #define BXSysexManufacturerIDNonRealtime 0x7E
 #define BXSysexManufacturerIDRealtime 0x7F
@@ -20,15 +36,22 @@
 
 #define BXRolandSysexDeviceIDDefault 0x10
 
-#define BXRolandSysexDataRequest 0x11
-#define BXRolandSysexDataSend 0x12
+#define BXRolandSysexRequest 0x11
+#define BXRolandSysexSend 0x12
 
-#define BXRolandSysexAddressPatchMemory 0x05
-#define BXRolandSysexAddressTimbreMemory 0x08
-#define BXRolandSysexAddressSystemArea 0x10
-#define BXRolandSysexAddressReset 0x7F
-#define BXRolandSysexAddressDisplay 0x20
+#define BXRolandSysexSendMinLength BXRolandSysexHeaderLength + BXRolandSysexAddressLength + BXRolandSysexTailLength
 
+#define BXRolandSysexRequestLength BXRolandSysexHeaderLength + BXRolandSysexAddressLength + BXRolandSysexRequestSizeLength + BXRolandSysexTailLength
+
+#pragma mark -
+#pragma mark MT-32-specific sysex message parameters
+
+#define BXMT32LCDMessageLength 20
+#define BXMT32SysexAddressPatchMemory 0x05
+#define BXMT32SysexAddressTimbreMemory 0x08
+#define BXMT32SysexAddressSystemArea 0x10
+#define BXMT32SysexAddressReset 0x7F
+#define BXMT32SysexAddressDisplay 0x20
 
 
 #define BXChannelModeChangePrefix 0xB0

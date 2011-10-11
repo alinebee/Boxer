@@ -57,16 +57,6 @@ extern NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey;
 @protocol BXMIDIDevice;
 @interface BXEmulator (BXAudio) <BXEmulatedMT32Delegate>
 
-#pragma mark -
-#pragma mark Helper class methods
-
-//Returns YES if the specified sysex message is explicitly intended
-//for a Roland MT-32, NO otherwise.
-//If indicatesSupport is provided, this will be set to YES if the
-//message indicates the game will definitely provide music tailored
-//to the MT-32, NO if it's inconclusive.
-+ (BOOL) isMT32Sysex: (NSData *)message indicatingMT32Support: (BOOL *)indicatesSupport;
-
 
 #pragma mark -
 #pragma mark MIDI processing

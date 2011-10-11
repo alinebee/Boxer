@@ -256,16 +256,11 @@
     
     NSTextField *messageField = [bezel viewWithTag: BXBezelMessage];
     
-    //TWEAK: if it's the same message getting spammed again and again,
-    //don't re-show the bezel. King's Quest IV likes to do this.
-    if (![[messageField stringValue] isEqualToString: message])
-    {
-        [messageField setStringValue: message];
-        
-        [self showBezel: bezel
-            forDuration: BXMT32MessageBezelDuration
-               priority: BXBezelPriorityHigh];
-    }
+    [messageField setStringValue: message];
+    
+    [self showBezel: bezel
+        forDuration: BXMT32MessageBezelDuration
+           priority: BXBezelPriorityHigh];
 }
 
 - (void) showMT32MissingBezel

@@ -517,7 +517,7 @@ nil];
     //it next time we run a program. (This lets users try out different
     //music options in the game's setup, without the emulation staying locked
     //to a particular MIDI mode.)
-    [self _resetMIDIDeviceDetection];
+    [self _resetMIDIDevice];
 
     
 	[self _postNotificationName: BXEmulatorDidReturnToShellNotification

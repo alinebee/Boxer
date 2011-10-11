@@ -25,7 +25,7 @@
     
     //Sysex is too short to be a valid MT-32 message, go with the standard delay.
     //(It'll still take time for it to reach the MT-32 and get rejected.)
-    if ([sysex length] < 9) return baseDelay;
+    if ([sysex length] < BXRolandSysexSendMinLength) return baseDelay;
     
     const UInt8 *contents = [sysex bytes];
     const UInt8 manufacturerID  = contents[1],
@@ -38,23 +38,23 @@
         
     //If this sysex isn't intended for the MT-32, or is not a data-set command,
     //then we don't know how to calculate it and should stick with the regular delay.
-    if (manufacturerID != BXSysexManufacturerIDRoland || modelID != BXRolandSysexModelIDMT32 || commandType != BXRolandSysexDataSend)
+    if (manufacturerID != BXSysexManufacturerIDRoland || modelID != BXRolandSysexModelIDMT32 || commandType != BXRolandSysexSend)
         return baseDelay;
 
     
     //All Parameters Reset
-    if (baseAddress == BXRolandSysexAddressReset) return MAX(0.290, baseDelay);
+    if (baseAddress == BXMT32SysexAddressReset) return MAX(0.290, baseDelay);
     
     //Partial reserve part 1: fixes Viking Child
-    if (baseAddress == BXRolandSysexAddressSystemArea && subAddress1 == 0x00 && subAddress2 == 0x04)
+    if (baseAddress == BXMT32SysexAddressSystemArea && subAddress1 == 0x00 && subAddress2 == 0x04)
         return MAX(0.145, baseDelay);
     
     //Reverb: fixes Dark Sun 1
-    if (baseAddress == BXRolandSysexAddressSystemArea && subAddress1 == 0x00 && subAddress2 == 0x01)
+    if (baseAddress == BXMT32SysexAddressSystemArea && subAddress1 == 0x00 && subAddress2 == 0x01)
         return MAX(0.030, baseDelay);
     
     //Patch/timbre assignment: fixes Colonel's Bequest on my own shitty MIDI cable.
-    if (baseAddress == BXRolandSysexAddressPatchMemory || baseAddress == BXRolandSysexAddressTimbreMemory)
+    if (baseAddress == BXMT32SysexAddressPatchMemory || baseAddress == BXMT32SysexAddressTimbreMemory)
         return MAX(0.040, baseDelay);
     
     return baseDelay;

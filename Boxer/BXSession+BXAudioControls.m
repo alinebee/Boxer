@@ -23,7 +23,24 @@
 - (void) emulatorDidDisplayMT32Message: (NSNotification *)notification
 {
     NSString *message = [[notification userInfo] objectForKey: @"message"];
-    [[BXBezelController controller] showMT32BezelForMessage: message];
+    
+    //TWEAK: some games (e.g. King's Quest IV, Ultima VII) spam the same message
+    //or set of messages over and over again. This is irritating when it's shown
+    //in a popover, so we ignore repeat messages.
+    BOOL isARepeat;
+    if (MT32MessagesReceived)
+    {
+        isARepeat = [MT32MessagesReceived containsObject: message];
+        [MT32MessagesReceived addObject: message];
+    }
+    else
+    {
+        isARepeat = NO;
+        MT32MessagesReceived = [[NSMutableSet alloc] initWithObjects: message, nil];
+    }
+    
+    if (!isARepeat)
+        [[BXBezelController controller] showMT32BezelForMessage: message];
 }
 
 - (id <BXMIDIDevice>) MIDIDeviceForEmulator: (BXEmulator *)theEmulator

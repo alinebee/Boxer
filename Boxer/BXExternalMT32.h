@@ -11,5 +11,9 @@
 
 #import "BXExternalMIDIDevice.h"
 
+
+#define SYSEX_HEADER_LENGTH 5
+#define MT32SYSEX_ADDRESS_LENGTH 3
+
 @interface BXExternalMT32 : BXExternalMIDIDevice
 @end

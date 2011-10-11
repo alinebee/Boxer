@@ -9,7 +9,7 @@
 #import "RegexKitLite.h"
 #import "BXEmulatedMT32.h"
 #import "BXExternalMIDIDevice.h"
-#import "BXExternalMT32.h"
+#import "BXExternalMT32+BXMT32Sysexes.h"
 #import "BXMIDISynth.h"
 
 
@@ -28,6 +28,7 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
 - (void) emulatedMT32: (BXEmulatedMT32 *)MT32 didDisplayMessage: (NSString *)message
 {
     NSDictionary *userInfo = [NSDictionary dictionaryWithObject: message forKey: @"message"];
+
     [self _postNotificationName: BXEmulatorDidDisplayMT32MessageNotification
                delegateSelector: @selector(emulatorDidDisplayMT32Message:)
                        userInfo: userInfo];
@@ -35,53 +36,8 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
 
 - (void) sendMT32LCDMessage: (NSString *)message
 {
-#define MSG_LENGTH 20
-#define SYSEX_LENGTH 30
-#define SYSEX_ADDRESS_OFFSET 5
-#define SYSEX_MSG_OFFSET 8
-#define SYSEX_CHECKSUM_OFFSET SYSEX_LENGTH - 2
-    
-    //Crop the message to 14 characters
-    if ([message length] > MSG_LENGTH)
-        message = [message substringToIndex: MSG_LENGTH];
-    
-    //Get a dump of the message's bytes, crushed down to ASCII encoding
-    NSData *chars = [message dataUsingEncoding: NSASCIIStringEncoding allowLossyConversion: YES];
-    
-    unsigned char sysex[SYSEX_LENGTH] = {
-        BXSysexStart,
-        
-        BXSysexManufacturerIDRoland, BXRolandSysexDeviceIDDefault, BXRolandSysexModelIDMT32,
-        
-        BXRolandSysexDataSend,
-        
-        //We're sending a display-on-LCD message
-        BXRolandSysexAddressDisplay, 0x00, 0x00,
-        
-        //The 20-character message, which we'll fill in later
-        ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-        ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-        
-        //The checksum, which we'll replace later
-        0xFF,
-        
-        BXSysexEnd
-    };
-    
-    //Paste the message into the sysex
-    [chars getBytes: &sysex[SYSEX_MSG_OFFSET] length: MSG_LENGTH];
-    
-    //Calculate the checksum for the sysex,
-    //which is based on the address and message bytes
-    NSUInteger i, checksum = 0;
-    for (i = SYSEX_ADDRESS_OFFSET; i < SYSEX_CHECKSUM_OFFSET; i++)
-    {
-        checksum += sysex[i];
-    }
-    checksum = 128 - (checksum % 128);
-    sysex[SYSEX_CHECKSUM_OFFSET] = checksum;
-    
-    [self sendMIDISysex: [NSData dataWithBytes: sysex length: SYSEX_LENGTH]];
+    NSData *sysex = [BXExternalMT32 sysexWithLCDMessage: message];
+    [self sendMIDISysex: sysex];
 }
 
 
@@ -133,8 +89,8 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
     {
         //Check if the message we've received was intended for an MT-32,
         //and if so, how 'conclusive' it is that the game is playing MT-32 music.
-        BOOL supportConfirmed, isMT32Sysex = [[self class] isMT32Sysex: message
-                                                 indicatingMT32Support: &supportConfirmed];
+        BOOL supportConfirmed, isMT32Sysex = [BXExternalMT32 isMT32Sysex: message
+                                                       confirmingSupport: &supportConfirmed];
         if (isMT32Sysex)
         {
             //If this sysex conclusively indicates that the game is playing MT-32 music,
@@ -180,43 +136,7 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
     }
 }
 
-+ (BOOL) isMT32Sysex: (NSData *)message indicatingMT32Support: (BOOL *)indicatesSupport
-{
-    if (indicatesSupport) *indicatesSupport = NO;
-    
-    //Too short to be a valid MT-32 sysex message.
-    if ([message length] < 7) return NO;
-        
-    const UInt8 *contents = (const UInt8 *)[message bytes];
-    UInt8   manufacturerID  = contents[1],
-            modelID         = contents[3],
-            commandType     = contents[4],
-            baseAddress     = contents[5];
-    
-    //Command is intended for a different device than a Roland MT-32.
-    if (manufacturerID != BXSysexManufacturerIDRoland) return NO;
-    if (!(modelID == BXRolandSysexModelIDMT32 || modelID == BXRolandSysexModelIDD50)) return NO;
-    
-    if (indicatesSupport)
-    {
-        //Some General MIDI drivers (used by Origin and Westwood among others)
-        //send sysexes telling the MT-32 to reset and setting up initial reverb
-        //and volume settings: but will then proceed to deliver General MIDI music
-        //to the MT-32 anyway.
-        if (commandType == BXRolandSysexDataSend &&
-            (baseAddress == BXRolandSysexAddressReset || baseAddress == BXRolandSysexAddressSystemArea)) *indicatesSupport = NO;
-        
-        //Some MIDI songs (so far, only Strike Commander's) contain embedded display
-        //messages: these should be treated as inconclusive, since the songs are shared
-        //between the game's MT-32 and General MIDI modes and these messages will be
-        //sent even when the game is in General MIDI mode.
-        else if (commandType == BXRolandSysexDataSend && baseAddress == BXRolandSysexAddressDisplay) *indicatesSupport = NO;
-        
-        else *indicatesSupport = YES;
-    }
-    
-    return YES;
-}
+
 
 
 #pragma mark -
@@ -242,9 +162,10 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
     return ([self autodetectsMT32] && ![[self activeMIDIDevice] supportsMT32Music]);
 }
 
-- (void) _resetMIDIDeviceDetection
+- (void) _resetMIDIDevice
 {
     [self _clearPendingSysexMessages];
+    
     //Clear the active MIDI device so that we can redetect it next time
     if ([self autodetectsMT32])
     {

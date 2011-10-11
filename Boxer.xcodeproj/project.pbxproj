@@ -258,6 +258,7 @@
 		9F7721E912B38C4400072AE8 /* shell_batch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77217312B38C4400072AE8 /* shell_batch.cpp */; };
 		9F7721EA12B38C4400072AE8 /* shell_cmds.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77217412B38C4400072AE8 /* shell_cmds.cpp */; };
 		9F7721EB12B38C4400072AE8 /* shell_misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77217512B38C4400072AE8 /* shell_misc.cpp */; };
+		9F7D9EFF1444BAA800B6AD50 /* BXExternalMT32+BXMT32Sysexes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F7D9EFE1444BAA800B6AD50 /* BXExternalMT32+BXMT32Sysexes.m */; };
 		9F7FC94C139EB38300D60320 /* RacingWheel.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F7FC94B139EB38300D60320 /* RacingWheel.png */; };
 		9F843FE11226EB1100FD37F1 /* import.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F843FE01226EB1100FD37F1 /* import.png */; };
 		9F86DB401431EF5F00A2EFB6 /* BXMIDIDeviceMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F86DB3F1431EF5F00A2EFB6 /* BXMIDIDeviceMonitor.m */; };
@@ -936,6 +937,8 @@
 		9F77217312B38C4400072AE8 /* shell_batch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = shell_batch.cpp; sourceTree = "<group>"; };
 		9F77217412B38C4400072AE8 /* shell_cmds.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = shell_cmds.cpp; sourceTree = "<group>"; };
 		9F77217512B38C4400072AE8 /* shell_misc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = shell_misc.cpp; sourceTree = "<group>"; };
+		9F7D9EFD1444BAA800B6AD50 /* BXExternalMT32+BXMT32Sysexes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXExternalMT32+BXMT32Sysexes.h"; sourceTree = "<group>"; };
+		9F7D9EFE1444BAA800B6AD50 /* BXExternalMT32+BXMT32Sysexes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXExternalMT32+BXMT32Sysexes.m"; sourceTree = "<group>"; };
 		9F7FC94B139EB38300D60320 /* RacingWheel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = RacingWheel.png; sourceTree = "<group>"; };
 		9F80BC81123556AD00EBAB23 /* Finder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Finder.h; sourceTree = "<group>"; };
 		9F81CFB713EEA3F4008F0265 /* BXISOImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXISOImage.h; sourceTree = "<group>"; };
@@ -943,7 +946,7 @@
 		9F81CFBA13EEAD6D008F0265 /* BXISOImagePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXISOImagePrivate.h; sourceTree = "<group>"; };
 		9F81CFBB13EED386008F0265 /* BXISOImageConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXISOImageConstants.h; sourceTree = "<group>"; };
 		9F843FE01226EB1100FD37F1 /* import.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = import.png; sourceTree = "<group>"; };
-		9F86DB3E1431EF5F00A2EFB6 /* BXMIDIDeviceMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; path = BXMIDIDeviceMonitor.h; sourceTree = "<group>"; };
+		9F86DB3E1431EF5F00A2EFB6 /* BXMIDIDeviceMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXMIDIDeviceMonitor.h; sourceTree = "<group>"; };
 		9F86DB3F1431EF5F00A2EFB6 /* BXMIDIDeviceMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXMIDIDeviceMonitor.m; sourceTree = "<group>"; };
 		9F87EF7113C1B18900326608 /* BXFlightstickAccelerometerLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFlightstickAccelerometerLayout.h; sourceTree = "<group>"; };
 		9F87EF7213C1B18900326608 /* BXFlightstickAccelerometerLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFlightstickAccelerometerLayout.m; sourceTree = "<group>"; };
@@ -2258,6 +2261,8 @@
 				9F902C29142E199100843B01 /* BXExternalMIDIDevice.m */,
 				9F3EDA191434B48D009BFBA2 /* BXExternalMT32.h */,
 				9F3EDA1A1434B48D009BFBA2 /* BXExternalMT32.m */,
+				9F7D9EFD1444BAA800B6AD50 /* BXExternalMT32+BXMT32Sysexes.h */,
+				9F7D9EFE1444BAA800B6AD50 /* BXExternalMT32+BXMT32Sysexes.m */,
 				9F6C1CD814373AF600601ACB /* BXDummyMIDIDevice.h */,
 				9F6C1CD914373AF600601ACB /* BXDummyMIDIDevice.m */,
 			);
@@ -3076,6 +3081,7 @@
 				9F6C1CDA14373AF600601ACB /* BXDummyMIDIDevice.m in Sources */,
 				9F586CEB143E41C200E840C8 /* BXMT32ROMDropzone.m in Sources */,
 				9F586CEE143E4A0100E840C8 /* CALayer+BXLayerAdditions.m in Sources */,
+				9F7D9EFF1444BAA800B6AD50 /* BXExternalMT32+BXMT32Sysexes.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

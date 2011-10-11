@@ -197,7 +197,8 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 		mouse				= [[BXEmulatedMouse alloc] init];
 		keyboard			= [[BXEmulatedKeyboard alloc] init];
         
-		pendingSysexMessages    = [[NSMutableArray alloc] initWithCapacity: 10];
+		pendingSysexMessages    = [[NSMutableArray alloc] initWithCapacity: 4];
+        
         
 		[videoHandler setEmulator: self];
 	}

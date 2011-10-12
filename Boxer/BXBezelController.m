@@ -116,6 +116,9 @@
        forDuration: (NSTimeInterval)duration
           priority: (BXBezelPriority)priority
 {
+    //Don't display any bezels if Boxer is not the active application
+    if (![NSApp isActive]) return;
+    
     //Only display the new bezel if it's of equal or higher priority
     //than the one we’re currently displaying
     if (priority >= currentPriority)

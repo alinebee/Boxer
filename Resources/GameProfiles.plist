@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
     <key>BXGameProfileCatalogueVersion</key>
-    <string>20111012.4</string>
+    <string>20111012.5</string>
     
 	<key>BXSpecificGameProfiles</key>
 	<array>
@@ -59,9 +59,15 @@
             <string>com.ea.birds-of-prey</string>
 			<key>BXProfileGameName</key>
 			<string>Birds of Prey</string>
+			<key>BXProfileConfigurations</key>
+            <array>
+                <string>386 speed</string>
+                <string>Timed joystick</string>
+            </array>
 			<key>BXProfileTelltales</key>
 			<array>
-				<string>bopinc.com</string>
+				<string>bopinc.com</string><!-- Catches original install media -->
+				<string>b0m.grf</string>
 			</array>
 			<key>BXProfileDriveLabels</key>
 			<dict>
@@ -708,6 +714,54 @@
 				<string>es.m50</string>
 			</array>
 		</dict>
+        
+		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.accolade.grand-prix-unlimited</string>
+			<key>BXProfileGameName</key>
+			<string>Grand Prix Unlimited</string>
+			<key>BXProfileConfigurations</key>
+            <array>
+                <string>MT-32</string>
+                <string>386 speed</string>
+            </array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>gpu.exe</string>
+			</array>
+		</dict>
+        
+		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.accolade.test-drive-3</string>
+			<key>BXProfileGameName</key>
+			<string>Test Drive III</string>
+			<key>BXProfileConfigurations</key>
+            <array>
+                <string>MT-32</string>
+                <string>386 speed</string>
+            </array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>td3.exe</string>
+			</array>
+		</dict>
+        
+		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.accolade.speed-racer</string>
+			<key>BXProfileGameName</key>
+			<string>Speed Racer</string>
+			<key>BXProfileConfigurations</key>
+            <array>
+                <string>MT-32</string>
+                <string>486 speed</string>
+            </array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>acco1.tjl</string>
+			</array>
+		</dict>
 	</array>
 
 	<key>BXGenericProfiles</key>
@@ -735,7 +789,7 @@
             <key>BXProfileIdentifier</key>
             <string>net.washboardabs.mt32-games</string>
 			<key>BXProfileDescription</key>
-			<string>Games which only support the MT-32 for MIDI output.</string>
+			<string>Games which support the MT-32 but not General MIDI.</string>
 			<key>BXProfileConfigurations</key>
             <array>
                 <string>MT-32</string>
@@ -743,11 +797,20 @@
 			<key>BXProfileMatches</key>
 			<array>
                 <string>Dune</string>
+                <string>Elvira II</string>
+                <string>Les Manley in: Lost in LA</string>
+                <string>Mike Ditka Ultimate Football</string>
+                <string>The Games: Summer Challenge</string>
+                <string>The Games: Winter Challenge</string>
+                <string>Hardball III</string>
+                <string>Gunboat</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
                 <string>dune.exe</string>
                 <string>dune.bat</string><!-- CD version -->
+                <string>music.drv</string>
+                <string>gbroster.dat</string>
 			</array>
          </dict>
         

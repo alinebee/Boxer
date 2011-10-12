@@ -91,19 +91,17 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
     //Bail out early if we've already been cancelled.
     if ([self isCancelled]) return;
     
-    _thread = [NSThread currentThread];
-    
     //Create a MIDI client
     OSStatus errCode = MIDIClientCreate((CFStringRef)@"Boxer MT-32 Scanner", _didReceiveMIDINotification, self, &_client);
     
     //Create the port we will use for sending out MIDI requests.
-    if (errCode == noErr)
+    if (errCode == noErr && ![self isCancelled])
     {
         errCode = MIDIOutputPortCreate(_client, (CFStringRef)@"MT-32 Scanner Out", &_outputPort);
     }
     
     //Create the port we will use for receiving responses to our MIDI requests.
-    if (errCode == noErr)
+    if (errCode == noErr && ![self isCancelled])
     {
         _inputPort = [BXMIDIInputListener createListeningPortForClient: _client
                                                               withName: @"MT-32 Scanner In"
@@ -113,11 +111,14 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
     //If we created everything we need, start browsing for devices.
     if (![self isCancelled] && _client && _outputPort && _inputPort)
     {
+        _thread = [NSThread currentThread];
+        
         //Begin by scanning any already-connected MIDI destinations.
         [self _scanAvailableDestinations];
         
         //Keep the operation running until we're cancelled,
         //listening for MIDI device connections and disconnections.
+        //We pump the run loop so that we'll catch cancellation signals.
         while (![self isCancelled] && [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode
                                                                beforeDate: [NSDate distantFuture]]);
         

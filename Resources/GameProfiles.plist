@@ -3,10 +3,25 @@
 <plist version="1.0">
 <dict>
     <key>BXGameProfileCatalogueVersion</key>
-    <string>20111012.5</string>
+    <string>20111012.91</string>
     
 	<key>BXSpecificGameProfiles</key>
 	<array>
+        <dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.firebird.elite-plus</string>
+			<key>BXProfileGameName</key>
+			<string>Elite Plus</string>
+			<key>BXProfileConfigurations</key>
+            <array>
+                <string>Timed joystick</string>
+                <string>MT-32</string>
+            </array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>elite.grf</string>
+			</array>
+		</dict>
 		<dict>
             <key>BXProfileIdentifier</key>
             <string>com.spectrum-holobyte.falcon-3</string>
@@ -51,6 +66,22 @@
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>fb.exe</string>
+			</array>
+		</dict>
+        
+		<dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.delphine.cruise-for-a-corpse</string>
+			<key>BXProfileGameName</key>
+			<string>Cruise for a Corpse</string>
+			<key>BXProfileConfigurations</key>
+            <array>
+                <string>Dynamic</string>
+                <string>MT-32</string>
+            </array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>delphine.lng</string>
 			</array>
 		</dict>
         
@@ -762,29 +793,42 @@
 				<string>acco1.tjl</string>
 			</array>
 		</dict>
+        
+        <dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.mindcraft.siege</string>
+			<key>BXProfileGameName</key>
+			<string>Siege</string>
+			<key>BXProfileConfigurations</key>
+            <array>
+                <string>Old Sound Blaster Pro</string>
+                <string>MT-32</string>
+            </array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>siege.als</string>
+			</array>
+		</dict>
+        
+        <dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.digital-illusions.pinball-dreams</string>
+			<key>BXProfileGameName</key>
+			<string>Pinball Dreams</string>
+			<key>BXProfileConfigurations</key>
+            <array>
+                <string>Dynamic</string>
+                <string>MT-32</string>
+            </array>
+			<key>BXProfileTelltales</key>
+			<array>
+                <string>tbldetlo.ign</string>
+			</array>
+		</dict>
 	</array>
 
 	<key>BXGenericProfiles</key>
 	<array>
-        <dict>
-            <key>BXProfileIdentifier</key>
-            <string>net.washboardabs.general-midi-games</string>
-			<key>BXProfileDescription</key>
-			<string>Games whose General MIDI music Boxer misdetects as being MT-32.</string>
-			<key>BXProfileConfigurations</key>
-            <array>
-                <string>General MIDI</string>
-            </array>
-			<key>BXProfileMatches</key>
-			<array>
-                <string>Strike Commander</string>
-			</array>
-			<key>BXProfileTelltales</key>
-			<array>
-                <string>strike.exe</string>
-			</array>
-        </dict>
-        
         <dict>
             <key>BXProfileIdentifier</key>
             <string>net.washboardabs.mt32-games</string>
@@ -796,23 +840,87 @@
             </array>
 			<key>BXProfileMatches</key>
 			<array>
+                <string>Curse of Enchantia</string>
+                <string>Planet’s Edge</string>
+                <string>Lotus 3</string>
+                <string>Alien Breed</string>
+                <string>Laser Squad</string>
+                <string>Sabre Team</string>
+                <string>It Came From the Desert</string>
+                <string>Centurion: Defender of Rome</string>
+                <string>Amazon: Guardians of Eden</string>
+                <string>Martian Memorandum</string>
+                <string>Rampart</string>
+                <string>The Settlers</string>
+                <string>Battle Chess II</string>
+                <string>A-Train</string>
+                <string>SimLife</string>
+                <string>SimAnt</string>
+                <string>Castles</string>
+                <string>Bad Blood</string>
+                <string>Chaos Engine</string>
+                <string>Simon the Sorcerer</string>
+                <string>Might &amp; Magic III</string>
                 <string>Dune</string>
+                <string>Gunboat</string>
                 <string>Elvira II</string>
                 <string>Les Manley in: Lost in LA</string>
                 <string>Mike Ditka Ultimate Football</string>
                 <string>The Games: Summer Challenge</string>
                 <string>The Games: Winter Challenge</string>
                 <string>Hardball III</string>
-                <string>Gunboat</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
+                <string>curse.rs1</string>
+                <string>spacet.bch</string>
+                <string>lotus.exe</string>
+                <string>cargobay.vhf</string>
+                <string>laserfx.*</string>
+                <string>sabre.exe</string>
+                <string>desert.dat</string>
+                <string>centurio.exe</string>
+                <string>amazon.exe</string>
+                <string>tex2.gam</string>
+                <string>rampart.exe</string>
+                <string>sett.exe</string>
+                <string>chess2.exe</string>
+                <string>at.ovl</string>
+                <string>sml.exe</string>
+                <string>simant.exe</string>
+                <string>castles1.exe</string>
+                <string>atrain.bat</string>
+                <string>badblood.exe</string>
+                <string>chaos.dat</string>
+                <string>simon.bat</string>
+                <string>mm3.exe</string>
                 <string>dune.exe</string>
                 <string>dune.bat</string><!-- CD version -->
-                <string>music.drv</string>
                 <string>gbroster.dat</string>
+                <string>music.drv</string>
 			</array>
-         </dict>
+        </dict>
+        
+        <dict>
+            <key>BXProfileIdentifier</key>
+            <string>net.washboardabs.general-midi-games</string>
+			<key>BXProfileDescription</key>
+			<string>Games whose General MIDI music Boxer misdetects as MT-32.</string>
+			<key>BXProfileConfigurations</key>
+            <array>
+                <string>General MIDI</string>
+            </array>
+			<key>BXProfileMatches</key>
+			<array>
+                <string>Strike Commander</string>
+                <string>Pacific Strike</string>
+			</array>
+			<key>BXProfileTelltales</key>
+			<array>
+                <string>strike.exe</string>
+                <string>pacific.exe</string>
+			</array>
+        </dict>
         
         <dict>
             <key>BXProfileIdentifier</key>
@@ -845,7 +953,7 @@
 			<key>BXProfileMatches</key>
 			<array>
 				<string>Flight Unlimited</string>
-				<string>Elite/Elite Plus</string>
+				<string>Elite</string>
 				<string>Mechwarrior 2</string>
 				<string>Descent</string>
 				<string>Descent 2</string>
@@ -1279,7 +1387,6 @@
 				<string>Star Wars X-Wing</string>
 				<string>The Elder Scrolls: Arena</string>
 				<string>Epic Pinball</string>
-                <string>Pinball Dreams</string>
                 <string>Pinball Dreams Deluxe, Pinball Dreams 2, Pinball Fantasies</string>
 				<string>Colonization</string>
 				<string>Blake Stone 1 &amp; 2</string>
@@ -1304,7 +1411,6 @@
 				<string>vga.pac</string>
 				<string>tamriel.mnu</string>
 				<string>ep1.dat</string>
-                <string>tbldetlo.ign</string>
                 <string>thing.sdr</string>
 				<string>viceroy.exe</string>
 				<string>jm_error.h</string>

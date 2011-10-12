@@ -117,19 +117,12 @@ NSString * const BXPreviousSpacesArrowKeyModifiersKey = @"previousSpacesArrowKey
 	}
 }
 
+
 - (void) syncSpacesKeyboardShortcuts
 {
 	//The Spaces Applescript API is broken on Leopard, and completely absent on Lion,
     //so don't bother trying
 	if (![[self class] isRunningOnSnowLeopard]) return;
-	
-    //Automatically perform this work on a background thread, to avoid delays waiting
-    //for System Events to respond.
-    if ([NSThread isMainThread])
-    {
-        [self performSelectorInBackground: _cmd withObject: nil];
-        return;
-    }
     
     @synchronized(self)
     {
@@ -143,10 +136,12 @@ NSString * const BXPreviousSpacesArrowKeyModifiersKey = @"previousSpacesArrowKey
         //IMPLEMENTATION NOTE: if we crashed while Boxer had suppressed the shortcuts,
         //then hasSyncedSpacesShortcuts will initially be false, but we'll still have
         //leftover modifiers that we'll want to restore.
-        BOOL isSynced = hasSyncedSpacesShortcuts || (oldModifiers != nil);
+        BOOL isSuppressed = hasSuppressedSpacesShortcuts || (oldModifiers != nil);
+        
+        BOOL needsSync = (DOSWindowIsKey != isSuppressed);
         
         //If we're already in sync, then don't bother continuing further.
-        if (DOSWindowIsKey != isSynced)
+        if (needsSync)
         {
             @try
             {
@@ -161,10 +156,10 @@ NSString * const BXPreviousSpacesArrowKeyModifiersKey = @"previousSpacesArrowKey
                 
                 //A Boxer session has the keyboard focus, but we haven't yet suppressed the Spaces shortcuts:
                 //if we need to, apply the suppression now, and keep a record of the old values
-                if (DOSWindowIsKey && !isSynced)
+                if (DOSWindowIsKey)
                 {
                     [systemEvents setSendMode: kAEWaitReply];
-                     //In case System Events has stopped responding, don't wait forever for it
+                    //In case System Events has stopped responding, don't wait forever for it
                     [systemEvents setTimeout: 0.1f];
                     
                     //The key modifiers are returned as an array of NSAppleEventDescriptors: getting the enumCodeValue
@@ -186,20 +181,20 @@ NSString * const BXPreviousSpacesArrowKeyModifiersKey = @"previousSpacesArrowKey
                     }
                     //Flag that we've synced even if we didn't need to make any changes, so that we don't
                     //have to keep checking the shortcuts each time.
-                    hasSyncedSpacesShortcuts = YES;
+                    hasSuppressedSpacesShortcuts = YES;
                 }
                 
                 //A Boxer session has lost keyboard focus, but we're still suppressing Spaces shortcuts:
                 //remove the suppression, revert the shortcuts to what they were, and erase our User Defaults
                 //backup of the key modifiers.
-                else if (!DOSWindowIsKey && isSynced)
+                else
                 {
                     [systemEvents setSendMode: kAENoReply];
                     [keyMods setTo: oldModifiers];
                     [defaults removeObjectForKey: BXPreviousSpacesArrowKeyModifiersKey];
                     [defaults synchronize];
                     
-                    hasSyncedSpacesShortcuts = NO;
+                    hasSuppressedSpacesShortcuts = NO;
                 }
             }
             @catch (NSException *exception)
@@ -212,18 +207,33 @@ NSString * const BXPreviousSpacesArrowKeyModifiersKey = @"previousSpacesArrowKey
     }
 }
 
+- (void) syncSpacesKeyboardShortcutsInBackground
+{
+	//The Spaces Applescript API is broken on Leopard, and completely absent on Lion,
+    //so don't bother trying
+	if (![[self class] isRunningOnSnowLeopard]) return;
+	
+    //Automatically perform this work on a background thread, to avoid delays waiting
+    //for System Events to respond.
+    if ([NSThread isMainThread]) [self performSelectorInBackground: @selector(syncSpacesKeyboardShortcuts)
+                                                        withObject: nil];
+    
+    //If we're already off the main thread though, then keep using the current thread.
+    else [self syncSpacesKeyboardShortcuts];
+}
+
 - (void) windowDidBecomeKey: (NSNotification *)notification
 {
     //Calling with a 0 delay ensures it gets called at the end of the current event loop
     //*after* the window has finished becoming key.
-	[self performSelector: @selector(syncSpacesKeyboardShortcuts) withObject: nil afterDelay: 0];
+	[self performSelector: @selector(syncSpacesKeyboardShortcutsInBackground) withObject: nil afterDelay: 0];
 }
 
 - (void) windowDidResignKey: (NSNotification *)notification
 {
     //Calling with a 0 delay ensures it gets called at the end of the current event loop
     //*after* the window has finished resigning key.
-	[self performSelector: @selector(syncSpacesKeyboardShortcuts) withObject: nil afterDelay: 0];
+	[self performSelector: @selector(syncSpacesKeyboardShortcutsInBackground) withObject: nil afterDelay: 0];
 }
 
 - (void) sessionDidUnlockMouse: (NSNotification *)notification

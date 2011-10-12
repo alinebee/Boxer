@@ -276,9 +276,9 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 - (void) applicationWillFinishLaunching: (NSNotification *)notification
 {
-	//Sync Spaces shortcuts at startup in case we previously crashed
+	//Sync Spaces shortcuts at startup, in case we previously crashed
 	//and left them overridden
-	[self syncSpacesKeyboardShortcuts];
+	[self syncSpacesKeyboardShortcutsInBackground];
     
     //Start scanning for MIDI devices now
     [self setMIDIDeviceMonitor: [[[BXMIDIDeviceMonitor alloc] init] autorelease]];
@@ -384,6 +384,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	[[NSUserDefaults standardUserDefaults] synchronize];
 	
 	//Restore Spaces shortcuts if we were overriding them
+    //(We do this synchronously so that we can be sure it completes before we exit.)
 	[self syncSpacesKeyboardShortcuts];
 	
 	//Tell any operations in our queue to cancel themselves

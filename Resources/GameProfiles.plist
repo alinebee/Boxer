@@ -812,7 +812,7 @@
         
         <dict>
             <key>BXProfileIdentifier</key>
-            <string>com.digital-illusions.pinball-dreams</string>
+            <string>se.dice.pinball-dreams</string>
 			<key>BXProfileGameName</key>
 			<string>Pinball Dreams</string>
 			<key>BXProfileConfigurations</key>
@@ -840,6 +840,12 @@
             </array>
 			<key>BXProfileMatches</key>
 			<array>
+                <string>Pushover</string>
+                <string>Elf</string>
+                <string>Hook</string>
+                <string>Nightbreed</string>
+                <string>Robocop 3</string>
+                <string>Epic</string>
                 <string>Curse of Enchantia</string>
                 <string>Planet’s Edge</string>
                 <string>Lotus 3</string>
@@ -872,6 +878,12 @@
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
+                <string>push.exe</string>
+                <string>elf.exe</string>
+                <string>hook.exe</string>
+                <string>night.exe</string>
+                <string>robo.dat</string>
+                <string>epic.dat</string>
                 <string>curse.rs1</string>
                 <string>spacet.bch</string>
                 <string>lotus.exe</string>

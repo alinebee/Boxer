@@ -41,7 +41,7 @@ enum {
 {
 	BXSession *currentSession;
 	NSString *gamesFolderPath;
-	BOOL hasSyncedSpacesShortcuts;
+	BOOL hasSuppressedSpacesShortcuts;
 	
 	NSOperationQueue *generalQueue;
 	

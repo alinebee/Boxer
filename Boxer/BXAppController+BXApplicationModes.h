@@ -29,9 +29,13 @@
 //fullscreen and mouse-locked status.
 - (void) syncApplicationPresentationMode;
 
-//Delicately suppress Spaces shortcuts that can't interfere with keyboard
-//control in Boxer.
+//Delicately suppress Spaces shortcuts via the System Events Applescript API,
+//so that they can't interfere with keyboard control in Boxer.
 - (void) syncSpacesKeyboardShortcuts;
+
+//Calls syncSpacesKeyboardShortcuts on a background thread, to avoid blocking
+//while communicating over Applescript with System Events.
+- (void) syncSpacesKeyboardShortcutsInBackground;
 
 
 #pragma mark -

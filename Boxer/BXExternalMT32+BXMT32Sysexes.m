@@ -13,15 +13,15 @@
 #pragma mark -
 #pragma mark Helper class methods
 
-+ (BOOL) isMT32Sysex: (NSData *)message confirmingSupport: (BOOL *)supportConfirmed
++ (BOOL) isMT32Sysex: (NSData *)sysex confirmingSupport: (BOOL *)supportConfirmed
 {
     if (supportConfirmed) *supportConfirmed = NO;
     
     //Too short to be a valid MT-32 sysex message.
-    if ([message length] < BXRolandSysexHeaderLength + BXRolandSysexAddressLength + BXRolandSysexTailLength)
+    if ([sysex length] < BXRolandSysexSendMinLength)
         return NO;
     
-    const UInt8 *contents = (const UInt8 *)[message bytes];
+    const UInt8 *contents = (const UInt8 *)[sysex bytes];
     UInt8   manufacturerID  = contents[1],
     modelID         = contents[3],
     commandType     = contents[4],
@@ -40,13 +40,24 @@
         if (commandType == BXRolandSysexSend && (baseAddress == BXMT32SysexAddressReset || baseAddress == BXMT32SysexAddressSystemArea))
             *supportConfirmed = NO;
         
-        //Some MIDI songs (so far, only Strike Commander's) contain embedded display
-        //messages: these should be treated as inconclusive, since the songs are shared
-        //between the game's MT-32 and General MIDI modes and these messages will be
-        //sent even when the game is in General MIDI mode.
-        //This is disabled for now because it resulted in several missed detections.
-        //Instead, we just force Strike Commander into General MIDI mode.
-        //else if (commandType == BXRolandSysexDataSend && baseAddress == BXRolandSysexAddressDisplay) *indicatesSupport = NO;
+        
+        //If an LCD message is sent, check if it matches messages we know to ignore.
+        else if (commandType == BXRolandSysexSend && baseAddress == BXMT32SysexAddressDisplay)
+        {
+            NSUInteger startOffset = BXRolandSysexHeaderLength + BXRolandSysexAddressLength;
+            NSUInteger length = [sysex length] - BXRolandSysexTailLength - startOffset;
+            
+            NSData *messageData = [sysex subdataWithRange: NSMakeRange(startOffset, length)];
+            NSString *message = [[NSString alloc] initWithData: messageData encoding: NSASCIIStringEncoding];
+            
+            NSArray *ignoredMessages = [NSArray arrayWithObjects:
+                                       //Sent by Pacific Strike and Strike Commander in General MIDI mode
+                                       @"SCSCSCFY!           ",
+                                       nil];
+            
+            *supportConfirmed = (![ignoredMessages containsObject: message]);
+            [message release];
+        }
         
         else *supportConfirmed = YES;
     }
@@ -54,12 +65,26 @@
     return YES;
 }
 
++ (NSData *) dataInSysex: (NSData *)sysex
+{
+    if ([sysex length] < BXRolandSysexSendMinLength) return nil;
+    
+    NSUInteger startOffset = BXRolandSysexHeaderLength + BXRolandSysexRequestLength;
+    NSUInteger endOffset = [sysex length] - BXRolandSysexTailLength;
+    
+    NSRange payloadRange = NSMakeRange(startOffset, endOffset - startOffset);
+    
+    return [sysex subdataWithRange: payloadRange];
+}
+
 //Calculate the Roland checksum for the specified raw bytes.
 + (NSUInteger) _checksumForBytes: (UInt8 *)bytes length: (NSUInteger)length
 {
     NSUInteger i, checksum = 0;
     for (i = 0; i < length; i++) checksum += bytes[i];
-    checksum = BXRolandSysexChecksumModulus - (checksum % BXRolandSysexChecksumModulus);
+    
+    checksum &= (BXRolandSysexChecksumModulus - 1);
+    if (checksum) checksum = BXRolandSysexChecksumModulus - checksum;
     
     return checksum;    
 }

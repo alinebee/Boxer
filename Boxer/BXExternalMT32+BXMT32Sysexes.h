@@ -26,6 +26,9 @@
 //Returns an MT-32 sysex that can be used to display the specified LCD message.
 + (NSData *) sysexWithLCDMessage: (NSString *)message;
 
+//Returns the data payload of the specified sysex, or nil if the sysex was not valid. 
++ (NSData *) dataInSysex: (NSData *)sysex;
+
 //Returns YES if the specified sysex message is intended for an MT-32,
 //NO otherwise.
 //If confirmsSupport is provided, this will be set to YES if the
@@ -33,6 +36,5 @@
 //music tailored to the MT-32, or NO if it's inconclusive.
 + (BOOL) isMT32Sysex: (NSData *)sysex
    confirmingSupport: (BOOL *)supportConfirmed;
-
 
 @end

@@ -924,13 +924,9 @@
             </array>
 			<key>BXProfileMatches</key>
 			<array>
-                <string>Strike Commander</string>
-                <string>Pacific Strike</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
-                <string>strike.exe</string>
-                <string>pacific.exe</string>
 			</array>
         </dict>
         

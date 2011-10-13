@@ -213,27 +213,38 @@ NSString * const BXPreviousSpacesArrowKeyModifiersKey = @"previousSpacesArrowKey
     //so don't bother trying
 	if (![[self class] isRunningOnSnowLeopard]) return;
 	
-    //Automatically perform this work on a background thread, to avoid delays waiting
-    //for System Events to respond.
-    if ([NSThread isMainThread]) [self performSelectorInBackground: @selector(syncSpacesKeyboardShortcuts)
+    //Perform the work of syncing the shortcuts on a background thread,
+    //to avoid blocking the UI while waiting for System Events to respond.
+    [self performSelectorInBackground: @selector(syncSpacesKeyboardShortcuts)
                                                         withObject: nil];
-    
-    //If we're already off the main thread though, then keep using the current thread.
-    else [self syncSpacesKeyboardShortcuts];
 }
 
 - (void) windowDidBecomeKey: (NSNotification *)notification
 {
-    //Calling with a 0 delay ensures it gets called at the end of the current event loop
-    //*after* the window has finished becoming key.
-	[self performSelector: @selector(syncSpacesKeyboardShortcutsInBackground) withObject: nil afterDelay: 0];
+    //Don't bother syncing shortcuts unless the window we just switched to is a DOS window.
+    if ([[notification object] isKindOfClass: [BXDOSWindow class]])
+    {
+        //Calling with a 0 delay ensures it gets called at the end of the current event loop
+        //*after* the window has finished becoming key. This is necessary even when the
+        //sync is done asynchronously like this.
+        [self performSelector: @selector(syncSpacesKeyboardShortcutsInBackground)
+                   withObject: nil
+                   afterDelay: 0];
+    }
 }
 
 - (void) windowDidResignKey: (NSNotification *)notification
 {
-    //Calling with a 0 delay ensures it gets called at the end of the current event loop
-    //*after* the window has finished resigning key.
-	[self performSelector: @selector(syncSpacesKeyboardShortcutsInBackground) withObject: nil afterDelay: 0];
+    //Don't bother syncing shortcuts unless the window we just switched from is a DOS window.
+    if ([[notification object] isKindOfClass: [BXDOSWindow class]])
+    {
+        //Calling with a 0 delay ensures it gets called at the end of the current event loop
+        //*after* the window has finished resigning key. This is necessary even when the
+        //sync is done asynchronously like this.
+        [self performSelector: @selector(syncSpacesKeyboardShortcutsInBackground)
+                   withObject: nil
+                   afterDelay: 0];
+    }
 }
 
 - (void) sessionDidUnlockMouse: (NSNotification *)notification

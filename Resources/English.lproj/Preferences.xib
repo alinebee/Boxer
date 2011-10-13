@@ -903,8 +903,7 @@
 																<object class="NSTextFieldCell" key="NSCell" id="599113342">
 																	<int key="NSCellFlags">67239424</int>
 																	<int key="NSCellFlags2">272760832</int>
-																	<string type="base64-UTF8" key="NSContents">TWFueSBET1MgZ2FtZXMgd291bGQgcHJpbnQgc2VjcmV0IG1lc3NhZ2VzCm9uIHRoZSBNVC0zMuKAmXMg
-TENEIHBhbmVsIHdoZW4gc3RhcnRpbmcgdXAuA</string>
+																	<string key="NSContents">Games will sometimes print secret messages on the MT-32’s LCD panel. Boxer will display these on-screen.</string>
 																	<reference key="NSSupport" ref="26"/>
 																	<reference key="NSControlView" ref="197259037"/>
 																	<reference key="NSBackgroundColor" ref="473233401"/>
@@ -920,7 +919,7 @@ TENEIHBhbmVsIHdoZW4gc3RhcnRpbmcgdXAuA</string>
 																<object class="NSButtonCell" key="NSCell" id="325849032">
 																	<int key="NSCellFlags">-2080244224</int>
 																	<int key="NSCellFlags2">0</int>
-																	<string key="NSContents">Display messages from the MT-32’s LCD</string>
+																	<string key="NSContents">Show messages from the MT-32’s LCD</string>
 																	<reference key="NSSupport" ref="467860324"/>
 																	<reference key="NSControlView" ref="620897352"/>
 																	<int key="NSButtonFlags">1211912703</int>
@@ -1038,10 +1037,6 @@ LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
 				<string key="NSFrameAutosaveName"/>
 			</object>
 			<object class="NSUserDefaultsController" id="783521929">
-				<object class="NSMutableArray" key="NSDeclaredKeys">
-					<bool key="EncodedWithXMLCoder">YES</bool>
-					<string>showMT32LCDMessages</string>
-				</object>
 				<bool key="NSSharedInstance">YES</bool>
 			</object>
 			<object class="NSMenu" id="352386710">

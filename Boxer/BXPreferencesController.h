@@ -27,16 +27,18 @@ enum {
 	IBOutlet NSPopUpButton *gamesFolderSelector;
 	IBOutlet NSMenuItem *currentGamesFolderItem;
     IBOutlet BXMT32ROMDropzone *MT32ROMDropzone;
-    IBOutlet NSView *MT32ROMMissingHelpText;
-    IBOutlet NSView *MT32ROMUsageHelpText;
+    IBOutlet NSView *missingMT32ROMHelp;
+    IBOutlet NSView *realMT32Help;
+    IBOutlet NSView *MT32ROMOptions;
 }
 
 @property (retain, nonatomic) BXFilterGallery *filterGallery;
 @property (retain, nonatomic) NSPopUpButton *gamesFolderSelector;
 @property (retain, nonatomic) NSMenuItem *currentGamesFolderItem;
 @property (retain, nonatomic) BXMT32ROMDropzone *MT32ROMDropzone;
-@property (retain, nonatomic) NSView *MT32ROMMissingHelpText;
-@property (retain, nonatomic) NSView *MT32ROMUsageHelpText;
+@property (retain, nonatomic) NSView *missingMT32ROMHelp;
+@property (retain, nonatomic) NSView *realMT32Help;
+@property (retain, nonatomic) NSView *MT32ROMOptions;
 
 //Provides a singleton instance of the window controller which stays retained for the lifetime
 //of the application. BXPreferencesController should always be accessed from this singleton.

@@ -889,6 +889,116 @@
 															<int key="NSPeriodicInterval">25</int>
 														</object>
 													</object>
+													<object class="NSButton" id="119062980">
+														<reference key="NSNextResponder" ref="221307292"/>
+														<int key="NSvFlags">268</int>
+														<string key="NSFrame">{{490, 16}, {25, 25}}</string>
+														<reference key="NSSuperview" ref="221307292"/>
+														<int key="NSViewLayerContentsRedrawPolicy">2</int>
+														<bool key="NSEnabled">YES</bool>
+														<object class="NSButtonCell" key="NSCell" id="333411757">
+															<int key="NSCellFlags">67239424</int>
+															<int key="NSCellFlags2">134217728</int>
+															<string key="NSContents"/>
+															<reference key="NSSupport" ref="467860324"/>
+															<reference key="NSControlView" ref="119062980"/>
+															<int key="NSButtonFlags">-2038415105</int>
+															<int key="NSButtonFlags2">161</int>
+															<string key="NSAlternateContents"/>
+															<string key="NSKeyEquivalent"/>
+															<int key="NSPeriodicDelay">200</int>
+															<int key="NSPeriodicInterval">25</int>
+														</object>
+													</object>
+													<object class="NSCustomView" id="1011413545">
+														<reference key="NSNextResponder" ref="221307292"/>
+														<int key="NSvFlags">-2147483358</int>
+														<object class="NSMutableArray" key="NSSubviews">
+															<bool key="EncodedWithXMLCoder">YES</bool>
+															<object class="NSTextField" id="422055618">
+																<reference key="NSNextResponder" ref="1011413545"/>
+																<int key="NSvFlags">269</int>
+																<string key="NSFrame">{{17, 23}, {378, 43}}</string>
+																<reference key="NSSuperview" ref="1011413545"/>
+																<int key="NSViewLayerContentsRedrawPolicy">2</int>
+																<bool key="NSEnabled">YES</bool>
+																<object class="NSTextFieldCell" key="NSCell" id="309702717">
+																	<int key="NSCellFlags">67239424</int>
+																	<int key="NSCellFlags2">4325376</int>
+																	<string key="NSContents">As an MT-32 owner, you are also a person of taste and distinction.</string>
+																	<reference key="NSSupport" ref="26"/>
+																	<reference key="NSControlView" ref="422055618"/>
+																	<reference key="NSBackgroundColor" ref="473233401"/>
+																	<reference key="NSTextColor" ref="374043504"/>
+																</object>
+															</object>
+															<object class="NSTextField" id="669869436">
+																<reference key="NSNextResponder" ref="1011413545"/>
+																<int key="NSvFlags">268</int>
+																<string key="NSFrame">{{17, 74}, {378, 34}}</string>
+																<reference key="NSSuperview" ref="1011413545"/>
+																<int key="NSViewLayerContentsRedrawPolicy">2</int>
+																<bool key="NSEnabled">YES</bool>
+																<object class="NSTextFieldCell" key="NSCell" id="636378371">
+																	<int key="NSCellFlags">67239424</int>
+																	<int key="NSCellFlags2">4194304</int>
+																	<string key="NSContents">Music in supporting games will be played through your Roland MT-32 Sound Module.</string>
+																	<reference key="NSSupport" ref="774145193"/>
+																	<reference key="NSControlView" ref="669869436"/>
+																	<reference key="NSBackgroundColor" ref="473233401"/>
+																	<reference key="NSTextColor" ref="374043504"/>
+																</object>
+															</object>
+														</object>
+														<string key="NSFrame">{{60, 0}, {412, 128}}</string>
+														<reference key="NSSuperview" ref="221307292"/>
+														<string key="NSClassName">NSView</string>
+													</object>
+													<object class="NSCustomView" id="604479938">
+														<reference key="NSNextResponder" ref="221307292"/>
+														<int key="NSvFlags">-2147483358</int>
+														<object class="NSMutableArray" key="NSSubviews">
+															<bool key="EncodedWithXMLCoder">YES</bool>
+															<object class="NSTextField" id="337599634">
+																<reference key="NSNextResponder" ref="604479938"/>
+																<int key="NSvFlags">269</int>
+																<string key="NSFrame">{{17, 23}, {378, 43}}</string>
+																<reference key="NSSuperview" ref="604479938"/>
+																<int key="NSViewLayerContentsRedrawPolicy">2</int>
+																<bool key="NSEnabled">YES</bool>
+																<object class="NSTextFieldCell" key="NSCell" id="883667838">
+																	<int key="NSCellFlags">67239424</int>
+																	<int key="NSCellFlags2">4325376</int>
+																	<string key="NSContents">But if one should stumble across MT-32 ROMs on the internet, then acccidentally download them, one could drag them onto this shelf to bring one’s MT-32 games to life.</string>
+																	<reference key="NSSupport" ref="26"/>
+																	<reference key="NSControlView" ref="337599634"/>
+																	<reference key="NSBackgroundColor" ref="473233401"/>
+																	<reference key="NSTextColor" ref="374043504"/>
+																</object>
+															</object>
+															<object class="NSTextField" id="687078311">
+																<reference key="NSNextResponder" ref="604479938"/>
+																<int key="NSvFlags">268</int>
+																<string key="NSFrame">{{17, 74}, {378, 34}}</string>
+																<reference key="NSSuperview" ref="604479938"/>
+																<int key="NSViewLayerContentsRedrawPolicy">2</int>
+																<bool key="NSEnabled">YES</bool>
+																<object class="NSTextFieldCell" key="NSCell" id="978812249">
+																	<int key="NSCellFlags">67239424</int>
+																	<int key="NSCellFlags2">4194304</int>
+																	<string type="base64-UTF8" key="NSContents">Qm94ZXIgZG9lcyBub3QgY29tZSB3aXRoIHRoZSBST01zIG5lZWRlZCB0byBwbGF5Ck1ULTMyIG11c2lj
+LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
+																	<reference key="NSSupport" ref="774145193"/>
+																	<reference key="NSControlView" ref="687078311"/>
+																	<reference key="NSBackgroundColor" ref="473233401"/>
+																	<reference key="NSTextColor" ref="374043504"/>
+																</object>
+															</object>
+														</object>
+														<string key="NSFrame">{{60, 0}, {412, 128}}</string>
+														<reference key="NSSuperview" ref="221307292"/>
+														<string key="NSClassName">NSView</string>
+													</object>
 													<object class="NSCustomView" id="324424019">
 														<reference key="NSNextResponder" ref="221307292"/>
 														<int key="NSvFlags">-2147483358</int>
@@ -930,72 +1040,6 @@
 																	<string key="NSKeyEquivalent"/>
 																	<int key="NSPeriodicDelay">200</int>
 																	<int key="NSPeriodicInterval">25</int>
-																</object>
-															</object>
-														</object>
-														<string key="NSFrame">{{60, 0}, {412, 128}}</string>
-														<reference key="NSSuperview" ref="221307292"/>
-														<string key="NSClassName">NSView</string>
-													</object>
-													<object class="NSButton" id="119062980">
-														<reference key="NSNextResponder" ref="221307292"/>
-														<int key="NSvFlags">268</int>
-														<string key="NSFrame">{{490, 16}, {25, 25}}</string>
-														<reference key="NSSuperview" ref="221307292"/>
-														<int key="NSViewLayerContentsRedrawPolicy">2</int>
-														<bool key="NSEnabled">YES</bool>
-														<object class="NSButtonCell" key="NSCell" id="333411757">
-															<int key="NSCellFlags">67239424</int>
-															<int key="NSCellFlags2">134217728</int>
-															<string key="NSContents"/>
-															<reference key="NSSupport" ref="467860324"/>
-															<reference key="NSControlView" ref="119062980"/>
-															<int key="NSButtonFlags">-2038415105</int>
-															<int key="NSButtonFlags2">161</int>
-															<string key="NSAlternateContents"/>
-															<string key="NSKeyEquivalent"/>
-															<int key="NSPeriodicDelay">200</int>
-															<int key="NSPeriodicInterval">25</int>
-														</object>
-													</object>
-													<object class="NSCustomView" id="604479938">
-														<reference key="NSNextResponder" ref="221307292"/>
-														<int key="NSvFlags">290</int>
-														<object class="NSMutableArray" key="NSSubviews">
-															<bool key="EncodedWithXMLCoder">YES</bool>
-															<object class="NSTextField" id="337599634">
-																<reference key="NSNextResponder" ref="604479938"/>
-																<int key="NSvFlags">269</int>
-																<string key="NSFrame">{{17, 23}, {378, 43}}</string>
-																<reference key="NSSuperview" ref="604479938"/>
-																<int key="NSViewLayerContentsRedrawPolicy">2</int>
-																<bool key="NSEnabled">YES</bool>
-																<object class="NSTextFieldCell" key="NSCell" id="883667838">
-																	<int key="NSCellFlags">67239424</int>
-																	<int key="NSCellFlags2">4325376</int>
-																	<string key="NSContents">But if one should stumble across MT-32 ROMs on the internet, then acccidentally download them, one could drag them onto this shelf to bring one’s MT-32 games to life.</string>
-																	<reference key="NSSupport" ref="26"/>
-																	<reference key="NSControlView" ref="337599634"/>
-																	<reference key="NSBackgroundColor" ref="473233401"/>
-																	<reference key="NSTextColor" ref="374043504"/>
-																</object>
-															</object>
-															<object class="NSTextField" id="687078311">
-																<reference key="NSNextResponder" ref="604479938"/>
-																<int key="NSvFlags">268</int>
-																<string key="NSFrame">{{17, 74}, {378, 34}}</string>
-																<reference key="NSSuperview" ref="604479938"/>
-																<int key="NSViewLayerContentsRedrawPolicy">2</int>
-																<bool key="NSEnabled">YES</bool>
-																<object class="NSTextFieldCell" key="NSCell" id="978812249">
-																	<int key="NSCellFlags">67239424</int>
-																	<int key="NSCellFlags2">4194304</int>
-																	<string type="base64-UTF8" key="NSContents">Qm94ZXIgZG9lcyBub3QgY29tZSB3aXRoIHRoZSBST01zIG5lZWRlZCB0byBwbGF5Ck1ULTMyIG11c2lj
-LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
-																	<reference key="NSSupport" ref="774145193"/>
-																	<reference key="NSControlView" ref="687078311"/>
-																	<reference key="NSBackgroundColor" ref="473233401"/>
-																	<reference key="NSTextColor" ref="374043504"/>
 																</object>
 															</object>
 														</object>
@@ -1370,22 +1414,6 @@ LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
 					<int key="connectionID">267</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">MT32ROMMissingHelpText</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="604479938"/>
-					</object>
-					<int key="connectionID">288</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">MT32ROMUsageHelpText</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="324424019"/>
-					</object>
-					<int key="connectionID">294</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
 						<string key="label">showMT32ROMsInFinder:</string>
 						<reference key="source" ref="1001"/>
@@ -1448,6 +1476,30 @@ LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
 						</object>
 					</object>
 					<int key="connectionID">327</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">MT32ROMOptions</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="324424019"/>
+					</object>
+					<int key="connectionID">328</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">missingMT32ROMHelp</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="604479938"/>
+					</object>
+					<int key="connectionID">329</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">realMT32Help</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="1011413545"/>
+					</object>
+					<int key="connectionID">335</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1965,6 +2017,7 @@ LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
 							<reference ref="324424019"/>
 							<reference ref="119062980"/>
 							<reference ref="118682712"/>
+							<reference ref="1011413545"/>
 						</object>
 						<reference key="parent" ref="223883958"/>
 						<string key="objectName">View</string>
@@ -2094,6 +2147,44 @@ LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
 						<reference key="object" ref="687211329"/>
 						<reference key="parent" ref="118682712"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">330</int>
+						<reference key="object" ref="1011413545"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="422055618"/>
+							<reference ref="669869436"/>
+						</object>
+						<reference key="parent" ref="221307292"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">331</int>
+						<reference key="object" ref="422055618"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="309702717"/>
+						</object>
+						<reference key="parent" ref="1011413545"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">332</int>
+						<reference key="object" ref="669869436"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="636378371"/>
+						</object>
+						<reference key="parent" ref="1011413545"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">333</int>
+						<reference key="object" ref="636378371"/>
+						<reference key="parent" ref="669869436"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">334</int>
+						<reference key="object" ref="309702717"/>
+						<reference key="parent" ref="422055618"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -2187,6 +2278,13 @@ LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
 					<string>317.IBPluginDependency</string>
 					<string>318.IBPluginDependency</string>
 					<string>319.IBPluginDependency</string>
+					<string>330.IBViewBoundsToFrameTransform</string>
+					<string>331.IBPluginDependency</string>
+					<string>331.IBViewBoundsToFrameTransform</string>
+					<string>332.IBPluginDependency</string>
+					<string>332.IBViewBoundsToFrameTransform</string>
+					<string>333.IBPluginDependency</string>
+					<string>334.IBPluginDependency</string>
 					<string>70.IBEditorWindowLastContentRect</string>
 					<string>70.IBPluginDependency</string>
 					<string>70.IBUserGuides</string>
@@ -2313,7 +2411,7 @@ LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
 					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<object class="NSAffineTransform">
-						<bytes key="NSTransformStruct">AUJwAABBmAAAA</bytes>
+						<bytes key="NSTransformStruct">AUJwAAAAAAAAA</bytes>
 					</object>
 					<string>{{366, 791}, {205, 43}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2335,6 +2433,19 @@ LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
 						<bytes key="NSTransformStruct">P4AAAL+AAABCaAAAwnAAAA</bytes>
 					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<object class="NSAffineTransform">
+						<bytes key="NSTransformStruct">AUJwAABBmAAAA</bytes>
+					</object>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<object class="NSAffineTransform">
+						<bytes key="NSTransformStruct">P4AAAL+AAABCmgAAwuoAAA</bytes>
+					</object>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<object class="NSAffineTransform">
+						<bytes key="NSTransformStruct">P4AAAL+AAABCmgAAwx8AAA</bytes>
+					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>{{33, 291}, {532, 396}}</string>
@@ -2392,7 +2503,7 @@ LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">327</int>
+			<int key="maxID">335</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptionsV3.1+">
@@ -2556,20 +2667,22 @@ LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>MT32ROMDropzone</string>
-							<string>MT32ROMMissingHelpText</string>
-							<string>MT32ROMUsageHelpText</string>
+							<string>MT32ROMOptions</string>
 							<string>currentGamesFolderItem</string>
 							<string>filterGallery</string>
 							<string>gamesFolderSelector</string>
+							<string>missingMT32ROMHelp</string>
+							<string>realMT32Help</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>BXMT32ROMDropzone</string>
 							<string>NSView</string>
-							<string>NSView</string>
 							<string>NSMenuItem</string>
 							<string>BXFilterGallery</string>
 							<string>NSPopUpButton</string>
+							<string>NSView</string>
+							<string>NSView</string>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
@@ -2577,11 +2690,12 @@ LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>MT32ROMDropzone</string>
-							<string>MT32ROMMissingHelpText</string>
-							<string>MT32ROMUsageHelpText</string>
+							<string>MT32ROMOptions</string>
 							<string>currentGamesFolderItem</string>
 							<string>filterGallery</string>
 							<string>gamesFolderSelector</string>
+							<string>missingMT32ROMHelp</string>
+							<string>realMT32Help</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -2590,11 +2704,7 @@ LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
 								<string key="candidateClassName">BXMT32ROMDropzone</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">MT32ROMMissingHelpText</string>
-								<string key="candidateClassName">NSView</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">MT32ROMUsageHelpText</string>
+								<string key="name">MT32ROMOptions</string>
 								<string key="candidateClassName">NSView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
@@ -2608,6 +2718,14 @@ LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
 							<object class="IBToOneOutletInfo">
 								<string key="name">gamesFolderSelector</string>
 								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">missingMT32ROMHelp</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">realMT32Help</string>
+								<string key="candidateClassName">NSView</string>
 							</object>
 						</object>
 					</object>

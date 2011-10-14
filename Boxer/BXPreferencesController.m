@@ -14,13 +14,14 @@
 #import "BXAppController+BXSupportFiles.h"
 #import "BXMT32ROMDropzone.h"
 #import "BXEmulatedMT32.h"
+#import "BXMIDIDeviceMonitor.h"
 
 #pragma mark -
 #pragma mark Implementation
 
 @implementation BXPreferencesController
 @synthesize filterGallery, gamesFolderSelector, currentGamesFolderItem;
-@synthesize MT32ROMDropzone, MT32ROMMissingHelpText, MT32ROMUsageHelpText;
+@synthesize MT32ROMDropzone, missingMT32ROMHelp, realMT32Help, MT32ROMOptions;
 
 #pragma mark -
 #pragma mark Initialization and deallocation
@@ -56,13 +57,20 @@
     //Listen for changes to the ROMs so that we can set the correct device in the ROM dropzone.
     [[NSApp delegate] addObserver: self
                        forKeyPath: @"pathToMT32ControlROM"
-                          options: NSKeyValueObservingOptionInitial
+                          options: 0
                           context: nil];
     
     [[NSApp delegate] addObserver: self
                        forKeyPath: @"pathToMT32PCMROM"
-                          options: NSKeyValueObservingOptionInitial
+                          options: 0
                           context: nil];
+    
+    //Also listen for MT-32 device connections.
+    [[NSApp delegate] addObserver: self
+                       forKeyPath: @"MIDIDeviceMonitor.discoveredMT32s"
+                          options: 0
+                          context: nil];
+    
     
     //Rerun the MT-32 ROM syncing each time Boxer regains the application focus,
     //to cover the user manually adding them in Finder.
@@ -84,18 +92,23 @@
 	{
 		[[self tabView] selectTabViewItemAtIndex: selectedIndex];
 	}
+    
+    //Finally, sync the MT-32 dropzone state.
+    [self syncMT32ROMState];
 }
 
 - (void) dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver: self];
+    [[NSApp delegate] removeObserver: self forKeyPath: @"MIDIDeviceMonitor.discoveredMT32s"];
     [[NSApp delegate] removeObserver: self forKeyPath: @"pathToMT32ControlROM"];
     [[NSApp delegate] removeObserver: self forKeyPath: @"pathToMT32PCMROM"];
     
 	[currentGamesFolderItem unbind: @"attributedTitle"];
 	
-    [self setMT32ROMMissingHelpText: nil],      [MT32ROMMissingHelpText release];
-    [self setMT32ROMUsageHelpText: nil],        [MT32ROMUsageHelpText release];
+    [self setMissingMT32ROMHelp: nil],          [missingMT32ROMHelp release];
+    [self setRealMT32Help: nil],                [realMT32Help release];
+    [self setMT32ROMOptions: nil],              [MT32ROMOptions release];
     [self setMT32ROMDropzone: nil],             [MT32ROMDropzone release];
 	[self setFilterGallery: nil],				[filterGallery release];
 	[self setGamesFolderSelector: nil],			[gamesFolderSelector release];
@@ -114,9 +127,11 @@
 	{
 		[self syncFilterControls];
 	}
-    else if ([keyPath isEqualToString: @"pathToMT32ControlROM"] || [keyPath isEqualToString: @"pathToMT32PCMROM"])
+    else if ([keyPath isEqualToString: @"pathToMT32ControlROM"] || [keyPath isEqualToString: @"pathToMT32PCMROM"] || [keyPath isEqualToString: @"MIDIDeviceMonitor.discoveredMT32s"])
     {
-        [self syncMT32ROMState];
+        //Ensure the syncing is done on the main thread: notifications from BXMIDIMonitor
+        //will come from the monitor's own thread.
+        [self performSelectorOnMainThread: @selector(syncMT32ROMState) withObject: nil waitUntilDone: NO];
     }
 }
 
@@ -149,79 +164,109 @@
 
 - (void) syncMT32ROMState
 {
-    NSString *controlPath   = [[NSApp delegate] pathToMT32ControlROM];
-    NSString *PCMPath       = [[NSApp delegate] pathToMT32PCMROM];
-    
-    NSError *error = nil;
-    BXMT32ROMType type = [BXEmulatedMT32 typeofROMPairWithControlROMPath: controlPath
-                                                              PCMROMPath: PCMPath
-                                                                   error: &error];
-    
     NSString *title;
+    BXMT32ROMType type;
+    BOOL showROMHelp;
+    BOOL showROMOptions;
+    BOOL showRealMT32Help;
     
-    //If ROMs are installed correctly, show the user what kind they have.
-    if (type == BXMT32ROMTypeMT32)
-    {
-        title = NSLocalizedString(@"Roland MT-32 emulation is now active.",
-                                  @"Title shown in MT-32 ROM dropzone when MT-32 ROMs are installed.");
-    }
-    else if (type == BXMT32ROMTypeCM32L)
-    {
-        title = NSLocalizedString(@"Roland CM-32L emulation is now active.",
-                                  @"Title shown in MT-32 ROM dropzone when CM-32L ROMs are installed.");
-    }
+    //First, check if any real MT-32s are plugged in.
+    BOOL realMT32Connected = [[[[NSApp delegate] MIDIDeviceMonitor] discoveredMT32s] count] > 0;
     
-    //Otherwise, work out what went wrong.
-    else if ([[error domain] isEqualToString: BXEmulatedMT32ErrorDomain])
+    //If so, display a custom message
+    if (realMT32Connected)
     {
-        switch ([error code])
+        title = NSLocalizedString(@"Your real Roland MT-32 is connected.",
+                                  @"Title shown in MT-32 ROM dropzone when user has a real MT-32 connected to their Mac.");
+        
+        //Assume the device is an MT-32 rather than a CM-32L.
+        type = BXMT32ROMTypeMT32;
+        
+        showROMHelp         = NO;
+        showROMOptions      = NO;
+        showRealMT32Help    = YES;
+    }
+    //Failing that, check what type of MT-32 ROMs we have installed.
+    else
+    {
+        NSString *controlPath   = [[NSApp delegate] pathToMT32ControlROM];
+        NSString *PCMPath       = [[NSApp delegate] pathToMT32PCMROM];
+        
+        NSError *error = nil;
+        type = [BXEmulatedMT32 typeofROMPairWithControlROMPath: controlPath
+                                                    PCMROMPath: PCMPath
+                                                         error: &error];
+        
+        
+        //If ROMs are installed correctly, show the user what kind they have.
+        if (type == BXMT32ROMTypeMT32)
         {
-            //One or both ROMs are not installed yet.
-            case BXEmulatedMT32MissingROM:
+            title = NSLocalizedString(@"Roland MT-32 emulation is now active.",
+                                      @"Title shown in MT-32 ROM dropzone when MT-32 ROMs are installed.");
+        }
+        else if (type == BXMT32ROMTypeCM32L)
+        {
+            title = NSLocalizedString(@"Roland CM-32L emulation is now active.",
+                                      @"Title shown in MT-32 ROM dropzone when CM-32L ROMs are installed.");
+        }
+        
+        //Otherwise, work out what went wrong.
+        else if ([[error domain] isEqualToString: BXEmulatedMT32ErrorDomain])
+        {
+            switch ([error code])
             {
-                //If neither ROM is present, show the standard prompt.
-                if (!PCMPath && !controlPath)
+                //One or both ROMs are not installed yet.
+                case BXEmulatedMT32MissingROM:
                 {
-                    title = NSLocalizedString(@"Drop MT-32 ROMs here to enable MT-32 emulation.",
-                                              @"Title shown in MT-32 ROM dropzone when no ROMs are present.");
-                }
-                //If one or the other ROM is missing, tell the user which kind they still need.
-                else
-                {
-                    NSString *titleFormat, *expectedROMName;
-                    if (!PCMPath)
+                    //If neither ROM is present, show the standard prompt.
+                    if (!PCMPath && !controlPath)
                     {
-                        BXMT32ROMType controlType = [BXEmulatedMT32 typeOfControlROMAtPath: controlPath error: nil];
-                        expectedROMName = (controlType == BXMT32ROMTypeCM32L) ? @"CM32L_PCM.ROM" : @"MT32_PCM.ROM";
-                        titleFormat = NSLocalizedString(@"Now drop in the matching PCM ROM\n(e.g. “%1$@”.)",
-                                                        @"Title shown in MT-32 ROM dropzone when a control ROM is present without a PCM ROM. %1$@ is the expected name of the matching ROM.");
+                        title = NSLocalizedString(@"Drop MT-32 ROMs here to enable MT-32 emulation.",
+                                                  @"Title shown in MT-32 ROM dropzone when no ROMs are present.");
                     }
+                    //If one or the other ROM is missing, tell the user which kind they still need.
                     else
                     {
-                        BXMT32ROMType PCMType = [BXEmulatedMT32 typeOfPCMROMAtPath: PCMPath error: nil];
-                        expectedROMName = (PCMType == BXMT32ROMTypeCM32L) ? @"CM32L_CONTROL.ROM" : @"MT32_CONTROL.ROM";
-                        titleFormat = NSLocalizedString(@"Now drop in the matching control ROM\n(e.g. “%1$@”.)",
-                                                        @"Title shown in MT-32 ROM dropzone when a PCM ROM is present without a control ROM. %1$@ is the expected name of the matching ROM.");
+                        NSString *titleFormat, *expectedROMName;
+                        if (!PCMPath)
+                        {
+                            BXMT32ROMType controlType = [BXEmulatedMT32 typeOfControlROMAtPath: controlPath error: nil];
+                            expectedROMName = (controlType == BXMT32ROMTypeCM32L) ? @"CM32L_PCM.ROM" : @"MT32_PCM.ROM";
+                            titleFormat = NSLocalizedString(@"Now drop in the matching PCM ROM\n(e.g. “%1$@”.)",
+                                                            @"Title shown in MT-32 ROM dropzone when a control ROM is present without a PCM ROM. %1$@ is the expected name of the matching ROM.");
+                        }
+                        else
+                        {
+                            BXMT32ROMType PCMType = [BXEmulatedMT32 typeOfPCMROMAtPath: PCMPath error: nil];
+                            expectedROMName = (PCMType == BXMT32ROMTypeCM32L) ? @"CM32L_CONTROL.ROM" : @"MT32_CONTROL.ROM";
+                            titleFormat = NSLocalizedString(@"Now drop in the matching control ROM\n(e.g. “%1$@”.)",
+                                                            @"Title shown in MT-32 ROM dropzone when a PCM ROM is present without a control ROM. %1$@ is the expected name of the matching ROM.");
+                        }
+                        
+                        title = [NSString stringWithFormat: titleFormat, expectedROMName];
                     }
-                    
-                    title = [NSString stringWithFormat: titleFormat, expectedROMName];
+                    break;
                 }
-                break;
+                    
+                //ROMs were invalid or could not be read.
+                default:
+                    title = NSLocalizedString(@"The current MT-32 ROMs are invalid.\nPlease drop in new ROMs to replace them.",
+                                              @"Title shown in MT-32 ROM dropzone when user has manually added invalid or unreadable ROMs."); 
             }
-                
-            //ROMs were invalid or could not be read.
-            default:
-                title = NSLocalizedString(@"The current MT-32 ROMs are invalid.\nPlease drop in new ROMs to replace them.",
-                                          @"Title shown in MT-32 ROM dropzone when user has manually added invalid or unreadable ROMs."); 
         }
+        
+        showROMHelp         = (type == BXMT32ROMTypeUnknown);
+        showROMOptions      = (type != BXMT32ROMTypeUnknown);
+        showRealMT32Help    = NO;
     }
     
     [[self MT32ROMDropzone] setROMType: type];
     [[self MT32ROMDropzone] setTitle: title];
     
     //Toggle the help text depending on whether we have valid ROMs or not.
-    [[self MT32ROMMissingHelpText] setHidden: (type != BXMT32ROMTypeUnknown)];
-    [[self MT32ROMUsageHelpText] setHidden: (type == BXMT32ROMTypeUnknown)];
+    [[self missingMT32ROMHelp] setHidden: !showROMHelp];
+    [[self realMT32Help] setHidden: !showRealMT32Help];
+    [[self MT32ROMOptions] setHidden: !showROMOptions];
 }
 
 - (BOOL) handleROMImportFromPaths: (NSArray *)paths

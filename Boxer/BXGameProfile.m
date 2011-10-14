@@ -9,7 +9,7 @@
 #import "BXGameProfile.h"
 #import "BXDrive.h"
 
-NSString * const BXUnknownProfileIdentifier = @"net.washboardabs.unknown-game";
+NSString * const BXGenericProfileIdentifier = @"net.washboardabs.generic";
 
 //Directories larger than this size (in bytes) will be treated as CD-era games by eraOfGameAtPath:
 const NSUInteger BXDisketteGameSizeThreshold = 20 * 1024 * 1024;
@@ -84,11 +84,18 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 #pragma mark -
 #pragma mark Initializers
 
-+ (BXGameProfile *)profileWithIdentifier: (NSString *)identifier
++ (BXGameProfile *) profileWithIdentifier: (NSString *)identifier
 {
-    NSDictionary *profileData = [[self _identifierIndex] objectForKey: identifier];
-    if (profileData) return [[[self alloc] initWithDictionary: profileData] autorelease];
-    else return nil;
+    if ([identifier isEqualToString: BXGenericProfileIdentifier])
+    {
+        return [[[self alloc] init] autorelease];
+    }
+    else
+    {
+        NSDictionary *profileData = [[self _identifierIndex] objectForKey: identifier];
+        if (profileData) return [[[self alloc] initWithDictionary: profileData] autorelease];
+        else return nil;
+    }
 }
 
 + (BXGameProfile *) detectedProfileForPath: (NSString *)basePath
@@ -135,7 +142,7 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 		[self setRequiredDiskSpace: BXDefaultFreeSpace];
 		[self setMountHelperDrivesDuringImport: YES];
 		[self setGameEra: BXUnknownEra];
-        [self setIdentifier: BXUnknownProfileIdentifier];
+        [self setIdentifier: BXGenericProfileIdentifier];
 	}
 	return self;
 }

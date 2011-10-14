@@ -30,7 +30,7 @@ typedef NSUInteger BXGameEra;
 
 
 //The default identifier string used for game profiles that don't match a known profile.
-extern NSString * const BXUnknownProfileIdentifier;
+extern NSString * const BXGenericProfileIdentifier;
 
 
 @interface BXGameProfile : NSObject

@@ -1213,7 +1213,7 @@
     //Not all files may be available at this point, potentially causing game
     //detection to fail: so only persist the game profile if we got a positive
     //match on a particular game.
-    return profile && ![[profile identifier] isEqualToString: BXUnknownProfileIdentifier];
+    return profile && ![[profile identifier] isEqualToString: BXGenericProfileIdentifier];
 }
 
 - (BOOL) _shouldSuppressDisplaySleep

@@ -282,7 +282,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
     
     //Start scanning for MIDI devices now
     [self setMIDIDeviceMonitor: [[[BXMIDIDeviceMonitor alloc] init] autorelease]];
-    [generalQueue addOperation: [self MIDIDeviceMonitor]];
+    [[self MIDIDeviceMonitor] start];
 }
 
 - (void) applicationDidFinishLaunching: (NSNotification *)notification
@@ -386,8 +386,12 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	//Restore Spaces shortcuts if we were overriding them
     //(We do this synchronously so that we can be sure it completes before we exit.)
 	[self syncSpacesKeyboardShortcuts];
+    
+    //Tell the MIDI device scanner to cancel itself
+    [[self MIDIDeviceMonitor] cancel];
 	
-	//Tell any operations in our queue to cancel themselves
+	//Tell any operations in our queue to cancel themselves,
+    //and let them finish in case they're performing critical operations
 	[generalQueue cancelAllOperations];
 	[generalQueue waitUntilAllOperationsAreFinished];
 	

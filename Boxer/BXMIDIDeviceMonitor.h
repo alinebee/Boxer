@@ -6,13 +6,11 @@
  */
 
 //BXMIDIDeviceMonitor is used for scanning connected MIDI devices to find MT-32s and listening
-//for device connections/disconnections.
-//It is built as an NSOperation that runs until cancelled, handling all MIDI requests on
-//a separate thread.
+//for device connections/disconnections. It is formulated as an NSThread subclass which runs
+//in the background until cancelled.
+//(This work is moved to a thread because CoreMIDI initialization is fairly costly, and would
+//otherwise block application startup. Besides improved startup time, there are no other benefits.)
 
-//(This isn't to avoid blocking the main thread when communicating with MIDI devices - CoreMIDI
-//handles this asynchronously on its own thread anyway - but to avoid lengthy connection times
-//when initially creating a CoreMIDI client.)
 
 #import <Foundation/Foundation.h>
 #import <CoreMIDI/CoreMIDI.h>
@@ -34,15 +32,13 @@
 
 @end
 
-@interface BXMIDIDeviceMonitor : NSOperation <BXMIDIInputListenerDelegate>
+@interface BXMIDIDeviceMonitor : NSThread <BXMIDIInputListenerDelegate>
 {
     MIDIClientRef _client;
     MIDIPortRef _outputPort;
     MIDIPortRef _inputPort;
     NSMutableArray *_discoveredMT32s;
     NSMutableArray *_listeners;
-    
-    NSThread *_thread;
 }
 
 //An array of unique destination IDs for MT-32s found during our scan.
@@ -123,8 +119,9 @@
 - (id) initWithDelegate: (id <BXMIDIInputListenerDelegate>)delegate;
 
 //Start listening for input on the specified source, with the specified contextInfo
-//(which is not retained).
-- (void) listenToSource: (MIDIEndpointRef)source
+//(which is not retained). Returns YES if the listener is now attached and listening,
+//NO if there was an error.
+- (BOOL) listenToSource: (MIDIEndpointRef)source
                  onPort: (MIDIPortRef)port
             contextInfo: (void *)contextInfo;
 

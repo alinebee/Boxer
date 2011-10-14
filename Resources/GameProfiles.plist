@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
     <key>BXGameProfileCatalogueVersion</key>
-    <string>20111014.3</string>
+    <string>20111015.4</string>
     
 	<key>BXSpecificGameProfiles</key>
 	<array>
@@ -858,7 +858,34 @@
             </array>
 			<key>BXProfileMatches</key>
 			<array>
+                <string>Champions of Krynn</string>
+                <string>Dark Queen of Krynn</string>
+                <string>Forgotten Realms: Unlimited Adventures</string>
+                <string>Buck Rogers: Matrix Cubed</string>
                 <string>Realms of Arkania: Blade of Destiny</string>
+                <string>Cisco Heat</string>
+                <string>Bumpy’s Arcade Fantasy</string>
+                <string>Prehistorik</string>
+                <string>Cadaver: The Payoff</string>
+                <string>Command H.Q.</string>
+                <string>Dominium</string>
+                <string>Double Dragon III</string>
+                <string>Great Naval Battles: North Atlantic 1939-43</string>
+                <string>Italy ’90</string>
+                <string>The Exterminator</string>
+                <string>Hired Guns</string>
+                <string>Obitus</string>
+                <string>Ninja Gaiden II</string>
+                <string>Predator II</string>
+                <string>PGA Tour Golf</string>
+                <string>The Summoning</string>
+                <string>Supaplex</string>
+                <string>Zool</string>
+                <string>Wrath of the Demon</string>
+                <string>Shuttle</string>
+                <string>TV Sports Boxing/ABC Wild World of Sports Boxing</string>
+                <string>Bloodwych</string>
+                <string>Risky Woods</string>
                 <string>Pushover</string>
                 <string>Elf</string>
                 <string>Hook</string>
@@ -897,7 +924,35 @@
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
+                <string>dungcom.dax</string>
+                <string>dqk.exe</string>
+                <string>ckit.exe</string>
+                <string>venuscom.dax</string>
                 <string>bladem.exe</string>
+                <string>cisco.exe</string>
+                <string>bumpy.exe</string>
+                <string>historic.exe</string>
+                <string>historik.exe</string>
+                <string>cadaver.exe</string>
+                <string>c_hq.rep</string>
+                <string>dominium.bat</string>
+                <string>dd3files.001</string>
+                <string>gnbna386.exe</string>
+                <string>italy90.com</string>
+                <string>exterm.exe</string>
+                <string>hggame.exe</string>
+                <string>obitus.exe</string>
+                <string>njconfig.exe</string>
+                <string>predgraf.vgc</string>
+                <string>pgawest.ega</string>
+                <string>summon.com</string>
+                <string>supaplex.*</string>
+                <string>zool.exe</string>
+                <string>wrath.exe</string>
+                <string>shuttle.exe</string>
+                <string>vbox.exe</string>
+                <string>bwych.exe</string>
+                <string>risky.exe</string>
                 <string>push.exe</string>
                 <string>elf.exe</string>
                 <string>hook.exe</string>
@@ -910,7 +965,7 @@
                 <string>cargobay.vhf</string>
                 <string>laserfx.*</string>
                 <string>sabre.exe</string>
-                <string>desert.dat</string>
+                <string>biplane.spl</string>
                 <string>centurio.exe</string>
                 <string>amazon.exe</string>
                 <string>tex2.gam</string>

@@ -1108,15 +1108,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     
     if (package)
 	{
-        //Custom mounting behaviour during initialization: put drives
-        //into queues only with drives at the same drive letter, don't
-        //replace previous drives with subsequent ones, don't bother
-        //checking for backing images (there won't be any volumes inside
-        //a gamebox), don't send drive-added notifications.
-        
         //TODO: deal with any mounting errors that occurred. Since all this happens automatically
         //during startup, we can't give errors straight to the user as they will seem cryptic.
-        
         
 		//Mount the game package as a new hard drive, at drive C.
 		//(This may get replaced below by a custom bundled C volume;
@@ -1181,6 +1174,12 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	//Mount our internal DOS toolkit and temporary drives
 	[self mountToolkitDriveWithError: nil];
 	[self mountTempDriveWithError: nil];
+    
+    //If the game needs a CD-ROM to be present, then mount a dummy CD drive
+    //if necessary.
+    if ([gameProfile requiresCDROM])
+        [self mountDummyCDROMWithError: nil];
+    
 	
 	//Once all regular drives are in place, check if our target program/folder
     //is now accessible in DOS: if not, add another drive allowing access to it.

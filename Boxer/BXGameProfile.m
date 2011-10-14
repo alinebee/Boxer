@@ -44,7 +44,7 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 
 @implementation BXGameProfile
 @synthesize gameName, configurations, identifier, profileDescription;
-@synthesize installMedium, gameEra, requiredDiskSpace, mountHelperDrivesDuringImport;
+@synthesize installMedium, gameEra, requiredDiskSpace, mountHelperDrivesDuringImport, requiresCDROM;
 
 + (BXGameEra) eraOfGameAtPath: (NSString *)basePath
 {
@@ -158,6 +158,9 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 		
 		NSNumber *mountHelperDrives = [profileDict objectForKey: @"BXMountHelperDrivesDuringImport"];
 		if (mountHelperDrives) [self setMountHelperDrivesDuringImport: [mountHelperDrives boolValue]];
+        
+		NSNumber *needsCDROM = [profileDict objectForKey: @"BXRequiresCDROM"];
+		if (needsCDROM) [self setRequiresCDROM: [needsCDROM boolValue]];
 		
 		NSNumber *era = [profileDict objectForKey: @"BXProfileGameEra"];
 		if (era) [self setGameEra: [era unsignedIntegerValue]];
@@ -165,7 +168,7 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 		//Used by isDesignatedInstallerAtPath:
 		installerPatterns	= [[profileDict objectForKey: @"BXDesignatedInstallers"] retain];
 		
-		//Used by customDriveLabelForPath
+		//Used by volumeLabelForDrive:
 		driveLabelMappings	= [[profileDict objectForKey: @"BXProfileDriveLabels"] retain];
 	}
 	return self;

@@ -750,6 +750,30 @@
     return nil;
 }
 
+- (BXDrive *) mountDummyCDROMWithError: (NSError **)outError
+{
+    //First, check if we already have a CD drive mounted:
+    //If so, we don't need a dummy one.
+    for (BXDrive *drive in [self mountedDrives])
+    {
+        if ([drive type] == BXDriveCDROM) return drive;
+    }
+    
+    
+    NSString *dummyImage    = [[NSBundle mainBundle] pathForResource: @"DummyCD" ofType: @"iso"];
+	BXDrive *dummyDrive     = [BXDrive CDROMFromPath: dummyImage atLetter: nil];
+    
+    [dummyDrive setTitle: NSLocalizedString(@"Dummy CD",
+                                            @"The display title for Boxer’s dummy CD-ROM drive.")];
+	
+	dummyDrive = [self mountDrive: dummyDrive
+                         ifExists: BXDriveQueue
+                          options: BXDriveKeepWithSameType
+                            error: outError];
+	
+    return dummyDrive;
+}
+
 - (NSString *) preferredLetterForDrive: (BXDrive *)drive
                                options: (BXDriveMountOptions)options
 {

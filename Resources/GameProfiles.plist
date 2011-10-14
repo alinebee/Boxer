@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
     <key>BXGameProfileCatalogueVersion</key>
-    <string>20111012.91</string>
+    <string>20111014.3</string>
     
 	<key>BXSpecificGameProfiles</key>
 	<array>
@@ -831,6 +831,24 @@
 	<array>
         <dict>
             <key>BXProfileIdentifier</key>
+            <string>net.washboardabs.cdrom-protected-games</string>
+			<key>BXProfileDescription</key>
+			<string>Games which require any CD to be present.</string>
+			<key>BXProfileMatches</key>
+			<array>
+                <string>Ignition</string>
+                <string>The Pandora Directive</string>
+            </array>
+			<key>BXProfileTelltales</key>
+            <array>
+                <string>ign_dos.bat</string>
+                <string>tex4.exe</string>
+            </array>
+			<key>BXRequiresCDROM</key>
+            <true/>
+        </dict>
+        <dict>
+            <key>BXProfileIdentifier</key>
             <string>net.washboardabs.mt32-games</string>
 			<key>BXProfileDescription</key>
 			<string>Games which support the MT-32 but not General MIDI.</string>
@@ -840,6 +858,7 @@
             </array>
 			<key>BXProfileMatches</key>
 			<array>
+                <string>Realms of Arkania: Blade of Destiny</string>
                 <string>Pushover</string>
                 <string>Elf</string>
                 <string>Hook</string>
@@ -878,6 +897,7 @@
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
+                <string>bladem.exe</string>
                 <string>push.exe</string>
                 <string>elf.exe</string>
                 <string>hook.exe</string>
@@ -915,26 +935,9 @@
         
         <dict>
             <key>BXProfileIdentifier</key>
-            <string>net.washboardabs.general-midi-games</string>
-			<key>BXProfileDescription</key>
-			<string>Games whose General MIDI music Boxer misdetects as MT-32.</string>
-			<key>BXProfileConfigurations</key>
-            <array>
-                <string>General MIDI</string>
-            </array>
-			<key>BXProfileMatches</key>
-			<array>
-			</array>
-			<key>BXProfileTelltales</key>
-			<array>
-			</array>
-        </dict>
-        
-        <dict>
-            <key>BXProfileIdentifier</key>
             <string>net.washboardabs.no-joystick-games</string>
 			<key>BXProfileDescription</key>
-			<string>Games that are incompatible with joystick emulation.</string>
+			<string>Games that are incompatible with joystick emulation altogether.</string>
 			<key>BXProfileConfigurations</key>
             <array>
                 <string>No joystick</string>
@@ -1344,13 +1347,14 @@
 			<array>
 				<string>CyberJudas</string>
 				<string>CyberLaw</string>
-				<string>Games using the HMI sound library</string>
+				<!--<string>Games using the HMI sound library</string>-->
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>cj08.fnt</string>
 				<string>t15_95.dat</string>
-				<string>hmidrv.386</string>
+                <!--Disabled owing to way too many false positives.-->
+				<!--<string>hmidrv.386</string>-->
 			</array>
 		</dict>
 		

@@ -260,15 +260,20 @@ typedef NSUInteger BXDriveMountOptions;
 - (NSArray *) mountFloppyVolumesWithError: (NSError **)outError;
 
 //Mount Boxer's internal toolkit drive at the appropriate drive letter.
-//Returns the mounted drive, or returns nil and populates outError if
-//the drive could not be mounted.
+//Returns the mounted drive, or returns nil and populates outError
+//if the drive could not be mounted.
 - (BXDrive *) mountToolkitDriveWithError: (NSError **)outError;
 
 //Create a temporary folder and mount it at the appropriate drive letter.
-//Returns the mounted drive, or returns nil and populates outError if
-//the drive could not be mounted.
+//Returns the mounted drive, or returns nil and populates outError
+//if the drive could not be mounted.
 - (BXDrive *) mountTempDriveWithError: (NSError **)outError;
 
+//Mounts a dummy CD-ROM drive if no CD drives are already mounted,
+//to fix games that require a CD in the drive at all times.
+//Returns the mounted drive, or returns nil and populates outError
+//if the drive could not be mounted.
+- (BXDrive *) mountDummyCDROMWithError: (NSError **)outError;
 
 //Unmount the BXDrives in the specified array. Returns YES if all drives
 //were unmounted, NO if there was an error (in which case outError will

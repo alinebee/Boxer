@@ -21,6 +21,7 @@
 		9F0F2B9512AD3C8500CD7078 /* BXMultiFileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0F2B9412AD3C8500CD7078 /* BXMultiFileTransfer.m */; };
 		9F0F9EDA12108A9000ED7A64 /* BXSessionError.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0F9ED912108A9000ED7A64 /* BXSessionError.m */; };
 		9F0F9EEF1210901800ED7A64 /* BXMountedVolumesError.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0F9EEE1210901800ED7A64 /* BXMountedVolumesError.m */; };
+		9F12F97C144875F400FC9645 /* DummyCD.iso in Resources */ = {isa = PBXBuildFile; fileRef = 9F12F97B144875F400FC9645 /* DummyCD.iso */; };
 		9F13F9D011F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F13F9CF11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m */; };
 		9F160DE21236952600F8768E /* Sample Games in Resources */ = {isa = PBXBuildFile; fileRef = 9F160BD91236952400F8768E /* Sample Games */; };
 		9F160E711236B2A600F8768E /* BXAppController+BXGamesFolder.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F160E701236B2A600F8768E /* BXAppController+BXGamesFolder.m */; };
@@ -497,6 +498,7 @@
 		9F0F9ED912108A9000ED7A64 /* BXSessionError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXSessionError.m; sourceTree = "<group>"; };
 		9F0F9EED1210901800ED7A64 /* BXMountedVolumesError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXMountedVolumesError.h; sourceTree = "<group>"; };
 		9F0F9EEE1210901800ED7A64 /* BXMountedVolumesError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXMountedVolumesError.m; sourceTree = "<group>"; };
+		9F12F97B144875F400FC9645 /* DummyCD.iso */ = {isa = PBXFileReference; lastKnownFileType = file; path = DummyCD.iso; sourceTree = "<group>"; };
 		9F13F9CE11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+BXTemporaryFiles.h"; sourceTree = "<group>"; };
 		9F13F9CF11F85E6F0069A02E /* NSFileManager+BXTemporaryFiles.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+BXTemporaryFiles.m"; sourceTree = "<group>"; };
 		9F160BD91236952400F8768E /* Sample Games */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Sample Games"; sourceTree = "<group>"; };
@@ -1368,6 +1370,7 @@
 				9F0102E3144078E300942713 /* BoxerHelp */,
 				9FF86676134DCA16001CE857 /* cdrdao */,
 				9FF86677134DCA16001CE857 /* toc2cue */,
+				9F12F97B144875F400FC9645 /* DummyCD.iso */,
 				9F70C19B129036C900A3627F /* Boxer.sdef */,
 				9FDCDEFC11B5B83B0032DA4E /* dsa_pub.pem */,
 				9FCBB2DB10A61E9300C28B09 /* Launch.conf */,
@@ -2748,6 +2751,7 @@
 				9F0102E01440543500942713 /* MT32ShelfHighlight.png in Resources */,
 				9F0102E21440561E00942713 /* MT32Shelf.jpg in Resources */,
 				9F0102E5144078E300942713 /* BoxerHelp in Resources */,
+				9F12F97C144875F400FC9645 /* DummyCD.iso in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

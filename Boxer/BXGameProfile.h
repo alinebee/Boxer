@@ -46,6 +46,7 @@ extern NSString * const BXUnknownProfileIdentifier;
 	BXDriveType installMedium;
 	NSInteger requiredDiskSpace;
 	BOOL mountHelperDrivesDuringImport;
+    BOOL requiresCDROM;
 }
 
 #pragma mark -
@@ -74,6 +75,11 @@ extern NSString * const BXUnknownProfileIdentifier;
 //Used to assign an appropriate amount of free space on drive C.
 //If the game has no special requirements, this will be BXDefaultFreeSpace.
 @property (assign, nonatomic) NSInteger requiredDiskSpace;
+
+//Whether the game requires a CD-ROM drive to be present in order to start up.
+//If YES, then Boxer will mount a dummy CD-ROM if no other CDs are present.
+//Defaults to NO.
+@property (assign, nonatomic) BOOL requiresCDROM;
 
 //Whether to mount the X and Y helper drives while importing this game.
 //These drives can confuse the installers for some games,

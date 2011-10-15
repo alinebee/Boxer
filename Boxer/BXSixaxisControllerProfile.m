@@ -32,9 +32,9 @@ enum {
 	BXSixaxisControllerStartButton,
 
 	BXSixaxisControllerDPadUp,
-	BXSixaxisControllerDPadLeft,
 	BXSixaxisControllerDPadRight,
 	BXSixaxisControllerDPadDown,
+	BXSixaxisControllerDPadLeft,
 		
 	//Unlike the 360 controller, the Sixaxis triggers are represented
 	//as buttons rather than analog axes
@@ -46,7 +46,8 @@ enum {
 	BXSixaxisControllerTriangleButton,
 	BXSixaxisControllerCircleButton,
 	BXSixaxisControllerXButton,
-	BXSixaxisControllerSquareButton
+	BXSixaxisControllerSquareButton,
+    BXSixaxisControllerHomeButton
 };
 
 

@@ -290,7 +290,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
                     if (!profileOutdated)
                     {
                         BXGameProfile *profile = [BXGameProfile profileWithIdentifier: identifier];
-                        NSLog(@"Reusing existing profile with identifier: %@, %@", identifier, profile);
+                        //NSLog(@"Reusing existing profile with identifier: %@, %@", identifier, profile);
                         [self setGameProfile: profile];
                     }
                 }

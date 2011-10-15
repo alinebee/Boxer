@@ -44,11 +44,9 @@
         //If an LCD message is sent, check if it matches messages we know to ignore.
         else if (commandType == BXRolandSysexSend && baseAddress == BXMT32SysexAddressDisplay)
         {
-            NSUInteger startOffset = BXRolandSysexHeaderLength + BXRolandSysexAddressLength;
-            NSUInteger length = [sysex length] - BXRolandSysexTailLength - startOffset;
-            
-            NSData *messageData = [sysex subdataWithRange: NSMakeRange(startOffset, length)];
-            NSString *message = [[NSString alloc] initWithData: messageData encoding: NSASCIIStringEncoding];
+            NSData *messageData = [self dataInSysex: sysex includingAddress: NO];
+            NSString *message = [[NSString alloc] initWithData: messageData
+                                                      encoding: NSASCIIStringEncoding];
             
             NSArray *ignoredMessages = [NSArray arrayWithObjects:
                                        //Sent by Pacific Strike and Strike Commander in General MIDI mode
@@ -65,11 +63,12 @@
     return YES;
 }
 
-+ (NSData *) dataInSysex: (NSData *)sysex
++ (NSData *) dataInSysex: (NSData *)sysex includingAddress: (BOOL)includeAddress
 {
     if ([sysex length] < BXRolandSysexSendMinLength) return nil;
     
-    NSUInteger startOffset = BXRolandSysexHeaderLength + BXRolandSysexRequestLength;
+    NSUInteger startOffset = BXRolandSysexHeaderLength;
+    if (!includeAddress) startOffset += BXRolandSysexAddressLength;
     NSUInteger endOffset = [sysex length] - BXRolandSysexTailLength;
     
     NSRange payloadRange = NSMakeRange(startOffset, endOffset - startOffset);

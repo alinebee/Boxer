@@ -123,6 +123,8 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
             //later. This ensures it won't miss out on any startup commands.
             else
             {
+                NSLog(@"Inconclusive MT-32 sysex: %@", [BXExternalMT32 dataInSysex: message
+                                                                  includingAddress: YES]);
                 [self _queueSysexMessage: message];
             }
         }

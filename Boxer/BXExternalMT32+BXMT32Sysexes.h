@@ -26,8 +26,11 @@
 //Returns an MT-32 sysex that can be used to display the specified LCD message.
 + (NSData *) sysexWithLCDMessage: (NSString *)message;
 
-//Returns the data payload of the specified sysex, or nil if the sysex was not valid. 
-+ (NSData *) dataInSysex: (NSData *)sysex;
+//Returns the data payload of the specified sysex, or nil if it was not valid. 
+//If includeAddress is YES, the 3-byte address prefix will be included in the
+//returned data also.
++ (NSData *) dataInSysex: (NSData *)sysex
+        includingAddress: (BOOL)includeAddress;
 
 //Returns YES if the specified sysex message is intended for an MT-32,
 //NO otherwise.

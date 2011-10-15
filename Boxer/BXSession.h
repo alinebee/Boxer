@@ -45,7 +45,7 @@ extern NSString * const BXDidFinishInterruptionNotification;
 @class BXEmulator;
 @class BXPackage;
 @class BXDOSWindowController;
-@class UKFileWatcher;
+@class UKFNSubscribeFileWatcher;
 
 @interface BXSession : NSDocument <BXEmulatorDelegate>
 {	
@@ -83,7 +83,7 @@ extern NSString * const BXDidFinishInterruptionNotification;
 	NSOperationQueue *importQueue;
     NSOperationQueue *scanQueue;
 	
-	UKFileWatcher *watcher;
+	UKFNSubscribeFileWatcher *watcher;
 	
 	NSTimeInterval programStartTime;
     

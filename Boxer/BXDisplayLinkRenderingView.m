@@ -48,7 +48,7 @@ static CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 		if ([BXAppController isRunningOnLeopard])
 		{
 			[self release];
-			return [[BXGLRenderingView alloc] initWithCoder: decoder];
+			return [(id)[BXGLRenderingView alloc] initWithCoder: decoder];
 		}
 	}
 	return self;

@@ -246,6 +246,7 @@
 	id <BXHIDInputBinding> positiveBinding;
 	id <BXHIDInputBinding> negativeBinding;
 	float previousValue;
+    float deadzone;
 }
 
 //Convenience method to return a binding preconfigured to split axis input
@@ -263,5 +264,8 @@
 
 //The binding to which to pass negative axis values.
 @property (retain, nonatomic) id <BXHIDInputBinding> negativeBinding;
+
+//The deadzone inside which neither binding will be triggered.
+@property (assign, nonatomic) float deadzone;
 
 @end

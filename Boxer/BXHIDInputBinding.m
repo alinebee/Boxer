@@ -687,7 +687,7 @@
 @end
 
 @implementation BXAxisToBindings
-@synthesize positiveBinding, negativeBinding;
+@synthesize positiveBinding, negativeBinding, deadzone;
 
 + (id) bindingWithPositiveAxis: (NSString *)positive
                   negativeAxis: (NSString *)negative
@@ -712,6 +712,7 @@
     if ((self = [super init]))
     {
 		previousValue = 0.0f;
+        deadzone = BXDefaultAxisDeadzone;
     }
     return self;
 }
@@ -746,8 +747,8 @@
 			forTarget: (id <BXEmulatedJoystick>)target
 {
     NSInteger rawValue = [event axisPosition];
-	NSInteger positiveValue = (rawValue > 0) ? rawValue : 0;
-	NSInteger negativeValue = (rawValue < 0) ? rawValue : 0;
+	NSInteger positiveValue = (rawValue > deadzone) ? rawValue : 0;
+	NSInteger negativeValue = (rawValue < -deadzone) ? rawValue : 0;
 
     //A bit ugly - we should clone the event instead - but oh well 
     [event setAxisPosition: positiveValue];

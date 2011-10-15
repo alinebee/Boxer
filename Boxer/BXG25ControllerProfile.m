@@ -35,24 +35,24 @@ enum {
 };
 
 enum {
-	BXG25DashboardButton1 = kHIDUsage_Button_1,
-	BXG25DashboardButton2,
-	BXG25DashboardButton3,
-	BXG25DashboardButton4,
+	BXG25DashboardButtonBottom = kHIDUsage_Button_1,
+	BXG25DashboardButtonLeft,
+	BXG25DashboardButtonRight,
+	BXG25DashboardButtonTop,
 	
-	BXG25LeftPaddle,
 	BXG25RightPaddle,
+	BXG25LeftPaddle,
     
 	BXG25WheelButton1,
 	BXG25WheelButton2,
 	
-	BXG25DashboardButton5,
-	BXG25DashboardButton6,
-	BXG25DashboardButton7,
-	BXG25DashboardButton8,
+	BXG25DashboardButton1,
+	BXG25DashboardButton2,
+	BXG25DashboardButton3,
+	BXG25DashboardButton4,
 	
-	BXG25ShifterDown = BXG25DashboardButton7,
-	BXG25ShifterUp   = BXG25DashboardButton8
+	BXG25ShifterDown = BXG25DashboardButton3,
+	BXG25ShifterUp   = BXG25DashboardButton4
     
     //TODO: enumerate the additional buttons on the G27
 };
@@ -93,22 +93,26 @@ enum {
     {
         case BXG25RightPaddle:
         case BXG25ShifterUp:
+        case BXG25DashboardButtonBottom:
             emulatedButton = BXEmulatedJoystickButton1;
             break;
             
         case BXG25LeftPaddle:
         case BXG25ShifterDown:
+        case BXG25DashboardButtonRight:
             emulatedButton = BXEmulatedJoystickButton2;
             break;
             
         case BXG25WheelButton1:
+        case BXG25DashboardButtonLeft:
             emulatedButton = BXEmulatedJoystickButton3;
             break;
             
         case BXG25WheelButton2:
+        case BXG25DashboardButtonTop:
             emulatedButton = BXEmulatedJoystickButton4;
             break;
-            
+        
         //Leave all other buttons unbound
     }
     

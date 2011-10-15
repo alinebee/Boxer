@@ -63,7 +63,7 @@ enum {
 	BXDisplayPathTransformer *fullDisplayPath = [[BXDisplayPathTransformer alloc] initWithJoiner: @" ▸ "
 																				   maxComponents: 4];
 	
-	BXDisplayPathTransformer *displayName = [[BXDisplayNameTransformer alloc] init];
+	BXDisplayNameTransformer *displayName = [[BXDisplayNameTransformer alloc] init];
 	
 	[NSValueTransformer setValueTransformer: fullDisplayPath forName: @"BXDriveDisplayPath"];
 	[NSValueTransformer setValueTransformer: displayName forName: @"BXDriveDisplayName"];

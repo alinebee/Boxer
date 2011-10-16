@@ -10,7 +10,7 @@
 #import "BXAppController+BXGamesFolder.h"
 
 @implementation BXGamesFolderPanelController
-@synthesize copySampleGamesToggle, useShelfAppearanceToggle;
+@synthesize sampleGamesToggle, useShelfAppearanceToggle;
 
 + (id) controller
 {
@@ -21,7 +21,7 @@
 
 - (void) dealloc
 {
-	[self setCopySampleGamesToggle: nil], copySampleGamesToggle = nil;
+	[self setSampleGamesToggle: nil], sampleGamesToggle = nil;
 	[self setUseShelfAppearanceToggle: nil], useShelfAppearanceToggle = nil;
 	[super dealloc];
 }
@@ -88,7 +88,7 @@
 	BOOL hasFiles = ([[manager enumeratorAtPath: selection] nextObject] != nil);
 	
 	//If the selected folder is empty, turn on the copy-sample-games checkbox; otherwise, clear it. 
-	[[self copySampleGamesToggle] setState: !hasFiles];
+	[[self sampleGamesToggle] setState: !hasFiles];
 }
 
 - (void) panel: (NSOpenPanel *)openPanel directoryDidChange: (NSString *)path
@@ -127,7 +127,7 @@
 	{
 		NSString *path = [[openPanel URL] path];
 		BXAppController *controller = [NSApp delegate];
-		BOOL addSampleGames		= [[self copySampleGamesToggle] state];
+		BOOL addSampleGames		= [[self sampleGamesToggle] state];
 		BOOL useShelfAppearance	= [[self useShelfAppearanceToggle] state];
 		
 		[[NSApp delegate] setAppliesShelfAppearanceToGamesFolder: useShelfAppearance];

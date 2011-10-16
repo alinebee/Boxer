@@ -16,11 +16,11 @@
 < NSOpenSavePanelDelegate >
 #endif
 {
-	IBOutlet NSButton *copySampleGamesToggle;
+	IBOutlet NSButton *sampleGamesToggle;
 	IBOutlet NSButton *useShelfAppearanceToggle;
 }
 
-@property (retain, nonatomic) NSButton *copySampleGamesToggle;
+@property (retain, nonatomic) NSButton *sampleGamesToggle;
 @property (retain, nonatomic) NSButton *useShelfAppearanceToggle;
 
 //Returns a singleton instance, which loads the view from the NIB file the first time.

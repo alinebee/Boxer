@@ -144,7 +144,7 @@ static void SN76496Write(Bitu /*port*/,Bitu data,Bitu /*iolen*/) {
 					R->NoiseFB = (n & 4) ? FB_WNOISE : FB_PNOISE;
 					n &= 3;
 					/* N/512,N/1024,N/2048,Tone #3 output */
-					R->Period[3] = (n == 3) ? 2 * R->Period[2] : (R->UpdateStep << (5+n));
+					R->Period[3] = (n == 3) ? 2 * R->Period[2] : (int)(R->UpdateStep << (5+n));
 
 					/* reset noise shifter */
 //					R->RNG = NG_PRESET;
@@ -405,7 +405,7 @@ static void TandyDACWrite(Bitu port,Bitu data,Bitu /*iolen*/) {
 		}
 		break;
 	case 0xc6:
-		tandy.dac.frequency = tandy.dac.frequency & 0xf00 | (Bit8u)(data&0xff);
+		tandy.dac.frequency = (tandy.dac.frequency & 0xf00) | (Bit8u)(data&0xff);
 		switch (tandy.dac.mode&3) {
 		case 0:
 			// joystick mode
@@ -418,7 +418,7 @@ static void TandyDACWrite(Bitu port,Bitu data,Bitu /*iolen*/) {
 		}
 		break;
 	case 0xc7:
-		tandy.dac.frequency = tandy.dac.frequency & 0x00ff | (((Bit8u)(data&0xf))<<8);
+		tandy.dac.frequency = (tandy.dac.frequency & 0x00ff) | (((Bit8u)(data&0xf))<<8);
 		tandy.dac.amplitude = (Bit8u)(data>>5);
 		switch (tandy.dac.mode&3) {
 		case 0:

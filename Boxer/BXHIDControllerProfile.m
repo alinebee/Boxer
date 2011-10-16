@@ -57,8 +57,8 @@ static NSMutableArray *profileClasses = nil;
 {
     for (NSDictionary *pairs in [self matchedIDs])
     {
-        long vendorID = [[pairs objectForKey: @"vendorID"] longValue],
-            productID = [[pairs objectForKey: @"productID"] longValue];
+        long vendorID = [(NSNumber *)[pairs objectForKey: @"vendorID"] longValue],
+            productID = [(NSNumber *)[pairs objectForKey: @"productID"] longValue];
         
         if ([HIDController vendorId] == vendorID &&
             [HIDController productId] == productID) return YES;

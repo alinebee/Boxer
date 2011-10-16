@@ -513,7 +513,7 @@ void WriteChar(Bit16u col,Bit16u row,Bit8u page,Bit8u chr,Bit8u attr,bool useatt
 	}
 
 	//Some weird behavior of mode 6 (and 11) 
-	if ((CurMode->mode == 0x6)/* || (CurMode->mode==0x11)*/) attr = (attr&0x80)|1;
+	if (CurMode->mode == 0x6/* || CurMode->mode==0x11*/) attr = (attr&0x80)|1;
 	//(same fix for 11 fixes vgatest2, but it's not entirely correct according to wd)
 
 	x=8*col;

@@ -135,6 +135,12 @@ typedef NSInteger BXDriveType;
 #pragma mark -
 #pragma mark Class methods
 
++ (NSSet *) hddVolumeTypes;
++ (NSSet *) cdVolumeTypes;
++ (NSSet *) floppyVolumeTypes;
++ (NSSet *) mountableFolderTypes;
++ (NSSet *) mountableImageTypes;
+
 //Returns a localised descriptive name for the specified drive type. e.g. @"hard disk", @"CD-ROM" etc. 
 + (NSString *) descriptionForType: (BXDriveType)driveType;
 

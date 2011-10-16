@@ -324,10 +324,10 @@ void boxer_die(const char *functionName, const char *fileName, int lineNumber, c
 	vsprintf(err, format, params);
 	va_end(params);
 
-    [[NSAssertionHandler currentHandler] handleFailureInFunction: [NSString stringWithUTF8String: functionName]
-                                                            file: [NSString stringWithUTF8String: fileName]
+    [[NSAssertionHandler currentHandler] handleFailureInFunction: [NSString stringWithCString: functionName encoding: NSASCIIStringEncoding]
+                                                            file: [NSString stringWithCString: fileName encoding: NSASCIIStringEncoding]
                                                       lineNumber: lineNumber
-                                                     description: [NSString stringWithUTF8String: err]];
+                                                     description: [NSString stringWithCString: err encoding: NSASCIIStringEncoding], nil];
 }
 
 

@@ -30,6 +30,151 @@
 		9F18133B129990D5009BC4B2 /* BXGamesFolderPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F18133A129990D5009BC4B2 /* BXGamesFolderPanelController.m */; };
 		9F18137C12999E39009BC4B2 /* GamesFolderPanelOptions.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F18137A12999E39009BC4B2 /* GamesFolderPanelOptions.xib */; };
 		9F18BE9513EB07190047C217 /* BXInstallerScan.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F18BE9413EB07190047C217 /* BXInstallerScan.m */; };
+		9F1920E6144B2BCB00B0617A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9F1920E4144B2BCB00B0617A /* InfoPlist.strings */; };
+		9F1920F1144B2CDC00B0617A /* BGHUDAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FA2E595109D251100E50623 /* BGHUDAppKit.framework */; };
+		9F1920F9144B2CF900B0617A /* MT32Emu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F34BE5A142B76D800A69FAF /* MT32Emu.framework */; };
+		9F1920FA144B2CF900B0617A /* PhysFS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E5CF183F128F81AF0065844A /* PhysFS.framework */; };
+		9F1920FB144B2CF900B0617A /* SDL_net.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C150F56D6E8001811F2 /* SDL_net.framework */; };
+		9F1920FC144B2CF900B0617A /* SDL_sound.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FCEDF3212B3DFFC00E856A4 /* SDL_sound.framework */; };
+		9F1920FD144B2CF900B0617A /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C140F56D6E8001811F2 /* SDL.framework */; };
+		9F1920FE144B2DC900B0617A /* bios.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77215212B38C4400072AE8 /* bios.cpp */; };
+		9F1920FF144B2DC900B0617A /* bios_disk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77215312B38C4400072AE8 /* bios_disk.cpp */; };
+		9F192100144B2DC900B0617A /* bios_keyboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77215412B38C4400072AE8 /* bios_keyboard.cpp */; };
+		9F192101144B2DC900B0617A /* ems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77215512B38C4400072AE8 /* ems.cpp */; };
+		9F192102144B2DC900B0617A /* int10.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77215612B38C4400072AE8 /* int10.cpp */; };
+		9F192103144B2DC900B0617A /* int10_char.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77215812B38C4400072AE8 /* int10_char.cpp */; };
+		9F192104144B2DC900B0617A /* int10_memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77215912B38C4400072AE8 /* int10_memory.cpp */; };
+		9F192105144B2DC900B0617A /* int10_misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77215A12B38C4400072AE8 /* int10_misc.cpp */; };
+		9F192106144B2DC900B0617A /* int10_modes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77215B12B38C4400072AE8 /* int10_modes.cpp */; };
+		9F192107144B2DC900B0617A /* int10_pal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77215C12B38C4400072AE8 /* int10_pal.cpp */; };
+		9F192108144B2DC900B0617A /* int10_put_pixel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77215D12B38C4400072AE8 /* int10_put_pixel.cpp */; };
+		9F192109144B2DC900B0617A /* int10_vesa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77215E12B38C4400072AE8 /* int10_vesa.cpp */; };
+		9F19210A144B2DC900B0617A /* int10_video_state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77215F12B38C4400072AE8 /* int10_video_state.cpp */; };
+		9F19210B144B2DC900B0617A /* int10_vptable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77216012B38C4400072AE8 /* int10_vptable.cpp */; };
+		9F19210C144B2DC900B0617A /* mouse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77216112B38C4400072AE8 /* mouse.cpp */; };
+		9F19210D144B2DC900B0617A /* xms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77216212B38C4400072AE8 /* xms.cpp */; };
+		9F19210E144B2DC900B0617A /* callback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77209F12B38C4400072AE8 /* callback.cpp */; };
+		9F19210F144B2DC900B0617A /* core_dyn_x86.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720A812B38C4400072AE8 /* core_dyn_x86.cpp */; };
+		9F192110144B2DC900B0617A /* core_dynrec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720BA12B38C4400072AE8 /* core_dynrec.cpp */; };
+		9F192111144B2DC900B0617A /* core_full.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720C412B38C4400072AE8 /* core_full.cpp */; };
+		9F192112144B2DC900B0617A /* core_normal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720CE12B38C4400072AE8 /* core_normal.cpp */; };
+		9F192113144B2DC900B0617A /* core_prefetch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720CF12B38C4400072AE8 /* core_prefetch.cpp */; };
+		9F192114144B2DC900B0617A /* core_simple.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720D012B38C4400072AE8 /* core_simple.cpp */; };
+		9F192115144B2DC900B0617A /* cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720D112B38C4400072AE8 /* cpu.cpp */; };
+		9F192116144B2DC900B0617A /* flags.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720D212B38C4400072AE8 /* flags.cpp */; };
+		9F192117144B2DC900B0617A /* modrm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720D512B38C4400072AE8 /* modrm.cpp */; };
+		9F192118144B2DC900B0617A /* paging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720D712B38C4400072AE8 /* paging.cpp */; };
+		9F192119144B2DD200B0617A /* dosbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77210012B38C4400072AE8 /* dosbox.cpp */; };
+		9F19211A144B2DF400B0617A /* cdrom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720E012B38C4400072AE8 /* cdrom.cpp */; };
+		9F19211B144B2DF400B0617A /* cdrom_image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720E312B38C4400072AE8 /* cdrom_image.cpp */; };
+		9F19211C144B2DF400B0617A /* dos.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720E812B38C4400072AE8 /* dos.cpp */; };
+		9F19211D144B2DF400B0617A /* dos_classes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720E912B38C4400072AE8 /* dos_classes.cpp */; };
+		9F19211E144B2DF400B0617A /* dos_devices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720EB12B38C4400072AE8 /* dos_devices.cpp */; };
+		9F19211F144B2DF400B0617A /* dos_execute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720EC12B38C4400072AE8 /* dos_execute.cpp */; };
+		9F192120144B2DF400B0617A /* dos_files.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720ED12B38C4400072AE8 /* dos_files.cpp */; };
+		9F192121144B2DF400B0617A /* dos_ioctl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720EE12B38C4400072AE8 /* dos_ioctl.cpp */; };
+		9F192122144B2DF400B0617A /* dos_keyboard_layout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720EF12B38C4400072AE8 /* dos_keyboard_layout.cpp */; };
+		9F192123144B2DF400B0617A /* dos_memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720F112B38C4400072AE8 /* dos_memory.cpp */; };
+		9F192124144B2DF400B0617A /* dos_misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720F212B38C4400072AE8 /* dos_misc.cpp */; };
+		9F192125144B2DF400B0617A /* dos_mscdex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720F312B38C4400072AE8 /* dos_mscdex.cpp */; };
+		9F192126144B2DF400B0617A /* dos_programs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720F412B38C4400072AE8 /* dos_programs.cpp */; };
+		9F192127144B2DF400B0617A /* dos_tables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720F512B38C4400072AE8 /* dos_tables.cpp */; };
+		9F192128144B2DF400B0617A /* drive_cache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720F612B38C4400072AE8 /* drive_cache.cpp */; };
+		9F192129144B2DF400B0617A /* drive_fat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720F712B38C4400072AE8 /* drive_fat.cpp */; };
+		9F19212A144B2DF400B0617A /* drive_iso.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720F812B38C4400072AE8 /* drive_iso.cpp */; };
+		9F19212B144B2DF400B0617A /* drive_local.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720F912B38C4400072AE8 /* drive_local.cpp */; };
+		9F19212C144B2DF400B0617A /* drive_physfs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720FA12B38C4400072AE8 /* drive_physfs.cpp */; };
+		9F19212D144B2DF400B0617A /* drive_virtual.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720FB12B38C4400072AE8 /* drive_virtual.cpp */; };
+		9F19212E144B2DF400B0617A /* drives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F7720FC12B38C4400072AE8 /* drives.cpp */; };
+		9F19212F144B2DFA00B0617A /* fpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77210212B38C4400072AE8 /* fpu.cpp */; };
+		9F192130144B2E1000B0617A /* midi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77210812B38C4400072AE8 /* midi.cpp */; };
+		9F192131144B2E1000B0617A /* render.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77210E12B38C4400072AE8 /* render.cpp */; };
+		9F192132144B2E1000B0617A /* render_scalers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77211012B38C4400072AE8 /* render_scalers.cpp */; };
+		9F192133144B2E3E00B0617A /* adlib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77211C12B38C4400072AE8 /* adlib.cpp */; };
+		9F192134144B2E3E00B0617A /* cmos.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77211E12B38C4400072AE8 /* cmos.cpp */; };
+		9F192135144B2E3E00B0617A /* dbopl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77211F12B38C4400072AE8 /* dbopl.cpp */; };
+		9F192136144B2E3E00B0617A /* disney.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212112B38C4400072AE8 /* disney.cpp */; };
+		9F192137144B2E3E00B0617A /* dma.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212212B38C4400072AE8 /* dma.cpp */; };
+		9F192138144B2E3E00B0617A /* gameblaster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212312B38C4400072AE8 /* gameblaster.cpp */; };
+		9F192139144B2E3E00B0617A /* gus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212412B38C4400072AE8 /* gus.cpp */; };
+		9F19213A144B2E3E00B0617A /* hardware.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212512B38C4400072AE8 /* hardware.cpp */; };
+		9F19213B144B2E3E00B0617A /* iohandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212612B38C4400072AE8 /* iohandler.cpp */; };
+		9F19213C144B2E3E00B0617A /* ipx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212712B38C4400072AE8 /* ipx.cpp */; };
+		9F19213D144B2E3E00B0617A /* ipxserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212812B38C4400072AE8 /* ipxserver.cpp */; };
+		9F19213E144B2E3E00B0617A /* joystick.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212912B38C4400072AE8 /* joystick.cpp */; };
+		9F19213F144B2E3E00B0617A /* keyboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212A12B38C4400072AE8 /* keyboard.cpp */; };
+		9F192140144B2E3E00B0617A /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212B12B38C4400072AE8 /* memory.cpp */; };
+		9F192141144B2E3E00B0617A /* mixer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212C12B38C4400072AE8 /* mixer.cpp */; };
+		9F192142144B2E3E00B0617A /* mpu401.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212D12B38C4400072AE8 /* mpu401.cpp */; };
+		9F192143144B2E3E00B0617A /* opl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77212E12B38C4400072AE8 /* opl.cpp */; };
+		9F192144144B2E3E00B0617A /* pcspeaker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77213012B38C4400072AE8 /* pcspeaker.cpp */; };
+		9F192145144B2E3E00B0617A /* pic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77213112B38C4400072AE8 /* pic.cpp */; };
+		9F192146144B2E3E00B0617A /* sblaster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77213212B38C4400072AE8 /* sblaster.cpp */; };
+		9F192147144B2E4800B0617A /* tandy_sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77214112B38C4400072AE8 /* tandy_sound.cpp */; };
+		9F192148144B2E4800B0617A /* timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77214212B38C4400072AE8 /* timer.cpp */; };
+		9F192149144B2E4800B0617A /* vga.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77214312B38C4400072AE8 /* vga.cpp */; };
+		9F19214A144B2E4800B0617A /* vga_attr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77214412B38C4400072AE8 /* vga_attr.cpp */; };
+		9F19214B144B2E4800B0617A /* vga_crtc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77214512B38C4400072AE8 /* vga_crtc.cpp */; };
+		9F19214C144B2E4800B0617A /* vga_dac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77214612B38C4400072AE8 /* vga_dac.cpp */; };
+		9F19214D144B2E4800B0617A /* vga_draw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77214712B38C4400072AE8 /* vga_draw.cpp */; };
+		9F19214E144B2E4800B0617A /* vga_gfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77214812B38C4400072AE8 /* vga_gfx.cpp */; };
+		9F19214F144B2E4800B0617A /* vga_memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77214912B38C4400072AE8 /* vga_memory.cpp */; };
+		9F192150144B2E4800B0617A /* vga_misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77214A12B38C4400072AE8 /* vga_misc.cpp */; };
+		9F192151144B2E4800B0617A /* vga_other.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77214B12B38C4400072AE8 /* vga_other.cpp */; };
+		9F192152144B2E4800B0617A /* vga_paradise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77214C12B38C4400072AE8 /* vga_paradise.cpp */; };
+		9F192153144B2E4800B0617A /* vga_s3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77214D12B38C4400072AE8 /* vga_s3.cpp */; };
+		9F192154144B2E4800B0617A /* vga_seq.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77214E12B38C4400072AE8 /* vga_seq.cpp */; };
+		9F192155144B2E4800B0617A /* vga_tseng.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77214F12B38C4400072AE8 /* vga_tseng.cpp */; };
+		9F192156144B2E4800B0617A /* vga_xga.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77215012B38C4400072AE8 /* vga_xga.cpp */; };
+		9F192157144B2E5400B0617A /* directserial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77213412B38C4400072AE8 /* directserial.cpp */; };
+		9F192158144B2E5400B0617A /* libserial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77213612B38C4400072AE8 /* libserial.cpp */; };
+		9F192159144B2E5400B0617A /* misc_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77213812B38C4400072AE8 /* misc_util.cpp */; };
+		9F19215A144B2E5400B0617A /* nullmodem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77213A12B38C4400072AE8 /* nullmodem.cpp */; };
+		9F19215B144B2E5400B0617A /* serialdummy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77213C12B38C4400072AE8 /* serialdummy.cpp */; };
+		9F19215C144B2E5400B0617A /* serialport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77213E12B38C4400072AE8 /* serialport.cpp */; };
+		9F19215D144B2E5400B0617A /* softmodem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77213F12B38C4400072AE8 /* softmodem.cpp */; };
+		9F19215E144B2E6200B0617A /* cross.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77216C12B38C4400072AE8 /* cross.cpp */; };
+		9F19215F144B2E6200B0617A /* messages.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77216D12B38C4400072AE8 /* messages.cpp */; };
+		9F192160144B2E6200B0617A /* programs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77216E12B38C4400072AE8 /* programs.cpp */; };
+		9F192161144B2E6200B0617A /* setup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77216F12B38C4400072AE8 /* setup.cpp */; };
+		9F192162144B2E6200B0617A /* support.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77217012B38C4400072AE8 /* support.cpp */; };
+		9F192163144B2E7900B0617A /* shell.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77217212B38C4400072AE8 /* shell.cpp */; };
+		9F192164144B2E7900B0617A /* shell_batch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77217312B38C4400072AE8 /* shell_batch.cpp */; };
+		9F192165144B2E7900B0617A /* shell_cmds.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77217412B38C4400072AE8 /* shell_cmds.cpp */; };
+		9F192166144B2E7900B0617A /* shell_misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77217512B38C4400072AE8 /* shell_misc.cpp */; };
+		9F192167144B303C00B0617A /* BXEmulator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */; };
+		9F192168144B303C00B0617A /* BXEmulator+BXShell.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35230F56C7B7001811F2 /* BXEmulator+BXShell.mm */; };
+		9F192169144B303C00B0617A /* BXEmulator+BXDOSFileSystem.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F675DE40F8F4D49001FCE5F /* BXEmulator+BXDOSFileSystem.mm */; };
+		9F19216A144B303C00B0617A /* BXEmulator+BXPaste.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F44E5E310D17A4C0081B8D2 /* BXEmulator+BXPaste.mm */; };
+		9F19216B144B303C00B0617A /* BXEmulator+BXAudio.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F34BE5E142B851700A69FAF /* BXEmulator+BXAudio.mm */; };
+		9F19216C144B303C00B0617A /* BXVideoHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FF175E611B279F500D0FCDC /* BXVideoHandler.mm */; };
+		9F19216D144B303C00B0617A /* BXEmulatorConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF2E9BC11E6F4950051E485 /* BXEmulatorConfiguration.m */; };
+		9F19216E144B303C00B0617A /* BXCoalface.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FDCA78F118F2B7900E2FD74 /* BXCoalface.mm */; };
+		9F19216F144B303C00B0617A /* BXCoalfaceDrives.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FCA702113DAE6F5006C5DF8 /* BXCoalfaceDrives.mm */; };
+		9F192170144B303C00B0617A /* BXCoalfaceAudio.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F34BE3E142B700100A69FAF /* BXCoalfaceAudio.mm */; };
+		9F192171144B303C00B0617A /* BXEmulatorErrors.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3E57A413F694B40070A14D /* BXEmulatorErrors.m */; };
+		9F192172144B305000B0617A /* BXMIDIDeviceMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F86DB3F1431EF5F00A2EFB6 /* BXMIDIDeviceMonitor.m */; };
+		9F192173144B305000B0617A /* BXMIDISynth.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F902C23142E183500843B01 /* BXMIDISynth.m */; };
+		9F192174144B305000B0617A /* BXEmulatedMT32.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F902C26142E198100843B01 /* BXEmulatedMT32.mm */; };
+		9F192175144B305000B0617A /* BXExternalMIDIDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F902C29142E199100843B01 /* BXExternalMIDIDevice.m */; };
+		9F192176144B305000B0617A /* BXExternalMT32.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3EDA1A1434B48D009BFBA2 /* BXExternalMT32.m */; };
+		9F192177144B305000B0617A /* BXExternalMT32+BXMT32Sysexes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F7D9EFE1444BAA800B6AD50 /* BXExternalMT32+BXMT32Sysexes.m */; };
+		9F192178144B305000B0617A /* BXDummyMIDIDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F6C1CD914373AF600601ACB /* BXDummyMIDIDevice.m */; };
+		9F192179144B305900B0617A /* BXDrive.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F69133210A2F62A00EA78CD /* BXDrive.m */; };
+		9F19217C144B30CE00B0617A /* BXEmulatedMouse.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FEF98001191E1EF002024DF /* BXEmulatedMouse.mm */; };
+		9F19217D144B30CE00B0617A /* BXEmulatedKeyboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FCC2F991366EF170013F083 /* BXEmulatedKeyboard.mm */; };
+		9F19217E144B30CE00B0617A /* BXEmulatedJoystick.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FC9E4E0136725190095DCDE /* BXEmulatedJoystick.mm */; };
+		9F19217F144B30CE00B0617A /* BXCHFlightstick.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FC9E58E1367514C0095DCDE /* BXCHFlightstick.mm */; };
+		9F192180144B30CE00B0617A /* BXThrustmasterFCS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FFE1F821390F70C005C438A /* BXThrustmasterFCS.mm */; };
+		9F192181144B30EF00B0617A /* BXFrameBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB4F9E311957B55006C8AC9 /* BXFrameBuffer.m */; };
+		9F192187144B318200B0617A /* BXGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBC35280F56C7B7001811F2 /* BXGeometry.m */; };
+		9F19218A144B32EF00B0617A /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C770F56E0D7001811F2 /* CoreMIDI.framework */; };
+		9F19218B144B32FC00B0617A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F4E042B0F67E72300427D50 /* AudioToolbox.framework */; };
+		9F19218C144B330000B0617A /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		9F19218D144B335D00B0617A /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBC3C760F56E0D7001811F2 /* AudioUnit.framework */; };
+		9F19218E144B376B00B0617A /* NSWorkspace+BXMountedVolumes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F573C590F8E18B10089D8B7 /* NSWorkspace+BXMountedVolumes.m */; };
+		9F19218F144B379A00B0617A /* BXMountedVolumesError.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0F9EEE1210901800ED7A64 /* BXMountedVolumesError.m */; };
+		9F192190144B37E800B0617A /* BXValueTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F69128B10A2DF8D00EA78CD /* BXValueTransformers.m */; };
 		9F19E7E112B3F48200496BCF /* SDL_sound.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FCEDF3212B3DFFC00E856A4 /* SDL_sound.framework */; };
 		9F1CBA58120C796C00C5E926 /* BXImportSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBA57120C796C00C5E926 /* BXImportSession.m */; };
 		9F1CBA97120C7D9000C5E926 /* BXImportWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBA96120C7D9000C5E926 /* BXImportWindowController.m */; };
@@ -441,12 +586,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		9F4EC82B12907B4300024B20 /* PBXContainerItemProxy */ = {
+		9F1920B1144B0E2000B0617A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 9F4EC82312907B1E00024B20;
-			remoteInfo = "Game Importer";
+			remoteInfo = "Game Importer Droplet";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -513,6 +658,10 @@
 		9F18137B12999E39009BC4B2 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/GamesFolderPanelOptions.xib; sourceTree = "<group>"; };
 		9F18BE9313EB07190047C217 /* BXInstallerScan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXInstallerScan.h; sourceTree = "<group>"; };
 		9F18BE9413EB07190047C217 /* BXInstallerScan.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXInstallerScan.m; sourceTree = "<group>"; };
+		9F1920DE144B2BCB00B0617A /* DOSBox Emulator Core.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "DOSBox Emulator Core.bundle"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9F1920DF144B2BCB00B0617A /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		9F1920E3144B2BCB00B0617A /* DOSBox Emulator Core-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "DOSBox Emulator Core-Info.plist"; sourceTree = "<group>"; };
+		9F1920E5144B2BCB00B0617A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		9F1CBA56120C796C00C5E926 /* BXImportSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImportSession.h; sourceTree = "<group>"; };
 		9F1CBA57120C796C00C5E926 /* BXImportSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXImportSession.m; sourceTree = "<group>"; };
 		9F1CBA95120C7D9000C5E926 /* BXImportWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXImportWindowController.h; sourceTree = "<group>"; };
@@ -1266,6 +1415,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		9F1920DB144B2BCB00B0617A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9F1920F9144B2CF900B0617A /* MT32Emu.framework in Frameworks */,
+				9F1920FA144B2CF900B0617A /* PhysFS.framework in Frameworks */,
+				9F1920FB144B2CF900B0617A /* SDL_net.framework in Frameworks */,
+				9F1920FC144B2CF900B0617A /* SDL_sound.framework in Frameworks */,
+				9F1920FD144B2CF900B0617A /* SDL.framework in Frameworks */,
+				9F1920F1144B2CDC00B0617A /* BGHUDAppKit.framework in Frameworks */,
+				9F19218A144B32EF00B0617A /* CoreMIDI.framework in Frameworks */,
+				9F19218B144B32FC00B0617A /* AudioToolbox.framework in Frameworks */,
+				9F19218C144B330000B0617A /* Cocoa.framework in Frameworks */,
+				9F19218D144B335D00B0617A /* AudioUnit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9F4EC82212907B1E00024B20 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1334,6 +1500,7 @@
 		1058C7A2FEA54F0111CA2CBB /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9F1920DF144B2BCB00B0617A /* CoreFoundation.framework */,
 				29B97324FDCFA39411CA2CEA /* AppKit.framework */,
 				13E42FB307B3F0F600E4EEF1 /* CoreData.framework */,
 				29B97325FDCFA39411CA2CEA /* Foundation.framework */,
@@ -1346,6 +1513,7 @@
 			children = (
 				8D1107320486CEB800E47090 /* Boxer.app */,
 				9F4EC82412907B1E00024B20 /* Game Importer Droplet.app */,
+				9F1920DE144B2BCB00B0617A /* DOSBox Emulator Core.bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1354,6 +1522,7 @@
 			isa = PBXGroup;
 			children = (
 				080E96DDFE201D6D7F000001 /* Boxer */,
+				9F1920E1144B2BCB00B0617A /* DOSBox Emulator Core */,
 				9FBC3A7A0F56CEA2001811F2 /* DOSBox */,
 				9F4EC82E12907B7400024B20 /* Game Importer Droplet */,
 				9FFF978412327D58009B5EE5 /* Other Sources */,
@@ -1456,6 +1625,23 @@
 			path = YRKSpinningProgressIndicator;
 			sourceTree = "<group>";
 		};
+		9F1920E1144B2BCB00B0617A /* DOSBox Emulator Core */ = {
+			isa = PBXGroup;
+			children = (
+				9F1920E2144B2BCB00B0617A /* Supporting Files */,
+			);
+			path = "DOSBox Emulator Core";
+			sourceTree = "<group>";
+		};
+		9F1920E2144B2BCB00B0617A /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				9F1920E3144B2BCB00B0617A /* DOSBox Emulator Core-Info.plist */,
+				9F1920E4144B2BCB00B0617A /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		9F1CBA55120C783800C5E926 /* Game import session */ = {
 			isa = PBXGroup;
 			children = (
@@ -1497,6 +1683,7 @@
 		9F1D50280F5C0ACD009F0AB9 /* Emulator */ = {
 			isa = PBXGroup;
 			children = (
+				9FCC2F971366EF030013F083 /* Input devices */,
 				9F902C1D142E169800843B01 /* MIDI */,
 				9F1D4FFF0F5C0966009F0AB9 /* BXEmulator.h */,
 				9F4037B912CB6CA300DAA66C /* BXEmulatorPrivate.h */,
@@ -2409,7 +2596,6 @@
 			children = (
 				9FC6382613C0DA0B004478A3 /* Controller profiles */,
 				9FC6381F13C0C786004478A3 /* Joypad layouts */,
-				9FCC2F971366EF030013F083 /* Emulated devices */,
 				9FD1D6FF1364819E00792011 /* BXJoystickController.h */,
 				9FD1D7001364819E00792011 /* BXJoystickController.m */,
 				9FC637FE13C09B79004478A3 /* BXJoypadController.h */,
@@ -2467,7 +2653,7 @@
 			name = Sounds;
 			sourceTree = "<group>";
 		};
-		9FCC2F971366EF030013F083 /* Emulated devices */ = {
+		9FCC2F971366EF030013F083 /* Input devices */ = {
 			isa = PBXGroup;
 			children = (
 				9FEF97FF1191E1EF002024DF /* BXEmulatedMouse.h */,
@@ -2481,7 +2667,7 @@
 				9FC9E58E1367514C0095DCDE /* BXCHFlightstick.mm */,
 				9FFE1F821390F70C005C438A /* BXThrustmasterFCS.mm */,
 			);
-			name = "Emulated devices";
+			name = "Input devices";
 			sourceTree = "<group>";
 		};
 		9FCC2FF71366FB6E0013F083 /* Input handling */ = {
@@ -2596,13 +2782,30 @@
 			);
 			comments = "REGARDING --mstackrealign\nBoxer will crash with a dyld_misaligned_stack_error if dynamic core mode is on when the session starts.\n\ndyld is the dynamic linker, so this may be some peculiar interaction of threading and dynamically-loaded frameworks: the crash also happens in our non-XCode, SDL-framework-using build, and it *doesn't* happen if a sleep() delay is introduced before DOSBox_main is called, which implies a race condition.\n\nAdding -mstackrealign to the C flags for Intel seems to have made the problem go away. Which doesn't explain why it's happening in the first place.";
 			dependencies = (
-				9F4EC82C12907B4300024B20 /* PBXTargetDependency */,
+				9F1920B2144B0E2000B0617A /* PBXTargetDependency */,
 			);
 			name = Boxer;
 			productInstallPath = "$(HOME)/Applications";
 			productName = Boxer;
 			productReference = 8D1107320486CEB800E47090 /* Boxer.app */;
 			productType = "com.apple.product-type.application";
+		};
+		9F1920DD144B2BCB00B0617A /* DOSBox Emulator Core */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9F1920E8144B2BCB00B0617A /* Build configuration list for PBXNativeTarget "DOSBox Emulator Core" */;
+			buildPhases = (
+				9F1920DA144B2BCB00B0617A /* Sources */,
+				9F1920DB144B2BCB00B0617A /* Frameworks */,
+				9F1920DC144B2BCB00B0617A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "DOSBox Emulator Core";
+			productName = "DOSBox Emulator Core";
+			productReference = 9F1920DE144B2BCB00B0617A /* DOSBox Emulator Core.bundle */;
+			productType = "com.apple.product-type.bundle";
 		};
 		9F4EC82312907B1E00024B20 /* Game Importer Droplet */ = {
 			isa = PBXNativeTarget;
@@ -2639,6 +2842,7 @@
 				Japanese,
 				French,
 				German,
+				en,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Boxer */;
 			projectDirPath = "";
@@ -2646,6 +2850,7 @@
 			targets = (
 				8D1107260486CEB800E47090 /* Boxer */,
 				9F4EC82312907B1E00024B20 /* Game Importer Droplet */,
+				9F1920DD144B2BCB00B0617A /* DOSBox Emulator Core */,
 			);
 		};
 /* End PBXProject section */
@@ -2752,6 +2957,14 @@
 				9F0102E21440561E00942713 /* MT32Shelf.jpg in Resources */,
 				9F0102E5144078E300942713 /* BoxerHelp in Resources */,
 				9F12F97C144875F400FC9645 /* DummyCD.iso in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9F1920DC144B2BCB00B0617A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9F1920E6144B2BCB00B0617A /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3089,6 +3302,147 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		9F1920DA144B2BCB00B0617A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9F1920FE144B2DC900B0617A /* bios.cpp in Sources */,
+				9F1920FF144B2DC900B0617A /* bios_disk.cpp in Sources */,
+				9F192100144B2DC900B0617A /* bios_keyboard.cpp in Sources */,
+				9F192101144B2DC900B0617A /* ems.cpp in Sources */,
+				9F192102144B2DC900B0617A /* int10.cpp in Sources */,
+				9F192103144B2DC900B0617A /* int10_char.cpp in Sources */,
+				9F192104144B2DC900B0617A /* int10_memory.cpp in Sources */,
+				9F192105144B2DC900B0617A /* int10_misc.cpp in Sources */,
+				9F192106144B2DC900B0617A /* int10_modes.cpp in Sources */,
+				9F192107144B2DC900B0617A /* int10_pal.cpp in Sources */,
+				9F192108144B2DC900B0617A /* int10_put_pixel.cpp in Sources */,
+				9F192109144B2DC900B0617A /* int10_vesa.cpp in Sources */,
+				9F19210A144B2DC900B0617A /* int10_video_state.cpp in Sources */,
+				9F19210B144B2DC900B0617A /* int10_vptable.cpp in Sources */,
+				9F19210C144B2DC900B0617A /* mouse.cpp in Sources */,
+				9F19210D144B2DC900B0617A /* xms.cpp in Sources */,
+				9F19210E144B2DC900B0617A /* callback.cpp in Sources */,
+				9F19210F144B2DC900B0617A /* core_dyn_x86.cpp in Sources */,
+				9F192110144B2DC900B0617A /* core_dynrec.cpp in Sources */,
+				9F192111144B2DC900B0617A /* core_full.cpp in Sources */,
+				9F192112144B2DC900B0617A /* core_normal.cpp in Sources */,
+				9F192113144B2DC900B0617A /* core_prefetch.cpp in Sources */,
+				9F192114144B2DC900B0617A /* core_simple.cpp in Sources */,
+				9F192115144B2DC900B0617A /* cpu.cpp in Sources */,
+				9F192116144B2DC900B0617A /* flags.cpp in Sources */,
+				9F192117144B2DC900B0617A /* modrm.cpp in Sources */,
+				9F192118144B2DC900B0617A /* paging.cpp in Sources */,
+				9F192119144B2DD200B0617A /* dosbox.cpp in Sources */,
+				9F19211A144B2DF400B0617A /* cdrom.cpp in Sources */,
+				9F19211B144B2DF400B0617A /* cdrom_image.cpp in Sources */,
+				9F19211C144B2DF400B0617A /* dos.cpp in Sources */,
+				9F19211D144B2DF400B0617A /* dos_classes.cpp in Sources */,
+				9F19211E144B2DF400B0617A /* dos_devices.cpp in Sources */,
+				9F19211F144B2DF400B0617A /* dos_execute.cpp in Sources */,
+				9F192120144B2DF400B0617A /* dos_files.cpp in Sources */,
+				9F192121144B2DF400B0617A /* dos_ioctl.cpp in Sources */,
+				9F192122144B2DF400B0617A /* dos_keyboard_layout.cpp in Sources */,
+				9F192123144B2DF400B0617A /* dos_memory.cpp in Sources */,
+				9F192124144B2DF400B0617A /* dos_misc.cpp in Sources */,
+				9F192125144B2DF400B0617A /* dos_mscdex.cpp in Sources */,
+				9F192126144B2DF400B0617A /* dos_programs.cpp in Sources */,
+				9F192127144B2DF400B0617A /* dos_tables.cpp in Sources */,
+				9F192128144B2DF400B0617A /* drive_cache.cpp in Sources */,
+				9F192129144B2DF400B0617A /* drive_fat.cpp in Sources */,
+				9F19212A144B2DF400B0617A /* drive_iso.cpp in Sources */,
+				9F19212B144B2DF400B0617A /* drive_local.cpp in Sources */,
+				9F19212C144B2DF400B0617A /* drive_physfs.cpp in Sources */,
+				9F19212D144B2DF400B0617A /* drive_virtual.cpp in Sources */,
+				9F19212E144B2DF400B0617A /* drives.cpp in Sources */,
+				9F19212F144B2DFA00B0617A /* fpu.cpp in Sources */,
+				9F192130144B2E1000B0617A /* midi.cpp in Sources */,
+				9F192131144B2E1000B0617A /* render.cpp in Sources */,
+				9F192132144B2E1000B0617A /* render_scalers.cpp in Sources */,
+				9F192133144B2E3E00B0617A /* adlib.cpp in Sources */,
+				9F192134144B2E3E00B0617A /* cmos.cpp in Sources */,
+				9F192135144B2E3E00B0617A /* dbopl.cpp in Sources */,
+				9F192136144B2E3E00B0617A /* disney.cpp in Sources */,
+				9F192137144B2E3E00B0617A /* dma.cpp in Sources */,
+				9F192138144B2E3E00B0617A /* gameblaster.cpp in Sources */,
+				9F192139144B2E3E00B0617A /* gus.cpp in Sources */,
+				9F19213A144B2E3E00B0617A /* hardware.cpp in Sources */,
+				9F19213B144B2E3E00B0617A /* iohandler.cpp in Sources */,
+				9F19213C144B2E3E00B0617A /* ipx.cpp in Sources */,
+				9F19213D144B2E3E00B0617A /* ipxserver.cpp in Sources */,
+				9F19213E144B2E3E00B0617A /* joystick.cpp in Sources */,
+				9F19213F144B2E3E00B0617A /* keyboard.cpp in Sources */,
+				9F192140144B2E3E00B0617A /* memory.cpp in Sources */,
+				9F192141144B2E3E00B0617A /* mixer.cpp in Sources */,
+				9F192142144B2E3E00B0617A /* mpu401.cpp in Sources */,
+				9F192143144B2E3E00B0617A /* opl.cpp in Sources */,
+				9F192144144B2E3E00B0617A /* pcspeaker.cpp in Sources */,
+				9F192145144B2E3E00B0617A /* pic.cpp in Sources */,
+				9F192146144B2E3E00B0617A /* sblaster.cpp in Sources */,
+				9F192147144B2E4800B0617A /* tandy_sound.cpp in Sources */,
+				9F192148144B2E4800B0617A /* timer.cpp in Sources */,
+				9F192149144B2E4800B0617A /* vga.cpp in Sources */,
+				9F19214A144B2E4800B0617A /* vga_attr.cpp in Sources */,
+				9F19214B144B2E4800B0617A /* vga_crtc.cpp in Sources */,
+				9F19214C144B2E4800B0617A /* vga_dac.cpp in Sources */,
+				9F19214D144B2E4800B0617A /* vga_draw.cpp in Sources */,
+				9F19214E144B2E4800B0617A /* vga_gfx.cpp in Sources */,
+				9F19214F144B2E4800B0617A /* vga_memory.cpp in Sources */,
+				9F192150144B2E4800B0617A /* vga_misc.cpp in Sources */,
+				9F192151144B2E4800B0617A /* vga_other.cpp in Sources */,
+				9F192152144B2E4800B0617A /* vga_paradise.cpp in Sources */,
+				9F192153144B2E4800B0617A /* vga_s3.cpp in Sources */,
+				9F192154144B2E4800B0617A /* vga_seq.cpp in Sources */,
+				9F192155144B2E4800B0617A /* vga_tseng.cpp in Sources */,
+				9F192156144B2E4800B0617A /* vga_xga.cpp in Sources */,
+				9F192157144B2E5400B0617A /* directserial.cpp in Sources */,
+				9F192158144B2E5400B0617A /* libserial.cpp in Sources */,
+				9F192159144B2E5400B0617A /* misc_util.cpp in Sources */,
+				9F19215A144B2E5400B0617A /* nullmodem.cpp in Sources */,
+				9F19215B144B2E5400B0617A /* serialdummy.cpp in Sources */,
+				9F19215C144B2E5400B0617A /* serialport.cpp in Sources */,
+				9F19215D144B2E5400B0617A /* softmodem.cpp in Sources */,
+				9F19215E144B2E6200B0617A /* cross.cpp in Sources */,
+				9F19215F144B2E6200B0617A /* messages.cpp in Sources */,
+				9F192160144B2E6200B0617A /* programs.cpp in Sources */,
+				9F192161144B2E6200B0617A /* setup.cpp in Sources */,
+				9F192162144B2E6200B0617A /* support.cpp in Sources */,
+				9F192163144B2E7900B0617A /* shell.cpp in Sources */,
+				9F192164144B2E7900B0617A /* shell_batch.cpp in Sources */,
+				9F192165144B2E7900B0617A /* shell_cmds.cpp in Sources */,
+				9F192166144B2E7900B0617A /* shell_misc.cpp in Sources */,
+				9F192167144B303C00B0617A /* BXEmulator.mm in Sources */,
+				9F192168144B303C00B0617A /* BXEmulator+BXShell.mm in Sources */,
+				9F192169144B303C00B0617A /* BXEmulator+BXDOSFileSystem.mm in Sources */,
+				9F19216A144B303C00B0617A /* BXEmulator+BXPaste.mm in Sources */,
+				9F19216B144B303C00B0617A /* BXEmulator+BXAudio.mm in Sources */,
+				9F19216C144B303C00B0617A /* BXVideoHandler.mm in Sources */,
+				9F19216D144B303C00B0617A /* BXEmulatorConfiguration.m in Sources */,
+				9F19216E144B303C00B0617A /* BXCoalface.mm in Sources */,
+				9F19216F144B303C00B0617A /* BXCoalfaceDrives.mm in Sources */,
+				9F192170144B303C00B0617A /* BXCoalfaceAudio.mm in Sources */,
+				9F192171144B303C00B0617A /* BXEmulatorErrors.m in Sources */,
+				9F192172144B305000B0617A /* BXMIDIDeviceMonitor.m in Sources */,
+				9F192173144B305000B0617A /* BXMIDISynth.m in Sources */,
+				9F192174144B305000B0617A /* BXEmulatedMT32.mm in Sources */,
+				9F192175144B305000B0617A /* BXExternalMIDIDevice.m in Sources */,
+				9F192176144B305000B0617A /* BXExternalMT32.m in Sources */,
+				9F192177144B305000B0617A /* BXExternalMT32+BXMT32Sysexes.m in Sources */,
+				9F192178144B305000B0617A /* BXDummyMIDIDevice.m in Sources */,
+				9F192179144B305900B0617A /* BXDrive.m in Sources */,
+				9F19217C144B30CE00B0617A /* BXEmulatedMouse.mm in Sources */,
+				9F19217D144B30CE00B0617A /* BXEmulatedKeyboard.mm in Sources */,
+				9F19217E144B30CE00B0617A /* BXEmulatedJoystick.mm in Sources */,
+				9F19217F144B30CE00B0617A /* BXCHFlightstick.mm in Sources */,
+				9F192180144B30CE00B0617A /* BXThrustmasterFCS.mm in Sources */,
+				9F192181144B30EF00B0617A /* BXFrameBuffer.m in Sources */,
+				9F192187144B318200B0617A /* BXGeometry.m in Sources */,
+				9F19218E144B376B00B0617A /* NSWorkspace+BXMountedVolumes.m in Sources */,
+				9F19218F144B379A00B0617A /* BXMountedVolumesError.m in Sources */,
+				9F192190144B37E800B0617A /* BXValueTransformers.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9F4EC82112907B1E00024B20 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3101,10 +3455,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		9F4EC82C12907B4300024B20 /* PBXTargetDependency */ = {
+		9F1920B2144B0E2000B0617A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 9F4EC82312907B1E00024B20 /* Game Importer Droplet */;
-			targetProxy = 9F4EC82B12907B4300024B20 /* PBXContainerItemProxy */;
+			targetProxy = 9F1920B1144B0E2000B0617A /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -3124,6 +3478,14 @@
 			);
 			name = GamesFolderPanelOptions.xib;
 			path = ..;
+			sourceTree = "<group>";
+		};
+		9F1920E4144B2BCB00B0617A /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9F1920E5144B2BCB00B0617A /* en */,
+			);
+			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
 		9F1CBB5C120CABBB00C5E926 /* ImportWindow.xib */ = {
@@ -3297,20 +3659,60 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		9F1920E9144B2BCB00B0617A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = i386;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../MT32Emu/build/Debug\"",
+					"\"$(SRCROOT)/../PhysFS/build/Release\"",
+					"\"$(SRCROOT)/Frameworks\"",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
+				GCC_WARN_UNUSED_VALUE = NO;
+				INFOPLIST_FILE = "DOSBox Emulator Core/DOSBox Emulator Core-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				VALID_ARCHS = "i386 ppc";
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Debug;
+		};
+		9F1920EA144B2BCB00B0617A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					i386,
+					ppc,
+				);
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../MT32Emu/build/Debug\"",
+					"\"$(SRCROOT)/../PhysFS/build/Release\"",
+					"\"$(SRCROOT)/Frameworks\"",
+				);
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
+				GCC_WARN_UNUSED_VALUE = NO;
+				INFOPLIST_FILE = "DOSBox Emulator Core/DOSBox Emulator Core-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				VALID_ARCHS = "i386 ppc";
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Release;
+		};
 		9F4EC82712907B1F00024B20 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = NO;
 				GCC_MODEL_TUNING = G5;
 				INFOPLIST_FILE = "Game Importer Droplet/Info.plist";
-				INSTALL_PATH = "$(HOME)/Applications";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-				);
 				PRODUCT_NAME = "Game Importer Droplet";
 			};
 			name = Debug;
@@ -3318,17 +3720,8 @@
 		9F4EC82812907B1F00024B20 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
 				GCC_MODEL_TUNING = G5;
 				INFOPLIST_FILE = "Game Importer Droplet/Info.plist";
-				INSTALL_PATH = "$(HOME)/Applications";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-				);
 				PRODUCT_NAME = "Game Importer Droplet";
 			};
 			name = Release;
@@ -3336,12 +3729,12 @@
 		9FE76B331139A11A005EF7B1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = (
-					ppc,
 					i386,
 					x86_64,
+					ppc,
 				);
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = NO;
 				CURRENT_PROJECT_SHORT_VERSION_STRING = 1.2pre;
 				CURRENT_PROJECT_VERSION = 20111001.1;
 				GCC_PREPROCESSOR_DEFINITIONS = USE_PRIVATE_APIS;
@@ -3350,13 +3743,13 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx10.6;
+				VALID_ARCHS = "i386 x86_64 ppc";
 			};
 			name = Debug;
 		};
 		9FE76B341139A11A005EF7B1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = i386;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3367,7 +3760,6 @@
 					BOXER_DEBUG,
 					USE_PRIVATE_APIS,
 				);
-				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				GCC_WARN_SHADOW = YES;
@@ -3385,26 +3777,23 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = "";
-				"OTHER_CFLAGS[arch=i386]" = "-mstackrealign";
 				PRODUCT_NAME = Boxer;
+				VALID_ARCHS = i386;
 			};
 			name = Debug;
 		};
 		C01FCF4C08A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = (
-					ppc,
 					i386,
+					ppc,
 				);
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/Frameworks\"",
 				);
 				GCC_MODEL_TUNING = G5;
-				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				GCC_WARN_SHADOW = YES;
@@ -3421,22 +3810,21 @@
 					"\"$(SRCROOT)/Other Sources/JoypadCocoaSDK\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				OTHER_CFLAGS = "";
-				"OTHER_CFLAGS[arch=i386]" = "-mstackrealign";
 				PRODUCT_NAME = Boxer;
 				VALIDATE_PRODUCT = YES;
+				VALID_ARCHS = "i386 ppc";
 			};
 			name = Release;
 		};
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = (
-					ppc,
 					i386,
 					x86_64,
+					ppc,
 				);
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = NO;
 				CURRENT_PROJECT_SHORT_VERSION_STRING = 1.2pre;
 				CURRENT_PROJECT_VERSION = 20111001.1;
 				GCC_PREPROCESSOR_DEFINITIONS = USE_PRIVATE_APIS;
@@ -3444,13 +3832,22 @@
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				SDKROOT = macosx10.6;
-				VALID_ARCHS = "i386 ppc x86_64";
+				VALID_ARCHS = "i386 x86_64 ppc";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		9F1920E8144B2BCB00B0617A /* Build configuration list for PBXNativeTarget "DOSBox Emulator Core" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9F1920E9144B2BCB00B0617A /* Debug */,
+				9F1920EA144B2BCB00B0617A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		9F4EC82A12907B1F00024B20 /* Build configuration list for PBXNativeTarget "Game Importer Droplet" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

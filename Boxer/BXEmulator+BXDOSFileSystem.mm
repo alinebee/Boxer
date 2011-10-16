@@ -80,21 +80,6 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 	return letters;	
 }
 
-
-+ (NSSet *) dosFileExclusions
-{
-	static NSSet *exclusions = nil;
-	if (!exclusions) exclusions = [[NSSet alloc] initWithObjects:
-								   [BXConfigurationFileName stringByAppendingPathExtension: BXConfigurationFileExtension],
-								   [BXGameInfoFileName stringByAppendingPathExtension: BXGameInfoFileExtension],
-								   BXTargetSymlinkName,
-								   @"Icon\r",
-								   nil];
-								   
-	return exclusions;
-}
-
-
 + (BXDrive *) driveFromMountCommand: (NSString *)mountCommand
                            basePath: (NSString *)basePath
                               error: (NSError **)outError
@@ -1127,16 +1112,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 //Todo: supplement this by getting entire OS X filepaths out of DOSBox, instead of just filenames
 - (BOOL) _shouldShowFileWithName: (NSString *)fileName
 {
-	//Permit . and .. to be shown
-	if ([fileName isEqualToString: @"."] || [fileName isEqualToString: @".."]) return YES;
-	
-	//Hide all hidden UNIX files
-	//CHECK: will this ever hide valid DOS files?
-	if ([fileName hasPrefix: @"."]) return NO;
-	
-	//Hide OSX and Boxer metadata files
-	if ([[[self class] dosFileExclusions] containsObject: fileName]) return NO;
-	return YES;
+    return [[self delegate] emulator: self shouldShowFileWithName: fileName];
 }
 
 - (BOOL) _shouldAllowWriteAccessToPath: (NSString *)filePath onDOSBoxDrive: (DOS_Drive *)dosboxDrive

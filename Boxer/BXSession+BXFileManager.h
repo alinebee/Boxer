@@ -135,6 +135,10 @@ typedef NSUInteger BXDriveMountOptions;
 #pragma mark -
 #pragma mark Helper class methods
 
+//Returns a set of filesnames that should be hidden from DOS directory listings.
+//Used by emulator:shouldShowDOSFile:.
++ (NSSet *) hiddenFilenamePatterns;
+
 //Returns the most appropriate base location for a drive to expose the specified path:
 //If path points to a disc image, that will be returned
 //If path is inside a gamebox or Boxer mountable folder type, that container will be returned.

@@ -800,23 +800,6 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	return [[self DOSWindowController] viewportSize];
 }
 
-
-- (BOOL) emulator: (BXEmulator *)theEmulator shouldMountDriveFromShell: (NSString *)drivePath
-{
-    NSError *validationError = nil;
-    BOOL shouldMount = [self validateDrivePath: &drivePath error: &validationError];
-    
-    if (validationError)
-    {
-        [self presentError: validationError
-            modalForWindow: [self windowForSheet]
-                  delegate: nil
-        didPresentSelector: NULL
-               contextInfo: NULL];
-    }
-    return shouldMount;
-}
-
 - (void) processEventsForEmulator: (BXEmulator *)theEmulator
 {
 	[self _processEventsUntilDate: nil];

@@ -81,10 +81,6 @@ extern NSString * const BXEmulatorDidDisplayMT32MessageNotification;
 //Called whenever the emulator starts/finishes one iteration of its run loop.
 - (void) emulatorWillStartRunLoop: (BXEmulator *)emulator;
 - (void) emulatorDidFinishRunLoop: (BXEmulator *)emulator;
-
-//Called whenever a path is mounted from the DOS MOUNT command.
-//Return NO to prevent the mount.
-- (BOOL) emulator: (BXEmulator *)emulator shouldMountDriveFromShell: (NSString *)drive;
                         
                         
 #pragma mark -
@@ -134,6 +130,13 @@ extern NSString * const BXEmulatorDidDisplayMT32MessageNotification;
 #pragma mark Additional filesystem-related delegate methods
 
 @protocol BXEmulatorFileSystemDelegate <NSObject>
+
+//Return whether the file at the specified path should be shown in DOS directory listings.
+- (BOOL) emulator: (BXEmulator *)emulator shouldShowFileWithName: (NSString *)filePath;
+
+//Called whenever a path is mounted from the DOS MOUNT command.
+//Return NO to prevent the mount.
+- (BOOL) emulator: (BXEmulator *)emulator shouldMountDriveFromShell: (NSString *)drive;
 
 @optional
 //Notifies the delegate that a DOS drive has been added/removed.

@@ -56,6 +56,19 @@
 #pragma mark -
 #pragma mark Helper class methods
 
++ (NSSet *) hiddenFilenamePatterns
+{
+	static NSSet *exclusions = nil;
+	if (!exclusions) exclusions = [[NSSet alloc] initWithObjects:
+								   [BXConfigurationFileName stringByAppendingPathExtension: BXConfigurationFileExtension],
+								   [BXGameInfoFileName stringByAppendingPathExtension: BXGameInfoFileExtension],
+								   BXTargetSymlinkName,
+								   @"Icon\r",
+								   nil];
+    
+	return exclusions;
+}
+
 + (NSString *) preferredMountPointForPath: (NSString *)filePath
 {	
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
@@ -1352,6 +1365,10 @@
 	if (package && [path hasPrefix: [package gamePath]]) [package refresh];
 }
 
+
+#pragma mark -
+#pragma mark Emulator delegate methods
+
 - (void) emulatorDidMountDrive: (NSNotification *)theNotification
 {	
 	BXDrive *drive = [[theNotification userInfo] objectForKey: @"drive"];
@@ -1440,6 +1457,38 @@
 		[self didChangeValueForKey: @"executables"];
 	}
 }
+
+- (BOOL) emulator: (BXEmulator *)emulator shouldShowFileWithName: (NSString *)fileName
+{
+	//Permit . and .. to be shown
+	if ([fileName isEqualToString: @"."] || [fileName isEqualToString: @".."]) return YES;
+	
+	//Hide all hidden UNIX files
+	//CHECK: will this ever hide valid DOS files?
+	if ([fileName hasPrefix: @"."]) return NO;
+	
+	//Hide OSX and Boxer metadata files
+	if ([[[self class] hiddenFilenamePatterns] containsObject: fileName]) return NO;
+    
+	return YES;
+}
+
+- (BOOL) emulator: (BXEmulator *)theEmulator shouldMountDriveFromShell: (NSString *)drivePath
+{
+    NSError *validationError = nil;
+    BOOL shouldMount = [self validateDrivePath: &drivePath error: &validationError];
+    
+    if (validationError)
+    {
+        [self presentError: validationError
+            modalForWindow: [self windowForSheet]
+                  delegate: nil
+        didPresentSelector: NULL
+               contextInfo: NULL];
+    }
+    return shouldMount;
+}
+
 
 #pragma mark -
 #pragma mark Drive executable scanning

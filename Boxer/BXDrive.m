@@ -7,7 +7,6 @@
 
 
 #import "BXDrive.h"
-#import "BXAppController.h"
 #import "NSWorkspace+BXMountedVolumes.h"
 #import "NSWorkspace+BXFileTypes.h"
 #import "NSString+BXPaths.h"
@@ -22,13 +21,64 @@
 #pragma mark -
 #pragma mark Class methods
 
-//Pretty much all our properties depend on our path, so we add it here
-+ (NSSet *)keyPathsForValuesAffectingValueForKey: (NSString *)key
++ (NSSet *) hddVolumeTypes
 {
-	NSSet *keyPaths = [super keyPathsForValuesAffectingValueForKey: key];
-	if (![key isEqualToString: @"path"]) keyPaths = [keyPaths setByAddingObject: @"path"];
-	return keyPaths;
+	static NSSet *types = nil;
+	if (!types) types = [[NSSet alloc] initWithObjects:
+						 @"net.washboardabs.boxer-harddisk-folder",
+						 nil];
+	return types;
 }
+
++ (NSSet *) cdVolumeTypes
+{
+	static NSSet *types = nil;
+	if (!types) types = [[NSSet alloc] initWithObjects:
+						 @"com.goldenhawk.cdrwin-cuesheet",
+						 @"net.washboardabs.boxer-cdrom-folder",
+						 @"net.washboardabs.boxer-cdrom-bundle",
+						 @"public.iso-image",
+						 @"com.apple.disk-image-cdr",
+						 nil];
+	return types;
+}
+
++ (NSSet *) floppyVolumeTypes
+{
+	static NSSet *types = nil;
+	if (!types) types = [[NSSet alloc] initWithObjects:
+						 @"net.washboardabs.boxer-floppy-folder",
+						 @"com.winimage.raw-disk-image",
+                         @"com.apple.disk-image-ndif",
+                         @"com.microsoft.virtualpc-disk-image",
+						 nil];
+	return types;
+}
+
++ (NSSet *) mountableFolderTypes
+{
+	static NSSet *types = nil;
+	if (!types) types = [[NSSet alloc] initWithObjects:
+						 @"net.washboardabs.boxer-mountable-folder",
+						 nil];
+	return types;
+}
+
++ (NSSet *) mountableImageTypes
+{
+	static NSSet *types = nil;
+	if (!types) types = [[NSSet alloc] initWithObjects:
+						 @"public.iso-image",					//.iso
+						 @"com.apple.disk-image-cdr",			//.cdr
+						 @"com.goldenhawk.cdrwin-cuesheet",		//.cue
+						 @"net.washboardabs.boxer-disk-bundle", //.cdmedia
+						 @"com.winimage.raw-disk-image",		//.ima
+                         @"com.microsoft.virtualpc-disk-image", //.vfd
+                         @"com.apple.disk-image-ndif",          //.img
+						 nil];
+	return types;
+}
+
 
 + (NSString *) descriptionForType: (BXDriveType)driveType
 {
@@ -48,8 +98,8 @@
 + (BXDriveType) preferredTypeForPath: (NSString *)filePath
 {	
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	if ([workspace file: filePath matchesTypes: [BXAppController cdVolumeTypes]])		return BXDriveCDROM;
-	if ([workspace file: filePath matchesTypes: [BXAppController floppyVolumeTypes]])	return BXDriveFloppyDisk;
+	if ([workspace file: filePath matchesTypes: [self cdVolumeTypes]])		return BXDriveCDROM;
+	if ([workspace file: filePath matchesTypes: [self floppyVolumeTypes]])	return BXDriveFloppyDisk;
 
 	//Check the volume type of the underlying filesystem for that path
 	NSString *volumeType = [workspace volumeTypeForPath: filePath];
@@ -77,7 +127,7 @@
 	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
 						   
 	//Disk images store their own volume labels
-	if ([workspace file: filePath matchesTypes: [BXAppController mountableImageTypes]]) return nil;
+	if ([workspace file: filePath matchesTypes: [self mountableImageTypes]]) return nil;
 						   
 	//Extensions to strip from filenames
 	NSArray *strippedExtensions = [NSArray arrayWithObjects:
@@ -93,7 +143,7 @@
 	
 	//Mountable folders can include a drive letter prefix as well as a drive label,
 	//so have a crack at parsing that out
-	if ([workspace file: filePath matchesTypes: [BXAppController mountableFolderTypes]])
+	if ([workspace file: filePath matchesTypes: [self mountableFolderTypes]])
 	{
 		NSString *detectedLabel	= [baseName stringByMatching: @"^([a-xA-X] )?(.+)$" capture: 2];
 		if (detectedLabel) return detectedLabel;
@@ -106,8 +156,8 @@
 + (NSString *) preferredDriveLetterForPath: (NSString *)filePath
 {
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	if ([workspace file: filePath matchesTypes: [BXAppController mountableImageTypes]] ||
-		[workspace file: filePath matchesTypes: [BXAppController mountableFolderTypes]])
+	if ([workspace file: filePath matchesTypes: [self mountableImageTypes]] ||
+		[workspace file: filePath matchesTypes: [self mountableFolderTypes]])
 	{
 		NSString *baseName			= [[filePath stringByDeletingPathExtension] lastPathComponent];
 		NSString *detectedLetter	= [baseName stringByMatching: @"^([a-xA-X])( .*)?$" capture: 1];
@@ -125,6 +175,15 @@
 	}
 	else return filePath;
 }
+
+//Pretty much all our properties depend on our path, so we add it here
++ (NSSet *)keyPathsForValuesAffectingValueForKey: (NSString *)key
+{
+	NSSet *keyPaths = [super keyPathsForValuesAffectingValueForKey: key];
+	if (![key isEqualToString: @"path"]) keyPaths = [keyPaths setByAddingObject: @"path"];
+	return keyPaths;
+}
+
 
 #pragma mark -
 #pragma mark Initializers

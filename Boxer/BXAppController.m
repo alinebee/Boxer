@@ -63,36 +63,17 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 + (NSSet *) hddVolumeTypes
 {
-	static NSSet *types = nil;
-	if (!types) types = [[NSSet alloc] initWithObjects:
-						 @"net.washboardabs.boxer-harddisk-folder",
-						 nil];
-	return types;
+    return [BXDrive hddVolumeTypes];
 }
 
 + (NSSet *) cdVolumeTypes
 {
-	static NSSet *types = nil;
-	if (!types) types = [[NSSet alloc] initWithObjects:
-						 @"com.goldenhawk.cdrwin-cuesheet",
-						 @"net.washboardabs.boxer-cdrom-folder",
-						 @"net.washboardabs.boxer-cdrom-bundle",
-						 @"public.iso-image",
-						 @"com.apple.disk-image-cdr",
-						 nil];
-	return types;
+    return [BXDrive cdVolumeTypes];
 }
 
 + (NSSet *) floppyVolumeTypes
 {
-	static NSSet *types = nil;
-	if (!types) types = [[NSSet alloc] initWithObjects:
-						 @"net.washboardabs.boxer-floppy-folder",
-						 @"com.winimage.raw-disk-image",
-                         @"com.apple.disk-image-ndif",
-                         @"com.microsoft.virtualpc-disk-image",
-						 nil];
-	return types;
+    return [BXDrive floppyVolumeTypes];
 }
 
 + (NSSet *) mountableFolderTypes
@@ -880,7 +861,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	
 	if (isFolder && ![ws isFilePackageAtPath: filePath])
 	{
-		return [ws openFile: filePath];
+		return [ws selectFile: nil inFileViewerRootedAtPath: filePath];
 	}
 	else
 	{

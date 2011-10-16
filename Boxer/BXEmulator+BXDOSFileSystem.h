@@ -48,7 +48,6 @@
 + (NSArray *) floppyDriveLetters;	//letters appropriate for floppy drives (A-W)
 + (NSArray *) hardDriveLetters;		//letters appropriate for hard disk drives (C-W)
 + (NSArray *) CDROMDriveLetters;	//letters appropriate for CD-ROM drives (D-W)
-+ (NSSet *) dosFileExclusions;		//Filenames to hide from DOS directory listings
 
 
 //Generates a drive from the specified mount/imgmount command string,

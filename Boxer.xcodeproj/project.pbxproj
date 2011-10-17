@@ -276,6 +276,7 @@
 		9F6A79041203547800D2097D /* gamefolder.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F6A79031203547800D2097D /* gamefolder.icns */; };
 		9F6C1CDA14373AF600601ACB /* BXDummyMIDIDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F6C1CD914373AF600601ACB /* BXDummyMIDIDevice.m */; };
 		9F70277B13D706CC00606B4C /* BXBezelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F70277A13D706CC00606B4C /* BXBezelController.m */; };
+		9F70277D13D70CA600606B4C /* Bezel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F70277C13D70CA600606B4C /* Bezel.xib */; };
 		9F70278413D72D8100606B4C /* BXHUDControls.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F70278313D72D8100606B4C /* BXHUDControls.m */; };
 		9F70278713D730D000606B4C /* BunnyTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F70278513D730D000606B4C /* BunnyTemplate.png */; };
 		9F70278813D730D000606B4C /* TurtleTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F70278613D730D000606B4C /* TurtleTemplate.png */; };
@@ -408,7 +409,6 @@
 		9F843FE11226EB1100FD37F1 /* import.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F843FE01226EB1100FD37F1 /* import.png */; };
 		9F86DB401431EF5F00A2EFB6 /* BXMIDIDeviceMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F86DB3F1431EF5F00A2EFB6 /* BXMIDIDeviceMonitor.m */; };
 		9F87EF7A13C232B600326608 /* BXFlightstickLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6382B13C0DC48004478A3 /* BXFlightstickLayout.m */; };
-		9F886FDB144CB6C30033CCD3 /* Bezel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F886FDD144CB6C30033CCD3 /* Bezel.xib */; };
 		9F8A976010E7EDDE00A4B72A /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */; };
 		9F8A9CD2143E120B00C37A93 /* MT32ROMTypes.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9F8A9CD1143E120B00C37A93 /* MT32ROMTypes.plist */; };
 		9F8BFE9F12C0EF7B0059030F /* BXDisplayLinkRenderingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8BFE9E12C0EF7B0059030F /* BXDisplayLinkRenderingView.m */; };
@@ -434,7 +434,7 @@
 		9F9FE70410FA5F5800E3944B /* NSWorkspace+BXIcons.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9FE70310FA5F5800E3944B /* NSWorkspace+BXIcons.m */; };
 		9FA0C9E313D24FF3000F6FCB /* DDHidUsage+BXUsageExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA0C9E213D24FF3000F6FCB /* DDHidUsage+BXUsageExtensions.m */; };
 		9FA1CF6813E5B44000416D74 /* BXMOMORacingControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA1CF6713E5B43F00416D74 /* BXMOMORacingControllerProfile.m */; };
-		9FA2E596109D251100E50623 /* BGHUDAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FA2E595109D251100E50623 /* BGHUDAppKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		9FA2E596109D251100E50623 /* BGHUDAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FA2E595109D251100E50623 /* BGHUDAppKit.framework */; };
 		9FA2E5D9109D255300E50623 /* BGHUDAppKit.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9FA2E595109D251100E50623 /* BGHUDAppKit.framework */; };
 		9FA54099139E85D800999940 /* 4ButtonJoystick.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FA54098139E85D800999940 /* 4ButtonJoystick.png */; };
 		9FA5D68311EB6CCC0012DFA5 /* BXLineEnumerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FA5D68211EB6CCC0012DFA5 /* BXLineEnumerator.m */; };
@@ -827,6 +827,7 @@
 		9F6C1CD914373AF600601ACB /* BXDummyMIDIDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDummyMIDIDevice.m; sourceTree = "<group>"; };
 		9F70277913D706CC00606B4C /* BXBezelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBezelController.h; sourceTree = "<group>"; };
 		9F70277A13D706CC00606B4C /* BXBezelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBezelController.m; sourceTree = "<group>"; };
+		9F70277C13D70CA600606B4C /* Bezel.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Bezel.xib; sourceTree = "<group>"; };
 		9F70278213D72D8100606B4C /* BXHUDControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXHUDControls.h; sourceTree = "<group>"; };
 		9F70278313D72D8100606B4C /* BXHUDControls.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXHUDControls.m; sourceTree = "<group>"; };
 		9F70278513D730D000606B4C /* BunnyTemplate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BunnyTemplate.png; sourceTree = "<group>"; };
@@ -1100,7 +1101,6 @@
 		9F86DB3F1431EF5F00A2EFB6 /* BXMIDIDeviceMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXMIDIDeviceMonitor.m; sourceTree = "<group>"; };
 		9F87EF7113C1B18900326608 /* BXFlightstickAccelerometerLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFlightstickAccelerometerLayout.h; sourceTree = "<group>"; };
 		9F87EF7213C1B18900326608 /* BXFlightstickAccelerometerLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFlightstickAccelerometerLayout.m; sourceTree = "<group>"; };
-		9F886FDC144CB6C30033CCD3 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Bezel.xib; sourceTree = "<group>"; };
 		9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
 		9F8A9CD1143E120B00C37A93 /* MT32ROMTypes.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = MT32ROMTypes.plist; sourceTree = "<group>"; };
 		9F8B8B25142B5C5B0077B6F2 /* midi_mt32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = midi_mt32.h; sourceTree = "<group>"; };
@@ -1328,7 +1328,7 @@
 		9FE50B581365845200495EBE /* BXInputController+BXJoystickInput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXInputController+BXJoystickInput.m"; sourceTree = "<group>"; };
 		9FE90BF511F8D1DC003CFFFF /* BXDelegatedView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDelegatedView.h; sourceTree = "<group>"; };
 		9FE90BF611F8D1DC003CFFFF /* BXDelegatedView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDelegatedView.m; sourceTree = "<group>"; };
-		9FEA1831144BFD8F00E39ACD /* BXAudioSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXAudioSource.h; sourceTree = "<group>"; };
+		9FEA1831144BFD8F00E39ACD /* BXAudioSource.h */ = {isa = PBXFileReference; fileEncoding = 4; path = BXAudioSource.h; sourceTree = "<group>"; };
 		9FEAA3EA1204595B0085F008 /* BXOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXOperation.h; sourceTree = "<group>"; };
 		9FEAA3EB1204595B0085F008 /* BXOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXOperation.m; sourceTree = "<group>"; };
 		9FEBB70E11DF9BB50055933F /* BXEmulatorDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatorDelegate.h; sourceTree = "<group>"; };
@@ -1900,7 +1900,7 @@
 				9FDE34381351E127000DCE44 /* ImportTipsPanel.xib */,
 				9F45A46A109C9A0400593456 /* MountPanelOptions.xib */,
 				9FDE34361351E0F5000DCE44 /* Welcome.xib */,
-				9F886FDD144CB6C30033CCD3 /* Bezel.xib */,
+				9F70277C13D70CA600606B4C /* Bezel.xib */,
 			);
 			name = XIBs;
 			sourceTree = "<group>";
@@ -2935,7 +2935,7 @@
 				9FA54099139E85D800999940 /* 4ButtonJoystick.png in Resources */,
 				9F7FC94C139EB38300D60320 /* RacingWheel.png in Resources */,
 				9FD012E313AB845200AF6FE8 /* GamepadTemplate.pdf in Resources */,
-				9F886FDB144CB6C30033CCD3 /* Bezel.xib in Resources */,
+				9F70277D13D70CA600606B4C /* Bezel.xib in Resources */,
 				9F70278713D730D000606B4C /* BunnyTemplate.png in Resources */,
 				9F70278813D730D000606B4C /* TurtleTemplate.png in Resources */,
 				9F96969813E59CA100FB51EC /* NoJoystickTemplate.pdf in Resources */,
@@ -3575,14 +3575,6 @@
 			);
 			name = ProgramPanel.xib;
 			path = ..;
-			sourceTree = "<group>";
-		};
-		9F886FDD144CB6C30033CCD3 /* Bezel.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				9F886FDC144CB6C30033CCD3 /* English */,
-			);
-			name = Bezel.xib;
 			sourceTree = "<group>";
 		};
 		9F9A4CA410F67DD800E61965 /* Preferences.xib */ = {

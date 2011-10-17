@@ -166,12 +166,12 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
 #pragma mark Private methods
 
 //Called periodically by our MIDI channel to fill its buffer with audio data.
-void _renderMIDIOutput(Bitu len)
+void _renderMIDIOutput(Bitu numFrames)
 {
     //We need to look up the corresponding channel for this because DOSBox's
     //mixer doesn't pass any context with its callbacks.
     MixerChannel *channel = MIXER_FindChannel(BXMIDIChannelName);
-    if (channel) [[BXEmulator currentEmulator] _renderMIDIOutputToChannel: channel length: len];
+    if (channel) [[BXEmulator currentEmulator] _renderMIDIOutputToChannel: channel frames: numFrames];
 }
 
 
@@ -206,18 +206,25 @@ void _renderMIDIOutput(Bitu len)
     }
 }
 
-- (void) _renderMIDIOutputToChannel: (MixerChannel *)channel length: (NSUInteger)length
+- (void) _renderMIDIOutputToChannel: (MixerChannel *)channel frames: (NSUInteger)numFrames
 {
     id <BXAudioSource> source = (id <BXAudioSource>)[self activeMIDIDevice];
     
     NSAssert1([source conformsToProtocol: @protocol(BXAudioSource)], @"_renderMIDIOutputToChannel:length: called for MIDI device that does not implement BXAudioSource: %@", source);
     
+    [self _renderOutputFromSource: source toChannel: channel frames: numFrames];
+}
+
+- (void) _renderOutputFromSource: (id <BXAudioSource>)source
+                       toChannel: (MixerChannel *)channel
+                          frames: (NSUInteger)numFrames
+{
     NSUInteger sampleRate = 0;
     BXAudioFormat format = BXAudioFormatAny;
     
     void *buffer = (void *)MixTemp;
     BOOL audioRendered = [source renderOutputToBuffer: buffer
-                                               length: length
+                                               frames: numFrames
                                            sampleRate: &sampleRate
                                                format: &format];
     
@@ -225,7 +232,7 @@ void _renderMIDIOutput(Bitu len)
     {
         [self _renderBuffer: MixTemp
                   toChannel: channel
-                     length: length
+                     frames: numFrames
                      format: format];
     }
     else
@@ -236,7 +243,7 @@ void _renderMIDIOutput(Bitu len)
 
 - (void) _renderBuffer: (void *)buffer
              toChannel: (MixerChannel *)channel
-                length: (NSUInteger)length
+                frames: (NSUInteger)numFrames
                 format: (BXAudioFormat)format
 {
     NSUInteger size = format & BXAudioFormatSizeMask;
@@ -248,32 +255,32 @@ void _renderMIDIOutput(Bitu len)
         case BXAudioFormat8Bit:
             if (isSigned)
             {
-                if (isStereo)   channel->AddSamples_s8s(length, (const Bit8s *)buffer);
-                else            channel->AddSamples_m8s(length, (const Bit8s *)buffer);
+                if (isStereo)   channel->AddSamples_s8s(numFrames, (const Bit8s *)buffer);
+                else            channel->AddSamples_m8s(numFrames, (const Bit8s *)buffer);
             }
             else
             {
-                if (isStereo)   channel->AddSamples_s8(length, (const Bit8u *)buffer);
-                else            channel->AddSamples_m8(length, (const Bit8u *)buffer);
+                if (isStereo)   channel->AddSamples_s8(numFrames, (const Bit8u *)buffer);
+                else            channel->AddSamples_m8(numFrames, (const Bit8u *)buffer);
             }
             break;
         
         case BXAudioFormat16Bit:
             if (isSigned)
             {
-                if (isStereo)   channel->AddSamples_s16(length, (const Bit16s *)buffer);
-                else            channel->AddSamples_m16(length, (const Bit16s *)buffer);
+                if (isStereo)   channel->AddSamples_s16(numFrames, (const Bit16s *)buffer);
+                else            channel->AddSamples_m16(numFrames, (const Bit16s *)buffer);
             }
             else
             {
-                if (isStereo)   channel->AddSamples_s16u(length, (const Bit16u *)buffer);
-                else            channel->AddSamples_m16u(length, (const Bit16u *)buffer);
+                if (isStereo)   channel->AddSamples_s16u(numFrames, (const Bit16u *)buffer);
+                else            channel->AddSamples_m16u(numFrames, (const Bit16u *)buffer);
             }
             break;
             
         case BXAudioFormat32Bit:
-            if (isStereo)       channel->AddSamples_s32(length, (const Bit32s *)buffer);
-            else                channel->AddSamples_m32(length, (const Bit32s *)buffer);
+            if (isStereo)       channel->AddSamples_s32(numFrames, (const Bit32s *)buffer);
+            else                channel->AddSamples_m32(numFrames, (const Bit32s *)buffer);
     }
 }
 

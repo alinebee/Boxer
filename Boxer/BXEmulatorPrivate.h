@@ -330,14 +330,19 @@ enum {
 //Disables and removes the current MIDI mixer channel, if one exists.
 - (void) _removeMIDIMixerChannel;
 
-//Render the active MIDI device's MIDI output to the specified channel,
-//if it supports mixing.
+//Render the active MIDI device's MIDI output to the specified channel.
+//Will raise an assertion exception if the current MIDI source does not support mixing.
 - (void) _renderMIDIOutputToChannel: (MixerChannel *)channel
-                             length: (NSUInteger)length;
+                             frames: (NSUInteger)numFrames;
 
-//Render the specified audio data to the specified channel.
+//Render the specified number of output frames from the specified source to the specified channel.
+- (void) _renderOutputFromSource: (id <BXAudioSource>)source
+                       toChannel: (MixerChannel *)channel
+                          frames: (NSUInteger)numFrames;
+
+//Render the specified audio data buffer to the specified channel.
 - (void) _renderBuffer: (void *)buffer
              toChannel: (MixerChannel *)channel
-                length: (NSUInteger)length
+                frames: (NSUInteger)numFrames
                 format: (BXAudioFormat)format;
 @end

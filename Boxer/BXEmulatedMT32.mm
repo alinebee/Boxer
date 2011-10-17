@@ -347,11 +347,12 @@ void _logMT32DebugMessage(void *userData, const char *fmt, va_list list);
 }
 
 - (BOOL) renderOutputToBuffer: (void *)buffer 
-                       length: (NSUInteger)length
+                       frames: (NSUInteger)numFrames
                    sampleRate: (NSUInteger *)sampleRate
                        format: (BXAudioFormat *)format
 {
-    _synth->render((SInt16 *)buffer, length);
+    _synth->render((SInt16 *)buffer, numFrames);
+
     *sampleRate = [self sampleRate];
     *format = BXAudioFormat16Bit | BXAudioFormatSigned | BXAudioFormatStereo;
     return YES;

@@ -20,6 +20,7 @@
 #import "BXEmulatedKeyboard.h"
 #import "BXEmulatedJoystick.h"
 #import "BXEmulatedMouse.h"
+#import "BXAudioSource.h"
 
 
 #pragma mark -
@@ -28,6 +29,7 @@
 
 class DOS_Shell;
 class DOS_Drive;
+class MixerChannel;
 
 typedef struct BXDriveGeometry {
 	NSUInteger bytesPerSector;
@@ -317,4 +319,25 @@ enum {
 //Called from handleSysex: and handleMessage: to create the MIDI device the first
 //time it is needed.
 - (void) _attachRequestedMIDIDeviceIfNeeded;
+
+
+//Returns the DOSBox channel used for MIDI mixing, or NULL if none is available.
+- (MixerChannel *) _MIDIMixerChannel;
+
+//Creates and returns a new DOSBox mixer channel for handling MIDI.
+- (MixerChannel *) _addMIDIMixerChannelWithSampleRate: (NSUInteger)sampleRate;
+
+//Disables and removes the current MIDI mixer channel, if one exists.
+- (void) _removeMIDIMixerChannel;
+
+//Render the active MIDI device's MIDI output to the specified channel,
+//if it supports mixing.
+- (void) _renderMIDIOutputToChannel: (MixerChannel *)channel
+                             length: (NSUInteger)length;
+
+//Render the specified audio data to the specified channel.
+- (void) _renderBuffer: (void *)buffer
+             toChannel: (MixerChannel *)channel
+                length: (NSUInteger)length
+                format: (BXAudioFormat)format;
 @end

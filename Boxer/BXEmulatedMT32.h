@@ -12,6 +12,7 @@
 
 #import <Foundation/Foundation.h>
 #import "BXMIDIDevice.h"
+#import "BXAudioSource.h"
 
 #ifdef __cplusplus
     #import "MT32Emu/mt32emu.h"
@@ -50,12 +51,13 @@ typedef NSUInteger BXMT32ROMType;
 
 @protocol BXEmulatedMT32Delegate;
 
-@interface BXEmulatedMT32 : NSObject <BXMIDIDevice>
+@interface BXEmulatedMT32 : NSObject <BXMIDIDevice, BXAudioSource>
 {
     NSString *_PCMROMPath;
     NSString *_controlROMPath;
     id <BXEmulatedMT32Delegate> _delegate;
     NSError *_synthError;
+    NSUInteger _sampleRate;
     
 #ifdef __cplusplus
     MT32Emu::Synth *_synth;
@@ -65,6 +67,7 @@ typedef NSUInteger BXMT32ROMType;
 @property (copy, nonatomic) NSString *PCMROMPath;
 @property (copy, nonatomic) NSString *controlROMPath;
 @property (assign, nonatomic) id <BXEmulatedMT32Delegate> delegate;
+@property (assign, nonatomic) NSUInteger sampleRate;
 
 - (id <BXMIDIDevice>) initWithPCMROM: (NSString *)PCMROM
                           controlROM: (NSString *)controlROM

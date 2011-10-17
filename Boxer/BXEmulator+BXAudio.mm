@@ -11,8 +11,11 @@
 #import "BXExternalMIDIDevice.h"
 #import "BXExternalMT32+BXMT32Sysexes.h"
 #import "BXMIDISynth.h"
+#import "BXAudioSource.h"
+#import "mixer.h"
 
 
+static const char *BXMIDIChannelName = "MIDI";
 
 NSString * const BXEmulatorDidDisplayMT32MessageNotification = @"BXEmulatorDidDisplayMT32MessageNotification";
 
@@ -49,18 +52,36 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
     return [[[self requestedMIDIDeviceDescription] objectForKey: BXMIDIMusicTypeKey] integerValue];
 }
 
+- (void) setActiveMIDIDevice:(id<BXMIDIDevice>)device
+{
+    if (device != [self activeMIDIDevice])
+    {
+        [activeMIDIDevice release];
+        activeMIDIDevice = [device retain];
+        
+        //If the device supports mixing, create a DOSBox mixer channel for it.
+        if ([device conformsToProtocol: @protocol(BXAudioSource)])
+        {
+            [self _addMIDIMixerChannelWithSampleRate: [(id <BXAudioSource>)device sampleRate]];
+        }
+        //Otherwise, disable and remove any existing mixer channel.
+        else [self _removeMIDIMixerChannel];
+        
+#ifdef BOXER_DEBUG
+        //When debugging, display an LCD message so that we know MT-32 mode has kicked in
+        if ([device supportsMT32Music]) [self sendMT32LCDMessage: @"BOXER:::MT-32 Active"];
+#endif
+    }
+}
+
 - (id <BXMIDIDevice>) attachMIDIDeviceForDescription: (NSDictionary *)description
 {
     id <BXMIDIDevice> device = [[self delegate] MIDIDeviceForEmulator: self
                                                    meetingDescription: description];
     
-    if (device)
+    if (device && device != [self activeMIDIDevice])
     {
         [self setActiveMIDIDevice: device];
-#ifdef BOXER_DEBUG
-        //When debugging, display an LCD message so that we know MT-32 mode has kicked in
-        if ([device isKindOfClass: [BXEmulatedMT32 class]]) [self sendMT32LCDMessage: @"BOXER:::MT-32 Active"];
-#endif
     }
     return device;
 }
@@ -143,6 +164,118 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
 
 #pragma mark -
 #pragma mark Private methods
+
+//Called periodically by our MIDI channel to fill its buffer with audio data.
+void _renderMIDIOutput(Bitu len)
+{
+    //We need to look up the corresponding channel for this because DOSBox's
+    //mixer doesn't pass any context with its callbacks.
+    MixerChannel *channel = MIXER_FindChannel(BXMIDIChannelName);
+    if (channel) [[BXEmulator currentEmulator] _renderMIDIOutputToChannel: channel length: len];
+}
+
+
+- (MixerChannel *) _MIDIMixerChannel
+{
+    return MIXER_FindChannel(BXMIDIChannelName);
+}
+
+- (MixerChannel *) _addMIDIMixerChannelWithSampleRate: (NSUInteger)sampleRate
+{
+    MixerChannel *channel = [self _MIDIMixerChannel];
+    
+    if (channel)
+    {
+        channel->SetFreq(sampleRate);
+    }
+    else
+    {
+        channel = MIXER_AddChannel(_renderMIDIOutput, sampleRate, BXMIDIChannelName);
+    }
+    channel->Enable(true);
+    return channel;
+}
+
+- (void) _removeMIDIMixerChannel
+{
+    MixerChannel *channel = [self _MIDIMixerChannel];
+    if (channel)
+    {
+        channel->Enable(false);
+        MIXER_DelChannel(channel);
+    }
+}
+
+- (void) _renderMIDIOutputToChannel: (MixerChannel *)channel length: (NSUInteger)length
+{
+    id <BXAudioSource> source = (id <BXAudioSource>)[self activeMIDIDevice];
+    
+    NSAssert1([source conformsToProtocol: @protocol(BXAudioSource)], @"_renderMIDIOutputToChannel:length: called for MIDI device that does not implement BXAudioSource: %@", source);
+    
+    NSUInteger sampleRate = 0;
+    BXAudioFormat format = BXAudioFormatAny;
+    
+    void *buffer = (void *)MixTemp;
+    BOOL audioRendered = [source renderOutputToBuffer: buffer
+                                               length: length
+                                           sampleRate: &sampleRate
+                                               format: &format];
+    
+    if (audioRendered)
+    {
+        [self _renderBuffer: MixTemp
+                  toChannel: channel
+                     length: length
+                     format: format];
+    }
+    else
+    {
+        channel->AddSilence();
+    }
+}
+
+- (void) _renderBuffer: (void *)buffer
+             toChannel: (MixerChannel *)channel
+                length: (NSUInteger)length
+                format: (BXAudioFormat)format
+{
+    NSUInteger size = format & BXAudioFormatSizeMask;
+    NSUInteger isSigned = (format & BXAudioFormatSigned);
+    NSUInteger isStereo = (format & BXAudioFormatStereo);
+    
+    switch (size)
+    {
+        case BXAudioFormat8Bit:
+            if (isSigned)
+            {
+                if (isStereo)   channel->AddSamples_s8s(length, (const Bit8s *)buffer);
+                else            channel->AddSamples_m8s(length, (const Bit8s *)buffer);
+            }
+            else
+            {
+                if (isStereo)   channel->AddSamples_s8(length, (const Bit8u *)buffer);
+                else            channel->AddSamples_m8(length, (const Bit8u *)buffer);
+            }
+            break;
+        
+        case BXAudioFormat16Bit:
+            if (isSigned)
+            {
+                if (isStereo)   channel->AddSamples_s16(length, (const Bit16s *)buffer);
+                else            channel->AddSamples_m16(length, (const Bit16s *)buffer);
+            }
+            else
+            {
+                if (isStereo)   channel->AddSamples_s16u(length, (const Bit16u *)buffer);
+                else            channel->AddSamples_m16u(length, (const Bit16u *)buffer);
+            }
+            break;
+            
+        case BXAudioFormat32Bit:
+            if (isStereo)       channel->AddSamples_s32(length, (const Bit32s *)buffer);
+            else                channel->AddSamples_m32(length, (const Bit32s *)buffer);
+    }
+}
 
 - (void) setRequestedMIDIDeviceDescription: (NSDictionary *)newDescription
 {

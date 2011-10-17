@@ -10,7 +10,6 @@
 #import "MT32Emu/Synth.h"
 #import "MT32Emu/Filestream.h"
 #import "BXEmulatedMT32Delegate.h"
-#import "mixer.h"
 
 
 #pragma mark -
@@ -24,6 +23,7 @@ NSString * const BXMT32PCMROMTypeKey = @"BXMT32PCMROMTypeKey";
 #define BXMT32ControlROMSize    64 * 1024
 #define BXMT32PCMROMSize        512 * 1024
 #define BXCM32LPCMROMSize       1024 * 1024
+#define BXMT32DefaultSampleRate 32000
 
 
 
@@ -34,16 +34,14 @@ NSString * const BXMT32PCMROMTypeKey = @"BXMT32PCMROMTypeKey";
 @property (retain, nonatomic) NSError *synthError;
 
 - (BOOL) _prepareMT32EmulatorWithError: (NSError **)outError;
-- (void) _renderOutputForLength: (NSUInteger)length;
 - (NSString *) _pathToROMMatchingName: (NSString *)ROMName;
 - (void) _reportMT32MessageOfType: (MT32Emu::ReportType)type data: (const void *)reportData;
 
-//Callbacks for MT32Emu::Synth and DOSBox mixer
+//Callbacks for MT32Emu::Synth
 MT32Emu::File * _openMT32ROM(void *userData, const char *filename);
 void _closeMT32ROM(void *userData, MT32Emu::File *file);
 int _reportMT32Message(void *userData, MT32Emu::ReportType type, const void *reportData);
 void _logMT32DebugMessage(void *userData, const char *fmt, va_list list);
-void _renderOutput(Bitu len);
 
 @end
 
@@ -55,12 +53,8 @@ void _renderOutput(Bitu len);
 @synthesize delegate = _delegate;
 @synthesize PCMROMPath = _PCMROMPath, controlROMPath = _controlROMPath;
 @synthesize synthError = _synthError;
+@synthesize sampleRate = _sampleRate;
 
-
-//Used by the DOSBox mixer, to flag the active MT-32 instance to which we should send the callback.
-BXEmulatedMT32 *_currentEmulatedMT32;
-//Used to track the single mixer channel to which the active MT-32 instance will mix.
-MixerChannel *_mixerChannel;
 
 #pragma mark -
 #pragma mark ROM validation methods
@@ -270,16 +264,13 @@ MixerChannel *_mixerChannel;
     {
         [self setPCMROMPath: PCMROM];
         [self setControlROMPath: controlROM];
+        [self setSampleRate: BXMT32DefaultSampleRate];
         [self setDelegate: delegate];
         
         if (![self _prepareMT32EmulatorWithError: outError])
         {
             [self release];
             self = nil;
-        }
-        else
-        {
-            _currentEmulatedMT32 = self;
         }
     }
     return self;
@@ -292,17 +283,6 @@ MixerChannel *_mixerChannel;
         _synth->close();
         delete _synth;
         _synth = NULL;
-    }
-    
-    if (_currentEmulatedMT32 == self)
-    {
-        _currentEmulatedMT32 = nil;
-        if (_mixerChannel)
-        {
-            _mixerChannel->Enable(false);
-            MIXER_DelChannel(_mixerChannel);
-            _mixerChannel = NULL;
-        }
     }
 }
 
@@ -358,14 +338,23 @@ MixerChannel *_mixerChannel;
 
 - (void) resume
 {
-    NSAssert(_mixerChannel, @"resume called before successful initialization.");
-    _mixerChannel->Enable(YES);
+    //Because BXEmulatedMT32 is mixer-driven, this has no effect
 }
 
 - (void) pause
 {
-    NSAssert(_mixerChannel, @"pause called before successful initialization.");
-    _mixerChannel->Enable(NO);
+    //Because BXEmulatedMT32 is mixer-driven, this has no effect
+}
+
+- (BOOL) renderOutputToBuffer: (void *)buffer 
+                       length: (NSUInteger)length
+                   sampleRate: (NSUInteger *)sampleRate
+                       format: (BXAudioFormat *)format
+{
+    _synth->render((SInt16 *)buffer, length);
+    *sampleRate = [self sampleRate];
+    *format = BXAudioFormat16Bit | BXAudioFormatSigned | BXAudioFormatStereo;
+    return YES;
 }
 
 
@@ -395,7 +384,7 @@ MixerChannel *_mixerChannel;
     properties.openFile = &_openMT32ROM;
     properties.closeFile = &_closeMT32ROM;
     properties.printDebug = &_logMT32DebugMessage;
-    properties.sampleRate = 32000;
+    properties.sampleRate = [self sampleRate];
     properties.baseDir = NULL;
     
     if (!_synth->open(properties))
@@ -408,23 +397,7 @@ MixerChannel *_mixerChannel;
         return NO;
     }
     
-    if (!_mixerChannel)
-    {
-        _mixerChannel = MIXER_AddChannel(_renderOutput, properties.sampleRate, "MT32");
-        _mixerChannel->Enable(YES);
-    }
-    
     return YES;
-}
-
-- (void) _renderOutputForLength: (NSUInteger)length
-{
-    NSAssert(_synth && _mixerChannel, @"_renderOutputForLength: called before successful initialization.");
-    
-    Bit16s buffer[MIXER_BUFSIZE];
-    
-    _synth->render(buffer, length);
-    _mixerChannel->AddSamples_s16(length, buffer);
 }
 
 - (NSString *) _pathToROMMatchingName: (NSString *)ROMName
@@ -506,14 +479,6 @@ void _logMT32DebugMessage(void *userData, const char *fmt, va_list list)
 #ifdef BOXER_DEBUG
     NSLogv([NSString stringWithUTF8String: fmt], list);
 #endif
-}
-
-//Called periodically by DOSBox's mixer to fill its buffer with audio data.
-void _renderOutput(Bitu len)
-{
-    //We need to use a hacky global variable for this because DOSBox's mixer
-    //doesn't pass any context with its callbacks.
-    [_currentEmulatedMT32 _renderOutputForLength: len];
 }
 
 @end

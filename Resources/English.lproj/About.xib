@@ -130,6 +130,7 @@
 									<reference key="NSSuperview" ref="524924394"/>
 									<reference key="NSWindow"/>
 									<reference key="NSNextKeyView" ref="245758057"/>
+									<int key="NSViewLayerContentsRedrawPolicy">2</int>
 									<bool key="NSEnabled">YES</bool>
 									<object class="NSTextFieldCell" key="NSCell" id="467885608">
 										<int key="NSCellFlags">68288064</int>
@@ -150,13 +151,11 @@
 												<bytes key="NSWhite">MC42NjY2NjY2NjY3AA</bytes>
 											</object>
 										</object>
-										<object class="NSColor" key="NSTextColor" id="543207403">
-											<int key="NSColorSpace">6</int>
-											<string key="NSCatalogName">System</string>
-											<string key="NSColorName">controlTextColor</string>
-											<object class="NSColor" key="NSColor" id="352974880">
-												<int key="NSColorSpace">3</int>
-												<bytes key="NSWhite">MAA</bytes>
+										<object class="NSColor" key="NSTextColor">
+											<int key="NSColorSpace">3</int>
+											<bytes key="NSWhite">MQA</bytes>
+											<object class="NSColorSpace" key="NSCustomColorSpace" id="871825884">
+												<int key="NSID">2</int>
 											</object>
 										</object>
 									</object>
@@ -168,6 +167,7 @@
 									<reference key="NSSuperview" ref="524924394"/>
 									<reference key="NSWindow"/>
 									<reference key="NSNextKeyView" ref="978929940"/>
+									<int key="NSViewLayerContentsRedrawPolicy">2</int>
 									<bool key="NSEnabled">YES</bool>
 									<object class="NSTextFieldCell" key="NSCell" id="28243971">
 										<int key="NSCellFlags">67239424</int>
@@ -182,7 +182,11 @@ MDAy4oCTMjAxMCBieSB0aGUgRE9TQm94IFRlYW0uA</string>
 										</object>
 										<reference key="NSControlView" ref="890281471"/>
 										<reference key="NSBackgroundColor" ref="1068513734"/>
-										<reference key="NSTextColor" ref="543207403"/>
+										<object class="NSColor" key="NSTextColor">
+											<int key="NSColorSpace">3</int>
+											<bytes key="NSWhite">MQA</bytes>
+											<reference key="NSCustomColorSpace" ref="871825884"/>
+										</object>
 									</object>
 								</object>
 								<object class="NSTextField" id="427986242">
@@ -206,7 +210,10 @@ MDAy4oCTMjAxMCBieSB0aGUgRE9TQm94IFRlYW0uA</string>
 										</object>
 										<reference key="NSControlView" ref="427986242"/>
 										<reference key="NSBackgroundColor" ref="1068513734"/>
-										<reference key="NSTextColor" ref="352974880"/>
+										<object class="NSColor" key="NSTextColor">
+											<int key="NSColorSpace">3</int>
+											<bytes key="NSWhite">MAA</bytes>
+										</object>
 									</object>
 								</object>
 							</object>
@@ -437,8 +444,16 @@ MDAy4oCTMjAxMCBieSB0aGUgRE9TQm94IFRlYW0uA</string>
 					<string>53.IBPluginDependency</string>
 					<string>54.IBPluginDependency</string>
 					<string>55.IBPluginDependency</string>
+					<string>55.IBViewIntegration.shadowBlurRadius</string>
+					<string>55.IBViewIntegration.shadowColor</string>
+					<string>55.IBViewIntegration.shadowOffsetHeight</string>
+					<string>55.IBViewIntegration.shadowOffsetWidth</string>
 					<string>56.IBPluginDependency</string>
 					<string>57.IBPluginDependency</string>
+					<string>57.IBViewIntegration.shadowBlurRadius</string>
+					<string>57.IBViewIntegration.shadowColor</string>
+					<string>57.IBViewIntegration.shadowOffsetHeight</string>
+					<string>57.IBViewIntegration.shadowOffsetWidth</string>
 					<string>58.IBPluginDependency</string>
 				</object>
 				<object class="NSMutableArray" key="dict.values">
@@ -455,9 +470,7 @@ MDAy4oCTMjAxMCBieSB0aGUgRE9TQm94IFRlYW0uA</string>
 					<object class="NSColor">
 						<int key="NSColorSpace">3</int>
 						<bytes key="NSWhite">MSAwLjUAA</bytes>
-						<object class="NSColorSpace" key="NSCustomColorSpace">
-							<int key="NSID">2</int>
-						</object>
+						<reference key="NSCustomColorSpace" ref="871825884"/>
 					</object>
 					<real value="-1"/>
 					<real value="0.0"/>
@@ -469,8 +482,22 @@ MDAy4oCTMjAxMCBieSB0aGUgRE9TQm94IFRlYW0uA</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<real value="2"/>
+					<object class="NSColor">
+						<int key="NSColorSpace">3</int>
+						<bytes key="NSWhite">MCAwLjUAA</bytes>
+					</object>
+					<real value="-1"/>
+					<real value="0.0"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<real value="2"/>
+					<object class="NSColor">
+						<int key="NSColorSpace">3</int>
+						<bytes key="NSWhite">MCAwLjUAA</bytes>
+					</object>
+					<real value="-1"/>
+					<real value="0.0"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>

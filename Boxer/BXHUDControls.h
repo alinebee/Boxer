@@ -14,11 +14,23 @@
 #import "BXHUDSegmentedCell.h"
 
 
-//BGHUDAppKit control subclasses hardcoded to use BXBlueTheme
-//or BXHelpTextTheme. These are for use in XCode 4+, which does not
-//support the IB plugins BGHUDAppKit relies on for defining themes.
+//BGHUDAppKit control subclasses hardcoded to use BXBlueTheme.
+//These are for use in XCode 4+, which does not support the IB
+//plugin that BGHUDAppKit relies on for defining themes.
 
 @interface BXHUDLabel : BGHUDLabel
+@end
+
+@interface BXHUDButtonCell : BGHUDButtonCell
+@end
+
+@interface BXHUDCheckboxCell : BXHUDButtonCell
+@end
+
+@interface BXHUDSliderCell : BGHUDSliderCell
+@end
+
+@interface BXHUDPopUpButtonCell : BGHUDPopUpButtonCell
 @end
 
 

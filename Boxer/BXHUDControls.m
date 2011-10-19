@@ -29,6 +29,40 @@
 }
 @end
 
+@implementation BXHUDButtonCell
+
+- (NSString *)themeKey { return @"BXBlueTheme"; }
+
+@end
+
+@implementation BXHUDCheckboxCell
+
+- (NSString *)themeKey { return @"BXBlueTheme"; }
+
+//Fix for setButtonType: no longer getting called for checkboxes in XIBs (jesus christ)
+- (id) initWithCoder: (NSCoder *)aDecoder
+{
+    if ((self = [super initWithCoder: aDecoder]))
+    {
+        [self setButtonType: NSSwitchButton];
+    }
+    return self;
+}
+
+@end
+
+@implementation BXHUDSliderCell
+
+- (NSString *)themeKey { return @"BXBlueTheme"; }
+
+@end
+
+@implementation BXHUDPopUpButtonCell
+
+- (NSString *)themeKey { return @"BXBlueTheme"; }
+
+@end 
+
 
 @implementation BXHUDProgressIndicator
 

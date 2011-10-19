@@ -18,6 +18,8 @@
 
 @implementation BXHUDSegmentedCell
 
+- (NSString *)themeKey { return @"BXBlueTheme"; }
+
 - (void) drawWithFrame: (NSRect)frame inView: (NSView *)view
 {
 	NSBezierPath *border;

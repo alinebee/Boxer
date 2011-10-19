@@ -20,7 +20,7 @@
 
 @interface BXWelcomeButton : BXFilterPortrait
 {
-	id <BXWelcomeButtonDraggingDelegate> draggingDelegate;
+	IBOutlet id <BXWelcomeButtonDraggingDelegate> draggingDelegate;
 }
 //The delegate used for drag-drop operations.
 @property (assign) id <BXWelcomeButtonDraggingDelegate> draggingDelegate;

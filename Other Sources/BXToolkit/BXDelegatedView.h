@@ -13,7 +13,7 @@
 
 @interface BXDelegatedView : NSView
 {
-	id delegate;
+	IBOutlet id delegate;
 	NSDragOperation draggingEnteredResponse;
 }
 @property (assign) id delegate;

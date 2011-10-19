@@ -619,14 +619,6 @@
 																<reference key="NSSuperview" ref="609505298"/>
 																<reference key="NSNextKeyView" ref="817626995"/>
 																<bool key="NSViewIsLayerTreeHost">YES</bool>
-																<object class="NSShadow" key="NSViewShadow">
-																	<double key="NSShadowVert">-1</double>
-																	<double key="NSShadowBlurRadius">2</double>
-																	<object class="NSColor" key="NSShadowColor" id="976602607">
-																		<int key="NSColorSpace">3</int>
-																		<bytes key="NSWhite">MCAwLjUAA</bytes>
-																	</object>
-																</object>
 																<int key="NSViewLayerContentsRedrawPolicy">2</int>
 																<bool key="NSEnabled">YES</bool>
 																<object class="NSTextFieldCell" key="NSCell" id="1022283228">
@@ -920,7 +912,7 @@
 														<string key="NSFrame">{{490, 16}, {25, 25}}</string>
 														<reference key="NSSuperview" ref="221307292"/>
 														<reference key="NSWindow"/>
-														<reference key="NSNextKeyView" ref="764053557"/>
+														<reference key="NSNextKeyView"/>
 														<int key="NSViewLayerContentsRedrawPolicy">2</int>
 														<bool key="NSEnabled">YES</bool>
 														<object class="NSButtonCell" key="NSCell" id="333411757">
@@ -1127,7 +1119,7 @@ LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
 					<reference key="NSNextKeyView" ref="764053557"/>
 					<int key="NSViewLayerContentsRedrawPolicy">2</int>
 				</object>
-				<string key="NSScreenRect">{{0, 0}, {1440, 878}}</string>
+				<string key="NSScreenRect">{{0, 0}, {1440, 900}}</string>
 				<string key="NSMaxSize">{10000000000000, 10000000000000}</string>
 				<string key="NSFrameAutosaveName"/>
 				<bool key="NSWindowIsRestorable">YES</bool>
@@ -1451,7 +1443,7 @@ LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
 						<reference key="source" ref="764053557"/>
 						<reference key="destination" ref="1001"/>
 					</object>
-					<int key="connectionID">179</int>
+					<int key="connectionID">362</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -1495,7 +1487,7 @@ LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
 						<reference key="source" ref="223883958"/>
 						<reference key="destination" ref="1001"/>
 					</object>
-					<int key="connectionID">307</int>
+					<int key="connectionID">361</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -2303,6 +2295,7 @@ LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
 					<string>332.IBPluginDependency</string>
 					<string>333.IBPluginDependency</string>
 					<string>334.IBPluginDependency</string>
+					<string>347.CustomClassName</string>
 					<string>347.IBPluginDependency</string>
 					<string>347.IBViewIntegration.shadowBlurRadius</string>
 					<string>347.IBViewIntegration.shadowColor</string>
@@ -2353,7 +2346,7 @@ LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{56, 183}, {532, 396}}</string>
+					<string>{{21, 259}, {532, 396}}</string>
 					<boolean value="NO"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2428,9 +2421,13 @@ LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>BXHUDLabel</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<real value="2"/>
-					<reference ref="976602607"/>
+					<object class="NSColor">
+						<int key="NSColorSpace">3</int>
+						<bytes key="NSWhite">MCAwLjUAA</bytes>
+					</object>
 					<real value="-1"/>
 					<real value="0.0"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -2487,14 +2484,33 @@ LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">359</int>
+			<int key="maxID">362</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<object class="IBPartialClassDescription">
+					<string key="className">BGHUDLabel</string>
+					<string key="superclassName">NSTextField</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BGHUDLabel.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">BXDelegatedView</string>
 					<string key="superclassName">NSView</string>
+					<object class="NSMutableDictionary" key="outlets">
+						<string key="NS.key.0">delegate</string>
+						<string key="NS.object.0">id</string>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<string key="NS.key.0">delegate</string>
+						<object class="IBToOneOutletInfo" key="NS.object.0">
+							<string key="name">delegate</string>
+							<string key="candidateClassName">id</string>
+						</object>
+					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/BXDelegatedView.h</string>
@@ -2522,6 +2538,14 @@ LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/BXFilterPortraitCell.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXHUDLabel</string>
+					<string key="superclassName">BGHUDLabel</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXHUDLabel.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

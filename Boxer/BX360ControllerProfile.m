@@ -97,7 +97,7 @@ enum {
     static NSArray *matches = nil;
     if (!matches)
     {
-        matches = [NSArray arrayWithObjects:
+        matches = [[NSArray alloc] initWithObjects:
                    [self matchForVendorID: BX360ControllerVendorID           productID: BX360ControllerProductID],
                    [self matchForVendorID: BX360WirelessControllerVendorID   productID: BX360WirelessControllerProductID],
                    [self matchForVendorID: BXJoyTek360ControllerVendorID     productID: BXJoyTek360ControllerProductID],
@@ -106,7 +106,7 @@ enum {
                    [self matchForVendorID: BXMadCatzGamepadVendorID          productID: BXMadCatzGamepadProductID],
                    [self matchForVendorID: BXMadCatzProGamepadVendorID       productID: BXMadCatzProGamepadProductID],
                    [self matchForVendorID: BXMadCatzMicroConVendorID         productID: BXMadCatzMicroConProductID],
-                   [self matchForVendorID: BXDOA4StickVendorID               productID: BXDOA4StickProductID],
+                   [self mgiatchForVendorID: BXDOA4StickVendorID               productID: BXDOA4StickProductID],
                    nil];
     }
     return matches;

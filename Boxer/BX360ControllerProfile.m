@@ -106,7 +106,7 @@ enum {
                    [self matchForVendorID: BXMadCatzGamepadVendorID          productID: BXMadCatzGamepadProductID],
                    [self matchForVendorID: BXMadCatzProGamepadVendorID       productID: BXMadCatzProGamepadProductID],
                    [self matchForVendorID: BXMadCatzMicroConVendorID         productID: BXMadCatzMicroConProductID],
-                   [self mgiatchForVendorID: BXDOA4StickVendorID               productID: BXDOA4StickProductID],
+                   [self matchForVendorID: BXDOA4StickVendorID               productID: BXDOA4StickProductID],
                    nil];
     }
     return matches;

@@ -25,7 +25,7 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 
 @interface BXVideoHandler ()
 
-- (BXFilterDefinition) _paramsForFilterType: (BXFilterType)filterType;
+- (const BXFilterDefinition *) _paramsForFilterType: (BXFilterType)filterType;
 
 - (BOOL) _shouldApplyFilterType: (BXFilterType)type
 				 fromResolution: (NSSize)resolution
@@ -300,11 +300,11 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 	render.scale.op		= (scalerOperation_t)activeType;
 }
 
-- (BXFilterDefinition) _paramsForFilterType: (BXFilterType)type
+- (const BXFilterDefinition *) _paramsForFilterType: (BXFilterType)type
 {
 	NSAssert1(type <= sizeof(BXFilters), @"Invalid filter type provided to paramsForFilterType: %i", type);
 	
-	return BXFilters[type];
+    return BXFilters[type];
 }
 
 
@@ -319,14 +319,14 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 					   toViewport: (NSSize)viewportSize
 					   isTextMode: (BOOL) isTextMode
 {
-	BXFilterDefinition params = [self _paramsForFilterType: type];
+	const BXFilterDefinition *params = [self _paramsForFilterType: type];
 	
 	NSSize scale = NSMakeSize(viewportSize.width / resolution.width,
 							  viewportSize.height / resolution.height);
 	
-	NSUInteger filterScale = (NSUInteger)ceilf(scale.height - params.outputScaleBias);
-	if (filterScale < params.minFilterScale) filterScale = params.minFilterScale;
-	if (filterScale > params.maxFilterScale) filterScale = params.maxFilterScale;
+	NSUInteger filterScale = (NSUInteger)ceilf(scale.height - params->outputScaleBias);
+	if (filterScale < params->minFilterScale) filterScale = params->minFilterScale;
+	if (filterScale > params->maxFilterScale) filterScale = params->maxFilterScale;
 	
 	return filterScale;
 }
@@ -337,17 +337,17 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 					 toViewport: (NSSize)viewportSize
 					 isTextMode: (BOOL)isTextMode
 {
-	BXFilterDefinition params = [self _paramsForFilterType: type];
+	const BXFilterDefinition *params = [self _paramsForFilterType: type];
 	
 	//Disable scalers for high-resolution graphics modes
 	//(We leave them available for text modes)
-	if (!isTextMode && !sizeFitsWithinSize(resolution, params.maxResolution)) return NO;
+	if (!isTextMode && !sizeFitsWithinSize(resolution, params->maxResolution)) return NO;
 	
 	NSSize scale = NSMakeSize(viewportSize.width / resolution.width,
 							  viewportSize.height / resolution.height);
 	
 	//Scale is too small for filter to be applied
-	if (scale.height < params.minOutputScale) return NO;
+	if (scale.height < params->minOutputScale) return NO;
 	
 	//If we got this far, go for it!
 	return YES;

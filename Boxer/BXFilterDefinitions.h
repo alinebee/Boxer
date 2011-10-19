@@ -22,7 +22,8 @@ enum {
 	BXFilterSuperEagle	= 6,
 	BXFilterTVScanlines	= 7,
 	BXFilterRGB			= 8,
-	BXFilterScanlines	= 9
+	BXFilterScanlines	= 9,
+    BXMaxFilters
 };
 
 // Accomodates 400x300 and 320x400 resolutions, which should still be small enough for reasonable filtering.
@@ -101,15 +102,15 @@ BXFilterDefinition BXFilterScanlinesParams		= BXFilterTVScanlinesParams;
 
 
 //Mapping table of filter definitions - the order corresponds to BXFilterType constants
-const BXFilterDefinition BXFilters[BXFilterScanlines+1] = {
-	BXFilterNormalParams,
-	BXFilterMAMEParams,
-	BXFilterInterpolatedParams,
-	BXFilterHQxParams,
-	BXFilterSaIParams,
-	BXFilterSuperSaIParams,
-	BXFilterSuperEagleParams,
-	BXFilterTVScanlinesParams,
-	BXFilterRGBParams,
-	BXFilterScanlinesParams
+const BXFilterDefinition *BXFilters[BXMaxFilters] = {
+	&BXFilterNormalParams,
+	&BXFilterMAMEParams,
+	&BXFilterInterpolatedParams,
+	&BXFilterHQxParams,
+	&BXFilterSaIParams,
+	&BXFilterSuperSaIParams,
+	&BXFilterSuperEagleParams,
+	&BXFilterTVScanlinesParams,
+	&BXFilterRGBParams,
+	&BXFilterScanlinesParams
 };

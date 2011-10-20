@@ -5,7 +5,7 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-//BXHUDControls defines a set of NSControl and NSCell subclasses
+//BXHUDControls defines a set of simple NSControl and NSCell subclasses
 //for use in HUD-style translucent black windows.
 
 #import <BGHUDAppKit/BGHUDAppKit.h>
@@ -31,41 +31,6 @@
 @end
 
 @interface BXHUDPopUpButtonCell : BGHUDPopUpButtonCell
-@end
-
-
-//A translucent white progress indicator designed for HUD panels.
-@interface BXHUDProgressIndicator: NSProgressIndicator
-{
-    NSTimer *animationTimer;
-}
-
-//Draw methods called from drawRect:
-- (NSBezierPath *) stripePathForFrame: (NSRect)frame
-                        animationTime: (NSTimeInterval)timeInterval;
-- (void) drawProgressInRect: (NSRect)dirtyRect;
-- (void) drawIndeterminateProgressInRect: (NSRect)dirtyRect;
-- (void) drawSlotInRect: (NSRect)dirtyRect;
-
-//Called each time the animation timer fires.
-- (void) performAnimation: (NSTimer *)timer;
-
-@end
-
-
-//A shadowed white level indicator designed for bezel notifications.
-@interface BXHUDLevelIndicatorCell : NSLevelIndicatorCell
-{
-	NSColor *indicatorColor;
-	NSShadow *indicatorShadow;
-}
-
-@property (copy, nonatomic) NSColor *indicatorColor;
-@property (copy, nonatomic) NSShadow *indicatorShadow;
-
-//Returns the height used for the level indicator at the specified control size
-+ (CGFloat) heightForControlSize: (NSControlSize)size;
-
 @end
 
 

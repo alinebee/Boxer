@@ -180,6 +180,7 @@
 }
 @end
 
+
 @implementation BXHUDScroller
 
 - (NSSize) knobMargin

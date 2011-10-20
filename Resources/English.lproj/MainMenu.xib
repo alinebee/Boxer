@@ -2,13 +2,13 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
-		<string key="IBDocument.SystemVersion">10K549</string>
-		<string key="IBDocument.InterfaceBuilderVersion">1306</string>
-		<string key="IBDocument.AppKitVersion">1038.36</string>
-		<string key="IBDocument.HIToolboxVersion">461.00</string>
+		<string key="IBDocument.SystemVersion">11C74</string>
+		<string key="IBDocument.InterfaceBuilderVersion">1938</string>
+		<string key="IBDocument.AppKitVersion">1138.23</string>
+		<string key="IBDocument.HIToolboxVersion">567.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">1306</string>
+			<string key="NS.object.0">1938</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1361,6 +1361,9 @@
 			<object class="NSCustomObject" id="96241277">
 				<string key="NSClassName">BXJoypadController</string>
 			</object>
+			<object class="NSCustomObject" id="424781297">
+				<string key="NSClassName">BXKeyboardEventTap</string>
+			</object>
 			<object class="NSMenu" id="881225046">
 				<string key="NSTitle"/>
 				<object class="NSMutableArray" key="NSMenuItems">
@@ -1379,6 +1382,22 @@
 		<object class="IBObjectContainer" key="IBDocument.Objects">
 			<object class="NSMutableArray" key="connectionRecords">
 				<bool key="EncodedWithXMLCoder">YES</bool>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">dockMenu</string>
+						<reference key="source" ref="597687122"/>
+						<reference key="destination" ref="881225046"/>
+					</object>
+					<int key="connectionID">2136</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">delegate</string>
+						<reference key="source" ref="27050976"/>
+						<reference key="destination" ref="74086318"/>
+					</object>
+					<int key="connectionID">402</int>
+				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
 						<string key="label">performMiniaturize:</string>
@@ -1420,14 +1439,6 @@
 					<int key="connectionID">399</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">delegate</string>
-						<reference key="source" ref="27050976"/>
-						<reference key="destination" ref="74086318"/>
-					</object>
-					<int key="connectionID">402</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
 						<string key="label">showWebsite:</string>
 						<reference key="source" ref="935372999"/>
@@ -1466,14 +1477,6 @@
 						<reference key="destination" ref="434929495"/>
 					</object>
 					<int key="connectionID">681</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">delegate</string>
-						<reference key="source" ref="632409172"/>
-						<reference key="destination" ref="849055722"/>
-					</object>
-					<int key="connectionID">1142</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
@@ -1805,78 +1808,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
-						<string key="label">showGameAtMobygames:</string>
-						<reference key="source" ref="849055722"/>
-						<reference key="destination" ref="146403874"/>
-					</object>
-					<int key="connectionID">1725</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">showGameAtReplacementDocs:</string>
-						<reference key="source" ref="849055722"/>
-						<reference key="destination" ref="1035603794"/>
-					</object>
-					<int key="connectionID">1726</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">mobygamesItem</string>
-						<reference key="source" ref="849055722"/>
-						<reference key="destination" ref="146403874"/>
-					</object>
-					<int key="connectionID">1753</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">replacementDocsItem</string>
-						<reference key="source" ref="849055722"/>
-						<reference key="destination" ref="1035603794"/>
-					</object>
-					<int key="connectionID">1754</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">showHelp:</string>
-						<reference key="source" ref="849055722"/>
-						<reference key="destination" ref="350988856"/>
-					</object>
-					<int key="connectionID">1755</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">orderFrontPreferencesPanel:</string>
-						<reference key="source" ref="74086318"/>
-						<reference key="destination" ref="751623511"/>
-					</object>
-					<int key="connectionID">1839</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: values.aspectCorrected</string>
-						<reference key="source" ref="803089018"/>
-						<reference key="destination" ref="852755903"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="803089018"/>
-							<reference key="NSDestination" ref="852755903"/>
-							<string key="NSLabel">value: values.aspectCorrected</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">values.aspectCorrected</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">1852</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">checkForUpdates:</string>
-						<reference key="source" ref="154218853"/>
-						<reference key="destination" ref="581728426"/>
-					</object>
-					<int key="connectionID">1857</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
 						<string key="label">orderFrontImportGamePanel:</string>
 						<reference key="source" ref="935372999"/>
 						<reference key="destination" ref="408921711"/>
@@ -1922,22 +1853,6 @@
 						<reference key="destination" ref="948329699"/>
 					</object>
 					<int key="connectionID">1886</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: values.pauseWhileInactive</string>
-						<reference key="source" ref="173528469"/>
-						<reference key="destination" ref="852755903"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="173528469"/>
-							<reference key="NSDestination" ref="852755903"/>
-							<string key="NSLabel">value: values.pauseWhileInactive</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">values.pauseWhileInactive</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">2038</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
@@ -2156,54 +2071,6 @@
 					<int key="connectionID">2129</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">joystickController</string>
-						<reference key="source" ref="74086318"/>
-						<reference key="destination" ref="407151793"/>
-					</object>
-					<int key="connectionID">2131</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">dockMenu</string>
-						<reference key="source" ref="597687122"/>
-						<reference key="destination" ref="881225046"/>
-					</object>
-					<int key="connectionID">2136</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">revealCurrentSessionPath:</string>
-						<reference key="source" ref="74086318"/>
-						<reference key="destination" ref="118784418"/>
-					</object>
-					<int key="connectionID">2137</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: currentSession.emulator.gameportTimingMode</string>
-						<reference key="source" ref="34920399"/>
-						<reference key="destination" ref="74086318"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="34920399"/>
-							<reference key="NSDestination" ref="74086318"/>
-							<string key="NSLabel">value: currentSession.emulator.gameportTimingMode</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">currentSession.emulator.gameportTimingMode</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">2146</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">joypadController</string>
-						<reference key="source" ref="74086318"/>
-						<reference key="destination" ref="96241277"/>
-					</object>
-					<int key="connectionID">2159</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
 						<string key="label">toggleFullScreen:</string>
 						<reference key="source" ref="935372999"/>
@@ -2250,6 +2117,142 @@
 						<reference key="destination" ref="384668648"/>
 					</object>
 					<int key="connectionID">2178</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: currentSession.emulator.gameportTimingMode</string>
+						<reference key="source" ref="34920399"/>
+						<reference key="destination" ref="74086318"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="34920399"/>
+							<reference key="NSDestination" ref="74086318"/>
+							<string key="NSLabel">value: currentSession.emulator.gameportTimingMode</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">currentSession.emulator.gameportTimingMode</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">2146</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">delegate</string>
+						<reference key="source" ref="632409172"/>
+						<reference key="destination" ref="849055722"/>
+					</object>
+					<int key="connectionID">1142</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">orderFrontPreferencesPanel:</string>
+						<reference key="source" ref="74086318"/>
+						<reference key="destination" ref="751623511"/>
+					</object>
+					<int key="connectionID">1839</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">joystickController</string>
+						<reference key="source" ref="74086318"/>
+						<reference key="destination" ref="407151793"/>
+					</object>
+					<int key="connectionID">2131</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">revealCurrentSessionPath:</string>
+						<reference key="source" ref="74086318"/>
+						<reference key="destination" ref="118784418"/>
+					</object>
+					<int key="connectionID">2137</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">joypadController</string>
+						<reference key="source" ref="74086318"/>
+						<reference key="destination" ref="96241277"/>
+					</object>
+					<int key="connectionID">2159</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">showGameAtMobygames:</string>
+						<reference key="source" ref="849055722"/>
+						<reference key="destination" ref="146403874"/>
+					</object>
+					<int key="connectionID">1725</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">showGameAtReplacementDocs:</string>
+						<reference key="source" ref="849055722"/>
+						<reference key="destination" ref="1035603794"/>
+					</object>
+					<int key="connectionID">1726</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">mobygamesItem</string>
+						<reference key="source" ref="849055722"/>
+						<reference key="destination" ref="146403874"/>
+					</object>
+					<int key="connectionID">1753</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">replacementDocsItem</string>
+						<reference key="source" ref="849055722"/>
+						<reference key="destination" ref="1035603794"/>
+					</object>
+					<int key="connectionID">1754</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">showHelp:</string>
+						<reference key="source" ref="849055722"/>
+						<reference key="destination" ref="350988856"/>
+					</object>
+					<int key="connectionID">1755</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: values.aspectCorrected</string>
+						<reference key="source" ref="803089018"/>
+						<reference key="destination" ref="852755903"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="803089018"/>
+							<reference key="NSDestination" ref="852755903"/>
+							<string key="NSLabel">value: values.aspectCorrected</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">values.aspectCorrected</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">1852</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">checkForUpdates:</string>
+						<reference key="source" ref="154218853"/>
+						<reference key="destination" ref="581728426"/>
+					</object>
+					<int key="connectionID">1857</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: values.pauseWhileInactive</string>
+						<reference key="source" ref="173528469"/>
+						<reference key="destination" ref="852755903"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="173528469"/>
+							<reference key="NSDestination" ref="852755903"/>
+							<string key="NSLabel">value: values.pauseWhileInactive</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">values.pauseWhileInactive</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">2038</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -3339,42 +3342,39 @@
 						<reference key="object" ref="424872924"/>
 						<reference key="parent" ref="561895638"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2182</int>
+						<reference key="object" ref="424781297"/>
+						<reference key="parent" ref="0"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<object class="NSArray" key="dict.sortedKeys">
 					<bool key="EncodedWithXMLCoder">YES</bool>
+					<string>-1.IBPluginDependency</string>
+					<string>-2.IBPluginDependency</string>
 					<string>-3.IBPluginDependency</string>
-					<string>-3.ImportedFromIB2</string>
 					<string>103.IBPluginDependency</string>
-					<string>103.ImportedFromIB2</string>
-					<string>106.IBEditorWindowLastContentRect</string>
 					<string>106.IBPluginDependency</string>
-					<string>106.ImportedFromIB2</string>
 					<string>111.IBPluginDependency</string>
-					<string>111.ImportedFromIB2</string>
 					<string>1124.IBPluginDependency</string>
-					<string>1124.ImportedFromIB2</string>
 					<string>1125.IBPluginDependency</string>
-					<string>1125.ImportedFromIB2</string>
+					<string>1141.IBPluginDependency</string>
 					<string>1141.notes</string>
 					<string>1141.showNotes</string>
 					<string>1155.IBPluginDependency</string>
 					<string>1156.IBPluginDependency</string>
 					<string>1157.IBPluginDependency</string>
 					<string>134.IBPluginDependency</string>
-					<string>134.ImportedFromIB2</string>
 					<string>136.IBPluginDependency</string>
-					<string>136.ImportedFromIB2</string>
 					<string>1414.IBPluginDependency</string>
-					<string>1415.IBEditorWindowLastContentRect</string>
 					<string>1415.IBPluginDependency</string>
 					<string>1416.IBPluginDependency</string>
 					<string>1417.IBPluginDependency</string>
 					<string>1418.IBPluginDependency</string>
 					<string>1420.IBPluginDependency</string>
-					<string>1427.IBEditorWindowLastContentRect</string>
 					<string>1427.IBPluginDependency</string>
 					<string>1428.IBPluginDependency</string>
 					<string>1438.IBPluginDependency</string>
@@ -3382,13 +3382,9 @@
 					<string>1448.IBPluginDependency</string>
 					<string>1449.IBPluginDependency</string>
 					<string>145.IBPluginDependency</string>
-					<string>145.ImportedFromIB2</string>
 					<string>149.IBPluginDependency</string>
-					<string>149.ImportedFromIB2</string>
 					<string>150.IBPluginDependency</string>
-					<string>150.ImportedFromIB2</string>
 					<string>1527.IBPluginDependency</string>
-					<string>1528.IBEditorWindowLastContentRect</string>
 					<string>1528.IBPluginDependency</string>
 					<string>1529.IBPluginDependency</string>
 					<string>1530.IBPluginDependency</string>
@@ -3405,16 +3401,13 @@
 					<string>1541.IBPluginDependency</string>
 					<string>1542.IBPluginDependency</string>
 					<string>1543.IBPluginDependency</string>
-					<string>1544.IBEditorWindowLastContentRect</string>
 					<string>1544.IBPluginDependency</string>
 					<string>1545.IBPluginDependency</string>
 					<string>1546.IBPluginDependency</string>
-					<string>1547.IBEditorWindowLastContentRect</string>
 					<string>1547.IBPluginDependency</string>
 					<string>1548.IBPluginDependency</string>
 					<string>1549.IBPluginDependency</string>
 					<string>1550.IBPluginDependency</string>
-					<string>1551.IBEditorWindowLastContentRect</string>
 					<string>1551.IBPluginDependency</string>
 					<string>1552.IBPluginDependency</string>
 					<string>1553.IBPluginDependency</string>
@@ -3424,7 +3417,6 @@
 					<string>1557.IBPluginDependency</string>
 					<string>1558.IBPluginDependency</string>
 					<string>1559.IBPluginDependency</string>
-					<string>1560.IBEditorWindowLastContentRect</string>
 					<string>1560.IBPluginDependency</string>
 					<string>1561.IBPluginDependency</string>
 					<string>1562.IBPluginDependency</string>
@@ -3432,47 +3424,33 @@
 					<string>1564.IBPluginDependency</string>
 					<string>1565.IBPluginDependency</string>
 					<string>1566.IBPluginDependency</string>
-					<string>1567.IBEditorWindowLastContentRect</string>
 					<string>1567.IBPluginDependency</string>
 					<string>1568.IBPluginDependency</string>
 					<string>1569.IBPluginDependency</string>
 					<string>1570.IBPluginDependency</string>
 					<string>1571.IBPluginDependency</string>
 					<string>1572.IBPluginDependency</string>
-					<string>1607.IBEditorWindowLastContentRect</string>
 					<string>1607.IBPluginDependency</string>
-					<string>1607.ImportedFromIB2</string>
 					<string>1607.notes</string>
 					<string>1611.IBPluginDependency</string>
-					<string>1611.ImportedFromIB2</string>
 					<string>1612.IBPluginDependency</string>
-					<string>1612.ImportedFromIB2</string>
 					<string>1613.IBPluginDependency</string>
-					<string>1613.ImportedFromIB2</string>
 					<string>1615.IBPluginDependency</string>
-					<string>1615.ImportedFromIB2</string>
 					<string>1616.IBPluginDependency</string>
-					<string>1616.ImportedFromIB2</string>
 					<string>1617.IBPluginDependency</string>
-					<string>1617.ImportedFromIB2</string>
-					<string>1618.IBEditorWindowLastContentRect</string>
 					<string>1618.IBPluginDependency</string>
-					<string>1618.ImportedFromIB2</string>
 					<string>1621.IBPluginDependency</string>
-					<string>1621.ImportedFromIB2</string>
 					<string>1623.IBPluginDependency</string>
-					<string>1623.ImportedFromIB2</string>
 					<string>1624.IBPluginDependency</string>
-					<string>1624.ImportedFromIB2</string>
 					<string>1625.IBPluginDependency</string>
-					<string>1625.ImportedFromIB2</string>
 					<string>1650.IBPluginDependency</string>
 					<string>1652.IBPluginDependency</string>
 					<string>1663.IBPluginDependency</string>
-					<string>1663.ImportedFromIB2</string>
+					<string>1756.IBPluginDependency</string>
 					<string>1838.IBPluginDependency</string>
 					<string>1840.IBPluginDependency</string>
 					<string>1841.IBPluginDependency</string>
+					<string>1855.IBPluginDependency</string>
 					<string>1856.IBPluginDependency</string>
 					<string>1869.IBPluginDependency</string>
 					<string>1871.IBPluginDependency</string>
@@ -3480,20 +3458,16 @@
 					<string>1876.IBPluginDependency</string>
 					<string>1878.IBPluginDependency</string>
 					<string>1884.IBPluginDependency</string>
-					<string>1884.ImportedFromIB2</string>
 					<string>1930.IBPluginDependency</string>
-					<string>1931.IBEditorWindowLastContentRect</string>
 					<string>1931.IBPluginDependency</string>
 					<string>1932.IBPluginDependency</string>
 					<string>196.IBPluginDependency</string>
-					<string>196.ImportedFromIB2</string>
 					<string>2027.IBPluginDependency</string>
 					<string>2033.IBPluginDependency</string>
 					<string>2034.IBPluginDependency</string>
 					<string>2035.IBPluginDependency</string>
 					<string>2056.IBPluginDependency</string>
 					<string>2057.IBPluginDependency</string>
-					<string>2058.IBEditorWindowLastContentRect</string>
 					<string>2058.IBPluginDependency</string>
 					<string>2059.IBPluginDependency</string>
 					<string>2060.IBPluginDependency</string>
@@ -3522,7 +3496,6 @@
 					<string>2124.IBPluginDependency</string>
 					<string>2126.IBPluginDependency</string>
 					<string>2130.IBPluginDependency</string>
-					<string>2132.IBEditorWindowLastContentRect</string>
 					<string>2132.IBPluginDependency</string>
 					<string>2133.IBPluginDependency</string>
 					<string>2158.IBPluginDependency</string>
@@ -3533,50 +3506,32 @@
 					<string>2173.IBPluginDependency</string>
 					<string>2174.IBPluginDependency</string>
 					<string>2179.IBPluginDependency</string>
+					<string>2182.IBPluginDependency</string>
 					<string>283.IBPluginDependency</string>
-					<string>283.ImportedFromIB2</string>
 					<string>284.IBPluginDependency</string>
-					<string>284.ImportedFromIB2</string>
-					<string>285.IBEditorWindowLastContentRect</string>
 					<string>285.IBPluginDependency</string>
-					<string>285.ImportedFromIB2</string>
-					<string>29.IBEditorWindowLastContentRect</string>
 					<string>29.IBPluginDependency</string>
-					<string>29.ImportedFromIB2</string>
 					<string>330.IBPluginDependency</string>
-					<string>330.ImportedFromIB2</string>
 					<string>339.IBPluginDependency</string>
-					<string>339.ImportedFromIB2</string>
 					<string>374.IBPluginDependency</string>
-					<string>374.ImportedFromIB2</string>
 					<string>375.IBPluginDependency</string>
-					<string>375.ImportedFromIB2</string>
-					<string>401.ImportedFromIB2</string>
+					<string>401.IBPluginDependency</string>
 					<string>56.IBPluginDependency</string>
-					<string>56.ImportedFromIB2</string>
-					<string>57.IBEditorWindowLastContentRect</string>
 					<string>57.IBPluginDependency</string>
-					<string>57.ImportedFromIB2</string>
 					<string>58.IBPluginDependency</string>
-					<string>58.ImportedFromIB2</string>
 					<string>663.IBPluginDependency</string>
-					<string>663.ImportedFromIB2</string>
 				</object>
 				<object class="NSMutableArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
-					<string>{{838, 711}, {258, 103}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<object class="NSMutableAttributedString">
 						<object class="NSMutableString" key="NSString">
 							<characters key="NS.bytes">Automatically populates the Help menu with a list of documentation resources available in the current gamebox.</characters>
@@ -3619,31 +3574,6 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{481, 641}, {237, 173}}</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{308, 616}, {143, 23}}</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{523, 531}, {240, 283}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -3660,16 +3590,6 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{367, 366}, {150, 43}}</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{367, 366}, {170, 63}}</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{367, 296}, {182, 153}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -3679,7 +3599,6 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{367, 356}, {275, 113}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -3687,48 +3606,56 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{367, 386}, {200, 103}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{568, 651}, {258, 163}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<object class="NSMutableAttributedString">
 						<object class="NSMutableString" key="NSString">
 							<characters key="NS.bytes"/>
 						</object>
 					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
-					<string>{{826, 601}, {235, 93}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -3739,20 +3666,16 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{618, 621}, {272, 193}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{889, 281}, {133, 483}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -3781,7 +3704,6 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{366, 788}, {194, 23}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -3793,33 +3715,21 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
-					<string>{{767, 721}, {200, 93}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
-					<string>{{411, 814}, {425, 20}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
-					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
-					<string>{{520, 588}, {215, 233}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<integer value="1"/>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
@@ -3834,7 +3744,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">2181</int>
+			<int key="maxID">2182</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -4793,6 +4703,14 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
+					<string key="className">BXKeyboardEventTap</string>
+					<string key="superclassName">NSObject</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXKeyboardEventTap.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">BXProgramPanelController</string>
 					<string key="superclassName">NSViewController</string>
 					<object class="NSMutableDictionary" key="actions">
@@ -5260,24 +5178,6 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
-					<string key="className">NSWindow</string>
-					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">toggleFullScreen:</string>
-						<string key="NS.object.0">id</string>
-					</object>
-					<object class="NSMutableDictionary" key="actionInfosByName">
-						<string key="NS.key.0">toggleFullScreen:</string>
-						<object class="IBActionInfo" key="NS.object.0">
-							<string key="name">toggleFullScreen:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-					</object>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/NSWindow.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
 					<string key="className">SUUpdater</string>
 					<string key="superclassName">NSObject</string>
 					<object class="NSMutableDictionary" key="actions">
@@ -5317,7 +5217,7 @@
 		</object>
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDependencyDefaults">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.macosx</string>
-			<integer value="1050" key="NS.object.0"/>
+			<real value="1060" key="NS.object.0"/>
 		</object>
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDevelopmentDependencies">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.InterfaceBuilder3</string>

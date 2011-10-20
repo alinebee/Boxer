@@ -555,6 +555,7 @@
 		9FEF98011191E1EF002024DF /* BXEmulatedMouse.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FEF98001191E1EF002024DF /* BXEmulatedMouse.mm */; };
 		9FF1562914506DBA00545317 /* BXHUDProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF1562814506DBA00545317 /* BXHUDProgressIndicator.m */; };
 		9FF1562D14506E7200545317 /* BXHUDLevelIndicatorCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF1562C14506E7200545317 /* BXHUDLevelIndicatorCell.m */; };
+		9FF1563014506F5C00545317 /* BXKeyboardEventTap.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF1562F14506F5C00545317 /* BXKeyboardEventTap.m */; };
 		9FF1756D11B25F4E00D0FCDC /* BXInputView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF1756C11B25F4E00D0FCDC /* BXInputView.m */; };
 		9FF175E711B279F500D0FCDC /* BXVideoHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FF175E611B279F500D0FCDC /* BXVideoHandler.mm */; };
 		9FF2E9BD11E6F4950051E485 /* BXEmulatorConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF2E9BC11E6F4950051E485 /* BXEmulatorConfiguration.m */; };
@@ -1344,6 +1345,8 @@
 		9FF1562814506DBA00545317 /* BXHUDProgressIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXHUDProgressIndicator.m; sourceTree = "<group>"; };
 		9FF1562B14506E7200545317 /* BXHUDLevelIndicatorCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXHUDLevelIndicatorCell.h; sourceTree = "<group>"; };
 		9FF1562C14506E7200545317 /* BXHUDLevelIndicatorCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXHUDLevelIndicatorCell.m; sourceTree = "<group>"; };
+		9FF1562E14506F5C00545317 /* BXKeyboardEventTap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXKeyboardEventTap.h; sourceTree = "<group>"; };
+		9FF1562F14506F5C00545317 /* BXKeyboardEventTap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXKeyboardEventTap.m; sourceTree = "<group>"; };
 		9FF1756B11B25F4E00D0FCDC /* BXInputView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXInputView.h; sourceTree = "<group>"; };
 		9FF1756C11B25F4E00D0FCDC /* BXInputView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXInputView.m; sourceTree = "<group>"; };
 		9FF175E511B279F500D0FCDC /* BXVideoHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXVideoHandler.h; sourceTree = "<group>"; };
@@ -2614,6 +2617,8 @@
 				9FC637FF13C09B79004478A3 /* BXJoypadController.m */,
 				9F06C6DF13993FB100B19DF1 /* BXHIDInputBinding.h */,
 				9F06C6E013993FB100B19DF1 /* BXHIDInputBinding.m */,
+				9FF1562E14506F5C00545317 /* BXKeyboardEventTap.h */,
+				9FF1562F14506F5C00545317 /* BXKeyboardEventTap.m */,
 			);
 			name = Input;
 			sourceTree = "<group>";
@@ -3313,6 +3318,7 @@
 				9F7D9EFF1444BAA800B6AD50 /* BXExternalMT32+BXMT32Sysexes.m in Sources */,
 				9FF1562914506DBA00545317 /* BXHUDProgressIndicator.m in Sources */,
 				9FF1562D14506E7200545317 /* BXHUDLevelIndicatorCell.m in Sources */,
+				9FF1563014506F5C00545317 /* BXKeyboardEventTap.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

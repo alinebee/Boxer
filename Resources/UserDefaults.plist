@@ -26,5 +26,7 @@
 	<false/>
 	<key>showMT32LCDMessages</key>
 	<true/>
+	<key>suppressSystemHotkeys</key>
+	<true/>
 </dict>
 </plist>

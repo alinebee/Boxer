@@ -14,28 +14,11 @@
 @interface BXAppController (BXApplicationModes)
 
 #pragma mark -
-#pragma mark Class helpers
-
-//Returns a non-conflicting set of keyboard modifiers based on the specified keyboard modifiers.
-//Expects an array of NSNumber instances corresponding to SystemEventsEpmd constants.
-//Used by syncSpacesKeyboardShortcuts.
-+ (NSArray *) safeKeyModifiersFromModifiers: (NSArray *)modifiers;
-
-
-#pragma mark -
 #pragma mark Synchronizing application state
 
 //Set the application UI to the appropriate mode for the current session's
 //fullscreen and mouse-locked status.
 - (void) syncApplicationPresentationMode;
-
-//Delicately suppress Spaces shortcuts via the System Events Applescript API,
-//so that they can't interfere with keyboard control in Boxer.
-- (void) syncSpacesKeyboardShortcuts;
-
-//Calls syncSpacesKeyboardShortcuts on a background thread, to avoid blocking
-//while communicating over Applescript with System Events.
-- (void) syncSpacesKeyboardShortcutsInBackground;
 
 
 #pragma mark -

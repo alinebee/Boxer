@@ -93,9 +93,8 @@
 						<td><kbd>Cmd ⌘</kbd>+<kbd>Shift ⇧</kbd>+<kbd>A</kbd></td>
 					</tr>
 					<tr>
-						<td>Skip a gamebox’s default program
-							<p class="note">This will show the DOS prompt instead</p></td>
-						<td>Hold <kbd>Opt ⌥</kbd>while the gamebox is loading</td>
+						<td>Skip the default program and start up at the DOS prompt</td>
+						<td>Hold <kbd>Opt ⌥</kbd>while a gamebox is loading</td>
 					</tr>
 				</tbody>
 			</table>
@@ -104,29 +103,21 @@
 		</section>
 		
 		<section>
-			<a name="function-keys"></a>
-			<h2>Using function keys on a Mac keyboard</h2>
-			
-			<p>The <kbd>F1</kbd>–<kbd>F10</kbd> function keys are normally reserved for OS&nbsp;X system functions like Exposé and Dashboard. To make these keys work normally in DOS, <strong>hold down <kbd>fn</kbd> as you press the function key.</strong></p>
-
-			<p class="tip">This behaviour can be toggled from the OS&nbsp;X <a href="help:runscript=BoxerHelp/shared/scripts/opensystemprefs.scpt string='com.apple.preference.keyboard'" rel="other-application">Keyboard preferences pane</a>.</p>
-
-			<p>You can also send function key signals directly to DOS using the <span class="menu">Emulation ▸ Send Key</span> menu.</p>
-		</section>
-		
-		<section>
+			<a name="keyboard"></a>
 			<a name="spaces-shortcuts"></a>
-			<h2>Preventing arrow-keys from switching OS&nbsp;X Spaces</h2>
+			<h2>Preventing OS&nbsp;X hotkeys from interfering with games</h2>
 			
-			<p>The default OS&nbsp;X keyboard shortcuts to switch Spaces are <kbd>Ctrl ⌃</kbd>+<kbd>⇠</kbd>/<kbd>⇢</kbd>. These can interfere with games that use the arrow keys and <kbd>Ctrl ⌃</kbd> as an action button. You can change or disable these shortcuts:</p>
+			<p>Some OS&nbsp;X global hotkeys overlap with the control schemes of DOS games, and get in the way when playing. (This is especially common with the <kbd>Ctrl ⌃</kbd>+<kbd>⇠</kbd>/<kbd>⇢</kbd> shortcut to switch Spaces.) </p>
 			
-			<ul>
-				<li><strong>In OS&nbsp;X 10.6 and below</strong>, via the <a href="help:runscript=BoxerHelp/shared/scripts/opensystemprefs.scpt string='com.apple.preference.expose'" rel="other-application">Exposé and Spaces preferences pane</a>.</li>
-				
-				<li><strong>In OS&nbsp;X 10.7</strong>, via the <a href="help:runscript=BoxerHelp/shared/scripts/opensystemprefs.scpt string='com.apple.preference.keyboard'" rel="other-application">Keyboard preferences pane</a> instead.</li>
-			</ul>
-		</section>
+			<p>If possible, <strong>Boxer will suppress these OS&nbsp;X hotkeys while you’re playing</strong> to stop them from interfering. To let Boxer do this though, you need to <strong>turn on “Enable access for assistive devices”</strong> in the OS X <a href="help:runscript=BoxerHelp/shared/scripts/opensystemprefs.scpt string='com.apple.preference.universalaccess'" rel="other-application">Universal Access preferences pane</a>.</p>
+		
+			<a name="function-keys"></a>
+			<h3>Accessing the function keys on a Mac keyboard</h3>
+			
+			<p>Most Mac keyboards adopt the <kbd>F1</kbd>–<kbd>F12</kbd> keys as hotkeys to control volume, screen brightness and other system functions. To make these keys act as regular function keys, <strong>hold down <kbd>fn</kbd> as you press the function key.</strong></p>
 
+			<p class="tip">You can also send function key signals directly to DOS using the <span class="menu">Emulation ▸ Send Key</span> menu.</p>
+		</section>
 		
 		<section>
 			<a name="keyboard-layout"></a>
@@ -137,7 +128,7 @@
 			
 			<p>You may have to try nearby keys and <kbd>Shift ⇧</kbd>-ed keys to find the character you’re looking for. On non-US keyboards, you can also <strong>hold down the <em>right-hand</em> <kbd>Opt ⌥</kbd> key</strong> to access additional special characters.</p>
 		
-			<p class="tip">Some keys found on a DOS-era PC keyboard, like Insert and NumLock, <strong>don’t exist at all</strong> on a Mac keyboard. If you have a game that needs these keys, you can send them using the <span class="menu">Edit ▸ Send Key</span> menu.</p>
+			<p class="tip">Some keys found on a DOS-era PC keyboard, like Insert and NumLock, <strong>don’t exist at all</strong> on a Mac keyboard. If you have a game that needs these keys, you can send them using the <span class="menu">Emulation ▸ Send Key</span> menu.</p>
 		</section>
 
 		

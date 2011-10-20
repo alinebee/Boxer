@@ -21,6 +21,9 @@
 			<enumerator name="Audio Preferences panel" code="APpn">
 				<cocoa integer-value="2"/>
 			</enumerator>
+			<enumerator name="Keyboard Preferences panel" code="KPpn">
+				<cocoa integer-value="3"/>
+			</enumerator>
 		</enumeration>
 		
 		<enumeration name="inspector window panels" code="eIpn">

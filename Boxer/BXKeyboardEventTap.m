@@ -9,6 +9,7 @@
 #import <Carbon/Carbon.h> //For keycodes
 #import "BXKeyboardEventTap.h"
 #import "BXAppController.h"
+#import "BXSession.h"
 
 
 @interface BXKeyboardEventTap ()
@@ -35,10 +36,7 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
     [self setEnabled: YES];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
-    [self bind: @"enabled"
-      toObject: defaults
-   withKeyPath: @"suppressSystemHotkeys"
-       options: nil];
+    [self bind: @"enabled" toObject: defaults withKeyPath: @"suppressSystemHotkeys" options: nil];
     
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center addObserver: self
@@ -55,10 +53,12 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
     //If the API is available, attempt to reestablish a tap if we're
     //enabled and don't already have one (which means it failed when
     //we tried it the last time.
+    [self willChangeValueForKey: @"canTapEvents"];
     if ([self isEnabled] && !_tap && [self canTapEvents])
     {
         [self _installTap];
     }
+    [self didChangeValueForKey: @"canTapEvents"];
 }
 
 - (void) dealloc
@@ -130,7 +130,8 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
 {
     if (![self isEnabled]) return NO;
     if (![NSApp isActive]) return NO;
-    if (![[NSApp delegate] currentSession]) return NO;
+    
+    if (![[[NSApp delegate] currentSession] programIsActive]) return NO;
     
     return YES;
 }

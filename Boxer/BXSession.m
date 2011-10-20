@@ -1296,6 +1296,20 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 #pragma mark -
 #pragma mark Pause-state handling
 
++ (NSSet *) keyPathsForValuesAffectingProgramIsActive
+{
+    return [NSSet setWithObjects: @"suspended", @"emulating", @"emulator.isAtPrompt", nil];
+}
+
+- (BOOL) programIsActive
+{
+    if ([self isSuspended]) return NO;
+    if (![self isEmulating]) return NO;
+    if ([[self emulator] isAtPrompt]) return NO;
+    
+    return YES;
+}
+
 - (void) setPaused: (BOOL)flag
 {
 	if (paused != flag)

@@ -436,6 +436,12 @@
 }
 
 
+//Display help for the Keyboard Preferences panel.
+- (IBAction) showKeyboardPreferencesHelp: (id)sender
+{
+	[[NSApp delegate] showHelpAnchor: @"keyboard"];
+}
+
 #pragma mark -
 #pragma mark Drag-drop events for MT-32 ROM adding
 

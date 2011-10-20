@@ -457,6 +457,7 @@
 		9FB554220F6EAC5F00A33017 /* NSAlert+BXAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FB554210F6EAC5F00A33017 /* NSAlert+BXAlert.m */; };
 		9FB642A313FEB71D00385DD3 /* BXISOImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F81CFB813EEA3F4008F0265 /* BXISOImage.m */; };
 		9FB642A413FEB71D00385DD3 /* BXBinCueImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F98589613EF71F600E66877 /* BXBinCueImage.m */; };
+		9FBA48C01450B73900F9BBDE /* Keyboard.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FBA48BF1450B73900F9BBDE /* Keyboard.png */; };
 		9FBAA6BD134A1A430092BF95 /* BXCDImageImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBAA6BC134A1A430092BF95 /* BXCDImageImport.m */; };
 		9FBAA6E1134A21A50092BF95 /* BXDriveImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBAA6E0134A21A50092BF95 /* BXDriveImport.m */; };
 		9FBAA878134A66C80092BF95 /* BXBinCueImageImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FBAA877134A66C80092BF95 /* BXBinCueImageImport.m */; };
@@ -1176,6 +1177,7 @@
 		9FB553E00F6EA30900A33017 /* BXCloseAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXCloseAlert.m; sourceTree = "<group>"; };
 		9FB554200F6EAC5F00A33017 /* NSAlert+BXAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAlert+BXAlert.h"; sourceTree = "<group>"; };
 		9FB554210F6EAC5F00A33017 /* NSAlert+BXAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAlert+BXAlert.m"; sourceTree = "<group>"; };
+		9FBA48BF1450B73900F9BBDE /* Keyboard.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Keyboard.png; sourceTree = "<group>"; };
 		9FBAA6BB134A1A430092BF95 /* BXCDImageImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCDImageImport.h; sourceTree = "<group>"; };
 		9FBAA6BC134A1A430092BF95 /* BXCDImageImport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXCDImageImport.m; sourceTree = "<group>"; };
 		9FBAA6E0134A21A50092BF95 /* BXDriveImport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDriveImport.m; sourceTree = "<group>"; };
@@ -2534,6 +2536,7 @@
 				9FFC2ABF12A19CCC008C2B3B /* Sample Game Icons */,
 				9F676BEF1235451B00924B8C /* Display.png */,
 				9F1F00AA143F091300FF163A /* Audio.png */,
+				9FBA48BF1450B73900F9BBDE /* Keyboard.png */,
 				9F960C7E12AAAB2900568AFD /* BlankShelves.png */,
 				9F843FE01226EB1100FD37F1 /* import.png */,
 				9F4B5283122591960055022A /* prompt.icns */,
@@ -2974,6 +2977,7 @@
 				9F0102E21440561E00942713 /* MT32Shelf.jpg in Resources */,
 				9F0102E5144078E300942713 /* BoxerHelp in Resources */,
 				9F12F97C144875F400FC9645 /* DummyCD.iso in Resources */,
+				9FBA48C01450B73900F9BBDE /* Keyboard.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

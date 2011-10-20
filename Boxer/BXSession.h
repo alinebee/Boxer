@@ -151,6 +151,10 @@ extern NSString * const BXDidFinishInterruptionNotification;
 //Whether the emulator is initialized and ready to receive instructions.
 @property (readonly, assign, nonatomic, getter=isEmulating) BOOL emulating;
 
+//Whether this session is actively running a program. Will be NO if the emulator
+//is suspended, at the DOS prompt, or not currently emulating at all.
+@property (readonly, assign, nonatomic) BOOL programIsActive;
+
 //Whether this session represents a gamebox.
 @property (readonly, nonatomic) BOOL isGamePackage;
 

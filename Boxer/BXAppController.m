@@ -55,7 +55,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 
 @implementation BXAppController
-@synthesize currentSession, generalQueue, joystickController, joypadController, MIDIDeviceMonitor;
+@synthesize currentSession, generalQueue, joystickController, joypadController, MIDIDeviceMonitor, hotkeySuppressionTap;
 
 
 #pragma mark -
@@ -237,6 +237,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	[self setJoystickController: nil], [joystickController release];
 	[self setJoypadController: nil], [joypadController release];
 	[self setMIDIDeviceMonitor: nil], [MIDIDeviceMonitor release];
+	[self setHotkeySuppressionTap: nil], [hotkeySuppressionTap release];
 	
 	[generalQueue release], generalQueue = nil;
 	
@@ -736,6 +737,13 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (IBAction) showBugReportPage:		(id)sender	{ [self openURLFromKey: @"BugReportURL"]; }
 - (IBAction) showPerianDownloadPage:(id)sender	{ [self openURLFromKey: @"PerianURL"]; }
 - (IBAction) showJoypadDownloadPage:(id)sender	{ [self openURLFromKey: @"JoypadURL"]; }
+- (IBAction) showUniversalAccessPrefsPane: (id)sender
+{
+    NSString *systemLibraryPath = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSSystemDomainMask, NO) objectAtIndex: 0];
+    NSString *prefsPanePath = [systemLibraryPath stringByAppendingPathComponent: @"PreferencePanes/UniversalAccessPref.prefPane"];
+    [[NSWorkspace sharedWorkspace] openFile: prefsPanePath];
+}
+
 - (IBAction) sendEmail:				(id)sender
 {
 	NSString *subject		= @"Boxer feedback";

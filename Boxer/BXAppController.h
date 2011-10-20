@@ -29,6 +29,7 @@
 @class BXJoystickController;
 @class BXJoypadController;
 @class BXMIDIDeviceMonitor;
+@class BXKeyboardEventTap;
 
 enum {
 	BXStartUpWithNothing		= 0,
@@ -47,6 +48,7 @@ enum {
 	
 	IBOutlet BXJoystickController *joystickController;
 	IBOutlet BXJoypadController *joypadController;
+    IBOutlet BXKeyboardEventTap *hotkeySuppressionTap;
 	
     BXMIDIDeviceMonitor *MIDIDeviceMonitor;
 }
@@ -58,6 +60,7 @@ enum {
 @property (retain, nonatomic) BXJoystickController *joystickController;
 @property (retain, nonatomic) BXJoypadController *joypadController;
 @property (retain, nonatomic) BXMIDIDeviceMonitor *MIDIDeviceMonitor;
+@property (retain, nonatomic) BXKeyboardEventTap *hotkeySuppressionTap;
 
 //A general operation queue for non-session-specific operations.
 @property (retain, readonly) NSOperationQueue *generalQueue;
@@ -142,15 +145,15 @@ enum {
 - (IBAction) orderFrontInspectorPanel: (id)sender;		//Display Boxer's inspector HUD panel.
 - (IBAction) toggleInspectorPanel: (id)sender;			//Display/hide Boxer's inspector HUD panel.
 
-
 //The URLs and email addresses for the following actions are configured in the Info.plist file.
 
 - (IBAction) showWebsite:			(id)sender;	//Open the Boxer website in the default browser. 
 - (IBAction) showDonationPage:		(id)sender;	//Open the Boxer donations page in the default browser.
 - (IBAction) showPerianDownloadPage:(id)sender;	//Open the Perian website in the default browser.
 - (IBAction) showJoypadDownloadPage:(id)sender;	//Open the Joypad website in the default browser.
-- (IBAction) showBugReportPage:		(id)sender;	//Open the Bitbucket issue reporting page in the default browser. 
+- (IBAction) showBugReportPage:		(id)sender;	//Open Boxer's issue reporting page in the default browser. 
 - (IBAction) sendEmail:				(id)sender;	//Open a new email to Boxer's contact email address.
+- (IBAction) showUniversalAccessPrefsPane: (id)sender; //Open the Universal Access pane in OS X System Preferences.
 
 - (IBAction) revealInFinder: (id)sender;			//Reveal the sender's represented object in a new Finder window.
 - (IBAction) openInDefaultApplication: (id)sender;	//Open the sender's represented object with its default app.

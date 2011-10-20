@@ -87,9 +87,6 @@ enum {
                        returnCode: (int)returnCode
                       contextInfo: (void *)contextInfo;
 
-//Display help for the Audio Preferences panel.
-- (IBAction) showAudioPreferencesHelp: (id)sender;
-
 //Does the work of importing ROMs from the specified path. Called when drag-dropping
 //ROMs onto the MT-32 ROM dropzone or choosing them from the file picker.
 //Will display an error sheet in the Preferences window if importing failed.
@@ -99,7 +96,13 @@ enum {
 #pragma mark -
 #pragma mark Help
 
+//Display help for the Audio Preferences panel.
+- (IBAction) showAudioPreferencesHelp: (id)sender;
+
 //Display help for the Display Preferences panel.
 - (IBAction) showDisplayPreferencesHelp: (id)sender;
+
+//Display help for the Keyboard Preferences panel.
+- (IBAction) showKeyboardPreferencesHelp: (id)sender;
 
 @end

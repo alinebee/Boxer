@@ -8,7 +8,6 @@
 
 #import "BXVideoHandler.h"
 #import "BXEmulatorPrivate.h"
-#import "BXSession.h"
 #import "BXFrameBuffer.h"
 #import "BXGeometry.h"
 #import "BXFilterDefinitions.h"

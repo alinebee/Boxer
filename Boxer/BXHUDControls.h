@@ -33,6 +33,14 @@
 @interface BXHUDPopUpButtonCell : BGHUDPopUpButtonCell
 @end
 
+//BGHUDAppKit control subclasses hardcoded to use BXBlueprintTheme and BXBlueprintHelpTextTheme.
+
+@interface BXBlueprintLabel : BXHUDLabel
+@end
+
+@interface BXBlueprintHelpTextLabel : BXHUDLabel
+@end
+
 
 //A custom view used for drawing a rounded translucent bezel background.
 @interface BXBezelView: NSView

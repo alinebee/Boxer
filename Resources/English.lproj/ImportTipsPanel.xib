@@ -54,6 +54,7 @@
 								<string key="NSFrame">{{320, 15}, {273, 17}}</string>
 								<reference key="NSSuperview" ref="237116129"/>
 								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView" ref="556091039"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="930571967">
 									<int key="NSCellFlags">68288064</int>
@@ -89,6 +90,7 @@
 								<string key="NSFrame">{{320, 34}, {273, 17}}</string>
 								<reference key="NSSuperview" ref="237116129"/>
 								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView" ref="352885084"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="294347757">
 									<int key="NSCellFlags">68288064</int>
@@ -114,6 +116,7 @@
 								<string key="NSFrame">{{27, 15}, {280, 17}}</string>
 								<reference key="NSSuperview" ref="237116129"/>
 								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView" ref="972104458"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="794110516">
 									<int key="NSCellFlags">68288064</int>
@@ -135,6 +138,7 @@
 								<string key="NSFrame">{{27, 34}, {280, 17}}</string>
 								<reference key="NSSuperview" ref="237116129"/>
 								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView" ref="505386163"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="206562801">
 									<int key="NSCellFlags">68288064</int>
@@ -156,6 +160,7 @@
 								<string key="NSFrame">{{595, 17}, {25, 25}}</string>
 								<reference key="NSSuperview" ref="237116129"/>
 								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="1061632617">
 									<int key="NSCellFlags">67239424</int>
@@ -175,12 +180,14 @@
 						<string key="NSFrameSize">{640, 64}</string>
 						<reference key="NSSuperview" ref="516813016"/>
 						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView" ref="460529248"/>
 						<string key="NSClassName">NSView</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{640, 64}</string>
 				<reference key="NSSuperview"/>
 				<reference key="NSWindow"/>
+				<reference key="NSNextKeyView" ref="237116129"/>
 				<string key="NSClassName">NSView</string>
 			</object>
 			<object class="NSCustomView" id="899602438">
@@ -199,6 +206,7 @@
 								<string key="NSFrame">{{17, 15}, {304, 17}}</string>
 								<reference key="NSSuperview" ref="327747426"/>
 								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView" ref="452337895"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="740846701">
 									<int key="NSCellFlags">68288064</int>
@@ -220,6 +228,7 @@
 								<string key="NSFrame">{{17, 34}, {304, 17}}</string>
 								<reference key="NSSuperview" ref="327747426"/>
 								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView" ref="71013719"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSTextFieldCell" key="NSCell" id="424183765">
 									<int key="NSCellFlags">68288064</int>
@@ -241,6 +250,7 @@
 								<string key="NSFrame">{{331, 12}, {152, 32}}</string>
 								<reference key="NSSuperview" ref="327747426"/>
 								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView" ref="946525712"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="867627875">
 									<int key="NSCellFlags">67239424</int>
@@ -263,6 +273,7 @@
 								<string key="NSFrame">{{482, 12}, {144, 32}}</string>
 								<reference key="NSSuperview" ref="327747426"/>
 								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView"/>
 								<bool key="NSEnabled">YES</bool>
 								<object class="NSButtonCell" key="NSCell" id="483073014">
 									<int key="NSCellFlags">67239424</int>
@@ -283,12 +294,14 @@
 						<string key="NSFrameSize">{640, 64}</string>
 						<reference key="NSSuperview" ref="899602438"/>
 						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView" ref="55700577"/>
 						<string key="NSClassName">NSView</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{640, 64}</string>
 				<reference key="NSSuperview"/>
 				<reference key="NSWindow"/>
+				<reference key="NSNextKeyView" ref="327747426"/>
 				<string key="NSClassName">NSView</string>
 			</object>
 		</object>
@@ -555,15 +568,21 @@
 					<string>335.IBPluginDependency</string>
 					<string>381.IBPluginDependency</string>
 					<string>382.IBPluginDependency</string>
+					<string>438.CustomClassName</string>
 					<string>438.IBPluginDependency</string>
 					<string>439.IBPluginDependency</string>
+					<string>440.CustomClassName</string>
 					<string>440.IBPluginDependency</string>
 					<string>441.IBPluginDependency</string>
+					<string>442.CustomClassName</string>
 					<string>442.IBPluginDependency</string>
 					<string>443.IBPluginDependency</string>
+					<string>444.CustomClassName</string>
 					<string>444.IBPluginDependency</string>
 					<string>445.IBPluginDependency</string>
+					<string>446.CustomClassName</string>
 					<string>446.IBPluginDependency</string>
+					<string>447.CustomClassName</string>
 					<string>447.IBPluginDependency</string>
 					<string>448.IBPluginDependency</string>
 					<string>449.IBPluginDependency</string>
@@ -583,15 +602,21 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>BXBlueprintLabel</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>BXBlueprintLabel</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>BXBlueprintLabel</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>BXBlueprintLabel</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>BXBlueprintLabel</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>BXBlueprintLabel</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -614,6 +639,30 @@
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<bool key="EncodedWithXMLCoder">YES</bool>
+				<object class="IBPartialClassDescription">
+					<string key="className">BGHUDLabel</string>
+					<string key="superclassName">NSTextField</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BGHUDLabel.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXBlueprintLabel</string>
+					<string key="superclassName">BXHUDLabel</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXBlueprintLabel.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXHUDLabel</string>
+					<string key="superclassName">BGHUDLabel</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXHUDLabel.h</string>
+					</object>
+				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">BXImportTipsPanelController</string>
 					<string key="superclassName">BXProgramPanelController</string>

@@ -63,6 +63,19 @@
 
 @end 
 
+@implementation BXBlueprintLabel
+
+- (NSString *)themeKey { return @"BXBlueprintTheme"; }
+
+@end
+
+@implementation BXBlueprintHelpTextLabel
+
+- (NSString *)themeKey { return @"BXBlueprintHelpText"; }
+
+@end
+
+
 
 
 @implementation BXBezelView

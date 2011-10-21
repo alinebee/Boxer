@@ -87,7 +87,6 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
 
 - (BOOL) _installTap
 {
-    NSLog(@"Attempting to install");
     if (!_tap)
     {
         _tap = CGEventTapCreate(kCGSessionEventTap,
@@ -96,8 +95,6 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
                                 CGEventMaskBit(kCGEventKeyUp) | CGEventMaskBit(kCGEventKeyDown),
                                 _handleEventFromTap,
                                 self);
-        
-        if (!_tap) NSLog(@"Event tap failed to install.");
     }
     
     if (_tap && !_source)
@@ -106,6 +103,7 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
         CFRunLoopAddSource(CFRunLoopGetCurrent(), _source, kCFRunLoopCommonModes);
     }
     
+    //TODO: populate an error if the tap failed.
     return (_tap && _source);
 }
 
@@ -186,14 +184,12 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
             
         case kCGEventTapDisabledByTimeout:
         {
-            NSLog(@"Timeout disabled received from tap.");
             CGEventTapEnable(_tap, YES);
             break;
         }
             
         case kCGEventTapDisabledByUserInput:
         {
-            NSLog(@"User-input disabled received from tap.");
             CGEventTapEnable(_tap, YES);
             break;
         }

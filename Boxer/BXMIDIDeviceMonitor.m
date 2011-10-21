@@ -200,8 +200,6 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
 
 - (void) _MIDINotificationReceived: (const MIDINotification *)message
 {
-    NSLog(@"MIDI notification received of type %ld", message->messageID);
-    
     //If a new destination was added, start scanning it.
     if (message->messageID == kMIDIMsgObjectAdded)
     {
@@ -210,7 +208,6 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
         if (notification->childType == kMIDIObjectType_Destination)
         {
             MIDIEndpointRef destination = (MIDIEndpointRef)notification->child;
-            NSLog(@"Scanning newly-connected MIDI destination");
             [self _scanDestination: destination];
         }
     }
@@ -225,11 +222,6 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
         if (type == kMIDIObjectType_Destination || type == kMIDIObjectType_Source)
         {
             MIDIEndpointRef endpoint = (MIDIEndpointRef)notification->child;
-            
-            if (type == kMIDIObjectType_Destination)
-                NSLog(@"Cleaning up disconnected MIDI destination");
-            else
-                NSLog(@"Cleaning up disconnected MIDI source");
             
             for (BXMIDIInputListener *listener in [NSArray arrayWithArray: _listeners])
             {
@@ -284,8 +276,6 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
             
             if (errCode == noErr)
             {
-                NSLog(@"MT-32 found at destination ID %ld", destinationID);
-                
                 //Synchronize to avoid problems if another thread is currently accessing the MT-32 list.
                 @synchronized(_discoveredMT32s)
                 {
@@ -307,7 +297,6 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
 
 - (BOOL) MIDIInputListenerShouldStopListeningAfterTimeout: (BXMIDIInputListener *)listener
 {
-    NSLog(@"MIDI input listener timed out.");
     [_listeners removeObject: listener];
     return YES;
 }
@@ -409,11 +398,9 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
 
 - (void) _scanAvailableDestinations
 {
-    NSLog(@"Number of destinations: %lu sources: %lu", MIDIGetNumberOfDestinations(), MIDIGetNumberOfSources());
     NSUInteger i, numDestinations = MIDIGetNumberOfDestinations();
     for (i = 0; i < numDestinations; i++)
     {
-        NSLog(@"Scanning MIDI destination at index %i", i);
         [self _scanDestination: MIDIGetDestination(i)];
     }
 }

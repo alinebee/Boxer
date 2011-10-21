@@ -417,27 +417,38 @@ void _logMT32DebugMessage(void *userData, const char *fmt, va_list list);
 
 - (void) _reportMT32MessageOfType: (MT32Emu::ReportType)type data: (const void *)reportData
 {
-    if (type == MT32Emu::ReportType_lcdMessage)
-    {
-        //Pass on LCD messages to our delegate
-        NSString *message = [NSString stringWithUTF8String: (const char *)reportData];
-        [[self delegate] emulatedMT32: self didDisplayMessage: message];
-    }
-    else if (type == MT32Emu::ReportType_errorControlROM || type == MT32Emu::ReportType_errorPCMROM)
-    {
-        //If ROM loading failed, record the error that occurred so we can retrieve it back in the initializer.
-        NSString *ROMPath = (type == MT32Emu::ReportType_errorControlROM) ? [self controlROMPath] : [self PCMROMPath]; 
-        NSDictionary *userInfo = ROMPath ? [NSDictionary dictionaryWithObject: ROMPath forKey: NSFilePathErrorKey] : nil;
+    switch (type) {
+        case MT32Emu::ReportType_lcdMessage:
+            //Pass LCD messages on to our delegate
+            {
+                NSString *message = [NSString stringWithCString: (const char *)reportData
+                                                       encoding: NSASCIIStringEncoding];
+                [[self delegate] emulatedMT32: self didDisplayMessage: message];
+            }
+            break;
         
-        [self setSynthError: [NSError errorWithDomain: BXEmulatedMT32ErrorDomain
-                                                 code: BXEmulatedMT32InvalidROM
-                                             userInfo: userInfo]];
-    }
-    else
-    {
-#ifdef BOXER_DEBUG
-        NSLog(@"MT-32 message of type: %d", type);
-#endif
+        case MT32Emu::ReportType_errorControlROM:
+        case MT32Emu::ReportType_errorPCMROM:
+            //If ROM loading failed, record the error that occurred so we can retrieve it back in the initializer.
+            {
+                NSString *ROMPath;
+                if (type == MT32Emu::ReportType_errorControlROM)
+                    ROMPath = [self controlROMPath];
+                else
+                    ROMPath = [self PCMROMPath];
+                
+                NSDictionary *userInfo = nil;
+                if (ROMPath) userInfo = [NSDictionary dictionaryWithObject: ROMPath
+                                                                    forKey: NSFilePathErrorKey];
+                
+                [self setSynthError: [NSError errorWithDomain: BXEmulatedMT32ErrorDomain
+                                                         code: BXEmulatedMT32InvalidROM
+                                                     userInfo: userInfo]];
+            }
+            break;
+            
+        default:
+            break;
     }
 }
 

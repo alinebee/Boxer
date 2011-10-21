@@ -16,6 +16,7 @@
 #import "BXDOSWindowController.h"
 #import "BXDOSWindow.h"
 #import "BXPostLeopardAPIs.h"
+#import "NSWindow+BXWindowDimensions.h"
 
 #import "BXEventConstants.h"
 
@@ -284,9 +285,17 @@
 {
 	if ([self mouseLocked]) return YES;
 	
-	NSPoint mouseLocation = [[[self view] window] mouseLocationOutsideOfEventStream];
-	NSPoint pointInView = [[self view] convertPoint: mouseLocation fromView: nil];
-	return [[self view] mouse: pointInView inRect: [[self view] bounds]];
+    NSPoint mouseLocation = [NSEvent mouseLocation];
+    NSWindow *window = [[self view] window];
+    
+    //Check if that point is over our window to begin with
+    if ([NSWindow windowAtPoint: mouseLocation] != window) return NO;
+    
+    //If it is, check if the mouse is inside our view
+	NSPoint pointInWindow = [window convertScreenToBase: mouseLocation];
+	NSPoint pointInView = [[self view] convertPoint: pointInWindow fromView: nil];
+    
+    return ([[self view] mouse: pointInView inRect: [[self view] bounds]]);
 }
 
 - (void) cursorUpdate: (NSEvent *)theEvent
@@ -303,6 +312,7 @@
 	else
 	{
 		[cursorFade stopAnimation];
+        [[NSCursor arrowCursor] set];
 	}
 }
 
@@ -695,14 +705,18 @@
 - (void) mouseExited: (NSEvent *)theEvent
 {
 	[self willChangeValueForKey: @"mouseInView"];
+	//Force a cursor update at this point: OS X 10.7 won't do so itself
+    //if the mouse leaves the tracking area by moving into a floating panel.
 	[super mouseExited: theEvent];
-	[self didChangeValueForKey: @"mouseInView"];
+    [self cursorUpdate: theEvent];
+    [self didChangeValueForKey: @"mouseInView"];
 }
 
 - (void) mouseEntered: (NSEvent *)theEvent
 {
 	[self willChangeValueForKey: @"mouseInView"];
 	[super mouseEntered: theEvent];
+    [self cursorUpdate: theEvent];
 	[self didChangeValueForKey: @"mouseInView"];
 }
 

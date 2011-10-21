@@ -15,7 +15,7 @@
 //Returns the window at the specified point (in screen coordinates) belonging
 //to this application. Will return nil if there is no window at that point,
 //or a window belonging to another app.
-+ (NSWindow *) windowAtPoint: (NSPoint)point;
++ (NSWindow *) windowAtPoint: (NSPoint)screenPoint;
 
 
 //Resize the window relative to an anchor point. 

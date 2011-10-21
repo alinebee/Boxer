@@ -5,13 +5,24 @@
 
 + (NSWindow *) windowAtPoint: (NSPoint)screenPoint
 {
-    //TODO: this is not particularly clever and may give false positives/negatives.
-    //For instance, it may return a window that is at that point but underneath
-    //another app's window.
-	for (NSWindow *window in [NSApp windows])
-	{
-		if ([window isVisible] && NSPointInRect(screenPoint, window.frame)) return window;
-	}
+    //Use the 10.6 method if it's available.
+    if ([[NSWindow class] respondsToSelector: @selector(windowNumberAtPoint:belowWindowWithWindowNumber:)])
+    {
+        NSInteger windowNumber = [NSWindow windowNumberAtPoint: screenPoint
+                                   belowWindowWithWindowNumber: 0];
+        
+        if (windowNumber) return [NSApp windowWithWindowNumber: windowNumber];
+    }
+    else
+    {
+        //TODO: this is not particularly clever and may give false positives/negatives.
+        //For instance, it may return a window that is at that point but underneath
+        //another app's window.
+        for (NSWindow *window in [NSApp windows])
+        {
+            if ([window isVisible] && NSPointInRect(screenPoint, window.frame)) return window;
+        }
+    }
 	return nil;
 }
 

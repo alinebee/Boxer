@@ -3,10 +3,25 @@
 <plist version="1.0">
 <dict>
     <key>BXGameProfileCatalogueVersion</key>
-    <string>20111015.4</string>
+    <string>20111021.1</string>
     
 	<key>BXSpecificGameProfiles</key>
 	<array>
+        <dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.shiny-entertainment.mdk</string>
+			<key>BXProfileGameName</key>
+			<string>MDK</string>
+			<key>BXProfileConfigurations</key>
+            <array>
+                <string>MDK</string>
+            </array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>mdk.exe</string>
+			</array>
+		</dict>
+        
         <dict>
             <key>BXProfileIdentifier</key>
             <string>com.firebird.elite-plus</string>

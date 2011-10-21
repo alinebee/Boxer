@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>BugReportURL</key>
-	<string>https://bitbucket.org/alunbestor/boxer/issues/new</string>
+	<string>http://boxerapp.com/report-an-issue</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleDocumentTypes</key>
@@ -393,8 +393,6 @@
 				<key>public.filename-extension</key>
 				<array>
 					<string>ima</string>
-                    <!--Claimed already by com.apple.disk-image-ndif-->
-					<!--<string>img</string>-->
 				</array>
 			</dict>
 		</dict>

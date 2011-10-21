@@ -489,7 +489,7 @@ int _reportMT32Message(void *userData, MT32Emu::ReportType type, const void *rep
 void _logMT32DebugMessage(void *userData, const char *fmt, va_list list)
 {
 #ifdef BOXER_DEBUG
-    NSLogv([NSString stringWithUTF8String: fmt], list);
+    NSLogv([NSString stringWithCString: fmt encoding: NSASCIIStringEncoding], list);
 #endif
 }
 

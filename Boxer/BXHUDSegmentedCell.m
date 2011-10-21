@@ -247,7 +247,10 @@
 		}
         
         //TWEAK: round the origin to fixed units, to prevent blurring.
-        imageRect.origin = NSIntegralRect(imageRect).origin;
+        imageRect.origin.x = floorf(imageRect.origin.x);
+        imageRect.origin.y = ceilf(imageRect.origin.y);
+        
+        //imageRect.origin = NSIntegralRect(imageRect).origin;
 		
 		NSShadow *imageShadow = [[[BGThemeManager keyedManager] themeForKey: self.themeKey] dropShadow];
 		

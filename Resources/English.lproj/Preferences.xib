@@ -233,7 +233,7 @@
 							</object>
 						</object>
 					</object>
-					<object class="NSMutableArray" key="NSToolbarIBAllowedItems">
+					<object class="NSArray" key="NSToolbarIBAllowedItems">
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<reference ref="216182816"/>
 						<reference ref="439594316"/>
@@ -242,7 +242,7 @@
 						<reference ref="556039677"/>
 						<reference ref="209033585"/>
 					</object>
-					<object class="NSMutableArray" key="NSToolbarIBDefaultItems">
+					<object class="NSArray" key="NSToolbarIBDefaultItems">
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<reference ref="556039677"/>
 						<reference ref="216182816"/>
@@ -266,7 +266,6 @@
 							<int key="NSvFlags">18</int>
 							<string key="NSFrameSize">{532, 396}</string>
 							<reference key="NSSuperview" ref="1006"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="205068588"/>
 							<int key="NSViewLayerContentsRedrawPolicy">2</int>
 							<object class="NSMutableArray" key="NSTabViewItems">
@@ -934,6 +933,7 @@
 														<int key="NSvFlags">268</int>
 														<string key="NSFrame">{{490, 16}, {25, 25}}</string>
 														<reference key="NSSuperview" ref="221307292"/>
+														<reference key="NSNextKeyView"/>
 														<int key="NSViewLayerContentsRedrawPolicy">2</int>
 														<bool key="NSEnabled">YES</bool>
 														<object class="NSButtonCell" key="NSCell" id="333411757">
@@ -965,7 +965,7 @@
 																<object class="NSTextFieldCell" key="NSCell" id="599113342">
 																	<int key="NSCellFlags">67239424</int>
 																	<int key="NSCellFlags2">272760832</int>
-																	<string key="NSContents">Games will sometimes print secret messages on the MT-32’s LCD panel. When enabled, Boxer will display these on-screen.</string>
+																	<string key="NSContents">Some games will print secret messages on the MT-32’s LCD panel. When enabled, Boxer will display these on-screen.</string>
 																	<reference key="NSSupport" ref="26"/>
 																	<reference key="NSControlView" ref="197259037"/>
 																	<reference key="NSBackgroundColor" ref="473233401"/>
@@ -1128,7 +1128,6 @@ LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
 														<int key="NSvFlags">268</int>
 														<string key="NSFrame">{{129, 69}, {293, 28}}</string>
 														<reference key="NSSuperview" ref="831383934"/>
-														<reference key="NSWindow"/>
 														<reference key="NSNextKeyView" ref="260665964"/>
 														<int key="NSViewLayerContentsRedrawPolicy">2</int>
 														<string key="NSReuseIdentifierKey">_NS:360</string>
@@ -1137,7 +1136,7 @@ LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
 														<object class="NSTextFieldCell" key="NSCell" id="449687808">
 															<int key="NSCellFlags">67239424</int>
 															<int key="NSCellFlags2">4325376</int>
-															<string key="NSContents">(If an F1, F2 etc. key still behaves as an OS X hotkey, then hold Fn while pressing the key.)</string>
+															<string key="NSContents">(If an F1, F2 etc. key still behaves as an OS X hotkey, then hold down Fn while pressing the key.)</string>
 															<object class="NSFont" key="NSSupport">
 																<string key="NSName">LucidaGrande</string>
 																<double key="NSSize">11</double>
@@ -1154,7 +1153,6 @@ LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
 														<int key="NSvFlags">268</int>
 														<string key="NSFrame">{{125, 33}, {300, 32}}</string>
 														<reference key="NSSuperview" ref="831383934"/>
-														<reference key="NSWindow"/>
 														<reference key="NSNextKeyView" ref="1023220269"/>
 														<int key="NSViewLayerContentsRedrawPolicy">2</int>
 														<string key="NSReuseIdentifierKey">_NS:687</string>
@@ -1179,7 +1177,6 @@ LCBhcyB0aGVzZSBhcmUgbm90IGxlZ2FsIHRvIGRpc3RyaWJ1dGUuA</string>
 														<int key="NSvFlags">268</int>
 														<string key="NSFrame">{{129, 69}, {293, 28}}</string>
 														<reference key="NSSuperview" ref="831383934"/>
-														<reference key="NSWindow"/>
 														<reference key="NSNextKeyView" ref="369159514"/>
 														<int key="NSViewLayerContentsRedrawPolicy">2</int>
 														<string key="NSReuseIdentifierKey">_NS:360</string>
@@ -1206,7 +1203,6 @@ ZWQgaW4gdGhlIFVuaXZlcnNhbCBBY2Nlc3MgcHJlZmVyZW5jZXMuA</string>
 														<int key="NSvFlags">268</int>
 														<string key="NSFrame">{{489, 17}, {25, 25}}</string>
 														<reference key="NSSuperview" ref="831383934"/>
-														<reference key="NSWindow"/>
 														<reference key="NSNextKeyView"/>
 														<int key="NSViewLayerContentsRedrawPolicy">2</int>
 														<string key="NSReuseIdentifierKey">_NS:3976</string>
@@ -1229,9 +1225,8 @@ ZWQgaW4gdGhlIFVuaXZlcnNhbCBBY2Nlc3MgcHJlZmVyZW5jZXMuA</string>
 													<object class="NSTextField" id="188649173">
 														<reference key="NSNextResponder" ref="831383934"/>
 														<int key="NSvFlags">268</int>
-														<string key="NSFrame">{{129, 105}, {293, 28}}</string>
+														<string key="NSFrame">{{129, 105}, {261, 28}}</string>
 														<reference key="NSSuperview" ref="831383934"/>
-														<reference key="NSWindow"/>
 														<reference key="NSNextKeyView" ref="732864421"/>
 														<int key="NSViewLayerContentsRedrawPolicy">2</int>
 														<string key="NSReuseIdentifierKey">_NS:360</string>
@@ -1240,7 +1235,7 @@ ZWQgaW4gdGhlIFVuaXZlcnNhbCBBY2Nlc3MgcHJlZmVyZW5jZXMuA</string>
 														<object class="NSTextFieldCell" key="NSCell" id="494454111">
 															<int key="NSCellFlags">67239424</int>
 															<int key="NSCellFlags2">272760832</int>
-															<string key="NSContents">Enable this option if OS X’s hotkeys are interfering with a game’s own keyboard controls.</string>
+															<string key="NSContents">Turn on if OS X hotkeys are interfering with the keyboard controls in your DOS games.</string>
 															<reference key="NSSupport" ref="26"/>
 															<string key="NSCellIdentifier">_NS:360</string>
 															<reference key="NSControlView" ref="188649173"/>
@@ -1253,7 +1248,6 @@ ZWQgaW4gdGhlIFVuaXZlcnNhbCBBY2Nlc3MgcHJlZmVyZW5jZXMuA</string>
 														<int key="NSvFlags">268</int>
 														<string key="NSFrame">{{111, 142}, {310, 18}}</string>
 														<reference key="NSSuperview" ref="831383934"/>
-														<reference key="NSWindow"/>
 														<reference key="NSNextKeyView" ref="188649173"/>
 														<int key="NSViewLayerContentsRedrawPolicy">2</int>
 														<string key="NSReuseIdentifierKey">_NS:771</string>
@@ -1278,7 +1272,6 @@ ZWQgaW4gdGhlIFVuaXZlcnNhbCBBY2Nlc3MgcHJlZmVyZW5jZXMuA</string>
 												</object>
 												<string key="NSFrameSize">{532, 192}</string>
 												<reference key="NSSuperview" ref="205068588"/>
-												<reference key="NSWindow"/>
 												<reference key="NSNextKeyView" ref="66817421"/>
 												<int key="NSViewLayerContentsRedrawPolicy">2</int>
 												<string key="NSReuseIdentifierKey">_NS:1192</string>
@@ -1287,7 +1280,6 @@ ZWQgaW4gdGhlIFVuaXZlcnNhbCBBY2Nlc3MgcHJlZmVyZW5jZXMuA</string>
 										</object>
 										<string key="NSFrameSize">{532, 396}</string>
 										<reference key="NSSuperview" ref="764053557"/>
-										<reference key="NSWindow"/>
 										<reference key="NSNextKeyView" ref="831383934"/>
 									</object>
 									<string key="NSLabel">Keyboard Preferences</string>
@@ -1306,7 +1298,6 @@ ZWQgaW4gdGhlIFVuaXZlcnNhbCBBY2Nlc3MgcHJlZmVyZW5jZXMuA</string>
 					</object>
 					<string key="NSFrameSize">{532, 396}</string>
 					<reference key="NSSuperview"/>
-					<reference key="NSWindow"/>
 					<reference key="NSNextKeyView" ref="764053557"/>
 					<int key="NSViewLayerContentsRedrawPolicy">2</int>
 				</object>
@@ -2614,10 +2605,10 @@ ZWQgaW4gdGhlIFVuaXZlcnNhbCBBY2Nlc3MgcHJlZmVyZW5jZXMuA</string>
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="1023220269"/>
 							<reference ref="66817421"/>
-							<reference ref="188649173"/>
 							<reference ref="260665964"/>
 							<reference ref="732864421"/>
 							<reference ref="369159514"/>
+							<reference ref="188649173"/>
 						</object>
 						<reference key="parent" ref="205068588"/>
 					</object>
@@ -3030,14 +3021,6 @@ ZWQgaW4gdGhlIFVuaXZlcnNhbCBBY2Nlc3MgcHJlZmVyZW5jZXMuA</string>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<bool key="EncodedWithXMLCoder">YES</bool>
-				<object class="IBPartialClassDescription">
-					<string key="className">BGHUDLabel</string>
-					<string key="superclassName">NSTextField</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BGHUDLabel.h</string>
-					</object>
-				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">BXAppController</string>
 					<string key="superclassName">NSDocumentController</string>

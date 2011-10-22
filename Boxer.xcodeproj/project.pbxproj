@@ -208,6 +208,7 @@
 		9F34BE5C142B76F500A69FAF /* MT32Emu.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F34BE5A142B76D800A69FAF /* MT32Emu.framework */; };
 		9F34BE5F142B851800A69FAF /* BXEmulator+BXAudio.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F34BE5E142B851700A69FAF /* BXEmulator+BXAudio.mm */; };
 		9F34BE62142B917100A69FAF /* BXAppController+BXSupportFiles.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F34BE61142B917100A69FAF /* BXAppController+BXSupportFiles.m */; };
+		9F39A43B1452CE9100942D0F /* BXBezelView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F39A43A1452CE9100942D0F /* BXBezelView.m */; };
 		9F3E57A513F694B40070A14D /* BXEmulatorErrors.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3E57A413F694B40070A14D /* BXEmulatorErrors.m */; };
 		9F3EDA171434A6E4009BFBA2 /* BXSession+BXAudioControls.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3EDA161434A6E4009BFBA2 /* BXSession+BXAudioControls.m */; };
 		9F3EDA1B1434B48D009BFBA2 /* BXExternalMT32.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3EDA1A1434B48D009BFBA2 /* BXExternalMT32.m */; };
@@ -717,6 +718,8 @@
 		9F34BE5E142B851700A69FAF /* BXEmulator+BXAudio.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "BXEmulator+BXAudio.mm"; sourceTree = "<group>"; };
 		9F34BE60142B917100A69FAF /* BXAppController+BXSupportFiles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXAppController+BXSupportFiles.h"; sourceTree = "<group>"; };
 		9F34BE61142B917100A69FAF /* BXAppController+BXSupportFiles.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXAppController+BXSupportFiles.m"; sourceTree = "<group>"; };
+		9F39A4391452CE9100942D0F /* BXBezelView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBezelView.h; sourceTree = "<group>"; };
+		9F39A43A1452CE9100942D0F /* BXBezelView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBezelView.m; sourceTree = "<group>"; };
 		9F3E57A313F694B40070A14D /* BXEmulatorErrors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatorErrors.h; sourceTree = "<group>"; };
 		9F3E57A413F694B40070A14D /* BXEmulatorErrors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXEmulatorErrors.m; sourceTree = "<group>"; };
 		9F3EDA151434A6E4009BFBA2 /* BXSession+BXAudioControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXSession+BXAudioControls.h"; sourceTree = "<group>"; };
@@ -1881,6 +1884,8 @@
 				9F70278313D72D8100606B4C /* BXThemedControls.m */,
 				9F438C5610E3D8C8007D30AD /* BXScroller.h */,
 				9F438C5710E3D8C8007D30AD /* BXScroller.m */,
+				9F39A4391452CE9100942D0F /* BXBezelView.h */,
+				9F39A43A1452CE9100942D0F /* BXBezelView.m */,
 				9FF1562B14506E7200545317 /* BXHUDLevelIndicatorCell.h */,
 				9FF1562C14506E7200545317 /* BXHUDLevelIndicatorCell.m */,
 				9F9E27C311F8C003003EE8F3 /* BXHUDSegmentedCell.h */,
@@ -3323,6 +3328,7 @@
 				9FF1562914506DBA00545317 /* BXHUDProgressIndicator.m in Sources */,
 				9FF1562D14506E7200545317 /* BXHUDLevelIndicatorCell.m in Sources */,
 				9FF1563014506F5C00545317 /* BXKeyboardEventTap.m in Sources */,
+				9F39A43B1452CE9100942D0F /* BXBezelView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

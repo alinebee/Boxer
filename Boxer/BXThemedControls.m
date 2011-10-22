@@ -6,12 +6,6 @@
  */
 
 #import "BXThemedControls.h"
-#import "BXGeometry.h"
-#import "NSShadow+BXShadowExtensions.h"
-#import "NSBezierPath+MCAdditions.h"
-
-
-#define BXBezelBorderRadius 20.0f
 
 
 @implementation BXHUDLabel
@@ -73,24 +67,4 @@
 
 - (NSString *)themeKey { return @"BXBlueprintHelpTextTheme"; }
 
-@end
-
-
-
-
-@implementation BXBezelView
-
-- (void) drawRect: (NSRect)dirtyRect
-{
-    NSBezierPath *background = [NSBezierPath bezierPathWithRoundedRect: [self bounds]
-                                                               xRadius: BXBezelBorderRadius
-                                                               yRadius: BXBezelBorderRadius];
-    
-    NSColor *backgroundColor = [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.5f];
-    
-    [NSGraphicsContext saveGraphicsState];
-        [backgroundColor set];
-        [background fill];
-    [NSGraphicsContext restoreGraphicsState];
-}
 @end

@@ -58,7 +58,7 @@
 	{
         NSShadow *brandShadow = [NSShadow shadowWithBlurRadius: 5.0f
                                                         offset: NSZeroSize
-                                                         color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.5f]];
+                                                         color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.25f]];
         [brandShadow set];
 		[brand drawInRect: brandRegion
 				 fromRect: NSZeroRect

@@ -32,11 +32,11 @@
 {
     if ([self respondsToSelector: @selector(scrollerStyle)] && [self scrollerStyle] == NSScrollerStyleOverlay)
     {
-        return NSMakeSize(1.0f, 2.0f);
+        return NSMakeSize(2.0f, 3.0f);
     }
     else
     {
-        return NSMakeSize(3.0f, 2.0f);
+        return NSMakeSize(4.0f, 3.0f);
     }
 }
 
@@ -47,7 +47,9 @@
         return NSMakeSize(1.0f, 2.0f);
     }
     else
+    {
         return NSMakeSize(3.0f, 2.0f);
+    }
 }
 
 - (NSColor *) slotFill
@@ -67,7 +69,7 @@
 
 - (NSColor *) knobStroke
 {
-    return [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.15f];
+    return [NSColor colorWithCalibratedWhite: 0.4f alpha: 1.0f];
 }
 
 - (NSGradient *) knobGradient
@@ -134,9 +136,9 @@
     
     if (knobStroke)
     {
-        NSBezierPath *strokePath = [NSBezierPath bezierPathWithRoundedRect: NSInsetRect(knobRect, 0.5f, 0.5f)
-                                                                   xRadius: knobRadius - 0.5f
-                                                                   yRadius: knobRadius - 0.5f];
+        NSBezierPath *strokePath = [NSBezierPath bezierPathWithRoundedRect: NSInsetRect(knobRect, -0.5f, -0.5f)
+                                                                   xRadius: knobRadius + 0.5f
+                                                                   yRadius: knobRadius + 0.5f];
         [knobStroke set];
         [strokePath stroke];
     }
@@ -167,9 +169,9 @@
 		slotRadius = slotRect.size.height / 2;
 	}
 	
-	NSBezierPath *slotPath	= [NSBezierPath	bezierPathWithRoundedRect: slotRect
-															 xRadius: slotRadius
-															 yRadius: slotRadius];
+	NSBezierPath *slotPath = [NSBezierPath bezierPathWithRoundedRect: slotRect
+                                                             xRadius: slotRadius
+                                                             yRadius: slotRadius];
 	
     
     [[NSGraphicsContext currentContext] saveGraphicsState];
@@ -187,24 +189,35 @@
 {
     if ([self respondsToSelector: @selector(scrollerStyle)] && [self scrollerStyle] == NSScrollerStyleOverlay)
     {
-        return NSMakeSize(2.0f, 3.0f);
+        return NSMakeSize(2.0f, 2.0f);
     }
     else
     {
-        return NSMakeSize(3.0f, 1.0f);
+        return NSMakeSize(5.0f, 1.0f);
+    }
+}
+
+- (NSSize) slotMargin
+{
+    if ([self respondsToSelector: @selector(scrollerStyle)] && [self scrollerStyle] == NSScrollerStyleOverlay)
+    {
+        return NSMakeSize(1.0f, 1.0f);
+    }
+    else
+    {
+        return NSMakeSize(4.0f, 0.0f);
     }
 }
 
 - (NSColor *) knobStroke
 {
-    //Give scroller a dark halo so it stands out properly
-    return [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.1f];
+    return [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.5f];
 }
 
 - (NSGradient *)knobGradient
 {
-	NSGradient *knobGradient = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.5f]
-															 endingColor: [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.5f]
+	NSGradient *knobGradient = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.5f alpha: 1.0f]
+															 endingColor: [NSColor colorWithCalibratedWhite: 0.4f alpha: 1.0f]
 								];
 	return [knobGradient autorelease];
 }

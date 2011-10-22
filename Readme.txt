@@ -25,11 +25,7 @@ Both have pretty much identical emulation performance. Until you want to distrib
 XCode 4 Caveats
 ---------------
 
-XCode 4 does not come with PowerPC compilers out-of-the-box, which will normally prevent you from building the Release configuration. However, you can install XCode 3.2.x alongside XCode 4: this comes with the necessary PowerPC build tools, and will make them available for XCode 4 to use also.
-
-It Worked For Me to just install 3.2 alongside XCode 4, with only the essentials and leaving out all other components. However, you may have to jump through some extra hoops: q.v. http://stackoverflow.com/questions/5333490/how-can-we-restore-ppc-ppc64-as-well-as-full-10-4-10-5-sdk-support-to-xcode-4
-
-Some of Boxer's XIB files cannot be opened for editing in XCode 4, because they rely on an Interface Builder 3 plugin. To edit these XIBs, you must open them in the Interface Builder from XCode 3.2.x instead.
+XCode versions 4.0 and later do not come with PowerPC compilers, which will normally prevent you from building the Release configuration. However: if you are still using OS X 10.6, then you can install XCode 3.2.x alongside XCode 4.x and compile the Release configuration using that. (Note that XCode 3.2 apparently cannot be used on Lion.)
 
 
 Having trouble?

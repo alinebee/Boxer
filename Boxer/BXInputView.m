@@ -9,6 +9,7 @@
 #import "BXInputView.h"
 #import "BXGeometry.h"
 #import "NSView+BXDrawing.h"
+#import "NSShadow+BXShadowExtensions.h"
 
 
 @implementation BXInputView
@@ -33,11 +34,11 @@
 
 - (void) _drawBackgroundInRect: (NSRect)dirtyRect
 {
-	NSColor *backgroundColor = [NSColor darkGrayColor];
+	NSColor *backgroundColor = [NSColor colorWithCalibratedRed: 0.22f green: 0.235f blue: 0.24f alpha: 1.0f];
 	NSGradient *background = [[NSGradient alloc] initWithColorsAndLocations:
 							  [backgroundColor shadowWithLevel: 0.5f],	0.00f,
-							  backgroundColor,							0.98f,
-							  [backgroundColor shadowWithLevel: 0.4f],	1.00f,
+							  backgroundColor,							0.985f,
+							  [backgroundColor shadowWithLevel: 0.3f],	1.00f,
 							  nil];
 	
 	[background drawInRect: [self bounds] angle: 270.0f];
@@ -50,14 +51,19 @@
 	[brand setFlipped: YES];
 	NSRect brandRegion;
 	brandRegion.size = [brand size];
+    
 	brandRegion = NSIntegralRect(centerInRect(brandRegion, [self bounds]));
 	
 	if ([self needsToDrawRect: brandRegion])
 	{
+        NSShadow *brandShadow = [NSShadow shadowWithBlurRadius: 5.0f
+                                                        offset: NSZeroSize
+                                                         color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.5f]];
+        [brandShadow set];
 		[brand drawInRect: brandRegion
 				 fromRect: NSZeroRect
 				operation: NSCompositeSourceOver
-				 fraction: 1.0f];	
+				 fraction: 0.5f];	
 	}
 }
 

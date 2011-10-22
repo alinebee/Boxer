@@ -8,22 +8,26 @@
 
 #import "BXThemes.h"
 
-@implementation BXShadowedTextTheme
+@implementation BXBaseTheme
 
-- (NSShadow *) textShadow	{ return [self dropShadow]; }
-
-@end
-
-@implementation BXHelpTextTheme
-
-- (NSColor *) textColor
++ (void) registerWithName: (NSString *)name
 {
-	return [NSColor whiteColor];
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    if (!name) name = NSStringFromClass(self);
+    BGTheme *theme = [[self alloc] init];
+    [[BGThemeManager keyedManager] setTheme: theme
+                                     forKey: name];
+    [theme release];
+    [pool drain];
 }
 @end
 
-
 @implementation BXBlueprintTheme
+
++ (void) load
+{
+    [self registerWithName: nil];
+}
 
 - (NSShadow *) textShadow
 {
@@ -45,7 +49,12 @@
 
 @end
 
-@implementation BXBlueprintHelpText
+@implementation BXBlueprintHelpTextTheme
+
++ (void) load
+{
+    [self registerWithName: nil];
+}
 
 - (NSColor *) textColor
 {
@@ -56,6 +65,13 @@
 
 
 @implementation BXBlueTheme
+
++ (void) load
+{
+    [self registerWithName: nil];
+}
+
+- (NSShadow *) textShadow	{ return [self dropShadow]; }
 
 - (NSColor *) disabledTextColor
 {
@@ -124,14 +140,11 @@
 	return glow;
 }
 
-@end
-
-
-@implementation BXWelcomeTheme
-
 - (NSColor *) strokeColor
 {
-	return [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.33f];
+    NSColor *selectionColor = [NSColor alternateSelectedControlColor];
+    
+    return [[selectionColor highlightWithLevel: 0.75f] colorWithAlphaComponent: 0.33];
 }
 
 @end

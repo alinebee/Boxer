@@ -25,9 +25,6 @@
 #import "BXValueTransformers.h"
 #import "NSString+BXPaths.h"
 
-#import <BGHUDAppKit/BGThemeManager.h>
-#import "BXThemes.h"
-
 #import "BXPostLeopardAPIs.h"
 
 
@@ -198,14 +195,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	[NSValueTransformer setValueTransformer: [isNotEmpty autorelease]	forName: @"BXArrayIsNotEmpty"];	
 	[NSValueTransformer setValueTransformer: [capitalizer autorelease]	forName: @"BXCapitalizedString"];	
 	[NSValueTransformer setValueTransformer: [pathTransformer autorelease] forName: @"BXIconifiedGamesFolderPath"];
-
-	//Register our BGHUD UI themes
-	[[BGThemeManager keyedManager] setTheme: [[BXShadowedTextTheme new] autorelease]	forKey: @"BXShadowedTextTheme"];
-	[[BGThemeManager keyedManager] setTheme: [[BXHelpTextTheme new] autorelease]		forKey: @"BXHelpTextTheme"];
-	[[BGThemeManager keyedManager] setTheme: [[BXBlueTheme new] autorelease]			forKey: @"BXBlueTheme"];
-	[[BGThemeManager keyedManager] setTheme: [[BXBlueprintTheme new] autorelease]		forKey: @"BXBlueprintTheme"];
-	[[BGThemeManager keyedManager] setTheme: [[BXBlueprintHelpText new] autorelease]	forKey: @"BXBlueprintHelpText"];
-	[[BGThemeManager keyedManager] setTheme: [[BXWelcomeTheme new] autorelease]			forKey: @"BXWelcomeTheme"];
 }
 
 + (void) setupDefaults

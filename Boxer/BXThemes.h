@@ -12,39 +12,31 @@
 #import <Cocoa/Cocoa.h>
 #import <BGHUDAppKit/BGHUDAppKit.h>
 
-//Adds a soft text shadow behind labels and button text.
-@interface BXShadowedTextTheme : BGGradientTheme
-- (NSShadow *) textShadow;
+//Adds convenience methods used by all Boxer themes.
+@interface BXBaseTheme : BGGradientTheme
+//Registers the theme class with the theme manager,
+//keyed under the specific name.
+//If name is nil, the classname will be used.
++ (void) registerWithName: (NSString *)name;
 @end
 
 //Adds a soft shadow around text.
-@interface BXBlueprintTheme : BGGradientTheme
+@interface BXBlueprintTheme : BXBaseTheme
 - (NSShadow *) textShadow;
 - (NSColor *) textColor;
 @end
 
 //Adds translucency to helper text
-@interface BXBlueprintHelpText : BXBlueprintTheme
-- (NSColor *) textColor;
-@end
-
-//Applies a light gray text colour for help text in HUD-style panels, along with a text shadow.
-@interface BXHelpTextTheme : BXShadowedTextTheme
+@interface BXBlueprintHelpTextTheme : BXBlueprintTheme
 - (NSColor *) textColor;
 @end
 
 //Makes selection highlights blue-tinted instead of grey.
-@interface BXBlueTheme : BXShadowedTextTheme
+@interface BXBlueTheme : BXBaseTheme
 - (NSGradient *) highlightGradient;
 - (NSGradient *) pushedGradient;
 - (NSGradient *) highlightComplexGradient;
 - (NSGradient *) pushedComplexGradient;
 - (NSGradient *) highlightKnobColor;
 - (NSShadow *) focusRing;
-@end
-
-//Makes borders more subtle for the darker background of the welcome panel.
-@interface BXWelcomeTheme : BXBlueTheme
-- (NSColor *) strokeColor;
-
 @end

@@ -276,7 +276,7 @@
 		9F6A79041203547800D2097D /* gamefolder.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F6A79031203547800D2097D /* gamefolder.icns */; };
 		9F6C1CDA14373AF600601ACB /* BXDummyMIDIDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F6C1CD914373AF600601ACB /* BXDummyMIDIDevice.m */; };
 		9F70277B13D706CC00606B4C /* BXBezelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F70277A13D706CC00606B4C /* BXBezelController.m */; };
-		9F70278413D72D8100606B4C /* BXHUDControls.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F70278313D72D8100606B4C /* BXHUDControls.m */; };
+		9F70278413D72D8100606B4C /* BXThemedControls.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F70278313D72D8100606B4C /* BXThemedControls.m */; };
 		9F70278713D730D000606B4C /* BunnyTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F70278513D730D000606B4C /* BunnyTemplate.png */; };
 		9F70278813D730D000606B4C /* TurtleTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F70278613D730D000606B4C /* TurtleTemplate.png */; };
 		9F70A09512F7471E00D144D2 /* BXAppController+BXApplicationModes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F70A09412F7471E00D144D2 /* BXAppController+BXApplicationModes.m */; };
@@ -831,8 +831,8 @@
 		9F6C1CD914373AF600601ACB /* BXDummyMIDIDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDummyMIDIDevice.m; sourceTree = "<group>"; };
 		9F70277913D706CC00606B4C /* BXBezelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBezelController.h; sourceTree = "<group>"; };
 		9F70277A13D706CC00606B4C /* BXBezelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBezelController.m; sourceTree = "<group>"; };
-		9F70278213D72D8100606B4C /* BXHUDControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXHUDControls.h; sourceTree = "<group>"; };
-		9F70278313D72D8100606B4C /* BXHUDControls.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXHUDControls.m; sourceTree = "<group>"; };
+		9F70278213D72D8100606B4C /* BXThemedControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXThemedControls.h; sourceTree = "<group>"; };
+		9F70278313D72D8100606B4C /* BXThemedControls.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXThemedControls.m; sourceTree = "<group>"; };
 		9F70278513D730D000606B4C /* BunnyTemplate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BunnyTemplate.png; sourceTree = "<group>"; };
 		9F70278613D730D000606B4C /* TurtleTemplate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TurtleTemplate.png; sourceTree = "<group>"; };
 		9F70A02212F731A800D144D2 /* SystemEvents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemEvents.h; sourceTree = "<group>"; };
@@ -1873,16 +1873,14 @@
 		9F496E3F108EEBB200282261 /* UI helpers */ = {
 			isa = PBXGroup;
 			children = (
-				9FC1620C119E9AD700705EA5 /* BXCursorFadeAnimation.h */,
-				9FC1620D119E9AD700705EA5 /* BXCursorFadeAnimation.m */,
-				9F544A7E10AB44C40030FED5 /* BXThemes.h */,
-				9F544A7F10AB44C40030FED5 /* BXThemes.m */,
 				9F69128A10A2DF8D00EA78CD /* BXValueTransformers.h */,
 				9F69128B10A2DF8D00EA78CD /* BXValueTransformers.m */,
+				9F544A7E10AB44C40030FED5 /* BXThemes.h */,
+				9F544A7F10AB44C40030FED5 /* BXThemes.m */,
+				9F70278213D72D8100606B4C /* BXThemedControls.h */,
+				9F70278313D72D8100606B4C /* BXThemedControls.m */,
 				9F438C5610E3D8C8007D30AD /* BXScroller.h */,
 				9F438C5710E3D8C8007D30AD /* BXScroller.m */,
-				9F70278213D72D8100606B4C /* BXHUDControls.h */,
-				9F70278313D72D8100606B4C /* BXHUDControls.m */,
 				9FF1562B14506E7200545317 /* BXHUDLevelIndicatorCell.h */,
 				9FF1562C14506E7200545317 /* BXHUDLevelIndicatorCell.m */,
 				9F9E27C311F8C003003EE8F3 /* BXHUDSegmentedCell.h */,
@@ -1895,6 +1893,8 @@
 				9F60B0DB13AA418300F06BB1 /* BXCollectionItemView.m */,
 				9FBEC4EE142CE8300016964A /* BXMT32LCDDisplay.h */,
 				9FBEC4EF142CE8300016964A /* BXMT32LCDDisplay.m */,
+				9FC1620C119E9AD700705EA5 /* BXCursorFadeAnimation.h */,
+				9FC1620D119E9AD700705EA5 /* BXCursorFadeAnimation.m */,
 			);
 			name = "UI helpers";
 			sourceTree = "<group>";
@@ -3290,7 +3290,7 @@
 				9FA0C9E313D24FF3000F6FCB /* DDHidUsage+BXUsageExtensions.m in Sources */,
 				9FC2F84013D60FBD00BD4F6B /* BXDualActionControllerProfile.m in Sources */,
 				9F70277B13D706CC00606B4C /* BXBezelController.m in Sources */,
-				9F70278413D72D8100606B4C /* BXHUDControls.m in Sources */,
+				9F70278413D72D8100606B4C /* BXThemedControls.m in Sources */,
 				9FCA702213DAE6F5006C5DF8 /* BXCoalfaceDrives.mm in Sources */,
 				9F8F482513DC74CA00C7E022 /* NSShadow+BXShadowExtensions.m in Sources */,
 				9F58BB5113DD975F00358512 /* BXFileScan.m in Sources */,

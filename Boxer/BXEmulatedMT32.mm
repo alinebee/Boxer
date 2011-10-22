@@ -315,17 +315,19 @@ void _logMT32DebugMessage(void *userData, const char *fmt, va_list list);
     NSAssert([message length] > 0, @"0-length message received by handleMessage:");
     
     //MT32Emu's playMsg takes standard 3-byte MIDI messages as a 32-bit integer, which
-    //is a terrible idea, but there you go. We need to pack our byte array into such
-    //an integer, allowing for the differing endianness on PowerPC Macs.
+    //is a terrible idea, but there you go. Thus we pack our byte array into such an
+    //integer, ensuring we keep the expected byte order.
+    
+    //IMPLEMENTATION NOTE: we use bitwise here, rather than just casting the array
+    //to a UInt32, to avoid endianness bugs on PowerPC.
     UInt8 *contents = (UInt8 *)[message bytes];
     UInt8 status = contents[0];
     UInt8 data1 = ([message length] > 1) ? contents[1] : 0;
     UInt8 data2 = ([message length] > 2) ? contents[2] : 0;
     
-    UInt8 paddedMsg[4] = { status, data1, data2, 0};
-    UInt32 intMsg = ((UInt32 *)paddedMsg)[0];
+    UInt32 packedMsg = status + (data1 << 8) + (data2 << 16);
     
-    _synth->playMsg(CFSwapInt32LittleToHost(intMsg));
+    _synth->playMsg(packedMsg);
 }
 
 - (void) handleSysex: (NSData *)message

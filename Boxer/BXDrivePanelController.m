@@ -142,15 +142,6 @@ enum {
     BXSession *session      = [[NSApp delegate] currentSession];
     NSArray *selectedDrives = [self selectedDrives];
     BOOL hasSelection       = ([selectedDrives count] > 0);
-    BOOL selectionContainsMountedDrives = NO;
-    for (BXDrive *drive in selectedDrives)
-    {
-        if ([session driveIsMounted: drive])
-        {
-            selectionContainsMountedDrives = YES;
-            break;
-        }
-    }
     
     [[self driveControls] setEnabled: (session != nil)  forSegment: BXAddDriveSegment];
     [[self driveControls] setEnabled: hasSelection      forSegment: BXRemoveDrivesSegment];

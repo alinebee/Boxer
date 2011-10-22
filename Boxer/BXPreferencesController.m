@@ -164,8 +164,8 @@
 
 - (void) syncMT32ROMState
 {
-    NSString *title;
-    BXMT32ROMType type;
+    NSString *title = nil;
+    BXMT32ROMType type = BXMT32ROMTypeUnknown;
     BOOL showROMHelp;
     BOOL showROMOptions;
     BOOL showRealMT32Help;

@@ -41,6 +41,10 @@ io_service_t createServiceFromHIDDevice(IOHIDDeviceRef deviceRef)
 			//The result, meanwhile, has a reference count of 1 and must be released by the caller.
 			result = IOServiceGetMatchingService(kIOMasterPortDefault, matchingDict);
 		}
+        else
+        {
+            CFRelease(matchingDict);
+        }
 	}
     return result;
 }

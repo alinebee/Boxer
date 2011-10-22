@@ -124,7 +124,9 @@ NSString * const BXCueFileDescriptorSyntax = @"FILE\\s+(?:\"(.+)\"|(\\S+))\\s+[A
     
     if (!cueContents) return NO;
     
-    return [cueContents isMatchedByRegex: BXCueFileDescriptorSyntax];
+    BOOL isCue = [cueContents isMatchedByRegex: BXCueFileDescriptorSyntax];
+    [cueContents release];
+    return isCue;
 }
 
 

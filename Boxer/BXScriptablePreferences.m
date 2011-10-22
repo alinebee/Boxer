@@ -32,7 +32,7 @@
 
 + (BXScriptablePreferences *) sharedPreferences
 {
-	BXScriptablePreferences *preferences = nil;
+	static BXScriptablePreferences *preferences = nil;
 	if (!preferences) preferences = [[self alloc] init];
 	return preferences;
 }

@@ -124,6 +124,7 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
 	
 	NSArray *relatedPaths		= [BXBinCueImage rawPathsInCueContents: cueContents];
 	NSUInteger numRelatedPaths	= [relatedPaths count];
+    [cueContents release];
 	
     
     //Bail out if we aren't able to parse the source files from this cue.
@@ -200,6 +201,7 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
             //cue file once we've written the new one
             NSFileManager *manager = [[NSFileManager alloc] init];
             [manager removeItemAtPath: sourcePath error: nil];
+            [manager release];
         }
     }
     
@@ -216,6 +218,7 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
 	{
 		NSFileManager *manager = [[NSFileManager alloc] init];
 		undid = [manager removeItemAtPath: [self importedDrivePath] error: nil];
+        [manager release];
 	}
 	return undid;
 }

@@ -249,6 +249,7 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 	{
 		NSFileManager *manager = [[NSFileManager alloc] init];
 		undid = [manager removeItemAtPath: [self importedDrivePath] error: nil];
+        [manager release];
 	}
 	return undid;
 }

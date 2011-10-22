@@ -49,7 +49,7 @@
 {
 	NSImage *brand = [NSImage imageNamed: @"Brand"];
 	[brand setFlipped: YES];
-	NSRect brandRegion;
+	NSRect brandRegion = NSZeroRect;
 	brandRegion.size = [brand size];
     
 	brandRegion = NSIntegralRect(centerInRect(brandRegion, [self bounds]));

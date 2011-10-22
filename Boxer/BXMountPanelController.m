@@ -75,8 +75,8 @@
 	//Now, repopulate the menu
 	for (NSString *letter in driveLetters)
 	{
-    	NSMenuItem *option	= [[NSMenuItem alloc] init];
-		NSString *title		= [NSString stringWithFormat: @"%@:", letter];
+    	NSMenuItem *option	= [[[NSMenuItem alloc] init] autorelease];
+		NSString *title		= [NSString stringWithFormat: @"%@:", letter, nil];
 		BXDrive *drive      = [theEmulator driveAtLetter: letter];
 		
         //Mark already-occupied drive letters with the title of the drive occupying that letter.
@@ -98,8 +98,6 @@
 		[option setRepresentedObject: letter];
 		
 		[[driveLetter menu] addItem: option];
-        
-        [option release];
 	}
 	
 	[driveLetter selectItemAtIndex: 0];

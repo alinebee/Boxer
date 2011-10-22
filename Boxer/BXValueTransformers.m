@@ -386,8 +386,10 @@
 	
 	//Bail out early if the path is empty
 	if (![components count])
+    {
+        [components release];
 		return [[[NSAttributedString alloc] init] autorelease];
-	
+	}
 	//Hide common system root directories
 	if ([self hideSystemRoots])
 	{

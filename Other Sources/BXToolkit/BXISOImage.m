@@ -328,7 +328,7 @@ int extdate_to_int(uint8_t *digits, int length)
 {
     BOOL isDirectory = (record.fileFlags & BXISOFileIsDirectory);
     Class entryClass = isDirectory ? [BXISODirectoryEntry class] : [BXISOFileEntry class];
-    return [[entryClass alloc] initWithDirectoryRecord: record inImage: image];
+    return [[[entryClass alloc] initWithDirectoryRecord: record inImage: image] autorelease];
 }
 
 - (id) initWithDirectoryRecord: (BXISODirectoryRecord)record

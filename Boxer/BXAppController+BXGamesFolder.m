@@ -183,7 +183,7 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 
 + (NSArray *) defaultGamesFolderPaths
 {
-	NSArray *paths = nil;
+	static NSArray *paths = nil;
 	if (!paths)
 	{
 		NSString *defaultName = NSLocalizedString(@"DOS Games", @"The default name for the games folder.");
@@ -204,7 +204,7 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 
 + (NSSet *) reservedPaths
 {
-	NSMutableSet *reservedPaths = nil;
+	static NSMutableSet *reservedPaths = nil;
 	if (!reservedPaths)
 	{
 		reservedPaths = [[NSMutableSet alloc] initWithObjects: NSHomeDirectory(), nil];
@@ -601,6 +601,7 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 						   window: (NSWindow *)window
 {
 	[[alert window] close];
+    [alert release];
 	switch(returnCode)
 	{
 		case NSAlertFirstButtonReturn:

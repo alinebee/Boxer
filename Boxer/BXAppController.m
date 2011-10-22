@@ -46,7 +46,8 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (BOOL) _canOpenDocumentOfClass: (Class)documentClass;
 
 //Cancel a makeDocument/openDocument request after spawning a new process.
-- (void) _cancelOpeningWithError: (NSError **)outError;
+//Returns the error that should be used to cancel AppKit's open request.
+- (NSError *) _cancelOpening;
 
 @end
 
@@ -451,7 +452,8 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	{
 		//Launch another instance of Boxer to open the new session
 		[self _launchProcessWithUntitledDocument];
-		[self _cancelOpeningWithError: outError];
+		NSError *cancelError = [self _cancelOpening];
+        if (outError) *outError = cancelError;
 		return nil;
 	}
 	else return [super makeUntitledDocumentOfType: typeName error: outError];
@@ -466,7 +468,8 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	{
 		//Launch another instance of Boxer to open the specified document
 		[self _launchProcessWithDocumentAtURL: absoluteURL];
-		[self _cancelOpeningWithError: outError];
+		NSError *cancelError = [self _cancelOpening];
+        if (outError) *outError = cancelError;
 		return nil;
 	}
 	else return [super makeDocumentWithContentsOfURL: absoluteURL
@@ -484,7 +487,8 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	{
 		//Launch another instance of Boxer to open the specified document
 		[self _launchProcessWithDocumentAtURL: absoluteDocumentContentsURL];
-		[self _cancelOpeningWithError: outError];
+		NSError *cancelError = [self _cancelOpening];
+        if (outError) *outError = cancelError;
 		return nil;
 	}
 	else return [super makeDocumentForURL: absoluteDocumentURL
@@ -500,7 +504,8 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	if (![self _canOpenDocumentOfClass: [BXImportSession class]])
 	{
 		[self _launchProcessWithImportPanel];
-		[self _cancelOpeningWithError: outError];
+		NSError *cancelError = [self _cancelOpening];
+        if (outError) *outError = cancelError;
 		return nil;
 	}
 	else
@@ -528,7 +533,8 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	if (![self _canOpenDocumentOfClass: [BXImportSession class]])
 	{
 		[self _launchProcessWithImportSessionAtURL: url];
-		[self _cancelOpeningWithError: outError];
+		NSError *cancelError = [self _cancelOpening];
+        if (outError) *outError = cancelError;
 		return nil;
 	}
 	else
@@ -620,16 +626,16 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	[NSTask launchedTaskWithLaunchPath: executablePath arguments: params];	
 }
 
-- (void) _cancelOpeningWithError: (NSError **)outError
+- (NSError *) _cancelOpening
 {
 	//If we don't have a current session going, exit after cancelling
 	if (![self currentSession]) [NSApp terminate: self];
 	
 	//Otherwise, cancel the existing open request without generating an error message,
 	//and we'll leave the current session going
-	if (outError) *outError = [NSError errorWithDomain: NSCocoaErrorDomain
-												  code: NSUserCancelledError
-											  userInfo: nil];
+	return [NSError errorWithDomain: NSCocoaErrorDomain
+                               code: NSUserCancelledError
+                           userInfo: nil];
 }
 
 - (BOOL) _canOpenDocumentOfClass: (Class)documentClass

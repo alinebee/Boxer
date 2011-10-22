@@ -62,7 +62,7 @@ static void CGPathCallback(void *info, const CGPathElement *element)
 }
 
 // Method borrowed from Google's Cocoa additions
-- (CGPathRef)cgPath
+- (CGPathRef)createCGPath
 {
 	CGMutablePathRef thePath = CGPathCreateMutable();
 	if (!thePath) return nil;
@@ -105,7 +105,7 @@ static void CGPathCallback(void *info, const CGPathElement *element)
 #ifdef MCBEZIER_USE_PRIVATE_FUNCTION
 	NSBezierPath *path = [self copy];
 	CGContextRef context = [[NSGraphicsContext currentContext] graphicsPort];
-	CGPathRef pathRef = [path cgPath];
+	CGPathRef pathRef = [path createCGPath];
 	[path release];
 	
 	CGContextSaveGState(context);

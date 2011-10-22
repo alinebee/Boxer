@@ -116,7 +116,7 @@ NSString * const HFSVolumeType		= @"hfs";
 - (NSString *) mountImageAtPath: (NSString *)path
 					   readOnly: (BOOL)readOnly
 					  invisibly: (BOOL)invisible
-						  error: (NSError **)error
+						  error: (NSError **)outError
 {
 	path = [path stringByStandardizingPath];
     
@@ -176,8 +176,9 @@ NSString * const HFSVolumeType		= @"hfs";
 		NSDictionary *userInfo	= [NSDictionary dictionaryWithObject: failureReason forKey: NSLocalizedFailureReasonErrorKey];
 		[failureReason release];
 		
-		*error = [BXCouldNotMountImageError errorWithImagePath: path userInfo: userInfo];
-		
+        if (outError)
+            *outError = [BXCouldNotMountImageError errorWithImagePath: path userInfo: userInfo];
+    
 		return nil;
 	}
 	else

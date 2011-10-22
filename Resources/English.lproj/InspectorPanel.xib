@@ -1311,7 +1311,7 @@ dG8gdGhlIHdpbmRvdy4</string>
 																						<int key="NSvFlags">4370</int>
 																						<string key="NSFrameSize">{296, 267}</string>
 																						<reference key="NSSuperview" ref="923987479"/>
-																						<reference key="NSNextKeyView" ref="336170015"/>
+																						<reference key="NSNextKeyView" ref="807352969"/>
 																						<string key="NSMinGridSize">{0, 0}</string>
 																						<string key="NSMaxGridSize">{0, 0}</string>
 																						<int key="NSMaxNumberOfGridRows">0</int>
@@ -1365,7 +1365,7 @@ dG8gdGhlIHdpbmRvdy4</string>
 																		</object>
 																		<string key="NSFrameSize">{296, 267}</string>
 																		<reference key="NSSuperview" ref="763376923"/>
-																		<reference key="NSNextKeyView" ref="923987479"/>
+																		<reference key="NSNextKeyView" ref="336170015"/>
 																		<int key="NSsFlags">133648</int>
 																		<reference key="NSVScroller" ref="807352969"/>
 																		<reference key="NSHScroller" ref="336170015"/>
@@ -1606,7 +1606,7 @@ A</string>
 															<object class="NSButton" id="627817547">
 																<reference key="NSNextResponder" ref="287644765"/>
 																<int key="NSvFlags">289</int>
-																<string key="NSFrame">{{254, 15}, {25, 25}}</string>
+																<string key="NSFrame">{{254, 16}, {25, 25}}</string>
 																<reference key="NSSuperview" ref="287644765"/>
 																<reference key="NSWindow"/>
 																<reference key="NSNextKeyView"/>

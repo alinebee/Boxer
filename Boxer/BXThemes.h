@@ -40,3 +40,11 @@
 - (NSGradient *) highlightKnobColor;
 - (NSShadow *) focusRing;
 @end
+
+//Lightly indented text for program panels.
+@interface BXIndentedTheme : BXBaseTheme
+@end
+
+//Same as above, but lighter text.
+@interface BXIndentedHelpTextTheme : BXIndentedTheme
+@end

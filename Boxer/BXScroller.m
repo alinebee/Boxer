@@ -52,7 +52,7 @@
 
 - (NSColor *) slotFill
 {
-	return [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.2f];
+	return [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.1f];
 }
 
 - (NSShadow *) slotShadow
@@ -72,8 +72,8 @@
 
 - (NSGradient *) knobGradient
 {
-	NSGradient *knobGradient = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.25f alpha: 1.0f]
-															 endingColor: [NSColor colorWithCalibratedWhite: 0.20f alpha: 1.0f]
+	NSGradient *knobGradient = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.6f alpha: 1.0f]
+															 endingColor: [NSColor colorWithCalibratedWhite: 0.5f alpha: 1.0f]
 								];
 	return [knobGradient autorelease];
 }

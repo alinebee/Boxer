@@ -17,11 +17,11 @@
 
 - (void) _drawGradientInRect: (NSRect)dirtyRect
 {
-	NSColor *backgroundColor = [NSColor grayColor]; 
+	NSColor *backgroundColor = [NSColor colorWithCalibratedWhite: 0.85f alpha: 1.0f]; 
 	NSGradient *background = [[NSGradient alloc] initWithColorsAndLocations:
 							  backgroundColor,							0.0f,
 							  [backgroundColor shadowWithLevel: 0.25f],	0.9f,
-							  [backgroundColor shadowWithLevel: 0.5f],	1.0f,
+							  [backgroundColor shadowWithLevel: 0.75f],	1.0f,
 							  nil];
 	
     [NSBezierPath clipRect: dirtyRect];
@@ -59,10 +59,24 @@
 	}	
 }
 
+- (void) _drawBevelInRect: (NSRect)dirtyRect
+{
+    NSRect bevelRect = [self bounds];
+    bevelRect.size.height = 1.0f;
+    
+    if ([self needsToDrawRect: bevelRect])
+    {
+        NSColor * bevelColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.2f];
+        [bevelColor set];
+        [NSBezierPath fillRect: bevelRect];
+    }
+}
+
 - (void) drawRect: (NSRect)dirtyRect
 {
 	[self _drawGradientInRect: dirtyRect];
 	[self _drawGrilleInRect: dirtyRect];
+    [self _drawBevelInRect: dirtyRect];
     
     //If we contain a title then redraw the gradient behind the title
     //and over the grille, to create a knockout effect

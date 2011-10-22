@@ -7,6 +7,7 @@
 
 
 #import "BXThemes.h"
+#import "NSShadow+BXShadowExtensions.h"
 
 @implementation BXBaseTheme
 
@@ -145,6 +146,110 @@
     NSColor *selectionColor = [NSColor alternateSelectedControlColor];
     
     return [[selectionColor highlightWithLevel: 0.75f] colorWithAlphaComponent: 0.33];
+}
+
+@end
+
+
+@implementation BXIndentedTheme
+
++ (void) load
+{
+    [self registerWithName: nil];
+}
+
+- (NSShadow *) textShadow	{ return [self dropShadow]; }
+
+- (NSShadow *) dropShadow
+{
+    return [NSShadow shadowWithBlurRadius: 1.0f
+                                   offset: NSMakeSize(0, -1.0f)
+                                    color: [NSColor colorWithCalibratedWhite: 1 alpha: 0.66f]];
+}
+
+- (NSColor *) textColor
+{
+    return [NSColor colorWithCalibratedWhite: 0.25f alpha: 1];
+}
+
+- (NSColor *) disabledTextColor
+{
+    return [NSColor grayColor];
+}
+
+- (NSColor *) strokeColor
+{
+    return [NSColor colorWithCalibratedWhite: 0 alpha: 0.25];
+}
+
+- (NSGradient *) normalGradient
+{
+    NSColor *baseColor = [NSColor lightGrayColor];
+    
+    NSColor *topColor		= [baseColor highlightWithLevel: 0.2f];
+	NSColor *midColor		= baseColor;
+	NSColor *bottomColor	= [baseColor shadowWithLevel: 0.2f];
+	
+	NSGradient *gradient = [[NSGradient alloc] initWithColorsAndLocations:
+							topColor,		0.0f,
+							midColor,		0.5f,
+							bottomColor,	1.0f,
+							nil];
+    
+    return [gradient autorelease];
+}
+
+- (NSGradient *) normalComplexGradient
+{
+    return [self normalGradient];
+}
+
+- (NSGradient *) highlightGradient
+{
+	NSColor *selectionColor	= [[NSColor alternateSelectedControlColor] colorWithAlphaComponent: [self alphaValue]];
+	
+	NSColor *topColor		= [selectionColor highlightWithLevel: 0.3f];
+	NSColor *midColor1		= [selectionColor highlightWithLevel: 0.2f];
+	NSColor *midColor2		= selectionColor;
+	NSColor *bottomColor	= [selectionColor shadowWithLevel: 0.4f];
+	
+	NSGradient *gradient = [[NSGradient alloc] initWithColorsAndLocations:
+							topColor,		0.0f,
+							midColor1,		0.5f,
+							midColor2,		0.5f,
+							bottomColor,	1.0f,
+							nil];
+	
+	return [gradient autorelease];
+}
+
+- (NSGradient *) pushedGradient
+{
+	return [self highlightGradient];
+}
+
+- (NSGradient *) highlightComplexGradient
+{
+	return [self highlightGradient];
+}
+
+- (NSGradient *) pushedComplexGradient
+{
+	return [self pushedGradient];
+}
+
+@end
+
+@implementation BXIndentedHelpTextTheme
+
++ (void) load
+{
+    [self registerWithName: nil];
+}
+
+- (NSColor *) textColor
+{
+    return [NSColor darkGrayColor];
 }
 
 @end

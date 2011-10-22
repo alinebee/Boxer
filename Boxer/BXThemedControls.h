@@ -38,4 +38,14 @@
 @interface BXBlueprintHelpTextLabel : BXHUDLabel
 @end
 
+//BGHUDAppKit control subclasses hardcoded to use BXIndentedTheme
+//and BXIndentedHelpTextTheme.
 
+@interface BXIndentedLabel : BXHUDLabel
+@end
+
+@interface BXIndentedHelpTextLabel : BXIndentedLabel
+@end
+
+@interface BXIndentedCheckboxCell : BXHUDCheckboxCell
+@end

@@ -5,7 +5,7 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
-#import "BXHUDControls.h"
+#import "BXThemedControls.h"
 #import "BXGeometry.h"
 #import "NSShadow+BXShadowExtensions.h"
 #import "NSBezierPath+MCAdditions.h"
@@ -71,7 +71,7 @@
 
 @implementation BXBlueprintHelpTextLabel
 
-- (NSString *)themeKey { return @"BXBlueprintHelpText"; }
+- (NSString *)themeKey { return @"BXBlueprintHelpTextTheme"; }
 
 @end
 

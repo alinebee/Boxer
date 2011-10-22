@@ -17,7 +17,7 @@
 
 - (void) _drawGradientInRect: (NSRect)dirtyRect
 {
-	NSColor *backgroundColor = [NSColor colorWithCalibratedWhite: 0.85f alpha: 1.0f]; 
+	NSColor *backgroundColor = [NSColor colorWithCalibratedRed: 0.86f green: 0.87f blue: 0.88f alpha: 1.0f];
 	NSGradient *background = [[NSGradient alloc] initWithColorsAndLocations:
 							  backgroundColor,							0.0f,
 							  [backgroundColor shadowWithLevel: 0.25f],	0.9f,

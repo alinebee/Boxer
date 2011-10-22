@@ -164,7 +164,7 @@
 {
     return [NSShadow shadowWithBlurRadius: 1.0f
                                    offset: NSMakeSize(0, -1.0f)
-                                    color: [NSColor colorWithCalibratedWhite: 1 alpha: 0.66f]];
+                                    color: [NSColor colorWithCalibratedWhite: 1 alpha: 0.75f]];
 }
 
 - (NSColor *) textColor

@@ -187,7 +187,7 @@
 {
     if ([self respondsToSelector: @selector(scrollerStyle)] && [self scrollerStyle] == NSScrollerStyleOverlay)
     {
-        return NSMakeSize(1.0f, 1.0f);
+        return NSMakeSize(2.0f, 3.0f);
     }
     else
     {
@@ -198,13 +198,13 @@
 - (NSColor *) knobStroke
 {
     //Give scroller a dark halo so it stands out properly
-    return [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.75f];
+    return [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.1f];
 }
 
 - (NSGradient *)knobGradient
 {
-	NSGradient *knobGradient = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 0.4f alpha: 1.0f]
-															 endingColor: [NSColor colorWithCalibratedWhite: 0.3f alpha: 1.0f]
+	NSGradient *knobGradient = [[NSGradient alloc] initWithStartingColor: [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.5f]
+															 endingColor: [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.5f]
 								];
 	return [knobGradient autorelease];
 }

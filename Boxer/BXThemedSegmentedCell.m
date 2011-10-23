@@ -186,17 +186,33 @@
     NSGradient *bezelGradient = (isHighlighted) ? [theme highlightGradient] : [theme normalGradient];
     [bezelGradient drawInBezierPath: bezel angle: [theme gradientAngle]];
 	
-	//Draw segment dividers for all but the last segment
-	if(segment != [self segmentCount] - 1)
-    {
+	//Draw segment dividers
+    
+	[NSGraphicsContext saveGraphicsState];
 		[[theme strokeColor] set];
         
         NSRect dividerRect = fillRect;
-        dividerRect.origin.x = NSMaxX(dividerRect) - 1;
         dividerRect.size.width = 1;
+    
+        //Draw a partial-height divider, unless this is a highlighted cell
+        if (!isHighlighted)
+        {
+            dividerRect = NSInsetRect(dividerRect, 0, 3.0f);
+        }
         
-        [NSBezierPath fillRect: dividerRect];
-	}
+        //If this cell is highlighted and not the leftmost cell,
+        //draw a divider to the left.
+        if (isHighlighted && segment > 0)
+            [NSBezierPath fillRect: dividerRect];
+        
+        //If this cell isn't followed by a highlighted cell,
+        //and is not the rightmost cell, draw a divider to the right.
+        if ((segment != [self segmentCount] - 1) && ![self isHighlightedForSegment: segment + 1])
+        {
+            dividerRect.origin.x = NSMaxX(fillRect) - 1;
+            [NSBezierPath fillRect: dividerRect];
+        }
+	[NSGraphicsContext restoreGraphicsState];
 	
 	[self drawInteriorForSegment: segment inFrame: segmentRect withView: view];
 }

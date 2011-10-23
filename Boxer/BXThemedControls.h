@@ -11,41 +11,61 @@
 
 #import <BGHUDAppKit/BGHUDAppKit.h>
 
+//Base classes for our BGHUDAppKit-themed control subclasses.
+
+@interface BXThemedLabel : BGHUDLabel
+@end
+
+@interface BXThemedButtonCell : BGHUDButtonCell
+@end
+
+@interface BXThemedCheckboxCell : BXThemedButtonCell
+@end
+
+@interface BXThemedRadioCell : BXThemedButtonCell
+@end
+
+@interface BXThemedSliderCell : BGHUDSliderCell
+@end
+
+@interface BXThemedPopUpButtonCell : BGHUDPopUpButtonCell
+@end
+
 
 //BGHUDAppKit control subclasses hardcoded to use BXBlueTheme.
 
-@interface BXHUDLabel : BGHUDLabel
+@interface BXHUDLabel : BXThemedLabel
 @end
 
-@interface BXHUDButtonCell : BGHUDButtonCell
+@interface BXHUDButtonCell : BXThemedButtonCell
 @end
 
-@interface BXHUDCheckboxCell : BXHUDButtonCell
+@interface BXHUDCheckboxCell : BXThemedCheckboxCell
 @end
 
-@interface BXHUDSliderCell : BGHUDSliderCell
+@interface BXHUDSliderCell : BXThemedSliderCell
 @end
 
-@interface BXHUDPopUpButtonCell : BGHUDPopUpButtonCell
+@interface BXHUDPopUpButtonCell : BXThemedPopUpButtonCell
 @end
 
 //BGHUDAppKit control subclasses hardcoded to use BXBlueprintTheme
 //and BXBlueprintHelpTextTheme.
 
-@interface BXBlueprintLabel : BXHUDLabel
+@interface BXBlueprintLabel : BXThemedLabel
 @end
 
-@interface BXBlueprintHelpTextLabel : BXHUDLabel
+@interface BXBlueprintHelpTextLabel : BXThemedLabel
 @end
 
 //BGHUDAppKit control subclasses hardcoded to use BXIndentedTheme
 //and BXIndentedHelpTextTheme.
 
-@interface BXIndentedLabel : BXHUDLabel
+@interface BXIndentedLabel : BXThemedLabel
 @end
 
 @interface BXIndentedHelpTextLabel : BXIndentedLabel
 @end
 
-@interface BXIndentedCheckboxCell : BXHUDCheckboxCell
+@interface BXIndentedCheckboxCell : BXThemedCheckboxCell
 @end

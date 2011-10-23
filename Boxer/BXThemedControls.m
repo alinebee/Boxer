@@ -8,9 +8,10 @@
 #import "BXThemedControls.h"
 
 
-@implementation BXHUDLabel
+#pragma mark -
+#pragma mark Base classes
 
-- (NSString *)themeKey { return @"BXBlueTheme"; }
+@implementation BXThemedLabel
 
 //Fixes a BGHUDLabel/NSTextField bug where toggling enabledness
 //won't cause a redraw.
@@ -23,27 +24,9 @@
 }
 @end
 
-@implementation BXHUDButtonCell
+@implementation BXThemedButtonCell
 
-- (NSString *)themeKey { return @"BXBlueTheme"; }
-
-@end
-
-@implementation BXHUDCheckboxCell
-
-- (NSString *)themeKey { return @"BXBlueTheme"; }
-
-//Fix for setButtonType: no longer getting called for checkboxes in XIBs (jesus christ)
-- (id) initWithCoder: (NSCoder *)aDecoder
-{
-    if ((self = [super initWithCoder: aDecoder]))
-    {
-        [self setButtonType: NSSwitchButton];
-    }
-    return self;
-}
-
-- (NSRect) checkboxRectForBounds: (NSRect)frame isRadio: (BOOL)radio
+- (NSRect) checkboxRectForBounds: (NSRect)frame
 {
     NSRect checkboxFrame = frame;
     
@@ -58,7 +41,7 @@
             checkboxFrame.size.width = 11;
             checkboxFrame.origin.y += 3;
             break;
-        
+            
         case NSMiniControlSize:
             checkboxFrame.size.height = 8;
             checkboxFrame.size.width = 9;
@@ -72,29 +55,24 @@
             checkboxFrame.origin.y += 2;
             break;   
     }
-	
-	if (radio)
-    {
-		checkboxFrame.size.height = checkboxFrame.size.width;
-	}
     
     //Adjust for image placement
     switch ([self imagePosition])
     {
         case NSImageLeft:
             switch ([self controlSize])
-            {
-                case NSSmallControlSize:
-                    checkboxFrame.origin.x += 3;
-                    break;
-                case NSMiniControlSize:
-                    checkboxFrame.origin.x += 4;
-                    break;
-                case NSRegularControlSize:
-                default:
-                    checkboxFrame.origin.x += 2;
-                    break;
-            }
+        {
+            case NSSmallControlSize:
+                checkboxFrame.origin.x += 3;
+                break;
+            case NSMiniControlSize:
+                checkboxFrame.origin.x += 4;
+                break;
+            case NSRegularControlSize:
+            default:
+                checkboxFrame.origin.x += 2;
+                break;
+        }
 			break;
 			
 		case NSImageRight:
@@ -121,7 +99,14 @@
     return checkboxFrame;
 }
 
-- (NSRect) textRectForBounds: (NSRect)frame withCheckboxRect: (NSRect)checkboxFrame
+- (NSRect) radioButtonRectForBounds: (NSRect)frame
+{
+    NSRect radioFrame = [self checkboxRectForBounds: frame];
+    radioFrame.size.height = radioFrame.size.width;
+    return radioFrame;
+}
+
+- (NSRect) titleRectForBounds: (NSRect)frame withCheckboxRect: (NSRect)checkboxFrame
 {
     NSRect textFrame = frame;
     
@@ -129,44 +114,44 @@
     {
 		case NSImageLeft:
             switch ([self controlSize])
-            {
-                case NSSmallControlSize:
-                    textFrame.size.width -= (NSMaxX(checkboxFrame) + 6);
-                    textFrame.origin.x = (NSMaxX(checkboxFrame) + 6);
-                    textFrame.origin.y -= 1;
-                    break;
-                case NSMiniControlSize:
-                    textFrame.size.width -= (NSMaxX(checkboxFrame) + 4);
-                    textFrame.origin.x = (NSMaxX(checkboxFrame) + 4);
-                    break;
-                case NSRegularControlSize:
-                default:
-                    textFrame.size.width -= (NSMaxX(checkboxFrame) + 5);
-                    textFrame.origin.x = (NSMaxX(checkboxFrame) + 5);
-                    textFrame.origin.y -= 2;
-                    break;
-            }
+        {
+            case NSSmallControlSize:
+                textFrame.size.width -= (NSMaxX(checkboxFrame) + 6);
+                textFrame.origin.x = (NSMaxX(checkboxFrame) + 6);
+                textFrame.origin.y -= 1;
+                break;
+            case NSMiniControlSize:
+                textFrame.size.width -= (NSMaxX(checkboxFrame) + 4);
+                textFrame.origin.x = (NSMaxX(checkboxFrame) + 4);
+                break;
+            case NSRegularControlSize:
+            default:
+                textFrame.size.width -= (NSMaxX(checkboxFrame) + 5);
+                textFrame.origin.x = (NSMaxX(checkboxFrame) + 5);
+                textFrame.origin.y -= 2;
+                break;
+        }
 			break;
             
 		case NSImageRight:
 			switch ([self controlSize])
-            {
-                case NSSmallControlSize:
-                    textFrame.origin.x += 2;
-                    textFrame.size.width = (NSMinX(checkboxFrame) - NSMinX(textFrame) - 5);
-                    textFrame.origin.y -= 1;
-                    break;
-                case NSMiniControlSize:
-                    textFrame.origin.x += 2;
-                    textFrame.size.width = (NSMinX(checkboxFrame) - NSMinX(textFrame) - 5);
-                    break;
-                case NSRegularControlSize:
-                default:
-                    textFrame.origin.x += 2;
-                    textFrame.size.width = (NSMinX(checkboxFrame) - NSMinX(textFrame) - 5);
-                    textFrame.origin.y -= 2;
-                    break;
-            }
+        {
+            case NSSmallControlSize:
+                textFrame.origin.x += 2;
+                textFrame.size.width = (NSMinX(checkboxFrame) - NSMinX(textFrame) - 5);
+                textFrame.origin.y -= 1;
+                break;
+            case NSMiniControlSize:
+                textFrame.origin.x += 2;
+                textFrame.size.width = (NSMinX(checkboxFrame) - NSMinX(textFrame) - 5);
+                break;
+            case NSRegularControlSize:
+            default:
+                textFrame.origin.x += 2;
+                textFrame.size.width = (NSMinX(checkboxFrame) - NSMinX(textFrame) - 5);
+                textFrame.origin.y -= 2;
+                break;
+        }
 			break;
             
         default:
@@ -176,12 +161,12 @@
     return textFrame;
 }
 
-- (NSBezierPath *) checkboxPathForRect: (NSRect)rect
+- (NSBezierPath *) checkboxBezelForRect: (NSRect)rect
 {
     return [NSBezierPath bezierPathWithRoundedRect: rect xRadius: 2 yRadius: 2];
 }
 
-- (NSBezierPath *) radioButtonPathForRect: (NSRect)rect
+- (NSBezierPath *) radioButtonBezelForRect: (NSRect)rect
 {
     return [NSBezierPath bezierPathWithOvalInRect: rect];
 }
@@ -225,35 +210,35 @@
     switch ([self state])
     {
 		case NSMixedState:
-            {
-                path = [[[NSBezierPath alloc] init] autorelease];
-                NSPoint pointsMixed[2];
-                
-                pointsMixed[0] = NSMakePoint(NSMinX(frame) + 3, NSMidY(frame));
-                pointsMixed[1] = NSMakePoint(NSMaxX(frame) - 3, NSMidY(frame));
-                
-                [path appendBezierPathWithPoints: pointsMixed count: 2];
-                [path setLineWidth: 2.0f];
-            }
+        {
+            path = [[[NSBezierPath alloc] init] autorelease];
+            NSPoint pointsMixed[2];
+            
+            pointsMixed[0] = NSMakePoint(NSMinX(frame) + 3, NSMidY(frame));
+            pointsMixed[1] = NSMakePoint(NSMaxX(frame) - 3, NSMidY(frame));
+            
+            [path appendBezierPathWithPoints: pointsMixed count: 2];
+            [path setLineWidth: 2.0f];
+        }
             break;
 			
 		case NSOnState:
-            {
-                path = [[[NSBezierPath alloc] init] autorelease];
-                NSPoint pointsOn[4];
-                
-                pointsOn[0] = NSMakePoint(NSMinX(frame) + 3, NSMidY(frame) - 2);
-                pointsOn[1] = NSMakePoint(NSMidX(frame), NSMidY(frame) + 2);
-                pointsOn[2] = NSMakePoint(NSMidX(frame), NSMidY(frame) + 2);
-                pointsOn[3] = NSMakePoint(NSMinX(frame) + NSWidth(frame) - 1, NSMinY(frame) - 2);
-                
-                [path appendBezierPathWithPoints: pointsOn count: 4];
-                
-                CGFloat lineWidth = ([self controlSize] == NSMiniControlSize) ? 1.5f : 2.0f;
-                [path setLineWidth: lineWidth];
-            }
+        {
+            path = [[[NSBezierPath alloc] init] autorelease];
+            NSPoint pointsOn[4];
+            
+            pointsOn[0] = NSMakePoint(NSMinX(frame) + 3, NSMidY(frame) - 2);
+            pointsOn[1] = NSMakePoint(NSMidX(frame), NSMidY(frame) + 2);
+            pointsOn[2] = NSMakePoint(NSMidX(frame), NSMidY(frame) + 2);
+            pointsOn[3] = NSMakePoint(NSMinX(frame) + NSWidth(frame) - 1, NSMinY(frame) - 2);
+            
+            [path appendBezierPathWithPoints: pointsOn count: 4];
+            
+            CGFloat lineWidth = ([self controlSize] == NSMiniControlSize) ? 1.5f : 2.0f;
+            [path setLineWidth: lineWidth];
+        }
             break;
-        
+            
         default:
             path = nil;
             break;
@@ -268,64 +253,128 @@
 {
     BGTheme *theme = [[BGThemeManager keyedManager] themeForKey: self.themeKey];
     
-	NSRect checkboxRect = [self checkboxRectForBounds: frame isRadio: radio];
-
-	NSBezierPath *path;
-	
-	if (radio)  path = [self radioButtonPathForRect: checkboxRect];
-    else        path = [self checkboxPathForRect: checkboxRect];
+	NSRect bezelRect;
+	NSBezierPath *bezelPath;
+    NSBezierPath *glyphPath;
+    
+	if (radio) 
+    {
+        bezelRect = [self radioButtonRectForBounds: frame];
+        bezelPath = [self radioButtonBezelForRect: bezelRect];
+        glyphPath = [self radioButtonGlyphForRect: bezelRect];
+    }
+    else
+    {
+        bezelRect = [self checkboxRectForBounds: frame];
+        bezelPath = [self checkboxBezelForRect: bezelRect];
+        glyphPath = [self checkboxGlyphForRect: bezelRect];
+    }
+    [bezelPath setLineWidth: 1.0f];
 	
     //First draw the shadow
     [NSGraphicsContext saveGraphicsState];
         [[theme dropShadow] set];
         [[theme darkStrokeColor] set];
-        [path stroke];
+        [bezelPath stroke];
 	[NSGraphicsContext restoreGraphicsState];
     
-    //Then fill the path
+    //Then fill the bezel
     NSGradient *fillGradient;
     if (![self isEnabled])          fillGradient = [theme disabledNormalGradient];
     else if ([self isHighlighted])  fillGradient = [theme highlightGradient];
     else                            fillGradient = [theme normalGradient];
     
-    [fillGradient drawInBezierPath: path angle: [theme gradientAngle]];
+    [fillGradient drawInBezierPath: bezelPath
+                             angle: [theme gradientAngle]];
     
-    //Then stroke the path
+    //Then stroke the outside of the bezel
 	[NSGraphicsContext saveGraphicsState];
         [[theme strokeColor] set];
-        [path setLineWidth: 1.0f];
-        [path stroke];
+        [bezelPath stroke];
 	[NSGraphicsContext restoreGraphicsState];
 	
     //Now finally draw the glyph
-    NSBezierPath *glyphPath;
-    
-    if (radio) glyphPath = [self radioButtonGlyphForRect: checkboxRect];
-    else       glyphPath = [self checkboxGlyphForRect: checkboxRect];
-    
-    
 	[NSGraphicsContext saveGraphicsState];
         if ([self isEnabled])
             [[theme textColor] set];
         else
             [[theme disabledTextColor] set];
-    
+        
         if ([glyphPath lineWidth])
             [glyphPath stroke];
         else
             [glyphPath fill];
     [NSGraphicsContext restoreGraphicsState];
-        
+    
     
     //Finally, draw the text label (if we need to)
 	if ([self imagePosition] != NSImageOnly && [self attributedTitle])
     {
-        NSRect textRect = [self textRectForBounds: frame withCheckboxRect: checkboxRect];
+        NSRect titleRect = [self titleRectForBounds: frame
+                                   withCheckboxRect: bezelRect];
+        
         [self drawTitle: [self attributedTitle]
-              withFrame: textRect
+              withFrame: titleRect
                  inView: [self controlView]];
 	}
 }
+
+@end
+
+@implementation BXThemedCheckboxCell
+
+//Fix for setButtonType: no longer getting called for checkboxes in XIBs (jesus christ)
+- (id) initWithCoder: (NSCoder *)aDecoder
+{
+    if ((self = [super initWithCoder: aDecoder]))
+    {
+        [self setButtonType: NSSwitchButton];
+    }
+    return self;
+}
+
+@end
+
+
+@implementation BXThemedRadioCell
+
+//See note above for BXThemedCheckboxCell.
+- (id) initWithCoder: (NSCoder *)aDecoder
+{
+    if ((self = [super initWithCoder: aDecoder]))
+    {
+        [self setButtonType: NSRadioButton];
+    }
+    return self;
+}
+
+@end
+
+@implementation BXThemedPopUpButtonCell
+@end
+
+@implementation BXThemedSliderCell
+@end
+
+
+#pragma mark -
+#pragma mark Themed versions
+
+@implementation BXHUDLabel
+
+- (NSString *)themeKey { return @"BXBlueTheme"; }
+
+@end
+
+@implementation BXHUDButtonCell
+
+- (NSString *)themeKey { return @"BXBlueTheme"; }
+
+@end
+
+@implementation BXHUDCheckboxCell
+
+- (NSString *)themeKey { return @"BXBlueTheme"; }
 
 @end
 
@@ -339,7 +388,8 @@
 
 - (NSString *)themeKey { return @"BXBlueTheme"; }
 
-@end 
+@end
+
 
 @implementation BXBlueprintLabel
 
@@ -352,7 +402,6 @@
 - (NSString *)themeKey { return @"BXBlueprintHelpTextTheme"; }
 
 @end
-
 
 
 @implementation BXIndentedLabel

@@ -601,7 +601,6 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 						   window: (NSWindow *)window
 {
 	[[alert window] close];
-    [alert release];
 	switch(returnCode)
 	{
 		case NSAlertFirstButtonReturn:
@@ -613,6 +612,7 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 			if ([self gamesFolderPath]) [self revealGamesFolder: self];
 			break;
 	}
+    [alert release];
 }
 
 - (void) addImporterDropletToPath: (NSString *)folderPath

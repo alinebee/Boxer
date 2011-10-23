@@ -169,6 +169,7 @@
 	BGTheme *theme = [[BGThemeManager keyedManager] themeForKey: self.themeKey];
     
     BOOL isHighlighted = [self isHighlightedForSegment: segment];
+    BOOL precedesHighlighted = (segment != [self segmentCount] - 1) && [self isHighlightedForSegment: segment + 1];
     
 	NSRect segmentRect = [self rectForSegment: segment inFrame: frame];
     NSRect fillRect = segmentRect;
@@ -178,6 +179,10 @@
     {
         fillRect.origin.x -= 1;
         fillRect.size.width += 1;
+    }
+    else if (precedesHighlighted)
+    {
+        fillRect.size.width -= 1;
     }
     
     NSBezierPath *bezel = [self bezelForSegment: segment inFrame: fillRect];
@@ -207,7 +212,7 @@
         
         //If this cell isn't followed by a highlighted cell,
         //and is not the rightmost cell, draw a divider to the right.
-        if ((segment != [self segmentCount] - 1) && ![self isHighlightedForSegment: segment + 1])
+        if ((segment != [self segmentCount] - 1) && !precedesHighlighted)
         {
             dividerRect.origin.x = NSMaxX(fillRect) - 1;
             [NSBezierPath fillRect: dividerRect];

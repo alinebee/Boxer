@@ -174,7 +174,7 @@
     NSRect fillRect = segmentRect;
     
     //Make the highlighted region overlap its neighbours
-    if (isHighlighted)
+    if (isHighlighted && segment > 0)
     {
         fillRect.origin.x -= 1;
         fillRect.size.width += 1;
@@ -217,11 +217,7 @@
 	if (image)
     {
         NSImageAlignment alignment = [label length] ? NSImageAlignLeft : NSImageAlignCenter;
-		NSShadow *imageShadow = [theme dropShadow];
-		BOOL useShadow = ([image isTemplate] && isEnabled && !isHighlighted);
-        
-        
-        imageRect = [image imageRectAlignedInRect: drawRegion
+		imageRect = [image imageRectAlignedInRect: drawRegion
                                         alignment: alignment
                                           scaling: [self imageScalingForSegment: segment]];
 		
@@ -229,20 +225,30 @@
         imageRect.origin.x = floorf(imageRect.origin.x);
         imageRect.origin.y = ceilf(imageRect.origin.y);
         
-        //Make the image into a single-color mask
+        
+		CGFloat imageAlpha;
+        NSShadow *imageShadow = nil;
+        
 		if ([image isTemplate])
 		{
-            NSColor *imageColor = [theme textColor];
+            NSColor *imageColor = (isEnabled) ? [theme textColor] : [theme disabledTextColor];
+            //TODO: add disabledShadow and highlightedShadow instead
+            //of just turning off the shadow altogether
+            if (isEnabled && !isHighlighted) imageShadow = [theme textShadow];
+            
+            imageAlpha = 1.0f; //alpha decided by imageColor instead
             image = [image imageFilledWithColor: imageColor atSize: imageRect.size];
 		}
-		
-        //FIXME: these should not be hardcoded
-		CGFloat imageAlpha = 0.8f;
-		if (isHighlighted) imageAlpha = 1.0f;
-		if (!isEnabled) imageAlpha = 0.33f;
+        else
+        {
+            //FIXME: these should not be hardcoded
+            imageAlpha = 0.8f;
+            if (isHighlighted) imageAlpha = 1.0f;
+            if (!isEnabled) imageAlpha = 0.33f;
+        }
 		
 		[NSGraphicsContext saveGraphicsState];
-            if (useShadow) [imageShadow set];
+            if (imageShadow) [imageShadow set];
             
             [image drawInRect: imageRect
                      fromRect: NSZeroRect
@@ -257,11 +263,18 @@
         CGFloat fontSize = [NSFont systemFontSizeForControlSize: [self controlSize]];
         NSFont *labelFont = [NSFont controlContentFontOfSize: fontSize];
         NSColor *labelColor = isEnabled ? [theme textColor] : [theme disabledTextColor];
+        //TODO: add disabledShadow and highlightedShadow instead
+        //of just turning off the shadow altogether
+        NSShadow *labelShadow = isEnabled ? [theme textShadow] : nil;
         
-        NSDictionary *labelAttrs = [[NSDictionary alloc] initWithObjectsAndKeys:
-                                    labelFont, NSFontAttributeName,
-                                    labelColor, NSForegroundColorAttributeName,
-                                    nil];
+        NSMutableDictionary *labelAttrs = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
+                                           labelFont, NSFontAttributeName,
+                                           labelColor, NSForegroundColorAttributeName,
+                                           nil];
+        
+        
+        if (labelShadow) [labelAttrs setObject: labelShadow
+                                        forKey: NSShadowAttributeName];
         
         //Center the label within the segment, then pad it to accommodate the image if present
         labelRect.size = [label sizeWithAttributes: labelAttrs];

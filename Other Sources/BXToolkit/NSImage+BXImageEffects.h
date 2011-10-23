@@ -9,6 +9,17 @@
 
 @interface NSImage (BXImageEffects)
 
+//Returns the relative anchor point (from {0.0, 0.0} to {1.0, 1.0})
+//that's equivalent to the specified image alignment constant.
++ (NSPoint) anchorForImageAlignment: (NSImageAlignment)alignment;
+
+//Returns a rect suitable for drawing this image into,
+//given the specified alignment and scaling mode. Intended
+//for NSCell/NSControl subclasses.
+- (NSRect) imageRectAlignedInRect: (NSRect)outerRect
+                        alignment: (NSImageAlignment)alignment
+                          scaling: (NSImageScaling)scaling;
+
 //Returns a new version of the image filled with the specified color at the
 //specified size, using the current image's alpha channel. The resulting image
 //will be a bitmap.

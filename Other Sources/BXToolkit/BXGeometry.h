@@ -72,7 +72,8 @@ extern "C" {
 	//Add/remove the specified delta from the specified starting point.
 	NSPoint pointWithDelta(NSPoint point, NSPoint delta);
 	NSPoint pointWithoutDelta(NSPoint point, NSPoint delta);
-	
+
+    
 	
 	//CG implementations of the above functions.
 	BOOL BXCGSizeFitsWithinSize(CGSize innerSize, CGSize outerSize);

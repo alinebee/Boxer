@@ -6,8 +6,72 @@
  */
 
 #import "NSImage+BXImageEffects.h"
+#import "BXGeometry.h"
 
 @implementation NSImage (BXImageEffects)
+
++ (NSPoint) anchorForImageAlignment: (NSImageAlignment)alignment
+{
+    switch (alignment)
+    {
+        case NSImageAlignCenter:
+            return NSMakePoint(0.5f, 0.5f);
+            
+        case NSImageAlignBottom:
+            return NSMakePoint(0.5f, 0.0f);
+            
+        case NSImageAlignTop:
+            return NSMakePoint(0.5f, 1.0f);
+            
+        case NSImageAlignLeft:
+            return NSMakePoint(0.0f, 0.5f);
+            
+        case NSImageAlignRight:
+            return NSMakePoint(1.0f, 0.5f);
+            
+        case NSImageAlignBottomLeft:
+            return NSMakePoint(0.0f, 0.0f);
+            
+        case NSImageAlignBottomRight:
+            return NSMakePoint(1.0f, 0.0f);
+            
+        case NSImageAlignTopLeft:
+            return NSMakePoint(0.0f, 1.0f);
+            
+        case NSImageAlignTopRight:
+            return NSMakePoint(1.0f, 1.0f);
+            
+        default:
+            return NSZeroPoint;
+    }
+}
+
+- (NSRect) imageRectAlignedInRect: (NSRect)outerRect
+                       alignment: (NSImageAlignment)alignment
+                         scaling: (NSImageScaling)scaling
+{
+    NSRect drawRect = NSZeroRect;
+    drawRect.size = self.size;
+    NSPoint anchor = [[self class] anchorForImageAlignment: alignment];
+    
+    switch (scaling)
+    {
+        case NSImageScaleProportionallyDown:
+            drawRect = constrainToRect(drawRect, outerRect, anchor);
+            break;
+        case NSImageScaleProportionallyUpOrDown:
+            drawRect = fitInRect(drawRect, outerRect, anchor);
+            break;
+        case NSImageScaleAxesIndependently:
+            drawRect = outerRect;
+            break;
+        case NSImageScaleNone:
+        default:
+            drawRect = alignInRectWithAnchor(drawRect, outerRect, anchor);
+            break;
+    }
+    return drawRect;
+}
 
 - (NSImage *) imageFilledWithColor: (NSColor *)color atSize: (NSSize)targetSize
 {

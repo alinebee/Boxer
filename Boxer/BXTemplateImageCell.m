@@ -14,42 +14,6 @@
 @implementation BXTemplateImageCell
 @synthesize imageColor, disabledImageColor, imageShadow;
 
-+ (NSPoint) anchorForAlignment: (NSImageAlignment)alignment
-{
-    switch (alignment)
-    {
-        case NSImageAlignCenter:
-            return NSMakePoint(0.5f, 0.5f);
-        
-        case NSImageAlignBottom:
-            return NSMakePoint(0.5f, 0.0f);
-            
-        case NSImageAlignTop:
-            return NSMakePoint(0.5f, 1.0f);
-            
-        case NSImageAlignLeft:
-            return NSMakePoint(0.0f, 0.5f);
-            
-        case NSImageAlignRight:
-            return NSMakePoint(1.0f, 0.5f);
-            
-        case NSImageAlignBottomLeft:
-            return NSMakePoint(0.0f, 0.0f);
-            
-        case NSImageAlignBottomRight:
-            return NSMakePoint(1.0f, 0.0f);
-            
-        case NSImageAlignTopLeft:
-            return NSMakePoint(0.0f, 1.0f);
-            
-        case NSImageAlignTopRight:
-            return NSMakePoint(1.0f, 1.0f);
-            
-        default: //Should never happen, but hey
-            return NSZeroPoint;
-    }
-}
-
 - (void) dealloc
 {
 	[self setImageColor: nil],          [imageColor release];
@@ -65,7 +29,8 @@
     if ([self imageShadow] && [[self image] isTemplate])
     {
         //If we have a shadow set, then constrain the image region to accomodate the shadow
-        imageRect = [[self imageShadow] insetRectForShadow: imageRect];
+        imageRect = [[self imageShadow] insetRectForShadow: imageRect
+                                                   flipped: [[self controlView] isFlipped]];
     }
     return imageRect;
 }
@@ -75,47 +40,28 @@
 	//Apply our foreground colour and shadow when drawing any template image
 	if ([[self image] isTemplate])
 	{
-		NSRect drawRegion = NSIntegralRect([self imageRectForBounds: cellFrame]);
-        NSSize imageSize = [[self image] size];
+		NSRect imageRegion = NSIntegralRect([self imageRectForBounds: cellFrame]);
         
-        NSPoint anchor = [[self class] anchorForAlignment: [self imageAlignment]];
+        NSRect imageRect = [[self image] imageRectAlignedInRect: imageRegion
+                                                     alignment: [self imageAlignment]
+                                                       scaling: [self imageScaling]];
         
-        NSRect imageFrame = NSMakeRect(0.0f, 0.0f, imageSize.width, imageSize.height);
-        
-        NSRect scaledFrame;
-        
-        switch ([self imageScaling])
-        {
-            case NSImageScaleProportionallyDown:
-                scaledFrame = constrainToRect(imageFrame, drawRegion, anchor);
-                break;
-            case NSImageScaleProportionallyUpOrDown:
-                scaledFrame = fitInRect(imageFrame, drawRegion, anchor);
-                break;
-            case NSImageScaleAxesIndependently:
-                scaledFrame = drawRegion;
-                break;
-            case NSImageScaleNone:
-            default:
-                scaledFrame = alignInRectWithAnchor(imageFrame, drawRegion, anchor);
-                break;
-        }
-        
-		scaledFrame = NSIntegralRect(scaledFrame);
+        imageRect = NSIntegralRect(imageRect);
         
         NSColor *color = ([self isEnabled]) ? [self imageColor] : [self disabledImageColor];
         
         //Use the template image as a mask to create a new image composed entirely of one color.
         NSImage *maskedImage = [[self image] imageFilledWithColor: color
-                                                           atSize: scaledFrame.size];
+                                                           atSize: imageRect.size];
 		
 		//Then, render the single-color image into the final context along with the drop shadow
 		[NSGraphicsContext saveGraphicsState];
 			[[self imageShadow] set];
-			[maskedImage drawInRect: scaledFrame
+			[maskedImage drawInRect: imageRect
                            fromRect: NSZeroRect
                           operation: NSCompositeSourceOver
-                           fraction: 1.0f];
+                           fraction: 1.0f
+                     respectFlipped: YES];
 		[NSGraphicsContext restoreGraphicsState];
 	}
 	else

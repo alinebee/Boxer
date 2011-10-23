@@ -29,11 +29,11 @@
 //Returns the specified rect, inset to accomodate the shadow's offset and blur radius.
 //Intended for draw operations where one has a fixed draw region (the original rect)
 //and needs to scale an object so that its shadow will fit inside that region without clipping.
-- (NSRect) insetRectForShadow: (NSRect)origRect;
+- (NSRect) insetRectForShadow: (NSRect)origRect flipped: (BOOL)flipped;
 
 //Returns the specified rect, expanded to accomodate the shadow's offset and blur radius.
 //Intended for draw operations where one has a target size and position to draw an object at,
 //and needs the total region that will be drawn including the shadow.
-- (NSRect) expandedRectForShadow: (NSRect)origRect;
+- (NSRect) expandedRectForShadow: (NSRect)origRect flipped: (BOOL)flipped;
 
 @end

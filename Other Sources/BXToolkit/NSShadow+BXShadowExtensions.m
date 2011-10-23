@@ -37,26 +37,30 @@
     return [theShadow autorelease];
 }
 
-- (NSRect) insetRectForShadow: (NSRect)origRect
+- (NSRect) insetRectForShadow: (NSRect)origRect flipped: (BOOL)flipped
 {
     CGFloat radius  = [self shadowBlurRadius];
     NSSize offset   = [self shadowOffset];
     
     NSRect insetRect  = NSInsetRect(origRect, radius, radius);
     insetRect.origin.x -= offset.width;
-    insetRect.origin.y -= offset.height;
+    
+    if (flipped) insetRect.origin.y += offset.height;
+    else insetRect.origin.y -= offset.height;
     
     return insetRect;
 }
 
-- (NSRect) expandedRectForShadow: (NSRect)origRect
+- (NSRect) expandedRectForShadow: (NSRect)origRect flipped: (BOOL)flipped
 {
     CGFloat radius  = [self shadowBlurRadius];
     NSSize offset   = [self shadowOffset];
     
     NSRect expandedRect  = NSInsetRect(origRect, -radius, -radius);
     expandedRect.origin.x += offset.width;
-    expandedRect.origin.y += offset.height;
+    
+    if (flipped) expandedRect.origin.y -= offset.height;
+    else expandedRect.origin.y += offset.height;
     
     return expandedRect;
 }

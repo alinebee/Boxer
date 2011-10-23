@@ -126,7 +126,7 @@
 - (void) drawInteriorWithFrame: (NSRect)frame inView: (NSView *)controlView
 {
     NSShadow *dropShadow = [self dropShadow];
-    NSRect frameForShadow = [dropShadow insetRectForShadow: frame];
+    NSRect frameForShadow = [dropShadow insetRectForShadow: frame flipped: [controlView isFlipped]];
     CGFloat cornerRadius = frameForShadow.size.height / 2;
     NSBezierPath *backgroundPill = [NSBezierPath bezierPathWithRoundedRect: frameForShadow
                                                                    xRadius: cornerRadius

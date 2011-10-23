@@ -10,6 +10,7 @@
 //which does not support the IB plugin BGHUDAppKit relies on for assigning themes.
 
 #import <BGHUDAppKit/BGHUDAppKit.h>
+#import "BXThemedSegmentedCell.h"
 
 //Base classes for our BGHUDAppKit-themed control subclasses.
 
@@ -48,6 +49,10 @@
 
 @interface BXHUDPopUpButtonCell : BXThemedPopUpButtonCell
 @end
+
+@interface BXHUDSegmentedCell : BXThemedSegmentedCell
+@end
+
 
 //BGHUDAppKit control subclasses hardcoded to use BXBlueprintTheme
 //and BXBlueprintHelpTextTheme.

@@ -106,7 +106,8 @@
     return radioFrame;
 }
 
-- (NSRect) titleRectForBounds: (NSRect)frame withCheckboxRect: (NSRect)checkboxFrame
+- (NSRect) titleRectForBounds: (NSRect)frame
+             withCheckboxRect: (NSRect)checkboxFrame
 {
     NSRect textFrame = frame;
     
@@ -385,6 +386,12 @@
 @end
 
 @implementation BXHUDPopUpButtonCell
+
+- (NSString *)themeKey { return @"BXBlueTheme"; }
+
+@end
+
+@implementation BXHUDSegmentedCell
 
 - (NSString *)themeKey { return @"BXBlueTheme"; }
 

@@ -58,7 +58,8 @@
     if ([self indicatorShadow])
     {
         //If we have a shadow set, then constrain the draw region to accomodate the shadow
-        drawingRect = [[self indicatorShadow] insetRectForShadow: drawingRect];
+        drawingRect = [[self indicatorShadow] insetRectForShadow: drawingRect
+                                                         flipped: [[self controlView] isFlipped]];
     }
     return drawingRect;
 }

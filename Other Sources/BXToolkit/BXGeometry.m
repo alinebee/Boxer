@@ -87,8 +87,8 @@ NSPoint pointRelativeToRect(NSPoint thePoint, NSRect theRect)
 NSRect alignInRectWithAnchor(NSRect innerRect, NSRect outerRect, NSPoint anchor)
 {
 	NSRect alignedRect = innerRect;
-	alignedRect.origin.x = anchor.x * (NSMaxX(outerRect) - innerRect.size.width);
-	alignedRect.origin.y = anchor.y * (NSMaxY(outerRect) - innerRect.size.height);
+	alignedRect.origin.x = outerRect.origin.x + (anchor.x * (outerRect.size.width - innerRect.size.width));
+	alignedRect.origin.y = outerRect.origin.y + (anchor.y * (outerRect.size.height - innerRect.size.height));
 	return alignedRect;	
 }
 

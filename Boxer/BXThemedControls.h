@@ -33,7 +33,7 @@
 @end
 
 
-//BGHUDAppKit control subclasses hardcoded to use BXBlueTheme.
+//BGHUDAppKit control subclasses hardcoded to use BXHUDTheme.
 
 @interface BXHUDLabel : BXThemedLabel
 @end

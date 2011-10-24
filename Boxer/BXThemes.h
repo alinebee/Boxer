@@ -26,13 +26,14 @@
 - (NSColor *) textColor;
 @end
 
-//Adds translucency to helper text
+//Same as above, but paler text.
 @interface BXBlueprintHelpTextTheme : BXBlueprintTheme
 - (NSColor *) textColor;
 @end
 
-//Makes selection highlights blue-tinted instead of grey.
-@interface BXBlueTheme : BXBaseTheme
+//White text, blue highlights and subtle text shadows
+//for HUD and bezel panels.
+@interface BXHUDTheme : BXBaseTheme
 - (NSGradient *) highlightGradient;
 - (NSGradient *) pushedGradient;
 - (NSGradient *) highlightComplexGradient;
@@ -45,6 +46,6 @@
 @interface BXIndentedTheme : BXBaseTheme
 @end
 
-//Same as above, but lighter text.
+//Same as above, but paler text.
 @interface BXIndentedHelpTextTheme : BXIndentedTheme
 @end

@@ -363,37 +363,37 @@
 
 @implementation BXHUDLabel
 
-- (NSString *)themeKey { return @"BXBlueTheme"; }
+- (NSString *)themeKey { return @"BXHUDTheme"; }
 
 @end
 
 @implementation BXHUDButtonCell
 
-- (NSString *)themeKey { return @"BXBlueTheme"; }
+- (NSString *)themeKey { return @"BXHUDTheme"; }
 
 @end
 
 @implementation BXHUDCheckboxCell
 
-- (NSString *)themeKey { return @"BXBlueTheme"; }
+- (NSString *)themeKey { return @"BXHUDTheme"; }
 
 @end
 
 @implementation BXHUDSliderCell
 
-- (NSString *)themeKey { return @"BXBlueTheme"; }
+- (NSString *)themeKey { return @"BXHUDTheme"; }
 
 @end
 
 @implementation BXHUDPopUpButtonCell
 
-- (NSString *)themeKey { return @"BXBlueTheme"; }
+- (NSString *)themeKey { return @"BXHUDTheme"; }
 
 @end
 
 @implementation BXHUDSegmentedCell
 
-- (NSString *)themeKey { return @"BXBlueTheme"; }
+- (NSString *)themeKey { return @"BXHUDTheme"; }
 
 @end
 

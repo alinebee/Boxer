@@ -445,7 +445,7 @@
 				<string key="NSClassName">NSView</string>
 			</object>
 			<object class="NSCustomView" id="80732392">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">266</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -454,6 +454,8 @@
 						<int key="NSvFlags">301</int>
 						<string key="NSFrame">{{4, 0}, {112, 24}}</string>
 						<reference key="NSSuperview" ref="80732392"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
 						<int key="NSTag">4</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="943765406">
@@ -481,6 +483,9 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{120, 24}</string>
+				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
+				<reference key="NSNextKeyView" ref="187453467"/>
 				<string key="NSClassName">NSView</string>
 			</object>
 		</object>
@@ -1313,32 +1318,8 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
-					<string key="className">BXHUDButtonCell</string>
-					<string key="superclassName">BGHUDButtonCell</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BXHUDButtonCell.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXHUDCheckboxCell</string>
-					<string key="superclassName">BXHUDButtonCell</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BXHUDCheckboxCell.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXHUDLabel</string>
-					<string key="superclassName">BGHUDLabel</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BXHUDLabel.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
 					<string key="className">BXIndentedCheckboxCell</string>
-					<string key="superclassName">BXHUDCheckboxCell</string>
+					<string key="superclassName">BXThemedCheckboxCell</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/BXIndentedCheckboxCell.h</string>
@@ -1354,7 +1335,7 @@
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">BXIndentedLabel</string>
-					<string key="superclassName">BXHUDLabel</string>
+					<string key="superclassName">BXThemedLabel</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/BXIndentedLabel.h</string>
@@ -1877,6 +1858,30 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/BXStatusBarController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXThemedButtonCell</string>
+					<string key="superclassName">BGHUDButtonCell</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXThemedButtonCell.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXThemedCheckboxCell</string>
+					<string key="superclassName">BXThemedButtonCell</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXThemedCheckboxCell.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXThemedLabel</string>
+					<string key="superclassName">BGHUDLabel</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXThemedLabel.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

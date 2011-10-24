@@ -32,15 +32,9 @@
 
 - (NSShadow *) textShadow
 {
-	static NSShadow *textShadow;
-	if (!textShadow)
-	{
-		textShadow = [[NSShadow alloc] init];
-		[textShadow setShadowOffset: NSMakeSize(0.0f, 0.0f)];
-		[textShadow setShadowBlurRadius: 3.0f];
-		[textShadow setShadowColor: [[NSColor blackColor] colorWithAlphaComponent: 0.75f]];
-	}
-	return textShadow;
+    return [NSShadow shadowWithBlurRadius: 3.0f
+                                   offset: NSZeroSize
+                                    color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.75f]];
 }
 
 - (NSColor *) textColor
@@ -65,18 +59,48 @@
 
 
 
-@implementation BXBlueTheme
+@implementation BXHUDTheme
 
 + (void) load
 {
     [self registerWithName: nil];
 }
 
-- (NSShadow *) textShadow	{ return [self dropShadow]; }
+
+- (NSShadow *) textShadow
+{
+    return [NSShadow shadowWithBlurRadius: 2
+                                   offset: NSMakeSize(0, -1)
+                                    color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.66f]];
+}
+
+- (NSColor *) textColor
+{
+    return [NSColor whiteColor];
+}
 
 - (NSColor *) disabledTextColor
 {
     return [NSColor colorWithCalibratedWhite: 1.0f alpha: 0.5f];
+}
+
+- (NSGradient *) normalGradient
+{
+	NSColor *baseColor      = [NSColor colorWithCalibratedWhite: 0.15f alpha: 0.75f];
+	
+	NSColor *topColor		= [baseColor highlightWithLevel: 0.2f];
+	NSColor *midColor1		= [baseColor highlightWithLevel: 0.1f];
+	NSColor *midColor2		= baseColor;
+	NSColor *bottomColor	= [baseColor shadowWithLevel: 0.4f];
+	
+	NSGradient *gradient = [[NSGradient alloc] initWithColorsAndLocations:
+							topColor,		0.0f,
+							midColor1,		0.5f,
+							midColor2,		0.5f,
+							bottomColor,	1.0f,
+							nil];
+	
+	return [gradient autorelease];
 }
 
 - (NSGradient *) highlightGradient
@@ -113,6 +137,26 @@
 	return [self pushedGradient];
 }
 
+- (NSGradient *) knobColor
+{
+	//Use solid colours to avoid the track showing through
+	NSColor *baseColor      = [NSColor colorWithCalibratedWhite: 0.15f alpha: 1.0f];
+	
+	NSColor *topColor		= [baseColor highlightWithLevel: 0.2f];
+	NSColor *midColor1		= [baseColor highlightWithLevel: 0.1f];
+	NSColor *midColor2		= baseColor;
+	NSColor *bottomColor	= [baseColor shadowWithLevel: 0.4f];
+	
+	NSGradient *gradient = [[NSGradient alloc] initWithColorsAndLocations:
+							topColor,		0.0f,
+							midColor1,		0.4f,
+							midColor2,		0.4f,
+							bottomColor,	1.0f,
+							nil];
+	
+	return [gradient autorelease];
+}
+
 - (NSGradient *) highlightKnobColor
 {
 	//Use solid colours to avoid the track showing through
@@ -125,27 +169,30 @@
 	
 	NSGradient *gradient = [[NSGradient alloc] initWithColorsAndLocations:
 							topColor,		0.0f,
-							midColor1,		0.5f,
-							midColor2,		0.5f,
+							midColor1,		0.4f,
+							midColor2,		0.4f,
 							bottomColor,	1.0f,
 							nil];
 	
 	return [gradient autorelease];
 }
 
+- (NSColor *) sliderTrackColor
+{
+    return [NSColor colorWithCalibratedWhite: 0 alpha: 0.1f];
+}
+
+
 - (NSShadow *) focusRing
 {
-	NSShadow *glow = [[NSShadow new] autorelease];
-	[glow setShadowColor: [NSColor keyboardFocusIndicatorColor]];
-	[glow setShadowBlurRadius: 2.0f];
-	return glow;
+    return [NSShadow shadowWithBlurRadius: 2.0f
+                                   offset: NSZeroSize
+                                    color: [NSColor keyboardFocusIndicatorColor]];
 }
 
 - (NSColor *) strokeColor
 {
-    NSColor *selectionColor = [NSColor alternateSelectedControlColor];
-    
-    return [[selectionColor highlightWithLevel: 0.75f] colorWithAlphaComponent: 0.33];
+    return [NSColor colorWithCalibratedRed: 0.8f green: 0.85f blue: 0.9f alpha: 0.33f];
 }
 
 @end

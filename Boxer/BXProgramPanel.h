@@ -10,6 +10,8 @@
 //program picker panel views.
 
 #import <Cocoa/Cocoa.h>
+#import "BXCollectionItemView.h"
+#import "BXThemedControls.h"
 #import "YRKSpinningProgressIndicator.h"
 
 //Interface Builder tags
@@ -25,20 +27,22 @@ enum {
 @interface BXProgramPanel : NSView
 @end
 
-
-//BXProgramItemButton is used for the buttons in the program chooser panel. Each
-//button tracks its relevant collection item as a delegate, to make it possible to
-//customise the button's appearance based on the program it represents.
-@interface BXProgramItemButton : NSButton
+//The tracking item for individual programs in the program panel collection view.
+@interface BXProgramItem : BXCollectionItem
 {
-	IBOutlet NSCollectionViewItem *delegate;
+    NSButton *programButton;
 }
-//A reference to the collection item defining which program we are representing.
-@property (assign) NSCollectionViewItem *delegate;
+@property (retain, nonatomic) NSButton *programButton;
+@end
 
-//A reference to the dictionary represented by our collection item delegate.
-- (id) representedObject;
-
+//Custom button appearance for buttons in the program panel collection view.
+@interface BXProgramItemButtonCell : BXThemedButtonCell
+{
+    BOOL mouseIsInside;
+    BOOL programIsDefault;
+}
+@property (assign, nonatomic) BOOL programIsDefault;
+@property (assign, nonatomic) BOOL mouseIsInside;
 @end
 
 

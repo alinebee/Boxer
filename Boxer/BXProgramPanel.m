@@ -9,6 +9,9 @@
 #import "BXProgramPanel.h"
 #import "NSView+BXDrawing.h"
 #import "BXAppController.h"
+#import "NSShadow+BXShadowExtensions.h"
+#import "NSBezierPath+MCAdditions.h"
+
 
 @implementation BXProgramPanel
 
@@ -92,29 +95,205 @@
 @end
 
 
-@implementation BXProgramItemButton
-@synthesize delegate;
-   
-- (id) representedObject
+@implementation BXProgramItem
+@synthesize programButton;
+
+- (void) viewDidLoad
 {
-	return [[self delegate] representedObject];
+    [self setProgramButton: [[self view] viewWithTag: BXProgramPanelButtons]];
+    
+    [[[self programButton] cell] bind: @"programIsDefault"
+                             toObject: self
+                          withKeyPath: @"representedObject.isDefault"
+                              options: nil];
 }
 
-- (void) viewWillDraw
+- (void) dealloc
 {
-	//If this item is enabled and the default, style the button differently.
-	//TODO: move this into an initializer? Buttons are recreated whenever the default
-	//program changes anyway.
-	BOOL isDefault = [[[self representedObject] objectForKey: @"isDefault"] boolValue];
-    
-	[self setShowsBorderOnlyWhileMouseInside: !isDefault || ![self isEnabled]];
-	
-    //Cosmetic fix for Lion, which changed the button appearance to remove the indent
-    //in the button's unhovered state.
-    [[self cell] setBackgroundStyle: NSBackgroundStyleRaised]; 
-    
-	[super viewWillDraw];
+    [[[self programButton] cell] unbind: @"programIsDefault"];
+    [self setProgramButton: nil], [programButton release];
+    [super dealloc];
 }
+@end
+
+
+@implementation BXProgramItemButtonCell
+@synthesize programIsDefault, mouseIsInside;
+
+- (NSString *) themeKey { return @"BXIndentedTheme"; }
+
+- (id) initWithCoder: (NSCoder *)aDecoder
+{
+    if ((self = [super initWithCoder: aDecoder]))
+    {
+        //Expand the control view to compensate for regular recessed buttons being so damn teeny
+        [[self controlView] setFrame: NSInsetRect([[self controlView] frame], 0, -1.0f)];
+    }
+    return self;
+}
+
+
+- (void) setMouseIsInside: (BOOL)flag
+{
+    mouseIsInside = flag;
+    [[self controlView] setNeedsDisplay: YES];
+}
+
+- (void) setProgramIsDefault: (BOOL)flag
+{
+    programIsDefault = flag;
+    [[self controlView] setNeedsDisplay: YES];
+}
+
+- (void) mouseEntered: (NSEvent *)event
+{
+    [self setMouseIsInside: YES];
+}
+
+- (void) mouseExited: (NSEvent *)event
+{
+    [self setMouseIsInside: NO];
+}
+
+-(NSRect) drawTitle: (NSAttributedString *)title
+          withFrame: (NSRect)frame
+             inView: (NSView *)controlView
+{
+	BGTheme *theme = [[BGThemeManager keyedManager] themeForKey: self.themeKey];
+
+	NSRect textRect = NSInsetRect(frame, 5.0f, 2.0f);
+	
+	if ([title length])
+    {
+        NSMutableAttributedString *newTitle = [title mutableCopy];
+        
+        NSColor *textColor;
+        NSShadow *textShadow;
+        
+        if (![self isEnabled])
+        {
+            textColor = [theme disabledTextColor];
+            textShadow = [theme textShadow];
+        }
+        else if ([self programIsDefault])
+        {
+            textColor = [NSColor whiteColor];
+            textShadow = [NSShadow shadowWithBlurRadius: 2.0f
+                                                 offset: NSMakeSize(0, -1.0)
+                                                  color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.75]];
+        }
+        else if ([self isHighlighted])
+        {
+            textColor = [NSColor colorWithCalibratedWhite: 0.15 alpha: 1];
+            textShadow = [theme textShadow];
+        }
+        else
+        {
+            textColor = [theme textColor];
+            textShadow = [theme textShadow];
+        }
+		
+        NSRange range = NSMakeRange(0, [newTitle length]);
+        
+        [newTitle beginEditing];
+            [newTitle addAttribute: NSForegroundColorAttributeName value: textColor range: range];
+            [newTitle addAttribute: NSShadowAttributeName value: textShadow range: range];
+		[newTitle endEditing];
+        
+        [newTitle drawInRect: textRect];
+        
+        [newTitle release];
+	}
+	
+	return textRect;
+}
+
+- (void) drawWithFrame: (NSRect)frame inView: (NSView *)controlView
+{
+    if ([self isEnabled] && ([self isHighlighted] || [self programIsDefault] || [self mouseIsInside]))
+    {
+        NSShadow *innerShadow = [NSShadow shadowWithBlurRadius: 3.0f
+                                                        offset: NSMakeSize(0, -1.0f)
+                                                         color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.25]];
+        NSShadow *outerBevel = [NSShadow shadowWithBlurRadius: 1.0f
+                                                       offset: NSMakeSize(0, -1.0f)
+                                                        color: [NSColor colorWithCalibratedWhite: 1 alpha: 0.75]];
+        
+        NSRect insetFrame = [outerBevel insetRectForShadow: frame flipped: [controlView isFlipped]];
+        
+        NSBezierPath *bezel = [NSBezierPath bezierPathWithRoundedRect: insetFrame
+                                                              xRadius: insetFrame.size.height / 2
+                                                              yRadius: insetFrame.size.height / 2];
+        
+        NSGradient *bezelGradient;
+        NSColor *bezelColor;
+        NSColor *strokeColor;
+        
+        if ([self programIsDefault])
+        {
+            if ([self isHighlighted])
+            {
+                strokeColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.3];
+                bezelColor  = [NSColor alternateSelectedControlColor];
+                bezelGradient = [[NSGradient alloc] initWithColorsAndLocations:
+                                 [NSColor colorWithCalibratedWhite: 0 alpha: 0.33f], 0.0f,
+                                 [NSColor colorWithCalibratedWhite: 0 alpha: 0.0f], 1.0f,
+                                 nil];
+            }
+            else
+            {
+                strokeColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.3];
+                bezelColor  = [NSColor alternateSelectedControlColor];
+                bezelGradient = [[NSGradient alloc] initWithColorsAndLocations:
+                                 [NSColor colorWithCalibratedWhite: 1 alpha: 0.1f], 0.0f,
+                                 [NSColor colorWithCalibratedWhite: 0 alpha: 0.05f], 1.0f,
+                                 nil];
+            }
+        }
+        else
+        {
+            if ([self isHighlighted])
+            {
+                strokeColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.2];
+                bezelColor  = [NSColor colorWithCalibratedWhite: 0.6 alpha: 1];
+                bezelGradient = [[NSGradient alloc] initWithColorsAndLocations:
+                                 [NSColor colorWithCalibratedWhite: 0 alpha: 0.33f], 0.0f,
+                                 [NSColor colorWithCalibratedWhite: 0 alpha: 0.0f], 1.0f,
+                                 nil];
+            }
+            else
+            {
+                strokeColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.05];
+                bezelColor  = [NSColor colorWithCalibratedWhite: 0.8 alpha: 1];
+                bezelGradient = [[NSGradient alloc] initWithColorsAndLocations:
+                                 [NSColor colorWithCalibratedWhite: 0 alpha: 0.1f], 0.0f,
+                                 [NSColor colorWithCalibratedWhite: 0 alpha: 0.05f], 1.0f,
+                                 nil];
+            }
+        }
+        
+        [NSGraphicsContext saveGraphicsState];
+            if ([self isHighlighted] || [self programIsDefault])
+            {
+                [outerBevel set];
+                [bezelColor set];
+                [bezel fill];
+            }
+            [bezelGradient drawInBezierPath: bezel angle: 90];
+        [NSGraphicsContext restoreGraphicsState];
+        
+        [NSGraphicsContext saveGraphicsState];
+            [strokeColor set];
+            [bezel strokeInside];
+            if ([self isHighlighted]) [bezel fillWithInnerShadow: innerShadow];
+        [NSGraphicsContext restoreGraphicsState];
+        
+        [bezelGradient release];
+    }
+    
+    [self drawTitle: [self attributedTitle] withFrame: frame inView: [self controlView]];
+}
+
 @end
 
 

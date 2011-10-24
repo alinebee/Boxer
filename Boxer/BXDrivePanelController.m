@@ -690,9 +690,6 @@ enum {
 
 @interface BXDriveItem ()
 
-//Populates IB outlets with subviews after initializing/cloning a drive item
-- (void) _prepareSubviews;
-
 //Shows/hides the drive controls and progress indicators, based on the current
 //state of the drive item.
 - (void) _syncControlsShownWithAnimation: (BOOL)animate;
@@ -704,7 +701,7 @@ enum {
 @synthesize progressMeter, progressMeterLabel, progressMeterCancel;
 @synthesize driveTypeLabel, driveToggleButton, driveRevealButton, driveImportButton;
 
-- (void) _prepareSubviews
+- (void) viewDidLoad
 {
     //IMPLEMENTATION NOTE: NSCollectionView does not correctly clone IBOutlets
     //when cloning collection view items whose views are stored within the same
@@ -730,6 +727,7 @@ enum {
         if ([subview isKindOfClass: [NSProgressIndicator class]])
         {
             [self setProgressMeter: subview];
+            break;
         }
     }
     
@@ -778,20 +776,6 @@ enum {
         [self _syncControlsShownWithAnimation: YES];
         [self _syncProgressShownWithAnimation: YES];
     }
-}
-
-//Overridden to perform additional view initialization when copying.
-- (id) copyWithZone: (NSZone *)zone
-{
-    id copy = [super copyWithZone: zone];
-    [copy _prepareSubviews];
-    return copy;
-}
-
-- (void) setView: (NSView *)view
-{
-    [super setView: view];
-    [self _prepareSubviews];
 }
 
 - (void) dealloc

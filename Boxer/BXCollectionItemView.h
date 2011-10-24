@@ -6,13 +6,19 @@
  */
 
 
-//BXCollectionItemView implements baseline behaviours to make working with NSCollectionView
-//item views a less miserable experience.
+//BXCollectionItemView and BXCollectionItem implement baseline behaviours to make working with
+//NSCollectionViews a less miserable experience.
 
 #import <Cocoa/Cocoa.h>
 
-//Designed for use with BXCollectionItemView: tells the view to redraw whenever its selected status changes.
+//Designed for use with BXCollectionItemView: runs viewDidLoad for every item created,
+//and tells its view to redraw whenever the item's selected status changes.
 @interface BXCollectionItem : NSCollectionViewItem
+
+//Called for every collection view item after the view has been set or the item has been cloned.
+//Intended to be overridden in subclasses to perform additional initialization.
+- (void) viewDidLoad;
+
 @end
 
 
@@ -28,7 +34,8 @@
 
 @end
 
-//Provides a blue lozenge appearance its collection view item is selected.
+
+//Provides a blue lozenge appearance when its collection view item is selected.
 @interface BXHUDCollectionItemView : BXCollectionItemView
 @end
 

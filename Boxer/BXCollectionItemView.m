@@ -114,6 +114,24 @@
 
 @implementation BXCollectionItem
 
+- (void) viewDidLoad
+{
+    //Intended to be overridden in subclasses.
+}
+
+- (id) copyWithZone: (NSZone *)zone
+{
+    id copy = [super copyWithZone: zone];
+    [copy viewDidLoad];
+    return copy;
+}
+
+- (void) setView: (NSView *)view
+{
+    [super setView: view];
+    [self viewDidLoad];
+}
+
 //Redraw our view whenever we are selected or deselected
 - (void) setSelected: (BOOL)flag
 {

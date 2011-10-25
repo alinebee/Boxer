@@ -175,6 +175,7 @@
             textColor = [theme disabledTextColor];
             textShadow = [theme textShadow];
         }
+        //Use white text to stand out against blue background
         else if ([self programIsDefault])
         {
             textColor = [NSColor whiteColor];
@@ -182,6 +183,7 @@
                                                  offset: NSMakeSize(0, -1.0)
                                                   color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.75]];
         }
+        //Darken text when pressed in
         else if ([self isHighlighted])
         {
             textColor = [NSColor colorWithCalibratedWhite: 0.15 alpha: 1];
@@ -231,19 +233,26 @@
         
         if ([self programIsDefault])
         {
+            strokeColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.3];
+            bezelColor  = [NSColor alternateSelectedControlColor];
+            
             if ([self isHighlighted])
             {
-                strokeColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.3];
-                bezelColor  = [NSColor alternateSelectedControlColor];
                 bezelGradient = [[NSGradient alloc] initWithColorsAndLocations:
                                  [NSColor colorWithCalibratedWhite: 0 alpha: 0.33f], 0.0f,
-                                 [NSColor colorWithCalibratedWhite: 0 alpha: 0.0f], 1.0f,
+                                 [NSColor colorWithCalibratedWhite: 0 alpha: 0.0f], 0.8f,
+                                 [NSColor colorWithCalibratedWhite: 1 alpha: 0.3f], 1.0f,
+                                 nil];
+            }
+            else if ([self mouseIsInside])
+            {
+                bezelGradient = [[NSGradient alloc] initWithColorsAndLocations:
+                                 [NSColor colorWithCalibratedWhite: 1 alpha: 0.15f], 0.0f,
+                                 [NSColor colorWithCalibratedWhite: 0 alpha: 0.1f], 1.0f,
                                  nil];
             }
             else
             {
-                strokeColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.3];
-                bezelColor  = [NSColor alternateSelectedControlColor];
                 bezelGradient = [[NSGradient alloc] initWithColorsAndLocations:
                                  [NSColor colorWithCalibratedWhite: 1 alpha: 0.1f], 0.0f,
                                  [NSColor colorWithCalibratedWhite: 0 alpha: 0.05f], 1.0f,
@@ -258,7 +267,8 @@
                 bezelColor  = [NSColor colorWithCalibratedWhite: 0.6 alpha: 1];
                 bezelGradient = [[NSGradient alloc] initWithColorsAndLocations:
                                  [NSColor colorWithCalibratedWhite: 0 alpha: 0.33f], 0.0f,
-                                 [NSColor colorWithCalibratedWhite: 0 alpha: 0.0f], 1.0f,
+                                 [NSColor colorWithCalibratedWhite: 0 alpha: 0.0f], 0.8f,
+                                 [NSColor colorWithCalibratedWhite: 1 alpha: 0.3f], 1.0f,
                                  nil];
             }
             else
@@ -266,8 +276,8 @@
                 strokeColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.05];
                 bezelColor  = [NSColor colorWithCalibratedWhite: 0.8 alpha: 1];
                 bezelGradient = [[NSGradient alloc] initWithColorsAndLocations:
-                                 [NSColor colorWithCalibratedWhite: 0 alpha: 0.1f], 0.0f,
-                                 [NSColor colorWithCalibratedWhite: 0 alpha: 0.05f], 1.0f,
+                                 [NSColor colorWithCalibratedWhite: 0 alpha: 0.05f], 0.0f,
+                                 [NSColor colorWithCalibratedWhite: 0 alpha: 0.1f], 1.0f,
                                  nil];
             }
         }

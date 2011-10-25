@@ -155,7 +155,7 @@
     for (i = 0; i < [self segmentCount]; i++)
     	[self drawSegment: i inFrame: drawingRect withView: view];
     
-    //Then finally draw the border
+    //Then finally draw the border on top
 	[NSGraphicsContext saveGraphicsState];
         [[theme strokeColor] set];
         [bezel stroke];
@@ -174,7 +174,9 @@
 	NSRect segmentRect = [self rectForSegment: segment inFrame: frame];
     NSRect fillRect = segmentRect;
     
-    //Make the highlighted region overlap its neighbours
+    //Make the highlighted segment overlap its neighbours, and the segment
+    //before it stop short by one pixel, so that the highlighted segment
+    //dividers can be drawn over the top.
     if (isHighlighted && segment > 0)
     {
         fillRect.origin.x -= 1;
@@ -187,19 +189,18 @@
     
     NSBezierPath *bezel = [self bezelForSegment: segment inFrame: fillRect];
 	
-	//Fill the segment
+	//Fill the segment.
     NSGradient *bezelGradient = (isHighlighted) ? [theme highlightGradient] : [theme normalGradient];
     [bezelGradient drawInBezierPath: bezel angle: [theme gradientAngle]];
 	
-	//Draw segment dividers
-    
+	//Draw segment divider(s).
 	[NSGraphicsContext saveGraphicsState];
 		[[theme strokeColor] set];
         
         NSRect dividerRect = fillRect;
         dividerRect.size.width = 1;
     
-        //Draw a partial-height divider, unless this is a highlighted cell
+        //Draw a partial-height divider, unless this is a highlighted cell.
         if (!isHighlighted)
         {
             dividerRect = NSInsetRect(dividerRect, 0, 3.0f);
@@ -222,23 +223,44 @@
 	[self drawInteriorForSegment: segment inFrame: segmentRect withView: view];
 }
 
-- (void) drawInteriorForSegment: (NSInteger)segment inFrame: (NSRect)frame withView: view
+- (void) drawInteriorForSegment: (NSInteger)segment
+                        inFrame: (NSRect)frame
+                       withView: (NSView *)view
+{
+	NSRect innerRect = [self interiorRectForSegment: segment inFrame: frame];
+	
+    //First, draw the image
+    NSRect imageRect = [self drawImageForSegment: segment
+                                         inFrame: innerRect
+                                        withView: view];
+    
+    //Shorten the region we use for drawing text to account for the image
+    if (!NSIsEmptyRect(imageRect))
+    {
+        CGFloat margin = NSMaxX(imageRect) + 3;
+        innerRect.origin.x += margin;
+        innerRect.size.width -= margin;
+    }
+
+    [self drawTitleForSegment: segment inFrame: innerRect withView: view];
+}
+
+- (NSRect) drawImageForSegment: (NSInteger)segment
+                       inFrame: (NSRect)frame
+                      withView: (NSView *)view
 {
     BGTheme *theme = [[BGThemeManager keyedManager] themeForKey: self.themeKey];
-	BOOL isHighlighted = [self isHighlightedForSegment: segment];
     BOOL isEnabled = [self isEnabledForSegment: segment];
     
-    NSImage *image  = [self imageForSegment: segment];
-    NSString *label = [self labelForSegment: segment];
+    NSImage *image = [self imageForSegment: segment];
+    NSRect imageRect = NSZeroRect;
     
-	NSRect imageRect = NSZeroRect;
-	NSRect labelRect = NSZeroRect;
-	NSRect drawRegion = [self interiorRectForSegment: segment inFrame: frame];
-	
-	if (image)
+    if (image)
     {
-        NSImageAlignment alignment = [label length] ? NSImageAlignLeft : NSImageAlignCenter;
-		imageRect = [image imageRectAlignedInRect: drawRegion
+        BOOL hasLabel = [[self labelForSegment: segment] length] > 0;
+        NSImageAlignment alignment = hasLabel ? NSImageAlignLeft : NSImageAlignCenter;
+        
+		imageRect = [image imageRectAlignedInRect: frame
                                         alignment: alignment
                                           scaling: [self imageScalingForSegment: segment]];
 		
@@ -247,25 +269,22 @@
         imageRect.origin.y = ceilf(imageRect.origin.y);
         
         
-		CGFloat imageAlpha;
+		CGFloat imageAlpha = 1.0f;
         NSShadow *imageShadow = nil;
         
 		if ([image isTemplate])
 		{
             NSColor *imageColor = (isEnabled) ? [theme textColor] : [theme disabledTextColor];
-            //TODO: add disabledShadow and highlightedShadow instead
-            //of just turning off the shadow altogether
-            if (isEnabled && !isHighlighted) imageShadow = [theme textShadow];
             
-            imageAlpha = 1.0f; //alpha decided by imageColor instead
+            //TODO: add disabledShadow and highlightedShadow to theme,
+            //instead of just turning off the shadow altogether
+            if (isEnabled) imageShadow = [theme textShadow];
+            
             image = [image imageFilledWithColor: imageColor atSize: imageRect.size];
 		}
         else
         {
-            //FIXME: these should not be hardcoded
-            imageAlpha = 0.8f;
-            if (isHighlighted) imageAlpha = 1.0f;
-            if (!isEnabled) imageAlpha = 0.33f;
+            imageAlpha = isEnabled ? [theme alphaValue] : [theme disabledAlphaValue];
         }
 		
 		[NSGraphicsContext saveGraphicsState];
@@ -278,15 +297,29 @@
                respectFlipped: YES];
 		[NSGraphicsContext restoreGraphicsState];
 	}
+    return imageRect;
+}
+
+- (void) drawTitleForSegment: (NSInteger)segment
+                     inFrame: (NSRect)frame
+                    withView: (NSView *)view
+{
+    BGTheme *theme = [[BGThemeManager keyedManager] themeForKey: self.themeKey];
+    BOOL isEnabled = [self isEnabledForSegment: segment];
     
+    NSString *label = [self labelForSegment: segment];
     if ([label length])
     {
+        NSRect labelRect;
+        
         CGFloat fontSize = [NSFont systemFontSizeForControlSize: [self controlSize]];
         NSFont *labelFont = [NSFont controlContentFontOfSize: fontSize];
         NSColor *labelColor = isEnabled ? [theme textColor] : [theme disabledTextColor];
+        
         //TODO: add disabledShadow and highlightedShadow instead
         //of just turning off the shadow altogether
         NSShadow *labelShadow = isEnabled ? [theme textShadow] : nil;
+        
         
         NSMutableDictionary *labelAttrs = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
                                            labelFont, NSFontAttributeName,
@@ -299,13 +332,10 @@
         
         //Center the label within the segment, then pad it to accommodate the image if present
         labelRect.size = [label sizeWithAttributes: labelAttrs];
-        labelRect = centerInRect(labelRect, drawRegion);
-        
-        if (!NSEqualRects(imageRect, NSZeroRect))
-            labelRect.origin.x = NSMaxX(imageRect) + 3;
+        labelRect = centerInRect(labelRect, frame);
         
         //Crop the label horizontally to ensure it fits inside the bounds
-        NSRect croppedRect = NSIntersectionRect(labelRect, drawRegion);
+        NSRect croppedRect = NSIntersectionRect(labelRect, frame);
         croppedRect.size.height = labelRect.size.height;
         croppedRect.origin.y = labelRect.origin.y;
         

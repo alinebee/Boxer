@@ -30,6 +30,9 @@
 @end
 
 @interface BXThemedPopUpButtonCell : BGHUDPopUpButtonCell
+
+- (void) drawArrowsWithFrame: (NSRect)frame inView: (NSView *)controlView;
+
 @end
 
 

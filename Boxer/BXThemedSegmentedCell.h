@@ -30,10 +30,25 @@
 //The path that will be used for filling the specified segment.
 - (NSBezierPath *) bezelForSegment: (NSInteger)segment inFrame: (NSRect)frame;
 
-//Draws the label and/or image of the specified segment. Called by drawSegment:inFrame:withView:
+//Draws the label and/or image of the specified segment.
+//Called by drawSegment:inFrame:withView:.
 //frame is expected to be the result of rectForSegment:inFrame:.
 - (void) drawInteriorForSegment: (NSInteger)segment
                         inFrame: (NSRect)frame
                        withView: (NSView *)view;
+
+//Draws the image for the specified segment, if any.
+//frame is expected to be the result of interiorRectForSegment:inFrame:.
+//This will be left-aligned if the segment has a title, or centered otherwise.
+- (NSRect) drawImageForSegment: (NSInteger)segment
+                       inFrame: (NSRect)frame
+                      withView: (NSView *)view;
+
+//Draws the label for the specified segment, if any.
+//frame is expected to be the result of interiorRectForSegment:inFrame:,
+//modified to allow for any segment image.
+- (void) drawTitleForSegment: (NSInteger)segment
+                     inFrame: (NSRect)frame
+                    withView: (NSView *)view;
 
 @end

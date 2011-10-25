@@ -66,7 +66,12 @@
     [self registerWithName: nil];
 }
 
-
+- (NSShadow *) dropShadow
+{
+    return [NSShadow shadowWithBlurRadius: 2
+                                   offset: NSMakeSize(0, -1)
+                                    color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.75f]];
+}
 - (NSShadow *) textShadow
 {
     return [NSShadow shadowWithBlurRadius: 2
@@ -88,8 +93,8 @@
 {
 	NSColor *baseColor      = [NSColor colorWithCalibratedWhite: 0.15f alpha: 0.75f];
 	
-	NSColor *topColor		= [baseColor highlightWithLevel: 0.2f];
-	NSColor *midColor1		= [baseColor highlightWithLevel: 0.1f];
+	NSColor *topColor		= [baseColor highlightWithLevel: 0.15f];
+	NSColor *midColor1		= [baseColor highlightWithLevel: 0.05f];
 	NSColor *midColor2		= baseColor;
 	NSColor *bottomColor	= [baseColor shadowWithLevel: 0.4f];
 	
@@ -107,8 +112,8 @@
 {
 	NSColor *selectionColor	= [[NSColor alternateSelectedControlColor] colorWithAlphaComponent: [self alphaValue]];
 	
-	NSColor *topColor		= [selectionColor highlightWithLevel: 0.3f];
-	NSColor *midColor1		= [selectionColor highlightWithLevel: 0.2f];
+	NSColor *topColor		= [selectionColor highlightWithLevel: 0.25f];
+	NSColor *midColor1		= [selectionColor highlightWithLevel: 0.1f];
 	NSColor *midColor2		= selectionColor;
 	NSColor *bottomColor	= [selectionColor shadowWithLevel: 0.4f];
 	
@@ -116,6 +121,47 @@
 							topColor,		0.0f,
 							midColor1,		0.5f,
 							midColor2,		0.5f,
+							bottomColor,	1.0f,
+							nil];
+	
+	return [gradient autorelease];
+}
+
+
+- (NSGradient *) knobColor
+{
+	//Use solid colours to avoid the track showing through
+	NSColor *baseColor      = [NSColor colorWithCalibratedWhite: 0.15f alpha: 1.0f];
+	
+	NSColor *topColor		= [baseColor highlightWithLevel: 0.15f];
+	NSColor *midColor1		= [baseColor highlightWithLevel: 0.05f];
+	NSColor *midColor2		= baseColor;
+	NSColor *bottomColor	= [baseColor shadowWithLevel: 0.4f];
+	
+	NSGradient *gradient = [[NSGradient alloc] initWithColorsAndLocations:
+							topColor,		0.0f,
+							midColor1,		0.4f,
+							midColor2,		0.4f,
+							bottomColor,	1.0f,
+							nil];
+	
+	return [gradient autorelease];
+}
+
+- (NSGradient *) highlightKnobColor
+{
+	//Use solid colours to avoid the track showing through
+	NSColor *selectionColor	= [NSColor alternateSelectedControlColor];
+	
+	NSColor *topColor		= [selectionColor highlightWithLevel: 0.25f];
+	NSColor *midColor1		= [selectionColor highlightWithLevel: 0.1f];
+	NSColor *midColor2		= selectionColor;
+	NSColor *bottomColor	= [selectionColor shadowWithLevel: 0.4f];
+	
+	NSGradient *gradient = [[NSGradient alloc] initWithColorsAndLocations:
+							topColor,		0.0f,
+							midColor1,		0.4f,
+							midColor2,		0.4f,
 							bottomColor,	1.0f,
 							nil];
 	
@@ -135,46 +181,6 @@
 - (NSGradient *) pushedComplexGradient
 {
 	return [self pushedGradient];
-}
-
-- (NSGradient *) knobColor
-{
-	//Use solid colours to avoid the track showing through
-	NSColor *baseColor      = [NSColor colorWithCalibratedWhite: 0.15f alpha: 1.0f];
-	
-	NSColor *topColor		= [baseColor highlightWithLevel: 0.2f];
-	NSColor *midColor1		= [baseColor highlightWithLevel: 0.1f];
-	NSColor *midColor2		= baseColor;
-	NSColor *bottomColor	= [baseColor shadowWithLevel: 0.4f];
-	
-	NSGradient *gradient = [[NSGradient alloc] initWithColorsAndLocations:
-							topColor,		0.0f,
-							midColor1,		0.4f,
-							midColor2,		0.4f,
-							bottomColor,	1.0f,
-							nil];
-	
-	return [gradient autorelease];
-}
-
-- (NSGradient *) highlightKnobColor
-{
-	//Use solid colours to avoid the track showing through
-	NSColor *selectionColor	= [NSColor alternateSelectedControlColor];
-	
-	NSColor *topColor		= [selectionColor highlightWithLevel: 0.2f];
-	NSColor *midColor1		= [selectionColor highlightWithLevel: 0.1f];
-	NSColor *midColor2		= [selectionColor shadowWithLevel: 0.2f];
-	NSColor *bottomColor	= [selectionColor shadowWithLevel: 0.4f];
-	
-	NSGradient *gradient = [[NSGradient alloc] initWithColorsAndLocations:
-							topColor,		0.0f,
-							midColor1,		0.4f,
-							midColor2,		0.4f,
-							bottomColor,	1.0f,
-							nil];
-	
-	return [gradient autorelease];
 }
 
 - (NSColor *) sliderTrackColor

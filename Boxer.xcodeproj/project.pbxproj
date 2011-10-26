@@ -533,6 +533,8 @@
 		9FD3A27F139A839600D0918E /* BXSixaxisControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD3A27E139A839600D0918E /* BXSixaxisControllerProfile.m */; };
 		9FD5481411047E420041E1E7 /* BXDrivesInUseAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD5481311047E420041E1E7 /* BXDrivesInUseAlert.m */; };
 		9FD668F11215CDD6009E0118 /* BXBottomBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD668F01215CDD6009E0118 /* BXBottomBar.m */; };
+		9FD7B6B0145745D800565CEB /* BXThemedPopUpButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD7B6AF145745D800565CEB /* BXThemedPopUpButtonCell.m */; };
+		9FD7B6B3145746CC00565CEB /* BXThemedButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD7B6B2145746CC00565CEB /* BXThemedButtonCell.m */; };
 		9FD95D6A13E2A45C005EF2C0 /* BXFullScreenCapableWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD95D6913E2A45C005EF2C0 /* BXFullScreenCapableWindow.m */; };
 		9FDAD87F10C182B3004EA7D0 /* BXCoverArtWell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FDAD87E10C182B3004EA7D0 /* BXCoverArtWell.m */; };
 		9FDB601710C0707F00C15CF4 /* BXDockTileController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FDB601610C0707F00C15CF4 /* BXDockTileController.m */; };
@@ -1139,7 +1141,7 @@
 		9F9A4CA510F67DD800E61965 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/Preferences.xib; sourceTree = "<group>"; };
 		9F9A4CA710F6824B00E61965 /* BXFilterGallery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFilterGallery.h; sourceTree = "<group>"; };
 		9F9A4CA810F6824B00E61965 /* BXFilterGallery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFilterGallery.m; sourceTree = "<group>"; };
-		9F9E27C311F8C003003EE8F3 /* BXThemedSegmentedCell.h */ = {isa = PBXFileReference; fileEncoding = 4; path = BXThemedSegmentedCell.h; sourceTree = "<group>"; };
+		9F9E27C311F8C003003EE8F3 /* BXThemedSegmentedCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXThemedSegmentedCell.h; sourceTree = "<group>"; };
 		9F9E27C411F8C003003EE8F3 /* BXThemedSegmentedCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXThemedSegmentedCell.m; sourceTree = "<group>"; };
 		9F9E27D411F8C173003EE8F3 /* BXDrivePanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDrivePanelController.h; sourceTree = "<group>"; };
 		9F9E27D511F8C173003EE8F3 /* BXDrivePanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDrivePanelController.m; sourceTree = "<group>"; };
@@ -1307,6 +1309,10 @@
 		9FD5481311047E420041E1E7 /* BXDrivesInUseAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDrivesInUseAlert.m; sourceTree = "<group>"; };
 		9FD668EF1215CDD6009E0118 /* BXBottomBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBottomBar.h; sourceTree = "<group>"; };
 		9FD668F01215CDD6009E0118 /* BXBottomBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBottomBar.m; sourceTree = "<group>"; };
+		9FD7B6AE145745D800565CEB /* BXThemedPopUpButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXThemedPopUpButtonCell.h; sourceTree = "<group>"; };
+		9FD7B6AF145745D800565CEB /* BXThemedPopUpButtonCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXThemedPopUpButtonCell.m; sourceTree = "<group>"; };
+		9FD7B6B1145746CC00565CEB /* BXThemedButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXThemedButtonCell.h; sourceTree = "<group>"; };
+		9FD7B6B2145746CC00565CEB /* BXThemedButtonCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXThemedButtonCell.m; sourceTree = "<group>"; };
 		9FD95D6813E2A45C005EF2C0 /* BXFullScreenCapableWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFullScreenCapableWindow.h; sourceTree = "<group>"; };
 		9FD95D6913E2A45C005EF2C0 /* BXFullScreenCapableWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFullScreenCapableWindow.m; sourceTree = "<group>"; };
 		9FDAD87D10C182B3004EA7D0 /* BXCoverArtWell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCoverArtWell.h; sourceTree = "<group>"; };
@@ -1876,20 +1882,15 @@
 		9F496E3F108EEBB200282261 /* UI helpers */ = {
 			isa = PBXGroup;
 			children = (
+				9FD7B6AC1457459D00565CEB /* Themes */,
 				9F69128A10A2DF8D00EA78CD /* BXValueTransformers.h */,
 				9F69128B10A2DF8D00EA78CD /* BXValueTransformers.m */,
-				9F544A7E10AB44C40030FED5 /* BXThemes.h */,
-				9F544A7F10AB44C40030FED5 /* BXThemes.m */,
-				9F70278213D72D8100606B4C /* BXThemedControls.h */,
-				9F70278313D72D8100606B4C /* BXThemedControls.m */,
 				9F438C5610E3D8C8007D30AD /* BXScroller.h */,
 				9F438C5710E3D8C8007D30AD /* BXScroller.m */,
 				9F39A4391452CE9100942D0F /* BXBezelView.h */,
 				9F39A43A1452CE9100942D0F /* BXBezelView.m */,
 				9FF1562B14506E7200545317 /* BXHUDLevelIndicatorCell.h */,
 				9FF1562C14506E7200545317 /* BXHUDLevelIndicatorCell.m */,
-				9F9E27C311F8C003003EE8F3 /* BXThemedSegmentedCell.h */,
-				9F9E27C411F8C003003EE8F3 /* BXThemedSegmentedCell.m */,
 				9FF1562714506DBA00545317 /* BXHUDProgressIndicator.h */,
 				9FF1562814506DBA00545317 /* BXHUDProgressIndicator.m */,
 				9FD012F913AB87E500AF6FE8 /* BXTemplateImageCell.h */,
@@ -2728,6 +2729,23 @@
 			name = HID;
 			sourceTree = "<group>";
 		};
+		9FD7B6AC1457459D00565CEB /* Themes */ = {
+			isa = PBXGroup;
+			children = (
+				9F544A7E10AB44C40030FED5 /* BXThemes.h */,
+				9F544A7F10AB44C40030FED5 /* BXThemes.m */,
+				9F70278213D72D8100606B4C /* BXThemedControls.h */,
+				9F70278313D72D8100606B4C /* BXThemedControls.m */,
+				9F9E27C311F8C003003EE8F3 /* BXThemedSegmentedCell.h */,
+				9F9E27C411F8C003003EE8F3 /* BXThemedSegmentedCell.m */,
+				9FD7B6AE145745D800565CEB /* BXThemedPopUpButtonCell.h */,
+				9FD7B6AF145745D800565CEB /* BXThemedPopUpButtonCell.m */,
+				9FD7B6B1145746CC00565CEB /* BXThemedButtonCell.h */,
+				9FD7B6B2145746CC00565CEB /* BXThemedButtonCell.m */,
+			);
+			name = Themes;
+			sourceTree = "<group>";
+		};
 		9FDE33FF1351DA0B000DCE44 /* Drive importing */ = {
 			isa = PBXGroup;
 			children = (
@@ -3329,6 +3347,8 @@
 				9FF1562D14506E7200545317 /* BXHUDLevelIndicatorCell.m in Sources */,
 				9FF1563014506F5C00545317 /* BXKeyboardEventTap.m in Sources */,
 				9F39A43B1452CE9100942D0F /* BXBezelView.m in Sources */,
+				9FD7B6B0145745D800565CEB /* BXThemedPopUpButtonCell.m in Sources */,
+				9FD7B6B3145746CC00565CEB /* BXThemedButtonCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

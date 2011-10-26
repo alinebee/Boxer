@@ -11,13 +11,12 @@
 
 #import <BGHUDAppKit/BGHUDAppKit.h>
 #import "BXThemedSegmentedCell.h"
+#import "BXThemedPopUpButtonCell.h"
+#import "BXThemedButtonCell.h"
 
 //Base classes for our BGHUDAppKit-themed control subclasses.
 
 @interface BXThemedLabel : BGHUDLabel
-@end
-
-@interface BXThemedButtonCell : BGHUDButtonCell
 @end
 
 @interface BXThemedCheckboxCell : BXThemedButtonCell
@@ -27,12 +26,6 @@
 @end
 
 @interface BXThemedSliderCell : BGHUDSliderCell
-@end
-
-@interface BXThemedPopUpButtonCell : BGHUDPopUpButtonCell
-
-- (void) drawArrowsWithFrame: (NSRect)frame inView: (NSView *)controlView;
-
 @end
 
 
@@ -50,12 +43,11 @@
 @interface BXHUDSliderCell : BXThemedSliderCell
 @end
 
-@interface BXHUDPopUpButtonCell : BXThemedPopUpButtonCell
-@end
-
 @interface BXHUDSegmentedCell : BXThemedSegmentedCell
 @end
 
+@interface BXHUDPopUpButtonCell : BXThemedPopUpButtonCell
+@end
 
 //BGHUDAppKit control subclasses hardcoded to use BXBlueprintTheme
 //and BXBlueprintHelpTextTheme.

@@ -9,7 +9,6 @@
 //BXThemedSegmentedCell is a rewrite of BGHUDSegmentedCell to add rounder corners,
 //support template image rendering, and generally make the code sane and maintainable.
 
-#import <Cocoa/Cocoa.h>
 #import <BGHUDAppKit/BGHUDAppKit.h>
 
 @interface BXThemedSegmentedCell : BGHUDSegmentedCell

@@ -35,6 +35,10 @@ enum {
 @property (retain, nonatomic) NSButton *programButton;
 @end
 
+//Overridden to fix button hover state behaviour when scrolling.
+@interface BXProgramItemButton : NSButton
+@end
+
 //Custom button appearance for buttons in the program panel collection view.
 @interface BXProgramItemButtonCell : BXThemedButtonCell
 {

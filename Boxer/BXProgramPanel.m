@@ -116,6 +116,30 @@
 }
 @end
 
+@implementation BXProgramItemButton
+
+- (void) updateTrackingAreas
+{
+    [super updateTrackingAreas];
+    
+    //IMPLEMENTATION NOTE: NSTrackingAreas don't send mouseEntered: and
+    //mouseExited: signals when a view is scrolled away from under the mouse.
+    //However, updateTrackingAreas *does* get called when scrolling: so we check
+    //mouse location by hand and synthesize mouseEntered/exited events to our
+    //button cell here instead.
+    NSPoint location = [[self window] mouseLocationOutsideOfEventStream];
+    NSPoint locationInView = [self convertPoint: location fromView: nil];
+    if ([self hitTest: locationInView] != nil)
+    {
+        [[self cell] mouseEntered: nil];
+    }
+    else
+    {
+        [[self cell] mouseExited: nil];
+    }
+}
+
+@end
 
 @implementation BXProgramItemButtonCell
 @synthesize programIsDefault, mouseIsInside;
@@ -126,23 +150,29 @@
 {
     if ((self = [super initWithCoder: aDecoder]))
     {
-        //Expand the control view to compensate for regular recessed buttons being so damn teeny
+        //Expand the control view to compensate for regular recessed
+        //buttons being so damn teeny.
         [[self controlView] setFrame: NSInsetRect([[self controlView] frame], 0, -1.0f)];
     }
     return self;
 }
 
-
 - (void) setMouseIsInside: (BOOL)flag
 {
-    mouseIsInside = flag;
-    [[self controlView] setNeedsDisplay: YES];
+    if (flag != mouseIsInside)
+    {
+        mouseIsInside = flag;
+        [[self controlView] setNeedsDisplay: YES];
+    }
 }
 
 - (void) setProgramIsDefault: (BOOL)flag
 {
-    programIsDefault = flag;
-    [[self controlView] setNeedsDisplay: YES];
+    if (flag != programIsDefault)
+    {
+        programIsDefault = flag;
+        [[self controlView] setNeedsDisplay: YES];
+    }
 }
 
 - (void) mouseEntered: (NSEvent *)event

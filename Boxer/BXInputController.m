@@ -74,7 +74,7 @@
 															   userInfo: nil];
 	
 	[[self view] addTrackingArea: trackingArea];
-	[trackingArea release];	
+	[trackingArea release];
 	 
 	
 	//Set up our cursor fade animation

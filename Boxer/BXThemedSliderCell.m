@@ -10,65 +10,63 @@
 
 @implementation BXThemedSliderCell
 
-- (NSRect) horizontalKnobRectInBounds: (NSRect)theRect
+- (NSRect) roundKnobRectInBounds: (NSRect)theRect
 {
-    BOOL hasTicks = [self numberOfTickMarks] > 0;
-    
+    NSRect knobRect = theRect;
+    switch ([self controlSize])
+    {
+		case NSRegularControlSize:
+            knobRect.origin.x += 3;
+            knobRect.origin.y += 3;
+            knobRect.size.height = 15;
+            knobRect.size.width = 15;
+			break;
+			
+		case NSSmallControlSize:
+            knobRect.origin.x += 2;
+            knobRect.origin.y += 2;
+            knobRect.size.height = 11;
+            knobRect.size.width = 11;
+			break;
+			
+		case NSMiniControlSize:
+            knobRect.origin.x += 2;
+            knobRect.origin.y += 1;
+            knobRect.size.height = 9;
+            knobRect.size.width = 9;
+			break;
+	}
+    return knobRect;
+}
+
+- (NSRect) horizontalKnobRectInBounds: (NSRect)theRect
+                     tickMarkPosition: (NSTickMarkPosition)tickPosition
+{
     NSRect knobRect = theRect;
 	switch ([self controlSize])
     {
 		case NSRegularControlSize:
-			if (hasTicks)
-            {
-				if ([self tickMarkPosition] == NSTickMarkAbove)
-                	knobRect.origin.y += 2;
-				
-				knobRect.origin.x += 2;
-				knobRect.size.height = 19;
-				knobRect.size.width = 15;
-			}
-            else
-            {
-				knobRect.origin.x += 3;
-				knobRect.origin.y += 3;
-				knobRect.size.height = 15;
-				knobRect.size.width = 15;
-			}
+            if (tickPosition == NSTickMarkAbove)
+                knobRect.origin.y += 2;
+            
+            knobRect.origin.x += 2;
+            knobRect.size.height = 19;
+            knobRect.size.width = 15;
 			break;
 			
 		case NSSmallControlSize:
-			if (hasTicks)
-            {
-				if ([self tickMarkPosition] == NSTickMarkAbove)
-					knobRect.origin.y += 1;
-				
-				knobRect.origin.x += 1;
-				knobRect.size.height = 13;
-				knobRect.size.width = 11;
-			}
-            else
-            {
-				knobRect.origin.x += 2;
-				knobRect.origin.y += 2;
-				knobRect.size.height = 11;
-				knobRect.size.width = 11;
-			}
+            if (tickPosition == NSTickMarkAbove)
+                knobRect.origin.y += 1;
+            
+            knobRect.origin.x += 1;
+            knobRect.size.height = 13;
+            knobRect.size.width = 11;
 			break;
 			
 		case NSMiniControlSize:
-			if(hasTicks)
-            {
-				knobRect.origin.x += 1;
-				knobRect.size.height = 11;
-				knobRect.size.width = 9;
-			}
-            else
-            {
-				knobRect.origin.x += 2;
-				knobRect.origin.y += 1;
-				knobRect.size.height = 9;
-				knobRect.size.width = 9;
-			}
+            knobRect.origin.x += 1;
+            knobRect.size.height = 11;
+            knobRect.size.width = 9;
 			break;
 	}
     return knobRect;
@@ -98,10 +96,11 @@
     //Flip the knob
     if (tickPosition == NSTickMarkAbove)
     {
-        NSLog(@"%@", NSStringFromRect(theRect));
         NSAffineTransform *transform = [NSAffineTransform transform];
         [transform scaleXBy: 1 yBy: -1];
-        [transform translateXBy: 0 yBy: -maxY - 4];
+        //The path will be flipped along its topmost edge:
+        //move it back down to where it should be
+        [transform translateXBy: 0 yBy: -maxY - minY];
         [knob transformUsingAffineTransform: transform];
     }
     
@@ -117,16 +116,19 @@
 {
     BGTheme *theme = [[BGThemeManager keyedManager] themeForKey: self.themeKey];
     
-	NSRect knobRect = [self horizontalKnobRectInBounds: frame];
-    
+	NSRect knobRect;
     NSBezierPath *knob;
     if ([self numberOfTickMarks] > 0)
     {
+        knobRect = [self horizontalKnobRectInBounds: frame
+                                   tickMarkPosition: [self tickMarkPosition]];
+        
         knob = [self horizontalKnobForRect: knobRect
                           tickMarkPosition: [self tickMarkPosition]];
     }
     else
     {
+        knobRect = [self roundKnobRectInBounds: frame];
         knob = [self roundKnobForRect: knobRect];
     }
 	

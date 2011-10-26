@@ -12,4 +12,20 @@
 
 @interface BXThemedSliderCell : BGHUDSliderCell
 
+//Given a cell frame, returns the rect that should be used for rendering
+//a round knob into it.
+- (NSRect) roundKnobRectInBounds: (NSRect)theRect;
+
+//Given a cell frame, returns the rect that should be used for rendering
+//a pointed knob into it facing the specified tick-mark position.
+- (NSRect) horizontalKnobRectInBounds: (NSRect)theRect
+                     tickMarkPosition: (NSTickMarkPosition)tickPosition;
+
+//Returns a pointed knob path for the specified rect,
+//facing the specified tick-mark position.
+- (NSBezierPath *) horizontalKnobForRect: (NSRect)theRect
+                        tickMarkPosition: (NSTickMarkPosition)tickPosition;
+
+//Returns a round knob path to sit in the middle of the slider track.
+- (NSBezierPath *) roundKnobForRect: (NSRect)theRect;
 @end

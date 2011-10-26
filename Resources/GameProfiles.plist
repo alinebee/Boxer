@@ -3,10 +3,25 @@
 <plist version="1.0">
 <dict>
     <key>BXGameProfileCatalogueVersion</key>
-    <string>20111021.1</string>
+    <string>20111026.1</string>
     
 	<key>BXSpecificGameProfiles</key>
 	<array>
+        <dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.activision.mechwarrior</string>
+			<key>BXProfileGameName</key>
+			<string>Mechwarrior</string>
+			<key>BXProfileConfigurations</key>
+            <array>
+                <string>Simple MPU-401</string>
+            </array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>mw_ega.exe</string>
+			</array>
+		</dict>
+        
         <dict>
             <key>BXProfileIdentifier</key>
             <string>com.shiny-entertainment.mdk</string>

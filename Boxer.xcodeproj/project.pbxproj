@@ -200,6 +200,7 @@
 		9F24D24D122439E0009C1817 /* BXWelcomeWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F24D24C122439E0009C1817 /* BXWelcomeWindowController.m */; };
 		9F24D25012243C9A009C1817 /* BXWelcomeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F24D24F12243C9A009C1817 /* BXWelcomeView.m */; };
 		9F25C4E212130B5E0025CB2C /* BrandWatermark.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F25C4E112130B5E0025CB2C /* BrandWatermark.png */; };
+		9F26A9AD1458678B000184D1 /* BXThemedSliderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F26A9AC1458678B000184D1 /* BXThemedSliderCell.m */; };
 		9F2AC6E410EFFE8600CFFF72 /* BXBootlegCoverArt.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2AC6E310EFFE8600CFFF72 /* BXBootlegCoverArt.m */; };
 		9F2C28A2129D906600B172C8 /* BXFirstRunWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2C28A1129D906600B172C8 /* BXFirstRunWindowController.m */; };
 		9F2C28B8129D924E00B172C8 /* FirstRunWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F2C28B6129D924E00B172C8 /* FirstRunWindow.xib */; };
@@ -707,6 +708,8 @@
 		9F24D24F12243C9A009C1817 /* BXWelcomeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXWelcomeView.m; sourceTree = "<group>"; };
 		9F25C1FD1212BB450025CB2C /* BXSessionPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXSessionPrivate.h; sourceTree = "<group>"; };
 		9F25C4E112130B5E0025CB2C /* BrandWatermark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BrandWatermark.png; sourceTree = "<group>"; };
+		9F26A9AB1458678B000184D1 /* BXThemedSliderCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXThemedSliderCell.h; sourceTree = "<group>"; };
+		9F26A9AC1458678B000184D1 /* BXThemedSliderCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXThemedSliderCell.m; sourceTree = "<group>"; };
 		9F2AC6E210EFFE8600CFFF72 /* BXBootlegCoverArt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBootlegCoverArt.h; sourceTree = "<group>"; };
 		9F2AC6E310EFFE8600CFFF72 /* BXBootlegCoverArt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBootlegCoverArt.m; sourceTree = "<group>"; };
 		9F2C28A0129D906600B172C8 /* BXFirstRunWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFirstRunWindowController.h; sourceTree = "<group>"; };
@@ -2742,6 +2745,8 @@
 				9FD7B6AF145745D800565CEB /* BXThemedPopUpButtonCell.m */,
 				9FD7B6B1145746CC00565CEB /* BXThemedButtonCell.h */,
 				9FD7B6B2145746CC00565CEB /* BXThemedButtonCell.m */,
+				9F26A9AB1458678B000184D1 /* BXThemedSliderCell.h */,
+				9F26A9AC1458678B000184D1 /* BXThemedSliderCell.m */,
 			);
 			name = Themes;
 			sourceTree = "<group>";
@@ -3349,6 +3354,7 @@
 				9F39A43B1452CE9100942D0F /* BXBezelView.m in Sources */,
 				9FD7B6B0145745D800565CEB /* BXThemedPopUpButtonCell.m in Sources */,
 				9FD7B6B3145746CC00565CEB /* BXThemedButtonCell.m in Sources */,
+				9F26A9AD1458678B000184D1 /* BXThemedSliderCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

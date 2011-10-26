@@ -13,6 +13,7 @@
 #import "BXThemedSegmentedCell.h"
 #import "BXThemedPopUpButtonCell.h"
 #import "BXThemedButtonCell.h"
+#import "BXThemedSliderCell.h"
 
 //Base classes for our BGHUDAppKit-themed control subclasses.
 
@@ -23,9 +24,6 @@
 @end
 
 @interface BXThemedRadioCell : BXThemedButtonCell
-@end
-
-@interface BXThemedSliderCell : BGHUDSliderCell
 @end
 
 

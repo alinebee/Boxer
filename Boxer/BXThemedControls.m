@@ -53,10 +53,6 @@
 @end
 
 
-@implementation BXThemedSliderCell
-@end
-
-
 #pragma mark -
 #pragma mark Themed versions
 

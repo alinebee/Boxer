@@ -151,7 +151,7 @@
 - (NSGradient *) highlightKnobColor
 {
 	//Use solid colours to avoid the track showing through
-	NSColor *selectionColor	= [NSColor alternateSelectedControlColor];
+	NSColor *selectionColor	= [[NSColor alternateSelectedControlColor] shadowWithLevel: 0.25f];
 	
 	NSColor *topColor		= [selectionColor highlightWithLevel: 0.25f];
 	NSColor *midColor1		= [selectionColor highlightWithLevel: 0.1f];

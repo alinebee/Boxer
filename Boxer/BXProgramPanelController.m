@@ -14,6 +14,7 @@
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "NSString+BXPaths.h"
 #import "BXDOSWindowController.h"
+#import "BXPostLeopardAPIs.h"
 
 
 @interface BXProgramPanelController ()
@@ -107,6 +108,16 @@
 	[super setView: view];
 	//This will pull our subsidiary views from our own NIB file
 	[self loadView];
+}
+
+- (void) awakeFromNib
+{
+    //Disable vertical scrolling on 10.7: while we can only scroll horizontally, it's still otherwise
+    //possible for the user to pull on the content vertically, and this causes ugly redraw errors.
+    if ([[self programScroller] respondsToSelector: @selector(setVerticalScrollElasticity:)])
+    {
+        [[self programScroller] setVerticalScrollElasticity: NSScrollElasticityNone];
+    }
 }
 
 - (void) syncActivePanel

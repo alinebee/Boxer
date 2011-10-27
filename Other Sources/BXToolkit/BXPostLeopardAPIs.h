@@ -53,7 +53,15 @@ typedef NSUInteger NSTouchPhase;
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED < 1070 //OS X 10.7
 
-//New 10.7 constants for fullscreen behaviour
+@interface NSDocumentController (BXPostLeopardRestorationAPIs)
+
++ (void) restoreWindowWithIdentifier: (NSString *)identifier
+                               state: (NSCoder *)state
+                   completionHandler: (void (^)(NSWindow *, NSError *))completionHandler;
+@end
+
+
+//New 10.7 fullscreen window behaviour
 enum {
     NSWindowCollectionBehaviorFullScreenPrimary = 1 << 7,
     NSWindowCollectionBehaviorFullScreenAuxiliary = 1 << 8
@@ -95,8 +103,7 @@ extern NSString * const NSWindowDidExitFullScreenNotification;
 
 
 
-//New 10.7 scroller behaviour
-
+//New 10.7 scroller and scrollview behaviour
 enum {
     NSScrollerStyleLegacy       = 0,
     NSScrollerStyleOverlay      = 1
@@ -111,11 +118,20 @@ typedef NSInteger NSScrollerStyle;
 @end
 
 
+enum {
+    NSScrollElasticityAutomatic = 0,
+    NSScrollElasticityNone      = 1,
+    NSScrollElasticityAllowed   = 2
+};
+typedef NSInteger NSScrollElasticity;
 
-@interface NSDocumentController (BXPostLeopardRestorationAPIs)
+@interface NSScrollView (BXPostLeopardScrollViewAPIs)
 
-+ (void) restoreWindowWithIdentifier: (NSString *)identifier
-                               state: (NSCoder *)state
-                   completionHandler: (void (^)(NSWindow *, NSError *))completionHandler;
+- (NSScrollElasticity)horizontalScrollElasticity;
+- (void) setHorizontalScrollElasticity: (NSScrollElasticity)elasticity;
+
+- (NSScrollElasticity)verticalScrollElasticity;
+- (void) setVerticalScrollElasticity: (NSScrollElasticity)elasticity;
 @end
+
 #endif

@@ -65,11 +65,12 @@ static CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 - (void) prepareOpenGL
 {
 	//Synchronize buffer swaps with vertical refresh rate
-	//Disabled for now as this will block emulation at inopportune times
-	//while we wait for the next vertical refresh.
-	//GLint swapInt = 1;
-	//[[self openGLContext] setValues: &swapInt forParameter: NSOpenGLCPSwapInterval];
-	
+    if ([[NSUserDefaults standardUserDefaults] boolForKey: @"useVSync"])
+    {
+        GLint swapInt = 1;
+        [[self openGLContext] setValues: &swapInt forParameter: NSOpenGLCPSwapInterval];
+	}
+    
 	// Create a display link capable of being used with all active displays
 	CVDisplayLinkCreateWithActiveCGDisplays(&displayLink);
 	

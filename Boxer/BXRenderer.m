@@ -133,6 +133,18 @@
 	//Shader *shader = [[Shader alloc] initWithShadersInAppBundle: @"Scale2xHQ"];
 	//if ([shader programObject]) [self setCurrentShader: shader];
 	//[shader release];
+    
+	//Disable everything we don't need
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_SCISSOR_TEST);
+    glDisable(GL_ALPHA_TEST);
+    glDisable(GL_STENCIL_TEST);
+	glDisable(GL_LIGHTING);
+	glDisable(GL_CULL_FACE);
+    glDisable(GL_BLEND);
+    glDisable(GL_DITHER);
+    glDisable(GL_FOG);
+    glPixelZoom(1.0,1.0);
 }
 
 - (void) tearDownGLContext: (CGLContextObj)glContext
@@ -201,13 +213,6 @@
 	GLint contextFramebuffer = 0;
 	if (useScalingBuffer) glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &contextFramebuffer);
 	
-	//Disable everything we don't need
-	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_SCISSOR_TEST);
-	glDisable(GL_LIGHTING);
-	glDisable(GL_CULL_FACE);
-    glDisable(GL_BLEND);
-	
 	//Set the viewport to match the aspect ratio of our frame
 	CGRect viewportRect = CGRectIntegral([self viewportForFrame: [self currentFrame]]);
 	
@@ -216,6 +221,7 @@
 			   (GLsizei)viewportRect.size.width,
 			   (GLsizei)viewportRect.size.height);
 	
+    //Fill the areas outside our viewport with black
 	if (!CGRectEqualToRect(viewportRect, canvas))
 	{
 		glClearColor(0, 0, 0, 1);
@@ -265,7 +271,7 @@
 				   (GLsizei)viewportRect.size.height);
 		
 		//Revert the framebuffer to the context's original target,
-		//so that drawing goes to the proper place from now on
+		//so that drawing goes to the proper buffer from now on
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, contextFramebuffer);
 		
 		

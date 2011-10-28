@@ -286,12 +286,16 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
                     //than use a profile detected from a previous version.
                     BOOL profileOutdated = [profileVersion compare: [BXGameProfile catalogueVersion]
                                                            options: NSNumericSearch] == NSOrderedAscending;
-                    
+
                     if (!profileOutdated)
                     {
+                        //Tweak: don't use saved profiles in debug mode, as this interferes with development
+                        //of detection rules.
+#ifndef BOXER_DEBUG
                         BXGameProfile *profile = [BXGameProfile profileWithIdentifier: identifier];
                         //NSLog(@"Reusing existing profile with identifier: %@, %@", identifier, profile);
                         [self setGameProfile: profile];
+#endif
                     }
                 }
             }

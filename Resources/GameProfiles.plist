@@ -2,132 +2,125 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>BXGameProfileCatalogueVersion</key>
-    <string>20111026.1</string>
-    
+	<key>BXGameProfileCatalogueVersion</key>
+	<string>20111027.4</string>
 	<key>BXSpecificGameProfiles</key>
 	<array>
-        <dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.activision.mechwarrior</string>
+		<dict>
+			<key>BXProfileIdentifier</key>
+			<string>com.activision.mechwarrior</string>
 			<key>BXProfileGameName</key>
 			<string>Mechwarrior</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Simple MPU-401</string>
-            </array>
+			<array>
+				<string>Simple MPU-401</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>mw_ega.exe</string>
 			</array>
 		</dict>
-        
-        <dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.shiny-entertainment.mdk</string>
+		<dict>
+			<key>BXProfileIdentifier</key>
+			<string>com.shiny-entertainment.mdk</string>
 			<key>BXProfileGameName</key>
 			<string>MDK</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>MDK</string>
-            </array>
+			<array>
+				<string>MDK</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>mdk.exe</string>
 			</array>
 		</dict>
-        
-        <dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.firebird.elite-plus</string>
+		<dict>
+			<key>BXProfileIdentifier</key>
+			<string>com.firebird.elite-plus</string>
 			<key>BXProfileGameName</key>
 			<string>Elite Plus</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Timed joystick</string>
-                <string>MT-32</string>
-            </array>
+			<array>
+				<string>Timed joystick</string>
+				<string>MT-32</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>elite.grf</string>
 			</array>
 		</dict>
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.spectrum-holobyte.falcon-3</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.spectrum-holobyte.falcon-3</string>
 			<key>BXProfileGameName</key>
 			<string>Falcon 3.0</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Dynamic</string>
-                <string>MT-32</string>
-            </array>
+			<array>
+				<string>Dynamic</string>
+				<string>MT-32</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>falcon3.def</string>
 			</array>
 		</dict>
-        
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.lucasarts.monkey-island</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.lucasarts.monkey-island</string>
 			<key>BXProfileGameName</key>
 			<string>The Secret of Monkey Island</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>MT-32</string>
-            </array>
+			<array>
+				<string>MT-32</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>monkey.exe</string>
 			</array>
 		</dict>
-        
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.delphine.flashback</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.delphine.flashback</string>
 			<key>BXProfileGameName</key>
 			<string>Flashback</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Dynamic</string>
-                <string>MT-32</string>
-            </array>
+			<array>
+				<string>Dynamic</string>
+				<string>MT-32</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>fb.exe</string>
 			</array>
 		</dict>
-        
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.delphine.cruise-for-a-corpse</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.delphine.cruise-for-a-corpse</string>
 			<key>BXProfileGameName</key>
 			<string>Cruise for a Corpse</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Dynamic</string>
-                <string>MT-32</string>
-            </array>
+			<array>
+				<string>Dynamic</string>
+				<string>MT-32</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>delphine.lng</string>
 			</array>
 		</dict>
-        
-        <dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.ea.birds-of-prey</string>
+		<dict>
+			<key>BXProfileIdentifier</key>
+			<string>com.ea.birds-of-prey</string>
 			<key>BXProfileGameName</key>
 			<string>Birds of Prey</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>386 speed</string>
-                <string>Timed joystick</string>
-            </array>
+			<array>
+				<string>386 speed</string>
+				<string>Timed joystick</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
-				<string>bopinc.com</string><!-- Catches original install media -->
+				<string>bopinc.com</string>
 				<string>b0m.grf</string>
 			</array>
 			<key>BXProfileDriveLabels</key>
@@ -136,124 +129,116 @@
 				<string>BOP_INST__1</string>
 			</dict>
 			<key>BXInstallMedium</key>
-			<integer>1</integer><!-- Floppy -->
+			<integer>1</integer>
 		</dict>
-        
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.delphine.another-world</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.delphine.another-world</string>
 			<key>BXProfileGameName</key>
 			<string>Another World</string>
 			<key>BXProfileConfigurations</key>
 			<array>
-                <string>Another World</string>
-            </array>
+				<string>Another World</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>tabvol.bin</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.factor5.turrican-2</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.factor5.turrican-2</string>
 			<key>BXProfileGameName</key>
 			<string>Turrican II</string>
 			<key>BXProfileConfigurations</key>
 			<array>
-                <string>Turrican 2</string>
+				<string>Turrican 2</string>
 			</array>
-            <key>BXProfileTelltales</key>
+			<key>BXProfileTelltales</key>
 			<array>
 				<string>turrican.*</string>
 			</array>
 		</dict>
-        
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.origin.privateer</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.origin.privateer</string>
 			<key>BXProfileGameName</key>
 			<string>Wing Commander Privateer</string>
 			<key>BXProfileConfigurations</key>
 			<array>
-                <string>Simple joystick</string>
+				<string>Simple joystick</string>
 			</array>
-            <key>BXProfileTelltales</key>
+			<key>BXProfileTelltales</key>
 			<array>
 				<string>priv.exe</string>
 				<string>privater.exe</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.origin.privateer-2</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.origin.privateer-2</string>
 			<key>BXProfileGameName</key>
 			<string>Privateer 2</string>
 			<key>BXProfileConfigurations</key>
 			<array>
-                <string>Privateer 2</string>
-            </array>
+				<string>Privateer 2</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>pad.iff</string>
 			</array>
 		</dict>
-        
-        <dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.westwood.the-lion-king</string>
+		<dict>
+			<key>BXProfileIdentifier</key>
+			<string>com.westwood.the-lion-king</string>
 			<key>BXProfileGameName</key>
 			<string>The Lion King</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Simple joystick</string>
-            </array>
+			<array>
+				<string>Simple joystick</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>lionking.exe</string>
 			</array>
 		</dict>
-        
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.ea.lhx</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.ea.lhx</string>
 			<key>BXProfileGameName</key>
 			<string>LHX Attack Chopper</string>
 			<key>BXProfileConfigurations</key>
 			<array>
-                <string>Simple joystick</string>
-            </array>
+				<string>Simple joystick</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>lhx.exe</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.rowansoftware.dawn-patrol</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.rowansoftware.dawn-patrol</string>
 			<key>BXProfileGameName</key>
 			<string>Dawn Patrol</string>
 			<key>BXProfileConfigurations</key>
 			<array>
-                <string>Dawn Patrol</string>
-            </array>
+				<string>Dawn Patrol</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>patrol.exe</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.simbiosis.fable</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.simbiosis.fable</string>
 			<key>BXProfileGameName</key>
 			<string>Fable</string>
 			<key>BXProfileConfigurations</key>
 			<array>
-                <string>No GUS</string>
-            </array>
+				<string>No GUS</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>fable.*</string>
@@ -261,26 +246,24 @@
 			<key>BXMountHelperDrivesDuringImport</key>
 			<false/>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.velocity.jetfighter</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.velocity.jetfighter</string>
 			<key>BXProfileGameName</key>
 			<string>Jetfighter</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Jetfighter</string>
-            </array>
+			<array>
+				<string>Jetfighter</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>jf.exe</string>
 				<string>jetfight.exe</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.gtinteractive.bedlam</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.gtinteractive.bedlam</string>
 			<key>BXProfileGameName</key>
 			<string>Bedlam</string>
 			<key>BXProfileTelltales</key>
@@ -292,17 +275,16 @@
 				<string>setup.exe</string>
 			</array>
 		</dict>
-
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.westwood.red-alert</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.westwood.red-alert</string>
 			<key>BXProfileGameName</key>
 			<string>Command &amp; Conquer - Red Alert</string>
 			<key>BXProfileConfigurations</key>
 			<array>
-                <string>More memory</string>
-                <string>No GUS</string>
-            </array>
+				<string>More memory</string>
+				<string>No GUS</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>redalert.mix</string>
@@ -312,40 +294,37 @@
 				<string>setup.exe</string>
 			</array>
 		</dict>
-
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.empireinteractive.pro-pinball-the-web</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.empireinteractive.pro-pinball-the-web</string>
 			<key>BXProfileGameName</key>
 			<string>Pro Pinball- The Web</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Pro Pinball- The Web</string>
-            </array>
+			<array>
+				<string>Pro Pinball- The Web</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>web.exe</string>
 			</array>
 		</dict>
-
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.empireinteractive.pro-pinball-timeshock</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.empireinteractive.pro-pinball-timeshock</string>
 			<key>BXProfileGameName</key>
 			<string>Pro Pinball- Timeshock</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Pro Pinball- Timeshock</string>
-            </array>
+			<array>
+				<string>Pro Pinball- Timeshock</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>shock8.exe</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.origin.system-shock</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.origin.system-shock</string>
 			<key>BXProfileGameName</key>
 			<string>System Shock</string>
 			<key>BXProfileTelltales</key>
@@ -358,80 +337,75 @@
 				<string>initial.exe</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.origin.ultima-underworld</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.origin.ultima-underworld</string>
 			<key>BXProfileGameName</key>
 			<string>Ultima Underworld</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Dynamic</string>
-            </array>
+			<array>
+				<string>Dynamic</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>uw.exe</string>
 				<string>uwdemo.exe</string>
-                <string>underom1</string>
+				<string>underom1</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.origin.ultima-underworld-2</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.origin.ultima-underworld-2</string>
 			<key>BXProfileGameName</key>
 			<string>Ultima Underworld II</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Dynamic</string>
-            </array>
+			<array>
+				<string>Dynamic</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>uw2.exe</string>
-                <string>underom2</string>
+				<string>underom2</string>
 			</array>
 		</dict>
-
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.psygnosis.destruction-derby-2</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.psygnosis.destruction-derby-2</string>
 			<key>BXProfileGameName</key>
 			<string>Destruction Derby 2</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Destruction Derby 2</string>
-            </array>
+			<array>
+				<string>Destruction Derby 2</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>dd2.fil</string>
 			</array>
 		</dict>
-
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.acclaim.i-have-no-mouth-and-i-must-scream</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.acclaim.i-have-no-mouth-and-i-must-scream</string>
 			<key>BXProfileGameName</key>
 			<string>I Have No Mouth and I Must Scream</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>I Have No Mouth</string>
-            </array>
+			<array>
+				<string>I Have No Mouth</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>scream.prf</string>
 			</array>
 		</dict>
-
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.bethesda.daggerfall</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.bethesda.daggerfall</string>
 			<key>BXProfileGameName</key>
 			<string>Daggerfall</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>More memory</string>
-                <string>No GUS</string>
-            </array>
+			<array>
+				<string>More memory</string>
+				<string>No GUS</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>dagger.exe</string>
@@ -446,293 +420,273 @@
 				<string>Daggerfall</string>
 			</dict>
 			<key>BXInstallMedium</key>
-			<integer>2</integer><!-- CD-ROM -->
+			<integer>2</integer>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.sierra.kings-quest-7</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.sierra.kings-quest-7</string>
 			<key>BXProfileGameName</key>
 			<string>King&apos;s Quest VII</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Sound Blaster Pro</string>
-            </array>
+			<array>
+				<string>Sound Blaster Pro</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>kq7.bat</string>
 			</array>
 		</dict>
-        
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.mindscape.angel-devoid</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.mindscape.angel-devoid</string>
 			<key>BXProfileGameName</key>
 			<string>Angel Devoid</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Sound Blaster Pro</string>
-            </array>
+			<array>
+				<string>Sound Blaster Pro</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>angel.exe</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.virgin.screamer-2</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.virgin.screamer-2</string>
 			<key>BXProfileGameName</key>
 			<string>Screamer 2</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Screamer</string>
-            </array>
+			<array>
+				<string>Screamer</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>cars101.dat</string>
 			</array>
 		</dict>
-        
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.virgin.screamer</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.virgin.screamer</string>
 			<key>BXProfileGameName</key>
 			<string>Screamer</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Screamer</string>
-            </array>
+			<array>
+				<string>Screamer</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>map1h.dat</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.ea.the-need-for-speed</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.ea.the-need-for-speed</string>
 			<key>BXProfileGameName</key>
 			<string>The Need for Speed</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Need for Speed</string>
-            </array>
+			<array>
+				<string>Need for Speed</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>nfs.exe</string>
 				<string>nfs_dos.exe</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.trilobyte.7th-guest</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.trilobyte.7th-guest</string>
 			<key>BXProfileGameName</key>
 			<string>The 7th Guest</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>The 7th Guest</string>
-            </array>
+			<array>
+				<string>The 7th Guest</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>t7g.bat</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.origin.ultima-6</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.origin.ultima-6</string>
 			<key>BXProfileGameName</key>
 			<string>Ultima VI</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>MT-32</string>
-            </array>
+			<array>
+				<string>MT-32</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>ultima6.exe</string>
 			</array>
 		</dict>
-        
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.origin.ultima-7</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.origin.ultima-7</string>
 			<key>BXProfileGameName</key>
 			<string>Ultima VII</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Ultima VII</string>
-            </array>
+			<array>
+				<string>Ultima VII</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>ultima7.com</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.origin.serpent-isle</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.origin.serpent-isle</string>
 			<key>BXProfileGameName</key>
 			<string>Ultima VII Part 2: The Serpent Isle</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Ultima VII</string>
-            </array>
+			<array>
+				<string>Ultima VII</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>serpent.com</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.origin.wing-commander</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.origin.wing-commander</string>
 			<key>BXProfileGameName</key>
 			<string>Wing Commander</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Wing Commander</string>
-            </array>
+			<array>
+				<string>Wing Commander</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>wingcmdr.cfg</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.origin.wing-commander-2</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.origin.wing-commander-2</string>
 			<key>BXProfileGameName</key>
 			<string>Wing Commander II</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Wing Commander</string>
-            </array>
+			<array>
+				<string>Wing Commander</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>wc2.*</string>
-                <string>communic.yu2</string>
+				<string>communic.yu2</string>
 			</array>
 			<key>BXDesignatedInstallers</key>
 			<array>
-				<!-- CD rereleases of Wing Commander II -->
 				<string>winstall.bat</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.origin.wing-commander-academy</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.origin.wing-commander-academy</string>
 			<key>BXProfileGameName</key>
 			<string>Wing Commander Academy</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Wing Commander</string>
-            </array>
+			<array>
+				<string>Wing Commander</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>wca.exe</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.origin.wing-commander-armada</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.origin.wing-commander-armada</string>
 			<key>BXProfileGameName</key>
 			<string>Wing Commander Armada</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Timed joystick</string>
-            </array>
+			<array>
+				<string>Timed joystick</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>armada1.adv</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.origin.wing-commander-3</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.origin.wing-commander-3</string>
 			<key>BXProfileGameName</key>
 			<string>Wing Commander III</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Timed joystick</string>
-            </array>
+			<array>
+				<string>Timed joystick</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>wc3.*</string>
 			</array>
-            <key>BXDesignatedInstallers</key>
-            <array>
-                <string>wc3.exe</string>
-            </array>
+			<key>BXDesignatedInstallers</key>
+			<array>
+				<string>wc3.exe</string>
+			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.origin.wing-commander-4</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.origin.wing-commander-4</string>
 			<key>BXProfileGameName</key>
 			<string>Wing Commander IV</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Timed joystick</string>
-            </array>
+			<array>
+				<string>Timed joystick</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>wc4.exe</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.origin.wings-of-glory</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.origin.wings-of-glory</string>
 			<key>BXProfileGameName</key>
 			<string>Wings of Glory</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Wings of Glory</string>
-            </array>
+			<array>
+				<string>Wings of Glory</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>wogdata3.tre</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.dynamix.aces-of-the-pacific</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.dynamix.aces-of-the-pacific</string>
 			<key>BXProfileGameName</key>
 			<string>Aces of the Pacific</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>No dynamic</string>
-            </array>
+			<array>
+				<string>No dynamic</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>aces.com</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.dynamix.aces-over-europe</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.dynamix.aces-over-europe</string>
 			<key>BXProfileGameName</key>
 			<string>Aces Over Europe</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Aces Over Europe</string>
-            </array>
+			<array>
+				<string>Aces Over Europe</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>aoe.com</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.perfect10.discworld</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.perfect10.discworld</string>
 			<key>BXProfileGameName</key>
 			<string>Discworld</string>
 			<key>BXProfileTelltales</key>
@@ -744,289 +698,297 @@
 				<string>disc.bat</string>
 			</array>
 		</dict>
-        
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.lucasarts.tie-fighter</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.lucasarts.tie-fighter</string>
 			<key>BXProfileGameName</key>
 			<string>Tie Fighter</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Tie Fighter</string>
-            </array>
+			<array>
+				<string>Tie Fighter</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>tie.exe</string>
 				<string>tie.cd</string>
 			</array>
 		</dict>
-        
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.dynamix.earthsiege</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.dynamix.earthsiege</string>
 			<key>BXProfileGameName</key>
 			<string>Earthsiege</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Earthsiege</string>
-            </array>
+			<array>
+				<string>Earthsiege</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>es.m50</string>
 			</array>
 		</dict>
-        
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.accolade.grand-prix-unlimited</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.accolade.grand-prix-unlimited</string>
 			<key>BXProfileGameName</key>
 			<string>Grand Prix Unlimited</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>MT-32</string>
-                <string>386 speed</string>
-            </array>
+			<array>
+				<string>MT-32</string>
+				<string>386 speed</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>gpu.exe</string>
 			</array>
 		</dict>
-        
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.accolade.test-drive-3</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.accolade.test-drive-3</string>
 			<key>BXProfileGameName</key>
 			<string>Test Drive III</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>MT-32</string>
-                <string>386 speed</string>
-            </array>
+			<array>
+				<string>MT-32</string>
+				<string>386 speed</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>td3.exe</string>
 			</array>
 		</dict>
-        
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.accolade.speed-racer</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.accolade.speed-racer</string>
 			<key>BXProfileGameName</key>
 			<string>Speed Racer</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>MT-32</string>
-                <string>486 speed</string>
-            </array>
+			<array>
+				<string>MT-32</string>
+				<string>486 speed</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>acco1.tjl</string>
 			</array>
 		</dict>
-        
-        <dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.mindcraft.siege</string>
+		<dict>
+			<key>BXProfileIdentifier</key>
+			<string>com.mindcraft.siege</string>
 			<key>BXProfileGameName</key>
 			<string>Siege</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Old Sound Blaster Pro</string>
-                <string>MT-32</string>
-            </array>
+			<array>
+				<string>Old Sound Blaster Pro</string>
+				<string>MT-32</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>siege.als</string>
 			</array>
 		</dict>
-        
-        <dict>
-            <key>BXProfileIdentifier</key>
-            <string>se.dice.pinball-dreams</string>
+		<dict>
+			<key>BXProfileIdentifier</key>
+			<string>se.dice.pinball-dreams</string>
 			<key>BXProfileGameName</key>
 			<string>Pinball Dreams</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Dynamic</string>
-                <string>MT-32</string>
-            </array>
+			<array>
+				<string>Dynamic</string>
+				<string>MT-32</string>
+			</array>
 			<key>BXProfileTelltales</key>
 			<array>
-                <string>tbldetlo.ign</string>
+				<string>tbldetlo.ign</string>
 			</array>
 		</dict>
 	</array>
-
 	<key>BXGenericProfiles</key>
 	<array>
-        <dict>
-            <key>BXProfileIdentifier</key>
-            <string>net.washboardabs.cdrom-protected-games</string>
+		<dict>
+			<key>BXProfileIdentifier</key>
+			<string>net.washboardabs.cdrom-protected-games</string>
 			<key>BXProfileDescription</key>
 			<string>Games which require any CD to be present.</string>
 			<key>BXProfileMatches</key>
 			<array>
-                <string>Ignition</string>
-                <string>The Pandora Directive</string>
-            </array>
+				<string>Ignition</string>
+				<string>The Pandora Directive</string>
+			</array>
 			<key>BXProfileTelltales</key>
-            <array>
-                <string>ign_dos.bat</string>
-                <string>tex4.exe</string>
-            </array>
+			<array>
+				<string>ign_dos.bat</string>
+				<string>tex4.exe</string>
+			</array>
 			<key>BXRequiresCDROM</key>
-            <true/>
-        </dict>
-        <dict>
-            <key>BXProfileIdentifier</key>
-            <string>net.washboardabs.mt32-games</string>
+			<true/>
+		</dict>
+		<dict>
+			<key>BXProfileIdentifier</key>
+			<string>net.washboardabs.mt32-games</string>
 			<key>BXProfileDescription</key>
 			<string>Games which support the MT-32 but not General MIDI.</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>MT-32</string>
-            </array>
+			<array>
+				<string>MT-32</string>
+			</array>
 			<key>BXProfileMatches</key>
 			<array>
-                <string>Champions of Krynn</string>
-                <string>Dark Queen of Krynn</string>
-                <string>Forgotten Realms: Unlimited Adventures</string>
-                <string>Buck Rogers: Matrix Cubed</string>
-                <string>Realms of Arkania: Blade of Destiny</string>
-                <string>Cisco Heat</string>
-                <string>Bumpy’s Arcade Fantasy</string>
-                <string>Prehistorik</string>
-                <string>Cadaver: The Payoff</string>
-                <string>Command H.Q.</string>
-                <string>Dominium</string>
-                <string>Double Dragon III</string>
-                <string>Great Naval Battles: North Atlantic 1939-43</string>
-                <string>Italy ’90</string>
-                <string>The Exterminator</string>
-                <string>Hired Guns</string>
-                <string>Obitus</string>
-                <string>Ninja Gaiden II</string>
-                <string>Predator II</string>
-                <string>PGA Tour Golf</string>
-                <string>The Summoning</string>
-                <string>Supaplex</string>
-                <string>Zool</string>
-                <string>Wrath of the Demon</string>
-                <string>Shuttle</string>
-                <string>TV Sports Boxing/ABC Wild World of Sports Boxing</string>
-                <string>Bloodwych</string>
-                <string>Risky Woods</string>
-                <string>Pushover</string>
-                <string>Elf</string>
-                <string>Hook</string>
-                <string>Nightbreed</string>
-                <string>Robocop 3</string>
-                <string>Epic</string>
-                <string>Curse of Enchantia</string>
-                <string>Planet’s Edge</string>
-                <string>Lotus 3</string>
-                <string>Alien Breed</string>
-                <string>Laser Squad</string>
-                <string>Sabre Team</string>
-                <string>It Came From the Desert</string>
-                <string>Centurion: Defender of Rome</string>
-                <string>Amazon: Guardians of Eden</string>
-                <string>Martian Memorandum</string>
-                <string>Rampart</string>
-                <string>The Settlers</string>
-                <string>Battle Chess II</string>
-                <string>A-Train</string>
-                <string>SimLife</string>
-                <string>SimAnt</string>
-                <string>Castles</string>
-                <string>Bad Blood</string>
-                <string>Chaos Engine</string>
-                <string>Simon the Sorcerer</string>
-                <string>Might &amp; Magic III</string>
-                <string>Dune</string>
-                <string>Gunboat</string>
-                <string>Elvira II</string>
-                <string>Les Manley in: Lost in LA</string>
-                <string>Mike Ditka Ultimate Football</string>
-                <string>The Games: Summer Challenge</string>
-                <string>The Games: Winter Challenge</string>
-                <string>Hardball III</string>
+                <string>Breach 2</string>
+                <string>Back to the Future Part III</string>
+                <string>Twilight 2000</string>
+                <string>Megatraveller II</string>
+                <string>Magic Candle II</string>
+                <string>Lord of the Rings vol. I</string>
+                <string>Lord of the Rings vol. II- The Two Towers</string>
+                <string>Miami Vice</string>
+				<string>Eye of the Beholder III</string>
+				<string>Champions of Krynn</string>
+				<string>Dark Queen of Krynn</string>
+				<string>Forgotten Realms: Unlimited Adventures</string>
+				<string>Buck Rogers: Matrix Cubed</string>
+				<string>Realms of Arkania: Blade of Destiny</string>
+				<string>Cisco Heat</string>
+				<string>Bumpy’s Arcade Fantasy</string>
+				<string>Prehistorik</string>
+				<string>Cadaver: The Payoff</string>
+				<string>Command H.Q.</string>
+				<string>Dominium</string>
+				<string>Double Dragon III</string>
+				<string>Great Naval Battles: North Atlantic 1939-43</string>
+				<string>Italy ’90</string>
+				<string>The Exterminator</string>
+				<string>Hired Guns</string>
+				<string>Obitus</string>
+				<string>Ninja Gaiden II</string>
+				<string>Predator II</string>
+				<string>PGA Tour Golf</string>
+				<string>The Summoning</string>
+				<string>Supaplex</string>
+				<string>Zool</string>
+				<string>Wrath of the Demon</string>
+				<string>Shuttle</string>
+				<string>TV Sports Boxing/ABC Wild World of Sports Boxing</string>
+				<string>Bloodwych</string>
+				<string>Risky Woods</string>
+				<string>Pushover</string>
+				<string>Elf</string>
+				<string>Hook</string>
+				<string>Nightbreed</string>
+				<string>Robocop 3</string>
+				<string>Epic</string>
+				<string>Curse of Enchantia</string>
+				<string>Planet’s Edge</string>
+				<string>Lotus 3</string>
+				<string>Alien Breed</string>
+				<string>Laser Squad</string>
+				<string>Sabre Team</string>
+				<string>It Came From the Desert</string>
+				<string>Centurion: Defender of Rome</string>
+				<string>Amazon: Guardians of Eden</string>
+				<string>Martian Memorandum</string>
+				<string>Rampart</string>
+				<string>The Settlers</string>
+				<string>Battle Chess II</string>
+				<string>A-Train</string>
+				<string>SimLife</string>
+				<string>SimAnt</string>
+				<string>Castles</string>
+				<string>Bad Blood</string>
+				<string>Chaos Engine</string>
+				<string>Simon the Sorcerer</string>
+				<string>Might &amp; Magic III</string>
+				<string>Dune</string>
+				<string>Gunboat</string>
+				<string>Elvira II</string>
+				<string>Les Manley in: Lost in LA</string>
+				<string>Mike Ditka Ultimate Football</string>
+				<string>The Games: Summer Challenge</string>
+				<string>The Games: Winter Challenge</string>
+				<string>Hardball III</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
-                <string>dungcom.dax</string>
-                <string>dqk.exe</string>
-                <string>ckit.exe</string>
-                <string>venuscom.dax</string>
-                <string>bladem.exe</string>
-                <string>cisco.exe</string>
-                <string>bumpy.exe</string>
-                <string>historic.exe</string>
-                <string>historik.exe</string>
-                <string>cadaver.exe</string>
-                <string>c_hq.rep</string>
-                <string>dominium.bat</string>
-                <string>dd3files.001</string>
-                <string>gnbna386.exe</string>
-                <string>italy90.com</string>
-                <string>exterm.exe</string>
-                <string>hggame.exe</string>
-                <string>obitus.exe</string>
-                <string>njconfig.exe</string>
-                <string>predgraf.vgc</string>
-                <string>pgawest.ega</string>
-                <string>summon.com</string>
-                <string>supaplex.*</string>
-                <string>zool.exe</string>
-                <string>wrath.exe</string>
-                <string>shuttle.exe</string>
-                <string>vbox.exe</string>
-                <string>bwych.exe</string>
-                <string>risky.exe</string>
-                <string>push.exe</string>
-                <string>elf.exe</string>
-                <string>hook.exe</string>
-                <string>night.exe</string>
-                <string>robo.dat</string>
-                <string>epic.dat</string>
-                <string>curse.rs1</string>
-                <string>spacet.bch</string>
-                <string>lotus.exe</string>
-                <string>cargobay.vhf</string>
-                <string>laserfx.*</string>
-                <string>sabre.exe</string>
-                <string>biplane.spl</string>
-                <string>centurio.exe</string>
-                <string>amazon.exe</string>
-                <string>tex2.gam</string>
-                <string>rampart.exe</string>
-                <string>sett.exe</string>
-                <string>chess2.exe</string>
-                <string>at.ovl</string>
-                <string>sml.exe</string>
-                <string>simant.exe</string>
-                <string>castles1.exe</string>
-                <string>atrain.bat</string>
-                <string>badblood.exe</string>
-                <string>chaos.dat</string>
-                <string>simon.bat</string>
-                <string>mm3.exe</string>
-                <string>dune.exe</string>
-                <string>dune.bat</string><!-- CD version -->
-                <string>gbroster.dat</string>
-                <string>music.drv</string>
+                <string>breach2.exe</string>
+                <string>roland.bin</string>
+                <string>twi2d.dat</string>
+                <string>pistol.voc</string>
+                <string>mc201t.mid</string>
+                <string>arts.ndx</string>
+                <string>stilts.ega</string>
+				<string>aesop.exe</string>
+				<string>dungcom.dax</string>
+				<string>dqk.exe</string>
+				<string>ckit.exe</string>
+				<string>venuscom.dax</string>
+				<string>bladem.exe</string>
+				<string>cisco.exe</string>
+				<string>bumpy.exe</string>
+				<string>historic.exe</string>
+				<string>historik.exe</string>
+				<string>cadaver.exe</string>
+				<string>c_hq.rep</string>
+				<string>dominium.bat</string>
+				<string>dd3files.001</string>
+				<string>gnbna386.exe</string>
+				<string>italy90.com</string>
+				<string>exterm.exe</string>
+				<string>hggame.exe</string>
+				<string>obitus.exe</string>
+				<string>njconfig.exe</string>
+				<string>predgraf.vgc</string>
+				<string>pgawest.ega</string>
+				<string>summon.com</string>
+				<string>supaplex.*</string>
+				<string>zool.exe</string>
+				<string>wrath.exe</string>
+				<string>shuttle.exe</string>
+				<string>vbox.exe</string>
+				<string>bwych.exe</string>
+				<string>risky.exe</string>
+				<string>push.exe</string>
+				<string>elf.exe</string>
+				<string>hook.exe</string>
+				<string>night.exe</string>
+				<string>robo.dat</string>
+				<string>epic.dat</string>
+				<string>curse.rs1</string>
+				<string>spacet.bch</string>
+				<string>lotus.exe</string>
+				<string>cargobay.vhf</string>
+				<string>laserfx.*</string>
+				<string>sabre.exe</string>
+				<string>biplane.spl</string>
+				<string>centurio.exe</string>
+				<string>amazon.exe</string>
+				<string>tex2.gam</string>
+				<string>rampart.exe</string>
+				<string>sett.exe</string>
+				<string>chess2.exe</string>
+				<string>at.ovl</string>
+				<string>sml.exe</string>
+				<string>simant.exe</string>
+				<string>castles1.exe</string>
+				<string>atrain.bat</string>
+				<string>badblood.exe</string>
+				<string>chaos.dat</string>
+				<string>simon.bat</string>
+				<string>mm3.exe</string>
+				<string>dune.exe</string>
+				<string>dune.bat</string>
+				<string>gbroster.dat</string>
+				<string>music.drv</string>
 			</array>
-        </dict>
-        
-        <dict>
-            <key>BXProfileIdentifier</key>
-            <string>net.washboardabs.no-joystick-games</string>
+		</dict>
+		<dict>
+			<key>BXProfileIdentifier</key>
+			<string>net.washboardabs.no-joystick-games</string>
 			<key>BXProfileDescription</key>
 			<string>Games that are incompatible with joystick emulation altogether.</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>No joystick</string>
-            </array>
+			<array>
+				<string>No joystick</string>
+			</array>
 			<key>BXProfileMatches</key>
 			<array>
 				<string>Mortal Kombat Trilogy</string>
@@ -1036,16 +998,15 @@
 				<string>mkbgrnd.bmp</string>
 			</array>
 		</dict>
-            
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>net.washboardabs.timed-joystick-games</string>
+			<key>BXProfileIdentifier</key>
+			<string>net.washboardabs.timed-joystick-games</string>
 			<key>BXProfileDescription</key>
 			<string>Games that require clock-based joystick timing.</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Timed joystick</string>
-            </array>
+			<array>
+				<string>Timed joystick</string>
+			</array>
 			<key>BXProfileMatches</key>
 			<array>
 				<string>Flight Unlimited</string>
@@ -1054,14 +1015,14 @@
 				<string>Descent</string>
 				<string>Descent 2</string>
 				<string>Gods</string>
-                <string>Xenon 2- Megablast</string>
+				<string>Xenon 2- Megablast</string>
 				<string>Space Rogue</string>
 				<string>Gauntlet II</string>
 				<string>Skate or Die</string>
 				<string>F-29 Retaliator</string>
 				<string>US Navy Fighters/Advanced Tactical Fighters</string>
-                <string>Mortal Kombat</string>
-                <string>Team Suzuki</string>
+				<string>Mortal Kombat</string>
+				<string>Team Suzuki</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
@@ -1072,20 +1033,19 @@
 				<string>descent1.sow</string>
 				<string>descent2.exe</string>
 				<string>pgods.mus</string>
-                <string>xenon2.exe</string>
+				<string>xenon2.exe</string>
 				<string>vspace.ctl</string>
 				<string>gauntlet.exe</string>
 				<string>skate.exe</string>
 				<string>retal.00</string>
 				<string>timeint.xxx</string>
-                <string>mktitle1.gra</string>
-                <string>suzuki.exe</string>
+				<string>mktitle1.gra</string>
+				<string>suzuki.exe</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>net.washboardabs.floppy-installer-games</string>
+			<key>BXProfileIdentifier</key>
+			<string>net.washboardabs.floppy-installer-games</string>
 			<key>BXProfileDescription</key>
 			<string>Games that rely on being installed from floppy disk.</string>
 			<key>BXProfileMatches</key>
@@ -1097,39 +1057,37 @@
 				<string>adskidms.vce</string>
 			</array>
 			<key>BXInstallMedium</key>
-			<integer>1</integer><!-- Floppy -->
+			<integer>1</integer>
 		</dict>
-		
-        <dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.microprose.early-flight-simulators</string>
+		<dict>
+			<key>BXProfileIdentifier</key>
+			<string>com.microprose.early-flight-simulators</string>
 			<key>BXProfileDescription</key>
 			<string>Early Microprose flight simulators</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Early Microprose flightsims</string>
-            </array>
+			<array>
+				<string>Early Microprose flightsims</string>
+			</array>
 			<key>BXProfileMatches</key>
 			<array>
 				<string>F-19 Stealth Fighter</string>
-                <string>Knights of the Sky</string>
+				<string>Knights of the Sky</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>f19.com</string>
-                <string>spad13.rb</string>
+				<string>spad13.rb</string>
 			</array>
-        </dict>
-        
+		</dict>
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.microprose.flight-simulators</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.microprose.flight-simulators</string>
 			<key>BXProfileDescription</key>
 			<string>Mid-era Microprose flight simulators</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Microprose flightsims</string>
-            </array>
+			<array>
+				<string>Microprose flightsims</string>
+			</array>
 			<key>BXProfileMatches</key>
 			<array>
 				<string>F-117a Stealth Fighter 2.0</string>
@@ -1137,9 +1095,9 @@
 				<string>F-14 Fleet Defender</string>
 				<string>Gunship 2000</string>
 				<string>B-17 Flying Fortress</string>
-                <string>Harrier Jump Jet</string>
-                <string>A.T.A.C</string>
-                <string>Dogfight: 80 Years of Aerial Warfare</string>
+				<string>Harrier Jump Jet</string>
+				<string>A.T.A.C</string>
+				<string>Dogfight: 80 Years of Aerial Warfare</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
@@ -1148,21 +1106,20 @@
 				<string>f14.com</string>
 				<string>gs2000.com</string>
 				<string>b17.exe</string>
-                <string>harr.com</string>
-                <string>atac1.dat</string>
-                <string>dog.exe</string>
+				<string>harr.com</string>
+				<string>atac1.dat</string>
+				<string>dog.exe</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>net.washboardabs.vga-only-games</string>
+			<key>BXProfileIdentifier</key>
+			<string>net.washboardabs.vga-only-games</string>
 			<key>BXProfileDescription</key>
 			<string>Early VGA games that are incompatible with SuperVGA.</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>VGA-only</string>
-            </array>
+			<array>
+				<string>VGA-only</string>
+			</array>
 			<key>BXProfileMatches</key>
 			<array>
 				<string>Lemmings</string>
@@ -1175,18 +1132,17 @@
 				<string>vgalemmi.exe</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.sierra.agi-games</string>
+			<key>BXProfileIdentifier</key>
+			<string>com.sierra.agi-games</string>
 			<key>BXProfileDescription</key>
 			<string>Sierra AGI games that support Tandy graphics and sound.</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Sierra AGI</string>
-            </array>
+			<array>
+				<string>Sierra AGI</string>
+			</array>
 			<key>BXProfileGameEra</key>
-			<integer>1</integer><!--BX525DisketteEra-->
+			<integer>1</integer>
 			<key>BXProfileMatches</key>
 			<array>
 				<string>King&apos;s Quest</string>
@@ -1206,16 +1162,15 @@
 				<string>jr_graf.ovl</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>net.washboardabs.low-memory-games</string>
+			<key>BXProfileIdentifier</key>
+			<string>net.washboardabs.low-memory-games</string>
 			<key>BXProfileDescription</key>
 			<string>Old games that need low conventional memory.</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>Low memory</string>
-            </array>
+			<array>
+				<string>Low memory</string>
+			</array>
 			<key>BXProfileMatches</key>
 			<array>
 				<string>Blood Money</string>
@@ -1229,16 +1184,15 @@
 				<string>mm2.exe</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>net.washboardabs.extra-memory-games</string>
+			<key>BXProfileIdentifier</key>
+			<string>net.washboardabs.extra-memory-games</string>
 			<key>BXProfileDescription</key>
 			<string>Later games that like a lot of memory.</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>More memory</string>
-            </array>
+			<array>
+				<string>More memory</string>
+			</array>
 			<key>BXProfileMatches</key>
 			<array>
 				<string>The Elder Scrolls: Battlespire</string>
@@ -1250,16 +1204,15 @@
 				<string>blood.exe</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>net.washboardabs.no-ems-games</string>
+			<key>BXProfileIdentifier</key>
+			<string>net.washboardabs.no-ems-games</string>
 			<key>BXProfileDescription</key>
 			<string>Games that dislike expanded memory (but are not fussy about anything else.)</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>No EMS</string>
-            </array>
+			<array>
+				<string>No EMS</string>
+			</array>
 			<key>BXProfileMatches</key>
 			<array>
 				<string>Wrath of Earth</string>
@@ -1271,16 +1224,15 @@
 				<string>bbspc.exe</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>net.washboardabs.at-games</string>
+			<key>BXProfileIdentifier</key>
+			<string>net.washboardabs.at-games</string>
 			<key>BXProfileDescription</key>
 			<string>Old games that need a 286-speed CPU for correct timing.</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>AT speed</string>
-            </array>
+			<array>
+				<string>AT speed</string>
+			</array>
 			<key>BXProfileMatches</key>
 			<array>
 				<string>Ultima IV</string>
@@ -1292,47 +1244,45 @@
 				<string>ultima.exe</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>net.washboardabs.xt-cga-games</string>
+			<key>BXProfileIdentifier</key>
+			<string>net.washboardabs.xt-cga-games</string>
 			<key>BXProfileDescription</key>
 			<string>Old games that require CGA video emulation as well as an XT-speed CPU.</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>XT speed</string>
-                <string>CGA</string>
-            </array>
+			<array>
+				<string>XT speed</string>
+				<string>CGA</string>
+			</array>
 			<key>BXProfileGameEra</key>
-			<integer>1</integer><!--BX525DisketteEra-->
+			<integer>1</integer>
 			<key>BXProfileMatches</key>
 			<array>
 				<string>Attack on Altair</string>
 				<string>Castle Adventure</string>
 				<string>Below the Root</string>
-                <string>Striker</string>
+				<string>Striker</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>altair.com</string>
 				<string>castle.ran</string>
 				<string>btroot.exe</string>
-                <string>strklogo.dat</string>
+				<string>strklogo.dat</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>net.washboardabs.at-cga-games</string>
+			<key>BXProfileIdentifier</key>
+			<string>net.washboardabs.at-cga-games</string>
 			<key>BXProfileDescription</key>
 			<string>Old games that require CGA video emulation and a faster CPU speed.</string>
 			<key>BXProfileConfigurations</key>
-            <array>
-                <string>AT speed</string>
-                <string>CGA</string>
-            </array>
+			<array>
+				<string>AT speed</string>
+				<string>CGA</string>
+			</array>
 			<key>BXProfileGameEra</key>
-			<integer>1</integer><!--BX525DisketteEra-->
+			<integer>1</integer>
 			<key>BXProfileMatches</key>
 			<array>
 				<string>Rogue</string>
@@ -1343,39 +1293,39 @@
 				<string>10rogue.exe</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>net.washboardabs.386-games</string>
+			<key>BXProfileIdentifier</key>
+			<string>net.washboardabs.386-games</string>
 			<key>BXProfileDescription</key>
 			<string>386/486-era games that are sensitive to high CPU speeds.</string>
 			<key>BXProfileConfigurations</key>
 			<array>
-                <string>386 speed</string>
-            </array>
+				<string>386 speed</string>
+			</array>
 			<key>BXProfileMatches</key>
 			<array>
 				<string>One Must Fall</string>
 				<string>Theme Park</string>
 				<string>Halloween Harry</string>
+                <string>F-14 Tomcat</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>omf.exe</string>
 				<string>park.bat</string>
 				<string>harry.sb0</string>
+                <string>tomcat.dat</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>net.washboardabs.486-games</string>
+			<key>BXProfileIdentifier</key>
+			<string>net.washboardabs.486-games</string>
 			<key>BXProfileDescription</key>
 			<string>486 and Pentium-era games that like dynamic core and high-but-not-too-high CPU speeds.</string>
 			<key>BXProfileConfigurations</key>
 			<array>
-                <string>486 speed</string>
-            </array>
+				<string>486 speed</string>
+			</array>
 			<key>BXProfileMatches</key>
 			<array>
 				<string>X-COM: UFO Defense</string>
@@ -1392,17 +1342,16 @@
 				<string>l3d.exe</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>net.washboardabs.extra-memory-no-gus-games</string>
+			<key>BXProfileIdentifier</key>
+			<string>net.washboardabs.extra-memory-no-gus-games</string>
 			<key>BXProfileDescription</key>
 			<string>Games that like a lot of memory and are incompatible with the Gravis Ultrasound.</string>
 			<key>BXProfileConfigurations</key>
 			<array>
-                <string>More memory</string>
-                <string>No GUS</string>
-            </array>
+				<string>More memory</string>
+				<string>No GUS</string>
+			</array>
 			<key>BXProfileMatches</key>
 			<array>
 				<string>Quake</string>
@@ -1418,40 +1367,35 @@
 				<string>skynet.exe</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>net.washboardabs.no-gus-games</string>
+			<key>BXProfileIdentifier</key>
+			<string>net.washboardabs.no-gus-games</string>
 			<key>BXProfileDescription</key>
 			<string>Games that autodetect the Gravis Ultrasound, but are incompatible with the current emulation of it.</string>
 			<key>BXProfileConfigurations</key>
 			<array>
-                <string>No GUS</string>
-            </array>
+				<string>No GUS</string>
+			</array>
 			<key>BXProfileMatches</key>
 			<array>
 				<string>CyberJudas</string>
 				<string>CyberLaw</string>
-				<!--<string>Games using the HMI sound library</string>-->
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>cj08.fnt</string>
 				<string>t15_95.dat</string>
-                <!--Disabled owing to way too many false positives.-->
-				<!--<string>hmidrv.386</string>-->
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>net.washboardabs.no-dynamic-core-games</string>
+			<key>BXProfileIdentifier</key>
+			<string>net.washboardabs.no-dynamic-core-games</string>
 			<key>BXProfileDescription</key>
 			<string>Games that need max speed but have problems with the dynamic core.</string>
 			<key>BXProfileConfigurations</key>
 			<array>
-                <string>No dynamic</string>
-            </array>
+				<string>No dynamic</string>
+			</array>
 			<key>BXProfileMatches</key>
 			<array>
 				<string>Alone in the Dark</string>
@@ -1467,16 +1411,15 @@
 				<string>rf_sfx</string>
 			</array>
 		</dict>
-		
 		<dict>
-            <key>BXProfileIdentifier</key>
-            <string>net.washboardabs.dynamic-core-games</string>
+			<key>BXProfileIdentifier</key>
+			<string>net.washboardabs.dynamic-core-games</string>
 			<key>BXProfileDescription</key>
 			<string>Real-mode games that benefit from dynamic core and max CPU speed.</string>
 			<key>BXProfileConfigurations</key>
 			<array>
-                <string>Dynamic</string>
-            </array>
+				<string>Dynamic</string>
+			</array>
 			<key>BXProfileMatches</key>
 			<array>
 				<string>Frontier</string>
@@ -1484,7 +1427,7 @@
 				<string>Star Wars X-Wing</string>
 				<string>The Elder Scrolls: Arena</string>
 				<string>Epic Pinball</string>
-                <string>Pinball Dreams Deluxe, Pinball Dreams 2, Pinball Fantasies</string>
+				<string>Pinball Dreams Deluxe, Pinball Dreams 2, Pinball Fantasies</string>
 				<string>Colonization</string>
 				<string>Blake Stone 1 &amp; 2</string>
 				<string>Links</string>
@@ -1497,9 +1440,9 @@
 				<string>Grand Prix</string>
 				<string>Tornado</string>
 				<string>Stunt Island</string>
-                <string>Wolfenstein 3D</string>
-                <string>Geekwad: Games of the Galaxy</string>
-                <string>Return of the Phantom</string>
+				<string>Wolfenstein 3D</string>
+				<string>Geekwad: Games of the Galaxy</string>
+				<string>Return of the Phantom</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
@@ -1508,7 +1451,7 @@
 				<string>vga.pac</string>
 				<string>tamriel.mnu</string>
 				<string>ep1.dat</string>
-                <string>thing.sdr</string>
+				<string>thing.sdr</string>
 				<string>viceroy.exe</string>
 				<string>jm_error.h</string>
 				<string>torrey_p.crs</string>
@@ -1521,9 +1464,9 @@
 				<string>f1gpdata.dat</string>
 				<string>tornado.bat</string>
 				<string>alcatraz.set</string>
-                <string>wolf3d.exe</string>
-                <string>geekwad.exe</string>
-                <string>phantom.res</string>
+				<string>wolf3d.exe</string>
+				<string>geekwad.exe</string>
+				<string>phantom.res</string>
 			</array>
 		</dict>
 	</array>

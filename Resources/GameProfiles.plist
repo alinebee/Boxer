@@ -6,6 +6,21 @@
 	<string>20111027.4</string>
 	<key>BXSpecificGameProfiles</key>
 	<array>
+        <dict>
+            <key>BXProfileIdentifier</key>
+            <string>uk.co.revolution.broken-sword</string>
+            <key>BXProfileGameName</key>
+            <string>Broken Sword</string>
+            <key>BXProfileConfigurations</key>
+            <array>
+                <string>Broken Sword</string>
+            </array>
+            <key>BXProfileTelltales</key>
+            <array>
+                <string>sword.vol</string>
+            </array>
+        </dict>
+        
 		<dict>
 			<key>BXProfileIdentifier</key>
 			<string>com.activision.mechwarrior</string>

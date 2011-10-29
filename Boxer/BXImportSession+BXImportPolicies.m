@@ -324,8 +324,8 @@
 															withString: @"$1 $2"];
 	
 	//Replace underscores with spaces:
-	//ULTIMA_8 -> ULTIMA 8
-	filename = [filename stringByReplacingOccurrencesOfString: @"_" withString: @" "];
+	//ULTIMA_8 -> ULTIMA 8, ULTIMA-8 -> ULTIMA 8
+    filename = [filename stringByReplacingOccurrencesOfRegex: @"[_-]" withString: @" "];
 	
 	//Trim the string and collapse all internal whitespace to single spaces:
 	// Ultima   8  -> Ultima 8

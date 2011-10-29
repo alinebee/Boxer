@@ -817,6 +817,36 @@
 				<string>tbldetlo.ign</string>
 			</array>
 		</dict>
+		<dict>
+			<key>BXProfileIdentifier</key>
+			<string>com.sensiblesoftware.cannon-fodder</string>
+			<key>BXProfileGameName</key>
+			<string>Cannon Fodder</string>
+			<key>BXProfileConfigurations</key>
+			<array>
+				<string>Dynamic</string>
+				<string>MT-32</string>
+			</array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>can.exe</string>
+			</array>
+		</dict>
+        <dict>
+			<key>BXProfileIdentifier</key>
+			<string>com.sir-tech.wizardry-7</string>
+			<key>BXProfileGameName</key>
+			<string>Wizardry VII</string>
+			<key>BXProfileConfigurations</key>
+			<array>
+				<string>386 speed</string>
+				<string>MT-32</string>
+			</array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>scenario.hdr</string>
+			</array>
+		</dict>
 	</array>
 	<key>BXGenericProfiles</key>
 	<array>
@@ -849,6 +879,10 @@
 			</array>
 			<key>BXProfileMatches</key>
 			<array>
+                <string>Powermonger</string>
+                <string>Stronghold</string>
+                <string>Starlord</string>
+                <string>Moonstone: A Hard Day’s Knight</string>
                 <string>Rules of Engagement</string>
                 <string>Spirit of Excalibur</string>
                 <string>Vengeance of Excalibur</string>
@@ -856,6 +890,7 @@
                 <string>Crisis in the Kremlin</string>
                 <string>Breach 2</string>
                 <string>Back to the Future Part III</string>
+                <string>AV-8B Harrier Assault</string>
                 <string>Teenage Mutant Ninja Turtles II: The Arcade Game</string>
                 <string>Twilight 2000</string>
                 <string>Megatraveller II</string>
@@ -864,6 +899,8 @@
                 <string>Lord of the Rings vol. II- The Two Towers</string>
                 <string>Miami Vice</string>
 				<string>Eye of the Beholder III</string>
+                <string>Veil of Darkness</string>
+                <string>Dungeon Hack</string>
 				<string>Champions of Krynn</string>
 				<string>Dark Queen of Krynn</string>
                 <string>Shadow Sorcerer</string>
@@ -934,6 +971,10 @@
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
+                <string>mt32.fx</string>
+                <string>strong.exe</string>
+                <string>starlord.dat</string>
+                <string>ratgoug</string>
                 <string>roemain.exe</string>
                 <string>rol.dvr</string>
                 <string>crisis1.big</string>
@@ -945,6 +986,7 @@
                 <string>arts.ndx</string>
                 <string>stilts.ega</string>
 				<string>aesop.exe</string>
+                <string>veil.com</string>
 				<string>dungcom.dax</string>
 				<string>dqk.exe</string>
                 <string>vmonz.dat</string>
@@ -1333,6 +1375,8 @@
 			</array>
 			<key>BXProfileMatches</key>
 			<array>
+				<string>The Incredible Machine</string>
+				<string>The Even More Incredible Machine</string>
 				<string>One Must Fall</string>
 				<string>Theme Park</string>
 				<string>Halloween Harry</string>
@@ -1340,6 +1384,7 @@
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
+                <string>tim.exe</string>
 				<string>omf.exe</string>
 				<string>park.bat</string>
 				<string>harry.sb0</string>
@@ -1453,6 +1498,7 @@
 			</array>
 			<key>BXProfileMatches</key>
 			<array>
+                <string>Car &amp; Driver</string>
 				<string>Frontier</string>
 				<string>Blackthorne</string>
 				<string>Star Wars X-Wing</string>
@@ -1479,6 +1525,7 @@
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
+                <string>c&amp;d.exe</string>
 				<string>frontier.exe</string>
 				<string>black.exe</string>
 				<string>vga.pac</string>

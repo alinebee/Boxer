@@ -849,8 +849,14 @@
 			</array>
 			<key>BXProfileMatches</key>
 			<array>
+                <string>Rules of Engagement</string>
+                <string>Spirit of Excalibur</string>
+                <string>Vengeance of Excalibur</string>
+                <string>Conan the Cimmerian</string>
+                <string>Crisis in the Kremlin</string>
                 <string>Breach 2</string>
                 <string>Back to the Future Part III</string>
+                <string>Teenage Mutant Ninja Turtles II: The Arcade Game</string>
                 <string>Twilight 2000</string>
                 <string>Megatraveller II</string>
                 <string>Magic Candle II</string>
@@ -860,6 +866,7 @@
 				<string>Eye of the Beholder III</string>
 				<string>Champions of Krynn</string>
 				<string>Dark Queen of Krynn</string>
+                <string>Shadow Sorcerer</string>
 				<string>Forgotten Realms: Unlimited Adventures</string>
 				<string>Buck Rogers: Matrix Cubed</string>
 				<string>Realms of Arkania: Blade of Destiny</string>
@@ -921,9 +928,15 @@
 				<string>The Games: Summer Challenge</string>
 				<string>The Games: Winter Challenge</string>
 				<string>Hardball III</string>
+				<string>Jack Nicklaus Unlimited Golf and Course Design</string>
+				<string>Jack Nicklaus Signature Edition</string>
+                <string>Snoopy’s Game Club</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
+                <string>roemain.exe</string>
+                <string>rol.dvr</string>
+                <string>crisis1.big</string>
                 <string>breach2.exe</string>
                 <string>roland.bin</string>
                 <string>twi2d.dat</string>
@@ -934,6 +947,7 @@
 				<string>aesop.exe</string>
 				<string>dungcom.dax</string>
 				<string>dqk.exe</string>
+                <string>vmonz.dat</string>
 				<string>ckit.exe</string>
 				<string>venuscom.dax</string>
 				<string>bladem.exe</string>
@@ -1418,12 +1432,14 @@
 				<string>Alone in the Dark 3</string>
 				<string>Sherlock Holmes: The Case of the Rose Tattoo</string>
 				<string>Royal Flush Pinball</string>
+                <string>Jetfighter 2</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>objets.itd</string>
 				<string>holmes2.bat</string>
 				<string>rf_sfx</string>
+                <string>jf2.exe</string>
 			</array>
 		</dict>
 		<dict>
@@ -1441,6 +1457,9 @@
 				<string>Blackthorne</string>
 				<string>Star Wars X-Wing</string>
 				<string>The Elder Scrolls: Arena</string>
+                <string>Terminator 2029</string>
+                <string>Terminator 2029: Operation Scour</string>
+                <string>Terminator: Rampage</string>
 				<string>Epic Pinball</string>
 				<string>Pinball Dreams Deluxe, Pinball Dreams 2, Pinball Fantasies</string>
 				<string>Colonization</string>
@@ -1451,7 +1470,6 @@
 				<string>Simcity 2000</string>
 				<string>Master of Orion 1</string>
 				<string>Flight Simulator 5</string>
-				<string>Jetfighter 2</string>
 				<string>Grand Prix</string>
 				<string>Tornado</string>
 				<string>Stunt Island</string>
@@ -1465,6 +1483,8 @@
 				<string>black.exe</string>
 				<string>vga.pac</string>
 				<string>tamriel.mnu</string>
+                <string>termspec.dff</string>
+                <string>pcdeath.flc</string>
 				<string>ep1.dat</string>
 				<string>thing.sdr</string>
 				<string>viceroy.exe</string>
@@ -1475,7 +1495,6 @@
 				<string>sc2000.dat</string>
 				<string>orion.exe</string>
 				<string>fs5.exe</string>
-				<string>jf2.exe</string>
 				<string>f1gpdata.dat</string>
 				<string>tornado.bat</string>
 				<string>alcatraz.set</string>

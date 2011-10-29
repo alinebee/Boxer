@@ -151,10 +151,9 @@ typedef struct {
 		return BXExecutableTypeUnknown;
     }
 	
-	//Header is stored in little-endian format, so swap the bytes around on PowerPC systems to ensure correct comparisons.
+	//Header is stored in little-endian format, so swap the bytes
+    //around on PowerPC systems to ensure correct comparisons.
 	unsigned short typeMarker			= NSSwapLittleShortToHost(header.typeMarker);
-	unsigned short numPages				= NSSwapLittleShortToHost(header.numPages);
-	unsigned short lastPageSize			= NSSwapLittleShortToHost(header.lastPageSize);
 	unsigned short relocationAddress	= NSSwapLittleShortToHost(header.relocationTableAddress);
 	unsigned long newHeaderAddress		= NSSwapLittleLongToHost(header.newHeaderAddress);
 	
@@ -167,27 +166,6 @@ typedef struct {
 		{
 			*outError = [NSError errorWithDomain: BXExecutableTypesErrorDomain
 											code: BXNotAnExecutable
-										userInfo: nil];
-		}
-		return BXExecutableTypeUnknown;
-	}
-	
-	//Calculate what size the DOS header thinks the executable is:
-	//this may legally differ from the actual file size.
-	unsigned long long expectedFileSize = (numPages * BXExecutablePageSize);
-	if (lastPageSize > 0)
-		expectedFileSize += (lastPageSize - BXExecutablePageSize);
-	
-    
-	//If file is shorter than the DOS header thinks it is, or the
-	//relocation table offset is out of range, it means the executable
-	//has been truncated and we cannot meaningfully determine the type.
-	if (realFileSize < expectedFileSize || relocationAddress > expectedFileSize)
-	{
-		if (outError)
-		{
-			*outError = [NSError errorWithDomain: BXExecutableTypesErrorDomain
-											code: BXExecutableTruncated
 										userInfo: nil];
 		}
 		return BXExecutableTypeUnknown;
@@ -258,7 +236,6 @@ typedef struct {
 	if ([self file: filePath matchesTypes: [NSSet setWithObject: @"com.microsoft.windows-executable"]])
     {
         BXExecutableType exeType = [self executableTypeAtPath: filePath error: outError];
-        
         return (exeType == BXExecutableTypeDOS);
     }
 		

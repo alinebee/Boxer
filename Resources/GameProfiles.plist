@@ -847,6 +847,35 @@
 				<string>scenario.hdr</string>
 			</array>
 		</dict>
+        <dict>
+			<key>BXProfileIdentifier</key>
+			<string>com.ea.ultrabots</string>
+			<key>BXProfileGameName</key>
+			<string>Ultrabots</string>
+			<key>BXProfileConfigurations</key>
+			<array>
+				<string>Dynamic</string>
+				<string>MT-32</string>
+			</array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>xenobot.1</string>
+			</array>
+		</dict><dict>
+			<key>BXProfileIdentifier</key>
+			<string>com.gametek.frontier</string>
+			<key>BXProfileGameName</key>
+			<string>Frontier</string>
+			<key>BXProfileConfigurations</key>
+			<array>
+				<string>Dynamic</string>
+				<string>MT-32</string>
+			</array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>frontier.exe</string>
+			</array>
+		</dict>
 	</array>
 	<key>BXGenericProfiles</key>
 	<array>
@@ -879,6 +908,7 @@
 			</array>
 			<key>BXProfileMatches</key>
 			<array>
+                <string>Street Fighter II</string>
                 <string>Powermonger</string>
                 <string>Stronghold</string>
                 <string>Starlord</string>
@@ -899,8 +929,9 @@
                 <string>Lord of the Rings vol. II- The Two Towers</string>
                 <string>Miami Vice</string>
 				<string>Eye of the Beholder III</string>
-                <string>Veil of Darkness</string>
                 <string>Dungeon Hack</string>
+                <string>Spelljammer: Pirates of Realmspace</string>
+                <string>Veil of Darkness</string>
 				<string>Champions of Krynn</string>
 				<string>Dark Queen of Krynn</string>
                 <string>Shadow Sorcerer</string>
@@ -971,6 +1002,7 @@
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
+                <string>sprite1.sf2</string>
                 <string>mt32.fx</string>
                 <string>strong.exe</string>
                 <string>starlord.dat</string>
@@ -987,6 +1019,7 @@
                 <string>stilts.ega</string>
 				<string>aesop.exe</string>
                 <string>veil.com</string>
+                <string>sjintro0.msh</string>
 				<string>dungcom.dax</string>
 				<string>dqk.exe</string>
                 <string>vmonz.dat</string>
@@ -1499,7 +1532,6 @@
 			<key>BXProfileMatches</key>
 			<array>
                 <string>Car &amp; Driver</string>
-				<string>Frontier</string>
 				<string>Blackthorne</string>
 				<string>Star Wars X-Wing</string>
 				<string>The Elder Scrolls: Arena</string>
@@ -1526,7 +1558,6 @@
 			<key>BXProfileTelltales</key>
 			<array>
                 <string>c&amp;d.exe</string>
-				<string>frontier.exe</string>
 				<string>black.exe</string>
 				<string>vga.pac</string>
 				<string>tamriel.mnu</string>

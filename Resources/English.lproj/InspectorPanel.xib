@@ -742,7 +742,7 @@
 																<reference key="NSNextKeyView" ref="878482794"/>
 															</object>
 														</object>
-														<string key="NSFrame">{{0, 202}, {298, 86}}</string>
+														<string key="NSFrame">{{-1, 202}, {298, 86}}</string>
 														<reference key="NSSuperview" ref="563656760"/>
 														<reference key="NSWindow"/>
 														<reference key="NSNextKeyView" ref="388311979"/>
@@ -1315,6 +1315,7 @@ dG8gdGhlIHdpbmRvdy4</string>
 														<int key="NSvFlags">-2147483359</int>
 														<string key="NSFrame">{{254, 16}, {25, 25}}</string>
 														<reference key="NSSuperview" ref="722134251"/>
+														<reference key="NSNextKeyView" ref="681208964"/>
 														<bool key="NSEnabled">YES</bool>
 														<object class="NSButtonCell" key="NSCell" id="357927964">
 															<int key="NSCellFlags">67239424</int>
@@ -2291,7 +2292,7 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 			<object class="NSViewController" id="589277066"/>
 			<object class="NSCollectionViewItem" id="527118087"/>
 			<object class="NSCustomView" id="101756917">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">266</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -2477,7 +2478,6 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 						<int key="NSvFlags">-2147483383</int>
 						<string key="NSFrame">{{258, 9}, {12, 12}}</string>
 						<reference key="NSSuperview" ref="101756917"/>
-						<reference key="NSNextKeyView"/>
 						<int key="NSViewLayerContentsRedrawPolicy">2</int>
 						<int key="NSTag">6</int>
 						<bool key="NSEnabled">YES</bool>
@@ -2539,7 +2539,6 @@ ZHJpZnRzIG9yIGJlaGF2ZXMgZXJyYXRpY2FsbHkuA</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{284, 48}</string>
-				<reference key="NSSuperview"/>
 				<reference key="NSNextKeyView" ref="1059830828"/>
 				<bool key="NSViewIsLayerTreeHost">YES</bool>
 				<int key="NSViewLayerContentsRedrawPolicy">2</int>

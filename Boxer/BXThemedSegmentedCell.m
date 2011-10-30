@@ -35,11 +35,11 @@
 
 - (NSRect) drawingRectForBounds: (NSRect)theRect
 {
-    NSShadow *shadow = [[[BGThemeManager keyedManager] themeForKey: self.themeKey] dropShadow];
-    if (shadow)
+    NSShadow *theShadow = [[[BGThemeManager keyedManager] themeForKey: self.themeKey] dropShadow];
+    if (theShadow)
     {
-        return [shadow insetRectForShadow: theRect
-                                  flipped: [[self controlView] isFlipped]];
+        return [theShadow insetRectForShadow: theRect
+                                     flipped: [[self controlView] isFlipped]];
     }
     else return theRect;
 }

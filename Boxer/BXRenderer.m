@@ -144,7 +144,7 @@
     glDisable(GL_BLEND);
     glDisable(GL_DITHER);
     glDisable(GL_FOG);
-    glPixelZoom(1.0,1.0);
+    glPixelZoom(1.0f, 1.0f);
 }
 
 - (void) tearDownGLContext: (CGLContextObj)glContext

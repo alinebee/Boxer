@@ -191,21 +191,21 @@
     {
         case NSRegularControlSize:
 			arrowSize = NSMakeSize(5, 4);
-            arrowPosition.x -= 11.5;
+            arrowPosition.x -= 11.5f;
             bottomOffset = 4;
             topOffset = -4;
 			break;
 			
 		case NSSmallControlSize:
 			arrowSize = NSMakeSize(5, 4);
-            arrowPosition.x -= 9.5;
+            arrowPosition.x -= 9.5f;
             bottomOffset = 3;
             topOffset = -3;
 			break;
 			
 		case NSMiniControlSize:
 			arrowSize = NSMakeSize(4, 3);
-            arrowPosition.x -= 7.5;
+            arrowPosition.x -= 7.5f;
             bottomOffset = 2;
             topOffset = -2;
 			break;
@@ -254,17 +254,17 @@
     {
         case NSRegularControlSize:
 			arrowSize = NSMakeSize(7, 5);
-            arrowPosition.x -= 11.5;
+            arrowPosition.x -= 11.5f;
 			break;
 			
 		case NSSmallControlSize:
 			arrowSize = NSMakeSize(7, 5);
-            arrowPosition.x -= 9.5;
+            arrowPosition.x -= 9.5f;
 			break;
 			
 		case NSMiniControlSize:
 			arrowSize = NSMakeSize(5, 3);
-            arrowPosition.x -= 7.5;
+            arrowPosition.x -= 7.5f;
 			break;
     }
     

@@ -232,7 +232,7 @@
 
 - (NSColor *) strokeColor
 {
-    return [NSColor colorWithCalibratedWhite: 0 alpha: 0.25];
+    return [NSColor colorWithCalibratedWhite: 0 alpha: 0.25f];
 }
 
 - (NSGradient *) normalGradient

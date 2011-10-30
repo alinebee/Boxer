@@ -211,13 +211,13 @@
         {
             textColor = [NSColor whiteColor];
             textShadow = [NSShadow shadowWithBlurRadius: 2.0f
-                                                 offset: NSMakeSize(0, -1.0)
-                                                  color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.75]];
+                                                 offset: NSMakeSize(0, -1.0f)
+                                                  color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.75f]];
         }
         //Darken text when pressed in
         else if ([self isHighlighted])
         {
-            textColor = [NSColor colorWithCalibratedWhite: 0.15 alpha: 1];
+            textColor = [NSColor colorWithCalibratedWhite: 0.15f alpha: 1];
             textShadow = [theme textShadow];
         }
         else
@@ -247,16 +247,16 @@
     {
         NSShadow *innerShadow = [NSShadow shadowWithBlurRadius: 3.0f
                                                         offset: NSMakeSize(0, -1.0f)
-                                                         color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.25]];
+                                                         color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.25f]];
         NSShadow *outerBevel = [NSShadow shadowWithBlurRadius: 1.0f
                                                        offset: NSMakeSize(0, -1.0f)
-                                                        color: [NSColor colorWithCalibratedWhite: 1 alpha: 0.75]];
+                                                        color: [NSColor colorWithCalibratedWhite: 1 alpha: 0.75f]];
         
         NSRect insetFrame = [outerBevel insetRectForShadow: frame flipped: [controlView isFlipped]];
         
         NSBezierPath *bezel = [NSBezierPath bezierPathWithRoundedRect: insetFrame
-                                                              xRadius: insetFrame.size.height / 2
-                                                              yRadius: insetFrame.size.height / 2];
+                                                              xRadius: insetFrame.size.height / 2.0f
+                                                              yRadius: insetFrame.size.height / 2.0f];
         
         NSGradient *bezelGradient;
         NSColor *bezelColor;
@@ -264,7 +264,7 @@
         
         if ([self programIsDefault])
         {
-            strokeColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.3];
+            strokeColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.3f];
             bezelColor  = [NSColor alternateSelectedControlColor];
             
             if ([self isHighlighted])
@@ -294,8 +294,8 @@
         {
             if ([self isHighlighted])
             {
-                strokeColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.2];
-                bezelColor  = [NSColor colorWithCalibratedWhite: 0.6 alpha: 1];
+                strokeColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.2f];
+                bezelColor  = [NSColor colorWithCalibratedWhite: 0.6f alpha: 1];
                 bezelGradient = [[NSGradient alloc] initWithColorsAndLocations:
                                  [NSColor colorWithCalibratedWhite: 0 alpha: 0.33f], 0.0f,
                                  [NSColor colorWithCalibratedWhite: 0 alpha: 0.0f], 0.8f,
@@ -304,8 +304,8 @@
             }
             else
             {
-                strokeColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.05];
-                bezelColor  = [NSColor colorWithCalibratedWhite: 0.8 alpha: 1];
+                strokeColor = [NSColor colorWithCalibratedWhite: 0 alpha: 0.05f];
+                bezelColor  = [NSColor colorWithCalibratedWhite: 0.8f alpha: 1];
                 bezelGradient = [[NSGradient alloc] initWithColorsAndLocations:
                                  [NSColor colorWithCalibratedWhite: 0 alpha: 0.05f], 0.0f,
                                  [NSColor colorWithCalibratedWhite: 0 alpha: 0.1f], 1.0f,

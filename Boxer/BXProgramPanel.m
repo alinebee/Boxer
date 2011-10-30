@@ -151,7 +151,8 @@
     if ((self = [super initWithCoder: aDecoder]))
     {
         //Expand the control view to compensate for regular recessed
-        //buttons being so damn teeny.
+        //buttons being so damn teeny. TODO: find some other more AppKitty
+        //way to do this.
         [[self controlView] setFrame: NSInsetRect([[self controlView] frame], 0, -1.0f)];
     }
     return self;

@@ -100,7 +100,7 @@
     //Update the current panel after any change we're listening for
 	//(Update the panel contents after a short delay, to allow time for a program
     //to quit at startup - this way we don't flash one panel and then go straight back to another.)
-	[self performSelector: @selector(syncActivePanel) withObject: nil afterDelay: 0.1];
+	[self performSelector: @selector(syncActivePanel) withObject: nil afterDelay: 0.2];
 }
 
 - (void) setView: (NSView *)view
@@ -160,12 +160,17 @@
 	{
 		NSButton *button = [itemView viewWithTag: BXProgramPanelButtons];
 		
-		//Validate the program chooser buttons, which will enable/disable them based on
-		//whether we're at the DOS prompt or not.
+		//Validate the program chooser buttons, which will enable/disable them based
+        //on whether we're at the DOS prompt or not.
 		//This would be much simpler with a binding but HA HA HA HA we can't because
 		//Cocoa doesn't clean up bindings on NSCollectionView subviews properly,
 		//causing spurious exceptions once the thing we're observing has been dealloced.
 		[button setEnabled: [[self representedObject] validateUserInterfaceItem: (id)button]];
+        
+        //Force each button to update its tracking area also, which will resyc
+        //its mouseover state. This is necessary to prevent 'sticky' mouse-hover
+        //highlights when pressing a button has switched the current panel.
+        [button updateTrackingAreas];
 	}
 }
 
@@ -350,8 +355,11 @@
 			[data release];
 		}
 	}
-	
-	[self setPanelExecutables: listedPrograms];
+    
+    //We check here if anything has actually changed, to avoid triggering
+    //unnecessary redraws in the program panel.
+    if (![[self panelExecutables] isEqualToArray: listedPrograms])
+	    [self setPanelExecutables: listedPrograms];
 	
 	[programNames release];
 	[listedPrograms release];

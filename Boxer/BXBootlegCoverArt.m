@@ -163,7 +163,10 @@
 		return nil;
 }
 
-+ (CGFloat) lineHeightForSize:	(NSSize)size	{ return 18.0f * (size.width / 128.0f); }
++ (CGFloat) lineHeightForSize:	(NSSize)size
+{
+    return 18.0f * (size.width / 128.0f);
+}
 
 + (NSRect) textRegionForRect: (NSRect)frame
 {
@@ -171,9 +174,9 @@
 	{
 		CGFloat scale = frame.size.width / 128.0f;
 		return NSMakeRect(24.0f * scale,
-						  55.0f * scale,
+						  56.0f * scale,
 						  80.0f * scale,
-						  54.0f * scale);
+						  56.0f * scale);
 	}
 	else return NSZeroRect;
 }

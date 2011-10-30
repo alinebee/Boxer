@@ -118,18 +118,15 @@
 
 + (NSString *) preferredTitleForPath: (NSString *)filePath
 {
-    //Well that was easy.
-	return [[NSFileManager defaultManager] displayNameAtPath: filePath];
+    NSString *label = [self preferredVolumeLabelForPath: filePath];
+    if ([label length] > 1) return label;
+	else return [[NSFileManager defaultManager] displayNameAtPath: filePath];
 }
 
 + (NSString *) preferredVolumeLabelForPath: (NSString *)filePath
-{
-	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
-						   
-	//Disk images store their own volume labels
-	if ([workspace file: filePath matchesTypes: [self mountableImageTypes]]) return nil;
-						   
+{						   
 	//Extensions to strip from filenames
+    //TODO: derive these from somewhere else
 	NSArray *strippedExtensions = [NSArray arrayWithObjects:
 								   @"boxer",
 								   @"cdrom",
@@ -141,16 +138,13 @@
 	NSString *extension		= [[baseName pathExtension] lowercaseString];
 	if ([strippedExtensions containsObject: extension]) baseName = [baseName stringByDeletingPathExtension];
 	
-	//Mountable folders can include a drive letter prefix as well as a drive label,
-	//so have a crack at parsing that out
-	if ([workspace file: filePath matchesTypes: [self mountableFolderTypes]])
-	{
-		NSString *detectedLabel	= [baseName stringByMatching: @"^([a-xA-X] )?(.+)$" capture: 2];
-		if (detectedLabel) return detectedLabel;
-	}
-
+	//Mountable folders can include a drive label as well as a letter prefix,
+    //so have a crack at parsing that out
+    NSString *detectedLabel	= [baseName stringByMatching: @"^([a-xA-X] )?(.+)$" capture: 2];
+    if ([detectedLabel length]) return detectedLabel;
+	
 	//For all other cases, just use the base filename as the drive label
-	return baseName;
+	else return baseName;
 }
 
 + (NSString *) preferredDriveLetterForPath: (NSString *)filePath
@@ -294,7 +288,7 @@
 		[volumeLabel release];
 		volumeLabel = [newLabel copy];
 		
-		if (![[self title] length]) [self setTitle: volumeLabel];
+		//if (![[self title] length]) [self setTitle: volumeLabel];
 	}
 }
 

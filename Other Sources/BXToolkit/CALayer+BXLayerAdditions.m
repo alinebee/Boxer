@@ -11,7 +11,8 @@
 
 - (void) setContentsFromImageNamed: (NSString *)imageName
 {
-    NSURL *imageURL = [[NSBundle mainBundle] URLForImageResource: imageName];
+    NSString *imagePath = [[NSBundle mainBundle] pathForImageResource: imageName];
+    NSURL *imageURL = [NSURL fileURLWithPath: imagePath];
     
     CGImageSourceRef imageSource = CGImageSourceCreateWithURL((CFURLRef)imageURL, NULL);
     if (imageSource)

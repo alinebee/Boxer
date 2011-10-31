@@ -96,7 +96,8 @@
 - (void) _syncDisplayedDevice
 {
     [CATransaction begin];
-    [CATransaction setAnimationDuration: 0.75];
+    //10.5 FIX: was setAnimationDuration, but that's 10.6-and-up.
+    [CATransaction setValue: [NSNumber numberWithDouble: 0.75] forKey: kCATransactionAnimationDuration];
     
     _CM32LLayer.hidden      = !(self.ROMType == BXMT32ROMTypeCM32L);
     _MT32Layer.hidden       = !(self.ROMType == BXMT32ROMTypeMT32);

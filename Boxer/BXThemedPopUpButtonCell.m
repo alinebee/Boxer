@@ -182,20 +182,13 @@
 
 - (NSBezierPath *) popUpArrowsForFrame: (NSRect)frame
 {
-    NSSize arrowSize;
+    NSSize arrowSize = NSZeroSize;
     NSPoint arrowPosition = NSMakePoint(NSMaxX(frame), NSMidY(frame));
     
     CGFloat bottomOffset, topOffset;
     
     switch ([self controlSize])
-    {
-        case NSRegularControlSize:
-			arrowSize = NSMakeSize(5, 4);
-            arrowPosition.x -= 11.5f;
-            bottomOffset = 4;
-            topOffset = -4;
-			break;
-			
+    {		
 		case NSSmallControlSize:
 			arrowSize = NSMakeSize(5, 4);
             arrowPosition.x -= 9.5f;
@@ -208,6 +201,14 @@
             arrowPosition.x -= 7.5f;
             bottomOffset = 2;
             topOffset = -2;
+			break;
+            
+        case NSRegularControlSize:
+        default:
+			arrowSize = NSMakeSize(5, 4);
+            arrowPosition.x -= 11.5f;
+            bottomOffset = 4;
+            topOffset = -4;
 			break;
     }
     
@@ -247,16 +248,11 @@
 {
     NSBezierPath *arrow = [[NSBezierPath alloc] init];
     
-    NSSize arrowSize;
+    NSSize arrowSize = NSZeroSize;
     NSPoint arrowPosition = NSMakePoint(NSMaxX(frame), NSMidY(frame));
     
     switch ([self controlSize])
     {
-        case NSRegularControlSize:
-			arrowSize = NSMakeSize(7, 5);
-            arrowPosition.x -= 11.5f;
-			break;
-			
 		case NSSmallControlSize:
 			arrowSize = NSMakeSize(7, 5);
             arrowPosition.x -= 9.5f;
@@ -266,6 +262,13 @@
 			arrowSize = NSMakeSize(5, 3);
             arrowPosition.x -= 7.5f;
 			break;
+            
+        case NSRegularControlSize:
+        default:
+			arrowSize = NSMakeSize(7, 5);
+            arrowPosition.x -= 11.5f;
+			break;
+			
     }
     
     NSPoint points[3];

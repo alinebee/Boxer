@@ -162,7 +162,7 @@
     [NSGraphicsContext saveGraphicsState];
     [knobShadow set];
     
-    [[theme strokeColor] set];
+    [knobStroke set];
     [knob fill];
     
     [knobFill drawInBezierPath: knob angle: [theme gradientAngle]];

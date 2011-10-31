@@ -310,7 +310,7 @@
     NSString *label = [self labelForSegment: segment];
     if ([label length])
     {
-        NSRect labelRect;
+        NSRect labelRect = NSZeroRect;
         
         CGFloat fontSize = [NSFont systemFontSizeForControlSize: [self controlSize]];
         NSFont *labelFont = [NSFont controlContentFontOfSize: fontSize];

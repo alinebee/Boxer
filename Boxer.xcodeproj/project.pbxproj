@@ -3790,7 +3790,7 @@
 			};
 			name = Release;
 		};
-		9FE76B331139A11A005EF7B1 /* Debug */ = {
+		9F83F93A145DFCA000860733 /* Legacy Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -3805,16 +3805,96 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx10.6;
 				VALID_ARCHS = "i386 x86_64 ppc";
+			};
+			name = "Legacy Release";
+		};
+		9F83F93B145DFCA000860733 /* Legacy Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					i386,
+					ppc,
+				);
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Frameworks\"",
+				);
+				GCC_MODEL_TUNING = G5;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_VALUE = NO;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = Info.plist;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Other Sources/JoypadCocoaSDK\"",
+				);
+				PRODUCT_NAME = Boxer;
+				VALID_ARCHS = "i386 ppc";
+			};
+			name = "Legacy Release";
+		};
+		9F83F93C145DFCA000860733 /* Legacy Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_MODEL_TUNING = G5;
+				INFOPLIST_FILE = "Game Importer Droplet/Info.plist";
+				PRODUCT_NAME = "Game Importer Droplet";
+			};
+			name = "Legacy Release";
+		};
+		9F83F93D145DFCA000860733 /* Legacy Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					i386,
+					ppc,
+				);
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../MT32Emu/build/Debug\"",
+					"\"$(SRCROOT)/../PhysFS/build/Release\"",
+					"\"$(SRCROOT)/Frameworks\"",
+				);
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
+				GCC_WARN_UNUSED_VALUE = NO;
+				INFOPLIST_FILE = "DOSBox Emulator Core/DOSBox Emulator Core-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				VALID_ARCHS = "i386 ppc";
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = "Legacy Release";
+		};
+		9FE76B331139A11A005EF7B1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CURRENT_PROJECT_SHORT_VERSION_STRING = 1.2;
+				CURRENT_PROJECT_VERSION = 20111031.1;
+				GCC_PREPROCESSOR_DEFINITIONS = USE_PRIVATE_APIS;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx10.6;
 			};
 			name = Debug;
 		};
 		9FE76B341139A11A005EF7B1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = i386;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/Frameworks\"",
@@ -3833,14 +3913,11 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_VALUE = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IBC_PLUGINS = "\"$(SRCROOT)/Frameworks/BGHUDAppKit.framework/Resources/BGHUDAppKitPlugin.ibplugin\"";
 				INFOPLIST_FILE = Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/Other Sources/JoypadCocoaSDK\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
-				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = Boxer;
 				VALID_ARCHS = i386;
 			};
@@ -3849,10 +3926,7 @@
 		C01FCF4C08A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					i386,
-					ppc,
-				);
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/Frameworks\"",
@@ -3867,16 +3941,13 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_VALUE = NO;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IBC_PLUGINS = "\"$(SRCROOT)/Frameworks/BGHUDAppKit.framework/Resources/BGHUDAppKitPlugin.ibplugin\"";
 				INFOPLIST_FILE = Info.plist;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/Other Sources/JoypadCocoaSDK\"",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				PRODUCT_NAME = Boxer;
-				VALIDATE_PRODUCT = YES;
-				VALID_ARCHS = "i386 ppc";
+				VALID_ARCHS = i386;
 			};
 			name = Release;
 		};
@@ -3884,11 +3955,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = (
-					i386,
-					x86_64,
-					ppc,
-				);
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				CURRENT_PROJECT_SHORT_VERSION_STRING = 1.2;
 				CURRENT_PROJECT_VERSION = 20111031.1;
 				GCC_PREPROCESSOR_DEFINITIONS = USE_PRIVATE_APIS;
@@ -3896,7 +3963,6 @@
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				SDKROOT = macosx10.6;
-				VALID_ARCHS = "i386 x86_64 ppc";
 			};
 			name = Release;
 		};
@@ -3908,6 +3974,7 @@
 			buildConfigurations = (
 				9F1920E9144B2BCB00B0617A /* Debug */,
 				9F1920EA144B2BCB00B0617A /* Release */,
+				9F83F93D145DFCA000860733 /* Legacy Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -3917,6 +3984,7 @@
 			buildConfigurations = (
 				9F4EC82712907B1F00024B20 /* Debug */,
 				9F4EC82812907B1F00024B20 /* Release */,
+				9F83F93C145DFCA000860733 /* Legacy Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -3926,6 +3994,7 @@
 			buildConfigurations = (
 				9FE76B341139A11A005EF7B1 /* Debug */,
 				C01FCF4C08A954540054247B /* Release */,
+				9F83F93B145DFCA000860733 /* Legacy Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -3935,6 +4004,7 @@
 			buildConfigurations = (
 				9FE76B331139A11A005EF7B1 /* Debug */,
 				C01FCF5008A954540054247B /* Release */,
+				9F83F93A145DFCA000860733 /* Legacy Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

@@ -306,3 +306,50 @@
 }
 
 @end
+
+
+
+@implementation BXAboutTheme
+
++ (void) load
+{
+    [self registerWithName: nil];
+}
+
+- (NSShadow *) textShadow	{ return [self dropShadow]; }
+
+- (NSShadow *) dropShadow
+{
+    return [NSShadow shadowWithBlurRadius: 1.0f
+                                   offset: NSMakeSize(0, 1.0f)
+                                    color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.66f]];
+}
+
+- (NSColor *) textColor
+{
+    return [NSColor colorWithCalibratedWhite: 1 alpha: 0.8];
+}
+
+@end
+
+
+@implementation BXAboutDarkTheme
+
++ (void) load
+{
+    [self registerWithName: nil];
+}
+
+- (NSShadow *) dropShadow
+{
+    return [NSShadow shadowWithBlurRadius: 1.0f
+                                   offset: NSMakeSize(0, -1.0f)
+                                    color: [NSColor colorWithCalibratedWhite: 1 alpha: 0.5f]];
+}
+
+- (NSColor *) textColor
+{
+    return [NSColor colorWithCalibratedWhite: 0 alpha: 0.9];
+}
+
+@end

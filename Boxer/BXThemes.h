@@ -49,3 +49,12 @@
 //Same as above, but paler text.
 @interface BXIndentedHelpTextTheme : BXIndentedTheme
 @end
+
+
+//Lightly indented light text for About panel.
+@interface BXAboutTheme : BXBaseTheme
+@end
+
+//Lightly indented dark text for About panel.
+@interface BXAboutDarkTheme : BXAboutTheme
+@end

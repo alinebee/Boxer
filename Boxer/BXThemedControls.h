@@ -67,3 +67,11 @@
 
 @interface BXIndentedCheckboxCell : BXThemedCheckboxCell
 @end
+
+//BGHUDAppKit control subclasses hardcoded to use BXAboutTheme
+//and BXAboutIndentedTheme
+@interface BXAboutLabel : BXThemedLabel
+@end
+
+@interface BXAboutDarkLabel : BXThemedLabel
+@end

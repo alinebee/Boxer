@@ -123,3 +123,17 @@
 - (NSString *)themeKey { return @"BXIndentedTheme"; }
 
 @end
+
+
+
+@implementation BXAboutLabel
+
+- (NSString *)themeKey { return @"BXAboutTheme"; }
+
+@end
+
+@implementation BXAboutDarkLabel
+
+- (NSString *)themeKey { return @"BXAboutDarkTheme"; }
+
+@end

@@ -861,7 +861,8 @@
 			<array>
 				<string>xenobot.1</string>
 			</array>
-		</dict><dict>
+		</dict>
+        <dict>
 			<key>BXProfileIdentifier</key>
 			<string>com.gametek.frontier</string>
 			<key>BXProfileGameName</key>

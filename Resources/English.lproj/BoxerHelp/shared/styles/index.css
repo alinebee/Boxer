@@ -47,6 +47,7 @@
 }
 
 
+
 /* Additional info */
 
 #side-topics
@@ -72,10 +73,4 @@
 #website-link
 {
 	font-weight: bold;
-}
-
-#contact-links a:link,
-#contact-links a:visited
-{
-	color: #789;
 }

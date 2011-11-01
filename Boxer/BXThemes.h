@@ -51,10 +51,14 @@
 @end
 
 
-//Lightly indented light text for About panel.
+//Lightly indented medium text for About panel.
 @interface BXAboutTheme : BXBaseTheme
 @end
 
 //Lightly indented dark text for About panel.
 @interface BXAboutDarkTheme : BXAboutTheme
+@end
+
+//Lightly indented bright text for About panel.
+@interface BXAboutLightTheme : BXAboutTheme
 @end

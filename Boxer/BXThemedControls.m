@@ -137,3 +137,9 @@
 - (NSString *)themeKey { return @"BXAboutDarkTheme"; }
 
 @end
+
+@implementation BXAboutLightLabel
+
+- (NSString *)themeKey { return @"BXAboutLightTheme"; }
+
+@end

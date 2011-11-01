@@ -322,12 +322,12 @@
 {
     return [NSShadow shadowWithBlurRadius: 1.0f
                                    offset: NSMakeSize(0, 1.0f)
-                                    color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.66f]];
+                                    color: [NSColor colorWithCalibratedWhite: 0 alpha: 1.0f]];
 }
 
 - (NSColor *) textColor
 {
-    return [NSColor colorWithCalibratedWhite: 1 alpha: 0.8f];
+    return [NSColor colorWithCalibratedWhite: 1 alpha: 0.66f];
 }
 
 @end
@@ -344,12 +344,26 @@
 {
     return [NSShadow shadowWithBlurRadius: 1.0f
                                    offset: NSMakeSize(0, -1.0f)
-                                    color: [NSColor colorWithCalibratedWhite: 1 alpha: 0.5f]];
+                                    color: [NSColor colorWithCalibratedWhite: 1 alpha: 0.4f]];
 }
 
 - (NSColor *) textColor
 {
     return [NSColor colorWithCalibratedWhite: 0 alpha: 0.9f];
+}
+
+@end
+
+@implementation BXAboutLightTheme
+
++ (void) load
+{
+    [self registerWithName: nil];
+}
+
+- (NSColor *) textColor
+{
+    return [NSColor colorWithCalibratedWhite: 1 alpha: 0.8f];
 }
 
 @end

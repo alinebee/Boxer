@@ -126,7 +126,7 @@
 								<object class="NSTextField" id="978929940">
 									<reference key="NSNextResponder" ref="524924394"/>
 									<int key="NSvFlags">268</int>
-									<string key="NSFrame">{{20, 20}, {162, 17}}</string>
+									<string key="NSFrame">{{20, 20}, {303, 17}}</string>
 									<reference key="NSSuperview" ref="524924394"/>
 									<reference key="NSWindow"/>
 									<reference key="NSNextKeyView" ref="245758057"/>
@@ -135,9 +135,9 @@
 									<object class="NSTextFieldCell" key="NSCell" id="467885608">
 										<int key="NSCellFlags">70385217</int>
 										<int key="NSCellFlags2">272630784</int>
-										<string key="NSContents">[Boxer version number]</string>
-										<object class="NSFont" key="NSSupport">
-											<string key="NSName">LucidaGrande-Bold</string>
+										<string key="NSContents">[Version 1.2 | build 20111031.1]</string>
+										<object class="NSFont" key="NSSupport" id="735780950">
+											<string key="NSName">LucidaGrande</string>
 											<double key="NSSize">13</double>
 											<int key="NSfFlags">16</int>
 										</object>
@@ -177,11 +177,7 @@
 										<string type="base64-UTF8" key="NSContents">Qm94ZXIgaXMgZGVzaWduZWQgYnkNQWx1biBCZXN0b3IgJiByZWxlYXNlZCB1bmRlciB0aGUgR05VIFB1
 YmxpYyBMaWNlbnNlLg0NQm94ZXIgaXMgYmFzZWQgb24gRE9TQm94IDAuNzQsIHdoaWNoIGlzIArCqSAy
 MDAy4oCTMjAxMCBieSB0aGUgRE9TQm94IFRlYW0uA</string>
-										<object class="NSFont" key="NSSupport">
-											<string key="NSName">LucidaGrande</string>
-											<double key="NSSize">13</double>
-											<int key="NSfFlags">16</int>
-										</object>
+										<reference key="NSSupport" ref="735780950"/>
 										<reference key="NSControlView" ref="890281471"/>
 										<object class="NSColor" key="NSBackgroundColor">
 											<int key="NSColorSpace">6</int>
@@ -497,7 +493,7 @@ MDAy4oCTMjAxMCBieSB0aGUgRE9TQm94IFRlYW0uA</string>
 					<real value="-1"/>
 					<real value="0.0"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>BXAboutLabel</string>
+					<string>BXAboutLightLabel</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<real value="2"/>
 					<object class="NSColor">
@@ -586,6 +582,14 @@ MDAy4oCTMjAxMCBieSB0aGUgRE9TQm94IFRlYW0uA</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/BXAboutLabel.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXAboutLightLabel</string>
+					<string key="superclassName">BXThemedLabel</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXAboutLightLabel.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

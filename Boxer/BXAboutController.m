@@ -29,7 +29,7 @@
 	[theWindow setMovableByWindowBackground: YES];
 	
 	//Set the version's number and appearance
-	NSString *versionFormat	= NSLocalizedString(@"v%1$@ %2$@", @"Version string for display in About panel. %1$@ is human-readable version (e.g. 1.0beta), %2$@ is build number (e.g. 20090323-1.)");
+	NSString *versionFormat	= NSLocalizedString(@"Version %1$@ | build %2$@", @"Version string for display in About panel. %1$@ is human-readable version (e.g. 1.0beta), %2$@ is build number (e.g. 20090323-1.)");
 	NSString *versionName	= [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleShortVersionString"];
 	NSString *buildNumber	= [[NSBundle mainBundle] objectForInfoDictionaryKey: (NSString *)kCFBundleVersionKey];
 	NSString *versionString	= [NSString stringWithFormat: versionFormat, versionName, buildNumber, nil];
@@ -51,14 +51,22 @@
 
 - (void) drawRect: (NSRect)dirtyRect
 {
-	[NSBezierPath clipRect: dirtyRect];
-    
     NSImage *background = [NSImage imageNamed: @"AboutBackground"];
     
     [background drawInRect: [self bounds]
                   fromRect: NSZeroRect
                  operation: NSCompositeSourceOver
                   fraction: 1.0f];
+    
+    //Render vignetting
+    NSGradient *lighting = [[NSGradient alloc] initWithColorsAndLocations:
+                            [NSColor colorWithCalibratedWhite: 0 alpha: 0],     0.0f,
+                            [NSColor colorWithCalibratedWhite: 0 alpha: 0.4f],  1.0f,
+                            nil];
+    
+    [lighting drawInRect: [self bounds] relativeCenterPosition: NSMakePoint(0.25f, 0.5f)];
+    
+    [lighting release];
 }
 
 @end

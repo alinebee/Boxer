@@ -70,7 +70,7 @@ li		{ margin-bottom: 0.25em; }
 
 .unbulleted	{ padding-left: 0; list-style: none; }
 
-dt		{ font-weight: bold; color: #777; }
+dt		{ font-weight: 500; color: #777; }
 dd		{ margin: 0 0 1em; padding: 0 0 0 2em; }
 
 h1, h2, h3, h4
@@ -85,10 +85,10 @@ h1, h2, h3, h4
 h1	{ font-size: 30px; letter-spacing: -1px; }
 h2	{ font-size: 22px; letter-spacing: -1px; }
 h3	{ font-size: 18px; }
-h4	{ font-size: 16px; font-weight: bold; margin-bottom: 0.5em; }
+h4	{ font-size: 16px; font-weight: 500; margin-bottom: 0.5em; }
 
 a:link,
-a:visited	{ color: #9ab; text-decoration: none; }
+a:visited	{ color: #fb4; text-decoration: none; }
 a:hover,
 a:focus		{ color: white; text-decoration: underline; }
 
@@ -142,6 +142,18 @@ kbd
 	-webkit-box-shadow: rgba(0,0,0,0.5) 0 1px 2px;
 	border-radius: 4px;
 }
+
+var
+{
+	font-style: italic;
+}
+
+strong
+{
+	color: #ddd;
+	font-weight: 500;
+}
+
 
 /* Tables */
 
@@ -223,11 +235,13 @@ a[rel=external]
 }
 
 /* Links to additional topics */
+/*
 a[rel=topic]
 {
 	padding-right: 11px;
 	background: url("../images/topic-arrow.png") 100% 75% no-repeat;
 }
+*/
 
 /* Email links */
 a[rel=email]
@@ -237,6 +251,7 @@ a[rel=email]
 }
 
 /* Links to open a window of the application */
+/*
 a[rel=application-window],
 a[rel=other-application]
 {
@@ -244,6 +259,8 @@ a[rel=other-application]
 	margin-right: 2px;
 	background: url("../images/application-popout.png") 100% 75% no-repeat;
 }
+*/
+
 
 /* Links to reveal an image or file in quicklook */
 a[rel=quicklook]
@@ -284,6 +301,12 @@ a[rel=quicklook]:hover img
 	background: url("../images/info.png") 0.25em 0.25em no-repeat;
 }
 
+.note strong
+{
+	color: #888;
+}
+
+
 /* Additional information boxes */
 .tip
 {
@@ -303,13 +326,9 @@ a[rel=quicklook]:hover img
 	white-space: nowrap;
 	text-shadow: rgba(255, 255, 255, 0.66) 0 1px 1px;
 	background: -webkit-gradient(linear, 50% 100%, 50% 0, from(#cecece), to(#fafafa));
+	border-radius: 2px;
 }
 
-/* Filename listings and DOS commands */
-.filename, .command
-{
-	color: #888;
-}
 
 /* Sequence steps */
 

@@ -73,24 +73,17 @@
 						<td>Pause the emulation</td>
 						<td><kbd>Cmd ⌘</kbd>+<kbd>P</kbd></td>
 					</tr>
-					
+					<tr>
+						<td>Switch to/from full screen mode</td>
+						<td><kbd>Cmd ⌘</kbd>+<kbd>F</kbd></td>
+					</tr>
 					<tr>
 						<td>Speed up/slow down the emulation</td>
 						<td><kbd>Cmd ⌘</kbd>+<kbd>⇡</kbd>/<kbd>⇣</kbd></td>
 					</tr>
 					<tr>
-						<td>Switch to/from full screen mode</td>
-						<td><kbd>Cmd ⌘</kbd>+<kbd>F</kbd><br>
-							<kbd>Cmd ⌘</kbd>+<kbd>Shift ⇧</kbd>+<kbd>F</kbd> to switch instantly
-						</td>
-					</tr>
-					<tr>
-						<td>Choose a <a href="display.html#rendering-styles" rel="topic">rendering style</a></td>
-						<td><kbd>Cmd ⌘</kbd>+<kbd>1</kbd>/<kbd>2</kbd>/<kbd>3</kbd>/<kbd>4</kbd></td>
-					</tr>
-					<tr>
-						<td>Toggle <a href="display.html#aspect-ratio" rel="topic">aspect ratio correction</a> on/off</td>
-						<td><kbd>Cmd ⌘</kbd>+<kbd>Shift ⇧</kbd>+<kbd>A</kbd></td>
+						<td>Switch to previous/next CD</td>
+						<td><kbd>Cmd ⌘</kbd>+<kbd>Shift ⇧</kbd>+<kbd>⇠</kbd>/<kbd>⇢</kbd></td>
 					</tr>
 					<tr>
 						<td>Skip the default program and start up at the DOS prompt</td>
@@ -102,21 +95,24 @@
 			<p class="note">Additional keyboard shortcuts can be found alongside each item in Boxer’s application menus.</p>
 		</section>
 		
+		<a name="keyboard"></a>
+		
 		<section>
-			<a name="keyboard"></a>
+			<a name="function-keys"></a>
+			<h2>Accessing the function keys on a Mac keyboard</h2>
+			
+			<p>Mac keyboards adopt many of the <kbd>F1</kbd>–<kbd>F12</kbd> keys as hotkeys to control volume, screen brightness and other system functions. To make those keys act as regular function keys, <strong>hold down <kbd>fn</kbd> as you press the function key.</strong></p>
+
+			<p class="tip">You can also send function key signals directly to DOS using the <span class="menu">Emulation ▸ Send Key</span> menu.</p>
+		</section>
+		
+		<section>
 			<a name="spaces-shortcuts"></a>
 			<h2>Preventing OS&nbsp;X hotkeys from interfering with games</h2>
 			
 			<p>Some OS&nbsp;X global hotkeys overlap with the control schemes of DOS games and get in the way when playing. (This is especially common with the <kbd>Ctrl ⌃</kbd>+<kbd>⇠</kbd>/<kbd>⇢</kbd> shortcut to switch Spaces.) </p>
 			
-			<p>If possible, <strong>Boxer will suppress certain OS&nbsp;X hotkeys while you’re playing</strong> to stop them from interfering. To let Boxer do this, you must <strong>turn on “Enable access for assistive devices”</strong> in the OS X <a href="help:runscript=BoxerHelp/shared/scripts/opensystemprefs.scpt string='com.apple.preference.universalaccess'" rel="other-application">Universal Access preferences pane</a>.</p>
-		
-			<a name="function-keys"></a>
-			<h3>Accessing the function keys on a Mac keyboard</h3>
-			
-			<p>Mac keyboards adopt some of the <kbd>F1</kbd>–<kbd>F12</kbd> keys as hotkeys to control volume, screen brightness and other system functions. To make those keys act as regular function keys, <strong>hold down <kbd>fn</kbd> as you press the function key.</strong></p>
-
-			<p class="tip">You can also send function key signals directly to DOS using the <span class="menu">Emulation ▸ Send Key</span> menu.</p>
+			<p>Where possible, <strong>Boxer will suppress certain OS&nbsp;X hotkeys while you’re playing</strong> to stop them from interfering. To let Boxer do this, you must <strong>turn on <span class="ui-label">“Enable access for assistive devices”</span></strong> in the OS X <a href="help:runscript=BoxerHelp/shared/scripts/opensystemprefs.scpt string='com.apple.preference.universalaccess'" rel="other-application">Universal Access preferences pane</a>.</p>
 		</section>
 		
 		<section>
@@ -126,7 +122,7 @@
 
 			<p>Boxer emulates an MS-DOS PC keyboard layout, and special characters (such as punctuation) are often in different places than where they’re labelled your Mac keyboard.</p>
 			
-			<p>You may have to try nearby keys and <kbd>Shift ⇧</kbd>-ed keys to find the character you’re looking for. On non-US keyboards, you can also <strong>hold down the <em>right-hand</em> <kbd>Opt ⌥</kbd> key</strong> to access additional special characters.</p>
+			<p>You may have to try nearby keys and <kbd>Shift ⇧</kbd>-ed keys to find the character you’re looking for. On non-US keyboards, you can also <strong>hold down the right-hand <kbd>Opt ⌥</kbd> key</strong> to access additional special characters.</p>
 		
 			<p class="tip">Some keys found on a DOS-era PC keyboard, like Insert and NumLock, <strong>don’t exist at all</strong> on a Mac keyboard. If you have a game that needs these keys, you can send them using the <span class="menu">Emulation ▸ Send Key</span> menu.</p>
 		</section>

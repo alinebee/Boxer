@@ -43,6 +43,7 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 
 
 @implementation BXGameProfile
+
 @synthesize gameName, configurations, identifier, profileDescription;
 @synthesize installMedium, gameEra, requiredDiskSpace, mountHelperDrivesDuringImport, requiresCDROM;
 

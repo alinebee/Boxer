@@ -344,15 +344,15 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 - (void) applicationWillTerminate: (NSNotification *)notification
 {
-	//Tell any remaining documents to close on exit
+	//Disable our hotkey suppression, just to be safe
+    [[self hotkeySuppressionTap] setEnabled: NO];
+    
+    //Tell any remaining documents to close on exit
 	//(NSDocumentController doesn't always do so by default)
 	for (id document in [NSArray arrayWithArray: [self documents]]) [document close];
 	
 	//Save our preferences to disk before exiting
 	[[NSUserDefaults standardUserDefaults] synchronize];
-    
-    //Disable our hotkey suppression, just to be safe
-    [[self hotkeySuppressionTap] setEnabled: NO];
     
     //Tell the MIDI device scanner to cancel itself
     [[self MIDIDeviceMonitor] cancel];

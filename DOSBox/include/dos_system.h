@@ -79,6 +79,10 @@ public:
 	virtual void	AddRef()					{ refCtr++; };
 	virtual Bits	RemoveRef()					{ return --refCtr; };
 	virtual bool	UpdateDateTimeFromHost()	{ return true; }
+    //--Added 2011-11-03 by Alun Bestor to let Boxer inform open file handles
+    //that their physical backing media will be removed.
+    virtual void    willBecomeUnavailable()     { }
+    //--End of modifications
 	void SetDrive(Bit8u drv) { hdrive=drv;}
 	Bit8u GetDrive(void) { return hdrive;}
 	Bit32u flags;

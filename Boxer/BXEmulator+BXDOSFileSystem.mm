@@ -725,7 +725,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 	
 	return YES;
 }
-
+    
 //Unmounts the DOSBox drive at the specified index and clears any references to the drive.
 - (BOOL) _unmountDOSBoxDriveAtIndex: (NSUInteger)index
                               error: (NSError **)outError
@@ -737,27 +737,33 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
     NSInteger result = DriveManager::UnmountDrive(index);
 	if (result == BXDOSBoxUnmountSuccess)
 	{
-        //Close any files that DOSBox had open on this drive after unmounting it
-        //TODO: port this code back to DOSBox itself, as it will not currently occur
-        //if user unmounts a drive with the MOUNT command (not that this usually matters,
-        //since there should be no open files while at the commandline, but still)
+        //Close any files that DOSBox had open on this drive after unmounting, and
+        //replace them with dummy file handles. This cleans up any real filesystem
+        //resources (i.e. POSIX file handles) that were opened by the file, while
+        //ensuring that any program that still expects its file to be open will
+        //get a file that won't give them back any data.
+        
+        //IMPLEMENTATION NOTE: previously, this cleaned up all open files regardless
+        //of whether the drive was local or not. This was breaking Broken Sword when
+        //switching CDs, because the game would leave file handles open on the previous
+        //disc and expect them to still be open after the swap. So, in order that at
+        //least ISO copies of the game will work, we leave the file handles be unless
+        //the drive is local.
         int i;
+        //BOOL driveIsLocal = (dynamic_cast<localDrive *>(Drives[index]) != NULL);
         for (i=0; i<DOS_FILES; i++)
         {
             if (Files[i] && Files[i]->GetDrive() == index)
             {
+                DOS_File *origFile = Files[i];
                 //DOS_File->GetDrive() returns 0 for the special CON system file,
-                //which also corresponds to the drive index for A, so make sure we don't
-                //close this by mistake.
-                if (index == 0 && !strcmp(Files[i]->GetName(), "CON")) continue;
+                //which also corresponds to the drive index for A, so ignore this file.
+                if (index == 0 && origFile->IsName("CON")) continue;
                 
-                //Code copy-pasted from localDrive::FileUnlink in drive_local.cpp
-                //Only relevant for local drives, but harmless to perform on other types of drives.
-                while (Files[i]->IsOpen())
-                {
-                    Files[i]->Close();
-                    if (Files[i]->RemoveRef() <= 0) break;
-                }
+                //Tell the file that its backing media may become unavailable.
+                //(Currently only necessary for files with a folder or volume backing,
+                //but harmless for others.)
+                origFile->willBecomeUnavailable();
             }
         }
         

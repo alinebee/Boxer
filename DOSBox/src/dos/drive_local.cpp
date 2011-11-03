@@ -41,6 +41,10 @@ public:
 	Bit16u GetInformation(void);
 	bool UpdateDateTimeFromHost(void);   
 	void FlagReadOnlyMedium(void);
+    //--Added 2011-11-03 by Alun Bestor to let Boxer inform open file handles
+    //that their physical backing media will be removed.
+    void willBecomeUnavailable(void);
+    //--End of modifications
 private:
 	FILE * fhandle;
 	bool read_only_medium;
@@ -552,6 +556,19 @@ bool localFile::Read(Bit8u * data,Bit16u * size) {
 		DOS_SetError(DOSERR_ACCESS_DENIED);
 		return false;
 	}
+    
+    //--Added 2011-11-03 by Alun Bestor to avoid errors on files
+    //whose backing media has disappeared
+    if (!fhandle)
+    {
+        *size = 0;
+        //IMPLEMENTATION NOTE: you might think we ought to return false here,
+        //but no! We return true to be consistent with DOSBox's behaviour,
+        //which appears to be the behaviour expected by DOS.
+        return true;
+    }
+    //--End of modifications
+    
 	if (last_action==WRITE) fseek(fhandle,ftell(fhandle),SEEK_SET);
 	last_action=READ;
 	*size=(Bit16u)fread(data,1,*size,fhandle);
@@ -568,6 +585,19 @@ bool localFile::Write(Bit8u * data,Bit16u * size) {
 		DOS_SetError(DOSERR_ACCESS_DENIED);
 		return false;
 	}
+    
+    //--Added 2011-11-03 by Alun Bestor to avoid errors on files
+    //whose backing media has disappeared
+    if (!fhandle)
+    {
+        *size = 0;
+        //IMPLEMENTATION NOTE: you might think we ought to return false here,
+        //but no! We return true to be consistent with DOSBox's behaviour,
+        //which appears to be the behaviour expected by DOS.
+        return true;
+    }
+    //--End of modifications
+    
 	if (last_action==READ) fseek(fhandle,ftell(fhandle),SEEK_SET);
 	last_action=WRITE;
 	if(*size==0){  
@@ -582,6 +612,7 @@ bool localFile::Write(Bit8u * data,Bit16u * size) {
 
 bool localFile::Seek(Bit32u * pos,Bit32u type) {
 	int seektype;
+    
 	switch (type) {
 	case DOS_SEEK_SET:seektype=SEEK_SET;break;
 	case DOS_SEEK_CUR:seektype=SEEK_CUR;break;
@@ -590,6 +621,19 @@ bool localFile::Seek(Bit32u * pos,Bit32u type) {
 	//TODO Give some doserrorcode;
 		return false;//ERROR
 	}
+    
+    //--Added 2011-11-03 by Alun Bestor to avoid errors on files
+    //whose backing media has disappeared
+    if (!fhandle)
+    {
+        *pos = 0;
+        //IMPLEMENTATION NOTE: you might think we ought to return false here,
+        //but no! We return true to be consistent with DOSBox's behaviour,
+        //which appears to be the behaviour expected by DOS.
+        return true;
+    }
+    //--End of modifications
+    
 	int ret=fseek(fhandle,*reinterpret_cast<Bit32s*>(pos),seektype);
 	if (ret!=0) {
 		// Out of file range, pretend everythings ok 
@@ -641,6 +685,11 @@ void localFile::FlagReadOnlyMedium(void) {
 
 bool localFile::UpdateDateTimeFromHost(void) {
 	if(!open) return false;
+    
+    //--Added 2011-11-03 by Alun Bestor to avoid errors on closed files
+    if (!fhandle) return false;
+    //--End of modifications
+    
 	struct stat temp_stat;
 	fstat(fileno(fhandle),&temp_stat);
 	struct tm * ltime;
@@ -652,6 +701,21 @@ bool localFile::UpdateDateTimeFromHost(void) {
 	}
 	return true;
 }
+
+//--Added 2011-11-03 by Alun Bestor to let Boxer inform open file handles
+//that their physical backing media will be removed.
+void localFile::willBecomeUnavailable()
+{
+    //If the real file is about to become unavailable, then close
+    //our file handle but leave the DOS file flagged as 'open'.
+    if (fhandle)
+    {
+		fclose(fhandle);
+		fhandle = 0;
+    }
+}
+//--End of modification
+
 
 
 // ********************************************

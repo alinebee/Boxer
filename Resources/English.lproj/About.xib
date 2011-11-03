@@ -136,9 +136,9 @@
 										<int key="NSCellFlags">70385217</int>
 										<int key="NSCellFlags2">272630784</int>
 										<string key="NSContents">[Version 1.2 | build 20111031.1]</string>
-										<object class="NSFont" key="NSSupport" id="735780950">
+										<object class="NSFont" key="NSSupport">
 											<string key="NSName">LucidaGrande</string>
-											<double key="NSSize">13</double>
+											<double key="NSSize">12</double>
 											<int key="NSfFlags">16</int>
 										</object>
 										<reference key="NSControlView" ref="978929940"/>
@@ -177,7 +177,11 @@
 										<string type="base64-UTF8" key="NSContents">Qm94ZXIgaXMgZGVzaWduZWQgYnkNQWx1biBCZXN0b3IgJiByZWxlYXNlZCB1bmRlciB0aGUgR05VIFB1
 YmxpYyBMaWNlbnNlLg0NQm94ZXIgaXMgYmFzZWQgb24gRE9TQm94IDAuNzQsIHdoaWNoIGlzIArCqSAy
 MDAy4oCTMjAxMCBieSB0aGUgRE9TQm94IFRlYW0uA</string>
-										<reference key="NSSupport" ref="735780950"/>
+										<object class="NSFont" key="NSSupport">
+											<string key="NSName">LucidaGrande</string>
+											<double key="NSSize">13</double>
+											<int key="NSfFlags">16</int>
+										</object>
 										<reference key="NSControlView" ref="890281471"/>
 										<object class="NSColor" key="NSBackgroundColor">
 											<int key="NSColorSpace">6</int>

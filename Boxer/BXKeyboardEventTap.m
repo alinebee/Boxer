@@ -33,10 +33,12 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
 
 - (void) awakeFromNib
 {
-    [self setEnabled: YES];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
-    [self bind: @"enabled" toObject: defaults withKeyPath: @"suppressSystemHotkeys" options: nil];
+    [self bind: @"enabled"
+      toObject: defaults
+   withKeyPath: @"suppressSystemHotkeys"
+       options: nil];
     
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center addObserver: self
@@ -52,9 +54,9 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
     //the availability of the accessibility API at this point.
     //If the API is available, attempt to reestablish a tap if we're
     //enabled and don't already have one (which means it failed when
-    //we tried it the last time.
+    //we tried it the last time.)
     [self willChangeValueForKey: @"canTapEvents"];
-    if ([self isEnabled] && !_tap && [self canTapEvents])
+    if (!_tap && [self isEnabled] && [self canTapEvents])
     {
         [self _installTap];
     }
@@ -66,7 +68,7 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
     [[NSNotificationCenter defaultCenter] removeObserver: self];
     [self unbind: @"enabled"];
     
-    [self setEnabled: NO];
+    [self _removeTap];
     [super dealloc];
 }
 
@@ -95,32 +97,31 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
                                 CGEventMaskBit(kCGEventKeyUp) | CGEventMaskBit(kCGEventKeyDown),
                                 _handleEventFromTap,
                                 self);
-    }
-    
-    if (_tap && !_source)
-    {
-        _source = CFMachPortCreateRunLoopSource(NULL, _tap, 0);
-        CFRunLoopAddSource(CFRunLoopGetCurrent(), _source, kCFRunLoopCommonModes);
+        
+        if (_tap)
+        {
+            CFRunLoopSourceRef source = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, _tap, 0);
+            //Install the source on the main run loop, where events are normally processed.
+            CFRunLoopAddSource(CFRunLoopGetMain(), source, kCFRunLoopCommonModes);
+            //Adding the source to the run loop will retain it, so we can ditch our own reference.
+            CFRelease(source);
+        }
+        
     }
     
     //TODO: populate an error if the tap failed.
-    return (_tap && _source);
+    return (_tap != NULL);
 }
+
 
 - (void) _removeTap
 {
     if (_tap)
     {
+        
         CFMachPortInvalidate(_tap);
         CFRelease(_tap);
         _tap = NULL;
-    }
-    
-    if (_source)
-    {
-        CFRunLoopSourceInvalidate(_source);
-        CFRelease(_source);
-        _source = NULL;
     }
 }
 
@@ -181,15 +182,11 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
             }
             break;
         }
-            
+        
         case kCGEventTapDisabledByTimeout:
         {
-            CGEventTapEnable(_tap, YES);
-            break;
-        }
-            
-        case kCGEventTapDisabledByUserInput:
-        {
+            //Re-enable the event tap if it has been disabled after a timeout.
+            //(This may occur if our main thread is blocked for too long.)
             CGEventTapEnable(_tap, YES);
             break;
         }
@@ -200,8 +197,17 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
 
 static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, CGEventRef event, void *userInfo)
 {
+    CGEventRef returnedEvent = event;
+    
     BXKeyboardEventTap *tap = (BXKeyboardEventTap *)userInfo;
-    return [tap _handleEvent: event ofType: type fromProxy: proxy];
+    if (tap)
+    {
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        returnedEvent = [tap _handleEvent: event ofType: type fromProxy: proxy];
+        [pool drain];
+    }
+    
+    return returnedEvent;
 }
 
 @end

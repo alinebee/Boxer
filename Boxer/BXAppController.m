@@ -351,6 +351,9 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	//Save our preferences to disk before exiting
 	[[NSUserDefaults standardUserDefaults] synchronize];
     
+    //Disable our hotkey suppression, just to be safe
+    [[self hotkeySuppressionTap] setEnabled: NO];
+    
     //Tell the MIDI device scanner to cancel itself
     [[self MIDIDeviceMonitor] cancel];
 	

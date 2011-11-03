@@ -11,8 +11,6 @@
 @interface BXKeyboardEventTap : NSObject
 {
     CFMachPortRef _tap;
-    CFRunLoopSourceRef _source;
-    
     BOOL _enabled;
 }
 

@@ -149,11 +149,11 @@ extern NSString * const BXDidFinishInterruptionNotification;
 @property (readonly, retain, nonatomic) NSArray *documentation;
 
 //Whether the emulator is initialized and ready to receive instructions.
-@property (readonly, assign, nonatomic, getter=isEmulating) BOOL emulating;
+@property (readonly, assign, getter=isEmulating) BOOL emulating;
 
 //Whether this session is actively running a program. Will be NO if the emulator
 //is suspended, at the DOS prompt, or not currently emulating at all.
-@property (readonly, assign, nonatomic) BOOL programIsActive;
+@property (readonly, assign) BOOL programIsActive;
 
 //Whether this session represents a gamebox.
 @property (readonly, nonatomic) BOOL isGamePackage;
@@ -178,7 +178,7 @@ extern NSString * const BXDidFinishInterruptionNotification;
 //Whether the emulator is currently suspended because Boxer is in the background.
 @property (readonly, nonatomic, getter=isAutoPaused)	BOOL autoPaused;
 //Whether the emulator is currently suspended for any reason.
-@property (readonly, nonatomic, getter=isSuspended)		BOOL suspended;
+@property (readonly, nonatomic, getter=isSuspended)     BOOL suspended;
 
 
 #pragma mark -

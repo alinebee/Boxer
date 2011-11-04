@@ -32,10 +32,10 @@
 @property (readwrite, retain, nonatomic) NSDictionary *executables;
 @property (readwrite, retain, nonatomic) NSArray *documentation;
 
-@property (readwrite, assign, nonatomic, getter=isEmulating)	BOOL emulating;
-@property (readwrite, assign, nonatomic, getter=isSuspended)	BOOL suspended;
-@property (readwrite, assign, nonatomic, getter=isAutoPaused)	BOOL autoPaused;
-@property (readwrite, assign, nonatomic, getter=isInterrupted)	BOOL interrupted;
+@property (readwrite, assign, getter=isEmulating)	BOOL emulating;
+@property (readwrite, nonatomic, assign, getter=isSuspended)	BOOL suspended;
+@property (readwrite, nonatomic, assign, getter=isAutoPaused)	BOOL autoPaused;
+@property (readwrite, nonatomic, assign, getter=isInterrupted)	BOOL interrupted;
 
 
 #pragma mark -

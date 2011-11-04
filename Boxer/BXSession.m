@@ -1309,7 +1309,11 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 {
     if ([self isSuspended]) return NO;
     if (![self isEmulating]) return NO;
-    if ([[self emulator] isAtPrompt]) return NO;
+    
+    @synchronized([self emulator])
+    {
+        if ([[self emulator] isAtPrompt]) return NO;
+    }
     
     return YES;
 }

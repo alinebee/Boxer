@@ -114,13 +114,11 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
         //Begin by scanning any already-connected MIDI destinations.
         [self _scanAvailableDestinations];
         
-        //Keep the operation running until we're cancelled,
+        //Keep the monitor thread running until we're cancelled,
         //listening for MIDI device connections and disconnections.
-        //We pump the run loop so that we'll catch cancellation signals.
-        while (![self isCancelled] && [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode
-                                                               beforeDate: [NSDate distantFuture]]);
-        
+        [self runUntilCancelled];
     }
+    
     //Clean up once we're done.
     MIDIClientDispose(_client);
     _client = NULL;
@@ -128,20 +126,6 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
     _outputPort = NULL;
     
     [pool drain];
-}
-
-- (void) cancel
-{
-    //Make sure cancel requests are handled on our own thread,
-    //so that the our runloop will return upstairs in main.
-    if ([NSThread currentThread] != self)
-    {
-        [self performSelector: _cmd onThread: self withObject: nil waitUntilDone: NO];
-    }
-    else
-    {
-        [super cancel];
-    }
 }
 
 - (void) dealloc

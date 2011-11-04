@@ -8,8 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
+@class BXContinuousThread;
 @interface BXKeyboardEventTap : NSObject
 {
+    BXContinuousThread *_tapThread;
     CFMachPortRef _tap;
     BOOL _enabled;
 }
@@ -18,6 +20,9 @@
 //Toggling this will attach/detach the event tap.
 //Enabling this will have no effect if canTapEvents is NO.
 @property (assign, nonatomic, getter=isEnabled) BOOL enabled;
+
+//Whether we our tap is in place and listening for system hotkeys.
+@property (readonly, nonatomic) BOOL isTapping;
 
 //Will be YES if the accessibility API is available
 //(i.e. "Enable access for assistive devices" is turned on),

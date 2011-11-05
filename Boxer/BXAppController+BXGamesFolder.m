@@ -63,6 +63,52 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 
 @implementation BXAppController (BXGamesFolder)
 
+
++ (NSArray *) defaultGamesFolderPaths
+{
+	static NSArray *paths = nil;
+	if (!paths)
+	{
+		NSString *defaultName = NSLocalizedString(@"DOS Games", @"The default name for the games folder.");
+        
+		NSString *docsPath      = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
+		NSString *homePath		= NSHomeDirectory();
+		NSString *appPath		= [NSSearchPathForDirectoriesInDomains(NSApplicationDirectory, NSLocalDomainMask, YES) objectAtIndex: 0];
+		NSString *userAppPath	= [NSSearchPathForDirectoriesInDomains(NSApplicationDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
+		
+		paths = [[NSArray alloc] initWithObjects:
+				 [docsPath stringByAppendingPathComponent: defaultName],
+				 [homePath stringByAppendingPathComponent: defaultName],
+				 [userAppPath stringByAppendingPathComponent: defaultName],
+				 [appPath stringByAppendingPathComponent: defaultName],
+				 nil];
+	}
+    
+	return paths;
+}
+
++ (NSSet *) reservedPaths
+{
+	static NSMutableSet *reservedPaths = nil;
+	if (!reservedPaths)
+	{
+		reservedPaths = [[NSMutableSet alloc] initWithObjects: NSHomeDirectory(), nil];
+        
+		[reservedPaths addObjectsFromArray: NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSAllDomainsMask, YES)];
+		[reservedPaths addObjectsFromArray: NSSearchPathForDirectoriesInDomains(NSAllApplicationsDirectory, NSAllDomainsMask, YES)];
+		[reservedPaths addObjectsFromArray: NSSearchPathForDirectoriesInDomains(NSAllLibrariesDirectory, NSAllDomainsMask, YES)];
+		[reservedPaths addObjectsFromArray: NSSearchPathForDirectoriesInDomains(NSDesktopDirectory, NSAllDomainsMask, YES)];
+		[reservedPaths addObjectsFromArray: NSSearchPathForDirectoriesInDomains(NSDownloadsDirectory, NSAllDomainsMask, YES)];
+		[reservedPaths addObjectsFromArray: NSSearchPathForDirectoriesInDomains(NSUserDirectory, NSAllDomainsMask, YES)];
+#ifdef NSSharedPublicDirectory
+		//10.6-only
+		[reservedPaths addObjectsFromArray: NSSearchPathForDirectoriesInDomains(NSSharedPublicDirectory, NSAllDomainsMask, YES)];
+#endif
+	}
+	return reservedPaths;
+}
+
+
 - (NSSize) _maxArtworkSize
 {
 	//4000 appears to be the upper bound for Finder background images
@@ -178,49 +224,6 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 	
 	//If we got this far then we have a pre-existing or newly-generated shelf image at the specified path.
 	return artworkPath;
-}
-
-
-+ (NSArray *) defaultGamesFolderPaths
-{
-	static NSArray *paths = nil;
-	if (!paths)
-	{
-		NSString *defaultName = NSLocalizedString(@"DOS Games", @"The default name for the games folder.");
-	
-		NSString *homePath		= NSHomeDirectory();
-		NSString *appPath		= [NSSearchPathForDirectoriesInDomains(NSApplicationDirectory, NSLocalDomainMask, YES) objectAtIndex: 0];
-		//NSString *userAppPath	= [NSSearchPathForDirectoriesInDomains(NSApplicationDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
-		
-		paths = [[NSArray alloc] initWithObjects:
-				 [homePath stringByAppendingPathComponent: defaultName],
-				 [appPath stringByAppendingPathComponent: defaultName],
-				 //[userAppPath stringByAppendingPathComponent: defaultName],
-				 nil];
-	}
-
-	return paths;
-}
-
-+ (NSSet *) reservedPaths
-{
-	static NSMutableSet *reservedPaths = nil;
-	if (!reservedPaths)
-	{
-		reservedPaths = [[NSMutableSet alloc] initWithObjects: NSHomeDirectory(), nil];
-										 
-		[reservedPaths addObjectsFromArray: NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSAllDomainsMask, YES)];
-		[reservedPaths addObjectsFromArray: NSSearchPathForDirectoriesInDomains(NSAllApplicationsDirectory, NSAllDomainsMask, YES)];
-		[reservedPaths addObjectsFromArray: NSSearchPathForDirectoriesInDomains(NSAllLibrariesDirectory, NSAllDomainsMask, YES)];
-		[reservedPaths addObjectsFromArray: NSSearchPathForDirectoriesInDomains(NSDesktopDirectory, NSAllDomainsMask, YES)];
-		[reservedPaths addObjectsFromArray: NSSearchPathForDirectoriesInDomains(NSDownloadsDirectory, NSAllDomainsMask, YES)];
-		[reservedPaths addObjectsFromArray: NSSearchPathForDirectoriesInDomains(NSUserDirectory, NSAllDomainsMask, YES)];
-#ifdef NSSharedPublicDirectory
-		//10.6-only
-		[reservedPaths addObjectsFromArray: NSSearchPathForDirectoriesInDomains(NSSharedPublicDirectory, NSAllDomainsMask, YES)];
-#endif
-	}
-	return reservedPaths;
 }
 
 + (NSSet *) keyPathsForValuesAffectingGamesFolderChosen

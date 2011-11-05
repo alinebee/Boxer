@@ -9,6 +9,7 @@
 #import "BXCoverArtWell.h"
 #import "BXCoverArt.h"
 #import "BXGeometry.h"
+#import "NSShadow+BXShadowExtensions.h"
 
 @implementation BXCoverArtWell
 
@@ -97,10 +98,9 @@
 
 - (NSShadow *) highlightGlow
 {
-	NSShadow *glow = [[NSShadow new] autorelease];
-	[glow setShadowColor: [NSColor keyboardFocusIndicatorColor]];
-	[glow setShadowBlurRadius: [self highlightRadius]];
-	return glow;
+    return [NSShadow shadowWithBlurRadius: [self highlightRadius]
+                                   offset: NSZeroSize
+                                    color: [NSColor keyboardFocusIndicatorColor]];
 }
 
 - (void) drawImageInFrame: (NSRect)frame

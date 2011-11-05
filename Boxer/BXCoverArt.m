@@ -8,6 +8,7 @@
 #import "BXCoverArt.h"
 #import "NSBezierPath+MCAdditions.h"
 #import "BXGeometry.h"
+#import "NSShadow+BXShadowExtensions.h"
 
 @implementation BXCoverArt
 @synthesize sourceImage;
@@ -21,12 +22,9 @@
 	CGFloat blurRadius	= MAX(1.0f, iconSize.height / 32);
 	CGFloat offset		= MAX(1.0f, iconSize.height / 128);
 	
-	NSShadow *boxShadow = [[NSShadow new] autorelease];
-	[boxShadow setShadowOffset: NSMakeSize(0, -offset)];
-	[boxShadow setShadowBlurRadius: blurRadius];
-	[boxShadow setShadowColor: [[NSColor blackColor] colorWithAlphaComponent: 0.85f]];
-	
-	return boxShadow;
+    return [NSShadow shadowWithBlurRadius: blurRadius
+                                   offset: NSMakeSize(0, -offset)
+                                    color: [NSColor colorWithCalibratedWhite: 0 alpha: 0.85f]];
 }
 
 //We give gameboxes a soft white glow around the inside edge so that they show up well against dark backgrounds
@@ -35,12 +33,9 @@
 	if (iconSize.height < 64) return nil;
 	CGFloat blurRadius = MAX(1.0f, iconSize.height / 64);
 	
-	NSShadow *boxGlow = [[NSShadow new] autorelease];
-	[boxGlow setShadowOffset: NSZeroSize];
-	[boxGlow setShadowBlurRadius: blurRadius];
-	[boxGlow setShadowColor: [[NSColor whiteColor] colorWithAlphaComponent: 0.33f]];
-	
-	return boxGlow;
+    return [NSShadow shadowWithBlurRadius: blurRadius
+                                   offset: NSZeroSize
+                                    color: [NSColor colorWithCalibratedWhite: 1 alpha: 0.33f]];
 }
 
 + (NSImage *) shineForSize: (NSSize)iconSize

@@ -37,8 +37,8 @@
 
 + (void) initialize
 {
-	BXBandedValueTransformer *speedBanding		= [[BXBandedValueTransformer new] autorelease];
-	BXInvertNumberTransformer *invertFramerate	= [[BXInvertNumberTransformer new] autorelease];
+	BXBandedValueTransformer *speedBanding		= [[BXBandedValueTransformer alloc] init];
+	BXInvertNumberTransformer *invertFramerate	= [[BXInvertNumberTransformer alloc] init];
 	
 	NSArray *bands = [NSArray arrayWithObjects:
 		[NSNumber numberWithInteger: BXMinSpeedThreshold],
@@ -53,6 +53,9 @@
 	
 	[NSValueTransformer setValueTransformer: speedBanding forName: @"BXSpeedSliderTransformer"];
 	[NSValueTransformer setValueTransformer: invertFramerate forName: @"BXFrameRateSliderTransformer"];
+    
+    [speedBanding release];
+    [invertFramerate release];
 }
 
 

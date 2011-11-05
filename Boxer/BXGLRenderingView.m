@@ -15,7 +15,7 @@
 
 - (void) awakeFromNib
 {
-	[self setRenderer: [[BXRenderer new] autorelease]];
+	[self setRenderer: [[[BXRenderer alloc] init] autorelease]];
 	//Hide the view until we receive our first frame
 	[self setHidden: YES];
 }

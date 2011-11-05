@@ -19,7 +19,7 @@
 		[self setNeedsDisplayOnBoundsChange: YES];
 		[self setOpaque: YES];
 		[self setAsynchronous: NO];	
-		[self setRenderer: [[BXRenderer new] autorelease]];
+		[self setRenderer: [[[BXRenderer alloc] init] autorelease]];
 	}
 	return self;
 }

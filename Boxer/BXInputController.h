@@ -13,6 +13,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import "JoypadSDK.h"
+#import "BXEventConstants.h"
 
 @class BXCursorFadeAnimation;
 @class BXDOSWindowController;
@@ -23,7 +24,7 @@
 #if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_5
 < NSAnimationDelegate >
 #endif
-{	
+{
 	BXCursorFadeAnimation *cursorFade;
 	
 	BOOL mouseActive;
@@ -39,7 +40,7 @@
 	//Used internally for tracking mouse state between events
 	NSPoint distanceWarped;
 	BOOL updatingMousePosition;
-	NSUInteger simulatedMouseButtons;
+	BXMouseButtonMask simulatedMouseButtons;
 	NSTimeInterval threeFingerTapStarted;
 	
 	NSUInteger lastModifiers;

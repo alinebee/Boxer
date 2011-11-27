@@ -25,7 +25,7 @@ typedef KBD_KEYS BXDOSKeyCode;
 	BOOL capsLockEnabled;
 	BOOL numLockEnabled;
 	NSString *activeLayout;
-	BOOL pressedKeys[KBD_LAST];
+	NSUInteger pressedKeys[KBD_LAST];
 }
 
 @property (assign) BOOL capsLockEnabled;
@@ -37,12 +37,20 @@ typedef KBD_KEYS BXDOSKeyCode;
 #pragma mark -
 #pragma mark Keyboard input
 
+//Press/release the specified key. Calls to keyDown: will stack to handle the same
+//keycode being sent from multiple sources, so each keyDown: should be paired with
+//a corresponding keyUp:. (Only the first keyDown: and the last keyUp: will actually
+//trigger emulated keypresses.)
+- (void) keyDown: (BXDOSKeyCode)key;
+- (void) keyUp: (BXDOSKeyCode)key;
+
 //Release all currently-pressed keys, as if the user took their hands off the keyboard.
 - (void) clearInput;
 
-//Press/release the specified key.
-- (void) keyDown: (BXDOSKeyCode)key;
-- (void) keyUp: (BXDOSKeyCode)key;
+//Release all current presses of the specified key, regardless of how many times keyDown:
+//has been called on it.
+- (void) clearKey: (BXDOSKeyCode)key;
+
 
 //Imitate the key being pressed and then released after the default/specified duration.
 - (void) keyPressed: (BXDOSKeyCode)key;

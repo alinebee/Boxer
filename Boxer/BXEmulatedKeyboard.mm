@@ -38,10 +38,6 @@
 {
 	if ((self = [super init]))
 	{
-		//Zero out the pressed keys array
-		BXDOSKeyCode key;
-		for (key=KBD_NONE; key<KBD_LAST; key++) pressedKeys[key] = NO;
-		
 		[self setActiveLayout: [[self class] defaultKeyboardLayout]];
 	}
 	return self;
@@ -59,29 +55,34 @@
 #pragma mark Keyboard input
 
 - (void) keyDown: (BXDOSKeyCode)key
-{
-	if (![self keyIsDown: key])
+{   
+    //If this key is not already pressed, tell the emulator the key has been pressed.
+	if (!pressedKeys[key])
 	{
 		KEYBOARD_AddKey(key, YES);
-		pressedKeys[key] = YES;
 		
 		if		(key == KBD_capslock)	[self setCapsLockEnabled: !capsLockEnabled];
 		else if	(key == KBD_numlock)	[self setNumLockEnabled: !numLockEnabled];
 	}
+    pressedKeys[key]++;
 }
 
 - (void) keyUp: (BXDOSKeyCode)key
 {
-	if ([self keyIsDown: key])
+	if (pressedKeys[key])
 	{
-		KEYBOARD_AddKey(key, NO);
-		pressedKeys[key] = NO;
+		pressedKeys[key]--;
+        
+        //If this was the last press of this key,
+        //tell the emulator to finally release the key.
+        if (!pressedKeys[key])
+            KEYBOARD_AddKey(key, NO);
 	}
 }
 
 - (BOOL) keyIsDown: (BXDOSKeyCode)key
 {
-	return pressedKeys[key];
+	return pressedKeys[key] > 0;
 }
 
 - (void) keyPressed: (BXDOSKeyCode)key
@@ -106,7 +107,21 @@
 - (void) clearInput
 {
 	BXDOSKeyCode key;
-	for (key=KBD_NONE; key<KBD_LAST; key++) [self keyUp: key];
+	for (key=KBD_NONE; key<KBD_LAST; key++)
+    {
+        [self clearKey: key];
+    }
+}
+
+- (void) clearKey: (BXDOSKeyCode)key
+{
+    if (pressedKeys[key])
+    {
+        //Ensure that no matter how many ways the key is being held down,
+        //it will always be released by this keyUp:.
+        pressedKeys[key] = 1;
+        [self keyUp: key];
+    }
 }
 	 
 @end

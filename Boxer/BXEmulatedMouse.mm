@@ -17,7 +17,7 @@
 #pragma mark Private method declarations
 
 @interface BXEmulatedMouse ()
-@property (readwrite, assign) NSUInteger pressedButtons;
+@property (readwrite, assign) BXMouseButtonMask pressedButtons;
 
 - (void) setButton: (BXMouseButton)button toState: (BOOL)pressed;
 - (void) releaseButton: (NSNumber *)button;
@@ -98,7 +98,7 @@
 	//Ignore button presses while we're inactive
 	if (![self isActive]) return;
 	
-	NSUInteger buttonMask = 1U << button;
+	BXMouseButtonMask buttonMask = 1U << button;
 
     //Whether or not we actually need to toggle the button,
     //cancel any pending button release in response.

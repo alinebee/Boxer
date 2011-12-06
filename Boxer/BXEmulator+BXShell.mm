@@ -139,7 +139,7 @@ nil];
 - (BOOL) changeWorkingDirectoryToPath: (NSString *)dosPath
 {
 	BOOL changedPath = NO;
-	
+
 	dosPath = [dosPath stringByReplacingOccurrencesOfString: @"/" withString: @"\\"];
 	
 	//If the path starts with a drive letter, switch to that first
@@ -149,15 +149,20 @@ nil];
 		//Snip off the drive letter from the front of the path
 		dosPath = [dosPath substringFromIndex: 2];
 		
-		changedPath = (BOOL)DOS_SetDrive([self _indexOfDriveLetter: driveLetter]);
+		changedPath = [self changeToDriveLetter: driveLetter];
+        
 		//If the drive was not found, bail out early
 		if (!changedPath) return NO;
 	}
 	
 	if ([dosPath length])
 	{
+        [self willChangeValueForKey: @"pathOfCurrentDirectory"];
+        
 		const char *dir = [dosPath cStringUsingEncoding: BXDirectStringEncoding];
 		if (dir) changedPath = (BOOL)DOS_ChangeDir(dir) || changedPath;
+        
+        [self didChangeValueForKey: @"pathOfCurrentDirectory"];
 	}
 	
 	if (changedPath) [self discardShellInput];
@@ -167,8 +172,16 @@ nil];
 
 - (BOOL) changeToDriveLetter: (NSString *)driveLetter 
 {
+    [self willChangeValueForKey: @"pathOfCurrentDirectory"];
+    
 	BOOL changedPath = (BOOL)DOS_SetDrive([self _indexOfDriveLetter: driveLetter]);
-	if (changedPath) [self discardShellInput];
+	if (changedPath)
+    {
+        [self discardShellInput];
+    }
+    
+    [self didChangeValueForKey: @"pathOfCurrentDirectory"];
+    
 	return changedPath;
 }
 

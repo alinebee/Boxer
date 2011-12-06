@@ -101,8 +101,16 @@ enum
 #pragma mark -
 #pragma mark Interface actions and validation
 
-//Pause/unpause the emulation.
+//Pause/unpause the emulation. Will show a paused/unpaused bezel notification.
 - (IBAction) togglePaused: (id)sender;
+
+//Pause the emulation if it was not already paused. Will show a paused bezel
+//notification if the emulation was previously running, otherwise will have no effect.
+- (IBAction) pause: (id)sender;
+
+//Resume the emulation if it was paused. Will show an unpaused bezel notification
+//if the emulation was previously paused, otherwise will have no effect.
+- (IBAction) resume: (id)sender;
 
 //Increase/decrease the current frameskip by 1.
 - (IBAction) incrementFrameSkip: (id)sender;

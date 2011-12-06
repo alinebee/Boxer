@@ -359,13 +359,13 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	}
 }
 
-- (NSString *)activeProgramPath
+- (NSString *) activeProgramPath
 {
     if ([self lastExecutedProgramPath]) return [self lastExecutedProgramPath];
     else return [self lastLaunchedProgramPath];
 }
 
-- (NSString *)currentPath
+- (NSString *) currentPath
 {
 	if ([self activeProgramPath]) return [self activeProgramPath];
 	else return [[self emulator] pathOfCurrentDirectory];
@@ -693,7 +693,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 + (NSSet *) keyPathsForValuesAffectingIsGamePackage		{ return [NSSet setWithObject: @"gamePackage"]; }
 + (NSSet *) keyPathsForValuesAffectingRepresentedIcon	{ return [NSSet setWithObject: @"gamePackage.coverArt"]; }
-+ (NSSet *) keyPathsForValuesAffectingCurrentPath       { return [NSSet setWithObject: @"activeProgramPath"]; }
++ (NSSet *) keyPathsForValuesAffectingCurrentPath       { return [NSSet setWithObjects: @"activeProgramPath", @"emulator.pathOfCurrentDirectory", nil]; }
 + (NSSet *) keyPathsForValuesAffectingActiveProgramPath { return [NSSet setWithObjects: @"lastExecutedProgramPath", @"lastLaunchedProgramPath", nil]; }
 
 #pragma mark -

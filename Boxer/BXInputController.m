@@ -482,7 +482,7 @@
 - (void) mouseDown: (NSEvent *)theEvent
 {
 	//Unpause whenever the view is clicked on
-	[[self representedObject] setPaused: NO];
+	[[self representedObject] resume: self];
 	
 	//Only respond to clicks if we're locked or tracking mouse input while unlocked
 	if ([self _controlsCursorWhileMouseInside])
@@ -545,7 +545,7 @@
 - (void) rightMouseDown: (NSEvent *)theEvent
 {
 	//Unpause whenever the view is clicked on
-	[[self representedObject] setPaused: NO];
+	[[self representedObject] resume: self];
 	
 	if ([self _controlsCursorWhileMouseInside])
 	{
@@ -560,7 +560,7 @@
 - (void) otherMouseDown: (NSEvent *)theEvent
 {
 	//Unpause whenever the view is clicked on
-	[[self representedObject] setPaused: NO];
+	[[self representedObject] resume: self];
 	
 	if ([self _controlsCursorWhileMouseInside] && [theEvent buttonNumber] == BXMouseButtonMiddle)
 	{
@@ -765,7 +765,7 @@
 			if ([touches count] == 0)
 			{	
 				//Unpause when triple-tapping
-				[[self representedObject] setPaused: NO];
+				[[self representedObject] resume: self];
 				
 				BXEmulatedMouse *mouse = [self _emulatedMouse];
 			

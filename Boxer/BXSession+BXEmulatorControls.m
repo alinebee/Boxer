@@ -98,14 +98,30 @@
 #pragma mark -
 #pragma mark Controlling CPU emulation
 
+- (IBAction) pause: (id)sender
+{
+    if (![self isPaused])
+    {
+        [self setPaused: YES];
+        [[BXBezelController controller] showPauseBezel];
+    }
+}
+
+- (IBAction) resume: (id)sender
+{
+    if ([self isPaused])
+    {
+        [self setPaused: NO];
+        [[BXBezelController controller] showPlayBezel];
+    }
+}
+
 - (IBAction) togglePaused: (id)sender
 {
-	[self setPaused: ![self isPaused]];
-    
     if ([self isPaused])
-        [[BXBezelController controller] showPauseBezel];
+        [self resume: sender];
     else
-        [[BXBezelController controller] showPlayBezel];
+        [self pause: sender];
 }
 
 - (NSUInteger) frameskip

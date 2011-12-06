@@ -591,7 +591,7 @@
 	if (!dosPath || ![theEmulator DOSPathExists: dosPath]) return NO;
 	
 	//Unpause the emulation if it's paused
-	[self setPaused: NO];
+	[self resume: self];
 	
 	if ([[self class] isExecutable: path])
 	{

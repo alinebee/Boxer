@@ -78,7 +78,7 @@
 	else if (![theEvent isARepeat])
 	{
 		//Unpause the emulation whenever a key is pressed.
-		[[self representedObject] setPaused: NO];
+		[[self representedObject] resume: self];
 		
 		BXDOSKeyCode key = [[self class] _DOSKeyCodeForSystemKeyCode: [theEvent keyCode]];
 		[[self _emulatedKeyboard] keyDown: key];

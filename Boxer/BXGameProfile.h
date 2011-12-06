@@ -21,12 +21,12 @@
 
 //Constants used by eraOfGameAtPath:
 enum {
-	BXUnknownEra = 0,
-	BX525DisketteEra = 1,
-	BX35DisketteEra = 2,
-	BXCDROMEra = 3
+	BXUnknownMedium = 0,
+	BX525DisketteMedium = 1,
+	BX35DisketteMedium = 2,
+	BXCDROMMedium = 3
 };
-typedef NSUInteger BXGameEra;
+typedef NSUInteger BXReleaseMedium;
 
 
 //The default identifier string used for game profiles that don't match a known profile.
@@ -43,8 +43,8 @@ extern NSString * const BXGenericProfileIdentifier;
     NSArray *ignoredInstallerPatterns;
 	NSArray *configurations;
 	
-	BXGameEra gameEra;
-	BXDriveType installMedium;
+	BXReleaseMedium coverArtMedium;
+	BXDriveType sourceDriveType;
 	NSInteger requiredDiskSpace;
 	BOOL mountHelperDrivesDuringImport;
     BOOL requiresCDROM;
@@ -68,9 +68,10 @@ extern NSString * const BXGenericProfileIdentifier;
 //Will be nil for game-specific profiles (in which case gameName will be available.)
 @property (copy, nonatomic) NSString *profileDescription;
 
-//Whether this game needs to be installed from a particular kind of drive (e.g. floppy-disk or CD-ROM).
-//If the game has no special requirements, will be BXDriveAutodetect.
-@property (assign, nonatomic) BXDriveType installMedium;
+//Whether this game needs to be installed from a particular kind of drive
+//(e.g. floppy-disk or CD-ROM).
+//If the game has no special requirements, this will be BXDriveAutodetect.
+@property (assign, nonatomic) BXDriveType sourceDriveType;
 
 //The maximum amount of free disk space this game may need to install.
 //Used to assign an appropriate amount of free space on drive C.
@@ -88,9 +89,11 @@ extern NSString * const BXGenericProfileIdentifier;
 //Defaults to YES.
 @property (assign, nonatomic) BOOL mountHelperDrivesDuringImport;
 
-//The era of this game, used for deciding on cover art.
-//Defaults to BXUnknownEra, which means Boxer will auto-detect the era.
-@property (assign, nonatomic) BXGameEra gameEra;
+//The type of media upon which this game was likely released: currently this
+//is used only for deciding on cover art, not for emulation decisions.
+//(See installMedium above, which does affect how the game is installed.)
+//Defaults to BXUnknownMedium.
+@property (assign, nonatomic) BXReleaseMedium coverArtMedium;
 
 
 #pragma mark -
@@ -111,7 +114,7 @@ extern NSString * const BXGenericProfileIdentifier;
 
 //Returns the game era that the contents of the specified file path look like, based on filesize
 //and age of files. This is used by BXDockTileController to decide which bootleg coverart style to use.
-+ (BXGameEra) eraOfGameAtPath: (NSString *)basePath;
++ (BXReleaseMedium) mediumOfGameAtPath: (NSString *)basePath;
 
 
 #pragma mark -

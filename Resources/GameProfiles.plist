@@ -160,7 +160,7 @@
 				<key>BXProfileDriveLabelAny</key>
 				<string>BOP_INST__1</string>
 			</dict>
-			<key>BXInstallMedium</key>
+			<key>BXSourceDriveType</key>
 			<integer>1</integer>
 		</dict>
 		<dict>
@@ -451,7 +451,7 @@
 				<key>BXProfileDriveLabelAny</key>
 				<string>Daggerfall</string>
 			</dict>
-			<key>BXInstallMedium</key>
+			<key>BXSourceDriveType</key>
 			<integer>2</integer>
 		</dict>
 		<dict>
@@ -1178,7 +1178,7 @@
 			<array>
 				<string>adskidms.vce</string>
 			</array>
-			<key>BXInstallMedium</key>
+			<key>BXSourceDriveType</key>
 			<integer>1</integer>
 		</dict>
 		<dict>

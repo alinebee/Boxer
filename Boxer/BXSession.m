@@ -119,15 +119,17 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	return nil;
 }
 
-+ (NSImage *) bootlegCoverArtForGamePackage: (BXPackage *)package withEra: (BXGameEra)era
++ (NSImage *) bootlegCoverArtForGamePackage: (BXPackage *)package withMedium: (BXReleaseMedium)medium
 {
 	Class <BXBootlegCoverArt> coverArtClass;
-	if (era == BXUnknownEra) era = [BXGameProfile eraOfGameAtPath: [package bundlePath]];
-	switch (era)
+	if (medium == BXUnknownMedium)
+        medium = [BXGameProfile mediumOfGameAtPath: [package bundlePath]];
+    
+	switch (medium)
 	{
-		case BXCDROMEra:		coverArtClass = [BXJewelCase class];	break;
-		case BX525DisketteEra:	coverArtClass = [BX525Diskette class];	break;
-		default:				coverArtClass = [BX35Diskette class];	break;
+		case BXCDROMMedium:         coverArtClass = [BXJewelCase class];	break;
+		case BX525DisketteMedium:	coverArtClass = [BX525Diskette class];	break;
+		default:                    coverArtClass = [BX35Diskette class];	break;
 	}
 	NSString *iconTitle = [package gameName];
 	NSImage *icon = [coverArtClass coverArtWithTitle: iconTitle];

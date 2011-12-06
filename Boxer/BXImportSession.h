@@ -138,7 +138,7 @@ typedef NSUInteger BXSourceFileImportType;
 
 
 //Generate a new bootleg cover-art icon and add it to the gamebox.
-//This icon will be based on the gamebox's name, and the age of the files being imported.
+//This icon will be based on the gamebox's name and the size and age of the files being imported.
 - (void) generateBootlegIcon;
 
 

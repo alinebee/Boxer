@@ -20,6 +20,9 @@ NSString * const BX35DisketteGameDateThreshold = @"1995-01-01 00:00:00 +0000";
 //Directories with any files older than this will be treated as 5.25 diskette-era games by eraOfGameAtPath:
 NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 
+//File timestamps older than this will be ignored as invalid.
+NSString * const BXInvalidGameDateThreshold = @"1981-01-01 00:00:00 +0000";
+
 
 
 //Internal methods which should not be called outside BXGameProfile.
@@ -45,36 +48,45 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 @implementation BXGameProfile
 
 @synthesize gameName, configurations, identifier, profileDescription;
-@synthesize installMedium, gameEra, requiredDiskSpace, mountHelperDrivesDuringImport, requiresCDROM;
+@synthesize sourceDriveType, coverArtMedium, requiredDiskSpace, mountHelperDrivesDuringImport, requiresCDROM;
 
-+ (BXGameEra) eraOfGameAtPath: (NSString *)basePath
++ (BXReleaseMedium) mediumOfGameAtPath: (NSString *)basePath
 {
+    //TODO: check first if the base path is a disc image or an external volume,
+    //and if so return a medium based on the size and type of volume/image.
+    
+    
+    //Scan the size and age of the files in the folder to determine what kind of media
+    //the game probably used.
+    
 	NSFileManager *manager = [NSFileManager defaultManager];
 	NSDirectoryEnumerator *enumerator = [manager enumeratorAtPath: basePath];
 	
-	NSDate *cutoffDate525	= [NSDate dateWithString: BX525DisketteGameDateThreshold];
-	NSDate *cutoffDate35	= [NSDate dateWithString: BX35DisketteGameDateThreshold];
+	NSDate *cutoffDate525       = [NSDate dateWithString: BX525DisketteGameDateThreshold];
+	NSDate *cutoffDate35        = [NSDate dateWithString: BX35DisketteGameDateThreshold];
+	NSDate *cutoffDateInvalid	= [NSDate dateWithString: BXInvalidGameDateThreshold];
 	unsigned long long pathSize = 0;
 	
 	while ([enumerator nextObject])
 	{
 		NSDictionary *attrs = [enumerator fileAttributes];
-		
-		//The game was released before CDs became commonplace, treat it as a diskette game
 		NSDate *creationDate = [attrs fileCreationDate];
-		//TWEAK: if the date is 1970, then ignore it - this indicates a missing creation date
-		if (creationDate && [creationDate timeIntervalSince1970] > 0)
+        
+        //If the file timestamps suggest the game was released before CDs
+        //became commonplace, treat it as a diskette game.
+		if (creationDate && [creationDate timeIntervalSinceDate: cutoffDateInvalid] > 0)
 		{
-			if ([creationDate timeIntervalSinceDate: cutoffDate525] < 0)	return BX525DisketteEra;
-			if ([creationDate timeIntervalSinceDate: cutoffDate35] < 0)		return BX35DisketteEra;
+			if ([creationDate timeIntervalSinceDate: cutoffDate525] < 0)	return BX525DisketteMedium;
+			if ([creationDate timeIntervalSinceDate: cutoffDate35] < 0)		return BX35DisketteMedium;
 		}
 		
-		//The game is too big to have been released on diskettes, treat it as a CD game
+		//If the game is too big to have been released on diskettes, treat it as a CD game
 		pathSize += [attrs fileSize];
-		if (pathSize > BXDisketteGameSizeThreshold) return BXCDROMEra;
+		if (pathSize > BXDisketteGameSizeThreshold) return BXCDROMMedium;
 	}
+    
 	//When all else fails, assume it's a 3.5 diskette game
-	return BX35DisketteEra;
+	return BX35DisketteMedium;
 }
 
 + (NSString *) catalogueVersion     { return [[self _gameProfileData] objectForKey: @"BXGameProfileCatalogueVersion"]; }
@@ -139,10 +151,10 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 	if ((self = [super init]))
 	{
 		//Set our standard defaults
-		[self setInstallMedium: BXDriveAutodetect];
+		[self setSourceDriveType: BXDriveAutodetect];
 		[self setRequiredDiskSpace: BXDefaultFreeSpace];
 		[self setMountHelperDrivesDuringImport: YES];
-		[self setGameEra: BXUnknownEra];
+		[self setCoverArtMedium: BXUnknownMedium];
         [self setIdentifier: BXGenericProfileIdentifier];
 	}
 	return self;
@@ -158,8 +170,16 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 		[self setConfigurations:        [profileDict objectForKey: @"BXProfileConfigurations"]];
 		
 		//Leave these at their default values if a particular key wasn't specified
-		NSNumber *medium = [profileDict objectForKey: @"BXInstallMedium"];
-		if (medium) [self setInstallMedium: [medium integerValue]];
+		NSNumber *medium = [profileDict objectForKey: @"BXSourceDriveType"];
+		if (medium)
+        {
+            [self setSourceDriveType: [medium integerValue]];
+            //If the profile mandates that the game must be installed from CD-ROM, use that for cover art too;
+            //otherwise, let the upstream context decide, since the source drive type doesn't distinguish
+            //between 3.5" and 3.25" floppies.
+            if ([medium integerValue] == BXDriveCDROM)
+                [self setCoverArtMedium: BXCDROMMedium];
+        }
 		
 		NSNumber *requiredSpace = [profileDict objectForKey: @"BXRequiredDiskSpace"];
 		if (requiredSpace) [self setRequiredDiskSpace: [requiredSpace integerValue]];
@@ -171,7 +191,7 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 		if (needsCDROM) [self setRequiresCDROM: [needsCDROM boolValue]];
 		
 		NSNumber *era = [profileDict objectForKey: @"BXProfileGameEra"];
-		if (era) [self setGameEra: [era unsignedIntegerValue]];
+		if (era) [self setCoverArtMedium: [era unsignedIntegerValue]];
 		
 		//Used by isDesignatedInstallerAtPath:
 		installerPatterns	= [[profileDict objectForKey: @"BXDesignatedInstallers"] retain];

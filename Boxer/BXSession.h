@@ -192,7 +192,7 @@ extern NSString * const BXDidFinishInterruptionNotification;
 //using the specified game era. If era is BXUnknownEra, a suitable era will be
 //autodetected based on the size and age of the game's files.
 + (NSImage *) bootlegCoverArtForGamePackage: (BXPackage *)package
-									withEra: (BXGameEra)era;
+                                 withMedium: (BXReleaseMedium)medium;
 
 
 #pragma mark -

@@ -43,8 +43,10 @@
 	NSImage *icon = [[[session representedIcon] copy] autorelease];
 	if (!icon && [session gamePackage])
 	{
+        BXReleaseMedium medium = [[session gamePackage] coverArtMedium];
 		//If the session didn't have an icon of its own, generate a bootleg one based on the gamebox
-		icon = [BXSession bootlegCoverArtForGamePackage: [session gamePackage] withEra: BXUnknownEra];
+		icon = [BXSession bootlegCoverArtForGamePackage: [session gamePackage]
+                                             withMedium: medium];
 	}
 	[icon setSize: NSMakeSize(128, 128)];
 	[NSApp setApplicationIconImage: icon];

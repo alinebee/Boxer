@@ -40,6 +40,7 @@ extern NSString * const BXGenericProfileIdentifier;
 	NSString *profileDescription;
 	NSDictionary *driveLabelMappings;
 	NSArray *installerPatterns;
+    NSArray *ignoredInstallerPatterns;
 	NSArray *configurations;
 	
 	BXGameEra gameEra;
@@ -139,5 +140,8 @@ extern NSString * const BXGenericProfileIdentifier;
 
 //Returns whether the file at the specified path is the designated installer for this game.
 - (BOOL) isDesignatedInstallerAtPath: (NSString *)path;
+
+//Returns whether the file at the specified path should be ignored when scanning for installers.
+- (BOOL) isIgnoredInstallerAtPath: (NSString *)path;
 
 @end

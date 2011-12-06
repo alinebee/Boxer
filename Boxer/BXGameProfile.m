@@ -175,6 +175,9 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 		
 		//Used by isDesignatedInstallerAtPath:
 		installerPatterns	= [[profileDict objectForKey: @"BXDesignatedInstallers"] retain];
+        
+        //Used by isIgnoredInstallerAtPath:
+        ignoredInstallerPatterns = [[profileDict objectForKey: @"BXIgnoredInstallers"] retain];
 		
 		//Used by volumeLabelForDrive:
 		driveLabelMappings	= [[profileDict objectForKey: @"BXProfileDriveLabels"] retain];
@@ -191,6 +194,7 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 	
 	[driveLabelMappings release], driveLabelMappings = nil;
 	[installerPatterns release], installerPatterns = nil;
+    [ignoredInstallerPatterns release], ignoredInstallerPatterns = nil;
 	
 	[super dealloc];
 }
@@ -229,6 +233,16 @@ NSString * const BX525DisketteGameDateThreshold = @"1988-01-01 00:00:00 +0000";
 	return NO;
 }
 
+- (BOOL) isIgnoredInstallerAtPath: (NSString *)path
+{
+	if (!ignoredInstallerPatterns) return NO;
+	path = [path lowercaseString];
+	for (NSString *pattern in ignoredInstallerPatterns)
+	{
+		if ([path hasSuffix: pattern]) return YES;
+	}
+	return NO;
+}
 
 #pragma mark -
 #pragma mark Private methods

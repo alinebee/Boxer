@@ -3,9 +3,26 @@
 <plist version="1.0">
 <dict>
 	<key>BXGameProfileCatalogueVersion</key>
-	<string>20111027.4</string>
+	<string>20111206.1</string>
 	<key>BXSpecificGameProfiles</key>
 	<array>
+        <dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.ssi.steel-panthers-2</string>
+            <key>BXProfileGameName</key>
+            <string>Steel Panthers II</string>
+            <key>BXProfileTelltales</key>
+            <array>
+                <string>steel2.exe</string>
+            </array>
+            <key>BXIgnoredInstallers</key>
+            <array>
+                <string>vinstall.bat</string>
+            </array>
+            <key>BXRequiresCDROM</key>
+            <true/>
+        </dict>
+        
         <dict>
             <key>BXProfileIdentifier</key>
             <string>uk.co.revolution.broken-sword</string>

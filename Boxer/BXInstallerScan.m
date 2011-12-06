@@ -61,7 +61,7 @@
                 [self addDOSExecutable: relativePath];
                 
                 //If this looks like an installer to us, finally add it into our list of matches
-                if ([BXImportSession isInstallerAtPath: relativePath])
+                if ([BXImportSession isInstallerAtPath: relativePath] && ![[self detectedProfile] isIgnoredInstallerAtPath: relativePath])
                 {
                     [self addMatchingPath: relativePath];
                     

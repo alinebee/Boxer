@@ -79,7 +79,9 @@
 							   @"(^|/)readme\\.",		//Readme viewers
                                
                                @"(^|/)foo\\.bat",       //Backup script included by mistake
-                                                        //on some X-Wing CDROM editions
+                                                        //on some Mac X-Wing CDROM editions
+                               
+                               @"(^|/)vinstall\\.bat",  //
 							   
 							   @"(^|/)pkunzip\\.",		//Archivers
 							   @"(^|/)pkunzjr\\.",

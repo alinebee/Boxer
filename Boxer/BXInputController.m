@@ -84,14 +84,6 @@
 	[cursorFade setOriginalCursor: [NSCursor arrowCursor]];
 	[cursorFade setAnimationBlockingMode: NSAnimationNonblocking];
 	[cursorFade setFrameRate: BXCursorFadeFrameRate];
-	
-	
-	//Listen for window resize events, so that we can redraw the cursor
-	//See note above for _windowDidResize:
-	[[NSNotificationCenter defaultCenter] addObserver: self
-											 selector: @selector(_windowDidResize:)
-												 name: NSWindowDidResizeNotification
-											   object: [[self view] window]];
 }
 
 - (void) dealloc
@@ -300,20 +292,44 @@
 
 - (void) cursorUpdate: (NSEvent *)theEvent
 {
+    //IMPLEMENTATION NOTE: changes to the statusbar segmented control appear
+    //to trigger spurious cursor updates which should be ignored.
+    //TODO: find a better heuristic for detecting such cursor updates,
+    //and figure out why they're being generated in the first place.
+    BOOL isSpuriousUpdate = (theEvent != nil) && ([theEvent timestamp] == 0);
+    if (isSpuriousUpdate) return;
+    
+    //If we have control of the mouse cursor and we aren't fading it out yet,
+    //start doing so now.
 	if ([self _controlsCursor])
 	{
-		if (![cursorFade isAnimating])
+        if (![cursorFade isAnimating])
 		{
-			//Make the cursor fade from the beginning rather than where it left off
+			//If the cursor fade was interrupted, make it restart from the beginning
+            //rather than where it left off last time.
 			[cursorFade setCurrentProgress: 0.0f];
 			[cursorFade startAnimation];
 		}
 	}
+    //Otherwise, restore the opaque cursor.
 	else
 	{
 		[cursorFade stopAnimation];
         [[NSCursor arrowCursor] set];
 	}
+}
+
+- (float) animation: (NSAnimation *)animation valueForProgress: (NSAnimationProgress)progress
+{
+    //Start fading only halfway through the animation.
+    float fadeDelay = 0.5f;
+    float curve = 0.9f;
+    
+    float easedValue = pow(progress, 2 * curve);
+    
+    return easedValue;
+    
+    return fadeDelay + (easedValue * (1.0 - fadeDelay));
 }
 
 - (BOOL) animationShouldChangeCursor: (BXCursorFadeAnimation *)animation
@@ -343,13 +359,14 @@
 - (void) didBecomeKey
 {
 	//Account for any changes to key modifier flags while we didn't have keyboard focus.
-	//IMPLEMENTATION NOTE CGEventSourceFlagsState returns the currently active modifiers
+	//IMPLEMENTATION NOTE: CGEventSourceFlagsState returns the currently active modifiers
 	//outside of the event stream. It works the same as the 10.6-only NSEvent +modifierFlags,
-	//but is available on 10.5 and includes side-specific Shift, Ctrl and Alt flags.
+	//but is available on 10.5 and (unlike +modifierFlags) it also includes side-specific Shift,
+    //Ctrl and Alt flags.
 	CGEventFlags currentModifiers = CGEventSourceFlagsState(kCGEventSourceStateCombinedSessionState);
 	[self _syncModifierFlags: (NSUInteger)currentModifiers];
 	
-	//Also sync the cursor state while we're at it, in case it was over the window.
+	//Also sync the cursor state while we're at it, in case the cursor was already over the window.
 	[self cursorUpdate: nil];
 }
 
@@ -364,9 +381,7 @@
 	//Don't continue if we're already in the right lock state
 	if (lock != [self mouseLocked])
     {
-        BOOL canLockMouse = (force || [self canLockMouse]);
-
-        if (!lock || canLockMouse)
+        if (!lock || force || [self canLockMouse])
         {
             [self _applyMouseLockState: lock];
             mouseLocked = lock;
@@ -374,6 +389,7 @@
             //Let everybody know we've grabbed the mouse on behalf of our session
             NSString *notification = (lock) ? BXSessionDidLockMouseNotification : BXSessionDidUnlockMouseNotification;
             [[NSNotificationCenter defaultCenter] postNotificationName: notification object: [self representedObject]]; 
+            
         }
     }
 	
@@ -390,6 +406,8 @@
 	if (active != mouseActive)
 	{
 		mouseActive = active;
+        //Update the mouse cursor, in case the mouse became active while the cursor was already
+        //over the window.
 		[self cursorUpdate: nil];
 		
 		//Release the mouse lock when DOS stops using the mouse, unless we're in fullscreen mode
@@ -801,12 +819,6 @@
 - (id <BXEmulatedJoystick>)_emulatedJoystick	{ return [[[self representedObject] emulator] joystick]; }
 
 
-- (void) _windowDidResize: (NSNotification *)notification
-{
-    //Don't update the cursor in fullscreen mode
-	if (![[[self _windowController] window] isFullScreen]) [self cursorUpdate: nil];
-}
-
 - (BOOL) _controlsCursor
 {
 	if (![self _controlsCursorWhileMouseInside]) return NO;
@@ -849,43 +861,51 @@
 }
 
 - (void) _applyMouseLockState: (BOOL)lock
-{
-	//Ensure we don't "over-hide" the cursor if it's already hidden,
-	//since [NSCursor hide] stacks.
-	//IMPLEMENTATION NOTE: we also used to check CGCursorIsVisible when
-	//unhiding too, but this broke with Cmd-Tabbing and there's no danger
-	//of "over-unhiding" anyway.
-	if		(CGCursorIsVisible() && lock)	[NSCursor hide];
-	else if (!lock)							[NSCursor unhide];
-	
-	//Reset any custom faded cursor to the default arrow cursor.
-	[[NSCursor arrowCursor] set];
-	
-	//Associate/disassociate the mouse and the OS X cursor
-	CGAssociateMouseAndMouseCursorPosition(!lock);
-	
+{	
 	if (lock)
 	{
-		//If we're locking the mouse and the cursor is outside of the view,
+        //Hide the mouse cursor when locking, if it's currently visible.
+        //Checking CGCursorIsVisible() ensures we don't "over-hide"
+        //the cursor if it's already hidden, since [NSCursor hide] stacks
+        //and we have no way of knowing the current stack depth.
+        if (CGCursorIsVisible()) [NSCursor hide];
+        
+        //Disassociate the mouse and the OS X cursor. This prevents the OS X cursor
+        //from moving as long as the mouse is locked (which prevents it leaving the
+        //confines of the window, which is what we want to avoid.)
+        //FIXME: this is ignored by tablet devices on OS X 10.6 and below, which means
+        //the cursor can leave the window and inadvertently click on other applications.
+        CGAssociateMouseAndMouseCursorPosition(NO);
+        
+		//If the cursor is outside of the view when we lock the mouse,
 		//then warp it to the center of the DOS view.
 		//This prevents mouse clicks from going to other windows.
 		//(We avoid warping if the mouse is already over the view,
-		//as this would cause an input delay.)
+        //as this would cause an input delay.)
 		if (![self mouseInView]) [self _syncOSXCursorToPointInCanvas: NSMakePoint(0.5f, 0.5f)];
 		
-		//If we weren't tracking the mouse while it was unlocked, then warp the DOS mouse cursor
-		//Disabled for now, because this makes the mouse behaviour jumpy and unpredictable.
-		
-		if (NO && ![self trackMouseWhileUnlocked])
+		//Warp the DOS mouse cursor to the previous location of the OS X cursor upon locking.
+		//Disabled for now, because this gives poor results in games with relative mouse positioning
+        //and so makes the mouse behaviour feel jumpy and unpredictable.
+        /*
+		if (![self trackMouseWhileUnlocked])
 		{
 			NSPoint mouseLocation = [NSEvent mouseLocation];
 			NSPoint canvasLocation = [self _pointInCanvas: mouseLocation];
 			
 			[self _syncEmulatedCursorToPointInCanvas: canvasLocation];
 		}
+         */
 	}
 	else
 	{
+        //Restore the regular mouse cursor if it was previously faded-out.
+        [[NSCursor arrowCursor] set];
+        
+        //Allow the OS X cursor to update its position in response to mouse
+        //movement again.
+        CGAssociateMouseAndMouseCursorPosition(YES);
+        
 		//If we're unlocking the mouse, then sync the OS X mouse cursor
 		//to wherever DOSBox's cursor is located within the view.
 		NSPoint mousePosition = [[self _emulatedMouse] position];
@@ -910,6 +930,12 @@
 			[self _syncEmulatedCursorToPointInCanvas: NSMakePoint(0.5f, 0.5f)];
 		}
 		 */
+        
+        //Unhide the mouse cursor once we're unlocked.
+        //IMPLEMENTATION NOTE: we used to check CGCursorIsVisible when unhiding,
+        //as with hiding, but this broke with Cmd-Tabbing and there's no danger
+        //of "over-unhiding" anyway.
+        [NSCursor unhide];
 	}
 }
 

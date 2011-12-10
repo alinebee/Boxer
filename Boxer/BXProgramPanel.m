@@ -229,8 +229,16 @@
         NSRange range = NSMakeRange(0, [newTitle length]);
         
         [newTitle beginEditing];
-            [newTitle addAttribute: NSForegroundColorAttributeName value: textColor range: range];
-            [newTitle addAttribute: NSShadowAttributeName value: textShadow range: range];
+            [newTitle addAttribute: NSForegroundColorAttributeName
+                             value: textColor
+                             range: range];
+        
+            if (textShadow)
+            {
+                [newTitle addAttribute: NSShadowAttributeName
+                                 value: textShadow
+                                 range: range];
+            }
 		[newTitle endEditing];
         
         [newTitle drawInRect: textRect];

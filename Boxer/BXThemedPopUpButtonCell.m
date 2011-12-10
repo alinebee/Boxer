@@ -121,9 +121,12 @@
                            value: textColor
                            range: range];
     
-    [formattedTitle addAttribute: NSShadowAttributeName
-                           value: textShadow
-                           range: range];
+    if (textShadow)
+    {
+        [formattedTitle addAttribute: NSShadowAttributeName
+                               value: textShadow
+                               range: range];
+    }
     [formattedTitle endEditing];
     
     NSRect titleFrame = [self titleRectForBounds: frame];

@@ -773,11 +773,21 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     return [configPaths autorelease];
 }
 
-//If we have not already performed our own configuration, do so now
 - (void) runPreflightCommandsForEmulator: (BXEmulator *)theEmulator
 {
 	if (!hasConfigured)
 	{
+        //If the Option key is held down during the startup process, skip the default program.
+		CGEventFlags currentModifiers = CGEventSourceFlagsState(kCGEventSourceStateCombinedSessionState);
+		userSkippedDefaultProgram = (currentModifiers & NSAlternateKeyMask) == NSAlternateKeyMask;
+        
+        //If we'll be starting up with a target program, clear the screen
+        //at the start of the autoexec sequence.
+        if (!userSkippedDefaultProgram && [self targetPath] && [[self class] isExecutable: [self targetPath]])
+        {
+            [theEmulator executeCommand: @"cls" encoding: BXDirectStringEncoding];
+        }
+        
 		[self _mountDrivesForSession];
 		
 		//Flag that we have completed our initial game configuration.
@@ -788,7 +798,35 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 - (void) runLaunchCommandsForEmulator: (BXEmulator *)theEmulator
 {
 	hasLaunched = YES;
-	[self _launchTarget];
+    
+    //Do any just-in-time configuration, which should override all previous startup stuff.
+	NSNumber *frameskip = [gameSettings objectForKey: @"frameskip"];
+	if (frameskip && [self validateValue: &frameskip forKey: @"frameskip" error: nil])
+		[self setValue: frameskip forKey: @"frameskip"];
+	
+	
+	//After all preflight configuration has finished, go ahead and open whatever
+    //file or folder we're pointing at.
+	NSString *target = [self targetPath];
+	if (target)
+	{
+        //If the Option key is held down during the startup process, skip the default program.
+        //(Repeated from runPreflightCommandsForEmulator: above, in case the user started
+        //holding the key down in between.
+        if (!userSkippedDefaultProgram)
+        {
+            CGEventFlags currentModifiers = CGEventSourceFlagsState(kCGEventSourceStateCombinedSessionState);
+            userSkippedDefaultProgram = (currentModifiers & NSAlternateKeyMask) == NSAlternateKeyMask;
+        }
+        
+		//If the Option key was held down, don't launch the gamebox's target;
+		//Instead, just switch to its parent folder.
+		if (userSkippedDefaultProgram && [[self class] isExecutable: target])
+		{
+			target = [target stringByDeletingLastPathComponent];
+		}
+		[self openFileAtPath: target];
+	}
 }
 
 - (void) emulator: (BXEmulator *)theEmulator didFinishFrame: (BXFrameBuffer *)frame
@@ -1194,35 +1232,6 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
                        contextInfo: NULL];
             }
         }
-	}
-}
-
-- (void) _launchTarget
-{	
-	//Do any just-in-time configuration, which should override all previous startup stuff
-	//TODO: abstract this to a proper post-autoexec method rather than assuming this is
-	//always going to be called right at the end of the autoexec thankyou very much
-	NSNumber *frameskip = [gameSettings objectForKey: @"frameskip"];
-	
-	//Set the frameskip setting if it's valid
-	if (frameskip && [self validateValue: &frameskip forKey: @"frameskip" error: nil])
-		[self setValue: frameskip forKey: @"frameskip"];
-	
-	
-	//After all preflight configuration has finished, go ahead and open whatever file we're pointing at
-	NSString *target = [self targetPath];
-	if (target)
-	{
-		//If the Option key was held down, don't launch the gamebox's target;
-		//Instead, just switch to its parent folder
-		CGEventFlags currentModifiers = CGEventSourceFlagsState(kCGEventSourceStateCombinedSessionState);
-		userSkippedDefaultProgram = (currentModifiers & NSAlternateKeyMask) == NSAlternateKeyMask;
-		
-		if (userSkippedDefaultProgram && [[self class] isExecutable: target])
-		{
-			target = [target stringByDeletingLastPathComponent];
-		}
-		[self openFileAtPath: target];
 	}
 }
 

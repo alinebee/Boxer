@@ -87,25 +87,22 @@
 
 - (void) keyUp: (NSEvent *)theEvent
 {
-	//If the keypress was command-modified, don't pass it on to the emulator as it indicates
-	//a failed key equivalent.
-	//(This is consistent with how other OS X apps with textinput handle Cmd-keypresses.)
-	if ([theEvent modifierFlags] & NSCommandKeyMask)
-	{
-		[super keyUp: theEvent];
-	}
-	else
-	{
-		BXDOSKeyCode key = [[self class] _DOSKeyCodeForSystemKeyCode: [theEvent keyCode]];
-		[[self _emulatedKeyboard] keyUp: key];
-	}
+    BXDOSKeyCode key = [[self class] _DOSKeyCodeForSystemKeyCode: [theEvent keyCode]];
+    [[self _emulatedKeyboard] keyUp: key];
 }
 
 - (void) flagsChanged: (NSEvent *)theEvent
 {
 	[self _syncModifierFlags: [theEvent modifierFlags]];
+    
+    //Cmd-key tweak: in 10.7 at least, we won't receive keyUp: events for any key while
+    //Cmd is being held down. To prevent keys getting stuck, we immediately release any
+    //keys that were down when Cmd is first pressed.
+    if ([theEvent modifierFlags] % NSCommandKeyMask)
+    {
+        [[self _emulatedKeyboard] clearInput];
+    }
 }
-
 
 
 #pragma mark -
@@ -144,7 +141,7 @@
 #pragma mark Private methods
 
 - (void) _syncModifierFlags: (NSUInteger)newModifiers
-{	
+{
 	//IMPLEMENTATION NOTE: this method used to check the keyCode of the event to determine which
 	//modifier key was just toggled. This worked fine for single keypresses, but could miss keys
 	//when multiple modifier keys were pressed or released, causing 'stuck' keys.

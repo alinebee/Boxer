@@ -1224,8 +1224,8 @@
 
 - (BOOL) _shouldSuppressDisplaySleep
 {
-    //Always allow the display to go to sleep when it wants, on the assumption
-    //that the emulation isn't doing anything particularly interesting during installation.
+    //Always allow the display to go to sleep when it wants, on the assumption that
+    //the emulation isn't doing anything particularly interesting during installation.
     return NO;
 }
 
@@ -1233,7 +1233,9 @@
 {
 	//Don't auto-pause the emulation while importing, even if the preference is on:
 	//this allows lengthy copy operations to continue in the background.
-	return NO;
+    if (![[self emulator] isAtPrompt]) return NO;
+    
+    else return [super _shouldAutoPause];
 }
 
 //We don't want to close the entire document after the emulated session is finished;

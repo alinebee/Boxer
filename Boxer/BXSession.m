@@ -1406,21 +1406,25 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (BOOL) _shouldAutoPause
 {
-	//Don't auto-pause if the emulator hasn't finished starting up yet
+	//Don't auto-pause if the emulator hasn't finished starting up yet.
 	if (![self isEmulating]) return NO;
 	
-	//Only auto-pause if the mode is enabled in the user's settings
-	if (![[NSUserDefaults standardUserDefaults] boolForKey: @"pauseWhileInactive"]) return NO;
+	//Only allow auto-pausing if the mode is enabled in the user's settings,
+    //or if the emulator is waiting at the DOS prompt.
+	if ([[self emulator] isAtPrompt] ||
+        [[NSUserDefaults standardUserDefaults] boolForKey: @"pauseWhileInactive"])
+    {
+        //Auto-pause if Boxer is in the background.
+        if (![NSApp isActive]) return YES;
+        
+        //Auto-pause if the DOS window is miniaturized.
+        //IMPLEMENTATION NOTE: we used to toggle this when the DOS window was hidden (not visible),
+        //but that gave rise to corner cases if shouldAutoPause was called just before the window
+        //was to appear.
+        if ([[DOSWindowController window] isMiniaturized]) return YES;
+    }
 	
-	//Auto-pause if Boxer is in the background
-	if (![NSApp isActive]) return YES;
-	
-	//Auto-pause if the DOS window is miniaturized
-	//IMPLEMENTATION NOTE: we used to toggle this when the DOS window was hidden (not visible),
-	//but that gave rise to corner cases if shouldAutoPause was called just before the window was to appear.
-	if ([[DOSWindowController window] isMiniaturized]) return YES;
-	
-	return NO;
+    return NO;
 }
 
 - (void) _interruptionWillBegin: (NSNotification *)notification

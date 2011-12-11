@@ -65,10 +65,6 @@
 //runPreflightCommands at the start of AUTOEXEC.BAT, before any other commands or settings are run.
 - (void) _mountDrivesForSession;
 
-//Start up the target program for this session (if any) and displays the program panel selector after this
-//finishes. Called by runLaunchCommands at the end of AUTOEXEC.BAT.
-- (void) _launchTarget;
-
 
 
 //Called once the session has exited to save any DOSBox settings we have changed to the gamebox conf.

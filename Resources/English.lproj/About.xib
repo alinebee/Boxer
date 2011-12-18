@@ -43,7 +43,7 @@
 			<object class="NSWindowTemplate" id="1032262345">
 				<int key="NSWindowStyleMask">3</int>
 				<int key="NSWindowBacking">2</int>
-				<string key="NSWindowRect">{{833, 294}, {340, 384}}</string>
+				<string key="NSWindowRect">{{960, 320}, {340, 384}}</string>
 				<int key="NSWTFlags">1685585920</int>
 				<string key="NSWindowTitle"/>
 				<string key="NSWindowClass">NSPanel</string>

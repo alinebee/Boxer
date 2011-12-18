@@ -55,7 +55,7 @@
 			<object class="NSWindowTemplate" id="1005">
 				<int key="NSWindowStyleMask">7</int>
 				<int key="NSWindowBacking">2</int>
-				<string key="NSWindowRect">{{109, 270}, {532, 396}}</string>
+				<string key="NSWindowRect">{{160, 250}, {532, 396}}</string>
 				<int key="NSWTFlags">1618478080</int>
 				<string key="NSWindowTitle">Boxer Preferences</string>
 				<string key="NSWindowClass">NSWindow</string>
@@ -267,6 +267,7 @@
 							<string key="NSFrameSize">{532, 396}</string>
 							<reference key="NSSuperview" ref="1006"/>
 							<reference key="NSWindow"/>
+							<reference key="NSNextKeyView" ref="205068588"/>
 							<int key="NSViewLayerContentsRedrawPolicy">2</int>
 							<object class="NSMutableArray" key="NSTabViewItems">
 								<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1206,7 +1207,7 @@ ZWQgaW4gdGhlIFVuaXZlcnNhbCBBY2Nlc3MgcHJlZmVyZW5jZXMuA</string>
 														<string key="NSFrame">{{489, 17}, {25, 25}}</string>
 														<reference key="NSSuperview" ref="831383934"/>
 														<reference key="NSWindow"/>
-														<reference key="NSNextKeyView" ref="764053557"/>
+														<reference key="NSNextKeyView"/>
 														<int key="NSViewLayerContentsRedrawPolicy">2</int>
 														<string key="NSReuseIdentifierKey">_NS:3976</string>
 														<bool key="NSEnabled">YES</bool>
@@ -1309,7 +1310,7 @@ ZWQgaW4gdGhlIFVuaXZlcnNhbCBBY2Nlc3MgcHJlZmVyZW5jZXMuA</string>
 					<reference key="NSNextKeyView" ref="764053557"/>
 					<int key="NSViewLayerContentsRedrawPolicy">2</int>
 				</object>
-				<string key="NSScreenRect">{{0, 0}, {1440, 900}}</string>
+				<string key="NSScreenRect">{{0, 0}, {1440, 878}}</string>
 				<string key="NSMaxSize">{10000000000000, 10000000000000}</string>
 				<string key="NSFrameAutosaveName"/>
 				<bool key="NSWindowIsRestorable">YES</bool>
@@ -3294,7 +3295,7 @@ ZWQgaW4gdGhlIFVuaXZlcnNhbCBBY2Nlc3MgcHJlZmVyZW5jZXMuA</string>
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">BXHUDLabel</string>
-					<string key="superclassName">BGHUDLabel</string>
+					<string key="superclassName">BXThemedLabel</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/BXHUDLabel.h</string>
@@ -3551,6 +3552,14 @@ ZWQgaW4gdGhlIFVuaXZlcnNhbCBBY2Nlc3MgcHJlZmVyZW5jZXMuA</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/BXTabbedWindowController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXThemedLabel</string>
+					<string key="superclassName">BGHUDLabel</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXThemedLabel.h</string>
 					</object>
 				</object>
 			</object>

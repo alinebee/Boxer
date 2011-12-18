@@ -48,7 +48,7 @@
 			<object class="NSWindowTemplate" id="224645555">
 				<int key="NSWindowStyleMask">3</int>
 				<int key="NSWindowBacking">2</int>
-				<string key="NSWindowRect">{{380, 300}, {520, 308}}</string>
+				<string key="NSWindowRect">{{460, 280}, {520, 308}}</string>
 				<int key="NSWTFlags">1148715008</int>
 				<string key="NSWindowTitle"/>
 				<string key="NSWindowClass">NSPanel</string>
@@ -140,6 +140,7 @@
 									<string key="NSFrame">{{435, 7}, {70, 25}}</string>
 									<reference key="NSSuperview" ref="207441628"/>
 									<reference key="NSWindow"/>
+									<reference key="NSNextKeyView"/>
 									<bool key="NSEnabled">YES</bool>
 									<object class="NSButtonCell" key="NSCell" id="494725080">
 										<int key="NSCellFlags">-2080244224</int>

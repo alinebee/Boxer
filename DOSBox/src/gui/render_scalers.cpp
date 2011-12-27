@@ -256,7 +256,6 @@ ScalerSimpleBlock_t ScaleNormal3x = {
 {	Normal3x_8_8_R,		Normal3x_9_15_R ,	Normal3x_9_16_R ,	Normal3x_9_32_R }
 }};
 
-
 #if RENDER_USE_ADVANCED_SCALERS>0
 ScalerSimpleBlock_t ScaleTV2x = {
 	"TV2x",

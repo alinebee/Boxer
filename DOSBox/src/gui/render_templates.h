@@ -257,8 +257,6 @@ static void conc3d(Cache,SBPP,DBPP) (const void * s) {
 #undef SCALERHEIGHT
 #undef SCALERFUNC
 
-
-
 #define SCALERNAME		NormalDw
 #define SCALERWIDTH		2
 #define SCALERHEIGHT	1

@@ -46,29 +46,21 @@ public:
 		RequireNoErr(NewAUGraph(&m_auGraph));
 
 		AUNode outputNode, synthNode;
-		
-#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_5
-		//AUGraphAddNode function switched from old ComponentDescription
-		//to newly-minted AudioComponentDescription in 10.6 
-		AudioComponentDescription desc;
-#else
 		ComponentDescription desc;
-#endif
-		
+
 		// The default output device
 		desc.componentType = kAudioUnitType_Output;
 		desc.componentSubType = kAudioUnitSubType_DefaultOutput;
 		desc.componentManufacturer = kAudioUnitManufacturer_Apple;
 		desc.componentFlags = 0;
 		desc.componentFlagsMask = 0;
-
-		RequireNoErr(AUGraphAddNode(m_auGraph, &desc, &outputNode));
+		RequireNoErr(AUGraphNewNode(m_auGraph, &desc, 0, NULL, &outputNode));
 
 		// The built-in default (softsynth) music device
 		desc.componentType = kAudioUnitType_MusicDevice;
 		desc.componentSubType = kAudioUnitSubType_DLSSynth;
 		desc.componentManufacturer = kAudioUnitManufacturer_Apple;
-		RequireNoErr(AUGraphAddNode(m_auGraph, &desc, &synthNode));
+		RequireNoErr(AUGraphNewNode(m_auGraph, &desc, 0, NULL, &synthNode));
 
 		// Connect the softsynth to the default output
 		RequireNoErr(AUGraphConnectNodeInput(m_auGraph, synthNode, 0, outputNode, 0));
@@ -78,7 +70,7 @@ public:
 		RequireNoErr(AUGraphInitialize(m_auGraph));
 
 		// Get the music device from the graph.
-		RequireNoErr(AUGraphNodeInfo(m_auGraph, synthNode, NULL, &m_synth));
+		RequireNoErr(AUGraphGetNodeInfo(m_auGraph, synthNode, NULL, NULL, NULL, &m_synth));
 
 		// Finally: Start the graph!
 		RequireNoErr(AUGraphStart(m_auGraph));
@@ -109,12 +101,6 @@ public:
 	void PlaySysex(Bit8u * sysex, Bitu len) {
 		MusicDeviceSysEx(m_synth, sysex, len);
 	}
-	
-	//--Added 2009-03-11 by Alun Bestor to allow Boxer to mute/unmute MIDI output
-	//Note that this isn't actually muting it, it's pausing it
-	void boxer_mute(void)	{ if (m_auGraph) AUGraphStop(m_auGraph); }
-	void boxer_unmute(void)	{ if (m_auGraph) AUGraphStart(m_auGraph); }
-	//--End of modifications
 };
 
 #undef RequireNoErr

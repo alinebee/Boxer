@@ -517,8 +517,6 @@
 		9FCBB2D010A61CA800C28B09 /* boxer.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CD10A61CA800C28B09 /* boxer.icns */; };
 		9FCBB2D110A61CA800C28B09 /* executable.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CE10A61CA800C28B09 /* executable.icns */; };
 		9FCBB2D210A61CA800C28B09 /* package.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2CF10A61CA800C28B09 /* package.icns */; };
-		9FCBB2DA10A61D6100C28B09 /* Preflight.conf in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2D910A61D6100C28B09 /* Preflight.conf */; };
-		9FCBB2DC10A61E9300C28B09 /* Launch.conf in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB2DB10A61E9300C28B09 /* Launch.conf */; };
 		9FCBB6F310A6DDBD00C28B09 /* DOS Toolkit in Resources */ = {isa = PBXBuildFile; fileRef = 9FCBB5FE10A6DDBD00C28B09 /* DOS Toolkit */; };
 		9FCC2F9A1366EF170013F083 /* BXEmulatedKeyboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FCC2F991366EF170013F083 /* BXEmulatedKeyboard.mm */; };
 		9FCC2FF41366FA820013F083 /* BXInputController+BXKeyboardInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FCC2FF31366FA820013F083 /* BXInputController+BXKeyboardInput.m */; };
@@ -1116,7 +1114,6 @@
 		9F886FDC144CB6C30033CCD3 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Bezel.xib; sourceTree = "<group>"; };
 		9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
 		9F8A9CD1143E120B00C37A93 /* MT32ROMTypes.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = MT32ROMTypes.plist; sourceTree = "<group>"; };
-		9F8B8B25142B5C5B0077B6F2 /* midi_mt32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = midi_mt32.h; sourceTree = "<group>"; };
 		9F8BFE9D12C0EF7B0059030F /* BXDisplayLinkRenderingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDisplayLinkRenderingView.h; sourceTree = "<group>"; };
 		9F8BFE9E12C0EF7B0059030F /* BXDisplayLinkRenderingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDisplayLinkRenderingView.m; sourceTree = "<group>"; };
 		9F8F482313DC74CA00C7E022 /* NSShadow+BXShadowExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSShadow+BXShadowExtensions.h"; sourceTree = "<group>"; };
@@ -1285,8 +1282,6 @@
 		9FCBB2CD10A61CA800C28B09 /* boxer.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = boxer.icns; sourceTree = "<group>"; };
 		9FCBB2CE10A61CA800C28B09 /* executable.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = executable.icns; sourceTree = "<group>"; };
 		9FCBB2CF10A61CA800C28B09 /* package.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = package.icns; sourceTree = "<group>"; };
-		9FCBB2D910A61D6100C28B09 /* Preflight.conf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Preflight.conf; sourceTree = "<group>"; };
-		9FCBB2DB10A61E9300C28B09 /* Launch.conf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Launch.conf; sourceTree = "<group>"; };
 		9FCBB5FE10A6DDBD00C28B09 /* DOS Toolkit */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "DOS Toolkit"; sourceTree = "<group>"; };
 		9FCC2F981366EF170013F083 /* BXEmulatedKeyboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatedKeyboard.h; sourceTree = "<group>"; };
 		9FCC2F991366EF170013F083 /* BXEmulatedKeyboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXEmulatedKeyboard.mm; sourceTree = "<group>"; };
@@ -1569,8 +1564,6 @@
 				9F12F97B144875F400FC9645 /* DummyCD.iso */,
 				9F70C19B129036C900A3627F /* Boxer.sdef */,
 				9FDCDEFC11B5B83B0032DA4E /* dsa_pub.pem */,
-				9FCBB2DB10A61E9300C28B09 /* Launch.conf */,
-				9FCBB2D910A61D6100C28B09 /* Preflight.conf */,
 				9F466AFB11A92C4B00C50965 /* UserDefaults.plist */,
 				9FAE9B8A11F1D7CF000363F7 /* GameDefaults.plist */,
 				9FFAFE2C10DE33FB00728BAC /* GameProfiles.plist */,
@@ -2223,7 +2216,6 @@
 				9F77210B12B38C4400072AE8 /* midi_coremidi.h */,
 				9F77210C12B38C4400072AE8 /* midi_oss.h */,
 				9F77210D12B38C4400072AE8 /* midi_win32.h */,
-				9F8B8B25142B5C5B0077B6F2 /* midi_mt32.h */,
 				9F77210E12B38C4400072AE8 /* render.cpp */,
 				9F77210F12B38C4400072AE8 /* render_loops.h */,
 				9F77211012B38C4400072AE8 /* render_scalers.cpp */,
@@ -2929,8 +2921,6 @@
 				9FCBB2D010A61CA800C28B09 /* boxer.icns in Resources */,
 				9FCBB2D110A61CA800C28B09 /* executable.icns in Resources */,
 				9FCBB2D210A61CA800C28B09 /* package.icns in Resources */,
-				9FCBB2DA10A61D6100C28B09 /* Preflight.conf in Resources */,
-				9FCBB2DC10A61E9300C28B09 /* Launch.conf in Resources */,
 				9FCBB6F310A6DDBD00C28B09 /* DOS Toolkit in Resources */,
 				9F59D99810AE0956008DBBC1 /* BoxArtShine.png in Resources */,
 				9F59DD2310AF6129008DBBC1 /* Grille.png in Resources */,

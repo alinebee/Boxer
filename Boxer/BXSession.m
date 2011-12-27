@@ -722,7 +722,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     //Turn off display-sleep suppression
     [self _syncSuppressesDisplaySleep];
 	
-	//Clear our drive and program caches (suppressing notifications)
+	//Clear our drive and program caches
 	[self setLastExecutedProgramPath: nil];
     [self setLastLaunchedProgramPath: nil];
 	
@@ -740,7 +740,10 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     NSMutableArray *configPaths = [[NSMutableArray alloc] initWithCapacity: 4];
     
     //Load Boxer's baseline configuration first.
-    [configPaths addObject: [[NSBundle mainBundle] pathForResource: @"Preflight" ofType: @"conf"]];
+    NSBundle *appBundle = [NSBundle mainBundle];
+    [configPaths addObject: [appBundle pathForResource: @"Preflight"
+                                                ofType: @"conf"
+                                           inDirectory: @"Configurations"]];
 
 	//If we don't have a manually-defined game-profile already,
     //detect the game profile from our target path and set it now.
@@ -756,10 +759,12 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	//Load the appropriate configuration files from our game profile.
     for (NSString *confName in [[self gameProfile] configurations])
     {
-        NSString *profileConf = [[NSBundle mainBundle] pathForResource: confName
-                                                                ofType: @"conf"
-                                                           inDirectory: @"Configurations"];
+        NSString *profileConf = [appBundle pathForResource: confName
+                                                    ofType: @"conf"
+                                               inDirectory: @"Configurations"];
+        
         if (profileConf) [configPaths addObject: profileConf];
+        else NSLog(@"Missing configuration profile: %@", confName);
     }
 	
 	//Next, load the gamebox's own configuration file if it has one.
@@ -768,7 +773,9 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     
 	
     //Last but not least, load Boxer's launch configuration.
-    [configPaths addObject: [[NSBundle mainBundle] pathForResource: @"Launch" ofType: @"conf"]];
+    [configPaths addObject: [appBundle pathForResource: @"Launch"
+                                                ofType: @"conf"
+                                           inDirectory: @"Configurations"]];
     
     return [configPaths autorelease];
 }

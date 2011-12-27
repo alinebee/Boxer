@@ -2105,11 +2105,6 @@ static void CreateDefaultBinds(void) {
 }
 
 void MAPPER_AddHandler(MAPPER_Handler * handler,MapKeys key,Bitu mods,char const * const eventname,char const * const buttonname) {
-	//--Modified 2009-11-07 by Alun Bestor to disable DOSBox's keyboard shortcuts altogether.
-	//(These are now handled entirely by Boxer and we don't want DOSBox's to conflict)
-	return;
-	//--End of modifications
-	
 	//Check if it allready exists=> if so return.
 	for(CHandlerEventVector_it it=handlergroup.begin();it!=handlergroup.end();it++)
 		if(strcmp((*it)->buttonname,buttonname) == 0) return;
@@ -2306,8 +2301,6 @@ void MAPPER_LosingFocus(void) {
 	}
 }
 
-//--Disabled 2010-05-31 by Alun Bestor. Boxer does not support the DOSBox mapper.
-#if 0
 void MAPPER_Run(bool pressed) {
 	if (pressed)
 		return;
@@ -2358,36 +2351,28 @@ void MAPPER_RunInternal() {
 	SDL_ShowCursor(cursor);
 	GFX_ResetScreen();
 }
-#endif
-//--End of modifications
-
 
 void MAPPER_Init(void) {
 	InitializeJoysticks();
-	
 	CreateLayout();
 	CreateBindGroups();
 	if (!MAPPER_LoadBinds()) CreateDefaultBinds();
-	
-	//--Modified 2010-05-30 by Alun Bestor to let Boxer control numlock and capslock state
-	if (boxer_capsLockEnabled()) {
+	if (SDL_GetModState()&KMOD_CAPS) {
 		for (CBindList_it bit=caps_lock_event->bindlist.begin();bit!=caps_lock_event->bindlist.end();bit++) {
 			(*bit)->ActivateBind(32767,true,true);
-			//FIXME: it looks like SDL finally fixed 'sticky' num- and capslock states and we should do the same.
-			//#if SDL_VERSION_ATLEAST(1, 2, 14)
+#if SDL_VERSION_ATLEAST(1, 2, 14)
 			(*bit)->DeActivateBind(false);
-			//#endif
+#endif
 		}
 	}
-	if (boxer_numLockEnabled()) {
+	if (SDL_GetModState()&KMOD_NUM) {
 		for (CBindList_it bit=num_lock_event->bindlist.begin();bit!=num_lock_event->bindlist.end();bit++) {
 			(*bit)->ActivateBind(32767,true,true);
-			//#if SDL_VERSION_ATLEAST(1, 2, 14)
+#if SDL_VERSION_ATLEAST(1, 2, 14)
 			(*bit)->DeActivateBind(false);
-			//#endif
+#endif
 		}
 	}
-	//--End of modifications
 }
 //Somehow including them at the top conflicts with something in setup.h
 #ifdef C_X11_XKB
@@ -2412,9 +2397,7 @@ void MAPPER_StartUp(Section * sec) {
 
 	usescancodes = false;
 
-	//--Modified 2011-02-03 by Alun Bestor: always disable scancodes, as Boxer is already doing the conversion to SDL keys
-	if (false && section->Get_bool("usescancodes")) {
-	//--End of modifications
+	if (section->Get_bool("usescancodes")) {
 		usescancodes=true;
 
 		/* Note: table has to be tested/updated for various OSs */
@@ -2522,12 +2505,8 @@ void MAPPER_StartUp(Section * sec) {
 		}
 	}
 
-	//--Disabled 2010-05-30 by Alun Bestor: Boxer no longer uses mapper files.
-	/*
 	Prop_path* pp = section->Get_path("mapperfile");
 	mapper.filename = pp->realpath;
 	MAPPER_AddHandler(&MAPPER_Run,MK_f1,MMOD1,"mapper","Mapper");
-	 */
-	//--End of modifications
 }
 

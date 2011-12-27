@@ -120,17 +120,20 @@ extern NSString * const BXGenericProfileIdentifier;
 #pragma mark -
 #pragma mark Initializers
 
+//Returns a generic profile with no special configuration or game data.
++ (id) genericProfile;
+
 //Returns the game profile matching the specified identifier,
 //or nil if no such profile was found.
-+ (BXGameProfile *)profileWithIdentifier: (NSString *)identifier;
++ (id) profileWithIdentifier: (NSString *)identifier;
 
 //Detects and returns an appropriate game profile for the specified path,
 //by scanning for telltale files in the file heirarchy starting at basePath.
 //Will return nil if no profile could be found.
 //If searchSubfolders is NO, only the base path will be scanned without
 //recursing into subfolders.
-+ (BXGameProfile *) detectedProfileForPath: (NSString *)basePath
-                          searchSubfolders: (BOOL) searchSubfolders;
++ (id) detectedProfileForPath: (NSString *)basePath
+             searchSubfolders: (BOOL) searchSubfolders;
 
 //Creates a new profile from the specified GameProfiles.plist-format dictionary.
 - (id) initWithDictionary: (NSDictionary *)profileDictionary;

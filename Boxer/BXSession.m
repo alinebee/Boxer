@@ -749,7 +749,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		BXGameProfile *profile = [[self class] profileForPath: [self targetPath]];
         
         //If no specific game can be found, then store it explicitly as an unknown game.
-        if (!profile) profile = [[[BXGameProfile alloc] init] autorelease];
+        if (!profile) profile = [BXGameProfile genericProfile];
 		[self setGameProfile: profile];
 	}
 	

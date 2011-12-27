@@ -71,7 +71,13 @@
 {
 	if (pressedKeys[key])
 	{
-		pressedKeys[key]--;
+        //FIXME: we should just decrement the number of times the key has been pressed
+        //instead of clearing it altogether. However, we're still running into problems
+        //with arrowkeys, where we miss a keyUp: event from OS X and the key stays pressed.
+        //This should be changed back once those problems have been located and fixed.
+        
+		//pressedKeys[key]--;
+        pressedKeys[key] = 0;
         
         //If this was the last press of this key,
         //tell the emulator to finally release the key.

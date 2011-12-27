@@ -97,7 +97,12 @@ NSString * const BXInvalidGameDateThreshold = @"1981-01-01 00:00:00 +0000";
 #pragma mark -
 #pragma mark Initializers
 
-+ (BXGameProfile *) profileWithIdentifier: (NSString *)identifier
++ (id) genericProfile
+{
+    return [[[self alloc] init] autorelease];
+}
+
++ (id) profileWithIdentifier: (NSString *)identifier
 {
     if ([identifier isEqualToString: BXGenericProfileIdentifier])
     {
@@ -111,7 +116,7 @@ NSString * const BXInvalidGameDateThreshold = @"1981-01-01 00:00:00 +0000";
     }
 }
 
-+ (BXGameProfile *) detectedProfileForPath: (NSString *)basePath
++ (id) detectedProfileForPath: (NSString *)basePath
 						  searchSubfolders: (BOOL)searchSubfolders
 {
 	NSFileManager *manager	= [NSFileManager defaultManager];

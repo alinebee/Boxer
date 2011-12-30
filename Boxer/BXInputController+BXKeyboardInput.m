@@ -217,9 +217,7 @@
 	static BOOL mapGenerated = NO;
 	if (!mapGenerated)
 	{
-		CGKeyCode i;
-		//Clear all of the keymap entries first
-		for (i=0; i < KEYMAP_SIZE; i++) map[i] = KBD_NONE;
+        memset(&map, KBD_NONE, sizeof(map));
 		
 		map[kVK_F1] = KBD_f1;
 		map[kVK_F2] = KBD_f2;
@@ -234,10 +232,11 @@
 		map[kVK_F11] = KBD_f11;
 		map[kVK_F12] = KBD_f12;
 		
-		//NOTE: these correspond to the physical locations of these keys on a PC keyboard
+		//NOTE: these keys don't exist on a Mac keyboard, but F13-15 on a full-size
+        //Mac keyboard correspond to the physical locations of the keys on a PC keyboard
 		map[kVK_F13] = KBD_printscreen;
 		map[kVK_F14] = KBD_scrolllock;
-		map[kVK_F15] = KBD_pause;		
+		map[kVK_F15] = KBD_pause;
 		
 		map[kVK_ANSI_1] = KBD_1;
 		map[kVK_ANSI_2] = KBD_2;
@@ -293,12 +292,12 @@
 		
 		map[kVK_ANSI_KeypadPlus] = KBD_kpplus;
 		map[kVK_ANSI_KeypadMinus] = KBD_kpminus;
-		//NOTE: PC keyboards have no equivalent keypad key
+		//NOTE: PC keyboards have no equals key on the keypad, so this triggers a regular equals.
 		map[kVK_ANSI_KeypadEquals] = KBD_equals;
 		map[kVK_ANSI_KeypadDivide] = KBD_kpdivide;
 		map[kVK_ANSI_KeypadMultiply] = KBD_kpmultiply;
 		map[kVK_ANSI_KeypadEnter] = KBD_kpenter;
-		//NOTE: Clear key is in the same physical location as numlock on a PC keyboard
+		//NOTE: Clear key is in the same physical location as Numlock on a PC keyboard.
 		map[kVK_ANSI_KeypadClear] = KBD_numlock;
 		
 		map[kVK_Escape] = KBD_esc;
@@ -345,7 +344,7 @@
 		mapGenerated = YES;
 	}
 	
-	//Correction for transposed kVK_ISO_Section/kVK_ANSI_Grave on ISO keyboards
+	//Correction for transposed kVK_ISO_Section/kVK_ANSI_Grave on ISO keyboards.
 	if ((keyCode == kVK_ISO_Section || keyCode == kVK_ANSI_Grave) && KBGetLayoutType(LMGetKbdType()) == kKeyboardISO)
 	{
 		return (keyCode == kVK_ISO_Section) ? KBD_grave : KBD_extra_lt_gt;

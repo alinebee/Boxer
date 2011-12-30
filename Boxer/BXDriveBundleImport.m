@@ -115,6 +115,7 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
 	NSString *cueContents = [[NSString alloc] initWithContentsOfFile: sourcePath
                                                         usedEncoding: NULL
                                                                error: &readError];
+    [cueContents autorelease];
     
 	if (!cueContents)
 	{
@@ -124,7 +125,6 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
 	
 	NSArray *relatedPaths		= [BXBinCueImage rawPathsInCueContents: cueContents];
 	NSUInteger numRelatedPaths	= [relatedPaths count];
-    [cueContents release];
 	
     
     //Bail out if we aren't able to parse the source files from this cue.

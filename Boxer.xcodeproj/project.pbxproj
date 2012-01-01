@@ -273,6 +273,7 @@
 		9F6311090F70F54300AB1155 /* BXHelpMenuController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F6311080F70F54300AB1155 /* BXHelpMenuController.m */; };
 		9F676BF01235451B00924B8C /* Display.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F676BEF1235451B00924B8C /* Display.png */; };
 		9F687004109F83ED003C26E4 /* BXDriveList.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F687003109F83ED003C26E4 /* BXDriveList.m */; };
+		9F6891A014B0F6D800641C62 /* BXTFlightControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F68919F14B0F6D800641C62 /* BXTFlightControllerProfile.m */; };
 		9F69128C10A2DF8D00EA78CD /* BXValueTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F69128B10A2DF8D00EA78CD /* BXValueTransformers.m */; };
 		9F69133310A2F62A00EA78CD /* BXDrive.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F69133210A2F62A00EA78CD /* BXDrive.m */; };
 		9F6A79041203547800D2097D /* gamefolder.icns in Resources */ = {isa = PBXBuildFile; fileRef = 9F6A79031203547800D2097D /* gamefolder.icns */; };
@@ -829,6 +830,7 @@
 		9F676BEF1235451B00924B8C /* Display.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Display.png; sourceTree = "<group>"; };
 		9F687002109F83ED003C26E4 /* BXDriveList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDriveList.h; sourceTree = "<group>"; };
 		9F687003109F83ED003C26E4 /* BXDriveList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDriveList.m; sourceTree = "<group>"; };
+		9F68919F14B0F6D800641C62 /* BXTFlightControllerProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXTFlightControllerProfile.m; sourceTree = "<group>"; };
 		9F69128A10A2DF8D00EA78CD /* BXValueTransformers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXValueTransformers.h; sourceTree = "<group>"; };
 		9F69128B10A2DF8D00EA78CD /* BXValueTransformers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXValueTransformers.m; sourceTree = "<group>"; };
 		9F69133110A2F62A00EA78CD /* BXDrive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDrive.h; sourceTree = "<group>"; };
@@ -2665,6 +2667,7 @@
 				9FC2F83F13D60FBD00BD4F6B /* BXDualActionControllerProfile.m */,
 				B7900B3D13E47D9E00B37913 /* BXPrecisionProControllerProfile.m */,
 				9FA1CF6713E5B43F00416D74 /* BXMOMORacingControllerProfile.m */,
+				9F68919F14B0F6D800641C62 /* BXTFlightControllerProfile.m */,
 			);
 			name = "Controller profiles";
 			sourceTree = "<group>";
@@ -3351,6 +3354,7 @@
 				9FD7B6B3145746CC00565CEB /* BXThemedButtonCell.m in Sources */,
 				9F26A9AD1458678B000184D1 /* BXThemedSliderCell.m in Sources */,
 				9FAD1DFD14641ECD00C3074E /* BXContinuousThread.m in Sources */,
+				9F6891A014B0F6D800641C62 /* BXTFlightControllerProfile.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

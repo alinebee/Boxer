@@ -8,6 +8,21 @@
 	<array>
         <dict>
             <key>BXProfileIdentifier</key>
+            <string>com.ea.fifa-94</string>
+            <key>BXProfileGameName</key>
+            <string>FIFA International Soccer</string>
+            <key>BXProfileConfigurations</key>
+            <array>
+                <string>Pentium</string>
+            </array>
+            <key>BXProfileTelltales</key>
+            <array>
+                <string>fifa.exe</string>
+            </array>
+        </dict>
+        
+        <dict>
+            <key>BXProfileIdentifier</key>
             <string>com.ssi.steel-panthers-2</string>
             <key>BXProfileGameName</key>
             <string>Steel Panthers II</string>
@@ -489,7 +504,7 @@
 			<string>Screamer 2</string>
 			<key>BXProfileConfigurations</key>
 			<array>
-				<string>Screamer</string>
+				<string>Pentium</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
@@ -503,7 +518,7 @@
 			<string>Screamer</string>
 			<key>BXProfileConfigurations</key>
 			<array>
-				<string>Screamer</string>
+				<string>Pentium</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>

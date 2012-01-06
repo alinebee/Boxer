@@ -24,6 +24,8 @@
 
 @interface BXRenderer ()
 
+@property (readwrite, nonatomic) BXFrameBuffer *currentFrame;
+
 //Ensure our framebuffer and scaling buffers are prepared for rendering the current frame. Called when the layer is about to be drawn.
 - (void) _prepareScalingBufferForCurrentFrameInCGLContext: (CGLContextObj)glContext;
 - (void) _prepareFrameTextureForCurrentFrameInCGLContext: (CGLContextObj)glContext;

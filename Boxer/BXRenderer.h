@@ -56,7 +56,7 @@
 #pragma mark Properties
 
 //The current frame that will be rendered when renderToGLContext: is called.
-@property (retain, nonatomic) BXFrameBuffer *currentFrame;
+@property (readonly, nonatomic) BXFrameBuffer *currentFrame;
 
 //The current shader we are using to render with.
 @property (retain, nonatomic) Shader *currentShader;

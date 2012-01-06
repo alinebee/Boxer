@@ -13,11 +13,13 @@
 @implementation BXGLRenderingView
 @synthesize renderer;
 
-- (void) awakeFromNib
+- (id) initWithCoder: (NSCoder *)aDecoder
 {
-	[self setRenderer: [[[BXRenderer alloc] init] autorelease]];
-	//Hide the view until we receive our first frame
-	[self setHidden: YES];
+    if ((self = [super initWithCoder: aDecoder]))
+    {
+        [self setRenderer: [[[BXRenderer alloc] init] autorelease]];
+    }
+    return self;
 }
 
 - (void) dealloc
@@ -50,21 +52,21 @@
 - (void) updateWithFrame: (BXFrameBuffer *)frame
 {
 	[[self renderer] updateWithFrame: frame];
-	[self setHidden: frame == nil];
+    
 	//Really we should use setNeedsDisplay: instead of forcing the window to redraw immediately;
 	//however, display results in *much* less tearing and more responsive visuals.
-	[self display];
-	//[self setNeedsDisplay: YES];
+	//[self display];
+	[self setNeedsDisplay: YES];
 }
 
-- (BXFrameBuffer *)currentFrame
+- (BXFrameBuffer *) currentFrame
 {
-	return [[self renderer] currentFrame];
+    return [[self renderer] currentFrame];
 }
 
 - (NSSize) viewportSize
 {
-	return NSSizeFromCGSize([renderer viewportForFrame: [renderer currentFrame]].size);
+	return NSSizeFromCGSize([renderer viewportForFrame: [self currentFrame]].size);
 }
 
 - (NSSize) maxFrameSize
@@ -79,6 +81,10 @@
 	
 	//Enable multithreaded OpenGL execution (if available)
 	CGLEnable(cgl_ctx, kCGLCEMPEngine);
+    
+    //Synchronize buffer swaps with vertical refresh rate
+    GLint swapInt = 1;
+    [[self openGLContext] setValues: &swapInt forParameter: NSOpenGLCPSwapInterval];
 	
 	[[self renderer] prepareForGLContext: cgl_ctx];
 }
@@ -96,12 +102,27 @@
 
 - (void) drawRect: (NSRect)dirtyRect
 {
-	CGLContextObj glContext = [[self openGLContext] CGLContextObj];
+    [self renderFrame];
+    [self flushIfNeeded];
+}
+
+- (void) renderFrame
+{
+    CGLContextObj glContext = [[self openGLContext] CGLContextObj];
 	if ([[self renderer] canRenderToGLContext: glContext])
 	{
 		[[self renderer] renderToGLContext: glContext];
-		[[self openGLContext] flushBuffer];
+        needsFlush = YES;
 	}
+}
+
+- (void) flushIfNeeded
+{
+    if (needsFlush)
+    {
+        [[self openGLContext] flushBuffer];
+        needsFlush = NO;
+    }
 }
 
 //Silly notifications to let the window controller know when a live resize operation is starting/stopping,

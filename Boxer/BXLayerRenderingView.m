@@ -17,46 +17,47 @@
 @implementation BXLayerRenderingView
 @synthesize renderingLayer, frameRateLayer;
 
-- (void) awakeFromNib
+- (id) initWithCoder: (NSCoder *)aDecoder
 {
-	CGRect canvas = NSRectToCGRect([self bounds]);
-	
-	[self setWantsLayer: YES];
-	
-	[self setRenderingLayer: [BXRenderingLayer layer]];
-	[renderingLayer setDelegate: self];
-	[renderingLayer setFrame: canvas];
-	[renderingLayer setAutoresizingMask: kCALayerWidthSizable | kCALayerHeightSizable];
-	
+    if ((self = [super initWithCoder: aDecoder]))
+    {
+        CGRect canvas = NSRectToCGRect([self bounds]);
+        
+        [self setWantsLayer: YES];
+        
+        [self setRenderingLayer: [BXRenderingLayer layer]];
+        [renderingLayer setDelegate: self];
+        [renderingLayer setFrame: canvas];
+        [renderingLayer setAutoresizingMask: kCALayerWidthSizable | kCALayerHeightSizable];
+        
 
-	//Now add a layer for displaying the current framerate
-	[self setFrameRateLayer: [BXFrameRateCounterLayer layer]];
-	
-	[frameRateLayer setOpacity: 0.75f];
-	[frameRateLayer setForegroundColor: CGColorGetConstantColor(kCGColorWhite)];
-	[frameRateLayer setFontSize: 20.0f];
-	[frameRateLayer setAlignmentMode: kCAAlignmentRight];
-	
-	BXRollingAverageTransformer *frameRateSmoother = [[[BXRollingAverageTransformer alloc] initWithWindowSize: 10] autorelease];
-	NSDictionary *bindingOptions = [NSDictionary dictionaryWithObjectsAndKeys:
-									frameRateSmoother,	NSValueTransformerBindingOption,
-									nil];
-	
-	[frameRateLayer bind: @"frameRate" toObject: renderingLayer withKeyPath: @"renderer.frameRate" options: bindingOptions];
-	
-	[frameRateLayer setBounds: CGRectMake(0, 0, 400, 20)];
-	[frameRateLayer setAnchorPoint: CGPointMake(1, 0)];
-	[frameRateLayer setPosition: CGPointMake(CGRectGetMaxX(canvas) - 10, CGRectGetMinY(canvas) + 10)];
-	[frameRateLayer setAutoresizingMask: kCALayerMinXMargin | kCALayerMaxYMargin];
-	
-	//Hide the frame-rate display until it is toggled on by a menu action
-	[frameRateLayer setHidden: YES];
-	
-	//Hide the rendering layer until we receive our first frame to draw
-	[renderingLayer setHidden: YES];
-	
-	[[self layer] addSublayer: renderingLayer];
-	[renderingLayer addSublayer: frameRateLayer];
+        //Now add a layer for displaying the current framerate
+        [self setFrameRateLayer: [BXFrameRateCounterLayer layer]];
+        
+        [frameRateLayer setOpacity: 0.75f];
+        [frameRateLayer setForegroundColor: CGColorGetConstantColor(kCGColorWhite)];
+        [frameRateLayer setFontSize: 20.0f];
+        [frameRateLayer setAlignmentMode: kCAAlignmentRight];
+        
+        BXRollingAverageTransformer *frameRateSmoother = [[[BXRollingAverageTransformer alloc] initWithWindowSize: 10] autorelease];
+        NSDictionary *bindingOptions = [NSDictionary dictionaryWithObjectsAndKeys:
+                                        frameRateSmoother,	NSValueTransformerBindingOption,
+                                        nil];
+        
+        [frameRateLayer bind: @"frameRate" toObject: renderingLayer withKeyPath: @"renderer.frameRate" options: bindingOptions];
+        
+        [frameRateLayer setBounds: CGRectMake(0, 0, 400, 20)];
+        [frameRateLayer setAnchorPoint: CGPointMake(1, 0)];
+        [frameRateLayer setPosition: CGPointMake(CGRectGetMaxX(canvas) - 10, CGRectGetMinY(canvas) + 10)];
+        [frameRateLayer setAutoresizingMask: kCALayerMinXMargin | kCALayerMaxYMargin];
+        
+        //Hide the frame-rate display until it is toggled on by a menu action
+        [frameRateLayer setHidden: YES];
+        
+        [[self layer] addSublayer: renderingLayer];
+        [renderingLayer addSublayer: frameRateLayer];
+    }
+    return self;
 }
 
 - (void) dealloc
@@ -80,19 +81,20 @@
 - (void) updateWithFrame: (BXFrameBuffer *)frame
 {
 	[[renderingLayer renderer] updateWithFrame: frame];
-	[renderingLayer setHidden: frame == nil];
+    
 	[renderingLayer setNeedsDisplay];
 }
 
-- (BXFrameBuffer *)currentFrame
+- (BXFrameBuffer *) currentFrame
 {
-	return [[renderingLayer renderer] currentFrame];
+	BXRenderer *renderer = [renderingLayer renderer];
+    return [renderer currentFrame];
 }
 
 - (NSSize) viewportSize
 {
 	BXRenderer *renderer = [renderingLayer renderer];
-	return NSSizeFromCGSize([renderer viewportForFrame: [renderer currentFrame]].size);
+	return NSSizeFromCGSize([renderer viewportForFrame: [self currentFrame]].size);
 }
 
 - (NSSize) maxFrameSize

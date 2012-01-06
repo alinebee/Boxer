@@ -16,6 +16,5 @@
 @interface BXDisplayLinkRenderingView : BXGLRenderingView
 {
 	CVDisplayLinkRef displayLink;
-	BOOL drawing;
 }
 @end

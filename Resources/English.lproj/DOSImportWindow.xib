@@ -184,7 +184,7 @@
 										<bool key="EncodedWithXMLCoder">YES</bool>
 										<object class="NSOpenGLView" id="511833091">
 											<reference key="NSNextResponder" ref="450603396"/>
-											<int key="NSvFlags">5394</int>
+											<int key="NSvFlags">-2147478254</int>
 											<object class="NSPSMatrix" key="NSDrawMatrix"/>
 											<string key="NSFrameSize">{640, 400}</string>
 											<reference key="NSSuperview" ref="450603396"/>

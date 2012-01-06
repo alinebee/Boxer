@@ -417,9 +417,10 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 {
 	//Update the renderer with the new frame.
 	[renderingView updateWithFrame: frame];
-	
-	if (frame != nil)
-	{
+    
+    BOOL hasFrame = (frame != nil);
+	if (hasFrame)
+	{   
 		//Resize the window to accomodate the frame when DOS switches resolutions.
 		//IMPLEMENTATION NOTE: We do this after only updating the view, because the frame
 		//immediately *before* DOS changes resolution is usually (always?) video-buffer garbage.
@@ -430,6 +431,8 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 		//bounds-change notifications so we can resize the window to match?
 		[self _resizeToAccommodateFrame: frame];
 	}
+    
+    [renderingView setHidden: !hasFrame];
 }
 
 - (NSSize) viewportSize

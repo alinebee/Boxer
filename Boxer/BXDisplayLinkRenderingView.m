@@ -14,63 +14,49 @@
 #pragma mark Private interface declaration
 
 @interface BXDisplayLinkRenderingView ()
+
+//The display link callback that renders the next frame in sync with the screen refresh.
+CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
+                               const CVTimeStamp* now,  
+                               const CVTimeStamp* outputTime,
+                               CVOptionFlags flagsIn,
+                               CVOptionFlags* flagsOut,
+                               void* displayLinkContext);
+
 @end
 	 
 	 
 @implementation BXDisplayLinkRenderingView
 
+- (id) initWithCoder: (NSCoder *)decoder
+{
+    //Don't use this class on Leopard, as the DisplayLink approach has rubbish performance on it.
+    //Instead, quietly replace ourselves with an instance of our superclass.
+    if ([BXAppController isRunningOnLeopard])
+    {
+        [self release];
+        return [(id)[BXGLRenderingView alloc] initWithCoder: decoder];
+    }
+    else
+    {
+        return [super initWithCoder: decoder];
+    }
+}
+
+
 #pragma mark -
 #pragma mark Rendering methods
 
-static CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
-									  const CVTimeStamp* now,
-									  const CVTimeStamp* outputTime,
-									  CVOptionFlags flagsIn,
-									  CVOptionFlags* flagsOut,
-									  void* displayLinkContext)
-{
-	//Needed because we're operating in a different thread
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	
-	BXGLRenderingView *view = (BXGLRenderingView *)displayLinkContext;
-	[view displayIfNeededIgnoringOpacity];
-	 
-	[pool drain];
-	return kCVReturnSuccess;
-}
-
-- (id) initWithCoder: (NSCoder *)decoder
-{
-	if ((self = [super initWithCoder: decoder]))
-	{
-		//Don't use this class on Leopard, as the DisplayLink approach has rubbish performance on it.
-		//Instead, quietly replace ourselves with an instance of our superclass.
-		if ([BXAppController isRunningOnLeopard])
-		{
-			[self release];
-			return [(id)[BXGLRenderingView alloc] initWithCoder: decoder];
-		}
-	}
-	return self;
-}
-
 - (void) updateWithFrame: (BXFrameBuffer *)frame
 {
-	[[self renderer] updateWithFrame: frame];
-	[self setHidden: frame == nil];
-	
-	[self setNeedsDisplay: YES];
+    //Pre-render the frame, but don't flush it or tell Cocoa that we need redrawing.
+    //Instead, we'll flush in the display link.
+    [[self renderer] updateWithFrame: frame];
+    [self renderFrame];
 }
 
 - (void) prepareOpenGL
-{
-	//Synchronize buffer swaps with vertical refresh rate
-    if ([[NSUserDefaults standardUserDefaults] boolForKey: @"useVSync"])
-    {
-        GLint swapInt = 1;
-        [[self openGLContext] setValues: &swapInt forParameter: NSOpenGLCPSwapInterval];
-	}
-    
+{   
 	// Create a display link capable of being used with all active displays
 	CVDisplayLinkCreateWithActiveCGDisplays(&displayLink);
 	
@@ -96,6 +82,24 @@ static CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 		displayLink = NULL;
 	}
 	[super clearGLContext];
+}
+
+CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
+                               const CVTimeStamp* now,  
+                               const CVTimeStamp* outputTime,
+                               CVOptionFlags flagsIn,
+                               CVOptionFlags* flagsOut,
+                               void* displayLinkContext)
+{
+	//Needed because we're operating in a different thread
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+	
+	BXDisplayLinkRenderingView *view = (BXDisplayLinkRenderingView *)displayLinkContext;
+    
+    [view flushIfNeeded];
+    
+	[pool drain];
+	return kCVReturnSuccess;
 }
 
 @end

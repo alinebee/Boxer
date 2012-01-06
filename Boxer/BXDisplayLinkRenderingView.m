@@ -52,7 +52,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     //Pre-render the frame, but don't flush it or tell Cocoa that we need redrawing.
     //(Instead, we'll flush in the display link.)
     [[self renderer] updateWithFrame: frame];
-    [self renderFrame];
+    [self renderIfNeeded];
 }
 
 - (void) prepareOpenGL

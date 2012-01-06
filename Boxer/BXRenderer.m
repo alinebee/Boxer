@@ -24,7 +24,9 @@
 
 @interface BXRenderer ()
 
-@property (readwrite, nonatomic) BXFrameBuffer *currentFrame;
+@property (readwrite, retain) BXFrameBuffer *currentFrame;
+@property (readwrite, assign) BOOL needsRender;
+@property (readwrite, assign) BOOL needsFlush;
 
 //Ensure our framebuffer and scaling buffers are prepared for rendering the current frame. Called when the layer is about to be drawn.
 - (void) _prepareScalingBufferForFrame: (BXFrameBuffer *)frame inCGLContext: (CGLContextObj)glContext;
@@ -52,7 +54,8 @@
 
 @implementation BXRenderer
 @synthesize currentFrame, currentShader, frameRate, renderingTime, canvas, maintainsAspectRatio;
-@synthesize requiresDisplayCaptureSuppression;
+@synthesize needsFlush, needsRender;
+@synthesize needsDisplayCaptureSuppression;
 
 - (void) dealloc
 {
@@ -65,9 +68,27 @@
 #pragma mark Handling frame updates
 
 - (void) updateWithFrame: (BXFrameBuffer *)frame
-{
-	[self setCurrentFrame: frame];
-	needsFrameTextureUpdate = YES;
+{   
+    if (frame != currentFrame)
+	{
+		//If the buffer memory locations for the two frames are different,
+        //we'll need to reinitialize the texture to link to the new buffer.
+        //This will be done next time we render.
+		if ([frame bytes] != [currentFrame bytes])
+			needsNewFrameTexture = YES;
+		
+		//If the buffers for the two frames are a different size,
+        //we'll need to recreate the scaling buffer when we next render too.
+		if (!NSEqualSizes([frame size], [currentFrame size]))
+			recalculateScalingBuffer = YES;
+        
+        [self setCurrentFrame: frame];
+	}
+    
+    //Even if the frame hasn't changed, it may contain new data:
+    //flag that we're dirty and need re-rendering.
+    [self setNeedsRender: YES];
+    needsFrameTextureUpdate = YES;
 }
 
 - (CGSize) maxFrameSize
@@ -77,29 +98,22 @@
 
 - (void) setCanvas: (CGRect)newCanvas
 {
-	canvas = newCanvas;
-	
-	//We need to recalculate our scaling buffer size if our canvas changes
+    if (!CGRectEqualToRect(canvas, newCanvas))
+    {
+        canvas = newCanvas;
+        [self setNeedsRender: YES];
+    }
+	//We need to recalculate the scaling buffer size if our canvas changes.
 	recalculateScalingBuffer = YES;
 }
 
-- (void) setCurrentFrame: (BXFrameBuffer *)frame
+- (void) setMaintainsAspectRatio: (BOOL)flag
 {
-	if (frame != currentFrame)
-	{
-		//If the buffer memory locations for the two frames are different, we'll need to reinitialize
-		//the texture to link to the new buffer. This will be done next time we draw.
-		if ([frame bytes] != [currentFrame bytes])
-			needsNewFrameTexture = YES;
-		
-		//If the buffers for the two frames are a different size, we'll need to recreate the scaling
-		//buffer when we draw too and possibly adjust the layout of the layer
-		if (!NSEqualSizes([frame size], [currentFrame size]))
-			recalculateScalingBuffer = YES;
-		
-		[currentFrame release];
-		currentFrame = [frame retain];
-	}
+    if (maintainsAspectRatio != flag)
+    {
+        maintainsAspectRatio = flag;
+        [self setNeedsRender: YES];
+    }
 }
 
 
@@ -110,11 +124,10 @@
 {
 	CGLContextObj cgl_ctx = glContext;
 
-	
 	//Check if the renderer is an Intel GMA 950, which has a buggy fullscreen mode
 	GLint rendererID = 0;
 	CGLGetParameter(cgl_ctx, kCGLCPCurrentRendererID, &rendererID);
-	requiresDisplayCaptureSuppression = (rendererID & kCGLRendererIDMatchingMask) == kCGLRendererIntel900ID;
+	needsDisplayCaptureSuppression = (rendererID & kCGLRendererIDMatchingMask) == kCGLRendererIntel900ID;
 	
 	
 	//Check what the largest texture size we can support is
@@ -189,9 +202,22 @@
 	if (lastFrameTime)
 		[self setFrameRate: (CGFloat)(1.0 / (endTime - lastFrameTime))];
 	
-	lastFrameTime = endTime;	
+	lastFrameTime = endTime;
+	
+    [self setNeedsRender: NO];
+    [self setNeedsFlush: YES];
 }
 
+- (void) flushToGLContext: (CGLContextObj)glContext
+{
+    CGLContextObj cgl_ctx = glContext;
+    
+    CGLLockContext(cgl_ctx);
+    CGLFlushDrawable(cgl_ctx);
+    CGLUnlockContext(cgl_ctx);
+    
+    [self setNeedsFlush: NO];
+}
 
 - (CGRect) viewportForFrame: (BXFrameBuffer *)frame
 {

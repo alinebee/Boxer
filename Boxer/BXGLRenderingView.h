@@ -16,13 +16,13 @@
 @interface BXGLRenderingView : NSOpenGLView <BXFrameRenderingView>
 {
 	BXRenderer *renderer;
-    BOOL needsFlush;
 }
 @property (retain, nonatomic) BXRenderer *renderer;
 
-//Renders the frame without flushing it to the screen.
-- (void) renderFrame;
-//Flush the last rendered frame to the screen.
+//Renders the frame to the OpenGL buffer, if it has changed and needs rendering.
+- (void) renderIfNeeded;
+
+//Flushes the OpenGL buffer to the screen, if it has been rendered and needs flushing.
 - (void) flushIfNeeded;
 
 @end

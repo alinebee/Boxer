@@ -41,6 +41,7 @@
 - (void) setManagesAspectRatio: (BOOL)manage
 {
 	[[self renderer] setMaintainsAspectRatio: manage];
+    [self renderIfNeeded];
 	[self setNeedsDisplay: YES];
 }
 
@@ -52,7 +53,7 @@
 - (void) updateWithFrame: (BXFrameBuffer *)frame
 {
 	[[self renderer] updateWithFrame: frame];
-    [self renderFrame];
+    [self renderIfNeeded];
 	[self setNeedsDisplay: YES];
 }
 
@@ -95,30 +96,29 @@
 - (void) reshape
 {
 	[[self renderer] setCanvas: NSRectToCGRect([self bounds])];
-    [self renderFrame];
 }
 
 - (void) drawRect: (NSRect)dirtyRect
 {
+    [self renderIfNeeded];
     [self flushIfNeeded];
 }
 
-- (void) renderFrame
+- (void) renderIfNeeded
 {
-    CGLContextObj glContext = [[self openGLContext] CGLContextObj];
-	if ([[self renderer] canRenderToGLContext: glContext])
+    CGLContextObj cgl_ctx = [[self openGLContext] CGLContextObj];
+	if ([[self renderer] needsRender] && [[self renderer] canRenderToGLContext: cgl_ctx])
 	{
-		[[self renderer] renderToGLContext: glContext];
-        needsFlush = YES;
+		[[self renderer] renderToGLContext: cgl_ctx];
 	}
 }
 
 - (void) flushIfNeeded
 {
-    if (needsFlush)
+    if ([[self renderer] needsFlush])
     {
-        [[self openGLContext] flushBuffer];
-        needsFlush = NO;
+        CGLContextObj cgl_ctx = [[self openGLContext] CGLContextObj];
+        [[self renderer] flushToGLContext: cgl_ctx];
     }
 }
 
@@ -136,9 +136,9 @@
 	[[NSNotificationCenter defaultCenter] postNotificationName: BXViewDidLiveResizeNotification object: self];
 }
 
-- (BOOL) requiresDisplayCaptureSuppression
+- (BOOL) needsDisplayCaptureSuppression
 {
-	return [[self renderer] requiresDisplayCaptureSuppression];
+	return [[self renderer] needsDisplayCaptureSuppression];
 }
 
 @end

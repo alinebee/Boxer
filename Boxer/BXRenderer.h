@@ -33,7 +33,7 @@
 	
 	CGRect canvas;
 	BOOL maintainsAspectRatio;
-	BOOL requiresDisplayCaptureSuppression;
+	BOOL needsDisplayCaptureSuppression;
 	
 	GLuint frameTexture;
 	GLuint scalingBufferTexture;
@@ -46,6 +46,9 @@
 	BOOL needsNewFrameTexture;
 	BOOL needsFrameTextureUpdate;
 	BOOL recalculateScalingBuffer;
+    
+    BOOL needsRender;
+    BOOL needsFlush;
 	
 	NSTimeInterval lastFrameTime;
 	NSTimeInterval renderingTime;
@@ -56,7 +59,7 @@
 #pragma mark Properties
 
 //The current frame that will be rendered when renderToGLContext: is called.
-@property (readonly, nonatomic) BXFrameBuffer *currentFrame;
+@property (readonly, retain) BXFrameBuffer *currentFrame;
 
 //The current shader we are using to render with.
 @property (retain, nonatomic) Shader *currentShader;
@@ -80,8 +83,15 @@
 
 //Whether we should prevent OS X 10.6 from automatically capturing the display in full screen mode.
 //This is needed for Intel GMA950 chipsets, and the hack itself is implemented by BXDOSWindowController.
-@property (readonly) BOOL requiresDisplayCaptureSuppression;
+@property (readonly) BOOL needsDisplayCaptureSuppression;
 
+//Whether the current frame needs re-rendering.
+//Will be YES if the frame, canvas or aspect ratio have changed.
+@property (readonly) BOOL needsRender;
+
+//Whether the renderer has finished rendering to the framebuffer and it can be flushed to the screen.
+//Will be YES after renderToCGLContext: has been called.
+@property (readonly) BOOL needsFlush;
 
 #pragma mark -
 #pragma mark Methods
@@ -113,5 +123,9 @@
 //frame texture and resizes the framebuffer if necessary. All changes to OpenGL state are then 
 //undone at the end of the frame, as expected by CAOpenGLLayer.
 - (void) renderToGLContext:		(CGLContextObj)glContext;
+
+//Flushes the OpenGL buffer in the specified context.
+//Unused by the layer-based implementations.
+- (void) flushToGLContext:     (CGLContextObj)glContext;
 
 @end

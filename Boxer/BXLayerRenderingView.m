@@ -134,7 +134,7 @@
 }
 
 
-- (BOOL) requiresDisplayCaptureSuppression
+- (BOOL) needsDisplayCaptureSuppression
 {
 	return NO;
 }

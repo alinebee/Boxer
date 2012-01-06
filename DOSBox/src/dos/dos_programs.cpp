@@ -1596,7 +1596,9 @@ void DOS_SetupPrograms(void) {
 	PROGRAMS_MakeFile("MEM.COM",MEM_ProgramStart);
 	PROGRAMS_MakeFile("LOADFIX.COM",LOADFIX_ProgramStart);
 	PROGRAMS_MakeFile("RESCAN.COM",RESCAN_ProgramStart);
-	PROGRAMS_MakeFile("INTRO.COM",INTRO_ProgramStart);
+    //--Disabled 2012-01-06 by Alun Bestor: Boxer no longer uses the INTRO command.
+	//PROGRAMS_MakeFile("INTRO.COM",INTRO_ProgramStart);
+    //--End of modifications
 	PROGRAMS_MakeFile("BOOT.COM",BOOT_ProgramStart);
 #if C_DEBUG
 	PROGRAMS_MakeFile("LDGFXROM.COM", LDGFXROM_ProgramStart);

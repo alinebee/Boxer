@@ -81,8 +81,8 @@
 	CGLEnable(cgl_ctx, kCGLCEMPEngine);
     
     //Synchronize buffer swaps with vertical refresh rate
-    GLint swapInt = 1;
-    [[self openGLContext] setValues: &swapInt forParameter: NSOpenGLCPSwapInterval];
+    GLint enableVSync = YES;
+    [[self openGLContext] setValues: &enableVSync forParameter: NSOpenGLCPSwapInterval];
 	
 	[[self renderer] prepareForGLContext: cgl_ctx];
 }

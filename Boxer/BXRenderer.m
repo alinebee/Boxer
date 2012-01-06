@@ -123,7 +123,9 @@
 - (void) prepareForGLContext: (CGLContextObj)glContext
 {
 	CGLContextObj cgl_ctx = glContext;
-
+    
+    CGLLockContext(cgl_ctx);
+    
 	//Check if the renderer is an Intel GMA 950, which has a buggy fullscreen mode
 	GLint rendererID = 0;
 	CGLGetParameter(cgl_ctx, kCGLCPCurrentRendererID, &rendererID);
@@ -160,18 +162,24 @@
     glDisable(GL_DITHER);
     glDisable(GL_FOG);
     glPixelZoom(1.0f, 1.0f);
+    
+    CGLUnlockContext(cgl_ctx);
 }
 
 - (void) tearDownGLContext: (CGLContextObj)glContext
 {
 	CGLContextObj cgl_ctx = glContext;
 	
+    CGLLockContext(cgl_ctx);
+    
 	if (glIsTexture(frameTexture))			glDeleteTextures(1, &frameTexture);
 	if (glIsTexture(scalingBufferTexture))	glDeleteTextures(1, &scalingBufferTexture);
 	if (glIsFramebufferEXT(scalingBuffer))	glDeleteFramebuffersEXT(1, &scalingBuffer);
 	frameTexture			= 0;
 	scalingBufferTexture	= 0;
 	scalingBuffer			= 0;	
+    
+    CGLUnlockContext(cgl_ctx);
 }
 
 - (BOOL) canRenderToGLContext: (CGLContextObj)glContext
@@ -181,42 +189,44 @@
 
 - (void) renderToGLContext: (CGLContextObj)glContext
 {
-	NSTimeInterval startTime = [NSDate timeIntervalSinceReferenceDate];
-	
-	CGLContextObj cgl_ctx = glContext;
-	
+    [self setNeedsRender: NO];
+    [self setNeedsFlush: NO];
+    
+    NSTimeInterval startTime = [NSDate timeIntervalSinceReferenceDate];
+    
+    CGLContextObj cgl_ctx = glContext;
+    
     CGLLockContext(cgl_ctx);
     
     
     BXFrameBuffer *frame = [self currentFrame];
-	
-	[self _prepareFrameTextureForFrame: frame inCGLContext: cgl_ctx];
-	[self _prepareScalingBufferForFrame: frame inCGLContext: cgl_ctx];
-	[self _renderFrame: frame inCGLContext: cgl_ctx];
-	
+    
+    [self _prepareFrameTextureForFrame: frame inCGLContext: cgl_ctx];
+    [self _prepareScalingBufferForFrame: frame inCGLContext: cgl_ctx];
+    [self _renderFrame: frame inCGLContext: cgl_ctx];
+    
     CGLUnlockContext(cgl_ctx);
-	
-	NSTimeInterval endTime = [NSDate timeIntervalSinceReferenceDate];
-	
-	[self setRenderingTime: endTime - startTime];
-	if (lastFrameTime)
-		[self setFrameRate: (CGFloat)(1.0 / (endTime - lastFrameTime))];
-	
-	lastFrameTime = endTime;
-	
-    [self setNeedsRender: NO];
+    
+    NSTimeInterval endTime = [NSDate timeIntervalSinceReferenceDate];
+    
+    [self setRenderingTime: endTime - startTime];
+    if (lastFrameTime)
+        [self setFrameRate: (CGFloat)(1.0 / (endTime - lastFrameTime))];
+    
+    lastFrameTime = endTime;
+    
     [self setNeedsFlush: YES];
 }
 
 - (void) flushToGLContext: (CGLContextObj)glContext
 {
+    [self setNeedsFlush: NO];
+    
     CGLContextObj cgl_ctx = glContext;
     
     CGLLockContext(cgl_ctx);
     CGLFlushDrawable(cgl_ctx);
     CGLUnlockContext(cgl_ctx);
-    
-    [self setNeedsFlush: NO];
 }
 
 - (CGRect) viewportForFrame: (BXFrameBuffer *)frame

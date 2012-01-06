@@ -52,10 +52,7 @@
 - (void) updateWithFrame: (BXFrameBuffer *)frame
 {
 	[[self renderer] updateWithFrame: frame];
-    
-	//Really we should use setNeedsDisplay: instead of forcing the window to redraw immediately;
-	//however, display results in *much* less tearing and more responsive visuals.
-	//[self display];
+    [self renderFrame];
 	[self setNeedsDisplay: YES];
 }
 
@@ -98,11 +95,11 @@
 - (void) reshape
 {
 	[[self renderer] setCanvas: NSRectToCGRect([self bounds])];
+    [self renderFrame];
 }
 
 - (void) drawRect: (NSRect)dirtyRect
 {
-    [self renderFrame];
     [self flushIfNeeded];
 }
 

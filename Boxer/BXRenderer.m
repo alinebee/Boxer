@@ -27,11 +27,11 @@
 @property (readwrite, nonatomic) BXFrameBuffer *currentFrame;
 
 //Ensure our framebuffer and scaling buffers are prepared for rendering the current frame. Called when the layer is about to be drawn.
-- (void) _prepareScalingBufferForCurrentFrameInCGLContext: (CGLContextObj)glContext;
-- (void) _prepareFrameTextureForCurrentFrameInCGLContext: (CGLContextObj)glContext;
+- (void) _prepareScalingBufferForFrame: (BXFrameBuffer *)frame inCGLContext: (CGLContextObj)glContext;
+- (void) _prepareFrameTextureForFrame: (BXFrameBuffer *)frame  inCGLContext: (CGLContextObj)glContext;
 
-//Render the current frame. Called when the layer is drawn.
-- (void) _renderCurrentFrameInCGLContext: (CGLContextObj)glContext;
+//Render the specified frame into the specified GL context.
+- (void) _renderFrame: (BXFrameBuffer *)frame inCGLContext: (CGLContextObj)glContext;
 
 //Draw a region of the currently active GL texture to a quad made from the specified points.
 - (void) _renderTexture: (GLuint)texture fromRegion: (CGRect)textureRegion toPoints: (GLfloat *)vertices inCGLContext: (CGLContextObj)glContext;
@@ -173,11 +173,13 @@
 	CGLContextObj cgl_ctx = glContext;
 	
     CGLLockContext(cgl_ctx);
+    
+    
+    BXFrameBuffer *frame = [self currentFrame];
 	
-	[self _prepareFrameTextureForCurrentFrameInCGLContext: cgl_ctx];
-	[self _prepareScalingBufferForCurrentFrameInCGLContext: cgl_ctx];
-	
-	[self _renderCurrentFrameInCGLContext: cgl_ctx];
+	[self _prepareFrameTextureForFrame: frame inCGLContext: cgl_ctx];
+	[self _prepareScalingBufferForFrame: frame inCGLContext: cgl_ctx];
+	[self _renderFrame: frame inCGLContext: cgl_ctx];
 	
     CGLUnlockContext(cgl_ctx);
 	
@@ -208,7 +210,7 @@
 #pragma mark -
 #pragma mark Private methods
 
-- (void) _renderCurrentFrameInCGLContext: (CGLContextObj)glContext
+- (void) _renderFrame: (BXFrameBuffer *)frame inCGLContext: (CGLContextObj)glContext
 {
 	CGLContextObj cgl_ctx = glContext;
 	
@@ -216,7 +218,7 @@
 	if (useScalingBuffer) glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &contextFramebuffer);
 	
 	//Set the viewport to match the aspect ratio of our frame
-	CGRect viewportRect = CGRectIntegral([self viewportForFrame: [self currentFrame]]);
+	CGRect viewportRect = CGRectIntegral([self viewportForFrame: frame]);
 	
 	glViewport((GLint)viewportRect.origin.x,
 			   (GLint)viewportRect.origin.y,
@@ -295,7 +297,10 @@
 	}
 }
 
-- (void) _renderTexture: (GLuint)texture fromRegion: (CGRect)textureRegion toPoints: (GLfloat *)vertices inCGLContext: (CGLContextObj)glContext
+- (void) _renderTexture: (GLuint)texture
+             fromRegion: (CGRect)textureRegion
+               toPoints: (GLfloat *)vertices
+           inCGLContext: (CGLContextObj)glContext
 {
 	CGLContextObj cgl_ctx = glContext;
 	
@@ -333,14 +338,14 @@
 #pragma mark -
 #pragma mark Preparing resources for drawing
 
-- (void) _prepareScalingBufferForCurrentFrameInCGLContext: (CGLContextObj)glContext
+- (void) _prepareScalingBufferForFrame: (BXFrameBuffer *)frame inCGLContext: (CGLContextObj)glContext
 {
 	if (scalingBuffer && recalculateScalingBuffer)
 	{
 		CGLContextObj cgl_ctx = glContext;
 		
-		CGSize newBufferSize = [self _idealScalingBufferSizeForFrame: currentFrame
-													  toViewportSize: [self viewportForFrame: currentFrame].size];
+		CGSize newBufferSize = [self _idealScalingBufferSizeForFrame: frame
+													  toViewportSize: [self viewportForFrame: frame].size];
 		
 		//If the old scaling buffer doesn't fit the new ideal size, recreate it
 		if (!CGSizeEqualToSize(scalingBufferSize, newBufferSize))
@@ -362,7 +367,7 @@
 	}
 }
 
-- (void) _prepareFrameTextureForCurrentFrameInCGLContext: (CGLContextObj)glContext
+- (void) _prepareFrameTextureForFrame: (BXFrameBuffer *)frame inCGLContext: (CGLContextObj)glContext
 {
 	CGLContextObj cgl_ctx = glContext;
 	
@@ -370,14 +375,14 @@
 	{
 		//Wipe out any existing frame texture we have before replacing it
 		if (frameTexture) glDeleteTextures(1, &frameTexture);
-		frameTexture = [self _createTextureForFrameBuffer: [self currentFrame] inCGLContext: cgl_ctx];
+		frameTexture = [self _createTextureForFrameBuffer: frame inCGLContext: cgl_ctx];
 		
 		needsNewFrameTexture = NO;
 		needsFrameTextureUpdate = NO;
 	}
 	else if (needsFrameTextureUpdate)
 	{
-		[self _fillTexture: frameTexture withFrameBuffer: [self currentFrame] inCGLContext: cgl_ctx];
+		[self _fillTexture: frameTexture withFrameBuffer: frame inCGLContext: cgl_ctx];
 		needsFrameTextureUpdate = NO;
 	}
 }
@@ -403,8 +408,7 @@
 	
 	//OS X-specific voodoo for mapping the framebuffer's byte array 
 	//to video memory for fast texture transfers.
-	
-	//These are disabled for now as they produce very apparent frame tearing and shimmering
+    //Disabled for now as they can cause screen tearing.
 	//glTextureRangeAPPLE(GL_TEXTURE_RECTANGLE_ARB,  texWidth * texHeight * (32 >> 3), [frame bytes]);
 	//glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_STORAGE_HINT_APPLE, GL_STORAGE_CACHED_APPLE);
 	

@@ -16,5 +16,6 @@
 @interface BXDisplayLinkRenderingView : BXGLRenderingView
 {
 	CVDisplayLinkRef displayLink;
+    BOOL needsCVLinkDisplay;
 }
 @end

@@ -15,6 +15,8 @@
 
 @interface BXDisplayLinkRenderingView ()
 
+@property (assign) BOOL needsCVLinkDisplay;
+
 //The display link callback that renders the next frame in sync with the screen refresh.
 CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
                                const CVTimeStamp* now,  
@@ -27,6 +29,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 	 
 	 
 @implementation BXDisplayLinkRenderingView
+@synthesize needsCVLinkDisplay;
 
 - (id) initWithCoder: (NSCoder *)decoder
 {
@@ -49,11 +52,11 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 
 - (void) updateWithFrame: (BXFrameBuffer *)frame
 {
-    //Pre-render the frame, but don't flush it or tell Cocoa that we need redrawing.
-    //(Instead, we'll flush in the display link.)
-
-    [[self renderer] updateWithFrame: frame];
-    [self renderIfNeeded];
+    //Update the frame but don't tell Cocoa that we need redrawing:
+    //Instead, we'll render and flush in the display link. This prevents
+    //Cocoa from drawing the dirty view at the 'wrong' time.
+    [[self renderer] updateWithFrame: frame inGLContext: [[self openGLContext] CGLContextObj]];
+    [self setNeedsCVLinkDisplay: YES];
 }
 
 - (void) prepareOpenGL
@@ -73,6 +76,12 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 	CVDisplayLinkStart(displayLink);
 	
 	[super prepareOpenGL];
+}
+
+- (void) drawRect:(NSRect)dirtyRect
+{
+    [self setNeedsCVLinkDisplay: NO];
+    [super drawRect: dirtyRect];
 }
 
 - (void) clearGLContext
@@ -97,7 +106,8 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 	
 	BXDisplayLinkRenderingView *view = (BXDisplayLinkRenderingView *)displayLinkContext;
     
-    [view flushIfNeeded];
+    if ([view needsCVLinkDisplay])
+        [view display];
     
 	[pool drain];
 	return kCVReturnSuccess;

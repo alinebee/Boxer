@@ -9,8 +9,13 @@
 #import "BXFrameBuffer.h"
 #import "BXGeometry.h"
 
+@interface BXFrameBuffer ()
+@property (readwrite, assign) NSUInteger numDirtyRegions;
+@end
+
 @implementation BXFrameBuffer
 @synthesize size, baseResolution, bitDepth, intendedScale;
+@synthesize numDirtyRegions;
 
 
 + (NSSize) scalingFactorForSize: (NSSize)frameSize toAspectRatio: (CGFloat)aspectRatio
@@ -111,6 +116,30 @@
 - (void *) mutableBytes
 {
 	return [frameData mutableBytes];
+}
+
+#pragma mark Region-dirtying
+
+- (void) setNeedsDisplayInRegion: (NSRange)range
+{
+    NSAssert([self numDirtyRegions] < MAX_DIRTY_REGIONS, @"setNeedsDisplayInRegion: called when the list of dirty regions is already full.");
+    
+    NSUInteger nextIndex = [self numDirtyRegions];
+    dirtyRegions[nextIndex] = range;
+    
+    [self setNumDirtyRegions: nextIndex + 1];
+}
+
+- (void) clearDirtyRegions
+{
+    [self setNumDirtyRegions: 0];
+}
+
+- (NSRange) dirtyRegionAtIndex: (NSUInteger)index
+{
+    NSAssert1(index < [self numDirtyRegions], @"dirtyRegionAtIndex: called with out of range index: %u", index);
+    
+    return dirtyRegions[index];
 }
 
 @end

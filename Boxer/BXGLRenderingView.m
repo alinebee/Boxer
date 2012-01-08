@@ -41,8 +41,6 @@
 - (void) setManagesAspectRatio: (BOOL)manage
 {
 	[[self renderer] setMaintainsAspectRatio: manage];
-    [self renderIfNeeded];
-	[self setNeedsDisplay: YES];
 }
 
 - (BOOL) managesAspectRatio
@@ -52,8 +50,7 @@
 
 - (void) updateWithFrame: (BXFrameBuffer *)frame
 {
-	[[self renderer] updateWithFrame: frame];
-    [self renderIfNeeded];
+	[[self renderer] updateWithFrame: frame inGLContext: [[self openGLContext] CGLContextObj]];
 	[self setNeedsDisplay: YES];
 }
 
@@ -74,15 +71,15 @@
 
 
 - (void) prepareOpenGL
-{	
+{
 	CGLContextObj cgl_ctx = [[self openGLContext] CGLContextObj];
 	
 	//Enable multithreaded OpenGL execution (if available)
 	CGLEnable(cgl_ctx, kCGLCEMPEngine);
     
     //Synchronize buffer swaps with vertical refresh rate
-    GLint enableVSync = YES;
-    [[self openGLContext] setValues: &enableVSync forParameter: NSOpenGLCPSwapInterval];
+    GLint useVSync = YES;
+    [[self openGLContext] setValues: &useVSync forParameter: NSOpenGLCPSwapInterval];
 	
 	[[self renderer] prepareForGLContext: cgl_ctx];
 }
@@ -95,31 +92,20 @@
 
 - (void) reshape
 {
+    [super reshape];
 	[[self renderer] setCanvas: NSRectToCGRect([self bounds])];
 }
 
 - (void) drawRect: (NSRect)dirtyRect
 {
-    [self renderIfNeeded];
-    [self flushIfNeeded];
-}
-
-- (void) renderIfNeeded
-{
     CGLContextObj cgl_ctx = [[self openGLContext] CGLContextObj];
-	if ([[self renderer] needsRender] && [[self renderer] canRenderToGLContext: cgl_ctx])
+    if ([[self renderer] canRenderToGLContext: cgl_ctx])
 	{
-		[[self renderer] renderToGLContext: cgl_ctx];
+		CGLLockContext(cgl_ctx);
+            [[self renderer] renderToGLContext: cgl_ctx];
+            [[self renderer] flushToGLContext: cgl_ctx];
+        CGLUnlockContext(cgl_ctx);
 	}
-}
-
-- (void) flushIfNeeded
-{
-    if ([[self renderer] needsFlush])
-    {
-        CGLContextObj cgl_ctx = [[self openGLContext] CGLContextObj];
-        [[self renderer] flushToGLContext: cgl_ctx];
-    }
 }
 
 //Silly notifications to let the window controller know when a live resize operation is starting/stopping,

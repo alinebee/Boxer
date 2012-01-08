@@ -33,7 +33,8 @@
 	
 	CGRect canvas;
 	BOOL maintainsAspectRatio;
-	BOOL needsDisplayCaptureSuppression;
+    BOOL usesMemoryMappedTextures;
+    BOOL needsDisplayCaptureSuppression;
 	
 	GLuint frameTexture;
 	GLuint scalingBufferTexture;
@@ -42,7 +43,7 @@
 	
 	CGSize maxTextureSize;
 	CGSize maxScalingBufferSize;
-	
+    
 	BOOL needsNewFrameTexture;
 	BOOL needsFrameTextureUpdate;
 	BOOL recalculateScalingBuffer;
@@ -59,19 +60,20 @@
 #pragma mark Properties
 
 //The current frame that will be rendered when renderToGLContext: is called.
-@property (readonly, retain) BXFrameBuffer *currentFrame;
+//Set using updateWithFrame:inGLContext:.
+@property (retain, readonly) BXFrameBuffer *currentFrame;
 
 //The current shader we are using to render with.
-@property (retain, nonatomic) Shader *currentShader;
+@property (retain) Shader *currentShader;
 
 //The frames-per-second we are producing, measured as the time between the last two rendered frames.
 //Note that BXRenderer is only rendered when the frame or viewport changes, so this rate will only
 //ever be as fast as the DOS program is changing the screen.
-@property (assign, nonatomic) CGFloat frameRate;
+@property (assign) CGFloat frameRate;
 
 //The time it took to render the last frame, measured as the time renderToGLContext: was called to
 //the time when renderToGLContext: finished. This measures the efficiency of the rendering pipeline.
-@property (assign, nonatomic) NSTimeInterval renderingTime;
+@property (assign) NSTimeInterval renderingTime;
 
 //The bounds of the view/layer in which we are rendering.
 //Set by the view, and used for viewport and scaling calculations.
@@ -80,6 +82,12 @@
 //Whether to set the GL viewport to match the aspect ratio of the current frame. Set by the view.
 //This is only enabled for fullscreen mode; in windowed mode, the window manages the aspect ratio itself.
 @property (assign, nonatomic) BOOL maintainsAspectRatio;
+
+//Whether to map the frame texture to the frame-buffer's memory using Apple’s.
+//This option requires that the texture be used before anything else writes to the frame buffer,
+//otherwise torn frames will result.
+@property (assign, nonatomic) BOOL usesMemoryMappedTextures; 
+
 
 //Whether we should prevent OS X 10.6 from automatically capturing the display in full screen mode.
 //This is needed for Intel GMA950 chipsets, and the hack itself is implemented by BXDOSWindowController.
@@ -99,7 +107,7 @@
 //Replaces the current frame with a new/updated one for rendering.
 //Next time renderToGLContext is called, the rendering state will be updated
 //to match the new frame and the new frame will be rendered. 
-- (void) updateWithFrame: (BXFrameBuffer *)frame;
+- (void) updateWithFrame: (BXFrameBuffer *)frame inGLContext: (CGLContextObj)glContext;
 
 //Returns the maximum drawable frame size.
 - (CGSize) maxFrameSize;

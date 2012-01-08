@@ -56,6 +56,7 @@
 @synthesize currentFrame, currentShader, frameRate, renderingTime, canvas, maintainsAspectRatio;
 @synthesize needsFlush, needsRender;
 @synthesize needsDisplayCaptureSuppression;
+@synthesize usesMemoryMappedTextures;
 
 - (void) dealloc
 {
@@ -67,7 +68,7 @@
 #pragma mark -
 #pragma mark Handling frame updates
 
-- (void) updateWithFrame: (BXFrameBuffer *)frame
+- (void) updateWithFrame: (BXFrameBuffer *)frame inGLContext: (CGLContextObj)context
 {   
     if (frame != currentFrame)
 	{
@@ -89,6 +90,12 @@
     //flag that we're dirty and need re-rendering.
     [self setNeedsRender: YES];
     needsFrameTextureUpdate = YES;
+    
+    //TWEAK: update our frame texture immediately with the new frame, while we know
+    //we have a complete frame in the buffer. (If we defer the update until it's time
+    //to render to the screen, then we may do it while DOS is in the middle of writing
+    //to the framebuffer: resulting in a 'torn' frame.
+    [self _prepareFrameTextureForFrame: frame inCGLContext: context];
 }
 
 - (CGSize) maxFrameSize
@@ -127,10 +134,13 @@
     CGLLockContext(cgl_ctx);
     
 	//Check if the renderer is an Intel GMA 950, which has a buggy fullscreen mode
-	GLint rendererID = 0;
-	CGLGetParameter(cgl_ctx, kCGLCPCurrentRendererID, &rendererID);
-	needsDisplayCaptureSuppression = (rendererID & kCGLRendererIDMatchingMask) == kCGLRendererIntel900ID;
-	
+    //when using memory-mapped textures.
+    if ([self usesMemoryMappedTextures])
+    {
+        GLint rendererID = 0;
+        CGLGetParameter(cgl_ctx, kCGLCPCurrentRendererID, &rendererID);
+        needsDisplayCaptureSuppression = (rendererID & kCGLRendererIDMatchingMask) == kCGLRendererIntel900ID;
+	}
 	
 	//Check what the largest texture size we can support is
 	GLint maxTextureDims = 0;
@@ -189,23 +199,20 @@
 
 - (void) renderToGLContext: (CGLContextObj)glContext
 {
-    [self setNeedsRender: NO];
-    [self setNeedsFlush: NO];
-    
-    NSTimeInterval startTime = [NSDate timeIntervalSinceReferenceDate];
-    
     CGLContextObj cgl_ctx = glContext;
     
     CGLLockContext(cgl_ctx);
     
+    [self setNeedsRender: NO];
+    [self setNeedsFlush: NO];
+    
+    NSTimeInterval startTime = [NSDate timeIntervalSinceReferenceDate];
     
     BXFrameBuffer *frame = [self currentFrame];
     
     [self _prepareFrameTextureForFrame: frame inCGLContext: cgl_ctx];
     [self _prepareScalingBufferForFrame: frame inCGLContext: cgl_ctx];
     [self _renderFrame: frame inCGLContext: cgl_ctx];
-    
-    CGLUnlockContext(cgl_ctx);
     
     NSTimeInterval endTime = [NSDate timeIntervalSinceReferenceDate];
     
@@ -216,16 +223,19 @@
     lastFrameTime = endTime;
     
     [self setNeedsFlush: YES];
+    
+    CGLUnlockContext(cgl_ctx);
 }
 
 - (void) flushToGLContext: (CGLContextObj)glContext
 {
-    [self setNeedsFlush: NO];
-    
     CGLContextObj cgl_ctx = glContext;
     
     CGLLockContext(cgl_ctx);
+    
+    [self setNeedsFlush: NO];
     CGLFlushDrawable(cgl_ctx);
+    
     CGLUnlockContext(cgl_ctx);
 }
 
@@ -406,7 +416,9 @@
 - (void) _prepareFrameTextureForFrame: (BXFrameBuffer *)frame inCGLContext: (CGLContextObj)glContext
 {
 	CGLContextObj cgl_ctx = glContext;
-	
+    
+    CGLLockContext(cgl_ctx);
+    
 	if (!frameTexture || needsNewFrameTexture)
 	{
 		//Wipe out any existing frame texture we have before replacing it
@@ -421,6 +433,8 @@
 		[self _fillTexture: frameTexture withFrameBuffer: frame inCGLContext: cgl_ctx];
 		needsFrameTextureUpdate = NO;
 	}
+    
+    CGLUnlockContext(cgl_ctx);
 }
 
 
@@ -444,13 +458,14 @@
 	
 	//OS X-specific voodoo for mapping the framebuffer's byte array 
 	//to video memory for fast texture transfers.
-    //Disabled for now as they can cause screen tearing.
-	//glTextureRangeAPPLE(GL_TEXTURE_RECTANGLE_ARB,  texWidth * texHeight * (32 >> 3), [frame bytes]);
-	//glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_STORAGE_HINT_APPLE, GL_STORAGE_CACHED_APPLE);
+    if ([self usesMemoryMappedTextures])
+    {
+        //glTextureRangeAPPLE(GL_TEXTURE_RECTANGLE_ARB,  texWidth * texHeight * (32 >> 3), [frame bytes]);
+        //glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_STORAGE_HINT_APPLE, GL_STORAGE_CACHED_APPLE);
 	
-	glPixelStorei(GL_UNPACK_CLIENT_STORAGE_APPLE, GL_TRUE);
-    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-	
+        glPixelStorei(GL_UNPACK_CLIENT_STORAGE_APPLE, GL_TRUE);
+        glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+	}
 	
 	//Clamp the texture to avoid wrapping, and set the filtering mode to use nearest-neighbour when scaling up
 	glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -481,7 +496,7 @@
 	
     glPixelStorei(GL_UNPACK_CLIENT_STORAGE_APPLE, GL_FALSE);
 	glDisable(GL_TEXTURE_RECTANGLE_ARB);
-	
+    
 	return texture;
 }
 
@@ -489,20 +504,50 @@
 {
 	CGLContextObj cgl_ctx = glContext;
 	
-	GLsizei frameWidth	= (GLsizei)[frame size].width;
+    GLsizei frameWidth	= (GLsizei)[frame size].width;
 	GLsizei frameHeight	= (GLsizei)[frame size].height;
-	
+    
 	glEnable(GL_TEXTURE_RECTANGLE_ARB);
 	glBindTexture(GL_TEXTURE_RECTANGLE_ARB, texture);
-	glTexSubImage2D(GL_TEXTURE_RECTANGLE_ARB,
-					0,				//Mipmap level
-					0,				//X offset
-					0,				//Y offset
-					frameWidth,		//Width
-					frameHeight,	//Height
-					GL_BGRA,		//Byte ordering
-					GL_UNSIGNED_INT_8_8_8_8_REV,	//Byte packing
-					[frame bytes]);					//Texture data
+    
+    //If we're using memory-mapping, just upload the whole texture at once.
+    if ([self usesMemoryMappedTextures])
+    {
+        glTexSubImage2D(GL_TEXTURE_RECTANGLE_ARB,
+                        0,				//Mipmap level
+                        0,				//X offset
+                        0,				//Y offset
+                        frameWidth,		//Width
+                        frameHeight,	//Height
+                        GL_BGRA,		//Byte ordering
+                        GL_UNSIGNED_INT_8_8_8_8_REV,	//Byte packing
+                        [frame bytes]);					//Texture data
+    }
+    //Otherwise, only upload the changed regions
+    else
+    {
+        NSUInteger pitch = [frame pitch];
+        NSUInteger i, numRegions = [frame numDirtyRegions];
+        
+        for (i=0; i < numRegions; i++)
+        {
+            NSRange dirtyRegion = [frame dirtyRegionAtIndex: i];
+            NSUInteger regionOffset = dirtyRegion.location * pitch;
+            
+            //Uggghhhh, pointer arithmetic
+            const void *regionBytes = [frame bytes] + regionOffset;
+            
+            glTexSubImage2D(GL_TEXTURE_RECTANGLE_ARB,
+                         0,                     //Mipmap level
+                         0,                     //X offset
+                         dirtyRegion.location,	//Y offset
+                         frameWidth,            //Width
+                         dirtyRegion.length,	//Height
+                         GL_BGRA,               //Byte ordering
+                         GL_UNSIGNED_INT_8_8_8_8_REV,	//Byte packing
+                         regionBytes);                  //Texture data
+        }
+    }
 	
 #ifdef BOXER_DEBUG	
 	GLenum status = glGetError();

@@ -80,7 +80,7 @@
 
 - (void) updateWithFrame: (BXFrameBuffer *)frame
 {
-	[[renderingLayer renderer] updateWithFrame: frame];
+	[[renderingLayer renderer] updateWithFrame: frame inGLContext: [[self openGLContext] CGLContextObj]];
     
 	[renderingLayer setNeedsDisplay];
 }

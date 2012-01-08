@@ -231,6 +231,8 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 	
 	*buffer	= [[self frameBuffer] mutableBytes];
 	*pitch	= [[self frameBuffer] pitch];
+    
+    [[self frameBuffer] clearDirtyRegions];
 	
 	frameInProgress = YES;
 	return YES;
@@ -240,6 +242,25 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 {
 	if ([self frameBuffer] && dirtyBlocks)
 	{
+        //Convert DOSBox's array of dirty blocks into a set of ranges
+        NSUInteger i=0, currentOffset = 0, maxOffset = [[self frameBuffer] size].height;
+        while (currentOffset < maxOffset)
+        {
+            NSUInteger regionLength = dirtyBlocks[i];
+            
+            //Odd-numbered indices represent blocks of lines that are dirty;
+            //Even-numbered indices represent clean regions that should be skipped.
+            BOOL isDirtyBlock = (i % 2 != 0);
+            
+            if (isDirtyBlock)
+            {
+                [[self frameBuffer] setNeedsDisplayInRegion: NSMakeRange(currentOffset, regionLength)];
+            }
+            
+            currentOffset += regionLength;
+            i++;
+        }
+        
 		[[[self emulator] delegate] emulator: [self emulator]
 							  didFinishFrame: [self frameBuffer]];
 	}

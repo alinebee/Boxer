@@ -16,6 +16,9 @@
 //Aspect ratios with a difference smaller than this will be considered equivalent
 #define BXIdenticalAspectRatioDelta	0.025f
 
+//The maximum number of regions that can be flagged as dirty.
+//This is set to the maximum vertical resolution expected from a DOS game.
+#define MAX_DIRTY_REGIONS 1024
 
 @interface BXFrameBuffer : NSObject
 {
@@ -24,6 +27,9 @@
 	NSSize baseResolution;
 	NSUInteger bitDepth;
 	NSSize intendedScale;
+    
+    NSRange dirtyRegions[MAX_DIRTY_REGIONS];
+    NSUInteger numDirtyRegions;
 }
 
 #pragma mark -
@@ -57,6 +63,10 @@
 @property (readonly) const void *bytes;
 @property (readonly) void *mutableBytes;
 
+//The number of ranges of dirty lines. Incremented by setNeedsDisplayInRegion:
+//and reset to 0 by clearDirtyRegions. See the dirty region functions below.
+@property (readonly, assign) NSUInteger numDirtyRegions;
+
 
 #pragma mark -
 #pragma mark Class helpers
@@ -81,5 +91,14 @@
 
 //Resets the aspect ratio of the framebuffer to use unscaled square pixels.
 - (void) useSquarePixels;
+
+
+#pragma mark -
+#pragma mark Flagging scanlines of the frame as dirty.
+
+- (void) setNeedsDisplayInRegion: (NSRange)range;
+- (void) clearDirtyRegions;
+
+- (NSRange) dirtyRegionAtIndex: (NSUInteger)index;
 
 @end

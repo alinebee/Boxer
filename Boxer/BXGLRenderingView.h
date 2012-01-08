@@ -19,10 +19,4 @@
 }
 @property (retain, nonatomic) BXRenderer *renderer;
 
-//Renders the frame to the OpenGL buffer, if it has changed and needs rendering.
-- (void) renderIfNeeded;
-
-//Flushes the OpenGL buffer to the screen, if it has been rendered and needs flushing.
-- (void) flushIfNeeded;
-
 @end

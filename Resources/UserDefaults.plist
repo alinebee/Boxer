@@ -6,8 +6,8 @@
 	<false/>
 	<key>aspectCorrected</key>
 	<true/>
-	<key>useVSync</key>
-	<false/>
+	<key>enableVSync</key>
+	<true/>
 	<key>enableMouseButtonShortcuts</key>
 	<true/>
 	<key>filterType</key>

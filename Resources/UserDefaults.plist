@@ -3,12 +3,10 @@
 <plist version="1.0">
 <dict>
 	<key>applyShelfAppearance</key>
-	<false/>
+	<true/>
 	<key>aspectCorrected</key>
 	<true/>
 	<key>useVSync</key>
-	<true/>
-	<key>enableMouseButtonShortcuts</key>
 	<true/>
 	<key>filterType</key>
 	<integer>0</integer>

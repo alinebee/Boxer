@@ -77,8 +77,8 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 		NSString *userAppPath	= [NSSearchPathForDirectoriesInDomains(NSApplicationDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
 		
 		paths = [[NSArray alloc] initWithObjects:
-				 [docsPath stringByAppendingPathComponent: defaultName],
 				 [homePath stringByAppendingPathComponent: defaultName],
+				 [docsPath stringByAppendingPathComponent: defaultName],
 				 [userAppPath stringByAppendingPathComponent: defaultName],
 				 [appPath stringByAppendingPathComponent: defaultName],
 				 nil];

@@ -6,7 +6,7 @@
 	<false/>
 	<key>aspectCorrected</key>
 	<true/>
-	<key>enableVSync</key>
+	<key>useVSync</key>
 	<true/>
 	<key>enableMouseButtonShortcuts</key>
 	<true/>

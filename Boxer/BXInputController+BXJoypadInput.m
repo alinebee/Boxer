@@ -21,8 +21,8 @@
 #define BXJoypadRotationDeadzone 0.15f
 
 //The maximum scale of movement for the analog stick.
-//TODO: figure out what lies behind this constant.
-#define BXJoypadAnalogStickMaxDistance 55.0f
+//(used to be 55.0 in previous versions of the Joypad SDK, now normalised to 1.0.)
+#define BXJoypadAnalogStickMaxDistance 1.0f
 
 //What fraction of the accelerometer input to mix with the previous input,
 //to derive a smoothed value. Used by joypadDevice:didAccelerate:.

@@ -1,28 +1,26 @@
 //
 //  JoypadControllerLayout.h
-//  Joypad SDK
 //
 //  Created by Lou Zell on 3/14/11.
-//  Copyright 2011 Hazelmade. All rights reserved.
+//  Copyright 2011 Joypad Inc. All rights reserved.
 //
-//  Please email questions to me, Lou, at lzell11@gmail.com
-//  -----------------------------------------------------------------
+//  Please email questions to lzell11@gmail.com
+//  __________________________________________________________________________
+//
+//  Examples of several custom controllers can be found in MyJoypadLayout.m in 
+//  the JoypadiOSSample project that comes with the SDK download.
 //
 //  This is the class that you will use to create a custom layout for your
 //  application.  Each method listed in the Public API section below adds
 //  one component to your controller.  Currently, you can add: 
 //
 //       * Analog sticks
+//       * Re-centering analog sticks
 //       * Dpads
 //       * Buttons
 //       * Accelerometer Data (this components doesn't add a view)
 //
 //  See the comments at the top of each method for instructions on using it.
-// 
-//  An example of building a custom controller from start to finish is in
-//  the README that comes with the SDK download, which is also at: 
-//  http://getjoypad.com/sdk_doc.html 
-// 
 
 #import <Foundation/Foundation.h>
 #if TARGET_OS_IPHONE
@@ -38,6 +36,12 @@
 }
 
 #pragma mark Public API 
+
+/**
+ * Returns a new autoreleased layout:
+ *   JoypadControllerLayout *myLayout = [JoypadControllerLayout layout];
+ */
++(JoypadControllerLayout *)layout;
 
 /**
  * Set the name of this layout.  This name will be displayed in the Connection Modal on Joypad
@@ -102,9 +106,18 @@
 -(void)addAccelerometer;
 
 /**
- * Adds an analog stick with origin at the center of the frame.
+ * Adds an analog stick with origin at the center of the frame.  This stick does not
+ * recenter around the initial touch point.  See the next method for more flexibility.
  */
 -(void)addAnalogStickWithFrame:(CGRect)rect identifier:(JoyInputIdentifier)inputId;
+
+/**
+ * Same as above with an extra parameter to specify if the analog stick should recenter at the 
+ * initial touch down point.  This gives it a hybrid feel between an analog stick and trackpad.
+ * Recentering analog sticks are ideal for camera movement in a FPS.  For player movement, 
+ * it is best to stick with a stationary analog stick (i.e. pass NO as the last argument).
+ */
+-(void)addAnalogStickWithFrame:(CGRect)rect identifier:(JoyInputIdentifier)inputId recentering:(BOOL)recentering;
 
 /**
  * Equal if controller layouts have the same input components (buttons, labels, dpads, name, etc.)

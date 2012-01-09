@@ -8,9 +8,9 @@
 //The BXJoypadInput category handles JoyPad iOS app input passed on from BXJoypadController.
 
 #import "BXInputController.h"
+#import "JoypadSDK.h"
 
-@class JoypadControllerLayout;
-@interface BXInputController (BXJoypadInput)
+@interface BXInputController (BXJoypadInput) <JoypadDeviceDelegate, JoypadManagerDelegate>
 
 //Returns a custom Joypad layout appropriate for the currently-selected joystick type.
 @property (readonly, nonatomic) JoypadControllerLayout *currentJoypadLayout;

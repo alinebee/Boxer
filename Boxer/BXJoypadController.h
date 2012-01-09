@@ -9,14 +9,12 @@
 //q.v. http://getjoypad.com/ and https://github.com/lzell/JoypadSDK#readme
 
 #import <Foundation/Foundation.h>
+#import "JoypadSDK.h"
 
-@class JoypadManager;
-@class JoypadControllerLayout;
-
-@interface BXJoypadController : NSObject
+@interface BXJoypadController : NSObject <JoypadManagerDelegate>
 {
     JoypadManager *joypadManager;
-    BOOL suppressReconnectionNotifications;
+    BOOL isReconnectingDevices;
     JoypadControllerLayout *currentLayout;
     BOOL hasJoypadDevices;
 }

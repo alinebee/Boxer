@@ -1,11 +1,11 @@
 //
 //  JoypadConstants.h
-//  Joypad SDK
 //
 //  Created by Lou Zell on 6/1/11.
-//  Copyright 2011 Hazelmade. All rights reserved.
+//  Copyright 2011 Joypad Inc. All rights reserved.
 //
-//  Please email questions to me, Lou, at lzell11@gmail.com
+//  Please email questions to lzell11@gmail.com
+//  __________________________________________________________________________
 //
 
 typedef struct
@@ -26,8 +26,7 @@ typedef enum
   kJoyInputTypeDpad,
   kJoyInputTypeButton,
   kJoyInputTypeAnalogStick,
-  kJoyInputTypeAccelerometer,
-  kJoyInputTypeWheel
+  kJoyInputTypeAccelerometer
 }JoyInputType;
 
 typedef enum

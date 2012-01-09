@@ -1,18 +1,21 @@
 //
 //  JoypadManager.h
-//  Joypad SDK
+// 
+//  Created by Lou Zell on 2/26/11.  
+//  Copyright 2011 Joypad Inc. All rights reserved.
+// 
+//  Please email questions to lzell11@gmail.com
+//  __________________________________________________________________________
 //
-//  Created by Lou Zell on 2/26/11.
-//  Copyright 2011 Hazelmade. All rights reserved.
-//
-//  Please email questions to me, Lou, at lzell11@gmail.com
-//
+
 
 #import <Foundation/Foundation.h>
 #import "JoypadConstants.h"
 
+// Forward declarations.
 @class JoypadDevice;
 @class JoypadControllerLayout;
+@protocol JoypadManagerDelegate;
 
 
 @interface JoypadManager : NSObject
@@ -21,26 +24,32 @@
  * Sets the object that will receive JoypadManager events.
  * See the JoypadManagerDelegate Category at the bottom of this header.
  */
--(void)setDelegate:(id)aDelegate;
+-(void)setDelegate:(id<JoypadManagerDelegate>)aDelegate;
 
 /**
  * Returns the object that will receive JoypadManager events.
  * See the JoypadManagerDelegate Category at the bottom of this header.
  */
--(id)delegate;
+-(id<JoypadManagerDelegate>)delegate;
 
 /**
- * Searches for devices running Joypad.  As devices on the network open 
- * and close Joypad, the following delegate methods will be called:
- *
- *      -joypadManager:didFindDevice:previouslyConnected:
- *      -joypadManager:didLoseDevice:
- *
+ * Sets the maximum number of Joypads to connect to.  Once the maximum number
+ * is hit, Joypad Manager will stop searching for devices.  Defaults to 1.
+ */
+-(void)setMaxPlayerCount:(NSUInteger)num;
+-(NSUInteger)maxPlayerCount;
+
+/**
+ * Searches for devices running Joypad.  Call this everytime your game's menu
+ * screen becomes active.  If there are already maxPlayerCount players connected,
+ * then this method does nothing.  Calling this while the search is already
+ * running has no effect.
  */
 -(void)startFindingDevices;
 
 /**
- * Stops the search for devices running Joypad. 
+ * Stops the search for devices running Joypad.  Calling this while the search
+ * is already stopped has no effect.
  *
  *  +----------------------------- IMPORTANT -----------------------------+ 
  *  | You MUST call this method before starting gameplay. We recommend    |
@@ -52,12 +61,11 @@
 -(void)stopFindingDevices;
 
 /**
- * An instance of JopyadDevice can be passed to this method to initiate a
- * connection.  If you would like to auto-connect to the first Joypad that
- * is found on the network (to avoid adding any menu elements to your app),
- * call this method from your implementation of:
+ * Deprecated.
+ * Instead, use -setMaxPlayerCount and let the SDK handle connections.
  *
- *      -joypadManager:didFindDevice:previouslyConnected:
+ * An instance of JoypadDevice can be passed to this method to initiate a
+ * connection.
  */
 -(void)connectToDevice:(JoypadDevice *)device asPlayer:(unsigned int)player;
 
@@ -71,6 +79,7 @@
  */
 -(void)connectToDeviceAtAddress:(NSString *)addrStr asPlayer:(unsigned int)player;
 -(void)connectToDeviceAtIp:(NSString *)ipAddr port:(UInt16)port asPlayer:(unsigned int)player;
+-(void)connectToDeviceAtHost:(NSString *)host port:(UInt16)port asPlayer:(unsigned int)player;
 
 /**
  * Contains all devices that are currently connected.  You can receive events 
@@ -88,6 +97,7 @@
  *
  */
 -(NSMutableArray *)connectedDevices;
+-(NSUInteger)connectedDeviceCount;
 
 /**
  * The Joypad app comes pre-installed with six generic layouts.  To use one
@@ -104,10 +114,16 @@
 -(void)usePreInstalledLayout:(JoyControllerIdentifier)layoutId;
 
 /**
+ * Deprecated.  
+ * Instead, use -setControllerLayout:
+ */
+-(void)useCustomLayout:(JoypadControllerLayout *)layout;
+
+/**
  * See the JoypadControllerLayout.h header for instructions on 
  * building a custom layout.
  */
--(void)useCustomLayout:(JoypadControllerLayout *)layout;
+-(void)setControllerLayout:(JoypadControllerLayout *)layout;
 
 /**
  * Returns the controller layout that JoypadManager is currently using. 
@@ -119,44 +135,11 @@
 @end
 
 
-#pragma mark JoypadManager Delegate Methods
 
-/**
- 
- Implement the methods below in the class that you would like to receive
- Joypad connection status updates in.  For example, if you would like an
- instance of MyClass to be notified when a device running Joypad is found,
- you would implement something like this in MyClass: 
- 
- +--------------------------------------------------------------+
- | @implementation MyClass                                      |
- |                                                              |
- | -(void)joypadManager:(JoypadManager *)manager                |
- |        didFindDevice:(JoypadDevice *)device                  |
- |  previouslyConnected:(BOOL)prev                              |
- | {                                                            |
- |   NSLog(@"Found a device named: %@", [device name]);         |
- | }                                                            |
- |                                                              |
- | @end                                                         |
- +--------------------------------------------------------------+
- 
- Please see the sample project that comes with the SDK download 
- for more examples.
- */
-@interface NSObject (JoypadManagerDelegate)
+#pragma mark JoypadManagerDelegate Protocol
+@protocol JoypadManagerDelegate <NSObject>
 
-/**
- * The following two methods are called when devices on the network open
- * and close the Joypad app.
- */
--(void)joypadManager:(JoypadManager *)manager 
-       didFindDevice:(JoypadDevice *)device
- previouslyConnected:(BOOL)prev;
-
--(void)joypadManager:(JoypadManager *)manager 
-       didLoseDevice:(JoypadDevice *)device;
-
+@required
 /**
  * Called when a device running Joypad has connected. At this point you 
  * are ready to receive input from it.
@@ -165,12 +148,21 @@
     deviceDidConnect:(JoypadDevice *)device 
               player:(unsigned int)player;
 
+@optional
+
 /**
  * Called when a device that you were connected to dropped the connection.
+ * You should use this to set the device's delegate to nil.
  */
 -(void)joypadManager:(JoypadManager *)manager 
  deviceDidDisconnect:(JoypadDevice *)device 
               player:(unsigned int)player;
+
+/**
+ * This is called before establishing a connection to Joypad.  If you implement
+ * this and return NO, the connection will be cancelled.
+ */
+-(BOOL)joypadManager:(JoypadManager *)manager deviceShouldConnect:(JoypadDevice *)device;
 
 
 @end

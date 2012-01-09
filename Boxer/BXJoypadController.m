@@ -43,18 +43,16 @@
         
         if (layout)
         {
-            [joypadManager useCustomLayout: layout];
+            [joypadManager setControllerLayout: layout];
             
             //Disconnect and reconnect each device to make it notice the new layout
             //(Remove this once Joypad SDK can handle on-the-fly layout changes)
-            suppressReconnectionNotifications = YES;
-            for (JoypadDevice *device in [joypadManager connectedDevices])
+            isReconnectingDevices = YES;
+            for (JoypadDevice *device in [self joypadDevices])
             {
-                NSUInteger playerNum = [device playerNumber];
                 [device disconnect];
-                [joypadManager connectToDevice: device asPlayer: playerNum];
             }
-            suppressReconnectionNotifications = NO;
+            isReconnectingDevices = NO;
         }
     }
 }
@@ -63,6 +61,8 @@
 {
     joypadManager = [[JoypadManager alloc] init];
     [joypadManager setDelegate: self];
+    [joypadManager setMaxPlayerCount: 1];
+    
     //Default to a 4-button layout (this may be overridden by any game the user starts)
     [self setCurrentLayout: [BX4ButtonJoystickLayout layout]];
     [joypadManager startFindingDevices];
@@ -120,65 +120,68 @@
     else if ([keyPath isEqualToString: @"currentSession.DOSWindowController.inputController"])
     {
         //Rebind all connected devices to send their messages to the currently active session
-        for (JoypadDevice *device in [joypadManager connectedDevices])
+        for (JoypadDevice *device in [self joypadDevices])
         {
             [device setDelegate: [self activeWindowController]];
         }
     }
 }
 
-- (void) joypadManager: (JoypadManager *)manager
-         didFindDevice: (JoypadDevice *)device 
-   previouslyConnected: (BOOL)wasConnected
+//Called when JoypadManager discovers a device, but before any connection attempts are made:
+//we flag at this point that we have joypad devices available, so that joystick emulation
+//will be enabled as early as possible.
+- (BOOL) joypadManager: (JoypadManager *)manager deviceShouldConnect: (JoypadDevice *)device
 {
-    //Don't connect more than one device
-    if (![self hasJoypadDevices])
-    {
-        [joypadManager connectToDevice: device asPlayer: 1];
-        [self setHasJoypadDevices: YES];
-    }
+    //NOTE: this method is getting called erroneously after disconnection
+    //in Joypad SDK 0.15.2 preview.
+    //We can't detect this though, which means that Boxer won't recognise
+    //that the Joypad device has disappeared and that there is no longer
+    //any input controller present. Big deal.
+    [self setHasJoypadDevices: YES];
+    return YES;
 }
 
-- (void) joypadManager: (JoypadManager *)manager
-         didLoseDevice: (JoypadDevice *)device
-{
-    if (![[self joypadDevices] count])
-    {
-        [self setHasJoypadDevices: NO];
-    }
-}
 - (void) joypadManager: (JoypadManager *)manager
       deviceDidConnect: (JoypadDevice *)device
                 player: (unsigned int)player
 {
-    [device setDelegate: [self activeWindowController]];
+    BXInputController *delegate = [self activeWindowController];
+    [device setDelegate: delegate];
     
     //Avoid spamming observers whenever we disconnect and immediately reconnect a device
-    if (!suppressReconnectionNotifications)
+    if (!isReconnectingDevices)
     {
+        [self setHasJoypadDevices: YES];
+        
         [self willChangeValueForKey: @"joypadDevices"];
         [self didChangeValueForKey: @"joypadDevices"];
     }
     
     //Let the delegate know that the device has been connected
-    [[device delegate] joypadManager: manager
-                    deviceDidConnect: device
-                              player: player];
+    [delegate joypadManager: manager
+           deviceDidConnect: device
+                     player: player];
 }
 
 - (void) joypadManager: (JoypadManager *)manager
    deviceDidDisconnect: (JoypadDevice *)device
                 player: (unsigned int)player
-{
+{   
     //Avoid spamming observers whenever we disconnect and immediately reconnect a device
-    if (!suppressReconnectionNotifications)
+    if (!isReconnectingDevices)
     {
+        BOOL devicesRemaining = [manager connectedDeviceCount] > 0;
+        [self setHasJoypadDevices: devicesRemaining];
+        
         [self willChangeValueForKey: @"joypadDevices"];
         [self didChangeValueForKey: @"joypadDevices"];
     }
-    //Let the device's delegate know that the device has been connected
-    [[device delegate] joypadManager: manager
-                 deviceDidDisconnect: device
-                              player: player];
+    
+    BXInputController *delegate = (BXInputController *)[device delegate];
+    
+    //Let the device's delegate know that the device has been disconnected
+    [delegate joypadManager: manager deviceDidDisconnect: device player: player];
+    
+    [device setDelegate: nil];
 }
 @end

@@ -1,15 +1,18 @@
 //
 //  JoypadDevice.h
-//  Joypad SDK
 //
 //  Created by Lou Zell on 2/25/11.
-//  Copyright 2011 Hazelmade. All rights reserved.
+//  Copyright 2011 Joypad Inc. All rights reserved.
 //
-//  Please email questions to me, Lou, at lzell11@gmail.com
+//  Please email questions to lzell11@gmail.com
+//  __________________________________________________________________________
 //
 
 #import <Foundation/Foundation.h>
 #import "JoypadConstants.h"
+
+// Forward declarations.
+@protocol JoypadDeviceDelegate;
 
 @interface JoypadDevice : NSObject
 
@@ -17,13 +20,13 @@
  * Sets the object that will receive input from a JoypadDevice.
  * See the JoypadDeviceDelegate Category at the bottom of this header.
  */
--(void)setDelegate:(id)aDelegate;
+-(void)setDelegate:(id<JoypadDeviceDelegate>)aDelegate;
 
 /**
  * Gets the object that will receive input from a JoypadDevice.
  * See the JoypadDeviceDelegate Category at the bottom of this header.
  */
--(id)delegate;
+-(id<JoypadDeviceDelegate>)delegate;
 
 /**
  * The name of this device.  This is the name that is displayed 
@@ -32,11 +35,10 @@
 -(NSString *)name;
 
 /**
- * The player number of this device.  You set the player number when 
- * you initiate a connection.  For example:
- *
- *   -[JoypadManager connectToDevice:aDevice asPlayer:2];
- *   
+ * The player number of this device.  This will be set automatically 
+ * by the sdk based on the order of connections.  As players drop out
+ * in a multiplayer game, new players will fill their old spots in
+ * ascending order.
  */
 -(unsigned int)playerNumber;
 
@@ -54,8 +56,8 @@
 
 
 
-@interface NSObject (JoypadDeviceDelegate)
-
+@protocol JoypadDeviceDelegate <NSObject>
+@optional
 /**
  
  Implement the following methods in the class that will receive input from Joypad.

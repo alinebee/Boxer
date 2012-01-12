@@ -275,7 +275,6 @@
 		if (skipAlert)
 		{
 			[skipAlert adoptIconFromWindow: [controller window]];
-			[skipAlert retain];
 			[skipAlert beginSheetModalForWindow: [controller window]
 								  modalDelegate: self
 								 didEndSelector: @selector(_skipAlertDidEnd:returnCode:contextInfo:)
@@ -299,9 +298,6 @@
 	{
 		[[controller document] cancelSourceFileImport];
 	}
-	
-	//Release the previously-retained alert
-	[alert release];	
 }
 
 

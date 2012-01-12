@@ -503,7 +503,6 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		else
 			alert = [BXCloseAlert closeAlertWhileSessionIsEmulating: self];
 		
-		[alert retain];
 		[alert beginSheetModalForWindow: [self windowForSheet]
 						  modalDelegate: self
 						 didEndSelector: @selector(_closeAlertDidEnd:returnCode:contextInfo:)
@@ -529,9 +528,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	[callback setArgument: &shouldClose atIndex: 3];
 	[callback invoke];
 	
-	//Release the previously-retained callback and alert instance
+	//Release the previously-retained callback
 	[callback release];
-	[alert release];
 }
 
 - (void) _windowsOnlyProgramCloseAlertDidEnd: (BXCloseAlert *)alert
@@ -542,7 +540,6 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	{
 		[self close];
 	}
-	[alert release];
 }
 
 //Save our configuration changes to disk before exiting
@@ -931,7 +928,6 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 			if (programType == BXExecutableTypeWindows)
 			{
 				BXCloseAlert *alert = [BXCloseAlert closeAlertAfterWindowsOnlyProgramExited: programPath];
-				[alert retain];
 				[alert beginSheetModalForWindow: [self windowForSheet]
 								  modalDelegate: self
 								 didEndSelector: @selector(_windowsOnlyProgramCloseAlertDidEnd:returnCode:contextInfo:)

@@ -597,25 +597,31 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 		NSInteger returnCode = [alert runModal];
 		[self _gamesFolderPromptDidEnd: alert returnCode: returnCode window: nil];
 	}
+    [alert release];
 }
 
 - (void) _gamesFolderPromptDidEnd: (NSAlert *)alert
 					   returnCode: (NSInteger)returnCode
 						   window: (NSWindow *)window
 {
-	[[alert window] close];
-	switch(returnCode)
+	switch (returnCode)
 	{
 		case NSAlertFirstButtonReturn:
+        {
+            //Hide the alert sheet now so that we can show a different sheet in the same window
+            [[alert window] orderOut: self];
+            
 			[[BXGamesFolderPanelController controller] showGamesFolderPanelForWindow: window];
 			break;
+        }
 		case NSAlertSecondButtonReturn:
+        {
 			//This will run modally, after which we can reveal the games folder it has made
 			[self orderFrontFirstRunPanel: self];
 			if ([self gamesFolderPath]) [self revealGamesFolder: self];
 			break;
+        }
 	}
-    [alert release];
 }
 
 - (void) addImporterDropletToPath: (NSString *)folderPath

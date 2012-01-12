@@ -424,7 +424,7 @@
 			sheetWindow = [sender window];
 		else sheetWindow = [self windowForSheet]; 
 		
-        NSDictionary *contextInfo = [[NSDictionary alloc] initWithObjectsAndKeys:
+        NSDictionary *contextInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                                      selectedDrives, @"drives",
                                      [NSNumber numberWithInteger: options], @"options",
                                      nil];
@@ -432,8 +432,10 @@
 		[alert beginSheetModalForWindow: sheetWindow
 						  modalDelegate: self
 						 didEndSelector: @selector(drivesInUseAlertDidEnd:returnCode:contextInfo:)
-							contextInfo: contextInfo];
+							contextInfo: [contextInfo retain]];
 
+        [alert release];
+        
 		return NO;
 	}
 	return YES;
@@ -457,7 +459,7 @@
         
         if (unmountError)
         {
-            [[alert window] close];
+            [[alert window] orderOut: self];
             [self presentError: unmountError
                 modalForWindow: [self windowForSheet]
                       delegate: nil
@@ -465,7 +467,7 @@
                    contextInfo: NULL];
         }
     }
-    [alert release];
+    //Release the context dictionary that was previously retained in the beginSheetModalForWindow: call.
 	[contextInfo release];
 }
 

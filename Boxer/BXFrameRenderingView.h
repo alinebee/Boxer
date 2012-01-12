@@ -32,9 +32,4 @@
 //Reports the current viewport size to which frames will be rendered.
 - (NSSize) viewportSize;
 
-//Whether the view requires Boxer to implement a workaround for OS X's automatic
-//display-capturing in full screen mode, which causes severe flickering artifacts
-//on Intel GMA950 chipsets.
-- (BOOL) needsDisplayCaptureSuppression;
-
 @end

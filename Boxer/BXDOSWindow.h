@@ -17,9 +17,6 @@
 @interface BXDOSWindow : BXFullScreenCapableWindow
 {
     IBOutlet NSView *actualContentView;
-    
-	//The hidden overlay window we use for our fullscreen display-capture suppression hack.
-	NSWindow *hiddenOverlay;
 }
 //The 'real' content view by which our content size calculations will be constrained,
 //and which will fill the screen in fullscreen mode. This is distinct from the window's
@@ -28,12 +25,6 @@
 
 //Return the current size of actualContentView.
 - (NSSize) actualContentViewSize;
-
-//Prevents OS X 10.6 from automatically capturing the contents of this window in fullscreen,
-//by creating a hidden overlay child window on top of this one. This hack is necessary for
-//Intel GMA950 chipsets, where implicit display capturing causes severe flickering artifacts.
-- (void) suppressDisplayCapture;
-
 
 //Convenience methods to force a certain fullscreen state.
 //Enters fullscreen with an animation.

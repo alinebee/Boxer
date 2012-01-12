@@ -33,8 +33,6 @@
 	
 	CGRect canvas;
 	BOOL maintainsAspectRatio;
-    BOOL usesMemoryMappedTextures;
-    BOOL needsDisplayCaptureSuppression;
 	
 	GLuint frameTexture;
 	GLuint scalingBufferTexture;
@@ -47,9 +45,6 @@
 	BOOL needsNewFrameTexture;
 	BOOL needsFrameTextureUpdate;
 	BOOL recalculateScalingBuffer;
-    
-    BOOL needsRender;
-    BOOL needsFlush;
 	
 	NSTimeInterval lastFrameTime;
 	NSTimeInterval renderingTime;
@@ -83,23 +78,6 @@
 //This is only enabled for fullscreen mode; in windowed mode, the window manages the aspect ratio itself.
 @property (assign, nonatomic) BOOL maintainsAspectRatio;
 
-//Whether to map the frame texture to the frame-buffer's memory using Apple’s.
-//This option requires that the texture be used before anything else writes to the frame buffer,
-//otherwise torn frames will result.
-@property (assign, nonatomic) BOOL usesMemoryMappedTextures; 
-
-
-//Whether we should prevent OS X 10.6 from automatically capturing the display in full screen mode.
-//This is needed for Intel GMA950 chipsets, and the hack itself is implemented by BXDOSWindowController.
-@property (readonly) BOOL needsDisplayCaptureSuppression;
-
-//Whether the current frame needs re-rendering.
-//Will be YES if the frame, canvas or aspect ratio have changed.
-@property (readonly) BOOL needsRender;
-
-//Whether the renderer has finished rendering to the framebuffer and it can be flushed to the screen.
-//Will be YES after renderToCGLContext: has been called.
-@property (readonly) BOOL needsFlush;
 
 #pragma mark -
 #pragma mark Methods

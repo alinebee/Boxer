@@ -571,12 +571,6 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 
 - (void) windowDidEnterFullScreen: (NSNotification *)notification
 {
-    //Apply display capture suppression for Intel GMA950 chipsets, if needed
-    if ([[self renderingView] needsDisplayCaptureSuppression])
-    {
-        [[self window] suppressDisplayCapture];
-    }
-    
     //Force the renderer to redraw after the resize to fullscreen
     [self _cleanUpAfterResize];
     

@@ -1193,8 +1193,6 @@
 		9FBAA876134A66C80092BF95 /* BXBinCueImageImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBinCueImageImport.h; sourceTree = "<group>"; };
 		9FBAA877134A66C80092BF95 /* BXBinCueImageImport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBinCueImageImport.m; sourceTree = "<group>"; };
 		9FBAA8F3134AFABD0092BF95 /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
-		9FBB86830F5DD070008418E6 /* BXLayerRenderingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXLayerRenderingView.h; sourceTree = "<group>"; };
-		9FBB86840F5DD070008418E6 /* BXLayerRenderingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXLayerRenderingView.m; sourceTree = "<group>"; };
 		9FBC31D10F56C370001811F2 /* AboutBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AboutBackground.png; sourceTree = "<group>"; };
 		9FBC31DD0F56C383001811F2 /* LockClosing.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = LockClosing.aiff; sourceTree = "<group>"; };
 		9FBC31DE0F56C383001811F2 /* LockOpening.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = LockOpening.aiff; sourceTree = "<group>"; };
@@ -1743,8 +1741,6 @@
 			children = (
 				9F8BFE9D12C0EF7B0059030F /* BXDisplayLinkRenderingView.h */,
 				9F8BFE9E12C0EF7B0059030F /* BXDisplayLinkRenderingView.m */,
-				9FBB86830F5DD070008418E6 /* BXLayerRenderingView.h */,
-				9FBB86840F5DD070008418E6 /* BXLayerRenderingView.m */,
 				9FECE1C011A3244500E0EBB6 /* BXGLRenderingView.h */,
 				9FECE1C111A3244500E0EBB6 /* BXGLRenderingView.m */,
 				9FFBF67011A7F8F4000A1863 /* BXFrameRenderingView.h */,

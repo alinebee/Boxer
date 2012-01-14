@@ -6,15 +6,15 @@
  */
 
 
-#import "BXMultiFileTransfer.h"
+#import "BXFileTransferSet.h"
 #import "BXSingleFileTransfer.h"
 
 
 #pragma mark -
 #pragma mark Implementation
 
-@implementation BXMultiFileTransfer
-@synthesize pathsToTransfer, copyFiles;
+@implementation BXFileTransferSet
+@synthesize copyFiles = _copyFiles;
 
 #pragma mark -
 #pragma mark Initialization and deallocation
@@ -29,19 +29,48 @@
 {
 	if ((self = [self init]))
 	{
-		[self setPathsToTransfer: paths];
-		[self setCopyFiles: copy];
+        [self setCopyFiles: copy];
+        [self addTransfers: paths];
 	}
 	return self;
 }
 
-- (void) dealloc
+#pragma mark -
+#pragma mark Adding transfers
+
+
+- (void) setCopyFiles: (BOOL)copy
 {
-	[self setPathsToTransfer: nil], [pathsToTransfer release];
-	
-	[super dealloc];
+    if (copy != self.copyFiles)
+    {
+        _copyFiles = copy;
+        
+        for (NSOperation <BXFileTransfer> *transfer in [self operations])
+        {
+            [transfer setCopyFiles: copy];
+        }
+    }
 }
 
+- (void) addTransfers: (NSDictionary *)paths
+{
+    //Build file transfer operations for each pair of paths
+	for (NSString *sourcePath in [paths keyEnumerator])
+	{
+		NSString *destinationPath = [paths objectForKey: sourcePath];
+        
+        [self addTransferFromPath: destinationPath toPath: sourcePath];
+	}
+}
+
+- (void) addTransferFromPath: (NSString *)sourcePath
+                      toPath: (NSString *)destinationPath
+{
+    BXSingleFileTransfer *transfer = [BXSingleFileTransfer transferFromPath: sourcePath
+                                                                     toPath: destinationPath
+                                                                  copyFiles: [self copyFiles]];
+    [[self operations] addObject: transfer];
+}
 
 #pragma mark -
 #pragma mark Transfer status
@@ -120,16 +149,7 @@
 
 - (void) performOperation
 {
-    //Build file transfer operations for each pair of paths
-	for (NSString *sourcePath in [[self pathsToTransfer] keyEnumerator])
-	{
-		NSString *destinationPath = [[self pathsToTransfer] objectForKey: sourcePath];
-		
-		BXSingleFileTransfer *transfer = [BXSingleFileTransfer transferFromPath: sourcePath
-																		 toPath: destinationPath
-																	  copyFiles: [self copyFiles]];
-		[[self operations] addObject: transfer];
-	}
+    
     
     [super performOperation];
 }

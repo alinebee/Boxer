@@ -25,9 +25,9 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
 
 @implementation BXDriveBundleImport
 @synthesize drive = _drive;
+@synthesize copyFiles = _copyFiles;
 @synthesize destinationFolder = _destinationFolder;
 @synthesize importedDrivePath = _importedDrivePath;
-@dynamic copyFiles, numFiles, filesTransferred, numBytes, bytesTransferred, currentPath;
 
 
 #pragma mark -
@@ -112,10 +112,9 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
 	[self setImportedDrivePath: destinationPath];
 	
 	NSError *readError = nil;
-	NSString *cueContents = [[NSString alloc] initWithContentsOfFile: sourcePath
-                                                        usedEncoding: NULL
-                                                               error: &readError];
-    [cueContents autorelease];
+	NSString *cueContents = [[[NSString alloc] initWithContentsOfFile: sourcePath
+                                                         usedEncoding: NULL
+                                                                error: &readError] autorelease];
     
 	if (!cueContents)
 	{
@@ -139,8 +138,7 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
     
     //Work out what to do with the related file paths we've parsed from the cue file
     NSString *sourceBasePath = [sourcePath stringByDeletingLastPathComponent];
-    NSMutableDictionary *revisedPaths	= [NSMutableDictionary dictionaryWithCapacity: numRelatedPaths];
-    NSMutableDictionary *transferPaths	= [NSMutableDictionary dictionaryWithCapacity: numRelatedPaths];
+    NSMutableDictionary *revisedPaths = [NSMutableDictionary dictionaryWithCapacity: numRelatedPaths];
     
     for (NSString *fromPath in relatedPaths)
     {
@@ -151,7 +149,7 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
         NSString *fromName		= [fullFromPath lastPathComponent];
         NSString *fullToPath	= [destinationPath stringByAppendingPathComponent: fromName];
         
-        [transferPaths setObject: fullToPath forKey: fullFromPath];
+        [self addTransferFromPath: fullFromPath toPath: fullToPath];
         
         //Make a note of the path if it needs to be changed when we rewrite the CUE file
         //(e.g. if it's in a subdirectory that will no longer exist when the files are imported)
@@ -160,8 +158,6 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
     }
     
     if ([self isCancelled]) return;
-    
-    [self setPathsToTransfer: transferPaths];		
     
     //Perform the standard file import
     [super performOperation];

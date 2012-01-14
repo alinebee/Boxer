@@ -1052,11 +1052,12 @@
             //Import any drives that were mounted in the (original) autoexec.
             NSArray *mountCommands = [[self class] mountCommandsFromConfiguration: bundledConfig];
             
+            //TWEAK: use the config's own dir as the base path for drive mounts instead
+            //of the root C drive, just in case there's a funny folder structure going on.
+            NSString *basePath = [bundledConfigPath stringByDeletingLastPathComponent];
+            
             for (NSString *mountCommand in mountCommands)
             {
-                //TWEAK: use the config's own dir as the base path instead of the root drive,
-                //just in case there's a funny folder structure going on.
-                NSString *basePath = [bundledConfigPath stringByDeletingLastPathComponent];
                 BXDrive *drive = [BXEmulator driveFromMountCommand: mountCommand
                                                           basePath: basePath
                                                              error: nil];

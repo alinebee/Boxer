@@ -103,6 +103,21 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 #pragma mark -
 #pragma mark The actual operation
 
+- (NSUInteger) numFiles
+{
+	//An ISO rip operation always results in a single ISO file being generated.
+    return 1;
+}
+- (NSUInteger) filesTransferred
+{
+    return [self succeeded] ? 1 : 0;
+}
+
+- (NSString *) currentPath
+{
+    return [self isFinished] ? nil : [[self drive] path];
+}
+
 - (BOOL) copyFiles
 {
 	return YES;
@@ -188,10 +203,13 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 		{
 			if (![destinationPath isEqualToString: tempDestinationPath])
 			{
-				BOOL moved = [manager moveItemAtPath: tempDestinationPath toPath: destinationPath error: nil];
-				//If the move failed then don't worry about it: just use the temporary destination path instead
+                NSError *renameError = nil;
+				BOOL moved = [manager moveItemAtPath: tempDestinationPath
+                                              toPath: destinationPath
+                                               error: &renameError];
+				//If the rename failed then don't worry about it: just use the temporary destination
+                //path instead (it'll just have to remain a CDR, which Boxer and DOSBox can still handle.)
 				if (!moved) destinationPath = tempDestinationPath;
-				
 			}
 			[self setImportedDrivePath: destinationPath];
 		}

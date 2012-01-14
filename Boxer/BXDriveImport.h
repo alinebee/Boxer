@@ -7,29 +7,22 @@
 
 
 #import "BXOperation.h"
-
+#import "BXFileTransfer.h"
 
 @class BXDrive;
 
-@protocol BXDriveImport <NSObject>
+@protocol BXDriveImport <NSObject, BXFileTransfer>
 
 //The drive to import.
 @property (retain) BXDrive *drive;
 
-//The base folder into which to import the drive to.
+//The base folder into which to import the drive.
 //This does not include the destination drive name, which will be determined automatically
 //from the drive being imported.
 @property (copy) NSString *destinationFolder;
 
 //The path of the new drive once it is finally imported.
 @property (copy, readonly) NSString *importedDrivePath;
-
-//Whether the source files will be left behind after importing.
-@property (assign) BOOL copyFiles;
-
-//The number of bytes that will be copied in total, and have been copied so far.
-@property (readonly) unsigned long long numBytes;
-@property (readonly) unsigned long long bytesTransferred;
 
 
 //Returns whether this import class is appropriate for importing the specified drive.
@@ -48,13 +41,6 @@
 - (id <BXDriveImport>) initForDrive: (BXDrive *)drive
 					  toDestination: (NSString *)destinationFolder
 						  copyFiles: (BOOL)copyFiles;
-
-
-//Undo the import operation. Called automatically if the operation is cancelled
-//or encounters an unrecoverable error.
-//Returns YES if the import was undone, NO if there was nothing to undo
-//(e.g. the operation hadn't successfully imported anything.)
-- (BOOL) undoTransfer;
 
 @end
 

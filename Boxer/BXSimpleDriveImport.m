@@ -20,7 +20,6 @@
 @synthesize drive = _drive;
 @synthesize destinationFolder = _destinationFolder;
 @synthesize importedDrivePath = _importedDrivePath;
-@dynamic copyFiles, numFiles, filesTransferred, numBytes, bytesTransferred, currentPath;
 
 
 #pragma mark -

@@ -34,26 +34,28 @@ extern NSString * const BXFileTransferCurrentPathKey;
 
 @protocol BXFileTransfer <NSObject>
 
-//Whether this is a copy or move operation.
-@property (assign) BOOL copyFiles;
-
-//The number of files that will be copied in total.
-@property (readonly) NSUInteger numFiles;
-
-//The number of files that have been copied so far.
-@property (readonly) NSUInteger filesTransferred;
+//Whether the files in the transfer should be copied or moved.
+- (BOOL) copyFiles;
+- (void) setCopyFiles: (BOOL)copy;
 
 //The number of bytes that will be copied in total, and have been copied so far.
-@property (readonly) unsigned long long numBytes;
-@property (readonly) unsigned long long bytesTransferred;
-
-//The file path of the current file being transferred,
-//or nil if no path is currently being transferred.
-@property (readonly, copy) NSString *currentPath;
+- (unsigned long long) numBytes;
+- (unsigned long long) bytesTransferred;
 
 //Undo the file operation. Called automatically if the operation is cancelled
 //or encounters an unrecoverable error.
 //Returns YES if the transfer was undone, NO if there was nothing to undo
 //(e.g. the operation hadn't successfully copied anything.)
 - (BOOL) undoTransfer;
+
+//The number of files that will be copied in total.
+- (NSUInteger) numFiles;
+
+//The number of files that have been copied so far.
+- (NSUInteger) filesTransferred;
+
+//The file path of the current file being transferred,
+//or nil if no path is currently being transferred (or this cannot be determined.)
+- (NSString *) currentPath;
+
 @end

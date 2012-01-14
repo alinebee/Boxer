@@ -49,6 +49,9 @@
 //Our overall running time will be a multiple of this interval.
 @property (assign) NSTimeInterval pollInterval;
 
+//Whether to copy or move the file(s) in the transfer.
+@property (assign) BOOL copyFiles;
+
 #pragma mark -
 #pragma mark Initialization
 

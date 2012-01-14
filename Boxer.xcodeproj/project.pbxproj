@@ -18,7 +18,7 @@
 		9F0C0BD713E1751E0039C081 /* BXDOSWindowControllerLion.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0C0BD613E1751E0039C081 /* BXDOSWindowControllerLion.m */; };
 		9F0E6110139E1A05004A7A56 /* CHFlightstickPro.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F0E610E139E1A05004A7A56 /* CHFlightstickPro.png */; };
 		9F0E6111139E1A05004A7A56 /* ThrustmasterFCS.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F0E610F139E1A05004A7A56 /* ThrustmasterFCS.png */; };
-		9F0F2B9512AD3C8500CD7078 /* BXMultiFileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0F2B9412AD3C8500CD7078 /* BXMultiFileTransfer.m */; };
+		9F0F2B9512AD3C8500CD7078 /* BXFileTransferSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0F2B9412AD3C8500CD7078 /* BXFileTransferSet.m */; };
 		9F0F9EDA12108A9000ED7A64 /* BXSessionError.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0F9ED912108A9000ED7A64 /* BXSessionError.m */; };
 		9F0F9EEF1210901800ED7A64 /* BXMountedVolumesError.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F0F9EEE1210901800ED7A64 /* BXMountedVolumesError.m */; };
 		9F12F97C144875F400FC9645 /* DummyCD.iso in Resources */ = {isa = PBXBuildFile; fileRef = 9F12F97B144875F400FC9645 /* DummyCD.iso */; };
@@ -644,8 +644,8 @@
 		9F0C0BF213E17C0E0039C081 /* BXDOSWindowControllerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDOSWindowControllerPrivate.h; sourceTree = "<group>"; };
 		9F0E610E139E1A05004A7A56 /* CHFlightstickPro.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CHFlightstickPro.png; sourceTree = "<group>"; };
 		9F0E610F139E1A05004A7A56 /* ThrustmasterFCS.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ThrustmasterFCS.png; sourceTree = "<group>"; };
-		9F0F2B9312AD3C8500CD7078 /* BXMultiFileTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXMultiFileTransfer.h; sourceTree = "<group>"; };
-		9F0F2B9412AD3C8500CD7078 /* BXMultiFileTransfer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXMultiFileTransfer.m; sourceTree = "<group>"; };
+		9F0F2B9312AD3C8500CD7078 /* BXFileTransferSet.h */ = {isa = PBXFileReference; fileEncoding = 4; path = BXFileTransferSet.h; sourceTree = "<group>"; };
+		9F0F2B9412AD3C8500CD7078 /* BXFileTransferSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFileTransferSet.m; sourceTree = "<group>"; };
 		9F0F9ED812108A9000ED7A64 /* BXSessionError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXSessionError.h; sourceTree = "<group>"; };
 		9F0F9ED912108A9000ED7A64 /* BXSessionError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXSessionError.m; sourceTree = "<group>"; };
 		9F0F9EED1210901800ED7A64 /* BXMountedVolumesError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXMountedVolumesError.h; sourceTree = "<group>"; };
@@ -1601,8 +1601,8 @@
 				9FBF66FC11F376B900DAAB9A /* BXOperationDelegate.h */,
 				9FBF66AD11F35ADD00DAAB9A /* BXSingleFileTransfer.h */,
 				9FBF66AE11F35ADD00DAAB9A /* BXSingleFileTransfer.m */,
-				9F0F2B9312AD3C8500CD7078 /* BXMultiFileTransfer.h */,
-				9F0F2B9412AD3C8500CD7078 /* BXMultiFileTransfer.m */,
+				9F0F2B9312AD3C8500CD7078 /* BXFileTransferSet.h */,
+				9F0F2B9412AD3C8500CD7078 /* BXFileTransferSet.m */,
 				9F444FCA12AEA28700A2D405 /* BXOperationSet.h */,
 				9F444FCB12AEA28700A2D405 /* BXOperationSet.m */,
 				9F44501012AEC71100A2D405 /* BXFileTransfer.h */,
@@ -3148,7 +3148,7 @@
 				9F18133B129990D5009BC4B2 /* BXGamesFolderPanelController.m in Sources */,
 				9FD23D55129AE3B600B2100B /* NSWindow+BXWindowEffects.m in Sources */,
 				9F2C28A2129D906600B172C8 /* BXFirstRunWindowController.m in Sources */,
-				9F0F2B9512AD3C8500CD7078 /* BXMultiFileTransfer.m in Sources */,
+				9F0F2B9512AD3C8500CD7078 /* BXFileTransferSet.m in Sources */,
 				9F444FCC12AEA28700A2D405 /* BXOperationSet.m in Sources */,
 				9F444FFF12AEBE5200A2D405 /* BXDriveBundleImport.m in Sources */,
 				9F44500212AEC0FC00A2D405 /* BXSimpleDriveImport.m in Sources */,

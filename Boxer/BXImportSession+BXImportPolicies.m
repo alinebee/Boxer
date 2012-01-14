@@ -275,10 +275,26 @@
 
 + (NSImage *) boxArtForGameAtPath: (NSString *)path
 {
+    NSString *iconPath = nil;
+    
 	//At the moment this is a very simple check for the existence of a Games For Windows
-	//icon, included with GOG games
-	NSString *iconPath = [path stringByAppendingPathComponent: @"gfw_high.ico"];
-	if ([[NSFileManager defaultManager] fileExistsAtPath: iconPath])
+	//icon, included with GOG games.
+    NSString *pattern = @"^gfw_high\\.ico$";
+    BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: path];
+    for (NSString *subPath in enumerator)
+    {
+        NSString *fileName = [subPath lastPathComponent];
+        if ([fileName isMatchedByRegex: pattern
+                               options: RKLCaseless
+                               inRange: NSMakeRange(0, [fileName length])
+                                 error: nil])
+        {
+            iconPath = subPath;
+            break;
+        }
+    }
+    
+	if (iconPath)
 	{
 		NSImage *icon = [[[NSImage alloc] initByReferencingFile: iconPath] autorelease];
 		

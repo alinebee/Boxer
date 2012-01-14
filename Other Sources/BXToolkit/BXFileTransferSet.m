@@ -41,7 +41,7 @@
 
 - (void) setCopyFiles: (BOOL)copy
 {
-    if (copy != self.copyFiles)
+    if (copy != [self copyFiles])
     {
         _copyFiles = copy;
         
@@ -59,7 +59,7 @@
 	{
 		NSString *destinationPath = [paths objectForKey: sourcePath];
         
-        [self addTransferFromPath: destinationPath toPath: sourcePath];
+        [self addTransferFromPath: sourcePath toPath: destinationPath];
 	}
 }
 
@@ -146,13 +146,6 @@
 
 #pragma mark -
 #pragma mark Performing the transfer
-
-- (void) performOperation
-{
-    
-    
-    [super performOperation];
-}
 
 - (void) _sendInProgressNotificationWithInfo: (NSDictionary *)info
 {	

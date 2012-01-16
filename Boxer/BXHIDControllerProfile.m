@@ -387,7 +387,7 @@ static NSMutableArray *profileClasses = nil;
                 [binding setDelegate: self];
                 return binding;
             }
-            else if ([joystick respondsToSelector: @selector(y2Axis)])
+            else if ([joystick supportsAxis: BXAxisY2])
                 return [BXAxisToAxis bindingWithAxis: BXAxisY2];
             
 			break;

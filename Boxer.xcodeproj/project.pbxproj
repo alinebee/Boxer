@@ -644,7 +644,7 @@
 		9F0C0BF213E17C0E0039C081 /* BXDOSWindowControllerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDOSWindowControllerPrivate.h; sourceTree = "<group>"; };
 		9F0E610E139E1A05004A7A56 /* CHFlightstickPro.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CHFlightstickPro.png; sourceTree = "<group>"; };
 		9F0E610F139E1A05004A7A56 /* ThrustmasterFCS.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ThrustmasterFCS.png; sourceTree = "<group>"; };
-		9F0F2B9312AD3C8500CD7078 /* BXFileTransferSet.h */ = {isa = PBXFileReference; fileEncoding = 4; path = BXFileTransferSet.h; sourceTree = "<group>"; };
+		9F0F2B9312AD3C8500CD7078 /* BXFileTransferSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFileTransferSet.h; sourceTree = "<group>"; };
 		9F0F2B9412AD3C8500CD7078 /* BXFileTransferSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFileTransferSet.m; sourceTree = "<group>"; };
 		9F0F9ED812108A9000ED7A64 /* BXSessionError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXSessionError.h; sourceTree = "<group>"; };
 		9F0F9ED912108A9000ED7A64 /* BXSessionError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXSessionError.m; sourceTree = "<group>"; };
@@ -3831,6 +3831,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/Other Sources/JoypadCocoaSDK\"",
 				);
+				OTHER_CFLAGS = "-mstackrealign";
 				PRODUCT_NAME = Boxer;
 				VALID_ARCHS = "i386 ppc";
 			};
@@ -3912,6 +3913,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/Other Sources/JoypadCocoaSDK\"",
 				);
+				OTHER_CFLAGS = "-mstackrealign";
 				PRODUCT_NAME = Boxer;
 				VALID_ARCHS = i386;
 			};
@@ -3940,6 +3942,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/Other Sources/JoypadCocoaSDK\"",
 				);
+				OTHER_CFLAGS = "-mstackrealign";
 				PRODUCT_NAME = Boxer;
 				VALID_ARCHS = i386;
 			};

@@ -11,6 +11,7 @@
 #import "NSWorkspace+BXFileTypes.h"
 #import "BXPathEnumerator.h"
 #import "BXAppController.h"
+#import "BXAppKitVersionHelpers.h"
 
 
 @interface BXShelfAppearanceOperation ()
@@ -231,7 +232,7 @@
 	//In 10.5 this isn't sufficient - but we can't just set it to nil, or to a nonexistent file, or the parent 
 	//folder's background image, as none of these work.
 	//So, we set it to an empty PNG file we keep around for these occasions. Fuck the world.
-	if ([BXAppController isRunningOnLeopard])
+	if (isRunningOnLeopard())
 	{
 		//Retrieve a Finder reference to the blank background the first time we need it,
 		//and store it so we don't need to retrieve it for every additional path we apply to.

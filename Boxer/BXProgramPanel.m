@@ -12,6 +12,8 @@
 #import "NSShadow+BXShadowExtensions.h"
 #import "NSBezierPath+MCAdditions.h"
 
+#import "BXAppKitVersionHelpers.h"
+
 
 @implementation BXProgramPanel
 
@@ -380,7 +382,7 @@
 
 - (void) setContent: (NSArray *)content
 {
-    if ([BXAppController isRunningOnLeopard])
+    if (isRunningOnLeopard())
     {
         [_pendingContent release];
         _pendingContent = [content retain];

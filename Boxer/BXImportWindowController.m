@@ -10,8 +10,7 @@
 #import "BXImportSession.h"
 #import "BXGeometry.h"
 #import "NSWindow+BXWindowDimensions.h"
-#import "BXAppController.h"
-
+#import "BXAppKitVersionHelpers.h"
 
 //The height of the bottom window border.
 //TODO: determine this from NIB content.
@@ -145,7 +144,7 @@
 	NSWindow *toWindow		= [controller window];
     
     //These fancy transitions don't work well at all in Lion, which has its own window popin/popout animations.
-    if ([BXAppController isRunningOnLionOrAbove])
+    if (isRunningOnLionOrAbove())
     {
         [fromWindow orderOut: self];
         [toWindow makeKeyAndOrderFront: self];
@@ -185,7 +184,7 @@
 	NSWindow *toWindow		= [self window];
 	
     //These fancy transitions don't work well at all in Lion, which has its own window popin/popout animations.
-    if ([BXAppController isRunningOnLionOrAbove])
+    if (isRunningOnLionOrAbove())
     {
         [fromWindow orderOut: self];
         [toWindow makeKeyAndOrderFront: self];

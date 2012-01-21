@@ -50,6 +50,8 @@
 
 #import "BXPathEnumerator.h"
 
+#import "BXAppKitVersionHelpers.h"
+
 
 #pragma mark -
 #pragma mark Private method declarations
@@ -224,7 +226,7 @@
 - (void) makeWindowControllers
 {
     BXDOSWindowController *controller;
-	if ([BXAppController isRunningOnLionOrAbove])
+	if (isRunningOnLionOrAbove())
 	{
 		controller = [[BXDOSWindowControllerLion alloc] initWithWindowNibName: @"DOSImportWindow"];
 	}

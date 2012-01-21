@@ -24,6 +24,8 @@
 #import "UKFNSubscribeFileWatcher.h"
 #import "NSWorkspace+BXExecutableTypes.h"
 
+#import "BXAppKitVersionHelpers.h"
+
 
 #pragma mark -
 #pragma mark Constants
@@ -379,7 +381,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 - (void) makeWindowControllers
 {
 	BXDOSWindowController *controller;
-	if ([BXAppController isRunningOnLionOrAbove])
+	if (isRunningOnLionOrAbove())
 	{
 		controller = [[BXDOSWindowControllerLion alloc] initWithWindowNibName: @"DOSWindow"];
 	}

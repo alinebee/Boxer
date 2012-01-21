@@ -10,6 +10,7 @@
 #import "NSWindow+BXWindowEffects.h"
 #import "BXAppController+BXGamesFolder.h"
 #import "BXValueTransformers.h"
+#import "BXAppKitVersionHelpers.h"
 
 
 //Used to determine where to fill the games folder selector with suggested locations
@@ -157,7 +158,8 @@ enum {
 							importerDroplet: YES
 							shelfAppearance: applyShelfAppearance];
 	
-    if ([BXAppController isRunningOnLionOrAbove])
+	//Lion's own window transitions will interfere with our own, so leave them out.
+    if (isRunningOnLionOrAbove())
     {
         [[self window] close];
     }

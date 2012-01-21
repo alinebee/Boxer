@@ -12,18 +12,6 @@
 #import <Cocoa/Cocoa.h>
 
 
-//Not defined in AppKit until 10.6 (whoopeeeeeee)
-#ifndef NSAppKitVersionNumber10_5
-#define NSAppKitVersionNumber10_5 949
-#endif 
-
-#ifndef NSAppKitVersionNumber10_6
-#define NSAppKitVersionNumber10_6 1038
-#endif
-
-#ifndef NSAppKitVersionNumber10_7
-#define NSAppKitVersionNumber10_7 1110
-#endif
 
 @class BXSession;
 @class BXJoystickController;
@@ -72,13 +60,6 @@ enum {
 
 //Returns YES if there are other Boxer processes currently running, no otherwise.
 + (BOOL) otherBoxersActive;
-
-//Check which version of OS X we’re running on.
-//This is used to trigger certain bugfixes and window effects, and adjusts the art we use.
-+ (BOOL) isRunningOnLeopard;
-+ (BOOL) isRunningOnSnowLeopard;
-+ (BOOL) isRunningOnLionOrAbove;
-
 
 //The application version and internal build number
 + (NSString *) localizedVersion;

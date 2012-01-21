@@ -20,6 +20,7 @@
 #import "BXShelfAppearanceOperation.h"
 #import "BXHelperAppCheck.h"
 #import "NSString+BXPaths.h"
+#import "BXAppKitVersionHelpers.h"
 
 //For determining maximum Finder folder-background sizes
 #import <OpenGL/OpenGL.h>
@@ -127,7 +128,10 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 	NSSize maxArtworkSize = [self _maxArtworkSize];
 	
 	//10.5 is happy with the largest image we can make.
-	if ([BXAppController isRunningOnLeopard]) return maxArtworkSize;
+	if (isRunningOnLeopard())
+	{
+		return maxArtworkSize;
+	}
 	else
 	{
 		//Snow Leopard's and Lion's Finder use OpenGL textures for 
@@ -175,7 +179,7 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 
 - (NSString *) shelfArtworkPath
 {
-	BOOL isLeopardFinder = [[self class] isRunningOnLeopard];
+	BOOL isLeopardFinder = isRunningOnLeopard();
 	
 	NSString *artworkFolderPath = [[self supportPathCreatingIfMissing: NO] stringByAppendingPathComponent: @"Shelf artwork"];
 	NSString *artworkName = isLeopardFinder ? @"Leopard.jpg" : @"Snow Leopard.jpg";

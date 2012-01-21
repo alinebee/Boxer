@@ -9,6 +9,7 @@
 #import "NSBezierPath+MCAdditions.h"
 #import "BXGeometry.h"
 #import "NSShadow+BXShadowExtensions.h"
+#import "BXAppKitVersionHelpers.h"
 
 @implementation BXCoverArt
 @synthesize sourceImage;
@@ -62,12 +63,23 @@
 	[[NSGraphicsContext currentContext] setImageInterpolation: NSImageInterpolationHigh];
 	
 	NSSize iconSize	= frame.size;
-	NSImage *image	= [self sourceImage];	
+	NSImage *image	= [self sourceImage];
 	
 	//Effects we'll be applying to the cover art
 	NSImage *shine			= [[self class] shineForSize: iconSize];
 	NSShadow *dropShadow	= [[self class] dropShadowForSize: iconSize];
 	NSShadow *innerGlow		= [[self class] innerGlowForSize: iconSize];
+	
+	//NOTE: drawInRect:fromRect:operation:fraction: misbehaves on 10.5 in that
+	//it caches what it draws and may use that for future draw operations
+	//instead of other, more suitable representations of that image.
+	//To work around this, we draw a copy of the image instead of the original.
+	//Fuck 10.5.
+	if (isRunningOnLeopard())
+	{
+		image = [[image copy] autorelease];
+		shine = [[shine copy] autorelease];
+	}
 	
 	//Allow enough room around the image for our drop shadow
 	NSSize availableSize	= NSMakeSize(
@@ -89,15 +101,21 @@
 	
 	//Draw the original image into the appropriate space in the canvas, with our drop shadow
 	[NSGraphicsContext saveGraphicsState];
-	[dropShadow set];
-	[image drawInRect: artFrame fromRect: NSZeroRect operation: NSCompositeSourceOver fraction: 1.0f];
+		[dropShadow set];
+		[image drawInRect: artFrame
+				 fromRect: NSZeroRect
+				operation: NSCompositeSourceOver
+				 fraction: 1.0f];
 	[NSGraphicsContext restoreGraphicsState];
 	
 	//Draw the inner glow inside the box region
 	[[NSBezierPath bezierPathWithRect: artFrame] fillWithInnerShadow: innerGlow];
 	
 	//Draw our pretty box shine into the box's region
-	[shine drawInRect: artFrame fromRect: artFrame operation: NSCompositeSourceOver fraction: 0.25f];
+	[shine drawInRect: artFrame
+			 fromRect: artFrame
+			operation: NSCompositeSourceOver
+			 fraction: 0.25f];
 	
 	//Finally, outline the box
 	[[NSColor colorWithCalibratedWhite: 0.0f alpha: 0.33f] set];

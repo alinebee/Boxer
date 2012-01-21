@@ -7,6 +7,7 @@
 
 #import "NSImage+BXImageEffects.h"
 #import "BXGeometry.h"
+#import "BXAppKitVersionHelpers.h"
 
 @implementation NSImage (BXImageEffects)
 
@@ -77,20 +78,31 @@
 {
     if (NSEqualSizes(targetSize, NSZeroSize)) targetSize = [self size];
     
-    NSImage *maskedImage = [[NSImage alloc] init];
-    [maskedImage setSize: targetSize];
+    NSRect imageRect = NSMakeRect(0, 0, targetSize.width, targetSize.height);
     
-    NSRect imageRect = NSMakeRect(0.0f, 0.0f, targetSize.width, targetSize.height);
-    
+	NSImage *maskedImage = [[NSImage alloc] initWithSize: targetSize];
+    NSImage *sourceImage = self;
+	
+	//NOTE: drawInRect:fromRect:operation:fraction: misbehaves on 10.5 in that
+	//it caches what it draws and may use that for future draw operations
+	//instead of other, more suitable representations of that image.
+	//To work around this, we draw a copy of the image instead of the original.
+	//Fuck 10.5.
+	if (isRunningOnLeopard())
+		sourceImage = [[sourceImage copy] autorelease];
+	
     [maskedImage lockFocus];
         [color set];
         NSRectFillUsingOperation(imageRect, NSCompositeSourceOver);
-        [self drawInRect: imageRect
-                fromRect: NSZeroRect
-               operation: NSCompositeDestinationIn 
-                fraction: 1.0f];
+        [sourceImage drawInRect: imageRect
+					   fromRect: NSZeroRect
+					  operation: NSCompositeDestinationIn 
+					   fraction: 1.0f];
     [maskedImage unlockFocus];
     
+	if (isRunningOnLeopard())
+		[self recache];
+	
     return [maskedImage autorelease];
 }
 
@@ -103,6 +115,14 @@
     
     NSRect imageRect = NSMakeRect(0.0f, 0.0f, targetSize.width, targetSize.height);
     
+	//NOTE: drawInRect:fromRect:operation:fraction: misbehaves on 10.5 in that
+	//it caches the what it draws and may use that for future draw operations
+	//instead of other, more suitable representations of that image.
+	//To work around this, we draw a copy of the image instead of the original.
+	//Fuck 10.5.
+	if (isRunningOnLeopard())
+		image = [[image copy] autorelease];
+	
     [maskedImage lockFocus];
         [image drawInRect: imageRect
                  fromRect: NSZeroRect

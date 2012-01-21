@@ -7,6 +7,7 @@
 
 
 #import "BXBootlegCoverArt.h"
+#import "BXAppKitVersionHelpers.h"
 
 @implementation BXJewelCase
 @synthesize title;
@@ -93,12 +94,23 @@
 	
 	NSImage *baseLayer	= [[self class] baseLayerForSize: iconSize];
 	NSImage *topLayer	= [[self class] topLayerForSize: iconSize];
-	NSRect textRegion = [[self class] textRegionForRect: frame];
-
-	if (baseLayer) [baseLayer drawInRect: frame
-								fromRect: NSZeroRect
-							   operation: NSCompositeSourceOver
-								fraction: 1.0f];
+	NSRect textRegion	= [[self class] textRegionForRect: frame];
+	
+	if (baseLayer)
+	{
+		//NOTE: drawInRect:fromRect:operation:fraction: misbehaves on 10.5 in that
+		//it caches what it draws and may use that for future draw operations
+		//instead of other, more suitable representations of that image.
+		//To work around this, we draw a copy of the image instead of the original.
+		//Fuck 10.5.
+		if (isRunningOnLeopard())
+			baseLayer = [[baseLayer copy] autorelease];
+		
+		[baseLayer drawInRect: frame
+					 fromRect: NSZeroRect
+					operation: NSCompositeSourceOver
+					 fraction: 1.0f];
+	}
 
 	if (!NSEqualRects(textRegion, NSZeroRect))
 	{
@@ -106,10 +118,16 @@
 		[[self title] drawInRect: textRegion withAttributes: textAttributes];
 	}
 
-	if (topLayer) [topLayer drawInRect: frame
-							  fromRect: NSZeroRect
-							 operation: NSCompositeSourceOver
-							  fraction: 1.0f];		
+	if (topLayer)
+	{
+		if (isRunningOnLeopard())
+			topLayer = [[topLayer copy] autorelease];
+		
+		[topLayer drawInRect: frame
+					fromRect: NSZeroRect
+				   operation: NSCompositeSourceOver
+					fraction: 1.0f];		
+	}
 
 }
 
@@ -121,9 +139,9 @@
 	NSImage *canvas = [[NSImage alloc] initWithSize: iconSize];
 	
 	[canvas lockFocus];
-	[self drawInRect: frame];
-	NSBitmapImageRep *rep = [[NSBitmapImageRep alloc] initWithFocusedViewRect: frame];
-	[canvas unlockFocus];
+		[self drawInRect: frame];
+		NSBitmapImageRep *rep = [[NSBitmapImageRep alloc] initWithFocusedViewRect: frame];
+		[canvas unlockFocus];
 	[canvas release];
 	
 	return [rep autorelease];

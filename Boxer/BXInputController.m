@@ -325,11 +325,11 @@
     float fadeDelay = 0.5f;
     float curve = 0.9f;
     
-    float easedValue = pow(progress, 2 * curve);
+    float easedValue = powf(progress, 2 * curve);
     
     return easedValue;
     
-    return fadeDelay + (easedValue * (1.0 - fadeDelay));
+    return fadeDelay + (easedValue * (1.0f - fadeDelay));
 }
 
 - (BOOL) animationShouldChangeCursor: (BXCursorFadeAnimation *)animation

@@ -3832,6 +3832,7 @@
 					"\"$(SRCROOT)/Other Sources/JoypadCocoaSDK\"",
 				);
 				OTHER_CFLAGS = "-mstackrealign";
+				"OTHER_CFLAGS[arch=i386]" = "-mstackrealign";
 				PRODUCT_NAME = Boxer;
 				VALID_ARCHS = "i386 ppc";
 			};

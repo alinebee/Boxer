@@ -99,6 +99,6 @@
 - (void) setNeedsDisplayInRegion: (NSRange)range;
 - (void) clearDirtyRegions;
 
-- (NSRange) dirtyRegionAtIndex: (NSUInteger)index;
+- (NSRange) dirtyRegionAtIndex: (NSUInteger)region;
 
 @end

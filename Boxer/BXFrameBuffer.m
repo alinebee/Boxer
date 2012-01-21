@@ -135,11 +135,11 @@
     [self setNumDirtyRegions: 0];
 }
 
-- (NSRange) dirtyRegionAtIndex: (NSUInteger)index
+- (NSRange) dirtyRegionAtIndex: (NSUInteger)regionIndex
 {
-    NSAssert1(index < [self numDirtyRegions], @"dirtyRegionAtIndex: called with out of range index: %u", index);
+    NSAssert1(regionIndex < [self numDirtyRegions], @"dirtyRegionAtIndex: called with index out of range: %u", regionIndex);
     
-    return dirtyRegions[index];
+    return dirtyRegions[regionIndex];
 }
 
 @end

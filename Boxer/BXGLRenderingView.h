@@ -11,11 +11,14 @@
 //and notifying it of changes to the view dimensions.
 
 #import "BXFrameRenderingView.h"
+#import <QuartzCore/QuartzCore.h>
 
 @class BXRenderer;
 @interface BXGLRenderingView : NSOpenGLView <BXFrameRenderingView>
 {
 	BXRenderer *renderer;
+	CVDisplayLinkRef displayLink;
+    BOOL needsCVLinkDisplay;
 }
 @property (retain, nonatomic) BXRenderer *renderer;
 

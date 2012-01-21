@@ -571,7 +571,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>BXInputController</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>BXDisplayLinkRenderingView</string>
+					<string>BXGLRenderingView</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
@@ -778,14 +778,6 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/BXDOSWindowController.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXDisplayLinkRenderingView</string>
-					<string key="superclassName">BXGLRenderingView</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BXDisplayLinkRenderingView.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

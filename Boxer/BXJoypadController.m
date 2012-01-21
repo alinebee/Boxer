@@ -133,10 +133,12 @@
 - (BOOL) joypadManager: (JoypadManager *)manager deviceShouldConnect: (JoypadDevice *)device
 {
     //NOTE: this method is getting called erroneously after disconnection
-    //in Joypad SDK 0.15.2 preview.
-    //We can't detect this though, which means that Boxer won't recognise
-    //that the Joypad device has disappeared and that there is no longer
-    //any input controller present. Big deal.
+    //in the Joypad SDK 0.1.5.1+ preview, which causes Boxer to think
+    //that a Joypad device is still available when it isn't. This is fixed
+    //in future SDK updates, but we're holding off on updating because of
+    //other bugs therein.
+    //(This bug isn't a huge deal anyway, and we prefer knowing as early
+    //as possible that the device is available.)
     [self setHasJoypadDevices: YES];
     return YES;
 }

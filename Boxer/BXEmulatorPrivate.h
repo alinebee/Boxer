@@ -97,6 +97,10 @@ enum {
 
 @property (readwrite, nonatomic) BOOL joystickActive;
 
+@property (readwrite, retain, nonatomic) BXVideoHandler *videoHandler;
+@property (readwrite, retain, nonatomic) BXEmulatedKeyboard *keyboard;
+@property (readwrite, retain, nonatomic) BXEmulatedMouse *mouse;
+
 @end
 
 

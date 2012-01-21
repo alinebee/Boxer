@@ -212,20 +212,25 @@
 	BXEmulator *emulator = [[self representedObject] emulator];
 	BXJoystickSupportLevel support = [emulator joystickSupport];
 	
-	Class preferredJoystickClass = [self preferredJoystickType];
+	Class joystickClass = [self preferredJoystickType];
 	
 	//If the current game doesn't support joysticks, or the user has chosen
 	//to disable joystick support, or there are no real controllers connected,
     //then remove the emulated joystick and don't continue further.
-	if (support == BXNoJoystickSupport || !preferredJoystickClass || ![self controllersAvailable])
+	if (support == BXNoJoystickSupport || !joystickClass || ![self controllersAvailable])
 	{
-		[emulator detachJoystick];
+		[emulator setJoystick: nil];
 	}
-	else
+	else if (![[emulator joystick] isMemberOfClass: joystickClass])
     {
-		if (![[emulator joystick] isMemberOfClass: preferredJoystickClass])
-			[emulator attachJoystickOfType: preferredJoystickClass];
-	}
+        id <BXEmulatedJoystick> joystick = [[joystickClass alloc] init];
+        //TODO: handle joystick validation errors.
+        if ([emulator validateJoystick: &joystick error: nil])
+        {
+            [emulator setJoystick: joystick];
+        }
+        [joystick release];
+    }
 }
 
 - (void) _syncControllerProfiles

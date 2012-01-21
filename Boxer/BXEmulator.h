@@ -109,10 +109,10 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 //The delegate responsible for this emulator.
 @property (assign, nonatomic) id <BXEmulatorDelegate, BXEmulatorFileSystemDelegate, BXEmulatorAudioDelegate> delegate;
 
-@property (readonly, nonatomic) BXVideoHandler *videoHandler;	//Our DOSBox video and rendering handler.
-@property (readonly, nonatomic) BXEmulatedKeyboard *keyboard;	//Our emulated keyboard.
-@property (readonly, nonatomic) BXEmulatedMouse *mouse;			//Our emulated mouse.
-@property (readonly, nonatomic) id <BXEmulatedJoystick> joystick;	//Our emulated joystick. Initially empty.
+@property (readonly, retain, nonatomic) BXVideoHandler *videoHandler;       //Our DOSBox video and rendering handler.
+@property (readonly, retain, nonatomic) BXEmulatedKeyboard *keyboard;       //Our emulated keyboard.
+@property (readonly, retain, nonatomic) BXEmulatedMouse *mouse;             //Our emulated mouse.
+@property (retain, nonatomic) id <BXEmulatedJoystick> joystick;             //Our emulated joystick. Initially empty.
 
 //The OS X filesystem path to which the emulator should resolve relative local filesystem paths.
 //This is used by DOSBox commands like MOUNT, IMGMOUNT and CONFIG, and is directly equivalent
@@ -241,17 +241,7 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 #pragma mark -
 #pragma mark Managing gameport devices
 
-//Attach an emulated joystick of the specified BXEmulatedJoystick subclass.
-//Will return the new joystick if it was created and attached successfully,
-//or NO if an existing joystick was already attached or joystickType
-//was not a valid BXEmulatedJoystick subclass. 
-- (id <BXEmulatedJoystick>) attachJoystickOfType: (Class)joystickType;
-
-//Remove the current joystick.
-//Will return YES if the joystick was removed, or NO if there was no joystick.
-- (BOOL) detachJoystick;
-
-//Validates whether the specified class is a valid joystick type and supported by the current session.
-- (BOOL) validateJoystickType: (Class *)ioValue error: (NSError **)outError;
+//Validates whether the specified joystick is a valid joystick type and supported by the current session.
+- (BOOL) validateJoystick: (id <BXEmulatedJoystick> *)ioValue error: (NSError **)outError;
 
 @end

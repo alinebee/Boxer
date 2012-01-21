@@ -3,56 +3,53 @@
 <plist version="1.0">
 <dict>
 	<key>BXGameProfileCatalogueVersion</key>
-	<string>20120101.1</string>
+	<string>20120121.1</string>
 	<key>BXSpecificGameProfiles</key>
 	<array>
-        <dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.ea.fifa-94</string>
-            <key>BXProfileGameName</key>
-            <string>FIFA International Soccer</string>
-            <key>BXProfileConfigurations</key>
-            <array>
-                <string>Pentium</string>
-            </array>
-            <key>BXProfileTelltales</key>
-            <array>
-                <string>fifa.exe</string>
-            </array>
-        </dict>
-        
-        <dict>
-            <key>BXProfileIdentifier</key>
-            <string>com.ssi.steel-panthers-2</string>
-            <key>BXProfileGameName</key>
-            <string>Steel Panthers II</string>
-            <key>BXProfileTelltales</key>
-            <array>
-                <string>steel2.exe</string>
-            </array>
-            <key>BXIgnoredInstallers</key>
-            <array>
-                <string>vinstall.bat</string>
-            </array>
-            <key>BXRequiresCDROM</key>
-            <true/>
-        </dict>
-        
-        <dict>
-            <key>BXProfileIdentifier</key>
-            <string>uk.co.revolution.broken-sword</string>
-            <key>BXProfileGameName</key>
-            <string>Broken Sword</string>
-            <key>BXProfileConfigurations</key>
-            <array>
-                <string>Broken Sword</string>
-            </array>
-            <key>BXProfileTelltales</key>
-            <array>
-                <string>sword.vol</string>
-            </array>
-        </dict>
-        
+		<dict>
+			<key>BXProfileIdentifier</key>
+			<string>com.ea.fifa-94</string>
+			<key>BXProfileGameName</key>
+			<string>FIFA International Soccer</string>
+			<key>BXProfileConfigurations</key>
+			<array>
+				<string>Pentium</string>
+			</array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>fifa.exe</string>
+			</array>
+		</dict>
+		<dict>
+			<key>BXProfileIdentifier</key>
+			<string>com.ssi.steel-panthers-2</string>
+			<key>BXProfileGameName</key>
+			<string>Steel Panthers II</string>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>steel2.exe</string>
+			</array>
+			<key>BXIgnoredInstallers</key>
+			<array>
+				<string>vinstall.bat</string>
+			</array>
+			<key>BXRequiresCDROM</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>BXProfileIdentifier</key>
+			<string>uk.co.revolution.broken-sword</string>
+			<key>BXProfileGameName</key>
+			<string>Broken Sword</string>
+			<key>BXProfileConfigurations</key>
+			<array>
+				<string>Broken Sword</string>
+			</array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>sword.vol</string>
+			</array>
+		</dict>
 		<dict>
 			<key>BXProfileIdentifier</key>
 			<string>com.activision.mechwarrior</string>
@@ -864,7 +861,7 @@
 				<string>can.exe</string>
 			</array>
 		</dict>
-        <dict>
+		<dict>
 			<key>BXProfileIdentifier</key>
 			<string>com.sir-tech.wizardry-7</string>
 			<key>BXProfileGameName</key>
@@ -879,7 +876,7 @@
 				<string>scenario.hdr</string>
 			</array>
 		</dict>
-        <dict>
+		<dict>
 			<key>BXProfileIdentifier</key>
 			<string>com.ea.ultrabots</string>
 			<key>BXProfileGameName</key>
@@ -894,7 +891,7 @@
 				<string>xenobot.1</string>
 			</array>
 		</dict>
-        <dict>
+		<dict>
 			<key>BXProfileIdentifier</key>
 			<string>com.gametek.frontier</string>
 			<key>BXProfileGameName</key>
@@ -941,33 +938,33 @@
 			</array>
 			<key>BXProfileMatches</key>
 			<array>
-                <string>Street Fighter II</string>
-                <string>Powermonger</string>
-                <string>Stronghold</string>
-                <string>Starlord</string>
-                <string>Moonstone: A Hard Day’s Knight</string>
-                <string>Rules of Engagement</string>
-                <string>Spirit of Excalibur</string>
-                <string>Vengeance of Excalibur</string>
-                <string>Conan the Cimmerian</string>
-                <string>Crisis in the Kremlin</string>
-                <string>Breach 2</string>
-                <string>Back to the Future Part III</string>
-                <string>AV-8B Harrier Assault</string>
-                <string>Teenage Mutant Ninja Turtles II: The Arcade Game</string>
-                <string>Twilight 2000</string>
-                <string>Megatraveller II</string>
-                <string>Magic Candle II</string>
-                <string>Lord of the Rings vol. I</string>
-                <string>Lord of the Rings vol. II- The Two Towers</string>
-                <string>Miami Vice</string>
+				<string>Street Fighter II</string>
+				<string>Powermonger</string>
+				<string>Stronghold</string>
+				<string>Starlord</string>
+				<string>Moonstone: A Hard Day’s Knight</string>
+				<string>Rules of Engagement</string>
+				<string>Spirit of Excalibur</string>
+				<string>Vengeance of Excalibur</string>
+				<string>Conan the Cimmerian</string>
+				<string>Crisis in the Kremlin</string>
+				<string>Breach 2</string>
+				<string>Back to the Future Part III</string>
+				<string>AV-8B Harrier Assault</string>
+				<string>Teenage Mutant Ninja Turtles II: The Arcade Game</string>
+				<string>Twilight 2000</string>
+				<string>Megatraveller II</string>
+				<string>Magic Candle II</string>
+				<string>Lord of the Rings vol. I</string>
+				<string>Lord of the Rings vol. II- The Two Towers</string>
+				<string>Miami Vice</string>
 				<string>Eye of the Beholder III</string>
-                <string>Dungeon Hack</string>
-                <string>Spelljammer: Pirates of Realmspace</string>
-                <string>Veil of Darkness</string>
+				<string>Dungeon Hack</string>
+				<string>Spelljammer: Pirates of Realmspace</string>
+				<string>Veil of Darkness</string>
 				<string>Champions of Krynn</string>
 				<string>Dark Queen of Krynn</string>
-                <string>Shadow Sorcerer</string>
+				<string>Shadow Sorcerer</string>
 				<string>Forgotten Realms: Unlimited Adventures</string>
 				<string>Buck Rogers: Matrix Cubed</string>
 				<string>Realms of Arkania: Blade of Destiny</string>
@@ -1031,31 +1028,31 @@
 				<string>Hardball III</string>
 				<string>Jack Nicklaus Unlimited Golf and Course Design</string>
 				<string>Jack Nicklaus Signature Edition</string>
-                <string>Snoopy’s Game Club</string>
+				<string>Snoopy’s Game Club</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
-                <string>sprite1.sf2</string>
-                <string>mt32.fx</string>
-                <string>strong.exe</string>
-                <string>starlord.dat</string>
-                <string>ratgoug</string>
-                <string>roemain.exe</string>
-                <string>rol.dvr</string>
-                <string>crisis1.big</string>
-                <string>breach2.exe</string>
-                <string>roland.bin</string>
-                <string>twi2d.dat</string>
-                <string>pistol.voc</string>
-                <string>mc201t.mid</string>
-                <string>arts.ndx</string>
-                <string>stilts.ega</string>
+				<string>sprite1.sf2</string>
+				<string>mt32.fx</string>
+				<string>strong.exe</string>
+				<string>starlord.dat</string>
+				<string>ratgoug</string>
+				<string>roemain.exe</string>
+				<string>rol.dvr</string>
+				<string>crisis1.big</string>
+				<string>breach2.exe</string>
+				<string>roland.bin</string>
+				<string>twi2d.dat</string>
+				<string>pistol.voc</string>
+				<string>mc201t.mid</string>
+				<string>arts.ndx</string>
+				<string>stilts.ega</string>
 				<string>aesop.exe</string>
-                <string>veil.com</string>
-                <string>sjintro0.msh</string>
+				<string>veil.com</string>
+				<string>sjintro0.msh</string>
 				<string>dungcom.dax</string>
 				<string>dqk.exe</string>
-                <string>vmonz.dat</string>
+				<string>vmonz.dat</string>
 				<string>ckit.exe</string>
 				<string>venuscom.dax</string>
 				<string>bladem.exe</string>
@@ -1446,15 +1443,15 @@
 				<string>One Must Fall</string>
 				<string>Theme Park</string>
 				<string>Halloween Harry</string>
-                <string>F-14 Tomcat</string>
+				<string>F-14 Tomcat</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
-                <string>tim.exe</string>
+				<string>tim.exe</string>
 				<string>omf.exe</string>
 				<string>park.bat</string>
 				<string>harry.sb0</string>
-                <string>tomcat.dat</string>
+				<string>tomcat.dat</string>
 			</array>
 		</dict>
 		<dict>
@@ -1543,14 +1540,14 @@
 				<string>Alone in the Dark 3</string>
 				<string>Sherlock Holmes: The Case of the Rose Tattoo</string>
 				<string>Royal Flush Pinball</string>
-                <string>Jetfighter 2</string>
+				<string>Jetfighter 2</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>objets.itd</string>
 				<string>holmes2.bat</string>
 				<string>rf_sfx</string>
-                <string>jf2.exe</string>
+				<string>jf2.exe</string>
 			</array>
 		</dict>
 		<dict>
@@ -1564,13 +1561,13 @@
 			</array>
 			<key>BXProfileMatches</key>
 			<array>
-                <string>Car &amp; Driver</string>
+				<string>Car &amp; Driver</string>
 				<string>Blackthorne</string>
 				<string>Star Wars X-Wing</string>
 				<string>The Elder Scrolls: Arena</string>
-                <string>Terminator 2029</string>
-                <string>Terminator 2029: Operation Scour</string>
-                <string>Terminator: Rampage</string>
+				<string>Terminator 2029</string>
+				<string>Terminator 2029: Operation Scour</string>
+				<string>Terminator: Rampage</string>
 				<string>Epic Pinball</string>
 				<string>Pinball Dreams Deluxe, Pinball Dreams 2, Pinball Fantasies</string>
 				<string>Colonization</string>
@@ -1590,12 +1587,12 @@
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
-                <string>c&amp;d.exe</string>
+				<string>c&amp;d.exe</string>
 				<string>black.exe</string>
 				<string>vga.pac</string>
 				<string>tamriel.mnu</string>
-                <string>termspec.dff</string>
-                <string>pcdeath.flc</string>
+				<string>termspec.dff</string>
+				<string>pcdeath.flc</string>
 				<string>ep1.dat</string>
 				<string>thing.sdr</string>
 				<string>viceroy.exe</string>

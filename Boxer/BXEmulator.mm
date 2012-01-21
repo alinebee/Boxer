@@ -187,18 +187,15 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 {
 	if ((self = [super init]))
 	{
-		commandQueue		= [[NSMutableArray alloc] initWithCapacity: 4];
-		driveCache			= [[NSMutableDictionary alloc] initWithCapacity: DOS_DRIVES];
-		
-		videoHandler		= [[BXVideoHandler alloc] init];
-		
-		mouse				= [[BXEmulatedMouse alloc] init];
-		keyboard			= [[BXEmulatedKeyboard alloc] init];
-        
+		commandQueue            = [[NSMutableArray alloc] initWithCapacity: 4];
+		driveCache              = [[NSMutableDictionary alloc] initWithCapacity: DOS_DRIVES];
 		pendingSysexMessages    = [[NSMutableArray alloc] initWithCapacity: 4];
+		
+        [self setKeyboard: [[[BXEmulatedKeyboard alloc] init] autorelease]];
+        [self setMouse: [[[BXEmulatedMouse alloc] init] autorelease]];
         
-        
-		[videoHandler setEmulator: self];
+        [self setVideoHandler: [[[BXVideoHandler alloc] init] autorelease]];
+		[[self videoHandler] setEmulator: self];
 	}
 	return self;
 }
@@ -209,18 +206,16 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	[self setActiveMIDIDevice: nil], [activeMIDIDevice release];
     [self setRequestedMIDIDeviceDescription: nil], [requestedMIDIDeviceDescription release];
     
-	[videoHandler release], videoHandler = nil;
-	
-	[mouse release],	mouse = nil;
-	[keyboard release], keyboard = nil;
-	[joystick release], joystick = nil;
+    [self setKeyboard: nil], [keyboard release];
+    [self setMouse: nil], [mouse release];
+    [self setJoystick: nil], [joystick release];
+    [self setVideoHandler: nil], [videoHandler release];
 	
 	[driveCache release], driveCache = nil;
 	[commandQueue release], commandQueue = nil;
     [pendingSysexMessages release], pendingSysexMessages = nil;
     
     [poolForRunLoop drain], poolForRunLoop = nil;
-    
 	
 	[super dealloc];
 }
@@ -507,45 +502,37 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	}
 }
 
-- (id <BXEmulatedJoystick>) attachJoystickOfType: (Class)joystickType
+- (void) setJoystick: (id<BXEmulatedJoystick>)newJoystick
 {
-	if ([self validateJoystickType: &joystickType error: nil])
-	{
-		//A joystick is already connected, remove it first
-		if (joystick) [self detachJoystick];
-		
-		[self willChangeValueForKey: @"joystick"];
-		joystick = [[joystickType alloc] init];
-		[self didChangeValueForKey: @"joystick"];
-		
-		[joystick didConnect];
-		return joystick;
-	}
-	return nil;
+    if ([self joystick] != newJoystick)
+    {
+        //Detach the existing joystick...
+        if (joystick)
+        {
+            [joystick willDisconnect];
+            [joystick release];
+        }
+        
+        joystick = [newJoystick retain];
+        
+        //...and prepare the new one
+        if (joystick)
+        {
+            [joystick didConnect];
+        }
+    }
 }
 
-- (BOOL) detachJoystick
+- (BOOL) validateJoystick: (id <BXEmulatedJoystick> *)ioValue error: (NSError **)outError
 {
-	if (!joystick) return NO;
-	
-	[self willChangeValueForKey: @"joystick"];
-	[joystick willDisconnect];
-	[joystick release];
-	joystick = nil;
-	[self didChangeValueForKey: @"joystick"];
-	
-	return YES;
-}
-
-- (BOOL) validateJoystickType: (Class *)ioValue error: (NSError **)outError
-{
-	Class joystickClass = *ioValue;
+	id <BXEmulatedJoystick> newJoystick = *ioValue;
+    Class joystickClass = [newJoystick class];
 	
 	//Nil values are just fine, skip all the other checks 
-	if (!joystickClass) return YES;
+	if (!newJoystick) return YES;
 	
-	//Unknown classname or non-joystick class
-	if (![joystickClass conformsToProtocol: @protocol(BXEmulatedJoystick)])
+	//Not actually a joystick class
+	if (![newJoystick conformsToProtocol: @protocol(BXEmulatedJoystick)])
 	{
 		if (outError)
 		{

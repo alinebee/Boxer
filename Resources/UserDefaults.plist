@@ -8,6 +8,8 @@
 	<true/>
 	<key>useVSync</key>
 	<true/>
+	<key>useCVDisplayLink</key>
+	<true/>
 	<key>filterType</key>
 	<integer>0</integer>
 	<key>initialInspectorPanelIndex</key>

@@ -71,11 +71,15 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 
 - (void) updateWithFrame: (BXFrameBuffer *)frame
 {
-    //Update the frame but don't tell Cocoa that we need redrawing:
-    //Instead, we'll render and flush in the display link. This prevents
-    //Cocoa from drawing the dirty view at the 'wrong' time.
+    //If we're using a CV Link, don't tell Cocoa that we need redrawing:
+    //Instead, flag that we need to render and flush in the display link.
+    //This prevents Cocoa from drawing the dirty view at the 'wrong' time.
     [[self renderer] updateWithFrame: frame inGLContext: [[self openGLContext] CGLContextObj]];
-    [self setNeedsCVLinkDisplay: YES];
+    
+    if (displayLink)
+        [self setNeedsCVLinkDisplay: YES];
+    else
+        [self setNeedsDisplay: YES];
 }
 
 - (BXFrameBuffer *) currentFrame
@@ -109,18 +113,23 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 	[[self renderer] prepareForGLContext: cgl_ctx];
     
     
-	//Create a display link capable of being used with all active displays
-	CVDisplayLinkCreateWithActiveCGDisplays(&displayLink);
-	
-	//Set the renderer output callback function
-	CVDisplayLinkSetOutputCallback(displayLink, &BXDisplayLinkCallback, self);
-	
-	// Set the display link for the current renderer
-	CGLPixelFormatObj cglPixelFormat = [[self pixelFormat] CGLPixelFormatObj];
-	CVDisplayLinkSetCurrentCGDisplayFromOpenGLContext(displayLink, cgl_ctx, cglPixelFormat);
-	
-	//Activate the display link
-	CVDisplayLinkStart(displayLink);
+    //Set up the CV display link if desired
+    BOOL useCVDisplayLink = [[NSUserDefaults standardUserDefaults] boolForKey: @"useCVDisplayLink"];
+    if (useCVDisplayLink)
+    {
+        //Create a display link capable of being used with all active displays
+        CVDisplayLinkCreateWithActiveCGDisplays(&displayLink);
+        
+        //Set the renderer output callback function
+        CVDisplayLinkSetOutputCallback(displayLink, &BXDisplayLinkCallback, self);
+        
+        // Set the display link for the current renderer
+        CGLPixelFormatObj cglPixelFormat = [[self pixelFormat] CGLPixelFormatObj];
+        CVDisplayLinkSetCurrentCGDisplayFromOpenGLContext(displayLink, cgl_ctx, cglPixelFormat);
+        
+        //Activate the display link
+        CVDisplayLinkStart(displayLink);
+    }
 }
 
 - (void) clearGLContext

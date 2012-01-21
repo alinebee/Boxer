@@ -186,9 +186,12 @@
 
 - (void) showFullscreenBezel
 {
-    [self showBezel: [self fullscreenBezel]
-        forDuration: BXFullscreenBezelDuration
-           priority: BXBezelPriorityNormal];
+    if ([[NSUserDefaults standardUserDefaults] boolForKey: @"showFullscreenToggleMessage"])
+    {
+        [self showBezel: [self fullscreenBezel]
+            forDuration: BXFullscreenBezelDuration
+               priority: BXBezelPriorityNormal];
+    }
 }
 
 - (void) showJoystickIgnoredBezel

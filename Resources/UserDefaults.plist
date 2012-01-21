@@ -26,6 +26,8 @@
 	<false/>
 	<key>showMT32LCDMessages</key>
 	<true/>
+	<key>showFullscreenToggleMessage</key>
+	<true/>
 	<key>suppressSystemHotkeys</key>
 	<true/>
 </dict>

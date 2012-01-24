@@ -262,7 +262,7 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 		}
 		else
 		{
-			//If no games folder has been set yet, try and import it now from Boxer 0.8x.
+			//If no games folder has been set yet, look for one from Boxer 0.8x.
 			NSString *oldPath = [self oldGamesFolderPath];
 			if (oldPath)
             {
@@ -603,9 +603,11 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 	[alert addButtonWithTitle: NSLocalizedString(@"Locate folder…",
 												 @"Button to display a file open panel to choose a new location for the games folder.")];
 	
+    /*
 	[alert addButtonWithTitle: NSLocalizedString(@"Create folder…",
 												 @"Button to automatically create a new games folder in the default location.")];
-	
+	*/
+    
 	[[alert addButtonWithTitle: NSLocalizedString(@"Cancel",
 												  @"Button to cancel without making a new games folder.")] setKeyEquivalent: @"\e"];
 	
@@ -640,10 +642,12 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
         }
 		case NSAlertSecondButtonReturn:
         {
+            /*
 			//This will run modally, after which we can reveal the games folder it has made
 			[self orderFrontFirstRunPanel: self];
 			if ([self gamesFolderPath]) [self revealGamesFolder: self];
-			break;
+            break;
+             */
         }
 	}
 }

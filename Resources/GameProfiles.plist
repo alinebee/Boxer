@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>BXGameProfileCatalogueVersion</key>
-	<string>20120121.1</string>
+	<string>20120124.1</string>
 	<key>BXSpecificGameProfiles</key>
 	<array>
 		<dict>
@@ -1444,6 +1444,7 @@
 				<string>Theme Park</string>
 				<string>Halloween Harry</string>
 				<string>F-14 Tomcat</string>
+                <string>Commander Keen 4-6</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
@@ -1452,6 +1453,9 @@
 				<string>park.bat</string>
 				<string>harry.sb0</string>
 				<string>tomcat.dat</string>
+                <string>gamemaps.ck4</string>
+                <string>gamemaps.ck5</string>
+                <string>gamemaps.ck6</string>
 			</array>
 		</dict>
 		<dict>

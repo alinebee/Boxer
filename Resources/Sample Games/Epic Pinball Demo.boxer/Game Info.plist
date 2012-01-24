@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>BXDefaultProgramPath</key>
+	<string>C.harddisk/PINBALL/PINBALL.EXE</string>
 	<key>BXGameIdentifier</key>
 	<string>8F23711CD567A10878FA1DB80F7C84439877C6B2</string>
 	<key>BXGameIdentifierType</key>

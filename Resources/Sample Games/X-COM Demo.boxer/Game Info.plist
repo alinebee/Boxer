@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>BXDefaultProgramPath</key>
+	<string>C.harddisk/XCOMDEMO/XCOM.BAT</string>
 	<key>BXGameIdentifier</key>
 	<string>644E7CBAB999DB002669A9AD0B0F91722D095C22</string>
 	<key>BXGameIdentifierType</key>

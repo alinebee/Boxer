@@ -26,6 +26,7 @@
 #import "NSString+BXPaths.h"
 
 #import "BXPostLeopardAPIs.h"
+#import "BXAppKitVersionHelpers.h"
 
 
 NSString * const BXNewSessionParam = @"--openNewSession";

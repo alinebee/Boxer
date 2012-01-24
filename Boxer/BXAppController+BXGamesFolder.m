@@ -264,7 +264,26 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 		{
 			//If no games folder has been set yet, try and import it now from Boxer 0.8x.
 			NSString *oldPath = [self oldGamesFolderPath];
-			if (oldPath) [self importOldGamesFolderFromPath: oldPath];
+			if (oldPath)
+            {
+                [self importOldGamesFolderFromPath: oldPath];
+            }
+            //If that fails, try one of the default locations to see if one is there.
+            else
+            {
+                NSFileManager *manager = [[NSFileManager alloc] init];
+                
+                for (NSString *path in [[self class] defaultGamesFolderPaths])
+                {
+                    BOOL isDir;
+                    if ([manager fileExistsAtPath: path isDirectory: &isDir] && isDir)
+                    {
+                        [self setGamesFolderPath: path];
+                        break;
+                    }
+                }
+                [manager release];
+            }
 		}
 	}
 	return gamesFolderPath;
@@ -406,14 +425,15 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 
 - (BOOL) importOldGamesFolderFromPath: (NSString *)path
 {
-	NSFileManager *manager = [NSFileManager defaultManager];
-	if ([manager fileExistsAtPath: path])
+	NSFileManager *manager = [[[NSFileManager alloc] init] autorelease];
+    BOOL isDir;
+	if ([manager fileExistsAtPath: path isDirectory: &isDir] && isDir)
 	{
 		[self freshenImporterDropletAtPath: path addIfMissing: YES];
 		
-		NSString *backgroundPath = [path stringByAppendingPathComponent: @".background"];
 		//Check if the old path has a .background folder: if so,
 		//then automatically apply the games-folder appearance.
+		NSString *backgroundPath = [path stringByAppendingPathComponent: @".background"];
 		if ([manager fileExistsAtPath: backgroundPath])
 		{
 			[self setAppliesShelfAppearanceToGamesFolder: YES];

@@ -23,14 +23,6 @@ typedef struct
 
 typedef enum
 {
-  kJoyInputTypeDpad,
-  kJoyInputTypeButton,
-  kJoyInputTypeAnalogStick,
-  kJoyInputTypeAccelerometer
-}JoyInputType;
-
-typedef enum
-{
   kJoyDpadButtonUp,
   kJoyDpadButtonRight,
   kJoyDpadButtonDown,

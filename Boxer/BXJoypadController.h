@@ -14,7 +14,6 @@
 @interface BXJoypadController : NSObject <JoypadManagerDelegate>
 {
     JoypadManager *joypadManager;
-    BOOL isReconnectingDevices;
     JoypadControllerLayout *currentLayout;
     BOOL hasJoypadDevices;
 }

@@ -32,8 +32,6 @@
 #pragma mark -
 #pragma mark Initialization and deallocation
 
-//Why don't we just set and get the layout using joypadManager controllerLayout, you ask?
-//Because this crashes when you try to use the property accessor.
 - (void) setCurrentLayout: (JoypadControllerLayout *)layout
 {
     if (currentLayout != layout)
@@ -44,15 +42,6 @@
         if (layout)
         {
             [joypadManager setControllerLayout: layout];
-            
-            //Disconnect and reconnect each device to make it notice the new layout
-            //(Remove this once Joypad SDK can handle on-the-fly layout changes)
-            isReconnectingDevices = YES;
-            for (JoypadDevice *device in [self joypadDevices])
-            {
-                [device disconnect];
-            }
-            isReconnectingDevices = NO;
         }
     }
 }
@@ -132,13 +121,6 @@
 //will be enabled as early as possible.
 - (BOOL) joypadManager: (JoypadManager *)manager deviceShouldConnect: (JoypadDevice *)device
 {
-    //NOTE: this method is getting called erroneously after disconnection
-    //in the Joypad SDK 0.1.5.1+ preview, which causes Boxer to think
-    //that a Joypad device is still available when it isn't. This is fixed
-    //in future SDK updates, but we're holding off on updating because of
-    //other bugs therein.
-    //(This bug isn't a huge deal anyway, and we prefer knowing as early
-    //as possible that the device is available.)
     [self setHasJoypadDevices: YES];
     return YES;
 }
@@ -150,14 +132,10 @@
     BXInputController *delegate = [self activeWindowController];
     [device setDelegate: delegate];
     
-    //Avoid spamming observers whenever we disconnect and immediately reconnect a device
-    if (!isReconnectingDevices)
-    {
-        [self setHasJoypadDevices: YES];
+    [self setHasJoypadDevices: YES];
         
-        [self willChangeValueForKey: @"joypadDevices"];
-        [self didChangeValueForKey: @"joypadDevices"];
-    }
+    [self willChangeValueForKey: @"joypadDevices"];
+    [self didChangeValueForKey: @"joypadDevices"];
     
     //Let the delegate know that the device has been connected
     [delegate joypadManager: manager
@@ -169,15 +147,11 @@
    deviceDidDisconnect: (JoypadDevice *)device
                 player: (unsigned int)player
 {   
-    //Avoid spamming observers whenever we disconnect and immediately reconnect a device
-    if (!isReconnectingDevices)
-    {
-        BOOL devicesRemaining = [manager connectedDeviceCount] > 0;
-        [self setHasJoypadDevices: devicesRemaining];
+    BOOL devicesRemaining = [manager connectedDeviceCount] > 0;
+    [self setHasJoypadDevices: devicesRemaining];
         
-        [self willChangeValueForKey: @"joypadDevices"];
-        [self didChangeValueForKey: @"joypadDevices"];
-    }
+    [self willChangeValueForKey: @"joypadDevices"];
+    [self didChangeValueForKey: @"joypadDevices"];
     
     BXInputController *delegate = (BXInputController *)[device delegate];
     

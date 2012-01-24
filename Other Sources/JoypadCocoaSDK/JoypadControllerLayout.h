@@ -29,13 +29,6 @@
 #import "JoypadConstants.h"
 
 @interface JoypadControllerLayout : NSObject
-{
-  NSMutableArray *inputComponentTemplates;
-  NSString *name;
-  unsigned int numBitsUsed;
-}
-
-#pragma mark Public API 
 
 /**
  * Returns a new autoreleased layout:
@@ -120,14 +113,13 @@
 -(void)addAnalogStickWithFrame:(CGRect)rect identifier:(JoyInputIdentifier)inputId recentering:(BOOL)recentering;
 
 /**
- * Equal if controller layouts have the same input components (buttons, labels, dpads, name, etc.)
+ * Pre-installed layouts to get you started.  Note that even when using these
+ * built in layouts, you should still name the layout after your game (this name
+ * is displayed on Joypad when a connection occurs).  Also, if you use one of 
+ * these, then the built in skins can be applied over your controller.   
  */
--(BOOL)isEqualToControllerLayout:(JoypadControllerLayout *)otherLayout;
-
-
-/* ------------ This stuff is internal to the SDK ------------- */
--(NSArray *)propertiesToEncode;
--(NSMutableArray *)inputComponentTemplates;
-+(JoypadControllerLayout *)anyPreInstalled;  // legacy.
++(JoypadControllerLayout *)nesLayout;
++(JoypadControllerLayout *)gbaLayout;
++(JoypadControllerLayout *)snesLayout;
 
 @end

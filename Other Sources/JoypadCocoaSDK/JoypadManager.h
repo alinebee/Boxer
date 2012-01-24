@@ -17,6 +17,8 @@
 @class JoypadControllerLayout;
 @protocol JoypadManagerDelegate;
 
+// Exceptions.
+extern NSString *const JoypadManagerException;
 
 @interface JoypadManager : NSObject
 
@@ -100,15 +102,22 @@
 -(NSUInteger)connectedDeviceCount;
 
 /**
- * The Joypad app comes pre-installed with six generic layouts.  To use one
- * of these instead of building a custom layout, pass one of the 
- * values in the JoyControllerIdentifier enum found in JoypadConstants.h.
- * For example, to use the generic SNES layout, you would do this:
+ * Deprecated and disabled.
  *
- *    JoypadManager *joypadManager = [[JoypadManager alloc] init];
- *    [joypadManager setDelegate:self];
- *    [joypadManager usePreInstalledLayout:kJoyControllerSNES];
- *    [joypadManager startFindingDevices];
+ * Instead, use the JoypadControllerLayout class methods: 
+ *   +nesLayout
+ *   +gbaLayout
+ *   +snesLayout
+ * 
+ * For example, where you would previously use: 
+ *   [joypadManager usePreInstalledLayout:kJoyControllerSNES];
+ *
+ * you should now use: 
+ *   JoypadControllerLayout *layout = [JoypadControllerLayout snesLayout];
+ *   [layout setName:@"MyGame"];
+ *   [joypadManager setControllerLayout:layout];
+ *
+ * Please name the layout, as the name is displayed on Joypad once connected.
  * 
  */
 -(void)usePreInstalledLayout:(JoyControllerIdentifier)layoutId;

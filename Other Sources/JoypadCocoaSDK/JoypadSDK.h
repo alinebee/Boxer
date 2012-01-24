@@ -7,7 +7,9 @@
 //  Please email questions to lzell11@gmail.com
 //  __________________________________________________________________________
 //
-
+//  SDK Version 0.1.6
+//  __________________________________________________________________________
+// 
 #import "JoypadDevice.h"
 #import "JoypadManager.h"
 #import "JoypadConstants.h"

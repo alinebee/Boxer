@@ -78,14 +78,19 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 		NSString *userAppPath	= [NSSearchPathForDirectoriesInDomains(NSApplicationDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
 		
 		paths = [[NSArray alloc] initWithObjects:
-				 [homePath stringByAppendingPathComponent: defaultName],
 				 [docsPath stringByAppendingPathComponent: defaultName],
+				 [homePath stringByAppendingPathComponent: defaultName],
 				 [userAppPath stringByAppendingPathComponent: defaultName],
 				 [appPath stringByAppendingPathComponent: defaultName],
 				 nil];
 	}
     
 	return paths;
+}
+
++ (NSString *) preferredGamesFolderPath
+{
+    return [[self defaultGamesFolderPaths] objectAtIndex: 0];
 }
 
 + (NSSet *) reservedPaths
@@ -264,12 +269,14 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 		{
 			//If no games folder has been set yet, look for one from Boxer 0.8x.
 			NSString *oldPath = [self oldGamesFolderPath];
+            BOOL foundOldPath = NO;
 			if (oldPath)
             {
-                [self importOldGamesFolderFromPath: oldPath];
+                foundOldPath = [self importOldGamesFolderFromPath: oldPath error: nil];
             }
-            //If that fails, try one of the default locations to see if one is there.
-            else
+            
+            //If that fails, try one of the default locations to see if a folder is there.
+            if (!foundOldPath)
             {
                 NSFileManager *manager = [[NSFileManager alloc] init];
                 
@@ -399,31 +406,74 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 }
 
 
-- (void) assignGamesFolderPath: (NSString *)newPath
+- (BOOL) assignGamesFolderPath: (NSString *)path
 			   withSampleGames: (BOOL)addSampleGames
 			   importerDroplet: (BOOL)addImporterDroplet
 			   shelfAppearance: (BXShelfAppearance)applyShelfAppearance
+               createIfMissing: (BOOL)createIfMissing
+                         error: (NSError **)outError
 {
+    NSAssert(path != nil, @"nil path provided to assignGamesFolderPath:withSampleGames:importerDroplet:shelfAppearance:createIfMissing:error:");
+    
+    NSFileManager *manager = [[[NSFileManager alloc] init] autorelease];
+    
+    if (![manager fileExistsAtPath: path])
+    {
+        //If we're allowed, create the folder if it's not there already.
+        if (createIfMissing)
+        {
+            BOOL created = [manager createDirectoryAtPath: path
+                              withIntermediateDirectories: YES
+                                               attributes: nil
+                                                    error: outError];
+            
+            if (!created) return NO;
+        }
+        //If we're not allowed, treat this as an error condition and bounce it back up.
+        else
+        {
+            if (outError)
+            {
+                NSDictionary *userInfo = [NSDictionary dictionaryWithObject: path forKey: NSFilePathErrorKey];
+                *outError = [NSError errorWithDomain: NSCocoaErrorDomain
+                                                code: NSFileNoSuchFileError
+                                            userInfo: userInfo];
+            }
+            return NO;
+        }
+    }
+    
+    //Verify that the path is acceptable to us.
+    BOOL isValid = [self validateGamesFolderPath: &path error: outError];
+    if (!isValid) return NO;
+    
+    //If we got this far, we can go ahead and assign this as our games folder path.
+    //Apply the requested options now.
 	if (applyShelfAppearance == BXShelfAuto)
 	{
 		applyShelfAppearance = [self appliesShelfAppearanceToGamesFolder];
 	}
 	else
 	{
+        //Update the option to reflect the shelf appearance requested.
 		[self setAppliesShelfAppearanceToGamesFolder: (BOOL)applyShelfAppearance];
 	}
 
-	
 	if (applyShelfAppearance)
-		[self applyShelfAppearanceToPath: newPath andSubFolders: YES switchToShelfMode: YES];
+    {
+		[self applyShelfAppearanceToPath: path
+                           andSubFolders: YES
+                       switchToShelfMode: YES];
+	}
+    
+	if (addSampleGames)			[self addSampleGamesToPath: path];
+	if (addImporterDroplet)		[self addImporterDropletToPath: path];
 	
-	if (addSampleGames)			[self addSampleGamesToPath: newPath];
-	if (addImporterDroplet)		[self addImporterDropletToPath: newPath];
-	
-	[self setGamesFolderPath: newPath];
+	[self setGamesFolderPath: path];
+    return YES;
 }
 
-- (BOOL) importOldGamesFolderFromPath: (NSString *)path
+- (BOOL) importOldGamesFolderFromPath: (NSString *)path error: (NSError **)outError
 {
 	NSFileManager *manager = [[[NSFileManager alloc] init] autorelease];
     BOOL isDir;
@@ -444,7 +494,17 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 		
 		return YES;
 	}
-	return NO;
+    else
+    {
+        if (outError)
+        {
+			NSDictionary *userInfo = [NSDictionary dictionaryWithObject: path forKey: NSFilePathErrorKey];
+			*outError = [NSError errorWithDomain: NSCocoaErrorDomain
+											code: NSFileNoSuchFileError
+										userInfo: userInfo];
+        }
+        return NO;
+    }
 }
 
 + (NSSet *) keyPathsForValuesAffectingGamesFolderIcon
@@ -602,11 +662,6 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 	
 	[alert addButtonWithTitle: NSLocalizedString(@"Locate folder…",
 												 @"Button to display a file open panel to choose a new location for the games folder.")];
-	
-    /*
-	[alert addButtonWithTitle: NSLocalizedString(@"Create folder…",
-												 @"Button to automatically create a new games folder in the default location.")];
-	*/
     
 	[[alert addButtonWithTitle: NSLocalizedString(@"Cancel",
 												  @"Button to cancel without making a new games folder.")] setKeyEquivalent: @"\e"];
@@ -630,25 +685,12 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 					   returnCode: (NSInteger)returnCode
 						   window: (NSWindow *)window
 {
-	switch (returnCode)
+    if (returnCode == NSAlertFirstButtonReturn)
 	{
-		case NSAlertFirstButtonReturn:
-        {
-            //Hide the alert sheet now so that we can show a different sheet in the same window
-            [[alert window] orderOut: self];
+        //Hide the alert sheet now so that we can show a different sheet in the same window
+        [[alert window] orderOut: self];
             
-			[[BXGamesFolderPanelController controller] showGamesFolderPanelForWindow: window];
-			break;
-        }
-		case NSAlertSecondButtonReturn:
-        {
-            /*
-			//This will run modally, after which we can reveal the games folder it has made
-			[self orderFrontFirstRunPanel: self];
-			if ([self gamesFolderPath]) [self revealGamesFolder: self];
-            break;
-             */
-        }
+        [[BXGamesFolderPanelController controller] showGamesFolderPanelForWindow: window];
 	}
 }
 
@@ -720,7 +762,7 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 		[self freshenImporterDropletAtPath: path addIfMissing: NO];
 	}
 
-	else if (![self gamesFolderChosen])
+	else if (![self gamesFolderChosen] && [[NSUserDefaults standardUserDefaults] boolForKey: @"showFirstRunPanel"])
 	{
 		//If the user hasn't chosen a games folder location yet, then show them
 		//the first-run panel to choose one, then reveal the new folder afterwards (if one was created).

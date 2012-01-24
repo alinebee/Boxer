@@ -130,12 +130,23 @@
 		BOOL addSampleGames		= [[self sampleGamesToggle] state];
 		BOOL useShelfAppearance	= [[self useShelfAppearanceToggle] state];
 		
-		[[NSApp delegate] setAppliesShelfAppearanceToGamesFolder: useShelfAppearance];
-		
-		[controller assignGamesFolderPath: path
-						  withSampleGames: addSampleGames
-						  importerDroplet: YES
-						  shelfAppearance: BXShelfAuto];
+		NSError *folderError = nil;
+		BOOL assigned = [controller assignGamesFolderPath: path
+                                          withSampleGames: addSampleGames
+                                          importerDroplet: YES
+                                          shelfAppearance: useShelfAppearance
+                                          createIfMissing: NO
+                                                    error: &folderError];
+        
+        //If there was an error assigning the folder, bounce it up to the user.
+        if (!assigned && folderError)
+        {   
+            [self presentError: folderError
+                modalForWindow: openPanel
+                      delegate: nil
+            didPresentSelector: NULL
+                   contextInfo: NULL];
+        }
 	}
 }
 

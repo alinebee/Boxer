@@ -130,42 +130,43 @@ enum {
 {	
 	NSString *path = [[gamesFolderSelector selectedItem] representedObject];
 	
-	NSFileManager *manager = [NSFileManager defaultManager];
-	if (![manager fileExistsAtPath: path])
-	{
-		NSError *creationError;
-		BOOL created = [manager createDirectoryAtPath: path
-						  withIntermediateDirectories: YES
-										   attributes: nil
-												error: &creationError];
-		
-		if (!created)
-		{
-			[self presentError: creationError
-				modalForWindow: [self window]
-					  delegate: nil
-			didPresentSelector: NULL
-				   contextInfo: NULL];
-			return;
-		}
-	}
 	
 	BOOL applyShelfAppearance = (BOOL)[useShelfAppearanceToggle state];
 	BOOL addSampleGames = [addSampleGamesToggle state];
-	
-	[[NSApp delegate] assignGamesFolderPath: path
-							withSampleGames: addSampleGames
-							importerDroplet: YES
-							shelfAppearance: applyShelfAppearance];
-	
-	//Lion's own window transitions will interfere with our own, so leave them out.
-    if (isRunningOnLionOrAbove())
+    
+    NSError *folderError = nil;
+    
+    BOOL assigned = [[NSApp delegate] assignGamesFolderPath: path
+                                            withSampleGames: addSampleGames
+                                            importerDroplet: YES
+                                            shelfAppearance: applyShelfAppearance
+                                            createIfMissing: YES
+                                                      error: &folderError];
+    
+    //If we failed to assign the folder for some reason,
+    //present the error to the user and bail out
+    if (!assigned && folderError)
     {
-        [[self window] close];
+        [self presentError: folderError
+            modalForWindow: [self window]
+                  delegate: nil
+        didPresentSelector: NULL
+               contextInfo: NULL];
+        
+        return;
     }
+    //Otherwise, close the first-run window and let the app move on.
     else
     {
-        [self hideWindowWithTransition: self];
+        //Lion's own window transitions will interfere with our own, so leave them out.
+        if (isRunningOnLionOrAbove())
+        {
+            [[self window] close];
+        }
+        else
+        {
+            [self hideWindowWithTransition: self];
+        }
     }
 }
 

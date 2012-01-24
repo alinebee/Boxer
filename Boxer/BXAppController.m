@@ -243,6 +243,19 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
     //Start scanning for MIDI devices now
     [self setMIDIDeviceMonitor: [[[BXMIDIDeviceMonitor alloc] init] autorelease]];
     [[self MIDIDeviceMonitor] start];
+    
+    //Check if we have any games folder, and if not (and we're allowed to create one automatically)
+    //then do so now
+    if (![self gamesFolderPath] && ![self gamesFolderChosen] && ![[NSUserDefaults standardUserDefaults] boolForKey: @"showFirstRunPanel"])
+    {
+        NSString *defaultPath = [[self class] preferredGamesFolderPath];
+        [self assignGamesFolderPath: defaultPath
+                    withSampleGames: YES
+                    importerDroplet: YES
+                    shelfAppearance: BXShelfAuto
+                    createIfMissing: YES
+                              error: nil];
+    }
 }
 
 - (void) applicationDidFinishLaunching: (NSNotification *)notification
@@ -276,27 +289,28 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 {
 	if (![NSApp isHidden])
 	{
+        NSLog(@"ASSHOLE");
 		BOOL hasDelayed = NO;
         
         //These are disabled as they do not run correctly on Lion
         BOOL useFlipTransitions = !isRunningOnLionOrAbove();
 		
-		//If the user has not chosen a games folder yet, then show them the first-run panel
-		//(This is modal, so execution will not continue until the panel is dismissed.)
-		if (![self gamesFolderPath] && ![self gamesFolderChosen])
+        //If the user has not chosen a games folder yet, then show them the first-run panel
+        //(This is modal, so execution will not continue until the panel is dismissed.)
+		if (![self gamesFolderPath] && ![self gamesFolderChosen] && [[NSUserDefaults standardUserDefaults] boolForKey: @"showFirstRunPanel"])
 		{
-			//Perform with a delay to give the Dock icon bouncing time to finish,
-			//since the Core Graphics flip animation interrupts this otherwise.
-			if (useFlipTransitions)
-			{
-				[NSThread sleepForTimeInterval: 0.4];
-				hasDelayed = YES;
-				[self orderFrontFirstRunPanelWithTransition: self];
-			}
-			else
-			{
-				[self orderFrontFirstRunPanel: self];
-			}
+            if (useFlipTransitions)
+            {
+                //Perform with a delay to give the Dock icon bouncing time to finish,
+                //since the Core Graphics flip animation interrupts this otherwise.
+                [NSThread sleepForTimeInterval: 0.4];
+                hasDelayed = YES;
+                [self orderFrontFirstRunPanelWithTransition: self];
+            }
+            else
+            {
+                [self orderFrontFirstRunPanel: self];
+            }
 		}
         
 		switch ([[NSUserDefaults standardUserDefaults] integerForKey: @"startupAction"])

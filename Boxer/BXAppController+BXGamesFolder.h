@@ -75,9 +75,14 @@ enum {
 #pragma mark -
 #pragma mark Helper class methods
 
-//Returns an array of suggested default paths for the games folder location
-//(which may or may not already exist) for selection when Boxer is first launched.
+//Returns an array of suitable paths for the games folder location.
+//Boxer will look in these locations for existing games folders if it has
+//no record of a specific folder (i.e. if its prefs file has been deleted.)
 + (NSArray *) defaultGamesFolderPaths;
+
+//Returns the game folder location that will be automatically created
+//when the user launches Boxer for the first time.
++ (NSString *) preferredGamesFolderPath;
 
 //Reserved system paths which may not be chosen as the games folder location
 //(though subfolders within these paths may be acceptable.)
@@ -96,18 +101,25 @@ enum {
 #pragma mark -
 #pragma mark Preparing the games folder
 
+//Set the games folder to the specified path, and prepare it with the selected options.
+//Returns YES if the folder was successfully assigned (and created, if required)
+//and all of the options applied, or NO otherwise.
+//If createIfMissing is YES, the folder and all its intermediate folders will be created
+//if needed; if createIfMissing is NO and the folder does not exist, then NO will be returned
+//and an error will be given.
+- (BOOL) assignGamesFolderPath: (NSString *)newPath
+			   withSampleGames: (BOOL)addSampleGames
+			   importerDroplet: (BOOL)addImporterDroplet
+			   shelfAppearance: (BXShelfAppearance)applyShelfAppearance
+               createIfMissing: (BOOL)createIfMissing
+                         error: (NSError **)outError;
+
 //Imports a games folder from a previous version of Boxer.
 //This freshens the folder and autodetects the presence of old
 //background art, enabling the shelf background if it is found.
-//Returns YES if successful, NO if the folder could not be found.
-- (BOOL) importOldGamesFolderFromPath: (NSString *)path;
-
-//Set the games folder and prepare it with the selected options.
-//This is the main point from which the rest of Boxer can set the folder path.
-- (void) assignGamesFolderPath: (NSString *)newPath
-			   withSampleGames: (BOOL)addSampleGames
-			   importerDroplet: (BOOL)addImporterDroplet
-			   shelfAppearance: (BXShelfAppearance)applyShelfAppearance;
+//Returns YES if successful, NO and populates outError if the
+//folder could not be located.
+- (BOOL) importOldGamesFolderFromPath: (NSString *)path error: (NSError **)outError;
 
 //Validate and sanitise the specified games folder path.
 //This will return NO and populate outError if the chosen path was reserved

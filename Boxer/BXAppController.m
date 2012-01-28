@@ -282,14 +282,13 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	}
 }
 
-//If no other window was opened during startup, show our startup window (or first-run window).
-//Note that this is only called at startup, not when re-focusing the application: that
-//functionality is overridden below in applicationShouldHandleReopen:hasVisibleWindows:  
+//If no other window was opened during startup, show our startup window.
+//Note that this is only called at startup, not when re-focusing the application;
+//that functionality is overridden below in applicationShouldHandleReopen:hasVisibleWindows:  
 - (BOOL) applicationShouldOpenUntitledFile: (NSApplication *)theApplication
 {
 	if (![NSApp isHidden])
 	{
-        NSLog(@"ASSHOLE");
 		BOOL hasDelayed = NO;
         
         //These are disabled as they do not run correctly on Lion

@@ -19,6 +19,17 @@
 	return YES;
 }
 
+//Prevent ourselves from relinquishing first-responder status to other elements in the window,
+//which could otherwise happen if the user has toggled "Full Keyboard Access" mode in the
+//System Keyboard Preferences.
+//FIXME: this is rather a blunt instrument and there are cases where it would be desirable
+//to allow keyboard focus to move to other elements. Instead of refusing to resign, we should
+//pass the decision upstream to BXInputController (which deserves a delegate relationship.)
+- (BOOL) resignFirstResponder
+{
+    return NO;
+}
+
 //Use flipped coordinates to make input handling easier
 - (BOOL) isFlipped
 {

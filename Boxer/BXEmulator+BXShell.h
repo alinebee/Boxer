@@ -72,21 +72,29 @@
 //--------------------------------------------
 
 //Retrieves the localized string for the specified key from Shell.strings and prints it to DOS using displayString:
-- (id) displayStringFromKey: (NSString *)theKey;
+- (void) displayStringFromKey: (NSString *)theKey;
 
 //Displays a page of DOS shell commands.
 //Call with "commands".
-- (id) showShellCommandHelp: (NSString *)argumentString;
+- (void) showShellCommandHelp: (NSString *)argumentString;
 
 //These commands hook into the AUTOEXEC process to execute Boxer's session commands at suitable points.
 //These call corresponding methods on our session delegate.
-- (id) runPreflightCommands: (NSString *)argumentString;
-- (id) runLaunchCommands: (NSString *)argumentString;
+- (void) runPreflightCommands: (NSString *)argumentString;
+- (void) runLaunchCommands: (NSString *)argumentString;
 
 //Lists all available drives, using Boxer's output syntax instead of DOSBox's.
 //Call with "drives"
-- (id) listDrives: (NSString *)argumentString;
+- (void) listDrives: (NSString *)argumentString;
 
 //Reveal the specified DOS path in Finder. If no argument is provided, will reveal the current directory.
-- (id) revealPath: (NSString *)argumentString;
+- (void) revealPath: (NSString *)argumentString;
+
+//Clears the screen when in text mode.
+- (void) clearScreen;
+
+//Prints the specified message to the MT-32's LCD.
+//Has no effect unless the current MIDI device is a real or emulated MT-32.
+- (void) sayToMT32: (NSString *)argumentString;
+
 @end

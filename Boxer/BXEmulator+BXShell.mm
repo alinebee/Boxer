@@ -13,6 +13,8 @@
 #import "BXEmulatedMT32.h"
 
 #import "shell.h"
+#import "regs.h"
+#import "callback.h"
 
 
 //Lookup table of BXEmulator+BXShell selectors and the shell commands that call them
@@ -55,32 +57,37 @@ nil];
 #pragma mark -
 #pragma mark Command processing
 
-- (void) executeCommand: (NSString *)theString
+- (void) executeCommand: (NSString *)command
 			   encoding: (NSStringEncoding)encoding
 {
 	if ([self isExecuting])
 	{
-		DOS_Shell *shell = [self _currentShell];
-		char *encodedString;
-
-		if ([self isRunningProcess])
-		{
-			//If we're running a program or we just don't want to print anything,
-			//then run the command itself and eat the command's output.
-			theString = [theString stringByAppendingString: @" > NUL"];
-			encodedString = (char *)[theString cStringUsingEncoding: encoding];
-			if (encodedString) shell->ParseLine(encodedString);
+        NSAssert2([command lengthOfBytesUsingEncoding: encoding] < CMD_MAXLINE,
+                  @"Command exceeded maximum commandline length of %u: %@", CMD_MAXLINE, command);
+        
+        //If we're inside a batchfile, we can go ahead and run the command directly.
+		if ([self isInBatchScript])
+		{   
+            char encodedCommand[CMD_MAXLINE];
+            
+			BOOL encoded = [command getCString: encodedCommand
+                                     maxLength: CMD_MAXLINE
+                                      encoding: encoding];
+			if (encoded)
+            {
+                DOS_Shell *shell = [self _currentShell];
+                shell->ParseLine(encodedCommand);
+            }
+            else
+            {
+                NSAssert1(NO, @"Could not encode command: %@", command);
+            }
 		}
-		else if ([self isInBatchScript])
-		{
-			//If we're inside a batchfile, we can go ahead and run the command directly.
-			encodedString = (char *)[theString cStringUsingEncoding: encoding];
-			if (encodedString) shell->ParseLine(encodedString);
-		}
+        //Otherwise, add the line to the end of the queue and we'll process it 
+        //when we're next at the commandline.
 		else
 		{
-			//Otherwise we're at the commandline: feed our command into DOSBox's command-line input loop
-			[[self commandQueue] addObject: [theString stringByAppendingString: @"\n"]];
+			[[self commandQueue] addObject: [command stringByAppendingString: @"\n"]];
 		}
 	}
 }
@@ -165,6 +172,7 @@ nil];
         [self didChangeValueForKey: @"pathOfCurrentDirectory"];
 	}
 	
+    //DOCUMENT ME: why were we discarding any following commands?
 	if (changedPath) [self discardShellInput];
 	
 	return changedPath;
@@ -219,7 +227,7 @@ nil];
 #pragma mark -
 #pragma mark Actual shell commands you might want to call
 
-- (id) displayStringFromKey: (NSString *)argumentString
+- (void) displayStringFromKey: (NSString *)argumentString
 {
 	//We may need to do additional cleanup and string-splitting here in future
 	NSString *theKey = argumentString;
@@ -229,31 +237,25 @@ nil];
 							value: nil
 							table: @"Shell"];
 	[self displayString: theString];
-
-	return [NSNumber numberWithBool: YES];
 }
 
-- (id) showShellCommandHelp: (NSString *)argumentString
+- (void) showShellCommandHelp: (NSString *)argumentString
 {
 	[self _substituteCommand: @"cls" encoding: BXDirectStringEncoding];
 	[self displayStringFromKey: @"Shell Command Help"];
-
-	return [NSNumber numberWithBool: YES];
 }
 
-- (id) runPreflightCommands: (NSString *)argumentString
+- (void) runPreflightCommands: (NSString *)argumentString
 {
 	[[self delegate] runPreflightCommandsForEmulator: self];
-	return [NSNumber numberWithBool: YES];
 }
 
-- (id) runLaunchCommands: (NSString *)argumentString
+- (void) runLaunchCommands: (NSString *)argumentString
 {
 	[[self delegate] runLaunchCommandsForEmulator: self];
-	return [NSNumber numberWithBool: YES];
 }
 
-- (id) listDrives: (NSString *)argumentString
+- (void) listDrives: (NSString *)argumentString
 {
 	NSString *description;
 	BXDisplayPathTransformer *pathTransformer = [[BXDisplayPathTransformer alloc] initWithJoiner: @"/"
@@ -293,20 +295,17 @@ nil];
 		[self displayString: description];
 	}
 	[pathTransformer release];
-	
-	return [NSNumber numberWithBool: YES];
 }
 
-- (id) sayToMT32: (NSString *)argumentString
+- (void) sayToMT32: (NSString *)argumentString
 {
     //Strip surrounding quotes from the message
     NSString *cleanedString = [argumentString stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @"\""]];
     
     [self sendMT32LCDMessage: cleanedString];
-    return [NSNumber numberWithBool: YES];
 }
 
-- (id) revealPath: (NSString *)argumentString
+- (void) revealPath: (NSString *)argumentString
 {
 	NSString *cleanedPath = [argumentString stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
 	if (![cleanedPath length]) cleanedPath = @".";
@@ -328,10 +327,14 @@ nil];
 		NSString *errorMessage = [NSString stringWithFormat: errorFormat, cleanedPath, nil];
 		[self displayString: errorMessage];
 	}
-	
-	return [NSNumber numberWithBool: YES];
 }
 
+- (void) clearScreen
+{
+    //Copypasta from CMD_CLS.
+	reg_ax=0x0003;
+	CALLBACK_RunRealInt(0x10);
+}
 @end
 
 
@@ -376,7 +379,8 @@ nil];
 			//If we respond to that selector, then handle it ourselves
 			if ([self respondsToSelector: selector])
 			{
-				returnValue = [[self performSelector: selector withObject: argumentString] boolValue];
+				[self performSelector: selector withObject: argumentString];
+                returnValue = YES;
 			}
 			//Otherwise, pass the selector up to the application as an action call, using the argument string as the action parameter
 			//This allows other parts of Boxer to hook into the shell, without BXShell explicitly handling the method responsible

@@ -791,7 +791,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         //at the start of the autoexec sequence.
         if (!userSkippedDefaultProgram && [self targetPath] && [[self class] isExecutable: [self targetPath]])
         {
-            [theEmulator executeCommand: @"cls" encoding: BXDirectStringEncoding];
+            [theEmulator clearScreen];
         }
         
 		[self _mountDrivesForSession];

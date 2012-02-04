@@ -9,6 +9,10 @@
 
 #import <Cocoa/Cocoa.h>
 
+//A sufficiently large number that exceeds the highest virtual keycode.
+//Used as the arbitrary length for arrays of key mappings.
+#define BXMaxSystemKeyCode 256
+
 //These correspond to NSEvent's mouse button numbers
 enum {
 	BXMouseButtonLeft	= 0,

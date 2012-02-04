@@ -40,9 +40,15 @@
 	//Used internally for tracking mouse state between events
 	NSPoint distanceWarped;
 	BOOL updatingMousePosition;
-	BXMouseButtonMask simulatedMouseButtons;
 	NSTimeInterval threeFingerTapStarted;
-	
+    
+	BXMouseButtonMask simulatedMouseButtons;
+    
+    //Which OSX virtual keycodes were pressed with the Fn-modifier,
+    //causing them to send a different key than usual. Used for releasing
+    //simulated keys upon key-up.
+    BOOL fnModifiedKeys[BXMaxSystemKeyCode];
+    
 	NSUInteger lastModifiers;
 	
 	NSMutableDictionary *controllerProfiles;

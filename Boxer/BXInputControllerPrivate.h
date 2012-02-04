@@ -126,7 +126,11 @@
 - (void) _syncModifierFlags: (NSUInteger)newModifiers;
 
 //Returns the DOS keycode constant corresponding to the specified OSX keycode.
-+ (BXDOSKeyCode) _DOSKeyCodeForSystemKeyCode: (CGKeyCode)keyCode;
+- (BXDOSKeyCode) _DOSKeyCodeForSystemKeyCode: (CGKeyCode)keyCode;
+
+//Returns the DOS keycode constant that should be simulated when the specified
+//OSX keycode is pressed along with the Fn key.
+- (BXDOSKeyCode) _DOSKeyCodeForFnModifiedSystemKeyCode: (CGKeyCode)keyCode;
 
 @end
 

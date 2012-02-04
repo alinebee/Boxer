@@ -354,6 +354,9 @@
 	
 	simulatedMouseButtons = BXNoMouseButtonsMask;
 	threeFingerTapStarted = 0;
+    
+    //Clear our record of which keys were fn-modified
+    memset(fnModifiedKeys, NO, sizeof(fnModifiedKeys));
 }
 
 - (void) didBecomeKey

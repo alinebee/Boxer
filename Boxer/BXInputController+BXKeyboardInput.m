@@ -346,6 +346,9 @@
 		map[kVK_Tab] = KBD_tab;
 		map[kVK_Delete] = KBD_backspace;
 		map[kVK_ForwardDelete] = KBD_delete;
+        //NOTE: Mac keyboards have no insert key, but Ins keys on connected PC keyboards are
+        //treated as help keys by OS X.
+        map[kVK_Help] = KBD_insert;
 		map[kVK_Return] = KBD_enter;
 		map[kVK_Space] = KBD_space;
 		
@@ -388,10 +391,11 @@
 	//Correction for transposed kVK_ISO_Section/kVK_ANSI_Grave on ISO keyboards.
 	if ((keyCode == kVK_ISO_Section || keyCode == kVK_ANSI_Grave) && KBGetLayoutType(LMGetKbdType()) == kKeyboardISO)
 	{
-		return (keyCode == kVK_ISO_Section) ? KBD_grave : KBD_extra_lt_gt;
+        if (keyCode == kVK_ISO_Section) keyCode = kVK_ANSI_Grave;
+        else keyCode = kVK_ISO_Section;
 	}
 	
-	else if (keyCode < BXMaxSystemKeyCode) return map[keyCode];
+	if (keyCode < BXMaxSystemKeyCode) return map[keyCode];
 	else return KBD_NONE;
 }
 
@@ -427,6 +431,13 @@
 		mapGenerated = YES;
 	}
 	
+	//Correction for transposed kVK_ISO_Section/kVK_ANSI_Grave on ISO keyboards.
+	if ((keyCode == kVK_ISO_Section || keyCode == kVK_ANSI_Grave) && KBGetLayoutType(LMGetKbdType()) == kKeyboardISO)
+	{
+        if (keyCode == kVK_ISO_Section) keyCode = kVK_ANSI_Grave;
+        else keyCode = kVK_ISO_Section;
+	}
+    
 	if (keyCode < BXMaxSystemKeyCode) return map[keyCode];
 	else return KBD_NONE;
 }

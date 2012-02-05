@@ -21,6 +21,7 @@
 #define BXBezelFadeDuration 0.25
 
 #define BXPauseBezelDuration 1.0
+#define BXNumpadBezelDuration 2.0
 #define BXFullscreenBezelDuration 3.0
 #define BXJoystickIgnoredBezelDuration 3.0
 #define BXDriveBezelDuration 2.0
@@ -35,6 +36,7 @@
 @synthesize pauseBezel, playBezel, fullscreenBezel;
 @synthesize joystickIgnoredBezel, CPUSpeedBezel, throttleBezel;
 @synthesize MT32MessageBezel, MT32MissingBezel;
+@synthesize numpadActiveBezel, numpadInactiveBezel;
 
 + (NSImage *) bezelIconForDrive: (BXDrive *)drive
 {
@@ -82,6 +84,8 @@
     [self setJoystickIgnoredBezel: nil],    [joystickIgnoredBezel release];
     [self setMT32MessageBezel: nil],        [MT32MessageBezel release];
     [self setMT32MissingBezel: nil],        [MT32MissingBezel release];
+    [self setNumpadActiveBezel: nil],       [numpadActiveBezel release];
+    [self setNumpadInactiveBezel: nil],     [numpadInactiveBezel release];
     
     [super dealloc];
 }
@@ -183,6 +187,21 @@
         forDuration: BXPauseBezelDuration
            priority: BXBezelPriorityHigh];    
 }
+
+- (void) showNumpadActiveBezel
+{
+    [self showBezel: [self numpadActiveBezel]
+        forDuration: BXNumpadBezelDuration
+           priority: BXBezelPriorityNormal];
+}
+
+- (void) showNumpadInactiveBezel
+{
+    [self showBezel: [self numpadInactiveBezel]
+        forDuration: BXNumpadBezelDuration
+           priority: BXBezelPriorityNormal];    
+}
+
 
 - (void) showFullscreenBezel
 {

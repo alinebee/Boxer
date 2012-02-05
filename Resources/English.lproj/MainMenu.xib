@@ -893,6 +893,15 @@
 									<reference key="NSOnImage" ref="569538535"/>
 									<reference key="NSMixedImage" ref="489554260"/>
 								</object>
+								<object class="NSMenuItem" id="488448645">
+									<reference key="NSMenu" ref="67815420"/>
+									<string key="NSTitle">Simulate Numeric Keypad</string>
+									<string key="NSKeyEquiv">6</string>
+									<int key="NSKeyEquivModMask">1048576</int>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="569538535"/>
+									<reference key="NSMixedImage" ref="489554260"/>
+								</object>
 								<object class="NSMenuItem" id="665114175">
 									<reference key="NSMenu" ref="67815420"/>
 									<string key="NSTitle">Send Key</string>
@@ -2119,6 +2128,14 @@
 					<int key="connectionID">2178</int>
 				</object>
 				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">toggleNumpadSimulation:</string>
+						<reference key="source" ref="935372999"/>
+						<reference key="destination" ref="488448645"/>
+					</object>
+					<int key="connectionID">2185</int>
+				</object>
+				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">value: currentSession.emulator.gameportTimingMode</string>
 						<reference key="source" ref="34920399"/>
@@ -3073,6 +3090,7 @@
 							<reference ref="800794685"/>
 							<reference ref="665114175"/>
 							<reference ref="726999377"/>
+							<reference ref="488448645"/>
 						</object>
 						<reference key="parent" ref="466028025"/>
 					</object>
@@ -3355,6 +3373,11 @@
 						<reference key="object" ref="424781297"/>
 						<reference key="parent" ref="0"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2184</int>
+						<reference key="object" ref="488448645"/>
+						<reference key="parent" ref="67815420"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -3515,6 +3538,7 @@
 					<string>2174.IBPluginDependency</string>
 					<string>2179.IBPluginDependency</string>
 					<string>2182.IBPluginDependency</string>
+					<string>2184.IBPluginDependency</string>
 					<string>283.IBPluginDependency</string>
 					<string>284.IBPluginDependency</string>
 					<string>285.IBPluginDependency</string>
@@ -3738,6 +3762,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
@@ -3752,7 +3777,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">2183</int>
+			<int key="maxID">2185</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -3782,11 +3807,13 @@
 							<string>showDonationPage:</string>
 							<string>showJoypadDownloadPage:</string>
 							<string>showPerianDownloadPage:</string>
+							<string>showUniversalAccessPrefsPane:</string>
 							<string>showWebsite:</string>
 							<string>toggleInspectorPanel:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -3831,6 +3858,7 @@
 							<string>showDonationPage:</string>
 							<string>showJoypadDownloadPage:</string>
 							<string>showPerianDownloadPage:</string>
+							<string>showUniversalAccessPrefsPane:</string>
 							<string>showWebsite:</string>
 							<string>toggleInspectorPanel:</string>
 						</object>
@@ -3906,6 +3934,10 @@
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">showPerianDownloadPage:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">showUniversalAccessPrefsPane:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -4409,10 +4441,12 @@
 							<string>sendPrintScreen:</string>
 							<string>sendScrollLock:</string>
 							<string>toggleMouseLocked:</string>
+							<string>toggleNumpadSimulation:</string>
 							<string>toggleTrackMouseWhileUnlocked:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -4468,6 +4502,7 @@
 							<string>sendPrintScreen:</string>
 							<string>sendScrollLock:</string>
 							<string>toggleMouseLocked:</string>
+							<string>toggleNumpadSimulation:</string>
 							<string>toggleTrackMouseWhileUnlocked:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
@@ -4566,6 +4601,10 @@
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">toggleMouseLocked:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">toggleNumpadSimulation:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -4833,7 +4872,9 @@
 							<string>mountPreviousDrivesInQueues:</string>
 							<string>openInDOS:</string>
 							<string>paste:</string>
+							<string>pause:</string>
 							<string>relaunch:</string>
+							<string>resume:</string>
 							<string>showCPUPanel:</string>
 							<string>showDrivesPanel:</string>
 							<string>showGamePanel:</string>
@@ -4843,6 +4884,8 @@
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -4872,7 +4915,9 @@
 							<string>mountPreviousDrivesInQueues:</string>
 							<string>openInDOS:</string>
 							<string>paste:</string>
+							<string>pause:</string>
 							<string>relaunch:</string>
+							<string>resume:</string>
 							<string>showCPUPanel:</string>
 							<string>showDrivesPanel:</string>
 							<string>showGamePanel:</string>
@@ -4915,7 +4960,15 @@
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
+								<string key="name">pause:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
 								<string key="name">relaunch:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">resume:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">

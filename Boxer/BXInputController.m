@@ -25,10 +25,12 @@
 #import "BXEmulatedKeyboard.h"
 #import "BXEmulatedJoystick.h"
 
+#import "BXBezelController.h"
+
 
 
 @implementation BXInputController
-@synthesize mouseLocked, mouseActive, trackMouseWhileUnlocked, mouseSensitivity, availableJoystickTypes;
+@synthesize mouseLocked, mouseActive, trackMouseWhileUnlocked, numpadSimulationActive, mouseSensitivity, availableJoystickTypes;
 
 
 #pragma mark -
@@ -356,7 +358,7 @@
 	threeFingerTapStarted = 0;
     
     //Clear our record of which keys were fn-modified
-    memset(fnModifiedKeys, NO, sizeof(fnModifiedKeys));
+    memset(&modifiedKeys, NO, sizeof(modifiedKeys));
 }
 
 - (void) didBecomeKey
@@ -473,10 +475,21 @@
 	}
 }
 
+- (IBAction) toggleNumpadSimulation: (id)sender
+{
+    BOOL simulating = [self numpadSimulationActive];
+    [self setNumpadSimulationActive: !simulating];
+    
+    if ([self numpadSimulationActive])
+        [[BXBezelController controller] showNumpadActiveBezel];
+    else
+        [[BXBezelController controller] showNumpadInactiveBezel];
+}
+
 - (IBAction) toggleTrackMouseWhileUnlocked: (id)sender
 {
-	BOOL track = [self trackMouseWhileUnlocked];
-	[self setTrackMouseWhileUnlocked: !track];
+	BOOL tracking = [self trackMouseWhileUnlocked];
+	[self setTrackMouseWhileUnlocked: !tracking];
 }
 
 - (BOOL) validateMenuItem: (NSMenuItem *)menuItem
@@ -491,6 +504,11 @@
 	else if (theAction == @selector(toggleTrackMouseWhileUnlocked:))
 	{
 		[menuItem setState: [self trackMouseWhileUnlocked]];
+		return YES;
+	}
+	else if (theAction == @selector(toggleNumpadSimulation:))
+	{
+		[menuItem setState: [self numpadSimulationActive]];
 		return YES;
 	}
 	return YES;

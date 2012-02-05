@@ -85,30 +85,25 @@
 		//Unpause the emulation whenever a key is sent to DOS.
 		[[self representedObject] resume: self];
         
-        BOOL fnModified = ([theEvent modifierFlags] & NSFunctionKeyMask) == NSFunctionKeyMask;
+        //If numpad simulation is active or the Fn key is held down, use a separate key-mapping layer.
+        BOOL simulateNumpad = [self numpadSimulationActive] || ([theEvent modifierFlags] & NSFunctionKeyMask) == NSFunctionKeyMask;
         CGKeyCode OSXKeyCode = [theEvent keyCode];
         BXDOSKeyCode dosKeyCode = KBD_NONE;
         
-        //Check if we have a different key mapping when the Fn key is held down
-        if (fnModified)
+        //Check if we have a different key mapping for this key when simulating a numpad.
+        if (simulateNumpad)
         {
-            NSLog(@"Function key modified");
-            dosKeyCode = [self _DOSKeyCodeForFnModifiedSystemKeyCode: OSXKeyCode];
+            dosKeyCode = [self _NumpadSimulatedKeyCodeForSystemKeyCode: OSXKeyCode];
+            if (dosKeyCode != KBD_NONE)
+                modifiedKeys[OSXKeyCode] = YES;
         }
         
-        //If there's no modified key equivalent, just go with the regular mapping
+        //If there's no numpad-simulation key equivalent, just go with the regular mapping
         if (dosKeyCode == KBD_NONE)
-        {
             dosKeyCode = [self _DOSKeyCodeForSystemKeyCode: OSXKeyCode];
-            fnModified = NO;
-        }
         
         if (dosKeyCode != KBD_NONE)
-        {
             [[self _emulatedKeyboard] keyDown: dosKeyCode];
-            if (fnModified)
-                fnModifiedKeys[OSXKeyCode] = YES;
-        }
 	}
 }
 
@@ -116,15 +111,15 @@
 {
     CGKeyCode OSXKeyCode = [theEvent keyCode];
     
-    //If fn was held down when this key was originally pressed,
-    //then release its modified mapping too.
-    if (fnModifiedKeys[OSXKeyCode])
+    //If this key was modified to a different mapping when it was was originally pressed,
+    //then release its modified mapping too (e.g. numpad simulation).
+    if (modifiedKeys[OSXKeyCode])
     {
-        BXDOSKeyCode modifiedKeyCode = [self _DOSKeyCodeForFnModifiedSystemKeyCode: OSXKeyCode];
+        BXDOSKeyCode modifiedKeyCode = [self _NumpadSimulatedKeyCodeForSystemKeyCode: OSXKeyCode];
         if (modifiedKeyCode != KBD_NONE)
             [[self _emulatedKeyboard] keyUp: modifiedKeyCode];
         
-        fnModifiedKeys[OSXKeyCode] = NO;
+        modifiedKeys[OSXKeyCode] = NO;
     }
     
     //Release the regular key mapping in any case.
@@ -387,6 +382,10 @@
 		
 		mapGenerated = YES;
 	}
+    
+    //Early return if key code is beyond the range of our mappings anyway.
+    if (keyCode > BXMaxSystemKeyCode)
+        return KBD_NONE;
 	
 	//Correction for transposed kVK_ISO_Section/kVK_ANSI_Grave on ISO keyboards.
 	if ((keyCode == kVK_ISO_Section || keyCode == kVK_ANSI_Grave) && KBGetLayoutType(LMGetKbdType()) == kKeyboardISO)
@@ -395,11 +394,10 @@
         else keyCode = kVK_ISO_Section;
 	}
 	
-	if (keyCode < BXMaxSystemKeyCode) return map[keyCode];
-	else return KBD_NONE;
+	return map[keyCode];
 }
 
-- (BXDOSKeyCode) _DOSKeyCodeForFnModifiedSystemKeyCode: (CGKeyCode)keyCode
+- (BXDOSKeyCode) _NumpadSimulatedKeyCodeForSystemKeyCode: (CGKeyCode)keyCode
 {
 	static BXDOSKeyCode map[BXMaxSystemKeyCode];
 	static BOOL mapGenerated = NO;
@@ -407,7 +405,10 @@
 	{
         memset(&map, KBD_NONE, sizeof(map));
 		
-		map[kVK_ANSI_6] = KBD_numlock;
+        //Disabled for now as it feels too easy to trigger by accident,
+        //resulting in confusion and misery.
+		//map[kVK_ANSI_6] = KBD_numlock;
+        
 		map[kVK_ANSI_7] = KBD_kp7;
 		map[kVK_ANSI_8] = KBD_kp8;
 		map[kVK_ANSI_9] = KBD_kp9;
@@ -431,6 +432,10 @@
 		mapGenerated = YES;
 	}
 	
+    //Early return if key code is beyond the range of our mappings anyway.
+    if (keyCode > BXMaxSystemKeyCode)
+        return KBD_NONE;
+    
 	//Correction for transposed kVK_ISO_Section/kVK_ANSI_Grave on ISO keyboards.
 	if ((keyCode == kVK_ISO_Section || keyCode == kVK_ANSI_Grave) && KBGetLayoutType(LMGetKbdType()) == kKeyboardISO)
 	{
@@ -438,8 +443,7 @@
         else keyCode = kVK_ISO_Section;
 	}
     
-	if (keyCode < BXMaxSystemKeyCode) return map[keyCode];
-	else return KBD_NONE;
+	return map[keyCode];
 }
 
 @end

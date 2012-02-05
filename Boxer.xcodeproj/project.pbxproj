@@ -532,6 +532,8 @@
 		9FD3A1E4139A358C00D0918E /* BX360ControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD3A1E3139A358C00D0918E /* BX360ControllerProfile.m */; };
 		9FD3A27F139A839600D0918E /* BXSixaxisControllerProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD3A27E139A839600D0918E /* BXSixaxisControllerProfile.m */; };
 		9FD5481411047E420041E1E7 /* BXDrivesInUseAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD5481311047E420041E1E7 /* BXDrivesInUseAlert.m */; };
+		9FD54A5B14DE96B800FE350F /* NumpadActiveTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FD54A5914DE96B800FE350F /* NumpadActiveTemplate.pdf */; };
+		9FD54A5D14DE979B00FE350F /* NumpadInactiveTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9FD54A5C14DE979B00FE350F /* NumpadInactiveTemplate.pdf */; };
 		9FD668F11215CDD6009E0118 /* BXBottomBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD668F01215CDD6009E0118 /* BXBottomBar.m */; };
 		9FD7B6B0145745D800565CEB /* BXThemedPopUpButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD7B6AF145745D800565CEB /* BXThemedPopUpButtonCell.m */; };
 		9FD7B6B3145746CC00565CEB /* BXThemedButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD7B6B2145746CC00565CEB /* BXThemedButtonCell.m */; };
@@ -1307,6 +1309,8 @@
 		9FD3A27E139A839600D0918E /* BXSixaxisControllerProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXSixaxisControllerProfile.m; sourceTree = "<group>"; };
 		9FD5481211047E420041E1E7 /* BXDrivesInUseAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDrivesInUseAlert.h; sourceTree = "<group>"; };
 		9FD5481311047E420041E1E7 /* BXDrivesInUseAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXDrivesInUseAlert.m; sourceTree = "<group>"; };
+		9FD54A5914DE96B800FE350F /* NumpadActiveTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = NumpadActiveTemplate.pdf; sourceTree = "<group>"; };
+		9FD54A5C14DE979B00FE350F /* NumpadInactiveTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = NumpadInactiveTemplate.pdf; sourceTree = "<group>"; };
 		9FD668EF1215CDD6009E0118 /* BXBottomBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBottomBar.h; sourceTree = "<group>"; };
 		9FD668F01215CDD6009E0118 /* BXBottomBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXBottomBar.m; sourceTree = "<group>"; };
 		9FD7B6AE145745D800565CEB /* BXThemedPopUpButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXThemedPopUpButtonCell.h; sourceTree = "<group>"; };
@@ -2510,6 +2514,8 @@
 		9FBC34390F56C5AC001811F2 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				9FD54A5C14DE979B00FE350F /* NumpadInactiveTemplate.pdf */,
+				9FD54A5914DE96B800FE350F /* NumpadActiveTemplate.pdf */,
 				9F0102E11440561E00942713 /* MT32Shelf.jpg */,
 				9F0102DF1440543500942713 /* MT32ShelfHighlight.png */,
 				9F586CEF143E51DD00E840C8 /* CM32L.png */,
@@ -2999,6 +3005,8 @@
 				9F0102E5144078E300942713 /* BoxerHelp in Resources */,
 				9F12F97C144875F400FC9645 /* DummyCD.iso in Resources */,
 				9FBA48C01450B73900F9BBDE /* Keyboard.png in Resources */,
+				9FD54A5B14DE96B800FE350F /* NumpadActiveTemplate.pdf in Resources */,
+				9FD54A5D14DE979B00FE350F /* NumpadInactiveTemplate.pdf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

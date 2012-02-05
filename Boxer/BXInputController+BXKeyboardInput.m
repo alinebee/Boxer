@@ -90,7 +90,8 @@
         //- The numpad simulation toggle is off and the user is holding down the Fn key OR
         //- The numpad simulation toggle is on and the user is *not* holding down the Fn key
         BOOL programIsRunning = ![[[self representedObject] emulator] isAtPrompt];
-        BOOL simulateNumpad = programIsRunning && ([self simulatedNumpadActive] != ([theEvent modifierFlags] & NSFunctionKeyMask) == NSFunctionKeyMask);
+        BOOL fnModified = ([theEvent modifierFlags] & NSFunctionKeyMask) == NSFunctionKeyMask;
+        BOOL simulateNumpad = programIsRunning && ([self simulatedNumpadActive] != fnModified);
         
         CGKeyCode OSXKeyCode = [theEvent keyCode];
         BXDOSKeyCode dosKeyCode = KBD_NONE;
@@ -98,7 +99,7 @@
         //Check if we have a different key mapping for this key when simulating a numpad.
         if (simulateNumpad)
         {
-            dosKeyCode = [self _NumpadSimulatedKeyCodeForSystemKeyCode: OSXKeyCode];
+            dosKeyCode = [self _simulatedNumpadKeyCodeForSystemKeyCode: OSXKeyCode];
             if (dosKeyCode != KBD_NONE)
                 modifiedKeys[OSXKeyCode] = YES;
         }
@@ -120,7 +121,7 @@
     //then release its modified mapping too (e.g. numpad simulation).
     if (modifiedKeys[OSXKeyCode])
     {
-        BXDOSKeyCode modifiedKeyCode = [self _NumpadSimulatedKeyCodeForSystemKeyCode: OSXKeyCode];
+        BXDOSKeyCode modifiedKeyCode = [self _simulatedNumpadKeyCodeForSystemKeyCode: OSXKeyCode];
         if (modifiedKeyCode != KBD_NONE)
             [[self _emulatedKeyboard] keyUp: modifiedKeyCode];
         
@@ -402,7 +403,7 @@
 	return map[keyCode];
 }
 
-- (BXDOSKeyCode) _NumpadSimulatedKeyCodeForSystemKeyCode: (CGKeyCode)keyCode
+- (BXDOSKeyCode) _simulatedNumpadKeyCodeForSystemKeyCode: (CGKeyCode)keyCode
 {
 	static BXDOSKeyCode map[BXMaxSystemKeyCode];
 	static BOOL mapGenerated = NO;

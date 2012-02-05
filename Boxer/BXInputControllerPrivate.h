@@ -130,7 +130,7 @@
 
 //Returns the DOS keycode constant that should be simulated when the specified
 //OSX keycode is pressed along with the Fn key.
-- (BXDOSKeyCode) _NumpadSimulatedKeyCodeForSystemKeyCode: (CGKeyCode)keyCode;
+- (BXDOSKeyCode) _simulatedNumpadKeyCodeForSystemKeyCode: (CGKeyCode)keyCode;
 
 @end
 

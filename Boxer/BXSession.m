@@ -23,6 +23,7 @@
 #import "NSString+BXPaths.h"
 #import "UKFNSubscribeFileWatcher.h"
 #import "NSWorkspace+BXExecutableTypes.h"
+#import "BXInputController.h"
 
 #import "BXAppKitVersionHelpers.h"
 
@@ -959,6 +960,10 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     
     //Clear our cache of sent MT-32 messages on behalf of BXAudioControls.
     [MT32MessagesReceived removeAllObjects];
+    
+    //Explicitly disable numpad simulation upon returning to the DOS prompt.
+    [[[self DOSWindowController] inputController] setSimulatedNumpadActive: NO];
+    
         
 	//Show the program chooser after returning to the DOS prompt, as long
 	//as the program chooser hasn't been manually toggled from the DOS prompt

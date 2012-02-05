@@ -35,6 +35,7 @@ extern NSString * const BXSessionDidLockMouseNotification;
 extern NSString * const BXSessionDidUnlockMouseNotification;
 
 //Intended to be posted by any part of Boxer that takes over the run loop for a significant time.
+//Listened for by BXSession, which will take steps to suspend the emulation and pause audio output.
 extern NSString * const BXWillBeginInterruptionNotification;
 extern NSString * const BXDidFinishInterruptionNotification;
 

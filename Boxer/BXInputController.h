@@ -27,7 +27,7 @@
 {
 	BXCursorFadeAnimation *cursorFade;
 	
-    BOOL numpadSimulationActive;
+    BOOL simulatedNumpadActive;
 	BOOL mouseActive;
 	BOOL mouseLocked;
 	BOOL trackMouseWhileUnlocked;
@@ -83,7 +83,7 @@
 
 //Whether numpad simulation is turned on. When active, certain keys will be remapped to imitate
 //the numeric keypad on a fullsize PC keyboard.
-@property (assign, nonatomic) BOOL numpadSimulationActive;
+@property (assign, nonatomic) BOOL simulatedNumpadActive;
 
 #pragma mark -
 #pragma mark Methods
@@ -112,12 +112,13 @@
 #pragma mark -
 #pragma mark UI actions
 
-//Lock/unlock the mouse.
+//Lock/unlock the mouse. Only available while a program is running.
 - (IBAction) toggleMouseLocked: (id)sender;
 
 //Enable/disable unlocked mouse tracking.
 - (IBAction) toggleTrackMouseWhileUnlocked: (id)sender;
 
-- (IBAction) toggleNumpadSimulation: (id)sender;
+//Enable/disable the simulated numpad layout. Only available while a program is running.
+- (IBAction) toggleSimulatedNumpad: (id)sender;
 
 @end

@@ -85,8 +85,13 @@
 		//Unpause the emulation whenever a key is sent to DOS.
 		[[self representedObject] resume: self];
         
-        //If numpad simulation is active or the Fn key is held down, use a separate key-mapping layer.
-        BOOL simulateNumpad = [self numpadSimulationActive] || ([theEvent modifierFlags] & NSFunctionKeyMask) == NSFunctionKeyMask;
+        //Check the separate key-mapping layer for numpad simulation for this key, if:
+        //- There's a program running AND
+        //- The numpad simulation toggle is off and the user is holding down the Fn key OR
+        //- The numpad simulation toggle is on and the user is *not* holding down the Fn key
+        BOOL programIsRunning = ![[[self representedObject] emulator] isAtPrompt];
+        BOOL simulateNumpad = programIsRunning && ([self simulatedNumpadActive] != ([theEvent modifierFlags] & NSFunctionKeyMask) == NSFunctionKeyMask);
+        
         CGKeyCode OSXKeyCode = [theEvent keyCode];
         BXDOSKeyCode dosKeyCode = KBD_NONE;
         

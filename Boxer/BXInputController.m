@@ -30,7 +30,7 @@
 
 
 @implementation BXInputController
-@synthesize mouseLocked, mouseActive, trackMouseWhileUnlocked, numpadSimulationActive, mouseSensitivity, availableJoystickTypes;
+@synthesize mouseLocked, mouseActive, trackMouseWhileUnlocked, simulatedNumpadActive, mouseSensitivity, availableJoystickTypes;
 
 
 #pragma mark -
@@ -475,12 +475,15 @@
 	}
 }
 
-- (IBAction) toggleNumpadSimulation: (id)sender
+- (IBAction) toggleSimulatedNumpad: (id)sender
 {
-    BOOL simulating = [self numpadSimulationActive];
-    [self setNumpadSimulationActive: !simulating];
+    //Don't toggle if we're at the DOS prompt.
+    if ([[[self representedObject] emulator] isAtPrompt]) return;
     
-    if ([self numpadSimulationActive])
+    BOOL simulating = [self simulatedNumpadActive];
+    [self setSimulatedNumpadActive: !simulating];
+    
+    if ([self simulatedNumpadActive])
         [[BXBezelController controller] showNumpadActiveBezel];
     else
         [[BXBezelController controller] showNumpadInactiveBezel];
@@ -506,10 +509,12 @@
 		[menuItem setState: [self trackMouseWhileUnlocked]];
 		return YES;
 	}
-	else if (theAction == @selector(toggleNumpadSimulation:))
+	else if (theAction == @selector(toggleSimulatedNumpad:))
 	{
-		[menuItem setState: [self numpadSimulationActive]];
-		return YES;
+		[menuItem setState: [self simulatedNumpadActive]];
+        
+        //Don't allow the numpad simulation to be toggled while at the DOS prompt
+		return ![[[self representedObject] emulator] isAtPrompt];
 	}
 	return YES;
 }

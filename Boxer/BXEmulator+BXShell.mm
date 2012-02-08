@@ -352,11 +352,11 @@ nil];
     
     //If we got this far, we finally have a path we can reveal in OS X.
     //FIXME: we should never be talking directly to the app controller from this level.
-    //Instead, pass this responsibility on to the delegate.
+    //Instead, pass this responsibility up to our delegate.
 	BXAppController *appController = [NSApp delegate];
     BOOL revealed = [appController revealPath: OSXPath];
     
-    //The file did not exist in OS X.
+    //The file did not exist in OS X so could not be revealed.
     if (!revealed)
     {
         NSString *errorFormat = NSLocalizedStringFromTable(@"The path \"%1$@\" does not exist in OS X.",

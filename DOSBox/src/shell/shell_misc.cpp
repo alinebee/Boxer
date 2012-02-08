@@ -344,14 +344,6 @@ void DOS_Shell::InputCommand(char * line) {
 			str_len = 0;    // prevent multiple adds of the same line
 			break;
 				
-		//--Added 2010-12-29 by Alun Bestor to suppress bogus control char
-		//that gets printed for some reason when Boxer injects its own commands
-		//after a program has been run.
-		//FIXME: this indicates a deeper bug (possibly in DOS_ReadFile())
-		//that I haven't tracked down yet.
-		case 0x10:
-			break;
-		//--End of modifications
 		
 		default:
 			if (l_completion.size()) l_completion.clear();

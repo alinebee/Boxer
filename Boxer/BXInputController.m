@@ -120,6 +120,7 @@
 			[previousSession removeObserver: self forKeyPath: @"paused"];
 			[previousSession removeObserver: self forKeyPath: @"autoPaused"];
 			[previousSession removeObserver: self forKeyPath: @"emulator.mouse.position"];
+			[previousSession removeObserver: self forKeyPath: @"emulator.keyboard.numLockEnabled"];
 			[previousSession removeObserver: self forKeyPath: @"emulator.joystick"];
 			[previousSession removeObserver: self forKeyPath: @"emulator.joystickSupport"];
 			
@@ -163,6 +164,11 @@
 			[session addObserver: self
 					  forKeyPath: @"emulator.mouse.position"
 						 options: NSKeyValueObservingOptionInitial
+						 context: nil];
+            
+			[session addObserver: self
+					  forKeyPath: @"emulator.keyboard.numLockEnabled"
+						 options: 0
 						 context: nil];
 			
 			[joystickController addObserver: self
@@ -211,6 +217,12 @@
 		[self _emulatedCursorMovedToPointInCanvas: mousePosition];
 	}
 	
+    //Show a notification whenever the numlock state is toggled.
+    else if ([keyPath isEqualToString: @"emulator.keyboard.numLockEnabled"])
+    {
+        [self _notifyNumlockState];
+    }
+    
 	//Tweak: we used to observe just the @suspended key, but that meant we'd resign key
 	//and unlock the mouse whenever Boxer interrupted the emulator for UI stuff like window resizing.
 	else if ([keyPath isEqualToString: @"paused"] || [keyPath isEqualToString: @"autoPaused"])
@@ -477,9 +489,6 @@
 
 - (IBAction) toggleSimulatedNumpad: (id)sender
 {
-    //Don't toggle if we're at the DOS prompt.
-    if ([[[self representedObject] emulator] isAtPrompt]) return;
-    
     BOOL simulating = [self simulatedNumpadActive];
     [self setSimulatedNumpadActive: !simulating];
     
@@ -512,10 +521,18 @@
 	else if (theAction == @selector(toggleSimulatedNumpad:))
 	{
 		[menuItem setState: [self simulatedNumpadActive]];
-        
-        //Don't allow the numpad simulation to be toggled while at the DOS prompt
-		return ![[[self representedObject] emulator] isAtPrompt];
+        return YES;
 	}
+    else if (theAction == @selector(sendNumLock:))
+    {
+        [menuItem setState: [[self _emulatedKeyboard] numLockEnabled]];
+        return YES;
+    }
+    else if (theAction == @selector(sendScrollLock:))
+    {
+        [menuItem setState: [[self _emulatedKeyboard] scrollLockEnabled]];
+        return YES;
+    }
 	return YES;
 }
 

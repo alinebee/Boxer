@@ -24,7 +24,7 @@
 #pragma mark Implementation
 
 @implementation BXEmulatedKeyboard
-@synthesize capsLockEnabled, numLockEnabled, activeLayout;
+@synthesize capsLockEnabled, numLockEnabled, scrollLockEnabled, activeLayout;
 
 + (NSString *) defaultKeyboardLayout { return @"us"; }
 
@@ -63,6 +63,7 @@
 		
 		if		(key == KBD_capslock)	[self setCapsLockEnabled: !capsLockEnabled];
 		else if	(key == KBD_numlock)	[self setNumLockEnabled: !numLockEnabled];
+        else if (key == KBD_scrolllock) [self setScrollLockEnabled: !scrollLockEnabled];
 	}
     pressedKeys[key]++;
 }

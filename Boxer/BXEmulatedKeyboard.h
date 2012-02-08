@@ -24,12 +24,14 @@ typedef KBD_KEYS BXDOSKeyCode;
 {
 	BOOL capsLockEnabled;
 	BOOL numLockEnabled;
+    BOOL scrollLockEnabled;
 	NSString *activeLayout;
 	NSUInteger pressedKeys[KBD_LAST];
 }
 
 @property (assign) BOOL capsLockEnabled;
 @property (assign) BOOL numLockEnabled;
+@property (assign) BOOL scrollLockEnabled;
 
 @property (copy) NSString *activeLayout;
 

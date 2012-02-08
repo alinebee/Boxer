@@ -204,6 +204,8 @@
 		9F2AC6E410EFFE8600CFFF72 /* BXBootlegCoverArt.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2AC6E310EFFE8600CFFF72 /* BXBootlegCoverArt.m */; };
 		9F2C28A2129D906600B172C8 /* BXFirstRunWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F2C28A1129D906600B172C8 /* BXFirstRunWindowController.m */; };
 		9F2C28B8129D924E00B172C8 /* FirstRunWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F2C28B6129D924E00B172C8 /* FirstRunWindow.xib */; };
+		9F3034B914E2C3F600BC572E /* NumlockActiveTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F3034B714E2C3F600BC572E /* NumlockActiveTemplate.pdf */; };
+		9F3034BA14E2C3F600BC572E /* NumlockInactiveTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F3034B814E2C3F600BC572E /* NumlockInactiveTemplate.pdf */; };
 		9F34BE40142B700100A69FAF /* BXCoalfaceAudio.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F34BE3E142B700100A69FAF /* BXCoalfaceAudio.mm */; };
 		9F34BE5B142B76D800A69FAF /* MT32Emu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F34BE5A142B76D800A69FAF /* MT32Emu.framework */; };
 		9F34BE5C142B76F500A69FAF /* MT32Emu.framework in Copy Bundled Frameworks */ = {isa = PBXBuildFile; fileRef = 9F34BE5A142B76D800A69FAF /* MT32Emu.framework */; };
@@ -716,6 +718,8 @@
 		9F2C28A0129D906600B172C8 /* BXFirstRunWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFirstRunWindowController.h; sourceTree = "<group>"; };
 		9F2C28A1129D906600B172C8 /* BXFirstRunWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFirstRunWindowController.m; sourceTree = "<group>"; };
 		9F2C28B7129D924E00B172C8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/FirstRunWindow.xib; sourceTree = "<group>"; };
+		9F3034B714E2C3F600BC572E /* NumlockActiveTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = NumlockActiveTemplate.pdf; sourceTree = "<group>"; };
+		9F3034B814E2C3F600BC572E /* NumlockInactiveTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = NumlockInactiveTemplate.pdf; sourceTree = "<group>"; };
 		9F348A9D128F004A0034E780 /* BXWelcomeButtonDraggingDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXWelcomeButtonDraggingDelegate.h; sourceTree = "<group>"; };
 		9F34BE3E142B700100A69FAF /* BXCoalfaceAudio.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXCoalfaceAudio.mm; sourceTree = "<group>"; };
 		9F34BE3F142B700100A69FAF /* BXCoalfaceAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCoalfaceAudio.h; sourceTree = "<group>"; };
@@ -2514,6 +2518,8 @@
 		9FBC34390F56C5AC001811F2 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				9F3034B714E2C3F600BC572E /* NumlockActiveTemplate.pdf */,
+				9F3034B814E2C3F600BC572E /* NumlockInactiveTemplate.pdf */,
 				9FD54A5C14DE979B00FE350F /* NumpadInactiveTemplate.pdf */,
 				9FD54A5914DE96B800FE350F /* NumpadActiveTemplate.pdf */,
 				9F0102E11440561E00942713 /* MT32Shelf.jpg */,
@@ -3007,6 +3013,8 @@
 				9FBA48C01450B73900F9BBDE /* Keyboard.png in Resources */,
 				9FD54A5B14DE96B800FE350F /* NumpadActiveTemplate.pdf in Resources */,
 				9FD54A5D14DE979B00FE350F /* NumpadInactiveTemplate.pdf in Resources */,
+				9F3034B914E2C3F600BC572E /* NumlockActiveTemplate.pdf in Resources */,
+				9F3034BA14E2C3F600BC572E /* NumlockInactiveTemplate.pdf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

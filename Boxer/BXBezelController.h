@@ -52,6 +52,8 @@ enum {
     NSView *MT32MissingBezel;
     NSView *numpadActiveBezel;
     NSView *numpadInactiveBezel;
+    NSView *numlockActiveBezel;
+    NSView *numlockInactiveBezel;
     
     BXBezelPriority currentPriority;
 }
@@ -90,6 +92,9 @@ enum {
 @property (retain, nonatomic) IBOutlet NSView *numpadActiveBezel;
 @property (retain, nonatomic) IBOutlet NSView *numpadInactiveBezel;
 
+//Numlock toggle bezels.
+@property (retain, nonatomic) IBOutlet NSView *numlockActiveBezel;
+@property (retain, nonatomic) IBOutlet NSView *numlockInactiveBezel;
 
 //The last bezel that was displayed.
 @property (readonly, nonatomic) NSView *currentBezel;
@@ -122,6 +127,9 @@ enum {
 
 - (void) showNumpadActiveBezel;
 - (void) showNumpadInactiveBezel;
+
+- (void) showNumlockActiveBezel;
+- (void) showNumlockInactiveBezel;
 
 - (void) showFullscreenBezel;
 - (void) showJoystickIgnoredBezel;

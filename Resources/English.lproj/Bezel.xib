@@ -2,10 +2,10 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
-		<string key="IBDocument.SystemVersion">11C74</string>
+		<string key="IBDocument.SystemVersion">11D50b</string>
 		<string key="IBDocument.InterfaceBuilderVersion">1938</string>
-		<string key="IBDocument.AppKitVersion">1138.23</string>
-		<string key="IBDocument.HIToolboxVersion">567.00</string>
+		<string key="IBDocument.AppKitVersion">1138.32</string>
+		<string key="IBDocument.HIToolboxVersion">568.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
 			<string key="NS.object.0">1938</string>
@@ -41,7 +41,7 @@
 				<string key="NSClassName">NSApplication</string>
 			</object>
 			<object class="NSCustomView" id="959508283">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -50,8 +50,6 @@
 						<int key="NSvFlags">274</int>
 						<string key="NSFrame">{{20, 23}, {300, 44}}</string>
 						<reference key="NSSuperview" ref="959508283"/>
-						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<int key="NSTag">7</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="422971973">
@@ -87,8 +85,6 @@ YmFyLg</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{340, 90}</string>
-				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="537414232"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
@@ -257,7 +253,7 @@ YmFyLg</string>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
 			<object class="NSCustomView" id="759628227">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -332,6 +328,7 @@ YmFyLg</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{220, 200}</string>
+				<reference key="NSSuperview"/>
 				<reference key="NSNextKeyView" ref="457239935"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
@@ -962,6 +959,138 @@ YmFyLg</string>
 				<reference key="NSNextKeyView" ref="395178798"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
+			<object class="NSCustomView" id="925260424">
+				<reference key="NSNextResponder"/>
+				<int key="NSvFlags">268</int>
+				<object class="NSMutableArray" key="NSSubviews">
+					<bool key="EncodedWithXMLCoder">YES</bool>
+					<object class="NSImageView" id="345059296">
+						<reference key="NSNextResponder" ref="925260424"/>
+						<int key="NSvFlags">269</int>
+						<object class="NSMutableSet" key="NSDragTypes">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="NSArray" key="set.sortedObjects">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<string>Apple PDF pasteboard type</string>
+								<string>Apple PICT pasteboard type</string>
+								<string>Apple PNG pasteboard type</string>
+								<string>NSFilenamesPboardType</string>
+								<string>NeXT Encapsulated PostScript v1.2 pasteboard type</string>
+								<string>NeXT TIFF v4.0 pasteboard type</string>
+							</object>
+						</object>
+						<string key="NSFrame">{{59, 47}, {102, 102}}</string>
+						<reference key="NSSuperview" ref="925260424"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView" ref="811921363"/>
+						<int key="NSTag">1</int>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSImageCell" key="NSCell" id="152662608">
+							<int key="NSCellFlags">130560</int>
+							<int key="NSCellFlags2">33554432</int>
+							<object class="NSCustomResource" key="NSContents">
+								<string key="NSClassName">NSImage</string>
+								<string key="NSResourceName">NumlockActiveTemplate</string>
+							</object>
+							<int key="NSAlign">0</int>
+							<int key="NSScale">3</int>
+							<int key="NSStyle">0</int>
+							<bool key="NSAnimates">NO</bool>
+						</object>
+						<bool key="NSEditable">YES</bool>
+					</object>
+					<object class="NSTextField" id="811921363">
+						<reference key="NSNextResponder" ref="925260424"/>
+						<int key="NSvFlags">306</int>
+						<string key="NSFrame">{{17, 20}, {186, 22}}</string>
+						<reference key="NSSuperview" ref="925260424"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
+						<int key="NSTag">4</int>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSTextFieldCell" key="NSCell" id="761529907">
+							<int key="NSCellFlags">67239488</int>
+							<int key="NSCellFlags2">138414080</int>
+							<string key="NSContents">Numlock active</string>
+							<reference key="NSSupport" ref="954562412"/>
+							<reference key="NSControlView" ref="811921363"/>
+							<reference key="NSBackgroundColor" ref="372717747"/>
+							<reference key="NSTextColor" ref="1005397457"/>
+						</object>
+					</object>
+				</object>
+				<string key="NSFrameSize">{220, 172}</string>
+				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
+				<reference key="NSNextKeyView" ref="345059296"/>
+				<string key="NSClassName">BXBezelView</string>
+			</object>
+			<object class="NSCustomView" id="739443494">
+				<reference key="NSNextResponder"/>
+				<int key="NSvFlags">268</int>
+				<object class="NSMutableArray" key="NSSubviews">
+					<bool key="EncodedWithXMLCoder">YES</bool>
+					<object class="NSImageView" id="366460092">
+						<reference key="NSNextResponder" ref="739443494"/>
+						<int key="NSvFlags">269</int>
+						<object class="NSMutableSet" key="NSDragTypes">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="NSArray" key="set.sortedObjects">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<string>Apple PDF pasteboard type</string>
+								<string>Apple PICT pasteboard type</string>
+								<string>Apple PNG pasteboard type</string>
+								<string>NSFilenamesPboardType</string>
+								<string>NeXT Encapsulated PostScript v1.2 pasteboard type</string>
+								<string>NeXT TIFF v4.0 pasteboard type</string>
+							</object>
+						</object>
+						<string key="NSFrame">{{59, 47}, {102, 102}}</string>
+						<reference key="NSSuperview" ref="739443494"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView" ref="603823739"/>
+						<int key="NSTag">1</int>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSImageCell" key="NSCell" id="877365512">
+							<int key="NSCellFlags">130560</int>
+							<int key="NSCellFlags2">33554432</int>
+							<object class="NSCustomResource" key="NSContents">
+								<string key="NSClassName">NSImage</string>
+								<string key="NSResourceName">NumlockInactiveTemplate</string>
+							</object>
+							<int key="NSAlign">0</int>
+							<int key="NSScale">3</int>
+							<int key="NSStyle">0</int>
+							<bool key="NSAnimates">NO</bool>
+						</object>
+						<bool key="NSEditable">YES</bool>
+					</object>
+					<object class="NSTextField" id="603823739">
+						<reference key="NSNextResponder" ref="739443494"/>
+						<int key="NSvFlags">306</int>
+						<string key="NSFrame">{{17, 20}, {186, 22}}</string>
+						<reference key="NSSuperview" ref="739443494"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
+						<int key="NSTag">4</int>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSTextFieldCell" key="NSCell" id="74504001">
+							<int key="NSCellFlags">67239488</int>
+							<int key="NSCellFlags2">138414080</int>
+							<string key="NSContents">Numlock disabled</string>
+							<reference key="NSSupport" ref="954562412"/>
+							<reference key="NSControlView" ref="603823739"/>
+							<reference key="NSBackgroundColor" ref="372717747"/>
+							<reference key="NSTextColor" ref="1005397457"/>
+						</object>
+					</object>
+				</object>
+				<string key="NSFrameSize">{220, 172}</string>
+				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
+				<reference key="NSNextKeyView" ref="366460092"/>
+				<string key="NSClassName">BXBezelView</string>
+			</object>
 		</object>
 		<object class="IBObjectContainer" key="IBDocument.Objects">
 			<object class="NSMutableArray" key="connectionRecords">
@@ -1077,6 +1206,22 @@ YmFyLg</string>
 						<reference key="destination" ref="205346084"/>
 					</object>
 					<int key="connectionID">112</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">numlockActiveBezel</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="925260424"/>
+					</object>
+					<int key="connectionID">123</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">numlockInactiveBezel</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="739443494"/>
+					</object>
+					<int key="connectionID">124</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1714,6 +1859,84 @@ YmFyLg</string>
 						<reference key="object" ref="641992703"/>
 						<reference key="parent" ref="909372776"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">113</int>
+						<reference key="object" ref="925260424"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="345059296"/>
+							<reference ref="811921363"/>
+						</object>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Numpad Active Bezel</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">114</int>
+						<reference key="object" ref="345059296"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="152662608"/>
+						</object>
+						<reference key="parent" ref="925260424"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">115</int>
+						<reference key="object" ref="811921363"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="761529907"/>
+						</object>
+						<reference key="parent" ref="925260424"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">116</int>
+						<reference key="object" ref="761529907"/>
+						<reference key="parent" ref="811921363"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">117</int>
+						<reference key="object" ref="152662608"/>
+						<reference key="parent" ref="345059296"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">118</int>
+						<reference key="object" ref="739443494"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="603823739"/>
+							<reference ref="366460092"/>
+						</object>
+						<reference key="parent" ref="0"/>
+						<string key="objectName">Numpad Active Bezel</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">119</int>
+						<reference key="object" ref="603823739"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="74504001"/>
+						</object>
+						<reference key="parent" ref="739443494"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">120</int>
+						<reference key="object" ref="366460092"/>
+						<object class="NSMutableArray" key="children">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<reference ref="877365512"/>
+						</object>
+						<reference key="parent" ref="739443494"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">121</int>
+						<reference key="object" ref="877365512"/>
+						<reference key="parent" ref="366460092"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">122</int>
+						<reference key="object" ref="74504001"/>
+						<reference key="parent" ref="603823739"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -1734,6 +1957,20 @@ YmFyLg</string>
 					<string>109.IBPluginDependency</string>
 					<string>11.CustomClassName</string>
 					<string>11.IBPluginDependency</string>
+					<string>113.IBPluginDependency</string>
+					<string>114.IBPluginDependency</string>
+					<string>115.CustomClassName</string>
+					<string>115.IBPluginDependency</string>
+					<string>116.IBPluginDependency</string>
+					<string>117.CustomClassName</string>
+					<string>117.IBPluginDependency</string>
+					<string>118.IBPluginDependency</string>
+					<string>119.CustomClassName</string>
+					<string>119.IBPluginDependency</string>
+					<string>120.IBPluginDependency</string>
+					<string>121.CustomClassName</string>
+					<string>121.IBPluginDependency</string>
+					<string>122.IBPluginDependency</string>
 					<string>15.IBPluginDependency</string>
 					<string>16.CustomClassName</string>
 					<string>16.IBPluginDependency</string>
@@ -1851,6 +2088,20 @@ YmFyLg</string>
 					<string>BXHUDLevelIndicatorCell</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>BXHUDLabel</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>BXHUDImageCell</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>BXHUDLabel</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>BXHUDImageCell</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>BXHUDImageCell</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -1963,7 +2214,7 @@ YmFyLg</string>
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">112</int>
+			<int key="maxID">124</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -1992,6 +2243,8 @@ YmFyLg</string>
 							<string>driveSwappedBezel</string>
 							<string>fullscreenBezel</string>
 							<string>joystickIgnoredBezel</string>
+							<string>numlockActiveBezel</string>
+							<string>numlockInactiveBezel</string>
 							<string>numpadActiveBezel</string>
 							<string>numpadInactiveBezel</string>
 							<string>pauseBezel</string>
@@ -2000,6 +2253,8 @@ YmFyLg</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSView</string>
+							<string>NSView</string>
 							<string>NSView</string>
 							<string>NSView</string>
 							<string>NSView</string>
@@ -2029,6 +2284,8 @@ YmFyLg</string>
 							<string>driveSwappedBezel</string>
 							<string>fullscreenBezel</string>
 							<string>joystickIgnoredBezel</string>
+							<string>numlockActiveBezel</string>
+							<string>numlockInactiveBezel</string>
 							<string>numpadActiveBezel</string>
 							<string>numpadInactiveBezel</string>
 							<string>pauseBezel</string>
@@ -2071,6 +2328,14 @@ YmFyLg</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">joystickIgnoredBezel</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">numlockActiveBezel</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">numlockInactiveBezel</string>
 								<string key="candidateClassName">NSView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
@@ -2182,6 +2447,8 @@ YmFyLg</string>
 				<string>CDROMTemplate</string>
 				<string>EjectTemplate</string>
 				<string>NSRightFacingTriangleTemplate</string>
+				<string>NumlockActiveTemplate</string>
+				<string>NumlockInactiveTemplate</string>
 				<string>NumpadActiveTemplate</string>
 				<string>NumpadInactiveTemplate</string>
 				<string>PauseTemplate</string>
@@ -2194,6 +2461,8 @@ YmFyLg</string>
 				<string>{128, 128}</string>
 				<string>{128, 128}</string>
 				<string>{9, 9}</string>
+				<string>{128, 128}</string>
+				<string>{128, 128}</string>
 				<string>{128, 128}</string>
 				<string>{128, 128}</string>
 				<string>{128, 128}</string>

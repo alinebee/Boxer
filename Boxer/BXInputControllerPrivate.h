@@ -132,6 +132,10 @@
 //OSX keycode is pressed along with the Fn key.
 - (BXDOSKeyCode) _simulatedNumpadKeyCodeForSystemKeyCode: (CGKeyCode)keyCode;
 
+//Called whenever the emulated keyboard's numlock state changes.
+//Displays a notification bezel indicating the current state.
+- (void) _notifyNumlockState;
+
 @end
 
 

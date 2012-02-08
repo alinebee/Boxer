@@ -9,6 +9,7 @@
 #import "BXInputControllerPrivate.h"
 #import "BXEventConstants.h"
 #import "BXDOSWindow.h"
+#import "BXBezelController.h"
 
 #import <Carbon/Carbon.h> //For keycodes
 
@@ -85,13 +86,10 @@
 		//Unpause the emulation whenever a key is sent to DOS.
 		[[self representedObject] resume: self];
         
-        //Check the separate key-mapping layer for numpad simulation for this key, if:
-        //- There's a program running AND
-        //- The numpad simulation toggle is off and the user is holding down the Fn key OR
-        //- The numpad simulation toggle is on and the user is *not* holding down the Fn key
-        BOOL programIsRunning = ![[[self representedObject] emulator] isAtPrompt];
+        //Check the separate key-mapping layer for numpad simulation for this key,
+        //if the numpad simulation toggle is on or the user is holding down the Fn key.
         BOOL fnModified = ([theEvent modifierFlags] & NSFunctionKeyMask) == NSFunctionKeyMask;
-        BOOL simulateNumpad = programIsRunning && ([self simulatedNumpadActive] != fnModified);
+        BOOL simulateNumpad = [self simulatedNumpadActive] || fnModified;
         
         CGKeyCode OSXKeyCode = [theEvent keyCode];
         BXDOSKeyCode dosKeyCode = KBD_NONE;
@@ -147,6 +145,18 @@
     }
 }
 
+- (void) _notifyNumlockState
+{
+    BOOL numlockEnabled = [[self _emulatedKeyboard] numLockEnabled];
+    if (numlockEnabled)
+    {
+        [[BXBezelController controller] showNumlockActiveBezel];
+    }
+    else
+    {
+        [[BXBezelController controller] showNumlockInactiveBezel];
+    }
+}
 
 #pragma mark -
 #pragma mark Simulating keyboard events
@@ -411,9 +421,7 @@
 	{
         memset(&map, KBD_NONE, sizeof(map));
 		
-        //Disabled for now as it feels too easy to trigger by accident,
-        //resulting in confusion and misery.
-		//map[kVK_ANSI_6] = KBD_numlock;
+        map[kVK_ANSI_6] = KBD_numlock;
         
 		map[kVK_ANSI_7] = KBD_kp7;
 		map[kVK_ANSI_8] = KBD_kp8;

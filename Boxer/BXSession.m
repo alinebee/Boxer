@@ -962,7 +962,9 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     [MT32MessagesReceived removeAllObjects];
     
     //Explicitly disable numpad simulation upon returning to the DOS prompt.
-    [[[self DOSWindowController] inputController] setSimulatedNumpadActive: NO];
+    //Disabled for now until we can record that the user has toggled the option while at the DOS prompt,
+    //and conditionally leave it on in that case, to prevent it switching off when executing commands. 
+    //[[[self DOSWindowController] inputController] setSimulatedNumpadActive: NO];
     
         
 	//Show the program chooser after returning to the DOS prompt, as long

@@ -911,6 +911,24 @@
 	<array>
 		<dict>
 			<key>BXProfileIdentifier</key>
+			<string>net.washboardabs.no-temp-drive-games</string>
+			<key>BXProfileDescription</key>
+			<string>Games which are incompatible with the temp drive.</string>
+			<key>BXProfileMatches</key>
+			<array>
+				<string>3 Sisters’ Story</string>
+				<string>Season of Sakura</string>
+			</array>
+			<key>BXProfileTelltales</key>
+			<array>
+				<string>pmdibm.com</string>
+			</array>
+			<key>BXMountTempDrive</key>
+			<false/>
+		</dict>
+        
+		<dict>
+			<key>BXProfileIdentifier</key>
 			<string>net.washboardabs.cdrom-protected-games</string>
 			<key>BXProfileDescription</key>
 			<string>Games which require any CD to be present.</string>

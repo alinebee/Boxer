@@ -1211,7 +1211,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	
 	//Mount our internal DOS toolkit and temporary drives
 	[self mountToolkitDriveWithError: nil];
-	[self mountTempDriveWithError: nil];
+    if (!gameProfile || [gameProfile mountTempDrive])
+        [self mountTempDriveWithError: nil];
     
     //If the game needs a CD-ROM to be present, then mount a dummy CD drive
     //if necessary.

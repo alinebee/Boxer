@@ -47,6 +47,7 @@ extern NSString * const BXGenericProfileIdentifier;
 	BXDriveType sourceDriveType;
 	NSInteger requiredDiskSpace;
 	BOOL mountHelperDrivesDuringImport;
+    BOOL mountTempDrive;
     BOOL requiresCDROM;
 }
 
@@ -88,6 +89,11 @@ extern NSString * const BXGenericProfileIdentifier;
 //e.g. making them offer the wrong default destination drive.
 //Defaults to YES.
 @property (assign, nonatomic) BOOL mountHelperDrivesDuringImport;
+
+//Whether to mount the X drive at all when running this game.
+//Certain games misinterpret the TMP and TEMP variables and need this disabled.
+//Defaults to YES.
+@property (assign, nonatomic) BOOL mountTempDrive;
 
 //The type of media upon which this game was likely released: currently this
 //is used only for deciding on cover art, not for emulation decisions.

@@ -48,7 +48,7 @@ NSString * const BXInvalidGameDateThreshold = @"1981-01-01 00:00:00 +0000";
 @implementation BXGameProfile
 
 @synthesize gameName, configurations, identifier, profileDescription;
-@synthesize sourceDriveType, coverArtMedium, requiredDiskSpace, mountHelperDrivesDuringImport, requiresCDROM;
+@synthesize sourceDriveType, coverArtMedium, requiredDiskSpace, mountHelperDrivesDuringImport, mountTempDrive, requiresCDROM;
 
 + (BXReleaseMedium) mediumOfGameAtPath: (NSString *)basePath
 {
@@ -159,6 +159,7 @@ NSString * const BXInvalidGameDateThreshold = @"1981-01-01 00:00:00 +0000";
 		[self setSourceDriveType: BXDriveAutodetect];
 		[self setRequiredDiskSpace: BXDefaultFreeSpace];
 		[self setMountHelperDrivesDuringImport: YES];
+        [self setMountTempDrive: YES];
 		[self setCoverArtMedium: BXUnknownMedium];
         [self setIdentifier: BXGenericProfileIdentifier];
 	}
@@ -191,6 +192,9 @@ NSString * const BXInvalidGameDateThreshold = @"1981-01-01 00:00:00 +0000";
 		
 		NSNumber *mountHelperDrives = [profileDict objectForKey: @"BXMountHelperDrivesDuringImport"];
 		if (mountHelperDrives) [self setMountHelperDrivesDuringImport: [mountHelperDrives boolValue]];
+        
+		NSNumber *mountTemporaryDrive = [profileDict objectForKey: @"BXMountTempDrive"];
+		if (mountTemporaryDrive) [self setMountTempDrive: [mountTemporaryDrive boolValue]];
         
 		NSNumber *needsCDROM = [profileDict objectForKey: @"BXRequiresCDROM"];
 		if (needsCDROM) [self setRequiresCDROM: [needsCDROM boolValue]];

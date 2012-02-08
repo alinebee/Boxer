@@ -1305,7 +1305,9 @@
 	if (![self gameProfile] || [[self gameProfile] mountHelperDrivesDuringImport])
 	{
 		[self mountToolkitDriveWithError: &mountError];
-		[self mountTempDriveWithError: &mountError];
+        
+        if (![self gameProfile] || [[self gameProfile] mountTempDrive])
+            [self mountTempDriveWithError: &mountError];
 	}
 }
 

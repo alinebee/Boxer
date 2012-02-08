@@ -631,6 +631,52 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 	else return nil;
 }
 
+- (BXDrive *) driveForDOSPath: (NSString *)path
+{
+    if ([self isExecuting])
+	{
+		const char *dosPath = [path cStringUsingEncoding: BXDirectStringEncoding];
+		//If the path couldn't be encoded successfully, don't do further lookups
+		if (!dosPath) return nil;
+		
+		char fullPath[DOS_PATHLENGTH];
+		Bit8u driveIndex;
+		BOOL resolved = DOS_MakeName(dosPath, fullPath, &driveIndex);
+                
+		if (resolved)
+		{
+			DOS_Drive *dosboxDrive = Drives[driveIndex];
+            return [self _driveMatchingDOSBoxDrive: dosboxDrive];
+		}
+		else return nil;
+	}
+	else return nil;
+}
+
+- (NSString *) resolvedDOSPath: (NSString *)path
+{
+    if ([self isExecuting])
+	{
+		const char *dosPath = [path cStringUsingEncoding: BXDirectStringEncoding];
+		//If the path couldn't be encoded successfully, don't do further lookups
+		if (!dosPath) return nil;
+		
+		char fullPath[DOS_PATHLENGTH];
+		Bit8u driveIndex;
+		BOOL resolved = DOS_MakeName(dosPath, fullPath, &driveIndex);
+        
+		if (resolved)
+		{
+            NSString *driveLetter = [self _driveLetterForIndex: driveIndex];
+            NSString *resolvedPath = [NSString stringWithCString: fullPath encoding: BXDirectStringEncoding];
+			
+            return [NSString stringWithFormat: @"%@:/%@", driveLetter, resolvedPath, nil];
+		}
+		else return nil;
+	}
+	else return nil;
+}
+
 @end
 
 

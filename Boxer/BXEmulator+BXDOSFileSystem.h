@@ -107,9 +107,9 @@
 //Returns whether the specified DOS path exists within the DOS filesystem.
 - (BOOL) DOSPathExists: (NSString *)dosPath;
 
-//Returns the 'best match' drive on which the specified path is accessible.
+//Returns the 'best match' drive on which the specified OS X filesystem path is accessible.
 //(If a path is accessible on several drives, this will return the 'deepest-nested' drive,
-//to handle gameboxes that have additional drives inside them. 
+//to handle gameboxes that have additional drives inside them.)
 - (BXDrive *) driveForPath: (NSString *)path;
 
 //Returns the standardized DOS path corresponding to the specified real path,
@@ -123,5 +123,10 @@
 //Will return nil if the path could not be resolved.
 - (NSString *) pathForDOSPath: (NSString *)path;
 
+//Returns the drive upon which the specified DOS path is found.
+- (BXDrive *) driveForDOSPath: (NSString *)path;
+
+//Given a relative DOS path, returns a fully-resolved DOS path including complete drive letter.
+- (NSString *) resolvedDOSPath: (NSString *)path;
 
 @end

@@ -37,9 +37,7 @@
 
 - (BOOL) canAcceptPastedString: (NSString *)pastedString
 {
-	//Disabled-for-1.0: Disable paste and drag-drop of text for now, as there are too many bugs for it to be a releasable feature.
-	return NO;
-	//return [self isAtPrompt];
+	return [self isAtPrompt];
 }
 
 @end

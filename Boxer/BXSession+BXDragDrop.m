@@ -64,16 +64,28 @@
 	for (NSString *filePath in filePaths)
 		returnValue = [self _handleDroppedFile: filePath withLaunching: launch] || returnValue;
 	
-	//If any dropped files were successfully handled, return focus to the window so that the user can get on with using them.
-	
-	if (returnValue) [[[self DOSWindowController] window] makeKeyAndOrderFront: self];
+	//If any dropped files were successfully handled, reactivate Boxer and return focus to the DOS window
+    //so that the user can get on with using them.
+	if (returnValue)
+    {
+        [NSApp activateIgnoringOtherApps: YES];
+        [[[self DOSWindowController] window] makeKeyAndOrderFront: self];
+    }
 	return returnValue;
 }
 
 //Called by BXDOSWindowController performDragOperation: when a string has been drag-dropped onto Boxer.
 - (BOOL) handleDroppedString: (NSString *)droppedString
 {
-	return [[self emulator] handlePastedString: droppedString];
+	BOOL returnValue = [[self emulator] handlePastedString: droppedString];
+    
+	//If the dragged string was successfully handled, reactivate Boxer and return focus to the DOS window.
+    if (returnValue)
+    {
+        [NSApp activateIgnoringOtherApps: YES];
+        [[[self DOSWindowController] window] makeKeyAndOrderFront: self];
+    }
+    return returnValue;
 }
 
 

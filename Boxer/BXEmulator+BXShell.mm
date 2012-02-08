@@ -309,24 +309,63 @@ nil];
 {
 	NSString *cleanedPath = [argumentString stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
 	if (![cleanedPath length]) cleanedPath = @".";
+    
+    //Firstly, get a fully-resolved absolute path from any relative path.
+    NSString *resolvedPath = [self resolvedDOSPath: cleanedPath];
+    
+    //Path did not exist in DOS, so we cannot continue.
+    if (!resolvedPath)
+    {
+        NSString *errorFormat = NSLocalizedStringFromTable(@"The path \"%1$@\" does not exist.",
+                                                           @"Shell",
+                                                           @"Error message displayed when BOXER_REVEAL is called on a path that could not be resolved to a full DOS path. %1$@ is the path exactly as the user entered it on the commandline.");
+        
+        [self displayString: [NSString stringWithFormat: errorFormat, cleanedPath, nil]];
+        return;
+    }
+    
 	
-	NSString *filesystemPath = [self pathForDOSPath: cleanedPath];
-	
-	BOOL couldReveal = NO;
-	if (filesystemPath)
-	{
-		BXAppController *appController = [NSApp delegate];
-		couldReveal = [appController revealPath: filesystemPath];
-	}
-	
-	if (!couldReveal)
-	{
-		NSString *errorFormat = NSLocalizedStringFromTable(@"The path \"%1$@\" could not be found, or does not exist in the OS X filesystem.",
-														   @"Shell",
-														   @"Error message displayed when BOXER_REVEAL cannot resolve a specified drive path.");
-		NSString *errorMessage = [NSString stringWithFormat: errorFormat, cleanedPath, nil];
-		[self displayString: errorMessage];
-	}
+    //Now, look up where the path lies in the OS X filesystem.
+	NSString *OSXPath = [self pathForDOSPath: cleanedPath];
+    
+    //Path does not exist in OS X, so we cannot continue.
+	if (!OSXPath)
+    {
+        BXDrive *drive = [self driveForDOSPath: cleanedPath];
+        
+        NSString *errorFormat;
+        if ([drive isInternal])
+        {
+            errorFormat = NSLocalizedStringFromTable(@"The path \"%1$@\" is a virtual drive used by Boxer and does not exist in OS X.",
+                                                               @"Shell",
+                                                               @"Error message displayed when BOXER_REVEAL is called on an internal virtual drive. %1$@ is the absolute DOS path to that drive, including drive letter.");
+        }
+        else
+        {
+            errorFormat = NSLocalizedStringFromTable(@"The path \"%1$@\" is not accessible in OS X.",
+                                                               @"Shell",
+                                                               @"Error message displayed when BOXER_REVEAL cannot resolve a DOS path to an OS X filesystem path. %1$@ is the absolute DOS path, including drive letter.");
+        }
+		[self displayString: [NSString stringWithFormat: errorFormat, resolvedPath, nil]];
+        return;
+    }
+    
+    //If we got this far, we finally have a path we can reveal in OS X.
+    //FIXME: we should never be talking directly to the app controller from this level.
+    //Instead, pass this responsibility on to the delegate.
+	BXAppController *appController = [NSApp delegate];
+    BOOL revealed = [appController revealPath: OSXPath];
+    
+    //The file did not exist in OS X.
+    if (!revealed)
+    {
+        NSString *errorFormat = NSLocalizedStringFromTable(@"The path \"%1$@\" does not exist in OS X.",
+                                                           @"Shell",
+                                                           @"Error message displayed when BOXER_REVEAL cannot reveal a path in OS X. %1$@ is the absolute DOS path, including drive letter.");
+        
+		[self displayString: [NSString stringWithFormat: errorFormat, resolvedPath, nil]];
+        return;
+    }
 }
 
 - (void) clearScreen

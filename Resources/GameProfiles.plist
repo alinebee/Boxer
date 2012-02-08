@@ -1027,7 +1027,7 @@
 				<string>Martian Memorandum</string>
 				<string>Rampart</string>
 				<string>The Settlers</string>
-				<string>Battle Chess II</string>
+				<string>Battle Chess II: Chinese Chess</string>
 				<string>A-Train</string>
 				<string>SimLife</string>
 				<string>SimAnt</string>
@@ -1117,6 +1117,7 @@
 				<string>rampart.exe</string>
 				<string>sett.exe</string>
 				<string>chess2.exe</string>
+                <string>chessii.exe</string>
 				<string>at.ovl</string>
 				<string>sml.exe</string>
 				<string>simant.exe</string>

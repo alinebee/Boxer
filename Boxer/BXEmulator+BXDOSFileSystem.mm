@@ -561,7 +561,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 			dosName = [fileName uppercaseString];
 		}
 		
-		[dosPath appendFormat: @"/%@", dosName, nil];
+		[dosPath appendFormat: @"\\%@", dosName, nil];
 		
 		[pool release];
 	}
@@ -669,8 +669,8 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 		{
             NSString *driveLetter = [self _driveLetterForIndex: driveIndex];
             NSString *resolvedPath = [NSString stringWithCString: fullPath encoding: BXDirectStringEncoding];
-			
-            return [NSString stringWithFormat: @"%@:/%@", driveLetter, resolvedPath, nil];
+            
+            return [NSString stringWithFormat: @"%@:\\%@", driveLetter, resolvedPath, nil];
 		}
 		else return nil;
 	}

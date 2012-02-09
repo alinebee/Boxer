@@ -105,8 +105,11 @@ nil];
 {
 	if (changeDir)
 	{
-		NSString *parentFolder	= [[dosPath stringByDeletingLastPathComponent] stringByAppendingString: @"/"];
-		NSString *programName	= [dosPath lastPathComponent];
+        //Normalise the path to Unix format so that we can perform standard Cocoa path operations upon it.
+        //TODO: write an NSString category with DOS path-handling routines for this kind of thing.
+        NSString *cocoafiedDOSPath = [dosPath stringByReplacingOccurrencesOfString: @"\\" withString: @"/"];
+		NSString *parentFolder	= [[cocoafiedDOSPath stringByDeletingLastPathComponent] stringByAppendingString: @"/"];
+		NSString *programName	= [cocoafiedDOSPath lastPathComponent];
 		
 		[self changeWorkingDirectoryToPath: parentFolder];
 		[self executeCommand: programName encoding: BXDirectStringEncoding];
@@ -147,6 +150,7 @@ nil];
 {
 	BOOL changedPath = NO;
 
+    //Normalise the path to ensure all delimiters are DOS-style rather than Unix-style. 
 	dosPath = [dosPath stringByReplacingOccurrencesOfString: @"/" withString: @"\\"];
 	
 	//If the path starts with a drive letter, switch to that first
@@ -172,7 +176,7 @@ nil];
         [self didChangeValueForKey: @"pathOfCurrentDirectory"];
 	}
 	
-    //DOCUMENT ME: why were we discarding any following commands?
+    //DOCUMENT ME: why were we discarding any commands that were already typed?
 	if (changedPath) [self discardShellInput];
 	
 	return changedPath;

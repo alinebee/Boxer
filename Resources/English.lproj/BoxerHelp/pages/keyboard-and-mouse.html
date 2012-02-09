@@ -12,50 +12,6 @@
 		<a name="shortcuts"></a>
 		<h1>Keyboard and mouse tips</h1>
 		
-		<section>
-			<a name="keyboard-shortcuts"></a>
-			<h2>Keyboard shortcuts</h2>
-		
-			<table class="wide shortcuts">
-				<col class="action">
-				<col class="shortcut">
-				<thead>
-					<tr>
-						<th>Action</th>
-						<th>Shortcut</th>
-					</tr>
-				</thead>
-				
-				<tbody>
-					<tr>
-						<td>Show/hide the <a href="help:runscript=BoxerHelp/shared/scripts/openinspector.scpt string='null'" rel="application-window">Inspector panel</a></td>
-						<td><kbd>Cmd ⌘</kbd>+<kbd>I</kbd></td>
-					</tr>
-					<tr>
-						<td>Pause the emulation</td>
-						<td><kbd>Cmd ⌘</kbd>+<kbd>P</kbd></td>
-					</tr>
-					<tr>
-						<td>Switch to/from full screen mode</td>
-						<td><kbd>Cmd ⌘</kbd>+<kbd>F</kbd></td>
-					</tr>
-					<tr>
-						<td>Speed up/slow down the emulation</td>
-						<td><kbd>Cmd ⌘</kbd>+<kbd>⇡</kbd>/<kbd>⇣</kbd></td>
-					</tr>
-					<tr>
-						<td>Switch to previous/next CD</td>
-						<td><kbd>Cmd ⌘</kbd>+<kbd>Shift ⇧</kbd>+<kbd>⇠</kbd>/<kbd>⇢</kbd></td>
-					</tr>
-					<tr>
-						<td>Skip the default program and start up at the DOS prompt</td>
-						<td>Hold <kbd>Opt ⌥</kbd>while a gamebox is loading</td>
-					</tr>
-				</tbody>
-			</table>
-			
-			<p class="note">Additional keyboard shortcuts can be found alongside each item in Boxer’s application menus.</p>
-		</section>
 		
 		<section>
 			<a name="mouse-modifiers"></a>
@@ -96,6 +52,72 @@
 		</section>
 		
 		<section>
+			<a name="keyboard-shortcuts"></a>
+			<h2>Keyboard shortcuts</h2>
+		
+			<table class="wide shortcuts">
+				<col class="action">
+				<col class="shortcut">
+				<thead>
+					<tr>
+						<th>Action</th>
+						<th>Shortcut</th>
+					</tr>
+				</thead>
+				
+				<tbody>
+					<tr>
+						<td>Show/hide the <a href="help:runscript=BoxerHelp/shared/scripts/openinspector.scpt string='null'" rel="application-window">Inspector panel</a></td>
+						<td><kbd>Cmd ⌘</kbd>+<kbd>I</kbd></td>
+					</tr>
+					<tr>
+						<td>Pause the emulation</td>
+						<td><kbd>Cmd ⌘</kbd>+<kbd>P</kbd></td>
+					</tr>
+					<tr>
+						<td>Toggle the <a href="#simulated-numpad">numeric keypad (see below)</a></td>
+						<td><kbd>Cmd</kbd>+<kbd>U</kbd><br> or hold <kbd>Fn</kbd></td>
+					</tr>
+					<tr>
+						<td>Switch to/from full screen mode</td>
+						<td><kbd>Cmd ⌘</kbd>+<kbd>F</kbd></td>
+					</tr>
+					<tr>
+						<td>Speed up/slow down the emulation</td>
+						<td><kbd>Cmd ⌘</kbd>+<kbd>⇡</kbd>/<kbd>⇣</kbd></td>
+					</tr>
+					<tr>
+						<td>Switch to previous/next CD</td>
+						<td><kbd>Cmd ⌘</kbd>+<kbd>Shift ⇧</kbd>+<kbd>⇠</kbd>/<kbd>⇢</kbd></td>
+					</tr>
+					<tr>
+						<td>Skip the default program and start up at the DOS prompt</td>
+						<td>Hold <kbd>Opt ⌥</kbd>while a gamebox is loading</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<p class="note">Additional keyboard shortcuts can be found alongside each item in Boxer’s application menus.</p>
+		</section>
+		
+		<section>
+			<a name="simulated-numpad"></a>
+			<h2>Simulating the numeric keypad</h2>
+			
+			<p>Many DOS games rely on a numeric keypad, which does not exist on Macbooks or Apple Wireless Keyboards.<br>
+			Instead, you can <strong>hold down <kbd>Fn</kbd> to make part of the keyboard act as a numpad:</strong></p>
+			
+			<p>
+				<img src="../images/numeric-keypad.png" class="fit-to-width" alt="While Fn is held down the 789, UIO and JKL keys act as the 9 numpad keys, the “M” and “,” keys act as 0 and period, and the 6 key acts as Num Lock. The keys surrounding them match up to /, *, + and - on the, with M and .">
+			</p>
+			
+			<p class="note">The 7-8-9 numpad keys match up to the same numbers on the regular keyboard: you can use this to orient your fingers to the simulated numpad.</p>
+			
+			<p class="tip">If you don’t want to keep <kbd>Fn</kbd> held down to access the numpad, you can also <strong>turn the numpad behaviour on or off</strong> with <span class="menu">Emulation ▸ Simulate numeric keypad</span>. This will take effect until you toggle the option again.</p>
+			
+		</section>
+		
+		<section>
 			<a name="keyboard"></a>
 			<h2>Common keyboard troubles</h2>
 			
@@ -103,7 +125,7 @@
 				<a name="function-keys"></a>
 				<h3>Accessing the function keys on a Mac keyboard</h3>
 				
-				<p>Mac keyboards adopt many of the <kbd>F1</kbd>–<kbd>F12</kbd> keys as hotkeys to control volume, screen brightness and other system functions. To make those keys act as regular function keys, <strong>hold down <kbd>fn</kbd> as you press the function key.</strong></p>
+				<p>Mac keyboards adopt the <kbd>F1</kbd>–<kbd>F12</kbd> keys as hotkeys to control volume, screen brightness and other system functions. To make those keys act as regular function keys, <strong>hold down <kbd>fn</kbd> as you press the function key.</strong></p>
 	
 				<p class="tip">You can also send function key signals directly to DOS using the <span class="menu">Emulation ▸ Send Key</span> menu.</p>
 			</section>
@@ -114,7 +136,7 @@
 				
 				<p>Some OS&nbsp;X hotkeys overlap with the control schemes for DOS games, and can get in the way when playing. This is especially common with the <kbd>Ctrl ⌃</kbd>+<kbd>⇠</kbd>/<kbd>⇢</kbd> shortcut to switch Spaces.</p>
 				
-				<p>When possible, <strong>Boxer disables conflicting OS&nbsp;X hotkeys while you’re playing</strong> to stop them from interfering. To let Boxer do this, you must have <strong class="ui-label">“Enable access for assistive devices”</strong> turned on in your OS&nbsp;X <a href="help:runscript=BoxerHelp/shared/scripts/opensystemprefs.scpt string='com.apple.preference.universalaccess'" rel="other-application">Universal Access preferences pane</a>.</p>
+				<p>If possible, <strong>Boxer will disable these OS&nbsp;X hotkeys while you’re playing</strong> so they won’t interfere. To let Boxer do this, you must have <strong class="ui-label">“Enable access for assistive devices”</strong> turned on in your OS&nbsp;X <a href="help:runscript=BoxerHelp/shared/scripts/opensystemprefs.scpt string='com.apple.preference.universalaccess'" rel="other-application">Universal Access preferences pane</a>.</p>
 			</section>
 			
 			<section>
@@ -124,9 +146,9 @@
 	
 				<p>Boxer emulates an MS-DOS PC keyboard layout, and special characters (such as punctuation) are often in different places than where they’re labelled your Mac keyboard.</p>
 				
-				<p>You may have to try nearby keys and <kbd>Shift ⇧</kbd>-ed keys to find the character you’re looking for. On non-US keyboards, you can also <strong>hold down the right-hand <kbd>Opt ⌥</kbd> key</strong> to access additional special characters.</p>
+				<p>Try nearby keys and <kbd>Shift ⇧</kbd>-ed keys to find the character you’re looking for. On non-US keyboards, you can also <strong>hold down the right-hand <kbd>Opt ⌥</kbd> key</strong> to access additional special characters.</p>
 			
-				<p class="tip">Some keys found on a DOS-era PC keyboard, like Insert and NumLock, <strong>don’t exist at all</strong> on a Mac keyboard. If you have a game that needs these keys, you can send them using the <span class="menu">Emulation ▸ Send Key</span> menu.</p>
+				<p class="tip">Some keys found on DOS-era PC keyboards don’t exist at all on a Mac keyboard. If you have a game that needs such keys, you can send them using the <span class="menu">Emulation ▸ Send Key</span> menu.</p>
 			</section>
 		</section>
 		

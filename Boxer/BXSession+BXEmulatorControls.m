@@ -40,7 +40,7 @@
 	BXBandedValueTransformer *speedBanding		= [[BXBandedValueTransformer alloc] init];
 	BXInvertNumberTransformer *invertFramerate	= [[BXInvertNumberTransformer alloc] init];
 	
-	NSArray *bands = [NSArray arrayWithObjects:
+	NSArray *bands = [[NSArray alloc] initWithObjects:
 		[NSNumber numberWithInteger: BXMinSpeedThreshold],
 		[NSNumber numberWithInteger: BX286SpeedThreshold],
 		[NSNumber numberWithInteger: BX386SpeedThreshold],
@@ -56,6 +56,7 @@
     
     [speedBanding release];
     [invertFramerate release];
+    [bands release];
 }
 
 

@@ -15,6 +15,9 @@
 #pragma mark -
 #pragma mark Numeric transformers
 
+//Averages out the value of an NSNumber using the specified number of previous inputs as a 'window'.
+//Note that this transformer stores state internally, which means it must not be shared between multiple
+//input sources.
 @interface BXRollingAverageTransformer : NSValueTransformer
 {
 	NSNumber *previousAverage;
@@ -47,9 +50,9 @@
 {
 	NSArray *bandThresholds;
 }
-@property (retain) NSArray *bandThresholds;
-@property (readonly) NSNumber *minValue;
-@property (readonly) NSNumber *maxValue;
+@property (retain, nonatomic) NSArray *bandThresholds;
+@property (readonly, nonatomic) NSNumber *minValue;
+@property (readonly, nonatomic) NSNumber *maxValue;
 
 - (id) initWithThresholds: (NSArray *)thresholds;
 @end
@@ -79,10 +82,10 @@
 	NSUInteger maxComponents;
 	BOOL useFilesystemDisplayPath;
 }
-@property (copy) NSString *joiner;
-@property (copy) NSString *ellipsis;
-@property (assign) NSUInteger maxComponents;
-@property (assign) BOOL useFilesystemDisplayPath;
+@property (copy, nonatomic) NSString *joiner;
+@property (copy, nonatomic) NSString *ellipsis;
+@property (assign, nonatomic) NSUInteger maxComponents;
+@property (assign, nonatomic) BOOL useFilesystemDisplayPath;
 
 - (id) initWithJoiner: (NSString *)joinString
 			 ellipsis: (NSString *)ellipsisString
@@ -106,22 +109,22 @@
 }
 //The file icon to use for files/folders that don't yet exist.
 //If left as nil, will use NSWorkspace's default icon for missing files.
-@property (copy) NSImage *missingFileIcon;
+@property (copy, nonatomic) NSImage *missingFileIcon;
 
 //The NSAttributedString attributes to apply to the final text.
 //Defaults to the standard system font.
-@property (retain) NSMutableDictionary *textAttributes;
+@property (retain, nonatomic) NSMutableDictionary *textAttributes;
 
 //The NSAttributedString attributes to apply to the icons within the text.
 //Defaults to a baseline offset of -4.0.
-@property (retain) NSMutableDictionary *iconAttributes;
+@property (retain, nonatomic) NSMutableDictionary *iconAttributes;
 
 //The pixel size at which to display icons. Defaults to 16x16.
-@property (assign) NSSize iconSize;
+@property (assign, nonatomic) NSSize iconSize;
 
 //Whether to hide the / and /Users/ subpaths in displayed paths.
 //This imitates the behaviour of NSPathControl et. al.
-@property (assign) BOOL hideSystemRoots;
+@property (assign, nonatomic) BOOL hideSystemRoots;
 
 //Returns an icon-and-label attributed string for the specified path.
 //defaultIcon specifies the icon to use if the path does not exist.
@@ -139,7 +142,7 @@
 {
 	NSSize size;
 }
-@property (assign) NSSize size;
+@property (assign, nonatomic) NSSize size;
 
 - (id) initWithSize: (NSSize)targetSize;
 

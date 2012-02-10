@@ -42,10 +42,13 @@
 
 + (void) initialize
 {
-	BXDisplayPathTransformer *nameTransformer = [[BXDisplayPathTransformer alloc] initWithJoiner: @" ▸ " maxComponents: 0];
-	
-	[NSValueTransformer setValueTransformer: nameTransformer forName: @"BXImportInstallerMenuTitle"];
-	[nameTransformer release];
+    if (self == [BXImportInstallerPanelController class])
+    {
+        BXDisplayPathTransformer *nameTransformer = [[BXDisplayPathTransformer alloc] initWithJoiner: @" ▸ " maxComponents: 0];
+        
+        [NSValueTransformer setValueTransformer: nameTransformer forName: @"BXImportInstallerMenuTitle"];
+        [nameTransformer release];
+    }
 }
 
 - (void) awakeFromNib

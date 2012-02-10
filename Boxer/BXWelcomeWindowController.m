@@ -44,9 +44,12 @@
 
 + (void) initialize
 {
-	BXImageSizeTransformer *welcomeButtonImageSize = [[BXImageSizeTransformer alloc] initWithSize: NSMakeSize(128, 128)];
-	[NSValueTransformer setValueTransformer: welcomeButtonImageSize forName: @"BXWelcomeButtonImageSize"];
-	[welcomeButtonImageSize release];
+    if (self == [BXWelcomeWindowController class])
+    {
+        BXImageSizeTransformer *welcomeButtonImageSize = [[BXImageSizeTransformer alloc] initWithSize: NSMakeSize(128, 128)];
+        [NSValueTransformer setValueTransformer: welcomeButtonImageSize forName: @"BXWelcomeButtonImageSize"];
+        [welcomeButtonImageSize release];
+    }
 }
 
 + (id) controller

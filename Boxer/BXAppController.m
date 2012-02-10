@@ -161,33 +161,36 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 + (void) initialize
 {
-	[self setupDefaults];
+    if (self == [BXAppController class])
+    {
+        [self setupDefaults];
 
-	//Create common value transformers
-	
-	NSValueTransformer *isEmpty		= [[BXArraySizeTransformer alloc] initWithMinSize: 0 maxSize: 0];
-	NSValueTransformer *isNotEmpty	= [[BXArraySizeTransformer alloc] initWithMinSize: 1 maxSize: NSIntegerMax];
-	NSValueTransformer *capitalizer	= [[BXCapitalizer alloc] init];
-	
-	BXIconifiedDisplayPathTransformer *pathTransformer = [[BXIconifiedDisplayPathTransformer alloc] initWithJoiner: @" ▸ "
-                                                                                                     maxComponents: 0];
-	[pathTransformer setMissingFileIcon: [NSImage imageNamed: @"gamefolder"]];
-	[pathTransformer setHideSystemRoots: YES];
-    
-	NSMutableParagraphStyle *pathStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-	[pathStyle setLineBreakMode: NSLineBreakByTruncatingMiddle];
-	[[pathTransformer textAttributes] setObject: pathStyle forKey: NSParagraphStyleAttributeName];
-    [pathStyle release];
-    
-	[NSValueTransformer setValueTransformer: isEmpty forName: @"BXArrayIsEmpty"];
-	[NSValueTransformer setValueTransformer: isNotEmpty forName: @"BXArrayIsNotEmpty"];	
-	[NSValueTransformer setValueTransformer: capitalizer forName: @"BXCapitalizedString"];	
-	[NSValueTransformer setValueTransformer: pathTransformer forName: @"BXIconifiedGamesFolderPath"];
-    
-    [isEmpty release];
-    [isNotEmpty release];
-    [capitalizer release];
-    [pathTransformer release];
+        //Create common value transformers
+        
+        NSValueTransformer *isEmpty		= [[BXArraySizeTransformer alloc] initWithMinSize: 0 maxSize: 0];
+        NSValueTransformer *isNotEmpty	= [[BXArraySizeTransformer alloc] initWithMinSize: 1 maxSize: NSIntegerMax];
+        NSValueTransformer *capitalizer	= [[BXCapitalizer alloc] init];
+        
+        BXIconifiedDisplayPathTransformer *pathTransformer = [[BXIconifiedDisplayPathTransformer alloc]
+                                                              initWithJoiner: @" ▸ " maxComponents: 0];
+        [pathTransformer setMissingFileIcon: [NSImage imageNamed: @"gamefolder"]];
+        [pathTransformer setHideSystemRoots: YES];
+        
+        NSMutableParagraphStyle *pathStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+        [pathStyle setLineBreakMode: NSLineBreakByTruncatingMiddle];
+        [[pathTransformer textAttributes] setObject: pathStyle forKey: NSParagraphStyleAttributeName];
+        [pathStyle release];
+        
+        [NSValueTransformer setValueTransformer: isEmpty forName: @"BXArrayIsEmpty"];
+        [NSValueTransformer setValueTransformer: isNotEmpty forName: @"BXArrayIsNotEmpty"];	
+        [NSValueTransformer setValueTransformer: capitalizer forName: @"BXCapitalizedString"];	
+        [NSValueTransformer setValueTransformer: pathTransformer forName: @"BXIconifiedGamesFolderPath"];
+        
+        [isEmpty release];
+        [isNotEmpty release];
+        [capitalizer release];
+        [pathTransformer release];
+    }
 }
 
 + (void) setupDefaults

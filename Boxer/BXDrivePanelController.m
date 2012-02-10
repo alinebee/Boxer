@@ -60,16 +60,19 @@ enum {
 
 + (void) initialize
 {
-	BXDisplayPathTransformer *fullDisplayPath = [[BXDisplayPathTransformer alloc] initWithJoiner: @" ▸ "
-																				   maxComponents: 4];
-	
-	BXDisplayNameTransformer *displayName = [[BXDisplayNameTransformer alloc] init];
-	
-	[NSValueTransformer setValueTransformer: fullDisplayPath forName: @"BXDriveDisplayPath"];
-	[NSValueTransformer setValueTransformer: displayName forName: @"BXDriveDisplayName"];
-	
-	[fullDisplayPath release];
-	[displayName release];
+    if (self == [BXDrivePanelController class])
+    {
+        BXDisplayPathTransformer *fullDisplayPath = [[BXDisplayPathTransformer alloc] initWithJoiner: @" ▸ "
+                                                                                       maxComponents: 4];
+        
+        BXDisplayNameTransformer *displayName = [[BXDisplayNameTransformer alloc] init];
+        
+        [NSValueTransformer setValueTransformer: fullDisplayPath forName: @"BXDriveDisplayPath"];
+        [NSValueTransformer setValueTransformer: displayName forName: @"BXDriveDisplayName"];
+        
+        [fullDisplayPath release];
+        [displayName release];
+    }
 }
 
 - (void) awakeFromNib

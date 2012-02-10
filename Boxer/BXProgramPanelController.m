@@ -52,11 +52,17 @@
 
 + (void) initialize
 {
-	id displayPath	= [[BXDisplayPathTransformer alloc]	initWithJoiner: @" ▸ " maxComponents: 3];
-	id fileName		= [[BXDOSFilenameTransformer alloc] init];
+    if (self == [BXProgramPanelController class])
+    {
+        id displayPath	= [[BXDisplayPathTransformer alloc]	initWithJoiner: @" ▸ " maxComponents: 3];
+        id fileName		= [[BXDOSFilenameTransformer alloc] init];
 
-	[NSValueTransformer setValueTransformer: [displayPath autorelease]	forName: @"BXProgramDisplayPath"];
-	[NSValueTransformer setValueTransformer: [fileName autorelease]		forName: @"BXDOSFilename"];
+        [NSValueTransformer setValueTransformer: displayPath forName: @"BXProgramDisplayPath"];
+        [NSValueTransformer setValueTransformer: fileName forName: @"BXDOSFilename"];
+        
+        [displayPath release];
+        [fileName release];
+    }
 }
 
 - (void) setRepresentedObject: (id)session

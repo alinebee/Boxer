@@ -27,21 +27,21 @@
 
 + (void) initialize
 {
-	//Ensure BXSession initializes itself, as BXSession’s initialize method declares
-	//a number of value transformers upon which the Inspector UI depends.
-	[BXSession class];
-	
-	NSArray *sensitivityThresholds = [NSArray arrayWithObjects:
-									  [NSNumber numberWithFloat: 1.0f / BXMouseSensitivityRange],
-									  [NSNumber numberWithFloat: 1.0f],
-									  [NSNumber numberWithFloat: 1.0f * BXMouseSensitivityRange],
-									  nil];
-	
-	BXBandedValueTransformer *mouseSensitivity = [[BXBandedValueTransformer alloc] initWithThresholds: sensitivityThresholds];
-	
-	[NSValueTransformer setValueTransformer: mouseSensitivity forName: @"BXMouseSensitivitySlider"];
-	
-	[mouseSensitivity release];
+    if (self == [BXInspectorController class])
+    {
+        NSArray *sensitivityThresholds = [[NSArray alloc] initWithObjects:
+                                          [NSNumber numberWithFloat: 1.0f / BXMouseSensitivityRange],
+                                          [NSNumber numberWithFloat: 1.0f],
+                                          [NSNumber numberWithFloat: 1.0f * BXMouseSensitivityRange],
+                                          nil];
+        
+        BXBandedValueTransformer *mouseSensitivity = [[BXBandedValueTransformer alloc] initWithThresholds: sensitivityThresholds];
+        
+        [NSValueTransformer setValueTransformer: mouseSensitivity forName: @"BXMouseSensitivitySlider"];
+        
+        [mouseSensitivity release];
+        [sensitivityThresholds release];
+    }
 }
 
 + (BXInspectorController *)controller

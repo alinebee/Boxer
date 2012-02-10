@@ -37,26 +37,30 @@
 
 + (void) initialize
 {
-	BXBandedValueTransformer *speedBanding		= [[BXBandedValueTransformer alloc] init];
-	BXInvertNumberTransformer *invertFramerate	= [[BXInvertNumberTransformer alloc] init];
-	
-	NSArray *bands = [[NSArray alloc] initWithObjects:
-		[NSNumber numberWithInteger: BXMinSpeedThreshold],
-		[NSNumber numberWithInteger: BX286SpeedThreshold],
-		[NSNumber numberWithInteger: BX386SpeedThreshold],
-		[NSNumber numberWithInteger: BX486SpeedThreshold],
-		[NSNumber numberWithInteger: BXPentiumSpeedThreshold],
-		[NSNumber numberWithInteger: BXMaxSpeedThreshold],
-	nil];
-	
-	[speedBanding setBandThresholds: bands];
-	
-	[NSValueTransformer setValueTransformer: speedBanding forName: @"BXSpeedSliderTransformer"];
-	[NSValueTransformer setValueTransformer: invertFramerate forName: @"BXFrameRateSliderTransformer"];
-    
-    [speedBanding release];
-    [invertFramerate release];
-    [bands release];
+    //Do not reinitialize in subclasses
+    if (self == [BXSession class])
+    {
+        BXBandedValueTransformer *speedBanding		= [[BXBandedValueTransformer alloc] init];
+        BXInvertNumberTransformer *invertFramerate	= [[BXInvertNumberTransformer alloc] init];
+        
+        NSArray *bands = [[NSArray alloc] initWithObjects:
+            [NSNumber numberWithInteger: BXMinSpeedThreshold],
+            [NSNumber numberWithInteger: BX286SpeedThreshold],
+            [NSNumber numberWithInteger: BX386SpeedThreshold],
+            [NSNumber numberWithInteger: BX486SpeedThreshold],
+            [NSNumber numberWithInteger: BXPentiumSpeedThreshold],
+            [NSNumber numberWithInteger: BXMaxSpeedThreshold],
+        nil];
+        
+        [speedBanding setBandThresholds: bands];
+        
+        [NSValueTransformer setValueTransformer: speedBanding forName: @"BXSpeedSliderTransformer"];
+        [NSValueTransformer setValueTransformer: invertFramerate forName: @"BXFrameRateSliderTransformer"];
+        
+        [speedBanding release];
+        [invertFramerate release];
+        [bands release];
+    }
 }
 
 

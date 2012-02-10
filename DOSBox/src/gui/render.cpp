@@ -418,9 +418,7 @@ forcenormal:
 	if (gfx_flags & GFX_SCALING) {
 		height = MakeAspectTable(skip, render.src.height, yscale, yscale );
 	} else {
-		//--Modified 2009-02-19 by Alun Bestor: WHY ARE YOU DOING THIS??? Multiplying the vertical scale factor like this is fucking up scalers with aspect-ratio correction turned on and I can't see anything that breaks when it's removed, so I've disabled it for now
-		if (false && (gfx_flags & GFX_CAN_RANDOM) && gfx_scaleh > 1) {
-		//--End of modifications
+		if ((gfx_flags & GFX_CAN_RANDOM) && gfx_scaleh > 1) {
 			gfx_scaleh *= yscale;
 			height = MakeAspectTable( skip, render.src.height, gfx_scaleh, yscale );
 		} else {

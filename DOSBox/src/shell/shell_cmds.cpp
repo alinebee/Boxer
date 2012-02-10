@@ -200,7 +200,7 @@ void DOS_Shell::CMD_DELETE(char * args) {
 	RealPt save_dta=dos.dta();
 	dos.dta(dos.tables.tempdta);
 
-	//--Disabled 2009-02-24 by Alun Bestor: This/is/preventing/Unix/delimited/paths/from/working/you/idiots
+	//--Disabled 2009-02-24 by Alun Bestor: bailing out upon encountering unrecognised switches was preventing the use of unix/style/paths
 	/*
 	char * rem=ScanCMDRemain(args);
 	if (rem) {
@@ -403,7 +403,7 @@ void DOS_Shell::CMD_MKDIR(char * args) {
 	
 	StripSpaces(args);
 	
-	//--Disabled 2009-02-24 by Alun Bestor: This/is/preventing/Unix/delimited/paths/from/working/you/idiots
+	//--Disabled 2009-02-24 by Alun Bestor: bailing out upon encountering unrecognised switches was preventing the use of unix/style/paths
 	/*
 	char * rem=ScanCMDRemain(args);
 	if (rem) {
@@ -426,7 +426,7 @@ void DOS_Shell::CMD_RMDIR(char * args) {
 	
 	StripSpaces(args);
 	
-	//--Disabled 2009-02-24 by Alun Bestor: This/is/preventing/Unix/delimited/paths/from/working/you/idiots
+	//--Disabled 2009-02-24 by Alun Bestor: bailing out upon encountering unrecognised switches was preventing the use of unix/style/paths
 	/*
 	char * rem=ScanCMDRemain(args);
 	if (rem) {
@@ -487,7 +487,7 @@ void DOS_Shell::CMD_DIR(char * args) {
 	bool optB=ScanCMDBool(args,"B");
 	bool optAD=ScanCMDBool(args,"AD");
 
-	//--Disabled 2009-02-24 by Alun Bestor: This/is/preventing/Unix/delimited/paths/from/working/you/idiots
+	//--Disabled 2009-02-24 by Alun Bestor: bailing out upon encountering unrecognised switches was preventing the use of unix/style/paths
 	/*	
 	char * rem=ScanCMDRemain(args);
 	if (rem) {
@@ -661,7 +661,7 @@ void DOS_Shell::CMD_COPY(char * args) {
 	ScanCMDBool(args,"Y");
 	ScanCMDBool(args,"-Y");
 
-	//--Disabled 2009-02-24 by Alun Bestor: This/is/preventing/Unix/delimited/paths/from/working/you/idiots
+	//--Disabled 2009-02-24 by Alun Bestor: bailing out upon encountering unrecognised switches was preventing the use of unix/style/paths
 	/*
 	char * rem=ScanCMDRemain(args);
 	if (rem) {
@@ -1132,7 +1132,7 @@ void DOS_Shell::CMD_CHOICE(char * args){
 		StripSpaces(args);
 		rem = ScanCMDRemain(args);
 		
-		//--Disabled 2009-02-24 by Alun Bestor: This/is/preventing/Unix/delimited/paths/from/working/you/idiots
+		//--Disabled 2009-02-24 by Alun Bestor: bailing out upon encountering unrecognised switches was preventing the use of unix/style/paths
 		/*
 		if (rem && *rem && (tolower(rem[1]) != 'c')) {
 			WriteOut(MSG_Get("SHELL_ILLEGAL_SWITCH"),rem);

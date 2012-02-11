@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>BXGameProfileCatalogueVersion</key>
-	<string>20120128.1</string>
+	<string>20120211.1</string>
 	<key>BXSpecificGameProfiles</key>
 	<array>
 		<dict>
@@ -926,7 +926,6 @@
 			<key>BXMountTempDrive</key>
 			<false/>
 		</dict>
-        
 		<dict>
 			<key>BXProfileIdentifier</key>
 			<string>net.washboardabs.cdrom-protected-games</string>
@@ -1117,7 +1116,7 @@
 				<string>rampart.exe</string>
 				<string>sett.exe</string>
 				<string>chess2.exe</string>
-                <string>chessii.exe</string>
+				<string>chessii.exe</string>
 				<string>at.ovl</string>
 				<string>sml.exe</string>
 				<string>simant.exe</string>

@@ -819,7 +819,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	{
         //If the Option key is held down during the startup process, skip the default program.
         //(Repeated from runPreflightCommandsForEmulator: above, in case the user started
-        //holding the key down in between.
+        //holding the key down in between.)
         if (!userSkippedDefaultProgram)
         {
             CGEventFlags currentModifiers = CGEventSourceFlagsState(kCGEventSourceStateCombinedSessionState);
@@ -834,6 +834,9 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		}
 		[self openFileAtPath: target];
 	}
+    
+    //Clear the program-skipping flag for next launch.
+    userSkippedDefaultProgram = NO;
 }
 
 - (void) emulator: (BXEmulator *)theEmulator didFinishFrame: (BXFrameBuffer *)frame
@@ -1269,14 +1272,13 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		
 		
 		//Add comment preambles to saved configuration
-		NSString *configurationHelpURL = [[NSBundle mainBundle] objectForInfoDictionaryKey: @"ConfigurationFileHelpURL"];
-		if (!configurationHelpURL) configurationHelpURL = @"";
-		NSString *preambleFormat = NSLocalizedStringFromTable(@"Configuration preamble", @"Configuration",
-															  @"Used generated configuration files as a commented header at the top of the file. %1$@ is an absolute URL to Boxer’s configuration setting documentation.");
-		[gameboxConf setPreamble: [NSString stringWithFormat: preambleFormat, configurationHelpURL, nil]];
-		 
-		[gameboxConf setStartupCommandsPreamble: NSLocalizedStringFromTable(@"Preamble for startup commands", @"Configuration",
-																			@"Used in generated configuration files as a commented header underneath the [autoexec] section.")];
+		NSString *preamble = NSLocalizedStringFromTable(@"Configuration preamble", @"Configuration",
+                                                        @"Used by generated configuration files as a commented header at the top of the file.");
+        NSString *autoexecPreamble = NSLocalizedStringFromTable(@"Configuration preamble", @"Configuration",
+                                                                @"Used in generated configuration files as a commented header underneath the [autoexec] section.");
+        
+		[gameboxConf setPreamble: preamble];
+		[gameboxConf setStartupCommandsPreamble: autoexecPreamble];
 		
 		
 		//Compare against the combined configuration we'll inherit from Boxer's base settings plus

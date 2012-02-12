@@ -128,8 +128,6 @@
 	<string>Boxr</string>
 	<key>CFBundleVersion</key>
 	<string>${CURRENT_PROJECT_VERSION}</string>
-	<key>ConfigurationFileHelpURL</key>
-	<string>http://boxerapp.com/guide/dosbox_configuration</string>
 	<key>ContactEmail</key>
 	<string>support@boxerapp.com</string>
 	<key>CoverArtSearchURL</key>

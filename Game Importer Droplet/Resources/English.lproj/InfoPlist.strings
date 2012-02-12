@@ -1,3 +1,3 @@
-/* Localized versions of Info.plist keys */
+/* The droplet application's name as it will be displayed in Finder. This string should be preceded and followed by a space, which will make it sort to the top of any alphabetical listing (which ensures it won't get sorted into the middle of a pile of games.) */
+"CFBundleDisplayName" = " Import a new game ";
 
-CFBundleDisplayName = " Import a new game ";

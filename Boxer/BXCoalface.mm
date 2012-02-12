@@ -41,7 +41,6 @@ bool boxer_runLoopShouldContinue()
 }
 
 //Notifies Boxer of changes to title and speed settings
-//This is called by GFX_SetTitle in DOSBox's sdlmain.cpp
 void boxer_handleDOSBoxTitleChange(Bit32s newCycles, Bits newFrameskip, bool newPaused)
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];

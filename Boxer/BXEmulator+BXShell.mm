@@ -222,8 +222,8 @@ nil];
 	if ([self isAtPrompt])
 	{
 		NSString *emptyInput = @"\n";
-		if (![[[self commandQueue] lastObject] isEqualToString: emptyInput]) [[self commandQueue] addObject: emptyInput];
-		
+		if (![[[self commandQueue] lastObject] isEqualToString: emptyInput])
+            [[self commandQueue] addObject: emptyInput];
 	}
 }
 
@@ -246,7 +246,8 @@ nil];
 - (void) showShellCommandHelp: (NSString *)argumentString
 {
 	[self _substituteCommand: @"cls" encoding: BXDirectStringEncoding];
-	[self displayStringFromKey: @"Shell Command Help"];
+	[self displayString: NSLocalizedStringFromTable(@"Shell Command Help", @"Shell",
+                                                    @"A list of common DOS commands, displayed when running HELP at the command line. This should list the commands in the left column (which should be left untranslated) and command descriptions in the right-hand column. Accepts DOSBox-style formatting characters.")];
 }
 
 - (void) runPreflightCommands: (NSString *)argumentString
@@ -266,7 +267,8 @@ nil];
 																						ellipsis: @"..."
 																				   maxComponents: 4];
 	
-	[self displayStringFromKey: @"Currently mounted drives:"];
+	[self displayString: NSLocalizedStringFromTable(@"Currently mounted drives:", @"Shell",
+                                           @"Heading for drive list when drunning DRIVES command.")];
 	NSArray *sortedDrives = [[self mountedDrives] sortedArrayUsingSelector: @selector(letterCompare:)];
 	for (BXDrive *drive in sortedDrives)
 	{
@@ -322,7 +324,7 @@ nil];
     {
         NSString *errorFormat = NSLocalizedStringFromTable(@"The path \"%1$@\" does not exist.",
                                                            @"Shell",
-                                                           @"Error message displayed when BOXER_REVEAL is called on a path that could not be resolved to a full DOS path. %1$@ is the path exactly as the user entered it on the commandline.");
+                                                           @"Error message displayed when the REVEAL command is called on a path that could not be resolved to a full DOS path. %1$@ is the path exactly as the user entered it on the commandline.");
         
         [self displayString: [NSString stringWithFormat: errorFormat, cleanedPath, nil]];
         return;
@@ -342,13 +344,13 @@ nil];
         {
             errorFormat = NSLocalizedStringFromTable(@"The path \"%1$@\" is a virtual drive used by Boxer and does not exist in OS X.",
                                                                @"Shell",
-                                                               @"Error message displayed when BOXER_REVEAL is called on an internal virtual drive. %1$@ is the absolute DOS path to that drive, including drive letter.");
+                                                               @"Error message displayed when the REVEAL command is called on an internal virtual drive. %1$@ is the absolute DOS path to that drive, including drive letter.");
         }
         else
         {
             errorFormat = NSLocalizedStringFromTable(@"The path \"%1$@\" is not accessible in OS X.",
                                                                @"Shell",
-                                                               @"Error message displayed when BOXER_REVEAL cannot resolve a DOS path to an OS X filesystem path. %1$@ is the absolute DOS path, including drive letter.");
+                                                               @"Error message displayed when the REVEAL command cannot resolve a DOS path to an OS X filesystem path. %1$@ is the absolute DOS path, including drive letter.");
         }
 		[self displayString: [NSString stringWithFormat: errorFormat, resolvedPath, nil]];
         return;
@@ -365,7 +367,7 @@ nil];
     {
         NSString *errorFormat = NSLocalizedStringFromTable(@"The path \"%1$@\" does not exist in OS X.",
                                                            @"Shell",
-                                                           @"Error message displayed when BOXER_REVEAL cannot reveal a path in OS X. %1$@ is the absolute DOS path, including drive letter.");
+                                                           @"Error message displayed when the REVEAL command cannot reveal a path in OS X because it did not exist. %1$@ is the absolute DOS path, including drive letter.");
         
 		[self displayString: [NSString stringWithFormat: errorFormat, resolvedPath, nil]];
         return;
@@ -439,15 +441,20 @@ nil];
 }
 
 
-- (void) _substituteCommand: (NSString *)theString encoding: (NSStringEncoding)encoding
+- (void) _substituteCommand: (NSString *)command encoding: (NSStringEncoding)encoding
 {
 	if ([self isExecuting])
 	{
-		const char *encodedString = [theString cStringUsingEncoding: encoding];
-		if (encodedString)
+        NSAssert2([command lengthOfBytesUsingEncoding: encoding] < CMD_MAXLINE,
+                  @"Command exceeded maximum commandline length of %u: %@", CMD_MAXLINE, command);
+        
+        char cmd[CMD_MAXLINE];
+        BOOL encoded = [command getCString: cmd maxLength: CMD_MAXLINE encoding: encoding];
+        
+		if (encoded)
 		{
 			DOS_Shell *shell = [self _currentShell];
-			shell->DoCommand((char *)encodedString);	
+			shell->DoCommand(cmd);
 		}
 	}
 }

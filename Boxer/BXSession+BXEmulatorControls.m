@@ -19,17 +19,6 @@
 #import "BXBezelController.h"
 
 
-#pragma mark Private method declarations
-
-@interface BXSession ()
-
-//Whether we can accept pasted data from the specified pasteboard.
-//Copy-paste is disabled, so this currently always returns NO.
-- (BOOL) _canPasteFromPasteboard: (NSPasteboard *)pboard;
-
-@end
-
-
 @implementation BXSession (BXEmulatorControls)
 
 #pragma mark -
@@ -311,7 +300,7 @@
 	if (theAction == @selector(relaunch:))				return [emulator isAtPrompt];
 	
 	if (theAction == @selector(paste:))
-		return [self _canPasteFromPasteboard: [NSPasteboard generalPasteboard]];
+		return [self canPasteFromPasteboard: [NSPasteboard generalPasteboard]];
 	
 	return [super validateUserInterfaceItem: theItem];
 }
@@ -452,7 +441,7 @@
 	[emulator handlePastedString: pastedString];
 }
 
-- (BOOL) _canPasteFromPasteboard: (NSPasteboard *)pboard 
+- (BOOL) canPasteFromPasteboard: (NSPasteboard *)pboard 
 {
 	NSArray *acceptedPasteTypes = [NSArray arrayWithObjects: NSFilenamesPboardType, NSStringPboardType, nil];
 	NSString *bestType = [pboard availableTypeFromArray: acceptedPasteTypes];

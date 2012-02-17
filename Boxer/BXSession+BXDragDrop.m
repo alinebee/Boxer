@@ -16,7 +16,7 @@
 
 
 //Private methods
-@interface BXSession ()
+@interface BXSession (BXDragDropPrivate)
 
 - (NSDragOperation) _responseToDroppedFile: (NSString *)filePath;
 - (BOOL) _handleDroppedFile: (NSString *)filePath withLaunching: (BOOL)launch;

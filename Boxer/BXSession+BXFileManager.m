@@ -37,7 +37,7 @@
 
 
 //The methods in this category are not intended to be called outside BXSession.
-@interface BXSession ()
+@interface BXSession (BXFileManagerPrivate)
 
 - (void) volumeDidMount:		(NSNotification *)theNotification;
 - (void) volumeWillUnmount:		(NSNotification *)theNotification;

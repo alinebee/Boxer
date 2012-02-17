@@ -6,8 +6,10 @@
  */
 
 
-//The BXGamesFolder category extends BXAppController with functions for setting, finding and 
-//styling the games folder.
+//The BXGamesFolder category extends BXAppController with functions for setting,
+//finding and styling the games folder.
+//TODO: move this functionality off to a standalone class, as it has nothing to do
+//with the app delegate or its lifecycle.
 
 #import "BXAppController.h"
 

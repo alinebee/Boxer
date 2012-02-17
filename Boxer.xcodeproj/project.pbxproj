@@ -398,7 +398,6 @@
 		9F7721DE12B38C4400072AE8 /* int10_vptable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77216012B38C4400072AE8 /* int10_vptable.cpp */; };
 		9F7721DF12B38C4400072AE8 /* mouse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77216112B38C4400072AE8 /* mouse.cpp */; };
 		9F7721E012B38C4400072AE8 /* xms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77216212B38C4400072AE8 /* xms.cpp */; };
-		9F7721E112B38C4400072AE8 /* gui_tk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77216612B38C4400072AE8 /* gui_tk.cpp */; };
 		9F7721E312B38C4400072AE8 /* cross.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77216C12B38C4400072AE8 /* cross.cpp */; };
 		9F7721E412B38C4400072AE8 /* messages.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77216D12B38C4400072AE8 /* messages.cpp */; };
 		9F7721E512B38C4400072AE8 /* programs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77216E12B38C4400072AE8 /* programs.cpp */; };
@@ -2888,7 +2887,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0430;
 				ORGANIZATIONNAME = "Alun Bestor and contributors";
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Boxer" */;
@@ -3300,7 +3299,6 @@
 				9F7721DE12B38C4400072AE8 /* int10_vptable.cpp in Sources */,
 				9F7721DF12B38C4400072AE8 /* mouse.cpp in Sources */,
 				9F7721E012B38C4400072AE8 /* xms.cpp in Sources */,
-				9F7721E112B38C4400072AE8 /* gui_tk.cpp in Sources */,
 				9F7721E312B38C4400072AE8 /* cross.cpp in Sources */,
 				9F7721E412B38C4400072AE8 /* messages.cpp in Sources */,
 				9F7721E512B38C4400072AE8 /* programs.cpp in Sources */,

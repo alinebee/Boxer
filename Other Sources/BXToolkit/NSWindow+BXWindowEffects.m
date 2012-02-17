@@ -11,7 +11,7 @@
 #pragma mark -
 #pragma mark Private method declarations
 
-@interface NSWindow ()
+@interface NSWindow (BXWindowEffectsPrivate)
 //Completes the ordering out from a fadeOutWithDuration: call.
 - (void) _orderOutAfterFade;
 @end
@@ -60,7 +60,7 @@
 
 #ifdef USE_PRIVATE_APIS
 
-@interface NSWindow ()
+@interface NSWindow (BXPrivateAPIWindowEffectsReallyPrivate)
 //Cleans up after a transition by releasing the specified handle.
 - (void) _releaseTransitionHandle: (NSNumber *)handleNum;
 

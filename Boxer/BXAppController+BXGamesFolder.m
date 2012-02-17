@@ -38,7 +38,7 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 #pragma mark -
 #pragma mark Private method declarations
 
-@interface BXAppController ()
+@interface BXAppController (BXGamesFolderPrivate)
 
 //The maximum size of artwork to generate.
 //This corresponds to Finder's own builtin max size, independent of hardware.

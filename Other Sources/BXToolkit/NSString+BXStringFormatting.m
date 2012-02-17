@@ -13,7 +13,7 @@
 #pragma mark -
 #pragma mark Private method declarations
 
-@interface NSString ()
+@interface NSString (BXStringFormattingPrivate)
 
 //Returns an array of word-wrapped lines. This doesn't handle hard linebreaks at all.
 - (NSArray *) _linesWrappedByWordAtLength: (NSUInteger)maxLength;

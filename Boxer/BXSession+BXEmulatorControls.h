@@ -130,8 +130,11 @@ enum
 //Snaps the speed to set increments, and switches to auto speed above the maximum speed.
 - (BOOL) validateSliderSpeed: (id *)ioValue error: (NSError **)outError;
 
-//Paste data from the clipboard into the DOS session. Currently disabled.
+//Paste data from the clipboard into the DOS session.
 - (IBAction) paste: (id)sender;
+
+//Whether we can accept pasted data from the specified pasteboard.
+- (BOOL) canPasteFromPasteboard: (NSPasteboard *)pboard;
 
 
 //Display the relevant panels of the Inspector.

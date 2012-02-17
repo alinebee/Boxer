@@ -331,14 +331,15 @@ void DOS_Shell::Run(void) {
 				if (echo) WriteOut("\n");
 			}
 		} else {
+            //--Added 2009-11-29 by Alun Bestor as a hook for detecting when control has returned to the DOS prompt. 
+            boxer_didReturnToShell();
+            //--End of modifications
+            
 			if (echo) ShowPrompt();
 			InputCommand(input_line);
 			ParseLine(input_line);
 			if (echo && !bf) WriteOut_NoParsing("\n");
 		}
-		//--Added 2009-11-29 by Alun Bestor as a hook for detecting when control has returned to the DOS prompt. 
-		if (!bf) boxer_didReturnToShell();
-		//--End of modifications
 	} while (!exit);
 }
 

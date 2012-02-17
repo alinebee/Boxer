@@ -533,10 +533,10 @@ nil];
     
 	//IMPLEMENTATION NOTE: we activate the mouse as soon as any program starts,
 	//regardless of whether the program claims to support the mouse or not.
-    [[self mouse] setActive: YES];
+    self.mouse.active = YES;
     
-	[self setProcessPath: fullDOSPath];
-	[self setProcessLocalPath: localPath];
+	self.processPath = fullDOSPath;
+	self.processLocalPath = localPath;
 	
 	NSMutableDictionary *userInfo	= [NSMutableDictionary dictionaryWithObjectsAndKeys:
                                        fullDOSPath, @"DOSPath",

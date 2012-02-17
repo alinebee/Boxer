@@ -26,8 +26,9 @@ static BOOL hasStartedEmulator = NO;
 #pragma mark -
 #pragma mark Constants
 
-//Default name that DOSBox uses when there's no process running. Used by processName for string comparisons.
+//The name and path to the DOSBox shell. Used when determining the current process.
 NSString * const shellProcessName = @"DOSBOX";
+NSString * const shellProcessPath = @"Z:\\COMMAND.COM";
 
 
 //BXEmulatorDelegate constants, defined here for want of somewhere better to put them.
@@ -105,33 +106,6 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 + (BOOL) canLaunchEmulator;
 {
 	return !hasStartedEmulator;
-}
-
-//Used by processIsInternal, to determine when we're running one of DOSBox's own builtin programs
-//TODO: generate this from DOSBox's builtin program manifest instead
-+ (NSSet *) internalProcessNames
-{
-	static NSSet *names = nil;
-	if (!names) names = [[NSSet alloc] initWithObjects:
-		@"IPXNET",
-		@"COMMAND",
-		@"KEYB",
-		@"IMGMOUNT",
-		@"BOOT",
-		@"INTRO",
-		@"RESCAN",
-		@"LOADFIX",
-		@"MEM",
-		@"MOUNT",
-		@"MIXER",
-		@"CONFIG",
-	nil];
-	return names;
-}
-
-+ (BOOL) isInternal: (NSString *)process
-{
-	return [[self internalProcessNames] containsObject: process];
 }
 
 + (NSString *) configStringForFixedSpeed: (NSInteger)speed
@@ -257,7 +231,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 		[self discardShellInput];
 	
 		//Tells DOSBox to close the current shell at the end of the commandline input loop
-		DOS_Shell *shell = [self _currentShell];
+		DOS_Shell *shell = self._currentShell;
 		if (shell) shell->exit = YES;
 	}
 
@@ -286,21 +260,22 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 
 - (BOOL) isRunningProcess
 {
-	//Extra-safe - processPath is set earlier than processName
-	return [self isExecuting] && ([self processName] || [self processPath]);
+    return self.processPath && ![self.processPath isEqualToString: shellProcessPath];
 }
 
 - (BOOL) processIsInternal
 {
-	if (![self isRunningProcess]) return NO;
-	return [[self class] isInternal: [self processName]];
+	if (!self.isRunningProcess) return NO;
+    
+    //Count any programs on drive Z as being internal
+	return [self.processPath characterAtIndex: 0] == 'Z';
 }
 
 - (BOOL) isInBatchScript
 {
-	if ([self isExecuting])
+	if (self.isExecuting)
 	{
-		DOS_Shell *shell = [self _currentShell];
+		DOS_Shell *shell = self._currentShell;
 		return (shell && shell->bf);		
 	}
 	return NO;
@@ -308,7 +283,13 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 
 - (BOOL) isAtPrompt
 {
-	return [self isExecuting] && [self isInitialized] && ![self isRunningProcess] && ![self isInBatchScript];
+    if (!self.isExecuting) return NO;
+    
+    if (!self.isInitialized) return NO;
+    if (self.isInBatchScript) return NO;
+    if (self.isRunningProcess) return NO;
+    
+    return YES;
 }
 
 

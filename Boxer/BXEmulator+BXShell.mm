@@ -521,16 +521,20 @@ nil];
 {
 	BXDrive *drive = [self _driveMatchingDOSBoxDrive: dosboxDrive];
 	NSUInteger driveIndex = [self _indexOfDOSBoxDrive: dosboxDrive];
-	
-	NSString *localPath		= [self _filesystemPathForDOSPath: dosPath onDOSBoxDrive: dosboxDrive];
+	NSString *localPath	= [self _filesystemPathForDOSPath: dosPath onDOSBoxDrive: dosboxDrive];
+    
 	NSString *fullDOSPath	= [NSString stringWithFormat: @"%@:\\%@",
 							   [self _driveLetterForIndex: driveIndex],
 							   [NSString stringWithCString: dosPath encoding: BXDirectStringEncoding],
 							   nil];
 	
+    //TWEAK: if this is another instance of the DOS session, do not change our state.
+    if ([fullDOSPath isEqualToString: shellProcessPath]) return;
+    
 	//IMPLEMENTATION NOTE: we activate the mouse as soon as any program starts,
-	//regardless of whether the game claims to support the mouse or not.
-	[[self mouse] setActive: YES];
+	//regardless of whether the program claims to support the mouse or not.
+    [[self mouse] setActive: YES];
+    
 	[self setProcessPath: fullDOSPath];
 	[self setProcessLocalPath: localPath];
 	

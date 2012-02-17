@@ -55,6 +55,10 @@ typedef NSUInteger BXJoystickSupportLevel;
 extern NSStringEncoding BXDisplayStringEncoding;	//Used for strings that will be displayed to the user
 extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings that must be preserved raw
 
+//The name and path to the DOSBox shell. Used when determining the current process.
+extern NSString * const shellProcessName;
+extern NSString * const shellProcessPath;
+
 
 @class BXVideoHandler;
 @class BXEmulatedKeyboard;
@@ -206,12 +210,6 @@ extern NSStringEncoding BXDirectStringEncoding;		//Used for file path strings th
 //Whether it is safe to launch a new emulator instance. Will be NO after an emulator has been opened
 //(and the memory state is too polluted to reuse.)
 + (BOOL) canLaunchEmulator;
-
-//An array of names of internal DOSBox processes.
-+ (NSSet *) internalProcessNames;
-
-//Returns whether the specified process name is a DOSBox internal process (according to internalProcessNames).
-+ (BOOL) isInternal: (NSString *)processName;
 
 //Returns the configuration values that reflect the specified settings.
 + (NSString *) configStringForFixedSpeed: (NSInteger)speed isAuto: (BOOL)isAutoSpeed;

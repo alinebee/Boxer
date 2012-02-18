@@ -109,8 +109,7 @@ typedef NSUInteger BXGameIdentifierType;
 
 
 //The path to the DOSBox configuration file for this package. Will be nil if one does not exist.
-//Note that setting this will actually *copy* the file; setting it to nil will delete the stored file.
-@property (copy, nonatomic) NSString *configurationFile;
+@property (readonly, nonatomic) NSString *configurationFile;
 
 //The path to the default executable for this gamebox. Will be nil if the gamebox has no target executable.
 //This is stored internally as a symlink; setting this to nil will remove the symlink.

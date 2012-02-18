@@ -243,23 +243,15 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 
 - (NSString *) configurationFile
 {
-	return [self pathForResource: BXConfigurationFileName ofType: BXConfigurationFileExtension];
-}
-
-
-- (void) setConfigurationFile: (NSString *)filePath
-{
-	NSString *configLocation = [self configurationFilePath];
-	
-	if (![filePath isEqualToString: configLocation])
-	{
-		NSFileManager *manager = [NSFileManager defaultManager];
-	
-		//First, attempt to delete any existing configuration file
-		[manager removeItemAtPath: configLocation error: nil];
-		//Now, copy the new file in its place (if one was provided)
-		if (filePath) [manager copyItemAtPath: filePath toPath: configLocation error: nil];		
-	}
+    //LAZY ASS FIX: this used to use pathForResource:ofType: but this was incorrectly returning nil
+    //in the case where a configuration file had just been written but NSBundle had checked before
+    //for a file and found it missing. This will be fixed once we migrate this wretched class away
+    //from NSBundle once and for all.
+    NSFileManager *manager = [NSFileManager defaultManager];
+    
+    NSString *configPath = [self configurationFilePath];
+    if ([manager fileExistsAtPath: configPath]) return configPath;
+    else return nil;
 }
 
 - (NSString *) configurationFilePath

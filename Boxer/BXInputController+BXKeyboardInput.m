@@ -134,7 +134,9 @@
 
 - (void) flagsChanged: (NSEvent *)theEvent
 {
-	[self _syncModifierFlags: [theEvent modifierFlags]];
+    NSUInteger currentModifiers = [theEvent modifierFlags];
+	[self _syncModifierFlags: currentModifiers];
+    [self _syncSimulatedMouseButtons: currentModifiers];
     
     //Cmd-key tweak: in 10.7 at least, we won't receive keyUp: events for any key while
     //Cmd is being held down. To prevent keys getting stuck, we immediately release any
@@ -244,7 +246,7 @@
 				
 				//Special handling for capslock key: whenever the flag is toggled,
 				//act like the key was pressed and then released shortly after.
-				//(We never receive receive actual keyup events for this key.)
+				//(We never receive actual keyup events for this key.)
 				if (flag == NSAlphaShiftKeyMask)
 				{
 					[keyboard keyPressed: keyCode];
@@ -259,6 +261,7 @@
 				}
 			}
 		}
+        
 		lastModifiers = newModifiers;
 	}
 }

@@ -62,6 +62,8 @@
 #pragma mark -
 #pragma mark Methods
 
+//Resynchronises the current simulated mouse button state whenever the current modifier flags change.
+- (void) _syncSimulatedMouseButtons: (NSUInteger)currentModifiers;
 
 //Returns whether we should have control of the mouse cursor state.
 //This is true if the mouse is within the view, the window is key,

@@ -31,6 +31,8 @@
 
 - (void) windowWillClose: (NSNotification *)notification
 {
+    [super windowWillClose: notification];
+    
     //Workaround for a Lion bug whereby if the window close button is triggered
     //by a touch event that includes a resting touch, then the event system may
     //try to send touchesCancelled: events to a now-deallocated view.

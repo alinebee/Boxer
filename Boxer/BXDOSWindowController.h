@@ -44,6 +44,7 @@ extern NSString * const BXViewDidLiveResizeNotification;
     NSSize currentScaledSize;
 	NSSize currentScaledResolution;
 	BOOL resizingProgrammatically;
+    BOOL windowIsClosing;
     
     NSSize renderingViewSizeBeforeFullScreen;
     NSString *autosaveNameBeforeFullScreen;

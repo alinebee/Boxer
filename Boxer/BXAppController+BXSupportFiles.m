@@ -18,6 +18,12 @@ NSString * const MT32PCMROMFilenamePattern = @"pcm";
 
 @implementation BXAppController (BXSupportFiles)
 
+- (NSString *) recordingsPathCreatingIfMissing: (BOOL)createIfMissing
+{
+    NSString *desktopPath = [NSSearchPathForDirectoriesInDomains(NSDesktopDirectory, NSUserDomainMask, YES) objectAtIndex: 0];
+    return desktopPath;
+}
+
 - (NSString *) supportPathCreatingIfMissing: (BOOL)createIfMissing
 {
 	NSString *basePath = [NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES) objectAtIndex: 0];

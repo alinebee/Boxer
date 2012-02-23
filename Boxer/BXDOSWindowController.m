@@ -437,7 +437,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 
 - (NSSize) viewportSize
 {
-	return [renderingView viewportSize];
+	return [renderingView viewportRect].size;
 }
 
 - (NSSize) maxFrameSize
@@ -451,6 +451,23 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 {
     if ([[self window] isFullScreen]) return renderingViewSizeBeforeFullScreen;
     else return [[self window] actualContentViewSize];
+}
+
+- (NSImage *) screenshotOfCurrentFrame
+{
+    NSImage *screenshot = nil;
+    
+    if ([renderingView currentFrame])
+    {
+        NSRect visibleRect = renderingView.viewportRect;
+        NSBitmapImageRep *rep = [renderingView bitmapImageRepForCachingDisplayInRect: visibleRect];
+        [renderingView cacheDisplayInRect: visibleRect toBitmapImageRep: rep];
+        
+        screenshot = [[NSImage alloc] init];
+        [screenshot addRepresentation: rep];
+    }
+    
+    return [screenshot autorelease];
 }
 
 

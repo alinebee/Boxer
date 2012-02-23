@@ -248,7 +248,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
     [[self MIDIDeviceMonitor] start];
     
     //Check if we have any games folder, and if not (and we're allowed to create one automatically)
-    //then do so now
+    //then create one now
     if (![self gamesFolderPath] && ![self gamesFolderChosen] && ![[NSUserDefaults standardUserDefaults] boolForKey: @"showFirstRunPanel"])
     {
         NSString *defaultPath = [[self class] preferredGamesFolderPath];

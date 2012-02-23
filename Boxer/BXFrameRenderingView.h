@@ -26,10 +26,12 @@
 - (BXFrameBuffer *) currentFrame;
 
 
-//Reports the maximum displayable frame size.
+//Reports the maximum displayable frame size (which may be limited by e.g. OpenGL
+//maximum texture dimensions.) Frames larger than this will not be passed to updateWithFrame:.
 - (NSSize) maxFrameSize;
 
-//Reports the current viewport size to which frames will be rendered.
-- (NSSize) viewportSize;
+//Reports where in the view the current frame will actually be rendered.
+//This may be a portion of the total view size, when in fullscreen mode.
+- (NSRect) viewportRect;
 
 @end

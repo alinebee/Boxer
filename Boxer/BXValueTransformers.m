@@ -9,6 +9,45 @@
 #import "BXValueTransformers.h"
 #import "NSString+BXPaths.h"
 
+
+#pragma mark -
+#pragma mark Date transformers
+
+@implementation BXDateTransformer
+@synthesize formatter = _formatter;
+
++ (Class) transformedValueClass			{ return [NSString class]; }
++ (BOOL) allowsReverseTransformation	{ return YES; }
+
+- (id) initWithDateFormatter:(NSDateFormatter *)formatter
+{
+    if ((self = [super init]))
+    {
+        self.formatter = formatter;
+    }
+    return self;
+}
+
+- (void) dealloc
+{
+    self.formatter = nil;
+    
+    [super dealloc];
+}
+
+- (NSString *) transformedValue: (NSDate *)value
+{
+    return [self.formatter stringFromDate: value];
+}
+
+- (NSDate *) reverseTransformedValue: (NSString *)value
+{
+    return [self.formatter dateFromString: value];
+}
+
+@end
+
+
 #pragma mark -
 #pragma mark Numeric transformers
 

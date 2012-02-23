@@ -75,8 +75,8 @@
 
 //The session window responds to dropped files and folders, mounting them as new DOS drives and/or opening
 //them in DOS if appropriate. These methods call corresponding methods on BXSession+BXDragDrop.
-- (NSDragOperation)draggingEntered:	(id < NSDraggingInfo >)sender;
-- (BOOL)performDragOperation:		(id < NSDraggingInfo >)sender;
+- (NSDragOperation) draggingEntered: (id <NSDraggingInfo>)sender;
+- (BOOL) performDragOperation: (id <NSDraggingInfo>)sender;
 
 //These tell the session to pause itself while a resize is in progress, and clean up when it finishes.
 - (void) renderingViewDidResize: (NSNotification *) notification;

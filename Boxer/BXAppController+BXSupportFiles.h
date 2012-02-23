@@ -16,6 +16,10 @@
 #pragma mark -
 #pragma mark Supporting directories
 
+//Returns Boxer's default location for screenshots and other recordings.
+//If createIfMissing is YES, the folder will be created if it does not exist.
+- (NSString *) recordingsPathCreatingIfMissing: (BOOL)createIfMissing;
+
 //Returns Boxer's application support path.
 //If createIfMissing is YES, the folder will be created if it does not exist.
 - (NSString *) supportPathCreatingIfMissing: (BOOL)createIfMissing;

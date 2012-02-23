@@ -143,4 +143,6 @@ enum
 - (IBAction) showDrivesPanel:	(id)sender;
 - (IBAction) showMousePanel:	(id)sender;
 
+//Save a screenshot to the desktop.
+- (IBAction) saveScreenshot: (id)sender;
 @end

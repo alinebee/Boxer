@@ -11,6 +11,18 @@
 
 #import <Cocoa/Cocoa.h>
 
+#pragma mark -
+#pragma mark Date transformers
+
+//A simple value transformer that wraps an NSDateFormatter instance.
+@interface BXDateTransformer : NSValueTransformer
+{
+    NSDateFormatter *_formatter;
+}
+@property (retain, nonatomic) NSDateFormatter *formatter;
+
+- (id) initWithDateFormatter: (NSDateFormatter *)formatter;
+@end
 
 #pragma mark -
 #pragma mark Numeric transformers

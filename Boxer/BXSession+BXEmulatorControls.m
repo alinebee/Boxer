@@ -9,7 +9,7 @@
 #import "BXEmulator+BXShell.h"
 #import "BXEmulator+BXPaste.h"
 #import "BXValueTransformers.h"
-#import "BXAppController.h"
+#import "BXAppController+BXSupportFiles.h"
 #import "BXVideoHandler.h"
 #import "BXEmulatorConfiguration.h"
 #import "BXInspectorController.h"
@@ -17,6 +17,8 @@
 #import "BXDOSWindowController.h"
 #import "BXInputController.h"
 #import "BXBezelController.h"
+
+#import "NSImage+BXSaveImages.h"
 
 
 @implementation BXSession (BXEmulatorControls)
@@ -29,26 +31,33 @@
     //Do not reinitialize in subclasses
     if (self == [BXSession class])
     {
-        BXBandedValueTransformer *speedBanding		= [[BXBandedValueTransformer alloc] init];
-        BXInvertNumberTransformer *invertFramerate	= [[BXInvertNumberTransformer alloc] init];
-        
         NSArray *bands = [[NSArray alloc] initWithObjects:
-            [NSNumber numberWithInteger: BXMinSpeedThreshold],
-            [NSNumber numberWithInteger: BX286SpeedThreshold],
-            [NSNumber numberWithInteger: BX386SpeedThreshold],
-            [NSNumber numberWithInteger: BX486SpeedThreshold],
-            [NSNumber numberWithInteger: BXPentiumSpeedThreshold],
-            [NSNumber numberWithInteger: BXMaxSpeedThreshold],
-        nil];
+                          [NSNumber numberWithInteger: BXMinSpeedThreshold],
+                          [NSNumber numberWithInteger: BX286SpeedThreshold],
+                          [NSNumber numberWithInteger: BX386SpeedThreshold],
+                          [NSNumber numberWithInteger: BX486SpeedThreshold],
+                          [NSNumber numberWithInteger: BXPentiumSpeedThreshold],
+                          [NSNumber numberWithInteger: BXMaxSpeedThreshold],
+                          nil];
         
-        [speedBanding setBandThresholds: bands];
+        NSDateFormatter *screenshotDateFormatter = [[NSDateFormatter alloc] init];
+        screenshotDateFormatter.dateFormat = NSLocalizedString(@"yyyy-MM-dd 'at' h.mm.ss a", @"The date and time format to use for screenshot filenames. Literal strings (such as the 'at') should be enclosed in single quotes. The date order should not be changed when localizing unless really necessary, as this is important to maintain chronological ordering in alphabetical file listings. Note that some characters such as / and : are not permissible in filenames and will be stripped out or replaced.");
+        
+        NSValueTransformer *speedBanding		= [[BXBandedValueTransformer alloc] initWithThresholds: bands];
+        NSValueTransformer *invertFramerate     = [[BXInvertNumberTransformer alloc] init];
+        NSValueTransformer *screenshotDater     = [[BXDateTransformer alloc] initWithDateFormatter: screenshotDateFormatter];
+        
         
         [NSValueTransformer setValueTransformer: speedBanding forName: @"BXSpeedSliderTransformer"];
         [NSValueTransformer setValueTransformer: invertFramerate forName: @"BXFrameRateSliderTransformer"];
+        [NSValueTransformer setValueTransformer: screenshotDater forName: @"BXScreenshotDateTransformer"];
         
         [speedBanding release];
         [invertFramerate release];
+        [screenshotDater release];
+        
         [bands release];
+        [screenshotDateFormatter release];
     }
 }
 
@@ -493,4 +502,50 @@
 - (IBAction) showCPUPanel:		(id)sender	{ [[BXInspectorController controller] showCPUPanel: sender]; }
 - (IBAction) showDrivesPanel:	(id)sender	{ [[BXInspectorController controller] showDrivesPanel: sender]; }
 - (IBAction) showMousePanel:	(id)sender	{ [[BXInspectorController controller] showMousePanel: sender]; }
+
+
+#pragma mark -
+#pragma mark Recording
+
+- (IBAction) saveScreenshot: (id)sender
+{   
+    NSImage *screenshot = [self.DOSWindowController screenshotOfCurrentFrame];
+    if (screenshot)
+    {
+        //Work out an appropriate filename, based on the window title and the current date and time.
+        NSValueTransformer *transformer = [NSValueTransformer valueTransformerForName: @"BXScreenshotDateTransformer"];
+        NSString *formattedDate = [transformer transformedValue: [NSDate date]];
+        
+        NSString *nameFormat = NSLocalizedString(@"%1$@ %2$@.png",
+                                                 @"Filename pattern for screenshots: %1$@ is the display name of the DOS session, %2$@ is the current date and time in a notation suitable for chronologically-ordered filenames.");
+        
+        NSString *fileName = [NSString stringWithFormat:
+                              nameFormat,
+                              [self.DOSWindowController.window title],
+                              formattedDate,
+                              nil];
+        
+        //Sanitise the filename in case it contains characters that are disallowed for file paths.
+        fileName = [fileName stringByReplacingOccurrencesOfString: @":" withString: @"."];
+        fileName = [fileName stringByReplacingOccurrencesOfString: @"/" withString: @"-"]; 
+        
+        NSString *basePath = [[NSApp delegate] recordingsPathCreatingIfMissing: YES];
+        NSString *destination = [basePath stringByAppendingPathComponent: fileName];
+        
+        BOOL saved = [screenshot saveToPath: destination
+                                   withType: NSPNGFileType
+                                 properties: nil
+                                      error: nil];
+        
+        if (saved)
+        {
+            NSDictionary *attrs	= [NSDictionary dictionaryWithObject: [NSNumber numberWithBool: YES]
+                                                              forKey: NSFileExtensionHidden];
+            
+            [[NSFileManager defaultManager] setAttributes: attrs ofItemAtPath: destination error: nil];
+            //TODO: play cheesy sound effect and show bezel notification.
+        }
+    }
+}
+
 @end

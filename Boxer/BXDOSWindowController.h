@@ -89,7 +89,13 @@ extern NSString * const BXViewDidLiveResizeNotification;
 #pragma mark -
 #pragma mark Renderer-related methods
 
+//Passes the specified frame on to our rendering view to handle,
+//and resizes the window appropriately if a change in resolution or aspect ratio has occurred.
 - (void) updateWithFrame: (BXFrameBuffer *)frame;
+
+//Returns a screenshot of what is currently being rendered in the rendering view.
+//Will return nil if no frame has been provided yet (via updateWithFrame:).
+- (NSImage *) screenshotOfCurrentFrame;
 
 
 #pragma mark -
@@ -105,6 +111,7 @@ extern NSString * const BXViewDidLiveResizeNotification;
 
 //Toggle the emulator's active rendering filter.
 - (IBAction) toggleFilterType: (id)sender;
+
 
 #pragma mark -
 #pragma mark Toggling UI components

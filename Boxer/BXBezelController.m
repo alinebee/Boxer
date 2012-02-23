@@ -20,7 +20,8 @@
 
 #define BXBezelFadeDuration 0.25
 
-#define BXPauseBezelDuration 1.0
+#define BXScreenshotBezelDuration 0.75
+#define BXPauseBezelDuration 0.75
 #define BXNumpadBezelDuration 2.0
 #define BXNumlockBezelDuration 2.0
 #define BXFullscreenBezelDuration 3.0
@@ -34,7 +35,7 @@
 
 @implementation BXBezelController
 @synthesize driveAddedBezel, driveSwappedBezel, driveRemovedBezel, driveImportedBezel;
-@synthesize pauseBezel, playBezel, fullscreenBezel;
+@synthesize pauseBezel, playBezel, fullscreenBezel, screenshotBezel;
 @synthesize joystickIgnoredBezel, CPUSpeedBezel, throttleBezel;
 @synthesize MT32MessageBezel, MT32MissingBezel;
 @synthesize numpadActiveBezel, numpadInactiveBezel;
@@ -75,20 +76,22 @@
 
 - (void) dealloc
 {
-    [self setDriveAddedBezel: nil],         [driveAddedBezel release];
-    [self setDriveSwappedBezel: nil],       [driveSwappedBezel release];
-    [self setDriveRemovedBezel: nil],       [driveRemovedBezel release];
-    [self setDriveImportedBezel: nil],      [driveImportedBezel release];
-    [self setFullscreenBezel: nil],         [fullscreenBezel release];
-    [self setPauseBezel: nil],              [pauseBezel release];
-    [self setPlayBezel: nil],               [playBezel release];
-    [self setCPUSpeedBezel: nil],           [CPUSpeedBezel release];
-    [self setThrottleBezel: nil],           [throttleBezel release];
-    [self setJoystickIgnoredBezel: nil],    [joystickIgnoredBezel release];
-    [self setMT32MessageBezel: nil],        [MT32MessageBezel release];
-    [self setMT32MissingBezel: nil],        [MT32MissingBezel release];
-    [self setNumpadActiveBezel: nil],       [numpadActiveBezel release];
-    [self setNumlockInactiveBezel: nil],    [numlockInactiveBezel release];
+    self.driveAddedBezel = nil;
+    self.driveSwappedBezel = nil;
+    self.driveRemovedBezel = nil;
+    self.driveImportedBezel = nil;
+    self.fullscreenBezel = nil;
+    self.pauseBezel = nil;
+    self.playBezel = nil;
+    self.CPUSpeedBezel = nil;
+    self.throttleBezel = nil;
+    self.joystickIgnoredBezel = nil;
+    self.MT32MessageBezel = nil;
+    self.MT32MissingBezel = nil;
+    self.numpadActiveBezel = nil;
+    self.numpadInactiveBezel = nil;
+    self.numlockActiveBezel = nil;
+    self.numlockInactiveBezel = nil;
     
     [super dealloc];
 }
@@ -110,13 +113,13 @@
                                                           backing: NSBackingStoreBuffered
                                                             defer: YES];
     
-    [bezelWindow setBackgroundColor: [NSColor clearColor]];
-    [bezelWindow setOpaque: NO];
-    [bezelWindow setIgnoresMouseEvents: YES];
-    [bezelWindow setLevel: NSPopUpMenuWindowLevel];
-    [bezelWindow setCollectionBehavior: NSWindowCollectionBehaviorCanJoinAllSpaces | NSWindowCollectionBehaviorFullScreenAuxiliary];
+    bezelWindow.backgroundColor = [NSColor clearColor];
+    bezelWindow.opaque = NO;
+    bezelWindow.ignoresMouseEvents = YES;
+    bezelWindow.level = NSPopUpMenuWindowLevel;
+    bezelWindow.collectionBehavior = NSWindowCollectionBehaviorCanJoinAllSpaces | NSWindowCollectionBehaviorFullScreenAuxiliary;
     
-    [self setWindow: [bezelWindow autorelease]];
+    self.window = [bezelWindow autorelease];
 }
 
 - (void) showBezel: (NSView *)bezel
@@ -176,6 +179,14 @@
 
 #pragma mark -
 #pragma mark Bezel-specific display methods
+
+- (void) showScreenshotBezel
+{
+    [self showBezel: self.screenshotBezel
+        forDuration: BXScreenshotBezelDuration
+           priority: BXBezelPriorityLow];
+}
+
 
 - (void) showPauseBezel
 {

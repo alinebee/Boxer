@@ -48,6 +48,7 @@ enum {
     NSView *throttleBezel;
     NSView *pauseBezel;
     NSView *playBezel;
+    NSView *screenshotBezel;
     NSView *MT32MessageBezel;
     NSView *MT32MissingBezel;
     NSView *numpadActiveBezel;
@@ -83,6 +84,9 @@ enum {
 @property (retain, nonatomic) IBOutlet NSView *MT32MessageBezel;
 //The bezel view used for notifying the user that they need an MT-32 to hear proper music.
 @property (retain, nonatomic) IBOutlet NSView *MT32MissingBezel;
+
+//Screenshot bezel views.
+@property (retain, nonatomic) IBOutlet NSView *screenshotBezel;
 
 //Pause/play bezel views.
 @property (retain, nonatomic) IBOutlet NSView *pauseBezel;
@@ -124,6 +128,8 @@ enum {
 
 - (void) showPauseBezel;
 - (void) showPlayBezel;
+
+- (void) showScreenshotBezel;
 
 - (void) showNumpadActiveBezel;
 - (void) showNumpadInactiveBezel;

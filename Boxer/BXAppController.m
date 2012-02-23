@@ -893,14 +893,27 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 }
 
 //If UI sounds are enabled, play the sound matching the specified name at the specified volume
-- (void) playUISoundWithName: (NSString *)soundName atVolume: (float)volume
+- (void) playUISoundWithName: (NSString *)soundName atVolume: (float)volume afterDelay: (NSTimeInterval)delay
 {
 	if ([self shouldPlayUISounds])
 	{
 		NSSound *theSound = [NSSound soundNamed: soundName];
 		[theSound setVolume: volume];
-		[theSound play];
+        
+        if (delay > 0)
+        {
+            [theSound performSelector: @selector(play) withObject: nil afterDelay: delay];
+        }
+        else
+        {
+            [theSound play];
+        }
 	}
+}
+
+- (void) playUISoundWithName: (NSString *)soundName atVolume: (float)volume
+{
+    [self playUISoundWithName: soundName atVolume: volume afterDelay: 0];
 }
 
 @end

@@ -106,8 +106,10 @@ enum {
 //(Currently this is based on OS X's system settings, rather than our own preference.)
 - (BOOL) shouldPlayUISounds;
 
-//If UI sounds are enabled, play the sound matching the specified name at the specified volume.
+//If UI sounds are enabled, play the sound matching the specified name
+//at the specified volume, with the specified optional delay.
 - (void) playUISoundWithName: (NSString *)soundName atVolume: (float)volume;
+- (void) playUISoundWithName: (NSString *)soundName atVolume: (float)volume afterDelay: (NSTimeInterval)delay;
 
 
 #pragma mark -

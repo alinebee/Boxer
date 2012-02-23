@@ -526,6 +526,7 @@
                               nil];
         
         //Sanitise the filename in case it contains characters that are disallowed for file paths.
+        //TODO: move this off to an NSFileManager/NSString category.
         fileName = [fileName stringByReplacingOccurrencesOfString: @":" withString: @"."];
         fileName = [fileName stringByReplacingOccurrencesOfString: @"/" withString: @"-"]; 
         
@@ -543,7 +544,9 @@
                                                               forKey: NSFileExtensionHidden];
             
             [[NSFileManager defaultManager] setAttributes: attrs ofItemAtPath: destination error: nil];
-            //TODO: play cheesy sound effect and show bezel notification.
+            
+            [[NSApp delegate] playUISoundWithName: @"Snapshot" atVolume: 1.0f];
+            [[BXBezelController controller] showScreenshotBezel];
         }
     }
 }

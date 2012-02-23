@@ -421,6 +421,7 @@
 		9F902C2A142E199100843B01 /* BXExternalMIDIDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F902C29142E199100843B01 /* BXExternalMIDIDevice.m */; };
 		9F955B60141A05990068EF71 /* InsertFreestandingTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F955B5E141A05990068EF71 /* InsertFreestandingTemplate.pdf */; };
 		9F955B61141A05990068EF71 /* EjectFreestandingTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F955B5F141A05990068EF71 /* EjectFreestandingTemplate.pdf */; };
+		9F9606E814F65A230072E90C /* ScreenshotTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F9606E714F65A230072E90C /* ScreenshotTemplate.pdf */; };
 		9F960C7F12AAAB2900568AFD /* BlankShelves.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F960C7E12AAAB2900568AFD /* BlankShelves.png */; };
 		9F96969813E59CA100FB51EC /* NoJoystickTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F96969713E59CA100FB51EC /* NoJoystickTemplate.pdf */; };
 		9F98EF5914E80A0900095248 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9F98EF5714E80A0900095248 /* Localizable.strings */; };
@@ -1132,6 +1133,7 @@
 		9F902C29142E199100843B01 /* BXExternalMIDIDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXExternalMIDIDevice.m; sourceTree = "<group>"; };
 		9F955B5E141A05990068EF71 /* InsertFreestandingTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = InsertFreestandingTemplate.pdf; sourceTree = "<group>"; };
 		9F955B5F141A05990068EF71 /* EjectFreestandingTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = EjectFreestandingTemplate.pdf; sourceTree = "<group>"; };
+		9F9606E714F65A230072E90C /* ScreenshotTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = ScreenshotTemplate.pdf; sourceTree = "<group>"; };
 		9F960C7E12AAAB2900568AFD /* BlankShelves.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BlankShelves.png; sourceTree = "<group>"; };
 		9F96969713E59CA100FB51EC /* NoJoystickTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = NoJoystickTemplate.pdf; sourceTree = "<group>"; };
 		9F98589513EF71F600E66877 /* BXBinCueImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBinCueImage.h; sourceTree = "<group>"; };
@@ -2489,6 +2491,113 @@
 			name = MIDI;
 			sourceTree = "<group>";
 		};
+		9F9606E514F65A0B0072E90C /* Bezels */ = {
+			isa = PBXGroup;
+			children = (
+				9F70278513D730D000606B4C /* BunnyTemplate.png */,
+				9F70278613D730D000606B4C /* TurtleTemplate.png */,
+				9FFF635B14013F4D007E8B47 /* PauseTemplate.pdf */,
+				9FFF635C14013F4D007E8B47 /* PlayTemplate.pdf */,
+				9FFF635D14013F4D007E8B47 /* EjectTemplate.pdf */,
+				9FFF635E14013F4D007E8B47 /* InsertTemplate.pdf */,
+				9F9606E714F65A230072E90C /* ScreenshotTemplate.pdf */,
+				9F3034B714E2C3F600BC572E /* NumlockActiveTemplate.pdf */,
+				9F3034B814E2C3F600BC572E /* NumlockInactiveTemplate.pdf */,
+				9FD54A5C14DE979B00FE350F /* NumpadInactiveTemplate.pdf */,
+				9FD54A5914DE96B800FE350F /* NumpadActiveTemplate.pdf */,
+				9FBEC4F2142CEB770016964A /* MT32LCDFontTemplate.png */,
+				9FBEC4F3142CEB770016964A /* MT32LCDGridTemplate.png */,
+			);
+			name = Bezels;
+			sourceTree = "<group>";
+		};
+		9F9606E914F65A3A0072E90C /* Inspector */ = {
+			isa = PBXGroup;
+			children = (
+				9F7FC94B139EB38300D60320 /* RacingWheel.png */,
+				9FA54098139E85D800999940 /* 4ButtonJoystick.png */,
+				9F0E610E139E1A05004A7A56 /* CHFlightstickPro.png */,
+				9F0E610F139E1A05004A7A56 /* ThrustmasterFCS.png */,
+				9F96969713E59CA100FB51EC /* NoJoystickTemplate.pdf */,
+				9FD012E213AB845200AF6FE8 /* GamepadTemplate.pdf */,
+				9FFF636B140150C3007E8B47 /* DisketteTemplate.pdf */,
+				9FFF635914013F4D007E8B47 /* HardDiskTemplate.pdf */,
+				9FFF635A14013F4D007E8B47 /* CDROMTemplate.pdf */,
+				9FBDC590141A0E5D00171176 /* BundleFreestandingTemplate.pdf */,
+				9F955B5E141A05990068EF71 /* InsertFreestandingTemplate.pdf */,
+				9F955B5F141A05990068EF71 /* EjectFreestandingTemplate.pdf */,
+			);
+			name = Inspector;
+			sourceTree = "<group>";
+		};
+		9F9606EA14F65AAF0072E90C /* Preferences */ = {
+			isa = PBXGroup;
+			children = (
+				9F9A4C9010F67A1F00E61965 /* GalleryOriginal.png */,
+				9F9A4C9110F67A1F00E61965 /* GalleryHQx.png */,
+				9F9A4C9210F67A1F00E61965 /* GalleryMAME.png */,
+				9F9A4C9310F67A1F00E61965 /* GallerySpotlight.png */,
+				9F9A4C9410F67A1F00E61965 /* GalleryBkg.jpg */,
+				9F9A4C9510F67A1F00E61965 /* GalleryTVScanlines.png */,
+				9F676BEF1235451B00924B8C /* Display.png */,
+				9F1F00AA143F091300FF163A /* Audio.png */,
+				9FBA48BF1450B73900F9BBDE /* Keyboard.png */,
+				9F0102E11440561E00942713 /* MT32Shelf.jpg */,
+				9F0102DF1440543500942713 /* MT32ShelfHighlight.png */,
+				9F586CEF143E51DD00E840C8 /* CM32L.png */,
+				9F586CF0143E51DD00E840C8 /* MT32.png */,
+			);
+			name = Preferences;
+			sourceTree = "<group>";
+		};
+		9F9606EB14F65AF10072E90C /* Shelves */ = {
+			isa = PBXGroup;
+			children = (
+				9F2121E5130187A9002AB1B7 /* ShelfTemplateLeopard.jpg */,
+				9F2121E6130187A9002AB1B7 /* ShelfTemplateSnowLeopard.jpg */,
+				9F960C7E12AAAB2900568AFD /* BlankShelves.png */,
+			);
+			name = Shelves;
+			sourceTree = "<group>";
+		};
+		9F9606EC14F65B030072E90C /* Importing */ = {
+			isa = PBXGroup;
+			children = (
+				9F25C4E112130B5E0025CB2C /* BrandWatermark.png */,
+				9F1CBCAC120CCF3900C5E926 /* Blueprint.jpg */,
+				9FA9E255121FD5BA006E20C4 /* DropzoneTemplate.pdf */,
+				9FE2172A121EED1E001452E3 /* ImportCoverArtTip.png */,
+				9FE2172C121EED1E001452E3 /* ImportRenameTip.png */,
+			);
+			name = Importing;
+			sourceTree = "<group>";
+		};
+		9F9606ED14F65B1A0072E90C /* Cover art */ = {
+			isa = PBXGroup;
+			children = (
+				9F59D99710AE0956008DBBC1 /* BoxArtShine.png */,
+				9F550664121B057C0042614A /* 35Diskette.icns */,
+				9FC5353412F489F8005E7670 /* 35DisketteShine.icns */,
+				9F550665121B057C0042614A /* CDCase.icns */,
+				9F18124312994474009BC4B2 /* CDCover.icns */,
+				9F550666121B057C0042614A /* 525Diskette.icns */,
+			);
+			name = "Cover art";
+			sourceTree = "<group>";
+		};
+		9F9606EE14F65B5F0072E90C /* Icons */ = {
+			isa = PBXGroup;
+			children = (
+				9F843FE01226EB1100FD37F1 /* import.png */,
+				9F4B5283122591960055022A /* prompt.icns */,
+				9FCBB2CD10A61CA800C28B09 /* boxer.icns */,
+				9F6A79031203547800D2097D /* gamefolder.icns */,
+				9FCBB2CE10A61CA800C28B09 /* executable.icns */,
+				9FCBB2CF10A61CA800C28B09 /* package.icns */,
+			);
+			name = Icons;
+			sourceTree = "<group>";
+		};
 		9F9A4C9E10F67CEA00E61965 /* Preferences panel */ = {
 			isa = PBXGroup;
 			children = (
@@ -2520,70 +2629,20 @@
 		9FBC34390F56C5AC001811F2 /* Images */ = {
 			isa = PBXGroup;
 			children = (
-				9F3034B714E2C3F600BC572E /* NumlockActiveTemplate.pdf */,
-				9F3034B814E2C3F600BC572E /* NumlockInactiveTemplate.pdf */,
-				9FD54A5C14DE979B00FE350F /* NumpadInactiveTemplate.pdf */,
-				9FD54A5914DE96B800FE350F /* NumpadActiveTemplate.pdf */,
-				9F0102E11440561E00942713 /* MT32Shelf.jpg */,
-				9F0102DF1440543500942713 /* MT32ShelfHighlight.png */,
-				9F586CEF143E51DD00E840C8 /* CM32L.png */,
-				9F586CF0143E51DD00E840C8 /* MT32.png */,
-				9FBEC4F2142CEB770016964A /* MT32LCDFontTemplate.png */,
-				9FBEC4F3142CEB770016964A /* MT32LCDGridTemplate.png */,
-				9FBDC590141A0E5D00171176 /* BundleFreestandingTemplate.pdf */,
-				9F955B5E141A05990068EF71 /* InsertFreestandingTemplate.pdf */,
-				9F955B5F141A05990068EF71 /* EjectFreestandingTemplate.pdf */,
-				9F96969713E59CA100FB51EC /* NoJoystickTemplate.pdf */,
-				9FFF636B140150C3007E8B47 /* DisketteTemplate.pdf */,
-				9FFF635914013F4D007E8B47 /* HardDiskTemplate.pdf */,
-				9FFF635A14013F4D007E8B47 /* CDROMTemplate.pdf */,
-				9FFF635B14013F4D007E8B47 /* PauseTemplate.pdf */,
-				9FFF635C14013F4D007E8B47 /* PlayTemplate.pdf */,
-				9FFF635D14013F4D007E8B47 /* EjectTemplate.pdf */,
-				9FFF635E14013F4D007E8B47 /* InsertTemplate.pdf */,
-				9F70278513D730D000606B4C /* BunnyTemplate.png */,
-				9F70278613D730D000606B4C /* TurtleTemplate.png */,
-				9FD012E213AB845200AF6FE8 /* GamepadTemplate.pdf */,
-				9F7FC94B139EB38300D60320 /* RacingWheel.png */,
-				9FA54098139E85D800999940 /* 4ButtonJoystick.png */,
-				9F0E610E139E1A05004A7A56 /* CHFlightstickPro.png */,
-				9F0E610F139E1A05004A7A56 /* ThrustmasterFCS.png */,
-				9F2121E5130187A9002AB1B7 /* ShelfTemplateLeopard.jpg */,
-				9F2121E6130187A9002AB1B7 /* ShelfTemplateSnowLeopard.jpg */,
+				9F9606EE14F65B5F0072E90C /* Icons */,
+				9F9606EB14F65AF10072E90C /* Shelves */,
+				9F9606EA14F65AAF0072E90C /* Preferences */,
+				9F9606E914F65A3A0072E90C /* Inspector */,
+				9F9606E514F65A0B0072E90C /* Bezels */,
+				9F9606EC14F65B030072E90C /* Importing */,
+				9F9606ED14F65B1A0072E90C /* Cover art */,
 				9FFC2ABF12A19CCC008C2B3B /* Sample Game Icons */,
-				9F676BEF1235451B00924B8C /* Display.png */,
-				9F1F00AA143F091300FF163A /* Audio.png */,
-				9FBA48BF1450B73900F9BBDE /* Keyboard.png */,
-				9F960C7E12AAAB2900568AFD /* BlankShelves.png */,
-				9F843FE01226EB1100FD37F1 /* import.png */,
-				9F4B5283122591960055022A /* prompt.icns */,
 				9F2292621225848000ABC0B3 /* WelcomeSpotlight.png */,
-				9FE2172A121EED1E001452E3 /* ImportCoverArtTip.png */,
-				9FE2172C121EED1E001452E3 /* ImportRenameTip.png */,
-				9F550664121B057C0042614A /* 35Diskette.icns */,
-				9FC5353412F489F8005E7670 /* 35DisketteShine.icns */,
-				9F550665121B057C0042614A /* CDCase.icns */,
-				9F18124312994474009BC4B2 /* CDCover.icns */,
-				9F550666121B057C0042614A /* 525Diskette.icns */,
-				9F25C4E112130B5E0025CB2C /* BrandWatermark.png */,
-				9FA9E255121FD5BA006E20C4 /* DropzoneTemplate.pdf */,
 				9FA9E27F121FD874006E20C4 /* PanelExpandTemplate.pdf */,
 				9FA9E280121FD874006E20C4 /* PanelCollapseTemplate.pdf */,
-				9F1CBCAC120CCF3900C5E926 /* Blueprint.jpg */,
 				9FBD321610E5144C00031CB6 /* Brand.png */,
-				9FCBB2CD10A61CA800C28B09 /* boxer.icns */,
-				9F6A79031203547800D2097D /* gamefolder.icns */,
-				9FCBB2CE10A61CA800C28B09 /* executable.icns */,
-				9FCBB2CF10A61CA800C28B09 /* package.icns */,
 				9F59DD2210AF6129008DBBC1 /* Grille.png */,
-				9F59D99710AE0956008DBBC1 /* BoxArtShine.png */,
 				9FBC31D10F56C370001811F2 /* AboutBackground.png */,
-				9F9A4C9010F67A1F00E61965 /* GalleryOriginal.png */,
-				9F9A4C9110F67A1F00E61965 /* GalleryHQx.png */,
-				9F9A4C9210F67A1F00E61965 /* GalleryMAME.png */,
-				9F9A4C9310F67A1F00E61965 /* GallerySpotlight.png */,
-				9F9A4C9410F67A1F00E61965 /* GalleryBkg.jpg */,
-				9F9A4C9510F67A1F00E61965 /* GalleryTVScanlines.png */,
 			);
 			name = Images;
 			sourceTree = "<group>";
@@ -3018,6 +3077,7 @@
 				9F3034B914E2C3F600BC572E /* NumlockActiveTemplate.pdf in Resources */,
 				9F3034BA14E2C3F600BC572E /* NumlockInactiveTemplate.pdf in Resources */,
 				9F98EF5914E80A0900095248 /* Localizable.strings in Resources */,
+				9F9606E814F65A230072E90C /* ScreenshotTemplate.pdf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

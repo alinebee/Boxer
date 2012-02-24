@@ -11,7 +11,8 @@
 #import "BXDOSWindow.h"
 #import "BXBezelController.h"
 
-#import <Carbon/Carbon.h> //For keycodes
+//For keycodes and input source methods
+#import <Carbon/Carbon.h>
 
 
 @implementation BXInputController (BXKeyboardInput)
@@ -52,6 +53,15 @@
 	return mappings;
 }
 
+- (void) _syncKeyboardLayout
+{
+    //Sync the DOS keyboard layout to match the current OS X layout as best as possible.
+    NSString *bestLayoutMatch = [[self class] keyboardLayoutForCurrentInputMethod];
+    if (bestLayoutMatch)
+    {
+        [[self _emulatedKeyboard] setActiveLayout: bestLayoutMatch];
+    }
+}
 
 #pragma mark -
 #pragma mark Key events

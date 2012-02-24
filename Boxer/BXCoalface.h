@@ -98,11 +98,9 @@ extern "C" {
     void boxer_setJoystickActive(bool joystickActive);
 	void boxer_setMouseActive(bool mouseActive);
 	void boxer_mouseMovedToPoint(float x, float y);
-	
-	bool boxer_capsLockEnabled();
-	bool boxer_numLockEnabled();
-	
-	double boxer_realTime();
+    
+    //Defined in keyboard.cpp to let Boxer see if there's any room left in the keyboard buffer.
+    bool boxer_keyboardBufferFull();
     
     void boxer_log(char const* format,...);
     void boxer_die(char const *functionName, char const *fileName, int lineNumber, char const* format,...);

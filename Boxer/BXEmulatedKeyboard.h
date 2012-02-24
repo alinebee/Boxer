@@ -25,16 +25,22 @@ typedef KBD_KEYS BXDOSKeyCode;
 	BOOL capsLockEnabled;
 	BOOL numLockEnabled;
     BOOL scrollLockEnabled;
-	NSString *activeLayout;
-	NSUInteger pressedKeys[KBD_LAST];
+    NSUInteger pressedKeys[KBD_LAST];
+    
+    //If setActiveLayout: is called before any layout has been loaded,
+    //it will be saved here and applied once DOSBox is ready to load a layout.
+	NSString *pendingLayout;
 }
 
 @property (assign) BOOL capsLockEnabled;
 @property (assign) BOOL numLockEnabled;
 @property (assign) BOOL scrollLockEnabled;
 
-@property (copy) NSString *activeLayout;
+//The DOS keyboard layout that is currently in use.
+@property (copy, nonatomic) NSString *activeLayout;
 
+//Returns YES if the emulated keyboard buffer is full, meaning further key events will be ignored.
+@property (readonly) BOOL keyboardBufferFull;
 
 #pragma mark -
 #pragma mark Keyboard input
@@ -64,6 +70,9 @@ typedef KBD_KEYS BXDOSKeyCode;
 
 #pragma mark -
 #pragma mark Keyboard layout mapping
+
+//The key code that will produce the specified character under the current keyboard layout.
+//- (BXDOSKeyCode) keyCodeForCharacter: (unichar)character;
 
 //The default DOS keyboard layout that should be used if no more specific one can be found.
 + (NSString *)defaultKeyboardLayout;

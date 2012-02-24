@@ -27,6 +27,8 @@
 
 #import "BXBezelController.h"
 
+//For text input services notification names
+#import <Carbon/Carbon.h>
 
 
 @implementation BXInputController
@@ -127,6 +129,8 @@
 			[joystickController removeObserver: self forKeyPath: @"joystickDevices"];
 			[joypadController removeObserver: self forKeyPath: @"hasJoypadDevices"];
 			
+            CFNotificationCenterRef cfCenter = CFNotificationCenterGetDistributedCenter();
+            CFNotificationCenterRemoveObserver(cfCenter, self, kTISNotifySelectedKeyboardInputSourceChanged, NULL);
 			
 			[self didResignKey];
 		}
@@ -191,14 +195,17 @@
 						 options: NSKeyValueObservingOptionInitial
 						 context: nil];
 			
-			//Set the DOS keyboard layout to match the current OS X layout as best as possible
-			//TODO: listen for input source changes
-			NSString *bestLayoutMatch = [[self class] keyboardLayoutForCurrentInputMethod];
-            if (bestLayoutMatch)
-            {
-                [[self _emulatedKeyboard] setActiveLayout: bestLayoutMatch];
-			}
             
+			//Listen for changes to the keyboard input method
+            CFNotificationCenterRef cfCenter = CFNotificationCenterGetDistributedCenter();
+            CFNotificationCenterAddObserver(cfCenter, self, &_inputSourceChanged,
+                                            kTISNotifySelectedKeyboardInputSourceChanged, NULL,
+                                            CFNotificationSuspensionBehaviorCoalesce);
+            
+            //Sync the current keyboard layout.
+            [self _syncKeyboardLayout];
+            
+            //Sync the current state of the input methods.
 			[self didBecomeKey];
 		}
 	}
@@ -375,7 +382,7 @@
 
 - (void) didBecomeKey
 {
-	//Account for any changes to key modifier flags while we didn't have keyboard focus.
+    //Account for any changes to key modifier flags while we didn't have keyboard focus.
 	//IMPLEMENTATION NOTE: CGEventSourceFlagsState returns the currently active modifiers
 	//outside of the event stream. It works the same as the 10.6-only NSEvent +modifierFlags,
 	//but is available on 10.5 and (unlike +modifierFlags) it also includes side-specific Shift,
@@ -385,6 +392,15 @@
 	
 	//Also sync the cursor state while we're at it, in case the cursor was already over the window.
 	[self cursorUpdate: nil];
+}
+
+void _inputSourceChanged(CFNotificationCenterRef center,
+                         void *observer,
+                         CFStringRef name,
+                         const void *object,
+                         CFDictionaryRef userInfo)
+{
+    [(BXInputController *)observer _syncKeyboardLayout];
 }
 
 

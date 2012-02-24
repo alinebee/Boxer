@@ -7,12 +7,20 @@
 
 
 #import "BXEmulatedKeyboard.h"
-
+#import "BXEmulator.h"
+#import "BXCoalface.h"
 
 #pragma mark -
 #pragma mark Private method declarations
 
+//Implemented in dos_keyboard_layout.cpp
+Bitu DOS_SwitchKeyboardLayout(const char* new_layout, Bit32s& tried_cp);
+Bitu DOS_LoadKeyboardLayout(const char * layoutname, Bit32s codepage, const char * codepagefile);
+const char* DOS_GetLoadedLayout(void);
+
 @interface BXEmulatedKeyboard ()
+
+@property (copy, nonatomic) NSString *pendingLayout;
 
 //Called after a delay by keyPressed: to release the specified key
 - (void) _releaseKeyWithCode: (NSNumber *)key;
@@ -24,9 +32,7 @@
 #pragma mark Implementation
 
 @implementation BXEmulatedKeyboard
-@synthesize capsLockEnabled, numLockEnabled, scrollLockEnabled, activeLayout;
-
-+ (NSString *) defaultKeyboardLayout { return @"us"; }
+@synthesize capsLockEnabled, numLockEnabled, scrollLockEnabled, pendingLayout;
 
 + (NSTimeInterval) defaultKeypressDuration { return 0.25; }
 
@@ -38,15 +44,15 @@
 {
 	if ((self = [super init]))
 	{
-		[self setActiveLayout: [[self class] defaultKeyboardLayout]];
+		self.pendingLayout = [[self class] defaultKeyboardLayout];
 	}
 	return self;
 }
 
 - (void) dealloc
 {
-	[self setActiveLayout: nil], [activeLayout release];
-	
+    self.pendingLayout = nil;
+    
 	[super dealloc];
 }
 
@@ -101,11 +107,21 @@
 {
 	[self keyDown: key];
 	
-	[self performSelector: @selector(_releaseKeyWithCode:)
-			   withObject: [NSNumber numberWithUnsignedShort: key]
-			   afterDelay: duration];
+    if (duration > 0)
+    {
+        [self performSelector: @selector(_releaseKeyWithCode:)
+                   withObject: [NSNumber numberWithUnsignedShort: key]
+                   afterDelay: duration];
+    }
+    //Immediately release the key if the duration was 0.
+    //CHECKME: The keydown and keyup events will still appear in the keyboard event queue,
+    //but games that poll the current state of the keys may overlook the event.
+    else
+    {
+        [self keyUp: key];
+    }
 }
-	 
+
 - (void) _releaseKeyWithCode: (NSNumber *)key
 {
 	[self keyUp: [key unsignedShortValue]];
@@ -129,6 +145,54 @@
         pressedKeys[key] = 1;
         [self keyUp: key];
     }
+}
+
+- (BOOL) keyboardBufferFull
+{
+    return boxer_keyboardBufferFull();
+}
+
+#pragma mark -
+#pragma mark Keyboard layout
+
++ (NSString *) defaultKeyboardLayout { return @"us"; }
+
+- (void) setActiveLayout: (NSString *)layout
+{
+    //TODO: support codepage files as well as keycodes
+    
+    //We cannot have a null layout, so explicitly force it to US.
+    if (!layout) layout = [[self class] defaultKeyboardLayout];
+    
+    //Always sanitise the layout to lowercase.
+    layout = layout.lowercaseString;
+    
+    if (![layout isEqualToString: self.activeLayout])
+    {
+        if (DOS_GetLoadedLayout())
+        {
+            const char *layoutName = [layout cStringUsingEncoding: BXDirectStringEncoding];
+            //Sync the keyboard layout now
+            Bit32s codepage = -1;
+            DOS_SwitchKeyboardLayout(layoutName, codepage);
+        }
+        
+        //Whether we can apply it or not, update the pending layout also.
+        self.pendingLayout = layout;
+    }
+}
+
+- (NSString *)activeLayout
+{
+    const char *loadedName = DOS_GetLoadedLayout();
+    
+    //If no layout has been loaded yet, return the pending layout;
+    //otherwise, return the actual active layout.
+    if (loadedName)
+    {
+        return [NSString stringWithCString: loadedName encoding: BXDirectStringEncoding];
+    }
+    else return self.pendingLayout;
 }
 	 
 @end

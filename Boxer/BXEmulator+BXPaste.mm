@@ -32,7 +32,11 @@
 		}
 		return YES;
 	}
-	return NO;
+    else
+    {
+        //TODO: generate simulated keyboard events for the specified keys.
+        return NO;
+    }
 }
 
 - (BOOL) canAcceptPastedString: (NSString *)pastedString

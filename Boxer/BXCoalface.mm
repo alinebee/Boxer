@@ -285,19 +285,6 @@ void boxer_mouseMovedToPoint(float x, float y)
 	[[emulator mouse] setPosition: point];
 }
 
-bool boxer_capsLockEnabled()
-{
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	return [[emulator keyboard] capsLockEnabled];
-}
-
-bool boxer_numLockEnabled()
-{
-	BXEmulator *emulator = [BXEmulator currentEmulator];
-	return [[emulator keyboard] numLockEnabled];
-}
-
-
 #pragma mark -
 #pragma mark Helper functions
 

@@ -25,6 +25,9 @@
 #include "mem.h"
 #include "mixer.h"
 #include "timer.h"
+//--Added 2012-02-24 by Alun Bestor to give Boxer more hooks into keyboard behaviour
+#import "BXCoalface.h"
+//--End of modifications
 
 #define KEYBUFSIZE 32
 #define KEYDELAY 0.300f			//Considering 20-30 khz serial clock and 11 bits/char
@@ -71,6 +74,10 @@ static void KEYBOARD_TransferBuffer(Bitu val) {
 	keyb.used--;
 }
 
+bool boxer_keyboardBufferFull()
+{
+    return keyb.used >= KEYBUFSIZE;
+}
 
 void KEYBOARD_ClrBuffer(void) {
 	keyb.used=0;

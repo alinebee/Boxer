@@ -260,7 +260,8 @@ void boxer_didRemoveLocalFile(const char *path, DOS_Drive *dosboxDrive)
 const char * boxer_currentDOSKeyboardLayout()
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	NSString *layoutCode = [[emulator keyboard] activeLayout];
+	NSString *layoutCode = (emulator.isInitialized) ? emulator.keyboard.activeLayout : emulator.keyboard.pendingLayout;
+    
     if (layoutCode)
         return [layoutCode cStringUsingEncoding: BXDirectStringEncoding];
     else return NULL;

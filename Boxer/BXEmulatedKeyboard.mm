@@ -20,7 +20,7 @@ const char* DOS_GetLoadedLayout(void);
 
 @interface BXEmulatedKeyboard ()
 
-@property (copy, nonatomic) NSString *pendingLayout;
+@property (copy) NSString *pendingLayout;
 
 //Called after a delay by keyPressed: to release the specified key
 - (void) _releaseKeyWithCode: (NSNumber *)key;
@@ -159,9 +159,9 @@ const char* DOS_GetLoadedLayout(void);
 
 - (void) setActiveLayout: (NSString *)layout
 {
-    //TODO: support codepage files as well as keycodes
+    //TODO: support codepage files as well as keycodes?
     
-    //We cannot have a null layout, so explicitly force it to US.
+    //We cannot have a null layout, so explicitly force it to the default here.
     if (!layout) layout = [[self class] defaultKeyboardLayout];
     
     //Always sanitise the layout to lowercase.
@@ -169,14 +169,14 @@ const char* DOS_GetLoadedLayout(void);
     
     if (![layout isEqualToString: self.activeLayout])
     {
-        if (DOS_GetLoadedLayout())
+        if (boxer_keyboardLayoutHasLoaded())
         {
             const char *layoutName = [layout cStringUsingEncoding: BXDirectStringEncoding];
-            //Sync the keyboard layout now
             Bit32s codepage = -1;
+            
             DOS_SwitchKeyboardLayout(layoutName, codepage);
+            NSLog(@"%s, %i", layoutName, codepage);
         }
-        
         //Whether we can apply it or not, update the pending layout also.
         self.pendingLayout = layout;
     }
@@ -184,15 +184,25 @@ const char* DOS_GetLoadedLayout(void);
 
 - (NSString *)activeLayout
 {
-    const char *loadedName = DOS_GetLoadedLayout();
-    
-    //If no layout has been loaded yet, return the pending layout;
-    //otherwise, return the actual active layout.
-    if (loadedName)
+    if (boxer_keyboardLayoutHasLoaded())
     {
-        return [NSString stringWithCString: loadedName encoding: BXDirectStringEncoding];
+        const char *loadedName = DOS_GetLoadedLayout();
+        
+        //The name of the default keyboard layout (US) will be reported as NULL by DOSBox.
+        if (loadedName)
+        {
+            return [NSString stringWithCString: loadedName encoding: BXDirectStringEncoding];
+        }
+        else
+        {
+            return @"us";
+        }
     }
-    else return self.pendingLayout;
+    //If no layout has been loaded yet, return the layout we'll apply once DOSBox finishes initializing.
+    else
+    {
+        return self.pendingLayout;
+    }
 }
 	 
 @end

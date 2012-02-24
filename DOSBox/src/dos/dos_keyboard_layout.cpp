@@ -1088,6 +1088,13 @@ const char* DOS_GetLoadedLayout(void) {
 	return NULL;
 }
 
+//--Added 2012-02-24 by Alun Bestor to let Boxer check if any layout has been loaded.
+bool boxer_keyboardLayoutHasLoaded()
+{
+    return (loaded_layout != NULL);
+}
+//--End of modifications
+
 
 class DOS_KeyboardLayout: public Module_base {
 public:
@@ -1244,24 +1251,25 @@ public:
 					break;
 			}
 #endif
-		}
-
-		//--Added 2009-02-23 by Alun Bestor: if auto layout was specified, ask Boxer to provide the current OSX layout
-		if (!strncasecmp(layoutname, "auto", 4))
-		{
-			//TODO: also retrieve preferred codepage
-			layoutname = boxer_currentDOSKeyboardLayout();
-            //If no layout was recognised, then let DOSBox use the default keyboard behaviour.
-            if (!layoutname) return;
             
-			//FIX: if the US layout is preferred, then don't continue with codepage detection
-            //and let DOSBox fall back on the default keyboard behaviour.
-			//(this is regular DOSBox behaviour, and otherwise we end up with codepage 858 which has a few bugs)
-			if (!strncasecmp(layoutname, "us", 2)) return;
+            //--Added 2009-02-23 by Alun Bestor: if auto layout was specified, ask Boxer to provide the current OSX layout
+            if (!strncasecmp(layoutname, "auto", 4))
+            {
+                //TODO: also retrieve preferred codepage
+                const char *preferredLayout = boxer_currentDOSKeyboardLayout();
+                
+                //FIX: if the US layout is preferred, then don't continue with codepage detection
+                //and let DOSBox fall back on the default keyboard behaviour.
+                //(this is regular DOSBox behaviour, and otherwise we end up with codepage 858 which has a few bugs)
+                if (preferredLayout && strncasecmp(preferredLayout, "us", 2))
+                {
+                    layoutname = preferredLayout;
+                }
+            }
+            //--End of modifications
 		}
-		
-		//--End of modifications
 
+		
 		bool extract_codepage = true;
 		if (wants_dos_codepage>0) {
 			if ((loaded_layout->read_codepage_file("auto", (Bitu)wants_dos_codepage)) == KEYB_NOERROR) {

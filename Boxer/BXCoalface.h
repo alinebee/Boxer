@@ -101,6 +101,9 @@ extern "C" {
     
     //Defined in keyboard.cpp to let Boxer see if there's any room left in the keyboard buffer.
     bool boxer_keyboardBufferFull();
+    //Defined in dos_keyboard_layout.cpp to let Boxer see if DOSBox has loaded up any keyboard layout.
+    bool boxer_keyboardLayoutHasLoaded();
+
     
     void boxer_log(char const* format,...);
     void boxer_die(char const *functionName, char const *fileName, int lineNumber, char const* format,...);

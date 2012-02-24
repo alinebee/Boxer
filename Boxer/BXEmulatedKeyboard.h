@@ -39,6 +39,10 @@ typedef KBD_KEYS BXDOSKeyCode;
 //The DOS keyboard layout that is currently in use.
 @property (copy, nonatomic) NSString *activeLayout;
 
+//The DOS keyboard layout that will be applied once emulation has started up.
+//Used internally and set automatically when activeLayout is changed during initialization.
+@property (copy, readonly) NSString *pendingLayout;
+
 //Returns YES if the emulated keyboard buffer is full, meaning further key events will be ignored.
 @property (readonly) BOOL keyboardBufferFull;
 

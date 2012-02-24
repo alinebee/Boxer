@@ -400,7 +400,7 @@ void _inputSourceChanged(CFNotificationCenterRef center,
                          const void *object,
                          CFDictionaryRef userInfo)
 {
-    [(BXInputController *)observer _syncKeyboardLayout];
+    [(BXInputController *)observer performSelectorOnMainThread: @selector(_syncKeyboardLayout) withObject: nil waitUntilDone: NO];
 }
 
 

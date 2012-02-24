@@ -169,14 +169,21 @@ const char* DOS_GetLoadedLayout(void);
     
     if (![layout isEqualToString: self.activeLayout])
     {
+        //Well, so much for that.
+        //In order to switch layouts, DOSBox may need to unpack layout data from UCX-packed
+        //keyboard.sys dumps. Doing so requires it to execute the contents of the sys as a DOS
+        //executable, which will clobber anything else we happen to be running at the same time,
+        //causing the emulation to crash. So basically we can't implement arbitrary layout switching
+        //until the keyboard layout data is replaced with an uncompressed version that doesn't need
+        //to be unpacked before use.
+        /*
         if (boxer_keyboardLayoutHasLoaded())
         {
             const char *layoutName = [layout cStringUsingEncoding: BXDirectStringEncoding];
-            Bit32s codepage = -1;
             
             DOS_SwitchKeyboardLayout(layoutName, codepage);
-            NSLog(@"%s, %i", layoutName, codepage);
         }
+         */
         //Whether we can apply it or not, update the pending layout also.
         self.pendingLayout = layout;
     }

@@ -319,8 +319,8 @@ const char* DOS_GetLoadedLayout(void);
     {
         const char *layoutName;
         if (!layout || layout.length < 2) layoutName = "none";
-        //Strip off any codepage number from the string and sanitise it to lowercase.
-        else layoutName = [[layout substringToIndex: 2].lowercaseString cStringUsingEncoding: BXDirectStringEncoding];
+        //Sanitise the layout name to lowercase.
+        else layoutName = [layout.lowercaseString cStringUsingEncoding: BXDirectStringEncoding];
         
         //IMPLEMENTATION NOTE: we can only safely swap layouts to one that's supported
         //by the current codepage. If the current codepage does not support the specified

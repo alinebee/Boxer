@@ -5,9 +5,8 @@
  online at [http://www.gnu.org/licenses/gpl-2.0.txt].
  */
 
+#import "BXSessionPrivate.h"
 #import "BXAppController.h"
-#import "BXSession+BXDragDrop.h"
-#import "BXSession+BXFileManager.h"
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulator+BXPaste.h"
 #import "BXEmulatorErrors.h"
@@ -82,6 +81,9 @@
 	//If the dragged string was successfully handled, reactivate Boxer and return focus to the DOS window.
     if (returnValue)
     {
+        //Unpause when handling strings
+        [self resume: self];
+        
         [NSApp activateIgnoringOtherApps: YES];
         [[[self DOSWindowController] window] makeKeyAndOrderFront: self];
     }

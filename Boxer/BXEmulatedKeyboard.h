@@ -53,6 +53,10 @@ typedef KBD_KEYS BXDOSKeyCode;
 //Returns YES if the emulated keyboard buffer is full, meaning further key events will be ignored.
 @property (readonly) BOOL keyboardBufferFull;
 
+//Whether we are currently typing text into the keyboard. Will be YES while the input from
+//typeCharacters: is being processed.
+@property (readonly) BOOL isTyping;
+
 
 #pragma mark -
 #pragma mark Keyboard input
@@ -80,6 +84,10 @@ typedef KBD_KEYS BXDOSKeyCode;
 //in bursts with the specified interval between bursts.
 - (void) typeCharacters: (NSString *)characters burstInterval: (NSTimeInterval)interval;
 - (void) typeCharacters: (NSString *)characters;
+
+//Cancel any pending keydown events and empty the queue.
+- (void) cancelTyping;
+
 
 
 #pragma mark -

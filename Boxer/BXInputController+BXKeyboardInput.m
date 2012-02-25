@@ -71,37 +71,42 @@
 	//If the keypress was command-modified, don't pass it on to the emulator as it indicates
 	//a failed key equivalent.
 	//(This is consistent with how other OS X apps with textinput handle Cmd-keypresses.)
-	if ([theEvent modifierFlags] & NSCommandKeyMask)
+	if ((theEvent.modifierFlags & NSCommandKeyMask) == NSCommandKeyMask)
 	{
 		[super keyDown: theEvent];
-	}
-	
-	//Pressing ESC while in fullscreen mode and not running a program will exit fullscreen mode.
-	else if ([[theEvent charactersIgnoringModifiers] isEqualToString: @"\e"] &&
-		[[[self _windowController] window] isFullScreen] &&
-		[[[self representedObject] emulator] isAtPrompt])
-	{
-		[NSApp sendAction: @selector(exitFullScreen:) to: nil from: self];
-	}
-	
-    //Ignore repeated key events, as the emulation implements its own key-repeating.
-	else if ([theEvent isARepeat])
-    {
         return;
+	}
+	
+    //Conditional behaviour for the ESC key:
+	if ([theEvent.charactersIgnoringModifiers isEqualToString: @"\e"])
+    {
+        //Pressing ESC while text is being typed in (e.g. via a paste) will cancel the typing.
+        if (self._emulatedKeyboard.isTyping)
+        {
+            [self._emulatedKeyboard cancelTyping];
+            return;
+        }
+        //Pressing ESC while in fullscreen mode and not running a program, will exit fullscreen mode.
+        else if (self._windowController.window.isFullScreen && self.representedObject.emulator.isAtPrompt)
+        {
+            [NSApp sendAction: @selector(exitFullScreen:) to: nil from: self];
+            return;
+        }
     }
-    
+	
     //Otherwise, pass the keypress on to the emulated keyboard hardware.
-    else
-	{   
+    //Ignore repeated key events, as the emulation implements its own key-repeating.
+	if (!theEvent.isARepeat)
+    {
 		//Unpause the emulation whenever a key is sent to DOS.
-		[[self representedObject] resume: self];
+		[self.representedObject resume: self];
         
         //Check the separate key-mapping layer for numpad simulation for this key,
         //if the numpad simulation toggle is on or the user is holding down the Fn key.
-        BOOL fnModified = ([theEvent modifierFlags] & NSFunctionKeyMask) == NSFunctionKeyMask;
-        BOOL simulateNumpad = [self simulatedNumpadActive] || fnModified;
+        BOOL fnModified = (theEvent.modifierFlags & NSFunctionKeyMask) == NSFunctionKeyMask;
+        BOOL simulateNumpad = self.simulatedNumpadActive || fnModified;
         
-        CGKeyCode OSXKeyCode = [theEvent keyCode];
+        CGKeyCode OSXKeyCode = theEvent.keyCode;
         BXDOSKeyCode dosKeyCode = KBD_NONE;
         
         //Check if we have a different key mapping for this key when simulating a numpad.
@@ -117,7 +122,7 @@
             dosKeyCode = [self _DOSKeyCodeForSystemKeyCode: OSXKeyCode];
         
         if (dosKeyCode != KBD_NONE)
-            [[self _emulatedKeyboard] keyDown: dosKeyCode];
+            [self._emulatedKeyboard keyDown: dosKeyCode];
 	}
 }
 

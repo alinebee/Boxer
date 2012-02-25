@@ -447,6 +447,10 @@
 		pastedString = [filePaths lastObject];
 	}
 	else pastedString = [pboard stringForType: NSStringPboardType];
+    
+    //Unpause when pasting strings
+    [self resume: self];
+    
 	[emulator handlePastedString: pastedString];
 }
 

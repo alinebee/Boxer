@@ -285,18 +285,24 @@ const char* DOS_GetLoadedLayout(void);
     }
     
     //Shut down the timer once we're out of keys to send.
-    if (!keyEvents.count)
-    {   
-        //Re-enable the active keyboard layout once we've finished typing.
-        //(Do this only after a delay, so that the buffer has time to get
-        //processed without the active layout.)
+    if (!keyEvents.count) [self cancelTyping];
+}
+
+- (void) cancelTyping
+{
+    if (self.pendingKeypresses)
+    {
         [self performSelector: @selector(_setUsesActiveLayoutFromValue:)
                    withObject: [NSNumber numberWithBool: YES]
                    afterDelay: self.pendingKeypresses.timeInterval];
         
-        [timer invalidate];
+        [self.pendingKeypresses invalidate];
         self.pendingKeypresses = nil;
     }
+}
+- (BOOL) isTyping
+{
+    return self.pendingKeypresses != nil;
 }
 
 

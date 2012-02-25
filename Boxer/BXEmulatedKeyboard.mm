@@ -20,8 +20,6 @@ const char* DOS_GetLoadedLayout(void);
 
 @interface BXEmulatedKeyboard ()
 
-@property (copy) NSString *pendingLayout;
-
 //Called after a delay by keyPressed: to release the specified key
 - (void) _releaseKeyWithCode: (NSNumber *)key;
 
@@ -32,7 +30,7 @@ const char* DOS_GetLoadedLayout(void);
 #pragma mark Implementation
 
 @implementation BXEmulatedKeyboard
-@synthesize capsLockEnabled, numLockEnabled, scrollLockEnabled, pendingLayout;
+@synthesize capsLockEnabled, numLockEnabled, scrollLockEnabled, preferredLayout;
 
 + (NSTimeInterval) defaultKeypressDuration { return 0.25; }
 
@@ -44,14 +42,14 @@ const char* DOS_GetLoadedLayout(void);
 {
 	if ((self = [super init]))
 	{
-		self.pendingLayout = [[self class] defaultKeyboardLayout];
+		self.preferredLayout = [[self class] defaultKeyboardLayout];
 	}
 	return self;
 }
 
 - (void) dealloc
 {
-    self.pendingLayout = nil;
+    self.preferredLayout = nil;
     
 	[super dealloc];
 }
@@ -155,61 +153,67 @@ const char* DOS_GetLoadedLayout(void);
 #pragma mark -
 #pragma mark Keyboard layout
 
+//FIXME: the US layout has a bug in codepage 858, whereby the E will remain lowercase when capslock is on.
+//This bug goes away after switching from another layout back to US, so it may be at the DOSBox level.
 + (NSString *) defaultKeyboardLayout { return @"us"; }
 
 - (void) setActiveLayout: (NSString *)layout
 {
-    //TODO: support codepage files as well as keycodes?
-    
-    //We cannot have a null layout, so explicitly force it to the default here.
-    if (!layout) layout = [[self class] defaultKeyboardLayout];
-    
-    //Always sanitise the layout to lowercase.
-    layout = layout.lowercaseString;
-    
     if (![layout isEqualToString: self.activeLayout])
     {
-        //Well, so much for that.
-        //In order to switch layouts, DOSBox may need to unpack layout data from UCX-packed
-        //keyboard.sys dumps. Doing so requires it to execute the contents of the sys as a DOS
-        //executable, which will clobber anything else we happen to be running at the same time,
-        //causing the emulation to crash. So basically we can't implement arbitrary layout switching
-        //until the keyboard layout data is replaced with an uncompressed version that doesn't need
-        //to be unpacked before use.
-        /*
-        if (boxer_keyboardLayoutHasLoaded())
-        {
-            const char *layoutName = [layout cStringUsingEncoding: BXDirectStringEncoding];
-            
+        const char *layoutName;
+        if (!layout || layout.length < 2) layoutName = "none";
+        //Strip off any codepage number from the string and sanitise it to lowercase.
+        else layoutName = [[layout substringToIndex: 2].lowercaseString cStringUsingEncoding: BXDirectStringEncoding];
+        
+        //IMPLEMENTATION NOTE: we can only safely swap layouts to one that's supported
+        //by the current codepage. If the current codepage does not support the specified
+        //layout, we would need to load up another codepage, which is too complex and brittle
+        //to do while another program may be running.
+        //TODO: if we're at the DOS prompt anyway, then run KEYB to let it handle such cases.
+        if (boxer_keyboardLayoutSupported(layoutName))
+        {   
+            Bit32s codepage = -1;
             DOS_SwitchKeyboardLayout(layoutName, codepage);
         }
-         */
-        //Whether we can apply it or not, update the pending layout also.
-        self.pendingLayout = layout;
+        
+        //Whether we can apply it or not, mark this as our preferred layout so that
+        //DOSBox will apply it during startup.
+        self.preferredLayout = layout;
     }
 }
 
 - (NSString *)activeLayout
 {
-    if (boxer_keyboardLayoutHasLoaded())
+    if (boxer_keyboardLayoutLoaded())
     {
         const char *loadedName = DOS_GetLoadedLayout();
         
-        //The name of the default keyboard layout (US) will be reported as NULL by DOSBox.
         if (loadedName)
         {
             return [NSString stringWithCString: loadedName encoding: BXDirectStringEncoding];
         }
         else
         {
-            return @"us";
+            //The name of the "none" keyboard layout will be reported as NULL by DOSBox.
+            return nil;
         }
     }
-    //If no layout has been loaded yet, return the layout we'll apply once DOSBox finishes initializing.
+    //If the keyboard has not been initialized yet, return the layout we'll apply once DOSBox finishes initializing.
     else
     {
-        return self.pendingLayout;
+        return self.preferredLayout;
     }
 }
-	 
+
+- (BOOL) usesActiveLayout
+{
+    return boxer_keyboardLayoutActive();
+}
+
+- (void) setUsesActiveLayout: (BOOL)usesActiveLayout
+{
+    boxer_setKeyboardLayoutActive(usesActiveLayout);
+}
+
 @end

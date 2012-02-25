@@ -84,6 +84,11 @@ public:
 	void switch_foreign_layout();
 	const char* get_layout_name();
 	const char* main_language_code();
+    
+    //--Added 2012-02-25 by Alun Bestor to support limited on-the-fly layout switching
+    bool foreign_layout_active();
+    bool supports_language_code(const char *code);
+    //--End of modifications
 
 
 private:
@@ -1032,6 +1037,19 @@ const char* keyboard_layout::main_language_code() {
 	return NULL;
 }
 
+//--Added 2012-02-25 by Alun Bestor to support limited on-the-fly layout switching
+bool keyboard_layout::supports_language_code(const char *code) {
+    Bitu code_len = strlen(code);
+    for (Bitu i=0; i<language_code_count; i++) {
+        if (!strncasecmp(code,language_codes[i],code_len)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool keyboard_layout::foreign_layout_active() { return use_foreign_layout; }
+//--End of modifications
 
 static keyboard_layout* loaded_layout=NULL;
 
@@ -1089,9 +1107,35 @@ const char* DOS_GetLoadedLayout(void) {
 }
 
 //--Added 2012-02-24 by Alun Bestor to let Boxer check if any layout has been loaded.
-bool boxer_keyboardLayoutHasLoaded()
+bool boxer_keyboardLayoutLoaded()
 {
     return (loaded_layout != NULL);
+}
+
+bool boxer_keyboardLayoutSupported(const char *code)
+{
+    if (loaded_layout)
+    {
+        //If the current layout supports the specified language code without switching anything, yippee
+        if (loaded_layout->supports_language_code(code)) return true;
+    
+        //If we can safely swap layouts without changing codepages, yippee too
+        Bitu detectedCodepage = loaded_layout->extract_codepage(code);
+        if (detectedCodepage == dos.loaded_codepage) return true;
+    }
+    return false;
+}
+
+bool boxer_keyboardLayoutActive()
+{
+    if (loaded_layout) return loaded_layout->foreign_layout_active();
+    else return false;
+}
+
+void boxer_setKeyboardLayoutActive(bool active)
+{
+    if (loaded_layout && boxer_keyboardLayoutActive() != active)
+        loaded_layout->switch_foreign_layout();
 }
 //--End of modifications
 
@@ -1252,19 +1296,11 @@ public:
 			}
 #endif
             
-            //--Added 2009-02-23 by Alun Bestor: if auto layout was specified, ask Boxer to provide the current OSX layout
+            //--Added 2009-02-23 by Alun Bestor: if auto layout was specified, ask Boxer to provide a layout
             if (!strncasecmp(layoutname, "auto", 4))
             {
-                //TODO: also retrieve preferred codepage
-                const char *preferredLayout = boxer_currentDOSKeyboardLayout();
-                
-                //FIX: if the US layout is preferred, then don't continue with codepage detection
-                //and let DOSBox fall back on the default keyboard behaviour.
-                //(this is regular DOSBox behaviour, and otherwise we end up with codepage 858 which has a few bugs)
-                if (preferredLayout && strncasecmp(preferredLayout, "us", 2))
-                {
-                    layoutname = preferredLayout;
-                }
+                const char *preferredLayout = boxer_preferredKeyboardLayout();
+                if (preferredLayout) layoutname = preferredLayout;
             }
             //--End of modifications
 		}

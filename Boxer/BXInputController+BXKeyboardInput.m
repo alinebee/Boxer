@@ -92,7 +92,7 @@
     
     //Otherwise, pass the keypress on to the emulated keyboard hardware.
     else
-	{
+	{   
 		//Unpause the emulation whenever a key is sent to DOS.
 		[[self representedObject] resume: self];
         
@@ -201,6 +201,11 @@
 - (IBAction) sendScrollLock:	(id)sender { [[self _emulatedKeyboard] keyPressed: KBD_scrolllock]; }
 - (IBAction) sendPrintScreen:	(id)sender { [[self _emulatedKeyboard] keyPressed: KBD_printscreen]; }
 
+
+- (void) type: (NSString *)message
+{
+    [self._emulatedKeyboard typeCharacters: message];
+}
 
 #pragma mark -
 #pragma mark Private methods

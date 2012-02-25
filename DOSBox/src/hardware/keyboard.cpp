@@ -74,9 +74,10 @@ static void KEYBOARD_TransferBuffer(Bitu val) {
 	keyb.used--;
 }
 
-bool boxer_keyboardBufferFull()
+Bitu boxer_keyboardBufferRemaining()
 {
-    return keyb.used >= KEYBUFSIZE;
+    if (keyb.used >= KEYBUFSIZE) return 0;
+    else return KEYBUFSIZE - keyb.used;
 }
 
 void KEYBOARD_ClrBuffer(void) {

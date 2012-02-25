@@ -7,11 +7,13 @@
 
 
 #import "BXEmulator+BXPaste.h"
+#import "BXEmulatedKeyboard.h"
 
 @implementation BXEmulator (BXPaste)
 
 - (BOOL) handlePastedString: (NSString *)pastedString
 {
+    //While we're at the DOS prompt, we can use a more streamlined method for pasting text.
 	if ([self isAtPrompt])
 	{
 		//Split string into separate lines, which will be pasted one by one as commands
@@ -30,18 +32,19 @@
 				[[self commandQueue] addObject: cleanedString];
 			}
 		}
-		return YES;
 	}
+    //While a program is running, we fall back on typing the string into the emulated keyboard.
     else
     {
-        //TODO: generate simulated keyboard events for the specified keys.
-        return NO;
+        [[self keyboard] typeCharacters: pastedString];
     }
+    return YES;
 }
 
 - (BOOL) canAcceptPastedString: (NSString *)pastedString
 {
-	return [self isAtPrompt];
+	//return [self isAtPrompt];
+    return YES;
 }
 
 @end

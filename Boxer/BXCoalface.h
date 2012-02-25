@@ -97,7 +97,7 @@ extern "C" {
 	void boxer_mouseMovedToPoint(float x, float y);
     
     //Defined in keyboard.cpp to let Boxer see if there's any room left in the keyboard buffer.
-    bool boxer_keyboardBufferFull();
+    Bitu boxer_keyboardBufferRemaining();
     
     //Defined in dos_keyboard_layout.cpp.
     bool boxer_keyboardLayoutLoaded();

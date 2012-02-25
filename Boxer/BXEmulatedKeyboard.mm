@@ -10,6 +10,9 @@
 #import "BXEmulator.h"
 #import "BXCoalface.h"
 
+//For unicode constants
+#import <Cocoa/Cocoa.h>
+
 #pragma mark -
 #pragma mark Private method declarations
 
@@ -20,8 +23,22 @@ const char* DOS_GetLoadedLayout(void);
 
 @interface BXEmulatedKeyboard ()
 
+@property (readwrite, assign) BOOL capsLockEnabled;
+@property (readwrite, assign) BOOL numLockEnabled;
+@property (readwrite, assign) BOOL scrollLockEnabled;
+
+//Assign rather than retain, because NSTimers retain their targets
+@property (assign) NSTimer *pendingKeypresses;
+
 //Called after a delay by keyPressed: to release the specified key
 - (void) _releaseKeyWithCode: (NSNumber *)key;
+
+//Returns the DOS keycode constant that will produce the specified character
+//under the US keyboard layout, along with any modifiers needed to trigger it.
+- (BXDOSKeyCode) _DOSKeyCodeForCharacter: (unichar)character requiredModifiers: (NSUInteger *)modifierFlags;
+
+- (void) _processNextQueuedKey: (NSTimer *)timer;
+- (void) _setUsesActiveLayoutFromValue: (NSNumber *)value;
 
 @end
 
@@ -30,7 +47,7 @@ const char* DOS_GetLoadedLayout(void);
 #pragma mark Implementation
 
 @implementation BXEmulatedKeyboard
-@synthesize capsLockEnabled, numLockEnabled, scrollLockEnabled, preferredLayout;
+@synthesize capsLockEnabled, numLockEnabled, scrollLockEnabled, preferredLayout, pendingKeypresses;
 
 + (NSTimeInterval) defaultKeypressDuration { return 0.25; }
 
@@ -50,7 +67,6 @@ const char* DOS_GetLoadedLayout(void);
 - (void) dealloc
 {
     self.preferredLayout = nil;
-    
 	[super dealloc];
 }
 
@@ -61,10 +77,13 @@ const char* DOS_GetLoadedLayout(void);
 - (void) keyDown: (BXDOSKeyCode)key
 {   
     //If this key is not already pressed, tell the emulator the key has been pressed.
-	if (!pressedKeys[key])
+    //TWEAK: ignore incoming keypresses while we're processing keypresses, so that
+    //they won't get interleaved.
+	if (!pressedKeys[key] && !self.pendingKeypresses)
 	{
 		KEYBOARD_AddKey(key, YES);
 		
+        //TODO: look these up from the actual emulation state.
 		if		(key == KBD_capslock)	[self setCapsLockEnabled: !capsLockEnabled];
 		else if	(key == KBD_numlock)	[self setNumLockEnabled: !numLockEnabled];
         else if (key == KBD_scrolllock) [self setScrollLockEnabled: !scrollLockEnabled];
@@ -147,8 +166,139 @@ const char* DOS_GetLoadedLayout(void);
 
 - (BOOL) keyboardBufferFull
 {
-    return boxer_keyboardBufferFull();
+    return boxer_keyboardBufferRemaining() == 0;
 }
+
+- (void) typeCharacters: (NSString *)characters
+{
+    [self typeCharacters: characters burstInterval: BXTypingBurstIntervalDefault];
+}
+
+- (void) typeCharacters: (NSString *)characters burstInterval: (NSTimeInterval)interval
+{
+    NSMutableArray *keyEvents = [NSMutableArray arrayWithCapacity: characters.length * 3];
+    
+    BOOL capsLock       = self.capsLockEnabled;
+    BOOL leftShifted    = [self keyIsDown: KBD_leftshift];
+    BOOL rightShifted   = [self keyIsDown: KBD_rightshift];
+    
+    NSUInteger i, length = characters.length;
+    for (i=0; i < length; i++)
+    {   
+        unichar character = [characters characterAtIndex: i];
+        NSUInteger flags;
+        BXDOSKeyCode code = [self _DOSKeyCodeForCharacter: character requiredModifiers: &flags];
+        
+        //Skip codes we cannot process
+        if (code == KBD_NONE) continue;
+        
+        BOOL needsShift = (flags & NSShiftKeyMask) == NSShiftKeyMask;
+        
+        //Ensure the shift keys are in the right state before we enter the key itself.
+        if (needsShift && !(leftShifted || rightShifted))
+        {
+            [keyEvents addObject: [NSNumber numberWithInteger: KBD_leftshift]];
+            leftShifted = YES;
+        }
+        else if (!needsShift && (leftShifted || rightShifted))
+        {   
+            if (leftShifted)
+                [keyEvents addObject: [NSNumber numberWithInteger: -KBD_leftshift]];
+            if (rightShifted)
+                [keyEvents addObject: [NSNumber numberWithInteger: -KBD_rightshift]];
+            
+            leftShifted = rightShifted = NO;
+        }
+        
+        [keyEvents addObject: [NSNumber numberWithInteger: code]];
+        [keyEvents addObject: [NSNumber numberWithInteger: -code]];
+    }
+    
+    //If none of the characters could be typed, then bail out now before modifying the keyboard state.
+    if (!keyEvents.count) return;
+    
+    
+    //Otherwise, bookend the typing with additional keys to set up the keyboard state appropriately.
+    //Turn capslock off before processing any other keys, if it was on.
+    if (capsLock)
+    {
+        [keyEvents insertObject: [NSNumber numberWithInteger: KBD_capslock] atIndex: 0];
+        [keyEvents insertObject: [NSNumber numberWithInteger: -KBD_capslock] atIndex: 1];
+        
+        [keyEvents addObject: [NSNumber numberWithInteger: KBD_capslock]];
+        [keyEvents addObject: [NSNumber numberWithInteger: -KBD_capslock]];
+    }
+    
+    //If the shift keys were pressed in the course of typing, release them once the typing is done.
+    if (leftShifted)
+        [keyEvents addObject: [NSNumber numberWithInteger: -KBD_leftshift]];
+    
+    if (rightShifted)
+        [keyEvents addObject: [NSNumber numberWithInteger: -KBD_rightshift]];
+    
+    
+    //Set up a timer to begin sending the keypresses in bursts, if we don't have one already.
+    if (!self.pendingKeypresses)
+    {
+        self.pendingKeypresses = [NSTimer scheduledTimerWithTimeInterval: interval
+                                                                  target: self
+                                                                selector: @selector(_processNextQueuedKey:)
+                                                                userInfo: keyEvents
+                                                                 repeats: YES];
+    }
+    //If we already have a timer for this running, then slap these events onto the end of its keypress queue.
+    else
+    {
+        NSMutableArray *previousQueue = self.pendingKeypresses.userInfo;
+        [previousQueue addObjectsFromArray: keyEvents];
+    }
+    
+    //Process the initial batch of keypresses.
+    [self.pendingKeypresses fire];
+}
+
+- (void) _processNextQueuedKey: (NSTimer *)timer
+{
+    NSMutableArray *keyEvents = timer.userInfo;
+    NSUInteger numProcessed = 0;
+    
+    for (NSNumber *keyEvent in keyEvents)
+    {
+        //Give up for now once we're out of keyboard buffer:
+        //we'll continue on the next cycle of the timer.
+        if (self.keyboardBufferFull) break;
+        
+        NSInteger code = keyEvent.integerValue;
+        BOOL pressed = (code >= 0);
+        
+        KEYBOARD_AddKey(ABS(code), pressed);
+        numProcessed++;
+    }
+    
+    if (numProcessed > 0)
+    {
+        //Tell the keyboard to ignore its builtin layout while processing these keys, and use the US layout instead.
+        //This ensures the keycodes are processed exactly as intended.
+        self.usesActiveLayout = NO;
+        
+        [keyEvents removeObjectsInRange: NSMakeRange(0, numProcessed)];
+    }
+    
+    //Shut down the timer once we're out of keys to send.
+    if (!keyEvents.count)
+    {   
+        //Re-enable the active keyboard layout once we've finished typing.
+        //(Do this only after a delay, so that the buffer has time to get
+        //processed without the active layout.)
+        [self performSelector: @selector(_setUsesActiveLayoutFromValue:)
+                   withObject: [NSNumber numberWithBool: YES]
+                   afterDelay: self.pendingKeypresses.timeInterval];
+        
+        [timer invalidate];
+        self.pendingKeypresses = nil;
+    }
+}
+
 
 #pragma mark -
 #pragma mark Keyboard layout
@@ -189,13 +339,13 @@ const char* DOS_GetLoadedLayout(void);
     {
         const char *loadedName = DOS_GetLoadedLayout();
         
+        //The name of the "none" keyboard layout will be reported as NULL by DOSBox.
         if (loadedName)
         {
             return [NSString stringWithCString: loadedName encoding: BXDirectStringEncoding];
         }
         else
         {
-            //The name of the "none" keyboard layout will be reported as NULL by DOSBox.
             return nil;
         }
     }
@@ -214,6 +364,175 @@ const char* DOS_GetLoadedLayout(void);
 - (void) setUsesActiveLayout: (BOOL)usesActiveLayout
 {
     boxer_setKeyboardLayoutActive(usesActiveLayout);
+}
+
+- (void) _setUsesActiveLayoutFromValue: (NSNumber *)value
+{
+    self.usesActiveLayout = value.boolValue;
+}
+
+
+- (BXDOSKeyCode) _DOSKeyCodeForCharacter: (unichar)character requiredModifiers: (NSUInteger *)modifierFlags;
+{
+    NSAssert(modifierFlags, @"_DOSKeyCodeForCharacter:requiredModifiers: must be called with a valid pointer in which to store the modifier flags.");
+    
+    *modifierFlags = 0;
+    
+    switch (character)
+    {
+            //UNSHIFTED KEYS    
+            
+        case NSF1FunctionKey: return KBD_f1;
+        case NSF2FunctionKey: return KBD_f2;
+        case NSF3FunctionKey: return KBD_f3;
+        case NSF4FunctionKey: return KBD_f4;
+        case NSF5FunctionKey: return KBD_f5;
+        case NSF6FunctionKey: return KBD_f6;
+        case NSF7FunctionKey: return KBD_f7;
+        case NSF8FunctionKey: return KBD_f8;
+        case NSF9FunctionKey: return KBD_f9;
+        case NSF10FunctionKey: return KBD_f10;
+        case NSF11FunctionKey: return KBD_f11;
+        case NSF12FunctionKey: return KBD_f12;
+            
+        case '1': return KBD_1;
+        case '2': return KBD_2;
+        case '3': return KBD_3;
+        case '4': return KBD_4;
+        case '5': return KBD_5;
+        case '6': return KBD_6;
+        case '7': return KBD_7;
+        case '8': return KBD_8;
+        case '9': return KBD_9;
+        case '0': return KBD_0;
+            
+        case NSPrintScreenFunctionKey: return KBD_printscreen;
+        case NSScrollLockFunctionKey: return KBD_scrolllock;
+        case NSPauseFunctionKey: return KBD_pause;
+            
+        case 'q': return KBD_q;
+        case 'w': return KBD_w;
+        case 'e': return KBD_e;
+        case 'r': return KBD_r;
+        case 't': return KBD_t;
+        case 'y': return KBD_y;
+        case 'u': return KBD_u;
+        case 'i': return KBD_i;
+        case 'o': return KBD_o;
+        case 'p': return KBD_p;
+            
+        case 'a': return KBD_a;
+        case 's': return KBD_s;
+        case 'd': return KBD_d;
+        case 'f': return KBD_f;
+        case 'g': return KBD_g;
+        case 'h': return KBD_h;
+        case 'j': return KBD_j;
+        case 'k': return KBD_k;
+        case 'l': return KBD_l;
+            
+        case 'z': return KBD_z;
+        case 'x': return KBD_x;
+        case 'c': return KBD_c;
+        case 'v': return KBD_v;
+        case 'b': return KBD_b;
+        case 'n': return KBD_n;
+        case 'm': return KBD_m;
+            
+        case '\e': return KBD_esc;
+            //KBD_capslock unavailable
+        case NSBackspaceCharacter: return KBD_tab;
+            
+        case NSDeleteCharacter: return KBD_delete;
+        case NSDeleteFunctionKey: return KBD_delete;
+        case NSInsertFunctionKey: return KBD_insert;
+        case NSEnterCharacter: return KBD_enter;
+        case NSNewlineCharacter: return KBD_enter;
+        case ' ': return KBD_space;
+            
+        case NSHomeFunctionKey: return KBD_home;
+        case NSEndFunctionKey: return KBD_end;
+        case NSPageUpFunctionKey: return KBD_pageup;
+        case NSPageDownFunctionKey: return KBD_pagedown;
+            
+        case NSUpArrowFunctionKey: return KBD_up;
+        case NSLeftArrowFunctionKey: return KBD_left;
+        case NSDownArrowFunctionKey: return KBD_down;
+        case NSRightArrowFunctionKey: return KBD_right;
+            
+        case '-': return KBD_minus;
+        case '=': return KBD_equals;
+            
+        case '[': return KBD_leftbracket;
+        case ']': return KBD_rightbracket;
+        case '\\': return KBD_backslash;
+            
+        case '`': return KBD_grave;
+        case ';': return KBD_semicolon;
+        case '\'': return KBD_quote;
+        case ',': return KBD_comma;
+        case '.': return KBD_period;
+        case '/': return KBD_slash;
+            
+            //SHIFTED KEYS
+            
+        case '!': *modifierFlags = NSShiftKeyMask; return KBD_1;
+        case '@': *modifierFlags = NSShiftKeyMask; return KBD_2;
+        case '#': *modifierFlags = NSShiftKeyMask; return KBD_3;
+        case '$': *modifierFlags = NSShiftKeyMask; return KBD_4;
+        case '%': *modifierFlags = NSShiftKeyMask; return KBD_5;
+        case '^': *modifierFlags = NSShiftKeyMask; return KBD_6;
+        case '&': *modifierFlags = NSShiftKeyMask; return KBD_7;
+        case '*': *modifierFlags = NSShiftKeyMask; return KBD_8;
+        case '(': *modifierFlags = NSShiftKeyMask; return KBD_9;
+        case ')': *modifierFlags = NSShiftKeyMask; return KBD_0;
+            
+        case 'Q': *modifierFlags = NSShiftKeyMask; return KBD_q;
+        case 'W': *modifierFlags = NSShiftKeyMask; return KBD_w;
+        case 'E': *modifierFlags = NSShiftKeyMask; return KBD_e;
+        case 'R': *modifierFlags = NSShiftKeyMask; return KBD_r;
+        case 'T': *modifierFlags = NSShiftKeyMask; return KBD_t;
+        case 'Y': *modifierFlags = NSShiftKeyMask; return KBD_y;
+        case 'U': *modifierFlags = NSShiftKeyMask; return KBD_u;
+        case 'I': *modifierFlags = NSShiftKeyMask; return KBD_i;
+        case 'O': *modifierFlags = NSShiftKeyMask; return KBD_o;
+        case 'P': *modifierFlags = NSShiftKeyMask; return KBD_p;
+            
+        case 'A': *modifierFlags = NSShiftKeyMask; return KBD_a;
+        case 'S': *modifierFlags = NSShiftKeyMask; return KBD_s;
+        case 'D': *modifierFlags = NSShiftKeyMask; return KBD_d;
+        case 'F': *modifierFlags = NSShiftKeyMask; return KBD_f;
+        case 'G': *modifierFlags = NSShiftKeyMask; return KBD_g;
+        case 'H': *modifierFlags = NSShiftKeyMask; return KBD_h;
+        case 'J': *modifierFlags = NSShiftKeyMask; return KBD_j;
+        case 'K': *modifierFlags = NSShiftKeyMask; return KBD_k;
+        case 'L': *modifierFlags = NSShiftKeyMask; return KBD_l;
+            
+        case 'Z': *modifierFlags = NSShiftKeyMask; return KBD_z;
+        case 'X': *modifierFlags = NSShiftKeyMask; return KBD_x;
+        case 'C': *modifierFlags = NSShiftKeyMask; return KBD_c;
+        case 'V': *modifierFlags = NSShiftKeyMask; return KBD_v;
+        case 'B': *modifierFlags = NSShiftKeyMask; return KBD_b;
+        case 'N': *modifierFlags = NSShiftKeyMask; return KBD_n;
+        case 'M': *modifierFlags = NSShiftKeyMask; return KBD_m;
+            
+        case '_': *modifierFlags = NSShiftKeyMask; return KBD_minus;
+        case '+': *modifierFlags = NSShiftKeyMask; return KBD_equals;
+            
+        case '{': *modifierFlags = NSShiftKeyMask; return KBD_leftbracket;
+        case '}': *modifierFlags = NSShiftKeyMask; return KBD_rightbracket;
+        case '|': *modifierFlags = NSShiftKeyMask; return KBD_backslash;
+            
+        case '~': *modifierFlags = NSShiftKeyMask; return KBD_grave;
+        case ':': *modifierFlags = NSShiftKeyMask; return KBD_semicolon;
+        case '"': *modifierFlags = NSShiftKeyMask; return KBD_quote;
+        case '<': *modifierFlags = NSShiftKeyMask; return KBD_comma;
+        case '>': *modifierFlags = NSShiftKeyMask; return KBD_period;
+        case '?': *modifierFlags = NSShiftKeyMask; return KBD_slash;
+            
+        default:
+            return KBD_NONE;
+    }
 }
 
 @end

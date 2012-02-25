@@ -16,7 +16,6 @@
 - (BOOL) handlePastedString: (NSString *)pastedString;
 
 //Returns YES if Boxer can paste the specified string, no otherwise.
-//In practice, this just returns whether Boxer is at the commandline or not.
 - (BOOL) canAcceptPastedString: (NSString *)pastedString;
 
 @end

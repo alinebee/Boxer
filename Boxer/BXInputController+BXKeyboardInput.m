@@ -152,14 +152,6 @@
     NSUInteger currentModifiers = [theEvent modifierFlags];
 	[self _syncModifierFlags: currentModifiers];
     [self _syncSimulatedMouseButtons: currentModifiers];
-    
-    //Cmd-key tweak: in 10.7 at least, we won't receive keyUp: events for any key while
-    //Cmd is being held down. To prevent keys getting stuck, we immediately release any
-    //keys that were down when Cmd is first pressed.
-    if (([theEvent modifierFlags] & NSCommandKeyMask) == NSCommandKeyMask)
-    {
-        [[self _emulatedKeyboard] clearInput];
-    }
 }
 
 - (void) _notifyNumlockState

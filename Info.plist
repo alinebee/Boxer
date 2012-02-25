@@ -134,6 +134,8 @@
 	<string>http://images.search.yahoo.com/search/images?p=dos%%20%@%%20cover</string>
 	<key>DonationURL</key>
 	<string>http://boxerapp.com/donate</string>
+	<key>JoypadURL</key>
+	<string>http://getjoypad.com/</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>${MACOSX_DEPLOYMENT_TARGET}</string>
 	<key>MobygamesSearchURL</key>
@@ -147,13 +149,11 @@
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
-	<string>NSApplication</string>
+	<string>BXApplication</string>
 	<key>OSAScriptingDefinition</key>
 	<string>Boxer.sdef</string>
 	<key>PerianURL</key>
 	<string>http://perian.org/</string>
-	<key>JoypadURL</key>
-	<string>http://getjoypad.com/</string>
 	<key>ReplacementDocsSearchURL</key>
 	<string>http://www.replacementdocs.com/search.php?r=0&amp;t=downloads&amp;q=%@</string>
 	<key>ReplacementDocsURL</key>

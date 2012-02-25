@@ -34,9 +34,9 @@ enum {
 	
 	NSOperationQueue *generalQueue;
 	
-	IBOutlet BXJoystickController *joystickController;
-	IBOutlet BXJoypadController *joypadController;
-    IBOutlet BXKeyboardEventTap *hotkeySuppressionTap;
+    BXJoystickController *joystickController;
+    BXJoypadController *joypadController;
+    BXKeyboardEventTap *hotkeySuppressionTap;
 	
     BXMIDIDeviceMonitor *MIDIDeviceMonitor;
 }
@@ -45,8 +45,8 @@ enum {
 @property (retain) BXSession *currentSession;
 
 //App-wide controllers for HID joystick input and JoyPad app input.
-@property (retain, nonatomic) BXJoystickController *joystickController;
-@property (retain, nonatomic) BXJoypadController *joypadController;
+@property (retain, nonatomic) IBOutlet BXJoystickController *joystickController;
+@property (retain, nonatomic) IBOutlet BXJoypadController *joypadController;
 @property (retain, nonatomic) BXMIDIDeviceMonitor *MIDIDeviceMonitor;
 @property (retain, nonatomic) BXKeyboardEventTap *hotkeySuppressionTap;
 

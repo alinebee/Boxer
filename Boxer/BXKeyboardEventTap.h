@@ -9,12 +9,17 @@
 #import <Foundation/Foundation.h>
 
 @class BXContinuousThread;
+@protocol BXKeyboardEventTapDelegate;
 @interface BXKeyboardEventTap : NSObject
 {
     BXContinuousThread *_tapThread;
     CFMachPortRef _tap;
     BOOL _enabled;
+    id <BXKeyboardEventTapDelegate> _delegate;
 }
+
+//The delegate whom we will ask for event-capture decisions.
+@property (assign) id <BXKeyboardEventTapDelegate> delegate;
 
 //Whether the event tap should suppress system hotkeys.
 //Toggling this will attach/detach the event tap.
@@ -28,5 +33,18 @@
 //(i.e. "Enable access for assistive devices" is turned on),
 //NO otherwise. If NO, then setEnabled will have no effect.
 @property (readonly, nonatomic) BOOL canTapEvents;
+
+@end
+
+
+@protocol BXKeyboardEventTapDelegate <NSObject>
+
+//Delegate methods may be called on a thread other than the main thread.
+
+//Called when a keyup or keydown event is received. 
+- (BOOL) eventTap: (BXKeyboardEventTap *)tap shouldCaptureKeyEvent: (NSEvent *)event;
+
+//Called when a media key event or other system-defined event is received.
+- (BOOL) eventTap: (BXKeyboardEventTap *)tap shouldCaptureSystemDefinedEvent: (NSEvent *)event;
 
 @end

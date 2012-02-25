@@ -6,10 +6,13 @@
  */
 
 #import "BXAppController.h"
+#import "BXKeyboardEventTap.h"
 
 //Dispatches media key events received by the application, which are otherwise unhandled by NSApplication.
 
-@interface BXAppController (BXMediaKeys)
+#define BXMediaKeyEventSubtype 8
+
+@interface BXAppController (BXHotKeys) <BXKeyboardEventTapDelegate>
 
 - (void) mediaKeyPressed: (NSEvent *)theEvent;
 

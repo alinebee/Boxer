@@ -885,7 +885,7 @@
 							<string key="NSTitle">Emulation</string>
 							<object class="NSMutableArray" key="NSMenuItems">
 								<bool key="EncodedWithXMLCoder">YES</bool>
-								<object class="NSMenuItem" id="884800394">
+								<object class="NSMenuItem" id="456941482">
 									<reference key="NSMenu" ref="67815420"/>
 									<string key="NSTitle">Fast Forward</string>
 									<string key="NSKeyEquiv"></string>
@@ -1397,9 +1397,6 @@
 			</object>
 			<object class="NSCustomObject" id="96241277">
 				<string key="NSClassName">BXJoypadController</string>
-			</object>
-			<object class="NSCustomObject" id="424781297">
-				<string key="NSClassName">BXKeyboardEventTap</string>
 			</object>
 			<object class="NSMenu" id="881225046">
 				<string key="NSTitle"/>
@@ -2191,7 +2188,7 @@
 					<object class="IBActionConnection" key="connection">
 						<string key="label">toggleFastForward:</string>
 						<reference key="source" ref="935372999"/>
-						<reference key="destination" ref="884800394"/>
+						<reference key="destination" ref="456941482"/>
 					</object>
 					<int key="connectionID">2193</int>
 				</object>
@@ -2250,14 +2247,6 @@
 						<reference key="destination" ref="96241277"/>
 					</object>
 					<int key="connectionID">2159</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">hotkeySuppressionTap</string>
-						<reference key="source" ref="74086318"/>
-						<reference key="destination" ref="424781297"/>
-					</object>
-					<int key="connectionID">2183</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
@@ -3153,7 +3142,7 @@
 							<reference ref="665114175"/>
 							<reference ref="726999377"/>
 							<reference ref="488448645"/>
-							<reference ref="884800394"/>
+							<reference ref="456941482"/>
 						</object>
 						<reference key="parent" ref="466028025"/>
 					</object>
@@ -3432,11 +3421,6 @@
 						<reference key="parent" ref="561895638"/>
 					</object>
 					<object class="IBObjectRecord">
-						<int key="objectID">2182</int>
-						<reference key="object" ref="424781297"/>
-						<reference key="parent" ref="0"/>
-					</object>
-					<object class="IBObjectRecord">
 						<int key="objectID">2184</int>
 						<reference key="object" ref="488448645"/>
 						<reference key="parent" ref="67815420"/>
@@ -3458,7 +3442,7 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">2192</int>
-						<reference key="object" ref="884800394"/>
+						<reference key="object" ref="456941482"/>
 						<reference key="parent" ref="67815420"/>
 					</object>
 				</object>
@@ -3620,7 +3604,6 @@
 					<string>2173.IBPluginDependency</string>
 					<string>2174.IBPluginDependency</string>
 					<string>2179.IBPluginDependency</string>
-					<string>2182.IBPluginDependency</string>
 					<string>2184.IBPluginDependency</string>
 					<string>2187.IBPluginDependency</string>
 					<string>2188.IBPluginDependency</string>
@@ -3761,7 +3744,6 @@
 							<characters key="NS.bytes"/>
 						</object>
 					</object>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>

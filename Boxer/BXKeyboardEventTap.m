@@ -10,8 +10,6 @@
 #import <IOKit/hidsystem/ev_keymap.h> //For media key codes
 
 #import "BXKeyboardEventTap.h"
-#import "BXAppController.h"
-#import "BXSession.h"
 #import "BXContinuousThread.h"
 
 
@@ -39,42 +37,25 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
 //tapThread's run loop, listening to the tap until the thread is cancelled.
 - (void) _runTap;
 
-//Returns whether the specified keyup/down event represents an OS X hotkey we want to intercept.
-- (BOOL) _isHotKeyEvent: (CGEventRef)event;
-
-//Returns whether the specified system-defined event represents an OS X media key.
-- (BOOL) _isMediaKeyEvent: (CGEventRef)event;
-
-//Returns whether we should bother suppressing the specified hotkey event. Will return YES
-//if we're the active application and the key window is an active (not paused) DOS session,
-//NO otherwise.
-- (BOOL) _shouldCaptureHotKeyEvent: (CGEventRef)event;
-
-//Returns whether we should capture the specified media key.
-- (BOOL) _shouldCaptureMediaKeyEvent: (CGEventRef)event;
-
 @end
 
 
 @implementation BXKeyboardEventTap
 @synthesize enabled = _enabled;
 @synthesize tapThread = _tapThread;
+@synthesize delegate = _delegate;
 
-- (void) awakeFromNib
+- (id) init
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    
-    [self bind: @"enabled"
-      toObject: defaults
-   withKeyPath: @"suppressSystemHotkeys"
-       options: nil];
-    
-    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    [center addObserver: self
-               selector: @selector(applicationDidBecomeActive:)
-                   name: NSApplicationDidBecomeActiveNotification
-                 object: NSApp];
-    
+    if ((self = [super init]))
+    {
+        NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+        [center addObserver: self
+                   selector: @selector(applicationDidBecomeActive:)
+                       name: NSApplicationDidBecomeActiveNotification
+                     object: NSApp];
+    }
+    return self;
 }
 
 - (void) applicationDidBecomeActive: (NSNotification *)notification
@@ -187,130 +168,45 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
     [pool drain];
 }
 
-- (BOOL) _isMediaKeyEvent: (CGEventRef)event
-{
-    //System-defined hotkey events need a little more deciphering than other kotkey events,
-    //and it's easier to do this with the NSEvent API.
-    //Adapted from https://github.com/nevyn/SPMediaKeyTap/blob/master/SPMediaKeyTap.m
-    NSEvent *cocoaEvent;
-    @try
-    {
-        cocoaEvent = [NSEvent eventWithCGEvent: event];
-    }
-    //If the event could not be converted into an NSEvent, we can't manage it anyway.
-    @catch (NSException * e) { return NO; }
-    
-    //Event was not of the correct subtype to be a media key event.
-    if (cocoaEvent.subtype != 8)
-        return NO;
-    
-    int keyCode = (cocoaEvent.data1 & 0xFFFF0000) >> 16;
-    
-    switch(keyCode)
-    {
-        case NX_KEYTYPE_PLAY:
-        case NX_KEYTYPE_FAST:
-        case NX_KEYTYPE_REWIND:
-            return YES;
-            break;
-        default:
-            return NO;
-    }
-}
-
-//TODO: move this logic off to the current DOS session
-- (BOOL) _isHotKeyEvent: (CGEventRef)event
-{
-    int64_t keyCode = CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode);
-    
-    switch(keyCode)
-    {
-        case kVK_UpArrow:
-        case kVK_DownArrow:
-        case kVK_LeftArrow:
-        case kVK_RightArrow:
-        case kVK_F1:
-        case kVK_F2:
-        case kVK_F3:
-        case kVK_F4:
-        case kVK_F5:
-        case kVK_F6:
-        case kVK_F7:
-        case kVK_F8:
-        case kVK_F9:
-        case kVK_F10:
-        case kVK_F11:
-        case kVK_F12:
-            return YES;
-            break;
-        default:
-            return NO;
-    }
-}
-
-- (BOOL) _shouldCaptureHotKeyEvent: (CGEventRef)event
-{
-    if (![self isEnabled]) return NO;
-    if (![NSApp isActive]) return NO;
-    
-    BOOL retVal = NO;
-    
-    //Allow hotkeys to be captured as long as the key window is an active DOS session.
-    //TODO: pass this decision to the application delegate itself.
-    @synchronized([NSApp delegate])
-    {
-        id document = [[NSApp delegate] documentForWindow: [NSApp keyWindow]];
-        @synchronized(document)
-        {
-            if ([document respondsToSelector: @selector(programIsActive)] && [document programIsActive])
-                retVal = YES;
-        }
-    }
-    return retVal;
-}
-
-- (BOOL) _shouldCaptureMediaKeyEvent: (CGEventRef)event
-{
-    if (![self isEnabled]) return NO;
-    if (![NSApp isActive]) return NO;
-    
-    BOOL retVal = NO;
-    
-    //Allow media keys to be captured as long as the current DOS session is running (even if it is at the DOS prompt).
-    //TODO: pass this decision to the application delegate itself.
-    @synchronized([NSApp delegate])
-    {
-        BXSession *currentSession = [[NSApp delegate] currentSession];
-        @synchronized(currentSession)
-        {
-            if (currentSession.isEmulating)
-                retVal = YES;
-        }
-    }
-    return retVal;
-}
-
 - (CGEventRef) _handleEvent: (CGEventRef)event
                      ofType: (CGEventType)type
                   fromProxy: (CGEventTapProxy)proxy
 {
+    //If we're not enabled or we have no way of validating the events, give up early
+    if (!self.enabled || !self.delegate)
+    {
+        return event;
+    }
+    
     BOOL shouldCapture = NO;
     switch (type)
     {
         case kCGEventKeyDown:
         case kCGEventKeyUp:
-        {
-            //If this is a hotkey event we want to handle ourselves,
-            //post it directly to our application and don't let it
-            //go through the regular OS X event dispatch.
-            if ([self _isHotKeyEvent: event] && [self _shouldCaptureHotKeyEvent: event])
-                shouldCapture = YES;
-            break;
-        }
         case NX_SYSDEFINED:
         {
-            if ([self _isMediaKeyEvent: event] && [self _shouldCaptureMediaKeyEvent: event])
-                shouldCapture = YES;
+            //First try and make this into a cocoa event
+            NSEvent *cocoaEvent = nil;
+            @try
+            {
+                cocoaEvent = [NSEvent eventWithCGEvent: event];
+            }
+            @catch (NSException *exception) {
+                //If the event could not be converted into a cocoa event, give up
+            }
+            
+            if (cocoaEvent)
+            {
+                if (type == NX_SYSDEFINED)
+                {
+                    shouldCapture = [self.delegate eventTap: self shouldCaptureSystemDefinedEvent: cocoaEvent];
+                }
+                else
+                {
+                    shouldCapture = [self.delegate eventTap: self shouldCaptureKeyEvent: cocoaEvent];
+                }
+            }
+            
             break;
         }
         
@@ -343,11 +239,13 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
 {
     CGEventRef returnedEvent = event;
     
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     BXKeyboardEventTap *tap = (BXKeyboardEventTap *)userInfo;
     if (tap)
     {
         returnedEvent = [tap _handleEvent: event ofType: type fromProxy: proxy];
     }
+    [pool drain];
     
     return returnedEvent;
 }

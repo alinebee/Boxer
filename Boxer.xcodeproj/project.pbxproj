@@ -417,7 +417,7 @@
 		9F8A9CD2143E120B00C37A93 /* MT32ROMTypes.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9F8A9CD1143E120B00C37A93 /* MT32ROMTypes.plist */; };
 		9F8F374914F91FEB00E482FB /* BXApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8F374814F91FEB00E482FB /* BXApplication.m */; };
 		9F8F374C14F9366F00E482FB /* FastForwardTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F8F374B14F9366F00E482FB /* FastForwardTemplate.pdf */; };
-		9F8F374F14F9442D00E482FB /* BXAppController+BXMediaKeys.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8F374E14F9442D00E482FB /* BXAppController+BXMediaKeys.m */; };
+		9F8F374F14F9442D00E482FB /* BXAppController+BXHotKeys.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8F374E14F9442D00E482FB /* BXAppController+BXHotKeys.m */; };
 		9F8F482513DC74CA00C7E022 /* NSShadow+BXShadowExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8F482413DC74CA00C7E022 /* NSShadow+BXShadowExtensions.m */; };
 		9F902C24142E183500843B01 /* BXMIDISynth.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F902C23142E183500843B01 /* BXMIDISynth.m */; };
 		9F902C27142E198100843B01 /* BXEmulatedMT32.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F902C26142E198100843B01 /* BXEmulatedMT32.mm */; };
@@ -1128,8 +1128,8 @@
 		9F8F374714F91FEB00E482FB /* BXApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXApplication.h; sourceTree = "<group>"; };
 		9F8F374814F91FEB00E482FB /* BXApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXApplication.m; sourceTree = "<group>"; };
 		9F8F374B14F9366F00E482FB /* FastForwardTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = FastForwardTemplate.pdf; sourceTree = "<group>"; };
-		9F8F374D14F9442D00E482FB /* BXAppController+BXMediaKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXAppController+BXMediaKeys.h"; sourceTree = "<group>"; };
-		9F8F374E14F9442D00E482FB /* BXAppController+BXMediaKeys.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXAppController+BXMediaKeys.m"; sourceTree = "<group>"; };
+		9F8F374D14F9442D00E482FB /* BXAppController+BXHotKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; path = "BXAppController+BXHotKeys.h"; sourceTree = "<group>"; };
+		9F8F374E14F9442D00E482FB /* BXAppController+BXHotKeys.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXAppController+BXHotKeys.m"; sourceTree = "<group>"; };
 		9F8F482313DC74CA00C7E022 /* NSShadow+BXShadowExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSShadow+BXShadowExtensions.h"; sourceTree = "<group>"; };
 		9F8F482413DC74CA00C7E022 /* NSShadow+BXShadowExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSShadow+BXShadowExtensions.m"; sourceTree = "<group>"; };
 		9F902C1F142E16C800843B01 /* BXMIDIDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXMIDIDevice.h; sourceTree = "<group>"; };
@@ -1646,8 +1646,8 @@
 				9F160E701236B2A600F8768E /* BXAppController+BXGamesFolder.m */,
 				9F34BE60142B917100A69FAF /* BXAppController+BXSupportFiles.h */,
 				9F34BE61142B917100A69FAF /* BXAppController+BXSupportFiles.m */,
-				9F8F374D14F9442D00E482FB /* BXAppController+BXMediaKeys.h */,
-				9F8F374E14F9442D00E482FB /* BXAppController+BXMediaKeys.m */,
+				9F8F374D14F9442D00E482FB /* BXAppController+BXHotKeys.h */,
+				9F8F374E14F9442D00E482FB /* BXAppController+BXHotKeys.m */,
 				9F2122E31301BD72002AB1B7 /* BXHelperAppCheck.h */,
 				9F2122E41301BD72002AB1B7 /* BXHelperAppCheck.m */,
 				9F2122E81301BDE1002AB1B7 /* BXShelfAppearanceOperation.h */,
@@ -3442,7 +3442,7 @@
 				9F6891A014B0F6D800641C62 /* BXTFlightControllerProfile.m in Sources */,
 				9F9AEE8914CB4AEA00728641 /* BXAppKitVersionHelpers.m in Sources */,
 				9F8F374914F91FEB00E482FB /* BXApplication.m in Sources */,
-				9F8F374F14F9442D00E482FB /* BXAppController+BXMediaKeys.m in Sources */,
+				9F8F374F14F9442D00E482FB /* BXAppController+BXHotKeys.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

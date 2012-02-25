@@ -6,7 +6,7 @@
  */
 
 #import "BXApplication.h"
-#import "BXAppController+BXMediaKeys.h"
+#import "BXAppController+BXHotKeys.h"
 
 @implementation BXApplication
 

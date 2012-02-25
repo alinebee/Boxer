@@ -9,6 +9,7 @@
 #import "BXAppController+BXSupportFiles.h"
 #import "BXAppController+BXGamesFolder.h"
 #import "BXAppController+BXApplicationModes.h"
+#import "BXAppController+BXHotKeys.h"
 
 #import "BXAboutController.h"
 #import "BXInspectorController.h"
@@ -21,6 +22,7 @@
 #import "BXImportSession.h"
 #import "BXEmulator.h"
 #import "BXMIDIDeviceMonitor.h"
+#import "BXKeyboardEventTap.h"
 
 #import "BXValueTransformers.h"
 #import "NSString+BXPaths.h"
@@ -243,9 +245,20 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 - (void) applicationWillFinishLaunching: (NSNotification *)notification
 {
+    //Set up our keyboard event tap
+    self.hotkeySuppressionTap = [[[BXKeyboardEventTap alloc] init] autorelease];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    self.hotkeySuppressionTap.delegate = self;
+    [self.hotkeySuppressionTap bind: @"enabled"
+                           toObject: defaults
+                        withKeyPath: @"suppressSystemHotkeys"
+                            options: nil];
+    
+    
     //Start scanning for MIDI devices now
-    [self setMIDIDeviceMonitor: [[[BXMIDIDeviceMonitor alloc] init] autorelease]];
-    [[self MIDIDeviceMonitor] start];
+    self.MIDIDeviceMonitor = [[[BXMIDIDeviceMonitor alloc] init] autorelease];
+    [self.MIDIDeviceMonitor start];
     
     //Check if we have any games folder, and if not (and we're allowed to create one automatically)
     //then create one now

@@ -229,7 +229,7 @@
 
 - (IBAction) decrementSpeed: (id)sender
 {
-	if ([self speedAtMinimum]) return;
+	if (self.speedAtMinimum) return;
 	
 	if ([self isAutoSpeed])
 	{
@@ -485,12 +485,12 @@
 		if (!self.emulator.isTurboSpeed)
 			title = NSLocalizedString(@"Fast Forward", @"Emulation menu option for fast-forwarding the emulator.");
 		else
-			title = NSLocalizedString(@"Resume Regular Speed", @"Emulation menu option for resuming from fast-forward.");
+			title = NSLocalizedString(@"Normal Speed", @"Emulation menu option for returning from fast-forward.");
 		
 		[theItem setTitle: title];
         
         //TWEAK: disable the menu item while we're waiting for the user to release the key.
-        //That will break out of the menu's own key loop, and prevents repeated keypresses.
+        //That will break out of the menu's own key-event loop, which would otherwise block.
 		return [self isEmulating] && !waitingForFastForwardRelease;
     }
     return [super validateMenuItem: theItem];

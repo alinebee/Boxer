@@ -885,15 +885,6 @@
 							<string key="NSTitle">Emulation</string>
 							<object class="NSMutableArray" key="NSMenuItems">
 								<bool key="EncodedWithXMLCoder">YES</bool>
-								<object class="NSMenuItem" id="456941482">
-									<reference key="NSMenu" ref="67815420"/>
-									<string key="NSTitle">Fast Forward</string>
-									<string key="NSKeyEquiv"></string>
-									<int key="NSKeyEquivModMask">1048576</int>
-									<int key="NSMnemonicLoc">2147483647</int>
-									<reference key="NSOnImage" ref="569538535"/>
-									<reference key="NSMixedImage" ref="489554260"/>
-								</object>
 								<object class="NSMenuItem" id="353619833">
 									<reference key="NSMenu" ref="67815420"/>
 									<string key="NSTitle">Pause</string>
@@ -1155,6 +1146,15 @@
 									<bool key="NSIsSeparator">YES</bool>
 									<string key="NSTitle"/>
 									<string key="NSKeyEquiv"/>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="569538535"/>
+									<reference key="NSMixedImage" ref="489554260"/>
+								</object>
+								<object class="NSMenuItem" id="633388051">
+									<reference key="NSMenu" ref="67815420"/>
+									<string key="NSTitle">Fast Forward</string>
+									<string key="NSKeyEquiv"></string>
+									<int key="NSKeyEquivModMask">1572864</int>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="569538535"/>
 									<reference key="NSMixedImage" ref="489554260"/>
@@ -2188,7 +2188,7 @@
 					<object class="IBActionConnection" key="connection">
 						<string key="label">toggleFastForward:</string>
 						<reference key="source" ref="935372999"/>
-						<reference key="destination" ref="456941482"/>
+						<reference key="destination" ref="633388051"/>
 					</object>
 					<int key="connectionID">2193</int>
 				</object>
@@ -3142,7 +3142,7 @@
 							<reference ref="665114175"/>
 							<reference ref="726999377"/>
 							<reference ref="488448645"/>
-							<reference ref="456941482"/>
+							<reference ref="633388051"/>
 						</object>
 						<reference key="parent" ref="466028025"/>
 					</object>
@@ -3442,7 +3442,7 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">2192</int>
-						<reference key="object" ref="456941482"/>
+						<reference key="object" ref="633388051"/>
 						<reference key="parent" ref="67815420"/>
 					</object>
 				</object>
@@ -4027,13 +4027,11 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>hotkeySuppressionTap</string>
 							<string>joypadController</string>
 							<string>joystickController</string>
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>BXKeyboardEventTap</string>
 							<string>BXJoypadController</string>
 							<string>BXJoystickController</string>
 						</object>
@@ -4042,16 +4040,11 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>hotkeySuppressionTap</string>
 							<string>joypadController</string>
 							<string>joystickController</string>
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<object class="IBToOneOutletInfo">
-								<string key="name">hotkeySuppressionTap</string>
-								<string key="candidateClassName">BXKeyboardEventTap</string>
-							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">joypadController</string>
 								<string key="candidateClassName">BXJoypadController</string>
@@ -4827,14 +4820,6 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/BXJoystickController.h</string>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">BXKeyboardEventTap</string>
-					<string key="superclassName">NSObject</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">./Classes/BXKeyboardEventTap.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

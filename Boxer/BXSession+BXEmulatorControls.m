@@ -103,25 +103,25 @@
 
 - (IBAction) pause: (id)sender
 {
-    if (![self isPaused])
+    if (self.isEmulating && !self.isPaused)
     {
-        [self setPaused: YES];
+        self.paused = YES;
         [[BXBezelController controller] showPauseBezel];
     }
 }
 
 - (IBAction) resume: (id)sender
 {
-    if ([self isPaused])
+    if (self.isEmulating && self.isPaused)
     {
-        [self setPaused: NO];
+        self.paused = NO;
         [[BXBezelController controller] showPlayBezel];
     }
 }
 
 - (IBAction) togglePaused: (id)sender
 {
-    if ([self isPaused])
+    if (self.isPaused)
         [self resume: sender];
     else
         [self pause: sender];
@@ -256,6 +256,8 @@
 
 - (IBAction) toggleFastForward: (id)sender
 {
+    if (!self.emulating) return;
+    
     //Check if the menu option was triggered via its key equivalent or via a regular click.
     NSEvent *currentEvent = [NSApp currentEvent];
     
@@ -285,6 +287,8 @@
 
 - (IBAction) fastForward: (id)sender
 {
+    if (!self.emulating) return;
+    
     //Unpause when fast-forwarding
     [self resume: self];
     
@@ -298,6 +302,8 @@
         
 - (IBAction) releaseFastForward: (id)sender
 {
+    if (!self.emulating) return;
+    
     if (self.emulator.turboSpeed)
     {
         self.emulator.turboSpeed = NO;

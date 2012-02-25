@@ -7,6 +7,8 @@
 
 #import <AppKit/AppKit.h> //For NSApp
 #import <Carbon/Carbon.h> //For keycodes
+#import <IOKit/hidsystem/ev_keymap.h> //For media key codes
+
 #import "BXKeyboardEventTap.h"
 #import "BXAppController.h"
 #import "BXSession.h"
@@ -37,13 +39,19 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
 //tapThread's run loop, listening to the tap until the thread is cancelled.
 - (void) _runTap;
 
-//Returns whether the specified keyup/down event represents an OS X hotkey.
+//Returns whether the specified keyup/down event represents an OS X hotkey we want to intercept.
 - (BOOL) _isHotKeyEvent: (CGEventRef)event;
+
+//Returns whether the specified system-defined event represents an OS X media key.
+- (BOOL) _isMediaKeyEvent: (CGEventRef)event;
 
 //Returns whether we should bother suppressing the specified hotkey event. Will return YES
 //if we're the active application and the key window is an active (not paused) DOS session,
 //NO otherwise.
-- (BOOL) _shouldSuppressHotKeyEvent: (CGEventRef)event;
+- (BOOL) _shouldCaptureHotKeyEvent: (CGEventRef)event;
+
+//Returns whether we should capture the specified media key.
+- (BOOL) _shouldCaptureMediaKeyEvent: (CGEventRef)event;
 
 @end
 
@@ -151,7 +159,7 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
     _tap = CGEventTapCreate(kCGSessionEventTap,
                             kCGHeadInsertEventTap,
                             kCGEventTapOptionDefault,
-                            CGEventMaskBit(kCGEventKeyUp) | CGEventMaskBit(kCGEventKeyDown),
+                            CGEventMaskBit(kCGEventKeyUp) | CGEventMaskBit(kCGEventKeyDown) | CGEventMaskBit(NX_SYSDEFINED),
                             _handleEventFromTap,
                             self);
         
@@ -179,6 +187,38 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
     [pool drain];
 }
 
+- (BOOL) _isMediaKeyEvent: (CGEventRef)event
+{
+    //System-defined hotkey events need a little more deciphering than other kotkey events,
+    //and it's easier to do this with the NSEvent API.
+    //Adapted from https://github.com/nevyn/SPMediaKeyTap/blob/master/SPMediaKeyTap.m
+    NSEvent *cocoaEvent;
+    @try
+    {
+        cocoaEvent = [NSEvent eventWithCGEvent: event];
+    }
+    //If the event could not be converted into an NSEvent, we can't manage it anyway.
+    @catch (NSException * e) { return NO; }
+    
+    //Event was not of the correct subtype to be a media key event.
+    if (cocoaEvent.subtype != 8)
+        return NO;
+    
+    int keyCode = (cocoaEvent.data1 & 0xFFFF0000) >> 16;
+    
+    switch(keyCode)
+    {
+        case NX_KEYTYPE_PLAY:
+        case NX_KEYTYPE_FAST:
+        case NX_KEYTYPE_REWIND:
+            return YES;
+            break;
+        default:
+            return NO;
+    }
+}
+
+//TODO: move this logic off to the current DOS session
 - (BOOL) _isHotKeyEvent: (CGEventRef)event
 {
     int64_t keyCode = CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode);
@@ -208,13 +248,15 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
     }
 }
 
-- (BOOL) _shouldSuppressHotKeyEvent: (CGEventRef)event
+- (BOOL) _shouldCaptureHotKeyEvent: (CGEventRef)event
 {
     if (![self isEnabled]) return NO;
     if (![NSApp isActive]) return NO;
     
     BOOL retVal = NO;
     
+    //Allow hotkeys to be captured as long as the key window is an active DOS session.
+    //TODO: pass this decision to the application delegate itself.
     @synchronized([NSApp delegate])
     {
         id document = [[NSApp delegate] documentForWindow: [NSApp keyWindow]];
@@ -227,10 +269,32 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
     return retVal;
 }
 
+- (BOOL) _shouldCaptureMediaKeyEvent: (CGEventRef)event
+{
+    if (![self isEnabled]) return NO;
+    if (![NSApp isActive]) return NO;
+    
+    BOOL retVal = NO;
+    
+    //Allow media keys to be captured as long as the current DOS session is running (even if it is at the DOS prompt).
+    //TODO: pass this decision to the application delegate itself.
+    @synchronized([NSApp delegate])
+    {
+        BXSession *currentSession = [[NSApp delegate] currentSession];
+        @synchronized(currentSession)
+        {
+            if (currentSession.isEmulating)
+                retVal = YES;
+        }
+    }
+    return retVal;
+}
+
 - (CGEventRef) _handleEvent: (CGEventRef)event
                      ofType: (CGEventType)type
                   fromProxy: (CGEventTapProxy)proxy
 {
+    BOOL shouldCapture = NO;
     switch (type)
     {
         case kCGEventKeyDown:
@@ -239,18 +303,14 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
             //If this is a hotkey event we want to handle ourselves,
             //post it directly to our application and don't let it
             //go through the regular OS X event dispatch.
-            if ([self _isHotKeyEvent: event] && [self _shouldSuppressHotKeyEvent: event])
-            {
-                ProcessSerialNumber PSN;
-                OSErr error = GetCurrentProcess(&PSN);
-                if (error == noErr)
-                {
-                    CGEventPostToPSN(&PSN, event);
-                
-                    //Returning NULL cancels the original event
-                    return NULL;
-                }
-            }
+            if ([self _isHotKeyEvent: event] && [self _shouldCaptureHotKeyEvent: event])
+                shouldCapture = YES;
+            break;
+        }
+        case NX_SYSDEFINED:
+        {
+            if ([self _isMediaKeyEvent: event] && [self _shouldCaptureMediaKeyEvent: event])
+                shouldCapture = YES;
             break;
         }
         
@@ -260,6 +320,19 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
             //(This may occur if our thread has been blocked for some reason.)
             CGEventTapEnable(_tap, YES);
             break;
+        }
+    }
+    
+    if (shouldCapture)
+    {
+        ProcessSerialNumber PSN;
+        OSErr error = GetCurrentProcess(&PSN);
+        if (error == noErr)
+        {
+            CGEventPostToPSN(&PSN, event);
+            
+            //Returning NULL cancels the original event
+            return NULL;
         }
     }
     

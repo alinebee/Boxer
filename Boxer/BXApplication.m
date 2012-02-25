@@ -6,23 +6,27 @@
  */
 
 #import "BXApplication.h"
+#import "BXAppController+BXMediaKeys.h"
 
 @implementation BXApplication
 
 - (void) sendEvent: (NSEvent *)theEvent
 {
-    //TODO: implement handling of media keys here.
-    if (theEvent.type == NSSystemDefined && theEvent.subtype == 8)
+    //Dispatch media key events.
+    if (self.delegate && theEvent.type == NSSystemDefined && theEvent.subtype == 8)
     {
+        [(BXAppController *)self.delegate mediaKeyPressed: theEvent];
+        return;
     }
     
     //Fix Cmd-modified key-up events not being dispatched to the key window.
-	if (self.keyWindow && theEvent.type == NSKeyUp && (theEvent.modifierFlags & NSCommandKeyMask) == NSCommandKeyMask)
+	else if (self.keyWindow && theEvent.type == NSKeyUp && (theEvent.modifierFlags & NSCommandKeyMask) == NSCommandKeyMask)
     {
         //NOTE: unlike a regular keyUp, the event will have a nil window.
         //If this becomes an issue, we could recreate the event and dispatch the copy.
 		[self.keyWindow sendEvent: theEvent];
 	}
+    
     else
     {
 		[super sendEvent: theEvent];

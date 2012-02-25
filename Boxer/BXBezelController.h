@@ -48,6 +48,7 @@ enum {
     NSView *throttleBezel;
     NSView *pauseBezel;
     NSView *playBezel;
+    NSView *fastForwardBezel;
     NSView *screenshotBezel;
     NSView *MT32MessageBezel;
     NSView *MT32MissingBezel;
@@ -88,9 +89,10 @@ enum {
 //Screenshot bezel views.
 @property (retain, nonatomic) IBOutlet NSView *screenshotBezel;
 
-//Pause/play bezel views.
+//Pause/play/fast-forward bezel views.
 @property (retain, nonatomic) IBOutlet NSView *pauseBezel;
 @property (retain, nonatomic) IBOutlet NSView *playBezel;
+@property (retain, nonatomic) IBOutlet NSView *fastForwardBezel;
 
 //Numpad simulation bezels.
 @property (retain, nonatomic) IBOutlet NSView *numpadActiveBezel;
@@ -128,6 +130,7 @@ enum {
 
 - (void) showPauseBezel;
 - (void) showPlayBezel;
+- (void) showFastForwardBezel;
 
 - (void) showScreenshotBezel;
 

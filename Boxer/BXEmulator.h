@@ -91,6 +91,7 @@ extern NSString * const shellProcessPath;
 	BOOL executing;
 	BOOL initialized;
 	BOOL isInterrupted;
+    BOOL wasAutoSpeed;
     
     //The autorelease pool for the current iteration of DOSBox's run loop.
     //Created in _willStartRunLoop and released in _didFinishRunLoop.
@@ -167,6 +168,9 @@ extern NSString * const shellProcessPath;
 
 //Whether we are running at automatic maximum speed.
 @property (assign, getter=isAutoSpeed) BOOL autoSpeed;
+
+//Whether we are running in turbo mode (emulating as fast as possible.)
+@property (assign, getter=isTurboSpeed) BOOL turboSpeed;
 
 //The current CPU core mode.
 @property (assign, nonatomic) BXCoreMode coreMode;

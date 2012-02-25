@@ -21,7 +21,8 @@
 #define BXBezelFadeDuration 0.25
 
 #define BXScreenshotBezelDuration 0.75
-#define BXPauseBezelDuration 0.75
+#define BXPausePlayBezelDuration 0.75
+#define BXFastForwardBezelDuration 3.0
 #define BXNumpadBezelDuration 2.0
 #define BXNumlockBezelDuration 2.0
 #define BXFullscreenBezelDuration 3.0
@@ -35,7 +36,7 @@
 
 @implementation BXBezelController
 @synthesize driveAddedBezel, driveSwappedBezel, driveRemovedBezel, driveImportedBezel;
-@synthesize pauseBezel, playBezel, fullscreenBezel, screenshotBezel;
+@synthesize pauseBezel, playBezel, fastForwardBezel, fullscreenBezel, screenshotBezel;
 @synthesize joystickIgnoredBezel, CPUSpeedBezel, throttleBezel;
 @synthesize MT32MessageBezel, MT32MissingBezel;
 @synthesize numpadActiveBezel, numpadInactiveBezel;
@@ -83,6 +84,7 @@
     self.fullscreenBezel = nil;
     self.pauseBezel = nil;
     self.playBezel = nil;
+    self.fastForwardBezel = nil;
     self.CPUSpeedBezel = nil;
     self.throttleBezel = nil;
     self.joystickIgnoredBezel = nil;
@@ -191,15 +193,22 @@
 - (void) showPauseBezel
 {
     [self showBezel: [self pauseBezel]
-        forDuration: BXPauseBezelDuration
+        forDuration: BXPausePlayBezelDuration
            priority: BXBezelPriorityHigh];
 }
 
 - (void) showPlayBezel
 {
     [self showBezel: [self playBezel]
-        forDuration: BXPauseBezelDuration
+        forDuration: BXPausePlayBezelDuration
            priority: BXBezelPriorityHigh];    
+}
+
+- (void) showFastForwardBezel
+{
+    [self showBezel: [self fastForwardBezel]
+        forDuration: BXFastForwardBezelDuration
+           priority: BXBezelPriorityHigh];
 }
 
 - (void) showNumpadActiveBezel

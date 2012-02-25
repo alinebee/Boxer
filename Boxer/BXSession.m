@@ -1064,7 +1064,20 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	{
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
         
-		[NSApp sendEvent: event];
+        //Listen for key-up events for our fast-forward key and handle them ourselves.
+        //Swallow all key-down events while this is happening.
+        //IMPLEMENTATION NOTE: this is essentially a standard Cocoa event-listening loop
+        //turned inside out, so that the emulation will keep running 'around' our listening.
+        if (waitingForFastForwardRelease)
+        {
+            if (event.type == NSKeyUp)
+                [self releaseFastForward: self];
+            else if (event.type == NSKeyDown)
+                event = nil;
+        }
+        
+        if (event)
+            [NSApp sendEvent: event];
 		
 		//If we're suspended, keep dispatching events until we are unpaused;
         //otherwise, exit once our original requested date has passed (which

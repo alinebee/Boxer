@@ -416,6 +416,7 @@
 		9F8A976010E7EDDE00A4B72A /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F8A975F10E7EDDE00A4B72A /* libicucore.dylib */; };
 		9F8A9CD2143E120B00C37A93 /* MT32ROMTypes.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9F8A9CD1143E120B00C37A93 /* MT32ROMTypes.plist */; };
 		9F8F374914F91FEB00E482FB /* BXApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8F374814F91FEB00E482FB /* BXApplication.m */; };
+		9F8F374C14F9366F00E482FB /* FastForwardTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F8F374B14F9366F00E482FB /* FastForwardTemplate.pdf */; };
 		9F8F482513DC74CA00C7E022 /* NSShadow+BXShadowExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F8F482413DC74CA00C7E022 /* NSShadow+BXShadowExtensions.m */; };
 		9F902C24142E183500843B01 /* BXMIDISynth.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F902C23142E183500843B01 /* BXMIDISynth.m */; };
 		9F902C27142E198100843B01 /* BXEmulatedMT32.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F902C26142E198100843B01 /* BXEmulatedMT32.mm */; };
@@ -1125,6 +1126,7 @@
 		9F8A9CD1143E120B00C37A93 /* MT32ROMTypes.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = MT32ROMTypes.plist; sourceTree = "<group>"; };
 		9F8F374714F91FEB00E482FB /* BXApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXApplication.h; sourceTree = "<group>"; };
 		9F8F374814F91FEB00E482FB /* BXApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXApplication.m; sourceTree = "<group>"; };
+		9F8F374B14F9366F00E482FB /* FastForwardTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = FastForwardTemplate.pdf; sourceTree = "<group>"; };
 		9F8F482313DC74CA00C7E022 /* NSShadow+BXShadowExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSShadow+BXShadowExtensions.h"; sourceTree = "<group>"; };
 		9F8F482413DC74CA00C7E022 /* NSShadow+BXShadowExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSShadow+BXShadowExtensions.m"; sourceTree = "<group>"; };
 		9F902C1F142E16C800843B01 /* BXMIDIDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXMIDIDevice.h; sourceTree = "<group>"; };
@@ -2503,6 +2505,7 @@
 				9F70278613D730D000606B4C /* TurtleTemplate.png */,
 				9FFF635B14013F4D007E8B47 /* PauseTemplate.pdf */,
 				9FFF635C14013F4D007E8B47 /* PlayTemplate.pdf */,
+				9F8F374B14F9366F00E482FB /* FastForwardTemplate.pdf */,
 				9FFF635D14013F4D007E8B47 /* EjectTemplate.pdf */,
 				9FFF635E14013F4D007E8B47 /* InsertTemplate.pdf */,
 				9F9606E714F65A230072E90C /* ScreenshotTemplate.pdf */,
@@ -3083,6 +3086,7 @@
 				9F3034BA14E2C3F600BC572E /* NumlockInactiveTemplate.pdf in Resources */,
 				9F98EF5914E80A0900095248 /* Localizable.strings in Resources */,
 				9F9606E814F65A230072E90C /* ScreenshotTemplate.pdf in Resources */,
+				9F8F374C14F9366F00E482FB /* FastForwardTemplate.pdf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

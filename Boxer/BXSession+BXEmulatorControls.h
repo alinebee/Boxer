@@ -121,6 +121,12 @@ enum
 - (IBAction) incrementSpeed: (id)sender;	
 - (IBAction) decrementSpeed: (id)sender;
 
+//Run the CPU in turbo mode.
+- (IBAction) toggleFastForward: (id)sender;
+- (IBAction) fastForward: (id)sender;
+- (IBAction) releaseFastForward: (id)sender;
+
+
 //Caps the speed within minimum and maximum limits
 - (BOOL) validateCPUSpeed: (id *)ioValue error: (NSError **)outError;
 

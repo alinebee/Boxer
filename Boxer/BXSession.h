@@ -80,6 +80,7 @@ extern NSString * const BXDidFinishInterruptionNotification;
 	
 	BOOL userToggledProgramPanel;
 	BOOL userSkippedDefaultProgram;
+    BOOL waitingForFastForwardRelease;
 	
 	NSOperationQueue *importQueue;
     NSOperationQueue *scanQueue;

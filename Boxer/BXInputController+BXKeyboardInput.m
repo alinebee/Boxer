@@ -73,7 +73,7 @@
 	//(This is consistent with how other OS X apps with textinput handle Cmd-keypresses.)
 	if ((theEvent.modifierFlags & NSCommandKeyMask) == NSCommandKeyMask)
 	{
-		[super keyDown: theEvent];
+        [super keyDown: theEvent];
         return;
 	}
 	

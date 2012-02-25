@@ -253,6 +253,63 @@
 }
 
 
+
+- (IBAction) toggleFastForward: (id)sender
+{
+    //Check if the menu option was triggered via its key equivalent or via a regular click.
+    NSEvent *currentEvent = [NSApp currentEvent];
+    
+    //If the toggle was triggered by a key event, then trigger the fast-forward until the key is released.
+    //IMLPEMENTATION NOTE: normally we'd do this with a standard Cocoa event-listening loop, but this would
+    //block the emulation and defeat the whole purpose. Instead we must listen for key-ups in BXSession's
+    //event-dispatch loop (_processEventsUntilDate:) and release fast forward when we receive one.
+    if (currentEvent.type == NSKeyDown)
+    {
+        waitingForFastForwardRelease = YES;
+        [self fastForward: sender];
+    }
+    //If it was toggled by a regular menu click, then make it 'stick' until toggled again.
+    else
+    {
+        if (!self.emulator.turboSpeed)
+        {
+            [self fastForward: sender];
+        }
+        else
+        {
+            [self releaseFastForward: sender];
+        }
+        waitingForFastForwardRelease = NO;
+    }
+}
+
+- (IBAction) fastForward: (id)sender
+{
+    //Unpause when fast-forwarding
+    [self resume: self];
+    
+    if (!self.emulator.turboSpeed)
+    {
+        self.emulator.turboSpeed = YES;
+        
+        [[BXBezelController controller] showFastForwardBezel];
+    }
+}
+        
+- (IBAction) releaseFastForward: (id)sender
+{
+    if (self.emulator.turboSpeed)
+    {
+        self.emulator.turboSpeed = NO;
+        BXBezelController *bezel = [BXBezelController controller];
+        if (bezel.currentBezel == bezel.fastForwardBezel)
+            [bezel hideBezel];
+        
+        waitingForFastForwardRelease = NO;
+    }
+}
+
+
 - (void) setSliderSpeed: (NSInteger)speed
 {
 	//If we're at the maximum speed, bump it into auto-throttling mode
@@ -416,6 +473,19 @@
         //If no next drive is found, then disable the menu item altogether and reset its title.
         [theItem setTitle: NSLocalizedString(@"Previous Disc", @"Menu item for cycling to the previous queued CD-ROM.")];
         return NO;
+    }
+    else if (theAction == @selector(toggleFastForward:))
+    {
+		if (!self.emulator.isTurboSpeed)
+			title = NSLocalizedString(@"Fast Forward", @"Emulation menu option for fast-forwarding the emulator.");
+		else
+			title = NSLocalizedString(@"Resume Regular Speed", @"Emulation menu option for resuming from fast-forward.");
+		
+		[theItem setTitle: title];
+        
+        //TWEAK: disable the menu item while we're waiting for the user to release the key.
+        //That will break out of the menu's own key loop, and prevents repeated keypresses.
+		return [self isEmulating] && !waitingForFastForwardRelease;
     }
     return [super validateMenuItem: theItem];
 }

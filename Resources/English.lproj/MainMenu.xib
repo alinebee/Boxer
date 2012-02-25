@@ -1168,6 +1168,15 @@
 									<reference key="NSOnImage" ref="569538535"/>
 									<reference key="NSMixedImage" ref="489554260"/>
 								</object>
+								<object class="NSMenuItem" id="1061875492">
+									<reference key="NSMenu" ref="67815420"/>
+									<string key="NSTitle">Fast Forward</string>
+									<string key="NSKeyEquiv"></string>
+									<int key="NSKeyEquivModMask">1048576</int>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="569538535"/>
+									<reference key="NSMixedImage" ref="489554260"/>
+								</object>
 								<object class="NSMenuItem" id="789450847">
 									<reference key="NSMenu" ref="67815420"/>
 									<string key="NSTitle">Show CPU Settings</string>
@@ -2179,6 +2188,14 @@
 					<int key="connectionID">2191</int>
 				</object>
 				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">toggleFastForward:</string>
+						<reference key="source" ref="935372999"/>
+						<reference key="destination" ref="1061875492"/>
+					</object>
+					<int key="connectionID">2193</int>
+				</object>
+				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">value: currentSession.emulator.gameportTimingMode</string>
 						<reference key="source" ref="34920399"/>
@@ -3136,6 +3153,7 @@
 							<reference ref="665114175"/>
 							<reference ref="726999377"/>
 							<reference ref="488448645"/>
+							<reference ref="1061875492"/>
 						</object>
 						<reference key="parent" ref="466028025"/>
 					</object>
@@ -3438,6 +3456,11 @@
 						<reference key="object" ref="1044668056"/>
 						<reference key="parent" ref="548981161"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">2192</int>
+						<reference key="object" ref="1061875492"/>
+						<reference key="parent" ref="67815420"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -3602,6 +3625,7 @@
 					<string>2187.IBPluginDependency</string>
 					<string>2188.IBPluginDependency</string>
 					<string>2190.IBPluginDependency</string>
+					<string>2192.IBPluginDependency</string>
 					<string>283.IBPluginDependency</string>
 					<string>284.IBPluginDependency</string>
 					<string>285.IBPluginDependency</string>
@@ -3829,6 +3853,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
@@ -3843,7 +3868,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">2191</int>
+			<int key="maxID">2193</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -4068,7 +4093,6 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>hideProgramPanel:</string>
-							<string>saveScreenshot:</string>
 							<string>showProgramPanel:</string>
 							<string>toggleFilterType:</string>
 							<string>toggleProgramPanelShown:</string>
@@ -4076,7 +4100,6 @@
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -4089,7 +4112,6 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>hideProgramPanel:</string>
-							<string>saveScreenshot:</string>
 							<string>showProgramPanel:</string>
 							<string>toggleFilterType:</string>
 							<string>toggleProgramPanelShown:</string>
@@ -4099,10 +4121,6 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<object class="IBActionInfo">
 								<string key="name">hideProgramPanel:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">saveScreenshot:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -4939,6 +4957,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>decrementFrameSkip:</string>
 							<string>decrementSpeed:</string>
+							<string>fastForward:</string>
 							<string>incrementFrameSkip:</string>
 							<string>incrementSpeed:</string>
 							<string>mountNextDrivesInQueues:</string>
@@ -4947,16 +4966,23 @@
 							<string>paste:</string>
 							<string>pause:</string>
 							<string>relaunch:</string>
+							<string>releaseFastForward:</string>
 							<string>resume:</string>
+							<string>saveScreenshot:</string>
 							<string>showCPUPanel:</string>
 							<string>showDrivesPanel:</string>
 							<string>showGamePanel:</string>
 							<string>showMountPanel:</string>
 							<string>showMousePanel:</string>
+							<string>toggleFastForward:</string>
 							<string>togglePaused:</string>
 						</object>
 						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -4982,6 +5008,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>decrementFrameSkip:</string>
 							<string>decrementSpeed:</string>
+							<string>fastForward:</string>
 							<string>incrementFrameSkip:</string>
 							<string>incrementSpeed:</string>
 							<string>mountNextDrivesInQueues:</string>
@@ -4990,12 +5017,15 @@
 							<string>paste:</string>
 							<string>pause:</string>
 							<string>relaunch:</string>
+							<string>releaseFastForward:</string>
 							<string>resume:</string>
+							<string>saveScreenshot:</string>
 							<string>showCPUPanel:</string>
 							<string>showDrivesPanel:</string>
 							<string>showGamePanel:</string>
 							<string>showMountPanel:</string>
 							<string>showMousePanel:</string>
+							<string>toggleFastForward:</string>
 							<string>togglePaused:</string>
 						</object>
 						<object class="NSArray" key="dict.values">
@@ -5006,6 +5036,10 @@
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">decrementSpeed:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">fastForward:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -5041,7 +5075,15 @@
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
+								<string key="name">releaseFastForward:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
 								<string key="name">resume:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">saveScreenshot:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -5062,6 +5104,10 @@
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">showMousePanel:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">toggleFastForward:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">

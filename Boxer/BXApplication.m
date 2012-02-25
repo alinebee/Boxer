@@ -11,6 +11,11 @@
 
 - (void) sendEvent: (NSEvent *)theEvent
 {
+    //TODO: implement handling of media keys here.
+    if (theEvent.type == NSSystemDefined && theEvent.subtype == 8)
+    {
+    }
+    
     //Fix Cmd-modified key-up events not being dispatched to the key window.
 	if (self.keyWindow && theEvent.type == NSKeyUp && (theEvent.modifierFlags & NSCommandKeyMask) == NSCommandKeyMask)
     {

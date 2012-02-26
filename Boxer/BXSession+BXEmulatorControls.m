@@ -28,20 +28,20 @@
 {
     //Do not reinitialize in subclasses
     if (self == [BXSession class])
-    {
-        NSArray *bands = [[NSArray alloc] initWithObjects:
-                          [NSNumber numberWithInteger: BXMinSpeedThreshold],
-                          [NSNumber numberWithInteger: BX286SpeedThreshold],
-                          [NSNumber numberWithInteger: BX386SpeedThreshold],
-                          [NSNumber numberWithInteger: BX486SpeedThreshold],
-                          [NSNumber numberWithInteger: BXPentiumSpeedThreshold],
-                          [NSNumber numberWithInteger: BXMaxSpeedThreshold],
-                          nil];
-        
+    {   
         NSDateFormatter *screenshotDateFormatter = [[NSDateFormatter alloc] init];
         screenshotDateFormatter.dateFormat = NSLocalizedString(@"yyyy-MM-dd 'at' h.mm.ss a", @"The date and time format to use for screenshot filenames. Literal strings (such as the 'at') should be enclosed in single quotes. The date order should not be changed when localizing unless really necessary, as this is important to maintain chronological ordering in alphabetical file listings. Note that some characters such as / and : are not permissible in filenames and will be stripped out or replaced.");
         
-        NSValueTransformer *speedBanding		= [[BXBandedValueTransformer alloc] initWithThresholds: bands];
+        
+        double bands[6] = {
+            BXMinSpeedThreshold,
+            BX286SpeedThreshold,
+            BX386SpeedThreshold,
+            BX486SpeedThreshold,
+            BXPentiumSpeedThreshold,
+            BXMaxSpeedThreshold
+        };
+        NSValueTransformer *speedBanding		= [[BXBandedValueTransformer alloc] initWithThresholds: bands count: 6];
         NSValueTransformer *invertFramerate     = [[BXInvertNumberTransformer alloc] init];
         NSValueTransformer *screenshotDater     = [[BXDateTransformer alloc] initWithDateFormatter: screenshotDateFormatter];
         
@@ -53,8 +53,6 @@
         [speedBanding release];
         [invertFramerate release];
         [screenshotDater release];
-        
-        [bands release];
         [screenshotDateFormatter release];
     }
 }

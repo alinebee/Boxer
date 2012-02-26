@@ -29,18 +29,19 @@
 {
     if (self == [BXInspectorController class])
     {
-        NSArray *sensitivityThresholds = [[NSArray alloc] initWithObjects:
-                                          [NSNumber numberWithFloat: 1.0f / BXMouseSensitivityRange],
-                                          [NSNumber numberWithFloat: 1.0f],
-                                          [NSNumber numberWithFloat: 1.0f * BXMouseSensitivityRange],
-                                          nil];
+        //A range from 0.5 to 2.0, with 1.0 as the midpoint of the range.
+        double sensitivityThresholds[3] = {
+            1.0 / BXMouseSensitivityRange,
+            1.0,
+            1.0 * BXMouseSensitivityRange
+        };
         
-        BXBandedValueTransformer *mouseSensitivity = [[BXBandedValueTransformer alloc] initWithThresholds: sensitivityThresholds];
+        BXBandedValueTransformer *mouseSensitivity = [[BXBandedValueTransformer alloc] initWithThresholds: sensitivityThresholds
+                                                                                                    count: 3];
         
         [NSValueTransformer setValueTransformer: mouseSensitivity forName: @"BXMouseSensitivitySlider"];
         
         [mouseSensitivity release];
-        [sensitivityThresholds release];
     }
 }
 

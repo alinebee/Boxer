@@ -131,60 +131,76 @@
 
 
 @implementation BXBandedValueTransformer
-@synthesize bandThresholds;
 
 + (Class) transformedValueClass			{ return [NSNumber class]; }
 + (BOOL) allowsReverseTransformation	{ return YES; }
 
-- (id) initWithThresholds: (NSArray *)thresholds
+- (id) init
 {
-	if ((self = [super init]))
+    if ((self = [super init]))
+    {
+        bandThresholds[0] = 0.0;
+        numBands = 1;
+    }
+    return self;
+}
+
+- (id) initWithThresholds: (double *)thresholds count: (NSUInteger)count
+{
+	if ((self = [self init]))
 	{
-		[self setBandThresholds: thresholds];
+		[self setThresholds: thresholds count: count];
 	}
 	return self;
 }
 
-
-- (NSNumber *) minValue	{ return [[self bandThresholds] objectAtIndex: 0]; }
-- (NSNumber *) maxValue	{ return [[self bandThresholds] lastObject]; }
+- (void) setThresholds: (double *)thresholds count: (NSUInteger)count
+{
+    NSAssert(count > 0, @"BXBandedValueTransformer must have at least one band.");
+    NSAssert1(count <= MAX_BANDS, @"BXBandedValueTransformer can have a maximum of %u bands.", MAX_BANDS);
+    
+    NSUInteger i;
+    for (i=0; i < count; i++)
+        bandThresholds[i] = thresholds[i];
+    
+    numBands = count;
+}
 
 //Return the 0.0->1.0 ratio that corresponds to the specified banded value
 - (NSNumber *) transformedValue: (NSNumber *)value
 {
-	CGFloat bandedValue = [value floatValue];
-
+	double bandedValue = value.doubleValue;
+    double minValue = bandThresholds[0], maxValue = bandThresholds[numBands-1];
+    
 	//Save us some odious calculations by doing bounds checking up front
-	if (bandedValue <= [[self minValue] floatValue]) return [NSNumber numberWithFloat: 0.0f];
-	if (bandedValue >= [[self maxValue] floatValue]) return [NSNumber numberWithFloat: 1.0f];
+	if (bandedValue <= minValue) return [NSNumber numberWithDouble: 0.0];
+	if (bandedValue >= maxValue) return [NSNumber numberWithDouble: 1.0];
 	
 	//Now get to work!
-	NSArray *thresholds = [self bandThresholds];
-	NSInteger numBands	= [thresholds count];
-	NSInteger bandNum;
+	NSUInteger bandNum;
 	
 	//How much of the overall range each band occupies
-	CGFloat bandSpread		= 1.0f / (numBands - 1);
+	double bandSpread		= 1.0 / (numBands - 1);
 	
-	CGFloat upperThreshold	= 0.0f;
-	CGFloat lowerThreshold	= 0.0f;
-	CGFloat bandRange		= 0.0f;
+	double upperThreshold	= 0.0;
+	double lowerThreshold	= 0.0;
+	double bandRange		= 0.0;
 
 	//Now figure out which band this value falls into
 	for (bandNum = 1; bandNum < numBands; bandNum++)
 	{
-		upperThreshold = [[thresholds objectAtIndex: bandNum] floatValue];
+		upperThreshold = bandThresholds[bandNum];
 		//We've found the band, stop looking now
 		if (bandedValue < upperThreshold) break;
 	}
 	
 	//Now populate the limits and range of the band
-	lowerThreshold	= [[thresholds objectAtIndex: bandNum - 1] floatValue];
+	lowerThreshold	= bandThresholds[bandNum - 1];
 	bandRange		= upperThreshold - lowerThreshold;
 	
 	//Now work out where in the band we fall
-	CGFloat offsetWithinBand	= bandedValue - lowerThreshold;
-	CGFloat ratioWithinBand		= (bandRange != 0.0f) ? offsetWithinBand / bandRange : 0.0f;
+	double offsetWithinBand	= bandedValue - lowerThreshold;
+	double ratioWithinBand	= (bandRange != 0.0) ? (offsetWithinBand / bandRange) : 0.0;
 	
 	//Once we know the ratio within this band, we apply it to the band's own ratio to derive the full field ratio
 	CGFloat fieldRatio = (bandNum - 1 + ratioWithinBand) * bandSpread;
@@ -195,38 +211,36 @@
 //Return the banded value that corresponds to the input's 0.0->1.0 ratio
 - (NSNumber *) reverseTransformedValue: (NSNumber *)value
 {
-	CGFloat fieldRatio = [value floatValue];
+	CGFloat fieldRatio = value.doubleValue;
+    double minValue = bandThresholds[0], maxValue = bandThresholds[numBands-1];
 	
 	//Save us some odious calculations by doing bounds checking up front
-	if		(fieldRatio >= 1.0f) return [self maxValue];
-	else if	(fieldRatio <= 0.0f) return [self minValue];
+	if		(fieldRatio >= 1.0) return [NSNumber numberWithDouble: maxValue];
+	else if	(fieldRatio <= 0.0) return [NSNumber numberWithDouble: minValue];
 	
 	//Now get to work!
-	NSArray *thresholds = [self bandThresholds];
-	NSInteger numBands	= [thresholds count];
-	NSInteger bandNum;
 	
 	//How much of the overall range each band occupies
-	CGFloat bandSpread	= 1.0f / (numBands - 1);
-	
-	CGFloat upperThreshold, lowerThreshold, bandRange;
+	double bandSpread	= 1.0 / (numBands - 1);
+	double upperThreshold, lowerThreshold, bandRange;
 	
 	//First work out which band the field's ratio falls into
-	bandNum = (NSInteger)floor(fieldRatio / bandSpread);
+	NSUInteger bandNum = floor(fieldRatio / bandSpread);
+    NSAssert1(bandNum < numBands - 1, @"Calculated band number out of range: %u", bandNum);
 	
 	//Grab the upper and lower points of this band's range
-	lowerThreshold	= [[thresholds objectAtIndex: bandNum]		floatValue];
-	upperThreshold	= [[thresholds objectAtIndex: bandNum + 1]	floatValue];
-	bandRange		= upperThreshold - lowerThreshold;
+	lowerThreshold	= bandThresholds[bandNum];
+    upperThreshold	= bandThresholds[bandNum + 1];
+    bandRange		= upperThreshold - lowerThreshold;
 	
 	//Work out where within the band our current ratio falls
-	CGFloat bandRatio			= bandNum * bandSpread;
-	CGFloat ratioWithinBand		= (fieldRatio - bandRatio) / bandSpread;
+	double bandRatio			= bandNum * bandSpread;
+	double ratioWithinBand		= (fieldRatio - bandRatio) / bandSpread;
 	
 	//From that we can calculate our banded value! hurrah
-	CGFloat bandedValue			= lowerThreshold + (ratioWithinBand * bandRange);
+	double bandedValue			= lowerThreshold + (ratioWithinBand * bandRange);
 	
-	return [NSNumber numberWithFloat: bandedValue];
+	return [NSNumber numberWithDouble: bandedValue];
 }
 @end
 

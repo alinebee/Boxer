@@ -8,6 +8,7 @@
 #import "BXSessionPrivate.h"
 #import "BXEmulator+BXShell.h"
 #import "BXEmulator+BXPaste.h"
+#import "BXEmulator+BXAudio.h"
 #import "BXValueTransformers.h"
 #import "BXAppController+BXSupportFiles.h"
 #import "BXVideoHandler.h"
@@ -353,10 +354,10 @@
 - (BOOL) validateUserInterfaceItem: (id)theItem
 {
 	//All our actions depend on the emulator being active
-	if (![self isEmulating]) return NO;
+	if (!self.isEmulating) return NO;
 	
 	SEL theAction = [theItem action];
-	
+        
 	if (theAction == @selector(incrementSpeed:))		return ![self speedAtMaximum];
 	if (theAction == @selector(decrementSpeed:))		return ![self speedAtMinimum];
 
@@ -364,8 +365,8 @@
 	if (theAction == @selector(decrementFrameSkip:))	return ![self frameskipAtMinimum];
 
 	//Defined in BXFileManager
-	if (theAction == @selector(openInDOS:))				return [emulator isAtPrompt];
-	if (theAction == @selector(relaunch:))				return [emulator isAtPrompt];
+	if (theAction == @selector(openInDOS:))				return emulator.isAtPrompt;
+	if (theAction == @selector(relaunch:))				return emulator.isAtPrompt;
 	
 	if (theAction == @selector(paste:))
 		return [self canPasteFromPasteboard: [NSPasteboard generalPasteboard]];

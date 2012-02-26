@@ -57,7 +57,6 @@ extern NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey;
 @protocol BXMIDIDevice;
 @interface BXEmulator (BXAudio) <BXEmulatedMT32Delegate>
 
-
 #pragma mark -
 #pragma mark MIDI processing
 

@@ -34,5 +34,9 @@
 	<true/>
 	<key>suppressSystemHotkeys</key>
 	<true/>
+	<key>muted</key>
+	<false/>
+	<key>globalVolume</key>
+	<real>1</real>
 </dict>
 </plist>

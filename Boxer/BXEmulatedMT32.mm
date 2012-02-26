@@ -348,6 +348,18 @@ void _logMT32DebugMessage(void *userData, const char *fmt, va_list list);
     //Because BXEmulatedMT32 is mixer-driven, this has no effect
 }
 
+//Because BXEmulatedMT32 is mixer-driven, this has no effect:
+//it is up to the renderer to control volume.
+- (void) setVolume: (float)volume
+{
+    
+}
+
+- (float) volume
+{
+    return 1.0f;
+}
+
 - (BOOL) renderOutputToBuffer: (void *)buffer 
                        frames: (NSUInteger)numFrames
                    sampleRate: (NSUInteger *)sampleRate

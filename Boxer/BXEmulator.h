@@ -80,6 +80,9 @@ extern NSString * const shellProcessPath;
 	id <BXEmulatedJoystick> joystick;
     
     BOOL joystickActive;
+    
+    float masterVolume;
+    BOOL muted;
 	
 	NSString *processName;
 	NSString *processPath;
@@ -191,6 +194,7 @@ extern NSString * const shellProcessPath;
 //An array of queued command strings to execute on the DOS command line.
 @property (readonly, nonatomic) NSMutableArray *commandQueue;
 
+
 //The properties requested by the game for what kind of MIDI playback
 //device we should use. See BXAudio for keys and constants.
 @property (retain, nonatomic) NSDictionary * requestedMIDIDeviceDescription;
@@ -200,9 +204,17 @@ extern NSString * const shellProcessPath;
 @property (retain, nonatomic) id <BXMIDIDevice> activeMIDIDevice;
 
 //Whether to autodetect when a game is playing MT-32 music.
-//If YES, and the game detects MT-32 myusic, it will try to switch
-//to an MT-32-capable MIDI device.
+//If YES, the game's MIDI output will be sniffed to see if it is using MT-32 music:
+//If so, we will request to switch to an MT-32-capable MIDI output device.
 @property (assign, nonatomic) BOOL autodetectsMT32;
+
+//The volume by which to scale all sound output, ranging from 0.0 to 1.0.
+//This can be set independently of muting.
+@property (assign, nonatomic) float masterVolume;
+
+//Whether the sound output is currently muted. Toggling this will have no effect
+//on the reported master volume.
+@property (assign, nonatomic) BOOL muted;
 
 
 #pragma mark -

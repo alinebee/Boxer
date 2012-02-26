@@ -20,6 +20,10 @@
 
 @implementation BXSession (BXAudioControls)
 
+
+#pragma mark -
+#pragma mark Delegate methods
+
 - (void) emulatorDidDisplayMT32Message: (NSNotification *)notification
 {
     NSString *message = [[notification userInfo] objectForKey: @"message"];

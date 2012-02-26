@@ -49,6 +49,10 @@
 #include "hardware.h"
 #include "programs.h"
 
+//--Added 2012-02-26 by Alun Bestor to give Boxer control over the mixer.
+#import "BXCoalfaceAudio.h"
+//--End of modifications
+
 #define MIXER_SSIZE 4
 #define MIXER_SHIFT 14
 #define MIXER_REMAIN ((1<<MIXER_SHIFT)-1)
@@ -113,8 +117,12 @@ void MIXER_DelChannel(MixerChannel* delchan) {
 }
 
 void MixerChannel::UpdateVolume(void) {
-	volmul[0]=(Bits)((1 << MIXER_VOLSHIFT)*scale*volmain[0]*mixer.mastervol[0]);
-	volmul[1]=(Bits)((1 << MIXER_VOLSHIFT)*scale*volmain[1]*mixer.mastervol[1]);
+    //--Modified 2012-02-26 by Alun Bestor to give Boxer control over master volume
+	//volmul[0]=(Bits)((1 << MIXER_VOLSHIFT)*scale*volmain[0]*mixer.mastervol[0]);
+	//volmul[1]=(Bits)((1 << MIXER_VOLSHIFT)*scale*volmain[1]*mixer.mastervol[1]);
+	volmul[0]=(Bits)((1 << MIXER_VOLSHIFT)*scale*volmain[0]*boxer_masterVolume(BXLeftChannel));
+	volmul[1]=(Bits)((1 << MIXER_VOLSHIFT)*scale*volmain[1]*boxer_masterVolume(BXRightChannel));
+    //--End of modifications
 }
 
 void MixerChannel::SetVolume(float _left,float _right) {
@@ -565,7 +573,10 @@ public:
 		if (cmd->FindExist("/NOSHOW")) return;
 		chan=mixer.channels;
 		WriteOut("Channel  Main    Main(dB)\n");
-		ShowVolume("MASTER",mixer.mastervol[0],mixer.mastervol[1]);
+        //--Modified 2012-02-26 by Alun Bestor to show Boxer's master volume instead.
+		//ShowVolume("MASTER",mixer.mastervol[0],mixer.mastervol[1]);
+        ShowVolume("MASTER", boxer_masterVolume(BXLeftChannel), boxer_masterVolume(BXRightChannel));
+        //--End of modifications
 		for (chan=mixer.channels;chan;chan=chan->next) 
 			ShowVolume(chan->name,chan->volmain[0],chan->volmain[1]);
 	}
@@ -627,7 +638,8 @@ void MIXER_Init(Section* sec) {
 	mixer.pos=0;
 	mixer.done=0;
 	memset(mixer.work,0,sizeof(mixer.work));
-	mixer.mastervol[0]=1.0f;
+	
+    mixer.mastervol[0]=1.0f;
 	mixer.mastervol[1]=1.0f;
 
 	/* Start the Mixer using SDL Sound at 22 khz */
@@ -667,3 +679,16 @@ void MIXER_Init(Section* sec) {
 	mixer.needed=mixer.min_needed+1;
 	PROGRAMS_MakeFile("MIXER.COM",MIXER_ProgramStart);
 }
+
+
+//--Added 2012-02-26 by Alun Bestor to give Boxer an easy way to update channel volumes.
+void boxer_updateVolumes()
+{
+    MixerChannel *source=mixer.channels;
+    while (source)
+    {
+        source->UpdateVolume();
+        source=source->next;
+    }
+}
+//--End of modifications

@@ -23,4 +23,7 @@
 - (void) resume {}
 - (void) close {}
 
+- (float) volume { return 0.0f; }
+- (void) setVolume: (float)volume {}
+
 @end

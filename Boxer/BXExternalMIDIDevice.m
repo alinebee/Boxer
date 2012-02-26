@@ -317,4 +317,13 @@
     
 }
 
+- (void) setVolume: (float)volume
+{
+    //TODO: send master-volume sysex to device?
+}
+
+- (float) volume
+{
+    return 1.0f;
+}
 @end

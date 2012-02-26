@@ -21,6 +21,7 @@
 #import "BXEmulatedJoystick.h"
 #import "BXEmulatedMouse.h"
 #import "BXAudioSource.h"
+#import "BXCoalfaceAudio.h"
 
 
 #pragma mark -
@@ -324,6 +325,13 @@ enum {
 //time it is needed.
 - (void) _attachRequestedMIDIDeviceIfNeeded;
 
+//Synchronizes volumes with the DOSBox mixer and MIDI devices whenever the master volume changes.
+- (void) _syncVolume;
+
+//The volume to apply to the specified DOSBox mixer channel or MIDI device.
+//Will be 0.0 while muted and masterVolume while unmuted.
+- (float) _masterVolumeForChannel: (BXAudioChannel)channel;
+- (float) _masterVolumeForMIDIDevice: (id <BXMIDIDevice>)device;
 
 //Returns the DOSBox channel used for MIDI mixing, or NULL if none is available.
 - (MixerChannel *) _MIDIMixerChannel;

@@ -106,10 +106,27 @@ enum {
 //(Currently this is based on OS X's system settings, rather than our own preference.)
 - (BOOL) shouldPlayUISounds;
 
+//Whether emulated audio is muted. Persisted across all sessions in user defaults.
+@property (assign, nonatomic) BOOL muted;
+//The master volume for emulated audio. Persisted across all sessions in user defaults.
+@property (assign, nonatomic) float masterVolume; 
+
+//The master volume as it will affect played sounds and appear in volume indicators.
+//Will be 0 while muted, regardless of the master volume currently set.
+//Changing this will change the master volume and mute/unmute sound.
+@property (assign, nonatomic) float effectiveVolume;
+
 //If UI sounds are enabled, play the sound matching the specified name
 //at the specified volume, with the specified optional delay.
 - (void) playUISoundWithName: (NSString *)soundName atVolume: (float)volume;
 - (void) playUISoundWithName: (NSString *)soundName atVolume: (float)volume afterDelay: (NSTimeInterval)delay;
+
+//Toggle mute on/off.
+- (IBAction) toggleMuted: (id)sender;
+
+//Increment/decrement the master volume. These will also unmute the sound.
+- (IBAction) incrementVolume: (id)sender;
+- (IBAction) decrementVolume: (id)sender;
 
 
 #pragma mark -

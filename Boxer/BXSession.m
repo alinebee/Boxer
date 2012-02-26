@@ -337,10 +337,13 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	{
 		if (emulator)
 		{
-			[emulator setDelegate: nil];
-			[[emulator videoHandler] unbind: @"aspectCorrected"];
-			[[emulator videoHandler] unbind: @"filterType"];
+			emulator.delegate = nil;
+			[emulator.videoHandler unbind: @"aspectCorrected"];
+			[emulator.videoHandler unbind: @"filterType"];
 			
+            [emulator unbind: @"muted"];
+            [emulator unbind: @"masterVolume"];
+            
 			[self _deregisterForPauseNotifications];
 			[self _deregisterForFilesystemNotifications];
 		}
@@ -349,14 +352,16 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		emulator = [newEmulator retain];
 		
 		if (newEmulator)
-		{
+		{	
+			newEmulator.delegate = (id)self;
+			
 			NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-			
-			[newEmulator setDelegate: (id)self];
-			
-			//FIXME: we shouldn't be using bindings for these
-			[[newEmulator videoHandler] bind: @"aspectCorrected" toObject: defaults withKeyPath: @"aspectCorrected" options: nil];
-			[[newEmulator videoHandler] bind: @"filterType" toObject: defaults withKeyPath: @"filterType" options: nil];
+            
+            [newEmulator bind: @"muted" toObject: [NSApp delegate] withKeyPath: @"muted" options: nil];
+            [newEmulator bind: @"masterVolume" toObject: [NSApp delegate] withKeyPath: @"masterVolume" options: nil];
+            
+			[newEmulator.videoHandler bind: @"aspectCorrected" toObject: defaults withKeyPath: @"aspectCorrected" options: nil];
+			[newEmulator.videoHandler bind: @"filterType" toObject: defaults withKeyPath: @"filterType" options: nil];
 			
 			[self _registerForFilesystemNotifications];
 			[self _registerForPauseNotifications];

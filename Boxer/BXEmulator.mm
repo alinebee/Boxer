@@ -94,6 +94,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 @synthesize commandQueue;
 
 @synthesize activeMIDIDevice, requestedMIDIDeviceDescription, autodetectsMT32;
+@synthesize muted, masterVolume;
 
 
 #pragma mark -
@@ -167,27 +168,30 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 		commandQueue            = [[NSMutableArray alloc] initWithCapacity: 4];
 		driveCache              = [[NSMutableDictionary alloc] initWithCapacity: DOS_DRIVES];
 		pendingSysexMessages    = [[NSMutableArray alloc] initWithCapacity: 4];
-		
-        [self setKeyboard: [[[BXEmulatedKeyboard alloc] init] autorelease]];
-        [self setMouse: [[[BXEmulatedMouse alloc] init] autorelease]];
         
-        [self setVideoHandler: [[[BXVideoHandler alloc] init] autorelease]];
-		[[self videoHandler] setEmulator: self];
-	}
+        self.masterVolume = 1.0f;
+        self.muted = NO;
+		
+        self.keyboard = [[[BXEmulatedKeyboard alloc] init] autorelease];
+        self.mouse = [[[BXEmulatedMouse alloc] init] autorelease];
+        
+        self.videoHandler = [[[BXVideoHandler alloc] init] autorelease];
+		self.videoHandler.emulator = self;
+    }
 	return self;
 }
 
 - (void) dealloc
 {	
-	[self setProcessName: nil],	[processName release];
-	[self setActiveMIDIDevice: nil], [activeMIDIDevice release];
-    [self setRequestedMIDIDeviceDescription: nil], [requestedMIDIDeviceDescription release];
+    self.processName = nil;
+    self.activeMIDIDevice = nil;
+    self.requestedMIDIDeviceDescription = nil;
     
-    [self setKeyboard: nil], [keyboard release];
-    [self setMouse: nil], [mouse release];
-    [self setJoystick: nil], [joystick release];
-    [self setVideoHandler: nil], [videoHandler release];
-	
+    self.keyboard = nil;
+    self.mouse = nil;
+    self.joystick = nil;
+    self.videoHandler = nil;
+    
 	[driveCache release], driveCache = nil;
 	[commandQueue release], commandQueue = nil;
     [pendingSysexMessages release], pendingSysexMessages = nil;

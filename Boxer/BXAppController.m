@@ -36,6 +36,9 @@ NSString * const BXShowImportPanelParam = @"--showImportPanel";
 NSString * const BXImportURLParam = @"--importURL ";
 NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
+#define BXMasterVolumeIncrement 1.0f / 12.0f
+
+
 @interface BXAppController ()
 
 //Because we can only run one emulation session at a time, we need to launch a second
@@ -905,7 +908,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 
 #pragma mark -
-#pragma mark Miscellaneous UI-related methods
+#pragma mark Sound-related methods
 
 
 //We retrieve OS X's own UI sound setting from their domain
@@ -926,7 +929,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	if ([self shouldPlayUISounds])
 	{
 		NSSound *theSound = [NSSound soundNamed: soundName];
-		[theSound setVolume: volume];
+		[theSound setVolume: (volume * self.effectiveVolume)];
         
         if (delay > 0)
         {
@@ -941,7 +944,79 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 - (void) playUISoundWithName: (NSString *)soundName atVolume: (float)volume
 {
-    [self playUISoundWithName: soundName atVolume: volume afterDelay: 0];
+    [self playUISoundWithName: soundName
+                     atVolume: volume
+                   afterDelay: 0];
+}
+
+- (BOOL) muted
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey: @"muted"];
+}
+
+- (void) setMuted: (BOOL)muted
+{
+    [[NSUserDefaults standardUserDefaults] setBool: muted forKey: @"muted"];
+}
+
+- (float) masterVolume
+{
+    return [[NSUserDefaults standardUserDefaults] floatForKey: @"masterVolume"];
+}
+
+- (void) setMasterVolume: (float)volume
+{
+    volume = MAX(0.0f, volume);
+    volume = MIN(volume, 1.0f);
+    [[NSUserDefaults standardUserDefaults] setFloat: volume forKey: @"masterVolume"];
+}
+
++ (NSSet *) keyPathsForValuesAffectingEffectiveVolume
+{
+    return [NSSet setWithObjects: @"muted", @"masterVolume", nil];
+}
+
+- (float) effectiveVolume
+{
+    if (self.muted) return 0.0;
+    else return self.masterVolume;
+}
+
+- (void) setEffectiveVolume: (float)volume
+{
+    volume = MAX(0.0f, volume);
+    volume = MIN(volume, 1.0f);
+    
+    //Mute/unmute the volume at the same time as setting it, when modifying it from here. 
+    self.muted = (volume == 0);
+    self.masterVolume = volume;
+}
+
+- (IBAction) toggleMuted: (id)sender
+{
+    self.muted = !self.muted;
+    //[[BXBezelController controller] showVolumeBezelForValue: self.emulator.masterVolume];
+}
+
+- (IBAction) incrementVolume: (id)sender
+{
+    self.muted = NO;
+    if (self.masterVolume < 1.0f)
+    {
+        self.masterVolume += BXMasterVolumeIncrement;
+    }
+    //[[BXBezelController controller] showVolumeBezelForValue: self.emulator.masterVolume];
+}
+
+- (IBAction) decrementVolume: (id)sender
+{
+    if (self.masterVolume > 0.0f)
+    {
+        self.masterVolume -= BXMasterVolumeIncrement;
+    }
+    self.muted = (self.masterVolume == 0);
+    
+    //[[BXBezelController controller] showVolumeBezelForValue: self.emulator.masterVolume];
 }
 
 @end

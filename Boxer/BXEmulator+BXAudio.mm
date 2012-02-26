@@ -76,12 +76,13 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
 
 - (id <BXMIDIDevice>) attachMIDIDeviceForDescription: (NSDictionary *)description
 {
-    id <BXMIDIDevice> device = [[self delegate] MIDIDeviceForEmulator: self
-                                                   meetingDescription: description];
+    id <BXMIDIDevice> device = [self.delegate MIDIDeviceForEmulator: self
+                                                 meetingDescription: description];
     
-    if (device && device != [self activeMIDIDevice])
+    if (device && device != self.activeMIDIDevice)
     {
-        [self setActiveMIDIDevice: device];
+        self.activeMIDIDevice = device;
+        self.activeMIDIDevice.volume = [self _masterVolumeForMIDIDevice: self.activeMIDIDevice];
     }
     return device;
 }
@@ -367,4 +368,52 @@ void _renderMIDIOutput(Bitu numFrames)
     }
 }
 
+
+#pragma mark -
+#pragma mark Volume and muting
+
+- (void) setMasterVolume: (float)volume
+{
+    volume = MAX(0.0f, volume);
+    volume = MIN(volume, 1.0f);
+    
+    if (self.masterVolume != volume)
+    {
+        masterVolume = volume;
+        [self _syncVolume];
+    }
+}
+
+- (void) setMuted: (BOOL)flag
+{
+    if (flag != self.muted)
+    {
+        muted = flag;
+        [self _syncVolume];
+    }
+}
+
+- (void) _syncVolume
+{
+    //Update the DOSBox mixer with the new volume and mute settings.
+    //Note that we can only do this once the mixer subsystem has initialized,
+    //and won't need to do it before then anyway.
+    if (self.isInitialized) boxer_updateVolumes();
+    
+    //Also update the volume of our current MIDI device.
+    if (self.activeMIDIDevice)
+    {
+        self.activeMIDIDevice.volume = [self _masterVolumeForMIDIDevice: self.activeMIDIDevice];
+    }
+}
+
+- (float) _masterVolumeForMIDIDevice: (id <BXMIDIDevice>)device
+{
+    return (self.muted) ? 0.0 : self.masterVolume;
+}
+
+- (float) _masterVolumeForChannel: (BXAudioChannel)channel
+{
+    return (self.muted) ? 0.0 : self.masterVolume;
+}
 @end

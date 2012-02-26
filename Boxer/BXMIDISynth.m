@@ -232,4 +232,16 @@
     AUGraphStart(_graph);
 }
 
+//Unimplemented for now
+- (void) setVolume: (float)volume
+{
+    //TODO: set volume on our output node
+}
+
+- (float) volume
+{
+    //TODO: retrieve volume from our output node
+    return 1.0f;
+}
+
 @end

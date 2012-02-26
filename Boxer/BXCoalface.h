@@ -107,7 +107,6 @@ extern "C" {
     
 	//Called from dos_keyboard_layout.cpp: provides the current OS X keyboard layout as a DOSBox layout code.
 	const char * boxer_preferredKeyboardLayout();
-
     
     void boxer_log(char const* format,...);
     void boxer_die(char const *functionName, char const *fileName, int lineNumber, char const* format,...);

@@ -16,6 +16,11 @@
 
 @protocol BXMIDIDevice <NSObject>
 
+//The master volume of the MIDI device from 0.0 to 1.0, independent of the volume
+//of individual channels. Not all MIDI devices are expected to support volume control,
+//but at the very least should mute themselves when their volume is set to 0.
+@property (assign, nonatomic) float volume;
+
 //Returns whether this device can play back MT-32 music properly.
 @property (readonly, nonatomic) BOOL supportsMT32Music;
 

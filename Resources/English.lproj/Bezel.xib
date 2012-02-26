@@ -41,7 +41,7 @@
 				<string key="NSClassName">NSApplication</string>
 			</object>
 			<object class="NSCustomView" id="959508283">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -50,7 +50,6 @@
 						<int key="NSvFlags">274</int>
 						<string key="NSFrame">{{20, 23}, {300, 44}}</string>
 						<reference key="NSSuperview" ref="959508283"/>
-						<reference key="NSNextKeyView"/>
 						<int key="NSTag">7</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="422971973">
@@ -86,12 +85,11 @@ YmFyLg</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{340, 90}</string>
-				<reference key="NSSuperview"/>
 				<reference key="NSNextKeyView" ref="537414232"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
 			<object class="NSCustomView" id="262078921">
-				<nil key="NSNextResponder"/>
+				<reference key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -110,8 +108,9 @@ YmFyLg</string>
 								<string>NeXT TIFF v4.0 pasteboard type</string>
 							</object>
 						</object>
-						<string key="NSFrame">{{260, 44}, {24, 24}}</string>
+						<string key="NSFrame">{{260, 41}, {24, 24}}</string>
 						<reference key="NSSuperview" ref="262078921"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="48927340"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="222996761">
@@ -143,8 +142,9 @@ YmFyLg</string>
 								<string>NeXT TIFF v4.0 pasteboard type</string>
 							</object>
 						</object>
-						<string key="NSFrame">{{16, 43}, {24, 24}}</string>
+						<string key="NSFrame">{{16, 40}, {24, 24}}</string>
 						<reference key="NSSuperview" ref="262078921"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="613313033"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="30691410">
@@ -166,6 +166,7 @@ YmFyLg</string>
 						<int key="NSvFlags">266</int>
 						<string key="NSFrame">{{41, 43}, {219, 20}}</string>
 						<reference key="NSSuperview" ref="262078921"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="546181327"/>
 						<int key="NSTag">2</int>
 						<bool key="NSEnabled">YES</bool>
@@ -190,6 +191,7 @@ YmFyLg</string>
 						<int key="NSvFlags">290</int>
 						<string key="NSFrame">{{20, 12}, {260, 22}}</string>
 						<reference key="NSSuperview" ref="262078921"/>
+						<reference key="NSWindow"/>
 						<int key="NSTag">3</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="639055398">
@@ -204,6 +206,8 @@ YmFyLg</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{300, 80}</string>
+				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="433158987"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
@@ -556,6 +560,7 @@ YmFyLg</string>
 						</object>
 						<string key="NSFrame">{{29, 29}, {102, 102}}</string>
 						<reference key="NSSuperview" ref="522861424"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView"/>
 						<int key="NSTag">1</int>
 						<bool key="NSEnabled">YES</bool>
@@ -576,6 +581,7 @@ YmFyLg</string>
 				</object>
 				<string key="NSFrameSize">{160, 160}</string>
 				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="450901117"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
@@ -1075,7 +1081,7 @@ YmFyLg</string>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
 			<object class="NSCustomView" id="13901621">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1096,7 +1102,6 @@ YmFyLg</string>
 						</object>
 						<string key="NSFrame">{{29, 29}, {102, 102}}</string>
 						<reference key="NSSuperview" ref="13901621"/>
-						<reference key="NSNextKeyView"/>
 						<int key="NSTag">1</int>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="979445244">
@@ -1115,7 +1120,6 @@ YmFyLg</string>
 					</object>
 				</object>
 				<string key="NSFrameSize">{160, 160}</string>
-				<reference key="NSSuperview"/>
 				<reference key="NSNextKeyView" ref="949738162"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
@@ -1141,6 +1145,7 @@ YmFyLg</string>
 						</object>
 						<string key="NSFrame">{{29, 29}, {102, 102}}</string>
 						<reference key="NSSuperview" ref="741825127"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView"/>
 						<int key="NSTag">1</int>
 						<bool key="NSEnabled">YES</bool>
@@ -1161,6 +1166,7 @@ YmFyLg</string>
 				</object>
 				<string key="NSFrameSize">{160, 160}</string>
 				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="65153907"/>
 				<string key="NSClassName">BXBezelView</string>
 			</object>
@@ -2369,7 +2375,227 @@ YmFyLg</string>
 			<nil key="sourceID"/>
 			<int key="maxID">132</int>
 		</object>
-		<object class="IBClassDescriber" key="IBDocument.Classes"/>
+		<object class="IBClassDescriber" key="IBDocument.Classes">
+			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
+				<bool key="EncodedWithXMLCoder">YES</bool>
+				<object class="IBPartialClassDescription">
+					<string key="className">BGHUDLabel</string>
+					<string key="superclassName">NSTextField</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BGHUDLabel.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXBezelController</string>
+					<string key="superclassName">NSWindowController</string>
+					<object class="NSMutableDictionary" key="outlets">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>CPUSpeedBezel</string>
+							<string>MT32MessageBezel</string>
+							<string>MT32MissingBezel</string>
+							<string>driveAddedBezel</string>
+							<string>driveImportedBezel</string>
+							<string>driveRemovedBezel</string>
+							<string>driveSwappedBezel</string>
+							<string>fastForwardBezel</string>
+							<string>fullscreenBezel</string>
+							<string>joystickIgnoredBezel</string>
+							<string>numlockActiveBezel</string>
+							<string>numlockInactiveBezel</string>
+							<string>numpadActiveBezel</string>
+							<string>numpadInactiveBezel</string>
+							<string>pauseBezel</string>
+							<string>playBezel</string>
+							<string>screenshotBezel</string>
+							<string>throttleBezel</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+							<string>NSView</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>CPUSpeedBezel</string>
+							<string>MT32MessageBezel</string>
+							<string>MT32MissingBezel</string>
+							<string>driveAddedBezel</string>
+							<string>driveImportedBezel</string>
+							<string>driveRemovedBezel</string>
+							<string>driveSwappedBezel</string>
+							<string>fastForwardBezel</string>
+							<string>fullscreenBezel</string>
+							<string>joystickIgnoredBezel</string>
+							<string>numlockActiveBezel</string>
+							<string>numlockInactiveBezel</string>
+							<string>numpadActiveBezel</string>
+							<string>numpadInactiveBezel</string>
+							<string>pauseBezel</string>
+							<string>playBezel</string>
+							<string>screenshotBezel</string>
+							<string>throttleBezel</string>
+						</object>
+						<object class="NSArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBToOneOutletInfo">
+								<string key="name">CPUSpeedBezel</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">MT32MessageBezel</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">MT32MissingBezel</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">driveAddedBezel</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">driveImportedBezel</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">driveRemovedBezel</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">driveSwappedBezel</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fastForwardBezel</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fullscreenBezel</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">joystickIgnoredBezel</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">numlockActiveBezel</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">numlockInactiveBezel</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">numpadActiveBezel</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">numpadInactiveBezel</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">pauseBezel</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">playBezel</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">screenshotBezel</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">throttleBezel</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXBezelController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXBezelView</string>
+					<string key="superclassName">NSView</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXBezelView.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXHUDImageCell</string>
+					<string key="superclassName">BXTemplateImageCell</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXHUDImageCell.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXHUDLabel</string>
+					<string key="superclassName">BXThemedLabel</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXHUDLabel.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXHUDLevelIndicatorCell</string>
+					<string key="superclassName">NSLevelIndicatorCell</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXHUDLevelIndicatorCell.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXMT32LCDDisplay</string>
+					<string key="superclassName">NSTextField</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXMT32LCDDisplay.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXTemplateImageCell</string>
+					<string key="superclassName">NSImageCell</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXTemplateImageCell.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXThemedLabel</string>
+					<string key="superclassName">BGHUDLabel</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXThemedLabel.h</string>
+					</object>
+				</object>
+			</object>
+		</object>
 		<int key="IBDocument.localizationMode">0</int>
 		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaFramework</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDependencies">

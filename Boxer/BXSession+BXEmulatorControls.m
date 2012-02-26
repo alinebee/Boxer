@@ -11,8 +11,6 @@
 #import "BXValueTransformers.h"
 #import "BXAppController+BXSupportFiles.h"
 #import "BXVideoHandler.h"
-#import "BXEmulatorConfiguration.h"
-#import "BXInspectorController.h"
 
 #import "BXDOSWindowController.h"
 #import "BXInputController.h"
@@ -572,16 +570,6 @@
 + (NSSet *) keyPathsForValuesAffectingSliderSpeed			{ return [NSSet setWithObjects: @"emulating", @"CPUSpeed", @"autoSpeed", @"dynamic", nil]; }
 + (NSSet *) keyPathsForValuesAffectingSpeedDescription		{ return [NSSet setWithObject: @"sliderSpeed"]; }
 + (NSSet *) keyPathsForValuesAffectingFrameskipDescription	{ return [NSSet setWithObjects: @"emulating", @"frameskip", nil]; }
-
-
-#pragma mark -
-#pragma mark Inspector actions
-
-//These are passthroughs for when BXInspectorController isn't in the responder chain
-- (IBAction) showGamePanel:		(id)sender	{ [[BXInspectorController controller] showGamePanel: sender]; }
-- (IBAction) showCPUPanel:		(id)sender	{ [[BXInspectorController controller] showCPUPanel: sender]; }
-- (IBAction) showDrivesPanel:	(id)sender	{ [[BXInspectorController controller] showDrivesPanel: sender]; }
-- (IBAction) showMousePanel:	(id)sender	{ [[BXInspectorController controller] showMousePanel: sender]; }
 
 
 #pragma mark -

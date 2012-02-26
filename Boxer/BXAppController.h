@@ -128,6 +128,12 @@ enum {
 - (IBAction) orderFrontInspectorPanel: (id)sender;		//Display Boxer's inspector HUD panel.
 - (IBAction) toggleInspectorPanel: (id)sender;			//Display/hide Boxer's inspector HUD panel.
 
+//Display the relevant panels of the Inspector.
+- (IBAction) showGamePanel:		(id)sender;
+- (IBAction) showCPUPanel:		(id)sender;
+- (IBAction) showDrivesPanel:	(id)sender;
+- (IBAction) showMousePanel:	(id)sender;
+
 //The URLs and email addresses for the following actions are configured in the Info.plist file.
 
 - (IBAction) showWebsite:			(id)sender;	//Open the Boxer website in the default browser. 

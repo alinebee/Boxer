@@ -142,13 +142,6 @@ enum
 //Whether we can accept pasted data from the specified pasteboard.
 - (BOOL) canPasteFromPasteboard: (NSPasteboard *)pboard;
 
-
-//Display the relevant panels of the Inspector.
-- (IBAction) showGamePanel:		(id)sender;
-- (IBAction) showCPUPanel:		(id)sender;
-- (IBAction) showDrivesPanel:	(id)sender;
-- (IBAction) showMousePanel:	(id)sender;
-
 //Save a screenshot to the desktop.
 - (IBAction) saveScreenshot: (id)sender;
 @end

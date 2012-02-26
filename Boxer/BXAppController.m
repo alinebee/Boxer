@@ -751,6 +751,14 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	}
 }
 
+//These are passthroughs for when BXInspectorController isn't in the responder chain
+- (IBAction) showGamePanel:		(id)sender	{ [[BXInspectorController controller] showGamePanel: sender]; }
+- (IBAction) showCPUPanel:		(id)sender	{ [[BXInspectorController controller] showCPUPanel: sender]; }
+- (IBAction) showDrivesPanel:	(id)sender	{ [[BXInspectorController controller] showDrivesPanel: sender]; }
+- (IBAction) showMousePanel:	(id)sender	{ [[BXInspectorController controller] showMousePanel: sender]; }
+
+
+
 - (IBAction) showWebsite:			(id)sender	{ [self openURLFromKey: @"WebsiteURL"]; }
 - (IBAction) showDonationPage:		(id)sender	{ [self openURLFromKey: @"DonationURL"]; }
 - (IBAction) showBugReportPage:		(id)sender	{ [self openURLFromKey: @"BugReportURL"]; }
@@ -784,7 +792,14 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	
 	//Don't allow the Inspector panel to be shown if there's no active session.
 	if (theAction == @selector(toggleInspectorPanel:) ||
-		theAction == @selector(orderFrontInspectorPanel:))	return [[self currentSession] isEmulating];
+		theAction == @selector(orderFrontInspectorPanel:) ||
+        theAction == @selector(showGamePanel:) ||
+        theAction == @selector(showCPUPanel:) ||
+        theAction == @selector(showDrivesPanel:) ||
+        theAction == @selector(showMousePanel:))
+    {
+        return [[self currentSession] isEmulating];
+    }
 	
 	//Don't allow game imports or the games folder to be opened if no games folder has been set yet.
 	if (theAction == @selector(revealGamesFolder:) ||

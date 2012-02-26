@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>BXGameProfileCatalogueVersion</key>
-	<string>20120211.1</string>
+	<string>20120227.1</string>
 	<key>BXSpecificGameProfiles</key>
 	<array>
 		<dict>
@@ -1463,6 +1463,7 @@
 				<string>Halloween Harry</string>
 				<string>F-14 Tomcat</string>
 				<string>Commander Keen 4-6</string>
+                <string>Gabriel Knight: Sins of the Fathers</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
@@ -1474,6 +1475,7 @@
 				<string>gamemaps.ck4</string>
 				<string>gamemaps.ck5</string>
 				<string>gamemaps.ck6</string>
+                <string>gksg.cat</string>
 			</array>
 		</dict>
 		<dict>

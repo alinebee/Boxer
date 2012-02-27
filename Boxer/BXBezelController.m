@@ -22,7 +22,7 @@
 
 #define BXScreenshotBezelDuration 0.75
 #define BXPausePlayBezelDuration 0.75
-#define BXFastForwardBezelDuration 3.0
+#define BXFastForwardBezelDuration 0.0 //Leave on-screen until dismissed
 #define BXNumpadBezelDuration 2.0
 #define BXNumlockBezelDuration 2.0
 #define BXFullscreenBezelDuration 3.0
@@ -155,9 +155,12 @@
                                                  selector: @selector(hideBezel)
                                                    object: nil];
         
-        [self performSelector: @selector(hideBezel)
-                   withObject: nil
-                   afterDelay: duration];
+        if (duration > 0)
+        {
+            [self performSelector: @selector(hideBezel)
+                       withObject: nil
+                       afterDelay: duration];
+        }
     }
 }
 

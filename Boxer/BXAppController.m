@@ -998,6 +998,12 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
     //[[BXBezelController controller] showVolumeBezelForValue: self.emulator.masterVolume];
 }
 
+- (IBAction) minimizeVolume: (id)sender
+{
+    self.effectiveVolume = 0.0f;
+    //[[BXBezelController controller] showVolumeBezelForValue: self.emulator.masterVolume];
+}
+
 - (IBAction) maximizeVolume: (id)sender
 {
     self.effectiveVolume = 1.0f;

@@ -103,6 +103,8 @@
     if (self.isEmulating && !self.isPaused)
     {
         self.paused = YES;
+        //Disable fast-forward upon pausing.
+        self.emulator.turboSpeed = NO;
         [[BXBezelController controller] showPauseBezel];
     }
 }
@@ -112,6 +114,8 @@
     if (self.isEmulating && self.isPaused)
     {
         self.paused = NO;
+        //Disable fast-forward upon resuming.
+        self.emulator.turboSpeed = NO;
         [[BXBezelController controller] showPlayBezel];
     }
 }
@@ -126,12 +130,12 @@
 
 - (NSUInteger) frameskip
 {
-	return [[emulator videoHandler] frameskip];
+	return emulator.videoHandler.frameskip;
 }
 
 - (void) setFrameskip: (NSUInteger)frameskip
 {
-	[[emulator videoHandler] setFrameskip: frameskip];
+	emulator.videoHandler.frameskip = frameskip;
 	
 	[gameSettings setObject: [NSNumber numberWithUnsignedInteger: frameskip] forKey: @"frameskip"];
 }
@@ -145,49 +149,54 @@
 
 - (IBAction) incrementFrameSkip: (id)sender
 {
-	NSNumber *newFrameskip = [NSNumber numberWithInteger: [self frameskip] + 1];
+	NSNumber *newFrameskip = [NSNumber numberWithInteger: self.frameskip + 1];
 	if ([self validateFrameskip: &newFrameskip error: nil])
-		[self setFrameskip: [newFrameskip integerValue]];
+		self.frameskip = newFrameskip.integerValue;
 }
 
 - (IBAction) decrementFrameSkip: (id)sender
 {
-	NSNumber *newFrameskip = [NSNumber numberWithInteger: [self frameskip] - 1];
+	NSNumber *newFrameskip = [NSNumber numberWithInteger: self.frameskip - 1];
 	if ([self validateFrameskip: &newFrameskip error: nil])
-		[self setFrameskip: [newFrameskip integerValue]];
+		self.frameskip = newFrameskip.integerValue;
 }
 
 
 - (BOOL) isAutoSpeed
 {
-	return [emulator isAutoSpeed];
+	return self.emulator.isAutoSpeed;
 }
 
 - (void) setAutoSpeed: (BOOL)isAuto
 {
-	[emulator setAutoSpeed: isAuto];
+    self.emulator.autoSpeed = isAuto;
+    //Upon changing the emulator speed, turn off fast-forward.
+    self.emulator.turboSpeed = NO;
 	
 	//Preserve changes to the speed settings
-	[gameSettings setObject: [NSNumber numberWithInteger: BXAutoSpeed] forKey: @"CPUSpeed"];
+	[self.gameSettings setObject: [NSNumber numberWithInteger: BXAutoSpeed] forKey: @"CPUSpeed"];
 }
 
 - (NSInteger) CPUSpeed
 {
-	return [emulator isAutoSpeed] ? BXAutoSpeed : [emulator fixedSpeed];
+	return self.emulator.isAutoSpeed ? BXAutoSpeed : self.emulator.fixedSpeed;
 }
 
 - (void) setCPUSpeed: (NSInteger)speed
 {
     if (speed == BXAutoSpeed)
     {
-        [self setAutoSpeed: YES];
+        self.autoSpeed = YES;
     }
     else
     {
-        [self setAutoSpeed: NO];
-        [emulator setFixedSpeed: speed];
+        self.autoSpeed = NO;
+        self.emulator.fixedSpeed = speed;
         
-        [gameSettings setObject: [NSNumber numberWithInteger: speed] forKey: @"CPUSpeed"];
+        //Upon changing the emulator speed, turn off fast-forward.
+        self.emulator.turboSpeed = NO;
+        
+        [self.gameSettings setObject: [NSNumber numberWithInteger: speed] forKey: @"CPUSpeed"];
     }
 }
 
@@ -204,24 +213,24 @@
 
 - (IBAction) incrementSpeed: (id)sender
 {
-	if ([self speedAtMaximum]) return;
+	if (self.speedAtMaximum) return;
 	
-	NSInteger currentSpeed = [self CPUSpeed];
+	NSInteger currentSpeed = self.CPUSpeed;
 	
-	if (currentSpeed >= BXMaxSpeedThreshold) [self setAutoSpeed: YES];
+	if (currentSpeed >= BXMaxSpeedThreshold) self.autoSpeed = YES;
 	else
 	{
-		NSInteger increment	= [[self class] incrementAmountForSpeed: currentSpeed goingUp: YES];
+		NSInteger increment	= [self.class incrementAmountForSpeed: currentSpeed goingUp: YES];
 		//This snaps the speed to the nearest increment rather than doing straight addition
 		increment -= (currentSpeed % increment);
 		
 		//Validate our final value before assigning it
 		NSNumber *newSpeed = [NSNumber numberWithInteger: currentSpeed + increment];
 		if ([self validateCPUSpeed: &newSpeed error: nil])
-			[self setCPUSpeed: [newSpeed integerValue]];
+			self.CPUSpeed = newSpeed.integerValue;
 	}
     
-    [[BXBezelController controller] showCPUSpeedBezelForSpeed: [self CPUSpeed]];
+    [[BXBezelController controller] showCPUSpeedBezelForSpeed: self.CPUSpeed];
 }
 
 - (IBAction) decrementSpeed: (id)sender
@@ -335,7 +344,7 @@
 {
 	//If we're at the maximum speed, bump it into auto-throttling mode
 	if (speed >= BXMaxSpeedThreshold) speed = BXAutoSpeed;
-	[self setCPUSpeed: speed];
+	self.CPUSpeed = speed;
 }
 
 - (NSInteger) sliderSpeed
@@ -343,7 +352,7 @@
 	//Report the max fixed speed if we're in auto-throttling mode,
     //so that the knob will appear at the top end of the slider
     //instead of the bottom
-	return ([self isAutoSpeed]) ? BXMaxSpeedThreshold : [self CPUSpeed];
+	return (self.isAutoSpeed) ? BXMaxSpeedThreshold : self.CPUSpeed;
 }
 
 //Snap fixed speed to even increments, unless the Option key is held down
@@ -359,13 +368,13 @@
 }
 
 
-- (BOOL) isDynamic	{ return [emulator coreMode] == BXCoreDynamic; }
+- (BOOL) isDynamic	{ return self.emulator.coreMode == BXCoreDynamic; }
 
 - (void) setDynamic: (BOOL)dynamic
 {
-	[emulator setCoreMode: dynamic ? BXCoreDynamic : BXCoreNormal];
+	self.emulator.coreMode = dynamic ? BXCoreDynamic : BXCoreNormal;
 	
-	[gameSettings setObject: [NSNumber numberWithInteger: [emulator coreMode]] forKey: @"coreMode"];
+	[gameSettings setObject: [NSNumber numberWithInteger: emulator.coreMode] forKey: @"coreMode"];
 }
 
 
@@ -376,11 +385,11 @@
 	
 	SEL theAction = [theItem action];
         
-	if (theAction == @selector(incrementSpeed:))		return ![self speedAtMaximum];
-	if (theAction == @selector(decrementSpeed:))		return ![self speedAtMinimum];
+	if (theAction == @selector(incrementSpeed:))		return !self.speedAtMaximum;
+	if (theAction == @selector(decrementSpeed:))		return !self.speedAtMinimum;
 
-	if (theAction == @selector(incrementFrameSkip:))	return ![self frameskipAtMaximum];
-	if (theAction == @selector(decrementFrameSkip:))	return ![self frameskipAtMinimum];
+	if (theAction == @selector(incrementFrameSkip:))	return !self.frameskipAtMaximum;
+	if (theAction == @selector(decrementFrameSkip:))	return !self.frameskipAtMinimum;
 
 	//Defined in BXFileManager
 	if (theAction == @selector(openInDOS:))				return emulator.isAtPrompt;

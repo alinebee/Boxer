@@ -387,19 +387,19 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
-						<string key="label">toggleMuted:</string>
-						<reference key="source" ref="1003"/>
-						<reference key="destination" ref="49776381"/>
-					</object>
-					<int key="connectionID">994</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
 						<string key="label">maximizeVolume:</string>
 						<reference key="source" ref="1003"/>
 						<reference key="destination" ref="609713258"/>
 					</object>
 					<int key="connectionID">998</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">minimizeVolume:</string>
+						<reference key="source" ref="1003"/>
+						<reference key="destination" ref="49776381"/>
+					</object>
+					<int key="connectionID">999</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -766,7 +766,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">998</int>
+			<int key="maxID">999</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -782,6 +782,7 @@
 							<string>hideWelcomePanel:</string>
 							<string>incrementVolume:</string>
 							<string>maximizeVolume:</string>
+							<string>minimizeVolume:</string>
 							<string>openInDefaultApplication:</string>
 							<string>orderFrontAboutPanel:</string>
 							<string>orderFrontFirstRunPanel:</string>
@@ -839,6 +840,7 @@
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
+							<string>id</string>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="actionInfosByName">
@@ -849,6 +851,7 @@
 							<string>hideWelcomePanel:</string>
 							<string>incrementVolume:</string>
 							<string>maximizeVolume:</string>
+							<string>minimizeVolume:</string>
 							<string>openInDefaultApplication:</string>
 							<string>orderFrontAboutPanel:</string>
 							<string>orderFrontFirstRunPanel:</string>
@@ -891,6 +894,10 @@
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">maximizeVolume:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">minimizeVolume:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">

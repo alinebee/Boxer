@@ -128,7 +128,8 @@ enum {
 - (IBAction) incrementVolume: (id)sender;
 - (IBAction) decrementVolume: (id)sender;
 
-//Set the volume to maximum.
+//Set the volume to minimum/maximum.
+- (IBAction) minimizeVolume: (id)sender;
 - (IBAction) maximizeVolume: (id)sender;
 
 

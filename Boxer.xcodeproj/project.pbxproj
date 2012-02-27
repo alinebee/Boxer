@@ -184,6 +184,7 @@
 		9F1CBBA8120CB99D00C5E926 /* BXImportDropzone.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1CBBA7120CB99D00C5E926 /* BXImportDropzone.m */; };
 		9F1CBCAD120CCF3900C5E926 /* Blueprint.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9F1CBCAC120CCF3900C5E926 /* Blueprint.jpg */; };
 		9F1D50010F5C0966009F0AB9 /* BXEmulator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */; };
+		9F1DE9B214FB7F3800F9C91E /* NSObject+BXPerformExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F1DE9B114FB7F3800F9C91E /* NSObject+BXPerformExtensions.m */; };
 		9F1F00AB143F091300FF163A /* Audio.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F1F00AA143F091300FF163A /* Audio.png */; };
 		9F20C28B11E5D848005AF541 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28A11E5D848005AF541 /* Sparkle.framework */; };
 		9F20C28E11E5D8B4005AF541 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F20C28D11E5D8B4005AF541 /* QTKit.framework */; };
@@ -696,6 +697,8 @@
 		9F1CBCAC120CCF3900C5E926 /* Blueprint.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Blueprint.jpg; sourceTree = "<group>"; };
 		9F1D4FFF0F5C0966009F0AB9 /* BXEmulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulator.h; sourceTree = "<group>"; };
 		9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXEmulator.mm; sourceTree = "<group>"; };
+		9F1DE9B014FB7F3800F9C91E /* NSObject+BXPerformExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+BXPerformExtensions.h"; sourceTree = "<group>"; };
+		9F1DE9B114FB7F3800F9C91E /* NSObject+BXPerformExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+BXPerformExtensions.m"; sourceTree = "<group>"; };
 		9F1F00AA143F091300FF163A /* Audio.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Audio.png; sourceTree = "<group>"; };
 		9F20C28A11E5D848005AF541 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
 		9F20C28D11E5D8B4005AF541 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = "/Volumes/Macintosh HD/System/Library/Frameworks/QTKit.framework"; sourceTree = "<absolute>"; };
@@ -2474,6 +2477,8 @@
 				9F586CED143E4A0100E840C8 /* CALayer+BXLayerAdditions.m */,
 				9F9AEE8714CB4AEA00728641 /* BXAppKitVersionHelpers.h */,
 				9F9AEE8814CB4AEA00728641 /* BXAppKitVersionHelpers.m */,
+				9F1DE9B014FB7F3800F9C91E /* NSObject+BXPerformExtensions.h */,
+				9F1DE9B114FB7F3800F9C91E /* NSObject+BXPerformExtensions.m */,
 			);
 			path = BXToolkit;
 			sourceTree = "<group>";
@@ -3471,6 +3476,7 @@
 				9F9AEE8914CB4AEA00728641 /* BXAppKitVersionHelpers.m in Sources */,
 				9F8F374914F91FEB00E482FB /* BXApplication.m in Sources */,
 				9F8F374F14F9442D00E482FB /* BXAppController+BXHotKeys.m in Sources */,
+				9F1DE9B214FB7F3800F9C91E /* NSObject+BXPerformExtensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

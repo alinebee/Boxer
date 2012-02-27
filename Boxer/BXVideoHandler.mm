@@ -261,8 +261,7 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
             i++;
         }
         
-		[[[self emulator] delegate] emulator: [self emulator]
-							  didFinishFrame: [self frameBuffer]];
+        [self.emulator _didFinishFrame: self.frameBuffer];
 	}
 	frameInProgress = NO;
 }

@@ -259,15 +259,33 @@
     NSEvent *currentEvent = [NSApp currentEvent];
     
     //If the toggle was triggered by a key event, then trigger the fast-forward until the key is released.
-    //IMLPEMENTATION NOTE: normally we'd do this with a standard Cocoa event-listening loop, but this would
-    //block the emulation and defeat the whole purpose. Instead we must listen for key-ups in BXSession's
-    //event-dispatch loop (_processEventsUntilDate:) and release fast forward when we receive one.
     if (currentEvent.type == NSKeyDown)
     {
-        waitingForFastForwardRelease = YES;
         [self fastForward: sender];
+        
+        if (self.emulator.isConcurrent)
+        {
+            //Keep fast-forwarding until the user lifts the key. Once we receive the key-up,
+            //then discard all the repeated key-down events that occurred before the key-up:
+            //otherwise, the action will trigger again and again for each repeat.
+            NSEvent *keyUp = [NSApp nextEventMatchingMask: NSKeyUpMask
+                                                untilDate: [NSDate distantFuture]
+                                                   inMode: NSEventTrackingRunLoopMode
+                                                  dequeue: NO];
+            [NSApp discardEventsMatchingMask: NSKeyDownMask beforeEvent: keyUp];
+            [self releaseFastForward: sender];
+        }
+        else
+        {
+            //IMPLEMENTATION NOTE: when the emulator is running on the main thread,
+            //an event-tracking loop like the one above would block the emulation:
+            //defeating the purpose of the fast-forward. So instead, we listen for
+            //the key-up within the session's event-dispatch loop: making it a kind
+            //of inverted tracking loop.
+            waitingForFastForwardRelease = YES;
+        }
     }
-    //If it was toggled by a regular menu click, then make it 'stick' until toggled again.
+    //If the option was toggled by a regular menu click, then make it 'stick' until toggled again.
     else
     {
         if (!self.emulator.turboSpeed)

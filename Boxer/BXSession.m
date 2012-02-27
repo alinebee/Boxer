@@ -1160,7 +1160,10 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	}
 	
 	//Start up the emulator itself.
-	[[self emulator] start];
+    if ([[NSUserDefaults standardUserDefaults] boolForKey: @"useMultithreadedEmulation"])
+        [self.emulator performSelectorInBackground: @selector(start) withObject: nil];
+    else
+        [[self emulator] start];
 }
 
 - (void) _mountDrivesForSession
@@ -1393,48 +1396,50 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 {
 	if (suspended != flag)
 	{
-		suspended = flag;
-
-		//Tell the emulator to prepare for being suspended, or to resume after we unpause.
-        //Also tell OS X's power management that it's OK/not OK to put the display to sleep.
-		if (suspended)
-		{
-			[emulator willPause];
-		}
-		else
-		{
-			[emulator didResume];
-		}
-        
         //Enable/disable display-sleep suppression
         [self _syncSuppressesDisplaySleep];
         
-        //The suspended state is only checked inside the event loop
-        //inside -emulatorDidBeginRunLoop:, which only processes when
-        //there's any events in the queue. We post a dummy event to ensure
-        //that the loop ticks over and recognises the pause state.
-        NSEvent *dummyEvent = [NSEvent otherEventWithType: NSApplicationDefined
-                                                 location: NSZeroPoint
-                                            modifierFlags: 0
-                                                timestamp: CFAbsoluteTimeGetCurrent()
-                                             windowNumber: 0
-                                                  context: nil
-                                                  subtype: 0
-                                                    data1: 0
-                                                    data2: 0];
+		suspended = flag;
         
-        [NSApp postEvent: dummyEvent atStart: NO];
+		//Tell the emulator to prepare for being suspended, or to resume after we unpause.
+        if (suspended)
+        {
+            [emulator pause];
+        }
+        else
+        {
+            [emulator resume];
+        }
+        
+        if (!emulator.isConcurrent)
+        { 
+            //The suspended state is only checked inside the event loop
+            //inside -emulatorDidBeginRunLoop:, which only processes when
+            //there's any events in the queue. We post a dummy event to ensure
+            //that the loop ticks over and recognises the pause state.
+            NSEvent *dummyEvent = [NSEvent otherEventWithType: NSApplicationDefined
+                                                     location: NSZeroPoint
+                                                modifierFlags: 0
+                                                    timestamp: CFAbsoluteTimeGetCurrent()
+                                                 windowNumber: 0
+                                                      context: nil
+                                                      subtype: 0
+                                                        data1: 0
+                                                        data2: 0];
+            
+            [NSApp postEvent: dummyEvent atStart: NO];
+        }
 	}
 }
 
 - (void) _syncSuspendedState
 {
-	[self setSuspended: (interrupted || paused || autoPaused)];
+	self.suspended = (paused || autoPaused || (interrupted && !emulator.isConcurrent));
 }
 
 - (void) _syncAutoPausedState
 {
-	[self setAutoPaused: [self _shouldAutoPause]];
+    self.autoPaused = [self _shouldAutoPause];
 }
 
 - (BOOL) _shouldAutoPause

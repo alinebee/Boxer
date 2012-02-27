@@ -50,7 +50,6 @@ typedef struct BXDriveGeometry {
 #define BXFloppyImageSizeCutoff 2880 * 1024
 
 
-
 #pragma mark -
 #pragma mark Error states
 
@@ -89,18 +88,21 @@ enum {
 @interface BXEmulator()
 
 //Overridden to add setters for internal use
-@property (readwrite, nonatomic, getter=isExecuting) BOOL executing;
-@property (readwrite, nonatomic, getter=isCancelled) BOOL cancelled;
-@property (readwrite, nonatomic, getter=isInitialized) BOOL initialized;
-@property (readwrite, copy, nonatomic) NSString *processName;
-@property (readwrite, copy, nonatomic) NSString *processPath;
-@property (readwrite, copy, nonatomic) NSString *processLocalPath;
+@property (readwrite) NSThread *emulationThread;
+@property (readwrite, getter=isExecuting) BOOL executing;
+@property (readwrite, getter=isCancelled) BOOL cancelled;
+@property (readwrite, getter=isInitialized) BOOL initialized;
+@property (readwrite, getter=isPaused) BOOL paused;
+@property (readwrite, copy) NSString *processName;
+@property (readwrite, copy) NSString *processPath;
+@property (readwrite, copy) NSString *processLocalPath;
 
-@property (readwrite, nonatomic) BOOL joystickActive;
+@property (readwrite) BOOL joystickActive;
 
-@property (readwrite, retain, nonatomic) BXVideoHandler *videoHandler;
-@property (readwrite, retain, nonatomic) BXEmulatedKeyboard *keyboard;
-@property (readwrite, retain, nonatomic) BXEmulatedMouse *mouse;
+
+@property (readwrite, retain) BXVideoHandler *videoHandler;
+@property (readwrite, retain) BXEmulatedKeyboard *keyboard;
+@property (readwrite, retain) BXEmulatedMouse *mouse;
 
 @end
 
@@ -137,6 +139,10 @@ enum {
 - (void) _willStart;
 - (void) _didInitialize;
 - (void) _didFinish;
+
+//Called by videoHandler when each new frame is ready.
+//Passes the frame on to the emulator's delegate.
+- (void) _didFinishFrame: (BXFrameBuffer *)frame;
 
 @end
 

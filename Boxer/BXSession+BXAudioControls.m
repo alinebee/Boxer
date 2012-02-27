@@ -200,11 +200,17 @@
     return YES;
 }
 
-- (BOOL) emulator: (BXEmulator *)emulator shouldWaitForMIDIDevice: (id<BXMIDIDevice>)device untilDate: (NSDate *)date
+- (BOOL) emulator: (BXEmulator *)theEmulator shouldWaitForMIDIDevice: (id <BXMIDIDevice>)device untilDate: (NSDate *)date
 {
-    //Handle the delay ourselves more gracefully by running the event loop until the time is up.
-    //NSLog(@"Waiting for MIDI device for %f seconds", [date timeIntervalSinceNow]);
-    [self _processEventsUntilDate: date];
-    return NO;
+    //If the emulator is concurrent it can take care of its own waiting.
+    if (theEmulator.isConcurrent) return YES;
+    else
+    {
+        //If the emulator is running on the main thread, then handle the delay ourselves
+        //by running the event loop until the time is up.
+        //NSLog(@"Waiting for MIDI device for %f seconds", [date timeIntervalSinceNow]);
+        [self _processEventsUntilDate: date];
+        return NO;
+    }
 }
 @end

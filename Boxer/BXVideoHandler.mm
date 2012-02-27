@@ -143,12 +143,22 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 //This is called after resizing the session window or toggling rendering options.
 - (void) reset
 {
-	if ([[self emulator] isExecuting])
+	if (self.emulator.isExecuting)
 	{
-		if (frameInProgress) [self finishFrameWithChanges: NULL];
-		
-		if (callback) callback(GFX_CallBackReset);
-		//CPU_Reset_AutoAdjust();
+        if (self.emulator.emulationThread != [NSThread currentThread])
+        {
+            [self performSelector: _cmd
+                         onThread: self.emulator.emulationThread
+                       withObject: nil
+                    waitUntilDone: NO];
+        }
+        else
+        {
+            if (frameInProgress) [self finishFrameWithChanges: NULL];
+            
+            if (callback) callback(GFX_CallBackReset);
+            //CPU_Reset_AutoAdjust();
+        }
 	}
 }
 

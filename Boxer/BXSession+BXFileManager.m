@@ -585,26 +585,25 @@
 
 - (BOOL) openFileAtPath: (NSString *)path
 {
-	BXEmulator *theEmulator = [self emulator];
-	if (![self isEmulating] || [theEmulator isRunningProcess]) return NO;
+	if (!self.emulator.isInitialized || self.emulator.isRunningProcess) return NO;
     
 	//Get the path to the file in the DOS filesystem
-	NSString *dosPath = [theEmulator DOSPathForPath: path];
-	if (!dosPath || ![theEmulator DOSPathExists: dosPath]) return NO;
+	NSString *dosPath = [self.emulator DOSPathForPath: path];
+	if (!dosPath || ![self.emulator DOSPathExists: dosPath]) return NO;
 	
 	//Unpause the emulation if it's paused
 	[self resume: self];
 	
-	if ([[self class] isExecutable: path])
+	if ([self.class isExecutable: path])
 	{
 		//If an executable was specified, execute it
-        [self setLastLaunchedProgramPath: path];
-		[theEmulator executeProgramAtPath: dosPath changingDirectory: YES];
+        self.lastLaunchedProgramPath = path;
+		[self.emulator executeProgramAtPath: dosPath changingDirectory: YES];
 	}
 	else
 	{
 		//Otherwise, just switch to the specified path
-		[theEmulator changeWorkingDirectoryToPath: dosPath];
+		[self.emulator changeWorkingDirectoryToPath: dosPath];
 	}
 	return YES;
 }

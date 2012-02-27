@@ -793,7 +793,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 
 - (void) _didInitialize
 {
-	[self setInitialized: YES];
+	self.initialized = YES;
 	
 	//These flags will only change during initialization
 	[self willChangeValueForKey: @"gameportTimingMode"];
@@ -829,7 +829,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
     //Let our delegate process events for us if we don't have our own thread
     if (!self.isConcurrent)
     {
-        [[self delegate] processEventsForEmulator: self];
+        [self.delegate processEventsForEmulator: self];
     }
     else
     {
@@ -850,11 +850,11 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	//TWEAK: it's only safe to break out once initialization is done, since some
 	//of DOSBox's initialization routines rely on running tasks on the run loop
 	//and may crash if they fail to complete.
-	if ([self isCancelled] && [self isInitialized]) return NO;
+	if (self.isCancelled && self.isInitialized) return NO;
 
 	//If we have a command of our own waiting at the command prompt,
     //then break out of DOSBox's stdin input loop
-	if ([[self commandQueue] count] && [self isAtPrompt]) return NO;
+	if (self.commandQueue.count > 0 && self.isAtPrompt) return NO;
 	
 	return YES;
 }
@@ -864,12 +864,12 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
     //Create an autorelease pool for this iteration of the runloop
     if (!poolForRunLoop) poolForRunLoop = [[NSAutoreleasePool alloc] init];
     
-	[[self delegate] emulatorWillStartRunLoop: self];
+	[self.delegate emulatorWillStartRunLoop: self];
 }
 
 - (void) _runLoopDidFinish
 {
-	[[self delegate] emulatorDidFinishRunLoop: self];
+	[self.delegate emulatorDidFinishRunLoop: self];
     
     if (poolForRunLoop)
     {

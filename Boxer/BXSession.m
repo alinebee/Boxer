@@ -713,7 +713,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	//a properly initialized state, and can respond properly to
 	//commands and settings changes.
 	//TODO: move this decision off to the emulator itself.
-	[self setEmulating: YES];
+	self.emulating = YES;
     
     //Start preventing the display from going to sleep
     [self _syncSuppressesDisplaySleep];
@@ -722,19 +722,18 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 - (void) emulatorDidFinish: (NSNotification *)notification
 {
 	//Flag that we're no longer emulating
-	[self setEmulating: NO];
-    
+	self.emulating = NO;
     //Turn off display-sleep suppression
     [self _syncSuppressesDisplaySleep];
 	
 	//Clear our drive and program caches
-	[self setLastExecutedProgramPath: nil];
-    [self setLastLaunchedProgramPath: nil];
+	self.lastExecutedProgramPath = nil;
+    self.lastLaunchedProgramPath = nil;
 	
-	[self setDrives: nil];
+	self.drives = nil;
 
 	//Clear the final rendered frame
-	[[self DOSWindowController] updateWithFrame: nil];
+	[self.DOSWindowController updateWithFrame: nil];
 	
 	//Close the document once we're done, if desired
 	if ([self _shouldCloseOnEmulatorExit]) [self close];
@@ -795,7 +794,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         
         //If we'll be starting up with a target program, clear the screen
         //at the start of the autoexec sequence.
-        if (!userSkippedDefaultProgram && [self targetPath] && [[self class] isExecutable: [self targetPath]])
+        if (!userSkippedDefaultProgram && self.targetPath && [[self class] isExecutable: self.targetPath])
         {
             [theEmulator clearScreen];
         }
@@ -812,14 +811,14 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	hasLaunched = YES;
     
     //Do any just-in-time configuration, which should override all previous startup stuff.
-	NSNumber *frameskip = [gameSettings objectForKey: @"frameskip"];
+	NSNumber *frameskip = [self.gameSettings objectForKey: @"frameskip"];
 	if (frameskip && [self validateValue: &frameskip forKey: @"frameskip" error: nil])
 		[self setValue: frameskip forKey: @"frameskip"];
 	
 	
 	//After all preflight configuration has finished, go ahead and open whatever
     //file or folder we're pointing at.
-	NSString *target = [self targetPath];
+	NSString *target = self.targetPath;
 	if (target)
 	{
         //If the Option key is held down during the startup process, skip the default program.
@@ -846,17 +845,17 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (void) emulator: (BXEmulator *)theEmulator didFinishFrame: (BXFrameBuffer *)frame
 {
-	[[self DOSWindowController] updateWithFrame: frame];
+	[self.DOSWindowController updateWithFrame: frame];
 }
 
 - (NSSize) maxFrameSizeForEmulator: (BXEmulator *)theEmulator
 {
-	return [[self DOSWindowController] maxFrameSize];
+	return self.DOSWindowController.maxFrameSize;
 }
 
 - (NSSize) viewportSizeForEmulator: (BXEmulator *)theEmulator
 {
-	return [[self DOSWindowController] viewportSize];
+	return self.DOSWindowController.viewportSize;
 }
 
 - (void) processEventsForEmulator: (BXEmulator *)theEmulator
@@ -1163,7 +1162,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     if ([[NSUserDefaults standardUserDefaults] boolForKey: @"useMultithreadedEmulation"])
         [self.emulator performSelectorInBackground: @selector(start) withObject: nil];
     else
-        [[self emulator] start];
+        [self.emulator start];
 }
 
 - (void) _mountDrivesForSession
@@ -1354,12 +1353,12 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (BOOL) programIsActive
 {
-    if ([self isSuspended]) return NO;
-    if (![self isEmulating]) return NO;
+    if (self.isSuspended) return NO;
+    if (!self.isEmulating) return NO;
     
-    @synchronized([self emulator])
+    @synchronized(self.emulator)
     {
-        if ([[self emulator] isAtPrompt]) return NO;
+        if (self.emulator.isAtPrompt) return NO;
     }
     
     return YES;
@@ -1445,11 +1444,11 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 - (BOOL) _shouldAutoPause
 {
 	//Don't auto-pause if the emulator hasn't finished starting up yet.
-	if (![self isEmulating]) return NO;
+	if (!self.isEmulating) return NO;
 	
 	//Only allow auto-pausing if the mode is enabled in the user's settings,
     //or if the emulator is waiting at the DOS prompt.
-	if ([[self emulator] isAtPrompt] ||
+	if (self.emulator.isAtPrompt ||
         [[NSUserDefaults standardUserDefaults] boolForKey: @"pauseWhileInactive"])
     {
         //Auto-pause if Boxer is in the background.
@@ -1459,7 +1458,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         //IMPLEMENTATION NOTE: we used to toggle this when the DOS window was hidden (not visible),
         //but that gave rise to corner cases if shouldAutoPause was called just before the window
         //was to appear.
-        if ([[DOSWindowController window] isMiniaturized]) return YES;
+        if (self.DOSWindowController.window.isMiniaturized) return YES;
     }
 	
     return NO;
@@ -1571,9 +1570,9 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (BOOL) _shouldSuppressDisplaySleep
 {
-    if (![self isEmulating]) return NO;
-    if ([self isPaused] || [self isAutoPaused]) return NO;
-    if ([[self emulator] isAtPrompt]) return NO;
+    if (!self.isEmulating) return NO;
+    if (self.isPaused || self.isAutoPaused) return NO;
+    if (self.emulator.isAtPrompt) return NO;
     return YES;
 }
 

@@ -346,17 +346,26 @@ void _renderMIDIOutput(Bitu numFrames)
     id <BXMIDIDevice> device = [self activeMIDIDevice];
     BOOL askDelegate = [[self delegate] respondsToSelector: @selector(emulator:shouldWaitForMIDIDevice:untilDate:)];
     
-    while ([device isProcessing])
+    while (device.isProcessing)
     {
-        NSDate *date = [device dateWhenReady];
+        NSDate *date = device.dateWhenReady;
         BOOL keepWaiting = YES;
         
-        if (askDelegate) keepWaiting = [[self delegate] emulator: self
-                                         shouldWaitForMIDIDevice: device
-                                                       untilDate: date];
+        if (askDelegate) keepWaiting = [self.delegate emulator: self
+                                       shouldWaitForMIDIDevice: device
+                                                     untilDate: date];
         
-        if (keepWaiting) [NSThread sleepUntilDate: date];
-        else break;
+        //Block by running the thread's loop until the time is up
+        //or we've been cancelled
+        if (keepWaiting)
+        {
+            while (!self.isCancelled && [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode
+                                                                 beforeDate: date]);
+        }
+        else
+        {
+            break;
+        }
     }
 }
 

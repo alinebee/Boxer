@@ -106,8 +106,8 @@
 
 - (void) _statusBarDidResize
 {
-	//Hide the notification text if it overlaps the button
-	[notificationMessage setHidden: NSIntersectsRect([notificationMessage frame], [statusBarControls frame])];
+	//Hide the notification text if it overlaps the button or volume controls
+	notificationMessage.hidden = NSIntersectsRect(notificationMessage.frame, statusBarControls.frame) || NSIntersectsRect(notificationMessage.frame, volumeControls.frame);
 }
 
 - (void) _windowWillClose
@@ -117,23 +117,25 @@
 
 - (void) _syncSegmentedButtonStates
 {	
-	[statusBarControls setSelected: [[BXInspectorController controller] panelShown]		forSegment: BXStatusBarInspectorSegment];
-	[statusBarControls setSelected: [[self controller] programPanelShown]				forSegment: BXStatusBarProgramPanelSegment];
-	[statusBarControls setSelected: [[[self controller] inputController] mouseLocked]	forSegment: BXStatusBarMouseLockSegment];
+	[statusBarControls setSelected: [BXInspectorController controller].panelShown	forSegment: BXStatusBarInspectorSegment];
+	[statusBarControls setSelected: self.controller.programPanelShown				forSegment: BXStatusBarProgramPanelSegment];
+	[statusBarControls setSelected: self.controller.inputController.mouseLocked     forSegment: BXStatusBarMouseLockSegment];
 	
-	[statusBarControls setEnabled:	[[[self controller] document] isGamePackage]		forSegment: BXStatusBarProgramPanelSegment];
-	[statusBarControls setEnabled:	[[[self controller] inputController] mouseActive]	forSegment: BXStatusBarMouseLockSegment];
+	[statusBarControls setEnabled:	self.controller.document.isGamePackage          forSegment: BXStatusBarProgramPanelSegment];
+	[statusBarControls setEnabled:	self.controller.inputController.mouseActive     forSegment: BXStatusBarMouseLockSegment];
 	
 	NSString *panelButtonImage;
 	if ([statusBarControls isSelectedForSegment: BXStatusBarProgramPanelSegment])
-			panelButtonImage = @"PanelCollapseTemplate";
-	else	panelButtonImage = @"PanelExpandTemplate";
+        panelButtonImage = @"PanelCollapseTemplate";
+	else
+        panelButtonImage = @"PanelExpandTemplate";
 	[statusBarControls setImage: [NSImage imageNamed: panelButtonImage] forSegment: BXStatusBarProgramPanelSegment];
 	
 	NSString *lockButtonImage;
 	if ([statusBarControls isSelectedForSegment: BXStatusBarMouseLockSegment])
-			lockButtonImage = @"NSLockLockedTemplate";
-	else	lockButtonImage = @"NSLockUnlockedTemplate";
+        lockButtonImage = @"NSLockLockedTemplate";
+	else
+        lockButtonImage = @"NSLockUnlockedTemplate";
 	[statusBarControls setImage: [NSImage imageNamed: lockButtonImage] forSegment: BXStatusBarMouseLockSegment];
 }
 

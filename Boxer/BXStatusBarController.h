@@ -22,6 +22,7 @@ enum {
 {
 	IBOutlet NSSegmentedControl *statusBarControls;
 	IBOutlet NSTextField *notificationMessage;
+    IBOutlet NSView *volumeControls;
 }
 
 //The window controller for the window containing this statusbar

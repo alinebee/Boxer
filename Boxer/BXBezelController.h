@@ -46,6 +46,7 @@ enum {
     NSView *joystickIgnoredBezel;
     NSView *CPUSpeedBezel;
     NSView *throttleBezel;
+    NSView *volumeBezel;
     NSView *pauseBezel;
     NSView *playBezel;
     NSView *fastForwardBezel;
@@ -80,6 +81,9 @@ enum {
 
 //The bezel view used for flightstick throttle notifications.
 @property (retain, nonatomic) IBOutlet NSView *throttleBezel;
+
+//The bezel view used for volume notifications.
+@property (retain, nonatomic) IBOutlet NSView *volumeBezel;
 
 //The bezel view used for MT-32 LCD messages.
 @property (retain, nonatomic) IBOutlet NSView *MT32MessageBezel;
@@ -118,8 +122,12 @@ enum {
 #pragma mark Methods
 
 //Whether to show or suppress drive notifications.
-//Currently this always returns YES.
+//This will return NO if the Drives Inspector panel is open.
 - (BOOL) shouldShowDriveNotifications;
+
+//Whether to show volume notifications.
+//This will return NO if the window's statusbar volume control is currently visible.
+- (BOOL) shouldShowVolumeNotifications;
 
 - (void) showDriveAddedBezelForDrive: (BXDrive *)drive;
 - (void) showDriveRemovedBezelForDrive: (BXDrive *)drive;
@@ -149,6 +157,7 @@ enum {
 - (void) showCPUSpeedBezelForSpeed: (NSInteger)cpuSpeed;
 - (void) showThrottleBezelForValue: (float)throttleValue;
 
+- (void) showVolumeBezelForVolume: (float)volume;
 
 - (void) showBezel: (NSView *)bezel
        forDuration: (NSTimeInterval)duration

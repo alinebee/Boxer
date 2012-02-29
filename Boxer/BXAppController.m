@@ -36,7 +36,7 @@ NSString * const BXShowImportPanelParam = @"--showImportPanel";
 NSString * const BXImportURLParam = @"--importURL ";
 NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
-#define BXMasterVolumeIncrement 1.0f / 12.0f
+#define BXMasterVolumeNumIncrements 12
 
 
 @interface BXAppController ()
@@ -995,19 +995,19 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (IBAction) toggleMuted: (id)sender
 {
     self.muted = !self.muted;
-    //[[BXBezelController controller] showVolumeBezelForValue: self.emulator.masterVolume];
+    [[BXBezelController controller] showVolumeBezelForVolume: self.effectiveVolume];
 }
 
 - (IBAction) minimizeVolume: (id)sender
 {
     self.effectiveVolume = 0.0f;
-    //[[BXBezelController controller] showVolumeBezelForValue: self.emulator.masterVolume];
+    [[BXBezelController controller] showVolumeBezelForVolume: self.effectiveVolume];
 }
 
 - (IBAction) maximizeVolume: (id)sender
 {
     self.effectiveVolume = 1.0f;
-    //[[BXBezelController controller] showVolumeBezelForValue: self.emulator.masterVolume];
+    [[BXBezelController controller] showVolumeBezelForVolume: self.effectiveVolume];
 }
 
 - (IBAction) incrementVolume: (id)sender
@@ -1015,20 +1015,24 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
     self.muted = NO;
     if (self.masterVolume < 1.0f)
     {
-        self.masterVolume += BXMasterVolumeIncrement;
+        //Round the volume to the nearest increment after incrementing.
+        float incrementedVolume = self.masterVolume + (1.0 / BXMasterVolumeNumIncrements);
+        self.masterVolume = roundf(incrementedVolume * BXMasterVolumeNumIncrements) / BXMasterVolumeNumIncrements;
     }
-    //[[BXBezelController controller] showVolumeBezelForValue: self.emulator.masterVolume];
+    [[BXBezelController controller] showVolumeBezelForVolume: self.effectiveVolume];
 }
 
 - (IBAction) decrementVolume: (id)sender
 {
     if (self.masterVolume > 0.0f)
     {
-        self.masterVolume -= BXMasterVolumeIncrement;
+        //Round the volume to the nearest increment after decrementing.
+        float decrementedVolume = self.masterVolume - (1.0 / BXMasterVolumeNumIncrements);
+        self.masterVolume = roundf(decrementedVolume * BXMasterVolumeNumIncrements) / BXMasterVolumeNumIncrements;
     }
     self.muted = (self.masterVolume == 0);
     
-    //[[BXBezelController controller] showVolumeBezelForValue: self.emulator.masterVolume];
+    [[BXBezelController controller] showVolumeBezelForVolume: self.effectiveVolume];
 }
 
 @end

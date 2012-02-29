@@ -6,8 +6,11 @@
  */
 
 #import "BXBezelController.h"
+#import "BXAppController.h"
 #import "NSWindow+BXWindowEffects.h"
 #import "BXSession+BXEmulatorControls.h"
+#import "BXDOSWindow.h"
+#import "BXDOSWindowController.h"
 #import "BXGeometry.h"
 #import "BXDrive.h"
 #import "BXPackage.h"
@@ -21,6 +24,7 @@
 #define BXBezelFadeDuration 0.25
 
 #define BXScreenshotBezelDuration 0.75
+#define BXVolumeBezelDuration 0.75
 #define BXPausePlayBezelDuration 0.75
 #define BXFastForwardBezelDuration 0.0 //Leave on-screen until dismissed
 #define BXNumpadBezelDuration 2.0
@@ -37,7 +41,7 @@
 @implementation BXBezelController
 @synthesize driveAddedBezel, driveSwappedBezel, driveRemovedBezel, driveImportedBezel;
 @synthesize pauseBezel, playBezel, fastForwardBezel, fullscreenBezel, screenshotBezel;
-@synthesize joystickIgnoredBezel, CPUSpeedBezel, throttleBezel;
+@synthesize joystickIgnoredBezel, CPUSpeedBezel, throttleBezel, volumeBezel;
 @synthesize MT32MessageBezel, MT32MissingBezel;
 @synthesize numpadActiveBezel, numpadInactiveBezel;
 @synthesize numlockActiveBezel, numlockInactiveBezel;
@@ -87,6 +91,7 @@
     self.fastForwardBezel = nil;
     self.CPUSpeedBezel = nil;
     self.throttleBezel = nil;
+    self.volumeBezel = nil;
     self.joystickIgnoredBezel = nil;
     self.MT32MessageBezel = nil;
     self.MT32MissingBezel = nil;
@@ -311,6 +316,34 @@
            priority: BXBezelPriorityNormal];
 }
 
+- (void) showVolumeBezelForVolume: (float)volume
+{
+    if (!self.shouldShowVolumeNotifications) return;
+    
+    NSView *bezel = self.volumeBezel;
+    
+    NSLevelIndicator *level = [bezel viewWithTag: BXBezelLevel];
+    NSImageView *icon = [bezel viewWithTag: BXBezelIcon];
+    
+    level.floatValue = volume;
+    
+    NSString *iconName;
+    if      (volume > 0.66f)
+        iconName = @"Volume100PercentTemplate";
+    else if (volume > 0.33f)
+        iconName = @"Volume66PercentTemplate";
+    else if (volume > 0.0f)
+        iconName = @"Volume33PercentTemplate";
+    else
+        iconName = @"Volume0PercentTemplate";
+    
+    icon.image = [NSImage imageNamed: iconName];
+    
+    [self showBezel: bezel
+        forDuration: BXVolumeBezelDuration
+           priority: BXBezelPriorityNormal];
+}
+
 - (void) showMT32BezelForMessage: (NSString *)message
 {
     //Suppress MT-32 messages if the relevant user-defaults option is disabled.
@@ -341,6 +374,13 @@
     
     BXInspectorController *inspector = [BXInspectorController controller];
     return !([inspector panelShown] && [inspector selectedTabViewItemIndex] == BXDriveInspectorPanelTag);
+}
+
+- (BOOL) shouldShowVolumeNotifications
+{
+    //Suppress volume notifications while the window's volume indicator is visible.
+    BXDOSWindowController *windowController = [[NSApp delegate] currentSession].DOSWindowController;
+    return !windowController.statusBarShown || windowController.window.isFullScreen;
 }
 
 - (void) showDriveAddedBezelForDrive: (BXDrive *)drive

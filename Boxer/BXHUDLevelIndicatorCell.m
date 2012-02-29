@@ -31,35 +31,34 @@
 
 - (void) dealloc
 {
-	[self setIndicatorColor: nil], [indicatorColor release];
-	[self setIndicatorShadow: nil], [indicatorShadow release];
-	
+    self.indicatorColor = nil;
+    self.indicatorShadow = nil;
 	[super dealloc];
 }
 
 - (void) awakeFromNib
 {
-	if (![self indicatorColor])
+	if (!self.indicatorColor)
 	{
-		[self setIndicatorColor: [NSColor whiteColor]];
+		self.indicatorColor = [NSColor whiteColor];
 	}
 	
-	if (![self indicatorShadow])
+	if (!self.indicatorShadow)
 	{
 		NSShadow *theShadow = [NSShadow shadowWithBlurRadius: 3.0f
                                                       offset: NSMakeSize(0.0f, -1.0f)];
-		[self setIndicatorShadow: theShadow];
+		self.indicatorShadow = theShadow;
 	}
 }
 
 - (NSRect) drawingRectForBounds: (NSRect)theRect
 {
     NSRect drawingRect = [super drawingRectForBounds: theRect];
-    if ([self indicatorShadow])
+    if (self.indicatorShadow)
     {
         //If we have a shadow set, then constrain the draw region to accomodate the shadow
-        drawingRect = [[self indicatorShadow] insetRectForShadow: drawingRect
-                                                         flipped: [[self controlView] isFlipped]];
+        drawingRect = [self.indicatorShadow insetRectForShadow: drawingRect
+                                                       flipped: self.controlView.isFlipped];
     }
     return drawingRect;
 }
@@ -69,7 +68,7 @@
 {
     NSRect indicatorFrame = NSIntegralRect([self drawingRectForBounds: cellFrame]);
     CGFloat maxHeight = indicatorFrame.size.height;
-    CGFloat height = MIN(maxHeight, [[self class] heightForControlSize: [self controlSize]]);
+    CGFloat height = MIN(maxHeight, [[self class] heightForControlSize: self.controlSize]);
     
     //Center the indicator vertically in the available space
     indicatorFrame.origin.y += (maxHeight - height) / 2.0f;
@@ -92,33 +91,38 @@
                                                               yRadius: levelRadius];
     
     //Work out how full the meter should be, and calculate from that how much of the path to draw
-    double level = ([self doubleValue] - [self minValue]) / ([self maxValue] - [self minValue]);
+    double level = (self.doubleValue - self.minValue) / (self.maxValue - self.minValue);
     NSRect levelClip = levelRect;
     levelClip.size.width *= (float)level;
     levelClip = NSIntegralRect(levelClip);
     
     
     [NSGraphicsContext saveGraphicsState];
-    [[self indicatorColor] set];
-    [[self indicatorShadow] set];
-    
-    NSUInteger i, numTicks = [self numberOfTickMarks];
-    for (i = 1; i < numTicks - 1; i++)
-    {
-        CGFloat tickPosition = (i / (CGFloat)(numTicks - 1));
-        CGFloat xOffset = (levelRect.size.width * tickPosition);
+        [self.indicatorColor set];
+        [self.indicatorShadow set];
         
-        NSRect tickRect = NSMakeRect(levelRect.origin.x + xOffset, levelRect.origin.y, 1.0f, levelRect.size.height);
-        tickRect = NSIntegralRect(tickRect);
-        tickRect.size.width = 1.0f;
+        NSUInteger i, numTicks = self.numberOfTickMarks;
+        if (numTicks > 0)
+        {
+            for (i = 1; i < numTicks - 1; i++)
+            {
+                CGFloat tickPosition = (i / (CGFloat)(numTicks - 1));
+                CGFloat xOffset = (levelRect.size.width * tickPosition);
+                
+                NSRect tickRect = NSMakeRect(levelRect.origin.x + xOffset,
+                                             levelRect.origin.y,
+                                             1.0f,
+                                             levelRect.size.height);
+                tickRect = NSIntegralRect(tickRect);
+                tickRect.size.width = 1.0f;
+                
+                [NSBezierPath fillRect: tickRect];
+            }
+        }
+        [borderPath stroke];
         
-        [NSBezierPath fillRect: tickRect];
-    }
-    
-    [borderPath stroke];
-    
-    [NSBezierPath clipRect: levelClip];
-    [levelPath fill];
+        [NSBezierPath clipRect: levelClip];
+        [levelPath fill];
     [NSGraphicsContext restoreGraphicsState];
 }
 

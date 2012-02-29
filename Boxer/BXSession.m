@@ -860,7 +860,9 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (void) processEventsForEmulator: (BXEmulator *)theEmulator
 {
-	[self _processEventsUntilDate: nil];
+    //Only pump the event queue ourselves if the emulator has taken over the main thread.
+    if (!theEmulator.isConcurrent)
+        [self _processEventsUntilDate: nil];
 }
 
 - (void) emulatorWillStartRunLoop: (BXEmulator *)theEmulator {}

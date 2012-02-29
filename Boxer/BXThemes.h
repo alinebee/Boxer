@@ -42,9 +42,6 @@
 //The color with which to stroke the slider knob. Defaults to disabledStrokeColor.
 - (NSColor *) disabledSliderKnobStrokeColor;
 
-//The color with which to stroke the highlighted slider knob. Defaults to highlightStrokeColor.
-- (NSColor *) highlightSliderKnobStrokeColor;
-
 @end
 
 

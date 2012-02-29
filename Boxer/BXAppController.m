@@ -36,8 +36,8 @@ NSString * const BXShowImportPanelParam = @"--showImportPanel";
 NSString * const BXImportURLParam = @"--importURL ";
 NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
-#define BXMasterVolumeNumIncrements 12
-
+#define BXMasterVolumeNumIncrements 12.0f
+#define BXMasterVolumeIncrement (1.0f / BXMasterVolumeNumIncrements)
 
 @interface BXAppController ()
 
@@ -1016,7 +1016,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
     if (self.masterVolume < 1.0f)
     {
         //Round the volume to the nearest increment after incrementing.
-        float incrementedVolume = self.masterVolume + (1.0 / BXMasterVolumeNumIncrements);
+        float incrementedVolume = self.masterVolume + BXMasterVolumeIncrement;
         self.masterVolume = roundf(incrementedVolume * BXMasterVolumeNumIncrements) / BXMasterVolumeNumIncrements;
     }
     [[BXBezelController controller] showVolumeBezelForVolume: self.effectiveVolume];
@@ -1027,7 +1027,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
     if (self.masterVolume > 0.0f)
     {
         //Round the volume to the nearest increment after decrementing.
-        float decrementedVolume = self.masterVolume - (1.0 / BXMasterVolumeNumIncrements);
+        float decrementedVolume = self.masterVolume - BXMasterVolumeIncrement;
         self.masterVolume = roundf(decrementedVolume * BXMasterVolumeNumIncrements) / BXMasterVolumeNumIncrements;
     }
     self.muted = (self.masterVolume == 0);

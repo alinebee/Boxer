@@ -136,7 +136,7 @@
 									<bool key="NSEnabled">YES</bool>
 									<object class="NSSliderCell" key="NSCell" id="1044383814">
 										<int key="NSCellFlags">-2079981824</int>
-										<int key="NSCellFlags2">131072</int>
+										<int key="NSCellFlags2">163840</int>
 										<string key="NSContents"/>
 										<string key="NSCellIdentifier">_NS:9</string>
 										<reference key="NSControlView" ref="659387175"/>
@@ -554,9 +554,9 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="533401407"/>
 							<reference ref="912332772"/>
-							<reference ref="659387175"/>
 							<reference ref="49776381"/>
 							<reference ref="609713258"/>
+							<reference ref="659387175"/>
 						</object>
 						<reference key="parent" ref="1006"/>
 						<string key="objectName">Status bar</string>
@@ -711,6 +711,7 @@
 					<string>970.IBPluginDependency</string>
 					<string>978.IBPluginDependency</string>
 					<string>985.IBPluginDependency</string>
+					<string>986.CustomClassName</string>
 					<string>986.IBPluginDependency</string>
 					<string>992.IBPluginDependency</string>
 					<string>993.IBPluginDependency</string>
@@ -747,6 +748,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>BXIndentedSliderCell</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -771,6 +773,14 @@
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<bool key="EncodedWithXMLCoder">YES</bool>
+				<object class="IBPartialClassDescription">
+					<string key="className">BGHUDSliderCell</string>
+					<string key="superclassName">NSSliderCell</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BGHUDSliderCell.h</string>
+					</object>
+				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">BXAppController</string>
 					<string key="superclassName">NSDocumentController</string>
@@ -1275,6 +1285,14 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
+					<string key="className">BXIndentedSliderCell</string>
+					<string key="superclassName">BXThemedSliderCell</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXIndentedSliderCell.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">BXInputController</string>
 					<string key="superclassName">NSViewController</string>
 					<object class="NSMutableDictionary" key="actions">
@@ -1656,6 +1674,14 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/BXStatusBarController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXThemedSliderCell</string>
+					<string key="superclassName">BGHUDSliderCell</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/BXThemedSliderCell.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

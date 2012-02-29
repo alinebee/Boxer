@@ -124,6 +124,11 @@
 
 @end
 
+@implementation BXIndentedSliderCell
+
+- (NSString *)themeKey { return @"BXIndentedTheme"; }
+
+@end
 
 
 @implementation BXAboutLabel

@@ -68,6 +68,9 @@
 @interface BXIndentedCheckboxCell : BXThemedCheckboxCell
 @end
 
+@interface BXIndentedSliderCell : BXThemedSliderCell
+@end
+
 //BGHUDAppKit control subclasses hardcoded to use BXAboutTheme,
 //BXAboutDarkTheme and BXAboutLightTheme.
 @interface BXAboutLabel : BXThemedLabel

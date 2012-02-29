@@ -12,12 +12,44 @@
 #import <Cocoa/Cocoa.h>
 #import <BGHUDAppKit/BGHUDAppKit.h>
 
-//Adds convenience methods used by all Boxer themes.
-@interface BXBaseTheme : BGGradientTheme
+//Extends BGTheme with more specific overrides.
+@interface BGTheme (BXThemeExtensions)
+
 //Registers the theme class with the theme manager,
 //keyed under the specific name.
 //If name is nil, the classname will be used.
 + (void) registerWithName: (NSString *)name;
+
+//The shadow to draw inside the slider track, on top of the background color.
+//Defaults to nil.
+- (NSShadow *) sliderTrackInnerShadow;
+
+//The shadow to draw beneath the slider track. Defaults to nil.
+- (NSShadow *) sliderTrackShadow;
+
+//The color with which to stroke the slider track. Defaults to strokeColor.
+- (NSColor *) sliderTrackStrokeColor;
+
+//The color with which to stroke the disabled slider track. Defaults to disabledStrokeColor.
+- (NSColor *) disabledSliderTrackStrokeColor;
+
+//The shadow to draw beneath slider knobs. Defaults to the value of dropShadow.
+- (NSShadow *) sliderKnobShadow;
+
+//The color with which to stroke the slider knob. Defaults to strokeColor.
+- (NSColor *) sliderKnobStrokeColor;
+
+//The color with which to stroke the slider knob. Defaults to disabledStrokeColor.
+- (NSColor *) disabledSliderKnobStrokeColor;
+
+//The color with which to stroke the highlighted slider knob. Defaults to highlightStrokeColor.
+- (NSColor *) highlightSliderKnobStrokeColor;
+
+@end
+
+
+//Base class used by all Boxer themes. Currently empty.
+@interface BXBaseTheme : BGGradientTheme
 @end
 
 //Adds a soft shadow around text.

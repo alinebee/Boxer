@@ -9,7 +9,8 @@
 #import "BXThemes.h"
 #import "NSShadow+BXShadowExtensions.h"
 
-@implementation BXBaseTheme
+
+@implementation BGTheme (BXThemeExtensions)
 
 + (void) registerWithName: (NSString *)name
 {
@@ -21,6 +22,45 @@
     [theme release];
     [pool drain];
 }
+
+- (NSShadow *) sliderTrackInnerShadow
+{
+    return nil;
+}
+
+- (NSShadow *) sliderTrackShadow
+{
+    return nil;
+}
+
+- (NSShadow *) sliderKnobShadow
+{
+    return self.dropShadow;
+}
+
+- (NSColor *) sliderTrackStrokeColor
+{
+    return self.strokeColor;
+}
+
+- (NSColor *) disabledSliderTrackStrokeColor
+{
+    return self.disabledStrokeColor;
+}
+
+- (NSColor *) sliderKnobStrokeColor
+{
+    return self.strokeColor;
+}
+
+- (NSColor *) disabledSliderKnobStrokeColor
+{
+    return self.disabledStrokeColor;
+}
+@end
+
+
+@implementation BXBaseTheme
 @end
 
 @implementation BXBlueprintTheme
@@ -168,6 +208,11 @@
 	return [gradient autorelease];
 }
 
+- (NSColor *) sliderTrackColor
+{
+    return [NSColor colorWithCalibratedWhite: 0 alpha: 0.1f];
+}
+
 - (NSGradient *) pushedGradient
 {
 	return [self highlightGradient];
@@ -181,11 +226,6 @@
 - (NSGradient *) pushedComplexGradient
 {
 	return [self pushedGradient];
-}
-
-- (NSColor *) sliderTrackColor
-{
-    return [NSColor colorWithCalibratedWhite: 0 alpha: 0.1f];
 }
 
 
@@ -211,7 +251,7 @@
     [self registerWithName: nil];
 }
 
-- (NSShadow *) textShadow	{ return [self dropShadow]; }
+- (NSShadow *) textShadow	{ return self.dropShadow; }
 
 - (NSShadow *) dropShadow
 {
@@ -259,12 +299,12 @@
 
 - (NSGradient *) highlightGradient
 {
-	NSColor *selectionColor	= [[NSColor alternateSelectedControlColor] colorWithAlphaComponent: [self alphaValue]];
+	NSColor *selectionColor	= [[NSColor alternateSelectedControlColor] colorWithAlphaComponent: 1];
 	
 	NSColor *topColor		= [selectionColor highlightWithLevel: 0.3f];
-	NSColor *midColor1		= [selectionColor highlightWithLevel: 0.2f];
+	NSColor *midColor1		= [selectionColor highlightWithLevel: 0.05f];
 	NSColor *midColor2		= selectionColor;
-	NSColor *bottomColor	= [selectionColor shadowWithLevel: 0.4f];
+	NSColor *bottomColor	= [selectionColor shadowWithLevel: 0.1f];
 	
 	NSGradient *gradient = [[NSGradient alloc] initWithColorsAndLocations:
 							topColor,		0.0f,
@@ -291,6 +331,57 @@
 	return [self pushedGradient];
 }
 
+- (NSGradient *) knobColor
+{
+    NSColor *baseColor = [NSColor lightGrayColor];
+    
+    NSColor *topColor		= [baseColor highlightWithLevel: 0.3f];
+	NSColor *midColor		= baseColor;
+	NSColor *bottomColor	= [baseColor shadowWithLevel: 0.1f];
+	
+	NSGradient *gradient = [[NSGradient alloc] initWithColorsAndLocations:
+							topColor,		0.0f,
+							midColor,		0.5f,
+							bottomColor,	1.0f,
+							nil];
+    
+    return [gradient autorelease];
+
+}
+
+- (NSGradient *) highlightKnobColor
+{
+    return self.highlightGradient;
+}
+
+- (NSColor *) sliderTrackColor
+{
+    return [NSColor colorWithCalibratedWhite: 0 alpha: 0.2f];
+}
+
+- (NSShadow *) sliderTrackShadow
+{
+    return self.dropShadow;
+}
+
+- (NSShadow *) sliderTrackInnerShadow
+{
+    return [NSShadow shadowWithBlurRadius: 3.0f
+                                   offset: NSMakeSize(0, -1.0f)
+                                    color: [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.5]];
+}
+
+- (NSShadow *) sliderKnobShadow
+{
+    return [NSShadow shadowWithBlurRadius: 2.0f
+                                   offset: NSMakeSize(0, -1.0f)
+                                    color: [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.5]];
+}
+
+- (NSColor *) sliderKnobStrokeColor
+{
+    return [NSColor colorWithCalibratedWhite: 0 alpha: 0.33];
+}
 @end
 
 @implementation BXIndentedHelpTextTheme

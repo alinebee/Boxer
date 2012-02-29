@@ -7,13 +7,14 @@
 
 #import "BXThemedSliderCell.h"
 #import "NSBezierPath+MCAdditions.h"
+#import "BXThemes.h"
 
 @implementation BXThemedSliderCell
 
 - (NSRect) roundKnobRectInBounds: (NSRect)theRect
 {
     NSRect knobRect = theRect;
-    switch ([self controlSize])
+    switch (self.controlSize)
     {
 		case NSRegularControlSize:
             knobRect.origin.x += 3;
@@ -23,10 +24,10 @@
 			break;
 			
 		case NSSmallControlSize:
-            knobRect.origin.x += 2;
-            knobRect.origin.y += 2;
-            knobRect.size.height = 11;
-            knobRect.size.width = 11;
+            knobRect.origin.x += 1;
+            knobRect.origin.y += 1;
+            knobRect.size.height = 13;
+            knobRect.size.width = 13;
 			break;
 			
 		case NSMiniControlSize:
@@ -43,7 +44,7 @@
                      tickMarkPosition: (NSTickMarkPosition)tickPosition
 {
     NSRect knobRect = theRect;
-	switch ([self controlSize])
+	switch (self.controlSize)
     {
 		case NSRegularControlSize:
             if (tickPosition == NSTickMarkAbove)
@@ -121,10 +122,10 @@
     if ([self numberOfTickMarks] > 0)
     {
         knobRect = [self horizontalKnobRectInBounds: frame
-                                   tickMarkPosition: [self tickMarkPosition]];
+                                   tickMarkPosition: self.tickMarkPosition];
         
         knob = [self horizontalKnobForRect: knobRect
-                          tickMarkPosition: [self tickMarkPosition]];
+                          tickMarkPosition: self.tickMarkPosition];
     }
     else
     {
@@ -136,39 +137,140 @@
     NSColor *knobStroke;
     NSShadow *knobShadow;
     
-    if ([self isHighlighted])
+    if (self.isHighlighted)
     {
-        if ([self focusRingType] != NSFocusRingTypeNone) 
-            knobShadow = [theme focusRing];
+        if (self.focusRingType != NSFocusRingTypeNone && theme.focusRing) 
+            knobShadow = theme.focusRing;
         else
-            knobShadow = [theme dropShadow];
+            knobShadow = theme.sliderKnobShadow;
         
-        knobStroke = [theme strokeColor];
-        knobFill = [theme highlightKnobColor];
+        knobStroke = theme.sliderKnobStrokeColor;
+        knobFill = theme.highlightKnobColor;
     }
-	else if ([self isEnabled])
+	else if (self.isEnabled)
     {
-        knobShadow = [theme dropShadow];
-        knobStroke = [theme strokeColor];
-        knobFill = [theme knobColor];
+        knobShadow = theme.sliderKnobShadow;
+        knobStroke = theme.sliderKnobStrokeColor;
+        knobFill = theme.knobColor;
     }
     else
     {
-        knobFill = [theme disabledKnobColor];
-        knobStroke = [theme disabledStrokeColor];
+        knobFill = theme.disabledKnobColor;
+        knobStroke = theme.disabledSliderKnobStrokeColor;
         knobShadow = nil;
     }
     
     [NSGraphicsContext saveGraphicsState];
-    [knobShadow set];
-    
-    [knobStroke set];
-    [knob fill];
-    
-    [knobFill drawInBezierPath: knob angle: [theme gradientAngle]];
-    [knob strokeInside];
-    
+        [knobShadow set];
+        [knobStroke set];
+        [knob fill];
     [NSGraphicsContext restoreGraphicsState];
+    
+    [knobFill drawInBezierPath: knob angle: theme.gradientAngle];
+    
+    [NSGraphicsContext saveGraphicsState];
+        [knobStroke set];
+        [knob strokeInside];
+    [NSGraphicsContext restoreGraphicsState];
+}
+
+- (NSRect) rectOfHorizontalBarInBounds: (NSRect)theRect
+{
+    NSRect barRect = theRect;
+    switch (self.controlSize)
+    {
+		case NSRegularControlSize:
+			if (self.numberOfTickMarks > 0)
+            {	
+				if (self.tickMarkPosition == NSTickMarkBelow)
+					barRect.origin.y += 4;
+                else
+					barRect.origin.y += barRect.size.height - 10;
+			}
+            else
+            {
+				barRect.origin.y += ((barRect.origin.y + barRect.size.height) / 2) - 2.5f;
+			}
+			
+            barRect.origin.x += 2;
+            barRect.size.width -= 4;
+			barRect.size.height = 5;
+			break;
+			
+		case NSSmallControlSize:
+			if (self.numberOfTickMarks > 0)
+            {
+				if (self.tickMarkPosition == NSTickMarkBelow)
+					barRect.origin.y += 2;
+                else
+					barRect.origin.y += barRect.size.height - 8;
+			}
+            else
+            {
+				barRect.origin.y += ((barRect.origin.y + barRect.size.height) / 2) - 2.5f;
+			}
+			
+            barRect.origin.x += 1;
+            barRect.size.width -= 2;
+			barRect.size.height = 5;
+			break;
+			
+		case NSMiniControlSize:
+			if (self.numberOfTickMarks > 0)
+            {
+				if (self.tickMarkPosition == NSTickMarkBelow)
+					barRect.origin.y += 2;
+                else
+					barRect.origin.y += barRect.size.height - 6;
+			} else {
+				
+				barRect.origin.y += ((barRect.origin.y + barRect.size.height) / 2) - 2;
+			}
+			
+			barRect.size.height = 3;
+			break;
+	}
+    return barRect;
+}
+
+- (NSBezierPath *) horizontalBarForRect: (NSRect)rect
+{
+	return [NSBezierPath bezierPathWithRoundedRect: rect xRadius: 2 yRadius: 2];
+}
+
+- (void) drawHorizontalBarInFrame: (NSRect)frame
+{
+    BGTheme *theme = [[BGThemeManager keyedManager] themeForKey: self.themeKey];
+    
+    NSRect fillRect = [self rectOfHorizontalBarInBounds: frame];
+    NSRect strokeRect = NSInsetRect(fillRect, 0.5f, 0.5f);
+    NSBezierPath *fillPath = [self horizontalBarForRect: fillRect];
+    NSBezierPath *strokePath = [self horizontalBarForRect: strokeRect];
+    
+    NSColor *strokeColor, *fillColor;
+	if (self.isEnabled)
+    {
+        fillColor = theme.sliderTrackColor;
+        strokeColor = theme.sliderTrackStrokeColor;
+	}
+    else
+    {
+        fillColor = theme.disabledSliderTrackColor;
+        strokeColor = theme.disabledStrokeColor;
+	}
+    
+    [[NSGraphicsContext currentContext] saveGraphicsState];
+        [fillColor set];
+        [theme.sliderTrackShadow set];
+        [fillPath fill];
+    [[NSGraphicsContext currentContext] restoreGraphicsState];
+    
+    NSShadow *innerShadow = theme.sliderTrackInnerShadow;
+    if (innerShadow)
+        [fillPath fillWithInnerShadow: innerShadow];
+    
+    [strokeColor set];
+    [strokePath stroke];
 }
 
 @end

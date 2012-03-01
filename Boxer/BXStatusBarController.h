@@ -20,31 +20,23 @@ enum {
 
 @interface BXStatusBarController : NSViewController
 {
-	IBOutlet NSSegmentedControl *statusBarControls;
-	IBOutlet NSTextField *notificationMessage;
-    IBOutlet NSView *volumeControls;
+	NSSegmentedControl *_statusBarControls;
+	NSTextField *_notificationMessage;
+    NSView *_volumeControls;
 }
 
-//The window controller for the window containing this statusbar
-- (BXDOSWindowController *)controller;
+@property (retain, nonatomic) IBOutlet NSSegmentedControl *statusBarControls;
+@property (retain, nonatomic) IBOutlet NSTextField *notificationMessage;
+@property (retain, nonatomic) IBOutlet NSView *volumeControls;
 
-//Processes the selection/deselection of segments in the segmented button
-- (IBAction) performSegmentedButtonAction: (id) sender;
+//The window controller for the window containing this statusbar
+@property (readonly, nonatomic) BXDOSWindowController *controller;
 
 //The text that will appear as the statusbar notification message
-- (NSString *) notificationText;
+@property (readonly, nonatomic) NSString *notificationText;
 
-//Selectively hides statusbar items when the window is too small to display them without overlaps 
-- (void) _statusBarDidResize;
-
-//Tears down our bindings when the window is about to close
-- (void) _windowWillClose;
-
-//Synchronises the selection state of segments in the segmented button
-- (void) _syncSegmentedButtonStates;
-
-//Set up/tear down the notification and KVC bindings we use to control the segmented button state
-- (void) _prepareBindings;
-- (void) _removeBindings;
+//Processes the selection/deselection of segments in the segmented button.
+//Called via statusBarControl's action.
+- (IBAction) performSegmentedButtonAction: (id) sender;
 
 @end

@@ -341,7 +341,6 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 			[emulator.videoHandler unbind: @"aspectCorrected"];
 			[emulator.videoHandler unbind: @"filterType"];
 			
-            [emulator unbind: @"muted"];
             [emulator unbind: @"masterVolume"];
             
 			[self _deregisterForPauseNotifications];
@@ -357,8 +356,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 			
 			NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
             
-            [newEmulator bind: @"muted" toObject: [NSApp delegate] withKeyPath: @"muted" options: nil];
-            [newEmulator bind: @"masterVolume" toObject: [NSApp delegate] withKeyPath: @"masterVolume" options: nil];
+            [newEmulator bind: @"masterVolume" toObject: [NSApp delegate] withKeyPath: @"effectiveVolume" options: nil];
             
 			[newEmulator.videoHandler bind: @"aspectCorrected" toObject: defaults withKeyPath: @"aspectCorrected" options: nil];
 			[newEmulator.videoHandler bind: @"filterType" toObject: defaults withKeyPath: @"filterType" options: nil];
@@ -1355,7 +1353,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (BOOL) programIsActive
 {
-    if (self.isSuspended) return NO;
+    if (self.isPaused || self.isAutoPaused) return NO;
     if (!self.isEmulating) return NO;
     
     @synchronized(self.emulator)

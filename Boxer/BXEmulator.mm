@@ -96,7 +96,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 @synthesize emulationThread;
 
 @synthesize activeMIDIDevice, requestedMIDIDeviceDescription, autodetectsMT32;
-@synthesize muted, masterVolume;
+@synthesize masterVolume;
 
 
 #pragma mark -
@@ -172,7 +172,6 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 		pendingSysexMessages    = [[NSMutableArray alloc] initWithCapacity: 4];
         
         self.masterVolume = 1.0f;
-        self.muted = NO;
 		
         self.keyboard = [[[BXEmulatedKeyboard alloc] init] autorelease];
         self.mouse = [[[BXEmulatedMouse alloc] init] autorelease];

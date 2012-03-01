@@ -83,7 +83,6 @@ extern NSString * const shellProcessPath;
     BOOL joystickActive;
     
     float masterVolume;
-    BOOL muted;
 	
 	NSString *processName;
 	NSString *processPath;
@@ -224,12 +223,7 @@ extern NSString * const shellProcessPath;
 @property (assign) BOOL autodetectsMT32;
 
 //The volume by which to scale all sound output, ranging from 0.0 to 1.0.
-//This can be set independently of muting.
 @property (assign) float masterVolume;
-
-//Whether the sound output is currently muted. Toggling this will have no effect
-//on the reported master volume.
-@property (assign, getter=isMuted) BOOL muted;
 
 
 #pragma mark -

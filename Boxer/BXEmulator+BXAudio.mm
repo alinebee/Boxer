@@ -82,7 +82,7 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
     if (device && device != self.activeMIDIDevice)
     {
         self.activeMIDIDevice = device;
-        self.activeMIDIDevice.volume = [self _masterVolumeForMIDIDevice: self.activeMIDIDevice];
+        self.activeMIDIDevice.volume = self.masterVolume;
     }
     return device;
 }
@@ -362,10 +362,6 @@ void _renderMIDIOutput(Bitu numFrames)
             while (!self.isCancelled && [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode
                                                                  beforeDate: date]);
         }
-        else
-        {
-            break;
-        }
     }
 }
 
@@ -393,15 +389,6 @@ void _renderMIDIOutput(Bitu numFrames)
     }
 }
 
-- (void) setMuted: (BOOL)flag
-{
-    if (flag != self.muted)
-    {
-        muted = flag;
-        [self _syncVolume];
-    }
-}
-
 - (void) _syncVolume
 {
     //Update the DOSBox mixer with the new volume and mute settings.
@@ -412,17 +399,8 @@ void _renderMIDIOutput(Bitu numFrames)
     //Also update the volume of our current MIDI device.
     if (self.activeMIDIDevice)
     {
-        self.activeMIDIDevice.volume = [self _masterVolumeForMIDIDevice: self.activeMIDIDevice];
+        self.activeMIDIDevice.volume = self.masterVolume;
     }
 }
 
-- (float) _masterVolumeForMIDIDevice: (id <BXMIDIDevice>)device
-{
-    return (self.muted) ? 0.0 : self.masterVolume;
-}
-
-- (float) _masterVolumeForChannel: (BXAudioChannel)channel
-{
-    return (self.muted) ? 0.0 : self.masterVolume;
-}
 @end

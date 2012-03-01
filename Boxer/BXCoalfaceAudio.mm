@@ -126,5 +126,6 @@ void boxer_sendMIDISysex(Bit8u *msg, Bitu len)
 
 float boxer_masterVolume(BXAudioChannel channel)
 {
-    return [[BXEmulator currentEmulator] _masterVolumeForChannel: channel];
+    //We don't use separate left and right volumes.
+    return [BXEmulator currentEmulator].masterVolume;
 }

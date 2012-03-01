@@ -30,6 +30,7 @@
     NSDate *_dateWhenReady;
     
     float _volume;
+    float _requestedVolume;
     NSTimer *_volumeSyncTimer;
 }
 
@@ -37,9 +38,14 @@
 @property (readonly, nonatomic) MIDIEndpointRef destination;
 
 //Declared as settable for the benefit of our subclasses
-@property (readwrite, copy, nonatomic) NSDate *dateWhenReady;
+@property (copy, nonatomic) NSDate *dateWhenReady;
 
-@property (readwrite, assign, nonatomic) float volume;
+//The master volume assigned by the application, from 0.0 to 1.0.
+@property (assign, nonatomic) float volume;
+
+//The master volume requested by the MIDI-using application via sysex, from 0.0 to 1.0.
+//This will be multiplied by @volume to arrive at the volume the device will be set to.
+@property (assign, nonatomic) float requestedVolume;
 
 
 #pragma mark -

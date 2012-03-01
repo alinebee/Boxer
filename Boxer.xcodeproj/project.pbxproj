@@ -549,6 +549,7 @@
 		9FD668F11215CDD6009E0118 /* BXBottomBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD668F01215CDD6009E0118 /* BXBottomBar.m */; };
 		9FD7B6B0145745D800565CEB /* BXThemedPopUpButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD7B6AF145745D800565CEB /* BXThemedPopUpButtonCell.m */; };
 		9FD7B6B3145746CC00565CEB /* BXThemedButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD7B6B2145746CC00565CEB /* BXThemedButtonCell.m */; };
+		9FD8BEE414FFF7660073B4EC /* BXExternalMIDIDevice+BXGeneralMIDISysexes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD8BEE314FFF7660073B4EC /* BXExternalMIDIDevice+BXGeneralMIDISysexes.m */; };
 		9FD95D6A13E2A45C005EF2C0 /* BXFullScreenCapableWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FD95D6913E2A45C005EF2C0 /* BXFullScreenCapableWindow.m */; };
 		9FDAD87F10C182B3004EA7D0 /* BXCoverArtWell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FDAD87E10C182B3004EA7D0 /* BXCoverArtWell.m */; };
 		9FDB601710C0707F00C15CF4 /* BXDockTileController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FDB601610C0707F00C15CF4 /* BXDockTileController.m */; };
@@ -1345,6 +1346,8 @@
 		9FD7B6AF145745D800565CEB /* BXThemedPopUpButtonCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXThemedPopUpButtonCell.m; sourceTree = "<group>"; };
 		9FD7B6B1145746CC00565CEB /* BXThemedButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXThemedButtonCell.h; sourceTree = "<group>"; };
 		9FD7B6B2145746CC00565CEB /* BXThemedButtonCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXThemedButtonCell.m; sourceTree = "<group>"; };
+		9FD8BEE214FFF7660073B4EC /* BXExternalMIDIDevice+BXGeneralMIDISysexes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXExternalMIDIDevice+BXGeneralMIDISysexes.h"; sourceTree = "<group>"; };
+		9FD8BEE314FFF7660073B4EC /* BXExternalMIDIDevice+BXGeneralMIDISysexes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXExternalMIDIDevice+BXGeneralMIDISysexes.m"; sourceTree = "<group>"; };
 		9FD95D6813E2A45C005EF2C0 /* BXFullScreenCapableWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFullScreenCapableWindow.h; sourceTree = "<group>"; };
 		9FD95D6913E2A45C005EF2C0 /* BXFullScreenCapableWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFullScreenCapableWindow.m; sourceTree = "<group>"; };
 		9FDAD87D10C182B3004EA7D0 /* BXCoverArtWell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXCoverArtWell.h; sourceTree = "<group>"; };
@@ -1512,6 +1515,7 @@
 				9F61FC8410DE3F7F00F3896C /* BXGameProfile.m */,
 				9F53411612059E7900BCBF24 /* NSWorkspace+BXExecutableTypes.h */,
 				9F53411712059E7900BCBF24 /* NSWorkspace+BXExecutableTypes.m */,
+				9F902C1D142E169800843B01 /* MIDI */,
 				9F1D50280F5C0ACD009F0AB9 /* Emulator */,
 				9F496E3D108EEB0700282261 /* DOS session */,
 				9F1CBA55120C783800C5E926 /* Game import session */,
@@ -1741,7 +1745,6 @@
 			isa = PBXGroup;
 			children = (
 				9FCC2F971366EF030013F083 /* Input devices */,
-				9F902C1D142E169800843B01 /* MIDI */,
 				9F1D4FFF0F5C0966009F0AB9 /* BXEmulator.h */,
 				9F4037B912CB6CA300DAA66C /* BXEmulatorPrivate.h */,
 				9F1D50000F5C0966009F0AB9 /* BXEmulator.mm */,
@@ -2524,6 +2527,8 @@
 				9F3EDA1A1434B48D009BFBA2 /* BXExternalMT32.m */,
 				9F7D9EFD1444BAA800B6AD50 /* BXExternalMT32+BXMT32Sysexes.h */,
 				9F7D9EFE1444BAA800B6AD50 /* BXExternalMT32+BXMT32Sysexes.m */,
+				9FD8BEE214FFF7660073B4EC /* BXExternalMIDIDevice+BXGeneralMIDISysexes.h */,
+				9FD8BEE314FFF7660073B4EC /* BXExternalMIDIDevice+BXGeneralMIDISysexes.m */,
 				9F6C1CD814373AF600601ACB /* BXDummyMIDIDevice.h */,
 				9F6C1CD914373AF600601ACB /* BXDummyMIDIDevice.m */,
 			);
@@ -3477,6 +3482,7 @@
 				9F8F374914F91FEB00E482FB /* BXApplication.m in Sources */,
 				9F8F374F14F9442D00E482FB /* BXAppController+BXHotKeys.m in Sources */,
 				9F1DE9B214FB7F3800F9C91E /* NSObject+BXPerformExtensions.m in Sources */,
+				9FD8BEE414FFF7660073B4EC /* BXExternalMIDIDevice+BXGeneralMIDISysexes.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

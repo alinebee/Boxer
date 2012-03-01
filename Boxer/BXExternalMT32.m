@@ -20,29 +20,21 @@
 - (NSTimeInterval) processingDelayForSysex: (NSData *)sysex
 {
     //The calculations for these sysex processing delays have been adapted from DOSBox's delaysysex patch.
-    NSTimeInterval baseDelay = (BXExternalMT32DelayFactor * _secondsPerByte * [sysex length]) + BXExternalMT32BaseDelay;
+    NSTimeInterval baseDelay = (BXExternalMT32DelayFactor * _secondsPerByte * sysex.length) + BXExternalMT32BaseDelay;
     
-    //Sysex is too short to be a valid MT-32 message, go with the standard delay.
-    //(It'll still take time for it to reach the MT-32 and get rejected.)
-    if ([sysex length] < BXRolandSysexSendMinLength) return baseDelay;
+    //If this wasn't a valid MT-32 sysex message, ignore it and go with the standard delay.
+    //(Even if the MT-32 can't handle it, it'll still take time for it to reach the MT-32 and get rejected.)
+    if (![[self class] isMT32Sysex: sysex confirmingSupport: NULL])
+        return baseDelay;
     
-    const UInt8 *contents = [sysex bytes];
-    const UInt8 manufacturerID  = contents[1],
-                modelID         = contents[3],
-                commandType     = contents[4],
-                baseAddress     = contents[5],
+    const UInt8 *contents = sysex.bytes;
+    const UInt8 baseAddress     = contents[5],
                 subAddress1     = contents[6],
                 subAddress2     = contents[7];
     
-        
-    //If this sysex isn't intended for the MT-32, or is not a data-set command,
-    //then we don't know how to calculate it and should stik with the regular delay.
-    if (manufacturerID != BXSysexManufacturerIDRoland || modelID != BXRolandSysexModelIDMT32 || commandType != BXRolandSysexSend)
-        return baseDelay;
-
-    
     //All Parameters Reset
-    if (baseAddress == BXMT32SysexAddressReset) return MAX(0.290, baseDelay);
+    if (baseAddress == BXMT32SysexAddressReset)
+        return MAX(0.290, baseDelay);
     
     //Partial reserve part 1: fixes Viking Child
     if (baseAddress == BXMT32SysexAddressSystemArea && subAddress1 == 0x00 && subAddress2 == 0x04)
@@ -57,12 +49,6 @@
         return MAX(0.040, baseDelay);
     
     return baseDelay;
-}
-
-- (void) syncVolume
-{
-    NSData *volumeMessage = [[self class] sysexWithMasterVolume: self.volume];
-    [self handleSysex: volumeMessage];
 }
 
 @end

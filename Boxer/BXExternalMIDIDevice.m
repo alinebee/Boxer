@@ -6,7 +6,7 @@
  */
 
 #import "BXExternalMIDIDevice.h"
-
+#import "BXExternalMIDIDevice+BXGeneralMIDISysexes.h"
 
 #pragma mark -
 #pragma mark Private method declarations
@@ -36,6 +36,7 @@
 @synthesize dateWhenReady = _dateWhenReady;
 @synthesize destination = _destination;
 @synthesize volume = _volume;
+@synthesize requestedVolume = _requestedVolume;
 
 #pragma mark -
 #pragma mark Class helper methods
@@ -59,8 +60,9 @@
 {
     if ((self = [super init]))
     {
-        //Don't use the setter, as it will try to send a message.
+        //Don't use setVolume:, as it will try to send a message.
         _volume = 1.0f;
+        _requestedVolume = 1.0f;
         self.dateWhenReady = [NSDate distantPast];
         _secondsPerByte = BXExternalMIDIDeviceDefaultSysexRate;
     }
@@ -120,7 +122,9 @@
 - (void) dealloc
 {
     [self close];
-    [self setDateWhenReady: nil], [_dateWhenReady release];
+    
+    self.dateWhenReady = nil;
+    
     [super dealloc];
 }
 
@@ -149,11 +153,11 @@
                          error: (NSError **)outError
 {
     //Create a MIDI client and port
-    OSStatus errCode = MIDIClientCreate((CFStringRef)[[self class] defaultClientName], NULL, NULL, &_client);
+    OSStatus errCode = MIDIClientCreate((CFStringRef)[self class].defaultClientName, NULL, NULL, &_client);
     
     if (errCode == noErr)
     {
-        errCode = MIDIOutputPortCreate(_client, (CFStringRef)[[self class] defaultPortName], &_port);
+        errCode = MIDIOutputPortCreate(_client, (CFStringRef)[self class].defaultPortName, &_port);
     }
     
     if (errCode != noErr)
@@ -183,7 +187,6 @@
     }
     
     return YES;
-    
 }
 
 - (BOOL) _connectToDestinationAtIndex: (ItemCount)destIndex
@@ -237,7 +240,7 @@
 
 - (NSTimeInterval) processingDelayForSysex: (NSData *)sysex
 {
-    return _secondsPerByte * [sysex length];
+    return _secondsPerByte * sysex.length;
 }
 
 - (BOOL) supportsMT32Music
@@ -268,7 +271,7 @@
     MIDIPacketList *packetList = (MIDIPacketList *)buffer;
 	MIDIPacket *currentPacket = MIDIPacketListInit(packetList);
     
-    MIDIPacketListAdd(packetList, sizeof(buffer), currentPacket, (MIDITimeStamp)0, [message length], (UInt8 *)[message bytes]);
+    MIDIPacketListAdd(packetList, sizeof(buffer), currentPacket, (MIDITimeStamp)0, message.length, (UInt8 *)message.bytes);
     
     MIDISend(_port, _destination, packetList);
 }
@@ -281,20 +284,20 @@
 #define MAX_SYSEX_PACKET_SIZE 1024 * 4
 
     NSAssert(_port && _destination, @"handleMessage: called before successful initialization.");
-    NSAssert([message length] > 0, @"0-length message received by handleMessage:");
+    NSAssert(message.length > 0, @"0-length message received by handleMessage:");
 
     UInt8 buffer[MAX_SYSEX_PACKET_SIZE];
     MIDIPacketList *packetList = (MIDIPacketList *)buffer;
 	MIDIPacket *currentPacket = MIDIPacketListInit(packetList);
     
-    MIDIPacketListAdd(packetList, sizeof(buffer), currentPacket, (MIDITimeStamp)0, [message length], (UInt8 *)[message bytes]);
+    MIDIPacketListAdd(packetList, sizeof(buffer), currentPacket, (MIDITimeStamp)0, message.length, (UInt8 *)message.bytes);
     
     MIDISend(_port, _destination, packetList);
     
     //Now, calculate how long it should take the device to process all that
     NSTimeInterval processingDelay = [self processingDelayForSysex: message];
     if (processingDelay > 0)
-        [self setDateWhenReady: [NSDate dateWithTimeIntervalSinceNow: processingDelay]];
+        self.dateWhenReady = [NSDate dateWithTimeIntervalSinceNow: processingDelay];
 }
 
 - (void) pause
@@ -317,7 +320,7 @@
 
 - (void) resume
 {
-    
+    //No resume message is needed, instead we'll resume playing once new MIDI data comes in.
 }
 
 - (void) setVolume: (float)volume
@@ -352,7 +355,7 @@
 {
     _volumeSyncTimer = nil;
     
-    //If we've since been closed, then don't send any further messages
+    //Only try to sync the volume if we're still connected
     if (_port && _destination)
     {   
         //If we're still busy processing, then defer the sync until after another delay
@@ -365,7 +368,8 @@
 
 - (void) syncVolume
 {
-    NSLog(@"Syncing volume");
+    NSData *volumeMessage = [[self class] sysexWithMasterVolume: self.volume * self.requestedVolume];
+    [self handleSysex: volumeMessage];
 }
 
 @end

@@ -11,6 +11,22 @@
 #define BXSysexStart 0xF0
 #define BXSysexEnd 0xF7
 
+//MIDI messages use 7 bits, but must be sent via byte arrays.
+//This mask is for clearing the 8th and higher bits of the byte.
+#define BXMIDIBitmask 0xFFFFFF80
+
+
+#pragma mark -
+#pragma mark General MIDI sysex message codes
+
+#define BXGeneralMIDISysexNonRealtime 0x7E
+#define BXGeneralMIDISysexRealtime 0x7F
+
+#define BXGeneralMIDISysexAllChannels 0x7F
+#define BXGeneralMIDISysexDeviceControl 0x04
+#define BXGeneralMIDISysexMasterVolume 0x01
+
+#define BXGeneralMIDIMaxMasterVolume 0x3FFF //16383
 
 #pragma mark -
 #pragma mark Roland sysex message format
@@ -24,6 +40,8 @@
 //Checksum, end byte
 #define BXRolandSysexTailLength 2
 
+
+#define BXRolandMaxMasterVolume 100
 
 #define BXRolandSysexChecksumModulus 128
 

@@ -8,6 +8,7 @@
 
 #import "BXExternalMT32.h"
 
+//Helper methods for generating MIDI sysex messages for the MT-32.
 
 @interface BXExternalMT32 (BXMT32Sysexes)
 
@@ -27,6 +28,8 @@
 + (NSData *) sysexWithLCDMessage: (NSString *)message;
 
 //Returns an MT-32 sysex that can be used to set the specified volume (from 0.0f to 1.0f.)
+//Note that this returns a different kind of sysex than its parent implementation in
+//BXGeneralMIDISysexes.
 + (NSData *) sysexWithMasterVolume: (float)volume;
 
 //Returns the data payload of the specified sysex, or nil if it was not valid. 

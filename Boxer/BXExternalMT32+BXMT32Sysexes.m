@@ -125,7 +125,7 @@
 {
     volume = MIN(1.0f, volume);
     volume = MAX(0.0f, volume);
-    UInt8 intVolume = (UInt8)roundf(volume * 100);
+    UInt8 intVolume = (UInt8)roundf(volume * BXRolandMaxMasterVolume) & BXMIDIBitmask;
     
     NSData *data        = [NSData dataWithBytes: &intVolume length: 1];
     UInt8 address[3]    = {BXMT32SysexAddressSystemArea, 0x00, BXMT32SysexSubAddressMasterVolume};

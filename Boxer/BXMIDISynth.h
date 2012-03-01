@@ -16,14 +16,15 @@
 @interface BXMIDISynth : NSObject <BXMIDIDevice>
 {
 	AUGraph _graph;
-	AudioUnit _unit;
+	AudioUnit _synthUnit;
+	AudioUnit _outputUnit;
     NSString *_soundFontPath;
 }
 
 //The path to the soundfont bank we are currently using,
 //or nil if no soundfont is in use.
 //Must be set with loadSoundFontAtPath:error:
-@property (readonly, nonatomic) NSString *soundFontPath;
+@property (readonly, copy, nonatomic) NSString *soundFontPath;
 
 //Returns a fully-initialized synth ready to receive MIDI messages.
 //Returns nil and populates outError if the synth could not be initialised.

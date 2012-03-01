@@ -1348,7 +1348,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 + (NSSet *) keyPathsForValuesAffectingProgramIsActive
 {
-    return [NSSet setWithObjects: @"suspended", @"emulating", @"emulator.isAtPrompt", nil];
+    return [NSSet setWithObjects: @"paused", @"autopaused", @"emulating", @"emulator.isAtPrompt", nil];
 }
 
 - (BOOL) programIsActive

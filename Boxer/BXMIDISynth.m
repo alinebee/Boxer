@@ -13,6 +13,8 @@
 
 @interface BXMIDISynth ()
 
+@property (readwrite, copy, nonatomic) NSString *soundFontPath;
+
 - (BOOL) _prepareAudioGraphWithError: (NSError **)outError;
 
 @end
@@ -45,7 +47,7 @@
 {
     [self close];
     
-    [_soundFontPath release], _soundFontPath = nil;
+    self.soundFontPath = nil;
     
     [super dealloc];
 }
@@ -58,14 +60,15 @@
         DisposeAUGraph(_graph);
     }
     _graph = NULL;
-    _unit = NULL;
+    _synthUnit = NULL;
+    _outputUnit = NULL;
 }
 
 
 - (BOOL) _prepareAudioGraphWithError: (NSError **)outError
 {
-    AUNode outputNode, synthNode;
     AudioComponentDescription outputDesc, synthDesc;
+    AUNode outputNode, synthNode;
     
     //OS X's default CoreAudio output
     outputDesc.componentType = kAudioUnitType_Output;
@@ -96,8 +99,9 @@
         REQUIRE(AUGraphOpen(_graph));
         REQUIRE(AUGraphInitialize(_graph));
         
-        //Get a reference to the audio unit for the synth.
-        REQUIRE(AUGraphNodeInfo(_graph, synthNode, NULL, &_unit));
+        //Get proper references to the audio units for the synth.
+        REQUIRE(AUGraphNodeInfo(_graph, synthNode, NULL, &_synthUnit));
+        REQUIRE(AUGraphNodeInfo(_graph, outputNode, NULL, &_outputUnit));
         
         //Finally start processing the graph.
         //(Technically, we could move this to the first time we receive a MIDI message.)
@@ -112,6 +116,8 @@
         {
             DisposeAUGraph(_graph);
             _graph = NULL;
+            _synthUnit = NULL;
+            _outputUnit = NULL;
         }
         
         if (outError)
@@ -141,16 +147,18 @@
 - (BOOL) loadSoundFontAtPath: (NSString *)path
                        error: (NSError **)outError
 {
-    NSAssert(_unit != NULL, @"loadSoundFontAtPath:error: called before successful initialization.");
+    NSAssert(_synthUnit != NULL, @"loadSoundFontAtPath:error: called before successful initialization.");
     
-    if (![path isEqualToString: _soundFontPath])
+    path = path.stringByStandardizingPath;
+    
+    if (![path isEqualToString: self.soundFontPath])
     {
         OSStatus errCode = noErr;
         
-        //Clear an existing soundfont
+        //Clear any existing soundfont
         if (path == nil)
         {
-            errCode = AudioUnitSetProperty(_unit,
+            errCode = AudioUnitSetProperty(_synthUnit,
                                            kMusicDeviceProperty_SoundBankFSRef,
                                            kAudioUnitScope_Global,
                                            0,
@@ -162,11 +170,11 @@
         else
         {
             FSRef soundfontRef;
-            errCode = FSPathMakeRef((const UInt8 *)[path fileSystemRepresentation], &soundfontRef, NULL);
+            errCode = FSPathMakeRef((const UInt8 *)path.fileSystemRepresentation, &soundfontRef, NULL);
             
             if (errCode == noErr)
             {
-                errCode = AudioUnitSetProperty(_unit,
+                errCode = AudioUnitSetProperty(_synthUnit,
                                                kMusicDeviceProperty_SoundBankFSRef,
                                                kAudioUnitScope_Global,
                                                0,
@@ -189,10 +197,7 @@
         }
         else
         {
-            [self willChangeValueForKey: @"soundFontPath"];
-            [_soundFontPath release];
-            _soundFontPath = [path retain];
-            [self didChangeValueForKey: @"soundFontPath"];
+            self.soundFontPath = path;
             return YES;
         }
     }
@@ -201,23 +206,23 @@
 
 - (void) handleMessage: (NSData *)message
 {
-    NSAssert(_unit != NULL, @"handleMessage: called before successful initialization.");
-    NSAssert([message length] > 0, @"0-length message received by handleMessage:");
+    NSAssert(_synthUnit != NULL, @"handleMessage: called before successful initialization.");
+    NSAssert(message.length > 0, @"0-length message received by handleMessage:");
     
     UInt8 *contents = (UInt8 *)[message bytes];
     UInt8 status = contents[0];
     UInt8 data1 = ([message length] > 1) ? contents[1] : 0;
     UInt8 data2 = ([message length] > 2) ? contents[2] : 0;
     
-    MusicDeviceMIDIEvent(_unit, status, data1, data2, 0);
+    MusicDeviceMIDIEvent(_synthUnit, status, data1, data2, 0);
 }
 
 - (void) handleSysex: (NSData *)message
 {
-    NSAssert(_unit != NULL, @"handleSysEx: called before successful initialization.");
-    NSAssert([message length] > 0, @"0-length message received by handleSysex:");
+    NSAssert(_synthUnit != NULL, @"handleSysEx: called before successful initialization.");
+    NSAssert(message.length > 0, @"0-length message received by handleSysex:");
     
-    MusicDeviceSysEx(_unit, (UInt8 *)[message bytes], [message length]);
+    MusicDeviceSysEx(_synthUnit, (UInt8 *)message.bytes, message.length);
 }
 
 - (void) pause
@@ -232,16 +237,19 @@
     AUGraphStart(_graph);
 }
 
-//Unimplemented for now
 - (void) setVolume: (float)volume
 {
-    //TODO: set volume on our output node
+    NSAssert(_outputUnit != NULL, @"setVolume: called before successful initialization.");
+    AudioUnitSetParameter(_outputUnit, kHALOutputParam_Volume, kAudioUnitScope_Global, 0, volume, 0);
 }
 
 - (float) volume
 {
-    //TODO: retrieve volume from our output node
-    return 1.0f;
+    NSAssert(_outputUnit != NULL, @"volume called before successful initialization.");
+    
+    AudioUnitParameterValue volume;
+    OSStatus errCode = AudioUnitGetParameter(_outputUnit, kHALOutputParam_Volume, kAudioUnitScope_Global, 0, &volume);
+    return (!errCode) ? volume : 0.0f;
 }
 
 @end

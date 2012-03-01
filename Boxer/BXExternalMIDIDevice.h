@@ -11,6 +11,13 @@
 #import <CoreMIDI/MIDIServices.h>
 #import "BXMIDIDevice.h"
 
+//The default seconds-per-byte delay to allow after sending a sysex.
+//Equivalent to the MIDI 1.0 specified delay of 3125 bytes/sec.
+#define BXExternalMIDIDeviceDefaultSysexRate 1.0f / 3125.0f
+
+//A short delay between programmatically changing the volume and updating the device,
+//to avoid rapid volume changes flooding the device with messages.
+#define BXVolumeSyncDelay 0.05
 
 @interface BXExternalMIDIDevice : NSObject <BXMIDIDevice>
 {
@@ -21,14 +28,22 @@
     NSTimeInterval _secondsPerByte;
     
     NSDate *_dateWhenReady;
+    
+    float _volume;
+    NSTimer *_volumeSyncTimer;
 }
 
 //The destination this device is connecting to. Set at initialization time.
 @property (readonly, nonatomic) MIDIEndpointRef destination;
 
-//Settable, for the benefit of our subclasses
+//Declared as settable for the benefit of our subclasses
 @property (readwrite, copy, nonatomic) NSDate *dateWhenReady;
 
+@property (readwrite, assign, nonatomic) float volume;
+
+
+#pragma mark -
+#pragma mark Utility methods
 
 //The descriptive client and port names to use for MIDI device connections.
 //Has no effect on actual functionality.
@@ -41,6 +56,9 @@
 - (NSTimeInterval) processingDelayForSysex: (NSData *)sysex;
 
 
+#pragma mark -
+#pragma mark Initializers
+
 - (id <BXMIDIDevice>) initWithDestination: (MIDIEndpointRef)destination
                                     error: (NSError **)outError;
 
@@ -49,5 +67,16 @@
 
 - (id <BXMIDIDevice>) initWithDestinationAtUniqueID: (MIDIUniqueID)uniqueID
                                               error: (NSError **)outError;
+
+#pragma mark -
+#pragma mark Volume control
+
+//
+- (void) scheduleVolumeSync;
+
+//Called after a short delay when @volume is changed, to send the new volume
+//to the external device. The delay prevents rapid minor volume changes from
+//flooding the external device.
+- (void) syncVolume;
 
 @end

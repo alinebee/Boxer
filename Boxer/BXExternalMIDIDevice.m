@@ -8,11 +8,6 @@
 #import "BXExternalMIDIDevice.h"
 
 
-//The default seconds-per-byte delay to allow after sending a sysex.
-//Equivalent to the MIDI 1.0 specified delay of 3125 bytes/sec.
-#define BXExternalMIDIDeviceDefaultSysexRate 1.0f / 3125.0f
-
-
 #pragma mark -
 #pragma mark Private method declarations
 
@@ -26,6 +21,11 @@
 
 - (BOOL) _connectToDestinationAtUniqueID: (MIDIUniqueID)uniqueID
                                    error: (NSError **)outError;
+
+//The callback for our volume synchronization timer.
+//Calls syncVolume and invalidates the timer.
+- (void) _performVolumeSync: (NSTimer *)timer;
+
 @end
 
 
@@ -35,6 +35,7 @@
 @implementation BXExternalMIDIDevice
 @synthesize dateWhenReady = _dateWhenReady;
 @synthesize destination = _destination;
+@synthesize volume = _volume;
 
 #pragma mark -
 #pragma mark Class helper methods
@@ -58,7 +59,9 @@
 {
     if ((self = [super init]))
     {
-        [self setDateWhenReady: [NSDate distantPast]];
+        //Don't use the setter, as it will try to send a message.
+        _volume = 1.0f;
+        self.dateWhenReady = [NSDate distantPast];
         _secondsPerByte = BXExternalMIDIDeviceDefaultSysexRate;
     }
     return self;
@@ -252,14 +255,14 @@
 - (BOOL) isProcessing
 {
     //We're still processing if our readiness date is in the future
-    return [[self dateWhenReady] timeIntervalSinceNow] > 0;
+    return self.dateWhenReady.timeIntervalSinceNow > 0;
 }
 
 
 - (void) handleMessage: (NSData *)message
 {
     NSAssert(_port && _destination, @"handleMessage: called before successful initialization.");
-    NSAssert([message length] > 0, @"0-length message received by handleMessage:");
+    NSAssert(message.length > 0, @"0-length message received by handleMessage:");
     
     UInt8 buffer[sizeof(MIDIPacketList)];
     MIDIPacketList *packetList = (MIDIPacketList *)buffer;
@@ -319,11 +322,50 @@
 
 - (void) setVolume: (float)volume
 {
-    //TODO: send master-volume sysex to device?
+    NSAssert(_port && _destination, @"setVolume: called before successful initialization.");
+    
+    if (self.volume != volume)
+    {
+        _volume = volume;
+        [self scheduleVolumeSync];
+    }
 }
 
-- (float) volume
+- (void) scheduleVolumeSync
 {
-    return 1.0f;
+    //If we already have a timer in progress, don't reschedule.
+    if (!_volumeSyncTimer)
+    {
+        NSTimeInterval timeUntilReady = MAX(0.0, self.dateWhenReady.timeIntervalSinceNow);
+        NSTimeInterval syncDelay = timeUntilReady + BXVolumeSyncDelay;
+        
+        //No need to retain it, since it'll be retained by the runloop until it fires
+        _volumeSyncTimer = [NSTimer scheduledTimerWithTimeInterval: syncDelay
+                                                            target: self
+                                                          selector: @selector(_performVolumeSync:)
+                                                          userInfo: nil
+                                                           repeats: NO];
+    }
 }
+
+- (void) _performVolumeSync: (NSTimer *)timer
+{
+    _volumeSyncTimer = nil;
+    
+    //If we've since been closed, then don't send any further messages
+    if (_port && _destination)
+    {   
+        //If we're still busy processing, then defer the sync until after another delay
+        if (self.isProcessing)
+            [self scheduleVolumeSync];
+        else
+            [self syncVolume];
+    }
+}
+
+- (void) syncVolume
+{
+    NSLog(@"Syncing volume");
+}
+
 @end

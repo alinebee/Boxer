@@ -16,24 +16,29 @@
 
 @protocol BXMIDIDevice <NSObject>
 
+#pragma mark -
+#pragma mark Properties
+
 //The master volume of the MIDI device from 0.0 to 1.0, independent of the volume
-//of individual channels. Not all MIDI devices are expected to support volume control,
-//but at the very least should mute themselves when their volume is set to 0.
-@property (assign, nonatomic) float volume;
+//of individual channels. MIDI devices are not expected to support fine-grained
+//volume control, but at the very least should mute themselves when their volume
+//is set to 0.
+- (float) volume;
+- (void) setVolume: (float)volume;
 
 //Returns whether this device can play back MT-32 music properly.
-@property (readonly, nonatomic) BOOL supportsMT32Music;
+- (BOOL) supportsMT32Music;
 
 //Returns whether this device can play back General MIDI music properly.
-@property (readonly, nonatomic) BOOL supportsGeneralMIDIMusic;
+- (BOOL) supportsGeneralMIDIMusic;
 
 //Returns whether this device is still processing events.
 //If YES, further messages should not be sent until dateWhenReady.
-@property (readonly, nonatomic, getter=isProcessing) BOOL processing;
+- (BOOL) isProcessing;
 
 //The date at which this device will next be able to receive events.
 //Sending events before this may result in skipped or truncated messages.
-@property (readonly, copy, nonatomic) NSDate *dateWhenReady;
+- (NSDate *) dateWhenReady;
 
 
 #pragma mark -

@@ -107,7 +107,7 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
     
     //Autodetect if the music we're receiving would be suitable for an MT-32:
     //If so, and our current device can't play MT-32 music, try switching to one that can.
-    if ([self _shouldAutodetectMT32])
+    if (self._shouldAutodetectMT32)
     {
         //Check if the message we've received was intended for an MT-32,
         //and if so, how 'conclusive' it is that the game is playing MT-32 music.
@@ -136,7 +136,7 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
                 //autodetection so we don't keep trying.
                 else
                 {
-                    [self setAutodetectsMT32: NO];
+                    self.autodetectsMT32 = NO;
                     [self _clearPendingSysexMessages];
                 }
             }
@@ -145,18 +145,20 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
             //later. This ensures it won't miss out on any startup commands.
             else
             {
+#if BOXER_DEBUG
                 NSLog(@"Inconclusive MT-32 sysex: %@", [BXExternalMT32 dataInSysex: message
                                                                   includingAddress: YES]);
+#endif
                 [self _queueSysexMessage: message];
             }
         }
     }
 
-    if ([self activeMIDIDevice])
+    if (self.activeMIDIDevice)
     {
         //If we're not ready to send yet, wait until we are.
         [self _waitUntilActiveMIDIDeviceIsReady];
-        [[self activeMIDIDevice] handleSysex: message];
+        [self.activeMIDIDevice handleSysex: message];
     }
 }
 

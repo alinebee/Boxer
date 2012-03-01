@@ -53,6 +53,8 @@
 #define BXMT32SysexAddressReset 0x7F
 #define BXMT32SysexAddressDisplay 0x20
 
+#define BXMT32SysexSubAddressMasterVolume 0x16
+
 
 #define BXChannelModeChangePrefix 0xB0
 #define BXAllNotesOffMessage 0x7B

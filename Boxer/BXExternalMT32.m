@@ -6,7 +6,7 @@
  */
 
 #import "BXExternalMT32.h"
-
+#import "BXExternalMT32+BXMT32Sysexes.h"
 
 #define BXExternalMT32DelayFactor 1.25
 #define BXExternalMT32BaseDelay 0.02
@@ -22,7 +22,6 @@
     //The calculations for these sysex processing delays have been adapted from DOSBox's delaysysex patch.
     NSTimeInterval baseDelay = (BXExternalMT32DelayFactor * _secondsPerByte * [sysex length]) + BXExternalMT32BaseDelay;
     
-    
     //Sysex is too short to be a valid MT-32 message, go with the standard delay.
     //(It'll still take time for it to reach the MT-32 and get rejected.)
     if ([sysex length] < BXRolandSysexSendMinLength) return baseDelay;
@@ -37,7 +36,7 @@
     
         
     //If this sysex isn't intended for the MT-32, or is not a data-set command,
-    //then we don't know how to calculate it and should stick with the regular delay.
+    //then we don't know how to calculate it and should stik with the regular delay.
     if (manufacturerID != BXSysexManufacturerIDRoland || modelID != BXRolandSysexModelIDMT32 || commandType != BXRolandSysexSend)
         return baseDelay;
 
@@ -58,6 +57,12 @@
         return MAX(0.040, baseDelay);
     
     return baseDelay;
+}
+
+- (void) syncVolume
+{
+    NSData *volumeMessage = [[self class] sysexWithMasterVolume: self.volume];
+    [self handleSysex: volumeMessage];
 }
 
 @end

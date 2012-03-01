@@ -26,6 +26,9 @@
 //Returns an MT-32 sysex that can be used to display the specified LCD message.
 + (NSData *) sysexWithLCDMessage: (NSString *)message;
 
+//Returns an MT-32 sysex that can be used to set the specified volume (from 0.0f to 1.0f.)
++ (NSData *) sysexWithMasterVolume: (float)volume;
+
 //Returns the data payload of the specified sysex, or nil if it was not valid. 
 //If includeAddress is YES, the 3-byte address prefix will be included in the
 //returned data also.

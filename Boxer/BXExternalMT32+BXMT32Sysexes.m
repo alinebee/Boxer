@@ -121,9 +121,20 @@
     return [self sysexWithData: chars forAddress: address];
 }
 
++ (NSData *) sysexWithMasterVolume: (float)volume
+{
+    volume = MIN(1.0f, volume);
+    volume = MAX(0.0f, volume);
+    UInt8 intVolume = (UInt8)roundf(volume * 100);
+    
+    NSData *data        = [NSData dataWithBytes: &intVolume length: 1];
+    UInt8 address[3]    = {BXMT32SysexAddressSystemArea, 0x00, BXMT32SysexSubAddressMasterVolume};
+    
+    return [self sysexWithData: data forAddress: address];
+}
+
 + (NSData *) sysexWithData: (NSData *)data forAddress: (UInt8[3])address
 {
-    
     UInt8 header[BXRolandSysexHeaderLength] = {
         BXSysexStart,
         

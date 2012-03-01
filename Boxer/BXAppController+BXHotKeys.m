@@ -67,6 +67,11 @@
     //Don't capture any keys when we're not the active application
     if (![NSApp isActive]) return NO;
     
+    //Tweak: let Cmd-modified keys fall through, so that key-repeat events
+    //for key equivalents are handled properly.
+    if ((event.modifierFlags & NSCommandKeyMask) == NSCommandKeyMask)
+        return NO;
+    
     //Only capture if the current session is key and is running a program.
     @synchronized(self.currentSession)
     {
@@ -74,7 +79,7 @@
         if (!self.currentSession.programIsActive) return NO;
         if ([self documentForWindow: [NSApp keyWindow]] != self.currentSession) return NO;
     }
-    
+        
     switch (event.keyCode)
     {
         case kVK_UpArrow:

@@ -127,11 +127,12 @@ code
 kbd
 {
 	font: normal 12px/1.5 "Lucida Grande";
-	padding: 0.1em 0.5em;
-	margin: 0 3px;
+	word-spacing: -0.2em;
+	padding: 0 0.5em;
+	margin: 0.2em;
 	text-shadow: none;
 	white-space: nowrap;
-	word-spacing: -0.2em;
+	display: inline-block;
 	
 	border-top: 1px solid #e9ecef;
 	background: #d9dcdf;
@@ -141,6 +142,12 @@ kbd
 	text-align: center;
 	-webkit-box-shadow: rgba(0,0,0,0.5) 0 1px 2px;
 	border-radius: 4px;
+}
+
+kbd img
+{
+	vertical-align: middle;
+	padding-bottom: 0.3em;
 }
 
 var

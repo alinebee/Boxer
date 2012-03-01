@@ -147,7 +147,7 @@
         knobStroke = theme.sliderKnobStrokeColor;
         knobFill = theme.highlightKnobColor;
     }
-	else if (self.isEnabled)
+	else if (self.isEnabled && self.controlView.window.isMainWindow)
     {
         knobShadow = theme.sliderKnobShadow;
         knobStroke = theme.sliderKnobStrokeColor;
@@ -248,7 +248,7 @@
     NSBezierPath *strokePath = [self horizontalBarForRect: strokeRect];
     
     NSColor *strokeColor, *fillColor;
-	if (self.isEnabled)
+	if (self.isEnabled && self.controlView.window.isMainWindow)
     {
         fillColor = theme.sliderTrackColor;
         strokeColor = theme.sliderTrackStrokeColor;

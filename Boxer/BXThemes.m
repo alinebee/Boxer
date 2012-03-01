@@ -275,6 +275,12 @@
     return [NSColor colorWithCalibratedWhite: 0 alpha: 0.25f];
 }
 
+- (NSColor *) disabledStrokeColor
+{
+    return [NSColor colorWithCalibratedWhite: 0 alpha: 0.1f];
+}
+
+
 - (NSGradient *) normalGradient
 {
     NSColor *baseColor = [NSColor lightGrayColor];
@@ -346,7 +352,23 @@
 							nil];
     
     return [gradient autorelease];
+}
 
+- (NSGradient *) disabledKnobColor
+{
+    NSColor *baseColor = [NSColor colorWithCalibratedWhite: 0.9f alpha: 1.0f];
+    
+    NSColor *topColor		= [baseColor highlightWithLevel: 0.3f];
+	NSColor *midColor		= baseColor;
+	NSColor *bottomColor	= [baseColor shadowWithLevel: 0.1f];
+	
+	NSGradient *gradient = [[NSGradient alloc] initWithColorsAndLocations:
+							topColor,		0.0f,
+							midColor,		0.5f,
+							bottomColor,	1.0f,
+							nil];
+    
+    return [gradient autorelease];
 }
 
 - (NSGradient *) highlightKnobColor
@@ -357,6 +379,11 @@
 - (NSColor *) sliderTrackColor
 {
     return [NSColor colorWithCalibratedWhite: 0 alpha: 0.2f];
+}
+
+- (NSColor *) disabledSliderTrackColor
+{
+    return [NSColor colorWithCalibratedWhite: 0 alpha: 0.1f];
 }
 
 - (NSShadow *) sliderTrackShadow
@@ -380,7 +407,12 @@
 
 - (NSColor *) sliderKnobStrokeColor
 {
-    return [NSColor colorWithCalibratedWhite: 0 alpha: 0.33];
+    return [NSColor colorWithCalibratedWhite: 0 alpha: 0.4];
+}
+
+- (NSColor *) disabledSliderKnobStrokeColor
+{
+    return [NSColor colorWithCalibratedWhite: 0 alpha: 0.25];
 }
 @end
 

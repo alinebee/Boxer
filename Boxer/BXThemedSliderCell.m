@@ -8,6 +8,7 @@
 #import "BXThemedSliderCell.h"
 #import "NSBezierPath+MCAdditions.h"
 #import "BXThemes.h"
+#import "NSView+BXDrawing.h"
 
 @implementation BXThemedSliderCell
 
@@ -147,7 +148,7 @@
         knobStroke = theme.sliderKnobStrokeColor;
         knobFill = theme.highlightKnobColor;
     }
-	else if (self.isEnabled && self.controlView.window.isMainWindow)
+	else if (self.isEnabled && self.controlView.windowIsActive)
     {
         knobShadow = theme.sliderKnobShadow;
         knobStroke = theme.sliderKnobStrokeColor;
@@ -248,7 +249,7 @@
     NSBezierPath *strokePath = [self horizontalBarForRect: strokeRect];
     
     NSColor *strokeColor, *fillColor;
-	if (self.isEnabled && self.controlView.window.isMainWindow)
+	if (self.isEnabled && self.controlView.windowIsActive)
     {
         fillColor = theme.sliderTrackColor;
         strokeColor = theme.sliderTrackStrokeColor;

@@ -23,4 +23,9 @@
 	
 	return offset;
 }
+
+- (BOOL) windowIsActive
+{
+    return (self.window.isMainWindow || !self.window.canBecomeMainWindow);
+}
 @end

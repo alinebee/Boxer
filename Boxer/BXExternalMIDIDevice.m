@@ -294,6 +294,7 @@
         [self dispatchSysex: message];
         
         //Sniff the sysex to see if it's a message that would reset the device's master volume.
+        //If so, reapply our own volume after it.
         if ([[self class] sysexResetsMasterVolume: message])
         {
 #if BOXER_DEBUG

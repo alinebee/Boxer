@@ -16,4 +16,9 @@
 //Useful for aligning pattern phase when drawing pattern colours.
 - (NSPoint) offsetFromWindowOrigin;
 
+//Returns whether the view is in an active window (the main window or a floating panel).
+//This is intended to reflect whether the window appears inactive (dimmed titlebar),
+//and thus whether controls within it should draw an active or inactive appearance.
+- (BOOL) windowIsActive;
+
 @end

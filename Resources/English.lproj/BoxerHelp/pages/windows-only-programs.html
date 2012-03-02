@@ -4,45 +4,45 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Windows-only programs</title>
 		<meta name="description" content="How to spot them, and alternatives for Windows emulation.">
-		<meta name="keywords" content="win32, win95, win 32, windows 95, windows 3.1">
+		<meta name="keywords" content="win32, win95, win 32, windows 95, windows 3.1, gog">
 		
 		<link rel="stylesheet" type="text/css" href="../shared/styles/main.css">
 	</head>
 	<body>
 		<a name="windows-only-programs"></a>
-		<h1>Windows-only programs</h1>
+		<h1>Windows-only games</h1>
 		
 		<section>
-			<a name="windows-program-telltales"></a>
+			<p><strong>Boxer can only emulate MS-DOS games</strong>, and will warn you if you try to start a Windows program or import a Windows game. To play Windows games on your Mac, you’ll need <a href="http://www.apple.com/findouthow/mac/tutorials/windowsonmac.html" rel="external">Boot Camp</a> or a <a href="#windows-emulators">Windows emulator</a> instead.</p>
 			
-			<p>If a program exits immediately at startup saying:</p>
-			<ul>
-				<li>“<samp>This program cannot be run in DOS mode.</samp>”</li>
-				<li>“<samp>This program must be run under Win32</samp>”</li>
-				<li>“<samp>Unknown command or file name: win</samp>”</li>
-			</ul>
-			<p>…or similar, this means that <strong>the program is Microsoft Windows-only</strong> and cannot run in DOS.</p>
+			<p class="tip">Before spending money on a game, <a href="http://www.mobygames.com/search/quick" rel="external">look it up on Mobygames</a> to check if it was released for MS-DOS.</p>
+		</section>
+		
+		<section>
+			<a name="windows-only-installers"></a>
+			<h2>DOS games inside Windows installers</h2>
 			
-			<p><strong>Boxer can only emulate MS-DOS programs</strong>, and will usually detect and warn you if you try to start a Windows program or import a Windows-only game.</p>
+			<p>Rereleased game collections, and online stores like <a href="http://gog.com/" rel="external">Good Old Games</a>, often <strong>package MS-DOS games inside Windows-only installer programs</strong>. Even though Boxer will be able to run the game itself, <strong>it cannot open the Windows installer to get the game out</strong>, and so cannot import the game directly.</p>
+			
+			<p>Instead, you should:</p>
+			
+			<ol class="steps">
+				<li>Run the installer on a Windows PC or inside a <a href="#windows-emulators">Windows emulator</a>, then:</li>
+				<li>Import the installed game files afterwards into Boxer on your Mac.</li>
+			</ol>
 		</section>
 		
 		<section>
 			<a name="windows-emulators"></a>
 			<h2>Alternatives for Windows emulation</h2>
 		
-			<p><a href="http://www.codeweavers.com/products/cxgames/" rel="external">Crossover Games</a> is a good alternative for running Windows-only games. It has a similar workflow to Boxer, and allows you to install and play many Windows games without needing a copy of Windows itself.</p>
+			<ul>
+				<li><p><a href="http://www.apple.com/findouthow/mac/tutorials/windowsonmac.html" rel="external">Boot Camp</a> comes with OS&nbsp;X, and lets you install a copy of Windows into a separate volume on your Mac. You can then choose between Windows and OS&nbsp;X when you start up your Mac.</p></li>
 			
-			<p>Another option is a virtualization suite such as <a href="http://www.parallels.com/products/desktop/" rel="external">Parallels Desktop</a> or <a href="http://www.vmware.com/products/fusion/" rel="external">VMWare Fusion</a>. These let you install and run Windows within a virtual machine on your Mac, and thus require you to have a copy of Windows.</p>
-		</section>
-		
-		<section>
-			<a name="dual-dos-windows-games"></a>
-			<h2>But I thought this <em>was</em> a DOS game!</h2>
-			<p>Many PC games around the 1995–1997 transitional era were released for both MS-DOS <em>and</em> Windows: sometimes as completely separate products, and sometimes as both versions in a single installation.</p>
+				<li><p><a href="http://www.codeweavers.com/products/cxgames/" rel="external">Crossover Games</a> is an emulator for running Windows games directly within OS&nbsp;X. It has a similar workflow to Boxer, and allows you to install and play many Windows games without needing a copy of Windows itself.</p></li>
 			
-			<p>If you encounter a Windows program, it’s worth trying other programs in the same folder to see if they work in DOS. Unfortunately, since DOS and Windows programs both use the <span class="filename">.exe</span> extension, you can only tell by trying to run them.</p>
-			
-			<p class="note">Boxer’s <a href="help:runscript=BoxerHelp/shared/scripts/import.scpt string='null'" rel="application-window">game importer</a> weeds out Windows-only installers and will only offer actual DOS installers to choose from. And if the importer says the whole game is Windows-only, that means it really is.</p>
+				<li><p>Virtualization suites such as <a href="http://www.vmware.com/products/fusion/" rel="external">VMWare Fusion</a>, <a href="http://www.parallels.com/products/desktop/" rel="external">Parallels Desktop</a> or <a href="https://www.virtualbox.org/" rel="external">VirtualBox</a> let you run Windows within a “virtual machine” on OS&nbsp;X, either in a window or full-screen. These require a copy of Windows.</p></li>
+			</ul>
 		</section>
 		
 		<script type="text/javascript" src="../shared/scripts/zepto.min.js"></script>

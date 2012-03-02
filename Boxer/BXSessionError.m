@@ -87,13 +87,13 @@ NSString * const BXSessionErrorDomain = @"BXSessionErrorDomain";
 + (id) errorWithSourcePath: (NSString *)sourcePath userInfo: (NSDictionary *)userInfo
 {
 	NSString *descriptionFormat = NSLocalizedString(
-		@"“%@” is a Microsoft Windows game or application, which Boxer does not support.",
-		@"Error message shown when importing a folder that contains a Windows-only game. %@ is the display filename of the imported path."
+		@"“%@” is a Windows game or inside a Windows installer, which Boxer cannot open.",
+		@"Error message shown when importing a folder that contains a Windows-only game or Windows installer. %@ is the display filename of the imported path."
 	);
 	
 	NSString *suggestion = NSLocalizedString(
-		@"You may be able to run it in a Windows emulator instead, such as CrossOver Games.",
-		@"Informative text of warning sheet after running a Windows-only executable or importing a Windows-only game."
+		@"You can open it with a Windows PC or Windows emulator instead. If it installs an MS-DOS game, you can then import the game files into Boxer.",
+		@"Informative text of warning sheet after importing a Windows-only game."
 	);
 	
 	NSString *description = [NSString stringWithFormat: descriptionFormat, [self displayNameForPath: sourcePath], nil];

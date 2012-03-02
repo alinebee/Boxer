@@ -231,7 +231,7 @@
     if (volume)
     {
         NSUInteger intVolume = ((UInt8 *)sysex.bytes)[8];
-        *volume = intVolume / (float)BXGeneralMIDIMaxMasterVolume;
+        *volume = intVolume / (float)BXMT32MaxMasterVolume;
     }
     
     return YES;
@@ -261,7 +261,7 @@
 {
     volume = MIN(1.0f, volume);
     volume = MAX(0.0f, volume);
-    UInt8 intVolume = (UInt8)roundf(volume * BXRolandMaxMasterVolume) & BXMIDIBitmask;
+    UInt8 intVolume = (UInt8)roundf(volume * BXMT32MaxMasterVolume) & BXMIDIBitmask;
     
     NSData *data        = [NSData dataWithBytes: &intVolume length: 1];
     UInt8 address[3]    = {BXMT32SysexAddressSystemArea, 0x00, 0x16};

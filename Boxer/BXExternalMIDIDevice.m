@@ -283,6 +283,9 @@
     float requestedVolume;
     if ([[self class] isMasterVolumeSysex: message withVolume: &requestedVolume])
     {
+#if BOXER_DEBUG
+        NSLog(@"Program attempted to set master volume of %f", requestedVolume);
+#endif
         self.requestedVolume = requestedVolume;
         [self syncVolume];
     }
@@ -293,6 +296,9 @@
         //Sniff the sysex to see if it's a message that would reset the device's master volume.
         if ([[self class] sysexResetsMasterVolume: message])
         {
+#if BOXER_DEBUG
+            NSLog(@"Program attempted to reset master volume with sysex: %@", message);
+#endif
             self.requestedVolume = 1.0f;
             [self scheduleVolumeSync];
         }

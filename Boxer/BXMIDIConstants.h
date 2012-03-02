@@ -47,8 +47,6 @@
 #define BXRolandSysexTailLength 2
 
 
-#define BXRolandMaxMasterVolume 100
-
 #define BXRolandSysexChecksumModulus 128
 
 #define BXRolandSysexModelIDMT32 0x16
@@ -66,7 +64,9 @@
 #pragma mark -
 #pragma mark MT-32-specific sysex message parameters
 
+#define BXMT32MaxMasterVolume 100
 #define BXMT32LCDMessageLength 20
+
 #define BXMT32SysexAddressPatchMemory 0x05
 #define BXMT32SysexAddressTimbreMemory 0x08
 #define BXMT32SysexAddressSystemArea 0x10

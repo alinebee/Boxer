@@ -123,6 +123,7 @@
     bezelWindow.backgroundColor = [NSColor clearColor];
     bezelWindow.opaque = NO;
     bezelWindow.ignoresMouseEvents = YES;
+    bezelWindow.hidesOnDeactivate = YES;
     bezelWindow.level = NSPopUpMenuWindowLevel;
     bezelWindow.collectionBehavior = NSWindowCollectionBehaviorCanJoinAllSpaces | NSWindowCollectionBehaviorFullScreenAuxiliary;
     
@@ -132,10 +133,7 @@
 - (void) showBezel: (NSView *)bezel
        forDuration: (NSTimeInterval)duration
           priority: (BXBezelPriority)priority
-{
-    //Don't display any bezels if Boxer is not the active application
-    if (![NSApp isActive]) return;
-    
+{   
     //Only display the new bezel if it's of equal or higher priority
     //than the one we’re currently displaying
     if (priority >= currentPriority)
@@ -378,7 +376,7 @@
 
 - (BOOL) shouldShowVolumeNotifications
 {
-    //Suppress volume notifications while the window's volume indicator is visible.
+    //Suppress volume notifications while the window's own volume indicator is visible.
     BXDOSWindowController *windowController = [[NSApp delegate] currentSession].DOSWindowController;
     return !windowController.statusBarShown || windowController.window.isFullScreen;
 }

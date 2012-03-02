@@ -10,25 +10,32 @@
 
 @implementation BXExternalMIDIDevice (BXGeneralMIDISysexes)
 
++ (BOOL) sysexResetsMasterVolume: (NSData *)sysex
+{
+    //TODO: find out if there are any official General MIDI parameters
+    //for resetting device parameters to defaults.
+    return NO;
+}
+
 + (BOOL) isMasterVolumeSysex: (NSData *)sysex withVolume: (float *)volume
 {
     //The wrong size for a volume sysex, don't bother continuing
     if (sysex.length != 8) return NO;
     
+    //Compare the headers of the sysex to what we expect to find.
     UInt8 *content = (UInt8 *)sysex.bytes;
     UInt8 expectedHeader[5] = {
         BXSysexStart,
         BXGeneralMIDISysexRealtime,
-        BXGeneralMIDISysexAllChannels,
+        0x00, //Allow any value for the device ID
         BXGeneralMIDISysexDeviceControl,
         BXGeneralMIDISysexMasterVolume
     };
     
-    BOOL isMasterVolumeSysex = YES;
     NSUInteger i;
     for (i=0; i < 5; i++)
     {
-        if (expectedHeader[i] != content[i]) { isMasterVolumeSysex = NO; break; }
+        if (expectedHeader[i] && (expectedHeader[i] != content[i])) return NO;
     }
     
     //If we got this far, it is indeed a volume sysex:
@@ -42,7 +49,7 @@
         *volume = intVolume / (float)BXGeneralMIDIMaxMasterVolume;
     }
     
-    return isMasterVolumeSysex;
+    return YES;
 }
 
 + (NSData *) sysexWithMasterVolume: (float)volume

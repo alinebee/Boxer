@@ -20,4 +20,8 @@
 //Returns a General MIDI sysex that can be used to set the specified master volume (from 0.0f to 1.0f.)
 + (NSData *) sysexWithMasterVolume: (float)volume;
 
+//Returns whether the specified sysex will reset the master volume to its default value.
+//The base implementation returns NO: it is intended to be overridden by subclasses
+//to define device-specific messages.
++ (BOOL) sysexResetsMasterVolume: (NSData *)sysex;
 @end

@@ -278,6 +278,29 @@
 
 - (void) handleSysex: (NSData *)message
 {
+    //Sniff the sysex to see if it's a request to set the master volume.
+    //If so, capture the volume and substitute our own sysex containing our scaled volume.
+    float requestedVolume;
+    if ([[self class] isMasterVolumeSysex: message withVolume: &requestedVolume])
+    {
+        self.requestedVolume = requestedVolume;
+        [self syncVolume];
+    }
+    else
+    {
+        [self dispatchSysex: message];
+        
+        //Sniff the sysex to see if it's a message that would reset the device's master volume.
+        if ([[self class] sysexResetsMasterVolume: message])
+        {
+            self.requestedVolume = 1.0f;
+            [self scheduleVolumeSync];
+        }
+    }
+}
+
+- (void) dispatchSysex: (NSData *)message
+{
 //The same length as DOSBox's MIDI message buffer, plus padding for extra data used by the packet list.
 //(Technically a sysex message could be much longer than 1024 bytes, but it would be truncated by DOSBox
 //before it ever reaches us.)
@@ -327,11 +350,22 @@
 {
     NSAssert(_port && _destination, @"setVolume: called before successful initialization.");
     
+    volume = MIN(1.0f, volume);
+    volume = MAX(0.0f, volume);
+    
     if (self.volume != volume)
     {
         _volume = volume;
         [self scheduleVolumeSync];
     }
+}
+
+- (void) setRequestedVolume: (float)volume
+{
+    volume = MIN(1.0f, volume);
+    volume = MAX(0.0f, volume);
+    
+    _requestedVolume = volume;
 }
 
 - (void) scheduleVolumeSync
@@ -353,12 +387,14 @@
 
 - (void) _performVolumeSync: (NSTimer *)timer
 {
+    //Invalidate and clear our sync timer.
+    [_volumeSyncTimer invalidate];
     _volumeSyncTimer = nil;
     
-    //Only try to sync the volume if we're still connected
+    //Only try to sync the volume if we're still connected.
     if (_port && _destination)
     {   
-        //If we're still busy processing, then defer the sync until after another delay
+        //If we're still busy processing, then defer the sync until after another delay.
         if (self.isProcessing)
             [self scheduleVolumeSync];
         else
@@ -368,8 +404,12 @@
 
 - (void) syncVolume
 {
+    //If this method gets called manually, cancel the timer and clear it.
+    [_volumeSyncTimer invalidate];
+    _volumeSyncTimer = nil;
+    
     NSData *volumeMessage = [[self class] sysexWithMasterVolume: self.volume * self.requestedVolume];
-    [self handleSysex: volumeMessage];
+    [self dispatchSysex: volumeMessage];
 }
 
 @end

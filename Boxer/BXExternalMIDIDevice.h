@@ -43,8 +43,8 @@
 //The master volume assigned by the application, from 0.0 to 1.0.
 @property (assign, nonatomic) float volume;
 
-//The master volume requested by the MIDI-using application via sysex, from 0.0 to 1.0.
-//This will be multiplied by @volume to arrive at the volume the device will be set to.
+//The master volume set by the MIDI-using application via sysex, from 0.0 to 1.0.
+//This will be multiplied by @volume to arrive at the actual volume passed on the device.
 @property (assign, nonatomic) float requestedVolume;
 
 
@@ -60,6 +60,12 @@
 //This is based on the time reported by the destination.
 //Used to calculate dateWhenReady when sending sysex commands.
 - (NSTimeInterval) processingDelayForSysex: (NSData *)sysex;
+
+//Sends specified the sysex message on its way to the external device.
+//Called by handleSysex after volume-related preprocessing, and called instead of handleSysex
+//by certain internal methods in order to bypass that preprocessing. Should not be called
+//directly by other classes unless you know what you're doing.
+- (void) dispatchSysex: (NSData *)sysex;
 
 
 #pragma mark -
@@ -77,12 +83,15 @@
 #pragma mark -
 #pragma mark Volume control
 
-//
+//Schedule a volume change to be sent to the device after a suitable delay
+//and once the device is not busy with other sysexes. The delay prevents
+//rapid minor volume changes from flooding the external device.
+//If a volume change is already scheduled, this will have no effect.
 - (void) scheduleVolumeSync;
 
-//Called after a short delay when @volume is changed, to send the new volume
-//to the external device. The delay prevents rapid minor volume changes from
-//flooding the external device.
+//Called after a short delay by scheduleVolumeSync, to send the current
+//scaled volume to the external device. Should be overridden by subclasses
+//that need to send custom messages.
 - (void) syncVolume;
 
 @end

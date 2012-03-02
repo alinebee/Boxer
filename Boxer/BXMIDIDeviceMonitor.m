@@ -270,7 +270,9 @@ void _didReceiveMIDINotification(const MIDINotification *message, void *context)
         }
         else
         {
+#if BOXER_DEBUG
             NSLog(@"Non-matching response from MIDI device: %@", fullResponse);
+#endif
         }
         
         //After establishing whether or not it's an MT-32, disconnect from this device.

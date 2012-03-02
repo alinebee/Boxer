@@ -15,49 +15,53 @@
 
 + (BOOL) isMT32Sysex: (NSData *)sysex confirmingSupport: (BOOL *)supportConfirmed
 {
-    if (supportConfirmed) *supportConfirmed = NO;
+    BOOL isRequest = NO;
     
-    //Too short to be a valid MT-32 sysex message.
-    if ([sysex length] < BXRolandSysexSendMinLength)
+    //Sysex was malformed, too short, or intended for a device other than the MT-32.
+    if (![self isMT32Sysex: sysex matchingAddress: NULL isRequest: &isRequest])
         return NO;
     
-    const UInt8 *contents = (const UInt8 *)[sysex bytes];
-    UInt8   manufacturerID  = contents[1],
-    modelID         = contents[3],
-    commandType     = contents[4],
-    baseAddress     = contents[5];
-    
-    //Command is intended for a different device than a Roland MT-32.
-    if (manufacturerID != BXSysexManufacturerIDRoland) return NO;
-    if (!(modelID == BXRolandSysexModelIDMT32 || modelID == BXRolandSysexModelIDD50)) return NO;
-    
+    //If we got this far, it's a valid MT-32 sysx: check if it confirms MT-32 support.
     if (supportConfirmed)
     {
-        //Some General MIDI drivers (used by Origin and Westwood among others)
-        //send sysexes telling the MT-32 to reset and setting up initial reverb
-        //and volume settings: but will then proceed to deliver General MIDI music
-        //to the MT-32 anyway.
-        if (commandType == BXRolandSysexSend && (baseAddress == BXMT32SysexAddressReset || baseAddress == BXMT32SysexAddressSystemArea))
-            *supportConfirmed = NO;
-        
-        
-        //If an LCD message is sent, check if it matches messages we know to ignore.
-        else if (commandType == BXRolandSysexSend && baseAddress == BXMT32SysexAddressDisplay)
+        //Sysex requests indicate the device is expecting a response from the MT-32:
+        //treat them as confirming support.
+        if (isRequest)
         {
-            NSData *messageData = [self dataInSysex: sysex includingAddress: NO];
-            NSString *message = [[NSString alloc] initWithData: messageData
-                                                      encoding: NSASCIIStringEncoding];
-            
-            NSArray *ignoredMessages = [NSArray arrayWithObjects:
-                                       //Sent by Pacific Strike and Strike Commander in General MIDI mode
-                                       @"SCSCSCFY!           ",
-                                       nil];
-            
-            *supportConfirmed = (![ignoredMessages containsObject: message]);
-            [message release];
+            *supportConfirmed = YES;
         }
-        
-        else *supportConfirmed = YES;
+        //Otherwise, check what address the sysex is targeting.
+        else
+        {
+            const UInt8 *contents = (const UInt8 *)[sysex bytes];
+            UInt8 baseAddress = contents[5];
+            
+            //Some General MIDI drivers (used by Origin and Westwood among others)
+            //send sysexes telling the MT-32 to reset and setting up initial reverb
+            //and volume settings: but will then proceed to deliver General MIDI music
+            //to the MT-32 anyway.
+            if (baseAddress == BXMT32SysexAddressReset || baseAddress == BXMT32SysexAddressSystemArea)
+                *supportConfirmed = NO;
+            
+            //If an LCD message is sent, check the contents to see if it matches messages we know to ignore.
+            else if (baseAddress == BXMT32SysexAddressDisplay)
+            {
+                NSData *messageData = [self dataInSysex: sysex includingAddress: NO];
+                NSString *LCDMessage = [[NSString alloc] initWithData: messageData
+                                                             encoding: NSASCIIStringEncoding];
+                
+                NSArray *ignoredMessages = [NSArray arrayWithObjects:
+                                            //Sent by Pacific Strike and Strike Commander in General MIDI mode
+                                            @"SCSCSCFY!           ",
+                                            nil];
+                
+                *supportConfirmed = (![ignoredMessages containsObject: LCDMessage]);
+                [LCDMessage release];
+            }
+            
+            //Otherwise, assume it confirms support.
+            else *supportConfirmed = YES;
+        }
     }
     
     return YES;
@@ -65,11 +69,11 @@
 
 + (NSData *) dataInSysex: (NSData *)sysex includingAddress: (BOOL)includeAddress
 {
-    if ([sysex length] < BXRolandSysexSendMinLength) return nil;
+    if (sysex.length < BXRolandSysexSendMinLength) return nil;
     
     NSUInteger startOffset = BXRolandSysexHeaderLength;
     if (!includeAddress) startOffset += BXRolandSysexAddressLength;
-    NSUInteger endOffset = [sysex length] - BXRolandSysexTailLength;
+    NSUInteger endOffset = sysex.length - BXRolandSysexTailLength;
     
     NSRange payloadRange = NSMakeRange(startOffset, endOffset - startOffset);
     
@@ -91,15 +95,15 @@
 + (NSUInteger) checksumForSysex: (NSData *)sysex
 {
     //An invalid sysex, for which we cannot generate a checksum
-    if ([sysex length] < (BXRolandSysexHeaderLength + BXRolandSysexTailLength))
+    if (sysex.length < (BXRolandSysexHeaderLength + BXRolandSysexTailLength))
         return NSNotFound;
     
     //The checksum for a Roland sysex message is calculated from
     //the bytes of the message address and the message data:
     //skip the bytes before and after that block.
-    UInt8 *bytes = (UInt8 *)[sysex bytes];
+    UInt8 *bytes = (UInt8 *)sysex.bytes;
     
-    NSUInteger length = [sysex length] - BXRolandSysexHeaderLength - BXRolandSysexTailLength;
+    NSUInteger length = sysex.length - BXRolandSysexHeaderLength - BXRolandSysexTailLength;
     
     return [self _checksumForBytes: &bytes[BXRolandSysexHeaderLength]
                             length: length];
@@ -121,18 +125,6 @@
     return [self sysexWithData: chars forAddress: address];
 }
 
-+ (NSData *) sysexWithMasterVolume: (float)volume
-{
-    volume = MIN(1.0f, volume);
-    volume = MAX(0.0f, volume);
-    UInt8 intVolume = (UInt8)roundf(volume * BXRolandMaxMasterVolume) & BXMIDIBitmask;
-    
-    NSData *data        = [NSData dataWithBytes: &intVolume length: 1];
-    UInt8 address[3]    = {BXMT32SysexAddressSystemArea, 0x00, BXMT32SysexSubAddressMasterVolume};
-    
-    return [self sysexWithData: data forAddress: address];
-}
-
 + (NSData *) sysexWithData: (NSData *)data forAddress: (UInt8[3])address
 {
     UInt8 header[BXRolandSysexHeaderLength] = {
@@ -143,7 +135,7 @@
         BXRolandSysexSend
     };
     
-    NSUInteger finalLength = [data length] + BXRolandSysexHeaderLength + BXRolandSysexAddressLength + BXRolandSysexTailLength;
+    NSUInteger finalLength = data.length + BXRolandSysexHeaderLength + BXRolandSysexAddressLength + BXRolandSysexTailLength;
     NSMutableData *sysex = [NSMutableData dataWithCapacity: finalLength];
     
     [sysex appendBytes: header length: BXRolandSysexHeaderLength];
@@ -151,7 +143,7 @@
     [sysex appendData: data];
     
     //Calculate the checksum based on the address and data parts of the overall sysex
-    UInt8 *bytes = (UInt8 *)[sysex bytes];
+    UInt8 *bytes = (UInt8 *)sysex.bytes;
     NSUInteger checksum = [self _checksumForBytes: &bytes[BXRolandSysexHeaderLength]
                                            length: (BXRolandSysexAddressLength + [data length])];
     
@@ -174,9 +166,9 @@
     
     //Split the requested length into high, middle and low bytes in big-endian order
     UInt8 requestSize[BXRolandSysexRequestSizeLength] = {
-        (numBytes & 0xFF0000) >> 16,
-        (numBytes & 0x00FF00) >> 8,
-        (numBytes & 0x0000FF)
+        (numBytes >> 14)    & BXMIDIBitmask,
+        (numBytes >> 7)     & BXMIDIBitmask,
+        (numBytes)          & BXMIDIBitmask
     };
     
     NSMutableData *sysex = [NSMutableData dataWithCapacity: BXRolandSysexRequestLength];
@@ -185,8 +177,8 @@
     [sysex appendBytes: address length: BXRolandSysexAddressLength];
     [sysex appendBytes: requestSize length: BXRolandSysexRequestSizeLength];
     
-    //Calculate the checksum based on the address and requuest size parts of the overall sysex
-    UInt8 *bytes = (UInt8 *)[sysex bytes];
+    //Calculate the checksum based on the address and request size parts of the overall sysex
+    UInt8 *bytes = (UInt8 *)sysex.bytes;
     NSUInteger checksum = [self _checksumForBytes: &bytes[BXRolandSysexHeaderLength]
                                            length: (BXRolandSysexAddressLength + BXRolandSysexRequestSizeLength)];
     
@@ -194,6 +186,87 @@
     [sysex appendBytes: tail length: BXRolandSysexTailLength];
     
     return sysex;
+}
+
++ (BOOL) isMT32Sysex: (NSData *)sysex matchingAddress: (UInt8[3])address isRequest: (BOOL *)isRequest
+{
+    //Sysex is too short, reject immediately
+    if (sysex.length < BXRolandSysexSendMinLength) return NO;
+    
+    UInt8 *content = (UInt8 *)sysex.bytes;
+    if (content[1] != BXSysexManufacturerIDRoland) return NO;
+    if (content[3] != BXRolandSysexModelIDMT32  && content[3] != BXRolandSysexModelIDD50) return NO;
+    if (content[4] != BXRolandSysexRequest      && content[4] != BXRolandSysexSend) return NO;
+    
+    //If a specified address was provided, check against that too
+    if (address)
+    {
+        if (content[5] != address[0]) return NO;
+        if (content[6] != address[1]) return NO;
+        if (content[7] != address[2]) return NO;
+    }
+    
+    //If we got this far, the sysex is OK: populate isRequest if provided.
+    if (isRequest)
+    {
+        *isRequest = (content[4] == BXRolandSysexRequest);
+    }
+    
+    return YES;
+}
+
++ (BOOL) isMasterVolumeSysex: (NSData *)sysex withVolume: (float *)volume
+{
+    //Reject the sysex if it is the wrong size for a master volume sysex.
+    if (sysex.length != BXRolandSysexSendMinLength + 1) return NO;
+    
+    //Reject the sysex if it is not an MT-32 send message addressing the master volume.
+    UInt8 expectedAddress[3] = {BXMT32SysexAddressSystemArea, 0x00, 0x16};
+    BOOL isRequest = NO;
+    if (!([self isMT32Sysex: sysex matchingAddress: expectedAddress isRequest: &isRequest] && !isRequest))
+        return NO;
+    
+    //If we got this far, it is indeed a volume sysex:
+    //populate the volume if it was requested.
+    if (volume)
+    {
+        NSUInteger intVolume = ((UInt8 *)sysex.bytes)[8];
+        *volume = intVolume / (float)BXGeneralMIDIMaxMasterVolume;
+    }
+    
+    return YES;
+}
+
++ (BOOL) sysexResetsMasterVolume: (NSData *)sysex
+{
+    BOOL isRequest = NO;
+    
+    //Ignore messages other than MT-32 send sysexes.
+    if (![self isMT32Sysex: sysex matchingAddress: NULL isRequest: &isRequest] || isRequest)
+        return NO;
+    
+    UInt8 *content = (UInt8 *)sysex.bytes;
+    UInt8 baseAddress = content[5];
+    UInt8 subAddress1 = content[6];
+    UInt8 subAddress2 = content[7];
+    
+    //Setting master tune appears to reset the master volume.
+    if (baseAddress == BXMT32SysexAddressSystemArea && subAddress1 == 0x00 && subAddress2 == 0x00)
+        return YES;
+    
+    return NO;
+}
+
++ (NSData *) sysexWithMasterVolume: (float)volume
+{
+    volume = MIN(1.0f, volume);
+    volume = MAX(0.0f, volume);
+    UInt8 intVolume = (UInt8)roundf(volume * BXRolandMaxMasterVolume) & BXMIDIBitmask;
+    
+    NSData *data        = [NSData dataWithBytes: &intVolume length: 1];
+    UInt8 address[3]    = {BXMT32SysexAddressSystemArea, 0x00, 0x16};
+    
+    return [self sysexWithData: data forAddress: address];
 }
 
 @end

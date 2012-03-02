@@ -27,16 +27,18 @@
 //Returns an MT-32 sysex that can be used to display the specified LCD message.
 + (NSData *) sysexWithLCDMessage: (NSString *)message;
 
-//Returns an MT-32 sysex that can be used to set the specified volume (from 0.0f to 1.0f.)
-//Note that this returns a different kind of sysex than its parent implementation in
-//BXGeneralMIDISysexes.
-+ (NSData *) sysexWithMasterVolume: (float)volume;
-
 //Returns the data payload of the specified sysex, or nil if it was not valid. 
 //If includeAddress is YES, the 3-byte address prefix will be included in the
 //returned data also.
 + (NSData *) dataInSysex: (NSData *)sysex
         includingAddress: (BOOL)includeAddress;
+
+
+//Returns YES if the specified sysex message is intended for an MT-32 and, if provided,
+//whether it matches the specified address.
+//If isRequest is specified, this will be populated with YES if the sysex is a request
+//message or NO if it is a send message.
++ (BOOL) isMT32Sysex: (NSData *)sysex matchingAddress: (UInt8[3])address isRequest: (BOOL *)isRequest;
 
 //Returns YES if the specified sysex message is intended for an MT-32,
 //NO otherwise.
@@ -45,5 +47,20 @@
 //music tailored to the MT-32, or NO if it's inconclusive.
 + (BOOL) isMT32Sysex: (NSData *)sysex
    confirmingSupport: (BOOL *)supportConfirmed;
+
+
+//Returns whether the specified sysex is an attempt to set the master volume.
+//If it is and volume is specified, volume will be populated with the master volume
+//in the sysex (from 0.0 to 1.0.)
+//Note that this overrides the parent implementation in BXGeneralMIDISysexes.
++ (BOOL) isMasterVolumeSysex: (NSData *)sysex withVolume: (float *)volume;
+
+//Returns whether the specified sysex will reset the master volume to its default value.
+//Note that this overrides the parent implementation in BXGeneralMIDISysexes.
++ (BOOL) sysexResetsMasterVolume: (NSData *)sysex;
+
+//Returns an MT-32 sysex that can be used to set the specified volume (from 0.0f to 1.0f.)
+//Note that this overrides the parent implementation in BXGeneralMIDISysexes.
++ (NSData *) sysexWithMasterVolume: (float)volume;
 
 @end

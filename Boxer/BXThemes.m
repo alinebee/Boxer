@@ -339,7 +339,7 @@
 
 - (NSGradient *) knobColor
 {
-    NSColor *baseColor = [NSColor lightGrayColor];
+    NSColor *baseColor = [NSColor colorWithCalibratedWhite: 0.75f alpha: 1.0f];
     
     NSColor *topColor		= [baseColor highlightWithLevel: 0.3f];
 	NSColor *midColor		= baseColor;

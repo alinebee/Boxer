@@ -504,8 +504,6 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 #pragma mark -
 #pragma mark Handling changes to application focus
 
-//These methods are only necessary while we are running in single-threaded mode,
-//and will be the first against the wall when the multiprocess revolution comes.
 - (void) pause
 {
 	if (!self.isPaused)
@@ -518,9 +516,8 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
         {
             @synchronized(self)
             {
-                SDL_PauseAudio(YES);
-                [self.activeMIDIDevice pause];
                 self.paused = YES;
+                [self _suspendAudio];
             }
         }
 	}
@@ -538,9 +535,8 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
         {
             @synchronized(self)
             {
-                SDL_PauseAudio(NO);
-                [self.activeMIDIDevice resume];
                 self.paused = NO;
+                [self _resumeAudio];
             }
         }
 	}

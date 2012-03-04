@@ -96,6 +96,10 @@ extern NSString * const shellProcessPath;
 	BOOL paused;
     BOOL wasAutoSpeed;
     
+    //Whether an SDL CD-ROM was playing when we paused the emulator.
+    //Used to selectively resume CD-ROM playback after unpausing.
+    BOOL cdromWasPlaying;
+    
     //The autorelease pool for the current iteration of DOSBox's run loop.
     //Created in _willStartRunLoop and released in _didFinishRunLoop.
     NSAutoreleasePool *poolForRunLoop;

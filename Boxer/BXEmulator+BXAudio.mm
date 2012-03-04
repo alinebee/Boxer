@@ -6,12 +6,14 @@
  */
 
 #import "BXEmulatorPrivate.h"
-#import "RegexKitLite.h"
 #import "BXEmulatedMT32.h"
 #import "BXExternalMIDIDevice.h"
 #import "BXExternalMT32+BXMT32Sysexes.h"
 #import "BXMIDISynth.h"
 #import "BXAudioSource.h"
+#import "BXDrive.h"
+
+#import <SDL/SDL.h>
 #import "mixer.h"
 
 
@@ -167,6 +169,28 @@ NSString * const BXMIDIExternalDeviceNeedsMT32SysexDelaysKey = @"Needs MT-32 Sys
 
 #pragma mark -
 #pragma mark Private methods
+
+- (void) _suspendAudio
+{
+    SDL_PauseAudio(YES);
+    
+    cdromWasPlaying = (SDL_CDStatus(NULL) == CD_PLAYING);
+    if (cdromWasPlaying)
+        SDL_CDPause(NULL);
+    
+    [self.activeMIDIDevice pause];
+}
+
+- (void) _resumeAudio
+{
+    SDL_PauseAudio(NO);
+    
+    if (cdromWasPlaying)
+        SDL_CDResume(NULL);
+    
+    [self.activeMIDIDevice resume];
+}
+
 
 //Called periodically by our MIDI channel to fill its buffer with audio data.
 void _renderMIDIOutput(Bitu numFrames)

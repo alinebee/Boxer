@@ -295,6 +295,11 @@ enum {
 
 @interface BXEmulator (BXAudioInternals)
 
+//Pause/resume audio playback. Called during pause and resume.
+- (void) _suspendAudio;
+- (void) _resumeAudio;
+
+
 //Returns the file path for the specified MT-32 ROM,
 //or nil if no such ROM is available. This calls
 //one of the delegate methods pathToMT32ControlROMForEmulator:

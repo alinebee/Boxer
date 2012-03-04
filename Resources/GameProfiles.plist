@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>BXGameProfileCatalogueVersion</key>
-	<string>20120227.1</string>
+	<string>20120304.1</string>
 	<key>BXSpecificGameProfiles</key>
 	<array>
 		<dict>
@@ -1438,11 +1438,13 @@
 			<key>BXProfileMatches</key>
 			<array>
 				<string>Rogue</string>
+                <string>Déjà Vu: A Nightmare Comes True</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>rogue.exe</string>
 				<string>10rogue.exe</string>
+                <string>dejavu.exe</string>
 			</array>
 		</dict>
 		<dict>

@@ -93,6 +93,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 @synthesize emulating;
 @synthesize paused, autoPaused, interrupted, suspended;
 @synthesize userToggledProgramPanel;
+@synthesize cachedIcon;
 
 #pragma mark -
 #pragma mark Helper class methods
@@ -195,18 +196,23 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (void) dealloc
 { 	
-	[self setDOSWindowController: nil],	[DOSWindowController release];
-	[self setEmulator: nil],			[emulator release];
-	[self setGamePackage: nil],			[gamePackage release];
-	[self setGameProfile: nil],			[gameProfile release];
-	[self setGameSettings: nil],		[gameSettings release];
-	[self setTargetPath: nil],			[targetPath release];
-	[self setLastExecutedProgramPath: nil],	[lastExecutedProgramPath release];
-	[self setLastLaunchedProgramPath: nil],	[lastLaunchedProgramPath release];
-	
-	[self setDrives: nil],				[drives release];
-	[self setExecutables: nil],			[executables release];
-	[self setDocumentation: nil],		[documentation release];
+    self.suppressesDisplaySleep = NO;
+    
+    self.DOSWindowController = nil;
+    self.emulator = nil;
+    self.gamePackage = nil;
+    self.gameProfile = nil;
+    self.gameSettings = nil;
+    
+    self.targetPath = nil;
+    self.lastExecutedProgramPath = nil;
+    self.lastLaunchedProgramPath = nil;
+    
+    self.drives = nil;
+    self.executables = nil;
+    self.documentation = nil;
+    
+    self.cachedIcon = nil;
 		
 	[temporaryFolderPath release], temporaryFolderPath = nil;
 	
@@ -214,8 +220,6 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	[importQueue release], importQueue = nil;
 	[watcher release], watcher = nil;
     [MT32MessagesReceived release], MT32MessagesReceived = nil;
-	
-    [self setSuppressesDisplaySleep: NO];
     
 	[super dealloc];
 }
@@ -634,28 +638,51 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 #pragma mark -
 #pragma mark Introspecting the gamebox
 
-- (BOOL) isGamePackage	{ return ([self gamePackage] != nil); }
+- (BOOL) isGamePackage
+{
+    return (self.gamePackage != nil);
+}
 
 - (NSImage *)representedIcon
 {
-	if ([self isGamePackage])
-	{
-		NSImage *icon = [[self gamePackage] coverArt];
-		return icon;
-	}
-	else return nil;
+    if (!self.cachedIcon && self.isGamePackage)
+    {
+        NSImage *icon = self.gamePackage.coverArt;
+        
+        //If the gamebox has no custom icon (or has lost it), then generate
+        //a new one for it now and try to apply it to the gamebox.
+        if (!icon)
+        {
+            BXReleaseMedium medium = self.gameProfile.coverArtMedium;
+            icon = [self.class bootlegCoverArtForGamePackage: self.gamePackage
+                                                  withMedium: medium];
+            
+            //This may fail, if the game package is on a read-only medium.
+            //We don't care about this though, since we now have cached the
+            //generated icon and will use that for the lifetime of the session.
+            self.gamePackage.coverArt = icon;
+        }
+        
+        self.cachedIcon = icon;
+    }
+    return self.cachedIcon;
 }
 
 - (void) setRepresentedIcon: (NSImage *)icon
 {
-	BXPackage *thePackage = [self gamePackage];
-	if (thePackage)
-	{
-		[thePackage setCoverArt: icon];
-				
-		//Force our file URL to appear to change, which will update icons elsewhere in the app 
-		[self setFileURL: [self fileURL]];
-	}
+    //Note: this equality check is fairly feeble, since we cannot
+    //(and should not) compare image data for equality.
+    if (self.gamePackage)
+    {
+        if (![self.cachedIcon isEqual: icon])
+        {
+            self.cachedIcon = icon;
+            self.gamePackage.coverArt = icon;
+        
+            //Force the window's icon to update to account for the new icon.
+            [self.DOSWindowController synchronizeWindowTitleWithDocumentName];
+        }
+    }
 }
 
 

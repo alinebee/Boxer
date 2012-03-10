@@ -185,10 +185,16 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 
 - (void) synchronizeWindowTitleWithDocumentName
 {
-	if ([[self document] isGamePackage])
+	if (self.document.isGamePackage)
 	{
 		//If the session is a gamebox, always use the gamebox for the window title (like a regular NSDocument.)
 		[super synchronizeWindowTitleWithDocumentName];
+        
+        //Also make sure we adopt the current icon of the gamebox,
+        //in case it has changed during the lifetime of the session.
+        NSImage *icon = self.document.representedIcon;
+        if (icon)
+            [self.window standardWindowButton: NSWindowDocumentIconButton].image = icon;
 	}
 	else
 	{

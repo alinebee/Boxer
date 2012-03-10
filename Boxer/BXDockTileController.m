@@ -9,7 +9,6 @@
 
 #import "BXDockTileController.h"
 #import "BXAppController.h"
-#import "BXGameProfile.h"
 #import "BXSession.h"
 
 @implementation BXDockTileController
@@ -41,17 +40,15 @@
 - (void) syncIconWithActiveSession
 {
 	BXSession *session = [[NSApp delegate] currentSession];
-	NSImage *icon = [[[session representedIcon] copy] autorelease];
+	NSImage *icon = [[session.representedIcon copy] autorelease];
     
     //If the session didn't have an icon of its own, generate a bootleg one
     //based on the size and age of the files in the gamebox.
-	if (!icon && [session gamePackage])
+	if (icon)
 	{
-        BXReleaseMedium medium = [[session gameProfile] coverArtMedium];
-		icon = [BXSession bootlegCoverArtForGamePackage: [session gamePackage]
-                                             withMedium: medium];
+        icon.size = NSMakeSize(128, 128);
+        [NSApp setApplicationIconImage: icon];
 	}
-	[icon setSize: NSMakeSize(128, 128)];
-	[NSApp setApplicationIconImage: icon];
+	
 }
 @end

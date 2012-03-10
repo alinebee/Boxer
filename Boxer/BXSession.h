@@ -58,6 +58,7 @@ extern NSString * const BXDidFinishInterruptionNotification;
 	NSMutableDictionary *drives;
 	NSMutableDictionary *executables;
 	NSMutableArray *documentation;
+    NSImage *cachedIcon;
 	
 	BXDOSWindowController *DOSWindowController;
 	

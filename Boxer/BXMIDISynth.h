@@ -8,9 +8,8 @@
 //BXMIDISyth sending MIDI signals from DOSBox to OS X's built-in MIDI synth, using the AUGraph API.
 //It's largely cribbed from DOSBox's own coreaudio MIDI handler.
 
-#import <Foundation/Foundation.h>
-#include <AudioToolbox/AudioToolbox.h>
 #import "BXMIDIDevice.h"
+#import <AudioToolbox/AudioToolbox.h>
 
 @class BXEmulator;
 @interface BXMIDISynth : NSObject <BXMIDIDevice>

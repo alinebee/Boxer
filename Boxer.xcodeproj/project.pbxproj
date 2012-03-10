@@ -415,6 +415,7 @@
 		9F7721EB12B38C4400072AE8 /* shell_misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F77217512B38C4400072AE8 /* shell_misc.cpp */; };
 		9F7D9EFF1444BAA800B6AD50 /* BXExternalMT32+BXMT32Sysexes.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F7D9EFE1444BAA800B6AD50 /* BXExternalMT32+BXMT32Sysexes.m */; };
 		9F7FC94C139EB38300D60320 /* RacingWheel.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F7FC94B139EB38300D60320 /* RacingWheel.png */; };
+		9F839FB5150B81EF00337DD6 /* ScreenshotTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F839FB4150B81EF00337DD6 /* ScreenshotTemplate.pdf */; };
 		9F843FE11226EB1100FD37F1 /* import.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F843FE01226EB1100FD37F1 /* import.png */; };
 		9F86DB401431EF5F00A2EFB6 /* BXMIDIDeviceMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F86DB3F1431EF5F00A2EFB6 /* BXMIDIDeviceMonitor.m */; };
 		9F87EF7A13C232B600326608 /* BXFlightstickLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FC6382B13C0DC48004478A3 /* BXFlightstickLayout.m */; };
@@ -430,7 +431,6 @@
 		9F902C2A142E199100843B01 /* BXExternalMIDIDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F902C29142E199100843B01 /* BXExternalMIDIDevice.m */; };
 		9F955B60141A05990068EF71 /* InsertFreestandingTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F955B5E141A05990068EF71 /* InsertFreestandingTemplate.pdf */; };
 		9F955B61141A05990068EF71 /* EjectFreestandingTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F955B5F141A05990068EF71 /* EjectFreestandingTemplate.pdf */; };
-		9F9606E814F65A230072E90C /* ScreenshotTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F9606E714F65A230072E90C /* ScreenshotTemplate.pdf */; };
 		9F960C7F12AAAB2900568AFD /* BlankShelves.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F960C7E12AAAB2900568AFD /* BlankShelves.png */; };
 		9F96969813E59CA100FB51EC /* NoJoystickTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F96969713E59CA100FB51EC /* NoJoystickTemplate.pdf */; };
 		9F98EF5914E80A0900095248 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9F98EF5714E80A0900095248 /* Localizable.strings */; };
@@ -1131,6 +1131,7 @@
 		9F81CFB813EEA3F4008F0265 /* BXISOImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXISOImage.m; sourceTree = "<group>"; };
 		9F81CFBA13EEAD6D008F0265 /* BXISOImagePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXISOImagePrivate.h; sourceTree = "<group>"; };
 		9F81CFBB13EED386008F0265 /* BXISOImageConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXISOImageConstants.h; sourceTree = "<group>"; };
+		9F839FB4150B81EF00337DD6 /* ScreenshotTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = ScreenshotTemplate.pdf; sourceTree = "<group>"; };
 		9F843FE01226EB1100FD37F1 /* import.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = import.png; sourceTree = "<group>"; };
 		9F86DB3E1431EF5F00A2EFB6 /* BXMIDIDeviceMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXMIDIDeviceMonitor.h; sourceTree = "<group>"; };
 		9F86DB3F1431EF5F00A2EFB6 /* BXMIDIDeviceMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXMIDIDeviceMonitor.m; sourceTree = "<group>"; };
@@ -1155,7 +1156,6 @@
 		9F902C29142E199100843B01 /* BXExternalMIDIDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXExternalMIDIDevice.m; sourceTree = "<group>"; };
 		9F955B5E141A05990068EF71 /* InsertFreestandingTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = InsertFreestandingTemplate.pdf; sourceTree = "<group>"; };
 		9F955B5F141A05990068EF71 /* EjectFreestandingTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = EjectFreestandingTemplate.pdf; sourceTree = "<group>"; };
-		9F9606E714F65A230072E90C /* ScreenshotTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = ScreenshotTemplate.pdf; sourceTree = "<group>"; };
 		9F960C7E12AAAB2900568AFD /* BlankShelves.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BlankShelves.png; sourceTree = "<group>"; };
 		9F96969713E59CA100FB51EC /* NoJoystickTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = NoJoystickTemplate.pdf; sourceTree = "<group>"; };
 		9F98589513EF71F600E66877 /* BXBinCueImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXBinCueImage.h; sourceTree = "<group>"; };
@@ -2545,7 +2545,7 @@
 				9F8F374B14F9366F00E482FB /* FastForwardTemplate.pdf */,
 				9FFF635D14013F4D007E8B47 /* EjectTemplate.pdf */,
 				9FFF635E14013F4D007E8B47 /* InsertTemplate.pdf */,
-				9F9606E714F65A230072E90C /* ScreenshotTemplate.pdf */,
+				9F839FB4150B81EF00337DD6 /* ScreenshotTemplate.pdf */,
 				9F3034B714E2C3F600BC572E /* NumlockActiveTemplate.pdf */,
 				9F3034B814E2C3F600BC572E /* NumlockInactiveTemplate.pdf */,
 				9FD54A5C14DE979B00FE350F /* NumpadInactiveTemplate.pdf */,
@@ -3123,13 +3123,13 @@
 				9F3034B914E2C3F600BC572E /* NumlockActiveTemplate.pdf in Resources */,
 				9F3034BA14E2C3F600BC572E /* NumlockInactiveTemplate.pdf in Resources */,
 				9F98EF5914E80A0900095248 /* Localizable.strings in Resources */,
-				9F9606E814F65A230072E90C /* ScreenshotTemplate.pdf in Resources */,
 				9F8F374C14F9366F00E482FB /* FastForwardTemplate.pdf in Resources */,
 				9F27BD1814FAA4F5008EB0A1 /* Volume33PercentTemplate.pdf in Resources */,
 				9F27BD1914FAA4F5008EB0A1 /* Volume66PercentTemplate.pdf in Resources */,
 				9F27BD1A14FAA4F5008EB0A1 /* Volume100PercentTemplate.pdf in Resources */,
 				9F27BD1B14FAA4F5008EB0A1 /* Volume0PercentCroppedTemplate.pdf in Resources */,
 				9F27BD1C14FAA4F5008EB0A1 /* Volume0PercentTemplate.pdf in Resources */,
+				9F839FB5150B81EF00337DD6 /* ScreenshotTemplate.pdf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

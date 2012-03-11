@@ -2,13 +2,13 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
-		<string key="IBDocument.SystemVersion">11C74</string>
-		<string key="IBDocument.InterfaceBuilderVersion">1938</string>
-		<string key="IBDocument.AppKitVersion">1138.23</string>
-		<string key="IBDocument.HIToolboxVersion">567.00</string>
+		<string key="IBDocument.SystemVersion">11D50b</string>
+		<string key="IBDocument.InterfaceBuilderVersion">2177</string>
+		<string key="IBDocument.AppKitVersion">1138.32</string>
+		<string key="IBDocument.HIToolboxVersion">568.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">1938</string>
+			<string key="NS.object.0">2177</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -44,14 +44,15 @@
 					<object class="NSButton" id="833138673">
 						<reference key="NSNextResponder" ref="96606091"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{18, 18}, {274, 18}}</string>
+						<string key="NSFrame">{{18, 18}, {307, 18}}</string>
 						<reference key="NSSuperview" ref="96606091"/>
 						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="1068012052">
 							<int key="NSCellFlags">-2080244224</int>
 							<int key="NSCellFlags2">0</int>
-							<string key="NSContents">Make this folder look like a games shelf</string>
+							<string key="NSContents">Make this folder look like a shelf in icon view</string>
 							<object class="NSFont" key="NSSupport" id="333892332">
 								<string key="NSName">LucidaGrande</string>
 								<double key="NSSize">13</double>
@@ -79,6 +80,7 @@
 						<string key="NSFrame">{{18, 40}, {259, 18}}</string>
 						<reference key="NSSuperview" ref="96606091"/>
 						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView" ref="833138673"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="463715679">
 							<int key="NSCellFlags">-2080244224</int>
@@ -97,9 +99,10 @@
 						</object>
 					</object>
 				</object>
-				<string key="NSFrameSize">{310, 76}</string>
+				<string key="NSFrameSize">{343, 76}</string>
 				<reference key="NSSuperview"/>
 				<reference key="NSWindow"/>
+				<reference key="NSNextKeyView" ref="977831493"/>
 				<string key="NSClassName">NSView</string>
 			</object>
 		</object>
@@ -214,7 +217,7 @@
 					<string>7.IBPluginDependency</string>
 					<string>8.IBPluginDependency</string>
 				</object>
-				<object class="NSMutableArray" key="dict.values">
+				<object class="NSArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -253,7 +256,7 @@
 							<string>sampleGamesToggle</string>
 							<string>useShelfAppearanceToggle</string>
 						</object>
-						<object class="NSMutableArray" key="dict.values">
+						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>NSButton</string>
 							<string>NSButton</string>
@@ -266,7 +269,7 @@
 							<string>sampleGamesToggle</string>
 							<string>useShelfAppearanceToggle</string>
 						</object>
-						<object class="NSMutableArray" key="dict.values">
+						<object class="NSArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<object class="IBToOneOutletInfo">
 								<string key="name">sampleGamesToggle</string>

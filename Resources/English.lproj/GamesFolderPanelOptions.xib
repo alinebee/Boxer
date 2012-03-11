@@ -44,7 +44,7 @@
 					<object class="NSButton" id="833138673">
 						<reference key="NSNextResponder" ref="96606091"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{18, 18}, {307, 18}}</string>
+						<string key="NSFrame">{{18, 18}, {380, 18}}</string>
 						<reference key="NSSuperview" ref="96606091"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView"/>
@@ -52,7 +52,7 @@
 						<object class="NSButtonCell" key="NSCell" id="1068012052">
 							<int key="NSCellFlags">-2080244224</int>
 							<int key="NSCellFlags2">0</int>
-							<string key="NSContents">Make this folder look like a shelf in icon view</string>
+							<string key="NSContents">Use shelf appearance for this folder in Finder’s icon view</string>
 							<object class="NSFont" key="NSSupport" id="333892332">
 								<string key="NSName">LucidaGrande</string>
 								<double key="NSSize">13</double>
@@ -99,7 +99,7 @@
 						</object>
 					</object>
 				</object>
-				<string key="NSFrameSize">{343, 76}</string>
+				<string key="NSFrameSize">{413, 76}</string>
 				<reference key="NSSuperview"/>
 				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="977831493"/>

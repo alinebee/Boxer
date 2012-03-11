@@ -388,7 +388,7 @@
 													<object class="NSButton" id="378975767">
 														<reference key="NSNextResponder" ref="743371518"/>
 														<int key="NSvFlags">269</int>
-														<string key="NSFrame">{{190, 147}, {302, 18}}</string>
+														<string key="NSFrame">{{190, 147}, {289, 18}}</string>
 														<reference key="NSSuperview" ref="743371518"/>
 														<reference key="NSWindow"/>
 														<reference key="NSNextKeyView" ref="31412724"/>
@@ -397,7 +397,7 @@
 														<object class="NSButtonCell" key="NSCell" id="815158257">
 															<int key="NSCellFlags">-2080244224</int>
 															<int key="NSCellFlags2">0</int>
-															<string key="NSContents">Make my folder look like a shelf in icon view</string>
+															<string key="NSContents">Use shelf appearance in Finder’s icon view</string>
 															<reference key="NSSupport" ref="467860324"/>
 															<reference key="NSControlView" ref="378975767"/>
 															<int key="NSButtonFlags">1211912703</int>

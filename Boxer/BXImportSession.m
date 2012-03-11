@@ -51,6 +51,7 @@
 #import "BXPathEnumerator.h"
 
 #import "BXAppKitVersionHelpers.h"
+#import "NSObject+BXPerformExtensions.h"
 
 
 #pragma mark -
@@ -235,57 +236,60 @@
 		controller = [[BXDOSWindowController alloc] initWithWindowNibName: @"DOSImportWindow"];
 	}
 	
-	[self addWindowController:		controller];
-	[self setDOSWindowController:	controller];
+	[self addWindowController: controller];
+	self.DOSWindowController = controller;
 	
-	[controller setShouldCloseDocument: YES];
+	controller.shouldCloseDocument = YES;
     [controller release];
     
 	
 	BXImportWindowController *importController	= [[BXImportWindowController alloc] initWithWindowNibName: @"ImportWindow"];
 	
 	[self addWindowController: importController];
-	[self setImportWindowController: importController];
+	self.importWindowController = importController;
 	
-	[importController setShouldCloseDocument: YES];
+	importController.shouldCloseDocument = YES;
 	[importController release];
 }
 
 - (void) removeWindowController: (NSWindowController *)windowController
 {
-	if (windowController == [self importWindowController])
+	if (windowController == self.importWindowController)
 	{
-		[self setImportWindowController: nil];
+		self.importWindowController = nil;
 	}
 	[super removeWindowController: windowController];
 }
 
 - (void) showWindows
 {
-	if ([self importStage] == BXImportSessionRunningInstaller)
+	if (self.importStage == BXImportSessionRunningInstaller)
 	{
-		[[self DOSWindowController] showWindow: self];
+		[self.DOSWindowController showWindow: self];
 	}
 	else
 	{
-		[[self importWindowController] showWindow: self];
+		[self.importWindowController showWindow: self];
 	}
 }
 
 - (NSWindow *) windowForSheet
 {
-	NSWindow *importWindow = [[self importWindowController] window];
+	NSWindow *importWindow = self.importWindowController.window;
 
-	if	([importWindow isVisible]) return importWindow;
-	else return [super windowForSheet];
+	if	(importWindow.isVisible) return importWindow;
+	else return super.windowForSheet;
 }
 
 
 #pragma mark -
 #pragma mark Controlling shutdown
 
-//We are considered to have unsaved changes if we have a not-yet-finalized gamebox
-- (BOOL) isDocumentEdited	{ return [self gamePackage] != nil && [self importStage] < BXImportSessionFinished; }
+//We are considered to have unsaved changes if we have a not-yet-finalized gamebox.
+- (BOOL) isDocumentEdited
+{
+    return (self.gamePackage != nil) && (self.importStage < BXImportSessionFinished);
+}
 
 //Overridden to display our own custom confirmation alert instead of the standard NSDocument one.
 - (void) canCloseDocumentWithDelegate: (id)delegate
@@ -294,29 +298,32 @@
 {	
 	//Define an invocation for the callback, which has the signature:
 	//- (void)document:(NSDocument *)document shouldClose:(BOOL)shouldClose contextInfo:(void *)contextInfo;
-	NSMethodSignature *signature = [delegate methodSignatureForSelector: shouldCloseSelector];
-	NSInvocation *callback = [NSInvocation invocationWithMethodSignature: signature];
-	[callback setSelector: shouldCloseSelector];
-	[callback setTarget: delegate];
+	NSInvocation *callback = [NSInvocation invocationWithTarget: delegate selector: shouldCloseSelector];
 	[callback setArgument: &self atIndex: 2];
 	[callback setArgument: &contextInfo atIndex: 4];
 	
 	//If we have a gamebox and haven't finished finalizing it, show a stop importing/cancel prompt
-	if ([self isDocumentEdited])
+	if (self.isDocumentEdited)
 	{
-		BXCloseAlert *alert = [BXCloseAlert closeAlertWhileImportingGame: self];
+        //If we're running an installer, ask the user if they want to quit the installer and finish importing,
+        //or stop importing altogether. Otherwise, just ask if they want to stop importing. 
+        BXCloseAlert *alert;
+        if (self.importStage == BXImportSessionRunningInstaller)
+            alert = [BXCloseAlert closeAlertWhileRunningInstaller: self];
+        else
+            alert = [BXCloseAlert closeAlertWhileImportingGame: self];
 		
 		//Show our custom close alert, passing it the callback so we can complete
 		//our response down in _closeAlertDidEnd:returnCode:contextInfo:
-		[alert beginSheetModalForWindow: [self windowForSheet]
+		[alert beginSheetModalForWindow: self.windowForSheet
 						  modalDelegate: self
 						 didEndSelector: @selector(_closeAlertDidEnd:returnCode:contextInfo:)
 							contextInfo: [callback retain]];
 	}
 	else
 	{
-		BOOL shouldClose = YES;
 		//Otherwise we can respond directly: call the callback straight away with YES for shouldClose:
+		BOOL shouldClose = YES;
 		[callback setArgument: &shouldClose atIndex: 3];
 		[callback invoke];
 	}
@@ -326,18 +333,17 @@
 				returnCode: (int)returnCode
 			   contextInfo: (NSInvocation *)callback
 {
-	if ([alert showsSuppressionButton] && [[alert suppressionButton] state] == NSOnState)
+	if (alert.showsSuppressionButton && alert.suppressionButton.state == NSOnState)
 		[[NSUserDefaults standardUserDefaults] setBool: YES forKey: @"suppressCloseAlert"];
 	
 	BOOL shouldClose = NO;
 	
-	//If the alert has three buttons it means it's a save/don't save confirmation instead of
-	//a close/cancel confirmation
-	//FIXME: for god's sake this is idiotic, we should detect this with contextinfo or alert class
-	if ([[alert buttons] count] == 3)
+	//If the alert has three buttons it means it's a finish/don't finish confirmation
+    //instead of a close/cancel confirmation.
+	if (alert.buttons.count == 3)
 	{
-		//Cancel button
-		switch (returnCode) {
+		switch (returnCode)
+        {
 			case NSAlertFirstButtonReturn:	//Finish importing
 				[self finishInstaller];
 				shouldClose = NO;

@@ -30,6 +30,9 @@
 //Shown when closing the window while a game import is in progress.
 + (BXCloseAlert *) closeAlertWhileImportingGame: (BXImportSession *)theSession;
 
+//Shown when closing the window while a game installer is running during import.
++ (BXCloseAlert *) closeAlertWhileRunningInstaller: (BXImportSession *)theSession;
+
 //Shown after a windows-only program has failed to run and exited.
 + (BXCloseAlert *) closeAlertAfterWindowsOnlyProgramExited: (NSString *)programPath;
 

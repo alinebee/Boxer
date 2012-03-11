@@ -34,7 +34,8 @@
 						 change: (NSDictionary *)change
 						context: (void *)context
 {	
-	if ([keyPath isEqualToString: @"currentSession.representedIcon"]) [self syncIconWithActiveSession];
+	if ([keyPath isEqualToString: @"currentSession.representedIcon"])
+        [self syncIconWithActiveSession];
 }
 
 - (void) syncIconWithActiveSession
@@ -49,6 +50,6 @@
         icon.size = NSMakeSize(128, 128);
         [NSApp setApplicationIconImage: icon];
 	}
-	
+	else [NSApp setApplicationIconImage: nil];
 }
 @end

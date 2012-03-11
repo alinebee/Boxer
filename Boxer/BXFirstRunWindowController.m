@@ -138,7 +138,6 @@ enum {
     
     BOOL assigned = [[NSApp delegate] assignGamesFolderPath: path
                                             withSampleGames: addSampleGames
-                                            importerDroplet: YES
                                             shelfAppearance: applyShelfAppearance
                                             createIfMissing: YES
                                                       error: &folderError];

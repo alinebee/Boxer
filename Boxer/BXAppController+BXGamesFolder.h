@@ -111,7 +111,6 @@ enum {
 //and an error will be given.
 - (BOOL) assignGamesFolderPath: (NSString *)newPath
 			   withSampleGames: (BOOL)addSampleGames
-			   importerDroplet: (BOOL)addImporterDroplet
 			   shelfAppearance: (BXShelfAppearance)applyShelfAppearance
                createIfMissing: (BOOL)createIfMissing
                          error: (NSError **)outError;
@@ -145,15 +144,6 @@ enum {
 
 //Copy our sample games into the specified path.
 - (void) addSampleGamesToPath: (NSString *)path;
-
-//Adds an Drop Games to Import droplet to the specified folder, replacing any
-//older version if one is found.
-- (void) addImporterDropletToPath: (NSString *)folderPath;
-
-//Check for the existence of the game importer droplet in the specified folder,
-//replacing any outdated versions. If addIfMissing is true, a new droplet will
-//be added if one is not found.
-- (void) freshenImporterDropletAtPath: (NSString *)folderPath addIfMissing: (BOOL)addIfMissing;
 
 //Display a prompt telling the user their games folder cannot be found, and giving them
 //options to create a new one or cancel. Used by revealGamesFolder and elsewhere.

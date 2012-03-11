@@ -18,7 +18,6 @@
 
 #import "BXSampleGamesCopy.h"
 #import "BXShelfAppearanceOperation.h"
-#import "BXHelperAppCheck.h"
 #import "NSString+BXPaths.h"
 #import "BXAppKitVersionHelpers.h"
 
@@ -408,12 +407,11 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 
 - (BOOL) assignGamesFolderPath: (NSString *)path
 			   withSampleGames: (BOOL)addSampleGames
-			   importerDroplet: (BOOL)addImporterDroplet
 			   shelfAppearance: (BXShelfAppearance)applyShelfAppearance
                createIfMissing: (BOOL)createIfMissing
                          error: (NSError **)outError
 {
-    NSAssert(path != nil, @"nil path provided to assignGamesFolderPath:withSampleGames:importerDroplet:shelfAppearance:createIfMissing:error:");
+    NSAssert(path != nil, @"nil path provided to assignGamesFolderPath:withSampleGames:shelfAppearance:createIfMissing:error:");
     
     NSFileManager *manager = [[[NSFileManager alloc] init] autorelease];
     
@@ -466,8 +464,8 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
                        switchToShelfMode: YES];
 	}
     
-	if (addSampleGames)			[self addSampleGamesToPath: path];
-	if (addImporterDroplet)		[self addImporterDropletToPath: path];
+	if (addSampleGames)
+        [self addSampleGamesToPath: path];
 	
 	[self setGamesFolderPath: path];
     return YES;
@@ -479,8 +477,6 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
     BOOL isDir;
 	if ([manager fileExistsAtPath: path isDirectory: &isDir] && isDir)
 	{
-		[self freshenImporterDropletAtPath: path addIfMissing: YES];
-		
 		//Check if the old path has a .background folder: if so,
 		//then automatically apply the games-folder appearance.
 		NSString *backgroundPath = [path stringByAppendingPathComponent: @".background"];
@@ -694,54 +690,6 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 	}
 }
 
-- (void) addImporterDropletToPath: (NSString *)folderPath
-{
-	return [self freshenImporterDropletAtPath: folderPath addIfMissing: YES];
-}
-
-- (void) freshenImporterDropletAtPath: (NSString *)path addIfMissing: (BOOL)addIfMissing
-{
-	NSString *dropletPath = [[NSBundle mainBundle] pathForResource: @"Game Importer Droplet" ofType: @"app"];
-	
-	BXHelperAppCheck *checkOperation = [[BXHelperAppCheck alloc] initWithTargetPath: path
-																	   forAppAtPath: dropletPath];
-	[checkOperation setAddIfMissing: addIfMissing];
-	
-	for (id operation in [[self generalQueue] operations])
-	{
-		//Check for other operations that are currently being performed on this path
-		if ([operation respondsToSelector: @selector(targetPath)] && [[operation targetPath] isEqualToString: path])
-		{
-			//Check for currently-active checks for this droplet
-			if ([operation isKindOfClass: [BXHelperAppCheck class]] &&
-				[[operation appPath] isEqualToString: dropletPath])
-			{
-				//If we're doing the same as the other check, or if we're only checking this time and not adding,
-				//then let the other operation continue and cancel this one
-				if (!addIfMissing || [operation addIfMissing])
-				{
-					[checkOperation release];
-					return;
-				}
-				//Otherwise, cancel the other operation and replace it with our own
-				else
-				{
-					[operation cancel];
-				}
-			}
-			 
-			//For other types of operations, mark them as a dependency to avoid performing
-			//many simultaneous file operations on the same location.
-			//(Among other things this avoids concurrency problems with NSWorkspace,
-			//which has thread-unsafe methods like -setIcon:forFile:options:)
-			else [checkOperation addDependency: operation];
-		}
-	}
-	
-	[[self generalQueue] addOperation: checkOperation];
-	[checkOperation release];
-}
-
 - (IBAction) revealGamesFolder: (id)sender
 {
 	NSString *path = [self gamesFolderPath];
@@ -757,9 +705,6 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 		{
 			[self applyShelfAppearanceToPath: path andSubFolders: YES switchToShelfMode: NO];
 		}
-		
-		//Also check that there's an up-to-date game importer droplet in the folder.
-		[self freshenImporterDropletAtPath: path addIfMissing: NO];
 	}
 
 	else if (![self gamesFolderChosen] && [[NSUserDefaults standardUserDefaults] boolForKey: @"showFirstRunPanel"])

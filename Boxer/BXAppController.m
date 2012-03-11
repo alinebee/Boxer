@@ -270,7 +270,6 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
         NSString *defaultPath = [[self class] preferredGamesFolderPath];
         [self assignGamesFolderPath: defaultPath
                     withSampleGames: YES
-                    importerDroplet: YES
                     shelfAppearance: BXShelfAuto
                     createIfMissing: YES
                               error: nil];

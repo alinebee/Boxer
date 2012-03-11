@@ -133,7 +133,6 @@
 		NSError *folderError = nil;
 		BOOL assigned = [controller assignGamesFolderPath: path
                                           withSampleGames: addSampleGames
-                                          importerDroplet: YES
                                           shelfAppearance: useShelfAppearance
                                           createIfMissing: NO
                                                     error: &folderError];

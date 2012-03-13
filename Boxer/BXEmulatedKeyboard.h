@@ -35,9 +35,11 @@ typedef KBD_KEYS BXDOSKeyCode;
     NSTimer *pendingKeypresses;
 }
 
-@property (readonly) BOOL capsLockEnabled;
-@property (readonly) BOOL numLockEnabled;
-@property (readonly) BOOL scrollLockEnabled;
+//NOTE: these are only readwrite for the sake of BXCoalface.
+//They should not be modified by code outside BXEmulator.
+@property (assign) BOOL capsLockEnabled;
+@property (assign) BOOL numLockEnabled;
+@property (assign) BOOL scrollLockEnabled;
 
 //The DOS keyboard layout that is currently in use.
 @property (copy, nonatomic) NSString *activeLayout;

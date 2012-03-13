@@ -9,6 +9,7 @@
 #import "BXEmulatedKeyboard.h"
 #import "BXEmulator.h"
 #import "BXCoalface.h"
+#import "NSObject+BXPerformExtensions.h"
 
 //For unicode constants
 #import <Cocoa/Cocoa.h>
@@ -23,22 +24,14 @@ const char* DOS_GetLoadedLayout(void);
 
 @interface BXEmulatedKeyboard ()
 
-@property (readwrite, assign) BOOL capsLockEnabled;
-@property (readwrite, assign) BOOL numLockEnabled;
-@property (readwrite, assign) BOOL scrollLockEnabled;
-
 //Assign rather than retain, because NSTimers retain their targets
 @property (assign) NSTimer *pendingKeypresses;
-
-//Called after a delay by keyPressed: to release the specified key
-- (void) _releaseKeyWithCode: (NSNumber *)key;
 
 //Returns the DOS keycode constant that will produce the specified character
 //under the US keyboard layout, along with any modifiers needed to trigger it.
 - (BXDOSKeyCode) _DOSKeyCodeForCharacter: (unichar)character requiredModifiers: (NSUInteger *)modifierFlags;
 
 - (void) _processNextQueuedKey: (NSTimer *)timer;
-- (void) _setUsesActiveLayoutFromValue: (NSNumber *)value;
 
 @end
 
@@ -82,11 +75,6 @@ const char* DOS_GetLoadedLayout(void);
 	if (!pressedKeys[key] && !self.pendingKeypresses)
 	{
 		KEYBOARD_AddKey(key, YES);
-		
-        //TODO: look these up from the actual emulation state.
-		if		(key == KBD_capslock)	[self setCapsLockEnabled: !capsLockEnabled];
-		else if	(key == KBD_numlock)	[self setNumLockEnabled: !numLockEnabled];
-        else if (key == KBD_scrolllock) [self setScrollLockEnabled: !scrollLockEnabled];
 	}
     pressedKeys[key]++;
 }
@@ -126,9 +114,9 @@ const char* DOS_GetLoadedLayout(void);
 	
     if (duration > 0)
     {
-        [self performSelector: @selector(_releaseKeyWithCode:)
-                   withObject: [NSNumber numberWithUnsignedShort: key]
-                   afterDelay: duration];
+        [self performSelector: @selector(keyUp:)
+                   afterDelay: duration
+                   withValues: &key];
     }
     //Immediately release the key if the duration was 0.
     //CHECKME: The keydown and keyup events will still appear in the keyboard event queue,
@@ -137,11 +125,6 @@ const char* DOS_GetLoadedLayout(void);
     {
         [self keyUp: key];
     }
-}
-
-- (void) _releaseKeyWithCode: (NSNumber *)key
-{
-	[self keyUp: [key unsignedShortValue]];
 }
 
 - (void) clearInput
@@ -292,14 +275,18 @@ const char* DOS_GetLoadedLayout(void);
 {
     if (self.pendingKeypresses)
     {
-        [self performSelector: @selector(_setUsesActiveLayoutFromValue:)
-                   withObject: [NSNumber numberWithBool: YES]
-                   afterDelay: self.pendingKeypresses.timeInterval];
+        //Turn the active layout back on after a short delay, to allow the pending input to finish processing
+        //under the US layout.
+        BOOL usesLayout = YES;
+        [self performSelector: @selector(setUsesActiveLayout:)
+                   afterDelay: self.pendingKeypresses.timeInterval
+                   withValues: &usesLayout];
         
         [self.pendingKeypresses invalidate];
         self.pendingKeypresses = nil;
     }
 }
+
 - (BOOL) isTyping
 {
     return self.pendingKeypresses != nil;
@@ -309,8 +296,8 @@ const char* DOS_GetLoadedLayout(void);
 #pragma mark -
 #pragma mark Keyboard layout
 
-//FIXME: the US layout has a bug in codepage 858, whereby the E will remain lowercase when capslock is on.
-//This bug goes away after switching from another layout back to US, so it may be at the DOSBox level.
+//FIXME: the US layout has a bug in codepage 858 (the default),
+//whereby the E will remain lowercase when capslock is on.
 + (NSString *) defaultKeyboardLayout { return @"us"; }
 
 - (void) setActiveLayout: (NSString *)layout
@@ -370,11 +357,6 @@ const char* DOS_GetLoadedLayout(void);
 - (void) setUsesActiveLayout: (BOOL)usesActiveLayout
 {
     boxer_setKeyboardLayoutActive(usesActiveLayout);
-}
-
-- (void) _setUsesActiveLayoutFromValue: (NSNumber *)value
-{
-    self.usesActiveLayout = value.boolValue;
 }
 
 

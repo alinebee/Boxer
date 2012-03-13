@@ -104,6 +104,9 @@ extern "C" {
     bool boxer_keyboardLayoutSupported(const char *code);
     bool boxer_keyboardLayoutActive();
     void boxer_setKeyboardLayoutActive(bool active);
+    void boxer_setNumLockActive(bool active);
+    void boxer_setCapsLockActive(bool active);
+    void boxer_setScrollLockActive(bool active);
     
 	//Called from dos_keyboard_layout.cpp: provides the current OS X keyboard layout as a DOSBox layout code.
 	const char * boxer_preferredKeyboardLayout();

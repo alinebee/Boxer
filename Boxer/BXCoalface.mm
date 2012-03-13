@@ -269,20 +269,39 @@ const char * boxer_preferredKeyboardLayout()
 void boxer_setMouseActive(bool mouseActive)
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	[[emulator mouse] setActive: mouseActive];
+	emulator.mouse.active = mouseActive;
 }
 
 void boxer_setJoystickActive(bool joystickActive)
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	[emulator setJoystickActive: joystickActive];
+	emulator.joystickActive = joystickActive;
 }
 
 void boxer_mouseMovedToPoint(float x, float y)
 {
 	NSPoint point = NSMakePoint((CGFloat)x, (CGFloat)y);
 	BXEmulator *emulator = [BXEmulator currentEmulator];
-	[[emulator mouse] setPosition: point];
+	emulator.mouse.position = point;
+}
+
+void boxer_setCapsLockActive(bool active)
+{
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+    emulator.keyboard.capsLockEnabled = active;
+}
+
+void boxer_setNumLockActive(bool active)
+{
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+    emulator.keyboard.numLockEnabled = active;
+}
+
+void boxer_setScrollLockActive(bool active)
+{
+    NSLog(@"Setting scroll lock: %i", active);
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+    emulator.keyboard.scrollLockEnabled = active;
 }
 
 #pragma mark -

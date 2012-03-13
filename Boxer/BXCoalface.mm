@@ -299,7 +299,6 @@ void boxer_setNumLockActive(bool active)
 
 void boxer_setScrollLockActive(bool active)
 {
-    NSLog(@"Setting scroll lock: %i", active);
 	BXEmulator *emulator = [BXEmulator currentEmulator];
     emulator.keyboard.scrollLockEnabled = active;
 }

@@ -229,7 +229,6 @@ const char* DOS_GetLoadedLayout(void);
             [keyEvents insertObject: [NSNumber numberWithInteger: -KBD_capslock] atIndex: 1];
         }
         
-        
         self.pendingKeypresses = [NSTimer scheduledTimerWithTimeInterval: interval
                                                                   target: self
                                                                 selector: @selector(_processNextQueuedKey:)
@@ -280,7 +279,7 @@ const char* DOS_GetLoadedLayout(void);
     {
         //Turn the active layout back on after a short delay, to allow the pending input to finish processing
         //under the US layout.
-        BOOL restoreLayout = self.usesActiveLayout;
+        BOOL restoreLayout = enableActiveLayoutAfterTyping;
         
         if (restoreLayout)
             [self performSelector: @selector(setUsesActiveLayout:)

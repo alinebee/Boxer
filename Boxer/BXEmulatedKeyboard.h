@@ -30,6 +30,11 @@ typedef KBD_KEYS BXDOSKeyCode;
     BOOL scrollLockEnabled;
     NSUInteger pressedKeys[KBD_LAST];
     
+    //Whether to re-enable capslock and the active layout
+    //once a simulated typing session is finished.
+    BOOL enableActiveLayoutAfterTyping;
+    BOOL enableCapslockAfterTyping;
+    
 	NSString *preferredLayout;
     
     NSTimer *pendingKeypresses;

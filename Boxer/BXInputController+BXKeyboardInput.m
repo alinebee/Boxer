@@ -84,7 +84,6 @@
         if (self._emulatedKeyboard.isTyping)
         {
             [self._emulatedKeyboard cancelTyping];
-            [self _syncModifierFlags: theEvent.modifierFlags];
             return;
         }
         //Pressing ESC while in fullscreen mode and not running a program, will exit fullscreen mode.

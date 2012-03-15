@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>BXGameProfileCatalogueVersion</key>
-	<string>20120304.1</string>
+	<string>20120315.1</string>
 	<key>BXSpecificGameProfiles</key>
 	<array>
 		<dict>
@@ -1438,13 +1438,13 @@
 			<key>BXProfileMatches</key>
 			<array>
 				<string>Rogue</string>
-                <string>Déjà Vu: A Nightmare Comes True</string>
+				<string>Déjà Vu: A Nightmare Comes True</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>rogue.exe</string>
 				<string>10rogue.exe</string>
-                <string>dejavu.exe</string>
+				<string>dejavu.exe</string>
 			</array>
 		</dict>
 		<dict>
@@ -1465,7 +1465,7 @@
 				<string>Halloween Harry</string>
 				<string>F-14 Tomcat</string>
 				<string>Commander Keen 4-6</string>
-                <string>Gabriel Knight: Sins of the Fathers</string>
+				<string>Gabriel Knight: Sins of the Fathers</string>
 			</array>
 			<key>BXProfileTelltales</key>
 			<array>
@@ -1477,7 +1477,7 @@
 				<string>gamemaps.ck4</string>
 				<string>gamemaps.ck5</string>
 				<string>gamemaps.ck6</string>
-                <string>gksg.cat</string>
+				<string>gksg.cat</string>
 			</array>
 		</dict>
 		<dict>

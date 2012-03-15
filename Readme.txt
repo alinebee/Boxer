@@ -31,7 +31,7 @@ XCode versions 4.0 and later do not come with PowerPC compilers, which will norm
 
 Other things to be aware of
 ---------------------------
-Boxer's hotkey override option ("Ignore OS X hotkeys while a game is running") relies on a keyboard event tap, and these *do not play nice at all* with the XCode debugger. I strongly recommend turning off that option in Boxer's preferences if you're testing through XCode: Otherwise, when pausing in the debugger or hitting a breakpoint, the mouse and keyboard may stop responding altogether and you'll have to restart your Mac to get them back.
+Boxer's OS X hotkey override option ("Reserve function keys and arrow keys for games") relies on a keyboard event tap, and these *do not play nice at all* with the XCode debugger. I strongly recommend turning off that option in Boxer's preferences if you're testing through XCode: Otherwise, when pausing in the debugger or hitting a breakpoint, the mouse and keyboard may stop responding altogether and you'll have to restart your Mac to get them back.
 
 
 Having trouble?

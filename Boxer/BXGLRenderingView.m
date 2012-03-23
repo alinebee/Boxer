@@ -219,6 +219,9 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     
     //Pad the row out the appropriate length
     NSInteger bytesPerRow	= (NSInteger)((theRect.size.width * 4) + 3) & ~3;
+    
+    //IMPLEMENTATION NOTE: we use the device RGB rather than a calibrated or generic RGB,
+    //so that the bitmap matches what the user is seeing.
     NSBitmapImageRep *rep	= [[[NSBitmapImageRep alloc]
                                 initWithBitmapDataPlanes: nil
                                 pixelsWide: theRect.size.width
@@ -227,9 +230,10 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
                                 samplesPerPixel: 3
                                 hasAlpha: NO
                                 isPlanar: NO
-                                colorSpaceName: NSCalibratedRGBColorSpace
+                                colorSpaceName: NSDeviceRGBColorSpace
                                 bytesPerRow: bytesPerRow
                                 bitsPerPixel: 32] autorelease];
+    
     return rep;
 }
 

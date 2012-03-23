@@ -25,7 +25,7 @@
 		rep = [NSBitmapImageRep imageRepWithData: [self TIFFRepresentation]];
 	}
 	
-	NSData *data = [rep representationUsingType: type properties: nil];
+	NSData *data = [rep representationUsingType: type properties: properties];
 	return [data writeToFile: path options: NSAtomicWrite error: outError];
 }
 

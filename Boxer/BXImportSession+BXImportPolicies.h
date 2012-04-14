@@ -126,13 +126,25 @@ static const NSInteger BXFreeSpaceForCDROMInstall = 700 * 1024 * 1024;
 #pragma mark -
 #pragma mark Importing pre-existing DOSBox configurations
 
+//Returns whether the file at the specified path is a valid DOSBox configuration file.
+//Currently this only checks its file extension, and does not check the contents of the file.
++ (BOOL) isConfigurationFileAtPath: (NSString *)path;
+
+//Returns the most likely configuration file from the specified set.
+//HEURISTIC: in the event that multiple configuration files are specified, this returns the one with
+//the shortest name. This is intended to handle e.g. GOG games that come with client/server
+//configurations as well as standalone configurations, where the former have "_client"/"_server"
+//suffixes applied to the base name of the latter.
++ (NSString *) preferredConfigurationFileFromPaths: (NSArray *)paths;
+
+
 //Returns the path to the most appropriate DOSBox configuration file within the specified path,
 //or nil if none could be found.
 //HEURISTIC: in the event that multiple configuration files are found, this returns the one with
 //the shortest name. This is intended to handle e.g. GOG games that come with client/server
 //configurations as well as standalone configurations, where the former have "_client"/"_server"
 //suffixes applied to the base name of the latter.
-+ (NSString *) preferredConfigurationFileFromPath: (NSString *)path error: (NSError **)error;
++ (NSString *) preferredConfigurationFileInPath: (NSString *)path error: (NSError **)error;
 
 //Returns a new DOSBox configuration cherry-picked from the specified configuration.
 //This will strip out all settings that are redundant, or that will interfere with Boxer.

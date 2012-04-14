@@ -18,28 +18,30 @@
 @class BXGameProfile;
 @interface BXInstallerScan : BXImageAwareFileScan
 {
-    NSMutableArray *windowsExecutables;
-    NSMutableArray *DOSExecutables;
-    BOOL isAlreadyInstalled;
+    NSMutableArray *_windowsExecutables;
+    NSMutableArray *_DOSExecutables;
+    NSMutableArray *_DOSBoxConfigurations;
+    BOOL _alreadyInstalled;
     
-    BXGameProfile *detectedProfile;
+    BXGameProfile *_detectedProfile;
 } 
 
-//The relative paths of all DOS and Windows executables discovered during scanning.
-@property (readonly, nonatomic) NSArray *windowsExecutables;
-@property (readonly, nonatomic) NSArray *DOSExecutables;
+//The relative paths of all DOS and Windows executables and DOSBox configuration files
+//discovered during scanning.
+@property (readonly, retain, nonatomic) NSArray *windowsExecutables;
+@property (readonly, retain, nonatomic) NSArray *DOSExecutables;
+@property (readonly, retain, nonatomic) NSArray *DOSBoxConfigurations;
+
+//The path which the scanner recommends as the base path to import from.
+//This will usually be the same as the base path to scan, but will differ
+//if an image was mounted during importing or a more likely game folder was found.
+@property (readonly, copy, nonatomic) NSString *recommendedSourcePath;
 
 //The profile of the game at the base path, used for discovery of additional installers.
 //If left unspecified, this will be autodetected during scanning.
-@property (retain, nonatomic) BXGameProfile *detectedProfile;
+@property (readonly, retain, nonatomic) BXGameProfile *detectedProfile;
 
 //Whether the game at the base path appears to be already installed.
-@property (readonly, nonatomic) BOOL isAlreadyInstalled;
-
-
-//Helper methods for adding executables to their appropriate match arrays,
-//a la addMatchingPath:
-- (void) addWindowsExecutable: (NSString *)relativePath;
-- (void) addDOSExecutable: (NSString *)relativePath;
+@property (readonly, nonatomic, getter=isAlreadyInstalled) BOOL alreadyInstalled;
 
 @end

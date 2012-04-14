@@ -13,12 +13,11 @@
 #import "BXFileScan.h"
 
 
-enum {
-    BXFileScanAutoEject = -1,
-    BXFileScanNeverEject = 0,
-    BXFileScanAlwaysEject = 1
-};
-typedef NSInteger BXFileScanEjectionBehaviour;
+typedef enum {
+    BXFileScanEjectIfSelfMounted,
+    BXFileScanNeverEject,
+    BXFileScanAlwaysEject
+} BXFileScanEjectionBehaviour;
 
     
 @interface BXImageAwareFileScan : BXFileScan

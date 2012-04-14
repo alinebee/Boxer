@@ -18,7 +18,7 @@
 {
     if ((self = [super init]))
     {
-        [self setEjectAfterScanning: BXFileScanAutoEject];
+        [self setEjectAfterScanning: BXFileScanEjectIfSelfMounted];
     }
     return self;
 }
@@ -86,7 +86,7 @@
     if ([self mountedVolumePath])
     {
         if (([self ejectAfterScanning] == BXFileScanAlwaysEject) ||
-            (didMountVolume && [self ejectAfterScanning] == BXFileScanAutoEject))
+            (didMountVolume && [self ejectAfterScanning] == BXFileScanEjectIfSelfMounted))
         {
             [workspace unmountAndEjectDeviceAtPath: [self mountedVolumePath]];
             [self setMountedVolumePath: nil];

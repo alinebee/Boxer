@@ -85,7 +85,7 @@ typedef enum {
 //The range of possible DOS installers to choose from.
 @property (readonly, retain, nonatomic) NSArray *installerPaths;
 
-//The path of the installer we will choose as the default from among installerPaths.
+//The path of the installer we would choose as the default from among installerPaths.
 @property (readonly, nonatomic) NSString *preferredInstallerPath;
 
 //The display filename of the gamebox, minus extension.

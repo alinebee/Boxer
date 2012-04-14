@@ -50,7 +50,7 @@
 
 + (BOOL) isInstallerAtPath: (NSString *)path
 {	
-	NSString *fileName = [[path lastPathComponent] lowercaseString];
+	NSString *fileName = path.lastPathComponent.lowercaseString;
 	
 	for (NSString *pattern in [self installerPatterns])
 	{
@@ -72,7 +72,7 @@
 							   @"(^|/)unins000\\.",					//GOG uninstaller files
 							   @"(^|/)Graphic mode setup\\.exe$",	//GOG configuration programs
 							   @"(^|/)gogwrap\\.exe$",				//GOG only knows what this one does
-							   @"(^|/)dosbox",						//Anything DOSBox-related
+							   @"(^|/)dosbox(.*)/",					//Anything in a DOSBox-related subfolder
 							   
 							   @"(^|/)autorun",			//Windows CD-autorun stubs
 							   @"(^|/)bootdisk\\.",		//Bootdisk makers
@@ -81,7 +81,7 @@
                                @"(^|/)foo\\.bat",       //Backup script included by mistake
                                                         //on some Mac X-Wing CDROM editions
                                
-                               @"(^|/)vinstall\\.bat",  //
+                               @"(^|/)vinstall\\.bat",  //??
 							   
 							   @"(^|/)pkunzip\\.",		//Archivers
 							   @"(^|/)pkunzjr\\.",
@@ -93,7 +93,7 @@
 
 + (BOOL) isIgnoredFileAtPath: (NSString *)path
 {
-	NSRange matchRange = NSMakeRange(0, [path length]);
+	NSRange matchRange = NSMakeRange(0, path.length);
 	for (NSString *pattern in [self ignoredFilePatterns])
 	{
 		if ([path isMatchedByRegex: pattern
@@ -128,7 +128,7 @@
 
 + (BOOL) isJunkFileAtPath: (NSString *)path
 {
-	NSRange matchRange = NSMakeRange(0, [path length]);
+	NSRange matchRange = NSMakeRange(0, path.length);
 	for (NSString *pattern in [self junkFilePatterns])
 	{
 		if ([path isMatchedByRegex: pattern
@@ -170,10 +170,10 @@
 
 + (BOOL) isPlayableGameTelltaleAtPath: (NSString *)path
 {
-	NSString *fileName = [[path lastPathComponent] lowercaseString];
+	NSString *fileName = path.lastPathComponent.lowercaseString;
 	
 	//Do a quick test first using just the extension
-	if ([[self playableGameTelltaleExtensions] containsObject: [fileName pathExtension]]) return YES;
+	if ([[self playableGameTelltaleExtensions] containsObject: fileName.pathExtension]) return YES;
 	
 	//Next, test against our filename patterns
 	for (NSString *pattern in [self playableGameTelltalePatterns])
@@ -192,9 +192,9 @@
 {
 	unsigned long long pathSize = 0;
 	NSDirectoryEnumerator *enumerator = [[NSFileManager defaultManager] enumeratorAtPath: path];
-	while ([enumerator nextObject])
+	while (enumerator.nextObject)
 	{
-		pathSize += [[enumerator fileAttributes] fileSize];
+		pathSize += enumerator.fileAttributes.fileSize;
 		if (pathSize > (NSUInteger)BXCDROMSizeThreshold) return YES;
 	}
 	return NO;
@@ -215,6 +215,8 @@
 	//Otherwise, for now stick with the original path as it was provided
 	//TODO: return the base volume path if the path was on a CD or floppy disk?
 	//TODO: search for a preferred import folder based on game profile?
+    //That would require us to know the profile in advance though,
+    //which makes it the purview of BXInstallerScan instead.
 	return path;
 }
 
@@ -226,10 +228,10 @@
 	{
 		for (NSString *path in paths)
 		{
-            NSString *fileName = [path lastPathComponent];
+            NSString *fileName = path.lastPathComponent;
 			if ([fileName isMatchedByRegex: pattern
                                    options: RKLCaseless
-                                   inRange: NSMakeRange(0, [fileName length])
+                                   inRange: NSMakeRange(0, fileName.length)
                                      error: nil])
                 return path;
 		}
@@ -256,7 +258,7 @@
 + (BOOL) shouldUseSubfolderForSourceFilesAtPath: (NSString *)basePath
 {
 	BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: basePath];
-	[enumerator setSkipSubdirectories: YES];
+	enumerator.skipSubdirectories = YES;
 	
 	BOOL hasExecutables = NO;
 	for (NSString *path in enumerator)
@@ -283,10 +285,10 @@
     BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: path];
     for (NSString *subPath in enumerator)
     {
-        NSString *fileName = [subPath lastPathComponent];
+        NSString *fileName = subPath.lastPathComponent;
         if ([fileName isMatchedByRegex: pattern
                                options: RKLCaseless
-                               inRange: NSMakeRange(0, [fileName length])
+                               inRange: NSMakeRange(0, fileName.length)
                                  error: nil])
         {
             iconPath = subPath;
@@ -302,16 +304,16 @@
 		//as these are usually terrible 16-colour Windows 3.1 icons.
 		//(We copy the representations array because it's bad form to modify
 		//an array while traversing it)
-		NSArray *reps = [[icon representations] copy];
+		NSArray *reps = [icon.representations copy];
 		for (NSImageRep *rep in reps)
 		{
-			NSSize size = [rep size];
+			NSSize size = rep.size;
 			if (size.width <= 32.0f && size.height <= 32.0f) [icon removeRepresentation: rep];
 		}
 		[reps release];
 		
 		//Sanity check: if there are no representations left, forget about the icon
-		if (![[icon representations] count]) return nil;
+		if (!icon.representations.count) return nil;
 		else return icon;
 	}
 	return nil;
@@ -319,7 +321,7 @@
 
 + (NSString *) nameForGameAtPath: (NSString *)path
 {
-	NSString *filename = [path lastPathComponent];
+	NSString *filename = path.lastPathComponent;
 	
 	//Strip any of our own file extensions from the path
 	NSArray *strippedExtensions = [NSArray arrayWithObjects:
@@ -329,8 +331,8 @@
 								   @"harddisk",
 								   nil];
 	
-	NSString *extension	= [[filename pathExtension] lowercaseString];
-	if ([strippedExtensions containsObject: extension]) filename = [filename stringByDeletingPathExtension];
+	NSString *extension	= filename.pathExtension.lowercaseString;
+	if ([strippedExtensions containsObject: extension]) filename = filename.stringByDeletingPathExtension;
 	
 	//Remove content enclosed in parentheses and/or square brackets:
 	//Ultima 8 (1994)(Origin Systems)[Rev.2.12] -> Ultima 8
@@ -353,7 +355,7 @@
 	//Format Roman numerals to uppercase, and everthing else into Title Case:
 	//ultima viii -> Ultima VIII
 	NSMutableArray *words = [[filename componentsSeparatedByCharactersInSet: [NSCharacterSet whitespaceCharacterSet]] mutableCopy];
-	NSUInteger i, numWords = [words count];
+	NSUInteger i, numWords = words.count;
 	for (i=0; i<numWords; i++)
 	{
 		NSString *word = [words objectAtIndex: i];
@@ -362,9 +364,9 @@
 		//and restricting the regex prevents it matching real words inadvertently (like "mix")
 		//TODO: expand this to match common acronyms as well
 		if ([word isMatchedByRegex: @"^[Ii]?[XxVvIi][Ii]*$"])
-			word = [word uppercaseString];
+			word = word.uppercaseString;
 		else
-			word = [word capitalizedString];
+			word = word.capitalizedString;
 		
 		[words replaceObjectAtIndex: i withObject: word];
 	}
@@ -373,7 +375,7 @@
 	
 	
 	//If all these substitutions somehow ended up with an empty string, then fall back on the original filename
-	if (![filename length]) filename = [path lastPathComponent];
+	if (!filename.length) filename = path.lastPathComponent;
 	
 	return filename;
 }
@@ -383,8 +385,8 @@
 {
 	NSFileManager *manager = [NSFileManager defaultManager];
 	
-	NSString *extension	= [path pathExtension];
-	NSString *basePath	= [path stringByDeletingPathExtension];
+	NSString *extension	= path.pathExtension;
+	NSString *basePath	= path.stringByDeletingPathExtension;
 	
 	//Check if a gamebox already exists at that location;
 	//if so, append an incremented extension until we land on a name that isn't taken
@@ -423,22 +425,22 @@
 
 + (NSString *) validDOSNameFromName: (NSString *)name
 {
-	NSString *asciiName = [[name lowercaseString] stringByReplacingOccurrencesOfRegex: @"[^a-z0-9\\.]" withString: @""];
-	NSString *baseName	= [asciiName stringByDeletingPathExtension];
-	NSString *extension = [asciiName pathExtension];
+	NSString *asciiName = [name.lowercaseString stringByReplacingOccurrencesOfRegex: @"[^a-z0-9\\.]" withString: @""];
+	NSString *baseName	= asciiName.stringByDeletingPathExtension;
+	NSString *extension = asciiName.pathExtension;
 	
-	NSString *shortBaseName		= ([baseName length] > 8) ? [baseName substringToIndex: 8] : baseName;
-	NSString *shortExtension	= ([extension length] > 3) ? [extension substringToIndex: 3] : extension;
+	NSString *shortBaseName		= (baseName.length > 8) ? [baseName substringToIndex: 8] : baseName;
+	NSString *shortExtension	= (extension.length > 3) ? [extension substringToIndex: 3] : extension;
 	
-	NSString *shortName = ([shortExtension length]) ? [shortBaseName stringByAppendingPathExtension: shortExtension] : shortBaseName;
+	NSString *shortName = (shortExtension.length) ? [shortBaseName stringByAppendingPathExtension: shortExtension] : shortBaseName;
 	
 	return shortName;
 }
 
 NSInteger filenameLengthSort(NSString *path1, NSString *path2, void *context)
 {
-    NSUInteger length1 = [[path1 lastPathComponent] length];
-    NSUInteger length2 = [[path2 lastPathComponent] length];
+    NSUInteger length1 = path1.lastPathComponent.length;
+    NSUInteger length2 = path2.lastPathComponent.length;
     
     if (length1 < length2)
         return NSOrderedAscending;
@@ -448,23 +450,35 @@ NSInteger filenameLengthSort(NSString *path1, NSString *path2, void *context)
         return NSOrderedSame;
 }
 
-+ (NSString *) preferredConfigurationFileFromPath: (NSString *)path
-                                            error: (NSError **)error
++ (BOOL) isConfigurationFileAtPath: (NSString *)path
+{
+    return [[NSWorkspace sharedWorkspace] file: path
+                                  matchesTypes: [NSSet setWithObject: @"gnu.org.configuration-file"]];
+}
+
++ (NSString *) preferredConfigurationFileFromPaths: (NSArray *)paths
+{
+    //Compare configuration filenames by length to determine the shortest
+    //(which we deem most likely to be the 'default')
+    if (paths.count)
+    {
+        NSArray *sortedPaths = [paths sortedArrayUsingFunction: filenameLengthSort
+                                                       context: NULL];
+        
+        return [sortedPaths objectAtIndex: 0];
+    }
+    else return nil;
+}
+
++ (NSString *) preferredConfigurationFileInPath: (NSString *)path
+                                          error: (NSError **)error
 {
     //Compare configuration filenames by length to determine the shortest
     //(which we deem most likely to be the 'default')
     BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: path];
-    [enumerator setFileTypes: [NSSet setWithObject: @"gnu.org.configuration-file"]];
+    enumerator.fileTypes = [NSSet setWithObject: @"gnu.org.configuration-file"];
     
-    NSArray *paths = [enumerator allObjects];
-    if ([paths count])
-    {
-        NSArray *sortedPaths = [paths sortedArrayUsingFunction: filenameLengthSort
-                                                       context: NULL];
-    
-        return [sortedPaths objectAtIndex: 0];
-    }
-    else return nil;
+    return [self preferredConfigurationFileFromPaths: enumerator.allObjects];
 }
 
 + (BXEmulatorConfiguration *) sanitizedVersionOfConfiguration: (BXEmulatorConfiguration *)configuration
@@ -486,7 +500,7 @@ NSInteger filenameLengthSort(NSString *path1, NSString *path2, void *context)
       //[NSSet setWithObjects: @"joysticktype", @"timed", nil],                   @"joystick",
       nil];
     
-    for (NSString *section in [relevantSettings keyEnumerator])
+    for (NSString *section in relevantSettings.keyEnumerator)
     {
         for (NSString *setting in [relevantSettings objectForKey: section])
         {
@@ -503,7 +517,7 @@ NSInteger filenameLengthSort(NSString *path1, NSString *path2, void *context)
     {
         if ([command isMatchedByRegex: pattern
                               options: RKLCaseless
-                              inRange: NSMakeRange(0, [command length])
+                              inRange: NSMakeRange(0, command.length)
                                 error: nil])
         {
             return YES;
@@ -524,7 +538,7 @@ NSInteger filenameLengthSort(NSString *path1, NSString *path2, void *context)
     
     NSMutableArray *matches = [[NSMutableArray alloc] initWithCapacity: 10];
     
-    for (NSString *command in [configuration startupCommands])
+    for (NSString *command in configuration.startupCommands)
     {
         if (![self _startupCommand: command matchesPatterns: patternsToIgnore])
             [matches addObject: command];
@@ -540,13 +554,12 @@ NSInteger filenameLengthSort(NSString *path1, NSString *path2, void *context)
                               nil];
     
     NSMutableArray *matches = [[NSMutableArray alloc] initWithCapacity: 10];
-    for (NSString *command in [configuration startupCommands])
+    for (NSString *command in configuration.startupCommands)
     {
-        if ([[self class] _startupCommand: command matchesPatterns: patternsToMatch])
+        if ([self _startupCommand: command matchesPatterns: patternsToMatch])
             [matches addObject: command];
     }
     return [matches autorelease];
 }
-
 
 @end

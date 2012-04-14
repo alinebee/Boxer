@@ -164,18 +164,12 @@
     if (scan.succeeded)
     {
         self.gameProfile = scan.detectedProfile;
+        self.sourcePath = scan.recommendedSourcePath;
         
-        //If we were scanning an image, then use the mounted image volume
-        //as our source path instead.
-        if (scan.mountedVolumePath)
-        {
-            self.sourcePath = scan.mountedVolumePath;
-            _didMountSourceVolume = scan.didMountVolume;
-        }
-        else
-        {
-            self.sourcePath = scan.basePath;
-        }
+        NSLog(@"Recommended source path: %@", scan.recommendedSourcePath);
+        
+        //Record whether we ought to unmount a mounted volume after we're done.
+        _didMountSourceVolume = scan.didMountVolume;
         
         self.fileURL = [NSURL fileURLWithPath: self.sourcePath];
         self.installerPaths = [self.sourcePath stringsByAppendingPaths: scan.matchingPaths];
@@ -210,10 +204,9 @@
         }
         
         //If there was an error that wasn't just that the operation was cancelled,
-        //display it to the user now.
+        //display it to the user now as an alert sheet.
         if (scan.error && !([scan.error.domain isEqualToString: NSCocoaErrorDomain] && scan.error.code == NSUserCancelledError))
         {
-            //If we failed, then display the error as a sheet
             [self presentError: scan.error
                 modalForWindow: self.windowForSheet
                       delegate: nil
@@ -1047,9 +1040,8 @@
     
     //Import any bundled DOSBox configuration: converting any mount commands
     //into drive imports, and any launch commands into a launcher batch file.
-    
-    NSString *bundledConfigPath = [self.class preferredConfigurationFileFromPath: self.rootDrivePath
-                                                                           error: nil];
+    NSString *bundledConfigPath = [self.class preferredConfigurationFileInPath: self.rootDrivePath
+                                                                         error: nil];
     
     if (bundledConfigPath)
     {
@@ -1080,7 +1072,7 @@
                 {
                     //TWEAK: Copy the drive files if they lie outside the gamebox,
                     //otherwise move them.
-                    BOOL copy = ![drive.path isRootedInPath: self.rootDrivePath];
+                    BOOL copy = ![drive.path isRootedInPath: self.gamePackage.bundlePath];
                     BXOperation <BXDriveImport> *importOperation = [BXDriveImport importOperationForDrive: drive
                                                                                             toDestination: pathForDrives
                                                                                                 copyFiles: copy];

@@ -215,7 +215,10 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
     self.emulationThread = [NSThread currentThread];
 	
 	//Record ourselves as the current emulator instance for DOSBox to talk to
-	currentEmulator = self;
+    if (!currentEmulator)
+    {
+        currentEmulator = [self retain];
+    }
 	hasStartedEmulator = YES;
 	
 	[self _willStart];
@@ -228,8 +231,11 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 	self.executing = NO;
 	
 	if (currentEmulator == self)
+    {
+        [currentEmulator autorelease];
         currentEmulator = nil;
-	
+	}
+    
 	[self _didFinish];
 }
 

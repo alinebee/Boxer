@@ -54,6 +54,11 @@
 - (IBAction) sendScrollLock:	(id)sender;
 - (IBAction) sendPrintScreen:	(id)sender;
 
+- (IBAction) sendBackslash:     (id)sender;
+- (IBAction) sendForwardSlash:  (id)sender;
+- (IBAction) sendColon:         (id)sender;
+- (IBAction) sendDash:          (id)sender;
+
 //'Types' the specified message into the DOS prompt by imitating keypress events.
 - (void) type: (NSString *)message;
 

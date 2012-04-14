@@ -251,11 +251,13 @@ const char* DOS_GetLoadedLayout(void);
         //we'll continue on the next cycle of the timer.
         if (self.keyboardBufferFull) break;
         
+        //We encode the pressed/released state as positive/negative.
         NSInteger code = keyEvent.integerValue;
         BOOL pressed = (code >= 0);
         
-        KEYBOARD_AddKey(ABS(code), pressed);
-        pressedKeys[ABS(code)] = pressed;
+        code = ABS(code);
+        KEYBOARD_AddKey((BXDOSKeyCode)code, pressed);
+        pressedKeys[code] = pressed;
         
         numProcessed++;
     }

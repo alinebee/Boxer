@@ -198,6 +198,11 @@
 - (IBAction) sendScrollLock:	(id)sender { [self._emulatedKeyboard keyPressed: KBD_scrolllock]; }
 - (IBAction) sendPrintScreen:	(id)sender { [self._emulatedKeyboard keyPressed: KBD_printscreen]; }
 
+- (IBAction) sendBackslash:     (id)sender { [self._emulatedKeyboard typeCharacters: @"\\"]; }
+- (IBAction) sendForwardSlash:  (id)sender { [self._emulatedKeyboard typeCharacters: @"/"]; }
+- (IBAction) sendColon:         (id)sender { [self._emulatedKeyboard typeCharacters: @":"]; }
+- (IBAction) sendDash:          (id)sender { [self._emulatedKeyboard typeCharacters: @"-"]; }
+
 
 - (void) type: (NSString *)message
 {
@@ -404,6 +409,11 @@
 		map[kVK_ANSI_Comma] = KBD_comma;
 		map[kVK_ANSI_Period] = KBD_period;
 		map[kVK_ANSI_Slash] = KBD_slash;
+        
+		map[kVK_JIS_Yen] = KBD_extra_lt_gt;
+		map[kVK_JIS_Underscore] = KBD_extra_lt_gt;
+		map[kVK_ISO_Section] = KBD_extra_lt_gt;
+		map[kVK_ISO_Section] = KBD_extra_lt_gt;
 		map[kVK_ISO_Section] = KBD_extra_lt_gt;
 		
 		mapGenerated = YES;

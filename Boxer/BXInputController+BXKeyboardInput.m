@@ -30,10 +30,10 @@
 {
 	//Input source IDs are a reverse-DNS string in the form com.companyname.layout.layoutName.
 	//To avoid false negatives, we only look at the last part of this string.
-	NSString *layoutName = [[inputSourceID componentsSeparatedByString: @"."] lastObject];
+	NSString *layoutName = [inputSourceID componentsSeparatedByString: @"."].lastObject;
 	if (layoutName)
 	{
-		return [[self keyboardLayoutMappings] objectForKey: layoutName];
+		return [self.keyboardLayoutMappings objectForKey: layoutName];
 	}
 	else return nil;
 }
@@ -56,7 +56,7 @@
 - (void) _syncKeyboardLayout
 {
     //Sync the DOS keyboard layout to match the current OS X layout as best as possible.
-    NSString *bestLayoutMatch = [[self class] keyboardLayoutForCurrentInputMethod];
+    NSString *bestLayoutMatch = [self.class keyboardLayoutForCurrentInputMethod];
     if (bestLayoutMatch)
     {
         [self._emulatedKeyboard setActiveLayout: bestLayoutMatch];
@@ -250,8 +250,6 @@
 			//events when both the left and right version of a key were pressed at the same time.
 			if (isPressed != wasPressed)
 			{
-				BXEmulatedKeyboard *keyboard = self._emulatedKeyboard;
-				
 				//Special handling for capslock key: whenever the flag is toggled,
 				//act like the key was pressed and then released shortly after.
 				//(We never receive actual keyup events for this key.)
@@ -261,15 +259,15 @@
                     //the keyboard’s state. This ensures that we don’t get out of sync if we ever
                     //miss a capslock event or toggle the emulated capslock programmatically.
                     if (isPressed != self._emulatedKeyboard.capsLockEnabled)
-                        [keyboard keyPressed: keyCode];
+                        [self._emulatedKeyboard keyPressed: keyCode];
 				}
 				else if (isPressed)
 				{
-					[keyboard keyDown: keyCode];
+					[self._emulatedKeyboard keyDown: keyCode];
 				}
 				else
 				{
-					[keyboard keyUp: keyCode];
+					[self._emulatedKeyboard keyUp: keyCode];
 				}
 			}
 		}

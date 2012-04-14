@@ -12,6 +12,7 @@
 #import "BXValueTransformers.h"
 #import "BXAppController+BXSupportFiles.h"
 #import "BXVideoHandler.h"
+#import "BXDOSWindow.h"
 
 #import "BXDOSWindowController.h"
 #import "BXInputController.h"
@@ -92,7 +93,7 @@
     	return NSLocalizedString(@"Maximum speed", @"Description for current CPU speed when in automatic CPU throttling mode.");
     
     else
-        return [NSString stringWithFormat: [self cpuClassFormatForSpeed: speed], speed, nil];
+        return [NSString stringWithFormat: [self cpuClassFormatForSpeed: speed], speed];
 }
 
 #pragma mark -
@@ -130,20 +131,23 @@
 
 - (NSUInteger) frameskip
 {
-	return emulator.videoHandler.frameskip;
+	return self.emulator.videoHandler.frameskip;
 }
 
 - (void) setFrameskip: (NSUInteger)frameskip
 {
-	emulator.videoHandler.frameskip = frameskip;
+	self.emulator.videoHandler.frameskip = frameskip;
 	
-	[gameSettings setObject: [NSNumber numberWithUnsignedInteger: frameskip] forKey: @"frameskip"];
+	[self.gameSettings setObject: [NSNumber numberWithUnsignedInteger: frameskip]
+                          forKey: @"frameskip"];
 }
 
 - (BOOL) validateFrameskip: (id *)ioValue error: (NSError **)outError
 {
 	NSUInteger theValue = [*ioValue unsignedIntegerValue];
-	if	(theValue > BXMaxFrameskip)	*ioValue = [NSNumber numberWithUnsignedInteger: BXMaxFrameskip];
+	if (theValue > BXMaxFrameskip)
+        *ioValue = [NSNumber numberWithUnsignedInteger: BXMaxFrameskip];
+    
 	return YES;
 }
 
@@ -174,7 +178,8 @@
     self.emulator.turboSpeed = NO;
 	
 	//Preserve changes to the speed settings
-	[self.gameSettings setObject: [NSNumber numberWithInteger: BXAutoSpeed] forKey: @"CPUSpeed"];
+	[self.gameSettings setObject: [NSNumber numberWithInteger: BXAutoSpeed]
+                          forKey: @"CPUSpeed"];
 }
 
 - (NSInteger) CPUSpeed
@@ -196,7 +201,8 @@
         //Upon changing the emulator speed, turn off fast-forward.
         self.emulator.turboSpeed = NO;
         
-        [self.gameSettings setObject: [NSNumber numberWithInteger: speed] forKey: @"CPUSpeed"];
+        [self.gameSettings setObject: [NSNumber numberWithInteger: speed]
+                              forKey: @"CPUSpeed"];
     }
 }
 
@@ -237,25 +243,25 @@
 {
 	if (self.speedAtMinimum) return;
 	
-	if ([self isAutoSpeed])
+	if (self.isAutoSpeed)
 	{
-		[self setCPUSpeed: BXMaxSpeedThreshold];
+		self.CPUSpeed = BXMaxSpeedThreshold;
 	}
 	else
 	{
-		NSInteger currentSpeed	= [self CPUSpeed];
-		NSInteger increment		= [[self class] incrementAmountForSpeed: currentSpeed goingUp: NO];
+		NSInteger currentSpeed	= self.CPUSpeed;
+		NSInteger increment		= [self.class incrementAmountForSpeed: currentSpeed goingUp: NO];
 		//This snaps the speed to the nearest increment rather than doing straight subtraction
-		NSInteger diff			= (currentSpeed % increment);
-		if (diff) increment		= diff;
+		NSInteger diff			= currentSpeed % increment;
+		if (diff) increment = diff;
 		
 		//Validate our final value before assigning it
 		NSNumber *newSpeed = [NSNumber numberWithInteger: currentSpeed - increment];
 		if ([self validateCPUSpeed: &newSpeed error: nil])
-			[self setCPUSpeed: [newSpeed integerValue]];
+			self.CPUSpeed = newSpeed.integerValue;
 	}
     
-    [[BXBezelController controller] showCPUSpeedBezelForSpeed: [self CPUSpeed]];
+    [[BXBezelController controller] showCPUSpeedBezelForSpeed: self.CPUSpeed];
 }
 
 
@@ -311,7 +317,7 @@
 
 - (IBAction) fastForward: (id)sender
 {
-    if (!self.emulating) return;
+    if (!self.isEmulating) return;
     
     //Unpause when fast-forwarding
     [self resume: self];
@@ -326,7 +332,7 @@
         
 - (IBAction) releaseFastForward: (id)sender
 {
-    if (!self.emulating) return;
+    if (!self.isEmulating) return;
     
     if (self.emulator.turboSpeed)
     {
@@ -358,10 +364,10 @@
 //Snap fixed speed to even increments, unless the Option key is held down
 - (BOOL) validateSliderSpeed: (id *)ioValue error: (NSError **)outError
 {
-	if (!([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask))
+	if (!([NSApp currentEvent].modifierFlags & NSAlternateKeyMask))
 	{
 		NSInteger speed			= [*ioValue integerValue]; 
-		NSInteger snappedSpeed	= [[self class] snappedSpeed: speed];
+		NSInteger snappedSpeed	= [self.class snappedSpeed: speed];
 		*ioValue = [NSNumber numberWithInteger: snappedSpeed];
 	}
 	return YES;
@@ -374,16 +380,17 @@
 {
 	self.emulator.coreMode = dynamic ? BXCoreDynamic : BXCoreNormal;
 	
-	[gameSettings setObject: [NSNumber numberWithInteger: emulator.coreMode] forKey: @"coreMode"];
+	[self.gameSettings setObject: [NSNumber numberWithInteger: emulator.coreMode]
+                          forKey: @"coreMode"];
 }
 
 
-- (BOOL) validateUserInterfaceItem: (id)theItem
+- (BOOL) validateUserInterfaceItem: (id <NSValidatedUserInterfaceItem>)theItem
 {
 	//All our actions depend on the emulator being active
 	if (!self.isEmulating) return NO;
 	
-	SEL theAction = [theItem action];
+	SEL theAction = theItem.action;
         
 	if (theAction == @selector(incrementSpeed:))		return !self.speedAtMaximum;
 	if (theAction == @selector(decrementSpeed:))		return !self.speedAtMinimum;
@@ -401,7 +408,8 @@
 	return [super validateUserInterfaceItem: theItem];
 }
 
-- (NSAttributedString *) _menuItemLabelForDrive: (BXDrive *)drive withBaseTitle: (NSString *)baseTitle
+- (NSAttributedString *) _menuItemLabelForDrive: (BXDrive *)drive
+                                  withBaseTitle: (NSString *)baseTitle
 {
     //Display drive titles smaller and greyed out.
     //We use a transcluent black rather than the system grey color, so that
@@ -422,7 +430,7 @@
     NSMutableAttributedString *title = [[NSMutableAttributedString alloc] initWithString: [baseTitle stringByAppendingString: separator]
                                                                               attributes: baseTitleAttrs];
     
-    NSAttributedString *driveTitle = [[NSAttributedString alloc] initWithString: [drive title]
+    NSAttributedString *driveTitle = [[NSAttributedString alloc] initWithString: drive.title
                                                                      attributes: driveTitleAttrs];
     
     [title appendAttributedString: driveTitle];
@@ -433,67 +441,67 @@
 
 - (BOOL) validateMenuItem: (NSMenuItem *)theItem
 {
-	SEL theAction = [theItem action];
-	NSString *title;
+	SEL theAction = theItem.action;
 	
+    NSString *title;
+    //Pause menu item
 	if (theAction == @selector(togglePaused:))
 	{
-		if (![self isPaused])
+		if (!self.isPaused)
 			title = NSLocalizedString(@"Pause", @"Emulation menu option for pausing the emulator.");
 		else
 			title = NSLocalizedString(@"Resume", @"Emulation menu option for resuming from pause.");
 		
-		[theItem setTitle: title];
-	
-		return [self isEmulating];
+        theItem.title = title;
+        
+		return self.isEmulating;
 	}
+    //Menu item to switch to next disc in queue
     else if (theAction == @selector(mountNextDrivesInQueues:))
     {
-        if ([self isEmulating])
+        if (self.isEmulating)
         {
             //Figure out the drive that will be switched to by the menu item,
             //and append its title to that of the menu item.
-            for (BXDrive *currentDrive in [self mountedDrives])
+            for (BXDrive *currentDrive in self.mountedDrives)
             {
                 BXDrive *nextDrive = [self siblingOfQueuedDrive: currentDrive atOffset: 1];
                 if (nextDrive && ![nextDrive isEqual: currentDrive])
                 {
-                    if ([nextDrive isCDROM])
+                    if (nextDrive.isCDROM)
                         title = NSLocalizedString(@"Next Disc", @"Menu item for cycling to the next queued CD-ROM.");
                     else
                         title = NSLocalizedString(@"Next Disk", @"Menu item for cycling to the next queued floppy or hard disk.");
-                    
-                    NSAttributedString *attributedTitle = [self _menuItemLabelForDrive: nextDrive
-                                                                         withBaseTitle: title];                    
-                    [theItem setAttributedTitle: attributedTitle];
+                                       
+                    theItem.attributedTitle = [self _menuItemLabelForDrive: nextDrive withBaseTitle: title];
                     return YES;
                 }
             }
         }
         
         //If no next drive is found, or we're not emulating, then disable the menu item altogether and reset its title.
-        [theItem setTitle: NSLocalizedString(@"Next Disc", @"Menu item for cycling to the next queued CD-ROM.")];
+        theItem.title = NSLocalizedString(@"Next Disc", @"Menu item for cycling to the next queued CD-ROM.");
         return NO;
     }
+    //Menu item to switch to previous disc in queue
     else if (theAction == @selector(mountPreviousDrivesInQueues:))
     {
-        if ([self isEmulating])
+        if (self.isEmulating)
         {
             //Figure out the drive that will be switched to by the menu item,
             //and append its title to that of the menu item.
-            for (BXDrive *currentDrive in [self mountedDrives])
+            for (BXDrive *currentDrive in self.mountedDrives)
             {
                 BXDrive *previousDrive = [self siblingOfQueuedDrive: currentDrive atOffset: -1];
                 if (previousDrive && ![previousDrive isEqual: currentDrive])
                 {
-                    if ([previousDrive isCDROM])
+                    if (previousDrive.isCDROM)
                         title = NSLocalizedString(@"Previous Disc", @"Menu item for cycling to the previous queued CD-ROM.");
                     else
                         title = NSLocalizedString(@"Previous Disk", @"Menu item for cycling to the previous queued floppy or hard disk.");
                     
-                    NSAttributedString *attributedTitle = [self _menuItemLabelForDrive: previousDrive
-                                                                         withBaseTitle: title];                    
-                    [theItem setAttributedTitle: attributedTitle];
+                    theItem.attributedTitle = [self _menuItemLabelForDrive: previousDrive
+                                                             withBaseTitle: title];
                     return YES;
                 }
             }
@@ -501,9 +509,10 @@
         
         //If no previous drive is found, then disable the menu item altogether.
         //If no next drive is found, then disable the menu item altogether and reset its title.
-        [theItem setTitle: NSLocalizedString(@"Previous Disc", @"Menu item for cycling to the previous queued CD-ROM.")];
+        theItem.title = NSLocalizedString(@"Previous Disc", @"Menu item for cycling to the previous queued CD-ROM.");
         return NO;
     }
+    //Fast-forward/resume menu item
     else if (theAction == @selector(toggleFastForward:))
     {
 		if (!self.emulator.isTurboSpeed)
@@ -511,22 +520,22 @@
 		else
 			title = NSLocalizedString(@"Normal Speed", @"Emulation menu option for returning from fast-forward.");
 		
-		[theItem setTitle: title];
+		theItem.title = title;
         
         //TWEAK: disable the menu item while we're waiting for the user to release the key.
         //That will break out of the menu's own key-event loop, which would otherwise block.
-		return [self isEmulating] && !waitingForFastForwardRelease;
+		return self.isEmulating && !waitingForFastForwardRelease;
     }
     return [super validateMenuItem: theItem];
 }
 
 
 //Used to selectively enable/disable menu items by validateUserInterfaceItem
-- (BOOL) speedAtMinimum		{ return ![self isAutoSpeed] && [self CPUSpeed] <= BXMinSpeedThreshold; }
-- (BOOL) speedAtMaximum		{ return [self isAutoSpeed]; }
+- (BOOL) speedAtMinimum		{ return !self.isAutoSpeed && (self.CPUSpeed <= BXMinSpeedThreshold); }
+- (BOOL) speedAtMaximum		{ return self.isAutoSpeed; }
 
-- (BOOL) frameskipAtMinimum	{ return [self frameskip] <= 0; }
-- (BOOL) frameskipAtMaximum	{ return [self frameskip] >= BXMaxFrameskip; }
+- (BOOL) frameskipAtMinimum	{ return self.frameskip <= 0; }
+- (BOOL) frameskipAtMaximum	{ return self.frameskip >= BXMaxFrameskip; }
 
 
 #pragma mark -
@@ -544,14 +553,14 @@
 	if ([bestType isEqualToString: NSFilenamesPboardType])
 	{
 		NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
-		pastedString = [filePaths lastObject];
+		pastedString = filePaths.lastObject;
 	}
 	else pastedString = [pboard stringForType: NSStringPboardType];
     
     //Unpause when pasting strings
     [self resume: self];
     
-	[emulator handlePastedString: pastedString];
+	[self.emulator handlePastedString: pastedString];
 }
 
 - (BOOL) canPasteFromPasteboard: (NSPasteboard *)pboard 
@@ -564,10 +573,10 @@
 	if ([bestType isEqualToString: NSFilenamesPboardType])
 	{
 		NSArray *filePaths = [pboard propertyListForType: NSFilenamesPboardType];
-		pastedString = [filePaths lastObject];
+		pastedString = filePaths.lastObject;
 	}
 	else pastedString = [pboard stringForType: NSStringPboardType];
-	return [emulator canAcceptPastedString: pastedString];
+	return [self.emulator canAcceptPastedString: pastedString];
 }
 
 
@@ -576,21 +585,20 @@
 
 - (NSString *) speedDescription
 {	
-	if (![self isEmulating]) return @"";
-    return [[self class] descriptionForSpeed: [self CPUSpeed]];
+	if (!self.isEmulating) return @"";
+    return [self.class descriptionForSpeed: self.CPUSpeed];
 }
 
 - (NSString *) frameskipDescription
 {
-	if (![self isEmulating]) return @"";
+	if (!self.isEmulating) return @"";
 	
 	NSString *format;
-	NSUInteger frameskip = [self frameskip]; 
-	if (frameskip == 0)
+	if (self.frameskip == 0)
 			format = NSLocalizedString(@"Playing every frame",		@"Descriptive text for 0 frameskipping");
 	else	format = NSLocalizedString(@"Playing 1 in %u frames",	@"Descriptive text for >0 frameskipping");
 	
-	return [NSString stringWithFormat: format, frameskip + 1];
+	return [NSString stringWithFormat: format, self.frameskip + 1];
 }
 
 + (NSSet *) keyPathsForValuesAffectingSliderSpeed			{ return [NSSet setWithObjects: @"emulating", @"CPUSpeed", @"autoSpeed", @"dynamic", nil]; }
@@ -615,7 +623,7 @@
         
         NSString *fileName = [NSString stringWithFormat:
                               nameFormat,
-                              [self.DOSWindowController.window title],
+                              self.DOSWindowController.window.title,
                               formattedDate,
                               nil];
         

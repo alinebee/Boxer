@@ -22,8 +22,7 @@
 @property (copy) NSString *destinationFolder;
 
 //The path of the new drive once it is finally imported.
-@property (copy, readonly) NSString *importedDrivePath;
-
+- (NSString *) importedDrivePath;
 
 //Returns whether this import class is appropriate for importing the specified drive.
 + (BOOL) isSuitableForDrive: (BXDrive *)drive;

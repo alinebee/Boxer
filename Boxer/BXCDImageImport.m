@@ -21,7 +21,6 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 @implementation BXCDImageImport
 @synthesize drive = _drive;
 @synthesize destinationFolder	= _destinationFolder;
-@synthesize importedDrivePath	= _importedDrivePath;
 @synthesize numBytes			= _numBytes;
 @synthesize bytesTransferred	= _bytesTransferred;
 @synthesize currentProgress		= _currentProgress;
@@ -38,14 +37,13 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 
 + (BOOL) isSuitableForDrive: (BXDrive *)drive
 {
-	NSString *drivePath = [drive path];
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	
-	NSString *volumePath = [workspace volumeForPath: drivePath];
+	NSString *volumePath = [workspace volumeForPath: drive.path];
 	
 	//If the drive is a data CD, then let 'er rip
-	if ([volumePath isEqualToString: drivePath] &&
-		[[workspace volumeTypeForPath: drivePath] isEqualToString: dataCDVolumeType])
+	if ([volumePath isEqualToString: drive.path] &&
+		[[workspace volumeTypeForPath: drive.path] isEqualToString: dataCDVolumeType])
 	{
 		return YES;
 	}
@@ -56,10 +54,10 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 {
 	NSString *importedName = nil;
 	
-	importedName = [[[drive path] lastPathComponent] stringByDeletingPathExtension];
+	importedName = drive.path.lastPathComponent.stringByDeletingPathExtension;
 	
 	//If the drive has a letter, then prepend it in our standard format
-	if ([drive letter]) importedName = [NSString stringWithFormat: @"%@ %@", [drive letter], importedName];
+	if (drive.letter) importedName = [NSString stringWithFormat: @"%@ %@", drive.letter, importedName];
 	
 	importedName = [importedName stringByAppendingPathExtension: @"iso"];
 	
@@ -74,7 +72,7 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 {
 	if ((self = [super init]))
 	{
-		[self setIndeterminate: YES];
+		self.indeterminate = YES;
 	}
 	return self;
 }
@@ -85,17 +83,17 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 {
 	if ((self = [self init]))
 	{
-		[self setDrive: drive];
-		[self setDestinationFolder: destinationFolder];
+        self.drive = drive;
+        self.destinationFolder = destinationFolder;
 	}
 	return self;
 }
 
 - (void) dealloc
 {
-	[self setDrive: nil], [_drive release];
-	[self setDestinationFolder: nil], [_destinationFolder release];
-	[self setImportedDrivePath: nil], [_importedDrivePath release];
+    self.drive = nil;
+    self.destinationFolder = nil;
+    
 	[super dealloc];
 }
 
@@ -110,12 +108,12 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 }
 - (NSUInteger) filesTransferred
 {
-    return [self succeeded] ? 1 : 0;
+    return self.succeeded ? 1 : 0;
 }
 
 - (NSString *) currentPath
 {
-    return [self isFinished] ? nil : [[self drive] path];
+    return self.isFinished ? nil : self.drive.path;
 }
 
 - (BOOL) copyFiles
@@ -128,16 +126,25 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 	//An ISO rip operation is always a copy, so this is a no-op
 }
 
+- (NSString *) importedDrivePath
+{
+    if (!self.drive || !self.destinationFolder) return nil;
+    
+	NSString *driveName			= [self.class nameForDrive: self.drive];
+	NSString *destinationPath	= [self.destinationFolder stringByAppendingPathComponent: driveName];
+    
+    return destinationPath;
+}
+
 - (BOOL) shouldPerformOperation
 {
-    return [super shouldPerformOperation] && [self drive] && [self destinationFolder];
+    return [super shouldPerformOperation] && self.drive && self.destinationFolder;
 }
 
 - (void) performOperation
 {
-	NSString *driveName			= [[self class] nameForDrive: [self drive]];
-	NSString *sourcePath		= [[self drive] path];
-	NSString *destinationPath	= [[self destinationFolder] stringByAppendingPathComponent: driveName];
+	NSString *sourcePath		= self.drive.path;
+	NSString *destinationPath	= self.importedDrivePath;
 	
 	//Measure the size of the volume to determine how much data we'll be importing
 	NSFileManager *manager = [[NSFileManager alloc] init];
@@ -145,11 +152,11 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 	NSDictionary *volumeAttrs = [manager attributesOfFileSystemForPath: sourcePath error: &volumeSizeError];
 	if (volumeAttrs)
 	{		
-		[self setNumBytes: [[volumeAttrs valueForKey: NSFileSystemSize] unsignedLongLongValue]];
+		self.numBytes = [[volumeAttrs objectForKey: NSFileSystemSize] unsignedLongLongValue];
 	}
 	else
 	{
-		[self setError: volumeSizeError];
+		self.error = volumeSizeError;
 		[manager release];
 		return;
 	}
@@ -162,7 +169,7 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 		NSError *unknownDeviceError = [NSError errorWithDomain: NSCocoaErrorDomain
 														  code: NSFileReadUnknownError
 													  userInfo: userInfo];
-		[self setError: unknownDeviceError];
+		self.error = unknownDeviceError;
 		[manager release];
 		return;
 	}
@@ -170,7 +177,7 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 	//If the destination filename doesn't end in .cdr, then hdiutil will add it itself:
 	//so we'll do so for it, to ensure we know exactly what the destination path will be.
 	NSString *tempDestinationPath = destinationPath;
-	if (![[[destinationPath pathExtension] lowercaseString] isEqualToString: @"cdr"])
+	if (![destinationPath.pathExtension.lowercaseString isEqualToString: @"cdr"])
 	{
 		tempDestinationPath = [destinationPath stringByAppendingPathExtension: @"cdr"];
 	}
@@ -185,18 +192,20 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 						  tempDestinationPath,
 						  nil];
 	
-	[hdiutil setLaunchPath:		@"/usr/bin/hdiutil"];
-	[hdiutil setArguments:		arguments];
-	[hdiutil setStandardOutput: [NSPipe pipe]];
-	[hdiutil setStandardError:	[NSPipe pipe]];
+	hdiutil.launchPath = @"/usr/bin/hdiutil";
+	hdiutil.arguments = arguments;
+	hdiutil.standardOutput = [NSPipe pipe];
+	hdiutil.standardError = [NSPipe pipe];
 	
-	[self setTask: hdiutil];
+	self.task = hdiutil;
 	[hdiutil release];
 	
 	//Run the task to completion and monitor its progress
+    _hasWrittenFiles = NO;
 	[self runTask];
+    _hasWrittenFiles = YES;
 	
-	if (![self error])
+	if (!self.error)
 	{
 		//If image creation succeeded, then rename the new image to its final destination name
 		if ([manager fileExistsAtPath: tempDestinationPath])
@@ -207,15 +216,16 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 				BOOL moved = [manager moveItemAtPath: tempDestinationPath
                                               toPath: destinationPath
                                                error: &renameError];
-				//If the rename failed then don't worry about it: just use the temporary destination
-                //path instead (it'll just have to remain a CDR, which Boxer and DOSBox can still handle.)
-				if (!moved) destinationPath = tempDestinationPath;
+                
+                if (!moved)
+                {
+                    self.error = renameError;
+                }
 			}
-			[self setImportedDrivePath: destinationPath];
 		}
 		else
 		{
-			[self setError: [BXCDImageImportRipFailedError errorWithDrive: [self drive]]];
+			self.error = [BXCDImageImportRipFailedError errorWithDrive: self.drive];
 		}
 	}
 	
@@ -224,29 +234,31 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
     
     //If the import failed for any reason (including cancellation),
     //then clean up the partial files.
-    if ([self error]) [self undoTransfer];
+    if (self.error) [self undoTransfer];
 }
 
 - (void) checkTaskProgress: (NSTimer *)timer
 {
-	NSFileHandle *outputHandle = [[[timer userInfo] standardOutput] fileHandleForReading];
+    NSTask *task = timer.userInfo;
+	NSFileHandle *outputHandle = [task.standardOutput fileHandleForReading];
 	
-	NSString *currentOutput = [[NSString alloc] initWithData: [outputHandle availableData] encoding: NSUTF8StringEncoding];
+	NSString *currentOutput = [[NSString alloc] initWithData: outputHandle.availableData
+                                                    encoding: NSUTF8StringEncoding];
 	NSArray *progressValues = [currentOutput componentsMatchedByRegex: @"PERCENT:(-?[0-9\\.]+)" capture: 1];
 	[currentOutput release];
 	
-	BXOperationProgress latestProgress = [[progressValues lastObject] floatValue];
+	BXOperationProgress latestProgress = [progressValues.lastObject floatValue];
 	
 	if (latestProgress > 0)
 	{
-		[self setIndeterminate: NO];
+		self.indeterminate = NO;
 		//hdiutil expresses progress as a float percentage from 0 to 100
-		[self setCurrentProgress: latestProgress / 100.0f];
-		[self setBytesTransferred: ([self numBytes] * (double)[self currentProgress])];
+		self.currentProgress = latestProgress / 100.0f;
+		self.bytesTransferred = (self.numBytes * (double)self.currentProgress);
 		
 		NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
-							  [NSNumber numberWithUnsignedLongLong:	[self bytesTransferred]],	BXFileTransferBytesTransferredKey,
-							  [NSNumber numberWithUnsignedLongLong:	[self numBytes]],			BXFileTransferBytesTotalKey,
+							  [NSNumber numberWithUnsignedLongLong:	self.bytesTransferred],	BXFileTransferBytesTransferredKey,
+							  [NSNumber numberWithUnsignedLongLong:	self.numBytes],			BXFileTransferBytesTotalKey,
 							  nil];
 		[self _sendInProgressNotificationWithInfo: info];
 	}
@@ -254,7 +266,7 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 	//q.v. man hdiutil and search for -puppetstrings
 	else if (latestProgress == -1)
 	{
-		[self setIndeterminate: YES];
+		self.indeterminate = YES;
 		[self _sendInProgressNotificationWithInfo: nil];
 	}
 }
@@ -263,10 +275,11 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 - (BOOL) undoTransfer
 {
 	BOOL undid = NO;
-	if ([self importedDrivePath])
+    NSString *destinationPath = self.importedDrivePath;
+	if (destinationPath && _hasWrittenFiles)
 	{
 		NSFileManager *manager = [[NSFileManager alloc] init];
-		undid = [manager removeItemAtPath: [self importedDrivePath] error: nil];
+		undid = [manager removeItemAtPath: destinationPath error: nil];
         [manager release];
 	}
 	return undid;
@@ -279,7 +292,7 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 
 + (id) errorWithDrive: (BXDrive *)drive
 {
-	NSString *displayName = [drive title];
+	NSString *displayName = drive.title;
 	NSString *descriptionFormat = NSLocalizedString(@"The disc “%1$@” could not be converted into a disc image.",
 													@"Error shown when CD-image ripping fails for an unknown reason. %1$@ is the display title of the drive.");
 	
@@ -289,7 +302,9 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 							   [drive path], NSFilePathErrorKey,
 							   nil];
 	
-	return [NSError errorWithDomain: BXCDImageImportErrorDomain code: BXCDImageImportErrorRipFailed userInfo: userInfo];
+	return [NSError errorWithDomain: BXCDImageImportErrorDomain
+                               code: BXCDImageImportErrorRipFailed
+                           userInfo: userInfo];
 }
 @end
 
@@ -298,7 +313,7 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 
 + (id) errorWithDrive: (BXDrive *)drive
 {
-	NSString *displayName = [drive title];
+	NSString *displayName = drive.title;
 	NSString *descriptionFormat = NSLocalizedString(@"The disc “%1$@” could not be converted to a disc image because it is in use by another application.",
 													@"Error shown when CD-image ripping fails because the disc is in use. %1$@ is the display title of the drive.");
 	
@@ -311,6 +326,8 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 							   [drive path],	NSFilePathErrorKey,
 							   nil];
 	
-	return [NSError errorWithDomain: BXCDImageImportErrorDomain code: BXCDImageImportErrorDiscInUse userInfo: userInfo];
+	return [NSError errorWithDomain: BXCDImageImportErrorDomain
+                               code: BXCDImageImportErrorDiscInUse
+                           userInfo: userInfo];
 }
 @end

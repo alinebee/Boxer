@@ -17,6 +17,5 @@
 {
 	BXDrive *_drive;
 	NSString *_destinationFolder;
-	NSString *_importedDrivePath;
 }
 @end

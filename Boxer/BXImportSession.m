@@ -33,6 +33,7 @@
 #import "BXDrive.h"
 #import "BXCloseAlert.h"
 
+#import "BXFileTransferSet.h"
 #import "BXSingleFileTransfer.h"
 #import "BXDriveImport.h"
 #import "BXBinCueImageImport.h"
@@ -59,6 +60,7 @@
 
 @interface BXImportSession ()
 @property (readwrite, retain, nonatomic) NSArray *installerPaths;
+@property (readwrite, copy, nonatomic) NSString *configurationFilePath;
 @property (readwrite, copy, nonatomic) NSString *sourcePath;
 
 @property (readwrite, assign, nonatomic) BXImportStage importStage;
@@ -95,6 +97,7 @@
 @synthesize sourceFileImportOperation = _sourceFileImportOperation;
 @synthesize sourceFileImportType = _sourceFileImportType;
 @synthesize sourceFileImportRequired = _sourceFileImportRequired;
+@synthesize configurationFilePath = _configurationFilePath;
 
 
 #pragma mark -
@@ -107,6 +110,7 @@
     self.rootDrivePath = nil;
     self.installerPaths = nil;
     self.sourceFileImportOperation = nil;
+    self.configurationFilePath = nil;
     
 	[super dealloc];
 }
@@ -164,9 +168,14 @@
     if (scan.succeeded)
     {
         self.gameProfile = scan.detectedProfile;
-        self.sourcePath = scan.recommendedSourcePath;
+        self.sourcePath = (scan.mountedVolumePath) ? scan.mountedVolumePath : scan.basePath;
         
-        NSLog(@"Recommended source path: %@", scan.recommendedSourcePath);
+        //If the scan found DOSBox configuration files, choose one of those to guide the import process.
+        if (scan.DOSBoxConfigurations.count)
+        {
+            NSArray *configurationPaths = [self.sourcePath stringsByAppendingPaths: scan.DOSBoxConfigurations];
+            self.configurationFilePath = [self.class preferredConfigurationFileFromPaths: configurationPaths];
+        }
         
         //Record whether we ought to unmount a mounted volume after we're done.
         _didMountSourceVolume = scan.didMountVolume;
@@ -772,141 +781,223 @@
     //and we know we'll need to import something.
 	//Now we need to decide exactly what we're importing,
     //and how we should import it.
-	
-	BXDrive *driveToImport = nil;
-	BXOperation *importOperation = nil;
+    BXOperation *importOperation = nil;
 	BXSourceFileImportType importType = BXImportTypeUnknown;
-	
-	BOOL didInstallFiles = self.gameDidInstall;
-	BOOL isMountableImage = [workspace file: self.sourcePath
-                               matchesTypes: [BXAppController mountableImageTypes]];
-	BOOL isMountableFolder = !isMountableImage && [workspace file: self.sourcePath
-                                                     matchesTypes: [BXAppController mountableFolderTypes]];
-	
-	//If the source path is directly bundleable (it is an image or a mountable folder)
-	//then import it as a new drive into the gamebox.
-	if (isMountableImage || isMountableFolder)
-	{
-		driveToImport = [BXDrive driveFromPath: self.sourcePath atLetter: nil];
-		
-		//If the drive is marked as being for drive C, then check what we need to do with our original C drive
-		if ([driveToImport.letter isEqualToString: @"C"])
-		{	
-			//If any files were installed to the original C drive, then reset the import drive letter
-			//so that the drive will be imported alongside the existing C drive.
-			if (didInstallFiles)
-			{
-				driveToImport.letter = nil;
-			}
-			//Otherwise, delete the original empty C drive so we can replace it with this one
-			else
-			{
-				[manager removeItemAtPath: self.rootDrivePath error: nil];
-			}
-		}
-		
-		//Mark what kind of import we're doing based on what the autodetected drive type is
-		switch (driveToImport.type)
-		{
-			case BXDriveCDROM:
-				importType = (isMountableImage) ? BXImportFromCDImage : BXImportFromFolderToCD; break;
-			case BXDriveFloppyDisk:
-				importType = (isMountableImage) ? BXImportFromFloppyImage : BXImportFromFolderToFloppy; break;
-			default:
-				importType = (isMountableImage) ? BXImportFromHardDiskImage : BXImportFromFolderToHardDisk; break;
-		}
-		importOperation = [self importOperationForDrive: driveToImport startImmediately: NO];
+    BOOL didInstallFiles = self.gameDidInstall;
+    
+    //If we have a configuration file to work from, check it to see if it defines any drives.
+    //If so, we'll import those drives directly.
+    if (self.configurationFilePath)
+    {
+        BXEmulatorConfiguration *configuration = [BXEmulatorConfiguration configurationWithContentsOfFile:self.configurationFilePath error: nil];
+        
+        NSArray *mountCommands = [self.class mountCommandsFromConfiguration: configuration];
+        if (mountCommands.count)
+        {
+            NSString *configurationBasePath = self.configurationFilePath.stringByDeletingLastPathComponent;
+            
+            BXFileTransferSet *driveImportSet = [[[BXFileTransferSet alloc] init] autorelease];
+            driveImportSet.copyFiles = YES;
+            
+            for (NSString *mountCommand in mountCommands)
+            {
+                BXDrive *driveToImport = [BXEmulator driveFromMountCommand: mountCommand
+                                                                  basePath: configurationBasePath
+                                                                     error: nil];
+                
+                BXOperation <BXDriveImport> *driveImport = [self importOperationForDrive: driveToImport
+                                                                        startImmediately: NO];
+                
+                driveImport.delegate = nil;
+                
+                [driveImportSet.operations addObject: driveImport];
+                
+                //If a drive C was defined, then remove our gamebox's own drive C.
+                //FIXME: work out how to make this non-destructive if didInstallFiles is YES,
+                //i.e. if we ran an installer first that put its own files on drive C.
+                //(Currently this will never be the case, because the presence of a
+                //configuration file will stop the importer from offering to run an installer.
+                if ([driveToImport.letter isEqualToString: @"C"])
+                {
+                    [manager removeItemAtPath: self.rootDrivePath error: nil];
+                    self.rootDrivePath = driveImport.importedDrivePath;
+                }
+            }
+            
+            //Once all operations have been defined, run through them looking for nested drives:
+            //i.e. drives that are located within the file structure of another drive import operation.
+            for (BXOperation <BXDriveImport> *driveImport in driveImportSet.operations)
+            {
+                for (BXOperation <BXDriveImport> *otherDriveImport in driveImportSet.operations)
+                {
+                    if (driveImport == otherDriveImport) continue;
+                    
+                    NSString *path1 = driveImport.drive.path, *path2 = otherDriveImport.drive.path;
+                    
+                    if (![path1 isEqualToString: path2] && [path1 isRootedInPath: path2])
+                    {
+                        //Make the import for the nested drive dependent on the import for the containing drive,
+                        //so that it won't start until the other drive has been copied.
+                        [driveImport addDependency: otherDriveImport];
+                        
+                        //Change the source path for the nested drive to point to where the drive will
+                        //have ended up after the containing drive has been copied.
+                        NSString *relativeSourcePath = [path1 pathRelativeToPath: path2];
+                        NSString *intermediateSourcePath = [otherDriveImport.importedDrivePath stringByAppendingPathComponent: relativeSourcePath];
+                        
+                        driveImport.drive.path = intermediateSourcePath.stringByStandardizingPath;
+                        
+                        //Make the nested drive import into a move operation instead,
+                        //since the drive's files will have been copied along with the containing drive.
+                        driveImport.copyFiles = NO;
+                    }
+                }
+            }
+            
+            if (driveImportSet.operations.count)
+            {
+                importOperation = driveImportSet;
+                importType = BXImportFromDOSBoxConfiguration;
+            }
+        }
+    }
+    
+    //If no configuration file was available to guide importing,
+    //scan the source path itself to see how best to import it.
+    if (!importOperation)
+    {
+        BXDrive *driveToImport = nil;
+        
+        BOOL isMountableImage = [workspace file: self.sourcePath
+                                   matchesTypes: [BXAppController mountableImageTypes]];
+        BOOL isMountableFolder = !isMountableImage && [workspace file: self.sourcePath
+                                                         matchesTypes: [BXAppController mountableFolderTypes]];
+        
+        //If the source path is directly bundleable (it is an image or a mountable folder)
+        //then import it as a new drive into the gamebox.
+        if (isMountableImage || isMountableFolder)
+        {
+            driveToImport = [BXDrive driveFromPath: self.sourcePath atLetter: nil];
+            
+            //If the drive is marked as being for drive C, then check what we need to do with our original C drive
+            if ([driveToImport.letter isEqualToString: @"C"])
+            {	
+                //If any files were installed to the original C drive, then reset the import drive letter
+                //so that the drive will be imported alongside the existing C drive.
+                if (didInstallFiles)
+                {
+                    driveToImport.letter = nil;
+                }
+                //Otherwise, delete the original empty C drive so we can replace it with this one
+                else
+                {
+                    [manager removeItemAtPath: self.rootDrivePath error: nil];
+                }
+            }
+            
+            //Mark what kind of import we're doing based on what the autodetected drive type is
+            switch (driveToImport.type)
+            {
+                case BXDriveCDROM:
+                    importType = (isMountableImage) ? BXImportFromCDImage : BXImportFromFolderToCD; break;
+                case BXDriveFloppyDisk:
+                    importType = (isMountableImage) ? BXImportFromFloppyImage : BXImportFromFolderToFloppy; break;
+                default:
+                    importType = (isMountableImage) ? BXImportFromHardDiskImage : BXImportFromFolderToHardDisk; break;
+            }
+            importOperation = [self importOperationForDrive: driveToImport startImmediately: NO];
+        }
+        
+        //Otherwise, we need to decide if the source path represents an already-installed
+        //game folder (which should be imported directly to the C drive) or whether it
+        //represents the original install media (which should be imported as a separate
+        //CD-ROM/floppy disk.)
+        else
+        {
+            NSString *volumePath = [workspace volumeForPath: self.sourcePath];
+            NSString *volumeType = [workspace volumeTypeForPath: volumePath];
+            
+            BOOL isRealCDROM = [volumeType isEqualToString: dataCDVolumeType];
+            BOOL isRealFloppy = !isRealCDROM && [volumeType isEqualToString: FATVolumeType] && [workspace isFloppySizedVolumeAtPath: volumePath];
+            
+            //If the installer copied files to our C drive, or the source files are on
+            //a CDROM/floppy volume, then the source files presumably represent the original
+            //install media and should be imported as a new CD-ROM/floppy disk.
+            if (didInstallFiles || isRealCDROM || isRealFloppy)
+            {
+                NSString *pathToImport = self.sourcePath;
+                NSString *sourceImagePath = [workspace sourceImageForVolume: self.sourcePath];
+                BOOL isDiskImage = NO;
+            
+                //If the source path is on a DOSBox-compatible disk image, then import the image directly.
+                if (sourceImagePath && [workspace file: sourceImagePath matchesTypes: [BXAppController mountableImageTypes]])
+                {
+                    isDiskImage = YES;
+                    pathToImport = sourceImagePath;
+                }
+                
+                //If the source is an actual floppy disk, or this game expects to be installed off floppies,
+                //then import the source files as a floppy disk.
+                if (isRealFloppy || self.gameProfile.sourceDriveType == BXDriveFloppyDisk)
+                {
+                    if (isDiskImage)		importType = BXImportFromFloppyImage;
+                    else if (isRealFloppy)	importType = BXImportFromFloppyVolume;
+                    else					importType = BXImportFromFolderToFloppy;
+                    
+                    driveToImport = [BXDrive floppyDriveFromPath: pathToImport atLetter: @"A"];
+                }
+                //In all other cases, import the source files as a CD-ROM drive.
+                else
+                {
+                    if (isDiskImage)		importType = BXImportFromCDImage;
+                    else if (isRealCDROM)	importType = BXImportFromCDVolume;
+                    else					importType = BXImportFromFolderToCD;
+                
+                    driveToImport = [BXDrive CDROMFromPath: pathToImport atLetter: @"D"];
+                }
+                
+                importOperation = [self importOperationForDrive: driveToImport startImmediately: NO];
+            }
+            
+            //If the game didn't install anything and we're not importing a CD or floppy disk,
+            //then assume that the source files represent an already-installed game, and copy
+            //the source files directly into the gamebox's C drive.
+            else
+            {
+                importType = BXImportFromPreInstalledGame;
+                
+                //Guess whether the game files expect to be located in the root of drive C
+                //(GOG games, Steam games etc.) or in a subfolder within drive C
+                //(almost everything else)
+                BOOL needsSubfolder = [self.class shouldUseSubfolderForSourceFilesAtPath: self.sourcePath];
+                
+                if (needsSubfolder)
+                {
+                    //If we need to copy the source path into a subfolder of drive C,
+                    //then do this as a regular file copy rather than a drive import.
+                    
+                    NSString *subfolderName	= self.sourcePath.lastPathComponent;
+                    //Ensure the destination name will be DOSBox-compatible
+                    NSString *safeName = [self.class validDOSNameFromName: subfolderName];
+                    
+                    NSString *destination = [self.rootDrivePath stringByAppendingPathComponent: safeName];
+                    
+                    importOperation = [BXSingleFileTransfer transferFromPath: self.sourcePath
+                                                                      toPath: destination
+                                                                   copyFiles: YES];
+                }
+                else
+                {
+                    //Otherwise, remove the old empty C drive we created and import
+                    //the source path as a new C drive in its place.
+                    [manager removeItemAtPath: self.rootDrivePath error: nil];
+                    driveToImport	= [BXDrive hardDriveFromPath: self.sourcePath atLetter: @"C"];
+                    importOperation	= [self importOperationForDrive: driveToImport startImmediately: NO];
+                }
+            }
+        }
 	}
     
-    //Otherwise, we need to decide if the source path represents an already-installed
-    //game folder (which should be imported directly to the C drive) or whether it
-    //represents the original install media (which should be imported as a separate
-    //CD-ROM/floppy disk.)
-	else
-	{
-		NSString *volumePath = [workspace volumeForPath: self.sourcePath];
-		NSString *volumeType = [workspace volumeTypeForPath: volumePath];
-		
-		BOOL isRealCDROM = [volumeType isEqualToString: dataCDVolumeType];
-		BOOL isRealFloppy = !isRealCDROM && [volumeType isEqualToString: FATVolumeType] && [workspace isFloppySizedVolumeAtPath: volumePath];
-		
-		//If the installer copied files to our C drive, or the source files are on
-        //a CDROM/floppy volume, then the source files presumably represent the original
-        //install media and should be imported as a new CD-ROM/floppy disk.
-		if (didInstallFiles || isRealCDROM || isRealFloppy)
-		{
-			NSString *pathToImport = self.sourcePath;
-			NSString *sourceImagePath = [workspace sourceImageForVolume: self.sourcePath];
-			BOOL isDiskImage = NO;
-		
-			//If the source path is on a DOSBox-compatible disk image, then import the image directly.
-			if (sourceImagePath && [workspace file: sourceImagePath matchesTypes: [BXAppController mountableImageTypes]])
-			{
-				isDiskImage = YES;
-				pathToImport = sourceImagePath;
-			}
-			
-			//If the source is an actual floppy disk, or this game expects to be installed off floppies,
-			//then import the source files as a floppy disk.
-			if (isRealFloppy || self.gameProfile.sourceDriveType == BXDriveFloppyDisk)
-			{
-				if (isDiskImage)		importType = BXImportFromFloppyImage;
-				else if (isRealFloppy)	importType = BXImportFromFloppyVolume;
-				else					importType = BXImportFromFolderToFloppy;
-				
-				driveToImport = [BXDrive floppyDriveFromPath: pathToImport atLetter: @"A"];
-			}
-			//In all other cases, import the source files as a CD-ROM drive.
-			else
-			{
-				if (isDiskImage)		importType = BXImportFromCDImage;
-				else if (isRealCDROM)	importType = BXImportFromCDVolume;
-				else					importType = BXImportFromFolderToCD;
-			
-				driveToImport = [BXDrive CDROMFromPath: pathToImport atLetter: @"D"];
-			}
-			
-			importOperation = [self importOperationForDrive: driveToImport startImmediately: NO];
-		}
-		
-		//If the game didn't install anything and we're not importing a CD or floppy disk,
-		//then assume that the source files represent an already-installed game, and copy
-		//the source files directly into the gamebox's C drive.
-		else
-		{
-			importType = BXImportFromPreInstalledGame;
-			
-			//Guess whether the game files expect to be located in the root of drive C
-            //(GOG games, Steam games etc.) or in a subfolder within drive C
-            //(almost everything else)
-			BOOL needsSubfolder = [self.class shouldUseSubfolderForSourceFilesAtPath: self.sourcePath];
-			
-			if (needsSubfolder)
-			{
-				//If we need to copy the source path into a subfolder of drive C,
-				//then do this as a regular file copy rather than a drive import.
-				
-				NSString *subfolderName	= self.sourcePath.lastPathComponent;
-				//Ensure the destination name will be DOSBox-compatible
-				NSString *safeName = [self.class validDOSNameFromName: subfolderName];
-				
-				NSString *destination = [self.rootDrivePath stringByAppendingPathComponent: safeName];
-				
-				importOperation = [BXSingleFileTransfer transferFromPath: self.sourcePath
-																  toPath: destination
-															   copyFiles: YES];
-			}
-			else
-			{
-                //Otherwise, remove the old empty C drive we created and import
-                //the source path as a new C drive in its place.
-				[manager removeItemAtPath: self.rootDrivePath error: nil];
-				driveToImport	= [BXDrive hardDriveFromPath: self.sourcePath atLetter: @"C"];
-				importOperation	= [self importOperationForDrive: driveToImport startImmediately: NO];
-			}
-		}
-	}
-	
 	//Set up the import operation and start it running.
 	self.sourceFileImportType = importType;
 	self.sourceFileImportOperation = importOperation;
@@ -1038,48 +1129,16 @@
 	NSString *pathForDrives	= self.gamePackage.resourcePath;
     
     
-    //Import any bundled DOSBox configuration: converting any mount commands
-    //into drive imports, and any launch commands into a launcher batch file.
-    NSString *bundledConfigPath = [self.class preferredConfigurationFileInPath: self.rootDrivePath
-                                                                         error: nil];
-    
-    if (bundledConfigPath)
+    //Import any bundled DOSBox configuration: converting any launch commands into a launcher batch file.
+    if (self.configurationFilePath)
     {
-        BXEmulatorConfiguration *bundledConfig = [BXEmulatorConfiguration configurationWithContentsOfFile: bundledConfigPath error: nil];
+        BXEmulatorConfiguration *bundledConfig = [BXEmulatorConfiguration configurationWithContentsOfFile: self.configurationFilePath
+                                                                                                    error: nil];
         
         if (bundledConfig)
         {
             //Strip out all the junk we don't care about from the original game configuration.
             BXEmulatorConfiguration *sanitizedConfig = [self.class sanitizedVersionOfConfiguration: bundledConfig];
-            
-            //Import any drives that were mounted in the (original) autoexec.
-            NSArray *mountCommands = [self.class mountCommandsFromConfiguration: bundledConfig];
-            
-            //TWEAK: use the config's own dir as the base path for drive mounts instead
-            //of the root C drive, just in case there's a funny folder structure going on.
-            NSString *basePath = [bundledConfigPath stringByDeletingLastPathComponent];
-            
-            for (NSString *mountCommand in mountCommands)
-            {
-                BXDrive *drive = [BXEmulator driveFromMountCommand: mountCommand
-                                                          basePath: basePath
-                                                             error: nil];
-                
-                
-                //TWEAK: ignore drive C mounts, as we already have our drive C.
-                //(And if we fucked it up, then it's a bit late to change now.)
-                if (drive && ![drive.letter isEqualToString: @"C"])
-                {
-                    //TWEAK: Copy the drive files if they lie outside the gamebox,
-                    //otherwise move them.
-                    BOOL copy = ![drive.path isRootedInPath: self.gamePackage.bundlePath];
-                    BXOperation <BXDriveImport> *importOperation = [BXDriveImport importOperationForDrive: drive
-                                                                                            toDestination: pathForDrives
-                                                                                                copyFiles: copy];
-                    
-                    [importQueue addOperation: importOperation];
-                }
-            }
             
             //If the original autoexec contained any launch commands, convert those
             //into a launcher batchfile in the root drive: we then assign that as

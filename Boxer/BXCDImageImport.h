@@ -28,14 +28,13 @@ enum {
 	BXOperationProgress _currentProgress;
 	BOOL _indeterminate;
 	NSString *_destinationFolder;
-	NSString *_importedDrivePath;
+    BOOL _hasWrittenFiles;
 }
 
 @property (assign, readwrite) unsigned long long numBytes;
 @property (assign, readwrite) unsigned long long bytesTransferred;
 @property (assign, readwrite) BXOperationProgress currentProgress;
 @property (assign, readwrite, getter=isIndeterminate) BOOL indeterminate;
-@property (copy, readwrite) NSString *importedDrivePath;
 
 
 @end

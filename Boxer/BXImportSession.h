@@ -44,7 +44,8 @@ typedef enum {
 	BXImportFromHardDiskImage,			//Copying from a hard-disk image (currently unused)
 	BXImportFromFolderToCD,				//Converting a folder of game files into a fake CD
 	BXImportFromFolderToFloppy,			//Converting a folder of game files into a fake floppy
-	BXImportFromFolderToHardDisk		//Converting a folder of game files into a secondary hard disk
+	BXImportFromFolderToHardDisk,		//Converting a folder of game files into a secondary hard disk
+    BXImportFromDOSBoxConfiguration     //Converting a set of drives defined by a DOSBox configuration file.
 } BXSourceFileImportType;
 
 
@@ -56,6 +57,8 @@ typedef enum {
 	NSString *_sourcePath;
 	BXImportWindowController *_importWindowController;
 	NSArray *_installerPaths;
+    
+    NSString *_configurationFilePath;
 	
 	NSString *_rootDrivePath;
 	
@@ -79,14 +82,18 @@ typedef enum {
 
 
 //The source path from which we are installing the game.
-//This can only be set from confirmSourcePath:
 @property (readonly, copy, nonatomic) NSString *sourcePath;
+
+//The path of the DOSBox configuration file we will use for guiding the import.
+//Only used when a suitable configuration file has been found in the source path.
+@property (readonly, copy, nonatomic) NSString *configurationFilePath;
 
 //The range of possible DOS installers to choose from.
 @property (readonly, retain, nonatomic) NSArray *installerPaths;
 
 //The path of the installer we would choose as the default from among installerPaths.
 @property (readonly, nonatomic) NSString *preferredInstallerPath;
+
 
 //The display filename of the gamebox, minus extension.
 //Changing this will rename the gamebox file itself.

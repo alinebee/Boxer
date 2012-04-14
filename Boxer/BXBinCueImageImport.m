@@ -87,7 +87,7 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 
 + (BOOL) isSuitableForDrive: (BXDrive *)drive
 {
-	NSString *drivePath = [drive path];
+	NSString *drivePath = drive.path;
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	
 	NSString *volumePath = [workspace volumeForPath: drivePath];
@@ -114,10 +114,10 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 {
 	NSString *importedName = nil;
 	
-	importedName = [[[drive path] lastPathComponent] stringByDeletingPathExtension];
+	importedName = drive.path.lastPathComponent.stringByDeletingPathExtension;
 	
 	//If the drive has a letter, then prepend it in our standard format
-	if ([drive letter]) importedName = [NSString stringWithFormat: @"%@ %@", [drive letter], importedName];
+	if (drive.letter) importedName = [NSString stringWithFormat: @"%@ %@", drive.letter, importedName];
 	
 	importedName = [importedName stringByAppendingPathExtension: @"cdmedia"];
 	
@@ -144,16 +144,12 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 #pragma mark -
 #pragma mark Task execution
 
-- (BOOL) shouldPerformOperation
-{
-    return [super shouldPerformOperation] && [self drive] && [self destinationFolder];
-}
-
 - (void) performOperation
 {	
-	NSString *driveName			= [[self class] nameForDrive: [self drive]];
-	NSString *sourcePath		= [[self drive] path];
-	NSString *destinationPath	= [[self destinationFolder] stringByAppendingPathComponent: driveName];
+    _hasWrittenFiles = NO;
+    
+	NSString *sourcePath		= self.drive.path;
+	NSString *destinationPath	= self.importedDrivePath;
 	
 	NSString *tocName	= @"tracks.toc";
 	NSString *cueName	= @"tracks.cue";
@@ -168,7 +164,7 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 		NSError *unknownDeviceError = [NSError errorWithDomain: NSCocoaErrorDomain
 														  code: NSFileReadUnknownError
 													  userInfo: userInfo];
-		[self setError: unknownDeviceError];
+		self.error = unknownDeviceError;
 		return;
 	}
 	
@@ -179,14 +175,14 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 	DASessionRef session = DASessionCreate(kCFAllocatorDefault);
 	if (!session)
 	{
-		[self setError: [BXCDImageImportRipFailedError errorWithDrive: [self drive]]];
+		self.error = [BXCDImageImportRipFailedError errorWithDrive: self.drive];
 		return;
 	}
 	
-	DADiskRef disk = DADiskCreateFromBSDName(kCFAllocatorDefault, session, [baseDeviceName fileSystemRepresentation]);
+	DADiskRef disk = DADiskCreateFromBSDName(kCFAllocatorDefault, session, baseDeviceName.fileSystemRepresentation);
 	if (!disk)
 	{
-		[self setError: [BXCDImageImportRipFailedError errorWithDrive: [self drive]]];
+		self.error = [BXCDImageImportRipFailedError errorWithDrive: self.drive];
 		CFRelease(session);
 		return;
 	}
@@ -210,15 +206,14 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 	//If we couldn't determine those for whatever reason then fail early now
 	else
 	{
-		[self setError: [BXCDImageImportRipFailedError errorWithDrive: [self drive]]];
+		self.error = [BXCDImageImportRipFailedError errorWithDrive: self.drive];
 		CFRelease(disk);
 		CFRelease(session);
 		return;
 	}
 	
-	[self setNumBytes: diskSize];
-	
-	
+	self.numBytes = diskSize;
+    
 	//Create the .cdimage wrapper for the imported image, since it shouldn't exist yet.
 	NSError *destinationCreationError = nil;
 	BOOL createdDestination = [manager createDirectoryAtPath: destinationPath
@@ -228,15 +223,15 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 	//If it does exist, or we can't create it for some reason, then stop importing and fail with an error.
 	if (!createdDestination)
 	{
-		[self setError: destinationCreationError];
+		self.error = destinationCreationError;
 		CFRelease(disk);
 		CFRelease(session);
 		return;
 	}
 	
-	//At this point we have started creating data; we declare the imported path now
-	//so that we can clean it up in BXCDImageImport -undoTransfer if the import is aborted.
-	[self setImportedDrivePath: destinationPath];
+	//At this point we have started creating data; record this fact so that we will
+	//clean up our partial files in BXCDImageImport -undoTransfer if the import is aborted.
+	_hasWrittenFiles = YES;
 
 	
 	//Unmount the disc's volume without ejecting it, so that cdrdao can access the device exclusively.
@@ -245,8 +240,7 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 	//If we couldn't unmount the disc then assume it's still in use and fail.
 	if (!unmounted)
 	{
-		NSError *discInUse = [BXCDImageImportDiscInUseError errorWithDrive: [self drive]];
-		[self setError: discInUse];
+		self.error = [BXCDImageImportDiscInUseError errorWithDrive: self.drive];
 		
 		CFRelease(disk);
 		CFRelease(session);
@@ -262,7 +256,7 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 	//3 is the maximum error correction level, 0 disables error correction altogether.
 	//The three different types of error correct make negligible difference to the overall speed:
 	//they all take about twice as long compared to no error-detection.
-	NSString *errorCorrectionLevel = [self usesErrorCorrection] ? @"3" : @"0";
+	NSString *errorCorrectionLevel = (self.usesErrorCorrection) ? @"3" : @"0";
 	
 	//cdrdao uses relative paths in cuesheets as long as we use relative paths, which simplifies our job,
 	//so we provide just the file names as arguments and change the task's working directory to where
@@ -277,18 +271,18 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 						  tocName,
 						  nil];
 	
-	[cdrdao setCurrentDirectoryPath: destinationPath];
-	[cdrdao setLaunchPath:		cdrdaoPath];
-	[cdrdao setArguments:		arguments];
+	cdrdao.currentDirectoryPath = destinationPath;
+	cdrdao.launchPath = cdrdaoPath;
+	cdrdao.arguments = arguments;
 	
-	[self setTask: cdrdao];
+	self.task = cdrdao;
 	[cdrdao release];
 	
 	//Run the task to completion and monitor its progress
 	[self runTask];
 	
 	//If the image creation went smoothly, do final cleanup
-	if (![self error])
+	if (!self.error)
 	{
 		NSString *tocPath = [destinationPath stringByAppendingPathComponent: tocName];
 		NSString *cuePath = [destinationPath stringByAppendingPathComponent: cueName];
@@ -296,15 +290,10 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 		{
 			//Now, convert the TOC file to a CUE
 			NSTask *toc2cue = [[NSTask alloc] init];
-			NSString *toc2cuePath = [[NSBundle mainBundle] pathForResource: @"toc2cue" ofType: nil];
 			
-			[toc2cue setLaunchPath:	toc2cuePath];
-			[toc2cue setArguments:	[NSArray arrayWithObjects:
-									 tocPath,
-									 cuePath,
-									 nil]];
-			
-			[toc2cue setStandardOutput: [NSFileHandle fileHandleWithNullDevice]];
+			toc2cue.launchPath = [[NSBundle mainBundle] pathForResource: @"toc2cue" ofType: nil];
+			toc2cue.arguments = [NSArray arrayWithObjects: tocPath, cuePath, nil];
+			toc2cue.standardOutput = [NSFileHandle fileHandleWithNullDevice];
 			
 			//toc2cue takes hardly any time to run, so just block until it finishes.
 			[toc2cue launch];
@@ -316,16 +305,16 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
 			{
 				[manager removeItemAtPath: tocPath error: nil];
 			}
-			//Treat it as an error if the CUE file was not generated successfully.
+			//Treat it as a fatal error if the CUE file was not generated successfully.
 			else
 			{
-				[self setError: [BXCDImageImportRipFailedError errorWithDrive: [self drive]]];
+				self.error = [BXCDImageImportRipFailedError errorWithDrive: self.drive];
 			}
 		}
 		//If the TOC file wasn't created, something went wrong in the ripping process.
 		else
 		{
-			[self setError: [BXCDImageImportRipFailedError errorWithDrive: [self drive]]];
+			self.error = [BXCDImageImportRipFailedError errorWithDrive: self.drive];
 		}
 	}
     
@@ -339,49 +328,49 @@ BOOL _mountSynchronously(DASessionRef session, DADiskRef disk, CFURLRef path, DA
     
     //If the import failed for any reason (including cancellation),
     //then clean up the partial files.
-    if ([self error]) [self undoTransfer];
+    if (self.error) [self undoTransfer];
 }
 
 - (void) checkTaskProgress: (NSTimer *)timer
 {
-	if ([self numBytes] > 0)
+	if (self.numBytes > 0)
 	{
 		//Rather than bothering to parse the output of cdrdao, we just compare how large
 		//the image is so far to the total size of the original disk.
 		
-		NSString *imagePath = [[self importedDrivePath] stringByAppendingPathComponent: @"data.bin"]; 
-		unsigned long long imageSize = [[manager attributesOfItemAtPath: imagePath error: nil] fileSize];
+		NSString *imagePath = [self.importedDrivePath stringByAppendingPathComponent: @"data.bin"]; 
+		unsigned long long imageSize = [manager attributesOfItemAtPath: imagePath error: nil].fileSize;
 		
 		if (imageSize > 0)
 		{
 			//The image may end up being larger than the original volume, so cap the reported size.
-			imageSize = MIN(imageSize, [self numBytes]);
+			imageSize = MIN(imageSize, self.numBytes);
 			
-			[self setIndeterminate: NO];
-			[self setBytesTransferred: imageSize];
+			self.indeterminate = NO;
+			self.bytesTransferred = imageSize;
 			
-			BXOperationProgress progress = (float)[self bytesTransferred] / (float)[self numBytes];
+			BXOperationProgress progress = (float)self.bytesTransferred / (float)self.numBytes;
 			//Add a margin at either side of the progress to account for lead-in, cleanup and TOC conversion
 			//TODO: move this upstream into setCurrentProgress or somewhere
 			progress = 0.03f + (progress * 0.97f);
-			[self setCurrentProgress: progress];
+			self.currentProgress = progress;
 			
 			NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
-				[NSNumber numberWithUnsignedLongLong:	[self bytesTransferred]],	BXFileTransferBytesTransferredKey,
-				[NSNumber numberWithUnsignedLongLong:	[self numBytes]],			BXFileTransferBytesTotalKey,
+				[NSNumber numberWithUnsignedLongLong: self.bytesTransferred],	BXFileTransferBytesTransferredKey,
+				[NSNumber numberWithUnsignedLongLong: self.numBytes],			BXFileTransferBytesTotalKey,
 			nil];
 			
 			[self _sendInProgressNotificationWithInfo: info];
 		}
 		else
 		{
-			[self setIndeterminate: YES];
+			self.indeterminate = YES;
 			[self _sendInProgressNotificationWithInfo: nil];
 		}
 	}
 	else
 	{
-		[self setIndeterminate: YES];
+		self.indeterminate = YES;
 		[self _sendInProgressNotificationWithInfo: nil];
 	}
 }

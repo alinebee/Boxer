@@ -18,16 +18,10 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
 
 
 
-@interface BXDriveBundleImport ()
-@property (copy, readwrite) NSString *importedDrivePath;
-@end
-
-
 @implementation BXDriveBundleImport
 @synthesize drive = _drive;
 @synthesize copyFiles = _copyFiles;
 @synthesize destinationFolder = _destinationFolder;
-@synthesize importedDrivePath = _importedDrivePath;
 
 
 #pragma mark -
@@ -42,10 +36,10 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
 {
 	NSString *importedName = nil;
 	
-	importedName = [[[drive path] lastPathComponent] stringByDeletingPathExtension];
+	importedName = drive.path.lastPathComponent.stringByDeletingPathExtension;
 	
 	//If the drive has a letter, then prepend it in our standard format
-	if ([drive letter]) importedName = [NSString stringWithFormat: @"%@ %@", [drive letter], importedName];
+	if (drive.letter) importedName = [NSString stringWithFormat: @"%@ %@", drive.letter, importedName];
 	
 	importedName = [importedName stringByAppendingPathExtension: @"cdmedia"];
 	
@@ -54,16 +48,15 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
 
 + (BOOL) isSuitableForDrive: (BXDrive *)drive
 {
-	NSString *drivePath = [drive path];
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	
 	NSSet *cueTypes = [NSSet setWithObject: @"com.goldenhawk.cdrwin-cuesheet"];
 	
     //If OS X thinks the file's extension makes it a valid CUE file, treat it as a match.
-	if ([workspace file: drivePath matchesTypes: cueTypes]) return YES;
+	if ([workspace file: drive.path matchesTypes: cueTypes]) return YES;
     
     //If the file can be parsed as a CUE, treat it as a match too (catches renamed GOG images.)
-    if ([BXBinCueImage isCueAtPath: drivePath error: nil]) return YES;
+    if ([BXBinCueImage isCueAtPath: drive.path error: nil]) return YES;
 
 	return NO;
 }
@@ -77,21 +70,30 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
 {
 	if ((self = [super init]))
 	{
-		[self setDrive: drive];
-		[self setDestinationFolder: destinationFolder];
-		[self setCopyFiles: copy];
+        self.drive = drive;
+        self.destinationFolder = destinationFolder;
+        self.copyFiles = copy;
 	}
 	return self;
 }
 
 - (void) dealloc
 {
-	[self setDrive: nil], [_drive release];
-	[self setDestinationFolder: nil], [_destinationFolder release];
-	[self setImportedDrivePath: nil], [_importedDrivePath release];
+    self.drive = nil;
+    self.destinationFolder = nil;
+    
 	[super dealloc];
 }
 
+- (NSString *) importedDrivePath
+{
+    if (!self.drive || !self.destinationFolder) return nil;
+    
+	NSString *driveName			= [self.class nameForDrive: self.drive];
+	NSString *destinationPath	= [self.destinationFolder stringByAppendingPathComponent: driveName];
+    
+    return destinationPath;
+}
 
 #pragma mark -
 #pragma mark The actual operation, finally
@@ -99,17 +101,13 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
 
 - (BOOL) shouldPerformOperation
 {
-    return [super shouldPerformOperation] && [self drive] && [self destinationFolder];
+    return [super shouldPerformOperation] && self.drive && self.destinationFolder;
 }
 
 - (void) performOperation
-{   
-	NSString *driveName			= [[self class] nameForDrive: [self drive]];
-	
-	NSString *sourcePath		= [[self drive] path];
-	NSString *destinationPath	= [[self destinationFolder] stringByAppendingPathComponent: driveName];
-	
-	[self setImportedDrivePath: destinationPath];
+{	
+	NSString *sourcePath		= self.drive.path;
+	NSString *destinationPath	= self.importedDrivePath;
 	
 	NSError *readError = nil;
 	NSString *cueContents = [[[NSString alloc] initWithContentsOfFile: sourcePath
@@ -118,23 +116,23 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
     
 	if (!cueContents)
 	{
-		[self setError: readError];
+		self.error = readError;
 		return;
 	}
 	
 	NSArray *relatedPaths		= [BXBinCueImage rawPathsInCueContents: cueContents];
-	NSUInteger numRelatedPaths	= [relatedPaths count];
+	NSUInteger numRelatedPaths	= relatedPaths.count;
 	
     
     //Bail out if we aren't able to parse the source files from this cue.
     if (!numRelatedPaths)
     {
-        NSError *cueParseError = [BXDriveBundleCueParseError errorWithDrive: [self drive]];
+        NSError *cueParseError = [BXDriveBundleCueParseError errorWithDrive: self.drive];
         [self setError: cueParseError];
         return;
     }
     
-	if ([self isCancelled]) return;
+	if (self.isCancelled) return;
     
     //Work out what to do with the related file paths we've parsed from the cue file
     NSString *sourceBasePath = [sourcePath stringByDeletingLastPathComponent];
@@ -145,8 +143,8 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
         //Rewrite Windows-style paths
         NSString *sanitisedFromPath = [fromPath stringByReplacingOccurrencesOfString: @"\\" withString: @"/"];
         
-        NSString *fullFromPath	= [[sourceBasePath stringByAppendingPathComponent: sanitisedFromPath] stringByStandardizingPath];
-        NSString *fromName		= [fullFromPath lastPathComponent];
+        NSString *fullFromPath	= [sourceBasePath stringByAppendingPathComponent: sanitisedFromPath].stringByStandardizingPath;
+        NSString *fromName		= fullFromPath.lastPathComponent;
         NSString *fullToPath	= [destinationPath stringByAppendingPathComponent: fromName];
         
         [self addTransferFromPath: fullFromPath toPath: fullToPath];
@@ -157,16 +155,18 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
             [revisedPaths setObject: fromName forKey: fromPath];
     }
     
-    if ([self isCancelled]) return;
+    if (self.isCancelled) return;
     
     //Perform the standard file import
+    _hasWrittenFiles = NO;
     [super performOperation];
+    _hasWrittenFiles = YES;
     
-    if (![self error])
+    if (!self.error)
     {
         //Once the transfer's finished, generate a revised cue file and write it to the new bundle
         NSMutableString *revisedCue = [cueContents mutableCopy];
-        for (NSString *oldPath in [revisedPaths keyEnumerator])
+        for (NSString *oldPath in revisedPaths.keyEnumerator)
         {
             NSString *newPath = [revisedPaths objectForKey: oldPath];
             //FIXME: this could break the CUE file if an old filename is exactly
@@ -175,7 +175,7 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
             [revisedCue replaceOccurrencesOfString: oldPath
                                         withString: newPath
                                            options: NSLiteralSearch
-                                             range: NSMakeRange(0, [revisedCue length])];
+                                             range: NSMakeRange(0, revisedCue.length)];
         }
         
         NSString *finalCuePath = [destinationPath stringByAppendingPathComponent: @"tracks.cue"];
@@ -189,9 +189,9 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
         
         if (!cueWritten)
         {
-            [self setError: cueError];
+            self.error = cueError;
         }
-        else if (![self copyFiles])
+        else if (!self.copyFiles)
         {
             //If we were moving rather than copying, then delete the original
             //cue file once we've written the new one
@@ -203,17 +203,18 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
     
     //If the import failed for any reason (including cancellation),
     //then clean up the partial files.
-    if ([self error]) [self undoTransfer];
+    if (self.error) [self undoTransfer];
 }
 
 
 - (BOOL) undoTransfer
 {
 	BOOL undid = [super undoTransfer];
-	if ([self copyFiles] && [self importedDrivePath])
+    NSString *destinationPath = self.importedDrivePath;
+	if (self.copyFiles && destinationPath && _hasWrittenFiles)
 	{
 		NSFileManager *manager = [[NSFileManager alloc] init];
-		undid = [manager removeItemAtPath: [self importedDrivePath] error: nil];
+		undid = [manager removeItemAtPath: destinationPath error: nil];
         [manager release];
 	}
 	return undid;
@@ -225,7 +226,7 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
 
 + (id) errorWithDrive: (BXDrive *)drive
 {
-	NSString *displayName = [drive title];
+	NSString *displayName = drive.title;
 	NSString *descriptionFormat = NSLocalizedString(@"The image “%1$@” could not be imported because Boxer was unable to determine its source files.",
 													@"Error shown when drive bundle importing fails because the CUE file could not be parsed. %1$@ is the display title of the drive.");
 	

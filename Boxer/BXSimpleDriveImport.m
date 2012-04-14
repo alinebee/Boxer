@@ -12,14 +12,9 @@
 #import "NSWorkspace+BXFileTypes.h"
 
 
-@interface BXSimpleDriveImport ()
-@property (copy, readwrite) NSString *importedDrivePath;
-@end
-
 @implementation BXSimpleDriveImport
 @synthesize drive = _drive;
 @synthesize destinationFolder = _destinationFolder;
-@synthesize importedDrivePath = _importedDrivePath;
 
 
 #pragma mark -
@@ -38,7 +33,7 @@
 + (NSString *) nameForDrive: (BXDrive *)drive
 {
 	NSString *importedName = nil;
-	NSString *drivePath = [drive path];
+	NSString *drivePath = drive.path;
 	
 	NSFileManager *manager = [NSFileManager defaultManager];
 	BOOL isDir, exists = [manager fileExistsAtPath: drivePath isDirectory: &isDir];
@@ -53,17 +48,17 @@
         //we can just use their filename directly.
 		if ([workspace file: drivePath matchesTypes: readyTypes])
 		{
-			importedName = [drivePath lastPathComponent];
+			importedName = drivePath.lastPathComponent;
 		}
 		//Otherwise: if it's a directory, it will need to be renamed as a mountable folder.
 		else if (isDir)
 		{
-			importedName = [drive volumeLabel];
+			importedName = drive.volumeLabel;
 			
 			NSString *extension	= nil;
 			
 			//Give the mountable folder the proper file extension for its drive type
-			switch ([drive type])
+			switch (drive.type)
 			{
 				case BXDriveCDROM:
 					extension = @"cdrom";
@@ -84,12 +79,13 @@
         //TODO: validate that it is in fact an ISO image, once we have ISO parsing ready.
         else
         {
-            NSString *baseName = [[drivePath lastPathComponent] stringByDeletingPathExtension];
+            NSString *baseName = drivePath.lastPathComponent.stringByDeletingPathExtension;
             importedName = [baseName stringByAppendingPathExtension: @"iso"];
         }
 		
 		//If the drive has a letter, then prepend it in our standard format
-		if ([drive letter]) importedName = [NSString stringWithFormat: @"%@ %@", [drive letter], importedName];
+		if (drive.letter)
+            importedName = [NSString stringWithFormat: @"%@ %@", drive.letter, importedName];
 	}
 	return importedName;
 }
@@ -103,18 +99,18 @@
 {
 	if ((self = [super init]))
 	{
-		[self setDrive: drive];
-		[self setDestinationFolder: destinationFolder];
-		[self setCopyFiles: copy];
+		self.drive = drive;
+		self.destinationFolder = destinationFolder;
+		self.copyFiles = copy;
 	}
 	return self;
 }
 
 - (void) dealloc
 {
-	[self setDrive: nil], [_drive release];
-	[self setDestinationFolder: nil], [_destinationFolder release];
-	[self setImportedDrivePath: nil], [_importedDrivePath release];
+    self.drive = nil;
+    self.destinationFolder = nil;
+    
 	[super dealloc];
 }
 
@@ -122,54 +118,37 @@
 #pragma mark -
 #pragma mark The actual operation, finally
 
-- (void) setDrive: (BXDrive *)newDrive
+- (BOOL) shouldPerformOperation
 {
-    if (![_drive isEqual: newDrive])
-    {
-        [_drive release];
-        _drive = [newDrive retain];
-        
-        [self setSourcePath: [newDrive path]];
-    }
+    return self.drive && self.destinationFolder;
 }
 
-//Automatically populate the destination path the first time we need it,
-//based on the drive and destination folder.
-- (NSString *) destinationPath
+- (void) performOperation
 {
-    if (![super destinationPath] && [self drive] && [self destinationFolder])
-    {
-        NSString *driveName		= [[self class] nameForDrive: [self drive]];
-        NSString *destination	= [[self destinationFolder] stringByAppendingPathComponent: driveName];
-        
-        [self setDestinationPath: destination];
-    }
-    return [super destinationPath];
+    self.sourcePath = self.drive.path;
+    self.destinationPath = self.importedDrivePath;
+    
+    [super performOperation];
+}
+
+- (NSString *) importedDrivePath
+{
+    if (!self.drive || !self.destinationFolder) return nil;
+    
+	NSString *driveName			= [self.class nameForDrive: self.drive];
+	NSString *destinationPath	= [self.destinationFolder stringByAppendingPathComponent: driveName];
+    
+    return destinationPath;
 }
 
 - (void) didPerformOperation
 {
-    //If nothing went wrong, then populate the imported drive path once we're done.
-    if (![self error])
-    {
-        [self setImportedDrivePath: [self destinationPath]];
-    }
     //If the import failed for any reason (including cancellation),
     //then clean up the partial files.
-    else
+    if (self.error)
     {
         [self undoTransfer];
     }
-}
-
-- (BOOL) succeeded
-{
-    return [super succeeded] && [self importedDrivePath];
-}
-
-- (BOOL) undoTransfer
-{
-	return [super undoTransfer];
 }
 
 @end

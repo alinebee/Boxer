@@ -23,7 +23,7 @@ enum {
 {
 	BXDrive *_drive;
 	NSString *_destinationFolder;
-	NSString *_importedDrivePath;
+    BOOL _hasWrittenFiles;
 }
 
 @end

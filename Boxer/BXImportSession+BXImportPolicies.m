@@ -450,12 +450,6 @@ NSInteger filenameLengthSort(NSString *path1, NSString *path2, void *context)
         return NSOrderedSame;
 }
 
-+ (BOOL) isConfigurationFileAtPath: (NSString *)path
-{
-    return [[NSWorkspace sharedWorkspace] file: path
-                                  matchesTypes: [NSSet setWithObject: @"gnu.org.configuration-file"]];
-}
-
 + (NSString *) preferredConfigurationFileFromPaths: (NSArray *)paths
 {
     //Compare configuration filenames by length to determine the shortest
@@ -479,6 +473,12 @@ NSInteger filenameLengthSort(NSString *path1, NSString *path2, void *context)
     enumerator.fileTypes = [NSSet setWithObject: @"gnu.org.configuration-file"];
     
     return [self preferredConfigurationFileFromPaths: enumerator.allObjects];
+}
+
++ (BOOL) isConfigurationFileAtPath: (NSString *)path
+{
+    return [[NSWorkspace sharedWorkspace] file: path
+                                  matchesTypes: [NSSet setWithObject: @"gnu.org.configuration-file"]];
 }
 
 + (BXEmulatorConfiguration *) sanitizedVersionOfConfiguration: (BXEmulatorConfiguration *)configuration

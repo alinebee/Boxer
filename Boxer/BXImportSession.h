@@ -45,7 +45,6 @@ typedef enum {
 	BXImportFromFolderToCD,				//Converting a folder of game files into a fake CD
 	BXImportFromFolderToFloppy,			//Converting a folder of game files into a fake floppy
 	BXImportFromFolderToHardDisk,		//Converting a folder of game files into a secondary hard disk
-    BXImportFromDOSBoxConfiguration     //Converting a set of drives defined by a DOSBox configuration file.
 } BXSourceFileImportType;
 
 

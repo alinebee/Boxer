@@ -859,7 +859,7 @@
             if (driveImportSet.operations.count)
             {
                 importOperation = driveImportSet;
-                importType = BXImportFromDOSBoxConfiguration;
+                importType = BXImportFromPreInstalledGame;
             }
         }
     }

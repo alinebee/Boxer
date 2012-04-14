@@ -40,8 +40,8 @@
 {
 	if ((self = [super init]))
 	{
-		[self setPollInterval: BXOperationSetDefaultPollInterval];
-		[self setOperations: [NSMutableArray arrayWithCapacity: 5]];
+		self.pollInterval = BXOperationSetDefaultPollInterval;
+		self.operations = [NSMutableArray arrayWithCapacity: 5];
 	}
 	return self;
 }
@@ -51,15 +51,15 @@
 	if ((self = [self init]))
 	{
 		if (operations)
-			[self setOperations: [[operations mutableCopy] autorelease]];
+			self.operations = [[operations mutableCopy] autorelease];
 	}
 	return self;
 }
 
 - (void) dealloc
 {
-	[self setOperations: nil], [_operations release];
-	
+    self.operations = nil;
+    
 	[super dealloc];
 }
 
@@ -78,12 +78,12 @@
 	NSUInteger numOperations = 0;
 	BXOperationProgress totalProgress = 0.0f;
 	
-	for (BXOperation *operation in [self operations])
+	for (BXOperation *operation in self.operations)
 	{
 		//Only count the operation if it can report its progress
-		if (![operation isIndeterminate])
+		if (!operation.isIndeterminate)
 		{
-			totalProgress += [operation currentProgress];
+			totalProgress += operation.currentProgress;
 			numOperations++;			
 		}
 	}
@@ -98,22 +98,21 @@
 
 - (BOOL) isIndeterminate
 {
-	for (BXOperation *operation in [self operations])
+	for (BXOperation *operation in self.operations)
 	{
-		if ([operation isIndeterminate]) return YES;
+		if (!operation.isIndeterminate) return NO;
 	}
-	return NO;
+	return YES;
 }
 
 - (NSTimeInterval) timeRemaining
 {
 	NSTimeInterval totalRemaining = 0.0;
-	for (BXOperation *operation in [self operations])
+	for (BXOperation *operation in self.operations)
 	{
-		NSTimeInterval operationRemaining = [operation timeRemaining];
-		//If any of the operations cannot estimate its time, then throw out the whole estimate
-		if (operationRemaining == BXUnknownTimeRemaining) return BXUnknownTimeRemaining;
-		else totalRemaining += operationRemaining;
+		NSTimeInterval operationRemaining = operation.timeRemaining;
+		if (operationRemaining != BXUnknownTimeRemaining)
+            totalRemaining += operationRemaining;
 	}
 	return totalRemaining;
 }
@@ -124,12 +123,13 @@
 	NSOperationQueue *queue = [[NSOperationQueue alloc] init];
 
 	//Queue up all transfer operations before letting them all start at once
-	[queue setSuspended: YES];
-	for (NSOperation *operation in [self operations]) [queue addOperation: operation];
-	[queue setSuspended: NO];
+	queue.suspended = YES;
+	for (NSOperation *operation in self.operations)
+        [queue addOperation: operation];
+	queue.suspended = NO;
 	
 	//Use a timer to execute our polling method. (This also keeps the runloop below alive.)
-	NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval: [self pollInterval]
+	NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval: self.pollInterval
 													  target: self
 													selector: @selector(_postUpdateWithTimer:)
 													userInfo: queue
@@ -137,20 +137,20 @@
 	
 	
 	//Poll until all operations are finished, but cancel them all if we ourselves are cancelled.
-	while ([[queue operations] count] && [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode
-																  beforeDate: [NSDate dateWithTimeIntervalSinceNow: [self pollInterval]]])
+	while (queue.operations.count && [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode
+                                                               beforeDate: [NSDate dateWithTimeIntervalSinceNow: self.pollInterval]])
 	{
-		if ([self isCancelled]) [queue cancelAllOperations];
+		if (self.isCancelled) [queue cancelAllOperations];
 	}
 	[timer invalidate];
 	
-	if (![self error])
+	if (!self.error)
 	{
-		for (BXOperation *operation in [self operations])
+		for (BXOperation *operation in self.operations)
 		{
-			if ([operation error])
+			if (operation.error)
 			{
-				[self setError: error];
+				self.error = operation.error;
 				break;
 			}
 		}		

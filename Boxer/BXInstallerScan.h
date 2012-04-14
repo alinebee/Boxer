@@ -33,8 +33,8 @@
 @property (readonly, retain, nonatomic) NSArray *DOSBoxConfigurations;
 
 //The path which the scanner recommends as the base path to import from.
-//This will usually be the same as the base path to scan, but will differ
-//if an image was mounted during importing or a more likely game folder was found.
+//This will usually be the same as the base path, but may point to a mounted
+//volume instead if the base path was an image.
 @property (readonly, copy, nonatomic) NSString *recommendedSourcePath;
 
 //The profile of the game at the base path, used for discovery of additional installers.

@@ -127,31 +127,6 @@
 
 - (NSString *) recommendedSourcePath
 {
-    //If DOSBox configuration files were found during the scan,
-    //recommend their location as the source path to import - so long as there are DOS
-    //executable files located under that path too. This fits with GOG's release conventions.
-    if (self.DOSBoxConfigurations.count)
-    {
-        NSString *relativeConfigPath = [[self.DOSBoxConfigurations objectAtIndex: 0] stringByDeletingLastPathComponent];
-        
-        BOOL hasAdjacentExecutables = NO;
-        for (NSString *exePath in self.DOSExecutables)
-        {
-            if ([exePath isRootedInPath: relativeConfigPath])
-            {
-                hasAdjacentExecutables = YES;
-                break;
-            }
-        }
-        
-        if (hasAdjacentExecutables)
-        {
-            NSString *sourceBasePath = (self.mountedVolumePath) ? self.mountedVolumePath : self.basePath;
-            NSString *configBasePath = [sourceBasePath stringByAppendingPathComponent: relativeConfigPath];
-            return configBasePath;
-        }
-    }
-    
     //If we mounted a volume to scan it, recommend the mounted volume as the source to use.
     if (self.mountedVolumePath)
     {
@@ -162,7 +137,7 @@
 
 + (NSSet *) keyPathsForValuesAffectingRecommendedSourcePath
 {
-    return [NSSet setWithObjects: @"basePath", @"mountedVolumePath", @"DOSExecutables", @"DOSBoxConfigurations", nil];
+    return [NSSet setWithObjects: @"basePath", @"mountedVolumePath", nil];
 }
 
 //Overridden to scan the folder structure to determine a game profile before

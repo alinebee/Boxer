@@ -9,6 +9,7 @@
 #import "BXEventConstants.h"
 #import "BXDOSWindow.h"
 #import "BXBezelController.h"
+#import "BXEmulator+BXPaste.h"
 
 //For keycodes and input source methods
 #import <Carbon/Carbon.h>
@@ -80,14 +81,16 @@
     //Conditional behaviour for the ESC key:
 	if ([theEvent.charactersIgnoringModifiers isEqualToString: @"\e"])
     {
-        //Pressing ESC while text is being typed in (e.g. via a paste) will cancel the typing.
-        if (self._emulatedKeyboard.isTyping)
+        BXEmulator *emulator = self.representedObject.emulator;
+        
+        //Pressing ESC while text is being pasted will clear any remaining pasted text.
+        if (emulator.hasPendingPaste)
         {
-            [self._emulatedKeyboard cancelTyping];
+            [emulator cancelPaste];
             return;
         }
         //Pressing ESC while in fullscreen mode and not running a program, will exit fullscreen mode.
-        else if (self._windowController.window.isFullScreen && self.representedObject.emulator.isAtPrompt)
+        else if (self._windowController.window.isFullScreen && emulator.isAtPrompt)
         {
             [NSApp sendAction: @selector(exitFullScreen:) to: nil from: self];
             return;

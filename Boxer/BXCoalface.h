@@ -111,6 +111,15 @@ extern "C" {
 	//Called from dos_keyboard_layout.cpp: provides the current OS X keyboard layout as a DOSBox layout code.
 	const char * boxer_preferredKeyboardLayout();
     
+    //Returns how many BIOS keycodes Boxer has stored in its internal key buffer.
+    Bitu boxer_numKeyCodesInPasteBuffer();
+    
+    //Populates outKeyCode with the next keycode from Boxer's internal key buffer if available.
+    //Returns true if a key code was retrieved, or false otherwise.
+    //If consumeKey is true, the key will be removed from the buffer as it is read.
+    bool boxer_getNextKeyCodeInPasteBuffer(Bit16u *outKeyCode, bool consumeKey);
+    
+    
     void boxer_log(char const* format,...);
     void boxer_die(char const *functionName, char const *fileName, int lineNumber, char const* format,...);
     

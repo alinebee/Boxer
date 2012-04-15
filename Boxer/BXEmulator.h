@@ -63,6 +63,7 @@ extern NSString * const shellProcessPath;
 @class BXVideoHandler;
 @class BXEmulatedKeyboard;
 @class BXEmulatedMouse;
+@class BXKeyBuffer;
 
 @protocol BXEmulatedJoystick;
 @protocol BXEmulatorDelegate;
@@ -78,7 +79,6 @@ extern NSString * const shellProcessPath;
 	BXEmulatedKeyboard *keyboard;
 	BXEmulatedMouse *mouse;
 	id <BXEmulatedJoystick> joystick;
-    
     
     BOOL joystickActive;
     
@@ -110,6 +110,7 @@ extern NSString * const shellProcessPath;
 	//The queue of commands we are waiting to execute at the DOS prompt.
     //Managed by BXShell.
 	NSMutableArray *commandQueue;
+    BXKeyBuffer *_keyBuffer;
     
     //Managed by BXAudio.
     id <BXMIDIDevice> activeMIDIDevice;
@@ -129,6 +130,9 @@ extern NSString * const shellProcessPath;
 @property (readonly, retain) BXEmulatedKeyboard *keyboard;       //Our emulated keyboard.
 @property (readonly, retain) BXEmulatedMouse *mouse;             //Our emulated mouse.
 @property (retain) id <BXEmulatedJoystick> joystick;             //Our emulated joystick. Initially empty.
+
+//The keybuffer we use for pasting text into DOS.
+@property (readonly, retain) BXKeyBuffer *keyBuffer;
 
 //The OS X filesystem path to which the emulator should resolve relative local filesystem paths.
 //This is used by DOSBox commands like MOUNT, IMGMOUNT and CONFIG, and is directly equivalent

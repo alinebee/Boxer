@@ -266,6 +266,26 @@ const char * boxer_preferredKeyboardLayout()
     else return NULL;
 }
 
+Bitu boxer_numKeyCodesInPasteBuffer()
+{
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+    return emulator.keyBuffer.count;
+}
+
+bool boxer_getNextKeyCodeInPasteBuffer(Bit16u *outKeyCode, bool consumeKey)
+{
+	BXEmulator *emulator = [BXEmulator currentEmulator];
+    
+    UInt16 keyCode = (consumeKey) ? emulator.keyBuffer.nextKey : emulator.keyBuffer.currentKey;
+    if (keyCode != BXNoKey)
+    {
+        *outKeyCode = keyCode;
+        return true;
+    }
+    else return false;
+}
+
+
 void boxer_setMouseActive(bool mouseActive)
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];

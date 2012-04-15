@@ -169,6 +169,11 @@ static void add_key(Bit16u code) {
 }
 
 static bool get_key(Bit16u &code) {
+    //--Added 2012-04-15 to let Boxer insert its own keys
+    if (boxer_getNextKeyCodeInPasteBuffer(&code, true))
+        return true;
+    //--End of modifications
+    
 	Bit16u start,end,head,tail,thead;
 	if (machine==MCH_PCJR) {
 		/* should be done for cga and others as well, to be tested */
@@ -186,10 +191,16 @@ static bool get_key(Bit16u &code) {
 	if (thead>=end) thead=start;
 	mem_writew(BIOS_KEYBOARD_BUFFER_HEAD,thead);
 	code = real_readw(0x40,head);
+    
 	return true;
 }
 
 static bool check_key(Bit16u &code) {
+    //--Added 2012-04-15 to let Boxer insert its own keys
+    if (boxer_getNextKeyCodeInPasteBuffer(&code, false))
+        return true;
+    //--End of modifications
+    
 	Bit16u head,tail;
 	head =mem_readw(BIOS_KEYBOARD_BUFFER_HEAD);
 	tail =mem_readw(BIOS_KEYBOARD_BUFFER_TAIL);
@@ -233,6 +244,7 @@ static bool check_key(Bit16u &code) {
 
 /* the scancode is in reg_al */
 static Bitu IRQ1_Handler(void) {
+    printf("IRQ1 BABY\n");
 /* handling of the locks key is difficult as sdl only gives
  * states for numlock capslock. 
  */

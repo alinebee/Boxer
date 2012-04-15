@@ -11,6 +11,12 @@
 
 @interface BXEmulator (BXPaste)
 
+//Returns whether there is any pasted text that hasn't yet been consumed by the DOS process.
+- (BOOL) hasPendingPaste;
+
+//Clear any pasted text that hasn't yet been consumed by the DOS process.
+- (void) cancelPaste;
+
 //Accepts a string of characters, and deals with how best to paste it into DOS.
 //Returns YES if the string was handled, NO otherwise.
 - (BOOL) handlePastedString: (NSString *)pastedString;

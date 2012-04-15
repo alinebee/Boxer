@@ -290,6 +290,7 @@
 		9F9A4CA610F67DD800E61965 /* Preferences.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A4CA410F67DD800E61965 /* Preferences.xib */; };
 		9F9A4CA910F6824B00E61965 /* BXFilterGallery.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9A4CA810F6824B00E61965 /* BXFilterGallery.m */; };
 		9F9AEE8914CB4AEA00728641 /* BXAppKitVersionHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9AEE8814CB4AEA00728641 /* BXAppKitVersionHelpers.m */; };
+		9F9DF415153B058200233968 /* BXKeyBuffer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9F9DF414153B058200233968 /* BXKeyBuffer.mm */; };
 		9F9E27C511F8C003003EE8F3 /* BXThemedSegmentedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9E27C411F8C003003EE8F3 /* BXThemedSegmentedCell.m */; };
 		9F9E27D611F8C173003EE8F3 /* BXDrivePanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9E27D511F8C173003EE8F3 /* BXDrivePanelController.m */; };
 		9F9FE70410FA5F5800E3944B /* NSWorkspace+BXIcons.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F9FE70310FA5F5800E3944B /* NSWorkspace+BXIcons.m */; };
@@ -996,6 +997,8 @@
 		9F9A4CA810F6824B00E61965 /* BXFilterGallery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXFilterGallery.m; sourceTree = "<group>"; };
 		9F9AEE8714CB4AEA00728641 /* BXAppKitVersionHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXAppKitVersionHelpers.h; sourceTree = "<group>"; };
 		9F9AEE8814CB4AEA00728641 /* BXAppKitVersionHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXAppKitVersionHelpers.m; sourceTree = "<group>"; };
+		9F9DF413153B058200233968 /* BXKeyBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXKeyBuffer.h; sourceTree = "<group>"; };
+		9F9DF414153B058200233968 /* BXKeyBuffer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXKeyBuffer.mm; sourceTree = "<group>"; };
 		9F9E27C311F8C003003EE8F3 /* BXThemedSegmentedCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXThemedSegmentedCell.h; sourceTree = "<group>"; };
 		9F9E27C411F8C003003EE8F3 /* BXThemedSegmentedCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXThemedSegmentedCell.m; sourceTree = "<group>"; };
 		9F9E27D411F8C173003EE8F3 /* BXDrivePanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDrivePanelController.h; sourceTree = "<group>"; };
@@ -1543,6 +1546,8 @@
 				9F34BE3E142B700100A69FAF /* BXCoalfaceAudio.mm */,
 				9F3E57A313F694B40070A14D /* BXEmulatorErrors.h */,
 				9F3E57A413F694B40070A14D /* BXEmulatorErrors.m */,
+				9F9DF413153B058200233968 /* BXKeyBuffer.h */,
+				9F9DF414153B058200233968 /* BXKeyBuffer.mm */,
 			);
 			comments = "The sourcefiles in this group interface directly with DOSBox's internals. For this reason, they need to be compiled as Objective C++ rather than Objective C.";
 			name = Emulator;
@@ -3176,6 +3181,7 @@
 				9F8F374F14F9442D00E482FB /* BXAppController+BXHotKeys.m in Sources */,
 				9F1DE9B214FB7F3800F9C91E /* NSObject+BXPerformExtensions.m in Sources */,
 				9FD8BEE414FFF7660073B4EC /* BXExternalMIDIDevice+BXGeneralMIDISysexes.m in Sources */,
+				9F9DF415153B058200233968 /* BXKeyBuffer.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

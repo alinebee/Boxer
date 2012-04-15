@@ -20,6 +20,7 @@
 #import "BXEmulatedKeyboard.h"
 #import "BXEmulatedJoystick.h"
 #import "BXEmulatedMouse.h"
+#import "BXKeyBuffer.h"
 #import "BXAudioSource.h"
 #import "BXCoalfaceAudio.h"
 
@@ -103,6 +104,7 @@ enum {
 @property (readwrite, retain) BXVideoHandler *videoHandler;
 @property (readwrite, retain) BXEmulatedKeyboard *keyboard;
 @property (readwrite, retain) BXEmulatedMouse *mouse;
+@property (readwrite, retain) BXKeyBuffer *keyBuffer;
 
 @end
 

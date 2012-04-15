@@ -97,6 +97,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 
 @synthesize activeMIDIDevice, requestedMIDIDeviceDescription, autodetectsMT32;
 @synthesize masterVolume;
+@synthesize keyBuffer = _keyBuffer;
 
 
 #pragma mark -
@@ -178,6 +179,8 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
         
         self.videoHandler = [[[BXVideoHandler alloc] init] autorelease];
 		self.videoHandler.emulator = self;
+        
+        self.keyBuffer = [[[BXKeyBuffer alloc] init] autorelease];
     }
 	return self;
 }
@@ -192,6 +195,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
     self.mouse = nil;
     self.joystick = nil;
     self.videoHandler = nil;
+    self.keyBuffer = nil;
     
 	[driveCache release], driveCache = nil;
 	[commandQueue release], commandQueue = nil;

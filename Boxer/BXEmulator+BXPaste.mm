@@ -8,11 +8,28 @@
 
 #import "BXEmulator+BXPaste.h"
 #import "BXEmulatedKeyboard.h"
+#import "BXKeyBuffer.h"
 
 @implementation BXEmulator (BXPaste)
 
+- (BOOL) hasPendingPaste
+{
+    return (self.keyBuffer.count > 0);
+    //return self.keyboard.isTyping;
+}
+
+- (void) cancelPaste
+{
+    [self.keyBuffer empty];
+    //[self.keyboard cancelTyping];
+}
+
 - (BOOL) handlePastedString: (NSString *)pastedString
 {
+    [self.keyBuffer addKeysForCharacters: pastedString];
+    return YES;
+    
+    /*
     //While we're at the DOS prompt, we can use a more streamlined method for pasting text.
 	if ([self isAtPrompt])
 	{
@@ -39,6 +56,7 @@
         [[self keyboard] typeCharacters: pastedString];
     }
     return YES;
+     */
 }
 
 - (BOOL) canAcceptPastedString: (NSString *)pastedString

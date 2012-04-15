@@ -197,11 +197,7 @@
 {
     NSAssert(key != BXNoKey, @"Unrecognised key passed to addKeyForBIOSKeyCode:.");
     
-    BIOS_AddKeyToBuffer(key);
-    
-    if (machine==MCH_PCJR) PIC_ActivateIRQ(6);
-	else PIC_ActivateIRQ(1);
-    return YES;
+    //return BIOS_AddKeyToBuffer(key);
     
     NSUInteger nextAddIndex = (_addIndex + 1) % BXKeyBufferSize;
     

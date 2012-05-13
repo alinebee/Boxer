@@ -221,10 +221,10 @@
 - (NSArray *) allDrives
 {
     NSMutableArray *allDrives = [NSMutableArray arrayWithCapacity: 10];
-    NSArray *sortedLetters = [[drives allKeys] sortedArrayUsingSelector: @selector(compare:)];
+    NSArray *sortedLetters = [self.drives.allKeys sortedArrayUsingSelector: @selector(compare:)];
     for (NSString *letter in sortedLetters)
     {
-        NSArray *queue = [drives objectForKey: letter];
+        NSArray *queue = [self.drives objectForKey: letter];
         [allDrives addObjectsFromArray: queue];
     }
     return allDrives;
@@ -232,7 +232,7 @@
 
 - (NSArray *) mountedDrives
 {
-    return [emulator mountedDrives];
+    return self.emulator.mountedDrives;
 }
 
 + (NSSet *) keyPathsForValuesAffectingAllDrives
@@ -247,20 +247,20 @@
 
 - (BOOL) driveIsMounted: (BXDrive *)drive
 {
-    return ([[emulator mountedDrives] containsObject: drive]);
+    return ([self.mountedDrives containsObject: drive]);
 }
 
 - (void) enqueueDrive: (BXDrive *)drive
 {
-    NSString *letter = [drive letter];
+    NSString *letter = drive.letter;
     NSAssert1(letter != nil, @"Drive %@ passed to enqueueDrive had no letter assigned.", drive);
     
     [self willChangeValueForKey: @"drives"];
-    NSMutableArray *queue = [drives objectForKey: letter];
+    NSMutableArray *queue = [self.drives objectForKey: letter];
     if (!queue)
     {
         queue = [NSMutableArray arrayWithObject: drive];
-        [drives setObject: queue forKey: letter];
+        [_drives setObject: queue forKey: letter];
     }
     else if (![queue containsObject: drive])
     {
@@ -283,7 +283,7 @@
     NSAssert1(letter != nil, @"Drive %@ passed to dequeueDrive had no letter assigned.", drive);
     
     [self willChangeValueForKey: @"drives"];
-    [[drives objectForKey: letter] removeObject: drive];
+    [[self.drives objectForKey: letter] removeObject: drive];
     [self didChangeValueForKey: @"drives"];
     
 }
@@ -291,10 +291,10 @@
 - (void) replaceQueuedDrive: (BXDrive *)oldDrive
                   withDrive: (BXDrive *)newDrive
 {
-    NSString *letter = [newDrive letter];
+    NSString *letter = newDrive.letter;
     NSAssert1(letter != nil, @"Drive %@ passed to replaceQueuedDrive:withDrive: had no letter assigned.", newDrive);
     
-    NSMutableArray *queue = [drives objectForKey: letter];
+    NSMutableArray *queue = [self.drives objectForKey: letter];
     NSUInteger oldDriveIndex = [queue indexOfObject: oldDrive];
     
     //If there was no queue to start with, or the old drive wasn't queued,
@@ -320,24 +320,24 @@
 
 - (NSUInteger) indexOfQueuedDrive: (BXDrive *)drive
 {
-    NSString *letter = [drive letter];
+    NSString *letter = drive.letter;
     if (!letter) return NSNotFound;
     
-    NSArray *queue = [drives objectForKey: letter];
+    NSArray *queue = [self.drives objectForKey: letter];
     return [queue indexOfObject: drive];
 }
 
 - (BXDrive *) siblingOfQueuedDrive: (BXDrive *)drive
                           atOffset: (NSInteger)offset
 {
-    NSString *letter = [drive letter];
+    NSString *letter = drive.letter;
     if (!letter) return nil;
     
-    NSArray *queue = [drives objectForKey: letter];
+    NSArray *queue = [self.drives objectForKey: letter];
     NSUInteger queueIndex = [queue indexOfObject: drive];
     if (queueIndex == NSNotFound) return nil;
     
-    NSUInteger siblingIndex = (queueIndex + offset) % [queue count];
+    NSUInteger siblingIndex = (queueIndex + offset) % queue.count;
     return [queue objectAtIndex: siblingIndex];
 }
 
@@ -732,14 +732,14 @@
 	
 	if (tempDrivePath)
 	{
-		temporaryFolderPath = [tempDrivePath retain];
+		self.temporaryFolderPath = tempDrivePath;
 		
 		BXDrive *tempDrive = [BXDrive hardDriveFromPath: tempDrivePath atLetter: tempDriveLetter];
         [tempDrive setTitle: NSLocalizedString(@"Temporary Files", @"The display title for Boxer’s temp drive.")];
         
         //Hide and lock the temp drive so that it cannot be ejected and will not appear in the drive inspector.
-		[tempDrive setLocked: YES];
-		[tempDrive setHidden: YES];
+		tempDrive.locked = YES;
+		tempDrive.hidden = YES;
 		
         //Replace any existing drive at the same letter, and don't show any notifications
 		tempDrive = [self mountDrive: tempDrive
@@ -749,7 +749,7 @@
 		
 		if (tempDrive)
 		{
-			NSString *tempPath = [NSString stringWithFormat: @"%@:\\", [tempDrive letter], nil];
+			NSString *tempPath = [NSString stringWithFormat: @"%@:\\", tempDrive.letter, nil];
 			[theEmulator setVariable: @"temp"	to: tempPath	encoding: BXDirectStringEncoding];
 			[theEmulator setVariable: @"tmp"	to: tempPath	encoding: BXDirectStringEncoding];
 		}
@@ -1143,13 +1143,13 @@
 - (BXDrive *) principalDrive
 {
 	//Prioritise drive C, if it's available and has executables on it
-	if ([[executables objectForKey: @"C"] count]) return [emulator driveAtLetter: @"C"];
+	if ([[self.executables objectForKey: @"C"] count]) return [self.emulator driveAtLetter: @"C"];
     
 	//Otherwise through all the mounted drives and return the first one that we have programs for.
-    NSArray *sortedLetters = [[executables allKeys] sortedArrayUsingSelector: @selector(compare:)];
+    NSArray *sortedLetters = [self.executables.allKeys sortedArrayUsingSelector: @selector(compare:)];
 	for (NSString *letter in sortedLetters)
 	{
-		if ([[executables objectForKey: letter] count]) return [emulator driveAtLetter: letter];
+		if ([[self.executables objectForKey: letter] count]) return [self.emulator driveAtLetter: letter];
 	}
 	return nil;
 }
@@ -1161,8 +1161,8 @@
 
 - (NSArray *) programPathsOnPrincipalDrive
 {
-	NSString *driveLetter = [[self principalDrive] letter];
-	if (driveLetter) return [executables objectForKey: driveLetter];
+	NSString *driveLetter = self.principalDrive.letter;
+	if (driveLetter) return [self.executables objectForKey: driveLetter];
 	else return nil;
 }
 
@@ -1194,22 +1194,22 @@
 	[center addObserver: self
 			   selector: @selector(filesystemDidChange:)
 				   name: UKFileWatcherWriteNotification
-				 object: watcher];
+				 object: self.watcher];
 	
 	[center addObserver: self
 			   selector: @selector(filesystemDidChange:)
 				   name: UKFileWatcherDeleteNotification
-				 object: watcher];
+				 object: self.watcher];
 	
 	[center addObserver: self
 			   selector: @selector(filesystemDidChange:)
 				   name: UKFileWatcherRenameNotification
-				 object: watcher];
+				 object: self.watcher];
 	
 	[center addObserver: self
 			   selector: @selector(filesystemDidChange:)
 				   name: UKFileWatcherAccessRevocationNotification
-				 object: watcher];
+				 object: self.watcher];
 }
 
 - (void) _deregisterForFilesystemNotifications
@@ -1220,10 +1220,10 @@
 	[center removeObserver: self name: NSWorkspaceDidMountNotification		object: workspace];
 	[center removeObserver: self name: NSWorkspaceDidUnmountNotification	object: workspace];
 	[center removeObserver: self name: NSWorkspaceWillUnmountNotification	object: workspace];
-	[center removeObserver: self name: UKFileWatcherWriteNotification		object: watcher];
-	[center removeObserver: self name: UKFileWatcherDeleteNotification		object: watcher];
-	[center removeObserver: self name: UKFileWatcherRenameNotification		object: watcher];
-	[center removeObserver: self name: UKFileWatcherAccessRevocationNotification object: watcher];
+	[center removeObserver: self name: UKFileWatcherWriteNotification		object: self.watcher];
+	[center removeObserver: self name: UKFileWatcherDeleteNotification		object: self.watcher];
+	[center removeObserver: self name: UKFileWatcherRenameNotification		object: self.watcher];
+	[center removeObserver: self name: UKFileWatcherAccessRevocationNotification object: self.watcher];
 }
 
 - (void) volumeDidMount: (NSNotification *)theNotification
@@ -1243,7 +1243,7 @@
 - (void) _handleVolumeDidMount: (NSNotification *)theNotification
 {
 	//Don't respond to mounts if the emulator isn't actually running
-	if (![self isEmulating]) return;
+	if (!self.isEmulating) return;
 	
 	//Ignore mounts if we currently have the mount panel open;
 	//we assume that the user will want to handle the new volume manually.
@@ -1266,9 +1266,9 @@
     //Ignore mount if we're scanning this volume for executables:
     //this indicates that the scan is responsible for the mount,
     //and it's not a user-mounted drive.
-    for (BXExecutableScan *scan in [scanQueue operations])
+    for (BXExecutableScan *scan in self.scanQueue.operations)
     {
-        if ([[scan mountedVolumePath] isEqualToString: volumePath]) return;
+        if ([scan.mountedVolumePath isEqualToString: volumePath]) return;
     }
     
 	//Only mount volumes that are of an appropriate type
@@ -1281,9 +1281,9 @@
 	//Only mount FAT volumes that are floppy-sized
 	if ([volumeType isEqualToString: FATVolumeType] && ![workspace isFloppySizedVolumeAtPath: volumePath]) return;
 	
-	NSString *mountPoint = [[self class] preferredMountPointForPath: volumePath];
+	NSString *mountPoint = [self.class preferredMountPointForPath: volumePath];
     
-	if ([[self emulator] pathIsMountedAsDrive: mountPoint]) return;
+	if ([self.emulator pathIsMountedAsDrive: mountPoint]) return;
 	
     //If an existing drive corresponds to this volume already,
     //then mount it if it's not already
@@ -1397,26 +1397,27 @@
 
 - (void) emulatorDidUnmountDrive: (NSNotification *)theNotification
 {
-	BXDrive *drive = [[theNotification userInfo] objectForKey: @"drive"];
+	BXDrive *drive = [theNotification.userInfo objectForKey: @"drive"];
 	
     //Flag the drive as no longer being mounted
-    [drive setMounted: NO];
+    drive.mounted = NO;
     
     //Stop scanning for executables on the drive
     [self cancelExecutableScanForDrive: drive];
     
-	if (![drive isInternal])
+	if (!drive.isInternal)
 	{
-		NSString *path = [drive path];
+		NSString *path = drive.path;
 		//Stop tracking for changes on the drive, if there are no other drives mapping to that path either.
-		if (![[self emulator] pathIsDOSAccessible: path]) [self _stopTrackingChangesAtPath: path];
+		if (![self.emulator pathIsDOSAccessible: path])
+            [self _stopTrackingChangesAtPath: path];
 	}
 	
     //Remove the cached executable list when the drive is unmounted
-	if ([executables objectForKey: [drive letter]])
+	if ([self.executables objectForKey: drive.letter])
 	{
 		[self willChangeValueForKey: @"executables"];
-		[executables removeObjectForKey: [drive letter]];
+		[_executables removeObjectForKey: drive.letter];
 		[self didChangeValueForKey: @"executables"];
 	}
 }
@@ -1424,12 +1425,12 @@
 //Pick up on the creation of new executables
 - (void) emulatorDidCreateFile: (NSNotification *)notification
 {
-	BXDrive *drive = [[notification userInfo] objectForKey: @"drive"];
-	NSString *path = [[notification userInfo] objectForKey: @"path"];
+	BXDrive *drive = [notification.userInfo objectForKey: @"drive"];
+	NSString *path = [notification.userInfo objectForKey: @"path"];
 	
 	//The drive is in our executables cache: check if the created file path was an executable
 	//(If so, add it to the executables cache) 
-	NSMutableArray *driveExecutables = [executables mutableArrayValueForKey: [drive letter]];
+	NSMutableArray *driveExecutables = [self.executables mutableArrayValueForKey: drive.letter];
 	if (driveExecutables && ![driveExecutables containsObject: path])
 	{
 		NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
@@ -1446,11 +1447,11 @@
 //Pick up on the deletion of executables
 - (void) emulatorDidRemoveFile: (NSNotification *)notification
 {
-	BXDrive *drive = [[notification userInfo] objectForKey: @"drive"];
-	NSString *path = [[notification userInfo] objectForKey: @"path"];
+	BXDrive *drive = [notification.userInfo objectForKey: @"drive"];
+	NSString *path = [notification.userInfo objectForKey: @"path"];
 	
 	//The drive is in our executables cache: remove any reference to the deleted file
-	NSMutableArray *driveExecutables = [executables objectForKey: [drive letter]];
+	NSMutableArray *driveExecutables = [self.executables objectForKey: drive.letter];
 	if (driveExecutables && [driveExecutables containsObject: path])
 	{
 		[self willChangeValueForKey: @"executables"];
@@ -1469,7 +1470,7 @@
 	if ([fileName hasPrefix: @"."]) return NO;
 	
 	//Hide OSX and Boxer metadata files
-	if ([[[self class] hiddenFilenamePatterns] containsObject: fileName]) return NO;
+	if ([[self.class hiddenFilenamePatterns] containsObject: fileName]) return NO;
     
 	return YES;
 }
@@ -1482,7 +1483,7 @@
     if (validationError)
     {
         [self presentError: validationError
-            modalForWindow: [self windowForSheet]
+            modalForWindow: self.windowForSheet
                   delegate: nil
         didPresentSelector: NULL
                contextInfo: NULL];
@@ -1497,25 +1498,25 @@
 - (BXExecutableScan *) executableScanForDrive: (BXDrive *)drive
                              startImmediately: (BOOL)start
 {
-    NSString *scanPath = [drive path];
+    NSString *scanPath = drive.path;
     //Don't scan non-physical drives
     if (!scanPath) return nil;
     
     BXExecutableScan *scan = [BXExecutableScan scanWithBasePath: scanPath];
-    [scan setDelegate: self];
-    [scan setDidFinishSelector: @selector(executableScanDidFinish:)];
-    [scan setContextInfo: drive];
+    scan.delegate = self;
+    scan.didFinishSelector = @selector(executableScanDidFinish:);
+    scan.contextInfo = drive;
     
     if (start)
     {
-        for (BXExecutableScan *otherScan in [scanQueue operations])
+        for (BXExecutableScan *otherScan in self.scanQueue.operations)
         {
             //Ignore completed scans
-            if ([otherScan isFinished]) continue;
+            if (otherScan.isFinished) continue;
 
             //If a scan for this drive is already in progress and hasn't been cancelled,
             //then use that scan instead.
-            if (![otherScan isCancelled] && [[otherScan contextInfo] isEqual: drive])
+            if (!otherScan.isCancelled && [otherScan.contextInfo isEqual: drive])
             {
                 return otherScan;
             }
@@ -1523,13 +1524,13 @@
             //If there's a scan going on for the same path, then make ours wait for that
             //one to finish. This prevents image scans from piling up and un/re-mounting
             //drives out of turn.
-            else if ([[otherScan basePath] isEqualToString: scanPath] ||
-                     [[otherScan mountedVolumePath] isEqualToString: scanPath])
+            else if ([otherScan.basePath isEqualToString: scanPath] ||
+                     [otherScan.mountedVolumePath isEqualToString: scanPath])
                 [scan addDependency: otherScan];
         }    
 
         [self willChangeValueForKey: @"isScanningForExecutables"];
-        [scanQueue addOperation: scan];
+        [self.scanQueue addOperation: scan];
         [self didChangeValueForKey: @"isScanningForExecutables"];
     }
     return scan;
@@ -1537,18 +1538,18 @@
 
 - (BOOL) isScanningForExecutables
 {
-    for (NSOperation *scan in [scanQueue operations])
+    for (NSOperation *scan in self.scanQueue.operations)
 	{
-		if (![scan isFinished] && ![scan isCancelled]) return YES;
+		if (!scan.isFinished && !scan.isCancelled) return YES;
 	}    
     return NO;
 }
 
 - (BXExecutableScan *) activeExecutableScanForDrive: (BXDrive *)drive
 {
-    for (BXExecutableScan *scan in [scanQueue operations])
+    for (BXExecutableScan *scan in self.scanQueue.operations)
 	{
-		if ([scan isExecuting] && [[scan contextInfo] isEqual: drive]) return scan;
+		if (scan.isExecuting && [scan.contextInfo isEqual: drive]) return scan;
 	}    
     return nil;
 }
@@ -1556,12 +1557,12 @@
 - (BOOL) cancelExecutableScanForDrive: (BXDrive *)drive
 {
     BOOL didCancelScan = NO;
-    for (BXExecutableScan *operation in [scanQueue operations])
+    for (BXExecutableScan *operation in self.scanQueue.operations)
 	{
         //Ignore completed scans
-        if ([operation isFinished]) continue;
+        if (operation.isFinished) continue;
         
-		if ([[operation contextInfo] isEqual: drive])
+		if ([operation.contextInfo isEqual: drive])
         {
             [self willChangeValueForKey: @"isScanningForExecutables"];
             [operation cancel];
@@ -1574,22 +1575,22 @@
 
 - (void) executableScanDidFinish: (NSNotification *)theNotification
 {
-    BXExecutableScan *scan = [theNotification object];
-	BXDrive *drive = [scan contextInfo];
+    BXExecutableScan *scan = theNotification.object;
+	BXDrive *drive = scan.contextInfo;
     
     [self willChangeValueForKey: @"isScanningForExecutables"];
-	if ([scan succeeded])
+	if (scan.succeeded)
 	{
         //Construct absolute paths out of the relative ones returned by the scan.
-        NSArray *driveExecutables = [[scan basePath] stringsByAppendingPaths: [scan matchingPaths]];
+        NSArray *driveExecutables = [scan.basePath stringsByAppendingPaths: scan.matchingPaths];
         
         //Only send notifications if any executables were found, to prevent unnecessary redraws
-        BOOL notify = ([driveExecutables count] > 0);
+        BOOL notify = (driveExecutables.count > 0);
         
         //TODO: is there a better notification method we could use here?
         if (notify) [self willChangeValueForKey: @"executables"];
-        [executables setObject: [NSMutableArray arrayWithArray: driveExecutables]
-                        forKey: [drive letter]];
+        [_executables setObject: [NSMutableArray arrayWithArray: driveExecutables]
+                         forKey: drive.letter];
         if (notify) [self didChangeValueForKey: @"executables"];
 	}
     [self didChangeValueForKey: @"isScanningForExecutables"];
@@ -1600,13 +1601,13 @@
 
 - (BOOL) driveIsBundled: (BXDrive *)drive
 {
-	if ([drive path] && [self isGamePackage])
+	if (drive.path && self.isGamePackage)
 	{
-		NSString *bundlePath = [[self gamePackage] resourcePath];
-		NSString *drivePath = [drive path];
+		NSString *bundlePath = self.gamePackage.resourcePath;
+		NSString *drivePath = drive.path;
 
 		if ([drivePath isEqualToString: bundlePath] ||
-            [[drivePath stringByDeletingLastPathComponent] isEqualToString: bundlePath])
+            [drivePath.stringByDeletingLastPathComponent isEqualToString: bundlePath])
             return YES;
 	}
 	return NO;
@@ -1614,11 +1615,11 @@
 
 - (BOOL) equivalentDriveIsBundled: (BXDrive *)drive
 {
-	if ([drive path] && [self isGamePackage])
+	if (drive.path && self.isGamePackage)
 	{
 		Class importClass		= [BXDriveImport importClassForDrive: drive];
 		NSString *importedName	= [importClass nameForDrive: drive];
-		NSString *importedPath	= [[[self gamePackage] resourcePath] stringByAppendingPathComponent: importedName];
+		NSString *importedPath	= [self.gamePackage.resourcePath stringByAppendingPathComponent: importedName];
 	
 		//A file already exists with the same name as we would import it with,
 		//which probably means the drive was bundled earlier
@@ -1631,9 +1632,9 @@
 
 - (BXOperation <BXDriveImport> *) activeImportOperationForDrive: (BXDrive *)drive
 {
-	for (BXOperation <BXDriveImport> *import in [importQueue operations])
+	for (BXOperation <BXDriveImport> *import in self.importQueue.operations)
 	{
-		if ([import isExecuting] && [[import drive] isEqual: drive]) return import; 
+		if (import.isExecuting && [import.drive isEqual: drive]) return import; 
 	}
 	return nil;
 }
@@ -1642,10 +1643,10 @@
 {
 	//Don't import drives if:
 	//...we're not running a gamebox
-	if (![self isGamePackage]) return NO;
+	if (!self.isGamePackage) return NO;
 	
 	//...the drive is DOSBox-internal or hidden (which means it's a Boxer-internal drive)
-	if ([drive isInternal] || [drive isHidden]) return NO;
+	if (drive.isInternal || drive.isHidden) return NO;
 	
 	//...the drive is currently being imported or is already bundled in the current gamebox
 	if ([self activeImportOperationForDrive: drive] ||
@@ -1661,21 +1662,21 @@
 {
 	if ([self canImportDrive: drive])
 	{
-		NSString *destinationFolder = [[self gamePackage] resourcePath];
+		NSString *destinationFolder = self.gamePackage.resourcePath;
 		
 		BXOperation <BXDriveImport> *driveImport = [BXDriveImport importOperationForDrive: drive
                                                                             toDestination: destinationFolder
                                                                                 copyFiles: YES];
 		
-		[driveImport setDelegate: self];
-		[driveImport setDidFinishSelector: @selector(driveImportDidFinish:)];
+		driveImport.delegate = self;
+		driveImport.didFinishSelector = @selector(driveImportDidFinish:);
     	
 		if (start)
         {
             //If we'll lose access to the drive during importing,
             //eject it but leave it in the drive queue: and make
             //a note to remount it afterwards.
-            if ([self driveIsMounted: drive] && [[driveImport class] driveUnavailableDuringImport])
+            if ([self driveIsMounted: drive] && [driveImport.class driveUnavailableDuringImport])
             {
                 [self unmountDrive: drive
                            options: BXDriveForceUnmounting | BXDriveReplaceWithSiblingFromQueue
@@ -1685,10 +1686,10 @@
                                              [NSNumber numberWithBool: YES], @"remountAfterImport",
                                              nil];
                 
-                [driveImport setContextInfo: contextInfo];
+                driveImport.contextInfo = contextInfo;
             }
             
-            [importQueue addOperation: driveImport];
+            [self.importQueue addOperation: driveImport];
         }
         
 		return driveImport;
@@ -1701,9 +1702,9 @@
 
 - (BOOL) cancelImportForDrive: (BXDrive *)drive
 {
-	for (BXOperation <BXDriveImport> *import in [importQueue operations])
+	for (BXOperation <BXDriveImport> *import in self.importQueue.operations)
 	{
-		if (![import isFinished] && [[import drive] isEqual: drive])
+		if (!import.isFinished && [import.drive isEqual: drive])
 		{
 			[import cancel];
 			return YES;
@@ -1714,32 +1715,32 @@
 
 - (BOOL) isImportingDrives
 {
-    for (NSOperation *import in [importQueue operations])
+    for (NSOperation *import in self.importQueue.operations)
 	{
-		if (![import isFinished] && ![import isCancelled]) return YES;
+		if (!import.isFinished && !import.isCancelled) return YES;
 	}    
     return NO;
 }
 
 - (void) driveImportDidFinish: (NSNotification *)theNotification
 {
-	BXOperation <BXDriveImport> *import = [theNotification object];
-	BXDrive *originalDrive = [import drive];
+	BXOperation <BXDriveImport> *import = theNotification.object;
+	BXDrive *originalDrive = import.drive;
     
-    BOOL remountDrive = [[[import contextInfo] objectForKey: @"remountAfterImport"] boolValue];
+    BOOL remountDrive = [[import.contextInfo objectForKey: @"remountAfterImport"] boolValue];
 
-	if ([import succeeded])
+	if (import.succeeded)
 	{
 		//Once the drive has successfully imported, replace the old drive
 		//with the newly-imported version (as long as the old one is not currently in use)
-		if (![[self emulator] driveInUseAtLetter: [originalDrive letter]])
+		if (![self.emulator driveInUseAtLetter: originalDrive.letter])
 		{
-            NSString *destinationPath	= [import importedDrivePath];
+            NSString *destinationPath	= import.importedDrivePath;
 			BXDrive *importedDrive		= [BXDrive driveFromPath: destinationPath
-                                                        atLetter: [originalDrive letter]];
+                                                        atLetter: originalDrive.letter];
 			
             //Make the new drive an alias for the old one.
-            [[importedDrive pathAliases] addObject: [originalDrive path]];
+            [importedDrive.pathAliases addObject: originalDrive.path];
             
             //If the old drive is currently mounted, or was mounted back when we started
             //then replace it entirely.
@@ -1772,9 +1773,10 @@
 		
 		//Display a notification that this drive was successfully imported.
         [[BXBezelController controller] showDriveImportedBezelForDrive: originalDrive
-                                                             toPackage: [self gamePackage]];
+                                                             toPackage: self.gamePackage];
 	}
-	else if ([import error])
+    
+	else if (import.error)
 	{
         //Remount the original drive, if it was unmounted as a result of the import
         if (remountDrive)
@@ -1787,12 +1789,12 @@
         }
 		
         //Display a sheet for the error, unless it was just the user cancelling
-		NSError *importError = [import error];
-		if (!([[importError domain] isEqualToString: NSCocoaErrorDomain] &&
-              [importError code] == NSUserCancelledError))
+		NSError *importError = import.error;
+		if (!([importError.domain isEqualToString: NSCocoaErrorDomain] &&
+              importError.code == NSUserCancelledError))
 		{
 			[self presentError: importError
-				modalForWindow: [self windowForSheet]
+				modalForWindow: self.windowForSheet
 					  delegate: nil
 			didPresentSelector: NULL
 				   contextInfo: NULL];
@@ -1808,13 +1810,13 @@
 	//Note: UKFNSubscribeFileWatcher can only watch directories, not regular files 
 	if (exists && isFolder)
 	{
-		[watcher addPath: path];
+		[self.watcher addPath: path];
 	}
 }
 
 - (void) _stopTrackingChangesAtPath: (NSString *)path
 {
-	[watcher removePath: path];
+	[self.watcher removePath: path];
 }
 
 @end

@@ -26,21 +26,21 @@
 
 - (void) emulatorDidDisplayMT32Message: (NSNotification *)notification
 {
-    NSString *message = [[notification userInfo] objectForKey: @"message"];
+    NSString *message = [notification.userInfo objectForKey: @"message"];
     
     //TWEAK: some games (e.g. King's Quest IV, Ultima VII) spam the same message
     //or set of messages over and over again. This is irritating when it's shown
     //in a popover, so we ignore repeat messages.
     BOOL isARepeat;
-    if (MT32MessagesReceived)
+    if (self.MT32MessagesReceived)
     {
-        isARepeat = [MT32MessagesReceived containsObject: message];
-        [MT32MessagesReceived addObject: message];
+        isARepeat = [self.MT32MessagesReceived containsObject: message];
+        [self.MT32MessagesReceived addObject: message];
     }
     else
     {
         isARepeat = NO;
-        MT32MessagesReceived = [[NSMutableSet alloc] initWithObjects: message, nil];
+        self.MT32MessagesReceived = [NSMutableSet setWithObjects: message, nil];
     }
     
     if (!isARepeat)
@@ -108,10 +108,10 @@
     //if we can't find a real MT-32, then try MUNT emulation.
     if (musicType == BXMIDIMusicMT32)
     {
-        NSArray *deviceIDs = [[[NSApp delegate] MIDIDeviceMonitor] discoveredMT32s];
+        NSArray *deviceIDs = [[NSApp delegate] MIDIDeviceMonitor].discoveredMT32s;
         for (NSNumber *deviceID in deviceIDs)
         {
-            device = [[BXExternalMT32 alloc] initWithDestinationAtUniqueID: [deviceID integerValue]
+            device = [[BXExternalMT32 alloc] initWithDestinationAtUniqueID: deviceID.integerValue
                                                                      error: NULL];
             
             if (device) return [device autorelease];
@@ -147,13 +147,13 @@
     //fall back on the good old reliable OS X MIDI synth.
     //Reuse the emulator's existing one if available, otherwise create
     //a new one.
-    if ([[emulator activeMIDIDevice] isKindOfClass: [BXMIDISynth class]])
+    if ([self.emulator.activeMIDIDevice isKindOfClass: [BXMIDISynth class]])
     {
-        return [emulator activeMIDIDevice];
+        return self.emulator.activeMIDIDevice;
     }
     else
     {
-        //If the, then we're in big trouble, but 
+        //TODO: assert upon error.
         device = [[BXMIDISynth alloc] initWithError: NULL];
         return [device autorelease];
     }
@@ -186,14 +186,14 @@
         if (specifiedID)
         {
             MIDIUniqueID actualID;
-            OSStatus errCode = MIDIObjectGetIntegerProperty([(BXExternalMIDIDevice *)device description], kMIDIPropertyUniqueID, &actualID);
-            if (errCode != noErr || actualID != [specifiedID integerValue]) return NO;
+            OSStatus errCode = MIDIObjectGetIntegerProperty([(BXExternalMIDIDevice *)device destination], kMIDIPropertyUniqueID, &actualID);
+            if (errCode != noErr || actualID != specifiedID.integerValue) return NO;
         }
     }
     
     //If a specific kind of music was specified, check that the device supports it.
-    if (musicType == BXMIDIMusicMT32 && ![device supportsMT32Music]) return NO;
-    if (musicType == BXMIDIMusicGeneralMIDI && ![device supportsGeneralMIDIMusic]) return NO;
+    if (musicType == BXMIDIMusicMT32 && !device.supportsMT32Music) return NO;
+    if (musicType == BXMIDIMusicGeneralMIDI && !device.supportsGeneralMIDIMusic) return NO;
     
     //If we got this far then we've run out of reasons to reject the device
     //and so it meets the specified description.

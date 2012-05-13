@@ -32,6 +32,13 @@
 @property (readwrite, retain, nonatomic) NSDictionary *executables;
 @property (readwrite, retain, nonatomic) NSArray *documentation;
 
+@property (retain, nonatomic) NSOperationQueue *importQueue;
+@property (retain, nonatomic) NSOperationQueue *scanQueue;
+@property (retain, nonatomic) UKFNSubscribeFileWatcher *watcher;
+
+@property (retain, nonatomic) NSMutableSet *MT32MessagesReceived;
+@property (copy, nonatomic) NSString *temporaryFolderPath;
+
 //A cached version of the represented icon for our gamebox. Used by @representedIcon.
 @property (retain, nonatomic) NSImage *cachedIcon;
 
@@ -46,7 +53,7 @@
 
 //Whether to leave the program panel open after launching a program, so they can decide what to do with it.
 //Used by programWillStart and didStartGraphicalContext.
-- (BOOL) _leaveProgramPanelOpenAfterLaunch;
+- (BOOL) _shouldLeaveProgramPanelOpenAfterLaunch;
 
 //Whether we should close the session (and the application) after returning to the DOS prompt.
 - (BOOL) _shouldCloseOnProgramExit;

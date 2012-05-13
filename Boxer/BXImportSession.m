@@ -156,7 +156,7 @@
     //it at the end of importing.
     scan.ejectAfterScanning = BXFileScanNeverEject;
     
-    [scanQueue addOperation: scan];
+    [self.scanQueue addOperation: scan];
 		
     return YES;
 }
@@ -648,7 +648,7 @@
 	//Sanity checks: if these fail then there is a programming error.
 	NSAssert(self.importStage <= BXImportSessionLoadingSourcePath, @"Cannot call cancelInstallerScan after scan is finished.");
     
-    [scanQueue cancelAllOperations];
+    [self.scanQueue cancelAllOperations];
     
     //Our installerScanDidFinish: callback will take care of resetting
     //the import state back to how it should be.
@@ -744,7 +744,7 @@
     
     //Before we begin, wait for any already-in-progress operations to finish
 	//(In case the user started importing volumes via the Drives panel during installation)
-	[importQueue waitUntilAllOperationsAreFinished];
+	[self.importQueue waitUntilAllOperationsAreFinished];
 	
     
 	NSFileManager *manager = [NSFileManager defaultManager];
@@ -1009,7 +1009,7 @@
 	self.sourceFileImportRequired = !didInstallFiles;
 	self.importStage = BXImportSessionImportingSourceFiles;
 	
-	[importQueue addOperation: importOperation];
+	[self.importQueue addOperation: importOperation];
 }
 
 - (BOOL) sourceFileImportRequired
@@ -1102,9 +1102,9 @@
 			//to allow time for the original volume to remount fully.
 			if ([operation isKindOfClass: [BXBinCueImageImport class]])
 			{
-				[importQueue performSelector: @selector(addOperation:) withObject: fallbackImport afterDelay: 2.0];
+				[self.importQueue performSelector: @selector(addOperation:) withObject: fallbackImport afterDelay: 2.0];
 			}
-			else [importQueue addOperation: fallbackImport];
+			else [self.importQueue addOperation: fallbackImport];
 		}
 		
 		//..and if not, skip the import altogether and pretend everything's OK.
@@ -1208,13 +1208,13 @@
 			
 			//Note: we don't set ourselves as a delegate for this import operation
 			//because we don't care about success or failure notifications.
-			[importQueue addOperation: importOperation];
+			[self.importQueue addOperation: importOperation];
 		}
 	}
 	
 	//Any import operations we do in this stage would be moves within the same volume,
 	//so they should be done already, but let's wait anyway.
-	[importQueue waitUntilAllOperationsAreFinished];
+	[self.importQueue waitUntilAllOperationsAreFinished];
 	
 	//That's all folks!
 	self.importStage = BXImportSessionFinished;
@@ -1278,7 +1278,7 @@
     //the command prompt, in which case we just assume they wanted to finish.
     //If the user closed the window, isCancelled will be YES, and we will already have
     //decided upstairs in the close confirmation whether to continue importing or not.
-	if (!emulator.isCancelled && self.importStage == BXImportSessionRunningInstaller)
+	if (!self.emulator.isCancelled && self.importStage == BXImportSessionRunningInstaller)
 	{
 		[self finishInstaller];
 	}

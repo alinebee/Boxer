@@ -25,6 +25,7 @@
 #import "NSWorkspace+BXExecutableTypes.h"
 #import "NDAlias+AliasFile.h"
 #import "BXInputController.h"
+#import "NSObject+BXPerformExtensions.h"
 
 #import "BXAppKitVersionHelpers.h"
 
@@ -89,18 +90,31 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 @implementation BXSession
 
-@synthesize DOSWindowController;
-@synthesize gamePackage;
-@synthesize emulator;
-@synthesize targetPath;
-@synthesize lastExecutedProgramPath, lastLaunchedProgramPath;
-@synthesize gameProfile;
-@synthesize gameSettings;
-@synthesize drives, executables, documentation;
-@synthesize emulating;
-@synthesize paused, autoPaused, interrupted, suspended;
-@synthesize userToggledProgramPanel;
-@synthesize cachedIcon;
+@synthesize DOSWindowController = _DOSWindowController;
+@synthesize gamePackage = _gamePackage;
+@synthesize emulator = _emulator;
+@synthesize targetPath = _targetPath;
+@synthesize lastExecutedProgramPath = _lastExecutedProgramPath;
+@synthesize lastLaunchedProgramPath = _lastLaunchedProgramPath;;
+@synthesize gameProfile = _gameProfile;
+@synthesize gameSettings = _gameSettings;
+@synthesize drives = _drives;
+@synthesize executables = _executables;
+@synthesize documentation = _documentation;
+@synthesize emulating = _emulating;
+@synthesize paused = _paused;
+@synthesize autoPaused = _autoPaused;
+@synthesize interrupted = _interrupted;
+@synthesize suspended = _suspended;
+@synthesize userToggledProgramPanel = _userToggledProgramPanel;
+@synthesize cachedIcon = _cachedIcon;
+
+@synthesize importQueue = _importQueue;
+@synthesize scanQueue = _scanQueue;
+@synthesize watcher = _watcher;
+@synthesize temporaryFolderPath = _temporaryFolderPath;
+@synthesize MT32MessagesReceived = _MT32MessagesReceived;
+
 
 #pragma mark -
 #pragma mark Helper class methods
@@ -158,15 +172,15 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		NSString *defaultsPath = [[NSBundle mainBundle] pathForResource: @"GameDefaults" ofType: @"plist"];
 		NSMutableDictionary *defaults = [NSMutableDictionary dictionaryWithContentsOfFile: defaultsPath];
 		
-		[self setDrives: [NSMutableDictionary dictionaryWithCapacity: 10]];
-		[self setExecutables: [NSMutableDictionary dictionaryWithCapacity: 10]];
+		self.drives = [NSMutableDictionary dictionaryWithCapacity: 10];
+		self.executables = [NSMutableDictionary dictionaryWithCapacity: 10];
 		
-		[self setEmulator: [[[BXEmulator alloc] init] autorelease]];
-		[self setGameSettings: defaults];
+		self.emulator = [[[BXEmulator alloc] init] autorelease];
+		self.gameSettings = defaults;
 		
-		importQueue = [[NSOperationQueue alloc] init];
-		scanQueue = [[NSOperationQueue alloc] init];
-		watcher = [[UKFNSubscribeFileWatcher alloc] init];
+		self.importQueue = [[[NSOperationQueue alloc] init] autorelease];
+		self.scanQueue = [[[NSOperationQueue alloc] init] autorelease];
+		self.watcher = [[[UKFNSubscribeFileWatcher alloc] init] autorelease];
 	}
 	return self;
 }
@@ -220,13 +234,13 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     self.documentation = nil;
     
     self.cachedIcon = nil;
-		
-	[temporaryFolderPath release], temporaryFolderPath = nil;
-	
-	[scanQueue release], scanQueue = nil;
-	[importQueue release], importQueue = nil;
-	[watcher release], watcher = nil;
-    [MT32MessagesReceived release], MT32MessagesReceived = nil;
+    
+    self.importQueue = nil;
+    self.scanQueue = nil;
+    self.watcher = nil;
+    
+    self.temporaryFolderPath = nil;
+    self.MT32MessagesReceived = nil;
     
 	[super dealloc];
 }
@@ -272,28 +286,28 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (void) setGamePackage: (BXPackage *)package
 {	
-	if (package != gamePackage)
+	if (package != self.gamePackage)
 	{
-		[gamePackage release];
-		gamePackage = [package retain];
+		[_gamePackage release];
+		_gamePackage = [package retain];
 		
 		//Also load up the settings and game profile for this gamebox
-		if (gamePackage)
+		if (self.gamePackage)
 		{
 			NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-			NSString *defaultsKey = [NSString stringWithFormat: BXGameboxSettingsKeyFormat, [gamePackage gameIdentifier], nil];
+			NSString *defaultsKey = [NSString stringWithFormat: BXGameboxSettingsKeyFormat, self.gamePackage.gameIdentifier];
 			
 			NSDictionary *gameboxSettings = [defaults objectForKey: defaultsKey];
 			
 			//Merge the loaded values in, rather than replacing the default settings altogether.
-			[gameSettings addEntriesFromDictionary: gameboxSettings];
+			[self.gameSettings addEntriesFromDictionary: gameboxSettings];
             
             //If we don't already have a game profile assigned,
             //then load any previously detected game profile for this game
-            if (![self gameProfile])
+            if (!self.gameProfile)
             {
-                NSString *identifier        = [gameSettings objectForKey: BXGameboxSettingsProfileKey];
-                NSString *profileVersion    = [gameSettings objectForKey: BXGameboxSettingsProfileVersionKey];
+                NSString *identifier        = [self.gameSettings objectForKey: BXGameboxSettingsProfileKey];
+                NSString *profileVersion    = [self.gameSettings objectForKey: BXGameboxSettingsProfileVersionKey];
                 
                 if (identifier && profileVersion)
                 {
@@ -310,7 +324,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 #ifndef BOXER_DEBUG
                         BXGameProfile *profile = [BXGameProfile profileWithIdentifier: identifier];
                         //NSLog(@"Reusing existing profile with identifier: %@, %@", identifier, profile);
-                        [self setGameProfile: profile];
+                        self.gameProfile = profile;
 #endif
                     }
                 }
@@ -321,22 +335,23 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (void) setGameProfile: (BXGameProfile *)profile
 {
-    if (![[self gameProfile] isEqual: profile])
+    if (![self.gameProfile isEqual: profile])
     {
-        [gameProfile release];
-        gameProfile = [profile retain];
+        [_gameProfile release];
+        _gameProfile = [profile retain];
         
         //Save the profile into our game settings so that we can retrieve it quicker later
-        if (gameProfile && [self _shouldPersistGameProfile: gameProfile])
+        if (self.gameProfile && [self _shouldPersistGameProfile: self.gameProfile])
         {
-            NSString *identifier = [gameProfile identifier];
+            NSString *identifier = self.gameProfile.identifier;
             if (identifier)
             {
-                [gameSettings setObject: identifier forKey: BXGameboxSettingsProfileKey];
+                [self.gameSettings setObject: identifier forKey: BXGameboxSettingsProfileKey];
                 
                 //Also store the catalogue version under which the game profile was decided,
                 //so that we can invalidate old detections whenever the catalogue is updated.
-                [gameSettings setObject: [BXGameProfile catalogueVersion] forKey: BXGameboxSettingsProfileVersionKey];
+                [self.gameSettings setObject: [BXGameProfile catalogueVersion]
+                                      forKey: BXGameboxSettingsProfileVersionKey];
             }
         }
     }
@@ -344,33 +359,40 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (void) setEmulator: (BXEmulator *)newEmulator
 {
-	if (newEmulator != emulator)
+	if (self.emulator != newEmulator)
 	{
-		if (emulator)
+		if (self.emulator)
 		{
-			emulator.delegate = nil;
-			[emulator.videoHandler unbind: @"aspectCorrected"];
-			[emulator.videoHandler unbind: @"filterType"];
+			self.emulator.delegate = nil;
+			[self.emulator.videoHandler unbind: @"aspectCorrected"];
+			[self.emulator.videoHandler unbind: @"filterType"];
 			
-            [emulator unbind: @"masterVolume"];
+            [self.emulator unbind: @"masterVolume"];
             
 			[self _deregisterForPauseNotifications];
 			[self _deregisterForFilesystemNotifications];
 		}
 		
-		[emulator release];
-		emulator = [newEmulator retain];
+		[_emulator release];
+		_emulator = [newEmulator retain];
 		
-		if (newEmulator)
+		if (self.emulator)
 		{	
-			newEmulator.delegate = (id)self;
+			self.emulator.delegate = (id)self;
 			
 			NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
             
-            [newEmulator bind: @"masterVolume" toObject: [NSApp delegate] withKeyPath: @"effectiveVolume" options: nil];
+            [self.emulator bind: @"masterVolume" toObject: [NSApp delegate] withKeyPath: @"effectiveVolume" options: nil];
             
-			[newEmulator.videoHandler bind: @"aspectCorrected" toObject: defaults withKeyPath: @"aspectCorrected" options: nil];
-			[newEmulator.videoHandler bind: @"filterType" toObject: defaults withKeyPath: @"filterType" options: nil];
+			[self.emulator.videoHandler bind: @"aspectCorrected"
+                                    toObject: defaults
+                                 withKeyPath: @"aspectCorrected"
+                                     options: nil];
+            
+			[self.emulator.videoHandler bind: @"filterType"
+                                    toObject: defaults
+                                 withKeyPath: @"filterType"
+                                     options: nil];
 			
 			[self _registerForFilesystemNotifications];
 			[self _registerForPauseNotifications];
@@ -405,19 +427,19 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		controller = [[BXDOSWindowController alloc] initWithWindowNibName: @"DOSWindow"];
 	}
 	
-	[self addWindowController:		controller];
-	[self setDOSWindowController:	controller];
+	[self addWindowController: controller];
+	self.DOSWindowController = controller;
 	
-	[controller setShouldCloseDocument: YES];
+	controller.shouldCloseDocument = YES;
 	
 	[controller release];
 }
 
 - (void) removeWindowController: (NSWindowController *)windowController
 {
-	if (windowController == [self DOSWindowController])
+	if (windowController == self.DOSWindowController)
 	{
-		[self setDOSWindowController: nil];
+        self.DOSWindowController = nil;
 	}
 	[super removeWindowController: windowController];
 }
@@ -428,7 +450,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	//when the user hides the program panel at the DOS prompt. This makes the behaviour
 	//feel more 'natural', in that the panel will stay hidden while the user is mucking
 	//around at the prompt but will return as soon as the user exits.
-	if ([emulator isAtPrompt]) userToggledProgramPanel = flag;
+	if (self.emulator.isAtPrompt)
+        _userToggledProgramPanel = flag;
 }
 
 #pragma mark -
@@ -441,22 +464,22 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	//This prevents menu highlights from getting 'stuck' because of DOSBox's main loop blocking
 	//the thread.
 	
-	if (!hasStarted) [self performSelector: @selector(_startEmulator)
-								withObject: nil
-								afterDelay: 0.1];
+	if (!_hasStarted) [self performSelector: @selector(_startEmulator)
+                                 withObject: nil
+                                 afterDelay: 0.1];
 	
 	//So we don't try to restart the emulator
-	hasStarted = YES;
+	_hasStarted = YES;
 }
 
 //Cancel the DOSBox emulator
 - (void) cancel
 {
-    [[self emulator] cancel];
+    [self.emulator cancel];
     //Flag ourselves early as no longer emulating: this
     //disables certain parts of our behaviour to prevent
     //interference while the emulator is shutting down.
-    [self setEmulating: NO];
+    self.emulating = NO;
 }
 
 
@@ -467,9 +490,9 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 - (void) close
 {
 	//Ensure that the document close procedure only happens once, no matter how many times we close
-	if (!isClosing)
+	if (!_isClosing)
 	{
-		isClosing = YES;
+		_isClosing = YES;
 		[self cancel];
 		
 		[self synchronizeSettings];
@@ -493,21 +516,18 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 {
 	//Define an invocation for the callback, which has the signature:
 	//- (void)document:(NSDocument *)document shouldClose:(BOOL)shouldClose contextInfo:(void *)contextInfo;
-	NSMethodSignature *signature = [delegate methodSignatureForSelector: shouldCloseSelector];
-	NSInvocation *callback = [NSInvocation invocationWithMethodSignature: signature];
-	[callback setSelector: shouldCloseSelector];
-	[callback setTarget: delegate];
+    NSInvocation *callback = [NSInvocation invocationWithTarget: delegate selector: shouldCloseSelector];
 	[callback setArgument: &self atIndex: 2];
 	[callback setArgument: &contextInfo atIndex: 4];
 	
-	BOOL hasActiveImports = [self isImportingDrives];
+	BOOL hasActiveImports = self.isImportingDrives;
 	
 	
 	//We confirm the close if a process is running and if we're not already shutting down
 	BOOL shouldConfirm = hasActiveImports ||
 						(![[NSUserDefaults standardUserDefaults] boolForKey: @"suppressCloseAlert"]
-						  && [emulator isRunningProcess]
-						  && ![emulator isCancelled]);
+						  && self.emulator.isRunningProcess
+						  && !self.emulator.isCancelled);
 	
 	if (shouldConfirm)
 	{
@@ -520,7 +540,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		else
 			alert = [BXCloseAlert closeAlertWhileSessionIsEmulating: self];
 		
-		[alert beginSheetModalForWindow: [self windowForSheet]
+		[alert beginSheetModalForWindow: self.windowForSheet
 						  modalDelegate: self
 						 didEndSelector: @selector(_closeAlertDidEnd:returnCode:contextInfo:)
 							contextInfo: [callback retain]];
@@ -538,7 +558,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 				returnCode: (int)returnCode
 			   contextInfo: (NSInvocation *)callback
 {
-	if ([alert showsSuppressionButton] && [[alert suppressionButton] state] == NSOnState)
+	if (alert.showsSuppressionButton && alert.suppressionButton.state == NSOnState)
 		[[NSUserDefaults standardUserDefaults] setBool: YES forKey: @"suppressCloseAlert"];
 	
 	BOOL shouldClose = (returnCode == NSAlertFirstButtonReturn);
@@ -609,7 +629,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         
         //Add the gamebox name into the settings, to make it easier
         //to identify to which gamebox the record belongs.
-        [self.gameSettings setObject: gamePackage.gameName forKey: BXGameboxSettingsNameKey];
+        [self.gameSettings setObject: self.gamePackage.gameName forKey: BXGameboxSettingsNameKey];
         
         //Record the state of the drive queues for next time we launch this gamebox.
         if ([self _shouldPersistQueuedDrives])
@@ -662,12 +682,14 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 - (NSString *) processDisplayName
 {
 	NSString *processName = nil;
-	if ([emulator isRunningProcess])
+	if (self.emulator.isRunningProcess)
 	{
 		//Use the active program name where possible;
 		//Failing that, fall back on the original process name
-		if ([self activeProgramPath]) processName = [[self activeProgramPath] lastPathComponent];
-		else processName = [emulator processName];
+		if (self.activeProgramPath)
+            processName = self.activeProgramPath.lastPathComponent;
+		else
+            processName = self.emulator.processName;
 	}
 	return processName;
 }
@@ -726,20 +748,20 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 - (NSArray *) documentation
 {
 	//Generate our documentation cache the first time it is needed
-	if (!documentation)
+	if (!_documentation)
 	{
 		NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
 		
-		NSArray *docPaths = [[[self gamePackage] documentation] sortedArrayUsingSelector: @selector(pathDepthCompare:)];
+		NSArray *docPaths = [self.gamePackage.documentation sortedArrayUsingSelector: @selector(pathDepthCompare:)];
 		
-		NSMutableSet *docNames = [[NSMutableSet alloc] initWithCapacity: [docPaths count]];
+		NSMutableSet *docNames = [[NSMutableSet alloc] initWithCapacity: docPaths.count];
 
-		documentation = [[NSMutableArray alloc] initWithCapacity: [docPaths count]];
+		_documentation = [[NSMutableArray alloc] initWithCapacity: docPaths.count];
 		
 		for (NSString *path in docPaths)
 		{
-			path = [path stringByStandardizingPath];
-			NSString *fileName = [path lastPathComponent];
+			path = path.stringByStandardizingPath;
+			NSString *fileName = path.lastPathComponent;
 			
 			//If we already have a document with this name, skip it so we don't offer ambiguous choices
 			//TODO: this filtering should be done downstream in the UI controller, it's not our call
@@ -752,12 +774,12 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 									   nil];
 				
 				[docNames addObject: fileName];
-				[documentation addObject: data];
+				[_documentation addObject: data];
 			}
 		}
 		[docNames release];
 	}
-	return documentation;
+	return [[_documentation retain] autorelease];
 }
 
 + (NSSet *) keyPathsForValuesAffectingIsGamePackage		{ return [NSSet setWithObject: @"gamePackage"]; }
@@ -848,15 +870,15 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (void) runPreflightCommandsForEmulator: (BXEmulator *)theEmulator
 {
-	if (!hasConfigured)
+	if (!_hasConfigured)
 	{
         //If the Option key is held down during the startup process, skip the default program.
 		CGEventFlags currentModifiers = CGEventSourceFlagsState(kCGEventSourceStateCombinedSessionState);
-		userSkippedDefaultProgram = (currentModifiers & NSAlternateKeyMask) == NSAlternateKeyMask;
+		_userSkippedDefaultProgram = (currentModifiers & NSAlternateKeyMask) == NSAlternateKeyMask;
         
         //If we'll be starting up with a target program, clear the screen
         //at the start of the autoexec sequence.
-        if (!userSkippedDefaultProgram && self.targetPath && [[self class] isExecutable: self.targetPath])
+        if (!_userSkippedDefaultProgram && self.targetPath && [[self class] isExecutable: self.targetPath])
         {
             [theEmulator clearScreen];
         }
@@ -864,13 +886,13 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		[self _mountDrivesForSession];
 		
 		//Flag that we have completed our initial game configuration.
-		hasConfigured = YES;
+		_hasConfigured = YES;
 	}
 }
 
 - (void) runLaunchCommandsForEmulator: (BXEmulator *)theEmulator
 {
-	hasLaunched = YES;
+	_hasLaunched = YES;
     
     //Do any just-in-time configuration, which should override all previous startup stuff.
 	NSNumber *frameskip = [self.gameSettings objectForKey: @"frameskip"];
@@ -886,23 +908,23 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         //If the Option key is held down during the startup process, skip the default program.
         //(Repeated from runPreflightCommandsForEmulator: above, in case the user started
         //holding the key down in between.)
-        if (!userSkippedDefaultProgram)
+        if (!_userSkippedDefaultProgram)
         {
             CGEventFlags currentModifiers = CGEventSourceFlagsState(kCGEventSourceStateCombinedSessionState);
-            userSkippedDefaultProgram = (currentModifiers & NSAlternateKeyMask) == NSAlternateKeyMask;
+            _userSkippedDefaultProgram = (currentModifiers & NSAlternateKeyMask) == NSAlternateKeyMask;
         }
         
 		//If the Option key was held down, don't launch the gamebox's target;
 		//Instead, just switch to its parent folder.
-		if (userSkippedDefaultProgram && [[self class] isExecutable: target])
+		if (_userSkippedDefaultProgram && [self.class isExecutable: target])
 		{
-			target = [target stringByDeletingLastPathComponent];
+			target = target.stringByDeletingLastPathComponent;
 		}
 		[self openFileAtPath: target];
 	}
     
     //Clear the program-skipping flag for next launch.
-    userSkippedDefaultProgram = NO;
+    _userSkippedDefaultProgram = NO;
 }
 
 - (void) emulator: (BXEmulator *)theEmulator didFinishFrame: (BXFrameBuffer *)frame
@@ -933,24 +955,24 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 - (void) emulatorWillStartProgram: (NSNotification *)notification
 {
     //Flag that the program the user launched is now executing.
-    executingLaunchedProgram = YES;
+    _executingLaunchedProgram = YES;
     
 	//Don't set the active program if we already have one: this way, we keep
 	//track of when a user launches a batch file and don't immediately discard
 	//it in favour of the next program the batch-file runs
-	if (![self lastExecutedProgramPath])
+	if (!self.lastExecutedProgramPath)
 	{
-		NSString *programPath = [[notification userInfo] objectForKey: @"localPath"];
+		NSString *programPath = [notification.userInfo objectForKey: @"localPath"];
         
-        if ([programPath length])
+        if (programPath.length)
         {
-            [self setLastExecutedProgramPath: programPath];
+            self.lastExecutedProgramPath = programPath;
 		}
         
 		//If the user hasn't manually opened/closed the program panel themselves,
 		//and we don't need to ask the user what to do with this program, then
 		//automatically hide the program panel shortly after launching.
-		if (![self userToggledProgramPanel] && ![self _leaveProgramPanelOpenAfterLaunch])
+		if (!self.userToggledProgramPanel && ![self _shouldLeaveProgramPanelOpenAfterLaunch])
 		{
 			[NSObject cancelPreviousPerformRequestsWithTarget: [self DOSWindowController]
 													 selector: @selector(showProgramPanel:)
@@ -963,7 +985,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	}
 	
 	//Track how long this program has run for
-	programStartTime = [NSDate timeIntervalSinceReferenceDate];
+	_programStartTime = [NSDate timeIntervalSinceReferenceDate];
     
     //Enable/disable display-sleep suppression
     [self _syncSuppressesDisplaySleep];
@@ -976,17 +998,17 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     //we can't use as the default, such as autoexec commands or dispatch batchfiles.
 	//(Note that the last executed program is always cleared down in didReturnToShell:)
 	NSString *executedPath = [self lastExecutedProgramPath];
-    BOOL executedPathCanBeDefault = (executedPath && hasLaunched && [[self gamePackage] validateTargetPath: &executedPath error: nil]);
+    BOOL executedPathCanBeDefault = (executedPath && _hasLaunched && [self.gamePackage validateTargetPath: &executedPath error: nil]);
 	if (!executedPathCanBeDefault)
 	{
-		[self setLastExecutedProgramPath: nil];
+		self.lastExecutedProgramPath = nil;
         //TODO: do we need to extend this to lastLaunchedProgramPath too?
         //The logic here is pretty damn fuzzy.
 	}
 	
 	//Check the running time of the program. If it was suspiciously short,
 	//then check for possible error conditions that we can inform the user about.
-	NSTimeInterval programRunningTime = [NSDate timeIntervalSinceReferenceDate] - programStartTime; 
+	NSTimeInterval programRunningTime = [NSDate timeIntervalSinceReferenceDate] - _programStartTime; 
 	if (programRunningTime < BXWindowsOnlyProgramFailTimeThreshold)
 	{
 		//If this was the target program for this launch, then
@@ -994,15 +1016,15 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		//(we only do this for the target program because we
 		//don't want to bother the user if they're just trying
 		//out programs at the DOS prompt)
-		NSString *programPath = [[notification userInfo] objectForKey: @"localPath"];
-		if ([programPath length] && [programPath isEqualToString: [self targetPath]])
+		NSString *programPath = [notification.userInfo objectForKey: @"localPath"];
+		if (programPath.length && [programPath isEqualToString: self.targetPath])
 		{
 			BXExecutableType programType = [[NSWorkspace sharedWorkspace] executableTypeAtPath: programPath error: NULL];
 			
 			if (programType == BXExecutableTypeWindows)
 			{
 				BXCloseAlert *alert = [BXCloseAlert closeAlertAfterWindowsOnlyProgramExited: programPath];
-				[alert beginSheetModalForWindow: [self windowForSheet]
+				[alert beginSheetModalForWindow: self.windowForSheet
 								  modalDelegate: self
 								 didEndSelector: @selector(_windowsOnlyProgramCloseAlertDidEnd:returnCode:contextInfo:)
 									contextInfo: NULL];
@@ -1022,15 +1044,15 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	//If a program has been properly launched, clear the active program.
     //(We don't want to clear it if we've nipped back to the DOS prompt
     //while we're still in the process of launching the program.)
-    if (executingLaunchedProgram)
+    if (_executingLaunchedProgram)
 	{
-        executingLaunchedProgram = NO;
-        [self setLastExecutedProgramPath: nil];
-        [self setLastLaunchedProgramPath: nil];
+        _executingLaunchedProgram = NO;
+        self.lastExecutedProgramPath = nil;
+        self.lastLaunchedProgramPath = nil;
 	}
     
     //Clear our cache of sent MT-32 messages on behalf of BXAudioControls.
-    [MT32MessagesReceived removeAllObjects];
+    [self.MT32MessagesReceived removeAllObjects];
     
     //Explicitly disable numpad simulation upon returning to the DOS prompt.
     //Disabled for now until we can record that the user has toggled the option while at the DOS prompt,
@@ -1040,22 +1062,22 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         
 	//Show the program chooser after returning to the DOS prompt, as long
 	//as the program chooser hasn't been manually toggled from the DOS prompt
-	if ([self isGamePackage] && ![self userToggledProgramPanel])
+	if (self.isGamePackage && !self.userToggledProgramPanel)
 	{
-		[NSObject cancelPreviousPerformRequestsWithTarget: [self DOSWindowController]
+		[NSObject cancelPreviousPerformRequestsWithTarget: self.DOSWindowController
 												 selector: @selector(hideProgramPanel:)
 												   object: self];
 		
 		//Show only after a delay, so that the window has time to resize after quitting the game
-		[[self DOSWindowController] performSelector: @selector(showProgramPanel:)
-										 withObject: self
-										 afterDelay: BXShowProgramPanelDelay];
+		[self.DOSWindowController performSelector: @selector(showProgramPanel:)
+                                       withObject: self
+                                       afterDelay: BXShowProgramPanelDelay];
         
         if ([[NSUserDefaults standardUserDefaults] boolForKey: @"startUpInFullScreen"])
         {
             //If we automatically switched into fullscreen at startup, then drop out of
             //fullscreen mode when we return to the prompt in order to show the program panel.
-            [[[self DOSWindowController] window] exitFullScreen: self];
+            [self.DOSWindowController.window exitFullScreen: self];
         }
 	}
 
@@ -1068,20 +1090,20 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	//Tweak: only switch into fullscreen mode if we don't need to prompt
 	//the user about choosing a default program.
 	if ([[NSUserDefaults standardUserDefaults] boolForKey: @"startUpInFullScreen"] &&
-		![self _leaveProgramPanelOpenAfterLaunch])
+		![self _shouldLeaveProgramPanelOpenAfterLaunch])
 	{
 		//Switch to fullscreen mode automatically after a brief delay:
 		//This will be cancelled if the context exits within that time,
 		//in case of a program that crashes early.
-		[[[self DOSWindowController] window] performSelector: @selector(enterFullScreen:) 
-                                                  withObject: self
-                                                  afterDelay: BXAutoSwitchToFullScreenDelay];
+		[self.DOSWindowController.window performSelector: @selector(enterFullScreen:) 
+                                              withObject: self
+                                              afterDelay: BXAutoSwitchToFullScreenDelay];
 	}
 }
 
 - (void) emulatorDidFinishGraphicalContext: (NSNotification *)notification
 {
-	[NSObject cancelPreviousPerformRequestsWithTarget: [[self DOSWindowController] window]
+	[NSObject cancelPreviousPerformRequestsWithTarget: self.DOSWindowController.window
 											 selector: @selector(enterFullScreen:)
 											   object: self];
 }
@@ -1123,12 +1145,12 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     NSEvent *event;
     [requestedDate retain];
     
-	NSDate *untilDate = [self isSuspended] ? [NSDate distantFuture] : requestedDate;
+	NSDate *untilDate = self.isSuspended ? [NSDate distantFuture] : requestedDate;
 	
-	while (!isClosing && (event = [NSApp nextEventMatchingMask: NSAnyEventMask
-													 untilDate: untilDate
-														inMode: NSDefaultRunLoopMode
-													   dequeue: YES]))
+	while (!_isClosing && (event = [NSApp nextEventMatchingMask: NSAnyEventMask
+                                                      untilDate: untilDate
+                                                         inMode: NSDefaultRunLoopMode
+                                                        dequeue: YES]))
 	{
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
         
@@ -1136,7 +1158,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         //Swallow all key-down events while this is happening.
         //IMPLEMENTATION NOTE: this is essentially a standard Cocoa event-listening loop
         //turned inside out, so that the emulation will keep running 'around' our listening.
-        if (waitingForFastForwardRelease)
+        if (_waitingForFastForwardRelease)
         {
             if (event.type == NSKeyUp)
                 [self releaseFastForward: self];
@@ -1151,7 +1173,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         //otherwise, exit once our original requested date has passed (which
         //will be after the first batch of events has been processed,
         //if requestedDate was nil or in the past.)
-		untilDate = [self isSuspended] ? [NSDate distantFuture] : requestedDate;
+		untilDate = self.isSuspended ? [NSDate distantFuture] : requestedDate;
         
         [pool drain];
 	}
@@ -1178,19 +1200,19 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 - (BOOL) _shouldCloseOnProgramExit
 {
 	//Don't close if the auto-close preference is disabled for this gamebox
-	if (![[gameSettings objectForKey: @"closeOnExit"] boolValue]) return NO;
+	if (![[self.gameSettings objectForKey: @"closeOnExit"] boolValue]) return NO;
 	
 	//Don't close if the user skipped the startup program in order to start up at the DOS prompt
-	if (userSkippedDefaultProgram) return NO;
+	if (_userSkippedDefaultProgram) return NO;
 	
 	//Don't close if we've been running a program other than the default program for the gamebox
-	if (![[self activeProgramPath] isEqualToString: [[self gamePackage] targetPath]]) return NO;
+	if (![self.activeProgramPath isEqualToString: self.gamePackage.targetPath]) return NO;
 	
 	//Don't close if there are drive imports in progress
-	if ([self isImportingDrives]) return NO;
+	if (self.isImportingDrives) return NO;
 	
 	//Don't close if the last program quit suspiciously early, since this may be a crash
-	NSTimeInterval executionTime = [NSDate timeIntervalSinceReferenceDate] - programStartTime;
+	NSTimeInterval executionTime = [NSDate timeIntervalSinceReferenceDate] - _programStartTime;
 	if (executionTime < BXSuccessfulProgramRunningTimeThreshold) return NO;
 	
 	//Don't close if the user is currently holding down the Option key override
@@ -1202,28 +1224,32 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	return YES;
 }
 
-//We leave the panel open when we don't have a default program already,
+//We leave the panel open when we don't have a default program already
 //and can adopt the current program as the default program. This way
 //we can ask the user what they want to do with the program.
-- (BOOL) _leaveProgramPanelOpenAfterLaunch
+- (BOOL) _shouldLeaveProgramPanelOpenAfterLaunch
 {
-	NSString *activePath = [[[self activeProgramPath] copy] autorelease];
-	return ![gamePackage targetPath] && [gamePackage validateTargetPath: &activePath error: NULL];
+    if (!self.gamePackage.targetPath)
+    {
+        NSString *activePath = [[self.activeProgramPath copy] autorelease];
+        return [self.gamePackage validateTargetPath: &activePath error: NULL];
+    }
+    else
+        return NO;
 }
 
 - (void) _startEmulator
 {	
 	//Set the emulator's current working directory relative to whatever we're opening
-	if ([self fileURL])
+	if (self.fileURL)
 	{
-		NSString *filePath = [[self fileURL] path];
+		NSString *filePath = self.fileURL.path;
 		BOOL isFolder = NO;
 		if ([[NSFileManager defaultManager] fileExistsAtPath: filePath isDirectory: &isFolder])
 		{
 			//If we're opening a folder/gamebox, use that as the base path; if we're opening
 			//a program or disc image, use its containing folder as the base path instead.
-			NSString *basePath = (isFolder) ? filePath : [filePath stringByDeletingLastPathComponent];
-			[[self emulator] setBasePath: basePath];
+			self.emulator.basePath = (isFolder) ? filePath : filePath.stringByDeletingLastPathComponent;
 		}
 	}
 	
@@ -1305,12 +1331,12 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	
 	//Mount our internal DOS toolkit and temporary drives
 	[self mountToolkitDriveWithError: nil];
-    if (!gameProfile || gameProfile.shouldMountTempDrive)
+    if (!self.gameProfile || [self.gameProfile shouldMountTempDrive])
         [self mountTempDriveWithError: nil];
     
     //If the game needs a CD-ROM to be present, then mount a dummy CD drive
     //if necessary.
-    if (gameProfile.requiresCDROM)
+    if (self.gameProfile.requiresCDROM)
         [self mountDummyCDROMWithError: nil];
     
     
@@ -1329,9 +1355,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         BOOL driveWasMounted = [[driveInfo objectForKey: BXGameboxSettingsDriveMountedKey] boolValue];
         BXDriveConflictBehaviour shouldReplace = driveWasMounted ? BXDriveReplace : BXDriveQueue;
         
-        //First, check if we have an existing drive that fits the bill for this path.
-        //If so, we'll mount that again now if the drive had been mounted previously,
-        //otherwise we'll leave it in the queue.
+        //First check if we have a drive queued that matches this path.
+        //If so, we'll mount that immediately if the drive had been mounted previously.
         BXDrive *drive  = [self queuedDriveForPath: drivePath];
         
         //Otherwise, make a new drive to represent this path and mount/queue that accordingly.
@@ -1342,7 +1367,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
             drive = [BXDrive driveFromPath: drivePath atLetter: driveLetter withType: driveType];
         }
         
-        NSError *mountError     = nil;
+        NSError *mountError = nil;
         [self mountDrive: drive
                 ifExists: shouldReplace
                  options: BXBundledDriveMountOptions
@@ -1413,8 +1438,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         BXEmulatorConfiguration *baseConf = [BXEmulatorConfiguration configurationWithContentsOfFile: baseConfPath error: nil];
         [baseConf removeStartupCommands];
         
-        NSArray *profileConfs = [gameProfile configurations];
-		for (NSString *profileConfName in profileConfs)
+		for (NSString *profileConfName in self.gameProfile.configurations)
         {
 			NSString *profileConfPath = [[NSBundle mainBundle] pathForResource: profileConfName
 																		ofType: @"conf"
@@ -1433,18 +1457,18 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 - (void) _cleanup
 {
 	//Delete the temporary folder, if one was created
-	if (temporaryFolderPath)
+	if (self.temporaryFolderPath)
 	{
 		NSFileManager *manager = [NSFileManager defaultManager];
-		[manager removeItemAtPath: temporaryFolderPath error: NULL];
+		[manager removeItemAtPath: self.temporaryFolderPath error: NULL];
 	}
 	
 	//Cancel any in-progress operations specific to this session
-	[importQueue cancelAllOperations];
-    [scanQueue cancelAllOperations];
+	[self.importQueue cancelAllOperations];
+    [self.scanQueue cancelAllOperations];
     
-	[importQueue waitUntilAllOperationsAreFinished];
-	[scanQueue waitUntilAllOperationsAreFinished];
+	[self.importQueue waitUntilAllOperationsAreFinished];
+	[self.scanQueue waitUntilAllOperationsAreFinished];
 }
 
 
@@ -1471,51 +1495,51 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (void) setPaused: (BOOL)flag
 {
-	if (paused != flag)
+	if (self.paused != flag)
 	{
-		paused = flag;
+		_paused = flag;
 		[self _syncSuspendedState];
 	}
 }
 
 - (void) setInterrupted: (BOOL)flag
 {
-	if (interrupted != flag)
+	if (self.interrupted != flag)
 	{
-		interrupted = flag;
+		_interrupted = flag;
 		[self _syncSuspendedState];
 	}
 }
 
 - (void) setAutoPaused: (BOOL)flag
 {
-	if (autoPaused != flag)
+	if (self.autoPaused != flag)
 	{
-		autoPaused = flag;
+		_autoPaused = flag;
 		[self _syncSuspendedState];
 	}
 }
 
 - (void) setSuspended: (BOOL)flag
 {
-	if (suspended != flag)
+	if (_suspended != flag)
 	{
         //Enable/disable display-sleep suppression
         [self _syncSuppressesDisplaySleep];
         
-		suspended = flag;
+		_suspended = flag;
         
 		//Tell the emulator to prepare for being suspended, or to resume after we unpause.
-        if (suspended)
+        if (self.suspended)
         {
-            [emulator pause];
+            [self.emulator pause];
         }
         else
         {
-            [emulator resume];
+            [self.emulator resume];
         }
         
-        if (!emulator.isConcurrent)
+        if (!self.emulator.isConcurrent)
         { 
             //The suspended state is only checked inside the event loop
             //inside -emulatorDidBeginRunLoop:, which only processes when
@@ -1538,7 +1562,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (void) _syncSuspendedState
 {
-	self.suspended = (paused || autoPaused || (interrupted && !emulator.isConcurrent));
+	self.suspended = (self.paused || self.autoPaused || (self.interrupted && !self.emulator.isConcurrent));
 }
 
 - (void) _syncAutoPausedState
@@ -1571,12 +1595,13 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (void) _interruptionWillBegin: (NSNotification *)notification
 {
-	[self setInterrupted: YES];
+    //TODO: increment interruptions?
+    self.interrupted = YES;
 }
 
 - (void) _interruptionDidFinish: (NSNotification *)notification
 {
-	[self setInterrupted: NO];
+    self.interrupted = NO;
 }
 
 - (void) _registerForPauseNotifications
@@ -1586,12 +1611,12 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	[center addObserver: self
 			   selector: @selector(_syncAutoPausedState)
 				   name: NSWindowDidMiniaturizeNotification
-				 object: [DOSWindowController window]];
+				 object: self.DOSWindowController.window];
 	
 	[center addObserver: self
 			   selector: @selector(_syncAutoPausedState)
 				   name: NSWindowDidDeminiaturizeNotification
-				 object: [DOSWindowController window]];
+				 object: self.DOSWindowController.window];
 	
 	[center addObserver: self
 			   selector: @selector(_syncAutoPausedState)
@@ -1645,7 +1670,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (BOOL) suppressesDisplaySleep
 {
-    return (displaySleepAssertionID != kIOPMNullAssertionID);
+    return (_displaySleepAssertionID != kIOPMNullAssertionID);
 }
 
 - (void) setSuppressesDisplaySleep: (BOOL)flag
@@ -1659,16 +1684,16 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
             IOReturn success = IOPMAssertionCreateWithName(kIOPMAssertionTypeNoDisplaySleep, 
                                                            kIOPMAssertionLevelOn,
                                                            (CFStringRef)reason,
-                                                           &displaySleepAssertionID);
+                                                           &_displaySleepAssertionID);
             if (success != kIOReturnSuccess)
             {
-                displaySleepAssertionID = kIOPMNullAssertionID;
+                _displaySleepAssertionID = kIOPMNullAssertionID;
             }
         }
         else
         {
-            IOPMAssertionRelease(displaySleepAssertionID);
-            displaySleepAssertionID = kIOPMNullAssertionID;
+            IOPMAssertionRelease(_displaySleepAssertionID);
+            _displaySleepAssertionID = kIOPMNullAssertionID;
         }
     }
 }

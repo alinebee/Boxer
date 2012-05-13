@@ -297,7 +297,7 @@
             //defeating the purpose of the fast-forward. So instead, we listen for
             //the key-up within the session's event-dispatch loop: making it a kind
             //of inverted tracking loop.
-            waitingForFastForwardRelease = YES;
+            _waitingForFastForwardRelease = YES;
         }
     }
     //If the option was toggled by a regular menu click, then make it 'stick' until toggled again.
@@ -311,7 +311,7 @@
         {
             [self releaseFastForward: sender];
         }
-        waitingForFastForwardRelease = NO;
+        _waitingForFastForwardRelease = NO;
     }
 }
 
@@ -341,7 +341,7 @@
         if (bezel.currentBezel == bezel.fastForwardBezel)
             [bezel hideBezel];
         
-        waitingForFastForwardRelease = NO;
+        _waitingForFastForwardRelease = NO;
     }
 }
 
@@ -380,7 +380,7 @@
 {
 	self.emulator.coreMode = dynamic ? BXCoreDynamic : BXCoreNormal;
 	
-	[self.gameSettings setObject: [NSNumber numberWithInteger: emulator.coreMode]
+	[self.gameSettings setObject: [NSNumber numberWithInteger: self.emulator.coreMode]
                           forKey: @"coreMode"];
 }
 
@@ -399,8 +399,8 @@
 	if (theAction == @selector(decrementFrameSkip:))	return !self.frameskipAtMinimum;
 
 	//Defined in BXFileManager
-	if (theAction == @selector(openInDOS:))				return emulator.isAtPrompt;
-	if (theAction == @selector(relaunch:))				return emulator.isAtPrompt;
+	if (theAction == @selector(openInDOS:))				return self.emulator.isAtPrompt;
+	if (theAction == @selector(relaunch:))				return self.emulator.isAtPrompt;
 	
 	if (theAction == @selector(paste:))
 		return [self canPasteFromPasteboard: [NSPasteboard generalPasteboard]];
@@ -524,7 +524,7 @@
         
         //TWEAK: disable the menu item while we're waiting for the user to release the key.
         //That will break out of the menu's own key-event loop, which would otherwise block.
-		return self.isEmulating && !waitingForFastForwardRelease;
+		return self.isEmulating && !_waitingForFastForwardRelease;
     }
     return [super validateMenuItem: theItem];
 }

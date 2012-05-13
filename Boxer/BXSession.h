@@ -64,50 +64,50 @@ extern NSString * const BXGameboxSettingsDriveTypeKey;
 
 @interface BXSession : NSDocument <BXEmulatorDelegate>
 {	
-	BXEmulator *emulator;
-	BXPackage *gamePackage;
-	BXGameProfile *gameProfile;
-	NSMutableDictionary *gameSettings;
+	BXEmulator *_emulator;
+	BXPackage *_gamePackage;
+	BXGameProfile *_gameProfile;
+	NSMutableDictionary *_gameSettings;
 	
-	NSMutableDictionary *drives;
-	NSMutableDictionary *executables;
-	NSMutableArray *documentation;
-    NSImage *cachedIcon;
+	NSMutableDictionary *_drives;
+	NSMutableDictionary *_executables;
+	NSMutableArray *_documentation;
+    NSImage *_cachedIcon;
 	
-	BXDOSWindowController *DOSWindowController;
+	BXDOSWindowController *_DOSWindowController;
 	
-	NSString *targetPath;
-	NSString *lastExecutedProgramPath;
-    NSString *lastLaunchedProgramPath;
-	NSString *temporaryFolderPath;
+	NSString *_targetPath;
+	NSString *_lastExecutedProgramPath;
+    NSString *_lastLaunchedProgramPath;
+	NSString *_temporaryFolderPath;
 	
-	BOOL hasStarted;
-	BOOL hasConfigured;
-	BOOL hasLaunched;
-	BOOL isClosing;
-	BOOL emulating;
-    BOOL executingLaunchedProgram;
+	BOOL _hasStarted;
+	BOOL _hasConfigured;
+	BOOL _hasLaunched;
+	BOOL _isClosing;
+	BOOL _emulating;
+    BOOL _executingLaunchedProgram;
 	
-	BOOL paused;
-	BOOL autoPaused;
-	BOOL interrupted;
-	BOOL suspended;
+	BOOL _paused;
+	BOOL _autoPaused;
+	BOOL _interrupted;
+	BOOL _suspended;
 	
-	BOOL userToggledProgramPanel;
-	BOOL userSkippedDefaultProgram;
-    BOOL waitingForFastForwardRelease;
+	BOOL _userToggledProgramPanel;
+	BOOL _userSkippedDefaultProgram;
+    BOOL _waitingForFastForwardRelease;
 	
-	NSOperationQueue *importQueue;
-    NSOperationQueue *scanQueue;
+	NSOperationQueue *_importQueue;
+    NSOperationQueue *_scanQueue;
 	
-	UKFNSubscribeFileWatcher *watcher;
+	UKFNSubscribeFileWatcher *_watcher;
 	
-	NSTimeInterval programStartTime;
+	NSTimeInterval _programStartTime;
     
-    IOPMAssertionID displaySleepAssertionID;
+    IOPMAssertionID _displaySleepAssertionID;
     
     //Used by BXAudioControls
-    NSMutableSet *MT32MessagesReceived;
+    NSMutableSet *_MT32MessagesReceived;
 }
 
 

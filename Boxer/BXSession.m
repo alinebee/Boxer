@@ -1321,11 +1321,11 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		NSData *aliasData = [driveInfo objectForKey: BXGameboxSettingsDriveAliasKey];
         
         NDAlias *alias = [NDAlias aliasWithData: aliasData];
+        NSString *drivePath = alias.path;
         
         //Skip drives that couldn't be resolved (which will happen the file has moved or been ejected/deleted.)
-        if (!alias) continue;
+        if (!drivePath) continue;
         
-        NSString *drivePath = alias.path;
         BOOL driveWasMounted = [[driveInfo objectForKey: BXGameboxSettingsDriveMountedKey] boolValue];
         BXDriveConflictBehaviour shouldReplace = driveWasMounted ? BXDriveReplace : BXDriveQueue;
         

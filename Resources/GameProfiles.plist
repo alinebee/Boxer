@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>BXGameProfileCatalogueVersion</key>
-	<string>20120318.1</string>
+	<string>20120513.1</string>
 	<key>BXSpecificGameProfiles</key>
 	<array>
 		<dict>
@@ -1627,6 +1627,7 @@
 			<array>
 				<string>c&amp;d.exe</string>
 				<string>black.exe</string>
+				<string>bthorne.exe</string>
 				<string>vga.pac</string>
 				<string>tamriel.mnu</string>
 				<string>termspec.dff</string>

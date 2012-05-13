@@ -23,6 +23,7 @@
 #import "NSString+BXPaths.h"
 #import "UKFNSubscribeFileWatcher.h"
 #import "NSWorkspace+BXExecutableTypes.h"
+#import "NDAlias+AliasFile.h"
 #import "BXInputController.h"
 
 #import "BXAppKitVersionHelpers.h"
@@ -37,6 +38,12 @@ NSString * const BXGameboxSettingsKeyFormat     = @"BXGameSettings: %@";
 NSString * const BXGameboxSettingsNameKey       = @"BXGameName";
 NSString * const BXGameboxSettingsProfileKey    = @"BXGameProfile";
 NSString * const BXGameboxSettingsProfileVersionKey = @"BXGameProfileVersion";
+
+NSString * const BXGameboxSettingsDrivesKey             = @"BXMountedDrives";
+NSString * const BXGameboxSettingsDriveAliasKey         = @"Alias";
+NSString * const BXGameboxSettingsDriveLetterKey        = @"Letter";
+NSString * const BXGameboxSettingsDriveTypeKey          = @"Type";
+NSString * const BXGameboxSettingsDriveMountedKey       = @"Mounted";
 
 
 //The length of time in seconds after which we figure that if the program was
@@ -555,32 +562,32 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 //Save our configuration changes to disk before exiting
 - (void) synchronizeSettings
 {
-	if ([self isGamePackage])
+	if (self.isGamePackage)
 	{
 		//Go through the settings working out which ones we should store in user defaults,
 		//and which ones we should store in the gamebox's configuration file.
 		BXEmulatorConfiguration *runtimeConf = [BXEmulatorConfiguration configuration];
 		
 		//These are the settings we want to keep in the configuration file
-		NSNumber *CPUSpeed      = [gameSettings objectForKey: @"CPUSpeed"];
-		NSNumber *coreMode		= [gameSettings objectForKey: @"coreMode"];
-		NSNumber *strictGameportTiming = [gameSettings objectForKey: @"strictGameportTiming"];
+		NSNumber *CPUSpeed      = [self.gameSettings objectForKey: @"CPUSpeed"];
+		NSNumber *coreMode		= [self.gameSettings objectForKey: @"coreMode"];
+		NSNumber *strictGameportTiming = [self.gameSettings objectForKey: @"strictGameportTiming"];
 		
 		if (coreMode)
 		{
-			NSString *coreString = [BXEmulator configStringForCoreMode: [coreMode integerValue]];
+			NSString *coreString = [BXEmulator configStringForCoreMode: coreMode.integerValue];
 			[runtimeConf setValue: coreString forKey: @"core" inSection: @"cpu"];
 		}
 		
 		if (strictGameportTiming)
 		{
-			NSString *timingString = [BXEmulator configStringForGameportTimingMode: [strictGameportTiming integerValue]];
+			NSString *timingString = [BXEmulator configStringForGameportTimingMode: strictGameportTiming.integerValue];
 			[runtimeConf setValue: timingString forKey: @"timed" inSection: @"joystick"];
 		}
 		
 		if (CPUSpeed)
 		{
-            NSInteger speed = [CPUSpeed integerValue];
+            NSInteger speed = CPUSpeed.integerValue;
             BOOL isAutoSpeed = (speed == BXAutoSpeed);
 			NSString *cyclesString = [BXEmulator configStringForFixedSpeed: speed
 																	isAuto: isAutoSpeed];
@@ -588,25 +595,56 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 			[runtimeConf setValue: cyclesString forKey: @"cycles" inSection: @"cpu"];
 		}
 		
-		//Strip out these settings once we're done, so we won't preserve them in user defaults
+		//Strip out these settings once we're done, so we won't preserve them in user defaults.
 		NSArray *confSettings = [NSArray arrayWithObjects: @"CPUSpeed", @"coreMode", @"strictGameportTiming", nil];
-		[gameSettings removeObjectsForKeys: confSettings];
+		[self.gameSettings removeObjectsForKeys: confSettings];
 
-		
-		//Persist the gamebox-specific configuration into the gamebox's configuration file.
-		NSString *configPath = [[self gamePackage] configurationFilePath];
+		//Persist these gamebox-specific configuration into the gamebox's configuration file.
+		NSString *configPath = self.gamePackage.configurationFilePath;
 		[self _saveConfiguration: runtimeConf toFile: configPath];
 		
-		//Save whatever's left into user defaults.
-		if ([gameSettings count])
-		{
-			//Add the gamebox name into the settings, to make it easier to identify to which gamebox the record belongs
-			[gameSettings setObject: [gamePackage gameName] forKey: BXGameboxSettingsNameKey];
-			
-			NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-			NSString *defaultsKey = [NSString stringWithFormat: BXGameboxSettingsKeyFormat, [[self gamePackage] gameIdentifier], nil];
-			[defaults setObject: gameSettings forKey: defaultsKey];			
-		}
+        //Now that we've saved those settings to the gamebox conf,
+        //persist the rest of the game state to user defaults.
+        
+        
+        //Add the gamebox name into the settings, to make it easier
+        //to identify to which gamebox the record belongs.
+        [self.gameSettings setObject: gamePackage.gameName forKey: BXGameboxSettingsNameKey];
+        
+        //Record the state of the drive queues for next time we launch this gamebox.
+        if ([self _shouldPersistQueuedDrives])
+        {
+            //Build a list of what drives the user had queued at the time they quit.
+            NSMutableArray *queuedDrives = [NSMutableArray arrayWithCapacity: self.allDrives.count];
+            for (BXDrive *drive in self.allDrives)
+            {
+                //Skip our own internal drives.
+                if (drive.isHidden || drive.isInternal)
+                    continue;
+                
+                NDAlias *driveAlias     = [NDAlias aliasWithPath: drive.path];
+                NSData *aliasData       = driveAlias.data;
+                NSString *driveLetter   = drive.letter;
+                NSNumber *mountState    = [NSNumber numberWithBool: [self driveIsMounted: drive]];
+                NSNumber *driveType     = [NSNumber numberWithInteger: drive.type];
+                
+                NSDictionary *driveInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                                           aliasData,   BXGameboxSettingsDriveAliasKey,
+                                           driveLetter, BXGameboxSettingsDriveLetterKey,
+                                           driveType,   BXGameboxSettingsDriveTypeKey,
+                                           mountState,  BXGameboxSettingsDriveMountedKey,
+                                           nil];
+                
+                [queuedDrives addObject: driveInfo];
+            }
+            
+            [self.gameSettings setObject: queuedDrives forKey: BXGameboxSettingsDrivesKey];
+        }
+
+        
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        NSString *defaultsKey = [NSString stringWithFormat: BXGameboxSettingsKeyFormat, self.gamePackage.gameIdentifier, nil];
+        [defaults setObject: self.gameSettings forKey: defaultsKey];
 	}
 }
  
@@ -1129,6 +1167,11 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     return YES;
 }
 
+- (BOOL) _shouldPersistQueuedDrives
+{
+    return YES;
+}
+
 - (BOOL) _shouldCloseOnEmulatorExit { return YES; }
 - (BOOL) _shouldStartImmediately { return YES; }
 
@@ -1203,8 +1246,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		//Mount the game package as a new hard drive, at drive C.
 		//(This may get replaced below by a custom bundled C volume;
         //we do it now to reserve drive C so that it doesn't get autoassigned.)
-		BXDrive *packageDrive = [BXDrive hardDriveFromPath: [package gamePath] atLetter: @"C"];
-        [packageDrive setTitle: NSLocalizedString(@"Game Drive", @"The display title for the gamebox’s C drive.")];
+		BXDrive *packageDrive = [BXDrive hardDriveFromPath: package.gamePath atLetter: @"C"];
+        packageDrive.title = NSLocalizedString(@"Game Drive", @"The display title for the gamebox’s C drive.");
         
 		packageDrive = [self mountDrive: packageDrive
                                ifExists: BXDriveReplace
@@ -1213,9 +1256,9 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         		
 		//Then, mount any extra volumes included in the game package
 		NSMutableArray *packageVolumes = [NSMutableArray arrayWithCapacity: 10];
-		[packageVolumes addObjectsFromArray: [package floppyVolumes]];
-		[packageVolumes addObjectsFromArray: [package hddVolumes]];
-		[packageVolumes addObjectsFromArray: [package cdVolumes]];
+		[packageVolumes addObjectsFromArray: package.floppyVolumes];
+		[packageVolumes addObjectsFromArray: package.hddVolumes];
+		[packageVolumes addObjectsFromArray: package.cdVolumes];
 		
 		BOOL hasProperDriveC = NO;
         for (NSString *volumePath in packageVolumes)
@@ -1224,9 +1267,9 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
             
 			//If a bundled drive was explicitly set to use drive C,
             //then replace our original C package-drive with it
-			if (!hasProperDriveC && [[bundledDrive letter] isEqualToString: [packageDrive letter]])
+			if (!hasProperDriveC && [bundledDrive.letter isEqualToString: packageDrive.letter])
 			{
-                [bundledDrive setTitle: [packageDrive title]];
+                bundledDrive.title = packageDrive.title;
                 
                 BXDrive *mountedDrive = [self mountDrive: bundledDrive
                                                 ifExists: BXDriveReplace
@@ -1236,8 +1279,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
                 if (mountedDrive)
                 {
 				    //Rewrite our target to point to the new C drive, if it was pointing to the old one
-                    if ([[self targetPath] isEqualToString: [packageDrive path]])
-                        [self setTargetPath: volumePath];
+                    if ([self.targetPath isEqualToString: packageDrive.path])
+                        self.targetPath = volumePath;
                     
                     //Don't look any further for a C drive
                     hasProperDriveC = YES;
@@ -1262,25 +1305,61 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	
 	//Mount our internal DOS toolkit and temporary drives
 	[self mountToolkitDriveWithError: nil];
-    if (!gameProfile || [gameProfile mountTempDrive])
+    if (!gameProfile || gameProfile.shouldMountTempDrive)
         [self mountTempDriveWithError: nil];
     
     //If the game needs a CD-ROM to be present, then mount a dummy CD drive
     //if necessary.
-    if ([gameProfile requiresCDROM])
+    if (gameProfile.requiresCDROM)
         [self mountDummyCDROMWithError: nil];
+    
+    
+    //Now, restore any drives that the user had in the drives list last time they ran this session.
+    NSArray *previousDrives = [self.gameSettings objectForKey: BXGameboxSettingsDrivesKey];
+    for (NSDictionary *driveInfo in previousDrives)
+    {
+		NSData *aliasData = [driveInfo objectForKey: BXGameboxSettingsDriveAliasKey];
+        
+        NDAlias *alias = [NDAlias aliasWithData: aliasData];
+        
+        //Skip drives that couldn't be resolved (which will happen the file has moved or been ejected/deleted.)
+        if (!alias) continue;
+        
+        NSString *drivePath = alias.path;
+        BOOL driveWasMounted = [[driveInfo objectForKey: BXGameboxSettingsDriveMountedKey] boolValue];
+        BXDriveConflictBehaviour shouldReplace = driveWasMounted ? BXDriveReplace : BXDriveQueue;
+        
+        //First, check if we have an existing drive that fits the bill for this path.
+        //If so, we'll mount that again now if the drive had been mounted previously,
+        //otherwise we'll leave it in the queue.
+        BXDrive *drive  = [self queuedDriveForPath: drivePath];
+        
+        //Otherwise, make a new drive to represent this path and mount/queue that accordingly.
+        if (!drive)
+        {
+            NSString *driveLetter   = [driveInfo objectForKey: BXGameboxSettingsDriveLetterKey];
+            BXDriveType driveType   = [[driveInfo objectForKey: BXGameboxSettingsDriveTypeKey] integerValue];
+            drive = [BXDrive driveFromPath: drivePath atLetter: driveLetter withType: driveType];
+        }
+        
+        NSError *mountError     = nil;
+        [self mountDrive: drive
+                ifExists: shouldReplace
+                 options: BXBundledDriveMountOptions
+                   error: &mountError];
+    }
     
 	
 	//Once all regular drives are in place, check if our target program/folder
     //is now accessible in DOS: if not, add another drive allowing access to it.
-	if ([self targetPath])
+	if (self.targetPath)
 	{
-        if ([self shouldMountNewDriveForPath: targetPath])
+        if ([self shouldMountNewDriveForPath: self.targetPath])
         {
             //Unlike the drives built into the gamebox, we do actually
             //want to show errors if something goes wrong here.
 		    NSError *mountError = nil;
-            [self mountDriveForPath: targetPath
+            [self mountDriveForPath: self.targetPath
                            ifExists: BXDriveReplace
                             options: BXTargetMountOptions
                               error: &mountError];

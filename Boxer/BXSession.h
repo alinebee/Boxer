@@ -40,6 +40,20 @@ extern NSString * const BXWillBeginInterruptionNotification;
 extern NSString * const BXDidFinishInterruptionNotification;
 
 
+#pragma mark Game settings .plist keys
+
+extern NSString * const BXGameboxSettingsKeyFormat;
+extern NSString * const BXGameboxSettingsNameKey;
+extern NSString * const BXGameboxSettingsProfileKey;
+extern NSString * const BXGameboxSettingsProfileVersionKey;
+
+extern NSString * const BXGameboxSettingsDrivesKey;
+extern NSString * const BXGameboxSettingsDriveAliasKey;
+extern NSString * const BXGameboxSettingsDriveLetterKey;
+extern NSString * const BXGameboxSettingsDriveMountedKey;
+extern NSString * const BXGameboxSettingsDriveTypeKey;
+
+
 #pragma mark -
 #pragma mark Interface
 

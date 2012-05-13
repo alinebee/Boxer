@@ -19,13 +19,12 @@
 
 
 //Options for resolving drive letter conflicts when mounting drives
-enum {
+typedef enum {
     BXDriveReplace,     //Replace any existing drive at the same drive letter.
     BXDriveQueue,       //Queue behind any existing drive at the same drive letter.
     BXDriveReassign     //Assign the new drive to the next available free drive letter.
-};
+} BXDriveConflictBehaviour;
 
-typedef NSUInteger BXDriveConflictBehaviour;
 
 
 //Bitflag options for mountDrive:ifExists:options:error:.

@@ -1296,6 +1296,13 @@
     return profile && ![profile.identifier isEqualToString: BXGenericProfileIdentifier];
 }
 
+- (BOOL) _shouldPersistQueuedDrives
+{
+    //The state of the drives during import is no indication of how they should be once
+    //importing is completed.
+    return NO;
+}
+
 - (BOOL) _shouldSuppressDisplaySleep
 {
     //Always allow the display to go to sleep when it wants, on the assumption that
@@ -1372,11 +1379,11 @@
 	[self mountCDVolumesWithError: &mountError];
 	
 	//Mount our internal DOS toolkit and temporary drives unless the profile says otherwise
-	if (!self.gameProfile || self.gameProfile.mountHelperDrivesDuringImport)
+	if (!self.gameProfile || self.gameProfile.shouldMountHelperDrivesDuringImport)
 	{
 		[self mountToolkitDriveWithError: &mountError];
         
-        if (!self.gameProfile || self.gameProfile.mountTempDrive)
+        if (!self.gameProfile || self.gameProfile.shouldMountTempDrive)
             [self mountTempDriveWithError: &mountError];
 	}
 }

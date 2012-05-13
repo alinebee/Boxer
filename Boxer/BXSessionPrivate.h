@@ -58,6 +58,10 @@
 //Normally YES, may be overridden by BXSession subclasses. 
 - (BOOL) _shouldCloseOnEmulatorExit;
 
+//Whether the session should store the state of its drive queue in the settings for that gamebox.
+//YES by default, but will be overridden to NO by import sessions.
+- (BOOL) _shouldPersistQueuedDrives;
+
 
 //Create our BXEmulator instance and starts its main loop.
 //Called internally by [BXSession start], deferred to the end of the main thread's event loop to prevent

@@ -3,9 +3,24 @@
 <plist version="1.0">
 <dict>
 	<key>BXGameProfileCatalogueVersion</key>
-	<string>20120513.1</string>
+	<string>20120520.1</string>
 	<key>BXSpecificGameProfiles</key>
 	<array>
+        <dict>
+            <key>BXProfileIdentifier</key>
+            <string>com.microprose.dragonsphere</string>
+            <key>BXProfileGameName</key>
+            <string>Dragonsphere</string>
+            <key>BXProfileConfigurations</key>
+            <array>
+                <string>Dragonsphere</string>
+            </array>
+            <key>BXProfileTelltales</key>
+            <array>
+                <string>dragon.res</string>
+            </array>
+        </dict>
+		
 		<dict>
 			<key>BXProfileIdentifier</key>
 			<string>com.ea.fifa-94</string>
@@ -953,6 +968,7 @@
 			<key>BXProfileTelltales</key>
 			<array>
 				<string>ign_dos.bat</string>
+                <string>ign_dos.btz</string>
 				<string>tex4.exe</string>
 			</array>
 			<key>BXRequiresCDROM</key>

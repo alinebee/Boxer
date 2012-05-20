@@ -20,13 +20,12 @@
 #pragma mark Constants
 
 //Constants used by eraOfGameAtPath:
-enum {
+typedef enum {
 	BXUnknownMedium = 0,
 	BX525DisketteMedium = 1,
 	BX35DisketteMedium = 2,
 	BXCDROMMedium = 3
-};
-typedef NSUInteger BXReleaseMedium;
+} BXReleaseMedium;
 
 
 //The default identifier string used for game profiles that don't match a known profile.
@@ -50,6 +49,10 @@ extern NSString * const BXGenericProfileIdentifier;
 	BOOL _shouldMountHelperDrivesDuringImport;
     BOOL _shouldMountTempDrive;
     BOOL _requiresCDROM;
+    
+    BOOL _shouldImportMountCommands;
+    BOOL _shouldImportLaunchCommands;
+    BOOL _shouldImportSettings;
 }
 
 #pragma mark -
@@ -102,6 +105,13 @@ extern NSString * const BXGenericProfileIdentifier;
 //Defaults to BXUnknownMedium.
 @property (assign, nonatomic) BXReleaseMedium coverArtMedium;
 
+//If a DOSBox configuration file is bundled with a game we're importing,
+//what to import from it: drive mounts, launch commands, and/or configuration settings.
+//These default to YES, but are selectively overridden for e.g. GOG games that are
+//bundled with inappropriate configuration settings.
+@property (assign, nonatomic) BOOL shouldImportMountCommands;
+@property (assign, nonatomic) BOOL shouldImportLaunchCommands;
+@property (assign, nonatomic) BOOL shouldImportSettings;
 
 #pragma mark -
 #pragma mark Helper class methods

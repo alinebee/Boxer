@@ -19,6 +19,8 @@
             <array>
                 <string>dragon.res</string>
             </array>
+            <key>BXShouldImportSettings</key>
+			<false/>
         </dict>
 		
 		<dict>

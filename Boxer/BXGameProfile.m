@@ -66,6 +66,10 @@ NSString * const BXInvalidGameDateThreshold = @"1981-01-01 00:00:00 +0000";
 @synthesize ignoredInstallerPatterns = _ignoredInstallerPatterns;
 @synthesize driveLabelMappings = _driveLabelMappings;
 
+@synthesize shouldImportMountCommands = _shouldImportMountCommands;
+@synthesize shouldImportLaunchCommands = _shouldImportLaunchCommands;
+@synthesize shouldImportSettings = _shouldImportSettings;
+
 
 + (BXReleaseMedium) mediumOfGameAtPath: (NSString *)basePath
 {
@@ -172,12 +176,17 @@ NSString * const BXInvalidGameDateThreshold = @"1981-01-01 00:00:00 +0000";
 	if ((self = [super init]))
 	{
 		//Set our standard defaults
+        self.identifier = BXGenericProfileIdentifier;
+        
         self.sourceDriveType = BXDriveAutodetect;
         self.requiredDiskSpace = BXDefaultFreeSpace;
         self.shouldMountHelperDrivesDuringImport = YES;
         self.shouldMountTempDrive = YES;
         self.coverArtMedium = BXUnknownMedium;
-        self.identifier = BXGenericProfileIdentifier;
+        
+        self.shouldImportMountCommands = YES;
+        self.shouldImportLaunchCommands = YES;
+        self.shouldImportSettings = YES;
 	}
 	return self;
 }
@@ -223,6 +232,18 @@ NSString * const BXInvalidGameDateThreshold = @"1981-01-01 00:00:00 +0000";
 		NSNumber *era = [profileDict objectForKey: @"BXProfileGameEra"];
 		if (era)
             self.coverArtMedium = era.unsignedIntegerValue;
+        
+		NSNumber *importMountCommands = [profileDict objectForKey: @"BXShouldImportMountCommands"];
+		if (importMountCommands)
+            self.shouldImportMountCommands = importMountCommands.boolValue;
+        
+		NSNumber *importLaunchCommands = [profileDict objectForKey: @"BXShouldImportLaunchCommands"];
+		if (importLaunchCommands)
+            self.shouldImportLaunchCommands = importLaunchCommands.boolValue;
+        
+		NSNumber *importSettings = [profileDict objectForKey: @"BXShouldImportSettings"];
+		if (importSettings)
+            self.shouldImportSettings = importSettings.boolValue;
 		
 		//Used by isDesignatedInstallerAtPath:
 		self.installerPatterns	= [profileDict objectForKey: @"BXDesignatedInstallers"];

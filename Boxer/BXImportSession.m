@@ -789,9 +789,9 @@
     
     //If we have a configuration file to work from, check it to see if it defines any drives.
     //If so, we'll import those drives directly.
-    if (self.configurationFilePath)
+    if (self.configurationFilePath && (!self.gameProfile || self.gameProfile.shouldImportMountCommands))
     {
-        BXEmulatorConfiguration *configuration = [BXEmulatorConfiguration configurationWithContentsOfFile:self.configurationFilePath error: nil];
+        BXEmulatorConfiguration *configuration = [BXEmulatorConfiguration configurationWithContentsOfFile: self.configurationFilePath error: nil];
         
         NSArray *mountCommands = [self.class mountCommandsFromConfiguration: configuration];
         if (mountCommands.count)
@@ -1141,31 +1141,37 @@
         
         if (bundledConfig)
         {
-            //Strip out all the junk we don't care about from the original game configuration.
-            BXEmulatorConfiguration *sanitizedConfig = [self.class sanitizedVersionOfConfiguration: bundledConfig];
-            
-            //If the original autoexec contained any launch commands, convert those
-            //into a launcher batchfile in the root drive: we then assign that as
-            //the default program to launch.
-            NSArray *launchCommands = [self.class launchCommandsFromConfiguration: bundledConfig];
-            
-            if (launchCommands.count)
+            if (!self.gameProfile || self.gameProfile.shouldImportLaunchCommands)
             {
-                NSString *launchPath = [self.rootDrivePath stringByAppendingPathComponent: @"bxlaunch.bat"];
-                NSString *startupCommandString = [launchCommands componentsJoinedByString: @"\r\n"];
+                //If the original autoexec contained any launch commands, convert those
+                //into a launcher batchfile in the root drive: we then assign that as
+                //the default program to launch.
+                NSArray *launchCommands = [self.class launchCommandsFromConfiguration: bundledConfig];
                 
-                BOOL createdLauncher = [startupCommandString writeToFile: launchPath
-                                                              atomically: NO
-                                                                encoding: BXDisplayStringEncoding
-                                                                   error: nil];
-                
-                if (createdLauncher)
-                    self.gamePackage.targetPath = launchPath;
+                if (launchCommands.count)
+                {
+                    NSString *launchPath = [self.rootDrivePath stringByAppendingPathComponent: @"bxlaunch.bat"];
+                    NSString *startupCommandString = [launchCommands componentsJoinedByString: @"\r\n"];
+                    
+                    BOOL createdLauncher = [startupCommandString writeToFile: launchPath
+                                                                  atomically: NO
+                                                                    encoding: BXDisplayStringEncoding
+                                                                       error: nil];
+                    
+                    if (createdLauncher)
+                        self.gamePackage.targetPath = launchPath;
+                }
             }
             
-            //Finally, save the sanitized configuration into the gamebox.
-            NSString *configPath = self.gamePackage.configurationFilePath;
-            [self _saveConfiguration: sanitizedConfig toFile: configPath];
+            if (!self.gameProfile || self.gameProfile.shouldImportSettings)
+            {
+                //Strip out all the junk we don't care about from the original game configuration.
+                BXEmulatorConfiguration *sanitizedConfig = [self.class sanitizedVersionOfConfiguration: bundledConfig];
+                
+                //Save the sanitized configuration into the gamebox.
+                NSString *configPath = self.gamePackage.configurationFilePath;
+                [self _saveConfiguration: sanitizedConfig toFile: configPath];
+            }
         }
     }
     

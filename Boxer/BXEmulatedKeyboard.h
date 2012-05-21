@@ -17,27 +17,33 @@
 //How long keyPressed: should pretend to hold the specified key down before releasing.
 #define BXKeyPressDurationDefault 0.25
 
-//How long typeCharacters should wait in between bursts of typing.
-//This needs to be high enough that we don't overload a DOS program's own keyboard buffer.
-#define BXTypingBurstIntervalDefault 0.4
+//How long typeCharacters should wait in between bursts of simulated typing.
+//This needs to be high enough that we don't overload a DOS program's own keyboard handling.
+#define BXTypingBurstIntervalDefault 0.5
+
+//How long to wait after finishing a batch of simulated typing, before returning the keyboard state to normal.
+#define BXTypingCleanupDelay 0.5
+
+//When simulating typing, this many slots will be reserved in the emulated keyboard buffer to avoid flooding.
+#define BXTypingKeyboardBufferReserve 3
 
 typedef KBD_KEYS BXDOSKeyCode;
 
 @interface BXEmulatedKeyboard : NSObject
 {
-	BOOL capsLockEnabled;
-	BOOL numLockEnabled;
-    BOOL scrollLockEnabled;
-    NSUInteger pressedKeys[KBD_LAST];
+	BOOL _capsLockEnabled;
+	BOOL _numLockEnabled;
+    BOOL _scrollLockEnabled;
+    NSUInteger _pressedKeys[KBD_LAST];
     
     //Whether to re-enable capslock and the active layout
     //once a simulated typing session is finished.
-    BOOL enableActiveLayoutAfterTyping;
-    BOOL enableCapslockAfterTyping;
+    BOOL _enableActiveLayoutAfterTyping;
+    BOOL _enableCapslockAfterTyping;
     
-	NSString *preferredLayout;
+	NSString *_preferredLayout;
     
-    NSTimer *pendingKeypresses;
+    NSTimer *_pendingKeypresses;
 }
 
 //NOTE: these are only readwrite for the sake of BXCoalface.

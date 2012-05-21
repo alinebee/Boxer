@@ -6,7 +6,7 @@
  */
 
 
-#import "BXEmulator+BXPaste.h"
+#import "BXEmulatorPrivate.h"
 #import "BXEmulatedKeyboard.h"
 #import "BXKeyBuffer.h"
 
@@ -14,54 +14,77 @@
 
 - (BOOL) hasPendingPaste
 {
-    return (self.keyBuffer.count > 0);
-    //return self.keyboard.isTyping;
+    return (self.keyBuffer.count > 0) || self.keyboard.isTyping;
 }
 
 - (void) cancelPaste
 {
     [self.keyBuffer empty];
-    //[self.keyboard cancelTyping];
+    [self.keyboard cancelTyping];
+}
+
+- (void) _polledBIOSKeyBuffer
+{
+    _keyBufferLastCheckTime = [NSDate timeIntervalSinceReferenceDate];
+}
+
+- (BOOL) _canPasteToBIOS
+{
+    NSTimeInterval now = [NSDate timeIntervalSinceReferenceDate];
+    return (now - _keyBufferLastCheckTime) < BXBIOSKeyBufferPollIntervalCutoff;
+}
+
+- (BOOL) _canPasteToShell
+{
+    return self.isAtPrompt;
 }
 
 - (BOOL) handlePastedString: (NSString *)pastedString
-{
-    [self.keyBuffer addKeysForCharacters: pastedString];
-    return YES;
-    
-    /*
-    //While we're at the DOS prompt, we can use a more streamlined method for pasting text.
-	if ([self isAtPrompt])
+{   
+    //While we're at the DOS prompt, we can paste text directly as commands
+    //and be more intelligent about formatting.
+	if (self._canPasteToShell)
 	{
+        NSCharacterSet *whitespace = [NSCharacterSet whitespaceCharacterSet];
+        NSCharacterSet *newLines = [NSCharacterSet newlineCharacterSet];
+        
 		//Split string into separate lines, which will be pasted one by one as commands
-		NSArray *lines = [pastedString componentsSeparatedByCharactersInSet: [NSCharacterSet newlineCharacterSet]];
-		NSUInteger i, numLines = [lines count];
-		for (i = 0; i < numLines; i++)
+        NSArray *lines = [pastedString componentsSeparatedByCharactersInSet: newLines];
+        NSUInteger i, numLines = lines.count;
+		
+        for (i = 0; i < numLines; i++)
 		{
 			//Remove whitespace from each line
-			NSString *cleanedString = [[lines objectAtIndex: i]
-									   stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
+			NSString *cleanedString = [[lines objectAtIndex: i] stringByTrimmingCharactersInSet: whitespace];
 			
-			if ([cleanedString length])
+			if (cleanedString.length)
 			{
+                BOOL isLastLine = (i == numLines - 1);
 				//Execute each line immediately, except for the last one, which we leave in case the user wants to modify it
-				if (i < numLines - 1) cleanedString = [cleanedString stringByAppendingString: @"\n"]; 
-				[[self commandQueue] addObject: cleanedString];
+				if (!isLastLine)
+                    cleanedString = [cleanedString stringByAppendingString: @"\n"];
+                
+				[self.commandQueue addObject: cleanedString];
 			}
 		}
 	}
-    //While a program is running, we fall back on typing the string into the emulated keyboard.
+    
+    //If supported, paste characters via the BIOS key buffer. This is faster and more accurate,
+    //but is not supported by programs that read directly from the keyboard.
+    else if (self._canPasteToBIOS)
+    {
+        [self.keyBuffer addKeysForCharacters: pastedString];
+    }
+    //Otherwise, fall back on typing the string into the emulated keyboard.
     else
     {
-        [[self keyboard] typeCharacters: pastedString];
+        [self.keyboard typeCharacters: pastedString];
     }
     return YES;
-     */
 }
 
 - (BOOL) canAcceptPastedString: (NSString *)pastedString
 {
-	//return [self isAtPrompt];
     return YES;
 }
 

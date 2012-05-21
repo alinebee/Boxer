@@ -276,6 +276,8 @@ bool boxer_getNextKeyCodeInPasteBuffer(Bit16u *outKeyCode, bool consumeKey)
 {
 	BXEmulator *emulator = [BXEmulator currentEmulator];
     
+    [emulator _polledBIOSKeyBuffer];
+    
     UInt16 keyCode = (consumeKey) ? emulator.keyBuffer.nextKey : emulator.keyBuffer.currentKey;
     if (keyCode != BXNoKey)
     {
@@ -284,7 +286,6 @@ bool boxer_getNextKeyCodeInPasteBuffer(Bit16u *outKeyCode, bool consumeKey)
     }
     else return false;
 }
-
 
 void boxer_setMouseActive(bool mouseActive)
 {

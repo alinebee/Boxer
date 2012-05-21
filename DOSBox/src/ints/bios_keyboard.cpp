@@ -244,7 +244,6 @@ static bool check_key(Bit16u &code) {
 
 /* the scancode is in reg_al */
 static Bitu IRQ1_Handler(void) {
-    printf("IRQ1 BABY\n");
 /* handling of the locks key is difficult as sdl only gives
  * states for numlock capslock. 
  */

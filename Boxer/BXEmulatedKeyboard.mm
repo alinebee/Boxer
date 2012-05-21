@@ -40,7 +40,11 @@ const char* DOS_GetLoadedLayout(void);
 #pragma mark Implementation
 
 @implementation BXEmulatedKeyboard
-@synthesize capsLockEnabled, numLockEnabled, scrollLockEnabled, preferredLayout, pendingKeypresses;
+@synthesize capsLockEnabled = _capsLockEnabled;
+@synthesize numLockEnabled = _numLockEnabled;
+@synthesize scrollLockEnabled = _scrollLockEnabled;
+@synthesize preferredLayout = _preferredLayout;
+@synthesize pendingKeypresses = _pendingKeypresses;
 
 + (NSTimeInterval) defaultKeypressDuration { return 0.25; }
 
@@ -74,23 +78,23 @@ const char* DOS_GetLoadedLayout(void);
     if (!self.isTyping)
     {
         //If this key is not already pressed, tell the emulator the key has been pressed.
-        if (!pressedKeys[key])
+        if (!_pressedKeys[key])
         {
             KEYBOARD_AddKey(key, YES);
         }
-        pressedKeys[key]++;
+        _pressedKeys[key]++;
     }
     //If the capslock key was pressed while we were simulating typing,
     //record the state to toggle it back to after we finish.
     else if (key == KBD_capslock)
     {
-        enableCapslockAfterTyping = !enableCapslockAfterTyping;
+        _enableCapslockAfterTyping = !_enableCapslockAfterTyping;
     }
 }
 
 - (void) keyUp: (BXDOSKeyCode)key
 {
-	if (pressedKeys[key] && !self.isTyping)
+	if (_pressedKeys[key] && !self.isTyping)
 	{
         //FIXME: we should just decrement the number of times the key has been pressed
         //instead of clearing it altogether. However, we're still running into problems
@@ -98,18 +102,18 @@ const char* DOS_GetLoadedLayout(void);
         //This should be changed back once those problems have been located and fixed.
         
 		//pressedKeys[key]--;
-        pressedKeys[key] = 0;
+        _pressedKeys[key] = 0;
         
         //If this was the last press of this key,
         //tell the emulator to finally release the key.
-        if (!pressedKeys[key])
+        if (!_pressedKeys[key])
             KEYBOARD_AddKey(key, NO);
 	}
 }
 
 - (BOOL) keyIsDown: (BXDOSKeyCode)key
 {
-	return pressedKeys[key] > 0;
+	return _pressedKeys[key] > 0;
 }
 
 - (void) keyPressed: (BXDOSKeyCode)key
@@ -136,6 +140,10 @@ const char* DOS_GetLoadedLayout(void);
 
 - (void) clearInput
 {
+    //Clear any pending keyboard events.
+    KEYBOARD_ClrBuffer();
+    
+    //Release any previously-pressed keys.
 	BXDOSKeyCode key;
 	for (key=KBD_NONE; key<KBD_LAST; key++)
     {
@@ -145,11 +153,11 @@ const char* DOS_GetLoadedLayout(void);
 
 - (void) clearKey: (BXDOSKeyCode)key
 {
-    if (pressedKeys[key] && !self.isTyping)
+    if (_pressedKeys[key] && !self.isTyping)
     {
         //Ensure that no matter how many ways the key is being held down,
         //it will always be released by this keyUp:.
-        pressedKeys[key] = 1;
+        _pressedKeys[key] = 1;
         [self keyUp: key];
     }
 }
@@ -204,40 +212,44 @@ const char* DOS_GetLoadedLayout(void);
     }
     
     //If none of the characters could be typed, then bail out now before modifying the keyboard state.
-    if (!keyEvents.count) return;
-    
-    
-    //If we already have a timer for this running, then slap these events onto the end of its keypress queue.
-    if (self.pendingKeypresses)
+    if (keyEvents.count)
     {
-        NSMutableArray *previousQueue = self.pendingKeypresses.userInfo;
-        [previousQueue addObjectsFromArray: keyEvents];
-    }
-    //Otherwise, set up a new timer to begin sending the keypresses in bursts.
-    else
-    {
-        //Clear any keys that are currently held down, so that they won't interfere.
-        [self clearInput];
-        
-        //Set up the keyboard state appropriately and record what state it was in for when we return.
-        enableCapslockAfterTyping = self.capsLockEnabled;
-        enableActiveLayoutAfterTyping = self.usesActiveLayout;
-        
-        if (enableCapslockAfterTyping)
+        //If we already have a timer for this running, then slap these events onto the end of its keypress queue.
+        if (self.pendingKeypresses)
         {
-            [keyEvents insertObject: [NSNumber numberWithInteger: KBD_capslock] atIndex: 0];
-            [keyEvents insertObject: [NSNumber numberWithInteger: -KBD_capslock] atIndex: 1];
+            NSMutableArray *previousQueue = self.pendingKeypresses.userInfo;
+            [previousQueue addObjectsFromArray: keyEvents];
+        }
+        //Otherwise, set up a new timer to begin sending the keypresses in bursts.
+        else
+        {
+            //Clear any keys that are currently held down, so that they won't interfere.
+            [self clearInput];
+            
+            //Set up the keyboard state appropriately and record what state it was in for when we return.
+            _enableCapslockAfterTyping = self.capsLockEnabled;
+            _enableActiveLayoutAfterTyping = self.usesActiveLayout;
+            
+            if (_enableCapslockAfterTyping)
+            {
+                [keyEvents insertObject: [NSNumber numberWithInteger: KBD_capslock] atIndex: 0];
+                [keyEvents insertObject: [NSNumber numberWithInteger: -KBD_capslock] atIndex: 1];
+            }
+            
+            self.pendingKeypresses = [NSTimer scheduledTimerWithTimeInterval: interval
+                                                                      target: self
+                                                                    selector: @selector(_processNextQueuedKey:)
+                                                                    userInfo: keyEvents
+                                                                     repeats: YES];
+            
+            //Process the initial batch of keypresses.
+            [self.pendingKeypresses fire];
         }
         
-        self.pendingKeypresses = [NSTimer scheduledTimerWithTimeInterval: interval
-                                                                  target: self
-                                                                selector: @selector(_processNextQueuedKey:)
-                                                                userInfo: keyEvents
-                                                                 repeats: YES];
+        [NSObject cancelPreviousPerformRequestsWithTarget: self
+                                                 selector: @selector(cancelTyping)
+                                                   object: nil];
     }
-    
-    //Process the initial batch of keypresses.
-    [self.pendingKeypresses fire];
 }
 
 - (void) _processNextQueuedKey: (NSTimer *)timer
@@ -249,7 +261,7 @@ const char* DOS_GetLoadedLayout(void);
     {
         //Give up for now once we're out of keyboard buffer:
         //we'll continue on the next cycle of the timer.
-        if (self.keyboardBufferFull) break;
+        if (boxer_keyboardBufferRemaining() < BXTypingKeyboardBufferReserve) break;
         
         //We encode the pressed/released state as positive/negative.
         NSInteger code = keyEvent.integerValue;
@@ -257,7 +269,7 @@ const char* DOS_GetLoadedLayout(void);
         
         code = ABS(code);
         KEYBOARD_AddKey((BXDOSKeyCode)code, pressed);
-        pressedKeys[code] = pressed;
+        _pressedKeys[code] = pressed;
         
         numProcessed++;
     }
@@ -272,30 +284,27 @@ const char* DOS_GetLoadedLayout(void);
     }
     
     //Shut down the timer once we're out of keys to send.
-    if (!keyEvents.count) [self cancelTyping];
+    if (!keyEvents.count)
+    {
+        [self performSelector: @selector(cancelTyping) withObject: nil afterDelay: BXTypingCleanupDelay];
+    }
 }
 
 - (void) cancelTyping
 {
     if (self.pendingKeypresses)
-    {
-        //Turn the active layout back on after a short delay, to allow the pending input to finish processing
-        //under the US layout.
-        BOOL restoreLayout = enableActiveLayoutAfterTyping;
-        
-        if (restoreLayout)
-            [self performSelector: @selector(setUsesActiveLayout:)
-                       afterDelay: self.pendingKeypresses.timeInterval
-                       withValues: &restoreLayout];
-        
+    {   
         [self.pendingKeypresses invalidate];
         self.pendingKeypresses = nil;
         
-        //Release any keys that were left down when we stopped.
+        //Clear the pending buffer and release any keys that were left down when we stopped.
         [self clearInput];
         
-        //Re-enable capslock if necessary.
-        if (enableCapslockAfterTyping)
+        //Re-enable capslock and the active layout if necessary.
+        if (_enableActiveLayoutAfterTyping)
+            self.usesActiveLayout = YES;
+        
+        if (_enableCapslockAfterTyping)
             [self keyPressed: KBD_capslock];
     }
 }

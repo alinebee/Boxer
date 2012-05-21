@@ -205,6 +205,7 @@
     {
         _keyCodes[_addIndex] = key;
         _addIndex = nextAddIndex;
+        
         return YES;
     }
     //Out of room :(

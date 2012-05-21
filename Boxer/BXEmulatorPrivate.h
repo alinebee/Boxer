@@ -15,6 +15,7 @@
 #import "BXEmulator+BXShell.h"
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulator+BXAudio.h"
+#import "BXEmulator+BXPaste.h"
 #import "BXMIDIDevice.h"
 #import "BXVideoHandler.h"
 #import "BXEmulatedKeyboard.h"
@@ -50,6 +51,9 @@ typedef struct BXDriveGeometry {
 //Raw disk images larger than this size in bytes will be treated as hard disks
 #define BXFloppyImageSizeCutoff 2880 * 1024
 
+//If the DOS program has last polled the BIOS key buffer more than this many seconds ago,
+//we assume that BIOS-level key pasting is not suitable.
+#define BXBIOSKeyBufferPollIntervalCutoff 0.5
 
 #pragma mark -
 #pragma mark Error states
@@ -365,4 +369,23 @@ enum {
              toChannel: (MixerChannel *)channel
                 frames: (NSUInteger)numFrames
                 format: (BXAudioFormat)format;
+@end
+
+
+#pragma mark -
+#pragma mark Paste-related internal methods
+
+@interface BXEmulator (BXPasteInternals)
+
+//Called whenever a program checks for new keys in the key buffer.
+//Used for determining whether BIOS-level pasting can be used. 
+- (void) _polledBIOSKeyBuffer;
+   
+//Whether we're able to paste directly to the BIOS. Faster, but not available for programs
+//that read directly from the keyboard buffer themselves.
+- (BOOL) _canPasteToBIOS;
+
+//Whether we're able to paste text directly to the DOS prompt.
+- (BOOL) _canPasteToShell;
+
 @end

@@ -111,6 +111,7 @@ extern NSString * const shellProcessPath;
     //Managed by BXShell.
 	NSMutableArray *commandQueue;
     BXKeyBuffer *_keyBuffer;
+    NSTimeInterval _keyBufferLastCheckTime;
     
     //Managed by BXAudio.
     id <BXMIDIDevice> activeMIDIDevice;

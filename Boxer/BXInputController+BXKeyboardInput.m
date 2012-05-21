@@ -125,13 +125,17 @@
             dosKeyCode = [self _DOSKeyCodeForSystemKeyCode: OSXKeyCode];
         
         if (dosKeyCode != KBD_NONE)
+        {
+            if ([self._emulatedKeyboard keyIsDown: dosKeyCode])
+                NSLog(@"STUCK KEY WARNING: key already down: %i", theEvent.keyCode);
             [self._emulatedKeyboard keyDown: dosKeyCode];
+        }
 	}
 }
 
 - (void) keyUp: (NSEvent *)theEvent
 {
-    CGKeyCode OSXKeyCode = [theEvent keyCode];
+    CGKeyCode OSXKeyCode = theEvent.keyCode;
     
     //If this key was modified to a different mapping when it was was originally pressed,
     //then release its modified mapping too (e.g. numpad simulation).
@@ -152,7 +156,7 @@
 
 - (void) flagsChanged: (NSEvent *)theEvent
 {
-    NSUInteger currentModifiers = [theEvent modifierFlags];
+    NSUInteger currentModifiers = theEvent.modifierFlags;
 	[self _syncModifierFlags: currentModifiers];
     [self _syncSimulatedMouseButtons: currentModifiers];
 }
@@ -201,15 +205,15 @@
 - (IBAction) sendScrollLock:	(id)sender { [self._emulatedKeyboard keyPressed: KBD_scrolllock]; }
 - (IBAction) sendPrintScreen:	(id)sender { [self._emulatedKeyboard keyPressed: KBD_printscreen]; }
 
-- (IBAction) sendBackslash:     (id)sender { [self._emulatedKeyboard typeCharacters: @"\\"]; }
-- (IBAction) sendForwardSlash:  (id)sender { [self._emulatedKeyboard typeCharacters: @"/"]; }
-- (IBAction) sendColon:         (id)sender { [self._emulatedKeyboard typeCharacters: @":"]; }
-- (IBAction) sendDash:          (id)sender { [self._emulatedKeyboard typeCharacters: @"-"]; }
+- (IBAction) sendBackslash:     (id)sender { [self.representedObject.emulator handlePastedString: @"\\"]; }
+- (IBAction) sendForwardSlash:  (id)sender { [self.representedObject.emulator handlePastedString: @"/"]; }
+- (IBAction) sendColon:         (id)sender { [self.representedObject.emulator handlePastedString: @":"]; }
+- (IBAction) sendDash:          (id)sender { [self.representedObject.emulator handlePastedString: @"-"]; }
 
 
 - (void) type: (NSString *)message
 {
-    [self._emulatedKeyboard typeCharacters: message];
+    [self.representedObject.emulator handlePastedString: message];
 }
 
 #pragma mark -

@@ -352,12 +352,15 @@ const char* DOS_GetLoadedLayout(void);
 {
     if (boxer_keyboardLayoutLoaded())
     {
-        const char *loadedName = DOS_GetLoadedLayout();
+        const char *layoutName = boxer_keyboardLayoutName();
         
-        //The name of the "none" keyboard layout will be reported as NULL by DOSBox.
-        if (loadedName)
+        if (layoutName)
         {
-            return [NSString stringWithCString: loadedName encoding: BXDirectStringEncoding];
+            NSString *layout = [[NSString stringWithCString: layoutName encoding: BXDirectStringEncoding] lowercaseString];
+            if ([layout isEqualToString: @"none"])
+                return nil;
+            else
+                return layout;
         }
         else
         {

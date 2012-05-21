@@ -87,6 +87,8 @@ public:
     
     //--Added 2012-02-25 by Alun Bestor to support limited on-the-fly layout switching
     bool foreign_layout_active();
+    bool is_US_layout();
+    const char *real_layout_name();
     bool supports_language_code(const char *code);
     //--End of modifications
 
@@ -1048,6 +1050,14 @@ bool keyboard_layout::supports_language_code(const char *code) {
     return false;
 }
 
+const char* keyboard_layout::real_layout_name() {
+    return current_keyboard_file_name;
+}
+
+bool keyboard_layout::is_US_layout() {
+    return !strncasecmp(current_keyboard_file_name,"US", 2) || !strncasecmp(current_keyboard_file_name, "none", 4);
+}
+
 bool keyboard_layout::foreign_layout_active() { return use_foreign_layout; }
 //--End of modifications
 
@@ -1107,6 +1117,14 @@ const char* DOS_GetLoadedLayout(void) {
 }
 
 //--Added 2012-02-24 by Alun Bestor to let Boxer check if any layout has been loaded.
+
+const char * boxer_keyboardLayoutName()
+{
+    if (loaded_layout)
+        return loaded_layout->real_layout_name();
+    else
+        return NULL;
+}
 bool boxer_keyboardLayoutLoaded()
 {
     return (loaded_layout != NULL);
@@ -1128,14 +1146,22 @@ bool boxer_keyboardLayoutSupported(const char *code)
 
 bool boxer_keyboardLayoutActive()
 {
-    if (loaded_layout) return loaded_layout->foreign_layout_active();
+    if (loaded_layout)
+        return loaded_layout->foreign_layout_active();
     else return false;
 }
 
 void boxer_setKeyboardLayoutActive(bool active)
 {
-    if (loaded_layout && boxer_keyboardLayoutActive() != active)
-        loaded_layout->switch_foreign_layout();
+    if (loaded_layout)
+    {
+        //Force-disable US layouts,
+        //to match how switch_keyboard_layout() behaves.
+        if (loaded_layout->is_US_layout()) active = false;
+        
+        if (boxer_keyboardLayoutActive() != active)
+            loaded_layout->switch_foreign_layout();
+    }
 }
 //--End of modifications
 
@@ -1332,6 +1358,13 @@ public:
 				LOG_MSG("DOS keyboard layout loaded with main language code %s for layout %s",lcode,layoutname);
 			}
 		}
+        
+        //--Added 2012-05-21 by Alun Bestor to fix US-858 layout loading up with keyboard remapping enabled.
+        if (loaded_layout->is_US_layout() && loaded_layout->foreign_layout_active())
+        {
+            loaded_layout->switch_foreign_layout();
+        }
+        //--End of modifications
 	}
 
 	~DOS_KeyboardLayout(){

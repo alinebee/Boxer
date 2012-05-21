@@ -101,6 +101,7 @@ extern "C" {
     
     //Defined in dos_keyboard_layout.cpp.
     bool boxer_keyboardLayoutLoaded();
+    const char *boxer_keyboardLayoutName();
     bool boxer_keyboardLayoutSupported(const char *code);
     bool boxer_keyboardLayoutActive();
     void boxer_setKeyboardLayoutActive(bool active);

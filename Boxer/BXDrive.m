@@ -207,7 +207,6 @@
         self.type = BXDriveHardDisk;
         self.freeSpace = BXDefaultFreeSpace;
         self.usesCDAudio = YES;
-        self.readOnly = NO;
         
         self.pathAliases = [NSMutableSet setWithCapacity: 1];
 	}
@@ -228,9 +227,11 @@
         
 		//Detect the appropriate mount type for the specified path
 		if (driveType == BXDriveAutodetect)
-            driveType = [self.class preferredTypeForPath: self.path];
-		
-		self.type = driveType;
+        {
+            self.type = [self.class preferredTypeForPath: self.path];
+            _hasAutodetectedType = YES;
+		}
+		else self.type = driveType;
 	}
 	return self;
 }
@@ -259,37 +260,111 @@
     if ((self = [self init]))
     {
         NDAlias *pathAlias = [aDecoder decodeObjectForKey: @"path"];
+        
+        //If the path couldn't be resolved after decoding, we cannot restore this drive.
+        //Give up in shame and disgust.
+        if (pathAlias.path == nil)
+        {
+            [self release];
+            return nil;
+        }
+        
+        self.path = pathAlias.path;
+        self.type = [aDecoder decodeIntegerForKey: @"type"];
+        
+        NSString *letter = [aDecoder decodeObjectForKey: @"letter"];
+        if (letter) self.letter = letter;
+        
+        NSString *title = [aDecoder decodeObjectForKey: @"title"];
+        if (title) self.title = title;
+        
+        NSString *volumeLabel = [aDecoder decodeObjectForKey: @"volumeLabel"];
+        if (volumeLabel) self.volumeLabel = volumeLabel;
+        
         NDAlias *mountPointAlias = [aDecoder decodeObjectForKey: @"mountPoint"];
-        
-        if (pathAlias.path)
-            self.path = pathAlias.path;
-        
-        if (mountPointAlias.path)
+        if (mountPointAlias.path != nil)
             self.mountPoint = mountPointAlias.path;
         
         NSSet *pathAliases = [aDecoder decodeObjectForKey: @"pathAliases"];
         for (NDAlias *alias in pathAliases)
         {
-            if (alias.path)
+            if (alias.path != nil)
                 [self.pathAliases addObject: alias.path];
         }
         
-        self.type           = [aDecoder decodeIntegerForKey: @"type"];
-        self.letter         = [aDecoder decodeObjectForKey: @"letter"];
-        self.title          = [aDecoder decodeObjectForKey: @"title"];
-        self.volumeLabel    = [aDecoder decodeObjectForKey: @"volumeLabel"];
+        if ([aDecoder containsValueForKey: @"freeSpace"])
+            self.freeSpace  = [aDecoder decodeIntegerForKey: @"freeSpace"];
         
-        self.usesCDAudio    = [aDecoder decodeBoolForKey: @"usesCDAudio"];
-        self.freeSpace      = [aDecoder decodeIntegerForKey: @"freeSpace"];
-        self.readOnly       = [aDecoder decodeBoolForKey: @"readOnly"];
-        self.locked         = [aDecoder decodeBoolForKey: @"locked"];
-        self.hidden         = [aDecoder decodeBoolForKey: @"hidden"];
+        if ([aDecoder containsValueForKey: @"usesCDAudio"])
+            self.usesCDAudio = [aDecoder decodeBoolForKey: @"usesCDAudio"];
+        
+        self.readOnly   = [aDecoder decodeBoolForKey: @"readOnly"];
+        self.locked     = [aDecoder decodeBoolForKey: @"locked"];
+        self.hidden     = [aDecoder decodeBoolForKey: @"hidden"];
+        self.mounted    = [aDecoder decodeBoolForKey: @"mounted"];
     }
+    
     return self;
 }
 
 - (void) encodeWithCoder: (NSCoder *)aCoder
 {
+    NSAssert1(self.path, @"Attempt to serialize internal drive or drive missing path: %@", self);
+    
+    //Convert all paths to aliases before encoding, so that we can track them if they move.
+    NDAlias *pathAlias = [NDAlias aliasWithPath: self.path];
+    [aCoder encodeObject: pathAlias forKey: @"path"];
+    [aCoder encodeInteger: self.type forKey: @"type"];
+    
+    if (self.letter)
+        [aCoder encodeObject: self.letter forKey: @"letter"];
+    
+    //For other paths and strings, only bother recording them if they have been
+    //manually changed from their autodetected versions.
+    if (self.mountPoint && !_hasAutodetectedMountPoint)
+    {
+        NDAlias *mountPointAlias = [NDAlias aliasWithPath: self.mountPoint];
+        [aCoder encodeObject: mountPointAlias forKey: @"mountPoint"];
+    }
+    
+    if (self.title && !_hasAutodetectedTitle)
+        [aCoder encodeObject: self.title forKey: @"title"];
+    
+    if (self.volumeLabel && !_hasAutodetectedVolumeLabel)
+        [aCoder encodeObject: self.volumeLabel forKey: @"volumeLabel"];
+    
+    if (self.pathAliases.count)
+    {
+        NSMutableSet *aliases = [[NSMutableSet alloc] initWithCapacity: self.pathAliases.count];
+        
+        for (NSString *path in self.pathAliases)
+        {
+            NDAlias *alias = [NDAlias aliasWithPath: path];
+            [aliases addObject: alias];
+        }
+        
+        [aCoder encodeObject: aliases forKey: @"pathAliases"];
+        [aliases release];
+    }
+    
+    //For scalar properties, we only bother recording exceptions to the defaults
+    if (self.freeSpace != BXDefaultFreeSpace)
+        [aCoder encodeInteger: self.freeSpace forKey: @"freeSpace"];
+    
+    if (self.readOnly)
+        [aCoder encodeBool: self.readOnly forKey: @"readOnly"];
+    
+    if (self.hidden)
+        [aCoder encodeBool: self.hidden forKey: @"hidden"];
+    
+    if (self.locked)
+        [aCoder encodeBool: self.locked forKey: @"locked"];
+    
+    if (self.isMounted)
+        [aCoder encodeBool: self.isMounted forKey: @"mounted"];
+    
+    if (!self.usesCDAudio)
+        [aCoder encodeBool: self.usesCDAudio forKey: @"usesCDAudio"];
     
 }
 
@@ -318,17 +393,29 @@
 		if (filePath)
 		{
 			if (!self.mountPoint)
+            {
 				self.mountPoint = [self.class mountPointForPath: filePath];
+                _hasAutodetectedMountPoint = YES;
+            }
 			
 			//Automatically parse the drive letter, title and volume label from the name of the drive
 			if (!self.letter)
+            {
                 self.letter = [self.class preferredDriveLetterForPath: filePath];
+                _hasAutodetectedLetter = YES;
+            }
             
 			if (!self.volumeLabel)
+            {
                 self.volumeLabel = [self.class preferredVolumeLabelForPath: filePath];
+                _hasAutodetectedVolumeLabel = YES;
+            }
             
 			if (!self.title)
+            {
                 self.title = [self.class preferredTitleForPath: filePath];
+                _hasAutodetectedTitle = YES;
+            }
 		}
 	}
 }
@@ -341,6 +428,8 @@
 	{
 		[_letter release];
 		_letter = [driveLetter copy];
+        
+        _hasAutodetectedLetter = NO;
 	}
 }
 
@@ -351,7 +440,29 @@
 		[_volumeLabel release];
 		_volumeLabel = [newLabel copy];
 		
-		//if (![[self title] length]) [self setTitle: volumeLabel];
+        _hasAutodetectedVolumeLabel = NO;
+	}
+}
+
+- (void) setTitle: (NSString *)title
+{
+    if (![_title isEqualToString: title])
+	{
+		[_title release];
+		_title = [title copy];
+		
+        _hasAutodetectedTitle = NO;
+	}
+}
+
+- (void) setMountPoint: (NSString *)mountPoint
+{
+    if (![_mountPoint isEqualToString: mountPoint])
+	{
+		[_mountPoint release];
+		_mountPoint = [mountPoint copy];
+		
+        _hasAutodetectedMountPoint = NO;
 	}
 }
 

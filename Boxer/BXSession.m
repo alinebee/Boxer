@@ -23,7 +23,6 @@
 #import "NSString+BXPaths.h"
 #import "UKFNSubscribeFileWatcher.h"
 #import "NSWorkspace+BXExecutableTypes.h"
-#import "NDAlias+AliasFile.h"
 #import "BXInputController.h"
 #import "NSObject+BXPerformExtensions.h"
 
@@ -40,11 +39,7 @@ NSString * const BXGameboxSettingsNameKey       = @"BXGameName";
 NSString * const BXGameboxSettingsProfileKey    = @"BXGameProfile";
 NSString * const BXGameboxSettingsProfileVersionKey = @"BXGameProfileVersion";
 
-NSString * const BXGameboxSettingsDrivesKey             = @"BXMountedDrives";
-NSString * const BXGameboxSettingsDriveAliasKey         = @"Alias";
-NSString * const BXGameboxSettingsDriveLetterKey        = @"Letter";
-NSString * const BXGameboxSettingsDriveTypeKey          = @"Type";
-NSString * const BXGameboxSettingsDriveMountedKey       = @"Mounted";
+NSString * const BXGameboxSettingsDrivesKey     = @"BXQueudDrives";
 
 
 //The length of time in seconds after which we figure that if the program was
@@ -642,19 +637,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
                 if (drive.isHidden || drive.isInternal)
                     continue;
                 
-                NDAlias *driveAlias     = [NDAlias aliasWithPath: drive.path];
-                NSData *aliasData       = driveAlias.data;
-                NSString *driveLetter   = drive.letter;
-                NSNumber *mountState    = [NSNumber numberWithBool: [self driveIsMounted: drive]];
-                NSNumber *driveType     = [NSNumber numberWithInteger: drive.type];
-                
-                NSDictionary *driveInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                                           aliasData,   BXGameboxSettingsDriveAliasKey,
-                                           driveLetter, BXGameboxSettingsDriveLetterKey,
-                                           driveType,   BXGameboxSettingsDriveTypeKey,
-                                           mountState,  BXGameboxSettingsDriveMountedKey,
-                                           nil];
-                
+                NSData *driveInfo = [NSKeyedArchiver archivedDataWithRootObject: drive];
                 [queuedDrives addObject: driveInfo];
             }
             
@@ -1342,30 +1325,28 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     
     //Now, restore any drives that the user had in the drives list last time they ran this session.
     NSArray *previousDrives = [self.gameSettings objectForKey: BXGameboxSettingsDrivesKey];
-    for (NSDictionary *driveInfo in previousDrives)
+    for (NSData *driveInfo in previousDrives)
     {
-		NSData *aliasData = [driveInfo objectForKey: BXGameboxSettingsDriveAliasKey];
+        BXDrive *drive = [NSKeyedUnarchiver unarchiveObjectWithData: driveInfo];
         
-        NDAlias *alias = [NDAlias aliasWithData: aliasData];
-        NSString *drivePath = alias.path;
+        //Skip drives that couldn't be decoded (which will happen the path for the drive
+        //had moved or been ejected/deleted in the interim.)
+        if (!drive) continue;
         
-        //Skip drives that couldn't be resolved (which will happen the file has moved or been ejected/deleted.)
-        if (!drivePath) continue;
+        //The drive has a flag indicating whether it was currently mounted last time.
+        //Read this off, then clear the flag (it'll be reinstated later if we decide to mount it.)
+        BOOL driveWasMounted = drive.isMounted;
+        drive.mounted = NO;
         
-        BOOL driveWasMounted = [[driveInfo objectForKey: BXGameboxSettingsDriveMountedKey] boolValue];
         BXDriveConflictBehaviour shouldReplace = driveWasMounted ? BXDriveReplace : BXDriveQueue;
         
-        //First check if we have a drive queued that matches this path.
-        //If so, we'll mount that immediately if the drive had been mounted previously.
-        BXDrive *drive  = [self queuedDriveForPath: drivePath];
+        //Check if we already have a drive queued that represents this drive.
+        //If so, we'll ignore the previous drive and just remount the existing one
+        //if the drive had been mounted before.
+        BXDrive *existingDrive = [self queuedDriveForPath: drive.path];
         
-        //Otherwise, make a new drive to represent this path and mount/queue that accordingly.
-        if (!drive)
-        {
-            NSString *driveLetter   = [driveInfo objectForKey: BXGameboxSettingsDriveLetterKey];
-            BXDriveType driveType   = [[driveInfo objectForKey: BXGameboxSettingsDriveTypeKey] integerValue];
-            drive = [BXDrive driveFromPath: drivePath atLetter: driveLetter withType: driveType];
-        }
+        if (existingDrive)
+            drive = existingDrive;
         
         NSError *mountError = nil;
         [self mountDrive: drive

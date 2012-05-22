@@ -47,6 +47,12 @@ typedef NSInteger BXDriveType;
 	BOOL _locked;
 	BOOL _hidden;
     BOOL _mounted;
+    
+    BOOL _hasAutodetectedMountPoint;
+    BOOL _hasAutodetectedLetter;
+    BOOL _hasAutodetectedTitle;
+    BOOL _hasAutodetectedVolumeLabel;
+    BOOL _hasAutodetectedType;
 }
 
 

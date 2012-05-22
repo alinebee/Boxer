@@ -48,10 +48,6 @@ extern NSString * const BXGameboxSettingsProfileKey;
 extern NSString * const BXGameboxSettingsProfileVersionKey;
 
 extern NSString * const BXGameboxSettingsDrivesKey;
-extern NSString * const BXGameboxSettingsDriveAliasKey;
-extern NSString * const BXGameboxSettingsDriveLetterKey;
-extern NSString * const BXGameboxSettingsDriveMountedKey;
-extern NSString * const BXGameboxSettingsDriveTypeKey;
 
 
 #pragma mark -

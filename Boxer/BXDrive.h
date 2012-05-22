@@ -32,21 +32,21 @@ typedef NSInteger BXDriveType;
 #pragma mark -
 #pragma mark Interface
 
-@interface BXDrive : NSObject
+@interface BXDrive : NSObject <NSCoding>
 {
-	NSString *path;
-	NSString *mountPoint;
-	NSMutableSet *pathAliases;
-	NSString *letter;
-	NSString *title;
-	NSString *volumeLabel;
-	BXDriveType type;
-	NSInteger freeSpace;
-	BOOL usesCDAudio;
-	BOOL readOnly;
-	BOOL locked;
-	BOOL hidden;
-    BOOL mounted;
+	NSString *_path;
+	NSString *_mountPoint;
+	NSMutableSet *_pathAliases;
+	NSString *_letter;
+	NSString *_title;
+	NSString *_volumeLabel;
+	BXDriveType _type;
+	NSInteger _freeSpace;
+	BOOL _usesCDAudio;
+	BOOL _readOnly;
+	BOOL _locked;
+	BOOL _hidden;
+    BOOL _mounted;
 }
 
 
@@ -67,7 +67,7 @@ typedef NSInteger BXDriveType;
 //when resolving DOS paths or determining if a drive is already mounted.
 //This is mainly used for matching up paths on the OS X volume for an ISO
 //that is mounted in DOS.
-@property (readonly, nonatomic) NSMutableSet *pathAliases;
+@property (readonly, retain, nonatomic) NSMutableSet *pathAliases;
 
 //The DOS drive letter under which this drive will be mounted.
 //If nil, BXEmulator mountDrive: will choose an appropriate drive letter at mount time.

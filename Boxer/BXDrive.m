@@ -11,12 +11,28 @@
 #import "NSWorkspace+BXFileTypes.h"
 #import "NSString+BXPaths.h"
 #import "RegexKitLite.h"
+#import "NDAlias.h"
+
+@interface BXDrive ()
+
+@property (readwrite, retain, nonatomic) NSMutableSet *pathAliases;
+
+@end
 
 @implementation BXDrive
-@synthesize path, mountPoint, pathAliases;
-@synthesize letter, title, volumeLabel;
-@synthesize type, freeSpace;
-@synthesize usesCDAudio, readOnly, locked, hidden, mounted;
+@synthesize path = _path;
+@synthesize mountPoint = _mountPoint;
+@synthesize pathAliases = _pathAliases;
+@synthesize letter = _letter;
+@synthesize title = _title;
+@synthesize volumeLabel = _volumeLabel;
+@synthesize type = _type;
+@synthesize freeSpace = _freeSpace;
+@synthesize usesCDAudio = _usesCDAudio;
+@synthesize readOnly = _readOnly;
+@synthesize locked = _locked;
+@synthesize hidden = _hidden;
+@synthesize mounted = _mounted;
 
 #pragma mark -
 #pragma mark Class methods
@@ -119,7 +135,7 @@
 + (NSString *) preferredTitleForPath: (NSString *)filePath
 {
     NSString *label = [self preferredVolumeLabelForPath: filePath];
-    if ([label length] > 1) return label;
+    if (label.length > 1) return label;
 	else return [[NSFileManager defaultManager] displayNameAtPath: filePath];
 }
 
@@ -134,14 +150,15 @@
 								   @"harddisk",
 								   nil];
 
-    NSString *baseName		= [filePath lastPathComponent];
-	NSString *extension		= [[baseName pathExtension] lowercaseString];
-	if ([strippedExtensions containsObject: extension]) baseName = [baseName stringByDeletingPathExtension];
+    NSString *baseName		= filePath.lastPathComponent;
+	NSString *extension		= baseName.pathExtension.lowercaseString;
+	if ([strippedExtensions containsObject: extension])
+        baseName = baseName.stringByDeletingPathExtension;
 	
 	//Mountable folders can include a drive label as well as a letter prefix,
     //so have a crack at parsing that out
     NSString *detectedLabel	= [baseName stringByMatching: @"^([a-xA-X] )?(.+)$" capture: 2];
-    if ([detectedLabel length]) return detectedLabel;
+    if (detectedLabel.length) return detectedLabel;
 	
 	//For all other cases, just use the base filename as the drive label
 	else return baseName;
@@ -153,7 +170,7 @@
 	if ([workspace file: filePath matchesTypes: [self mountableImageTypes]] ||
 		[workspace file: filePath matchesTypes: [self mountableFolderTypes]])
 	{
-		NSString *baseName			= [[filePath stringByDeletingPathExtension] lastPathComponent];
+		NSString *baseName			= filePath.stringByDeletingPathExtension.lastPathComponent;
 		NSString *detectedLetter	= [baseName stringByMatching: @"^([a-xA-X])( .*)?$" capture: 1];
 		return detectedLetter;	//will be nil if no match was found
 	}
@@ -187,11 +204,12 @@
 	if ((self = [super init]))
 	{
 		//Initialise properties to sensible defaults
-		[self setType:			BXDriveHardDisk];
-		[self setFreeSpace:		BXDefaultFreeSpace];
-		[self setUsesCDAudio:	YES];
-		[self setReadOnly:		NO];
-		pathAliases = [[NSMutableSet alloc] initWithCapacity: 1];
+        self.type = BXDriveHardDisk;
+        self.freeSpace = BXDefaultFreeSpace;
+        self.usesCDAudio = YES;
+        self.readOnly = NO;
+        
+        self.pathAliases = [NSMutableSet setWithCapacity: 1];
 	}
 	return self;
 }
@@ -202,14 +220,17 @@
     
 	if ((self = [self init]))
 	{
-		if (driveLetter) [self setLetter: driveLetter];
-		
-		if (drivePath) [self setPath: drivePath];
-		
+		if (driveLetter)
+            self.letter = driveLetter;
+        
+		if (drivePath)
+            self.path = drivePath;
+        
 		//Detect the appropriate mount type for the specified path
-		if (driveType == BXDriveAutodetect) driveType = [[self class] preferredTypeForPath: [self path]];
+		if (driveType == BXDriveAutodetect)
+            driveType = [self.class preferredTypeForPath: self.path];
 		
-		[self setType: driveType];
+		self.type = driveType;
 	}
 	return self;
 }
@@ -224,24 +245,63 @@
 	return [self driveFromPath: drivePath atLetter: driveLetter withType: BXDriveAutodetect];
 }
 
-+ (id) CDROMFromPath:		(NSString *)drivePath atLetter: (NSString *)driveLetter
-	{ return [self driveFromPath: drivePath atLetter: driveLetter withType: BXDriveCDROM]; }
++ (id) CDROMFromPath: (NSString *)drivePath atLetter: (NSString *)driveLetter
+{ return [self driveFromPath: drivePath atLetter: driveLetter withType: BXDriveCDROM]; }
 + (id) floppyDriveFromPath: (NSString *)drivePath atLetter: (NSString *)driveLetter
-	{ return [self driveFromPath: drivePath atLetter: driveLetter withType: BXDriveFloppyDisk]; }
-+ (id) hardDriveFromPath:	(NSString *)drivePath atLetter: (NSString *)driveLetter
-	{ return [self driveFromPath: drivePath atLetter: driveLetter withType: BXDriveHardDisk]; }
+{ return [self driveFromPath: drivePath atLetter: driveLetter withType: BXDriveFloppyDisk]; }
++ (id) hardDriveFromPath: (NSString *)drivePath atLetter: (NSString *)driveLetter
+{ return [self driveFromPath: drivePath atLetter: driveLetter withType: BXDriveHardDisk]; }
 + (id) internalDriveAtLetter: (NSString *)driveLetter
 { return [self driveFromPath: nil atLetter: driveLetter withType: BXDriveInternal]; }
+
+- (id) initWithCoder: (NSCoder *)aDecoder
+{
+    if ((self = [self init]))
+    {
+        NDAlias *pathAlias = [aDecoder decodeObjectForKey: @"path"];
+        NDAlias *mountPointAlias = [aDecoder decodeObjectForKey: @"mountPoint"];
+        
+        if (pathAlias.path)
+            self.path = pathAlias.path;
+        
+        if (mountPointAlias.path)
+            self.mountPoint = mountPointAlias.path;
+        
+        NSSet *pathAliases = [aDecoder decodeObjectForKey: @"pathAliases"];
+        for (NDAlias *alias in pathAliases)
+        {
+            if (alias.path)
+                [self.pathAliases addObject: alias.path];
+        }
+        
+        self.type           = [aDecoder decodeIntegerForKey: @"type"];
+        self.letter         = [aDecoder decodeObjectForKey: @"letter"];
+        self.title          = [aDecoder decodeObjectForKey: @"title"];
+        self.volumeLabel    = [aDecoder decodeObjectForKey: @"volumeLabel"];
+        
+        self.usesCDAudio    = [aDecoder decodeBoolForKey: @"usesCDAudio"];
+        self.freeSpace      = [aDecoder decodeIntegerForKey: @"freeSpace"];
+        self.readOnly       = [aDecoder decodeBoolForKey: @"readOnly"];
+        self.locked         = [aDecoder decodeBoolForKey: @"locked"];
+        self.hidden         = [aDecoder decodeBoolForKey: @"hidden"];
+    }
+    return self;
+}
+
+- (void) encodeWithCoder: (NSCoder *)aCoder
+{
+    
+}
 
 
 - (void) dealloc
 {
-	[self setLetter: nil],		[letter release];
-	[self setPath: nil],		[path release];
-	[self setTitle: nil],		[title release];
-	[self setVolumeLabel: nil],	[volumeLabel release];
-	
-	[pathAliases release], pathAliases = nil;
+    self.path = nil;
+    self.letter = nil;
+    self.title = nil;
+    self.volumeLabel = nil;
+    self.pathAliases = nil;
+    
 	[super dealloc];
 }
 
@@ -250,43 +310,46 @@
 {
 	filePath = [filePath stringByStandardizingPath];
 	
-	if (![path isEqualToString: filePath])
+	if (![self.path isEqualToString: filePath])
 	{
-		[path release];
-		path = [filePath copy];
+		[_path release];
+		_path = [filePath copy];
 		
-		if (path)
+		if (filePath)
 		{
-			if (![self mountPoint])
-			{
-				[self setMountPoint: [[self class] mountPointForPath: filePath]];
-			}
+			if (!self.mountPoint)
+				self.mountPoint = [self.class mountPointForPath: filePath];
 			
 			//Automatically parse the drive letter, title and volume label from the name of the drive
-			if (![self letter])         [self setLetter:        [[self class] preferredDriveLetterForPath: filePath]];
-			if (![self volumeLabel])	[self setVolumeLabel:	[[self class] preferredVolumeLabelForPath: filePath]];
-			if (![self title])          [self setTitle:         [[self class] preferredTitleForPath: filePath]];
+			if (!self.letter)
+                self.letter = [self.class preferredDriveLetterForPath: filePath];
+            
+			if (!self.volumeLabel)
+                self.volumeLabel = [self.class preferredVolumeLabelForPath: filePath];
+            
+			if (!self.title)
+                self.title = [self.class preferredTitleForPath: filePath];
 		}
 	}
 }
 
 - (void) setLetter: (NSString *)driveLetter
 {
-	driveLetter = [driveLetter uppercaseString];
+	driveLetter = driveLetter.uppercaseString;
 	
-	if (![letter isEqualToString: driveLetter])
+	if (![self.letter isEqualToString: driveLetter])
 	{
-		[letter release];
-		letter = [driveLetter copy];
+		[_letter release];
+		_letter = [driveLetter copy];
 	}
 }
 
 - (void) setVolumeLabel: (NSString *)newLabel
 {
-	if (![volumeLabel isEqualToString: newLabel])
+	if (![_volumeLabel isEqualToString: newLabel])
 	{
-		[volumeLabel release];
-		volumeLabel = [newLabel copy];
+		[_volumeLabel release];
+		_volumeLabel = [newLabel copy];
 		
 		//if (![[self title] length]) [self setTitle: volumeLabel];
 	}
@@ -294,25 +357,25 @@
 
 - (BOOL) representsPath: (NSString *)basePath
 {
-	if ([self isInternal]) return NO;
+	if (self.isInternal) return NO;
 	basePath = [basePath stringByStandardizingPath];
 	
-	if ([[self path] isEqualToString: basePath]) return YES;
-	if ([[self mountPoint] isEqualToString: basePath]) return YES;
-	if ([[self pathAliases] containsObject: basePath]) return YES;
+	if ([self.path isEqualToString: basePath]) return YES;
+	if ([self.mountPoint isEqualToString: basePath]) return YES;
+	if ([self.pathAliases containsObject: basePath]) return YES;
 	
 	return NO;
 }
 
 - (BOOL) exposesPath: (NSString *)subPath
 {
-	if ([self isInternal]) return NO;
+	if (self.isInternal) return NO;
 	subPath = [subPath stringByStandardizingPath];
 	
-	if ([subPath isEqualToString: [self path]]) return YES;
-	if ([subPath isRootedInPath: [self mountPoint]]) return YES;
+	if ([subPath isEqualToString: self.path]) return YES;
+	if ([subPath isRootedInPath: self.mountPoint]) return YES;
 	
-	for (NSString *alias in [self pathAliases])
+	for (NSString *alias in self.pathAliases)
 	{
 		if ([subPath isRootedInPath: alias]) return YES;
 	}
@@ -322,29 +385,29 @@
 
 - (NSString *) relativeLocationOfPath: (NSString *)realPath
 {
-	if ([self isInternal]) return nil;
+	if (self.isInternal) return nil;
 	realPath = [realPath stringByStandardizingPath];
 	
 	NSString *relativePath = nil;
 	
 	//Special-case: map the 'represented' path directly onto the mount path
-	if ([realPath isEqualToString: [self path]])
+	if ([realPath isEqualToString: self.path])
 	{
 		relativePath = @"";
 	}
 	
-	else if ([realPath isRootedInPath: [self mountPoint]])
+	else if ([realPath isRootedInPath: self.mountPoint])
 	{
-		relativePath = [realPath substringFromIndex: [[self mountPoint] length]];
+		relativePath = [realPath substringFromIndex: self.mountPoint.length];
 	}
 	
 	else
 	{
-		for (NSString *alias in [self pathAliases])
+		for (NSString *alias in self.pathAliases)
 		{
 			if ([realPath isRootedInPath: alias])
 			{
-				relativePath = [realPath substringFromIndex: [alias length]];
+				relativePath = [realPath substringFromIndex: alias.length];
 				break;
 			}
 		}
@@ -357,36 +420,36 @@
 	return relativePath;
 }
 
-- (BOOL) isInternal	{ return ([self type] == BXDriveInternal); }
-- (BOOL) isCDROM	{ return ([self type] == BXDriveCDROM); }
-- (BOOL) isFloppy	{ return ([self type] == BXDriveFloppyDisk); }
-- (BOOL) isHardDisk	{ return ([self type] == BXDriveHardDisk); }
+- (BOOL) isInternal	{ return (self.type == BXDriveInternal); }
+- (BOOL) isCDROM	{ return (self.type == BXDriveCDROM); }
+- (BOOL) isFloppy	{ return (self.type == BXDriveFloppyDisk); }
+- (BOOL) isHardDisk	{ return (self.type == BXDriveHardDisk); }
 
 - (NSString *) typeDescription
 {
-	return [[self class] descriptionForType: [self type]];
+	return [self.class descriptionForType: self.type];
 }
 - (NSString *) description
 {
 	return [NSString stringWithFormat: @"%@: %@ (%@)",
-			[self letter],
-			[self path],
-			[[self class] descriptionForType: [self type]],
+			self.letter,
+			self.path,
+			[self.class descriptionForType: self.type],
 			nil]; 
 }
 
 - (NSString *) displayName
 {
-	if ([self title]) return [self title];
-	else if ([self volumeLabel]) return [self volumeLabel];
-	else if ([self path])
+	if      (self.title) return self.title;
+	else if (self.volumeLabel) return self.volumeLabel;
+	else if (self.path)
 	{
 		NSFileManager *manager = [NSFileManager defaultManager];
-		return [manager displayNameAtPath: [self path]];
+		return [manager displayNameAtPath: self.path];
 	}
 	else
 	{
-		return [self typeDescription];
+		return self.typeDescription;
 	}
 }
 
@@ -397,13 +460,13 @@
 //Sort by path depth
 - (NSComparisonResult) pathDepthCompare: (BXDrive *)comparison
 {
-	return [[self path] pathDepthCompare: [comparison path]];
+	return [self.path pathDepthCompare: comparison.path];
 }
 
 //Sort by drive letter
 - (NSComparisonResult) letterCompare: (BXDrive *)comparison
 {
-	return [[self letter] caseInsensitiveCompare: [comparison letter]];
+	return [self.letter caseInsensitiveCompare: comparison.letter];
 }
 
 @end

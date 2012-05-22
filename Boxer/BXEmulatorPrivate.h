@@ -52,7 +52,8 @@ typedef struct BXDriveGeometry {
 #define BXFloppyImageSizeCutoff 2880 * 1024
 
 //If the DOS program has last polled the BIOS key buffer more than this many seconds ago,
-//we assume that BIOS-level key pasting is not suitable.
+//we assume that BIOS-level key pasting is not a suitable approach (because the program either
+//doesn't use the BIOS keybuffer at all, or only checks it in response to keyboard signalling).
 #define BXBIOSKeyBufferPollIntervalCutoff 0.5
 
 #pragma mark -

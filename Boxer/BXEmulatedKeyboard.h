@@ -19,7 +19,7 @@
 
 //How long typeCharacters should wait in between bursts of simulated typing.
 //This needs to be high enough that we don't overload a DOS program's own keyboard handling.
-#define BXTypingBurstIntervalDefault 0.5
+#define BXTypingBurstIntervalDefault 1.0
 
 //How long to wait after finishing a batch of simulated typing, before returning the keyboard state to normal.
 #define BXTypingCleanupDelay 0.5

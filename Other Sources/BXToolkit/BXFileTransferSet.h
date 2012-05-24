@@ -17,7 +17,7 @@
 //set as the default maxConcurrentOperations for BXFileTransferSets.
 //Large numbers of file transfers may otherwise flood OS X with threads and result in deadlocking.
 //This was observed in OS X 10.7.3 with 63 file transfers.
-#define BXDefaultMaxConcurrentFileTransfers 20
+#define BXDefaultMaxConcurrentFileTransfers 10
 
 @interface BXFileTransferSet : BXOperationSet <BXFileTransfer>
 {

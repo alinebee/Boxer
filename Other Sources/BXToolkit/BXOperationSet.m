@@ -8,9 +8,6 @@
 
 #import "BXOperationSet.h"
 
-//The standard interval in seconds at which to poll the progress of our dependent operations
-#define BXOperationSetDefaultPollInterval 0.1
-
 
 #pragma mark -
 #pragma mark Private method declarations
@@ -27,6 +24,7 @@
 @implementation BXOperationSet
 @synthesize operations = _operations;
 @synthesize pollInterval = _pollInterval;
+@synthesize maxConcurrentOperations = _maxConcurrentOperations;
 
 #pragma mark -
 #pragma mark Initialization and deallocation
@@ -42,6 +40,7 @@
 	{
 		self.pollInterval = BXOperationSetDefaultPollInterval;
 		self.operations = [NSMutableArray arrayWithCapacity: 5];
+        self.maxConcurrentOperations = NSOperationQueueDefaultMaxConcurrentOperationCount;
 	}
 	return self;
 }
@@ -121,6 +120,7 @@
 - (void) performOperation
 {	
 	NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+    queue.maxConcurrentOperationCount = self.maxConcurrentOperations;
 
 	//Queue up all transfer operations before letting them all start at once
 	queue.suspended = YES;
@@ -138,7 +138,7 @@
 	
 	//Poll until all operations are finished, but cancel them all if we ourselves are cancelled.
 	while (queue.operations.count && [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode
-                                                               beforeDate: [NSDate dateWithTimeIntervalSinceNow: self.pollInterval]])
+                                                              beforeDate: [NSDate dateWithTimeIntervalSinceNow: self.pollInterval]])
 	{
 		if (self.isCancelled) [queue cancelAllOperations];
 	}

@@ -14,6 +14,9 @@
 #import "BXOperation.h"
 #import "BXFileTransfer.h"
 
+//The default interval in seconds at which to poll the progress of the file transfer.
+#define BXFileTransferDefaultPollInterval 0.5
+
 @interface BXSingleFileTransfer : BXOperation <BXFileTransfer>
 {
 	BOOL _copyFiles;

@@ -11,10 +11,14 @@
 
 #import "BXOperation.h"
 
+//The standard interval in seconds at which to poll the progress of our dependent operations
+#define BXOperationSetDefaultPollInterval 0.1
+
 @interface BXOperationSet : BXOperation
 {
 	NSMutableArray *_operations;
 	NSTimeInterval _pollInterval;
+    NSInteger _maxConcurrentOperations;
 }
 
 #pragma mark -
@@ -24,6 +28,10 @@
 //These will be added to an operation queue only when this operation is started.
 //After starting, it is not safe to modify this array.
 @property (retain, nonatomic) NSMutableArray *operations;
+
+//The maximum number of operations we should execute at once.
+//Defaults to NSOperationQueueDefaultMaxConcurrentOperationCount.
+@property (assign, nonatomic) NSInteger maxConcurrentOperations;
 
 //The interval at which to check the progress of our dependent operations and
 //issue overall progress updates.

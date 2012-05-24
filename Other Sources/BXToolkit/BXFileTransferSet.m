@@ -29,10 +29,19 @@
 {
 	if ((self = [self init]))
 	{
-        [self setCopyFiles: copy];
+        self.copyFiles = copy;
         [self addTransfers: paths];
 	}
 	return self;
+}
+
+- (id) init
+{
+    if ((self = [super init]))
+    {
+        self.maxConcurrentOperations = BXDefaultMaxConcurrentFileTransfers;
+    }
+    return self;
 }
 
 #pragma mark -
@@ -41,13 +50,13 @@
 
 - (void) setCopyFiles: (BOOL)copy
 {
-    if (copy != [self copyFiles])
+    if (copy != self.copyFiles)
     {
         _copyFiles = copy;
         
-        for (NSOperation <BXFileTransfer> *transfer in [self operations])
+        for (NSOperation <BXFileTransfer> *transfer in self.operations)
         {
-            [transfer setCopyFiles: copy];
+            transfer.copyFiles = copy;
         }
     }
 }
@@ -55,7 +64,7 @@
 - (void) addTransfers: (NSDictionary *)paths
 {
     //Build file transfer operations for each pair of paths
-	for (NSString *sourcePath in [paths keyEnumerator])
+	for (NSString *sourcePath in paths.keyEnumerator)
 	{
 		NSString *destinationPath = [paths objectForKey: sourcePath];
         
@@ -68,8 +77,9 @@
 {
     BXSingleFileTransfer *transfer = [BXSingleFileTransfer transferFromPath: sourcePath
                                                                      toPath: destinationPath
-                                                                  copyFiles: [self copyFiles]];
-    [[self operations] addObject: transfer];
+                                                                  copyFiles: self.copyFiles];
+    
+    [self.operations addObject: transfer];
 }
 
 #pragma mark -
@@ -81,16 +91,18 @@
 	
 	NSSet *progressKeys = [NSSet setWithObjects: @"numBytes", @"numFiles", @"bytesTransferred", @"filesTransferred", nil]; 
 	
-	if ([progressKeys containsObject: key]) return [baseKeys setByAddingObject: @"currentProgress"];
-	else return baseKeys;
+	if ([progressKeys containsObject: key])
+        return [baseKeys setByAddingObject: @"currentProgress"];
+	else
+        return baseKeys;
 }
    
 - (BXOperationProgress) currentProgress
 {
-	unsigned long long totalBytes = [self numBytes];
+	unsigned long long totalBytes = self.numBytes;
 	if (totalBytes > 0)
 	{
-		return (BXOperationProgress)[self bytesTransferred] / (BXOperationProgress)totalBytes;
+		return (BXOperationProgress)self.bytesTransferred / (BXOperationProgress)totalBytes;
 	}
 	else return 0.0f;
 }
@@ -98,9 +110,9 @@
 - (unsigned long long) numBytes
 {
 	unsigned long long bytes = 0;
-	for (BXOperation <BXFileTransfer> *operation in [self operations])
+	for (BXOperation <BXFileTransfer> *operation in self.operations)
 	{
-		bytes += [operation numBytes];
+		bytes += operation.numBytes;
 	}
 	return bytes;
 }
@@ -108,9 +120,9 @@
 - (unsigned long long) bytesTransferred
 {
 	unsigned long long bytes = 0;
-	for (BXOperation <BXFileTransfer> *operation in [self operations])
+	for (BXOperation <BXFileTransfer> *operation in self.operations)
 	{
-		bytes += [operation bytesTransferred];
+		bytes += operation.bytesTransferred;
 	}
 	return bytes;
 }
@@ -118,9 +130,9 @@
 - (NSUInteger) numFiles
 {
 	NSUInteger files = 0;
-	for (BXOperation <BXFileTransfer> *operation in [self operations])
+	for (BXOperation <BXFileTransfer> *operation in self.operations)
 	{
-		files += [operation numFiles];
+		files += operation.numFiles;
 	}
 	return files;
 }
@@ -128,18 +140,19 @@
 - (NSUInteger) filesTransferred
 {
 	NSUInteger files = 0;
-	for (BXOperation <BXFileTransfer> *operation in [self operations])
+	for (BXOperation <BXFileTransfer> *operation in self.operations)
 	{
-		files += [operation filesTransferred];
+		files += operation.filesTransferred;
 	}
 	return files;
 }
 
 - (NSString *) currentPath
 {
-	for (BXOperation <BXFileTransfer> *transfer in [self operations])
+	for (BXOperation <BXFileTransfer> *transfer in self.operations)
 	{
-		if ([transfer isExecuting]) return [transfer currentPath];
+		if (transfer.isExecuting)
+            return transfer.currentPath;
 	}
 	return nil;
 }
@@ -150,11 +163,11 @@
 - (void) _sendInProgressNotificationWithInfo: (NSDictionary *)info
 {	
 	NSMutableDictionary *extendedInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-										 [NSNumber numberWithUnsignedInteger:	[self filesTransferred]],	BXFileTransferFilesTransferredKey,
-										 [NSNumber numberWithUnsignedLongLong:	[self bytesTransferred]],	BXFileTransferBytesTransferredKey,
-										 [NSNumber numberWithUnsignedInteger:	[self numFiles]],			BXFileTransferFilesTotalKey,
-										 [NSNumber numberWithUnsignedLongLong:	[self numBytes]],			BXFileTransferBytesTotalKey,
-										 [self currentPath], BXFileTransferCurrentPathKey,
+										 [NSNumber numberWithUnsignedInteger:	self.filesTransferred],	BXFileTransferFilesTransferredKey,
+										 [NSNumber numberWithUnsignedLongLong:	self.bytesTransferred],	BXFileTransferBytesTransferredKey,
+										 [NSNumber numberWithUnsignedInteger:	self.numFiles],			BXFileTransferFilesTotalKey,
+										 [NSNumber numberWithUnsignedLongLong:	self.numBytes],			BXFileTransferBytesTotalKey,
+										 self.currentPath, BXFileTransferCurrentPathKey,
 										 nil];
 	
 	if (info) [extendedInfo addEntriesFromDictionary: info];
@@ -166,7 +179,7 @@
 {
 	BOOL undid = NO;
     //Tell each component file transfer to undo whatever it did
-    for (BXSingleFileTransfer *transfer in [self operations])
+    for (BXSingleFileTransfer *transfer in self.operations)
     {
         if ([transfer undoTransfer]) undid = YES;
     }

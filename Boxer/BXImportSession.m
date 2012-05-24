@@ -59,16 +59,12 @@
 #pragma mark Private method declarations
 
 @interface BXImportSession ()
-@property (readwrite, retain, nonatomic) NSArray *installerPaths;
-@property (readwrite, copy, nonatomic) NSString *configurationFilePath;
-@property (readwrite, copy, nonatomic) NSString *sourcePath;
 
 @property (readwrite, assign, nonatomic) BXImportStage importStage;
 @property (readwrite, assign, nonatomic) BXOperationProgress stageProgress;
 @property (readwrite, assign, nonatomic) BOOL stageProgressIndeterminate;
 @property (readwrite, retain, nonatomic) BXOperation *sourceFileImportOperation;
 @property (readwrite, assign, nonatomic) BXSourceFileImportType sourceFileImportType;
-@property (readwrite, assign, nonatomic) BOOL sourceFileImportRequired;
 
 //Only defined for internal use
 @property (copy, nonatomic) NSString *rootDrivePath;
@@ -97,7 +93,8 @@
 @synthesize sourceFileImportOperation = _sourceFileImportOperation;
 @synthesize sourceFileImportType = _sourceFileImportType;
 @synthesize sourceFileImportRequired = _sourceFileImportRequired;
-@synthesize configurationFilePath = _configurationFilePath;
+@synthesize bundledConfigurationPath = _bundledConfigurationPath;
+@synthesize configurationToImport = _configurationToImport;
 
 
 #pragma mark -
@@ -110,7 +107,8 @@
     self.rootDrivePath = nil;
     self.installerPaths = nil;
     self.sourceFileImportOperation = nil;
-    self.configurationFilePath = nil;
+    self.bundledConfigurationPath = nil;
+    self.configurationToImport = nil;
     
 	[super dealloc];
 }
@@ -176,7 +174,7 @@
         if (scan.DOSBoxConfigurations.count)
         {
             NSArray *configurationPaths = [self.sourcePath stringsByAppendingPaths: scan.DOSBoxConfigurations];
-            self.configurationFilePath = [self.class preferredConfigurationFileFromPaths: configurationPaths];
+            self.bundledConfigurationPath  = [self.class preferredConfigurationFileFromPaths: configurationPaths];
         }
         
         self.fileURL = [NSURL fileURLWithPath: self.sourcePath];
@@ -449,7 +447,7 @@
 
 - (NSString *) gameboxName
 {
-	return self.gamePackage.gameName; 
+	return self.gamePackage.gameName;
 }
 
 - (void) setGameboxName: (NSString *)newName
@@ -789,14 +787,16 @@
     
     //If we have a configuration file to work from, check it to see if it defines any drives.
     //If so, we'll import those drives directly.
-    if (self.configurationFilePath && (!self.gameProfile || self.gameProfile.shouldImportMountCommands))
+    if (self.bundledConfigurationPath && !self.configurationToImport)
+        self.configurationToImport = [BXEmulatorConfiguration configurationWithContentsOfFile: self.bundledConfigurationPath
+                                                                                        error: NULL];
+    
+    if (self.configurationToImport && (!self.gameProfile || self.gameProfile.shouldImportMountCommands))
     {
-        BXEmulatorConfiguration *configuration = [BXEmulatorConfiguration configurationWithContentsOfFile: self.configurationFilePath error: nil];
-        
-        NSArray *mountCommands = [self.class mountCommandsFromConfiguration: configuration];
+        NSArray *mountCommands = [self.class mountCommandsFromConfiguration: self.configurationToImport];
         if (mountCommands.count)
         {
-            NSString *configurationBasePath = self.configurationFilePath.stringByDeletingLastPathComponent;
+            NSString *configurationBasePath = self.bundledConfigurationPath.stringByDeletingLastPathComponent;
             
             BXFileTransferSet *driveImportSet = [[[BXFileTransferSet alloc] init] autorelease];
             driveImportSet.copyFiles = YES;
@@ -1132,46 +1132,38 @@
     
     
     //Import any bundled DOSBox configuration: converting any launch commands into a launcher batch file.
-    if (self.configurationFilePath)
-    {
-        //FIXME: we're loading and parsing this twice, once before back in importSourceFiles.
-        //Instead, store the parsed config data and reuse it here.
-        BXEmulatorConfiguration *bundledConfig = [BXEmulatorConfiguration configurationWithContentsOfFile: self.configurationFilePath
-                                                                                                    error: nil];
-        
-        if (bundledConfig)
+    if (self.configurationToImport)
+    {   
+        if (!self.gameProfile || self.gameProfile.shouldImportLaunchCommands)
         {
-            if (!self.gameProfile || self.gameProfile.shouldImportLaunchCommands)
-            {
-                //If the original autoexec contained any launch commands, convert those
-                //into a launcher batchfile in the root drive: we then assign that as
-                //the default program to launch.
-                NSArray *launchCommands = [self.class launchCommandsFromConfiguration: bundledConfig];
-                
-                if (launchCommands.count)
-                {
-                    NSString *launchPath = [self.rootDrivePath stringByAppendingPathComponent: @"bxlaunch.bat"];
-                    NSString *startupCommandString = [launchCommands componentsJoinedByString: @"\r\n"];
-                    
-                    BOOL createdLauncher = [startupCommandString writeToFile: launchPath
-                                                                  atomically: NO
-                                                                    encoding: BXDisplayStringEncoding
-                                                                       error: nil];
-                    
-                    if (createdLauncher)
-                        self.gamePackage.targetPath = launchPath;
-                }
-            }
+            //If the original autoexec contained any launch commands, convert those
+            //into a launcher batchfile in the root drive: we then assign that as
+            //the default program to launch.
+            NSArray *launchCommands = [self.class launchCommandsFromConfiguration: self.configurationToImport];
             
-            if (!self.gameProfile || self.gameProfile.shouldImportSettings)
+            if (launchCommands.count)
             {
-                //Strip out all the junk we don't care about from the original game configuration.
-                BXEmulatorConfiguration *sanitizedConfig = [self.class sanitizedVersionOfConfiguration: bundledConfig];
+                NSString *launchPath = [self.rootDrivePath stringByAppendingPathComponent: @"bxlaunch.bat"];
+                NSString *startupCommandString = [launchCommands componentsJoinedByString: @"\r\n"];
                 
-                //Save the sanitized configuration into the gamebox.
-                NSString *configPath = self.gamePackage.configurationFilePath;
-                [self _saveConfiguration: sanitizedConfig toFile: configPath];
+                BOOL createdLauncher = [startupCommandString writeToFile: launchPath
+                                                              atomically: NO
+                                                                encoding: BXDisplayStringEncoding
+                                                                   error: nil];
+                
+                if (createdLauncher)
+                    self.gamePackage.targetPath = launchPath;
             }
+        }
+        
+        if (!self.gameProfile || self.gameProfile.shouldImportSettings)
+        {
+            //Strip out all the junk we don't care about from the original game configuration.
+            BXEmulatorConfiguration *sanitizedConfig = [self.class sanitizedVersionOfConfiguration: self.configurationToImport];
+            
+            //Save the sanitized configuration into the gamebox.
+            NSString *configPath = self.gamePackage.configurationFilePath;
+            [self _saveConfiguration: sanitizedConfig toFile: configPath];
         }
     }
     

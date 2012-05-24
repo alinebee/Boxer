@@ -49,6 +49,7 @@ typedef enum {
 
 
 @class BXImportWindowController;
+@class BXEmulatorConfiguration;
 @protocol BXDriveImport;
 
 @interface BXImportSession : BXSession <BXOperationDelegate>
@@ -57,7 +58,8 @@ typedef enum {
 	BXImportWindowController *_importWindowController;
 	NSArray *_installerPaths;
     
-    NSString *_configurationFilePath;
+    NSString *_bundledConfigurationPath;
+    BXEmulatorConfiguration *_configurationToImport;
 	
 	NSString *_rootDrivePath;
 	
@@ -81,18 +83,18 @@ typedef enum {
 
 
 //The source path from which we are installing the game.
-@property (readonly, copy, nonatomic) NSString *sourcePath;
+@property (copy, nonatomic) NSString *sourcePath;
 
 //The path of the DOSBox configuration file we will use for guiding the import.
 //Only used when a suitable configuration file has been found in the source path.
-@property (readonly, copy, nonatomic) NSString *configurationFilePath;
+@property (copy, nonatomic) NSString *bundledConfigurationPath;
+@property (retain, nonatomic) BXEmulatorConfiguration *configurationToImport;
 
 //The range of possible DOS installers to choose from.
-@property (readonly, retain, nonatomic) NSArray *installerPaths;
+@property (retain, nonatomic) NSArray *installerPaths;
 
 //The path of the installer we would choose as the default from among installerPaths.
 @property (readonly, nonatomic) NSString *preferredInstallerPath;
-
 
 //The display filename of the gamebox, minus extension.
 //Changing this will rename the gamebox file itself.
@@ -120,7 +122,7 @@ typedef enum {
 
 //Whether the user is allowed to skip the step of importing the source files into the game folder.
 //Will be NO if the game did not install any files into the gamebox to start with.
-@property (readonly, assign, nonatomic) BOOL sourceFileImportRequired;
+@property (assign, nonatomic) BOOL sourceFileImportRequired;
 
 
 #pragma mark -

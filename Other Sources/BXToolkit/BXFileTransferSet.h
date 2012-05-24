@@ -13,6 +13,12 @@
 #import "BXOperationSet.h"
 #import "BXFileTransfer.h"
 
+//Limit the number of file transfers we will undertake at once:
+//set as the default maxConcurrentOperations for BXFileTransferSets.
+//Large numbers of file transfers may otherwise flood OS X with threads and result in deadlocking.
+//This was observed in OS X 10.7.3 with 63 file transfers.
+#define BXDefaultMaxConcurrentFileTransfers 20
+
 @interface BXFileTransferSet : BXOperationSet <BXFileTransfer>
 {
     BOOL _copyFiles;

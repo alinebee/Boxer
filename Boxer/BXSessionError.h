@@ -20,6 +20,7 @@ enum
     BXImportNoExecutablesInSourcePath,  //Returned when the import scanner can find no executables of any kind in the source folder.
 	BXImportSourcePathIsWindowsOnly,    //Returned when the import scanner can only find Windows executables in the source folder.
 	BXImportSourcePathIsMacOSApp,       //Returned when the import scanner can only find Mac applications in the source folder.
+	BXImportSourcePathIsHybridCD,       //Returned when the import scanner detects a hybrid Mac+PC CD.
 };
 
 //General base class for all session errors
@@ -41,6 +42,10 @@ enum
 @interface BXImportWindowsOnlyError : BXImportError
 + (id) errorWithSourcePath: (NSString *)sourcePath userInfo: (NSDictionary *)userInfo;
 - (NSString *) helpAnchor;
+@end
+
+@interface BXImportHybridCDError : BXImportError
++ (id) errorWithSourcePath: (NSString *)sourcePath userInfo: (NSDictionary *)userInfo;
 @end
 
 @interface BXImportMacAppError : BXImportError

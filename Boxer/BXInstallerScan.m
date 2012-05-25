@@ -9,8 +9,9 @@
 #import "BXImportSession+BXImportPolicies.h"
 
 #import "NSWorkspace+BXFileTypes.h"
-#import "NSString+BXPaths.h"
 #import "NSWorkspace+BXExecutableTypes.h"
+#import "NSWorkspace+BXMountedVolumes.h"
+#import "NSString+BXPaths.h"
 #import "BXFileTypes.h"
 #import "BXSessionError.h"
 
@@ -269,16 +270,25 @@
             {
                 self.error = [BXImportWindowsOnlyError errorWithSourcePath: self.basePath userInfo: nil];
             }
+            
             //If there were classic Mac OS/OS X apps present, this is probably a Mac game.
             else if (self.macOSApps.count > 0)
             {
-                self.error = [BXImportMacAppError errorWithSourcePath: self.basePath userInfo: nil];   
+                //Check if it may be a hybrid-mode CD, in which case we'll show
+                //a different set of advice to the user.
+                
+                BOOL isHybridCD = [_workspace isHybridCDAtPath: self.basePath];
+                Class errorClass = isHybridCD ? [BXImportHybridCDError class] : [BXImportMacAppError class];
+                
+                self.error = [errorClass errorWithSourcePath: self.basePath
+                                                    userInfo: nil];   
             }
             //Otherwise, the folder may be empty or contains something other than a DOS game.
             //TODO: additional logic to detect Classic Mac games.
             else
             {
-                self.error = [BXImportNoExecutablesError errorWithSourcePath: self.basePath userInfo: nil];
+                self.error = [BXImportNoExecutablesError errorWithSourcePath: self.basePath
+                                                                    userInfo: nil];
             }
         }
     }

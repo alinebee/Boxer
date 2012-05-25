@@ -69,15 +69,15 @@ NSString * const HFSVolumeType		= @"hfs";
 
 - (NSString *) volumeTypeForPath: (NSString *)path
 {
-	NSString *volumeType = nil;
-	[self getFileSystemInfoForPath: path
-					   isRemovable: nil
-						isWritable: nil
-					 isUnmountable: nil
-					   description: nil
-							  type: &volumeType];
+	NSString *volumeType;
+	BOOL retrieved = [self getFileSystemInfoForPath: path
+                                        isRemovable: nil
+                                         isWritable: nil
+                                      isUnmountable: nil
+                                        description: nil
+                                               type: &volumeType];
 	
-	return volumeType;
+	return (retrieved) ? volumeType : nil;
 }
 
 - (NSString *) volumeForPath: (NSString *)path
@@ -89,7 +89,8 @@ NSString * const HFSVolumeType		= @"hfs";
     //then return the path itself without checking further.
     //(This prevents us being unable to resolve paths for hidden volumes
     //in OS X Lion, which does not list them in the local volume paths.)
-    if ([[resolvedPath stringByDeletingLastPathComponent] isEqualToString: volumesBasePath]) return resolvedPath;
+    if ([[resolvedPath stringByDeletingLastPathComponent] isEqualToString: volumesBasePath])
+        return resolvedPath;
 	
 	//Sort the volumes by length from longest to shortest,
     //to make sure we get the right volume (and not a parent volume)
@@ -342,6 +343,46 @@ NSString * const HFSVolumeType		= @"hfs";
 	NSDictionary *fsAttrs = [manager attributesOfFileSystemForPath: path error: nil];
 	unsigned long long volumeSize = [[fsAttrs valueForKey: NSFileSystemSize] unsignedLongLongValue];
 	return volumeSize <= BXFloppySizeCutoff;	
+}
+
+- (BOOL) isHybridCDAtPath: (NSString *)path
+{
+    return ([self BSDNameForISOVolumeOfHybridCD: path] != nil);
+}
+
+- (NSString *) BSDNameForISOVolumeOfHybridCD:(NSString *)volumePath
+{
+    BOOL isRemovable, isWriteable;
+    NSString *fsType;
+    
+    if (![self getFileSystemInfoForPath: volumePath
+                            isRemovable: &isRemovable
+                             isWritable: &isWriteable
+                          isUnmountable: NULL
+                            description: NULL
+                                   type: &fsType])
+        return nil;
+    
+    //The Mac part of the hybrid CD is expected to be removable,
+    //read-only, and have an HFS filesystem. If not, it's probably
+    //not a hybrid CD.
+    if (!(isRemovable && !isWriteable && [fsType isEqualToString: HFSVolumeType]))
+        return nil;
+    
+    //If the CDROM has a corresponding ISO9660 volume,
+    //then it should have a very particular device-name layout:
+    //diskXs1: ISO volume
+    //diskXs1s1 apple partition map
+    //diskXs1s2 HFS volume (the one we're looking at)
+    NSString *BSDName = [self BSDNameForVolumePath: volumePath];
+    NSString *isoSuffix = @"s1";
+    NSString *hfsSuffix = @"s1s2";
+    
+    if (![BSDName hasSuffix: hfsSuffix])
+        return nil;
+    
+    NSString *baseName = [BSDName substringToIndex: BSDName.length - hfsSuffix.length];
+    return [baseName stringByAppendingString: isoSuffix];
 }
 
 @end

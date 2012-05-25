@@ -74,6 +74,15 @@ extern NSString * const HFSVolumeType;
 - (BOOL) isFloppyVolumeAtPath: (NSString *)volumePath;
 
 //Returns whether the specified volume is the size of a DOS floppy disk.
-- (BOOL) isFloppySizedVolumeAtPath: (NSString *)path;
+- (BOOL) isFloppySizedVolumeAtPath: (NSString *)volumePath;
+
+//When given a path to the HFS volume of a hybrid Mac+PC CD, returns the BSD device name
+//of the corresponding ISO volume. Returns nil if the path was not a hybrid CD or no
+//matching device name could be determined.
+- (NSString *) BSDNameForISOVolumeOfHybridCD: (NSString *)volumePath;
+
+//Returns YES if the specified path points to the HFS volume of a hybrid Mac+PC CD,
+//NO otherwise.
+- (BOOL) isHybridCDAtPath: (NSString *)volumePath;
 
 @end

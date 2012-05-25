@@ -113,20 +113,50 @@ NSString * const BXSessionErrorDomain = @"BXSessionErrorDomain";
 
 - (NSString *) helpAnchor
 {
-	return @"windows-only-programs";
+	return @"windows-games";
 }
 @end
 
 
+@implementation BXImportHybridCDError
+
++ (id) errorWithSourcePath: (NSString *)sourcePath userInfo: (NSDictionary *)userInfo
+{
+	NSString *descriptionFormat = NSLocalizedString(@"“%@” is a Mac+PC hybrid disc, which Boxer cannot import.",
+                                                    @"Error message shown when importing a hybrid Mac/PC CD. %@ is the display filename of the imported path.");
+	
+	NSString *suggestion = NSLocalizedString(@"You could insert the disc into a Windows PC instead, and copy the DOS version of the game from there to your Mac.",
+                                             @"Informative text of warning sheet when importing a hybrid Mac/PC CD.");
+	
+	NSString *description = [NSString stringWithFormat: descriptionFormat, [self displayNameForPath: sourcePath], nil];
+	
+	NSMutableDictionary *defaultInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+										description,	NSLocalizedDescriptionKey,
+										suggestion,		NSLocalizedRecoverySuggestionErrorKey,
+										sourcePath,		NSFilePathErrorKey,
+										nil];
+	
+	if (userInfo) [defaultInfo addEntriesFromDictionary: userInfo];
+	
+	return [self errorWithDomain: BXSessionErrorDomain
+							code: BXImportSourcePathIsHybridCD
+						userInfo: defaultInfo];
+}
+
+- (NSString *) helpAnchor
+{
+	return @"hybrid-cds";
+}
+@end
 
 @implementation BXImportMacAppError
 
 + (id) errorWithSourcePath: (NSString *)sourcePath userInfo: (NSDictionary *)userInfo
 {
-	NSString *descriptionFormat = NSLocalizedString(@"“%@” is a Mac game, which Boxer cannot run.",
-                                                    @"Error message shown when importing a folder that contains a Mac application. %@ is the display filename of the imported path.");
+	NSString *descriptionFormat = NSLocalizedString(@"“%@” is a Mac OS game, which Boxer cannot emulate.",
+                                                    @"Error message shown when importing a folder that contains a Mac game. %@ is the display filename of the imported path.");
 	
-	NSString *suggestion = NSLocalizedString(@"You may be able to run the game directly by double-clicking on it: however games made for Classic Mac OS 9 and earlier will not run on Mac OS X.",
+	NSString *suggestion = NSLocalizedString(@"If you cannot start up the game in OS X, you may be able to play it in a Classic Mac OS emulator instead. Click the help button for details.",
                                              @"Informative text of warning sheet after importing a Mac application.");
 	
 	NSString *description = [NSString stringWithFormat: descriptionFormat, [self displayNameForPath: sourcePath], nil];
@@ -140,8 +170,12 @@ NSString * const BXSessionErrorDomain = @"BXSessionErrorDomain";
 	if (userInfo) [defaultInfo addEntriesFromDictionary: userInfo];
 	
 	return [self errorWithDomain: BXSessionErrorDomain
-							code: BXImportSourcePathIsWindowsOnly
+							code: BXImportSourcePathIsMacOSApp
 						userInfo: defaultInfo];
 }
 
+- (NSString *) helpAnchor
+{
+	return @"macos-games";
+}
 @end

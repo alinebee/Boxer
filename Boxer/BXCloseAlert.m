@@ -140,7 +140,7 @@
                                            @"Cancel button for warning sheet after running a Windows-only executable: will return user to the DOS prompt.");
 	
 	alert.showsHelp = YES;
-	alert.helpAnchor = @"windows-only-programs";
+	alert.helpAnchor = @"windows-games";
 	
 	return alert;
 }

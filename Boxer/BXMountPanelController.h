@@ -20,16 +20,16 @@
 < NSOpenSavePanelDelegate >
 #endif
 {
-	IBOutlet NSPopUpButton *driveType;
-	IBOutlet NSPopUpButton *driveLetter;
-	IBOutlet NSButton *readOnlyToggle;
+	NSPopUpButton *_driveType;
+	NSPopUpButton *_driveLetter;
+	NSButton *_readOnlyToggle;
 	
-	NSCellStateValue previousReadOnlyState;
-	NSMenuItem *previousDriveTypeSelection;
+	NSCellStateValue _previousReadOnlyState;
+	NSMenuItem *_previousDriveTypeSelection;
 }
-@property (retain) NSPopUpButton *driveType;	//The drive type selector in the accessory view.
-@property (retain) NSPopUpButton *driveLetter;	//The drive letter selector in the accessory view.
-@property (retain) NSButton *readOnlyToggle;	//The read-only checkbox toggle in the accessory view.
+@property (retain) IBOutlet NSPopUpButton *driveType;	//The drive type selector in the accessory view.
+@property (retain) IBOutlet NSPopUpButton *driveLetter;	//The drive letter selector in the accessory view.
+@property (retain) IBOutlet NSButton *readOnlyToggle;	//The read-only checkbox toggle in the accessory view.
 
 //Returns a singleton instance, which loads the view from the NIB file the first time.
 + (id) controller;

@@ -7,7 +7,7 @@
 
 
 #import "BXSimpleDriveImport.h"
-#import "BXAppController.h"
+#import "BXFileTypes.h"
 #import "BXDrive.h"
 #import "NSWorkspace+BXFileTypes.h"
 
@@ -42,7 +42,7 @@
 	{
 		NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 		
-		NSSet *readyTypes = [[BXAppController mountableFolderTypes] setByAddingObjectsFromSet: [BXAppController mountableImageTypes]];
+		NSSet *readyTypes = [[BXFileTypes mountableFolderTypes] setByAddingObjectsFromSet: [BXFileTypes mountableImageTypes]];
 		
 		//Files and folders of the above types don't need additional renaming before import:
         //we can just use their filename directly.

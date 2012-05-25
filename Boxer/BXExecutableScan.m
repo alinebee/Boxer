@@ -7,7 +7,7 @@
 
 #import "BXExecutableScan.h"
 #import "NSWorkspace+BXExecutableTypes.h"
-#import "BXAppController.h"
+#import "BXFileTypes.h"
 
 
 @implementation BXExecutableScan
@@ -17,7 +17,7 @@
     if ([super isMatchingPath: relativePath])
     {
         NSString *fullPath = [self fullPathFromRelativePath: relativePath];
-        return [workspace isCompatibleExecutableAtPath: fullPath error: NULL];
+        return [_workspace isCompatibleExecutableAtPath: fullPath error: NULL];
     }
     else
     {
@@ -32,7 +32,7 @@
         NSString *fullPath = [self fullPathFromRelativePath: relativePath];
         
         //Filter out the contents of any nested drive folders
-        return ![workspace file: fullPath matchesTypes: [BXAppController mountableFolderTypes]];
+        return ![_workspace file: fullPath matchesTypes: [BXFileTypes mountableFolderTypes]];
     }
     else return NO;
 }

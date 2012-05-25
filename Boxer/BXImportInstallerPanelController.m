@@ -9,6 +9,7 @@
 #import "BXImportInstallerPanelController.h"
 #import "BXImportWindowController.h"
 #import "BXImportSession.h"
+#import "BXFileTypes.h"
 #import "BXAppController.h"
 #import "BXValueTransformers.h"
 #import "NSString+BXPaths.h"
@@ -35,7 +36,8 @@
 
 
 @implementation BXImportInstallerPanelController
-@synthesize installerSelector, controller;
+@synthesize installerSelector = _installerSelector;
+@synthesize controller = _controller;
 
 #pragma mark -
 #pragma mark Initialization and deallocation
@@ -53,14 +55,14 @@
 
 - (void) awakeFromNib
 {
-	[[self controller] addObserver: self forKeyPath: @"document.installerPaths" options: 0 context: nil];
+	[self.controller addObserver: self forKeyPath: @"document.installerPaths" options: 0 context: nil];
 }
 
 - (void) dealloc
 {
-	[[self controller] removeObserver: self forKeyPath: @"document.installerPaths"];
+	[self.controller removeObserver: self forKeyPath: @"document.installerPaths"];
 
-	[self setInstallerSelector: nil], [installerSelector release];
+    self.installerSelector = nil;
 	
 	[super dealloc];
 }
@@ -78,18 +80,18 @@
 
 - (void) _syncInstallerSelectorItems
 {
-	NSMenu *menu = [[self installerSelector] menu];
+	NSMenu *menu = self.installerSelector.menu;
 	NSRange installerRange = NSMakeRange(0, [menu indexOfItemWithTag: 1]);
 	
 	//Remove all the original installer options
-	for (NSMenuItem *oldItem in [[menu itemArray] subarrayWithRange: installerRange])
+	for (NSMenuItem *oldItem in [menu.itemArray subarrayWithRange: installerRange])
 		[menu removeItem: oldItem];
 	
 	
 	//...and then add all the new ones in their place
 	NSUInteger insertionPoint = 0;
 	
-	NSArray *installerPaths = [[[self controller] document] installerPaths];
+	NSArray *installerPaths = self.controller.document.installerPaths;
 	
 	if (installerPaths)
 	{		
@@ -107,17 +109,17 @@
 		}
 		
 		//Always select the first installer in the list, as this is the preferred installer
-		[[self installerSelector] selectItemAtIndex: 0];
+		[self.installerSelector selectItemAtIndex: 0];
 	}
 	
 	//Ensure the popup button is in sync after we've messed around with its menu.
-	[[self installerSelector] synchronizeTitleAndSelectedItem];
+	[self.installerSelector synchronizeTitleAndSelectedItem];
 }
 
 - (NSMenuItem *) _installerSelectorItemForPath: (NSString *)path
 {
-	NSString *basePath = [[[self controller] document] sourcePath];
-	NSUInteger baseLength = [basePath length];
+	NSString *basePath = self.controller.document.sourcePath;
+	NSUInteger baseLength = basePath.length;
 	
 	//Remove the base source path to make shorter relative paths for display
 	NSString *shortenedPath = path;
@@ -132,8 +134,8 @@
 	NSString *title = [nameTransformer transformedValue: shortenedPath];
 	
 	NSMenuItem *item = [[NSMenuItem alloc] init];
-	[item setRepresentedObject: path];
-	[item setTitle: title];
+	item.representedObject = path;
+    item.title = title;
 	
 	return [item autorelease];
 }
@@ -144,35 +146,36 @@
 
 - (IBAction) launchSelectedInstaller: (id)sender
 {
-	NSString *installerPath = [[[self installerSelector] selectedItem] representedObject];
-	[[[self controller] document] launchInstaller: installerPath];
+	NSString *installerPath = self.installerSelector.selectedItem.representedObject;
+	[self.controller.document launchInstaller: installerPath];
 }
 
 - (IBAction) cancelInstallerChoice: (id)sender
 {
-	[[[self controller] document] cancelSourcePath];
+	[self.controller.document cancelSourcePath];
 }
 
 - (IBAction) skipInstaller: (id)sender
 {
-	[[[self controller] document] skipInstaller];
+	[self.controller.document skipInstaller];
 }
 
 - (IBAction) showInstallerPicker: (id)sender
 {
 	NSOpenPanel *openPanel	= [NSOpenPanel openPanel];
 	
-	[openPanel setCanChooseFiles: YES];
-	[openPanel setCanChooseDirectories: NO];
-	[openPanel setTreatsFilePackagesAsDirectories: NO];
-	[openPanel setMessage:	NSLocalizedString(@"Choose the DOS installer program for this game:",
-											  @"Help text shown at the top of choose-an-installer panel.")];
+    openPanel.canChooseFiles = YES;
+    openPanel.canChooseDirectories = NO;
+    openPanel.treatsFilePackagesAsDirectories = NO;
+    openPanel.message = NSLocalizedString(@"Choose the DOS installer program for this game:",
+                                          @"Help text shown at the top of choose-an-installer panel.");
 	
-	[openPanel setDelegate: self];
-	[openPanel beginSheetForDirectory: [[[self controller] document] sourcePath]
+    openPanel.delegate = self;
+    
+	[openPanel beginSheetForDirectory: self.controller.document.sourcePath
 								 file: nil
-								types: [[BXAppController executableTypes] allObjects]
-					   modalForWindow: [[self view] window]
+								types: [BXFileTypes executableTypes].allObjects
+					   modalForWindow: self.view.window
 						modalDelegate: self
 					   didEndSelector: @selector(_addChosenInstaller:returnCode:contextInfo:)
 						  contextInfo: NULL];	
@@ -181,7 +184,7 @@
 - (BOOL) panel: (id)sender shouldShowFilename: (NSString *)filename
 {
 	//Disable files outside the source path of the import process, for sanity's sake
-	return [filename isRootedInPath: [[[self controller] document] sourcePath]];
+	return [filename isRootedInPath: self.controller.document.sourcePath];
 }
 
 - (void) _addChosenInstaller: (NSOpenPanel *)openPanel
@@ -190,26 +193,26 @@
 {
 	if (returnCode == NSOKButton)
 	{
-		NSString *path = [[openPanel URL] path];
+		NSString *path = openPanel.URL.path;
 		
-		NSInteger itemIndex = [[self installerSelector] indexOfItemWithRepresentedObject: path];
+		NSInteger itemIndex = [self.installerSelector indexOfItemWithRepresentedObject: path];
 		if (itemIndex != -1)
 		{
 			//This path already exists in the menu, select it
-			[[self installerSelector] selectItemAtIndex: itemIndex];
+			[self.installerSelector selectItemAtIndex: itemIndex];
 		}
 		else
 		{
 			//This installer is not yet in the menu - add a new entry for it and select it
 			NSMenuItem *item = [self _installerSelectorItemForPath: path];
-			[[[self installerSelector] menu] insertItem: item atIndex: 0];
-			[[self installerSelector] selectItemAtIndex: 0];
+			[self.installerSelector.menu insertItem: item atIndex: 0];
+			[self.installerSelector selectItemAtIndex: 0];
 		}
 	}
 	else if (returnCode == NSCancelButton)
 	{
 		//Revert to the first menu item if the user cancelled
-		[[self installerSelector] selectItemAtIndex: 0];
+		[self.installerSelector selectItemAtIndex: 0];
 	}
 }
 

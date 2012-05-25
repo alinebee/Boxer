@@ -7,7 +7,7 @@
 
 #import "BXSession+BXFileManager.h"
 #import "BXSessionPrivate.h"
-#import "BXAppController.h"
+#import "BXFileTypes.h"
 
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulatorErrors.h"
@@ -74,10 +74,10 @@
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	
 	//If the path is a disc image, use that as the mount point.
-	if ([workspace file: filePath matchesTypes: [BXAppController mountableImageTypes]]) return filePath;
+	if ([workspace file: filePath matchesTypes: [BXFileTypes mountableImageTypes]]) return filePath;
 	
 	//If the path is (itself or inside) a gamebox or mountable folder, use that as the mount point.
-	NSString *container = [workspace parentOfFile: filePath matchingTypes: [[self class] preferredMountPointTypes]];
+	NSString *container = [workspace parentOfFile: filePath matchingTypes: [self.class preferredMountPointTypes]];
     if (container) return container;
 	
 	//Check what kind of volume the file is on
@@ -176,7 +176,7 @@
 	static NSSet *types = nil;
 	if (!types)
 	{
-		NSSet *imageTypes	= [BXAppController mountableImageTypes];
+		NSSet *imageTypes	= [BXFileTypes mountableImageTypes];
 		NSSet *folderTypes	= [self preferredMountPointTypes];
 		types = [[imageTypes setByAddingObjectsFromSet: folderTypes] retain];
 	}
@@ -185,7 +185,7 @@
 
 + (BOOL) isExecutable: (NSString *)path
 {
-	return [[NSWorkspace sharedWorkspace] file: path matchesTypes: [BXAppController executableTypes]];
+	return [[NSWorkspace sharedWorkspace] file: path matchesTypes: [BXFileTypes executableTypes]];
 }
 
 
@@ -859,7 +859,7 @@
         NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
         NSString *sourceImagePath = [workspace sourceImageForVolume: [drive path]];
         
-        if (sourceImagePath && [workspace file: sourceImagePath matchesTypes: [BXAppController mountableImageTypes]])
+        if (sourceImagePath && [workspace file: sourceImagePath matchesTypes: [BXFileTypes mountableImageTypes]])
         {
             //Check if we already have another drive representing the source path
             //at the requested drive letter: if so, then just add the path as an

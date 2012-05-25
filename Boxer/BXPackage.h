@@ -72,7 +72,7 @@ typedef NSUInteger BXGameIdentifierType;
 
 @interface BXPackage : NSBundle
 {
-	NSMutableDictionary *gameInfo;
+	NSMutableDictionary *_gameInfo;
 }
 
 #pragma mark -

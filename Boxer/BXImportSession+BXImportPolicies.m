@@ -14,7 +14,7 @@
 #import "NSString+BXPaths.h"
 
 #import "BXPackage.h"
-#import "BXAppController.h"
+#import "BXFileTypes.h"
 #import "BXPathEnumerator.h"
 #import "BXEmulatorConfiguration.h"
 
@@ -102,6 +102,15 @@
 							 error: NULL]) return YES;
 	}
 	return NO;
+}
+
++ (BOOL) isInconclusiveDOSProgramAtPath: (NSString *)path
+{
+    //Ignore batch files when determining DOS-versus-Windowsness,
+    //since a file-scripting utility may be included with an otherwise Windows game.
+	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+    NSSet *inconclusiveFileTypes = [NSSet setWithObject: @"com.microsoft.batch-file"];
+    return [workspace file: path matchesTypes: inconclusiveFileTypes];
 }
 
 #pragma mark -
@@ -244,7 +253,7 @@
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	
 	//If the source path is a mountable image, it should be imported
-	if ([workspace file: path matchesTypes: [BXAppController mountableImageTypes]]) return YES;
+	if ([workspace file: path matchesTypes: [BXFileTypes mountableImageTypes]]) return YES;
 	
 	//If the source path is on a CD, it should be imported
 	if ([[workspace volumeTypeForPath: path] isEqualToString: dataCDVolumeType]) return YES;

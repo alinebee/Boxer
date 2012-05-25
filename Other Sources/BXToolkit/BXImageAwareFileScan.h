@@ -22,9 +22,9 @@ typedef enum {
     
 @interface BXImageAwareFileScan : BXFileScan
 {
-    NSString *mountedVolumePath;
-    BXFileScanEjectionBehaviour ejectAfterScanning;
-    BOOL didMountVolume;
+    NSString *_mountedVolumePath;
+    BXFileScanEjectionBehaviour _ejectAfterScanning;
+    BOOL _didMountVolume;
 }
 
 //The volume path at which the original source disk image is mounted.

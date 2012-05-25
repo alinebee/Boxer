@@ -67,19 +67,6 @@ enum {
 
 
 #pragma mark -
-#pragma mark UTIs
-
-+ (NSSet *) executableTypes;		//DOS executable UTIs
-+ (NSSet *) hddVolumeTypes;			//UTIs that should be mounted as DOS hard drives
-+ (NSSet *) cdVolumeTypes;			//UTIs that should be mounted as DOS CD-ROM drives
-+ (NSSet *) floppyVolumeTypes;		//UTIs that should be mounted as DOS floppy drives
-+ (NSSet *) mountableFolderTypes;	//All mountable folder UTIs supported by Boxer
-+ (NSSet *) mountableImageTypes;	//All mountable disk-image UTIs supported by Boxer
-+ (NSSet *) OSXMountableImageTypes; //All disk-image UTIs that OSX's hdiutil can mount
-+ (NSSet *) mountableTypes;			//All mountable UTIs supported by Boxer
-
-
-#pragma mark -
 #pragma mark Initialization and teardown
 
 //Called at class initialization time to initialize Boxer's own user defaults.

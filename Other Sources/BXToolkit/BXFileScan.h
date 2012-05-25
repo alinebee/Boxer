@@ -26,19 +26,19 @@ extern NSString * const BXFileScanLastMatchKey;
 @protocol BXFilesystemEnumeration;
 @interface BXFileScan : BXOperation
 {
-	NSString *basePath;
+	NSString *_basePath;
     
-    NSMutableArray *matchingPaths;
-    NSUInteger maxMatches;
+    NSMutableArray *_matchingPaths;
+    NSUInteger _maxMatches;
     
-    BOOL skipHiddenFiles;
-	BOOL skipSubdirectories;
-	BOOL skipPackageContents;
-	NSSet *fileTypes;
-    NSPredicate *predicate;
+    BOOL _skipHiddenFiles;
+	BOOL _skipSubdirectories;
+	BOOL _skipPackageContents;
+	NSSet *_fileTypes;
+    NSPredicate *_predicate;
     
-	NSFileManager *manager;
-	NSWorkspace *workspace;
+	NSFileManager *_manager;
+	NSWorkspace *_workspace;
 }
 
 #pragma mark -

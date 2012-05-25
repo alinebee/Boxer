@@ -21,9 +21,14 @@ NSString * const BXFileScanLastMatchKey = @"BXFileScanLastMatch";
 
 
 @implementation BXFileScan
-@synthesize basePath, matchingPaths, maxMatches;
-@synthesize fileTypes, predicate;
-@synthesize skipSubdirectories, skipPackageContents, skipHiddenFiles;
+@synthesize basePath = _basePath;
+@synthesize matchingPaths = _matchingPaths;
+@synthesize maxMatches = _maxMatches;
+@synthesize fileTypes = _fileTypes;
+@synthesize predicate = _predicate;
+@synthesize skipSubdirectories = _skipSubdirectories;
+@synthesize skipPackageContents = _skipPackageContents;
+@synthesize skipHiddenFiles = _skipHiddenFiles;
 
 #pragma mark -
 #pragma mark Initialization and deallocation
@@ -31,7 +36,7 @@ NSString * const BXFileScanLastMatchKey = @"BXFileScanLastMatch";
 + (id) scanWithBasePath: (NSString *)path
 {
     BXFileScan *scan = [[self alloc] init];
-    [scan setBasePath: path];
+    scan.basePath = path;
     
     return [scan autorelease];
 }
@@ -40,14 +45,14 @@ NSString * const BXFileScanLastMatchKey = @"BXFileScanLastMatch";
 {
     if ((self = [super init]))
     {
-        matchingPaths = [[NSMutableArray alloc] initWithCapacity: 10];
-        maxMatches = 0;
+        _matchingPaths = [[NSMutableArray alloc] initWithCapacity: 10];
         
-		workspace = [[NSWorkspace alloc] init];
-		manager	= [[NSFileManager alloc] init];
+		_workspace = [[NSWorkspace alloc] init];
+		_manager	= [[NSFileManager alloc] init];
         
 		//Skip hidden files by default
-		[self setSkipHiddenFiles: YES];
+		self.skipHiddenFiles = YES;
+        self.maxMatches = 0;
     }
     
     return self;
@@ -55,14 +60,13 @@ NSString * const BXFileScanLastMatchKey = @"BXFileScanLastMatch";
 
 - (void) dealloc
 {
-    [matchingPaths release], matchingPaths = nil;
+    self.fileTypes = nil;
+    self.basePath = nil;
+    self.predicate = nil;
     
-	[self setFileTypes: nil],       [fileTypes release];
-	[self setBasePath: nil],        [basePath release];
-    [self setPredicate: nil],       [predicate release];
-    
-	[manager release], manager = nil;
-	[workspace release], workspace = nil;
+    [_matchingPaths release], _matchingPaths = nil;
+	[_manager release], _manager = nil;
+	[_workspace release], _workspace = nil;
     
     [super dealloc];
 }
@@ -73,12 +77,12 @@ NSString * const BXFileScanLastMatchKey = @"BXFileScanLastMatch";
 
 - (NSString *) lastMatch
 {
-    return [matchingPaths lastObject];
+    return [_matchingPaths lastObject];
 }
 
 - (NSString *) fullPathFromRelativePath: (NSString *)relativePath
 {
-    return [[self basePath] stringByAppendingPathComponent: relativePath];
+    return [self.basePath stringByAppendingPathComponent: relativePath];
 }
 
 - (BOOL) matchAgainstPath: (NSString *)relativePath
@@ -87,13 +91,13 @@ NSString * const BXFileScanLastMatchKey = @"BXFileScanLastMatch";
     {
         [self addMatchingPath: relativePath];
         
-        NSDictionary *userInfo = [NSDictionary dictionaryWithObject: [self lastMatch]
+        NSDictionary *userInfo = [NSDictionary dictionaryWithObject: self.lastMatch
                                                              forKey: BXFileScanLastMatchKey];
         
         [self _sendInProgressNotificationWithInfo: userInfo];
         
         //Check if we have enough matches now: if so, stop scanning.
-        if ([self maxMatches] && [matchingPaths count] >= [self maxMatches]) return NO;
+        if (self.maxMatches && _matchingPaths.count >= self.maxMatches) return NO;
     }
     
     return YES;
@@ -101,14 +105,14 @@ NSString * const BXFileScanLastMatchKey = @"BXFileScanLastMatch";
 
 - (BOOL) isMatchingPath: (NSString *)relativePath
 {
-    if ([self skipHiddenFiles] && [[relativePath lastPathComponent] hasPrefix: @"."]) return NO;
+    if (self.skipHiddenFiles && [relativePath.lastPathComponent hasPrefix: @"."]) return NO;
     
-    if ([self predicate] && ![[self predicate] evaluateWithObject: relativePath]) return NO;
+    if (self.predicate && ![self.predicate evaluateWithObject: relativePath]) return NO;
     
-    if ([self fileTypes])
+    if (self.fileTypes)
     {
         NSString *fullPath = [self fullPathFromRelativePath: relativePath];
-        if (![workspace file: fullPath matchesTypes: [self fileTypes]]) return NO;
+        if (![_workspace file: fullPath matchesTypes: self.fileTypes]) return NO;
     }
     
     return YES;
@@ -116,12 +120,12 @@ NSString * const BXFileScanLastMatchKey = @"BXFileScanLastMatch";
 
 - (BOOL) shouldScanSubpath: (NSString *)relativePath
 {
-    if ([self skipSubdirectories]) return NO;
+    if (self.skipSubdirectories) return NO;
     
-    if ([self skipPackageContents])
+    if (self.skipPackageContents)
     {
         NSString *fullPath = [self fullPathFromRelativePath: relativePath];
-        if ([workspace isFilePackageAtPath: fullPath]) return NO;
+        if ([_workspace isFilePackageAtPath: fullPath]) return NO;
     }
     
     return YES;
@@ -136,29 +140,29 @@ NSString * const BXFileScanLastMatchKey = @"BXFileScanLastMatch";
 - (BOOL) shouldPerformOperation
 {
     //If no base path has been set, we cannot begin
-    return [super shouldPerformOperation] && ([self basePath] != nil);
+    return [super shouldPerformOperation] && (self.basePath != nil);
 }
 
 - (id <BXFilesystemEnumeration>) enumerator
 {
-    return (id <BXFilesystemEnumeration>)[manager enumeratorAtPath: [self basePath]];
+    return (id <BXFilesystemEnumeration>)[_manager enumeratorAtPath: self.basePath];
 }
 
 - (void) performOperation
 {
     //In case we were cancelled upstairs in willStart
     //Empty the matches before we begin
-    [matchingPaths removeAllObjects];
+    [_matchingPaths removeAllObjects];
     
-    id <BXFilesystemEnumeration> enumerator = [self enumerator];
+    id <BXFilesystemEnumeration> enumerator = self.enumerator;
     
     for (NSString *relativePath in enumerator)
     {
-        if ([self isCancelled]) break;
+        if (self.isCancelled) break;
         
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
         
-        NSString *fileType = [[enumerator fileAttributes] fileType];
+        NSString *fileType = enumerator.fileAttributes.fileType;
         if ([fileType isEqualToString: NSFileTypeDirectory])
         {
             if (![self shouldScanSubpath: relativePath])
@@ -169,7 +173,7 @@ NSString * const BXFileScanLastMatchKey = @"BXFileScanLastMatch";
         
         [pool drain];
         
-        if ([self isCancelled] || !keepScanning) break;
+        if (self.isCancelled || !keepScanning) break;
     }
 }
 

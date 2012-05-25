@@ -15,10 +15,11 @@
 extern NSString * const BXSessionErrorDomain;
 enum
 {
-    BXSessionCannotMountSystemFolder,       //Returned when user attempts to mount an OS X system folder as a DOS drive.
+    BXSessionCannotMountSystemFolder,   //Returned when user attempts to mount an OS X system folder as a DOS drive.
 	
-    BXImportNoExecutablesInSourcePath,      //Returned when the import scanner can find no executables of any kind in the source folder.
-	BXImportSourcePathIsWindowsOnly,        //Returned when the import scanner can only find Windows executables in the source folder.
+    BXImportNoExecutablesInSourcePath,  //Returned when the import scanner can find no executables of any kind in the source folder.
+	BXImportSourcePathIsWindowsOnly,    //Returned when the import scanner can only find Windows executables in the source folder.
+	BXImportSourcePathIsMacOSApp,       //Returned when the import scanner can only find Mac applications in the source folder.
 };
 
 //General base class for all session errors
@@ -40,4 +41,8 @@ enum
 @interface BXImportWindowsOnlyError : BXImportError
 + (id) errorWithSourcePath: (NSString *)sourcePath userInfo: (NSDictionary *)userInfo;
 - (NSString *) helpAnchor;
+@end
+
+@interface BXImportMacAppError : BXImportError
++ (id) errorWithSourcePath: (NSString *)sourcePath userInfo: (NSDictionary *)userInfo;
 @end

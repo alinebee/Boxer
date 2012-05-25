@@ -92,7 +92,7 @@ NSString * const BXSessionErrorDomain = @"BXSessionErrorDomain";
 	);
 	
 	NSString *suggestion = NSLocalizedString(
-		@"You should install it with a Windows PC or emulator instead. If it installs an MS-DOS game, you can then import the installed game files into Boxer.",
+		@"You could install the game on a Windows PC or emulator instead. If it installs an MS-DOS game, you can then import the installed game files into Boxer.",
 		@"Informative text of warning sheet after importing a Windows-only game."
 	);
 	
@@ -115,4 +115,33 @@ NSString * const BXSessionErrorDomain = @"BXSessionErrorDomain";
 {
 	return @"windows-only-programs";
 }
+@end
+
+
+
+@implementation BXImportMacAppError
+
++ (id) errorWithSourcePath: (NSString *)sourcePath userInfo: (NSDictionary *)userInfo
+{
+	NSString *descriptionFormat = NSLocalizedString(@"“%@” is a Mac game, which Boxer cannot run.",
+                                                    @"Error message shown when importing a folder that contains a Mac application. %@ is the display filename of the imported path.");
+	
+	NSString *suggestion = NSLocalizedString(@"You may be able to run the game directly by double-clicking on it: however games made for Classic Mac OS 9 and earlier will not run on Mac OS X.",
+                                             @"Informative text of warning sheet after importing a Mac application.");
+	
+	NSString *description = [NSString stringWithFormat: descriptionFormat, [self displayNameForPath: sourcePath], nil];
+	
+	NSMutableDictionary *defaultInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+										description,	NSLocalizedDescriptionKey,
+										suggestion,		NSLocalizedRecoverySuggestionErrorKey,
+										sourcePath,		NSFilePathErrorKey,
+										nil];
+	
+	if (userInfo) [defaultInfo addEntriesFromDictionary: userInfo];
+	
+	return [self errorWithDomain: BXSessionErrorDomain
+							code: BXImportSourcePathIsWindowsOnly
+						userInfo: defaultInfo];
+}
+
 @end

@@ -10,6 +10,7 @@
 #import "BXValueTransformers.h"
 #import "BXSession+BXFileManager.h"
 #import "BXEmulator+BXDOSFileSystem.h"
+#import "BXFileTypes.h"
 #import "BXAppController.h"
 #import "BXPackage.h"
 #import "NSString+BXPaths.h"
@@ -45,23 +46,24 @@ enum {
 #pragma mark Implementation
 
 @implementation BXGameboxPanelController
-@synthesize programSelector, sessionMediator;
+@synthesize programSelector = _programSelector;
+@synthesize sessionMediator = _sessionMediator;
 
 - (BXSession *) session
 {
-	return [[self sessionMediator] content];
+	return self.sessionMediator.content;
 }
 
 - (void) dealloc
 {
-	[self setSessionMediator: nil]; [sessionMediator release];
-	[self setProgramSelector: nil]; [programSelector release];
+    self.sessionMediator = nil;
+    self.programSelector = nil;
 	[super dealloc];
 }
 
 - (void) setSessionMediator: (NSObjectController *)mediator
 {
-	if (mediator != sessionMediator)
+	if (mediator != self.sessionMediator)
 	{
 		NSArray *observePaths = [NSArray arrayWithObjects:
 			@"content.executables",
@@ -69,10 +71,10 @@ enum {
 		nil];
 		
 		for (NSString *path in observePaths)
-			[sessionMediator removeObserver: self forKeyPath: path];
+			[_sessionMediator removeObserver: self forKeyPath: path];
 	
-		[sessionMediator release];
-		sessionMediator = [mediator retain];
+		[_sessionMediator release];
+		_sessionMediator = [mediator retain];
 	
 		for (NSString *path in observePaths)
 			[mediator addObserver: self forKeyPath: path options: NSKeyValueObservingOptionInitial context: nil];
@@ -97,37 +99,37 @@ enum {
 #pragma mark -
 #pragma mark UI actions
 
-- (BOOL) validateUserInterfaceItem: (id)theItem
+- (BOOL) validateUserInterfaceItem: (id <NSValidatedUserInterfaceItem>)theItem
 {
-	if ([theItem action] == @selector(launchDefaultProgram:))
+	if (theItem.action == @selector(launchDefaultProgram:))
 	{
-		BXEmulator *emulator = [[self session] emulator];
-		NSString *filePath = [[[self programSelector] selectedItem] representedObject];
-		return filePath && [emulator isExecuting] && ![emulator isRunningProcess];
+		BXEmulator *emulator = self.session.emulator;
+		NSString *filePath = self.programSelector.selectedItem.representedObject;
+		return filePath && emulator.isExecuting && !emulator.isRunningProcess;
 	}
 	return YES;
 }
 
-- (IBAction) changeDefaultProgram: (id)sender
+- (IBAction) changeDefaultProgram: (NSPopUpButton *)sender
 {
-	NSString *selectedPath = [[sender selectedItem] representedObject];
-	[[[self session] gamePackage] setTargetPath: selectedPath];
+	NSString *selectedPath = sender.selectedItem.representedObject;
+    self.session.gamePackage.targetPath = selectedPath;
 }
 
 - (IBAction) launchDefaultProgram: (id)sender
 {
-	NSString *filePath = [[[self programSelector] selectedItem] representedObject];
-	[[self session] openFileAtPath: filePath];
+	NSString *filePath = self.programSelector.selectedItem.representedObject;
+	[self.session openFileAtPath: filePath];
 }
 
 - (IBAction) revealGamebox: (id)sender
 {
-	[[NSApp delegate] revealPath: [[[self session] gamePackage] bundlePath]];
+	[[NSApp delegate] revealPath: self.session.gamePackage.bundlePath];
 }
 
 - (IBAction) searchForCoverArt: (id)sender
 {
-	NSString *search = [[self session] displayName];
+	NSString *search = self.session.displayName;
 	[[NSApp delegate] searchURLFromKey: @"CoverArtSearchURL" withSearchString: search];
 }
 
@@ -135,17 +137,18 @@ enum {
 {	
 	NSOpenPanel *openPanel = [NSOpenPanel openPanel];
 	
-	[openPanel setCanChooseFiles: YES];
-	[openPanel setCanChooseDirectories: NO];
-	[openPanel setTreatsFilePackagesAsDirectories: NO];
-	[openPanel setMessage:	NSLocalizedString(@"Choose the target program for this gamebox:",
-											  @"Help text shown at the top of choose-a-target-program panel.")];
+    openPanel.canChooseFiles = YES;
+    openPanel.canChooseDirectories = NO;
+    openPanel.treatsFilePackagesAsDirectories = NO;
+    
+    openPanel.message = NSLocalizedString(@"Choose the target program for this gamebox:",
+                                          @"Help text shown at the top of choose-a-target-program panel.");
 	
-	[openPanel setDelegate: self];
-	[openPanel beginSheetForDirectory: [[[self session] gamePackage] gamePath]
+    openPanel.delegate = self;
+	[openPanel beginSheetForDirectory: self.session.gamePackage.gamePath
 								 file: nil
-								types: [[BXAppController executableTypes] allObjects]
-					   modalForWindow: [[self view] window]
+								types: [BXFileTypes executableTypes].allObjects
+					   modalForWindow: self.view.window
 						modalDelegate: self
 					   didEndSelector: @selector(_setChosenProgramAsDefault:returnCode:contextInfo:)
 						  contextInfo: NULL];
@@ -153,13 +156,13 @@ enum {
 
 - (BOOL) panel: (id)sender shouldShowFilename: (NSString *)filename
 {
-	BXSession *session = [self session];
+	BXSession *session = self.session;
     
 	//Disable files that are outside the gamebox or that aren't accessible in DOS
-	if (![filename isRootedInPath: [[session gamePackage] gamePath]]) return NO;
+	if (![filename isRootedInPath: session.gamePackage.gamePath]) return NO;
     
     //Note: we could test if the file actually exists in DOS, but that's kinda expensive.
-	if (![[session emulator] pathIsDOSAccessible: filename]) return NO;
+	if (![session.emulator pathIsDOSAccessible: filename]) return NO;
 	return YES;
 }
 
@@ -169,20 +172,20 @@ enum {
 
 - (void) syncMenuItems
 {
-	NSMenu *menu = [[self programSelector] menu];
+	NSMenu *menu = self.programSelector.menu;
 	
 	NSInteger startOfPrograms	= [menu indexOfItemWithTag: BXGameboxPanelNoProgramTag] + 1;
 	NSInteger endOfPrograms		= [menu indexOfItemWithTag: BXGameboxPanelEndOfProgramsTag];
 	NSRange programItemRange	= NSMakeRange(startOfPrograms, endOfPrograms - startOfPrograms);
 	
 	//Remove all the original program options...
-	for (NSMenuItem *oldItem in [[menu itemArray] subarrayWithRange: programItemRange])
+	for (NSMenuItem *oldItem in [menu.itemArray subarrayWithRange: programItemRange])
 		[menu removeItem: oldItem];
 	
 	//...and then add all the new ones in their place
 	NSArray *newItems = [self _programMenuItems];
 	
-	if ([newItems count])
+	if (newItems.count)
 	{
 		NSUInteger insertionPoint = startOfPrograms;
 		
@@ -197,10 +200,10 @@ enum {
 
 - (void) syncSelection
 {
-	NSMenu *menu = [[self programSelector] menu];
-	NSString *targetPath = [[[self session] gamePackage] targetPath];
+	NSMenu *menu = self.programSelector.menu;
+	NSString *targetPath = self.session.gamePackage.targetPath;
 	NSUInteger pathIndex = (targetPath == nil) ? 0 : [menu indexOfItemWithRepresentedObject: targetPath];
-	[programSelector selectItemAtIndex: pathIndex];
+	[self.programSelector selectItemAtIndex: pathIndex];
 }
 
 
@@ -209,14 +212,14 @@ enum {
 
 - (NSArray *) _programMenuItems
 {	
-	NSDictionary *allPrograms	= [[self session] executables];
-	NSMutableArray *items		= [NSMutableArray arrayWithCapacity: [allPrograms count]];
+	NSDictionary *allPrograms	= self.session.executables;
+	NSMutableArray *items		= [NSMutableArray arrayWithCapacity: allPrograms.count];
 	
-	NSArray *driveLetters = [[allPrograms allKeys] sortedArrayUsingSelector: @selector(compare:)];
+	NSArray *driveLetters = [allPrograms.allKeys sortedArrayUsingSelector: @selector(compare:)];
 	
-	if ([driveLetters count])
+	if (driveLetters.count)
 	{
-		BXEmulator *emulator = [[self session] emulator];
+		BXEmulator *emulator = self.session.emulator;
 		for (NSString *driveLetter in driveLetters)
 		{
 			NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
@@ -224,26 +227,26 @@ enum {
 			BXDrive *drive = [emulator driveAtLetter: driveLetter];
 			
 			//Skip drives that aren't located inside the gamebox
-			if (![[self session] driveIsBundled: drive]) continue;
-			
-			NSArray *programsInDrive = [allPrograms objectForKey: driveLetter];
-			
-			//Skip drives with no executables on them
-			if (![programsInDrive count]) continue;
-			
-			//Sort the executables in order of path depth, so we can prioritise programs 'higher up' in the file heirarchy
-			NSArray *sortedPrograms = [programsInDrive sortedArrayUsingSelector: @selector(pathDepthCompare:)];
-			
-			
-			for (NSString *path in sortedPrograms)
-			{
-				NSMenuItem *item = [self _programMenuItemForPath: path onDrive: drive];
-				[items addObject: item];
-			}
-			
-			//Add a separator after each new drive
-			[items addObject: [NSMenuItem separatorItem]];
-			
+			if ([self.session driveIsBundled: drive])
+            {
+                NSArray *programsInDrive = [allPrograms objectForKey: driveLetter];
+                
+                //Skip drives with no executables on them
+                if (programsInDrive.count)
+                {
+                    //Sort the executables in order of path depth, so we can prioritise programs 'higher up' in the file heirarchy
+                    NSArray *sortedPrograms = [programsInDrive sortedArrayUsingSelector: @selector(pathDepthCompare:)];
+                    
+                    for (NSString *path in sortedPrograms)
+                    {
+                        NSMenuItem *item = [self _programMenuItemForPath: path onDrive: drive];
+                        [items addObject: item];
+                    }
+                    
+                    //Add a separator after each new drive
+                    [items addObject: [NSMenuItem separatorItem]];
+                }
+            }
 			[pool release];
 		}
 	}
@@ -257,22 +260,22 @@ enum {
 {
 	if (returnCode == NSOKButton)
 	{
-		NSString *path = [[openPanel URL] path];
+		NSString *path = openPanel.URL.path;
 		
 		//Look for an existing program item with that path
-		NSInteger itemIndex = [[self programSelector] indexOfItemWithRepresentedObject: path];
+		NSInteger itemIndex = [self.programSelector indexOfItemWithRepresentedObject: path];
 		if (itemIndex == -1)
 		{
 			//This program is not yet in the menu: add a new item for it and use its new index
-			NSMenu *menu = [[self programSelector] menu];
+			NSMenu *menu = self.programSelector.menu;
 			NSMenuItem *item = [self _programMenuItemForPath: path onDrive: nil];
 			
 			itemIndex = [menu indexOfItemWithTag: BXGameboxPanelEndOfProgramsTag];
 			[menu insertItem: item atIndex: itemIndex];
 		}
 		
-		[[self programSelector] selectItemAtIndex: itemIndex];
-		[self changeDefaultProgram: [self programSelector]];
+		[self.programSelector selectItemAtIndex: itemIndex];
+		[self changeDefaultProgram: self.programSelector];
 	}
 	else if (returnCode == NSCancelButton)
 	{
@@ -287,7 +290,7 @@ enum {
 	BXDisplayPathTransformer *pathFormat = [[BXDisplayPathTransformer alloc] initWithJoiner: @" ▸ " maxComponents: 0];
 	[pathFormat setUseFilesystemDisplayPath: NO];
 	
-	BXEmulator *emulator = [[self session] emulator];
+	BXEmulator *emulator = self.session.emulator;
 	
 	NSMenuItem *item = [[NSMenuItem alloc] init];
 	
@@ -301,8 +304,8 @@ enum {
 	//(This should never happen - we don't list programs that aren't on mounted drives - but just in case)
 	if (!displayPath) displayPath = path; 
 	
-	[item setRepresentedObject: path];
-	[item setTitle: [pathFormat transformedValue: displayPath]];
+	item.representedObject = path;
+	item.title = [pathFormat transformedValue: displayPath];
 	
 	[pathFormat release];
 	

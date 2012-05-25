@@ -20,15 +20,15 @@
 < NSOpenSavePanelDelegate >
 #endif
 {
-	IBOutlet NSPopUpButton *programSelector;
-	IBOutlet NSObjectController *sessionMediator;
+    NSPopUpButton *_programSelector;
+    NSObjectController *_sessionMediator;
 }
-@property (retain, nonatomic) NSPopUpButton *programSelector;		//The program selector popup button we populate.
-@property (retain, nonatomic) NSObjectController *sessionMediator;	//The NIB's object-controller proxy for the current session.
+@property (retain, nonatomic) IBOutlet NSPopUpButton *programSelector;		//The program selector popup button we populate.
+@property (retain, nonatomic) IBOutlet NSObjectController *sessionMediator;	//The NIB's object-controller proxy for the current session.
 
 //Sets the default program of the gamebox to the represented path of the selected menu item.
 //Called by the program selector whenever its selected item is changed.
-- (IBAction) changeDefaultProgram: (id)sender;
+- (IBAction) changeDefaultProgram: (NSPopUpButton *)sender;
 
 //Launches the represented path of the popup button's selected menu item.
 //Currently unused - intended for a button to sit alongside the program popup selector.

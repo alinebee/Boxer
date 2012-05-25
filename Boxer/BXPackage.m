@@ -9,7 +9,7 @@
 #import "NSString+BXPaths.h"
 #import "NSWorkspace+BXFileTypes.h"
 #import "NSWorkspace+BXIcons.h"
-#import "BXAppController.h"
+#import "BXFileTypes.h"
 #import "RegexKitLite.h"
 #import "BXDigest.h"
 #import "NSData+HexStrings.h"
@@ -59,7 +59,7 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 
 
 @implementation BXPackage
-@synthesize gameInfo;
+@synthesize gameInfo = _gameInfo;
 
 + (NSSet *) documentationTypes
 {
@@ -117,23 +117,23 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 
 - (void) dealloc
 {
-	[self setGameInfo: nil], [gameInfo release];
+    self.gameInfo = nil;
 	[super dealloc];
 }
 
-- (NSArray *) hddVolumes	{ return [self volumesOfTypes: [BXAppController hddVolumeTypes]]; }
-- (NSArray *) cdVolumes		{ return [self volumesOfTypes: [BXAppController cdVolumeTypes]]; }
-- (NSArray *) floppyVolumes	{ return [self volumesOfTypes: [BXAppController floppyVolumeTypes]]; }
+- (NSArray *) hddVolumes	{ return [self volumesOfTypes: [BXFileTypes hddVolumeTypes]]; }
+- (NSArray *) cdVolumes		{ return [self volumesOfTypes: [BXFileTypes cdVolumeTypes]]; }
+- (NSArray *) floppyVolumes	{ return [self volumesOfTypes: [BXFileTypes floppyVolumeTypes]]; }
 
 - (NSArray *) volumesOfTypes: (NSSet *)acceptedTypes
 {
-	BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: [self resourcePath]];
-	[enumerator setSkipSubdirectories: YES];
-	[enumerator setFileTypes: acceptedTypes];
-	return [enumerator allObjects];
+	BXPathEnumerator *enumerator = [BXPathEnumerator enumeratorAtPath: self.resourcePath];
+	enumerator.skipSubdirectories = YES;
+	enumerator.fileTypes = acceptedTypes;
+	return enumerator.allObjects;
 }
 
-- (NSString *) gamePath { return [self bundlePath]; }
+- (NSString *) gamePath { return self.bundlePath; }
 
 - (NSString *) targetPath
 {
@@ -142,13 +142,13 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 	//Resolve the path from a gamebox-relative path into an absolute path
     if (targetPath)
     {
-        targetPath = [[self resourcePath] stringByAppendingPathComponent: targetPath];
+        targetPath = [self.resourcePath stringByAppendingPathComponent: targetPath];
     }
     //If there's no target path stored in game info, check for an old-style symlink
     else
 	{
 		NSString *symlinkPath = [self pathForResource: BXTargetSymlinkName ofType: nil];
-        targetPath = [symlinkPath stringByResolvingSymlinksInPath];
+        targetPath = symlinkPath.stringByResolvingSymlinksInPath;
         
         if (targetPath)
         {
@@ -158,7 +158,7 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
             else
             {
                 //Once we've resolved the symlink, store it in the game info for future use
-                [self setTargetPath: targetPath];
+                self.targetPath = targetPath;
             }
         }
 	}
@@ -171,7 +171,7 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
     if (path)
     {
         //Make the path relative to the game package
-        NSString *basePath		= [self resourcePath];
+        NSString *basePath		= self.resourcePath;
         NSString *relativePath	= [path pathRelativeToPath: basePath];
     
         [self setGameInfo: relativePath forKey: BXTargetProgramKey];
@@ -215,7 +215,7 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
      */
 	
 	//Reject target paths that are not located inside the gamebox
-	if (![filePath isRootedInPath: [self gamePath]])
+	if (![filePath isRootedInPath: self.gamePath])
 	{
 		if (outError)
 		{
@@ -249,7 +249,7 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
     //from NSBundle once and for all.
     NSFileManager *manager = [NSFileManager defaultManager];
     
-    NSString *configPath = [self configurationFilePath];
+    NSString *configPath = self.configurationFilePath;
     if ([manager fileExistsAtPath: configPath]) return configPath;
     else return nil;
 }
@@ -257,23 +257,23 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 - (NSString *) configurationFilePath
 {
 	NSString *fileName = [BXConfigurationFileName stringByAppendingPathExtension: BXConfigurationFileExtension];
-	return [[self resourcePath] stringByAppendingPathComponent: fileName];
+	return [self.resourcePath stringByAppendingPathComponent: fileName];
 }
 
 //Set/return the cover art associated with this game package (currently, the package file's icon)
 - (NSImage *) coverArt
 {
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	if ([workspace fileHasCustomIcon: [self bundlePath]])
+	if ([workspace fileHasCustomIcon: self.bundlePath])
 	{
-		return [workspace iconForFile: [self bundlePath]];
+		return [workspace iconForFile: self.bundlePath];
 	}
 	else return nil;
 }
 
 - (void) setCoverArt: (NSImage *)image
 {
-	[[NSWorkspace sharedWorkspace] setIcon: image forFile: [self bundlePath] options: 0];
+	[[NSWorkspace sharedWorkspace] setIcon: image forFile: self.bundlePath options: 0];
 }
 
 - (NSArray *) executables
@@ -289,7 +289,7 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 - (NSDictionary *) gameInfo
 {
 	//Load the game info from the gamebox's plist file the first time we need it.
-	if (gameInfo == nil)
+	if (_gameInfo == nil)
 	{
 		NSMutableDictionary *info = nil;
 		
@@ -299,15 +299,15 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 		//If there was no plist file in the gamebox, create an empty dictionary instead.
 		if (!info) info = [NSMutableDictionary dictionaryWithCapacity: 10];
 		
-		[self setGameInfo: info];
+        self.gameInfo = info;
 	}
 	
-	return gameInfo;
+	return _gameInfo;
 }
 
 - (id) gameInfoForKey: (NSString *)key
 {
-	return [[self gameInfo] objectForKey: key];
+	return [self.gameInfo objectForKey: key];
 }
 
 - (void) setGameInfo: (id)info forKey: (NSString *)key
@@ -317,9 +317,9 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 	if (![[self gameInfoForKey: key] isEqual: info])
 	{
         if (info)
-            [(NSMutableDictionary *)[self gameInfo] setObject: info forKey: key];
+            [(NSMutableDictionary *)self.gameInfo setObject: info forKey: key];
         else
-            [(NSMutableDictionary *)[self gameInfo] removeObjectForKey: key];
+            [(NSMutableDictionary *)self.gameInfo removeObjectForKey: key];
         
 		[self _persistGameInfo];		
 	}
@@ -336,9 +336,10 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 		BXGameIdentifierType generatedType = 0;
 		identifier = [self _generatedIdentifierOfType: &generatedType];
 
-		[gameInfo setObject: identifier forKey: BXGameIdentifierKey];
-		[gameInfo setObject: [NSNumber numberWithUnsignedInteger: generatedType]
-					 forKey: BXGameIdentifierTypeKey];
+		[(NSMutableDictionary *)self.gameInfo setObject: identifier forKey: BXGameIdentifierKey];
+		[(NSMutableDictionary *)self.gameInfo setObject: [NSNumber numberWithUnsignedInteger: generatedType]
+                                                 forKey: BXGameIdentifierTypeKey];
+        
 		[self _persistGameInfo];
 	}
 	
@@ -347,27 +348,27 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 
 - (void) setGameIdentifier: (NSString *)identifier
 {
-	[gameInfo setObject: identifier forKey: BXGameIdentifierKey];
-	[gameInfo setObject: [NSNumber numberWithUnsignedInteger: BXGameIdentifierUserSpecified]
-				 forKey: BXGameIdentifierTypeKey];
+	[(NSMutableDictionary *)self.gameInfo setObject: identifier forKey: BXGameIdentifierKey];
+	[(NSMutableDictionary *)self.gameInfo setObject: [NSNumber numberWithUnsignedInteger: BXGameIdentifierUserSpecified]
+                                             forKey: BXGameIdentifierTypeKey];
 }
 
 - (NSString *) gameName
 {
 	NSFileManager *manager = [NSFileManager defaultManager];
-	NSString *displayName = [manager displayNameAtPath: [self bundlePath]];
+	NSString *displayName = [manager displayNameAtPath: self.bundlePath];
 
 	//Strip the extension if it's .boxer, otherwise leave path extension intact
 	//(as it could be a version number component, e.g. the ".1" in "Windows 3.1")
-	if ([[[displayName pathExtension] lowercaseString] isEqualToString: @"boxer"])
-		displayName = [displayName stringByDeletingPathExtension];
+	if ([displayName.pathExtension.lowercaseString isEqualToString: @"boxer"])
+		displayName = displayName.stringByDeletingPathExtension;
 	
 	return displayName;
 }
 
 - (void) refresh
 {
-	[self setGameInfo: nil];
+    self.gameInfo = nil;
 }
 
 
@@ -378,11 +379,11 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 //Write the game info back to the plist file
 - (void) _persistGameInfo
 {
-	if (gameInfo)
+	if (_gameInfo)
 	{
 		NSString *infoName = [BXGameInfoFileName stringByAppendingPathExtension: BXGameInfoFileExtension];
-		NSString *infoPath = [[self resourcePath] stringByAppendingPathComponent: infoName];
-		[gameInfo writeToFile: infoPath atomically: YES];
+		NSString *infoPath = [self.resourcePath stringByAppendingPathComponent: infoName];
+		[_gameInfo writeToFile: infoPath atomically: YES];
 	}
 }
 
@@ -391,8 +392,9 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 //TODO: move filtering upstairs to BXSession, as we should not be determining application behaviour here.
 - (NSArray *) _foundExecutables
 {
-	NSArray *foundExecutables	= [self _foundResourcesOfTypes: [BXAppController executableTypes] startingIn: [self gamePath]];
-	NSPredicate *notExcluded	= [NSPredicate predicateWithFormat: @"NOT lastPathComponent.lowercaseString IN %@", [[self class] executableExclusions]];
+	NSArray *foundExecutables	= [self _foundResourcesOfTypes: [BXFileTypes executableTypes]
+                                                    startingIn: self.gamePath];
+	NSPredicate *notExcluded	= [NSPredicate predicateWithFormat: @"NOT lastPathComponent.lowercaseString IN %@", [self.class executableExclusions]];
 	
 	return [foundExecutables filteredArrayUsingPredicate: notExcluded];
 }
@@ -401,15 +403,16 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 {
 	//First, check if there is an explicitly-named documentation folder and use the contents of that if so
 	NSArray *docsFolderContents = [self pathsForResourcesOfType: nil inDirectory: BXDocumentationFolderName];
-	if ([docsFolderContents count])
+	if (docsFolderContents.count)
 	{
 		NSPredicate *notHidden	= [NSPredicate predicateWithFormat: @"NOT lastPathComponent BEGINSWITH %@", @".", nil];
 		return [docsFolderContents filteredArrayUsingPredicate: notHidden];
 	}
 
 	//Otherwise, go trawling through the entire game package looking for likely documentation
-	NSArray *foundDocumentation	= [self _foundResourcesOfTypes: [[self class] documentationTypes] startingIn: [self gamePath]];
-	NSPredicate *notExcluded	= [NSPredicate predicateWithFormat: @"NOT lastPathComponent.lowercaseString IN %@", [[self class] documentationExclusions]];
+	NSArray *foundDocumentation	= [self _foundResourcesOfTypes: [self.class documentationTypes]
+                                                    startingIn: self.gamePath];
+	NSPredicate *notExcluded	= [NSPredicate predicateWithFormat: @"NOT lastPathComponent.lowercaseString IN %@", [self.class documentationExclusions]];
 
 	return [foundDocumentation filteredArrayUsingPredicate: notExcluded];
 }
@@ -423,7 +426,8 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 	{
 		//Note that we don't use our own smarter file:matchesTypes: function for this,
 		//because there are some inherited filetypes that we want to avoid matching.
-		if ([fileTypes containsObject: [workspace typeOfFile: path error: nil]]) [matches addObject: path];
+		if ([fileTypes containsObject: [workspace typeOfFile: path error: nil]])
+            [matches addObject: path];
 	}
 	return matches;	
 }
@@ -432,14 +436,14 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 {
 	//If the gamebox contains executables, generate an identifier based on their hash.
 	//TODO: move the choice of executables off to BXSession
-	NSArray *foundExecutables = [self executables];
-	if ([foundExecutables count])
+	NSArray *foundExecutables = self.executables;
+	if (foundExecutables.count)
 	{
 		NSData *digest = [BXDigest SHA1DigestForFiles: foundExecutables
 										   upToLength: BXGameIdentifierEXEDigestStubLength];
 		*type = BXGameIdentifierEXEDigest;
 		
-		return [digest stringWithHexBytes];
+		return digest.stringWithHexBytes;
 	}
 	
 	//Otherwise, generate a UUID.

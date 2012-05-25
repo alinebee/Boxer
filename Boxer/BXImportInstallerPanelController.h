@@ -18,15 +18,15 @@
 < NSOpenSavePanelDelegate >
 #endif
 {
-	IBOutlet BXImportWindowController *controller;
-	IBOutlet NSPopUpButton *installerSelector;
+    BXImportWindowController *_controller;
+    NSPopUpButton *_installerSelector;
 }
 
 //A reference to our window controller.
-@property (assign, nonatomic) BXImportWindowController *controller;
+@property (assign, nonatomic) IBOutlet BXImportWindowController *controller;
 
 //The drop-down selector we populate with our installer program options
-@property (retain, nonatomic) NSPopUpButton *installerSelector;
+@property (retain, nonatomic) IBOutlet NSPopUpButton *installerSelector;
 
 
 #pragma mark -

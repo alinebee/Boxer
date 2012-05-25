@@ -12,6 +12,7 @@
 #import "NSString+BXPaths.h"
 #import "RegexKitLite.h"
 #import "NDAlias.h"
+#import "BXFileTypes.h"
 
 @interface BXDrive ()
 
@@ -37,65 +38,6 @@
 #pragma mark -
 #pragma mark Class methods
 
-+ (NSSet *) hddVolumeTypes
-{
-	static NSSet *types = nil;
-	if (!types) types = [[NSSet alloc] initWithObjects:
-						 @"net.washboardabs.boxer-harddisk-folder",
-						 nil];
-	return types;
-}
-
-+ (NSSet *) cdVolumeTypes
-{
-	static NSSet *types = nil;
-	if (!types) types = [[NSSet alloc] initWithObjects:
-						 @"com.goldenhawk.cdrwin-cuesheet",
-						 @"net.washboardabs.boxer-cdrom-folder",
-						 @"net.washboardabs.boxer-cdrom-bundle",
-						 @"public.iso-image",
-						 @"com.apple.disk-image-cdr",
-						 nil];
-	return types;
-}
-
-+ (NSSet *) floppyVolumeTypes
-{
-	static NSSet *types = nil;
-	if (!types) types = [[NSSet alloc] initWithObjects:
-						 @"net.washboardabs.boxer-floppy-folder",
-						 @"com.winimage.raw-disk-image",
-                         @"com.apple.disk-image-ndif",
-                         @"com.microsoft.virtualpc-disk-image",
-						 nil];
-	return types;
-}
-
-+ (NSSet *) mountableFolderTypes
-{
-	static NSSet *types = nil;
-	if (!types) types = [[NSSet alloc] initWithObjects:
-						 @"net.washboardabs.boxer-mountable-folder",
-						 nil];
-	return types;
-}
-
-+ (NSSet *) mountableImageTypes
-{
-	static NSSet *types = nil;
-	if (!types) types = [[NSSet alloc] initWithObjects:
-						 @"public.iso-image",					//.iso
-						 @"com.apple.disk-image-cdr",			//.cdr
-						 @"com.goldenhawk.cdrwin-cuesheet",		//.cue
-						 @"net.washboardabs.boxer-disk-bundle", //.cdmedia
-						 @"com.winimage.raw-disk-image",		//.ima
-                         @"com.microsoft.virtualpc-disk-image", //.vfd
-                         @"com.apple.disk-image-ndif",          //.img
-						 nil];
-	return types;
-}
-
-
 + (NSString *) descriptionForType: (BXDriveType)driveType
 {
 	static NSArray *descriptions = nil;
@@ -105,7 +47,7 @@
 		NSLocalizedString(@"CD-ROM",                @"Label for CD-ROM drive mounts."),				//BXDriveTypeCDROM
 		NSLocalizedString(@"internal system disk",	@"Label for DOSBox virtual drives (i.e. Z)."),	//BXDriveTypeInternal
 	nil];
-	NSAssert1(driveType >= BXDriveHardDisk && (NSUInteger)driveType < [descriptions count],
+	NSAssert1(driveType >= BXDriveHardDisk && (NSUInteger)driveType < descriptions.count,
 			  @"Unknown drive type supplied to BXDrive descriptionForType: %i", driveType);
 	
 	return [descriptions objectAtIndex: driveType];
@@ -114,8 +56,8 @@
 + (BXDriveType) preferredTypeForPath: (NSString *)filePath
 {	
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	if ([workspace file: filePath matchesTypes: [self cdVolumeTypes]])		return BXDriveCDROM;
-	if ([workspace file: filePath matchesTypes: [self floppyVolumeTypes]])	return BXDriveFloppyDisk;
+	if ([workspace file: filePath matchesTypes: [BXFileTypes cdVolumeTypes]])		return BXDriveCDROM;
+	if ([workspace file: filePath matchesTypes: [BXFileTypes floppyVolumeTypes]])	return BXDriveFloppyDisk;
 
 	//Check the volume type of the underlying filesystem for that path
 	NSString *volumeType = [workspace volumeTypeForPath: filePath];
@@ -167,8 +109,8 @@
 + (NSString *) preferredDriveLetterForPath: (NSString *)filePath
 {
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	if ([workspace file: filePath matchesTypes: [self mountableImageTypes]] ||
-		[workspace file: filePath matchesTypes: [self mountableFolderTypes]])
+	if ([workspace file: filePath matchesTypes: [BXFileTypes mountableImageTypes]] ||
+		[workspace file: filePath matchesTypes: [BXFileTypes mountableFolderTypes]])
 	{
 		NSString *baseName			= filePath.stringByDeletingPathExtension.lastPathComponent;
 		NSString *detectedLetter	= [baseName stringByMatching: @"^([a-xA-X])( .*)?$" capture: 1];

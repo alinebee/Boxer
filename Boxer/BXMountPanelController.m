@@ -7,16 +7,19 @@
 
 #import "BXMountPanelController.h"
 #import "BXSession+BXFileManager.h"
-#import "BXAppController.h"
+#import "BXFileTypes.h"
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulatorErrors.h"
 #import "BXEmulator+BXShell.h"
 #import "NSWorkspace+BXFileTypes.h"
 #import "BXDrive.h"
+#import "BXPackage.h"
 
 
 @implementation BXMountPanelController
-@synthesize driveType, driveLetter, readOnlyToggle;
+@synthesize driveType = _driveType;
+@synthesize driveLetter = _driveLetter;
+@synthesize readOnlyToggle = _readOnlyToggle;
 
 + (id) controller
 {
@@ -29,7 +32,7 @@
 {
 	if ((self = [super init]))
 	{
-		previousReadOnlyState = NSMixedState;
+		_previousReadOnlyState = NSMixedState;
 	}
 	return self;
 }
@@ -37,27 +40,30 @@
 
 - (void) showMountPanelForSession: (BXSession *)theSession
 {
-	[self setRepresentedObject: theSession];
+	self.representedObject = theSession;
 	
-	NSOpenPanel *openPanel	= [NSOpenPanel openPanel];
+	NSOpenPanel *openPanel = [NSOpenPanel openPanel];
 	
-	[openPanel setCanChooseFiles: YES];
-	[openPanel setCanChooseDirectories: YES];
-	[openPanel setTreatsFilePackagesAsDirectories: YES];
-	[openPanel setMessage:	NSLocalizedString(@"Choose a folder, CD-ROM or disc image to add as a DOS drive.", @"Help text shown at the top of mount-a-new-drive panel.")];
-	[openPanel setPrompt:	NSLocalizedString(@"Add drive", @"Label shown on accept button in mount-a-new-drive panel.")];
+    openPanel.canChooseFiles = YES;
+    openPanel.canChooseDirectories = YES;
+    openPanel.treatsFilePackagesAsDirectories = YES;
+    
+    openPanel.message = NSLocalizedString(@"Choose a folder, CD-ROM or disc image to add as a DOS drive.",
+                                          @"Help text shown at the top of mount-a-new-drive panel.");
+	openPanel.prompt = NSLocalizedString(@"Add drive",
+                                         @"Label shown on accept button in mount-a-new-drive panel.");
 	
-	[openPanel setAccessoryView: [self view]];
-	[openPanel setDelegate: self];
+    openPanel.accessoryView = self.view;
+    openPanel.delegate = self;
 	
 	[self populateDrivesFromSession: theSession];
 
-    NSString *baseDirectory = [[theSession gamePackage] resourcePath];
+    NSString *baseDirectory = theSession.gamePackage.resourcePath;
     
 	[openPanel beginSheetForDirectory: baseDirectory
                                  file: nil
-                                types: [[BXAppController mountableTypes] allObjects]
-                       modalForWindow: [theSession windowForSheet]
+                                types: [BXFileTypes mountableTypes].allObjects
+                       modalForWindow: theSession.windowForSheet
                         modalDelegate: self
                        didEndSelector: @selector(mountChosenItem:returnCode:contextInfo:)
                           contextInfo: NULL];	
@@ -66,11 +72,11 @@
 //(Re)initialise the possible values for drive letters
 - (void) populateDrivesFromSession: (BXSession *)theSession
 {	
-	BXEmulator *theEmulator = [theSession emulator];
+	BXEmulator *theEmulator = theSession.emulator;
 	NSArray *driveLetters	= [BXEmulator driveLetters];
 	
 	//First, strip any existing options after the first two (which are Auto and a divider)
-	while ([driveLetter numberOfItems] > 2) [driveLetter removeItemAtIndex: 2];
+	while (self.driveLetter.numberOfItems > 2) [self.driveLetter removeItemAtIndex: 2];
 	
 	//Now, repopulate the menu
 	for (NSString *letter in driveLetters)
@@ -85,84 +91,84 @@
 		{
             //If the drive is hidden or an internal DOSBox drive,
             //skip it altogether and don't show an entry
-            if ([drive isHidden] || [drive isInternal]) continue;
+            if (drive.isHidden || drive.isInternal) continue;
             
             //If the drive is locked, disable the entry - it cannot be replaced
-            if ([drive isLocked]) [option setEnabled: NO];
+            if (drive.isLocked)
+                option.enabled = NO;
             
             //Append the drive title to the letter to form the menu item's label
-            title = [title stringByAppendingFormat: @" (%@)", [drive title], nil];
+            title = [title stringByAppendingFormat: @" (%@)", drive.title, nil];
 		}
 		
-		[option setTitle: title];
-		[option setRepresentedObject: letter];
+		option.title = title;
+		option.representedObject = letter;
 		
-		[[driveLetter menu] addItem: option];
+		[self.driveLetter.menu addItem: option];
 	}
 	
-	[driveLetter selectItemAtIndex: 0];
+	[self.driveLetter selectItemAtIndex: 0];
 }
 
 //Toggle the mount panel options depending on the selected file
 - (void) syncMountOptionsForPanel: (NSOpenPanel *)openPanel
 {
-    BXSession *session = [self representedObject];
-	NSString *path = [[openPanel URL] path];
+    BXSession *session = self.representedObject;
+	NSString *path = openPanel.URL.path;
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	
 	if (path)
 	{
 		//Don't allow drive type to be configured for disc images: instead,
         //force it to CD-ROM/floppy while an appropriate image is selected
-		BOOL isImage = [workspace file: path matchesTypes: [BXAppController mountableImageTypes]];
+		BOOL isImage = [workspace file: path matchesTypes: [BXFileTypes mountableImageTypes]];
 		if (isImage)
 		{
-			[driveType setEnabled: NO];
+			self.driveType.enabled = NO;
 			//Back up the current selection and then override it
-			if (!previousDriveTypeSelection)
+			if (!_previousDriveTypeSelection)
 			{
-				previousDriveTypeSelection = [driveType selectedItem];
+				_previousDriveTypeSelection = self.driveType.selectedItem;
 			}
 			
-			BOOL isFloppyImage = [workspace file: path matchesTypes: [BXAppController floppyVolumeTypes]];
-			NSUInteger optionIndex = [driveType indexOfItemWithTag: isFloppyImage ? BXDriveFloppyDisk : BXDriveCDROM];
-			[driveType selectItemAtIndex: optionIndex];
+			BOOL isFloppyImage = [workspace file: path matchesTypes: [BXFileTypes floppyVolumeTypes]];
+			NSUInteger optionIndex = [self.driveType indexOfItemWithTag: isFloppyImage ? BXDriveFloppyDisk : BXDriveCDROM];
+			[self.driveType selectItemAtIndex: optionIndex];
 		}
 		else
 		{
-			[driveType setEnabled: YES];
-			//Restore the previously selected type
-			if (previousDriveTypeSelection)
+			self.driveType.enabled = YES;
+        	//Restore the previously selected type
+			if (_previousDriveTypeSelection)
 			{
-				[driveType selectItem: previousDriveTypeSelection];
-				previousDriveTypeSelection = nil;
+				[self.driveType selectItem: _previousDriveTypeSelection];
+				_previousDriveTypeSelection = nil;
 			}
 		}		
 		
 		
 		//Now determine what the automatic options will do for the selected path
-		BXDriveType selectedType	= [[driveType selectedItem] tag];
+		BXDriveType selectedType	= self.driveType.selectedItem.tag;
 		BXDriveType preferredType	= [BXDrive preferredTypeForPath: path];
 
 		BXDrive *fakeDrive			= [BXDrive driveFromPath: path atLetter: nil withType: selectedType];
-		NSString *preferredLetter	= [session preferredLetterForDrive: fakeDrive
-                                                                options: BXDriveKeepWithSameType];
+		NSString *preferredLetter	= [session preferredLetterForDrive: fakeDrive options: BXDriveKeepWithSameType];
 		
-		NSMenuItem *autoTypeOption		= [driveType itemAtIndex: 0];
-		NSMenuItem *preferredTypeOption	= [driveType itemAtIndex: [driveType indexOfItemWithTag: preferredType]];
+		NSMenuItem *autoTypeOption		= [self.driveType itemAtIndex: 0];
+		NSMenuItem *preferredTypeOption	= [self.driveType itemAtIndex: [self.driveType indexOfItemWithTag: preferredType]];
 		
-		NSMenuItem *autoLetterOption		= [driveLetter itemAtIndex: 0];
-		NSMenuItem *preferredLetterOption	= [driveLetter itemAtIndex: [driveLetter indexOfItemWithRepresentedObject: preferredLetter]];
+		NSMenuItem *autoLetterOption		= [self.driveLetter itemAtIndex: 0];
+		NSMenuItem *preferredLetterOption	= [self.driveLetter itemAtIndex: [self.driveLetter indexOfItemWithRepresentedObject: preferredLetter]];
 		
 
 		NSString *autoLabel = NSLocalizedString(
 			@"Auto (%@)",
 			@"Title format for automatic drive type/letter option. Shown in popup buttons on mount-a-new-drive sheet. %@ is the title of the real option whose value will be used if auto is chosen."
 												);		
-		[autoTypeOption setTitle:	[NSString stringWithFormat: autoLabel, [preferredTypeOption title], nil]];
-		[autoLetterOption setTitle:	[NSString stringWithFormat: autoLabel, [preferredLetterOption title], nil]];
+		autoTypeOption.title    = [NSString stringWithFormat: autoLabel, preferredTypeOption.title, nil];
+		autoLetterOption.title  = [NSString stringWithFormat: autoLabel, preferredLetterOption.title, nil];
 
-		[driveLetter setEnabled: YES];
+		self.driveLetter.enabled = YES;
 
 		
 		//Override the read-only option when the drive type is CD-ROM or Auto (CD-ROM),
@@ -171,37 +177,37 @@
 			(selectedType == BXDriveAutodetect && preferredType == BXDriveCDROM) ||
 			(![[NSFileManager defaultManager] isWritableFileAtPath: path]))
 		{
-			[readOnlyToggle setEnabled: NO];
+			self.readOnlyToggle.enabled = NO;
 			//Back up the previous state and override it
-			if (previousReadOnlyState == NSMixedState)
+			if (_previousReadOnlyState == NSMixedState)
 			{
-				previousReadOnlyState = [readOnlyToggle state];
-				[readOnlyToggle setState: NSOnState];
+				_previousReadOnlyState = self.readOnlyToggle.state;
+				self.readOnlyToggle.state = NSOnState;
 			}
 		}
 		else
 		{
-			[readOnlyToggle setEnabled: YES];
-			//Restore the previous state
-			if (previousReadOnlyState != NSMixedState)
+			self.readOnlyToggle.enabled = YES;
+        	//Restore the previous state
+			if (_previousReadOnlyState != NSMixedState)
 			{
-				[readOnlyToggle setState: NSOffState];
-				previousReadOnlyState = NSMixedState;
+				self.readOnlyToggle.state = NSOffState;
+            	_previousReadOnlyState = NSMixedState;
 			}
 		}
 	}
 	else
 	{
-		[driveType setEnabled: NO];
-		[driveLetter setEnabled: NO];
-		[readOnlyToggle setEnabled: NO];
-	}
+		self.driveType.enabled = NO;
+    	self.driveLetter = NO;
+		self.readOnlyToggle.enabled = NO;
+    }
 }
 
 //Fired whenever the drive type selection is changed: updates the drive letter to match the appropriate selected type
 - (IBAction) updateLettersForDriveType: (NSPopUpButton *)sender
 {
-	[self syncMountOptionsForPanel: (NSOpenPanel *)[sender window]];
+	[self syncMountOptionsForPanel: (NSOpenPanel *)sender.window];
 }
 
 - (void) panel: (NSOpenPanel *)openPanel directoryDidChange: (NSString *)path
@@ -216,7 +222,7 @@
 
 - (BOOL) panel: (NSOpenPanel *)openPanel shouldShowFilename: (NSString *)path
 {
-	if (![[self representedObject] validateDrivePath: &path error: nil]) return NO;
+	if (![self.representedObject validateDrivePath: &path error: nil]) return NO;
 	
 	return YES;
 }
@@ -227,16 +233,16 @@
 {
 	if (returnCode == NSOKButton)
 	{
-        BXSession *session = [self representedObject];
+        BXSession *session = self.representedObject;
         
-		NSString *path = [[openPanel URL] path];
+		NSString *path = openPanel.URL.path;
 		
-		BXDriveType preferredType	= [[driveType selectedItem] tag];
-		NSString *preferredLetter	= [[driveLetter selectedItem] representedObject];
-		BOOL readOnly				= [readOnlyToggle state];
+		BXDriveType preferredType	= self.driveType.selectedItem.tag;
+		NSString *preferredLetter	= self.driveLetter.selectedItem.representedObject;
+		BOOL readOnly				= self.readOnlyToggle.state;
 		
 		BXDrive *drive = [BXDrive driveFromPath: path atLetter: preferredLetter withType: preferredType];
-		[drive setReadOnly: readOnly];
+		drive.readOnly = readOnly;
         
         NSError *mountError = nil;
 		drive = [session mountDrive: drive
@@ -247,12 +253,12 @@
 		//Switch to the new mount after adding it
 		if (drive)
         {
-            [session openFileAtPath: [drive path]];
+            [session openFileAtPath: drive.path];
         }
         //Display the error to the user as a sheet in the same window we are on
         else if (mountError)
         {
-            NSWindow *window = [openPanel parentWindow];
+            NSWindow *window = openPanel.parentWindow;
             [openPanel close];
             [session presentError: mountError
                    modalForWindow: window
@@ -261,7 +267,7 @@
                       contextInfo: NULL];
         }
 	}
-	[self setRepresentedObject: nil];
+	self.representedObject = nil;
 }
 
 @end

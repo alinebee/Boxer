@@ -11,7 +11,7 @@
 #import "NSWorkspace+BXFileTypes.h"
 #import "NSString+BXPaths.h"
 #import "NSWorkspace+BXExecutableTypes.h"
-#import "BXAppController.h"
+#import "BXFileTypes.h"
 #import "BXSessionError.h"
 
 @interface BXInstallerScan ()
@@ -19,6 +19,7 @@
 @property (retain, nonatomic) NSArray *windowsExecutables;
 @property (retain, nonatomic) NSArray *DOSExecutables;
 @property (retain, nonatomic) NSArray *DOSBoxConfigurations;
+@property (retain, nonatomic) NSArray *macOSApps;
 @property (retain, nonatomic) BXGameProfile *detectedProfile;
 @property (nonatomic, getter=isAlreadyInstalled) BOOL alreadyInstalled;
 
@@ -26,6 +27,7 @@
 //a la addMatchingPath:
 - (void) addWindowsExecutable: (NSString *)relativePath;
 - (void) addDOSExecutable: (NSString *)relativePath;
+- (void) addMacOSApp: (NSString *)relativePath;
 - (void) addDOSBoxConfiguration: (NSString *)relativePath;
 
 @end
@@ -34,6 +36,7 @@
 @synthesize windowsExecutables      = _windowsExecutables;
 @synthesize DOSExecutables          = _DOSExecutables;
 @synthesize DOSBoxConfigurations    = _DOSBoxConfigurations;
+@synthesize macOSApps               = _macOSApps;
 @synthesize alreadyInstalled        = _alreadyInstalled;
 @synthesize detectedProfile         = _detectedProfile;
 
@@ -43,6 +46,7 @@
     {
         self.windowsExecutables     = [NSMutableArray arrayWithCapacity: 10];
         self.DOSExecutables         = [NSMutableArray arrayWithCapacity: 10];
+        self.macOSApps              = [NSMutableArray arrayWithCapacity: 10];
         self.DOSBoxConfigurations   = [NSMutableArray arrayWithCapacity: 2];
     }
     return self;
@@ -52,6 +56,7 @@
 {
     self.windowsExecutables = nil;
     self.DOSExecutables = nil;
+    self.macOSApps = nil;
     self.detectedProfile = nil;
     
     [super dealloc];
@@ -80,11 +85,12 @@
             self.alreadyInstalled = YES;
         }
         
-        NSSet *executableTypes = [BXAppController executableTypes];
+        NSSet *executableTypes = [BXFileTypes executableTypes];
+        NSSet *macAppTypes = [BXFileTypes macOSAppTypes];
         
-        if ([workspace file: fullPath matchesTypes: executableTypes])
+        if ([_workspace file: fullPath matchesTypes: executableTypes])
         {
-            if ([workspace isCompatibleExecutableAtPath: fullPath error: NULL])
+            if ([_workspace isCompatibleExecutableAtPath: fullPath error: NULL])
             {
                 [self addDOSExecutable: relativePath];
                 
@@ -105,6 +111,10 @@
                 [self addWindowsExecutable: relativePath];
             }
         }
+        else if ([_workspace file: fullPath matchesTypes: macAppTypes])
+        {
+            [self addMacOSApp: relativePath];
+        }
     }
     
     return YES;
@@ -119,6 +129,12 @@
 {
     [[self mutableArrayValueForKey: @"DOSExecutables"] addObject: relativePath];
 }
+
+- (void) addMacOSApp: (NSString *)relativePath
+{
+    [[self mutableArrayValueForKey: @"macOSApps"] addObject: relativePath];
+}
+
 
 - (void) addDOSBoxConfiguration: (NSString *)relativePath
 {
@@ -172,8 +188,28 @@
 {
     if (!self.error)
     {
-        //Determine a preferred installer from among those discovered in the scan.
-        if (self.DOSExecutables.count)
+        //If we discovered windows executables (or Mac apps) as well as DOS programs,
+        //check the DOS programs more thoroughly to make sure they indicate a complete DOS game
+        //(and not just some leftover batch files or utilities.)
+        BOOL isConclusivelyDOS = (self.DOSExecutables.count > 0);
+        if (isConclusivelyDOS && (self.windowsExecutables.count || self.macOSApps.count))
+        {
+            isConclusivelyDOS = NO;
+            for (NSString *path in self.DOSExecutables)
+            {
+                //Forgive the double-negative, but it's quicker to test files for inconclusiveness
+                //than for conclusiveness, so the method makes more sense with this phrasing.
+                if (![BXImportSession isInconclusiveDOSProgramAtPath: path])
+                {
+                    isConclusivelyDOS = YES;
+                    break;
+                }
+            }
+        }
+        
+        //If this really is a DOS game, determine a preferred installer from among those discovered
+        //in the scan (if any).
+        if (isConclusivelyDOS)
         {
             NSString *preferredInstallerPath = nil;
             
@@ -196,33 +232,35 @@
             [self willChangeValueForKey: @"matchingPaths"];
             
             //Sort the installers we found by depth, to prioritise the ones in the root directory.
-            [matchingPaths sortUsingSelector: @selector(pathDepthCompare:)];
+            [_matchingPaths sortUsingSelector: @selector(pathDepthCompare:)];
             
             //If the game profile didn't suggest a preferred installer,
             //then pick one from the set of discovered installers
             if (!preferredInstallerPath)
             {
-                preferredInstallerPath = [BXImportSession preferredInstallerFromPaths: matchingPaths];
+                preferredInstallerPath = [BXImportSession preferredInstallerFromPaths: _matchingPaths];
             }
             
             //Bump the preferred installer up to the first entry in the list of installers.
             if (preferredInstallerPath)
             {
-                [matchingPaths removeObject: preferredInstallerPath];
-                [matchingPaths insertObject: preferredInstallerPath atIndex: 0];
+                [preferredInstallerPath retain];
+                [_matchingPaths removeObject: preferredInstallerPath];
+                [_matchingPaths insertObject: preferredInstallerPath atIndex: 0];
+                [preferredInstallerPath autorelease];
             }
             
             [self didChangeValueForKey: @"matchingPaths"];
         }
         
-        //If we didn't find any executables and couldn't identify this as a known game,
-        //then this isn't a game we can import and we should treat it as a failure.
+        //If we didn't find any DOS executables and couldn't identify this as a known game,
+        //then this isn't a game we can import and we should reject it.
         
-        //IMPLEMENTATION NOTE: if we didn't find any DOS executables, but *did*
-        //identify a profile for the game, then we give it the benefit of the doubt.
-        //This case usually means that the game is preinstalled and the game
-        //files are buried away on a disc image inside the source folder.
-        //(e.g. GOG releases of Wing Commander 3 and Ultima Underworld 1 & 2)
+        //IMPLEMENTATION NOTE: if we didn't find any DOS executables, but *did* identify
+        //a profile for the game, then we give the game the benefit of the doubt.
+        //This case normally indicates that the game is preinstalled and the game files
+        //are just buried away on a disc image inside the source folder.
+        //(e.g. GOG releases of Wing Commander 3 and Ultima Underworld 1 & 2.)
         
         else if (!(self.isAlreadyInstalled && self.detectedProfile))
         {   
@@ -230,7 +268,12 @@
             if (self.windowsExecutables.count > 0)
             {
                 self.error = [BXImportWindowsOnlyError errorWithSourcePath: self.basePath userInfo: nil];
-            }    
+            }
+            //If there were classic Mac OS/OS X apps present, this is probably a Mac game.
+            else if (self.macOSApps.count > 0)
+            {
+                self.error = [BXImportMacAppError errorWithSourcePath: self.basePath userInfo: nil];   
+            }
             //Otherwise, the folder may be empty or contains something other than a DOS game.
             //TODO: additional logic to detect Classic Mac games.
             else

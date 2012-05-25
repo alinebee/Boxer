@@ -28,7 +28,7 @@
 #pragma mark Implementation
 
 @implementation BXImportFinalizingPanelController
-@synthesize controller;
+@synthesize controller = _controller;
 
 #pragma mark -
 #pragma mark Cancel button behaviour
@@ -65,18 +65,18 @@
 
 - (NSString *) cancelButtonLabel
 {
-	BXImportSession *session = [controller document];
+	BXImportSession *session = self.controller.document;
 	NSString *label;
     
-	if ([session sourceFileImportRequired])
+	if (session.sourceFileImportRequired)
 	{
 		//If the import is necessary, then the cancel button represents cancelling the entire game import.
 		label = NSLocalizedString(@"Stop importing", @"Button label to cancel the entire game import.");
 	}
 	else
 	{
-		BXSourceFileImportType importType = [session sourceFileImportType];
-		label = [[self class] cancelButtonLabelForImportType: importType];
+		BXSourceFileImportType importType = session.sourceFileImportType;
+		label = [self.class cancelButtonLabelForImportType: importType];
 	}
     //Tweak: since we'll confirm the user's cancellation, append ellipses
     //to indicate to the user that the action will not take effect immediately.
@@ -94,8 +94,8 @@
 
 - (BOOL) cancelButtonEnabled
 {
-	BXImportSession *session = [controller document];
-	BXImportStage stage = [session importStage];
+	BXImportSession *session = self.controller.document;
+	BXImportStage stage = session.importStage;
 	
 	//Disable the button when finalizing or skipping.
 	if (stage == BXImportSessionCancellingSourceFileImport || stage == BXImportSessionCleaningGamebox) return NO;
@@ -105,7 +105,7 @@
 
 - (BOOL) showAdditionalCDTips
 {
-    BXSourceFileImportType importType = [[controller document] sourceFileImportType];
+    BXSourceFileImportType importType = self.controller.document.sourceFileImportType;
     
     return (importType == BXImportFromCDImage || importType == BXImportFromCDVolume);
 }
@@ -160,17 +160,17 @@
 
 - (NSString *) progressDescription
 {
-	BXImportSession *session = [controller document];
-	BXImportStage stage = [session importStage];
+	BXImportSession *session = self.controller.document;
+	BXImportStage stage = session.importStage;
 	
 	if (stage == BXImportSessionImportingSourceFiles)
 	{
-		BXOperation *transfer				= [session sourceFileImportOperation];
-		BXSourceFileImportType importType	= [session sourceFileImportType];
-		NSString *stageDescription			= [[self class] stageDescriptionForImportType: importType];
+		BXOperation *transfer				= session.sourceFileImportOperation;
+		BXSourceFileImportType importType	= session.sourceFileImportType;
+		NSString *stageDescription			= [self.class stageDescriptionForImportType: importType];
 		
 		//Append the current file transfer progress to the base description, if available
-		if (transfer && ![transfer isIndeterminate] &&
+		if (transfer && !transfer.isIndeterminate &&
 			[transfer respondsToSelector: @selector(numBytes)] &&
 			[transfer respondsToSelector: @selector(bytesTransferred)])
 		{	
@@ -247,8 +247,8 @@
 	NSString *cancelLabel	= NSLocalizedString(@"Cancel", @"Cancel the current action and return to what the user was doing");		
 	
 	NSAlert *alert = [[NSAlert alloc] init];
-	[alert setMessageText: message];
-	[alert setInformativeText: informativeText];
+	alert.messageText = message;
+	alert.informativeText = informativeText;
 	
 	[alert addButtonWithTitle: skipLabel];
 	[[alert addButtonWithTitle: cancelLabel] setKeyEquivalent: @"\e"];	//Ensure the cancel button always uses Escape
@@ -258,24 +258,24 @@
 
 - (IBAction) cancelSourceFileImport: (id)sender
 {
-	BXImportSession *session = [controller document];
+	BXImportSession *session = self.controller.document;
 	//If the import is required and cannot be skipped, then treat this action as a request
 	//to stop the entire game import process - pass this up to the as a close window attempt
 	//(which will use the standard session machinery for confirming the close.)
-	if ([session sourceFileImportRequired])
+	if (session.sourceFileImportRequired)
 	{
-		[[controller window] performClose: sender];
+		[self.controller.window performClose: sender];
 	}
 	//Otherwise, show a custom are-you-sure-you-want-to-skip-this alert sheet.
 	else
 	{
-		NSAlert *skipAlert = [[self class] skipAlertForSourcePath: [session sourcePath]
-															 type: [session sourceFileImportType]];
+		NSAlert *skipAlert = [self.class skipAlertForSourcePath: session.sourcePath
+                                                           type: session.sourceFileImportType];
 		
 		if (skipAlert)
 		{
-			[skipAlert adoptIconFromWindow: [controller window]];
-			[skipAlert beginSheetModalForWindow: [controller window]
+			[skipAlert adoptIconFromWindow: self.controller.window];
+			[skipAlert beginSheetModalForWindow: self.controller.window
 								  modalDelegate: self
 								 didEndSelector: @selector(_skipAlertDidEnd:returnCode:contextInfo:)
 									contextInfo: NULL];
@@ -296,7 +296,7 @@
 {
 	if (returnCode == NSAlertFirstButtonReturn)
 	{
-		[[controller document] cancelSourceFileImport];
+		[self.controller.document cancelSourceFileImport];
 	}
 }
 

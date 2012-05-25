@@ -14,14 +14,14 @@
 @class BXImportWindowController;
 @interface BXImportFinalizingPanelController : NSViewController
 {
-	IBOutlet BXImportWindowController *controller;
+    BXImportWindowController *_controller;
 }
 
 #pragma mark -
 #pragma mark Properties
 
 //A reference to our window controller.
-@property (assign, nonatomic) BXImportWindowController *controller;
+@property (assign, nonatomic) IBOutlet BXImportWindowController *controller;
 
 //A textual description of what import stage we are currently performing.
 //Used for populating the description field beneath the progress bar.

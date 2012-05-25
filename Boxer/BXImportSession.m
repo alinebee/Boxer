@@ -27,6 +27,7 @@
 #import "BXDOSWindow.h"
 
 #import "BXAppController+BXGamesFolder.h"
+#import "BXFileTypes.h"
 #import "BXInspectorController.h"
 #import "BXGameProfile.h"
 #import "BXPackage.h"
@@ -382,7 +383,7 @@
     
     //A subset of our usual mountable types: we only accept regular folders and disk image
     //formats which can be mounted by hdiutil (so that we can inspect their filesystems)
-	if (!types) types = [[[BXAppController OSXMountableImageTypes] setByAddingObject: @"public.folder"] retain];
+	if (!types) types = [[[BXFileTypes OSXMountableImageTypes] setByAddingObject: @"public.folder"] retain];
     
     return types;
 }
@@ -747,7 +748,7 @@
     
 	NSFileManager *manager = [NSFileManager defaultManager];
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-	NSSet *bundleableTypes = [[BXAppController mountableFolderTypes] setByAddingObjectsFromSet: [BXAppController mountableImageTypes]];
+	NSSet *bundleableTypes = [[BXFileTypes mountableFolderTypes] setByAddingObjectsFromSet: [BXFileTypes mountableImageTypes]];
     
 	
 	//Determine how we should import the source files
@@ -871,9 +872,9 @@
         BXDrive *driveToImport = nil;
         
         BOOL isMountableImage = [workspace file: self.sourcePath
-                                   matchesTypes: [BXAppController mountableImageTypes]];
+                                   matchesTypes: [BXFileTypes mountableImageTypes]];
         BOOL isMountableFolder = !isMountableImage && [workspace file: self.sourcePath
-                                                         matchesTypes: [BXAppController mountableFolderTypes]];
+                                                         matchesTypes: [BXFileTypes mountableFolderTypes]];
         
         //If the source path is directly bundleable (it is an image or a mountable folder)
         //then import it as a new drive into the gamebox.
@@ -932,7 +933,7 @@
                 BOOL isDiskImage = NO;
             
                 //If the source path is on a DOSBox-compatible disk image, then import the image directly.
-                if (sourceImagePath && [workspace file: sourceImagePath matchesTypes: [BXAppController mountableImageTypes]])
+                if (sourceImagePath && [workspace file: sourceImagePath matchesTypes: [BXFileTypes mountableImageTypes]])
                 {
                     isDiskImage = YES;
                     pathToImport = sourceImagePath;
@@ -1122,7 +1123,7 @@
 {
 	self.importStage = BXImportSessionCleaningGamebox;
 
-	NSSet *bundleableTypes = [[BXAppController mountableFolderTypes] setByAddingObjectsFromSet: [BXAppController mountableImageTypes]];
+	NSSet *bundleableTypes = [[BXFileTypes mountableFolderTypes] setByAddingObjectsFromSet: [BXFileTypes mountableImageTypes]];
 	
 	NSFileManager *manager	= [NSFileManager defaultManager];
 	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];

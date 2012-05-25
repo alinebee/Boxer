@@ -6,7 +6,7 @@
  */
 
 #import "BXSessionPrivate.h"
-#import "BXAppController.h"
+#import "BXFileTypes.h"
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulator+BXPaste.h"
 #import "BXEmulatorErrors.h"
@@ -28,7 +28,7 @@
 //Return an array of all filetypes we will accept by drag-drop
 + (NSSet *) droppableFileTypes
 {
-	return [[BXAppController mountableTypes] setByAddingObjectsFromSet: [BXAppController executableTypes]];
+	return [[BXFileTypes mountableTypes] setByAddingObjectsFromSet: [BXFileTypes executableTypes]];
 }
 
 

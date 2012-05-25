@@ -10,16 +10,19 @@
 #import "BXAppController.h"
 
 @implementation BXHelpMenuController
+@synthesize mobygamesItem = _mobygamesItem;
+@synthesize replacementDocsItem = _replacementDocsItem;
+@synthesize documentationDivider = _documentationDivider;
 
 - (NSString *)mobygamesMenuTitle
 {
 	BXSession *session = [[NSApp delegate] currentSession];
 	
-	if ([session isGamePackage])
+	if (session.isGamePackage)
 	{
 		NSString *format = NSLocalizedString(@"Find %@ at Mobygames",
 											 @"Help menu item for searching Mobygames: %@ is the display name of the current DOS session.");
-		return [NSString stringWithFormat: format, [session displayName], nil];
+		return [NSString stringWithFormat: format, session.displayName];
 	}
 	else
 	{
@@ -35,7 +38,7 @@
 	{
 		NSString *format = NSLocalizedString(@"Find %@ at ReplacementDocs",
 											 @"Help menu item for searching ReplacementDocs: %@ is the display name of the current DOS session.");
-		return [NSString stringWithFormat: format, [session displayName], nil];
+		return [NSString stringWithFormat: format, session.displayName];
 	}
 	else
 	{
@@ -52,9 +55,9 @@
 {
 	BXSession *session = [[NSApp delegate] currentSession];
 	
-	if ([session isGamePackage])
+	if (session.isGamePackage)
 	{
-		NSString *search = [session displayName];
+		NSString *search = session.displayName;
 		[[NSApp delegate] searchURLFromKey: @"MobygamesSearchURL" withSearchString: search];
 	}
 	else
@@ -67,9 +70,9 @@
 {
 	BXSession *session = [[NSApp delegate] currentSession];
 
-	if ([session isGamePackage])
+	if (session.isGamePackage)
 	{
-		NSString *search = [session displayName];
+		NSString *search = session.displayName;
 		[[NSApp delegate] searchURLFromKey: @"ReplacementDocsSearchURL" withSearchString: search];
 	}
 	else
@@ -79,30 +82,43 @@
 }
 
 
-
-
 //Populates the application Help menu with the current session's documentation files,
 //and set menu item titles appropriately
-- (void) menuNeedsUpdate: (NSMenu *) menu
+- (void) menuNeedsUpdate: (NSMenu *)menu
 {
-	[replacementDocsItem setTitle:	[self replacementDocsMenuTitle]];
-	[mobygamesItem setTitle:		[self mobygamesMenuTitle]];
-
-	if (!populated)
+	self.replacementDocsItem.title = self.replacementDocsMenuTitle;
+	self.mobygamesItem.title = self.mobygamesMenuTitle;
+    
+    //If the current session has changed, reconstruct the list of documentation from that of the new session.
+    BXSession *session = [[NSApp delegate] currentSession];
+	if (_sessionForDisplayedDocs != session)
 	{
-		NSArray *docs = [self documentation];
-		if ([docs count] > 0)
+        NSArray *docs = [session.documentation sortedArrayUsingDescriptors: [self.class sortCriteria]];
+
+        NSInteger insertionPoint = [menu indexOfItem: self.documentationDivider];
+        
+        //Clear out all menu items after the insertion point,
+        //then reconstruct them for the new session.
+        while (menu.numberOfItems > insertionPoint + 1)
+            [menu removeItemAtIndex: insertionPoint + 1];
+        
+		if (docs.count > 0)
 		{
 			NSString *format = NSLocalizedString(@"%@ Documentation:",
 												 @"Heading for game documentation in help menu. %@ is the display name of the current DOS session.");
-			NSString *heading = [NSString stringWithFormat:	format, [docSession displayName], nil]; 
+			NSString *heading = [NSString stringWithFormat:	format, session.displayName]; 
 			
-			[menu addItem: [NSMenuItem separatorItem]];
+            self.documentationDivider.hidden = NO;
 			[menu addItemWithTitle: heading action: nil keyEquivalent: @""];
 			
-			for (NSDictionary *document in docs) [self addItemForDocument: document toMenu: menu];
+			for (NSDictionary *document in docs)
+                [self addItemForDocument: document toMenu: menu];
 		}
-		populated = YES;
+        else
+        {
+            self.documentationDivider.hidden = YES;
+        }
+		_sessionForDisplayedDocs = session;
 	}
 }
 
@@ -121,14 +137,12 @@
 										  action: itemAction
 								   keyEquivalent: @""];
 	
-	[newItem setRepresentedObject: document];
-
-	//IMPLEMENTATION NOTE: I'd rather set the menu item image and then change its size,
-	//to avoid modifying the original; but 10.5 doesn't accept that and continues using
-	//the original size. So, we resize before assignment.
-	[itemIcon setSize: iconSize];
-	[newItem setImage: itemIcon];
-
+	newItem.representedObject = document;
+    
+    itemIcon = [itemIcon copy];
+	itemIcon.size = iconSize;
+	newItem.image = [itemIcon autorelease];
+    
 	return newItem;
 }
 
@@ -149,36 +163,12 @@
 	return sortDescriptors;
 }
 
-- (void) setDocumentation: (NSArray *)newDocumentation
-{
-	if (documentation != newDocumentation)
-	{
-		[documentation release];
-		documentation = [newDocumentation retain];
-		docSession = [[NSApp delegate] currentSession];
-	}
-}
-
-- (NSArray *) documentation
-{
-	BXSession *session = [[NSApp delegate] currentSession];
-	
-	//invalidate the documentation if the session has changed
-	if (documentation && docSession != session) [self setDocumentation: nil];
-	if (!documentation)
-	{
-		NSArray *docs = [session documentation];
-		if ([docs count] > 0) docs = [docs sortedArrayUsingDescriptors: [[self class] sortCriteria]];
-
-		[self setDocumentation: docs];
-	}
-	return documentation;
-}
-
 - (void) dealloc
 {
-	[self setDocumentation: nil], [documentation release];
-	docSession = nil;
+    self.mobygamesItem = nil;
+    self.replacementDocsItem = nil;
+    self.documentationDivider = nil;
+    
 	[super dealloc];
 }
 

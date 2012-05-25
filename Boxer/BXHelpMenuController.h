@@ -16,14 +16,14 @@
 
 @interface BXHelpMenuController : NSObject
 {
-	BOOL populated;
-	NSArray *documentation;
-	BXSession *docSession;
-	IBOutlet NSMenuItem *mobygamesItem;
-	IBOutlet NSMenuItem *replacementDocsItem;
+	BXSession *_sessionForDisplayedDocs;
+	NSMenuItem *_mobygamesItem;
+	NSMenuItem *_replacementDocsItem;
+    NSMenuItem *_documentationDivider;
 }
-//File paths of documentation in the active session's gamebox, sorted by filetype and then alphabetically.
-@property (retain) NSArray *documentation;
+@property (retain, nonatomic) IBOutlet NSMenuItem *mobygamesItem;
+@property (retain, nonatomic) IBOutlet NSMenuItem *replacementDocsItem;
+@property (retain, nonatomic) IBOutlet NSMenuItem *documentationDivider;
 
 //Returns the localised display strings used to label the "Find [current game] on Mobygames"
 //and "Find [current game] on ReplacementDocs" menu items.

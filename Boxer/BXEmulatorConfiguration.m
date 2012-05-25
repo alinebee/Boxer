@@ -494,7 +494,7 @@ NSString * const emptyFormat = @"^\\s*$";
 	NSArray *commentLines = [comment componentsSplitAtLineLength: lineLength atWordBoundaries: YES];
 	
 	
-	NSString *commentedString = [NSString stringWithFormat: @"# %@\n", [commentLines componentsJoinedByString: joiner], nil];
+	NSString *commentedString = [NSString stringWithFormat: @"# %@\n", [commentLines componentsJoinedByString: joiner]];
 	return commentedString;
 }
 

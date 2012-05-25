@@ -14,7 +14,7 @@
 - (void) setFrameRate: (CGFloat)newRate
 {
 	frameRate = newRate;	
-	[self setString: [NSString stringWithFormat: @"%0.02f fps", newRate, nil]];
+	[self setString: [NSString stringWithFormat: @"%0.02f fps", newRate]];
 }
 
 @end

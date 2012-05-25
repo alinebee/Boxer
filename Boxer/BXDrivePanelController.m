@@ -869,16 +869,20 @@ enum {
     if ([self isBundled])
     {
         NSString *bundledDescriptionFormat = NSLocalizedString(@"gamebox %@", @"Description format for bundled drives. %@ is the original description of the drive (e.g. 'CD-ROM', 'hard disk' etc.)");
-        description = [NSString stringWithFormat: bundledDescriptionFormat, description, nil];
+        description = [NSString stringWithFormat: bundledDescriptionFormat, description];
     }
     if (![self isMounted])
     {
         NSString *inactiveDescriptionFormat = NSLocalizedString(@"%@ (ejected)", @"Description format for inactive drives. %@ is the original description of the drive (e.g. 'CD-ROM', 'hard disk' etc.)");
-        description = [NSString stringWithFormat: inactiveDescriptionFormat, description, nil];
+        description = [NSString stringWithFormat: inactiveDescriptionFormat, description];
     }
     return description;
 }
-+ (NSSet *) keyPathsForValuesAffectingTypeDescription   { return [NSSet setWithObjects: @"representedObject.typeDescription", @"mounted", @"bundled", nil]; }
+
++ (NSSet *) keyPathsForValuesAffectingTypeDescription
+{
+    return [NSSet setWithObjects: @"representedObject.typeDescription", @"mounted", @"bundled", nil];
+}
 
 
 - (void) driveImportWillStart: (NSNotification *)notification
@@ -926,7 +930,7 @@ enum {
         
         NSUInteger progressPercent	= (NSUInteger)round(easedProgress * 100.0);
         NSUInteger sizeInMB			= (NSUInteger)ceil([transfer numBytes] / 1000.0 / 1000.0);
-        [progressMeterLabel setStringValue: [NSString stringWithFormat: progressFormat, progressPercent, sizeInMB, nil]];			
+        [progressMeterLabel setStringValue: [NSString stringWithFormat: progressFormat, progressPercent, sizeInMB]];			
     }
 }
 

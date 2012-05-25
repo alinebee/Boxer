@@ -296,10 +296,10 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 	NSString *descriptionFormat = NSLocalizedString(@"The disc “%1$@” could not be converted into a disc image.",
 													@"Error shown when CD-image ripping fails for an unknown reason. %1$@ is the display title of the drive.");
 	
-	NSString *description	= [NSString stringWithFormat: descriptionFormat, displayName, nil];
+	NSString *description	= [NSString stringWithFormat: descriptionFormat, displayName];
 	NSDictionary *userInfo	= [NSDictionary dictionaryWithObjectsAndKeys:
 							   description, NSLocalizedDescriptionKey,
-							   [drive path], NSFilePathErrorKey,
+							   drive.path, NSFilePathErrorKey,
 							   nil];
 	
 	return [NSError errorWithDomain: BXCDImageImportErrorDomain
@@ -317,13 +317,13 @@ NSString * const BXCDImageImportErrorDomain = @"BXCDImageImportErrorDomain";
 	NSString *descriptionFormat = NSLocalizedString(@"The disc “%1$@” could not be converted to a disc image because it is in use by another application.",
 													@"Error shown when CD-image ripping fails because the disc is in use. %1$@ is the display title of the drive.");
 	
-	NSString *description	= [NSString stringWithFormat: descriptionFormat, displayName, nil];
+	NSString *description	= [NSString stringWithFormat: descriptionFormat, displayName];
 	NSString *suggestion	= NSLocalizedString(@"Close Finder windows or other applications that are using the disc, then try importing again.", @"Explanatory message shown when CD-image ripping fails because the disc is in use.");
 	
 	NSDictionary *userInfo	= [NSDictionary dictionaryWithObjectsAndKeys:
-							   description,		NSLocalizedDescriptionKey,
-							   suggestion,		NSLocalizedRecoverySuggestionErrorKey,
-							   [drive path],	NSFilePathErrorKey,
+							   description, NSLocalizedDescriptionKey,
+							   suggestion, NSLocalizedRecoverySuggestionErrorKey,
+							   drive.path, NSFilePathErrorKey,
 							   nil];
 	
 	return [NSError errorWithDomain: BXCDImageImportErrorDomain

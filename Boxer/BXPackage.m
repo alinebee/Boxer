@@ -223,7 +223,7 @@ NSString * const BXGameboxErrorDomain = @"BXGameboxErrorDomain";
 												 @"Error message shown when trying to set the target path of a gamebox to a file outside the gamebox. %@ is the display filename of the file in question.");
 			
 			NSString *displayName = [manager displayNameAtPath: filePath];
-			NSString *description = [NSString stringWithFormat: format, displayName, nil];
+			NSString *description = [NSString stringWithFormat: format, displayName];
 			
 			NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
 									  filePath, NSFilePathErrorKey,

@@ -32,43 +32,43 @@ extern NSString * const BXViewDidLiveResizeNotification;
 
 @interface BXDOSWindowController : NSWindowController <BXFullScreenCapableWindowDelegate>
 {
-	IBOutlet NSView <BXFrameRenderingView> *renderingView;
-	IBOutlet BXInputView *inputView;
-	IBOutlet NSView *statusBar;
-	IBOutlet NSView *programPanel;
+    NSView <BXFrameRenderingView> *_renderingView;
+	BXInputView *_inputView;
+	NSView *_statusBar;
+	NSView *_programPanel;
 
-	IBOutlet BXProgramPanelController *programPanelController;
-	IBOutlet BXInputController *inputController;
-	IBOutlet BXStatusBarController *statusBarController;
+	BXProgramPanelController *_programPanelController;
+	BXInputController *_inputController;
+	BXStatusBarController *_statusBarController;
 	
-    NSSize currentScaledSize;
-	NSSize currentScaledResolution;
-	BOOL resizingProgrammatically;
-    BOOL windowIsClosing;
+    NSSize _currentScaledSize;
+	NSSize _currentScaledResolution;
+	BOOL _resizingProgrammatically;
+    BOOL _windowIsClosing;
     
-    NSSize renderingViewSizeBeforeFullScreen;
-    NSString *autosaveNameBeforeFullScreen;
+    NSSize _renderingViewSizeBeforeFullScreen;
+    NSString *_autosaveNameBeforeFullScreen;
 }
 
 #pragma mark -
 #pragma mark Properties
 
 //Our subsidiary view controllers.
-@property (retain, nonatomic) BXProgramPanelController *programPanelController;
-@property (retain, nonatomic) BXInputController *inputController;
-@property (retain, nonatomic) BXStatusBarController *statusBarController;
+@property (retain, nonatomic) IBOutlet BXProgramPanelController *programPanelController;
+@property (retain, nonatomic) IBOutlet BXInputController *inputController;
+@property (retain, nonatomic) IBOutlet BXStatusBarController *statusBarController;
 
 //The view which displays the emulator's graphical output.
-@property (retain, nonatomic) NSView <BXFrameRenderingView> *renderingView;
+@property (retain, nonatomic) IBOutlet NSView <BXFrameRenderingView> *renderingView;
 
 //The view that tracks user input. This is also be the view we use for fullscreen.
-@property (retain, nonatomic) BXInputView *inputView;
+@property (retain, nonatomic) IBOutlet BXInputView *inputView;
 
 //The slide-out program picker panel.
-@property (retain, nonatomic) NSView *programPanel;
+@property (retain, nonatomic) IBOutlet NSView *programPanel;
 
 //The status bar at the bottom of the window.
-@property (retain, nonatomic) NSView *statusBar;
+@property (retain, nonatomic) IBOutlet NSView *statusBar;
 
 //The maximum BXFrameBuffer size we can render.
 @property (readonly, nonatomic) NSSize maxFrameSize;

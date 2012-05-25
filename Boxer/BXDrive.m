@@ -484,11 +484,7 @@
 }
 - (NSString *) description
 {
-	return [NSString stringWithFormat: @"%@: %@ (%@)",
-			self.letter,
-			self.path,
-			[self.class descriptionForType: self.type],
-			nil]; 
+	return [NSString stringWithFormat: @"%@: %@ (%@)", self.letter, self.path, self.typeDescription]; 
 }
 
 - (NSString *) displayName

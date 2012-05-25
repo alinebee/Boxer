@@ -50,7 +50,7 @@
 + (NSImage *) bezelIconForDrive: (BXDrive *)drive
 {
     NSString *iconName;
-    switch ([drive type])
+    switch (drive.type)
     {
         case BXDriveCDROM:
             iconName = @"CDROMTemplate";
@@ -105,7 +105,7 @@
 
 - (NSView *) currentBezel
 {
-    return [[[[self window] contentView] subviews] lastObject];
+    return [self.window.contentView subviews].lastObject;
 }
 
 - (void) loadWindow
@@ -143,15 +143,15 @@
         //Swap the old bezel for the new one, and resize the bezel window to fit it
         if (bezel != [self currentBezel])
         {
-            [[self currentBezel] removeFromSuperviewWithoutNeedingDisplay];
-            [[self window] setContentSize: [bezel frame].size];
-            [[[self window] contentView] addSubview: bezel];
+            [self.currentBezel removeFromSuperviewWithoutNeedingDisplay];
+            [self.window setContentSize: bezel.frame.size];
+            [self.window.contentView addSubview: bezel];
             
             [self centerBezel];
         }
         
         //Fade in the bezel window if it isn't already visible
-        [[self window] fadeInWithDuration: BXBezelFadeDuration];
+        [self.window fadeInWithDuration: BXBezelFadeDuration];
         
         //Start counting down to hiding the bezel again
         [NSObject cancelPreviousPerformRequestsWithTarget: self
@@ -176,12 +176,12 @@
 - (void) centerBezel
 {
     //Position the bezel so that it's centered in the bottom third of the available screen area
-    NSRect screenFrame = [[NSScreen mainScreen] visibleFrame];
-    NSRect windowFrame = [[self window] frame];
+    NSRect screenFrame = [NSScreen mainScreen].visibleFrame;
+    NSRect windowFrame = self.window.frame;
     
     NSRect centeredFrame = alignInRectWithAnchor(windowFrame, screenFrame, NSMakePoint(0.5f, 0.25f));
     
-    [[self window] setFrameOrigin: centeredFrame.origin];
+    self.window.frameOrigin = centeredFrame.origin;
 }
 
 
@@ -198,49 +198,49 @@
 
 - (void) showPauseBezel
 {
-    [self showBezel: [self pauseBezel]
+    [self showBezel: self.pauseBezel
         forDuration: BXPausePlayBezelDuration
            priority: BXBezelPriorityHigh];
 }
 
 - (void) showPlayBezel
 {
-    [self showBezel: [self playBezel]
+    [self showBezel: self.playBezel
         forDuration: BXPausePlayBezelDuration
            priority: BXBezelPriorityHigh];    
 }
 
 - (void) showFastForwardBezel
 {
-    [self showBezel: [self fastForwardBezel]
+    [self showBezel: self.fastForwardBezel
         forDuration: BXFastForwardBezelDuration
            priority: BXBezelPriorityHigh];
 }
 
 - (void) showNumpadActiveBezel
 {
-    [self showBezel: [self numpadActiveBezel]
+    [self showBezel: self.numpadActiveBezel
         forDuration: BXNumpadBezelDuration
            priority: BXBezelPriorityNormal];
 }
 
 - (void) showNumpadInactiveBezel
 {
-    [self showBezel: [self numpadInactiveBezel]
+    [self showBezel: self.numpadInactiveBezel
         forDuration: BXNumpadBezelDuration
            priority: BXBezelPriorityNormal];    
 }
 
 - (void) showNumlockActiveBezel
 {
-    [self showBezel: [self numlockActiveBezel]
+    [self showBezel: self.numlockActiveBezel
         forDuration: BXNumlockBezelDuration
            priority: BXBezelPriorityNormal];
 }
 
 - (void) showNumlockInactiveBezel
 {
-    [self showBezel: [self numlockInactiveBezel]
+    [self showBezel: self.numlockInactiveBezel
         forDuration: BXNumlockBezelDuration
            priority: BXBezelPriorityNormal];    
 }
@@ -249,7 +249,7 @@
 {
     if ([[NSUserDefaults standardUserDefaults] boolForKey: @"showFullscreenToggleMessage"])
     {
-        [self showBezel: [self fullscreenBezel]
+        [self showBezel: self.fullscreenBezel
             forDuration: BXFullscreenBezelDuration
                priority: BXBezelPriorityNormal];
     }
@@ -257,7 +257,7 @@
 
 - (void) showJoystickIgnoredBezel
 {
-    [self showBezel: [self joystickIgnoredBezel]
+    [self showBezel: self.joystickIgnoredBezel
         forDuration: BXJoystickIgnoredBezelDuration
            priority: BXBezelPriorityLow];
 }
@@ -266,10 +266,10 @@
 {
     //Tweak: if the CPU inspector panel is visible, don’t bother showing the bezel.
     BXInspectorController *inspector = [BXInspectorController controller];
-    if ([inspector panelShown] && [inspector selectedTabViewItemIndex] == BXCPUInspectorPanelTag)
+    if (inspector.panelShown && inspector.selectedTabViewItemIndex == BXCPUInspectorPanelTag)
         return;
     
-    NSView *bezel = [self CPUSpeedBezel];
+    NSView *bezel = self.CPUSpeedBezel;
     
     NSString *speedDescription = [BXSession descriptionForSpeed: cpuSpeed];
     
@@ -284,8 +284,8 @@
     
     NSNumber *scaledValue = [cpuScale transformedValue: [NSNumber numberWithInteger: displayedSpeed]];
                              
-    [level setDoubleValue: [scaledValue doubleValue]];
-    [label setStringValue: speedDescription];
+    level.doubleValue = scaledValue.doubleValue;
+    label.stringValue = speedDescription;
     
     [self showBezel: bezel
         forDuration: BXCPUBezelDuration
@@ -294,20 +294,20 @@
 
 - (void) showThrottleBezelForValue: (float)throttleValue
 {
-    NSView *bezel = [self throttleBezel];
+    NSView *bezel = self.throttleBezel;
     
     NSString *format = NSLocalizedString(@"%u%% throttle", @"Label for flightstick throttle-adjusted bezel notification. %u is the current throttle value expressed as a percentage from 0 to 100%.");
     
     //The throttle is expressed as a value from 1.0 (min) to -1.0 (max):
     //Convert it to a percentage from 0-100.
     NSUInteger percentage = 50 * (1.0f - throttleValue);
-    NSString *throttleDescription = [NSString stringWithFormat: format, percentage, nil];
+    NSString *throttleDescription = [NSString stringWithFormat: format, percentage];
     
     NSLevelIndicator *level = [bezel viewWithTag: BXBezelLevel];
     NSTextField *label      = [bezel viewWithTag: BXBezelLevelStatus];
     
-    [level setIntegerValue: percentage];
-    [label setStringValue: throttleDescription];
+    level.integerValue = percentage;
+    label.stringValue = throttleDescription;
     
     [self showBezel: bezel
         forDuration: BXThrottleBezelDuration
@@ -347,11 +347,11 @@
     //Suppress MT-32 messages if the relevant user-defaults option is disabled.
     if (![[NSUserDefaults standardUserDefaults] boolForKey: @"showMT32LCDMessages"]) return;
     
-    NSView *bezel = [self MT32MessageBezel];
+    NSView *bezel = self.MT32MessageBezel;
     
     NSTextField *messageField = [bezel viewWithTag: BXBezelMessage];
     
-    [messageField setStringValue: message];
+    messageField.stringValue = message;
     
     [self showBezel: bezel
         forDuration: BXMT32MessageBezelDuration
@@ -360,7 +360,7 @@
 
 - (void) showMT32MissingBezel
 {
-    [self showBezel: [self MT32MissingBezel]
+    [self showBezel: self.MT32MissingBezel
         forDuration: BXMT32MissingBezelDuration
            priority: BXBezelPriorityLow];
 }
@@ -371,7 +371,7 @@
     //Suppress drive notifications while the Drive Inspector panel is open.
     
     BXInspectorController *inspector = [BXInspectorController controller];
-    return !([inspector panelShown] && [inspector selectedTabViewItemIndex] == BXDriveInspectorPanelTag);
+    return !(inspector.panelShown && inspector.selectedTabViewItemIndex == BXDriveInspectorPanelTag);
 }
 
 - (BOOL) shouldShowVolumeNotifications
@@ -385,20 +385,17 @@
 {
     if (![self shouldShowDriveNotifications]) return;
     
-    NSView *bezel               = [self driveAddedBezel];
+    NSView *bezel               = self.driveAddedBezel;
     NSImageView *icon           = [bezel viewWithTag: BXBezelIcon];
     NSTextField *actionLabel    = [bezel viewWithTag: BXBezelDriveAction];
     NSTextField *titleLabel     = [bezel viewWithTag: BXBezelDriveTitle];
     
-    NSImage *iconImage = [[self class] bezelIconForDrive: drive];
-    NSString *driveTitle = [drive title];
+    NSString *actionFormat = NSLocalizedString(@"Drive %1$@ added",
+                                               @"Label for drive-added bezel notification. %1$@ is the drive letter.");
     
-    NSString *actionFormat = NSLocalizedString(@"Drive %1$@ added", @"Label for drive-added bezel notification. %1$@ is the drive letter.");
-    NSString *actionDescription = [NSString stringWithFormat: actionFormat, [drive letter], nil];
-                             
-    [icon setImage:                 iconImage];
-    [actionLabel setStringValue:    actionDescription];
-    [titleLabel setStringValue:     driveTitle];
+    actionLabel.stringValue = [NSString stringWithFormat: actionFormat, drive.letter];
+    titleLabel.stringValue = drive.title;
+    icon.image = [self.class bezelIconForDrive: drive];
     
     [self showBezel: bezel
         forDuration: BXDriveBezelDuration
@@ -409,23 +406,19 @@
 {
     if (![self shouldShowDriveNotifications]) return;
     
-    NSView *bezel               = [self driveSwappedBezel];
+    NSView *bezel               = self.driveSwappedBezel;
     NSImageView *fromIcon       = [bezel viewWithTag: BXBezelDriveFromIcon];
     NSImageView *toIcon         = [bezel viewWithTag: BXBezelDriveToIcon];
     NSTextField *actionLabel    = [bezel viewWithTag: BXBezelDriveAction];
     NSTextField *titleLabel     = [bezel viewWithTag: BXBezelDriveTitle];
     
-    NSString *driveTitle    = [toDrive title];
-    NSImage *fromIconImage  = [[self class] bezelIconForDrive: fromDrive];
-    NSImage *toIconImage    = [[self class] bezelIconForDrive: toDrive];
-    
     NSString *actionFormat = NSLocalizedString(@"Drive %1$@ swapped", @"Label for drive-swapped bezel notification. %1$@ is the drive letter.");
-    NSString *actionDescription = [NSString stringWithFormat: actionFormat, [toDrive letter], nil];
-        
-    [fromIcon setImage:             fromIconImage];
-    [toIcon setImage:               toIconImage];
-    [actionLabel setStringValue:    actionDescription];
-    [titleLabel setStringValue:     driveTitle];
+    
+    actionLabel.stringValue = [NSString stringWithFormat: actionFormat, toDrive.letter];
+    titleLabel.stringValue = toDrive.title;
+    
+    fromIcon.image = [self.class bezelIconForDrive: fromDrive];
+    toIcon.image = [self.class bezelIconForDrive: toDrive];
     
     [self showBezel: bezel
         forDuration: BXDriveBezelDuration
@@ -436,21 +429,16 @@
 {
     if (![self shouldShowDriveNotifications]) return;
     
-    NSView *bezel               = [self driveRemovedBezel];
+    NSView *bezel               = self.driveRemovedBezel;
     NSImageView *icon           = [bezel viewWithTag: BXBezelIcon];
     NSTextField *actionLabel    = [bezel viewWithTag: BXBezelDriveAction];
     NSTextField *titleLabel     = [bezel viewWithTag: BXBezelDriveTitle];
 
-    NSImage *iconImage      = [NSImage imageNamed: @"EjectTemplate"];
-    NSString *driveTitle    = [drive title];
-    
     NSString *actionFormat = NSLocalizedString(@"Drive %1$@ ejected", @"Label for drive-removed bezel notification. %1$@ is the drive letter.");
-    NSString *actionDescription = [NSString stringWithFormat: actionFormat, [drive letter], nil];
     
-    
-    [icon setImage:                 iconImage];
-    [actionLabel setStringValue:    actionDescription];
-    [titleLabel setStringValue:     driveTitle];
+    actionLabel.stringValue = [NSString stringWithFormat: actionFormat, drive.letter];
+    titleLabel.stringValue = drive.title;
+    icon.image = [NSImage imageNamed: @"EjectTemplate"];
     
     [self showBezel: bezel
         forDuration: BXDriveBezelDuration
@@ -462,23 +450,20 @@
 {
     if (![self shouldShowDriveNotifications]) return;
     
-    NSView *bezel               = [self driveImportedBezel];
+    NSView *bezel               = self.driveImportedBezel;
     NSImageView *icon           = [bezel viewWithTag: BXBezelIcon];
     NSTextField *actionLabel    = [bezel viewWithTag: BXBezelDriveAction];
     NSTextField *titleLabel     = [bezel viewWithTag: BXBezelDriveTitle];
     
-    NSImage *iconImage = [[self class] bezelIconForDrive: drive];
-    NSString *driveTitle = [drive title];
-    
     NSString *actionFormat = NSLocalizedString(@"Drive %2$@ imported", @"Label for drive-imported bezel notification. %1$@ is the drive letter.");
-	NSString *actionDescription = [NSString stringWithFormat: actionFormat, [drive letter], nil];
     
-    [icon setImage:                 iconImage];
-    [actionLabel setStringValue:    actionDescription];
-    [titleLabel setStringValue:     driveTitle];
+    actionLabel.stringValue = [NSString stringWithFormat: actionFormat, drive.letter];
+    titleLabel.stringValue = drive.title;
+    icon.image = [self.class bezelIconForDrive: drive];
     
     [self showBezel: bezel
         forDuration: BXDriveBezelDuration
            priority: BXBezelPriorityNormal];
 }
+
 @end

@@ -113,16 +113,14 @@
 	if (shouldRecurse) *shouldRecurse = YES;
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	
-	NSArray *typeOrder = [NSArray arrayWithObjects:
-						  @"net.washboardabs.boxer-game-package",
-						  @"net.washboardabs.boxer-mountable-folder",
-						  nil];
+	NSArray *typeOrder = [NSArray arrayWithObjects: BXGameboxType, BXMountableFolderType, nil];
 	
 	//If the file is inside a gamebox (first in preferredMountPointTypes) then search from that;
 	//If the file is inside a mountable folder (second) then search from that.
 	for (NSString *type in typeOrder)
 	{
-		NSString *parent = [workspace parentOfFile: path matchingTypes: [NSSet setWithObject: type]];
+		NSString *parent = [workspace parentOfFile: path
+                                     matchingTypes: [NSSet setWithObject: type]];
 		if (parent) return parent;
 	}
 	
@@ -164,10 +162,7 @@
 + (NSSet *) preferredMountPointTypes
 {
 	static NSSet *types = nil;
-	if (!types) types = [[NSSet alloc] initWithObjects:
-						 @"net.washboardabs.boxer-game-package",		//.boxer
-						 @"net.washboardabs.boxer-mountable-folder",	//Any of .floppy, .cdrom, .harddisk
-						 nil];
+	if (!types) types = [[NSSet alloc] initWithObjects: BXGameboxType, BXMountableFolderType, nil];
 	return types;
 }
 
@@ -197,9 +192,10 @@
 	if ([self targetPath]) [self openFileAtPath: [self targetPath]];
 }
 
-- (IBAction) openInDOS:			(id)sender
+- (IBAction) openInDOS: (id)sender
 {
-	if ([sender respondsToSelector: @selector(representedObject)]) sender = [sender representedObject];
+	if ([sender respondsToSelector: @selector(representedObject)])
+        sender = [sender representedObject];
 	
 	NSString *path = nil;
 	
@@ -210,7 +206,8 @@
 	//NSDictionaries with paths
 	else if ([sender isKindOfClass: [NSDictionary class]])	path = [sender objectForKey: @"path"];	
 	
-	if (path) [self openFileAtPath: path];
+	if (path)
+        [self openFileAtPath: path];
 }
 
 
@@ -279,7 +276,7 @@
     //or that should not be removed for other reasons.
     if ([self activeImportOperationForDrive: drive]) return;
     
-    NSString *letter = [drive letter];
+    NSString *letter = drive.letter;
     NSAssert1(letter != nil, @"Drive %@ passed to dequeueDrive had no letter assigned.", drive);
     
     [self willChangeValueForKey: @"drives"];
@@ -311,7 +308,7 @@
 
 - (BXDrive *) queuedDriveForPath: (NSString *)path
 {
-	for (BXDrive *drive in [self allDrives])
+	for (BXDrive *drive in self.allDrives)
 	{
 		if ([drive representsPath: path]) return drive;
 	}
@@ -393,7 +390,7 @@
                       sender: (id)sender
 {
 	//If the Option key was held down, bypass this check altogether and allow any drive to be unmounted
-	NSUInteger optionKeyDown = [[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask;
+	NSUInteger optionKeyDown = ([NSApp currentEvent].modifierFlags & NSAlternateKeyMask) == NSAlternateKeyMask;
 	if (optionKeyDown) return YES;
 
 	NSMutableArray *drivesInUse = [[[NSMutableArray alloc] initWithCapacity: [selectedDrives count]] autorelease];
@@ -407,10 +404,10 @@
         if (![self driveIsMounted: drive]) continue;
         
         //Prevent locked drives from being removed altogether
-		if ([drive isLocked]) return NO;
+		if (drive.isLocked) return NO;
 		
 		//If a program is running and the drive is in use, then warn about it
-		if (![[self emulator] isAtPrompt] && [[self emulator] driveInUseAtLetter: [drive letter]])
+		if (!self.emulator.isAtPrompt && [self.emulator driveInUseAtLetter: drive.letter])
 			[drivesInUse addObject: drive];
 	}
 	
@@ -459,9 +456,9 @@
         
         if (unmountError)
         {
-            [[alert window] orderOut: self];
+            [alert.window orderOut: self];
             [self presentError: unmountError
-                modalForWindow: [self windowForSheet]
+                modalForWindow: self.windowForSheet
                       delegate: nil
             didPresentSelector: NULL
                    contextInfo: NULL];
@@ -533,14 +530,13 @@
 - (BOOL) shouldMountNewDriveForPath: (NSString *)path
 {
 	//If the file isn't already accessible from DOS, we should mount it
-	BXEmulator *theEmulator = [self emulator];
+	BXEmulator *theEmulator = self.emulator;
 	if (![theEmulator pathIsDOSAccessible: path]) return YES;
-	
 	
 	//If it is accessible within another drive, but the path is of a type
 	//that should get its own drive, then mount it as a new drive of its own.
 	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
-	if ([workspace file: path matchesTypes: [[self class] separatelyMountedTypes]]
+	if ([workspace file: path matchesTypes: [self.class separatelyMountedTypes]]
 	&& ![theEmulator pathIsMountedAsDrive: path])
 		return YES;
 	
@@ -552,10 +548,10 @@
                         options: (BXDriveMountOptions)options
                           error: (NSError **)outError
 {
-	NSAssert1([self isEmulating], @"mountDriveForPath:ifExists:options:error: called for %@ while emulator is not running.", path);
+	NSAssert1(self.isEmulating, @"mountDriveForPath:ifExists:options:error: called for %@ while emulator is not running.", path);
     
 	//Choose an appropriate mount point and create the new drive for it
-	NSString *mountPoint = [[self class] preferredMountPointForPath: path];
+	NSString *mountPoint = [self.class preferredMountPointForPath: path];
     
     //Make sure the mount point exists and is suitable to use
     if (![self validateDrivePath: &mountPoint error: outError]) return nil;
@@ -614,7 +610,7 @@
 //Returns YES if any drives were mounted, NO otherwise.
 - (NSArray *) mountCDVolumesWithError: (NSError **)outError
 {
-	BXEmulator *theEmulator = [self emulator];
+	BXEmulator *theEmulator = self.emulator;
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	NSArray *volumes = [workspace mountedVolumesOfType: dataCDVolumeType includingHidden: NO];
 	
@@ -655,7 +651,7 @@
 {
 	NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
 	NSArray *volumePaths = [workspace mountedVolumesOfType: FATVolumeType includingHidden: NO];
-	BXEmulator *theEmulator = [self emulator];
+	BXEmulator *theEmulator = self.emulator;
     
     NSMutableArray *mountedDrives = [NSMutableArray arrayWithCapacity: 10];
 	for (NSString *volumePath in volumePaths)
@@ -683,20 +679,20 @@
 
 - (BXDrive *) mountToolkitDriveWithError: (NSError **)outError
 {
-	BXEmulator *theEmulator = [self emulator];
+	BXEmulator *theEmulator = self.emulator;
 
 	NSString *toolkitDriveLetter	= [[NSUserDefaults standardUserDefaults] stringForKey: @"toolkitDriveLetter"];
 	NSString *toolkitFiles			= [[NSBundle mainBundle] pathForResource: @"DOS Toolkit" ofType: nil];
     
-	BXDrive *toolkitDrive			= [BXDrive hardDriveFromPath: toolkitFiles atLetter: toolkitDriveLetter];
-    [toolkitDrive setTitle: NSLocalizedString(@"DOS Toolkit", @"The display title for Boxer’s toolkit drive.")];
+	BXDrive *toolkitDrive = [BXDrive hardDriveFromPath: toolkitFiles atLetter: toolkitDriveLetter];
+    toolkitDrive.title = NSLocalizedString(@"DOS Toolkit", @"The display title for Boxer’s toolkit drive.");
 	
 	//Hide and lock the toolkit drive so that it cannot be ejected and will not appear in the drive inspector,
     //and make it read-only with 0 bytes free so that it will not appear as a valid installation target to DOS games.
-	[toolkitDrive setLocked: YES];
-	[toolkitDrive setReadOnly: YES];
-	[toolkitDrive setHidden: YES];
-	[toolkitDrive setFreeSpace: 0];
+	toolkitDrive.locked = YES;
+	toolkitDrive.readOnly = YES;
+	toolkitDrive.hidden = YES;
+	toolkitDrive.freeSpace = 0;
     
 	toolkitDrive = [self mountDrive: toolkitDrive
                            ifExists: BXDriveReplace
@@ -710,9 +706,9 @@
 		//TODO: the DOS path should include the root folder of every drive, not just Y and Z.
         //We should also have a proper API for adding to the DOS path, rather than overriding
         //it completely like this.
-		NSString *dosPath	= [NSString stringWithFormat: @"%1$@:\\;%1$@:\\UTILS;Z:\\", [toolkitDrive letter], nil];
-		NSString *ultraDir	= [NSString stringWithFormat: @"%@:\\ULTRASND", [toolkitDrive letter], nil];
-		NSString *utilsDir	= [NSString stringWithFormat: @"%@:\\UTILS", [toolkitDrive letter], nil];
+		NSString *dosPath	= [NSString stringWithFormat: @"%1$@:\\;%1$@:\\UTILS;Z:\\", toolkitDrive.letter];
+		NSString *ultraDir	= [NSString stringWithFormat: @"%@:\\ULTRASND", toolkitDrive.letter];
+		NSString *utilsDir	= [NSString stringWithFormat: @"%@:\\UTILS", toolkitDrive.letter];
 		
 		[theEmulator setVariable: @"path"		to: dosPath		encoding: BXDirectStringEncoding];
 		[theEmulator setVariable: @"boxerutils"	to: utilsDir	encoding: BXDirectStringEncoding];
@@ -723,7 +719,7 @@
 
 - (BXDrive *) mountTempDriveWithError: (NSError **)outError
 {
-	BXEmulator *theEmulator = [self emulator];
+	BXEmulator *theEmulator = self.emulator;
 
 	//Mount a temporary folder at the appropriate drive
 	NSFileManager *manager		= [NSFileManager defaultManager];
@@ -735,7 +731,7 @@
 		self.temporaryFolderPath = tempDrivePath;
 		
 		BXDrive *tempDrive = [BXDrive hardDriveFromPath: tempDrivePath atLetter: tempDriveLetter];
-        [tempDrive setTitle: NSLocalizedString(@"Temporary Files", @"The display title for Boxer’s temp drive.")];
+        tempDrive.title = NSLocalizedString(@"Temporary Files", @"The display title for Boxer’s temp drive.");
         
         //Hide and lock the temp drive so that it cannot be ejected and will not appear in the drive inspector.
 		tempDrive.locked = YES;
@@ -749,7 +745,7 @@
 		
 		if (tempDrive)
 		{
-			NSString *tempPath = [NSString stringWithFormat: @"%@:\\", tempDrive.letter, nil];
+			NSString *tempPath = [NSString stringWithFormat: @"%@:\\", tempDrive.letter];
 			[theEmulator setVariable: @"temp"	to: tempPath	encoding: BXDirectStringEncoding];
 			[theEmulator setVariable: @"tmp"	to: tempPath	encoding: BXDirectStringEncoding];
 		}
@@ -768,17 +764,17 @@
 {
     //First, check if we already have a CD drive mounted:
     //If so, we don't need a dummy one.
-    for (BXDrive *drive in [self mountedDrives])
+    for (BXDrive *drive in self.mountedDrives)
     {
-        if ([drive type] == BXDriveCDROM) return drive;
+        if (drive.type == BXDriveCDROM) return drive;
     }
     
     
     NSString *dummyImage    = [[NSBundle mainBundle] pathForResource: @"DummyCD" ofType: @"iso"];
 	BXDrive *dummyDrive     = [BXDrive CDROMFromPath: dummyImage atLetter: nil];
     
-    [dummyDrive setTitle: NSLocalizedString(@"Dummy CD",
-                                            @"The display title for Boxer’s dummy CD-ROM drive.")];
+    dummyDrive.title = NSLocalizedString(@"Dummy CD",
+                                         @"The display title for Boxer’s dummy CD-ROM drive.");
 	
 	dummyDrive = [self mountDrive: dummyDrive
                          ifExists: BXDriveQueue
@@ -793,25 +789,25 @@
 {
     //If we want to keep this drive with others of its ilk,
     //then use the letter of the first drive of that type.
-    if ((options & BXDriveKeepWithSameType) && ([drive type] == BXDriveCDROM || [drive type] == BXDriveFloppyDisk))
+    if ((options & BXDriveKeepWithSameType) && (drive.type == BXDriveCDROM || drive.type == BXDriveFloppyDisk))
     {
-        for (BXDrive *knownDrive in [self allDrives])
+        for (BXDrive *knownDrive in self.allDrives)
         {
-            if ([knownDrive type] == [drive type])
-                return [knownDrive letter];
+            if (knownDrive.type == drive.type)
+                return knownDrive.letter;
         }
     }
     
     //Otherwise, pick the next suitable drive letter for that type
     //that isn't already queued.
     NSArray *letters;
-	if ([drive isFloppy])		letters = [BXEmulator floppyDriveLetters];
-	else if ([drive isCDROM])	letters = [BXEmulator CDROMDriveLetters];
-	else						letters = [BXEmulator hardDriveLetters];
+	if      (drive.isFloppy)	letters = [BXEmulator floppyDriveLetters];
+	else if (drive.isCDROM)     letters = [BXEmulator CDROMDriveLetters];
+	else                        letters = [BXEmulator hardDriveLetters];
     
 	for (NSString *letter in letters)
     {
-        if (![[[self drives] objectForKey: letter] count]) return letter;
+        if (![[self.drives objectForKey: letter] count]) return letter;
     }
     
     //Uh-oh, looks like all suitable drive letters are taken! Bummer.
@@ -834,20 +830,20 @@
     
     //Sanity check: BXDriveReassign cannot be used along with
     //BXDriveKeepWithSameType, so clear that flag.
-    if (conflictBehaviour == BXDriveReassign) options &= ~BXDriveKeepWithSameType;
+    if (conflictBehaviour == BXDriveReassign)
+        options &= ~BXDriveKeepWithSameType;
     
     //If the drive doesn't have a specific drive letter,
     //determine one now based on the specified options.
-    if (![drive letter])
+    if (!drive.letter)
     {
-        NSString *preferredLetter = [self preferredLetterForDrive: drive
-                                                          options: options];
-        [drive setLetter: preferredLetter];
+        drive.letter = [self preferredLetterForDrive: drive
+                                             options: options];
     }
     
     //Allow the game profile to override the drive volume label if needed.
-	NSString *customLabel = [[self gameProfile] volumeLabelForDrive: drive];
-	if (customLabel) [drive setVolumeLabel: customLabel];
+	NSString *customLabel = [self.gameProfile volumeLabelForDrive: drive];
+	if (customLabel) drive.volumeLabel = customLabel;
     
     BXDrive *driveToMount = drive;
     BXDrive *fallbackDrive = nil;
@@ -857,7 +853,7 @@
         //Check if the specified path has a DOSBox-compatible image backing it:
         //if so then try to mount that instead, and assign the current path as an alias.
         NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-        NSString *sourceImagePath = [workspace sourceImageForVolume: [drive path]];
+        NSString *sourceImagePath = [workspace sourceImageForVolume: drive.path];
         
         if (sourceImagePath && [workspace file: sourceImagePath matchesTypes: [BXFileTypes mountableImageTypes]])
         {
@@ -867,9 +863,9 @@
             //(assuming it isn't already.)
             //TODO: should we handle this case upstairs in mountDriveForPath:?
             BXDrive *existingDrive = [self queuedDriveForPath: sourceImagePath];
-            if (![existingDrive isEqual: drive] && [[existingDrive letter] isEqual: [drive letter]])
+            if (![existingDrive isEqual: drive] && [existingDrive.letter isEqual: drive.letter])
             {   
-                [[existingDrive pathAliases] addObject: [drive path]];
+                [existingDrive.pathAliases addObject: drive.path];
                 if ([self driveIsMounted: existingDrive])
                 {
                     return existingDrive;
@@ -883,13 +879,13 @@
             else
             {
                 BXDrive *imageDrive = [BXDrive driveFromPath: sourceImagePath
-                                                    atLetter: [drive letter]
-                                                    withType: [drive type]];
+                                                    atLetter: drive.letter
+                                                    withType: drive.type];
                 
-                [imageDrive setReadOnly: [drive readOnly]];
-                [imageDrive setHidden: [drive isHidden]];
-                [imageDrive setLocked: [drive isLocked]];
-                [[imageDrive pathAliases] addObject: [drive path]];
+                imageDrive.readOnly = drive.readOnly;
+                imageDrive.hidden = drive.isHidden;
+                imageDrive.locked = drive.isLocked;
+                [imageDrive.pathAliases addObject: drive.path];
                 
                 driveToMount = imageDrive;
                 fallbackDrive = drive;
@@ -904,13 +900,13 @@
     do
     {
         NSError *mountError = nil;
-        mountedDrive = [[self emulator] mountDrive: driveToMount error: &mountError];
+        mountedDrive = [self.emulator mountDrive: driveToMount error: &mountError];
     
         //If mounting fails, check what the failure was and try to recover.
         if (!mountedDrive)
         {
-            NSInteger errCode = [mountError code];
-            BOOL isDOSFilesystemError = [[mountError domain] isEqualToString: BXDOSFilesystemErrorDomain];
+            NSInteger errCode = mountError.code;
+            BOOL isDOSFilesystemError = [mountError.domain isEqualToString: BXDOSFilesystemErrorDomain];
             
             //The drive letter was already taken: decide what to do based on our conflict behaviour.
             if (isDOSFilesystemError && errCode == BXDOSFilesystemDriveLetterOccupied)
@@ -922,7 +918,7 @@
                         {
                             NSString *newLetter = [self preferredLetterForDrive: driveToMount
                                                                         options: options];
-                            [driveToMount setLetter: newLetter];
+                            driveToMount.letter = newLetter;
                         }
                         break;
                     
@@ -930,8 +926,8 @@
                     case BXDriveReplace:
                         {
                             NSError *unmountError = nil;
-                            replacedDrive           = [[self emulator] driveAtLetter: [driveToMount letter]];
-                            replacedDriveWasCurrent = [[[self emulator] currentDrive] isEqual: replacedDrive];
+                            replacedDrive           = [self.emulator driveAtLetter: driveToMount.letter];
+                            replacedDriveWasCurrent = [self.emulator.currentDrive isEqual: replacedDrive];
                             
                             BOOL unmounted = [self unmountDrive: replacedDrive
                                                         options: options
@@ -981,7 +977,7 @@
                     NSString *descriptionFormat = NSLocalizedString(@"The drive “%1$@” is unavailable while it is being imported.",
                                                                     @"Error shown when a drive cannot be mounted because it is busy being imported.");
                     
-                    NSString *description = [NSString stringWithFormat: descriptionFormat, [driveToMount title], nil];
+                    NSString *description = [NSString stringWithFormat: descriptionFormat, driveToMount.title];
                     NSString *suggestion = NSLocalizedString(@"You can use the drive once the import has completed or been cancelled.", @"Recovery suggestion shown when a drive cannot be mounted because it is busy being imported.");
                     
                     
@@ -992,18 +988,18 @@
                                               driveToMount, BXDOSFilesystemErrorDriveKey,
                                               nil];
                     
-                    mountError = [NSError errorWithDomain: [mountError domain]
-                                                     code: [mountError code]
+                    mountError = [NSError errorWithDomain: mountError.domain
+                                                     code: mountError.code
                                                  userInfo: userInfo];
                 }
                 
                 if (replacedDrive)
                 {
-                    [[self emulator] mountDrive: replacedDrive error: nil];
+                    [self.emulator mountDrive: replacedDrive error: nil];
                     
-                    if (replacedDriveWasCurrent && [[self emulator] isAtPrompt])
+                    if (replacedDriveWasCurrent && self.emulator.isAtPrompt)
                     {
-                        [[self emulator] changeToDriveLetter: [replacedDrive letter]];
+                        [self.emulator changeToDriveLetter: replacedDrive.letter];
                     }
                 }
                 if (outError) *outError = mountError;
@@ -1032,9 +1028,9 @@
     //If we replaced DOS's current drive in the course of ejecting, then switch
     //to the new drive.
     //TODO: make it so that we don't switch away from the drive in the first place.
-    if (replacedDrive && replacedDriveWasCurrent && [[self emulator] isAtPrompt])
+    if (replacedDrive && replacedDriveWasCurrent && self.emulator.isAtPrompt)
     {
-        [[self emulator] changeToDriveLetter: [mountedDrive letter]];
+        [self.emulator changeToDriveLetter: mountedDrive.letter];
     }
     
     return mountedDrive;
@@ -1050,7 +1046,7 @@
         BOOL force = NO;
         if      (options & BXDriveForceUnmounting) force = YES;
         else if (options & BXDriveForceUnmountingIfRemovable &&
-                ([drive type] == BXDriveCDROM || [drive type] == BXDriveFloppyDisk)) force = YES;
+                (drive.type == BXDriveCDROM || drive.type == BXDriveFloppyDisk)) force = YES;
         
         //If requested, try to find another drive in the same queue
         //to replace the unmounted one with.
@@ -1060,13 +1056,13 @@
         {
             replacementDrive = [self siblingOfQueuedDrive: drive atOffset: 1];
             if ([replacementDrive isEqual: drive]) replacementDrive = nil;
-            driveWasCurrent = [[[self emulator] currentDrive] isEqual: drive];
+            driveWasCurrent = [self.emulator.currentDrive isEqual: drive];
         }
         
         
-        BOOL unmounted = [[self emulator] unmountDrive: drive
-                                                 force: force
-                                                 error: outError];
+        BOOL unmounted = [self.emulator unmountDrive: drive
+                                               force: force
+                                               error: outError];
         
         if (unmounted)
         {
@@ -1078,9 +1074,9 @@
                                               error: nil];
                 
                 //Remember to change back to the same drive once we're done unmounting.
-                if (replacementDrive && driveWasCurrent && [[self emulator] isAtPrompt])
+                if (replacementDrive && driveWasCurrent && self.emulator.isAtPrompt)
                 {
-                    [[self emulator] changeToDriveLetter: [replacementDrive letter]];
+                    [self.emulator changeToDriveLetter: replacementDrive.letter];
                 }
             }
             
@@ -1143,7 +1139,8 @@
 - (BXDrive *) principalDrive
 {
 	//Prioritise drive C, if it's available and has executables on it
-	if ([[self.executables objectForKey: @"C"] count]) return [self.emulator driveAtLetter: @"C"];
+	if ([[self.executables objectForKey: @"C"] count])
+        return [self.emulator driveAtLetter: @"C"];
     
 	//Otherwise through all the mounted drives and return the first one that we have programs for.
     NSArray *sortedLetters = [self.executables.allKeys sortedArrayUsingSelector: @selector(compare:)];
@@ -1247,7 +1244,7 @@
 	
 	//Ignore mounts if we currently have the mount panel open;
 	//we assume that the user will want to handle the new volume manually.
-	NSWindow *attachedSheet = [[self windowForSheet] attachedSheet];
+	NSWindow *attachedSheet = self.windowForSheet.attachedSheet;
 	if ([attachedSheet isMemberOfClass: [NSOpenPanel class]]) return;
 	
 	NSArray *automountedTypes = [NSArray arrayWithObjects:
@@ -1257,7 +1254,7 @@
 								 nil];
 	
 	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
-	NSString *volumePath	= [[theNotification userInfo] objectForKey: @"NSDevicePath"];
+	NSString *volumePath	= [theNotification.userInfo objectForKey: @"NSDevicePath"];
 	NSString *volumeType	= [workspace volumeTypeForPath: volumePath];
     
     //Ignore the mount if it's a hidden volume.
@@ -1317,18 +1314,18 @@
 - (void) volumeWillUnmount: (NSNotification *)theNotification
 {
 	//Ignore unmount events if the emulator isn't actually running
-	if (![self isEmulating]) return;
+	if (!self.isEmulating) return;
 	
-	NSString *volumePath = [[theNotification userInfo] objectForKey: @"NSDevicePath"];
+	NSString *volumePath = [theNotification.userInfo objectForKey: @"NSDevicePath"];
 	//Should already be standardized, but still
-	NSString *standardizedPath = [volumePath stringByStandardizingPath];
+	NSString *standardizedPath = volumePath.stringByStandardizingPath;
 	
-	for (BXDrive *drive in [self allDrives])
+	for (BXDrive *drive in self.allDrives)
 	{
         //TODO: refactor this so that we can move the decision off to BXDrive itself
 		//(We can't use representsPath: because that includes path aliases too, and we
         //don't want to eject backing-image drives inadvertently.)
-		if ([[drive path] isEqualToString: standardizedPath] || [[drive mountPoint] isEqualToString: standardizedPath])
+		if ([drive.path isEqualToString: standardizedPath] || [drive.mountPoint isEqualToString: standardizedPath])
 		{
             //Drive import processes may unmount a volume themselves in the course
             //of importing it: in which case we want to leave the drive in place.
@@ -1351,19 +1348,21 @@
 		}
 		else
 		{
-			[[drive pathAliases] removeObject: standardizedPath];
+			[drive.pathAliases removeObject: standardizedPath];
 		}
 	}
 }
 
 - (void) filesystemDidChange: (NSNotification *)theNotification
 {
-	NSString *path = [[theNotification userInfo] objectForKey: @"path"];
-	if ([[self emulator] pathIsDOSAccessible: path]) [[self emulator] refreshMountedDrives];
+	NSString *path = [theNotification.userInfo objectForKey: @"path"];
+	if ([self.emulator pathIsDOSAccessible: path])
+        [self.emulator refreshMountedDrives];
 	
 	//Also check if the file was inside our gamebox - if so, flush the gamebox's caches
-	BXPackage *package = [self gamePackage];
-	if (package && [path hasPrefix: [package gamePath]]) [package refresh];
+	BXPackage *package = self.gamePackage;
+	if (package && [path hasPrefix: package.gamePath])
+        [package refresh];
 }
 
 
@@ -1372,17 +1371,17 @@
 
 - (void) emulatorDidMountDrive: (NSNotification *)theNotification
 {	
-	BXDrive *drive = [[theNotification userInfo] objectForKey: @"drive"];
+	BXDrive *drive = [theNotification.userInfo objectForKey: @"drive"];
     
     //Flag the drive as being mounted
-    [drive setMounted: YES];
+    drive.mounted = YES;
     
     //Add the drive to our set of known drives
     [self enqueueDrive: drive];
 	
-	if (![drive isInternal])
+	if (!drive.isInternal)
 	{
-		NSString *drivePath = [drive path];
+		NSString *drivePath = drive.path;
 	
 		[self _startTrackingChangesAtPath: drivePath];
 		

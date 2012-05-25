@@ -621,11 +621,8 @@
         NSString *nameFormat = NSLocalizedString(@"%1$@ %2$@.png",
                                                  @"Filename pattern for screenshots: %1$@ is the display name of the DOS session, %2$@ is the current date and time in a notation suitable for chronologically-ordered filenames.");
         
-        NSString *fileName = [NSString stringWithFormat:
-                              nameFormat,
-                              self.DOSWindowController.window.title,
-                              formattedDate,
-                              nil];
+        NSString *windowTitle = self.DOSWindowController.window.title;
+        NSString *fileName = [NSString stringWithFormat: nameFormat, windowTitle, formattedDate];
         
         //Sanitise the filename in case it contains characters that are disallowed for file paths.
         //TODO: move this off to an NSFileManager/NSString category.

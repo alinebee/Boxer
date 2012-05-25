@@ -513,7 +513,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
 	//The path is not be accessible on this drive; give up before we go any further. 
 	if (!subPath) return nil;
 	
-	NSString *dosDrive = [NSString stringWithFormat: @"%@:", [drive letter], nil];
+	NSString *dosDrive = [NSString stringWithFormat: @"%@:", [drive letter]];
 	
 	//If the path is at the root of the drive, bail out now.
 	if (![subPath length]) return dosDrive;
@@ -670,7 +670,7 @@ void MSCDEX_SetCDInterface(int intNr, int forceCD);
             NSString *driveLetter = [self _driveLetterForIndex: driveIndex];
             NSString *resolvedPath = [NSString stringWithCString: fullPath encoding: BXDirectStringEncoding];
             
-            return [NSString stringWithFormat: @"%@:\\%@", driveLetter, resolvedPath, nil];
+            return [NSString stringWithFormat: @"%@:\\%@", driveLetter, resolvedPath];
 		}
 		else return nil;
 	}

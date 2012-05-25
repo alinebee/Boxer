@@ -25,7 +25,7 @@ NSString * const BXDOSFilesystemErrorDriveKey = @"BXDOSFilesystemErrorDriveKey";
 	NSString *descriptionFormat = NSLocalizedString(@"The file “%1$@” could not be read.",
 													@"Error shown when a drive's source path does not exist or could not be accessed. %1$@ is the filename of the drive's source path.");
 	
-	NSString *description	= [NSString stringWithFormat: descriptionFormat, displayName, nil];
+	NSString *description	= [NSString stringWithFormat: descriptionFormat, displayName];
     NSString *suggestion    = NSLocalizedString(@"Ensure that you have permission to access this file and that the volume containing it is still available.", @"Recovery suggestion shown when a drive's source path does not exist or could not be accessed.");
     
     NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -50,7 +50,7 @@ NSString * const BXDOSFilesystemErrorDriveKey = @"BXDOSFilesystemErrorDriveKey";
     
     NSString *suggestion    = NSLocalizedString(@"The disk image file may be corrupted or incomplete.", @"Recovery suggestion shown when a drive's source image could not be loaded by DOSBox.");
 	
-	NSString *description	= [NSString stringWithFormat: descriptionFormat, displayName, nil];
+	NSString *description	= [NSString stringWithFormat: descriptionFormat, displayName];
     
     NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                               description, NSLocalizedDescriptionKey,
@@ -71,7 +71,7 @@ NSString * const BXDOSFilesystemErrorDriveKey = @"BXDOSFilesystemErrorDriveKey";
 	NSString *descriptionFormat = NSLocalizedString(@"There is already another drive at the DOS drive letter %1$@.",
 													@"Error shown when a drive's letter is already occupied. %1$@ is the occupied drive letter.");
 	
-	NSString *description	= [NSString stringWithFormat: descriptionFormat, [drive letter], nil];
+	NSString *description	= [NSString stringWithFormat: descriptionFormat, drive.letter];
     NSString *suggestion    = NSLocalizedString(@"Eject the existing drive and try again.", @"Recovery suggestion shown when a drive's letter is already occupied.");
     //TODO: a failure handler that offers to do that for the user
     
@@ -138,7 +138,7 @@ NSString * const BXDOSFilesystemErrorDriveKey = @"BXDOSFilesystemErrorDriveKey";
 	NSString *descriptionFormat	= NSLocalizedString(@"MS-DOS is limited to a maximum of %1$d CD-ROM drives.",
                                                     @"Error shown when the user tries to add more than the maximum number of CD-ROM drives. %1$d is the maximum number allowed.");
     
-    NSString *description   = [NSString stringWithFormat: descriptionFormat, BXMaxCDROMDrives, nil];
+    NSString *description   = [NSString stringWithFormat: descriptionFormat, BXMaxCDROMDrives];
     NSString *suggestion    = NSLocalizedString(@"Eject one or more existing drives and try again.", @"Recovery suggestion shown when the user tries to add more than the maximum number of CD-ROM drives.");
     //TODO: a failure handler that offers to rearrange them for the user.
     
@@ -163,7 +163,7 @@ NSString * const BXDOSFilesystemErrorDriveKey = @"BXDOSFilesystemErrorDriveKey";
 	NSString *descriptionFormat = NSLocalizedString(@"Drive %1$@ is required by Boxer and cannot be ejected.",
 													@"Error shown when a drive was locked and cannot be ejected. %1$@ is the drive's letter.");
 	
-	NSString *description	= [NSString stringWithFormat: descriptionFormat, [drive letter], nil];
+	NSString *description	= [NSString stringWithFormat: descriptionFormat, drive.letter];
     
     NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                               description, NSLocalizedDescriptionKey,
@@ -184,7 +184,7 @@ NSString * const BXDOSFilesystemErrorDriveKey = @"BXDOSFilesystemErrorDriveKey";
 	NSString *descriptionFormat = NSLocalizedString(@"Drive %1$@ is currently busy and cannot be ejected.",
 													@"Error shown when a drive was in use and cannot be ejected. %1$@ is the drive's letter.");
 	
-	NSString *description	= [NSString stringWithFormat: descriptionFormat, [drive letter], nil];
+	NSString *description	= [NSString stringWithFormat: descriptionFormat, drive.letter];
     
     NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                               description, NSLocalizedDescriptionKey,

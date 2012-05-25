@@ -32,7 +32,7 @@
 	NSString *versionFormat	= NSLocalizedString(@"Version %1$@ | build %2$@", @"Version string for display in About panel. %1$@ is human-readable version (e.g. 1.0beta), %2$@ is build number (e.g. 20090323-1.)");
 	NSString *versionName	= [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleShortVersionString"];
 	NSString *buildNumber	= [[NSBundle mainBundle] objectForInfoDictionaryKey: (NSString *)kCFBundleVersionKey];
-	NSString *versionString	= [NSString stringWithFormat: versionFormat, versionName, buildNumber, nil];
+	NSString *versionString	= [NSString stringWithFormat: versionFormat, versionName, buildNumber];
 	[version setStringValue: versionString];
     
     //Add a bottom border to the window

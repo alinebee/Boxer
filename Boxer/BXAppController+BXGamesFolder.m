@@ -356,7 +356,7 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 			NSString *displayName			= [manager displayNameAtPath: path];
 			if (!displayName) displayName	= [path lastPathComponent];
 			
-			NSString *description = [NSString stringWithFormat: descriptionFormat, displayName, nil];
+			NSString *description = [NSString stringWithFormat: descriptionFormat, displayName];
 					
 			NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
 									  description,	NSLocalizedDescriptionKey,
@@ -385,7 +385,7 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 			NSString *displayName			= [manager displayNameAtPath: path];
 			if (!displayName) displayName	= [path lastPathComponent];
 			
-			NSString *description = [NSString stringWithFormat: descriptionFormat, displayName, nil];
+			NSString *description = [NSString stringWithFormat: descriptionFormat, displayName];
 			
 			NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
 									  description, NSLocalizedDescriptionKey,

@@ -141,7 +141,7 @@ nil];
 - (NSString *) quotedString: (NSString *)theString
 {
 	NSString *escapedString = [theString stringByReplacingOccurrencesOfString: @"\"" withString: @"\\\""];
-	return [NSString stringWithFormat:@"\"%@\"", escapedString, nil];
+	return [NSString stringWithFormat: @"\"%@\"", escapedString];
 }
 
 
@@ -203,13 +203,13 @@ nil];
 
 - (void) setVariable: (NSString *)name to: (NSString *)value encoding: (NSStringEncoding)encoding
 {
-	NSString *command = [NSString stringWithFormat: @"set %@=%@", name, value, nil];
+	NSString *command = [NSString stringWithFormat: @"set %@=%@", name, value];
 	return [self _substituteCommand: command encoding: encoding];
 }
 
 - (void) setConfig: (NSString *)name to: (NSString *)value
 {
-	NSString *command = [NSString stringWithFormat: @"%@ %@", name, value, nil];
+	NSString *command = [NSString stringWithFormat: @"%@ %@", name, value];
 	return [self _substituteCommand: command encoding: BXDirectStringEncoding];	
 }
 
@@ -269,33 +269,27 @@ nil];
 	
 	[self displayString: NSLocalizedStringFromTable(@"Currently mounted drives:", @"Shell",
                                            @"Heading for drive list when drunning DRIVES command.")];
-	NSArray *sortedDrives = [[self mountedDrives] sortedArrayUsingSelector: @selector(letterCompare:)];
+	NSArray *sortedDrives = [self.mountedDrives sortedArrayUsingSelector: @selector(letterCompare:)];
 	for (BXDrive *drive in sortedDrives)
 	{
 		//if ([drive isHidden]) continue;
 		
 		NSString *localizedFormat;
 		
-		if ([drive isInternal])
+		if (drive.isInternal)
 		{
 			localizedFormat = NSLocalizedStringFromTable(@"%1$@: %2$@\n",
 														 @"Shell",
 														 @"Format for listing internal DOSBox drives via the DRIVES command: %1$@ is the drive letter, %2$@ is the localized drive type.");
-			description = [NSString stringWithFormat: localizedFormat,
-						   [drive letter],
-						   [drive typeDescription],
-						   nil];
+			description = [NSString stringWithFormat: localizedFormat, drive.letter, drive.typeDescription];
 		}
 		else
 		{
 			localizedFormat = NSLocalizedStringFromTable(@"%1$@: %2$@ from %3$@\n",
 														 @"Shell",
 														 @"Format for listing regular drives via the DRIVES command: %1$@ is the drive letter, %2$@ is the localized drive type, %3$@ is the drive's OS X filesystem path");
-			description = [NSString stringWithFormat: localizedFormat,
-						   [drive letter],
-						   [drive typeDescription],
-						   [pathTransformer transformedValue: [drive path]],
-						   nil];
+            NSString *displayPath = [pathTransformer transformedValue: drive.path];
+			description = [NSString stringWithFormat: localizedFormat, drive.letter, drive.typeDescription, displayPath];
 		}
 
 		[self displayString: description];
@@ -326,7 +320,7 @@ nil];
                                                            @"Shell",
                                                            @"Error message displayed when the REVEAL command is called on a path that could not be resolved to a full DOS path. %1$@ is the path exactly as the user entered it on the commandline.");
         
-        [self displayString: [NSString stringWithFormat: errorFormat, cleanedPath, nil]];
+        [self displayString: [NSString stringWithFormat: errorFormat, cleanedPath]];
         return;
     }
     
@@ -352,7 +346,7 @@ nil];
                                                                @"Shell",
                                                                @"Error message displayed when the REVEAL command cannot resolve a DOS path to an OS X filesystem path. %1$@ is the absolute DOS path, including drive letter.");
         }
-		[self displayString: [NSString stringWithFormat: errorFormat, resolvedPath, nil]];
+		[self displayString: [NSString stringWithFormat: errorFormat, resolvedPath]];
         return;
     }
     
@@ -488,7 +482,7 @@ nil];
 			*cursorPosition += [nextCommand length];
 			*execute = NO;
 			
-			finalCommand = [NSString stringWithFormat: @"%@%@%@", prefix, nextCommand, suffix, nil];
+			finalCommand = [NSString stringWithFormat: @"%@%@%@", prefix, nextCommand, suffix];
 
 			[self displayString: nextCommand];
 			[self displayString: suffix];
@@ -525,8 +519,7 @@ nil];
     
 	NSString *fullDOSPath	= [NSString stringWithFormat: @"%@:\\%@",
 							   [self _driveLetterForIndex: driveIndex],
-							   [NSString stringWithCString: dosPath encoding: BXDirectStringEncoding],
-							   nil];
+							   [NSString stringWithCString: dosPath encoding: BXDirectStringEncoding]];
 	
     //TWEAK: if this is another instance of the DOS session, do not change our state.
     if ([fullDOSPath isEqualToString: shellProcessPath]) return;
@@ -559,8 +552,7 @@ nil];
 	NSString *localPath		= [self _filesystemPathForDOSPath: dosPath onDOSBoxDrive: dosboxDrive];
 	NSString *fullDOSPath	= [NSString stringWithFormat: @"%@:\\%@",
 							   [self _driveLetterForIndex: driveIndex],
-							   [NSString stringWithCString: dosPath encoding: BXDirectStringEncoding],
-							   nil];
+							   [NSString stringWithCString: dosPath encoding: BXDirectStringEncoding]];
 	
 	NSMutableDictionary *userInfo	= [NSMutableDictionary dictionaryWithObjectsAndKeys:
                                        fullDOSPath, @"DOSPath",

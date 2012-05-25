@@ -32,9 +32,9 @@ NSString * const BXMountedVolumesErrorDomain = @"BXMountedVolumesErrorDomain";
 	);
 	
 	NSString *displayName			= [[NSFileManager defaultManager] displayNameAtPath: imagePath];
-	if (!displayName) displayName	= [imagePath lastPathComponent];
+	if (!displayName) displayName	= imagePath.lastPathComponent;
 	
-	NSString *description = [NSString stringWithFormat: descriptionFormat, displayName, nil];
+	NSString *description = [NSString stringWithFormat: descriptionFormat, displayName];
 	
 	NSMutableDictionary *defaultInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
 										description,	NSLocalizedDescriptionKey,

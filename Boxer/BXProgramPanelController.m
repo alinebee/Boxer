@@ -234,7 +234,7 @@
         );
         
         NSString *displayName = [[NSValueTransformer valueTransformerForName: @"BXDOSFilename"] transformedValue: programPath];
-        return [NSString stringWithFormat: format, displayName, nil];
+        return [NSString stringWithFormat: format, displayName];
     }
     else return nil;
 }
@@ -250,7 +250,7 @@
         );
         
         NSString *displayName = [[NSValueTransformer valueTransformerForName: @"BXDOSFilename"] transformedValue: programPath];
-        return [NSString stringWithFormat: format, displayName, nil];
+        return [NSString stringWithFormat: format, displayName];
     }
     else return nil;
 }

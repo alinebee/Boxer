@@ -230,13 +230,13 @@ NSString * const BXDriveBundleErrorDomain = @"BXDriveBundleErrorDomain";
 	NSString *descriptionFormat = NSLocalizedString(@"The image “%1$@” could not be imported because Boxer was unable to determine its source files.",
 													@"Error shown when drive bundle importing fails because the CUE file could not be parsed. %1$@ is the display title of the drive.");
 	
-	NSString *description	= [NSString stringWithFormat: descriptionFormat, displayName, nil];
+	NSString *description	= [NSString stringWithFormat: descriptionFormat, displayName];
 	NSString *suggestion	= NSLocalizedString(@"This image may be in a format that Boxer does not support.", @"Explanatory message shown when drive bundle importing fails because the CUE file could not be parsed.");
 	
 	NSDictionary *userInfo	= [NSDictionary dictionaryWithObjectsAndKeys:
 							   description,		NSLocalizedDescriptionKey,
 							   suggestion,		NSLocalizedRecoverySuggestionErrorKey,
-							   [drive path],	NSFilePathErrorKey,
+							   drive.path,      NSFilePathErrorKey,
 							   nil];
 	
 	return [NSError errorWithDomain: BXDriveBundleErrorDomain

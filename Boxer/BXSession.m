@@ -646,7 +646,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
         
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        NSString *defaultsKey = [NSString stringWithFormat: BXGameboxSettingsKeyFormat, self.gamePackage.gameIdentifier, nil];
+        NSString *defaultsKey = [NSString stringWithFormat: BXGameboxSettingsKeyFormat, self.gamePackage.gameIdentifier];
         [defaults setObject: self.gameSettings forKey: defaultsKey];
 	}
 }

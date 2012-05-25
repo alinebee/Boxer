@@ -119,7 +119,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 								  isAuto: (BOOL)isAutoSpeed
 {
 	if (isAutoSpeed) return @"max";
-	else return [NSString stringWithFormat: @"fixed %i", speed, nil]; 
+	else return [NSString stringWithFormat: @"fixed %i", speed]; 
 }
 
 + (NSString *) configStringForCoreMode: (BXCoreMode)mode
@@ -657,7 +657,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 			NSString *descriptionFormat = NSLocalizedString(@"“%@” is not a valid joystick type.",
 															@"Format for error message when choosing an unrecognised joystick type. %@ is the classname of the chosen joystick type.");
 			
-			NSString *description = [NSString stringWithFormat: descriptionFormat, NSStringFromClass(joystickClass), nil];
+			NSString *description = [NSString stringWithFormat: descriptionFormat, NSStringFromClass(joystickClass)];
 			
 			NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
 									  description, NSLocalizedDescriptionKey,
@@ -682,7 +682,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 			NSString *descriptionFormat = NSLocalizedString(@"Joysticks of type “%1$@” are not supported by the current session.",
 															@"Format for error message when choosing an unsupported joystick type. %1$@ is the localized name of the chosen joystick type.");
 			
-			NSString *description = [NSString stringWithFormat: descriptionFormat, localizedName, nil];
+			NSString *description = [NSString stringWithFormat: descriptionFormat, localizedName];
 			
 			NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
 									  description, NSLocalizedDescriptionKey,

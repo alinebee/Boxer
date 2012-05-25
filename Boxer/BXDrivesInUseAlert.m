@@ -36,7 +36,7 @@
 				@"The selected drives are in use by %@. Are you sure you want to remove them?",
 				@"Title for confirmation sheet when unmounting multiple drives that are in use. %@ is the display-ready name of the current DOS process.");
 			
-			[self setMessageText: [NSString stringWithFormat: messageFormat, processName, nil]];
+			[self setMessageText: [NSString stringWithFormat: messageFormat, processName]];
 		}
 		else
 		{
@@ -44,7 +44,7 @@
 			NSString *messageFormat = NSLocalizedString(
 				@"Drive %1$@: is in use by %2$@. Are you sure you want to remove it?",
 				@"Title for confirmation sheet when unmounting a single drive that is in use. %1$@ is the uppercase letter of the drive, %@ is the display-ready name of the current DOS process.");
-			[self setMessageText: [NSString stringWithFormat: messageFormat, [drive letter], processName, nil]];
+			[self setMessageText: [NSString stringWithFormat: messageFormat, drive.letter, processName]];
 		}
 
 		[self setInformativeText: NSLocalizedString(

@@ -702,12 +702,12 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
     [[NSWorkspace sharedWorkspace] openFile: prefsPanePath];
 }
 
-- (IBAction) sendEmail:				(id)sender
+- (IBAction) sendEmail: (id)sender
 {
 	NSString *subject		= @"Boxer feedback";
 	NSString *versionName	= [[self class] localizedVersion];
 	NSString *buildNumber	= [[self class] buildNumber];
-	NSString *fullSubject	= [NSString stringWithFormat: @"%@ (v%@ %@)", subject, versionName, buildNumber, nil];
+	NSString *fullSubject	= [NSString stringWithFormat: @"%@ (v%@ %@)", subject, versionName, buildNumber];
 	[self sendEmailFromKey: @"ContactEmail" withSubject: fullSubject];
 }
 
@@ -755,7 +755,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 {
 	NSString *encodedSearch = [search stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
 	NSString *siteString	= [[NSBundle mainBundle] objectForInfoDictionaryKey: infoKey];
-	NSString *URLString		= [NSString stringWithFormat: siteString, encodedSearch, nil];
+	NSString *URLString		= [NSString stringWithFormat: siteString, encodedSearch];
 	if ([URLString length]) [[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString: URLString]];
 }
 

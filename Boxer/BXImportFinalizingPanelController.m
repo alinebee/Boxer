@@ -83,7 +83,7 @@
     //(We can't just bake these into cancelButtonLabelForImportType: as that
     //is also used for the confirmation sheet, which does take effect immediately.)
     NSString *cancelButtonFormat = NSLocalizedString(@"%@…", @"Format for the label of the initial cancel button when finalizing import, which should indicate that the action will not take effect immediately. %@ is the original button label.");
-    label = [NSString stringWithFormat: cancelButtonFormat, label, nil];
+    label = [NSString stringWithFormat: cancelButtonFormat, label];
     return label;
 }
 
@@ -180,7 +180,7 @@
 			NSString *format = NSLocalizedString(@"%1$@ (%2$.01f MB of %3$.01f MB)",
 												 @"Import progress description for importing source files stage. %1 is the basic description of the stage as a string (followed by ellipses), %2is the number of MB transferred so far as a float, %3 is the total number of MB to be transferred as a float.");
 			
-			return [NSString stringWithFormat: format, stageDescription, transferredMB, sizeInMB, nil];
+			return [NSString stringWithFormat: format, stageDescription, transferredMB, sizeInMB];
 		}
 		else return stageDescription;
 	}

@@ -410,7 +410,7 @@ NSString * const MT32PCMROMFilenamePattern = @"pcm";
                 explanation = @"";
             }
             NSString *displayName = [manager displayNameAtPath: path];
-            title = [NSString stringWithFormat: titleFormat, displayName, nil];
+            title = [NSString stringWithFormat: titleFormat, displayName];
         }
         //Multiple files were chosen, from which we couldn't find any suitable ROMs.
         else

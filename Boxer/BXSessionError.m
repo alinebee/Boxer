@@ -37,7 +37,7 @@ NSString * const BXSessionErrorDomain = @"BXSessionErrorDomain";
     
     NSString *suggestion = NSLocalizedString(@"Instead, choose one of your own folders, or a disc mounted in OS X.", @"Recovery suggestion shown when user tries to mount a system folder as a DOS drive.");
     
-    NSString *description = [NSString stringWithFormat: descriptionFormat, [self displayNameForPath: folderPath], nil];
+    NSString *description = [NSString stringWithFormat: descriptionFormat, [self displayNameForPath: folderPath]];
     NSMutableDictionary *defaultInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                                         description,    NSLocalizedDescriptionKey,
                                         suggestion,     NSLocalizedRecoverySuggestionErrorKey,
@@ -63,7 +63,7 @@ NSString * const BXSessionErrorDomain = @"BXSessionErrorDomain";
 	NSString *suggestion = NSLocalizedString(@"This folder may contain a game for another platform which is not supported by Boxer.",
 											 @"Explanation text shown when importing a folder with no executables in it.");
 	
-	NSString *description = [NSString stringWithFormat: descriptionFormat, [self displayNameForPath: sourcePath], nil];
+	NSString *description = [NSString stringWithFormat: descriptionFormat, [self displayNameForPath: sourcePath]];
 	
 	
 	NSMutableDictionary *defaultInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
@@ -96,7 +96,7 @@ NSString * const BXSessionErrorDomain = @"BXSessionErrorDomain";
 		@"Informative text of warning sheet after importing a Windows-only game."
 	);
 	
-	NSString *description = [NSString stringWithFormat: descriptionFormat, [self displayNameForPath: sourcePath], nil];
+	NSString *description = [NSString stringWithFormat: descriptionFormat, [self displayNameForPath: sourcePath]];
 	
 	NSMutableDictionary *defaultInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
 										description,	NSLocalizedDescriptionKey,
@@ -128,7 +128,7 @@ NSString * const BXSessionErrorDomain = @"BXSessionErrorDomain";
 	NSString *suggestion = NSLocalizedString(@"You could insert the disc into a Windows PC instead, and copy the DOS version of the game from there to your Mac.",
                                              @"Informative text of warning sheet when importing a hybrid Mac/PC CD.");
 	
-	NSString *description = [NSString stringWithFormat: descriptionFormat, [self displayNameForPath: sourcePath], nil];
+	NSString *description = [NSString stringWithFormat: descriptionFormat, [self displayNameForPath: sourcePath]];
 	
 	NSMutableDictionary *defaultInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
 										description,	NSLocalizedDescriptionKey,
@@ -159,7 +159,7 @@ NSString * const BXSessionErrorDomain = @"BXSessionErrorDomain";
 	NSString *suggestion = NSLocalizedString(@"If you cannot start up the game in OS X, you may be able to play it in a Classic Mac OS emulator instead. Click the help button for details.",
                                              @"Informative text of warning sheet after importing a Mac application.");
 	
-	NSString *description = [NSString stringWithFormat: descriptionFormat, [self displayNameForPath: sourcePath], nil];
+	NSString *description = [NSString stringWithFormat: descriptionFormat, [self displayNameForPath: sourcePath]];
 	
 	NSMutableDictionary *defaultInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
 										description,	NSLocalizedDescriptionKey,

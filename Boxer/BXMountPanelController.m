@@ -82,7 +82,7 @@
 	for (NSString *letter in driveLetters)
 	{
     	NSMenuItem *option	= [[[NSMenuItem alloc] init] autorelease];
-		NSString *title		= [NSString stringWithFormat: @"%@:", letter, nil];
+		NSString *title		= [NSString stringWithFormat: @"%@:", letter];
 		BXDrive *drive      = [theEmulator driveAtLetter: letter];
 		
         //Mark already-occupied drive letters with the title of the drive occupying that letter.
@@ -165,8 +165,8 @@
 			@"Auto (%@)",
 			@"Title format for automatic drive type/letter option. Shown in popup buttons on mount-a-new-drive sheet. %@ is the title of the real option whose value will be used if auto is chosen."
 												);		
-		autoTypeOption.title    = [NSString stringWithFormat: autoLabel, preferredTypeOption.title, nil];
-		autoLetterOption.title  = [NSString stringWithFormat: autoLabel, preferredLetterOption.title, nil];
+		autoTypeOption.title    = [NSString stringWithFormat: autoLabel, preferredTypeOption.title];
+		autoLetterOption.title  = [NSString stringWithFormat: autoLabel, preferredLetterOption.title];
 
 		self.driveLetter.enabled = YES;
 

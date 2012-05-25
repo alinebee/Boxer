@@ -139,13 +139,23 @@ enum {
 	
     openPanel.canChooseFiles = YES;
     openPanel.canChooseDirectories = NO;
-    openPanel.treatsFilePackagesAsDirectories = NO;
+    openPanel.treatsFilePackagesAsDirectories = YES;
     
     openPanel.message = NSLocalizedString(@"Choose the target program for this gamebox:",
                                           @"Help text shown at the top of choose-a-target-program panel.");
 	
+    
+    //Start the panel with the current target selected.
+    //If we don't have one, then start it up in the folder of the main drive (usually drive C.)
+    //If we don't have one of *those*, then start it up in the root folder of the gamebox.
+    NSString *initialPath = self.session.gamePackage.targetPath;
+    if (!initialPath)
+        initialPath = self.session.principalDrive.path;
+    if (!initialPath)
+        initialPath = self.session.gamePackage.gamePath;
+    
     openPanel.delegate = self;
-	[openPanel beginSheetForDirectory: self.session.gamePackage.gamePath
+	[openPanel beginSheetForDirectory: initialPath
 								 file: nil
 								types: [BXFileTypes executableTypes].allObjects
 					   modalForWindow: self.view.window
@@ -158,11 +168,11 @@ enum {
 {
 	BXSession *session = self.session;
     
-	//Disable files that are outside the gamebox or that aren't accessible in DOS
+	//Disable files that are outside the gamebox or that aren't accessible in DOS.
 	if (![filename isRootedInPath: session.gamePackage.gamePath]) return NO;
     
-    //Note: we could test if the file actually exists in DOS, but that's kinda expensive.
 	if (![session.emulator pathIsDOSAccessible: filename]) return NO;
+    
 	return YES;
 }
 
@@ -202,8 +212,10 @@ enum {
 {
 	NSMenu *menu = self.programSelector.menu;
 	NSString *targetPath = self.session.gamePackage.targetPath;
-	NSUInteger pathIndex = (targetPath == nil) ? 0 : [menu indexOfItemWithRepresentedObject: targetPath];
-	[self.programSelector selectItemAtIndex: pathIndex];
+	NSInteger pathIndex = (targetPath != nil) ? [menu indexOfItemWithRepresentedObject: targetPath] : 0;
+    
+    if (pathIndex != -1)
+        [self.programSelector selectItemAtIndex: pathIndex];
 }
 
 
@@ -213,10 +225,12 @@ enum {
 - (NSArray *) _programMenuItems
 {	
 	NSDictionary *allPrograms	= self.session.executables;
+    NSString *currentTarget     = self.session.gamePackage.targetPath;
 	NSMutableArray *items		= [NSMutableArray arrayWithCapacity: allPrograms.count];
 	
 	NSArray *driveLetters = [allPrograms.allKeys sortedArrayUsingSelector: @selector(compare:)];
 	
+    BOOL hasItemForTarget = NO;
 	if (driveLetters.count)
 	{
 		BXEmulator *emulator = self.session.emulator;
@@ -241,6 +255,9 @@ enum {
                     {
                         NSMenuItem *item = [self _programMenuItemForPath: path onDrive: drive];
                         [items addObject: item];
+                        
+                        if (!hasItemForTarget && [path isEqualToString: currentTarget])
+                            hasItemForTarget = YES;
                     }
                     
                     //Add a separator after each new drive
@@ -249,6 +266,13 @@ enum {
             }
 			[pool release];
 		}
+        
+        if (!hasItemForTarget)
+        {
+            BXDrive *driveForTarget = [self.session queuedDriveForPath: currentTarget];
+            NSMenuItem *item = [self _programMenuItemForPath: currentTarget onDrive: driveForTarget];
+            [items addObject: item];
+        }
 	}
 	
 	return items;

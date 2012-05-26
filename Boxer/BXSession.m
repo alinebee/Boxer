@@ -7,6 +7,7 @@
 
 #import "BXSessionPrivate.h"
 
+#import "BXFileTypes.h"
 #import "BXPackage.h"
 #import "BXGameProfile.h"
 #import "BXBootlegCoverArt.h"
@@ -16,6 +17,7 @@
 #import "BXDOSWindow.h"
 #import "BXEmulatorConfiguration.h"
 #import "BXCloseAlert.h"
+#import "NDAlias.h"
 
 #import "BXEmulator+BXDOSFileSystem.h"
 #import "BXEmulator+BXShell.h"
@@ -31,15 +33,6 @@
 
 #pragma mark -
 #pragma mark Constants
-
-//How we will store our gamebox-specific settings in user defaults.
-//%@ is the unique identifier for the gamebox.
-NSString * const BXGameboxSettingsKeyFormat     = @"BXGameSettings: %@";
-NSString * const BXGameboxSettingsNameKey       = @"BXGameName";
-NSString * const BXGameboxSettingsProfileKey    = @"BXGameProfile";
-NSString * const BXGameboxSettingsProfileVersionKey = @"BXGameProfileVersion";
-
-NSString * const BXGameboxSettingsDrivesKey     = @"BXQueudDrives";
 
 
 //The length of time in seconds after which we assume that if the program was
@@ -63,6 +56,20 @@ NSString * const BXGameboxSettingsDrivesKey     = @"BXQueudDrives";
 //How soon after returning to the DOS prompt to display the program panel.
 //The delay gives the window time to resize or return from fullscreen mode.
 #define BXShowProgramPanelDelay 0.25
+
+
+#pragma mark -
+#pragma mark Gamebox settings keys
+
+//How we will store our gamebox-specific settings in user defaults.
+//%@ is the unique identifier for the gamebox.
+NSString * const BXGameboxSettingsKeyFormat     = @"BXGameSettings: %@";
+NSString * const BXGameboxSettingsNameKey       = @"BXGameName";
+NSString * const BXGameboxSettingsProfileKey    = @"BXGameProfile";
+NSString * const BXGameboxSettingsProfileVersionKey = @"BXGameProfileVersion";
+NSString * const BXGameboxSettingsLastLocationKey = @"BXGameLastLocation";
+
+NSString * const BXGameboxSettingsDrivesKey     = @"BXQueudDrives";
 
 
 #pragma mark -
@@ -151,7 +158,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		case BX525DisketteMedium:	coverArtClass = [BX525Diskette class];	break;
 		default:                    coverArtClass = [BX35Diskette class];	break;
 	}
-	NSString *iconTitle = [package gameName];
+	NSString *iconTitle = package.gameName;
 	NSImage *icon = [coverArtClass coverArtWithTitle: iconTitle];
 	return icon;
 }
@@ -245,14 +252,15 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 			   error: (NSError **)outError
 {
 	NSWorkspace *workspace	= [NSWorkspace sharedWorkspace];
-	NSString *filePath		= [absoluteURL path];
+	NSString *filePath		= absoluteURL.path;
 	
 	//Set our target launch path to point to this file, if we don't have a target already
-	if (![self targetPath]) [self setTargetPath: filePath];
-	
+	if (!self.targetPath)
+        self.targetPath = filePath;
+    
 	//Check if the chosen file is located inside a gamebox
-	NSString *packagePath	= [workspace parentOfFile: filePath
-										matchingTypes: [NSSet setWithObject: @"net.washboardabs.boxer-game-package"]];
+	NSString *packagePath = [workspace parentOfFile: filePath
+                                      matchingTypes: [NSSet setWithObject: BXGameboxType]];
 	
 	//If the fileURL is located inside a gamebox, load the gamebox and use the gamebox itself as the fileURL.
 	//This way, the DOS window will show the gamebox as the represented file, and our Recent Documents
@@ -260,20 +268,20 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	if (packagePath)
 	{
 		BXPackage *package = [[BXPackage alloc] initWithPath: packagePath];
-		[self setGamePackage: package];
+        self.gamePackage = package;
 		
 		//If we opened the package directly, check if it has a target of its own;
 		//if so, use that as our target path instead.
 		if ([[self targetPath] isEqualToString: packagePath])
 		{
-			NSString *packageTarget = [package targetPath];
-			if (packageTarget) [self setTargetPath: packageTarget];
-		}
+			NSString *packageTarget = package.targetPath;
+			if (packageTarget) self.targetPath = packageTarget;
+        }
 		[package release];
 		
 		//FIXME: move the fileURL reset out of here and into a later step: we can't rely on the order
 		//in which NSDocument's setFileURL/readFromURL methods are called.
-		[self setFileURL: [NSURL fileURLWithPath: packagePath]];
+		self.fileURL = [NSURL fileURLWithPath: packagePath];
 	}
     
 	return YES;
@@ -397,14 +405,14 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (NSString *) activeProgramPath
 {
-    if ([self lastExecutedProgramPath]) return [self lastExecutedProgramPath];
-    else return [self lastLaunchedProgramPath];
+    if (self.lastExecutedProgramPath) return self.lastExecutedProgramPath;
+    else return self.lastLaunchedProgramPath;
 }
 
 - (NSString *) currentPath
 {
-	if ([self activeProgramPath]) return [self activeProgramPath];
-	else return [[self emulator] pathOfCurrentDirectory];
+	if (self.activeProgramPath) return self.activeProgramPath;
+	else return self.emulator.pathOfCurrentDirectory;
 }
 
 #pragma mark -
@@ -501,7 +509,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 //in the first place. This otherwise should have no effect and should not show up in the UI.
 - (BOOL) isDocumentEdited
 {
-    return [[self emulator] isRunningProcess] || [self isImportingDrives];
+    return self.emulator.isRunningProcess || self.isImportingDrives;
 }
 
 //Overridden to display our own custom confirmation alert instead of the standard NSDocument one.
@@ -626,6 +634,12 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         //to identify to which gamebox the record belongs.
         [self.gameSettings setObject: self.gamePackage.gameName forKey: BXGameboxSettingsNameKey];
         
+        //While we're here, update the game settings to reflect the current location of the gamebox.
+        NDAlias *packageLocation = [NDAlias aliasWithPath: self.gamePackage.bundlePath];
+        if (packageLocation)
+            [self.gameSettings setObject: packageLocation.data
+                                  forKey: BXGameboxSettingsLastLocationKey];
+        
         //Record the state of the drive queues for next time we launch this gamebox.
         if ([self _shouldPersistQueuedDrives])
         {
@@ -657,9 +671,9 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (NSString *) displayName
 {
-	if ([self isGamePackage])	return [[self gamePackage] gameName];
-	else if ([self fileURL])	return [super displayName];
-	else						return [self processDisplayName];
+	if (self.isGamePackage) return self.gamePackage.gameName;
+	else if (self.fileURL)	return [super displayName];
+	else					return self.processDisplayName;
 }
 
 - (NSString *) processDisplayName
@@ -803,7 +817,8 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	[self.DOSWindowController updateWithFrame: nil];
 	
 	//Close the document once we're done, if desired
-	if ([self _shouldCloseOnEmulatorExit]) [self close];
+	if ([self _shouldCloseOnEmulatorExit])
+        [self close];
 }
 
 - (NSArray *) configurationPathsForEmulator: (BXEmulator *)emulator
@@ -816,19 +831,20 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
                                                 ofType: @"conf"
                                            inDirectory: @"Configurations"]];
 
-	//If we don't have a manually-defined game-profile already,
+	//If we don't have a previously-determined game profile already,
     //detect the game profile from our target path and set it now.
-	if ([self targetPath] && ![self gameProfile])
+	if (self.targetPath && !self.gameProfile)
 	{
-		BXGameProfile *profile = [[self class] profileForPath: [self targetPath]];
+		BXGameProfile *profile = [self.class profileForPath: self.targetPath];
         
-        //If no specific game can be found, then store it explicitly as an unknown game.
+        //If no specific game can be found, then record the profile explicitly as an unknown game
+        //rather than leaving it blank. This stops us trying to redetect it again next time.
         if (!profile) profile = [BXGameProfile genericProfile];
-		[self setGameProfile: profile];
+        self.gameProfile = profile;
 	}
 	
 	//Load the appropriate configuration files from our game profile.
-    for (NSString *confName in [[self gameProfile] configurations])
+    for (NSString *confName in self.gameProfile.configurations)
     {
         NSString *profileConf = [appBundle pathForResource: confName
                                                     ofType: @"conf"
@@ -839,8 +855,9 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     }
 	
 	//Next, load the gamebox's own configuration file if it has one.
-    NSString *packageConf = [[self gamePackage] configurationFile];
-    if (packageConf) [configPaths addObject: packageConf];
+    NSString *packageConf = self.gamePackage.configurationFile;
+    if (packageConf)
+        [configPaths addObject: packageConf];
     
 	
     //Last but not least, load Boxer's launch configuration.
@@ -861,7 +878,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
         
         //If we'll be starting up with a target program, clear the screen
         //at the start of the autoexec sequence.
-        if (!_userSkippedDefaultProgram && self.targetPath && [[self class] isExecutable: self.targetPath])
+        if (!_userSkippedDefaultProgram && self.targetPath && [self.class isExecutable: self.targetPath])
         {
             [theEmulator clearScreen];
         }
@@ -995,29 +1012,33 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	if (programRunningTime < BXWindowsOnlyProgramFailTimeThreshold)
 	{
         NSString *programPath = [notification.userInfo objectForKey: @"localPath"];
-        BXExecutableType programType = [[NSWorkspace sharedWorkspace] executableTypeAtPath: programPath error: NULL];
-        
-        //If this was a windows-only program, explain further to the user why Boxer cannot run it.
-        if (programType == BXExecutableTypeWindows)
+        if (programPath.length)
         {
-            //If the user launched this program directly from Finder, then show
-            //a proper alert to the user and offer to close the DOS session.
-            if ([programPath isEqualToString: self.targetPath])
+            BXExecutableType programType = [[NSWorkspace sharedWorkspace] executableTypeAtPath: programPath
+                                                                                         error: NULL];
+            
+            //If this was a windows-only program, explain further to the user why Boxer cannot run it.
+            if (programType == BXExecutableTypeWindows)
             {
-                BXCloseAlert *alert = [BXCloseAlert closeAlertAfterWindowsOnlyProgramExited: programPath];
-                [alert beginSheetModalForWindow: self.windowForSheet
-                                  modalDelegate: self
-                                 didEndSelector: @selector(_windowsOnlyProgramCloseAlertDidEnd:returnCode:contextInfo:)
-                                    contextInfo: NULL];
-                
-            }
-            //Otherwise, just print out explanatory text at the DOS prompt.
-            else
-            {
-                NSString *warningFormat = NSLocalizedStringFromTable(@"Windows-only game warning", @"Shell", nil);
-                NSString *programName = programPath.lastPathComponent.uppercaseString;
-                NSString *warningText = [NSString stringWithFormat: warningFormat, programName];
-                [self.emulator displayString: warningText];
+                //If the user launched this program directly from Finder, then show
+                //a proper alert to the user and offer to close the DOS session.
+                if ([programPath isEqualToString: self.targetPath])
+                {
+                    BXCloseAlert *alert = [BXCloseAlert closeAlertAfterWindowsOnlyProgramExited: programPath];
+                    [alert beginSheetModalForWindow: self.windowForSheet
+                                      modalDelegate: self
+                                     didEndSelector: @selector(_windowsOnlyProgramCloseAlertDidEnd:returnCode:contextInfo:)
+                                        contextInfo: NULL];
+                    
+                }
+                //Otherwise, just print out explanatory text at the DOS prompt.
+                else
+                {
+                    NSString *warningFormat = NSLocalizedStringFromTable(@"Windows-only game warning", @"Shell", nil);
+                    NSString *programName = programPath.lastPathComponent.uppercaseString;
+                    NSString *warningText = [NSString stringWithFormat: warningFormat, programName];
+                    [self.emulator displayString: warningText];
+                }
             }
         }
 	}
@@ -1410,13 +1431,10 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 		
 		
 		//Add comment preambles to saved configuration
-		NSString *preamble = NSLocalizedStringFromTable(@"Configuration preamble", @"Configuration",
-                                                        @"Used by generated configuration files as a commented header at the top of the file.");
-        NSString *autoexecPreamble = NSLocalizedStringFromTable(@"Configuration preamble", @"Configuration",
-                                                                @"Used in generated configuration files as a commented header underneath the [autoexec] section.");
-        
-		[gameboxConf setPreamble: preamble];
-		[gameboxConf setStartupCommandsPreamble: autoexecPreamble];
+		gameboxConf.preamble = NSLocalizedStringFromTable(@"Configuration preamble", @"Configuration",
+                                                          @"Used by generated configuration files as a commented header at the top of the file.");
+        gameboxConf.startupCommandsPreamble = NSLocalizedStringFromTable(@"Configuration preamble", @"Configuration",
+                                                                         @"Used in generated configuration files as a commented header underneath the [autoexec] section.");
 		
 		
 		//Compare against the combined configuration we'll inherit from Boxer's base settings plus
@@ -1663,7 +1681,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (void) setSuppressesDisplaySleep: (BOOL)flag
 {
-    if (flag != [self suppressesDisplaySleep])
+    if (flag != self.suppressesDisplaySleep)
     {
         if (flag)
         {
@@ -1696,7 +1714,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 
 - (void) _syncSuppressesDisplaySleep
 {
-    [self setSuppressesDisplaySleep: [self _shouldSuppressDisplaySleep]];
+    self.suppressesDisplaySleep = [self _shouldSuppressDisplaySleep];
 }
 
 @end

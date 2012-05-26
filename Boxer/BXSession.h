@@ -46,6 +46,7 @@ extern NSString * const BXGameboxSettingsKeyFormat;
 extern NSString * const BXGameboxSettingsNameKey;
 extern NSString * const BXGameboxSettingsProfileKey;
 extern NSString * const BXGameboxSettingsProfileVersionKey;
+extern NSString * const BXGameboxSettingsLastLocationKey;
 
 extern NSString * const BXGameboxSettingsDrivesKey;
 

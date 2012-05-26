@@ -129,7 +129,7 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 
 - (NSSize) _shelfArtworkSize
 {
-	NSSize maxArtworkSize = [self _maxArtworkSize];
+	NSSize maxArtworkSize = self._maxArtworkSize;
 	
 	//10.5 is happy with the largest image we can make.
 	if (isRunningOnLeopard())
@@ -203,7 +203,7 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 		if (!folderCreated) return nil;
 		
 		//Now, generate new artwork appropriate for the current Finder version
-		NSSize artworkSize = [self _shelfArtworkSize];
+		NSSize artworkSize = self._shelfArtworkSize;
 		
 		
 		//If an appropriate size could not be determined, bail out
@@ -248,26 +248,26 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 - (NSString *) gamesFolderPath
 {
 	//Load the games folder path from our preferences alias the first time we need it
-	if (!gamesFolderPath)
+	if (!_gamesFolderPath)
 	{
 		NSData *aliasData = [[NSUserDefaults standardUserDefaults] dataForKey: @"gamesFolder"];
 		
 		if (aliasData)
 		{
 			NDAlias *alias = [NDAlias aliasWithData: aliasData];
-			gamesFolderPath = [[alias path] copy];
+			_gamesFolderPath = [alias.path copy];
 			
 			//If the alias was updated while resolving it because the target had moved,
 			//then re-save the new alias data
-			if ([alias changed])
+			if (alias.changed)
 			{
-				[[NSUserDefaults standardUserDefaults] setObject: [alias data] forKey: @"gamesFolder"];
+				[[NSUserDefaults standardUserDefaults] setObject: alias.data forKey: @"gamesFolder"];
 			}
 		}
 		else
 		{
 			//If no games folder has been set yet, look for one from Boxer 0.8x.
-			NSString *oldPath = [self oldGamesFolderPath];
+			NSString *oldPath = self.oldGamesFolderPath;
             BOOL foundOldPath = NO;
 			if (oldPath)
             {
@@ -279,12 +279,12 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
             {
                 NSFileManager *manager = [[NSFileManager alloc] init];
                 
-                for (NSString *path in [[self class] defaultGamesFolderPaths])
+                for (NSString *path in [self.class defaultGamesFolderPaths])
                 {
                     BOOL isDir;
                     if ([manager fileExistsAtPath: path isDirectory: &isDir] && isDir)
                     {
-                        [self setGamesFolderPath: path];
+                        self.gamesFolderPath = path;
                         break;
                     }
                 }
@@ -292,21 +292,21 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
             }
 		}
 	}
-	return gamesFolderPath;
+	return _gamesFolderPath;
 }
 
 - (void) setGamesFolderPath: (NSString *)newPath
 {
-	if (![gamesFolderPath isEqualToString: newPath])
+	if (![_gamesFolderPath isEqualToString: newPath])
 	{
-		[gamesFolderPath release];
-		gamesFolderPath = [newPath copy];
+		[_gamesFolderPath release];
+		_gamesFolderPath = [newPath copy];
 		
 		if (newPath)
 		{
 			//Store the new path in the preferences as an alias, so that users can move it around.
 			NDAlias *alias = [NDAlias aliasWithPath: newPath];
-			[[NSUserDefaults standardUserDefaults] setObject: [alias data] forKey: @"gamesFolder"];
+			[[NSUserDefaults standardUserDefaults] setObject: alias.data forKey: @"gamesFolder"];
 		}
 	}
 }
@@ -314,7 +314,7 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 + (BOOL) _isReservedPath: (NSString *)path
 {
 	//Reject reserved paths
-	if ([[[self class] reservedPaths] containsObject: path]) return YES;
+	if ([[self.class reservedPaths] containsObject: path]) return YES;
 	
 	//Reject paths located inside system library folders (though we allow them within the user's own Library folder)
 	NSArray *libraryPaths = NSSearchPathForDirectoriesInDomains(NSAllLibrariesDirectory, NSLocalDomainMask | NSSystemDomainMask, YES);
@@ -336,10 +336,10 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 	//Accept nil paths, since these will clear the preference
 	if (!path) return YES;
 	
-	path = [path stringByStandardizingPath];
+	path = path.stringByStandardizingPath;
 	
 	NSFileManager *manager = [NSFileManager defaultManager];
-	if ([[self class] _isReservedPath: path])
+	if ([self.class _isReservedPath: path])
 	{
 		if (outError)
 		{
@@ -354,7 +354,7 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 			);
 			
 			NSString *displayName			= [manager displayNameAtPath: path];
-			if (!displayName) displayName	= [path lastPathComponent];
+			if (!displayName) displayName	= path.lastPathComponent;
 			
 			NSString *description = [NSString stringWithFormat: descriptionFormat, displayName];
 					
@@ -383,7 +383,7 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 													  @"Explanatory text shown when chosen games folder was read-only.");
 			
 			NSString *displayName			= [manager displayNameAtPath: path];
-			if (!displayName) displayName	= [path lastPathComponent];
+			if (!displayName) displayName	= path.lastPathComponent;
 			
 			NSString *description = [NSString stringWithFormat: descriptionFormat, displayName];
 			
@@ -467,7 +467,7 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 	if (addSampleGames)
         [self addSampleGamesToPath: path];
 	
-	[self setGamesFolderPath: path];
+    self.gamesFolderPath = path;
     return YES;
 }
 
@@ -482,7 +482,7 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 		NSString *backgroundPath = [path stringByAppendingPathComponent: @".background"];
 		if ([manager fileExistsAtPath: backgroundPath])
 		{
-			[self setAppliesShelfAppearanceToGamesFolder: YES];
+            self.appliesShelfAppearanceToGamesFolder = YES;
 			[self applyShelfAppearanceToPath: path andSubFolders: YES switchToShelfMode: NO];
 		}
 		
@@ -511,7 +511,7 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 - (NSImage *) gamesFolderIcon
 {
 	NSImage *icon = nil;
-	NSString *path = [self gamesFolderPath];
+	NSString *path = self.gamesFolderPath;
 	if (path) icon = [[NSWorkspace sharedWorkspace] iconForFile: path];
 	//If no games folder has been set, or the path couldn't be found, then fall back on our default icon
 	if (!icon) icon = [NSImage imageNamed: @"gamefolder"];
@@ -527,7 +527,7 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 	
 	//Resolve the previous games folder location from that alias
 	NDAlias *alias = [NDAlias aliasWithContentsOfFile: oldAliasPath];
-	return [alias path];
+	return alias.path;
 }
 
 - (NSString *) fallbackGamesFolderPath
@@ -540,7 +540,7 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 				  switchToShelfMode: (BOOL)switchMode
 {	
 	//NOTE: if no shelf artwork could be found or generated, then bail out early
-	NSString *backgroundImagePath = [self shelfArtworkPath];
+	NSString *backgroundImagePath = self.shelfArtworkPath;
 	if (backgroundImagePath == nil) return;
 	
 	NSImage *folderIcon = [NSImage imageNamed: @"gamefolder"];
@@ -549,16 +549,17 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 																				  backgroundImagePath: backgroundImagePath
 																								 icon: folderIcon];
 	
-	[applicator setAppliesToSubFolders: applyToSubFolders];
-	[applicator setSwitchToIconView: switchMode];
+    applicator.appliesToSubFolders = applyToSubFolders;
+    applicator.switchToIconView = switchMode;
 	
-	for (id operation in [[self generalQueue] operations])
+	for (id operation in self.generalQueue.operations)
 	{
 		//Check for other operations that are currently being performed on this path
 		if ([operation respondsToSelector: @selector(targetPath)] && [[operation targetPath] isEqualToString: path])
 		{
 			//Cancel any currently-active shelf-appearance application or removal being applied to this path
-			if ([operation isKindOfClass: [BXShelfAppearanceOperation class]]) [operation cancel];
+			if ([operation isKindOfClass: [BXShelfAppearanceOperation class]])
+                [operation cancel];
 			
 			//For other types of operations, mark them as a dependency to avoid performing
 			//many simultaneous file operations on the same location.
@@ -568,7 +569,7 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 		}
 	}
 	
-	[[self generalQueue] addOperation: applicator];
+	[self.generalQueue addOperation: applicator];
 	[applicator release];
 }
 
@@ -583,13 +584,14 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 	
 	[remover setAppliesToSubFolders: applyToSubFolders];
 	
-	for (id operation in [[self generalQueue] operations])
+	for (id operation in self.generalQueue.operations)
 	{
 		//Check for other operations that are currently being performed on this path
 		if ([operation respondsToSelector: @selector(targetPath)] && [[operation targetPath] isEqualToString: path])
 		{
 			//Cancel any currently-active shelf-appearance application or removal being applied to this path
-			if ([operation isKindOfClass: [BXShelfAppearanceOperation class]]) [operation cancel];
+			if ([operation isKindOfClass: [BXShelfAppearanceOperation class]])
+                [operation cancel];
 			
 			//For other types of operations, mark them as a dependency to avoid performing
 			//many simultaneous file operations on the same location.
@@ -599,7 +601,7 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 		}
 	}
 	
-	[[self generalQueue] addOperation: remover];
+	[self.generalQueue addOperation: remover];
 	[remover release];	
 }
 
@@ -620,7 +622,7 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 	BXSampleGamesCopy *copyOperation = [[BXSampleGamesCopy alloc] initFromPath: sourcePath
 																		toPath: path];
 	
-	for (id operation in [[self generalQueue] operations])
+	for (id operation in self.generalQueue.operations)
 	{
 		//Check for other operations that are currently being performed on this path
 		if ([operation respondsToSelector: @selector(targetPath)] && [[operation targetPath] isEqualToString: path])
@@ -642,7 +644,7 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 		}
 	}
 	
-	[[self generalQueue] addOperation: copyOperation];
+	[self.generalQueue addOperation: copyOperation];
 	[copyOperation release];
 }
 
@@ -684,7 +686,7 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
     if (returnCode == NSAlertFirstButtonReturn)
 	{
         //Hide the alert sheet now so that we can show a different sheet in the same window
-        [[alert window] orderOut: self];
+        [alert.window orderOut: self];
             
         [[BXGamesFolderPanelController controller] showGamesFolderPanelForWindow: window];
 	}
@@ -692,7 +694,7 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 
 - (IBAction) revealGamesFolder: (id)sender
 {
-	NSString *path = [self gamesFolderPath];
+	NSString *path = self.gamesFolderPath;
 	BOOL revealed = NO;
 	
 	if (path) revealed = [self revealPath: path];
@@ -707,12 +709,13 @@ NSString * const BXGamesFolderErrorDomain = @"BXGamesFolderErrorDomain";
 		}
 	}
 
-	else if (![self gamesFolderChosen] && [[NSUserDefaults standardUserDefaults] boolForKey: @"showFirstRunPanel"])
+	else if (!self.gamesFolderChosen && [[NSUserDefaults standardUserDefaults] boolForKey: @"showFirstRunPanel"])
 	{
 		//If the user hasn't chosen a games folder location yet, then show them
 		//the first-run panel to choose one, then reveal the new folder afterwards (if one was created).
 		[self orderFrontFirstRunPanel: self];
-		if ([self gamesFolderPath]) [self revealGamesFolder: self];
+		if (self.gamesFolderPath)
+            [self revealGamesFolder: self];
 	}
 	else
 	{

@@ -153,10 +153,10 @@ NSString * const BXSessionErrorDomain = @"BXSessionErrorDomain";
 
 + (id) errorWithSourcePath: (NSString *)sourcePath userInfo: (NSDictionary *)userInfo
 {
-	NSString *descriptionFormat = NSLocalizedString(@"“%@” is a Mac OS game, which Boxer cannot emulate.",
+	NSString *descriptionFormat = NSLocalizedString(@"“%@” is a Mac OS game, which Boxer does not support.",
                                                     @"Error message shown when importing a folder that contains a Mac game. %@ is the display filename of the imported path.");
 	
-	NSString *suggestion = NSLocalizedString(@"If you cannot start up the game in OS X, you may be able to play it in a Classic Mac OS emulator instead. Click the help button for details.",
+	NSString *suggestion = NSLocalizedString(@"If you cannot start up this game in OS X, you may be able to play it in a Classic Mac OS emulator instead. Click the help button for details.",
                                              @"Informative text of warning sheet after importing a Mac application.");
 	
 	NSString *description = [NSString stringWithFormat: descriptionFormat, [self displayNameForPath: sourcePath]];

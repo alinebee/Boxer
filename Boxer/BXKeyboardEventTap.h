@@ -14,7 +14,9 @@
 {
     BXContinuousThread *_tapThread;
     CFMachPortRef _tap;
+    CFRunLoopSourceRef _source;
     BOOL _enabled;
+    BOOL _usesDedicatedThread;
     id <BXKeyboardEventTapDelegate> _delegate;
 }
 
@@ -26,13 +28,19 @@
 //Enabling this will have no effect if canTapEvents is NO.
 @property (assign, nonatomic, getter=isEnabled) BOOL enabled;
 
-//Whether we our tap is in place and listening for system hotkeys.
-@property (readonly, nonatomic) BOOL isTapping;
+//Whether our tap is in place and listening for system hotkeys.
+@property (readonly, getter=isTapping) BOOL tapping;
 
 //Will be YES if the accessibility API is available
 //(i.e. "Enable access for assistive devices" is turned on),
 //NO otherwise. If NO, then setEnabled will have no effect.
 @property (readonly, nonatomic) BOOL canTapEvents;
+
+//Whether the event tap will run on a separate thread or the main thread.
+//A separate thread prevents input lag in other apps when the main thread
+//is busy, but also seems to result in missed key events.
+//Changing this while a tap is in progress will stop and restart the tap.
+@property (assign, nonatomic) BOOL usesDedicatedThread;
 
 @end
 

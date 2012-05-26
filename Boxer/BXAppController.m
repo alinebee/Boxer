@@ -19,6 +19,7 @@
 #import "BXBezelController.h"
 
 #import "BXSession+BXFileManager.h"
+#import "BXPackage.h"
 #import "BXImportSession.h"
 #import "BXEmulator.h"
 #import "BXMIDIDeviceMonitor.h"
@@ -27,6 +28,7 @@
 #import "BXValueTransformers.h"
 #import "NSString+BXPaths.h"
 
+#import "BXFileTypes.h"
 #import "BXPostLeopardAPIs.h"
 #import "BXAppKitVersionHelpers.h"
 
@@ -40,6 +42,8 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 #define BXMasterVolumeIncrement (1.0f / BXMasterVolumeNumIncrements)
 
 @interface BXAppController ()
+
+@property (readwrite, retain) NSOperationQueue *generalQueue;
 
 //Because we can only run one emulation session at a time, we need to launch a second
 //Boxer process for opening additional/subsequent documents
@@ -59,7 +63,12 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 
 @implementation BXAppController
-@synthesize currentSession, generalQueue, joystickController, joypadController, MIDIDeviceMonitor, hotkeySuppressionTap;
+@synthesize currentSession = _currentSession;
+@synthesize generalQueue = _generalQueue;
+@synthesize joystickController = _joystickController;
+@synthesize joypadController = _joypadController;
+@synthesize MIDIDeviceMonitor = _MIDIDeviceMonitor;
+@synthesize hotkeySuppressionTap = _hotkeySuppressionTap;
 
 
 #pragma mark -
@@ -78,7 +87,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 + (BOOL) otherBoxersActive
 {
-	NSString *bundleIdentifier	= [[NSBundle mainBundle] bundleIdentifier];
+	NSString *bundleIdentifier	= [NSBundle mainBundle].bundleIdentifier;
 	NSWorkspace *workspace		= [NSWorkspace sharedWorkspace];
 	NSUInteger numBoxers = 0;
 	
@@ -107,12 +116,13 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
         
         BXIconifiedDisplayPathTransformer *pathTransformer = [[BXIconifiedDisplayPathTransformer alloc]
                                                               initWithJoiner: @" ▸ " maxComponents: 0];
-        [pathTransformer setMissingFileIcon: [NSImage imageNamed: @"gamefolder"]];
-        [pathTransformer setHideSystemRoots: YES];
+        pathTransformer.missingFileIcon = [NSImage imageNamed: @"gamefolder"];
+        pathTransformer.hideSystemRoots = YES;
         
         NSMutableParagraphStyle *pathStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-        [pathStyle setLineBreakMode: NSLineBreakByTruncatingMiddle];
-        [[pathTransformer textAttributes] setObject: pathStyle forKey: NSParagraphStyleAttributeName];
+        pathStyle.lineBreakMode = NSLineBreakByTruncatingMiddle;
+        [pathTransformer.textAttributes setObject: pathStyle
+                                           forKey: NSParagraphStyleAttributeName];
         [pathStyle release];
         
         [NSValueTransformer setValueTransformer: isEmpty forName: @"BXArrayIsEmpty"];
@@ -140,7 +150,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 {
 	if ((self = [super init]))
 	{
-		generalQueue = [[NSOperationQueue alloc] init];
+		self.generalQueue = [[[NSOperationQueue alloc] init] autorelease];
 		[self addApplicationModeObservers];
 	}
 	return self;
@@ -151,14 +161,13 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	//Remove any notification observers we've registered
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
 	
-	[self setCurrentSession: nil], [currentSession release];
-	[self setGamesFolderPath: nil], [gamesFolderPath release];
-	[self setJoystickController: nil], [joystickController release];
-	[self setJoypadController: nil], [joypadController release];
-	[self setMIDIDeviceMonitor: nil], [MIDIDeviceMonitor release];
-	[self setHotkeySuppressionTap: nil], [hotkeySuppressionTap release];
-	
-	[generalQueue release], generalQueue = nil;
+    self.currentSession = nil;
+    self.gamesFolderPath = nil;
+    self.joystickController = nil;
+    self.joypadController = nil;
+    self.MIDIDeviceMonitor = nil;
+    self.hotkeySuppressionTap = nil;
+    self.generalQueue = nil;
 	
 	[super dealloc];
 }
@@ -172,7 +181,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 //to avoid leaving extra Boxers littering the Dock
 - (BOOL) applicationShouldTerminateAfterLastWindowClosed: (NSApplication *)sender
 {
-	return [[self class] otherBoxersActive];
+	return [self.class otherBoxersActive];
 }
 
 - (void) applicationWillFinishLaunching: (NSNotification *)notification
@@ -182,6 +191,8 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     
     self.hotkeySuppressionTap.delegate = self;
+    //Event-tap threading is a hidden preference, so don't bother binding it.
+    self.hotkeySuppressionTap.usesDedicatedThread = [defaults boolForKey: @"useMultithreadedEventTap"];
     [self.hotkeySuppressionTap bind: @"enabled"
                            toObject: defaults
                         withKeyPath: @"suppressSystemHotkeys"
@@ -194,9 +205,9 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
     
     //Check if we have any games folder, and if not (and we're allowed to create one automatically)
     //then create one now
-    if (![self gamesFolderPath] && ![self gamesFolderChosen] && ![[NSUserDefaults standardUserDefaults] boolForKey: @"showFirstRunPanel"])
+    if (!self.gamesFolderPath && !self.gamesFolderChosen && ![[NSUserDefaults standardUserDefaults] boolForKey: @"showFirstRunPanel"])
     {
-        NSString *defaultPath = [[self class] preferredGamesFolderPath];
+        NSString *defaultPath = [self.class preferredGamesFolderPath];
         [self assignGamesFolderPath: defaultPath
                     withSampleGames: YES
                     shelfAppearance: BXShelfAuto
@@ -208,7 +219,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (void) applicationDidFinishLaunching: (NSNotification *)notification
 {
     //Determine if we were passed any startup parameters we need to act upon
-	NSArray *arguments = [[NSProcessInfo processInfo] arguments];
+	NSArray *arguments = [NSProcessInfo processInfo].arguments;
 	
 	for (NSString *argument in arguments)
 	{
@@ -223,7 +234,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 		
 		else if ([argument hasPrefix: BXImportURLParam])
 		{
-			NSString *importPath = [argument substringFromIndex: [BXImportURLParam length]];
+			NSString *importPath = [argument substringFromIndex: BXImportURLParam.length];
 			[self openImportSessionWithContentsOfURL: [NSURL fileURLWithPath: importPath] display: YES error: nil];
 		}
 	}
@@ -243,7 +254,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 		
         //If the user has not chosen a games folder yet, then show them the first-run panel
         //(This is modal, so execution will not continue until the panel is dismissed.)
-		if (![self gamesFolderPath] && ![self gamesFolderChosen] && [[NSUserDefaults standardUserDefaults] boolForKey: @"showFirstRunPanel"])
+		if (!self.gamesFolderPath && !self.gamesFolderChosen && [[NSUserDefaults standardUserDefaults] boolForKey: @"showFirstRunPanel"])
 		{
             if (useFlipTransitions)
             {
@@ -296,26 +307,28 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 - (void) applicationWillTerminate: (NSNotification *)notification
 {
-	//Disable our hotkey suppression, just to be safe
-    [[self hotkeySuppressionTap] setEnabled: NO];
+	//Disable our hotkey suppression
+    [self.hotkeySuppressionTap unbind: @"enabled"];
+    self.hotkeySuppressionTap.enabled = NO;
     
-    //Tell any remaining documents to close on exit
-	//(NSDocumentController doesn't always do so by default)
-	for (id document in [NSArray arrayWithArray: [self documents]]) [document close];
+    //Tell the MIDI device scanner to stop
+    [self.MIDIDeviceMonitor cancel];
+    
+    //Tell any remaining documents to close on exit so they can clean up properly and save their state.
+	//(NSDocumentController doesn't always do this itself.)
+	for (id document in [NSArray arrayWithArray: self.documents])
+        [document close];
 	
 	//Save our preferences to disk before exiting
 	[[NSUserDefaults standardUserDefaults] synchronize];
     
-    //Tell the MIDI device scanner to cancel itself
-    [[self MIDIDeviceMonitor] cancel];
-	
 	//Tell any operations in our queue to cancel themselves,
     //and let them finish in case they're performing critical operations
-	[generalQueue cancelAllOperations];
-	[generalQueue waitUntilAllOperationsAreFinished];
+	[self.generalQueue cancelAllOperations];
+	[self.generalQueue waitUntilAllOperationsAreFinished];
 	
 	//If we are the last Boxer process, remove any temporary folder on our way out
-	if (![[self class] otherBoxersActive])
+	if (![self.class otherBoxersActive])
 	{
 		NSFileManager *manager = [NSFileManager defaultManager];
 		NSString *tempPath = [self temporaryPathCreatingIfMissing: NO];
@@ -330,9 +343,10 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (NSArray *) sessions
 {
 	NSMutableArray *sessions = [NSMutableArray arrayWithCapacity: 1];
-	for (id document in [self documents])
+	for (id document in self.documents)
 	{
-		if ([document isKindOfClass: [BXSession class]]) [sessions addObject: document];
+		if ([document isKindOfClass: [BXSession class]])
+            [sessions addObject: document];
 	}
 	return sessions;
 }
@@ -341,11 +355,12 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (NSInteger) runModalOpenPanel: (NSOpenPanel *)openPanel
 					   forTypes: (NSArray *)extensions
 {
-	[openPanel setAllowsMultipleSelection: NO];
-	[openPanel setCanChooseFiles: YES];
-	[openPanel setCanChooseDirectories: YES];
-	[openPanel setMessage: NSLocalizedString(@"Choose a gamebox, folder or DOS program to open in DOS.",
-											 @"Help text shown at the top of the open panel.")];
+    openPanel.allowsMultipleSelection = NO;
+    openPanel.canChooseFiles = YES;
+    openPanel.canChooseDirectories = YES;
+    
+    openPanel.message = NSLocalizedString(@"Choose a gamebox, folder or DOS program to open in DOS.",
+                                          @"Help text shown at the top of the open panel.");
 	
 	//Todo: add an accessory view and delegate to handle special-case requirements.
 	//(like installation, or choosing which drive to mount a folder as.) 
@@ -358,7 +373,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 							 display: (BOOL)displayDocument
 							   error: (NSError **)outError
 {
-	NSString *path = [absoluteURL path];
+	NSString *path = absoluteURL.path;
 	
 	//First go through our existing sessions, checking if any can open the specified URL.
 	//(This will be possible if the URL is accessible to a session's emulated filesystem,
@@ -368,13 +383,13 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	//If so, ask that session to launch the default program in that gamebox (if there is any)
 	//or else focus it.
 	NSString *type = [self typeForContentsOfURL: absoluteURL error: nil];
-	if ([type isEqualToString: @"net.washboardabs.boxer-game-package"])
+	if ([type isEqualToString: BXGameboxType])
 	{
-		for (BXSession *session in [self sessions])
+		for (BXSession *session in self.sessions)
 		{
-			if ([[[session gamePackage] bundlePath] isEqualToString: path])
+			if ([session.gamePackage.bundlePath isEqualToString: path])
 			{
-				NSString *defaultTarget = [[session gamePackage] targetPath];
+				NSString *defaultTarget = session.gamePackage.targetPath;
 				if (defaultTarget) [session openFileAtPath: defaultTarget];
 				
 				[session showWindows];
@@ -385,7 +400,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	//For other filetypes, just see if any of the sessions we have can open the file.
 	else
 	{
-		for (BXSession *session in [self sessions])
+		for (BXSession *session in self.sessions)
 		{
 			if ([session openFileAtPath: path])
 			{
@@ -541,10 +556,11 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	[super removeDocument: theDocument];
 	
 	//Clear the current session
-	if ([self currentSession] == theDocument) [self setCurrentSession: nil];
-	
+	if (self.currentSession == theDocument) self.currentSession = nil;
+    
 	//Hide the Inspector panel if there's no longer any sessions open
-	if (![self currentSession]) [[BXInspectorController controller] setPanelShown: NO];
+	if (!self.currentSession)
+        [BXInspectorController controller].panelShown = NO;
 }
 
 
@@ -555,7 +571,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (void) _launchProcessWithDocumentAtURL: (NSURL *)URL
 {	
 	NSString *executablePath	= [[NSBundle mainBundle] executablePath];
-	NSArray *params				= [NSArray arrayWithObjects: [URL path], BXActivateOnLaunchParam, nil]; 
+	NSArray *params				= [NSArray arrayWithObjects: URL.path, BXActivateOnLaunchParam, nil]; 
 	[NSTask launchedTaskWithLaunchPath: executablePath arguments: params];
 }
 
@@ -576,7 +592,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (void) _launchProcessWithImportSessionAtURL: (NSURL *)URL
 {
 	NSString *executablePath	= [[NSBundle mainBundle] executablePath];
-	NSString *URLParam			= [BXImportURLParam stringByAppendingString: [URL path]];
+	NSString *URLParam			= [BXImportURLParam stringByAppendingString: URL.path];
 	NSArray *params				= [NSArray arrayWithObjects: BXActivateOnLaunchParam, URLParam, nil]; 
 	[NSTask launchedTaskWithLaunchPath: executablePath arguments: params];	
 }
@@ -584,7 +600,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (NSError *) _cancelOpening
 {
 	//If we don't have a current session going, exit after cancelling
-	if (![self currentSession]) [NSApp terminate: self];
+	if (!self.currentSession) [NSApp terminate: self];
 	
 	//Otherwise, cancel the existing open request without generating an error message,
 	//and we'll leave the current session going
@@ -600,7 +616,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 		//Only allow a session to open if no emulator has started yet,
 		//and no other sessions are open (which could start their own emulators)
 		if (![BXEmulator canLaunchEmulator]) return NO;
-		if ([[self sessions] count] > 0) return NO;
+		if (self.sessions.count > 0) return NO;
 	}
 	return YES;
 }
@@ -643,7 +659,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (IBAction) orderFrontImportGamePanel: (id)sender
 {
 	//If we already have an import session active, just bring it to the front
-	for (BXSession *session in [self sessions])
+	for (BXSession *session in self.sessions)
 	{
 		if ([session isKindOfClass: [BXImportSession class]])
 		{
@@ -667,16 +683,16 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (IBAction) toggleInspectorPanel: (id)sender
 {
 	BXInspectorController *controller = [BXInspectorController controller];
-	BOOL show = ![controller panelShown];
-	if (!show || [[self currentSession] isEmulating])
+	BOOL show = !controller.panelShown;
+	if (!show || self.currentSession.isEmulating)
 	{
-		[controller setPanelShown: show];		
+        controller.panelShown = show;		
 	}
 }
 
 - (IBAction) orderFrontInspectorPanel: (id)sender
 {
-	if ([[self currentSession] isEmulating])
+	if (self.currentSession.isEmulating)
 	{
 		[[BXInspectorController controller] showWindow: sender];
 	}
@@ -705,18 +721,18 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (IBAction) sendEmail: (id)sender
 {
 	NSString *subject		= @"Boxer feedback";
-	NSString *versionName	= [[self class] localizedVersion];
-	NSString *buildNumber	= [[self class] buildNumber];
+	NSString *versionName	= [self.class localizedVersion];
+	NSString *buildNumber	= [self.class buildNumber];
 	NSString *fullSubject	= [NSString stringWithFormat: @"%@ (v%@ %@)", subject, versionName, buildNumber];
 	[self sendEmailFromKey: @"ContactEmail" withSubject: fullSubject];
 }
 
-- (BOOL) validateUserInterfaceItem: (id)theItem
+- (BOOL) validateUserInterfaceItem: (id <NSValidatedUserInterfaceItem>)theItem
 {	
-	SEL theAction = [theItem action];
+	SEL theAction = theItem.action;
 	
 	if (theAction == @selector(revealCurrentSessionPath:))
-		return ([[self currentSession] isGamePackage] || [[self currentSession] currentPath] != nil);
+		return (self.currentSession.isGamePackage || self.currentSession.currentPath != nil);
 		
 	//Don't allow any of the following actions while a modal window is active.
 	if ([NSApp modalWindow]) return NO;
@@ -729,12 +745,12 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
         theAction == @selector(showDrivesPanel:) ||
         theAction == @selector(showMousePanel:))
     {
-        return [[self currentSession] isEmulating];
+        return self.currentSession.isEmulating;
     }
 	
 	//Don't allow game imports or the games folder to be opened if no games folder has been set yet.
 	if (theAction == @selector(revealGamesFolder:) ||
-		theAction == @selector(orderFrontImportGamePanel:))	return [self gamesFolderPath] != nil;
+		theAction == @selector(orderFrontImportGamePanel:))	return self.gamesFolderPath != nil;
 		
 	return [super validateUserInterfaceItem: theItem];
 }
@@ -748,7 +764,8 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (void) openURLFromKey: (NSString *)infoKey
 {
 	NSString *URLString = [[NSBundle mainBundle] objectForInfoDictionaryKey: infoKey];
-	if ([URLString length]) [[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString: URLString]];
+	if (URLString.length)
+        [[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString: URLString]];
 }
 
 - (void) searchURLFromKey: (NSString *)infoKey withSearchString: (NSString *)search
@@ -756,17 +773,18 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 	NSString *encodedSearch = [search stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
 	NSString *siteString	= [[NSBundle mainBundle] objectForInfoDictionaryKey: infoKey];
 	NSString *URLString		= [NSString stringWithFormat: siteString, encodedSearch];
-	if ([URLString length]) [[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString: URLString]];
+	if (URLString.length)
+        [[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString: URLString]];
 }
 
 - (void) sendEmailFromKey: (NSString *)infoKey withSubject:(NSString *)subject
 {
 	NSString *address = [[NSBundle mainBundle] objectForInfoDictionaryKey: infoKey];
-	if ([address length])
+	if (address.length)
 	{
 		NSString *encodedSubject	= [subject stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
 		NSString *mailtoURLString	= [NSString stringWithFormat: @"mailto:%@?subject=%@", address, encodedSubject];
-		[[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString:mailtoURLString]];
+		[[NSWorkspace sharedWorkspace] openURL: [NSURL URLWithString: mailtoURLString]];
 	}
 }
 
@@ -788,15 +806,16 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 - (IBAction) revealCurrentSessionPath: (id)sender
 {
 	NSString *path = nil;
-	BXSession *session = [self currentSession];
+	BXSession *session = self.currentSession;
 	if (session)
 	{
 		//When running a gamebox, offer up the gamebox itself
-		if ([session isGamePackage]) path = [[session fileURL] path];
+		if (session.isGamePackage) path = session.fileURL.path;
 		//Otherwise, offer up the current DOS program or directory
-		else path = [session currentPath];
+		else path = session.currentPath;
 	}
-	if (path) [self revealPath: path];
+	if (path)
+        [self revealPath: path];
 }
 
 - (IBAction) openInDefaultApplication: (id)sender

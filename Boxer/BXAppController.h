@@ -28,17 +28,17 @@ enum {
 
 @interface BXAppController : NSDocumentController
 {
-	BXSession *currentSession;
-	NSString *gamesFolderPath;
-	BOOL hasSuppressedSpacesShortcuts;
+	BXSession *_currentSession;
+	NSString *_gamesFolderPath;
+	BOOL _hasSuppressedSpacesShortcuts;
 	
-	NSOperationQueue *generalQueue;
+	NSOperationQueue *_generalQueue;
 	
-    BXJoystickController *joystickController;
-    BXJoypadController *joypadController;
-    BXKeyboardEventTap *hotkeySuppressionTap;
+    BXJoystickController *_joystickController;
+    BXJoypadController *_joypadController;
+    BXKeyboardEventTap *_hotkeySuppressionTap;
 	
-    BXMIDIDeviceMonitor *MIDIDeviceMonitor;
+    BXMIDIDeviceMonitor *_MIDIDeviceMonitor;
 }
 
 //The currently-active DOS session. Changes whenever a new session opens.

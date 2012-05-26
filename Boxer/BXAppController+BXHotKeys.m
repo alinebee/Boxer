@@ -39,8 +39,8 @@
         return;
     
     //Decipher information from the event and decide what to do with the key.
-    NSUInteger keyCode  = [[self class] _mediaKeyCode: theEvent];
-    BOOL isPressed      = [[self class] _mediaKeyDown: theEvent];
+    NSUInteger keyCode  = [self.class _mediaKeyCode: theEvent];
+    BOOL isPressed      = [self.class _mediaKeyDown: theEvent];
     
     switch (keyCode)
     {
@@ -73,9 +73,9 @@
         return NO;
     
     //Only capture if the current session is key and is running a program.
+    if (!self.currentSession) return NO;
     @synchronized(self.currentSession)
     {
-        if (!self.currentSession) return NO;
         if (!self.currentSession.programIsActive) return NO;
         if ([self documentForWindow: [NSApp keyWindow]] != self.currentSession) return NO;
     }
@@ -114,10 +114,14 @@
     if (![NSApp isActive]) return NO;
     
     //Only capture media keys if the current session is running.
-    if (!self.currentSession.isEmulating) return NO;
+    if (!self.currentSession) return NO;
+    @synchronized(self.currentSession)
+    {
+        if (!self.currentSession.isEmulating) return NO;
+    }
     
     //Only listen for certain media keys.
-    NSUInteger keyCode = [[self class] _mediaKeyCode: event];
+    NSUInteger keyCode = [self.class _mediaKeyCode: event];
     
     switch (keyCode)
     {

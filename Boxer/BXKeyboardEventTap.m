@@ -15,7 +15,7 @@
 
 @interface BXKeyboardEventTap ()
 
-//The thread on which our tap is running.
+//The dedicated thread on which our tap runs.
 @property (retain) BXContinuousThread *tapThread;
 
 //Our CGEventTap callback. Receives the BXKeyboardEventTap instance as the userInfo parameter,
@@ -27,21 +27,22 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
                      ofType: (CGEventType)type
                   fromProxy: (CGEventTapProxy)proxy;
 
-//Executes _runTap in a separate continuous thread.
+//Creates an event tap, and starts up a dedicated thread to monitor it (if usesDedicatedThread is YES)
+//or adds it to the main thread (if usesDedicatedThread is NO).
 - (void) _startTapping;
 
-//Cancels the tapping thread and waits for it to finish.
+//Removes the tap and any dedicated thread we were running it on.
 - (void) _stopTapping;
 
-//Runs continuously on tapThread. Creates an event tap and pumps
-//tapThread's run loop, listening to the tap until the thread is cancelled.
-- (void) _runTap;
+//Runs continuously on tapThread, listening to the tap until _stopTapping is called and the thread is cancelled.
+- (void) _runTapInDedicatedThread;
 
 @end
 
 
 @implementation BXKeyboardEventTap
 @synthesize enabled = _enabled;
+@synthesize usesDedicatedThread = _usesDedicatedThread;
 @synthesize tapThread = _tapThread;
 @synthesize delegate = _delegate;
 
@@ -49,6 +50,8 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
 {
     if ((self = [super init]))
     {
+        self.usesDedicatedThread = NO;
+        
         NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
         [center addObserver: self
                    selector: @selector(applicationDidBecomeActive:)
@@ -66,7 +69,7 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
     //enabled and don't already have one (which means it failed when
     //we tried it the last time.)
     [self willChangeValueForKey: @"canTapEvents"];
-    if (![self isTapping] && [self isEnabled] && [self canTapEvents])
+    if (!self.isTapping && self.isEnabled && self.canTapEvents)
     {
         [self _startTapping];
     }
@@ -76,10 +79,9 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
 - (void) dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver: self];
-    [self unbind: @"enabled"];
     
     [self _stopTapping];
-    [self setTapThread: nil], [_tapThread release];
+    self.tapThread = nil;
     
     [super dealloc];
 }
@@ -95,6 +97,25 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
     }
 }
 
+- (void) setUsesDedicatedThread: (BOOL)usesDedicatedThread
+{
+    if (usesDedicatedThread != self.usesDedicatedThread)
+    {
+        BOOL wasTapping = self.isTapping;
+        if (wasTapping)
+        {
+            [self _stopTapping];
+        }
+        
+        _usesDedicatedThread = usesDedicatedThread;
+        
+        if (wasTapping)
+        {
+            [self _startTapping];
+        }
+    }
+}
+
 - (BOOL) canTapEvents
 {
     return (AXAPIEnabled() || AXIsProcessTrusted());
@@ -102,67 +123,94 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
 
 - (BOOL) isTapping
 {
-    return [[self tapThread] isExecuting];
+    return _tap != NULL;
 }
 
 - (void) _startTapping
 {
-    if (![self isTapping])
+    if (!self.isTapping)
     {
-        BXContinuousThread *thread = [[BXContinuousThread alloc] initWithTarget: self
-                                                                       selector: @selector(_runTap)
-                                                                         object: nil];
+        //Create the event tap, and keep a reference to it as an instance variable
+        //so that we can access it from our callback if needed.
+        //This will fail and return NULL if Boxer does not have permission to tap
+        //keyboard events.
+        CGEventMask eventTypes = CGEventMaskBit(kCGEventKeyUp) | CGEventMaskBit(kCGEventKeyDown) | CGEventMaskBit(NX_SYSDEFINED);
+        _tap = CGEventTapCreate(kCGSessionEventTap,
+                                kCGHeadInsertEventTap,
+                                kCGEventTapOptionDefault,
+                                eventTypes,
+                                _handleEventFromTap,
+                                self);
         
-        [thread start];
-        [self setTapThread: thread];
-        [thread release];
+        if (_tap)
+        {
+            _source = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, _tap, 0);
+            
+            //Decide whether to run the tap on a dedicated thread or on the main thread.
+            if (self.usesDedicatedThread)
+            {
+                //_runTapInDedicatedThread will handle adding and removing the source
+                //on its own run loop.
+                self.tapThread = [[[BXContinuousThread alloc] initWithTarget: self
+                                                                    selector: @selector(_runTapInDedicatedThread)
+                                                                      object: nil] autorelease];
+                
+                [self.tapThread start];
+            }
+            else
+            {
+                CFRunLoopAddSource(CFRunLoopGetMain(), _source, kCFRunLoopCommonModes);
+            }
+        }
     }
 }
 
 - (void) _stopTapping
 {
-    if ([self isTapping])
+    if (self.isTapping)
     {
-        [[self tapThread] cancel];
-        [[self tapThread] waitUntilFinished];
-        [self setTapThread: nil];
+        if (self.usesDedicatedThread && self.tapThread)
+        {
+            [self.tapThread cancel];
+            [self.tapThread waitUntilFinished];
+            self.tapThread = nil;
+        }
+        else
+        {
+            CFRunLoopRemoveSource(CFRunLoopGetMain(), _source, kCFRunLoopCommonModes);
+        }
+        
+        //Clean up the event tap and source after ourselves.
+        CFMachPortInvalidate(_tap);
+        CFRunLoopSourceInvalidate(_source);
+        
+        CFRelease(_source);
+        CFRelease(_tap);
+        
+        _tap = NULL;
+        _source = NULL;
     }
 }
 
-- (void) _runTap
+- (void) _runTapInDedicatedThread
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     
-    //Create the event tap, and keep a reference to it as an instance variable
-    //so that we can access it from our callback if needed.
-    //This will fail and return NULL if Boxer does not have permission to tap
-    //keyboard events.
-    _tap = CGEventTapCreate(kCGSessionEventTap,
-                            kCGHeadInsertEventTap,
-                            kCGEventTapOptionDefault,
-                            CGEventMaskBit(kCGEventKeyUp) | CGEventMaskBit(kCGEventKeyDown) | CGEventMaskBit(NX_SYSDEFINED),
-                            _handleEventFromTap,
-                            self);
-        
-    if (_tap != NULL)
+    if (_source != NULL)
     {
+        CFRetain(_source);
+        
         //Create a source on the thread's run loop so that we'll receive messages
         //from the tap when an event comes in.
-        CFRunLoopSourceRef source = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, _tap, 0);
-        CFRunLoopAddSource(CFRunLoopGetCurrent(), source, kCFRunLoopCommonModes);
+        CFRunLoopAddSource(CFRunLoopGetCurrent(), _source, kCFRunLoopCommonModes);
         
         //Run this thread's run loop until we're told to stop, processing event-tap
         //callbacks and other messages on this thread.
         [(BXContinuousThread *)[NSThread currentThread] runUntilCancelled];
         
-        //Clean up the event tap and source after ourselves.
-        CFMachPortInvalidate(_tap);
-        CFRunLoopSourceInvalidate(source);
+        CFRunLoopRemoveSource(CFRunLoopGetCurrent(), _source, kCFRunLoopCommonModes);
         
-        CFRelease(source);
-        CFRelease(_tap);
-        
-        _tap = NULL;
+        CFRelease(_source);
     }
     
     [pool drain];

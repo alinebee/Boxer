@@ -42,9 +42,9 @@ NSString * const BXGameboxSettingsProfileVersionKey = @"BXGameProfileVersion";
 NSString * const BXGameboxSettingsDrivesKey     = @"BXQueudDrives";
 
 
-//The length of time in seconds after which we figure that if the program was
+//The length of time in seconds after which we assume that if the program was
 //Windows-only, it would have failed by now. If a program exits before this time,
-//then we check if it's a Windows-only program and warn the user.
+//then we check if it's a Windows-only program and warn the user if so.
 #define BXWindowsOnlyProgramFailTimeThreshold 0.2
 
 //The length of time in seconds after which we count a program as having run successfully,
@@ -52,8 +52,8 @@ NSString * const BXGameboxSettingsDrivesKey     = @"BXQueudDrives";
 //a probable startup crash and leave the user at the DOS prompt to diagnose it.
 #define BXSuccessfulProgramRunningTimeThreshold 10
 
-//How soon after the program to enter fullscreen, if the run-programs-in-fullscreen toggle
-//is enabled. The delay gives the program time to crash andour program panel time to hide.
+//How soon after the program starts to enter fullscreen, if the run-programs-in-fullscreen toggle
+//is enabled. The delay gives the program time to crash and our program panel time to hide.
 #define BXAutoSwitchToFullScreenDelay 0.5
 
 //How soon after launching a program to auto-hide the program panel.
@@ -61,7 +61,7 @@ NSString * const BXGameboxSettingsDrivesKey     = @"BXQueudDrives";
 #define BXHideProgramPanelDelay 0.1
 
 //How soon after returning to the DOS prompt to display the program panel.
-//The delay gives the window time to resize or return from windowed mode.
+//The delay gives the window time to resize or return from fullscreen mode.
 #define BXShowProgramPanelDelay 0.25
 
 
@@ -980,7 +980,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     //program finishes. This way, programWillStart: won't hang onto programs
     //we can't use as the default, such as autoexec commands or dispatch batchfiles.
 	//(Note that the last executed program is always cleared down in didReturnToShell:)
-	NSString *executedPath = [self lastExecutedProgramPath];
+	NSString *executedPath = self.lastExecutedProgramPath;
     BOOL executedPathCanBeDefault = (executedPath && _hasLaunched && [self.gamePackage validateTargetPath: &executedPath error: nil]);
 	if (!executedPathCanBeDefault)
 	{
@@ -994,25 +994,32 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
 	NSTimeInterval programRunningTime = [NSDate timeIntervalSinceReferenceDate] - _programStartTime; 
 	if (programRunningTime < BXWindowsOnlyProgramFailTimeThreshold)
 	{
-		//If this was the target program for this launch, then
-		//warn if the program is Windows-only.
-		//(we only do this for the target program because we
-		//don't want to bother the user if they're just trying
-		//out programs at the DOS prompt)
-		NSString *programPath = [notification.userInfo objectForKey: @"localPath"];
-		if (programPath.length && [programPath isEqualToString: self.targetPath])
-		{
-			BXExecutableType programType = [[NSWorkspace sharedWorkspace] executableTypeAtPath: programPath error: NULL];
-			
-			if (programType == BXExecutableTypeWindows)
-			{
-				BXCloseAlert *alert = [BXCloseAlert closeAlertAfterWindowsOnlyProgramExited: programPath];
-				[alert beginSheetModalForWindow: self.windowForSheet
-								  modalDelegate: self
-								 didEndSelector: @selector(_windowsOnlyProgramCloseAlertDidEnd:returnCode:contextInfo:)
-									contextInfo: NULL];
-			}
-		}
+        NSString *programPath = [notification.userInfo objectForKey: @"localPath"];
+        BXExecutableType programType = [[NSWorkspace sharedWorkspace] executableTypeAtPath: programPath error: NULL];
+        
+        //If this was a windows-only program, explain further to the user why Boxer cannot run it.
+        if (programType == BXExecutableTypeWindows)
+        {
+            //If the user launched this program directly from Finder, then show
+            //a proper alert to the user and offer to close the DOS session.
+            if ([programPath isEqualToString: self.targetPath])
+            {
+                BXCloseAlert *alert = [BXCloseAlert closeAlertAfterWindowsOnlyProgramExited: programPath];
+                [alert beginSheetModalForWindow: self.windowForSheet
+                                  modalDelegate: self
+                                 didEndSelector: @selector(_windowsOnlyProgramCloseAlertDidEnd:returnCode:contextInfo:)
+                                    contextInfo: NULL];
+                
+            }
+            //Otherwise, just print out explanatory text at the DOS prompt.
+            else
+            {
+                NSString *warningFormat = NSLocalizedStringFromTable(@"Windows-only game warning", @"Shell", nil);
+                NSString *programName = programPath.lastPathComponent.uppercaseString;
+                NSString *warningText = [NSString stringWithFormat: warningFormat, programName];
+                [self.emulator displayString: warningText];
+            }
+        }
 	}
 }
 

@@ -41,6 +41,6 @@
 	<key>useMultithreadedEmulation</key>
 	<false/>
 	<key>useMultithreadedEventTap</key>
-	<false/>
+	<true/>
 </dict>
 </plist>

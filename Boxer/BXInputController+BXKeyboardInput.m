@@ -21,7 +21,6 @@
 {
 	TISInputSourceRef keyboardRef	= TISCopyCurrentKeyboardLayoutInputSource();
 	NSString *inputSourceID			= (NSString *)TISGetInputSourceProperty(keyboardRef, kTISPropertyInputSourceID);
-    //NSLog(@"%@", inputSourceID);
 	CFRelease(keyboardRef);
 	
 	return [self keyboardLayoutForInputSourceID: inputSourceID];
@@ -126,8 +125,10 @@
         
         if (dosKeyCode != KBD_NONE)
         {
+#ifdef BOXER_DEBUG
             if ([self._emulatedKeyboard keyIsDown: dosKeyCode])
                 NSLog(@"STUCK KEY WARNING: key already down: %i", theEvent.keyCode);
+#endif
             [self._emulatedKeyboard keyDown: dosKeyCode];
         }
 	}

@@ -149,7 +149,9 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
             //Decide whether to run the tap on a dedicated thread or on the main thread.
             if (self.usesDedicatedThread)
             {
+#ifdef BOXER_DEBUG
                 NSLog(@"Installing event tap on dedicated thread.");
+#endif
                 //_runTapInDedicatedThread will handle adding and removing the source
                 //on its own run loop.
                 self.tapThread = [[[BXContinuousThread alloc] initWithTarget: self
@@ -160,7 +162,9 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
             }
             else
             {
+#ifdef BOXER_DEBUG
                 NSLog(@"Installing event tap on main thread.");
+#endif
                 CFRunLoopAddSource(CFRunLoopGetMain(), _source, kCFRunLoopCommonModes);
             }
         }
@@ -244,10 +248,12 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
             }
             @catch (NSException *exception) 
             {
+#ifdef BOXER_DEBUG
                 //If the event could not be converted into a cocoa event, give up
                 CFStringRef eventDesc = CFCopyDescription(event);
                 NSLog(@"Could not convert CGEvent: %@", (NSString *)eventDesc);
                 CFRelease(eventDesc);
+#endif
             }
             
             if (cocoaEvent)
@@ -265,6 +271,11 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
             if (shouldCapture)
             {
                 [NSApp postEvent: cocoaEvent atStart: YES];
+                
+                //This approach ought to be closer to the normal behaviour
+                //of the event dispatch mechanism, but seems to result
+                //in key events occasionally getting lost, causing stuck keys.
+                //So we go with a more explicit NSEvent-based dispatch instead.
                 /*
                  ProcessSerialNumber PSN;
                  OSErr error = GetCurrentProcess(&PSN);

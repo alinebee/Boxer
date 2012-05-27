@@ -149,6 +149,7 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
             //Decide whether to run the tap on a dedicated thread or on the main thread.
             if (self.usesDedicatedThread)
             {
+                NSLog(@"Installing event tap on dedicated thread.");
                 //_runTapInDedicatedThread will handle adding and removing the source
                 //on its own run loop.
                 self.tapThread = [[[BXContinuousThread alloc] initWithTarget: self
@@ -159,6 +160,7 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
             }
             else
             {
+                NSLog(@"Installing event tap on main thread.");
                 CFRunLoopAddSource(CFRunLoopGetMain(), _source, kCFRunLoopCommonModes);
             }
         }
@@ -226,21 +228,26 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
         return event;
     }
     
-    BOOL shouldCapture = NO;
     switch (type)
     {
         case kCGEventKeyDown:
         case kCGEventKeyUp:
         case NX_SYSDEFINED:
         {
+            BOOL shouldCapture = NO;
+            
             //First try and make this into a cocoa event
             NSEvent *cocoaEvent = nil;
             @try
             {
                 cocoaEvent = [NSEvent eventWithCGEvent: event];
             }
-            @catch (NSException *exception) {
+            @catch (NSException *exception) 
+            {
                 //If the event could not be converted into a cocoa event, give up
+                CFStringRef eventDesc = CFCopyDescription(event);
+                NSLog(@"Could not convert CGEvent: %@", (NSString *)eventDesc);
+                CFRelease(eventDesc);
             }
             
             if (cocoaEvent)
@@ -255,6 +262,25 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
                 }
             }
             
+            if (shouldCapture)
+            {
+                [NSApp postEvent: cocoaEvent atStart: YES];
+                /*
+                 ProcessSerialNumber PSN;
+                 OSErr error = GetCurrentProcess(&PSN);
+                 if (error == noErr)
+                 {
+                 CGEventPostToPSN(&PSN, event);
+                 
+                 //Returning NULL cancels the original event
+                 return NULL;
+                 }
+                 */
+                
+                //Returning NULL cancels the original event
+                return NULL;
+            }
+            
             break;
         }
         
@@ -265,18 +291,13 @@ static CGEventRef _handleEventFromTap(CGEventTapProxy proxy, CGEventType type, C
             CGEventTapEnable(_tap, YES);
             break;
         }
-    }
-    
-    if (shouldCapture)
-    {
-        ProcessSerialNumber PSN;
-        OSErr error = GetCurrentProcess(&PSN);
-        if (error == noErr)
-        {
-            CGEventPostToPSN(&PSN, event);
             
-            //Returning NULL cancels the original event
-            return NULL;
+        case kCGEventTapDisabledByUserInput:
+        {
+            //Re-enable the event tap if it has been disabled after a timeout.
+            //(This may occur if our thread has been blocked for some reason.)
+            CGEventTapEnable(_tap, YES);
+            break;
         }
     }
     

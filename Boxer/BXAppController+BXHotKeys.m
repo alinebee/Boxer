@@ -73,12 +73,8 @@
         return NO;
     
     //Only capture if the current session is key and is running a program.
-    if (!self.currentSession) return NO;
-    @synchronized(self.currentSession)
-    {
-        if (!self.currentSession.programIsActive) return NO;
-        if ([self documentForWindow: [NSApp keyWindow]] != self.currentSession) return NO;
-    }
+    if (!self.currentSession.programIsActive) return NO;
+    if ([self documentForWindow: [NSApp keyWindow]] != self.currentSession) return NO;
         
     switch (event.keyCode)
     {

@@ -108,7 +108,7 @@
 												 @"Heading for game documentation in help menu. %@ is the display name of the current DOS session.");
 			NSString *heading = [NSString stringWithFormat:	format, session.displayName]; 
 			
-            self.documentationDivider.hidden = NO;
+            [self.documentationDivider setHidden: NO];
 			[menu addItemWithTitle: heading action: nil keyEquivalent: @""];
 			
 			for (NSDictionary *document in docs)
@@ -116,7 +116,7 @@
 		}
         else
         {
-            self.documentationDivider.hidden = YES;
+            [self.documentationDivider setHidden: YES];
         }
 		_sessionForDisplayedDocs = session;
 	}

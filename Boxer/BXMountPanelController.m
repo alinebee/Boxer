@@ -95,7 +95,9 @@
             
             //If the drive is locked, disable the entry - it cannot be replaced
             if (drive.isLocked)
-                option.enabled = NO;
+            {
+                [option setEnabled: NO];
+            }
             
             //Append the drive title to the letter to form the menu item's label
             title = [title stringByAppendingFormat: @" (%@)", drive.title, nil];
@@ -124,7 +126,7 @@
 		BOOL isImage = [workspace file: path matchesTypes: [BXFileTypes mountableImageTypes]];
 		if (isImage)
 		{
-			self.driveType.enabled = NO;
+			[self.driveType setEnabled: NO];
 			//Back up the current selection and then override it
 			if (!_previousDriveTypeSelection)
 			{
@@ -137,7 +139,7 @@
 		}
 		else
 		{
-			self.driveType.enabled = YES;
+			[self.driveType setEnabled: YES];
         	//Restore the previously selected type
 			if (_previousDriveTypeSelection)
 			{
@@ -168,7 +170,7 @@
 		autoTypeOption.title    = [NSString stringWithFormat: autoLabel, preferredTypeOption.title];
 		autoLetterOption.title  = [NSString stringWithFormat: autoLabel, preferredLetterOption.title];
 
-		self.driveLetter.enabled = YES;
+		[self.driveLetter setEnabled: YES];
 
 		
 		//Override the read-only option when the drive type is CD-ROM or Auto (CD-ROM),
@@ -177,7 +179,7 @@
 			(selectedType == BXDriveAutodetect && preferredType == BXDriveCDROM) ||
 			(![[NSFileManager defaultManager] isWritableFileAtPath: path]))
 		{
-			self.readOnlyToggle.enabled = NO;
+			[self.readOnlyToggle setEnabled: NO];
 			//Back up the previous state and override it
 			if (_previousReadOnlyState == NSMixedState)
 			{
@@ -187,7 +189,7 @@
 		}
 		else
 		{
-			self.readOnlyToggle.enabled = YES;
+			[self.readOnlyToggle setEnabled: YES];
         	//Restore the previous state
 			if (_previousReadOnlyState != NSMixedState)
 			{
@@ -198,9 +200,9 @@
 	}
 	else
 	{
-		self.driveType.enabled = NO;
-    	self.driveLetter = NO;
-		self.readOnlyToggle.enabled = NO;
+		[self.driveType setEnabled: NO];
+    	[self.driveLetter setEnabled: NO];
+		[self.readOnlyToggle setEnabled: NO];
     }
 }
 

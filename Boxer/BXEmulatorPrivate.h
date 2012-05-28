@@ -94,7 +94,7 @@ enum {
 @interface BXEmulator()
 
 //Overridden to add setters for internal use
-@property (readwrite) NSThread *emulationThread;
+@property (readwrite, assign) NSThread *emulationThread;
 @property (readwrite, getter=isExecuting) BOOL executing;
 @property (readwrite, getter=isCancelled) BOOL cancelled;
 @property (readwrite, getter=isInitialized) BOOL initialized;

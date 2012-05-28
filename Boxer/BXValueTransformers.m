@@ -203,15 +203,15 @@
 	double ratioWithinBand	= (bandRange != 0.0) ? (offsetWithinBand / bandRange) : 0.0;
 	
 	//Once we know the ratio within this band, we apply it to the band's own ratio to derive the full field ratio
-	CGFloat fieldRatio = (bandNum - 1 + ratioWithinBand) * bandSpread;
+	double fieldRatio = (bandNum - 1 + ratioWithinBand) * bandSpread;
 	
-	return [NSNumber numberWithFloat: fieldRatio];
+	return [NSNumber numberWithDouble: fieldRatio];
 }
 
 //Return the banded value that corresponds to the input's 0.0->1.0 ratio
 - (NSNumber *) reverseTransformedValue: (NSNumber *)value
 {
-	CGFloat fieldRatio = value.doubleValue;
+	double fieldRatio = value.doubleValue;
     double minValue = bandThresholds[0], maxValue = bandThresholds[numBands-1];
 	
 	//Save us some odious calculations by doing bounds checking up front
@@ -225,7 +225,7 @@
 	double upperThreshold, lowerThreshold, bandRange;
 	
 	//First work out which band the field's ratio falls into
-	NSUInteger bandNum = floor(fieldRatio / bandSpread);
+	NSUInteger bandNum = (NSUInteger)floor(fieldRatio / bandSpread);
     NSAssert1(bandNum < numBands - 1, @"Calculated band number out of range: %u", bandNum);
 	
 	//Grab the upper and lower points of this band's range

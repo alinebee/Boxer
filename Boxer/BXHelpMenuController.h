@@ -25,6 +25,10 @@
 @property (retain, nonatomic) IBOutlet NSMenuItem *replacementDocsItem;
 @property (retain, nonatomic) IBOutlet NSMenuItem *documentationDivider;
 
+//The array of sort descriptors we use to order documentation in the doc list.
+//These are ordered by extension and then by filename.
++ (NSArray *) sortCriteria;
+
 //Returns the localised display strings used to label the "Find [current game] on Mobygames"
 //and "Find [current game] on ReplacementDocs" menu items.
 - (NSString *)mobygamesMenuTitle;

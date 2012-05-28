@@ -1734,7 +1734,7 @@
 		//with the newly-imported version (as long as the old one is not currently in use)
 		if (![self.emulator driveInUseAtLetter: originalDrive.letter])
 		{
-            NSString *destinationPath	= import.importedDrivePath;
+            NSString *destinationPath	= [import importedDrivePath];
 			BXDrive *importedDrive		= [BXDrive driveFromPath: destinationPath
                                                         atLetter: originalDrive.letter];
 			

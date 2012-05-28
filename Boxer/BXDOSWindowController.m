@@ -162,11 +162,11 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	{
 		NSString *gameIdentifier = self.document.gamePackage.gameIdentifier;
 		if (gameIdentifier)
-            self.frameAutosaveName = gameIdentifier;
+            [self setFrameAutosaveName: gameIdentifier];
     }
 	else
 	{
-        self.frameAutosaveName = @"DOSWindow";
+        [self setFrameAutosaveName: @"DOSWindow"];
 	}
 	
 	//Ensure we get frame resize notifications from the rendering view
@@ -258,7 +258,8 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	CGFloat initialAspectRatio = aspectRatioOfSize(initialSize);
 	
 	//This will resize the window to the frame size saved with the specified name
-	if (self.window.frameAutosaveName = savedName)
+    BOOL appliedName = [self.window setFrameAutosaveName: savedName];
+	if (appliedName)
 	{
 		NSSize loadedSize = self.windowedRenderingViewSize;
 		CGFloat loadedAspectRatio = aspectRatioOfSize(loadedSize);
@@ -456,17 +457,17 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 		[self _resizeToAccommodateFrame: frame];
 	}
     
-    self.renderingView.hidden = !hasFrame;
+    [self.renderingView setHidden: !hasFrame];
 }
 
 - (NSSize) viewportSize
 {
-	return self.renderingView.viewportRect.size;
+	return [self.renderingView viewportRect].size;
 }
 
 - (NSSize) maxFrameSize
 {
-	return self.renderingView.maxFrameSize;
+	return [self.renderingView maxFrameSize];
 }
 
 //Returns the current size that the render view would be if it were in windowed mode.
@@ -481,9 +482,9 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 {
     NSImage *screenshot = nil;
     
-    if (self.renderingView.currentFrame)
+    if ([self.renderingView currentFrame])
     {
-        NSRect visibleRect = self.renderingView.viewportRect;
+        NSRect visibleRect = [self.renderingView viewportRect];
         NSBitmapImageRep *rep = [self.renderingView bitmapImageRepForCachingDisplayInRect: visibleRect];
         [self.renderingView cacheDisplayInRect: visibleRect toBitmapImageRep: rep];
         
@@ -534,7 +535,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	//But is now constant while developing to find the ideal default value
 	NSInteger snapThreshold	= BXWindowSnapThreshold;
 	
-	NSSize snapIncrement	= self.renderingView.currentFrame.scaledResolution;
+	NSSize snapIncrement	= [self.renderingView currentFrame].scaledResolution;
 	CGFloat aspectRatio		= aspectRatioOfSize(theWindow.contentAspectRatio);
 	
 	NSRect proposedFrame	= NSMakeRect(0, 0, proposedFrameSize.width, proposedFrameSize.height);
@@ -604,7 +605,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
     //Override the window name while in fullscreen,
     //so that AppKit does not save the fullscreen frame in preferences
     self.autosaveNameBeforeFullScreen = self.window.frameAutosaveName;
-    self.window.frameAutosaveName = @"";
+    [self.window setFrameAutosaveName: @""];
     
     self.renderingView.managesAspectRatio = YES;
     [self.inputController setMouseLocked: YES force: YES];
@@ -624,7 +625,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 - (void) windowDidFailToEnterFullScreen: (NSWindow *)window
 {
     //Clean up all our preparations for fullscreen mode
-    self.window.frameAutosaveName = self.autosaveNameBeforeFullScreen;
+    [self.window setFrameAutosaveName: self.autosaveNameBeforeFullScreen];
     
     self.renderingView.managesAspectRatio = NO;
     [self.inputController setMouseLocked: NO force: YES];
@@ -654,7 +655,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
     if (!_windowIsClosing)
     {
         [NSWindow removeFrameUsingName: self.autosaveNameBeforeFullScreen];
-        self.window.frameAutosaveName = self.autosaveNameBeforeFullScreen;
+        [self.window setFrameAutosaveName: self.autosaveNameBeforeFullScreen];
     }
     
     //Force the renderer to redraw after the resize
@@ -667,7 +668,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 - (void) windowDidFailToExitFullScreen: (NSWindow *)window
 {
     //Clean up our preparations for returning to windowed mode
-    self.window.frameAutosaveName = @"";
+    [self.window setFrameAutosaveName: @""];
     
     [self.inputController setMouseLocked: YES force: YES];
 }
@@ -925,9 +926,10 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 {
     BOOL isFullScreen = self.window.isFullScreen || self.window.isInFullScreenTransition;
 
-	
     if (show)
-        view.hidden = NO;	//Unhide before sliding out
+    {
+        [view setHidden: NO];	//Unhide before sliding out
+    }
     
 	NSRect currentFrame	= self.window.frame;
 	
@@ -949,7 +951,9 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
                   animate: animate && !isFullScreen];
 	
 	if (!show)
-        view.hidden = YES; //Hide after sliding in
+    {
+        [view setHidden: YES]; //Hide after sliding in
+    }
 }
 
 @end

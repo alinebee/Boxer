@@ -144,10 +144,10 @@ const char* DOS_GetLoadedLayout(void);
     KEYBOARD_ClrBuffer();
     
     //Release any previously-pressed keys.
-	BXDOSKeyCode key;
+	NSUInteger key;
 	for (key=KBD_NONE; key<KBD_LAST; key++)
     {
-        [self clearKey: key];
+        [self clearKey: (BXDOSKeyCode)key];
     }
 }
 

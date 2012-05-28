@@ -925,7 +925,7 @@ NSString * const BXActivateOnLaunchParam = @"--activateOnLaunch";
 
 - (float) effectiveVolume
 {
-    if (self.muted) return 0.0;
+    if (self.muted) return 0.0f;
     else return self.masterVolume;
 }
 

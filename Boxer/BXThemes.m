@@ -395,24 +395,24 @@
 {
     return [NSShadow shadowWithBlurRadius: 3.0f
                                    offset: NSMakeSize(0, -1.0f)
-                                    color: [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.5]];
+                                    color: [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.5f]];
 }
 
 - (NSShadow *) sliderKnobShadow
 {
     return [NSShadow shadowWithBlurRadius: 2.0f
                                    offset: NSMakeSize(0, -1.0f)
-                                    color: [NSColor colorWithCalibratedWhite: 0.0 alpha: 0.5]];
+                                    color: [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.5f]];
 }
 
 - (NSColor *) sliderKnobStrokeColor
 {
-    return [NSColor colorWithCalibratedWhite: 0 alpha: 0.4];
+    return [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.4f];
 }
 
 - (NSColor *) disabledSliderKnobStrokeColor
 {
-    return [NSColor colorWithCalibratedWhite: 0 alpha: 0.25];
+    return [NSColor colorWithCalibratedWhite: 0.0f alpha: 0.25f];
 }
 @end
 

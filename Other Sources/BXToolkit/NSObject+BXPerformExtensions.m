@@ -59,7 +59,7 @@
     else [self performSelector: selector withObject: nil afterDelay: delay];
 }
 
-- (void) performSelectorOnMainThread: (SEL)selector waitUntilDone: (BOOL)wait withValues: (void *)arg1, ...
+- (void) performSelectorOnMainThread: (SEL)selector waitUntilDone: (BOOL)waitUntilDone withValues: (void *)arg1, ...
 {
     if (arg1)
     {
@@ -73,15 +73,22 @@
         
         va_end(args);
         
-        [invocation performSelectorOnMainThread: @selector(invoke) withObject: nil waitUntilDone: wait];
+        [invocation performSelectorOnMainThread: @selector(invoke)
+                                     withObject: nil
+                                  waitUntilDone: waitUntilDone];
     }
-    else [self performSelectorOnMainThread: selector withObject: nil waitUntilDone: wait];
+    else
+    {   
+        [self performSelectorOnMainThread: selector
+                               withObject: nil
+                            waitUntilDone: waitUntilDone];
+    }
 }
 
 
 - (void) performSelector: (SEL)selector
                 onThread: (NSThread *)thread
-           waitUntilDone: (BOOL)wait
+           waitUntilDone: (BOOL)waitUntilDone
               withValues: (void *)arg1, ...
 {
     if (arg1)
@@ -96,9 +103,18 @@
         
         va_end(args);
         
-        [invocation performSelector: @selector(invoke) onThread: thread withObject: nil waitUntilDone: wait];
+        [invocation performSelector: @selector(invoke)
+                           onThread: thread
+                         withObject: nil
+                      waitUntilDone: waitUntilDone];
     }
-    else [self performSelector: selector onThread: thread withObject: nil waitUntilDone: wait];
+    else
+    {
+        [self performSelector: selector
+                     onThread: thread
+                   withObject: nil
+                waitUntilDone: waitUntilDone];
+    }
 }
 
 - (void) performSelectorInBackground: (SEL)selector

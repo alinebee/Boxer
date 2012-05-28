@@ -153,11 +153,11 @@
                          error: (NSError **)outError
 {
     //Create a MIDI client and port
-    OSStatus errCode = MIDIClientCreate((CFStringRef)[self class].defaultClientName, NULL, NULL, &_client);
+    OSStatus errCode = MIDIClientCreate((CFStringRef)[self.class defaultClientName], NULL, NULL, &_client);
     
     if (errCode == noErr)
     {
-        errCode = MIDIOutputPortCreate(_client, (CFStringRef)[self class].defaultPortName, &_port);
+        errCode = MIDIOutputPortCreate(_client, (CFStringRef)[self.class defaultPortName], &_port);
     }
     
     if (errCode != noErr)

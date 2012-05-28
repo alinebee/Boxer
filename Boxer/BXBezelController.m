@@ -121,7 +121,7 @@
                                                             defer: YES];
     
     bezelWindow.backgroundColor = [NSColor clearColor];
-    bezelWindow.opaque = NO;
+    [bezelWindow setOpaque: NO];
     bezelWindow.ignoresMouseEvents = YES;
     bezelWindow.hidesOnDeactivate = YES;
     bezelWindow.level = NSPopUpMenuWindowLevel;
@@ -181,7 +181,7 @@
     
     NSRect centeredFrame = alignInRectWithAnchor(windowFrame, screenFrame, NSMakePoint(0.5f, 0.25f));
     
-    self.window.frameOrigin = centeredFrame.origin;
+    [self.window setFrameOrigin: centeredFrame.origin];
 }
 
 

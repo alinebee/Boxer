@@ -823,7 +823,7 @@
                 if ([driveToImport.letter isEqualToString: @"C"])
                 {
                     [manager removeItemAtPath: self.rootDrivePath error: nil];
-                    self.rootDrivePath = driveImport.importedDrivePath;
+                    self.rootDrivePath = [driveImport importedDrivePath];
                 }
             }
             
@@ -846,13 +846,13 @@
                         //Change the source path for the nested drive to point to where the drive will
                         //have ended up after the containing drive has been copied.
                         NSString *relativeSourcePath = [path1 pathRelativeToPath: path2];
-                        NSString *intermediateSourcePath = [otherDriveImport.importedDrivePath stringByAppendingPathComponent: relativeSourcePath];
+                        NSString *intermediateSourcePath = [[otherDriveImport importedDrivePath] stringByAppendingPathComponent: relativeSourcePath];
                         
                         driveImport.drive.path = intermediateSourcePath.stringByStandardizingPath;
                         
                         //Make the nested drive import into a move operation instead,
                         //since the drive's files will have been copied along with the containing drive.
-                        driveImport.copyFiles = NO;
+                        [driveImport setCopyFiles: NO];
                     }
                 }
             }

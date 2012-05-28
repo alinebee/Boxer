@@ -123,10 +123,10 @@
     queue.maxConcurrentOperationCount = self.maxConcurrentOperations;
 
 	//Queue up all transfer operations before letting them all start at once
-	queue.suspended = YES;
+	[queue setSuspended: YES];
 	for (NSOperation *operation in self.operations)
         [queue addOperation: operation];
-	queue.suspended = NO;
+	[queue setSuspended: NO];
 	
 	//Use a timer to execute our polling method. (This also keeps the runloop below alive.)
 	NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval: self.pollInterval

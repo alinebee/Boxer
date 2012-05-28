@@ -134,7 +134,8 @@
 - (void) _statusBarDidResize
 {
 	//Hide the notification text if it overlaps the button or volume controls
-	self.notificationMessage.hidden = NSIntersectsRect(self.notificationMessage.frame, self.statusBarControls.frame) || NSIntersectsRect(self.notificationMessage.frame, self.volumeControls.frame);
+    BOOL hideMessage = NSIntersectsRect(self.notificationMessage.frame, self.statusBarControls.frame) || NSIntersectsRect(self.notificationMessage.frame, self.volumeControls.frame);
+	[self.notificationMessage setHidden: hideMessage];
 }
 
 - (void) _windowWillClose

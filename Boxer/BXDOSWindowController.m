@@ -292,7 +292,11 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 
 - (void) setStatusBarShown: (BOOL)show animate: (BOOL)animate
 {
-	if (show != self.statusBarShown)
+    //IMPLEMENTATION NOTE: we do not check statusBarShown directly, because
+    //this is overridden in subclasses to return a dummy value when in fullscreen.
+    //This would prevent us from forcing the statusbar to reappear just before
+    //returning from fullscreen.
+	if (show == self.statusBar.isHidden)
 	{
         [self willChangeValueForKey: @"statusBarShown"];
         
@@ -331,7 +335,8 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	//Don't open the program panel if we're not running a gamebox
 	if (show && !self.document.isGamePackage) return;
 	
-	if (show != self.programPanelShown)
+    //IMPLEMENTATION NOTE: see note above for setStatusBarShown:animate:.
+	if (show == self.programPanel.isHidden)
 	{
         [self willChangeValueForKey: @"programPanelShown"];
         

@@ -134,7 +134,7 @@ enum {
 }
 
 - (IBAction) showProgramChooserPanel: (id)sender
-{	
+{
 	NSOpenPanel *openPanel = [NSOpenPanel openPanel];
 	
     openPanel.canChooseFiles = YES;
@@ -267,7 +267,7 @@ enum {
 			[pool release];
 		}
         
-        if (!hasItemForTarget)
+        if (!hasItemForTarget && currentTarget)
         {
             BXDrive *driveForTarget = [self.session queuedDriveForPath: currentTarget];
             NSMenuItem *item = [self _programMenuItemForPath: currentTarget onDrive: driveForTarget];

@@ -87,12 +87,12 @@ NSString * const BXSessionErrorDomain = @"BXSessionErrorDomain";
 + (id) errorWithSourcePath: (NSString *)sourcePath userInfo: (NSDictionary *)userInfo
 {
 	NSString *descriptionFormat = NSLocalizedString(
-		@"“%@” is a Windows game or has a Windows installer, which Boxer cannot import.",
+		@"“%@” is a Windows game. Boxer only supports MS-DOS games.",
 		@"Error message shown when importing a folder that contains a Windows-only game or Windows installer. %@ is the display filename of the imported path."
 	);
 	
 	NSString *suggestion = NSLocalizedString(
-		@"You could install the game on a Windows PC or emulator instead. If it installs an MS-DOS game, you can then import the installed game files into Boxer.",
+		@"You can run this game in a Windows emulator instead. For more help, click the ? button.",
 		@"Informative text of warning sheet after importing a Windows-only game."
 	);
 	
@@ -125,7 +125,7 @@ NSString * const BXSessionErrorDomain = @"BXSessionErrorDomain";
 	NSString *descriptionFormat = NSLocalizedString(@"“%@” is a Mac+PC hybrid disc, which Boxer cannot import.",
                                                     @"Error message shown when importing a hybrid Mac/PC CD. %@ is the display filename of the imported path.");
 	
-	NSString *suggestion = NSLocalizedString(@"You could insert the disc into a Windows PC instead, and copy the DOS version of the game from there to your Mac.",
+	NSString *suggestion = NSLocalizedString(@"You can insert the disc into a Windows PC instead, and copy the DOS version of the game from there to your Mac. For more help, click the ? button.",
                                              @"Informative text of warning sheet when importing a hybrid Mac/PC CD.");
 	
 	NSString *description = [NSString stringWithFormat: descriptionFormat, [self displayNameForPath: sourcePath]];
@@ -153,10 +153,10 @@ NSString * const BXSessionErrorDomain = @"BXSessionErrorDomain";
 
 + (id) errorWithSourcePath: (NSString *)sourcePath userInfo: (NSDictionary *)userInfo
 {
-	NSString *descriptionFormat = NSLocalizedString(@"“%@” is a Mac OS game, which Boxer does not support.",
+	NSString *descriptionFormat = NSLocalizedString(@"“%@” is a Mac OS game. Boxer only supports MS-DOS games.",
                                                     @"Error message shown when importing a folder that contains a Mac game. %@ is the display filename of the imported path.");
 	
-	NSString *suggestion = NSLocalizedString(@"If you cannot start up this game in OS X, you may be able to play it in a Classic Mac OS emulator instead. Click the help button for details.",
+	NSString *suggestion = NSLocalizedString(@"If you cannot play this game in OS X, you may be able to play it in a Classic Mac OS emulator instead. For more help, click the ? button.",
                                              @"Informative text of warning sheet after importing a Mac application.");
 	
 	NSString *description = [NSString stringWithFormat: descriptionFormat, [self displayNameForPath: sourcePath]];

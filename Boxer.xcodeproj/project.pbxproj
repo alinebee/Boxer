@@ -280,7 +280,6 @@
 		9F955B61141A05990068EF71 /* EjectFreestandingTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F955B5F141A05990068EF71 /* EjectFreestandingTemplate.pdf */; };
 		9F960C7F12AAAB2900568AFD /* BlankShelves.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F960C7E12AAAB2900568AFD /* BlankShelves.png */; };
 		9F96969813E59CA100FB51EC /* NoJoystickTemplate.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9F96969713E59CA100FB51EC /* NoJoystickTemplate.pdf */; };
-		9F98EF5914E80A0900095248 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9F98EF5714E80A0900095248 /* Localizable.strings */; };
 		9F9A4C9610F67A1F00E61965 /* GalleryOriginal.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A4C9010F67A1F00E61965 /* GalleryOriginal.png */; };
 		9F9A4C9710F67A1F00E61965 /* GalleryHQx.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A4C9110F67A1F00E61965 /* GalleryHQx.png */; };
 		9F9A4C9810F67A1F00E61965 /* GalleryMAME.png in Resources */ = {isa = PBXBuildFile; fileRef = 9F9A4C9210F67A1F00E61965 /* GalleryMAME.png */; };
@@ -2844,7 +2843,6 @@
 				9FD54A5D14DE979B00FE350F /* NumpadInactiveTemplate.pdf in Resources */,
 				9F3034B914E2C3F600BC572E /* NumlockActiveTemplate.pdf in Resources */,
 				9F3034BA14E2C3F600BC572E /* NumlockInactiveTemplate.pdf in Resources */,
-				9F98EF5914E80A0900095248 /* Localizable.strings in Resources */,
 				9F8F374C14F9366F00E482FB /* FastForwardTemplate.pdf in Resources */,
 				9F27BD1814FAA4F5008EB0A1 /* Volume33PercentTemplate.pdf in Resources */,
 				9F27BD1914FAA4F5008EB0A1 /* Volume66PercentTemplate.pdf in Resources */,

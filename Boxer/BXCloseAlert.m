@@ -127,12 +127,12 @@
 	
 	NSString *programName = programPath.lastPathComponent;
 	
-	NSString *messageFormat	= NSLocalizedString(@"“%@” is a Microsoft Windows program, which Boxer does not support.",
+	NSString *messageFormat	= NSLocalizedString(@"“%@” is a Windows program. Boxer only supports MS-DOS programs.",
 												@"Title of warning sheet after running a Windows-only executable. %@ is the original filename of the executable.");
 	
 	alert.messageText = [NSString stringWithFormat: messageFormat, programName];
 	
-	alert.informativeText =	NSLocalizedString(@"You may be able to run it in a Windows emulator instead, such as CrossOver Games.",
+	alert.informativeText =	NSLocalizedString(@"You can run this program in a Windows emulator instead. For more help, click the ? button.",
                                               @"Informative text of warning sheet after running a Windows-only executable or importing a Windows-only game.");
 	
     NSButton *cancelButton = alert.buttons.lastObject;

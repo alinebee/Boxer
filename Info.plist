@@ -365,7 +365,7 @@
 				<string>public.data</string>
 			</array>
 			<key>UTTypeDescription</key>
-			<string>Good Old Games disc image</string>
+			<string>GOG.com disc image</string>
 			<key>UTTypeIdentifier</key>
 			<string>com.gog.gog-disk-image</string>
 			<key>UTTypeTagSpecification</key>

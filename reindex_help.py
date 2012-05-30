@@ -40,7 +40,9 @@ def kill_helpd():
 			
 if __name__ == "__main__":
 	for locale in locales_in_path(RESOURCE_PATH):
+		print u"Reindexing locale %s..." % locale
 		reindex_help_for_locale(locale)
 		
+	print u"Restarting helpd process..."
 	kill_helpd()
 	

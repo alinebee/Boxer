@@ -27,35 +27,55 @@
 @property (readwrite, retain) BXFrameBuffer *currentFrame;
 
 //Ensure our framebuffer and scaling buffers are prepared for rendering the current frame. Called when the layer is about to be drawn.
-- (void) _prepareScalingBufferForFrame: (BXFrameBuffer *)frame inCGLContext: (CGLContextObj)glContext;
-- (void) _prepareFrameTextureForFrame: (BXFrameBuffer *)frame  inCGLContext: (CGLContextObj)glContext;
+- (void) _prepareScalingBufferForFrame: (BXFrameBuffer *)frame
+                          inCGLContext: (CGLContextObj)glContext;
+- (void) _prepareFrameTextureForFrame: (BXFrameBuffer *)frame
+                         inCGLContext: (CGLContextObj)glContext;
 
 //Render the specified frame into the specified GL context.
-- (void) _renderFrame: (BXFrameBuffer *)frame inCGLContext: (CGLContextObj)glContext;
+- (void) _renderFrame: (BXFrameBuffer *)frame
+         inCGLContext: (CGLContextObj)glContext;
 
 //Draw a region of the currently active GL texture to a quad made from the specified points.
-- (void) _renderTexture: (GLuint)texture fromRegion: (CGRect)textureRegion toPoints: (GLfloat *)vertices inCGLContext: (CGLContextObj)glContext;
+- (void) _renderTexture: (GLuint)texture
+             fromRegion: (CGRect)textureRegion
+               toPoints: (GLfloat *)vertices
+           inCGLContext: (CGLContextObj)glContext;
 
 //Create/update an OpenGL texture with the contents of the specified framebuffer in the specified context.
-- (GLuint) _createTextureForFrameBuffer: (BXFrameBuffer *)frame inCGLContext: (CGLContextObj)glContext;
-- (void) _fillTexture: (GLuint)texture withFrameBuffer: (BXFrameBuffer *)frame inCGLContext: (CGLContextObj)glContext;
+- (GLuint) _createTextureForFrameBuffer: (BXFrameBuffer *)frame
+                           inCGLContext: (CGLContextObj)glContext;
+
+- (void) _fillTexture: (GLuint)texture
+      withFrameBuffer: (BXFrameBuffer *)frame
+         inCGLContext: (CGLContextObj)glContext;
 
 //Create a new empty scaling buffer texture of the specified size in the specified context.
-- (GLuint) _createTextureForScalingBuffer: (GLuint)buffer withSize: (CGSize)size inCGLContext: (CGLContextObj)glContext;
+- (GLuint) _createTextureForScalingBuffer: (GLuint)buffer
+                                 withSize: (CGSize)size
+                             inCGLContext: (CGLContextObj)glContext;
 
 //Calculate the appropriate scaling buffer size for the specified frame to the specified viewport dimensions.
 //This will be the nearest even multiple of the frame's resolution which covers the entire viewport size.
-- (CGSize) _idealScalingBufferSizeForFrame: (BXFrameBuffer *)frame toViewportSize: (CGSize)viewportSize;
+- (CGSize) _idealScalingBufferSizeForFrame: (BXFrameBuffer *)frame
+                            toViewportSize: (CGSize)viewportSize;
 
 @end
 
 
 @implementation BXRenderer
-@synthesize currentFrame, currentShader, frameRate, renderingTime, canvas, maintainsAspectRatio;
+@synthesize currentFrame = _currentFrame;
+@synthesize currentShader = _currentShader;
+@synthesize frameRate = _frameRate;
+@synthesize renderingTime = _renderingTime;
+@synthesize canvas = _canvas;
+@synthesize maintainsAspectRatio = _maintainsAspectRatio;
 
 - (void) dealloc
 {
-	[self setCurrentFrame: nil], [currentFrame release];
+    self.currentFrame = nil;
+    self.currentShader = nil;
+    
 	[super dealloc];
 }
 
@@ -64,26 +84,26 @@
 #pragma mark Handling frame updates
 
 - (void) updateWithFrame: (BXFrameBuffer *)frame inGLContext: (CGLContextObj)context
-{   
-    if (frame != currentFrame)
+{
+    if (frame != self.currentFrame)
 	{
 		//If the buffer memory locations for the two frames are different,
         //we'll need to reinitialize the texture to link to the new buffer.
         //This will be done next time we render.
-		if ([frame bytes] != [currentFrame bytes])
-			needsNewFrameTexture = YES;
+		if (frame.bytes != self.currentFrame.bytes)
+			_needsNewFrameTexture = YES;
 		
 		//If the buffers for the two frames are a different size,
         //we'll need to recreate the scaling buffer when we next render too.
-		if (!NSEqualSizes([frame size], [currentFrame size]))
-			recalculateScalingBuffer = YES;
+		if (!NSEqualSizes(frame.size, self.currentFrame.size))
+			_recalculateScalingBuffer = YES;
         
-        [self setCurrentFrame: frame];
+        self.currentFrame = frame;
 	}
     
     //Even if the frame hasn't changed, it may contain new data:
     //flag that we're dirty and need re-rendering.
-    needsFrameTextureUpdate = YES;
+    _needsFrameTextureUpdate = YES;
     
     //TWEAK: update our frame texture immediately with the new frame, while we know
     //we have a complete frame in the buffer. (If we defer the update until it's time
@@ -94,24 +114,24 @@
 
 - (CGSize) maxFrameSize
 {
-	return maxTextureSize;
+	return _maxTextureSize;
 }
 
 - (void) setCanvas: (CGRect)newCanvas
 {
-    if (!CGRectEqualToRect(canvas, newCanvas))
+    if (!CGRectEqualToRect(_canvas, newCanvas))
     {
-        canvas = newCanvas;
+        _canvas = newCanvas;
     }
 	//We need to recalculate the scaling buffer size if our canvas changes.
-	recalculateScalingBuffer = YES;
+	_recalculateScalingBuffer = YES;
 }
 
 - (void) setMaintainsAspectRatio: (BOOL)flag
 {
-    if (maintainsAspectRatio != flag)
+    if (_maintainsAspectRatio != flag)
     {
-        maintainsAspectRatio = flag;
+        _maintainsAspectRatio = flag;
     }
 }
 
@@ -128,16 +148,16 @@
 	//Check what the largest texture size we can support is
 	GLint maxTextureDims = 0;
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureDims);
-	maxTextureSize = CGSizeMake((CGFloat)maxTextureDims, (CGFloat)maxTextureDims);
+	_maxTextureSize = CGSizeMake((CGFloat)maxTextureDims, (CGFloat)maxTextureDims);
 	
 	//Check for FBO support to see if we can use a scaling buffer
-	supportsFBO = (BOOL)gluCheckExtension((const GLubyte *)"GL_EXT_framebuffer_object",
-										  glGetString(GL_EXTENSIONS));
+	_supportsFBO = (BOOL)gluCheckExtension((const GLubyte *)"GL_EXT_framebuffer_object",
+                                           glGetString(GL_EXTENSIONS));
 	
-	if (supportsFBO)
+	if (_supportsFBO)
 	{
-		glGenFramebuffersEXT(1, &scalingBuffer);
-		maxScalingBufferSize = maxTextureSize;
+		glGenFramebuffersEXT(1, &_scalingBuffer);
+		_maxScalingBufferSize = _maxTextureSize;
 	}
 	
 	//Shader *shader = [[Shader alloc] initWithShadersInAppBundle: @"Scale2xHQ"];
@@ -165,19 +185,20 @@
 	
     CGLLockContext(cgl_ctx);
     
-	if (glIsTexture(frameTexture))			glDeleteTextures(1, &frameTexture);
-	if (glIsTexture(scalingBufferTexture))	glDeleteTextures(1, &scalingBufferTexture);
-	if (glIsFramebufferEXT(scalingBuffer))	glDeleteFramebuffersEXT(1, &scalingBuffer);
-	frameTexture			= 0;
-	scalingBufferTexture	= 0;
-	scalingBuffer			= 0;	
+    //Clean up all the assets we were using.
+	if (glIsTexture(_frameTexture))			glDeleteTextures(1, &_frameTexture);
+	if (glIsTexture(_scalingBufferTexture))	glDeleteTextures(1, &_scalingBufferTexture);
+	if (glIsFramebufferEXT(_scalingBuffer))	glDeleteFramebuffersEXT(1, &_scalingBuffer);
+	_frameTexture			= 0;
+	_scalingBufferTexture	= 0;
+	_scalingBuffer			= 0;	
     
     CGLUnlockContext(cgl_ctx);
 }
 
 - (BOOL) canRenderToGLContext: (CGLContextObj)glContext
 {
-	return [self currentFrame] != nil;
+	return self.currentFrame != nil;
 }
 
 - (void) renderToGLContext: (CGLContextObj)glContext
@@ -186,21 +207,26 @@
     
     CGLLockContext(cgl_ctx);
     
-    NSTimeInterval startTime = [NSDate timeIntervalSinceReferenceDate];
+    CFAbsoluteTime startTime = CFAbsoluteTimeGetCurrent();
     
-    BXFrameBuffer *frame = [self currentFrame];
+    BXFrameBuffer *frame = self.currentFrame;
     
     [self _prepareFrameTextureForFrame: frame inCGLContext: cgl_ctx];
     [self _prepareScalingBufferForFrame: frame inCGLContext: cgl_ctx];
     [self _renderFrame: frame inCGLContext: cgl_ctx];
     
-    NSTimeInterval endTime = [NSDate timeIntervalSinceReferenceDate];
+    CFAbsoluteTime endTime = CFAbsoluteTimeGetCurrent();
     
-    [self setRenderingTime: endTime - startTime];
-    if (lastFrameTime)
-        [self setFrameRate: (CGFloat)(1.0 / (endTime - lastFrameTime))];
+    self.renderingTime = endTime - startTime;
     
-    lastFrameTime = endTime;
+    if (_lastFrameTime)
+    {
+        CFTimeInterval timeSinceEndOfLastFrame = endTime - _lastFrameTime;
+        if (timeSinceEndOfLastFrame > 0)
+            self.frameRate = (CGFloat)(1.0 / timeSinceEndOfLastFrame);
+    }
+    
+    _lastFrameTime = endTime;
     
     CGLUnlockContext(cgl_ctx);
 }
@@ -218,27 +244,34 @@
 
 - (CGRect) viewportForFrame: (BXFrameBuffer *)frame
 {
-	if ([self maintainsAspectRatio])
+	if (self.maintainsAspectRatio)
 	{
-		NSSize frameSize = [frame scaledSize];
+		NSSize frameSize = frame.scaledSize;
 		NSRect frameRect = NSMakeRect(0.0f, 0.0f, frameSize.width, frameSize.height);
-		NSRect bounds = NSRectFromCGRect([self canvas]);
+		NSRect bounds = NSRectFromCGRect(self.canvas);
 		
 		return NSRectToCGRect(fitInRect(frameRect, bounds, NSMakePoint(0.5f, 0.5f)));
 	}
-	else return [self canvas];
+	else
+    {
+        return self.canvas;
+    }
 }
 
 
 #pragma mark -
 #pragma mark Private methods
 
-- (void) _renderFrame: (BXFrameBuffer *)frame inCGLContext: (CGLContextObj)glContext
+- (void) _renderFrame: (BXFrameBuffer *)frame
+         inCGLContext: (CGLContextObj)glContext
 {
 	CGLContextObj cgl_ctx = glContext;
 	
 	GLint contextFramebuffer = 0;
-	if (useScalingBuffer) glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &contextFramebuffer);
+	if (_useScalingBuffer)
+    {
+        glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &contextFramebuffer);
+    }
 	
 	//Set the viewport to match the aspect ratio of our frame
 	CGRect viewportRect = CGRectIntegral([self viewportForFrame: frame]);
@@ -249,25 +282,25 @@
 			   (GLsizei)viewportRect.size.height);
 	
     //Fill the areas outside our viewport with black
-	if (!CGRectEqualToRect(viewportRect, canvas))
+	if (!CGRectEqualToRect(viewportRect, self.canvas))
 	{
 		glClearColor(0, 0, 0, 1);
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
 	
 	//Activate our scaling buffer, which we'll draw the frame into first
-	if (useScalingBuffer)
+	if (_useScalingBuffer)
 	{
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, scalingBuffer);
+		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, _scalingBuffer);
 		
 		//Set the viewport to match the size of the scaling buffer (rather than the viewport size)
-		glViewport(0, 0, (GLsizei)scalingBufferSize.width, (GLsizei)scalingBufferSize.height);
+		glViewport(0, 0, (GLsizei)_scalingBufferSize.width, (GLsizei)_scalingBufferSize.height);
 	}
 	
 	//Draw the frame texture as a quad filling the viewport/framebuffer
 	//-----------
 
-	NSSize frameSize = [[self currentFrame] size];
+	NSSize frameSize = self.currentFrame.size;
 	CGRect frameRegion = CGRectIntegral(CGRectMake(0, 0, frameSize.width, frameSize.height));
 	GLfloat frameVerts[] = {
 		-1,	1,
@@ -276,20 +309,23 @@
 		-1,	-1
 	};
 	
-	if ([self currentShader])
+	if (self.currentShader)
 	{
-		glUseProgramObjectARB([[self currentShader] programObject]);
-		glUniform1iARB([[self currentShader] getUniformLocation: "OGL2Texture"], 0);
+		glUseProgramObjectARB(self.currentShader.programObject);
+		glUniform1iARB([self.currentShader getUniformLocation: "OGL2Texture"], 0);
 	}
 	
-	[self _renderTexture: frameTexture
+	[self _renderTexture: _frameTexture
 			  fromRegion: frameRegion
 				toPoints: frameVerts
 			inCGLContext: cgl_ctx];
 	
-	if ([self currentShader]) glUseProgramObjectARB(NULL);
+	if (self.currentShader)
+    {
+        glUseProgramObjectARB(NULL);
+    }
 	
-	if (useScalingBuffer)
+	if (_useScalingBuffer)
 	{
 		//Revert the GL viewport to match the viewport again
 		glViewport((GLint)viewportRect.origin.x,
@@ -304,7 +340,7 @@
 		
 		//Finally, take the scaling buffer texture and draw that into the original viewport
 		//--------
-		CGRect scalingRegion = CGRectMake(0, 0, scalingBufferSize.width, scalingBufferSize.height);
+		CGRect scalingRegion = CGRectMake(0, 0, _scalingBufferSize.width, _scalingBufferSize.height);
 		//Note that this is flipped vertically from the coordinates we use for rendering the frame texture
 		GLfloat scalingVerts[] = {
 			-1,	-1,
@@ -313,7 +349,7 @@
 			-1,	1
 		};
 		
-		[self _renderTexture: scalingBufferTexture
+		[self _renderTexture: _scalingBufferTexture
 				  fromRegion: scalingRegion
 					toPoints: scalingVerts
 				inCGLContext: cgl_ctx];
@@ -361,54 +397,57 @@
 #pragma mark -
 #pragma mark Preparing resources for drawing
 
-- (void) _prepareScalingBufferForFrame: (BXFrameBuffer *)frame inCGLContext: (CGLContextObj)glContext
+- (void) _prepareScalingBufferForFrame: (BXFrameBuffer *)frame
+                          inCGLContext: (CGLContextObj)glContext
 {
-	if (scalingBuffer && recalculateScalingBuffer)
+	if (_scalingBuffer && _recalculateScalingBuffer)
 	{
 		CGLContextObj cgl_ctx = glContext;
 		
+        CGSize viewportSize = [self viewportForFrame: frame].size;
 		CGSize newBufferSize = [self _idealScalingBufferSizeForFrame: frame
-													  toViewportSize: [self viewportForFrame: frame].size];
+													  toViewportSize: viewportSize];
 		
 		//If the old scaling buffer doesn't fit the new ideal size, recreate it
-		if (!CGSizeEqualToSize(scalingBufferSize, newBufferSize))
+		if (!CGSizeEqualToSize(_scalingBufferSize, newBufferSize))
 		{
 			//A zero suggested size means the scaling buffer is not necessary
-			useScalingBuffer = !CGSizeEqualToSize(newBufferSize, CGSizeZero);
+			_useScalingBuffer = !CGSizeEqualToSize(newBufferSize, CGSizeZero);
 			
-			if (useScalingBuffer)
+			if (_useScalingBuffer)
 			{
 				//(Re)create the scaling buffer texture in the new dimensions
-				if (scalingBufferTexture) glDeleteTextures(1, &scalingBufferTexture);
-				scalingBufferTexture = [self _createTextureForScalingBuffer: scalingBuffer
-																   withSize: newBufferSize
-															   inCGLContext: cgl_ctx];
+				if (_scalingBufferTexture) glDeleteTextures(1, &_scalingBufferTexture);
+				_scalingBufferTexture = [self _createTextureForScalingBuffer: _scalingBuffer
+                                                                    withSize: newBufferSize
+                                                                inCGLContext: cgl_ctx];
 			}
-			scalingBufferSize = newBufferSize;
+			_scalingBufferSize = newBufferSize;
 		}
-		recalculateScalingBuffer = NO;
+		_recalculateScalingBuffer = NO;
 	}
 }
 
-- (void) _prepareFrameTextureForFrame: (BXFrameBuffer *)frame inCGLContext: (CGLContextObj)glContext
+- (void) _prepareFrameTextureForFrame: (BXFrameBuffer *)frame
+                         inCGLContext: (CGLContextObj)glContext
 {
 	CGLContextObj cgl_ctx = glContext;
     
     CGLLockContext(cgl_ctx);
     
-	if (!frameTexture || needsNewFrameTexture)
+	if (!_frameTexture || _needsNewFrameTexture)
 	{
 		//Wipe out any existing frame texture we have before replacing it
-		if (frameTexture) glDeleteTextures(1, &frameTexture);
-		frameTexture = [self _createTextureForFrameBuffer: frame inCGLContext: cgl_ctx];
+		if (_frameTexture) glDeleteTextures(1, &_frameTexture);
+		_frameTexture = [self _createTextureForFrameBuffer: frame inCGLContext: cgl_ctx];
 		
-		needsNewFrameTexture = NO;
-		needsFrameTextureUpdate = NO;
+		_needsNewFrameTexture = NO;
+		_needsFrameTextureUpdate = NO;
 	}
-	else if (needsFrameTextureUpdate)
+	else if (_needsFrameTextureUpdate)
 	{
-		[self _fillTexture: frameTexture withFrameBuffer: frame inCGLContext: cgl_ctx];
-		needsFrameTextureUpdate = NO;
+		[self _fillTexture: _frameTexture withFrameBuffer: frame inCGLContext: cgl_ctx];
+		_needsFrameTextureUpdate = NO;
 	}
     
     CGLUnlockContext(cgl_ctx);
@@ -418,14 +457,15 @@
 #pragma mark -
 #pragma mark Generating and updating OpenGL resources
 
-- (GLuint) _createTextureForFrameBuffer: (BXFrameBuffer *)frame inCGLContext: (CGLContextObj)glContext
+- (GLuint) _createTextureForFrameBuffer: (BXFrameBuffer *)frame
+                           inCGLContext: (CGLContextObj)glContext
 {
 	CGLContextObj cgl_ctx = glContext;
 	
 	GLuint texture;
 	
-	GLsizei texWidth	= (GLsizei)[frame size].width;
-	GLsizei texHeight	= (GLsizei)[frame size].height;
+	GLsizei texWidth	= (GLsizei)frame.size.width;
+	GLsizei texHeight	= (GLsizei)frame.size.height;
 	
 	glEnable(GL_TEXTURE_RECTANGLE_ARB);
 	
@@ -448,13 +488,13 @@
 				 0,								//Border (unused)
 				 GL_BGRA,						//Byte ordering
 				 GL_UNSIGNED_INT_8_8_8_8_REV,	//Byte packing
-				 [frame bytes]);				//Texture data
+				 frame.bytes);                  //Texture data
 
 #ifdef BOXER_DEBUG
 	GLenum status = glGetError();
     if (status)
     {
-        NSLog(@"[BXRenderingLayer _createTextureForFrameBuffer:inCGLContext:] Could not create texture for frame buffer of size: %@ (OpenGL error %04X)", NSStringFromSize([frame size]), status);
+        NSLog(@"[BXRenderingLayer _createTextureForFrameBuffer:inCGLContext:] Could not create texture for frame buffer of size: %@ (OpenGL error %04X)", NSStringFromSize(frame.size), status);
 		glDeleteTextures(1, &texture);
 		texture = 0;
 	}
@@ -465,7 +505,9 @@
 	return texture;
 }
 
-- (void) _fillTexture: (GLuint)texture withFrameBuffer: (BXFrameBuffer *)frame inCGLContext: (CGLContextObj)glContext
+- (void) _fillTexture: (GLuint)texture
+      withFrameBuffer: (BXFrameBuffer *)frame
+         inCGLContext: (CGLContextObj)glContext
 {
 	CGLContextObj cgl_ctx = glContext;
     
@@ -477,9 +519,9 @@
     //to just upload the whole texture at once, e.g. if there's lots of small
     //changed regions.
     
-    NSUInteger pitch = [frame pitch];
-    GLsizei frameWidth = (GLsizei)[frame size].width;
-    NSUInteger i, numRegions = [frame numDirtyRegions];
+    NSUInteger pitch = frame.pitch;
+    GLsizei frameWidth = (GLsizei)frame.size.width;
+    NSUInteger i, numRegions = frame.numDirtyRegions;
     
     for (i=0; i < numRegions; i++)
     {
@@ -487,7 +529,7 @@
         NSUInteger regionOffset = dirtyRegion.location * pitch;
         
         //Uggghhhh, pointer arithmetic
-        const void *regionBytes = [frame bytes] + regionOffset;
+        const void *regionBytes = frame.bytes + regionOffset;
         
         glTexSubImage2D(GL_TEXTURE_RECTANGLE_ARB,
                      0,                     //Mipmap level
@@ -504,7 +546,7 @@
 	GLenum status = glGetError();
     if (status)
     {
-        NSLog(@"[BXRenderingLayer _fillTexture:withFrameBuffer:inCGLContext:] Could not update texture for frame buffer of size: %@ (OpenGL error %04X)", NSStringFromSize([frame size]), status);
+        NSLog(@"[BXRenderingLayer _fillTexture:withFrameBuffer:inCGLContext:] Could not update texture for frame buffer of size: %@ (OpenGL error %04X)", NSStringFromSize(frame.size), status);
 	}
 #endif
 	
@@ -512,7 +554,9 @@
 }
 
 
-- (GLuint) _createTextureForScalingBuffer: (GLuint)buffer withSize: (CGSize)size inCGLContext: (CGLContextObj)glContext
+- (GLuint) _createTextureForScalingBuffer: (GLuint)buffer
+                                 withSize: (CGSize)size
+                             inCGLContext: (CGLContextObj)glContext
 {
 	CGLContextObj cgl_ctx = glContext;
 	
@@ -581,9 +625,10 @@
 	return texture;	
 }
 
-- (CGSize) _idealScalingBufferSizeForFrame: (BXFrameBuffer *)frame toViewportSize: (CGSize)viewportSize
+- (CGSize) _idealScalingBufferSizeForFrame: (BXFrameBuffer *)frame
+                            toViewportSize: (CGSize)viewportSize
 {
-	CGSize frameSize		= NSSizeToCGSize([frame size]);
+	CGSize frameSize		= NSSizeToCGSize(frame.size);
 	CGSize scalingFactor	= CGSizeMake(viewportSize.width / frameSize.width,
 										 viewportSize.height / frameSize.height);
 	
@@ -597,7 +642,7 @@
 	
 	//If there's no aspect ratio correction needed, and the viewport is an even multiple
 	//of the initial resolution, then we don't need to scale either.
-	if (NSEqualSizes([frame intendedScale], NSMakeSize(1, 1)) &&
+	if (NSEqualSizes(frame.intendedScale, NSMakeSize(1, 1)) &&
 		!((NSInteger)viewportSize.width % (NSInteger)frameSize.width) && 
 		!((NSInteger)viewportSize.height % (NSInteger)frameSize.height)) return CGSizeZero;
 	
@@ -617,7 +662,7 @@
 									 frameSize.height * nearestScale);
 		nearestScale--;
 	}
-	while (!BXCGSizeFitsWithinSize(idealBufferSize, maxScalingBufferSize));
+	while (!BXCGSizeFitsWithinSize(idealBufferSize, _maxScalingBufferSize));
 	
 	return idealBufferSize;
 }

@@ -39,21 +39,21 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 
 
 @implementation BXGLRenderingView
-@synthesize renderer;
-@synthesize needsCVLinkDisplay;
+@synthesize renderer = _renderer;
+@synthesize needsCVLinkDisplay = _needsCVLinkDisplay;
 
 - (id) initWithCoder: (NSCoder *)aDecoder
 {
     if ((self = [super initWithCoder: aDecoder]))
     {
-        [self setRenderer: [[[BXRenderer alloc] init] autorelease]];
+        self.renderer = [[[BXRenderer alloc] init] autorelease];
     }
     return self;
 }
 
 - (void) dealloc
 {
-	[self setRenderer: nil], [renderer release];
+    self.renderer = nil;
 	[super dealloc];
 }
 
@@ -61,7 +61,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 //Pass on various events that would otherwise be eaten by the default NSView implementation
 - (void) rightMouseDown: (NSEvent *)theEvent
 {
-	[[self nextResponder] rightMouseDown: theEvent];
+	[self.nextResponder rightMouseDown: theEvent];
 }
 
 #pragma mark -
@@ -69,12 +69,12 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 
 - (void) setManagesAspectRatio: (BOOL)manage
 {
-	[[self renderer] setMaintainsAspectRatio: manage];
+	self.renderer.maintainsAspectRatio = manage;
 }
 
 - (BOOL) managesAspectRatio
 {
-	return [[self renderer] maintainsAspectRatio];	
+	return self.renderer.maintainsAspectRatio;	
 }
 
 - (void) updateWithFrame: (BXFrameBuffer *)frame
@@ -82,43 +82,45 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     //If we're using a CV Link, don't tell Cocoa that we need redrawing:
     //Instead, flag that we need to render and flush in the display link.
     //This prevents Cocoa from drawing the dirty view at the 'wrong' time.
-    [[self renderer] updateWithFrame: frame inGLContext: [[self openGLContext] CGLContextObj]];
+    [self.renderer updateWithFrame: frame
+                       inGLContext: self.openGLContext.CGLContextObj];
     
-    if (displayLink)
-        [self setNeedsCVLinkDisplay: YES];
+    if (_displayLink)
+        self.needsCVLinkDisplay = YES;
     else
-        [self setNeedsDisplay: YES];
+        self.needsDisplay = YES;
 }
 
 - (BXFrameBuffer *) currentFrame
 {
-    return [[self renderer] currentFrame];
+    return self.renderer.currentFrame;
 }
 
 - (NSRect) viewportRect
 {
-	return NSRectFromCGRect([renderer viewportForFrame: [self currentFrame]]);
+	return NSRectFromCGRect([self.renderer viewportForFrame: self.currentFrame]);
 }
 
 - (NSSize) maxFrameSize
 {
-	return NSSizeFromCGSize([renderer maxFrameSize]);
+	return NSSizeFromCGSize(self.renderer.maxFrameSize);
 }
 
 
 - (void) prepareOpenGL
 {
-	CGLContextObj cgl_ctx = [[self openGLContext] CGLContextObj];
+	CGLContextObj cgl_ctx = self.openGLContext.CGLContextObj;
 	
 	//Enable multithreaded OpenGL execution (if available)
 	CGLEnable(cgl_ctx, kCGLCEMPEngine);
     
     //Synchronize buffer swaps with vertical refresh rate
     GLint useVSync = [[NSUserDefaults standardUserDefaults] boolForKey: @"useVSync"];
-    [[self openGLContext] setValues: &useVSync forParameter: NSOpenGLCPSwapInterval];
+    [self.openGLContext setValues: &useVSync
+                     forParameter: NSOpenGLCPSwapInterval];
 	
     //Let the renderer do its own preparations
-	[[self renderer] prepareForGLContext: cgl_ctx];
+	[self.renderer prepareForGLContext: cgl_ctx];
     
     
     //Set up the CV display link if desired
@@ -126,48 +128,51 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     if (useCVDisplayLink)
     {
         //Create a display link capable of being used with all active displays
-        CVDisplayLinkCreateWithActiveCGDisplays(&displayLink);
+        CVReturn status = CVDisplayLinkCreateWithActiveCGDisplays(&_displayLink);
         
-        //Set the renderer output callback function
-        CVDisplayLinkSetOutputCallback(displayLink, &BXDisplayLinkCallback, self);
-        
-        // Set the display link for the current renderer
-        CGLPixelFormatObj cglPixelFormat = [[self pixelFormat] CGLPixelFormatObj];
-        CVDisplayLinkSetCurrentCGDisplayFromOpenGLContext(displayLink, cgl_ctx, cglPixelFormat);
-        
-        //Activate the display link
-        CVDisplayLinkStart(displayLink);
+        if (status == kCVReturnSuccess)
+        {
+            //Set the renderer output callback function
+            CVDisplayLinkSetOutputCallback(_displayLink, &BXDisplayLinkCallback, self);
+            
+            // Set the display link for the current renderer
+            CGLPixelFormatObj cglPixelFormat = self.pixelFormat.CGLPixelFormatObj;
+            CVDisplayLinkSetCurrentCGDisplayFromOpenGLContext(_displayLink, cgl_ctx, cglPixelFormat);
+            
+            //Activate the display link
+            CVDisplayLinkStart(_displayLink);
+        }
     }
 }
 
 - (void) clearGLContext
 {
-	if (displayLink)
+	if (_displayLink)
 	{
-		CVDisplayLinkRelease(displayLink);
-		displayLink = NULL;
+		CVDisplayLinkRelease(_displayLink);
+		_displayLink = NULL;
 	}
     
-	[[self renderer] tearDownGLContext: [[self openGLContext] CGLContextObj]];	
+	[self.renderer tearDownGLContext: self.openGLContext.CGLContextObj];	
 	[super clearGLContext];
 }
 
 - (void) reshape
 {
     [super reshape];
-	[[self renderer] setCanvas: NSRectToCGRect([self bounds])];
+    self.renderer.canvas = NSRectToCGRect(self.bounds);
 }
 
 - (void) drawRect: (NSRect)dirtyRect
 {
-    [self setNeedsCVLinkDisplay: NO];
+    self.needsCVLinkDisplay = NO;
     
-    CGLContextObj cgl_ctx = [[self openGLContext] CGLContextObj];
-    if ([[self renderer] canRenderToGLContext: cgl_ctx])
+    CGLContextObj cgl_ctx = self.openGLContext.CGLContextObj;
+    if ([self.renderer canRenderToGLContext: cgl_ctx])
 	{
 		CGLLockContext(cgl_ctx);
-            [[self renderer] renderToGLContext: cgl_ctx];
-            [[self renderer] flushToGLContext: cgl_ctx];
+            [self.renderer renderToGLContext: cgl_ctx];
+            [self.renderer flushToGLContext: cgl_ctx];
         CGLUnlockContext(cgl_ctx);
 	}
 }
@@ -184,7 +189,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 	
 	BXGLRenderingView *view = (BXGLRenderingView *)displayLinkContext;
     
-    if ([view needsCVLinkDisplay])
+    if (view.needsCVLinkDisplay)
         [view display];
     
 	[pool drain];
@@ -197,13 +202,15 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 - (void) viewWillStartLiveResize
 {	
 	[super viewWillStartLiveResize];
-	[[NSNotificationCenter defaultCenter] postNotificationName: BXViewWillLiveResizeNotification object: self];
+	[[NSNotificationCenter defaultCenter] postNotificationName: BXViewWillLiveResizeNotification
+                                                        object: self];
 }
 
 - (void) viewDidEndLiveResize
 {
 	[super viewDidEndLiveResize];
-	[[NSNotificationCenter defaultCenter] postNotificationName: BXViewDidLiveResizeNotification object: self];
+	[[NSNotificationCenter defaultCenter] postNotificationName: BXViewDidLiveResizeNotification
+                                                        object: self];
 }
 @end
 
@@ -217,8 +224,8 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 {
     theRect = NSIntegralRect(theRect);
     
-    //Pad the row out the appropriate length
-    NSInteger bytesPerRow	= (NSInteger)((theRect.size.width * 4) + 3) & ~3;
+    //Pad the row out to the appropriate length
+    NSInteger bytesPerRow = (NSInteger)((theRect.size.width * 4) + 3) & ~3;
     
     //IMPLEMENTATION NOTE: we use the device RGB rather than a calibrated or generic RGB,
     //so that the bitmap matches what the user is seeing.
@@ -246,10 +253,9 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     
 	//Ensure the rectangle isn't fractional
 	theRect = NSIntegralRect(theRect);
-	
     
 	//Now, do the OpenGL calls to rip off the image data
-    CGLContextObj cgl_ctx = [[self openGLContext] CGLContextObj];
+    CGLContextObj cgl_ctx = self.openGLContext.CGLContextObj;
     
     CGLLockContext(cgl_ctx);
         CGLSetCurrentContext(cgl_ctx);
@@ -277,7 +283,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
                      
                      channelOrder,
                      byteType,
-                     [rep bitmapData]
+                     rep.bitmapData
                      );
         
         //Restore the old settings
@@ -300,9 +306,9 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 	void * topP;
 	void * bottomP;
 	
-	height		= [self pixelsHigh];
-	rowBytes	= [self bytesPerRow];
-	data		= [self bitmapData];
+	height		= self.pixelsHigh;
+	rowBytes	= self.bytesPerRow;
+	data		= self.bitmapData;
 	
 	top			= 0;
 	bottom		= height - 1;

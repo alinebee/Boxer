@@ -25,30 +25,30 @@
 
 @interface BXRenderer : NSObject
 {
-	BXFrameBuffer *currentFrame;
-	Shader *currentShader;
+	BXFrameBuffer *_currentFrame;
+	Shader *_currentShader;
 	
-	BOOL supportsFBO;
-	BOOL useScalingBuffer;
+	BOOL _supportsFBO;
+	BOOL _useScalingBuffer;
 	
-	CGRect canvas;
-	BOOL maintainsAspectRatio;
+	CGRect _canvas;
+	BOOL _maintainsAspectRatio;
 	
-	GLuint frameTexture;
-	GLuint scalingBufferTexture;
-	GLuint scalingBuffer;
-	CGSize scalingBufferSize;
+	GLuint _frameTexture;
+	GLuint _scalingBufferTexture;
+	GLuint _scalingBuffer;
+	CGSize _scalingBufferSize;
 	
-	CGSize maxTextureSize;
-	CGSize maxScalingBufferSize;
+	CGSize _maxTextureSize;
+	CGSize _maxScalingBufferSize;
     
-	BOOL needsNewFrameTexture;
-	BOOL needsFrameTextureUpdate;
-	BOOL recalculateScalingBuffer;
+	BOOL _needsNewFrameTexture;
+	BOOL _needsFrameTextureUpdate;
+	BOOL _recalculateScalingBuffer;
 	
-	NSTimeInterval lastFrameTime;
-	NSTimeInterval renderingTime;
-	CGFloat frameRate;
+	CFAbsoluteTime _lastFrameTime;
+	CFTimeInterval _renderingTime;
+	CGFloat _frameRate;
 }
 
 #pragma mark -
@@ -68,7 +68,7 @@
 
 //The time it took to render the last frame, measured as the time renderToGLContext: was called to
 //the time when renderToGLContext: finished. This measures the efficiency of the rendering pipeline.
-@property (assign) NSTimeInterval renderingTime;
+@property (assign) CFTimeInterval renderingTime;
 
 //The bounds of the view/layer in which we are rendering.
 //Set by the view, and used for viewport and scaling calculations.

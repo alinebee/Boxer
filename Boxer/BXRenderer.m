@@ -10,7 +10,7 @@
 #import <OpenGL/CGLMacro.h>
 #import <OpenGL/glu.h>
 #import <OpenGL/CGLRenderers.h>
-#import "Shader.h"
+#import "BXShader.h"
 #import "BXFrameBuffer.h"
 #import "BXGeometry.h"
 
@@ -160,9 +160,10 @@
 		_maxScalingBufferSize = _maxTextureSize;
 	}
 	
-	//Shader *shader = [[Shader alloc] initWithShadersInAppBundle: @"Scale2xHQ"];
-	//if ([shader programObject]) [self setCurrentShader: shader];
-	//[shader release];
+    /*
+    NSError *loadError = nil;
+    self.currentShader = [BXShader shaderNamed: @"Scale4xHQ" inSubdirectory: @"Shaders" error: &loadError];
+    */
     
 	//Disable everything we don't need
 	glDisable(GL_DEPTH_TEST);
@@ -311,8 +312,8 @@
 	
 	if (self.currentShader)
 	{
-		glUseProgramObjectARB(self.currentShader.programObject);
-		glUniform1iARB([self.currentShader getUniformLocation: "OGL2Texture"], 0);
+		glUseProgramObjectARB(self.currentShader.shaderProgram);
+		glUniform1iARB([self.currentShader locationOfUniform: "OGL2Texture"], 0);
 	}
 	
 	[self _renderTexture: _frameTexture

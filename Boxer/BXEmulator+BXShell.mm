@@ -171,7 +171,7 @@ nil];
         [self willChangeValueForKey: @"pathOfCurrentDirectory"];
         
 		const char *dir = [dosPath cStringUsingEncoding: BXDirectStringEncoding];
-		if (dir) changedPath = (BOOL)DOS_ChangeDir(dir) || changedPath;
+		if (dir) changedPath = DOS_ChangeDir(dir) || changedPath;
         
         [self didChangeValueForKey: @"pathOfCurrentDirectory"];
 	}
@@ -186,7 +186,7 @@ nil];
 {
     [self willChangeValueForKey: @"pathOfCurrentDirectory"];
     
-	BOOL changedPath = (BOOL)DOS_SetDrive([self _indexOfDriveLetter: driveLetter]);
+	BOOL changedPath = DOS_SetDrive([self _indexOfDriveLetter: driveLetter]);
 	if (changedPath)
     {
         [self discardShellInput];

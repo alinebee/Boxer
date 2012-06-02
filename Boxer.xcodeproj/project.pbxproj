@@ -413,6 +413,9 @@
 		9FE202480F6D749500B3A38C /* Snapshot.aiff in Resources */ = {isa = PBXBuildFile; fileRef = 9FE202470F6D749500B3A38C /* Snapshot.aiff */; };
 		9FE2172E121EED1E001452E3 /* ImportCoverArtTip.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE2172A121EED1E001452E3 /* ImportCoverArtTip.png */; };
 		9FE2172F121EED1E001452E3 /* ImportRenameTip.png in Resources */ = {isa = PBXBuildFile; fileRef = 9FE2172C121EED1E001452E3 /* ImportRenameTip.png */; };
+		9FE3237E157A42B3004492E8 /* BXShader.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE3237D157A42B3004492E8 /* BXShader.m */; };
+		9FE32382157A7498004492E8 /* BXBSNESShader.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE32381157A7498004492E8 /* BXBSNESShader.m */; };
+		9FE32383157A9559004492E8 /* Shaders in Resources */ = {isa = PBXBuildFile; fileRef = 9F84C86D157800DD00CCBCA7 /* Shaders */; };
 		9FE50B591365845200495EBE /* BXInputController+BXJoystickInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE50B581365845200495EBE /* BXInputController+BXJoystickInput.m */; };
 		9FE90BF711F8D1DC003CFFFF /* BXDelegatedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FE90BF611F8D1DC003CFFFF /* BXDelegatedView.m */; };
 		9FEAA3EC1204595B0085F008 /* BXOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEAA3EB1204595B0085F008 /* BXOperation.m */; };
@@ -621,8 +624,6 @@
 		9F45A422109C867E00593456 /* BXMountPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXMountPanelController.h; sourceTree = "<group>"; };
 		9F45A423109C867E00593456 /* BXMountPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXMountPanelController.m; sourceTree = "<group>"; };
 		9F45A46B109C9A0400593456 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/MountPanelOptions.xib; sourceTree = "<group>"; };
-		9F466A4711A924EC00C50965 /* Shader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shader.h; sourceTree = "<group>"; };
-		9F466A4811A924EC00C50965 /* Shader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Shader.m; sourceTree = "<group>"; };
 		9F466AFB11A92C4B00C50965 /* UserDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UserDefaults.plist; sourceTree = "<group>"; };
 		9F4B5283122591960055022A /* prompt.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = prompt.icns; sourceTree = "<group>"; };
 		9F4E042B0F67E72300427D50 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
@@ -956,6 +957,7 @@
 		9F81CFBB13EED386008F0265 /* BXISOImageConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXISOImageConstants.h; sourceTree = "<group>"; };
 		9F839FB4150B81EF00337DD6 /* ScreenshotTemplate.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = ScreenshotTemplate.pdf; sourceTree = "<group>"; };
 		9F843FE01226EB1100FD37F1 /* import.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = import.png; sourceTree = "<group>"; };
+		9F84C86D157800DD00CCBCA7 /* Shaders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Shaders; sourceTree = "<group>"; };
 		9F86DB3E1431EF5F00A2EFB6 /* BXMIDIDeviceMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXMIDIDeviceMonitor.h; sourceTree = "<group>"; };
 		9F86DB3F1431EF5F00A2EFB6 /* BXMIDIDeviceMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXMIDIDeviceMonitor.m; sourceTree = "<group>"; };
 		9F87EF7113C1B18900326608 /* BXFlightstickAccelerometerLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXFlightstickAccelerometerLayout.h; sourceTree = "<group>"; };
@@ -1200,6 +1202,10 @@
 		9FE202470F6D749500B3A38C /* Snapshot.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; path = Snapshot.aiff; sourceTree = "<group>"; };
 		9FE2172B121EED1E001452E3 /* English */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = English; path = English.lproj/ImportCoverArtTip.png; sourceTree = "<group>"; };
 		9FE2172D121EED1E001452E3 /* English */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = English; path = English.lproj/ImportRenameTip.png; sourceTree = "<group>"; };
+		9FE3237C157A42B3004492E8 /* BXShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXShader.h; path = Rendering/BXShader.h; sourceTree = "<group>"; };
+		9FE3237D157A42B3004492E8 /* BXShader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXShader.m; path = Rendering/BXShader.m; sourceTree = "<group>"; };
+		9FE32380157A7498004492E8 /* BXBSNESShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXBSNESShader.h; path = Rendering/BXBSNESShader.h; sourceTree = "<group>"; };
+		9FE32381157A7498004492E8 /* BXBSNESShader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXBSNESShader.m; path = Rendering/BXBSNESShader.m; sourceTree = "<group>"; };
 		9FE50B571365845200495EBE /* BXInputController+BXJoystickInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "BXInputController+BXJoystickInput.h"; sourceTree = "<group>"; };
 		9FE50B581365845200495EBE /* BXInputController+BXJoystickInput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "BXInputController+BXJoystickInput.m"; sourceTree = "<group>"; };
 		9FE90BF511F8D1DC003CFFFF /* BXDelegatedView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXDelegatedView.h; sourceTree = "<group>"; };
@@ -1392,6 +1398,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				9F84C86D157800DD00CCBCA7 /* Shaders */,
 				9F0102E3144078E300942713 /* BoxerHelp */,
 				9FF86676134DCA16001CE857 /* cdrdao */,
 				9FF86677134DCA16001CE857 /* toc2cue */,
@@ -1571,6 +1578,10 @@
 				9FB4F9E311957B55006C8AC9 /* BXFrameBuffer.m */,
 				9FECE18E11A31B8B00E0EBB6 /* BXRenderer.h */,
 				9FECE18F11A31B8B00E0EBB6 /* BXRenderer.m */,
+				9FE3237C157A42B3004492E8 /* BXShader.h */,
+				9FE3237D157A42B3004492E8 /* BXShader.m */,
+				9FE32380157A7498004492E8 /* BXBSNESShader.h */,
+				9FE32381157A7498004492E8 /* BXBSNESShader.m */,
 			);
 			name = Rendering;
 			sourceTree = "<group>";
@@ -2672,8 +2683,6 @@
 			children = (
 				9FC6380113C09C13004478A3 /* JoypadCocoaSDK */,
 				9F70A02212F731A800D144D2 /* SystemEvents.h */,
-				9F466A4711A924EC00C50965 /* Shader.h */,
-				9F466A4811A924EC00C50965 /* Shader.m */,
 				9FDD4CB411E619D50035BA9E /* CGSPrivate.h */,
 				9F80BC81123556AD00EBAB23 /* Finder.h */,
 				9F7A8F230F8E705100D1AAD5 /* BXToolkit */,
@@ -2850,6 +2859,7 @@
 				9F27BD1B14FAA4F5008EB0A1 /* Volume0PercentCroppedTemplate.pdf in Resources */,
 				9F27BD1C14FAA4F5008EB0A1 /* Volume0PercentTemplate.pdf in Resources */,
 				9F839FB5150B81EF00337DD6 /* ScreenshotTemplate.pdf in Resources */,
+				9FE32383157A9559004492E8 /* Shaders in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3186,6 +3196,8 @@
 				9FD8BEE414FFF7660073B4EC /* BXExternalMIDIDevice+BXGeneralMIDISysexes.m in Sources */,
 				9F9DF415153B058200233968 /* BXKeyBuffer.mm in Sources */,
 				9F887105156F85F9006CDB5F /* BXFileTypes.m in Sources */,
+				9FE3237E157A42B3004492E8 /* BXShader.m in Sources */,
+				9FE32382157A7498004492E8 /* BXBSNESShader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

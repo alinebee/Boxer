@@ -21,12 +21,12 @@
 #import <OpenGL/OpenGL.h>
 
 @class BXFrameBuffer;
-@class Shader;
+@class BXShader;
 
 @interface BXRenderer : NSObject
 {
 	BXFrameBuffer *_currentFrame;
-	Shader *_currentShader;
+	BXShader *_currentShader;
 	
 	BOOL _supportsFBO;
 	BOOL _useScalingBuffer;
@@ -59,7 +59,7 @@
 @property (retain, readonly) BXFrameBuffer *currentFrame;
 
 //The current shader we are using to render with.
-@property (retain) Shader *currentShader;
+@property (retain) BXShader *currentShader;
 
 //The frames-per-second we are producing, measured as the time between the last two rendered frames.
 //Note that BXRenderer is only rendered when the frame or viewport changes, so this rate will only

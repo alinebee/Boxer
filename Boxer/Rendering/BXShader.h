@@ -10,12 +10,6 @@
 
 
 #pragma mark -
-#pragma mark Constants
-
-#define BXShaderUnsupportedUniformLocation -1
-
-
-#pragma mark -
 #pragma mark Error constants
 
 enum {
@@ -34,14 +28,38 @@ extern NSString * const BXShaderErrorInfoLogKey;
 
 
 #pragma mark -
+#pragma mark Shader description constants
+
+//Returned by locationOfUniform: for unrecognised uniform names.
+#define BXShaderUnsupportedUniformLocation -1
+
+//Keys for uniform description dictionaries.
+
+//An NSString representing the name of the uniform.
+extern NSString * const BXShaderUniformNameKey;
+
+//An NSNumber representing the location at which values can be assigned to the uniform.
+extern NSString * const BXShaderUniformLocationKey;
+
+//An NSNumber representing the uniform's index in the list of active uniforms.
+extern NSString * const BXShaderUniformIndexKey;
+
+//An NSNumber representing the uniform's type.
+extern NSString * const BXShaderUniformTypeKey;
+
+//An NSNumber representing the uniform's size.
+extern NSString * const BXShaderUniformSizeKey;
+
+
+#pragma mark -
 #pragma mark Interface declaration
 
 @interface BXShader : NSObject
 {
     GLhandleARB _shaderProgram;
     
-    //Whether to delete the shader when this is deallocated.
-    BOOL _freeShaderWhenDone;
+    //Whether to delete the shader program when this shader is deallocated.
+    BOOL _freeProgramWhenDone;
 }
 
 //The program underpinning this shader.
@@ -50,6 +68,11 @@ extern NSString * const BXShaderErrorInfoLogKey;
 
 #pragma mark -
 #pragma mark Helper class methods
+
+//Returns an array of dictionaries describing the active uniforms
+//defined in the specified shader program.
+//See the key constants above for what is included in this dictionary.
++ (NSArray *) uniformDescriptionsForShaderProgram: (GLhandleARB)shaderProgram;
 
 //Returns the contents of the info log for the specified object
 //(normally a shader or shader program).
@@ -98,11 +121,22 @@ extern NSString * const BXShaderErrorInfoLogKey;
 #pragma mark -
 #pragma mark Behaviour
 
-//Set this shader to use different shader program. If freeWhenDone is YES,
-//this shader will be deleted once the shader is deallocated.
-- (void) setShaderProgram: (GLhandleARB)shaderProgram freeWhenDone: (BOOL)freeWhenDone;
+//Set this shader to use the specified shader program (deleting any previous one if appropriate.)
+//If freeWhenDone is YES, the program will be deleted once the shader is deallocated.
+- (void) setShaderProgram: (GLhandleARB)shaderProgram
+             freeWhenDone: (BOOL)freeWhenDone;
 
-//Returns the location of the specified uniform, for calls to glUniformXxARB() 
+//Returns the location of the specified uniform, for calls to glUniformXxARB().
+//Returns BXShaderUnsupportedUniformLocation if the shader program does not
+//contain that uniform.
 - (GLint) locationOfUniform: (const GLcharARB *)uniformName;
+
+//Returns an array of NSDictionaries describing all of the active uniforms defined
+//in the shader program.
+//See the key constants above for what data is included in each dictionary.
+- (NSArray *) uniformDescriptions;
+
+//The info log for this shader program.
+- (NSString *) infoLog;
 
 @end

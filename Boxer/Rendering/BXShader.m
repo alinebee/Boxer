@@ -13,6 +13,22 @@ NSString * const BXShaderErrorDomain = @"BXShaderErrorDomain";
 NSString * const BXShaderErrorSourceKey = @"Source";
 NSString * const BXShaderErrorInfoLogKey = @"Info log";
 
+//An NSString representing the name of the uniform.
+NSString * const BXShaderUniformNameKey = @"Name";
+
+//An NSNumber representing the location at which values can be assigned to the uniform.
+NSString * const BXShaderUniformLocationKey = @"Location";
+
+//An NSNumber representing the uniform's index in the list of active uniforms.
+NSString * const BXShaderUniformIndexKey = @"Index";
+
+//An NSNumber representing the uniform's type.
+NSString * const BXShaderUniformTypeKey = @"Type";
+
+//An NSNumber representing the uniform's size.
+NSString * const BXShaderUniformSizeKey = @"Size";
+
+
 
 @interface BXShader ()
 @property (readwrite, nonatomic) GLhandleARB shaderProgram;
@@ -46,6 +62,57 @@ NSString * const BXShaderErrorInfoLogKey = @"Info log";
         }
     }
     return infoLog;
+}
+
++ (NSArray *) uniformDescriptionsForShaderProgram: (GLhandleARB)shaderProgram
+{
+    GLint numUniforms = 0;
+    
+    glGetObjectParameterivARB(shaderProgram, GL_OBJECT_ACTIVE_UNIFORMS_ARB, &numUniforms);
+    
+    NSMutableArray *descriptions = [NSMutableArray arrayWithCapacity: numUniforms];
+    
+    if (numUniforms > 0)
+    {
+        GLint maxUniformNameLength = 0;
+        glGetObjectParameterivARB(shaderProgram, GL_OBJECT_ACTIVE_UNIFORM_MAX_LENGTH_ARB, &maxUniformNameLength);
+        
+        GLcharARB *nameBuf = (maxUniformNameLength > 0) ? (GLcharARB *)malloc(maxUniformNameLength) : NULL;
+        GLint index;
+        for (index=0; index < numUniforms; index++)
+        {
+            GLint numBytes;
+            GLint size;
+            GLenum type;
+            glGetActiveUniformARB(shaderProgram, index, maxUniformNameLength, &numBytes, &size, &type, nameBuf);
+            
+            if (numBytes > 0)
+            {
+                GLint location = glGetUniformLocationARB(shaderProgram, nameBuf);
+                
+                //A location of -1 will be reported for builtin uniforms, which cannot be addressed
+                //with glUniformXxARB anyway. For clarity's sake we leave these out of the resulting
+                //array.
+                if (location != BXShaderUnsupportedUniformLocation)
+                {
+                    NSString *name = [NSString stringWithCString: nameBuf encoding: NSASCIIStringEncoding];
+                    NSDictionary *uniformData = [NSDictionary dictionaryWithObjectsAndKeys:
+                                                 name, BXShaderUniformNameKey,
+                                                 [NSNumber numberWithInt: type], BXShaderUniformTypeKey,
+                                                 [NSNumber numberWithInt: index], BXShaderUniformIndexKey,
+                                                 [NSNumber numberWithInt: size], BXShaderUniformSizeKey,
+                                                 [NSNumber numberWithInt: location], BXShaderUniformLocationKey,
+                                                 nil];
+            
+                    [descriptions addObject: uniformData];
+                }
+            }
+        }
+        
+        free(nameBuf);
+    }
+    
+    return descriptions;
 }
 
 + (GLhandleARB) createShaderWithSource: (NSString *)source
@@ -263,7 +330,7 @@ NSString * const BXShaderErrorInfoLogKey = @"Info log";
                                                        fragmentShaders: fragmentSources
                                                                  error: outError];
         
-        _freeShaderWhenDone = YES;
+        _freeProgramWhenDone = YES;
         
         //If we couldn't compile a shader program from the specified sources,
         //pack up and go home.
@@ -288,7 +355,7 @@ NSString * const BXShaderErrorInfoLogKey = @"Info log";
 {
     if (_shaderProgram != shaderProgram)
     {
-        if (_shaderProgram && _freeShaderWhenDone)
+        if (_shaderProgram && _freeProgramWhenDone)
             glDeleteObjectARB(_shaderProgram);
             
         _shaderProgram = shaderProgram;
@@ -299,12 +366,22 @@ NSString * const BXShaderErrorInfoLogKey = @"Info log";
              freeWhenDone: (BOOL)freeWhenDone
 {
     self.shaderProgram = shaderProgram;
-    _freeShaderWhenDone = freeWhenDone;
+    _freeProgramWhenDone = freeWhenDone;
 }
 
 - (GLint) locationOfUniform: (const GLcharARB *)uniformName
 {
     return glGetUniformLocationARB(self.shaderProgram, uniformName);
+}
+
+- (NSArray *) uniformDescriptions
+{
+    return [self.class uniformDescriptionsForShaderProgram: self.shaderProgram];
+}
+
+- (NSString *) infoLog
+{
+    return [self.class infoLogForObject: self.shaderProgram];
 }
 
 @end

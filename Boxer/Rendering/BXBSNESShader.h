@@ -71,7 +71,7 @@ extern const GLcharARB * const BXBSNESShaderFrameCountUniform;
 #pragma mark -
 #pragma mark Properties
 
-//How many frames have been rendered so far by this shader. Used by some shader programs.
+//How many frames have been rendered so far by this shader. Can be used by some shader programs.
 @property (assign, nonatomic) uint64_t frameCount;
 
 //How the shader will scale horizontally and vertically.
@@ -84,9 +84,9 @@ extern const GLcharARB * const BXBSNESShaderFrameCountUniform;
 #pragma mark -
 #pragma mark Loader methods
 
-//Returns an array of shaders loaded from the specified OpenGLShader XML definition, in the order
-//they were defined. Returns nil and populates outError if the file could not be parsed or if one
-//or more shaders failed to compile.
+//Returns an array of BXBSNESShaders loaded from the specified OpenGLShader XML definition,
+//in the order they were defined. Returns nil and populates outError if the file could not
+//be parsed or if one or more shaders failed to compile.
 + (NSArray *) shadersWithContentsOfURL: (NSURL *)shaderURL
                                  error: (NSError **)outError;
 
@@ -97,9 +97,9 @@ extern const GLcharARB * const BXBSNESShaderFrameCountUniform;
 #pragma mark -
 #pragma mark Rendering behaviour
 
-//Returns how large an output surface this shader needs to render the specified input size
-//(what the emulator rendered or the previous pipeline stage produced) to the specified final
-//output size (what the user will see.)
+//Returns how large an output surface this shader wants to render the specified input size
+//(what the emulator or previous pipeline stage produced) to the specified final output size
+//(what the user will see.)
 //This is calculated by the shader based on the scaling parameters included in the definition.
 - (CGSize) outputSizeForInputSize: (CGSize)inputSize
                   finalOutputSize: (CGSize)finalOutputSize;

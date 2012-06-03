@@ -22,6 +22,7 @@
 
 @class BXFrameBuffer;
 @class BXShader;
+@class BXGLTexture;
 
 @interface BXRenderer : NSObject
 {
@@ -34,10 +35,9 @@
 	CGRect _canvas;
 	BOOL _maintainsAspectRatio;
 	
-	GLuint _frameTexture;
-	GLuint _scalingBufferTexture;
+    BXGLTexture *_frameTexture;
+    BXGLTexture *_scalingBufferTexture;
 	GLuint _scalingBuffer;
-	CGSize _scalingBufferSize;
 	
 	CGSize _maxTextureSize;
 	CGSize _maxScalingBufferSize;

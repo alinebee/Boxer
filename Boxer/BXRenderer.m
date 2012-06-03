@@ -12,6 +12,7 @@
 #import <OpenGL/CGLRenderers.h>
 #import "BXShader.h"
 #import "BXFrameBuffer.h"
+#import "BXGLTexture+BXFrameBufferExtensions.h"
 #import "BXGeometry.h"
 
 //Documented but for some reason not present in OpenGL headers
@@ -24,36 +25,24 @@
 
 @interface BXRenderer ()
 
+//The texture into which we are drawing the DOS frames.
+@property (retain) BXGLTexture *frameTexture;
+//The texture into which we are drawing output for scaling.
+@property (retain) BXGLTexture *scalingBufferTexture;
+
 @property (readwrite, retain) BXFrameBuffer *currentFrame;
 
-//Ensure our framebuffer and scaling buffers are prepared for rendering the current frame. Called when the layer is about to be drawn.
+//Ensure our framebuffer and scaling buffers are prepared for rendering the current frame.
+//Called when the layer is about to be drawn.
 - (void) _prepareScalingBufferForFrame: (BXFrameBuffer *)frame
                           inCGLContext: (CGLContextObj)glContext;
+
 - (void) _prepareFrameTextureForFrame: (BXFrameBuffer *)frame
                          inCGLContext: (CGLContextObj)glContext;
 
 //Render the specified frame into the specified GL context.
 - (void) _renderFrame: (BXFrameBuffer *)frame
          inCGLContext: (CGLContextObj)glContext;
-
-//Draw a region of the currently active GL texture to a quad made from the specified points.
-- (void) _renderTexture: (GLuint)texture
-             fromRegion: (CGRect)textureRegion
-               toPoints: (GLfloat *)vertices
-           inCGLContext: (CGLContextObj)glContext;
-
-//Create/update an OpenGL texture with the contents of the specified framebuffer in the specified context.
-- (GLuint) _createTextureForFrameBuffer: (BXFrameBuffer *)frame
-                           inCGLContext: (CGLContextObj)glContext;
-
-- (void) _fillTexture: (GLuint)texture
-      withFrameBuffer: (BXFrameBuffer *)frame
-         inCGLContext: (CGLContextObj)glContext;
-
-//Create a new empty scaling buffer texture of the specified size in the specified context.
-- (GLuint) _createTextureForScalingBuffer: (GLuint)buffer
-                                 withSize: (CGSize)size
-                             inCGLContext: (CGLContextObj)glContext;
 
 //Calculate the appropriate scaling buffer size for the specified frame to the specified viewport dimensions.
 //This will be the nearest even multiple of the frame's resolution which covers the entire viewport size.
@@ -65,6 +54,8 @@
 
 @implementation BXRenderer
 @synthesize currentFrame = _currentFrame;
+@synthesize frameTexture = _frameTexture;
+@synthesize scalingBufferTexture = _scalingBufferTexture;
 @synthesize currentShader = _currentShader;
 @synthesize frameRate = _frameRate;
 @synthesize renderingTime = _renderingTime;
@@ -75,6 +66,8 @@
 {
     self.currentFrame = nil;
     self.currentShader = nil;
+    self.frameTexture = nil;
+    self.scalingBufferTexture = nil;
     
 	[super dealloc];
 }
@@ -87,16 +80,13 @@
 {
     if (frame != self.currentFrame)
 	{
-		//If the buffer memory locations for the two frames are different,
-        //we'll need to reinitialize the texture to link to the new buffer.
-        //This will be done next time we render.
-		if (frame.bytes != self.currentFrame.bytes)
-			_needsNewFrameTexture = YES;
-		
 		//If the buffers for the two frames are a different size,
-        //we'll need to recreate the scaling buffer when we next render too.
+        //we'll need to recreate the scaling buffer and frame texture when we next render.
 		if (!NSEqualSizes(frame.size, self.currentFrame.size))
+        {
 			_recalculateScalingBuffer = YES;
+			_needsNewFrameTexture = YES;
+        }
         
         self.currentFrame = frame;
 	}
@@ -187,11 +177,11 @@
     CGLLockContext(cgl_ctx);
     
     //Clean up all the assets we were using.
-	if (glIsTexture(_frameTexture))			glDeleteTextures(1, &_frameTexture);
-	if (glIsTexture(_scalingBufferTexture))	glDeleteTextures(1, &_scalingBufferTexture);
-	if (glIsFramebufferEXT(_scalingBuffer))	glDeleteFramebuffersEXT(1, &_scalingBuffer);
-	_frameTexture			= 0;
-	_scalingBufferTexture	= 0;
+    self.frameTexture = nil;
+    self.scalingBufferTexture = nil;
+    
+	if (glIsFramebufferEXT(_scalingBuffer))
+        glDeleteFramebuffersEXT(1, &_scalingBuffer);
 	_scalingBuffer			= 0;	
     
     CGLUnlockContext(cgl_ctx);
@@ -295,7 +285,11 @@
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, _scalingBuffer);
 		
 		//Set the viewport to match the size of the scaling buffer (rather than the viewport size)
-		glViewport(0, 0, (GLsizei)_scalingBufferSize.width, (GLsizei)_scalingBufferSize.height);
+        CGRect scalingBufferViewport = self.scalingBufferTexture.contentRegion;
+		glViewport(scalingBufferViewport.origin.x, 
+                   scalingBufferViewport.origin.y,
+                   scalingBufferViewport.size.width,
+                   scalingBufferViewport.size.height);
 	}
 	
 	//Draw the frame texture as a quad filling the viewport/framebuffer
@@ -316,10 +310,7 @@
 		glUniform1iARB([self.currentShader locationOfUniform: "OGL2Texture"], 0);
 	}
 	
-	[self _renderTexture: _frameTexture
-			  fromRegion: frameRegion
-				toPoints: frameVerts
-			inCGLContext: cgl_ctx];
+    [self.frameTexture drawFromTexelRegion: frameRegion ontoVertices: frameVerts error: NULL];
 	
 	if (self.currentShader)
     {
@@ -339,10 +330,9 @@
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, contextFramebuffer);
 		
 		
-		//Finally, take the scaling buffer texture and draw that into the original viewport
+		//Finally, draw the scaling buffer texture into the original viewport
 		//--------
-		CGRect scalingRegion = CGRectMake(0, 0, _scalingBufferSize.width, _scalingBufferSize.height);
-		//Note that this is flipped vertically from the coordinates we use for rendering the frame texture
+        //Note that this is flipped vertically from the coordinates we use for rendering the frame texture
 		GLfloat scalingVerts[] = {
 			-1,	-1,
 			1,	-1,
@@ -350,48 +340,8 @@
 			-1,	1
 		};
 		
-		[self _renderTexture: _scalingBufferTexture
-				  fromRegion: scalingRegion
-					toPoints: scalingVerts
-				inCGLContext: cgl_ctx];
+        [self.scalingBufferTexture drawOntoVertices: scalingVerts error: NULL];
 	}
-}
-
-- (void) _renderTexture: (GLuint)texture
-             fromRegion: (CGRect)textureRegion
-               toPoints: (GLfloat *)vertices
-           inCGLContext: (CGLContextObj)glContext
-{
-	CGLContextObj cgl_ctx = glContext;
-	
-	GLfloat minX = CGRectGetMinX(textureRegion),
-			minY = CGRectGetMinY(textureRegion),
-			maxX = CGRectGetMaxX(textureRegion),
-			maxY = CGRectGetMaxY(textureRegion);
-	
-    GLfloat texCoords[] = {
-        minX,	minY,
-        maxX,	minY,
-        maxX,	maxY,
-		minX,	maxY
-    };
-	
-	glEnable(GL_TEXTURE_RECTANGLE_ARB);
-	glBindTexture(GL_TEXTURE_RECTANGLE_ARB, texture);
-	
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
-	
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(2, GL_FLOAT, 0, vertices);
-    
-	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-    
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisableClientState(GL_VERTEX_ARRAY);
-	
-	glBindTexture(GL_TEXTURE_RECTANGLE_ARB, 0);
-	glDisable(GL_TEXTURE_RECTANGLE_ARB);
 }
 
 
@@ -402,15 +352,14 @@
                           inCGLContext: (CGLContextObj)glContext
 {
 	if (_scalingBuffer && _recalculateScalingBuffer)
-	{
-		CGLContextObj cgl_ctx = glContext;
-		
+	{	
         CGSize viewportSize = [self viewportForFrame: frame].size;
+        CGSize oldBufferSize = self.scalingBufferTexture.contentRegion.size;
 		CGSize newBufferSize = [self _idealScalingBufferSizeForFrame: frame
 													  toViewportSize: viewportSize];
 		
 		//If the old scaling buffer doesn't fit the new ideal size, recreate it
-		if (!CGSizeEqualToSize(_scalingBufferSize, newBufferSize))
+		if (!CGSizeEqualToSize(oldBufferSize, newBufferSize))
 		{
 			//A zero suggested size means the scaling buffer is not necessary
 			_useScalingBuffer = !CGSizeEqualToSize(newBufferSize, CGSizeZero);
@@ -418,12 +367,24 @@
 			if (_useScalingBuffer)
 			{
 				//(Re)create the scaling buffer texture in the new dimensions
-				if (_scalingBufferTexture) glDeleteTextures(1, &_scalingBufferTexture);
-				_scalingBufferTexture = [self _createTextureForScalingBuffer: _scalingBuffer
-                                                                    withSize: newBufferSize
-                                                                inCGLContext: cgl_ctx];
+                self.scalingBufferTexture = [BXGLTexture textureWithType: GL_TEXTURE_2D
+                                                             contentSize: newBufferSize
+                                                                   bytes: NULL
+                                                                   error: NULL];
+                
+                //Now try binding the texture to our scaling buffer.
+                BOOL bindSucceeded = [self.scalingBufferTexture bindToFrameBuffer: _scalingBuffer
+                                                                       attachment: GL_COLOR_ATTACHMENT0_EXT
+                                                                            level: 0
+                                                                            error: nil];
+                
+                //If binding failed, then ditch the texture after all.
+                if (!bindSucceeded)
+                {
+                    self.scalingBufferTexture = nil;
+                    _useScalingBuffer = NO;
+                }
 			}
-			_scalingBufferSize = newBufferSize;
 		}
 		_recalculateScalingBuffer = NO;
 	}
@@ -436,194 +397,24 @@
     
     CGLLockContext(cgl_ctx);
     
-	if (!_frameTexture || _needsNewFrameTexture)
+	if (!self.frameTexture || _needsNewFrameTexture)
 	{
-		//Wipe out any existing frame texture we have before replacing it
-		if (_frameTexture) glDeleteTextures(1, &_frameTexture);
-		_frameTexture = [self _createTextureForFrameBuffer: frame inCGLContext: cgl_ctx];
+        self.frameTexture = [BXGLTexture textureWithType: GL_TEXTURE_2D
+                                             frameBuffer: frame
+                                                   error: NULL];
+        self.frameTexture.minFilter = GL_LINEAR;
+        self.frameTexture.magFilter = GL_NEAREST;
 		
 		_needsNewFrameTexture = NO;
 		_needsFrameTextureUpdate = NO;
 	}
 	else if (_needsFrameTextureUpdate)
 	{
-		[self _fillTexture: _frameTexture withFrameBuffer: frame inCGLContext: cgl_ctx];
+        [self.frameTexture fillWithFrameBuffer: frame error: NULL];
 		_needsFrameTextureUpdate = NO;
 	}
     
     CGLUnlockContext(cgl_ctx);
-}
-
-
-#pragma mark -
-#pragma mark Generating and updating OpenGL resources
-
-- (GLuint) _createTextureForFrameBuffer: (BXFrameBuffer *)frame
-                           inCGLContext: (CGLContextObj)glContext
-{
-	CGLContextObj cgl_ctx = glContext;
-	
-	GLuint texture;
-	
-	GLsizei texWidth	= (GLsizei)frame.size.width;
-	GLsizei texHeight	= (GLsizei)frame.size.height;
-	
-	glEnable(GL_TEXTURE_RECTANGLE_ARB);
-	
-	//Create a new texture and bind it as the current target
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_RECTANGLE_ARB, texture);
-	
-	//Clamp the texture to avoid wrapping, and set the filtering mode to use nearest-neighbour when scaling up
-	glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	
-	//Create a new texture for the framebuffer's resolution using the framebuffer's data
-	glTexImage2D(GL_TEXTURE_RECTANGLE_ARB,		//Texture target
-				 0,								//Mipmap level
-				 GL_RGBA8,						//Internal texture format
-				 texWidth,						//Width
-				 texHeight,						//Height
-				 0,								//Border (unused)
-				 GL_BGRA,						//Byte ordering
-				 GL_UNSIGNED_INT_8_8_8_8_REV,	//Byte packing
-				 frame.bytes);                  //Texture data
-
-#ifdef BOXER_DEBUG
-	GLenum status = glGetError();
-    if (status)
-    {
-        NSLog(@"[BXRenderingLayer _createTextureForFrameBuffer:inCGLContext:] Could not create texture for frame buffer of size: %@ (OpenGL error %04X)", NSStringFromSize(frame.size), status);
-		glDeleteTextures(1, &texture);
-		texture = 0;
-	}
-#endif
-	
-	glDisable(GL_TEXTURE_RECTANGLE_ARB);
-    
-	return texture;
-}
-
-- (void) _fillTexture: (GLuint)texture
-      withFrameBuffer: (BXFrameBuffer *)frame
-         inCGLContext: (CGLContextObj)glContext
-{
-	CGLContextObj cgl_ctx = glContext;
-    
-	glEnable(GL_TEXTURE_RECTANGLE_ARB);
-	glBindTexture(GL_TEXTURE_RECTANGLE_ARB, texture);
-    
-    //Optimisation: only upload the changed regions to the texture.
-    //TODO: profile this and see if it's quicker under some circumstances
-    //to just upload the whole texture at once, e.g. if there's lots of small
-    //changed regions.
-    
-    NSUInteger pitch = frame.pitch;
-    GLsizei frameWidth = (GLsizei)frame.size.width;
-    NSUInteger i, numRegions = frame.numDirtyRegions;
-    
-    for (i=0; i < numRegions; i++)
-    {
-        NSRange dirtyRegion = [frame dirtyRegionAtIndex: i];
-        NSUInteger regionOffset = dirtyRegion.location * pitch;
-        
-        //Uggghhhh, pointer arithmetic
-        const void *regionBytes = frame.bytes + regionOffset;
-        
-        glTexSubImage2D(GL_TEXTURE_RECTANGLE_ARB,
-                     0,                     //Mipmap level
-                     0,                     //X offset
-                     dirtyRegion.location,	//Y offset
-                     frameWidth,            //Width
-                     dirtyRegion.length,	//Height
-                     GL_BGRA,               //Byte ordering
-                     GL_UNSIGNED_INT_8_8_8_8_REV,	//Byte packing
-                     regionBytes);                  //Texture data
-    }
-	
-#ifdef BOXER_DEBUG	
-	GLenum status = glGetError();
-    if (status)
-    {
-        NSLog(@"[BXRenderingLayer _fillTexture:withFrameBuffer:inCGLContext:] Could not update texture for frame buffer of size: %@ (OpenGL error %04X)", NSStringFromSize(frame.size), status);
-	}
-#endif
-	
-	glDisable(GL_TEXTURE_RECTANGLE_ARB);
-}
-
-
-- (GLuint) _createTextureForScalingBuffer: (GLuint)buffer
-                                 withSize: (CGSize)size
-                             inCGLContext: (CGLContextObj)glContext
-{
-	CGLContextObj cgl_ctx = glContext;
-	
-	GLuint texture;
-	
-	GLsizei texWidth	= (GLsizei)size.width;
-	GLsizei texHeight	= (GLsizei)size.height;
-	
-	glEnable(GL_TEXTURE_RECTANGLE_ARB);
-	
-	//Create a new texture and bind it as the current target
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_RECTANGLE_ARB, texture);	
-	
-	//Clamp the texture to avoid wrapping, and set the filtering mode to bilinear filtering
-	glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_T, GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	
-	//Create a new empty texture of the specified size
-	glTexImage2D(GL_TEXTURE_RECTANGLE_ARB,		//Texture target
-				 0,								//Mipmap level
-				 GL_RGBA8,						//Internal texture format
-				 texWidth,						//Width
-				 texHeight,						//Height
-				 0,								//Border (unused)
-				 GL_BGRA,						//Byte ordering
-				 GL_UNSIGNED_INT_8_8_8_8_REV,	//Byte packing
-				 NULL);							//Empty data
-	
-#ifdef BOXER_DEBUG
-	GLenum status = glGetError();
-    if (status)
-    {
-        NSLog(@"[BXRenderingLayer _createTextureForScalingBuffer:withSize:inCGLContext:] Could not create texture for scaling buffer of size: %@ (OpenGL error %04X)", NSStringFromSize(NSSizeFromCGSize(size)), status);
-		glDeleteTextures(1, &texture);
-		texture = 0;
-	}
-#endif
-	
-	//Now bind it to the specified buffer
-	if (texture)
-	{
-		GLint contextFramebuffer;
-		glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &contextFramebuffer);
-		
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, buffer);
-		glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_RECTANGLE_ARB, texture, 0);
-		
-#ifdef BOXER_DEBUG
-		status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
-		if (status != GL_FRAMEBUFFER_COMPLETE_EXT)
-		{
-			NSLog(@"[BXRenderingLayer _createTextureForScalingBuffer:withSize:inCGLContext:] Could not bind to scaling buffer (OpenGL error %04X)", status);
-			glDeleteTextures(1, &texture);
-			texture = 0;
-		}
-#endif
-		
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, contextFramebuffer);
-	}
-	
-	glDisable(GL_TEXTURE_RECTANGLE_ARB);
-	
-	return texture;	
 }
 
 - (CGSize) _idealScalingBufferSizeForFrame: (BXFrameBuffer *)frame

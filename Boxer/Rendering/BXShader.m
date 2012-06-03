@@ -93,7 +93,7 @@ NSString * const BXShaderUniformSizeKey = @"Size";
                 //A location of -1 will be reported for builtin uniforms, which cannot be addressed
                 //with glUniformXxARB anyway. For clarity's sake we leave these out of the resulting
                 //array.
-                if (location != BXShaderUnsupportedUniformLocation)
+                if (YES || location != BXShaderUnsupportedUniformLocation)
                 {
                     NSString *name = [NSString stringWithCString: nameBuf encoding: NSASCIIStringEncoding];
                     NSDictionary *uniformData = [NSDictionary dictionaryWithObjectsAndKeys:

@@ -6,14 +6,14 @@
 //  Copyright (c) 2012 Alun Bestor and contributors. All rights reserved.
 //
 
-#import "BXGLTexture.h"
+#import "BXTexture2D.h"
 #import "BXGeometry.h"
 
 NSString * const BXGLErrorDomain = @"BXGLErrorDomain";
 NSString * const BXGLFramebufferExtensionErrorDomain = @"BXGLFramebufferExtensionErrorDomain";
 
 
-@implementation BXGLTexture
+@implementation BXTexture2D
 @synthesize texture = _texture;
 @synthesize type = _type;
 @synthesize contentRegion = _contentRegion;
@@ -30,7 +30,7 @@ NSString * const BXGLFramebufferExtensionErrorDomain = @"BXGLFramebufferExtensio
 
 + (CGSize) textureSizeNeededForContentSize: (CGSize)size withType: (GLenum)textureType
 {
-    if (textureType == GL_TEXTURE_RECTANGLE_ARB)
+    if (textureType == GL_TEXTURE_RECTANGLE_ARB || textureType == GL_TEXTURE_RECTANGLE_EXT)
     {
         return size;
     }
@@ -122,21 +122,21 @@ NSString * const BXGLFramebufferExtensionErrorDomain = @"BXGLFramebufferExtensio
         glTexParameteri(_type, GL_TEXTURE_MAG_FILTER, _magFilter);
         
         
+        
         //If the texture size is the same as the content size, then we can provide the texture
         //data in the initial call already. Otherwise, we'll have to fill it in a separate pass.
         BOOL canWriteTextureData = (bytes != NULL) && CGSizeEqualToSize(_textureSize, contentSize);
 
-        //If we don't have any bytes to fill the texture with, or we'll only be filling a subregion,
-        //then fill the texture initially with black.
         GLvoid *initialData;
         BOOL createdOwnData = NO;
         if (canWriteTextureData)
         {
             initialData = (GLvoid *)bytes;
-        }
+        }        
+        //If we don't have any bytes to fill the texture with, or we'll only be filling a subregion,
+        //then fill the texture initially with pure black.
         else
         {
-            //Create a buffer of all zeros, which will appear as black in the final texture.
             size_t numBytes = _textureSize.width * _textureSize.height * 4;
             initialData = (GLvoid *)malloc(numBytes);
             if (initialData)

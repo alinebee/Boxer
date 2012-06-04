@@ -12,18 +12,18 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class BXFrameBuffer;
+@class BXVideoFrame;
 
 @protocol BXFrameRenderingView
 @property (assign) BOOL managesAspectRatio;
 
 //Tells the view to render the specified frame next time it is redrawn.
 //Will usually mark the view as needing display.
-- (void) updateWithFrame: (BXFrameBuffer *)frame;
+- (void) updateWithFrame: (BXVideoFrame *)frame;
 
 //Returns the current frame being rendered - i.e. the last frame that was passed
 //to the view via updateWithFrame:.
-- (BXFrameBuffer *) currentFrame;
+- (BXVideoFrame *) currentFrame;
 
 
 //Reports the maximum displayable frame size (which may be limited by e.g. OpenGL

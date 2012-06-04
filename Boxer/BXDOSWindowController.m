@@ -14,7 +14,7 @@
 #import "BXPackage.h"
 
 #import "BXFrameRenderingView.h"
-#import "BXFrameBuffer.h"
+#import "BXVideoFrame.h"
 #import "BXInputView.h"
 
 #import "BXEmulator.h"
@@ -443,7 +443,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 #pragma mark -
 #pragma mark DOSBox frame rendering
 
-- (void) updateWithFrame: (BXFrameBuffer *)frame
+- (void) updateWithFrame: (BXVideoFrame *)frame
 {
 	//Update the renderer with the new frame.
 	[self.renderingView updateWithFrame: frame];
@@ -774,7 +774,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 	[self.document.emulator.videoHandler reset];
 }
 
-- (BOOL) _resizeToAccommodateFrame: (BXFrameBuffer *)frame
+- (BOOL) _resizeToAccommodateFrame: (BXVideoFrame *)frame
 {
 	NSSize scaledSize		= frame.scaledSize;
 	NSSize scaledResolution	= frame.scaledResolution;
@@ -854,7 +854,7 @@ NSString * const BXViewDidLiveResizeNotification	= @"BXViewDidLiveResizeNotifica
 //Returns the most appropriate view size for the intended output size, given the size of the current window.
 //This is calculated as the current view size with the aspect ratio compensated for that of the new output size:
 //favouring the width or the height as appropriate.
-- (NSSize) _renderingViewSizeForFrame: (BXFrameBuffer *)frame minSize: (NSSize)minViewSize
+- (NSSize) _renderingViewSizeForFrame: (BXVideoFrame *)frame minSize: (NSSize)minViewSize
 {	
 	//Start off with our current view size: we want to deviate from this as little as possible.
 	NSSize viewSize = self.windowedRenderingViewSize;

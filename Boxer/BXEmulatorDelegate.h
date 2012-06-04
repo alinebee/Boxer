@@ -42,7 +42,7 @@ extern NSString * const BXEmulatorDidDisplayMT32MessageNotification;
 #pragma mark -
 #pragma mark Protocol
 
-@class BXFrameBuffer;
+@class BXVideoFrame;
 @class BXEmulator;
 @protocol BXMIDIDevice;
 @protocol BXEmulatorDelegate <NSObject>
@@ -64,7 +64,7 @@ extern NSString * const BXEmulatorDidDisplayMT32MessageNotification;
 - (NSArray *) configurationPathsForEmulator: (BXEmulator *)emulator;
 
 //Tells the delegate that the specified frame has finished rendering.
-- (void) emulator: (BXEmulator *)emulator didFinishFrame: (BXFrameBuffer *)frame;
+- (void) emulator: (BXEmulator *)emulator didFinishFrame: (BXVideoFrame *)frame;
 
 //Called at the start of AUTOEXEC.BAT to let the delegate run any DOS commands
 //it needs to configure the emulation state.

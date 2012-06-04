@@ -20,13 +20,13 @@
 #import <Foundation/Foundation.h>
 #import <OpenGL/OpenGL.h>
 
-@class BXFrameBuffer;
+@class BXVideoFrame;
 @class BXShader;
-@class BXGLTexture;
+@class BXTexture2D;
 
 @interface BXRenderer : NSObject
 {
-	BXFrameBuffer *_currentFrame;
+	BXVideoFrame *_currentFrame;
 	BXShader *_currentShader;
 	
 	BOOL _supportsFBO;
@@ -35,8 +35,8 @@
 	CGRect _canvas;
 	BOOL _maintainsAspectRatio;
 	
-    BXGLTexture *_frameTexture;
-    BXGLTexture *_scalingBufferTexture;
+    BXTexture2D *_frameTexture;
+    BXTexture2D *_scalingBufferTexture;
 	GLuint _scalingBuffer;
 	
 	CGSize _maxTextureSize;
@@ -56,7 +56,7 @@
 
 //The current frame that will be rendered when renderToGLContext: is called.
 //Set using updateWithFrame:inGLContext:.
-@property (retain, readonly) BXFrameBuffer *currentFrame;
+@property (retain, readonly) BXVideoFrame *currentFrame;
 
 //The current shader we are using to render with.
 @property (retain) BXShader *currentShader;
@@ -85,13 +85,13 @@
 //Replaces the current frame with a new/updated one for rendering.
 //Next time renderToGLContext is called, the rendering state will be updated
 //to match the new frame and the new frame will be rendered. 
-- (void) updateWithFrame: (BXFrameBuffer *)frame inGLContext: (CGLContextObj)glContext;
+- (void) updateWithFrame: (BXVideoFrame *)frame inGLContext: (CGLContextObj)glContext;
 
 //Returns the maximum drawable frame size.
 - (CGSize) maxFrameSize;
 
 //Returns the rectangular region of the current canvas that the specified frame would be drawn into.
-- (CGRect) viewportForFrame: (BXFrameBuffer *)frame;
+- (CGRect) viewportForFrame: (BXVideoFrame *)frame;
 
 //Prepare the renderer state for rendering into the specified OpenGL context.
 - (void) prepareForGLContext:	(CGLContextObj)glContext;

@@ -149,7 +149,7 @@ enum {
 
 //Called by videoHandler when each new frame is ready.
 //Passes the frame on to the emulator's delegate.
-- (void) _didFinishFrame: (BXFrameBuffer *)frame;
+- (void) _didFinishFrame: (BXVideoFrame *)frame;
 
 @end
 

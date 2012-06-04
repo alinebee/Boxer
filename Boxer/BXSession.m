@@ -927,7 +927,7 @@ NSString * const BXDidFinishInterruptionNotification = @"BXDidFinishInterruption
     _userSkippedDefaultProgram = NO;
 }
 
-- (void) emulator: (BXEmulator *)theEmulator didFinishFrame: (BXFrameBuffer *)frame
+- (void) emulator: (BXEmulator *)theEmulator didFinishFrame: (BXVideoFrame *)frame
 {
 	[self.DOSWindowController updateWithFrame: frame];
 }

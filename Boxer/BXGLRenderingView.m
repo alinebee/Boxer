@@ -77,7 +77,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 	return self.renderer.maintainsAspectRatio;	
 }
 
-- (void) updateWithFrame: (BXFrameBuffer *)frame
+- (void) updateWithFrame: (BXVideoFrame *)frame
 {
     //If we're using a CV Link, don't tell Cocoa that we need redrawing:
     //Instead, flag that we need to render and flush in the display link.
@@ -91,7 +91,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
         self.needsDisplay = YES;
 }
 
-- (BXFrameBuffer *) currentFrame
+- (BXVideoFrame *) currentFrame
 {
     return self.renderer.currentFrame;
 }

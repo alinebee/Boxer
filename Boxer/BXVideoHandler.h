@@ -17,10 +17,6 @@
 #endif
 
 
-//The standard 4:3 aspect ratio of old displays
-extern const CGFloat BX4by3AspectRatio;
-
-
 typedef NSUInteger BXFilterType;
 
 typedef struct {
@@ -58,21 +54,21 @@ typedef struct {
 
 
 @class BXEmulator;
-@class BXFrameBuffer;
+@class BXVideoFrame;
 
 @interface BXVideoHandler : NSObject
 {
-	BXEmulator *emulator;
-	BXFrameBuffer *frameBuffer;
+	BXEmulator *_emulator;
+	BXVideoFrame *_currentFrame;
 	
-	NSInteger currentVideoMode;
-	BXFilterType filterType;
-	BOOL aspectCorrected;
-	BOOL frameInProgress;
+	NSInteger _currentVideoMode;
+	BXFilterType _filterType;
+	BOOL _aspectCorrected;
+	BOOL _frameInProgress;
 	
 #if __cplusplus
 	//This is a C++ function pointer and should never be seen by Obj-C classes
-	GFX_CallBack_t callback;
+	GFX_CallBack_t _callback;
 #endif
 }
 
@@ -83,7 +79,7 @@ typedef struct {
 @property (assign, nonatomic) BXEmulator *emulator;
 
 //The framebuffer we render our frames into.
-@property (retain, nonatomic) BXFrameBuffer *frameBuffer;
+@property (retain, nonatomic) BXVideoFrame *currentFrame;
 
 //Whether to apply 4:3 aspect ratio correction to the rendered output.
 @property (assign, nonatomic, getter=isAspectCorrected) BOOL aspectCorrected;

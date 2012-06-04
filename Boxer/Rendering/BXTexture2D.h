@@ -16,7 +16,7 @@
 #pragma mark -
 #pragma mark Error constants
 
-//The error domain for standardGL errors.
+//The error domain for errors produced by standard GL calls.
 extern NSString * const BXGLErrorDomain;
 
 //The error domain for errors produced by GL_EXT_framebuffer_object extension.
@@ -26,7 +26,7 @@ extern NSString * const BXGLFramebufferExtensionErrorDomain;
 #pragma mark -
 #pragma mark Implementation
 
-@interface BXGLTexture : NSObject
+@interface BXTexture2D : NSObject
 {
     GLuint _texture;
     GLenum _type;
@@ -47,7 +47,7 @@ extern NSString * const BXGLFramebufferExtensionErrorDomain;
 //The type of this texture: one of GL_TEXTURE_2D or GL_TEXTURE_RECTANGLE.
 @property (readonly, nonatomic) GLenum type;
 
-//The size in pixels of this texture.
+//The size in texels of this texture.
 @property (readonly, nonatomic) CGSize textureSize;
 
 //The region (expressed in texels) of the texture that is filled by content:
@@ -59,8 +59,8 @@ extern NSString * const BXGLFramebufferExtensionErrorDomain;
 //The above expressed in normalized texture coordinates (0-1).
 @property (assign, nonatomic) CGRect normalizedContentRegion;
 
-//Whether the texture uses normalized (0-1) texture coordinates
-//or texels for draw operations.
+//Whether the texture uses texels or normalized (0-1) texture coordinates for draw functions.
+//Will be NO for GL_TEXTURE_RECTANGLE textures, YES for everything else.
 @property (readonly, nonatomic) BOOL usesNormalizedTextureCoordinates;
 
 

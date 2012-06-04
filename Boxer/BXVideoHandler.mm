@@ -8,15 +8,12 @@
 
 #import "BXVideoHandler.h"
 #import "BXEmulatorPrivate.h"
-#import "BXFrameBuffer.h"
+#import "BXVideoFrame.h"
 #import "BXGeometry.h"
 #import "BXFilterDefinitions.h"
 
 #import "render.h"
 #import "vga.h"
-
-
-const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 
 
 #pragma mark -
@@ -38,37 +35,37 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 
 - (NSInteger) _maxFilterScaleForResolution: (NSSize)resolution;
 
-- (void) _applyAspectCorrectionToFrame: (BXFrameBuffer *)frame;
+- (void) _applyAspectCorrectionToFrame: (BXVideoFrame *)frame;
 
 @end
 
 
 @implementation BXVideoHandler
-@synthesize frameBuffer;
-@synthesize emulator;
-@synthesize aspectCorrected;
-@synthesize filterType;
+@synthesize currentFrame = _currentFrame;
+@synthesize emulator = _emulator;
+@synthesize aspectCorrected = _aspectCorrected;
+@synthesize filterType = _filterType;
 
 
 - (id) init
 {
 	if ((self = [super init]))
 	{
-		currentVideoMode = M_TEXT;
+		_currentVideoMode = M_TEXT;
 	}
 	return self;
 }
 
 - (void) dealloc
 {	
-	[self setFrameBuffer: nil], [frameBuffer release];
+    self.currentFrame = nil;
 	[super dealloc];
 }
 
 - (NSSize) resolution
 {
 	NSSize size = NSZeroSize;
-	if ([[self emulator] isExecuting])
+	if (self.emulator.isExecuting)
 	{
 		size.width	= (CGFloat)render.src.width;
 		size.height	= (CGFloat)render.src.height;
@@ -80,11 +77,14 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 - (BOOL) isInTextMode
 {
 	BOOL textMode = NO;
-	if ([[self emulator] isExecuting])
+	if (self.emulator.isExecuting)
 	{
-		switch (currentVideoMode)
+		switch (_currentVideoMode)
 		{
-			case M_TEXT: case M_TANDY_TEXT: case M_HERC_TEXT: textMode = YES;
+			case M_TEXT:
+            case M_TANDY_TEXT:
+            case M_HERC_TEXT:
+                textMode = YES;
 		}
 	}
 	return textMode;
@@ -100,14 +100,12 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 	render.frameskip.max = (Bitu)frameskip;
 }
 
-
-
 //Toggles aspect ratio correction and resets the renderer to apply the change immediately.
 - (void) setAspectCorrected: (BOOL)correct
 {
-	if (correct != [self isAspectCorrected])
+	if (correct != self.isAspectCorrected)
 	{
-		aspectCorrected = correct;
+		_aspectCorrected = correct;
 		//Reset to force a new frame buffer at the corrected size
 		//TODO: this would be unnecessary if we applied aspect correction higher up
 		//at the windowing level
@@ -118,13 +116,12 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 //Chooses the specified filter, and resets the renderer to apply the change immediately.
 - (void) setFilterType: (BXFilterType)type
 {
-	if (type != filterType)
+	if (type != _filterType)
 	{
 		NSAssert1(type <= sizeof(BXFilters), @"Invalid filter type provided to setFilterType: %i", type);
 				
-		filterType = type;
+		_filterType = type;
 		[self reset];
-		
 	}
 }
 
@@ -132,9 +129,9 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 - (BOOL) filterIsActive
 {
 	BOOL isActive = NO;
-	if ([[self emulator] isExecuting])
+	if (self.emulator.isExecuting)
 	{
-		isActive = ([self filterType] == (NSUInteger)render.scale.op);
+		isActive = (self.filterType == (NSUInteger)render.scale.op);
 	}
 	return isActive;
 }
@@ -154,9 +151,9 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
         }
         else
         {
-            if (frameInProgress) [self finishFrameWithChanges: NULL];
+            if (_frameInProgress) [self finishFrameWithChanges: NULL];
             
-            if (callback) callback(GFX_CallBackReset);
+            if (_callback) _callback(GFX_CallBackReset);
             //CPU_Reset_AutoAdjust();
         }
 	}
@@ -165,19 +162,19 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 - (void) shutdown
 {
 	[self finishFrameWithChanges: 0];
-	if (callback) callback(GFX_CallBackStop);
+	if (_callback) _callback(GFX_CallBackStop);
 }
 
 
 #pragma mark -
 #pragma mark DOSBox callbacks
 
-- (void) _applyAspectCorrectionToFrame: (BXFrameBuffer *)frame
+- (void) _applyAspectCorrectionToFrame: (BXVideoFrame *)frame
 {
 	//If aspect correction is turned on and we're in a graphical game,
 	//then apply the correction. (For now we leave it off for text-modes
 	//since they tend to look crappy scaled at small window sizes.)
-	if ([self isAspectCorrected] && ![self isInTextMode])
+	if (self.isAspectCorrected && !self.isInTextMode)
 	{
 		[frame useAspectRatio: BX4by3AspectRatio];
 	}
@@ -187,73 +184,72 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 - (void) prepareForOutputSize: (NSSize)outputSize atScale: (NSSize)scale withCallback: (GFX_CallBack_t)newCallback
 {
 	//Synchronise our record of the current video mode with the new video mode
-	BOOL wasTextMode = [self isInTextMode];
-	if (currentVideoMode != vga.mode)
+	BOOL wasTextMode = self.isInTextMode;
+	if (_currentVideoMode != vga.mode)
 	{
 		[self willChangeValueForKey: @"isInTextMode"];
-		currentVideoMode = vga.mode;
+		_currentVideoMode = vga.mode;
 		[self didChangeValueForKey: @"isInTextMode"];
 	}
-	BOOL nowTextMode = [self isInTextMode];
+	BOOL nowTextMode = self.isInTextMode;
 	
 	//If we were in the middle of a frame then cancel it
-	frameInProgress = NO;
+	_frameInProgress = NO;
 	
-	callback = newCallback;
+	_callback = newCallback;
 	
 	//Check if we can reuse our existing framebuffer: if not, create a new one
-	if (!NSEqualSizes(outputSize, [[self frameBuffer] size]))
+	if (!NSEqualSizes(outputSize, self.currentFrame.size))
 	{
-		BXFrameBuffer *newBuffer = [BXFrameBuffer bufferWithSize: outputSize depth: 4];
-		[self setFrameBuffer: newBuffer];
+        self.currentFrame = [BXVideoFrame frameWithSize: outputSize depth: 4];
 	}
 	
-	[[self frameBuffer] setBaseResolution: [self resolution]];
-	[self _applyAspectCorrectionToFrame: [self frameBuffer]];
+    self.currentFrame.baseResolution = self.resolution;
+	[self _applyAspectCorrectionToFrame: self.currentFrame];
 	
 	
 	//Send notifications if the display mode has changed
 	
 	if (wasTextMode && !nowTextMode)
-		[[self emulator] _postNotificationName: BXEmulatorDidBeginGraphicalContextNotification
-							  delegateSelector: @selector(emulatorDidBeginGraphicalContext:)
-									  userInfo: nil];
+		[self.emulator _postNotificationName: BXEmulatorDidBeginGraphicalContextNotification
+                            delegateSelector: @selector(emulatorDidBeginGraphicalContext:)
+                                    userInfo: nil];
 	
 	else if (!wasTextMode && nowTextMode)
-		[[self emulator] _postNotificationName: BXEmulatorDidFinishGraphicalContextNotification
-							  delegateSelector: @selector(emulatorDidFinishGraphicalContext:)
-									  userInfo: nil];
+		[self.emulator _postNotificationName: BXEmulatorDidFinishGraphicalContextNotification
+                            delegateSelector: @selector(emulatorDidFinishGraphicalContext:)
+                                    userInfo: nil];
 }
 
 - (BOOL) startFrameWithBuffer: (void **)buffer pitch: (NSUInteger *)pitch
 {
-	if (frameInProgress) 
+	if (_frameInProgress) 
 	{
 		NSLog(@"Tried to start a new frame while one was still in progress!");
 		return NO;
 	}
 	
-	if (![self frameBuffer])
+	if (!self.currentFrame)
 	{
 		NSLog(@"Tried to start a frame before any framebuffer was created!");
 		return NO;
 	}
 	
-	*buffer	= [[self frameBuffer] mutableBytes];
-	*pitch	= [[self frameBuffer] pitch];
+	*buffer	= self.currentFrame.mutableBytes;
+    *pitch	= self.currentFrame.pitch;
     
-    [[self frameBuffer] clearDirtyRegions];
+    [self.currentFrame clearDirtyRegions];
 	
-	frameInProgress = YES;
+	_frameInProgress = YES;
 	return YES;
 }
 
 - (void) finishFrameWithChanges: (const uint16_t *)dirtyBlocks
 {
-	if ([self frameBuffer] && dirtyBlocks)
+	if (self.currentFrame && dirtyBlocks)
 	{
         //Convert DOSBox's array of dirty blocks into a set of ranges
-        NSUInteger i=0, currentOffset = 0, maxOffset = [[self frameBuffer] size].height;
+        NSUInteger i=0, currentOffset = 0, maxOffset = self.currentFrame.size.height;
         while (currentOffset < maxOffset)
         {
             NSUInteger regionLength = dirtyBlocks[i];
@@ -264,16 +260,16 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
             
             if (isDirtyBlock)
             {
-                [[self frameBuffer] setNeedsDisplayInRegion: NSMakeRange(currentOffset, regionLength)];
+                [self.currentFrame setNeedsDisplayInRegion: NSMakeRange(currentOffset, regionLength)];
             }
             
             currentOffset += regionLength;
             i++;
         }
         
-        [self.emulator _didFinishFrame: self.frameBuffer];
+        [self.emulator _didFinishFrame: self.currentFrame];
 	}
-	frameInProgress = NO;
+	_frameInProgress = NO;
 }
 
 - (NSUInteger) paletteEntryWithRed: (NSUInteger)red
@@ -291,17 +287,17 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 - (void) applyRenderingStrategy
 {
 	//Work out how much we will need to scale the resolution to fit the viewport
-	NSSize resolution			= [self resolution];	
-	NSSize viewportSize			= [[[self emulator] delegate] viewportSizeForEmulator: [self emulator]];
+	NSSize resolution			= self.resolution;	
+	NSSize viewportSize			= [self.emulator.delegate viewportSizeForEmulator: self.emulator];
 	
-	BOOL isTextMode				= [self isInTextMode];
+	BOOL isTextMode				= self.isInTextMode;
 	NSInteger maxFilterScale	= [self _maxFilterScaleForResolution: resolution];	
 	
 	
 	//Start off with a passthrough filter as the default
 	BXFilterType activeType		= BXFilterNormal;
 	NSInteger filterScale		= 1;
-	BXFilterType desiredType	= [self filterType];
+	BXFilterType desiredType	= self.filterType;
 	
 	//Decide if we can use our selected filter at this scale, and if so at what scale
 	if (desiredType != BXFilterNormal &&
@@ -384,9 +380,10 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 
 - (NSInteger) _maxFilterScaleForResolution: (NSSize)resolution
 {
-	NSSize maxFrameSize	= [[[self emulator] delegate] maxFrameSizeForEmulator: [self emulator]];
+	NSSize maxFrameSize	= [self.emulator.delegate maxFrameSizeForEmulator: self.emulator];
 	//Work out how big a filter operation size we can use, given the maximum output size
-	NSInteger maxScale	= floorf(MIN(maxFrameSize.width / resolution.width, maxFrameSize.height / resolution.height));
+	NSInteger maxScale	= floorf(MIN(maxFrameSize.width / resolution.width,
+                                     maxFrameSize.height / resolution.height));
 	
 	return maxScale;
 }

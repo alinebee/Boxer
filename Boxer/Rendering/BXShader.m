@@ -93,15 +93,15 @@ NSString * const BXShaderUniformSizeKey = @"Size";
                 //A location of -1 will be reported for builtin uniforms, which cannot be addressed
                 //with glUniformXxARB anyway. For clarity's sake we leave these out of the resulting
                 //array.
-                if (YES || location != BXShaderUnsupportedUniformLocation)
+                if (location != BXShaderUnsupportedUniformLocation)
                 {
                     NSString *name = [NSString stringWithCString: nameBuf encoding: NSASCIIStringEncoding];
                     NSDictionary *uniformData = [NSDictionary dictionaryWithObjectsAndKeys:
                                                  name, BXShaderUniformNameKey,
-                                                 [NSNumber numberWithInt: type], BXShaderUniformTypeKey,
-                                                 [NSNumber numberWithInt: index], BXShaderUniformIndexKey,
-                                                 [NSNumber numberWithInt: size], BXShaderUniformSizeKey,
-                                                 [NSNumber numberWithInt: location], BXShaderUniformLocationKey,
+                                                 [NSNumber numberWithInt: type],        BXShaderUniformTypeKey,
+                                                 [NSNumber numberWithInt: index],       BXShaderUniformIndexKey,
+                                                 [NSNumber numberWithInt: size],        BXShaderUniformSizeKey,
+                                                 [NSNumber numberWithInt: location],    BXShaderUniformLocationKey,
                                                  nil];
             
                     [descriptions addObject: uniformData];
@@ -152,8 +152,8 @@ NSString * const BXShaderUniformSizeKey = @"Size";
             NSString *infoLog = (shaderHandle) ? [self infoLogForObject: shaderHandle] : @"";
                 
             NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                                      source, BXShaderErrorSourceKey,
                                       infoLog, BXShaderErrorInfoLogKey,
+                                      source, BXShaderErrorSourceKey,
                                       nil];
             
             
@@ -236,8 +236,9 @@ NSString * const BXShaderUniformSizeKey = @"Size";
             //Read out the info log to give some clue as to why linking failed.
             NSString *infoLog = (programHandle) ? [self infoLogForObject: programHandle] : @"";
             
-            NSDictionary *userInfo = [NSDictionary dictionaryWithObject: infoLog
-                                                                 forKey: BXShaderErrorInfoLogKey];
+            NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                                      infoLog, BXShaderErrorInfoLogKey,
+                                      nil];
             
             *outError = [NSError errorWithDomain: BXShaderErrorDomain
                                             code: BXShaderCouldNotCreateShaderProgram

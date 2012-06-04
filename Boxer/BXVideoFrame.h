@@ -6,12 +6,14 @@
  */
 
 
-//BXFrameBuffer is a renderer-agnostic framebuffer for DOSBox to draw frames into and for BXRenderer
+//BXVideoFrame is a renderer-agnostic framebuffer for DOSBox to draw frames into, and for BXRenderer
 //to draw as an OpenGL texture. It keeps track of the frame's resolution, bit depth and intended
 //display scale.
 
 #import <Foundation/Foundation.h>
 
+//The standard 4:3 aspect ratio of old displays
+extern const CGFloat BX4by3AspectRatio; 
 
 //Aspect ratios with a difference smaller than this will be considered equivalent
 #define BXIdenticalAspectRatioDelta	0.025f
@@ -20,48 +22,54 @@
 //This is set to the maximum vertical resolution expected from a DOS game.
 #define MAX_DIRTY_REGIONS 1024
 
-@interface BXFrameBuffer : NSObject
+@interface BXVideoFrame : NSObject
 {
-	NSMutableData *frameData;
-	NSSize size;
-	NSSize baseResolution;
-	NSUInteger bitDepth;
-	NSSize intendedScale;
+	NSMutableData *_frameData;
+	NSSize _size;
+	NSSize _baseResolution;
+	NSUInteger _bytesPerPixel;
+	NSSize _intendedScale;
     
-    NSRange dirtyRegions[MAX_DIRTY_REGIONS];
-    NSUInteger numDirtyRegions;
+    NSRange _dirtyRegions[MAX_DIRTY_REGIONS];
+    NSUInteger _numDirtyRegions;
 }
 
 #pragma mark -
 #pragma mark Properties
 
-
+//The size of the video frame in pixels.
 @property (readonly) NSSize size;
-@property (readonly) NSUInteger bitDepth;
 
-//The original game resolution represented by the framebuffer.
-@property (assign) NSSize baseResolution;
-
-//The scaling factor to apply to the framebuffer to reach the desired aspect ratio.
-@property (assign) NSSize intendedScale;
-
-
-//The base resolution corrected to the same aspect ratio as the underlying buffer size.
-//Needed to account for pixel pre-doubling done by DOSBox.
-@property (readonly) NSSize correctedResolution;
+//The number of bytes per pixel. The total size in bytes of the frame
+//is bytesPerPixel * size.width * size.height.
+@property (readonly) NSUInteger bytesPerPixel;
 
 //The width in bytes of one scanline in the buffer.
+//This is equal to size.width * bytesPerPixel.
 @property (readonly) NSInteger pitch;
 
-//The size of the frame scaled to the intended scale.
+//The original game resolution represented by the frame.
+@property (assign) NSSize baseResolution;
+
+//The scaling factor to apply to the frame to reach the desired aspect ratio.
+@property (assign) NSSize intendedScale;
+
+//The size of the frame when scaled to the intended scale.
 @property (readonly) NSSize scaledSize;
 
-//The corrected resolution of the frame scaled to the intended scale.
+//The base resolution corrected to the same aspect ratio as the intended size:
+//e.g. a 640x200 frame is intended to be doubled vertically, for an effective
+//resolution of 640x400.
+@property (readonly) NSSize effectiveResolution;
+
+//The effective resolution of the frame scaled to the intended scale.
 @property (readonly) NSSize scaledResolution;
+
 
 //Read-only/mutable pointers to the frame's data.
 @property (readonly) const void *bytes;
 @property (readonly) void *mutableBytes;
+
 
 //The number of ranges of dirty lines. Incremented by setNeedsDisplayInRegion:
 //and reset to 0 by clearDirtyRegions. See the dirty region functions below.
@@ -78,18 +86,18 @@
 #pragma mark -
 #pragma mark Initializers
 
-+ (id) bufferWithSize: (NSSize)targetSize depth: (NSUInteger)depth;
++ (id) frameWithSize: (NSSize)targetSize depth: (NSUInteger)depth;
 - (id) initWithSize: (NSSize)targetSize depth: (NSUInteger)depth;
 
 
 #pragma mark -
 #pragma mark Methods
 
-//Sets the frame buffer to use the specified intended aspect ratio.
+//Sets the frame to use the specified intended aspect ratio.
 //This does not affect the underlying image data, just the intended scaled size and resolution.
 - (void) useAspectRatio: (CGFloat)aspectRatio;
 
-//Resets the aspect ratio of the framebuffer to use unscaled square pixels.
+//Resets the aspect ratio of the frame to use unscaled square pixels.
 - (void) useSquarePixels;
 
 

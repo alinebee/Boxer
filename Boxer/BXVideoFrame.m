@@ -6,16 +6,21 @@
  */
 
 
-#import "BXFrameBuffer.h"
+#import "BXVideoFrame.h"
 #import "BXGeometry.h"
 
-@interface BXFrameBuffer ()
+const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
+
+@interface BXVideoFrame ()
 @property (readwrite, assign) NSUInteger numDirtyRegions;
 @end
 
-@implementation BXFrameBuffer
-@synthesize size, baseResolution, bitDepth, intendedScale;
-@synthesize numDirtyRegions;
+@implementation BXVideoFrame
+@synthesize size = _size;
+@synthesize baseResolution = _baseResolution;
+@synthesize bytesPerPixel = _bytesPerPixel;
+@synthesize intendedScale = _intendedScale;
+@synthesize numDirtyRegions = _numDirtyRegions;
 
 
 + (NSSize) scalingFactorForSize: (NSSize)frameSize toAspectRatio: (CGFloat)aspectRatio
@@ -41,7 +46,7 @@
 }
 
 
-+ (id) bufferWithSize: (NSSize)targetSize depth: (NSUInteger)depth
++ (id) frameWithSize: (NSSize)targetSize depth: (NSUInteger)depth
 {
 	return [[[self alloc] initWithSize: targetSize depth: depth] autorelease];
 }
@@ -50,96 +55,98 @@
 {
 	if ((self = [super init]))
 	{
-		size			= targetSize;
-		baseResolution	= targetSize;
-		bitDepth		= depth;
-		intendedScale	= NSMakeSize(1.0f, 1.0f);
+		_size			= targetSize;
+		_baseResolution	= targetSize;
+		_bytesPerPixel	= depth;
+		_intendedScale	= NSMakeSize(1.0f, 1.0f);
 		
-		NSUInteger requiredLength = size.width * size.height * bitDepth;
-		frameData = [[NSMutableData alloc] initWithCapacity: requiredLength];
+		NSUInteger requiredLength = _size.width * _size.height * _bytesPerPixel;
+		_frameData = [[NSMutableData alloc] initWithCapacity: requiredLength];
 	}
 	return self;
 }
 
 - (void) dealloc
 {
-	[frameData release], frameData = nil;
+	[_frameData release], _frameData = nil;
 	[super dealloc];
 }
 
 - (NSInteger) pitch
 {
-	return size.width * bitDepth;
+	return self.size.width * self.bytesPerPixel;
 }
 
 - (void) useAspectRatio: (CGFloat)aspectRatio
 {
-	NSSize scale = [[self class] scalingFactorForSize: [self size] toAspectRatio: aspectRatio];
-	[self setIntendedScale: scale];
+	self.intendedScale = [self.class scalingFactorForSize: self.size
+                                            toAspectRatio: aspectRatio];
 }
 
 - (void) useSquarePixels
 {
-	[self setIntendedScale: NSMakeSize(1, 1)];
+    self.intendedScale = NSMakeSize(1, 1);
 }
 
 - (NSSize) scaledSize
 {
-	return NSMakeSize(ceilf(size.width	* intendedScale.width),
-					  ceilf(size.height	* intendedScale.height));
+	return NSMakeSize(ceilf(self.size.width	* self.intendedScale.width),
+					  ceilf(self.size.height * self.intendedScale.height));
 }
 
 //IMPLEMENTATION NOTE: sometimes the buffer size that DOSBox is using
 //is already a different aspect ratio from the original resolution,
 //e.g. if it is performing pixel pre-doubling to correct for wacky video modes.
 //This provides a corrected version of that resolution.
-- (NSSize) correctedResolution
+- (NSSize) effectiveResolution
 {
-	CGFloat bufferRatio		= aspectRatioOfSize(size);
-	CGFloat resolutionRatio	= aspectRatioOfSize(baseResolution);
+	CGFloat bufferRatio		= aspectRatioOfSize(self.size);
+	CGFloat resolutionRatio	= aspectRatioOfSize(self.baseResolution);
 	
-	return sizeToMatchRatio(baseResolution, bufferRatio, resolutionRatio < bufferRatio);
+	return sizeToMatchRatio(self.baseResolution, bufferRatio, resolutionRatio < bufferRatio);
 }
 
 - (NSSize) scaledResolution
 {
-	NSSize correctedResolution = [self correctedResolution];
-	return NSMakeSize(ceilf(correctedResolution.width	* intendedScale.width),
-					  ceilf(correctedResolution.height	* intendedScale.height));
+	NSSize effectiveResolution = self.effectiveResolution;
+	return NSMakeSize(ceilf(effectiveResolution.width	* self.intendedScale.width),
+					  ceilf(effectiveResolution.height	* self.intendedScale.height));
 }
 
 - (const void *) bytes
 {
-	return [frameData bytes];
+	return _frameData.bytes;
 }
 
 - (void *) mutableBytes
 {
-	return [frameData mutableBytes];
+	return _frameData.mutableBytes;
 }
 
 #pragma mark Region-dirtying
 
 - (void) setNeedsDisplayInRegion: (NSRange)range
 {
-    NSAssert([self numDirtyRegions] < MAX_DIRTY_REGIONS, @"setNeedsDisplayInRegion: called when the list of dirty regions is already full.");
+    NSAssert(self.numDirtyRegions < MAX_DIRTY_REGIONS,
+             @"setNeedsDisplayInRegion: called when the list of dirty regions is already full.");
     
-    NSUInteger nextIndex = [self numDirtyRegions];
-    dirtyRegions[nextIndex] = range;
+    NSUInteger nextIndex = self.numDirtyRegions;
+    _dirtyRegions[nextIndex] = range;
     
-    [self setNumDirtyRegions: nextIndex + 1];
+    self.numDirtyRegions = nextIndex + 1;
 }
 
 - (void) clearDirtyRegions
 {
-    [self setNumDirtyRegions: 0];
+    self.numDirtyRegions = 0;
 }
 
 - (NSRange) dirtyRegionAtIndex: (NSUInteger)regionIndex
 {
-    NSAssert1(regionIndex < [self numDirtyRegions], @"dirtyRegionAtIndex: called with index out of range: %u", regionIndex);
+    NSAssert1(regionIndex < self.numDirtyRegions,
+              @"dirtyRegionAtIndex: called with index out of range: %u", regionIndex);
     
-    return dirtyRegions[regionIndex];
+    return _dirtyRegions[regionIndex];
 }
 
 @end

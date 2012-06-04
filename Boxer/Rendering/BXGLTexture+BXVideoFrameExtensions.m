@@ -6,47 +6,47 @@
 //  Copyright (c) 2012 Alun Bestor and contributors. All rights reserved.
 //
 
-#import "BXGLTexture+BXFrameBufferExtensions.h"
-#import "BXFrameBuffer.h"
+#import "BXGLTexture+BXVideoFrameExtensions.h"
+#import "BXVideoFrame.h"
 
-@implementation BXGLTexture (BXFrameBufferExtensions)
+@implementation BXTexture2D (BXVideoFrameExtensions)
 
-+ (id) textureWithType: (GLenum)type frameBuffer: (BXFrameBuffer *)frameBuffer error: (NSError **)outError
++ (id) textureWithType: (GLenum)type videoFrame: (BXVideoFrame *)frame error: (NSError **)outError
 {
-    return [[[self alloc] initWithType: type frameBuffer: frameBuffer error: outError] autorelease];
+    return [[[self alloc] initWithType: type videoFrame: frame error: outError] autorelease];
 }
 
-- (id) initWithType: (GLenum)type frameBuffer: (BXFrameBuffer *)frameBuffer error: (NSError **)outError
+- (id) initWithType: (GLenum)type videoFrame: (BXVideoFrame *)frame error: (NSError **)outError
 {
     return [self initWithType: type
-                  contentSize: NSSizeToCGSize(frameBuffer.size)
-                        bytes: frameBuffer.bytes
+                  contentSize: NSSizeToCGSize(frame.size)
+                        bytes: frame.bytes
                         error: outError];
 }
 
-- (BOOL) fillWithFrameBuffer: (BXFrameBuffer *)frameBuffer
-                       error: (NSError **)outError
-{    
+- (BOOL) fillWithVideoFrame: (BXVideoFrame *)frame
+                      error: (NSError **)outError
+{
 	glBindTexture(_type, _texture);
     
-    self.contentRegion = CGRectMake(0, 0, frameBuffer.size.width, frameBuffer.size.height);
+    self.contentRegion = CGRectMake(0, 0, frame.size.width, frame.size.height);
     
     //Optimisation: only upload the changed regions to the texture.
     //TODO: profile this and see if it's quicker under some circumstances
     //to just upload the whole texture at once, e.g. if there's lots of small
     //changed regions.
     
-    NSUInteger pitch = frameBuffer.pitch;
-    GLsizei frameWidth = (GLsizei)frameBuffer.size.width;
-    NSUInteger i, numRegions = frameBuffer.numDirtyRegions;
+    NSUInteger pitch = frame.pitch;
+    GLsizei frameWidth = (GLsizei)frame.size.width;
+    NSUInteger i, numRegions = frame.numDirtyRegions;
     
     for (i=0; i < numRegions; i++)
     {
-        NSRange dirtyRegion = [frameBuffer dirtyRegionAtIndex: i];
+        NSRange dirtyRegion = [frame dirtyRegionAtIndex: i];
         NSUInteger regionOffset = dirtyRegion.location * pitch;
         
         //Uggghhhh, pointer arithmetic
-        const void *regionBytes = frameBuffer.bytes + regionOffset;
+        const void *regionBytes = frame.bytes + regionOffset;
         
         glTexSubImage2D(_type,
                         0,                      //Mipmap level
@@ -69,5 +69,10 @@
     }
         
     return succeeded;
+}
+
+- (BOOL) canAccomodateVideoFrame: (BXVideoFrame *)frame
+{
+    return (frame.size.width < self.textureSize.width) && (frame.size.height < self.textureSize.height);
 }
 @end

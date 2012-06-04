@@ -54,10 +54,10 @@
 
 //Resize the window if needed to accomodate the specified frame.
 //Returns YES if the window was resized, NO if the size remained the same.
-- (BOOL) _resizeToAccommodateFrame: (BXFrameBuffer *)frame;
+- (BOOL) _resizeToAccommodateFrame: (BXVideoFrame *)frame;
 
 //Returns the view size that should be used for rendering the specified frame.
-- (NSSize) _renderingViewSizeForFrame: (BXFrameBuffer *)frame minSize: (NSSize)minViewSize;
+- (NSSize) _renderingViewSizeForFrame: (BXVideoFrame *)frame minSize: (NSSize)minViewSize;
 
 //Forces the emulator's video handler to recalculate its filter settings at the end of a resize event.
 - (void) _cleanUpAfterResize;

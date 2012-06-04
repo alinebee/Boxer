@@ -21,7 +21,7 @@
 @class BXInputController;
 @class BXStatusBarController;
 @class BXEmulator;
-@class BXFrameBuffer;
+@class BXVideoFrame;
 @class BXInputView;
 
 @protocol BXFrameRenderingView;
@@ -91,7 +91,7 @@ extern NSString * const BXViewDidLiveResizeNotification;
 
 //Passes the specified frame on to our rendering view to handle,
 //and resizes the window appropriately if a change in resolution or aspect ratio has occurred.
-- (void) updateWithFrame: (BXFrameBuffer *)frame;
+- (void) updateWithFrame: (BXVideoFrame *)frame;
 
 //Returns a screenshot of what is currently being rendered in the rendering view.
 //Will return nil if no frame has been provided yet (via updateWithFrame:).

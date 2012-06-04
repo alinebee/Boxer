@@ -820,7 +820,7 @@ void CPU_Core_Dynrec_Cache_Init(bool enable_cache);
 					   userInfo: nil];
 }
 
-- (void) _didFinishFrame: (BXFrameBuffer *)frame
+- (void) _didFinishFrame: (BXVideoFrame *)frame
 {
     [self.delegate emulator: self didFinishFrame: frame];
 }

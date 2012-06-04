@@ -83,7 +83,23 @@ extern "C" {
 	CGSize BXCGSmallerSize(CGSize size1, CGSize size2);
 
 	CGSize BXCGLargerSize(CGSize size1, CGSize size2);
-
+    
+    
+    #pragma mark -
+    #pragma mark Debug logging
+        
+    #ifndef NSStringFromCGRect
+    #define NSStringFromCGRect(rect) NSStringFromRect(NSRectFromCGRect(rect))
+    #endif
+        
+    #ifndef NSStringFromCGSize
+    #define NSStringFromCGSize(size) NSStringFromSize(NSSizeFromCGSize(size))
+    #endif
+        
+    #ifndef NSStringFromCGPoint
+    #define NSStringFromCGPoint(point) NSStringFromPoint(NSPointFromCGPoint(point))
+    #endif
+    
 #if __cplusplus
 } //Extern C
 #endif

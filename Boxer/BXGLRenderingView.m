@@ -47,6 +47,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 @synthesize currentFrame = _currentFrame;
 @synthesize managesAspectRatio = _managesAspectRatio;
 @synthesize needsCVLinkDisplay = _needsCVLinkDisplay;
+@synthesize viewportRect = _viewportRect;
 
 - (void) dealloc
 {
@@ -68,8 +69,16 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 - (void) updateWithFrame: (BXVideoFrame *)frame
 {
     self.currentFrame = frame;
-    self.renderer.viewport = NSRectToCGRect([self viewportForFrame: frame]);
     [self.renderer updateWithFrame: frame];
+    
+    //If the view changes aspect ratio, and we're responsible for the aspect ratio ourselves,
+    //then smoothly animate the transition to the new ratio. 
+    if (self.managesAspectRatio)
+    {
+        NSRect newViewport = [self viewportForFrame: frame];
+        if (!NSEqualRects(newViewport, self.viewportRect))
+            [self.animator setViewportRect: newViewport];
+    }
     
     //If we're using a CV Link, don't tell Cocoa that we need redrawing:
     //Instead, flag that we need to render and flush in the display link.
@@ -78,6 +87,21 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
         self.needsCVLinkDisplay = YES;
     else
         self.needsDisplay = YES;
+}
+
+
++ (id)defaultAnimationForKey: (NSString *)key
+{
+    if ([key isEqualToString: @"viewportRect"])
+    {
+		CABasicAnimation *animation = [CABasicAnimation animation];
+        animation.duration = 0.1;
+        return animation;
+    }
+    else
+    {
+        return [super defaultAnimationForKey: key];
+    }
 }
 
 //Returns the rectangular region of the view into which the specified frame should be drawn.
@@ -102,14 +126,24 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     {
         _managesAspectRatio = enabled;
         
-        //Update the renderer's viewport to compensate for the change
-        self.renderer.viewport = NSRectToCGRect([self viewportForFrame: self.currentFrame]);
+        //Update our viewport immediately to compensate for the change
+        self.viewportRect = [self viewportForFrame: self.currentFrame];
     }
 }
 
-- (NSRect) viewportRect
+- (void) setViewportRect: (NSRect)newRect
 {
-	return [self viewportForFrame: self.currentFrame];
+    if (!NSEqualRects(newRect, _viewportRect))
+    {
+        _viewportRect = newRect;
+        
+        self.renderer.viewport = NSRectToCGRect(newRect);
+        
+        if (_displayLink)
+            self.needsCVLinkDisplay = YES;
+        else
+            self.needsDisplay = YES;
+    }
 }
 
 - (NSSize) maxFrameSize
@@ -134,7 +168,7 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     self.renderer = [[[BXRenderer alloc] initWithGLContext: cgl_ctx] autorelease];
     if (self.currentFrame)
     {
-        self.renderer.viewport = NSRectToCGRect([self viewportForFrame: self.currentFrame]);
+        self.renderer.viewport = NSRectToCGRect(self.viewportRect);
         [self.renderer updateWithFrame: self.currentFrame];
     }
     
@@ -177,7 +211,8 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 - (void) reshape
 {
     [super reshape];
-    self.renderer.viewport = NSRectToCGRect([self viewportForFrame: self.currentFrame]);
+    //Instantly recalculate our viewport rect whenever the view changes shape.
+    self.viewportRect = [self viewportForFrame: self.currentFrame];
 }
 
 - (void) drawRect: (NSRect)dirtyRect

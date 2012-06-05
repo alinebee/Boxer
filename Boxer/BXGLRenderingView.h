@@ -21,8 +21,10 @@
 	CVDisplayLinkRef _displayLink;
     BOOL _needsCVLinkDisplay;
     BOOL _managesAspectRatio;
+    NSRect _viewportRect;
 }
 @property (retain) BXRenderer *renderer;
 @property (assign, nonatomic) BOOL managesAspectRatio;
+@property (assign, nonatomic) NSRect viewportRect;
 
 @end

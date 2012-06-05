@@ -14,6 +14,7 @@ NSString * const BXGLFramebufferExtensionErrorDomain = @"BXGLFramebufferExtensio
 
 
 @implementation BXTexture2D
+@synthesize context = _context;
 @synthesize texture = _texture;
 @synthesize type = _type;
 @synthesize contentRegion = _contentRegion;
@@ -41,8 +42,9 @@ NSString * const BXGLFramebufferExtensionErrorDomain = @"BXGLFramebufferExtensio
     }
 }
 
-+ (NSError *) latestGLError
+- (NSError *) latestGLError
 {
+    CGLSetCurrentContext(_context);
     GLenum status = glGetError();
     if (status)
     {
@@ -58,7 +60,7 @@ NSString * const BXGLFramebufferExtensionErrorDomain = @"BXGLFramebufferExtensio
 {
     if (outError)
     {
-        *outError = [self.class latestGLError];
+        *outError = self.latestGLError;
         return (*outError == nil);
     }
     return YES;
@@ -70,23 +72,31 @@ NSString * const BXGLFramebufferExtensionErrorDomain = @"BXGLFramebufferExtensio
 + (id) textureWithType: (GLenum)type
            contentSize: (CGSize)contentSize
                  bytes: (const GLvoid *)bytes
+           inGLContext: (CGLContextObj)context
                  error: (NSError **)outError
 {
     return [[[self alloc] initWithType: type
                            contentSize: contentSize
                                  bytes: bytes
+                           inGLContext: context
                                  error: outError] autorelease];
 }
             
 - (id) initWithType: (GLenum)type
         contentSize: (CGSize)contentSize
               bytes: (const GLvoid *)bytes
+        inGLContext: (CGLContextObj)context
               error: (NSError **)outError
 {
     if ((self = [self init]))
     {
-        _contentRegion = CGRectMake(0, 0, contentSize.width, contentSize.height);
+        _context = context;
+        CGLRetainContext(context);
+        
+        CGLSetCurrentContext(_context);
+        
         _type = type;
+        _contentRegion = CGRectMake(0, 0, contentSize.width, contentSize.height);
         
         //Choose suitable default wrapping modes based on the texture type,
         //and check what texture size we'll need.
@@ -187,12 +197,29 @@ NSString * const BXGLFramebufferExtensionErrorDomain = @"BXGLFramebufferExtensio
     return self;
 }
 
-- (void) dealloc
+- (void) deleteTexture
 {
     if (_texture)
     {
-        glDeleteTextures(1, &_texture);
-        _texture = 0;
+        //Because deleteTexture could be called in dealloc,
+        //which may occur at any time out of the direct control of the program flow,
+        //we need to lock the context to avoid stepping on anyone's toes.
+        CGLLockContext(_context);
+            CGLSetCurrentContext(_context);
+            glDeleteTextures(1, &_texture);
+            _texture = 0;
+        CGLUnlockContext(_context);
+    }
+}
+
+- (void) dealloc
+{
+    [self deleteTexture];
+    
+    if (_context)
+    {
+        CGLReleaseContext(_context);
+        _context = NULL;
     }
     
     [super dealloc];
@@ -203,8 +230,11 @@ NSString * const BXGLFramebufferExtensionErrorDomain = @"BXGLFramebufferExtensio
           withBytes: (const GLvoid *)bytes
               error: (NSError **)outError
 {
-    NSAssert1(CGRectContainsRect(self.contentRegion, region),
+    CGRect textureRegion = CGRectMake(0, 0, _textureSize.width, _textureSize.height);
+    NSAssert1(CGRectContainsRect(textureRegion, region),
               @"Region out of bounds: %@", NSStringFromRect(NSRectFromCGRect(region)));
+    
+    CGLSetCurrentContext(_context);
     
     glBindTexture(_type, _texture);
     
@@ -228,9 +258,10 @@ NSString * const BXGLFramebufferExtensionErrorDomain = @"BXGLFramebufferExtensio
 
 - (void) setIntValue: (GLint)value forParameter: (GLenum)parameter
 {
+    CGLSetCurrentContext(_context);
+    
     glBindTexture(_type, _texture);
     glTexParameteri(_type, parameter, value);
-    
 }
 
 - (void) setMinFilter: (GLenum)minFilter
@@ -278,6 +309,8 @@ NSString * const BXGLFramebufferExtensionErrorDomain = @"BXGLFramebufferExtensio
                      level: (GLint)level
                      error: (NSError **)outError
 {
+    CGLSetCurrentContext(_context);
+    
     //Record what the current framebuffer is, so that we can reset it after attachment.
     GLint currentFramebuffer;
     glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, &currentFramebuffer);
@@ -409,6 +442,8 @@ NSString * const BXGLFramebufferExtensionErrorDomain = @"BXGLFramebufferExtensio
 		minX,	maxY
     };
 	
+    CGLSetCurrentContext(_context);
+    
 	glBindTexture(_type, _texture);
 	
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);

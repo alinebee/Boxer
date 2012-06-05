@@ -36,13 +36,17 @@ NSString * const BXShaderUniformSizeKey = @"Size";
 
 @implementation BXShader
 @synthesize shaderProgram = _shaderProgram;
+@synthesize context = _context;
 
 
 #pragma mark -
 #pragma mark Compilation helper methods
 
 + (NSString *) infoLogForObject: (GLhandleARB)objectHandle
+                      inContext: (CGLContextObj)context
 {
+    CGLSetCurrentContext(context);
+    
     NSString *infoLog = nil;
     GLint infoLogLength = 0;
     
@@ -65,7 +69,10 @@ NSString * const BXShaderUniformSizeKey = @"Size";
 }
 
 + (NSArray *) uniformDescriptionsForShaderProgram: (GLhandleARB)shaderProgram
+                                        inContext: (CGLContextObj)context
 {
+    CGLSetCurrentContext(context);
+    
     GLint numUniforms = 0;
     
     glGetObjectParameterivARB(shaderProgram, GL_OBJECT_ACTIVE_UNIFORMS_ARB, &numUniforms);
@@ -117,8 +124,11 @@ NSString * const BXShaderUniformSizeKey = @"Size";
 
 + (GLhandleARB) createShaderWithSource: (NSString *)source
                                   type: (GLenum)shaderType
+                             inContext: (CGLContextObj)context
                                  error: (NSError **)outError
 {
+    CGLSetCurrentContext(context);
+    
     GLhandleARB shaderHandle = NULL;
     BOOL compiled = NO;
     
@@ -149,7 +159,11 @@ NSString * const BXShaderUniformSizeKey = @"Size";
             NSInteger compileError = (isVertexShader) ? BXShaderCouldNotCompileVertexShader : BXShaderCouldNotCompileFragmentShader;
             
             //Read out the info log to give some clue as to why compilation failed.
-            NSString *infoLog = (shaderHandle) ? [self infoLogForObject: shaderHandle] : @"";
+            NSString *infoLog;
+            if (shaderHandle)
+                infoLog = [self infoLogForObject: shaderHandle inContext: context];
+            else
+                infoLog = @"";
                 
             NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                                       infoLog, BXShaderErrorInfoLogKey,
@@ -175,8 +189,11 @@ NSString * const BXShaderUniformSizeKey = @"Size";
 
 + (GLhandleARB) createProgramWithVertexShader: (NSString *)vertexSource
                               fragmentShaders: (NSArray *)fragmentSources
+                                    inContext: (CGLContextObj)context
                                         error: (NSError **)outError
 {
+    CGLSetCurrentContext(context);
+    
     GLhandleARB programHandle = glCreateProgramObjectARB();
     
     NSAssert(vertexSource != nil || fragmentSources.count > 0, @"No vertex shader or fragment shader supplied for program.");
@@ -185,6 +202,7 @@ NSString * const BXShaderUniformSizeKey = @"Size";
     {
         GLhandleARB vertexShader = [self createShaderWithSource: vertexSource
                                                            type: GL_VERTEX_SHADER_ARB
+                                                      inContext: context
                                                           error: outError];
 
         if (vertexShader)
@@ -204,6 +222,7 @@ NSString * const BXShaderUniformSizeKey = @"Size";
     {
         GLhandleARB fragmentShader = [self createShaderWithSource: fragmentSource
                                                              type: GL_FRAGMENT_SHADER_ARB
+                                                        inContext: context
                                                             error: outError];
         
         if (fragmentShader)
@@ -234,7 +253,11 @@ NSString * const BXShaderUniformSizeKey = @"Size";
         if (outError)
         {
             //Read out the info log to give some clue as to why linking failed.
-            NSString *infoLog = (programHandle) ? [self infoLogForObject: programHandle] : @"";
+            NSString *infoLog;
+            if (programHandle)
+                infoLog = [self infoLogForObject: programHandle inContext: context];
+            else
+                infoLog = @"";
             
             NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                                       infoLog, BXShaderErrorInfoLogKey,
@@ -261,28 +284,40 @@ NSString * const BXShaderUniformSizeKey = @"Size";
 #pragma mark -
 #pragma mark Initialization and deallocation
 
-+ (id) shaderNamed: (NSString *)shaderName error: (NSError **)outError
++ (id) shaderNamed: (NSString *)shaderName
+         inContext: (CGLContextObj)context
+             error: (NSError **)outError
 {
     NSURL *vertexURL    = [[NSBundle mainBundle] URLForResource: shaderName withExtension: @"vert"];
     NSURL *fragmentURL  = [[NSBundle mainBundle] URLForResource: shaderName withExtension: @"frag"];
     
     return [[[self alloc] initWithContentsOfVertexShaderURL: vertexURL
                                          fragmentShaderURLs: [NSArray arrayWithObject: fragmentURL]
+                                                  inContext: context
                                                       error: outError] autorelease];
 }
 
-+ (id) shaderNamed: (NSString *)shaderName inSubdirectory: (NSString *)subdirectory error: (NSError **)outError
++ (id) shaderNamed: (NSString *)shaderName
+    inSubdirectory: (NSString *)subdirectory
+         inContext: (CGLContextObj)context
+             error: (NSError **)outError
 {
-    NSURL *vertexURL    = [[NSBundle mainBundle] URLForResource: shaderName withExtension: @"vert" subdirectory: subdirectory];
-    NSURL *fragmentURL  = [[NSBundle mainBundle] URLForResource: shaderName withExtension: @"frag" subdirectory: subdirectory];
+    NSURL *vertexURL    = [[NSBundle mainBundle] URLForResource: shaderName
+                                                  withExtension: @"vert"
+                                                   subdirectory: subdirectory];
+    NSURL *fragmentURL  = [[NSBundle mainBundle] URLForResource: shaderName
+                                                  withExtension: @"frag"
+                                                   subdirectory: subdirectory];
     
     return [[[self alloc] initWithContentsOfVertexShaderURL: vertexURL
                                          fragmentShaderURLs: [NSArray arrayWithObject: fragmentURL]
+                                                  inContext: context
                                                       error: outError] autorelease];
 }
 
 - (id) initWithContentsOfVertexShaderURL: (NSURL *)vertexShaderURL
                       fragmentShaderURLs: (NSArray *)fragmentShaderURLs
+                               inContext: (CGLContextObj)context
                                    error: (NSError **)outError
 {
     NSString *vertexSource = nil;
@@ -318,17 +353,23 @@ NSString * const BXShaderUniformSizeKey = @"Size";
     
     return [self initWithVertexShader: vertexSource
                       fragmentShaders: fragmentSources
+                            inContext: context
                                 error: outError];
 }
 
 - (id) initWithVertexShader: (NSString *)vertexSource
             fragmentShaders: (NSArray *)fragmentSources
+                  inContext: (CGLContextObj)context
                       error: (NSError **)outError
 {
     if (self = [self init])
     {
+        _context = context;
+        CGLRetainContext(context);
+        
         self.shaderProgram = [self.class createProgramWithVertexShader: vertexSource
                                                        fragmentShaders: fragmentSources
+                                                             inContext: context
                                                                  error: outError];
         
         _freeProgramWhenDone = YES;
@@ -352,14 +393,25 @@ NSString * const BXShaderUniformSizeKey = @"Size";
     [super dealloc];
 }
 
+- (void) deleteShaderProgram
+{
+    self.shaderProgram = nil;
+}
+
 - (void) setShaderProgram: (GLhandleARB)shaderProgram
 {
     if (_shaderProgram != shaderProgram)
     {
-        if (_shaderProgram && _freeProgramWhenDone)
-            glDeleteObjectARB(_shaderProgram);
-            
-        _shaderProgram = shaderProgram;
+        //Because this could be called in dealloc, which may occur at any time 
+        //out of the direct control of the program flow, we need to lock the context
+        //to avoid stepping on anyone's toes.
+        CGLLockContext(_context);
+            CGLSetCurrentContext(_context);
+            if (_shaderProgram && _freeProgramWhenDone)
+                glDeleteObjectARB(_shaderProgram);
+                
+            _shaderProgram = shaderProgram;
+        CGLUnlockContext(_context);
     }
 }
 
@@ -372,17 +424,18 @@ NSString * const BXShaderUniformSizeKey = @"Size";
 
 - (GLint) locationOfUniform: (const GLcharARB *)uniformName
 {
-    return glGetUniformLocationARB(self.shaderProgram, uniformName);
+    CGLSetCurrentContext(_context);
+    return glGetUniformLocationARB(_shaderProgram, uniformName);
 }
 
 - (NSArray *) uniformDescriptions
 {
-    return [self.class uniformDescriptionsForShaderProgram: self.shaderProgram];
+    return [self.class uniformDescriptionsForShaderProgram: _shaderProgram inContext: _context];
 }
 
 - (NSString *) infoLog
 {
-    return [self.class infoLogForObject: self.shaderProgram];
+    return [self.class infoLogForObject: _shaderProgram inContext: _context];
 }
 
 @end

@@ -1,34 +1,42 @@
-//
-//  BXGLTexture+BXFrameBufferExtensions.m
-//  Boxer
-//
-//  Created by Alun Bestor on 03/06/2012.
-//  Copyright (c) 2012 Alun Bestor and contributors. All rights reserved.
-//
+/* 
+ Boxer is copyright 2011 Alun Bestor and contributors.
+ Boxer is released under the GNU General Public License 2.0. A full copy of this license can be
+ found in this XCode project at Resources/English.lproj/BoxerHelp/pages/legalese.html, or read
+ online at [http://www.gnu.org/licenses/gpl-2.0.txt].
+ */
 
-#import "BXGLTexture+BXVideoFrameExtensions.h"
+#import "BXTexture2D+BXVideoFrameExtensions.h"
 #import "BXVideoFrame.h"
+#import "BXGeometry.h"
 
 @implementation BXTexture2D (BXVideoFrameExtensions)
 
-+ (id) textureWithType: (GLenum)type videoFrame: (BXVideoFrame *)frame error: (NSError **)outError
++ (id) textureWithType: (GLenum)type
+            videoFrame: (BXVideoFrame *)frame
+           inGLContext: (CGLContextObj)context
+                 error: (NSError **)outError
 {
-    return [[[self alloc] initWithType: type videoFrame: frame error: outError] autorelease];
+    return [[[self alloc] initWithType: type
+                            videoFrame: frame
+                           inGLContext: context
+                                 error: outError] autorelease];
 }
 
-- (id) initWithType: (GLenum)type videoFrame: (BXVideoFrame *)frame error: (NSError **)outError
+- (id) initWithType: (GLenum)type 
+         videoFrame: (BXVideoFrame *)frame
+        inGLContext: (CGLContextObj)context
+              error: (NSError **)outError
 {
     return [self initWithType: type
                   contentSize: NSSizeToCGSize(frame.size)
                         bytes: frame.bytes
+                  inGLContext: context
                         error: outError];
 }
 
 - (BOOL) fillWithVideoFrame: (BXVideoFrame *)frame
                       error: (NSError **)outError
 {
-	glBindTexture(_type, _texture);
-    
     self.contentRegion = CGRectMake(0, 0, frame.size.width, frame.size.height);
     
     //Optimisation: only upload the changed regions to the texture.
@@ -40,10 +48,16 @@
     GLsizei frameWidth = (GLsizei)frame.size.width;
     NSUInteger i, numRegions = frame.numDirtyRegions;
     
+    CGLSetCurrentContext(_context);
+	glBindTexture(_type, _texture);
+    
     for (i=0; i < numRegions; i++)
     {
         NSRange dirtyRegion = [frame dirtyRegionAtIndex: i];
         NSUInteger regionOffset = dirtyRegion.location * pitch;
+        
+        NSAssert2(regionOffset < frame.frameData.length,
+                  @"Dirty region offset exceeded frame size: %u (limit %u)", regionOffset, frame.frameData.length);
         
         //Uggghhhh, pointer arithmetic
         const void *regionBytes = frame.bytes + regionOffset;
@@ -64,7 +78,7 @@
     BOOL succeeded = YES;
     if (outError)
     {
-        *outError = [self.class latestGLError];
+        *outError = self.latestGLError;
         succeeded = (*outError == nil);
     }
         
@@ -73,6 +87,6 @@
 
 - (BOOL) canAccomodateVideoFrame: (BXVideoFrame *)frame
 {
-    return (frame.size.width < self.textureSize.width) && (frame.size.height < self.textureSize.height);
+    return (frame.size.width <= self.textureSize.width) && (frame.size.height <= self.textureSize.height);
 }
 @end

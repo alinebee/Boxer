@@ -88,9 +88,11 @@ extern const GLcharARB * const BXBSNESShaderFrameCountUniform;
 //in the order they were defined. Returns nil and populates outError if the file could not
 //be parsed or if one or more shaders failed to compile.
 + (NSArray *) shadersWithContentsOfURL: (NSURL *)shaderURL
+                             inContext: (CGLContextObj)context
                                  error: (NSError **)outError;
 
 + (NSArray *) shadersWithDefinition: (NSXMLDocument *)shaderDefinition
+                          inContext: (CGLContextObj)context
                               error: (NSError **)outError;
 
 

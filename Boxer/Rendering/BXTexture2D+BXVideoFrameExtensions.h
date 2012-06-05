@@ -1,10 +1,9 @@
-//
-//  BXGLTexture+BXFrameBufferExtensions.h
-//  Boxer
-//
-//  Created by Alun Bestor on 03/06/2012.
-//  Copyright (c) 2012 Alun Bestor and contributors. All rights reserved.
-//
+/* 
+ Boxer is copyright 2011 Alun Bestor and contributors.
+ Boxer is released under the GNU General Public License 2.0. A full copy of this license can be
+ found in this XCode project at Resources/English.lproj/BoxerHelp/pages/legalese.html, or read
+ online at [http://www.gnu.org/licenses/gpl-2.0.txt].
+ */
 
 #import "BXTexture2D.h"
 
@@ -17,10 +16,12 @@
 //Create a new texture with the contents of the specified frame buffer.
 + (id) textureWithType: (GLenum)type
             videoFrame: (BXVideoFrame *)frame
+           inGLContext: (CGLContextObj)context
                  error: (NSError **)outError;
 
 - (id) initWithType: (GLenum)type
          videoFrame: (BXVideoFrame *)frame
+        inGLContext: (CGLContextObj)context
               error: (NSError **)outError;
 
 //Fill the frame with the specified frame buffer.

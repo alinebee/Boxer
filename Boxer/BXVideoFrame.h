@@ -67,6 +67,7 @@ extern const CGFloat BX4by3AspectRatio;
 
 
 //Read-only/mutable pointers to the frame's data.
+@property (readonly) NSMutableData *frameData;
 @property (readonly) const void *bytes;
 @property (readonly) void *mutableBytes;
 

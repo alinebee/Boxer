@@ -78,7 +78,6 @@
 		9F3FB1AF1306F88800DB8FBE /* BXScriptablePreferences.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3FB1AE1306F88800DB8FBE /* BXScriptablePreferences.m */; };
 		9F3FB1B61306F9FB00DB8FBE /* NSApplication+BXScripting.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3FB1B51306F9FB00DB8FBE /* NSApplication+BXScripting.m */; };
 		9F3FB24E130714D700DB8FBE /* BXScriptableWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F3FB24D130714D700DB8FBE /* BXScriptableWindow.m */; };
-		9F4175AB119DBFDD00646B15 /* BXRenderingLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4175AA119DBFDD00646B15 /* BXRenderingLayer.m */; };
 		9F4175F1119DCF7E00646B15 /* BXFrameRateCounterLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4175F0119DCF7E00646B15 /* BXFrameRateCounterLayer.m */; };
 		9F424207109D03F500111D28 /* BXInspectorController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F424206109D03F500111D28 /* BXInspectorController.m */; };
 		9F424222109D061000111D28 /* InspectorPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F45A1C5109C3CB400593456 /* InspectorPanel.xib */; };
@@ -429,7 +428,7 @@
 		9FF175E711B279F500D0FCDC /* BXVideoHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9FF175E611B279F500D0FCDC /* BXVideoHandler.mm */; };
 		9FF2E9BD11E6F4950051E485 /* BXEmulatorConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF2E9BC11E6F4950051E485 /* BXEmulatorConfiguration.m */; };
 		9FF68FF8157B9C6600F8B5BC /* BXTexture2D.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF68FF7157B9C6600F8B5BC /* BXTexture2D.m */; };
-		9FF69000157BE82C00F8B5BC /* BXGLTexture+BXVideoFrameExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF68FFF157BE82B00F8B5BC /* BXGLTexture+BXVideoFrameExtensions.m */; };
+		9FF69000157BE82C00F8B5BC /* BXTexture2D+BXVideoFrameExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF68FFF157BE82B00F8B5BC /* BXTexture2D+BXVideoFrameExtensions.m */; };
 		9FF865CF134DAB5A001CE857 /* BXTaskOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FF865CE134DAB5A001CE857 /* BXTaskOperation.m */; };
 		9FF86678134DCA16001CE857 /* cdrdao in Resources */ = {isa = PBXBuildFile; fileRef = 9FF86676134DCA16001CE857 /* cdrdao */; };
 		9FF86679134DCA16001CE857 /* toc2cue in Resources */ = {isa = PBXBuildFile; fileRef = 9FF86677134DCA16001CE857 /* toc2cue */; };
@@ -1234,10 +1233,10 @@
 		9FF175E611B279F500D0FCDC /* BXVideoHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BXVideoHandler.mm; sourceTree = "<group>"; };
 		9FF2E9BB11E6F4950051E485 /* BXEmulatorConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXEmulatorConfiguration.h; sourceTree = "<group>"; };
 		9FF2E9BC11E6F4950051E485 /* BXEmulatorConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXEmulatorConfiguration.m; sourceTree = "<group>"; };
-		9FF68FF6157B9C6600F8B5BC /* BXTexture2D.h */ = {isa = PBXFileReference; fileEncoding = 4; name = BXTexture2D.h; path = Rendering/BXTexture2D.h; sourceTree = "<group>"; };
+		9FF68FF6157B9C6600F8B5BC /* BXTexture2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXTexture2D.h; path = Rendering/BXTexture2D.h; sourceTree = "<group>"; };
 		9FF68FF7157B9C6600F8B5BC /* BXTexture2D.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXTexture2D.m; path = Rendering/BXTexture2D.m; sourceTree = "<group>"; };
-		9FF68FFE157BE82B00F8B5BC /* BXGLTexture+BXVideoFrameExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "BXGLTexture+BXVideoFrameExtensions.h"; path = "Rendering/BXGLTexture+BXVideoFrameExtensions.h"; sourceTree = "<group>"; };
-		9FF68FFF157BE82B00F8B5BC /* BXGLTexture+BXVideoFrameExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "BXGLTexture+BXVideoFrameExtensions.m"; path = "Rendering/BXGLTexture+BXVideoFrameExtensions.m"; sourceTree = "<group>"; };
+		9FF68FFE157BE82B00F8B5BC /* BXTexture2D+BXVideoFrameExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; name = "BXTexture2D+BXVideoFrameExtensions.h"; path = "Rendering/BXTexture2D+BXVideoFrameExtensions.h"; sourceTree = "<group>"; };
+		9FF68FFF157BE82B00F8B5BC /* BXTexture2D+BXVideoFrameExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "BXTexture2D+BXVideoFrameExtensions.m"; path = "Rendering/BXTexture2D+BXVideoFrameExtensions.m"; sourceTree = "<group>"; };
 		9FF865CD134DAB5A001CE857 /* BXTaskOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXTaskOperation.h; sourceTree = "<group>"; };
 		9FF865CE134DAB5A001CE857 /* BXTaskOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXTaskOperation.m; sourceTree = "<group>"; };
 		9FF86676134DCA16001CE857 /* cdrdao */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = cdrdao; sourceTree = "<group>"; };
@@ -1590,8 +1589,8 @@
 				9FE32381157A7498004492E8 /* BXBSNESShader.m */,
 				9FF68FF6157B9C6600F8B5BC /* BXTexture2D.h */,
 				9FF68FF7157B9C6600F8B5BC /* BXTexture2D.m */,
-				9FF68FFE157BE82B00F8B5BC /* BXGLTexture+BXVideoFrameExtensions.h */,
-				9FF68FFF157BE82B00F8B5BC /* BXGLTexture+BXVideoFrameExtensions.m */,
+				9FF68FFE157BE82B00F8B5BC /* BXTexture2D+BXVideoFrameExtensions.h */,
+				9FF68FFF157BE82B00F8B5BC /* BXTexture2D+BXVideoFrameExtensions.m */,
 			);
 			name = Rendering;
 			sourceTree = "<group>";
@@ -2948,7 +2947,6 @@
 				9FEF98011191E1EF002024DF /* BXEmulatedMouse.mm in Sources */,
 				9F765649119403520082A06A /* BXInputController.m in Sources */,
 				9FB4F9E411957B55006C8AC9 /* BXVideoFrame.m in Sources */,
-				9F4175AB119DBFDD00646B15 /* BXRenderingLayer.m in Sources */,
 				9F4175F1119DCF7E00646B15 /* BXFrameRateCounterLayer.m in Sources */,
 				9FC1620E119E9AD700705EA5 /* BXCursorFadeAnimation.m in Sources */,
 				9FECE19011A31B8B00E0EBB6 /* BXRenderer.m in Sources */,
@@ -3209,7 +3207,7 @@
 				9FE3237E157A42B3004492E8 /* BXShader.m in Sources */,
 				9FE32382157A7498004492E8 /* BXBSNESShader.m in Sources */,
 				9FF68FF8157B9C6600F8B5BC /* BXTexture2D.m in Sources */,
-				9FF69000157BE82C00F8B5BC /* BXGLTexture+BXVideoFrameExtensions.m in Sources */,
+				9FF69000157BE82C00F8B5BC /* BXTexture2D+BXVideoFrameExtensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

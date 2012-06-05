@@ -181,7 +181,9 @@
 	else [frame useSquarePixels];
 }
 
-- (void) prepareForOutputSize: (NSSize)outputSize atScale: (NSSize)scale withCallback: (GFX_CallBack_t)newCallback
+- (void) prepareForOutputSize: (NSSize)outputSize
+                      atScale: (NSSize)scale
+                 withCallback: (GFX_CallBack_t)newCallback
 {
 	//Synchronise our record of the current video mode with the new video mode
 	BOOL wasTextMode = self.isInTextMode;

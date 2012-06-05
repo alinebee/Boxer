@@ -17,9 +17,10 @@
 @interface BXGLRenderingView : NSOpenGLView <BXFrameRenderingView>
 {
 	BXRenderer *_renderer;
+    BXVideoFrame *_currentFrame;
 	CVDisplayLinkRef _displayLink;
     BOOL _needsCVLinkDisplay;
 }
-@property (retain, nonatomic) BXRenderer *renderer;
+@property (retain) BXRenderer *renderer;
 
 @end

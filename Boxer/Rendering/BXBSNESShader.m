@@ -49,7 +49,9 @@ NSString * const BXBSNESShaderErrorDomain = @"BXBSNESShaderErrorDomain";
 #pragma mark -
 #pragma mark Initialization and deallocation
 
-+ (NSArray *) shadersWithContentsOfURL: (NSURL *)shaderURL error: (NSError **)outError
++ (NSArray *) shadersWithContentsOfURL: (NSURL *)shaderURL
+                             inContext: (CGLContextObj)context
+                                 error: (NSError **)outError
 {
     NSXMLDocument *definition = [[NSXMLDocument alloc] initWithContentsOfURL: shaderURL
                                                                      options: 0
@@ -57,12 +59,15 @@ NSString * const BXBSNESShaderErrorDomain = @"BXBSNESShaderErrorDomain";
     
     if (definition)
     {
-        return [self shadersWithDefinition: definition error: outError];
+        return [self shadersWithDefinition: definition
+                                 inContext: context
+                                     error: outError];
     }
     else return nil;
 }
 
 + (NSArray *) shadersWithDefinition: (NSXMLDocument *)shaderDefinition
+                          inContext: (CGLContextObj)context
                               error: (NSError **)outError
 {
     NSMutableArray *shaders = [NSMutableArray arrayWithCapacity: 1];
@@ -118,6 +123,7 @@ NSString * const BXBSNESShaderErrorDomain = @"BXBSNESShaderErrorDomain";
             NSArray *fragments = (lastFragmentNode) ? [NSArray arrayWithObject: lastFragmentNode.stringValue] : nil;
             BXBSNESShader *shader = [[BXBSNESShader alloc] initWithVertexShader: lastVertexNode.stringValue
                                                                 fragmentShaders: fragments
+                                                                      inContext: context
                                                                           error: outError];
             
             //If we failed to create the shader, bail out immediately

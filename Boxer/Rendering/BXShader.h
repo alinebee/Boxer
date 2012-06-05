@@ -56,6 +56,8 @@ extern NSString * const BXShaderUniformSizeKey;
 
 @interface BXShader : NSObject
 {
+    CGLContextObj _context;
+    
     GLhandleARB _shaderProgram;
     
     //Whether to delete the shader program when this shader is deallocated.
@@ -65,6 +67,9 @@ extern NSString * const BXShaderUniformSizeKey;
 //The program underpinning this shader.
 @property (readonly, nonatomic) GLhandleARB shaderProgram;
 
+//The context in which this shader was created.
+@property (readonly, nonatomic) CGLContextObj context;
+
 
 #pragma mark -
 #pragma mark Helper class methods
@@ -72,17 +77,18 @@ extern NSString * const BXShaderUniformSizeKey;
 //Returns an array of dictionaries describing the active uniforms
 //defined in the specified shader program.
 //See the key constants above for what is included in this dictionary.
-+ (NSArray *) uniformDescriptionsForShaderProgram: (GLhandleARB)shaderProgram;
++ (NSArray *) uniformDescriptionsForShaderProgram: (GLhandleARB)shaderProgram inContext: (CGLContextObj)context;
 
 //Returns the contents of the info log for the specified object
 //(normally a shader or shader program).
-+ (NSString *) infoLogForObject: (GLhandleARB)objectHandle;
++ (NSString *) infoLogForObject: (GLhandleARB)objectHandle inContext: (CGLContextObj)context;
 
 //Compiles the specified shader source code of the specified type,
 //and returns a handle for the new shader object.
 //Returns NULL and populates outError if the shader could not be compiled.
 + (GLhandleARB) createShaderWithSource: (NSString *)source
                                   type: (GLenum)shaderType
+                             inContext: (CGLContextObj)context
                                  error: (NSError **)outError;
 
 //Returns a shader program compiled and linked with the specified vertex shader
@@ -91,6 +97,7 @@ extern NSString * const BXShaderUniformSizeKey;
 //or the program could not be linked.
 + (GLhandleARB) createProgramWithVertexShader: (NSString *)vertexSource
                               fragmentShaders: (NSArray *)fragmentSources
+                                    inContext: (CGLContextObj)context
                                         error: (NSError **)outError;
 
 
@@ -100,21 +107,25 @@ extern NSString * const BXShaderUniformSizeKey;
 //Shorthands for loading a shader from the main bundle,
 //composed of a [shaderName].frag+[shaderName].vert pair.
 + (id) shaderNamed: (NSString *)shaderName
+         inContext: (CGLContextObj)context
              error: (NSError **)outError;
 
 + (id) shaderNamed: (NSString *)shaderName
     inSubdirectory: (NSString *)subdirectory
+         inContext: (CGLContextObj)context
              error: (NSError **)outError;
 
 //Returns a new shader compiled from the specified vertex shader and/or fragment shaders,
 //passed as source code. Returns nil and populates outError if the shader could not be compiled.
 - (id) initWithVertexShader: (NSString *)vertexSource
             fragmentShaders: (NSArray *)fragmentSources
+                  inContext: (CGLContextObj)context
                       error: (NSError **)outError;
 
 //Same as above, but loading the shader data from files on disk.
 - (id) initWithContentsOfVertexShaderURL: (NSURL *)vertexShaderURL
                       fragmentShaderURLs: (NSArray *)fragmentShaderURLs
+                               inContext: (CGLContextObj)context
                                    error: (NSError **)outError;
 
 
@@ -125,6 +136,12 @@ extern NSString * const BXShaderUniformSizeKey;
 //If freeWhenDone is YES, the program will be deleted once the shader is deallocated.
 - (void) setShaderProgram: (GLhandleARB)shaderProgram
              freeWhenDone: (BOOL)freeWhenDone;
+
+//Clears the shader program and all related resources, deleting the shader itself if freeWhenDone
+//was YES at the time the shader was assigned.
+//After this, the shader should not be used unless setShaderProgram:freeWhenDone:
+//is called with another shader.
+- (void) deleteShaderProgram;
 
 //Returns the location of the specified uniform, for calls to glUniformXxARB().
 //Returns BXShaderUnsupportedUniformLocation if the shader program does not

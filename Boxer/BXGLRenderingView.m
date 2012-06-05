@@ -15,6 +15,8 @@
 
 @interface BXGLRenderingView ()
 
+@property (retain) BXVideoFrame *currentFrame;
+
 //Whether we should redraw in the next display-link cycle.
 //Set to YES upon receiving a new frame, then back to NO after rendering it.
 @property (assign) BOOL needsCVLinkDisplay;
@@ -40,19 +42,12 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 
 @implementation BXGLRenderingView
 @synthesize renderer = _renderer;
+@synthesize currentFrame = _currentFrame;
 @synthesize needsCVLinkDisplay = _needsCVLinkDisplay;
-
-- (id) initWithCoder: (NSCoder *)aDecoder
-{
-    if ((self = [super initWithCoder: aDecoder]))
-    {
-        self.renderer = [[[BXRenderer alloc] init] autorelease];
-    }
-    return self;
-}
 
 - (void) dealloc
 {
+    self.currentFrame = nil;
     self.renderer = nil;
 	[super dealloc];
 }
@@ -79,21 +74,16 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 
 - (void) updateWithFrame: (BXVideoFrame *)frame
 {
+    self.currentFrame = frame;
+    [self.renderer updateWithFrame: frame];
+    
     //If we're using a CV Link, don't tell Cocoa that we need redrawing:
     //Instead, flag that we need to render and flush in the display link.
     //This prevents Cocoa from drawing the dirty view at the 'wrong' time.
-    [self.renderer updateWithFrame: frame
-                       inGLContext: self.openGLContext.CGLContextObj];
-    
     if (_displayLink)
         self.needsCVLinkDisplay = YES;
     else
         self.needsDisplay = YES;
-}
-
-- (BXVideoFrame *) currentFrame
-{
-    return self.renderer.currentFrame;
 }
 
 - (NSRect) viewportRect
@@ -119,9 +109,13 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
     [self.openGLContext setValues: &useVSync
                      forParameter: NSOpenGLCPSwapInterval];
 	
-    //Let the renderer do its own preparations
-	[self.renderer prepareForGLContext: cgl_ctx];
-    
+    //Create a new renderer for this context, and set it up appropriately
+    self.renderer = [[[BXRenderer alloc] initWithGLContext: cgl_ctx] autorelease];
+    self.renderer.canvas = NSRectToCGRect(self.bounds);
+    if (self.currentFrame)
+    {
+        [self.renderer updateWithFrame: self.currentFrame];
+    }
     
     //Set up the CV display link if desired
     BOOL useCVDisplayLink = [[NSUserDefaults standardUserDefaults] boolForKey: @"useCVDisplayLink"];
@@ -147,13 +141,15 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 
 - (void) clearGLContext
 {
+    //Get rid of our entire renderer when the context changes.
+    self.renderer = nil;
+    
 	if (_displayLink)
 	{
 		CVDisplayLinkRelease(_displayLink);
 		_displayLink = NULL;
 	}
-    
-	[self.renderer tearDownGLContext: self.openGLContext.CGLContextObj];	
+    	
 	[super clearGLContext];
 }
 
@@ -167,13 +163,10 @@ CVReturn BXDisplayLinkCallback(CVDisplayLinkRef displayLink,
 {
     self.needsCVLinkDisplay = NO;
     
-    CGLContextObj cgl_ctx = self.openGLContext.CGLContextObj;
-    if ([self.renderer canRenderToGLContext: cgl_ctx])
+    if ([self.renderer canRender])
 	{
-		CGLLockContext(cgl_ctx);
-            [self.renderer renderToGLContext: cgl_ctx];
-            [self.renderer flushToGLContext: cgl_ctx];
-        CGLUnlockContext(cgl_ctx);
+        [self.renderer render];
+        [self.renderer flush];
 	}
 }
 

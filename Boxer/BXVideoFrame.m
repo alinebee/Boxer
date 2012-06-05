@@ -16,6 +16,7 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 @end
 
 @implementation BXVideoFrame
+@synthesize frameData = _frameData;
 @synthesize size = _size;
 @synthesize baseResolution = _baseResolution;
 @synthesize bytesPerPixel = _bytesPerPixel;
@@ -61,7 +62,7 @@ const CGFloat BX4by3AspectRatio = (CGFloat)320.0 / (CGFloat)240.0;
 		_intendedScale	= NSMakeSize(1.0f, 1.0f);
 		
 		NSUInteger requiredLength = _size.width * _size.height * _bytesPerPixel;
-		_frameData = [[NSMutableData alloc] initWithCapacity: requiredLength];
+		_frameData = [[NSMutableData alloc] initWithLength: requiredLength];
 	}
 	return self;
 }

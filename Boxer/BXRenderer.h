@@ -26,8 +26,10 @@
 
 @interface BXRenderer : NSObject
 {
+    CGLContextObj _context;
+    
 	BXVideoFrame *_currentFrame;
-	BXShader *_currentShader;
+	NSArray *_shaders;
 	
 	BOOL _supportsFBO;
 	BOOL _useScalingBuffer;
@@ -54,64 +56,57 @@
 #pragma mark -
 #pragma mark Properties
 
-//The current frame that will be rendered when renderToGLContext: is called.
-//Set using updateWithFrame:inGLContext:.
+//The context in which this renderer is running, set when the renderer is created.
+//Renderers cannot be moved between contexts.
+@property (readonly) CGLContextObj context;
+
+//The current frame that will be rendered when render is called. Set using updateWithFrame:inGLContext:.
 @property (retain, readonly) BXVideoFrame *currentFrame;
 
-//The current shader we are using to render with.
-@property (retain) BXShader *currentShader;
+//An array of BXBSNESShaders that will be applied in order when rendering the current frame.
+@property (retain) NSArray *shaders;
 
-//The frames-per-second we are producing, measured as the time between the last two rendered frames.
-//Note that BXRenderer is only rendered when the frame or viewport changes, so this rate will only
-//ever be as fast as the DOS program is changing the screen.
+//The bounds of the view/layer in which we are rendering.
+//Set by the view, and used for viewport and scaling calculations.
+@property (assign, nonatomic) CGRect canvas;
+
+//Whether to adjust the GL viewport to match the aspect ratio of the current frame.
+//If NO, the GL viewport will fill the entire canvas.
+@property (assign, nonatomic) BOOL maintainsAspectRatio;
+
+
+//The frames-per-second the renderer is producing, measured as the time between
+//the last two rendered frames.
 @property (assign) CGFloat frameRate;
 
 //The time it took to render the last frame, measured as the time renderToGLContext: was called to
 //the time when renderToGLContext: finished. This measures the efficiency of the rendering pipeline.
 @property (assign) CFTimeInterval renderingTime;
 
-//The bounds of the view/layer in which we are rendering.
-//Set by the view, and used for viewport and scaling calculations.
-@property (assign, nonatomic) CGRect canvas;
-
-//Whether to set the GL viewport to match the aspect ratio of the current frame. Set by the view.
-//This is only enabled for fullscreen mode; in windowed mode, the window manages the aspect ratio itself.
-@property (assign, nonatomic) BOOL maintainsAspectRatio;
-
 
 #pragma mark -
 #pragma mark Methods
 
-//Replaces the current frame with a new/updated one for rendering.
-//Next time renderToGLContext is called, the rendering state will be updated
-//to match the new frame and the new frame will be rendered. 
-- (void) updateWithFrame: (BXVideoFrame *)frame inGLContext: (CGLContextObj)glContext;
+//Returns a new renderer prepared for the specified context.
+- (id) initWithGLContext: (CGLContextObj)glContext;
 
-//Returns the maximum drawable frame size.
+//Replaces the current frame with a new/updated one for rendering.
+- (void) updateWithFrame: (BXVideoFrame *)frame;
+
+//Returns the maximum drawable frame size. This is usually a limit of the maximum GL texture size.
 - (CGSize) maxFrameSize;
 
 //Returns the rectangular region of the current canvas that the specified frame would be drawn into.
 - (CGRect) viewportForFrame: (BXVideoFrame *)frame;
 
-//Prepare the renderer state for rendering into the specified OpenGL context.
-- (void) prepareForGLContext:	(CGLContextObj)glContext;
+//Whether the renderer is ready to render the current frame.
+//Will be YES as long as there is a frame to render.
+- (BOOL) canRender;
 
-//Release resources (textures, framebuffers etc.) that were created for the specified
-//OpenGL context.
-- (void) tearDownGLContext:		(CGLContextObj)glContext;
+//Renders the frame into its GL context.
+- (void) render;
 
-//Returns whether the renderer is ready to render the current frame.
-//Currently this ignores the context and always returns YES as long as there is a frame to render.
-- (BOOL) canRenderToGLContext:	(CGLContextObj)glContext;
-
-//Renders the current frame into the specified context.
-//This also adjusts the GL viewport, enables and disables OpenGL features, generates/updates the
-//frame texture and resizes the framebuffer if necessary. All changes to OpenGL state are then 
-//undone at the end of the frame, as expected by CAOpenGLLayer.
-- (void) renderToGLContext:		(CGLContextObj)glContext;
-
-//Flushes the OpenGL buffer in the specified context.
-//Unused by the layer-based implementations.
-- (void) flushToGLContext:     (CGLContextObj)glContext;
+//Flushes the OpenGL framebuffer in the renderer's context.
+- (void) flush;
 
 @end
